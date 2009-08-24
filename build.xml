@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     13.07.2009 12:00:00                                                        
+
+     project:		AgentGUI
+     description	Erzeugung notwendiger Datei- und Verzeichnisstrukturen
+					für das Tool Agent.GUI ....
+                   
+     Christian Derksen                                                                
+     ====================================================================== -->
+<project name="AgentGui" default="supply" basedir=".">
+
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+          properties: Wichtige Verzeichniseinstellungen                      
+         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<property name="sourceDir" value="src" />
+	<property name="sourceDirLibraries" value="lib" />
+	<property name="sourceDirProperties" value="properties" />
+	
+	<property name="binaryDir" value="bin" />
+	
+	<property name="destinJar" value="D:\00 Tmp\00 Jars\AgentGUI\AgentGui.jar" />
+	<property name="destinDir" value="D:\00 Tmp\00 Jars\AgentGUI" />	
+	<property name="destinDirLibraries" value="D:\00 Tmp\00 Jars\AgentGUI\lib" />
+	<property name="destinDirProperties" value="D:\00 Tmp\00 Jars\AgentGUI\properties\\" />
+
+	<!-- Jar's für den Class-Path im Manifest  -->
+	<property name="destinClassPath" 
+		     value="lib/batik/batik-rasterizer.jar
+					lib/batik/batik-slideshow.jar
+					lib/batik/batik-squiggle.jar
+					lib/batik/batik-svgpp.jar
+					lib/batik/batik-ttf2svg.jar
+					lib/batik/batik.jar
+					lib/jade/lib/http.jar
+					lib/jade/lib/iiop.jar
+					lib/jade/lib/jade.jar
+					lib/jade/lib/jadeTools.jar" />
+	
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+          target: cleanup => Aufräumen, bevor es wirklich los geht                      
+         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <target name="cleanup" description="Löschen der alten Datei- und Verzeichnisstruktur ...">
+    	<delete failonerror="false" dir="${destinDir}" />    	    	
+    </target>
+	
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+          target: createdir => Anlegen der Verzeichnisstruktur                      
+         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <target name="createdir" description="Erstellung der Verzeichnisstruktur ...">
+    	<mkdir dir="${destinDir}" />  	
+    	<mkdir dir="${destinDirLibraries}" />
+    	<mkdir dir="${destinDirProperties}" />
+    </target>
+	
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+          target: compile => Anlegen der Verzeichnisstruktur                      
+         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <target name="compile" description="Erzeugung des Byte-Codes ...">
+		<echo message="Java-Version ${ant.java.version}" />    	    	
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+          target: supply => .jar-externe Dateien' verschieben
+          				 => Erzeugung der ausführbaren Struktur              
+         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <target name="supply" depends="cleanup,createdir,compile" description="Erstellung der Dateistruktur ... ">
+    	
+    	<!-- Kopieren der Property-Files -->    	
+    	<copy todir="${destinDirProperties}">
+    		<fileset dir="${sourceDirProperties}" />
+		</copy>   	
+    	
+    	<!-- Kopieren der Library-Files -->    	
+    	<copy todir="${destinDirLibraries}">
+    		<fileset dir="${sourceDirLibraries}" />
+		</copy>   	
+    	
+    	<!-- Erzeugen der ausführbaren Java-Datei -->
+    	<jar compress="true" destfile="${destinJar}">
+ 			<manifest>
+				<attribute name="Built-By" value="${user.name}"/>
+ 				<attribute name="Built-Lang" value="${user.language}"/>
+    		    <attribute name="Main-Class" value="application.Application"/>
+ 				<attribute name="Class-Path" value="${destinClassPath}"/>
+			</manifest>
+    		<fileset dir="${binaryDir}" excludes="**/properties/**" />
+    		<zipfileset excludes="META-INF/*.SF" src="D:/10 Java Projects/.metadata/.plugins/org.dyno.visual.swing/layoutext/grouplayout.jar"/>    		
+        </jar>
+    	
+    	<!-- Die erzeugte jar ausführen -->
+    	<java jar="${destinJar}" fork="true" />
+    	
+    </target>
+
+</project>

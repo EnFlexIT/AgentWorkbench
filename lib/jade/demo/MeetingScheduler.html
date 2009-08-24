@@ -1,0 +1,60 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Fabio Bellifemine">
+   <meta name="GENERATOR" content="Mozilla/4.5 [en] (WinNT; I) [Netscape]">
+   <title>MeetingScheduler Demo Description</title>
+</head>
+<body>
+
+<center><b>Meeting Scheduler</b></center>
+
+<p>This is a sample application that uses JADE for message exchange and
+for the implementation of the interaction protocols.
+<br>It implements a meeting scheduler agent that helps a user in scheduling
+meetings with other users.
+<br>This sample application is based on the one that was successfully used at the FIPA Interoperability
+Tests in Seoul on January 1999.
+<p>It allows to try and check:
+<blockquote>- the registration of an agent with the default DF (Directory
+Facilitator) of the platform;
+<br>- the registration of an agent with a remote DF belonging to another
+platform or, different from the default DF;
+<br>- the search within the known DFs for a list of agents and their properties,
+in particular the list of MeetingScheduler agents and the name of the user
+that they represent;
+<br>- the usage of the FipaContractNet protocol, both the initiator and
+responder role.</blockquote>
+
+<p><br>The source code was written a bit in an hurry, but some files may
+help you with some examples:
+<br>- demo/MeetingScheduler/myFipaContractNetInitiatorBehaviour.java extends
+the JADE class jade.proto.FipaContractNetInitiatorBehaviour with some application-specific
+code;
+<br>- demo/MeetingScheduler/myFipaContractNetResponderBehaviour.java extends
+the JADE class jade.proto.FipaContractNetResponder Behaviour with some
+application-specific code.</blockquote>
+
+<br>When the two agents start, two login windows appears. Put different
+user names (the password is not used, currently), e.g. "Tizio" and "Caio".
+<br>Then, use the calendar window of Tizio to fix a couple of appointments
+in different dates (notice that only the day is used and not the month)
+with different descriptions. Let's say, for instance, that Tizio has fixed
+two appointments for the 1st and the 2nd.
+<br>Switch then to the calendar window of Caio. From the directory menu,
+execute the item "Update known persons with the facilitator" such that
+Caio comes to know about Tizio existance. Use the calendar window of Caio
+to fix an appointment with Tizio between 1st and 4th. The ContractNet protocol
+should be then executed and both agents should converge to the date 3rd.
+<br>
+<br>
+<b>Notice that a java.lang.IllegalArgumentException might be thrawn </b>
+at java.util.Date.parse if the Regional Settings of your computer is not
+set to English <A HREF="http://sharon.cselt.it/projects/jade/jade-develop-archive-Mar2003/0165.html">(see bug reported on the mailing list)</A>
+
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+</body>
+</html>

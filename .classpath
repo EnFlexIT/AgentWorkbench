@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="lib" path="lib/batik/batik-rasterizer.jar"/>
+	<classpathentry kind="lib" path="lib/batik/batik-slideshow.jar"/>
+	<classpathentry kind="lib" path="lib/batik/batik-squiggle.jar"/>
+	<classpathentry kind="lib" path="lib/batik/batik-svgpp.jar"/>
+	<classpathentry kind="lib" path="lib/batik/batik-ttf2svg.jar"/>
+	<classpathentry kind="lib" path="lib/batik/batik.jar"/>
+	<classpathentry kind="lib" path="lib/jade/lib/http.jar"/>
+	<classpathentry kind="lib" path="lib/jade/lib/iiop.jar"/>
+	<classpathentry kind="lib" path="lib/jade/lib/jade.jar"/>
+	<classpathentry kind="lib" path="lib/jade/lib/jadeTools.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
