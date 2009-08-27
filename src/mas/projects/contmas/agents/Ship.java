@@ -1,5 +1,6 @@
 package mas.projects.contmas.agents;
 import java.io.IOException;
+import java.sql.PreparedStatement;
 import java.util.Vector;
 
 import mas.projects.contmas.ontology.*;
@@ -21,6 +22,7 @@ import jade.core.behaviours.*;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 import jade.proto.AchieveREInitiator;
+import jade.proto.ContractNetInitiator;
 import jade.proto.FIPAProtocolNames;
 
 import jade.domain.DFService;
@@ -28,29 +30,23 @@ import jade.domain.FIPANames;
 import jade.domain.FIPAAgentManagement.*;
 import jade.domain.FIPAException;
 
-public class Ship extends Agent {
-	private Codec codec = new LEAPCodec();
-	private Ontology ontology = ContainerTerminalOntology.getInstance();
+public class Ship extends ContainerAgent {
+	public Ship() {
+		super("long-term-transporting");
+	}
+    AID[] harborManager=null;
 	private AID[] RandomGenerator;
 	private float length=0;
 
 	private BayMap LoadBay;
 
 	protected void setup() {
-		getContentManager().registerLanguage(codec);
-		getContentManager().registerOntology(ontology);
-		
+		super.setup();
 		length=(float) 120.5;
-		
-		//register self at DF
-		ServiceDescription sd = new ServiceDescription();
-		sd.setType("long-term-transporting");
-		sd.setName(getLocalName());
-		register(sd);
 		
 		//look for RandomGeneratorAgent
         DFAgentDescription dfd = new DFAgentDescription();
-        sd  = new ServiceDescription();
+        ServiceDescription sd  = new ServiceDescription();
         sd.setType( "random-generation");
         dfd.addServices(sd);
 			DFAgentDescription[] result;
@@ -70,22 +66,15 @@ public class Ship extends Agent {
 		ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
 	    msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST); 
 		addBehaviour(new fetchRandomBayMap(this,msg));
+		msg = new ACLMessage(ACLMessage.REQUEST);
+	    msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST); 
+		addBehaviour(new fetchCraneList(this,msg));
+	//	addBehaviour(new passContainerOn(this));
 	}
 
-	void register(ServiceDescription sd) {
-		DFAgentDescription dfd = new DFAgentDescription();
-		dfd.setName(getAID());
-		dfd.addServices(sd);
-
-		try {
-			DFService.register(this, dfd);
-		} catch (FIPAException fe) {
-			fe.printStackTrace();
-		}
-	}
 
 	public class enrollAtHarbor extends OneShotBehaviour {
-	    AID[] harborManager=null;
+
 		public enrollAtHarbor(Agent a) {
 			super(a);
 		}
@@ -125,6 +114,33 @@ public class Ship extends Agent {
 				e.printStackTrace();
 			}
 		}
+	}
+	public class fetchCraneList extends AchieveREInitiator {
+		public fetchCraneList(Agent a, ACLMessage msg) {
+			super(a, msg);
+		}
+		protected Vector prepareRequests(ACLMessage request){
+			request.setLanguage(codec.getName());
+			request.setOntology(ontology.getName());
+			request.addReceiver(harborManager[0]);
+			AgentAction act=new GetCraneList();
+			try {
+				getContentManager().fillContent(request, act);
+			    Vector messages = new Vector();
+			    messages.add(request); 
+			    return messages; 
+			} catch (CodecException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (OntologyException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return null;
+		}
+	    protected void handleInform(ACLMessage msg) { 
+	    	//nutin'
+	    }
 	}
 
 	public class fetchRandomBayMap extends AchieveREInitiator {
@@ -180,6 +196,23 @@ public class Ship extends Agent {
 
 
 	}
+	public class passContainerOn extends ContractNetInitiator{
+
+		public passContainerOn(Agent a) {
+			super(a, null);
+		}
+		protected Vector prepareCFPs(ACLMessage cfp){
+			cfp=new ACLMessage(ACLMessage.CFP);
+			//TODO DF abfragen nach Kränen
+			//TODO CallForProposalsOnLoadStage benutzen, um Auftrag auszuschreiben
+			//new CallForProposalsOnLoadStage().setRequired_turnover_capacity(value)
+			return null;
+			
+		}
+
+
+		
+	}
 /*
 	public class getPopulatedBayMap extends SimpleBehaviour {
 		public getPopulatedBayMap(Agent a) {
@@ -227,27 +260,6 @@ public class Ship extends Agent {
 		}
 	}
 
-	public class recieveGentryCraneInformation extends SimpleBehaviour {
-		public recieveGentryCraneInformation(Agent a) {
-			super(a);
-		}
 
-		public void action() {
-			ACLMessage msg = receive();
-			if (msg != null) {
-				System.out.println(" - " + myAgent.getLocalName() + " <- "
-						+ msg.getContent());
-				this.finished = true;
-			}
-			block();
-
-		}
-
-		private boolean finished = false;
-
-		public boolean done() {
-			return finished;
-		}
-	}
 	*/
 }

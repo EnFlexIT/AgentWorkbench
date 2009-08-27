@@ -26,19 +26,12 @@ import java.util.Random;
 
 import mas.projects.contmas.ontology.*;
 
-public class RandomGeneratorAgent extends Agent{
-	private Codec codec = new LEAPCodec();
-	private Ontology ontology = ContainerTerminalOntology.getInstance();
+public class RandomGeneratorAgent extends ContainerAgent{
+	public RandomGeneratorAgent() {
+		super("random-generation");
+	}
 	protected void setup(){ 
-		getContentManager().registerLanguage(codec);
-		getContentManager().registerOntology(ontology);
-		
-		//register self at DF
-        ServiceDescription sd  = new ServiceDescription();
-        sd.setType( "random-generation" );
-        sd.setName( getLocalName() );
-        register( sd );
-        
+        super.setup();
         //create filter for incoming messages
         MessageTemplate mt = AchieveREResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_REQUEST); 
         
@@ -47,18 +40,7 @@ public class RandomGeneratorAgent extends Agent{
 		//addBehaviour(new populateBayMap(this));
 	}
     
-    void register( ServiceDescription sd)
-    {
-        DFAgentDescription dfd = new DFAgentDescription();
-        dfd.setName(getAID());
-        dfd.addServices(sd);
-
-        try {  
-            DFService.register(this, dfd );  
-        }
-        catch (FIPAException fe) { fe.printStackTrace(); }
-    }
-	public class createRandomBayMap extends AchieveREResponder{
+ 	public class createRandomBayMap extends AchieveREResponder{
 		public createRandomBayMap(Agent a, MessageTemplate mt) {
 			super(a, mt);
 		}
