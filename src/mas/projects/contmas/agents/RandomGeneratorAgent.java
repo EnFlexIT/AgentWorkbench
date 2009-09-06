@@ -1,27 +1,15 @@
 package mas.projects.contmas.agents;
 import jade.content.AgentAction;
 import jade.content.Concept;
-import jade.content.ContentElement;
-import jade.content.lang.Codec;
 import jade.content.lang.Codec.CodecException;
-import jade.content.lang.leap.LEAPCodec;
-import jade.content.onto.Ontology;
 import jade.content.onto.OntologyException;
 import jade.content.onto.UngroundedException;
-import jade.core.AID;
 import jade.core.Agent;
-import jade.core.behaviours.SimpleBehaviour;
-import jade.domain.DFService;
-import jade.domain.FIPAException;
 import jade.domain.FIPANames;
-import jade.domain.FIPAAgentManagement.DFAgentDescription;
-import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-import jade.lang.acl.UnreadableException;
 import jade.proto.AchieveREResponder;
 
-import java.io.IOException;
 import java.util.Random;
 
 import mas.projects.contmas.ontology.*;
@@ -34,10 +22,10 @@ public class RandomGeneratorAgent extends ContainerAgent{
         super.setup();
         //create filter for incoming messages
         MessageTemplate mt = AchieveREResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_REQUEST); 
-        
-        System.out.println("RandomGenerator gestartet (selbst)");
 		addBehaviour(new createRandomBayMap (this,mt));
-		//addBehaviour(new populateBayMap(this));
+		
+        mt = AchieveREResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_REQUEST); 
+		addBehaviour(new populateBayMap (this,mt));
 	}
     
  	public class createRandomBayMap extends AchieveREResponder{
@@ -85,61 +73,69 @@ public class RandomGeneratorAgent extends ContainerAgent{
 	    } // end prepareResponse() 
 	    
 	}	
-	/*
-	public class populateBayMap extends SimpleBehaviour{
-		public populateBayMap(Agent a){
-			super(a);
+
+	public class populateBayMap extends AchieveREResponder{
+		public populateBayMap(Agent a, MessageTemplate mt) {
+			super(a, mt);
 		}
-		private boolean finished = false;
-		public void action() {
-			ACLMessage rcvMsg= receive();
-			BayMap LoadBay=null;
-			if (rcvMsg!=null && rcvMsg.getPerformative()==rcvMsg.REQUEST){ 
-				try {
-					LoadBay=(BayMap) rcvMsg.getContentObject();
+	    protected ACLMessage prepareResponse(ACLMessage request) { 
+	        ACLMessage reply = request.createReply();
+			Concept content;
+			try {
+				content = ((Concept) getContentManager().extractContent(request));
+		        if(content instanceof BayMap) {
+		        	BayMap LoadBay=(BayMap) content;
+		            reply.setPerformative(ACLMessage.INFORM); 
+		            
 					Integer width, length, height;
 					Random RandomGenerator=new Random();
 					String containerName;
-
-					width=LoadBay.Width;
-					length=LoadBay.Length;
-					height=LoadBay.Height;
+					Container c;
+					BlockAddress ba;
+		            //old
+					width=LoadBay.getX_dimension();
+					length=LoadBay.getY_dimension();
+					height=LoadBay.getZ_dimension();
 					for(int z=0;z<height;z++){
 						for(int y=0;y<length;y++){
 							for(int x=0;x<width;x++){
-								if(RandomGenerator.nextInt(2)==1){
+								if(RandomGenerator.nextInt(2)==1 && (z==0 || 1==2)){ //TODO Abfrage, ob unterer Container schon vorhanden (keine Container in die Luft stellen)
 									containerName="Container-ID: #"+RandomGenerator.nextInt(65000);
+									c=new Container();
+									ba=new BlockAddress();
+									ba.setAddresses_within(LoadBay);
+									ba.setX_dimension(x);
+									ba.setY_dimension(y);
+									ba.setZ_dimension(z);
+									c.setOccupies(ba);
+									c.setId(containerName);
 								}else{
 									containerName="LEER";	
 								}
-								LoadBay.getContainerAt(x, y, z).setContainerName(containerName);
 							}
 						}
 					}
-					ACLMessage sndMsg = rcvMsg.createReply();
-					try {
-						sndMsg.setContentObject(LoadBay);
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					AID dest = rcvMsg.getSender();
-
-					sndMsg.addReceiver( dest );
-					send(sndMsg);
-
-					this.finished=true;
-				} catch (UnreadableException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			} else {
-				block();
+		            //end old
+		            
+					ProvideBayMap act=new ProvideBayMap();
+					act.setProvides(LoadBay);
+					getContentManager().fillContent(reply, act);
+		        } else {
+		            reply.setPerformative(ACLMessage.NOT_UNDERSTOOD); 
+		            reply.setContent("Fehler"); 
+		        } 
+		        return reply; 
+			} catch (UngroundedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (CodecException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (OntologyException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-		}
-		public boolean done() {  
-			return finished;  
+			return null;
 		}
 	}
-	*/
 }

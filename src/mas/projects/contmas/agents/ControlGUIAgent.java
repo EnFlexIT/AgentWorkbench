@@ -16,6 +16,7 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
+import jade.wrapper.StaleProxyException;
 
 import java.io.IOException;
 import java.util.Random;
@@ -52,11 +53,14 @@ public class ControlGUIAgent extends GuiAgent{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+
         }
         catch (Exception e){}
 		
 	}
 
+
+	
 	protected void onGuiEvent(GuiEvent ev) {
 		// TODO Auto-generated method stub
 		int command = ev.getType();
@@ -64,7 +68,7 @@ public class ControlGUIAgent extends GuiAgent{
 	        AgentContainer c = getContainerController();
 	        try {
 	        	String name=ev.getParameter(0).toString();
-	            AgentController a = c.createNewAgent(name , "mas.projects.contmas.agents.Ship", null );
+	            AgentController a = c.createNewAgent(name , "mas.projects.contmas.agents.ShipAgent", null );
 	            a.start();
 				ACLMessage sndMsg = new ACLMessage(ACLMessage.REQUEST);
 				sndMsg.addUserDefinedParameter("article","bayMap");
