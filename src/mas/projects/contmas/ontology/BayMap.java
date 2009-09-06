@@ -8,19 +8,41 @@ import jade.core.*;
 /**
 * Protege name: BayMap
 * @author ontology bean generator
-* @version 2009/08/25, 14:09:13
+* @version 2009/09/6, 16:03:55
 */
 public class BayMap implements Concept {
 
    /**
-* Protege name: x_dimension
+   * BlockAdresses and therefore containers this bay map contains
+* Protege name: is_filled_with
    */
-   private int x_dimension;
-   public void setX_dimension(int value) { 
-    this.x_dimension=value;
+   private List is_filled_with = new ArrayList();
+   public void addIs_filled_with(BlockAddress elem) { 
+     List oldList = this.is_filled_with;
+     is_filled_with.add(elem);
    }
-   public int getX_dimension() {
-     return this.x_dimension;
+   public boolean removeIs_filled_with(BlockAddress elem) {
+     List oldList = this.is_filled_with;
+     boolean result = is_filled_with.remove(elem);
+     return result;
+   }
+   public void clearAllIs_filled_with() {
+     List oldList = this.is_filled_with;
+     is_filled_with.clear();
+   }
+   public Iterator getAllIs_filled_with() {return is_filled_with.iterator(); }
+   public List getIs_filled_with() {return is_filled_with; }
+   public void setIs_filled_with(List l) {is_filled_with = l; }
+
+   /**
+* Protege name: y_dimension
+   */
+   private int y_dimension;
+   public void setY_dimension(int value) { 
+    this.y_dimension=value;
+   }
+   public int getY_dimension() {
+     return this.y_dimension;
    }
 
    /**
@@ -35,14 +57,14 @@ public class BayMap implements Concept {
    }
 
    /**
-* Protege name: y_dimension
+* Protege name: x_dimension
    */
-   private int y_dimension;
-   public void setY_dimension(int value) { 
-    this.y_dimension=value;
+   private int x_dimension;
+   public void setX_dimension(int value) { 
+    this.x_dimension=value;
    }
-   public int getY_dimension() {
-     return this.y_dimension;
+   public int getX_dimension() {
+     return this.x_dimension;
    }
 
 }

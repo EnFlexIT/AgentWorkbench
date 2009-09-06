@@ -23,7 +23,6 @@ import java.util.Random;
 
 import mas.projects.contmas.ontology.*;
 
-
 public class ControlGUIAgent extends GuiAgent{
     AID[] randomGenerators=null;
 
@@ -35,10 +34,9 @@ public class ControlGUIAgent extends GuiAgent{
         try {
             AgentController a = c.createNewAgent( "RandomGenerator", "mas.projects.contmas.agents.RandomGeneratorAgent", null );
             a.start();
-            System.out.println("RandomGenerator gestartet");
             a = c.createNewAgent( "HarborMaster", "mas.projects.contmas.agents.HarborMasterAgent", null );
             a.start();
-            System.out.println("HarborMaster gestartet");
+
             DFAgentDescription dfd = new DFAgentDescription();
             ServiceDescription sd  = new ServiceDescription();
             sd.setType( "random-generation" );
@@ -53,13 +51,9 @@ public class ControlGUIAgent extends GuiAgent{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
         }
         catch (Exception e){}
-		
 	}
-
-
 	
 	protected void onGuiEvent(GuiEvent ev) {
 		// TODO Auto-generated method stub

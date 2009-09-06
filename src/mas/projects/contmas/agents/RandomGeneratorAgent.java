@@ -80,11 +80,11 @@ public class RandomGeneratorAgent extends ContainerAgent{
 		}
 	    protected ACLMessage prepareResponse(ACLMessage request) { 
 	        ACLMessage reply = request.createReply();
-			Concept content;
+			AgentAction content;
 			try {
-				content = ((Concept) getContentManager().extractContent(request));
-		        if(content instanceof BayMap) {
-		        	BayMap LoadBay=(BayMap) content;
+				content = ((AgentAction) getContentManager().extractContent(request));
+		        if(content instanceof RequestPopulatedBayMap) {
+		        	BayMap LoadBay=((RequestPopulatedBayMap) content).getPopulate_on();
 		            reply.setPerformative(ACLMessage.INFORM); 
 		            
 					Integer width, length, height;
@@ -99,7 +99,7 @@ public class RandomGeneratorAgent extends ContainerAgent{
 					for(int z=0;z<height;z++){
 						for(int y=0;y<length;y++){
 							for(int x=0;x<width;x++){
-								if(RandomGenerator.nextInt(2)==1 && (z==0 || 1==2)){ //TODO Abfrage, ob unterer Container schon vorhanden (keine Container in die Luft stellen)
+								if(RandomGenerator.nextInt(2)==1 && (z==0 || 1==2)){ //TODO Abfrage, ob unterer Container schon vorhanden (keine Container "in die Luft" stellen)
 									containerName="Container-ID: #"+RandomGenerator.nextInt(65000);
 									c=new Container();
 									ba=new BlockAddress();
@@ -109,15 +109,13 @@ public class RandomGeneratorAgent extends ContainerAgent{
 									ba.setZ_dimension(z);
 									c.setOccupies(ba);
 									c.setId(containerName);
-								}else{
-									containerName="LEER";	
 								}
 							}
 						}
 					}
 		            //end old
 		            
-					ProvideBayMap act=new ProvideBayMap();
+					ProvidePopulatedBayMap act=new ProvidePopulatedBayMap();
 					act.setProvides(LoadBay);
 					getContentManager().fillContent(reply, act);
 		        } else {
