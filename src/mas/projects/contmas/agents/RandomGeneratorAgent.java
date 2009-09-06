@@ -109,6 +109,7 @@ public class RandomGeneratorAgent extends ContainerAgent{
 									ba.setZ_dimension(z);
 									c.setOccupies(ba);
 									c.setId(containerName);
+									LoadBay.addIs_filled_with(ba);
 								}
 							}
 						}
