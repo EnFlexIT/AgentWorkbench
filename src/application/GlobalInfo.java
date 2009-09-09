@@ -10,8 +10,11 @@ public class GlobalInfo {
 	
 	final private static String LocalAppPathSeparatorString = File.separator;
 	final private static String LocalAppNewLineString = System.getProperty("line.separator");
+	final private static String LocalAppNewLineStringReplacer = "<br>";
 	final private static String LocalPathImageIntern = "/img/";
 	final private static String LocalJadeVersion = jade.core.Runtime.getVersion();
+	
+	final private static String LocalProjectFileEnd =  ".mas";
 	
 	// --- Variablen --------------------------------------------------------
 	private static String LocalAppExecutedOver = "IDE";
@@ -22,6 +25,7 @@ public class GlobalInfo {
 	private static String LocalPathJade		= "lib" + LocalAppPathSeparatorString + "jade" +  LocalAppPathSeparatorString + "lib";
 	private static String LocalPathBatik	= "lib" + LocalAppPathSeparatorString + "batik";	
 	private static String LocalPathProperty = "properties" + LocalAppPathSeparatorString;
+	private static String LocalPathProjects =  "projects" + LocalAppPathSeparatorString;
 	
 	private static String LocalFileRunnableJar = "AgentGui.jar";
 	private static String LocalFileDictionary  = LocalPathProperty + "dictionary.csv";
@@ -81,9 +85,15 @@ public class GlobalInfo {
 	// ----------------------------------------------------------------------
 	public String AppTitel() {
 		/**
-		 * Titel der Anwendung zurückgeben 
+		 * Returns the titel of the application 
 		 */
 		return LocalAppTitel;
+	};
+	public String ProjectFileEnd() {
+		/**
+		 * Returns the File-End for Project-Files => ".mas"
+		 */
+		return LocalProjectFileEnd;
 	};
 	// -------------------------------
 	// --- Look and Feel -------------
@@ -115,9 +125,15 @@ public class GlobalInfo {
 	}
 	public String AppNewLineString(){
 		/**
-		 * String für neue Zeilen in einer Text-Datei
+		 * String for the 'new line' charakter inside of this application
 		 */
 		return LocalAppNewLineString;
+	}
+	public String AppNewLineStringReplacer(){
+		/**
+		 * String for the 'new line' charakter inside of a text file
+		 */
+		return LocalAppNewLineStringReplacer;
 	}
 
 	// --- Allgemeine Verzeichnisangaben ---------------------
@@ -131,7 +147,7 @@ public class GlobalInfo {
 		/**
 		 * Unterverzeichnis für die Jade-Libraries
 		 */
-		if ( Absolute== true ) { 
+		if ( Absolute == true ) { 
 			return FilePath2Absolute( LocalPathJade );
 		}
 		else {
@@ -142,7 +158,7 @@ public class GlobalInfo {
 		/**
 		 * Unterverzeichnis für die Batik-Libraries
 		 */
-		if ( Absolute== true ) { 
+		if ( Absolute == true ) { 
 			return FilePath2Absolute( LocalPathBatik );
 		}
 		else {
@@ -153,11 +169,22 @@ public class GlobalInfo {
 		/**
 		 * Unterverzeichnis für Eigenschaftsdateien
 		 */
-		if ( Absolute== true ) { 
+		if ( Absolute == true ) { 
 			return FilePath2Absolute( LocalPathProperty );
 		}
 		else {
 			return LocalPathProperty;	
+		}	
+	}
+	public String PathProjects( Boolean Absolute ){
+		/**
+		 * Unterverzeichnis für Projekte
+		 */
+		if ( Absolute == true ) { 
+			return FilePath2Absolute( LocalPathProjects );
+		}
+		else {
+			return LocalPathProjects;	
 		}	
 	}
 	public String PathImageIntern( ){
@@ -204,7 +231,6 @@ public class GlobalInfo {
 	// ---------------------------------------------------------
 	// ---------------------------------------------------------
 
-	
 	
 	// ---------------------------------------------------------
 	// --- Laufzeitinformationen zu Jade -----------------------

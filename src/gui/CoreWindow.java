@@ -9,6 +9,8 @@ import java.awt.Graphics;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -26,21 +28,21 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.EtchedBorder;
 
 import application.Application;
-import application.Projects;
+import application.Project;
 import application.Language;
 
 /**
  * Main User-Interface der Anwendung
  * 
  * @author Christin Derksen
- * @version 0.1
- * 
+ * @version 0.5 * 
  */
-public class CoreWindow extends JFrame {
+public class CoreWindow extends JFrame implements ComponentListener{
 
 	private static final long serialVersionUID = 1L;
 
@@ -58,6 +60,7 @@ public class CoreWindow extends JFrame {
 	private JMenu jMenuExtra;
 		private JMenu jMenuExtraLang;
 		private JMenu jMenuExtraLnF;
+	public JMenu jMenuMainWindow;
 	private JMenu jMenuMainHelp;
 
 	private JToolBar jToolBarApp;
@@ -69,6 +72,16 @@ public class CoreWindow extends JFrame {
 	// ------------------------------------------------------------
 	public CoreWindow() {
 		initComponents();
+		
+		this.setDefaultCloseOperation(CoreWindow.DO_NOTHING_ON_CLOSE);
+		this.getContentPane().setPreferredSize(this.getSize());
+		this.setLocationRelativeTo(null);
+		this.pack();		
+		if ( Application.RunInfo.AppLnF() != null ) 
+			setLookAndFeel( Application.RunInfo.AppLnF() );
+		//this.setExtendedState(Frame.MAXIMIZED_BOTH);
+		this.setVisible(true);
+		setTitelAddition("");
 	}
 	// ------------------------------------------------------------	
 
@@ -91,6 +104,7 @@ public class CoreWindow extends JFrame {
 			Application.quit();
 			}
 		});
+		this.addComponentListener(this);
 	}	
 	// ------------------------------------------------------------
 	// --- Initialisierung des Fensters - ENDE --------------------
@@ -98,7 +112,7 @@ public class CoreWindow extends JFrame {
 
 	
 	// ------------------------------------------------------------
-	// --- Statusleiste definieren - START ------------------------
+	// --- Statusanzeigen etc. definieren - START -----------------
 	// ------------------------------------------------------------
 	private JPanel getStatusBar() {
 	    
@@ -135,6 +149,14 @@ public class CoreWindow extends JFrame {
 			StatusBar.setText("  " + Message);
 		};		
 	}
+	public void setTitelAddition( String Add2BasicTitel ) {
+		if ( Add2BasicTitel != "" ) {
+			this.setTitle( Application.RunInfo.AppTitel() + ": " + Add2BasicTitel );	
+		}
+		else {
+			this.setTitle( Application.RunInfo.AppTitel() );
+		}
+	}
 	public void setStatusJadeRunning(boolean runs) {
 		if ( runs == false ) { 
 			StatusJade.setText( Language.translate("Jade wurde noch nicht gestartet.") );
@@ -145,8 +167,24 @@ public class CoreWindow extends JFrame {
 			StatusJade.setIcon(iconGreen);
 		};		
 	}
+	public void setLookAndFeel( String NewLnF ) {
+		// --- Look and fell einstellen --------------- 
+		if (NewLnF == null) return;		
+		Application.RunInfo.setAppLnf( NewLnF );
+		try {
+			String lnfClassname = Application.RunInfo.AppLnF();
+			if (lnfClassname == null)
+				lnfClassname = UIManager.getCrossPlatformLookAndFeelClassName();
+				UIManager.setLookAndFeel(lnfClassname);
+				SwingUtilities.updateComponentTreeUI(this);
+		} 
+		catch (Exception e) {
+				System.err.println("Cannot install " + Application.RunInfo.AppLnF()
+					+ " on this platform:" + e.getMessage());
+		}		  
+	}		
 	// ------------------------------------------------------------
-	// --- Statusleiste definieren - ENDE -------------------------	
+	// --- Statusanzeigen etc. definieren - ENDE ------------------
 	// ------------------------------------------------------------
 	
 	
@@ -174,6 +212,7 @@ public class CoreWindow extends JFrame {
 			jMenuBarMain.add( getjMenuMainProject() );
 			jMenuBarMain.add( getjMenuMainJade() );
 			jMenuBarMain.add( getjMenuMainExtra() );
+			jMenuBarMain.add( getjMenuMainWindow() );
 			jMenuBarMain.add( getjMenuMainHelp() );			
 		}
 		return jMenuBarMain;
@@ -236,8 +275,13 @@ public class CoreWindow extends JFrame {
 				jMenuExtraLang.setText(Language.translate("Sprache"));
 	
 				String[] DictLineValues = Language.getLanguages(); 
+				boolean setBold = false;
 				for(int i=0; i<DictLineValues.length; i++) {
-					jMenuExtraLang.add( new JMenuItemLang(DictLineValues[i]));
+					if ( i == Language.DefaultLanguage ) 
+						setBold = true;
+					else 
+						setBold = false;					
+					jMenuExtraLang.add( new JMenuItemLang(DictLineValues[i], setBold) );
 				};
 			}
 			return jMenuExtraLang;
@@ -247,8 +291,12 @@ public class CoreWindow extends JFrame {
 			 
 			private static final long serialVersionUID = 1L;
 			
-			private JMenuItemLang( String LangHeader ) {
+			private JMenuItemLang( String LangHeader, boolean setBold ) {
 				this.setText( Language.getLanguagesHeaderInGerman( LangHeader.toUpperCase() ) );			
+				if ( setBold ) {
+					Font font = new Font( this.getFont().getFontName(), Font.BOLD, this.getFont().getSize() );
+					this.setFont(font);
+				}
 				this.addActionListener(this);
 				this.setActionCommand( LangHeader );
 			}
@@ -294,6 +342,16 @@ public class CoreWindow extends JFrame {
 		// ------------------------------------------------------------	
 		// ------------------------------------------------------------	
 	
+	// ------------------------------------------------------------
+	// --- Menü Fenster -------------------------------------------
+	// ------------------------------------------------------------
+	private JMenu getjMenuMainWindow() {
+		if (jMenuMainWindow == null) {
+			jMenuMainWindow = new JMenu();
+			jMenuMainWindow.setText(Language.translate("Fenster"));
+		}
+		return jMenuMainWindow;
+	}
 	
 	// ------------------------------------------------------------
 	// --- Menü Hilfe ---------------------------------------------
@@ -321,7 +379,6 @@ public class CoreWindow extends JFrame {
 							 String Text, 
 							 String imgName ) {
 
-			this.setActionCommand(actionCommand);
 			this.setText(Text);
 
 			if ( imgName != null ) {
@@ -333,22 +390,27 @@ public class CoreWindow extends JFrame {
 				}				
 			}
 			this.addActionListener(this);
+			this.setActionCommand(actionCommand);
 		}
 
 		public void actionPerformed(ActionEvent ae) {
 			String ActCMD = ae.getActionCommand();	
 			// --- Menü Projekt -------------------------------
 			if ( ActCMD.equalsIgnoreCase("ProjectNew") ) {
-				Projects.addnew();
+				Project CurPro = new Project();
+				CurPro.addnew();
 			}
 			else if ( ActCMD.equalsIgnoreCase("ProjectOpen") ) {
-				Projects.open();
+				Project CurPro = new Project();
+				CurPro.open();
 			}
 			else if ( ActCMD.equalsIgnoreCase("ProjectClose") ) {
-				Projects.close();
+				Project CurPro = Application.ProjectCurr;
+				CurPro.close();				
 			}
 			else if ( ActCMD.equalsIgnoreCase("ProjectSave") ) {
-				Projects.save();
+				Project CurPro = Application.ProjectCurr;
+				CurPro.save();
 			}
 			else if ( ActCMD.equalsIgnoreCase("ApplicationQuit") ) {
 				Application.quit();
@@ -447,7 +509,6 @@ public class CoreWindow extends JFrame {
 								String altText, 
 								String imgName ) {
 				
-			this.setActionCommand(actionCommand);
 			this.setText(altText);
 			this.setToolTipText(toolTipText);
 			this.setSize(36, 36);
@@ -469,6 +530,7 @@ public class CoreWindow extends JFrame {
 				}				
 			}
 			this.addActionListener(this);	
+			this.setActionCommand(actionCommand);
 		}
 		
 		public void actionPerformed(ActionEvent ae) {
@@ -476,13 +538,16 @@ public class CoreWindow extends JFrame {
 			String ActCMD = ae.getActionCommand();			
 			// ------------------------------------------------
 			if ( ActCMD.equalsIgnoreCase("New") ) {
-				Projects.addnew();
+				Project CurPro = new Project();
+				CurPro.addnew();
 			}
 			else if ( ActCMD.equalsIgnoreCase("Open") ) {
-				Projects.open();
+				Project CurPro = new Project();
+				CurPro.open();
 			}
 			else if ( ActCMD.equalsIgnoreCase("Save") ) {
-				Projects.save();
+				Project CurPro = new Project();
+				CurPro.save();
 			}
 			// ------------------------------------------------
 			else if ( ActCMD.equalsIgnoreCase("JadeStart") ) { 
@@ -504,7 +569,25 @@ public class CoreWindow extends JFrame {
 		};
 	};
 		
-
+	@Override
+	public void componentHidden(ComponentEvent e) {
+		// TODO Auto-generated method stub				
+	}
+	@Override
+	public void componentMoved(ComponentEvent e) {
+		// TODO Auto-generated method stub		
+	}
+	@Override
+	public void componentResized(ComponentEvent e) {
+		if ( Application.Projects.count() != 0 ) {
+			Application.ProjectCurr.setMaximized();
+		}
+	}
+	@Override
+	public void componentShown(ComponentEvent e) {
+		// TODO Auto-generated method stub
+	}
+	
 	// ------------------------------------------------------------
 	// --- Unterklasse für die Schräge im unteren  
 	// --- rechten Teil des Hauptfenmsters
@@ -545,7 +628,6 @@ public class CoreWindow extends JFrame {
 
 		}
 	}
-
 } // -- End Class ---
 
 

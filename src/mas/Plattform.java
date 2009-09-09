@@ -58,8 +58,10 @@ public class Plattform extends java.lang.Object {
 		 */
 		try {
 			if ( jadeMainContainerIsRunning() ) MASmc.kill();
-			if ( MASrt != null ) MASrt.shutDown();
-			System.out.println("Jade wurde beendet!");
+			if ( MASrt != null ) {
+				MASrt.shutDown();
+				System.out.println("Jade wurde beendet!");
+			}			
 		}
 		catch (Exception e) {
 			e.printStackTrace();

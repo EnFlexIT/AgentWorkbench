@@ -1,66 +1,128 @@
 package application;
 
-import javax.swing.plaf.basic.BasicInternalFrameUI;
-
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import gui.ProjectWindow;
 
-public class Project {
+public class Project extends Object{
 
+	private String NewLine = Application.RunInfo.AppNewLineString();
+	
+	public ProjectWindow ProjectGUI;
+	public boolean ProjectUnsaved = false;
+	
 	public String ProjectFolder;
+	public String ProjectName;
+	public String ProjectDescription;
 	
 	
-	//static ProjectWindow CurrProject;
-	static ProjectWindow CurrProject;
-	
-	public Project() {
+	public void addnew() {
+		// --- Anlegen eines neuen Projekts ---------------
+		String ProjectNamePrefix = Language.translate("Neues Projekt");
+		Application.MainWindow.setStatusBar(ProjectNamePrefix + " ...");
+
+		// --- Neuen, allgemeinen Projektnamen finden -----		
+		String ProjectNameTest = ProjectNamePrefix;
+		int Index = Application.Projects.getIndexByName(ProjectNameTest);
+		int i = 2;
+		while ( Index != -1 ) {
+			ProjectNameTest = ProjectNamePrefix + " " + i;
+			Index = Application.Projects.getIndexByName( ProjectNameTest );
+			i++;
+		}
+		ProjectName = ProjectNameTest;
 		
+		// --- Entprechendes GUI öffnen -------------------
+		ProjectGUI = new ProjectWindow();		
+		ProjectGUI.ProjectTitel.setText(ProjectName);
+		
+		// --- Objekt an die Projektauflistung hängen -----
+		Application.Projects.add( this );
+		Application.ProjectCurr = this;
+		Application.Projects.setProjectMenuItems();
+
+		// --- Anzeige anpassen ---------------------------
+		setMaximized();
+		Application.setTitelAddition( ProjectName );
+		Application.setStatusBar( "" );		
 	};
 	
-	public static void addnew() {
-		// --- Anlegen eines neuen Projekts -------
-		System.out.println("Neues Projekt ");		
-		Application.MainWindow.setStatusBar("Neues Projekt ");	
-	};
-	
-	public static void open() {
-		// --- Öffnen eines neuen Pojekts ---------
-		// --- Projekt öffnen -------------------------- 
-		System.out.println("Projekt öffnen ...");
-		Application.MainWindow.setStatusBar("Projekt öffnen ... ");
-		
-		//CurrProject = new ProjectWindow();
-		CurrProject = new ProjectWindow();
-		CurrProject.setTitle("Project: ");
-		CurrProject.setClosable(true);
-		CurrProject.setMaximizable(true);
-		CurrProject.setResizable(true);
-		CurrProject.setAutoscrolls(true);
-		
-		CurrProject.setBorder(null);
-		((BasicInternalFrameUI) CurrProject.getUI()).setNorthPane(null);
-        
-        
-		Application.MainWindow.ProjectDesktop.add(CurrProject);		
-		Application.MainWindow.ProjectDesktop.getDesktopManager().maximizeFrame(CurrProject);
-		Application.MainWindow.setStatusBar("Projekt öffnen ... ");
-		CurrProject.setVisible(true);
-		
+	public void open() {
+		// --- Öffnen eines neuen Pojekts -----------------
+		JFileChooser fc = new JFileChooser( Application.RunInfo.PathProjects(true) );
+		fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		fc.setMultiSelectionEnabled(false);		 
+		fc.setDialogTitle( Language.translate("Projekt öffnen") );
+		if ( fc.showOpenDialog( Application.MainWindow ) != JFileChooser.APPROVE_OPTION ){
+			return;
+		}
+		String SelectedFile = fc.getSelectedFile().getName();
+	    System.out.println( SelectedFile );
+
+	    
+		ProjectGUI = new ProjectWindow();
+		setMaximized();
+		//Application.Projects.add();
 
 	}
 
-	public static void save() {
+	public void save() {
 		// --- Speichern des aktuellen Pojekts ----
-		System.out.println("Projekt speichern ...");
 		Application.MainWindow.setStatusBar("Projekt speichern ... ");
 		
 	}
 	
-	public static void close() {
-		// --- Anlegen eines neuen Projekts -------
-		System.out.println("Projekt schliessen ...");
-		Application.MainWindow.setStatusBar("Projekt schliessen ... ");
+	public void close() {
+		// --- Projekt schliessen ? -----------------------
+		String MsgHead = null;
+		String MsgText = null;
+
+		Application.MainWindow.setStatusBar(Language.translate("Projekt schliessen") + " ...");
+		if ( ProjectUnsaved ) {
+			MsgHead = Language.translate("Projekt '@' speichern?");
+			MsgHead = MsgHead.replace( "'@'", "'" + ProjectName + "'");
+			
+			MsgText = Language.translate(
+						"Das aktuelle Projekt '@' ist noch nicht gespeichert!" + NewLine + 
+						"Möchten Sie es nun speichern ?");
+			MsgText = MsgText.replace( "'@'", "'" + ProjectName + "'");
+			
+			Integer MsgAnswer = JOptionPane.showInternalConfirmDialog( Application.MainWindow.getContentPane(), MsgText, MsgHead, JOptionPane.YES_NO_OPTION);
+			if ( MsgAnswer == 0 ) 
+				save();
+		}
+		// --- Projekt kann geschlossen werden ------------
+		int Index = Application.Projects.getIndexByName( ProjectName );
+		int NProjects = Application.Projects.count();
+
+		ProjectGUI.dispose();
+		Application.Projects.remove(this);
+		
+		if ( NProjects > 1 ) {
+			if ( Index+1 >= NProjects ) Index = NProjects - 2;  
+			Application.ProjectCurr = Application.Projects.get(Index);
+			Application.ProjectCurr.setFocus();
+			Application.setTitelAddition( Application.ProjectCurr.ProjectName );
+		}
+		else {
+			Application.Projects.setProjectMenuItems();
+		}
+		Application.setStatusBar( "" );
+	}
+	/**
+	 * Moves the requested Projectwindow to the front
+	 */
+	public void setFocus() {
+		ProjectGUI.moveToFront();
+		Application.setTitelAddition( ProjectName );
+		Application.ProjectCurr = this;
+		Application.Projects.setProjectMenuItems();
+		setMaximized();
 	}
 
+	public void setMaximized() {
+		Application.MainWindow.ProjectDesktop.getDesktopManager().maximizeFrame( ProjectGUI );		
+	}
 	
 	
 }

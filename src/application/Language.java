@@ -19,9 +19,10 @@ public class Language {
 	// -------------------------------------------------------------------------
 	final static String Seperator = ";";
 	private static Integer DictLangCount = 0;
-	private static Integer DefaultLanguage = null;
+	public static Integer DefaultLanguage = null;
 	private static String DictFileLocation = Application.RunInfo.FileDictionary( false );
 	private static String NewLine = Application.RunInfo.AppNewLineString();
+	private static String NewLineReplacer = Application.RunInfo.AppNewLineStringReplacer();
 	private static List<String> DictLineList = new ArrayList<String>();
 	private static Hashtable<String, Integer> DictHash = new Hashtable<String, Integer>(); 
 	// -------------------------------------------------------------------------
@@ -29,7 +30,7 @@ public class Language {
 	// -------------------------------------------------------------------------
 	/**
 	 * Changing the application language to:
-	 * NewLang => "DE", "EN", "ES", "IT" etc. Is equal to the 
+	 * NewLang => "DE", "EN", "ES", "IT" etc. is equal to the 
 	 * end phrase after the prefix "LANG_". E.g. "LANG_EN" needs "EN" as parameter
 	 */
 	// -------------------------------------------------------------------------
@@ -58,7 +59,8 @@ public class Language {
 		String MsgHead = translate("Anzeigesprache wechseln?");
 		String MsgText = translate(
 						 "Möchten Sie die Anzeigesprache wirklich umstellen?" + NewLine + 
-						 "Die Anwendung muss hierzu neu gestartat werden.");
+						 "Die Anwendung muss hierzu neu gestartet und Projekte" + NewLine +
+						 "von Ihnen neu geöffnet werden.");
 		Integer MsgAnswer =  JOptionPane.showInternalConfirmDialog( Application.MainWindow.getContentPane(), MsgText, MsgHead, JOptionPane.YES_NO_OPTION);
 		if ( MsgAnswer == 1 ) return;
 		
@@ -73,8 +75,10 @@ public class Language {
 		LoadDictionaryFile();		
 
 		// --- Anwendung neu starten -------------------------------------------		
+		Application.JadePlatform.jadeStop();
 		Application.MainWindow.dispose();		
-		Application.startApplication();
+		Application.startApplication();		
+		Application.Projects.removeAll();	
 		
 		return;		
 	}
@@ -94,7 +98,7 @@ public class Language {
 		
 		// --- Nachsehen, ob dieser Ausdruck im Dictionary existiert -----------
 		String DE_Exp_Work = DE_Exp.trim();
-		DE_Exp_Work = DE_Exp_Work.replace( NewLine, "|-|" );
+		DE_Exp_Work = DE_Exp_Work.replace( NewLine, NewLineReplacer );
 		
 		String  TranslationExp = null;
 		Integer TranslationLine = DictHash.get( DE_Exp_Work );		
@@ -114,7 +118,7 @@ public class Language {
 				TranslationExp = DE_Exp.trim();
 			}
 			else {
-				TranslationExp = TranslationExp.replace( "|-|", NewLine );				
+				TranslationExp = TranslationExp.replace( NewLineReplacer, NewLine );				
 			};
 		};
 
