@@ -31,15 +31,21 @@ public class HarborMasterAgent extends ContainerAgent {
 	}
 	
 	protected void setupEnvironment(){
+        Crane ontologyRepresentation=new Crane();
 		Domain terminalArea=new Land();
 		Subdomain habitat = new Rail();
 		habitat.setLies_in(terminalArea);
+        ontologyRepresentation.setLives_in(habitat);
         AgentContainer c = getContainerController();
         AgentController a;
-        Object[] args=new Object[1];
-        args[0]=habitat;
 		try {
-			a = c.createNewAgent( "Crane #1", "mas.projects.contmas.agents.CraneAgent",args );
+			//a = c.createNewAgent( "Crane #1", "mas.projects.contmas.agents.CraneAgent",null );
+			
+			a=c.acceptNewAgent("Crane #1", new CraneAgent(ontologyRepresentation));
+			ontologyRepresentation=new Crane();
+			ontologyRepresentation.setLives_in(habitat);
+			a=c.acceptNewAgent("Crane #2", new CraneAgent(ontologyRepresentation));
+
 	        a.start();
 		} catch (StaleProxyException e) {
 			// TODO Auto-generated catch block

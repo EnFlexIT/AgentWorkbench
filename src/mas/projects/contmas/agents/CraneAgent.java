@@ -12,26 +12,20 @@ import mas.projects.contmas.ontology.*;
  * @author Hanno - Felix Wagner
  *
  */
-public class CraneAgent extends ContainerAgent {
+public class CraneAgent extends ActiveContainerAgent implements TransportOrderHandler{
 	public CraneAgent() {
-		super("craning");
-		// TODO Auto-generated constructor stub
+		this(new Crane());
+	}
+	public CraneAgent(Crane ontologyRepresentation) {
+		super("craning", ontologyRepresentation );
 	}
 	public void setup(){
 		super.setup();
-		Object[] args=getArguments();
+		handleTransportOrder();
+	}
+
+	public void handleTransportOrder() {
         MessageTemplate mt = AchieveREResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
 		addBehaviour(new recieveLoadOrders(this,mt));
-	}
-	public class recieveLoadOrders extends ContractNetResponder{
-		public recieveLoadOrders(Agent a, MessageTemplate mt) {
-			super(a, mt);
-			// TODO Auto-generated constructor stub
-		}
-		protected ACLMessage handleCfp(ACLMessage cfp){
-			ACLMessage reply = cfp.createReply();
-			reply.setPerformative(ACLMessage.PROPOSE);
-			return reply;
-		}
 	}
 }

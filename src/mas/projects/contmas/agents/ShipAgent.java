@@ -13,6 +13,7 @@ import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.proto.AchieveREInitiator;
 import jade.proto.ContractNetInitiator;
+import jade.util.leap.Iterator;
 import jade.util.leap.List;
 
 import java.io.IOException;
@@ -20,7 +21,7 @@ import java.util.Vector;
 
 import mas.projects.contmas.ontology.*;
 
-public class ShipAgent extends ContainerAgent {
+public class ShipAgent extends PassiveContainerAgent implements TransportOrderOfferer {
 	public ShipAgent() {
 		super("long-term-transporting");
 	}
@@ -52,16 +53,14 @@ public class ShipAgent extends ContainerAgent {
 		msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST); 
 		addBehaviour(new enrollAtHarbor(this,msg));
 
-		msg = new ContainerMessage(ACLMessage.REQUEST);
-	    msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST); 
-		addBehaviour(new fetchCraneList(this,msg));
+		offerTransportOrder();
 		
 		/*
 		msg = new ContainerMessage(ACLMessage.REQUEST);
 	    msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST); 
 		addBehaviour(new unloadShip(this,msg));
 		 */
-		addBehaviour(new unloadShip(this));
+		//addBehaviour(new unload(this));
 	}
 	
 	public BayMap getLoadBay(){
@@ -124,14 +123,21 @@ public class ShipAgent extends ContainerAgent {
 			super(a, msg);
 		}
 		protected Vector prepareRequests(ACLMessage request) {
+        	System.out.println("prepareRequests populatedBayMap"); 
 			request.addReceiver(RandomGenerator);
 			//BayMap aus Agent auslesen
 			RequestPopulatedBayMap act = new RequestPopulatedBayMap();
-			act.setPopulate_on(((ShipAgent) myAgent).ontologyRepresentation.getContains()); 
+        	System.out.println("Wer A sagt"); 
+			act.setPopulate_on(((ShipAgent) myAgent).ontologyRepresentation.getContains());
+        	System.out.println("muss auch B sagen können"); 
 			try {
 				getContentManager().fillContent(request, act);
-			    Vector<ACLMessage> messages = new Vector<ACLMessage>();
-			    messages.add(request); 
+	        	System.out.println("und am besten auch C"); 
+
+			    Vector messages = new Vector();
+			    messages.add(request);
+	        	System.out.println("prepareRequests before return"); 
+
 			    return messages; 
 			    
 			} catch (CodecException e) {
@@ -146,8 +152,14 @@ public class ShipAgent extends ContainerAgent {
 	    protected void handleInform(ACLMessage msg) { 
 			Concept content;
 			try {
-				content = ((Concept) getContentManager().extractContent(msg));
+	        	System.out.println("x"); 
+
+				content = ((AgentAction) getContentManager().extractContent(msg));
+	        	System.out.println("y"); 
+
 		        if (content instanceof ProvidePopulatedBayMap) {
+		        	System.out.println("z"); 
+
 		        	((ShipAgent) myAgent).ontologyRepresentation.setContains(((ProvidePopulatedBayMap) content).getProvides());
 		        	System.out.println("populatedBayMap recieved!"); 
 		        } else {
@@ -216,7 +228,7 @@ public class ShipAgent extends ContainerAgent {
 		        if(content instanceof ProvideCraneList) {
 		    		List craneList=((ProvideCraneList) content).getAvailable_cranes();
 		    		((ShipAgent) myAgent).craneList=craneList;
-		    		myAgent.addBehaviour(new unloadShip(myAgent));
+		    		myAgent.addBehaviour(new unload(myAgent));
 		        }
 			} catch (UngroundedException e) {
 				// TODO Auto-generated catch block
@@ -231,24 +243,34 @@ public class ShipAgent extends ContainerAgent {
 	    }
 	}
 
-	public class unloadShip extends OneShotBehaviour{
-		public unloadShip(Agent a) {
+	public class unload extends OneShotBehaviour{
+		public unload(Agent a) {
 			super(a);
 		}
 
 		public void action() {
 			if(((ShipAgent) myAgent).craneList!=null){
-				LoadList currentLoadList=new LoadList();
-				//TODO Bay-Map durchlaufen und oberste Lage bestimmen, transportOrder ausfertigen
-				TransportOrder TO=new TransportOrder();
-				Container transportObject=new Container();
-				TO.setStarts_at(myAgent.getAID());
-		//		TO.setEnds_at(new Yard());
-				TransportOrderChain TOChain=new TransportOrderChain();
-				TOChain.addIs_linked_by(TO);
-				TOChain.setTransports(transportObject);
-				currentLoadList.setConsists_of(TOChain);
-				myAgent.addBehaviour(new passContainerOn(myAgent,currentLoadList));
+				BayMap LoadBay=((ShipAgent) myAgent).ontologyRepresentation.getContains();
+				Iterator allContainers=LoadBay.getAllIs_filled_with();
+				BlockAddress curContainer;
+				
+				while(allContainers.hasNext()){
+					curContainer=(BlockAddress) allContainers.next();
+					LoadList currentLoadList=new LoadList();
+					//TODO Bay-Map durchlaufen und oberste Lage bestimmen, transportOrder ausfertigen
+					TransportOrder TO=new TransportOrder();
+					//Container transportObject=curContainer.g();
+					Container transportObject=new Container();
+					TO.setStarts_at(myAgent.getAID());
+			//		TO.setEnds_at(new Yard());
+					TransportOrderChain TOChain=new TransportOrderChain();
+					TOChain.addIs_linked_by(TO);
+					TOChain.setTransports(transportObject);
+					currentLoadList.setConsists_of(TOChain);
+					
+					myAgent.addBehaviour(new announceLoadOrders(myAgent,currentLoadList));
+				}
+
 				//block();
 			}else{
 				System.err.println("Noch keine Kranliste vorhanden");
@@ -256,34 +278,12 @@ public class ShipAgent extends ContainerAgent {
 			}
 		}
 	}
-	
-	public class passContainerOn extends ContractNetInitiator{
-		private LoadList currentLoadList=null;
-		public passContainerOn(Agent a, LoadList currentLoadList) {
-			super(a, null);
-			this.currentLoadList=currentLoadList;
-		}
-		protected Vector prepareCfps(ACLMessage cfp){
-			cfp=new ContainerMessage(ACLMessage.CFP);
-			cfp.setProtocol(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET); 
-			List craneList=((ShipAgent)myAgent).craneList;
-			//TODO nur der erste
-			cfp.addReceiver((AID)craneList.iterator().next());
-			CallForProposalsOnLoadStage act=new CallForProposalsOnLoadStage();
-			act.setRequired_turnover_capacity(this.currentLoadList);
-			try {
-				getContentManager().fillContent(cfp, act);
-				Vector<ACLMessage> messages = new Vector<ACLMessage>();
-			    messages.add(cfp); 
-			    return messages; 
-			} catch (CodecException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (OntologyException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			return null;
-		}
+
+	public void offerTransportOrder() {
+		ContainerMessage msg = new ContainerMessage(ACLMessage.REQUEST);
+	    msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST); 
+		addBehaviour(new fetchCraneList(this,msg));
 	}
+	
+
 }

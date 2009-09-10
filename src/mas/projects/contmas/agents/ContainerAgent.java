@@ -23,13 +23,23 @@ import jade.util.leap.List;
 public class ContainerAgent extends Agent {
 	protected Codec codec = new LEAPCodec();
 	protected Ontology ontology = ContainerTerminalOntology.getInstance();
-	protected String serviceType="handling-containers";
-	protected ContainerHolder ontologyRepresentation=new ContainerHolder();
+	protected String serviceType;
+	protected ContainerHolder ontologyRepresentation;
+	
+	public ContainerAgent() {
+		this.serviceType="handling-containers";
+		this.ontologyRepresentation=new ContainerHolder();
+	}
 	
 	public ContainerAgent(String serviceType) {
+		this();
 		this.serviceType=serviceType;
 	}
-
+	
+	public ContainerAgent(String serviceType, ContainerHolder ontologyRepresentation) {
+		this(serviceType);
+		this.ontologyRepresentation=ontologyRepresentation;
+	}
 	protected void setup(){ 
 		getContentManager().registerLanguage(codec);
 		getContentManager().registerOntology(ontology);
