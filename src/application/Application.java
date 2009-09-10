@@ -30,6 +30,10 @@ public class Application {
 		Projects.setProjectMenuItems();
 	}	
 	
+	public Application getInstance(){
+		return this;
+	}
+	
 	/**
 	 * Opens the Main-Window (JFrame)
 	 */

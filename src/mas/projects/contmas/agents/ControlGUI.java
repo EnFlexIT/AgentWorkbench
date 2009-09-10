@@ -28,7 +28,7 @@ import java.awt.event.WindowEvent;
  * @author Hanno - Felix Wagner
  *
  */
-public class ControlGUI extends JDialog implements ActionListener{
+public class ControlGUI extends JInternalFrame implements ActionListener{
 
 	private static final long serialVersionUID = 1L;
 	private JPanel jContentPane = null;

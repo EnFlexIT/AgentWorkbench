@@ -21,6 +21,10 @@ import jade.wrapper.StaleProxyException;
 import java.io.IOException;
 import java.util.Random;
 
+import javax.swing.JDesktopPane;
+
+import application.Application;
+
 import mas.projects.contmas.ontology.*;
 
 public class ControlGUIAgent extends GuiAgent{
@@ -30,6 +34,8 @@ public class ControlGUIAgent extends GuiAgent{
 		// Instanciate the gui
 		ControlGUI myGui = new ControlGUI(this);
 		myGui.setVisible(true);
+		JDesktopPane desktop=Application.MainWindow.ProjectDesktop;
+		desktop.add(myGui);
         AgentContainer c = getContainerController();
         try {
             AgentController a = c.createNewAgent( "RandomGenerator", "mas.projects.contmas.agents.RandomGeneratorAgent", null );
