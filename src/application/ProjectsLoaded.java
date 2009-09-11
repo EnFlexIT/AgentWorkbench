@@ -96,12 +96,10 @@ public class ProjectsLoaded {
 		else {
 			for(int i=0; i<this.count(); i++) {
 				String ProjectName = ProjectsOpen.get(i).ProjectName;
-				if ( ProjectName.equalsIgnoreCase( Application.ProjectCurr.ProjectName ) ) {
+				if ( ProjectName.equalsIgnoreCase( Application.ProjectCurr.ProjectName ) ) 
 					SetFontBold = true;
-				}
-				else {
+				else 
 					SetFontBold = false;
-				}
 				WindowMenu.add( new JMenuItmen_Window( ProjectName, i, SetFontBold) );
 			}		
 		}
@@ -128,8 +126,13 @@ public class ProjectsLoaded {
 				this.setText( WinNo + ": " + ProjectName );
 			}		
 			if ( setBold ) {
-				Font font = new Font( this.getFont().getFontName(), Font.BOLD, this.getFont().getSize() );
-				this.setFont(font);
+				Font cfont = this.getFont();
+				if ( cfont.isBold() == true ) {
+					this.setForeground( Application.RunInfo.ColorMenuHighLight() );	
+				}
+				else {
+					this.setFont( cfont.deriveFont(Font.BOLD) );
+				}
 			}
 			this.addActionListener( new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {

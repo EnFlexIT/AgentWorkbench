@@ -71,14 +71,15 @@ public class CoreWindow extends JFrame implements ComponentListener{
 	// --- Start -------------------------------------------------- 
 	// ------------------------------------------------------------
 	public CoreWindow() {
-		initComponents();
 		
+		if ( Application.RunInfo.AppLnF() != null ) 
+			setLookAndFeel( Application.RunInfo.AppLnF() );
+
+		initComponents();
 		this.setDefaultCloseOperation(CoreWindow.DO_NOTHING_ON_CLOSE);
 		this.getContentPane().setPreferredSize(this.getSize());
 		this.setLocationRelativeTo(null);
 		this.pack();		
-		if ( Application.RunInfo.AppLnF() != null ) 
-			setLookAndFeel( Application.RunInfo.AppLnF() );
 		//this.setExtendedState(Frame.MAXIMIZED_BOTH);
 		this.setVisible(true);
 		setTitelAddition("");
@@ -181,7 +182,14 @@ public class CoreWindow extends JFrame implements ComponentListener{
 		catch (Exception e) {
 				System.err.println("Cannot install " + Application.RunInfo.AppLnF()
 					+ " on this platform:" + e.getMessage());
-		}		  
+		}
+		if ( jMenuExtraLnF != null ){
+			jMenuExtraLnF.removeAll();
+			setjMenuExtraLnF();
+		}
+		if (Application.ProjectCurr != null) {
+			Application.ProjectCurr.setMaximized();
+		}
 	}		
 	// ------------------------------------------------------------
 	// --- Statusanzeigen etc. definieren - ENDE ------------------
@@ -261,8 +269,13 @@ public class CoreWindow extends JFrame implements ComponentListener{
 		if (jMenuExtra == null) {
 			jMenuExtra = new JMenu();
 			jMenuExtra.setText(Language.translate("Extras"));
-			jMenuExtra.add(getjMenuExtraLang());
-			jMenuExtra.add(getjMenuExtraLnF());
+			// --- Menue 'Sprache' ---
+			jMenuExtra.add( getjMenuExtraLang() );
+			// --- Menue 'LnF' -------
+			jMenuExtraLnF = new JMenu();
+			jMenuExtraLnF.setText("Look and Feel");
+			setjMenuExtraLnF();
+			jMenuExtra.add( jMenuExtraLnF );
 			}
 		return jMenuExtra;
 	}
@@ -294,8 +307,13 @@ public class CoreWindow extends JFrame implements ComponentListener{
 			private JMenuItemLang( String LangHeader, boolean setBold ) {
 				this.setText( Language.getLanguagesHeaderInGerman( LangHeader.toUpperCase() ) );			
 				if ( setBold ) {
-					Font font = new Font( this.getFont().getFontName(), Font.BOLD, this.getFont().getSize() );
-					this.setFont(font);
+					Font cfont = this.getFont();
+					if ( cfont.isBold() ) {
+						this.setForeground( Application.RunInfo.ColorMenuHighLight() );	
+					}
+					else {
+						this.setFont( cfont.deriveFont(Font.BOLD) );
+					}
 				}
 				this.addActionListener(this);
 				this.setActionCommand( LangHeader );
@@ -310,18 +328,18 @@ public class CoreWindow extends JFrame implements ComponentListener{
 		// ------------------------------------------------------------
 		// --- Look and Feel ------------------------------------------
 		// ------------------------------------------------------------
-		private JMenu getjMenuExtraLnF() {
-			if (jMenuExtraLnF == null) {
-				jMenuExtraLnF = new JMenu();
-				jMenuExtraLnF.setText("Look and Feel ");
-	
-				UIManager.LookAndFeelInfo plaf[] = UIManager.getInstalledLookAndFeels();
-					for (int i = 0, n = plaf.length; i < n; i++) {
-						jMenuExtraLnF.add(new JMenuItmen_LnF(plaf[i].getName(), plaf[i].getClassName()));
-				    };
-				    
-				}
-			return jMenuExtraLnF;
+		private void setjMenuExtraLnF() {
+
+			boolean setBold = false;
+			UIManager.LookAndFeelInfo plaf[] = UIManager.getInstalledLookAndFeels();
+			
+			for (int i = 0, n = plaf.length; i < n; i++) {
+				if ( plaf[i].getClassName() == Application.RunInfo.AppLnF() )
+					setBold = true;
+				else
+					setBold = false;
+					jMenuExtraLnF.add( new JMenuItmen_LnF(plaf[i].getName(), plaf[i].getClassName(), setBold) );
+			    };			
 		}
 		// --- Unterklasse für die Look and Feel Menü-Elemente --------
 		private class JMenuItmen_LnF extends JMenuItem  {
@@ -329,9 +347,18 @@ public class CoreWindow extends JFrame implements ComponentListener{
 			private static final long serialVersionUID = 1L;
 			private String LnFPath; 
 			
-			private JMenuItmen_LnF( String LnFName, String LnFClass  ) {
+			private JMenuItmen_LnF( String LnFName, String LnFClass, boolean setBold  ) {
 				LnFPath = LnFClass;	
 				this.setText( LnFName );
+				if ( setBold ) {
+					Font cfont = this.getFont();
+					if ( cfont.isBold() ) {
+						this.setForeground( Application.RunInfo.ColorMenuHighLight() );	
+					}
+					else {
+						this.setFont( cfont.deriveFont(Font.BOLD) );
+					}
+				}
 				this.addActionListener( new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
 						Application.setLookAndFeel( LnFPath );							

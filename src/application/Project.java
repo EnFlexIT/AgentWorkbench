@@ -2,6 +2,8 @@ package application;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.plaf.basic.BasicInternalFrameUI;
+
 import gui.ProjectWindow;
 
 public class Project extends Object{
@@ -59,6 +61,7 @@ public class Project extends Object{
 		String SelectedFile = fc.getSelectedFile().getName();
 	    System.out.println( SelectedFile );
 
+	    
 	    
 		ProjectGUI = new ProjectWindow();
 		setMaximized();
@@ -121,6 +124,7 @@ public class Project extends Object{
 	}
 
 	public void setMaximized() {
+		((BasicInternalFrameUI) Application.ProjectCurr.ProjectGUI.getUI()).setNorthPane(null);
 		Application.MainWindow.ProjectDesktop.getDesktopManager().maximizeFrame( ProjectGUI );		
 	}
 	

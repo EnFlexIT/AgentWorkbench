@@ -78,9 +78,7 @@ public class Language {
 		Application.JadePlatform.jadeStop();
 		Application.MainWindow.dispose();		
 		Application.startApplication();		
-		Application.Projects.removeAll();	
-		
-		return;		
+		Application.Projects.removeAll();
 	}
 	// -------------------------------------------------------------------------	
 		

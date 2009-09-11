@@ -1,5 +1,6 @@
 package application;
 
+import java.awt.Color;
 import java.io.File;
 import java.util.HashSet;
 
@@ -15,6 +16,8 @@ public class GlobalInfo {
 	final private static String LocalJadeVersion = jade.core.Runtime.getVersion();
 	
 	final private static String LocalProjectFileEnd =  ".mas";
+	
+	final private static Color LocalColorMenuHighLight =  new Color(0,0,192);
 	
 	// --- Variablen --------------------------------------------------------
 	private static String LocalAppExecutedOver = "IDE";
@@ -239,7 +242,11 @@ public class GlobalInfo {
 		return LocalJadeVersion;
 	}
 	
-
-	
+	// ---------------------------------------------------------
+	// --- Farbvariablen ---------------------------------------
+	// ---------------------------------------------------------
+	public Color ColorMenuHighLight () {
+		return LocalColorMenuHighLight;
+	}
 	
 }

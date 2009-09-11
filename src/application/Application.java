@@ -25,15 +25,10 @@ public class Application {
 		// --- Start Application -----------------------
 		System.out.println( Language.translate("Programmstart ..." ) );
 		startApplication();
-		System.out.println( Language.translate("Fertig") );
 		MainWindow.setStatusBar( Language.translate("Fertig") );
 		Projects.setProjectMenuItems();
 	}	
-	
-	public Application getInstance(){
-		return this;
-	}
-	
+
 	/**
 	 * Opens the Main-Window (JFrame)
 	 */
@@ -73,6 +68,15 @@ public class Application {
 	 */
 	public static void setLookAndFeel( String NewLnF ) {
 		MainWindow.setLookAndFeel(NewLnF);
+		Projects.setProjectMenuItems();
+	}	
+	/**
+	 * Changing the application language to:
+	 * NewLang => "DE", "EN", "IT", "ES" or "FR" etc. is equal to the 
+	 * end phrase after the prefix "LANG_". E.g. "LANG_EN" needs "EN" as parameter
+	 */
+	public static void setLanguage( String NewLang ) {
+		Language.changeLanguageTo(NewLang);		
 	}	
 
 } // --- End Class ---

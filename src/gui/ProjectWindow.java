@@ -3,22 +3,22 @@
  */
 package gui;
 
-import javax.swing.JPanel;
-import javax.swing.JInternalFrame;
-import javax.swing.WindowConstants;
 import java.awt.Dimension;
-import javax.swing.JTabbedPane;
-import javax.swing.JScrollPane;
-import java.awt.GridBagLayout;
-import javax.swing.JLabel;
 import java.awt.Font;
+import java.awt.GridBagLayout;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JTextField;
-import javax.swing.JTextArea;
 import javax.swing.JButton;
+import javax.swing.JInternalFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.WindowConstants;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 
 import application.Application;
@@ -27,7 +27,7 @@ import application.Application;
  * @author derksen
  *
  */
-public class ProjectWindow extends JInternalFrame implements ActionListener{
+public class ProjectWindow extends JInternalFrame implements ActionListener {
 
 	/**
 	 * 
@@ -47,7 +47,6 @@ public class ProjectWindow extends JInternalFrame implements ActionListener{
 	private JButton jButton = null;
 	private JScrollPane jScrollPane = null;
 	private JPanel ProjectOntology = null;
-	
 	/**
 	 * This is the xxx default constructor
 	 */
@@ -253,7 +252,6 @@ public class ProjectWindow extends JInternalFrame implements ActionListener{
 
 	@Override
 	public void actionPerformed(ActionEvent ae) {
-		// TODO Auto-generated method stub
 		System.out.println( ae.getActionCommand() );
 		String AC = ae.getActionCommand();
 		if ( AC.equalsIgnoreCase("ProjectLoadFile") ) {
@@ -265,8 +263,6 @@ public class ProjectWindow extends JInternalFrame implements ActionListener{
 		else {
 			System.out.println( "Unbekannter Befehl" );
 		}
-		
-		
 	}
 
 }  //  @jve:decl-index=0:visual-constraint="10,10"
