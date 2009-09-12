@@ -94,10 +94,14 @@ public class RandomGeneratorAgent extends ContainerAgent{
 		            //end old
 		            
 					ProvidePopulatedBayMap act=new ProvidePopulatedBayMap();
-					act.setProvides(LoadBay);
-			    	System.out.println("Ad");
-
+					//act.setProvides(LoadBay);
+			    	//System.out.println("Addfh");
+try{
 					getContentManager().fillContent(reply, act);
+}catch (OntologyException e){
+	System.err.println("Exception RandomGeneratorAgent prepareResponse OntologyException special");
+	return null;
+}
 			    	System.out.println("Ae");
 		        
 		        }else {
@@ -107,12 +111,15 @@ public class RandomGeneratorAgent extends ContainerAgent{
 		        return reply; 
 			} catch (UngroundedException e) {
 				// TODO Auto-generated catch block
+				System.err.println("Exception RandomGeneratorAgent prepareResponse UngroundedException");
 				e.printStackTrace();
 			} catch (CodecException e) {
 				// TODO Auto-generated catch block
+				System.err.println("Exception RandomGeneratorAgent prepareResponse CodecException");
 				e.printStackTrace();
 			} catch (OntologyException e) {
 				// TODO Auto-generated catch block
+				System.err.println("Exception RandomGeneratorAgent prepareResponse OntologyException");
 				e.printStackTrace();
 			}
 			return null;

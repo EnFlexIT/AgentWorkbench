@@ -57,7 +57,9 @@ public class Plattform extends java.lang.Object {
 		 * Shutting down the jade-platform 
 		 */
 		try {
-			if ( jadeMainContainerIsRunning() ) MASmc.kill();
+			if ( jadeMainContainerIsRunning() ){
+				MASmc.kill();
+			}
 			if ( MASrt != null ) {
 				MASrt.shutDown();
 				System.out.println("Jade wurde beendet!");
@@ -79,7 +81,7 @@ public class Plattform extends java.lang.Object {
 		boolean JiR;		
 		try {
 			State Stat = MASmc.getState();
-			System.out.println( "Staus of main-container: " +  Stat.getCode() + " - " + Stat.getName()); 
+			System.out.println( "Status of main-container: " +  Stat.getCode() + " - " + Stat.getName()); 
 			JiR = true;
 			Application.MainWindow.setStatusJadeRunning(true);
 		}
