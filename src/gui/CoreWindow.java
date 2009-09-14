@@ -3,9 +3,11 @@ package gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Insets;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -49,7 +51,9 @@ public class CoreWindow extends JFrame implements ComponentListener{
 	final static String PathImage = Application.RunInfo.PathImageIntern();
 	static ImageIcon iconGreen = new ImageIcon( CoreWindow.class.getResource( PathImage + "StatGreen.png") );
 	static ImageIcon iconRed = new ImageIcon( CoreWindow.class.getResource( PathImage + "StatRed.png") );
-
+	static ImageIcon iconClose = new ImageIcon( CoreWindow.class.getResource( PathImage + "MBclose.png") );
+	static ImageIcon iconCloseDummy = new ImageIcon( CoreWindow.class.getResource( PathImage + "MBdummy.png") );
+	
 	static JLabel StatusBar;	
 	static JLabel StatusJade;
 	public JDesktopPane ProjectDesktop;
@@ -63,6 +67,10 @@ public class CoreWindow extends JFrame implements ComponentListener{
 	public JMenu jMenuMainWindow;
 	private JMenu jMenuMainHelp;
 
+	private static int jMenuMainHelpPositionLeft;
+	private JLabel jMenuSpacer ;
+	private JMenuItem jMenuCloseButton;
+	
 	private JToolBar jToolBarApp;
 		private JButton JadeTools;	
 		private JPopupMenu JadeToolsPopUp;
@@ -83,6 +91,7 @@ public class CoreWindow extends JFrame implements ComponentListener{
 		//this.setExtendedState(Frame.MAXIMIZED_BOTH);
 		this.setVisible(true);
 		setTitelAddition("");
+		setCloseButtonPosition( false );
 	}
 	// ------------------------------------------------------------	
 
@@ -170,7 +179,7 @@ public class CoreWindow extends JFrame implements ComponentListener{
 	}
 	public void setLookAndFeel( String NewLnF ) {
 		// --- Look and fell einstellen --------------- 
-		if (NewLnF == null) return;		
+		if ( NewLnF == null ) return;		
 		Application.RunInfo.setAppLnf( NewLnF );
 		try {
 			String lnfClassname = Application.RunInfo.AppLnF();
@@ -186,6 +195,10 @@ public class CoreWindow extends JFrame implements ComponentListener{
 		if ( jMenuExtraLnF != null ){
 			jMenuExtraLnF.removeAll();
 			setjMenuExtraLnF();
+		}
+		if ( jMenuExtraLang != null ) {
+			jMenuExtraLang.removeAll();
+			setjMenuExtraLang();
 		}
 		if (Application.ProjectCurr != null) {
 			Application.ProjectCurr.setMaximized();
@@ -221,7 +234,9 @@ public class CoreWindow extends JFrame implements ComponentListener{
 			jMenuBarMain.add( getjMenuMainJade() );
 			jMenuBarMain.add( getjMenuMainExtra() );
 			jMenuBarMain.add( getjMenuMainWindow() );
-			jMenuBarMain.add( getjMenuMainHelp() );			
+			jMenuBarMain.add( getjMenuMainHelp() );	
+			jMenuBarMain.add( getMenuSpacer() );
+			jMenuBarMain.add( getCloseButton() );
 		}
 		return jMenuBarMain;
 	}
@@ -269,8 +284,13 @@ public class CoreWindow extends JFrame implements ComponentListener{
 		if (jMenuExtra == null) {
 			jMenuExtra = new JMenu();
 			jMenuExtra.setText(Language.translate("Extras"));
+
 			// --- Menue 'Sprache' ---
-			jMenuExtra.add( getjMenuExtraLang() );
+			jMenuExtraLang = new JMenu();
+			jMenuExtraLang.setText(Language.translate("Sprache"));
+			setjMenuExtraLang();			
+			jMenuExtra.add( jMenuExtraLang );
+
 			// --- Menue 'LnF' -------
 			jMenuExtraLnF = new JMenu();
 			jMenuExtraLnF.setText("Look and Feel");
@@ -282,22 +302,17 @@ public class CoreWindow extends JFrame implements ComponentListener{
 		// ------------------------------------------------------------
 		// --- Sprache ------------------------------------------------
 		// ------------------------------------------------------------
-		private JMenu getjMenuExtraLang() {
-			if (jMenuExtraLang == null) {
-				jMenuExtraLang = new JMenu();
-				jMenuExtraLang.setText(Language.translate("Sprache"));
-	
-				String[] DictLineValues = Language.getLanguages(); 
-				boolean setBold = false;
-				for(int i=0; i<DictLineValues.length; i++) {
-					if ( i == Language.DefaultLanguage ) 
-						setBold = true;
-					else 
-						setBold = false;					
-					jMenuExtraLang.add( new JMenuItemLang(DictLineValues[i], setBold) );
-				};
-			}
-			return jMenuExtraLang;
+		private void setjMenuExtraLang() {
+			
+			String[] DictLineValues = Language.getLanguages(); 
+			boolean setBold = false;
+			for(int i=0; i<DictLineValues.length; i++) {
+				if ( i == Language.DefaultLanguage ) 
+					setBold = true;
+				else 
+					setBold = false;					
+				jMenuExtraLang.add( new JMenuItemLang(DictLineValues[i], setBold) );
+			};
 		}
 		// --- Unterklasse für die verfügbaren Sprachen  --------------
 		private class JMenuItemLang extends JMenuItem implements ActionListener {
@@ -338,16 +353,16 @@ public class CoreWindow extends JFrame implements ComponentListener{
 					setBold = true;
 				else
 					setBold = false;
-					jMenuExtraLnF.add( new JMenuItmen_LnF(plaf[i].getName(), plaf[i].getClassName(), setBold) );
+					jMenuExtraLnF.add( new JMenuItmenLnF(plaf[i].getName(), plaf[i].getClassName(), setBold) );
 			    };			
 		}
 		// --- Unterklasse für die Look and Feel Menü-Elemente --------
-		private class JMenuItmen_LnF extends JMenuItem  {
+		private class JMenuItmenLnF extends JMenuItem  {
 	 
 			private static final long serialVersionUID = 1L;
 			private String LnFPath; 
 			
-			private JMenuItmen_LnF( String LnFName, String LnFClass, boolean setBold  ) {
+			private JMenuItmenLnF( String LnFName, String LnFClass, boolean setBold  ) {
 				LnFPath = LnFClass;	
 				this.setText( LnFName );
 				if ( setBold ) {
@@ -393,6 +408,69 @@ public class CoreWindow extends JFrame implements ComponentListener{
 	}
 
 	// ------------------------------------------------------------
+	// --- Menü-Spacer für den folgenden "Close-Button" -----------
+	// ------------------------------------------------------------
+	private JLabel getMenuSpacer() {
+		if (jMenuSpacer == null ) {
+			jMenuSpacer = new JLabel();
+			jMenuSpacer.setIcon(iconCloseDummy);
+			//jMenuSpacer.setText("Hallo");
+			jMenuSpacer.setVisible(false);			
+		}
+		return jMenuSpacer;
+	}
+	// ------------------------------------------------------------
+	// --- Menü "Close-Button" ------------------------------------
+	// ------------------------------------------------------------
+	private JMenuItem getCloseButton() {
+		if (jMenuCloseButton == null ) {
+			jMenuCloseButton = new CWMenueItem( "ProjectClose", "", "MBclose.png" );
+			jMenuCloseButton.setText("");
+			jMenuCloseButton.setToolTipText( Language.translate("Projekt schliessen") );
+			jMenuCloseButton.setBorder( null );
+			jMenuCloseButton.setMargin( new Insets(0, 0, 0, 0) );
+			jMenuCloseButton.setComponentOrientation( ComponentOrientation.RIGHT_TO_LEFT );
+			jMenuCloseButton.setPreferredSize( new Dimension ( 30 , jMenuCloseButton.getHeight() ) );
+			jMenuCloseButton.setIcon( iconCloseDummy );
+			jMenuCloseButton.setEnabled( false );
+			jMenuCloseButton.setVisible( false );			
+		}
+		return jMenuCloseButton ;
+	}
+	public void setCloseButtonPosition( boolean setVisible ){
+		
+		// --- Positionsmerker für das Fenster setzen ?  ----------
+		// --- Wird nach der Initialisierung ausgewertet ----------
+		if ( jMenuCloseButton.isVisible() == false ) {
+			jMenuMainHelpPositionLeft = jMenuMainHelp.getLocation().x +  jMenuMainHelp.getWidth();
+			jMenuCloseButton.setVisible(true);
+			jMenuSpacer.setVisible(true);
+		}
+		// --- Entsprechendes Icon einblenden --------------------- 
+		if ( setVisible == true ){
+			jMenuCloseButton.setIcon( iconClose );	
+			jMenuCloseButton.setEnabled( true );	
+		}
+		else {
+			jMenuCloseButton.setIcon( iconCloseDummy );
+			jMenuCloseButton.setEnabled( false );
+		}		
+		
+		// --- Breite des jMenuSpacer's anpassen ------------------		 
+		int CBoWidth = 30;
+		int NewWidth = (this.getWidth() - jMenuMainHelpPositionLeft - CBoWidth ) ;
+		if ( NewWidth <= 0 ) {
+			jMenuSpacer.setPreferredSize( new Dimension( 0, jMenuMainProject.getHeight() ) );			
+		}
+		else {
+			jMenuSpacer.setPreferredSize( new Dimension( NewWidth , jMenuMainProject.getHeight() ) );			
+		}
+		jMenuBarMain.updateUI();
+	}
+	
+	
+	
+	// ------------------------------------------------------------
 	// --- Unterklasse für alle einfachen Menüelemente - START ----
 	// ------------------------------------------------------------	
 	private class CWMenueItem extends JMenuItem implements ActionListener {
@@ -407,7 +485,6 @@ public class CoreWindow extends JFrame implements ComponentListener{
 							 String imgName ) {
 
 			this.setText(Text);
-
 			if ( imgName != null ) {
 				try {
 					this.setIcon( new ImageIcon( this.getClass().getResource( PathImage + imgName ) ) );
@@ -433,7 +510,7 @@ public class CoreWindow extends JFrame implements ComponentListener{
 			}
 			else if ( ActCMD.equalsIgnoreCase("ProjectClose") ) {
 				Project CurPro = Application.ProjectCurr;
-				CurPro.close();				
+				if ( CurPro != null ) CurPro.close();				
 			}
 			else if ( ActCMD.equalsIgnoreCase("ProjectSave") ) {
 				Project CurPro = Application.ProjectCurr;
@@ -608,6 +685,10 @@ public class CoreWindow extends JFrame implements ComponentListener{
 	public void componentResized(ComponentEvent e) {
 		if ( Application.Projects.count() != 0 ) {
 			Application.ProjectCurr.setMaximized();
+			setCloseButtonPosition( true );
+		}
+		else {
+			setCloseButtonPosition( false );
 		}
 	}
 	@Override

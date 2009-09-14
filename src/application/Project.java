@@ -42,6 +42,7 @@ public class Project extends Object{
 		Application.Projects.add( this );
 		Application.ProjectCurr = this;
 		Application.Projects.setProjectMenuItems();
+		Application.MainWindow.setCloseButtonPosition( true );
 
 		// --- Anzeige anpassen ---------------------------
 		setMaximized();
@@ -96,19 +97,22 @@ public class Project extends Object{
 		}
 		// --- Projekt kann geschlossen werden ------------
 		int Index = Application.Projects.getIndexByName( ProjectName );
-		int NProjects = Application.Projects.count();
-
+		
 		ProjectGUI.dispose();
 		Application.Projects.remove(this);
 		
-		if ( NProjects > 1 ) {
-			if ( Index+1 >= NProjects ) Index = NProjects - 2;  
+		int NProjects = Application.Projects.count();
+		if ( NProjects > 0 ) {
+			if ( Index+1 > NProjects ) Index = NProjects-1;  
 			Application.ProjectCurr = Application.Projects.get(Index);
 			Application.ProjectCurr.setFocus();
 			Application.setTitelAddition( Application.ProjectCurr.ProjectName );
 		}
 		else {
+			Application.ProjectCurr = null;
 			Application.Projects.setProjectMenuItems();
+			Application.MainWindow.setCloseButtonPosition( false );
+			Application.setTitelAddition( "" );
 		}
 		Application.setStatusBar( "" );
 	}

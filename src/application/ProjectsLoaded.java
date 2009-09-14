@@ -90,7 +90,7 @@ public class ProjectsLoaded {
 		
 		JMenu WindowMenu = Application.MainWindow.jMenuMainWindow;
 		WindowMenu.removeAll();
-		if (this.count() ==0 ){
+		if (this.count() == 0 ){
 			WindowMenu.add( new JMenuItmen_Window( Language.translate("Kein Projekt geöffnet !"), -1, SetFontBold ) );
 		}
 		else {
