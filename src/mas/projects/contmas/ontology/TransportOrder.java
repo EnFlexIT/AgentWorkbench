@@ -9,7 +9,7 @@ import jade.core.*;
    * step-like transport orders
 * Protege name: TransportOrder
 * @author ontology bean generator
-* @version 2009/08/25, 14:09:13
+* @version 2009/09/15, 02:37:50
 */
 public class TransportOrder implements Concept {
 
@@ -35,17 +35,6 @@ public class TransportOrder implements Concept {
    public void setLinks(List l) {links = l; }
 
    /**
-* Protege name: ends_at
-   */
-   private Object ends_at;
-   public void setEnds_at(Object value) { 
-    this.ends_at=value;
-   }
-   public Object getEnds_at() {
-     return this.ends_at;
-   }
-
-   /**
 * Protege name: starts_at
    */
    private Object starts_at;
@@ -66,6 +55,17 @@ public class TransportOrder implements Concept {
    }
    public float getTakes() {
      return this.takes;
+   }
+
+   /**
+* Protege name: ends_at
+   */
+   private Object ends_at;
+   public void setEnds_at(Object value) { 
+    this.ends_at=value;
+   }
+   public Object getEnds_at() {
+     return this.ends_at;
    }
 
 }

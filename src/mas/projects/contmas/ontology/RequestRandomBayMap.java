@@ -6,10 +6,10 @@ import jade.util.leap.*;
 import jade.core.*;
 
 /**
-   * Request a random generated bay map at the RandomGeneratorAgent for testing purposes
+   * Request a random generated bay map at the RandomGeneratorAgent for development purposes
 * Protege name: RequestRandomBayMap
 * @author ontology bean generator
-* @version 2009/08/25, 14:09:14
+* @version 2009/09/15, 02:37:50
 */
 public class RequestRandomBayMap implements AgentAction {
 

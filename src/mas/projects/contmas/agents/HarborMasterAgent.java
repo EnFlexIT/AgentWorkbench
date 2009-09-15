@@ -42,11 +42,13 @@ public class HarborMasterAgent extends ContainerAgent {
 			//a = c.createNewAgent( "Crane #1", "mas.projects.contmas.agents.CraneAgent",null );
 			
 			a=c.acceptNewAgent("Crane #1", new CraneAgent(ontologyRepresentation));
+	        a.start();
+
 			ontologyRepresentation=new Crane();
 			ontologyRepresentation.setLives_in(habitat);
 			a=c.acceptNewAgent("Crane #2", new CraneAgent(ontologyRepresentation));
-
 	        a.start();
+	        
 		} catch (StaleProxyException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

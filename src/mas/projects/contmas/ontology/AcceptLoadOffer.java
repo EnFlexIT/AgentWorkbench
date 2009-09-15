@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: AcceptLoadOffer
 * @author ontology bean generator
-* @version 2009/08/25, 14:09:14
+* @version 2009/09/15, 02:37:50
 */
 public class AcceptLoadOffer implements AgentAction {
 

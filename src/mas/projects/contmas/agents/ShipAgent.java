@@ -40,8 +40,13 @@ public class ShipAgent extends PassiveContainerAgent implements TransportOrderOf
 		RandomGenerator=getFirstAIDFromDF("random-generation");
 
 		harborManager=getFirstAIDFromDF("harbor-managing");
-			
+		
 		ContainerMessage msg = new ContainerMessage(ACLMessage.REQUEST);
+		msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST); 
+		addBehaviour(new enrollAtHarbor(this,msg));
+		
+		
+		msg = new ContainerMessage(ACLMessage.REQUEST);
 	    msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST); 
 		addBehaviour(new fetchRandomBayMap(this,msg));
 		/*
@@ -49,11 +54,9 @@ public class ShipAgent extends PassiveContainerAgent implements TransportOrderOf
 	    msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST); 
 		addBehaviour(new getPopulatedBayMap(this,msg));
 		*/
-		msg = new ContainerMessage(ACLMessage.REQUEST);
-		msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST); 
-		addBehaviour(new enrollAtHarbor(this,msg));
 
-		offerTransportOrder();
+
+
 		
 		/*
 		msg = new ContainerMessage(ACLMessage.REQUEST);
@@ -123,20 +126,15 @@ public class ShipAgent extends PassiveContainerAgent implements TransportOrderOf
 			super(a, msg);
 		}
 		protected Vector prepareRequests(ACLMessage request) {
-        	System.out.println("prepareRequests populatedBayMap"); 
 			request.addReceiver(RandomGenerator);
 			//BayMap aus Agent auslesen
 			RequestPopulatedBayMap act = new RequestPopulatedBayMap();
-        	System.out.println("Wer A sagt"); 
 			act.setPopulate_on(((ShipAgent) myAgent).ontologyRepresentation.getContains());
-        	System.out.println("muss auch B sagen können"); 
 			try {
 				getContentManager().fillContent(request, act);
-	        	System.out.println("und am besten auch C"); 
 
 			    Vector messages = new Vector();
 			    messages.add(request);
-	        	System.out.println("prepareRequests before return"); 
 
 			    return messages; 
 			    
@@ -152,16 +150,15 @@ public class ShipAgent extends PassiveContainerAgent implements TransportOrderOf
 	    protected void handleInform(ACLMessage msg) { 
 			Concept content;
 			try {
-	        	System.out.println("x"); 
 
 				content = ((AgentAction) getContentManager().extractContent(msg));
-	        	System.out.println("y"); 
 
 		        if (content instanceof ProvidePopulatedBayMap) {
-		        	System.out.println("z"); 
 
 		        	((ShipAgent) myAgent).ontologyRepresentation.setContains(((ProvidePopulatedBayMap) content).getProvides());
 		        	System.out.println("populatedBayMap recieved!"); 
+		    		offerTransportOrder();
+
 		        } else {
 		            System.out.println("Error"); 
 		        } 
@@ -249,11 +246,12 @@ public class ShipAgent extends PassiveContainerAgent implements TransportOrderOf
 		}
 
 		public void action() {
+			System.out.println("Entladen geht los");
 			if(((ShipAgent) myAgent).craneList!=null){
 				BayMap LoadBay=((ShipAgent) myAgent).ontologyRepresentation.getContains();
 				Iterator allContainers=LoadBay.getAllIs_filled_with();
 				BlockAddress curContainer;
-				
+				System.out.println("allContainers.hasNext():"+allContainers.hasNext());
 				while(allContainers.hasNext()){
 					curContainer=(BlockAddress) allContainers.next();
 					LoadList currentLoadList=new LoadList();

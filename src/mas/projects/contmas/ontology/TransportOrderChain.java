@@ -9,32 +9,9 @@ import jade.core.*;
    * high-level transport order with destination
 * Protege name: TransportOrderChain
 * @author ontology bean generator
-* @version 2009/08/25, 14:09:13
+* @version 2009/09/15, 02:37:50
 */
 public class TransportOrderChain implements Concept {
-
-   /**
-* Protege name: makes_up
-   */
-   private LoadList makes_up;
-   public void setMakes_up(LoadList value) { 
-    this.makes_up=value;
-   }
-   public LoadList getMakes_up() {
-     return this.makes_up;
-   }
-
-   /**
-   * container to be transported
-* Protege name: transports
-   */
-   private Container transports;
-   public void setTransports(Container value) { 
-    this.transports=value;
-   }
-   public Container getTransports() {
-     return this.transports;
-   }
 
    /**
 * Protege name: is_linked_by
@@ -56,6 +33,29 @@ public class TransportOrderChain implements Concept {
    public Iterator getAllIs_linked_by() {return is_linked_by.iterator(); }
    public List getIs_linked_by() {return is_linked_by; }
    public void setIs_linked_by(List l) {is_linked_by = l; }
+
+   /**
+   * container to be transported
+* Protege name: transports
+   */
+   private Container transports;
+   public void setTransports(Container value) { 
+    this.transports=value;
+   }
+   public Container getTransports() {
+     return this.transports;
+   }
+
+   /**
+* Protege name: makes_up
+   */
+   private LoadList makes_up;
+   public void setMakes_up(LoadList value) { 
+    this.makes_up=value;
+   }
+   public LoadList getMakes_up() {
+     return this.makes_up;
+   }
 
    /**
    * final destination

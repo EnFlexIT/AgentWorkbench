@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: Yard
 * @author ontology bean generator
-* @version 2009/08/25, 14:09:13
+* @version 2009/09/15, 02:37:49
 */
 public class Yard extends StaticContainerHolder{ 
 

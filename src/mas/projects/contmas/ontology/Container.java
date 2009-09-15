@@ -8,9 +8,32 @@ import jade.core.*;
 /**
 * Protege name: Container
 * @author ontology bean generator
-* @version 2009/08/25, 14:09:13
+* @version 2009/09/15, 02:37:50
 */
 public class Container implements Concept {
+
+   /**
+* Protege name: length
+   */
+   private float length;
+   public void setLength(float value) { 
+    this.length=value;
+   }
+   public float getLength() {
+     return this.length;
+   }
+
+   /**
+   * LSCU 107737 9
+* Protege name: id
+   */
+   private String id;
+   public void setId(String value) { 
+    this.id=value;
+   }
+   public String getId() {
+     return this.id;
+   }
 
    /**
 * Protege name: height
@@ -24,15 +47,14 @@ public class Container implements Concept {
    }
 
    /**
-   * LSCU 107737 9
-* Protege name: id
+* Protege name: width
    */
-   private String id;
-   public void setId(String value) { 
-    this.id=value;
+   private float width;
+   public void setWidth(float value) { 
+    this.width=value;
    }
-   public String getId() {
-     return this.id;
+   public float getWidth() {
+     return this.width;
    }
 
    /**
@@ -66,39 +88,6 @@ public class Container implements Concept {
    }
    public boolean getIs_coolable() {
      return this.is_coolable;
-   }
-
-   /**
-* Protege name: occupies
-   */
-   private BlockAddress occupies;
-   public void setOccupies(BlockAddress value) { 
-    this.occupies=value;
-   }
-   public BlockAddress getOccupies() {
-     return this.occupies;
-   }
-
-   /**
-* Protege name: length
-   */
-   private float length;
-   public void setLength(float value) { 
-    this.length=value;
-   }
-   public float getLength() {
-     return this.length;
-   }
-
-   /**
-* Protege name: width
-   */
-   private float width;
-   public void setWidth(float value) { 
-    this.width=value;
-   }
-   public float getWidth() {
-     return this.width;
    }
 
 }

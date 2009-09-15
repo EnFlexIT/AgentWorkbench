@@ -26,8 +26,10 @@ public class announceLoadOrders extends ContractNetInitiator{
 		cfp=new ContainerMessage(ACLMessage.CFP);
 		cfp.setProtocol(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET); 
 		List craneList=((ShipAgent)myAgent).craneList;
-		//TODO nur der erste
-		cfp.addReceiver((AID)craneList.iterator().next());
+		Iterator allCranes=craneList.iterator();
+		while (allCranes.hasNext()) {
+			cfp.addReceiver((AID) allCranes.next());
+		}
 		CallForProposalsOnLoadStage act=new CallForProposalsOnLoadStage();
 		act.setRequired_turnover_capacity(this.currentLoadList);
 		try {
