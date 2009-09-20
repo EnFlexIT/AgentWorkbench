@@ -35,7 +35,7 @@ public class ShipAgent extends PassiveContainerAgent implements TransportOrderOf
 		ontologyRepresentation=new Ship();
 		//TODO hardcoded
 		((Ship)ontologyRepresentation).setLength((float) 120.5);
-		
+		((Ship)ontologyRepresentation).setLives_in(new Sea());
 		//look for RandomGeneratorAgent
 		RandomGenerator=getFirstAIDFromDF("random-generation");
 
@@ -259,7 +259,8 @@ public class ShipAgent extends PassiveContainerAgent implements TransportOrderOf
 					TransportOrder TO=new TransportOrder();
 					//Container transportObject=curContainer.g();
 					Container transportObject=new Container();
-					TO.setStarts_at(myAgent.getAID());
+					//TO.setStarts_at(myAgent.getAID());
+					TO.setStarts_at(((ContainerAgent) myAgent).ontologyRepresentation);
 			//		TO.setEnds_at(new Yard());
 					TransportOrderChain TOChain=new TransportOrderChain();
 					TOChain.addIs_linked_by(TO);

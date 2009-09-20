@@ -1,7 +1,10 @@
 package mas.projects.contmas.agents;
 
+import jade.content.AgentAction;
+import jade.content.Concept;
 import jade.content.lang.Codec.CodecException;
 import jade.content.onto.OntologyException;
+import jade.content.onto.UngroundedException;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.domain.FIPANames;
@@ -14,6 +17,8 @@ import java.util.Vector;
 
 import mas.projects.contmas.ontology.CallForProposalsOnLoadStage;
 import mas.projects.contmas.ontology.LoadList;
+import mas.projects.contmas.ontology.ProposeLoadOffer;
+import mas.projects.contmas.ontology.TransportOrder;
 import jade.proto.ContractNetInitiator;
 
 public class announceLoadOrders extends ContractNetInitiator{
@@ -50,7 +55,29 @@ public class announceLoadOrders extends ContractNetInitiator{
 	protected void handleAllResponses(Vector responses, Vector acceptances){
 		for (Object message : responses) {
 			ACLMessage propose =(ACLMessage) message;
+
+			Concept content;
+			try {
+				content = ((AgentAction) myAgent.getContentManager().extractContent(propose));
+		        if(content instanceof ProposeLoadOffer) {
+		        	ProposeLoadOffer proposal=(ProposeLoadOffer) content;
+		        	TransportOrder liste=proposal.getLoad_offer();
+		        	Iterator toc=liste.getConsists_of().getAllIs_linked_by();
+		        	TransportOrder matchingOrder=null;
+		        }
+			} catch (UngroundedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (CodecException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (OntologyException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
 			ACLMessage accept=propose.createReply();
+			
 			accept.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
 			acceptances.add(accept);
 		}
