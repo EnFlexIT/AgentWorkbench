@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: CallForProposalsOnLoadStage
 * @author ontology bean generator
-* @version 2009/09/15, 02:37:50
+* @version 2009/09/15, 23:06:53
 */
 public class CallForProposalsOnLoadStage implements AgentAction {
 
