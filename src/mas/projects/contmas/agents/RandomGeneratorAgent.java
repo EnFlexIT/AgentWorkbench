@@ -129,7 +129,7 @@ public class RandomGeneratorAgent extends ContainerAgent{
 									c.setId(containerName);
 									ba=new BlockAddress();
 									//ba.setAddresses_within(LoadBay);
-									ba.addLocates(c);
+									ba.setLocates(c);
 									ba.setX_dimension(x);
 									ba.setY_dimension(y);
 									ba.setZ_dimension(z);

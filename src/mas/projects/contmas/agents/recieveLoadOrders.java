@@ -12,6 +12,14 @@ import mas.projects.contmas.ontology.Ship;
 import mas.projects.contmas.ontology.TransportOrder;
 import mas.projects.contmas.ontology.TransportOrderChain;
 
+import mas.projects.contmas.ontology.CallForProposalsOnLoadStage;
+import mas.projects.contmas.ontology.ProvidePopulatedBayMap;
+
+import jade.content.AgentAction;
+import jade.content.Concept;
+import jade.content.lang.Codec.CodecException;
+import jade.content.onto.OntologyException;
+import jade.content.onto.UngroundedException;
 import jade.content.AgentAction;
 import jade.content.Concept;
 import jade.content.lang.Codec.CodecException;
@@ -30,6 +38,30 @@ public class recieveLoadOrders extends ContractNetResponder{
 	}
 	protected ACLMessage handleCfp(ACLMessage cfp){
 		ACLMessage reply = cfp.createReply();
+		Concept content;
+		try {
+
+			content = ((AgentAction) myAgent.getContentManager().extractContent(cfp));
+
+	        if (content instanceof CallForProposalsOnLoadStage) {
+	        	if(((CraneAgent) myAgent).Queue.size()<((CraneAgent) myAgent).lengthOfQueue){
+		        	reply.setPerformative(ACLMessage.PROPOSE);
+	        		((CraneAgent) myAgent).Queue.add(((CallForProposalsOnLoadStage)content).getRequired_turnover_capacity());
+	        	} else { //schon genug Aufträge
+		        	reply.setPerformative(ACLMessage.REFUSE);
+	        	}
+	        	// TODO herausfinden, ob man sich auf den Auftrag bewerben will
+	        }
+		} catch (UngroundedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CodecException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (OntologyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		if(false){
 			reply.setPerformative(ACLMessage.REFUSE);
 		}else{

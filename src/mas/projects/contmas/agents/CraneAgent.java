@@ -6,6 +6,8 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.proto.AchieveREResponder;
 import jade.proto.ContractNetResponder;
+import jade.util.leap.ArrayList;
+import jade.util.leap.List;
 import mas.projects.contmas.ontology.*;
 
 /**
@@ -16,6 +18,8 @@ public class CraneAgent extends ActiveContainerAgent implements TransportOrderHa
 	public CraneAgent() {
 		this(new Crane());
 	}
+	public Integer lengthOfQueue=3;
+	public List Queue=new ArrayList();
 	public CraneAgent(Crane ontologyRepresentation) {
 		super("craning", ontologyRepresentation );
 	}

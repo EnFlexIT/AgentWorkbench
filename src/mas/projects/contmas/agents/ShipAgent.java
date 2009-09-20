@@ -250,6 +250,37 @@ public class ShipAgent extends PassiveContainerAgent implements TransportOrderOf
 			if(((ShipAgent) myAgent).craneList!=null){
 				BayMap LoadBay=((ShipAgent) myAgent).ontologyRepresentation.getContains();
 				Iterator allContainers=LoadBay.getAllIs_filled_with();
+				BlockAddress curContainer=null;
+				BlockAddress upmostContainer=null;
+				LoadList completeLoadList=new LoadList();
+
+				for(int x=0;x<LoadBay.getX_dimension();x++){ //baymap zeilen-
+					for(int y=0;y<LoadBay.getY_dimension();y++){ //und spaltenweise durchlaufen
+						while(allContainers.hasNext()){ //alle geladenen Container überprüfen 
+							curContainer=(BlockAddress) allContainers.next();
+							if(curContainer.getX_dimension()==x && curContainer.getY_dimension()==y){ //betrachteter Container steht im stapel auf momentaner koordinate
+								if(upmostContainer==null || upmostContainer.getZ_dimension()<curContainer.getZ_dimension()){
+									upmostContainer=curContainer;
+								}
+							}
+						}
+						if(upmostContainer!=null){
+							TransportOrder TO=new TransportOrder();
+							TO.setStarts_at(myAgent.getAID());
+				//		TO.setEnds_at(new Yard());
+							TransportOrderChain TOChain=new TransportOrderChain();
+							TOChain.addIs_linked_by(TO);
+							TOChain.setTransports(upmostContainer.getLocates());
+							completeLoadList.addConsists_of(TOChain);
+						
+							//Variante: Jeder Container einzeln
+							LoadList currentLoadList=new LoadList();
+							currentLoadList.addConsists_of(TOChain);
+							myAgent.addBehaviour(new announceLoadOrders(myAgent,currentLoadList));
+						
+							upmostContainer=null;
+						}
+					}
 				BlockAddress curContainer;
 				System.out.println("allContainers.hasNext():"+allContainers.hasNext());
 				while(allContainers.hasNext()){
@@ -269,6 +300,8 @@ public class ShipAgent extends PassiveContainerAgent implements TransportOrderOf
 					
 					myAgent.addBehaviour(new announceLoadOrders(myAgent,currentLoadList));
 				}
+				//Variante: alle Container einer Lage zusammen
+//				myAgent.addBehaviour(new announceLoadOrders(myAgent,completeLoadList));
 
 				//block();
 			}else{
