@@ -19,11 +19,12 @@
 	
 	<property name="binaryDir" value="bin" />
 	
-	<property name="destinJar" value="D:\00 Tmp\00 Jars\AgentGUI\AgentGui.jar" />
-	<property name="destinDir" value="D:\00 Tmp\00 Jars\AgentGUI" />	
-	<property name="destinDirLibraries" value="D:\00 Tmp\00 Jars\AgentGUI\lib" />
-	<property name="destinDirProperties" value="D:\00 Tmp\00 Jars\AgentGUI\properties\\" />
-
+	<property name="destinDir" value="D:\00 Tmp\00 Jars\AgentGUI\\" />
+	<property name="destinJar" value="${destinDir}\AgentGui.jar" />		
+	<property name="destinDirLibraries" value="${destinDir}\lib\\" />
+	<property name="destinDirProperties" value="${destinDir}\properties\\" />
+	<property name="destinDirProjects" value="${destinDir}\projects\\" />
+	
 	<!-- Jar's für den Class-Path im Manifest  -->
 	<property name="destinClassPath" 
 		     value="lib/batik/batik-rasterizer.jar
@@ -51,6 +52,7 @@
     	<mkdir dir="${destinDir}" />  	
     	<mkdir dir="${destinDirLibraries}" />
     	<mkdir dir="${destinDirProperties}" />
+    	<mkdir dir="${destinDirProjects}" />
     </target>
 	
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
