@@ -20,6 +20,7 @@ import mas.projects.contmas.ontology.CallForProposalsOnLoadStage;
 import mas.projects.contmas.ontology.LoadList;
 import mas.projects.contmas.ontology.ProposeLoadOffer;
 import mas.projects.contmas.ontology.TransportOrder;
+import mas.projects.contmas.ontology.TransportOrderChain;
 
 public class announceLoadOrders extends ContractNetInitiator {
 	private LoadList currentLoadList = null;
@@ -56,6 +57,8 @@ public class announceLoadOrders extends ContractNetInitiator {
 	}
 
 	protected void handleAllResponses(Vector responses, Vector acceptances) {
+		TransportOrder bestOffer=null;
+		ACLMessage bestOfferMessage=null;
 		for (Object message : responses) {
 			ACLMessage propose = (ACLMessage) message;
 			if (propose.getContent() != null) {
@@ -66,9 +69,13 @@ public class announceLoadOrders extends ContractNetInitiator {
 					// content = ((AgentAction) myAgent.getContentManager().);
 					if (content instanceof ProposeLoadOffer) {
 						ProposeLoadOffer proposal = (ProposeLoadOffer) content;
-						TransportOrder liste = proposal.getLoad_offer();
-						Iterator toc = liste.getAllLinks();
-						TransportOrder matchingOrder = null;
+						TransportOrder offer = proposal.getLoad_offer();
+						if(bestOffer==null || offer.getTakes()<bestOffer.getTakes()){ //bisher beste Zeit
+							bestOffer=offer;
+							bestOfferMessage=propose;
+						}
+
+
 					}
 				} catch (UngroundedException e) {
 					// TODO Auto-generated catch block
@@ -81,15 +88,26 @@ public class announceLoadOrders extends ContractNetInitiator {
 					e.printStackTrace();
 				}
 
-				ACLMessage accept = propose.createReply();
 
-				accept.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
+			}
+		}
+		ACLMessage accept=null;
+		if(bestOffer!=null){
+			accept = bestOfferMessage.createReply();
+			accept.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
+			acceptances.add(accept);
+		}
+		for (Object message : responses) {
+			ACLMessage propose = (ACLMessage) message;
+			if (propose != bestOfferMessage) {
+				accept = propose.createReply();
+				accept.setPerformative(ACLMessage.REJECT_PROPOSAL);
 				acceptances.add(accept);
 			}
 		}
 	}
 
-	protected void handleAllResultNotifications(Vector resultNotifications) {
-		System.out.println("Erfolgreich");
+	protected void handleResultNotification(Vector resultNotifications) {
+		System.out.println("Erfolgreich abgeladen");
 	}
 }

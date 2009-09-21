@@ -101,7 +101,7 @@ public class ShipAgent extends PassiveContainerAgent implements TransportOrderOf
 				content = ((Concept) getContentManager().extractContent(msg));
 		        if (content instanceof ProvideBayMap) {
 		        	((ShipAgent) myAgent).ontologyRepresentation.setContains(((ProvideBayMap) content).getProvides());
-		        	System.out.println("BayMap recieved! X_dimension:"+getLoadBay().getX_dimension()+", Y_dimension:"+getLoadBay().getY_dimension()+", Z_dimension:"+getLoadBay().getZ_dimension());
+		        	//System.out.println("BayMap recieved! X_dimension:"+getLoadBay().getX_dimension()+", Y_dimension:"+getLoadBay().getY_dimension()+", Z_dimension:"+getLoadBay().getZ_dimension());
 		    		msg = new ContainerMessage(ACLMessage.REQUEST);
 		    	    msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST); 
 		    		addBehaviour(new getPopulatedBayMap(myAgent,msg));
@@ -156,7 +156,7 @@ public class ShipAgent extends PassiveContainerAgent implements TransportOrderOf
 		        if (content instanceof ProvidePopulatedBayMap) {
 
 		        	((ShipAgent) myAgent).ontologyRepresentation.setContains(((ProvidePopulatedBayMap) content).getProvides());
-		        	System.out.println("populatedBayMap recieved!"); 
+		        	//System.out.println("populatedBayMap recieved!"); 
 		    		offerTransportOrder();
 
 		        } else {
@@ -249,15 +249,14 @@ public class ShipAgent extends PassiveContainerAgent implements TransportOrderOf
 			System.out.println("Entladen geht los");
 			if(((ShipAgent) myAgent).craneList!=null){
 				BayMap LoadBay=((ShipAgent) myAgent).ontologyRepresentation.getContains();
-				Iterator allContainers=LoadBay.getAllIs_filled_with();
-				BlockAddress curContainer=null;
-				BlockAddress upmostContainer=null;
 				LoadList completeLoadList=new LoadList();
 
 				for(int x=0;x<LoadBay.getX_dimension();x++){ //baymap zeilen-
 					for(int y=0;y<LoadBay.getY_dimension();y++){ //und spaltenweise durchlaufen
+						BlockAddress upmostContainer=null;
+						Iterator allContainers=LoadBay.getAllIs_filled_with();
 						while(allContainers.hasNext()){ //alle geladenen Container überprüfen 
-							curContainer=(BlockAddress) allContainers.next();
+							BlockAddress curContainer=(BlockAddress) allContainers.next();
 							if(curContainer.getX_dimension()==x && curContainer.getY_dimension()==y){ //betrachteter Container steht im stapel auf momentaner koordinate
 								if(upmostContainer==null || upmostContainer.getZ_dimension()<curContainer.getZ_dimension()){
 									upmostContainer=curContainer;
@@ -276,8 +275,9 @@ public class ShipAgent extends PassiveContainerAgent implements TransportOrderOf
 							//Variante: Jeder Container einzeln
 							LoadList currentLoadList=new LoadList();
 							currentLoadList.addConsists_of(TOChain);
+							//System.out.println("addBehaviour announceLoadOrders with "+currentLoadList.getConsists_of().get(0));
 							myAgent.addBehaviour(new announceLoadOrders(myAgent,currentLoadList));
-						
+							currentLoadList=null;
 							upmostContainer=null;
 						}
 					}

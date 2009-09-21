@@ -19,7 +19,7 @@ public class CraneAgent extends ActiveContainerAgent implements TransportOrderHa
 		this(new Crane());
 	}
 	public Integer lengthOfQueue=3;
-	public List Queue=new ArrayList();
+	public List loadOrderQueue=new ArrayList();
 	public CraneAgent(Crane ontologyRepresentation) {
 		super("craning", ontologyRepresentation );
 	}
