@@ -186,7 +186,7 @@ public class CoreWindow extends JFrame implements ComponentListener{
 			if (lnfClassname == null)
 				lnfClassname = UIManager.getCrossPlatformLookAndFeelClassName();
 				UIManager.setLookAndFeel(lnfClassname);
-				SwingUtilities.updateComponentTreeUI(this);
+				SwingUtilities.updateComponentTreeUI(this);				
 		} 
 		catch (Exception e) {
 				System.err.println("Cannot install " + Application.RunInfo.AppLnF()
@@ -465,9 +465,12 @@ public class CoreWindow extends JFrame implements ComponentListener{
 		else {
 			jMenuSpacer.setPreferredSize( new Dimension( NewWidth , jMenuMainProject.getHeight() ) );			
 		}
-		jMenuBarMain.updateUI();
-	}
-	
+		// --- Menüleiste neu zeichnen / Änderungen anzeigen ------
+		if ( jMenuBarMain != null ) {
+			jMenuBarMain.revalidate();
+			//jMenuBarMain.updateUI();
+		}						
+	}	
 	
 	
 	// ------------------------------------------------------------
@@ -514,7 +517,7 @@ public class CoreWindow extends JFrame implements ComponentListener{
 			}
 			else if ( ActCMD.equalsIgnoreCase("ProjectSave") ) {
 				Project CurPro = Application.ProjectCurr;
-				CurPro.save();
+				if ( CurPro != null ) CurPro.save();
 			}
 			else if ( ActCMD.equalsIgnoreCase("ApplicationQuit") ) {
 				Application.quit();
@@ -650,8 +653,8 @@ public class CoreWindow extends JFrame implements ComponentListener{
 				CurPro.open();
 			}
 			else if ( ActCMD.equalsIgnoreCase("Save") ) {
-				Project CurPro = new Project();
-				CurPro.save();
+				Project CurPro = Application.ProjectCurr;
+				if ( CurPro != null ) CurPro.save();
 			}
 			// ------------------------------------------------
 			else if ( ActCMD.equalsIgnoreCase("JadeStart") ) { 
