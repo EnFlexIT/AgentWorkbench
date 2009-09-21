@@ -46,7 +46,7 @@ public class ProjectsLoaded {
 	 * @param String Project2Remove
 	 */
 	public void remove( Project Project2Remove ) {
-		int Index = getIndexByName( Project2Remove.ProjectName );		
+		int Index = getIndexByName( Project2Remove.getProjectName() );		
 		ProjectsOpen.remove(Index);
 	}
 	/**
@@ -66,7 +66,7 @@ public class ProjectsLoaded {
 	public int getIndexByName ( String ProjectName ) {
 		int Index = -1;
 		for(int i=0; i<this.count(); i++) {
-			if( ProjectsOpen.get(i).ProjectName.equalsIgnoreCase(ProjectName) ) {
+			if( ProjectsOpen.get(i).getProjectName().equalsIgnoreCase(ProjectName) ) {
 				Index = i;
 				break;
 			}	
@@ -95,8 +95,8 @@ public class ProjectsLoaded {
 		}
 		else {
 			for(int i=0; i<this.count(); i++) {
-				String ProjectName = ProjectsOpen.get(i).ProjectName;
-				if ( ProjectName.equalsIgnoreCase( Application.ProjectCurr.ProjectName ) ) 
+				String ProjectName = ProjectsOpen.get(i).getProjectName();
+				if ( ProjectName.equalsIgnoreCase( Application.ProjectCurr.getProjectName() ) ) 
 					SetFontBold = true;
 				else 
 					SetFontBold = false;

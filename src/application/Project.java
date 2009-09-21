@@ -1,23 +1,39 @@
 package application;
 
+import java.io.FileWriter;
+import java.io.Writer;
+import java.util.Observable;
+
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import gui.ProjectWindow;
 
-public class Project extends Object{
+@XmlRootElement public class Project extends Observable {
 
-	private String NewLine = Application.RunInfo.AppNewLineString();
+	// --- Konstanten ------------------------------------------
+	private static String NewLine = Application.RunInfo.AppNewLineString();
 	
-	public ProjectWindow ProjectGUI;
-	public boolean ProjectUnsaved = false;
+	// --- GUI der aktuellen Projekt-Instanz -------------------
+	@XmlTransient public ProjectWindow ProjectGUI = new ProjectWindow(this);
 	
-	public String ProjectFolder;
-	public String ProjectName;
-	public String ProjectDescription;
+	// --- Objekt- / Projektvariablen --------------------------
+	@XmlTransient public boolean ProjectUnsaved = false;
+	
+	// --- Speichervariablen der Projektdatei ------------------ 
+	private String ProjectFolder;
+	private String ProjectName;
+	private String ProjectDescription;
 	
 	
+	/**
+	 * Creating a new MAS-Project
+	 */
 	public void addnew() {
 		// --- Anlegen eines neuen Projekts ---------------
 		String ProjectNamePrefix = Language.translate("Neues Projekt");
@@ -32,11 +48,9 @@ public class Project extends Object{
 			Index = Application.Projects.getIndexByName( ProjectNameTest );
 			i++;
 		}
-		ProjectName = ProjectNameTest;
-		
-		// --- Entprechendes GUI öffnen -------------------
-		ProjectGUI = new ProjectWindow();		
-		ProjectGUI.ProjectTitel.setText(ProjectName);
+		// --- Projektnamen für diese Instanz festlegen --- 
+		setProjectName( ProjectNameTest );
+		ProjectUnsaved = false;
 		
 		// --- Objekt an die Projektauflistung hängen -----
 		Application.Projects.add( this );
@@ -49,7 +63,9 @@ public class Project extends Object{
 		Application.setTitelAddition( ProjectName );
 		Application.setStatusBar( "" );		
 	};
-	
+	/**
+	 * Open an existing MAS-Project
+	 */
 	public void open() {
 		// --- Öffnen eines neuen Pojekts -----------------
 		JFileChooser fc = new JFileChooser( Application.RunInfo.PathProjects(true) );
@@ -63,17 +79,45 @@ public class Project extends Object{
 	    System.out.println( SelectedFile );
 
 	    
-	    
-		ProjectGUI = new ProjectWindow();
-		setMaximized();
+		this.setMaximized();
 		//Application.Projects.add();
 
 	}
-
-	public void save() {
-		// --- Speichern des aktuellen Pojekts ----
-		Application.MainWindow.setStatusBar("Projekt speichern ... ");
+	/**
+	 * Save the current MAS-Project
+	 */
+	public boolean save() {
+		// --- Speichern des aktuellen Pojekts ------------
+		Application.MainWindow.setStatusBar( ProjectName + ": " + Language.translate("speichern") + " ... ");
 		
+		if ( ProjectFolder == null) {
+			JFileChooser fc = new JFileChooser( Application.RunInfo.PathProjects(true) );
+			fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+			fc.setMultiSelectionEnabled(false);		 
+			fc.setDialogTitle( Language.translate("Projekt öffnen") );
+			if ( fc.showOpenDialog( Application.MainWindow ) != JFileChooser.APPROVE_OPTION ){
+				return false;
+			}
+		}
+		
+		
+		try {			
+			// --- Kontext und Marshaller vorbereiten 
+			JAXBContext pc = JAXBContext.newInstance( getClass() ); 
+			Marshaller pm = pc.createMarshaller(); 
+			pm.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE ); 
+			pm.marshal( this, System.out );
+			// --- Objektwerte in xml-Datei schreiben -----
+			Writer pw = new FileWriter( "club-jaxb.xml" );
+			pm.marshal( this, pw );
+			
+		} 
+		catch (Exception e) {
+			System.out.println("XML - Fehler !");
+			e.printStackTrace();
+		}
+		Application.MainWindow.setStatusBar("");
+		return true;		
 	}
 	
 	public void close() {
@@ -84,16 +128,21 @@ public class Project extends Object{
 		Application.MainWindow.setStatusBar(Language.translate("Projekt schliessen") + " ...");
 		if ( ProjectUnsaved ) {
 			MsgHead = Language.translate("Projekt '@' speichern?");
-			MsgHead = MsgHead.replace( "'@'", "'" + ProjectName + "'");
-			
+			MsgHead = MsgHead.replace( "'@'", "'" + ProjectName + "'");			
 			MsgText = Language.translate(
 						"Das aktuelle Projekt '@' ist noch nicht gespeichert!" + NewLine + 
 						"Möchten Sie es nun speichern ?");
 			MsgText = MsgText.replace( "'@'", "'" + ProjectName + "'");
 			
-			Integer MsgAnswer = JOptionPane.showInternalConfirmDialog( Application.MainWindow.getContentPane(), MsgText, MsgHead, JOptionPane.YES_NO_OPTION);
-			if ( MsgAnswer == 0 ) 
-				save();
+			Integer MsgAnswer = JOptionPane.showInternalConfirmDialog ( 
+					Application.MainWindow.getContentPane(), 
+					MsgText, MsgHead, JOptionPane.YES_NO_CANCEL_OPTION );
+			if ( MsgAnswer == JOptionPane.CANCEL_OPTION ) {
+				return;
+			}
+			else if ( MsgAnswer == JOptionPane.YES_OPTION ) {
+				if ( save()== false ) return;
+			}
 		}
 		// --- Projekt kann geschlossen werden ------------
 		int Index = Application.Projects.getIndexByName( ProjectName );
@@ -131,6 +180,53 @@ public class Project extends Object{
 		((BasicInternalFrameUI) Application.ProjectCurr.ProjectGUI.getUI()).setNorthPane(null);
 		Application.MainWindow.ProjectDesktop.getDesktopManager().maximizeFrame( ProjectGUI );		
 	}
+
 	
+
+
+	/**
+	 * @param projectFolder the projectName to set
+	 */
+	public void setProjectName(String projectName) {
+		ProjectName = projectName;
+		setChanged();
+		notifyObservers( "ProjectName" );
+	}
+	/**
+	 * @return the projectName
+	 */
+	public String getProjectName() {
+		return ProjectName;
+	}
+	
+	/**
+	 * @param projectDescription the projectDescription to set
+	 */
+	public void setProjectDescription(String projectDescription) {
+		ProjectDescription = projectDescription;
+		setChanged();
+		notifyObservers( "ProjectDescription" );
+	}
+	/**
+	 * @return the projectDescription
+	 */
+	public String getProjectDescription() {
+		return ProjectDescription;
+	}
+	
+	/**
+	 * @param projectFolder the projectFolder to set
+	 */
+	public void setProjectFolder(String projectFolder) {
+		ProjectFolder = projectFolder;
+		setChanged();
+		notifyObservers( "ProjectFolder" );
+	}
+	/**
+	 * @return the projectFolder
+	 */
+	public String getProjectFolder() {
+		return ProjectFolder;
+	}
 	
 }
