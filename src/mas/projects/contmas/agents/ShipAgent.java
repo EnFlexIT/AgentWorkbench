@@ -263,10 +263,10 @@ public class ShipAgent extends PassiveContainerAgent implements TransportOrderOf
 									upmostContainer=curContainer;
 								}
 							}
-						}
-						if(upmostContainer!=null){
+						} //end while
+						if(upmostContainer!=null){ //an dieser Koordinate steht ein Container obenauf
 							TransportOrder TO=new TransportOrder();
-							TO.setStarts_at(myAgent.getAID());
+							TO.setStarts_at(((ContainerAgent) myAgent).ontologyRepresentation);
 				//		TO.setEnds_at(new Yard());
 							TransportOrderChain TOChain=new TransportOrderChain();
 							TOChain.addIs_linked_by(TO);
@@ -281,24 +281,6 @@ public class ShipAgent extends PassiveContainerAgent implements TransportOrderOf
 							upmostContainer=null;
 						}
 					}
-				BlockAddress curContainer;
-				System.out.println("allContainers.hasNext():"+allContainers.hasNext());
-				while(allContainers.hasNext()){
-					curContainer=(BlockAddress) allContainers.next();
-					LoadList currentLoadList=new LoadList();
-					//TODO Bay-Map durchlaufen und oberste Lage bestimmen, transportOrder ausfertigen
-					TransportOrder TO=new TransportOrder();
-					//Container transportObject=curContainer.g();
-					Container transportObject=new Container();
-					//TO.setStarts_at(myAgent.getAID());
-					TO.setStarts_at(((ContainerAgent) myAgent).ontologyRepresentation);
-			//		TO.setEnds_at(new Yard());
-					TransportOrderChain TOChain=new TransportOrderChain();
-					TOChain.addIs_linked_by(TO);
-					TOChain.setTransports(transportObject);
-					currentLoadList.setConsists_of(TOChain);
-					
-					myAgent.addBehaviour(new announceLoadOrders(myAgent,currentLoadList));
 				}
 				//Variante: alle Container einer Lage zusammen
 //				myAgent.addBehaviour(new announceLoadOrders(myAgent,completeLoadList));

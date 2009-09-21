@@ -46,9 +46,9 @@ public class RandomGeneratorAgent extends ContainerAgent{
 		            reply.setPerformative(ACLMessage.INFORM); 
 					Integer width, length, height;
 					Random RandomGenerator=new Random(); 
-					width=RandomGenerator.nextInt(input.getX_dimension());
-					length=RandomGenerator.nextInt(input.getY_dimension());
-					height=RandomGenerator.nextInt(input.getZ_dimension());
+					width=RandomGenerator.nextInt(input.getX_dimension())+1;
+					length=RandomGenerator.nextInt(input.getY_dimension())+1;
+					height=RandomGenerator.nextInt(input.getZ_dimension())+1;
 					BayMap LoadBay=new BayMap();
 					LoadBay.setX_dimension(width);
 					LoadBay.setY_dimension(length);
@@ -121,7 +121,9 @@ public class RandomGeneratorAgent extends ContainerAgent{
 						for(int y=0;y<length;y++){
 							for(int x=0;x<width;x++){
 								//System.out.println("runde");
-								if(RandomGenerator.nextInt(2)==1 && (z==0 || 1==2)){ //TODO Abfrage, ob unterer Container schon vorhanden (keine Container "in die Luft" stellen)
+//								if(RandomGenerator.nextInt(2)==1 && (z==0 || 1==2)){ //TODO Abfrage, ob unterer Container schon vorhanden (keine Container "in die Luft" stellen)
+								if(RandomGenerator.nextInt(2)==1){ //TODO Abfrage, ob unterer Container schon vorhanden (keine Container "in die Luft" stellen)
+
 									//System.out.println("zufällig");
 									
 									c=new Container();

@@ -62,20 +62,26 @@ public class recieveLoadOrders extends ContractNetResponder{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		reply.setPerformative(ACLMessage.REFUSE);
+
 		if(false){
 			reply.setPerformative(ACLMessage.REFUSE);
 		}else{
-			reply.setPerformative(ACLMessage.PROPOSE);
-			Concept content;
+			System.out.println("Generell kann proposed werden");
 			try {
 			content = ((AgentAction) myAgent.getContentManager().extractContent(cfp));
 	        if(content instanceof CallForProposalsOnLoadStage) {
+				System.out.println("ist auch ein call for proposals");
+
 	        	CallForProposalsOnLoadStage call=(CallForProposalsOnLoadStage) content;
-	        	LoadList liste =call.getRequired_turnover_capacity();
-	        	Iterator toc=liste.getConsists_of().getAllIs_linked_by();
+	        	LoadList liste=call.getRequired_turnover_capacity();
+	        	Iterator allTocs=liste.getAllConsists_of();
+	        	Iterator toc=((TransportOrderChain) allTocs.next()).getAllIs_linked_by();
 	        	TransportOrder matchingOrder=null;
 
 	        	while(toc.hasNext()){
+					System.out.println("ein chain-link weiter");
+
 	        		TransportOrder curTO=(TransportOrder) toc.next();
 	        		ContainerHolder start=(ContainerHolder) curTO.getStarts_at();
 	        		ContainerHolder end=(ContainerHolder) curTO.getEnds_at();
@@ -83,15 +89,22 @@ public class recieveLoadOrders extends ContractNetResponder{
 	        		Class operator=((ContainerAgent) myAgent).ontologyRepresentation.getClass();
 	        		System.out.println("operator: "+operator.getSimpleName());
 	        		System.out.println("startat: "+start.getClass().getSimpleName());
-	        		if(operator.getSimpleName()=="Crane" && start.getClass().getSimpleName()=="Ship"){
+	        		if(operator.getSimpleName().equals("Crane") && start.getClass().getSimpleName().equals("Ship")){
+						System.out.println("Start und Ende passen");
 	        			matchingOrder=curTO;
 	        		}
 	        	}
-				ProposeLoadOffer act=new ProposeLoadOffer();
-				Random RandomGenerator=new Random(); 
-				matchingOrder.setTakes(RandomGenerator.nextFloat());
-				act.setLoad_offer(matchingOrder);
-				myAgent.getContentManager().fillContent(cfp, act);
+	        	if(matchingOrder!=null){
+					System.out.println("passende TransportOrder gefunden");
+
+					ProposeLoadOffer act=new ProposeLoadOffer();
+					Random RandomGenerator=new Random(); 
+					matchingOrder.setTakes(RandomGenerator.nextFloat());
+					act.setLoad_offer(matchingOrder);
+					reply.setPerformative(ACLMessage.PROPOSE);
+
+					myAgent.getContentManager().fillContent(reply, act);
+	        	}
 	        }
 				
 			} catch (CodecException e) {
