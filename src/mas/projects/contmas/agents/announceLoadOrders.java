@@ -89,7 +89,8 @@ public class announceLoadOrders extends ContractNetInitiator {
 				}
 
 
-			}
+			}// End if content !=null
+			
 		}
 		ACLMessage accept=null;
 		if(bestOffer!=null){
@@ -99,7 +100,7 @@ public class announceLoadOrders extends ContractNetInitiator {
 		}
 		for (Object message : responses) {
 			ACLMessage propose = (ACLMessage) message;
-			if (propose != bestOfferMessage) {
+			if (propose != bestOfferMessage && propose.getPerformative()==ACLMessage.PROPOSE) {
 				accept = propose.createReply();
 				accept.setPerformative(ACLMessage.REJECT_PROPOSAL);
 				acceptances.add(accept);

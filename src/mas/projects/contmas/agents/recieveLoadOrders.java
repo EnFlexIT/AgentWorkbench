@@ -47,52 +47,52 @@ public class recieveLoadOrders extends ContractNetResponder{
 			content = ((AgentAction) myAgent.getContentManager().extractContent(cfp));
 
 	        if (content instanceof CallForProposalsOnLoadStage) {
-	        	if(((CraneAgent) myAgent).loadOrderQueue.size()>=((CraneAgent) myAgent).lengthOfQueue){//schon genug Aufträge
+	        	if(((CraneAgent) myAgent).loadOrderPostQueue.size()>=((CraneAgent) myAgent).lengthOfQueue){//schon genug Aufträge
 	        		System.out.println("schon genug Aufträge");
 		        	reply.setPerformative(ACLMessage.REFUSE);
 		    		return reply;
 
 	        	} else { 
 		        	reply.setPerformative(ACLMessage.PROPOSE);
-	        		((CraneAgent) myAgent).loadOrderQueue.add(((CallForProposalsOnLoadStage)content).getRequired_turnover_capacity());
+	        		((CraneAgent) myAgent).loadOrderPostQueue.add(((CallForProposalsOnLoadStage)content).getRequired_turnover_capacity());
+		        	//System.out.println("ist auch ein call for proposals");
 
+		        	CallForProposalsOnLoadStage call=(CallForProposalsOnLoadStage) content;
+		        	LoadList liste=call.getRequired_turnover_capacity();
+		        	//System.out.println("LoadList besteht aus "+liste.getConsists_of().size()+" TransportOrderChains");
+
+		        	Iterator allTocs=liste.getAllConsists_of();
+		        	Iterator toc=((TransportOrderChain) allTocs.next()).getAllIs_linked_by();
+		        	TransportOrder matchingOrder=null;
+
+		        	while(toc.hasNext()){
+						//System.out.println("ein chain-link weiter");
+
+		        		TransportOrder curTO=(TransportOrder) toc.next();
+		        		ContainerHolder start=(ContainerHolder) curTO.getStarts_at();
+		        		ContainerHolder end=(ContainerHolder) curTO.getEnds_at();
+		        		//TODO den passenden ContainerHolder herausfinden, den spezifischsten, aber der auf operator und ausschreiber passt
+		        		Class operator=((ContainerAgent) myAgent).ontologyRepresentation.getClass();
+		        		//System.out.println("operator: "+operator.getSimpleName());
+		        		//System.out.println("startat: "+start.getClass().getSimpleName());
+		        		if(operator.getSimpleName().equals("Crane") && start.getClass().getSimpleName().equals("Ship")){
+							//System.out.println("Start und Ende passen");
+		        			matchingOrder=curTO;
+		        		}
+		        	}
+		        	if(matchingOrder!=null){
+						//System.out.println("passende TransportOrder gefunden");
+
+						ProposeLoadOffer act=new ProposeLoadOffer();
+						Random RandomGenerator=new Random(); 
+						matchingOrder.setTakes(RandomGenerator.nextFloat());
+						act.setLoad_offer(matchingOrder);
+						reply.setPerformative(ACLMessage.PROPOSE);
+
+						myAgent.getContentManager().fillContent(reply, act);
+		        	}
 	        	}
-	        	//System.out.println("ist auch ein call for proposals");
 
-	        	CallForProposalsOnLoadStage call=(CallForProposalsOnLoadStage) content;
-	        	LoadList liste=call.getRequired_turnover_capacity();
-	        	//System.out.println("LoadList besteht aus "+liste.getConsists_of().size()+" TransportOrderChains");
-
-	        	Iterator allTocs=liste.getAllConsists_of();
-	        	Iterator toc=((TransportOrderChain) allTocs.next()).getAllIs_linked_by();
-	        	TransportOrder matchingOrder=null;
-
-	        	while(toc.hasNext()){
-					//System.out.println("ein chain-link weiter");
-
-	        		TransportOrder curTO=(TransportOrder) toc.next();
-	        		ContainerHolder start=(ContainerHolder) curTO.getStarts_at();
-	        		ContainerHolder end=(ContainerHolder) curTO.getEnds_at();
-	        		//TODO den passenden ContainerHolder herausfinden, den spezifischsten, aber der auf operator und ausschreiber passt
-	        		Class operator=((ContainerAgent) myAgent).ontologyRepresentation.getClass();
-	        		//System.out.println("operator: "+operator.getSimpleName());
-	        		//System.out.println("startat: "+start.getClass().getSimpleName());
-	        		if(operator.getSimpleName().equals("Crane") && start.getClass().getSimpleName().equals("Ship")){
-						//System.out.println("Start und Ende passen");
-	        			matchingOrder=curTO;
-	        		}
-	        	}
-	        	if(matchingOrder!=null){
-					//System.out.println("passende TransportOrder gefunden");
-
-					ProposeLoadOffer act=new ProposeLoadOffer();
-					Random RandomGenerator=new Random(); 
-					matchingOrder.setTakes(RandomGenerator.nextFloat());
-					act.setLoad_offer(matchingOrder);
-					reply.setPerformative(ACLMessage.PROPOSE);
-
-					myAgent.getContentManager().fillContent(reply, act);
-	        	}
 
 	        }
 		} catch (UngroundedException e) {
@@ -110,6 +110,32 @@ public class recieveLoadOrders extends ContractNetResponder{
 	protected ACLMessage handleAcceptProposal(ACLMessage cfp,ACLMessage propose, ACLMessage accept){
 		ACLMessage inform = accept.createReply();
 		inform.setPerformative(ACLMessage.INFORM);
+		Concept content;
+		try {
+			content = ((AgentAction) myAgent.getContentManager().extractContent(cfp));
+			System.out.println("Vor entfernen"+((CraneAgent) myAgent).loadOrderPostQueue.size());
+			Iterator queue=((CraneAgent) myAgent).loadOrderPostQueue.iterator();
+			while(queue.hasNext()){
+				LoadList curList=(LoadList) queue.next();
+//				curList.getAllConsists_of().next()
+				if(((CallForProposalsOnLoadStage)content).getRequired_turnover_capacity().equals(curList)){
+					queue.remove();
+//					System.out.println(queue.);
+
+				}
+			}
+			System.out.println("Nach entfernen"+((CraneAgent) myAgent).loadOrderPostQueue.size());
+			System.out.println("Auftrag abgearbeitet, auswarteschlage entfernen");
+		} catch (UngroundedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CodecException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (OntologyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return inform;
 	}
 	
