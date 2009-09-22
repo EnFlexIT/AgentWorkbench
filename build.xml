@@ -85,9 +85,10 @@
  				<attribute name="Built-Lang" value="${user.language}"/>
     		    <attribute name="Main-Class" value="application.Application"/>
  				<attribute name="Class-Path" value="${destinClassPath}"/>
-			</manifest>
-    		<fileset dir="${binaryDir}" excludes="**/properties/**" />
-    		<zipfileset excludes="META-INF/*.SF" src="D:/10 Java Projects/.metadata/.plugins/org.dyno.visual.swing/layoutext/grouplayout.jar"/>    		
+			</manifest>    		
+    		<fileset dir="${binaryDir}">
+    			<exclude name="**/mas/projects/**" />    			
+    		</fileset>    		
         </jar>
     	
     	<!-- Die erzeugte jar ausführen -->
