@@ -12,5 +12,10 @@
 	<classpathentry kind="lib" path="lib/jade/lib/iiop.jar"/>
 	<classpathentry kind="lib" path="lib/jade/lib/jade.jar"/>
 	<classpathentry kind="lib" path="lib/jade/lib/jadeTools.jar"/>
+	<classpathentry kind="lib" path="lib/batik/lib/batik-swing.jar"/>
+	<classpathentry kind="lib" path="lib/batik/lib/batik-svg-dom.jar"/>
+	<classpathentry kind="lib" path="lib/batik/lib/xml-apis-ext.jar"/>
+	<classpathentry kind="lib" path="lib/batik/lib/batik-script.jar"/>
+	<classpathentry kind="lib" path="lib/batik/lib/batik-bridge.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
