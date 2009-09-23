@@ -118,7 +118,7 @@ public class recieveLoadOrders extends ContractNetResponder{
 			while(queue.hasNext()){
 				LoadList curList=(LoadList) queue.next();
 //				curList.getAllConsists_of().next()
-				if(((CallForProposalsOnLoadStage)content).getRequired_turnover_capacity().equals(curList)){
+				if(((CallForProposalsOnLoadStage) content).getRequired_turnover_capacity()==curList){
 					queue.remove();
 //					System.out.println(queue.);
 
