@@ -62,24 +62,8 @@ public class recieveLoadOrders extends ContractNetResponder{
 		        	//System.out.println("LoadList besteht aus "+liste.getConsists_of().size()+" TransportOrderChains");
 
 		        	Iterator allTocs=liste.getAllConsists_of();
-		        	Iterator toc=((TransportOrderChain) allTocs.next()).getAllIs_linked_by();
-		        	TransportOrder matchingOrder=null;
+		        	TransportOrder matchingOrder=((ContainerAgent) myAgent).findMatchingOrder((TransportOrderChain) allTocs.next());
 
-		        	while(toc.hasNext()){
-						//System.out.println("ein chain-link weiter");
-
-		        		TransportOrder curTO=(TransportOrder) toc.next();
-		        		ContainerHolder start=(ContainerHolder) curTO.getStarts_at();
-		        		ContainerHolder end=(ContainerHolder) curTO.getEnds_at();
-		        		//TODO den passenden ContainerHolder herausfinden, den spezifischsten, aber der auf operator und ausschreiber passt
-		        		Class operator=((ContainerAgent) myAgent).ontologyRepresentation.getClass();
-		        		//System.out.println("operator: "+operator.getSimpleName());
-		        		//System.out.println("startat: "+start.getClass().getSimpleName());
-		        		if(operator.getSimpleName().equals("Crane") && start.getClass().getSimpleName().equals("Ship")){
-							//System.out.println("Start und Ende passen");
-		        			matchingOrder=curTO;
-		        		}
-		        	}
 		        	if(matchingOrder!=null){
 						//System.out.println("passende TransportOrder gefunden");
 
@@ -113,18 +97,16 @@ public class recieveLoadOrders extends ContractNetResponder{
 		Concept content;
 		try {
 			content = ((AgentAction) myAgent.getContentManager().extractContent(cfp));
-			System.out.println("Vor entfernen"+((CraneAgent) myAgent).loadOrderPostQueue.size());
 			Iterator queue=((CraneAgent) myAgent).loadOrderPostQueue.iterator();
 			while(queue.hasNext()){
 				LoadList curList=(LoadList) queue.next();
-//				curList.getAllConsists_of().next()
-				if(((CallForProposalsOnLoadStage) content).getRequired_turnover_capacity()==curList){
+				LoadList requiredCapacity=((CallForProposalsOnLoadStage) content).getRequired_turnover_capacity();
+				TransportOrderChain proposedTOC=(TransportOrderChain) requiredCapacity.getAllConsists_of().next();
+				TransportOrderChain queuedTOC=(TransportOrderChain) curList.getAllConsists_of().next();
+				if(proposedTOC.getTransports().getId().equals(queuedTOC.getTransports().getId())){
 					queue.remove();
-//					System.out.println(queue.);
-
 				}
 			}
-			System.out.println("Nach entfernen"+((CraneAgent) myAgent).loadOrderPostQueue.size());
 			System.out.println("Auftrag abgearbeitet, auswarteschlage entfernen");
 		} catch (UngroundedException e) {
 			// TODO Auto-generated catch block
@@ -138,5 +120,31 @@ public class recieveLoadOrders extends ContractNetResponder{
 		}
 		return inform;
 	}
-	
+	protected ACLMessage handleRefuseProposal(ACLMessage cfp,ACLMessage propose, ACLMessage accept){
+		Concept content;
+		try {
+			content = ((AgentAction) myAgent.getContentManager().extractContent(cfp));
+			Iterator queue=((CraneAgent) myAgent).loadOrderPostQueue.iterator();
+			while(queue.hasNext()){
+				LoadList curList=(LoadList) queue.next();
+				LoadList requiredCapacity=((CallForProposalsOnLoadStage) content).getRequired_turnover_capacity();
+				TransportOrderChain proposedTOC=(TransportOrderChain) requiredCapacity.getAllConsists_of().next();
+				TransportOrderChain queuedTOC=(TransportOrderChain) curList.getAllConsists_of().next();
+				if(proposedTOC.getTransports().getId().equals(queuedTOC.getTransports().getId())){
+					queue.remove();
+					System.out.println("Test");
+				}
+			}
+		} catch (UngroundedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CodecException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (OntologyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
 }

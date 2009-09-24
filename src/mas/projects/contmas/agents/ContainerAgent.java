@@ -14,6 +14,7 @@ import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.util.leap.ArrayList;
+import jade.util.leap.Iterator;
 import jade.util.leap.List;
 
 /**
@@ -98,5 +99,20 @@ public class ContainerAgent extends Agent {
 			output.add(aid);
 		}
     	return output;
+    }
+    public TransportOrder findMatchingOrder(TransportOrderChain haystack){
+    	Iterator toc=haystack.getAllIs_linked_by();
+    	TransportOrder matchingOrder=null;
+    	while(toc.hasNext()){
+    		TransportOrder curTO=(TransportOrder) toc.next();
+    		ContainerHolder start=(ContainerHolder) curTO.getStarts_at();
+    		ContainerHolder end=(ContainerHolder) curTO.getEnds_at();
+    		//TODO den passenden ContainerHolder herausfinden, den spezifischsten, aber der auf operator und ausschreiber passt
+    		Class operator=ontologyRepresentation.getClass();
+    		if(operator.getSimpleName().equals("Crane") && start.getClass().getSimpleName().equals("Ship")){ //TODO hardcoded
+    			matchingOrder=curTO;
+    		}
+    	}
+    	return matchingOrder;
     }
 }
