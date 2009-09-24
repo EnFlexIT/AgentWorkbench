@@ -120,7 +120,7 @@ public class recieveLoadOrders extends ContractNetResponder{
 		}
 		return inform;
 	}
-	protected ACLMessage handleRefuseProposal(ACLMessage cfp,ACLMessage propose, ACLMessage accept){
+	protected void handleRejectProposal(ACLMessage cfp,ACLMessage propose, ACLMessage accept){
 		Concept content;
 		try {
 			content = ((AgentAction) myAgent.getContentManager().extractContent(cfp));
@@ -132,7 +132,6 @@ public class recieveLoadOrders extends ContractNetResponder{
 				TransportOrderChain queuedTOC=(TransportOrderChain) curList.getAllConsists_of().next();
 				if(proposedTOC.getTransports().getId().equals(queuedTOC.getTransports().getId())){
 					queue.remove();
-					System.out.println("Test");
 				}
 			}
 		} catch (UngroundedException e) {
@@ -145,6 +144,5 @@ public class recieveLoadOrders extends ContractNetResponder{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return null;
 	}
 }
