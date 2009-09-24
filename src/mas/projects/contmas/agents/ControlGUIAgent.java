@@ -29,10 +29,12 @@ import mas.projects.contmas.ontology.*;
 
 public class ControlGUIAgent extends GuiAgent{
     AID[] randomGenerators=null;
-
+    private ControlGUI myGui = null;
+    
+    
 	protected void setup(){ 
 		// Instanciate the gui
-		ControlGUI myGui = new ControlGUI(this);
+		myGui = new ControlGUI(this);
 		myGui.setVisible(true);
 		JDesktopPane desktop=Application.MainWindow.ProjectDesktop;
 		desktop.add(myGui);
@@ -83,5 +85,11 @@ public class ControlGUIAgent extends GuiAgent{
 	         doDelete();
 	         System.exit(0);
 		}
+		
 	}
+	
+	protected void takeDown () {
+		myGui.dispose();
+	}
+	 
 }
