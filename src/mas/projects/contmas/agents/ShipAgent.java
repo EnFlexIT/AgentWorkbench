@@ -88,6 +88,7 @@ public class ShipAgent extends PassiveContainerAgent implements TransportOrderOf
 			    return messages; 
 			} catch (CodecException e) {
 				// TODO Auto-generated catch block
+				System.out.println("Ship - prepareRequests - fillContent - CodecException");
 				e.printStackTrace();
 			} catch (OntologyException e) {
 				// TODO Auto-generated catch block
@@ -269,6 +270,9 @@ public class ShipAgent extends PassiveContainerAgent implements TransportOrderOf
 				//		TO.setEnds_at(new Yard());
 							TransportOrderChain TOChain=new TransportOrderChain();
 							TOChain.addIs_linked_by(TO);
+							
+							//TO.setLinks(TOChain); 
+							
 							TOChain.setTransports(upmostContainer.getLocates());
 							completeLoadList.addConsists_of(TOChain);
 						

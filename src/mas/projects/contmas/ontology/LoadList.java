@@ -6,10 +6,10 @@ import jade.util.leap.*;
 import jade.core.*;
 
 /**
-   * collection of transport orders for one long-time loading or unloading process
+   * collection of transport orders for one long-time loading or unloading process (layer-kind of cfp)
 * Protege name: LoadList
 * @author ontology bean generator
-* @version 2009/09/15, 23:06:53
+* @version 2009/10/5, 23:56:08
 */
 public class LoadList implements Concept {
 

@@ -8,19 +8,19 @@ import jade.core.*;
 /**
 * Protege name: BayMap
 * @author ontology bean generator
-* @version 2009/09/15, 23:06:53
+* @version 2009/10/5, 23:56:07
 */
 public class BayMap implements Concept {
 
    /**
-* Protege name: x_dimension
+* Protege name: y_dimension
    */
-   private int x_dimension;
-   public void setX_dimension(int value) { 
-    this.x_dimension=value;
+   private int y_dimension;
+   public void setY_dimension(int value) { 
+    this.y_dimension=value;
    }
-   public int getX_dimension() {
-     return this.x_dimension;
+   public int getY_dimension() {
+     return this.y_dimension;
    }
 
    /**
@@ -57,14 +57,14 @@ public class BayMap implements Concept {
    }
 
    /**
-* Protege name: y_dimension
+* Protege name: x_dimension
    */
-   private int y_dimension;
-   public void setY_dimension(int value) { 
-    this.y_dimension=value;
+   private int x_dimension;
+   public void setX_dimension(int value) { 
+    this.x_dimension=value;
    }
-   public int getY_dimension() {
-     return this.y_dimension;
+   public int getX_dimension() {
+     return this.x_dimension;
    }
 
 }

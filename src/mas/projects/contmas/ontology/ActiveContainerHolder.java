@@ -8,19 +8,21 @@ import jade.core.*;
    * can manipulate containers, can move them between domains, e.g. crane
 * Protege name: ActiveContainerHolder
 * @author ontology bean generator
-* @version 2009/09/15, 23:06:53
+* @version 2009/10/5, 23:56:07
 */
 public class ActiveContainerHolder extends ContainerHolder{ 
 
    /**
-* Protege name: tonnage_capacity
+   * x-over-y
+capability of device to move x container above y
+* Protege name: stowage_capability
    */
-   private float tonnage_capacity;
-   public void setTonnage_capacity(float value) { 
-    this.tonnage_capacity=value;
+   private String stowage_capability;
+   public void setStowage_capability(String value) { 
+    this.stowage_capability=value;
    }
-   public float getTonnage_capacity() {
-     return this.tonnage_capacity;
+   public String getStowage_capability() {
+     return this.stowage_capability;
    }
 
    /**
@@ -28,11 +30,11 @@ public class ActiveContainerHolder extends ContainerHolder{
 * Protege name: capable_of
    */
    private List capable_of = new ArrayList();
-   public void addCapable_of(Object elem) { 
+   public void addCapable_of(Domain elem) { 
      List oldList = this.capable_of;
      capable_of.add(elem);
    }
-   public boolean removeCapable_of(Object elem) {
+   public boolean removeCapable_of(Domain elem) {
      List oldList = this.capable_of;
      boolean result = capable_of.remove(elem);
      return result;
@@ -46,16 +48,14 @@ public class ActiveContainerHolder extends ContainerHolder{
    public void setCapable_of(List l) {capable_of = l; }
 
    /**
-   * x-over-y
-capability of device to move x container above y
-* Protege name: stowage_capability
+* Protege name: tonnage_capacity
    */
-   private String stowage_capability;
-   public void setStowage_capability(String value) { 
-    this.stowage_capability=value;
+   private float tonnage_capacity;
+   public void setTonnage_capacity(float value) { 
+    this.tonnage_capacity=value;
    }
-   public String getStowage_capability() {
-     return this.stowage_capability;
+   public float getTonnage_capacity() {
+     return this.tonnage_capacity;
    }
 
 }

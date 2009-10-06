@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: Container
 * @author ontology bean generator
-* @version 2009/09/15, 23:06:53
+* @version 2009/10/5, 23:56:08
 */
 public class Container implements Concept {
 
@@ -24,14 +24,25 @@ public class Container implements Concept {
    }
 
    /**
-* Protege name: height
+* Protege name: is_coolable
    */
-   private float height;
-   public void setHeight(float value) { 
-    this.height=value;
+   private boolean is_coolable;
+   public void setIs_coolable(boolean value) { 
+    this.is_coolable=value;
    }
-   public float getHeight() {
-     return this.height;
+   public boolean getIs_coolable() {
+     return this.is_coolable;
+   }
+
+   /**
+* Protege name: length
+   */
+   private float length;
+   public void setLength(float value) { 
+    this.length=value;
+   }
+   public float getLength() {
+     return this.length;
    }
 
    /**
@@ -57,6 +68,17 @@ public class Container implements Concept {
    }
 
    /**
+* Protege name: height
+   */
+   private float height;
+   public void setHeight(float value) { 
+    this.height=value;
+   }
+   public float getHeight() {
+     return this.height;
+   }
+
+   /**
    * LSCU 107737 9
 * Protege name: id
    */
@@ -66,28 +88,6 @@ public class Container implements Concept {
    }
    public String getId() {
      return this.id;
-   }
-
-   /**
-* Protege name: is_coolable
-   */
-   private boolean is_coolable;
-   public void setIs_coolable(boolean value) { 
-    this.is_coolable=value;
-   }
-   public boolean getIs_coolable() {
-     return this.is_coolable;
-   }
-
-   /**
-* Protege name: length
-   */
-   private float length;
-   public void setLength(float value) { 
-    this.length=value;
-   }
-   public float getLength() {
-     return this.length;
    }
 
 }

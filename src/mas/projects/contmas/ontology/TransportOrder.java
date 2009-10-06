@@ -9,20 +9,30 @@ import jade.core.*;
    * step-like transport orders
 * Protege name: TransportOrder
 * @author ontology bean generator
-* @version 2009/09/15, 23:06:53
+* @version 2009/10/5, 23:56:07
 */
 public class TransportOrder implements Concept {
 
    /**
-   * required time to perform
-* Protege name: takes
+* Protege name: starts_at
    */
-   private float takes;
-   public void setTakes(float value) { 
-    this.takes=value;
+   private Object starts_at;
+   public void setStarts_at(Object value) { 
+    this.starts_at=value;
    }
-   public float getTakes() {
-     return this.takes;
+   public Object getStarts_at() {
+     return this.starts_at;
+   }
+
+   /**
+* Protege name: links
+   */
+   private TransportOrderChain links;
+   public void setLinks(TransportOrderChain value) { 
+    this.links=value;
+   }
+   public TransportOrderChain getLinks() {
+     return this.links;
    }
 
    /**
@@ -37,35 +47,15 @@ public class TransportOrder implements Concept {
    }
 
    /**
-* Protege name: links
+   * required time to perform
+* Protege name: takes
    */
-   private List links = new ArrayList();
-   public void addLinks(TransportOrderChain elem) { 
-     List oldList = this.links;
-     links.add(elem);
+   private float takes;
+   public void setTakes(float value) { 
+    this.takes=value;
    }
-   public boolean removeLinks(TransportOrderChain elem) {
-     List oldList = this.links;
-     boolean result = links.remove(elem);
-     return result;
-   }
-   public void clearAllLinks() {
-     List oldList = this.links;
-     links.clear();
-   }
-   public Iterator getAllLinks() {return links.iterator(); }
-   public List getLinks() {return links; }
-   public void setLinks(List l) {links = l; }
-
-   /**
-* Protege name: starts_at
-   */
-   private Object starts_at;
-   public void setStarts_at(Object value) { 
-    this.starts_at=value;
-   }
-   public Object getStarts_at() {
-     return this.starts_at;
+   public float getTakes() {
+     return this.takes;
    }
 
 }

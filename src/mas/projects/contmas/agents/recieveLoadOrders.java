@@ -39,20 +39,26 @@ public class recieveLoadOrders extends ContractNetResponder{
 	protected ACLMessage handleCfp(ACLMessage cfp){
 		ACLMessage reply = cfp.createReply();
 		Concept content;
+		System.out.println(myAgent.getAID().getLocalName()+": cfpEmpfangen");
 		try {
 			if(cfp.getContent()==null){
 				reply.setPerformative(ACLMessage.FAILURE);
+				System.out.println(myAgent.getAID().getLocalName()+": noContent");
 	    		return reply;
 			}
 			content = ((AgentAction) myAgent.getContentManager().extractContent(cfp));
 
 	        if (content instanceof CallForProposalsOnLoadStage) {
+				System.out.println(myAgent.getAID().getLocalName()+": lengthOfQueue: "+((CraneAgent) myAgent).lengthOfQueue+", loadOrderPostQueue.size(): "+((CraneAgent) myAgent).loadOrderPostQueue.size());
+
 	        	if(((CraneAgent) myAgent).loadOrderPostQueue.size()>=((CraneAgent) myAgent).lengthOfQueue){//schon genug Aufträge
-	        		System.out.println("schon genug Aufträge");
+					System.out.println(myAgent.getAID().getLocalName()+": schon genug Aufträge");
 		        	reply.setPerformative(ACLMessage.REFUSE);
 		    		return reply;
 
-	        	} else { 
+	        	} else {
+					System.out.println(myAgent.getAID().getLocalName()+": noch Kapazitäten vorhanden");
+
 		        	reply.setPerformative(ACLMessage.PROPOSE);
 	        		((CraneAgent) myAgent).loadOrderPostQueue.add(((CallForProposalsOnLoadStage)content).getRequired_turnover_capacity());
 		        	//System.out.println("ist auch ein call for proposals");
@@ -65,20 +71,22 @@ public class recieveLoadOrders extends ContractNetResponder{
 		        	TransportOrder matchingOrder=((ContainerAgent) myAgent).findMatchingOrder((TransportOrderChain) allTocs.next());
 
 		        	if(matchingOrder!=null){
-						//System.out.println("passende TransportOrder gefunden");
+						System.out.println(myAgent.getAID().getLocalName()+": TransportOrder gefunden, die zu mir passt");
 
-						ProposeLoadOffer act=new ProposeLoadOffer();
-						Random RandomGenerator=new Random(); 
-						matchingOrder.setTakes(RandomGenerator.nextFloat());
-						act.setLoad_offer(matchingOrder);
+						ProposeLoadOffer act=(((ActiveContainerAgent) myAgent).GetLoadProposal(matchingOrder));
 						reply.setPerformative(ACLMessage.PROPOSE);
 
 						myAgent.getContentManager().fillContent(reply, act);
+		        	} else {
+						System.out.println(myAgent.getAID().getLocalName()+": keine TransportOrder passt zu mir");
 		        	}
 	        	}
 
 
+	        } else {
+	        	System.out.println(myAgent.getAID().getLocalName()+": unbekannter inhalt in CFP");
 	        }
+	        
 		} catch (UngroundedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -92,22 +100,31 @@ public class recieveLoadOrders extends ContractNetResponder{
 		return reply;
 	}
 	protected ACLMessage handleAcceptProposal(ACLMessage cfp,ACLMessage propose, ACLMessage accept){
+		System.out.println(myAgent.getAID().getLocalName()+": Auftragsannahme empfangen");
 		ACLMessage inform = accept.createReply();
 		inform.setPerformative(ACLMessage.INFORM);
 		Concept content;
 		try {
 			content = ((AgentAction) myAgent.getContentManager().extractContent(cfp));
 			Iterator queue=((CraneAgent) myAgent).loadOrderPostQueue.iterator();
+			System.out.println(myAgent.getAID().getLocalName()+": Auftrag abgearbeitet");
+
 			while(queue.hasNext()){
+				System.out.println(myAgent.getAID().getLocalName()+": Auftrag überprüfen");
 				LoadList curList=(LoadList) queue.next();
 				LoadList requiredCapacity=((CallForProposalsOnLoadStage) content).getRequired_turnover_capacity();
 				TransportOrderChain proposedTOC=(TransportOrderChain) requiredCapacity.getAllConsists_of().next();
 				TransportOrderChain queuedTOC=(TransportOrderChain) curList.getAllConsists_of().next();
 				if(proposedTOC.getTransports().getId().equals(queuedTOC.getTransports().getId())){
+					((ActiveContainerAgent) myAgent).aquireContainer(proposedTOC.getTransports());
+					LoadList commissions=new LoadList();
+					commissions.addConsists_of(proposedTOC);
+					((ActiveContainerAgent) myAgent).commissions=commissions;
+
 					queue.remove();
+					System.out.println(myAgent.getAID().getLocalName()+": Aus Warteschlage entfernt");
 				}
 			}
-			System.out.println("Auftrag abgearbeitet, auswarteschlage entfernen");
 		} catch (UngroundedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

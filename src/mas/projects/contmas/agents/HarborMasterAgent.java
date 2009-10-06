@@ -33,9 +33,18 @@ public class HarborMasterAgent extends ContainerAgent {
 	protected void setupEnvironment(){
         Crane ontologyRepresentation=new Crane();
 		Domain terminalArea=new Land();
-		Subdomain habitat = new Rail();
+		Domain habitat = new Rail();
 		habitat.setLies_in(terminalArea);
         ontologyRepresentation.setLives_in(habitat);
+
+		Domain capability=new Rail();
+		ontologyRepresentation.addCapable_of(capability);
+		capability=new Street();
+		ontologyRepresentation.addCapable_of(capability);
+		capability=new Sea();
+		ontologyRepresentation.addCapable_of(capability);
+
+
         AgentContainer c = getContainerController();
         AgentController a;
 		try {
@@ -46,6 +55,7 @@ public class HarborMasterAgent extends ContainerAgent {
 
 			ontologyRepresentation=new Crane();
 			ontologyRepresentation.setLives_in(habitat);
+			ontologyRepresentation.addCapable_of(capability);
 			a=c.acceptNewAgent("Crane #2", new CraneAgent(ontologyRepresentation));
 	        a.start();
 	        

@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: ContainerHolder
 * @author ontology bean generator
-* @version 2009/09/15, 23:06:53
+* @version 2009/10/5, 23:56:07
 */
 public class ContainerHolder implements Concept {
 
@@ -16,11 +16,11 @@ public class ContainerHolder implements Concept {
    * the domain, in which the containerholder is located
 * Protege name: lives_in
    */
-   private Object lives_in;
-   public void setLives_in(Object value) { 
+   private Domain lives_in;
+   public void setLives_in(Domain value) { 
     this.lives_in=value;
    }
-   public Object getLives_in() {
+   public Domain getLives_in() {
      return this.lives_in;
    }
 

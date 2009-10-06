@@ -47,9 +47,11 @@ public class announceLoadOrders extends ContractNetInitiator {
 			messages.add(cfp);
 			return messages;
 		} catch (CodecException e) {
+			System.out.println("announceLoadOrders - prepareCfps - fillContent - CodecException");
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (OntologyException e) {
+			System.out.println("announceLoadOrders - prepareCfps - fillContent - OntologyException");
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
