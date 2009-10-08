@@ -1,4 +1,4 @@
-; Tue Sep 15 02:35:55 CEST 2009
+; Wed Oct 07 02:40:41 CEST 2009
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -19,7 +19,7 @@
 
 ([BROWSER_SLOT_NAMES] of  Property_List
 
-	(properties [Container-Ontologie_ProjectKB_Instance_10148]))
+	(properties [Container-Ontologie_ProjectKB_Instance_10154]))
 
 ([CLSES_TAB] of  Widget
 
@@ -79,19 +79,19 @@
 ([Container-Ontologie_ProjectKB_Instance_10147] of  Property_List
 )
 
-([Container-Ontologie_ProjectKB_Instance_10148] of  String
+([Container-Ontologie_ProjectKB_Instance_10154] of  String
 
 	(name ":INSTANCE-ANNOTATION")
 	(string_value "%3AANNOTATION-TEXT"))
 
-([Container-Ontologie_ProjectKB_Instance_10149] of  Map_Entry
+([Container-Ontologie_ProjectKB_Instance_10155] of  Map_Entry
 
 	(key "add_name_on_instance_form")
 	(key_class "java.lang.String")
 	(value "false")
 	(value_class "java.lang.String"))
 
-([Container-Ontologie_ProjectKB_Instance_10150] of  Map_Entry
+([Container-Ontologie_ProjectKB_Instance_10156] of  Map_Entry
 
 	(key "change_tracking_active")
 	(key_class "java.lang.String")
@@ -101,8 +101,8 @@
 ([Container-Ontologie_ProjectKB_Instance_10339] of  Map
 
 	(entries
-		[Container-Ontologie_ProjectKB_Instance_10149]
-		[Container-Ontologie_ProjectKB_Instance_10150]))
+		[Container-Ontologie_ProjectKB_Instance_10155]
+		[Container-Ontologie_ProjectKB_Instance_10156]))
 
 ([Container-Ontologie_ProjectKB_Instance_133] of  Widget
 

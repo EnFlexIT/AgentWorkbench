@@ -1,4 +1,4 @@
-; Tue Sep 15 02:35:55 CEST 2009
+; Wed Oct 07 02:40:39 CEST 2009
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -8,6 +8,10 @@
 	(%3AJADE-IGNORE FALSE))
 
 ([ActiveContainerHolder] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([AGV] of  %3AJADE-CLASS
 
 	(%3AJADE-IGNORE FALSE))
 
@@ -68,10 +72,10 @@
 ([Container-Ontologie_Instance_43] of  Crane
 
 	(capable_of
-		Sea
-		Land
-		Rail
-		Street)
+		[Sea]
+		[Land]
+		[Rail]
+		[Street])
 	(contains [Container-Ontologie_Instance_44])
 	(tonnage_capacity 5.0))
 
@@ -132,7 +136,7 @@
 
 ([project+annotation] of  %3APROJECT-ANNOTATION
 
-	(%3ALOCATION "F:\\Dokumente und Einstellungen\\Hanno - Felix Wagner\\eclipse-workspace\\ContAgent\\src")
+	(%3ALOCATION "C:\\Dokumente und Einstellungen\\Hanno - Felix Wagner\\eclipse-workspace\\AgentGUI\\src")
 	(%3AONTOLOGYNAME "ContainerTerminal")
 	(%3APACKAGE "mas.projects.contmas.ontology")
 	(%3ASUPPORT "j2se"))
@@ -194,10 +198,6 @@
 	(%3AJADE-IGNORE FALSE))
 
 ([Street] of  %3AJADE-CLASS
-
-	(%3AJADE-IGNORE FALSE))
-
-([Subdomain] of  %3AJADE-CLASS
 
 	(%3AJADE-IGNORE FALSE))
 
