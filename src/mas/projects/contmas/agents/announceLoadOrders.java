@@ -33,10 +33,10 @@ public class announceLoadOrders extends ContractNetInitiator {
 	protected Vector prepareCfps(ACLMessage cfp) {
 		cfp = new ContainerMessage(ACLMessage.CFP);
 		cfp.setProtocol(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
-		List craneList = ((ShipAgent) myAgent).craneList;
-		Iterator allCranes = craneList.iterator();
-		while (allCranes.hasNext()) {
-			cfp.addReceiver((AID) allCranes.next());
+		List contractorList = ((ContainerAgent) myAgent).determineContractors();
+		Iterator allContractors = contractorList.iterator();
+		while (allContractors.hasNext()) {
+			cfp.addReceiver((AID) allContractors.next());
 		}
 		CallForProposalsOnLoadStage act = new CallForProposalsOnLoadStage();
 		act.setRequired_turnover_capacity(this.currentLoadList);
@@ -47,11 +47,11 @@ public class announceLoadOrders extends ContractNetInitiator {
 			messages.add(cfp);
 			return messages;
 		} catch (CodecException e) {
-			System.out.println("announceLoadOrders - prepareCfps - fillContent - CodecException");
+			((ContainerAgent)myAgent).echoStatus("announceLoadOrders - prepareCfps - fillContent - CodecException");
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (OntologyException e) {
-			System.out.println("announceLoadOrders - prepareCfps - fillContent - OntologyException");
+			((ContainerAgent)myAgent).echoStatus("announceLoadOrders - prepareCfps - fillContent - OntologyException");
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

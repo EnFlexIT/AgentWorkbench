@@ -5,11 +5,10 @@ import jade.util.leap.*;
 import jade.core.*;
 
 /**
-   * Portal Bridge Crane, Stevedore
-* Protege name: Crane
+* Protege name: AGV
 * @author ontology bean generator
 * @version 2009/10/6, 22:51:49
 */
-public class Crane extends ActiveContainerHolder{ 
+public class AGV extends PassiveContainerHolder{ 
 
 }

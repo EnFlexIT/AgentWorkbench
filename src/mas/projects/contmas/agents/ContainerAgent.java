@@ -27,6 +27,9 @@ public class ContainerAgent extends Agent {
 	protected String serviceType;
 	protected ContainerHolder ontologyRepresentation;
 	
+	public Integer lengthOfQueue=3;
+	public List loadOrdersProposedForQueue=new ArrayList();
+	
 	public ContainerAgent() {
 		this.serviceType="handling-containers";
 		this.ontologyRepresentation=new ContainerHolder();
@@ -50,6 +53,17 @@ public class ContainerAgent extends Agent {
         sd.setType( serviceType );
         sd.setName( getLocalName() );
         register( sd );
+        
+		BayMap LoadBay=new BayMap();
+		LoadBay.setX_dimension(1);
+		LoadBay.setY_dimension(1);
+		LoadBay.setZ_dimension(1);
+		ontologyRepresentation.setContains(LoadBay);
+	}
+	public int getBaySize(){
+		BayMap LoadBay=ontologyRepresentation.getContains();
+		int baySize=LoadBay.getX_dimension()*LoadBay.getY_dimension()*LoadBay.getZ_dimension();
+		return baySize;
 	}
     void register( ServiceDescription sd)
     {
@@ -104,4 +118,18 @@ public class ContainerAgent extends Agent {
     	System.err.println("findMatchingOrder in ContainerAgent not implemented");
     	return null;
     }
+    public List determineContractors(){
+    	ArrayList contractors=new ArrayList();
+    	return contractors;
+    }
+    public void echoStatus(String statusMessage){
+    	System.out.println(this.getAID().getLocalName()+": "+statusMessage);
+    }
+	public BlockAddress getEmptyBlockAddress(){
+		BlockAddress empty=new BlockAddress();
+		empty.setX_dimension(0);
+		empty.setY_dimension(0);
+		empty.setZ_dimension(0);
+		return empty;
+	}
 }

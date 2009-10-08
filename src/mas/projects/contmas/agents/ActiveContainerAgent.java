@@ -1,6 +1,8 @@
 package mas.projects.contmas.agents;
 
+import jade.util.leap.ArrayList;
 import jade.util.leap.Iterator;
+import jade.util.leap.List;
 import mas.projects.contmas.ontology.ActiveContainerHolder;
 import mas.projects.contmas.ontology.Container;
 import mas.projects.contmas.ontology.ContainerHolder;
@@ -11,13 +13,12 @@ import mas.projects.contmas.ontology.TransportOrder;
 import mas.projects.contmas.ontology.TransportOrderChain;
 
 public class ActiveContainerAgent extends ContainerAgent {
-	public LoadList commissions=new LoadList();
-
 	public ActiveContainerAgent(String serviceType) {
 		this(serviceType, new ActiveContainerHolder());
 	}
 	public ActiveContainerAgent(String serviceType,ActiveContainerHolder ontologyRepresentation) {
 		super(serviceType, ontologyRepresentation);
+		ontologyRepresentation.setAdministers(new LoadList());
 	}
 	
 	public ProposeLoadOffer GetLoadProposal(TransportOrder call){
@@ -27,8 +28,9 @@ public class ActiveContainerAgent extends ContainerAgent {
 		return act;
 	}
 	
-	public void aquireContainer(Container targetContainer){
-		
+	public void aquireContainer(TransportOrderChain targetContainer){
+		((ActiveContainerHolder)this.ontologyRepresentation).getAdministers().addConsists_of(targetContainer); //container ist in BayMap, auftragsbuch hinzufügen
+
 	}
 	
     public TransportOrder findMatchingOrder(TransportOrderChain haystack){
@@ -63,4 +65,5 @@ public class ActiveContainerAgent extends ContainerAgent {
     	}
     	return matchingOrder;
     }
+
 }

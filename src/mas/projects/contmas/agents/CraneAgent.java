@@ -3,12 +3,14 @@ package mas.projects.contmas.agents;
 import java.util.Random;
 
 import jade.core.Agent;
+import jade.core.behaviours.TickerBehaviour;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.proto.AchieveREResponder;
 import jade.proto.ContractNetResponder;
 import jade.util.leap.ArrayList;
+import jade.util.leap.Iterator;
 import jade.util.leap.List;
 import mas.projects.contmas.ontology.*;
 
@@ -20,15 +22,14 @@ public class CraneAgent extends ActiveContainerAgent implements TransportOrderHa
 	public CraneAgent() {
 		this(new Crane());
 	}
-	public Integer lengthOfQueue=3;
-	public List loadOrderPostQueue=new ArrayList();
+
 	public CraneAgent(Crane ontologyRepresentation) {
 		super("craning", ontologyRepresentation);
-		ontologyRepresentation.setContains(new BayMap());
 	}
 	public void setup(){
 		super.setup();
 		handleTransportOrder();
+		offerTransportOrder();
 	}
 
 	public void handleTransportOrder() {
@@ -44,25 +45,46 @@ public class CraneAgent extends ActiveContainerAgent implements TransportOrderHa
 		return act;
 	}
 	
-	public void aquireContainer(Container targetContainer){
+	public void aquireContainer(TransportOrderChain targetContainer){ //eigentlicher Vorgang des Container-Aufnehmens
 		super.aquireContainer(targetContainer);
+		
+		//physikalische Aktionen
+		
 		//TODO aus bisheriger BayMap entfernen
-		BlockAddress destination=getEmptyBlockAddress();
-		destination.setLocates(targetContainer);
-		ontologyRepresentation.getContains().addIs_filled_with(destination);
-		System.out.println("Nun hängt der Container am Haken");
+		BlockAddress destination=getEmptyBlockAddress(); //zieladresse besorgen
+		destination.setLocates(targetContainer.getTransports());
+		ontologyRepresentation.getContains().addIs_filled_with(destination); //Container mit neuer BlockAdress in eigene BayMap aufnehmens
+		echoStatus("Nun hängt der Container am Haken");
 	}
 	
-	public BlockAddress getEmptyBlockAddress(){
-		BlockAddress empty=new BlockAddress();
-		empty.setX_dimension(0);
-		empty.setY_dimension(0);
-		empty.setZ_dimension(0);
-		return empty;
-
-	}
-
+    public List determineContractors(){
+    	return toAIDList(getAIDsFromDF("container-distributing"));
+    }
 	public void offerTransportOrder() {
-		addBehaviour(new announceLoadOrders(this, commissions));
+		addBehaviour(new disposePayload(this));
+	}
+	class disposePayload extends TickerBehaviour{
+
+		public disposePayload(Agent a) {
+			super(a, 2000);
+		}
+
+		protected void onTick() {
+			LoadList commissions=((ActiveContainerHolder)((ContainerAgent)myAgent).ontologyRepresentation).getAdministers();
+			Iterator commissionIter=commissions.getAllConsists_of();
+			while(commissionIter.hasNext()){ //Agent hat Transportaufträge abzuarbeiten
+				echoStatus("Ticking: commissions available - dropping Container on the hook");
+
+				TransportOrderChain TOChain=((TransportOrderChain) commissionIter.next());
+				TransportOrder TO=new TransportOrder();
+				TO.setStarts_at(((ContainerAgent) myAgent).ontologyRepresentation);
+	//			TO.setEnds_at(new Yard());
+//				TOChain.addIs_linked_by(TO);
+				LoadList newCommission=new LoadList();
+				newCommission.addConsists_of(TOChain);
+				addBehaviour(new announceLoadOrders(myAgent, newCommission));
+			}
+			echoStatus("Ticking: no commissions administered - no Container on the hook to be dropped");
+		}
 	}
 }

@@ -9,7 +9,7 @@ import jade.core.*;
    * Request a random generated bay map at the RandomGeneratorAgent for development purposes
 * Protege name: RequestRandomBayMap
 * @author ontology bean generator
-* @version 2009/10/5, 23:56:08
+* @version 2009/10/6, 22:51:49
 */
 public class RequestRandomBayMap implements AgentAction {
 
@@ -25,17 +25,6 @@ public class RequestRandomBayMap implements AgentAction {
    }
 
    /**
-* Protege name: z_dimension
-   */
-   private int z_dimension;
-   public void setZ_dimension(int value) { 
-    this.z_dimension=value;
-   }
-   public int getZ_dimension() {
-     return this.z_dimension;
-   }
-
-   /**
 * Protege name: x_dimension
    */
    private int x_dimension;
@@ -44,6 +33,17 @@ public class RequestRandomBayMap implements AgentAction {
    }
    public int getX_dimension() {
      return this.x_dimension;
+   }
+
+   /**
+* Protege name: z_dimension
+   */
+   private int z_dimension;
+   public void setZ_dimension(int value) { 
+    this.z_dimension=value;
+   }
+   public int getZ_dimension() {
+     return this.z_dimension;
    }
 
 }

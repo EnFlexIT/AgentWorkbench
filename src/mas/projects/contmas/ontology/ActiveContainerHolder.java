@@ -8,7 +8,7 @@ import jade.core.*;
    * can manipulate containers, can move them between domains, e.g. crane
 * Protege name: ActiveContainerHolder
 * @author ontology bean generator
-* @version 2009/10/5, 23:56:07
+* @version 2009/10/6, 22:51:49
 */
 public class ActiveContainerHolder extends ContainerHolder{ 
 
@@ -23,6 +23,17 @@ capability of device to move x container above y
    }
    public String getStowage_capability() {
      return this.stowage_capability;
+   }
+
+   /**
+* Protege name: tonnage_capacity
+   */
+   private float tonnage_capacity;
+   public void setTonnage_capacity(float value) { 
+    this.tonnage_capacity=value;
+   }
+   public float getTonnage_capacity() {
+     return this.tonnage_capacity;
    }
 
    /**
@@ -48,14 +59,14 @@ capability of device to move x container above y
    public void setCapable_of(List l) {capable_of = l; }
 
    /**
-* Protege name: tonnage_capacity
+* Protege name: administers
    */
-   private float tonnage_capacity;
-   public void setTonnage_capacity(float value) { 
-    this.tonnage_capacity=value;
+   private LoadList administers;
+   public void setAdministers(LoadList value) { 
+    this.administers=value;
    }
-   public float getTonnage_capacity() {
-     return this.tonnage_capacity;
+   public LoadList getAdministers() {
+     return this.administers;
    }
 
 }

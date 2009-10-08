@@ -59,12 +59,20 @@ public class HarborMasterAgent extends ContainerAgent {
 			a=c.acceptNewAgent("Crane #2", new CraneAgent(ontologyRepresentation));
 	        a.start();
 	        
+
+	        AGV AGVontologyRepresentation=new AGV();
+			habitat = new Street();
+			habitat.setLies_in(terminalArea);
+	        AGVontologyRepresentation.setLives_in(habitat);
+			a=c.acceptNewAgent("AGV #1", new AGVAgent(AGVontologyRepresentation));
+	        a.start();
+	        
 		} catch (StaleProxyException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-        System.out.println("Kran gestartet");
+      //  System.out.println("Kran gestartet");
 	}
 
 	public class offerCraneList extends AchieveREResponder{

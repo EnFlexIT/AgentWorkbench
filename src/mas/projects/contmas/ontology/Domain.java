@@ -9,20 +9,9 @@ import jade.core.*;
    * the domain, in which the containerholder is located
 * Protege name: Domain
 * @author ontology bean generator
-* @version 2009/10/5, 23:56:07
+* @version 2009/10/6, 22:51:49
 */
 public class Domain implements Concept {
-
-   /**
-* Protege name: lies_in
-   */
-   private Domain lies_in;
-   public void setLies_in(Domain value) { 
-    this.lies_in=value;
-   }
-   public Domain getLies_in() {
-     return this.lies_in;
-   }
 
    /**
 * Protege name: has_subdomains
@@ -44,5 +33,16 @@ public class Domain implements Concept {
    public Iterator getAllHas_subdomains() {return has_subdomains.iterator(); }
    public List getHas_subdomains() {return has_subdomains; }
    public void setHas_subdomains(List l) {has_subdomains = l; }
+
+   /**
+* Protege name: lies_in
+   */
+   private Domain lies_in;
+   public void setLies_in(Domain value) { 
+    this.lies_in=value;
+   }
+   public Domain getLies_in() {
+     return this.lies_in;
+   }
 
 }

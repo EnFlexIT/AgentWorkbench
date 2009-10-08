@@ -9,10 +9,12 @@ import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
+import jade.core.behaviours.TickerBehaviour;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.proto.AchieveREInitiator;
 import jade.proto.ContractNetInitiator;
+import jade.util.leap.ArrayList;
 import jade.util.leap.Iterator;
 import jade.util.leap.List;
 
@@ -28,7 +30,7 @@ public class ShipAgent extends PassiveContainerAgent implements TransportOrderOf
     AID harborManager=null;
 	private AID RandomGenerator;
 
-	protected List craneList=null;
+	protected List contractors=null;
 
 	protected void setup() {
 		super.setup();
@@ -66,9 +68,12 @@ public class ShipAgent extends PassiveContainerAgent implements TransportOrderOf
 		//addBehaviour(new unload(this));
 	}
 	
-	public BayMap getLoadBay(){
-		return ontologyRepresentation.getContains();
-	}
+
+	
+    public List determineContractors(){
+    	return 	contractors;
+    }
+
 	
 	public class fetchRandomBayMap extends AchieveREInitiator {
 		public fetchRandomBayMap(Agent a, ACLMessage msg) {
@@ -101,7 +106,7 @@ public class ShipAgent extends PassiveContainerAgent implements TransportOrderOf
 			try {
 				content = ((Concept) getContentManager().extractContent(msg));
 		        if (content instanceof ProvideBayMap) {
-		        	((ShipAgent) myAgent).ontologyRepresentation.setContains(((ProvideBayMap) content).getProvides());
+		        	((ContainerAgent) myAgent).ontologyRepresentation.setContains(((ProvideBayMap) content).getProvides());
 		        	//System.out.println("BayMap recieved! X_dimension:"+getLoadBay().getX_dimension()+", Y_dimension:"+getLoadBay().getY_dimension()+", Z_dimension:"+getLoadBay().getZ_dimension());
 		    		msg = new ContainerMessage(ACLMessage.REQUEST);
 		    	    msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST); 
@@ -225,7 +230,7 @@ public class ShipAgent extends PassiveContainerAgent implements TransportOrderOf
 				content = ((AgentAction) getContentManager().extractContent(msg));
 		        if(content instanceof ProvideCraneList) {
 		    		List craneList=((ProvideCraneList) content).getAvailable_cranes();
-		    		((ShipAgent) myAgent).craneList=craneList;
+		    		((ShipAgent) myAgent).contractors=craneList;
 		    		myAgent.addBehaviour(new unload(myAgent));
 		        }
 			} catch (UngroundedException e) {
@@ -241,14 +246,20 @@ public class ShipAgent extends PassiveContainerAgent implements TransportOrderOf
 	    }
 	}
 
+//	public class unload extends TickerBehaviour{
 	public class unload extends OneShotBehaviour{
+
 		public unload(Agent a) {
+//			super(a, 1000);
 			super(a);
+			
 		}
 
+//		public void onTick() {
 		public void action() {
-			System.out.println("Entladen geht los");
-			if(((ShipAgent) myAgent).craneList!=null){
+
+			echoStatus("Tick: Entladen geht los");
+			if(((ShipAgent) myAgent).contractors!=null){
 				BayMap LoadBay=((ShipAgent) myAgent).ontologyRepresentation.getContains();
 				LoadList completeLoadList=new LoadList();
 
@@ -289,12 +300,13 @@ public class ShipAgent extends PassiveContainerAgent implements TransportOrderOf
 				//Variante: alle Container einer Lage zusammen
 //				myAgent.addBehaviour(new announceLoadOrders(myAgent,completeLoadList));
 
-				//block();
+				block();
 			}else{
 				System.err.println("Noch keine Kranliste vorhanden");
-				//block();
+				block();
 			}
 		}
+
 	}
 
 	public void offerTransportOrder() {

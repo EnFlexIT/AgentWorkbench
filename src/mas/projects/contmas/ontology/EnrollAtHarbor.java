@@ -9,7 +9,7 @@ import jade.core.*;
    * Register with the HarborMaster and get a berthing place
 * Protege name: EnrollAtHarbor
 * @author ontology bean generator
-* @version 2009/10/5, 23:56:08
+* @version 2009/10/6, 22:51:49
 */
 public class EnrollAtHarbor implements AgentAction {
 
