@@ -1,5 +1,8 @@
 package application;
 
+import gui.ProjectNewOpen;
+import gui.ProjectWindow;
+
 import java.io.FileWriter;
 import java.io.Writer;
 import java.util.Observable;
@@ -12,15 +15,13 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import gui.ProjectWindow;
-
 @XmlRootElement public class Project extends Observable {
 
 	// --- Konstanten ------------------------------------------
 	private static String NewLine = Application.RunInfo.AppNewLineString();
 	
 	// --- GUI der aktuellen Projekt-Instanz -------------------
-	@XmlTransient public ProjectWindow ProjectGUI = new ProjectWindow(this);
+	@XmlTransient public ProjectWindow ProjectGUI = null;
 	
 	// --- Objekt- / Projektvariablen --------------------------
 	@XmlTransient public boolean ProjectUnsaved = false;
@@ -29,7 +30,6 @@ import gui.ProjectWindow;
 	private String ProjectFolder;
 	private String ProjectName;
 	private String ProjectDescription;
-	
 	
 	/**
 	 * Creating a new MAS-Project
@@ -48,16 +48,57 @@ import gui.ProjectWindow;
 			Index = Application.Projects.getIndexByName( ProjectNameTest );
 			i++;
 		}
+		
+		if ( Application.RunInfo.AppExecutedOver() == "IDE" ) {
+			// -----------------------------------------------
+			// --- IDE-Dialog für "Neues Projekt" öffnen -----
+			// -----------------------------------------------
+			ProjectNewOpen NewProDia = new ProjectNewOpen( 
+					Application.MainWindow, 
+					Application.RunInfo.AppTitel() + ": " + Language.translate("Neues Projekt anlegen"), 
+					true, 
+					true 
+					);
+			NewProDia.setVarProjectName( ProjectNameTest );
+			NewProDia.setVarProjectFolder( ProjectNameTest.toLowerCase().replace(" ", "_") );
+			NewProDia.setVisible(true);
+			// === Hier geht's weiter, wenn der Dialog wieder geschlossen ist ===
+			if (NewProDia.isCanceled() == true ) {
+				return;
+			}
+			else {
+				ProjectName = NewProDia.getVarProjectName();
+				ProjectFolder = NewProDia.getVarProjectFolder();
+			}
+			NewProDia.dispose();
+			NewProDia = null;	
+			// -----------------------------------------------
+		}
+		else {
+			// -----------------------------------------------
+			// --- Datei-Dialog für "Neues Projekt" öffnen ---
+			// -----------------------------------------------			
+			
+			
+			
+			// -----------------------------------------------
+		}
+
+		
+		// --- Neues Projeltfenster öffnen ----------------
+		ProjectGUI = new ProjectWindow(this);
+		
 		// --- Projektnamen für diese Instanz festlegen --- 
-		setProjectName( ProjectNameTest );
+		setProjectName( ProjectName );
+		setProjectFolder( ProjectFolder );
 		ProjectUnsaved = false;
 		
 		// --- Objekt an die Projektauflistung hängen -----
 		Application.Projects.add( this );
 		Application.ProjectCurr = this;
-		Application.Projects.setProjectMenuItems();
+		Application.Projects.setProjectMenuItems();		
 		Application.MainWindow.setCloseButtonPosition( true );
-
+		
 		// --- Anzeige anpassen ---------------------------
 		setMaximized();
 		Application.setTitelAddition( ProjectName );
@@ -180,9 +221,6 @@ import gui.ProjectWindow;
 		((BasicInternalFrameUI) Application.ProjectCurr.ProjectGUI.getUI()).setNorthPane(null);
 		Application.MainWindow.ProjectDesktop.getDesktopManager().maximizeFrame( ProjectGUI );		
 	}
-
-	
-
 
 	/**
 	 * @param projectFolder the projectName to set

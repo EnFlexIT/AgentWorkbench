@@ -29,10 +29,11 @@ public class GlobalInfo {
 	private static String LocalPathBatik	= "lib" + LocalAppPathSeparatorString + "batik";	
 	private static String LocalPathProperty = "properties" + LocalAppPathSeparatorString;
 	private static String LocalPathProjects =  "projects" + LocalAppPathSeparatorString;
-	
+	private static String LocalPathProjectsIDE =  "src" + LocalAppPathSeparatorString +  "mas" + LocalAppPathSeparatorString + LocalPathProjects;
+	private static String[] LocalProjects = null;
 	private static String LocalFileRunnableJar = "AgentGui.jar";
 	private static String LocalFileDictionary  = LocalPathProperty + "dictionary.csv";
-
+	
 	
 	// ----------------------------------------------------------------------
 	// --- Objekt-Initialisierung -------------------------------------------
@@ -76,8 +77,27 @@ public class GlobalInfo {
 				}
 			} // -- End 'for' --
 			// --------------------------------------------------------------
-			// --- Bei Ausführung IDE, eingie Variablen umstellen -----------			
+			// --- Bei Ausführung IDE, einige Variablen umstellen -----------			
 			LocalFileRunnableJar = null;
+			LocalPathProjects =  LocalPathProjectsIDE;
+			
+			// --- Projektverzeichnis nach Unterverzeichnissen durchsuchen --
+			File maindir = new File( PathProjects( true ) ) ;
+			File files[] = maindir.listFiles();
+			for (int i = 0; i < files.length; i++) {
+				if (files[i].isDirectory() && !files[i].getName().substring(0, 1).equals(".") ) {
+					if (LocalProjects == null) {						
+						String[] AddEr = { files[i].getName() };	
+						LocalProjects = AddEr;	
+					}
+					else {
+						String[] AddEr = new String[LocalProjects.length+1];
+						System.arraycopy( LocalProjects, 0, AddEr, 0, LocalProjects.length );
+						AddEr[AddEr.length-1] = files[i].getName();
+						LocalProjects = AddEr;
+					}
+				} 
+			}// End for
 		}
 		// ------------------------------------------------------------------
 	}
@@ -190,6 +210,13 @@ public class GlobalInfo {
 			return LocalPathProjects;	
 		}	
 	}
+	public String[] getIDEProjects( ){
+		/**
+		 * Projektordner, die sich in "src/mas/projekte" befinden
+		 */
+		return LocalProjects;	
+		
+	}	
 	public String PathImageIntern( ){
 		/**
 		 * Bild-Unterverzeichnis für das Projekt

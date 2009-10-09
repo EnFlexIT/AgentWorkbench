@@ -91,6 +91,11 @@
     		</fileset>    		
         </jar>
     	
+    	<!-- Die einzelnen Projekte kompilieren -->
+    	
+    	
+    	
+    	
     	<!-- Die erzeugte jar ausführen -->
     	<java jar="${destinJar}" fork="true" />
     	
