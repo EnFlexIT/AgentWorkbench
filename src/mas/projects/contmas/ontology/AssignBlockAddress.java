@@ -9,7 +9,7 @@ import jade.core.*;
    * announces address of block, where designated container should be transported to
 * Protege name: AssignBlockAddress
 * @author ontology bean generator
-* @version 2009/10/6, 22:51:49
+* @version 2009/10/10, 17:32:32
 */
 public class AssignBlockAddress implements AgentAction {
 

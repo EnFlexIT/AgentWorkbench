@@ -2,6 +2,10 @@ package mas.projects.contmas.agents;
 
 import java.util.Random;
 
+import com.missing.inspect.Inspector;
+
+import de.planetxml.tools.DebugPrinter;
+
 import jade.core.Agent;
 import jade.core.behaviours.TickerBehaviour;
 import jade.domain.FIPANames;
@@ -74,14 +78,25 @@ public class CraneAgent extends ActiveContainerAgent implements TransportOrderHa
 			Iterator commissionIter=commissions.getAllConsists_of();
 			while(commissionIter.hasNext()){ //Agent hat Transportaufträge abzuarbeiten
 				echoStatus("Ticking: commissions available - dropping Container on the hook");
+				TransportOrderChain curTOC=((TransportOrderChain) commissionIter.next());
+				TransportOrderChain TOChain=curTOC;
+				
+				TOChain=new TransportOrderChain();
+//				TOChain.setIs_linked_by(curTOC.getIs_linked_by());
+				TOChain.setTransports(curTOC.getTransports());
 
-				TransportOrderChain TOChain=((TransportOrderChain) commissionIter.next());
 				TransportOrder TO=new TransportOrder();
 				TO.setStarts_at(((ContainerAgent) myAgent).ontologyRepresentation);
-	//			TO.setEnds_at(new Yard());
-//				TOChain.addIs_linked_by(TO);
+				ContainerHolder target=new Yard();
+				target.setLives_in(new Street());//TODO change to Land but implement recursive Domain-determination in passiveHolder
+				TO.setEnds_at(target);
+//				TO.setLinks(TOChain);
+				TOChain.addIs_linked_by(TO);
 				LoadList newCommission=new LoadList();
 				newCommission.addConsists_of(TOChain);
+				DebugPrinter DB=new DebugPrinter(TOChain,8);
+//				echoStatus(DB.dump());
+//				Inspector.inspect(newCommission);
 				addBehaviour(new announceLoadOrders(myAgent, newCommission));
 			}
 			echoStatus("Ticking: no commissions administered - no Container on the hook to be dropped");

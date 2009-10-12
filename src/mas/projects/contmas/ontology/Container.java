@@ -8,42 +8,9 @@ import jade.core.*;
 /**
 * Protege name: Container
 * @author ontology bean generator
-* @version 2009/10/6, 22:51:49
+* @version 2009/10/10, 17:32:32
 */
 public class Container implements Concept {
-
-   /**
-* Protege name: length
-   */
-   private float length;
-   public void setLength(float value) { 
-    this.length=value;
-   }
-   public float getLength() {
-     return this.length;
-   }
-
-   /**
-* Protege name: weight
-   */
-   private float weight;
-   public void setWeight(float value) { 
-    this.weight=value;
-   }
-   public float getWeight() {
-     return this.weight;
-   }
-
-   /**
-* Protege name: carries_dangerous_goods
-   */
-   private boolean carries_dangerous_goods;
-   public void setCarries_dangerous_goods(boolean value) { 
-    this.carries_dangerous_goods=value;
-   }
-   public boolean getCarries_dangerous_goods() {
-     return this.carries_dangerous_goods;
-   }
 
    /**
 * Protege name: height
@@ -68,6 +35,17 @@ public class Container implements Concept {
    }
 
    /**
+* Protege name: is_coolable
+   */
+   private boolean is_coolable;
+   public void setIs_coolable(boolean value) { 
+    this.is_coolable=value;
+   }
+   public boolean getIs_coolable() {
+     return this.is_coolable;
+   }
+
+   /**
    * LSCU 107737 9
 * Protege name: id
    */
@@ -80,14 +58,36 @@ public class Container implements Concept {
    }
 
    /**
-* Protege name: is_coolable
+* Protege name: length
    */
-   private boolean is_coolable;
-   public void setIs_coolable(boolean value) { 
-    this.is_coolable=value;
+   private float length;
+   public void setLength(float value) { 
+    this.length=value;
    }
-   public boolean getIs_coolable() {
-     return this.is_coolable;
+   public float getLength() {
+     return this.length;
+   }
+
+   /**
+* Protege name: carries_dangerous_goods
+   */
+   private boolean carries_dangerous_goods;
+   public void setCarries_dangerous_goods(boolean value) { 
+    this.carries_dangerous_goods=value;
+   }
+   public boolean getCarries_dangerous_goods() {
+     return this.carries_dangerous_goods;
+   }
+
+   /**
+* Protege name: weight
+   */
+   private float weight;
+   public void setWeight(float value) { 
+    this.weight=value;
+   }
+   public float getWeight() {
+     return this.weight;
    }
 
 }

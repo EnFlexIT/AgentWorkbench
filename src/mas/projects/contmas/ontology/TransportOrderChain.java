@@ -9,9 +9,21 @@ import jade.core.*;
    * high-level transport order with destination
 * Protege name: TransportOrderChain
 * @author ontology bean generator
-* @version 2009/10/6, 22:51:49
+* @version 2009/10/10, 17:32:32
 */
 public class TransportOrderChain implements Concept {
+
+   /**
+   * container to be transported
+* Protege name: transports
+   */
+   private Container transports;
+   public void setTransports(Container value) { 
+    this.transports=value;
+   }
+   public Container getTransports() {
+     return this.transports;
+   }
 
    /**
 * Protege name: is_linked_by
@@ -44,29 +56,6 @@ public class TransportOrderChain implements Concept {
    }
    public String getTerminates_at() {
      return this.terminates_at;
-   }
-
-   /**
-   * container to be transported
-* Protege name: transports
-   */
-   private Container transports;
-   public void setTransports(Container value) { 
-    this.transports=value;
-   }
-   public Container getTransports() {
-     return this.transports;
-   }
-
-   /**
-* Protege name: makes_up
-   */
-   private LoadList makes_up;
-   public void setMakes_up(LoadList value) { 
-    this.makes_up=value;
-   }
-   public LoadList getMakes_up() {
-     return this.makes_up;
    }
 
 }

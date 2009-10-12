@@ -26,7 +26,7 @@ public class recieveLoadOrders extends ContractNetResponder{
 		Concept content;
 		((ContainerAgent)myAgent).echoStatus("cfpEmpfangen");
 		try {
-			if(cfp.getContent()==null){
+			if(cfp.getContent()==null){ //CFP leer
 				reply.setPerformative(ACLMessage.FAILURE);
 				((ContainerAgent)myAgent).echoStatus("noContent");
 	    		return reply;
@@ -55,21 +55,23 @@ public class recieveLoadOrders extends ContractNetResponder{
 		        	Iterator allTocs=liste.getAllConsists_of();
 		        	TransportOrder matchingOrder=((ContainerAgent) myAgent).findMatchingOrder((TransportOrderChain) allTocs.next());
 
-		        	if(matchingOrder!=null){
+		        	if(matchingOrder!=null){ //passende TransportOrder gefunden
 						((ContainerAgent)myAgent).echoStatus("TransportOrder gefunden, die zu mir passt");
 
-						ProposeLoadOffer act=(((ActiveContainerAgent) myAgent).GetLoadProposal(matchingOrder));
+						ProposeLoadOffer act=(((ContainerAgent) myAgent).GetLoadProposal(matchingOrder));
 						reply.setPerformative(ACLMessage.PROPOSE);
 
 						myAgent.getContentManager().fillContent(reply, act);
-		        	} else {
+		        	} else { //keine TransportOrder passt
 						((ContainerAgent)myAgent).echoStatus("keine TransportOrder passt zu mir");
 		        	}
 	        	}
 
 
-	        } else {
+	        } else { //unbekannter inhalt in CFP
 	        	((ContainerAgent)myAgent).echoStatus("unbekannter inhalt in CFP");
+				reply.setPerformative(ACLMessage.FAILURE);
+				reply.setContent("unbekannter inhalt in CFP");
 	        }
 	        
 		} catch (UngroundedException e) {
@@ -85,6 +87,8 @@ public class recieveLoadOrders extends ContractNetResponder{
 		return reply;
 	}
 	protected ACLMessage handleAcceptProposal(ACLMessage cfp,ACLMessage propose, ACLMessage accept){
+		((ContainerAgent)myAgent).echoStatus("handleAcceptProposal - acceptPerformative: "+accept.getPerformative());
+
 		((ContainerAgent)myAgent).echoStatus("Auftragsannahme empfangen");
 		ACLMessage inform = accept.createReply();
 		Concept content;
@@ -103,13 +107,15 @@ public class recieveLoadOrders extends ContractNetResponder{
 					queue.remove();
 					((ContainerAgent)myAgent).echoStatus("Auftrag aus Bewerbungsliste entfernt, mit Bearbeitung beginnen");
 
-					((ActiveContainerAgent) myAgent).aquireContainer(proposedTOC);
+					((ContainerAgent) myAgent).aquireContainer(proposedTOC);
 					
 					((ContainerAgent)myAgent).echoStatus("Auftrag abgearbeitet");
 					inform.setPerformative(ACLMessage.INFORM);
 				}
 				if(inform.getPerformative()!=ACLMessage.INFORM){
 					inform.setPerformative(ACLMessage.FAILURE);
+					inform.setContent("recieveLoadOrders: Auftrag, auf den ich mich beworben habe nicht gefunden");
+
 				}
 			}
 		} catch (UngroundedException e) {

@@ -8,16 +8,19 @@ import jade.lang.acl.MessageTemplate;
 import jade.proto.AchieveREResponder;
 import mas.projects.contmas.ontology.AGV;
 import mas.projects.contmas.ontology.ContainerHolder;
+import mas.projects.contmas.ontology.PassiveContainerHolder;
+import mas.projects.contmas.ontology.TransportOrder;
+import mas.projects.contmas.ontology.TransportOrderChain;
 
 /**
  * @author Hanno - Felix Wagner
  *
  */
-public class AGVAgent extends ContainerAgent implements TransportOrderHandler {
+public class AGVAgent extends PassiveContainerAgent implements TransportOrderHandler {
 	public AGVAgent() {
 		this(new AGV());
 	}
-	public AGVAgent(ContainerHolder ontologyRepresentation) {
+	public AGVAgent(PassiveContainerHolder ontologyRepresentation) {
 		super("container-distributing",ontologyRepresentation);
 	}
 	

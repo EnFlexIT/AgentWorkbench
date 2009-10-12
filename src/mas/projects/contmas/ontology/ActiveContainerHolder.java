@@ -8,32 +8,19 @@ import jade.core.*;
    * can manipulate containers, can move them between domains, e.g. crane
 * Protege name: ActiveContainerHolder
 * @author ontology bean generator
-* @version 2009/10/6, 22:51:49
+* @version 2009/10/10, 17:32:32
 */
 public class ActiveContainerHolder extends ContainerHolder{ 
 
    /**
-   * x-over-y
-capability of device to move x container above y
-* Protege name: stowage_capability
+* Protege name: administers
    */
-   private String stowage_capability;
-   public void setStowage_capability(String value) { 
-    this.stowage_capability=value;
+   private LoadList administers;
+   public void setAdministers(LoadList value) { 
+    this.administers=value;
    }
-   public String getStowage_capability() {
-     return this.stowage_capability;
-   }
-
-   /**
-* Protege name: tonnage_capacity
-   */
-   private float tonnage_capacity;
-   public void setTonnage_capacity(float value) { 
-    this.tonnage_capacity=value;
-   }
-   public float getTonnage_capacity() {
-     return this.tonnage_capacity;
+   public LoadList getAdministers() {
+     return this.administers;
    }
 
    /**
@@ -59,14 +46,27 @@ capability of device to move x container above y
    public void setCapable_of(List l) {capable_of = l; }
 
    /**
-* Protege name: administers
+* Protege name: tonnage_capacity
    */
-   private LoadList administers;
-   public void setAdministers(LoadList value) { 
-    this.administers=value;
+   private float tonnage_capacity;
+   public void setTonnage_capacity(float value) { 
+    this.tonnage_capacity=value;
    }
-   public LoadList getAdministers() {
-     return this.administers;
+   public float getTonnage_capacity() {
+     return this.tonnage_capacity;
+   }
+
+   /**
+   * x-over-y
+capability of device to move x container above y
+* Protege name: stowage_capability
+   */
+   private String stowage_capability;
+   public void setStowage_capability(String value) { 
+    this.stowage_capability=value;
+   }
+   public String getStowage_capability() {
+     return this.stowage_capability;
    }
 
 }

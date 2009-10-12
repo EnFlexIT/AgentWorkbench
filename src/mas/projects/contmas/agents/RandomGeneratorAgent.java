@@ -122,7 +122,8 @@ public class RandomGeneratorAgent extends ContainerAgent{
 							for(int x=0;x<width;x++){
 								//System.out.println("runde");
 //								if(RandomGenerator.nextInt(2)==1 && (z==0 || 1==2)){ //TODO Abfrage, ob unterer Container schon vorhanden (keine Container "in die Luft" stellen)
-								if(RandomGenerator.nextInt(2)==1){ //TODO Abfrage, ob unterer Container schon vorhanden (keine Container "in die Luft" stellen)
+//								if(RandomGenerator.nextInt(2)==1){ //TODO Abfrage, ob unterer Container schon vorhanden (keine Container "in die Luft" stellen)
+								if(true){ //TODO Abfrage, ob unterer Container schon vorhanden (keine Container "in die Luft" stellen)
 
 									//System.out.println("zufällig");
 									

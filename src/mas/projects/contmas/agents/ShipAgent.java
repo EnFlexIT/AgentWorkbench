@@ -21,6 +21,8 @@ import jade.util.leap.List;
 import java.io.IOException;
 import java.util.Vector;
 
+import de.planetxml.tools.DebugPrinter;
+
 import mas.projects.contmas.ontology.*;
 
 public class ShipAgent extends PassiveContainerAgent implements TransportOrderOfferer {
@@ -83,9 +85,9 @@ public class ShipAgent extends PassiveContainerAgent implements TransportOrderOf
 			request.addReceiver(RandomGenerator);
 			RequestRandomBayMap act = new RequestRandomBayMap();
 			//TODO hardcoded
-			act.setX_dimension(10);
-			act.setY_dimension(10);
-			act.setZ_dimension(10);
+			act.setX_dimension(1);
+			act.setY_dimension(1);
+			act.setZ_dimension(1);
 			try {
 				getContentManager().fillContent(request, act);
 			    Vector<ACLMessage> messages = new Vector<ACLMessage>();
@@ -278,18 +280,23 @@ public class ShipAgent extends PassiveContainerAgent implements TransportOrderOf
 						if(upmostContainer!=null){ //an dieser Koordinate steht ein Container obenauf
 							TransportOrder TO=new TransportOrder();
 							TO.setStarts_at(((ContainerAgent) myAgent).ontologyRepresentation);
-				//		TO.setEnds_at(new Yard());
+							ContainerHolder target=new ContainerHolder();
+							target.setLives_in(new Domain());
+							TO.setEnds_at(target);
 							TransportOrderChain TOChain=new TransportOrderChain();
 							TOChain.addIs_linked_by(TO);
 							
 							//TO.setLinks(TOChain); 
 							
 							TOChain.setTransports(upmostContainer.getLocates());
-							completeLoadList.addConsists_of(TOChain);
+
+							//Variante: Alle Container einer Lage auf einmal
+//							completeLoadList.addConsists_of(TOChain);
 						
 							//Variante: Jeder Container einzeln
 							LoadList currentLoadList=new LoadList();
 							currentLoadList.addConsists_of(TOChain);
+
 							//System.out.println("addBehaviour announceLoadOrders with "+currentLoadList.getConsists_of().get(0));
 							myAgent.addBehaviour(new announceLoadOrders(myAgent,currentLoadList));
 							currentLoadList=null;

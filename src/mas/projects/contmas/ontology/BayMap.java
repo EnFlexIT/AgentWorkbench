@@ -8,31 +8,9 @@ import jade.core.*;
 /**
 * Protege name: BayMap
 * @author ontology bean generator
-* @version 2009/10/6, 22:51:49
+* @version 2009/10/10, 17:32:32
 */
 public class BayMap implements Concept {
-
-   /**
-   * BlockAdresses and therefore containers this bay map contains
-* Protege name: is_filled_with
-   */
-   private List is_filled_with = new ArrayList();
-   public void addIs_filled_with(BlockAddress elem) { 
-     List oldList = this.is_filled_with;
-     is_filled_with.add(elem);
-   }
-   public boolean removeIs_filled_with(BlockAddress elem) {
-     List oldList = this.is_filled_with;
-     boolean result = is_filled_with.remove(elem);
-     return result;
-   }
-   public void clearAllIs_filled_with() {
-     List oldList = this.is_filled_with;
-     is_filled_with.clear();
-   }
-   public Iterator getAllIs_filled_with() {return is_filled_with.iterator(); }
-   public List getIs_filled_with() {return is_filled_with; }
-   public void setIs_filled_with(List l) {is_filled_with = l; }
 
    /**
 * Protege name: y_dimension
@@ -66,5 +44,27 @@ public class BayMap implements Concept {
    public int getZ_dimension() {
      return this.z_dimension;
    }
+
+   /**
+   * BlockAdresses and therefore containers this bay map contains
+* Protege name: is_filled_with
+   */
+   private List is_filled_with = new ArrayList();
+   public void addIs_filled_with(BlockAddress elem) { 
+     List oldList = this.is_filled_with;
+     is_filled_with.add(elem);
+   }
+   public boolean removeIs_filled_with(BlockAddress elem) {
+     List oldList = this.is_filled_with;
+     boolean result = is_filled_with.remove(elem);
+     return result;
+   }
+   public void clearAllIs_filled_with() {
+     List oldList = this.is_filled_with;
+     is_filled_with.clear();
+   }
+   public Iterator getAllIs_filled_with() {return is_filled_with.iterator(); }
+   public List getIs_filled_with() {return is_filled_with; }
+   public void setIs_filled_with(List l) {is_filled_with = l; }
 
 }

@@ -13,24 +13,21 @@ import mas.projects.contmas.ontology.TransportOrder;
 import mas.projects.contmas.ontology.TransportOrderChain;
 
 public class ActiveContainerAgent extends ContainerAgent {
+	
 	public ActiveContainerAgent(String serviceType) {
 		this(serviceType, new ActiveContainerHolder());
 	}
+	
 	public ActiveContainerAgent(String serviceType,ActiveContainerHolder ontologyRepresentation) {
 		super(serviceType, ontologyRepresentation);
 		ontologyRepresentation.setAdministers(new LoadList());
 	}
 	
-	public ProposeLoadOffer GetLoadProposal(TransportOrder call){
-		ProposeLoadOffer act=new ProposeLoadOffer();
-		call.setTakes(0);
-		act.setLoad_offer(call);
-		return act;
-	}
+
 	
 	public void aquireContainer(TransportOrderChain targetContainer){
+		super.aquireContainer(targetContainer);
 		((ActiveContainerHolder)this.ontologyRepresentation).getAdministers().addConsists_of(targetContainer); //container ist in BayMap, auftragsbuch hinzufügen
-
 	}
 	
     public TransportOrder findMatchingOrder(TransportOrderChain haystack){
@@ -54,14 +51,6 @@ public class ActiveContainerAgent extends ContainerAgent {
 	    			break;
 				}
 			}
-    		ContainerHolder end=(ContainerHolder) curTO.getEnds_at();
-    		//TODO den passenden ContainerHolder herausfinden, den spezifischsten, aber der auf operator und ausschreiber passt
-    		/*
-    		Class operator=ontologyRepresentation.getClass();
-    		if(operator.getSimpleName().equals("Crane") && start.getClass().getSimpleName().equals("Ship")){ //TODO hardcoded
-    			matchingOrder=curTO;
-    		}
-    		*/
     	}
     	return matchingOrder;
     }

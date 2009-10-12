@@ -132,4 +132,13 @@ public class ContainerAgent extends Agent {
 		empty.setZ_dimension(0);
 		return empty;
 	}
+	public ProposeLoadOffer GetLoadProposal(TransportOrder call){
+		ProposeLoadOffer act=new ProposeLoadOffer();
+		call.setTakes(0);
+		act.setLoad_offer(call);
+		return act;
+	}
+	public void aquireContainer(TransportOrderChain targetContainer){
+		
+	}
 }

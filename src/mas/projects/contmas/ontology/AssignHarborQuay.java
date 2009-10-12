@@ -9,7 +9,7 @@ import jade.core.*;
    * assign quay to berthing ship
 * Protege name: AssignHarborQuay
 * @author ontology bean generator
-* @version 2009/10/6, 22:51:49
+* @version 2009/10/10, 17:32:32
 */
 public class AssignHarborQuay implements AgentAction {
 
