@@ -1,1 +1,1 @@
-http://MobilePok:7778/acc
+http://rudel1:7778/acc
