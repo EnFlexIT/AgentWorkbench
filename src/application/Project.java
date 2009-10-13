@@ -1,13 +1,12 @@
 package application;
 
-import gui.ProjectNewOpen;
 import gui.ProjectWindow;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.Writer;
 import java.util.Observable;
 
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 import javax.xml.bind.JAXBContext;
@@ -18,7 +17,8 @@ import javax.xml.bind.annotation.XmlTransient;
 @XmlRootElement public class Project extends Observable {
 
 	// --- Konstanten ------------------------------------------
-	private static String NewLine = Application.RunInfo.AppNewLineString();
+	@XmlTransient private static String[] DefaultSubFolders = {"agents", "ontology", "ressources"};
+	@XmlTransient private static String NewLine = Application.RunInfo.AppNewLineString();	
 	
 	// --- GUI der aktuellen Projekt-Instanz -------------------
 	@XmlTransient public ProjectWindow ProjectGUI = null;
@@ -27,131 +27,27 @@ import javax.xml.bind.annotation.XmlTransient;
 	@XmlTransient public boolean ProjectUnsaved = false;
 	
 	// --- Speichervariablen der Projektdatei ------------------ 
-	private String ProjectFolder;
+	@XmlTransient private String ProjectFolder;
+	@XmlTransient private String ProjectFolderFullPath;
 	private String ProjectName;
 	private String ProjectDescription;
 	
 	/**
-	 * Creating a new MAS-Project
-	 */
-	public void addnew() {
-		// --- Anlegen eines neuen Projekts ---------------
-		String ProjectNamePrefix = Language.translate("Neues Projekt");
-		Application.MainWindow.setStatusBar(ProjectNamePrefix + " ...");
-
-		// --- Neuen, allgemeinen Projektnamen finden -----		
-		String ProjectNameTest = ProjectNamePrefix;
-		int Index = Application.Projects.getIndexByName(ProjectNameTest);
-		int i = 2;
-		while ( Index != -1 ) {
-			ProjectNameTest = ProjectNamePrefix + " " + i;
-			Index = Application.Projects.getIndexByName( ProjectNameTest );
-			i++;
-		}
-		
-		if ( Application.RunInfo.AppExecutedOver() == "IDE" ) {
-			// -----------------------------------------------
-			// --- IDE-Dialog für "Neues Projekt" öffnen -----
-			// -----------------------------------------------
-			ProjectNewOpen NewProDia = new ProjectNewOpen( 
-					Application.MainWindow, 
-					Application.RunInfo.AppTitel() + ": " + Language.translate("Neues Projekt anlegen"), 
-					true, 
-					true 
-					);
-			NewProDia.setVarProjectName( ProjectNameTest );
-			NewProDia.setVarProjectFolder( ProjectNameTest.toLowerCase().replace(" ", "_") );
-			NewProDia.setVisible(true);
-			// === Hier geht's weiter, wenn der Dialog wieder geschlossen ist ===
-			if (NewProDia.isCanceled() == true ) {
-				return;
-			}
-			else {
-				ProjectName = NewProDia.getVarProjectName();
-				ProjectFolder = NewProDia.getVarProjectFolder();
-			}
-			NewProDia.dispose();
-			NewProDia = null;	
-			// -----------------------------------------------
-		}
-		else {
-			// -----------------------------------------------
-			// --- Datei-Dialog für "Neues Projekt" öffnen ---
-			// -----------------------------------------------			
-			
-			
-			
-			// -----------------------------------------------
-		}
-
-		
-		// --- Neues Projeltfenster öffnen ----------------
-		ProjectGUI = new ProjectWindow(this);
-		
-		// --- Projektnamen für diese Instanz festlegen --- 
-		setProjectName( ProjectName );
-		setProjectFolder( ProjectFolder );
-		ProjectUnsaved = false;
-		
-		// --- Objekt an die Projektauflistung hängen -----
-		Application.Projects.add( this );
-		Application.ProjectCurr = this;
-		Application.Projects.setProjectMenuItems();		
-		Application.MainWindow.setCloseButtonPosition( true );
-		
-		// --- Anzeige anpassen ---------------------------
-		setMaximized();
-		Application.setTitelAddition( ProjectName );
-		Application.setStatusBar( "" );		
-	};
-	/**
-	 * Open an existing MAS-Project
-	 */
-	public void open() {
-		// --- Öffnen eines neuen Pojekts -----------------
-		JFileChooser fc = new JFileChooser( Application.RunInfo.PathProjects(true) );
-		fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		fc.setMultiSelectionEnabled(false);		 
-		fc.setDialogTitle( Language.translate("Projekt öffnen") );
-		if ( fc.showOpenDialog( Application.MainWindow ) != JFileChooser.APPROVE_OPTION ){
-			return;
-		}
-		String SelectedFile = fc.getSelectedFile().getName();
-	    System.out.println( SelectedFile );
-
-	    
-		this.setMaximized();
-		//Application.Projects.add();
-
-	}
-	/**
 	 * Save the current MAS-Project
 	 */
 	public boolean save() {
-		// --- Speichern des aktuellen Pojekts ------------
+		// --- Speichern des aktuellen Projekts ------------
 		Application.MainWindow.setStatusBar( ProjectName + ": " + Language.translate("speichern") + " ... ");
-		
-		if ( ProjectFolder == null) {
-			JFileChooser fc = new JFileChooser( Application.RunInfo.PathProjects(true) );
-			fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-			fc.setMultiSelectionEnabled(false);		 
-			fc.setDialogTitle( Language.translate("Projekt öffnen") );
-			if ( fc.showOpenDialog( Application.MainWindow ) != JFileChooser.APPROVE_OPTION ){
-				return false;
-			}
-		}
-		
-		
 		try {			
-			// --- Kontext und Marshaller vorbereiten 
-			JAXBContext pc = JAXBContext.newInstance( getClass() ); 
+			// --- Kontext und Marshaller vorbereiten ------
+			JAXBContext pc = JAXBContext.newInstance( this.getClass() ); 
 			Marshaller pm = pc.createMarshaller(); 
 			pm.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE ); 
-			pm.marshal( this, System.out );
+			//pm.marshal( this, System.out );
 			// --- Objektwerte in xml-Datei schreiben -----
-			Writer pw = new FileWriter( "club-jaxb.xml" );
+			Writer pw = new FileWriter( ProjectFolderFullPath + Application.RunInfo.MASFile() );
 			pm.marshal( this, pw );
-			
+			ProjectUnsaved = false;
 		} 
 		catch (Exception e) {
 			System.out.println("XML - Fehler !");
@@ -167,7 +63,7 @@ import javax.xml.bind.annotation.XmlTransient;
 		String MsgText = null;
 
 		Application.MainWindow.setStatusBar(Language.translate("Projekt schliessen") + " ...");
-		if ( ProjectUnsaved ) {
+		if ( ProjectUnsaved == true ) {
 			MsgHead = Language.translate("Projekt '@' speichern?");
 			MsgHead = MsgHead.replace( "'@'", "'" + ProjectName + "'");			
 			MsgText = Language.translate(
@@ -186,8 +82,7 @@ import javax.xml.bind.annotation.XmlTransient;
 			}
 		}
 		// --- Projekt kann geschlossen werden ------------
-		int Index = Application.Projects.getIndexByName( ProjectName );
-		
+		int Index = Application.Projects.getIndexByName( ProjectName ); // --- Merker Index ---		
 		ProjectGUI.dispose();
 		Application.Projects.remove(this);
 		
@@ -206,6 +101,41 @@ import javax.xml.bind.annotation.XmlTransient;
 		}
 		Application.setStatusBar( "" );
 	}
+	
+	/**
+	 * Controls and/or Creates wether the Subfolder-Structure exists 
+	 * @return boolean true or false
+	 */	
+	public boolean CheckCreateSubFolders() {
+		
+		String NewDirName = null;
+		File f = null;
+		boolean Error = false;
+		
+		for (int i=0; i< DefaultSubFolders.length; i++  ) {
+			// --- ggf. Verzeichnis anlegen ---------------
+			NewDirName = this.ProjectFolderFullPath + DefaultSubFolders[i];
+			f = new File(NewDirName);
+			if ( f.isDirectory() ) {
+				// => Do nothing (yet)
+			} 
+			else {
+				// --- Verzeichnis anlegen ----------------
+				if ( f.mkdir() == false ) {
+					Error = true;	
+				}				
+			}
+		};
+		
+		// --- Set Return-Value ---------------------------
+		if ( Error == true ) {
+			return false;
+		}
+		else {
+			return true;	
+		}		
+	}
+	
 	/**
 	 * Moves the requested Projectwindow to the front
 	 */
@@ -257,6 +187,7 @@ import javax.xml.bind.annotation.XmlTransient;
 	 */
 	public void setProjectFolder(String projectFolder) {
 		ProjectFolder = projectFolder;
+		ProjectFolderFullPath = Application.RunInfo.PathProjects(true) + ProjectFolder + Application.RunInfo.AppPathSeparatorString();
 		setChanged();
 		notifyObservers( "ProjectFolder" );
 	}
@@ -265,6 +196,12 @@ import javax.xml.bind.annotation.XmlTransient;
 	 */
 	public String getProjectFolder() {
 		return ProjectFolder;
+	}
+	/**
+	 * @return the ProjectFolderFullPath
+	 */
+	public String getProjectFolderFullPath() {
+		return ProjectFolderFullPath;
 	}
 	
 }

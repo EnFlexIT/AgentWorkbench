@@ -15,8 +15,8 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import application.Application;
+import application.Language;
 import application.Project;
-import javax.swing.JComboBox;
 
 /**
  * @author: Christian Derksen
@@ -37,8 +37,6 @@ public class ProjectInfo extends JScrollPane implements Observer, ActionListener
 	private JLabel jLabel1 = null;
 	private JLabel jLabel2 = null;
 	private JScrollPane jScrollPane = null;
-
-	private JComboBox ProjectFolderList = null;  //  @jve:decl-index=0:visual-constraint="724,41"
 
 	/**
 	 * This is the default constructor
@@ -65,35 +63,21 @@ public class ProjectInfo extends JScrollPane implements Observer, ActionListener
 		jLabel1 = new JLabel();
 		jLabel1.setBounds(new Rectangle(15, 15, 156, 19));
 		jLabel1.setFont(new Font("Dialog", Font.BOLD, 14));
-		jLabel1.setText("Projekttitel");
+		jLabel1.setText( Language.translate("Projekttitel") );
 		jLabel2 = new JLabel();
 		jLabel2.setBounds(new Rectangle(15, 45, 156, 21));
 		jLabel2.setFont(new Font("Dialog", Font.BOLD, 14));
-		jLabel2.setText("Projektbeschreibung");
+		jLabel2.setText( Language.translate("Beschreibung") );
 		jLabel = new JLabel();
 		jLabel.setBounds(new Rectangle(15, 285, 156, 21));
 		jLabel.setFont(new Font("Dialog", Font.BOLD, 14));
-		jLabel.setText("Basisverzeichnis");
+		jLabel.setText( Language.translate("Verzeichnis") );
 		
 		this.add(jLabel, null);
 		this.add(jLabel1, null);
 		this.add(jLabel2, null);
 		this.add( getProjectTitel() );
-		
-		if ( Application.RunInfo.AppExecutedOver().equalsIgnoreCase("IDE") ) {
-			// ------------------------------------------------------------
-			// --- Entwicklungsumgebung -----------------------------------
-			// ------------------------------------------------------------
-			// => Auswahlfeld auf die einzelnen Verzeichnis aus PathProjects
-			this.add( getProjectFolderList() );	
-		}
-		else if ( Application.RunInfo.AppExecutedOver().equalsIgnoreCase("Executable") ) {
-			// ------------------------------------------------------------
-			// --- Executable jar-File ------------------------------------
-			// ------------------------------------------------------------
-			// => Verzeichnisangabe des gewählten Projekts anzeigen
-			this.add( getProjectFolder() );		
-		}
+		this.add( getProjectFolder() );		
 		this.add( getJScrollPane() );
 		this.setVisible(true);
 
@@ -107,9 +91,10 @@ public class ProjectInfo extends JScrollPane implements Observer, ActionListener
 	private JTextField getProjectTitel() {
 		if (ProjectName == null) {
 			ProjectName = new JTextField();
-			ProjectName.setBounds(new Rectangle(180, 15, 480, 26));
+			ProjectName.setBounds(new Rectangle(140, 15, 520, 26));
 			ProjectName.setName("ProjectTitel");
 			ProjectName.setFont(new Font("Dialog", Font.PLAIN, 12));
+			ProjectName.setText( CurrProject.getProjectName() );
 			ProjectNameDocumentListener = new DocumentListener() {
 				public void removeUpdate(DocumentEvent e) {
 					CurrProject.setProjectName( ProjectName.getText() );
@@ -127,6 +112,19 @@ public class ProjectInfo extends JScrollPane implements Observer, ActionListener
 	}
 
 	/**
+	 * This method initializes jScrollPane	
+	 * 	
+	 * @return javax.swing.JScrollPane	
+	 */
+	private JScrollPane getJScrollPane() {
+		if (jScrollPane == null) {
+			jScrollPane = new JScrollPane();
+			jScrollPane.setBounds(new Rectangle(140, 45, 520, 221));
+			jScrollPane.setViewportView(getProjectDescription());
+		}
+		return jScrollPane;
+	}
+	/**
 	 * This method initializes ProjectDescription	
 	 * 	
 	 * @return javax.swing.JTextArea	
@@ -138,6 +136,7 @@ public class ProjectInfo extends JScrollPane implements Observer, ActionListener
 			ProjectDescription.setColumns(0);
 			ProjectDescription.setLineWrap(true);
 			ProjectDescription.setFont(new Font("Dialog", Font.PLAIN, 12));
+			ProjectDescription.setText( CurrProject.getProjectDescription() );
 			ProjectDescription.getDocument().addDocumentListener( new DocumentListener() {
 				public void removeUpdate(DocumentEvent e) {
 					CurrProject.setProjectDescription( ProjectDescription.getText() );
@@ -161,50 +160,19 @@ public class ProjectInfo extends JScrollPane implements Observer, ActionListener
 	private JTextField getProjectFolder() {
 		if (ProjectFolder == null) {
 			ProjectFolder = new JTextField();
-			ProjectFolder.setBounds(new Rectangle(180, 285, 480, 26));
-			ProjectFolder.setText("");
 			ProjectFolder.setName("ProjectFolder");
+			ProjectFolder.setBounds(new Rectangle(140, 285, 520, 26));
 			ProjectFolder.setFont(new Font("Dialog", Font.PLAIN, 12));
 			ProjectFolder.setEditable( false );
+			ProjectFolder.setText( "... " + 
+								   Application.RunInfo.PathProjects(false) +
+								   CurrProject.getProjectFolder() + 
+								   Application.RunInfo.AppPathSeparatorString() 
+								 );			
+			
 		}
 		return ProjectFolder;
 	}
-
-	/**
-	 * This method initializes jComboBox	
-	 * 	
-	 * @return javax.swing.JComboBox	
-	 */
-	private JComboBox getProjectFolderList() {
-		if (ProjectFolderList == null) {
-			ProjectFolderList = new JComboBox();
-			ProjectFolderList.setName("ProjectFolder");
-			ProjectFolderList.setBounds(new Rectangle(180, 285, 480, 26));
-			ProjectFolderList.setFont(new Font("Dialog", Font.PLAIN, 12));
-			ProjectFolderList.setEditable( false );
-			String[] IDEProjects = Application.RunInfo.getIDEProjects();
-			for ( String Pro : IDEProjects ) {
-				ProjectFolderList.addItem( Pro );
-			}		
-		}
-		return ProjectFolderList;
-	}
-
-	
-	/**
-	 * This method initializes jScrollPane	
-	 * 	
-	 * @return javax.swing.JScrollPane	
-	 */
-	private JScrollPane getJScrollPane() {
-		if (jScrollPane == null) {
-			jScrollPane = new JScrollPane();
-			jScrollPane.setBounds(new Rectangle(180, 45, 480, 221));
-			jScrollPane.setViewportView(getProjectDescription());
-		}
-		return jScrollPane;
-	}
-
 	@Override
 	/**
 	 * Get the notyfication of the ObjectModel

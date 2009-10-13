@@ -504,12 +504,10 @@ public class CoreWindow extends JFrame implements ComponentListener{
 			String ActCMD = ae.getActionCommand();	
 			// --- Menü Projekt -------------------------------
 			if ( ActCMD.equalsIgnoreCase("ProjectNew") ) {
-				Project CurPro = new Project();
-				CurPro.addnew();
+				Application.Projects.add( true );
 			}
 			else if ( ActCMD.equalsIgnoreCase("ProjectOpen") ) {
-				Project CurPro = new Project();
-				CurPro.open();
+				Application.Projects.add( false );
 			}
 			else if ( ActCMD.equalsIgnoreCase("ProjectClose") ) {
 				Project CurPro = Application.ProjectCurr;
@@ -645,13 +643,10 @@ public class CoreWindow extends JFrame implements ComponentListener{
 			String ActCMD = ae.getActionCommand();			
 			// ------------------------------------------------
 			if ( ActCMD.equalsIgnoreCase("New") ) {
-				Project CurPro = new Project();
-				CurPro.addnew();
+				Application.Projects.add( true );
 			}
 			else if ( ActCMD.equalsIgnoreCase("Open") ) {
-				Project CurPro = new Project();
-				CurPro.open();
-			}
+				Application.Projects.add( false );			}
 			else if ( ActCMD.equalsIgnoreCase("Save") ) {
 				Project CurPro = Application.ProjectCurr;
 				if ( CurPro != null ) CurPro.save();

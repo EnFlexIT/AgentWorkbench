@@ -1,12 +1,20 @@
 package application;
 
+import gui.ProjectNewOpen;
+import gui.ProjectWindow;
+
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.ArrayList;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 
 public class ProjectsLoaded {
 
@@ -14,13 +22,130 @@ public class ProjectsLoaded {
 	private ArrayList<Project> ProjectsOpen = new ArrayList<Project>();
 	
 	/**
-	 * Adding a new Project to the Application
-	 * @param Project2Add
-	 * @return
+	 * Adding (Creating or Opening) a new Project to the Application
+	 * @param addNew
+	 * @return Project
 	 */
-	public Project add ( Project Project2Add ) {
-		ProjectsOpen.add( Project2Add );
-		return Project2Add;
+	public Project add ( boolean addNew ) {
+		
+		String ActionTitel = null;
+		String ProjectNameTest = null;
+		String ProjectFolderTest = null;
+		String LocalTmpProjectName = null;
+		String LocalTmpProjectFolder = null;
+		
+		// ------------------------------------------------
+		// --- Define a new Project-Instance -------------- 
+		Project NewPro = new Project();
+		
+		// ------------------------------------------------
+		// --- Startbedingenen für "New" oder "Open" ------
+		// ------------------------------------------------
+		if ( addNew == true ){
+			// ------------------------------------------------
+			// --- Anlegen eines neuen Projekts ---------------
+			ActionTitel = Language.translate("Neues Projekt anlegen");
+			
+			// --- Neuen, allgemeinen Projektnamen finden -----		
+			String ProjectNamePrefix = Language.translate("Neues Projekt");
+			ProjectNameTest = ProjectNamePrefix;
+			int Index = Application.Projects.getIndexByName(ProjectNameTest);
+			int i = 2;
+			while ( Index != -1 ) {
+				ProjectNameTest = ProjectNamePrefix + " " + i;
+				Index = Application.Projects.getIndexByName( ProjectNameTest );
+				i++;
+			}
+			ProjectFolderTest = ProjectNameTest.toLowerCase().replace(" ", "_");
+		}
+		else {
+			// ------------------------------------------------
+			// --- Öffnen eine vorhandenen Projekts -----------
+			ActionTitel = Language.translate("Projekt öffnen");			
+		}
+		Application.MainWindow.setStatusBar(ActionTitel + " ...");
+		
+		// ------------------------------------------------
+		// --- User-Dilog öffnen --------------------------
+		// ------------------------------------------------
+		if ( Application.RunInfo.AppExecutedOver() == "IDE" ) {
+			// -----------------------------------------------
+			// --- IDE-Dialog für "Neues Projekt" öffnen -----
+			ProjectNewOpen NewProDia = new ProjectNewOpen( Application.MainWindow,
+														   Application.RunInfo.AppTitel() + ": " + ActionTitel,
+														   true,
+														   addNew
+														   );
+			NewProDia.setVarProjectName( ProjectNameTest );
+			NewProDia.setVarProjectFolder( ProjectFolderTest );
+			NewProDia.setVisible(true);
+			// === Hier geht's weiter, wenn der Dialog wieder geschlossen ist ===
+			if ( NewProDia.isCanceled() == true ) {
+				return null;
+			}
+			else {
+				LocalTmpProjectName = NewProDia.getVarProjectName();
+				LocalTmpProjectFolder = NewProDia.getVarProjectFolder(); 
+			}
+			NewProDia.dispose();
+			NewProDia = null;	
+			// -----------------------------------------------
+		}
+		else {
+			// -----------------------------------------------
+			// --- Datei-Dialog für "Neues Projekt" öffnen ---
+			// -----------------------------------------------			
+			// TODO: Öffnen-Verfahren über einen Dateidialog  
+			// -----------------------------------------------
+		}				
+		
+		// --- Projektvariablen setzen -------------------
+		NewPro.setProjectName( LocalTmpProjectName );
+		NewPro.setProjectFolder( LocalTmpProjectFolder );
+
+		// --- Further 
+		if ( addNew == true ) {			
+			// --- Unterverzeichnise anlegen ------------------
+			NewPro.CheckCreateSubFolders();
+		}
+		else {
+			// --- XML-Datei einlesen -------------------------
+			JAXBContext pc;
+			Unmarshaller um = null;
+			String XMLFileName = NewPro.getProjectFolderFullPath() + Application.RunInfo.MASFile();			
+			try {
+				pc = JAXBContext.newInstance( NewPro.getClass() );
+				um = pc.createUnmarshaller(); 
+				NewPro = (Project) um.unmarshal( new FileReader( XMLFileName ) );
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (JAXBException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		// --- Neues Projektfenster öffnen ----------------
+		NewPro.ProjectGUI = new ProjectWindow( NewPro );
+		
+		// --- Projekt als aktuelle markieren ------------- 
+		NewPro.ProjectUnsaved = false;
+		
+		// --- Objekt an die Projektauflistung hängen -----
+		Application.ProjectCurr = NewPro;
+		Application.Projects.setProjectMenuItems();		
+		Application.MainWindow.setCloseButtonPosition( true );
+		
+		// --- Anzeige anpassen ---------------------------
+		NewPro.setMaximized();
+		Application.setTitelAddition( NewPro.getProjectName() );
+		Application.setStatusBar( Language.translate("Fertig") );	
+		
+		// --- Erstmalig speichern ------------------------
+		NewPro.save();
+		
+		// --- Objekt an die Auflistungen hängen ----------
+		ProjectsOpen.add( NewPro );
+		return NewPro;
 	}
 
 	/**
