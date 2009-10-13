@@ -122,6 +122,8 @@ public class ProjectsLoaded {
 			} catch (JAXBException e) {
 				e.printStackTrace();
 			}
+			// --- Folder auf aktuellen Projektordner einstellen ---
+			NewPro.setProjectFolder( LocalTmpProjectFolder );			
 		}
 		
 		// --- Neues Projektfenster öffnen ----------------
