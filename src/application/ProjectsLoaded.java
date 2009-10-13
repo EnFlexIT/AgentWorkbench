@@ -81,6 +81,7 @@ public class ProjectsLoaded {
 			NewProDia.setVisible(true);
 			// === Hier geht's weiter, wenn der Dialog wieder geschlossen ist ===
 			if ( NewProDia.isCanceled() == true ) {
+				Application.setStatusBar( Language.translate("Fertig") );
 				return null;
 			}
 			else {
@@ -139,11 +140,10 @@ public class ProjectsLoaded {
 		
 		// --- Anzeige anpassen ---------------------------
 		NewPro.setMaximized();
+		NewPro.save();   // --- Erstmalig speichern -------
+		
 		Application.setTitelAddition( NewPro.getProjectName() );
 		Application.setStatusBar( Language.translate("Fertig") );	
-		
-		// --- Erstmalig speichern ------------------------
-		NewPro.save();
 		
 		// --- Objekt an die Auflistungen hängen ----------
 		ProjectsOpen.add( NewPro );
