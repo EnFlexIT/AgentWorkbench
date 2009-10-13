@@ -1,4 +1,4 @@
-LANG_DEFAULT;0;;;
+LANG_DEFAULT;1;;;
 LANG_DE;LANG_EN;LANG_IT;LANG_ES;LANG_FR
 Fertig;Ready;;;
 Programmstart ...;Starting Program ...;;;
@@ -14,25 +14,25 @@ Englisch;English;;;
 Italienisch;Italian;;;
 Spanisch;Spanish;;;
 Französisch;French;;;
-Fenster;Window
-Hilfe;Help
-Jade;Jade
-Jade starten;Start Jade
-Jade stoppen;Stop Jade
-RMA (Remote Monitoring Agent) öffnen;Open RMA (Remote Monitoring Agent)
-Sniffer-Agenten starten;Start Sniffer-Agent
-Dummy-Agenten starten;Start Dummy-Agent
-DF (Directory Facilitator) starten;
-Introspector-Agent starten;
-Log-Manager starten;
-Sprache;Language
-Über ...;About ...
-Jade-Tools ...;
+Fenster;Window;;;
+Hilfe;Help;;;
+Jade;Jade;;;
+Jade starten;Start Jade;;;
+Jade stoppen;Stop Jade;;;
+RMA (Remote Monitoring Agent) öffnen;Open RMA (Remote Monitoring Agent);;;
+Sniffer-Agenten starten;Start Sniffer-Agent;;;
+Dummy-Agenten starten;Start Dummy-Agent;;;
+DF (Directory Facilitator) starten;;;;
+Introspector-Agent starten;Start Introspector-Agent;;;
+Log-Manager starten;Start Log-Manager;;;
+Sprache;Language;;;
+Über ...;About ...;;;
+Jade-Tools ...;;;;
 Jade wurde noch nicht gestartet.;Jade was not started yet.
 Jade wurde noch nicht gestartet!;Jade was not started yet!
-Jade wurde lokal gestartet.;Jade is running.
-Möchten Sie Jade nun starten und fortfahren?;
-Der Agent 'rma' ist bereits geöffnet!;
+Jade wurde lokal gestartet.;Jade is running.;;;
+Möchten Sie Jade nun starten und fortfahren?;;;;
+Der Agent 'rma' ist bereits geöffnet!;;;;
 Möchten Sie einen weiteren Agenten dieser Art starten?;;;;
 Der Agent ';;;;
  ist bereits geöffnet!;;;;
@@ -44,39 +44,33 @@ Das aktuelle Projekt ist noch nicht gespeichert!<br>Möchten Sie es nun speichern
 Das aktuelle Projekt '@' ist noch nicht gespeichert!<br>Möchten Sie es nun speichern ?;;;;
 Projekt '@' speichern?;;;;
 Möchten Sie die Anzeigesprache wirklich umstellen?<br>Die Anwendung muss hierzu neu gestartet und Projekte<br>von Ihnen neu geöffnet werden.;
-speichern;;;;
+speichern;save;;;
 Möchten Sie die Anzeigesprache wirklich umstellen?<br>Die Anwendung muss hierzu neu gestartet und Projekte<br>von Ihnen neu geöffnet werden.;;;;
-Projekt öffnen;;;;
-RMA (Remote Monitoring Agent) öffnen;;;;
 Kein Projekt geöffnet !;;;;
 Das aktuelle Projekt '@' ist noch nicht gespeichert!<br>Möchten Sie es nun speichern ?;;;;
 ' ist bereits geöffnet!;;;;
 Möchten Sie einen weiteren Agenten dieser Art starten?;;;;
-Basis-Info;;;;
-Basis-Agenten;;;;
-Kommunikation;;;;
-Umgebungs - Setup;;;;
-Simmulations - Setup;;;;
-Simulation;;;;
-Möchten Sie Jade nun starten und fortfahren?;;;;
-Simulationsmeldungen;;;;
+Basis-Info;Basic-Info;;;
+Basis-Agenten;Base-Agents;;;
+Kommunikation;Communication;;;
+Umgebungs - Setup;Environment-Setup	;;;
+Simmulations - Setup;Simulation-Setup;;;
+Simulation;Simulation;;;
+Simulationsmeldungen;Simulation-Messages;;;
 Neues Projekt anlegen;;;;
-OK;;;;
-Abbruch;;;;
-Projekttitel;;;;
-Verzeichnis;;;;
-Vorhandene Projektverzeichnisse;;;;
-Ok;;;;
+OK;OK;;;
+Abbruch;Cancel;;;
+Projekttitel;Project-Title;;;
+Verzeichnis;Folder;;;
+Vorhandene Projektverzeichnisse;Known Project-Folder;;;
 Bitte geben Sie einen Projektnamen an!<br><br>Zulässig sind beliebige Zeichen <br>sowie Leerzeichen.;;;;
 Fehler - Projektname !;;;;
 Bitte geben Sie ein korrektes Projektverzeichnis an!<br><br>Zulässig  sind beliebige Zeichen <br>sowie Leerzeichen.;;;;
 Fehler - Projektverzeichnis !;;;;
 Das von Ihnen gewählte Projektverzeichnis wird bereits verwendet!<br><br>Bitte wählen Sie einen anderen Namen für Ihr Verzeichnis;;;;
-Unbekannt:;;;;
+Unbekannt:;Unknown;;;
 Der gewählte Bezeichner für das Projektverzeichnis enthält<br>unzulässige oder zu wenige Zeichen! <br><br>Es werden min. 3 bis max. 20 Zeichen benötigt:<br>Erlaubt sind nur Kleinbuchstaben. Umlaute und<br>Leerzeichen sind nicht zulässig (verwenden Sie <br>stattdessen _ 'Unterstrich').;;;;
 Beschreibung;;;;
-Öffnen;;;;
-Fehler - ';;;;
-;;;;
-Die Datei '@' wurde nicht gefunden!;;;;
-Fehler - '@';;;;
+Öffnen;Open;;;
+Die Datei '@' wurde nicht gefunden!;File '@' was not found!;;;
+Fehler - '@';Error - '@';;;
