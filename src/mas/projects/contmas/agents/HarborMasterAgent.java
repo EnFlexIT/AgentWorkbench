@@ -81,27 +81,16 @@ public class HarborMasterAgent extends ContainerAgent {
 		}
 		protected ACLMessage prepareResponse(ACLMessage request){
 			ACLMessage reply=request.createReply();
-			try {
-				Concept content = ((AgentAction) getContentManager().extractContent(request));
-		        if(content instanceof GetCraneList) {
-		        	GetCraneList input=(GetCraneList) content;
-		            reply.setPerformative(ACLMessage.INFORM); 
-		            ProvideCraneList act=new ProvideCraneList();
-		    		//look for Cranes
-	    			act.setAvailable_cranes(toAIDList(getAIDsFromDF("craning"))); 
-					getContentManager().fillContent(reply, act);
-		        }else{
-		        	reply.setPerformative(ACLMessage.NOT_UNDERSTOOD);
-		        }
-			} catch (UngroundedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (CodecException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (OntologyException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			Concept content = ((ContainerAgent)myAgent).extractAction(request);
+			if(content instanceof GetCraneList) {
+				GetCraneList input=(GetCraneList) content;
+			    reply.setPerformative(ACLMessage.INFORM); 
+			    ProvideCraneList act=new ProvideCraneList();
+				//look for Cranes
+				act.setAvailable_cranes(toAIDList(getAIDsFromDF("craning"))); 
+				((ContainerAgent)myAgent).fillMessage(reply, act);
+			}else{
+				reply.setPerformative(ACLMessage.NOT_UNDERSTOOD);
 			}
 			return reply;
 		}
@@ -113,28 +102,17 @@ public class HarborMasterAgent extends ContainerAgent {
 		}
 		protected ACLMessage prepareResponse(ACLMessage request){
 			ContentElement content;
-			try {
-				content = getContentManager().extractContent(request);
-				Concept action = ((AgentAction) content);
-				if (action instanceof EnrollAtHarbor) {
-					ACLMessage rplyMsg = request.createReply();
-					rplyMsg.setPerformative(ACLMessage.INFORM);
-					AssignHarborQuay act = new AssignHarborQuay();
-					Quay concept = new Quay();
-					concept.setLies_in(new Sea());
-					act.setAssigned_quay(concept);
-					getContentManager().fillContent(rplyMsg, act);
-					return rplyMsg;
-				}
-			} catch (UngroundedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (CodecException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (OntologyException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			content = ((ContainerAgent)myAgent).extractAction(request);
+			Concept action = ((AgentAction) content);
+			if (action instanceof EnrollAtHarbor) {
+				ACLMessage rplyMsg = request.createReply();
+				rplyMsg.setPerformative(ACLMessage.INFORM);
+				AssignHarborQuay act = new AssignHarborQuay();
+				Quay concept = new Quay();
+				concept.setLies_in(new Sea());
+				act.setAssigned_quay(concept);
+				((ContainerAgent)myAgent).fillMessage(rplyMsg, act);
+				return rplyMsg;
 			}
 			return null;
 		}

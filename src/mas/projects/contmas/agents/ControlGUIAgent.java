@@ -64,7 +64,6 @@ public class ControlGUIAgent extends GuiAgent{
 	}
 	
 	protected void onGuiEvent(GuiEvent ev) {
-		// TODO Auto-generated method stub
 		int command = ev.getType();
 		if (command == 1) {
 	        AgentContainer c = getContainerController();

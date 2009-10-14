@@ -4,15 +4,20 @@
 package mas.projects.contmas.agents;
 
 import mas.projects.contmas.ontology.*;
+import jade.content.AgentAction;
 import jade.content.lang.Codec;
+import jade.content.lang.Codec.CodecException;
 import jade.content.lang.leap.LEAPCodec;
 import jade.content.onto.Ontology;
+import jade.content.onto.OntologyException;
+import jade.content.onto.UngroundedException;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.lang.acl.ACLMessage;
 import jade.util.leap.ArrayList;
 import jade.util.leap.Iterator;
 import jade.util.leap.List;
@@ -118,6 +123,10 @@ public class ContainerAgent extends Agent {
     	System.err.println("findMatchingOrder in ContainerAgent not implemented");
     	return null;
     }
+    public TransportOrder findMatchingOutgoingOrder(TransportOrderChain haystack){
+    	System.err.println("findMatchingOutgoingOrder in ContainerAgent not implemented");
+    	return null;
+    }
     public List determineContractors(){
     	ArrayList contractors=new ArrayList();
     	return contractors;
@@ -132,13 +141,79 @@ public class ContainerAgent extends Agent {
 		empty.setZ_dimension(0);
 		return empty;
 	}
-	public ProposeLoadOffer GetLoadProposal(TransportOrder call){
-		ProposeLoadOffer act=new ProposeLoadOffer();
-		call.setTakes(0);
-		act.setLoad_offer(call);
+	public ProposeLoadOffer GetLoadProposal(TransportOrderChain curTOC){
+    	ProposeLoadOffer act=null;
+    	TransportOrder matchingOrder=findMatchingOrder(curTOC);
+    	if(matchingOrder!=null){ //passende TransportOrder gefunden
+			echoStatus("TransportOrder gefunden, die zu mir passt");
+			matchingOrder.getEnds_at().setConcrete_designation(getAID());
+			matchingOrder.getEnds_at().setType("concrete");
+
+    		act=new ProposeLoadOffer();
+    		calculateEffort(matchingOrder);
+    		act.setLoad_offer(curTOC);
+    		loadOrdersProposedForQueue.add(curTOC);
+    	}
 		return act;
 	}
+	
+	public TransportOrder calculateEffort(TransportOrder call){
+		call.setTakes(0);
+		return call;		
+	}
+	
 	public void aquireContainer(TransportOrderChain targetContainer){
 		
+	}
+	public boolean checkQueueCapacity(){
+		echoStatus("lengthOfQueue: "+lengthOfQueue+", loadOrderPostQueue.size(): "+loadOrdersProposedForQueue.size());
+		return loadOrdersProposedForQueue.size()<lengthOfQueue;
+	}
+	public boolean checkPlausibility(CallForProposalsOnLoadStage call){
+		return true;
+	}
+
+	public boolean removeContainerFromBayMap(TransportOrderChain load_offer) {
+		Iterator allContainers=ontologyRepresentation.getContains().getIs_filled_with().iterator();
+		while(allContainers.hasNext()){
+			Container curContainer=((BlockAddress)allContainers.next()).getLocates();
+			echoStatus("curContainerID: "+curContainer.getId()+"load_offerID: "+load_offer.getTransports().getId());
+			if(curContainer.getId().equals(load_offer.getTransports().getId())){
+				allContainers.remove();
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public void fillMessage(ACLMessage accept, AgentAction act) {
+		try {
+			getContentManager().fillContent(accept, act);
+		}catch (UngroundedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CodecException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (OntologyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	public AgentAction extractAction(ACLMessage accept) {
+		AgentAction act=null;
+		try {
+			act=(AgentAction) getContentManager().extractContent(accept);
+		}catch (UngroundedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CodecException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (OntologyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return act;
 	}
 }

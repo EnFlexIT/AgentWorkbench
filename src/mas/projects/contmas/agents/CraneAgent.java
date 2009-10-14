@@ -37,24 +37,22 @@ public class CraneAgent extends ActiveContainerAgent implements TransportOrderHa
 	}
 
 	public void handleTransportOrder() {
-        MessageTemplate mt = AchieveREResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
+        MessageTemplate mt = ContractNetResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
 		addBehaviour(new recieveLoadOrders(this,mt));
 	}
 	
-	public ProposeLoadOffer GetLoadProposal(TransportOrder call){
-		ProposeLoadOffer act=super.GetLoadProposal(call);
+	public TransportOrder calculateEffort(TransportOrder call){
+		call=super.calculateEffort(call);
 		Random RandomGenerator=new Random(); 
 		call.setTakes(RandomGenerator.nextFloat());
-		act.setLoad_offer(call);
-		return act;
+		return call;
 	}
 	
 	public void aquireContainer(TransportOrderChain targetContainer){ //eigentlicher Vorgang des Container-Aufnehmens
-		super.aquireContainer(targetContainer);
+		super.aquireContainer(targetContainer); //in AUftragsliste eintragen
 		
 		//physikalische Aktionen
 		
-		//TODO aus bisheriger BayMap entfernen
 		BlockAddress destination=getEmptyBlockAddress(); //zieladresse besorgen
 		destination.setLocates(targetContainer.getTransports());
 		ontologyRepresentation.getContains().addIs_filled_with(destination); //Container mit neuer BlockAdress in eigene BayMap aufnehmens
@@ -62,7 +60,10 @@ public class CraneAgent extends ActiveContainerAgent implements TransportOrderHa
 	}
 	
     public List determineContractors(){
-    	return toAIDList(getAIDsFromDF("container-distributing"));
+    	if(!contractors.iterator().hasNext()){
+    		contractors=toAIDList(getAIDsFromDF("container-distributing"));
+    	}
+    	return contractors;
     }
 	public void offerTransportOrder() {
 		addBehaviour(new disposePayload(this));
@@ -74,11 +75,14 @@ public class CraneAgent extends ActiveContainerAgent implements TransportOrderHa
 		}
 
 		protected void onTick() {
-			LoadList commissions=((ActiveContainerHolder)((ContainerAgent)myAgent).ontologyRepresentation).getAdministers();
-			Iterator commissionIter=commissions.getAllConsists_of();
-			while(commissionIter.hasNext()){ //Agent hat Transportaufträge abzuarbeiten
+			Iterator commissions=((ActiveContainerHolder)((ContainerAgent)myAgent).ontologyRepresentation).getAdministers().getAllConsists_of();
+			Designator myself=new Designator();
+			myself.setType("concrete");
+			myself.setConcrete_designation(myAgent.getAID());
+			Boolean hasCommissions=commissions.hasNext();
+			while(commissions.hasNext()){ //Agent hat Transportaufträge abzuarbeiten
 				echoStatus("Ticking: commissions available - dropping Container on the hook");
-				TransportOrderChain curTOC=((TransportOrderChain) commissionIter.next());
+				TransportOrderChain curTOC=((TransportOrderChain) commissions.next());
 				TransportOrderChain TOChain=curTOC;
 				
 				TOChain=new TransportOrderChain();
@@ -86,20 +90,29 @@ public class CraneAgent extends ActiveContainerAgent implements TransportOrderHa
 				TOChain.setTransports(curTOC.getTransports());
 
 				TransportOrder TO=new TransportOrder();
-				TO.setStarts_at(((ContainerAgent) myAgent).ontologyRepresentation);
-				ContainerHolder target=new Yard();
-				target.setLives_in(new Street());//TODO change to Land but implement recursive Domain-determination in passiveHolder
+				TO.setStarts_at(myself);
+				
+				Designator target=new Designator();
+				target.setType("abstract");
+				target.setAbstract_designation(new Street());//TODO change to Land but implement recursive Domain-determination in passiveHolder
 				TO.setEnds_at(target);
 //				TO.setLinks(TOChain);
 				TOChain.addIs_linked_by(TO);
 				LoadList newCommission=new LoadList();
 				newCommission.addConsists_of(TOChain);
+				
+				/*
 				DebugPrinter DB=new DebugPrinter(TOChain,8);
 //				echoStatus(DB.dump());
 //				Inspector.inspect(newCommission);
+				*/
+				
 				addBehaviour(new announceLoadOrders(myAgent, newCommission));
+				commissions.remove();
 			}
-			echoStatus("Ticking: no commissions administered - no Container on the hook to be dropped");
+			if(hasCommissions){
+				echoStatus("Ticking: no commissions administered - no Container on the hook to be dropped");
+			}
 		}
 	}
 }

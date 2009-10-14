@@ -8,9 +8,20 @@ import jade.core.*;
 /**
 * Protege name: AnnounceLoadStatus
 * @author ontology bean generator
-* @version 2009/10/10, 17:32:32
+* @version 2009/10/13, 22:18:34
 */
 public class AnnounceLoadStatus implements AgentAction {
+
+   /**
+* Protege name: load_offer
+   */
+   private TransportOrderChain load_offer;
+   public void setLoad_offer(TransportOrderChain value) { 
+    this.load_offer=value;
+   }
+   public TransportOrderChain getLoad_offer() {
+     return this.load_offer;
+   }
 
    /**
 * Protege name: load_status
@@ -21,17 +32,6 @@ public class AnnounceLoadStatus implements AgentAction {
    }
    public String getLoad_status() {
      return this.load_status;
-   }
-
-   /**
-* Protege name: load_offer
-   */
-   private TransportOrder load_offer;
-   public void setLoad_offer(TransportOrder value) { 
-    this.load_offer=value;
-   }
-   public TransportOrder getLoad_offer() {
-     return this.load_offer;
    }
 
 }

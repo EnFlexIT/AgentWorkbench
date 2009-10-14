@@ -20,6 +20,7 @@ public class AGVAgent extends PassiveContainerAgent implements TransportOrderHan
 	public AGVAgent() {
 		this(new AGV());
 	}
+	
 	public AGVAgent(PassiveContainerHolder ontologyRepresentation) {
 		super("container-distributing",ontologyRepresentation);
 	}
@@ -29,14 +30,8 @@ public class AGVAgent extends PassiveContainerAgent implements TransportOrderHan
 		handleTransportOrder();
 	}
 
-	/* (non-Javadoc)
-	 * @see mas.projects.contmas.agents.TransportOrderHandler#handleTransportOrder()
-	 */
-	@Override
 	public void handleTransportOrder() {
-		// TODO Auto-generated method stub
         MessageTemplate mt = AchieveREResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
 		addBehaviour(new recieveLoadOrders(this,mt));
 	}
-
 }

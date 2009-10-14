@@ -16,6 +16,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Vector;
 
+import mas.projects.contmas.ontology.AcceptLoadOffer;
+import mas.projects.contmas.ontology.AnnounceLoadStatus;
 import mas.projects.contmas.ontology.CallForProposalsOnLoadStage;
 import mas.projects.contmas.ontology.LoadList;
 import mas.projects.contmas.ontology.ProposeLoadOffer;
@@ -40,55 +42,35 @@ public class announceLoadOrders extends ContractNetInitiator {
 		}
 		CallForProposalsOnLoadStage act = new CallForProposalsOnLoadStage();
 		act.setRequired_turnover_capacity(this.currentLoadList);
-		try {
-			myAgent.getContentManager().fillContent(cfp, act);
+			((ContainerAgent)myAgent).fillMessage(cfp, act);
 			Vector<ACLMessage> messages = new Vector<ACLMessage>();
 			cfp.setReplyByDate(new Date(System.currentTimeMillis() + 5000));
 			messages.add(cfp);
 			return messages;
-		} catch (CodecException e) {
-			((ContainerAgent)myAgent).echoStatus("announceLoadOrders - prepareCfps - fillContent - CodecException");
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (OntologyException e) {
-			((ContainerAgent)myAgent).echoStatus("announceLoadOrders - prepareCfps - fillContent - OntologyException");
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
 	}
 
 	protected void handleAllResponses(Vector responses, Vector acceptances) {
 		TransportOrder bestOffer=null;
+		TransportOrderChain bestOfferToc=null;
+
 		ACLMessage bestOfferMessage=null;
 		for (Object message : responses) {
 			ACLMessage propose = (ACLMessage) message;
 			if (propose.getContent() != null) {
 				Concept content;
-				try {
 					//System.out.println("Content: "+propose.getContent());
-					content = ((AgentAction) myAgent.getContentManager().extractContent(propose));
+					content = ((ContainerAgent) myAgent).extractAction(propose);
 					// content = ((AgentAction) myAgent.getContentManager().);
 					if (content instanceof ProposeLoadOffer) {
 						ProposeLoadOffer proposal = (ProposeLoadOffer) content;
-						TransportOrder offer = proposal.getLoad_offer();
+						TransportOrder offer = ((ContainerAgent)myAgent).findMatchingOutgoingOrder(proposal.getLoad_offer());
 						if(bestOffer==null || offer.getTakes()<bestOffer.getTakes()){ //bisher beste Zeit
 							bestOffer=offer;
 							bestOfferMessage=propose;
+							bestOfferToc=proposal.getLoad_offer();
 						}
-
-
 					}
-				} catch (UngroundedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (CodecException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (OntologyException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+
 
 
 			}// End if content !=null
@@ -97,6 +79,9 @@ public class announceLoadOrders extends ContractNetInitiator {
 		ACLMessage accept=null;
 		if(bestOffer!=null){
 			accept = bestOfferMessage.createReply();
+			AcceptLoadOffer act = new AcceptLoadOffer();
+			act.setLoad_offer(bestOfferToc);
+			((ContainerAgent)myAgent).fillMessage(accept, act);
 			accept.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
 			acceptances.add(accept);
 		}
@@ -110,7 +95,19 @@ public class announceLoadOrders extends ContractNetInitiator {
 		}
 	}
 
-	protected void handleResultNotification(Vector resultNotifications) {
-		System.out.println("Erfolgreich abgeladen");
+	protected void handleAllResultNotifications(Vector resultNotifications) {
+		for (Object message : resultNotifications) {
+			ACLMessage notification = (ACLMessage) message;
+				AgentAction content = ((ContainerAgent) myAgent).extractAction(notification);
+				if (content instanceof AnnounceLoadStatus) {
+					AnnounceLoadStatus loadStatus=(AnnounceLoadStatus) content;
+					if(loadStatus.getLoad_status().equals("FINISHED")){
+						((ContainerAgent)myAgent).echoStatus("AnnounceLoadStatus FINISHED empfangen, bearbeiten");
+						if(((ContainerAgent)myAgent).removeContainerFromBayMap(loadStatus.getLoad_offer())){
+							((ContainerAgent)myAgent).echoStatus("Erfolgreich abgeladen");
+						}
+					}
+				}
+		}
 	}
 }

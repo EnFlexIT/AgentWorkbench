@@ -10,6 +10,7 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.proto.ContractNetResponder;
 import jade.util.leap.Iterator;
+import mas.projects.contmas.ontology.AnnounceLoadStatus;
 import mas.projects.contmas.ontology.CallForProposalsOnLoadStage;
 import mas.projects.contmas.ontology.LoadList;
 import mas.projects.contmas.ontology.ProposeLoadOffer;
@@ -19,140 +20,114 @@ import mas.projects.contmas.ontology.TransportOrderChain;
 public class recieveLoadOrders extends ContractNetResponder{
 	public recieveLoadOrders(Agent a, MessageTemplate mt) {
 		super(a, mt);
-		// TODO Auto-generated constructor stub
 	}
 	protected ACLMessage handleCfp(ACLMessage cfp){
 		ACLMessage reply = cfp.createReply();
 		Concept content;
-		((ContainerAgent)myAgent).echoStatus("cfpEmpfangen");
-		try {
-			if(cfp.getContent()==null){ //CFP leer
-				reply.setPerformative(ACLMessage.FAILURE);
-				((ContainerAgent)myAgent).echoStatus("noContent");
-	    		return reply;
-			}
-			content = ((AgentAction) myAgent.getContentManager().extractContent(cfp));
+		((ContainerAgent)myAgent).echoStatus("CFP empfangen");
+		if(cfp.getContent()==null){ //CFP leer
+			((ContainerAgent)myAgent).echoStatus("no content");
+			reply.setContent("no content");
+			reply.setPerformative(ACLMessage.FAILURE);
+			return reply;
+		}
+		content = ((ContainerAgent)myAgent).extractAction(cfp);
 
-	        if (content instanceof CallForProposalsOnLoadStage) {
-				((ContainerAgent)myAgent).echoStatus("lengthOfQueue: "+((ContainerAgent) myAgent).lengthOfQueue+", loadOrderPostQueue.size(): "+((ContainerAgent) myAgent).loadOrdersProposedForQueue.size());
+		if (content instanceof CallForProposalsOnLoadStage) {
+			CallForProposalsOnLoadStage call=(CallForProposalsOnLoadStage) content;
+			LoadList liste=call.getRequired_turnover_capacity();
+			Iterator allTocs=liste.getAllConsists_of();
+			TransportOrderChain curTOC=(TransportOrderChain) allTocs.next();
 
-	        	if(((ContainerAgent) myAgent).loadOrdersProposedForQueue.size()>=((ContainerAgent) myAgent).lengthOfQueue){//schon auf genug Aufträge beworben
-	        		((ContainerAgent)myAgent).echoStatus("schon genug Aufträge");
+			if(!((ContainerAgent)myAgent).checkQueueCapacity()){//schon auf genug Aufträge beworben
+				((ContainerAgent)myAgent).echoStatus("schon genug Aufträge");
+				reply.setContent("schon genug Aufträge");
+		    	reply.setPerformative(ACLMessage.REFUSE);
+				return reply;
+
+			} else if (!((ContainerAgent)myAgent).checkPlausibility(call)) {
+				((ContainerAgent)myAgent).echoStatus("CFP unplausibel");
+				reply.setContent("CFP unplausibel");
+		    	reply.setPerformative(ACLMessage.REFUSE);
+				return reply;					
+			} 
+			else { //noch Kapazitäten vorhanden
+				((ContainerAgent)myAgent).echoStatus("noch Kapazitäten vorhanden");
+				ProposeLoadOffer act=((ContainerAgent) myAgent).GetLoadProposal(curTOC);
+				if(act!=null){
+					((ContainerAgent)myAgent).fillMessage(reply,act);
+					reply.setPerformative(ACLMessage.PROPOSE);
+				} else {
+					((ContainerAgent)myAgent).echoStatus("keine TransportOrder passt zu mir");
+					reply.setContent("keine TransportOrder passt zu mir");
 		        	reply.setPerformative(ACLMessage.REFUSE);
-		    		return reply;
-
-	        	} else {
-					((ContainerAgent)myAgent).echoStatus("noch Kapazitäten vorhanden");
-
-		        	reply.setPerformative(ACLMessage.PROPOSE);
-	        		((ContainerAgent) myAgent).loadOrdersProposedForQueue.add(((CallForProposalsOnLoadStage)content).getRequired_turnover_capacity());
-		        	//System.out.println("ist auch ein call for proposals");
-
-		        	CallForProposalsOnLoadStage call=(CallForProposalsOnLoadStage) content;
-		        	LoadList liste=call.getRequired_turnover_capacity();
-		        	//System.out.println("LoadList besteht aus "+liste.getConsists_of().size()+" TransportOrderChains");
-
-		        	Iterator allTocs=liste.getAllConsists_of();
-		        	TransportOrder matchingOrder=((ContainerAgent) myAgent).findMatchingOrder((TransportOrderChain) allTocs.next());
-
-		        	if(matchingOrder!=null){ //passende TransportOrder gefunden
-						((ContainerAgent)myAgent).echoStatus("TransportOrder gefunden, die zu mir passt");
-
-						ProposeLoadOffer act=(((ContainerAgent) myAgent).GetLoadProposal(matchingOrder));
-						reply.setPerformative(ACLMessage.PROPOSE);
-
-						myAgent.getContentManager().fillContent(reply, act);
-		        	} else { //keine TransportOrder passt
-						((ContainerAgent)myAgent).echoStatus("keine TransportOrder passt zu mir");
-		        	}
-	        	}
-
-
-	        } else { //unbekannter inhalt in CFP
-	        	((ContainerAgent)myAgent).echoStatus("unbekannter inhalt in CFP");
-				reply.setPerformative(ACLMessage.FAILURE);
-				reply.setContent("unbekannter inhalt in CFP");
-	        }
-	        
-		} catch (UngroundedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (CodecException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (OntologyException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+				}
+			}
+		} else { //unbekannter inhalt in CFP
+			((ContainerAgent)myAgent).echoStatus("unbekannter inhalt in CFP");
+			reply.setContent("unbekannter inhalt in CFP");
+			reply.setPerformative(ACLMessage.FAILURE);
+			return reply;		
 		}
 		return reply;
 	}
 	protected ACLMessage handleAcceptProposal(ACLMessage cfp,ACLMessage propose, ACLMessage accept){
 		((ContainerAgent)myAgent).echoStatus("handleAcceptProposal - acceptPerformative: "+accept.getPerformative());
 
-		((ContainerAgent)myAgent).echoStatus("Auftragsannahme empfangen");
+		Iterator queue=((ContainerAgent) myAgent).loadOrdersProposedForQueue.iterator();
+		
 		ACLMessage inform = accept.createReply();
 		Concept content;
-		try {
-			content = ((AgentAction) myAgent.getContentManager().extractContent(cfp));
-			LoadList requiredCapacity=((CallForProposalsOnLoadStage) content).getRequired_turnover_capacity();
-			TransportOrderChain proposedTOC=(TransportOrderChain) requiredCapacity.getAllConsists_of().next(); 				//TODO Bisher: Variante nur einer pro, erweitern
+		content = ((ContainerAgent)myAgent).extractAction(cfp);
 
-			Iterator queue=((ContainerAgent) myAgent).loadOrdersProposedForQueue.iterator();
-			
-			while(queue.hasNext()){ //Aufträge durchlaufen, auf die beworben wurde, den richtigen bearbeiten
-				((ContainerAgent)myAgent).echoStatus("Auftrag überprüfen");
-				LoadList curList=(LoadList) queue.next();
-				TransportOrderChain queuedTOC=(TransportOrderChain) curList.getAllConsists_of().next();				//TODO Bisher: Variante nur einer pro, erweitern
-				if(proposedTOC.getTransports().getId().equals(queuedTOC.getTransports().getId())){ //wenn der untersuchte Container dem entspricht, für den sich beworben wurde
-					queue.remove();
-					((ContainerAgent)myAgent).echoStatus("Auftrag aus Bewerbungsliste entfernt, mit Bearbeitung beginnen");
+		LoadList requiredCapacity=((CallForProposalsOnLoadStage) content).getRequired_turnover_capacity();
+		TransportOrderChain proposedTOC=(TransportOrderChain) requiredCapacity.getAllConsists_of().next();
 
-					((ContainerAgent) myAgent).aquireContainer(proposedTOC);
-					
-					((ContainerAgent)myAgent).echoStatus("Auftrag abgearbeitet");
-					inform.setPerformative(ACLMessage.INFORM);
-				}
-				if(inform.getPerformative()!=ACLMessage.INFORM){
-					inform.setPerformative(ACLMessage.FAILURE);
-					inform.setContent("recieveLoadOrders: Auftrag, auf den ich mich beworben habe nicht gefunden");
+		while(queue.hasNext()){ //Aufträge durchlaufen, auf die beworben wurde, den richtigen bearbeiten
+			((ContainerAgent)myAgent).echoStatus("Queue überprüfen");
+			TransportOrderChain queuedTOC=(TransportOrderChain)queue.next();
+			if(proposedTOC.getTransports().getId().equals(queuedTOC.getTransports().getId())){ //wenn der untersuchte Container dem entspricht, für den sich beworben wurde
+				queue.remove();
+				((ContainerAgent)myAgent).echoStatus("Auftrag aus Bewerbungsliste entfernt, mit Bearbeitung beginnen");
 
-				}
+				((ContainerAgent) myAgent).aquireContainer(proposedTOC);
+				
+				((ContainerAgent)myAgent).echoStatus("Auftrag abgearbeitet");
+				AnnounceLoadStatus loadStatus=new AnnounceLoadStatus();
+				loadStatus.setLoad_status("FINISHED");
+				loadStatus.setLoad_offer(proposedTOC);
+				((ContainerAgent)myAgent).fillMessage(inform,loadStatus);
+
+				inform.setPerformative(ACLMessage.INFORM);
 			}
-		} catch (UngroundedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (CodecException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (OntologyException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			if(inform.getPerformative()!=ACLMessage.INFORM){
+				inform.setContent("recieveLoadOrders: Auftrag, auf den ich mich beworben habe nicht gefunden");
+				inform.setPerformative(ACLMessage.FAILURE);
+			}
 		}
 		return inform;
 	}
 	protected void handleRejectProposal(ACLMessage cfp,ACLMessage propose, ACLMessage accept){
+		((ContainerAgent)myAgent).echoStatus("handleRejectProposal - acceptPerformative");
+
 		Concept content;
-		try {
-			content = ((AgentAction) myAgent.getContentManager().extractContent(cfp));
-			Iterator queue=((ContainerAgent) myAgent).loadOrdersProposedForQueue.iterator();
-			while(queue.hasNext()){
-				LoadList curList=(LoadList) queue.next();
-				LoadList requiredCapacity=((CallForProposalsOnLoadStage) content).getRequired_turnover_capacity();
-				TransportOrderChain proposedTOC=(TransportOrderChain) requiredCapacity.getAllConsists_of().next();
-				TransportOrderChain queuedTOC=(TransportOrderChain) curList.getAllConsists_of().next();
-				if(proposedTOC.getTransports().getId().equals(queuedTOC.getTransports().getId())){
-					queue.remove();
-				}
+
+		content = ((ContainerAgent)myAgent).extractAction(cfp);
+
+		LoadList requiredCapacity=((CallForProposalsOnLoadStage) content).getRequired_turnover_capacity();
+		TransportOrderChain proposedTOC=(TransportOrderChain) requiredCapacity.getAllConsists_of().next();
+
+		Iterator queue=((ContainerAgent) myAgent).loadOrdersProposedForQueue.iterator();
+		while(queue.hasNext()){
+			((ContainerAgent)myAgent).echoStatus("Queue überprüfen");
+
+			TransportOrderChain queuedTOC=(TransportOrderChain) queue.next();
+
+			if(proposedTOC.getTransports().getId().equals(queuedTOC.getTransports().getId())){
+				((ContainerAgent)myAgent).echoStatus("Auftrag gefunden, entfernt");
+
+				queue.remove();
 			}
-		} catch (UngroundedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (CodecException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (OntologyException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 }

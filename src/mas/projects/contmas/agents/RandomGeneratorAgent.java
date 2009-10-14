@@ -37,8 +37,7 @@ public class RandomGeneratorAgent extends ContainerAgent{
 	    protected ACLMessage handleRequest(ACLMessage request) { 
 	        ACLMessage reply = request.createReply(); 
 			Concept content;
-			try {
-				content = ((AgentAction) getContentManager().extractContent(request));
+				content = ((ContainerAgent)myAgent).extractAction(request);
 		        if(content instanceof RequestRandomBayMap) {
 			    	System.out.println("content instanceof RequestRandomBayMap");
 
@@ -55,29 +54,9 @@ public class RandomGeneratorAgent extends ContainerAgent{
 					LoadBay.setZ_dimension(height);
 					ProvideBayMap act=new ProvideBayMap();
 					act.setProvides(LoadBay);
-					getContentManager().fillContent(reply, act);
+					((ContainerAgent)myAgent).fillMessage(reply, act);
 			        return reply;
 		        }
-		        /*
-		        else {
-		            reply.setPerformative(ACLMessage.NOT_UNDERSTOOD); 
-		            reply.setContent("Fehler");
-		        } 
-		        return reply;
-		        */
-			} catch (UngroundedException e) {
-				// TODO Auto-generated catch block
-				System.err.println("Exception RandomGeneratorAgent prepareResponse UngroundedException");
-				e.printStackTrace();
-			} catch (CodecException e) {
-				// TODO Auto-generated catch block
-				System.err.println("Exception RandomGeneratorAgent prepareResponse CodecException");
-				e.printStackTrace();
-			} catch (OntologyException e) {
-				// TODO Auto-generated catch block
-				System.err.println("Exception RandomGeneratorAgent prepareResponse OntologyException");
-				e.printStackTrace();
-			}
 			return null;
 	    } // end prepareResponse() 
 	    protected ACLMessage prepareResultNotification(ACLMessage request, ACLMessage response){
@@ -87,9 +66,6 @@ public class RandomGeneratorAgent extends ContainerAgent{
 
 	public class populateBayMap extends AchieveREResponder{
 		
-		//TODO prepareResultNotification() method not re-defined
-		//TODO Schema and Java class do not match
-		
 		public populateBayMap(Agent a, MessageTemplate mt) {
 			super(a, mt);
 		}
@@ -97,85 +73,67 @@ public class RandomGeneratorAgent extends ContainerAgent{
 	    	System.out.println("populateBayMap handleRequest start");
 	        ACLMessage reply = request.createReply();
 			AgentAction content;
-			try {
-				content = ((AgentAction) getContentManager().extractContent(request));
+			content = ((ContainerAgent)myAgent).extractAction(request);
 
-		        if(content instanceof RequestPopulatedBayMap) {
 
-		        	BayMap LoadBay=((RequestPopulatedBayMap) content).getPopulate_on();
+			if(content instanceof RequestPopulatedBayMap) {
 
-		            reply.setPerformative(ACLMessage.INFORM); 
-		            
-					Integer width, length, height;
-					Random RandomGenerator=new Random();
-					String containerName;
-					Container c;
-					BlockAddress ba;
-					
-		            //old
-					width=LoadBay.getX_dimension();
-					length=LoadBay.getY_dimension();
-					height=LoadBay.getZ_dimension();
-					//System.out.println("width:"+width+"length:"+length+"height:"+height);
-					for(int z=0;z<height;z++){
-						for(int y=0;y<length;y++){
-							for(int x=0;x<width;x++){
-								//System.out.println("runde");
+				BayMap LoadBay=((RequestPopulatedBayMap) content).getPopulate_on();
+
+			    reply.setPerformative(ACLMessage.INFORM); 
+			    
+				Integer width, length, height;
+				Random RandomGenerator=new Random();
+				String containerName;
+				Container c;
+				BlockAddress ba;
+				
+			    //old
+				width=LoadBay.getX_dimension();
+				length=LoadBay.getY_dimension();
+				height=LoadBay.getZ_dimension();
+				//System.out.println("width:"+width+"length:"+length+"height:"+height);
+				for(int z=0;z<height;z++){
+					for(int y=0;y<length;y++){
+						for(int x=0;x<width;x++){
+							//System.out.println("runde");
 //								if(RandomGenerator.nextInt(2)==1 && (z==0 || 1==2)){ //TODO Abfrage, ob unterer Container schon vorhanden (keine Container "in die Luft" stellen)
-//								if(RandomGenerator.nextInt(2)==1){ //TODO Abfrage, ob unterer Container schon vorhanden (keine Container "in die Luft" stellen)
-								if(true){ //TODO Abfrage, ob unterer Container schon vorhanden (keine Container "in die Luft" stellen)
+//								if(RandomGenerator.nextInt(2)==1){ 
+							if(true){ 
 
-									//System.out.println("zufällig");
-									
-									c=new Container();
-									containerName="Container-ID: "+RandomGenerator.nextInt(65000);
-									c.setId(containerName);
-									ba=new BlockAddress();
-									//ba.setAddresses_within(LoadBay);
-									ba.setLocates(c);
-									ba.setX_dimension(x);
-									ba.setY_dimension(y);
-									ba.setZ_dimension(z);
-									//c.setOccupies(ba);
-									//c.
-		
-									LoadBay.addIs_filled_with(ba);
-									
-								}
+								//System.out.println("zufällig");
+								
+								c=new Container();
+								containerName="Container-ID: "+RandomGenerator.nextInt(65000);
+								c.setId(containerName);
+								ba=new BlockAddress();
+								//ba.setAddresses_within(LoadBay);
+								ba.setLocates(c);
+								ba.setX_dimension(x);
+								ba.setY_dimension(y);
+								ba.setZ_dimension(z);
+								//c.setOccupies(ba);
+								//c.
+
+								LoadBay.addIs_filled_with(ba);
+								
 							}
 						}
 					}
-		            //end old
-		            
-					ProvidePopulatedBayMap act=new ProvidePopulatedBayMap();
-					act.setProvides(LoadBay);
-					try{
-						getContentManager().fillContent(reply, act);
-					}catch (OntologyException e){
-						System.err.println("Exception RandomGeneratorAgent prepareResponse OntologyException special");
-						e.printStackTrace();
-						return null;
-					}
+				}
+			    //end old
+			    
+				ProvidePopulatedBayMap act=new ProvidePopulatedBayMap();
+				act.setProvides(LoadBay);
 
-		        } else {
-		            reply.setPerformative(ACLMessage.NOT_UNDERSTOOD); 
-		            reply.setContent("Fehler populated"); 
-		        } 
-		        return reply; 
-			} catch (UngroundedException e) {
-				// TODO Auto-generated catch block
-				System.err.println("Exception RandomGeneratorAgent prepareResponse UngroundedException");
-				e.printStackTrace();
-			} catch (CodecException e) {
-				// TODO Auto-generated catch block
-				System.err.println("Exception RandomGeneratorAgent prepareResponse CodecException");
-				e.printStackTrace();
-			} catch (OntologyException e) {
-				// TODO Auto-generated catch block
-				System.err.println("Exception RandomGeneratorAgent prepareResponse OntologyException");
-				e.printStackTrace();
-			}
-			return null;
+					((ContainerAgent)myAgent).fillMessage(reply, act);
+
+
+			} else {
+			    reply.setPerformative(ACLMessage.NOT_UNDERSTOOD); 
+			    reply.setContent("Fehler populated"); 
+			} 
+			return reply;
 		}
 		protected ACLMessage prepareResultNotification(ACLMessage request, ACLMessage response){
 			return response;

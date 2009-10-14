@@ -32,8 +32,6 @@ public class ShipAgent extends PassiveContainerAgent implements TransportOrderOf
     AID harborManager=null;
 	private AID RandomGenerator;
 
-	protected List contractors=null;
-
 	protected void setup() {
 		super.setup();
 		ontologyRepresentation=new Ship();
@@ -53,21 +51,7 @@ public class ShipAgent extends PassiveContainerAgent implements TransportOrderOf
 		msg = new ContainerMessage(ACLMessage.REQUEST);
 	    msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST); 
 		addBehaviour(new fetchRandomBayMap(this,msg));
-		/*
-		msg = new ContainerMessage(ACLMessage.REQUEST);
-	    msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST); 
-		addBehaviour(new getPopulatedBayMap(this,msg));
-		*/
 
-
-
-		
-		/*
-		msg = new ContainerMessage(ACLMessage.REQUEST);
-	    msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST); 
-		addBehaviour(new unloadShip(this,msg));
-		 */
-		//addBehaviour(new unload(this));
 	}
 	
 
@@ -85,8 +69,8 @@ public class ShipAgent extends PassiveContainerAgent implements TransportOrderOf
 			request.addReceiver(RandomGenerator);
 			RequestRandomBayMap act = new RequestRandomBayMap();
 			//TODO hardcoded
-			act.setX_dimension(1);
-			act.setY_dimension(1);
+			act.setX_dimension(2);
+			act.setY_dimension(2);
 			act.setZ_dimension(1);
 			try {
 				getContentManager().fillContent(request, act);
@@ -264,6 +248,11 @@ public class ShipAgent extends PassiveContainerAgent implements TransportOrderOf
 			if(((ShipAgent) myAgent).contractors!=null){
 				BayMap LoadBay=((ShipAgent) myAgent).ontologyRepresentation.getContains();
 				LoadList completeLoadList=new LoadList();
+				Designator myself=new Designator();
+				myself.setType("concrete");
+				myself.setConcrete_designation(myAgent.getAID());
+				myself.setAbstract_designation(((ContainerAgent)myAgent).ontologyRepresentation.getLives_in());
+
 
 				for(int x=0;x<LoadBay.getX_dimension();x++){ //baymap zeilen-
 					for(int y=0;y<LoadBay.getY_dimension();y++){ //und spaltenweise durchlaufen
@@ -279,9 +268,10 @@ public class ShipAgent extends PassiveContainerAgent implements TransportOrderOf
 						} //end while
 						if(upmostContainer!=null){ //an dieser Koordinate steht ein Container obenauf
 							TransportOrder TO=new TransportOrder();
-							TO.setStarts_at(((ContainerAgent) myAgent).ontologyRepresentation);
-							ContainerHolder target=new ContainerHolder();
-							target.setLives_in(new Domain());
+							TO.setStarts_at(myself);
+							Designator target=new Designator();
+							target.setType("abstract");
+							target.setAbstract_designation(new Domain());
 							TO.setEnds_at(target);
 							TransportOrderChain TOChain=new TransportOrderChain();
 							TOChain.addIs_linked_by(TO);

@@ -9,7 +9,7 @@ import jade.core.*;
    * collection of transport orders for one long-time loading or unloading process (layer-kind of cfp)
 * Protege name: LoadList
 * @author ontology bean generator
-* @version 2009/10/10, 17:32:32
+* @version 2009/10/13, 22:18:34
 */
 public class LoadList implements Concept {
 

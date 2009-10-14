@@ -1,8 +1,11 @@
 package mas.projects.contmas.agents;
 
+import jade.util.leap.ArrayList;
 import jade.util.leap.Iterator;
+import jade.util.leap.List;
 import mas.projects.contmas.ontology.ActiveContainerHolder;
 import mas.projects.contmas.ontology.ContainerHolder;
+import mas.projects.contmas.ontology.Designator;
 import mas.projects.contmas.ontology.Domain;
 import mas.projects.contmas.ontology.LoadList;
 import mas.projects.contmas.ontology.PassiveContainerHolder;
@@ -10,7 +13,8 @@ import mas.projects.contmas.ontology.TransportOrder;
 import mas.projects.contmas.ontology.TransportOrderChain;
 
 public class PassiveContainerAgent extends ContainerAgent {
-
+	protected List contractors=new ArrayList();
+	
 	public PassiveContainerAgent(String serviceType) {
 		this(serviceType, new PassiveContainerHolder());
 	}
@@ -34,8 +38,8 @@ public class PassiveContainerAgent extends ContainerAgent {
     		ContainerHolder start=(ContainerHolder) curTO.getStarts_at();
     		Domain startHabitat=(Domain) start.getLives_in();
 */
-    		ContainerHolder end=(ContainerHolder) curTO.getEnds_at();
-    		Domain endHabitat=(Domain) end.getLives_in();
+    		Designator end=(Designator) curTO.getEnds_at();
+    		Domain endHabitat=(Domain) end.getAbstract_designation();
     		echoStatus("handlerHabitat: "+handlerHabitat.getClass().getSimpleName());
     		echoStatus("endHabitat: "+endHabitat.getClass().getSimpleName());
 
@@ -47,6 +51,21 @@ public class PassiveContainerAgent extends ContainerAgent {
     	}
     	return matchingOrder;
     }
+    
+    public TransportOrder findMatchingOutgoingOrder(TransportOrderChain haystack){
+    	TransportOrder matchingOrder=null;
+    	Iterator toc=haystack.getAllIs_linked_by();
+    	while(toc.hasNext()){//jede order in der kette durchlaufen
+    		TransportOrder curTO=(TransportOrder) toc.next();
+    		Designator start=(Designator) curTO.getStarts_at();
+    		if(start.getConcrete_designation().getName().equals(getAID().getName())){ 
+    			matchingOrder=curTO;
+    			break;
+    		}
+    	}
+    	return matchingOrder;
+    }
+
 	public void aquireContainer(TransportOrderChain targetContainer){
 		super.aquireContainer(targetContainer);
 		((PassiveContainerHolder)this.ontologyRepresentation).getAdministers().addConsists_of(targetContainer); //container ist in BayMap, auftragsbuch hinzufügen

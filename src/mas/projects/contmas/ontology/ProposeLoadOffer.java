@@ -8,18 +8,18 @@ import jade.core.*;
 /**
 * Protege name: ProposeLoadOffer
 * @author ontology bean generator
-* @version 2009/10/10, 17:32:32
+* @version 2009/10/13, 22:18:34
 */
 public class ProposeLoadOffer implements AgentAction {
 
    /**
 * Protege name: load_offer
    */
-   private TransportOrder load_offer;
-   public void setLoad_offer(TransportOrder value) { 
+   private TransportOrderChain load_offer;
+   public void setLoad_offer(TransportOrderChain value) { 
     this.load_offer=value;
    }
-   public TransportOrder getLoad_offer() {
+   public TransportOrderChain getLoad_offer() {
      return this.load_offer;
    }
 
