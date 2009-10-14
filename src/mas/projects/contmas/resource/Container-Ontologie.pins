@@ -1,0 +1,183 @@
+; Wed Oct 14 02:37:13 CEST 2009
+; 
+;+ (version "3.3.1")
+;+ (build "Build 430")
+
+([AcceptLoadOffer] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([ActiveContainerHolder] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([AGV] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([AnnounceLoadStatus] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([AskForDestination] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([AssignBlockAddress] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([AssignHarborQuay] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([BayMap] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([BlockAddress] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([CallForProposalsOnLoadStage] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([Container] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([ContainerHolder] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([Crane] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([Designator] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([Domain] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([DomainArea] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([EnrollAtHarbor] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([GetCraneList] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([IndicateContainer] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([Land] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([LoadList] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([LookForContainer] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([PassiveContainerHolder] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([project+annotation] of  %3APROJECT-ANNOTATION
+
+	(%3ALOCATION "C:\\Dokumente und Einstellungen\\Hanno - Felix Wagner\\eclipse-workspace\\AgentGUI\\src")
+	(%3AONTOLOGYNAME "ContainerTerminal")
+	(%3APACKAGE "mas.projects.contmas.ontology")
+	(%3ASUPPORT "j2se"))
+
+([ProposeLoadOffer] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([ProvideBayMap] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([ProvideCraneList] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([ProvidePopulatedBayMap] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([Quay] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([Rail] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([ReachStacker] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([RejectLoadOffer] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([RequestPopulatedBayMap] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([RequestRandomBayMap] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([RMG] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([Sea] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([Ship] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([StaticContainerHolder] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([Street] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([Train] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([TransportOrder] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([TransportOrderChain] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([TwentyFootContainer] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([Yard] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
