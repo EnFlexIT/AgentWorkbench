@@ -7,6 +7,8 @@ import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -67,7 +69,7 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 		NewProject = NewPro;
 		
 		//--- TreeModel initialisieren --------------------------
-		RootNode = new DefaultMutableTreeNode( "... " + Application.RunInfo.PathProjects(false) );
+		RootNode = new DefaultMutableTreeNode( "... " + Application.RunInfo.PathProjects(false, false) );
 		ProjectTreeModel = new DefaultTreeModel( RootNode );	
 		initialize();
 
@@ -220,6 +222,7 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 			}
 			TreePath TreePathRoot = new TreePath(RootNode);
 			ProTree.expandPath( TreePathRoot );	
+			
 			// --- Falls ein Projekt geöffnet werden soll - START ---
 			if (NewProject == false ) {
 				ProTree.addTreeSelectionListener(new TreeSelectionListener() {
@@ -237,6 +240,13 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 							setVarProjectFolder(null);
 						}		
 						
+					}
+				});
+				ProTree.addMouseListener( new MouseAdapter() {
+					public void mouseClicked(MouseEvent me) {
+						if (me.getClickCount() == 2 ) {
+							jButtonOK.doClick();	
+						}
 					}
 				});
 			};
@@ -395,7 +405,7 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 			// ----------------------------------------------------
 			// --- Test: Basis-Verzeichnis anlegen ----------------
 			if ( ProError==false ) {
-				String NewDirName = Application.RunInfo.PathProjects(true) + ProFolder;
+				String NewDirName = Application.RunInfo.PathProjects(true, false) + ProFolder;
 				File f = new File(NewDirName);
 				if ( f.isDirectory() ) {
 					ProErrorSrc = "ProFolderDouble";
@@ -455,20 +465,34 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 			// ++++++++++++++++++++++++++++++++++++++++++++++++++++
 			// +++ Öffnen eines vorhandnen Projekts +++++++++++++++
 			// ++++++++++++++++++++++++++++++++++++++++++++++++++++
-			String XMLFileName = Application.RunInfo.PathProjects(true) + 
-								 ProFolder + 
-								 Application.RunInfo.AppPathSeparatorString() +
-								 Application.RunInfo.MASFile();
-			File f = new File( XMLFileName );
-			if ( f.isFile() == false ) {
-				ProErrorSrc = "ProFolderAgentGUIxml";
+			// --- Test, ob ein Projektordner gewählt wurde -------
+			System.out.println("Fehlersuche" + ProFolder );
+			if ( ProError==false && (ProFolder == null || ProFolder == "" || ProFolder.length() == 0) ) {
+				System.out.println("Fehler gefunden ");
+				ProErrorSrc = "ProFolder";
 				ProError = true;
-			}			
+			}
+			// --- Test, ob die Projektdatei gefunden wurde -------
+			if ( ProError==false ) {				
+				String XMLFileName = Application.RunInfo.PathProjects(true, false) + 
+									 ProFolder + 
+									 Application.RunInfo.AppPathSeparatorString() +
+									 Application.RunInfo.MASFile();
+				File f = new File( XMLFileName );
+				if ( f.isFile() == false ) {
+					ProErrorSrc = "ProFolderAgentGUIxml";
+					ProError = true;
+				}
+			}
 			
 			// ----------------------------------------------------
 			// --- Show Error-Msg, if an error occurs -------------
 			if (ProError==true) {
-				if ( ProErrorSrc == "ProFolderAgentGUIxml" ) {
+				if ( ProErrorSrc == "ProFolder" ) {
+					MsgHead = Language.translate("Fehler - Projektauswahl !");
+					MsgText = Language.translate("Bitte wählen Sie das gewünschte Projekt aus!");			
+				}
+				else if ( ProErrorSrc == "ProFolderAgentGUIxml" ) {
 					MsgHead = Language.translate("Fehler - '@'");
 					MsgText = Language.translate("Die Datei '@' wurde nicht gefunden!");	
 					MsgHead = MsgHead.replace("@", Application.RunInfo.MASFile() );

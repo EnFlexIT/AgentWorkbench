@@ -184,10 +184,16 @@ public class GlobalInfo {
 			return LocalPathProperty;	
 		}	
 	}
-	public String PathProjects( Boolean Absolute ){
+	public String PathProjects( Boolean Absolute, boolean UseImportSpecification ){
 		/**
 		 * Unterverzeichnis für Projekte
 		 */
+		if ( UseImportSpecification == true ) {
+			String ImportPath = LocalPathProjects;
+			ImportPath = ImportPath.replace( LocalAppPathSeparatorString, "." );
+			ImportPath = ImportPath.replace("src.","");
+			return ImportPath;
+		}
 		if ( Absolute == true ) { 
 			return FilePath2Absolute( LocalPathProjects );
 		}
@@ -203,7 +209,7 @@ public class GlobalInfo {
 		// --- Projektverzeichnis nach Unterverzeichnissen durchsuchen --
 		LocalProjects = null;
 		
-		File maindir = new File( PathProjects( true ) ) ;
+		File maindir = new File( PathProjects( true, false ) ) ;
 		File files[] = maindir.listFiles();
 		for (int i = 0; i < files.length; i++) {
 			if (files[i].isDirectory() && !files[i].getName().substring(0, 1).equals(".") ) {

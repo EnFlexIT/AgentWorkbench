@@ -165,7 +165,7 @@ public class ProjectInfo extends JScrollPane implements Observer, ActionListener
 			ProjectFolder.setFont(new Font("Dialog", Font.PLAIN, 12));
 			ProjectFolder.setEditable( false );
 			ProjectFolder.setText( "... " + 
-								   Application.RunInfo.PathProjects(false) +
+								   Application.RunInfo.PathProjects(false, false) +
 								   CurrProject.getProjectFolder() + 
 								   Application.RunInfo.AppPathSeparatorString() 
 								 );			
@@ -221,7 +221,7 @@ public class ProjectInfo extends JScrollPane implements Observer, ActionListener
 			CurrProject.setProjectDescription( ae.getActionCommand() );
 		}
 		else {
-			
+			System.err.println(Language.translate("Unbekannt: ") + "ActionCommand => " + ActCMD);
 		};
 	}
 	

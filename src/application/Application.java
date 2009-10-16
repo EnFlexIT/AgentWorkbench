@@ -1,6 +1,6 @@
 package application;
 
-import mas.Plattform;
+import mas.Platform;
 import gui.CoreWindow;
 /**
  * Diese Klasse verwaltet alle 	 
@@ -15,7 +15,7 @@ public class Application {
 	public static ProjectsLoaded Projects = new ProjectsLoaded();
 	public static Project ProjectCurr = null;
 		
-	public static Plattform JadePlatform = new Plattform();
+	public static Platform JadePlatform = new Platform();
 	
 	/**
 	 * main-method for the start of the application 
@@ -42,8 +42,8 @@ public class Application {
 	public static void quit() {
 		// --- Anwendung beenden ---------------------- 
 		JadePlatform.jadeStop();
-		Language.SaveDictionaryFile();
 		System.out.println( Language.translate("Programmende ... ") );
+		Language.SaveDictionaryFile();
 		System.exit(0);		
 	}
 

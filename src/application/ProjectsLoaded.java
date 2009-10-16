@@ -127,12 +127,15 @@ public class ProjectsLoaded {
 			NewPro.setProjectFolder( LocalTmpProjectFolder );			
 		}
 		
+		// --- Die Agenten zu diesem Projekt ermitteln ----
+		NewPro.filterProjectAgents();
+
 		// --- Neues Projektfenster öffnen ----------------
 		NewPro.ProjectGUI = new ProjectWindow( NewPro );
 		
 		// --- Projekt als aktuelle markieren ------------- 
 		NewPro.ProjectUnsaved = false;
-		
+				
 		// --- Objekt an die Projektauflistung hängen -----
 		Application.ProjectCurr = NewPro;
 		Application.Projects.setProjectMenuItems();		

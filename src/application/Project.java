@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.Writer;
 import java.util.Observable;
+import java.util.Vector;
 
 import javax.swing.JOptionPane;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
@@ -25,10 +26,11 @@ import javax.xml.bind.annotation.XmlTransient;
 	
 	// --- Objekt- / Projektvariablen --------------------------
 	@XmlTransient public boolean ProjectUnsaved = false;
-	
-	// --- Speichervariablen der Projektdatei ------------------ 
 	@XmlTransient private String ProjectFolder;
 	@XmlTransient private String ProjectFolderFullPath;
+	@XmlTransient private Vector<Class<?>> ProjectAgents;
+	
+	// --- Speichervariablen der Projektdatei ------------------ 
 	private String ProjectName;
 	private String ProjectDescription;
 	
@@ -187,7 +189,7 @@ import javax.xml.bind.annotation.XmlTransient;
 	 */
 	public void setProjectFolder(String projectFolder) {
 		ProjectFolder = projectFolder;
-		ProjectFolderFullPath = Application.RunInfo.PathProjects(true) + ProjectFolder + Application.RunInfo.AppPathSeparatorString();
+		ProjectFolderFullPath = Application.RunInfo.PathProjects(true, false) + ProjectFolder + Application.RunInfo.AppPathSeparatorString();
 		setChanged();
 		notifyObservers( "ProjectFolder" );
 	}
@@ -202,6 +204,20 @@ import javax.xml.bind.annotation.XmlTransient;
 	 */
 	public String getProjectFolderFullPath() {
 		return ProjectFolderFullPath;
+	}
+
+	/**
+	 * @param projectAgents the projectAgents to set
+	 */
+	public void filterProjectAgents() {
+		String FolderFilter = Application.RunInfo.PathProjects(false, true) + getProjectFolder();
+		ProjectAgents = Application.JadePlatform.jadeGetAgentClasses( FolderFilter );
+	}
+	/**
+	 * @return the projectAgents
+	 */
+	public Vector<Class<?>> getProjectAgents() {
+		return ProjectAgents;
 	}
 	
 }
