@@ -68,7 +68,7 @@ public class Platform extends java.lang.Object {
 		}
 		Application.MainWindow.setStatusJadeRunning(true);
 		// --- Jade-GUI zeigen --------------------------------------
-		jadeSystemAgentOpen( "rma", null );		
+		jadeSystemAgentOpen( "rma", null );
 	}
 	
 	/**
@@ -107,7 +107,9 @@ public class Platform extends java.lang.Object {
 	public boolean jadeMainContainerIsRunning () {
 		boolean JiR;		
 		try {
-			//System.out.println( "Status of main-container: " +  MASmc.getState().getCode() + " - " + MASmc.getState().getName()); 
+			@SuppressWarnings("unused")
+			State Status = MASmc.getState();
+			//System.out.println( "Status of main-container: " +  Status.getCode() + " - " + Status.getName()); 
 			JiR = true;
 			Application.MainWindow.setStatusJadeRunning(true);
 		}

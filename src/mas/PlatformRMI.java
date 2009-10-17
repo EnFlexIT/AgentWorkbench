@@ -33,7 +33,7 @@ import java.rmi.*;
  * 
  * @author Stelios Gerogiannakis, (c) Archetypon S.A. 2002, Project Onto-Logging
  */
-public class PlatformTest implements Remote {
+public class PlatformRMI implements Remote {
 
 	/** name of the JADE platform in the RMI registry */
 	private static String smName = jade.core.IMTPManager.SERVICE_MANAGER_NAME;
@@ -85,6 +85,7 @@ public class PlatformTest implements Remote {
 					+ " or is not listening on port " + rmiPort;
 		}
 
+		
 		return null;
 	}
 }
