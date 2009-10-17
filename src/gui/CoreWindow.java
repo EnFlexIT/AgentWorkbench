@@ -414,7 +414,6 @@ public class CoreWindow extends JFrame implements ComponentListener{
 		if (jMenuSpacer == null ) {
 			jMenuSpacer = new JLabel();
 			jMenuSpacer.setIcon(iconCloseDummy);
-			//jMenuSpacer.setText("Hallo");
 			jMenuSpacer.setVisible(false);			
 		}
 		return jMenuSpacer;
@@ -545,7 +544,7 @@ public class CoreWindow extends JFrame implements ComponentListener{
 			// --- Menü Extras => nicht hier !! ---------------
 			// --- Menü Hilfe ---------------------------------
 			else if ( ActCMD.equalsIgnoreCase("HelpAbout") ) {
-				
+				// --- Hier kann man mal ein paar Befehle testen ...
 			}
 			else {
 				System.err.println(Language.translate("Unbekannt: ") + "ActionCommand => " + ActCMD);

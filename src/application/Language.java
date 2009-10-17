@@ -76,9 +76,9 @@ public class Language {
 
 		// --- Anwendung neu starten -------------------------------------------		
 		Application.JadePlatform.jadeStop();
-		Application.MainWindow.dispose();		
-		Application.startApplication();		
 		Application.Projects.removeAll();
+		Application.MainWindow.dispose();		
+		Application.startApplication();	
 	}
 	// -------------------------------------------------------------------------	
 		

@@ -179,17 +179,10 @@ public class ProjectInfo extends JScrollPane implements Observer, ActionListener
 	 */
 	public void update(Observable arg0, Object OName) {
 		
-		CurrProject.ProjectUnsaved = true;
 		String ObjectName = OName.toString();
-		
 		if ( ObjectName.equalsIgnoreCase( "ProjectName" ) ) {
 			if ( ProjectName.isFocusOwner() == false ) {
-				// --- DocumentListener kurzzeitig entfernen, da sonst bei --- 
-				// --- Initialisierung eines Projektes eine Endlosschleife ---
-				// --- entsteht ...										   ---
-				ProjectName.getDocument().removeDocumentListener(ProjectNameDocumentListener);
 				ProjectName.setText( CurrProject.getProjectName() );				
-				ProjectName.getDocument().addDocumentListener(ProjectNameDocumentListener);
 			}								
 		}			
 		else if ( ObjectName.equalsIgnoreCase( "ProjectDescription" ) ) {
@@ -197,7 +190,7 @@ public class ProjectInfo extends JScrollPane implements Observer, ActionListener
 				ProjectDescription.setText( CurrProject.getProjectDescription() );
 		}			
 		else {
-			System.out.println("Unbekannter Updatebefehl vom Observerable ...");
+			//System.out.println("Unbekannter Updatebefehl vom Observerable ...");
 		};
 		this.repaint();
 	}
@@ -207,8 +200,8 @@ public class ProjectInfo extends JScrollPane implements Observer, ActionListener
 		// --- Das ActionCommand und den Auslöser des Events ermitteln ---
 		String ActCMD = ae.getActionCommand();
 		Object Trigger = ae.getSource();
-		System.out.println( "ActCMD/Wert => " + ActCMD );
-		System.out.println( "Auslöser => " + Trigger );
+		//System.out.println( "ActCMD/Wert => " + ActCMD );
+		//System.out.println( "Auslöser => " + Trigger );
 
 		// --- Fallunterscheidung 'Auslöser' -----------------------------
 		if ( Trigger == ProjectName ) {

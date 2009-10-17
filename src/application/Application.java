@@ -40,8 +40,14 @@ public class Application {
 	 * Quits the application
 	 */
 	public static void quit() {
+		// --------------------------------------------
 		// --- Anwendung beenden ---------------------- 
+		// --------------------------------------------
+		// --- Jade beenden ------------------------
 		JadePlatform.jadeStop();
+		// --- Noch offene Projekte schlieﬂen ------
+		if ( Projects.closeAll() == false ) return;
+		// --- Fertig ------------------------------
 		System.out.println( Language.translate("Programmende ... ") );
 		Language.SaveDictionaryFile();
 		System.exit(0);		

@@ -137,22 +137,33 @@ public class ProjectsLoaded {
 		NewPro.ProjectUnsaved = false;
 				
 		// --- Objekt an die Projektauflistung h‰ngen -----
+		ProjectsOpen.add( NewPro );
 		Application.ProjectCurr = NewPro;
+
+		// --- Anzeige anpassen ---------------------------
 		Application.Projects.setProjectMenuItems();		
 		Application.MainWindow.setCloseButtonPosition( true );
-		
-		// --- Anzeige anpassen ---------------------------
+		Application.setTitelAddition( NewPro.getProjectName() );
+		Application.setStatusBar( Language.translate("Fertig") );	
 		NewPro.setMaximized();
 		NewPro.save();   // --- Erstmalig speichern -------
 		
-		Application.setTitelAddition( NewPro.getProjectName() );
-		Application.setStatusBar( Language.translate("Fertig") );	
-		
-		// --- Objekt an die Auflistungen h‰ngen ----------
-		ProjectsOpen.add( NewPro );
 		return NewPro;
 	}
 
+	/**
+	 * Trys to close all current opened projects
+	 * @return
+	 */
+	public boolean closeAll() {		
+		// --- Alle "aktuellen" Projekte schlieﬂen --------
+		while ( Application.ProjectCurr != null ) {
+			if ( Application.ProjectCurr.close() == false  ) {
+				return false;
+			}
+		}
+		return true;
+	}
 	/**
 	 * Returns the Project-Object
 	 * @param String ProjectName
@@ -176,8 +187,7 @@ public class ProjectsLoaded {
 	 * @param String Project2Remove
 	 */
 	public void remove( Project Project2Remove ) {
-		int Index = getIndexByName( Project2Remove.getProjectName() );		
-		ProjectsOpen.remove(Index);
+		ProjectsOpen.remove(Project2Remove);		
 	}
 	/**
 	 * Removes all Projects from the (Array) ProjectList

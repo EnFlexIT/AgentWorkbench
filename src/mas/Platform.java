@@ -94,7 +94,7 @@ public class Platform extends java.lang.Object {
 			}			
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		MASmc = null;
 		MASrt = null;
@@ -102,13 +102,12 @@ public class Platform extends java.lang.Object {
 	}
 
 	/** 
-	 * Checks, whether the main-container is running or not 
+	 * Checks, whether the main-container (Jade himself) is running or not 
 	 */
 	public boolean jadeMainContainerIsRunning () {
 		boolean JiR;		
 		try {
-			State Stat = MASmc.getState();
-			System.out.println( "Status of main-container: " +  Stat.getCode() + " - " + Stat.getName()); 
+			//System.out.println( "Status of main-container: " +  MASmc.getState().getCode() + " - " + MASmc.getState().getName()); 
 			JiR = true;
 			Application.MainWindow.setStatusJadeRunning(true);
 		}

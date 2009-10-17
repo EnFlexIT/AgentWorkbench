@@ -69,7 +69,8 @@ public class PlatformTest implements Remote {
 		// try to bind and unbind the object to the RMI
 		try {
 			ServiceManagerRMI obj = (ServiceManagerRMI) Naming.lookup(url);
-			String test = obj.getPlatformName();
+			String TestName = obj.getPlatformName();
+			System.out.println( "SmName: " + smName + " - PlattformName: " + TestName );
 
 		} catch (NotBoundException e) {
 			// this means that the registry is running

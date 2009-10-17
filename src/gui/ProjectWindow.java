@@ -185,7 +185,7 @@ public class ProjectWindow extends JInternalFrame implements Observer {
     }
     @SuppressWarnings("unchecked")
 	private void ProjectTreeExpand( TreePath parent, boolean expand, Integer CurrNodeLevel, Integer Up2TreeLevel) {
-        // Traverse children
+    
         TreeNode node = (TreeNode)parent.getLastPathComponent();
         if (CurrNodeLevel >= Up2TreeLevel) {
         	return;
@@ -208,13 +208,11 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	
 	@Override
 	/**
-	 * Get the notyfication of the ObjectModel
+	 * Get the notification of the ObjectModel
 	 */
 	public void update(Observable arg0, Object OName) {
 		
-		CurrProject.ProjectUnsaved = true;
 		String ObjectName = OName.toString();
-		
 		if ( ObjectName.equalsIgnoreCase( "ProjectName" ) ) {
 			CurrentNode = (DefaultMutableTreeNode) ProjectTree.getModel().getRoot();
 			CurrentNode.setUserObject( CurrProject.getProjectName() );
@@ -222,11 +220,8 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 			ProjectTree.repaint();
 			Application.setTitelAddition( CurrProject.getProjectName() );
 		}			
-		else if ( ObjectName.equalsIgnoreCase( "ProjectDescription" ) ) {
-
-		}			
 		else {
-			System.out.println("Unbekannter Updatebefehl vom Observerable ...");
+			//System.out.println("Unbekannter Updatebefehl vom Observerable ...");
 		};
 		this.repaint();
 	}
@@ -258,11 +253,11 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	 */	
 	public void addProjectTab( String title, Icon icon, Component component, String tip ) {
 		// --- GUI-Komponente in das TabbedPane-Objekt einfügen -------------
-		component.setName( title ); 								// --- Component bennenn ----
+		component.setName( title ); 								// --- Component benennen ----
 		ProjectViewRightTabs.addTab( title, icon, component, tip);	// --- Component anhängen ---
 		// --- Neuen Basisknoten einfügen ------------------
 		CurrentNode = new DefaultMutableTreeNode( title );
-		RootNode.add( CurrentNode );
+		RootNode.add( CurrentNode );		
 	}
 
 

@@ -59,7 +59,7 @@ import javax.xml.bind.annotation.XmlTransient;
 		return true;		
 	}
 	
-	public void close() {
+	public boolean close() {
 		// --- Projekt schliessen ? -----------------------
 		String MsgHead = null;
 		String MsgText = null;
@@ -77,10 +77,10 @@ import javax.xml.bind.annotation.XmlTransient;
 					Application.MainWindow.getContentPane(), 
 					MsgText, MsgHead, JOptionPane.YES_NO_CANCEL_OPTION );
 			if ( MsgAnswer == JOptionPane.CANCEL_OPTION ) {
-				return;
+				return false;
 			}
 			else if ( MsgAnswer == JOptionPane.YES_OPTION ) {
-				if ( save()== false ) return;
+				if ( save()== false ) return false;
 			}
 		}
 		// --- Projekt kann geschlossen werden ------------
@@ -102,6 +102,7 @@ import javax.xml.bind.annotation.XmlTransient;
 			Application.setTitelAddition( "" );
 		}
 		Application.setStatusBar( "" );
+		return true;
 	}
 	
 	/**
@@ -154,11 +155,14 @@ import javax.xml.bind.annotation.XmlTransient;
 		Application.MainWindow.ProjectDesktop.getDesktopManager().maximizeFrame( ProjectGUI );		
 	}
 
+	
+	
 	/**
 	 * @param projectFolder the projectName to set
 	 */
 	public void setProjectName(String projectName) {
 		ProjectName = projectName;
+		ProjectUnsaved = true;
 		setChanged();
 		notifyObservers( "ProjectName" );
 	}
@@ -174,6 +178,7 @@ import javax.xml.bind.annotation.XmlTransient;
 	 */
 	public void setProjectDescription(String projectDescription) {
 		ProjectDescription = projectDescription;
+		ProjectUnsaved = true;
 		setChanged();
 		notifyObservers( "ProjectDescription" );
 	}
@@ -206,12 +211,15 @@ import javax.xml.bind.annotation.XmlTransient;
 		return ProjectFolderFullPath;
 	}
 
+	
 	/**
 	 * @param projectAgents the projectAgents to set
 	 */
 	public void filterProjectAgents() {
 		String FolderFilter = Application.RunInfo.PathProjects(false, true) + getProjectFolder();
 		ProjectAgents = Application.JadePlatform.jadeGetAgentClasses( FolderFilter );
+		setChanged();
+		notifyObservers("ProjectAgents");
 	}
 	/**
 	 * @return the projectAgents

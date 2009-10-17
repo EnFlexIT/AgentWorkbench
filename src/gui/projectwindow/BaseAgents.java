@@ -68,8 +68,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 	 * @return void
 	 */
 	private void initialize() {
-		
-		
+				
 		DummyRight = new JLabel();
 		DummyRight.setText("");
 		DummyLeft = new JLabel();
@@ -99,7 +98,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 	private JScrollPane getJScrollAgents() {
 		if (jScrollAgents == null) {
 			jScrollAgents = new JScrollPane();
-			jScrollAgents.setViewportView(getJAgentList() );			
+			jScrollAgents.setViewportView( getJAgentList() );			
 		}
 		return jScrollAgents;
 	}
@@ -288,8 +287,6 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 		// --- Das ActionCommand und den Auslöser des Events ermitteln ---
 		String ActCMD = ae.getActionCommand();
 		Object Trigger = ae.getSource();
-		//System.out.println( "ActCMD/Wert => " + ActCMD );
-		//System.out.println( "Auslöser => " + Trigger );
 
 		if ( Trigger == jAgentListRefresh ) {
 			// --------------------------------------------
@@ -301,14 +298,14 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 			// --- Agentenliste aktualisieren -------------	
 			Application.JadePlatform.jadeFindAgentClasse();
 			CurrProject.filterProjectAgents();
-			jScrollAgents.remove( jAgentList );			
-			jAgentList = null;			
-			jScrollAgents.setViewportView( getJAgentList() );			
 		}
 		else if ( Trigger == jAgentStartButton ) {
 			// --------------------------------------------
 			// --- Den ausgewählten Agenten starten -------
 			// --------------------------------------------
+			if ( jAgentStartAs.getText().length() == 0 ) {
+				return;
+			}			
 			Application.JadePlatform.jadeAgentStart( jAgentStartAs.getText(), 
 													 jAgentList.getSelectedValue().toString(), 
 													 CurrProject.getProjectFolder());	
@@ -319,11 +316,19 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 		else {
 			System.err.println(Language.translate("Unbekannt: ") + "ActionCommand => " + ActCMD);	
 		};
+		this.repaint();
 	}
 
 	@Override
-	public void update(Observable arg0, Object arg1) {
-		// TODO Auto-generated method stub
+	public void update(Observable arg0, Object OName) {
+		
+		String ObjectName = OName.toString();
+		if ( ObjectName.equalsIgnoreCase( "ProjectAgents" ) ) {
+			
+			jScrollAgents.remove( jAgentList );			
+			jAgentList = null;			
+			jScrollAgents.setViewportView( getJAgentList() );			
+		}
 		
 	}
 
