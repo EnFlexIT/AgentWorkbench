@@ -31,38 +31,30 @@ public class ActiveContainerAgent extends ContainerAgent {
 		((ActiveContainerHolder)this.ontologyRepresentation).getAdministers().addConsists_of(targetContainer); //container auftragsbuch hinzufügen
 	}
 
-    public TransportOrder findMatchingOrder(TransportOrderChain haystack){
-    	Iterator toc=haystack.getAllIs_linked_by();
-    	TransportOrder matchingOrder=null;
-		echoStatus("findMatchingOrder - jede order in der kette durchlaufen");
+	public Integer matchOrder(TransportOrder curTO){
+		Integer endMatch=super.matchOrder(curTO);
+		Integer startMatch=-1;
 
-    	while(toc.hasNext()){
-    		TransportOrder curTO=(TransportOrder) toc.next();
-    		Iterator capabilities=((ActiveContainerHolder) ontologyRepresentation).getAllCapable_of();
-    		Designator start=(Designator) curTO.getStarts_at();
-    		Domain startHabitat=(Domain) start.getAbstract_designation();
-    		while (capabilities.hasNext()) {
-    			Domain capability = (Domain) capabilities.next();
-    			if(startHabitat.getClass().getSimpleName().equals(capability.getClass().getSimpleName())){ //containeragent is able to handle orders in this start-habitat-domain
-	    			matchingOrder=curTO;
-	    			echoStatus("passt!");
-	    			break;
-				}
+		Designator start=(Designator) curTO.getStarts_at();
+		Domain startHabitat=(Domain) start.getAbstract_designation();
+		Designator end=(Designator) curTO.getStarts_at();
+		Domain endHabitat=(Domain) end.getAbstract_designation();
+		Iterator capabilities=((ActiveContainerHolder) ontologyRepresentation).getAllCapable_of();
+		while (capabilities.hasNext()) {
+			Domain capability = (Domain) capabilities.next();
+			if(startHabitat.getClass()
+					==capability.getClass()){ //containeragent is able to handle orders in this start-habitat-domain
+//    			echoStatus("start passt auch!");
+    			startMatch=1;
 			}
-    	}
-    	return matchingOrder;
-    }
-    public TransportOrder findMatchingOutgoingOrder(TransportOrderChain haystack){
-    	TransportOrder matchingOrder=null;
-    	Iterator toc=haystack.getAllIs_linked_by();
-    	while(toc.hasNext()){//jede order in der kette durchlaufen
-    		TransportOrder curTO=(TransportOrder) toc.next();
-    		Designator start=(Designator) curTO.getStarts_at();
-    		if(start.getConcrete_designation().getName().equals(getAID().getName())){ 
-    			matchingOrder=curTO;
-    			break;
-    		}
-    	}
-    	return matchingOrder;
-    }
+			if(endMatch!=0 && endMatch!=1 && endHabitat.getClass()==capability.getClass()){ //containeragent is able to handle orders in this end-habitat-domain
+//    			echoStatus("end passt (besser)!");
+				endMatch=1;
+			}
+		}
+		if(startMatch>-1 && endMatch>-1){
+			return startMatch+endMatch;
+		}
+		return -1;
+	}
 }

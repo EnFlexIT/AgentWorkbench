@@ -63,18 +63,14 @@ public class announceLoadOrders extends ContractNetInitiator {
 					// content = ((AgentAction) myAgent.getContentManager().);
 					if (content instanceof ProposeLoadOffer) {
 						ProposeLoadOffer proposal = (ProposeLoadOffer) content;
-						TransportOrder offer = ((ContainerAgent)myAgent).findMatchingOutgoingOrder(proposal.getLoad_offer());
+						TransportOrder offer = ((ContainerAgent)myAgent).findMatchingOrder(proposal.getLoad_offer(),false);
 						if(bestOffer==null || offer.getTakes()<bestOffer.getTakes()){ //bisher beste Zeit
 							bestOffer=offer;
 							bestOfferMessage=propose;
 							bestOfferToc=proposal.getLoad_offer();
 						}
 					}
-
-
-
 			}// End if content !=null
-			
 		}
 		ACLMessage accept=null;
 		if(bestOffer!=null){
@@ -102,7 +98,7 @@ public class announceLoadOrders extends ContractNetInitiator {
 				if (content instanceof AnnounceLoadStatus) {
 					AnnounceLoadStatus loadStatus=(AnnounceLoadStatus) content;
 					if(loadStatus.getLoad_status().equals("FINISHED")){
-						((ContainerAgent)myAgent).echoStatus("AnnounceLoadStatus FINISHED empfangen, bearbeiten");
+//						((ContainerAgent)myAgent).echoStatus("AnnounceLoadStatus FINISHED empfangen, bearbeiten");
 						if(((ContainerAgent)myAgent).removeContainerFromBayMap(loadStatus.getLoad_offer())){
 							((ContainerAgent)myAgent).echoStatus("Erfolgreich abgeladen");
 						}

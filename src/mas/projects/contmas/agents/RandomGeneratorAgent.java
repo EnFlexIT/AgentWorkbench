@@ -39,7 +39,7 @@ public class RandomGeneratorAgent extends ContainerAgent{
 			Concept content;
 				content = ((ContainerAgent)myAgent).extractAction(request);
 		        if(content instanceof RequestRandomBayMap) {
-			    	System.out.println("content instanceof RequestRandomBayMap");
+//			    	echoStatus("content instanceof RequestRandomBayMap");
 
 		        	RequestRandomBayMap input=(RequestRandomBayMap) content;
 		            reply.setPerformative(ACLMessage.INFORM); 

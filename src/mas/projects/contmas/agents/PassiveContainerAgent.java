@@ -27,7 +27,7 @@ public class PassiveContainerAgent extends ContainerAgent {
     public TransportOrder findMatchingOrder(TransportOrderChain haystack){
     	Iterator toc=haystack.getAllIs_linked_by();
     	TransportOrder matchingOrder=null;
-		echoStatus("findMatchingOrder - jede order in der kette durchlaufen");
+//		echoStatus("findMatchingOrder - jede order in der kette durchlaufen");
 
     	while(toc.hasNext()){//jede order in der kette durchlaufen
     		TransportOrder curTO=(TransportOrder) toc.next();
@@ -40,12 +40,12 @@ public class PassiveContainerAgent extends ContainerAgent {
 */
     		Designator end=(Designator) curTO.getEnds_at();
     		Domain endHabitat=(Domain) end.getAbstract_designation();
-    		echoStatus("handlerHabitat: "+handlerHabitat.getClass().getSimpleName());
-    		echoStatus("endHabitat: "+endHabitat.getClass().getSimpleName());
+//    		echoStatus("handlerHabitat: "+handlerHabitat.getClass().getSimpleName());
+//    		echoStatus("endHabitat: "+endHabitat.getClass().getSimpleName());
 
     		if(handlerHabitat.getClass().getSimpleName().equals(endHabitat.getClass().getSimpleName())){ //containeragent lives in the same domain as the target
     			matchingOrder=curTO;
-    			echoStatus("passt!");
+//    			echoStatus("passt!");
     			break;
     		}
     	}

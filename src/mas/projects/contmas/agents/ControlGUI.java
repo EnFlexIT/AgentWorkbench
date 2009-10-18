@@ -80,10 +80,10 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 			ShipLabelName.setBounds(new Rectangle(113, 31, 131, 16));
 			ShipLabelName.setText("Schiffsname");
 			ShipLabelZ = new JLabel();
-			ShipLabelZ.setBounds(new Rectangle(18, 83, 54, 16));
+			ShipLabelZ.setBounds(new Rectangle(19, 98, 54, 16));
 			ShipLabelZ.setText("Größe Z");
 			ShipLabelY = new JLabel();
-			ShipLabelY.setBounds(new Rectangle(18, 58, 54, 16));
+			ShipLabelY.setBounds(new Rectangle(18, 64, 54, 16));
 			ShipLabelY.setText("Größe Y");
 			ShipLabelX = new JLabel();
 			ShipLabelX.setText("Größe X");
@@ -113,7 +113,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 		if (ButtonCreateShip == null) {
 			ButtonCreateShip = new JButton();
 			
-			ButtonCreateShip.setBounds(new Rectangle(111, 79, 134, 20));
+			ButtonCreateShip.setBounds(new Rectangle(111, 100, 134, 20));
 			ButtonCreateShip.setText("Schiff erzeugen");
 			ButtonCreateShip.addActionListener(this);
 		}
@@ -128,8 +128,8 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JTextField getTFShipX() {
 		if (TFShipX == null) {
 			TFShipX = new JTextField();
-			TFShipX.setBounds(new Rectangle(77, 33, 24, 21));
-			TFShipX.setText("10");
+			TFShipX.setBounds(new Rectangle(77, 33, 24, 27));
+			TFShipX.setText("3");
 		}
 		return TFShipX;
 	}
@@ -142,8 +142,8 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JTextField getTFShipY() {
 		if (TFShipY == null) {
 			TFShipY = new JTextField();
-			TFShipY.setBounds(new Rectangle(78, 57, 25, 20));
-			TFShipY.setText("10");
+			TFShipY.setBounds(new Rectangle(78, 65, 25, 27));
+			TFShipY.setText("2");
 		}
 		return TFShipY;
 	}
@@ -156,8 +156,8 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JTextField getTFShipZ() {
 		if (TFShipZ == null) {
 			TFShipZ = new JTextField();
-			TFShipZ.setBounds(new Rectangle(78, 81, 25, 20));
-			TFShipZ.setText("5");
+			TFShipZ.setBounds(new Rectangle(79, 98, 25, 25));
+			TFShipZ.setText("1");
 		}
 		return TFShipZ;
 	}
@@ -170,7 +170,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JTextField getTFShipName() {
 		if (TFShipName == null) {
 			TFShipName = new JTextField();
-			TFShipName.setBounds(new Rectangle(115, 54, 118, 20));
+			TFShipName.setBounds(new Rectangle(116, 66, 118, 26));
 			TFShipName.setText("MS Schiff");
 		}
 		return TFShipName;

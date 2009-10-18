@@ -3,6 +3,7 @@ package mas.projects.contmas.agents;
 import mas.projects.contmas.ontology.ContainerTerminalOntology;
 import jade.content.lang.Codec;
 import jade.content.lang.leap.LEAPCodec;
+import jade.content.lang.sl.SLCodec;
 import jade.content.onto.Ontology;
 import jade.lang.acl.ACLMessage;
 

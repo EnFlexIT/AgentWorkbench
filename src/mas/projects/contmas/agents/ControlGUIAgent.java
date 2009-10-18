@@ -69,20 +69,35 @@ public class ControlGUIAgent extends GuiAgent{
 	        AgentContainer c = getContainerController();
 	        try {
 	        	String name=ev.getParameter(0).toString();
-	            AgentController a = c.createNewAgent(name , "mas.projects.contmas.agents.ShipAgent", null );
+//	            AgentController a = c.createNewAgent(name , "mas.projects.contmas.agents.ShipAgent", null );
+		        Ship ontologyRepresentation=new Ship();
+				Domain habitat = new Sea();
+		        ontologyRepresentation.setLives_in(habitat);
+		        if(ev.getParameter(1).toString()!="" && ev.getParameter(1).toString()!="" && ev.getParameter(1).toString()!=""){
+			        BayMap loadBay=new BayMap();
+			        loadBay.setX_dimension(Integer.parseInt(ev.getParameter(1).toString()));
+			        loadBay.setY_dimension(Integer.parseInt(ev.getParameter(2).toString()));
+			        loadBay.setZ_dimension(Integer.parseInt(ev.getParameter(3).toString()));
+			        ontologyRepresentation.setContains(loadBay);
+		        }
+//				habitat.setLies_in(terminalArea);
+	            AgentController a=c.acceptNewAgent(name, new ShipAgent(ontologyRepresentation));
+
 	            a.start();
+	            /*
 				ACLMessage sndMsg = new ACLMessage(ACLMessage.REQUEST);
 				sndMsg.addUserDefinedParameter("article","bayMap");
-				sndMsg.addUserDefinedParameter("dimensionX", ev.getParameter(1).toString());
+				sndMsg.addUserDefinedParameter("dimensionX", );
 				sndMsg.addUserDefinedParameter("dimensionY", ev.getParameter(2).toString());
 				sndMsg.addUserDefinedParameter("dimensionZ", ev.getParameter(3).toString());
 				sndMsg.addReceiver(randomGenerators[0]);
 				send(sndMsg);
+				*/
 	        }
 	        catch (Exception e){}
 		} else if (command == -1) {
 	         doDelete();
-	         System.exit(0);
+	         //System.exit(0);
 		}
 		
 	}

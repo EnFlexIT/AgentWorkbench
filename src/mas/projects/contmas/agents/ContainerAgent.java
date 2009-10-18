@@ -8,6 +8,7 @@ import jade.content.AgentAction;
 import jade.content.lang.Codec;
 import jade.content.lang.Codec.CodecException;
 import jade.content.lang.leap.LEAPCodec;
+import jade.content.lang.sl.SLCodec;
 import jade.content.onto.Ontology;
 import jade.content.onto.OntologyException;
 import jade.content.onto.UngroundedException;
@@ -59,16 +60,21 @@ public class ContainerAgent extends Agent {
         sd.setName( getLocalName() );
         register( sd );
         
-		BayMap LoadBay=new BayMap();
-		LoadBay.setX_dimension(1);
-		LoadBay.setY_dimension(1);
-		LoadBay.setZ_dimension(1);
-		ontologyRepresentation.setContains(LoadBay);
+        if(ontologyRepresentation.getContains()==null){
+    		BayMap LoadBay=new BayMap();
+    		LoadBay.setX_dimension(1);
+    		LoadBay.setY_dimension(1);
+    		LoadBay.setZ_dimension(1);
+    		ontologyRepresentation.setContains(LoadBay);
+        }
 	}
-	public int getBaySize(){
+	public Integer getBaySize(){
 		BayMap LoadBay=ontologyRepresentation.getContains();
-		int baySize=LoadBay.getX_dimension()*LoadBay.getY_dimension()*LoadBay.getZ_dimension();
+		Integer baySize=LoadBay.getX_dimension()*LoadBay.getY_dimension()*LoadBay.getZ_dimension();
 		return baySize;
+	}
+	public Integer getBayUtilization(){
+		return ontologyRepresentation.getContains().getIs_filled_with().size();
 	}
     void register( ServiceDescription sd)
     {
@@ -119,14 +125,57 @@ public class ContainerAgent extends Agent {
 		}
     	return output;
     }
+    
     public TransportOrder findMatchingOrder(TransportOrderChain haystack){
-    	System.err.println("findMatchingOrder in ContainerAgent not implemented");
-    	return null;
+    	return findMatchingOrder(haystack,true);
     }
-    public TransportOrder findMatchingOutgoingOrder(TransportOrderChain haystack){
-    	System.err.println("findMatchingOutgoingOrder in ContainerAgent not implemented");
-    	return null;
+    
+    public TransportOrder findMatchingOrder(TransportOrderChain haystack, boolean matchIncoming){
+    	Iterator toc=haystack.getAllIs_linked_by();
+    	TransportOrder matchingOrder=null;
+		Integer matchRating=-1;
+		Integer bestMatchRating=-1;
+		//echoStatus("findMatchingOrder - jede order in der kette durchlaufen");
+    	while(toc.hasNext()){
+    		TransportOrder curTO=(TransportOrder) toc.next();
+    		if(!matchIncoming && matchAID(curTO.getStarts_at())){
+    			return curTO;
+    		}
+    		matchRating=matchOrder(curTO);
+    		if(matchRating>-1 && matchIncoming){
+    			if(bestMatchRating==-1 || bestMatchRating>matchRating){
+	    			matchingOrder=curTO;
+	    			bestMatchRating=matchRating;
+	    			//echoStatus("passt! (besser?)");
+    			}
+    		}
+    	}
+    	return matchingOrder;
     }
+    
+	public Integer matchOrder(TransportOrder curTO){
+		Designator end=(Designator) curTO.getEnds_at();
+		if(matchAID(end)){
+			return 0;
+		} else {
+			Domain endHabitat=(Domain) end.getAbstract_designation();
+			Domain ownHabitat=ontologyRepresentation.getLives_in();
+			if(endHabitat.getClass()==ownHabitat.getClass()){ //domain entspricht genau Lebensraum
+				return 2; //+DomainDiffrence
+			}
+		}
+		return -1;
+	}
+	
+	public Boolean matchAID(Designator designation){
+		if(designation.getType().equals("concrete")){
+			if(designation.getConcrete_designation().equals(this.getAID())){ //genau für diesen Agenten bestimmt
+				return true;
+			}
+		} 
+		return false;
+	}
+    
     public List determineContractors(){
     	ArrayList contractors=new ArrayList();
     	return contractors;
@@ -162,13 +211,41 @@ public class ContainerAgent extends Agent {
 		return call;		
 	}
 	
-	public void aquireContainer(TransportOrderChain targetContainer){
+	public void aquireContainer(TransportOrderChain targetContainer){ //eigentlicher Vorgang des Container-Aufnehmens
+		//super.aquireContainer(targetContainer); //in AUftragsliste eintragen
 		
+		//physikalische Aktionen
+		
+		BlockAddress destination=getEmptyBlockAddress(); //zieladresse besorgen
+		destination.setLocates(targetContainer.getTransports());
+		ontologyRepresentation.getContains().addIs_filled_with(destination); //Container mit neuer BlockAdress in eigene BayMap aufnehmens
+		echoStatus("Nun wird der Container von mir transportiert");
 	}
-	public boolean checkQueueCapacity(){
-		echoStatus("lengthOfQueue: "+lengthOfQueue+", loadOrderPostQueue.size(): "+loadOrdersProposedForQueue.size());
+	
+	public boolean removeFromQueue(TransportOrderChain proposedTOC){
+		Iterator queue=loadOrdersProposedForQueue.iterator();
+
+		while(queue.hasNext()){ //Aufträge durchlaufen, auf die beworben wurde, den richtigen entfernen
+//			echoStatus("Queue überprüfen, Aufträge durchlaufen, auf die beworben wurde, den richtigen entfernen");
+			TransportOrderChain queuedTOC=(TransportOrderChain)queue.next();
+			if(proposedTOC.getTransports().getId().equals(queuedTOC.getTransports().getId())){ //wenn der untersuchte Container dem entspricht, für den sich beworben wurde
+				queue.remove();
+//				echoStatus("Auftrag aus Bewerbungsliste entfernt");
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean isQueueNotFull(){ //TODO use DataaStore
+		//echoStatus("lengthOfQueue: "+lengthOfQueue+", loadOrderPostQueue.size(): "+loadOrdersProposedForQueue.size());
 		return loadOrdersProposedForQueue.size()<lengthOfQueue;
 	}
+	
+	public boolean isBayMapFull(){
+		return getBaySize()<=getBayUtilization();
+	}
+	
 	public boolean checkPlausibility(CallForProposalsOnLoadStage call){
 		return true;
 	}
@@ -177,7 +254,7 @@ public class ContainerAgent extends Agent {
 		Iterator allContainers=ontologyRepresentation.getContains().getIs_filled_with().iterator();
 		while(allContainers.hasNext()){
 			Container curContainer=((BlockAddress)allContainers.next()).getLocates();
-			echoStatus("curContainerID: "+curContainer.getId()+"load_offerID: "+load_offer.getTransports().getId());
+//			echoStatus("curContainerID: "+curContainer.getId()+"load_offerID: "+load_offer.getTransports().getId());
 			if(curContainer.getId().equals(load_offer.getTransports().getId())){
 				allContainers.remove();
 				return true;
@@ -216,4 +293,5 @@ public class ContainerAgent extends Agent {
 		}
 		return act;
 	}
+
 }

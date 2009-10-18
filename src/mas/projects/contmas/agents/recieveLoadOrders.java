@@ -10,6 +10,7 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.proto.ContractNetResponder;
 import jade.util.leap.Iterator;
+import mas.projects.contmas.ontology.AcceptLoadOffer;
 import mas.projects.contmas.ontology.AnnounceLoadStatus;
 import mas.projects.contmas.ontology.CallForProposalsOnLoadStage;
 import mas.projects.contmas.ontology.LoadList;
@@ -39,7 +40,7 @@ public class recieveLoadOrders extends ContractNetResponder{
 			Iterator allTocs=liste.getAllConsists_of();
 			TransportOrderChain curTOC=(TransportOrderChain) allTocs.next();
 
-			if(!((ContainerAgent)myAgent).checkQueueCapacity()){//schon auf genug Aufträge beworben
+			if(!((ContainerAgent)myAgent).isQueueNotFull()){//schon auf genug Aufträge beworben
 				((ContainerAgent)myAgent).echoStatus("schon genug Aufträge");
 				reply.setContent("schon genug Aufträge");
 		    	reply.setPerformative(ACLMessage.REFUSE);
@@ -52,7 +53,7 @@ public class recieveLoadOrders extends ContractNetResponder{
 				return reply;					
 			} 
 			else { //noch Kapazitäten vorhanden
-				((ContainerAgent)myAgent).echoStatus("noch Kapazitäten vorhanden");
+				//((ContainerAgent)myAgent).echoStatus("noch Kapazitäten vorhanden");
 				ProposeLoadOffer act=((ContainerAgent) myAgent).GetLoadProposal(curTOC);
 				if(act!=null){
 					((ContainerAgent)myAgent).fillMessage(reply,act);
@@ -72,62 +73,41 @@ public class recieveLoadOrders extends ContractNetResponder{
 		return reply;
 	}
 	protected ACLMessage handleAcceptProposal(ACLMessage cfp,ACLMessage propose, ACLMessage accept){
-		((ContainerAgent)myAgent).echoStatus("handleAcceptProposal - acceptPerformative: "+accept.getPerformative());
+//		((ContainerAgent)myAgent).echoStatus("handleAcceptProposal - acceptPerformative: "+accept.getPerformative());
 
-		Iterator queue=((ContainerAgent) myAgent).loadOrdersProposedForQueue.iterator();
-		
 		ACLMessage inform = accept.createReply();
-		Concept content;
-		content = ((ContainerAgent)myAgent).extractAction(cfp);
-
-		LoadList requiredCapacity=((CallForProposalsOnLoadStage) content).getRequired_turnover_capacity();
-		TransportOrderChain proposedTOC=(TransportOrderChain) requiredCapacity.getAllConsists_of().next();
-
-		while(queue.hasNext()){ //Aufträge durchlaufen, auf die beworben wurde, den richtigen bearbeiten
-			((ContainerAgent)myAgent).echoStatus("Queue überprüfen");
-			TransportOrderChain queuedTOC=(TransportOrderChain)queue.next();
-			if(proposedTOC.getTransports().getId().equals(queuedTOC.getTransports().getId())){ //wenn der untersuchte Container dem entspricht, für den sich beworben wurde
-				queue.remove();
-				((ContainerAgent)myAgent).echoStatus("Auftrag aus Bewerbungsliste entfernt, mit Bearbeitung beginnen");
-
-				((ContainerAgent) myAgent).aquireContainer(proposedTOC);
-				
-				((ContainerAgent)myAgent).echoStatus("Auftrag abgearbeitet");
-				AnnounceLoadStatus loadStatus=new AnnounceLoadStatus();
-				loadStatus.setLoad_status("FINISHED");
-				loadStatus.setLoad_offer(proposedTOC);
-				((ContainerAgent)myAgent).fillMessage(inform,loadStatus);
-
-				inform.setPerformative(ACLMessage.INFORM);
-			}
-			if(inform.getPerformative()!=ACLMessage.INFORM){
-				inform.setContent("recieveLoadOrders: Auftrag, auf den ich mich beworben habe nicht gefunden");
-				inform.setPerformative(ACLMessage.FAILURE);
-			}
+		inform.setPerformative(ACLMessage.INFORM);
+		Concept content= ((ContainerAgent)myAgent).extractAction(accept);
+		TransportOrderChain acceptedTOC=((AcceptLoadOffer) content).getLoad_offer();
+		if(!((ContainerAgent)myAgent).removeFromQueue(acceptedTOC)){ 
+			inform.setContent("handleAcceptProposal: Auftrag, auf den ich mich beworben habe nicht gefunden");
+			inform.setPerformative(ACLMessage.FAILURE);
+			return inform;
 		}
+		
+		if(((ContainerAgent)myAgent).isBayMapFull()){
+			((ContainerAgent)myAgent).echoStatus("Baymap voll");
+			block();
+			return null;
+		}
+		
+		((ContainerAgent) myAgent).aquireContainer(acceptedTOC);
+		
+		((ContainerAgent)myAgent).echoStatus("Auftrag abgearbeitet");
+		AnnounceLoadStatus loadStatus=new AnnounceLoadStatus();
+		loadStatus.setLoad_status("FINISHED");
+		loadStatus.setLoad_offer(acceptedTOC);
+		((ContainerAgent)myAgent).fillMessage(inform,loadStatus);
 		return inform;
 	}
 	protected void handleRejectProposal(ACLMessage cfp,ACLMessage propose, ACLMessage accept){
-		((ContainerAgent)myAgent).echoStatus("handleRejectProposal - acceptPerformative");
-
-		Concept content;
-
-		content = ((ContainerAgent)myAgent).extractAction(cfp);
-
-		LoadList requiredCapacity=((CallForProposalsOnLoadStage) content).getRequired_turnover_capacity();
-		TransportOrderChain proposedTOC=(TransportOrderChain) requiredCapacity.getAllConsists_of().next();
-
-		Iterator queue=((ContainerAgent) myAgent).loadOrdersProposedForQueue.iterator();
-		while(queue.hasNext()){
-			((ContainerAgent)myAgent).echoStatus("Queue überprüfen");
-
-			TransportOrderChain queuedTOC=(TransportOrderChain) queue.next();
-
-			if(proposedTOC.getTransports().getId().equals(queuedTOC.getTransports().getId())){
-				((ContainerAgent)myAgent).echoStatus("Auftrag gefunden, entfernt");
-
-				queue.remove();
-			}
+//		((ContainerAgent)myAgent).echoStatus("handleRejectProposal - acceptPerformative");
+		Concept content= ((ContainerAgent)myAgent).extractAction(propose);
+		TransportOrderChain acceptedTOC=((ProposeLoadOffer) content).getLoad_offer();
+		if(!((ContainerAgent)myAgent).removeFromQueue(acceptedTOC)){ //wenn der untersuchte Container dem entspricht, für den sich beworben wurde
+			((ContainerAgent)myAgent).echoStatus("handleRejectProposal: Auftrag, auf den ich mich beworben habe nicht gefunden");
+		} else{
+			((ContainerAgent)myAgent).echoStatus("abgelehnten Auftrag entfernt");
 		}
 	}
 }

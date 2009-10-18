@@ -27,17 +27,21 @@ import mas.projects.contmas.ontology.*;
 
 public class ShipAgent extends PassiveContainerAgent implements TransportOrderOfferer {
 	public ShipAgent() {
-		super("long-term-transporting");
+		this(new Ship());
+	}
+
+	public ShipAgent(Ship ontologyRepresentation) {
+		super("long-term-transporting", ontologyRepresentation);
 	}
     AID harborManager=null;
 	private AID RandomGenerator;
 
 	protected void setup() {
 		super.setup();
-		ontologyRepresentation=new Ship();
+
 		//TODO hardcoded
 		((Ship)ontologyRepresentation).setLength((float) 120.5);
-		((Ship)ontologyRepresentation).setLives_in(new Sea());
+		ontologyRepresentation.setLives_in(new Sea());
 		//look for RandomGeneratorAgent
 		RandomGenerator=getFirstAIDFromDF("random-generation");
 
@@ -47,20 +51,21 @@ public class ShipAgent extends PassiveContainerAgent implements TransportOrderOf
 		msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST); 
 		addBehaviour(new enrollAtHarbor(this,msg));
 		
-		
-		msg = new ContainerMessage(ACLMessage.REQUEST);
-	    msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST); 
-		addBehaviour(new fetchRandomBayMap(this,msg));
-
+		if(ontologyRepresentation.getContains().getX_dimension()==1 &&
+			ontologyRepresentation.getContains().getY_dimension()==1 &&
+			ontologyRepresentation.getContains().getZ_dimension()==1){ //default-größe
+			msg = new ContainerMessage(ACLMessage.REQUEST);
+		    msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST); 
+			addBehaviour(new fetchRandomBayMap(this,msg));
+		} else { //direkt füllen
+    		addBehaviour(new getPopulatedBayMap(this,msg));
+		}
 	}
-	
-
-	
+		
     public List determineContractors(){
     	return 	contractors;
     }
 
-	
 	public class fetchRandomBayMap extends AchieveREInitiator {
 		public fetchRandomBayMap(Agent a, ACLMessage msg) {
 			super(a, msg);
@@ -69,9 +74,9 @@ public class ShipAgent extends PassiveContainerAgent implements TransportOrderOf
 			request.addReceiver(RandomGenerator);
 			RequestRandomBayMap act = new RequestRandomBayMap();
 			//TODO hardcoded
-			act.setX_dimension(2);
-			act.setY_dimension(2);
-			act.setZ_dimension(1);
+			act.setX_dimension(4);
+			act.setY_dimension(4);
+			act.setZ_dimension(2);
 			try {
 				getContentManager().fillContent(request, act);
 			    Vector<ACLMessage> messages = new Vector<ACLMessage>();
@@ -244,7 +249,7 @@ public class ShipAgent extends PassiveContainerAgent implements TransportOrderOf
 //		public void onTick() {
 		public void action() {
 
-			echoStatus("Tick: Entladen geht los");
+//			echoStatus("Tick: Entladen geht los");
 			if(((ShipAgent) myAgent).contractors!=null){
 				BayMap LoadBay=((ShipAgent) myAgent).ontologyRepresentation.getContains();
 				LoadList completeLoadList=new LoadList();

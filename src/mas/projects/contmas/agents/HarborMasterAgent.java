@@ -24,7 +24,7 @@ public class HarborMasterAgent extends ContainerAgent {
 		super.setup();
         //create filter for incoming messages
         MessageTemplate mt = AchieveREResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_REQUEST); 
-        System.out.println("HarborMaster gestartet (selbst)");
+//        echoStatus("HarborMaster gestartet (selbst)");
         setupEnvironment();
 		addBehaviour(new listenForEnroll(this,mt));
         addBehaviour(new offerCraneList (this,mt));
@@ -65,6 +65,20 @@ public class HarborMasterAgent extends ContainerAgent {
 			habitat.setLies_in(terminalArea);
 	        AGVontologyRepresentation.setLives_in(habitat);
 			a=c.acceptNewAgent("AGV #1", new AGVAgent(AGVontologyRepresentation));
+	        a.start();
+	        
+	        AGVontologyRepresentation=new AGV();
+			habitat = new Street();
+			habitat.setLies_in(terminalArea);
+	        AGVontologyRepresentation.setLives_in(habitat);
+			a=c.acceptNewAgent("AGV #2", new AGVAgent(AGVontologyRepresentation));
+	        a.start();
+	        
+	        AGVontologyRepresentation=new AGV();
+			habitat = new Street();
+			habitat.setLies_in(terminalArea);
+	        AGVontologyRepresentation.setLives_in(habitat);
+			a=c.acceptNewAgent("AGV #3", new AGVAgent(AGVontologyRepresentation));
 	        a.start();
 	        
 		} catch (StaleProxyException e) {

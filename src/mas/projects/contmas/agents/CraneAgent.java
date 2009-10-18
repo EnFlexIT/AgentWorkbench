@@ -48,17 +48,6 @@ public class CraneAgent extends ActiveContainerAgent implements TransportOrderHa
 		return call;
 	}
 	
-	public void aquireContainer(TransportOrderChain targetContainer){ //eigentlicher Vorgang des Container-Aufnehmens
-		super.aquireContainer(targetContainer); //in AUftragsliste eintragen
-		
-		//physikalische Aktionen
-		
-		BlockAddress destination=getEmptyBlockAddress(); //zieladresse besorgen
-		destination.setLocates(targetContainer.getTransports());
-		ontologyRepresentation.getContains().addIs_filled_with(destination); //Container mit neuer BlockAdress in eigene BayMap aufnehmens
-		echoStatus("Nun hängt der Container am Haken");
-	}
-	
     public List determineContractors(){
     	if(!contractors.iterator().hasNext()){
     		contractors=toAIDList(getAIDsFromDF("container-distributing"));
@@ -110,7 +99,7 @@ public class CraneAgent extends ActiveContainerAgent implements TransportOrderHa
 				addBehaviour(new announceLoadOrders(myAgent, newCommission));
 				commissions.remove();
 			}
-			if(hasCommissions){
+			if(!hasCommissions){
 				echoStatus("Ticking: no commissions administered - no Container on the hook to be dropped");
 			}
 		}
