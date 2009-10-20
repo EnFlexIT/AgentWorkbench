@@ -1,7 +1,7 @@
 package svganalyzer;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -9,14 +9,14 @@ import java.net.MalformedURLException;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
-import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.swing.JSVGCanvas;
 import org.apache.batik.swing.svg.SVGDocumentLoaderAdapter;
 import org.apache.batik.swing.svg.SVGDocumentLoaderEvent;
@@ -25,64 +25,88 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.svg.SVGDocument;
+import org.w3c.dom.Text;
+import org.w3c.dom.events.Event;
+import org.w3c.dom.events.EventListener;
+import org.w3c.dom.events.EventTarget;
 
 public class SvgAnalyzer extends JSplitPane implements ActionListener{
 	
 	public static String svgNs="http://www.w3.org/2000/svg";	// SVG Namespace
 	
-	JFrame parent;
 	private JSVGCanvas canvas = null;
-	private JPanel panel=null;		// Containing open button and DOM tree 
+	private JScrollPane canvasPane = null;
+	private JPanel panel=null;		// Containing open button and DOM tree
+	private JPanel zoomPanel = null;	// Containing zoom buttons
 	private JTree tree = null;
 	private JButton btnOpen = null;
+	private JButton btnZoomIn = null;
+	private JButton btnZoomOut = null;
 	private JFileChooser fcOpen = null;
 	
 	private Document svgDoc = null;
 	
-	private DefaultMutableTreeNode root;
-	
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		JFrame frame = new JFrame ("SvgAnalyzer");
-		SvgAnalyzer svga = new SvgAnalyzer();
-		svga.parent=frame;
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setContentPane(svga);
-		frame.pack();
-		frame.setVisible(true);		
-	}
-	
 	public SvgAnalyzer(){
 		super(JSplitPane.HORIZONTAL_SPLIT);
+		initialize();
+	}
+	
+	/**
+	 * Initializing JSplitpane
+	 */
+	private void initialize(){
 		canvas = new JSVGCanvas();
+		canvas.setDocumentState(JSVGCanvas.ALWAYS_DYNAMIC);
 		canvas.addSVGDocumentLoaderListener(new SVGDocumentLoaderAdapter(){
 			public void documentLoadingCompleted(SVGDocumentLoaderEvent e){
-				DefaultMutableTreeNode root = buildTree(canvas.getSVGDocument().getDocumentElement());
+				svgDoc = canvas.getSVGDocument();
+				DefaultMutableTreeNode root = buildTree(svgDoc.getDocumentElement());
 				tree.setModel(new DefaultTreeModel(root));				
 			}
 		});
 		
 		this.setLeftComponent(canvas);
 		
-		panel = new JPanel();
-		panel.setLayout(new BorderLayout());
+		
 		btnOpen = new JButton ("Open SVG file");
 		btnOpen.addActionListener(this);
-		panel.add("North", btnOpen);
+				
+		zoomPanel = new JPanel();
+		zoomPanel.setLayout(new FlowLayout());
+		btnZoomIn = new JButton("+");
+		btnZoomIn.addActionListener(canvas.new ZoomAction(1.2));
+		btnZoomOut = new JButton("-");
+		btnZoomOut.addActionListener(canvas.new ZoomAction(0.8));
+		zoomPanel.add(btnZoomIn);
+		zoomPanel.add(btnZoomOut);
 		
 		tree = new JTree(new DefaultMutableTreeNode("No SVG loaded"));
+		
+		panel = new JPanel();
+		panel.setLayout(new BorderLayout());
+		panel.add("North", btnOpen);
 		panel.add(tree);
-		this.setRightComponent(panel);		
+		panel.add("South", zoomPanel);
+		this.setRightComponent(panel);
+		
+		this.setSize(650, 500);
+		this.setDividerLocation(this.getWidth()-200);
+		
+		System.out.println(this.getSize());
+		System.out.println(this.getDividerLocation());
 	}
 	
+	/**
+	 * Building a JTree representation of the documents DOM tree via depth first search
+	 * @param element DOM element to be added to the tree
+	 * @return Root element of the built subtree starting from the given element 
+	 */
 	private DefaultMutableTreeNode buildTree(Element element){
-		String description = element.getNodeName();
-		description+=" "+element.getAttributeNS(null, "id");
-		System.out.println("Analyzing "+description);
-		DefaultMutableTreeNode self=new DefaultMutableTreeNode(description);
+		String type = element.getNodeName();	// SVG element name
+		String id = element.getAttributeNS(null, "id");		// Id attribute
+		System.out.println("Analyzing "+type+" "+id);
+		
+		DefaultMutableTreeNode self=new DefaultMutableTreeNode(type+" "+id);
 		if(element.hasChildNodes()){
 			NodeList children = element.getChildNodes();
 			for(int i=0;i<children.getLength();i++){
@@ -92,8 +116,25 @@ public class SvgAnalyzer extends JSplitPane implements ActionListener{
 				}
 			}
 		}
+		
+		if((type!="svg")&&(type!="text")){	// If non-root element
+			EventTarget et = (EventTarget) element;
+			et.addEventListener("click", new OnClickAction(), false);
+//			addLabel(element, id);			
+		}
+		
 		return self;
-	}	
+	}
+	
+//	private void addLabel(Element element, String text){
+//		Element textElement = svgDoc.createElementNS(svgNs, "text");
+//		Text textContent = svgDoc.createTextNode(text);
+//		textElement.setAttributeNS(null, "font-size", "24");
+//		textElement.setAttributeNS(null, "x", element.getAttributeNS(null, "x"));
+//		textElement.setAttributeNS(null, "y", element.getAttributeNS(null, "y"));
+//		textElement.appendChild(textContent);
+//		svgDoc.getDocumentElement().appendChild(textElement);
+//	}
 
 	@Override
 	public void actionPerformed(ActionEvent ae) {
@@ -112,5 +153,15 @@ public class SvgAnalyzer extends JSplitPane implements ActionListener{
 				
 			}
 		}		
-	}	
+	}
+	
+	private class OnClickAction implements EventListener{
+
+		@Override
+		public void handleEvent(Event evt) {
+			Element target = (Element) evt.getTarget();
+			JOptionPane.showMessageDialog(SvgAnalyzer.this, target.getAttribute("id"));		
+		}
+		
+	}
 }

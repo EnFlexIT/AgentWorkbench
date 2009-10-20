@@ -66,7 +66,7 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 		// --- Die (optionalen) Karteikarten einblenden ----------
 		addProjectTab(Language.translate("Basis-Agenten"), null, new gui.projectwindow.BaseAgents(CurrProject), Language.translate("Basis-Agenten"));
 		addProjectTab(Language.translate("Kommunikation"), null, new gui.projectwindow.Ontology(CurrProject), Language.translate("Kommunikation"));		
-		addProjectTab(Language.translate("Umgebungs - Setup"), null, new gui.projectwindow.SetupEnvironment(CurrProject), Language.translate("Umgebungs - Setup"));
+		addProjectTab(Language.translate("Umgebungs - Setup"), null, new svganalyzer.SvgAnalyzer(), Language.translate("Umgebungs - Setup"));
 		addProjectTab(Language.translate("Simmulations - Setup"), null, new gui.projectwindow.SetupSimulation(CurrProject), Language.translate("Simmulations - Setup"));
 		addProjectTab(Language.translate("Simulation"), null, new gui.projectwindow.Simulation(CurrProject), Language.translate("Simulation"));
 		addProjectTab(Language.translate("Simulationsmeldungen"), null, new gui.projectwindow.SimulationMessages(CurrProject), Language.translate("Simulationsmeldungen"));
@@ -252,10 +252,10 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	 * @param tip
 	 */	
 	public void addProjectTab( String title, Icon icon, Component component, String tip ) {
-		// --- GUI-Komponente in das TabbedPane-Objekt einfügen -------------
+		// --- GUI-Komponente in das TabbedPane-Objekt einfï¿½gen -------------
 		component.setName( title ); 								// --- Component benennen ----
-		ProjectViewRightTabs.addTab( title, icon, component, tip);	// --- Component anhängen ---
-		// --- Neuen Basisknoten einfügen ------------------
+		ProjectViewRightTabs.addTab( title, icon, component, tip);	// --- Component anhï¿½ngen ---
+		// --- Neuen Basisknoten einfï¿½gen ------------------
 		CurrentNode = new DefaultMutableTreeNode( title );
 		RootNode.add( CurrentNode );		
 	}

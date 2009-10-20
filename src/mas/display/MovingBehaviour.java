@@ -4,21 +4,22 @@ import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
 
 class MovingBehaviour extends TickerBehaviour{
-	MovingAgent agent;
+	GraphicalAgent agent;
 
-	public MovingBehaviour(MovingAgent agent) {
+	public MovingBehaviour(GraphicalAgent agent) {
 		super(agent, 50);
 		this.agent=agent;
 	}
 
 	@Override
 	protected void onTick() {
-		agent.xPos+=agent.xSpeed;
-		agent.yPos+=agent.ySpeed;
+		agent.posX+=agent.speedX;
+		agent.posY+=agent.speedY;
 		ACLMessage movingMsg=new ACLMessage(ACLMessage.REQUEST);
-		movingMsg.addReceiver(agent.displayAgent);
+		for(int i=0;i<agent.displayAgents.length;i++)
+			movingMsg.addReceiver(agent.displayAgents[i].getName());
 		movingMsg.setConversationId("move");
-		movingMsg.setContent(agent.xPos+","+agent.yPos);
+		movingMsg.setContent(agent.posX+","+agent.posY);
 		agent.send(movingMsg);
 	}
 	

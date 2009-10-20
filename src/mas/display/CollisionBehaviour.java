@@ -6,9 +6,9 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
 class CollisionBehaviour extends CyclicBehaviour{
-	MovingAgent agent;
+	GraphicalAgent agent;
 	
-	public CollisionBehaviour(MovingAgent agent){
+	public CollisionBehaviour(GraphicalAgent agent){
 		this.agent=agent;
 	}
 	@Override
@@ -20,9 +20,9 @@ class CollisionBehaviour extends CyclicBehaviour{
 		if(collisionMsg!=null){
 			String[] colls=collisionMsg.getContent().split(",");
 			if(colls[0].contains("true"))
-				agent.xSpeed=-agent.xSpeed;
+				agent.speedX=-agent.speedX;
 			if(colls[1].contains("true"))
-				agent.ySpeed=-agent.ySpeed;
+				agent.speedY=-agent.speedY;
 		}else{
 			block();
 		}

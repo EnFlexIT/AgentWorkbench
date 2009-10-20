@@ -3,6 +3,8 @@ package mas.display;
 import java.awt.Dimension;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -77,7 +79,6 @@ public class DisplayAgent extends Agent {
 		panel.add(canvas);		
 		
 		frame.setContentPane(panel);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
 		frame.setVisible(true);
 		
@@ -110,7 +111,8 @@ public class DisplayAgent extends Agent {
 		}catch(FIPAException fe){
 			fe.printStackTrace();
 		}
-		frame.dispose();
+		if(frame!=null)
+			frame.dispose();
 	}
 	
 	/**
