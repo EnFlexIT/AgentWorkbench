@@ -45,42 +45,15 @@ public class DisplayAgent extends Agent {
 	// SVG Namespace
 	public static final String svgNs="http://www.w3.org/2000/svg";
 	
-	private JFrame frame;	// Later replaced by christian's GUI
-	private JPanel panel;
-	private JSVGCanvas canvas;
+	private DisplayAgentGUI myGUI = null;
 	
 	private Document svgDoc;
 	private Element svgRoot;	// Root element of the SVG Document
-	private Window window;
-	private Map <String, AnimAgent> animAgents;  // Hashmap storing animated agents, key=localName
+	public Map <String, AnimAgent> animAgents = null;  // Hashmap storing animated agents, key=localName
 	
 	public void setup(){
-		frame = new JFrame();		// Later replaced by christian's GUI
 		
-		// GUI and SVG Initialization
-		panel = new JPanel();
-		canvas = new JSVGCanvas();
-		canvas.setDocumentState(JSVGCanvas.ALWAYS_DYNAMIC);	// Dynamic document
-		canvas.addGVTTreeRendererListener(new GVTTreeRendererAdapter(){
-			// Method called when the document is completely loaded
-			public void gvtRenderingCompleted(GVTTreeRendererEvent re) {
-				// Animation initialization
-				window = canvas.getUpdateManager().getScriptingEnvironment().createWindow();
-				window.setInterval(new Animation(), 50);
-			}
-		});
-		
-		// SVG document creation
-		svgDoc = SVGDOMImplementation.getDOMImplementation().createDocument(svgNs, "svg", null);
-		svgRoot = svgDoc.getDocumentElement();
-
-		
-		canvas.setDocument(svgDoc);
-		panel.add(canvas);		
-		
-		frame.setContentPane(panel);
-		frame.pack();
-		frame.setVisible(true);
+		myGUI = new DisplayAgentGUI(this);
 		
 		// Add Behaviours
 		this.addBehaviour(new RegistrationServer());
@@ -111,79 +84,7 @@ public class DisplayAgent extends Agent {
 		}catch(FIPAException fe){
 			fe.printStackTrace();
 		}
-		if(frame!=null)
-			frame.dispose();
-	}
-	
-	/**
-	 * Controlling animation
-	 * @author nils
-	 *
-	 */
-	private class Animation implements Runnable{
-
-		@Override
-		public void run() {
-			if(animAgents!=null){
-				Iterator<String> keys=animAgents.keySet().iterator();
-				while(keys.hasNext()){
-					AnimAgent agent=animAgents.get(keys.next());
-					agent.getElem().getAttributeNodeNS(null, "x").setValue(""+agent.getXPos());
-					agent.getElem().getAttributeNodeNS(null, "y").setValue(""+agent.getYPos());					
-				}
-			}
-			
-		}
 		
-	}
-	
-	/**
-	 * Helper class storing and agent's position and representing SVG Element 
-	 * @author nils
-	 */
-	private class AnimAgent{
-		
-		String id;
-		Element elem;	// Element visualizing the agent
-		int xPos;		// The agents x coordinate
-		int yPos;		// The agents y coordinate
-		int width;
-		int height;		
-		
-		private AnimAgent(String id, Element elem, int xPos, int yPos, int width, int height) {
-			this.id=id;
-			this.elem = elem;
-			this.xPos = xPos;
-			this.yPos = yPos;
-			this.width=width;
-			this.height=height;			
-		}		
-		
-		private String getId(){
-			return id;
-		}
-		
-		private Element getElem() {
-			return elem;
-		}		
-		private int getXPos() {
-			return xPos;
-		}
-		private void setXPos(int pos) {
-			xPos = pos;
-		}
-		private int getYPos() {
-			return yPos;
-		}
-		private void setYPos(int pos) {
-			yPos = pos;
-		}
-		private int getWidth(){
-			return width;
-		}
-		private int getHeight(){
-			return height;
-		}
 	}
 	
 	/**
@@ -226,14 +127,15 @@ public class DisplayAgent extends Agent {
 		}
 		
 		private void registerAgent(String localName, String width, String height, String xPos, String yPos, String color){
-			Element agentSvg=svgDoc.createElementNS(svgNs, "rect");
+			
+			Element agentSvg=myGUI.svgDoc.createElementNS(svgNs, "rect");
 			agentSvg.setAttributeNS(null, "id", localName);
 			agentSvg.setAttributeNS(null, "width", width);
 			agentSvg.setAttributeNS(null, "height", height);
 			agentSvg.setAttributeNS(null, "x", xPos);
 			agentSvg.setAttributeNS(null, "y", yPos);
 			agentSvg.setAttributeNS(null, "style", "fill:"+color);
-			svgRoot.appendChild(agentSvg);
+			myGUI.addAgent(agentSvg);
 			if(animAgents==null)
 				animAgents=new HashMap<String, AnimAgent>();
 			animAgents.put(localName, new AnimAgent(localName, agentSvg,Integer.parseInt(xPos),Integer.parseInt(yPos),
@@ -243,7 +145,8 @@ public class DisplayAgent extends Agent {
 		
 		private void deregisterAgent(String name){
 			AnimAgent aa=animAgents.remove(name);
-			svgRoot.removeChild(aa.getElem());
+			myGUI.removeAgent(name);
+			System.out.println("Agent "+name+" sucessfully deregistered");
 		}
 		
 	}
@@ -322,9 +225,9 @@ public class DisplayAgent extends Agent {
 		
 		private boolean[] detectBorderCollision(AnimAgent aa, int newPosX, int newPosY){
 			boolean coll[]={false, false};
-			if(newPosX<0||newPosX+aa.getWidth()>canvas.getWidth())
+			if(newPosX<0||newPosX+aa.getWidth()>myGUI.canvas.getWidth())
 				coll[0]=true;
-			if(newPosY<0||newPosY+aa.getHeight()>canvas.getHeight())
+			if(newPosY<0||newPosY+aa.getHeight()>myGUI.canvas.getHeight())
 				coll[1]=true;
 			return coll;
 		}
