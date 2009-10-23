@@ -8,20 +8,9 @@ import jade.core.*;
    * can manipulate containers, can move them between domains, e.g. crane
 * Protege name: ActiveContainerHolder
 * @author ontology bean generator
-* @version 2009/10/13, 22:18:34
+* @version 2009/10/20, 22:25:25
 */
 public class ActiveContainerHolder extends ContainerHolder{ 
-
-   /**
-* Protege name: administers
-   */
-   private LoadList administers;
-   public void setAdministers(LoadList value) { 
-    this.administers=value;
-   }
-   public LoadList getAdministers() {
-     return this.administers;
-   }
 
    /**
 * Protege name: tonnage_capacity

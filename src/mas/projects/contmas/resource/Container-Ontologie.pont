@@ -1,4 +1,4 @@
-; Wed Oct 14 02:37:11 CEST 2009
+; Tue Oct 20 22:25:18 CEST 2009
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -7,10 +7,145 @@
 (defclass %3ACLIPS_TOP_LEVEL_SLOT_CLASS "Fake class to save top-level slot information"
 	(is-a USER)
 	(role abstract)
-	(single-slot starts_at
+	(multislot consists_of
+		(type INSTANCE)
+;+		(allowed-classes TransportOrderChain)
+		(cardinality 1 ?VARIABLE)
+;+		(inverse-slot makes_up)
+		(create-accessor read-write))
+	(single-slot makes_up
+		(type INSTANCE)
+;+		(allowed-classes LoadList)
+;+		(cardinality 0 1)
+;+		(inverse-slot consists_of)
+		(create-accessor read-write))
+	(single-slot x_dimension
+		(type INTEGER)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot y_dimension
+		(type INTEGER)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot assigned_quay
+		(type INSTANCE)
+;+		(allowed-classes Quay)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot provides
+		(type INSTANCE)
+;+		(allowed-classes BayMap)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(multislot has_subdomains
+		(type INSTANCE)
+;+		(allowed-classes Domain)
+;+		(inverse-slot lies_in)
+		(create-accessor read-write))
+	(single-slot lies_in
+		(type INSTANCE)
+;+		(allowed-classes Domain)
+;+		(cardinality 0 1)
+;+		(inverse-slot has_subdomains)
+		(create-accessor read-write))
+	(single-slot locates
+		(type INSTANCE)
+;+		(allowed-classes Container)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot height
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot ship_length
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot ends_at
 		(type INSTANCE)
 ;+		(allowed-classes Designator)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot populate_on
+;+		(comment "the bay map to be populated")
+		(type INSTANCE)
+;+		(allowed-classes BayMap)
 ;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot tonnage_capacity
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot carries_dangerous_goods
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+		(default FALSE)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(multislot found
+		(type INSTANCE)
+;+		(allowed-classes Container)
+		(cardinality 1 ?VARIABLE)
+		(create-accessor read-write))
+	(single-slot administers
+		(type INSTANCE)
+;+		(allowed-classes LoadList)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot abstract_designation
+		(type INSTANCE)
+;+		(allowed-classes Domain)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot type
+		(type SYMBOL)
+		(allowed-values abstract concrete)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot part_of
+		(type SYMBOL)
+;+		(allowed-parents DomainArea)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot contains
+;+		(comment "the storage area provided by the holder")
+		(type INSTANCE)
+;+		(allowed-classes BayMap)
+;+		(cardinality 0 1)
+;+		(inverse-slot belongs_to)
+		(create-accessor read-write))
+	(single-slot belongs_to
+;+		(comment "the holder, to which this baymap belongs")
+		(type INSTANCE)
+;+		(allowed-classes ContainerHolder)
+;+		(cardinality 1 1)
+;+		(inverse-slot contains)
+		(create-accessor read-write))
+	(multislot available_cranes
+		(type INSTANCE)
+;+		(allowed-classes AID)
+		(create-accessor read-write))
+	(single-slot to_be_stored
+;+		(comment "transport order of object which is to be stored")
+		(type INSTANCE)
+;+		(allowed-classes TransportOrderChain)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot store_in
+		(type INSTANCE)
+;+		(allowed-classes BlockAddress)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot required_turnover_capacity
+		(type INSTANCE)
+;+		(allowed-classes LoadList)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(multislot capable_of
+;+		(comment "domains, in which containers can be manipulated")
+		(type INSTANCE)
+;+		(allowed-classes Domain)
+		(cardinality 1 ?VARIABLE)
 		(create-accessor read-write))
 	(multislot is_filled_with
 ;+		(comment "BlockAdresses and therefore containers this bay map contains")
@@ -21,13 +156,17 @@
 		(type INTEGER)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
+	(single-slot terminates_at
+;+		(comment "final destination e.g. target harbour")
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
 	(single-slot weight
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot terminates_at
-;+		(comment "final destination e.g. target harbour")
-		(type STRING)
+	(single-slot width
+		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot stowage_capability
@@ -35,8 +174,42 @@
 		(type STRING)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot width
+	(single-slot starts_at
+		(type INSTANCE)
+;+		(allowed-classes Designator)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot load_offer
+		(type INSTANCE)
+;+		(allowed-classes TransportOrderChain)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot links
+		(type INSTANCE)
+;+		(allowed-classes TransportOrderChain)
+;+		(cardinality 0 1)
+;+		(inverse-slot is_linked_by)
+		(create-accessor read-write))
+	(multislot is_linked_by
+		(type INSTANCE)
+;+		(allowed-classes TransportOrder)
+		(cardinality 1 ?VARIABLE)
+;+		(inverse-slot links)
+		(create-accessor read-write))
+	(single-slot lives_in
+;+		(comment "the domain, in which the containerholder is located")
+		(type SYMBOL)
+;+		(allowed-parents Domain)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot takes
+;+		(comment "required time to perform")
 		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot from
+;+		(comment "start of available domainarea")
+		(type STRING)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot load_status
@@ -67,177 +240,15 @@
 		(type INSTANCE)
 ;+		(allowed-classes Container)
 		(create-accessor read-write))
-	(single-slot load_offer
-		(type INSTANCE)
-;+		(allowed-classes TransportOrderChain)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot links
-		(type INSTANCE)
-;+		(allowed-classes TransportOrderChain)
-;+		(cardinality 0 1)
-;+		(inverse-slot is_linked_by)
-		(create-accessor read-write))
-	(single-slot lives_in
-;+		(comment "the domain, in which the containerholder is located")
-		(type SYMBOL)
-;+		(allowed-parents Domain)
-;+		(cardinality 1 1)
-		(create-accessor read-write))
-	(single-slot takes
-;+		(comment "required time to perform")
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot from
-;+		(comment "start of available domainarea")
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot height
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot locates
-		(type INSTANCE)
-;+		(allowed-classes Container)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot lies_in
-		(type INSTANCE)
-;+		(allowed-classes Domain)
-;+		(cardinality 0 1)
-;+		(inverse-slot has_subdomains)
-		(create-accessor read-write))
-	(single-slot populate_on
-;+		(comment "the bay map to be populated")
-		(type INSTANCE)
-;+		(allowed-classes BayMap)
-;+		(cardinality 1 1)
-		(create-accessor read-write))
-	(single-slot ends_at
-		(type INSTANCE)
-;+		(allowed-classes Designator)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot ship_length
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(multislot is_linked_by
-		(type INSTANCE)
-;+		(allowed-classes TransportOrder)
-		(cardinality 1 ?VARIABLE)
-;+		(inverse-slot links)
-		(create-accessor read-write))
-	(multislot has_subdomains
-		(type INSTANCE)
-;+		(allowed-classes Domain)
-;+		(inverse-slot lies_in)
-		(create-accessor read-write))
-	(single-slot x_dimension
-		(type INTEGER)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot makes_up
-		(type INSTANCE)
-;+		(allowed-classes LoadList)
-;+		(cardinality 0 1)
-;+		(inverse-slot consists_of)
-		(create-accessor read-write))
-	(single-slot provides
-		(type INSTANCE)
-;+		(allowed-classes BayMap)
-;+		(cardinality 1 1)
-		(create-accessor read-write))
-	(single-slot assigned_quay
-		(type INSTANCE)
-;+		(allowed-classes Quay)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot y_dimension
-		(type INTEGER)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(multislot available_cranes
-		(type INSTANCE)
-;+		(allowed-classes AID)
-		(create-accessor read-write))
-	(single-slot to_be_stored
-;+		(comment "transport order of object which is to be stored")
-		(type INSTANCE)
-;+		(allowed-classes TransportOrderChain)
-;+		(cardinality 1 1)
-		(create-accessor read-write))
-	(single-slot contains
-;+		(comment "the storage area provided by the holder")
-		(type INSTANCE)
-;+		(allowed-classes BayMap)
-;+		(cardinality 0 1)
-;+		(inverse-slot belongs_to)
-		(create-accessor read-write))
-	(single-slot belongs_to
-;+		(comment "the holder, to which this baymap belongs")
-		(type INSTANCE)
-;+		(allowed-classes ContainerHolder)
-;+		(cardinality 1 1)
-;+		(inverse-slot contains)
-		(create-accessor read-write))
-	(multislot capable_of
-;+		(comment "domains, in which containers can be manipulated")
-		(type INSTANCE)
-;+		(allowed-classes Domain)
-		(cardinality 1 ?VARIABLE)
-		(create-accessor read-write))
-	(multislot consists_of
-		(type INSTANCE)
-;+		(allowed-classes TransportOrderChain)
-		(cardinality 1 ?VARIABLE)
-;+		(inverse-slot makes_up)
-		(create-accessor read-write))
-	(single-slot store_in
+	(single-slot occupies
 		(type INSTANCE)
 ;+		(allowed-classes BlockAddress)
-;+		(cardinality 1 1)
-		(create-accessor read-write))
-	(single-slot required_turnover_capacity
-		(type INSTANCE)
-;+		(allowed-classes LoadList)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(multislot found
-		(type INSTANCE)
-;+		(allowed-classes Container)
-		(cardinality 1 ?VARIABLE)
-		(create-accessor read-write))
-	(single-slot administers
-		(type INSTANCE)
-;+		(allowed-classes LoadList)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot tonnage_capacity
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot carries_dangerous_goods
+	(single-slot is_coolable
 		(type SYMBOL)
 		(allowed-values FALSE TRUE)
 		(default FALSE)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot part_of
-		(type SYMBOL)
-;+		(allowed-parents DomainArea)
-;+		(cardinality 1 1)
-		(create-accessor read-write))
-	(single-slot abstract_designation
-		(type INSTANCE)
-;+		(allowed-classes Domain)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot type
-		(type SYMBOL)
-		(allowed-values abstract concrete)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot addresses_within
@@ -250,17 +261,6 @@
 ;+		(comment "LSCU 107737 9")
 		(type STRING)
 		(default "LSCU 107737 9")
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot occupies
-		(type INSTANCE)
-;+		(allowed-classes BlockAddress)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot is_coolable
-		(type SYMBOL)
-		(allowed-values FALSE TRUE)
-		(default FALSE)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot concrete_designation
@@ -295,14 +295,14 @@
 (defclass GetCraneList
 	(is-a AgentAction)
 	(role concrete)
-	(single-slot required_turnover_capacity
-		(type INSTANCE)
-;+		(allowed-classes LoadList)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
 	(single-slot assigned_quay
 		(type INSTANCE)
 ;+		(allowed-classes Quay)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot required_turnover_capacity
+		(type INSTANCE)
+;+		(allowed-classes LoadList)
 ;+		(cardinality 0 1)
 		(create-accessor read-write)))
 
@@ -409,11 +409,11 @@
 		(type INTEGER)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot y_dimension
+	(single-slot x_dimension
 		(type INTEGER)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot x_dimension
+	(single-slot y_dimension
 		(type INTEGER)
 ;+		(cardinality 0 1)
 		(create-accessor read-write)))
@@ -449,22 +449,24 @@
 (defclass Container
 	(is-a Concept)
 	(role concrete)
-	(single-slot weight
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
 	(single-slot carries_dangerous_goods
 		(type SYMBOL)
 		(allowed-values FALSE TRUE)
 		(default FALSE)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot height
+	(single-slot weight
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot width
 		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot is_coolable
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+		(default FALSE)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot id
@@ -473,10 +475,8 @@
 		(default "LSCU 107737 9")
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot is_coolable
-		(type SYMBOL)
-		(allowed-values FALSE TRUE)
-		(default FALSE)
+	(single-slot height
+		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot length
@@ -487,14 +487,14 @@
 (defclass TwentyFootContainer
 	(is-a Container)
 	(role concrete)
-	(single-slot height
-		(type FLOAT)
-;+		(value 2.591)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
 	(single-slot width
 		(type FLOAT)
 ;+		(value 2.438)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot height
+		(type FLOAT)
+;+		(value 2.591)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot length
@@ -506,6 +506,11 @@
 (defclass ContainerHolder
 	(is-a Concept)
 	(role concrete)
+	(single-slot administers
+		(type INSTANCE)
+;+		(allowed-classes LoadList)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
 	(single-slot lives_in
 ;+		(comment "the domain, in which the containerholder is located")
 		(type SYMBOL)
@@ -529,12 +534,7 @@
 
 (defclass PassiveContainerHolder "can move containers inside of a domain, e.g. train"
 	(is-a ContainerHolder)
-	(role concrete)
-	(single-slot administers
-		(type INSTANCE)
-;+		(allowed-classes LoadList)
-;+		(cardinality 0 1)
-		(create-accessor read-write)))
+	(role concrete))
 
 (defclass Train
 	(is-a PassiveContainerHolder)
@@ -569,11 +569,6 @@
 (defclass ActiveContainerHolder "can manipulate containers, can move them between domains, e.g. crane"
 	(is-a ContainerHolder)
 	(role concrete)
-	(single-slot administers
-		(type INSTANCE)
-;+		(allowed-classes LoadList)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
 	(single-slot tonnage_capacity
 		(type FLOAT)
 ;+		(cardinality 0 1)
@@ -616,17 +611,17 @@
 (defclass RMG "rail mounted gentry crane"
 	(is-a ActiveContainerHolder)
 	(role concrete)
+	(single-slot tonnage_capacity
+		(type FLOAT)
+;+		(value 10.0)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
 	(single-slot lives_in
 ;+		(comment "the domain, in which the containerholder is located")
 		(type SYMBOL)
 ;+		(allowed-parents Domain)
 ;+		(value Rail)
 ;+		(cardinality 1 1)
-		(create-accessor read-write))
-	(single-slot tonnage_capacity
-		(type FLOAT)
-;+		(value 10.0)
-;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(multislot capable_of
 ;+		(comment "domains, in which containers can be manipulated")
@@ -639,14 +634,14 @@
 (defclass Domain "the domain, in which the containerholder is located"
 	(is-a Concept)
 	(role abstract)
+	(multislot has_subdomains
+		(type INSTANCE)
+;+		(allowed-classes Domain)
+		(create-accessor read-write))
 	(single-slot lies_in
 		(type INSTANCE)
 ;+		(allowed-classes Domain)
 ;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(multislot has_subdomains
-		(type INSTANCE)
-;+		(allowed-classes Domain)
 		(create-accessor read-write)))
 
 (defclass Sea
@@ -699,11 +694,11 @@
 		(type INTEGER)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot y_dimension
+	(single-slot x_dimension
 		(type INTEGER)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot x_dimension
+	(single-slot y_dimension
 		(type INTEGER)
 ;+		(cardinality 0 1)
 		(create-accessor read-write)))
@@ -730,11 +725,6 @@
 (defclass TransportOrder "step-like transport orders"
 	(is-a Concept)
 	(role concrete)
-	(single-slot starts_at
-		(type INSTANCE)
-;+		(allowed-classes Designator)
-;+		(cardinality 1 1)
-		(create-accessor read-write))
 	(single-slot takes
 ;+		(comment "required time to perform")
 		(type FLOAT)
@@ -744,20 +734,25 @@
 		(type INSTANCE)
 ;+		(allowed-classes Designator)
 ;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot starts_at
+		(type INSTANCE)
+;+		(allowed-classes Designator)
+;+		(cardinality 1 1)
 		(create-accessor read-write)))
 
 (defclass TransportOrderChain "high-level transport order with destination"
 	(is-a Concept)
 	(role concrete)
-	(single-slot terminates_at
-;+		(comment "final destination e.g. target harbour")
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
 	(multislot is_linked_by
 		(type INSTANCE)
 ;+		(allowed-classes TransportOrder)
 		(cardinality 1 ?VARIABLE)
+		(create-accessor read-write))
+	(single-slot terminates_at
+;+		(comment "final destination e.g. target harbour")
+		(type STRING)
+;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot transports
 ;+		(comment "container to be transported")
@@ -782,6 +777,10 @@
 		(type INTEGER)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
+	(single-slot x_dimension
+		(type INTEGER)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
 	(single-slot y_dimension
 		(type INTEGER)
 ;+		(cardinality 0 1)
@@ -789,10 +788,6 @@
 	(single-slot locates
 		(type INSTANCE)
 ;+		(allowed-classes Container)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot x_dimension
-		(type INTEGER)
 ;+		(cardinality 0 1)
 		(create-accessor read-write)))
 

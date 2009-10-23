@@ -42,8 +42,7 @@ public class ActiveContainerAgent extends ContainerAgent {
 		Iterator capabilities=((ActiveContainerHolder) ontologyRepresentation).getAllCapable_of();
 		while (capabilities.hasNext()) {
 			Domain capability = (Domain) capabilities.next();
-			if(startHabitat.getClass()
-					==capability.getClass()){ //containeragent is able to handle orders in this start-habitat-domain
+			if(startHabitat.getClass()==capability.getClass()){ //containeragent is able to handle orders in this start-habitat-domain
 //    			echoStatus("start passt auch!");
     			startMatch=1;
 			}

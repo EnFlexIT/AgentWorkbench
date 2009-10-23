@@ -8,20 +8,9 @@ import jade.core.*;
 /**
 * Protege name: GetCraneList
 * @author ontology bean generator
-* @version 2009/10/13, 22:18:34
+* @version 2009/10/20, 22:25:25
 */
 public class GetCraneList implements AgentAction {
-
-   /**
-* Protege name: required_turnover_capacity
-   */
-   private LoadList required_turnover_capacity;
-   public void setRequired_turnover_capacity(LoadList value) { 
-    this.required_turnover_capacity=value;
-   }
-   public LoadList getRequired_turnover_capacity() {
-     return this.required_turnover_capacity;
-   }
 
    /**
 * Protege name: assigned_quay
@@ -32,6 +21,17 @@ public class GetCraneList implements AgentAction {
    }
    public Quay getAssigned_quay() {
      return this.assigned_quay;
+   }
+
+   /**
+* Protege name: required_turnover_capacity
+   */
+   private LoadList required_turnover_capacity;
+   public void setRequired_turnover_capacity(LoadList value) { 
+    this.required_turnover_capacity=value;
+   }
+   public LoadList getRequired_turnover_capacity() {
+     return this.required_turnover_capacity;
    }
 
 }

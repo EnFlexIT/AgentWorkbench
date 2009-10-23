@@ -222,6 +222,51 @@ public class ContainerAgent extends Agent {
 		echoStatus("Nun wird der Container von mir transportiert");
 	}
 	
+	public Boolean releaseAllContainer(){
+		Boolean isDone=false;
+		while(releaseSingleContainer()){
+			isDone=true;
+		}
+		return isDone;
+	}
+	
+	public Boolean releaseSingleContainer(){
+		Iterator commissions=ontologyRepresentation.getAdministers().getAllConsists_of();
+		if(commissions.hasNext()){ //Agent hat Transportaufträge abzuarbeiten
+			echoStatus("commission available - dropping Container on the hook");
+			TransportOrderChain curTOC=((TransportOrderChain) commissions.next());
+			
+			releaseContainer(curTOC);
+			
+			commissions.remove();
+			return true;
+		}
+		return false;
+	}
+	
+	public Boolean releaseContainer(TransportOrderChain curTOC){
+		TransportOrderChain TOChain=new TransportOrderChain();
+		TOChain.setTransports(curTOC.getTransports());
+
+		TransportOrder TO=new TransportOrder();
+		
+		Designator myself=new Designator();
+		myself.setType("concrete");
+		myself.setConcrete_designation(getAID());
+		TO.setStarts_at(myself);
+		
+		Designator target=new Designator();
+		target.setType("abstract");
+		target.setAbstract_designation(new Street());//TODO change to Land but implement recursive Domain-determination in passiveHolder
+		TO.setEnds_at(target);
+		TOChain.addIs_linked_by(TO);
+		LoadList newCommission=new LoadList();
+		newCommission.addConsists_of(TOChain);
+		
+		addBehaviour(new announceLoadOrders(this, newCommission));
+		return true;
+	}
+	
 	public boolean removeFromQueue(TransportOrderChain proposedTOC){
 		Iterator queue=loadOrdersProposedForQueue.iterator();
 
@@ -237,7 +282,7 @@ public class ContainerAgent extends Agent {
 		return false;
 	}
 	
-	public boolean isQueueNotFull(){ //TODO use DataaStore
+	public boolean isQueueNotFull(){ //TODO use DataStore
 		//echoStatus("lengthOfQueue: "+lengthOfQueue+", loadOrderPostQueue.size(): "+loadOrdersProposedForQueue.size());
 		return loadOrdersProposedForQueue.size()<lengthOfQueue;
 	}

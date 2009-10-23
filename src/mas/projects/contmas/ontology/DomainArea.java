@@ -8,9 +8,20 @@ import jade.core.*;
 /**
 * Protege name: DomainArea
 * @author ontology bean generator
-* @version 2009/10/13, 22:18:34
+* @version 2009/10/20, 22:25:25
 */
 public class DomainArea implements Concept {
+
+   /**
+* Protege name: part_of
+   */
+   private DomainArea part_of;
+   public void setPart_of(DomainArea value) { 
+    this.part_of=value;
+   }
+   public DomainArea getPart_of() {
+     return this.part_of;
+   }
 
    /**
    * start of available domainarea
@@ -22,17 +33,6 @@ public class DomainArea implements Concept {
    }
    public String getFrom() {
      return this.from;
-   }
-
-   /**
-* Protege name: part_of
-   */
-   private DomainArea part_of;
-   public void setPart_of(DomainArea value) { 
-    this.part_of=value;
-   }
-   public DomainArea getPart_of() {
-     return this.part_of;
    }
 
    /**
