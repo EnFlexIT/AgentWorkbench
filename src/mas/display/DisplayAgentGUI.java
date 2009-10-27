@@ -2,15 +2,23 @@ package mas.display;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
 import java.util.Iterator;
 import java.util.Map;
 
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.apache.batik.dom.svg.SVGDOMImplementation;
@@ -20,6 +28,11 @@ import org.apache.batik.swing.gvt.GVTTreeRendererAdapter;
 import org.apache.batik.swing.gvt.GVTTreeRendererEvent;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.events.Event;
+import org.w3c.dom.events.EventListener;
+import org.w3c.dom.events.EventTarget;
+
+import svganalyzer.SvgAnalyzer;
 /**
  * GUI for DisplayAgent
  * @author nils
@@ -57,12 +70,26 @@ public class DisplayAgentGUI extends JPanel {
 			public void gvtRenderingCompleted(GVTTreeRendererEvent re) {
 				// Animation initialization
 				window = canvas.getUpdateManager().getScriptingEnvironment().createWindow();
-				window.setInterval(new Animation(), 50);				
+				window.setInterval(new Animation(), 50);
+				
+			}
+		});
+		this.canvas.addComponentListener(new ComponentAdapter(){
+			// Resizing document when the canvas is resized
+			public void componentResized(ComponentEvent ce){
+				JSVGCanvas canvas = (JSVGCanvas) ce.getSource();				
+				Element svgRoot = canvas.getSVGDocument().getDocumentElement();
+				svgRoot.setAttributeNS(null, "width", ""+canvas.getWidth());
+				svgRoot.setAttributeNS(null, "height", ""+canvas.getHeight());				
 			}
 		});
 		this.svgDoc = SVGDOMImplementation.getDOMImplementation().createDocument(svgNs, "svg", null);
 		this.svgRoot = svgDoc.getDocumentElement();
+		this.svgRoot.setAttributeNS(null, "width", "300");
+		this.svgRoot.setAttributeNS(null, "height", "300");
+		this.canvas.setMySize(new Dimension(300,300));
 		this.canvas.setDocument(svgDoc);
+		
 		
 		// Initialize buttons and panel
 		this.setLayout(new BorderLayout());
@@ -78,21 +105,11 @@ public class DisplayAgentGUI extends JPanel {
 		this.add("North", zoomPanel);
 		this.add(canvas);
 		
-		// Temporary solution, to be integrated in Christian's GUI
+		// Temporary solution, to be integrated in christian's GUI
 		JFrame frame = new JFrame("DA GUI Test");
-//		frame.addComponentListener(new ComponentAdapter(){
-//			public void componentResized(ComponentEvent ce){
-//				canvas.getSVGDocument().getDocumentElement().setAttributeNS(null, "x", ""+canvas.getWidth());
-//				canvas.getSVGDocument().getDocumentElement().setAttributeNS(null, "y", ""+canvas.getHeight());
-//				System.out.println(((JFrame)ce.getSource()).getSize());
-//				System.out.println(DisplayAgentGUI.this.getSize());
-//				System.out.println(canvas.getSize());
-//				System.out.println(canvas.getSVGDocumentSize());				
-//			}
-//		});
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setContentPane(this);
-		frame.pack();
+		frame.pack();		
 		frame.setVisible(true);
 	}
 	
@@ -101,7 +118,9 @@ public class DisplayAgentGUI extends JPanel {
 	 * @param element SVG element representing the agent
 	 */
 	public void addAgent(Element element){
-		this.svgRoot.appendChild(element);		
+		Element newAgent = element;
+		((EventTarget)newAgent).addEventListener("click", new OnClickAction(), false);
+		this.svgRoot.appendChild(newAgent);		
 	}
 	
 	/**
@@ -131,6 +150,30 @@ public class DisplayAgentGUI extends JPanel {
 					}
 				}
 			}			
+		}		
+	}
+	
+	private class OnClickAction implements EventListener{
+
+		@Override
+		public void handleEvent(Event evt) {
+			Element target = (Element) evt.getTarget();
+			String message = "Id: "+target.getAttributeNS(null, "id");
+			
+			// Build non-blocking JOptionPane
+			final JDialog jd = new JDialog(null, ModalityType.MODELESS);
+			final JOptionPane jop = new JOptionPane(message, JOptionPane.INFORMATION_MESSAGE);
+			jop.addPropertyChangeListener(new PropertyChangeListener(){
+
+				@Override
+				public void propertyChange(PropertyChangeEvent evt) {
+					if(evt.getSource()==jop&&evt.getPropertyName().equals(JOptionPane.VALUE_PROPERTY))
+						jd.setVisible(false);
+				}				
+			});			
+			jd.setContentPane(jop);	
+			jd.pack();
+			jd.setVisible(true);			
 		}		
 	}
 }

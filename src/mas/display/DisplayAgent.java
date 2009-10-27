@@ -33,6 +33,7 @@ import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import jade.lang.acl.UnreadableException;
 
 /**
  * Offering display service for other agents. Takes care of displaying, collision management etc.
@@ -116,6 +117,8 @@ public class DisplayAgent extends Agent {
 					yPos=props[3];
 					color=props[4];
 					registerAgent(name, width, height,xPos,yPos,color);
+					
+
 				}else{
 					System.out.println("Received deregistration request from "+request.getSender().getLocalName());
 					deregisterAgent(request.getSender().getLocalName());
