@@ -2,15 +2,16 @@ package application;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Hashtable;
+import java.util.List;
 
 import javax.swing.JOptionPane;
-import application.Application;
 
 public class Language {
 
@@ -183,14 +184,18 @@ public class Language {
 	private static void LoadDictionaryFile() {
 		
 		// --- Einlesen des Dictionary-Files -----------------------------------     
-		FileReader fr = null;    
-		BufferedReader br = null;   
+		FileInputStream FInStr = null;
+		InputStreamReader InStrRea = null;
+		BufferedReader br = null;
+		
 		try {        
-			String line;    
-			fr = new FileReader( DictFileLocation );
-			br = new BufferedReader(fr);
-			while ((line = br.readLine()) != null) {   
-				DictLineList.add(line);				
+			String line;
+			// --- Reading UTF8-File of the dictionary -------------------------		
+			FInStr = new FileInputStream( DictFileLocation); 
+			InStrRea = new InputStreamReader( FInStr , "UTF8" );
+			BufferedReader in = new BufferedReader( InStrRea );
+			while ((line = in.readLine()) != null) {   
+				DictLineList.add(line);					
 			}    
 		} 
 		catch (IOException e) {        
@@ -198,8 +203,7 @@ public class Language {
 		}
 		finally {
 			try {            
-				if ( br != null) br.close();            
-				if ( fr != null) fr.close();        
+				if ( br != null) br.close();
 			} 
 			catch (IOException e) {            
 				System.err.println("Error Dict-File: " + e);  
@@ -239,23 +243,26 @@ public class Language {
 	// -------------------------------------------------------------------------
 	public static void SaveDictionaryFile() {
 		
-		FileWriter fw = null; 
-		BufferedWriter bw = null;
+		FileOutputStream FOutStr = null; 
+		OutputStreamWriter OutStrWri = null;
+		BufferedWriter OutWri = null;
+		
 		try { 
-			fw = new FileWriter(DictFileLocation);
-		    bw = new BufferedWriter(fw); 
-			for ( final String line : DictLineList ) {        
-				 bw.write( line.toString() );
-				 bw.newLine();
-			}		    
-		    bw.close(); 
+			// --- UTF8-File for the dictionary -------------------------------- 
+			FOutStr = new FileOutputStream( DictFileLocation ); 
+			OutStrWri = new OutputStreamWriter( FOutStr, "UTF8" );
+			OutWri = new BufferedWriter( OutStrWri );			
+		    for ( final String line : DictLineList ) {
+		    	OutWri.write( line.toString() );
+		    	OutWri.newLine();		    	
+		    }
+		    OutWri.close();
 		} 
 		catch (ArrayIndexOutOfBoundsException aioobe) { 
-			System.out.println("Aufruf mit: java SchreibeDatei name"); 
-		    System.out.println("erzeugt eine Datei name.html"); 
+			System.out.println( "Error Dict-File: " + aioobe ); 
 		} 
 		catch (IOException e) { 
-			System.out.println("Error Dict-File: "+ e); 
+			System.out.println( "Error Dict-File: "+ e ); 
 		} 
 	}
 	// -------------------------------------------------------------------------
