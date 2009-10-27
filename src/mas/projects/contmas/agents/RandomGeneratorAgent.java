@@ -21,11 +21,12 @@ public class RandomGeneratorAgent extends ContainerAgent{
 	protected void setup(){ 
         super.setup();
         //create filter for incoming messages
+        /*
         MessageTemplate mt = AchieveREResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_REQUEST); 
 		addBehaviour(new createRandomBayMap (this,mt));
+		*/
 		
-		
-		 mt = AchieveREResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_REQUEST); 
+        MessageTemplate mt = AchieveREResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_REQUEST); 
 		addBehaviour(new populateBayMap (this,mt));
 		
 	}
@@ -70,7 +71,7 @@ public class RandomGeneratorAgent extends ContainerAgent{
 			super(a, mt);
 		}
 	    protected ACLMessage handleRequest(ACLMessage request) { 
-	    	System.out.println("populateBayMap handleRequest start");
+	    	echoStatus("populateBayMap handleRequest start");
 	        ACLMessage reply = request.createReply();
 			AgentAction content;
 			content = ((ContainerAgent)myAgent).extractAction(request);

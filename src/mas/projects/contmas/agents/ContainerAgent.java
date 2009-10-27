@@ -155,7 +155,7 @@ public class ContainerAgent extends Agent {
     
 	public Integer matchOrder(TransportOrder curTO){
 		Designator end=(Designator) curTO.getEnds_at();
-		if(matchAID(end)){
+		if(matchAID(end)){ //Genau für mich bestimmt
 			return 0;
 		} else {
 			Domain endHabitat=(Domain) end.getAbstract_designation();
@@ -164,7 +164,7 @@ public class ContainerAgent extends Agent {
 				return 2; //+DomainDiffrence
 			}
 		}
-		return -1;
+		return -1; //order passt gar nicht
 	}
 	
 	public Boolean matchAID(Designator designation){
@@ -212,7 +212,7 @@ public class ContainerAgent extends Agent {
 	}
 	
 	public void aquireContainer(TransportOrderChain targetContainer){ //eigentlicher Vorgang des Container-Aufnehmens
-		//super.aquireContainer(targetContainer); //in AUftragsliste eintragen
+		((ContainerHolder)this.ontologyRepresentation).getAdministers().addConsists_of(targetContainer); //container auftragsbuch hinzufügen //in AUftragsliste eintragen
 		
 		//physikalische Aktionen
 		
@@ -233,13 +233,13 @@ public class ContainerAgent extends Agent {
 	public Boolean releaseSingleContainer(){
 		Iterator commissions=ontologyRepresentation.getAdministers().getAllConsists_of();
 		if(commissions.hasNext()){ //Agent hat Transportaufträge abzuarbeiten
-			echoStatus("commission available - dropping Container on the hook");
+			echoStatus("commission available - releasing Container");
 			TransportOrderChain curTOC=((TransportOrderChain) commissions.next());
 			
-			releaseContainer(curTOC);
-			
-			commissions.remove();
-			return true;
+			if(releaseContainer(curTOC)){
+				commissions.remove();
+				return true;
+			}
 		}
 		return false;
 	}

@@ -33,8 +33,8 @@ public class ShipAgent extends PassiveContainerAgent implements TransportOrderOf
 	public ShipAgent(Ship ontologyRepresentation) {
 		super("long-term-transporting", ontologyRepresentation);
 	}
-    AID harborManager=null;
-	private AID RandomGenerator;
+	private AID harborManager=null;
+	private AID RandomGenerator=null;
 
 	protected void setup() {
 		super.setup();
@@ -42,9 +42,9 @@ public class ShipAgent extends PassiveContainerAgent implements TransportOrderOf
 		//TODO hardcoded
 		((Ship)ontologyRepresentation).setLength((float) 120.5);
 		ontologyRepresentation.setLives_in(new Sea());
+		
 		//look for RandomGeneratorAgent
 		RandomGenerator=getFirstAIDFromDF("random-generation");
-
 		harborManager=getFirstAIDFromDF("harbor-managing");
 		
 		ContainerMessage msg = new ContainerMessage(ACLMessage.REQUEST);
@@ -58,6 +58,8 @@ public class ShipAgent extends PassiveContainerAgent implements TransportOrderOf
 		    msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST); 
 			addBehaviour(new fetchRandomBayMap(this,msg));
 		} else { //direkt füllen
+			msg = new ContainerMessage(ACLMessage.REQUEST);
+		    msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST); 
     		addBehaviour(new getPopulatedBayMap(this,msg));
 		}
 	}
@@ -77,44 +79,23 @@ public class ShipAgent extends PassiveContainerAgent implements TransportOrderOf
 			act.setX_dimension(4);
 			act.setY_dimension(4);
 			act.setZ_dimension(2);
-			try {
-				getContentManager().fillContent(request, act);
-			    Vector<ACLMessage> messages = new Vector<ACLMessage>();
-			    messages.add(request); 
-			    return messages; 
-			} catch (CodecException e) {
-				// TODO Auto-generated catch block
-				System.out.println("Ship - prepareRequests - fillContent - CodecException");
-				e.printStackTrace();
-			} catch (OntologyException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			return null; 
+			((ContainerAgent)myAgent).fillMessage(request,act);
+		    Vector<ACLMessage> messages = new Vector<ACLMessage>();
+		    messages.add(request); 
+			return messages; 
 		}
 	    protected void handleInform(ACLMessage msg) { 
 			Concept content;
-			try {
-				content = ((Concept) getContentManager().extractContent(msg));
-		        if (content instanceof ProvideBayMap) {
-		        	((ContainerAgent) myAgent).ontologyRepresentation.setContains(((ProvideBayMap) content).getProvides());
-		        	//System.out.println("BayMap recieved! X_dimension:"+getLoadBay().getX_dimension()+", Y_dimension:"+getLoadBay().getY_dimension()+", Z_dimension:"+getLoadBay().getZ_dimension());
-		    		msg = new ContainerMessage(ACLMessage.REQUEST);
-		    	    msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST); 
-		    		addBehaviour(new getPopulatedBayMap(myAgent,msg));
-		        } else {
-		            System.out.println("Error"); 
-		        } 
-			} catch (UngroundedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (CodecException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (OntologyException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			content = ((ContainerAgent)myAgent).extractAction(msg);
+	        if (content instanceof ProvideBayMap) {
+	        	((ContainerAgent) myAgent).ontologyRepresentation.setContains(((ProvideBayMap) content).getProvides());
+	        	//echoStatus("BayMap recieved! X_dimension:"+getLoadBay().getX_dimension()+", Y_dimension:"+getLoadBay().getY_dimension()+", Z_dimension:"+getLoadBay().getZ_dimension());
+	    		msg = new ContainerMessage(ACLMessage.REQUEST);
+	    	    msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST); 
+	    		addBehaviour(new getPopulatedBayMap(myAgent,msg));
+	        } else {
+	            echoStatus("Error"); 
+	        } 
 	    }
 	}
 	
@@ -127,48 +108,23 @@ public class ShipAgent extends PassiveContainerAgent implements TransportOrderOf
 			//BayMap aus Agent auslesen
 			RequestPopulatedBayMap act = new RequestPopulatedBayMap();
 			act.setPopulate_on(((ShipAgent) myAgent).ontologyRepresentation.getContains());
-			try {
-				getContentManager().fillContent(request, act);
+			((ContainerAgent)myAgent).fillMessage(request,act);
+		    Vector messages = new Vector();
+		    messages.add(request);
 
-			    Vector messages = new Vector();
-			    messages.add(request);
-
-			    return messages; 
-			    
-			} catch (CodecException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (OntologyException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			return null; 
+		    return messages; 
 		}
 	    protected void handleInform(ACLMessage msg) { 
 			Concept content;
-			try {
+			content = ((ContainerAgent)myAgent).extractAction(msg);
 
-				content = ((AgentAction) getContentManager().extractContent(msg));
-
-		        if (content instanceof ProvidePopulatedBayMap) {
-
-		        	((ShipAgent) myAgent).ontologyRepresentation.setContains(((ProvidePopulatedBayMap) content).getProvides());
-		        	//System.out.println("populatedBayMap recieved!"); 
-		    		offerTransportOrder();
-
-		        } else {
-		            System.out.println("Error"); 
-		        } 
-			} catch (UngroundedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (CodecException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (OntologyException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+	        if (content instanceof ProvidePopulatedBayMap) {
+	        	((ShipAgent) myAgent).ontologyRepresentation.setContains(((ProvidePopulatedBayMap) content).getProvides());
+	        	//echoStatus("populatedBayMap recieved!"); 
+	    		offerTransportOrder();
+	        } else {
+	            echoStatus("Error"); 
+	        } 
 	    }
 	}
 	
@@ -180,15 +136,8 @@ public class ShipAgent extends PassiveContainerAgent implements TransportOrderOf
 				request.addReceiver(harborManager);
 				EnrollAtHarbor act = new EnrollAtHarbor();
 				act.setShip_length(((Ship)((ShipAgent) myAgent).ontologyRepresentation).getLength() );
-				try {
-					getContentManager().fillContent(request,  act);
-				} catch (CodecException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (OntologyException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				((ContainerAgent)myAgent).fillMessage(request,act);
+
 	            Vector<ACLMessage> messages=new Vector<ACLMessage>();
 				messages.add(request);
 				return messages;
@@ -201,39 +150,21 @@ public class ShipAgent extends PassiveContainerAgent implements TransportOrderOf
 		protected Vector<ACLMessage> prepareRequests(ACLMessage request){
 			request.addReceiver(harborManager);
 			AgentAction act=new GetCraneList();
-			try {
-				getContentManager().fillContent(request, act);
-			    Vector<ACLMessage> messages = new Vector<ACLMessage>();
-			    messages.add(request); 
-			    return messages; 
-			} catch (CodecException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (OntologyException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			return null;
+			((ContainerAgent)myAgent).fillMessage(request,act);
+
+		    Vector<ACLMessage> messages = new Vector<ACLMessage>();
+		    messages.add(request); 
+		    return messages; 
 		}
 	    protected void handleInform(ACLMessage msg) {
 			Concept content;
-			try {
-				content = ((AgentAction) getContentManager().extractContent(msg));
-		        if(content instanceof ProvideCraneList) {
-		    		List craneList=((ProvideCraneList) content).getAvailable_cranes();
-		    		((ShipAgent) myAgent).contractors=craneList;
-		    		myAgent.addBehaviour(new unload(myAgent));
-		        }
-			} catch (UngroundedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (CodecException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (OntologyException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			content = ((ContainerAgent)myAgent).extractAction(msg);
+
+	        if(content instanceof ProvideCraneList) {
+	    		List craneList=((ProvideCraneList) content).getAvailable_cranes();
+	    		((ShipAgent) myAgent).contractors=craneList;
+	    		myAgent.addBehaviour(new unload(myAgent));
+	        }
 	    }
 	}
 
@@ -316,6 +247,4 @@ public class ShipAgent extends PassiveContainerAgent implements TransportOrderOf
 	    msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST); 
 		addBehaviour(new fetchCraneList(this,msg));
 	}
-	
-
 }

@@ -57,7 +57,7 @@ public class CraneAgent extends ActiveContainerAgent implements TransportOrderHa
     }
 	public void offerTransportOrder() {
 //		addBehaviour(new disposePayload(this));
-		echoStatus("offerTransportOrder");
+//		echoStatus("offerTransportOrder");
 	}
 
 	class disposePayload extends TickerBehaviour{

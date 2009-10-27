@@ -25,14 +25,9 @@ public class ActiveContainerAgent extends ContainerAgent {
 		super(serviceType, ontologyRepresentation);
 		ontologyRepresentation.setAdministers(new LoadList());
 	}
-	
-	public void aquireContainer(TransportOrderChain targetContainer){
-		super.aquireContainer(targetContainer);
-		((ActiveContainerHolder)this.ontologyRepresentation).getAdministers().addConsists_of(targetContainer); //container auftragsbuch hinzufügen
-	}
 
 	public Integer matchOrder(TransportOrder curTO){
-		Integer endMatch=super.matchOrder(curTO);
+		Integer endMatch=super.matchOrder(curTO); //standard-Match: AID und ziel ist genau lebensraum
 		Integer startMatch=-1;
 
 		Designator start=(Designator) curTO.getStarts_at();
@@ -43,17 +38,17 @@ public class ActiveContainerAgent extends ContainerAgent {
 		while (capabilities.hasNext()) {
 			Domain capability = (Domain) capabilities.next();
 			if(startHabitat.getClass()==capability.getClass()){ //containeragent is able to handle orders in this start-habitat-domain
-//    			echoStatus("start passt auch!");
+//    			echoStatus("start passt");
     			startMatch=1;
 			}
 			if(endMatch!=0 && endMatch!=1 && endHabitat.getClass()==capability.getClass()){ //containeragent is able to handle orders in this end-habitat-domain
-//    			echoStatus("end passt (besser)!");
+//    			echoStatus("end passt (besser)");
 				endMatch=1;
 			}
 		}
-		if(startMatch>-1 && endMatch>-1){
+		if(startMatch>-1 && endMatch>-1){ //order matcht
 			return startMatch+endMatch;
 		}
-		return -1;
+		return -1; //order matcht nicht
 	}
 }

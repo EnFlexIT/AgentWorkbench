@@ -34,4 +34,8 @@ public class AGVAgent extends PassiveContainerAgent implements TransportOrderHan
         MessageTemplate mt = AchieveREResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
 		addBehaviour(new recieveLoadOrders(this,mt));
 	}
+	public Boolean releaseContainer(TransportOrderChain curTOC){ //AGV kann noch keine Container loswerden
+		return false;
+	}
+
 }
