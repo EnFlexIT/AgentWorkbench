@@ -14,6 +14,8 @@ import jade.content.onto.OntologyException;
 import jade.content.onto.UngroundedException;
 import jade.core.AID;
 import jade.core.Agent;
+import jade.core.behaviours.Behaviour;
+import jade.core.behaviours.SequentialBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
@@ -34,7 +36,7 @@ public class ContainerAgent extends Agent {
 	protected ContainerHolder ontologyRepresentation;
 	
 	public Integer lengthOfQueue=3;
-	public List loadOrdersProposedForQueue=new ArrayList();
+	protected List loadOrdersProposedForQueue=new ArrayList();
 	
 	public ContainerAgent() {
 		this.serviceType="handling-containers";
@@ -194,7 +196,7 @@ public class ContainerAgent extends Agent {
     	ProposeLoadOffer act=null;
     	TransportOrder matchingOrder=findMatchingOrder(curTOC);
     	if(matchingOrder!=null){ //passende TransportOrder gefunden
-			echoStatus("TransportOrder gefunden, die zu mir passt");
+			echoStatus("TransportOrder gefunden, die zu mir passt. CID="+curTOC.getTransports().getId());
 			matchingOrder.getEnds_at().setConcrete_designation(getAID());
 			matchingOrder.getEnds_at().setType("concrete");
 
@@ -211,7 +213,7 @@ public class ContainerAgent extends Agent {
 		return call;		
 	}
 	
-	public void aquireContainer(TransportOrderChain targetContainer){ //eigentlicher Vorgang des Container-Aufnehmens
+	public Boolean aquireContainer(TransportOrderChain targetContainer){ //eigentlicher Vorgang des Container-Aufnehmens
 		((ContainerHolder)this.ontologyRepresentation).getAdministers().addConsists_of(targetContainer); //container auftragsbuch hinzufügen //in AUftragsliste eintragen
 		
 		//physikalische Aktionen
@@ -220,23 +222,32 @@ public class ContainerAgent extends Agent {
 		destination.setLocates(targetContainer.getTransports());
 		ontologyRepresentation.getContains().addIs_filled_with(destination); //Container mit neuer BlockAdress in eigene BayMap aufnehmens
 		echoStatus("Nun wird der Container von mir transportiert");
+		if(removeFromQueue(targetContainer)){ //Auftrag aus Liste von Bewerbungen streichen
+			return true;
+		}
+		echoStatus("Auftrag, auf den ich mich beworben habe nicht gefunden");
+		return false;
 	}
 	
 	public Boolean releaseAllContainer(){
 		Boolean isDone=false;
-		while(releaseSingleContainer()){
+		while(releaseSomeContainer()){
 			isDone=true;
 		}
 		return isDone;
 	}
 	
-	public Boolean releaseSingleContainer(){
+	public Boolean releaseSomeContainer(){
+		return releaseSomeContainer(null);
+	}
+	
+	public Boolean releaseSomeContainer(SequentialBehaviour sb){ //irgendeinen
 		Iterator commissions=ontologyRepresentation.getAdministers().getAllConsists_of();
 		if(commissions.hasNext()){ //Agent hat Transportaufträge abzuarbeiten
-			echoStatus("commission available - releasing Container");
 			TransportOrderChain curTOC=((TransportOrderChain) commissions.next());
-			
-			if(releaseContainer(curTOC)){
+			echoStatus("commission available - releasing Container. CID="+curTOC.getTransports().getId());
+
+			if(releaseContainer(curTOC,sb)){
 				commissions.remove();
 				return true;
 			}
@@ -245,6 +256,10 @@ public class ContainerAgent extends Agent {
 	}
 	
 	public Boolean releaseContainer(TransportOrderChain curTOC){
+		return releaseContainer(curTOC, null);
+	}
+	
+	public Boolean releaseContainer(TransportOrderChain curTOC, SequentialBehaviour sb){
 		TransportOrderChain TOChain=new TransportOrderChain();
 		TOChain.setTransports(curTOC.getTransports());
 
@@ -262,8 +277,12 @@ public class ContainerAgent extends Agent {
 		TOChain.addIs_linked_by(TO);
 		LoadList newCommission=new LoadList();
 		newCommission.addConsists_of(TOChain);
-		
-		addBehaviour(new announceLoadOrders(this, newCommission));
+		Behaviour b=new announceLoadOrders(this, newCommission);
+		if(sb!=null){ //von sequentialbehaviour aufgerufen
+			sb.addSubBehaviour(b);
+		} else { // einfach so entladen
+			addBehaviour(b);
+		}
 		return true;
 	}
 	
@@ -296,15 +315,19 @@ public class ContainerAgent extends Agent {
 	}
 
 	public boolean removeContainerFromBayMap(TransportOrderChain load_offer) {
+		echoStatus("removeContainerFromBayMap");
 		Iterator allContainers=ontologyRepresentation.getContains().getIs_filled_with().iterator();
 		while(allContainers.hasNext()){
 			Container curContainer=((BlockAddress)allContainers.next()).getLocates();
 //			echoStatus("curContainerID: "+curContainer.getId()+"load_offerID: "+load_offer.getTransports().getId());
 			if(curContainer.getId().equals(load_offer.getTransports().getId())){
 				allContainers.remove();
+				echoStatus("container found and removed");
 				return true;
 			}
 		}
+		echoStatus("container NOT found");
+
 		return false;
 	}
 

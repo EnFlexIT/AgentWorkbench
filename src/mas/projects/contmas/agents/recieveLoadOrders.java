@@ -4,6 +4,7 @@ import jade.content.Concept;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.DataStore;
+import jade.core.behaviours.OneShotBehaviour;
 import jade.core.behaviours.SequentialBehaviour;
 import jade.core.behaviours.SimpleBehaviour;
 import jade.lang.acl.ACLMessage;
@@ -22,11 +23,12 @@ public class recieveLoadOrders extends ContractNetResponder{
 		super(a, mt);
 		SequentialBehaviour sb = new SequentialBehaviour(a);
 		sb.setDataStore(getDataStore());
-		Behaviour b=new stowContainer();
+/*		Behaviour b=new stowContainer();
 		b.setDataStore(getDataStore());
 		sb.addSubBehaviour(b);
+		*/
 //		b=new disposePayload(a);
-		b=new checkForUtilization();
+		Behaviour b=new checkForUtilization();
 		b.setDataStore(getDataStore());
 		sb.addSubBehaviour(b);
 		registerHandleAcceptProposal(sb);
@@ -59,39 +61,70 @@ public class recieveLoadOrders extends ContractNetResponder{
 				((ContainerAgent)myAgent).echoStatus("CFP unplausibel");
 				reply.setContent("CFP unplausibel");
 		    	reply.setPerformative(ACLMessage.REFUSE);
-				return reply;					
+				return reply;
 			} 
-			else { //noch Kapazitäten vorhanden
+			else { //noch Kapazitäten vorhanden und anfrage plausibel
 				//((ContainerAgent)myAgent).echoStatus("noch Kapazitäten vorhanden");
 				ProposeLoadOffer act=((ContainerAgent) myAgent).GetLoadProposal(curTOC);
 				if(act!=null){
 					((ContainerAgent)myAgent).fillMessage(reply,act);
 					reply.setPerformative(ACLMessage.PROPOSE);
+					return reply;
+
 				} else {
 					((ContainerAgent)myAgent).echoStatus("keine TransportOrder passt zu mir");
 					reply.setContent("keine TransportOrder passt zu mir");
 		        	reply.setPerformative(ACLMessage.REFUSE);
+		    		return reply;
+
 				}
 			}
 		} else { //unbekannter inhalt in CFP
 			((ContainerAgent)myAgent).echoStatus("unbekannter inhalt in CFP");
 			reply.setContent("unbekannter inhalt in CFP");
 			reply.setPerformative(ACLMessage.FAILURE);
-			return reply;		
+			return reply;
 		}
-		return reply;
 	}
 	
-	protected class checkForUtilization extends SimpleBehaviour{
-		private Boolean isDone=false;
+	protected class makeWay extends OneShotBehaviour{
+		private Integer count=0;
+		private Integer maxCount=3;
+
 		public void action(){
-			if(((ContainerAgent)myAgent).isBayMapFull()){
-				((ContainerAgent)myAgent).echoStatus("Baymap voll");
-				isDone=((ContainerAgent)myAgent).releaseSingleContainer();
+			while(count<maxCount){
+				((ContainerAgent)myAgent).releaseSomeContainer((SequentialBehaviour)parent);
+				count++;
 			}
 		}
-		public boolean done() {
-			return isDone;
+	}
+	
+	protected class checkForUtilization extends OneShotBehaviour{
+		public void action(){
+			SequentialBehaviour sb=((SequentialBehaviour) getParent());
+			if(!((ContainerAgent)myAgent).isBayMapFull()){
+				Behaviour b=new stowContainer();
+				b.setDataStore(getDataStore());
+				sb.addSubBehaviour(b);
+				((ContainerAgent)myAgent).echoStatus("Baymap nicht voll");
+			} else {
+				Behaviour b=new prepareFailure();
+				b.setDataStore(getDataStore());
+				sb.addSubBehaviour(b);
+			}
+		}
+	}
+	
+	protected class prepareFailure extends OneShotBehaviour{
+		public void action() {
+			DataStore ds=getDataStore();
+			ACLMessage accept=(ACLMessage) ds.get(ACCEPT_PROPOSAL_KEY);
+			ACLMessage fail = accept.createReply();	
+			AnnounceLoadStatus loadStatus=getLoadStatusAnnouncement(null, "Fehler: BayMap voll und kann nicht gelehrt werden");
+			fail.setPerformative(ACLMessage.FAILURE);
+			((ContainerAgent)myAgent).fillMessage(fail,loadStatus);
+
+			ds.put(REPLY_KEY, fail);
 		}
 	}
 	
@@ -103,24 +136,23 @@ public class recieveLoadOrders extends ContractNetResponder{
 //			((ContainerAgent)myAgent).echoStatus(ds.toString());
 			ACLMessage accept=(ACLMessage) ds.get(ACCEPT_PROPOSAL_KEY);
 			ACLMessage inform = accept.createReply();
-			inform.setPerformative(ACLMessage.INFORM);
 			Concept content= ((ContainerAgent)myAgent).extractAction(accept);
 			TransportOrderChain acceptedTOC=((AcceptLoadOffer) content).getLoad_offer();
-			if(!((ContainerAgent)myAgent).removeFromQueue(acceptedTOC)){ 
-				inform.setContent("handleAcceptProposal: Auftrag, auf den ich mich beworben habe nicht gefunden");
+
+//			((ContainerAgent)myAgent).echoStatus("handleAcceptProposal - acceptPerformative: "+accept.getPerformative());
+					
+			if(!((ContainerAgent) myAgent).aquireContainer(acceptedTOC)){ 
+				AnnounceLoadStatus loadStatus=getLoadStatusAnnouncement(acceptedTOC, "Containeraufnahme fehlgeschlagen");
 				inform.setPerformative(ACLMessage.FAILURE);
+				((ContainerAgent)myAgent).fillMessage(inform,loadStatus);
 				ds.put(REPLY_KEY, inform);
 				isDone=true;
 				return;
 			}
-//			((ContainerAgent)myAgent).echoStatus("handleAcceptProposal - acceptPerformative: "+accept.getPerformative());
-					
-			((ContainerAgent) myAgent).aquireContainer(acceptedTOC);
 			
 			((ContainerAgent)myAgent).echoStatus("Auftrag abgearbeitet");
-			AnnounceLoadStatus loadStatus=new AnnounceLoadStatus();
-			loadStatus.setLoad_status("FINISHED");
-			loadStatus.setLoad_offer(acceptedTOC);
+			AnnounceLoadStatus loadStatus=getLoadStatusAnnouncement(acceptedTOC,"FINISHED");
+			inform.setPerformative(ACLMessage.INFORM);
 			((ContainerAgent)myAgent).fillMessage(inform,loadStatus);
 			ds.put(REPLY_KEY, inform);
 			isDone=true;
@@ -132,6 +164,13 @@ public class recieveLoadOrders extends ContractNetResponder{
 			return isDone;
 		}
 	}
+	
+public AnnounceLoadStatus getLoadStatusAnnouncement(TransportOrderChain curTOC, String content){
+	AnnounceLoadStatus loadStatus=new AnnounceLoadStatus();
+	loadStatus.setLoad_status(content);
+	loadStatus.setLoad_offer(curTOC);
+	return loadStatus;
+}
 	/*
 	protected ACLMessage handleAcceptProposal(ACLMessage cfp,ACLMessage propose, ACLMessage accept){
 //		((ContainerAgent)myAgent).echoStatus("handleAcceptProposal - acceptPerformative: "+accept.getPerformative());
@@ -170,7 +209,7 @@ public class recieveLoadOrders extends ContractNetResponder{
 		if(!((ContainerAgent)myAgent).removeFromQueue(acceptedTOC)){ //wenn der untersuchte Container dem entspricht, für den sich beworben wurde
 			((ContainerAgent)myAgent).echoStatus("handleRejectProposal: Auftrag, auf den ich mich beworben habe nicht gefunden");
 		} else{
-			((ContainerAgent)myAgent).echoStatus("abgelehnten Auftrag entfernt");
+			((ContainerAgent)myAgent).echoStatus("abgelehnten Auftrag entfernt. CID="+acceptedTOC.getTransports().getId());
 		}
 	}
 }
