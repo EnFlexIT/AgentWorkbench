@@ -221,7 +221,7 @@ public class ContainerAgent extends Agent {
 		BlockAddress destination=getEmptyBlockAddress(); //zieladresse besorgen
 		destination.setLocates(targetContainer.getTransports());
 		ontologyRepresentation.getContains().addIs_filled_with(destination); //Container mit neuer BlockAdress in eigene BayMap aufnehmens
-		echoStatus("Nun wird der Container von mir transportiert");
+//		echoStatus("Nun wird der Container von mir transportiert");
 		if(removeFromQueue(targetContainer)){ //Auftrag aus Liste von Bewerbungen streichen
 			return true;
 		}

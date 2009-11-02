@@ -36,7 +36,7 @@ public class recieveLoadOrders extends ContractNetResponder{
 	protected ACLMessage handleCfp(ACLMessage cfp){
 		ACLMessage reply = cfp.createReply();
 		Concept content;
-		((ContainerAgent)myAgent).echoStatus("CFP empfangen");
+//		((ContainerAgent)myAgent).echoStatus("CFP empfangen");
 		if(cfp.getContent()==null){ //CFP leer
 			((ContainerAgent)myAgent).echoStatus("no content");
 			reply.setContent("no content");
@@ -100,17 +100,34 @@ public class recieveLoadOrders extends ContractNetResponder{
 	}
 	
 	protected class checkForUtilization extends OneShotBehaviour{
+		Boolean checkedAgain=false;
+		public checkForUtilization(Boolean checkedAgain) {
+			this.checkedAgain=checkedAgain;
+		}
+		public checkForUtilization() {
+			this(false);
+		}
 		public void action(){
 			SequentialBehaviour sb=((SequentialBehaviour) getParent());
+			Behaviour b;
 			if(!((ContainerAgent)myAgent).isBayMapFull()){
-				Behaviour b=new stowContainer();
+				b=new stowContainer();
 				b.setDataStore(getDataStore());
 				sb.addSubBehaviour(b);
 				((ContainerAgent)myAgent).echoStatus("Baymap nicht voll");
 			} else {
-				Behaviour b=new prepareFailure();
-				b.setDataStore(getDataStore());
-				sb.addSubBehaviour(b);
+				if(checkedAgain){ //has been already checked, makeRoom failed, no chance
+					b=new prepareFailure();
+					b.setDataStore(getDataStore());
+					sb.addSubBehaviour(b);
+				} else { // try making some room
+					b=new makeWay();
+					b.setDataStore(getDataStore());
+					sb.addSubBehaviour(b);
+					b=new checkForUtilization(true);
+					b.setDataStore(getDataStore());
+					sb.addSubBehaviour(b);
+				}
 			}
 		}
 	}
@@ -131,7 +148,7 @@ public class recieveLoadOrders extends ContractNetResponder{
 	protected class stowContainer extends SimpleBehaviour{
 		private Boolean isDone=false;
 		public void action(){
-			((ContainerAgent)myAgent).echoStatus("action");
+//			((ContainerAgent)myAgent).echoStatus("action");
 			DataStore ds=getDataStore();
 //			((ContainerAgent)myAgent).echoStatus(ds.toString());
 			ACLMessage accept=(ACLMessage) ds.get(ACCEPT_PROPOSAL_KEY);
@@ -150,7 +167,7 @@ public class recieveLoadOrders extends ContractNetResponder{
 				return;
 			}
 			
-			((ContainerAgent)myAgent).echoStatus("Auftrag abgearbeitet");
+			((ContainerAgent)myAgent).echoStatus("Auftrag abgearbeitet. CID="+acceptedTOC.getTransports().getId());
 			AnnounceLoadStatus loadStatus=getLoadStatusAnnouncement(acceptedTOC,"FINISHED");
 			inform.setPerformative(ACLMessage.INFORM);
 			((ContainerAgent)myAgent).fillMessage(inform,loadStatus);
@@ -160,7 +177,7 @@ public class recieveLoadOrders extends ContractNetResponder{
 		}
 
 		public boolean done() {
-			((ContainerAgent)myAgent).echoStatus("done");
+//			((ContainerAgent)myAgent).echoStatus("done");
 			return isDone;
 		}
 	}

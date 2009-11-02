@@ -12,7 +12,7 @@ import mas.projects.contmas.ontology.PassiveContainerHolder;
 import mas.projects.contmas.ontology.TransportOrder;
 import mas.projects.contmas.ontology.TransportOrderChain;
 
-public class PassiveContainerAgent extends ContainerAgent {
+public class PassiveContainerAgent extends PhysicalContainerAgent {
 	protected List contractors=new ArrayList();
 	
 	public PassiveContainerAgent(String serviceType) {
