@@ -106,8 +106,7 @@ public class DisplayAgentGUI extends JPanel {
 		this.add(canvas);
 		
 		// Temporary solution, to be integrated in christian's GUI
-		JFrame frame = new JFrame("DA GUI Test");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		JFrame frame = new JFrame("DA GUI Test");		
 		frame.setContentPane(this);
 		frame.pack();		
 		frame.setVisible(true);
@@ -143,8 +142,14 @@ public class DisplayAgentGUI extends JPanel {
 					AnimAgent agent=agents.get(keys.next());		
 					Element agentSVG = svgDoc.getElementById(agent.getId());
 					if(agentSVG!=null){
-						agentSVG.getAttributeNodeNS(null, "x").setValue(""+agent.getXPos());
-						agentSVG.getAttributeNodeNS(null, "y").setValue(""+agent.getYPos());
+						String tagName = agentSVG.getTagName();
+						if(tagName.equals("circle")){
+							agentSVG.getAttributeNodeNS(null, "cx").setValue(""+agent.getXPos());
+							agentSVG.getAttributeNodeNS(null, "cy").setValue(""+agent.getYPos());
+						}else{
+							agentSVG.getAttributeNodeNS(null, "x").setValue(""+agent.getXPos());
+							agentSVG.getAttributeNodeNS(null, "y").setValue(""+agent.getYPos());
+						}
 					}else{
 						System.out.println("SVG representation of "+agent.getId()+" not found");
 					}

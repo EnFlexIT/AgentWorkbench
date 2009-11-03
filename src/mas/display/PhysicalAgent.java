@@ -16,27 +16,25 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 
 /**
- * Abstract parent class for graphical agents
- * Specifying properties shared by all graphical agents
+ * Abstract parent class for agents having a "physical" position for being displayed by a display agent 
  *  
  * @author nils
  *
  */
-public abstract class GraphicalAgent extends Agent {
+public abstract class PhysicalAgent extends Agent {
 	public static final String svgNs="http://www.w3.org/2000/svg";
 	
 	MovingAgent self;
 	DFAgentDescription[] displayAgents = null;
-	// Default values, used if no arguments are specified
-	int width=30;
-	int height=30;
-	int posX=20;
-	int posY=20;
-	int speedX=5;
-	int speedY=2;
-	String color="red";
 	
-	Element svgRepresentation;
+	int posX;
+	int posY;
+	int speedX;
+	int speedY;
+	
+	// Type of displayable agent
+	String displayableType = null;
+	
 	
 	public void setup(){
 		// Ask DF for DisplayAgents
@@ -53,14 +51,11 @@ public abstract class GraphicalAgent extends Agent {
 			ACLMessage registrationRequest = new ACLMessage(ACLMessage.REQUEST);
 			for(int i=0; i<displayAgents.length; i++)
 				registrationRequest.addReceiver(displayAgents[i].getName());
-			registrationRequest.setContent(width+","+height+","+posX+","+posY+","+color);
-//			if(this.svgRepresentation == null){
-//				this.svgRepresentation = this.createDefaultRepresentation();
-//			}
-			
+			registrationRequest.setContent(displayableType+","+posX+","+posY);
 			registrationRequest.setConversationId("register");
 			send(registrationRequest);
-		}		
+		}
+		registerAsDisplayable();
 	}
 	
 	public void takeDown(){
@@ -73,15 +68,21 @@ public abstract class GraphicalAgent extends Agent {
 		
 	}
 	
-	private Element createDefaultRepresentation(){
-		Element rep = SVGDOMImplementation.getDOMImplementation().createDocument(svgNs, "svg", null).createElementNS(svgNs, "rect");
-		rep.setAttributeNS(null, "id", this.getLocalName());
-		rep.setAttributeNS(null, "x", "30");
-		rep.setAttributeNS(null, "y", "30");
-		rep.setAttributeNS(null, "width", "30");
-		rep.setAttributeNS(null, "height", "30");
-		rep.setAttributeNS(null, "style", "fill:blue");
-		return rep;
+	/**
+	 * Register at the DF as a displayable agent
+	 */
+	private void registerAsDisplayable(){
+		DFAgentDescription dfd = new DFAgentDescription();
+		dfd.setName(getAID());
+		ServiceDescription sd = new ServiceDescription();
+		sd.setType("displayable");
+		sd.setName("displayable-"+displayableType);
+		dfd.addServices(sd);
+		try{
+			DFService.register(this, dfd);
+		}catch (FIPAException fe){
+			fe.printStackTrace();
+		}
 	}
 }
 

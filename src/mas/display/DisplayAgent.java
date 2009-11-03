@@ -27,6 +27,7 @@ import org.w3c.dom.Element;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
+import jade.core.behaviours.TickerBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
@@ -44,17 +45,17 @@ import jade.lang.acl.UnreadableException;
 public class DisplayAgent extends Agent {
 	
 	// SVG Namespace
-	public static final String svgNs="http://www.w3.org/2000/svg";
+	public static final String svgNs=SVGDOMImplementation.SVG_NAMESPACE_URI;
 	
 	private DisplayAgentGUI myGUI = null;
+	private DisplayAgent myAgent = this;
 	
-	private Document svgDoc;
-	private Element svgRoot;	// Root element of the SVG Document
 	public Map <String, AnimAgent> animAgents = null;  // Hashmap storing animated agents, key=localName
 	
 	public void setup(){
 		
 		myGUI = new DisplayAgentGUI(this);
+		animAgents=new HashMap<String, AnimAgent>();
 		
 		// Add Behaviours
 		this.addBehaviour(new RegistrationServer());
@@ -72,8 +73,8 @@ public class DisplayAgent extends Agent {
 		}catch(FIPAException fe){
 			fe.printStackTrace();
 		}
-		
 		System.out.println("Display agent "+getLocalName()+"ready.");
+		this.addBehaviour(new DisplayableSearchBehaviour(this, 10000));
 		
 		
 	}
@@ -84,6 +85,9 @@ public class DisplayAgent extends Agent {
 			DFService.deregister(this);
 		}catch(FIPAException fe){
 			fe.printStackTrace();
+		}
+		if(myGUI!=null){
+			myGUI.setVisible(false);
 		}
 		
 	}
@@ -97,7 +101,7 @@ public class DisplayAgent extends Agent {
 
 		@Override
 		public void action() {
-			String name, width, height, xPos, yPos, color;
+			String name, type, xPos, yPos;
 			MessageTemplate mt=MessageTemplate.and(
 					MessageTemplate.MatchPerformative(ACLMessage.REQUEST),
 					MessageTemplate.or(
@@ -109,14 +113,12 @@ public class DisplayAgent extends Agent {
 			if(request!=null){
 				if(request.getConversationId()=="register"){
 					System.out.println("Received registration request from "+request.getSender().getLocalName());
-					String[] props=request.getContent().split(",");
-					name=request.getSender().getLocalName();
-					width=props[0];
-					height=props[1];
-					xPos=props[2];
-					yPos=props[3];
-					color=props[4];
-					registerAgent(name, width, height,xPos,yPos,color);
+					String[] props = request.getContent().split(",");
+					name = request.getSender().getLocalName();
+					type = props[0];
+					xPos = props[1];
+					yPos = props[2];
+					registerAgent(name, type, xPos, yPos);
 					
 
 				}else{
@@ -129,21 +131,44 @@ public class DisplayAgent extends Agent {
 			
 		}
 		
-		private void registerAgent(String localName, String width, String height, String xPos, String yPos, String color){
+		/**
+		 * Getting the agents SVG representation and adds it to the SVG document
+		 * @param localName
+		 * @param type
+		 * @param xPos
+		 * @param yPos
+		 */
+		private void registerAgent(String name, String type, String xPos, String yPos){
 			
-			Element agentSvg=myGUI.svgDoc.createElementNS(svgNs, "rect");
-			agentSvg.setAttributeNS(null, "id", localName);
-			agentSvg.setAttributeNS(null, "width", width);
-			agentSvg.setAttributeNS(null, "height", height);
-			agentSvg.setAttributeNS(null, "x", xPos);
-			agentSvg.setAttributeNS(null, "y", yPos);
-			agentSvg.setAttributeNS(null, "style", "fill:"+color);
-			myGUI.addAgent(agentSvg);
-			if(animAgents==null)
-				animAgents=new HashMap<String, AnimAgent>();
-			animAgents.put(localName, new AnimAgent(localName, agentSvg,Integer.parseInt(xPos),Integer.parseInt(yPos),
-					Integer.parseInt(width),Integer.parseInt(height)));
-			System.out.println("Agent "+localName+" sucessfully registered");
+			// Try to obtain SVG representation
+			Element agentSVG = AgentSVGDefinitions.getSVG(type, xPos, yPos, myGUI.svgDoc);
+			if(agentSVG != null){
+				// Set id attribute and append to the SVG document
+				agentSVG.setAttributeNS(null, "id", name);
+				myGUI.addAgent(agentSVG);
+				
+				// Get position and size
+				int x, y, width, height;
+				String tagName = agentSVG.getTagName();
+				if(tagName == "circle"){
+					int r = Integer.parseInt(agentSVG.getAttribute("r"));
+					x = Integer.parseInt(agentSVG.getAttribute("cx"));
+					y = Integer.parseInt(agentSVG.getAttribute("cy"));
+					width = r;
+					height = width;
+				}else{
+					x = Integer.parseInt(agentSVG.getAttribute("x"));
+					y = Integer.parseInt(agentSVG.getAttribute("y"));
+					width = Integer.parseInt(agentSVG.getAttribute("width"));
+					height = Integer.parseInt(agentSVG.getAttribute("height"));
+				}					
+				animAgents.put(name, new AnimAgent(name, agentSVG, x, y, width, height));
+				System.out.println("Agent "+name+" sucessfully registered, pos"+x+","+y);
+			}else{
+				System.err.println("Could not get SVG representation for agent type "+type);
+			}
+			
+			
 		}
 		
 		private void deregisterAgent(String name){
@@ -171,56 +196,55 @@ public class DisplayAgent extends Agent {
 				boolean collideX=false, collideY=false;
 				
 				AnimAgent aa=animAgents.get(moveRequest.getSender().getLocalName());
-				String[] newPos=moveRequest.getContent().split(",");
-				int newPosX=Integer.parseInt(newPos[0]);
-				int newPosY=Integer.parseInt(newPos[1]);
+				if(aa!=null){
+					String[] newPos=moveRequest.getContent().split(",");
+					int newPosX=Integer.parseInt(newPos[0]);
+					int newPosY=Integer.parseInt(newPos[1]);
 				
-				
-				// Collision detection
-				// Borders
-				boolean[] colls=detectBorderCollision(aa,newPosX,newPosY);
-				if(colls[0]||colls[1]){
-					System.out.println("Border collision detected");
-					ACLMessage reply=moveRequest.createReply();
-					reply.setPerformative(ACLMessage.INFORM);
-					reply.setConversationId("collision");
-					reply.setContent(Arrays.toString(colls));
-					send(reply);
-				}
-				// Other agents
-				Iterator<String> keys=animAgents.keySet().iterator();
-				while(keys.hasNext()){
-					AnimAgent oa=animAgents.get(keys.next());
-					if(!oa.equals(aa)){		// If not the same agent
-						colls=detectAgentCollision(aa,newPosX,newPosY,oa);
-						if(colls[0]||colls[1]){
-							System.out.println("Agent collision detected");
-							ACLMessage reply=moveRequest.createReply();
-							reply.addReceiver(new AID(oa.getId(),AID.ISLOCALNAME));
-							reply.setPerformative(ACLMessage.INFORM);
-							reply.setConversationId("collision");
-							reply.setContent(Arrays.toString(colls));
-							send(reply);
+					// Collision detection
+					// Borders
+					boolean[] colls=detectBorderCollision(aa,newPosX,newPosY);
+					if(colls[0]||colls[1]){
+						System.out.println("Border collision detected, pos "+newPosX+","+newPosY);
+						ACLMessage reply=moveRequest.createReply();
+						reply.setPerformative(ACLMessage.INFORM);
+						reply.setConversationId("collision");
+						reply.setContent(Arrays.toString(colls));
+						send(reply);
+					}
+					// Other agents
+					Iterator<String> keys=animAgents.keySet().iterator();
+					while(keys.hasNext()){
+						AnimAgent oa=animAgents.get(keys.next());
+						if(!oa.equals(aa)){		// If not the same agent
+							colls=detectAgentCollision(aa,newPosX,newPosY,oa);
+							if(colls[0]||colls[1]){
+								System.out.println("Agent collision detected");
+								ACLMessage reply=moveRequest.createReply();
+								reply.addReceiver(new AID(oa.getId(),AID.ISLOCALNAME));
+								reply.setPerformative(ACLMessage.INFORM);
+								reply.setConversationId("collision");
+								reply.setContent(Arrays.toString(colls));
+								send(reply);
+							}							
 						}
-							
+					}
+				
+					aa.setXPos(newPosX);
+					aa.setYPos(newPosY);
+					int col=0;
+					if(collideX)col+=1;
+					if(collideY)col+=2;
+				
+					if(col!=0){
+						System.out.println("Border collision detected");
+						ACLMessage reply=moveRequest.createReply();
+						reply.setPerformative(ACLMessage.INFORM);
+						reply.setConversationId("collision");
+						reply.setContent(""+col);
+						send(reply);
 					}
 				}
-				
-				aa.setXPos(newPosX);
-				aa.setYPos(newPosY);
-				int col=0;
-				if(collideX)col+=1;
-				if(collideY)col+=2;
-				
-				if(col!=0){
-					System.out.println("Border collision detected");
-					ACLMessage reply=moveRequest.createReply();
-					reply.setPerformative(ACLMessage.INFORM);
-					reply.setConversationId("collision");
-					reply.setContent(""+col);
-					send(reply);
-				}
-				
 			}else{
 				block();
 			}			
@@ -250,7 +274,67 @@ public class DisplayAgent extends Agent {
 					coll[1]=true;
 			}
 			return coll;
+		}		
+	}
+	
+	class DisplayableSearchBehaviour extends TickerBehaviour{
+
+		public DisplayableSearchBehaviour(Agent a, long period) {
+			super(a, period);
+			// TODO Auto-generated constructor stub
 		}
+
+		@Override
+		protected void onTick() {
+			DFAgentDescription template= new DFAgentDescription();
+			ServiceDescription sd = new ServiceDescription();
+			sd.setType("displayable");
+			template.addServices(sd);
+			try{
+				DFAgentDescription[] results = DFService.search(myAgent, template);
+				for (int i=0; i<results.length; i++){
+					jade.util.leap.Iterator services = results[i].getAllServices();
+					while(services.hasNext()){
+						ServiceDescription service = (ServiceDescription) services.next();
+						if(service.getType().equals("displayable")){
+							String name = service.getName();
+							int splitPos = name.indexOf('-');
+							String type = name.substring(splitPos+1);
+							System.out.println("Found displayable agent "+results[i].getName().getLocalName()+" of type"+type);
+						}
+					}
+				}
+			}catch (FIPAException fe){
+				fe.printStackTrace();
+			}			
+					
+		}
+		
+//		private void searchDisplayables(){
+//			DFAgentDescription template= new DFAgentDescription();
+//			ServiceDescription sd = new ServiceDescription();
+//			sd.setType("displayable");
+//			template.addServices(sd);
+//			try{
+//				DFAgentDescription[] results = DFService.search(myAgent, template);
+//				for (int i=0; i<results.length; i++){
+//					jade.util.leap.Iterator services = results[i].getAllServices();
+//					while(services.hasNext()){
+//						ServiceDescription service = (ServiceDescription) services.next();
+//						if(service.getType().equals("displayable")){
+//							String name = service.getName();
+//							int splitPos = name.indexOf('-');
+//							String type = name.substring(splitPos+1);
+//							System.out.println("Found displayable agent "+results[i].getName().getLocalName()+" of type"+type);
+//						}
+//					}
+//				}
+//			}catch (FIPAException fe){
+//				fe.printStackTrace();
+//			}			
+//		}
+
+		
 		
 	}
 }

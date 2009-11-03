@@ -6,9 +6,9 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
 class CollisionBehaviour extends CyclicBehaviour{
-	GraphicalAgent agent;
+	PhysicalAgent agent;
 	
-	public CollisionBehaviour(GraphicalAgent agent){
+	public CollisionBehaviour(PhysicalAgent agent){
 		this.agent=agent;
 	}
 	@Override

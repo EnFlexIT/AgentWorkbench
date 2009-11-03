@@ -7,11 +7,20 @@ package mas.display;
  * @author nils
  *
  */
-public class MovingAgent extends GraphicalAgent {
+public class MovingAgent extends PhysicalAgent {
 	
 	
 	public void setup(){
-		color="blue";
+		posX = 20;
+		posY = 20;
+		speedX = 5;
+		speedY = 2;
+		Object[] args = getArguments();
+		if(args.length>0){
+			displayableType = (String) args[0];
+		}else{
+			displayableType = "A";
+		}
 		super.setup();
 		addBehaviour(new MovingBehaviour(this));
 		addBehaviour(new CollisionBehaviour(this));
