@@ -38,7 +38,7 @@ import svganalyzer.SvgAnalyzer;
  * @author nils
  *
  */
-public class DisplayAgentGUI extends JPanel {
+public class DisplayAgentGUI extends JFrame {
 	
 	// SVG Namespace
 	public static final String svgNs="http://www.w3.org/2000/svg";
@@ -105,11 +105,8 @@ public class DisplayAgentGUI extends JPanel {
 		this.add("North", zoomPanel);
 		this.add(canvas);
 		
-		// Temporary solution, to be integrated in christian's GUI
-		JFrame frame = new JFrame("DA GUI Test");		
-		frame.setContentPane(this);
-		frame.pack();		
-		frame.setVisible(true);
+		this.pack();		
+		this.setVisible(true);
 	}
 	
 	/**
