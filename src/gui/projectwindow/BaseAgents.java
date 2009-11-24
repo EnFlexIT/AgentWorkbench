@@ -120,57 +120,59 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 			jAgentList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			jAgentList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
 				public void valueChanged(javax.swing.event.ListSelectionEvent se) {
-					// -----------------------------------------------------
-					// --- Eintrag für den aktuellen Agenten vornehmen -----  
-					String ToDisplay = jAgentList.getSelectedValue().toString();
-					int maxLenght = 30;
-					if ( ToDisplay.length() > maxLenght ) {
-						String ToDisplayStart = ToDisplay.substring(0, 4);
-						String ToDisplayEnde = ToDisplay.substring( ToDisplay.length() - maxLenght );
-						ToDisplay = ToDisplayStart + "..." + ToDisplayEnde;
+
+					if ( jAgentList.getSelectedValue() != null ) {
+						// -----------------------------------------------------
+						// --- Eintrag für den aktuellen Agenten vornehmen -----
+						String ToDisplay = jAgentList.getSelectedValue().toString();
+						int maxLenght = 30;
+						if ( ToDisplay.length() > maxLenght ) {
+							String ToDisplayStart = ToDisplay.substring(0, 4);
+							String ToDisplayEnde = ToDisplay.substring( ToDisplay.length() - maxLenght );
+							ToDisplay = ToDisplayStart + "..." + ToDisplayEnde;
+						}
+						jAgent2Start.setText( ToDisplay );
+						// -----------------------------------------------------
+						// --- Vorschlag für den Ausführungsnamen finden -------
+						String StartAs = jAgentList.getSelectedValue().toString();
+						StartAs = StartAs.substring(StartAs.lastIndexOf(".")+1);
+						// -----------------------------------------------------
+						// --- Alle Großbuchstaben filtern ---------------------
+						String RegExp = "[A-Z]";	
+						String StartAsNew = ""; 
+						for (int i = 0; i < StartAs.length(); i++) {
+							String SngChar = "" + StartAs.charAt(i);
+							if ( SngChar.matches( RegExp ) == true ) {
+								StartAsNew = StartAsNew + SngChar;	
+								// --- ggf. den zweiten Buchstaben mitnehmen ---
+								if ( i < StartAs.length() ) {
+									String SngCharN = "" + StartAs.charAt(i+1);
+									if ( SngCharN.matches( RegExp ) == false ) {
+										StartAsNew = StartAsNew + SngCharN;	
+									}
+								}	
+								// ---------------------------------------------
+							}						
+					    }
+						if ( StartAsNew != "" && StartAsNew.length() >= 4 ) {
+							StartAs = StartAsNew;
+						}
+						// -----------------------------------------------------
+						// --- Check, ob es dieser Agent schon läuft -----------
+						int i = 1;
+						StartAsNew = StartAs;
+						while ( Application.JadePlatform.jadeAgentIsRunning( StartAs, CurrProject.getProjectFolder() ) == true ){
+							StartAs = StartAsNew + i;
+							i++; 
+						}
+						// -----------------------------------------------------
+						// --- Vorschlagsnamen einstellen ----------------------
+						jAgentStartAs.setText(StartAs);
 					}
-					jAgent2Start.setText( ToDisplay );
-					// -----------------------------------------------------
-					// --- Vorschlag für den Ausführungsnamen finden -------
-					String StartAs = jAgentList.getSelectedValue().toString();
-					StartAs = StartAs.substring(StartAs.lastIndexOf(".")+1);
-					// -----------------------------------------------------
-					// --- Alle Großbuchstaben filtern ---------------------
-					String RegExp = "[A-Z]";	
-					String StartAsNew = ""; 
-					for (int i = 0; i < StartAs.length(); i++) {
-						String SngChar = "" + StartAs.charAt(i);
-						if ( SngChar.matches( RegExp ) == true ) {
-							StartAsNew = StartAsNew + SngChar;	
-							// --- ggf. den zweiten Buchstaben mitnehmen ---
-							if ( i < StartAs.length() ) {
-								String SngCharN = "" + StartAs.charAt(i+1);
-								if ( SngCharN.matches( RegExp ) == false ) {
-									StartAsNew = StartAsNew + SngCharN;	
-								}
-							}	
-							// ---------------------------------------------
-						}						
-				    }
-					if ( StartAsNew != "" && StartAsNew.length() >= 4 ) {
-						StartAs = StartAsNew;
-					}
-					// -----------------------------------------------------
-					// --- Check, ob es dieser Agent schon läuft -----------
-					int i = 1;
-					StartAsNew = StartAs;
-					while ( Application.JadePlatform.jadeAgentIsRunning( StartAs, CurrProject.getProjectFolder() ) == true ){
-						StartAs = StartAsNew + i;
-						i++; 
-					}
-					// -----------------------------------------------------
-					// --- Vorschlagsnamen einstellen ----------------------
-					jAgentStartAs.setText(StartAs);
-					
 					// ----------------------------------------------------
 					// --- Fertig -----------------------------------------
 					// ----------------------------------------------------
-					}
+				}
 			});
 		}
 		return jAgentList;
