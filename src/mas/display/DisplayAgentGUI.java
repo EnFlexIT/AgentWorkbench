@@ -11,6 +11,8 @@ import java.awt.event.WindowAdapter;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -57,8 +59,11 @@ public class DisplayAgentGUI extends JFrame {
 	Element svgRoot = null;
 	Window window = null;
 	
+	Map <String, AnimAgent> knownAgents;
+	
 	public DisplayAgentGUI(DisplayAgent myAgent){
 		this.myAgent=myAgent;
+		this.knownAgents = new HashMap<String, AnimAgent>();
 		this.initialize();
 	}
 	
@@ -70,7 +75,7 @@ public class DisplayAgentGUI extends JFrame {
 			public void gvtRenderingCompleted(GVTTreeRendererEvent re) {
 				// Animation initialization
 				window = canvas.getUpdateManager().getScriptingEnvironment().createWindow();
-				window.setInterval(new Animation(), 50);
+				window.setInterval(new Animation(), 20);
 				
 			}
 		});
@@ -113,10 +118,23 @@ public class DisplayAgentGUI extends JFrame {
 	 * Add an agents SVG representation to the SVG document 
 	 * @param element SVG element representing the agent
 	 */
-	public void addAgent(Element element){
-		Element newAgent = element;
+	public void addAgent(String name, String x, String y){
+		Element newAgent = svgDoc.createElementNS(svgNs, "rect");
+		newAgent.setAttributeNS(null, "id", name);
+		newAgent.setAttributeNS(null, "x", x);
+		newAgent.setAttributeNS(null, "y", y);
+		newAgent.setAttributeNS(null, "width", "50");
+		newAgent.setAttributeNS(null, "height", "20");
+		newAgent.setAttributeNS(null, "style", "fill:red");
 		((EventTarget)newAgent).addEventListener("click", new OnClickAction(), false);
-		this.svgRoot.appendChild(newAgent);		
+		knownAgents.put(name, new AnimAgent(name, newAgent, Integer.parseInt(x), Integer.parseInt(y)));
+		svgRoot.appendChild(newAgent);				
+	}
+	
+	public void updateAgent(String name, String x, String y){
+		AnimAgent agent = knownAgents.get(name);
+		agent.setXPos(Integer.parseInt(x));
+		agent.setYPos(Integer.parseInt(y));
 	}
 	
 	/**
@@ -124,6 +142,7 @@ public class DisplayAgentGUI extends JFrame {
 	 * @param name Agents local name (= the SVG elements id attribute)
 	 */
 	public void removeAgent(String name){
+		knownAgents.remove(name);
 		this.svgRoot.removeChild(svgDoc.getElementById(name));		
 	}	
 	
@@ -132,26 +151,13 @@ public class DisplayAgentGUI extends JFrame {
 
 		@Override
 		public void run() {
-			Map <String, AnimAgent> agents = myAgent.animAgents;
-			if(agents!=null){
-				Iterator<String> keys=agents.keySet().iterator();
-				while(keys.hasNext()){
-					AnimAgent agent=agents.get(keys.next());		
-					Element agentSVG = svgDoc.getElementById(agent.getId());
-					if(agentSVG!=null){
-						String tagName = agentSVG.getTagName();
-						if(tagName.equals("circle")){
-							agentSVG.getAttributeNodeNS(null, "cx").setValue(""+agent.getXPos());
-							agentSVG.getAttributeNodeNS(null, "cy").setValue(""+agent.getYPos());
-						}else{
-							agentSVG.getAttributeNodeNS(null, "x").setValue(""+agent.getXPos());
-							agentSVG.getAttributeNodeNS(null, "y").setValue(""+agent.getYPos());
-						}
-					}else{
-						System.out.println("SVG representation of "+agent.getId()+" not found");
-					}
-				}
-			}			
+			Iterator<AnimAgent> agents = knownAgents.values().iterator();
+			while(agents.hasNext()){
+				AnimAgent aa = agents.next();
+				aa.getElem().setAttributeNS(null, "x", ""+aa.getXPos());
+				aa.getElem().setAttributeNS(null, "y", ""+aa.getYPos());
+			}
+			
 		}		
 	}
 	

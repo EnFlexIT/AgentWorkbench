@@ -57,6 +57,7 @@ public class Platform extends java.lang.Object {
 				});
 				// --- MainContainer starten ------------------------			
 				Profile pMain = new ProfileImpl();
+				pMain.setParameter(Profile.SERVICES,"jade.core.event.NotificationService;jade.core.messaging.TopicManagementService" ); 
 				MASmc = MASrt.createMainContainer( pMain );				
 			}
 			catch ( Exception e ) {
@@ -283,6 +284,7 @@ public class Platform extends java.lang.Object {
 		
 		Profile pSub = new ProfileImpl();
 		pSub.setParameter(Profile.CONTAINER_NAME, ContainerName);
+		pSub.setParameter( Profile.SERVICES ,"jade.core.event.NotificationService;jade.core.messaging.TopicManagementService" );
 		AgentContainer MAS_AgentContainer = MASrt.createAgentContainer( pSub );
 		MAScontainer.add( MAS_AgentContainer );
 		return MAS_AgentContainer;		

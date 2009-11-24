@@ -10,50 +10,83 @@ import java.awt.Point;
  */
 public class DisplayableData {
 	/**
-	 * The agent's position  
+	 * Agent's position
 	 */
-	Point position = new Point();
-	/**
-	 * The agent's size
-	 */
-	Dimension agentSize = new Dimension();
-	/**
-	 * Size of the area the agent is moving in
-	 */
-	Dimension playgroundSize = new Dimension();
-	/**
-	 * Type definition, used to map agents to SVG representations
-	 */
-	String agentType = "";
+	private int x, y;
 	
+	/**
+	 * Agent's size
+	 */
+	private int agentWidth, agentHeight;
+	
+	/**
+	 * Area Size
+	 */
+	private int playgroundWidth, playgroundHeight;
+	
+	String agentType = "";
 	DisplayableAgent myAgent;
 	
-	public DisplayableData(DisplayableAgent agent){
-		myAgent = agent;		
+	public int getX() {
+		return x;
+	}
+	public void setX(int x) {
+		this.x = x;
+	}
+	public int getY() {
+		return y;
+	}
+	public void setY(int y) {
+		this.y = y;
+	}
+	public void setPos(int x, int y){
+		this.x=x;
+		this.y=y;
+	}
+	public int getAgentWidth() {
+		return agentWidth;
+	}
+	public void setAgentWidth(int agentWidth) {
+		this.agentWidth = agentWidth;
+	}
+	public int getAgentHeight() {
+		return agentHeight;
+	}
+	public void setAgentHeight(int agentHeight) {
+		this.agentHeight = agentHeight;
+	}
+	public void setAgentSize(int width, int height){
+		this.agentWidth = width;
+		this.agentHeight = height;
+	}
+	public int getPlaygroundWidth() {
+		return playgroundWidth;
+	}
+	public void setPlaygroundWidth(int playgroundWidth) {
+		this.playgroundWidth = playgroundWidth;
+	}
+	public int getPlaygroundHeight() {
+		return playgroundHeight;
+	}
+	public void setPlaygroundHeight(int playgroundHeight) {
+		this.playgroundHeight = playgroundHeight;
+	}
+	public void setPlaygroundSize(int width, int height){
+		this.playgroundWidth = width;
+		this.playgroundHeight = height;
 	}
 	
-	public Point getPosition() {
-		return position;
-	}	
-	public void setPosition(Point position) {
-		this.position = position;
-	}
-	public Dimension getAgentSize() {
-		return agentSize;
-	}
-	public void setAgentSize(Dimension agentSize) {
-		this.agentSize = agentSize;
-	}
+	
 	public String getAgentType() {
 		return agentType;
 	}
 	public void setAgentType(String agentType) {
 		this.agentType = agentType;
 	}
-	public Dimension getPlaygroundSize() {
-		return playgroundSize;
+	public DisplayableAgent getMyAgent() {
+		return myAgent;
 	}
-	public void setPlaygroundSize(Dimension playgroundSize){
-		this.playgroundSize = playgroundSize;
-	}
+	
+	
+	
 }

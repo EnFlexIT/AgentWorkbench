@@ -3,7 +3,10 @@ package mas.display;
 import java.awt.Dimension;
 import java.awt.Point;
 
+import jade.core.AID;
 import jade.core.Agent;
+import jade.core.ServiceException;
+import jade.core.messaging.TopicManagementHelper;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
@@ -21,32 +24,26 @@ public class MovingAgent extends Agent implements DisplayableAgent{
 //	SubscriptionResponder responder = null;
 	
 	DisplayableData posData;
+	MovingBehaviour mb;
 	
 	public void setup(){
 		// Create and initialize DisplayableData object
-		posData = new DisplayableData(this);
-		posData.setPosition(new Point(50,30));
-		posData.setAgentSize(new Dimension(30,10));
-		posData.setPlaygroundSize(new Dimension (300,300));
+		posData = new DisplayableData();
+		posData.setPos(50,30);
+		posData.setAgentSize(50,20);
+		posData.setPlaygroundSize(300,300);
 		posData.setAgentType(this.getClass().getSimpleName());
 		
-		addBehaviour(new RegisterBehaviour());
+		mb = new MovingBehaviour(this, 20);
+		addBehaviour(mb);
 			
-//		MessageTemplate mt = jade.proto.SubscriptionResponder.createMessageTemplate(ACLMessage.SUBSCRIBE);
-//		responder = new SubscriptionResponder(this, mt);
-		
 
-//		addBehaviour(new MovingBehaviour(this));
-//		addBehaviour(new CollisionBehaviour(this));
 		
 	}
 	
 	public void takeDown(){
-		try{
-			DFService.deregister(this);
-		}catch (FIPAException fe){
-			fe.printStackTrace();
-		}
+		mb.onEnd();
+		
 	}
 
 	@Override
@@ -54,13 +51,48 @@ public class MovingAgent extends Agent implements DisplayableAgent{
 		return this.posData.getAgentType();
 	}
 
+	
+
+	
+
 	@Override
-	public Point getPosition() {
-		return this.posData.getPosition();
+	public int getHeight() {
+		// TODO Auto-generated method stub
+		return this.posData.getAgentHeight();
 	}
 
 	@Override
-	public Dimension getSize() {
-		return this.posData.getAgentSize();
+	public int getWidth() {
+		// TODO Auto-generated method stub
+		return this.posData.getAgentWidth();
+	}
+
+	@Override
+	public int getX() {
+		// TODO Auto-generated method stub
+		return this.posData.getX();
+	}
+
+	@Override
+	public int getY() {
+		// TODO Auto-generated method stub
+		return this.posData.getY();
+	}
+
+	@Override
+	public void setPos(int x, int y) {
+		this.posData.setPos(x, y);		
+	}
+
+	@Override
+	public int getPlaygroundHeight() {
+		// TODO Auto-generated method stub
+		return this.posData.getPlaygroundHeight();
+	}
+
+	@Override
+	public int getPlaygroundWidth() {
+		// TODO Auto-generated method stub
+		return this.posData.getPlaygroundWidth();
 	}
 }

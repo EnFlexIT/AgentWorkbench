@@ -12,16 +12,14 @@ public class AnimAgent{
 	Element elem;	// Element visualizing the agent
 	int xPos;		// The agents x coordinate
 	int yPos;		// The agents y coordinate
-	int width;
-	int height;		
+			
 	
-	public AnimAgent(String id, Element elem, int xPos, int yPos, int width, int height) {
+	public AnimAgent(String id, Element elem, int xPos, int yPos) {
 		this.id=id;
 		this.elem = elem;
 		this.xPos = xPos;
 		this.yPos = yPos;
-		this.width=width;
-		this.height=height;			
+					
 	}		
 	
 	public String getId(){
@@ -42,11 +40,5 @@ public class AnimAgent{
 	}
 	public void setYPos(int pos) {
 		yPos = pos;
-	}
-	public int getWidth(){
-		return width;
-	}
-	public int getHeight(){
-		return height;
-	}
+	}	
 }
