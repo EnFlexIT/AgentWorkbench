@@ -271,6 +271,7 @@ public class CoreWindow extends JFrame implements ComponentListener{
 			jMenuMainJade.add( new CWMenueItem( "PopRMAStart", Language.translate("RMA (Remote Monitoring Agent) öffnen"), "MBJadeRMA.gif" )) ;
 			jMenuMainJade.add( new CWMenueItem( "PopSniffer", Language.translate("Sniffer-Agenten starten"), "MBJadeSniffer.gif" )) ;
 			jMenuMainJade.add( new CWMenueItem( "PopDummy", Language.translate("Dummy-Agenten starten"), "MBJadeDummy.gif" )) ;
+			jMenuMainJade.add( new CWMenueItem( "PopDF", Language.translate("DF anzeigen"), "MBJadeDF.gif" )) ;
 			jMenuMainJade.add( new CWMenueItem( "PopIntrospec", Language.translate("Introspector-Agent starten"), "MBJadeIntrospector.gif" )) ;
 			jMenuMainJade.add( new CWMenueItem( "PopLog", Language.translate("Log-Manager starten"), "MBJadeLogger.gif" )) ;
 		}
@@ -535,6 +536,9 @@ public class CoreWindow extends JFrame implements ComponentListener{
 			else if ( ActCMD.equalsIgnoreCase("PopDummy") ) {
 				Application.JadePlatform.jadeSystemAgentOpen("dummy", null);
 			}
+			else if ( ActCMD.equalsIgnoreCase("PopDF") ) {
+				Application.JadePlatform.jadeSystemAgentOpen("DF", null);
+			}
 			else if ( ActCMD.equalsIgnoreCase("PopIntrospec") ) {
 				Application.JadePlatform.jadeSystemAgentOpen("introspector", null);
 			}
@@ -574,6 +578,7 @@ public class CoreWindow extends JFrame implements ComponentListener{
 			JadeToolsPopUp.add( new CWMenueItem( "PopRMAStart", Language.translate("RMA (Remote Monitoring Agent) öffnen"), "MBJadeRMA.gif" )) ;
 			JadeToolsPopUp.add( new CWMenueItem( "PopSniffer", Language.translate("Sniffer-Agenten starten"), "MBJadeSniffer.gif" )) ;
 			JadeToolsPopUp.add( new CWMenueItem( "PopDummy", Language.translate("Dummy-Agenten starten"), "MBJadeDummy.gif" )) ;
+			JadeToolsPopUp.add( new CWMenueItem( "PopDF", Language.translate("DF anzeigen"), "MBJadeDF.gif" )) ;
 			JadeToolsPopUp.add( new CWMenueItem( "PopIntrospec", Language.translate("Introspector-Agent starten"), "MBJadeIntrospector.gif" )) ;
 			JadeToolsPopUp.add( new CWMenueItem( "PopLog", Language.translate("Log-Manager starten"), "MBJadeLogger.gif" )) ;
 			

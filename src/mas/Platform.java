@@ -137,10 +137,11 @@ public class Platform extends java.lang.Object {
 		JadeSystemTools.put( "rma", "jade.tools.rma.rma" );
 		JadeSystemTools.put( "sniffer", "jade.tools.sniffer.Sniffer" );
 		JadeSystemTools.put( "dummy", "jade.tools.DummyAgent.DummyAgent" );
+		JadeSystemTools.put( "df", "mas.agents.DFOpener" );
 		JadeSystemTools.put( "introspector", "jade.tools.introspector.Introspector" );
 		JadeSystemTools.put( "log", "jade.tools.logging.LogManagerAgent" );
 		
-		AgentController AgeCon;
+		AgentController AgeCon = null;
 		String AgentNameSearch  = RootAgentName.toLowerCase();
 		String AgentNameClass = null;
 		String AgentNameForStart = RootAgentName;
@@ -148,6 +149,7 @@ public class Platform extends java.lang.Object {
 		String MsgHead = null;
 		String MsgText = null;
 		Integer MsgAnswer = null;
+		
 		
 		// --- Setting the real name of the agent to start --- 
 		if ( OptionalPostfixNo != null ) 
@@ -161,14 +163,25 @@ public class Platform extends java.lang.Object {
 			if ( MsgAnswer == 1 ) return; // --- NO,just exit 
 			// --- Start the Jade-Platform -------------------
 			jadeStart();
-			if ( RootAgentName == "rma" ) return;
+			if ( RootAgentName == "rma" ) {
+				try {
+					AgeCon = MASmc.getAgent("rma");
+				} catch (ControllerException e) {
+					e.printStackTrace();
+				}				
+				return;
+			}
 		}
+	
+		// ---------------------------------------------------
 		// --- Can a path to the agent be found? -------------   
 		AgentNameClass = JadeSystemTools.get( AgentNameSearch );
+		
 		if ( AgentNameClass == null ) {
 			System.out.println( "jadeSystemAgentOpen: Unbekannter System-Agent => " + RootAgentName);
 			return;
 		}
+		
 		// --- Does an agent (see name) already exists? ------
 		if ( jadeAgentIsRunning( AgentNameForStart ) == true ) {
 			// --- Agent already EXISTS !! -------------------
@@ -187,10 +200,24 @@ public class Platform extends java.lang.Object {
 			}
 		}
 		else {
-			// --- Agent doe's NOT EXISTS !! -----------------
+			// --- Agent doe's NOT EXISTS !! ---------------------
 			try {
-				AgeCon = MASmc.createNewAgent(AgentNameForStart, AgentNameClass, new Object[0]);
-				AgeCon.start();
+				if ( RootAgentName == "DF" ) {
+					// --- Show the DF-GUI -----------------------
+					AgeCon = MASmc.createNewAgent("DFOpener", AgentNameClass, new Object[0]);
+					AgeCon.start();
+					try {
+						Thread.sleep(200);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					AgeCon.kill();					
+				}
+				else {
+					// --- Show a standard jade ToolAgent --------
+					AgeCon = MASmc.createNewAgent(AgentNameForStart, AgentNameClass, new Object[0]);
+					AgeCon.start();					
+				}
 			} 
 			catch (StaleProxyException e) {
 				e.printStackTrace();
