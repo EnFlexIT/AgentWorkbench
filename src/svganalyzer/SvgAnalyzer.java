@@ -91,9 +91,6 @@ public class SvgAnalyzer extends JSplitPane implements ActionListener{
 		
 		this.setSize(650, 500);
 		this.setDividerLocation(this.getWidth()-200);
-		
-		System.out.println(this.getSize());
-		System.out.println(this.getDividerLocation());
 	}
 	
 	/**
@@ -117,7 +114,7 @@ public class SvgAnalyzer extends JSplitPane implements ActionListener{
 			}
 		}
 		
-		if((type!="svg")&&(type!="text")){	// If non-root element
+		if((type!="svg")&&(type!="text")&&(type!="g")){	// If non-root element
 			EventTarget et = (EventTarget) element;
 			et.addEventListener("click", new OnClickAction(), false);
 //			addLabel(element, id);			

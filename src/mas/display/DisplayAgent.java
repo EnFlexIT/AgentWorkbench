@@ -1,9 +1,11 @@
 package mas.display;
 
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Arrays;
@@ -45,7 +47,7 @@ import jade.lang.acl.UnreadableException;
 import jade.proto.SubscriptionInitiator;
 
 /**
- * Offering display service for other agents. Takes care of displaying, collision management etc.
+ * This class controls a DisplayAgentGUI instance and receives position updates from the TopicManagementHelper   
  *   
  * @author nils
  *
@@ -60,15 +62,25 @@ public class DisplayAgent extends Agent {
 	
 	public HashSet<String> knownAgents = null;  // Hashmap storing animated agents, key=localName
 	
-	
-	
-	
-	
 	public void setup(){
+		Object[] args = getArguments();
+		// GUI object passed as argument -> embedded mode
+		if((args.length>0) && (args[0] instanceof DisplayAgentGUI)){
+			myGUI = (DisplayAgentGUI)args[0];
+		// No GUI passed -> stand alone mode
+		}else{
+			myGUI = new DisplayAgentGUI(this);
+			JFrame frame = new JFrame ("DisplayAgent GUI stand alone mode");
+			frame.setContentPane(myGUI);
+			
+			frame.pack();
+			frame.setVisible(true);
+			
+		}
 		
-		myGUI = new DisplayAgentGUI(this);
+				
 		knownAgents=new HashSet<String>();
-		
+				
 		try {
 			TopicManagementHelper tmh = (TopicManagementHelper) getHelper(TopicManagementHelper.SERVICE_NAME);
 			AID positionTopic = tmh.createTopic("position");
@@ -89,23 +101,32 @@ public class DisplayAgent extends Agent {
 	
 	public void addAgent(String name, String x, String y){
 		knownAgents.add(name);
-		myGUI.addAgent(name, x, y);
+		if(myGUI!=null)
+			myGUI.addAgent(name, x, y);
 	}
 	
 	public void updateAgent(String name, String x, String y){
-		myGUI.updateAgent(name, x, y);
+		if(myGUI!=null)
+			myGUI.updateAgent(name, x, y);
 	}
 	
 	public void removeAgent(String name){
-		myGUI.removeAgent(name);
+		if(myGUI!=null)
+			myGUI.removeAgent(name);
 	}
 	
 	public void takeDown(){
 		if(myGUI!=null){
-			myGUI.dispose();
+			myGUI.setVisible(false);
 		}
 		
 	}
 	
-		
+	public DisplayAgentGUI getGUI(){
+		return myGUI;
+	}
+	
+	public void setGUI(DisplayAgentGUI gui){
+		this.myGUI = gui;
+	}		
 }

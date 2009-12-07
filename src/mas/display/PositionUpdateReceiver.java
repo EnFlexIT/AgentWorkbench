@@ -18,15 +18,16 @@ public class PositionUpdateReceiver extends CyclicBehaviour {
 		if(posUpdate != null){
 			DisplayAgent da = (DisplayAgent)myAgent;
 			String name = posUpdate.getSender().getLocalName();
+//			System.out.println(myAgent.getLocalName()+": Received position update from "+name);
 			if(posUpdate.getContent().equals("bye")){
-				da.removeAgent(name);
+				da.removeAgent(name);				
 			}
 			else{
 				String newPos[] = posUpdate.getContent().split(",");
 				if(da.knownAgents.contains(name)){
-					da.updateAgent(name, newPos[0], newPos[1]);
+					da.updateAgent(name, newPos[0], newPos[1]);					
 				}else{
-					da.addAgent(name, newPos[0], newPos[1]);
+					da.addAgent(name, newPos[0], newPos[1]);					
 				}
 			}
 			

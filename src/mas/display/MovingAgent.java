@@ -31,7 +31,7 @@ public class MovingAgent extends Agent implements DisplayableAgent{
 		posData = new DisplayableData();
 		posData.setPos(50,30);
 		posData.setAgentSize(50,20);
-		posData.setPlaygroundSize(300,300);
+		posData.setPlaygroundSize(500,300);
 		posData.setAgentType(this.getClass().getSimpleName());
 		
 		mb = new MovingBehaviour(this, 20);

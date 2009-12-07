@@ -1,10 +1,18 @@
 package mas.display;
 
+import jade.core.Agent;
+import jade.wrapper.AgentController;
+import jade.wrapper.ControllerException;
+import jade.wrapper.StaleProxyException;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Rectangle;
 import java.awt.Dialog.ModalityType;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
@@ -26,6 +34,7 @@ import javax.swing.JPanel;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.script.Window;
 import org.apache.batik.swing.JSVGCanvas;
+import org.apache.batik.swing.JSVGScrollPane;
 import org.apache.batik.swing.gvt.GVTTreeRendererAdapter;
 import org.apache.batik.swing.gvt.GVTTreeRendererEvent;
 import org.w3c.dom.Document;
@@ -34,13 +43,15 @@ import org.w3c.dom.events.Event;
 import org.w3c.dom.events.EventListener;
 import org.w3c.dom.events.EventTarget;
 
+import application.Application;
+
 import svganalyzer.SvgAnalyzer;
 /**
  * GUI for DisplayAgent
  * @author nils
  *
  */
-public class DisplayAgentGUI extends JFrame {
+public class DisplayAgentGUI extends JPanel {
 	
 	// SVG Namespace
 	public static final String svgNs="http://www.w3.org/2000/svg";
@@ -52,22 +63,113 @@ public class DisplayAgentGUI extends JFrame {
 	JPanel zoomPanel = null;
 	JButton btnZoomIn = null;
 	JButton btnZoomOut = null;
+	JButton btnZoomReset = null;
 	JSVGCanvas canvas = null;
+	JSVGScrollPane scrollPane = null;
 	
+	// Pre-start components
+	JLabel lblStart = null;
+	JButton btnStart = null;
+		
 	// SVG stuff
 	Document svgDoc = null;
 	Element svgRoot = null;
-	Window window = null;
+	Window window = null;	
 	
 	Map <String, AnimAgent> knownAgents;
 	
+	/**
+	 * This constructor is called when the GUI is created first (embedded mode)
+	 */
+	public DisplayAgentGUI(){
+		final int btnWidth = 150;
+		final int btnHeight = 25;
+		lblStart = new JLabel();
+		lblStart.setBounds(new Rectangle(354, 201, 149, 16));
+		lblStart.setText("DisplayAgent not started");
+		this.setLayout(null);
+
+				
+		btnStart = new JButton();
+		btnStart.setText("Start");
+		btnStart.addActionListener(new ActionListener(){
+			// Starting a display agent and enabling the GUI
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if(application.Application.JadePlatform.jadeMainContainerIsRunning()){
+				
+								
+					jade.wrapper.AgentContainer ac = Application.JadePlatform.MASmc;
+					String agentNameBase = "DA";
+					int agentNameSuffix = 1;
+									
+					try {					
+						// Increase suffix until a name not in use is found
+						while(ac.getAgent(agentNameBase+agentNameSuffix) != null){
+							agentNameSuffix++;
+						}					
+					} catch (ControllerException e1) {
+						// Exception == agent not found == name not in use
+						System.out.println("Agent name "+agentNameBase+agentNameSuffix);
+					}				
+					
+					try {
+						initialize();
+						Object[] args = new Object[1];
+						args[0] = DisplayAgentGUI.this;
+						AgentController controller = ac.createNewAgent(agentNameBase+agentNameSuffix, "mas.display.DisplayAgent", args);
+						controller.start();
+						
+						DisplayAgentGUI.this.remove(lblStart);
+						DisplayAgentGUI.this.remove(btnStart);
+						
+					} catch (StaleProxyException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				
+				}else{
+					JOptionPane.showMessageDialog(DisplayAgentGUI.this, "Start JADE first!", "Error", JOptionPane.ERROR_MESSAGE);
+				}
+								
+				
+									
+			}
+			
+		});
+		this.add(lblStart, null);
+		this.add(btnStart, null);
+		this.addComponentListener(new ComponentAdapter(){
+			// Fit button position to pane size
+			public void componentResized(ComponentEvent ce){
+				int btnX = (DisplayAgentGUI.this.getWidth()/2-btnWidth/2);
+				int btnY = (DisplayAgentGUI.this.getHeight()/2-btnHeight/2);
+				lblStart.setLocation(btnX, btnY-30);		
+				btnStart.setBounds(new Rectangle(btnX, btnY, btnWidth, btnHeight));
+				
+			}
+		
+			
+		});
+		this.setVisible(true);
+	}
+	
+	/**
+	 * This constructor is called when the DisplayAgent is created first (stand alone mode)
+	 * @param myAgent Displayagent object controlling this GUI
+	 */
 	public DisplayAgentGUI(DisplayAgent myAgent){
-		this.myAgent=myAgent;
-		this.knownAgents = new HashMap<String, AnimAgent>();
+		this.myAgent=myAgent;			
 		this.initialize();
 	}
 	
+	/**
+	 * Initializing the SVG related components and starting the GUI
+	 */
 	private void initialize(){
+		this.setVisible(false);
+		this.knownAgents = new HashMap<String, AnimAgent>();
 		// Initialize canvas and SVG root
 		this.canvas = new JSVGCanvas();
 		this.canvas.setDocumentState(JSVGCanvas.ALWAYS_DYNAMIC);
@@ -79,38 +181,73 @@ public class DisplayAgentGUI extends JFrame {
 				
 			}
 		});
-		this.canvas.addComponentListener(new ComponentAdapter(){
-			// Resizing document when the canvas is resized
-			public void componentResized(ComponentEvent ce){
-				JSVGCanvas canvas = (JSVGCanvas) ce.getSource();				
-				Element svgRoot = canvas.getSVGDocument().getDocumentElement();
-				svgRoot.setAttributeNS(null, "width", ""+canvas.getWidth());
-				svgRoot.setAttributeNS(null, "height", ""+canvas.getHeight());				
-			}
-		});
+
 		this.svgDoc = SVGDOMImplementation.getDOMImplementation().createDocument(svgNs, "svg", null);
 		this.svgRoot = svgDoc.getDocumentElement();
-		this.svgRoot.setAttributeNS(null, "width", "300");
+		this.svgRoot.setAttributeNS(null, "width", "500");
 		this.svgRoot.setAttributeNS(null, "height", "300");
-		this.canvas.setMySize(new Dimension(300,300));
+//		Element backGround = svgDoc.createElementNS(svgNs, "rect");
+//		backGround.setAttributeNS(null, "id", "background");
+//		backGround.setAttributeNS(null, "x", "0");
+//		backGround.setAttributeNS(null, "y", "0");
+//		backGround.setAttributeNS(null, "width", "500");
+//		backGround.setAttributeNS(null, "height", "300");
+//		backGround.setAttributeNS(null, "style", "fill:lightskyblue");
+//		this.svgRoot.appendChild(backGround);
+		
+		Element cornerMarker1 = svgDoc.createElementNS(svgNs, "rect");
+		cornerMarker1.setAttributeNS(null, "x", "1");
+		cornerMarker1.setAttributeNS(null, "y", "1");
+		cornerMarker1.setAttributeNS(null, "width", "1");
+		cornerMarker1.setAttributeNS(null, "height", "1");
+		svgRoot.appendChild(cornerMarker1);
+		
+		Element cornerMarker2 = svgDoc.createElementNS(svgNs, "rect");
+		cornerMarker2.setAttributeNS(null, "x", "850");
+		cornerMarker2.setAttributeNS(null, "y", "1");
+		cornerMarker2.setAttributeNS(null, "width", "1");
+		cornerMarker2.setAttributeNS(null, "height", "1");
+		svgRoot.appendChild(cornerMarker2);
+		
+		Element cornerMarker3 = svgDoc.createElementNS(svgNs, "rect");
+		cornerMarker3.setAttributeNS(null, "x", "1");
+		cornerMarker3.setAttributeNS(null, "y", "500");
+		cornerMarker3.setAttributeNS(null, "width", "1");
+		cornerMarker3.setAttributeNS(null, "height", "1");
+		svgRoot.appendChild(cornerMarker3);
+		
+		Element cornerMarker4 = svgDoc.createElementNS(svgNs, "rect");
+		cornerMarker4.setAttributeNS(null, "x", "850");
+		cornerMarker4.setAttributeNS(null, "y", "500");
+		cornerMarker4.setAttributeNS(null, "width", "1");
+		cornerMarker4.setAttributeNS(null, "height", "1");
+		svgRoot.appendChild(cornerMarker4);
+		
+		this.canvas.setMySize(new Dimension(500,300));
 		this.canvas.setDocument(svgDoc);
 		
 		
 		// Initialize buttons and panel
+		
 		this.setLayout(new BorderLayout());
 		this.zoomPanel = new JPanel();
 		this.zoomPanel.setLayout(new FlowLayout());
 		this.btnZoomIn = new JButton("+");
 		this.btnZoomIn.addActionListener(canvas.new ZoomAction(1.2));
+		
 		this.btnZoomOut = new JButton("-");
 		this.btnZoomOut.addActionListener(canvas.new ZoomAction(0.8));
+		this.btnZoomReset = new JButton("100%");
+		this.btnZoomReset.addActionListener(canvas.new ResetTransformAction());
 		this.zoomPanel.add(btnZoomIn);
 		this.zoomPanel.add(btnZoomOut);
-		
+		this.zoomPanel.add(btnZoomReset);
 		this.add("North", zoomPanel);
-		this.add(canvas);
 		
-		this.pack();		
+		scrollPane=new JSVGScrollPane(canvas);
+		scrollPane.setScrollbarsAlwaysVisible(true);
+		this.add("Center", scrollPane);
+				
 		this.setVisible(true);
 	}
 	
@@ -144,13 +281,24 @@ public class DisplayAgentGUI extends JFrame {
 	public void removeAgent(String name){
 		knownAgents.remove(name);
 		this.svgRoot.removeChild(svgDoc.getElementById(name));		
-	}	
+	}
+	
+	private class UpdateScrollsAction implements EventListener{
+
+		@Override
+		public void handleEvent(Event arg0) {
+			DisplayAgentGUI.this.scrollPane.reset();
+			
+		}
+		
+	}
 	
 	// Controlling periodic display updates
 	private class Animation implements Runnable{
 
 		@Override
 		public void run() {
+			
 			Iterator<AnimAgent> agents = knownAgents.values().iterator();
 			while(agents.hasNext()){
 				AnimAgent aa = agents.next();
@@ -184,4 +332,6 @@ public class DisplayAgentGUI extends JFrame {
 			jd.setVisible(true);			
 		}		
 	}
+	
+	
 }
