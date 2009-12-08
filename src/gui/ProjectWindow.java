@@ -68,7 +68,7 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 		addProjectTab(Language.translate("Kommunikation"), null, new gui.projectwindow.Ontology(CurrProject), Language.translate("Kommunikation"));		
 		addProjectTab(Language.translate("Umgebungs - Setup"), null, new svganalyzer.SvgAnalyzer(), Language.translate("Umgebungs - Setup"));
 		addProjectTab(Language.translate("Simmulations - Setup"), null, new gui.projectwindow.SetupSimulation(CurrProject), Language.translate("Simmulations - Setup"));
-		addProjectTab(Language.translate("Simulation"), null, new mas.display.DisplayAgentGUI(), Language.translate("Simulation"));
+		addProjectTab(Language.translate("Simulation"), null, new mas.display.DisplayAgentGUI(this.CurrProject), Language.translate("Simulation"));
 		addProjectTab(Language.translate("Simulationsmeldungen"), null, new gui.projectwindow.SimulationMessages(CurrProject), Language.translate("Simulationsmeldungen"));
 
 		// --- Basis-Verzeichnisse im ProjectTree anzeigen -------

@@ -44,6 +44,7 @@ import org.w3c.dom.events.EventListener;
 import org.w3c.dom.events.EventTarget;
 
 import application.Application;
+import application.Project;
 
 import svganalyzer.SvgAnalyzer;
 /**
@@ -52,6 +53,9 @@ import svganalyzer.SvgAnalyzer;
  *
  */
 public class DisplayAgentGUI extends JPanel {
+	
+	// Currrent Agent-Project of AgentGUI
+	Project CurrentProject = null;
 	
 	// SVG Namespace
 	public static final String svgNs="http://www.w3.org/2000/svg";
@@ -81,7 +85,10 @@ public class DisplayAgentGUI extends JPanel {
 	/**
 	 * This constructor is called when the GUI is created first (embedded mode)
 	 */
-	public DisplayAgentGUI(){
+	public DisplayAgentGUI( Project CP ){
+		
+		this.CurrentProject = CP;
+		
 		final int btnWidth = 150;
 		final int btnHeight = 25;
 		lblStart = new JLabel();
@@ -97,44 +104,26 @@ public class DisplayAgentGUI extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				if(application.Application.JadePlatform.jadeMainContainerIsRunning()){
-				
-								
-					jade.wrapper.AgentContainer ac = Application.JadePlatform.MASmc;
-					String agentNameBase = "DA";
-					int agentNameSuffix = 1;
-									
-					try {					
-						// Increase suffix until a name not in use is found
-						while(ac.getAgent(agentNameBase+agentNameSuffix) != null){
-							agentNameSuffix++;
-						}					
-					} catch (ControllerException e1) {
-						// Exception == agent not found == name not in use
-						System.out.println("Agent name "+agentNameBase+agentNameSuffix);
-					}				
+			
+				String agentNameBase = "DA";
+				String agentName = agentNameBase;
+				int agentNameSuffix = 0;				
+
+				if ( Application.JadePlatform.jadeMainContainerIsRunning(true) == true ) {
+					while( Application.JadePlatform.jadeAgentIsRunning(agentName) == true ){
+						agentName = agentNameBase + agentNameSuffix++;
+					}	
+					System.out.println("Agent name "+agentNameBase);				
 					
-					try {
-						initialize();
-						Object[] args = new Object[1];
-						args[0] = DisplayAgentGUI.this;
-						AgentController controller = ac.createNewAgent(agentNameBase+agentNameSuffix, "mas.display.DisplayAgent", args);
-						controller.start();
-						
-						DisplayAgentGUI.this.remove(lblStart);
-						DisplayAgentGUI.this.remove(btnStart);
-						
-					} catch (StaleProxyException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+					initialize();
+					Object[] args = new Object[1];
+					args[0] = DisplayAgentGUI.this;
+					Application.JadePlatform.jadeAgentStart(agentName, "mas.display.DisplayAgent", args, DisplayAgentGUI.this.CurrentProject.getProjectFolder() );
+					
+					DisplayAgentGUI.this.remove(lblStart);
+					DisplayAgentGUI.this.remove(btnStart);
 					}
 				
-				}else{
-					JOptionPane.showMessageDialog(DisplayAgentGUI.this, "Start JADE first!", "Error", JOptionPane.ERROR_MESSAGE);
-				}
-								
-				
-									
 			}
 			
 		});

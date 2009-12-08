@@ -105,6 +105,12 @@ public class Platform extends java.lang.Object {
 	/** 
 	 * Checks, whether the main-container (Jade himself) is running or not 
 	 */
+	public boolean jadeMainContainerIsRunning(Boolean ForceJadeStart) {
+		if ( ForceJadeStart == true ) {
+			jadeSystemAgentOpen("rma", null);
+		}		
+		return jadeMainContainerIsRunning();
+	}
 	public boolean jadeMainContainerIsRunning () {
 		boolean JiR;		
 		try {
@@ -369,9 +375,12 @@ public class Platform extends java.lang.Object {
 	 */
 	public void jadeAgentStart(String AgentName, String Clazz) {
 		String MainContainerName = MASmc.getName();
-		jadeAgentStart(AgentName, Clazz, MainContainerName) ;
+		jadeAgentStart(AgentName, Clazz, null, MainContainerName) ;
 	}
 	public void jadeAgentStart(String AgentName, String Clazz, String ContainerName ) {
+		jadeAgentStart(AgentName, Clazz, null, ContainerName) ;
+	}
+	public void jadeAgentStart(String AgentName, String Clazz, Object[] AgentArgs, String ContainerName ) {
 		
 		int MsgAnswer;
 		String MsgHead, MsgText;
@@ -393,7 +402,7 @@ public class Platform extends java.lang.Object {
 			AgeCont = jadeContainerCreate( ContainerName );
 		}		
 		try {
-			AgentCont = AgeCont.createNewAgent( AgentName, Clazz, null );
+			AgentCont = AgeCont.createNewAgent( AgentName, Clazz, AgentArgs );
 			AgentCont.start();
 		} 
 		catch (StaleProxyException e) {
