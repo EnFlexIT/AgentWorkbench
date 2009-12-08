@@ -12,7 +12,7 @@ import jade.lang.acl.ACLMessage;
 public class DFOpener extends Agent{
 
 	/**
-	 * This is just an Agent who is opening the DF-GUI
+	 * This is just an Agent which is able to open the DF-GUI
 	 */
 	private static final long serialVersionUID = 1L;
 	
