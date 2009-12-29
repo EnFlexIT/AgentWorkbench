@@ -55,10 +55,10 @@ import svganalyzer.SvgAnalyzer;
 public class DisplayAgentGUI extends JPanel {
 	
 	// Currrent Agent-Project of AgentGUI
-	Project CurrentProject = null;
+	Project currentProject = null;
 	
 	// SVG Namespace
-	public static final String svgNs="http://www.w3.org/2000/svg";
+	public static final String svgNs=SVGDOMImplementation.SVG_NAMESPACE_URI;
 	
 	// DisplayAgent controlling this GUI
 	DisplayAgent myAgent = null;
@@ -87,7 +87,7 @@ public class DisplayAgentGUI extends JPanel {
 	 */
 	public DisplayAgentGUI( Project CP ){
 		
-		this.CurrentProject = CP;
+		this.currentProject = CP;
 		
 		final int btnWidth = 150;
 		final int btnHeight = 25;
@@ -109,8 +109,8 @@ public class DisplayAgentGUI extends JPanel {
 				String agentName = agentNameBase;
 				int agentNameSuffix = 0;				
 
-				if ( Application.JadePlatform.jadeMainContainerIsRunning(true) == true ) {
-					while( Application.JadePlatform.jadeAgentIsRunning(agentName) == true ){
+				if ( Application.JadePlatform.jadeMainContainerIsRunning(true)) {
+					while( Application.JadePlatform.jadeAgentIsRunning(agentName)){
 						agentName = agentNameBase + agentNameSuffix++;
 					}	
 					System.out.println("Agent name "+agentNameBase);				
@@ -118,7 +118,7 @@ public class DisplayAgentGUI extends JPanel {
 					initialize();
 					Object[] args = new Object[1];
 					args[0] = DisplayAgentGUI.this;
-					Application.JadePlatform.jadeAgentStart(agentName, "mas.display.DisplayAgent", args, DisplayAgentGUI.this.CurrentProject.getProjectFolder() );
+					Application.JadePlatform.jadeAgentStart(agentName, "mas.display.DisplayAgent", args, DisplayAgentGUI.this.currentProject.getProjectFolder() );
 					
 					DisplayAgentGUI.this.remove(lblStart);
 					DisplayAgentGUI.this.remove(btnStart);
