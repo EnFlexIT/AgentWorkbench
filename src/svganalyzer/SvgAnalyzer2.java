@@ -80,6 +80,7 @@ public class SvgAnalyzer2 extends JSplitPane {
 	
 	private Playground mainPlayground = null;
 	private Element selectedElement = null;
+	private Element selectedElementBackup = null;
 	private DefaultMutableTreeNode agentNode = null;
 	private DefaultMutableTreeNode objectNode = null;
 
@@ -208,6 +209,8 @@ public class SvgAnalyzer2 extends JSplitPane {
 					if(treeEnvironment.getLastSelectedPathComponent()!=null){
 						String selection = treeEnvironment.getLastSelectedPathComponent().toString();
 						setSelectedObject(selection);
+						SvgAnalyzer2.this.setSelectedElement(canvas.getSVGDocument().getElementById(selection));
+						canvas.paint(canvas.getGraphics());
 					}
 				}
 				
@@ -345,9 +348,15 @@ public class SvgAnalyzer2 extends JSplitPane {
 					}
 					if(cbType.getSelectedItem().equals("Object")){
 						BasicObject newObject = new BasicObject(id, selectedElement);
+						System.out.println("Neues Objekt "+id);
+						System.out.println("Position "+newObject.getX()+":"+newObject.getY());
+						System.out.println("Größe "+newObject.getWidth()+"x"+newObject.getHeight());
 						mainPlayground.addObject(newObject);					
 					}else if(cbType.getSelectedItem().equals("Agent")){
 						AgentObject newAgent = new AgentObject(id, selectedElement, cbClass.getSelectedItem().toString());
+						System.out.println("Neuer Agent "+id);
+						System.out.println("Position "+newAgent.getX()+":"+newAgent.getY());
+						System.out.println("Größe "+newAgent.getWidth()+"x"+newAgent.getHeight());
 						mainPlayground.addAgent(newAgent);						
 					}
 					treeEnvironment.setModel(new DefaultTreeModel(buildPlaygroundTree(mainPlayground)));
@@ -397,10 +406,10 @@ public class SvgAnalyzer2 extends JSplitPane {
 
 				@Override
 				public void handleEvent(Event arg0) {
-					selectedElement = (Element) arg0.getTarget();
+					
+					setSelectedElement((Element)arg0.getTarget());
+					
 					String id = selectedElement.getAttributeNS(null, "id");
-					
-					
 					if(mainPlayground.getObjects().get(id) != null){
 						setSelectedObject(selectedElement.getAttributeNS(null, "id"));
 					}else{
@@ -422,7 +431,11 @@ public class SvgAnalyzer2 extends JSplitPane {
 	}
 	
 	private DefaultMutableTreeNode buildPlaygroundTree(Playground pg){
-		DefaultMutableTreeNode pgRoot = new DefaultMutableTreeNode(pg.getId());
+		String id = pg.getId();
+		if(id.length()==0){
+			id="Playground";
+		}
+		DefaultMutableTreeNode pgRoot = new DefaultMutableTreeNode(id);
 		DefaultMutableTreeNode objectsRoot = new DefaultMutableTreeNode("Objects");
 		DefaultMutableTreeNode agentsRoot = new DefaultMutableTreeNode("Agents");
 		DefaultMutableTreeNode playgroundsRoot = new DefaultMutableTreeNode("Sub-Playgrounds");
@@ -504,6 +517,18 @@ public class SvgAnalyzer2 extends JSplitPane {
 			btnDelete.setEnabled(true);
 		}
 	}
+	
+	private void setSelectedElement(Element element){
+		if(selectedElement!=null){
+			selectedElement.setAttributeNS(null, "stroke", "none");
+		}
+		selectedElement = element;
+				
+		selectedElement.setAttributeNS(null, "stroke", "black");
+		selectedElement.setAttributeNS(null, "stroke-width", "5px");
+	}
+	
+	
 	
 	
 	
