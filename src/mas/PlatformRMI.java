@@ -23,8 +23,13 @@ package mas;
  Boston, MA  02111-1307, USA.
  *****************************************************************/
 import jade.imtp.rmi.ServiceManagerRMI;
+
 import java.net.MalformedURLException;
-import java.rmi.*;
+import java.rmi.MarshalException;
+import java.rmi.Naming;
+import java.rmi.NotBoundException;
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 
 /**
  * A simple class to test for the existence of a JADE platform. This class can
@@ -70,8 +75,7 @@ public class PlatformRMI implements Remote {
 		try {
 			ServiceManagerRMI obj = (ServiceManagerRMI) Naming.lookup(url);
 			String TestName = obj.getPlatformName();
-			System.out.println( "SmName: " + smName + " - PlattformName: " + TestName );
-
+			System.out.println( "SmName: " + smName + " - PlattformName: " + TestName );			
 		} catch (NotBoundException e) {
 			// this means that the registry is running
 			return "JADE is not yet bound to the remote registry";

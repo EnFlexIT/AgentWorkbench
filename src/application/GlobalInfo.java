@@ -8,6 +8,7 @@ public class GlobalInfo {
 
 	// --- Konstanten ------------------------------------------------------- 
 	final private static String LocalAppTitel = "Agent.GUI";
+	final private static boolean LocalAppUseInternalConsole = true;
 	
 	final private static String LocalAppPathSeparatorString = File.separator;
 	final private static String LocalAppNewLineString = System.getProperty("line.separator");
@@ -96,6 +97,12 @@ public class GlobalInfo {
 		 * Returns the titel of the application 
 		 */
 		return LocalAppTitel;
+	};
+	public boolean AppUseInternalConsole() {
+		/**
+		 * Returns if the System-Output ('Out' or 'Err') goe's throw this application 
+		 */
+		return LocalAppUseInternalConsole;
 	};
 	public String ProjectFileEnd() {
 		/**

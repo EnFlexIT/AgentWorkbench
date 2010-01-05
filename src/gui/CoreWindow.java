@@ -8,19 +8,21 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Insets;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDesktopPane;
+import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -28,6 +30,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -35,14 +39,13 @@ import javax.swing.UIManager;
 import javax.swing.border.EtchedBorder;
 
 import application.Application;
-import application.Project;
 import application.Language;
+import application.Project;
 
 /**
  * Main User-Interface der Anwendung
  * 
  * @author Christin Derksen
- * @version 0.5 * 
  */
 public class CoreWindow extends JFrame implements ComponentListener{
 
@@ -56,10 +59,15 @@ public class CoreWindow extends JFrame implements ComponentListener{
 	
 	static JLabel StatusBar;	
 	static JLabel StatusJade;
-	public JDesktopPane ProjectDesktop;
+	
+	public JSplitPane SplitProjectDesktop;
+	public JDesktopPane ProjectDesktop;	
+	public JEditorPane ConsoleText;
+	private int ConsoleHeight;
 	
 	private JMenuBar jMenuBarMain;
 	private JMenu jMenuMainProject;
+	private JMenu jMenuMainView;
 	private JMenu jMenuMainJade;
 	private JMenu jMenuExtra;
 		private JMenu jMenuExtraLang;
@@ -80,9 +88,9 @@ public class CoreWindow extends JFrame implements ComponentListener{
 	// ------------------------------------------------------------
 	public CoreWindow() {
 		
-		if ( Application.RunInfo.AppLnF() != null ) 
+		if ( Application.RunInfo.AppLnF() != null ) {
 			setLookAndFeel( Application.RunInfo.AppLnF() );
-
+		}
 		initComponents();
 		this.setDefaultCloseOperation(CoreWindow.DO_NOTHING_ON_CLOSE);
 		this.getContentPane().setPreferredSize(this.getSize());
@@ -92,6 +100,11 @@ public class CoreWindow extends JFrame implements ComponentListener{
 		this.setVisible(true);
 		setTitelAddition("");
 		setCloseButtonPosition( false );
+		
+		// --- Console einstellen --------------------------------- 
+		ConsoleHeight = SplitProjectDesktop.getHeight() / 4; 
+		SplitProjectDesktop.setDividerLocation( SplitProjectDesktop.getHeight() - ConsoleHeight );
+		//ConsoleSetVisible(false);
 	}
 	// ------------------------------------------------------------	
 
@@ -105,7 +118,7 @@ public class CoreWindow extends JFrame implements ComponentListener{
 		this.setJMenuBar(getJMenuBarProject());
 		this.add( getJToolBarApp(), BorderLayout.NORTH );
 		this.add( getStatusBar(), BorderLayout.SOUTH );
-		this.add( getJDesktopPaneProjectDesktop() );
+		this.add( getMainSplitpane() );
 		this.setSize(900, 600);	
 		
 		// --- Listener für das Schliessen der Applikation ----
@@ -204,6 +217,42 @@ public class CoreWindow extends JFrame implements ComponentListener{
 			Application.ProjectCurr.setMaximized();
 		}
 	}		
+	public boolean ConsoleIsVisible() {
+		// --- Umschalten der Consolen-Ansicht --------------------
+		if ( ConsoleText.isVisible() == true ) {
+			return true;
+		} else {
+			return false;
+		}		
+	}
+	public void ConsoleSwitch() {
+		// --- Umschalten der Consolen-Ansicht --------------------
+		if ( ConsoleText.isVisible() == true ) {
+			this.ConsoleSetVisible(false);
+		} else {
+			this.ConsoleSetVisible(true);
+		}
+	}
+	private void ConsoleSetVisible(boolean show) {
+		// --- Ein- und ausblenden der Console --------------------
+		if (show == true) {
+			// --- System.out.println("Console einblenden ...");
+			SplitProjectDesktop.setDividerLocation( SplitProjectDesktop.getHeight() - ConsoleHeight );
+			SplitProjectDesktop.setDividerSize(5);
+			ConsoleText.setVisible(true);			
+		} else {
+			// --- System.out.println("Console ausblenden ...");			
+			ConsoleHeight = SplitProjectDesktop.getHeight() - SplitProjectDesktop.getDividerLocation(); 
+			SplitProjectDesktop.setDividerLocation( SplitProjectDesktop.getHeight() );			
+			SplitProjectDesktop.setDividerSize( 0 );
+			ConsoleText.setVisible(false);	
+		}
+		this.validate();
+		if ( Application.Projects.count() != 0 ) {
+			Application.ProjectCurr.setMaximized();
+		}
+	}
+		
 	// ------------------------------------------------------------
 	// --- Statusanzeigen etc. definieren - ENDE ------------------
 	// ------------------------------------------------------------
@@ -212,6 +261,37 @@ public class CoreWindow extends JFrame implements ComponentListener{
 	// ------------------------------------------------------------
 	// --- Desktop der Anwendung definieren - START ---------------
 	// ------------------------------------------------------------
+	private JSplitPane getMainSplitpane() {
+		if (SplitProjectDesktop == null ) {
+			// --- JEditorPane aus Application-Objekt übernehmen --
+			ConsoleText = Application.Console;
+			
+			// --- Panel für Text und Button ----------------------
+			JPanel ConsolePanel = new JPanel();
+			ConsolePanel.setLayout(new BorderLayout());
+			ConsolePanel.add(new JScrollPane(ConsoleText),BorderLayout.CENTER);
+			
+			SplitProjectDesktop = new JSplitPane();
+			SplitProjectDesktop.setOrientation(JSplitPane.VERTICAL_SPLIT);
+			SplitProjectDesktop.setDividerSize(5);
+			SplitProjectDesktop.setResizeWeight(1);
+			SplitProjectDesktop.setOneTouchExpandable(false);
+			SplitProjectDesktop.setTopComponent(getJDesktopPaneProjectDesktop());			
+			SplitProjectDesktop.setBottomComponent(ConsolePanel);
+			SplitProjectDesktop.addPropertyChangeListener(new PropertyChangeListener() {
+				@Override
+				public void propertyChange(PropertyChangeEvent EventSource) {
+					// --- Deviderpositionierung abfangen ---
+					if (EventSource.getPropertyName() == "lastDividerLocation" ) {
+						if ( Application.Projects.count() != 0 ) {
+							Application.ProjectCurr.setMaximized();
+						}
+					}
+				}
+			});
+		}
+		return SplitProjectDesktop;		
+	}
 	private JDesktopPane getJDesktopPaneProjectDesktop() {
 		if (ProjectDesktop == null) {
 			ProjectDesktop = new JDesktopPane();
@@ -231,6 +311,7 @@ public class CoreWindow extends JFrame implements ComponentListener{
 		if (jMenuBarMain == null) {
 			jMenuBarMain = new JMenuBar();
 			jMenuBarMain.add( getjMenuMainProject() );
+			jMenuBarMain.add( getjMenuMainView() );
 			jMenuBarMain.add( getjMenuMainJade() );
 			jMenuBarMain.add( getjMenuMainExtra() );
 			jMenuBarMain.add( getjMenuMainWindow() );
@@ -257,6 +338,17 @@ public class CoreWindow extends JFrame implements ComponentListener{
 			jMenuMainProject.add( new CWMenueItem( "ApplicationQuit", Language.translate("Beenden"), null )) ;			
 		}
 		return jMenuMainProject;
+	}
+	// ------------------------------------------------------------
+	// --- Menü "Jade" --------------------------------------------
+	// ------------------------------------------------------------
+	private JMenu getjMenuMainView() {
+		if (jMenuMainView == null) {
+			jMenuMainView = new JMenu();
+			jMenuMainView.setText(Language.translate("Ansicht"));
+			jMenuMainView.add( new CWMenueItem( "ViewConsole", Language.translate("Konsole ein- oder ausblenden"), "MBConsole.png" )) ;			
+		}
+		return jMenuMainView;
 	}
 	// ------------------------------------------------------------
 	// --- Menü "Jade" --------------------------------------------
@@ -520,6 +612,10 @@ public class CoreWindow extends JFrame implements ComponentListener{
 			else if ( ActCMD.equalsIgnoreCase("ApplicationQuit") ) {
 				Application.quit();
 			}
+			// --- Menü Ansicht / View ------------------------
+			else if ( ActCMD.equalsIgnoreCase("ViewConsole") ) {
+				Application.MainWindow.ConsoleSwitch();
+			}
 			// --- Menü Jade ----------------------------------
 			else if ( ActCMD.equalsIgnoreCase("JadeStart") ) {
 				Application.JadePlatform.jadeStart();
@@ -591,7 +687,10 @@ public class CoreWindow extends JFrame implements ComponentListener{
 			jToolBarApp.add(new JToolBarButton( "Open", Language.translate("Projekt öffnen"), null, "MBopen.png" ));
 			jToolBarApp.add(new JToolBarButton( "Save", Language.translate("Projekt speichern"), null, "MBsave.png" ));
 			jToolBarApp.addSeparator();
-
+			
+			jToolBarApp.add(new JToolBarButton( "ViewConsole", Language.translate("Konsole ein- oder ausblenden"), null, "MBConsole.png" ));
+			jToolBarApp.addSeparator();
+			
 			jToolBarApp.add(new JToolBarButton( "JadeStart", Language.translate("Jade starten"), null, "MBJadeOn.png" ));
 			jToolBarApp.add(new JToolBarButton( "JadeStop", Language.translate("Jade stoppen"), null, "MBJadeOff.png" ));
 			JadeTools = new JToolBarButton( "JadeTools", Language.translate("Jade-Tools ..."), null, "MBJadeTools.png" );
@@ -656,6 +755,10 @@ public class CoreWindow extends JFrame implements ComponentListener{
 				if ( CurPro != null ) CurPro.save();
 			}
 			// ------------------------------------------------
+			else if ( ActCMD.equalsIgnoreCase("ViewConsole") ) { 
+				Application.MainWindow.ConsoleSwitch();
+			}
+			// ------------------------------------------------
 			else if ( ActCMD.equalsIgnoreCase("JadeStart") ) { 
 				Application.JadePlatform.jadeStart();				
 			}
@@ -685,6 +788,9 @@ public class CoreWindow extends JFrame implements ComponentListener{
 	}
 	@Override
 	public void componentResized(ComponentEvent e) {
+		if (ConsoleIsVisible() == false) {
+			SplitProjectDesktop.setDividerLocation( SplitProjectDesktop.getHeight() );			
+		}
 		if ( Application.Projects.count() != 0 ) {
 			Application.ProjectCurr.setMaximized();
 			setCloseButtonPosition( true );
@@ -692,6 +798,7 @@ public class CoreWindow extends JFrame implements ComponentListener{
 		else {
 			setCloseButtonPosition( false );
 		}
+		
 	}
 	@Override
 	public void componentShown(ComponentEvent e) {

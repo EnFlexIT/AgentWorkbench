@@ -22,6 +22,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JTree;
+import javax.swing.WindowConstants;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -31,7 +32,6 @@ import javax.swing.tree.TreeSelectionModel;
 
 import application.Application;
 import application.Language;
-import javax.swing.WindowConstants;
 
 
 public class ProjectNewOpen extends JDialog implements ActionListener {

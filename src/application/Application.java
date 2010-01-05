@@ -1,16 +1,17 @@
 package application;
 
-import mas.Platform;
 import gui.CoreWindow;
+import gui.CoreWindowConsole;
+import mas.Platform;
 /**
  * Diese Klasse verwaltet alle 	 
- * @author: Christian Derksen
- * @Version 0.1  	
+ * @author: Christian Derksen  	
  */
 public class Application {
-	
-	public static CoreWindow MainWindow;
+		
 	public static GlobalInfo RunInfo = new GlobalInfo();
+	public static CoreWindowConsole Console = new CoreWindowConsole();
+	public static CoreWindow MainWindow;
 	
 	public static ProjectsLoaded Projects = new ProjectsLoaded();
 	public static Project ProjectCurr = null;
@@ -23,8 +24,8 @@ public class Application {
 	 */
 	public static void main( String[] args ) {
 		// --- Start Application -----------------------
-		System.out.println( Language.translate("Programmstart ..." ) );
 		startApplication();
+		System.out.println( Language.translate("Programmstart ..." ) );
 		MainWindow.setStatusBar( Language.translate("Fertig") );
 		Projects.setProjectMenuItems();
 	}	

@@ -34,10 +34,17 @@ public class Platform extends java.lang.Object {
 	
 	
 	public Platform() {
+		
 		// ----------------------------------------------
 		// --- Nach allen Agent-Klassen suchen ----------
 		jadeFindAgentClasse(); // Extra Thread !! -------
 		// ----------------------------------------------
+		/*String Res = PlatformRMI.isJADERunning("rudel1", "1100");
+		System.out.println( Res );
+		jade.domain.FIPAAgentManagement.APDescription AP  = new jade.domain.FIPAAgentManagement.APDescription();
+		AP.setName("Hallo");
+		System.out.println( AP.toString() );
+		*/
 	}	
 	
 	/**
@@ -316,7 +323,7 @@ public class Platform extends java.lang.Object {
 	public AgentContainer jadeContainerCreate( String ContainerName ) {
 		
 		Profile pSub = new ProfileImpl();
-		pSub.setParameter(Profile.CONTAINER_NAME, ContainerName);
+		pSub.setParameter( Profile.CONTAINER_NAME, ContainerName );
 		pSub.setParameter( Profile.SERVICES ,"jade.core.event.NotificationService;jade.core.messaging.TopicManagementService" );
 		AgentContainer MAS_AgentContainer = MASrt.createAgentContainer( pSub );
 		MAScontainer.add( MAS_AgentContainer );
@@ -334,7 +341,10 @@ public class Platform extends java.lang.Object {
 		if ( jadeMainContainerIsRunning() == false ) {
 			return null;
 		}
-
+		// --- Wird nach dem 'Main-Container' gesucht? --------
+		if ( ContainerNameSearch == MASmc.getName() ) {
+			return MASmc;
+		}	
 		// --- Den richtigen Container abgreifen -------------- 
 		for ( int i=0; i < MAScontainer.size(); i++ ) {
 			AgeCont = MAScontainer.get(i);
@@ -483,7 +493,7 @@ public class Platform extends java.lang.Object {
 		public void FindClasse(String SuperClass)  {
 			ClassFinder cf = new ClassFinder();
 			ClassVector = cf.findSubclasses(SuperClass);
-			System.out.println( Language.translate( "Suche nach Agenten beendet .. " ) );
+			//System.out.println( Language.translate( "Suche nach Agenten beendet .. " ) );
 		}	
 		public Vector<Class<?>> getClassesFound() {
 			return ClassVector;

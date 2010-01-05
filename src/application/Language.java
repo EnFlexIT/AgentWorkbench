@@ -26,8 +26,8 @@ public class Language {
 	private static String NewLineReplacer = Application.RunInfo.AppNewLineStringReplacer();
 	private static List<String> DictLineList = new ArrayList<String>();
 	private static Hashtable<String, Integer> DictHash = new Hashtable<String, Integer>(); 
-	// -------------------------------------------------------------------------
-
+	// ------------------------------------------------s-------------------------
+	
 	// -------------------------------------------------------------------------
 	/**
 	 * Changing the application language to:
@@ -195,7 +195,7 @@ public class Language {
 			InStrRea = new InputStreamReader( FInStr , "UTF8" );
 			BufferedReader in = new BufferedReader( InStrRea );
 			while ((line = in.readLine()) != null) {   
-				DictLineList.add(line);					
+				DictLineList.add(line);			
 			}    
 		} 
 		catch (IOException e) {        
@@ -214,13 +214,15 @@ public class Language {
 		final String[][] valuesArray = new String[DictLineList.size()][];    
 		int cnt = 0;    
 		for ( final String line : DictLineList ) {   
-			valuesArray[cnt] = line.split( Seperator, -1 );
-			if ( ! valuesArray[cnt][0].isEmpty() ) {
-				DictHash.put( valuesArray[cnt][0], cnt ); 					// - Dient der Indizierung der Übersetzungsdatei -
-				if ( valuesArray[cnt][0].equalsIgnoreCase( "LANG_DE" ) ) {
-					DictLangCount = valuesArray[cnt].length ;				// - Anzahl der Sprachen im Dictionary ermitteln - 				
+			if (line != null) {
+				valuesArray[cnt] = line.split( Seperator, -1 );
+				if ( ! valuesArray[cnt][0].isEmpty() ) {
+					DictHash.put( valuesArray[cnt][0], cnt ); 					// - Dient der Indizierung der Übersetzungsdatei -
+					if ( valuesArray[cnt][0].equalsIgnoreCase( "LANG_DE" ) ) {
+						DictLangCount = valuesArray[cnt].length ;				// - Anzahl der Sprachen im Dictionary ermitteln - 				
+					};
 				};
-			};
+			}
 			cnt++;			
 		}
 		
