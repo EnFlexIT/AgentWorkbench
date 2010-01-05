@@ -5,7 +5,7 @@ import org.w3c.dom.Element;
 import jade.core.AID;
 
 /**
- * Object representing an agent
+ * Umgebungsobjekt, das einen Agenten repräsentiert
  * @author Nils
  *
  */
@@ -22,10 +22,18 @@ public class AgentObject extends BasicObject {
 		this.agentClass = agentClass;
 	}
 	
+	/**
+	 * Liefert die Klasse des Agenten
+	 * @return
+	 */
 	public String getAgentClass(){
 		return this.agentClass;
 	}
 	
+	/**
+	 * Liefert die AID des Agenten
+	 * @return
+	 */
 	public AID getAID(){
 		return this.agentAID;
 	}

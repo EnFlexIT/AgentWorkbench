@@ -1,32 +1,29 @@
 package mas.environment;
 
-import java.awt.Dimension;
-import java.awt.Rectangle;
-import java.awt.geom.Area;
+
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Vector;
 
 import org.w3c.dom.Element;
 
 
 
 /**
- * Represents an area containing agents
+ * Eine (Teil-)Umgebung
  * @author Nils
  *
  */
 public class Playground extends BasicObject{
 	/**
-	 * List of all objects in this playground 
+	 * Alle Objekte (auch Agenten und Kind-Playgrounds) in diesem Playground 
 	 */
 	private HashMap<String, BasicObject> objects = null;
 	/**
-	 * List of all agents in this playground
+	 * Alle Agenten in diesem Playground 
 	 */
 	private HashMap<String, AgentObject> agents = null;
 	/**
-	 * List of subplaygrounds
+	 * Alle Kind-Playgrounds in diesem Playground
 	 */
 	private HashMap<String, Playground> playgrounds = null;
 		
@@ -41,6 +38,10 @@ public class Playground extends BasicObject{
 		this.agents = new HashMap<String, AgentObject>();
 	}	
 	
+	/**
+	 * Fügt ein statisches Objekt zum Playground hinzu
+	 * @param object
+	 */
 	public void addObject(BasicObject object){
 		if(object != null){
 			object.setPlayground(this);
@@ -48,6 +49,10 @@ public class Playground extends BasicObject{
 		}
 	}
 	
+	/**
+	 * Fügt einen Agenten zu diesem Playground hinzu
+	 * @param agent
+	 */
 	public void addAgent(AgentObject agent){
 		if(agent != null){
 			this.agents.put(agent.getId(), agent);
@@ -55,20 +60,36 @@ public class Playground extends BasicObject{
 		}
 	}	
 	
+	/**
+	 * Entfernt ein beliebiges Umgebungsobjekt aus dem Playground
+	 * @param id String ID des zu entfernenden Objektes
+	 */
 	public void removeElement(String id){
 		objects.remove(id);
 		agents.remove(id);
 //		playgrounds.remove(id);
 	}
 	
+	/**
+	 * Liefert eine Liste aller Umgebungsobjekte in diesem Playground
+	 * @return HashMap<String, BasicObject>
+	 */
 	public HashMap<String, BasicObject> getObjects(){
 		return this.objects;
 	}
 	
+	/**
+	 * Liefert eine Liste aller Agenten in diesem Playground
+	 * @return HashMap<String, AgentObject>
+	 */
 	public Collection<AgentObject> getAgents(){
 		return this.agents.values();
 	}
 	
+	/**
+	 * Liefert eine Liste aller Kind-Playgrounds in diesem Playground
+	 * @return HashMap<String, Playground>
+	 */
 	public Collection<Playground> getPlaygrounds(){
 		return this.playgrounds.values();
 	}

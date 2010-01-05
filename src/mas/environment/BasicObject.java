@@ -9,7 +9,7 @@ import java.awt.geom.Ellipse2D;
 import org.w3c.dom.Element;
 
 /**
- * Abstract parent class for all kinds of objects in an environmennt
+ * Oberklasse für alle Arten von Umgebungsobjekten
  * @author Nils
  *
  */
@@ -17,11 +17,11 @@ public class BasicObject {
 	protected Area area;
 	
 	/**
-	 * SVG element representing this BasicObject
+	 * SVG-Element, das dieses Objekt darstellt
 	 */
 	protected Element svgRepresentation;
 	/**
-	 * Playground instance containing this BasicObject
+	 * Playground, der dieses Objekt enthält
 	 */
 	protected Playground playground = null;
 	
@@ -33,6 +33,7 @@ public class BasicObject {
 	
 	public BasicObject(String id, Element svg){
 		this.id = id;
+		// Benötigte Attribute je nach SVG Elementtyp unterschiedlich 
 		if(svg.getTagName().equals("rect")){
 			int width = (int) Float.parseFloat(svg.getAttributeNS(null, "width"));
 			int height = (int) Float.parseFloat(svg.getAttributeNS(null, "height"));

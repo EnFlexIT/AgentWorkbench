@@ -1,7 +1,16 @@
 package svganalyzer;
 
+import javax.swing.JSplitPane;
+import javax.swing.JPanel;
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
+
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JTree;
+import javax.swing.JLabel;
+
+import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,344 +18,541 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.io.File;
 import java.net.MalformedURLException;
+import java.util.Arrays;
 import java.util.Iterator;
+
+import org.w3c.dom.events.EventListener;
 import java.util.Vector;
 
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSplitPane;
-import javax.swing.JTextField;
-import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeSelectionModel;
+
+import mas.display.BasicSvgGUI;
+import mas.environment.AgentObject;
+import mas.environment.BasicObject;
+import mas.environment.Playground;
 
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.swing.JSVGCanvas;
 import org.apache.batik.swing.svg.SVGDocumentLoaderAdapter;
 import org.apache.batik.swing.svg.SVGDocumentLoaderEvent;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.events.Event;
-import org.w3c.dom.events.EventListener;
 import org.w3c.dom.events.EventTarget;
 
-import application.Project;
-import java.awt.Dimension;
 
-public class SvgAnalyzer extends JSplitPane implements ActionListener{
+import application.Project;
+import javax.swing.JTextField;
+
+/**
+ * Umgebungssetup im Projektfenster, zur Bearbeitung der Umgebung
+ * @author Nils
+ *
+ */
+public class SvgAnalyzer extends JSplitPane {
 	
-	public static String svgNs=SVGDOMImplementation.SVG_NAMESPACE_URI;
-	
-	/**
-	 * Types of objects a SVG element can be associated with
-	 */
-	private String[] objectTypes = {"Playground", "Agent", "Static"};
-	
-	
-	
-	private Project currentProject = null;
-		
+	private static String svgNs = SVGDOMImplementation.SVG_NAMESPACE_URI;
+
+	private static final long serialVersionUID = 1L;
 	private JSVGCanvas canvas = null;
-	private JSplitPane controllsPane = null;
-	private JPanel canvasPanel = null;			// Contains canvas and view control
-	private JPanel zoomPanel = null;			// Contains zoom buttons
-	private JPanel elementsPanel = null;		// Contains open button and DOM tree
-	private JPanel settingsPanel = null;		// Contains everything related to mapping SVG elements to objects 
-	private JTree tree = null;	
+		
+	private JSplitPane splitControlls = null;
+	private JPanel pnlTop = null;
 	private JButton btnOpen = null;
-	private JButton btnZoomIn = null;
-	private JButton btnZoomOut = null;
-	private JButton btnSet = null;
-	private JLabel lblSettings = null;
-	private JLabel lblElement = null;
-	private JLabel lblType = null;
-	private JLabel lblClass = null;
-	private JComboBox cbElement = null;
+	private JTree treeEnvironment = null;
+	private JPanel pnlBottom = null;
 	private JComboBox cbType = null;
-	private JComboBox cbAgentClass = null;	
-	
+	private JComboBox cbClass = null;
+	private JButton btnApply = null;
 	private JFileChooser fcOpen = null;
-	
 	private Document svgDoc = null;
+	private Project currentProject = null;
+	
+	
+	private Playground mainPlayground = null;
 	private Element selectedElement = null;
 	
-	private Vector<String> elementIds = null;
-
 	
 
-	
-	
-	public SvgAnalyzer(Project currentProject){
-		super(JSplitPane.HORIZONTAL_SPLIT);
-		this.currentProject = currentProject;
+	private JTextField tfId = null;
+
+	private JLabel lblType = null;
+
+	private JLabel lblAgentClass = null;
+
+	private JLabel lblId = null;
+
+	private JButton btnDelete = null;
+
+	private JLabel lblSettings = null;
+	/**
+	 * This is the default constructor
+	 */
+	public SvgAnalyzer(Project project) {
+		super();
+		this.currentProject = project;
 		initialize();
 	}
-	
+
 	/**
-	 * Initializing JSplitpane
+	 * This method initializes this
+	 * 
+	 * @return void
 	 */
-	private void initialize(){
-		this.setSize(new Dimension(600, 400));
-		this.setDividerLocation(300);
-		canvas = new JSVGCanvas();
-		canvas.setDocumentState(JSVGCanvas.ALWAYS_DYNAMIC);
-		canvas.addSVGDocumentLoaderListener(new SVGDocumentLoaderAdapter(){
-			public void documentLoadingCompleted(SVGDocumentLoaderEvent e){
-				svgDoc = canvas.getSVGDocument();
-				elementIds = new Vector<String>();
-				
-				DefaultMutableTreeNode root = buildTree(svgDoc.getDocumentElement());
-				tree.setModel(new DefaultTreeModel(root));
-				setComboBoxModels();
-				
-				setElementControlsEnabled(true);
-				
-			}
-		});
-		
-		zoomPanel = new JPanel();
-		zoomPanel.setLayout(new FlowLayout());
-		btnZoomIn = new JButton("+");
-		btnZoomIn.addActionListener(canvas.new ZoomAction(1.2));
-		btnZoomOut = new JButton("-");
-		btnZoomOut.addActionListener(canvas.new ZoomAction(0.8));
-		zoomPanel.add(btnZoomIn);
-		zoomPanel.add(btnZoomOut);
-		
-		canvasPanel = new JPanel();
-		canvasPanel.setLayout(new BorderLayout());
-		canvasPanel.add("North", zoomPanel);
-		canvasPanel.add("Center", canvas);
-		
-		
-		
-		
-		btnOpen = new JButton ("Open SVG file");
-		btnOpen.addActionListener(this);
-				
-		
-		
-		tree = new JTree(new DefaultMutableTreeNode("No SVG loaded"));
-		tree.addTreeSelectionListener(new TreeSelectionListener(){
-			
-			@Override
-			public void valueChanged(TreeSelectionEvent arg0) {
-				String selectedItem = tree.getLastSelectedPathComponent().toString();
-				String id = selectedItem.split(" ")[1];
-				setSelectedElement(svgDoc.getElementById(id),tree);				
-			}
-			
-		});
-		
-		
-		elementsPanel = new JPanel();
-		elementsPanel.setLayout(new BorderLayout());
-		elementsPanel.add("North", btnOpen);
-		elementsPanel.add(tree);
-		
-		settingsPanel = getSettingsPanel();
-		
-		
-		controllsPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-		controllsPane.setTopComponent(elementsPanel);
-		controllsPane.setBottomComponent(settingsPanel);
-		controllsPane.setDividerLocation(0.5);
-		
-		this.setLeftComponent(canvasPanel);
-		this.setRightComponent(controllsPane);		
-				
+	private void initialize() {
+		this.setSize(500, 300);
+		this.setDividerLocation(250);
+		this.setRightComponent(getSplitControlls());
+		this.canvas = getCanvas();
+		this.setLeftComponent(new BasicSvgGUI(canvas));
 		this.addComponentListener(new ComponentAdapter(){
 			public void componentResized(ComponentEvent ce){
-				SvgAnalyzer.this.setDividerLocation(SvgAnalyzer.this.getWidth()-250);
-				controllsPane.setDividerLocation(controllsPane.getHeight()-300);				
+				SvgAnalyzer.this.setDividerLocation(SvgAnalyzer.this.getWidth()-200);
+				splitControlls.setDividerLocation(0.5);				
 			}
 		});
 	}
+
 	
-	private JPanel getSettingsPanel(){
-		if(settingsPanel == null){
-			settingsPanel = new JPanel();
-			settingsPanel.setLayout(null);
-			
-			lblClass = new JLabel();
-			lblClass.setText("Agent Class");
-			lblClass.setSize(new Dimension(68, 16));
-			lblClass.setLocation(new Point(15, 120));
-			settingsPanel.add(lblClass);
-			lblType = new JLabel();
-			lblType.setText("Type");
-			lblType.setSize(new Dimension(27, 16));
-			lblType.setLocation(new Point(15, 85));
-			settingsPanel.add(lblType);
-			lblElement = new JLabel();
-			lblElement.setText("Element");
-			lblElement.setSize(new Dimension(46, 16));
-			lblElement.setLocation(new Point(15, 50));
-			settingsPanel.add(lblElement);
-			lblSettings = new JLabel();
-			lblSettings.setText("Element Settings");
-			lblSettings.setSize(new Dimension(96, 16));
-			lblSettings.setLocation(new Point(15, 16));
-			settingsPanel.add(lblSettings);
-			
-			cbElement = new JComboBox();
-			cbElement.setLocation(new Point(120, 45));
-			cbElement.setSize(new Dimension(100, 25));
-			cbElement.addActionListener(new ActionListener(){
+
+	/**
+	 * This method initializes splitControlls	
+	 * 	
+	 * @return javax.swing.JSplitPane	
+	 */
+	private JSplitPane getSplitControlls() {
+		if (splitControlls == null) {
+			splitControlls = new JSplitPane();
+			splitControlls.setOrientation(JSplitPane.VERTICAL_SPLIT);
+			splitControlls.setTopComponent(getPnlTop());
+			splitControlls.setBottomComponent(getPnlBottom());
+			splitControlls.setDividerLocation(100);
+		}
+		return splitControlls;
+	}
+
+	/**
+	 * This method initializes pnlTop	
+	 * 	
+	 * @return javax.swing.JPanel	
+	 */
+	private JPanel getPnlTop() {
+		if (pnlTop == null) {
+			pnlTop = new JPanel();
+			pnlTop.setLayout(new BorderLayout());
+			pnlTop.add(getBtnOpen(), BorderLayout.NORTH);
+			pnlTop.add(getTreeEnvironment(), BorderLayout.CENTER);
+		}
+		return pnlTop;
+	}
+
+	/**
+	 * This method initializes btnOpen	
+	 * 	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getBtnOpen() {
+		if (btnOpen == null) {
+			btnOpen = new JButton();
+			btnOpen.setText("Open SVG file");
+			btnOpen.addActionListener(new ActionListener(){
 
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
-					String selectedItem = cbElement.getSelectedItem().toString();
-					String id = selectedItem.split(" ")[1];
-					setSelectedElement(svgDoc.getElementById(id), cbElement);
+					if(SvgAnalyzer.this.getFcOpen().showOpenDialog(SvgAnalyzer.this)==JFileChooser.APPROVE_OPTION){
+						try {
+							File file = fcOpen.getSelectedFile();
+							svgDoc = SVGDOMImplementation.getDOMImplementation().createDocument(svgNs, "svg", null);
+							canvas.setURI(file.toURI().toURL().toString());
+							
+						} catch (MalformedURLException e) {							
+							e.printStackTrace();
+						}
+					}
 					
 				}
 				
 			});
-			settingsPanel.add(cbElement);
+		}
+		return btnOpen;
+	}
+
+	/**
+	 * This method initializes treeEnvironment	
+	 * 	
+	 * @return javax.swing.JTree	
+	 */
+	private JTree getTreeEnvironment() {
+		if (treeEnvironment == null) {
+			treeEnvironment = new JTree();
+			DefaultMutableTreeNode root = new DefaultMutableTreeNode("Playground");
+			root.add(new DefaultMutableTreeNode("Agents"));
+			root.add(new DefaultMutableTreeNode("Objects"));
+			root.add(new DefaultMutableTreeNode("Sub-Playgrounds"));
+			treeEnvironment.setModel(new DefaultTreeModel(root));
+			treeEnvironment.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+			treeEnvironment.addTreeSelectionListener(new TreeSelectionListener(){
+
+				@Override
+				public void valueChanged(TreeSelectionEvent arg0) {
+					if(treeEnvironment.getLastSelectedPathComponent()!=null){
+						String selection = treeEnvironment.getLastSelectedPathComponent().toString();
+						setSelectedObject(selection);
+						SvgAnalyzer.this.setSelectedElement(canvas.getSVGDocument().getElementById(selection));
+						canvas.paint(canvas.getGraphics());
+					}
+				}
+				
+			});
+		}
+		return treeEnvironment;
+	}	
+	
+
+	/**
+	 * This method initializes pnlBottom	
+	 * 	
+	 * @return javax.swing.JPanel	
+	 */
+	private JPanel getPnlBottom() {
+		if (pnlBottom == null) {
+			lblSettings = new JLabel();
+			lblSettings.setText("Object Settings");
+			lblSettings.setSize(new Dimension(87, 16));
+			lblSettings.setLocation(new Point(9, 5));
+			lblId = new JLabel();
+			lblId.setText("Object ID");
+			lblId.setSize(new Dimension(51, 16));
+			lblId.setLocation(new Point(11, 35));
+			lblAgentClass = new JLabel();
+			lblAgentClass.setText("Agent class");
+			lblAgentClass.setSize(new Dimension(67, 16));
+			lblAgentClass.setLocation(new Point(5, 113));
+			lblType = new JLabel();
+			lblType.setText("Object type");
+			lblType.setSize(new Dimension(64, 16));
+			lblType.setLocation(new Point(4, 68));
+			pnlBottom = new JPanel();
+			pnlBottom.setLayout(null);
+			pnlBottom.add(getCbType(), null);
+			pnlBottom.add(getCbClass(), null);
+			pnlBottom.add(getBtnApply(), null);
+			pnlBottom.add(getTfId(), null);
+			pnlBottom.add(lblType, null);
+			pnlBottom.add(lblAgentClass, null);
+			pnlBottom.add(lblId, null);
+			pnlBottom.add(getBtnDelete(), null);
+			pnlBottom.add(lblSettings, null);
+		}
+		return pnlBottom;
+	}
+
+	/**
+	 * This method initializes cbType	
+	 * 	
+	 * @return javax.swing.JComboBox	
+	 */
+	private JComboBox getCbType() {
+		if (cbType == null) {
 			cbType = new JComboBox();
+			String[] types = {"Not specified", "Agent", "Object"};
+			cbType.setModel(new DefaultComboBoxModel(types));
+			cbType.setLocation(new Point(90, 62));
 			cbType.setSize(new Dimension(100, 25));
-			cbType.setLocation(new Point(120, 80));
 			cbType.addActionListener(new ActionListener(){
 
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
 					if(cbType.getSelectedItem().equals("Agent")){
-						cbAgentClass.setEnabled(true);
+						cbClass.setEnabled(true);
 					}else{
-						cbAgentClass.setEnabled(false);
+						cbClass.setEnabled(false);
 					}
-				}
-				
-			});
-			settingsPanel.add(cbType);
-			cbAgentClass = new JComboBox();
-			cbAgentClass.setSize(new Dimension(100, 25));
-			cbAgentClass.setLocation(new Point(120, 115));
-			settingsPanel.add(cbAgentClass);
-			
-			btnSet = new JButton("Set");
-			btnSet.setSize(53, 26);
-			btnSet.setLocation(170, 260);
-			btnSet.addActionListener(new ActionListener(){
-
-				@Override
-				public void actionPerformed(ActionEvent arg0) {
-					if(selectedElement!=null){
-						
+					if(cbType.getSelectedItem().equals("Not specified")){
+						btnApply.setEnabled(false);
+					}else{
+						btnApply.setEnabled(true);
 					}
 					
 				}
 				
 			});
-			settingsPanel.add(btnSet);
+		}
+		return cbType;
+	}
+
+	/**
+	 * This method initializes cbAgentClass	
+	 * 	
+	 * @return javax.swing.JComboBox	
+	 */
+	private JComboBox getCbClass() {
+		if (cbClass == null) {
+			cbClass = new JComboBox();
+			cbClass.setVisible(true);
+			cbClass.setSize(new Dimension(100, 25));
+			cbClass.setLocation(new Point(90, 104));
 			
-			setElementControlsEnabled(false);
+			Vector<Class<?>> agentClasses = currentProject.getProjectAgents();
+			Vector<String> agentNames = new Vector<String>();		
+			for (int i =0; i<agentClasses.size();i++) {
+				String name = agentClasses.get(i).getName();
+				name = name.substring(name.lastIndexOf('.')+1);
+				agentNames.add(name);
+				
+			}
+			cbClass.setModel(new DefaultComboBoxModel(agentNames));
+			cbClass.setEnabled(false);
+		}
+		return cbClass;
+	}
+
+	/**
+	 * This method initializes btnSet	
+	 * 	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getBtnApply() {
+		if (btnApply == null) {
+			btnApply = new JButton();
+			btnApply.setText("Apply");
+			btnApply.setSize(new Dimension(65, 26));
+			btnApply.setLocation(new Point(9, 149));
+			btnApply.addActionListener(new ActionListener(){
+
+				
+				@Override
+				/**
+				 * Erzeugt zu dem ausgewählten SVG Element ein Umgebungsobjekt und fügt es zum Haupt-Playground hinzu
+				 */
+				public void actionPerformed(ActionEvent e) {
+					String id = tfId.getText();
+					if(id.length()>0){
+						selectedElement.setAttributeNS(null, "id", id);
+					}else{
+						id = selectedElement.getAttributeNS(null, "id");
+					}
+					if(cbType.getSelectedItem().equals("Object")){
+						BasicObject newObject = new BasicObject(id, selectedElement);
+						System.out.println("Neues Objekt "+id);
+						System.out.println("Position "+newObject.getX()+":"+newObject.getY());
+						System.out.println("Größe "+newObject.getWidth()+"x"+newObject.getHeight());
+						mainPlayground.addObject(newObject);					
+					}else if(cbType.getSelectedItem().equals("Agent")){
+						AgentObject newAgent = new AgentObject(id, selectedElement, cbClass.getSelectedItem().toString());
+						System.out.println("Neuer Agent "+id);
+						System.out.println("Position "+newAgent.getX()+":"+newAgent.getY());
+						System.out.println("Größe "+newAgent.getWidth()+"x"+newAgent.getHeight());
+						mainPlayground.addAgent(newAgent);						
+					}
+					// Aktualisiere Umgebungsbaum
+					treeEnvironment.setModel(new DefaultTreeModel(buildPlaygroundTree(mainPlayground)));
+					treeEnvironment.paint(treeEnvironment.getGraphics());
+					setSelectedObject(id);
+				}
+				
+			});
 			
 		}
-		return settingsPanel;
-	}
-	
-	private void setComboBoxModels(){
-		cbElement.setModel(new DefaultComboBoxModel(elementIds));
-		cbType.setModel(new DefaultComboBoxModel(objectTypes));
-		
-		Vector<Class<?>> agentClasses = currentProject.getProjectAgents();
-		Vector<String> agentNames = new Vector<String>();		
-		for (int i =0; i<agentClasses.size();i++) {
-			String name = agentClasses.get(i).getName();
-			name = name.substring(name.lastIndexOf('.')+1);
-			agentNames.add(name);
-			
-		}
-		cbAgentClass.setModel(new DefaultComboBoxModel(agentNames));		
-	}
-	
-	private void setElementControlsEnabled(boolean enabled){
-		cbElement.setEnabled(enabled);
-		cbType.setEnabled(enabled);
-		if(enabled && cbType.getSelectedItem().equals("Agent")){
-			cbAgentClass.setEnabled(true);
-		}else{
-			cbAgentClass.setEnabled(false);
-		}		
+		return btnApply;
 	}
 	
 	/**
-	 * Building a JTree representation of the documents DOM tree via depth first search
-	 * @param element DOM element to be added to the tree
-	 * @return Root element of the built subtree starting from the given element 
+	 * This method initializes canvas	
+	 * 	
+	 * @return javax.swing.JFileChooser	
 	 */
-	private DefaultMutableTreeNode buildTree(Element element){
-		String type = element.getNodeName();	// SVG element name
-		String id = element.getAttributeNS(null, "id");		// Id attribute
-//		System.out.println("Analyzing "+type+" "+id);
-		DefaultMutableTreeNode self = null;
-//		if(Arrays.asList(relevantElementTypes).contains(type)){
-			self=new DefaultMutableTreeNode(type+" "+id);
-			elementIds.add(type+" "+id);
-			if(element.hasChildNodes()){
-				NodeList children = element.getChildNodes();
-				for(int i=0;i<children.getLength();i++){
-					Node child = children.item(i);
-					if(child instanceof Element){
-						self.add(buildTree((Element) child));
-					}
-				}
-			}
-//		}
-		
-		if((type!="svg")&&(type!="text")&&(type!="g")){	// If non-root element
-			EventTarget et = (EventTarget) element;
-			et.addEventListener("click", new EventListener(){
+	private JFileChooser getFcOpen(){
+		if(fcOpen == null){
+			fcOpen = new JFileChooser();
+			fcOpen.setFileFilter(new FileNameExtensionFilter("SVG Files", "svg"));
+			fcOpen.setCurrentDirectory(new File(currentProject.getProjectFolderFullPath()+"/ressources"));
+		}
+		return fcOpen;
+	}
+
+	/**
+	 * This method initializes canvas	
+	 * 	
+	 * @return org.apache.batik.swing.JSVGCanvas	
+	 */
+	private JSVGCanvas getCanvas(){
+		if(canvas == null){
+			canvas = new JSVGCanvas();
+			canvas.setDocumentState(JSVGCanvas.ALWAYS_DYNAMIC);
+			canvas.addSVGDocumentLoaderListener(new SVGDocumentLoaderAdapter(){
+				// Wird aufgerufen, wenn das SVG vollständig geladen ist
+				public void documentLoadingCompleted(SVGDocumentLoaderEvent e){
+					svgDoc = canvas.getSVGDocument();
+					// Erzeugt den Haupt-Playground aus dem SVG Root Objekt 
+					mainPlayground = new Playground(svgDoc.getDocumentElement());
+					// Erzeugt onClick-Listener für die SVG-Elemente
+					addElementListeners(svgDoc.getDocumentElement());
+				};
+			});
+		}
+		return canvas;
+	}
+	
+	/**
+	 * Erzeugt onClick-Listener für das übergebene Element und seine Kindelemente, falls sinnvoll  
+	 * @param root 
+	 */
+	private void addElementListeners(Node root){
+		// Element-Typen, die Listener bekommen 
+		String tags[] = {"rect", "circle", "ellipse", "path"};
+		if(Arrays.asList(tags).contains(root.getNodeName())){
+			((EventTarget) root).addEventListener("click", new EventListener(){
 
 				@Override
-				public void handleEvent(Event arg0) {					
-					Element target = (Element) arg0.getTarget();
-					setSelectedElement(target, target);					
+				public void handleEvent(Event arg0) {
+					// Markiert das Element
+					setSelectedElement((Element)arg0.getTarget());
+					
+					// Überprüfung, ob zu dem SVG-Element schon ein Umgebungsobjekt existiert
+					// und passende Belegung der GUI-Elemente
+					String id = selectedElement.getAttributeNS(null, "id");
+					if(mainPlayground.getObjects().get(id) != null){						
+						setSelectedObject(selectedElement.getAttributeNS(null, "id"));
+					}else{						
+						tfId.setText(id);
+						cbType.setSelectedItem("Not specified");
+						cbClass.setEnabled(false);
+						btnDelete.setEnabled(false);
+					}
 				}
 				
 			}, false);			
 		}
-		
-		return self;
+		if(root.hasChildNodes()){
+			NodeList children = root.getChildNodes();
+			for(int i=0; i<children.getLength(); i++){
+				addElementListeners(children.item(i));
+			}
+		}
 	}
 	
-
-
-	@Override
-	public void actionPerformed(ActionEvent ae) {
-		if(ae.getSource()==btnOpen){
-			if(fcOpen==null){
-				fcOpen = new JFileChooser();
-				fcOpen.setFileFilter(new FileNameExtensionFilter("SVG Files", "svg"));
-				fcOpen.setCurrentDirectory(new File(currentProject.getProjectFolderFullPath()+"/ressources"));
+	/**
+	 * Analysiert den übergebenen Playground und erzeugt eine Baumstruktur der enthaltenen Objekte
+	 * @param pg Der zu verarbeitende PlayGround
+	 * @return Teilbaum mit den Objekten des PlayGround 
+	 */
+	private DefaultMutableTreeNode buildPlaygroundTree(Playground pg){
+		String id = pg.getId();
+		if(id.length()==0){
+			id="Playground";
+		}
+		// Playground Root
+		DefaultMutableTreeNode pgRoot = new DefaultMutableTreeNode(id);
+		// Äste für die Objektarten
+		DefaultMutableTreeNode objectsRoot = new DefaultMutableTreeNode("Objects");
+		DefaultMutableTreeNode agentsRoot = new DefaultMutableTreeNode("Agents");
+		DefaultMutableTreeNode playgroundsRoot = new DefaultMutableTreeNode("Sub-Playgrounds");
+		
+		// Objekte werden ausgelesen und je nach Klasse in den Teilbaum eingehängt
+		Iterator<BasicObject> objects = pg.getObjects().values().iterator();
+		while(objects.hasNext()){
+			BasicObject object = objects.next();
+			if(object instanceof Playground){
+				playgroundsRoot.add(buildPlaygroundTree((Playground) object));				
+			}else if(object instanceof AgentObject){
+				agentsRoot.add(new DefaultMutableTreeNode(object.getId()));
+			}else{
+				objectsRoot.add(new DefaultMutableTreeNode(object.getId()));
 			}
-			if(fcOpen.showOpenDialog(this)==JFileChooser.APPROVE_OPTION){
-				try {
-					File file = fcOpen.getSelectedFile();
-					canvas.setURI(file.toURI().toURL().toString());					
-				} catch (MalformedURLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+			
+		}
+		
+		pgRoot.add(agentsRoot);
+		pgRoot.add(objectsRoot);
+		pgRoot.add(playgroundsRoot);
+		
+		return pgRoot;
+	}
+
+	/**
+	 * This method initializes tfId	
+	 * 	
+	 * @return javax.swing.JTextField	
+	 */
+	private JTextField getTfId() {
+		if (tfId == null) {
+			tfId = new JTextField();
+			tfId.setLocation(new Point(90, 32));
+			tfId.setText("");
+			tfId.setPreferredSize(new Dimension(4, 20));
+			tfId.setSize(new Dimension(100, 25));
+		}
+		return tfId;
+	}
+
+	/**
+	 * This method initializes btnDelete	
+	 * 	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getBtnDelete() {
+		if (btnDelete == null) {
+			btnDelete = new JButton();
+			btnDelete.setText("Remove");
+			btnDelete.setSize(new Dimension(80, 26));
+			btnDelete.setEnabled(false);
+			btnDelete.setLocation(new Point(93, 150));
+			btnDelete.addActionListener(new ActionListener(){
+
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					mainPlayground.removeElement(tfId.getText());
+					treeEnvironment.setModel(new DefaultTreeModel(buildPlaygroundTree(mainPlayground)));
 				}
 				
-			}
-		}		
+			});
+		}
+		return btnDelete;
 	}
 	
-	private void setSelectedElement(Element selection, Object source){
-		selectedElement = selection;		
+	/**
+	 * Setzt bei Auswahl eines Umgebungsobjektes den Status der GUI-Elemente passend 
+	 * @param id
+	 */
+	private void setSelectedObject(String id){
+		BasicObject object = mainPlayground.getObjects().get(id);
+		if(object != null){
+			tfId.setText(object.getId());
+			if(object instanceof AgentObject){
+				cbType.setSelectedItem("Agent");
+				cbClass.setSelectedItem(((AgentObject) object).getAgentClass());
+				cbClass.setEnabled(true);
+			}else{
+				cbType.setSelectedItem("Object");
+				cbClass.setEnabled(false);
+			}
+			btnDelete.setEnabled(true);
+		}
 	}
+	
+	/**
+	 * Setzt und markiert das aktuell ausgewählte SVG-Element 
+	 * @param element
+	 */
+	private void setSelectedElement(Element element){
+		// Entferne Markierung des vorherigen Elements
+		if(selectedElement!=null){
+			selectedElement.setAttributeNS(null, "stroke", "none");
+		}
+		selectedElement = element;
+				
+		selectedElement.setAttributeNS(null, "stroke", "black");
+		selectedElement.setAttributeNS(null, "stroke-width", "5px");
+	}
+
+
 }
