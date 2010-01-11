@@ -1,6 +1,7 @@
 package mas.environment;
 
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 
@@ -13,7 +14,7 @@ import org.w3c.dom.Element;
  * @author Nils
  *
  */
-public class Playground extends BasicObject{
+public class Playground extends BasicObject implements Serializable{
 	/**
 	 * Alle Objekte (auch Agenten und Kind-Playgrounds) in diesem Playground 
 	 */
@@ -27,11 +28,6 @@ public class Playground extends BasicObject{
 	 */
 	private HashMap<String, Playground> playgrounds = null;
 		
-	public Playground(){		
-		this.objects = new HashMap<String, BasicObject>();
-		this.agents = new HashMap<String, AgentObject>();		
-	}
-	
 	public Playground(Element svg){
 		super(svg);
 		this.objects = new HashMap<String, BasicObject>();

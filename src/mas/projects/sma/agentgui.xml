@@ -2,4 +2,5 @@
 <project>
     <projectFolder>sma</projectFolder>
     <projectName>Simple Moving Agent</projectName>
+    <svgFileName>Bla.svg</svgFileName>
 </project>

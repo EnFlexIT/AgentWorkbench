@@ -1,113 +1,127 @@
 package mas.environment;
 
-import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.geom.Area;
-import java.awt.geom.Ellipse2D;
+import java.io.Serializable;
 
 import org.w3c.dom.Element;
 
 /**
- * Oberklasse für alle Arten von Umgebungsobjekten
+ * Oberklasse für alle Umgebungsobjekte
  * @author Nils
  *
  */
-public class BasicObject {
-	protected Area area;
-	
-	/**
-	 * SVG-Element, das dieses Objekt darstellt
-	 */
-	protected Element svgRepresentation;
-	/**
-	 * Playground, der dieses Objekt enthält
-	 */
-	protected Playground playground = null;
-	
+public class BasicObject implements Serializable{
+	private int width;
+	private int height;
+	private int posX;
+	private int posY;
+	private transient Element svgRepresentation;
+	private Playground playground;
 	private String id;
 	
-	public BasicObject(){
-		
+	public BasicObject(Element svg){
+		this(svg.getAttributeNS(null, "id"), svg);
 	}
 	
 	public BasicObject(String id, Element svg){
-		this.id = id;
-		// Benötigte Attribute je nach SVG Elementtyp unterschiedlich 
-		if(svg.getTagName().equals("rect")){
-			int width = (int) Float.parseFloat(svg.getAttributeNS(null, "width"));
-			int height = (int) Float.parseFloat(svg.getAttributeNS(null, "height"));
-			int x = (int) Float.parseFloat(svg.getAttributeNS(null, "x"));
-			int y = (int) Float.parseFloat(svg.getAttributeNS(null, "y"));
-			this.area = new Area(new Rectangle(x, y, width, height));
-			this.svgRepresentation = svg;
+		this.svgRepresentation = svg;
+		this.setPhysics(svg);
+		this.playground = null;
+		this.id = id;		
+	}
+	
+	/**
+	 * Setzt Größe und Position des Objektes abhängig vom übergebenen SVG-Element
+	 * @param svg
+	 */
+	private void setPhysics(Element svg){
+		if(svg.getTagName().equals("svg")){		// SVG-Root als Playground
+			this.width = (int) Float.parseFloat(svg.getAttributeNS(null, "width"));
+			this.height = (int) Float.parseFloat(svg.getAttributeNS(null, "height"));
+			this.posX = 0;
+			this.posY = 0;
+		}else if(svg.getTagName().equals("rect")){
+			this.width = (int) Float.parseFloat(svg.getAttributeNS(null, "width"));
+			this.height = (int) Float.parseFloat(svg.getAttributeNS(null, "height"));
+			this.posX = (int) Float.parseFloat(svg.getAttributeNS(null, "x"));
+			this.posY = (int) Float.parseFloat(svg.getAttributeNS(null, "y"));
 		}else if(svg.getTagName().equals("circle")){
-			float r = Float.parseFloat(svg.getAttributeNS(null, "r"));
-			float width = r*2;
-			float height = r*2;
-			float x = Float.parseFloat(svg.getAttributeNS(null, "cx"))-r;
-			float y = Float.parseFloat(svg.getAttributeNS(null, "cy"))-r;
-			this.area = new Area(new Ellipse2D.Float(x, y, width, height));
-			this.svgRepresentation = svg;
+			int r = (int) Float.parseFloat(svg.getAttributeNS(null, "r"));
+			int x = (int) Float.parseFloat(svg.getAttributeNS(null, "cx"));
+			int y = (int) Float.parseFloat(svg.getAttributeNS(null, "cy"));
+			
+			this.width = 2*r;
+			this.height = 2*r;
+			this.posX = x-r;
+			this.posY = y-r;			
 		}else if(svg.getTagName().equals("ellipse")){
-			float rx = Float.parseFloat(svg.getAttributeNS(null, "rx"));
-			float ry = Float.parseFloat(svg.getAttributeNS(null, "ry"));
-			float width = rx*2;
-			float height = ry*2;
-			float x = Float.parseFloat(svg.getAttributeNS(null, "cx"))-rx;
-			float y = Float.parseFloat(svg.getAttributeNS(null, "cy"))-ry;
-			this.area = new Area(new Ellipse2D.Float(x, y, width, height));
-			this.svgRepresentation = svg;
-		}else if(svg.getTagName().equals("path")){
-//			float rx = Float.parseFloat(svg.getAttributeNS(null, "sodipodi:rx"));
-//			float ry = Float.parseFloat(svg.getAttributeNS(null, "sodipodi:ry"));
-//			float width = rx*2;
-//			float height = ry*2;
-//			float x = Float.parseFloat(svg.getAttributeNS(null, "sodipodi:cx"))-rx;
-//			float y = Float.parseFloat(svg.getAttributeNS(null, "sodipodi:cy"))-ry;
-//			this.area = new Area(new Ellipse2D.Float(x, y, width, height));
-//			this.svgRepresentation = svg;
+			int rx = (int) Float.parseFloat(svg.getAttributeNS(null, "rx"));
+			int ry = (int) Float.parseFloat(svg.getAttributeNS(null, "ry"));
+			int x = (int) Float.parseFloat(svg.getAttributeNS(null, "cx"));
+			int y = (int) Float.parseFloat(svg.getAttributeNS(null, "cy"));
+			
+			this.width = 2*rx;
+			this.height = 2*ry;
+			this.posX = x-rx;
+			this.posY = y-ry;
 		}
 	}
-	
-	public BasicObject(Element svg){
-		this.id=svg.getAttributeNS(null, "id");
-		String strWidth = svg.getAttributeNS(null, "width");
-		String strHeight = svg.getAttributeNS(null, "height");
-		
-		int width = (int) Float.parseFloat(svg.getAttributeNS(null, "width"));
-		int height = (int) Float.parseFloat(svg.getAttributeNS(null, "height"));
-		
-		this.id = svg.getAttributeNS(null, "id");
-		this.area = new Area(new Rectangle(width, height));
-		this.svgRepresentation = svg;
+
+	public int getWidth() {
+		return width;
 	}
-	
-	public int getWidth(){
-		return this.area.getBounds().width;
+
+//	public void setWidth(int width) {
+//		this.width = width;
+//	}
+
+	public int getHeight() {
+		return height;
 	}
-	public int getHeight(){
-		return this.area.getBounds().height;
+
+//	public void setHeight(int height) {
+//		this.height = height;
+//	}
+
+	public int getPosX() {
+		return posX;
 	}
-	public int getX(){
-		return this.area.getBounds().x;
+
+	public void setPosX(int posX) {
+		this.posX = posX;
 	}
-	public int getY(){
-		return this.area.getBounds().y;
+
+	public int getPosY() {
+		return posY;
 	}
-	public Element getSvg(){
-		return this.svgRepresentation;
+
+	public void setPosY(int posY) {
+		this.posY = posY;
 	}
-	public Area getArea(){
-		return this.area;
+
+//	public Element getSvgRepresentation() {
+//		return svgRepresentation;
+//	}
+
+	public void setSvgRepresentation(Element svgRepresentation) {
+//		this.svgRepresentation = svgRepresentation;
 	}
-	void setPlayground(Playground pg){
-		this.playground = pg;
+
+	public Playground getPlayground() {
+		return playground;
 	}
-	public String getId(){
-		return this.id;
+
+	public void setPlayground(Playground playground) {
+		this.playground = playground;
 	}
-	void setId(String id){
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
 		this.id = id;
 	}
+	
+	
+	
 }

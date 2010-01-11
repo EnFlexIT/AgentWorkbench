@@ -1,5 +1,7 @@
 package mas.environment;
 
+import java.io.Serializable;
+
 import org.w3c.dom.Element;
 
 import jade.core.AID;
@@ -9,7 +11,7 @@ import jade.core.AID;
  * @author Nils
  *
  */
-public class AgentObject extends BasicObject {
+public class AgentObject extends BasicObject implements Serializable{
 	private String agentClass = null;
 	private AID agentAID = null;
 	public AgentObject(String id, Element svg, String agentClass){

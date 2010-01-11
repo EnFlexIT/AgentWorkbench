@@ -7,6 +7,7 @@ import java.awt.BorderLayout;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
+import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.JLabel;
 
@@ -68,15 +69,17 @@ public class SvgAnalyzer extends JSplitPane {
 	private JPanel pnlTop = null;
 	private JButton btnOpen = null;
 	private JTree treeEnvironment = null;
+	private JScrollPane scrollEnvironment = null;
 	private JPanel pnlBottom = null;
 	private JComboBox cbType = null;
 	private JComboBox cbClass = null;
 	private JButton btnApply = null;
 	private JFileChooser fcOpen = null;
 	private Document svgDoc = null;
+	
 	private Project currentProject = null;
-	
-	
+	private String svgPath = null;
+	private File svgFile = null;
 	private Playground mainPlayground = null;
 	private Element selectedElement = null;
 	
@@ -93,12 +96,23 @@ public class SvgAnalyzer extends JSplitPane {
 	private JButton btnDelete = null;
 
 	private JLabel lblSettings = null;
+
 	/**
 	 * This is the default constructor
 	 */
 	public SvgAnalyzer(Project project) {
 		super();
 		this.currentProject = project;
+		this.svgPath = currentProject.getSvgPath();
+		if(svgPath!=null){
+			svgFile=new File(svgPath);
+			System.out.println("Loading SVG file "+svgFile.getName());
+		}else{
+			System.out.println("No SVG file specified");
+		}
+		this.currentProject.loadEnvironment();
+		this.mainPlayground = currentProject.getEnvironment();
+		
 		initialize();
 	}
 
@@ -109,14 +123,13 @@ public class SvgAnalyzer extends JSplitPane {
 	 */
 	private void initialize() {
 		this.setSize(500, 300);
-		this.setDividerLocation(250);
 		this.setRightComponent(getSplitControlls());
 		this.canvas = getCanvas();
 		this.setLeftComponent(new BasicSvgGUI(canvas));
 		this.addComponentListener(new ComponentAdapter(){
 			public void componentResized(ComponentEvent ce){
-				SvgAnalyzer.this.setDividerLocation(SvgAnalyzer.this.getWidth()-200);
-				splitControlls.setDividerLocation(0.5);				
+				SvgAnalyzer.this.setDividerLocation(SvgAnalyzer.this.getWidth()-220);
+				splitControlls.setDividerLocation(SvgAnalyzer.this.getHeight()-220);				
 			}
 		});
 	}
@@ -134,7 +147,7 @@ public class SvgAnalyzer extends JSplitPane {
 			splitControlls.setOrientation(JSplitPane.VERTICAL_SPLIT);
 			splitControlls.setTopComponent(getPnlTop());
 			splitControlls.setBottomComponent(getPnlBottom());
-			splitControlls.setDividerLocation(100);
+			splitControlls.setDividerLocation(50);
 		}
 		return splitControlls;
 	}
@@ -149,7 +162,7 @@ public class SvgAnalyzer extends JSplitPane {
 			pnlTop = new JPanel();
 			pnlTop.setLayout(new BorderLayout());
 			pnlTop.add(getBtnOpen(), BorderLayout.NORTH);
-			pnlTop.add(getTreeEnvironment(), BorderLayout.CENTER);
+			pnlTop.add(getScrollEnvironment(), BorderLayout.CENTER);
 		}
 		return pnlTop;
 	}
@@ -169,9 +182,13 @@ public class SvgAnalyzer extends JSplitPane {
 				public void actionPerformed(ActionEvent arg0) {
 					if(SvgAnalyzer.this.getFcOpen().showOpenDialog(SvgAnalyzer.this)==JFileChooser.APPROVE_OPTION){
 						try {
-							File file = fcOpen.getSelectedFile();
+							svgFile = fcOpen.getSelectedFile();
 							svgDoc = SVGDOMImplementation.getDOMImplementation().createDocument(svgNs, "svg", null);
-							canvas.setURI(file.toURI().toURL().toString());
+							canvas.setURI(svgFile.toURI().toURL().toString());
+							System.out.println(svgFile.getName());
+							currentProject.setSvgFileName(svgFile.getName());
+							currentProject.ProjectUnsaved=true;
+							
 							
 						} catch (MalformedURLException e) {							
 							e.printStackTrace();
@@ -193,11 +210,9 @@ public class SvgAnalyzer extends JSplitPane {
 	private JTree getTreeEnvironment() {
 		if (treeEnvironment == null) {
 			treeEnvironment = new JTree();
-			DefaultMutableTreeNode root = new DefaultMutableTreeNode("Playground");
-			root.add(new DefaultMutableTreeNode("Agents"));
-			root.add(new DefaultMutableTreeNode("Objects"));
-			root.add(new DefaultMutableTreeNode("Sub-Playgrounds"));
+			DefaultMutableTreeNode root = new DefaultMutableTreeNode("No SVG loaded");
 			treeEnvironment.setModel(new DefaultTreeModel(root));
+			treeEnvironment.setEnabled(false);
 			treeEnvironment.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 			treeEnvironment.addTreeSelectionListener(new TreeSelectionListener(){
 
@@ -205,8 +220,11 @@ public class SvgAnalyzer extends JSplitPane {
 				public void valueChanged(TreeSelectionEvent arg0) {
 					if(treeEnvironment.getLastSelectedPathComponent()!=null){
 						String selection = treeEnvironment.getLastSelectedPathComponent().toString();
-						setSelectedObject(selection);
-						SvgAnalyzer.this.setSelectedElement(canvas.getSVGDocument().getElementById(selection));
+						BasicObject object = mainPlayground.getObjects().get(treeEnvironment.getLastSelectedPathComponent().toString());
+						setInputValues(object);
+						if(object!=null){
+							SvgAnalyzer.this.setSelectedElement(canvas.getSVGDocument().getElementById(selection));
+						}
 						canvas.paint(canvas.getGraphics());
 					}
 				}
@@ -214,7 +232,15 @@ public class SvgAnalyzer extends JSplitPane {
 			});
 		}
 		return treeEnvironment;
-	}	
+	}
+	
+	private JScrollPane getScrollEnvironment(){
+		if(scrollEnvironment == null){
+			scrollEnvironment = new JScrollPane(getTreeEnvironment());			
+		}
+		return scrollEnvironment;
+		
+	}
 	
 
 	/**
@@ -227,19 +253,19 @@ public class SvgAnalyzer extends JSplitPane {
 			lblSettings = new JLabel();
 			lblSettings.setText("Object Settings");
 			lblSettings.setSize(new Dimension(87, 16));
-			lblSettings.setLocation(new Point(9, 5));
+			lblSettings.setLocation(new Point(5, 5));
 			lblId = new JLabel();
 			lblId.setText("Object ID");
 			lblId.setSize(new Dimension(51, 16));
-			lblId.setLocation(new Point(11, 35));
+			lblId.setLocation(new Point(5, 35));
 			lblAgentClass = new JLabel();
 			lblAgentClass.setText("Agent class");
 			lblAgentClass.setSize(new Dimension(67, 16));
-			lblAgentClass.setLocation(new Point(5, 113));
+			lblAgentClass.setLocation(new Point(5, 105));
 			lblType = new JLabel();
 			lblType.setText("Object type");
 			lblType.setSize(new Dimension(64, 16));
-			lblType.setLocation(new Point(4, 68));
+			lblType.setLocation(new Point(5, 70));
 			pnlBottom = new JPanel();
 			pnlBottom.setLayout(null);
 			pnlBottom.add(getCbType(), null);
@@ -249,8 +275,8 @@ public class SvgAnalyzer extends JSplitPane {
 			pnlBottom.add(lblType, null);
 			pnlBottom.add(lblAgentClass, null);
 			pnlBottom.add(lblId, null);
-			pnlBottom.add(getBtnDelete(), null);
-			pnlBottom.add(lblSettings, null);
+			pnlBottom.add(getBtnRemove(), null);
+			pnlBottom.add(lblSettings, null);			
 		}
 		return pnlBottom;
 	}
@@ -299,7 +325,7 @@ public class SvgAnalyzer extends JSplitPane {
 			cbClass = new JComboBox();
 			cbClass.setVisible(true);
 			cbClass.setSize(new Dimension(100, 25));
-			cbClass.setLocation(new Point(90, 104));
+			cbClass.setLocation(new Point(90, 97));
 			
 			Vector<Class<?>> agentClasses = currentProject.getProjectAgents();
 			Vector<String> agentNames = new Vector<String>();		
@@ -323,9 +349,9 @@ public class SvgAnalyzer extends JSplitPane {
 	private JButton getBtnApply() {
 		if (btnApply == null) {
 			btnApply = new JButton();
-			btnApply.setText("Apply");
-			btnApply.setSize(new Dimension(65, 26));
-			btnApply.setLocation(new Point(9, 149));
+			btnApply.setText("Apply Object");
+			btnApply.setSize(new Dimension(150, 26));
+			btnApply.setLocation(new Point(10, 135));
 			btnApply.addActionListener(new ActionListener(){
 
 				
@@ -340,23 +366,29 @@ public class SvgAnalyzer extends JSplitPane {
 					}else{
 						id = selectedElement.getAttributeNS(null, "id");
 					}
+					// Falls für diese ID schon ein Objekt definiert war, vorher löschen
+					if(mainPlayground.getObjects().get(id)!=null){
+						mainPlayground.removeElement(id);
+					}
 					if(cbType.getSelectedItem().equals("Object")){
 						BasicObject newObject = new BasicObject(id, selectedElement);
 						System.out.println("Neues Objekt "+id);
-						System.out.println("Position "+newObject.getX()+":"+newObject.getY());
+						System.out.println("Position "+newObject.getPosX()+":"+newObject.getPosY());
 						System.out.println("Größe "+newObject.getWidth()+"x"+newObject.getHeight());
-						mainPlayground.addObject(newObject);					
+						mainPlayground.addObject(newObject);
+						setInputValues(newObject);
 					}else if(cbType.getSelectedItem().equals("Agent")){
 						AgentObject newAgent = new AgentObject(id, selectedElement, cbClass.getSelectedItem().toString());
 						System.out.println("Neuer Agent "+id);
-						System.out.println("Position "+newAgent.getX()+":"+newAgent.getY());
+						System.out.println("Position "+newAgent.getPosX()+":"+newAgent.getPosY());
 						System.out.println("Größe "+newAgent.getWidth()+"x"+newAgent.getHeight());
-						mainPlayground.addAgent(newAgent);						
+						mainPlayground.addAgent(newAgent);
+						setInputValues(newAgent);
 					}
 					// Aktualisiere Umgebungsbaum
 					treeEnvironment.setModel(new DefaultTreeModel(buildPlaygroundTree(mainPlayground)));
 					treeEnvironment.paint(treeEnvironment.getGraphics());
-					setSelectedObject(id);
+					currentProject.ProjectUnsaved=true;
 				}
 				
 			});
@@ -392,12 +424,25 @@ public class SvgAnalyzer extends JSplitPane {
 				// Wird aufgerufen, wenn das SVG vollständig geladen ist
 				public void documentLoadingCompleted(SVGDocumentLoaderEvent e){
 					svgDoc = canvas.getSVGDocument();
-					// Erzeugt den Haupt-Playground aus dem SVG Root Objekt 
-					mainPlayground = new Playground(svgDoc.getDocumentElement());
 					// Erzeugt onClick-Listener für die SVG-Elemente
 					addElementListeners(svgDoc.getDocumentElement());
+					// Erzeugt den Haupt-Playground aus dem SVG Root Objekt
+					if(mainPlayground==null){
+						mainPlayground = new Playground(svgDoc.getDocumentElement());
+					}
+					// Initialisiert den Baum 
+					treeEnvironment.setModel(new DefaultTreeModel(buildPlaygroundTree(mainPlayground)));
+					treeEnvironment.setEnabled(true);
 				};
 			});
+			if(svgFile.exists()){
+				try {
+					canvas.setURI(svgFile.toURI().toURL().toString());
+				} catch (MalformedURLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
 		}
 		return canvas;
 	}
@@ -420,8 +465,9 @@ public class SvgAnalyzer extends JSplitPane {
 					// Überprüfung, ob zu dem SVG-Element schon ein Umgebungsobjekt existiert
 					// und passende Belegung der GUI-Elemente
 					String id = selectedElement.getAttributeNS(null, "id");
-					if(mainPlayground.getObjects().get(id) != null){						
-						setSelectedObject(selectedElement.getAttributeNS(null, "id"));
+					BasicObject object = mainPlayground.getObjects().get(id);
+					if(object != null){						
+						setInputValues(object);
 					}else{						
 						tfId.setText(id);
 						cbType.setSelectedItem("Not specified");
@@ -447,7 +493,7 @@ public class SvgAnalyzer extends JSplitPane {
 	 */
 	private DefaultMutableTreeNode buildPlaygroundTree(Playground pg){
 		String id = pg.getId();
-		if(id.length()==0){
+		if( (id == null) || (id.length())==0){
 			id="Playground";
 		}
 		// Playground Root
@@ -475,6 +521,7 @@ public class SvgAnalyzer extends JSplitPane {
 		pgRoot.add(objectsRoot);
 		pgRoot.add(playgroundsRoot);
 		
+		
 		return pgRoot;
 	}
 
@@ -499,19 +546,21 @@ public class SvgAnalyzer extends JSplitPane {
 	 * 	
 	 * @return javax.swing.JButton	
 	 */
-	private JButton getBtnDelete() {
+	private JButton getBtnRemove() {
 		if (btnDelete == null) {
 			btnDelete = new JButton();
-			btnDelete.setText("Remove");
-			btnDelete.setSize(new Dimension(80, 26));
+			btnDelete.setText("Remove Object");
+			btnDelete.setSize(new Dimension(150, 26));
 			btnDelete.setEnabled(false);
-			btnDelete.setLocation(new Point(93, 150));
+			btnDelete.setLocation(new Point(10, 170));
 			btnDelete.addActionListener(new ActionListener(){
 
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
 					mainPlayground.removeElement(tfId.getText());
 					treeEnvironment.setModel(new DefaultTreeModel(buildPlaygroundTree(mainPlayground)));
+					setSelectedElement(null);
+					setInputValues(null);
 				}
 				
 			});
@@ -521,10 +570,9 @@ public class SvgAnalyzer extends JSplitPane {
 	
 	/**
 	 * Setzt bei Auswahl eines Umgebungsobjektes den Status der GUI-Elemente passend 
-	 * @param id
+	 * @param object
 	 */
-	private void setSelectedObject(String id){
-		BasicObject object = mainPlayground.getObjects().get(id);
+	private void setInputValues(BasicObject object){
 		if(object != null){
 			tfId.setText(object.getId());
 			if(object instanceof AgentObject){
@@ -536,6 +584,15 @@ public class SvgAnalyzer extends JSplitPane {
 				cbClass.setEnabled(false);
 			}
 			btnDelete.setEnabled(true);
+		}else{
+			if(selectedElement!=null){
+				tfId.setText(selectedElement.getAttributeNS(null, "id"));
+			}else{
+				tfId.setText("");
+			}
+			cbType.setSelectedItem("Not specified");
+			cbClass.setEnabled(false);
+			btnDelete.setEnabled(false);
 		}
 	}
 	
@@ -549,10 +606,10 @@ public class SvgAnalyzer extends JSplitPane {
 			selectedElement.setAttributeNS(null, "stroke", "none");
 		}
 		selectedElement = element;
-				
-		selectedElement.setAttributeNS(null, "stroke", "black");
-		selectedElement.setAttributeNS(null, "stroke-width", "5px");
+		
+		if(selectedElement!=null){
+			selectedElement.setAttributeNS(null, "stroke", "black");
+			selectedElement.setAttributeNS(null, "stroke-width", "5px");
+		}
 	}
-
-
 }
