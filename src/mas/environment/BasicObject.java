@@ -1,7 +1,6 @@
 package mas.environment;
 
-import java.io.Serializable;
-
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
@@ -9,7 +8,7 @@ import org.w3c.dom.Element;
  * @author Nils
  *
  */
-public class BasicObject implements Serializable{
+public abstract class BasicObject{
 	private int width;
 	private int height;
 	private int posX;
@@ -17,6 +16,13 @@ public class BasicObject implements Serializable{
 	private transient Element svgRepresentation;
 	private Playground playground;
 	private String id;
+	
+	/**
+	 * 
+	 */
+	public BasicObject(){
+		
+	}
 	
 	public BasicObject(Element svg){
 		this(svg.getAttributeNS(null, "id"), svg);
@@ -122,6 +128,24 @@ public class BasicObject implements Serializable{
 		this.id = id;
 	}
 	
+	public abstract Element saveAsXML(Document doc);
 	
+	public abstract void loadFromXML(Element elem);
 	
+	protected void saveBasics(Element xml){
+		xml.setAttribute("id", this.getId());
+//		xml.setAttribute("svgId", this.svgRepresentation.getAttributeNS(null, "id"));
+		xml.setAttribute("x", ""+this.getPosX());
+		xml.setAttribute("y", ""+this.getPosY());
+		xml.setAttribute("width", ""+this.getWidth());
+		xml.setAttribute("height", ""+this.getHeight());
+	}
+	
+	protected void loadBasics(Element xml){
+		this.id = xml.getAttribute("id");
+		this.posX = Integer.parseInt(xml.getAttribute("x"));
+		this.posY = Integer.parseInt(xml.getAttribute("y"));
+		this.width = Integer.parseInt(xml.getAttribute("width"));
+		this.height = Integer.parseInt(xml.getAttribute("height"));
+	}
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <project>
+    <envFileName>environment.xml</envFileName>
     <projectFolder>sma</projectFolder>
     <projectName>Simple Moving Agent</projectName>
     <svgFileName>Bla.svg</svgFileName>

@@ -36,19 +36,19 @@ import javax.swing.tree.TreeSelectionModel;
 import mas.display.BasicSvgGUI;
 import mas.environment.AgentObject;
 import mas.environment.BasicObject;
+import mas.environment.EnvironmentController;
+import mas.environment.ObstacleObject;
 import mas.environment.Playground;
 
-import org.apache.batik.dom.svg.SVGDOMImplementation;
+
 import org.apache.batik.swing.JSVGCanvas;
 import org.apache.batik.swing.svg.SVGDocumentLoaderAdapter;
 import org.apache.batik.swing.svg.SVGDocumentLoaderEvent;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.events.Event;
 import org.w3c.dom.events.EventTarget;
-
 
 import application.Project;
 import javax.swing.JTextField;
@@ -60,7 +60,7 @@ import javax.swing.JTextField;
  */
 public class SvgAnalyzer extends JSplitPane {
 	
-	private static String svgNs = SVGDOMImplementation.SVG_NAMESPACE_URI;
+	
 
 	private static final long serialVersionUID = 1L;
 	private JSVGCanvas canvas = null;
@@ -75,15 +75,11 @@ public class SvgAnalyzer extends JSplitPane {
 	private JComboBox cbClass = null;
 	private JButton btnApply = null;
 	private JFileChooser fcOpen = null;
-	private Document svgDoc = null;
-	
-	private Project currentProject = null;
-	private String svgPath = null;
-	private File svgFile = null;
-	private Playground mainPlayground = null;
+		
+	private Project currentProject = null;	
 	private Element selectedElement = null;
 	
-	
+	private EnvironmentController ec = null;
 
 	private JTextField tfId = null;
 
@@ -97,22 +93,21 @@ public class SvgAnalyzer extends JSplitPane {
 
 	private JLabel lblSettings = null;
 
+	private JButton btnSave = null;
+
 	/**
 	 * This is the default constructor
 	 */
 	public SvgAnalyzer(Project project) {
 		super();
 		this.currentProject = project;
-		this.svgPath = currentProject.getSvgPath();
-		if(svgPath!=null){
-			svgFile=new File(svgPath);
-			System.out.println("Loading SVG file "+svgFile.getName());
-		}else{
-			System.out.println("No SVG file specified");
-		}
-		this.currentProject.loadEnvironment();
-		this.mainPlayground = currentProject.getEnvironment();
-		
+		this.ec = new EnvironmentController(this, currentProject);
+//		if(currentProject.getSvgPath()!=null){			
+//			ec.loadSvgFile(new File(currentProject.getSvgPath()));
+//		}else{
+//			System.out.println("No SVG File specified");
+//		}	
+				
 		initialize();
 	}
 
@@ -129,7 +124,7 @@ public class SvgAnalyzer extends JSplitPane {
 		this.addComponentListener(new ComponentAdapter(){
 			public void componentResized(ComponentEvent ce){
 				SvgAnalyzer.this.setDividerLocation(SvgAnalyzer.this.getWidth()-220);
-				splitControlls.setDividerLocation(SvgAnalyzer.this.getHeight()-220);				
+				splitControlls.setDividerLocation(SvgAnalyzer.this.getHeight()-250);				
 			}
 		});
 	}
@@ -181,22 +176,10 @@ public class SvgAnalyzer extends JSplitPane {
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
 					if(SvgAnalyzer.this.getFcOpen().showOpenDialog(SvgAnalyzer.this)==JFileChooser.APPROVE_OPTION){
-						try {
-							svgFile = fcOpen.getSelectedFile();
-							svgDoc = SVGDOMImplementation.getDOMImplementation().createDocument(svgNs, "svg", null);
-							canvas.setURI(svgFile.toURI().toURL().toString());
-							System.out.println(svgFile.getName());
-							currentProject.setSvgFileName(svgFile.getName());
-							currentProject.ProjectUnsaved=true;
-							
-							
-						} catch (MalformedURLException e) {							
-							e.printStackTrace();
-						}
-					}
-					
-				}
-				
+						ec.setNewEnv(true);
+						ec.loadSvgFile(fcOpen.getSelectedFile());						
+					}					
+				}				
 			});
 		}
 		return btnOpen;
@@ -220,7 +203,7 @@ public class SvgAnalyzer extends JSplitPane {
 				public void valueChanged(TreeSelectionEvent arg0) {
 					if(treeEnvironment.getLastSelectedPathComponent()!=null){
 						String selection = treeEnvironment.getLastSelectedPathComponent().toString();
-						BasicObject object = mainPlayground.getObjects().get(treeEnvironment.getLastSelectedPathComponent().toString());
+						BasicObject object = ec.getMainPlayground().getObjects().get(treeEnvironment.getLastSelectedPathComponent().toString());
 						setInputValues(object);
 						if(object!=null){
 							SvgAnalyzer.this.setSelectedElement(canvas.getSVGDocument().getElementById(selection));
@@ -277,6 +260,7 @@ public class SvgAnalyzer extends JSplitPane {
 			pnlBottom.add(lblId, null);
 			pnlBottom.add(getBtnRemove(), null);
 			pnlBottom.add(lblSettings, null);			
+			pnlBottom.add(getBtnSave(), null);
 		}
 		return pnlBottom;
 	}
@@ -366,29 +350,31 @@ public class SvgAnalyzer extends JSplitPane {
 					}else{
 						id = selectedElement.getAttributeNS(null, "id");
 					}
+					
+					Playground pg = ec.getMainPlayground();
 					// Falls für diese ID schon ein Objekt definiert war, vorher löschen
-					if(mainPlayground.getObjects().get(id)!=null){
-						mainPlayground.removeElement(id);
+					if(pg.getObjects().get(id)!=null){
+						pg.removeElement(id);
 					}
 					if(cbType.getSelectedItem().equals("Object")){
-						BasicObject newObject = new BasicObject(id, selectedElement);
+						ObstacleObject newObject = new ObstacleObject(id, selectedElement);
 						System.out.println("Neues Objekt "+id);
 						System.out.println("Position "+newObject.getPosX()+":"+newObject.getPosY());
 						System.out.println("Größe "+newObject.getWidth()+"x"+newObject.getHeight());
-						mainPlayground.addObject(newObject);
+						pg.addObstacle(newObject);
 						setInputValues(newObject);
 					}else if(cbType.getSelectedItem().equals("Agent")){
 						AgentObject newAgent = new AgentObject(id, selectedElement, cbClass.getSelectedItem().toString());
 						System.out.println("Neuer Agent "+id);
 						System.out.println("Position "+newAgent.getPosX()+":"+newAgent.getPosY());
 						System.out.println("Größe "+newAgent.getWidth()+"x"+newAgent.getHeight());
-						mainPlayground.addAgent(newAgent);
+						pg.addAgent(newAgent);
 						setInputValues(newAgent);
 					}
 					// Aktualisiere Umgebungsbaum
-					treeEnvironment.setModel(new DefaultTreeModel(buildPlaygroundTree(mainPlayground)));
+					treeEnvironment.setModel(new DefaultTreeModel(buildPlaygroundTree(pg)));
 					treeEnvironment.paint(treeEnvironment.getGraphics());
-					currentProject.ProjectUnsaved=true;
+//					currentProject.ProjectUnsaved=true;
 				}
 				
 			});
@@ -416,33 +402,29 @@ public class SvgAnalyzer extends JSplitPane {
 	 * 	
 	 * @return org.apache.batik.swing.JSVGCanvas	
 	 */
-	private JSVGCanvas getCanvas(){
+	public JSVGCanvas getCanvas(){
 		if(canvas == null){
 			canvas = new JSVGCanvas();
 			canvas.setDocumentState(JSVGCanvas.ALWAYS_DYNAMIC);
+			
+			// EventListener wird ausgelöst, wenn die SVG-Datei vollständig geladen ist
 			canvas.addSVGDocumentLoaderListener(new SVGDocumentLoaderAdapter(){
 				// Wird aufgerufen, wenn das SVG vollständig geladen ist
 				public void documentLoadingCompleted(SVGDocumentLoaderEvent e){
-					svgDoc = canvas.getSVGDocument();
+					ec.setSvgDoc(canvas.getSVGDocument());
 					// Erzeugt onClick-Listener für die SVG-Elemente
-					addElementListeners(svgDoc.getDocumentElement());
-					// Erzeugt den Haupt-Playground aus dem SVG Root Objekt
-					if(mainPlayground==null){
-						mainPlayground = new Playground(svgDoc.getDocumentElement());
+					addElementListeners(canvas.getSVGDocument().getDocumentElement());
+					
+					// Wenn neue Umgebung, erzeuge mainPlayground aus SVG root
+					if(ec.isNewEnv()){
+						ec.setMainPlayground  (new Playground(canvas.getSVGDocument().getDocumentElement()));
 					}
-					// Initialisiert den Baum 
-					treeEnvironment.setModel(new DefaultTreeModel(buildPlaygroundTree(mainPlayground)));
+					// Initialisiert den Baum
+					
+					treeEnvironment.setModel(new DefaultTreeModel(buildPlaygroundTree(ec.getMainPlayground())));
 					treeEnvironment.setEnabled(true);
 				};
 			});
-			if(svgFile.exists()){
-				try {
-					canvas.setURI(svgFile.toURI().toURL().toString());
-				} catch (MalformedURLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			}
 		}
 		return canvas;
 	}
@@ -465,7 +447,7 @@ public class SvgAnalyzer extends JSplitPane {
 					// Überprüfung, ob zu dem SVG-Element schon ein Umgebungsobjekt existiert
 					// und passende Belegung der GUI-Elemente
 					String id = selectedElement.getAttributeNS(null, "id");
-					BasicObject object = mainPlayground.getObjects().get(id);
+					BasicObject object = ec.getMainPlayground().getObjects().get(id);
 					if(object != null){						
 						setInputValues(object);
 					}else{						
@@ -503,18 +485,20 @@ public class SvgAnalyzer extends JSplitPane {
 		DefaultMutableTreeNode agentsRoot = new DefaultMutableTreeNode("Agents");
 		DefaultMutableTreeNode playgroundsRoot = new DefaultMutableTreeNode("Sub-Playgrounds");
 		
-		// Objekte werden ausgelesen und je nach Klasse in den Teilbaum eingehängt
-		Iterator<BasicObject> objects = pg.getObjects().values().iterator();
-		while(objects.hasNext()){
-			BasicObject object = objects.next();
-			if(object instanceof Playground){
-				playgroundsRoot.add(buildPlaygroundTree((Playground) object));				
-			}else if(object instanceof AgentObject){
-				agentsRoot.add(new DefaultMutableTreeNode(object.getId()));
-			}else{
-				objectsRoot.add(new DefaultMutableTreeNode(object.getId()));
+		if(pg!=null){
+			// Objekte werden ausgelesen und je nach Klasse in den Teilbaum eingehängt
+			Iterator<BasicObject> objects = pg.getObjects().values().iterator();
+			while(objects.hasNext()){
+				BasicObject object = objects.next();
+				if(object instanceof Playground){
+					playgroundsRoot.add(buildPlaygroundTree((Playground) object));				
+				}else if(object instanceof AgentObject){
+					agentsRoot.add(new DefaultMutableTreeNode(object.getId()));
+				}else if(object instanceof ObstacleObject){
+					objectsRoot.add(new DefaultMutableTreeNode(object.getId()));
+				}
+				
 			}
-			
 		}
 		
 		pgRoot.add(agentsRoot);
@@ -557,8 +541,8 @@ public class SvgAnalyzer extends JSplitPane {
 
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
-					mainPlayground.removeElement(tfId.getText());
-					treeEnvironment.setModel(new DefaultTreeModel(buildPlaygroundTree(mainPlayground)));
+					ec.getMainPlayground().removeElement(tfId.getText());
+					treeEnvironment.setModel(new DefaultTreeModel(buildPlaygroundTree(ec.getMainPlayground())));
 					setSelectedElement(null);
 					setInputValues(null);
 				}
@@ -611,5 +595,28 @@ public class SvgAnalyzer extends JSplitPane {
 			selectedElement.setAttributeNS(null, "stroke", "black");
 			selectedElement.setAttributeNS(null, "stroke-width", "5px");
 		}
+	}
+	
+	/**
+	 * This method initializes btnSave	
+	 * 	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getBtnSave() {
+		if (btnSave == null) {
+			btnSave = new JButton();
+			btnSave.setLocation(new Point(10, 205));
+			btnSave.setText("Save Environment");
+			btnSave.setSize(new Dimension(150, 26));
+			btnSave.addActionListener(new ActionListener(){
+
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					ec.saveEnvironment();
+				}
+				
+			});
+		}
+		return btnSave;
 	}
 }
