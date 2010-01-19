@@ -97,16 +97,16 @@ public class EnvironmentController {
 	 * @param mainPlayground Wurzel-Playground der Umgebung
 	 */
 	public void saveEnvironment(){
-		File tempFile = new File(currentProject.getProjectFolderFullPath()+"temp.xml");
+//		File tempFile = new File(currentProject.getProjectFolderFullPath()+"temp.xml");
 		File envFile = new File(currentProject.getProjectFolderFullPath()+currentProject.getEnvFileName());
-		if(!tempFile.exists()){
-			try {
-				tempFile.createNewFile();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+//		if(!tempFile.exists()){
+//			try {
+//				tempFile.createNewFile();
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
 		if(!envFile.exists()){
 			try {
 				envFile.createNewFile();
@@ -128,7 +128,7 @@ public class EnvironmentController {
 		
 		// Ohne PrettyPrinter
 		try {
-			FileWriter fw = new FileWriter(tempFile);
+			FileWriter fw = new FileWriter(envFile);
 			fw.write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
 			DOMUtilities.writeDocument(envDoc, fw);
 			fw.close();
@@ -137,29 +137,29 @@ public class EnvironmentController {
 			e.printStackTrace();
 		}
 		
-		// Mit PrettyPrinter  !!! Funktioniert noch nicht !!!
-		try {
-//			PipedWriter pw = new PipedWriter();
-//			PipedReader pr = new PipedReader();
-			PrettyPrinter pp = new PrettyPrinter();
-			FileReader fr = new FileReader(tempFile);
-			FileWriter fw = new FileWriter(envFile);
-			
-//			pr.connect(pw);
-//			pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
-//			DOMUtilities.writeDocument(envDoc, pw);
-			pp.print(fr, fw);
-			fw.close();
-			tempFile.delete();
-			
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (TranscoderException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		// Mit PrettyPrinter  !!! Funktioniert noch nicht !!!
+//		try {
+////			PipedWriter pw = new PipedWriter();
+////			PipedReader pr = new PipedReader();
+//			PrettyPrinter pp = new PrettyPrinter();
+//			FileReader fr = new FileReader(tempFile);
+//			FileWriter fw = new FileWriter(envFile);
+//			
+////			pr.connect(pw);
+////			pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
+////			DOMUtilities.writeDocument(envDoc, pw);
+//			pp.print(fr, fw);
+//			fw.close();
+//			tempFile.delete();
+//			
+//			
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (TranscoderException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 	}
 	
 	public void loadEnvironment(){
