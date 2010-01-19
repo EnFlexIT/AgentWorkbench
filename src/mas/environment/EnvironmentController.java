@@ -116,38 +116,38 @@ public class EnvironmentController {
 		envRoot.setAttribute("project", currentProject.getProjectName());
 		envRoot.appendChild(mainPlayground.saveAsXML(envDoc));
 		
-//		// Ohne PrettyPrinter
-//		try {
-//			FileWriter fw = new FileWriter(envFile);
-//			fw.write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
-//			DOMUtilities.writeDocument(envDoc, fw);
-//			fw.close();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		
-		// Mit PrettyPrinter  !!! Funktioniert noch nicht !!!
+		// Ohne PrettyPrinter
 		try {
-			PipedWriter pw = new PipedWriter();
-			PipedReader pr = new PipedReader();
-			PrettyPrinter pp = new PrettyPrinter();
 			FileWriter fw = new FileWriter(envFile);
-			
-			pr.connect(pw);
-			pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
-			DOMUtilities.writeDocument(envDoc, pw);
-			pp.print(pr, fw);
+			fw.write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
+			DOMUtilities.writeDocument(envDoc, fw);
 			fw.close();
-			
-			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (TranscoderException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
+		
+//		// Mit PrettyPrinter  !!! Funktioniert noch nicht !!!
+//		try {
+//			PipedWriter pw = new PipedWriter();
+//			PipedReader pr = new PipedReader();
+//			PrettyPrinter pp = new PrettyPrinter();
+//			FileWriter fw = new FileWriter(envFile);
+//			
+//			pr.connect(pw);
+//			pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
+//			DOMUtilities.writeDocument(envDoc, pw);
+//			pp.print(pr, fw);
+//			fw.close();
+//			
+//			
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (TranscoderException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 	}
 	
 	public void loadEnvironment(){
@@ -189,6 +189,7 @@ public class EnvironmentController {
 				e.printStackTrace();
 			}
 		}else{
+			System.out.println("No environment file found.");
 			this.newEnv=true;
 		}
 	}
