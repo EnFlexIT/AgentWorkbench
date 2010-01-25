@@ -24,37 +24,40 @@ public class HarborMasterAgent extends ContainerAgent {
 		super.setup();
         //create filter for incoming messages
         MessageTemplate mt = AchieveREResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_REQUEST); 
-//        echoStatus("HarborMaster gestartet (selbst)");
+//		echoStatus("HarborMaster gestartet (selbst)");
         setupEnvironment();
 		addBehaviour(new listenForEnroll(this,mt));
         addBehaviour(new offerCraneList (this,mt));
 	}
 	
 	protected void setupEnvironment(){
-        Crane ontologyRepresentation=new Crane();
-		Domain terminalArea=new Land();
-		Domain habitat = new Rail();
-		habitat.setLies_in(terminalArea);
-        ontologyRepresentation.setLives_in(habitat);
-
-		Domain capability=new Rail();
-		ontologyRepresentation.addCapable_of(capability);
-		capability=new Street();
-		ontologyRepresentation.addCapable_of(capability);
-		capability=new Sea();
-		ontologyRepresentation.addCapable_of(capability);
-
-
         AgentContainer c = getContainerController();
         AgentController a;
 		try {
-			//a = c.createNewAgent( "Crane #1", "mas.projects.contmas.agents.CraneAgent",null );
-			
+	        Crane ontologyRepresentation=new Crane();
+			Domain terminalArea=new Land();
+			Domain habitat = new Rail();
+			habitat.setLies_in(terminalArea);
+	        ontologyRepresentation.setLives_in(habitat);
+			Domain capability=new Rail();
+			ontologyRepresentation.addCapable_of(capability);
+			capability=new Street();
+			ontologyRepresentation.addCapable_of(capability);
+			capability=new Sea();
+			ontologyRepresentation.addCapable_of(capability);
 			a=c.acceptNewAgent("Crane #1", new CraneAgent(ontologyRepresentation));
 	        a.start();
-
-			ontologyRepresentation=new Crane();
-			ontologyRepresentation.setLives_in(habitat);
+	        
+	        ontologyRepresentation=new Crane();
+			terminalArea=new Land();
+			habitat = new Rail();
+			habitat.setLies_in(terminalArea);
+	        ontologyRepresentation.setLives_in(habitat);
+			capability=new Rail();
+			ontologyRepresentation.addCapable_of(capability);
+			capability=new Street();
+			ontologyRepresentation.addCapable_of(capability);
+			capability=new Sea();
 			ontologyRepresentation.addCapable_of(capability);
 			a=c.acceptNewAgent("Crane #2", new CraneAgent(ontologyRepresentation));
 	        a.start();
@@ -81,12 +84,11 @@ public class HarborMasterAgent extends ContainerAgent {
 			a=c.acceptNewAgent("AGV #3", new AGVAgent(AGVontologyRepresentation));
 	        a.start();
 	        
+	        
 		} catch (StaleProxyException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-      //  System.out.println("Kran gestartet");
 	}
 
 	public class offerCraneList extends AchieveREResponder{

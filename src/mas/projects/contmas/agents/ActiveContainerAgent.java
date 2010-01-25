@@ -1,5 +1,6 @@
 package mas.projects.contmas.agents;
 
+import jade.core.AID;
 import jade.util.leap.ArrayList;
 import jade.util.leap.Iterator;
 import jade.util.leap.List;
@@ -15,7 +16,6 @@ import mas.projects.contmas.ontology.TransportOrder;
 import mas.projects.contmas.ontology.TransportOrderChain;
 
 public class ActiveContainerAgent extends PhysicalContainerAgent {
-	protected List contractors=new ArrayList();
 	
 	public ActiveContainerAgent(String serviceType) {
 		this(serviceType, new ActiveContainerHolder());
@@ -32,7 +32,7 @@ public class ActiveContainerAgent extends PhysicalContainerAgent {
 
 		Designator start=(Designator) curTO.getStarts_at();
 		Domain startHabitat=(Domain) start.getAbstract_designation();
-		Designator end=(Designator) curTO.getStarts_at();
+		Designator end=(Designator) curTO.getEnds_at();
 		Domain endHabitat=(Domain) end.getAbstract_designation();
 		Iterator capabilities=((ActiveContainerHolder) ontologyRepresentation).getAllCapable_of();
 		while (capabilities.hasNext()) {
@@ -51,4 +51,5 @@ public class ActiveContainerAgent extends PhysicalContainerAgent {
 		}
 		return -1; //order matcht nicht
 	}
+
 }

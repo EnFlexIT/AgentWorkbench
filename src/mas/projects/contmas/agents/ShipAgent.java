@@ -47,18 +47,18 @@ public class ShipAgent extends PassiveContainerAgent implements TransportOrderOf
 		RandomGenerator=getFirstAIDFromDF("random-generation");
 		harborManager=getFirstAIDFromDF("harbor-managing");
 		
-		ContainerMessage msg = new ContainerMessage(ACLMessage.REQUEST);
+		ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
 		msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST); 
 		addBehaviour(new enrollAtHarbor(this,msg));
 		
-		if(ontologyRepresentation.getContains().getX_dimension()==1 &&
-			ontologyRepresentation.getContains().getY_dimension()==1 &&
-			ontologyRepresentation.getContains().getZ_dimension()==1){ //default-größe
-			msg = new ContainerMessage(ACLMessage.REQUEST);
+		if(ontologyRepresentation.getContains().getX_dimension()==-1 ||
+			ontologyRepresentation.getContains().getY_dimension()==-1 ||
+			ontologyRepresentation.getContains().getZ_dimension()==-1){ //default-größe
+			msg = new ACLMessage(ACLMessage.REQUEST);
 		    msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST); 
 			addBehaviour(new fetchRandomBayMap(this,msg));
 		} else { //direkt füllen
-			msg = new ContainerMessage(ACLMessage.REQUEST);
+			msg = new ACLMessage(ACLMessage.REQUEST);
 		    msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST); 
     		addBehaviour(new getPopulatedBayMap(this,msg));
 		}
@@ -90,7 +90,7 @@ public class ShipAgent extends PassiveContainerAgent implements TransportOrderOf
 	        if (content instanceof ProvideBayMap) {
 	        	((ContainerAgent) myAgent).ontologyRepresentation.setContains(((ProvideBayMap) content).getProvides());
 	        	//echoStatus("BayMap recieved! X_dimension:"+getLoadBay().getX_dimension()+", Y_dimension:"+getLoadBay().getY_dimension()+", Z_dimension:"+getLoadBay().getZ_dimension());
-	    		msg = new ContainerMessage(ACLMessage.REQUEST);
+	    		msg = new ACLMessage(ACLMessage.REQUEST);
 	    	    msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST); 
 	    		addBehaviour(new getPopulatedBayMap(myAgent,msg));
 	        } else {
@@ -207,7 +207,7 @@ public class ShipAgent extends PassiveContainerAgent implements TransportOrderOf
 							TO.setStarts_at(myself);
 							Designator target=new Designator();
 							target.setType("abstract");
-							target.setAbstract_designation(new Domain());
+							target.setAbstract_designation(new Street());
 							TO.setEnds_at(target);
 							TransportOrderChain TOChain=new TransportOrderChain();
 							TOChain.addIs_linked_by(TO);
@@ -243,7 +243,7 @@ public class ShipAgent extends PassiveContainerAgent implements TransportOrderOf
 	}
 
 	public void offerTransportOrder() {
-		ContainerMessage msg = new ContainerMessage(ACLMessage.REQUEST);
+		ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
 	    msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST); 
 		addBehaviour(new fetchCraneList(this,msg));
 	}

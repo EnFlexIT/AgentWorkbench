@@ -6,6 +6,7 @@ package mas.projects.contmas.agents;
 import jade.domain.FIPANames;
 import jade.lang.acl.MessageTemplate;
 import jade.proto.AchieveREResponder;
+import jade.util.leap.List;
 import mas.projects.contmas.ontology.AGV;
 import mas.projects.contmas.ontology.ContainerHolder;
 import mas.projects.contmas.ontology.PassiveContainerHolder;
@@ -17,6 +18,7 @@ import mas.projects.contmas.ontology.TransportOrderChain;
  *
  */
 public class AGVAgent extends PassiveContainerAgent implements TransportOrderHandler {
+	public Integer lengthOfQueue=0;
 	public AGVAgent() {
 		this(new AGV());
 	}
@@ -32,10 +34,10 @@ public class AGVAgent extends PassiveContainerAgent implements TransportOrderHan
 
 	public void handleTransportOrder() {
         MessageTemplate mt = AchieveREResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
-		addBehaviour(new recieveLoadOrders(this,mt));
-	}
-	public Boolean releaseContainer(TransportOrderChain curTOC){ //AGV kann noch keine Container loswerden
-		return false;
+		addBehaviour(new receiveLoadOrders(this,mt));
 	}
 
+    public List determineContractors(){//AGV kann noch keine Container loswerden
+    	return null;
+    }
 }

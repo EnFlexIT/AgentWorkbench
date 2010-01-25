@@ -39,7 +39,7 @@ public class CraneAgent extends ActiveContainerAgent implements TransportOrderHa
 
 	public void handleTransportOrder() {
         MessageTemplate mt = ContractNetResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
-		addBehaviour(new recieveLoadOrders(this,mt));
+		addBehaviour(new receiveLoadOrders(this,mt));
 	}
 	
 	public TransportOrder calculateEffort(TransportOrder call){
@@ -50,7 +50,7 @@ public class CraneAgent extends ActiveContainerAgent implements TransportOrderHa
 	}
 	
     public List determineContractors(){
-    	if(!contractors.iterator().hasNext()){
+    	if(contractors==null){
     		contractors=toAIDList(getAIDsFromDF("container-distributing"));
     	}
     	return contractors;
@@ -59,7 +59,7 @@ public class CraneAgent extends ActiveContainerAgent implements TransportOrderHa
 //		addBehaviour(new disposePayload(this));
 //		echoStatus("offerTransportOrder");
 	}
-
+/*
 	class disposePayload extends TickerBehaviour{
 
 		public disposePayload(Agent a) {
@@ -70,4 +70,5 @@ public class CraneAgent extends ActiveContainerAgent implements TransportOrderHa
 			((ContainerAgent)myAgent).releaseAllContainer();
 		}
 	}
+	*/
 }

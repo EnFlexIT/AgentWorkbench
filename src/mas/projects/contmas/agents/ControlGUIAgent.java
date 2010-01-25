@@ -28,39 +28,25 @@ import application.Application;
 import mas.projects.contmas.ontology.*;
 
 public class ControlGUIAgent extends GuiAgent{
-    AID[] randomGenerators=null;
     private ControlGUI myGui = null;
-    
-    
+
 	protected void setup(){ 
 		// Instanciate the gui
 		myGui = new ControlGUI(this);
 		myGui.setVisible(true);
 		JDesktopPane desktop=Application.MainWindow.ProjectDesktop;
 		desktop.add(myGui);
+		
         AgentContainer c = getContainerController();
         try {
             AgentController a = c.createNewAgent( "RandomGenerator", "mas.projects.contmas.agents.RandomGeneratorAgent", null );
             a.start();
             a = c.createNewAgent( "HarborMaster", "mas.projects.contmas.agents.HarborMasterAgent", null );
             a.start();
-
-            DFAgentDescription dfd = new DFAgentDescription();
-            ServiceDescription sd  = new ServiceDescription();
-            sd.setType( "random-generation" );
-            dfd.addServices(sd);
-            try {
-				DFAgentDescription[] result = DFService.search(this, dfd);
-				randomGenerators= new AID[result.length];
-				for (int i = 0; i < result.length; i++) {
-					randomGenerators[i]=result[i].getName();
-				}
-			} catch (FIPAException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
         }
-        catch (Exception e){}
+        catch (Exception e){
+        	
+        }
 	}
 	
 	protected void onGuiEvent(GuiEvent ev) {
@@ -84,15 +70,6 @@ public class ControlGUIAgent extends GuiAgent{
 	            AgentController a=c.acceptNewAgent(name, new ShipAgent(ontologyRepresentation));
 
 	            a.start();
-	            /*
-				ACLMessage sndMsg = new ACLMessage(ACLMessage.REQUEST);
-				sndMsg.addUserDefinedParameter("article","bayMap");
-				sndMsg.addUserDefinedParameter("dimensionX", );
-				sndMsg.addUserDefinedParameter("dimensionY", ev.getParameter(2).toString());
-				sndMsg.addUserDefinedParameter("dimensionZ", ev.getParameter(3).toString());
-				sndMsg.addReceiver(randomGenerators[0]);
-				send(sndMsg);
-				*/
 	        }
 	        catch (Exception e){}
 		} else if (command == -1) {

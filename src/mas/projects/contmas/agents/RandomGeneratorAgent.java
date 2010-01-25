@@ -71,12 +71,10 @@ public class RandomGeneratorAgent extends ContainerAgent{
 			super(a, mt);
 		}
 	    protected ACLMessage handleRequest(ACLMessage request) { 
-	    	echoStatus("populateBayMap handleRequest start");
+//	    	echoStatus("populateBayMap handleRequest start");
 	        ACLMessage reply = request.createReply();
 			AgentAction content;
 			content = ((ContainerAgent)myAgent).extractAction(request);
-
-
 			if(content instanceof RequestPopulatedBayMap) {
 
 				BayMap LoadBay=((RequestPopulatedBayMap) content).getPopulate_on();
@@ -105,7 +103,7 @@ public class RandomGeneratorAgent extends ContainerAgent{
 								//System.out.println("zufällig");
 								
 								c=new Container();
-								containerName="Container-ID: "+RandomGenerator.nextInt(65000);
+								containerName="ABC "+RandomGenerator.nextInt(65000);
 								c.setId(containerName);
 								ba=new BlockAddress();
 								//ba.setAddresses_within(LoadBay);

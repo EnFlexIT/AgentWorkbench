@@ -35,8 +35,18 @@ public class ContainerAgent extends Agent {
 	protected String serviceType;
 	protected ContainerHolder ontologyRepresentation;
 	
-	public Integer lengthOfQueue=3;
+	protected List contractors=null;
+
+	
+	public Integer lengthOfQueue=2;
 	protected List loadOrdersProposedForQueue=new ArrayList();
+	
+	protected List announcedQueue=new ArrayList();
+	
+	protected List failedQueue=new ArrayList();
+	
+	protected List pendingQueue=new ArrayList();
+
 	
 	public ContainerAgent() {
 		this.serviceType="handling-containers";
@@ -139,6 +149,8 @@ public class ContainerAgent extends Agent {
 		Integer bestMatchRating=-1;
 		//echoStatus("findMatchingOrder - jede order in der kette durchlaufen");
     	while(toc.hasNext()){
+//			echoStatus("Ausschreibung ausprobieren.");
+
     		TransportOrder curTO=(TransportOrder) toc.next();
     		if(!matchIncoming && matchAID(curTO.getStarts_at())){
     			return curTO;
@@ -148,14 +160,28 @@ public class ContainerAgent extends Agent {
     			if(bestMatchRating==-1 || bestMatchRating>matchRating){
 	    			matchingOrder=curTO;
 	    			bestMatchRating=matchRating;
-	    			//echoStatus("passt! (besser?)");
+//	    			echoStatus("Ausschreibung passt zu mir! (besser?)");
     			}
     		}
     	}
     	return matchingOrder;
     }
     
-	public Integer matchOrder(TransportOrder curTO){
+    
+    /*
+     * Matcht hier nur Habitat des Ziels (für Static und Passive).
+     * Matching für Active ist angepasst, matcht sowohl Start als auch Ziel
+     * und Habitat+Capabilities
+     * Matching-Bewertung:
+     * -1 NoMatch
+     *  0 ExactMatch (AID), Static+Passive
+     *  1 ExactMatch (AID), Active
+     *  2 relativeMatch (Domain difference), Minimum für Static+Passive
+     * ...relativeMatch 
+     * 
+     * Matching-Wert stellt also nahezu Aufwand des Transports dar
+     */
+	public Integer matchOrder(TransportOrder curTO){ 
 		Designator end=(Designator) curTO.getEnds_at();
 		if(matchAID(end)){ //Genau für mich bestimmt
 			return 0;
@@ -163,7 +189,7 @@ public class ContainerAgent extends Agent {
 			Domain endHabitat=(Domain) end.getAbstract_designation();
 			Domain ownHabitat=ontologyRepresentation.getLives_in();
 			if(endHabitat.getClass()==ownHabitat.getClass()){ //domain entspricht genau Lebensraum
-				return 2; //+DomainDiffrence
+				return 2; //TODO +DomainDiffrence
 			}
 		}
 		return -1; //order passt gar nicht
@@ -185,6 +211,15 @@ public class ContainerAgent extends Agent {
     public void echoStatus(String statusMessage){
     	System.out.println(this.getAID().getLocalName()+": "+statusMessage);
     }
+    
+    public void echoStatus(String statusMessage, TransportOrderChain subject){
+    	String additionalText="";
+    	if(subject!=null){
+    		additionalText=" BIC="+subject.getTransports().getId();
+    	}
+    	echoStatus(statusMessage+additionalText);
+    }
+    
 	public BlockAddress getEmptyBlockAddress(){
 		BlockAddress empty=new BlockAddress();
 		empty.setX_dimension(0);
@@ -196,7 +231,7 @@ public class ContainerAgent extends Agent {
     	ProposeLoadOffer act=null;
     	TransportOrder matchingOrder=findMatchingOrder(curTOC);
     	if(matchingOrder!=null){ //passende TransportOrder gefunden
-			echoStatus("TransportOrder gefunden, die zu mir passt. CID="+curTOC.getTransports().getId());
+//			echoStatus("TransportOrder gefunden, die zu mir passt.",curTOC);
 			matchingOrder.getEnds_at().setConcrete_designation(getAID());
 			matchingOrder.getEnds_at().setType("concrete");
 
@@ -204,6 +239,8 @@ public class ContainerAgent extends Agent {
     		calculateEffort(matchingOrder);
     		act.setLoad_offer(curTOC);
     		loadOrdersProposedForQueue.add(curTOC);
+    	} else {
+			echoStatus("keine TransportOrder passt zu mir.",curTOC);
     	}
 		return act;
 	}
@@ -214,7 +251,7 @@ public class ContainerAgent extends Agent {
 	}
 	
 	public Boolean aquireContainer(TransportOrderChain targetContainer){ //eigentlicher Vorgang des Container-Aufnehmens
-		((ContainerHolder)this.ontologyRepresentation).getAdministers().addConsists_of(targetContainer); //container auftragsbuch hinzufügen //in AUftragsliste eintragen
+		((ContainerHolder)this.ontologyRepresentation).getAdministers().addConsists_of(targetContainer); //Container zu Auftragsbuch hinzufügen
 		
 		//physikalische Aktionen
 		
@@ -225,66 +262,11 @@ public class ContainerAgent extends Agent {
 		if(removeFromQueue(targetContainer)){ //Auftrag aus Liste von Bewerbungen streichen
 			return true;
 		}
-		echoStatus("Auftrag, auf den ich mich beworben habe nicht gefunden");
+		echoStatus("ERROR: Ausschreibung, auf die ich mich beworben habe, nicht gefunden.",targetContainer);
 		return false;
 	}
 	
-	public Boolean releaseAllContainer(){
-		Boolean isDone=false;
-		while(releaseSomeContainer()){
-			isDone=true;
-		}
-		return isDone;
-	}
-	
-	public Boolean releaseSomeContainer(){
-		return releaseSomeContainer(null);
-	}
-	
-	public Boolean releaseSomeContainer(SequentialBehaviour sb){ //irgendeinen
-		Iterator commissions=ontologyRepresentation.getAdministers().getAllConsists_of();
-		if(commissions.hasNext()){ //Agent hat Transportaufträge abzuarbeiten
-			TransportOrderChain curTOC=((TransportOrderChain) commissions.next());
-			echoStatus("commission available - releasing Container. CID="+curTOC.getTransports().getId());
 
-			if(releaseContainer(curTOC,sb)){
-				commissions.remove();
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	public Boolean releaseContainer(TransportOrderChain curTOC){
-		return releaseContainer(curTOC, null);
-	}
-	
-	public Boolean releaseContainer(TransportOrderChain curTOC, SequentialBehaviour sb){
-		TransportOrderChain TOChain=new TransportOrderChain();
-		TOChain.setTransports(curTOC.getTransports());
-
-		TransportOrder TO=new TransportOrder();
-		
-		Designator myself=new Designator();
-		myself.setType("concrete");
-		myself.setConcrete_designation(getAID());
-		TO.setStarts_at(myself);
-		
-		Designator target=new Designator();
-		target.setType("abstract");
-		target.setAbstract_designation(new Street());//TODO change to Land but implement recursive Domain-determination in passiveHolder
-		TO.setEnds_at(target);
-		TOChain.addIs_linked_by(TO);
-		LoadList newCommission=new LoadList();
-		newCommission.addConsists_of(TOChain);
-		Behaviour b=new announceLoadOrders(this, newCommission);
-		if(sb!=null){ //von sequentialbehaviour aufgerufen
-			sb.addSubBehaviour(b);
-		} else { // einfach so entladen
-			addBehaviour(b);
-		}
-		return true;
-	}
 	
 	public boolean removeFromQueue(TransportOrderChain proposedTOC){
 		Iterator queue=loadOrdersProposedForQueue.iterator();
@@ -301,13 +283,82 @@ public class ContainerAgent extends Agent {
 		return false;
 	}
 	
+	public boolean removeFromAnnouncedQueue(TransportOrderChain needleTOC){
+		Iterator queue=announcedQueue.iterator();
+		while(queue.hasNext()){
+			TransportOrderChain queuedTOC=(TransportOrderChain)queue.next();
+			if(needleTOC.getTransports().getId().equals(queuedTOC.getTransports().getId())){
+				queue.remove();
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean removeFromCommissions(TransportOrderChain needleTOC){
+		Iterator queue=ontologyRepresentation.getAdministers().getAllConsists_of();
+		while(queue.hasNext()){
+			TransportOrderChain queuedTOC=(TransportOrderChain)queue.next();
+			if(needleTOC.getTransports().getId().equals(queuedTOC.getTransports().getId())){
+				queue.remove();
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean isInAnnouncedQueue(TransportOrderChain needleTOC){
+		Iterator queue=announcedQueue.iterator();
+		while(queue.hasNext()){
+			TransportOrderChain queuedTOC=(TransportOrderChain)queue.next();
+			if(needleTOC.getTransports().getId().equals(queuedTOC.getTransports().getId())){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean isInFailedQueue(TransportOrderChain needleTOC){
+		Iterator queue=failedQueue.iterator();
+		while(queue.hasNext()){
+			TransportOrderChain queuedTOC=(TransportOrderChain)queue.next();
+			if(needleTOC.getTransports().getId().equals(queuedTOC.getTransports().getId())){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean removeFromPendingQueue(TransportOrderChain needleTOC){
+		Iterator queue=pendingQueue.iterator();
+		while(queue.hasNext()){
+			TransportOrderChain queuedTOC=(TransportOrderChain)queue.next();
+			if(needleTOC.getTransports().getId().equals(queuedTOC.getTransports().getId())){
+				queue.remove();
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean isAlreadyPending(TransportOrderChain needleTOC){
+		Iterator queue=pendingQueue.iterator();
+		while(queue.hasNext()){
+			TransportOrderChain queuedTOC=(TransportOrderChain)queue.next();
+			if(needleTOC.getTransports().getId().equals(queuedTOC.getTransports().getId())){
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public boolean isQueueNotFull(){ //TODO use DataStore
 		//echoStatus("lengthOfQueue: "+lengthOfQueue+", loadOrderPostQueue.size(): "+loadOrdersProposedForQueue.size());
 		return loadOrdersProposedForQueue.size()<lengthOfQueue;
 	}
 	
-	public boolean isBayMapFull(){
-		return getBaySize()<=getBayUtilization();
+	public boolean hasBayMapRoom(){
+		return getBaySize()>getBayUtilization();
 	}
 	
 	public boolean checkPlausibility(CallForProposalsOnLoadStage call){
@@ -315,25 +366,38 @@ public class ContainerAgent extends Agent {
 	}
 
 	public boolean removeContainerFromBayMap(TransportOrderChain load_offer) {
-		echoStatus("removeContainerFromBayMap");
+//		echoStatus("removeContainerFromBayMap:",load_offer);
 		Iterator allContainers=ontologyRepresentation.getContains().getIs_filled_with().iterator();
 		while(allContainers.hasNext()){
 			Container curContainer=((BlockAddress)allContainers.next()).getLocates();
 //			echoStatus("curContainerID: "+curContainer.getId()+"load_offerID: "+load_offer.getTransports().getId());
 			if(curContainer.getId().equals(load_offer.getTransports().getId())){
 				allContainers.remove();
-				echoStatus("container found and removed");
+//				echoStatus("Container found and removed.",load_offer);
 				return true;
 			}
 		}
-		echoStatus("container NOT found");
-
+		echoStatus("ERROR: Container NOT found to remove from BayMap.",load_offer);
+		return false;
+	}
+	
+	public boolean removeFromContractors(AID badContractor){
+		Iterator contractorList=contractors.iterator();
+		while(contractorList.hasNext()){
+			AID contractor=(AID)contractorList.next();
+			if(badContractor.equals(contractor)){
+				contractorList.remove();
+				return true;
+			}
+		}
 		return false;
 	}
 
-	public void fillMessage(ACLMessage accept, AgentAction act) {
+	public void fillMessage(ACLMessage msg, AgentAction act) {
+		msg.setLanguage(codec.getName());
+		msg.setOntology(ontology.getName());
 		try {
-			getContentManager().fillContent(accept, act);
+			getContentManager().fillContent(msg, act);
 		}catch (UngroundedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -345,10 +409,10 @@ public class ContainerAgent extends Agent {
 			e.printStackTrace();
 		}
 	}
-	public AgentAction extractAction(ACLMessage accept) {
+	public AgentAction extractAction(ACLMessage msg) {
 		AgentAction act=null;
 		try {
-			act=(AgentAction) getContentManager().extractContent(accept);
+			act=(AgentAction) getContentManager().extractContent(msg);
 		}catch (UngroundedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -361,5 +425,4 @@ public class ContainerAgent extends Agent {
 		}
 		return act;
 	}
-
 }
