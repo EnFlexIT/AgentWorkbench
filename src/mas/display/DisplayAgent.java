@@ -1,132 +1,169 @@
+/**
+ * 
+ */
 package mas.display;
 
 import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
 
-import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.script.Window;
 import org.apache.batik.swing.JSVGCanvas;
 import org.apache.batik.swing.gvt.GVTTreeRendererAdapter;
 import org.apache.batik.swing.gvt.GVTTreeRendererEvent;
-import org.apache.batik.swing.svg.SVGDocumentLoaderAdapter;
-import org.apache.batik.swing.svg.SVGDocumentLoaderEvent;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import mas.environment.AgentObject;
+import mas.environment.Playground;
 
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.ServiceException;
-import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.CyclicBehaviour;
-import jade.core.behaviours.TickerBehaviour;
 import jade.core.messaging.TopicManagementHelper;
-import jade.domain.DFService;
-import jade.domain.FIPAException;
-import jade.domain.FIPANames;
-import jade.domain.FIPAAgentManagement.DFAgentDescription;
-import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-import jade.lang.acl.UnreadableException;
-import jade.proto.SubscriptionInitiator;
 
 /**
- * This class controls a DisplayAgentGUI instance and receives position updates from the TopicManagementHelper   
- *   
- * @author nils
+ * Neuimplementierung,   
+ * 
+ * @author Nils
  *
  */
 public class DisplayAgent extends Agent {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	
-	// SVG Namespace
 	public static final String svgNs=SVGDOMImplementation.SVG_NAMESPACE_URI;
 	
-	private DisplayAgentGUI myGUI = null;
-	private DisplayAgent myAgent = this;
-	
-	public HashSet<String> knownAgents = null;  // Hashmap storing animated agents, key=localName
+	private Container parent = null;
+	private BasicSvgGUI myGUI = null;
+	private Playground environment = null;
+	private Document svgDoc = null;
+	private Element svgRoot = null;
+	private HashMap<String, AgentObject> agents = null;
 	
 	public void setup(){
+					
 		Object[] args = getArguments();
-		// GUI object passed as argument -> embedded mode
-		if((args.length>0) && (args[0] instanceof DisplayAgentGUI)){
-			myGUI = (DisplayAgentGUI)args[0];
-		// No GUI passed -> stand alone mode
+		this.environment = (Playground) args[0];
+		this.svgDoc = (Document) args[1];
+		if(args[2] != null){
+			// Setze GUI auf übergebenen Container
+			this.parent = (Container) args[2];
 		}else{
-			myGUI = new DisplayAgentGUI(this);
-			JFrame frame = new JFrame ("DisplayAgent GUI stand alone mode");
-			frame.setContentPane(myGUI);
-			
+			// Kein Container übergeben -> erzeuge JFrame
+			JFrame frame = new JFrame("DisplayAgent2 Test");
+			parent = frame;			
 			frame.pack();
 			frame.setVisible(true);
-			
+		}
+		myGUI = new BasicSvgGUI();
+		myGUI.setSize(parent.getSize());
+		parent.add(myGUI);
+		
+		Iterator<AgentObject> agents = environment.getAgents().iterator();
+		this.agents = new HashMap<String, AgentObject>();
+		while(agents.hasNext()){
+			AgentObject newAgent = agents.next();
+			this.agents.put(newAgent.getId(), newAgent);
 		}
 		
-				
-		knownAgents=new HashSet<String>();
-				
+		
+		myGUI.getCanvas().setDocumentState(JSVGCanvas.ALWAYS_DYNAMIC);
+		
+		myGUI.getCanvas().addGVTTreeRendererListener(new GVTTreeRendererAdapter(){
+			public void gvtRenderingCompleted(GVTTreeRendererEvent re) {
+				// Animation initialization
+				Window window = myGUI.getCanvas().getUpdateManager().getScriptingEnvironment().createWindow();
+				window.setInterval(new Animation(), 50);				
+			}
+		});
+		
+		myGUI.getCanvas().setDocument(svgDoc);
+		svgRoot = svgDoc.getDocumentElement();
+		Element border = svgDoc.createElementNS(svgNs, "rect");
+		border.setAttributeNS(null, "x", "1");
+		border.setAttributeNS(null, "y", "1");
+		border.setAttributeNS(null, "width", ""+(environment.getWidth()-2));
+		border.setAttributeNS(null, "height", ""+(environment.getHeight()-2));
+		border.setAttributeNS(null, "stroke", "black");
+		border.setAttributeNS(null, "stroke-width", "2");
+		border.setAttributeNS(null, "fill", "none");
+		svgRoot.appendChild(border);
+		
 		try {
 			TopicManagementHelper tmh = (TopicManagementHelper) getHelper(TopicManagementHelper.SERVICE_NAME);
 			AID positionTopic = tmh.createTopic("position");
 			tmh.register(positionTopic);
-			addBehaviour(new PositionUpdateReceiver(MessageTemplate.MatchTopic(positionTopic)));
+			addBehaviour(new PosUpdater(MessageTemplate.MatchTopic(positionTopic)));
 		} catch (ServiceException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 		
-		System.out.println("Display agent "+getLocalName()+"ready.");
-		
+		System.out.println("Display agent "+getLocalName()+"ready.");		
+	}
+	
+	class PosUpdater extends CyclicBehaviour{
 
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 		
+		MessageTemplate positionTemplate;
+		DisplayAgent da;
 		
-	}
-	
-	public void addAgent(String name, String x, String y){
-		knownAgents.add(name);
-		if(myGUI!=null)
-			myGUI.addAgent(name, x, y);
-	}
-	
-	public void updateAgent(String name, String x, String y){
-		if(myGUI!=null)
-			myGUI.updateAgent(name, x, y);
-	}
-	
-	public void removeAgent(String name){
-		if(myGUI!=null)
-			myGUI.removeAgent(name);
-	}
-	
-	public void takeDown(){
-		if(myGUI!=null){
-			myGUI.setVisible(false);
+		public PosUpdater(MessageTemplate mt){
+			this.positionTemplate = mt;			
+		}
+
+		@Override
+		public void action() {
+			ACLMessage posUpdate = receive(positionTemplate);
+			if(posUpdate != null){
+				String sender = posUpdate.getSender().getLocalName();
+				String content = posUpdate.getContent();
+				if(content.equals("bye")){
+					agents.remove(sender);
+				}else{
+					String[] pos = content.split(",");
+					AgentObject agent = agents.get(sender);
+					agent.setPosX(Integer.parseInt(pos[0]));
+					agent.setPosY(Integer.parseInt(pos[1]));
+				}
+				
+			}else{
+				block();
+			}
+			
 		}
 		
 	}
 	
-	public DisplayAgentGUI getGUI(){
-		return myGUI;
+	class Animation implements Runnable{
+
+		@Override
+		public void run() {
+			Iterator<AgentObject> iter = agents.values().iterator(); 
+			while(iter.hasNext()){
+				AgentObject agentObject = iter.next();
+				Element agentSvg = svgDoc.getElementById(agentObject.getId());
+				agentSvg.setAttributeNS(null, "x", ""+agentObject.getPosX());
+				agentSvg.setAttributeNS(null, "y", ""+agentObject.getPosY());
+			}
+		}
+		
 	}
 	
-	public void setGUI(DisplayAgentGUI gui){
-		this.myGUI = gui;
-	}		
+
 }

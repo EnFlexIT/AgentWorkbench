@@ -18,8 +18,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.io.File;
-import java.net.MalformedURLException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import org.w3c.dom.events.EventListener;
@@ -94,6 +94,8 @@ public class SvgAnalyzer extends JSplitPane {
 	private JLabel lblSettings = null;
 
 	private JButton btnSave = null;
+	
+	private HashMap<String, String> agentClasses = null;
 
 	/**
 	 * This is the default constructor
@@ -102,11 +104,7 @@ public class SvgAnalyzer extends JSplitPane {
 		super();
 		this.currentProject = project;
 		this.ec = new EnvironmentController(this, currentProject);
-//		if(currentProject.getSvgPath()!=null){			
-//			ec.loadSvgFile(new File(currentProject.getSvgPath()));
-//		}else{
-//			System.out.println("No SVG File specified");
-//		}	
+
 				
 		initialize();
 	}
@@ -170,7 +168,7 @@ public class SvgAnalyzer extends JSplitPane {
 	private JButton getBtnOpen() {
 		if (btnOpen == null) {
 			btnOpen = new JButton();
-			btnOpen.setText("Open SVG file");
+			btnOpen.setText("SVG-Datei öffnen");
 			btnOpen.addActionListener(new ActionListener(){
 
 				@Override
@@ -193,7 +191,7 @@ public class SvgAnalyzer extends JSplitPane {
 	private JTree getTreeEnvironment() {
 		if (treeEnvironment == null) {
 			treeEnvironment = new JTree();
-			DefaultMutableTreeNode root = new DefaultMutableTreeNode("No SVG loaded");
+			DefaultMutableTreeNode root = new DefaultMutableTreeNode("Kein SVG geladen");
 			treeEnvironment.setModel(new DefaultTreeModel(root));
 			treeEnvironment.setEnabled(false);
 			treeEnvironment.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
@@ -234,19 +232,19 @@ public class SvgAnalyzer extends JSplitPane {
 	private JPanel getPnlBottom() {
 		if (pnlBottom == null) {
 			lblSettings = new JLabel();
-			lblSettings.setText("Object Settings");
-			lblSettings.setSize(new Dimension(87, 16));
+			lblSettings.setText("Objekt-Eigenschaften");
+			lblSettings.setSize(new Dimension(122, 16));
 			lblSettings.setLocation(new Point(5, 5));
 			lblId = new JLabel();
-			lblId.setText("Object ID");
-			lblId.setSize(new Dimension(51, 16));
+			lblId.setText("Objekt-ID");
+			lblId.setSize(new Dimension(52, 16));
 			lblId.setLocation(new Point(5, 35));
 			lblAgentClass = new JLabel();
-			lblAgentClass.setText("Agent class");
-			lblAgentClass.setSize(new Dimension(67, 16));
+			lblAgentClass.setText("Agentenklasse");
+			lblAgentClass.setSize(new Dimension(85, 16));
 			lblAgentClass.setLocation(new Point(5, 105));
 			lblType = new JLabel();
-			lblType.setText("Object type");
+			lblType.setText("Objekt-Typ");
 			lblType.setSize(new Dimension(64, 16));
 			lblType.setLocation(new Point(5, 70));
 			pnlBottom = new JPanel();
@@ -273,9 +271,9 @@ public class SvgAnalyzer extends JSplitPane {
 	private JComboBox getCbType() {
 		if (cbType == null) {
 			cbType = new JComboBox();
-			String[] types = {"Not specified", "Agent", "Object"};
+			String[] types = {"Undefiniert", "Agent", "Hinderniss"};
 			cbType.setModel(new DefaultComboBoxModel(types));
-			cbType.setLocation(new Point(90, 62));
+			cbType.setLocation(new Point(100, 62));
 			cbType.setSize(new Dimension(100, 25));
 			cbType.addActionListener(new ActionListener(){
 
@@ -286,7 +284,7 @@ public class SvgAnalyzer extends JSplitPane {
 					}else{
 						cbClass.setEnabled(false);
 					}
-					if(cbType.getSelectedItem().equals("Not specified")){
+					if(cbType.getSelectedItem().equals("Undefiniert")){
 						btnApply.setEnabled(false);
 					}else{
 						btnApply.setEnabled(true);
@@ -309,17 +307,19 @@ public class SvgAnalyzer extends JSplitPane {
 			cbClass = new JComboBox();
 			cbClass.setVisible(true);
 			cbClass.setSize(new Dimension(100, 25));
-			cbClass.setLocation(new Point(90, 97));
+			cbClass.setLocation(new Point(100, 97));
 			
-			Vector<Class<?>> agentClasses = currentProject.getProjectAgents();
-			Vector<String> agentNames = new Vector<String>();		
-			for (int i =0; i<agentClasses.size();i++) {
-				String name = agentClasses.get(i).getName();
-				name = name.substring(name.lastIndexOf('.')+1);
-				agentNames.add(name);
-				
+			agentClasses = new HashMap<String, String>(); 
+			
+			Vector<Class<?>> classes = currentProject.getProjectAgents();
+			Vector<String> names = new Vector<String>();		
+			for (int i =0; i<classes.size();i++) {
+				String fullName = classes.get(i).getName();
+				String shortName = fullName.substring(fullName.lastIndexOf('.')+1);
+				names.add(shortName);
+				agentClasses.put(shortName, fullName);				
 			}
-			cbClass.setModel(new DefaultComboBoxModel(agentNames));
+			cbClass.setModel(new DefaultComboBoxModel(names));
 			cbClass.setEnabled(false);
 		}
 		return cbClass;
@@ -333,7 +333,7 @@ public class SvgAnalyzer extends JSplitPane {
 	private JButton getBtnApply() {
 		if (btnApply == null) {
 			btnApply = new JButton();
-			btnApply.setText("Apply Object");
+			btnApply.setText("Objekt übernehmen");
 			btnApply.setSize(new Dimension(150, 26));
 			btnApply.setLocation(new Point(10, 135));
 			btnApply.addActionListener(new ActionListener(){
@@ -364,7 +364,7 @@ public class SvgAnalyzer extends JSplitPane {
 						pg.addObstacle(newObject);
 						setInputValues(newObject);
 					}else if(cbType.getSelectedItem().equals("Agent")){
-						AgentObject newAgent = new AgentObject(id, selectedElement, cbClass.getSelectedItem().toString());
+						AgentObject newAgent = new AgentObject(id, selectedElement, agentClasses.get(cbClass.getSelectedItem().toString()));
 						System.out.println("Neuer Agent "+id);
 						System.out.println("Position "+newAgent.getPosX()+":"+newAgent.getPosY());
 						System.out.println("Größe "+newAgent.getWidth()+"x"+newAgent.getHeight());
@@ -418,6 +418,7 @@ public class SvgAnalyzer extends JSplitPane {
 					// Wenn neue Umgebung, erzeuge mainPlayground aus SVG root
 					if(ec.isNewEnv()){
 						ec.setMainPlayground  (new Playground(canvas.getSVGDocument().getDocumentElement()));
+//						ec.buildNewEnv(canvas.getSVGDocument().getDocumentElement());
 					}
 					// Initialisiert den Baum
 					
@@ -452,7 +453,7 @@ public class SvgAnalyzer extends JSplitPane {
 						setInputValues(object);
 					}else{						
 						tfId.setText(id);
-						cbType.setSelectedItem("Not specified");
+						cbType.setSelectedItem("Undefiniert");
 						cbClass.setEnabled(false);
 						btnDelete.setEnabled(false);
 					}
@@ -481,9 +482,9 @@ public class SvgAnalyzer extends JSplitPane {
 		// Playground Root
 		DefaultMutableTreeNode pgRoot = new DefaultMutableTreeNode(id);
 		// Äste für die Objektarten
-		DefaultMutableTreeNode objectsRoot = new DefaultMutableTreeNode("Objects");
-		DefaultMutableTreeNode agentsRoot = new DefaultMutableTreeNode("Agents");
-		DefaultMutableTreeNode playgroundsRoot = new DefaultMutableTreeNode("Sub-Playgrounds");
+		DefaultMutableTreeNode objectsRoot = new DefaultMutableTreeNode("Hindernisse");
+		DefaultMutableTreeNode agentsRoot = new DefaultMutableTreeNode("Agenten");
+		DefaultMutableTreeNode playgroundsRoot = new DefaultMutableTreeNode("Kind-Umgebungen");
 		
 		if(pg!=null){
 			// Objekte werden ausgelesen und je nach Klasse in den Teilbaum eingehängt
@@ -517,7 +518,7 @@ public class SvgAnalyzer extends JSplitPane {
 	private JTextField getTfId() {
 		if (tfId == null) {
 			tfId = new JTextField();
-			tfId.setLocation(new Point(90, 32));
+			tfId.setLocation(new Point(100, 32));
 			tfId.setText("");
 			tfId.setPreferredSize(new Dimension(4, 20));
 			tfId.setSize(new Dimension(100, 25));
@@ -533,7 +534,7 @@ public class SvgAnalyzer extends JSplitPane {
 	private JButton getBtnRemove() {
 		if (btnDelete == null) {
 			btnDelete = new JButton();
-			btnDelete.setText("Remove Object");
+			btnDelete.setText("Objekt löschen");
 			btnDelete.setSize(new Dimension(150, 26));
 			btnDelete.setEnabled(false);
 			btnDelete.setLocation(new Point(10, 170));
@@ -564,7 +565,7 @@ public class SvgAnalyzer extends JSplitPane {
 				cbClass.setSelectedItem(((AgentObject) object).getAgentClass());
 				cbClass.setEnabled(true);
 			}else{
-				cbType.setSelectedItem("Object");
+				cbType.setSelectedItem("Hinderniss");
 				cbClass.setEnabled(false);
 			}
 			btnDelete.setEnabled(true);
@@ -574,7 +575,7 @@ public class SvgAnalyzer extends JSplitPane {
 			}else{
 				tfId.setText("");
 			}
-			cbType.setSelectedItem("Not specified");
+			cbType.setSelectedItem("Undefiniert");
 			cbClass.setEnabled(false);
 			btnDelete.setEnabled(false);
 		}
@@ -606,7 +607,7 @@ public class SvgAnalyzer extends JSplitPane {
 		if (btnSave == null) {
 			btnSave = new JButton();
 			btnSave.setLocation(new Point(10, 205));
-			btnSave.setText("Save Environment");
+			btnSave.setText("Umgebung speichern");
 			btnSave.setSize(new Dimension(150, 26));
 			btnSave.addActionListener(new ActionListener(){
 
@@ -618,5 +619,5 @@ public class SvgAnalyzer extends JSplitPane {
 			});
 		}
 		return btnSave;
-	}
+	}	
 }

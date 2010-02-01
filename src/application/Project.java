@@ -15,6 +15,8 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import mas.environment.EnvironmentController;
+
 @XmlRootElement public class Project extends Observable {
 
 	// --- Konstanten ------------------------------------------
@@ -30,11 +32,15 @@ import javax.xml.bind.annotation.XmlTransient;
 	@XmlTransient private String ProjectFolderFullPath;
 	@XmlTransient private Vector<Class<?>> ProjectAgents;
 	
+	@XmlTransient public EnvironmentController ec; 
+	
 	// --- Speichervariablen der Projektdatei ------------------ 
 	private String ProjectName;
 	private String ProjectDescription;
 	private String svgFileName;		// SVG-Datei
 	private String envFileName;		// XML mit Umgebungsdefinition
+	
+
 	
 	
 	/**
@@ -267,5 +273,5 @@ import javax.xml.bind.annotation.XmlTransient;
 	 */
 	public void setEnvFileName(String fileName){
 		this.envFileName = fileName;
-	}
+	}	
 }

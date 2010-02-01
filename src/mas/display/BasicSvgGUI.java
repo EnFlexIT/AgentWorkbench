@@ -52,7 +52,7 @@ public class BasicSvgGUI extends JPanel {
 	 * @return void
 	 */
 	private void initialize() {
-		this.setSize(300, 200);
+//		this.setSize(300, 200);
 		this.setLayout(new BorderLayout());
 		this.add(getPnlZoom(), BorderLayout.NORTH);
 		this.add(getScrollpane(), BorderLayout.CENTER);
@@ -123,12 +123,7 @@ public class BasicSvgGUI extends JPanel {
 		return scrollpane;
 	}
 	
-//	public static void main(String args[]){
-//		JFrame frame = new JFrame("Test");
-//		frame.setContentPane(new BasicSvgGUI());
-//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//		frame.pack();
-//		frame.setVisible(true);
-//	}
-
+	public JSVGCanvas getCanvas(){
+		return this.canvas;
+	}
 }

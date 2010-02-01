@@ -13,7 +13,7 @@ public abstract class BasicObject{
 	private int height;
 	private int posX;
 	private int posY;
-	private transient Element svgRepresentation;
+	
 	private Playground playground;
 	private String id;
 	
@@ -29,7 +29,7 @@ public abstract class BasicObject{
 	}
 	
 	public BasicObject(String id, Element svg){
-		this.svgRepresentation = svg;
+	
 		this.setPhysics(svg);
 		this.playground = null;
 		this.id = id;		

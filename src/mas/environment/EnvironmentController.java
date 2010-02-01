@@ -1,22 +1,20 @@
 package mas.environment;
 
 import java.io.File;
-import java.io.FileReader;
+
 import java.io.FileWriter;
 import java.io.IOException;
-//import java.io.PipedReader;
-//import java.io.PipedWriter;
 import java.net.MalformedURLException;
+import java.util.Iterator;
 
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.dom.util.DOMUtilities;
-import org.apache.batik.transcoder.TranscoderException;
-import org.apache.batik.transcoder.svg2svg.PrettyPrinter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import application.Application;
 import application.Project;
 
 import svganalyzer.SvgAnalyzer;
@@ -46,6 +44,8 @@ public class EnvironmentController {
 	public EnvironmentController(SvgAnalyzer gui, Project proj){
 		this.gui = gui;
 		this.currentProject = proj;
+		currentProject.ec = this;
+//		this.currentProject.setEnvCont(this);
 		if(currentProject.getSvgPath()!=null){
 			loadSvgFile(new File(currentProject.getSvgPath()));			
 		}else{
@@ -76,10 +76,15 @@ public class EnvironmentController {
 		this.newEnv = isNew;
 	}
 	
+	public void buildNewEnv(Element root){
+		this.mainPlayground = new Playground(root);
+//		currentProject.setEnvironment(this.mainPlayground);
+	}
+	
 	public void loadSvgFile(File svgFile){
 		if(svgFile.exists()){
 			try {
-				System.out.println("Loading SVG File "+svgFile.getName());
+				System.out.println("Lade SVG-Datei "+svgFile.getName());
 				this.gui.getCanvas().setURI(svgFile.toURI().toURL().toString());
 				this.svgDoc = this.gui.getCanvas().getSVGDocument();
 				
@@ -89,6 +94,7 @@ public class EnvironmentController {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+//			currentProject.setSvgDoc(svgDoc);
 		}
 	}
 	
@@ -116,17 +122,16 @@ public class EnvironmentController {
 			}
 		}
 		
-		System.out.println("Saving Environment to "+envFile.getName());
-		System.out.println("Agents:            "+mainPlayground.getAgents().size());
-		System.out.println("Objects:           "+mainPlayground.getObstacles().size());
-		System.out.println("Child playgrounds: "+mainPlayground.getPlaygrounds().size());
+		System.out.println("Speichere Umgebung nach "+envFile.getName());
+		System.out.println(mainPlayground.getAgents().size()+" Agenten");
+		System.out.println(mainPlayground.getObstacles().size()+" Hindernisse");
+		System.out.println(mainPlayground.getPlaygrounds().size()+" Kind-Umgebungen");
 		
 		Document envDoc = SVGDOMImplementation.getDOMImplementation().createDocument(null, "environment", null);
 		Element envRoot = envDoc.getDocumentElement();
 		envRoot.setAttribute("project", currentProject.getProjectName());
 		envRoot.appendChild(mainPlayground.saveAsXML(envDoc));
 		
-		// Ohne PrettyPrinter
 		try {
 			FileWriter fw = new FileWriter(envFile);
 			fw.write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
@@ -136,30 +141,6 @@ public class EnvironmentController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-//		// Mit PrettyPrinter  !!! Funktioniert noch nicht !!!
-//		try {
-////			PipedWriter pw = new PipedWriter();
-////			PipedReader pr = new PipedReader();
-//			PrettyPrinter pp = new PrettyPrinter();
-//			FileReader fr = new FileReader(tempFile);
-//			FileWriter fw = new FileWriter(envFile);
-//			
-////			pr.connect(pw);
-////			pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
-////			DOMUtilities.writeDocument(envDoc, pw);
-//			pp.print(fr, fw);
-//			fw.close();
-//			tempFile.delete();
-//			
-//			
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (TranscoderException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
 	}
 	
 	public void loadEnvironment(){
@@ -173,7 +154,7 @@ public class EnvironmentController {
 				
 				Element mainPg = (Element) svgDoc.getDocumentElement().getFirstChild();
 				if(mainPg.getTagName().equals("playground")){
-					System.out.println("Loading Environment from "+svgFile.getName()+"...");
+					System.out.println("Lade Umgebung aus "+svgFile.getName()+"...");
 					this.mainPlayground = new Playground();
 					mainPlayground.loadFromXML(mainPg);
 					if(mainPg.hasChildNodes()){
@@ -182,11 +163,12 @@ public class EnvironmentController {
 							loadObject((Element) children.item(i), this.mainPlayground);
 						}
 					}
-					System.out.println(this.mainPlayground.getAgents().size()+" agents loaded");
-					System.out.println(this.mainPlayground.getObstacles().size()+" obstacles loaded");
-					System.out.println(this.mainPlayground.getPlaygrounds().size()+" child playgrounds loaded");
-					
+					System.out.println(this.mainPlayground.getAgents().size()+" Agenten");
+					System.out.println(this.mainPlayground.getObstacles().size()+" Hindernisse");
+					System.out.println(this.mainPlayground.getPlaygrounds().size()+" Kind-Umgebungen");					
 				}
+				
+//				currentProject.setEnvironment(mainPlayground);
 				
 				
 				
@@ -201,7 +183,7 @@ public class EnvironmentController {
 				e.printStackTrace();
 			}
 		}else{
-			System.out.println("No environment file found.");
+			System.out.println("Keine Umgebungsdatei gefunden.");
 			this.newEnv=true;
 		}
 	}
@@ -227,6 +209,42 @@ public class EnvironmentController {
 			}
 			parent.addPlayground(pg);
 		}
+	}
+	
+	public void startSimulation(){
+		
+//		if ( Application.JadePlatform.jadeMainContainerIsRunning(true)) {
+			// DisplayAgent
+			
+//			String agentNameBase = "DA";
+//			int agentNameSuffix = 1;
+//			String agentName = agentNameBase+agentNameSuffix;
+//			
+//			while( Application.JadePlatform.jadeAgentIsRunning(agentName)){
+//				agentNameSuffix++;
+//				agentName = agentNameBase + agentNameSuffix;
+//			}	
+//			System.out.println("Agent name "+agentNameBase);				
+//						
+//			Object[] args = new Object[2];
+//			args[0] = mainPlayground;
+//			args[1] = svgDoc;
+//			Application.JadePlatform.jadeAgentStart(agentName, "mas.display.DisplayAgent2", args, currentProject.getProjectFolder() );
+			
+			// Agent Objekte aus der Umgebung
+			Iterator<AgentObject> agents = mainPlayground.getAgents().iterator();
+			while(agents.hasNext()){
+				startAgent(agents.next());
+			}
+//		}
+	}
+	
+	public void startAgent(AgentObject agent){
+		String agentName = agent.getId();
+		String agentClass = agent.getAgentClass();
+		AgentObject[] arg = new AgentObject[1];
+		arg[0]=agent;
+		Application.JadePlatform.jadeAgentStart(agentName, agentClass, arg, currentProject.getProjectFolder() );
 	}
 	
 	
