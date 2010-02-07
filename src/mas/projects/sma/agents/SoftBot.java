@@ -70,9 +70,7 @@ public class SoftBot extends Agent {
 			} catch (ServiceException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
-			
-			System.out.println("Behaviour added...");
+			}			
 		}
 
 		@Override
@@ -84,7 +82,6 @@ public class SoftBot extends Agent {
 			
 			posX += speedX;
 			posY += speedY;
-			System.out.println(posX+":"+posY);
 			if(posX < 0 || posX+width >= envWidth){
 				collX = true;
 			}

@@ -15,43 +15,68 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import application.Application;
+import application.Language;
 import application.Project;
 
-import svganalyzer.SvgAnalyzer;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+/**
+ * Verwaltet die Umgebung für ein Projekt
+ * @author Nils
+ *
+ */
 public class EnvironmentController {
 	
-	private SvgAnalyzer gui = null;
-	private Project currentProject = null;	
+	/**
+	 * GUI des EnvironmentControllers 
+	 */
+	private EnvironmentControllerGUI gui = null;
+	/**
+	 * Projekt
+	 */
+	private Project currentProject = null;
+	/**
+	 * (Wurzel-)Umgebung des Projektes
+	 */
 	private Playground mainPlayground = null;
+	/**
+	 * SVG-Dokument des Projektes
+	 */
 	private Document svgDoc = null;
 	
 	/**
-	 * 
+	 * Wenn false wurde die Umgebung aus einer Datei geladen
+	 * Wenn true wird die Umgebung neu angelegt 
 	 */
 	private boolean newEnv = false; 
 	
-	public EnvironmentController(){
-		
-	};
-	
-	
-	
-	public EnvironmentController(SvgAnalyzer gui, Project proj){
+	/**
+	 * Konstruktor
+	 * @param gui	GUI dieses EnvironmentControllers
+	 * @param proj	Projekt, desen Umgebung verwaltet wird
+	 */
+	public EnvironmentController(EnvironmentControllerGUI gui, Project proj){
 		this.gui = gui;
 		this.currentProject = proj;
 		currentProject.ec = this;
-//		this.currentProject.setEnvCont(this);
+		// SVG und Umgebungsdatei Laden, wenn im Projekt definiert		
 		if(currentProject.getSvgPath()!=null){
 			loadSvgFile(new File(currentProject.getSvgPath()));			
 		}else{
-			System.out.println("No SVG file specified");
+			System.out.println(Language.translate("Keine SVG-Datei zugewiesen"));
 		}
-		this.loadEnvironment();
+		if(currentProject.getEnvPath() != null){
+			loadEnvironment(new File(currentProject.getEnvPath()));			
+		}else{
+			System.out.println(Language.translate("Keine Umgebungsdatei zugewiesen"));
+		}
+//		System.out.println(System.getProperty("user.dir"));
+//		System.out.println(Application.RunInfo.PathBaseDir());
+//		System.out.println(Application.RunInfo.PathProjects(false, true));
+		
 	}
 	
 	public Playground getMainPlayground(){
@@ -78,41 +103,32 @@ public class EnvironmentController {
 	
 	public void buildNewEnv(Element root){
 		this.mainPlayground = new Playground(root);
-//		currentProject.setEnvironment(this.mainPlayground);
 	}
 	
 	public void loadSvgFile(File svgFile){
 		if(svgFile.exists()){
 			try {
-				System.out.println("Lade SVG-Datei "+svgFile.getName());
+				System.out.println(Language.translate("Lade SVG-Datei")+" "+svgFile.getName());
+				// Weise das geladene SVG-Dokument GUI und Umgebung zu
 				this.gui.getCanvas().setURI(svgFile.toURI().toURL().toString());
 				this.svgDoc = this.gui.getCanvas().getSVGDocument();
 				
-				currentProject.setSvgFileName(svgFile.getName());
-				currentProject.ProjectUnsaved=true;
 			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-//			currentProject.setSvgDoc(svgDoc);
+		}else{
+			System.err.println(Language.translate("SVG-Datei")+" "+svgFile.getName()+" "+Language.translate("nicht gefunden"));
 		}
 	}
 	
 	/**
 	 * Speichert eine Beschreibung der Umgebung als XML Datei  
-	 * @param mainPlayground Wurzel-Playground der Umgebung
 	 */
-	public void saveEnvironment(){
-//		File tempFile = new File(currentProject.getProjectFolderFullPath()+"temp.xml");
-		File envFile = new File(currentProject.getProjectFolderFullPath()+currentProject.getEnvFileName());
-//		if(!tempFile.exists()){
-//			try {
-//				tempFile.createNewFile();
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
+	public void saveEnvironment(File envFile){
+		// Hole Dateiname aus dem Projekt
+//		File envFile = new File(currentProject.getProjectFolderFullPath()+currentProject.getEnvFileName());
+		// Wenn noch nicht vorhanden, lege die Datei an
 		if(!envFile.exists()){
 			try {
 				envFile.createNewFile();
@@ -122,16 +138,18 @@ public class EnvironmentController {
 			}
 		}
 		
-		System.out.println("Speichere Umgebung nach "+envFile.getName());
-		System.out.println(mainPlayground.getAgents().size()+" Agenten");
-		System.out.println(mainPlayground.getObstacles().size()+" Hindernisse");
-		System.out.println(mainPlayground.getPlaygrounds().size()+" Kind-Umgebungen");
+		System.out.println(Language.translate("Speichere Umgebung nach")+" "+envFile.getName());
+		System.out.println(mainPlayground.getAgents().size()+" "+Language.translate("Agenten"));
+		System.out.println(mainPlayground.getObstacles().size()+" "+Language.translate("Hindernisse"));
+		System.out.println(mainPlayground.getPlaygrounds().size()+" "+Language.translate(" Kind-Umgebungen"));
 		
+		// Erzeuge ein XML-Dokument und Speichere die Wurzel-Umgebung (inkl. Kind-Objekte)
 		Document envDoc = SVGDOMImplementation.getDOMImplementation().createDocument(null, "environment", null);
 		Element envRoot = envDoc.getDocumentElement();
 		envRoot.setAttribute("project", currentProject.getProjectName());
 		envRoot.appendChild(mainPlayground.saveAsXML(envDoc));
 		
+		// Schreibe die Datei
 		try {
 			FileWriter fw = new FileWriter(envFile);
 			fw.write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
@@ -141,20 +159,23 @@ public class EnvironmentController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		currentProject.setEnvPath(envFile.getPath());
 	}
 	
-	public void loadEnvironment(){
+	/**
+	 * Läd eine gespeicherte Umgebung
+	 */
+	public void loadEnvironment(File envFile){
 		
-		File svgFile = new File(currentProject.getProjectFolderFullPath()+currentProject.getEnvFileName());
-		if(svgFile.exists()){
+		if(envFile.exists()){
 			try {
 				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 				DocumentBuilder builder = factory.newDocumentBuilder();
-				svgDoc = builder.parse(svgFile);
+				svgDoc = builder.parse(envFile);
 				
 				Element mainPg = (Element) svgDoc.getDocumentElement().getFirstChild();
 				if(mainPg.getTagName().equals("playground")){
-					System.out.println("Lade Umgebung aus "+svgFile.getName()+"...");
+					System.out.println(Language.translate("Lade Umgebung aus")+" "+envFile.getName()+"...");
 					this.mainPlayground = new Playground();
 					mainPlayground.loadFromXML(mainPg);
 					if(mainPg.hasChildNodes()){
@@ -163,14 +184,10 @@ public class EnvironmentController {
 							loadObject((Element) children.item(i), this.mainPlayground);
 						}
 					}
-					System.out.println(this.mainPlayground.getAgents().size()+" Agenten");
-					System.out.println(this.mainPlayground.getObstacles().size()+" Hindernisse");
-					System.out.println(this.mainPlayground.getPlaygrounds().size()+" Kind-Umgebungen");					
-				}
-				
-//				currentProject.setEnvironment(mainPlayground);
-				
-				
+					System.out.println(mainPlayground.getAgents().size()+" "+Language.translate("Agenten"));
+					System.out.println(mainPlayground.getObstacles().size()+" "+Language.translate("Hindernisse"));
+					System.out.println(mainPlayground.getPlaygrounds().size()+" "+Language.translate(" Kind-Umgebungen"));					
+				}				
 				
 			} catch (ParserConfigurationException e) {
 				// TODO Auto-generated catch block
@@ -183,11 +200,16 @@ public class EnvironmentController {
 				e.printStackTrace();
 			}
 		}else{
-			System.out.println("Keine Umgebungsdatei gefunden.");
+			System.err.println(Language.translate("Umgebungsdatei")+" "+envFile.getName()+" "+Language.translate("nicht gefunden."));
 			this.newEnv=true;
 		}
 	}
 	
+	/**
+	 * 
+	 * @param xml		Knoten im XML-Dokument, der das Objekt repräsentiert
+	 * @param parent	Playground, in den das Objekt eingefügt wird
+	 */
 	public void loadObject(Element xml, Playground parent){
 		if(xml.getTagName().equals("obstacle")){
 			ObstacleObject object = new ObstacleObject();
@@ -211,32 +233,15 @@ public class EnvironmentController {
 		}
 	}
 	
+	/**
+	 * Startet die in der Umgebung definierten Agenten
+	 */
 	public void startSimulation(){
-		
-//		if ( Application.JadePlatform.jadeMainContainerIsRunning(true)) {
-			// DisplayAgent
-			
-//			String agentNameBase = "DA";
-//			int agentNameSuffix = 1;
-//			String agentName = agentNameBase+agentNameSuffix;
-//			
-//			while( Application.JadePlatform.jadeAgentIsRunning(agentName)){
-//				agentNameSuffix++;
-//				agentName = agentNameBase + agentNameSuffix;
-//			}	
-//			System.out.println("Agent name "+agentNameBase);				
-//						
-//			Object[] args = new Object[2];
-//			args[0] = mainPlayground;
-//			args[1] = svgDoc;
-//			Application.JadePlatform.jadeAgentStart(agentName, "mas.display.DisplayAgent2", args, currentProject.getProjectFolder() );
-			
 			// Agent Objekte aus der Umgebung
 			Iterator<AgentObject> agents = mainPlayground.getAgents().iterator();
 			while(agents.hasNext()){
 				startAgent(agents.next());
 			}
-//		}
 	}
 	
 	public void startAgent(AgentObject agent){
@@ -245,7 +250,5 @@ public class EnvironmentController {
 		AgentObject[] arg = new AgentObject[1];
 		arg[0]=agent;
 		Application.JadePlatform.jadeAgentStart(agentName, agentClass, arg, currentProject.getProjectFolder() );
-	}
-	
-	
+	}	
 }

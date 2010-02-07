@@ -37,8 +37,8 @@ import mas.environment.EnvironmentController;
 	// --- Speichervariablen der Projektdatei ------------------ 
 	private String ProjectName;
 	private String ProjectDescription;
-	private String svgFileName;		// SVG-Datei
-	private String envFileName;		// XML mit Umgebungsdefinition
+	private String svgPath;		// SVG-Datei
+	private String envPath;		// Umgebungsdatei
 	
 
 	
@@ -238,40 +238,33 @@ import mas.environment.EnvironmentController;
 		return ProjectAgents;
 	}
 	/**
-	 * Getter für svgFileName
-	 * @return Dateiname der SVG-Datei
-	 */
-	public String getSvgFileName(){
-		return this.svgFileName;
-	}
-	/**
-	 * Liefert den absoluten Pfad zur SVG-Datei
-	 * @return Pfad zur SVG Datei
+	 * Getter für svgPath
+	 * @return Pfad der SVG-Datei
 	 */
 	public String getSvgPath(){
-		return this.ProjectFolderFullPath+"ressources"+File.separator+this.svgFileName;
+		return svgPath;
 	}
 	/**
-	 * Setter für svgFileName 
-	 * @param fileName Dateiname der svg
+	 * Setter für svgPath 
+	 * @param fileName Pfad der SVG-Datei
 	 */
-	public void setSvgFileName(String fileName){
-		this.svgFileName = fileName;
+	public void setSvgPath(String fileName){
+		this.svgPath = fileName;		
+	}	
+	/**
+	 * Getter für envPath
+	 * @return Pfad der Umgebungsdatei 
+	 */
+	public String getEnvPath(){
+		
+		return envPath;
 	}
 	
 	/**
-	 * Getter für envFileName
-	 * @return Dateiname der Umgebungsdatei 
+	 * Setter für envPath
+	 * @param fileName Pfad der Umgebungsdatei
 	 */
-	public String getEnvFileName(){
-		return this.envFileName;
-	}
-	
-	/**
-	 * Setter für envFileName
-	 * @param fileName Dateiname der Umgebungsdatei
-	 */
-	public void setEnvFileName(String fileName){
-		this.envFileName = fileName;
+	public void setEnvPath(String fileName){
+		this.envPath = fileName;		
 	}	
 }

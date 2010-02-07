@@ -1,7 +1,11 @@
 package mas.environment;
 
+import mas.display.SvgTypes;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import application.Language;
 
 /**
  * Oberklasse für alle Umgebungsobjekte
@@ -16,6 +20,7 @@ public abstract class BasicObject{
 	
 	private Playground playground;
 	private String id;
+	private SvgTypes svgType = null;
 	
 	/**
 	 * 
@@ -29,7 +34,21 @@ public abstract class BasicObject{
 	}
 	
 	public BasicObject(String id, Element svg){
-	
+				
+//		// Setze svgType abhängig vom übergebenen Element
+//		if(svg.getTagName().equals("svg")){
+//			this.svgType = SvgTypes.svg;
+//		}else if(svg.getTagName().equals("rect")){
+//			this.svgType = SvgTypes.rect;
+//		}else if(svg.getTagName().equals("circle")){
+//			this.svgType = SvgTypes.circle;
+//		}else if(svg.getTagName().equals("ellipse")){
+//			this.svgType = SvgTypes.ellipse;
+//		}else{
+//			System.err.println(Language.translate("SVG-Elementtyp")+" "+svg.getTagName()+" "+Language.translate("nicht unterstützt"));
+//		}
+		
+		this.setSvgType(svg.getTagName());		
 		this.setPhysics(svg);
 		this.playground = null;
 		this.id = id;		
@@ -46,11 +65,13 @@ public abstract class BasicObject{
 			this.posX = 0;
 			this.posY = 0;
 		}else if(svg.getTagName().equals("rect")){
+			this.svgType = SvgTypes.rect;
 			this.width = (int) Float.parseFloat(svg.getAttributeNS(null, "width"));
 			this.height = (int) Float.parseFloat(svg.getAttributeNS(null, "height"));
 			this.posX = (int) Float.parseFloat(svg.getAttributeNS(null, "x"));
 			this.posY = (int) Float.parseFloat(svg.getAttributeNS(null, "y"));
 		}else if(svg.getTagName().equals("circle")){
+			this.svgType =SvgTypes.circle;
 			int r = (int) Float.parseFloat(svg.getAttributeNS(null, "r"));
 			int x = (int) Float.parseFloat(svg.getAttributeNS(null, "cx"));
 			int y = (int) Float.parseFloat(svg.getAttributeNS(null, "cy"));
@@ -60,6 +81,7 @@ public abstract class BasicObject{
 			this.posX = x-r;
 			this.posY = y-r;			
 		}else if(svg.getTagName().equals("ellipse")){
+			this.svgType = SvgTypes.ellipse;
 			int rx = (int) Float.parseFloat(svg.getAttributeNS(null, "rx"));
 			int ry = (int) Float.parseFloat(svg.getAttributeNS(null, "ry"));
 			int x = (int) Float.parseFloat(svg.getAttributeNS(null, "cx"));
@@ -134,7 +156,7 @@ public abstract class BasicObject{
 	
 	protected void saveBasics(Element xml){
 		xml.setAttribute("id", this.getId());
-//		xml.setAttribute("svgId", this.svgRepresentation.getAttributeNS(null, "id"));
+		xml.setAttribute("svgType", this.getSvgType().toString());
 		xml.setAttribute("x", ""+this.getPosX());
 		xml.setAttribute("y", ""+this.getPosY());
 		xml.setAttribute("width", ""+this.getWidth());
@@ -143,9 +165,29 @@ public abstract class BasicObject{
 	
 	protected void loadBasics(Element xml){
 		this.id = xml.getAttribute("id");
+		this.setSvgType(xml.getAttribute("svgType"));
 		this.posX = Integer.parseInt(xml.getAttribute("x"));
 		this.posY = Integer.parseInt(xml.getAttribute("y"));
 		this.width = Integer.parseInt(xml.getAttribute("width"));
 		this.height = Integer.parseInt(xml.getAttribute("height"));
+	}
+	
+	public SvgTypes getSvgType(){
+		return this.svgType;
+	}
+	
+	public void setSvgType(String tagName){
+		if(tagName.equals("svg")){
+			this.svgType = SvgTypes.svg;
+		}else if(tagName.equals("rect")){
+			this.svgType = SvgTypes.rect;
+		}else if(tagName.equals("circle")){
+			this.svgType = SvgTypes.circle;
+		}else if(tagName.equals("ellipse")){
+			this.svgType = SvgTypes.ellipse;
+		}else{
+			System.err.println(Language.translate("SVG-Elementtyp")+" "+tagName+" "+Language.translate("nicht unterstützt"));
+		}
+		
 	}
 }

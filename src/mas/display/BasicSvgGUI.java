@@ -1,20 +1,17 @@
 package mas.display;
 
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.FlowLayout;
 import javax.swing.JButton;
 
 import org.apache.batik.swing.JSVGCanvas;
 import org.apache.batik.swing.JSVGScrollPane;
-import org.apache.batik.swing.JSVGCanvas.ResetTransformAction;
-import org.apache.batik.swing.JSVGCanvas.ZoomAction;
 
 import java.awt.BorderLayout;
 
 /**
- * Basic GUI element for displaying SVGs
- * contains a scrollable SVG canvas and zoom buttons 
+ * Grund-GUI zur Darstellung von SVGs
+ * Scrollbarer JSVGCanvas plus Zoomfunktion   
  * @author Nils
  *
  */
@@ -52,7 +49,6 @@ public class BasicSvgGUI extends JPanel {
 	 * @return void
 	 */
 	private void initialize() {
-//		this.setSize(300, 200);
 		this.setLayout(new BorderLayout());
 		this.add(getPnlZoom(), BorderLayout.NORTH);
 		this.add(getScrollpane(), BorderLayout.CENTER);
