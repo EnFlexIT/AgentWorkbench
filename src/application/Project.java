@@ -242,7 +242,9 @@ import mas.environment.EnvironmentController;
 	 * @return Pfad der SVG-Datei
 	 */
 	public String getSvgPath(){
-		return svgPath;
+		// Temporäre Lösung, später direkt relativ speichern
+		return this.ProjectFolderFullPath+"ressources"+svgPath.substring(svgPath.lastIndexOf("\\"));
+//		return svgPath;
 	}
 	/**
 	 * Setter für svgPath 
@@ -256,8 +258,9 @@ import mas.environment.EnvironmentController;
 	 * @return Pfad der Umgebungsdatei 
 	 */
 	public String getEnvPath(){
-		
-		return envPath;
+		// Temporäre Lösung, später direkt relativ speichern
+		return this.ProjectFolderFullPath+"ressources"+envPath.substring(envPath.lastIndexOf("\\"));
+//		return envPath;
 	}
 	
 	/**
