@@ -1,4 +1,4 @@
-LANG_DEFAULT;1;;;
+LANG_DEFAULT;0;;;
 LANG_DE;LANG_EN;LANG_IT;LANG_ES;LANG_FR
 Fertig;Ready;;;
 Programmstart ...;Starting Program ...;;;
@@ -122,3 +122,5 @@ SVG-Elementtyp;SVG element type;;;
 nicht unterstützt;not supported;;;
 XML Files;;;;
 Speichere Umgebung nach;Saving environment to;;;
+Keine SVG-Datei zugewiesen;;;;
+Keine Umgebungsdatei zugewiesen;;;;
