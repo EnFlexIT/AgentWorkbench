@@ -12,13 +12,13 @@ import mas.projects.contmas.ontology.PassiveContainerHolder;
 import mas.projects.contmas.ontology.TransportOrder;
 import mas.projects.contmas.ontology.TransportOrderChain;
 
-public class PassiveContainerAgent extends ContainerAgent {
+public class StaticContainerAgent extends ContainerAgent {
 	
-	public PassiveContainerAgent(String serviceType) {
+	public StaticContainerAgent(String serviceType) {
 		this(serviceType, new PassiveContainerHolder());
 	}
 
-	public PassiveContainerAgent(String serviceType,PassiveContainerHolder ontologyRepresentation) {
+	public StaticContainerAgent(String serviceType,PassiveContainerHolder ontologyRepresentation) {
 		super(serviceType, ontologyRepresentation);
 		ontologyRepresentation.setAdministers(new LoadList());
 	}

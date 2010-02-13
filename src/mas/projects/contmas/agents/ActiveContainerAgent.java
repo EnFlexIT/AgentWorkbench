@@ -15,7 +15,7 @@ import mas.projects.contmas.ontology.ProposeLoadOffer;
 import mas.projects.contmas.ontology.TransportOrder;
 import mas.projects.contmas.ontology.TransportOrderChain;
 
-public class ActiveContainerAgent extends PhysicalContainerAgent {
+public class ActiveContainerAgent extends ContainerAgent {
 	
 	public ActiveContainerAgent(String serviceType) {
 		this(serviceType, new ActiveContainerHolder());

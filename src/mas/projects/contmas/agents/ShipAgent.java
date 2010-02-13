@@ -25,7 +25,7 @@ import de.planetxml.tools.DebugPrinter;
 
 import mas.projects.contmas.ontology.*;
 
-public class ShipAgent extends PassiveContainerAgent implements TransportOrderOfferer {
+public class ShipAgent extends StaticContainerAgent implements TransportOrderOfferer {
 	public ShipAgent() {
 		this(new Ship());
 	}
@@ -33,7 +33,7 @@ public class ShipAgent extends PassiveContainerAgent implements TransportOrderOf
 	public ShipAgent(Ship ontologyRepresentation) {
 		super("long-term-transporting", ontologyRepresentation);
 	}
-	private AID harborManager=null;
+	private AID HarborManager=null;
 	private AID RandomGenerator=null;
 
 	protected void setup() {
@@ -45,7 +45,7 @@ public class ShipAgent extends PassiveContainerAgent implements TransportOrderOf
 		
 		//look for RandomGeneratorAgent
 		RandomGenerator=getFirstAIDFromDF("random-generation");
-		harborManager=getFirstAIDFromDF("harbor-managing");
+		HarborManager=getFirstAIDFromDF("harbor-managing");
 		
 		ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
 		msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST); 
@@ -133,7 +133,7 @@ public class ShipAgent extends PassiveContainerAgent implements TransportOrderOf
 			super(a, initiation);
 		}
 		protected Vector<ACLMessage> prepareRequests(ACLMessage request){
-				request.addReceiver(harborManager);
+				request.addReceiver(HarborManager);
 				EnrollAtHarbor act = new EnrollAtHarbor();
 				act.setShip_length(((Ship)((ShipAgent) myAgent).ontologyRepresentation).getLength() );
 				((ContainerAgent)myAgent).fillMessage(request,act);
@@ -148,7 +148,7 @@ public class ShipAgent extends PassiveContainerAgent implements TransportOrderOf
 			super(a, msg);
 		}
 		protected Vector<ACLMessage> prepareRequests(ACLMessage request){
-			request.addReceiver(harborManager);
+			request.addReceiver(HarborManager);
 			AgentAction act=new GetCraneList();
 			((ContainerAgent)myAgent).fillMessage(request,act);
 

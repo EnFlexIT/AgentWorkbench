@@ -62,7 +62,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private void initialize() {
 		this.setSize(232, 224);
 		this.setContentPane(getJContentPane());
-		this.setTitle("Hafenmeister");
+		this.setTitle("ControlGUI");
 /*		this.addWindowListener(new WindowAdapter() {
 	         public void windowClosing(WindowEvent e) {
 	            shutDown();
