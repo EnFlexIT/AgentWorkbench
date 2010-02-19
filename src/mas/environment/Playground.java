@@ -122,8 +122,8 @@ public class Playground extends BasicObject{
 	 * Liefert eine Liste aller Agenten in diesem Playground
 	 * @return HashMap<String, AgentObject>
 	 */
-	public Collection<AgentObject> getAgents(){
-		return this.agents.values();
+	public HashMap<String, AgentObject> getAgents(){
+		return this.agents;
 	}
 	
 	/**

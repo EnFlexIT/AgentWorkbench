@@ -2,16 +2,25 @@ package mas.environment;
 
 import java.io.File;
 
+import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.net.MalformedURLException;
+import java.util.Date;
 import java.util.Iterator;
 
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.dom.util.DOMUtilities;
+import org.apache.xerces.parsers.DOMParser;
+import org.apache.xml.serialize.OutputFormat;
+import org.apache.xml.serialize.XMLSerializer;
+import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import application.Application;
@@ -19,6 +28,9 @@ import application.Language;
 import application.Project;
 
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -162,6 +174,46 @@ public class EnvironmentController {
 		currentProject.setEnvPath(envFile.getPath());
 	}
 	
+	public void saveEnv(File envFile){
+		
+		try {
+			if(!(envFile.exists())){
+				envFile.createNewFile();
+			}
+			System.out.println(Language.translate("Speichere Umgebung nach")+" "+envFile.getName());
+			System.out.println(mainPlayground.getAgents().size()+" "+Language.translate("Agenten"));
+			System.out.println(mainPlayground.getObstacles().size()+" "+Language.translate("Hindernisse"));
+			System.out.println(mainPlayground.getPlaygrounds().size()+" "+Language.translate(" Kind-Umgebungen"));
+			
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			DOMImplementation impl = builder.getDOMImplementation();
+			Document doc = impl.createDocument(null, "environment", null);
+			Element envRoot = doc.getDocumentElement();
+			envRoot.setAttribute("project", currentProject.getProjectName());
+			envRoot.setAttribute("Date", new java.util.Date().toString());
+			envRoot.appendChild(mainPlayground.saveAsXML(doc));
+			
+			OutputFormat format = new OutputFormat(doc);
+			FileOutputStream fos = new FileOutputStream(envFile);
+			format.setIndenting(true);
+			format.setIndent(2);
+//			XMLSerializer serializer = new XMLSerializer(fos, format);
+			XMLSerializer serializer = new XMLSerializer(fos, null);
+		    serializer.serialize(doc);
+		    fos.close();
+
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+
+	
 	/**
 	 * Läd eine gespeicherte Umgebung
 	 */
@@ -171,9 +223,16 @@ public class EnvironmentController {
 			try {
 				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 				DocumentBuilder builder = factory.newDocumentBuilder();
-				svgDoc = builder.parse(envFile);
+				DOMParser parser = new DOMParser();
 				
-				Element mainPg = (Element) svgDoc.getDocumentElement().getFirstChild();
+				FileReader reader = new FileReader(envFile);
+				InputSource source = new InputSource(reader);
+				parser.parse(source);
+				Document doc = parser.getDocument();
+				
+				
+				
+				Element mainPg = (Element) doc.getDocumentElement().getFirstChild();
 				if(mainPg.getTagName().equals("playground")){
 					System.out.println(Language.translate("Lade Umgebung aus")+" "+envFile.getName()+"...");
 					this.mainPlayground = new Playground();
@@ -237,8 +296,15 @@ public class EnvironmentController {
 	 * Startet die in der Umgebung definierten Agenten
 	 */
 	public void startSimulation(){
+		
+			String ecAgentName="eca";
+			Object[] args = new Object[1];
+			args[0] = this;
+			
+			Application.JadePlatform.jadeAgentStart(ecAgentName, "mas.environment.EnvironmentControllerAgent", args, currentProject.getProjectFolder() );
+		
 			// Agent Objekte aus der Umgebung
-			Iterator<AgentObject> agents = mainPlayground.getAgents().iterator();
+			Iterator<AgentObject> agents = mainPlayground.getAgents().values().iterator();
 			while(agents.hasNext()){
 				startAgent(agents.next());
 			}

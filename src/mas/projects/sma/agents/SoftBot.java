@@ -1,6 +1,7 @@
 package mas.projects.sma.agents;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import mas.environment.AgentObject;
@@ -8,9 +9,11 @@ import mas.environment.ObstacleObject;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.ServiceException;
+import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.TickerBehaviour;
 import jade.core.messaging.TopicManagementHelper;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 
 /**
  * Dummy-Implementierung zum Testen des Displayagent
@@ -18,6 +21,11 @@ import jade.lang.acl.ACLMessage;
  *
  */
 public class SoftBot extends Agent {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	private int width;
 	private int height;
@@ -30,10 +38,7 @@ public class SoftBot extends Agent {
 	
 	private Collection<ObstacleObject> obstacles = null;
 	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+	private HashMap<String, AgentObject> agents = null;
 	
 	public void setup(){
 		// Initialize with values from environment definition
@@ -47,7 +52,18 @@ public class SoftBot extends Agent {
 			this.envHeight = self.getPlayground().getHeight();
 			this.envWidth = self.getPlayground().getWidth();
 			this.obstacles = self.getPlayground().getObstacles();
+			this.agents = self.getPlayground().getAgents();
 			this.addBehaviour(new MoveExampleBehaviour(this, 50));
+			try {
+				TopicManagementHelper tmh = (TopicManagementHelper) getHelper(TopicManagementHelper.SERVICE_NAME);
+				AID positionTopic = tmh.createTopic("position");
+				tmh.register(positionTopic);
+				addBehaviour(new PosUpdateBehaviour(MessageTemplate.MatchTopic(positionTopic)));
+			
+			} catch (ServiceException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}		
 	}
 	
@@ -106,6 +122,30 @@ public class SoftBot extends Agent {
 				}				
 			}
 			
+			Iterator<AgentObject> aIter = agents.values().iterator();
+			while(aIter.hasNext()){
+				AgentObject ao = aIter.next();
+				
+				// X Richtung
+				if(oldY+height>ao.getPosY()&&oldY<ao.getPosY()+ao.getHeight()){
+					if(posX+width>ao.getPosX()&&posX<ao.getPosX()+ao.getWidth()
+							&&!(oldX+width>ao.getPosX()&&oldX<ao.getPosX()+ao.getWidth())){
+						collX = true;
+						System.out.println("Agent collision");
+					}
+						
+				}
+				// Y Richtung
+				if(oldX+width>ao.getPosX()&&oldX<ao.getPosX()+ao.getWidth()){
+					if(posY+height>ao.getPosY()&&posY<ao.getPosY()+ao.getHeight()
+							&&!(oldY+height>ao.getPosY()&&oldY<ao.getPosY()+ao.getHeight())){
+						collY = true;
+						System.out.println("Agent collision");
+					}
+						
+				}				
+			}
+			
 			if(collX){
 				speedX = -speedX;
 			}
@@ -128,6 +168,43 @@ public class SoftBot extends Agent {
 			bye.setContent("bye");
 			myAgent.send(bye);
 			return 0;
+		}
+		
+	}
+	
+	class PosUpdateBehaviour extends CyclicBehaviour{
+		
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		MessageTemplate positionTemplate;
+		
+		public PosUpdateBehaviour(MessageTemplate mt){
+			this.positionTemplate = mt;
+		}
+
+		@Override
+		public void action() {
+			ACLMessage posUpdate = receive(positionTemplate);
+			if(posUpdate != null){
+				String sender = posUpdate.getSender().getLocalName();
+				String content = posUpdate.getContent();
+				if(content.equals("bye")){
+					// Agent wurde beendet -> entferne aus HashMap
+					agents.remove(sender);
+				}else{
+					String[] pos = content.split(",");
+					AgentObject agent = agents.get(sender);
+					agent.setPosX(Integer.parseInt(pos[0]));
+					agent.setPosY(Integer.parseInt(pos[1]));					
+				}
+				
+			}else{
+				block();
+			}
+				
+			
 		}
 		
 	}

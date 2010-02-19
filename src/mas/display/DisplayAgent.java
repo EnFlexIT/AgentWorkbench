@@ -96,7 +96,7 @@ public class DisplayAgent extends Agent {
 		 * Agenten aus der Umgebungsdefinition lesen und in HashMap speichern
 		 * (=> über id/localName direkt adressierbar)
 		 */
-		Iterator<AgentObject> agents = environment.getAgents().iterator();
+		Iterator<AgentObject> agents = environment.getAgents().values().iterator();
 		this.agents = new HashMap<String, AgentObject>();
 		while(agents.hasNext()){
 			AgentObject newAgent = agents.next();

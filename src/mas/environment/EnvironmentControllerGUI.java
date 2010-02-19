@@ -629,7 +629,10 @@ public class EnvironmentControllerGUI extends JSplitPane {
 					if(getFcSave().showSaveDialog(EnvironmentControllerGUI.this) == JFileChooser.APPROVE_OPTION){
 						envFile = getFcSave().getSelectedFile();
 					}
-					ec.saveEnvironment(envFile);					
+//					ec.saveEnvironment(envFile);
+					ec.saveEnv(envFile);
+//					ec.saveEnv2(envFile);
+					
 				}
 				
 			});
