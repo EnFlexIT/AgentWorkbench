@@ -5,15 +5,14 @@ import java.awt.event.ActionListener;
 import java.util.Observable;
 import java.util.Observer;
 
-import javax.swing.JScrollPane;
-
 import application.Project;
+import javax.swing.JDesktopPane;
 
 /**
  * @author: Christian Derksen
  *
  */
-public class SimulationMessages extends JScrollPane implements Observer, ActionListener {
+public class SimulationMessages extends JDesktopPane implements Observer, ActionListener {
 
 	private Project CurrProject;
 	
@@ -27,6 +26,7 @@ public class SimulationMessages extends JScrollPane implements Observer, ActionL
 		this.CurrProject = CP;
 		this.CurrProject.addObserver(this);		
 		initialize();	
+		this.CurrProject.ProjectDesktop = this;
 	}
 
 	/**
@@ -35,21 +35,24 @@ public class SimulationMessages extends JScrollPane implements Observer, ActionL
 	 */
 	private void initialize() {
 		
-		this.setLayout(null);
-		this.setSize(850, 500);
 		this.setAutoscrolls(true);		
-		this.setBorder(null);
-		this.setFocusable(true);
-		this.setVisible(true);
-		
-		
+		this.addContainerListener(new java.awt.event.ContainerListener() {
+			public void componentAdded(java.awt.event.ContainerEvent e) {
+				System.out.println( e.getSource() );
+				setFocus();
+			}
+			public void componentRemoved(java.awt.event.ContainerEvent e) {
+			}
+		});
 	}
 
 	/**
-	 * This method initializes ProjectTitel	
-	 * 	
-	 * @return javax.swing.JTextField	
+	 * Set's the focus to the current project-message
 	 */
+	public void setFocus () {
+		CurrProject.setFocus();
+		CurrProject.ProjectGUI.setFocusOnProjectTab("Simulationsmeldungen");
+	}
 
 
 	@Override
@@ -74,7 +77,6 @@ public class SimulationMessages extends JScrollPane implements Observer, ActionL
 			
 		};
 	}
-
 	@Override
 	public void update(Observable arg0, Object arg1) {
 		// TODO Auto-generated method stub

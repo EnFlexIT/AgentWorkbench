@@ -8,6 +8,7 @@ import java.io.Writer;
 import java.util.Observable;
 import java.util.Vector;
 
+import javax.swing.JDesktopPane;
 import javax.swing.JOptionPane;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 import javax.xml.bind.JAXBContext;
@@ -25,6 +26,7 @@ import mas.environment.EnvironmentController;
 	
 	// --- GUI der aktuellen Projekt-Instanz -------------------
 	@XmlTransient public ProjectWindow ProjectGUI = null;
+	@XmlTransient public JDesktopPane ProjectDesktop = null;
 	
 	// --- Objekt- / Projektvariablen --------------------------
 	@XmlTransient public boolean ProjectUnsaved = false;

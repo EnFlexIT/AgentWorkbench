@@ -205,6 +205,10 @@ public class ProjectsLoaded {
 	 */
 	public Project get ( String ProjectName ) {
 		int Index = getIndexByName( ProjectName );
+		if ( Index == -1 ) {
+			// --- Falls der Verzeichnisname genommen wurde ----
+			Index = getIndexByFolderName( ProjectName );
+		}
 		return get(Index);
 	}
 	/**
@@ -247,7 +251,21 @@ public class ProjectsLoaded {
 		}
 		return Index;
 	}
-
+	/**
+	 * Identifies a Project by his Root-Folder-Name and returns the Array-/Window-Index
+	 * @param ProjectName
+	 * @return
+	 */
+	public int getIndexByFolderName ( String ProjectName ) {
+		int Index = -1;
+		for(int i=0; i<this.count(); i++) {
+			if( ProjectsOpen.get(i).getProjectFolder().toLowerCase().equalsIgnoreCase( ProjectName.toLowerCase() ) ) {
+				Index = i;
+				break;
+			}	
+		}
+		return Index;
+	}
 	/**
 	 * Counts the actual open projects
 	 */

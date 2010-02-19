@@ -26,6 +26,7 @@ import javax.swing.JDesktopPane;
 import contmas.ontology.*;
 
 import application.Application;
+import application.Project;
 
 
 public class ControlGUIAgent extends GuiAgent{
@@ -35,7 +36,12 @@ public class ControlGUIAgent extends GuiAgent{
 		// Instanciate the gui
 		myGui = new ControlGUI(this);
 		myGui.setVisible(true);
-		JDesktopPane desktop=Application.MainWindow.ProjectDesktop;
+		// ------------------------------------------------
+		// --- Hier gab es eine Änderung von Christian ----
+		Project CurrPro = Application.Projects.get("contmas");
+		JDesktopPane desktop = CurrPro.ProjectDesktop;
+		// --- Hier gab es eine Änderung von Christian ----
+		// ------------------------------------------------
 		desktop.add(myGui);
 		
         AgentContainer c = getContainerController();

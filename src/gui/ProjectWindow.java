@@ -260,5 +260,18 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 		RootNode.add( CurrentNode );		
 	}
 
-
+	/**
+	 * Setzt den Fokus auf eine bestimmte Karteikarte
+	 * @param title
+	 */
+	public void setFocusOnProjectTab ( String title ) {
+		for (int i=0; i<ProjectViewRightTabs.getComponentCount();  i++ ) {
+			Component Comp = ProjectViewRightTabs.getComponent(i);
+			if ( Comp.getName().equalsIgnoreCase( Language.translate(title) ) ) {
+				ProjectViewRightTabs.setSelectedIndex(i);		
+			}
+		}	
+	}
+	
+	
 }  //  @jve:decl-index=0:visual-constraint="10,10"
