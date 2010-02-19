@@ -38,6 +38,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.EtchedBorder;
 
+import mas.PlatformSysInfo;
+
 import application.Application;
 import application.Language;
 import application.Project;
@@ -104,7 +106,9 @@ public class CoreWindow extends JFrame implements ComponentListener{
 		// --- Console einstellen --------------------------------- 
 		ConsoleHeight = SplitProjectDesktop.getHeight() / 4; 
 		SplitProjectDesktop.setDividerLocation( SplitProjectDesktop.getHeight() - ConsoleHeight );
-		//ConsoleSetVisible(false);
+		if ( Application.RunInfo.AppUseInternalConsole() == false ) { 
+			ConsoleSetVisible(false);
+		}
 	}
 	// ------------------------------------------------------------	
 
@@ -756,6 +760,7 @@ public class CoreWindow extends JFrame implements ComponentListener{
 			}
 			// ------------------------------------------------
 			else if ( ActCMD.equalsIgnoreCase("ViewConsole") ) { 
+				PlatformSysInfo.getLoadAverage();
 				Application.MainWindow.ConsoleSwitch();
 			}
 			// ------------------------------------------------

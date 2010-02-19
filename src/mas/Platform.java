@@ -16,8 +16,10 @@ import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
+
 import application.Application;
 import application.Language;
+import application.reflection.Reflect;
 
 public class Platform extends java.lang.Object {
 
@@ -32,7 +34,7 @@ public class Platform extends java.lang.Object {
 	private jadeClasses Agents; 
 	public static Vector<Class<?>> AgentsVector;
 	
-	
+
 	public Platform() {
 		
 		// ----------------------------------------------
@@ -45,6 +47,7 @@ public class Platform extends java.lang.Object {
 		AP.setName("Hallo");
 		System.out.println( AP.toString() );
 		*/
+		//PlatformSysInfo.getLoadAverage();
 	}	
 	
 	/**
@@ -62,9 +65,17 @@ public class Platform extends java.lang.Object {
 						Application.MainWindow.setStatusJadeRunning(false);
 					}
 				});
-				// --- MainContainer starten ------------------------			
+				
+				// --- Services zusammenstellen ---------------------
+				String ServiceList = new String();
+				ServiceList = ServiceList.concat("jade.core.event.NotificationService;");
+				ServiceList = ServiceList.concat("jade.core.messaging.TopicManagementService;");
+				ServiceList = ServiceList.concat("jade.core.mobility.AgentMobilityService;");
+				ServiceList = ServiceList.concat("jade.core.migration.InterPlatformMobilityService;");
+												  
+				// --- MainContainer starten ------------------------				
 				Profile pMain = new ProfileImpl();
-				pMain.setParameter(Profile.SERVICES,"jade.core.event.NotificationService;jade.core.messaging.TopicManagementService" ); 
+				pMain.setParameter(Profile.SERVICES, ServiceList ); 
 				MASmc = MASrt.createMainContainer( pMain );				
 			}
 			catch ( Exception e ) {
@@ -422,7 +433,6 @@ public class Platform extends java.lang.Object {
 	}
 	
 	
-	
 	public Vector<Class<?>> jadeGetAgentClasses( String FilterFor ) {
 		
 		boolean PrintMsg = true;
@@ -462,7 +472,6 @@ public class Platform extends java.lang.Object {
 		}		
 		return FilteredVector;
 	}
-	
 	/**
 	 * Starts the search for Agents in the  
 	 * current environment in an own Thread

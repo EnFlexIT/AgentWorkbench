@@ -6,10 +6,12 @@ import gui.ProjectWindow;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
 
+import javax.swing.*;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.xml.bind.JAXBContext;
@@ -66,7 +68,7 @@ public class ProjectsLoaded {
 		Application.MainWindow.setStatusBar(ActionTitel + " ...");
 		
 		// ------------------------------------------------
-		// --- User-Dilog öffnen --------------------------
+		// --- Benutzer-Dialog öffnen ---------------------
 		// ------------------------------------------------
 		if ( Application.RunInfo.AppExecutedOver() == "IDE" ) {
 			// -----------------------------------------------
@@ -94,13 +96,45 @@ public class ProjectsLoaded {
 		}
 		else {
 			// -----------------------------------------------
-			// --- Datei-Dialog für "Neues Projekt" öffnen ---
-			// -----------------------------------------------			
-			// TODO: Öffnen-Verfahren über einen Dateidialog  
-			// -----------------------------------------------
+			// --- Datei-Dialog für "Projekt öffnen" laden ---
+			File DefaultFile = new File( Application.RunInfo.PathProjects(true, false) ); 
+
+			JFileChooser FileSelector = new JFileChooser();
+			FileSelector.setDialogTitle( Application.RunInfo.AppTitel() + " - " + ActionTitel );
+			FileSelector.setCurrentDirectory( DefaultFile );
+			FileSelector.setFileSelectionMode( JFileChooser.FILES_ONLY );
+			FileSelector.setAcceptAllFileFilterUsed(false);
+			FileSelector.addChoosableFileFilter( new javax.swing.filechooser.FileFilter() {
+				public String getDescription() {
+					return "AgentGUI - Projektdatei (*.xml)";
+				}
+				public boolean accept(File f) {
+					boolean RightFileType = false;
+					if (f.getName().endsWith("agentgui.xml")) RightFileType = true;
+					return RightFileType || f.isDirectory();					
+				}
+			});			
+			// Disable "New-Folder" - Button ----------------- 
+			((JPanel)FileSelector.getComponent(0)).getAccessibleContext().getAccessibleChild(0).getAccessibleContext().getAccessibleChild(4).getAccessibleContext().getAccessibleComponent().setEnabled(false);   
+			FileSelector.setVisible(true);			
+		
+			// --- Dialog öffnen -----------------------------
+			int SelectorResult = FileSelector.showOpenDialog(null);
+			if ( SelectorResult != FileSelector.APPROVE_OPTION) {
+				// --- Abbruch / Falscher Dateityp -----------
+				Application.setStatusBar( Language.translate("Fertig") );
+				return null;				
+			}	
+			
+			// --- Projektname und -verzeichnis festlegen 
+			int Cut = FileSelector.getSelectedFile().getParent().lastIndexOf( Application.RunInfo.AppPathSeparatorString() ) + 1;
+			LocalTmpProjectName =  FileSelector.getSelectedFile().getParent().substring(Cut);
+			LocalTmpProjectFolder = FileSelector.getSelectedFile().getParent();
+			if (LocalTmpProjectFolder.endsWith(Application.RunInfo.AppPathSeparatorString()) == false  )
+				LocalTmpProjectFolder = LocalTmpProjectFolder.concat(Application.RunInfo.AppPathSeparatorString());	
 		}				
 		
-		// --- Projektvariablen setzen -------------------
+		// --- Projektvariablen setzen -----------------------
 		NewPro.setProjectName( LocalTmpProjectName );
 		NewPro.setProjectFolder( LocalTmpProjectFolder );
 

@@ -164,11 +164,7 @@ public class ProjectInfo extends JScrollPane implements Observer, ActionListener
 			ProjectFolder.setBounds(new Rectangle(140, 285, 520, 26));
 			ProjectFolder.setFont(new Font("Dialog", Font.PLAIN, 12));
 			ProjectFolder.setEditable( false );
-			ProjectFolder.setText( "... " + 
-								   Application.RunInfo.PathProjects(false, false) +
-								   CurrProject.getProjectFolder() + 
-								   Application.RunInfo.AppPathSeparatorString() 
-								 );			
+			ProjectFolder.setText( CurrProject.getProjectFolderFullPath() );			
 			
 		}
 		return ProjectFolder;

@@ -8,7 +8,7 @@ public class GlobalInfo {
 
 	// --- Konstanten ------------------------------------------------------- 
 	final private static String LocalAppTitel = "Agent.GUI";
-	final private static boolean LocalAppUseInternalConsole = true;
+	final private static boolean LocalAppUseInternalConsole = false;
 	
 	final private static String LocalAppPathSeparatorString = File.separator;
 	final private static String LocalAppNewLineString = System.getProperty("line.separator");
@@ -30,7 +30,8 @@ public class GlobalInfo {
 	private static String LocalPathBatik	= "lib" + LocalAppPathSeparatorString + "batik";	
 	private static String LocalPathProperty = "properties" + LocalAppPathSeparatorString;
 	private static String LocalPathProjects =  "projects" + LocalAppPathSeparatorString;
-	private static String LocalPathProjectsIDE =  "src" + LocalAppPathSeparatorString +  "mas" + LocalAppPathSeparatorString + LocalPathProjects;
+	//private static String LocalPathProjectsIDE =  "src" + LocalAppPathSeparatorString +  "mas" + LocalAppPathSeparatorString + LocalPathProjects;
+	private static String LocalPathProjectsIDE =  LocalPathProjects;
 	private static String[] LocalProjects = null;
 	
 	private static String LocalFileRunnableJar = "AgentGui.jar";
@@ -157,6 +158,12 @@ public class GlobalInfo {
 		 * Aktuelles Basisverzeichnis der Anwendung
 		 */
 		return LocalBaseDir;
+	}	
+	public String PathBaseDirIDE_BIN( ) {
+		/**
+		 * Aktuelles KLassenverzeichnis der Anwendung für die IDE-Umgebung
+		 */
+		return LocalBaseDir + LocalPathAgentGUI + LocalAppPathSeparatorString;
 	}	
 	public String PathJade( Boolean Absolute ){
 		/**

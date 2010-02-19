@@ -204,7 +204,11 @@ import mas.environment.EnvironmentController;
 	 */
 	public void setProjectFolder(String projectFolder) {
 		ProjectFolder = projectFolder;
-		ProjectFolderFullPath = Application.RunInfo.PathProjects(true, false) + ProjectFolder + Application.RunInfo.AppPathSeparatorString();
+		if ( Application.RunInfo.AppExecutedOver() == "IDE" ) {
+			ProjectFolderFullPath = Application.RunInfo.PathProjects(true, false) + ProjectFolder + Application.RunInfo.AppPathSeparatorString();
+		} else {
+			ProjectFolderFullPath = ProjectFolder;
+		}
 		setChanged();
 		notifyObservers( "ProjectFolder" );
 	}
@@ -226,7 +230,7 @@ import mas.environment.EnvironmentController;
 	 * @param projectAgents the projectAgents to set
 	 */
 	public void filterProjectAgents() {
-		String FolderFilter = Application.RunInfo.PathProjects(false, true) + getProjectFolder();
+		String FolderFilter = getProjectFolder();
 		ProjectAgents = Application.JadePlatform.jadeGetAgentClasses( FolderFilter );
 		setChanged();
 		notifyObservers("ProjectAgents");
