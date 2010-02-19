@@ -38,7 +38,7 @@ public class SimulationMessages extends JDesktopPane implements Observer, Action
 		this.setAutoscrolls(true);		
 		this.addContainerListener(new java.awt.event.ContainerListener() {
 			public void componentAdded(java.awt.event.ContainerEvent e) {
-				System.out.println( e.getSource() );
+				//System.out.println( e.getSource() );
 				setFocus();
 			}
 			public void componentRemoved(java.awt.event.ContainerEvent e) {
