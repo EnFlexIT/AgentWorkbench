@@ -138,7 +138,6 @@ public class ProjectsLoaded {
 		NewPro.setProjectName( LocalTmpProjectName );
 		NewPro.setProjectFolder( LocalTmpProjectFolder );
 
-		// --- Further 
 		if ( addNew == true ) {			
 			// --- Unterverzeichnise anlegen ------------------
 			NewPro.CheckCreateSubFolders();

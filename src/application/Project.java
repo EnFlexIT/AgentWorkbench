@@ -163,8 +163,9 @@ import mas.environment.EnvironmentController;
 	}
 
 	public void setMaximized() {
+		Application.MainWindow.validate();
 		((BasicInternalFrameUI) Application.ProjectCurr.ProjectGUI.getUI()).setNorthPane(null);
-		Application.MainWindow.ProjectDesktop.getDesktopManager().maximizeFrame( ProjectGUI );		
+		Application.MainWindow.ProjectDesktop.getDesktopManager().maximizeFrame( ProjectGUI );				
 	}
 
 	
