@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry excluding="utils/" kind="src" path="src"/>
+	<classpathentry kind="src" path="projects"/>
 	<classpathentry kind="src" path="src/utils"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="lib" path="lib/batik/batik-rasterizer.jar"/>
@@ -18,5 +19,7 @@
 	<classpathentry kind="lib" path="lib/batik/lib/xml-apis-ext.jar"/>
 	<classpathentry kind="lib" path="lib/batik/lib/batik-script.jar"/>
 	<classpathentry kind="lib" path="lib/batik/lib/batik-bridge.jar"/>
+	<classpathentry kind="lib" path="lib/jade/lib/commons-codec/commons-codec-1.3.jar"/>
+	<classpathentry kind="lib" path="lib/jade/lib/migration.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

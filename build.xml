@@ -36,7 +36,8 @@
 					lib/jade/lib/http.jar
 					lib/jade/lib/iiop.jar
 					lib/jade/lib/jade.jar
-					lib/jade/lib/jadeTools.jar" />
+					lib/jade/lib/jadeTools.jar
+					lib/jade/lib/migration.jar" />
 	
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
           target: cleanup => Aufräumen, bevor es wirklich los geht                      

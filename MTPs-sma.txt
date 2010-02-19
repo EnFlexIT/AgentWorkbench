@@ -1,1 +1,1 @@
-http://NB-Nils:1192/acc
+http://rudel1.informatik.uni-essen.de:2690/acc
