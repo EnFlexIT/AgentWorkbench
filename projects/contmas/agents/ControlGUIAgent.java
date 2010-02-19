@@ -40,9 +40,9 @@ public class ControlGUIAgent extends GuiAgent{
 		
         AgentContainer c = getContainerController();
         try {
-            AgentController a = c.createNewAgent( "RandomGenerator", "mas.projects.contmas.agents.RandomGeneratorAgent", null );
+            AgentController a = c.createNewAgent( "RandomGenerator", "contmas.agents.RandomGeneratorAgent", null );
             a.start();
-            a = c.createNewAgent( "HarborMaster", "mas.projects.contmas.agents.HarborMasterAgent", null );
+            a = c.createNewAgent( "HarborMaster", "contmas.agents.HarborMasterAgent", null );
             a.start();
         }
         catch (Exception e){
@@ -56,7 +56,7 @@ public class ControlGUIAgent extends GuiAgent{
 	        AgentContainer c = getContainerController();
 	        try {
 	        	String name=ev.getParameter(0).toString();
-//	            AgentController a = c.createNewAgent(name , "mas.projects.contmas.agents.ShipAgent", null );
+//	            AgentController a = c.createNewAgent(name , "contmas.agents.ShipAgent", null );
 		        Ship ontologyRepresentation=new Ship();
 				Domain habitat = new Sea();
 		        ontologyRepresentation.setLives_in(habitat);
