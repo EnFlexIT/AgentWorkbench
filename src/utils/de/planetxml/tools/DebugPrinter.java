@@ -234,7 +234,7 @@ public class DebugPrinter {
                         pw.print(escapeString(property));
                         pw.print(": ");
                         try {
-                            printProperties(m[i].invoke(o, null), pw, level+1);
+                            printProperties( m[i].invoke(o, new Object[0]), pw, level+1);
                             c++;
                         }
                         catch (Exception e) {

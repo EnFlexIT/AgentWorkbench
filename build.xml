@@ -16,8 +16,11 @@
 	<property name="sourceDir" value="src" />
 	<property name="sourceDirLibraries" value="lib" />
 	<property name="sourceDirProperties" value="properties" />
+	<property name="sourceDirImages" value="src\img" />
 	
 	<property name="binaryDir" value="bin" />
+	<property name="binaryDirANT" value="build" />
+	<property name="binaryDirIMG" value="build\img" />
 	
 	<property name="destinDir" value="D:\00 Tmp\00 Jars\AgentGUI\\" />
 	<property name="destinJar" value="${destinDir}\AgentGui.jar" />		
@@ -43,7 +46,7 @@
           target: cleanup => Aufräumen, bevor es wirklich los geht                      
          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
     <target name="cleanup" description="Löschen der alten Datei- und Verzeichnisstruktur ...">
-    	<delete failonerror="false" dir="${destinDir}" />    	    	
+    	<delete failonerror="false" dir="${binaryDirANT}" />    	    	
     </target>
 	
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -60,7 +63,25 @@
           target: compile => Anlegen der Verzeichnisstruktur                      
          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
     <target name="compile" description="Erzeugung des Byte-Codes ...">
-		<echo message="Java-Version ${ant.java.version}" />    	    	
+    	
+    	<delete failonerror="false" dir="${binaryDirANT}" />
+    	<mkdir dir="${binaryDirANT}" />    	
+    	
+    	<path id="class.path">
+    	  <fileset dir="lib">
+    	    <include name="**/*.jar" />
+    	  </fileset>
+    	</path>
+
+    	<echo message="Compile: Java-Version ${ant.java.version}" />
+    	<javac destdir="${binaryDirANT}" encoding="iso-8859-1">    		
+    		<src path="${sourceDir}" />
+    		<classpath refid="class.path" />
+    	</javac>
+    	<copy todir="${binaryDirIMG}">
+    		<fileset dir="${sourceDirImages}" />
+    	</copy>  
+    	
     </target>
 	
 	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -85,9 +106,9 @@
 				<attribute name="Built-By" value="${user.name}"/>
  				<attribute name="Built-Lang" value="${user.language}"/>
     		    <attribute name="Main-Class" value="application.Application"/>
- 				<attribute name="Class-Path" value="${destinClassPath}"/>
+ 				<attribute name="Class-Path" value="${destinClassPath}"/> 				
 			</manifest>    		
-    		<fileset dir="${binaryDir}">
+    		<fileset dir="${binaryDirANT}">
     			<exclude name="**/mas/projects/**" />    			
     		</fileset>    		
         </jar>

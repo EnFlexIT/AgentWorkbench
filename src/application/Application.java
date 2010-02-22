@@ -47,7 +47,7 @@ public class Application {
 		// --------------------------------------------
 		// --- Jade beenden ------------------------
 		JadePlatform.jadeStop();
-		// --- Noch offene Projekte schlieﬂen ------
+		// --- Noch offene Projekte schliessen ------
 		if ( Projects.closeAll() == false ) return;
 		// --- Fertig ------------------------------
 		System.out.println( Language.translate("Programmende ... ") );

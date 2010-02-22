@@ -69,7 +69,7 @@ public class GlobalInfo {
 		}
 		if ( LocalAppExecutedOver == "IDE"  ) {
 			// -------------------------------------------------------------
-			// --- Verzeichnis-Einträge eindeutig (unique) machen -----------
+			// --- Verzeichnis-Eintraege eindeutig (unique) machen -----------
 			JCP_Folders = (String[])Folders.toArray(new String[Folders.size()]);
 			for (int j = 0; j < JCP_Folders.length; j++) {				
 				if ( JCP_Folders[j].indexOf( LocalPathAgentGUI ) != -1 ) {
@@ -81,7 +81,7 @@ public class GlobalInfo {
 			} // -- End 'for' --
 
 			// --------------------------------------------------------------
-			// --- Bei Ausführung IDE, einige Variablen umstellen -----------			
+			// --- Bei Ausfuehrung IDE, einige Variablen umstellen -----------			
 			LocalFileRunnableJar = null;
 			LocalPathProjects =  LocalPathProjectsIDE;
 			
@@ -122,7 +122,7 @@ public class GlobalInfo {
 	};
 	public void setAppLnf( String NewLnF ) {
 		/**
-		 * Look and Feel - Einstellung  ändern
+		 * Look and Feel - Einstellung  aendern
 		 */
 		LocalAppLnF = NewLnF;
 	};
@@ -161,13 +161,13 @@ public class GlobalInfo {
 	}	
 	public String PathBaseDirIDE_BIN( ) {
 		/**
-		 * Aktuelles KLassenverzeichnis der Anwendung für die IDE-Umgebung
+		 * Aktuelles KLassenverzeichnis der Anwendung fuer die IDE-Umgebung
 		 */
 		return LocalBaseDir + LocalPathAgentGUI + LocalAppPathSeparatorString;
 	}	
 	public String PathJade( Boolean Absolute ){
 		/**
-		 * Unterverzeichnis für die Jade-Libraries
+		 * Unterverzeichnis fuer die Jade-Libraries
 		 */
 		if ( Absolute == true ) { 
 			return FilePath2Absolute( LocalPathJade );
@@ -178,7 +178,7 @@ public class GlobalInfo {
 	}
 	public String PathBatik( Boolean Absolute ){
 		/**
-		 * Unterverzeichnis für die Batik-Libraries
+		 * Unterverzeichnis fuer die Batik-Libraries
 		 */
 		if ( Absolute == true ) { 
 			return FilePath2Absolute( LocalPathBatik );
@@ -189,7 +189,7 @@ public class GlobalInfo {
 	}
 	public String PathProperty( Boolean Absolute ){
 		/**
-		 * Unterverzeichnis für Eigenschaftsdateien
+		 * Unterverzeichnis fuer Eigenschaftsdateien
 		 */
 		if ( Absolute == true ) { 
 			return FilePath2Absolute( LocalPathProperty );
@@ -200,7 +200,7 @@ public class GlobalInfo {
 	}
 	public String PathProjects( Boolean Absolute, boolean UseImportSpecification ){
 		/**
-		 * Unterverzeichnis für Projekte
+		 * Unterverzeichnis fuer Projekte
 		 */
 		if ( UseImportSpecification == true ) {
 			String ImportPath = LocalPathProjects;
@@ -244,7 +244,7 @@ public class GlobalInfo {
 	
 	public String PathImageIntern( ){
 		/**
-		 * Bild-Unterverzeichnis für das Projekt
+		 * Bild-Unterverzeichnis fuer das Projekt
 		 */
 		return LocalPathImageIntern;
 	}
@@ -263,7 +263,7 @@ public class GlobalInfo {
 	}
 	public String FileDictionary( Boolean Absolute ){
 		/**
-		 * Verweis auf die Dictionary-Datei zur Sprachübersetzung
+		 * Verweis auf die Dictionary-Datei zur Sprachuebersetzung
 		 */
 		if ( Absolute== true ) { 
 			return FilePath2Absolute( LocalFileDictionary );
