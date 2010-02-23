@@ -1,1 +1,17 @@
 application
+application.reflection
+com.missing
+com.missing.inspect
+contmas.agents
+contmas.ontology
+de.planetxml.tools
+gui
+gui.projectwindow
+mas
+mas.agents
+mas.display
+mas.environment
+monitormas.agents
+monitormas.ontology
+physics.ontology
+sma.agents
