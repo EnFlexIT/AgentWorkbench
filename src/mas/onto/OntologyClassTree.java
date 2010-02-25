@@ -1,5 +1,6 @@
 package mas.onto;
 
+import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Iterator;
 
@@ -9,7 +10,7 @@ import javax.swing.tree.DefaultTreeModel;
 import application.Project;
 import application.reflection.Reflect;
 
-public class OntologieTree extends DefaultTreeModel {
+public class OntologyClassTree extends DefaultTreeModel implements Serializable {
 
 	/**
 	 * 
@@ -35,9 +36,8 @@ public class OntologieTree extends DefaultTreeModel {
 	private final static String BaseClassObject = "java.lang.Object";
 	// --------------------------------------------------------------------------
 	
-	
-	public OntologieTree(DefaultMutableTreeNode root, Project CurrPro) {
-		super(root);
+	public OntologyClassTree(DefaultMutableTreeNode root, Project CurrPro) {
+		super(root);		
 		// --- Basisstruktur erstellen -------------------------
 		RootNode = root;
 		
@@ -46,7 +46,6 @@ public class OntologieTree extends DefaultTreeModel {
 
 		AActionNode = new DefaultMutableTreeNode( "AgentAction" );
 		ConceptNode.add( AActionNode );		
-		
 		
 		// --- Suchverzeichnis festlegen ----------------------
 		SearchIN = CurrPro.getProjectFolder()+".ontology";
@@ -112,7 +111,7 @@ public class OntologieTree extends DefaultTreeModel {
 	        	
 	        	// ---------------------------------------------
 	        	// --- Aktuelle Klasse in Tree darstellen ------
-	        	CurrentNode = new DefaultMutableTreeNode( getClassTextSimple( ClaName ) );
+	        	CurrentNode = new DefaultMutableTreeNode( new OntologyClassTreeObject(Cla) );
 	        	if ( ClaIsBaseOnto == true ) {
 	        		// --- Root-Node umbennennen ---------------
 	        		RootNode.setUserObject( getClassTextSimple( ClaName ) );
@@ -167,10 +166,12 @@ public class OntologieTree extends DefaultTreeModel {
 		DefaultMutableTreeNode NodeFound = null;
 		DefaultMutableTreeNode CurrNode = null;
 		Reference = Reference.replace( SearchIN + "." , "");
+		String CurrNodeText;
 		
 		for (Enumeration<DefaultMutableTreeNode> e = RootNode.breadthFirstEnumeration(); e.hasMoreElements();) {
 			CurrNode = e.nextElement();
-			if ( CurrNode.getUserObject().equals(Reference) ) {				
+			CurrNodeText = CurrNode.getUserObject().toString(); 
+			if ( CurrNodeText.equals(Reference) ) {				
 				NodeFound = CurrNode;
 				break;
 			} 
@@ -184,13 +185,7 @@ public class OntologieTree extends DefaultTreeModel {
 	 * @return
 	 */
 	private String getClassTextSimple( String Reference ) {
-		
-		String ClaTeSi = null;
-		int Cut = -1;
-		
-		Cut = Reference.lastIndexOf(".");
-		ClaTeSi = Reference.substring( Cut+1 );
-		return ClaTeSi;
+		return Reference.substring( Reference.lastIndexOf(".")+1 );
 	}
 
 	

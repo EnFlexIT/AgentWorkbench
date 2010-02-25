@@ -15,14 +15,11 @@ import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import mas.onto.OntologieTree;
-
-import application.Language;
+import mas.onto.OntologyClassTreeObject;
 import application.Project;
 
 /**
@@ -38,9 +35,6 @@ public class Ontology extends JPanel implements Observer, ActionListener {
 	private JScrollPane TreeScrollPane = null;
 
 	private JTree OntoTree = null;
-	private DefaultTreeModel OntoTreeModel;
-	private DefaultMutableTreeNode RootNode;
-	
 	private JPanel OntoMain = null;
 
 	/**
@@ -51,9 +45,6 @@ public class Ontology extends JPanel implements Observer, ActionListener {
 		this.CurrProject = CP;
 		this.CurrProject.addObserver(this);		
 		
-		// --- TreeModel initialisieren --------------------------
-		RootNode = new DefaultMutableTreeNode( Language.translate("Ontologie") );
-		OntoTreeModel = new OntologieTree( RootNode, CurrProject );	
 		// --- Form aufbauen -------------------------------------
 		this.initialize();	
 
@@ -146,7 +137,7 @@ public class Ontology extends JPanel implements Observer, ActionListener {
 	 */
 	private JTree getOntoTree() {
 		if (OntoTree == null) {
-			OntoTree = new JTree( OntoTreeModel );
+			OntoTree = new JTree( CurrProject.getProjectOntologieTree() );
 			OntoTree.setName("OntoTree");
 			OntoTree.setShowsRootHandles(false);
 			OntoTree.setRootVisible(true);
@@ -161,15 +152,19 @@ public class Ontology extends JPanel implements Observer, ActionListener {
 					Integer PathLevel = PathSelected.getPathCount();
 					//System.out.println( PathLevel + " => "  + ts.getPath().toString() );
 					
-					// ----------------------------------------------------------
-					if ( PathLevel == 2 ) {
-						// ------------------------------------------------------
-						// --- Fokus auf die entsprechende Karteikarte setzen ---
-						// ------------------------------------------------------
-						TreeNode BaseNode = (TreeNode) ts.getPath().getPathComponent(1);
-						String BaseNodeName = BaseNode.toString();
-											
-					} 
+					DefaultMutableTreeNode CurrNode = (DefaultMutableTreeNode)ts.getPath().getLastPathComponent();
+					Object CurrUserObject = CurrNode.getUserObject();
+					if ( CurrUserObject instanceof String ) {
+						// --- String-Objekt in Node ----------------------
+						//System.out.println( CurrUserObject );
+					} else if ( CurrUserObject instanceof OntologyClassTreeObject ) {
+						// --- Klasse bearbeiten / auslesen ---------------
+						OntologyClassTreeObject OTJ = (OntologyClassTreeObject ) CurrUserObject;
+						Class<?> CurrClass = OTJ.OntoClass;
+						//System.out.println( CurrClass.getName() );
+					}
+					
+					
 					// ----------------------------------------------------------
 					// --- Tree-Selection abfangen --- S T O P ------------------
 					// ----------------------------------------------------------
@@ -187,8 +182,7 @@ public class Ontology extends JPanel implements Observer, ActionListener {
     	Integer CurrNodeLevel = 1;
     	if ( Up2TreeLevel == null ) 
     		Up2TreeLevel = 1000;
-
-    	OntoTreeExpand( new TreePath(RootNode), expand, CurrNodeLevel, Up2TreeLevel);
+    	OntoTreeExpand( new TreePath( CurrProject.getProjectOntologieTree().getRoot() ), expand, CurrNodeLevel, Up2TreeLevel);
     }
     @SuppressWarnings("unchecked")
 	private void OntoTreeExpand( TreePath parent, boolean expand, Integer CurrNodeLevel, Integer Up2TreeLevel) {

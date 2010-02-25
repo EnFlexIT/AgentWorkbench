@@ -12,8 +12,6 @@ import java.io.FileReader;
 import java.util.ArrayList;
 
 import javax.swing.*;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -120,7 +118,7 @@ public class ProjectsLoaded {
 		
 			// --- Dialog öffnen -----------------------------
 			int SelectorResult = FileSelector.showOpenDialog(null);
-			if ( SelectorResult != FileSelector.APPROVE_OPTION) {
+			if ( SelectorResult != JFileChooser.APPROVE_OPTION) {
 				// --- Abbruch / Falscher Dateityp -----------
 				Application.setStatusBar( Language.translate("Fertig") );
 				return null;				

@@ -14,7 +14,6 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import application.Application;
 import application.Language;
 import application.Project;
 

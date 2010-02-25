@@ -1,6 +1,5 @@
 package application;
 
-import application.reflection.Reflect;
 import gui.CoreWindow;
 import gui.CoreWindowConsole;
 import mas.Platform;

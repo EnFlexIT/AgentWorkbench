@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
@@ -33,17 +32,18 @@ public class Reflect extends ArrayList<String> {
 		
 		// --- Testausgaben ---------------------------------
 		int i = this.size();
-		System.out.println("KLasse No. "+i+": " + this.get(i-1).toString() );
-		try {
-            Class c = Class.forName(this.get(i-1).toString());
-            Method m[] = c.getDeclaredMethods();
-            for (int j = 0; j < m.length; j++)
-            System.out.println(m[j].toString());
-        }
-        catch (Throwable e) {
-        	System.err.println(e);
-        }	
-
+		if (i!=0) {
+			System.out.println("KLasse No. "+i+": " + this.get(i-1).toString() );
+			try {
+	            Class<?> c = Class.forName(this.get(i-1).toString());
+	            Method m[] = c.getDeclaredMethods();
+	            for (int j = 0; j < m.length; j++)
+	            System.out.println(m[j].toString());
+	        }
+	        catch (Throwable e) {
+	        	System.err.println(e);
+	        }	
+		}
 	}
 
 	private void getClazzes() {
