@@ -5,55 +5,37 @@ import java.io.FileInputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
 import application.Application;
 
-public class Reflect {
+public class Reflect extends ArrayList<String> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private ArrayList<String> ClazzList = null;
-	
-	public Reflect(String Folder) {
+	private String SearchINReference = null;
+	private String[] SearchINPathParts = null;
+		
+		
+	public Reflect( String SearchReference ) {
 		// --- Verzeichnis, in dem die Ontologie liegt auslesen ---
-		getClazzes();		
-	}
-	
-	private ArrayList<String> getClazzes() {
-		/**
-		 * 
-		 */
-		if ( Application.RunInfo.AppExecutedOver() == "IDE" ) {
-			// --- Read Classes from the IDE environment ----
-			String SearchPath = Application.RunInfo.PathBaseDirIDE_BIN();
-			ClazzList = getIDEClasses( SearchPath, SearchPath );			
-		} else {
-			// --- Read Classes from the inside of a jar  ---
-			ClazzList = getJARClasses( Application.RunInfo.AppFileRunnableJar(true) );
-		}		
-		// --- nix gefunden, dann raus hier ---
-		if (ClazzList == null || ClazzList.size() == 0 ) {
-			return  null;
-		};
-		
-		
-		// --- Iterator für ClazzList ---
-		String Klassenname;
-		Iterator<String> ClLi = ClazzList.listIterator();
-	    while ( ClLi.hasNext() ) {
-	    	Klassenname = ClLi.next();
-	        System.out.println( "=> " + Klassenname );
-	      }
-
-		
+		SearchINReference = SearchReference;
+		if ( !(SearchINReference == null) ) {
+			SearchINPathParts = SearchINReference.split("\\.");
+		}
+		this.getClazzes();
+		this.addAll( ClazzList );
 		
 		// --- Testausgaben ---------------------------------
-		int i = 8;
-		System.out.println("KLasse No. "+i+": " + ClazzList.get(i-1).toString() );
+		int i = this.size();
+		System.out.println("KLasse No. "+i+": " + this.get(i-1).toString() );
 		try {
-            Class c = Class.forName(ClazzList.get(i-1).toString());
+            Class c = Class.forName(this.get(i-1).toString());
             Method m[] = c.getDeclaredMethods();
             for (int j = 0; j < m.length; j++)
             System.out.println(m[j].toString());
@@ -61,10 +43,25 @@ public class Reflect {
         catch (Throwable e) {
         	System.err.println(e);
         }	
+
+	}
+
+	private void getClazzes() {
+		/**
+		 * Initial detection of the available classe by using the 'SearchReference'
+		 */
+		String SearchPath = null;
 		
-		//Application.class.getPackage()
-		return ClazzList;
-		 
+		if ( Application.RunInfo.AppExecutedOver() == "IDE" ) {
+			// ------------------------------------------------------------------------
+			// --- Read Classes from the IDE environment ------------------------------
+			SearchPath = Application.RunInfo.PathBaseDirIDE_BIN();
+			ClazzList = getIDEClasses( SearchPath, SearchPath );
+		} else {
+			// ------------------------------------------------------------------------
+			// --- Read Classes from the inside of a jar  -----------------------------
+			ClazzList = getJARClasses( Application.RunInfo.AppFileRunnableJar(true) );
+		}		
 	}
 
 	private ArrayList<String> getJARClasses(String jarName) {
@@ -89,7 +86,14 @@ public class Reflect {
 				if ((jarEntry.getName().startsWith(packageName)) && (jarEntry.getName().endsWith(".class"))) {
 					CurrClass = jarEntry.getName().replaceAll("/", "\\.");
 					CurrClass = CurrClass.substring(0, CurrClass.length() - (".class").length());
-					classes.add( CurrClass );
+					// --- Klasse in die Auflistung aufnehmen ? ---
+					if ( SearchINReference == null ) {
+						classes.add( CurrClass );	
+					} else {
+						if (CurrClass.startsWith( SearchINReference ) ) {
+							classes.add( CurrClass );
+						}		
+					}
 				}
 			}
 		} catch (Exception e) {
@@ -109,25 +113,68 @@ public class Reflect {
 		int CutEnd   = 0;
 		String CurrClass = "";
 		
-		
 		File dir = new File(SearchPath);
 		File[] files = dir.listFiles();
 		if (files != null) {
 			for (int i = 0; i < files.length; i++) {
-				if (files[i].isDirectory()) {
-					//System.out.print(" (Ordner)\n");
-					FileList.addAll( getIDEClasses( BasePath, files[i].getAbsolutePath() ) ); 
-					}
-				else {
+				// --------------------------------------------------------------------
+				// --------------------------------------------------------------------
+				if ( files[i].isDirectory() ) {
+					// ----------------------------------------------------------------
+					// --- System.out.print(" (Unteriordner)\n");
+					if ( SearchINReference == null ) {
+						// ------------------------------------------------------------
+						// --- Falls nach nichts konkretem gesucht wird, dann --------- 
+						// --- alles in die Ergebnisliste aufnehmen 		  ---------
+						FileList.addAll( getIDEClasses( BasePath, files[i].getAbsolutePath() ) );	
+					} else {
+						// ------------------------------------------------------------
+						// --- Nur das durchsuchen, was auch wirklich interessiert ----
+						boolean MoveDeeper = false;
+						String SearchINPath = null;
+						// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+						for (int j=0; j<SearchINPathParts.length; j++) {
+							if ( SearchINPath == null ) {
+								SearchINPath = SearchINPathParts[j];	
+							} else {
+								SearchINPath = SearchINPath +  Application.RunInfo.AppPathSeparatorString() + SearchINPathParts[j];
+							}								
+							// --- Aktuellen Pfad untersuchen / vergleichen -----------
+							if ( files[i].getAbsolutePath().endsWith( SearchINPath) ) {
+								MoveDeeper = true;
+								break;
+							}							
+						}
+						// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+						if ( MoveDeeper == true ) {
+							// --- eine Verzeichnisebene tiefer suchen ----------------
+							FileList.addAll( getIDEClasses( BasePath, files[i].getAbsolutePath() ) );	
+						}
+						// ------------------------------------------------------------
+						// ------------------------------------------------------------
+						}					 
+				} else {
+					// ----------------------------------------------------------------
+					// --- System.out.println("Datei: " + CurrClass );
 					CurrClass = files[i].getAbsolutePath().toString();
 					if ( CurrClass.endsWith(".class") ) {
-						//System.out.println("Datei: " + CurrClass );
+						// --- String der Klassendatei anpassen -----------------------
 						CutEnd    = CurrClass.length() - (".class").length();						
 						CurrClass = CurrClass.substring(CutBegin, CutEnd);
-						CurrClass = CurrClass.replace('/', '.').replace('\\', '.');
-						FileList.add( CurrClass );
+						CurrClass = CurrClass.replace('/', '.').replace('\\', '.');						
+						// --- Klasse in die Auflistung aufnehmen ? -------------------
+						if ( SearchINReference == null ) {
+							FileList.add( CurrClass );	
+						} else {
+							if (CurrClass.startsWith( SearchINReference ) ) {
+								FileList.add( CurrClass );
+							}		
+						}
+						// ------------------------------------------------------------
 					}
 				}
+				// --------------------------------------------------------------------
+				// --------------------------------------------------------------------
 			}		
 		}
 		return FileList;

@@ -467,7 +467,6 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 			// ++++++++++++++++++++++++++++++++++++++++++++++++++++
 			// --- Test, ob ein Projektordner gewählt wurde -------
 			if ( ProError==false && (ProFolder == null || ProFolder == "" || ProFolder.length() == 0) ) {
-				System.out.println("Fehler gefunden ");
 				ProErrorSrc = "ProFolder";
 				ProError = true;
 			}

@@ -58,14 +58,14 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 		ProjectTreeModel = new DefaultTreeModel( RootNode );	
 		
 		// --- Projektfenster zusammenbauen ----------------------
-		initialize();		
+		this.initialize();		
 		
 		// --- Anzeige der Basisinformationen immer einblenden ---
 		addProjectTab( "Projekt-Info", null, new gui.projectwindow.ProjectInfo( CurrProject ), "Projekt-Info" );
 
 		// --- Die (optionalen) Karteikarten einblenden ----------
 		addProjectTab(Language.translate("Basis-Agenten"), null, new gui.projectwindow.BaseAgents(CurrProject), Language.translate("Basis-Agenten"));
-		addProjectTab(Language.translate("Kommunikation"), null, new gui.projectwindow.Ontology(CurrProject), Language.translate("Kommunikation"));		
+		addProjectTab(Language.translate("Ontologie"), null, new gui.projectwindow.Ontology(CurrProject), Language.translate("Kommunikation"));		
 		addProjectTab(Language.translate("Umgebungs - Setup"), null, new mas.environment.EnvironmentControllerGUI(this.CurrProject), Language.translate("Umgebungs - Setup"));
 		addProjectTab(Language.translate("Simmulations - Setup"), null, new gui.projectwindow.SetupSimulation(CurrProject), Language.translate("Simmulations - Setup"));
 		addProjectTab(Language.translate("Simulation"), null, new mas.display.DisplayAgentGUI(this.CurrProject), Language.translate("Simulation"));
@@ -255,7 +255,7 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 		// --- GUI-Komponente in das TabbedPane-Objekt einfï¿½gen -------------
 		component.setName( title ); 								// --- Component benennen ----
 		ProjectViewRightTabs.addTab( title, icon, component, tip);	// --- Component anhï¿½ngen ---
-		// --- Neuen Basisknoten einfï¿½gen ------------------
+		// --- Neuen Basisknoten einfügen ------------------
 		CurrentNode = new DefaultMutableTreeNode( title );
 		RootNode.add( CurrentNode );		
 	}
