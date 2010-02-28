@@ -5,10 +5,11 @@ import jade.util.leap.*;
 import jade.core.*;
 
 /**
-* Protege name: Quay
+   * Container is beeing announced to other ContainerHolders to be transported by them
+* Protege name: Announced
 * @author ontology bean generator
 * @version 2010/02/28, 13:48:46
 */
-public class Quay extends Domain{ 
+public class Announced extends TransportOrderChainState{ 
 
 }

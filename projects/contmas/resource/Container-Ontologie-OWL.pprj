@@ -1,4 +1,4 @@
-; Sun Feb 28 15:11:05 NZDT 2010
+; Sat Feb 27 15:17:48 NZDT 2010
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -20,96 +20,53 @@
 ([BROWSER_SLOT_NAMES] of  Property_List
 
 	(properties
-		[Container-Ontologie_ProjectKB_Instance_10156]
-		[Container-Ontologie_ProjectKB_Instance_10157]))
+		[Container-Ontologie-OWL_ProjectKB_Instance_10135]
+		[Container-Ontologie-OWL_ProjectKB_Instance_10136]))
 
 ([CLSES_TAB] of  Widget
 
 	(is_hidden FALSE)
 	(widget_class_name "edu.stanford.smi.protege.widget.ClsesTab"))
 
-([Container-Ontologie_ProjectKB_Instance_10133] of  Boolean
-
-	(boolean_value FALSE)
-	(name "ButtonDisplayed-View References to Value"))
-
-([Container-Ontologie_ProjectKB_Instance_10134] of  Boolean
-
-	(boolean_value FALSE)
-	(name "ButtonDisplayed-Delete Instance"))
-
-([Container-Ontologie_ProjectKB_Instance_10135] of  Property_List
-)
-
-([Container-Ontologie_ProjectKB_Instance_10136] of  Property_List
-)
-
-([Container-Ontologie_ProjectKB_Instance_10137] of  Property_List
-)
-
-([Container-Ontologie_ProjectKB_Instance_10146] of  Property_List
-)
-
-([Container-Ontologie_ProjectKB_Instance_10147] of  Property_List
-)
-
-([Container-Ontologie_ProjectKB_Instance_10148] of  Property_List
-)
-
-([Container-Ontologie_ProjectKB_Instance_10149] of  Property_List
-)
-
-([Container-Ontologie_ProjectKB_Instance_10150] of  Boolean
-
-	(boolean_value FALSE)
-	(name "ButtonDisplayed-View References to Value"))
-
-([Container-Ontologie_ProjectKB_Instance_10151] of  Boolean
-
-	(boolean_value FALSE)
-	(name "ButtonDisplayed-Delete Instance"))
-
-([Container-Ontologie_ProjectKB_Instance_10152] of  Property_List
-)
-
-([Container-Ontologie_ProjectKB_Instance_10153] of  Property_List
-)
-
-([Container-Ontologie_ProjectKB_Instance_10154] of  Property_List
-)
-
-([Container-Ontologie_ProjectKB_Instance_10155] of  Property_List
-)
-
-([Container-Ontologie_ProjectKB_Instance_10156] of  String
-
-	(name ":INSTANCE-ANNOTATION")
-	(string_value "%3AANNOTATION-TEXT"))
-
-([Container-Ontologie_ProjectKB_Instance_10157] of  String
+([Container-Ontologie-OWL_ProjectKB_Instance_10135] of  String
 
 	(name "BayMap")
 	(string_value "y_dimension{}is_filled_with{}z_dimension{}x_dimension{}y_dimension"))
 
-([Container-Ontologie_ProjectKB_Instance_10158] of  Map_Entry
+([Container-Ontologie-OWL_ProjectKB_Instance_10136] of  String
+
+	(name ":INSTANCE-ANNOTATION")
+	(string_value "%3AANNOTATION-TEXT"))
+
+([Container-Ontologie-OWL_ProjectKB_Instance_10137] of  Map_Entry
 
 	(key "add_name_on_instance_form")
 	(key_class "java.lang.String")
 	(value "false")
 	(value_class "java.lang.String"))
 
-([Container-Ontologie_ProjectKB_Instance_10159] of  Map_Entry
+([Container-Ontologie-OWL_ProjectKB_Instance_10138] of  Map_Entry
 
 	(key "change_tracking_active")
 	(key_class "java.lang.String")
 	(value "false")
 	(value_class "java.lang.String"))
 
+([Container-Ontologie_ProjectKB_Instance_10133] of  String
+
+	(name "owl_file_language")
+	(string_value "RDF/XML-ABBREV"))
+
+([Container-Ontologie_ProjectKB_Instance_10134] of  String
+
+	(name "owl_file_name")
+	(string_value "Container-Ontologie-OWL.owl"))
+
 ([Container-Ontologie_ProjectKB_Instance_10339] of  Map
 
 	(entries
-		[Container-Ontologie_ProjectKB_Instance_10158]
-		[Container-Ontologie_ProjectKB_Instance_10159]))
+		[Container-Ontologie-OWL_ProjectKB_Instance_10137]
+		[Container-Ontologie-OWL_ProjectKB_Instance_10138]))
 
 ([Container-Ontologie_ProjectKB_Instance_133] of  Widget
 
@@ -479,7 +436,7 @@
 ([KB_757098_Instance_0] of  String
 
 	(name "factory_class_name")
-	(string_value "edu.stanford.smi.protege.storage.clips.ClipsKnowledgeBaseFactory"))
+	(string_value "edu.stanford.smi.protegex.owl.jena.JenaKnowledgeBaseFactory"))
 
 ([KB_757098_Instance_1] of  Options
 
@@ -730,7 +687,9 @@
 	(properties
 		[KB_757098_Instance_0]
 		[KB_757098_Instance_96]
-		[KB_757098_Instance_97]))
+		[KB_757098_Instance_97]
+		[Container-Ontologie_ProjectKB_Instance_10133]
+		[Container-Ontologie_ProjectKB_Instance_10134]))
 
 ([STANDARD_CLASS_CONSTRAINTS_WIDGET] of  Widget
 

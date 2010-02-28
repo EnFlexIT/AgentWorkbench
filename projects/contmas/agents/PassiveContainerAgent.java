@@ -20,6 +20,5 @@ public class PassiveContainerAgent extends ContainerAgent {
 
 	public PassiveContainerAgent(String serviceType,PassiveContainerHolder ontologyRepresentation) {
 		super(serviceType, ontologyRepresentation);
-		ontologyRepresentation.setAdministers(new LoadList());
 	}
 }

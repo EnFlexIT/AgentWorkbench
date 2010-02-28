@@ -9,7 +9,7 @@ import jade.core.*;
    * the domain, in which the containerholder is located
 * Protege name: Domain
 * @author ontology bean generator
-* @version 2009/10/20, 22:25:25
+* @version 2010/02/28, 13:48:46
 */
 public class Domain implements Concept {
 

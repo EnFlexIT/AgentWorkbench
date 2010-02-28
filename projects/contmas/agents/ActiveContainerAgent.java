@@ -23,7 +23,6 @@ public class ActiveContainerAgent extends ContainerAgent {
 	
 	public ActiveContainerAgent(String serviceType,ActiveContainerHolder ontologyRepresentation) {
 		super(serviceType, ontologyRepresentation);
-		ontologyRepresentation.setAdministers(new LoadList());
 	}
 
 	public Integer matchOrder(TransportOrder curTO){

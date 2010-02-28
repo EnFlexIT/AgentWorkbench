@@ -3,8 +3,12 @@
  */
 package contmas.agents;
 
+import java.util.Random;
+
 import contmas.ontology.*;
 import jade.content.AgentAction;
+import jade.content.Concept;
+import jade.content.Predicate;
 import jade.content.lang.Codec;
 import jade.content.lang.Codec.CodecException;
 import jade.content.lang.leap.LEAPCodec;
@@ -30,23 +34,12 @@ import jade.util.leap.List;
  *
  */
 public class ContainerAgent extends Agent {
-	protected Codec codec = new LEAPCodec();
-	protected Ontology ontology = ContainerTerminalOntology.getInstance();
+	protected final Codec codec = new LEAPCodec();
+	protected final Ontology ontology = ContainerTerminalOntology.getInstance();
 	protected String serviceType;
 	protected ContainerHolder ontologyRepresentation;
 	
-	protected List contractors=null;
-
-	
-	public Integer lengthOfQueue=2;
-	protected List loadOrdersProposedForQueue=new ArrayList();
-	
-	protected List announcedQueue=new ArrayList();
-	
-	protected List failedQueue=new ArrayList();
-	
-	protected List pendingQueue=new ArrayList();
-
+	public Integer lengthOfProposeQueue=2;
 	
 	public ContainerAgent() {
 		this.serviceType="handling-containers";
@@ -67,10 +60,7 @@ public class ContainerAgent extends Agent {
 		getContentManager().registerOntology(ontology);
 		
 		//register self at DF
-        ServiceDescription sd  = new ServiceDescription();
-        sd.setType( serviceType );
-        sd.setName( getLocalName() );
-        register( sd );
+        register(serviceType);
         
         if(ontologyRepresentation.getContains()==null){
     		BayMap LoadBay=new BayMap();
@@ -88,7 +78,15 @@ public class ContainerAgent extends Agent {
 	public Integer getBayUtilization(){
 		return ontologyRepresentation.getContains().getIs_filled_with().size();
 	}
-    void register( ServiceDescription sd)
+    public void register(String serviceType)
+    {
+        ServiceDescription sd  = new ServiceDescription();
+        sd.setType(serviceType);
+        sd.setName(getLocalName());
+        register(sd);
+    }
+	
+    public void register( ServiceDescription sd)
     {
         DFAgentDescription dfd = new DFAgentDescription();
         dfd.setName(getAID());
@@ -167,7 +165,6 @@ public class ContainerAgent extends Agent {
     	return matchingOrder;
     }
     
-    
     /*
      * Matcht hier nur Habitat des Ziels (für Static und Passive).
      * Matching für Active ist angepasst, matcht sowohl Start als auch Ziel
@@ -215,7 +212,7 @@ public class ContainerAgent extends Agent {
     public void echoStatus(String statusMessage, TransportOrderChain subject){
     	String additionalText="";
     	if(subject!=null){
-    		additionalText=" BIC="+subject.getTransports().getId();
+    		additionalText=" BIC="+subject.getTransports().getBic_code();
     	}
     	echoStatus(statusMessage+additionalText);
     }
@@ -238,7 +235,8 @@ public class ContainerAgent extends Agent {
     		act=new ProposeLoadOffer();
     		calculateEffort(matchingOrder);
     		act.setLoad_offer(curTOC);
-    		loadOrdersProposedForQueue.add(curTOC);
+    		// put this TOC in the queue of TOC proposed for
+    		changeTOCState(curTOC, new ProposedFor(), true);
     	} else {
 			echoStatus("keine TransportOrder passt zu mir.",curTOC);
     	}
@@ -246,115 +244,103 @@ public class ContainerAgent extends Agent {
 	}
 	
 	public TransportOrder calculateEffort(TransportOrder call){
-		call.setTakes(0);
+		Random RandomGenerator=new Random(); 
+		call.setTakes(RandomGenerator.nextFloat()+getBayUtilization());
 		return call;		
 	}
 	
 	public Boolean aquireContainer(TransportOrderChain targetContainer){ //eigentlicher Vorgang des Container-Aufnehmens
-		((ContainerHolder)this.ontologyRepresentation).getAdministers().addConsists_of(targetContainer); //Container zu Auftragsbuch hinzufügen
-		
+//		ontologyRepresentation.getAdministers().addConsists_of(targetContainer); //Container zu Auftragsbuch hinzufügen
+		if(changeTOCState(targetContainer, new Administerd())==null){
+			echoStatus("ERROR: war noch nicht in States",targetContainer);
+		}
 		//physikalische Aktionen
 		
 		BlockAddress destination=getEmptyBlockAddress(); //zieladresse besorgen
 		destination.setLocates(targetContainer.getTransports());
 		ontologyRepresentation.getContains().addIs_filled_with(destination); //Container mit neuer BlockAdress in eigene BayMap aufnehmens
 //		echoStatus("Nun wird der Container von mir transportiert");
-		if(removeFromQueue(targetContainer)){ //Auftrag aus Liste von Bewerbungen streichen
+		if(changeTOCState(targetContainer, new Administerd()) instanceof Administerd){ //Auftrag aus Liste von Bewerbungen streichen
 			return true;
 		}
 		echoStatus("ERROR: Ausschreibung, auf die ich mich beworben habe, nicht gefunden.",targetContainer);
 		return false;
 	}
-	
 
+	public TransportOrderChainState changeTOCState(TransportOrderChain needleTOC){
+		return changeTOCState(needleTOC,null);
+	}
 	
-	public boolean removeFromQueue(TransportOrderChain proposedTOC){
-		Iterator queue=loadOrdersProposedForQueue.iterator();
+	public TransportOrderChainState changeTOCState(TransportOrderChain needleTOC,TransportOrderChainState toState){
+		return changeTOCState(needleTOC,toState,false);
+	}
+	
+	public TransportOrderChainState changeTOCState(TransportOrderChain needleTOC,TransportOrderChainState toState,Boolean addRemoveSwitch){
+		Iterator queue=ontologyRepresentation.getAllContainer_states();
+		while(queue.hasNext()){
+			TOCHasState queuedTOCState=(TOCHasState)queue.next();
+			if(needleTOC.getTransports().getBic_code().equals(queuedTOCState.getSubjected_toc().getTransports().getBic_code())){
+				TransportOrderChainState curState = queuedTOCState.getState();
+				if(toState!=null){
+					queuedTOCState.setState(toState); //set-Methode
+				}
+				if(toState==null && addRemoveSwitch){ //remove-Methode
+					queue.remove();
+				}
+				return curState; //get-Methode
+			}
+		}
+		if(toState!=null && addRemoveSwitch){ //add-Methode
+			TOCHasState state=new TOCHasState();
+			state.setState(toState);
+			state.setSubjected_toc(needleTOC);
+			ontologyRepresentation.getContainer_states().add(state);
+			return state.getState();
+		}
+		return null; //nicht gefunden
+	}
+	
+	public TransportOrderChain getSomeTOCOfState(TransportOrderChainState needleState){
+		Iterator queue=ontologyRepresentation.getAllContainer_states();
+		while(queue.hasNext()){
+			TOCHasState queuedTOCState=(TOCHasState)queue.next();
+			if(needleState.getClass()==queuedTOCState.getState().getClass()){
+				return queuedTOCState.getSubjected_toc();
+			}
+		}
+		return null;
+	}
+	
+	public boolean removeContainerFromBayMap(TransportOrderChain load_offer) {
+//		echoStatus("removeContainerFromBayMap:",load_offer);
+		Iterator allContainers=ontologyRepresentation.getContains().getIs_filled_with().iterator();
+		while(allContainers.hasNext()){
+			Container curContainer=((BlockAddress)allContainers.next()).getLocates();
+//			echoStatus("curContainerID: "+curContainer.getId()+"load_offerID: "+load_offer.getTransports().getId());
+			if(curContainer.getBic_code().equals(load_offer.getTransports().getBic_code())){
+				allContainers.remove();
+//				echoStatus("Container found and removed.",load_offer);
+				return true;
+			}
+		}
+		echoStatus("ERROR: Container NOT found to remove from BayMap.",load_offer);
+		return false;
+	}
 
-		while(queue.hasNext()){ //Aufträge durchlaufen, auf die beworben wurde, den richtigen entfernen
-//			echoStatus("Queue überprüfen, Aufträge durchlaufen, auf die beworben wurde, den richtigen entfernen");
-			TransportOrderChain queuedTOC=(TransportOrderChain)queue.next();
-			if(proposedTOC.getTransports().getId().equals(queuedTOC.getTransports().getId())){ //wenn der untersuchte Container dem entspricht, für den sich beworben wurde
-				queue.remove();
-//				echoStatus("Auftrag aus Bewerbungsliste entfernt");
-				return true;
-			}
-		}
-		return false;
+	public Boolean isQueueNotFull(){
+		return countTOCInState(new ProposedFor())<lengthOfProposeQueue;
 	}
-	
-	public boolean removeFromAnnouncedQueue(TransportOrderChain needleTOC){
-		Iterator queue=announcedQueue.iterator();
+		
+	public Integer countTOCInState(TransportOrderChainState TOCState){
+		Integer queueCount=0;
+		Iterator queue=ontologyRepresentation.getAllContainer_states();
 		while(queue.hasNext()){
-			TransportOrderChain queuedTOC=(TransportOrderChain)queue.next();
-			if(needleTOC.getTransports().getId().equals(queuedTOC.getTransports().getId())){
-				queue.remove();
-				return true;
+			TOCHasState queuedTOCState=(TOCHasState)queue.next();
+			if(queuedTOCState.getState().getClass()==TOCState.getClass()){
+				queueCount++;
 			}
 		}
-		return false;
-	}
-
-	public boolean removeFromCommissions(TransportOrderChain needleTOC){
-		Iterator queue=ontologyRepresentation.getAdministers().getAllConsists_of();
-		while(queue.hasNext()){
-			TransportOrderChain queuedTOC=(TransportOrderChain)queue.next();
-			if(needleTOC.getTransports().getId().equals(queuedTOC.getTransports().getId())){
-				queue.remove();
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	public boolean isInAnnouncedQueue(TransportOrderChain needleTOC){
-		Iterator queue=announcedQueue.iterator();
-		while(queue.hasNext()){
-			TransportOrderChain queuedTOC=(TransportOrderChain)queue.next();
-			if(needleTOC.getTransports().getId().equals(queuedTOC.getTransports().getId())){
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	public boolean isInFailedQueue(TransportOrderChain needleTOC){
-		Iterator queue=failedQueue.iterator();
-		while(queue.hasNext()){
-			TransportOrderChain queuedTOC=(TransportOrderChain)queue.next();
-			if(needleTOC.getTransports().getId().equals(queuedTOC.getTransports().getId())){
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	public boolean removeFromPendingQueue(TransportOrderChain needleTOC){
-		Iterator queue=pendingQueue.iterator();
-		while(queue.hasNext()){
-			TransportOrderChain queuedTOC=(TransportOrderChain)queue.next();
-			if(needleTOC.getTransports().getId().equals(queuedTOC.getTransports().getId())){
-				queue.remove();
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	public boolean isAlreadyPending(TransportOrderChain needleTOC){
-		Iterator queue=pendingQueue.iterator();
-		while(queue.hasNext()){
-			TransportOrderChain queuedTOC=(TransportOrderChain)queue.next();
-			if(needleTOC.getTransports().getId().equals(queuedTOC.getTransports().getId())){
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	public boolean isQueueNotFull(){ //TODO use DataStore
-		//echoStatus("lengthOfQueue: "+lengthOfQueue+", loadOrderPostQueue.size(): "+loadOrdersProposedForQueue.size());
-		return loadOrdersProposedForQueue.size()<lengthOfQueue;
+		return queueCount;
 	}
 	
 	public boolean hasBayMapRoom(){
@@ -364,25 +350,9 @@ public class ContainerAgent extends Agent {
 	public boolean checkPlausibility(CallForProposalsOnLoadStage call){
 		return true;
 	}
-
-	public boolean removeContainerFromBayMap(TransportOrderChain load_offer) {
-//		echoStatus("removeContainerFromBayMap:",load_offer);
-		Iterator allContainers=ontologyRepresentation.getContains().getIs_filled_with().iterator();
-		while(allContainers.hasNext()){
-			Container curContainer=((BlockAddress)allContainers.next()).getLocates();
-//			echoStatus("curContainerID: "+curContainer.getId()+"load_offerID: "+load_offer.getTransports().getId());
-			if(curContainer.getId().equals(load_offer.getTransports().getId())){
-				allContainers.remove();
-//				echoStatus("Container found and removed.",load_offer);
-				return true;
-			}
-		}
-		echoStatus("ERROR: Container NOT found to remove from BayMap.",load_offer);
-		return false;
-	}
 	
 	public boolean removeFromContractors(AID badContractor){
-		Iterator contractorList=contractors.iterator();
+		Iterator contractorList=ontologyRepresentation.getAllContractors();
 		while(contractorList.hasNext()){
 			AID contractor=(AID)contractorList.next();
 			if(badContractor.equals(contractor)){
@@ -425,4 +395,25 @@ public class ContainerAgent extends Agent {
 		}
 		return act;
 	}
+	
+	public void releaseContainer(TransportOrderChain curTOC,Behaviour MasterBehaviour){
+		TransportOrder TO=new TransportOrder();
+		
+		Designator myself=new Designator();
+		myself.setType("concrete");
+		myself.setConcrete_designation(getAID());
+		
+		Designator target=new Designator(); //TODO mögliche ziele herausfinden
+		target.setType("abstract");
+		target.setAbstract_designation(new Street());//TODO change to Land but implement recursive Domain-determination in passiveHolder
+
+		TO.setStarts_at(myself);
+		TO.setEnds_at(target);
+		curTOC.addIs_linked_by(TO);
+		LoadList newCommission=new LoadList();
+		newCommission.addConsists_of(curTOC);
+		Behaviour b=new announceLoadOrders(this, newCommission,MasterBehaviour);
+		addBehaviour(b);
+	}
+	
 }

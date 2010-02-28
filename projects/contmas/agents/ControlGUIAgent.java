@@ -36,6 +36,8 @@ public class ControlGUIAgent extends GuiAgent{
 		// Instanciate the gui
 		myGui = new ControlGUI(this);
 		myGui.setVisible(true);
+
+		/*
 		// ------------------------------------------------
 		// --- Hier gab es eine Änderung von Christian ----
 		Project CurrPro = Application.Projects.get("contmas");
@@ -43,6 +45,7 @@ public class ControlGUIAgent extends GuiAgent{
 		// --- Hier gab es eine Änderung von Christian ----
 		// ------------------------------------------------
 		desktop.add(myGui);
+		*/
 		
         AgentContainer c = getContainerController();
         try {
@@ -72,6 +75,7 @@ public class ControlGUIAgent extends GuiAgent{
 			        loadBay.setY_dimension(Integer.parseInt(ev.getParameter(2).toString()));
 			        loadBay.setZ_dimension(Integer.parseInt(ev.getParameter(3).toString()));
 			        ontologyRepresentation.setContains(loadBay);
+			        ontologyRepresentation.setLength(Float.parseFloat(ev.getParameter(3).toString()));
 		        }
 //				habitat.setLies_in(terminalArea);
 	            AgentController a=c.acceptNewAgent(name, new ShipAgent(ontologyRepresentation));

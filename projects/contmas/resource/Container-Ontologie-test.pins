@@ -1,7 +1,11 @@
-; Sun Feb 28 15:11:03 NZDT 2010
+; Sat Feb 27 15:20:54 NZDT 2010
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
+
+([AA] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
 
 ([AcceptLoadOffer] of  %3AJADE-CLASS
 
@@ -24,6 +28,14 @@
 	(%3AJADE-IGNORE FALSE))
 
 ([AnnounceLoadStatus] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([AskForDestination] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([AssignBlockAddress] of  %3AJADE-CLASS
 
 	(%3AJADE-IGNORE FALSE))
 
@@ -63,15 +75,19 @@
 
 	(%3AJADE-IGNORE FALSE))
 
+([DomainArea] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
 ([EnrollAtHarbor] of  %3AJADE-CLASS
 
 	(%3AJADE-IGNORE FALSE))
 
-([Failed] of  %3AJADE-CLASS
+([GetCraneList] of  %3AJADE-CLASS
 
 	(%3AJADE-IGNORE FALSE))
 
-([GetCraneList] of  %3AJADE-CLASS
+([IndicateContainer] of  %3AJADE-CLASS
 
 	(%3AJADE-IGNORE FALSE))
 
@@ -80,6 +96,10 @@
 	(%3AJADE-IGNORE FALSE))
 
 ([LoadList] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([LookForContainer] of  %3AJADE-CLASS
 
 	(%3AJADE-IGNORE FALSE))
 
@@ -162,7 +182,7 @@
 
 	(%3AJADE-IGNORE FALSE))
 
-([TOCHasState] of  %3AJADE-CLASS
+([TOCHasStateAtCH] of  %3AJADE-CLASS
 
 	(%3AJADE-IGNORE FALSE))
 

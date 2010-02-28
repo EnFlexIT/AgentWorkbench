@@ -29,7 +29,7 @@ import java.awt.Font;
  * @author Hanno - Felix Wagner
  *
  */
-public class ControlGUI extends JInternalFrame implements ActionListener{
+public class ControlGUI extends JFrame implements ActionListener{
 
 	private static final long serialVersionUID = 1L;
 	private JPanel jContentPane = null;
@@ -44,6 +44,8 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JTextField TFShipName = null;
 	private ControlGUIAgent myAgent;
 	private JLabel jLabel = null;
+	private JLabel jLabel1 = null;
+	private JTextField TFShipLength = null;
 	/**
 	 * This is the default constructor
 	 */
@@ -60,7 +62,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	 * @return void
 	 */
 	private void initialize() {
-		this.setSize(232, 224);
+		this.setSize(232, 251);
 		this.setContentPane(getJContentPane());
 		this.setTitle("ControlGUI");
 /*		this.addWindowListener(new WindowAdapter() {
@@ -78,6 +80,9 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	 */
 	private JPanel getJContentPane() {
 		if (jContentPane == null) {
+			jLabel1 = new JLabel();
+			jLabel1.setBounds(new Rectangle(10, 165, 38, 16));
+			jLabel1.setText("Länge");
 			jLabel = new JLabel();
 			jLabel.setBounds(new Rectangle(10, 6, 198, 16));
 			jLabel.setFont(new Font("Dialog", Font.BOLD, 14));
@@ -106,6 +111,8 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 			jContentPane.add(ShipLabelName, null);
 			jContentPane.add(getTFShipName(), null);
 			jContentPane.add(jLabel, null);
+			jContentPane.add(jLabel1, null);
+			jContentPane.add(getTFShipLength(), null);
 		}
 		return jContentPane;
 		
@@ -120,7 +127,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 		if (ButtonCreateShip == null) {
 			ButtonCreateShip = new JButton();
 			
-			ButtonCreateShip.setBounds(new Rectangle(11, 161, 201, 20));
+			ButtonCreateShip.setBounds(new Rectangle(11, 196, 201, 20));
 			ButtonCreateShip.setText("Schiff erzeugen");
 			ButtonCreateShip.addActionListener(this);
 		}
@@ -190,6 +197,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 			 ge.addParameter(TFShipX.getText());
 			 ge.addParameter(TFShipY.getText());
 			 ge.addParameter(TFShipZ.getText());
+			 ge.addParameter(TFShipLength.getText());
 			 myAgent.postGuiEvent(ge);
 		 }		
 	}
@@ -200,6 +208,20 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
     		GuiEvent ge = new GuiEvent(this, -1);
     		myAgent.postGuiEvent(ge);
 	    }
+	}
+
+	/**
+	 * This method initializes TFShipLength	
+	 * 	
+	 * @return javax.swing.JTextField	
+	 */
+	private JTextField getTFShipLength() {
+		if (TFShipLength == null) {
+			TFShipLength = new JTextField();
+			TFShipLength.setBounds(new Rectangle(76, 161, 42, 25));
+			TFShipLength.setText("120.5");
+		}
+		return TFShipLength;
 	}
 
 

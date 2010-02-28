@@ -105,7 +105,7 @@ public class RandomGeneratorAgent extends ContainerAgent{
 								
 								c=new Container();
 								containerName="ABC "+RandomGenerator.nextInt(65000);
-								c.setId(containerName);
+								c.setBic_code(containerName);
 								ba=new BlockAddress();
 								//ba.setAddresses_within(LoadBay);
 								ba.setLocates(c);

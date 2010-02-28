@@ -41,7 +41,6 @@ public class ShipAgent extends StaticContainerAgent implements TransportOrderOff
 		super.setup();
 
 		//TODO hardcoded
-		((Ship)ontologyRepresentation).setLength((float) 120.5);
 		ontologyRepresentation.setLives_in(new Sea());
 		
 		//look for RandomGeneratorAgent
@@ -66,7 +65,7 @@ public class ShipAgent extends StaticContainerAgent implements TransportOrderOff
 	}
 		
     public List determineContractors(){
-    	return 	contractors;
+    	return 	ontologyRepresentation.getContractors();
     }
 
 	public class fetchRandomBayMap extends AchieveREInitiator {
@@ -108,7 +107,7 @@ public class ShipAgent extends StaticContainerAgent implements TransportOrderOff
 			request.addReceiver(RandomGenerator);
 			//BayMap aus Agent auslesen
 			RequestPopulatedBayMap act = new RequestPopulatedBayMap();
-			act.setPopulate_on(((ShipAgent) myAgent).ontologyRepresentation.getContains());
+			act.setPopulate_on(ontologyRepresentation.getContains());
 			((ContainerAgent)myAgent).fillMessage(request,act);
 		    Vector messages = new Vector();
 		    messages.add(request);
@@ -120,7 +119,14 @@ public class ShipAgent extends StaticContainerAgent implements TransportOrderOff
 			content = ((ContainerAgent)myAgent).extractAction(msg);
 
 	        if (content instanceof ProvidePopulatedBayMap) {
-	        	((ShipAgent) myAgent).ontologyRepresentation.setContains(((ProvidePopulatedBayMap) content).getProvides());
+	        	ontologyRepresentation.setContains(((ProvidePopulatedBayMap) content).getProvides());
+	        	Iterator allConts = ontologyRepresentation.getContains().getAllIs_filled_with();
+	        	while (allConts.hasNext()) {
+					BlockAddress curBaymap = (BlockAddress) allConts.next();
+					TransportOrderChain curTOC = new TransportOrderChain();
+					curTOC.setTransports(curBaymap.getLocates());
+					changeTOCState(curTOC, new Administerd(),true);
+				}
 	        	//echoStatus("populatedBayMap recieved!"); 
 	    		offerTransportOrder();
 	        } else {
@@ -163,7 +169,7 @@ public class ShipAgent extends StaticContainerAgent implements TransportOrderOff
 
 	        if(content instanceof ProvideCraneList) {
 	    		List craneList=((ProvideCraneList) content).getAvailable_cranes();
-	    		((ShipAgent) myAgent).contractors=craneList;
+	    		ontologyRepresentation.setContractors(craneList);
 	    		myAgent.addBehaviour(new unload(myAgent));
 	        }
 	    }
@@ -182,7 +188,7 @@ public class ShipAgent extends StaticContainerAgent implements TransportOrderOff
 		public void action() {
 
 //			echoStatus("Tick: Entladen geht los");
-			if(((ShipAgent) myAgent).contractors!=null){
+			if(((ShipAgent) myAgent).ontologyRepresentation.getContractors()!=null){
 				BayMap LoadBay=((ShipAgent) myAgent).ontologyRepresentation.getContains();
 				LoadList completeLoadList=new LoadList();
 				Designator myself=new Designator();

@@ -1,4 +1,4 @@
-; Sun Feb 28 15:11:05 NZDT 2010
+; Sat Feb 27 15:20:55 NZDT 2010
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -20,13 +20,37 @@
 ([BROWSER_SLOT_NAMES] of  Property_List
 
 	(properties
-		[Container-Ontologie_ProjectKB_Instance_10156]
-		[Container-Ontologie_ProjectKB_Instance_10157]))
+		[Container-Ontologie-test_ProjectKB_Instance_10142]
+		[Container-Ontologie-test_ProjectKB_Instance_10143]))
 
 ([CLSES_TAB] of  Widget
 
 	(is_hidden FALSE)
 	(widget_class_name "edu.stanford.smi.protege.widget.ClsesTab"))
+
+([Container-Ontologie-test_ProjectKB_Instance_10142] of  String
+
+	(name ":INSTANCE-ANNOTATION")
+	(string_value "%3AANNOTATION-TEXT"))
+
+([Container-Ontologie-test_ProjectKB_Instance_10143] of  String
+
+	(name "BayMap")
+	(string_value "y_dimension{}is_filled_with{}z_dimension{}x_dimension{}y_dimension"))
+
+([Container-Ontologie-test_ProjectKB_Instance_10144] of  Map_Entry
+
+	(key "add_name_on_instance_form")
+	(key_class "java.lang.String")
+	(value "false")
+	(value_class "java.lang.String"))
+
+([Container-Ontologie-test_ProjectKB_Instance_10145] of  Map_Entry
+
+	(key "change_tracking_active")
+	(key_class "java.lang.String")
+	(value "false")
+	(value_class "java.lang.String"))
 
 ([Container-Ontologie_ProjectKB_Instance_10133] of  Boolean
 
@@ -47,69 +71,11 @@
 ([Container-Ontologie_ProjectKB_Instance_10137] of  Property_List
 )
 
-([Container-Ontologie_ProjectKB_Instance_10146] of  Property_List
-)
-
-([Container-Ontologie_ProjectKB_Instance_10147] of  Property_List
-)
-
-([Container-Ontologie_ProjectKB_Instance_10148] of  Property_List
-)
-
-([Container-Ontologie_ProjectKB_Instance_10149] of  Property_List
-)
-
-([Container-Ontologie_ProjectKB_Instance_10150] of  Boolean
-
-	(boolean_value FALSE)
-	(name "ButtonDisplayed-View References to Value"))
-
-([Container-Ontologie_ProjectKB_Instance_10151] of  Boolean
-
-	(boolean_value FALSE)
-	(name "ButtonDisplayed-Delete Instance"))
-
-([Container-Ontologie_ProjectKB_Instance_10152] of  Property_List
-)
-
-([Container-Ontologie_ProjectKB_Instance_10153] of  Property_List
-)
-
-([Container-Ontologie_ProjectKB_Instance_10154] of  Property_List
-)
-
-([Container-Ontologie_ProjectKB_Instance_10155] of  Property_List
-)
-
-([Container-Ontologie_ProjectKB_Instance_10156] of  String
-
-	(name ":INSTANCE-ANNOTATION")
-	(string_value "%3AANNOTATION-TEXT"))
-
-([Container-Ontologie_ProjectKB_Instance_10157] of  String
-
-	(name "BayMap")
-	(string_value "y_dimension{}is_filled_with{}z_dimension{}x_dimension{}y_dimension"))
-
-([Container-Ontologie_ProjectKB_Instance_10158] of  Map_Entry
-
-	(key "add_name_on_instance_form")
-	(key_class "java.lang.String")
-	(value "false")
-	(value_class "java.lang.String"))
-
-([Container-Ontologie_ProjectKB_Instance_10159] of  Map_Entry
-
-	(key "change_tracking_active")
-	(key_class "java.lang.String")
-	(value "false")
-	(value_class "java.lang.String"))
-
 ([Container-Ontologie_ProjectKB_Instance_10339] of  Map
 
 	(entries
-		[Container-Ontologie_ProjectKB_Instance_10158]
-		[Container-Ontologie_ProjectKB_Instance_10159]))
+		[Container-Ontologie-test_ProjectKB_Instance_10144]
+		[Container-Ontologie-test_ProjectKB_Instance_10145]))
 
 ([Container-Ontologie_ProjectKB_Instance_133] of  Widget
 
@@ -577,12 +543,12 @@
 ([KB_757098_Instance_96] of  String
 
 	(name "classes_file_name")
-	(string_value "Container-Ontologie.pont"))
+	(string_value "Container-Ontologie-test.pont"))
 
 ([KB_757098_Instance_97] of  String
 
 	(name "instances_file_name")
-	(string_value "Container-Ontologie.pins"))
+	(string_value "Container-Ontologie-test.pins"))
 
 ([LAYOUT_PROPERTIES] of  Property_List
 
@@ -665,7 +631,6 @@
 	(default_facet_metaclass ":STANDARD-FACET")
 	(default_instance_widget_class_name "edu.stanford.smi.protege.widget.FormWidget")
 	(default_slot_metaclass ":STANDARD-SLOT")
-	(included_projects "file:/C:/Programme/Protege_3.3.1/plugins/nl.uva.psy.swi.beangenerator/projects/SimpleJADEAbstractOntology.pprj")
 	(journaling_enabled FALSE)
 	(next_frame_number 0)
 	(options [KB_757098_Instance_1])

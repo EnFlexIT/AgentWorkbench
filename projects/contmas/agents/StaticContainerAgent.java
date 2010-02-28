@@ -6,6 +6,7 @@ import contmas.ontology.Designator;
 import contmas.ontology.Domain;
 import contmas.ontology.LoadList;
 import contmas.ontology.PassiveContainerHolder;
+import contmas.ontology.StaticContainerHolder;
 import contmas.ontology.TransportOrder;
 import contmas.ontology.TransportOrderChain;
 import jade.util.leap.ArrayList;
@@ -15,11 +16,10 @@ import jade.util.leap.List;
 public class StaticContainerAgent extends ContainerAgent {
 	
 	public StaticContainerAgent(String serviceType) {
-		this(serviceType, new PassiveContainerHolder());
+		this(serviceType, new StaticContainerHolder());
 	}
 
-	public StaticContainerAgent(String serviceType,PassiveContainerHolder ontologyRepresentation) {
+	public StaticContainerAgent(String serviceType,StaticContainerHolder ontologyRepresentation) {
 		super(serviceType, ontologyRepresentation);
-		ontologyRepresentation.setAdministers(new LoadList());
 	}
 }

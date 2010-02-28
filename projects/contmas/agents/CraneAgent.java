@@ -43,33 +43,16 @@ public class CraneAgent extends ActiveContainerAgent implements TransportOrderHa
 		addBehaviour(new receiveLoadOrders(this,mt));
 	}
 	
-	public TransportOrder calculateEffort(TransportOrder call){
-		call=super.calculateEffort(call);
-		Random RandomGenerator=new Random(); 
-		call.setTakes(RandomGenerator.nextFloat());
-		return call;
-	}
-	
     public List determineContractors(){
-    	if(contractors==null){
-    		contractors=toAIDList(getAIDsFromDF("container-distributing"));
+    	if(ontologyRepresentation.getContractors().isEmpty()){
+    		ontologyRepresentation.setContractors(toAIDList(getAIDsFromDF("container-distributing")));
     	}
-    	return contractors;
+    	return ontologyRepresentation.getContractors();
     }
+
+	@Override
 	public void offerTransportOrder() {
-//		addBehaviour(new disposePayload(this));
-//		echoStatus("offerTransportOrder");
+		// TODO Auto-generated method stub
 	}
-/*
-	class disposePayload extends TickerBehaviour{
 
-		public disposePayload(Agent a) {
-			super(a, 2000);
-		}
-
-		protected void onTick() {
-			((ContainerAgent)myAgent).releaseAllContainer();
-		}
-	}
-	*/
 }

@@ -1,0 +1,13 @@
+digraph "Container-Ontologie" {
+
+node [fontname=Arial]
+edge [fontname=Arial]
+
+"BayMap" [shape=record, color="0.0,0.0,0.0", fontcolor="0.0,0.0,0.0", label="{BayMap|{x_dimension|Integer}|{y_dimension|Integer}|{z_dimension|Integer}|{...}}"]
+"BayMap"->"BlockAddress" [style=filled, label="is_filled_with*", color="0.6666667,1.0,1.0", fontcolor="0.6666667,1.0,1.0"]
+"TwentyFootContainer" [shape=record, color="0.0,0.0,0.0", fontcolor="0.0,0.0,0.0", label="{TwentyFootContainer|{length|Float}|{width|Float}|{height|Float}}"]
+"Container"->"TwentyFootContainer" [dir=back, label=isa, color="0.0,0.0,0.0", fontcolor="0.0,0.0,0.0"]
+"BlockAddress" [shape=record, color="0.0,0.0,0.0", fontcolor="0.0,0.0,0.0", label="{BlockAddress|{x_dimension|Integer}|{y_dimension|Integer}|{z_dimension|Integer}|{...}}"]
+"BlockAddress"->"Container" [style=filled, label="locates", color="0.6666667,1.0,1.0", fontcolor="0.6666667,1.0,1.0"]
+"Container" [shape=record, color="0.0,0.0,0.0", fontcolor="0.0,0.0,0.0", label="{Container|{bic_code|String}|{weight|Float}|{length|Float}|{...}}"]
+}

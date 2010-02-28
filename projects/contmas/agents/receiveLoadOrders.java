@@ -1,14 +1,21 @@
 package contmas.agents;
 
 import contmas.ontology.AcceptLoadOffer;
+import contmas.ontology.Administerd;
 import contmas.ontology.AnnounceLoadStatus;
+import contmas.ontology.Announced;
 import contmas.ontology.CallForProposalsOnLoadStage;
 import contmas.ontology.Designator;
+import contmas.ontology.Failed;
 import contmas.ontology.LoadList;
+import contmas.ontology.PendingForSubCFP;
 import contmas.ontology.ProposeLoadOffer;
+import contmas.ontology.ProposedFor;
 import contmas.ontology.Street;
+import contmas.ontology.TOCHasState;
 import contmas.ontology.TransportOrder;
 import contmas.ontology.TransportOrderChain;
+import contmas.ontology.TransportOrderChainState;
 import jade.content.Concept;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
@@ -66,7 +73,7 @@ public class receiveLoadOrders extends ContractNetResponder{
 				reply.setContent("CFP unplausibel");
 		    	reply.setPerformative(ACLMessage.REFUSE);
 				return reply;
-			} else if (((ContainerAgent)myAgent).determineContractors()!=null && ((ContainerAgent)myAgent).determineContractors().isEmpty()) {
+			} else if (((ContainerAgent)myAgent).determineContractors()!=null && ((ContainerAgent)myAgent).determineContractors().isEmpty()) { //won't work any more like this
 				((ContainerAgent)myAgent).echoStatus("Habe keine Subunternehmer, lehne ab.");
 				reply.setContent("Habe keine Subunternehmer, lehne ab.");
 		    	reply.setPerformative(ACLMessage.REFUSE);
@@ -100,93 +107,68 @@ public class receiveLoadOrders extends ContractNetResponder{
 		}
 	}
 	
-//	protected ACLMessage handleAcceptProposalManual(ACLMessage cfp,ACLMessage propose, ACLMessage accept){
 	protected class handleAcceptProposalManual extends SimpleBehaviour{
-	Boolean isDone=false;
-	public void action(){
-		DataStore ds=getDataStore();
-		ACLMessage accept=(ACLMessage) ds.get(ACCEPT_PROPOSAL_KEY);
+		Boolean isDone=false;
+		public void action(){
+			DataStore ds=getDataStore();
+			ACLMessage accept=(ACLMessage) ds.get(ACCEPT_PROPOSAL_KEY);
+			Concept content= ((ContainerAgent)myAgent).extractAction(accept);
+			TransportOrderChain acceptedTOC=((AcceptLoadOffer) content).getLoad_offer();
+			((ContainerAgent)myAgent).echoStatus("Bewerbung wurde akzeptiert. Überprüfe Kapazitäten für ",acceptedTOC);
 
-		
-		Concept content= ((ContainerAgent)myAgent).extractAction(accept);
-		TransportOrderChain acceptedTOC=((AcceptLoadOffer) content).getLoad_offer();
-
-		if(((ContainerAgent)myAgent).isAlreadyPending(acceptedTOC)){  // && ausschreibungsqueue hat noch inhalt
-			if(!(((ContainerAgent)myAgent).announcedQueue.isEmpty())){
-				((ContainerAgent)myAgent).echoStatus("unterauftrag läuft noch:",acceptedTOC);
-
-				//myAgent.putBack(accept);
-				this.block();
-				isDone=false;
-				return;
-			} else {
-				((ContainerAgent)myAgent).pendingQueue.add(acceptedTOC);
+			TransportOrderChainState curState = ((ContainerAgent)myAgent).changeTOCState(acceptedTOC);
+			if(curState instanceof ProposedFor){//Angebot wurde angenommen->Alles weitere in die Wege leiten
+				if(((ContainerAgent)myAgent).hasBayMapRoom()){
+//					((ContainerAgent)myAgent).echoStatus("BayMap hat noch Platz.");
+					ds.put(REPLY_KEY,stowContainer(accept));
+					isDone=true;
+					return;
+				} else {
+					TransportOrderChain curTOC=((ContainerAgent)myAgent).getSomeTOCOfState(new Administerd());
+					if(curTOC!=null){
+						((ContainerAgent)myAgent).echoStatus("BayMap voll, versuche Räumung für",acceptedTOC);
+						((ContainerAgent)myAgent).changeTOCState(acceptedTOC, new PendingForSubCFP());
+						((ContainerAgent)myAgent).releaseContainer(curTOC,this);
+						this.block();
+						isDone=false;
+						return;
+					} else { //keine administrierten TOCs da
+						((ContainerAgent)myAgent).echoStatus("FAILURE: BayMap voll, keine administrierten TOCs da, Räumung nicht möglich.");
+					}
+				}
+			} else if(curState instanceof PendingForSubCFP){
+				//TOC bereits angenommen, aber noch kein Platz
+				if(((ContainerAgent)myAgent).countTOCInState(new Announced())!=0){ // ausschreibungsqueue hat noch inhalt
+					((ContainerAgent)myAgent).echoStatus("Unterauftrag läuft noch:",acceptedTOC);
+					this.block();
+					isDone=false;
+					return;
+				} else { // ausschreibungsqueque ist leer
+					((ContainerAgent)myAgent).changeTOCState(acceptedTOC, new ProposedFor());
+					((ContainerAgent)myAgent).echoStatus("Keine Unteraufträge mehr, erneut versuchen aufzunehmen.");
+					isDone=false;
+					return;
+				}
+			} else if(curState instanceof Failed){
+				((ContainerAgent)myAgent).echoStatus("FAILURE: Ausschreibung des Unterauftrags ist bereits fehlgeschlagen.");
 			}
-		} 
-		
-
-		((ContainerAgent)myAgent).echoStatus("Bewerbung wurde akzeptiert. Überprüfe Kapazitäten für ",acceptedTOC);
-		
-		if(((ContainerAgent)myAgent).hasBayMapRoom()){
-//			((ContainerAgent)myAgent).echoStatus("BayMap hat noch Platz.");
-
-//			return stowContainer(accept);
-			ds.put(REPLY_KEY,stowContainer(accept));
-//			((ContainerAgent)myAgent).echoStatus("REPLY_KEY ist "+((ACLMessage) ds.get(REPLY_KEY)).getPerformative());
-
+			//Ausschreibung ist fehlgeschlagen, keine administrierten TOCs da, Irgendwas schiefgelaufen bei der Ausschreibung des Unterauftrags
+			((ContainerAgent)myAgent).changeTOCState(acceptedTOC, new Failed());
+			ds.put(REPLY_KEY, prepareFailure(accept));
 			isDone=true;
-			if(((ContainerAgent)myAgent).isAlreadyPending(acceptedTOC)){
-				((ContainerAgent)myAgent).removeFromPendingQueue(acceptedTOC);
-			}
 			return;
-			
-		} else {
-
-			if(releaseSomeContainer()){ // try making some room
-
-				((ContainerAgent)myAgent).echoStatus("BayMap voll, versuche Räumung für",acceptedTOC);
-				/* Eigentlich nicht, denn sonst würden ja auch alle bisherigen Antworten wiederholt
-				myAgent.putBack(cfp);
-				myAgent.putBack(propose);
-				*/
-				/*
-				myAgent.putBack(accept);
-				isDone=true;
-				this.getParent().block();
-				((FSMBehaviour)this.getParent()).resetStates(new String[]{"Handle-Accept-Proposal"});
-//				((FSMBehaviour)this.getParent()).
-				//return null;
-				myAgent.addBehaviour(this);
-				*/
-				//myAgent.putBack(accept);
-				this.block();
-				isDone=false;
-
-				return;
-
-			} else { //has been already checked, makeRoom failed, no chance
-				((ContainerAgent)myAgent).echoStatus("BayMap voll, Räumung fehlgeschlagen.");
-				//TODO (?) removeCommission
-				
-				ds.put(REPLY_KEY, prepareFailure(accept));
-				isDone=true;
-				return;
-//				return prepareFailure(accept);
-			}
 		}
-	}
-	
-	public boolean done() {
-		return isDone;
-	}
-	
+		
+		public boolean done() {
+			return isDone;
+		}
 	}
 	
 	protected void handleRejectProposal(ACLMessage cfp,ACLMessage propose, ACLMessage accept){
 		Concept content=((ContainerAgent)myAgent).extractAction(propose);
 		TransportOrderChain acceptedTOC=((ProposeLoadOffer) content).getLoad_offer();
 //		((ContainerAgent)myAgent).echoStatus("Meine Bewerbung wurde abgelehnt");
-		if(!((ContainerAgent)myAgent).removeFromQueue(acceptedTOC)){ //wenn der untersuchte Container dem entspricht, für den sich beworben wurde
+		if(!(((ContainerAgent)myAgent).changeTOCState(acceptedTOC, null, true) instanceof ProposedFor)){ //wenn der untersuchte Container dem entspricht, für den sich beworben wurde
 			((ContainerAgent)myAgent).echoStatus("ERROR: Auftrag, auf den ich mich beworben habe (abgelehnt), nicht zum Entfernen gefunden.",acceptedTOC);
 		} else{
 //			((ContainerAgent)myAgent).echoStatus("Abgelehnten Auftrag entfernt.",acceptedTOC);
@@ -215,50 +197,6 @@ public class receiveLoadOrders extends ContractNetResponder{
 			return rply;
 		}
 	}
-	public Boolean releaseSomeContainer(){ //irgendeinen
-		Iterator commissions=((ContainerAgent)myAgent).ontologyRepresentation.getAdministers().getAllConsists_of();
-		while(commissions.hasNext()){ //Agent hat Transportaufträge abzuarbeiten
-			TransportOrderChain curTOC=((TransportOrderChain) commissions.next());
-			((ContainerAgent)myAgent).echoStatus("Verfüge über Transportgüter, versuche Container abzugeben.",curTOC);
-			return releaseContainer(curTOC);
-		}
-		((ContainerAgent)myAgent).echoStatus("ERROR: Keine Transportgüter verfügbar.");
-		return false;
-	}
-	
-	public Boolean releaseContainer(TransportOrderChain curTOC){
-//		TransportOrderChain TOChain=new TransportOrderChain();
-//		TOChain.setTransports(curTOC.getTransports());
-		if(((ContainerAgent)myAgent).isInFailedQueue(curTOC)){// && !((ContainerAgent)myAgent).isInAnnouncedQueue(curTOC)){ //Ausschreibung bereits fehlgeschlagen, abbrechen!
-			((ContainerAgent)myAgent).echoStatus("Ausschreibung bereits fehlgeschlagen, abbrechen!",curTOC);
-			return false;
-		}
-		if(((ContainerAgent)myAgent).isInAnnouncedQueue(curTOC)){ //Ausschreibung läuft noch, nicht nochmal, abwarten!
-			((ContainerAgent)myAgent).echoStatus("Ausschreibung läuft noch, nicht nochmal, abwarten!",curTOC);
-			return true;
-		}
-		TransportOrderChain TOChain=curTOC;
-
-		TransportOrder TO=new TransportOrder();
-		
-		Designator myself=new Designator();
-		myself.setType("concrete");
-		myself.setConcrete_designation(((ContainerAgent)myAgent).getAID());
-		
-		Designator target=new Designator(); //TODO mögliche ziele herausfinden
-		target.setType("abstract");
-		target.setAbstract_designation(new Street());//TODO change to Land but implement recursive Domain-determination in passiveHolder
-
-		TO.setStarts_at(myself);
-		TO.setEnds_at(target);
-		TOChain.addIs_linked_by(TO);
-		LoadList newCommission=new LoadList();
-		newCommission.addConsists_of(TOChain);
-		Behaviour b=new announceLoadOrders(((ContainerAgent)myAgent), newCommission,this);
-		((ContainerAgent)myAgent).addBehaviour(b);
-		return true; //Ausschreibung erfolgt
-	}
-	
 	
 	protected ACLMessage prepareFailure(ACLMessage accept){
 		ACLMessage fail = accept.createReply();	
@@ -278,61 +216,3 @@ public class receiveLoadOrders extends ContractNetResponder{
 		return loadStatus;
 	}
 }
-/*
-protected class checkForUtilization extends OneShotBehaviour{
-	Boolean checkedAgain=false;
-	public checkForUtilization(Boolean checkedAgain) {
-		this.checkedAgain=checkedAgain;
-	}
-	public checkForUtilization() {
-		this(false);
-	}
-	public void action(){
-//		((ContainerAgent)myAgent).echoStatus("Bewerbung wurde akzeptiert. Überprüfe Kapazitäten.");
-		SequentialBehaviour sb=((SequentialBehaviour) getParent());
-		Behaviour b;
-		if(((ContainerAgent)myAgent).hasBayMapRoom()){
-//			((ContainerAgent)myAgent).echoStatus("BayMap hat noch Platz.");
-			b=new stowContainer();
-			b.setDataStore(getDataStore());
-			sb.addSubBehaviour(b);
-		} else {
-			if(checkedAgain){ //has been already checked, makeRoom failed, no chance
-				((ContainerAgent)myAgent).echoStatus("BayMap voll, Räumung fehlgeschlagen.");
-				b=new prepareFailure();
-				b.setDataStore(getDataStore());
-				sb.addSubBehaviour(b);
-			} else { // try making some room
-				((ContainerAgent)myAgent).echoStatus("BayMap voll, versuche Räumung.");
-				b=new makeWay();
-				b.setDataStore(getDataStore());
-				sb.addSubBehaviour(b);
-				b=new checkForUtilization(true);
-				b.setDataStore(getDataStore());
-				sb.addSubBehaviour(b);
-			}
-		}
-	}
-}
-*/
-
-
-//CONTENT OF CONSTRUCTOR
-/*
-SequentialBehaviour sb = new SequentialBehaviour(a);
-sb.setDataStore(getDataStore());
-*/
-
-/*		
-Behaviour b=new stowContainer();
-b.setDataStore(getDataStore());
-sb.addSubBehaviour(b);
-*/
-//b=new disposePayload(a);
-
-/*
-Behaviour b=new checkForUtilization();
-b.setDataStore(getDataStore());
-sb.addSubBehaviour(b);
-registerHandleAcceptProposal(sb);
-*/

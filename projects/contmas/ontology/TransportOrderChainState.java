@@ -1,14 +1,15 @@
 package contmas.ontology;
 
+
 import jade.content.*;
 import jade.util.leap.*;
 import jade.core.*;
 
 /**
-* Protege name: ReachStacker
+* Protege name: TransportOrderChainState
 * @author ontology bean generator
-* @version 2010/02/28, 13:48:47
+* @version 2010/02/28, 13:48:46
 */
-public class ReachStacker extends ActiveContainerHolder{ 
+public class TransportOrderChainState implements Concept {
 
 }

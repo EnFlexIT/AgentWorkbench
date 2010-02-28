@@ -9,7 +9,7 @@ import jade.core.*;
    * Request a randomly populated bay map at the RandomGeneratorAgent for development purposes
 * Protege name: RequestPopulatedBayMap
 * @author ontology bean generator
-* @version 2009/10/20, 22:25:25
+* @version 2010/02/28, 13:48:47
 */
 public class RequestPopulatedBayMap implements AgentAction {
 

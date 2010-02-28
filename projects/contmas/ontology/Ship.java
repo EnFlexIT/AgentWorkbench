@@ -7,9 +7,9 @@ import jade.core.*;
 /**
 * Protege name: Ship
 * @author ontology bean generator
-* @version 2009/10/20, 22:25:25
+* @version 2010/02/28, 13:48:47
 */
-public class Ship extends PassiveContainerHolder{ 
+public class Ship extends StaticContainerHolder{ 
 
    /**
 * Protege name: length

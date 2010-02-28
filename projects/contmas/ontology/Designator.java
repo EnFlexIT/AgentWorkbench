@@ -9,9 +9,20 @@ import jade.core.*;
    * start or end of a transport order
 * Protege name: Designator
 * @author ontology bean generator
-* @version 2009/10/20, 22:25:25
+* @version 2010/02/28, 13:48:46
 */
 public class Designator implements Concept {
+
+   /**
+* Protege name: concrete_designation
+   */
+   private AID concrete_designation;
+   public void setConcrete_designation(AID value) { 
+    this.concrete_designation=value;
+   }
+   public AID getConcrete_designation() {
+     return this.concrete_designation;
+   }
 
    /**
 * Protege name: abstract_designation
@@ -33,17 +44,6 @@ public class Designator implements Concept {
    }
    public String getType() {
      return this.type;
-   }
-
-   /**
-* Protege name: concrete_designation
-   */
-   private AID concrete_designation;
-   public void setConcrete_designation(AID value) { 
-    this.concrete_designation=value;
-   }
-   public AID getConcrete_designation() {
-     return this.concrete_designation;
    }
 
 }

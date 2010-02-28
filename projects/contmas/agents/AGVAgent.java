@@ -18,7 +18,7 @@ import jade.util.leap.List;
  *
  */
 public class AGVAgent extends PassiveContainerAgent implements TransportOrderHandler {
-	public Integer lengthOfQueue=0;
+	public Integer lengthOfProposeQueue=0;
 	public AGVAgent() {
 		this(new AGV());
 	}

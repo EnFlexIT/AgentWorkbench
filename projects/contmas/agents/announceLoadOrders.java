@@ -20,8 +20,11 @@ import java.util.Vector;
 import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
 
 import contmas.ontology.AcceptLoadOffer;
+import contmas.ontology.Administerd;
 import contmas.ontology.AnnounceLoadStatus;
+import contmas.ontology.Announced;
 import contmas.ontology.CallForProposalsOnLoadStage;
+import contmas.ontology.Failed;
 import contmas.ontology.LoadList;
 import contmas.ontology.ProposeLoadOffer;
 import contmas.ontology.TransportOrder;
@@ -44,19 +47,22 @@ public class announceLoadOrders extends ContractNetInitiator {
 
 	protected Vector prepareCfps(ACLMessage cfp) {
 		TransportOrderChain curTOC=(TransportOrderChain) currentLoadList.getConsists_of().iterator().next();
+		if(!(((ContainerAgent)myAgent).changeTOCState(curTOC, new Announced()) instanceof Administerd)){
+			((ContainerAgent)myAgent).echoStatus("FAILURE: Auftrag wird nicht ausgeschrieben werden, nicht administriert, wahrscheinlich schon failure.",curTOC);
+			((ContainerAgent)myAgent).changeTOCState(curTOC, new Failed());
+			return null;
+		}
 		((ContainerAgent)myAgent).echoStatus("Schreibe Auftrag aus.", curTOC );
 		cfp = new ACLMessage(ACLMessage.CFP);
 		cfp.setProtocol(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
 		List contractorList = ((ContainerAgent) myAgent).determineContractors();
 		if(contractorList==null || contractorList.isEmpty()){
-			if(!((ContainerAgent)myAgent).isInFailedQueue(curTOC)){
-				((ContainerAgent)myAgent).failedQueue.add(curTOC);
-			}
 			if(masterBehaviour!=null){
 				((ContainerAgent)myAgent).echoStatus("MasterBehaviour wird neugestartet.");
 				masterBehaviour.restart();
 			}
-			((ContainerAgent)myAgent).echoStatus("Keine Contractors mehr vorhanden. Ausschreibung nicht möglich.",curTOC);
+			((ContainerAgent)myAgent).echoStatus("FAILURE: Keine Contractors mehr vorhanden. Ausschreibung nicht möglich.",curTOC);
+			((ContainerAgent)myAgent).changeTOCState(curTOC, new Failed());
 			return null;
 		}
 		Iterator allContractors = contractorList.iterator();
@@ -68,9 +74,9 @@ public class announceLoadOrders extends ContractNetInitiator {
 		act.setRequired_turnover_capacity(this.currentLoadList);
 		((ContainerAgent)myAgent).fillMessage(cfp, act);
 		Vector<ACLMessage> messages = new Vector<ACLMessage>();
-		cfp.setReplyByDate(new Date(System.currentTimeMillis() + 500000)); //5000
+		cfp.setReplyByDate(new Date(System.currentTimeMillis() + 5000)); //500000
 		messages.add(cfp);
-		((ContainerAgent)myAgent).announcedQueue.add(curTOC); //TODO 1-Container-Version2LoadListVersion
+
 //		((ContainerAgent)myAgent).echoStatus("Auftrag ausgeschrieben.",curTOC);
 		return messages;
 	}
@@ -87,9 +93,7 @@ public class announceLoadOrders extends ContractNetInitiator {
 			}
 			if (propose.getContent() != null && propose.getPerformative()==ACLMessage.PROPOSE) {
 				Concept content;
-//				((ContainerAgent)myAgent).echoStatus("Content: "+propose.getContent());
 				content = ((ContainerAgent) myAgent).extractAction(propose);
-				// content = ((AgentAction) myAgent.getContentManager().);
 				if (content instanceof ProposeLoadOffer) {
 					ProposeLoadOffer proposal = (ProposeLoadOffer) content;
 					TransportOrder offer = ((ContainerAgent)myAgent).findMatchingOrder(proposal.getLoad_offer(),false);
@@ -99,14 +103,23 @@ public class announceLoadOrders extends ContractNetInitiator {
 						bestOfferToc=proposal.getLoad_offer();
 					}
 				}
-			}// End if content !=null
+			} // End if content !=null
 		}
 		ACLMessage accept=null;
 		TransportOrderChain curTOC=(TransportOrderChain) currentLoadList.getConsists_of().iterator().next();
 
 		if(bestOffer==null){ //Abnehmer momentan alle beschäftigt
+			((ContainerAgent)myAgent).echoStatus("FAILURE: Nur Ablehnungen empfangen, Abbruch.");
+			((ContainerAgent)myAgent).changeTOCState(curTOC, new Failed());
+			if(masterBehaviour!=null){
+				((ContainerAgent)myAgent).echoStatus("REFUSE: MasterBehaviour wird neugestartet.");
+				masterBehaviour.restart();
+			}
+			this.reset();
+			return;
+
+			/* Alt: warten, benötigt aber weiteren zwischenspeicher oder so
 			if(((ContainerAgent)myAgent).isInFailedQueue(curTOC)){
-				((ContainerAgent)myAgent).removeFromAnnouncedQueue(curTOC);
 				if(masterBehaviour!=null){
 					((ContainerAgent)myAgent).echoStatus("REFUSE: MasterBehaviour wird neugestartet.");
 					masterBehaviour.restart();
@@ -115,10 +128,11 @@ public class announceLoadOrders extends ContractNetInitiator {
 			} else {
 				((ContainerAgent)myAgent).echoStatus("Nur Ablehnungen empfangen, versuche es nochmal");
 				((ContainerAgent)myAgent).doWait(1000); //kurz warten, vielleicht beruhigt sich ja die Lage
-				((ContainerAgent)myAgent).failedQueue.add(curTOC);
+				((ContainerAgent)myAgent).changeTOCState(curTOC, new Failed());
 				this.reset();
 				return;	
 			}
+			*/
 		}
 		if(bestOffer!=null){
 			accept = bestOfferMessage.createReply();
@@ -148,8 +162,7 @@ public class announceLoadOrders extends ContractNetInitiator {
 				if(notification.getPerformative()==ACLMessage.INFORM && loadStatus.getLoad_status().equals("FINISHED")){
 //					((ContainerAgent)myAgent).echoStatus("AnnounceLoadStatus FINISHED empfangen, bearbeiten");
 					if(((ContainerAgent)myAgent).removeContainerFromBayMap(load_offer)){
-						((ContainerAgent)myAgent).removeFromCommissions(load_offer);
-						((ContainerAgent)myAgent).removeFromAnnouncedQueue(load_offer);
+						((ContainerAgent)myAgent).changeTOCState(load_offer, null, true);
 						((ContainerAgent)myAgent).echoStatus("Erfolgreich losgeworden (Meldung+BayMap-Entfernung).",load_offer);
 						if(masterBehaviour!=null){
 							((ContainerAgent)myAgent).echoStatus("INFORM: MasterBehaviour wird neugestartet.");
@@ -158,9 +171,7 @@ public class announceLoadOrders extends ContractNetInitiator {
 					}
 				} else if (notification.getPerformative()==ACLMessage.FAILURE) { // && loadStatus.getLoad_status().substring(0, 4).equals("ERROR")) {
 					((ContainerAgent)myAgent).removeFromContractors(notification.getSender());
-					if(!((ContainerAgent)myAgent).isInFailedQueue(load_offer)){
-						((ContainerAgent)myAgent).failedQueue.add(load_offer);
-					}
+					((ContainerAgent)myAgent).changeTOCState(load_offer, new Failed());
 					((ContainerAgent)myAgent).echoStatus("Containerabgabe fehlgeschlagen. "+loadStatus.getLoad_status(),load_offer);
 					if(masterBehaviour!=null){
 						((ContainerAgent)myAgent).echoStatus("FAILURE: MasterBehaviour wird neugestartet.");

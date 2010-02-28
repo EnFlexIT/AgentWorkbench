@@ -5,11 +5,11 @@ import jade.util.leap.*;
 import jade.core.*;
 
 /**
-   * can move containers inside of a domain, e.g. AGV
-* Protege name: PassiveContainerHolder
+   * Container is waiting for result of subbehaviour to gain space
+* Protege name: PendingForSubCFP
 * @author ontology bean generator
 * @version 2010/02/28, 13:48:47
 */
-public class PassiveContainerHolder extends ContainerHolder{ 
+public class PendingForSubCFP extends TransportOrderChainState{ 
 
 }

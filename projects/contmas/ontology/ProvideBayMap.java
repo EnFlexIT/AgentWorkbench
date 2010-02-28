@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: ProvideBayMap
 * @author ontology bean generator
-* @version 2009/10/20, 22:25:25
+* @version 2010/02/28, 13:48:47
 */
 public class ProvideBayMap implements AgentAction {
 

@@ -9,19 +9,19 @@ import jade.core.*;
    * Address of a free slot or of a container occupying a slot in a bay map
 * Protege name: BlockAddress
 * @author ontology bean generator
-* @version 2009/10/20, 22:25:25
+* @version 2010/02/28, 13:48:46
 */
 public class BlockAddress implements Concept {
 
    /**
-* Protege name: z_dimension
+* Protege name: locates
    */
-   private int z_dimension;
-   public void setZ_dimension(int value) { 
-    this.z_dimension=value;
+   private Container locates;
+   public void setLocates(Container value) { 
+    this.locates=value;
    }
-   public int getZ_dimension() {
-     return this.z_dimension;
+   public Container getLocates() {
+     return this.locates;
    }
 
    /**
@@ -36,6 +36,17 @@ public class BlockAddress implements Concept {
    }
 
    /**
+* Protege name: z_dimension
+   */
+   private int z_dimension;
+   public void setZ_dimension(int value) { 
+    this.z_dimension=value;
+   }
+   public int getZ_dimension() {
+     return this.z_dimension;
+   }
+
+   /**
 * Protege name: y_dimension
    */
    private int y_dimension;
@@ -44,17 +55,6 @@ public class BlockAddress implements Concept {
    }
    public int getY_dimension() {
      return this.y_dimension;
-   }
-
-   /**
-* Protege name: locates
-   */
-   private Container locates;
-   public void setLocates(Container value) { 
-    this.locates=value;
-   }
-   public Container getLocates() {
-     return this.locates;
    }
 
 }
