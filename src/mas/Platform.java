@@ -16,10 +16,8 @@ import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
-
 import application.Application;
 import application.Language;
-import application.reflection.Reflect;
 
 public class Platform extends java.lang.Object {
 

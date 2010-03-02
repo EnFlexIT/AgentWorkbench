@@ -1,41 +1,41 @@
 package gui.projectwindow;
 
 import java.awt.Font;
+import java.awt.GridBagLayout;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Observable;
-import java.util.Observer;
 
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import java.awt.GridBagConstraints;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import application.Language;
 import application.Project;
 
-/**
- * @author: Christian Derksen
- *
- */
-public class ProjectInfo extends JScrollPane implements Observer, ActionListener {
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Observable;
+import java.util.Observer;
+
+public class ProjectInfo extends JPanel implements Observer, ActionListener {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private Project CurrProject;
 	
 	private JTextField ProjectName = null;
 	private DocumentListener ProjectNameDocumentListener;  //  @jve:decl-index=0:
+	private JLabel TitleProject = null;
+	private JScrollPane jScrollPane = null;
 	private JTextArea ProjectDescription = null;
 	private JTextField ProjectFolder = null;
-	
-	private JLabel jLabel = null;
-	private JLabel jLabel1 = null;
-	private JLabel jLabel2 = null;
-	private JScrollPane jScrollPane = null;
+	private JLabel TitleDescription = null;
+	private JLabel TitleFolder = null;
 
 	/**
 	 * This is the default constructor
@@ -44,50 +44,81 @@ public class ProjectInfo extends JScrollPane implements Observer, ActionListener
 		super();
 		this.CurrProject = CP;
 		this.CurrProject.addObserver(this);		
-		initialize();	
+		initialize();
+		
+		// --- Sprachspezifische Einstellungen -----------------
+		TitleProject.setText( Language.translate("Projekttitel") );
+		TitleDescription.setText( Language.translate("Beschreibung") );
+		TitleFolder.setText( Language.translate("Verzeichnis") );
 	}
+
 	/**
 	 * This method initializes this
+	 * 
 	 * @return void
 	 */
 	private void initialize() {
-		
-		this.setSize(699, 326);
-		this.setAutoscrolls(true);		
-		this.setBorder(null);
-		this.setFocusable(true);
-		this.setLayout(null);		
-		this.setName("ProjectBaseInfo");
-		
-		jLabel1 = new JLabel();
-		jLabel1.setBounds(new Rectangle(15, 15, 156, 19));
-		jLabel1.setFont(new Font("Dialog", Font.BOLD, 14));
-		jLabel1.setText( Language.translate("Projekttitel") );
-		jLabel2 = new JLabel();
-		jLabel2.setBounds(new Rectangle(15, 45, 156, 21));
-		jLabel2.setFont(new Font("Dialog", Font.BOLD, 14));
-		jLabel2.setText( Language.translate("Beschreibung") );
-		jLabel = new JLabel();
-		jLabel.setBounds(new Rectangle(15, 285, 156, 21));
-		jLabel.setFont(new Font("Dialog", Font.BOLD, 14));
-		jLabel.setText( Language.translate("Verzeichnis") );
-		
-		this.add(jLabel, null);
-		this.add(jLabel1, null);
-		this.add(jLabel2, null);
-		this.add( getProjectTitel() );
-		this.add( getProjectFolder() );		
-		this.add( getJScrollPane() );
-		this.setVisible(true);
-
+		GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
+		gridBagConstraints5.gridx = 0;
+		gridBagConstraints5.insets = new Insets(0, 10, 10, 5);
+		gridBagConstraints5.anchor = GridBagConstraints.WEST;
+		gridBagConstraints5.gridy = 2;
+		TitleFolder = new JLabel();
+		TitleFolder.setText("JLabel");
+		TitleFolder.setFont(new Font("Dialog", Font.BOLD, 14));
+		TitleFolder.setText( Language.translate("Beschreibung") );
+		GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
+		gridBagConstraints4.gridx = 0;
+		gridBagConstraints4.anchor = GridBagConstraints.NORTHWEST;
+		gridBagConstraints4.insets = new Insets(2, 10, 0, 5);
+		gridBagConstraints4.gridy = 1;
+		TitleDescription = new JLabel();
+		TitleDescription.setText("JLabel");
+		TitleDescription.setFont(new Font("Dialog", Font.BOLD, 14));
+		TitleDescription.setText( Language.translate("Beschreibung") );		
+		GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
+		gridBagConstraints3.fill = GridBagConstraints.HORIZONTAL;
+		gridBagConstraints3.gridy = 2;
+		gridBagConstraints3.weightx = 1.0;
+		gridBagConstraints3.gridwidth = 2;
+		gridBagConstraints3.insets = new Insets(0, 0, 10, 10);
+		gridBagConstraints3.gridx = 2;
+		GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
+		gridBagConstraints2.fill = GridBagConstraints.BOTH;
+		gridBagConstraints2.gridy = 1;
+		gridBagConstraints2.weightx = 1.0;
+		gridBagConstraints2.weighty = 1.0;
+		gridBagConstraints2.insets = new Insets(0, 0, 10, 10);
+		gridBagConstraints2.gridx = 2;
+		GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
+		gridBagConstraints1.gridx = 0;
+		gridBagConstraints1.insets = new Insets(0, 10, 0, 5);
+		gridBagConstraints1.anchor = GridBagConstraints.WEST;
+		gridBagConstraints1.gridy = 0;
+		TitleProject = new JLabel();
+		TitleProject.setText("JLabel");
+		TitleProject.setFont(new Font("Dialog", Font.BOLD, 14));
+		GridBagConstraints gridBagConstraints = new GridBagConstraints();
+		gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+		gridBagConstraints.gridx = 2;
+		gridBagConstraints.insets = new Insets(10, 0, 10, 10);
+		gridBagConstraints.weightx = 1.0;
+		this.setSize(557, 329);
+		this.setLayout(new GridBagLayout());
+		this.add(getProjectName(), gridBagConstraints);
+		this.add(TitleProject, gridBagConstraints1);
+		this.add(getJScrollPane(), gridBagConstraints2);
+		this.add(getProjectFolder(), gridBagConstraints3);
+		this.add(TitleDescription, gridBagConstraints4);
+		this.add(TitleFolder, gridBagConstraints5);
 	}
 
 	/**
-	 * This method initializes ProjectTitel	
+	 * This method initializes ProjectName	
 	 * 	
 	 * @return javax.swing.JTextField	
 	 */
-	private JTextField getProjectTitel() {
+	private JTextField getProjectName() {
 		if (ProjectName == null) {
 			ProjectName = new JTextField();
 			ProjectName.setBounds(new Rectangle(140, 15, 520, 26));
@@ -106,6 +137,7 @@ public class ProjectInfo extends JScrollPane implements Observer, ActionListener
 				}
 			};
 			ProjectName.getDocument().addDocumentListener(ProjectNameDocumentListener);
+			
 		}
 		return ProjectName;
 	}
@@ -118,11 +150,11 @@ public class ProjectInfo extends JScrollPane implements Observer, ActionListener
 	private JScrollPane getJScrollPane() {
 		if (jScrollPane == null) {
 			jScrollPane = new JScrollPane();
-			jScrollPane.setBounds(new Rectangle(140, 45, 520, 221));
 			jScrollPane.setViewportView(getProjectDescription());
 		}
 		return jScrollPane;
 	}
+
 	/**
 	 * This method initializes ProjectDescription	
 	 * 	
@@ -134,6 +166,7 @@ public class ProjectInfo extends JScrollPane implements Observer, ActionListener
 			ProjectDescription.setName("ProjectDescription");
 			ProjectDescription.setColumns(0);
 			ProjectDescription.setLineWrap(true);
+			ProjectDescription.setWrapStyleWord(true);
 			ProjectDescription.setFont(new Font("Dialog", Font.PLAIN, 12));
 			ProjectDescription.setText( CurrProject.getProjectDescription() );
 			ProjectDescription.getDocument().addDocumentListener( new DocumentListener() {
@@ -164,10 +197,11 @@ public class ProjectInfo extends JScrollPane implements Observer, ActionListener
 			ProjectFolder.setFont(new Font("Dialog", Font.PLAIN, 12));
 			ProjectFolder.setEditable( false );
 			ProjectFolder.setText( CurrProject.getProjectFolderFullPath() );			
-			
 		}
 		return ProjectFolder;
 	}
+
+	
 	@Override
 	/**
 	 * Get the notyfication of the ObjectModel
@@ -212,5 +246,7 @@ public class ProjectInfo extends JScrollPane implements Observer, ActionListener
 			System.err.println(Language.translate("Unbekannt: ") + "ActionCommand => " + ActCMD);
 		};
 	}
+	
+	
 	
 }  //  @jve:decl-index=0:visual-constraint="10,10"

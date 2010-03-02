@@ -2,14 +2,13 @@ package application.reflection;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
 import application.Application;
 
-public class Reflect extends ArrayList<String> {
+public class ReflectClassFiles extends ArrayList<String> {
 
 	/**
 	 * 
@@ -21,7 +20,7 @@ public class Reflect extends ArrayList<String> {
 	private String[] SearchINPathParts = null;
 		
 		
-	public Reflect( String SearchReference ) {
+	public ReflectClassFiles( String SearchReference ) {
 		// --- Verzeichnis, in dem die Ontologie liegt auslesen ---
 		SearchINReference = SearchReference;
 		if ( !(SearchINReference == null) ) {
@@ -29,21 +28,6 @@ public class Reflect extends ArrayList<String> {
 		}
 		this.getClazzes();
 		this.addAll( ClazzList );
-		
-		// --- Testausgaben ---------------------------------
-		int i = this.size();
-		if (i!=0) {
-			System.out.println("KLasse No. "+i+": " + this.get(i-1).toString() );
-			try {
-	            Class<?> c = Class.forName(this.get(i-1).toString());
-	            Method m[] = c.getDeclaredMethods();
-	            for (int j = 0; j < m.length; j++)
-	            System.out.println(m[j].toString());
-	        }
-	        catch (Throwable e) {
-	        	System.err.println(e);
-	        }	
-		}
 	}
 
 	private void getClazzes() {

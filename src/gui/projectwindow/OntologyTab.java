@@ -1,7 +1,6 @@
 package gui.projectwindow;
 
 import java.awt.BorderLayout;
-import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Enumeration;
@@ -19,14 +18,13 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import mas.onto.OntologyClassTreeObject;
 import application.Project;
 
 /**
  * @author: Christian Derksen
  *
  */
-public class Ontology extends JPanel implements Observer, ActionListener {
+public class OntologyTab extends JPanel implements Observer, ActionListener {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -40,7 +38,7 @@ public class Ontology extends JPanel implements Observer, ActionListener {
 	/**
 	 * This is the default constructor
 	 */
-	public Ontology( Project CP ) {
+	public OntologyTab( Project CP ) {
 		super();
 		this.CurrProject = CP;
 		this.CurrProject.addObserver(this);		
@@ -137,7 +135,7 @@ public class Ontology extends JPanel implements Observer, ActionListener {
 	 */
 	private JTree getOntoTree() {
 		if (OntoTree == null) {
-			OntoTree = new JTree( CurrProject.getProjectOntologieTree() );
+			OntoTree = new JTree( CurrProject.Ontology.getOntologyTree() );
 			OntoTree.setName("OntoTree");
 			OntoTree.setShowsRootHandles(false);
 			OntoTree.setRootVisible(true);
@@ -148,23 +146,13 @@ public class Ontology extends JPanel implements Observer, ActionListener {
 					// ----------------------------------------------------------
 					// --- Tree-Selection abfangen --- S T A R T ----------------
 					// ----------------------------------------------------------
-					TreePath PathSelected = ts.getPath();
-					Integer PathLevel = PathSelected.getPathCount();
-					//System.out.println( PathLevel + " => "  + ts.getPath().toString() );
-					
+					// --- Node auslesen und Slots anzeigen ---------------------
 					DefaultMutableTreeNode CurrNode = (DefaultMutableTreeNode)ts.getPath().getLastPathComponent();
-					Object CurrUserObject = CurrNode.getUserObject();
-					if ( CurrUserObject instanceof String ) {
-						// --- String-Objekt in Node ----------------------
-						//System.out.println( CurrUserObject );
-					} else if ( CurrUserObject instanceof OntologyClassTreeObject ) {
-						// --- Klasse bearbeiten / auslesen ---------------
-						OntologyClassTreeObject OTJ = (OntologyClassTreeObject ) CurrUserObject;
-						Class<?> CurrClass = OTJ.OntoClass;
-						//System.out.println( CurrClass.getName() );
-					}
-					
-					
+					JPanel NewSlotView = new OntologyTabClassView( CurrNode ); 
+					int DivLoc = OntoSplitPane.getDividerLocation();
+					OntoSplitPane.setRightComponent( NewSlotView );
+					OntoSplitPane.setDividerLocation(DivLoc);
+					OntoMain = NewSlotView; 
 					// ----------------------------------------------------------
 					// --- Tree-Selection abfangen --- S T O P ------------------
 					// ----------------------------------------------------------
@@ -182,7 +170,7 @@ public class Ontology extends JPanel implements Observer, ActionListener {
     	Integer CurrNodeLevel = 1;
     	if ( Up2TreeLevel == null ) 
     		Up2TreeLevel = 1000;
-    	OntoTreeExpand( new TreePath( CurrProject.getProjectOntologieTree().getRoot() ), expand, CurrNodeLevel, Up2TreeLevel);
+    	OntoTreeExpand( new TreePath( CurrProject.Ontology.getOntologyTree().getRoot() ), expand, CurrNodeLevel, Up2TreeLevel);
     }
     @SuppressWarnings("unchecked")
 	private void OntoTreeExpand( TreePath parent, boolean expand, Integer CurrNodeLevel, Integer Up2TreeLevel) {
@@ -214,8 +202,7 @@ public class Ontology extends JPanel implements Observer, ActionListener {
 	 */
 	private JPanel getOntoMain() {
 		if (OntoMain == null) {
-			OntoMain = new JPanel();
-			OntoMain.setLayout(new GridBagLayout());
+			OntoMain = new JPanel();			
 		}
 		return OntoMain;
 	}

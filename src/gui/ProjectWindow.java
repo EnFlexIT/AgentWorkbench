@@ -65,7 +65,7 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 
 		// --- Die (optionalen) Karteikarten einblenden ----------
 		addProjectTab(Language.translate("Basis-Agenten"), null, new gui.projectwindow.BaseAgents(CurrProject), Language.translate("Basis-Agenten"));
-		addProjectTab(Language.translate("Ontologie"), null, new gui.projectwindow.Ontology(CurrProject), Language.translate("Kommunikation"));		
+		addProjectTab(Language.translate("Ontologie"), null, new gui.projectwindow.OntologyTab(CurrProject), Language.translate("Kommunikation"));		
 		addProjectTab(Language.translate("Umgebungs - Setup"), null, new mas.environment.EnvironmentControllerGUI(this.CurrProject), Language.translate("Umgebungs - Setup"));
 		addProjectTab(Language.translate("Simmulations - Setup"), null, new gui.projectwindow.SetupSimulation(CurrProject), Language.translate("Simmulations - Setup"));
 		addProjectTab(Language.translate("Simulation"), null, new mas.display.DisplayAgentGUI(this.CurrProject), Language.translate("Simulation"));

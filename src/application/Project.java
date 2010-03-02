@@ -11,14 +11,13 @@ import java.util.Vector;
 import javax.swing.JDesktopPane;
 import javax.swing.JOptionPane;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
-import javax.swing.tree.DefaultMutableTreeNode;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import mas.environment.EnvironmentController;
-import mas.onto.OntologyClassTree;
+import mas.onto.OntologyClass;
 
 @XmlRootElement public class Project extends Observable {
 
@@ -35,7 +34,7 @@ import mas.onto.OntologyClassTree;
 	@XmlTransient private String ProjectFolder;
 	@XmlTransient private String ProjectFolderFullPath;
 	@XmlTransient private Vector<Class<?>> ProjectAgents;
-	@XmlTransient private OntologyClassTree ProjectOntologieTree;
+	@XmlTransient public OntologyClass Ontology = new OntologyClass(this);
 	@XmlTransient public EnvironmentController ec; 
 	
 	// --- Speichervariablen der Projektdatei ------------------ 
@@ -285,15 +284,4 @@ import mas.onto.OntologyClassTree;
 		this.envPath = fileName;		
 	}
 
-	/**
-	 * @return the projectOntologieTree
-	 */
-	public OntologyClassTree getProjectOntologieTree() {
-		if ( ProjectOntologieTree == null ) {
-			DefaultMutableTreeNode RootNode = new DefaultMutableTreeNode( Language.translate("Ontologie")  );
-			ProjectOntologieTree = new OntologyClassTree( RootNode, this );
-		}
-		return ProjectOntologieTree;
-	}	
-	
 }

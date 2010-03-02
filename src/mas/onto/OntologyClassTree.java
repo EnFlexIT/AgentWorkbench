@@ -8,23 +8,26 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
 import application.Project;
-import application.reflection.Reflect;
+import application.reflection.ReflectClassFiles;
 
 public class OntologyClassTree extends DefaultTreeModel implements Serializable {
 
 	/**
-	 * 
+	 * This class represents the TreeModel for the Ontology of
+	 * the current Project 
 	 */
 	private static final long serialVersionUID = 1L;
 
+	private Project CurrProject;
 	private DefaultMutableTreeNode RootNode;
 	private DefaultMutableTreeNode CurrentNode;
 	private DefaultMutableTreeNode ParentNode;
 	private DefaultMutableTreeNode ConceptNode;
+	private DefaultMutableTreeNode AidNode;
 	private DefaultMutableTreeNode AActionNode;
 	
 	private String SearchIN;
-
+	
 	// --------------------------------------------------------------------------
 	// --- "jade.content.onto.Ontology" - Basisklasse der Ontologie			  ---
 	// --- "jade.content.Concept"		- 1. mögliches Interface einer Klasse ---
@@ -32,26 +35,41 @@ public class OntologyClassTree extends DefaultTreeModel implements Serializable 
 	// --------------------------------------------------------------------------
 	private final static String BaseClassOnto = "jade.content.onto.Ontology";
 	private final static String BaseClassConcept = "jade.content.Concept";
+	private final static String BaseClassAID = "jade.core.AID";
 	private final static String BaseClassAAction = "jade.content.AgentAction";
 	private final static String BaseClassObject = "java.lang.Object";
 	// --------------------------------------------------------------------------
 	
 	public OntologyClassTree(DefaultMutableTreeNode root, Project CurrPro) {
 		super(root);		
+		CurrProject = CurrPro;
 		// --- Basisstruktur erstellen -------------------------
 		RootNode = root;
 		
-		ConceptNode = new DefaultMutableTreeNode( "Concept" );
+		// --- Den Knoten 'Concept' hinzufügen -----------------
+		ConceptNode = new DefaultMutableTreeNode( new OntologyClassTreeObject(CurrPro.Ontology, "Concept") );
 		RootNode.add( ConceptNode );		
 
-		AActionNode = new DefaultMutableTreeNode( "AgentAction" );
+		// --- Den Knoten AID 'Agent-Identifier' hinzufügen ----
+		try {
+			Class<?> AIDClass = Class.forName(BaseClassAID);
+			AidNode = new DefaultMutableTreeNode( new OntologyClassTreeObject(CurrPro.Ontology, AIDClass) );			
+		} catch (ClassNotFoundException e) {
+			//e.printStackTrace();
+			System.out.println( "Could not find AID-Class !!!" );
+			AidNode = new DefaultMutableTreeNode( new OntologyClassTreeObject(CurrPro.Ontology, "AID") );
+		}
+		ConceptNode.add( AidNode );
+		
+		// --- Den Knoten AgentAction hinzufügen --------------
+		AActionNode = new DefaultMutableTreeNode( new OntologyClassTreeObject(CurrPro.Ontology, "AgentAction") );
 		ConceptNode.add( AActionNode );		
 		
 		// --- Suchverzeichnis festlegen ----------------------
 		SearchIN = CurrPro.getProjectFolder()+".ontology";
 		
 		// --- Auslesen der class-Files ------------------------
-		Reflect ProOnto = new Reflect(SearchIN); 		
+		ReflectClassFiles ProOnto = new ReflectClassFiles(SearchIN); 		
 		Iterator<String> ClLi = ProOnto.listIterator();
 		
 		// --- Klassen untersuchen -----------------------------
@@ -59,7 +77,7 @@ public class OntologyClassTree extends DefaultTreeModel implements Serializable 
 		Class<?>[] ClaInt = null;
 		Class<?> ClaPare = null;
 		String ClaRef = null, ClaRefPrev = null;
-		String ClaName, ClaIntName, ClaPareName;
+		String ClaIntName, ClaPareName;
 		boolean ClaIsBaseOnto, ClaIsConcept, ClaIsAACtion;
 		int ClLiCount = 0, ClLiIndex = 0;
 		
@@ -75,13 +93,11 @@ public class OntologyClassTree extends DefaultTreeModel implements Serializable 
 	        	// ---------------------------------------------
 	        	// --- Klassen anfassen ------------------------	        	
 	        	Cla = Class.forName( ClaRef );
-	        	ClaName = Cla.getName();	
 	        	// --- Superclass ------------------------------
 	        	ClaPare = Cla.getSuperclass();
 	        	ClaPareName = ClaPare.getName();
 	        	// --- Interfaces der Klasse ermitteln ---------
 	        	ClaInt = Cla.getInterfaces();
-	        	//System.out.println( "=> Name: " + ClaName + " => Super: " + ClaPareName );
 	        	// --- Default ---------------------------------
 	        	ClaIsBaseOnto = false;
 		    	ClaIsConcept = false;
@@ -111,10 +127,15 @@ public class OntologyClassTree extends DefaultTreeModel implements Serializable 
 	        	
 	        	// ---------------------------------------------
 	        	// --- Aktuelle Klasse in Tree darstellen ------
-	        	CurrentNode = new DefaultMutableTreeNode( new OntologyClassTreeObject(Cla) );
+	        	CurrentNode = new DefaultMutableTreeNode( new OntologyClassTreeObject(CurrPro.Ontology, Cla) );
 	        	if ( ClaIsBaseOnto == true ) {
-	        		// --- Root-Node umbennennen ---------------
-	        		RootNode.setUserObject( getClassTextSimple( ClaName ) );
+	        		// --- Vokabular der Ontologie auslesen ----
+	        		// --- und im Project-Objekt bereitstellen -
+	        		CurrProject.Ontology.setOntologyVocabulary( Cla );
+	        		// --- Root-Object neu belegen -------------
+	        		OntologyClassTreeObject OCTO = new OntologyClassTreeObject(CurrPro.Ontology, Cla);
+	        		OCTO.setObjectTitle( CurrProject.Ontology.getOntologyWord("ONTOLOGY_NAME") );
+	        		RootNode.setUserObject( OCTO );   
 	        	} else if ( ClaIsConcept == true ) {
 		    		ConceptNode.add( CurrentNode );	
 	        	} else if ( ClaIsAACtion == true ){
@@ -161,7 +182,7 @@ public class OntologyClassTree extends DefaultTreeModel implements Serializable 
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	private DefaultMutableTreeNode getTreeNode( String Reference ) {
+	public DefaultMutableTreeNode getTreeNode( String Reference ) {
 		
 		DefaultMutableTreeNode NodeFound = null;
 		DefaultMutableTreeNode CurrNode = null;
@@ -178,15 +199,4 @@ public class OntologyClassTree extends DefaultTreeModel implements Serializable 
 		}
 		return NodeFound;
 	}
-	
-	/**
-	 * Returns the simple class name from a class-reference
-	 * @param Reference
-	 * @return
-	 */
-	private String getClassTextSimple( String Reference ) {
-		return Reference.substring( Reference.lastIndexOf(".")+1 );
-	}
-
-	
 }
