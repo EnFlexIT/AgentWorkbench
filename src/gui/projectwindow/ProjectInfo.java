@@ -169,6 +169,7 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 			ProjectDescription.setWrapStyleWord(true);
 			ProjectDescription.setFont(new Font("Dialog", Font.PLAIN, 12));
 			ProjectDescription.setText( CurrProject.getProjectDescription() );
+			ProjectDescription.setCaretPosition(0);
 			ProjectDescription.getDocument().addDocumentListener( new DocumentListener() {
 				public void removeUpdate(DocumentEvent e) {
 					CurrProject.setProjectDescription( ProjectDescription.getText() );
