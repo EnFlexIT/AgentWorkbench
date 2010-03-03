@@ -1,76 +1,84 @@
+/**
+ * @author Hanno - Felix Wagner Copyright 2010 Hanno - Felix Wagner This file is
+ *         part of ContMAS. ContMAS is free software: you can redistribute it
+ *         and/or modify it under the terms of the GNU Lesser General Public
+ *         License as published by the Free Software Foundation, either version
+ *         3 of the License, or (at your option) any later version. ContMAS is
+ *         distributed in the hope that it will be useful, but WITHOUT ANY
+ *         WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ *         FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+ *         License for more details. You should have received a copy of the GNU
+ *         Lesser General Public License along with ContMAS. If not, see
+ *         <http://www.gnu.org/licenses/>.
+ */
+
 package contmas.agents;
+
 import jade.gui.GuiEvent;
 
-import java.awt.BorderLayout;
-
-import javax.swing.JDialog;
-import javax.swing.JInternalFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JFrame;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
+import java.awt.Font;
 import java.awt.Rectangle;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.Font;
 
-/**
- * 
- */
+import javax.swing.*;
+import javax.swing.event.InternalFrameAdapter;
+import javax.swing.event.InternalFrameEvent;
 
-/**
- * @author Hanno - Felix Wagner
- *
- */
-public class ControlGUI extends JFrame implements ActionListener{
+public class ControlGUI extends JInternalFrame implements ActionListener{
 
-	private static final long serialVersionUID = 1L;
-	private JPanel jContentPane = null;
-	private JButton ButtonCreateShip = null;
-	private JLabel ShipLabelX = null;
-	private JTextField TFShipX = null;
-	private JLabel ShipLabelY = null;
-	private JTextField TFShipY = null;
-	private JTextField TFShipZ = null;
-	private JLabel ShipLabelZ = null;
-	private JLabel ShipLabelName = null;
-	private JTextField TFShipName = null;
+	private static final long serialVersionUID=1L;
+	private JPanel jContentPane=null;
+	private JButton ButtonCreateShip=null;
+	private JLabel ShipLabelX=null;
+	private JTextField TFShipX=null;
+	private JLabel ShipLabelY=null;
+	private JTextField TFShipY=null;
+	private JTextField TFShipZ=null;
+	private JLabel ShipLabelZ=null;
+	private JLabel ShipLabelName=null;
+	private JTextField TFShipName=null;
 	private ControlGUIAgent myAgent;
-	private JLabel jLabel = null;
-	private JLabel jLabel1 = null;
-	private JTextField TFShipLength = null;
+	private JLabel jLabel=null;
+	private JLabel jLabel1=null;
+	private JTextField TFShipLength=null;
+
 	/**
 	 * This is the default constructor
 	 */
-	public ControlGUI(ControlGUIAgent a) {
+	public ControlGUI(ControlGUIAgent a){
 		super();
-		myAgent=a;
-		initialize();
+		this.myAgent=a;
+		this.initialize();
 
 	}
 
+	public void actionPerformed(ActionEvent ae){
+		if(ae.getSource() == this.ButtonCreateShip){
+			GuiEvent ge=new GuiEvent(this,1);
+			ge.addParameter(this.TFShipName.getText());
+			ge.addParameter(this.TFShipX.getText());
+			ge.addParameter(this.TFShipY.getText());
+			ge.addParameter(this.TFShipZ.getText());
+			ge.addParameter(this.TFShipLength.getText());
+			this.myAgent.postGuiEvent(ge);
+		}
+	}
+
 	/**
-	 * This method initializes this
+	 * This method initializes ButtonCreateShip
 	 * 
-	 * @return void
+	 * @return javax.swing.JButton
 	 */
-	private void initialize() {
-		this.setSize(232, 251);
-		this.setContentPane(getJContentPane());
-		this.setTitle("ControlGUI");
-/*		this.addWindowListener(new WindowAdapter() {
-	         public void windowClosing(WindowEvent e) {
-	            shutDown();
-	         }
-	      });
-	      */
+	private JButton getButtonCreateShip(){
+		if(this.ButtonCreateShip == null){
+			this.ButtonCreateShip=new JButton();
+
+			this.ButtonCreateShip.setBounds(new Rectangle(11,196,201,20));
+			this.ButtonCreateShip.setText("Schiff erzeugen");
+			this.ButtonCreateShip.addActionListener(this);
+		}
+		return this.ButtonCreateShip;
 	}
 
 	/**
@@ -78,151 +86,157 @@ public class ControlGUI extends JFrame implements ActionListener{
 	 * 
 	 * @return javax.swing.JPanel
 	 */
-	private JPanel getJContentPane() {
-		if (jContentPane == null) {
-			jLabel1 = new JLabel();
-			jLabel1.setBounds(new Rectangle(10, 165, 38, 16));
-			jLabel1.setText("Länge");
-			jLabel = new JLabel();
-			jLabel.setBounds(new Rectangle(10, 6, 198, 16));
-			jLabel.setFont(new Font("Dialog", Font.BOLD, 14));
-			jLabel.setText("Neues Schiff erzeugen");
-			ShipLabelName = new JLabel();
-			ShipLabelName.setBounds(new Rectangle(12, 34, 55, 16));
-			ShipLabelName.setText("Name");
-			ShipLabelZ = new JLabel();
-			ShipLabelZ.setBounds(new Rectangle(12, 132, 54, 16));
-			ShipLabelZ.setText("Größe Z");
-			ShipLabelY = new JLabel();
-			ShipLabelY.setBounds(new Rectangle(12, 98, 54, 16));
-			ShipLabelY.setText("Größe Y");
-			ShipLabelX = new JLabel();
-			ShipLabelX.setText("Größe X");
-			ShipLabelX.setBounds(new Rectangle(12, 66, 54, 16));
-			jContentPane = new JPanel();
-			jContentPane.setLayout(null);
-			jContentPane.add(getTFShipX(), null);
-			jContentPane.add(getButtonCreateShip(), null);
-			jContentPane.add(ShipLabelX, null);
-			jContentPane.add(ShipLabelY, null);
-			jContentPane.add(getTFShipY(), null);
-			jContentPane.add(getTFShipZ(), null);
-			jContentPane.add(ShipLabelZ, null);
-			jContentPane.add(ShipLabelName, null);
-			jContentPane.add(getTFShipName(), null);
-			jContentPane.add(jLabel, null);
-			jContentPane.add(jLabel1, null);
-			jContentPane.add(getTFShipLength(), null);
+	private JPanel getJContentPane(){
+		if(this.jContentPane == null){
+			this.jLabel1=new JLabel();
+			this.jLabel1.setText("Länge");
+			this.jLabel1.setBounds(new Rectangle(30,163,38,16));
+			this.jLabel=new JLabel();
+			this.jLabel.setFont(new Font("Dialog",Font.BOLD,14));
+			this.jLabel.setBounds(new Rectangle(11,7,198,16));
+			this.jLabel.setText("Neues Schiff erzeugen");
+			this.ShipLabelName=new JLabel();
+			this.ShipLabelName.setText("Name");
+			this.ShipLabelName.setBounds(new Rectangle(14,32,55,16));
+			this.ShipLabelZ=new JLabel();
+			this.ShipLabelZ.setText("Größe Z");
+			this.ShipLabelZ.setBounds(new Rectangle(13,133,54,16));
+			this.ShipLabelY=new JLabel();
+			this.ShipLabelY.setText("Größe Y");
+			this.ShipLabelY.setBounds(new Rectangle(16,99,54,16));
+			this.ShipLabelX=new JLabel();
+			this.ShipLabelX.setText("Größe X");
+			this.ShipLabelX.setBounds(new Rectangle(15,65,54,16));
+			this.jContentPane=new JPanel();
+			this.jContentPane.setLayout(null);
+			this.jContentPane.add(this.getTFShipX(),null);
+			this.jContentPane.add(this.getButtonCreateShip(),null);
+			this.jContentPane.add(this.ShipLabelX,null);
+			this.jContentPane.add(this.ShipLabelY,null);
+			this.jContentPane.add(this.getTFShipY(),null);
+			this.jContentPane.add(this.getTFShipZ(),null);
+			this.jContentPane.add(this.ShipLabelZ,null);
+			this.jContentPane.add(this.ShipLabelName,null);
+			this.jContentPane.add(this.getTFShipName(),null);
+			this.jContentPane.add(this.jLabel,null);
+			this.jContentPane.add(this.jLabel1,null);
+			this.jContentPane.add(this.getTFShipLength(),null);
+			this.jContentPane.add(this.jLabel1,null);
+			this.jContentPane.add(this.jLabel,null);
+			this.jContentPane.add(this.ShipLabelName,null);
+			this.jContentPane.add(this.ShipLabelZ,null);
+			this.jContentPane.add(this.ShipLabelX,null);
+			this.jContentPane.add(this.ShipLabelY,null);
 		}
-		return jContentPane;
-		
+		return this.jContentPane;
+
 	}
 
 	/**
-	 * This method initializes ButtonCreateShip	
-	 * 	
-	 * @return javax.swing.JButton	
+	 * This method initializes TFShipLength
+	 * 
+	 * @return javax.swing.JTextField
 	 */
-	private JButton getButtonCreateShip() {
-		if (ButtonCreateShip == null) {
-			ButtonCreateShip = new JButton();
-			
-			ButtonCreateShip.setBounds(new Rectangle(11, 196, 201, 20));
-			ButtonCreateShip.setText("Schiff erzeugen");
-			ButtonCreateShip.addActionListener(this);
+	private JTextField getTFShipLength(){
+		if(this.TFShipLength == null){
+			this.TFShipLength=new JTextField();
+			this.TFShipLength.setBounds(new Rectangle(76,161,42,25));
+			this.TFShipLength.setText("120.5");
 		}
-		return ButtonCreateShip;
+		return this.TFShipLength;
 	}
 
 	/**
-	 * This method initializes TFShipX	
-	 * 	
-	 * @return javax.swing.JTextField	
+	 * This method initializes TFShipName
+	 * 
+	 * @return javax.swing.JTextField
 	 */
-	private JTextField getTFShipX() {
-		if (TFShipX == null) {
-			TFShipX = new JTextField();
-			TFShipX.setBounds(new Rectangle(76, 62, 42, 25));
-			TFShipX.setText("2");
+	private JTextField getTFShipName(){
+		if(this.TFShipName == null){
+			this.TFShipName=new JTextField();
+			this.TFShipName.setBounds(new Rectangle(75,29,134,25));
+			this.TFShipName.setText("MS Schiff");
 		}
-		return TFShipX;
+		return this.TFShipName;
 	}
 
 	/**
-	 * This method initializes TFShipY	
-	 * 	
-	 * @return javax.swing.JTextField	
+	 * This method initializes TFShipX
+	 * 
+	 * @return javax.swing.JTextField
 	 */
-	private JTextField getTFShipY() {
-		if (TFShipY == null) {
-			TFShipY = new JTextField();
-			TFShipY.setBounds(new Rectangle(76, 94, 42, 25));
-			TFShipY.setText("1");
+	private JTextField getTFShipX(){
+		if(this.TFShipX == null){
+			this.TFShipX=new JTextField();
+			this.TFShipX.setBounds(new Rectangle(76,62,42,25));
+			this.TFShipX.setText("2");
 		}
-		return TFShipY;
+		return this.TFShipX;
 	}
 
 	/**
-	 * This method initializes TFShipZ	
-	 * 	
-	 * @return javax.swing.JTextField	
+	 * This method initializes TFShipY
+	 * 
+	 * @return javax.swing.JTextField
 	 */
-	private JTextField getTFShipZ() {
-		if (TFShipZ == null) {
-			TFShipZ = new JTextField();
-			TFShipZ.setBounds(new Rectangle(76, 128, 42, 25));
-			TFShipZ.setText("1");
+	private JTextField getTFShipY(){
+		if(this.TFShipY == null){
+			this.TFShipY=new JTextField();
+			this.TFShipY.setBounds(new Rectangle(76,94,42,25));
+			this.TFShipY.setText("1");
 		}
-		return TFShipZ;
+		return this.TFShipY;
 	}
 
 	/**
-	 * This method initializes TFShipName	
-	 * 	
-	 * @return javax.swing.JTextField	
+	 * This method initializes TFShipZ
+	 * 
+	 * @return javax.swing.JTextField
 	 */
-	private JTextField getTFShipName() {
-		if (TFShipName == null) {
-			TFShipName = new JTextField();
-			TFShipName.setBounds(new Rectangle(75, 30, 134, 25));
-			TFShipName.setText("MS Schiff");
+	private JTextField getTFShipZ(){
+		if(this.TFShipZ == null){
+			this.TFShipZ=new JTextField();
+			this.TFShipZ.setBounds(new Rectangle(76,128,42,25));
+			this.TFShipZ.setText("1");
 		}
-		return TFShipName;
-	}
-
-	public void actionPerformed(ActionEvent ae) {
-		 if (ae.getSource() == ButtonCreateShip) {
-			 GuiEvent ge = new GuiEvent(this, 1);
-			 ge.addParameter(TFShipName.getText());
-			 ge.addParameter(TFShipX.getText());
-			 ge.addParameter(TFShipY.getText());
-			 ge.addParameter(TFShipZ.getText());
-			 ge.addParameter(TFShipLength.getText());
-			 myAgent.postGuiEvent(ge);
-		 }		
-	}
-	void shutDown() {
-	// -----------------  Control the closing of this gui
-    int rep = JOptionPane.showConfirmDialog(this, "Wirklich schließen?", myAgent.getLocalName(),JOptionPane.YES_NO_CANCEL_OPTION);
-    	if (rep == JOptionPane.YES_OPTION) {
-    		GuiEvent ge = new GuiEvent(this, -1);
-    		myAgent.postGuiEvent(ge);
-	    }
+		return this.TFShipZ;
 	}
 
 	/**
-	 * This method initializes TFShipLength	
-	 * 	
-	 * @return javax.swing.JTextField	
+	 * This method initializes this
+	 * 
+	 * @return void
 	 */
-	private JTextField getTFShipLength() {
-		if (TFShipLength == null) {
-			TFShipLength = new JTextField();
-			TFShipLength.setBounds(new Rectangle(76, 161, 42, 25));
-			TFShipLength.setText("120.5");
-		}
-		return TFShipLength;
+	private void initialize(){
+		this.setSize(232,251);
+		this.setClosable(true);
+
+		this.setMaximizable(true);
+		this.setContentPane(this.getJContentPane());
+		this.setTitle("ControlGUI");
+		this.addInternalFrameListener(new InternalFrameAdapter(){
+			@Override
+			public void internalFrameClosing(InternalFrameEvent e){
+				ControlGUI.this.shutDown();
+			}
+		});
+		/*
+		 * this.addWindowListener(new WindowAdapter() { public void
+		 * windowClosing(WindowEvent e) { shutDown(); } });
+		 */
 	}
 
+	void shutDown(){
+		// -----------------  Control the closing of this gui
+		/*
+		 * int
+		 * rep=JOptionPane.showConfirmDialog(this,"Wirklich schließen?",this.
+		 * myAgent.getLocalName(),JOptionPane.YES_NO_CANCEL_OPTION); if(rep ==
+		 * JOptionPane.YES_OPTION){
+		 */
+		GuiEvent ge=new GuiEvent(this, -1);
+		this.myAgent.postGuiEvent(ge);
+		//}
+	}
 
-}  //  @jve:decl-index=0:visual-constraint="30,15"
+} //  @jve:decl-index=0:visual-constraint="30,15"

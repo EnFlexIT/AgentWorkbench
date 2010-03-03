@@ -1,97 +1,104 @@
-package contmas.agents;
-import jade.content.lang.Codec;
-import jade.content.lang.sl.SLCodec;
-import jade.content.onto.Ontology;
-import jade.core.AID;
-import jade.core.Agent;
+/**
+ * @author Hanno - Felix Wagner Copyright 2010 Hanno - Felix Wagner This file is
+ *         part of ContMAS. ContMAS is free software: you can redistribute it
+ *         and/or modify it under the terms of the GNU Lesser General Public
+ *         License as published by the Free Software Foundation, either version
+ *         3 of the License, or (at your option) any later version. ContMAS is
+ *         distributed in the hope that it will be useful, but WITHOUT ANY
+ *         WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ *         FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+ *         License for more details. You should have received a copy of the GNU
+ *         Lesser General Public License along with ContMAS. If not, see
+ *         <http://www.gnu.org/licenses/>.
+ */
 
-import jade.core.behaviours.SimpleBehaviour;
-import jade.domain.DFService;
-import jade.domain.FIPAException;
-import jade.domain.FIPAAgentManagement.DFAgentDescription;
-import jade.domain.FIPAAgentManagement.ServiceDescription;
+package contmas.agents;
+
 import jade.gui.GuiAgent;
 import jade.gui.GuiEvent;
-import jade.lang.acl.ACLMessage;
-import jade.lang.acl.UnreadableException;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
-import jade.wrapper.StaleProxyException;
-
-import java.io.IOException;
-import java.util.Random;
 
 import javax.swing.JDesktopPane;
 
-import contmas.ontology.*;
-
-import application.Application;
-import application.Project;
-
+import contmas.main.ContMASContainer;
+import contmas.ontology.BayMap;
+import contmas.ontology.Domain;
+import contmas.ontology.Sea;
+import contmas.ontology.Ship;
 
 public class ControlGUIAgent extends GuiAgent{
-    private ControlGUI myGui = null;
 
-	protected void setup(){ 
-		// Instanciate the gui
-		myGui = new ControlGUI(this);
-		myGui.setVisible(true);
+	private static final long serialVersionUID= -7176620366025244274L;
+	private JDesktopPane canvas=null;
+	private ControlGUI myGui=null;
 
-		/*
-		// ------------------------------------------------
-		// --- Hier gab es eine Änderung von Christian ----
-		Project CurrPro = Application.Projects.get("contmas");
-		JDesktopPane desktop = CurrPro.ProjectDesktop;
-		// --- Hier gab es eine Änderung von Christian ----
-		// ------------------------------------------------
-		desktop.add(myGui);
-		*/
-		
-        AgentContainer c = getContainerController();
-        try {
-            AgentController a = c.createNewAgent( "RandomGenerator", "contmas.agents.RandomGeneratorAgent", null );
-            a.start();
-            a = c.createNewAgent( "HarborMaster", "contmas.agents.HarborMasterAgent", null );
-            a.start();
-        }
-        catch (Exception e){
-        	
-        }
-	}
-	
-	protected void onGuiEvent(GuiEvent ev) {
-		int command = ev.getType();
-		if (command == 1) {
-	        AgentContainer c = getContainerController();
-	        try {
-	        	String name=ev.getParameter(0).toString();
-//	            AgentController a = c.createNewAgent(name , "contmas.agents.ShipAgent", null );
-		        Ship ontologyRepresentation=new Ship();
-				Domain habitat = new Sea();
-		        ontologyRepresentation.setLives_in(habitat);
-		        if(ev.getParameter(1).toString()!="" && ev.getParameter(1).toString()!="" && ev.getParameter(1).toString()!=""){
-			        BayMap loadBay=new BayMap();
-			        loadBay.setX_dimension(Integer.parseInt(ev.getParameter(1).toString()));
-			        loadBay.setY_dimension(Integer.parseInt(ev.getParameter(2).toString()));
-			        loadBay.setZ_dimension(Integer.parseInt(ev.getParameter(3).toString()));
-			        ontologyRepresentation.setContains(loadBay);
-			        ontologyRepresentation.setLength(Float.parseFloat(ev.getParameter(3).toString()));
-		        }
-//				habitat.setLies_in(terminalArea);
-	            AgentController a=c.acceptNewAgent(name, new ShipAgent(ontologyRepresentation));
+	@Override
+	protected void onGuiEvent(GuiEvent ev){
+		int command=ev.getType();
+		if(command == 1){
+			AgentContainer c=this.getContainerController();
+			try{
+				String name=ev.getParameter(0).toString();
+				//	            AgentController a = c.createNewAgent(name , "contmas.agents.ShipAgent", null );
+				Ship ontologyRepresentation=new Ship();
+				Domain habitat=new Sea();
+				ontologyRepresentation.setLives_in(habitat);
+				if((ev.getParameter(1).toString() != "") && (ev.getParameter(1).toString() != "") && (ev.getParameter(1).toString() != "")){
+					BayMap loadBay=new BayMap();
+					loadBay.setX_dimension(Integer.parseInt(ev.getParameter(1).toString()));
+					loadBay.setY_dimension(Integer.parseInt(ev.getParameter(2).toString()));
+					loadBay.setZ_dimension(Integer.parseInt(ev.getParameter(3).toString()));
+					ontologyRepresentation.setContains(loadBay);
+					ontologyRepresentation.setLength(Float.parseFloat(ev.getParameter(3).toString()));
+				}
+				//				habitat.setLies_in(terminalArea);
+				AgentController a=c.acceptNewAgent(name,new ShipAgent(ontologyRepresentation));
 
-	            a.start();
-	        }
-	        catch (Exception e){}
-		} else if (command == -1) {
-	         doDelete();
-	         //System.exit(0);
+				a.start();
+			}catch(Exception e){
+			}
+		}else if(command == -1){
+			this.doDelete();
+			//System.exit(0);
 		}
-		
+
 	}
-	
-	protected void takeDown () {
-		myGui.dispose();
+
+	@Override
+	protected void setup(){
+		// Instanciate the gui
+
+		Object[] args=this.getArguments();
+
+		if((args != null) && (args[0] instanceof JDesktopPane)){
+			this.canvas=(JDesktopPane) args[0];
+		}
+		if(this.canvas == null){
+			ContMASContainer CMC=new ContMASContainer();
+			CMC.setVisible(true);
+			this.canvas=CMC.getJDesktopPane();
+		}
+
+		this.myGui=new ControlGUI(this);
+		this.myGui.setVisible(true);
+
+		this.canvas.add(this.myGui);
+
+		AgentContainer c=this.getContainerController();
+		try{
+			AgentController a=c.createNewAgent("RandomGenerator","contmas.agents.RandomGeneratorAgent",null);
+			a.start();
+			a=c.createNewAgent("HarborMaster","contmas.agents.HarborMasterAgent",null);
+			a.start();
+		}catch(Exception e){
+
+		}
 	}
-	 
+
+	@Override
+	protected void takeDown(){
+		this.myGui.dispose();
+	}
+
 }

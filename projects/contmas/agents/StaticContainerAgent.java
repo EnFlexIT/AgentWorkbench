@@ -1,25 +1,33 @@
+/**
+ * @author Hanno - Felix Wagner Copyright 2010 Hanno - Felix Wagner This file is
+ *         part of ContMAS. ContMAS is free software: you can redistribute it
+ *         and/or modify it under the terms of the GNU Lesser General Public
+ *         License as published by the Free Software Foundation, either version
+ *         3 of the License, or (at your option) any later version. ContMAS is
+ *         distributed in the hope that it will be useful, but WITHOUT ANY
+ *         WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ *         FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+ *         License for more details. You should have received a copy of the GNU
+ *         Lesser General Public License along with ContMAS. If not, see
+ *         <http://www.gnu.org/licenses/>.
+ */
+
 package contmas.agents;
 
-import contmas.ontology.ActiveContainerHolder;
-import contmas.ontology.ContainerHolder;
-import contmas.ontology.Designator;
-import contmas.ontology.Domain;
-import contmas.ontology.LoadList;
-import contmas.ontology.PassiveContainerHolder;
 import contmas.ontology.StaticContainerHolder;
-import contmas.ontology.TransportOrder;
-import contmas.ontology.TransportOrderChain;
-import jade.util.leap.ArrayList;
-import jade.util.leap.Iterator;
-import jade.util.leap.List;
 
-public class StaticContainerAgent extends ContainerAgent {
-	
-	public StaticContainerAgent(String serviceType) {
-		this(serviceType, new StaticContainerHolder());
+public class StaticContainerAgent extends ContainerAgent{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID= -4081147908985783035L;
+
+	public StaticContainerAgent(String serviceType){
+		this(serviceType,new StaticContainerHolder());
 	}
 
-	public StaticContainerAgent(String serviceType,StaticContainerHolder ontologyRepresentation) {
-		super(serviceType, ontologyRepresentation);
+	public StaticContainerAgent(String serviceType,StaticContainerHolder ontologyRepresentation){
+		super(serviceType,ontologyRepresentation);
 	}
 }

@@ -1,28 +1,30 @@
 package contmas.ontology;
 
-
-import jade.content.*;
-import jade.util.leap.*;
-import jade.core.*;
+import jade.content.AgentAction;
 
 /**
-   * Request a randomly populated bay map at the RandomGeneratorAgent for development purposes
-* Protege name: RequestPopulatedBayMap
-* @author ontology bean generator
-* @version 2010/02/28, 13:48:47
-*/
-public class RequestPopulatedBayMap implements AgentAction {
+ * Protege name: RequestPopulatedBayMap
+ * 
+ * @author ontology bean generator
+ * @version 2010/03/3, 11:16:16
+ */
+public class RequestPopulatedBayMap implements AgentAction{
 
-   /**
-   * the bay map to be populated
-* Protege name: populate_on
-   */
-   private BayMap populate_on;
-   public void setPopulate_on(BayMap value) { 
-    this.populate_on=value;
-   }
-   public BayMap getPopulate_on() {
-     return this.populate_on;
-   }
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID=7002894707977660588L;
+	/**
+	 * Protege name: populate_on
+	 */
+	private BayMap populate_on;
+
+	public BayMap getPopulate_on(){
+		return this.populate_on;
+	}
+
+	public void setPopulate_on(BayMap value){
+		this.populate_on=value;
+	}
 
 }

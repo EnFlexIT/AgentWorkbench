@@ -1,61 +1,49 @@
 package contmas.ontology;
 
-import jade.content.*;
-import jade.util.leap.*;
-import jade.core.*;
+import jade.util.leap.ArrayList;
+import jade.util.leap.Iterator;
+import jade.util.leap.List;
 
 /**
-   * can manipulate containers, can move them between domains, e.g. crane
-* Protege name: ActiveContainerHolder
-* @author ontology bean generator
-* @version 2010/02/28, 13:48:47
-*/
-public class ActiveContainerHolder extends ContainerHolder{ 
+ * Protege name: ActiveContainerHolder
+ * 
+ * @author ontology bean generator
+ * @version 2010/03/3, 11:16:16
+ */
+public class ActiveContainerHolder extends ContainerHolder{
 
-   /**
-   * domains, in which containers can be manipulated
-* Protege name: capable_of
-   */
-   private List capable_of = new ArrayList();
-   public void addCapable_of(Domain elem) { 
-     List oldList = this.capable_of;
-     capable_of.add(elem);
-   }
-   public boolean removeCapable_of(Domain elem) {
-     List oldList = this.capable_of;
-     boolean result = capable_of.remove(elem);
-     return result;
-   }
-   public void clearAllCapable_of() {
-     List oldList = this.capable_of;
-     capable_of.clear();
-   }
-   public Iterator getAllCapable_of() {return capable_of.iterator(); }
-   public List getCapable_of() {return capable_of; }
-   public void setCapable_of(List l) {capable_of = l; }
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID=8496180633867445239L;
+	/**
+	 * Protege name: capable_of
+	 */
+	private List capable_of=new ArrayList();
 
-   /**
-* Protege name: tonnage_capacity
-   */
-   private float tonnage_capacity;
-   public void setTonnage_capacity(float value) { 
-    this.tonnage_capacity=value;
-   }
-   public float getTonnage_capacity() {
-     return this.tonnage_capacity;
-   }
+	public void addCapable_of(Domain elem){
+		this.capable_of.add(elem);
+	}
 
-   /**
-   * x-over-y
-capability of device to move x container above y
-* Protege name: stowage_capability
-   */
-   private String stowage_capability;
-   public void setStowage_capability(String value) { 
-    this.stowage_capability=value;
-   }
-   public String getStowage_capability() {
-     return this.stowage_capability;
-   }
+	public void clearAllCapable_of(){
+		this.capable_of.clear();
+	}
+
+	public Iterator getAllCapable_of(){
+		return this.capable_of.iterator();
+	}
+
+	public List getCapable_of(){
+		return this.capable_of;
+	}
+
+	public boolean removeCapable_of(Domain elem){
+		boolean result=this.capable_of.remove(elem);
+		return result;
+	}
+
+	public void setCapable_of(List l){
+		this.capable_of=l;
+	}
 
 }

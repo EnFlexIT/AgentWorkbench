@@ -1,14 +1,16 @@
 package contmas.ontology;
 
-import jade.content.*;
-import jade.util.leap.*;
-import jade.core.*;
-
 /**
-* Protege name: Land
-* @author ontology bean generator
-* @version 2010/02/28, 13:48:47
-*/
-public class Land extends Domain{ 
+ * Protege name: Land
+ * 
+ * @author ontology bean generator
+ * @version 2010/03/3, 11:16:16
+ */
+public class Land extends Domain{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID= -2538154651368382475L;
 
 }

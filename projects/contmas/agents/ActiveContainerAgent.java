@@ -1,52 +1,63 @@
+/**
+ * @author Hanno - Felix Wagner Copyright 2010 Hanno - Felix Wagner This file is
+ *         part of ContMAS. ContMAS is free software: you can redistribute it
+ *         and/or modify it under the terms of the GNU Lesser General Public
+ *         License as published by the Free Software Foundation, either version
+ *         3 of the License, or (at your option) any later version. ContMAS is
+ *         distributed in the hope that it will be useful, but WITHOUT ANY
+ *         WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ *         FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+ *         License for more details. You should have received a copy of the GNU
+ *         Lesser General Public License along with ContMAS. If not, see
+ *         <http://www.gnu.org/licenses/>.
+ */
+
 package contmas.agents;
 
+import jade.util.leap.Iterator;
 import contmas.ontology.ActiveContainerHolder;
-import contmas.ontology.CallForProposalsOnLoadStage;
-import contmas.ontology.Container;
-import contmas.ontology.ContainerHolder;
 import contmas.ontology.Designator;
 import contmas.ontology.Domain;
-import contmas.ontology.LoadList;
-import contmas.ontology.ProposeLoadOffer;
 import contmas.ontology.TransportOrder;
-import contmas.ontology.TransportOrderChain;
-import jade.core.AID;
-import jade.util.leap.ArrayList;
-import jade.util.leap.Iterator;
-import jade.util.leap.List;
 
-public class ActiveContainerAgent extends ContainerAgent {
-	
-	public ActiveContainerAgent(String serviceType) {
-		this(serviceType, new ActiveContainerHolder());
-	}
-	
-	public ActiveContainerAgent(String serviceType,ActiveContainerHolder ontologyRepresentation) {
-		super(serviceType, ontologyRepresentation);
+public class ActiveContainerAgent extends ContainerAgent{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID= -5397340339244159587L;
+
+	public ActiveContainerAgent(String serviceType){
+		this(serviceType,new ActiveContainerHolder());
 	}
 
+	public ActiveContainerAgent(String serviceType,ActiveContainerHolder ontologyRepresentation){
+		super(serviceType,ontologyRepresentation);
+	}
+
+	@Override
 	public Integer matchOrder(TransportOrder curTO){
 		Integer endMatch=super.matchOrder(curTO); //standard-Match: AID und ziel ist genau lebensraum
-		Integer startMatch=-1;
+		Integer startMatch= -1;
 
-		Designator start=(Designator) curTO.getStarts_at();
-		Domain startHabitat=(Domain) start.getAbstract_designation();
-		Designator end=(Designator) curTO.getEnds_at();
-		Domain endHabitat=(Domain) end.getAbstract_designation();
-		Iterator capabilities=((ActiveContainerHolder) ontologyRepresentation).getAllCapable_of();
-		while (capabilities.hasNext()) {
-			Domain capability = (Domain) capabilities.next();
-			if(startHabitat.getClass()==capability.getClass()){ //containeragent is able to handle orders in this start-habitat-domain
-//    			echoStatus("start passt");
-    			startMatch=1;
+		Designator start=curTO.getStarts_at();
+		Domain startHabitat=start.getAbstract_designation();
+		Designator end=curTO.getEnds_at();
+		Domain endHabitat=end.getAbstract_designation();
+		Iterator capabilities=((ActiveContainerHolder) this.ontologyRepresentation).getAllCapable_of();
+		while(capabilities.hasNext()){
+			Domain capability=(Domain) capabilities.next();
+			if(startHabitat.getClass() == capability.getClass()){ //containeragent is able to handle orders in this start-habitat-domain
+				//    			echoStatus("start passt");
+				startMatch=1;
 			}
-			if(endMatch!=0 && endMatch!=1 && endHabitat.getClass()==capability.getClass()){ //containeragent is able to handle orders in this end-habitat-domain
-//    			echoStatus("end passt (besser)");
+			if((endMatch != 0) && (endMatch != 1) && (endHabitat.getClass() == capability.getClass())){ //containeragent is able to handle orders in this end-habitat-domain
+				//    			echoStatus("end passt (besser)");
 				endMatch=1;
 			}
 		}
-		if(startMatch>-1 && endMatch>-1){ //order matcht
-			return startMatch+endMatch;
+		if((startMatch > -1) && (endMatch > -1)){ //order matcht
+			return startMatch + endMatch;
 		}
 		return -1; //order matcht nicht
 	}

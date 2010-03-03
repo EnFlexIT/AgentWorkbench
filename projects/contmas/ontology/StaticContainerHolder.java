@@ -1,15 +1,16 @@
 package contmas.ontology;
 
-import jade.content.*;
-import jade.util.leap.*;
-import jade.core.*;
-
 /**
-   * can't move at all, e.g. yard
-* Protege name: StaticContainerHolder
-* @author ontology bean generator
-* @version 2010/02/28, 13:48:46
-*/
-public class StaticContainerHolder extends ContainerHolder{ 
+ * Protege name: StaticContainerHolder
+ * 
+ * @author ontology bean generator
+ * @version 2010/03/3, 11:16:16
+ */
+public class StaticContainerHolder extends ContainerHolder{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID= -8886488223831991931L;
 
 }

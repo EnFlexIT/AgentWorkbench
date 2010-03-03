@@ -1,15 +1,16 @@
 package contmas.ontology;
 
-import jade.content.*;
-import jade.util.leap.*;
-import jade.core.*;
-
 /**
-   * Portal Bridge Crane, Stevedore
-* Protege name: Crane
-* @author ontology bean generator
-* @version 2010/02/28, 13:48:47
-*/
-public class Crane extends ActiveContainerHolder{ 
+ * Protege name: Crane
+ * 
+ * @author ontology bean generator
+ * @version 2010/03/3, 11:16:16
+ */
+public class Crane extends ActiveContainerHolder{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID= -6097101123513087095L;
 
 }
