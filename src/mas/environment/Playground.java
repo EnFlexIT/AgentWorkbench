@@ -9,16 +9,18 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import application.Language;
+
 
 
 /**
- * Eine (Teil-)Umgebung
+ * Eine (Teil-)Umgebung, die Umgebungsobjekte enthält
  * @author Nils
  *
  */
 public class Playground extends BasicObject{
 	/**
-	 * Alle Objekte (auch Agenten und Kind-Playgrounds) in diesem Playground 
+	 * Alle Umgebungsobjekte in diesem Playground 
 	 */
 	private HashMap<String, BasicObject> objects = null;
 	/**
@@ -31,18 +33,24 @@ public class Playground extends BasicObject{
 	private HashMap<String, Playground> playgrounds = null;
 	
 	/**
-	 * Alle statischen Umgebungsobjekte
+	 * Alle statischen Umgebungsobjekte in diesem Playground
 	 */
 	private HashMap<String, ObstacleObject> obstacles = null;
-		
-	public Playground(){
-		// "Leeres" Objekt, Initialisierung über loadFromXML()
+	
+	/**
+	 * Erzeugt ein "leeres" Playground-Objekt
+	 */
+	public Playground(){		
 		this.objects = new HashMap<String, BasicObject>();
 		this.agents = new HashMap<String, AgentObject>();
 		this.obstacles = new HashMap<String, ObstacleObject>();
 		this.playgrounds = new HashMap<String, Playground>();
 	}
 	
+	/**
+	 * Erzeugt ein Playground-Objekt, das auf dem übergebenen SVG-Element basiert 
+	 * @param svg
+	 */
 	public Playground(Element svg){
 		this("MainPG", svg);		
 	}
@@ -88,6 +96,10 @@ public class Playground extends BasicObject{
 		}		
 	}
 	
+	/**
+	 * Fügt einen Kind-Playground zu diesem Playground hinzu
+	 * @param playground
+	 */
 	public void addPlayground(Playground playground){
 		if(playground != null){
 			this.playgrounds.put(playground.getId(), playground);
@@ -101,11 +113,11 @@ public class Playground extends BasicObject{
 	 */
 	public void removeElement(String id){
 		if(agents.remove(id) != null){
-			System.out.println("Removing agent "+id);
+			System.out.println(Language.translate("Entferne Agent")+" "+id);
 		}else if(obstacles.remove(id) != null){
-			System.out.println("Removing obstacle "+id);
+			System.out.println(Language.translate("Entferne Hindernis")+" "+id);
 		}else if(playgrounds.remove(id) != null){
-			System.out.println("Removing child playground "+id);
+			System.out.println(Language.translate("Entferne Kind-Playground")+" "+id);
 		}
 		objects.remove(id);
 	}
@@ -134,14 +146,23 @@ public class Playground extends BasicObject{
 		return this.playgrounds.values();
 	}
 	
+	/**
+	 * Liefert eine Liste aller statischen Objekte in diesem Playground
+	 * @return
+	 */
 	public Collection<ObstacleObject> getObstacles(){
 		return this.obstacles.values();
 	}
-
+	
+	
+	/**
+	 * Erzeugt ein XML-Element, das diesen Playground speichert
+	 */
 	@Override
 	public Element saveAsXML(Document doc) {
 		Element xml = doc.createElement("playground");
 		this.saveBasics(xml);
+		// Rekursiver Aufruf für enthaltene Objekte
 		Iterator<BasicObject> children = this.getObjects().values().iterator();
 		while(children.hasNext()){
 			xml.appendChild(children.next().saveAsXML(doc));
@@ -149,6 +170,7 @@ public class Playground extends BasicObject{
 		return xml;
 	}
 
+	
 	@Override
 	public void loadFromXML(Element elem) {
 		this.loadBasics(elem);

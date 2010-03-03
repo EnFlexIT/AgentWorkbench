@@ -18,82 +18,84 @@ public abstract class BasicObject{
 	private int posX;
 	private int posY;
 	
-	private Playground playground;
+	/**
+	 * Übergeordneter Playground
+	 */
+	private Playground parentPlayground;
+	/**
+	 * Eindeutige ID des Objektes
+	 */
 	private String id;
+	/**
+	 * SVG-Elementtyp des Objektes
+	 */
 	private SvgTypes svgType = null;
 	
 	/**
-	 * 
+	 * Erzeugt ein "leeres" BasicObject
 	 */
 	public BasicObject(){
 		
 	}
 	
+	/**
+	 * Erzeugt ein BasicObject, das auf dem übergebenen SVG-Element basiert 
+	 * @param svg
+	 */
 	public BasicObject(Element svg){
 		this(svg.getAttributeNS(null, "id"), svg);
 	}
 	
+	
 	public BasicObject(String id, Element svg){
 				
-//		// Setze svgType abhängig vom übergebenen Element
-//		if(svg.getTagName().equals("svg")){
-//			this.svgType = SvgTypes.svg;
-//		}else if(svg.getTagName().equals("rect")){
-//			this.svgType = SvgTypes.rect;
-//		}else if(svg.getTagName().equals("circle")){
-//			this.svgType = SvgTypes.circle;
-//		}else if(svg.getTagName().equals("ellipse")){
-//			this.svgType = SvgTypes.ellipse;
-//		}else{
-//			System.err.println(Language.translate("SVG-Elementtyp")+" "+svg.getTagName()+" "+Language.translate("nicht unterstützt"));
-//		}
-		
 		this.setSvgType(svg.getTagName());		
-		this.setPhysics(svg);
-		this.playground = null;
-		this.id = id;		
-	}
-	
-	/**
-	 * Setzt Größe und Position des Objektes abhängig vom übergebenen SVG-Element
-	 * @param svg
-	 */
-	private void setPhysics(Element svg){
-		if(svg.getTagName().equals("svg")){		// SVG-Root als Playground
+		switch(this.getSvgType()){
+		case svg:
 			this.width = (int) Float.parseFloat(svg.getAttributeNS(null, "width"));
 			this.height = (int) Float.parseFloat(svg.getAttributeNS(null, "height"));
 			this.posX = 0;
 			this.posY = 0;
-		}else if(svg.getTagName().equals("rect")){
-			this.svgType = SvgTypes.rect;
+		break;
+			
+		case rect:
 			this.width = (int) Float.parseFloat(svg.getAttributeNS(null, "width"));
 			this.height = (int) Float.parseFloat(svg.getAttributeNS(null, "height"));
 			this.posX = (int) Float.parseFloat(svg.getAttributeNS(null, "x"));
 			this.posY = (int) Float.parseFloat(svg.getAttributeNS(null, "y"));
-		}else if(svg.getTagName().equals("circle")){
-			this.svgType =SvgTypes.circle;
+		break;
+		
+		case circle:
 			int r = (int) Float.parseFloat(svg.getAttributeNS(null, "r"));
-			int x = (int) Float.parseFloat(svg.getAttributeNS(null, "cx"));
-			int y = (int) Float.parseFloat(svg.getAttributeNS(null, "cy"));
+			int cx = (int) Float.parseFloat(svg.getAttributeNS(null, "cx"));
+			int cy = (int) Float.parseFloat(svg.getAttributeNS(null, "cy"));
 			
 			this.width = 2*r;
 			this.height = 2*r;
-			this.posX = x-r;
-			this.posY = y-r;			
-		}else if(svg.getTagName().equals("ellipse")){
-			this.svgType = SvgTypes.ellipse;
+			this.posX = cx-r;
+			this.posY = cy-r;
+		break;
+		
+		case ellipse:
 			int rx = (int) Float.parseFloat(svg.getAttributeNS(null, "rx"));
 			int ry = (int) Float.parseFloat(svg.getAttributeNS(null, "ry"));
-			int x = (int) Float.parseFloat(svg.getAttributeNS(null, "cx"));
-			int y = (int) Float.parseFloat(svg.getAttributeNS(null, "cy"));
+			int ex = (int) Float.parseFloat(svg.getAttributeNS(null, "cx"));
+			int ey = (int) Float.parseFloat(svg.getAttributeNS(null, "cy"));
 			
 			this.width = 2*rx;
 			this.height = 2*ry;
-			this.posX = x-rx;
-			this.posY = y-ry;
+			this.posX = ex-rx;
+			this.posY = ey-ry;
+		break;
 		}
+		this.parentPlayground = null;
+		this.id = id;		
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public int getWidth() {
 		return width;
 	}
@@ -126,20 +128,12 @@ public abstract class BasicObject{
 		this.posY = posY;
 	}
 
-//	public Element getSvgRepresentation() {
-//		return svgRepresentation;
-//	}
-
-	public void setSvgRepresentation(Element svgRepresentation) {
-//		this.svgRepresentation = svgRepresentation;
-	}
-
-	public Playground getPlayground() {
-		return playground;
+	public Playground getParentPlayground() {
+		return parentPlayground;
 	}
 
 	public void setPlayground(Playground playground) {
-		this.playground = playground;
+		this.parentPlayground = playground;
 	}
 
 	public String getId() {
@@ -150,31 +144,49 @@ public abstract class BasicObject{
 		this.id = id;
 	}
 	
+	/**
+	 * Speichert das Objekt als XML-Element
+	 * @param doc Übergeordnetes XML-Dokument
+	 * @return Das erzeugte XML-Element  
+	 */
 	public abstract Element saveAsXML(Document doc);
 	
-	public abstract void loadFromXML(Element elem);
+	/**
+	 * Läd die Objekteigenschaften aus dem übergebenen XML-Element
+	 * @param element XML-Element, in dem die Objekteigenschaften gespeichert sind
+	 */
+	public abstract void loadFromXML(Element element);
 	
-	protected void saveBasics(Element xml){
-		xml.setAttribute("id", this.getId());
-		xml.setAttribute("svgType", this.getSvgType().toString());
-		xml.setAttribute("x", ""+this.getPosX());
-		xml.setAttribute("y", ""+this.getPosY());
-		xml.setAttribute("width", ""+this.getWidth());
-		xml.setAttribute("height", ""+this.getHeight());
+	/**
+	 * Speichert die gemeinsamen Eigenschaften aller Unterklassen 
+	 * @param element XML-Element, dass die Daten aufnimmt
+	 */
+	protected void saveBasics(Element element){
+		element.setAttribute("id", this.getId());
+		element.setAttribute("svgType", this.getSvgType().toString());
+		element.setAttribute("x", ""+this.getPosX());
+		element.setAttribute("y", ""+this.getPosY());
+		element.setAttribute("width", ""+this.getWidth());
+		element.setAttribute("height", ""+this.getHeight());
 	}
 	
-	protected void loadBasics(Element xml){
-		this.id = xml.getAttribute("id");
-		this.setSvgType(xml.getAttribute("svgType"));
-		this.posX = Integer.parseInt(xml.getAttribute("x"));
-		this.posY = Integer.parseInt(xml.getAttribute("y"));
-		this.width = Integer.parseInt(xml.getAttribute("width"));
-		this.height = Integer.parseInt(xml.getAttribute("height"));
+	/**
+	 * Läd die gemeinsamen Eigenschaften aller Unterklassen
+	 * @param element XML-Element, in dem die Daten stehen  
+	 */
+	protected void loadBasics(Element element){
+		this.id = element.getAttribute("id");
+		this.setSvgType(element.getAttribute("svgType"));
+		this.posX = Integer.parseInt(element.getAttribute("x"));
+		this.posY = Integer.parseInt(element.getAttribute("y"));
+		this.width = Integer.parseInt(element.getAttribute("width"));
+		this.height = Integer.parseInt(element.getAttribute("height"));
 	}
 	
 	public SvgTypes getSvgType(){
 		return this.svgType;
 	}
+	
 	
 	public void setSvgType(String tagName){
 		if(tagName.equals("svg")){

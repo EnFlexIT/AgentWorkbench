@@ -38,8 +38,23 @@ public class EnvironmentControllerAgent extends Agent {
 		}		
 	}
 	
+	public void takeDown(){
+		try {
+			TopicManagementHelper tmh = (TopicManagementHelper) getHelper(TopicManagementHelper.SERVICE_NAME);
+			AID positionTopic = tmh.createTopic("position");
+			tmh.register(positionTopic);
+		} catch (ServiceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	class PosUpdateBehaviour extends CyclicBehaviour{
 		
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 		MessageTemplate positionTemplate;
 		
 		public PosUpdateBehaviour(MessageTemplate mt){

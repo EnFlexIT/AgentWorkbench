@@ -31,10 +31,9 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
 /**
- * Steuert die Darstellung 
+ * Steuert die Darstellung. Empf‰ngt Positionsupdates von Agenten und aktualisiert die GUI 
  * 
  * @author Nils
- *
  */
 public class DisplayAgent extends Agent {
 
@@ -141,6 +140,17 @@ public class DisplayAgent extends Agent {
 		System.out.println("DisplayAgent "+getLocalName()+" "+Language.translate("bereit"));		
 	}
 	
+	public void takeDown(){
+		try {
+			TopicManagementHelper tmh = (TopicManagementHelper) getHelper(TopicManagementHelper.SERVICE_NAME);
+			AID positionTopic = tmh.createTopic("position");
+			tmh.deregister(positionTopic);
+		} catch (ServiceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	/**
 	 * Aktualisiert in regelm‰ﬂigen Abst‰nden die Position aller bekannten Agents im SVG Dokument 
 	 * @author Nils
@@ -199,8 +209,7 @@ public class DisplayAgent extends Agent {
 			while(iter.hasNext()){
 				setAgentPos(iter.next());
 			}
-		}
-		
+		}		
 	}
 	
 	/**

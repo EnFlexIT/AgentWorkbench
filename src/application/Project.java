@@ -40,8 +40,8 @@ import mas.onto.OntologyClass;
 	// --- Speichervariablen der Projektdatei ------------------ 
 	private String ProjectName;
 	private String ProjectDescription;
-	private String svgPath;		// SVG-Datei
-	private String envPath;		// Umgebungsdatei
+	private String svgFile;		// SVG-Datei
+	private String envFile;		// Umgebungsdatei
 	
 
 	
@@ -246,42 +246,59 @@ import mas.onto.OntologyClass;
 		return ProjectAgents;
 	}
 	/**
-	 * Getter für svgPath
-	 * @return Pfad der SVG-Datei
+	 * Getter für svgFile
+	 * @return Dateiname der SVG-Datei
 	 */
-	public String getSvgPath(){
-		// Temporäre Lösung, spter direkt relativ speichern
-		if(svgPath != null){
-			svgPath =  this.ProjectFolderFullPath+"ressources"+svgPath.substring(svgPath.lastIndexOf("\\"));
-		}
-		
-		return svgPath;
-	}
-	/**
-	 * Setter für svgPath 
-	 * @param fileName Pfad der SVG-Datei
-	 */
-	public void setSvgPath(String fileName){
-		this.svgPath = fileName;		
-	}	
-	/**
-	 * Getter für envPath
-	 * @return Pfad der Umgebungsdatei 
-	 */
-	public String getEnvPath(){
-		// Temporäre Lösung, später direkt relativ speichern
-		if(envPath != null){
-			envPath = this.ProjectFolderFullPath+"ressources"+envPath.substring(envPath.lastIndexOf("\\")); 
-		}		
-		return envPath;
+	public String getSvgFile(){
+		return svgFile;
 	}
 	
 	/**
-	 * Setter für envPath
-	 * @param fileName Pfad der Umgebungsdatei
+	 * 
+	 * @return Pfad zur SVG-Datei (Ressources-Ordner + Dateiname)
 	 */
-	public void setEnvPath(String fileName){
-		this.envPath = fileName;		
+	public String getSvgPath(){
+		return this.getProjectFolderFullPath()+"ressources"+File.separator+this.svgFile;
+	}
+
+	/**
+	 * Setter für svgFile 
+	 * @param fileName Dateiname der SVG-Datei
+	 */
+	public void setSvgFile(String fileName){
+		this.svgFile = fileName;		
+	}	
+	/**
+	 * Getter für envFile
+	 * @return Dateiname der Umgebungsdatei 
+	 */
+	public String getEnvFile(){
+		return envFile;
+	}
+	
+	/**
+	 * 
+	 * @return Pfad zur Umgebungsdatei (Ressources-Ordner + Dateiname)
+	 */
+	public String getEnvPath(){
+		return this.getProjectFolderFullPath()+"ressources"+File.separator+this.envFile;
+	}
+	
+	/**
+	 * Setter für envFile
+	 * @param fileName Dateiname der Umgebungsdatei
+	 */
+	public void setEnvFile(String fileName){
+		this.envFile = fileName;
+	}
+	
+	@XmlTransient
+	public EnvironmentController getEnvironmentController(){
+		return this.ec;
+	}
+	
+	public void setEnvironmentController(EnvironmentController ec){
+		this.ec = ec;
 	}
 
 }

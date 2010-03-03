@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <project>
-    <envPath>D:\10 Java Projects\AgentGUI\projects\sma\ressources\environment.xml</envPath>
+    <envFile>environment.xml</envFile>
     <projectFolder>sma</projectFolder>
-    <projectName>Simple Moving Agent</projectName>
-    <svgPath>D:\10 Java Projects\AgentGUI\projects\sma\ressources\Bla.svg</svgPath>
+    <projectName></projectName>
+    <svgFile>Bla.svg</svgFile>
 </project>

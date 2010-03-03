@@ -49,10 +49,10 @@ public class SoftBot extends Agent {
 			this.height = self.getHeight();
 			this.posX = self.getPosX();
 			this.posY = self.getPosY();
-			this.envHeight = self.getPlayground().getHeight();
-			this.envWidth = self.getPlayground().getWidth();
-			this.obstacles = self.getPlayground().getObstacles();
-			this.agents = self.getPlayground().getAgents();
+			this.envHeight = self.getParentPlayground().getHeight();
+			this.envWidth = self.getParentPlayground().getWidth();
+			this.obstacles = self.getParentPlayground().getObstacles();
+			this.agents = self.getParentPlayground().getAgents();
 			this.addBehaviour(new MoveExampleBehaviour(this, 50));
 			try {
 				TopicManagementHelper tmh = (TopicManagementHelper) getHelper(TopicManagementHelper.SERVICE_NAME);
@@ -65,6 +65,22 @@ public class SoftBot extends Agent {
 				e.printStackTrace();
 			}
 		}		
+	}
+	
+	/**
+	 * 
+	 */
+	public void takeDown(){
+		TopicManagementHelper tmh;
+		try {
+			tmh = (TopicManagementHelper) getHelper(TopicManagementHelper.SERVICE_NAME);
+			AID positionTopic = tmh.createTopic("position");
+			tmh.deregister(positionTopic);
+		} catch (ServiceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	
 	class MoveExampleBehaviour extends TickerBehaviour{
@@ -81,6 +97,7 @@ public class SoftBot extends Agent {
 			
 			try {
 				tmh = (TopicManagementHelper) a.getHelper(TopicManagementHelper.SERVICE_NAME);
+				
 				
 				positionTopic = tmh.createTopic("position");
 			} catch (ServiceException e) {
@@ -175,7 +192,7 @@ public class SoftBot extends Agent {
 	class PosUpdateBehaviour extends CyclicBehaviour{
 		
 		/**
-		 * 
+		 * Empfängt Positionsupdates anderer Agenten
 		 */
 		private static final long serialVersionUID = 1L;
 		MessageTemplate positionTemplate;

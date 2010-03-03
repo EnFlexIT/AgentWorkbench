@@ -30,7 +30,7 @@ public class BasicSvgGUI extends JPanel {
 	 */
 	public BasicSvgGUI() {
 		super();
-		canvas = new JSVGCanvas();
+		this.canvas = new JSVGCanvas();
 		initialize();
 	}
 	

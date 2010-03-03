@@ -75,16 +75,19 @@ public class DisplayAgentGUI extends JPanel {
 						agentNameSuffix++;
 						agentName = agentNameBase + agentNameSuffix;
 					}	
-					System.out.println("Agent name "+agentNameBase);				
+					System.out.println("Agent name "+agentNameBase);	
+					
+					// Markierungen vor dem Start entfernen
+					currentProject.getEnvironmentController().setSelectedElement(null);
 								
 					Object[] args = new Object[3];
-					args[0] = currentProject.ec.getMainPlayground();
-					args[1] = currentProject.ec.getSvgDoc();
+					args[0] = currentProject.getEnvironmentController().getMainPlayground();
+					args[1] = currentProject.getEnvironmentController().getSvgDoc();
 					args[2] = DisplayAgentGUI.this;
 					Application.JadePlatform.jadeAgentStart(agentName, "mas.display.DisplayAgent", args, currentProject.getProjectFolder() );
 					
 					// Starte in der Umgebung definierte Agenten
-					currentProject.ec.startSimulation();
+					currentProject.getEnvironmentController().startSimulation();
 				}
 			}
 			

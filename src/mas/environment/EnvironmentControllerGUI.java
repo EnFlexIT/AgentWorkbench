@@ -36,6 +36,7 @@ import javax.swing.tree.TreeSelectionModel;
 import mas.display.BasicSvgGUI;
 
 
+import org.apache.batik.bridge.UpdateManager;
 import org.apache.batik.swing.JSVGCanvas;
 import org.apache.batik.swing.svg.SVGDocumentLoaderAdapter;
 import org.apache.batik.swing.svg.SVGDocumentLoaderEvent;
@@ -174,7 +175,7 @@ public class EnvironmentControllerGUI extends JSplitPane {
 						ec.setNewEnv(true);
 						ec.loadSvgFile(fcOpen.getSelectedFile());
 						// Speichere Dateiname im Projekt
-						currentProject.setSvgPath(fcOpen.getSelectedFile().getPath());
+						currentProject.setSvgFile(fcOpen.getSelectedFile().getName());
 						currentProject.ProjectUnsaved=true;
 					}					
 				}				
@@ -202,9 +203,12 @@ public class EnvironmentControllerGUI extends JSplitPane {
 					if(treeEnvironment.getLastSelectedPathComponent()!=null){
 						String selection = treeEnvironment.getLastSelectedPathComponent().toString();
 						BasicObject object = ec.getMainPlayground().getObjects().get(treeEnvironment.getLastSelectedPathComponent().toString());
-						setInputValues(object);
 						if(object!=null){
-							EnvironmentControllerGUI.this.setSelectedElement(canvas.getSVGDocument().getElementById(selection));
+							
+							UpdateManager um = canvas.getUpdateManager();
+							if(um != null){
+								um.getUpdateRunnableQueue().invokeLater(new ElementSelector(canvas.getSVGDocument().getElementById(selection)));
+							}
 						}
 						canvas.paint(canvas.getGraphics());
 					}
@@ -362,20 +366,20 @@ public class EnvironmentControllerGUI extends JSplitPane {
 						System.out.println(Language.translate("Position")+" "+newObject.getPosX()+":"+newObject.getPosY());
 						System.out.println(Language.translate("Größe")+" "+newObject.getWidth()+"x"+newObject.getHeight());
 						pg.addObstacle(newObject);
-						setInputValues(newObject);
 					}else if(cbType.getSelectedItem().equals(Language.translate("Agent"))){
 						AgentObject newAgent = new AgentObject(id, selectedElement, agentClasses.get(cbClass.getSelectedItem().toString()));
 						System.out.println(Language.translate("Neuer Agent")+" "+id);
 						System.out.println(Language.translate("Position")+" "+newAgent.getPosX()+":"+newAgent.getPosY());
 						System.out.println(Language.translate("Größe")+" "+newAgent.getWidth()+"x"+newAgent.getHeight());
 						pg.addAgent(newAgent);
-						setInputValues(newAgent);
 					}
 					// Aktualisiere Umgebungsbaum
-					treeEnvironment.setModel(new DefaultTreeModel(buildPlaygroundTree(pg)));
-					treeEnvironment.paint(treeEnvironment.getGraphics());
-					setSelectedElement(null);
-//					currentProject.ProjectUnsaved=true;
+					rebuildEnvironmentTree();
+					
+					UpdateManager um = canvas.getUpdateManager();
+					if(um != null){
+						um.getUpdateRunnableQueue().invokeLater(new ElementSelector(null));
+					}
 				}
 				
 			});
@@ -430,11 +434,9 @@ public class EnvironmentControllerGUI extends JSplitPane {
 					// Wenn neue Umgebung, erzeuge mainPlayground aus SVG root
 					if(ec.isNewEnv()){
 						ec.setMainPlayground  (new Playground(canvas.getSVGDocument().getDocumentElement()));
-//						ec.buildNewEnv(canvas.getSVGDocument().getDocumentElement());
 					}
-					// Initialisiert den Baum
-					
-					treeEnvironment.setModel(new DefaultTreeModel(buildPlaygroundTree(ec.getMainPlayground())));
+					// Initialisiert den Baum					
+					rebuildEnvironmentTree();
 					treeEnvironment.setEnabled(true);
 				};
 			});
@@ -454,20 +456,9 @@ public class EnvironmentControllerGUI extends JSplitPane {
 
 				@Override
 				public void handleEvent(Event arg0) {
-					// Markiert das Element
-					setSelectedElement((Element)arg0.getTarget());
-					
-					// Überprüfung, ob zu dem SVG-Element schon ein Umgebungsobjekt existiert
-					// und passende Belegung der GUI-Elemente
-					String id = selectedElement.getAttributeNS(null, "id");
-					BasicObject object = ec.getMainPlayground().getObjects().get(id);
-					if(object != null){						
-						setInputValues(object);
-					}else{						
-						tfId.setText(id);
-						cbType.setSelectedItem(Language.translate("Undefiniert"));
-						cbClass.setEnabled(false);
-						btnDelete.setEnabled(false);
+					UpdateManager um = canvas.getUpdateManager();
+					if(um != null){
+						um.getUpdateRunnableQueue().invokeLater(new ElementSelector((Element)arg0.getTarget()));
 					}
 				}
 				
@@ -482,11 +473,11 @@ public class EnvironmentControllerGUI extends JSplitPane {
 	}
 	
 	/**
-	 * Analysiert den übergebenen Playground und erzeugt eine Baumstruktur der enthaltenen Objekte
+	 * Baut einen Teilbaum für einen Playground auf
 	 * @param pg Der zu verarbeitende PlayGround
-	 * @return Teilbaum mit den Objekten des PlayGround 
+	 * @return Teilbaum für den übergebenen Playground 
 	 */
-	private DefaultMutableTreeNode buildPlaygroundTree(Playground pg){
+	private DefaultMutableTreeNode buildSubTree(Playground pg){
 		String id = pg.getId();
 		if( (id == null) || (id.length())==0){
 			id="Playground";
@@ -504,7 +495,7 @@ public class EnvironmentControllerGUI extends JSplitPane {
 			while(objects.hasNext()){
 				BasicObject object = objects.next();
 				if(object instanceof Playground){
-					playgroundsRoot.add(buildPlaygroundTree((Playground) object));				
+					playgroundsRoot.add(buildSubTree((Playground) object));				
 				}else if(object instanceof AgentObject){
 					agentsRoot.add(new DefaultMutableTreeNode(object.getId()));
 				}else if(object instanceof ObstacleObject){
@@ -516,10 +507,21 @@ public class EnvironmentControllerGUI extends JSplitPane {
 		
 		pgRoot.add(agentsRoot);
 		pgRoot.add(objectsRoot);
-		pgRoot.add(playgroundsRoot);
-		
-		
+		pgRoot.add(playgroundsRoot);		
 		return pgRoot;
+	}
+	
+	/**
+	 * Baut das TreeModel der Umgebung neu auf
+	 */
+	private void rebuildEnvironmentTree(){
+		// Erzeuge Baum für den mainPlayground
+		treeEnvironment.setModel(new DefaultTreeModel(buildSubTree(ec.getMainPlayground())));
+		// Expandiere alle Teilbäume
+		for(int row=0; row<treeEnvironment.getRowCount(); row++){
+			treeEnvironment.expandRow(row);
+		}		
+		treeEnvironment.paint(treeEnvironment.getGraphics());
 	}
 
 	/**
@@ -554,10 +556,13 @@ public class EnvironmentControllerGUI extends JSplitPane {
 
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
-					ec.getMainPlayground().removeElement(tfId.getText());
-					treeEnvironment.setModel(new DefaultTreeModel(buildPlaygroundTree(ec.getMainPlayground())));
-					setSelectedElement(null);
-					setInputValues(null);
+					ec.getMainPlayground().removeElement(tfId.getText());		// Element aus Umgenung entfernen
+					rebuildEnvironmentTree();
+					
+					UpdateManager um = canvas.getUpdateManager();
+					if(um != null){
+						um.getUpdateRunnableQueue().invokeLater(new ElementSelector(null));
+					}
 				}
 				
 			});
@@ -566,47 +571,42 @@ public class EnvironmentControllerGUI extends JSplitPane {
 	}
 	
 	/**
-	 * Setzt bei Auswahl eines Umgebungsobjektes den Status der GUI-Elemente passend 
-	 * @param object
-	 */
-	private void setInputValues(BasicObject object){
-		if(object != null){
-			tfId.setText(object.getId());
-			if(object instanceof AgentObject){
-				cbType.setSelectedItem(Language.translate("Agent"));
-				cbClass.setSelectedItem(((AgentObject) object).getAgentClass());
-				cbClass.setEnabled(true);
-			}else{
-				cbType.setSelectedItem(Language.translate("Hindernis"));
-				cbClass.setEnabled(false);
-			}
-			btnDelete.setEnabled(true);
-		}else{
-			if(selectedElement!=null){
-				tfId.setText(selectedElement.getAttributeNS(null, "id"));
-			}else{
-				tfId.setText("");
-			}
+	 * Setzt die Werte der GUI-Elemente  abhängig von selectedElement
+	 */	
+	private void setInputValues(){
+		// Kein Element ausgewählt
+		if(selectedElement == null){
+			tfId.setText(null);
 			cbType.setSelectedItem(Language.translate("Undefiniert"));
 			cbClass.setEnabled(false);
 			btnDelete.setEnabled(false);
-		}
-	}
-	
-	/**
-	 * Setzt und markiert das aktuell ausgewählte SVG-Element 
-	 * @param element
-	 */
-	private void setSelectedElement(Element element){
-		// Entferne Markierung des vorherigen Elements
-		if(selectedElement!=null){
-			selectedElement.setAttributeNS(null, "stroke", "none");
-		}
-		selectedElement = element;
-		
-		if(selectedElement!=null){
-			selectedElement.setAttributeNS(null, "stroke", "black");
-			selectedElement.setAttributeNS(null, "stroke-width", "5px");
+		}else{
+			String id = selectedElement.getAttributeNS(null, "id");
+			tfId.setText(id);
+			// Umgebungsobjekt, das von selectedElement repräsentiert wird
+			BasicObject object = ec.getMainPlayground().getObjects().get(id);
+			if(object != null){
+				if(object instanceof ObstacleObject){
+					cbType.setSelectedItem(Language.translate("Hindernis"));
+					cbClass.setEnabled(false);
+					btnDelete.setEnabled(true);
+				}else if(object instanceof AgentObject){
+					cbType.setSelectedItem(Language.translate("Agent"));
+					cbClass.setSelectedItem(((AgentObject) object).getAgentClass());
+					cbClass.setEnabled(true);
+					btnDelete.setEnabled(true);
+				}else{
+					// Anderer Objekttyp, sollte nicht vorkommen
+					cbType.setSelectedItem(Language.translate("Undefiniert"));
+					cbClass.setEnabled(false);
+					btnDelete.setEnabled(true);
+				}
+			}else{
+				// Kein Umgebungsobjekt zugeordnet
+				cbType.setSelectedItem(Language.translate("Undefiniert"));
+				cbClass.setEnabled(false);
+				btnDelete.setEnabled(false);
+			}
 		}
 	}
 	
@@ -629,15 +629,68 @@ public class EnvironmentControllerGUI extends JSplitPane {
 					if(getFcSave().showSaveDialog(EnvironmentControllerGUI.this) == JFileChooser.APPROVE_OPTION){
 						envFile = getFcSave().getSelectedFile();
 					}
-//					ec.saveEnvironment(envFile);
-					ec.saveEnv(envFile);
-//					ec.saveEnv2(envFile);
+					ec.saveEnvironment(envFile);
+					currentProject.setEnvFile(envFile.getName());
 					
 				}
 				
 			});
 		}
 		return btnSave;
+	}
+	
+	/**
+	 * Macht die Funktion des ElementSelectors von Außen verfügbar 
+	 * @param element
+	 */
+	public void setSelectedElement(Element element){
+		UpdateManager um = canvas.getUpdateManager();
+		if(um != null){
+			um.getUpdateRunnableQueue().invokeLater(new ElementSelector(element));
+		}
+	}
+	
+	/**
+	 * Hilfsklasse, nötig um setSelectedElement über den UpdateManager-Thread ausführen zu lassen
+	 * @author Nils
+	 *
+	 */
+	class ElementSelector implements Runnable{
+		/**
+		 * Ausgewähltes SVG-Element
+		 */
+		private Element element;
+
+		
+		public ElementSelector(Element element){
+			this.element = element;
+		}
+
+		@Override
+		public void run() {
+			setSelectedElement(element);			
+		}
+		
+		/**
+		 * Setzt und markiert das aktuell ausgewählte SVG-Element 
+		 * @param element
+		 */
+		private void setSelectedElement(Element element){
+			
+			// Entferne Markierung des vorherigen Elements
+			if(selectedElement!=null){
+				selectedElement.setAttributeNS(null, "stroke", "none");
+			}
+			selectedElement = element;			
+			setInputValues();
+			
+			if(selectedElement!=null){
+				selectedElement.setAttributeNS(null, "stroke", "black");
+				selectedElement.setAttributeNS(null, "stroke-width", "5px");
+			}
+			
+		}
+		
 	}
 	
 	
