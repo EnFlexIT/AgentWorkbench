@@ -1,0 +1,38 @@
+digraph "Container-Ontologie-OWL" {
+	node [label="\N", fontname=Arial];
+	edge [fontname=Arial];
+	graph [bb="0,0,1273,346"];
+	Domain [label=Domain, shape=box, color="0.0,0.0,0.0", fontcolor="0.0,0.0,0.0", pos="194,238", width="0.88889", height="0.5"];
+	"p1:Concept" [label="p1:Concept", shape=box, color="0.0,0.0,0.0", fontcolor="0.0,0.0,0.0", pos="1124,328", width="1.25", height="0.5"];
+	Land [label=Land, shape=box, color="0.0,0.0,0.0", fontcolor="0.0,0.0,0.0", pos="27,128", width="0.75", height="0.5"];
+	Sea [label=Sea, shape=box, color="0.0,0.0,0.0", fontcolor="0.0,0.0,0.0", pos="99,128", width="0.75", height="0.5"];
+	"@2" [label="assigned_quay exactly 1", shape=box, color="0.0,0.0,0.0", fontcolor="0.0,0.0,0.0", pos="460,238", width="2.3889", height="0.5"];
+	"p1:AgentAction" [label="p1:AgentAction", shape=box, color="0.0,0.0,0.0", fontcolor="0.0,0.0,0.0", pos="839,238", width="1.5833", height="0.5"];
+	AssignHarborQuay [label="{AssignHarborQuay|{assigned_quay|Instance|{Quay}}}", shape=record, color="0.0,0.0,0.0", fontcolor="0.0,0.0,0.0", pos="460,128", rects="343,128,577,153 343,103,456,128 456,103,527,128 527,103,577,128", width="3.25", height="0.70833"];
+	Quay [label=Quay, shape=box, color="0.0,0.0,0.0", fontcolor="0.0,0.0,0.0", pos="460,18", width="0.75", height="0.5"];
+	GetCraneList [label="{GetCraneList|{assigned_quay|Instance|{Quay}}|{required_turnover_capacity|Instance|{LoadList}}}", shape=record, color="0.0,0.0,0.0", fontcolor="0.0,0.0,0.0", pos="760,128", rects="595,140.5,925,165.5 595,115.5,740,140.5 740,115.5,843,140.5 843,115.5,925,140.5 595,90.5,783,115.5 783,90.5,854,115.5 854,90.5,925\
+,115.5", width="4.5833", height="1.0556"];
+	LoadList [label=LoadList, shape=box, color="0.0,0.0,0.0", fontcolor="0.0,0.0,0.0", pos="968,18", width="0.97222", height="0.5"];
+	"p1:AID" [label="p1:AID", shape=box, color="0.0,0.0,0.0", fontcolor="0.0,0.0,0.0", pos="1180,18", width="0.86111", height="0.5"];
+	ProvideCraneList [label="{ProvideCraneList|{available_cranes|Instance*|{p1:AID}}}", shape=record, color="0.0,0.0,0.0", fontcolor="0.0,0.0,0.0", pos="1073,128", rects="943,128,1203,153 943,103,1065,128 1065,103,1141,128 1141,103,1203,128", width="3.6111", height="0.70833"];
+	Rail [label=Rail, shape=box, color="0.0,0.0,0.0", fontcolor="0.0,0.0,0.0", pos="226,128", width="0.75", height="0.5"];
+	Street [label=Street, shape=box, color="0.0,0.0,0.0", fontcolor="0.0,0.0,0.0", pos="298,128", width="0.75", height="0.5"];
+	"p1:Concept" -> Domain [dir=back, label=isa, color="0.0,0.0,0.0", fontcolor="0.0,0.0,0.0", pos="s,1078.6,323.86 1068.5,322.93 943.12,311.44 628.25,282.34 365,256 316.58,251.16 260.5,245.18 226.14,241.48", lp="727.5,283"];
+	Domain -> Land [dir=back, label=isa, color="0.0,0.0,0.0", fontcolor="0.0,0.0,0.0", pos="s,161.97,230.77 152.17,227.93 133.38,222.19 111.54,213.75 94,202 71.539,186.95 51.573,162.76 39.401,146.16", lp="103.5,193"];
+	Domain -> Sea [dir=back, label=isa, color="0.0,0.0,0.0", fontcolor="0.0,0.0,0.0", pos="s,161.88,225.62 152.83,220.75 144.13,215.68 135.6,209.45 129,202 114.84,186.02 106.86,162.49 102.75,146.27", lp="138.5,193"];
+	"p1:Concept" -> "p1:AgentAction" [dir=back, label=isa, color="0.0,0.0,0.0", fontcolor="0.0,0.0,0.0", pos="s,1078.8,313.74 1069.2,310.71 1019.6,295.02 946.65,271.99 896.24,256.08", lp="1016.5,283"];
+	"p1:AgentAction" -> AssignHarborQuay [dir=back, label=isa, color="0.0,0.0,0.0", fontcolor="0.0,0.0,0.0", pos="s,781.9,222.03 771.98,219.24 720.94,204.87 648.96,184.45 586,166 571.86,161.86 556.84,157.39 542.29,153.02", lp="719.5,193"];
+	"@2" -> AssignHarborQuay [dir=back, label=isa, color="0.0,0.0,0.0", fontcolor="0.0,0.0,0.0", pos="s,460,219.84 460,209.67 460,192.21 460,170.03 460,153.19", lp="469.5,193"];
+	AssignHarborQuay -> Quay [label=assigned_quay, color="0.6666667,1.0,1.0", fontcolor="0.6666667,1.0,1.0", style=filled, pos="e,460,36.257 460,102.76 460,85.955 460,63.839 460,46.412", lp="508.5,63"];
+	"p1:AgentAction" -> GetCraneList [dir=back, label=isa, color="0.0,0.0,0.0", fontcolor="0.0,0.0,0.0", pos="s,825.95,219.84 819.87,211.37 810.06,197.7 797.93,180.81 787.16,165.82", lp="820.5,193"];
+	GetCraneList -> Quay [label=assigned_quay, color="0.6666667,1.0,1.0", fontcolor="0.6666667,1.0,1.0", style=filled, pos="e,487.04,27.527 659.88,90.467 628.28,78.702 593.21,65.729 561,54 539.7,46.244 515.81,37.721 496.61,30.916", lp="652.5,63"];
+	GetCraneList -> LoadList [label=required_turnover_capacity, color="0.6666667,1.0,1.0", fontcolor="0.6666667,1.0,1.0", style=filled, pos="e,933.74,36.118 831,90.452 862.19,73.956 897.8,55.124 924.9,40.795", lp="980,63"];
+	"p1:Concept" -> "p1:AID" [dir=back, label=isa, color="0.0,0.0,0.0", fontcolor="0.0,0.0,0.0", pos="s,1169.2,320.11 1179.2,317.93 1206.9,311.68 1236.4,302.79 1245,292 1266.6,264.93 1246.9,57.009 1245,54 1237.4,41.725 1224,33.3 1211.3\
+,27.706", lp="1263.5,193"];
+	"p1:AgentAction" -> ProvideCraneList [dir=back, label=isa, color="0.0,0.0,0.0", fontcolor="0.0,0.0,0.0", pos="s,877.38,219.96 886.84,215.51 925.45,197.36 979.74,171.84 1019.7,153.04", lp="957.5,193"];
+	ProvideCraneList -> "p1:AID" [label="available_cranes*", color="0.6666667,1.0,1.0", fontcolor="0.6666667,1.0,1.0", style=filled, pos="e,1162.2,36.257 1097.5,102.76 1114.8,85.004 1137.9,61.318 1155.2,43.5", lp="1198,63"];
+	Domain -> Rail [dir=back, label=isa, color="0.0,0.0,0.0", fontcolor="0.0,0.0,0.0", pos="s,199.28,219.84 202.14,210.02 207.97,189.97 215.66,163.56 220.71,146.19", lp="219.5,193"];
+	Domain -> Quay [dir=back, label=isa, color="0.0,0.0,0.0", fontcolor="0.0,0.0,0.0", pos="s,183.36,219.89 178.59,210.6 162.74,178.33 143.87,124.72 171,90 203.4,48.544 366.91,27.5 432.61,20.612", lp="180.5,128"];
+	Domain -> Street [dir=back, label=isa, color="0.0,0.0,0.0", fontcolor="0.0,0.0,0.0", pos="s,214.62,219.71 222.15,212.67 225.86,209.15 229.56,205.52 233,202 250.91,183.64 270.15,161.39 283.01,146.11", lp="259.5,193"];
+	"p1:Concept" -> LoadList [dir=back, label=isa, color="0.0,0.0,0.0", fontcolor="0.0,0.0,0.0", pos="s,1141,309.68 1147.6,302.12 1192.7,249.43 1281.4,128.41 1217,54 1210,45.972 1069.9,29.362 1003,21.845", lp="1233.5,193"];
+}
