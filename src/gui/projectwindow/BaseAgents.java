@@ -1,7 +1,5 @@
 package gui.projectwindow;
 
-import jade.wrapper.StaleProxyException;
-
 import java.awt.BorderLayout;
 import java.awt.ComponentOrientation;
 import java.awt.Dimension;
@@ -24,15 +22,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 
-import contmas.agents.ControlGUIAgent;
-
 import application.Application;
 import application.Language;
 import application.Project;
 
 /**
  * @author: Christian Derksen
- *
  */
 public class BaseAgents extends JPanel implements Observer, ActionListener {
 
@@ -311,32 +306,10 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 			// --------------------------------------------
 			if ( jAgentStartAs.getText().length() == 0 ) {
 				return;
-			}	
-			
-			//HFW Change 
-
-			/*
-			try{
-				Application.JadePlatform.jadeContainer(CurrProject.getProjectFolder()).acceptNewAgent(jAgentStartAs.getText(),new ControlGUIAgent(Application.Projects.get(CurrProject.getProjectFolder()).ProjectDesktop ));
-			}catch(StaleProxyException e){
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			*/
-			
-			Object[] args={Application.Projects.get(CurrProject.getProjectFolder()).ProjectDesktop};
-			
-			Application.JadePlatform.jadeAgentStart( jAgentStartAs.getText(), 
-					 								 jAgentList.getSelectedValue().toString(), 
-					 								 args,
-					 								 CurrProject.getProjectFolder());
-			/*
+			}			
 			Application.JadePlatform.jadeAgentStart( jAgentStartAs.getText(), 
 													 jAgentList.getSelectedValue().toString(), 
-													 CurrProject.getProjectFolder());
-			*/
-			//End Of HFW Change 
-
+													 CurrProject.getProjectFolder());	
 			jAgentStartAs.setText("");
 			jAgent2Start.setText("");
 			jAgentList.clearSelection();

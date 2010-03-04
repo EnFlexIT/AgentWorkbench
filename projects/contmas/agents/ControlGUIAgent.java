@@ -21,6 +21,7 @@ import jade.wrapper.AgentController;
 
 import javax.swing.JDesktopPane;
 
+import contmas.main.AgentDesktop;
 import contmas.main.ContMASContainer;
 import contmas.ontology.BayMap;
 import contmas.ontology.Domain;
@@ -69,8 +70,8 @@ public class ControlGUIAgent extends GuiAgent{
 	protected void setup(){
 		// Instanciate the gui
 
+		/*
 		Object[] args=this.getArguments();
-
 		if((args != null) && (args[0] instanceof JDesktopPane)){
 			this.canvas=(JDesktopPane) args[0];
 		}
@@ -78,8 +79,10 @@ public class ControlGUIAgent extends GuiAgent{
 			ContMASContainer CMC=new ContMASContainer();
 			CMC.setVisible(true);
 			this.canvas=CMC.getJDesktopPane();
-		}
-
+		}*/
+		
+		AgentDesktop ad = new AgentDesktop(); 
+		this.canvas = ad.getDesktopPane();
 		this.myGui=new ControlGUI(this);
 		this.myGui.setVisible(true);
 
