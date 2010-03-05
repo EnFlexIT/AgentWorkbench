@@ -1,0 +1,281 @@
+; Thu Mar 04 21:33:35 CET 2010
+; 
+;+ (version "3.3.1")
+;+ (build "Build 430")
+
+
+(defclass %3ACLIPS_TOP_LEVEL_SLOT_CLASS "Fake class to save top-level slot information"
+	(is-a USER)
+	(role abstract)
+	(single-slot xSpeed
+;+		(comment "Object's position change in x direction per step")
+		(type INTEGER)
+		(default 0)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot width
+;+		(comment "The object's width")
+		(type INTEGER)
+		(range 0 %3FVARIABLE)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot height
+;+		(comment "The object's height")
+		(type INTEGER)
+		(range 0 %3FVARIABLE)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot yPos
+;+		(comment "The object's y coordinate")
+		(type STRING)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot ySpeed
+;+		(comment "Object's position change in y direction per step")
+		(type INTEGER)
+		(default 0)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot masterAgent
+;+		(comment "AID of the EnvironmentControllerAgent controlling this environment")
+		(type INSTANCE)
+;+		(allowed-classes AID)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot rootPlayground
+;+		(comment "Root of the project's environment representation, containing all it's EnvironmentObjects")
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(multislot childObjects
+;+		(comment "List of EnvironmentObjects inside this PlaygroundObject")
+		(type INSTANCE)
+;+		(allowed-classes EnvironmentObject)
+		(create-accessor read-write))
+	(single-slot xPos
+;+		(comment "The object's x coordinate")
+		(type INTEGER)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot svgFile
+;+		(comment "The SVG document used to visualize the project")
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot currentSpeed
+		(type INSTANCE)
+;+		(allowed-classes Speed)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot projectName
+;+		(comment "The project's name")
+		(type STRING)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot speed
+;+		(comment "Position change")
+		(type INSTANCE)
+;+		(allowed-classes Speed)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot startPos
+;+		(comment "Start position")
+		(type INSTANCE)
+;+		(allowed-classes Position)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot DisplayOntology_Slot_12
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot agentClass
+;+		(comment "Name of the agent class (subclass of jade.core.agent) this agent is an instance of")
+		(type STRING)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot aid
+;+		(comment "This agent's AID")
+		(type INSTANCE)
+;+		(allowed-classes AID)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot maxSpeed
+		(type INSTANCE)
+;+		(allowed-classes Speed)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot parent
+;+		(comment "The playground containing this EnvironmentObject")
+		(type INSTANCE)
+;+		(allowed-classes PlaygroundObject)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot id
+;+		(comment "Unique id to identify this object")
+		(type STRING)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot size
+;+		(comment "This EnvironmentObject's size")
+		(type INSTANCE)
+;+		(allowed-classes Size)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot position
+;+		(comment "This EnvironmentObject's position")
+		(type INSTANCE)
+;+		(allowed-classes Position)
+;+		(cardinality 1 1)
+		(create-accessor read-write)))
+
+(defclass Size "Represents an objects size in a 2D environment"
+	(is-a Concept)
+	(role concrete)
+	(single-slot width
+;+		(comment "The object's width")
+		(type INTEGER)
+		(range 0 %3FVARIABLE)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot height
+;+		(comment "The object's height")
+		(type INTEGER)
+		(range 0 %3FVARIABLE)
+;+		(cardinality 1 1)
+		(create-accessor read-write)))
+
+(defclass Speed "Represents the speed of an object moving in a 2D environment"
+	(is-a Concept)
+	(role concrete)
+	(single-slot xSpeed
+;+		(comment "Object's position change in x direction per step")
+		(type INTEGER)
+		(default 0)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot ySpeed
+;+		(comment "Object's position change in y direction per step")
+		(type INTEGER)
+		(default 0)
+;+		(cardinality 1 1)
+		(create-accessor read-write)))
+
+(defclass Position "Represents an object's position in a 2D environment"
+	(is-a Concept)
+	(role concrete)
+	(single-slot yPos
+;+		(comment "The object's y coordinate")
+		(type STRING)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot xPos
+;+		(comment "The object's x coordinate")
+		(type INTEGER)
+;+		(cardinality 1 1)
+		(create-accessor read-write)))
+
+(defclass EnvironmentObject
+	(is-a Concept)
+	(role abstract)
+	(single-slot parent
+;+		(comment "The playground containing this EnvironmentObject")
+		(type INSTANCE)
+;+		(allowed-classes PlaygroundObject)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot id
+;+		(comment "Unique id to identify this object")
+		(type STRING)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot size
+;+		(comment "This EnvironmentObject's size")
+		(type INSTANCE)
+;+		(allowed-classes Size)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot position
+;+		(comment "This EnvironmentObject's position")
+		(type INSTANCE)
+;+		(allowed-classes Position)
+;+		(cardinality 1 1)
+		(create-accessor read-write)))
+
+(defclass ObstacleObject "Represents a static, non movable object in the environment"
+	(is-a EnvironmentObject)
+	(role concrete))
+
+(defclass AgentObject "Represents an agent that can move in the environment"
+	(is-a EnvironmentObject)
+	(role concrete)
+	(single-slot agentClass
+;+		(comment "Name of the agent class (subclass of jade.core.agent) this agent is an instance of")
+		(type STRING)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot aid
+;+		(comment "This agent's AID")
+		(type INSTANCE)
+;+		(allowed-classes AID)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot maxSpeed
+		(type INSTANCE)
+;+		(allowed-classes Speed)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot currentSpeed
+		(type INSTANCE)
+;+		(allowed-classes Speed)
+;+		(cardinality 1 1)
+		(create-accessor read-write)))
+
+(defclass PlaygroundObject "Represents a 2D environment or subenvironment, can contain all kinds of EnvironmentObjects"
+	(is-a EnvironmentObject)
+	(role concrete)
+	(multislot childObjects
+;+		(comment "List of EnvironmentObjects inside this PlaygroundObject")
+		(type INSTANCE)
+;+		(allowed-classes EnvironmentObject)
+		(create-accessor read-write)))
+
+(defclass Environment "A project's environment definition"
+	(is-a Concept)
+	(role concrete)
+	(single-slot masterAgent
+;+		(comment "AID of the EnvironmentControllerAgent controlling this environment")
+		(type INSTANCE)
+;+		(allowed-classes AID)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot rootPlayground
+;+		(comment "Root of the project's environment representation, containing all it's EnvironmentObjects")
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot svgFile
+;+		(comment "The SVG document used to visualize the project")
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot projectName
+;+		(comment "The project's name")
+		(type STRING)
+;+		(cardinality 1 1)
+		(create-accessor read-write)))
+
+(defclass Movement
+	(is-a Concept)
+	(role concrete)
+	(single-slot speed
+;+		(comment "Position change")
+		(type INSTANCE)
+;+		(allowed-classes Speed)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot startPos
+;+		(comment "Start position")
+		(type INSTANCE)
+;+		(allowed-classes Position)
+;+		(cardinality 1 1)
+		(create-accessor read-write)))

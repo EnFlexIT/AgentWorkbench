@@ -1,0 +1,47 @@
+; Thu Mar 04 21:33:35 CET 2010
+; 
+;+ (version "3.3.1")
+;+ (build "Build 430")
+
+([AgentObject] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([Environment] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([EnvironmentObject] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([Movement] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([ObstacleObject] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([PlaygroundObject] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([Position] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([project+annotation] of  %3APROJECT-ANNOTATION
+
+	(%3ALOCATION "D:\\Eclipse\\workspace_v35\\AgentGUI\\projects")
+	(%3AONTOLOGYNAME "Display")
+	(%3APACKAGE "sma.ontology")
+	(%3ASUPPORT "j2se"))
+
+([Size] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([Speed] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
