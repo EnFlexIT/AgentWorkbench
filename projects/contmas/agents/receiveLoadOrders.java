@@ -29,14 +29,27 @@ import contmas.ontology.*;
 
 public class receiveLoadOrders extends ContractNetResponder{
 	protected class handleAcceptProposal extends SimpleBehaviour{
+		
 		private static final long serialVersionUID= -1740553491760609807L;
-		private final ContainerAgent myCAgent=(ContainerAgent) this.myAgent;
+		private final ContainerAgent myCAgent;
 		private Boolean isDone=false;
+		
+		handleAcceptProposal(ContainerAgent myCAgent){
+			this.myCAgent=myCAgent;
+		}
+		
 		@Override
 		public void action(){
 			DataStore ds=this.getDataStore();
 			ACLMessage accept=(ACLMessage) ds.get(receiveLoadOrders.this.ACCEPT_PROPOSAL_KEY);
-			Concept content=this.myCAgent.extractAction(accept);
+			Concept 
+			content
+			=
+				this.
+				myCAgent.
+				extractAction(
+						accept
+						);
 			TransportOrderChain acceptedTOC=((AcceptLoadOffer) content).getLoad_offer();
 			ACLMessage rply=accept.createReply();
 
@@ -118,7 +131,7 @@ public class receiveLoadOrders extends ContractNetResponder{
 
 	public receiveLoadOrders(Agent a,MessageTemplate mt){
 		super(a,mt);
-		Behaviour b=new handleAcceptProposal();
+		Behaviour b=new handleAcceptProposal(this.myCAgent);
 		this.registerHandleAcceptProposal(b);
 	}
 
