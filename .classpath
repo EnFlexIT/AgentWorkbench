@@ -25,5 +25,6 @@
 	<classpathentry kind="lib" path="lib/batik/lib/xerces_2_5_0.jar"/>
 	<classpathentry kind="lib" path="lib/batik/lib/batik-xml.jar"/>
 	<classpathentry kind="lib" path="lib/batik/lib/batik-util.jar"/>
+	<classpathentry kind="lib" path="lib/jade/lib/XMLCodec.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

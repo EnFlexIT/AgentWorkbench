@@ -35,7 +35,7 @@ public class CraneAgent extends ActiveContainerAgent implements TransportOrderHa
 	@Override
 	public List determineContractors(){
 		if(this.ontologyRepresentation.getContractors().isEmpty()){
-			this.ontologyRepresentation.setContractors(this.toAIDList(this.getAIDsFromDF("container-distributing")));
+			this.ontologyRepresentation.setContractors(ContainerAgent.toAIDList(this.getAIDsFromDF("container-distributing")));
 		}
 		return this.ontologyRepresentation.getContractors();
 	}

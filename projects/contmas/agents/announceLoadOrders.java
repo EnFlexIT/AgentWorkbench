@@ -35,8 +35,9 @@ public class announceLoadOrders extends ContractNetInitiator{
 	 * 
 	 */
 	private static final long serialVersionUID=7080809105355535853L;
-	private LoadList currentLoadList=null;
-	private Behaviour masterBehaviour=null;
+	private final LoadList currentLoadList;
+	private final Behaviour masterBehaviour;
+	private final ContainerAgent myCAgent=(ContainerAgent) this.myAgent;
 
 	public announceLoadOrders(Agent a,LoadList currentLoadList){
 		this(a,currentLoadList,null);
@@ -57,14 +58,14 @@ public class announceLoadOrders extends ContractNetInitiator{
 		for(Object message: responses){
 			ACLMessage propose=(ACLMessage) message;
 			if(propose.getPerformative() == ACLMessage.REFUSE){
-				((ContainerAgent) this.myAgent).echoStatus("Ablehnung empfangen von " + propose.getSender().getLocalName() + ": " + propose.getContent());
+				this.myCAgent.echoStatus("Ablehnung empfangen von " + propose.getSender().getLocalName() + ": " + propose.getContent());
 			}
 			if((propose.getContent() != null) && (propose.getPerformative() == ACLMessage.PROPOSE)){
 				Concept content;
-				content=((ContainerAgent) this.myAgent).extractAction(propose);
+				content=this.myCAgent.extractAction(propose);
 				if(content instanceof ProposeLoadOffer){
 					ProposeLoadOffer proposal=(ProposeLoadOffer) content;
-					TransportOrder offer=((ContainerAgent) this.myAgent).findMatchingOrder(proposal.getLoad_offer(),false);
+					TransportOrder offer=this.myCAgent.findMatchingOrder(proposal.getLoad_offer(),false);
 					if((bestOffer == null) || (offer.getTakes() < bestOffer.getTakes())){ //bisher beste Zeit
 						bestOffer=offer;
 						bestOfferMessage=propose;
@@ -77,10 +78,10 @@ public class announceLoadOrders extends ContractNetInitiator{
 		TransportOrderChain curTOC=(TransportOrderChain) this.currentLoadList.getConsists_of().iterator().next();
 
 		if(bestOffer == null){ //Abnehmer momentan alle beschäftigt
-			((ContainerAgent) this.myAgent).echoStatus("FAILURE: Nur Ablehnungen empfangen, Abbruch.");
-			((ContainerAgent) this.myAgent).changeTOCState(curTOC,new Failed());
+			this.myCAgent.echoStatus("FAILURE: Nur Ablehnungen empfangen, Abbruch.");
+			this.myCAgent.changeTOCState(curTOC,new Failed());
 			if(this.masterBehaviour != null){
-				((ContainerAgent) this.myAgent).echoStatus("REFUSE: MasterBehaviour wird neugestartet.");
+				this.myCAgent.echoStatus("REFUSE: MasterBehaviour wird neugestartet.");
 				this.masterBehaviour.restart();
 			}
 			this.reset();
@@ -104,7 +105,7 @@ public class announceLoadOrders extends ContractNetInitiator{
 			accept=bestOfferMessage.createReply();
 			AcceptLoadOffer act=new AcceptLoadOffer();
 			act.setLoad_offer(bestOfferToc);
-			((ContainerAgent) this.myAgent).fillMessage(accept,act);
+			this.myCAgent.fillMessage(accept,act);
 			accept.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
 			acceptances.add(accept);
 		}
@@ -122,26 +123,26 @@ public class announceLoadOrders extends ContractNetInitiator{
 	protected void handleAllResultNotifications(Vector resultNotifications){
 		for(Object message: resultNotifications){
 			ACLMessage notification=(ACLMessage) message;
-			AgentAction content=((ContainerAgent) this.myAgent).extractAction(notification);
+			AgentAction content=this.myCAgent.extractAction(notification);
 			if(content instanceof AnnounceLoadStatus){
 				AnnounceLoadStatus loadStatus=(AnnounceLoadStatus) content;
 				TransportOrderChain load_offer=loadStatus.getLoad_offer();
 				if((notification.getPerformative() == ACLMessage.INFORM) && loadStatus.getLoad_status().equals("FINISHED")){
 					//					((ContainerAgent)myAgent).echoStatus("AnnounceLoadStatus FINISHED empfangen, bearbeiten");
-					if(((ContainerAgent) this.myAgent).removeContainerFromBayMap(load_offer)){
-						((ContainerAgent) this.myAgent).changeTOCState(load_offer,null,true);
-						((ContainerAgent) this.myAgent).echoStatus("Erfolgreich losgeworden (Meldung+BayMap-Entfernung).",load_offer);
+					if(this.myCAgent.removeContainerFromBayMap(load_offer)){
+						this.myCAgent.changeTOCState(load_offer,null,true);
+						this.myCAgent.echoStatus("Erfolgreich losgeworden (Meldung+BayMap-Entfernung).",load_offer);
 						if(this.masterBehaviour != null){
-							((ContainerAgent) this.myAgent).echoStatus("INFORM: MasterBehaviour wird neugestartet.");
+							this.myCAgent.echoStatus("INFORM: MasterBehaviour wird neugestartet.");
 							this.masterBehaviour.restart();
 						}
 					}
 				}else if(notification.getPerformative() == ACLMessage.FAILURE){ // && loadStatus.getLoad_status().substring(0, 4).equals("ERROR")) {
-					((ContainerAgent) this.myAgent).removeFromContractors(notification.getSender());
-					((ContainerAgent) this.myAgent).changeTOCState(load_offer,new Failed());
-					((ContainerAgent) this.myAgent).echoStatus("Containerabgabe fehlgeschlagen. " + loadStatus.getLoad_status(),load_offer);
+					this.myCAgent.removeFromContractors(notification.getSender());
+					this.myCAgent.changeTOCState(load_offer,new Failed());
+					this.myCAgent.echoStatus("Containerabgabe fehlgeschlagen. " + loadStatus.getLoad_status(),load_offer);
 					if(this.masterBehaviour != null){
-						((ContainerAgent) this.myAgent).echoStatus("FAILURE: MasterBehaviour wird neugestartet.");
+						this.myCAgent.echoStatus("FAILURE: MasterBehaviour wird neugestartet.");
 						this.masterBehaviour.restart();
 					}
 				}
@@ -151,28 +152,28 @@ public class announceLoadOrders extends ContractNetInitiator{
 
 	@Override
 	protected void handleOutOfSequence(ACLMessage msg){
-		((ContainerAgent) this.myAgent).echoStatus("ERROR: Unerwartete Nachricht empfangen: " + msg.getPerformative());
+		this.myCAgent.echoStatus("ERROR: Unerwartete Nachricht empfangen: " + msg.getPerformative());
 	}
 
 	@Override
 	protected Vector prepareCfps(ACLMessage cfp){
 		TransportOrderChain curTOC=(TransportOrderChain) this.currentLoadList.getConsists_of().iterator().next();
-		if( !(((ContainerAgent) this.myAgent).changeTOCState(curTOC,new Announced()) instanceof Administered)){
-			((ContainerAgent) this.myAgent).echoStatus("FAILURE: Auftrag wird nicht ausgeschrieben werden, nicht administriert, wahrscheinlich schon failure.",curTOC);
-			((ContainerAgent) this.myAgent).changeTOCState(curTOC,new Failed());
+		if( !(this.myCAgent.changeTOCState(curTOC,new Announced()) instanceof Administered)){
+			this.myCAgent.echoStatus("FAILURE: Auftrag wird nicht ausgeschrieben werden, nicht administriert, wahrscheinlich schon failure.",curTOC);
+			this.myCAgent.changeTOCState(curTOC,new Failed());
 			return null;
 		}
-		((ContainerAgent) this.myAgent).echoStatus("Schreibe Auftrag aus.",curTOC);
+		this.myCAgent.echoStatus("Schreibe Auftrag aus.",curTOC);
 		cfp=new ACLMessage(ACLMessage.CFP);
 		cfp.setProtocol(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
-		List contractorList=((ContainerAgent) this.myAgent).determineContractors();
+		List contractorList=this.myCAgent.determineContractors();
 		if((contractorList == null) || contractorList.isEmpty()){
 			if(this.masterBehaviour != null){
-				((ContainerAgent) this.myAgent).echoStatus("MasterBehaviour wird neugestartet.");
+				this.myCAgent.echoStatus("MasterBehaviour wird neugestartet.");
 				this.masterBehaviour.restart();
 			}
-			((ContainerAgent) this.myAgent).echoStatus("FAILURE: Keine Contractors mehr vorhanden. Ausschreibung nicht möglich.",curTOC);
-			((ContainerAgent) this.myAgent).changeTOCState(curTOC,new Failed());
+			this.myCAgent.echoStatus("FAILURE: Keine Contractors mehr vorhanden. Ausschreibung nicht möglich.",curTOC);
+			this.myCAgent.changeTOCState(curTOC,new Failed());
 			return null;
 		}
 		Iterator allContractors=contractorList.iterator();
@@ -182,7 +183,7 @@ public class announceLoadOrders extends ContractNetInitiator{
 		}
 		CallForProposalsOnLoadStage act=new CallForProposalsOnLoadStage();
 		act.setRequired_turnover_capacity(this.currentLoadList);
-		((ContainerAgent) this.myAgent).fillMessage(cfp,act);
+		this.myCAgent.fillMessage(cfp,act);
 		Vector<ACLMessage> messages=new Vector<ACLMessage>();
 		cfp.setReplyByDate(new Date(System.currentTimeMillis() + 5000)); //500000
 		messages.add(cfp);

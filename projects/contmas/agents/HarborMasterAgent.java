@@ -73,7 +73,7 @@ public class HarborMasterAgent extends ContainerAgent{
 				reply.setPerformative(ACLMessage.INFORM);
 				ProvideCraneList act=new ProvideCraneList();
 				//look for Cranes
-				act.setAvailable_cranes(HarborMasterAgent.this.toAIDList(HarborMasterAgent.this.getAIDsFromDF("craning")));
+				act.setAvailable_cranes(ContainerAgent.toAIDList(HarborMasterAgent.this.getAIDsFromDF("craning")));
 				((ContainerAgent) this.myAgent).fillMessage(reply,act);
 			}else{
 				reply.setPerformative(ACLMessage.NOT_UNDERSTOOD);

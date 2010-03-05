@@ -17,7 +17,7 @@ package contmas.agents;
 import jade.content.AgentAction;
 import jade.content.lang.Codec;
 import jade.content.lang.Codec.CodecException;
-import jade.content.lang.leap.LEAPCodec;
+import jade.content.lang.xml.XMLCodec;
 import jade.content.onto.Ontology;
 import jade.content.onto.OntologyException;
 import jade.content.onto.UngroundedException;
@@ -45,8 +45,8 @@ public class ContainerAgent extends Agent{
 	 * 
 	 */
 	private static final long serialVersionUID=202350816610492193L;
-	protected final Codec codec=new LEAPCodec();
-	protected final Ontology ontology=ContainerTerminalOntology.getInstance();
+	private static final Codec codec=new XMLCodec();
+	private static final Ontology ontology=ContainerTerminalOntology.getInstance();
 	protected String serviceType;
 	protected ContainerHolder ontologyRepresentation;
 
@@ -124,10 +124,6 @@ public class ContainerAgent extends Agent{
 		return null; //nicht gefunden
 	}
 
-	public boolean checkPlausibility(CallForProposalsOnLoadStage call){
-		return true;
-	}
-
 	public Integer countTOCInState(TransportOrderChainState TOCState){
 		Integer queueCount=0;
 		Iterator queue=this.ontologyRepresentation.getAllContainer_states();
@@ -175,8 +171,8 @@ public class ContainerAgent extends Agent{
 	}
 
 	public void fillMessage(ACLMessage msg,AgentAction act){
-		msg.setLanguage(this.codec.getName());
-		msg.setOntology(this.ontology.getName());
+		msg.setLanguage(ContainerAgent.codec.getName());
+		msg.setOntology(ContainerAgent.ontology.getName());
 		try{
 			this.getContentManager().fillContent(msg,act);
 		}catch(UngroundedException e){
@@ -410,8 +406,8 @@ public class ContainerAgent extends Agent{
 
 	@Override
 	protected void setup(){
-		this.getContentManager().registerLanguage(this.codec);
-		this.getContentManager().registerOntology(this.ontology);
+		this.getContentManager().registerLanguage(ContainerAgent.codec);
+		this.getContentManager().registerOntology(ContainerAgent.ontology);
 
 		//register self at DF
 		this.register(this.serviceType);
@@ -425,12 +421,19 @@ public class ContainerAgent extends Agent{
 		}
 	}
 
-	public List toAIDList(AID[] input){
+	public static List toAIDList(AID[] input){
 		List output=new ArrayList();
 		for(AID aid: input){
 			output.add(aid);
 		}
 		return output;
+	}
+
+	public static AnnounceLoadStatus getLoadStatusAnnouncement(TransportOrderChain curTOC,String content){
+		AnnounceLoadStatus loadStatus=new AnnounceLoadStatus();
+		loadStatus.setLoad_status(content);
+		loadStatus.setLoad_offer(curTOC);
+		return loadStatus;
 	}
 
 }
