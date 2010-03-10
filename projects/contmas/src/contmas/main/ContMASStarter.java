@@ -37,8 +37,10 @@ public class ContMASStarter{
 		try{
 			AgentController a=c.acceptNewAgent("rma",new rma());
 			a.start();
+			/*
 			a=c.acceptNewAgent("sniffer",new Sniffer());
 			a.start();
+			*/
 			a=c.acceptNewAgent("ControlGUIAgent",new ControlGUIAgent());
 			a.start();
 		}catch(StaleProxyException e){

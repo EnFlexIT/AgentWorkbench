@@ -14,12 +14,18 @@
 
 package contmas.main;
 
+import java.awt.ComponentOrientation;
+import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Rectangle;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
+import javax.swing.ActionMap;
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.plaf.ActionMapUIResource;
 
 public class ContMASContainer extends JFrame{
 
@@ -57,8 +63,13 @@ public class ContMASContainer extends JFrame{
 	 */
 	public JDesktopPane getJDesktopPane(){
 		if(this.jDesktopPane == null){
+			ActionMap actionMap=new ActionMap();
+			actionMap.setParent(new ActionMapUIResource());
 			this.jDesktopPane=new JDesktopPane();
 			this.jDesktopPane.setBounds(new Rectangle(0,0,307,294));
+			jDesktopPane.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+			jDesktopPane.setActionMap(actionMap);
+			jDesktopPane.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
 		}
 		return this.jDesktopPane;
 	}
@@ -74,6 +85,19 @@ public class ContMASContainer extends JFrame{
 		this.setContentPane(this.getJContentPane());
 		this.setTitle("ContMAS");
 		this.setVisible(true);
+
+		this.addWindowListener(new WindowAdapter(){
+			public void windowClosing(WindowEvent e){
+				shutDown();
+			}
+		});
+
+	}
+
+	void shutDown(){
+		// -----------------  Control the closing of this gui
+
+		System.exit(0);
 	}
 
 } //  @jve:decl-index=0:visual-constraint="30,15"
