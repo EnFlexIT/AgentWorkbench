@@ -14,8 +14,6 @@
 
 package contmas.agents;
 
-import java.beans.PropertyVetoException;
-
 import jade.gui.GuiAgent;
 import jade.gui.GuiEvent;
 import jade.wrapper.AgentContainer;
@@ -24,7 +22,6 @@ import jade.wrapper.AgentController;
 import javax.swing.JDesktopPane;
 
 import contmas.main.AgentDesktop;
-import contmas.main.ContMASContainer;
 import contmas.main.ControlGUI;
 import contmas.ontology.BayMap;
 import contmas.ontology.Domain;
@@ -84,16 +81,15 @@ public class ControlGUIAgent extends GuiAgent{
 			this.canvas=CMC.getJDesktopPane();
 		}*/
 
-
 		this.myGui=new ControlGUI(this);
-		
+
 		AgentDesktop ad=new AgentDesktop("ContMAS");
 		this.canvas=ad.getDesktopPane();
 		this.myGui.displayOn(this.canvas);
 //		this.canvas.add(this.myGui);
 		this.myGui.setVisible(true);
-		if(ad.getStandaloneMode()==AgentDesktop.AGENTDESKTOP_STANDALONE){
-			this.myGui.getCanvas().getParent().getParent().getParent().getParent().setSize(this.myGui.getWidth()+10,this.myGui.getHeight()+30);
+		if(ad.getStandaloneMode() == AgentDesktop.AGENTDESKTOP_STANDALONE){
+			this.myGui.getCanvas().getParent().getParent().getParent().getParent().setSize(this.myGui.getWidth() + 10,this.myGui.getHeight() + 30);
 /*
 			try{
 				this.myGui.setMaximum(true);

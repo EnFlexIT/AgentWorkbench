@@ -29,28 +29,30 @@ import contmas.ontology.*;
 public final class HarbourSetup{
 
 	private Domain HarbourArea=null;
+
 	/**
 	 * 
 	 */
 	private HarbourSetup(){
 		// TODO Auto-generated constructor stub
 	}
+
 	public Domain getHarbourArea(){
-		if(HarbourArea==null){
+		if(this.HarbourArea == null){
 			Domain workingDomainOne=null;
 			Domain workingDomainTwo=null;
 
-			HarbourArea=new Harbour();
-			HarbourArea.setId("Port of Otago");
-			
+			this.HarbourArea=new Harbour();
+			this.HarbourArea.setId("Port of Otago");
+
 			workingDomainOne=new Sea();
-			workingDomainOne.setLies_in(HarbourArea);
+			workingDomainOne.setLies_in(this.HarbourArea);
 
 			workingDomainTwo=new Berth();
 			workingDomainTwo.setLies_in(workingDomainOne);
-			
+
 			workingDomainOne=new Land();
-			workingDomainOne.setLies_in(HarbourArea);
+			workingDomainOne.setLies_in(this.HarbourArea);
 
 			workingDomainTwo=new Rail();
 			workingDomainTwo.setId("CraneRails");
@@ -62,8 +64,8 @@ public final class HarbourSetup{
 			workingDomainOne=workingDomainTwo;
 			workingDomainTwo=new ApronArea();
 			workingDomainTwo.setLies_in(workingDomainOne);
-			
+
 		}
-		return HarbourArea;
+		return this.HarbourArea;
 	}
 }

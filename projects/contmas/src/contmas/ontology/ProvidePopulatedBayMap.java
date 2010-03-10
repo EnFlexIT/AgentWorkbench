@@ -1,26 +1,29 @@
 package contmas.ontology;
 
-
-import jade.content.*;
-import jade.util.leap.*;
-import jade.core.*;
+import jade.content.AgentAction;
 
 /**
 * Protege name: ProvidePopulatedBayMap
 * @author ontology bean generator
-* @version 2010/03/9, 21:12:43
+* @version 2010/03/10, 15:08:52
 */
-public class ProvidePopulatedBayMap implements AgentAction {
+public class ProvidePopulatedBayMap implements AgentAction{
 
-   /**
-* Protege name: provides
-   */
-   private BayMap provides;
-   public void setProvides(BayMap value) { 
-    this.provides=value;
-   }
-   public BayMap getProvides() {
-     return this.provides;
-   }
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID= -3730304865923255074L;
+	/**
+	* Protege name: provides
+	*/
+	private BayMap provides;
+
+	public BayMap getProvides(){
+		return this.provides;
+	}
+
+	public void setProvides(BayMap value){
+		this.provides=value;
+	}
 
 }

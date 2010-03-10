@@ -126,7 +126,7 @@ public class HarborMasterAgent extends ContainerAgent{
 			a=c.acceptNewAgent("Crane #1",new CraneAgent(ontologyRepresentation));
 			a.start();
 			tbs.add(a);
-			
+
 			ontologyRepresentation=new Crane();
 			ontologyRepresentation.setLives_in(habitat);
 			capability=habitat;
@@ -140,7 +140,7 @@ public class HarborMasterAgent extends ContainerAgent{
 			a=c.acceptNewAgent("Crane #2",new CraneAgent(ontologyRepresentation));
 			a.start();
 			tbs.add(a);
-			
+
 			Apron ApronontologyRepresentation=new Apron();
 			habitat=new ApronArea();
 			habitat.setLies_in(terminalArea);
@@ -148,7 +148,7 @@ public class HarborMasterAgent extends ContainerAgent{
 			a=c.acceptNewAgent("Apron",new ApronAgent(ApronontologyRepresentation));
 			a.start();
 			tbs.add(a);
-			
+
 			StraddleCarrier StraddleCarrierontologyRepresentation=new StraddleCarrier();
 			habitat=new Street();
 			habitat.setLies_in(terminalArea);
@@ -189,7 +189,7 @@ public class HarborMasterAgent extends ContainerAgent{
 			a=c.acceptNewAgent("AGV #3",new AGVAgent(AGVontologyRepresentation));
 			a.start();
 			tbs.add(a);
-*/
+			*/
 			Sniffer s=new Sniffer();
 
 			a=c.acceptNewAgent("sniffer",s);
@@ -200,20 +200,18 @@ public class HarborMasterAgent extends ContainerAgent{
 			Domain inQuestion=new ApronArea();
 			Domain liesIn=new ApronArea();
 
-			
-			echoStatus("Testcase #1="+ContainerAgent.matchDomainsTransitive(inQuestion,liesIn)+" (should be 2)");
-			
+			this.echoStatus("Testcase #1=" + ContainerAgent.matchDomainsTransitive(inQuestion,liesIn) + " (should be 2)");
+
 			liesIn=new Street();
 			inQuestion.setLies_in(liesIn);
-			
-			echoStatus("Testcase #2="+ContainerAgent.matchDomainsTransitive(inQuestion,liesIn)+" (should be 3)");
-			
+
+			this.echoStatus("Testcase #2=" + ContainerAgent.matchDomainsTransitive(inQuestion,liesIn) + " (should be 3)");
+
 			liesIn=new Land();
 			inQuestion.getLies_in().setLies_in(liesIn);
-			
-			echoStatus("Testcase #3="+ContainerAgent.matchDomainsTransitive(inQuestion,liesIn)+" (should be 4)");
 
-			
+			this.echoStatus("Testcase #3=" + ContainerAgent.matchDomainsTransitive(inQuestion,liesIn) + " (should be 4)");
+
 		}catch(StaleProxyException e){
 			// TODO Auto-generated catch block
 			e.printStackTrace();

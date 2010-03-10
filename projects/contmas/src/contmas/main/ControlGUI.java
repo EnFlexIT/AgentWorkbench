@@ -26,7 +26,6 @@ import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
 import contmas.agents.ControlGUIAgent;
-import java.awt.Dimension;
 
 public class ControlGUI extends JInternalFrame implements ActionListener{
 
@@ -55,15 +54,6 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 		this.myAgent=a;
 		this.initialize();
 	}
-	
-	public void displayOn(JDesktopPane canvas){
-		this.canvas=canvas;
-		this.canvas.add(this);
-	}
-	
-	public JDesktopPane getCanvas(){
-		return canvas;
-	}
 
 	public void actionPerformed(ActionEvent ae){
 		if(ae.getSource() == this.ButtonCreateShip){
@@ -77,6 +67,11 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 		}
 	}
 
+	public void displayOn(JDesktopPane canvas){
+		this.canvas=canvas;
+		this.canvas.add(this);
+	}
+
 	/**
 	 * This method initializes ButtonCreateShip
 	 * 
@@ -86,11 +81,15 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 		if(this.ButtonCreateShip == null){
 			this.ButtonCreateShip=new JButton();
 
-			this.ButtonCreateShip.setBounds(new Rectangle(5, 185, 196, 20));
+			this.ButtonCreateShip.setBounds(new Rectangle(5,185,196,20));
 			this.ButtonCreateShip.setText("Start ShipAgent");
 			this.ButtonCreateShip.addActionListener(this);
 		}
 		return this.ButtonCreateShip;
+	}
+
+	public JDesktopPane getCanvas(){
+		return this.canvas;
 	}
 
 	/**
@@ -102,23 +101,23 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 		if(this.jContentPane == null){
 			this.jLabel1=new JLabel();
 			this.jLabel1.setText("Length");
-			jLabel1.setBounds(new Rectangle(5, 158, 55, 16));
+			this.jLabel1.setBounds(new Rectangle(5,158,55,16));
 			this.jLabel=new JLabel();
 			this.jLabel.setFont(new Font("Dialog",Font.BOLD,14));
-			jLabel.setBounds(new Rectangle(5, 5, 196, 15));
+			this.jLabel.setBounds(new Rectangle(5,5,196,15));
 			this.jLabel.setText("Create new Ship");
 			this.ShipLabelName=new JLabel();
 			this.ShipLabelName.setText("Name");
-			ShipLabelName.setBounds(new Rectangle(5, 38, 55, 16));
+			this.ShipLabelName.setBounds(new Rectangle(5,38,55,16));
 			this.ShipLabelZ=new JLabel();
 			this.ShipLabelZ.setText("Size Z");
-			ShipLabelZ.setBounds(new Rectangle(5, 128, 55, 16));
+			this.ShipLabelZ.setBounds(new Rectangle(5,128,55,16));
 			this.ShipLabelY=new JLabel();
 			this.ShipLabelY.setText("Size Y");
-			ShipLabelY.setBounds(new Rectangle(5, 98, 55, 16));
+			this.ShipLabelY.setBounds(new Rectangle(5,98,55,16));
 			this.ShipLabelX=new JLabel();
 			this.ShipLabelX.setText("Size X");
-			ShipLabelX.setBounds(new Rectangle(5, 68, 55, 16));
+			this.ShipLabelX.setBounds(new Rectangle(5,68,55,16));
 			this.jContentPane=new JPanel();
 			this.jContentPane.setLayout(null);
 			this.jContentPane.add(this.getTFShipX(),null);
@@ -133,12 +132,12 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 			this.jContentPane.add(this.jLabel,null);
 			this.jContentPane.add(this.jLabel1,null);
 			this.jContentPane.add(this.getTFShipLength(),null);
-			jContentPane.add(jLabel1, null);
-			jContentPane.add(jLabel, null);
-			jContentPane.add(ShipLabelName, null);
-			jContentPane.add(ShipLabelZ, null);
-			jContentPane.add(ShipLabelY, null);
-			jContentPane.add(ShipLabelX, null);
+			this.jContentPane.add(this.jLabel1,null);
+			this.jContentPane.add(this.jLabel,null);
+			this.jContentPane.add(this.ShipLabelName,null);
+			this.jContentPane.add(this.ShipLabelZ,null);
+			this.jContentPane.add(this.ShipLabelY,null);
+			this.jContentPane.add(this.ShipLabelX,null);
 			this.jContentPane.add(this.jLabel1,null);
 			this.jContentPane.add(this.jLabel,null);
 			this.jContentPane.add(this.ShipLabelName,null);
@@ -158,7 +157,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JTextField getTFShipLength(){
 		if(this.TFShipLength == null){
 			this.TFShipLength=new JTextField();
-			this.TFShipLength.setBounds(new Rectangle(65, 155, 46, 25));
+			this.TFShipLength.setBounds(new Rectangle(65,155,46,25));
 			this.TFShipLength.setText("120.5");
 		}
 		return this.TFShipLength;
@@ -172,7 +171,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JTextField getTFShipName(){
 		if(this.TFShipName == null){
 			this.TFShipName=new JTextField();
-			this.TFShipName.setBounds(new Rectangle(65, 35, 136, 25));
+			this.TFShipName.setBounds(new Rectangle(65,35,136,25));
 			this.TFShipName.setText("MV Ship");
 		}
 		return this.TFShipName;
@@ -186,7 +185,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JTextField getTFShipX(){
 		if(this.TFShipX == null){
 			this.TFShipX=new JTextField();
-			this.TFShipX.setBounds(new Rectangle(65, 65, 46, 25));
+			this.TFShipX.setBounds(new Rectangle(65,65,46,25));
 			this.TFShipX.setText("2");
 		}
 		return this.TFShipX;
@@ -200,7 +199,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JTextField getTFShipY(){
 		if(this.TFShipY == null){
 			this.TFShipY=new JTextField();
-			this.TFShipY.setBounds(new Rectangle(65, 95, 46, 25));
+			this.TFShipY.setBounds(new Rectangle(65,95,46,25));
 			this.TFShipY.setText("1");
 		}
 		return this.TFShipY;
@@ -214,7 +213,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JTextField getTFShipZ(){
 		if(this.TFShipZ == null){
 			this.TFShipZ=new JTextField();
-			this.TFShipZ.setBounds(new Rectangle(65, 125, 46, 25));
+			this.TFShipZ.setBounds(new Rectangle(65,125,46,25));
 			this.TFShipZ.setText("1");
 		}
 		return this.TFShipZ;
@@ -226,7 +225,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	 * @return void
 	 */
 	private void initialize(){
-		this.setSize(216, 243);
+		this.setSize(216,243);
 		this.setClosable(true);
 
 		this.setMaximizable(true);

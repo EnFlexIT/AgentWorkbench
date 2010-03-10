@@ -26,8 +26,6 @@ import jade.proto.ContractNetResponder;
 import jade.util.leap.List;
 import contmas.behaviours.receiveLoadOrders;
 import contmas.ontology.Apron;
-import contmas.ontology.Crane;
-import contmas.ontology.StaticContainerHolder;
 
 /**
  * @author Hanno - Felix Wagner
@@ -36,12 +34,17 @@ import contmas.ontology.StaticContainerHolder;
 public class ApronAgent extends StaticContainerAgent implements TransportOrderHandler,TransportOrderOfferer{
 
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID=4904170788284891727L;
+
+	/**
 	 *
 	 */
 	public ApronAgent(){
 		this(new Apron());
 	}
-	
+
 	/**
 	 *
 	 */
@@ -72,7 +75,7 @@ public class ApronAgent extends StaticContainerAgent implements TransportOrderHa
 	@Override
 	public void offerTransportOrder(){
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

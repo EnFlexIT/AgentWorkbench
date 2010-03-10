@@ -67,9 +67,9 @@ public class ContMASContainer extends JFrame{
 			actionMap.setParent(new ActionMapUIResource());
 			this.jDesktopPane=new JDesktopPane();
 			this.jDesktopPane.setBounds(new Rectangle(0,0,307,294));
-			jDesktopPane.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-			jDesktopPane.setActionMap(actionMap);
-			jDesktopPane.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+			this.jDesktopPane.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+			this.jDesktopPane.setActionMap(actionMap);
+			this.jDesktopPane.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
 		}
 		return this.jDesktopPane;
 	}
@@ -87,8 +87,9 @@ public class ContMASContainer extends JFrame{
 		this.setVisible(true);
 
 		this.addWindowListener(new WindowAdapter(){
+			@Override
 			public void windowClosing(WindowEvent e){
-				shutDown();
+				ContMASContainer.this.shutDown();
 			}
 		});
 

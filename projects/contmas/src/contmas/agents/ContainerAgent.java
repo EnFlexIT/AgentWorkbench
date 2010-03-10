@@ -48,7 +48,45 @@ public class ContainerAgent extends Agent{
 	private static final long serialVersionUID=202350816610492193L;
 	private static final Codec codec=new XMLCodec();
 	private static final Ontology ontology=ContainerTerminalOntology.getInstance();
+
+	public static AnnounceLoadStatus getLoadStatusAnnouncement(TransportOrderChain curTOC,String content){
+		AnnounceLoadStatus loadStatus=new AnnounceLoadStatus();
+		loadStatus.setLoad_status(content);
+		loadStatus.setLoad_offer(curTOC);
+		return loadStatus;
+	}
+
+	public static Integer matchDomains(Domain one,Domain two){
+		if(one.getClass() == two.getClass()){
+			return 2; //passt genau
+		}
+		return -1; //passt gar nicht
+	}
+
+	/*
+	 * Überprüft, ob Domain inQuestion in Domain suspectedIn liegt
+	 */
+	public static Integer matchDomainsTransitive(Domain inQuestion,Domain suspectedIn){
+		System.out.println(inQuestion.getClass() + " in " + suspectedIn.getClass() + "?");
+		if(inQuestion.getClass() == suspectedIn.getClass()){
+			return 2; //passt genau
+		}
+		if(inQuestion.getLies_in() != null){
+			return ContainerAgent.matchDomainsTransitive(inQuestion.getLies_in(),suspectedIn) + 1;
+		}
+		return -1; //passt gar nicht
+	}
+
+	public static List toAIDList(AID[] input){
+		List output=new ArrayList();
+		for(AID aid: input){
+			output.add(aid);
+		}
+		return output;
+	}
+
 	protected String serviceType;
+
 	protected ContainerHolder ontologyRepresentation;
 
 	public Integer lengthOfProposeQueue=2;
@@ -340,28 +378,6 @@ public class ContainerAgent extends Agent{
 		}
 		return -1; //order passt gar nicht
 	}
-	
-	public static Integer matchDomains(Domain one, Domain two){
-		if(one.getClass() == two.getClass()){
-			return 2; //passt genau
-		}
-		return -1; //passt gar nicht
-	}
-	
-	
-	/*
-	 * Überprüft, ob Domain inQuestion in Domain suspectedIn liegt
-	 */
-	public static Integer matchDomainsTransitive(Domain inQuestion, Domain suspectedIn){
-		System.out.println(inQuestion.getClass()+" in "+suspectedIn.getClass()+"?");
-		if(inQuestion.getClass() == suspectedIn.getClass()){
-			return 2; //passt genau
-		}
-		if(inQuestion.getLies_in() != null){
-			return matchDomainsTransitive(inQuestion.getLies_in(), suspectedIn)+1;
-		}		
-		return -1; //passt gar nicht
-	}
 
 	public void register(ServiceDescription sd){
 		DFAgentDescription dfd=new DFAgentDescription();
@@ -445,21 +461,6 @@ public class ContainerAgent extends Agent{
 			LoadBay.setZ_dimension(1);
 			this.ontologyRepresentation.setContains(LoadBay);
 		}
-	}
-
-	public static List toAIDList(AID[] input){
-		List output=new ArrayList();
-		for(AID aid: input){
-			output.add(aid);
-		}
-		return output;
-	}
-
-	public static AnnounceLoadStatus getLoadStatusAnnouncement(TransportOrderChain curTOC,String content){
-		AnnounceLoadStatus loadStatus=new AnnounceLoadStatus();
-		loadStatus.setLoad_status(content);
-		loadStatus.setLoad_offer(curTOC);
-		return loadStatus;
 	}
 
 }

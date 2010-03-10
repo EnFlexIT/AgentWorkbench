@@ -1,14 +1,15 @@
 package contmas.ontology;
 
-import jade.content.*;
-import jade.util.leap.*;
-import jade.core.*;
-
 /**
 * Protege name: PendingForSubCFP
 * @author ontology bean generator
-* @version 2010/03/9, 21:12:43
+* @version 2010/03/10, 15:08:52
 */
-public class PendingForSubCFP extends TransportOrderChainState{ 
+public class PendingForSubCFP extends TransportOrderChainState{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID= -6596674459887009900L;
 
 }

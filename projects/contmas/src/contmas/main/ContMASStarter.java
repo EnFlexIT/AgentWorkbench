@@ -17,7 +17,6 @@ package contmas.main;
 import jade.core.ProfileImpl;
 import jade.core.Runtime;
 import jade.tools.rma.rma;
-import jade.tools.sniffer.Sniffer;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
 import jade.wrapper.StaleProxyException;

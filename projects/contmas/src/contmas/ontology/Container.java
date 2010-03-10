@@ -1,70 +1,81 @@
 package contmas.ontology;
 
-
-import jade.content.*;
-import jade.util.leap.*;
-import jade.core.*;
+import jade.content.Concept;
 
 /**
 * Protege name: Container
 * @author ontology bean generator
-* @version 2010/03/9, 21:12:43
+* @version 2010/03/10, 15:08:52
 */
-public class Container implements Concept {
+public class Container implements Concept{
 
-   /**
-* Protege name: height
-   */
-   private float height;
-   public void setHeight(float value) { 
-    this.height=value;
-   }
-   public float getHeight() {
-     return this.height;
-   }
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID= -6741750554123390398L;
+	/**
+	* Protege name: weight
+	*/
+	private float weight;
 
-   /**
-* Protege name: bic_code
-   */
-   private String bic_code;
-   public void setBic_code(String value) { 
-    this.bic_code=value;
-   }
-   public String getBic_code() {
-     return this.bic_code;
-   }
+	/**
+	* Protege name: width
+	*/
+	private float width;
 
-   /**
-* Protege name: width
-   */
-   private float width;
-   public void setWidth(float value) { 
-    this.width=value;
-   }
-   public float getWidth() {
-     return this.width;
-   }
+	/**
+	* Protege name: length
+	*/
+	private float length;
 
-   /**
-* Protege name: weight
-   */
-   private float weight;
-   public void setWeight(float value) { 
-    this.weight=value;
-   }
-   public float getWeight() {
-     return this.weight;
-   }
+	/**
+	* Protege name: height
+	*/
+	private float height;
 
-   /**
-* Protege name: length
-   */
-   private float length;
-   public void setLength(float value) { 
-    this.length=value;
-   }
-   public float getLength() {
-     return this.length;
-   }
+	/**
+	* Protege name: bic_code
+	*/
+	private String bic_code;
+
+	public String getBic_code(){
+		return this.bic_code;
+	}
+
+	public float getHeight(){
+		return this.height;
+	}
+
+	public float getLength(){
+		return this.length;
+	}
+
+	public float getWeight(){
+		return this.weight;
+	}
+
+	public float getWidth(){
+		return this.width;
+	}
+
+	public void setBic_code(String value){
+		this.bic_code=value;
+	}
+
+	public void setHeight(float value){
+		this.height=value;
+	}
+
+	public void setLength(float value){
+		this.length=value;
+	}
+
+	public void setWeight(float value){
+		this.weight=value;
+	}
+
+	public void setWidth(float value){
+		this.width=value;
+	}
 
 }

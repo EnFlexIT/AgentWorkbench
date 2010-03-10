@@ -25,7 +25,6 @@ import jade.lang.acl.MessageTemplate;
 import jade.proto.AchieveREResponder;
 import contmas.behaviours.receiveLoadOrders;
 import contmas.ontology.ActiveContainerHolder;
-import contmas.ontology.Apron;
 import contmas.ontology.StraddleCarrier;
 
 /**
@@ -35,21 +34,26 @@ import contmas.ontology.StraddleCarrier;
 public class StraddleCarrierAgent extends ActiveContainerAgent implements TransportOrderHandler,TransportOrderOfferer{
 
 	/**
-	 * @param serviceType
+	 * 
 	 */
-	public StraddleCarrierAgent(String serviceType){
-		super(serviceType);
-	}
-	
+	private static final long serialVersionUID=2675047952726694600L;
+
 	public StraddleCarrierAgent(){
 		this(new StraddleCarrier());
 	}
-	
+
 	/**
 	 *
 	 */
 	public StraddleCarrierAgent(StraddleCarrier ontologyRepresentation){
 		super("container-distributing",ontologyRepresentation);
+	}
+
+	/**
+	 * @param serviceType
+	 */
+	public StraddleCarrierAgent(String serviceType){
+		super(serviceType);
 	}
 
 	/**
