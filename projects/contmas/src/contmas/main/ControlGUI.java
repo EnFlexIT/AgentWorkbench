@@ -12,7 +12,7 @@
  *         <http://www.gnu.org/licenses/>.
  */
 
-package contmas.agents;
+package contmas.main;
 
 import jade.gui.GuiEvent;
 
@@ -24,6 +24,8 @@ import java.awt.event.ActionListener;
 import javax.swing.*;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
+
+import contmas.agents.ControlGUIAgent;
 
 public class ControlGUI extends JInternalFrame implements ActionListener{
 

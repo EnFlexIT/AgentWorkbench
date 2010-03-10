@@ -27,6 +27,8 @@ import jade.util.leap.List;
 
 import java.util.Vector;
 
+import behaviours.announceLoadOrders;
+
 import contmas.ontology.*;
 
 public class ShipAgent extends StaticContainerAgent implements TransportOrderOfferer{

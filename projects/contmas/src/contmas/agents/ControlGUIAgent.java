@@ -23,6 +23,7 @@ import javax.swing.JDesktopPane;
 
 import contmas.main.AgentDesktop;
 import contmas.main.ContMASContainer;
+import contmas.main.ControlGUI;
 import contmas.ontology.BayMap;
 import contmas.ontology.Domain;
 import contmas.ontology.Sea;

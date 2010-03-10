@@ -12,7 +12,7 @@
  *         <http://www.gnu.org/licenses/>.
  */
 
-package contmas.agents;
+package behaviours;
 
 import jade.content.AgentAction;
 import jade.content.Concept;
@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Vector;
 
+import contmas.agents.ContainerAgent;
 import contmas.ontology.*;
 
 public class announceLoadOrders extends ContractNetInitiator{

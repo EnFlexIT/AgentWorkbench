@@ -14,7 +14,7 @@
  *         <http://www.gnu.org/licenses/>.
  */
 
-package contmas.agents;
+package behaviours;
 
 import jade.content.Concept;
 import jade.core.Agent;
@@ -25,6 +25,7 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.proto.ContractNetResponder;
 import jade.util.leap.Iterator;
+import contmas.agents.ContainerAgent;
 import contmas.ontology.*;
 
 public class receiveLoadOrders extends ContractNetResponder{

@@ -14,6 +14,7 @@
 
 package contmas.agents;
 
+import behaviours.receiveLoadOrders;
 import jade.domain.FIPANames;
 import jade.lang.acl.MessageTemplate;
 import jade.proto.ContractNetResponder;
