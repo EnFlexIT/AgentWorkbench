@@ -35,8 +35,8 @@ import jade.util.leap.List;
 
 import java.util.Random;
 
-import behaviours.announceLoadOrders;
 
+import contmas.behaviours.announceLoadOrders;
 import contmas.ontology.*;
 
 /**

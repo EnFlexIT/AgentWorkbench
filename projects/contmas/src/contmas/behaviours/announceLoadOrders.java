@@ -12,7 +12,7 @@
  *         <http://www.gnu.org/licenses/>.
  */
 
-package behaviours;
+package contmas.behaviours;
 
 import jade.content.AgentAction;
 import jade.content.Concept;

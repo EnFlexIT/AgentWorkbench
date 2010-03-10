@@ -14,11 +14,11 @@
 
 package contmas.agents;
 
-import behaviours.receiveLoadOrders;
 import jade.domain.FIPANames;
 import jade.lang.acl.MessageTemplate;
 import jade.proto.ContractNetResponder;
 import jade.util.leap.List;
+import contmas.behaviours.receiveLoadOrders;
 import contmas.ontology.Crane;
 
 public class CraneAgent extends ActiveContainerAgent implements TransportOrderHandler,TransportOrderOfferer{
