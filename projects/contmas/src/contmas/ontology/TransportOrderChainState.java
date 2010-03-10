@@ -1,18 +1,15 @@
 package contmas.ontology;
 
-import jade.content.Concept;
+
+import jade.content.*;
+import jade.util.leap.*;
+import jade.core.*;
 
 /**
- * Protege name: TransportOrderChainState
- * 
- * @author ontology bean generator
- * @version 2010/03/3, 11:16:16
- */
-public class TransportOrderChainState implements Concept{
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID=2414424973915226846L;
+* Protege name: TransportOrderChainState
+* @author ontology bean generator
+* @version 2010/03/9, 21:12:43
+*/
+public class TransportOrderChainState implements Concept {
 
 }

@@ -5,10 +5,10 @@ import jade.util.leap.*;
 import jade.core.*;
 
 /**
-* Protege name: PendingForSubCFP
+* Protege name: StraddleCarrier
 * @author ontology bean generator
 * @version 2010/03/9, 21:12:43
 */
-public class PendingForSubCFP extends TransportOrderChainState{ 
+public class StraddleCarrier extends ActiveContainerHolder{ 
 
 }

@@ -1,16 +1,14 @@
 package contmas.ontology;
 
-/**
- * Protege name: Sea
- * 
- * @author ontology bean generator
- * @version 2010/03/3, 11:16:16
- */
-public class Sea extends Domain{
+import jade.content.*;
+import jade.util.leap.*;
+import jade.core.*;
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID=1609150680278466856L;
+/**
+* Protege name: Sea
+* @author ontology bean generator
+* @version 2010/03/9, 21:12:43
+*/
+public class Sea extends Domain{ 
 
 }

@@ -1,30 +1,26 @@
 package contmas.ontology;
 
-import jade.content.AgentAction;
+
+import jade.content.*;
+import jade.util.leap.*;
+import jade.core.*;
 
 /**
- * Protege name: ProposeLoadOffer
- * 
- * @author ontology bean generator
- * @version 2010/03/3, 11:16:16
- */
-public class ProposeLoadOffer implements AgentAction{
+* Protege name: ProposeLoadOffer
+* @author ontology bean generator
+* @version 2010/03/9, 21:12:43
+*/
+public class ProposeLoadOffer implements AgentAction {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID= -1773787534648361818L;
-	/**
-	 * Protege name: load_offer
-	 */
-	private TransportOrderChain load_offer;
-
-	public TransportOrderChain getLoad_offer(){
-		return this.load_offer;
-	}
-
-	public void setLoad_offer(TransportOrderChain value){
-		this.load_offer=value;
-	}
+   /**
+* Protege name: load_offer
+   */
+   private TransportOrderChain load_offer;
+   public void setLoad_offer(TransportOrderChain value) { 
+    this.load_offer=value;
+   }
+   public TransportOrderChain getLoad_offer() {
+     return this.load_offer;
+   }
 
 }
