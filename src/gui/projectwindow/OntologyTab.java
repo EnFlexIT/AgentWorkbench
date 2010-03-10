@@ -45,7 +45,7 @@ public class OntologyTab extends JPanel implements Observer, ActionListener {
 		
 		// --- Form aufbauen -------------------------------------
 		this.initialize();	
-
+		
 		// --- Basis-Verzeichnisse im OntoTree anzeigen -------
 		OntoTreeExpand2Level(3, true);
 
@@ -67,8 +67,8 @@ public class OntologyTab extends JPanel implements Observer, ActionListener {
 		this.setFocusable(true);
 		this.setVisible(true);
 		this.add(getOntoSplitPane(), BorderLayout.CENTER);
-		
-		
+
+
 	}
 
 	@Override
