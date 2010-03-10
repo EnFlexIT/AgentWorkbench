@@ -2,6 +2,6 @@
 <project>
     <envFile>environment.xml</envFile>
     <projectFolder>sma</projectFolder>
-    <projectName></projectName>
+    <projectName>SMA - Simple Moving Agent</projectName>
     <svgFile>Bla.svg</svgFile>
 </project>
