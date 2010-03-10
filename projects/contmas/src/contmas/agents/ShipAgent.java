@@ -27,7 +27,6 @@ import jade.util.leap.List;
 
 import java.util.Vector;
 
-
 import contmas.behaviours.announceLoadOrders;
 import contmas.ontology.*;
 

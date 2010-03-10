@@ -22,6 +22,9 @@ import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.proto.AchieveREResponder;
+import jade.tools.sniffer.Sniffer;
+import jade.util.leap.ArrayList;
+import jade.util.leap.List;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
 import jade.wrapper.StaleProxyException;
@@ -105,6 +108,7 @@ public class HarborMasterAgent extends ContainerAgent{
 	protected void setupEnvironment(){
 		AgentContainer c=this.getContainerController();
 		AgentController a;
+		List tbs=new ArrayList();
 		try{
 			Crane ontologyRepresentation=new Crane();
 			Domain terminalArea=new Land();
@@ -117,29 +121,58 @@ public class HarborMasterAgent extends ContainerAgent{
 			ontologyRepresentation.addCapable_of(capability);
 			capability=new Sea();
 			ontologyRepresentation.addCapable_of(capability);
+			capability=new ApronArea();
+			ontologyRepresentation.addCapable_of(capability);
 			a=c.acceptNewAgent("Crane #1",new CraneAgent(ontologyRepresentation));
 			a.start();
-
+			tbs.add(a);
+			
 			ontologyRepresentation=new Crane();
-			terminalArea=new Land();
-			habitat=new Rail();
-			habitat.setLies_in(terminalArea);
 			ontologyRepresentation.setLives_in(habitat);
-			capability=new Rail();
+			capability=habitat;
 			ontologyRepresentation.addCapable_of(capability);
 			capability=new Street();
 			ontologyRepresentation.addCapable_of(capability);
 			capability=new Sea();
 			ontologyRepresentation.addCapable_of(capability);
+			capability=new ApronArea();
+			ontologyRepresentation.addCapable_of(capability);
 			a=c.acceptNewAgent("Crane #2",new CraneAgent(ontologyRepresentation));
 			a.start();
+			tbs.add(a);
+			
+			Apron ApronontologyRepresentation=new Apron();
+			habitat=new ApronArea();
+			habitat.setLies_in(terminalArea);
+			ApronontologyRepresentation.setLives_in(habitat);
+			a=c.acceptNewAgent("Apron",new ApronAgent(ApronontologyRepresentation));
+			a.start();
+			tbs.add(a);
+			
+			StraddleCarrier StraddleCarrierontologyRepresentation=new StraddleCarrier();
+			habitat=new Street();
+			habitat.setLies_in(terminalArea);
+			StraddleCarrierontologyRepresentation.setLives_in(habitat);
+			capability=new Rail();
+			StraddleCarrierontologyRepresentation.addCapable_of(capability);
+			capability=new Street();
+			StraddleCarrierontologyRepresentation.addCapable_of(capability);
+			capability=new YardArea();
+			StraddleCarrierontologyRepresentation.addCapable_of(capability);
+			capability=new ApronArea();
+			StraddleCarrierontologyRepresentation.addCapable_of(capability);
+			a=c.acceptNewAgent("StraddleCarrier #1",new StraddleCarrierAgent(StraddleCarrierontologyRepresentation));
+			a.start();
+			tbs.add(a);
 
+			/*
 			AGV AGVontologyRepresentation=new AGV();
 			habitat=new Street();
 			habitat.setLies_in(terminalArea);
 			AGVontologyRepresentation.setLives_in(habitat);
 			a=c.acceptNewAgent("AGV #1",new AGVAgent(AGVontologyRepresentation));
 			a.start();
+			tbs.add(a);
 
 			AGVontologyRepresentation=new AGV();
 			habitat=new Street();
@@ -147,6 +180,7 @@ public class HarborMasterAgent extends ContainerAgent{
 			AGVontologyRepresentation.setLives_in(habitat);
 			a=c.acceptNewAgent("AGV #2",new AGVAgent(AGVontologyRepresentation));
 			a.start();
+			tbs.add(a);
 
 			AGVontologyRepresentation=new AGV();
 			habitat=new Street();
@@ -154,7 +188,32 @@ public class HarborMasterAgent extends ContainerAgent{
 			AGVontologyRepresentation.setLives_in(habitat);
 			a=c.acceptNewAgent("AGV #3",new AGVAgent(AGVontologyRepresentation));
 			a.start();
+			tbs.add(a);
+*/
+			Sniffer s=new Sniffer();
 
+			a=c.acceptNewAgent("sniffer",s);
+
+			a.start();
+//			s.sniffMsg(tbs,Sniffer.SNIFF_ON);
+
+			Domain inQuestion=new ApronArea();
+			Domain liesIn=new ApronArea();
+
+			
+			echoStatus("Testcase #1="+ContainerAgent.matchDomainsTransitive(inQuestion,liesIn)+" (should be 2)");
+			
+			liesIn=new Street();
+			inQuestion.setLies_in(liesIn);
+			
+			echoStatus("Testcase #2="+ContainerAgent.matchDomainsTransitive(inQuestion,liesIn)+" (should be 3)");
+			
+			liesIn=new Land();
+			inQuestion.getLies_in().setLies_in(liesIn);
+			
+			echoStatus("Testcase #3="+ContainerAgent.matchDomainsTransitive(inQuestion,liesIn)+" (should be 4)");
+
+			
 		}catch(StaleProxyException e){
 			// TODO Auto-generated catch block
 			e.printStackTrace();

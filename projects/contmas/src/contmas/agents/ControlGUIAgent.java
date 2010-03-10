@@ -14,6 +14,8 @@
 
 package contmas.agents;
 
+import java.beans.PropertyVetoException;
+
 import jade.gui.GuiAgent;
 import jade.gui.GuiEvent;
 import jade.wrapper.AgentContainer;
@@ -81,13 +83,26 @@ public class ControlGUIAgent extends GuiAgent{
 			CMC.setVisible(true);
 			this.canvas=CMC.getJDesktopPane();
 		}*/
-		
-		AgentDesktop ad = new AgentDesktop(); 
-		this.canvas = ad.getDesktopPane();
-		this.myGui=new ControlGUI(this);
-		this.myGui.setVisible(true);
 
-		this.canvas.add(this.myGui);
+
+		this.myGui=new ControlGUI(this);
+		
+		AgentDesktop ad=new AgentDesktop("ContMAS");
+		this.canvas=ad.getDesktopPane();
+		this.myGui.displayOn(this.canvas);
+//		this.canvas.add(this.myGui);
+		this.myGui.setVisible(true);
+		if(ad.getStandaloneMode()==AgentDesktop.AGENTDESKTOP_STANDALONE){
+			this.myGui.getCanvas().getParent().getParent().getParent().getParent().setSize(this.myGui.getWidth()+10,this.myGui.getHeight()+30);
+/*
+			try{
+				this.myGui.setMaximum(true);
+			}catch(PropertyVetoException e1){
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+*/
+		}
 
 		AgentContainer c=this.getContainerController();
 		try{
@@ -96,7 +111,8 @@ public class ControlGUIAgent extends GuiAgent{
 			a=c.createNewAgent("HarborMaster","contmas.agents.HarborMasterAgent",null);
 			a.start();
 		}catch(Exception e){
-
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 

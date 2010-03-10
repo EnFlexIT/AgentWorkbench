@@ -35,7 +35,6 @@ import jade.util.leap.List;
 
 import java.util.Random;
 
-
 import contmas.behaviours.announceLoadOrders;
 import contmas.ontology.*;
 
@@ -320,9 +319,12 @@ public class ContainerAgent extends Agent{
 	/*
 	 * Matcht hier nur Habitat des Ziels (für Static und Passive). Matching für
 	 * Active ist angepasst, matcht sowohl Start als auch Ziel und
-	 * Habitat+Capabilities Matching-Bewertung: -1 NoMatch 0 ExactMatch (AID),
-	 * Static+Passive 1 ExactMatch (AID), Active 2 relativeMatch (Domain
-	 * difference), Minimum für Static+Passive ...relativeMatch Matching-Wert
+	 * Habitat+Capabilities Matching-Bewertung:
+	 *  -1 NoMatch 
+	 *   0 ExactMatch (AID), Static+Passive 
+	 *   1 ExactMatch (AID), Active 
+	 *   2 relativeMatch (Domain difference), Minimum für Static+Passive
+	 *  ...relativeMatch Matching-Wert
 	 * stellt also nahezu Aufwand des Transports dar
 	 */
 	public Integer matchOrder(TransportOrder curTO){
@@ -337,6 +339,28 @@ public class ContainerAgent extends Agent{
 			}
 		}
 		return -1; //order passt gar nicht
+	}
+	
+	public static Integer matchDomains(Domain one, Domain two){
+		if(one.getClass() == two.getClass()){
+			return 2; //passt genau
+		}
+		return -1; //passt gar nicht
+	}
+	
+	
+	/*
+	 * Überprüft, ob Domain inQuestion in Domain suspectedIn liegt
+	 */
+	public static Integer matchDomainsTransitive(Domain inQuestion, Domain suspectedIn){
+		System.out.println(inQuestion.getClass()+" in "+suspectedIn.getClass()+"?");
+		if(inQuestion.getClass() == suspectedIn.getClass()){
+			return 2; //passt genau
+		}
+		if(inQuestion.getLies_in() != null){
+			return matchDomainsTransitive(inQuestion.getLies_in(), suspectedIn)+1;
+		}		
+		return -1; //passt gar nicht
 	}
 
 	public void register(ServiceDescription sd){
