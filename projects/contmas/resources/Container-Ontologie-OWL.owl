@@ -388,16 +388,16 @@
   </j.0:JADE-CLASS>
   <j.0:JADE-CLASS rdf:ID="AGV">
     <rdfs:subClassOf>
-      <owl:Restriction>
-        <owl:onProperty rdf:resource="#service_type"/>
-        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-        >container-distribution</owl:hasValue>
-      </owl:Restriction>
-    </rdfs:subClassOf>
-    <rdfs:subClassOf>
       <j.0:JADE-CLASS rdf:ID="PassiveContainerHolder">
         <rdfs:subClassOf rdf:resource="#ContainerHolder"/>
       </j.0:JADE-CLASS>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >container-distribution</owl:hasValue>
+        <owl:onProperty rdf:resource="#service_type"/>
+      </owl:Restriction>
     </rdfs:subClassOf>
   </j.0:JADE-CLASS>
   <j.0:JADE-CLASS rdf:ID="Land">

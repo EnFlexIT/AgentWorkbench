@@ -40,7 +40,9 @@
 					lib/jade/lib/iiop.jar
 					lib/jade/lib/jade.jar
 					lib/jade/lib/jadeTools.jar
-					lib/jade/lib/migration.jar" />
+					lib/jade/lib/migration.jar
+					lib/jade/lib/XMLCodec.jar
+					lib/jade/lib/commons-codec/commons-codec-1.3.jar" />
 	
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
           target: cleanup => Aufräumen, bevor es wirklich los geht                      
@@ -109,7 +111,7 @@
  				<attribute name="Class-Path" value="${destinClassPath}"/> 				
 			</manifest>    		
     		<fileset dir="${binaryDirANT}">
-    			<exclude name="**/mas/projects/**" />    			
+    			<!-- <exclude name="**/mas/projects/**" /> -->    			
     		</fileset>    		
         </jar>
     	

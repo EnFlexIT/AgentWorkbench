@@ -78,7 +78,7 @@ public class OntologyClassTree extends DefaultTreeModel implements Serializable 
 		Class<?> ClaPare = null;
 		String ClaRef = null, ClaRefPrev = null;
 		String ClaIntName, ClaPareName;
-		boolean ClaIsBaseOnto, ClaIsConcept, ClaIsAACtion;
+		boolean ClaIsBaseOnto, ClaIsConcept, ClaIsAAction, ClaIsAID;
 		int ClLiCount = 0, ClLiIndex = 0;
 		
 	    while ( ClLi.hasNext() ) {
@@ -101,23 +101,26 @@ public class OntologyClassTree extends DefaultTreeModel implements Serializable 
 	        	// --- Default ---------------------------------
 	        	ClaIsBaseOnto = false;
 		    	ClaIsConcept = false;
-				ClaIsAACtion = false;
+		    	ClaIsAAction = false;
+		    	ClaIsAID = false;
 	        	// --- Parent-Class untersuchen ----------------
-	        	if ( ClaPareName == BaseClassOnto ) {
+		    	if ( ClaPareName == BaseClassOnto ) {
 	        		// --- Found: BaseClass of Ontology ----   
 	        		ClaIsBaseOnto = true;	        		
-	        	} else if ( ClaPareName == BaseClassObject ) {
+    			} else if ( ClaPareName == BaseClassAID ) {
+    				// --- Found: BaseClass of AID ----------
+    				ClaIsAID = true;
+		    	} else if ( ClaPareName == BaseClassObject ) {
 	        		// --- Found: Normal Object -------------
 	        		// --- Serach Interfaces ----------------
-	        		// --- => Concept oder AgentAction? -----
+	        		// --- => Concept, AID or AgentAction? --
 	        		for (int i = 0; i < ClaInt.length; i++) {
 		    			ClaIntName = ClaInt[i].getName();
-		    			//System.out.println( ClaIntName );
 		    			if ( ClaIntName == BaseClassConcept ) {
 		    				ClaIsConcept = true;
 		    				break;
 		    			} else if ( ClaIntName == BaseClassAAction ) {
-		    				ClaIsAACtion = true;
+		    				ClaIsAAction = true;
 		    				break;
 		    			}
 		    		}
@@ -138,8 +141,10 @@ public class OntologyClassTree extends DefaultTreeModel implements Serializable 
 	        		RootNode.setUserObject( OCTO );   
 	        	} else if ( ClaIsConcept == true ) {
 		    		ConceptNode.add( CurrentNode );	
-	        	} else if ( ClaIsAACtion == true ){
+	        	} else if ( ClaIsAAction == true ){
 	        		AActionNode.add( CurrentNode );
+	        	} else if ( ClaIsAID == true ){
+	        		AidNode.add( CurrentNode );
 	        	} else {
 	        		// --- An den entsprechenden Knoten hängen -	        		
 	        		ParentNode = getTreeNode( ClaPareName );

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     13.07.2009 12:00:00                                                        
+
+     project:		AgentGUI
+     description	Erzeugung notwendiger Datei- und Verzeichnisstrukturen
+					für das Tool Agent.GUI ....
+                   
+     Christian Derksen                                                                
+     ====================================================================== -->
+<project name="AgentGuiProject" default="supply" basedir=".">
+
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+          properties: Wichtige Verzeichniseinstellungen                      
+         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	
+	<property name="AgentGuiBaseDir" value="D:\10 Java Projects\AgentGUI" />
+	<property name="AgentGuiProject" value="contmas" />
+	<property name="ProjectStarterClas" value="contmas.main.ContMASStarter" />
+	
+	<property name="ProjectDir" value="${AgentGuiBaseDir}\projects\${AgentGuiProject}" />
+	
+	<property name="binaryDir" value="${ProjectDir}\bin" />
+	<property name="destinJar" value="${ProjectDir}\contmas.jar" />		
+	
+	<property name="AgentGuiLib" value="${AgentGuiBaseDir}\lib" />
+	<property name="libDir" value="${ProjectDir}\lib" />
+	
+	<!-- Jar's für den Class-Path im Manifest  -->
+	<property name="destinClassPath" 
+		     value="lib/jade/lib/http.jar
+					lib/jade/lib/iiop.jar
+					lib/jade/lib/jade.jar
+					lib/jade/lib/jadeTools.jar
+					lib/jade/lib/migration.jar
+					lib/jade/lib/XMLCodec.jar
+					lib/jade/lib/commons-codec/commons-codec-1.3.jar" />
+	
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+          target: compile => Erzeugen der Binaries                      
+         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <target name="compile" description="Erzeugung des Byte-Codes ...">
+    	
+    	<delete failonerror="false" dir="${binaryDir}" />
+    	<mkdir dir="${binaryDir}" />    	
+
+    	<path id="class.path">
+    	  <fileset dir="${AgentGuiBaseDir}\lib">
+    	    <include name="**/*.jar" />
+    	  </fileset>
+    	</path>
+
+    	<echo message="Compile: Java-Version ${ant.java.version}" />
+    	<javac destdir="${binaryDir}" encoding="iso-8859-1" >    		
+    		<src path="${ProjectDir}" />    		
+    		<classpath refid="class.path" />
+    	</javac>
+    	
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+          target: supply => .jar-externe Dateien' verschieben
+          				 => Erzeugung der ausführbaren Struktur              
+         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <target name="supply" depends="compile" description="Erstellung der jar-Datei ">
+    	
+    	<!-- Kopieren der Library-Files -->    	
+    	<delete failonerror="false" dir="${libDir}" />
+    	<copy todir="${libDir}">
+    		<fileset dir="${AgentGuiLib}">
+    			<exclude name="**batik**" />
+    		</fileset>
+    	</copy>     	
+    	
+    	<!-- Erzeugen der ausführbaren Java-Datei --> 
+    	<jar compress="true" destfile="${destinJar}">
+ 			<manifest>
+				<attribute name="Built-By" value="${user.name}"/>
+ 				<attribute name="Built-Lang" value="${user.language}"/>
+    		    <attribute name="Main-Class" value="${ProjectStarterClas}"/>
+ 				<attribute name="Class-Path" value="${destinClassPath}"/> 				
+			</manifest>    		
+    		<fileset dir="${binaryDir}">
+    			<!-- <exclude name="**/mas/projects/**" /> -->
+    		</fileset>    		
+        </jar>
+    	
+    	<!-- Das bin-Verzeichnis entfernen -->
+    	<delete failonerror="false" dir="${binaryDir}" />
+    	
+    	<!-- Die erzeugte jar ausführen -->
+    	<java jar="${destinJar}" fork="true" /> 
+    	
+    </target>
+
+</project>
