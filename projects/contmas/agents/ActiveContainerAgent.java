@@ -40,14 +40,15 @@ public class ActiveContainerAgent extends ContainerAgent{
 		Integer endMatch=super.matchOrder(curTO); //standard-Match: AID und ziel ist genau lebensraum
 		Integer startMatch= -1;
 
-		Designator start=curTO.getStarts_at();
-		Domain startHabitat=start.getAbstract_designation();
-		Designator end=curTO.getEnds_at();
-		Domain endHabitat=end.getAbstract_designation();
+		Domain startHabitat=curTO.getStarts_at().getAbstract_designation();
+		Domain endHabitat=curTO.getEnds_at().getAbstract_designation();
 		Iterator capabilities=((ActiveContainerHolder) this.ontologyRepresentation).getAllCapable_of();
 		while(capabilities.hasNext()){
 			Domain capability=(Domain) capabilities.next();
-			if(startHabitat.getClass() == capability.getClass()){ //containeragent is able to handle orders in this start-habitat-domain
+			if(startHabitat.
+					getClass() 
+					== capability.
+					getClass()){ //containeragent is able to handle orders in this start-habitat-domain
 				//    			echoStatus("start passt");
 				startMatch=1;
 			}

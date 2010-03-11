@@ -26,6 +26,7 @@ import jade.lang.acl.MessageTemplate;
 import jade.proto.ContractNetResponder;
 import jade.util.leap.Iterator;
 import contmas.agents.ContainerAgent;
+import contmas.agents.TransportOrderOfferer;
 import contmas.ontology.*;
 
 public class receiveLoadOrders extends ContractNetResponder{
@@ -59,27 +60,27 @@ public class receiveLoadOrders extends ContractNetResponder{
 						AnnounceLoadStatus loadStatus=ContainerAgent.getLoadStatusAnnouncement(acceptedTOC,"FINISHED");
 						rply.setPerformative(ACLMessage.INFORM);
 						this.myCAgent.fillMessage(rply,loadStatus);
+						ds.put(receiveLoadOrders.this.REPLY_KEY,rply);
+						this.isDone=true;
+						return;
 					}else{
 						this.myCAgent.echoStatus("ERROR: Auftrag kann nicht ausgeführt werden.",acceptedTOC);
-						AnnounceLoadStatus loadStatus=ContainerAgent.getLoadStatusAnnouncement(acceptedTOC,"FAILURE");
-						rply.setPerformative(ACLMessage.FAILURE);
-						this.myCAgent.fillMessage(rply,loadStatus);
 					}
-
-					ds.put(receiveLoadOrders.this.REPLY_KEY,rply);
-					this.isDone=true;
-					return;
 				}else{
-					TransportOrderChain curTOC=this.myCAgent.getSomeTOCOfState(new Administered());
-					if(curTOC != null){
-						this.myCAgent.echoStatus("BayMap voll, versuche Räumung für",acceptedTOC);
-						this.myCAgent.changeTOCState(acceptedTOC,new PendingForSubCFP());
-						this.myCAgent.releaseContainer(curTOC,this);
-						this.block();
-						this.isDone=false;
-						return;
-					}else{ //keine administrierten TOCs da
-						this.myCAgent.echoStatus("FAILURE: BayMap voll, keine administrierten TOCs da, Räumung nicht möglich.");
+					if(myCAgent instanceof TransportOrderOfferer){ 
+						TransportOrderChain curTOC=this.myCAgent.getSomeTOCOfState(new Administered());
+						if(curTOC != null){
+							this.myCAgent.echoStatus("BayMap voll, versuche Räumung für",acceptedTOC);
+							this.myCAgent.changeTOCState(acceptedTOC,new PendingForSubCFP());
+							this.myCAgent.releaseContainer(curTOC,this);
+							this.block();
+							this.isDone=false;
+							return;
+						}else{ //keine administrierten TOCs da
+							this.myCAgent.echoStatus("FAILURE: BayMap voll, keine administrierten TOCs da, Räumung nicht möglich.");
+						}
+					} else {//Agent kann keine Aufträge abgeben=>Senke
+						this.myCAgent.echoStatus("FAILURE: Bin Senke, kann keine Aufträge weitergeben.");
 					}
 				}
 			}else if(curState instanceof PendingForSubCFP){
@@ -172,7 +173,7 @@ public class receiveLoadOrders extends ContractNetResponder{
 				return reply;
 			}else{ //noch Kapazitäten vorhanden und Anfrage plausibel
 				//((ContainerAgent)myAgent).echoStatus("noch Kapazitäten vorhanden");
-				ProposeLoadOffer act=this.myCAgent.GetLoadProposal(curTOC);
+				ProposeLoadOffer act=this.myCAgent.getLoadProposal(curTOC);
 				if(act != null){
 					this.myCAgent.echoStatus("Bewerbe mich für Ausschreibung.",curTOC);
 					this.myCAgent.fillMessage(reply,act);

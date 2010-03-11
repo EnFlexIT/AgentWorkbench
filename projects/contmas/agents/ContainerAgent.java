@@ -48,6 +48,9 @@ public class ContainerAgent extends Agent{
 	private static final long serialVersionUID=202350816610492193L;
 	private static final Codec codec=new XMLCodec();
 	private static final Ontology ontology=ContainerTerminalOntology.getInstance();
+	protected String targetAgentDFDescription=null;
+	protected Domain targetAbstractDomain=null;
+
 
 	public static AnnounceLoadStatus getLoadStatusAnnouncement(TransportOrderChain curTOC,String content){
 		AnnounceLoadStatus loadStatus=new AnnounceLoadStatus();
@@ -55,14 +58,14 @@ public class ContainerAgent extends Agent{
 		loadStatus.setLoad_offer(curTOC);
 		return loadStatus;
 	}
-
+/*
 	public static Integer matchDomains(Domain one,Domain two){
 		if(one.getClass() == two.getClass()){
 			return 2; //passt genau
 		}
 		return -1; //passt gar nicht
 	}
-
+*/
 	/*
 	 * Überprüft, ob Domain inQuestion in Domain suspectedIn liegt
 	 */
@@ -176,8 +179,10 @@ public class ContainerAgent extends Agent{
 	}
 
 	public List determineContractors(){
-		ArrayList contractors=new ArrayList();
-		return contractors;
+		if(this.ontologyRepresentation.getContractors().isEmpty()){
+			this.ontologyRepresentation.setContractors(toAIDList(this.getAIDsFromDF(targetAgentDFDescription)));
+		}
+		return this.ontologyRepresentation.getContractors();
 	}
 
 	public void echoStatus(String statusMessage){
@@ -307,7 +312,7 @@ public class ContainerAgent extends Agent{
 		return null;
 	}
 
-	public ProposeLoadOffer GetLoadProposal(TransportOrderChain curTOC){
+	public ProposeLoadOffer getLoadProposal(TransportOrderChain curTOC){
 		ProposeLoadOffer act=null;
 		TransportOrder matchingOrder=this.findMatchingOrder(curTOC);
 		if(matchingOrder != null){ //passende TransportOrder gefunden
@@ -370,20 +375,20 @@ public class ContainerAgent extends Agent{
 		if(this.matchAID(end)){ //Genau für mich bestimmt
 			return 0;
 		}else{
-			Domain endHabitat=end.getAbstract_designation();
-			Domain ownHabitat=this.ontologyRepresentation.getLives_in();
-			if(endHabitat.getClass() == ownHabitat.getClass()){ //domain entspricht genau Lebensraum
-				return 2; //TODO +DomainDiffrence
-			}
+			return matchDomainsTransitive(this.ontologyRepresentation.getLives_in(),end.getAbstract_designation());
 		}
-		return -1; //order passt gar nicht
 	}
 
 	public void register(ServiceDescription sd){
+		this.register(new ServiceDescription[]{ sd});
+	}
+	
+	public void register(ServiceDescription[] sd){
 		DFAgentDescription dfd=new DFAgentDescription();
 		dfd.setName(this.getAID());
-		dfd.addServices(sd);
-
+		for(ServiceDescription serviceDescription: sd){
+			dfd.addServices(serviceDescription);
+		}
 		try{
 			DFService.register(this,dfd);
 		}catch(FIPAException fe){
@@ -392,25 +397,42 @@ public class ContainerAgent extends Agent{
 	}
 
 	public void register(String serviceType){
-		ServiceDescription sd=new ServiceDescription();
-		sd.setType(serviceType);
-		sd.setName(this.getLocalName());
-		this.register(sd);
+		String[] allSTs=new String[]{"container-handling",serviceType};
+		this.register(allSTs);
+	}
+	
+	public void register(String[] serviceType){
+		ServiceDescription[] allSDs=new ServiceDescription[serviceType.length];
+		for(int i=0;i < serviceType.length;i++){
+			String sT=serviceType[i];
+			ServiceDescription sd=new ServiceDescription();
+			sd.setType(sT);
+			sd.setName(this.getLocalName());
+			allSDs[i]=sd;
+		}
+		this.register(allSDs);
 	}
 
-	public void releaseContainer(TransportOrderChain curTOC,Behaviour MasterBehaviour){
-		TransportOrder TO=new TransportOrder();
-
+	public Designator getMyselfDesignator(){
 		Designator myself=new Designator();
 		myself.setType("concrete");
 		myself.setConcrete_designation(this.getAID());
-
+		myself.setAbstract_designation(this.ontologyRepresentation.getLives_in());
+		return myself;
+	}
+	
+	public Designator getAbstractTargetDesignator(){
 		Designator target=new Designator(); //TODO mögliche ziele herausfinden
 		target.setType("abstract");
-		target.setAbstract_designation(new Street());//TODO change to Land but implement recursive Domain-determination in passiveHolder
+		target.setAbstract_designation(targetAbstractDomain);
+		return target;
+	}
+	
+	public void releaseContainer(TransportOrderChain curTOC,Behaviour MasterBehaviour){
+		TransportOrder TO=new TransportOrder();
 
-		TO.setStarts_at(myself);
-		TO.setEnds_at(target);
+		TO.setStarts_at(getMyselfDesignator());
+		TO.setEnds_at(getAbstractTargetDesignator());
 		curTOC.addIs_linked_by(TO);
 		LoadList newCommission=new LoadList();
 		newCommission.addConsists_of(curTOC);

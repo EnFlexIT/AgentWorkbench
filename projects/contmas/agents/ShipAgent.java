@@ -31,6 +31,8 @@ import contmas.behaviours.announceLoadOrders;
 import contmas.ontology.*;
 
 public class ShipAgent extends StaticContainerAgent implements TransportOrderOfferer{
+	private ShipAgent mySAgent=null;
+
 	public class enrollAtHarbor extends AchieveREInitiator{
 		/**
 		 * 
@@ -39,13 +41,14 @@ public class ShipAgent extends StaticContainerAgent implements TransportOrderOff
 
 		public enrollAtHarbor(Agent a,ACLMessage initiation){
 			super(a,initiation);
+			mySAgent=((ShipAgent) this.myAgent);
 		}
 
 		@Override
 		protected Vector<ACLMessage> prepareRequests(ACLMessage request){
 			request.addReceiver(ShipAgent.this.HarborManager);
 			EnrollAtHarbor act=new EnrollAtHarbor();
-			act.setShip_length(((Ship) ((ShipAgent) this.myAgent).ontologyRepresentation).getLength());
+			act.setShip_length(((Ship) mySAgent.ontologyRepresentation).getLength());
 			((ContainerAgent) this.myAgent).fillMessage(request,act);
 
 			Vector<ACLMessage> messages=new Vector<ACLMessage>();
@@ -179,12 +182,13 @@ public class ShipAgent extends StaticContainerAgent implements TransportOrderOff
 		/**
 		 * 
 		 */
+		private ShipAgent mySAgent=null;
 		private static final long serialVersionUID=3933460156486819068L;
 
 		public unload(Agent a){
 			//			super(a, 1000);
 			super(a);
-
+			mySAgent=((ShipAgent) this.myAgent);
 		}
 
 		//		public void onTick() {
@@ -192,13 +196,10 @@ public class ShipAgent extends StaticContainerAgent implements TransportOrderOff
 		public void action(){
 
 			//			echoStatus("Tick: Entladen geht los");
-			if(((ShipAgent) this.myAgent).ontologyRepresentation.getContractors() != null){
-				BayMap LoadBay=((ShipAgent) this.myAgent).ontologyRepresentation.getContains();
+			if(mySAgent.ontologyRepresentation.getContractors() != null){
+				BayMap LoadBay=mySAgent.ontologyRepresentation.getContains();
 				new LoadList();
-				Designator myself=new Designator();
-				myself.setType("concrete");
-				myself.setConcrete_designation(this.myAgent.getAID());
-				myself.setAbstract_designation(((ContainerAgent) this.myAgent).ontologyRepresentation.getLives_in());
+				Designator myself=getMyselfDesignator();
 
 				for(int x=0;x < LoadBay.getX_dimension();x++){ //baymap zeilen-
 					for(int y=0;y < LoadBay.getY_dimension();y++){ //und spaltenweise durchlaufen
@@ -217,7 +218,7 @@ public class ShipAgent extends StaticContainerAgent implements TransportOrderOff
 							TO.setStarts_at(myself);
 							Designator target=new Designator();
 							target.setType("abstract");
-							target.setAbstract_designation(new Street());
+							target.setAbstract_designation(mySAgent.targetAbstractDomain);
 							TO.setEnds_at(target);
 							TransportOrderChain TOChain=new TransportOrderChain();
 							TOChain.addIs_linked_by(TO);
@@ -267,6 +268,7 @@ public class ShipAgent extends StaticContainerAgent implements TransportOrderOff
 
 	public ShipAgent(Ship ontologyRepresentation){
 		super("long-term-transporting",ontologyRepresentation);
+		targetAbstractDomain=new ApronArea();
 	}
 
 	@Override

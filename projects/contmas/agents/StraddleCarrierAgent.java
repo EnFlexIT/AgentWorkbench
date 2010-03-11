@@ -24,8 +24,8 @@ import jade.domain.FIPANames;
 import jade.lang.acl.MessageTemplate;
 import jade.proto.AchieveREResponder;
 import contmas.behaviours.receiveLoadOrders;
-import contmas.ontology.ActiveContainerHolder;
 import contmas.ontology.StraddleCarrier;
+import contmas.ontology.YardArea;
 
 /**
  * @author Hanno - Felix Wagner
@@ -47,22 +47,8 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 	 */
 	public StraddleCarrierAgent(StraddleCarrier ontologyRepresentation){
 		super("container-distributing",ontologyRepresentation);
-	}
-
-	/**
-	 * @param serviceType
-	 */
-	public StraddleCarrierAgent(String serviceType){
-		super(serviceType);
-	}
-
-	/**
-	 * @param serviceType
-	 * @param ontologyRepresentation
-	 */
-	public StraddleCarrierAgent(String serviceType,ActiveContainerHolder ontologyRepresentation){
-		super(serviceType,ontologyRepresentation);
-		// TODO Auto-generated constructor stub
+		targetAgentDFDescription="container-storing";
+		targetAbstractDomain=new YardArea();
 	}
 
 	/* (non-Javadoc)
@@ -81,6 +67,13 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 	public void offerTransportOrder(){
 		// TODO Auto-generated method stub
 
+	}
+	
+	@Override
+	public void setup(){
+		super.setup();
+		this.handleTransportOrder();
+		this.offerTransportOrder();
 	}
 
 }

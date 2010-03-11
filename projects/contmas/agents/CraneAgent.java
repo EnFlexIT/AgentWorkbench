@@ -19,7 +19,9 @@ import jade.lang.acl.MessageTemplate;
 import jade.proto.ContractNetResponder;
 import jade.util.leap.List;
 import contmas.behaviours.receiveLoadOrders;
+import contmas.ontology.ApronArea;
 import contmas.ontology.Crane;
+import contmas.ontology.YardArea;
 
 public class CraneAgent extends ActiveContainerAgent implements TransportOrderHandler,TransportOrderOfferer{
 
@@ -31,15 +33,10 @@ public class CraneAgent extends ActiveContainerAgent implements TransportOrderHa
 
 	public CraneAgent(Crane ontologyRepresentation){
 		super("craning",ontologyRepresentation);
+		targetAgentDFDescription="short-time-storage";
+		targetAbstractDomain=new ApronArea();
 	}
 
-	@Override
-	public List determineContractors(){
-		if(this.ontologyRepresentation.getContractors().isEmpty()){
-			this.ontologyRepresentation.setContractors(ContainerAgent.toAIDList(this.getAIDsFromDF("short-time-storage")));
-		}
-		return this.ontologyRepresentation.getContractors();
-	}
 
 	public void handleTransportOrder(){
 		MessageTemplate mt=ContractNetResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);

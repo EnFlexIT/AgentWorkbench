@@ -26,13 +26,14 @@ import jade.proto.ContractNetResponder;
 import jade.util.leap.List;
 import contmas.behaviours.receiveLoadOrders;
 import contmas.ontology.Apron;
+import contmas.ontology.Domain;
+import contmas.ontology.Street;
 
 /**
  * @author Hanno - Felix Wagner
  *
  */
 public class ApronAgent extends StaticContainerAgent implements TransportOrderHandler,TransportOrderOfferer{
-
 	/**
 	 * 
 	 */
@@ -50,15 +51,11 @@ public class ApronAgent extends StaticContainerAgent implements TransportOrderHa
 	 */
 	public ApronAgent(Apron ontologyRepresentation){
 		super("short-time-storage",ontologyRepresentation);
+		targetAgentDFDescription="container-distributing";
+		targetAbstractDomain=new Street();
+
 	}
 
-	@Override
-	public List determineContractors(){
-		if(this.ontologyRepresentation.getContractors().isEmpty()){
-			this.ontologyRepresentation.setContractors(ContainerAgent.toAIDList(this.getAIDsFromDF("container-distributing")));
-		}
-		return this.ontologyRepresentation.getContractors();
-	}
 
 	/* (non-Javadoc)
 	 * @see contmas.agents.TransportOrderHandler#handleTransportOrder()
@@ -76,6 +73,13 @@ public class ApronAgent extends StaticContainerAgent implements TransportOrderHa
 	public void offerTransportOrder(){
 		// TODO Auto-generated method stub
 
+	}
+	
+	@Override
+	public void setup(){
+		super.setup();
+		this.handleTransportOrder();
+		this.offerTransportOrder();
 	}
 
 }

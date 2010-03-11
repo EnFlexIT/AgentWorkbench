@@ -165,6 +165,20 @@ public class HarborMasterAgent extends ContainerAgent{
 			a.start();
 			tbs.add(a);
 
+			Yard YardontologyRepresentation=new Yard();
+			habitat=new YardArea();
+			habitat.setLies_in(terminalArea);
+			YardontologyRepresentation.setLives_in(habitat);
+			YardontologyRepresentation.setContains(new BayMap());
+			YardontologyRepresentation.getContains().setX_dimension(1);
+			YardontologyRepresentation.getContains().setY_dimension(1);
+			YardontologyRepresentation.getContains().setZ_dimension(1);
+
+			a=c.acceptNewAgent("Yard",new YardAgent(YardontologyRepresentation));
+			a.start();
+			tbs.add(a);
+			
+			
 			/*
 			AGV AGVontologyRepresentation=new AGV();
 			habitat=new Street();
@@ -196,21 +210,6 @@ public class HarborMasterAgent extends ContainerAgent{
 
 			a.start();
 //			s.sniffMsg(tbs,Sniffer.SNIFF_ON);
-
-			Domain inQuestion=new ApronArea();
-			Domain liesIn=new ApronArea();
-
-			this.echoStatus("Testcase #1=" + ContainerAgent.matchDomainsTransitive(inQuestion,liesIn) + " (should be 2)");
-
-			liesIn=new Street();
-			inQuestion.setLies_in(liesIn);
-
-			this.echoStatus("Testcase #2=" + ContainerAgent.matchDomainsTransitive(inQuestion,liesIn) + " (should be 3)");
-
-			liesIn=new Land();
-			inQuestion.getLies_in().setLies_in(liesIn);
-
-			this.echoStatus("Testcase #3=" + ContainerAgent.matchDomainsTransitive(inQuestion,liesIn) + " (should be 4)");
 
 		}catch(StaleProxyException e){
 			// TODO Auto-generated catch block
