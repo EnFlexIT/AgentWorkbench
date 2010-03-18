@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.0//EN' 'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'>
+
+
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg contentScriptType="text/ecmascript" width="600"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     xmlns:svg="http://www.w3.org/2000/svg" zoomAndPan="magnify"
+     contentStyleType="text/css" id="svg2844" height="400"
+     preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"
+     version="1.1">
+    <defs id="defs2846"/>
+    <rect x="227.11864" width="174.57628" id="subPlayground" y="47.45763"
+          height="216.94914" style="fill:aqua;stroke:black"/>
+    <rect x="44.067795" width="37.288136" id="AgentRed" y="38.983051"
+          height="32.203388" style="fill:red;stroke:none"/>
+    <rect x="40.677967" width="111.8644" id="ObstBlue" y="235.5932"
+          height="15.254239" style="fill:blue;stroke:none"/>
+    <rect x="510.16949" width="38.983051" id="AgentGrey" y="118.64407"
+          height="40.677967" style="fill:gray;stroke:none"/>
+    <rect x="301.69492" width="16.949152" id="ObstGreen" y="303.38983"
+          height="67.796608" style="fill:green;stroke:none"/>
+    <rect x="259.32202" width="28.81356" id="AgentBrown" y="206.77966"
+          height="37.288136" style="fill:#520;stroke:none"/>
+    <rect x="254.23729" width="116.94915" id="ObstYellow" y="138.98305"
+          height="32.203388" style="fill:yellow;stroke:none"/>
+    <rect x="325.42374" width="30.508474" id="AgentPink" y="72.881355"
+          height="32.203388" style="fill:fuchsia;stroke:none"/>
+    <rect fill="none" width="599" stroke-width="1" id="border" height="399"
+          stroke="black"/>
+    <rect fill="none" width="599" height="399" id="border" stroke-width="1"
+          stroke="black"/>
+    <rect fill="none" width="599" stroke-width="1" id="border" height="399"
+          stroke="black"/>
+</svg>
