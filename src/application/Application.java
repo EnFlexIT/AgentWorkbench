@@ -9,14 +9,14 @@ import mas.Platform;
  */
 public class Application {
 		
-	public static GlobalInfo RunInfo = new GlobalInfo();
-	public static CoreWindowConsole Console = new CoreWindowConsole();
-	public static CoreWindow MainWindow;
+	public static GlobalInfo RunInfo = null;
+	public static CoreWindowConsole Console = null;
+	public static CoreWindow MainWindow = null;
 	
-	public static ProjectsLoaded Projects = new ProjectsLoaded();
+	public static ProjectsLoaded Projects = null;
 	public static Project ProjectCurr = null;
 		
-	public static Platform JadePlatform = new Platform();
+	public static Platform JadePlatform = null;
 	
 	/**
 	 * main-method for the start of the application 
@@ -24,6 +24,13 @@ public class Application {
 	 */
 	public static void main( String[] args ) {
 		// --- Start Application -----------------------
+		RunInfo = new GlobalInfo();
+
+		Console=new CoreWindowConsole();
+		Projects = new ProjectsLoaded();
+		
+		JadePlatform = new Platform();
+
 		startApplication();
 		System.out.println( Language.translate("Programmstart ..." ) );
 		MainWindow.setStatusBar( Language.translate("Fertig") );
