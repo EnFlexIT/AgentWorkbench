@@ -17,11 +17,9 @@ package contmas.agents;
 import jade.domain.FIPANames;
 import jade.lang.acl.MessageTemplate;
 import jade.proto.ContractNetResponder;
-import jade.util.leap.List;
 import contmas.behaviours.receiveLoadOrders;
 import contmas.ontology.ApronArea;
 import contmas.ontology.Crane;
-import contmas.ontology.YardArea;
 
 public class CraneAgent extends ActiveContainerAgent implements TransportOrderHandler,TransportOrderOfferer{
 
@@ -33,10 +31,9 @@ public class CraneAgent extends ActiveContainerAgent implements TransportOrderHa
 
 	public CraneAgent(Crane ontologyRepresentation){
 		super("craning",ontologyRepresentation);
-		targetAgentDFDescription="short-time-storage";
-		targetAbstractDomain=new ApronArea();
+		this.targetAgentServiceType="short-time-storage";
+		this.targetAbstractDomain=new ApronArea();
 	}
-
 
 	public void handleTransportOrder(){
 		MessageTemplate mt=ContractNetResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);

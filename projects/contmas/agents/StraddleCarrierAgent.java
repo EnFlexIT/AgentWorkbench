@@ -47,8 +47,8 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 	 */
 	public StraddleCarrierAgent(StraddleCarrier ontologyRepresentation){
 		super("container-distributing",ontologyRepresentation);
-		targetAgentDFDescription="container-storing";
-		targetAbstractDomain=new YardArea();
+		this.targetAgentServiceType="container-storing";
+		this.targetAbstractDomain=new YardArea();
 	}
 
 	/* (non-Javadoc)
@@ -68,7 +68,7 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 		// TODO Auto-generated method stub
 
 	}
-	
+
 	@Override
 	public void setup(){
 		super.setup();

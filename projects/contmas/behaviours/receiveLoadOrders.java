@@ -67,7 +67,7 @@ public class receiveLoadOrders extends ContractNetResponder{
 						this.myCAgent.echoStatus("ERROR: Auftrag kann nicht ausgeführt werden.",acceptedTOC);
 					}
 				}else{
-					if(myCAgent instanceof TransportOrderOfferer){ 
+					if(this.myCAgent instanceof TransportOrderOfferer){
 						TransportOrderChain curTOC=this.myCAgent.getSomeTOCOfState(new Administered());
 						if(curTOC != null){
 							this.myCAgent.echoStatus("BayMap voll, versuche Räumung für",acceptedTOC);
@@ -79,7 +79,7 @@ public class receiveLoadOrders extends ContractNetResponder{
 						}else{ //keine administrierten TOCs da
 							this.myCAgent.echoStatus("FAILURE: BayMap voll, keine administrierten TOCs da, Räumung nicht möglich.");
 						}
-					} else {//Agent kann keine Aufträge abgeben=>Senke
+					}else{//Agent kann keine Aufträge abgeben=>Senke
 						this.myCAgent.echoStatus("FAILURE: Bin Senke, kann keine Aufträge weitergeben.");
 					}
 				}
@@ -161,11 +161,13 @@ public class receiveLoadOrders extends ContractNetResponder{
 				reply.setContent("schon genug Aufträge");
 				reply.setPerformative(ACLMessage.REFUSE);
 				return reply;
-			}else if((this.myCAgent.determineContractors() != null) && this.myCAgent.determineContractors().isEmpty()){ //won't work any more like this
+				/*
+				}else if((this.myCAgent.determineContractors() != null) && this.myCAgent.determineContractors().isEmpty()){ //won't work any more like this
 				this.myCAgent.echoStatus("Habe keine Subunternehmer, lehne ab.");
 				reply.setContent("Habe keine Subunternehmer, lehne ab.");
 				reply.setPerformative(ACLMessage.REFUSE);
 				return reply;
+				*/
 			}else if((this.myCAgent.determineContractors() == null) && !this.myCAgent.hasBayMapRoom()){
 				this.myCAgent.echoStatus("Habe keine Subunternehmer und bin voll, lehne ab.");
 				reply.setContent("Habe keine Subunternehmer und bin voll, lehne ab.");

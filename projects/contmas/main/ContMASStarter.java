@@ -14,6 +14,7 @@
 
 package contmas.main;
 
+import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.core.Runtime;
 import jade.tools.rma.rma;
@@ -31,7 +32,14 @@ public class ContMASStarter{
 
 		Runtime JADERuntime=Runtime.instance();
 
-		AgentContainer c=JADERuntime.createMainContainer(new ProfileImpl());
+		String ServiceList = new String();
+		ServiceList = ServiceList.concat("jade.core.event.NotificationService;");
+		ServiceList = ServiceList.concat("jade.core.messaging.TopicManagementService;");
+										  
+		Profile mainContainerProfile = new ProfileImpl();
+		mainContainerProfile.setParameter(Profile.SERVICES, ServiceList ); 
+
+		AgentContainer c=JADERuntime.createMainContainer(mainContainerProfile);
 
 		try{
 			AgentController a=c.acceptNewAgent("rma",new rma());

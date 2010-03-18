@@ -24,16 +24,18 @@ import jade.domain.FIPANames;
 import jade.lang.acl.MessageTemplate;
 import jade.proto.ContractNetResponder;
 import contmas.behaviours.receiveLoadOrders;
-import contmas.ontology.StaticContainerHolder;
-import contmas.ontology.StraddleCarrier;
 import contmas.ontology.Yard;
-import contmas.ontology.YardArea;
 
 /**
  * @author Hanno - Felix Wagner
  *
  */
 public class YardAgent extends StaticContainerAgent implements TransportOrderHandler{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID= -3774026871349327373L;
 
 	public YardAgent(){
 		this(new Yard());
@@ -45,8 +47,8 @@ public class YardAgent extends StaticContainerAgent implements TransportOrderHan
 	 */
 	public YardAgent(Yard ontologyRepresentation){
 		super("container-storing",ontologyRepresentation);
-		targetAgentDFDescription=null;
-		targetAbstractDomain=null;
+		this.targetAgentServiceType="";
+		this.targetAbstractDomain=null;
 	}
 
 	/* (non-Javadoc)
@@ -57,6 +59,7 @@ public class YardAgent extends StaticContainerAgent implements TransportOrderHan
 		MessageTemplate mt=ContractNetResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
 		this.addBehaviour(new receiveLoadOrders(this,mt));
 	}
+
 	@Override
 	public void setup(){
 		super.setup();

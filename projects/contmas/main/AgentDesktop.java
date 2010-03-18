@@ -86,7 +86,7 @@ public class AgentDesktop{
 				// ------------------------------------------------------
 				// --- Methodenaufruf fehlgeschlagen => ausserhalb von AgentGUI -
 				System.out.println(this.ProjectFolder + ": Standalone");
-				this.DP=AgentDesktop.getDesktopPaneInJFrame(this.ProjectFolder);
+				this.DP=AgentDesktop.getDesktopPaneInJFrame(this.FrameTitle);
 				this.standaloneMode=AgentDesktop.AGENTDESKTOP_STANDALONE;
 			}
 
@@ -95,7 +95,7 @@ public class AgentDesktop{
 			// --- Klasse nicht gefunden => ausserhalb von AgentGUI -
 			// ErrDP.printStackTrace();
 			System.out.println(this.ProjectFolder + ": Standalone");
-			this.DP=AgentDesktop.getDesktopPaneInJFrame(this.ProjectFolder);
+			this.DP=AgentDesktop.getDesktopPaneInJFrame(this.FrameTitle);
 			this.standaloneMode=AgentDesktop.AGENTDESKTOP_STANDALONE;
 		}
 	}

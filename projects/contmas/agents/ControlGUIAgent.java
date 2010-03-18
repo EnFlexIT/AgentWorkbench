@@ -14,13 +14,23 @@
 
 package contmas.agents;
 
+import jade.core.AID;
+import jade.core.ServiceException;
+import jade.core.behaviours.CyclicBehaviour;
+import jade.core.messaging.TopicManagementHelper;
 import jade.gui.GuiAgent;
 import jade.gui.GuiEvent;
+import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
+import jade.util.leap.ArrayList;
+import jade.util.leap.List;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
 
 import javax.swing.JDesktopPane;
 
+import contmas.behaviours.prepareSubscribeToDF;
+import contmas.behaviours.subscribeToDF;
 import contmas.main.AgentDesktop;
 import contmas.main.ControlGUI;
 import contmas.ontology.BayMap;
@@ -30,9 +40,62 @@ import contmas.ontology.Ship;
 
 public class ControlGUIAgent extends GuiAgent{
 
+	class listenForLogMessage extends CyclicBehaviour{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID=3580181910527477281L;
+		MessageTemplate loggingTemplate=MessageTemplate.MatchTopic(((ControlGUIAgent) this.myAgent).loggingTopic);
+
+		/**
+		 * @param controlGUIAgent
+		 */
+		public listenForLogMessage(ControlGUIAgent myCAgent){
+			super(myCAgent);
+		}
+
+		/**
+		 * 
+		 */
+
+		/* (non-Javadoc)
+		 * @see jade.core.behaviours.Behaviour#action()
+		 */
+		@Override
+		public void action(){
+			ACLMessage logMsg=ControlGUIAgent.this.receive(this.loggingTemplate);
+			if(logMsg != null){
+				String content=logMsg.getContent();
+				((ControlGUIAgent) this.myAgent).writeLogMsg(content);
+			}else{
+				this.block();
+			}
+
+		}
+	}
+	/*
+	class refreshAgentTree extends CyclicBehaviour{
+
+
+		@Override
+		public void action(){
+			ACLMessage logMsg=ControlGUIAgent.this.receive(this.loggingTemplate);
+			if(logMsg != null){
+				String content=logMsg.getContent();
+				((ControlGUIAgent) this.myAgent).writeLogMsg(content);
+			}else{
+				this.block();
+			}
+
+		}
+	}
+*/
 	private static final long serialVersionUID= -7176620366025244274L;
 	private JDesktopPane canvas=null;
 	private ControlGUI myGui=null;
+	private List allAvailableAgents = new ArrayList();
+
+	private AID loggingTopic=null;
 
 	@Override
 	protected void onGuiEvent(GuiEvent ev){
@@ -100,6 +163,20 @@ public class ControlGUIAgent extends GuiAgent{
 */
 		}
 
+		try{
+			TopicManagementHelper tmh;
+			tmh=(TopicManagementHelper) this.getHelper(TopicManagementHelper.SERVICE_NAME);
+			this.loggingTopic=tmh.createTopic("container-harbour-logging");
+			tmh.register(this.loggingTopic);
+		}catch(ServiceException e1){
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+		this.addBehaviour(new listenForLogMessage(this));
+		
+		this.addBehaviour(new prepareSubscribeToDF(this, allAvailableAgents, "handling-containers"));
+
 		AgentContainer c=this.getContainerController();
 		try{
 			AgentController a=c.createNewAgent("RandomGenerator","contmas.agents.RandomGeneratorAgent",null);
@@ -115,6 +192,13 @@ public class ControlGUIAgent extends GuiAgent{
 	@Override
 	protected void takeDown(){
 		this.myGui.dispose();
+	}
+
+	/**
+	 * @param content
+	 */
+	public void writeLogMsg(String content){
+		this.myGui.writeLogMsg(content);
 	}
 
 }

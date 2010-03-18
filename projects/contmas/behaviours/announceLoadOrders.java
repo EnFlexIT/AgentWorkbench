@@ -153,7 +153,7 @@ public class announceLoadOrders extends ContractNetInitiator{
 
 	@Override
 	protected void handleOutOfSequence(ACLMessage msg){
-		this.myCAgent.echoStatus("ERROR: Unerwartete Nachricht empfangen: " + msg.getPerformative());
+		this.myCAgent.echoStatus("ERROR: Unerwartete Nachricht (" + msg.getPerformative()+ ") empfangen von "+msg.getSender().getLocalName()+": "+msg.getContent());
 	}
 
 	@Override

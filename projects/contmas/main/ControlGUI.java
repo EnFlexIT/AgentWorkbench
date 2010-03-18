@@ -14,18 +14,29 @@
 
 package contmas.main;
 
+import jade.gui.AgentTree;
 import jade.gui.GuiEvent;
 
 import java.awt.Font;
 import java.awt.Rectangle;
+import java.awt.TextArea;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.*;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.tree.TreePath;
 
 import contmas.agents.ControlGUIAgent;
+import java.awt.Dimension;
+
+import javax.swing.JEditorPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextPane;
+import javax.swing.JScrollPane;
 
 public class ControlGUI extends JInternalFrame implements ActionListener{
 
@@ -45,6 +56,10 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JLabel jLabel1=null;
 	private JTextField TFShipLength=null;
 	private JDesktopPane canvas=null;
+	private JTextArea console = null;
+	private JScrollPane jScrollPane = null;
+	private JScrollPane AgentTreeScrollPane = null;
+	private AgentTree AT = null;
 
 	/**
 	 * This is the default constructor
@@ -132,6 +147,8 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 			this.jContentPane.add(this.jLabel,null);
 			this.jContentPane.add(this.jLabel1,null);
 			this.jContentPane.add(this.getTFShipLength(),null);
+			jContentPane.add(getJScrollPane(), null);
+			jContentPane.add(getAgentTreeScrollPane(), null);
 			this.jContentPane.add(this.jLabel1,null);
 			this.jContentPane.add(this.jLabel,null);
 			this.jContentPane.add(this.ShipLabelName,null);
@@ -225,7 +242,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	 * @return void
 	 */
 	private void initialize(){
-		this.setSize(216,243);
+		this.setSize(449, 361);
 		this.setClosable(true);
 
 		this.setMaximizable(true);
@@ -255,5 +272,87 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 		this.myAgent.postGuiEvent(ge);
 		//}
 	}
+
+	/**
+	 * This method initializes console	
+	 * 	
+	 * @return javax.swing.JTextPane	
+	 */
+	private JTextArea getConsole(){
+		if(console == null){
+			console=new JTextArea();
+			console.setText("");
+			console.setSize(new Dimension(1000, 112));
+			console.setEditable(false);
+//			console.setAutoscrolls(true);
+		}
+		return console;
+	}
+
+	/**
+	 * @param content
+	 */
+	public void writeLogMsg(final String content){
+	    Runnable addIt = new Runnable() {  
+	        public void run() {
+//	        	getJTextPane().setText(content);
+	    		Document doc = getConsole().getDocument();
+	    		try {
+	    			doc.insertString(doc.getLength(), content, null);
+//	    			getJTextPane().setCaretPosition(doc.getLength());
+	    		} catch (BadLocationException ex) {
+	    			ex.printStackTrace();
+	    		}
+	        }  
+	      };
+
+	      SwingUtilities.invokeLater(addIt);
+	}
+
+	/**
+	 * This method initializes jScrollPane	
+	 * 	
+	 * @return javax.swing.JScrollPane	
+	 */
+	private JScrollPane getJScrollPane(){
+		if(jScrollPane == null){
+			jScrollPane=new JScrollPane();
+			jScrollPane.setBounds(new Rectangle(5, 208, 429, 115));
+			jScrollPane.setViewportView(getConsole());
+		}
+		return jScrollPane;
+	}
+
+	/**
+	 * This method initializes AgentTreeScrollPane	
+	 * 	
+	 * @return javax.swing.JScrollPane	
+	 */
+	private JScrollPane getAgentTreeScrollPane(){
+		if(AgentTreeScrollPane == null){
+			AgentTree AT=getAgentTree();
+
+			AgentTreeScrollPane=new JScrollPane(AT.tree);
+			AgentTreeScrollPane.setBounds(new Rectangle(233, 6, 194, 191));
+		}
+		return AgentTreeScrollPane;
+	}
+	
+	private AgentTree getAgentTree(){
+	if(AT == null){
+		AT=new AgentTree();
+		AT.addContainerNode("contmas",null);
+		AT.addAgentNode("bla","","contmas");
+		AT.refreshLocalPlatformName("Contmas");
+		/*
+		TreePath test=TreePath.this;
+		test.;
+		AT.tree.setExpandsSelectedPaths(arg0);
+		AT.tree.getModel().
+		AT.tree.expandPath(arg0);
+		*/
+	}
+	return AT ;
+}
 
 } //  @jve:decl-index=0:visual-constraint="30,15"

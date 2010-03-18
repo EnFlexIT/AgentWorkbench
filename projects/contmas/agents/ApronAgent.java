@@ -23,10 +23,8 @@ package contmas.agents;
 import jade.domain.FIPANames;
 import jade.lang.acl.MessageTemplate;
 import jade.proto.ContractNetResponder;
-import jade.util.leap.List;
 import contmas.behaviours.receiveLoadOrders;
 import contmas.ontology.Apron;
-import contmas.ontology.Domain;
 import contmas.ontology.Street;
 
 /**
@@ -51,11 +49,10 @@ public class ApronAgent extends StaticContainerAgent implements TransportOrderHa
 	 */
 	public ApronAgent(Apron ontologyRepresentation){
 		super("short-time-storage",ontologyRepresentation);
-		targetAgentDFDescription="container-distributing";
-		targetAbstractDomain=new Street();
+		this.targetAgentServiceType="container-distributing";
+		this.targetAbstractDomain=new Street();
 
 	}
-
 
 	/* (non-Javadoc)
 	 * @see contmas.agents.TransportOrderHandler#handleTransportOrder()
@@ -74,7 +71,7 @@ public class ApronAgent extends StaticContainerAgent implements TransportOrderHa
 		// TODO Auto-generated method stub
 
 	}
-	
+
 	@Override
 	public void setup(){
 		super.setup();

@@ -41,20 +41,27 @@ public class HarborMasterAgent extends ContainerAgent{
 
 		@Override
 		protected ACLMessage prepareResponse(ACLMessage request){
+			ACLMessage reply=request.createReply();
+
 			ContentElement content;
 			content=((ContainerAgent) this.myAgent).extractAction(request);
 			Concept action=((AgentAction) content);
 			if(action instanceof EnrollAtHarbor){
-				ACLMessage rplyMsg=request.createReply();
-				rplyMsg.setPerformative(ACLMessage.INFORM);
+				reply.setPerformative(ACLMessage.INFORM);
 				AssignHarborQuay act=new AssignHarborQuay();
 				Quay concept=new Quay();
 				concept.setLies_in(new Sea());
 				act.setAssigned_quay(concept);
-				((ContainerAgent) this.myAgent).fillMessage(rplyMsg,act);
-				return rplyMsg;
+				((ContainerAgent) this.myAgent).fillMessage(reply,act);
+				return reply;
+			}else{
+				this.myAgent.putBack(request);
+				this.reset();
+				return null;
+//				reply.setPerformative(ACLMessage.NOT_UNDERSTOOD);
+//				echoStatus("listenForEnroll - NOT_UNDERSTOOD: "+request.getContent());
 			}
-			return null;
+//			return null;
 		}
 	}
 
@@ -78,10 +85,15 @@ public class HarborMasterAgent extends ContainerAgent{
 				//look for Cranes
 				act.setAvailable_cranes(ContainerAgent.toAIDList(HarborMasterAgent.this.getAIDsFromDF("craning")));
 				((ContainerAgent) this.myAgent).fillMessage(reply,act);
+				return reply;
 			}else{
-				reply.setPerformative(ACLMessage.NOT_UNDERSTOOD);
+				this.myAgent.putBack(request);
+				this.reset();
+				return null;
+//				reply.setPerformative(ACLMessage.NOT_UNDERSTOOD);
+//				echoStatus("listenForEnroll - NOT_UNDERSTOOD: "+request.getContent());
 			}
-			return reply;
+//			return null;
 		}
 	}
 
@@ -108,8 +120,10 @@ public class HarborMasterAgent extends ContainerAgent{
 	protected void setupEnvironment(){
 		AgentContainer c=this.getContainerController();
 		AgentController a;
-		List tbs=new ArrayList();
 		try{
+			a=c.createNewAgent("mySniffer", "jade.tools.sniffer.Sniffer", new  Object[]{"Yard;StraddleCarrier-#1;Apron;Crane-#2;Crane-#1"});
+			a.start();
+			
 			Crane ontologyRepresentation=new Crane();
 			Domain terminalArea=new Land();
 			Domain habitat=new Rail();
@@ -123,9 +137,8 @@ public class HarborMasterAgent extends ContainerAgent{
 			ontologyRepresentation.addCapable_of(capability);
 			capability=new ApronArea();
 			ontologyRepresentation.addCapable_of(capability);
-			a=c.acceptNewAgent("Crane #1",new CraneAgent(ontologyRepresentation));
+			a=c.acceptNewAgent("Crane-#1",new CraneAgent(ontologyRepresentation));
 			a.start();
-			tbs.add(a);
 
 			ontologyRepresentation=new Crane();
 			ontologyRepresentation.setLives_in(habitat);
@@ -137,9 +150,8 @@ public class HarborMasterAgent extends ContainerAgent{
 			ontologyRepresentation.addCapable_of(capability);
 			capability=new ApronArea();
 			ontologyRepresentation.addCapable_of(capability);
-			a=c.acceptNewAgent("Crane #2",new CraneAgent(ontologyRepresentation));
+			a=c.acceptNewAgent("Crane-#2",new CraneAgent(ontologyRepresentation));
 			a.start();
-			tbs.add(a);
 
 			Apron ApronontologyRepresentation=new Apron();
 			habitat=new ApronArea();
@@ -147,7 +159,6 @@ public class HarborMasterAgent extends ContainerAgent{
 			ApronontologyRepresentation.setLives_in(habitat);
 			a=c.acceptNewAgent("Apron",new ApronAgent(ApronontologyRepresentation));
 			a.start();
-			tbs.add(a);
 
 			StraddleCarrier StraddleCarrierontologyRepresentation=new StraddleCarrier();
 			habitat=new Street();
@@ -161,9 +172,8 @@ public class HarborMasterAgent extends ContainerAgent{
 			StraddleCarrierontologyRepresentation.addCapable_of(capability);
 			capability=new ApronArea();
 			StraddleCarrierontologyRepresentation.addCapable_of(capability);
-			a=c.acceptNewAgent("StraddleCarrier #1",new StraddleCarrierAgent(StraddleCarrierontologyRepresentation));
+			a=c.acceptNewAgent("StraddleCarrier-#1",new StraddleCarrierAgent(StraddleCarrierontologyRepresentation));
 			a.start();
-			tbs.add(a);
 
 			Yard YardontologyRepresentation=new Yard();
 			habitat=new YardArea();
@@ -176,9 +186,7 @@ public class HarborMasterAgent extends ContainerAgent{
 
 			a=c.acceptNewAgent("Yard",new YardAgent(YardontologyRepresentation));
 			a.start();
-			tbs.add(a);
-			
-			
+
 			/*
 			AGV AGVontologyRepresentation=new AGV();
 			habitat=new Street();
@@ -204,11 +212,16 @@ public class HarborMasterAgent extends ContainerAgent{
 			a.start();
 			tbs.add(a);
 			*/
-			Sniffer s=new Sniffer();
+//			Sniffer s=new Sniffer();
+//			s.setArguments(new Object[]{"Crane #1;Crane #1;Apron;StraddleCarrier #1;Yard;"});
+//			s.setArguments(new Object[]{"HarborMaster@"+c.getPlatformName()});
+			
 
+/*
 			a=c.acceptNewAgent("sniffer",s);
-
-			a.start();
+			*/
+//			a.start();
+			
 //			s.sniffMsg(tbs,Sniffer.SNIFF_ON);
 
 		}catch(StaleProxyException e){

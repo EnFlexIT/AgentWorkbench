@@ -17,18 +17,24 @@ package contmas.agents;
 import jade.content.AgentAction;
 import jade.content.lang.Codec;
 import jade.content.lang.Codec.CodecException;
+import jade.content.lang.sl.SLCodec;
 import jade.content.lang.xml.XMLCodec;
 import jade.content.onto.Ontology;
 import jade.content.onto.OntologyException;
 import jade.content.onto.UngroundedException;
+import jade.content.onto.basic.Action;
 import jade.core.AID;
 import jade.core.Agent;
+import jade.core.ServiceException;
 import jade.core.behaviours.Behaviour;
+import jade.core.behaviours.OneShotBehaviour;
+import jade.core.messaging.TopicManagementHelper;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 import jade.util.leap.ArrayList;
 import jade.util.leap.Iterator;
 import jade.util.leap.List;
@@ -36,21 +42,69 @@ import jade.util.leap.List;
 import java.util.Random;
 
 import contmas.behaviours.announceLoadOrders;
+import contmas.behaviours.prepareSubscribeToDF;
 import contmas.ontology.*;
 
 /**
  * @author Hanno - Felix Wagner
  */
 public class ContainerAgent extends Agent{
+	class sendLogMessage extends OneShotBehaviour{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID=336783126262644079L;
+		ContainerAgent myCAgent=null;
+		MessageTemplate loggingTemplate=null;
+		String logMessageText="";
+
+		/**
+		 * 
+		 */
+		public sendLogMessage(ContainerAgent myCAgent,String logMessageText){
+			super(myCAgent);
+			this.myCAgent=myCAgent;
+
+			this.logMessageText=logMessageText;
+			this.loggingTemplate=MessageTemplate.MatchTopic(myCAgent.loggingTopic);
+		}
+
+		/* (non-Javadoc)
+		 * @see jade.core.behaviours.Behaviour#action()
+		 */
+		@Override
+		public void action(){
+			ACLMessage logMsg=new ACLMessage(ACLMessage.INFORM);
+
+			logMsg.addReceiver(ContainerAgent.this.loggingTopic);
+			logMsg.setContent(this.logMessageText);
+			this.myAgent.send(logMsg);
+
+		}
+	}
+
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID=202350816610492193L;
 	private static final Codec codec=new XMLCodec();
 	private static final Ontology ontology=ContainerTerminalOntology.getInstance();
-	protected String targetAgentDFDescription=null;
-	protected Domain targetAbstractDomain=null;
 
+	public static List addToList(List base,List addition){
+		Iterator it=addition.iterator();
+		while(it.hasNext()){
+			base.add(it.next());
+		}
+		return base;
+	}
+
+	public static AID[] agentDescToAIDArray(DFAgentDescription[] agents){
+		AID[] result=new AID[agents.length];
+		for(int i=0;i < agents.length;i++){
+			result[i]=agents[i].getName();
+		}
+		return result;
+	}
 
 	public static AnnounceLoadStatus getLoadStatusAnnouncement(TransportOrderChain curTOC,String content){
 		AnnounceLoadStatus loadStatus=new AnnounceLoadStatus();
@@ -58,19 +112,12 @@ public class ContainerAgent extends Agent{
 		loadStatus.setLoad_offer(curTOC);
 		return loadStatus;
 	}
-/*
-	public static Integer matchDomains(Domain one,Domain two){
-		if(one.getClass() == two.getClass()){
-			return 2; //passt genau
-		}
-		return -1; //passt gar nicht
-	}
-*/
+
 	/*
 	 * Überprüft, ob Domain inQuestion in Domain suspectedIn liegt
 	 */
 	public static Integer matchDomainsTransitive(Domain inQuestion,Domain suspectedIn){
-		System.out.println(inQuestion.getClass() + " in " + suspectedIn.getClass() + "?");
+//		System.out.println(inQuestion.getClass() + " in " + suspectedIn.getClass() + "?");
 		if(inQuestion.getClass() == suspectedIn.getClass()){
 			return 2; //passt genau
 		}
@@ -88,25 +135,37 @@ public class ContainerAgent extends Agent{
 		return output;
 	}
 
-	protected String serviceType;
+	protected String targetAgentServiceType=null;
+
+	protected DFAgentDescription targetDFAgentDescription=null;
+
+	protected Domain targetAbstractDomain=null;
+
+	protected AID loggingTopic=null;
+
+	protected String ownServiceType;
 
 	protected ContainerHolder ontologyRepresentation;
 
 	public Integer lengthOfProposeQueue=2;
 
 	public ContainerAgent(){
-		this.serviceType="handling-containers";
+		this.ownServiceType="handling-containers";
 		this.ontologyRepresentation=new ContainerHolder();
 	}
 
 	public ContainerAgent(String serviceType){
 		this();
-		this.serviceType=serviceType;
+		this.ownServiceType=serviceType;
 	}
 
 	public ContainerAgent(String serviceType,ContainerHolder ontologyRepresentation){
 		this(serviceType);
 		this.ontologyRepresentation=ontologyRepresentation;
+	}
+
+	public void addToContractors(List newContractors){
+		ContainerAgent.addToList(this.ontologyRepresentation.getContractors(),newContractors);
 	}
 
 	public Boolean aquireContainer(TransportOrderChain targetContainer){ //eigentlicher Vorgang des Container-Aufnehmens
@@ -180,13 +239,32 @@ public class ContainerAgent extends Agent{
 
 	public List determineContractors(){
 		if(this.ontologyRepresentation.getContractors().isEmpty()){
-			this.ontologyRepresentation.setContractors(toAIDList(this.getAIDsFromDF(targetAgentDFDescription)));
+			this.ontologyRepresentation.setContractors(ContainerAgent.toAIDList(this.getAIDsFromDF(this.targetAgentServiceType)));
+
+			Behaviour DFsubscriber;
+			DFsubscriber=new prepareSubscribeToDF(this,this.ontologyRepresentation.getContractors(),this.targetDFAgentDescription);
+			this.addBehaviour(DFsubscriber);
+/*
+			try{
+				DFsubscriber=new prepareSubscribeToDF(this,this.getClass().getMethod("addToContractors",List.class),this.targetDFAgentDescription);
+				this.addBehaviour(DFsubscriber);
+			}catch(SecurityException e){
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}catch(NoSuchMethodException e){
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+*/
 		}
 		return this.ontologyRepresentation.getContractors();
 	}
 
 	public void echoStatus(String statusMessage){
-		System.out.println(this.getAID().getLocalName() + ": " + statusMessage);
+		statusMessage=this.getAID().getLocalName() + ": " + statusMessage;
+		this.addBehaviour(new sendLogMessage(this,statusMessage + "\n"));
+
+//		System.out.println(statusMessage);
 	}
 
 	public void echoStatus(String statusMessage,TransportOrderChain subject){
@@ -218,6 +296,9 @@ public class ContainerAgent extends Agent{
 		msg.setLanguage(ContainerAgent.codec.getName());
 		msg.setOntology(ContainerAgent.ontology.getName());
 		try{
+			Action actionOp = new Action(getAID(), act);
+//			this.getContentManager().fillContent(msg, actionOp);
+
 			this.getContentManager().fillContent(msg,act);
 		}catch(UngroundedException e){
 			// TODO Auto-generated catch block
@@ -260,11 +341,14 @@ public class ContainerAgent extends Agent{
 		return matchingOrder;
 	}
 
-	public DFAgentDescription[] getAgentsFromDF(String serviceType){
-		DFAgentDescription dfd=new DFAgentDescription();
-		ServiceDescription sd=new ServiceDescription();
-		sd.setType(serviceType);
-		dfd.addServices(sd);
+	public Designator getAbstractTargetDesignator(){
+		Designator target=new Designator(); //TODO mögliche ziele herausfinden
+		target.setType("abstract");
+		target.setAbstract_designation(this.targetAbstractDomain);
+		return target;
+	}
+
+	public DFAgentDescription[] getAgentsFromDF(DFAgentDescription dfd){
 		try{
 			DFAgentDescription[] result=DFService.search(this,dfd);
 			return result;
@@ -273,15 +357,20 @@ public class ContainerAgent extends Agent{
 			e.printStackTrace();
 		}
 		return null;
+
+	}
+
+	public DFAgentDescription[] getAgentsFromDF(String serviceType){
+		DFAgentDescription dfd=new DFAgentDescription();
+		ServiceDescription sd=new ServiceDescription();
+		sd.setType(serviceType);
+		dfd.addServices(sd);
+		return this.getAgentsFromDF(dfd);
 	}
 
 	public AID[] getAIDsFromDF(String serviceType){
 		DFAgentDescription[] agents=this.getAgentsFromDF(serviceType);
-		AID[] result=new AID[agents.length];
-		for(int i=0;i < agents.length;i++){
-			result[i]=agents[i].getName();
-		}
-		return result;
+		return ContainerAgent.agentDescToAIDArray(agents);
 	}
 
 	public Integer getBaySize(){
@@ -331,6 +420,14 @@ public class ContainerAgent extends Agent{
 		return act;
 	}
 
+	public Designator getMyselfDesignator(){
+		Designator myself=new Designator();
+		myself.setType("concrete");
+		myself.setConcrete_designation(this.getAID());
+		myself.setAbstract_designation(this.ontologyRepresentation.getLives_in());
+		return myself;
+	}
+
 	public TransportOrderChain getSomeTOCOfState(TransportOrderChainState needleState){
 		Iterator queue=this.ontologyRepresentation.getAllContainer_states();
 		while(queue.hasNext()){
@@ -375,14 +472,14 @@ public class ContainerAgent extends Agent{
 		if(this.matchAID(end)){ //Genau für mich bestimmt
 			return 0;
 		}else{
-			return matchDomainsTransitive(this.ontologyRepresentation.getLives_in(),end.getAbstract_designation());
+			return ContainerAgent.matchDomainsTransitive(this.ontologyRepresentation.getLives_in(),end.getAbstract_designation());
 		}
 	}
 
 	public void register(ServiceDescription sd){
-		this.register(new ServiceDescription[]{ sd});
+		this.register(new ServiceDescription[] {sd});
 	}
-	
+
 	public void register(ServiceDescription[] sd){
 		DFAgentDescription dfd=new DFAgentDescription();
 		dfd.setName(this.getAID());
@@ -397,10 +494,10 @@ public class ContainerAgent extends Agent{
 	}
 
 	public void register(String serviceType){
-		String[] allSTs=new String[]{"container-handling",serviceType};
+		String[] allSTs=new String[] {"container-handling", serviceType};
 		this.register(allSTs);
 	}
-	
+
 	public void register(String[] serviceType){
 		ServiceDescription[] allSDs=new ServiceDescription[serviceType.length];
 		for(int i=0;i < serviceType.length;i++){
@@ -413,26 +510,11 @@ public class ContainerAgent extends Agent{
 		this.register(allSDs);
 	}
 
-	public Designator getMyselfDesignator(){
-		Designator myself=new Designator();
-		myself.setType("concrete");
-		myself.setConcrete_designation(this.getAID());
-		myself.setAbstract_designation(this.ontologyRepresentation.getLives_in());
-		return myself;
-	}
-	
-	public Designator getAbstractTargetDesignator(){
-		Designator target=new Designator(); //TODO mögliche ziele herausfinden
-		target.setType("abstract");
-		target.setAbstract_designation(targetAbstractDomain);
-		return target;
-	}
-	
 	public void releaseContainer(TransportOrderChain curTOC,Behaviour MasterBehaviour){
 		TransportOrder TO=new TransportOrder();
 
-		TO.setStarts_at(getMyselfDesignator());
-		TO.setEnds_at(getAbstractTargetDesignator());
+		TO.setStarts_at(this.getMyselfDesignator());
+		TO.setEnds_at(this.getAbstractTargetDesignator());
 		curTOC.addIs_linked_by(TO);
 		LoadList newCommission=new LoadList();
 		newCommission.addConsists_of(curTOC);
@@ -474,7 +556,7 @@ public class ContainerAgent extends Agent{
 		this.getContentManager().registerOntology(ContainerAgent.ontology);
 
 		//register self at DF
-		this.register(this.serviceType);
+		this.register(this.ownServiceType);
 
 		if(this.ontologyRepresentation.getContains() == null){
 			BayMap LoadBay=new BayMap();
@@ -483,6 +565,22 @@ public class ContainerAgent extends Agent{
 			LoadBay.setZ_dimension(1);
 			this.ontologyRepresentation.setContains(LoadBay);
 		}
-	}
 
+		DFAgentDescription dfd=new DFAgentDescription();
+		ServiceDescription sd=new ServiceDescription();
+		sd.setType(this.targetAgentServiceType);
+		dfd.addServices(sd);
+		this.targetDFAgentDescription=dfd;
+
+		try{
+			TopicManagementHelper tmh;
+			tmh=(TopicManagementHelper) this.getHelper(TopicManagementHelper.SERVICE_NAME);
+			this.loggingTopic=tmh.createTopic("container-harbour-logging");
+		}catch(ServiceException e1){
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+		this.determineContractors();
+	}
 }

@@ -16,7 +16,6 @@ package contmas.agents;
 
 import jade.util.leap.Iterator;
 import contmas.ontology.ActiveContainerHolder;
-import contmas.ontology.Designator;
 import contmas.ontology.Domain;
 import contmas.ontology.TransportOrder;
 
@@ -45,10 +44,7 @@ public class ActiveContainerAgent extends ContainerAgent{
 		Iterator capabilities=((ActiveContainerHolder) this.ontologyRepresentation).getAllCapable_of();
 		while(capabilities.hasNext()){
 			Domain capability=(Domain) capabilities.next();
-			if(startHabitat.
-					getClass() 
-					== capability.
-					getClass()){ //containeragent is able to handle orders in this start-habitat-domain
+			if(startHabitat.getClass() == capability.getClass()){ //containeragent is able to handle orders in this start-habitat-domain
 				//    			echoStatus("start passt");
 				startMatch=1;
 			}
