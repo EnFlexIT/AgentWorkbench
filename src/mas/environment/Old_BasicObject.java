@@ -12,7 +12,7 @@ import application.Language;
  * @author Nils
  *
  */
-public abstract class BasicObject{
+public abstract class Old_BasicObject{
 	private int width;
 	private int height;
 	private int posX;
@@ -21,7 +21,7 @@ public abstract class BasicObject{
 	/**
 	 * Übergeordneter Playground
 	 */
-	private Playground parentPlayground;
+	private Old_Playground parentPlayground;
 	/**
 	 * Eindeutige ID des Objektes
 	 */
@@ -34,7 +34,7 @@ public abstract class BasicObject{
 	/**
 	 * Erzeugt ein "leeres" BasicObject
 	 */
-	public BasicObject(){
+	public Old_BasicObject(){
 		
 	}
 	
@@ -42,30 +42,30 @@ public abstract class BasicObject{
 	 * Erzeugt ein BasicObject, das auf dem übergebenen SVG-Element basiert 
 	 * @param svg
 	 */
-	public BasicObject(Element svg){
+	public Old_BasicObject(Element svg){
 		this(svg.getAttributeNS(null, "id"), svg);
 	}
 	
 	
-	public BasicObject(String id, Element svg){
+	public Old_BasicObject(String id, Element svg){
 				
 		this.setSvgType(svg.getTagName());		
 		switch(this.getSvgType()){
-		case svg:
+		case SVG:
 			this.width = (int) Float.parseFloat(svg.getAttributeNS(null, "width"));
 			this.height = (int) Float.parseFloat(svg.getAttributeNS(null, "height"));
 			this.posX = 0;
 			this.posY = 0;
 		break;
 			
-		case rect:
+		case RECT:
 			this.width = (int) Float.parseFloat(svg.getAttributeNS(null, "width"));
 			this.height = (int) Float.parseFloat(svg.getAttributeNS(null, "height"));
 			this.posX = (int) Float.parseFloat(svg.getAttributeNS(null, "x"));
 			this.posY = (int) Float.parseFloat(svg.getAttributeNS(null, "y"));
 		break;
 		
-		case circle:
+		case CIRCLE:
 			int r = (int) Float.parseFloat(svg.getAttributeNS(null, "r"));
 			int cx = (int) Float.parseFloat(svg.getAttributeNS(null, "cx"));
 			int cy = (int) Float.parseFloat(svg.getAttributeNS(null, "cy"));
@@ -76,7 +76,7 @@ public abstract class BasicObject{
 			this.posY = cy-r;
 		break;
 		
-		case ellipse:
+		case ELLIPSE:
 			int rx = (int) Float.parseFloat(svg.getAttributeNS(null, "rx"));
 			int ry = (int) Float.parseFloat(svg.getAttributeNS(null, "ry"));
 			int ex = (int) Float.parseFloat(svg.getAttributeNS(null, "cx"));
@@ -128,11 +128,11 @@ public abstract class BasicObject{
 		this.posY = posY;
 	}
 
-	public Playground getParentPlayground() {
+	public Old_Playground getParentPlayground() {
 		return parentPlayground;
 	}
 
-	public void setPlayground(Playground playground) {
+	public void setPlayground(Old_Playground playground) {
 		this.parentPlayground = playground;
 	}
 
@@ -190,13 +190,13 @@ public abstract class BasicObject{
 	
 	public void setSvgType(String tagName){
 		if(tagName.equals("svg")){
-			this.svgType = SvgTypes.svg;
+			this.svgType = SvgTypes.SVG;
 		}else if(tagName.equals("rect")){
-			this.svgType = SvgTypes.rect;
+			this.svgType = SvgTypes.RECT;
 		}else if(tagName.equals("circle")){
-			this.svgType = SvgTypes.circle;
+			this.svgType = SvgTypes.CIRCLE;
 		}else if(tagName.equals("ellipse")){
-			this.svgType = SvgTypes.ellipse;
+			this.svgType = SvgTypes.ELLIPSE;
 		}else{
 			System.err.println(Language.translate("SVG-Elementtyp")+" "+tagName+" "+Language.translate("nicht unterstützt"));
 		}

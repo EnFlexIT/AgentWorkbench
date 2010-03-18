@@ -1,4 +1,4 @@
-; Thu Mar 04 21:33:35 CET 2010
+; Tue Mar 16 21:58:38 CET 2010
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -20,7 +20,7 @@
 
 ([BROWSER_SLOT_NAMES] of  Property_List
 
-	(properties [DisplayOntology_ProjectKB_Instance_10153]))
+	(properties [DisplayOntology_ProjectKB_Instance_10148]))
 
 ([CLSES_TAB] of  Widget
 
@@ -88,33 +88,33 @@
 ([DisplayOntology_ProjectKB_Instance_10147] of  Property_List
 )
 
-([DisplayOntology_ProjectKB_Instance_10153] of  String
+([DisplayOntology_ProjectKB_Instance_10148] of  String
 
 	(name ":INSTANCE-ANNOTATION")
 	(string_value "%3AANNOTATION-TEXT"))
 
-([DisplayOntology_ProjectKB_Instance_10154] of  Map_Entry
+([DisplayOntology_ProjectKB_Instance_10149] of  Map_Entry
 
 	(key "add_name_on_instance_form")
 	(key_class "java.lang.String")
 	(value "false")
 	(value_class "java.lang.String"))
 
-([DisplayOntology_ProjectKB_Instance_10155] of  Map_Entry
+([DisplayOntology_ProjectKB_Instance_10150] of  Map_Entry
 
 	(key "change_tracking_active")
 	(key_class "java.lang.String")
 	(value "false")
 	(value_class "java.lang.String"))
 
-([DisplayOntology_ProjectKB_Instance_10156] of  Map
+([DisplayOntology_ProjectKB_Instance_10151] of  Map
 )
 
-([DisplayOntology_ProjectKB_Instance_10157] of  Map_Entry
+([DisplayOntology_ProjectKB_Instance_10152] of  Map_Entry
 
 	(key "InstanceDisplay.yellow_stickies")
 	(key_class "java.lang.String")
-	(value "DisplayOntology_ProjectKB_Instance_10156")
+	(value "DisplayOntology_ProjectKB_Instance_10151")
 	(value_class "java.util.Map"))
 
 ([DisplayOntology_ProjectKB_Instance_133] of  Widget
@@ -451,10 +451,10 @@
 ([DisplayOntology_ProjectKB_Instance_221] of  Map
 
 	(entries
-		[DisplayOntology_ProjectKB_Instance_10154]
-		[DisplayOntology_ProjectKB_Instance_10155]
-		[DisplayOntology_ProjectKB_Instance_10157])
-	(referenced_maps [DisplayOntology_ProjectKB_Instance_10156]))
+		[DisplayOntology_ProjectKB_Instance_10149]
+		[DisplayOntology_ProjectKB_Instance_10150]
+		[DisplayOntology_ProjectKB_Instance_10152])
+	(referenced_maps [DisplayOntology_ProjectKB_Instance_10151]))
 
 ([DisplayOntology_ProjectKB_Instance_98] of  String
 

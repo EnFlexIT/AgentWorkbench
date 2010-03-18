@@ -1,7 +1,11 @@
-; Thu Mar 04 21:33:35 CET 2010
+; Tue Mar 16 21:58:38 CET 2010
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
+
+([AbstractObject] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
 
 ([AgentObject] of  %3AJADE-CLASS
 
@@ -11,7 +15,7 @@
 
 	(%3AJADE-IGNORE FALSE))
 
-([EnvironmentObject] of  %3AJADE-CLASS
+([EnvironmentUpdate] of  %3AJADE-CLASS
 
 	(%3AJADE-IGNORE FALSE))
 
@@ -37,6 +41,10 @@
 	(%3AONTOLOGYNAME "Display")
 	(%3APACKAGE "sma.ontology")
 	(%3ASUPPORT "j2se"))
+
+([RegisterDisplayable] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
 
 ([Size] of  %3AJADE-CLASS
 

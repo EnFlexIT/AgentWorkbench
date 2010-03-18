@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<environment Date="Wed Mar 03 22:32:50 CET 2010" project="">
-  <playground height="300" id="MainPG" svgType="svg" width="500" x="0" y="0">
-    <agent class="sma.agents.SoftBot" height="90" id="rect1"
-      svgType="rect" width="90" x="70" y="183"/>
-    <obstacle height="150" id="circ2" svgType="circle" width="150"
-      x="75" y="18"/>
-    <obstacle height="90" id="circ1" svgType="circle" width="90" x="292" y="41"/>
-    <obstacle height="66" id="ellip1" svgType="ellipse" width="166"
-      x="289" y="141"/>
+<environment date="Thu Mar 18 21:12:04 CET 2010" project="SMA">
+  <playground height="400" id="rootPlayground" width="600" xPos="0" yPos="0">
+    <playground height="216" id="subPlayground" width="174" xPos="227" yPos="47">
+      <agent class="SoftBot" height="37" id="AgentBrown" width="28"
+        xPos="259" yPos="206"/>
+      <obstacle height="32" id="ObstYellow" width="116" xPos="254" yPos="138"/>
+      <agent class="SoftBot" height="32" id="AgentPink" width="30"
+        xPos="325" yPos="72"/>
+    </playground>
+    <agent class="SoftBot" height="32" id="AgentRed" width="37"
+      xPos="44" yPos="38"/>
+    <agent class="SoftBot" height="40" id="AgentGrey" width="38"
+      xPos="510" yPos="118"/>
+    <obstacle height="15" id="ObstBlue" width="111" xPos="40" yPos="235"/>
+    <obstacle height="67" id="ObstGreen" width="16" xPos="301" yPos="303"/>
   </playground>
 </environment>

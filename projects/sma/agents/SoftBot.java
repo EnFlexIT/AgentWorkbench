@@ -4,8 +4,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import mas.environment.AgentObject;
-import mas.environment.ObstacleObject;
+import mas.environment.Old_AgentObject;
+import mas.environment.Old_ObstacleObject;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.ServiceException;
@@ -36,15 +36,15 @@ public class SoftBot extends Agent {
 	private int envWidth;
 	private int envHeight;
 	
-	private Collection<ObstacleObject> obstacles = null;
+	private Collection<Old_ObstacleObject> obstacles = null;
 	
-	private HashMap<String, AgentObject> agents = null;
+	private HashMap<String, Old_AgentObject> agents = null;
 	
 	public void setup(){
 		// Initialize with values from environment definition
 		Object[] args = getArguments();
-		if(args[0] != null && args[0] instanceof AgentObject){
-			AgentObject self = (AgentObject) args[0];
+		if(args[0] != null && args[0] instanceof Old_AgentObject){
+			Old_AgentObject self = (Old_AgentObject) args[0];
 			this.width = self.getWidth();
 			this.height = self.getHeight();
 			this.posX = self.getPosX();
@@ -121,9 +121,9 @@ public class SoftBot extends Agent {
 			if(posY <= 0 || posY+height >= envHeight){
 				collY = true;
 			}
-			Iterator<ObstacleObject> iter = obstacles.iterator();
+			Iterator<Old_ObstacleObject> iter = obstacles.iterator();
 			while(iter.hasNext()){
-				ObstacleObject oo = iter.next();
+				Old_ObstacleObject oo = iter.next();
 				
 				// X Richtung
 				if(oldY+height>oo.getPosY()&&oldY<oo.getPosY()+oo.getHeight()){
@@ -139,9 +139,9 @@ public class SoftBot extends Agent {
 				}				
 			}
 			
-			Iterator<AgentObject> aIter = agents.values().iterator();
+			Iterator<Old_AgentObject> aIter = agents.values().iterator();
 			while(aIter.hasNext()){
-				AgentObject ao = aIter.next();
+				Old_AgentObject ao = aIter.next();
 				
 				// X Richtung
 				if(oldY+height>ao.getPosY()&&oldY<ao.getPosY()+ao.getHeight()){
@@ -212,7 +212,7 @@ public class SoftBot extends Agent {
 					agents.remove(sender);
 				}else{
 					String[] pos = content.split(",");
-					AgentObject agent = agents.get(sender);
+					Old_AgentObject agent = agents.get(sender);
 					agent.setPosX(Integer.parseInt(pos[0]));
 					agent.setPosY(Integer.parseInt(pos[1]));					
 				}

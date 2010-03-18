@@ -8,9 +8,9 @@ import jade.core.*;
    * Represents an agent that can move in the environment
 * Protege name: AgentObject
 * @author ontology bean generator
-* @version 2010/03/4, 21:33:23
+* @version 2010/03/16, 20:55:13
 */
-public class AgentObject extends EnvironmentObject{ 
+public class AgentObject extends AbstractObject{ 
 
    /**
    * Name of the agent class (subclass of jade.core.agent) this agent is an instance of
@@ -37,17 +37,6 @@ public class AgentObject extends EnvironmentObject{
    }
 
    /**
-* Protege name: maxSpeed
-   */
-   private Speed maxSpeed;
-   public void setMaxSpeed(Speed value) { 
-    this.maxSpeed=value;
-   }
-   public Speed getMaxSpeed() {
-     return this.maxSpeed;
-   }
-
-   /**
 * Protege name: currentSpeed
    */
    private Speed currentSpeed;
@@ -56,6 +45,17 @@ public class AgentObject extends EnvironmentObject{
    }
    public Speed getCurrentSpeed() {
      return this.currentSpeed;
+   }
+
+   /**
+* Protege name: maxSpeed
+   */
+   private Speed maxSpeed;
+   public void setMaxSpeed(Speed value) { 
+    this.maxSpeed=value;
+   }
+   public Speed getMaxSpeed() {
+     return this.maxSpeed;
    }
 
 }

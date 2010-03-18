@@ -9,7 +9,7 @@ import jade.core.*;
    * Represents an object's position in a 2D environment
 * Protege name: Position
 * @author ontology bean generator
-* @version 2010/03/4, 21:33:23
+* @version 2010/03/16, 20:55:13
 */
 public class Position implements Concept {
 
@@ -17,11 +17,11 @@ public class Position implements Concept {
    * The object's y coordinate
 * Protege name: yPos
    */
-   private String yPos;
-   public void setYPos(String value) { 
+   private int yPos;
+   public void setYPos(int value) { 
     this.yPos=value;
    }
-   public String getYPos() {
+   public int getYPos() {
      return this.yPos;
    }
 

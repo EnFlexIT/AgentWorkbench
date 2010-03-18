@@ -9,44 +9,32 @@ import jade.core.*;
    * A project's environment definition
 * Protege name: Environment
 * @author ontology bean generator
-* @version 2010/03/4, 21:33:23
+* @version 2010/03/16, 20:55:13
 */
 public class Environment implements Concept {
 
    /**
-   * AID of the EnvironmentControllerAgent controlling this environment
-* Protege name: masterAgent
+   * The SVG document object
+* Protege name: svgDoc
    */
-   private AID masterAgent;
-   public void setMasterAgent(AID value) { 
-    this.masterAgent=value;
+   private Object svgDoc;
+   public void setSvgDoc(Object value) { 
+    this.svgDoc=value;
    }
-   public AID getMasterAgent() {
-     return this.masterAgent;
+   public Object getSvgDoc() {
+     return this.svgDoc;
    }
 
    /**
    * Root of the project's environment representation, containing all it's EnvironmentObjects
 * Protege name: rootPlayground
    */
-   private String rootPlayground;
-   public void setRootPlayground(String value) { 
+   private PlaygroundObject rootPlayground;
+   public void setRootPlayground(PlaygroundObject value) { 
     this.rootPlayground=value;
    }
-   public String getRootPlayground() {
+   public PlaygroundObject getRootPlayground() {
      return this.rootPlayground;
-   }
-
-   /**
-   * The SVG document used to visualize the project
-* Protege name: svgFile
-   */
-   private String svgFile;
-   public void setSvgFile(String value) { 
-    this.svgFile=value;
-   }
-   public String getSvgFile() {
-     return this.svgFile;
    }
 
    /**
@@ -60,5 +48,27 @@ public class Environment implements Concept {
    public String getProjectName() {
      return this.projectName;
    }
+
+   /**
+   * All objects existing in this environment
+* Protege name: objects
+   */
+   private List objects = new ArrayList();
+   public void addObjects(AbstractObject elem) { 
+     List oldList = this.objects;
+     objects.add(elem);
+   }
+   public boolean removeObjects(AbstractObject elem) {
+     List oldList = this.objects;
+     boolean result = objects.remove(elem);
+     return result;
+   }
+   public void clearAllObjects() {
+     List oldList = this.objects;
+     objects.clear();
+   }
+   public Iterator getAllObjects() {return objects.iterator(); }
+   public List getObjects() {return objects; }
+   public void setObjects(List l) {objects = l; }
 
 }

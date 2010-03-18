@@ -9,20 +9,20 @@ import jade.core.AID;
  * @author Nils
  *
  */
-public class AgentObject extends BasicObject{
+public class Old_AgentObject extends Old_BasicObject{
 	private String agentClass = null;
 	private AID agentAID = null;
 	
-	public AgentObject(){
+	public Old_AgentObject(){
 		// "Leeres" Objekt, Initialisierung über loadFromXML()
 	};
 	
-	public AgentObject(String id, Element svg, String agentClass){
+	public Old_AgentObject(String id, Element svg, String agentClass){
 		super(id, svg);
 		this.agentClass = agentClass;
 	}
 	
-	public AgentObject(Element svg, String agentClass){
+	public Old_AgentObject(Element svg, String agentClass){
 		super(svg);
 		this.agentClass = agentClass;
 	}

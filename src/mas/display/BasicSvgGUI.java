@@ -6,6 +6,7 @@ import javax.swing.JButton;
 
 import org.apache.batik.swing.JSVGCanvas;
 import org.apache.batik.swing.JSVGScrollPane;
+import org.w3c.dom.Document;
 
 import java.awt.BorderLayout;
 
@@ -120,6 +121,10 @@ public class BasicSvgGUI extends JPanel {
 	}
 	
 	public JSVGCanvas getCanvas(){
-		return this.canvas;
+		return canvas;
+	}
+	
+	public void setSVGDoc(Document doc){
+		this.canvas.setDocument(doc);
 	}
 }

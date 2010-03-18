@@ -19,8 +19,8 @@ import org.w3c.dom.Element;
 
 import application.Language;
 
-import mas.environment.AgentObject;
-import mas.environment.Playground;
+import mas.environment.Old_AgentObject;
+import mas.environment.Old_Playground;
 
 import jade.core.AID;
 import jade.core.Agent;
@@ -52,7 +52,7 @@ public class DisplayAgent extends Agent {
 	/**
 	 * Umgebung, die von diesem Agenten dargestellt wird 
 	 */
-	private Playground environment = null;
+	private Old_Playground environment = null;
 	/**
 	 * Dargestelltes SVG Dokument
 	 */
@@ -64,7 +64,7 @@ public class DisplayAgent extends Agent {
 	/**
 	 * Bekannte Agenten, key = localName des Agenten = id des SVG-Elementes
 	 */
-	private HashMap<String, AgentObject> agents = null;
+	private HashMap<String, Old_AgentObject> agents = null;
 	
 	public void setup(){
 		/*
@@ -74,7 +74,7 @@ public class DisplayAgent extends Agent {
 		 * args[2] = Container; der die GUI aufnimmt 
 		 */
 		Object[] args = getArguments();
-		this.environment = (Playground) args[0];
+		this.environment = (Old_Playground) args[0];
 		this.svgDoc = (Document) args[1];
 		if(args[2] != null){
 			// Container übergeben
@@ -95,10 +95,10 @@ public class DisplayAgent extends Agent {
 		 * Agenten aus der Umgebungsdefinition lesen und in HashMap speichern
 		 * (=> über id/localName direkt adressierbar)
 		 */
-		Iterator<AgentObject> agents = environment.getAgents().values().iterator();
-		this.agents = new HashMap<String, AgentObject>();
+		Iterator<Old_AgentObject> agents = environment.getAgents().values().iterator();
+		this.agents = new HashMap<String, Old_AgentObject>();
 		while(agents.hasNext()){
-			AgentObject newAgent = agents.next();
+			Old_AgentObject newAgent = agents.next();
 			this.agents.put(newAgent.getId(), newAgent);
 		}
 		
@@ -183,7 +183,7 @@ public class DisplayAgent extends Agent {
 				}else{
 					// Aktualisiere Positionsdaten des Absenders in der HashMap
 					String[] pos = content.split(",");
-					AgentObject agent = agents.get(sender);
+					Old_AgentObject agent = agents.get(sender);
 					agent.setPosX(Integer.parseInt(pos[0]));
 					agent.setPosY(Integer.parseInt(pos[1]));
 				}
@@ -205,7 +205,7 @@ public class DisplayAgent extends Agent {
 
 		@Override
 		public void run() {
-			Iterator<AgentObject> iter = agents.values().iterator(); 
+			Iterator<Old_AgentObject> iter = agents.values().iterator(); 
 			while(iter.hasNext()){
 				setAgentPos(iter.next());
 			}
@@ -216,17 +216,17 @@ public class DisplayAgent extends Agent {
 	 * Aktualisiert die Position der Agenten im SVG
 	 * @param agent
 	 */
-	private void setAgentPos(AgentObject agent){
+	private void setAgentPos(Old_AgentObject agent){
 		Element agentSvg;
 		switch(agent.getSvgType()){
-			case rect:
+			case RECT:
 				agentSvg = svgDoc.getElementById(agent.getId());
 				agentSvg.setAttributeNS(null, "x", ""+agent.getPosX());
 				agentSvg.setAttributeNS(null, "y", ""+agent.getPosY());
 			break;
 			
-			case circle:				
-			case ellipse:
+			case CIRCLE:				
+			case ELLIPSE:
 				agentSvg = svgDoc.getElementById(agent.getId());
 				int cx = agent.getPosX()+agent.getWidth()/2;
 				int cy = agent.getPosY()+agent.getHeight()/2;

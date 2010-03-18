@@ -8,20 +8,20 @@ import jade.core.*;
    * Represents a 2D environment or subenvironment, can contain all kinds of EnvironmentObjects
 * Protege name: PlaygroundObject
 * @author ontology bean generator
-* @version 2010/03/4, 21:33:23
+* @version 2010/03/16, 20:55:13
 */
-public class PlaygroundObject extends EnvironmentObject{ 
+public class PlaygroundObject extends AbstractObject{ 
 
    /**
    * List of EnvironmentObjects inside this PlaygroundObject
 * Protege name: childObjects
    */
    private List childObjects = new ArrayList();
-   public void addChildObjects(EnvironmentObject elem) { 
+   public void addChildObjects(AbstractObject elem) { 
      List oldList = this.childObjects;
      childObjects.add(elem);
    }
-   public boolean removeChildObjects(EnvironmentObject elem) {
+   public boolean removeChildObjects(AbstractObject elem) {
      List oldList = this.childObjects;
      boolean result = childObjects.remove(elem);
      return result;

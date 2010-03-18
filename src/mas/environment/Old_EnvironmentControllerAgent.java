@@ -1,0 +1,89 @@
+package mas.environment;
+
+import jade.core.AID;
+import jade.core.Agent;
+import jade.core.ServiceException;
+import jade.core.behaviours.CyclicBehaviour;
+import jade.core.messaging.TopicManagementHelper;
+import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
+
+/**
+ * Agent zur Kommunikation zwischen EnvironmentController und den eigentlichen Simulations-Agenten
+ * @author Nils
+ *
+ */
+public class Old_EnvironmentControllerAgent extends Agent {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private Old_EnvironmentController ec;
+	
+	public void setup(){
+		Object[] args = getArguments();
+		if(args[0] != null && args[0] instanceof Old_EnvironmentController){
+			this.ec = (Old_EnvironmentController) args[0];
+		}
+		
+		try {
+			TopicManagementHelper tmh = (TopicManagementHelper) getHelper(TopicManagementHelper.SERVICE_NAME);
+			AID positionTopic = tmh.createTopic("position");
+			tmh.register(positionTopic);
+			addBehaviour(new PosUpdateBehaviour(MessageTemplate.MatchTopic(positionTopic)));
+		
+		} catch (ServiceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+	}
+	
+	public void takeDown(){
+		try {
+			TopicManagementHelper tmh = (TopicManagementHelper) getHelper(TopicManagementHelper.SERVICE_NAME);
+			AID positionTopic = tmh.createTopic("position");
+			tmh.register(positionTopic);
+		} catch (ServiceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	class PosUpdateBehaviour extends CyclicBehaviour{
+		
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		MessageTemplate positionTemplate;
+		
+		public PosUpdateBehaviour(MessageTemplate mt){
+			this.positionTemplate = mt;
+		}
+
+		@Override
+		public void action() {
+			ACLMessage posUpdate = receive(positionTemplate);
+			if(posUpdate != null){
+				String sender = posUpdate.getSender().getLocalName();
+				String content = posUpdate.getContent();
+				if(content.equals("bye")){
+					// Agent wurde beendet -> entferne aus HashMap
+					ec.getMainPlayground().removeElement(sender);
+				}else{
+					// Aktualisiere Positionsdaten des Absenders in der HashMap
+					String[] pos = content.split(",");
+					Old_AgentObject agent = (Old_AgentObject) ec.getMainPlayground().getObjects().get(sender);
+					agent.setPosX(Integer.parseInt(pos[0]));
+					agent.setPosY(Integer.parseInt(pos[1]));					
+				}
+				
+			}else{
+				block();
+			}
+			
+		}
+		
+	}
+	
+}

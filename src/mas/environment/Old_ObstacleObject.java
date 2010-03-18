@@ -3,17 +3,17 @@ package mas.environment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-public class ObstacleObject extends BasicObject {
+public class Old_ObstacleObject extends Old_BasicObject {
 	
-	public ObstacleObject(){
+	public Old_ObstacleObject(){
 		// "Leeres" Objekt, Initialisierung über loadFromXML() 
 	};
 	
-	public ObstacleObject(Element svg){
+	public Old_ObstacleObject(Element svg){
 		super(svg);
 	}
 	
-	public ObstacleObject(String id, Element svg){
+	public Old_ObstacleObject(String id, Element svg){
 		super(id, svg);
 	}
 

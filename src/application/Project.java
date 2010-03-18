@@ -16,7 +16,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import mas.environment.EnvironmentController;
+import mas.environment.Old_EnvironmentController;
 import mas.onto.OntologyClass;
 
 @XmlRootElement public class Project extends Observable {
@@ -35,7 +35,7 @@ import mas.onto.OntologyClass;
 	@XmlTransient private String ProjectFolderFullPath;
 	@XmlTransient private Vector<Class<?>> ProjectAgents;
 	@XmlTransient public OntologyClass Ontology = new OntologyClass(this);
-	@XmlTransient public EnvironmentController ec; 
+	@XmlTransient public Old_EnvironmentController ec; 
 	
 	// --- Speichervariablen der Projektdatei ------------------ 
 	private String ProjectName;
@@ -258,7 +258,7 @@ import mas.onto.OntologyClass;
 	 * @return Pfad zur SVG-Datei (Ressources-Ordner + Dateiname)
 	 */
 	public String getSvgPath(){
-		return this.getProjectFolderFullPath()+"ressources"+File.separator+this.svgFile;
+		return this.getProjectFolderFullPath()+"resources"+File.separator+this.svgFile;
 	}
 
 	/**
@@ -266,7 +266,8 @@ import mas.onto.OntologyClass;
 	 * @param fileName Dateiname der SVG-Datei
 	 */
 	public void setSvgFile(String fileName){
-		this.svgFile = fileName;		
+		this.svgFile = fileName;	
+		this.ProjectUnsaved = true;
 	}	
 	/**
 	 * Getter für envFile
@@ -281,7 +282,7 @@ import mas.onto.OntologyClass;
 	 * @return Pfad zur Umgebungsdatei (Ressources-Ordner + Dateiname)
 	 */
 	public String getEnvPath(){
-		return this.getProjectFolderFullPath()+"ressources"+File.separator+this.envFile;
+		return this.getProjectFolderFullPath()+"resources"+File.separator+this.envFile;
 	}
 	
 	/**
@@ -290,14 +291,15 @@ import mas.onto.OntologyClass;
 	 */
 	public void setEnvFile(String fileName){
 		this.envFile = fileName;
+		this.ProjectUnsaved = true;
 	}
 	
 	@XmlTransient
-	public EnvironmentController getEnvironmentController(){
+	public Old_EnvironmentController getEnvironmentController(){
 		return this.ec;
 	}
 	
-	public void setEnvironmentController(EnvironmentController ec){
+	public void setEnvironmentController(Old_EnvironmentController ec){
 		this.ec = ec;
 	}
 
