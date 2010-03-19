@@ -59,6 +59,18 @@ public class OntologyClassTreeObject extends Object {
 		}
 	}
 	/**
+	 * Returns TRUE if the current Instance has an 
+	 * real Ontology-Class 
+	 * @return boolean
+	 */
+	public boolean isClass() {
+		if (OntoClass == null) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+	/**
 	 * Returns the simple class name from a class-reference
 	 * @param Reference
 	 * @return String

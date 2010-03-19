@@ -11,7 +11,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
 
-import javax.swing.*;
+import javax.swing.JFileChooser;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -147,7 +150,7 @@ public class ProjectsLoaded {
 			String XMLFileName = NewPro.getProjectFolderFullPath() + Application.RunInfo.MASFile();			
 			try {
 				pc = JAXBContext.newInstance( NewPro.getClass() );
-				um = pc.createUnmarshaller(); 
+				um = pc.createUnmarshaller();
 				NewPro = (Project) um.unmarshal( new FileReader( XMLFileName ) );
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
@@ -178,7 +181,6 @@ public class ProjectsLoaded {
 		Application.setStatusBar( Language.translate("Fertig") );	
 		NewPro.setMaximized();
 		NewPro.save();   // --- Erstmalig speichern -------
-		
 		return NewPro;
 	}
 

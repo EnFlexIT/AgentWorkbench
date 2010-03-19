@@ -13,9 +13,12 @@ import javax.swing.JOptionPane;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import mas.agents.AgentConfiguration;
 import mas.environment.Old_EnvironmentController;
 import mas.onto.OntologyClass;
 
@@ -38,13 +41,22 @@ import mas.onto.OntologyClass;
 	@XmlTransient public Old_EnvironmentController ec; 
 	
 	// --- Speichervariablen der Projektdatei ------------------ 
+	@XmlElement(name="projectName")
 	private String ProjectName;
+	@XmlElement(name="projectDescription")
 	private String ProjectDescription;
+	
 	private String svgFile;		// SVG-Datei
 	private String envFile;		// Umgebungsdatei
-	
 
-	
+	@XmlElementWrapper(name = "agentConfiguration")
+	public AgentConfiguration AgentConfig = new AgentConfiguration(this);
+		
+	/**
+	 * Default-Constructor
+	 */
+	public Project() {
+	};
 	
 	/**
 	 * Save the current MAS-Project
@@ -56,6 +68,7 @@ import mas.onto.OntologyClass;
 			// --- Kontext und Marshaller vorbereiten ------
 			JAXBContext pc = JAXBContext.newInstance( this.getClass() ); 
 			Marshaller pm = pc.createMarshaller(); 
+			pm.setProperty( Marshaller.JAXB_ENCODING, "UTF-8" );
 			pm.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE ); 
 			//pm.marshal( this, System.out );
 			// --- Objektwerte in xml-Datei schreiben -----
@@ -183,6 +196,7 @@ import mas.onto.OntologyClass;
 	/**
 	 * @return the projectName
 	 */
+	@XmlTransient
 	public String getProjectName() {
 		return ProjectName;
 	}
@@ -190,6 +204,7 @@ import mas.onto.OntologyClass;
 	/**
 	 * @param projectDescription the projectDescription to set
 	 */
+	
 	public void setProjectDescription(String projectDescription) {
 		ProjectDescription = projectDescription;
 		ProjectUnsaved = true;
@@ -199,6 +214,7 @@ import mas.onto.OntologyClass;
 	/**
 	 * @return the projectDescription
 	 */
+	@XmlTransient
 	public String getProjectDescription() {
 		return ProjectDescription;
 	}
@@ -206,6 +222,7 @@ import mas.onto.OntologyClass;
 	/**
 	 * @param projectFolder the projectFolder to set
 	 */
+	@XmlTransient
 	public void setProjectFolder(String projectFolder) {
 		ProjectFolder = projectFolder;
 		if ( Application.RunInfo.AppExecutedOver() == "IDE" ) {
@@ -228,14 +245,12 @@ import mas.onto.OntologyClass;
 	public String getProjectFolderFullPath() {
 		return ProjectFolderFullPath;
 	}
-
 	
 	/**
 	 * @param projectAgents the projectAgents to set
 	 */
 	public void filterProjectAgents() {
-		String FolderFilter = getProjectFolder();
-		ProjectAgents = Application.JadePlatform.jadeGetAgentClasses( FolderFilter );
+		ProjectAgents = Application.JadePlatform.jadeGetAgentClasses( getProjectFolder() );
 		setChanged();
 		notifyObservers("ProjectAgents");
 	}
@@ -245,6 +260,16 @@ import mas.onto.OntologyClass;
 	public Vector<Class<?>> getProjectAgents() {
 		return ProjectAgents;
 	}
+	/**
+	 * Informs about changes at the AgentConfiguration 'AgentConfig'
+	 */
+	public void updateAgentReferences() {
+		ProjectUnsaved = true;
+		setChanged();
+		notifyObservers("AgentReferences");
+	}
+	
+	
 	/**
 	 * Getter für svgFile
 	 * @return Dateiname der SVG-Datei

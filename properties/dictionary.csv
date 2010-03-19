@@ -1,4 +1,4 @@
-LANG_DEFAULT;0;;;
+LANG_DEFAULT;1;;;
 LANG_DE;LANG_EN;LANG_IT;LANG_ES;LANG_FR
 Fertig;Ready;;;
 Programmstart ...;Starting Program ...;;;
@@ -139,10 +139,16 @@ Entferne Agent;;;;
 Entferne Hindernis;;;;
 Umgebungs-Setup;;;;
 Simulations-Setup;;;;
-SVG Dateien;;;;
-XML Dateien;;;;
+Agent:;;;;
+Starten als:;;;;
+Objekte aus Projekt-Ontologie;;;;
+Projekt-Ontologie;;;;
+Agent starten ...;;;;
+Agentenliste aktualisieren;;;;
+Objekt nach oben;;;;
+Objekt nach unten;;;;
+Alle Objekte löschen;;;;
+Objekt hinzufügen;;;;
+Objekt entfernen;;;;
 Keine Umgebungsdatei definiert;;;;
-Element-Typ;;;;
-Objekt;;;;
-liegt außerhalb von Playground;;;;
 Keine SVG-Datei definiert;;;;
