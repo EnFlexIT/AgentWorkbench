@@ -14,29 +14,25 @@
 
 package contmas.main;
 
+import jade.core.AID;
 import jade.gui.AgentTree;
 import jade.gui.GuiEvent;
+import jade.util.leap.List;
 
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Rectangle;
-import java.awt.TextArea;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Iterator;
 
 import javax.swing.*;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
-import javax.swing.tree.TreePath;
 
 import contmas.agents.ControlGUIAgent;
-import java.awt.Dimension;
-
-import javax.swing.JEditorPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextPane;
-import javax.swing.JScrollPane;
 
 public class ControlGUI extends JInternalFrame implements ActionListener{
 
@@ -56,10 +52,12 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JLabel jLabel1=null;
 	private JTextField TFShipLength=null;
 	private JDesktopPane canvas=null;
-	private JTextArea console = null;
-	private JScrollPane jScrollPane = null;
-	private JScrollPane AgentTreeScrollPane = null;
-	private AgentTree AT = null;
+	private JTextArea console=null;
+	private JScrollPane jScrollPane=null;
+	private JScrollPane AgentTreeScrollPane=null;
+	private AgentTree AT=null;
+	private JScrollPane jScrollPane1=null;
+	private JTextArea jTextArea=null;
 
 	/**
 	 * This is the default constructor
@@ -147,8 +145,9 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 			this.jContentPane.add(this.jLabel,null);
 			this.jContentPane.add(this.jLabel1,null);
 			this.jContentPane.add(this.getTFShipLength(),null);
-			jContentPane.add(getJScrollPane(), null);
-			jContentPane.add(getAgentTreeScrollPane(), null);
+			this.jContentPane.add(this.getJScrollPane(),null);
+			this.jContentPane.add(this.getAgentTreeScrollPane(),null);
+			this.jContentPane.add(this.getJScrollPane1(),null);
 			this.jContentPane.add(this.jLabel1,null);
 			this.jContentPane.add(this.jLabel,null);
 			this.jContentPane.add(this.ShipLabelName,null);
@@ -242,7 +241,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	 * @return void
 	 */
 	private void initialize(){
-		this.setSize(449, 361);
+		this.setSize(449,511);
 		this.setClosable(true);
 
 		this.setMaximizable(true);
@@ -258,6 +257,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 		 * this.addWindowListener(new WindowAdapter() { public void
 		 * windowClosing(WindowEvent e) { shutDown(); } });
 		 */
+		new setConsole(this.getJTextArea());
 	}
 
 	void shutDown(){
@@ -279,34 +279,34 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	 * @return javax.swing.JTextPane	
 	 */
 	private JTextArea getConsole(){
-		if(console == null){
-			console=new JTextArea();
-			console.setText("");
-			console.setSize(new Dimension(1000, 112));
-			console.setEditable(false);
+		if(this.console == null){
+			this.console=new JTextArea();
+			this.console.setText("");
+			this.console.setSize(new Dimension(1000,112));
+			this.console.setEditable(false);
 //			console.setAutoscrolls(true);
 		}
-		return console;
+		return this.console;
 	}
 
 	/**
 	 * @param content
 	 */
 	public void writeLogMsg(final String content){
-	    Runnable addIt = new Runnable() {  
-	        public void run() {
+		Runnable addIt=new Runnable(){
+			public void run(){
 //	        	getJTextPane().setText(content);
-	    		Document doc = getConsole().getDocument();
-	    		try {
-	    			doc.insertString(doc.getLength(), content, null);
+				Document doc=ControlGUI.this.getConsole().getDocument();
+				try{
+					doc.insertString(doc.getLength(),content,null);
 //	    			getJTextPane().setCaretPosition(doc.getLength());
-	    		} catch (BadLocationException ex) {
-	    			ex.printStackTrace();
-	    		}
-	        }  
-	      };
+				}catch(BadLocationException ex){
+					ex.printStackTrace();
+				}
+			}
+		};
 
-	      SwingUtilities.invokeLater(addIt);
+		SwingUtilities.invokeLater(addIt);
 	}
 
 	/**
@@ -315,12 +315,12 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	 * @return javax.swing.JScrollPane	
 	 */
 	private JScrollPane getJScrollPane(){
-		if(jScrollPane == null){
-			jScrollPane=new JScrollPane();
-			jScrollPane.setBounds(new Rectangle(5, 208, 429, 115));
-			jScrollPane.setViewportView(getConsole());
+		if(this.jScrollPane == null){
+			this.jScrollPane=new JScrollPane();
+			this.jScrollPane.setBounds(new Rectangle(5,208,429,115));
+			this.jScrollPane.setViewportView(this.getConsole());
 		}
-		return jScrollPane;
+		return this.jScrollPane;
 	}
 
 	/**
@@ -329,30 +329,66 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	 * @return javax.swing.JScrollPane	
 	 */
 	private JScrollPane getAgentTreeScrollPane(){
-		if(AgentTreeScrollPane == null){
-			AgentTree AT=getAgentTree();
+		if(this.AgentTreeScrollPane == null){
+			AgentTree AT=this.getAgentTree();
 
-			AgentTreeScrollPane=new JScrollPane(AT.tree);
-			AgentTreeScrollPane.setBounds(new Rectangle(233, 6, 194, 191));
+			this.AgentTreeScrollPane=new JScrollPane(AT.tree);
+			this.AgentTreeScrollPane.setBounds(new Rectangle(239,7,194,198));
 		}
-		return AgentTreeScrollPane;
+		return this.AgentTreeScrollPane;
 	}
-	
+
 	private AgentTree getAgentTree(){
-	if(AT == null){
-		AT=new AgentTree();
-		AT.addContainerNode("contmas",null);
-		AT.addAgentNode("bla","","contmas");
-		AT.refreshLocalPlatformName("Contmas");
-		/*
-		TreePath test=TreePath.this;
-		test.;
-		AT.tree.setExpandsSelectedPaths(arg0);
-		AT.tree.getModel().
-		AT.tree.expandPath(arg0);
-		*/
+		if(this.AT == null){
+			this.AT=new AgentTree();
+			this.AT.refreshLocalPlatformName("Contmas");
+			this.AT.addContainerNode("contmas",null);
+			ControlGUI.expandTree(this.AT.tree);
+		}
+		return this.AT;
 	}
-	return AT ;
-}
+
+	public void updateAgentTree(List newAgents){
+		this.getAgentTree();
+		Iterator<AID> agentIter=newAgents.iterator();
+		while(agentIter.hasNext()){
+			AID curAgent=agentIter.next();
+			this.AT.addAgentNode(curAgent.getLocalName(),"","contmas");
+		}
+		ControlGUI.expandTree(this.AT.tree);
+	}
+
+	public static JTree expandTree(JTree inputTree){
+		for(Integer i=0;i < inputTree.getRowCount();i++){
+			inputTree.expandRow(i);
+		}
+		return inputTree;
+	}
+
+	/**
+	 * This method initializes jScrollPane1	
+	 * 	
+	 * @return javax.swing.JScrollPane	
+	 */
+	private JScrollPane getJScrollPane1(){
+		if(this.jScrollPane1 == null){
+			this.jScrollPane1=new JScrollPane();
+			this.jScrollPane1.setBounds(new Rectangle(9,335,422,135));
+			this.jScrollPane1.setViewportView(this.getJTextArea());
+		}
+		return this.jScrollPane1;
+	}
+
+	/**
+	 * This method initializes jTextArea	
+	 * 	
+	 * @return javax.swing.JTextArea	
+	 */
+	private JTextArea getJTextArea(){
+		if(this.jTextArea == null){
+			this.jTextArea=new JTextArea();
+		}
+		return this.jTextArea;
+	}
 
 } //  @jve:decl-index=0:visual-constraint="30,15"

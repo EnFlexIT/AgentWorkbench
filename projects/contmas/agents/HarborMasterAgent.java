@@ -22,9 +22,6 @@ import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.proto.AchieveREResponder;
-import jade.tools.sniffer.Sniffer;
-import jade.util.leap.ArrayList;
-import jade.util.leap.List;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
 import jade.wrapper.StaleProxyException;
@@ -121,9 +118,9 @@ public class HarborMasterAgent extends ContainerAgent{
 		AgentContainer c=this.getContainerController();
 		AgentController a;
 		try{
-			a=c.createNewAgent("mySniffer", "jade.tools.sniffer.Sniffer", new  Object[]{"Yard;StraddleCarrier-#1;Apron;Crane-#2;Crane-#1"});
+			a=c.createNewAgent("mySniffer","jade.tools.sniffer.Sniffer",new Object[] {"Yard;StraddleCarrier-#1;Apron;Crane-#2;Crane-#1"});
 			a.start();
-			
+
 			Crane ontologyRepresentation=new Crane();
 			Domain terminalArea=new Land();
 			Domain habitat=new Rail();
@@ -215,15 +212,11 @@ public class HarborMasterAgent extends ContainerAgent{
 //			Sniffer s=new Sniffer();
 //			s.setArguments(new Object[]{"Crane #1;Crane #1;Apron;StraddleCarrier #1;Yard;"});
 //			s.setArguments(new Object[]{"HarborMaster@"+c.getPlatformName()});
-			
-
 /*
 			a=c.acceptNewAgent("sniffer",s);
 			*/
 //			a.start();
-			
 //			s.sniffMsg(tbs,Sniffer.SNIFF_ON);
-
 		}catch(StaleProxyException e){
 			// TODO Auto-generated catch block
 			e.printStackTrace();

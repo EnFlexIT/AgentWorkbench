@@ -32,12 +32,12 @@ public class ContMASStarter{
 
 		Runtime JADERuntime=Runtime.instance();
 
-		String ServiceList = new String();
-		ServiceList = ServiceList.concat("jade.core.event.NotificationService;");
-		ServiceList = ServiceList.concat("jade.core.messaging.TopicManagementService;");
-										  
-		Profile mainContainerProfile = new ProfileImpl();
-		mainContainerProfile.setParameter(Profile.SERVICES, ServiceList ); 
+		String ServiceList=new String();
+		ServiceList=ServiceList.concat("jade.core.event.NotificationService;");
+		ServiceList=ServiceList.concat("jade.core.messaging.TopicManagementService;");
+
+		Profile mainContainerProfile=new ProfileImpl();
+		mainContainerProfile.setParameter(Profile.SERVICES,ServiceList);
 
 		AgentContainer c=JADERuntime.createMainContainer(mainContainerProfile);
 

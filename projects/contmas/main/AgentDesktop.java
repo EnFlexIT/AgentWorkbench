@@ -7,7 +7,7 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * ContMAS is distributed in the hope that it will be useful,
+ * This file is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
@@ -19,7 +19,6 @@
 
 package contmas.main;
 
-import java.awt.Font;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.lang.reflect.Method;
@@ -39,7 +38,6 @@ public class AgentDesktop{
 	private static JDesktopPane getDesktopPaneInJFrame(String FrameTitle){
 
 		JFrame Frame=new JFrame();
-		Frame.setFont(new Font("Dialog",Font.PLAIN,12));
 		Frame.setTitle(FrameTitle);
 		JDesktopPane DP=new JDesktopPane();
 		Frame.add(DP);
@@ -79,13 +77,13 @@ public class AgentDesktop{
 
 				Object ret=getMethod.invoke(projects,new Object[] {this.ProjectFolder});
 				this.DP=(JDesktopPane) ret.getClass().getField("ProjectDesktop").get(ret);
-				System.out.println(this.ProjectFolder + ": AgentGUI Environment found");
+//				System.out.println(this.FrameTitle + ": AgentGUI Environment found");
 				this.standaloneMode=AgentDesktop.AGENTDESKTOP_AGENTGUI;
 
 			}catch(Exception ErrInv){
 				// ------------------------------------------------------
 				// --- Methodenaufruf fehlgeschlagen => ausserhalb von AgentGUI -
-				System.out.println(this.ProjectFolder + ": Standalone");
+//				System.out.println(this.FrameTitle + ": Standalone");
 				this.DP=AgentDesktop.getDesktopPaneInJFrame(this.FrameTitle);
 				this.standaloneMode=AgentDesktop.AGENTDESKTOP_STANDALONE;
 			}
@@ -94,7 +92,7 @@ public class AgentDesktop{
 			// ------------------------------------------------------
 			// --- Klasse nicht gefunden => ausserhalb von AgentGUI -
 			// ErrDP.printStackTrace();
-			System.out.println(this.ProjectFolder + ": Standalone");
+//			System.out.println(this.FrameTitle + ": Standalone");
 			this.DP=AgentDesktop.getDesktopPaneInJFrame(this.FrameTitle);
 			this.standaloneMode=AgentDesktop.AGENTDESKTOP_STANDALONE;
 		}

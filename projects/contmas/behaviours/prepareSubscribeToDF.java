@@ -20,8 +20,6 @@
  */
 package contmas.behaviours;
 
-import java.lang.reflect.Method;
-
 import jade.core.Agent;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.domain.DFService;
@@ -29,6 +27,8 @@ import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.util.leap.List;
+
+import java.lang.reflect.Method;
 
 /**
  * @author Hanno - Felix Wagner
@@ -45,12 +45,6 @@ public class prepareSubscribeToDF extends OneShotBehaviour{
 	String targetAgentServiceType="";
 	private Method callbackMethod=null;
 
-
-	public prepareSubscribeToDF(Agent a,Method callbackMethod,DFAgentDescription targetDFAgentDescription){
-		this.targetDFAgentDescription=targetDFAgentDescription;
-		this.callbackMethod=callbackMethod;
-	}
-	
 	public prepareSubscribeToDF(Agent a,List targetStorage,DFAgentDescription targetDFAgentDescription){
 		this.targetDFAgentDescription=targetDFAgentDescription;
 		this.targetStorage=targetStorage;
@@ -63,10 +57,16 @@ public class prepareSubscribeToDF extends OneShotBehaviour{
 	public prepareSubscribeToDF(Agent a,List targetStorage,String targetAgentServiceType){
 		DFAgentDescription dfd=new DFAgentDescription();
 		ServiceDescription sd=new ServiceDescription();
-		sd.setType(this.targetAgentServiceType);
+		sd.setType(targetAgentServiceType);
 		dfd.addServices(sd);
+		this.targetAgentServiceType=targetAgentServiceType;
 		this.targetDFAgentDescription=dfd;
 		this.targetStorage=targetStorage;
+	}
+
+	public prepareSubscribeToDF(Agent a,Method callbackMethod,DFAgentDescription targetDFAgentDescription){
+		this.targetDFAgentDescription=targetDFAgentDescription;
+		this.callbackMethod=callbackMethod;
 	}
 
 	/* (non-Javadoc)
@@ -75,7 +75,7 @@ public class prepareSubscribeToDF extends OneShotBehaviour{
 	@Override
 	public void action(){
 		ACLMessage subscriptionMessage=DFService.createSubscriptionMessage(this.myAgent,this.myAgent.getDefaultDF(),this.targetDFAgentDescription,null);
-		this.myAgent.addBehaviour(new subscribeToDF(this.myAgent,subscriptionMessage,targetStorage));
-//		this.myAgent.addBehaviour(new subscribeToDF(this.myAgent,subscriptionMessage,callbackMethod));
+//		this.myAgent.addBehaviour(new subscribeToDF(this.myAgent,subscriptionMessage,targetStorage));
+		this.myAgent.addBehaviour(new subscribeToDF(this.myAgent,subscriptionMessage,this.callbackMethod));
 	}
 }

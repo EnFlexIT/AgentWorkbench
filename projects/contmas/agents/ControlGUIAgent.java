@@ -16,13 +16,15 @@ package contmas.agents;
 
 import jade.core.AID;
 import jade.core.ServiceException;
+import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.messaging.TopicManagementHelper;
+import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.gui.GuiAgent;
 import jade.gui.GuiEvent;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-import jade.util.leap.ArrayList;
 import jade.util.leap.List;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
@@ -30,7 +32,6 @@ import jade.wrapper.AgentController;
 import javax.swing.JDesktopPane;
 
 import contmas.behaviours.prepareSubscribeToDF;
-import contmas.behaviours.subscribeToDF;
 import contmas.main.AgentDesktop;
 import contmas.main.ControlGUI;
 import contmas.ontology.BayMap;
@@ -73,6 +74,7 @@ public class ControlGUIAgent extends GuiAgent{
 
 		}
 	}
+
 	/*
 	class refreshAgentTree extends CyclicBehaviour{
 
@@ -89,12 +91,11 @@ public class ControlGUIAgent extends GuiAgent{
 
 		}
 	}
-*/
+	*/
 	private static final long serialVersionUID= -7176620366025244274L;
 	private JDesktopPane canvas=null;
 	private ControlGUI myGui=null;
-	private List allAvailableAgents = new ArrayList();
-
+	private TopicManagementHelper tmh;
 	private AID loggingTopic=null;
 
 	@Override
@@ -164,18 +165,37 @@ public class ControlGUIAgent extends GuiAgent{
 		}
 
 		try{
-			TopicManagementHelper tmh;
-			tmh=(TopicManagementHelper) this.getHelper(TopicManagementHelper.SERVICE_NAME);
-			this.loggingTopic=tmh.createTopic("container-harbour-logging");
-			tmh.register(this.loggingTopic);
+			this.tmh=(TopicManagementHelper) this.getHelper(TopicManagementHelper.SERVICE_NAME);
+			this.loggingTopic=this.tmh.createTopic("container-harbour-logging");
+			this.tmh.register(this.loggingTopic);
 		}catch(ServiceException e1){
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 
 		this.addBehaviour(new listenForLogMessage(this));
-		
-		this.addBehaviour(new prepareSubscribeToDF(this, allAvailableAgents, "handling-containers"));
+
+		DFAgentDescription dfd=new DFAgentDescription();
+		ServiceDescription sd=new ServiceDescription();
+		sd.setType("container-handling");
+//		sd.setType("short-time-storage");
+		dfd.addServices(sd);
+
+		Behaviour DFsubscribePreparer=null;
+		try{
+			DFsubscribePreparer=new prepareSubscribeToDF(this,this.getClass().getMethod("updateAgentTree",List.class),dfd);
+		}catch(SecurityException e1){
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}catch(NoSuchMethodException e1){
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+//		DFsubscribePreparer=new prepareSubscribeToDF(this,allAvailableAgents,dfd);
+		this.addBehaviour(DFsubscribePreparer);
+
+//		this.addBehaviour(new prepareSubscribeToDF(this, allAvailableAgents, "container-handling"));
 
 		AgentContainer c=this.getContainerController();
 		try{
@@ -192,6 +212,16 @@ public class ControlGUIAgent extends GuiAgent{
 	@Override
 	protected void takeDown(){
 		this.myGui.dispose();
+		try{
+			this.tmh.deregister(this.loggingTopic); //does it work?
+		}catch(ServiceException e){
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public void updateAgentTree(List newAgents){
+		this.myGui.updateAgentTree(newAgents);
 	}
 
 	/**

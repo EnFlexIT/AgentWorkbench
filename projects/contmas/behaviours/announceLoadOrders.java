@@ -59,7 +59,7 @@ public class announceLoadOrders extends ContractNetInitiator{
 		for(Object message: responses){
 			ACLMessage propose=(ACLMessage) message;
 			if(propose.getPerformative() == ACLMessage.REFUSE){
-				this.myCAgent.echoStatus("Ablehnung empfangen von " + propose.getSender().getLocalName() + ": " + propose.getContent());
+				this.myCAgent.echoStatus("Ablehnung empfangen von " + propose.getSender().getLocalName() + ": " + propose.getContent(),ContainerAgent.LOGGING_INFORM);
 			}
 			if((propose.getContent() != null) && (propose.getPerformative() == ACLMessage.PROPOSE)){
 				Concept content;
@@ -79,10 +79,10 @@ public class announceLoadOrders extends ContractNetInitiator{
 		TransportOrderChain curTOC=(TransportOrderChain) this.currentLoadList.getConsists_of().iterator().next();
 
 		if(bestOffer == null){ //Abnehmer momentan alle beschäftigt
-			this.myCAgent.echoStatus("FAILURE: Nur Ablehnungen empfangen, Abbruch.");
+			this.myCAgent.echoStatus("FAILURE: Nur Ablehnungen empfangen, Abbruch.",ContainerAgent.LOGGING_NOTICE);
 			this.myCAgent.changeTOCState(curTOC,new Failed());
 			if(this.masterBehaviour != null){
-				this.myCAgent.echoStatus("REFUSE: MasterBehaviour wird neugestartet.");
+				this.myCAgent.echoStatus("REFUSE: MasterBehaviour wird neugestartet.",ContainerAgent.LOGGING_INFORM);
 				this.masterBehaviour.restart();
 			}
 			this.reset();
@@ -132,16 +132,16 @@ public class announceLoadOrders extends ContractNetInitiator{
 					//					((ContainerAgent)myAgent).echoStatus("AnnounceLoadStatus FINISHED empfangen, bearbeiten");
 					if(this.myCAgent.removeContainerFromBayMap(load_offer)){
 						this.myCAgent.changeTOCState(load_offer,null,true);
-						this.myCAgent.echoStatus("Erfolgreich losgeworden (Meldung+BayMap-Entfernung).",load_offer);
+						this.myCAgent.echoStatus("Erfolgreich losgeworden (Meldung+BayMap-Entfernung).",load_offer,ContainerAgent.LOGGING_INFORM);
 						if(this.masterBehaviour != null){
-							this.myCAgent.echoStatus("INFORM: MasterBehaviour wird neugestartet.");
+							this.myCAgent.echoStatus("INFORM: MasterBehaviour wird neugestartet.",ContainerAgent.LOGGING_INFORM);
 							this.masterBehaviour.restart();
 						}
 					}
 				}else if(notification.getPerformative() == ACLMessage.FAILURE){ // && loadStatus.getLoad_status().substring(0, 4).equals("ERROR")) {
 					this.myCAgent.removeFromContractors(notification.getSender());
 					this.myCAgent.changeTOCState(load_offer,new Failed());
-					this.myCAgent.echoStatus("Containerabgabe fehlgeschlagen. " + loadStatus.getLoad_status(),load_offer);
+					this.myCAgent.echoStatus("Containerabgabe fehlgeschlagen. " + loadStatus.getLoad_status(),load_offer,ContainerAgent.LOGGING_NOTICE);
 					if(this.masterBehaviour != null){
 						this.myCAgent.echoStatus("FAILURE: MasterBehaviour wird neugestartet.");
 						this.masterBehaviour.restart();
@@ -153,27 +153,27 @@ public class announceLoadOrders extends ContractNetInitiator{
 
 	@Override
 	protected void handleOutOfSequence(ACLMessage msg){
-		this.myCAgent.echoStatus("ERROR: Unerwartete Nachricht (" + msg.getPerformative()+ ") empfangen von "+msg.getSender().getLocalName()+": "+msg.getContent());
+		this.myCAgent.echoStatus("ERROR: Unerwartete Nachricht bei announce (" + msg.getPerformative() + ") empfangen von " + msg.getSender().getLocalName() + ": " + msg.getContent(),ContainerAgent.LOGGING_ERROR);
 	}
 
 	@Override
-	protected Vector prepareCfps(ACLMessage cfp){
+	protected Vector<ACLMessage> prepareCfps(ACLMessage cfp){
 		TransportOrderChain curTOC=(TransportOrderChain) this.currentLoadList.getConsists_of().iterator().next();
 		if( !(this.myCAgent.changeTOCState(curTOC,new Announced()) instanceof Administered)){
-			this.myCAgent.echoStatus("FAILURE: Auftrag wird nicht ausgeschrieben werden, nicht administriert, wahrscheinlich schon failure.",curTOC);
+			this.myCAgent.echoStatus("FAILURE: Auftrag wird nicht ausgeschrieben werden, nicht administriert, wahrscheinlich schon failure.",curTOC,ContainerAgent.LOGGING_NOTICE);
 			this.myCAgent.changeTOCState(curTOC,new Failed());
 			return null;
 		}
-		this.myCAgent.echoStatus("Schreibe Auftrag aus.",curTOC);
+		this.myCAgent.echoStatus("Schreibe Auftrag aus.",curTOC,ContainerAgent.LOGGING_INFORM);
 		cfp=new ACLMessage(ACLMessage.CFP);
 		cfp.setProtocol(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
 		List contractorList=this.myCAgent.determineContractors();
 		if((contractorList == null) || contractorList.isEmpty()){
 			if(this.masterBehaviour != null){
-				this.myCAgent.echoStatus("MasterBehaviour wird neugestartet.");
+				this.myCAgent.echoStatus("MasterBehaviour wird neugestartet.",ContainerAgent.LOGGING_INFORM);
 				this.masterBehaviour.restart();
 			}
-			this.myCAgent.echoStatus("FAILURE: Keine Contractors mehr vorhanden. Ausschreibung nicht möglich.",curTOC);
+			this.myCAgent.echoStatus("FAILURE: Keine Contractors mehr vorhanden. Ausschreibung nicht möglich.",curTOC,ContainerAgent.LOGGING_NOTICE);
 			this.myCAgent.changeTOCState(curTOC,new Failed());
 			return null;
 		}

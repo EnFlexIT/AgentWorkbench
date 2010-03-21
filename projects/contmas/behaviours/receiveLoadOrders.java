@@ -48,7 +48,7 @@ public class receiveLoadOrders extends ContractNetResponder{
 			TransportOrderChain acceptedTOC=((AcceptLoadOffer) content).getLoad_offer();
 			ACLMessage rply=accept.createReply();
 
-			this.myCAgent.echoStatus("Bewerbung wurde akzeptiert. Überprüfe Kapazitäten für ",acceptedTOC);
+			this.myCAgent.echoStatus("Bewerbung wurde akzeptiert. Überprüfe Kapazitäten für ",acceptedTOC,ContainerAgent.LOGGING_INFORM);
 
 			TransportOrderChainState curState=this.myCAgent.changeTOCState(acceptedTOC);
 			if(curState instanceof ProposedFor){//Angebot wurde angenommen->Alles weitere in die Wege leiten
@@ -64,40 +64,40 @@ public class receiveLoadOrders extends ContractNetResponder{
 						this.isDone=true;
 						return;
 					}else{
-						this.myCAgent.echoStatus("ERROR: Auftrag kann nicht ausgeführt werden.",acceptedTOC);
+						this.myCAgent.echoStatus("ERROR: Auftrag kann nicht ausgeführt werden.",acceptedTOC,ContainerAgent.LOGGING_ERROR);
 					}
 				}else{
 					if(this.myCAgent instanceof TransportOrderOfferer){
 						TransportOrderChain curTOC=this.myCAgent.getSomeTOCOfState(new Administered());
 						if(curTOC != null){
-							this.myCAgent.echoStatus("BayMap voll, versuche Räumung für",acceptedTOC);
+							this.myCAgent.echoStatus("BayMap voll, versuche Räumung für",acceptedTOC,ContainerAgent.LOGGING_INFORM);
 							this.myCAgent.changeTOCState(acceptedTOC,new PendingForSubCFP());
 							this.myCAgent.releaseContainer(curTOC,this);
 							this.block();
 							this.isDone=false;
 							return;
 						}else{ //keine administrierten TOCs da
-							this.myCAgent.echoStatus("FAILURE: BayMap voll, keine administrierten TOCs da, Räumung nicht möglich.");
+							this.myCAgent.echoStatus("FAILURE: BayMap voll, keine administrierten TOCs da, Räumung nicht möglich.",ContainerAgent.LOGGING_NOTICE);
 						}
 					}else{//Agent kann keine Aufträge abgeben=>Senke
-						this.myCAgent.echoStatus("FAILURE: Bin Senke, kann keine Aufträge weitergeben.");
+						this.myCAgent.echoStatus("FAILURE: Bin Senke, kann keine Aufträge weitergeben.",ContainerAgent.LOGGING_NOTICE);
 					}
 				}
 			}else if(curState instanceof PendingForSubCFP){
 				//TOC bereits angenommen, aber noch kein Platz
 				if(this.myCAgent.countTOCInState(new Announced()) != 0){ // ausschreibungsqueue hat noch inhalt
-					this.myCAgent.echoStatus("Unterauftrag läuft noch:",acceptedTOC);
+					this.myCAgent.echoStatus("Unterauftrag läuft noch:",acceptedTOC,ContainerAgent.LOGGING_INFORM);
 					this.block();
 					this.isDone=false;
 					return;
 				}else{ // ausschreibungsqueque ist leer
 					this.myCAgent.changeTOCState(acceptedTOC,new ProposedFor());
-					this.myCAgent.echoStatus("Keine Unteraufträge mehr, erneut versuchen aufzunehmen.");
+					this.myCAgent.echoStatus("Keine Unteraufträge mehr, erneut versuchen aufzunehmen.",ContainerAgent.LOGGING_INFORM);
 					this.isDone=false;
 					return;
 				}
 			}else if(curState instanceof Failed){
-				this.myCAgent.echoStatus("FAILURE: Ausschreibung des Unterauftrags ist bereits fehlgeschlagen.");
+				this.myCAgent.echoStatus("FAILURE: Ausschreibung des Unterauftrags ist bereits fehlgeschlagen.",ContainerAgent.LOGGING_NOTICE);
 			}
 			//Ausschreibung ist fehlgeschlagen, keine administrierten TOCs da, Irgendwas schiefgelaufen bei der Ausschreibung des Unterauftrags
 			this.myCAgent.changeTOCState(acceptedTOC,new Failed());
@@ -140,7 +140,7 @@ public class receiveLoadOrders extends ContractNetResponder{
 			return null;
 		}
 		if(cfp.getContent() == null){ //CFP leer
-			this.myCAgent.echoStatus("no content");
+			this.myCAgent.echoStatus("no content",ContainerAgent.LOGGING_ERROR);
 			reply.setContent("no content");
 			reply.setPerformative(ACLMessage.FAILURE);
 			return reply;
@@ -157,7 +157,7 @@ public class receiveLoadOrders extends ContractNetResponder{
 //			((ContainerAgent)myAgent).echoStatus("Ausschreibung erhalten.",curTOC);
 
 			if( !this.myCAgent.isQueueNotFull()){//schon auf genug Aufträge beworben
-				this.myCAgent.echoStatus("schon genug Aufträge");
+				this.myCAgent.echoStatus("schon genug Aufträge, refusing",ContainerAgent.LOGGING_INFORM);
 				reply.setContent("schon genug Aufträge");
 				reply.setPerformative(ACLMessage.REFUSE);
 				return reply;
@@ -169,7 +169,7 @@ public class receiveLoadOrders extends ContractNetResponder{
 				return reply;
 				*/
 			}else if((this.myCAgent.determineContractors() == null) && !this.myCAgent.hasBayMapRoom()){
-				this.myCAgent.echoStatus("Habe keine Subunternehmer und bin voll, lehne ab.");
+				this.myCAgent.echoStatus("Habe keine Subunternehmer und bin voll, lehne ab.",ContainerAgent.LOGGING_NOTICE);
 				reply.setContent("Habe keine Subunternehmer und bin voll, lehne ab.");
 				reply.setPerformative(ACLMessage.REFUSE);
 				return reply;
@@ -177,19 +177,19 @@ public class receiveLoadOrders extends ContractNetResponder{
 				//((ContainerAgent)myAgent).echoStatus("noch Kapazitäten vorhanden");
 				ProposeLoadOffer act=this.myCAgent.getLoadProposal(curTOC);
 				if(act != null){
-					this.myCAgent.echoStatus("Bewerbe mich für Ausschreibung.",curTOC);
+					this.myCAgent.echoStatus("Bewerbe mich für Ausschreibung.",curTOC,ContainerAgent.LOGGING_INFORM);
 					this.myCAgent.fillMessage(reply,act);
 					reply.setPerformative(ACLMessage.PROPOSE);
 					return reply;
 				}else{
-					this.myCAgent.echoStatus("Lehne Ausschreibung ab.",curTOC);
+					this.myCAgent.echoStatus("Lehne Ausschreibung ab.",curTOC,ContainerAgent.LOGGING_INFORM);
 					reply.setContent("keine TransportOrder passt zu mir");
 					reply.setPerformative(ACLMessage.REFUSE);
 					return reply;
 				}
 			}
 		}else{ //unbekannter inhalt in CFP
-			this.myCAgent.echoStatus("ERROR: Unbekannter Inhalt in CFP: " + cfp.getContent());
+			this.myCAgent.echoStatus("ERROR: Unbekannter Inhalt in CFP: " + cfp.getContent(),ContainerAgent.LOGGING_ERROR);
 			reply.setContent("ERROR: Unbekannter Inhalt in CFP: " + cfp.getContent());
 			reply.setPerformative(ACLMessage.FAILURE);
 
@@ -198,12 +198,17 @@ public class receiveLoadOrders extends ContractNetResponder{
 	}
 
 	@Override
+	protected void handleOutOfSequence(ACLMessage msg){
+		this.myCAgent.echoStatus("ERROR: Unerwartete Nachricht bei recieve (" + msg.getPerformative() + ") empfangen von " + msg.getSender().getLocalName() + ": " + msg.getContent(),ContainerAgent.LOGGING_ERROR);
+	}
+
+	@Override
 	protected void handleRejectProposal(ACLMessage cfp,ACLMessage propose,ACLMessage accept){
 		Concept content=this.myCAgent.extractAction(propose);
 		TransportOrderChain acceptedTOC=((ProposeLoadOffer) content).getLoad_offer();
 		//		((ContainerAgent)myAgent).echoStatus("Meine Bewerbung wurde abgelehnt");
 		if( !(this.myCAgent.changeTOCState(acceptedTOC,null,true) instanceof ProposedFor)){ //wenn der untersuchte Container dem entspricht, für den sich beworben wurde
-			this.myCAgent.echoStatus("ERROR: Auftrag, auf den ich mich beworben habe (abgelehnt), nicht zum Entfernen gefunden.",acceptedTOC);
+			this.myCAgent.echoStatus("ERROR: Auftrag, auf den ich mich beworben habe (abgelehnt), nicht zum Entfernen gefunden.",acceptedTOC,ContainerAgent.LOGGING_ERROR);
 		}else{
 			//			((ContainerAgent)myAgent).echoStatus("Abgelehnten Auftrag entfernt.",acceptedTOC);
 		}

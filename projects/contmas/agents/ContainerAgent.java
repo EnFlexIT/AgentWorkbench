@@ -17,7 +17,6 @@ package contmas.agents;
 import jade.content.AgentAction;
 import jade.content.lang.Codec;
 import jade.content.lang.Codec.CodecException;
-import jade.content.lang.sl.SLCodec;
 import jade.content.lang.xml.XMLCodec;
 import jade.content.onto.Ontology;
 import jade.content.onto.OntologyException;
@@ -49,6 +48,7 @@ import contmas.ontology.*;
  * @author Hanno - Felix Wagner
  */
 public class ContainerAgent extends Agent{
+
 	class sendLogMessage extends OneShotBehaviour{
 		/**
 		 * 
@@ -86,6 +86,14 @@ public class ContainerAgent extends Agent{
 	/**
 	 * 
 	 */
+	public static final Integer LOGGING_ALL=5; //just information for the user
+	public static final Integer LOGGING_INFORM=4; //just information for the user, debugging
+	public static final Integer LOGGING_NOTICE=3; //failure in harbour processing, but no complecations with program
+	public static final Integer LOGGING_ERROR=2; //heavy error, possibly bug
+	public static final Integer LOGGING_NONE=0; //No error logging
+	private static final Integer SYSTEM_LOGGING=ContainerAgent.LOGGING_ALL;
+	private static final Integer GUI_LOGGING=ContainerAgent.LOGGING_NOTICE;
+
 	private static final long serialVersionUID=202350816610492193L;
 	private static final Codec codec=new XMLCodec();
 	private static final Ontology ontology=ContainerTerminalOntology.getInstance();
@@ -150,7 +158,7 @@ public class ContainerAgent extends Agent{
 	public Integer lengthOfProposeQueue=2;
 
 	public ContainerAgent(){
-		this.ownServiceType="handling-containers";
+		this.ownServiceType="container-handling";
 		this.ontologyRepresentation=new ContainerHolder();
 	}
 
@@ -171,7 +179,7 @@ public class ContainerAgent extends Agent{
 	public Boolean aquireContainer(TransportOrderChain targetContainer){ //eigentlicher Vorgang des Container-Aufnehmens
 		//		ontologyRepresentation.getAdministers().addConsists_of(targetContainer); //Container zu Auftragsbuch hinzufügen
 		if(this.changeTOCState(targetContainer,new Administered()) == null){
-			this.echoStatus("ERROR: war noch nicht in States",targetContainer);
+			this.echoStatus("ERROR: war noch nicht in States",targetContainer,ContainerAgent.LOGGING_ERROR);
 		}
 		//physikalische Aktionen
 
@@ -182,7 +190,7 @@ public class ContainerAgent extends Agent{
 		if(this.changeTOCState(targetContainer,new Administered()) instanceof Administered){ //Auftrag aus Liste von Bewerbungen streichen
 			return true;
 		}
-		this.echoStatus("ERROR: Ausschreibung, auf die ich mich beworben habe, nicht gefunden.",targetContainer);
+		this.echoStatus("ERROR: Ausschreibung, auf die ich mich beworben habe, nicht gefunden.",targetContainer,ContainerAgent.LOGGING_ERROR);
 		return false;
 	}
 
@@ -238,16 +246,20 @@ public class ContainerAgent extends Agent{
 	}
 
 	public List determineContractors(){
+		if( !(this instanceof TransportOrderOfferer)){
+			return null;
+		}
 		if(this.ontologyRepresentation.getContractors().isEmpty()){
-			this.ontologyRepresentation.setContractors(ContainerAgent.toAIDList(this.getAIDsFromDF(this.targetAgentServiceType)));
-
-			Behaviour DFsubscriber;
-			DFsubscriber=new prepareSubscribeToDF(this,this.ontologyRepresentation.getContractors(),this.targetDFAgentDescription);
-			this.addBehaviour(DFsubscriber);
+//			this.ontologyRepresentation.setContractors(ContainerAgent.toAIDList(this.getAIDsFromDF(this.targetAgentServiceType)));
 /*
+			DFsubscribePreparer=new prepareSubscribeToDF(this,this.ontologyRepresentation.getContractors(),this.targetDFAgentDescription);
+			this.addBehaviour(DFsubscribePreparer);
+*/
+			Behaviour DFsubscribePreparer;
+
 			try{
-				DFsubscriber=new prepareSubscribeToDF(this,this.getClass().getMethod("addToContractors",List.class),this.targetDFAgentDescription);
-				this.addBehaviour(DFsubscriber);
+				DFsubscribePreparer=new prepareSubscribeToDF(this,this.getClass().getMethod("addToContractors",List.class),this.targetDFAgentDescription);
+				this.addBehaviour(DFsubscribePreparer);
 			}catch(SecurityException e){
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -255,24 +267,35 @@ public class ContainerAgent extends Agent{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-*/
+
 		}
 		return this.ontologyRepresentation.getContractors();
 	}
 
 	public void echoStatus(String statusMessage){
-		statusMessage=this.getAID().getLocalName() + ": " + statusMessage;
-		this.addBehaviour(new sendLogMessage(this,statusMessage + "\n"));
+		this.echoStatus(statusMessage,ContainerAgent.LOGGING_INFORM);
+	}
 
-//		System.out.println(statusMessage);
+	public void echoStatus(String statusMessage,Integer severity){
+		statusMessage=this.getAID().getLocalName() + ": " + statusMessage;
+		if(severity <= ContainerAgent.GUI_LOGGING){
+			this.addBehaviour(new sendLogMessage(this,statusMessage + "\n"));
+		}
+		if(severity <= ContainerAgent.SYSTEM_LOGGING){
+			System.out.println(statusMessage);
+		}
 	}
 
 	public void echoStatus(String statusMessage,TransportOrderChain subject){
+		this.echoStatus(statusMessage,subject,ContainerAgent.LOGGING_INFORM);
+	}
+
+	public void echoStatus(String statusMessage,TransportOrderChain subject,Integer severity){
 		String additionalText="";
 		if(subject != null){
 			additionalText=" BIC=" + subject.getTransports().getBic_code();
 		}
-		this.echoStatus(statusMessage + additionalText);
+		this.echoStatus(statusMessage + additionalText,severity);
 	}
 
 	public AgentAction extractAction(ACLMessage msg){
@@ -296,8 +319,7 @@ public class ContainerAgent extends Agent{
 		msg.setLanguage(ContainerAgent.codec.getName());
 		msg.setOntology(ContainerAgent.ontology.getName());
 		try{
-			Action actionOp = new Action(getAID(), act);
-//			this.getContentManager().fillContent(msg, actionOp);
+			new Action(this.getAID(),act);
 
 			this.getContentManager().fillContent(msg,act);
 		}catch(UngroundedException e){
@@ -396,7 +418,7 @@ public class ContainerAgent extends Agent{
 		if(aids.length > 0){
 			return aids[0];
 		}else{
-			System.err.println("Kein Agent der Art vorhanden.");
+			this.echoStatus("Kein Agent der Art vorhanden.",ContainerAgent.LOGGING_NOTICE);
 		}
 		return null;
 	}
@@ -406,8 +428,7 @@ public class ContainerAgent extends Agent{
 		TransportOrder matchingOrder=this.findMatchingOrder(curTOC);
 		if(matchingOrder != null){ //passende TransportOrder gefunden
 			//			echoStatus("TransportOrder gefunden, die zu mir passt.",curTOC);
-			matchingOrder.getEnds_at().setConcrete_designation(this.getAID());
-			matchingOrder.getEnds_at().setType("concrete");
+			matchingOrder.setEnds_at(this.getMyselfDesignator());
 
 			act=new ProposeLoadOffer();
 			this.calculateEffort(matchingOrder);
@@ -415,7 +436,7 @@ public class ContainerAgent extends Agent{
 			// put this TOC in the queue of TOC proposed for
 			this.changeTOCState(curTOC,new ProposedFor(),true);
 		}else{
-			this.echoStatus("keine TransportOrder passt zu mir.",curTOC);
+			this.echoStatus("keine TransportOrder passt zu mir.",curTOC,ContainerAgent.LOGGING_NOTICE);
 		}
 		return act;
 	}
@@ -534,7 +555,7 @@ public class ContainerAgent extends Agent{
 				return true;
 			}
 		}
-		this.echoStatus("ERROR: Container NOT found to remove from BayMap.",load_offer);
+		this.echoStatus("ERROR: Container NOT found to remove from BayMap.",load_offer,ContainerAgent.LOGGING_ERROR);
 		return false;
 	}
 
@@ -582,5 +603,15 @@ public class ContainerAgent extends Agent{
 		}
 
 		this.determineContractors();
+	}
+
+	@Override
+	protected void takeDown(){
+		try{
+			DFService.deregister(this);
+		}catch(FIPAException e){
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

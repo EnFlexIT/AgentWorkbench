@@ -110,12 +110,12 @@ public class ShipAgent extends StaticContainerAgent implements TransportOrderOff
 				msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
 				ShipAgent.this.addBehaviour(new getPopulatedBayMap(this.myAgent,msg));
 			}else{
-				ShipAgent.this.echoStatus("Error");
+				ShipAgent.this.echoStatus("Error",ContainerAgent.LOGGING_ERROR);
 			}
 		}
 
 		@Override
-		protected Vector prepareRequests(ACLMessage request){
+		protected Vector<?> prepareRequests(ACLMessage request){
 			request.addReceiver(ShipAgent.this.RandomGenerator);
 			RequestRandomBayMap act=new RequestRandomBayMap();
 			//TODO hardcoded
@@ -156,18 +156,18 @@ public class ShipAgent extends StaticContainerAgent implements TransportOrderOff
 				//echoStatus("populatedBayMap recieved!"); 
 				ShipAgent.this.offerTransportOrder();
 			}else{
-				ShipAgent.this.echoStatus("Error");
+				ShipAgent.this.echoStatus("Error",ContainerAgent.LOGGING_ERROR);
 			}
 		}
 
 		@Override
-		protected Vector prepareRequests(ACLMessage request){
+		protected Vector<?> prepareRequests(ACLMessage request){
 			request.addReceiver(ShipAgent.this.RandomGenerator);
 			//BayMap aus Agent auslesen
 			RequestPopulatedBayMap act=new RequestPopulatedBayMap();
 			act.setPopulate_on(ShipAgent.this.ontologyRepresentation.getContains());
 			((ContainerAgent) this.myAgent).fillMessage(request,act);
-			Vector messages=new Vector();
+			Vector<ACLMessage> messages=new Vector<ACLMessage>();
 			messages.add(request);
 
 			return messages;

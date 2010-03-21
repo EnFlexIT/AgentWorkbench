@@ -20,9 +20,6 @@
  */
 package contmas.behaviours;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
 import jade.core.Agent;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
@@ -30,6 +27,10 @@ import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.lang.acl.ACLMessage;
 import jade.proto.SubscriptionInitiator;
 import jade.util.leap.List;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import contmas.agents.ContainerAgent;
 
 /**
@@ -42,26 +43,25 @@ public class subscribeToDF extends SubscriptionInitiator{
 	 * 
 	 */
 	private static final long serialVersionUID=5004964558751306936L;
-	private List resultStorage=null;
 	private Method callbackMethod=null;
 
 	public subscribeToDF(Agent a,ACLMessage msg,List resultStorage){
 		super(a,msg);
-		this.resultStorage=resultStorage;
 	}
-	
+
 	public subscribeToDF(Agent a,ACLMessage msg,Method methode){
 		super(a,msg);
-		callbackMethod=methode;
+		this.callbackMethod=methode;
 	}
 
 	@Override
 	protected void handleInform(ACLMessage inform){
 		try{
 			DFAgentDescription[] dfds=DFService.decodeNotification(inform.getContent());
-			/*
 			try{
-				callbackMethod.invoke(ContainerAgent.toAIDList(ContainerAgent.agentDescToAIDArray(dfds)));
+				this.callbackMethod.invoke(this.myAgent,ContainerAgent.toAIDList(ContainerAgent.agentDescToAIDArray(dfds)));
+
+//				callbackMethod.invoke();
 			}catch(IllegalArgumentException e){
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -72,8 +72,8 @@ public class subscribeToDF extends SubscriptionInitiator{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			*/
-			ContainerAgent.addToList(this.resultStorage,ContainerAgent.toAIDList(ContainerAgent.agentDescToAIDArray(dfds)));
+//			ContainerAgent.addToList(this.resultStorage,ContainerAgent.toAIDList(ContainerAgent.agentDescToAIDArray(dfds)));
+
 		}catch(FIPAException fe){
 			fe.printStackTrace();
 		}
