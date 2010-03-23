@@ -14,6 +14,8 @@
 
 package contmas.agents;
 
+import java.util.HashMap;
+
 import jade.content.AgentAction;
 import jade.content.Concept;
 import jade.content.ContentElement;
@@ -25,11 +27,14 @@ import jade.proto.AchieveREResponder;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
 import jade.wrapper.StaleProxyException;
+import contmas.behaviours.listenForOntRepRequest;
+import contmas.main.MatchAgentAction;
 import contmas.ontology.*;
 
 public class HarborMasterAgent extends ContainerAgent{
-	public class listenForEnroll extends AchieveREResponder{
+	private HashMap<String, ContainerHolder> activeContainerHolders=new HashMap();
 
+	public class listenForEnroll extends AchieveREResponder{
 		private static final long serialVersionUID= -4440040520781720185L;
 
 		public listenForEnroll(Agent a,MessageTemplate mt){
@@ -37,28 +42,26 @@ public class HarborMasterAgent extends ContainerAgent{
 		}
 
 		@Override
-		protected ACLMessage prepareResponse(ACLMessage request){
+		protected ACLMessage handleRequest(ACLMessage request){
+//			echoStatus("listenForEnroll - prepareResponse: "+request.getContent());
 			ACLMessage reply=request.createReply();
 
 			ContentElement content;
 			content=((ContainerAgent) this.myAgent).extractAction(request);
 			Concept action=((AgentAction) content);
-			if(action instanceof EnrollAtHarbor){
-				reply.setPerformative(ACLMessage.INFORM);
-				AssignHarborQuay act=new AssignHarborQuay();
-				Quay concept=new Quay();
-				concept.setLies_in(new Sea());
-				act.setAssigned_quay(concept);
-				((ContainerAgent) this.myAgent).fillMessage(reply,act);
-				return reply;
-			}else{
-				this.myAgent.putBack(request);
-				this.reset();
-				return null;
-//				reply.setPerformative(ACLMessage.NOT_UNDERSTOOD);
-//				echoStatus("listenForEnroll - NOT_UNDERSTOOD: "+request.getContent());
-			}
-//			return null;
+			reply.setPerformative(ACLMessage.INFORM);
+			AssignHarborQuay act=new AssignHarborQuay();
+			Quay concept=new Quay();
+			concept.setLies_in(new Sea());
+			act.setAssigned_quay(concept);
+			((ContainerAgent) this.myAgent).fillMessage(reply,act);
+			return reply;
+
+		}
+
+		@Override
+		protected ACLMessage prepareResultNotification(ACLMessage request,ACLMessage response){
+			return null;
 		}
 	}
 
@@ -73,25 +76,39 @@ public class HarborMasterAgent extends ContainerAgent{
 		}
 
 		@Override
-		protected ACLMessage prepareResponse(ACLMessage request){
+		protected ACLMessage handleRequest(ACLMessage request){
+//			echoStatus("offerCraneList - prepareResponse: "+request.getContent());
+
 			ACLMessage reply=request.createReply();
 			Concept content=((ContainerAgent) this.myAgent).extractAction(request);
-			if(content instanceof GetCraneList){
-				reply.setPerformative(ACLMessage.INFORM);
-				ProvideCraneList act=new ProvideCraneList();
-				//look for Cranes
-				act.setAvailable_cranes(ContainerAgent.toAIDList(HarborMasterAgent.this.getAIDsFromDF("craning")));
-				((ContainerAgent) this.myAgent).fillMessage(reply,act);
-				return reply;
-			}else{
-				this.myAgent.putBack(request);
-				this.reset();
-				return null;
-//				reply.setPerformative(ACLMessage.NOT_UNDERSTOOD);
-//				echoStatus("listenForEnroll - NOT_UNDERSTOOD: "+request.getContent());
-			}
-//			return null;
+			reply.setPerformative(ACLMessage.INFORM);
+			ProvideCraneList act=new ProvideCraneList();
+			//look for Cranes
+			act.setAvailable_cranes(ContainerAgent.toAIDList(HarborMasterAgent.this.getAIDsFromDF("craning")));
+			((ContainerAgent) this.myAgent).fillMessage(reply,act);
+			return reply;
+
 		}
+
+		@Override
+		protected ACLMessage prepareResultNotification(ACLMessage request,ACLMessage response){
+			return null;
+		}
+	}
+
+	public boolean isAlreadyCached(String lookForAgent){
+		if(activeContainerHolders.get(lookForAgent) != null){
+			return true;
+		}
+		return false;
+	}
+
+	public ContainerHolder getCachedOntRep(String lookForAgent){
+		return activeContainerHolders.get(lookForAgent);
+	}
+	
+	public void addCachedOntRep(String lookForAgent, ContainerHolder ontRep){
+		activeContainerHolders.put(lookForAgent,ontRep);
 	}
 
 	/**
@@ -106,12 +123,14 @@ public class HarborMasterAgent extends ContainerAgent{
 	@Override
 	protected void setup(){
 		super.setup();
+		//		echoStatus("HarborMaster gestartet (selbst)");
+
+		this.setupEnvironment();
 		//create filter for incoming messages
 		MessageTemplate mt=AchieveREResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_REQUEST);
-		//		echoStatus("HarborMaster gestartet (selbst)");
-		this.setupEnvironment();
-		this.addBehaviour(new listenForEnroll(this,mt));
-		this.addBehaviour(new offerCraneList(this,mt));
+		this.addBehaviour(new listenForEnroll(this,MessageTemplate.and(mt,new MessageTemplate(new MatchAgentAction(this,new EnrollAtHarbor())))));
+		this.addBehaviour(new offerCraneList(this,MessageTemplate.and(mt,new MessageTemplate(new MatchAgentAction(this,new GetCraneList())))));
+		this.addBehaviour(new listenForOntRepRequest(this,MessageTemplate.and(mt,new MessageTemplate(new MatchAgentAction(this,new RequestOntologyRepresentation())))));
 	}
 
 	protected void setupEnvironment(){

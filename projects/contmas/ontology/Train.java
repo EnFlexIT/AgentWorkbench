@@ -1,15 +1,14 @@
 package contmas.ontology;
 
+import jade.content.*;
+import jade.util.leap.*;
+import jade.core.*;
+
 /**
 * Protege name: Train
 * @author ontology bean generator
-* @version 2010/03/10, 15:08:52
+* @version 2010/03/21, 12:51:20
 */
-public class Train extends StaticContainerHolder{
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID= -4442263720145329225L;
+public class Train extends StaticContainerHolder{ 
 
 }

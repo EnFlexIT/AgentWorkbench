@@ -14,6 +14,7 @@
 
 package contmas.agents;
 
+
 import jade.core.AID;
 import jade.core.ServiceException;
 import jade.core.behaviours.Behaviour;
@@ -31,6 +32,7 @@ import jade.wrapper.AgentController;
 
 import javax.swing.JDesktopPane;
 
+import contmas.behaviours.getOntologyRepresentation;
 import contmas.behaviours.prepareSubscribeToDF;
 import contmas.main.AgentDesktop;
 import contmas.main.ControlGUI;
@@ -94,14 +96,15 @@ public class ControlGUIAgent extends GuiAgent{
 	*/
 	private static final long serialVersionUID= -7176620366025244274L;
 	private JDesktopPane canvas=null;
-	private ControlGUI myGui=null;
+	public ControlGUI myGui=null;
 	private TopicManagementHelper tmh;
 	private AID loggingTopic=null;
+	public AID harbourMaster=null;
 
 	@Override
 	protected void onGuiEvent(GuiEvent ev){
 		int command=ev.getType();
-		if(command == 1){
+		if(command == 1){ //create new ship
 			AgentContainer c=this.getContainerController();
 			try{
 				String name=ev.getParameter(0).toString();
@@ -123,7 +126,16 @@ public class ControlGUIAgent extends GuiAgent{
 				a.start();
 			}catch(Exception e){
 			}
-		}else if(command == -1){
+		}else if(command == 2){ // get ontologyRepresentation
+			harbourMaster=ContainerAgent.getFirstAIDFromDF("harbor-managing",this);
+
+			AID inQuestion=new AID();
+			inQuestion.setLocalName(ev.getParameter(0).toString());
+
+			addBehaviour(new getOntologyRepresentation(this,inQuestion));
+
+			writeLogMsg(ev.getParameter(0).toString());
+		}else if(command == -1){ // GUI closed
 			this.doDelete();
 			//System.exit(0);
 		}
@@ -230,5 +242,4 @@ public class ControlGUIAgent extends GuiAgent{
 	public void writeLogMsg(String content){
 		this.myGui.writeLogMsg(content);
 	}
-
 }

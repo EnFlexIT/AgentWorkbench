@@ -33,28 +33,30 @@ public class ActiveContainerAgent extends ContainerAgent{
 	public ActiveContainerAgent(String serviceType,ActiveContainerHolder ontologyRepresentation){
 		super(serviceType,ontologyRepresentation);
 	}
-
+	
+	//TODO implement recursive transitive domain matching
 	@Override
 	public Integer matchOrder(TransportOrder curTO){
 		Integer endMatch=super.matchOrder(curTO); //standard-Match: AID und ziel ist genau lebensraum
 		Integer startMatch= -1;
-
-		Domain startHabitat=curTO.getStarts_at().getAbstract_designation();
-		Domain endHabitat=curTO.getEnds_at().getAbstract_designation();
-		Iterator capabilities=((ActiveContainerHolder) this.ontologyRepresentation).getAllCapable_of();
-		while(capabilities.hasNext()){
-			Domain capability=(Domain) capabilities.next();
-			if(startHabitat.getClass() == capability.getClass()){ //containeragent is able to handle orders in this start-habitat-domain
-				//    			echoStatus("start passt");
-				startMatch=1;
+		if(endMatch>0){
+			Domain startHabitat=curTO.getStarts_at().getAbstract_designation();
+			Domain endHabitat=curTO.getEnds_at().getAbstract_designation();
+			Iterator capabilities=((ActiveContainerHolder) this.ontologyRepresentation).getAllCapable_of();
+			while(capabilities.hasNext()){
+				Domain capability=(Domain) capabilities.next();
+				if(startHabitat.getClass() == capability.getClass()){ //containeragent is able to handle orders in this start-habitat-domain
+					//    			echoStatus("start passt");
+					startMatch=1;
+				}
+				if((endMatch != 0) && (endMatch != 1) && (endHabitat.getClass() == capability.getClass())){ //containeragent is able to handle orders in this end-habitat-domain
+					//    			echoStatus("end passt (besser)");
+					endMatch=1;
+				}
 			}
-			if((endMatch != 0) && (endMatch != 1) && (endHabitat.getClass() == capability.getClass())){ //containeragent is able to handle orders in this end-habitat-domain
-				//    			echoStatus("end passt (besser)");
-				endMatch=1;
+			if((startMatch > -1) && (endMatch > -1)){ //order matcht
+				return startMatch + endMatch;
 			}
-		}
-		if((startMatch > -1) && (endMatch > -1)){ //order matcht
-			return startMatch + endMatch;
 		}
 		return -1; //order matcht nicht
 	}

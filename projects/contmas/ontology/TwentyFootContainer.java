@@ -1,15 +1,14 @@
 package contmas.ontology;
 
+import jade.content.*;
+import jade.util.leap.*;
+import jade.core.*;
+
 /**
 * Protege name: TwentyFootContainer
 * @author ontology bean generator
-* @version 2010/03/10, 15:08:52
+* @version 2010/03/21, 12:51:19
 */
-public class TwentyFootContainer extends Container{
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID= -8721952160670504427L;
+public class TwentyFootContainer extends Container{ 
 
 }

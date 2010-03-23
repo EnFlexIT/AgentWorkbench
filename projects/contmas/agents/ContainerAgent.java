@@ -30,18 +30,24 @@ import jade.core.behaviours.OneShotBehaviour;
 import jade.core.messaging.TopicManagementHelper;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
+import jade.domain.FIPANames;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import jade.proto.AchieveREResponder;
 import jade.util.leap.ArrayList;
 import jade.util.leap.Iterator;
 import jade.util.leap.List;
 
 import java.util.Random;
 
+import contmas.agents.HarborMasterAgent.listenForEnroll;
+import contmas.agents.HarborMasterAgent.offerCraneList;
 import contmas.behaviours.announceLoadOrders;
+import contmas.behaviours.listenForOntRepRequest;
 import contmas.behaviours.prepareSubscribeToDF;
+import contmas.main.MatchAgentAction;
 import contmas.ontology.*;
 
 /**
@@ -66,7 +72,11 @@ public class ContainerAgent extends Agent{
 			this.myCAgent=myCAgent;
 
 			this.logMessageText=logMessageText;
-			this.loggingTemplate=MessageTemplate.MatchTopic(myCAgent.loggingTopic);
+			if(loggingTopic!=null){
+				this.loggingTemplate=MessageTemplate.MatchTopic(myCAgent.loggingTopic);
+			} else {
+				this.block();
+			}
 		}
 
 		/* (non-Javadoc)
@@ -90,13 +100,16 @@ public class ContainerAgent extends Agent{
 	public static final Integer LOGGING_INFORM=4; //just information for the user, debugging
 	public static final Integer LOGGING_NOTICE=3; //failure in harbour processing, but no complecations with program
 	public static final Integer LOGGING_ERROR=2; //heavy error, possibly bug
+	public static final Integer LOGGING_DEBUG=1; //default setting for short time debugging
 	public static final Integer LOGGING_NONE=0; //No error logging
-	private static final Integer SYSTEM_LOGGING=ContainerAgent.LOGGING_ALL;
+	private static final Integer SYSTEM_LOGGING=ContainerAgent.LOGGING_NOTICE;
 	private static final Integer GUI_LOGGING=ContainerAgent.LOGGING_NOTICE;
+	public static final Integer LOGGING_DEFAULT=LOGGING_DEBUG; //default setting for short time debugging
+
 
 	private static final long serialVersionUID=202350816610492193L;
-	private static final Codec codec=new XMLCodec();
-	private static final Ontology ontology=ContainerTerminalOntology.getInstance();
+	public static final Codec codec=new XMLCodec();
+	public static final Ontology ontology=ContainerTerminalOntology.getInstance();
 
 	public static List addToList(List base,List addition){
 		Iterator it=addition.iterator();
@@ -130,7 +143,10 @@ public class ContainerAgent extends Agent{
 			return 2; //passt genau
 		}
 		if(inQuestion.getLies_in() != null){
-			return ContainerAgent.matchDomainsTransitive(inQuestion.getLies_in(),suspectedIn) + 1;
+			Integer match=ContainerAgent.matchDomainsTransitive(inQuestion.getLies_in(),suspectedIn);
+			if(match>-1){
+				return  match + 1;
+			}
 		}
 		return -1; //passt gar nicht
 	}
@@ -154,6 +170,10 @@ public class ContainerAgent extends Agent{
 	protected String ownServiceType;
 
 	protected ContainerHolder ontologyRepresentation;
+
+	public ContainerHolder getOntologyRepresentation(){
+		return this.ontologyRepresentation;
+	}
 
 	public Integer lengthOfProposeQueue=2;
 
@@ -272,8 +292,9 @@ public class ContainerAgent extends Agent{
 		return this.ontologyRepresentation.getContractors();
 	}
 
+	@Deprecated
 	public void echoStatus(String statusMessage){
-		this.echoStatus(statusMessage,ContainerAgent.LOGGING_INFORM);
+		this.echoStatus(statusMessage,ContainerAgent.LOGGING_DEFAULT);
 	}
 
 	public void echoStatus(String statusMessage,Integer severity){
@@ -286,6 +307,7 @@ public class ContainerAgent extends Agent{
 		}
 	}
 
+	@Deprecated
 	public void echoStatus(String statusMessage,TransportOrderChain subject){
 		this.echoStatus(statusMessage,subject,ContainerAgent.LOGGING_INFORM);
 	}
@@ -299,9 +321,13 @@ public class ContainerAgent extends Agent{
 	}
 
 	public AgentAction extractAction(ACLMessage msg){
+		return extractAction(this,msg);
+	}
+	
+	public static AgentAction extractAction(Agent containerAgent,ACLMessage msg){
 		AgentAction act=null;
 		try{
-			act=(AgentAction) this.getContentManager().extractContent(msg);
+			act=(AgentAction) containerAgent.getContentManager().extractContent(msg);
 		}catch(UngroundedException e){
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -315,23 +341,9 @@ public class ContainerAgent extends Agent{
 		return act;
 	}
 
-	public void fillMessage(ACLMessage msg,AgentAction act){
-		msg.setLanguage(ContainerAgent.codec.getName());
-		msg.setOntology(ContainerAgent.ontology.getName());
-		try{
-			new Action(this.getAID(),act);
+	public void fillMessage(ACLMessage msg,AgentAction agact){
+		ContainerAgent.fillMessage(msg,agact,this);
 
-			this.getContentManager().fillContent(msg,act);
-		}catch(UngroundedException e){
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}catch(CodecException e){
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}catch(OntologyException e){
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 	public TransportOrder findMatchingOrder(TransportOrderChain haystack){
@@ -348,15 +360,29 @@ public class ContainerAgent extends Agent{
 			//			echoStatus("Ausschreibung ausprobieren.");
 
 			TransportOrder curTO=(TransportOrder) toc.next();
-			if( !matchIncoming && this.matchAID(curTO.getStarts_at())){
+			if( !matchIncoming){ 
+				if(this.matchAID(curTO.getStarts_at())){//exactly from this agent
+					return curTO;
+				} else {
+					continue;
+				}
+			}
+			
+			/*
+			if( matchIncoming && this.matchAID(curTO.getEnds_at())){ //exactly for this agent
 				return curTO;
 			}
-			matchRating=this.matchOrder(curTO);
-			if((matchRating > -1) && matchIncoming){
-				if((bestMatchRating == -1) || (bestMatchRating > matchRating)){
-					matchingOrder=curTO;
-					bestMatchRating=matchRating;
-					//	    			echoStatus("Ausschreibung passt zu mir! (besser?)");
+			*/
+
+			if(matchIncoming){
+				matchRating=this.matchOrder(curTO);
+//				echoStatus("Order Ends_at "+ curTO.getEnds_at().getType()+" "+curTO.getEnds_at().getAbstract_designation()+" matcht="+matchRating,haystack,LOGGING_INFORM;
+				if((matchRating > -1)){
+					if((bestMatchRating == -1) || (bestMatchRating > matchRating)){
+						matchingOrder=curTO;
+						bestMatchRating=matchRating;
+						//	    			echoStatus("Ausschreibung passt zu mir! (besser?)");
+					}
 				}
 			}
 		}
@@ -371,27 +397,42 @@ public class ContainerAgent extends Agent{
 	}
 
 	public DFAgentDescription[] getAgentsFromDF(DFAgentDescription dfd){
+		return getAgentsFromDF(dfd,this);
+	}
+	
+	public static DFAgentDescription[] getAgentsFromDF(DFAgentDescription dfd,Agent searcher){
 		try{
-			DFAgentDescription[] result=DFService.search(this,dfd);
+			DFAgentDescription[] result=DFService.search(searcher,dfd);
 			return result;
 		}catch(FIPAException e){
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
-
 	}
 
+	public static DFAgentDescription[] getAgentsFromDF(String serviceType,Agent searcher){
+		DFAgentDescription dfd=new DFAgentDescription();
+		ServiceDescription sd=new ServiceDescription();
+		sd.setType(serviceType);
+		dfd.addServices(sd);
+		return getAgentsFromDF(dfd,searcher);
+	}
+	
 	public DFAgentDescription[] getAgentsFromDF(String serviceType){
 		DFAgentDescription dfd=new DFAgentDescription();
 		ServiceDescription sd=new ServiceDescription();
 		sd.setType(serviceType);
 		dfd.addServices(sd);
-		return this.getAgentsFromDF(dfd);
+		return getAgentsFromDF(serviceType,this);
 	}
 
 	public AID[] getAIDsFromDF(String serviceType){
-		DFAgentDescription[] agents=this.getAgentsFromDF(serviceType);
+		return getAIDsFromDF(serviceType,this);
+	}
+	
+	public static AID[] getAIDsFromDF(String serviceType,Agent searcher){
+		DFAgentDescription[] agents=getAgentsFromDF(serviceType,searcher);
 		return ContainerAgent.agentDescToAIDArray(agents);
 	}
 
@@ -414,11 +455,17 @@ public class ContainerAgent extends Agent{
 	}
 
 	public AID getFirstAIDFromDF(String serviceType){
-		AID[] aids=this.getAIDsFromDF(serviceType);
+		return getFirstAIDFromDF(serviceType,this);
+	}
+	
+	public static AID getFirstAIDFromDF(String serviceType,Agent searcher){
+		AID[] aids=getAIDsFromDF(serviceType,searcher);
 		if(aids.length > 0){
 			return aids[0];
 		}else{
-			this.echoStatus("Kein Agent der Art vorhanden.",ContainerAgent.LOGGING_NOTICE);
+			System.out.println("Kein Agent der Art vorhanden.");
+
+//			searcher.echoStatus("Kein Agent der Art vorhanden.",ContainerAgent.LOGGING_NOTICE);
 		}
 		return null;
 	}
@@ -427,8 +474,9 @@ public class ContainerAgent extends Agent{
 		ProposeLoadOffer act=null;
 		TransportOrder matchingOrder=this.findMatchingOrder(curTOC);
 		if(matchingOrder != null){ //passende TransportOrder gefunden
-			//			echoStatus("TransportOrder gefunden, die zu mir passt.",curTOC);
+//			echoStatus("EndsAt-Designator vorher:"+matchingOrder.getEnds_at().getType()+" "+matchingOrder.getEnds_at().getAbstract_designation(),curTOC,LOGGING_INFORM);
 			matchingOrder.setEnds_at(this.getMyselfDesignator());
+//			echoStatus("EndsAt-Designator nachher:"+matchingOrder.getEnds_at().getType()+" "+matchingOrder.getEnds_at().getAbstract_designation(),curTOC,LOGGING_INFORM);
 
 			act=new ProposeLoadOffer();
 			this.calculateEffort(matchingOrder);
@@ -491,9 +539,12 @@ public class ContainerAgent extends Agent{
 	public Integer matchOrder(TransportOrder curTO){
 		Designator end=curTO.getEnds_at();
 		if(this.matchAID(end)){ //Genau für mich bestimmt
+//			echoStatus("Genau für mich bestimmt",LOGGING_INFORM);
 			return 0;
-		}else{
+		}else if(end.getType().equals("abstract")){
 			return ContainerAgent.matchDomainsTransitive(this.ontologyRepresentation.getLives_in(),end.getAbstract_designation());
+		} else{
+			return -1;
 		}
 	}
 
@@ -577,6 +628,7 @@ public class ContainerAgent extends Agent{
 		this.getContentManager().registerOntology(ContainerAgent.ontology);
 
 		//register self at DF
+		echoStatus(this.ownServiceType,LOGGING_INFORM);
 		this.register(this.ownServiceType);
 
 		if(this.ontologyRepresentation.getContains() == null){
@@ -603,6 +655,8 @@ public class ContainerAgent extends Agent{
 		}
 
 		this.determineContractors();
+		MessageTemplate mt=AchieveREResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_REQUEST);
+		this.addBehaviour(new listenForOntRepRequest(this,MessageTemplate.and(mt,new MessageTemplate(new MatchAgentAction(this,new RequestOntologyRepresentation())))));
 	}
 
 	@Override
@@ -610,6 +664,35 @@ public class ContainerAgent extends Agent{
 		try{
 			DFService.deregister(this);
 		}catch(FIPAException e){
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	public static void enableForCommunication(Agent toBeEnabled){
+		toBeEnabled.getContentManager().registerLanguage(ContainerAgent.codec);
+		toBeEnabled.getContentManager().registerOntology(ContainerAgent.ontology);
+	}
+
+	/**
+	 * @param containerAgent
+	 * @param msg
+	 * @param agact
+	 */
+	public static void fillMessage(ACLMessage msg,AgentAction agact,Agent containerAgent){
+		msg.setLanguage(ContainerAgent.codec.getName());
+		msg.setOntology(ContainerAgent.ontology.getName());
+		try{
+			Action act=new Action(containerAgent.getAID(),agact);
+//			this.getContentManager().fillContent(msg,act);
+
+			containerAgent.getContentManager().fillContent(msg,agact);
+		}catch(UngroundedException e){
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}catch(CodecException e){
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}catch(OntologyException e){
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

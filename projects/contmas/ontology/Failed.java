@@ -1,15 +1,14 @@
 package contmas.ontology;
 
+import jade.content.*;
+import jade.util.leap.*;
+import jade.core.*;
+
 /**
 * Protege name: Failed
 * @author ontology bean generator
-* @version 2010/03/10, 15:08:52
+* @version 2010/03/21, 12:51:19
 */
-public class Failed extends TransportOrderChainState{
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID=6923352660568003622L;
+public class Failed extends TransportOrderChainState{ 
 
 }

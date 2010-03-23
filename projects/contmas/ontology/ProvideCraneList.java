@@ -1,50 +1,36 @@
 package contmas.ontology;
 
-import jade.content.AgentAction;
-import jade.core.AID;
-import jade.util.leap.ArrayList;
-import jade.util.leap.Iterator;
-import jade.util.leap.List;
+
+import jade.content.*;
+import jade.util.leap.*;
+import jade.core.*;
 
 /**
 * Protege name: ProvideCraneList
 * @author ontology bean generator
-* @version 2010/03/10, 15:08:52
+* @version 2010/03/21, 12:51:19
 */
-public class ProvideCraneList implements AgentAction{
+public class ProvideCraneList implements AgentAction {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID= -1275201910898305533L;
-	/**
-	* Protege name: available_cranes
-	*/
-	private List available_cranes=new ArrayList();
-
-	public void addAvailable_cranes(AID elem){
-		this.available_cranes.add(elem);
-	}
-
-	public void clearAllAvailable_cranes(){
-		this.available_cranes.clear();
-	}
-
-	public Iterator getAllAvailable_cranes(){
-		return this.available_cranes.iterator();
-	}
-
-	public List getAvailable_cranes(){
-		return this.available_cranes;
-	}
-
-	public boolean removeAvailable_cranes(AID elem){
-		boolean result=this.available_cranes.remove(elem);
-		return result;
-	}
-
-	public void setAvailable_cranes(List l){
-		this.available_cranes=l;
-	}
+   /**
+* Protege name: available_cranes
+   */
+   private List available_cranes = new ArrayList();
+   public void addAvailable_cranes(AID elem) { 
+     List oldList = this.available_cranes;
+     available_cranes.add(elem);
+   }
+   public boolean removeAvailable_cranes(AID elem) {
+     List oldList = this.available_cranes;
+     boolean result = available_cranes.remove(elem);
+     return result;
+   }
+   public void clearAllAvailable_cranes() {
+     List oldList = this.available_cranes;
+     available_cranes.clear();
+   }
+   public Iterator getAllAvailable_cranes() {return available_cranes.iterator(); }
+   public List getAvailable_cranes() {return available_cranes; }
+   public void setAvailable_cranes(List l) {available_cranes = l; }
 
 }

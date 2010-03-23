@@ -17,6 +17,8 @@ package contmas.main;
 import jade.core.AID;
 import jade.gui.AgentTree;
 import jade.gui.GuiEvent;
+import jade.gui.AgentTree.AgentNode;
+import jade.gui.AgentTree.Node;
 import jade.util.leap.List;
 
 import java.awt.Dimension;
@@ -31,8 +33,12 @@ import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
+import javax.swing.tree.TreePath;
 
 import contmas.agents.ControlGUIAgent;
+import javax.swing.JButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 public class ControlGUI extends JInternalFrame implements ActionListener{
 
@@ -48,16 +54,20 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JLabel ShipLabelName=null;
 	private JTextField TFShipName=null;
 	private ControlGUIAgent myAgent;
-	private JLabel jLabel=null;
-	private JLabel jLabel1=null;
+	private JLabel Heading=null;
+	private JLabel ShipLabelLength=null;
 	private JTextField TFShipLength=null;
 	private JDesktopPane canvas=null;
 	private JTextArea console=null;
-	private JScrollPane jScrollPane=null;
+	private JScrollPane consoleScrollPane=null;
 	private JScrollPane AgentTreeScrollPane=null;
 	private AgentTree AT=null;
-	private JScrollPane jScrollPane1=null;
-	private JTextArea jTextArea=null;
+	private JScrollPane systemConsoleScrollPane=null;
+	private JTextArea systemConsole=null;
+	private JButton ButtonGetOntRep=null;
+	private JButton ButtonSetOntRep=null;
+	private JScrollPane ontRepScrollPane=null;
+	private JTextArea ontRep=null;
 
 	/**
 	 * This is the default constructor
@@ -70,13 +80,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 
 	public void actionPerformed(ActionEvent ae){
 		if(ae.getSource() == this.ButtonCreateShip){
-			GuiEvent ge=new GuiEvent(this,1);
-			ge.addParameter(this.TFShipName.getText());
-			ge.addParameter(this.TFShipX.getText());
-			ge.addParameter(this.TFShipY.getText());
-			ge.addParameter(this.TFShipZ.getText());
-			ge.addParameter(this.TFShipLength.getText());
-			this.myAgent.postGuiEvent(ge);
+
 		}
 	}
 
@@ -96,7 +100,18 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 
 			this.ButtonCreateShip.setBounds(new Rectangle(5,185,196,20));
 			this.ButtonCreateShip.setText("Start ShipAgent");
-			this.ButtonCreateShip.addActionListener(this);
+
+			ButtonCreateShip.addActionListener(new ActionListener(){
+				public void actionPerformed(ActionEvent e){
+					GuiEvent ge=new GuiEvent(this,1);
+					ge.addParameter(TFShipName.getText());
+					ge.addParameter(TFShipX.getText());
+					ge.addParameter(TFShipY.getText());
+					ge.addParameter(TFShipZ.getText());
+					ge.addParameter(TFShipLength.getText());
+					myAgent.postGuiEvent(ge);
+				}
+			});
 		}
 		return this.ButtonCreateShip;
 	}
@@ -112,13 +127,13 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	 */
 	private JPanel getJContentPane(){
 		if(this.jContentPane == null){
-			this.jLabel1=new JLabel();
-			this.jLabel1.setText("Length");
-			this.jLabel1.setBounds(new Rectangle(5,158,55,16));
-			this.jLabel=new JLabel();
-			this.jLabel.setFont(new Font("Dialog",Font.BOLD,14));
-			this.jLabel.setBounds(new Rectangle(5,5,196,15));
-			this.jLabel.setText("Create new Ship");
+			this.ShipLabelLength=new JLabel();
+			this.ShipLabelLength.setText("Length");
+			this.ShipLabelLength.setBounds(new Rectangle(5,158,55,16));
+			this.Heading=new JLabel();
+			this.Heading.setFont(new Font("Dialog",Font.BOLD,14));
+			this.Heading.setBounds(new Rectangle(5,5,196,15));
+			this.Heading.setText("Create new Ship");
 			this.ShipLabelName=new JLabel();
 			this.ShipLabelName.setText("Name");
 			this.ShipLabelName.setBounds(new Rectangle(5,38,55,16));
@@ -133,29 +148,32 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 			this.ShipLabelX.setBounds(new Rectangle(5,68,55,16));
 			this.jContentPane=new JPanel();
 			this.jContentPane.setLayout(null);
+			jContentPane.add(getTFShipName(),null);
 			this.jContentPane.add(this.getTFShipX(),null);
-			this.jContentPane.add(this.getButtonCreateShip(),null);
 			this.jContentPane.add(this.ShipLabelX,null);
 			this.jContentPane.add(this.ShipLabelY,null);
 			this.jContentPane.add(this.getTFShipY(),null);
 			this.jContentPane.add(this.getTFShipZ(),null);
 			this.jContentPane.add(this.ShipLabelZ,null);
 			this.jContentPane.add(this.ShipLabelName,null);
-			this.jContentPane.add(this.getTFShipName(),null);
-			this.jContentPane.add(this.jLabel,null);
-			this.jContentPane.add(this.jLabel1,null);
+			this.jContentPane.add(this.Heading,null);
+			this.jContentPane.add(this.ShipLabelLength,null);
 			this.jContentPane.add(this.getTFShipLength(),null);
-			this.jContentPane.add(this.getJScrollPane(),null);
+			jContentPane.add(getButtonCreateShip(),null);
+			this.jContentPane.add(this.getConsoleScrollPane(),null);
 			this.jContentPane.add(this.getAgentTreeScrollPane(),null);
-			this.jContentPane.add(this.getJScrollPane1(),null);
-			this.jContentPane.add(this.jLabel1,null);
-			this.jContentPane.add(this.jLabel,null);
+			this.jContentPane.add(this.getSystemConsoleScrollPane(),null);
+			jContentPane.add(getButtonGetOntRep(),null);
+			jContentPane.add(getButtonSetOntRep(),null);
+			jContentPane.add(getOntRepScrollPane(),null);
+			this.jContentPane.add(this.ShipLabelLength,null);
+			this.jContentPane.add(this.Heading,null);
 			this.jContentPane.add(this.ShipLabelName,null);
 			this.jContentPane.add(this.ShipLabelZ,null);
 			this.jContentPane.add(this.ShipLabelY,null);
 			this.jContentPane.add(this.ShipLabelX,null);
-			this.jContentPane.add(this.jLabel1,null);
-			this.jContentPane.add(this.jLabel,null);
+			this.jContentPane.add(this.ShipLabelLength,null);
+			this.jContentPane.add(this.Heading,null);
 			this.jContentPane.add(this.ShipLabelName,null);
 			this.jContentPane.add(this.ShipLabelZ,null);
 			this.jContentPane.add(this.ShipLabelX,null);
@@ -241,7 +259,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	 * @return void
 	 */
 	private void initialize(){
-		this.setSize(449,511);
+		this.setSize(777,511);
 		this.setClosable(true);
 
 		this.setMaximizable(true);
@@ -257,7 +275,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 		 * this.addWindowListener(new WindowAdapter() { public void
 		 * windowClosing(WindowEvent e) { shutDown(); } });
 		 */
-		new setConsole(this.getJTextArea());
+//		new setConsole(this.getSystemConsole());
 	}
 
 	void shutDown(){
@@ -308,19 +326,35 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 
 		SwingUtilities.invokeLater(addIt);
 	}
+	/**
+	 * @param content
+	 */
+	public void printMessageContent(final String content){
+		Runnable addIt=new Runnable(){
+			public void run(){
+				Document doc=ControlGUI.this.getOntRep().getDocument();
+				try{
+					doc.insertString(doc.getLength(),content,null);
+				}catch(BadLocationException ex){
+					ex.printStackTrace();
+				}
+			}
+		};
+		SwingUtilities.invokeLater(addIt);
+	}
 
 	/**
-	 * This method initializes jScrollPane	
+	 * This method initializes consoleScrollPane	
 	 * 	
 	 * @return javax.swing.JScrollPane	
 	 */
-	private JScrollPane getJScrollPane(){
-		if(this.jScrollPane == null){
-			this.jScrollPane=new JScrollPane();
-			this.jScrollPane.setBounds(new Rectangle(5,208,429,115));
-			this.jScrollPane.setViewportView(this.getConsole());
+	private JScrollPane getConsoleScrollPane(){
+		if(this.consoleScrollPane == null){
+			this.consoleScrollPane=new JScrollPane();
+			this.consoleScrollPane.setBounds(new Rectangle(5,208,429,115));
+			this.consoleScrollPane.setViewportView(this.getConsole());
 		}
-		return this.jScrollPane;
+		return this.consoleScrollPane;
 	}
 
 	/**
@@ -366,29 +400,101 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	}
 
 	/**
-	 * This method initializes jScrollPane1	
+	 * This method initializes systemConsoleScrollPane	
 	 * 	
 	 * @return javax.swing.JScrollPane	
 	 */
-	private JScrollPane getJScrollPane1(){
-		if(this.jScrollPane1 == null){
-			this.jScrollPane1=new JScrollPane();
-			this.jScrollPane1.setBounds(new Rectangle(9,335,422,135));
-			this.jScrollPane1.setViewportView(this.getJTextArea());
+	private JScrollPane getSystemConsoleScrollPane(){
+		if(this.systemConsoleScrollPane == null){
+			this.systemConsoleScrollPane=new JScrollPane();
+			this.systemConsoleScrollPane.setBounds(new Rectangle(9,335,422,135));
+			this.systemConsoleScrollPane.setViewportView(this.getSystemConsole());
 		}
-		return this.jScrollPane1;
+		return this.systemConsoleScrollPane;
 	}
 
 	/**
-	 * This method initializes jTextArea	
+	 * This method initializes systemConsole	
 	 * 	
 	 * @return javax.swing.JTextArea	
 	 */
-	private JTextArea getJTextArea(){
-		if(this.jTextArea == null){
-			this.jTextArea=new JTextArea();
+	private JTextArea getSystemConsole(){
+		if(this.systemConsole == null){
+			this.systemConsole=new JTextArea();
+			systemConsole.setEditable(false);
 		}
-		return this.jTextArea;
+		return this.systemConsole;
+	}
+
+	/**
+	 * This method initializes ButtonGetOntRep	
+	 * 	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getButtonGetOntRep(){
+		if(ButtonGetOntRep == null){
+			ButtonGetOntRep=new JButton();
+			ButtonGetOntRep.setBounds(new Rectangle(443,10,314,23));
+			ButtonGetOntRep.setText("> Get ontologyRepresentation");
+			ButtonGetOntRep.addActionListener(new ActionListener(){
+				public void actionPerformed(ActionEvent e){
+					TreePath paths[];
+					paths=AT.tree.getSelectionPaths();
+					if(paths != null){
+						for(int i=0;i < paths.length;i++){
+							Node now=(Node) (paths[i].getLastPathComponent());
+							if(now instanceof AgentNode){
+								GuiEvent ge=new GuiEvent(this,2);
+								ge.addParameter(((AgentNode) now).getName());
+								myAgent.postGuiEvent(ge);
+							}
+						}
+					}
+				}
+			});
+		}
+		return ButtonGetOntRep;
+	}
+
+	/**
+	 * This method initializes ButtonSetOntRep	
+	 * 	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getButtonSetOntRep(){
+		if(ButtonSetOntRep == null){
+			ButtonSetOntRep=new JButton();
+			ButtonSetOntRep.setBounds(new Rectangle(442,239,309,26));
+			ButtonSetOntRep.setText("< Set ontologyRepresentation");
+		}
+		return ButtonSetOntRep;
+	}
+
+	/**
+	 * This method initializes ontRepScrollPane	
+	 * 	
+	 * @return javax.swing.JScrollPane	
+	 */
+	private JScrollPane getOntRepScrollPane(){
+		if(ontRepScrollPane == null){
+			ontRepScrollPane=new JScrollPane();
+			ontRepScrollPane.setBounds(new Rectangle(447,40,305,193));
+			ontRepScrollPane.setViewportView(getOntRep());
+		}
+		return ontRepScrollPane;
+	}
+
+	/**
+	 * This method initializes ontRep	
+	 * 	
+	 * @return javax.swing.JTextArea	
+	 */
+	private JTextArea getOntRep(){
+		if(ontRep == null){
+			ontRep=new JTextArea();
+			ontRep.setEditable(false);
+		}
+		return ontRep;
 	}
 
 } //  @jve:decl-index=0:visual-constraint="30,15"

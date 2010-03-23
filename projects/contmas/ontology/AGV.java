@@ -1,15 +1,14 @@
 package contmas.ontology;
 
+import jade.content.*;
+import jade.util.leap.*;
+import jade.core.*;
+
 /**
 * Protege name: AGV
 * @author ontology bean generator
-* @version 2010/03/10, 15:08:52
+* @version 2010/03/21, 12:51:20
 */
-public class AGV extends PassiveContainerHolder{
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID=4915961032430969428L;
+public class AGV extends PassiveContainerHolder{ 
 
 }

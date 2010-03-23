@@ -1,4 +1,4 @@
-; Thu Mar 11 10:36:08 CET 2010
+; Mon Mar 22 12:55:30 NZDT 2010
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -6,11 +6,11 @@
 ([BROWSER_SLOT_NAMES] of  Property_List
 
 	(properties
-		[Container-Ontologie-OWL_ProjectKB_Instance_0]
-		[Container-Ontologie-OWL_ProjectKB_Instance_10001]
-		[Container-Ontologie-OWL_ProjectKB_Instance_10002]
-		[Container-Ontologie-OWL_ProjectKB_Instance_10003]
-		[Container-Ontologie-OWL_ProjectKB_Instance_10004]))
+		[Container-Ontologie-OWL_ProjectKB_Instance_10060]
+		[Container-Ontologie-OWL_ProjectKB_Instance_10061]
+		[Container-Ontologie-OWL_ProjectKB_Instance_10062]
+		[Container-Ontologie-OWL_ProjectKB_Instance_10063]
+		[Container-Ontologie-OWL_ProjectKB_Instance_10064]))
 
 ([CLSES_TAB] of  Widget
 
@@ -18,11 +18,6 @@
 	(label "Classes")
 	(property_list [Instance_47])
 	(widget_class_name "edu.stanford.smi.protege.widget.ClsesTab"))
-
-([Container-Ontologie-OWL_ProjectKB_Instance_0] of  String
-
-	(name "owl:Thing")
-	(string_value "%3ANAME"))
 
 ([Container-Ontologie-OWL_ProjectKB_Instance_1] of  Widget
 
@@ -33,34 +28,39 @@
 ([Container-Ontologie-OWL_ProjectKB_Instance_10] of  Property_List
 )
 
-([Container-Ontologie-OWL_ProjectKB_Instance_10001] of  String
+([Container-Ontologie-OWL_ProjectKB_Instance_10060] of  String
+
+	(name "owl:Thing")
+	(string_value "%3ANAME"))
+
+([Container-Ontologie-OWL_ProjectKB_Instance_10061] of  String
 
 	(name ":PAL-CONSTRAINT")
 	(string_value "%3APAL-NAME"))
 
-([Container-Ontologie-OWL_ProjectKB_Instance_10002] of  String
+([Container-Ontologie-OWL_ProjectKB_Instance_10062] of  String
 
 	(name ":INSTANCE-ANNOTATION")
 	(string_value "%3AANNOTATION-TEXT"))
 
-([Container-Ontologie-OWL_ProjectKB_Instance_10003] of  String
+([Container-Ontologie-OWL_ProjectKB_Instance_10063] of  String
 
 	(name ":META-CLASS")
 	(string_value "%3ANAME"))
 
-([Container-Ontologie-OWL_ProjectKB_Instance_10004] of  String
+([Container-Ontologie-OWL_ProjectKB_Instance_10064] of  String
 
 	(name "owl:Class")
 	(string_value "%3ANAME"))
 
-([Container-Ontologie-OWL_ProjectKB_Instance_10005] of  Map_Entry
+([Container-Ontologie-OWL_ProjectKB_Instance_10065] of  Map_Entry
 
 	(key "add_name_on_instance_form")
 	(key_class "java.lang.String")
 	(value "false")
 	(value_class "java.lang.String"))
 
-([Container-Ontologie-OWL_ProjectKB_Instance_10006] of  Map_Entry
+([Container-Ontologie-OWL_ProjectKB_Instance_10066] of  Map_Entry
 
 	(key "change_tracking_active")
 	(key_class "java.lang.String")
@@ -277,8 +277,8 @@
 ([Container-Ontologie-OWL_ProjectKB_Instance_58] of  Map
 
 	(entries
-		[Container-Ontologie-OWL_ProjectKB_Instance_10005]
-		[Container-Ontologie-OWL_ProjectKB_Instance_10006]))
+		[Container-Ontologie-OWL_ProjectKB_Instance_10065]
+		[Container-Ontologie-OWL_ProjectKB_Instance_10066]))
 
 ([Container-Ontologie-OWL_ProjectKB_Instance_6] of  Property_List
 )
@@ -1095,7 +1095,7 @@
 ([KB_444675_Instance_0] of  String
 
 	(name "SwitchableClassDefinitionType")
-	(string_value "edu.stanford.smi.protegex.owl.ui.cls.LogicClassDefinitionWidgetType"))
+	(string_value "edu.stanford.smi.protegex.owl.ui.cls.PropertiesClassDefinitionWidget"))
 
 ([KB_465546_Instance_567] of  Widget
 

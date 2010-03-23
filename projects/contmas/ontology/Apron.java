@@ -1,15 +1,14 @@
 package contmas.ontology;
 
+import jade.content.*;
+import jade.util.leap.*;
+import jade.core.*;
+
 /**
 * Protege name: Apron
 * @author ontology bean generator
-* @version 2010/03/10, 15:08:52
+* @version 2010/03/21, 12:51:20
 */
-public class Apron extends StaticContainerHolder{
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID= -6610467838176982975L;
+public class Apron extends StaticContainerHolder{ 
 
 }

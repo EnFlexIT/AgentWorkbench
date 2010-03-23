@@ -268,7 +268,7 @@ public class ShipAgent extends StaticContainerAgent implements TransportOrderOff
 
 	public ShipAgent(Ship ontologyRepresentation){
 		super("long-term-transporting",ontologyRepresentation);
-		this.targetAbstractDomain=new ApronArea();
+		this.targetAbstractDomain=new Rail();
 	}
 
 	@Override

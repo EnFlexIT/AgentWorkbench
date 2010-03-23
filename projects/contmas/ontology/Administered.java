@@ -1,15 +1,14 @@
 package contmas.ontology;
 
+import jade.content.*;
+import jade.util.leap.*;
+import jade.core.*;
+
 /**
 * Protege name: Administered
 * @author ontology bean generator
-* @version 2010/03/10, 15:08:52
+* @version 2010/03/21, 12:51:19
 */
-public class Administered extends TransportOrderChainState{
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID=897694671776289004L;
+public class Administered extends TransportOrderChainState{ 
 
 }
