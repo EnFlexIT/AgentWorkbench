@@ -16,7 +16,7 @@ package contmas.agents;
 
 import contmas.ontology.StaticContainerHolder;
 
-public class StaticContainerAgent extends ContainerAgent{
+public class StaticContainerAgent extends ContainerHolderAgent{
 
 	/**
 	 * 

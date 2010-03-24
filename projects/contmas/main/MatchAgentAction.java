@@ -20,25 +20,30 @@
  */
 package contmas.main;
 
-import contmas.agents.ContainerAgent;
 import jade.content.AgentAction;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate.MatchExpression;
+import contmas.agents.ContainerAgent;
 
 /**
  * @author Hanno - Felix Wagner
  *
  */
 public class MatchAgentAction implements MatchExpression{
-	
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID=4280898408420445259L;
 	AgentAction actionToMatch;
 	Agent myAgent;
+
 	/**
 	 * 
 	 */
 	public MatchAgentAction(Agent myAgent,AgentAction action){
-		actionToMatch=action;
+		this.actionToMatch=action;
 		this.myAgent=myAgent;
 	}
 
@@ -47,8 +52,8 @@ public class MatchAgentAction implements MatchExpression{
 	 */
 	@Override
 	public boolean match(ACLMessage msg){
-		AgentAction Content = ContainerAgent.extractAction(myAgent,msg);
-		if(actionToMatch.getClass().isInstance(Content)){
+		AgentAction Content=ContainerAgent.extractAction(this.myAgent,msg);
+		if(this.actionToMatch.getClass().isInstance(Content)){
 			return true;
 		}
 		return false;

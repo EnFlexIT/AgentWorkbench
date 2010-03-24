@@ -26,56 +26,82 @@ import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.proto.AchieveREInitiator;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Vector;
 
 import contmas.agents.ContainerAgent;
 import contmas.agents.ControlGUIAgent;
 import contmas.agents.HarborMasterAgent;
-import contmas.ontology.ProvideOntologyRepresentation;
 import contmas.ontology.RequestOntologyRepresentation;
 
 public class getOntologyRepresentation extends AchieveREInitiator{
-		/**
-		 * 
-		 */
-		private AID agentInQuestion=null;
-		 public static ACLMessage getRequestMessage(){
-			ACLMessage msg=new ACLMessage(ACLMessage.REQUEST);
-			msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
-			return msg;
-		 }
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID=3852209142960173705L;
+	/**
+	 * 
+	 */
+	private AID agentInQuestion=null;
+	private Method callbackMethod;
 
-		public getOntologyRepresentation(Agent a,AID agentInQuestion){
-			super(a,getRequestMessage());
-			this.agentInQuestion=agentInQuestion;
-		}
-		
-		@Override
-		protected Vector<ACLMessage> prepareRequests(ACLMessage request){
-			if(myAgent instanceof ControlGUIAgent){
-				request.addReceiver(((ControlGUIAgent) myAgent).harbourMaster);
-			}else if(myAgent instanceof HarborMasterAgent){
-				request.addReceiver(agentInQuestion);
-			}
-			RequestOntologyRepresentation act=new RequestOntologyRepresentation();
-			act.setAgent_in_question(this.agentInQuestion);
-			
-			ContainerAgent.enableForCommunication(myAgent);
-			ContainerAgent.fillMessage(request,act,myAgent);
-			
-			Vector<ACLMessage> messages=new Vector<ACLMessage>();
-			messages.add(request);//			writeLogMsg((((ControlGUIAgent) myAgent).harbourMaster).toString());
-			return messages;
-		}
-		
-		@Override
-		protected void handleInform(ACLMessage msg){
-			if(myAgent instanceof ControlGUIAgent){
-				((ControlGUIAgent)myAgent).myGui.printMessageContent(msg.getContent());
-			}else if(myAgent instanceof HarborMasterAgent){
-				ProvideOntologyRepresentation ontRep=(ProvideOntologyRepresentation)ContainerAgent.extractAction(myAgent,msg);
-				((HarborMasterAgent)myAgent).addCachedOntRep(agentInQuestion.getLocalName(),ontRep.getAccording_ontrep());
-			}
+	public static ACLMessage getRequestMessage(){
+		ACLMessage msg=new ACLMessage(ACLMessage.REQUEST);
+		msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
+		return msg;
+	}
 
+/*
+	public getOntologyRepresentation(Agent a,AID agentInQuestion){
+		super(a,getRequestMessage());
+		this.agentInQuestion=agentInQuestion;
+	}
+	*/
+
+	/**
+	 * @param myAgent
+	 * @param inQuestion
+	 * @param method
+	 */
+	public getOntologyRepresentation(Agent myAgent,AID inQuestion,Method method){
+		super(myAgent,getOntologyRepresentation.getRequestMessage());
+		this.agentInQuestion=inQuestion;
+		this.callbackMethod=method;
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	protected Vector<ACLMessage> prepareRequests(ACLMessage request){
+		if(this.myAgent instanceof ControlGUIAgent){
+			request.addReceiver(((ControlGUIAgent) this.myAgent).harbourMaster);
+		}else if(this.myAgent instanceof HarborMasterAgent){
+			request.addReceiver(this.agentInQuestion);
+		}
+		RequestOntologyRepresentation act=new RequestOntologyRepresentation();
+		act.setAgent_in_question(this.agentInQuestion);
+
+		ContainerAgent.enableForCommunication(this.myAgent);
+		ContainerAgent.fillMessage(request,act,this.myAgent);
+
+		Vector<ACLMessage> messages=new Vector<ACLMessage>();
+		messages.add(request);//			writeLogMsg((((ControlGUIAgent) myAgent).harbourMaster).toString());
+		return messages;
+	}
+
+	@Override
+	protected void handleInform(ACLMessage msg){
+		try{
+			this.callbackMethod.invoke(this.myAgent,msg);
+		}catch(IllegalArgumentException e){
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}catch(IllegalAccessException e){
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}catch(InvocationTargetException e){
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
+}

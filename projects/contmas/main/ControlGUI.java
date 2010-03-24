@@ -36,9 +36,6 @@ import javax.swing.text.Document;
 import javax.swing.tree.TreePath;
 
 import contmas.agents.ControlGUIAgent;
-import javax.swing.JButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 
 public class ControlGUI extends JInternalFrame implements ActionListener{
 
@@ -101,15 +98,15 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 			this.ButtonCreateShip.setBounds(new Rectangle(5,185,196,20));
 			this.ButtonCreateShip.setText("Start ShipAgent");
 
-			ButtonCreateShip.addActionListener(new ActionListener(){
+			this.ButtonCreateShip.addActionListener(new ActionListener(){
 				public void actionPerformed(ActionEvent e){
 					GuiEvent ge=new GuiEvent(this,1);
-					ge.addParameter(TFShipName.getText());
-					ge.addParameter(TFShipX.getText());
-					ge.addParameter(TFShipY.getText());
-					ge.addParameter(TFShipZ.getText());
-					ge.addParameter(TFShipLength.getText());
-					myAgent.postGuiEvent(ge);
+					ge.addParameter(ControlGUI.this.TFShipName.getText());
+					ge.addParameter(ControlGUI.this.TFShipX.getText());
+					ge.addParameter(ControlGUI.this.TFShipY.getText());
+					ge.addParameter(ControlGUI.this.TFShipZ.getText());
+					ge.addParameter(ControlGUI.this.TFShipLength.getText());
+					ControlGUI.this.myAgent.postGuiEvent(ge);
 				}
 			});
 		}
@@ -148,7 +145,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 			this.ShipLabelX.setBounds(new Rectangle(5,68,55,16));
 			this.jContentPane=new JPanel();
 			this.jContentPane.setLayout(null);
-			jContentPane.add(getTFShipName(),null);
+			this.jContentPane.add(this.getTFShipName(),null);
 			this.jContentPane.add(this.getTFShipX(),null);
 			this.jContentPane.add(this.ShipLabelX,null);
 			this.jContentPane.add(this.ShipLabelY,null);
@@ -159,13 +156,13 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 			this.jContentPane.add(this.Heading,null);
 			this.jContentPane.add(this.ShipLabelLength,null);
 			this.jContentPane.add(this.getTFShipLength(),null);
-			jContentPane.add(getButtonCreateShip(),null);
+			this.jContentPane.add(this.getButtonCreateShip(),null);
 			this.jContentPane.add(this.getConsoleScrollPane(),null);
 			this.jContentPane.add(this.getAgentTreeScrollPane(),null);
 			this.jContentPane.add(this.getSystemConsoleScrollPane(),null);
-			jContentPane.add(getButtonGetOntRep(),null);
-			jContentPane.add(getButtonSetOntRep(),null);
-			jContentPane.add(getOntRepScrollPane(),null);
+			this.jContentPane.add(this.getButtonGetOntRep(),null);
+			this.jContentPane.add(this.getButtonSetOntRep(),null);
+			this.jContentPane.add(this.getOntRepScrollPane(),null);
 			this.jContentPane.add(this.ShipLabelLength,null);
 			this.jContentPane.add(this.Heading,null);
 			this.jContentPane.add(this.ShipLabelName,null);
@@ -326,15 +323,16 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 
 		SwingUtilities.invokeLater(addIt);
 	}
+
 	/**
 	 * @param content
 	 */
-	public void printMessageContent(final String content){
+	public void printOntRep(final String content){
 		Runnable addIt=new Runnable(){
 			public void run(){
 				Document doc=ControlGUI.this.getOntRep().getDocument();
 				try{
-					doc.insertString(doc.getLength(),content,null);
+					doc.insertString(doc.getLength(),content + "\n",null);
 				}catch(BadLocationException ex){
 					ex.printStackTrace();
 				}
@@ -421,7 +419,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JTextArea getSystemConsole(){
 		if(this.systemConsole == null){
 			this.systemConsole=new JTextArea();
-			systemConsole.setEditable(false);
+			this.systemConsole.setEditable(false);
 		}
 		return this.systemConsole;
 	}
@@ -432,28 +430,28 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	 * @return javax.swing.JButton	
 	 */
 	private JButton getButtonGetOntRep(){
-		if(ButtonGetOntRep == null){
-			ButtonGetOntRep=new JButton();
-			ButtonGetOntRep.setBounds(new Rectangle(443,10,314,23));
-			ButtonGetOntRep.setText("> Get ontologyRepresentation");
-			ButtonGetOntRep.addActionListener(new ActionListener(){
+		if(this.ButtonGetOntRep == null){
+			this.ButtonGetOntRep=new JButton();
+			this.ButtonGetOntRep.setBounds(new Rectangle(443,10,314,23));
+			this.ButtonGetOntRep.setText("> Get ontologyRepresentation");
+			this.ButtonGetOntRep.addActionListener(new ActionListener(){
 				public void actionPerformed(ActionEvent e){
 					TreePath paths[];
-					paths=AT.tree.getSelectionPaths();
+					paths=ControlGUI.this.AT.tree.getSelectionPaths();
 					if(paths != null){
 						for(int i=0;i < paths.length;i++){
 							Node now=(Node) (paths[i].getLastPathComponent());
 							if(now instanceof AgentNode){
 								GuiEvent ge=new GuiEvent(this,2);
 								ge.addParameter(((AgentNode) now).getName());
-								myAgent.postGuiEvent(ge);
+								ControlGUI.this.myAgent.postGuiEvent(ge);
 							}
 						}
 					}
 				}
 			});
 		}
-		return ButtonGetOntRep;
+		return this.ButtonGetOntRep;
 	}
 
 	/**
@@ -462,12 +460,12 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	 * @return javax.swing.JButton	
 	 */
 	private JButton getButtonSetOntRep(){
-		if(ButtonSetOntRep == null){
-			ButtonSetOntRep=new JButton();
-			ButtonSetOntRep.setBounds(new Rectangle(442,239,309,26));
-			ButtonSetOntRep.setText("< Set ontologyRepresentation");
+		if(this.ButtonSetOntRep == null){
+			this.ButtonSetOntRep=new JButton();
+			this.ButtonSetOntRep.setBounds(new Rectangle(442,239,309,26));
+			this.ButtonSetOntRep.setText("< Set ontologyRepresentation");
 		}
-		return ButtonSetOntRep;
+		return this.ButtonSetOntRep;
 	}
 
 	/**
@@ -476,12 +474,12 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	 * @return javax.swing.JScrollPane	
 	 */
 	private JScrollPane getOntRepScrollPane(){
-		if(ontRepScrollPane == null){
-			ontRepScrollPane=new JScrollPane();
-			ontRepScrollPane.setBounds(new Rectangle(447,40,305,193));
-			ontRepScrollPane.setViewportView(getOntRep());
+		if(this.ontRepScrollPane == null){
+			this.ontRepScrollPane=new JScrollPane();
+			this.ontRepScrollPane.setBounds(new Rectangle(447,40,305,193));
+			this.ontRepScrollPane.setViewportView(this.getOntRep());
 		}
-		return ontRepScrollPane;
+		return this.ontRepScrollPane;
 	}
 
 	/**
@@ -490,11 +488,11 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	 * @return javax.swing.JTextArea	
 	 */
 	private JTextArea getOntRep(){
-		if(ontRep == null){
-			ontRep=new JTextArea();
-			ontRep.setEditable(false);
+		if(this.ontRep == null){
+			this.ontRep=new JTextArea();
+			this.ontRep.setEditable(false);
 		}
-		return ontRep;
+		return this.ontRep;
 	}
 
 } //  @jve:decl-index=0:visual-constraint="30,15"

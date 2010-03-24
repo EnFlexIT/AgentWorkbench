@@ -20,9 +20,6 @@
  */
 package contmas.agents;
 
-import jade.domain.FIPANames;
-import jade.lang.acl.MessageTemplate;
-import jade.proto.ContractNetResponder;
 import contmas.behaviours.receiveLoadOrders;
 import contmas.ontology.Apron;
 import contmas.ontology.Street;
@@ -59,8 +56,7 @@ public class ApronAgent extends StaticContainerAgent implements TransportOrderHa
 	 */
 	@Override
 	public void handleTransportOrder(){
-		MessageTemplate mt=ContractNetResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
-		this.addBehaviour(new receiveLoadOrders(this,mt));
+		this.addBehaviour(new receiveLoadOrders(this));
 	}
 
 	/* (non-Javadoc)

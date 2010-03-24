@@ -20,9 +20,6 @@
  */
 package contmas.agents;
 
-import jade.domain.FIPANames;
-import jade.lang.acl.MessageTemplate;
-import jade.proto.ContractNetResponder;
 import contmas.behaviours.receiveLoadOrders;
 import contmas.ontology.Yard;
 
@@ -56,8 +53,7 @@ public class YardAgent extends StaticContainerAgent implements TransportOrderHan
 	 */
 	@Override
 	public void handleTransportOrder(){
-		MessageTemplate mt=ContractNetResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
-		this.addBehaviour(new receiveLoadOrders(this,mt));
+		this.addBehaviour(new receiveLoadOrders(this));
 	}
 
 	@Override

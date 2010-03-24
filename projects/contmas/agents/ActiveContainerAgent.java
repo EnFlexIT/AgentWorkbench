@@ -19,7 +19,7 @@ import contmas.ontology.ActiveContainerHolder;
 import contmas.ontology.Domain;
 import contmas.ontology.TransportOrder;
 
-public class ActiveContainerAgent extends ContainerAgent{
+public class ActiveContainerAgent extends ContainerHolderAgent{
 
 	/**
 	 * 
@@ -33,13 +33,13 @@ public class ActiveContainerAgent extends ContainerAgent{
 	public ActiveContainerAgent(String serviceType,ActiveContainerHolder ontologyRepresentation){
 		super(serviceType,ontologyRepresentation);
 	}
-	
+
 	//TODO implement recursive transitive domain matching
 	@Override
 	public Integer matchOrder(TransportOrder curTO){
 		Integer endMatch=super.matchOrder(curTO); //standard-Match: AID und ziel ist genau lebensraum
 		Integer startMatch= -1;
-		if(endMatch>0){
+		if(endMatch > 0){
 			Domain startHabitat=curTO.getStarts_at().getAbstract_designation();
 			Domain endHabitat=curTO.getEnds_at().getAbstract_designation();
 			Iterator capabilities=((ActiveContainerHolder) this.ontologyRepresentation).getAllCapable_of();

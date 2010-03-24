@@ -14,7 +14,6 @@
 
 package contmas.agents;
 
-
 import jade.core.AID;
 import jade.core.ServiceException;
 import jade.core.behaviours.Behaviour;
@@ -77,6 +76,10 @@ public class ControlGUIAgent extends GuiAgent{
 		}
 	}
 
+	public void printOntRep(ACLMessage msg){
+		this.myGui.printOntRep(msg.getContent());
+	}
+
 	/*
 	class refreshAgentTree extends CyclicBehaviour{
 
@@ -100,6 +103,7 @@ public class ControlGUIAgent extends GuiAgent{
 	private TopicManagementHelper tmh;
 	private AID loggingTopic=null;
 	public AID harbourMaster=null;
+	private AID sniffer=null;
 
 	@Override
 	protected void onGuiEvent(GuiEvent ev){
@@ -124,17 +128,40 @@ public class ControlGUIAgent extends GuiAgent{
 				AgentController a=c.acceptNewAgent(name,new ShipAgent(ontologyRepresentation));
 
 				a.start();
+				/*
+				AID test2=new AID();
+				test2.setName(a.getName());
+				SniffOn agact=new SniffOn();
+				agact.addSniffedAgents(test2);
+				agact.setSniffer(sniffer);
+				ACLMessage msg=new ACLMessage(ACLMessage.REQUEST);
+				msg.setLanguage(new SLCodec().getName());
+				msg.setOntology(JADEManagementOntology.getInstance().getName());
+				getContentManager().registerLanguage(new SLCodec());
+				getContentManager().registerOntology(JADEManagementOntology.getInstance());
+				Action act=new Action(sniffer,agact);
+				getContentManager().fillContent(msg,act);
+				msg.addReceiver(sniffer);
+				send(msg);
+				*/
 			}catch(Exception e){
+				e.printStackTrace();
 			}
 		}else if(command == 2){ // get ontologyRepresentation
-			harbourMaster=ContainerAgent.getFirstAIDFromDF("harbor-managing",this);
+			this.harbourMaster=ContainerAgent.getFirstAIDFromDF("harbor-managing",this);
 
 			AID inQuestion=new AID();
 			inQuestion.setLocalName(ev.getParameter(0).toString());
 
-			addBehaviour(new getOntologyRepresentation(this,inQuestion));
-
-			writeLogMsg(ev.getParameter(0).toString());
+			try{
+				this.addBehaviour(new getOntologyRepresentation(this,inQuestion,this.getClass().getMethod("printOntRep",ACLMessage.class)));
+			}catch(SecurityException e){
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}catch(NoSuchMethodException e){
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}else if(command == -1){ // GUI closed
 			this.doDelete();
 			//System.exit(0);
@@ -215,6 +242,10 @@ public class ControlGUIAgent extends GuiAgent{
 			a.start();
 			a=c.createNewAgent("HarborMaster","contmas.agents.HarborMasterAgent",null);
 			a.start();
+			a=c.createNewAgent("Sniffer","jade.tools.sniffer.Sniffer",new Object[] {"Yard;StraddleCarrier-#1;Apron;Crane-#2;Crane-#1"});
+			a.start();
+			this.sniffer=new AID();
+			this.sniffer.setName(a.getName());
 		}catch(Exception e){
 			// TODO Auto-generated catch block
 			e.printStackTrace();

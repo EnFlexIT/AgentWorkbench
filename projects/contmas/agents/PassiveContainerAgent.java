@@ -16,7 +16,7 @@ package contmas.agents;
 
 import contmas.ontology.PassiveContainerHolder;
 
-public class PassiveContainerAgent extends ContainerAgent{
+public class PassiveContainerAgent extends ContainerHolderAgent{
 
 	private static final long serialVersionUID= -2130904228870165418L;
 

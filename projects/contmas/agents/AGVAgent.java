@@ -14,9 +14,6 @@
 
 package contmas.agents;
 
-import jade.domain.FIPANames;
-import jade.lang.acl.MessageTemplate;
-import jade.proto.AchieveREResponder;
 import jade.util.leap.List;
 import contmas.behaviours.receiveLoadOrders;
 import contmas.ontology.AGV;
@@ -46,8 +43,7 @@ public class AGVAgent extends PassiveContainerAgent implements TransportOrderHan
 	}
 
 	public void handleTransportOrder(){
-		MessageTemplate mt=AchieveREResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
-		this.addBehaviour(new receiveLoadOrders(this,mt));
+		this.addBehaviour(new receiveLoadOrders(this));
 	}
 
 	@Override

@@ -104,7 +104,7 @@ public class ShipAgent extends StaticContainerAgent implements TransportOrderOff
 			Concept content;
 			content=((ContainerAgent) this.myAgent).extractAction(msg);
 			if(content instanceof ProvideBayMap){
-				((ContainerAgent) this.myAgent).ontologyRepresentation.setContains(((ProvideBayMap) content).getProvides());
+				((ContainerHolderAgent) this.myAgent).ontologyRepresentation.setContains(((ProvideBayMap) content).getProvides());
 				//echoStatus("BayMap recieved! X_dimension:"+getLoadBay().getX_dimension()+", Y_dimension:"+getLoadBay().getY_dimension()+", Z_dimension:"+getLoadBay().getZ_dimension());
 				msg=new ACLMessage(ACLMessage.REQUEST);
 				msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
@@ -151,7 +151,7 @@ public class ShipAgent extends StaticContainerAgent implements TransportOrderOff
 					BlockAddress curBaymap=(BlockAddress) allConts.next();
 					TransportOrderChain curTOC=new TransportOrderChain();
 					curTOC.setTransports(curBaymap.getLocates());
-					ShipAgent.this.changeTOCState(curTOC,new Administered(),true);
+					ShipAgent.this.touchTOCState(curTOC,new Administered(),true);
 				}
 				//echoStatus("populatedBayMap recieved!"); 
 				ShipAgent.this.offerTransportOrder();

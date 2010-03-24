@@ -26,7 +26,6 @@ import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.lang.acl.ACLMessage;
 import jade.proto.SubscriptionInitiator;
-import jade.util.leap.List;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -44,10 +43,6 @@ public class subscribeToDF extends SubscriptionInitiator{
 	 */
 	private static final long serialVersionUID=5004964558751306936L;
 	private Method callbackMethod=null;
-
-	public subscribeToDF(Agent a,ACLMessage msg,List resultStorage){
-		super(a,msg);
-	}
 
 	public subscribeToDF(Agent a,ACLMessage msg,Method methode){
 		super(a,msg);

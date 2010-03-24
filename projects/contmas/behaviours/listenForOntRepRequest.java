@@ -21,59 +21,95 @@
 package contmas.behaviours;
 
 import jade.content.Concept;
-import jade.core.AID;
 import jade.core.Agent;
+import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.proto.AchieveREResponder;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import contmas.agents.ContainerAgent;
-import contmas.agents.HarborMasterAgent;
+import contmas.main.MatchAgentAction;
+import contmas.ontology.ContainerHolder;
 import contmas.ontology.ProvideOntologyRepresentation;
 import contmas.ontology.RequestOntologyRepresentation;
 
 public class listenForOntRepRequest extends AchieveREResponder{
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID=3755512724278640204L;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID=3755512724278640204L;
+	private ContainerHolder accordingOntrep=null;
+	String nameInQuestion;
+	private Method callbackMethod;
 
-		public listenForOntRepRequest(Agent a,MessageTemplate mt){
-			super(a,mt);
-		}
+	private static MessageTemplate getMessageTemplate(Agent a){
+		MessageTemplate mt=AchieveREResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_REQUEST);
+		mt=MessageTemplate.and(mt,new MessageTemplate(new MatchAgentAction(a,new RequestOntologyRepresentation())));
+		return mt;
+	}
 
-		@Override
-		protected ACLMessage handleRequest(ACLMessage request){
+	/*
+	public listenForOntRepRequest(Agent a){
+		super(a,getMessageTemplate(a));
+	}
+	*/
+	public listenForOntRepRequest(Agent a,Method method){
+		super(a,listenForOntRepRequest.getMessageTemplate(a));
+//			this(a);
+		this.callbackMethod=method;
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	protected ACLMessage handleRequest(ACLMessage request){
+		/*
+		if(((HarborMasterAgent) myAgent).isAlreadyCached(nameInQuestion)){
+			reply.setPerformative(ACLMessage.INFORM);
+			ProvideOntologyRepresentation act=new ProvideOntologyRepresentation();
+			act.setAccording_ontrep(((HarborMasterAgent) myAgent).getCachedOntRep(nameInQuestion));
+			((ContainerAgent) this.myAgent).fillMessage(reply,act);
+			return reply;
+		}else{*/
 //			echoStatus("listenForOntRepRequest - prepareResponse: "+request.getContent());
-
-			ACLMessage reply=request.createReply();
-			Concept content=((ContainerAgent) this.myAgent).extractAction(request);
-			String nameInQuestion=((RequestOntologyRepresentation) content).getAgent_in_question().getLocalName();
-			if(myAgent instanceof HarborMasterAgent){
-				if(((HarborMasterAgent) myAgent).isAlreadyCached(nameInQuestion)){
-					reply.setPerformative(ACLMessage.INFORM);
-					ProvideOntologyRepresentation act=new ProvideOntologyRepresentation();
-					act.setAccording_ontrep(((HarborMasterAgent) myAgent).getCachedOntRep(nameInQuestion));
-					((ContainerAgent) this.myAgent).fillMessage(reply,act);
-					return reply;
-				}else{
-					AID inQuestion=new AID();
-					inQuestion.setLocalName(nameInQuestion);
-					myAgent.addBehaviour(new getOntologyRepresentation(myAgent,inQuestion));
-				}
-			}else{
-				reply.setPerformative(ACLMessage.INFORM);
-				ProvideOntologyRepresentation act=new ProvideOntologyRepresentation();
-				act.setAccording_ontrep(((ContainerAgent)myAgent).getOntologyRepresentation());
-				((ContainerAgent) this.myAgent).fillMessage(reply,act);
-				return reply;
-			}
-			myAgent.postMessage(request);
-			block(200);
-			return null;
+		Concept content=((ContainerAgent) this.myAgent).extractAction(request);
+		this.nameInQuestion=((RequestOntologyRepresentation) content).getAgent_in_question().getLocalName();
+		try{
+			this.accordingOntrep=(ContainerHolder) this.callbackMethod.invoke(this.myAgent,this.nameInQuestion);
+		}catch(IllegalArgumentException e1){
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}catch(IllegalAccessException e1){
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}catch(InvocationTargetException e1){
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
 
-		@Override
-		protected ACLMessage prepareResultNotification(ACLMessage request,ACLMessage response){
+		if(this.accordingOntrep == null){
+			this.block();
+			this.myAgent.putBack(request);
+//				myAgent.postMessage(request);
 			return null;
+		}else{
+			ACLMessage reply=request.createReply();
+			reply.setPerformative(ACLMessage.INFORM);
+			ProvideOntologyRepresentation act=new ProvideOntologyRepresentation();
+			act.setAccording_ontrep(this.accordingOntrep);
+			((ContainerAgent) this.myAgent).fillMessage(reply,act);
+			return reply;
 		}
 	}
+
+	public void notifyOnCompletion(ContainerHolder accordingOntrep){
+		this.accordingOntrep=accordingOntrep;
+	}
+
+	@Override
+	protected ACLMessage prepareResultNotification(ACLMessage request,ACLMessage response){
+		return null;
+	}
+}

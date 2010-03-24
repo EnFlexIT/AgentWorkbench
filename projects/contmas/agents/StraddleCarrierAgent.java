@@ -20,9 +20,6 @@
  */
 package contmas.agents;
 
-import jade.domain.FIPANames;
-import jade.lang.acl.MessageTemplate;
-import jade.proto.AchieveREResponder;
 import contmas.behaviours.receiveLoadOrders;
 import contmas.ontology.StraddleCarrier;
 import contmas.ontology.YardArea;
@@ -56,8 +53,7 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 	 */
 	@Override
 	public void handleTransportOrder(){
-		MessageTemplate mt=AchieveREResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
-		this.addBehaviour(new receiveLoadOrders(this,mt));
+		this.addBehaviour(new receiveLoadOrders(this));
 	}
 
 	/* (non-Javadoc)

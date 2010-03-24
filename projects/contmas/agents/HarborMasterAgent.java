@@ -14,101 +14,39 @@
 
 package contmas.agents;
 
-import java.util.HashMap;
-
-import jade.content.AgentAction;
-import jade.content.Concept;
-import jade.content.ContentElement;
-import jade.core.Agent;
-import jade.domain.FIPANames;
+import jade.core.AID;
+import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
-import jade.lang.acl.MessageTemplate;
-import jade.proto.AchieveREResponder;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
 import jade.wrapper.StaleProxyException;
+
+import java.util.HashMap;
+
+import contmas.behaviours.getOntologyRepresentation;
+import contmas.behaviours.listenForEnroll;
 import contmas.behaviours.listenForOntRepRequest;
-import contmas.main.MatchAgentAction;
+import contmas.behaviours.offerCraneList;
 import contmas.ontology.*;
 
 public class HarborMasterAgent extends ContainerAgent{
-	private HashMap<String, ContainerHolder> activeContainerHolders=new HashMap();
-
-	public class listenForEnroll extends AchieveREResponder{
-		private static final long serialVersionUID= -4440040520781720185L;
-
-		public listenForEnroll(Agent a,MessageTemplate mt){
-			super(a,mt);
-		}
-
-		@Override
-		protected ACLMessage handleRequest(ACLMessage request){
-//			echoStatus("listenForEnroll - prepareResponse: "+request.getContent());
-			ACLMessage reply=request.createReply();
-
-			ContentElement content;
-			content=((ContainerAgent) this.myAgent).extractAction(request);
-			Concept action=((AgentAction) content);
-			reply.setPerformative(ACLMessage.INFORM);
-			AssignHarborQuay act=new AssignHarborQuay();
-			Quay concept=new Quay();
-			concept.setLies_in(new Sea());
-			act.setAssigned_quay(concept);
-			((ContainerAgent) this.myAgent).fillMessage(reply,act);
-			return reply;
-
-		}
-
-		@Override
-		protected ACLMessage prepareResultNotification(ACLMessage request,ACLMessage response){
-			return null;
-		}
-	}
-
-	public class offerCraneList extends AchieveREResponder{
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID= -4313612086308829396L;
-
-		public offerCraneList(Agent a,MessageTemplate mt){
-			super(a,mt);
-		}
-
-		@Override
-		protected ACLMessage handleRequest(ACLMessage request){
-//			echoStatus("offerCraneList - prepareResponse: "+request.getContent());
-
-			ACLMessage reply=request.createReply();
-			Concept content=((ContainerAgent) this.myAgent).extractAction(request);
-			reply.setPerformative(ACLMessage.INFORM);
-			ProvideCraneList act=new ProvideCraneList();
-			//look for Cranes
-			act.setAvailable_cranes(ContainerAgent.toAIDList(HarborMasterAgent.this.getAIDsFromDF("craning")));
-			((ContainerAgent) this.myAgent).fillMessage(reply,act);
-			return reply;
-
-		}
-
-		@Override
-		protected ACLMessage prepareResultNotification(ACLMessage request,ACLMessage response){
-			return null;
-		}
-	}
+	private HashMap<String, ContainerHolder> activeContainerHolders=new HashMap<String, ContainerHolder>();
+	private HashMap<String, Behaviour> ontRepInquieries=new HashMap<String, Behaviour>();
 
 	public boolean isAlreadyCached(String lookForAgent){
-		if(activeContainerHolders.get(lookForAgent) != null){
+		if(this.activeContainerHolders.get(lookForAgent) != null){
 			return true;
 		}
 		return false;
 	}
 
 	public ContainerHolder getCachedOntRep(String lookForAgent){
-		return activeContainerHolders.get(lookForAgent);
+		return this.activeContainerHolders.get(lookForAgent);
 	}
-	
-	public void addCachedOntRep(String lookForAgent, ContainerHolder ontRep){
-		activeContainerHolders.put(lookForAgent,ontRep);
+
+	public void addCachedOntRep(ACLMessage msg){
+		ContainerHolder ontRep=((ProvideOntologyRepresentation) ContainerAgent.extractAction(this,msg)).getAccording_ontrep();
+		this.activeContainerHolders.put(msg.getSender().getLocalName(),ontRep);
 	}
 
 	/**
@@ -126,20 +64,48 @@ public class HarborMasterAgent extends ContainerAgent{
 		//		echoStatus("HarborMaster gestartet (selbst)");
 
 		this.setupEnvironment();
-		//create filter for incoming messages
-		MessageTemplate mt=AchieveREResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_REQUEST);
-		this.addBehaviour(new listenForEnroll(this,MessageTemplate.and(mt,new MessageTemplate(new MatchAgentAction(this,new EnrollAtHarbor())))));
-		this.addBehaviour(new offerCraneList(this,MessageTemplate.and(mt,new MessageTemplate(new MatchAgentAction(this,new GetCraneList())))));
-		this.addBehaviour(new listenForOntRepRequest(this,MessageTemplate.and(mt,new MessageTemplate(new MatchAgentAction(this,new RequestOntologyRepresentation())))));
+		this.addBehaviour(new listenForEnroll(this));
+		this.addBehaviour(new offerCraneList(this));
+		try{
+			this.addBehaviour(new listenForOntRepRequest(this,this.getClass().getMethod("getOntologyRepresentation",String.class)));
+		}catch(SecurityException e){
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}catch(NoSuchMethodException e){
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public ContainerHolder getOntologyRepresentation(String nameInQuestion){
+		AID inQuestion=new AID();
+		inQuestion.setLocalName(nameInQuestion);
+		if(this.getCachedOntRep(nameInQuestion) == null){
+			if( !this.ontRepInquieries.containsKey(nameInQuestion)){
+				try{
+					Behaviour b=new getOntologyRepresentation(this,inQuestion,this.getClass().getMethod("addCachedOntRep",ACLMessage.class));
+					this.addBehaviour(b);
+					this.ontRepInquieries.put(nameInQuestion,b);
+				}catch(SecurityException e){
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}catch(NoSuchMethodException e){
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+			return null;
+		}else{
+			this.ontRepInquieries.remove(nameInQuestion);
+			return this.getCachedOntRep(nameInQuestion);
+		}
 	}
 
 	protected void setupEnvironment(){
 		AgentContainer c=this.getContainerController();
 		AgentController a;
 		try{
-			a=c.createNewAgent("mySniffer","jade.tools.sniffer.Sniffer",new Object[] {"Yard;StraddleCarrier-#1;Apron;Crane-#2;Crane-#1"});
-			a.start();
-
 			Crane ontologyRepresentation=new Crane();
 			Domain terminalArea=new Land();
 			Domain habitat=new Rail();
