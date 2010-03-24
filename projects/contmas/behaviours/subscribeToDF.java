@@ -24,6 +24,7 @@ import jade.core.Agent;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.proto.SubscriptionInitiator;
 
@@ -44,8 +45,17 @@ public class subscribeToDF extends SubscriptionInitiator{
 	private static final long serialVersionUID=5004964558751306936L;
 	private Method callbackMethod=null;
 
-	public subscribeToDF(Agent a,ACLMessage msg,Method methode){
-		super(a,msg);
+	private static ACLMessage getSubscriptionMessage(Agent a,String serviceType){
+		DFAgentDescription dfd=new DFAgentDescription();
+		ServiceDescription sd=new ServiceDescription();
+		sd.setType(serviceType);
+		dfd.addServices(sd);
+		 ACLMessage subscriptionMessage=DFService.createSubscriptionMessage(a,a.getDefaultDF(),dfd,null);
+		 return subscriptionMessage;
+	}
+	
+	public subscribeToDF(Agent a,Method methode, String serviceType){
+		super(a,getSubscriptionMessage(a,serviceType));
 		this.callbackMethod=methode;
 	}
 
@@ -55,8 +65,6 @@ public class subscribeToDF extends SubscriptionInitiator{
 			DFAgentDescription[] dfds=DFService.decodeNotification(inform.getContent());
 			try{
 				this.callbackMethod.invoke(this.myAgent,ContainerAgent.toAIDList(ContainerAgent.agentDescToAIDArray(dfds)));
-
-//				callbackMethod.invoke();
 			}catch(IllegalArgumentException e){
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -67,8 +75,6 @@ public class subscribeToDF extends SubscriptionInitiator{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-//			ContainerAgent.addToList(this.resultStorage,ContainerAgent.toAIDList(ContainerAgent.agentDescToAIDArray(dfds)));
-
 		}catch(FIPAException fe){
 			fe.printStackTrace();
 		}

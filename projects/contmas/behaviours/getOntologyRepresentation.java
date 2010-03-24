@@ -27,12 +27,13 @@ import jade.lang.acl.ACLMessage;
 import jade.proto.AchieveREInitiator;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Vector;
 
 import contmas.agents.ContainerAgent;
 import contmas.agents.ControlGUIAgent;
 import contmas.agents.HarborMasterAgent;
+import contmas.agents.OntRepRequester;
+import contmas.ontology.ProvideOntologyRepresentation;
 import contmas.ontology.RequestOntologyRepresentation;
 
 public class getOntologyRepresentation extends AchieveREInitiator{
@@ -44,7 +45,7 @@ public class getOntologyRepresentation extends AchieveREInitiator{
 	 * 
 	 */
 	private AID agentInQuestion=null;
-	private Method callbackMethod;
+	private AID requestFrom;
 
 	public static ACLMessage getRequestMessage(){
 		ACLMessage msg=new ACLMessage(ACLMessage.REQUEST);
@@ -52,32 +53,30 @@ public class getOntologyRepresentation extends AchieveREInitiator{
 		return msg;
 	}
 
-/*
-	public getOntologyRepresentation(Agent a,AID agentInQuestion){
-		super(a,getRequestMessage());
-		this.agentInQuestion=agentInQuestion;
+	/**
+	 * @param myAgent
+	 * @param inQuestion
+	 */
+	public getOntologyRepresentation(Agent myAgent,AID inQuestion){
+		super(myAgent,getOntologyRepresentation.getRequestMessage());
+		this.agentInQuestion=inQuestion;
+		this.requestFrom=agentInQuestion;
 	}
-	*/
 
 	/**
 	 * @param myAgent
 	 * @param inQuestion
-	 * @param method
+	 * @param relayServer TODO
+	 * @param newParam TODO
 	 */
-	public getOntologyRepresentation(Agent myAgent,AID inQuestion,Method method){
-		super(myAgent,getOntologyRepresentation.getRequestMessage());
-		this.agentInQuestion=inQuestion;
-		this.callbackMethod=method;
-		// TODO Auto-generated constructor stub
+	public getOntologyRepresentation(Agent myAgent,AID inQuestion, AID requestFrom){
+		this(myAgent,inQuestion);
+		this.requestFrom=requestFrom;
 	}
 
 	@Override
 	protected Vector<ACLMessage> prepareRequests(ACLMessage request){
-		if(this.myAgent instanceof ControlGUIAgent){
-			request.addReceiver(((ControlGUIAgent) this.myAgent).harbourMaster);
-		}else if(this.myAgent instanceof HarborMasterAgent){
-			request.addReceiver(this.agentInQuestion);
-		}
+		request.addReceiver(this.requestFrom);
 		RequestOntologyRepresentation act=new RequestOntologyRepresentation();
 		act.setAgent_in_question(this.agentInQuestion);
 
@@ -85,23 +84,13 @@ public class getOntologyRepresentation extends AchieveREInitiator{
 		ContainerAgent.fillMessage(request,act,this.myAgent);
 
 		Vector<ACLMessage> messages=new Vector<ACLMessage>();
-		messages.add(request);//			writeLogMsg((((ControlGUIAgent) myAgent).harbourMaster).toString());
+		messages.add(request);
 		return messages;
 	}
 
 	@Override
 	protected void handleInform(ACLMessage msg){
-		try{
-			this.callbackMethod.invoke(this.myAgent,msg);
-		}catch(IllegalArgumentException e){
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}catch(IllegalAccessException e){
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}catch(InvocationTargetException e){
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		ProvideOntologyRepresentation act=(ProvideOntologyRepresentation) ContainerAgent.extractAction(myAgent,msg);
+		((OntRepRequester) myAgent).processOntRep(act.getAccording_ontrep(), msg.getSender());
 	}
 }

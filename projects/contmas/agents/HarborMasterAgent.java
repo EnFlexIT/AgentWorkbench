@@ -16,7 +16,6 @@ package contmas.agents;
 
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
-import jade.lang.acl.ACLMessage;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
 import jade.wrapper.StaleProxyException;
@@ -29,9 +28,9 @@ import contmas.behaviours.listenForOntRepRequest;
 import contmas.behaviours.offerCraneList;
 import contmas.ontology.*;
 
-public class HarborMasterAgent extends ContainerAgent{
-	private HashMap<String, ContainerHolder> activeContainerHolders=new HashMap<String, ContainerHolder>();
-	private HashMap<String, Behaviour> ontRepInquieries=new HashMap<String, Behaviour>();
+public class HarborMasterAgent extends ContainerAgent implements OntRepProvider, OntRepRequester{
+	private HashMap<AID, ContainerHolder> activeContainerHolders=new HashMap<AID, ContainerHolder>();
+	private HashMap<AID, Behaviour> ontRepInquieries=new HashMap<AID, Behaviour>();
 
 	public boolean isAlreadyCached(String lookForAgent){
 		if(this.activeContainerHolders.get(lookForAgent) != null){
@@ -40,13 +39,12 @@ public class HarborMasterAgent extends ContainerAgent{
 		return false;
 	}
 
-	public ContainerHolder getCachedOntRep(String lookForAgent){
+	public ContainerHolder getCachedOntRep(AID lookForAgent){
 		return this.activeContainerHolders.get(lookForAgent);
 	}
 
-	public void addCachedOntRep(ACLMessage msg){
-		ContainerHolder ontRep=((ProvideOntologyRepresentation) ContainerAgent.extractAction(this,msg)).getAccording_ontrep();
-		this.activeContainerHolders.put(msg.getSender().getLocalName(),ontRep);
+	public void processOntRep(ContainerHolder ontRep, AID agent){
+		this.activeContainerHolders.put(agent,ontRep);
 	}
 
 	/**
@@ -61,44 +59,25 @@ public class HarborMasterAgent extends ContainerAgent{
 	@Override
 	protected void setup(){
 		super.setup();
-		//		echoStatus("HarborMaster gestartet (selbst)");
 
 		this.setupEnvironment();
 		this.addBehaviour(new listenForEnroll(this));
 		this.addBehaviour(new offerCraneList(this));
-		try{
-			this.addBehaviour(new listenForOntRepRequest(this,this.getClass().getMethod("getOntologyRepresentation",String.class)));
-		}catch(SecurityException e){
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}catch(NoSuchMethodException e){
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		this.addBehaviour(new listenForOntRepRequest(this));
 	}
 
-	public ContainerHolder getOntologyRepresentation(String nameInQuestion){
-		AID inQuestion=new AID();
-		inQuestion.setLocalName(nameInQuestion);
-		if(this.getCachedOntRep(nameInQuestion) == null){
-			if( !this.ontRepInquieries.containsKey(nameInQuestion)){
-				try{
-					Behaviour b=new getOntologyRepresentation(this,inQuestion,this.getClass().getMethod("addCachedOntRep",ACLMessage.class));
+	public ContainerHolder getOntologyRepresentation(AID inQuestion){
+		ContainerHolder ontRep=this.getCachedOntRep(inQuestion);
+		if(ontRep == null){
+			if( !this.ontRepInquieries.containsKey(inQuestion)){
+					Behaviour b=new getOntologyRepresentation(this,inQuestion);
 					this.addBehaviour(b);
-					this.ontRepInquieries.put(nameInQuestion,b);
-				}catch(SecurityException e){
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}catch(NoSuchMethodException e){
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
+					this.ontRepInquieries.put(inQuestion,b);
 			}
 			return null;
 		}else{
-			this.ontRepInquieries.remove(nameInQuestion);
-			return this.getCachedOntRep(nameInQuestion);
+			this.ontRepInquieries.remove(inQuestion);
+			return ontRep;
 		}
 	}
 
@@ -176,7 +155,6 @@ public class HarborMasterAgent extends ContainerAgent{
 			AGVontologyRepresentation.setLives_in(habitat);
 			a=c.acceptNewAgent("AGV #1",new AGVAgent(AGVontologyRepresentation));
 			a.start();
-			tbs.add(a);
 
 			AGVontologyRepresentation=new AGV();
 			habitat=new Street();
@@ -184,7 +162,6 @@ public class HarborMasterAgent extends ContainerAgent{
 			AGVontologyRepresentation.setLives_in(habitat);
 			a=c.acceptNewAgent("AGV #2",new AGVAgent(AGVontologyRepresentation));
 			a.start();
-			tbs.add(a);
 
 			AGVontologyRepresentation=new AGV();
 			habitat=new Street();
@@ -192,16 +169,8 @@ public class HarborMasterAgent extends ContainerAgent{
 			AGVontologyRepresentation.setLives_in(habitat);
 			a=c.acceptNewAgent("AGV #3",new AGVAgent(AGVontologyRepresentation));
 			a.start();
-			tbs.add(a);
 			*/
-//			Sniffer s=new Sniffer();
-//			s.setArguments(new Object[]{"Crane #1;Crane #1;Apron;StraddleCarrier #1;Yard;"});
-//			s.setArguments(new Object[]{"HarborMaster@"+c.getPlatformName()});
-/*
-			a=c.acceptNewAgent("sniffer",s);
-			*/
-//			a.start();
-//			s.sniffMsg(tbs,Sniffer.SNIFF_ON);
+
 		}catch(StaleProxyException e){
 			// TODO Auto-generated catch block
 			e.printStackTrace();

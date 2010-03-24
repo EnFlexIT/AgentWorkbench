@@ -14,6 +14,11 @@
 
 package contmas.agents;
 
+import jade.content.lang.Codec.CodecException;
+import jade.content.lang.sl.SLCodec;
+import jade.content.lang.xml.XMLCodec;
+import jade.content.onto.OntologyException;
+import jade.content.onto.basic.Action;
 import jade.core.AID;
 import jade.core.ServiceException;
 import jade.core.behaviours.Behaviour;
@@ -21,6 +26,8 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.core.messaging.TopicManagementHelper;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.domain.JADEAgentManagement.JADEManagementOntology;
+import jade.domain.JADEAgentManagement.SniffOn;
 import jade.gui.GuiAgent;
 import jade.gui.GuiEvent;
 import jade.lang.acl.ACLMessage;
@@ -32,15 +39,12 @@ import jade.wrapper.AgentController;
 import javax.swing.JDesktopPane;
 
 import contmas.behaviours.getOntologyRepresentation;
-import contmas.behaviours.prepareSubscribeToDF;
+import contmas.behaviours.subscribeToDF;
 import contmas.main.AgentDesktop;
 import contmas.main.ControlGUI;
-import contmas.ontology.BayMap;
-import contmas.ontology.Domain;
-import contmas.ontology.Sea;
-import contmas.ontology.Ship;
+import contmas.ontology.*;
 
-public class ControlGUIAgent extends GuiAgent{
+public class ControlGUIAgent extends GuiAgent implements OntRepRequester{
 
 	class listenForLogMessage extends CyclicBehaviour{
 		/**
@@ -75,34 +79,27 @@ public class ControlGUIAgent extends GuiAgent{
 
 		}
 	}
-
-	public void printOntRep(ACLMessage msg){
-		this.myGui.printOntRep(msg.getContent());
-	}
-
-	/*
-	class refreshAgentTree extends CyclicBehaviour{
-
-
-		@Override
-		public void action(){
-			ACLMessage logMsg=ControlGUIAgent.this.receive(this.loggingTemplate);
-			if(logMsg != null){
-				String content=logMsg.getContent();
-				((ControlGUIAgent) this.myAgent).writeLogMsg(content);
-			}else{
-				this.block();
-			}
-
+	@Override
+	public void processOntRep(ContainerHolder ontRep, AID agent){
+		XMLCodec xmlCodec=new XMLCodec();
+		String s;
+		try{
+			s=xmlCodec.encodeObject(ContainerTerminalOntology.getInstance(), ontRep, true);
+			this.myGui.printOntRep(s);
+		}catch(CodecException e){
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}catch(OntologyException e){
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
-	*/
+
 	private static final long serialVersionUID= -7176620366025244274L;
 	private JDesktopPane canvas=null;
 	public ControlGUI myGui=null;
 	private TopicManagementHelper tmh;
 	private AID loggingTopic=null;
-	public AID harbourMaster=null;
 	private AID sniffer=null;
 
 	@Override
@@ -128,11 +125,10 @@ public class ControlGUIAgent extends GuiAgent{
 				AgentController a=c.acceptNewAgent(name,new ShipAgent(ontologyRepresentation));
 
 				a.start();
-				/*
-				AID test2=new AID();
-				test2.setName(a.getName());
+				AID address=new AID();
+				address.setName(a.getName());
 				SniffOn agact=new SniffOn();
-				agact.addSniffedAgents(test2);
+				agact.addSniffedAgents(address);
 				agact.setSniffer(sniffer);
 				ACLMessage msg=new ACLMessage(ACLMessage.REQUEST);
 				msg.setLanguage(new SLCodec().getName());
@@ -143,25 +139,14 @@ public class ControlGUIAgent extends GuiAgent{
 				getContentManager().fillContent(msg,act);
 				msg.addReceiver(sniffer);
 				send(msg);
-				*/
 			}catch(Exception e){
 				e.printStackTrace();
 			}
 		}else if(command == 2){ // get ontologyRepresentation
-			this.harbourMaster=ContainerAgent.getFirstAIDFromDF("harbor-managing",this);
-
 			AID inQuestion=new AID();
 			inQuestion.setLocalName(ev.getParameter(0).toString());
 
-			try{
-				this.addBehaviour(new getOntologyRepresentation(this,inQuestion,this.getClass().getMethod("printOntRep",ACLMessage.class)));
-			}catch(SecurityException e){
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}catch(NoSuchMethodException e){
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			this.addBehaviour(new getOntologyRepresentation(this,inQuestion, ContainerAgent.getFirstAIDFromDF("harbor-managing",this)));
 		}else if(command == -1){ // GUI closed
 			this.doDelete();
 			//System.exit(0);
@@ -214,15 +199,8 @@ public class ControlGUIAgent extends GuiAgent{
 
 		this.addBehaviour(new listenForLogMessage(this));
 
-		DFAgentDescription dfd=new DFAgentDescription();
-		ServiceDescription sd=new ServiceDescription();
-		sd.setType("container-handling");
-//		sd.setType("short-time-storage");
-		dfd.addServices(sd);
-
-		Behaviour DFsubscribePreparer=null;
 		try{
-			DFsubscribePreparer=new prepareSubscribeToDF(this,this.getClass().getMethod("updateAgentTree",List.class),dfd);
+			this.addBehaviour(new subscribeToDF(this,this.getClass().getMethod("updateAgentTree",List.class),"container-handling"));
 		}catch(SecurityException e1){
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -230,11 +208,6 @@ public class ControlGUIAgent extends GuiAgent{
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-
-//		DFsubscribePreparer=new prepareSubscribeToDF(this,allAvailableAgents,dfd);
-		this.addBehaviour(DFsubscribePreparer);
-
-//		this.addBehaviour(new prepareSubscribeToDF(this, allAvailableAgents, "container-handling"));
 
 		AgentContainer c=this.getContainerController();
 		try{

@@ -268,24 +268,13 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 				ControlGUI.this.shutDown();
 			}
 		});
-		/*
-		 * this.addWindowListener(new WindowAdapter() { public void
-		 * windowClosing(WindowEvent e) { shutDown(); } });
-		 */
+
 //		new setConsole(this.getSystemConsole());
 	}
 
 	void shutDown(){
-		// -----------------  Control the closing of this gui
-		/*
-		 * int
-		 * rep=JOptionPane.showConfirmDialog(this,"Wirklich schlieﬂen?",this.
-		 * myAgent.getLocalName(),JOptionPane.YES_NO_CANCEL_OPTION); if(rep ==
-		 * JOptionPane.YES_OPTION){
-		 */
 		GuiEvent ge=new GuiEvent(this, -1);
 		this.myAgent.postGuiEvent(ge);
-		//}
 	}
 
 	/**
@@ -299,7 +288,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 			this.console.setText("");
 			this.console.setSize(new Dimension(1000,112));
 			this.console.setEditable(false);
-//			console.setAutoscrolls(true);
+			this.console.setAutoscrolls(true);
 		}
 		return this.console;
 	}
@@ -310,11 +299,9 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	public void writeLogMsg(final String content){
 		Runnable addIt=new Runnable(){
 			public void run(){
-//	        	getJTextPane().setText(content);
 				Document doc=ControlGUI.this.getConsole().getDocument();
 				try{
 					doc.insertString(doc.getLength(),content,null);
-//	    			getJTextPane().setCaretPosition(doc.getLength());
 				}catch(BadLocationException ex){
 					ex.printStackTrace();
 				}

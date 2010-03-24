@@ -17,7 +17,6 @@ package contmas.agents;
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
-import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.util.leap.Iterator;
 import jade.util.leap.List;
 
@@ -25,10 +24,10 @@ import java.util.Random;
 
 import contmas.behaviours.announceLoadOrders;
 import contmas.behaviours.listenForOntRepRequest;
-import contmas.behaviours.prepareSubscribeToDF;
+import contmas.behaviours.subscribeToDF;
 import contmas.ontology.*;
 
-public class ContainerHolderAgent extends ContainerAgent{
+public class ContainerHolderAgent extends ContainerAgent implements OntRepProvider{
 
 	/**
 	 * 
@@ -37,14 +36,15 @@ public class ContainerHolderAgent extends ContainerAgent{
 
 	protected String targetAgentServiceType=null;
 
-	protected DFAgentDescription targetDFAgentDescription=null;
-
 	protected Domain targetAbstractDomain=null;
 
 	protected ContainerHolder ontologyRepresentation;
 
-	public ContainerHolder getOntologyRepresentation(String none){
-		return this.ontologyRepresentation;
+	public ContainerHolder getOntologyRepresentation(AID myAID){
+		if(myAID.equals(this.getAID())){
+			return this.ontologyRepresentation;
+		}
+		return null;
 	}
 
 	public Integer lengthOfProposeQueue=2;
@@ -144,7 +144,7 @@ public class ContainerHolderAgent extends ContainerAgent{
 			Behaviour DFsubscribePreparer;
 
 			try{
-				DFsubscribePreparer=new prepareSubscribeToDF(this,this.getClass().getMethod("addToContractors",List.class),this.targetDFAgentDescription);
+				DFsubscribePreparer=new subscribeToDF(this,this.getClass().getMethod("addToContractors",List.class),this.targetAgentServiceType);
 				this.addBehaviour(DFsubscribePreparer);
 			}catch(SecurityException e){
 				// TODO Auto-generated catch block
@@ -355,23 +355,7 @@ public class ContainerHolderAgent extends ContainerAgent{
 			this.ontologyRepresentation.setContains(LoadBay);
 		}
 
-		DFAgentDescription dfd=new DFAgentDescription();
-		ServiceDescription sd=new ServiceDescription();
-		sd.setType(this.targetAgentServiceType);
-		dfd.addServices(sd);
-		this.targetDFAgentDescription=dfd;
-
 		this.determineContractors();
-
-		try{
-			this.addBehaviour(new listenForOntRepRequest(this,this.getClass().getMethod("getOntologyRepresentation",String.class)));
-		}catch(SecurityException e){
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}catch(NoSuchMethodException e){
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
+		this.addBehaviour(new listenForOntRepRequest(this));
 	}
 }
