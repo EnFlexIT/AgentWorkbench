@@ -36,6 +36,10 @@ import javax.swing.text.Document;
 import javax.swing.tree.TreePath;
 
 import contmas.agents.ControlGUIAgent;
+import javax.swing.JScrollPane;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.ListModel;
 
 public class ControlGUI extends JInternalFrame implements ActionListener{
 
@@ -65,6 +69,9 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JButton ButtonSetOntRep=null;
 	private JScrollPane ontRepScrollPane=null;
 	private JTextArea ontRep=null;
+	private JScrollPane jScrollPane = null;
+	private JLabel ontRepAgentName = null;
+	private JList jList = null;
 
 	/**
 	 * This is the default constructor
@@ -124,6 +131,10 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	 */
 	private JPanel getJContentPane(){
 		if(this.jContentPane == null){
+			ontRepAgentName = new JLabel();
+			ontRepAgentName.setBounds(new Rectangle(439, 67, 199, 16));
+			ontRepAgentName.setName("ontRepAgentName");
+			ontRepAgentName.setText("[No Agent Yet]");
 			this.ShipLabelLength=new JLabel();
 			this.ShipLabelLength.setText("Length");
 			this.ShipLabelLength.setBounds(new Rectangle(5,158,55,16));
@@ -163,6 +174,8 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 			this.jContentPane.add(this.getButtonGetOntRep(),null);
 			this.jContentPane.add(this.getButtonSetOntRep(),null);
 			this.jContentPane.add(this.getOntRepScrollPane(),null);
+			jContentPane.add(getJScrollPane(), null);
+			jContentPane.add(ontRepAgentName, null);
 			this.jContentPane.add(this.ShipLabelLength,null);
 			this.jContentPane.add(this.Heading,null);
 			this.jContentPane.add(this.ShipLabelName,null);
@@ -256,7 +269,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	 * @return void
 	 */
 	private void initialize(){
-		this.setSize(777,511);
+		this.setSize(653, 511);
 		this.setClosable(true);
 
 		this.setMaximizable(true);
@@ -392,7 +405,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JScrollPane getSystemConsoleScrollPane(){
 		if(this.systemConsoleScrollPane == null){
 			this.systemConsoleScrollPane=new JScrollPane();
-			this.systemConsoleScrollPane.setBounds(new Rectangle(9,335,422,135));
+			this.systemConsoleScrollPane.setBounds(new Rectangle(5, 326, 429, 149));
 			this.systemConsoleScrollPane.setViewportView(this.getSystemConsole());
 		}
 		return this.systemConsoleScrollPane;
@@ -419,7 +432,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JButton getButtonGetOntRep(){
 		if(this.ButtonGetOntRep == null){
 			this.ButtonGetOntRep=new JButton();
-			this.ButtonGetOntRep.setBounds(new Rectangle(443,10,314,23));
+			this.ButtonGetOntRep.setBounds(new Rectangle(437, 7, 202, 23));
 			this.ButtonGetOntRep.setText("> Get ontologyRepresentation");
 			this.ButtonGetOntRep.addActionListener(new ActionListener(){
 				public void actionPerformed(ActionEvent e){
@@ -449,7 +462,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JButton getButtonSetOntRep(){
 		if(this.ButtonSetOntRep == null){
 			this.ButtonSetOntRep=new JButton();
-			this.ButtonSetOntRep.setBounds(new Rectangle(442,239,309,26));
+			this.ButtonSetOntRep.setBounds(new Rectangle(436, 36, 203, 23));
 			this.ButtonSetOntRep.setText("< Set ontologyRepresentation");
 		}
 		return this.ButtonSetOntRep;
@@ -463,7 +476,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JScrollPane getOntRepScrollPane(){
 		if(this.ontRepScrollPane == null){
 			this.ontRepScrollPane=new JScrollPane();
-			this.ontRepScrollPane.setBounds(new Rectangle(447,40,305,193));
+			this.ontRepScrollPane.setBounds(new Rectangle(436, 88, 203, 115));
 			this.ontRepScrollPane.setViewportView(this.getOntRep());
 		}
 		return this.ontRepScrollPane;
@@ -480,6 +493,49 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 			this.ontRep.setEditable(false);
 		}
 		return this.ontRep;
+	}
+
+	/**
+	 * This method initializes jScrollPane	
+	 * 	
+	 * @return javax.swing.JScrollPane	
+	 */
+	private JScrollPane getJScrollPane(){
+		if(jScrollPane == null){
+			jScrollPane=new JScrollPane();
+			jScrollPane.setBounds(new Rectangle(437, 209, 201, 113));
+			jScrollPane.setViewportView(getJList());
+		}
+		return jScrollPane;
+	}
+
+	/**
+	 * This method initializes jList	
+	 * 	
+	 * @return javax.swing.JList	
+	 */
+	private JList getJList(){
+		if(jList == null){
+			jList=new JList();
+		}
+		return jList;
+	}
+
+	/**
+	 * @param localName
+	 */
+	public void setOntRepAgent(String localName){
+		this.ontRepAgentName.setText(localName);
+	}
+
+	/**
+	 * @param containerList
+	 */
+	public void setContainerList(ListModel containerList){
+		// TODO Auto-generated method stub
+		this.getJList().setModel(containerList);
+
+		
 	}
 
 } //  @jve:decl-index=0:visual-constraint="30,15"

@@ -40,7 +40,9 @@ public class HarborMasterAgent extends ContainerAgent implements OntRepProvider,
 	}
 
 	public ContainerHolder getCachedOntRep(AID lookForAgent){
-		return this.activeContainerHolders.get(lookForAgent);
+		ContainerHolder lookedForOntRep=this.activeContainerHolders.get(lookForAgent);
+		this.activeContainerHolders.remove(lookForAgent);//no real caching
+		return lookedForOntRep;
 	}
 
 	public void processOntRep(ContainerHolder ontRep, AID agent){
@@ -67,6 +69,7 @@ public class HarborMasterAgent extends ContainerAgent implements OntRepProvider,
 	}
 
 	public ContainerHolder getOntologyRepresentation(AID inQuestion){
+
 		ContainerHolder ontRep=this.getCachedOntRep(inQuestion);
 		if(ontRep == null){
 			if( !this.ontRepInquieries.containsKey(inQuestion)){

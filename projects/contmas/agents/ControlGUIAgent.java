@@ -32,11 +32,15 @@ import jade.gui.GuiAgent;
 import jade.gui.GuiEvent;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import jade.util.leap.Iterator;
 import jade.util.leap.List;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JDesktopPane;
+import javax.swing.JList;
+import javax.swing.ListModel;
 
 import contmas.behaviours.getOntologyRepresentation;
 import contmas.behaviours.subscribeToDF;
@@ -81,6 +85,9 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester{
 	}
 	@Override
 	public void processOntRep(ContainerHolder ontRep, AID agent){
+		if(ontRep==null){
+			return;
+		}
 		XMLCodec xmlCodec=new XMLCodec();
 		String s;
 		try{
@@ -93,6 +100,32 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		this.myGui.setOntRepAgent(agent.getLocalName());
+		DefaultListModel containerList=new DefaultListModel();
+		Iterator allContStates=ontRep.getAllContainer_states();
+		List allContsList=ontRep.getContains().getIs_filled_with();
+		while(allContStates.hasNext()){
+			TOCHasState contState=(TOCHasState) allContStates.next();
+			String administeredContBic=contState.getSubjected_toc().getTransports().getBic_code();
+			String dispString=administeredContBic;
+			dispString+=" - "+contState.getState().getClass().getSimpleName();
+			Iterator allConts=allContsList.iterator();
+			Boolean found=false;
+			while(allConts.hasNext()){
+				found=false;
+				BlockAddress curCont=(BlockAddress) allConts.next();
+				if(curCont.getLocates().getBic_code().equals(administeredContBic)){
+					dispString+=" (x="+curCont.getX_dimension()+", y="+curCont.getY_dimension()+", z="+curCont.getZ_dimension()+")";
+					found=true;
+				}
+			}
+			if(found==false){
+				dispString+=" [ERROR]";
+			}
+			containerList.addElement(dispString);
+		}
+//		containerList.setModel(new ListModel());
+		this.myGui.setContainerList(containerList);
 	}
 
 	private static final long serialVersionUID= -7176620366025244274L;

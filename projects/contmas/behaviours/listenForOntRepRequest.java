@@ -33,6 +33,7 @@ import java.lang.reflect.Method;
 
 import contmas.agents.ContainerAgent;
 import contmas.agents.OntRepProvider;
+import contmas.agents.OntRepRequester;
 import contmas.main.MatchAgentAction;
 import contmas.ontology.ContainerHolder;
 import contmas.ontology.ProvideOntologyRepresentation;
@@ -58,20 +59,30 @@ public class listenForOntRepRequest extends AchieveREResponder{
 	@Override
 	protected ACLMessage handleRequest(ACLMessage request){
 		Concept content=((ContainerAgent) this.myAgent).extractAction(request);
+		ACLMessage reply=request.createReply();
 		AID inQuestion=((RequestOntologyRepresentation) content).getAgent_in_question();
 		this.accordingOntrep=((OntRepProvider) myAgent).getOntologyRepresentation(inQuestion);
 
-		if(this.accordingOntrep == null){
+		if((myAgent instanceof OntRepRequester) && inQuestion.equals(myAgent.getAID())){ //request is asking myself, and i'm the harbourmaster or not-understood got yet
+			reply.setPerformative(ACLMessage.REFUSE);
+			return reply;
+		}
+
+		if(this.accordingOntrep == null ){
 			this.block();
 			this.myAgent.putBack(request);
 			return null;
 		}else{
-			ACLMessage reply=request.createReply();
-			reply.setPerformative(ACLMessage.INFORM);
-			ProvideOntologyRepresentation act=new ProvideOntologyRepresentation();
-			act.setAccording_ontrep(this.accordingOntrep);
-			((ContainerAgent) this.myAgent).fillMessage(reply,act);
-			return reply;
+			if(this.accordingOntrep.getContains()==null){ //request is asking myself, and i'm the harbourmaster or not-understood got yet
+				reply.setPerformative(ACLMessage.REFUSE);
+				return reply;
+			}else{
+				reply.setPerformative(ACLMessage.INFORM);
+				ProvideOntologyRepresentation act=new ProvideOntologyRepresentation();
+				act.setAccording_ontrep(this.accordingOntrep);
+				((ContainerAgent) this.myAgent).fillMessage(reply,act);
+				return reply;
+			}
 		}
 	}
 

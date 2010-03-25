@@ -33,6 +33,7 @@ import contmas.agents.ContainerAgent;
 import contmas.agents.ControlGUIAgent;
 import contmas.agents.HarborMasterAgent;
 import contmas.agents.OntRepRequester;
+import contmas.ontology.ContainerHolder;
 import contmas.ontology.ProvideOntologyRepresentation;
 import contmas.ontology.RequestOntologyRepresentation;
 
@@ -91,6 +92,17 @@ public class getOntologyRepresentation extends AchieveREInitiator{
 	@Override
 	protected void handleInform(ACLMessage msg){
 		ProvideOntologyRepresentation act=(ProvideOntologyRepresentation) ContainerAgent.extractAction(myAgent,msg);
-		((OntRepRequester) myAgent).processOntRep(act.getAccording_ontrep(), msg.getSender());
+		((OntRepRequester) myAgent).processOntRep(act.getAccording_ontrep(), this.agentInQuestion);
+	}
+	
+	@Override
+	protected void handleRefuse(ACLMessage msg){
+//		System.out.println("Refuse");
+	}
+	
+	@Override
+	protected void handleNotUnderstood(ACLMessage msg){
+		((OntRepRequester) myAgent).processOntRep(new ContainerHolder(), this.agentInQuestion);
+//		System.out.println("NotUnderstood");
 	}
 }
