@@ -16,9 +16,9 @@ package contmas.agents;
 
 import jade.content.AgentAction;
 import jade.content.Concept;
-import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.OneShotBehaviour;
+import jade.core.behaviours.SimpleBehaviour;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.proto.AchieveREInitiator;
@@ -28,6 +28,8 @@ import jade.util.leap.List;
 import java.util.Vector;
 
 import contmas.behaviours.announceLoadOrders;
+import contmas.behaviours.fetchRandomBayMap;
+import contmas.behaviours.getPopulatedBayMap;
 import contmas.ontology.*;
 
 public class ShipAgent extends StaticContainerAgent implements TransportOrderOfferer{
@@ -36,17 +38,21 @@ public class ShipAgent extends StaticContainerAgent implements TransportOrderOff
 		 * 
 		 */
 		private static final long serialVersionUID= -1583891049645164006L;
+		private ShipAgent mySAgent=null;
+		private ContainerAgent myCAgent=null;
 
 		public enrollAtHarbor(Agent a,ACLMessage initiation){
 			super(a,initiation);
-			ShipAgent.this.mySAgent=((ShipAgent) this.myAgent);
+			this.mySAgent=((ShipAgent) this.myAgent);
+			this.myCAgent=((ContainerAgent) this.myAgent);
+
 		}
 
 		@Override
 		protected Vector<ACLMessage> prepareRequests(ACLMessage request){
-			request.addReceiver(ShipAgent.this.HarborManager);
+			request.addReceiver(ShipAgent.this.harborManager);
 			EnrollAtHarbor act=new EnrollAtHarbor();
-			act.setShip_length(((Ship) ShipAgent.this.mySAgent.ontologyRepresentation).getLength());
+			act.setShip_length(((Ship) this.mySAgent.ontologyRepresentation).getLength());
 			((ContainerAgent) this.myAgent).fillMessage(request,act);
 
 			Vector<ACLMessage> messages=new Vector<ACLMessage>();
@@ -79,97 +85,12 @@ public class ShipAgent extends StaticContainerAgent implements TransportOrderOff
 
 		@Override
 		protected Vector<ACLMessage> prepareRequests(ACLMessage request){
-			request.addReceiver(ShipAgent.this.HarborManager);
+			request.addReceiver(ShipAgent.this.harborManager);
 			AgentAction act=new GetCraneList();
 			((ContainerAgent) this.myAgent).fillMessage(request,act);
 
 			Vector<ACLMessage> messages=new Vector<ACLMessage>();
 			messages.add(request);
-			return messages;
-		}
-	}
-
-	public class fetchRandomBayMap extends AchieveREInitiator{
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID= -1832052412333457494L;
-
-		public fetchRandomBayMap(Agent a,ACLMessage msg){
-			super(a,msg);
-		}
-
-		@Override
-		protected void handleInform(ACLMessage msg){
-			Concept content;
-			content=((ContainerAgent) this.myAgent).extractAction(msg);
-			if(content instanceof ProvideBayMap){
-				((ContainerHolderAgent) this.myAgent).ontologyRepresentation.setContains(((ProvideBayMap) content).getProvides());
-				//echoStatus("BayMap recieved! X_dimension:"+getLoadBay().getX_dimension()+", Y_dimension:"+getLoadBay().getY_dimension()+", Z_dimension:"+getLoadBay().getZ_dimension());
-				msg=new ACLMessage(ACLMessage.REQUEST);
-				msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
-				ShipAgent.this.addBehaviour(new getPopulatedBayMap(this.myAgent,msg));
-			}else{
-				ShipAgent.this.echoStatus("Error",ContainerAgent.LOGGING_ERROR);
-			}
-		}
-
-		@Override
-		protected Vector<?> prepareRequests(ACLMessage request){
-			request.addReceiver(ShipAgent.this.RandomGenerator);
-			RequestRandomBayMap act=new RequestRandomBayMap();
-			//TODO hardcoded
-			act.setX_dimension(4);
-			act.setY_dimension(4);
-			act.setZ_dimension(2);
-			((ContainerAgent) this.myAgent).fillMessage(request,act);
-			Vector<ACLMessage> messages=new Vector<ACLMessage>();
-			messages.add(request);
-			return messages;
-		}
-	}
-
-	public class getPopulatedBayMap extends AchieveREInitiator{
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID= -6587230887404034233L;
-
-		public getPopulatedBayMap(Agent a,ACLMessage msg){
-			super(a,msg);
-		}
-
-		@Override
-		protected void handleInform(ACLMessage msg){
-			Concept content;
-			content=((ContainerAgent) this.myAgent).extractAction(msg);
-
-			if(content instanceof ProvidePopulatedBayMap){
-				ShipAgent.this.ontologyRepresentation.setContains(((ProvidePopulatedBayMap) content).getProvides());
-				Iterator allConts=ShipAgent.this.ontologyRepresentation.getContains().getAllIs_filled_with();
-				while(allConts.hasNext()){
-					BlockAddress curBaymap=(BlockAddress) allConts.next();
-					TransportOrderChain curTOC=new TransportOrderChain();
-					curTOC.setTransports(curBaymap.getLocates());
-					ShipAgent.this.touchTOCState(curTOC,new Administered(),true);
-				}
-				//echoStatus("populatedBayMap recieved!"); 
-				ShipAgent.this.offerTransportOrder();
-			}else{
-				ShipAgent.this.echoStatus("Error",ContainerAgent.LOGGING_ERROR);
-			}
-		}
-
-		@Override
-		protected Vector<?> prepareRequests(ACLMessage request){
-			request.addReceiver(ShipAgent.this.RandomGenerator);
-			//BayMap aus Agent auslesen
-			RequestPopulatedBayMap act=new RequestPopulatedBayMap();
-			act.setPopulate_on(ShipAgent.this.ontologyRepresentation.getContains());
-			((ContainerAgent) this.myAgent).fillMessage(request,act);
-			Vector<ACLMessage> messages=new Vector<ACLMessage>();
-			messages.add(request);
-
 			return messages;
 		}
 	}
@@ -196,6 +117,15 @@ public class ShipAgent extends StaticContainerAgent implements TransportOrderOff
 			//			echoStatus("Tick: Entladen geht los");
 			if(this.mySAgent.ontologyRepresentation.getContractors() != null){
 				BayMap LoadBay=this.mySAgent.ontologyRepresentation.getContains();
+
+				Iterator allConts=getOntologyRepresentation().getContains().getAllIs_filled_with();
+				while(allConts.hasNext()){
+					BlockAddress curBaymap=(BlockAddress) allConts.next();
+					TransportOrderChain curTOC=new TransportOrderChain();
+					curTOC.setTransports(curBaymap.getLocates());
+					touchTOCState(curTOC,new Administered(),true);
+				}
+
 				new LoadList();
 				Designator myself=ShipAgent.this.getMyselfDesignator();
 
@@ -248,19 +178,12 @@ public class ShipAgent extends StaticContainerAgent implements TransportOrderOff
 				this.block();
 			}
 		}
-
 	}
-
-	private ShipAgent mySAgent=null;
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID=6800105012920938089L;
-
-	private AID HarborManager=null;
-
-	private AID RandomGenerator=null;
 
 	public ShipAgent(){
 		this(new Ship());
@@ -282,6 +205,35 @@ public class ShipAgent extends StaticContainerAgent implements TransportOrderOff
 		this.addBehaviour(new fetchCraneList(this,msg));
 	}
 
+	class scheduleUnloadStart extends SimpleBehaviour{
+		Boolean done=false;
+		/**
+		 * @param shipAgent
+		 */
+		public scheduleUnloadStart(Agent a){
+			super(a);
+		}
+
+		/* (non-Javadoc)
+		 * @see jade.core.behaviours.Behaviour#action()
+		 */
+		@Override
+		public void action(){
+			if( !((ContainerHolderAgent) myAgent).getOntologyRepresentation().getContains().getIs_filled_with().isEmpty()){
+				offerTransportOrder();
+				done=true;
+			}
+		}
+
+		/* (non-Javadoc)
+		 * @see jade.core.behaviours.Behaviour#done()
+		 */
+		@Override
+		public boolean done(){
+			return done;
+		}
+	}
+
 	@Override
 	protected void setup(){
 		super.setup();
@@ -289,22 +241,16 @@ public class ShipAgent extends StaticContainerAgent implements TransportOrderOff
 		//TODO hardcoded
 		this.ontologyRepresentation.setLives_in(new Sea());
 
-		//look for RandomGeneratorAgent
-		this.RandomGenerator=this.getFirstAIDFromDF("random-generation");
-		this.HarborManager=this.getFirstAIDFromDF("harbor-managing");
-
 		ACLMessage msg=new ACLMessage(ACLMessage.REQUEST);
 		msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
 		this.addBehaviour(new enrollAtHarbor(this,msg));
-
+/*
 		if((this.ontologyRepresentation.getContains().getX_dimension() == -1) || (this.ontologyRepresentation.getContains().getY_dimension() == -1) || (this.ontologyRepresentation.getContains().getZ_dimension() == -1)){ //default-größe
-			msg=new ACLMessage(ACLMessage.REQUEST);
-			msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
-			this.addBehaviour(new fetchRandomBayMap(this,msg));
+			this.addBehaviour(new fetchRandomBayMap(this));
 		}else{ //direkt füllen
-			msg=new ACLMessage(ACLMessage.REQUEST);
-			msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
-			this.addBehaviour(new getPopulatedBayMap(this,msg));
+			this.addBehaviour(new getPopulatedBayMap(this));
 		}
+		*/
+		this.addBehaviour(new scheduleUnloadStart(this));
 	}
 }

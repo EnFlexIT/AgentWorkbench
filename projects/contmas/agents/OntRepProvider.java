@@ -29,4 +29,9 @@ import contmas.ontology.ContainerHolder;
  */
 public interface OntRepProvider{
 	public ContainerHolder getOntologyRepresentation(AID request);
+
+	/**
+	 * @return
+	 */
+	public ContainerHolder getOntologyRepresentation();
 }

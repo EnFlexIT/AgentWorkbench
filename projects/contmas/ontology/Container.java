@@ -8,19 +8,19 @@ import jade.core.*;
 /**
 * Protege name: Container
 * @author ontology bean generator
-* @version 2010/03/21, 12:51:19
+* @version 2010/03/25, 18:36:31
 */
 public class Container implements Concept {
 
    /**
-* Protege name: bic_code
+* Protege name: weight
    */
-   private String bic_code;
-   public void setBic_code(String value) { 
-    this.bic_code=value;
+   private float weight;
+   public void setWeight(float value) { 
+    this.weight=value;
    }
-   public String getBic_code() {
-     return this.bic_code;
+   public float getWeight() {
+     return this.weight;
    }
 
    /**
@@ -35,6 +35,17 @@ public class Container implements Concept {
    }
 
    /**
+* Protege name: bic_code
+   */
+   private String bic_code;
+   public void setBic_code(String value) { 
+    this.bic_code=value;
+   }
+   public String getBic_code() {
+     return this.bic_code;
+   }
+
+   /**
 * Protege name: length
    */
    private float length;
@@ -43,17 +54,6 @@ public class Container implements Concept {
    }
    public float getLength() {
      return this.length;
-   }
-
-   /**
-* Protege name: weight
-   */
-   private float weight;
-   public void setWeight(float value) { 
-    this.weight=value;
-   }
-   public float getWeight() {
-     return this.weight;
    }
 
    /**

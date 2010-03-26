@@ -1,5 +1,5 @@
 /**
- * @author Hanno - Felix Wagner, 22.03.2010
+ * @author Hanno - Felix Wagner, 24.03.2010
  * Copyright 2010 Hanno - Felix Wagner
  * 
  * This file is part of ContMAS.
@@ -20,66 +20,46 @@
  */
 package contmas.behaviours;
 
+import java.util.Vector;
+
+import contmas.agents.ContainerAgent;
+import contmas.agents.OntRepRequester;
+import contmas.ontology.ContainerHolder;
+import contmas.ontology.ProvideOntologyRepresentation;
+import contmas.ontology.RequestOntologyRepresentation;
+import contmas.ontology.StartNewContainerHolder;
+import jade.content.AgentAction;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.proto.AchieveREInitiator;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.Vector;
+/**
+ * @author Hanno - Felix Wagner
+ *
+ */
+public class requestStartAgent extends AchieveREInitiator{
 
-import contmas.agents.ContainerAgent;
-import contmas.agents.ControlGUIAgent;
-import contmas.agents.HarborMasterAgent;
-import contmas.agents.OntRepRequester;
-import contmas.ontology.ContainerHolder;
-import contmas.ontology.ProvideOntologyRepresentation;
-import contmas.ontology.RequestOntologyRepresentation;
+	private AID harbourMaster=null;
+	private StartNewContainerHolder act=null;
 
-public class getOntologyRepresentation extends AchieveREInitiator{
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID=3852209142960173705L;
-	/**
-	 * 
-	 */
-	private AID agentInQuestion=null;
-	private AID requestFrom;
-
-	public static ACLMessage getRequestMessage(){
+	private static ACLMessage getRequestMessage(Agent a){
 		ACLMessage msg=new ACLMessage(ACLMessage.REQUEST);
 		msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
 		return msg;
 	}
 
-	/**
-	 * @param myAgent
-	 * @param inQuestion
-	 */
-	public getOntologyRepresentation(Agent myAgent,AID inQuestion){
-		super(myAgent,getOntologyRepresentation.getRequestMessage());
-		this.agentInQuestion=inQuestion;
-		this.requestFrom=agentInQuestion;
-	}
+	public requestStartAgent(Agent a,AID harbourMaster,StartNewContainerHolder act){
+		super(a,getRequestMessage(a));
+		this.harbourMaster=harbourMaster;
 
-	/**
-	 * @param myAgent
-	 * @param inQuestion
-	 * @param relayServer TODO
-	 * @param newParam TODO
-	 */
-	public getOntologyRepresentation(Agent myAgent,AID inQuestion, AID requestFrom){
-		this(myAgent,inQuestion);
-		this.requestFrom=requestFrom;
+		this.act=act;
 	}
 
 	@Override
 	protected Vector<ACLMessage> prepareRequests(ACLMessage request){
-		request.addReceiver(this.requestFrom);
-		RequestOntologyRepresentation act=new RequestOntologyRepresentation();
-		act.setAgent_in_question(this.agentInQuestion);
+		request.addReceiver(this.harbourMaster);
 
 		ContainerAgent.enableForCommunication(this.myAgent);
 		ContainerAgent.fillMessage(request,act,this.myAgent);
@@ -91,16 +71,13 @@ public class getOntologyRepresentation extends AchieveREInitiator{
 
 	@Override
 	protected void handleInform(ACLMessage msg){
-		ProvideOntologyRepresentation act=(ProvideOntologyRepresentation) ContainerAgent.extractAction(myAgent,msg);
-		((OntRepRequester) myAgent).processOntologyRepresentation(act.getAccording_ontrep(), this.agentInQuestion);
 	}
-	
+
 	@Override
 	protected void handleRefuse(ACLMessage msg){
 	}
-	
+
 	@Override
 	protected void handleNotUnderstood(ACLMessage msg){
-		((OntRepRequester) myAgent).processOntologyRepresentation(new ContainerHolder(), this.agentInQuestion);
 	}
 }

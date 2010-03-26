@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: Sea
 * @author ontology bean generator
-* @version 2010/03/21, 12:51:19
+* @version 2010/03/25, 18:36:31
 */
 public class Sea extends Domain{ 
 

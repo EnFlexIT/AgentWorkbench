@@ -199,6 +199,8 @@ public class ContainerAgent extends Agent{
 	}
 
 	protected String ownServiceType;
+	protected AID harborManager=null;
+	public AID randomGenerator=null;
 
 	/**
 	 * 
@@ -223,6 +225,10 @@ public class ContainerAgent extends Agent{
 		//register self at DF
 		this.echoStatus(this.ownServiceType,ContainerAgent.LOGGING_INFORM);
 		this.register(this.ownServiceType);
+		
+		//look for RandomGeneratorAgent
+		this.randomGenerator=this.getFirstAIDFromDF("random-generation");
+		this.harborManager=this.getFirstAIDFromDF("harbor-managing");
 
 	}
 

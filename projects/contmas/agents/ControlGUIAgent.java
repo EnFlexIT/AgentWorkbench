@@ -43,6 +43,7 @@ import javax.swing.JList;
 import javax.swing.ListModel;
 
 import contmas.behaviours.getOntologyRepresentation;
+import contmas.behaviours.requestStartAgent;
 import contmas.behaviours.subscribeToDF;
 import contmas.main.AgentDesktop;
 import contmas.main.ControlGUI;
@@ -84,7 +85,7 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester{
 		}
 	}
 	@Override
-	public void processOntRep(ContainerHolder ontRep, AID agent){
+	public void processOntologyRepresentation(ContainerHolder ontRep, AID agent){
 		if(ontRep==null){
 			return;
 		}
@@ -131,6 +132,7 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester{
 	private static final long serialVersionUID= -7176620366025244274L;
 	private JDesktopPane canvas=null;
 	public ControlGUI myGui=null;
+	private AID harbourMaster=null;
 	private TopicManagementHelper tmh;
 	private AID loggingTopic=null;
 	private AID sniffer=null;
@@ -152,12 +154,22 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester{
 					loadBay.setY_dimension(Integer.parseInt(ev.getParameter(2).toString()));
 					loadBay.setZ_dimension(Integer.parseInt(ev.getParameter(3).toString()));
 					ontologyRepresentation.setContains(loadBay);
-					ontologyRepresentation.setLength(Float.parseFloat(ev.getParameter(3).toString()));
+					ontologyRepresentation.setLength(Float.parseFloat(ev.getParameter(6).toString()));
 				}
+				/*
 				//				habitat.setLies_in(terminalArea);
 				AgentController a=c.acceptNewAgent(name,new ShipAgent(ontologyRepresentation));
-
 				a.start();
+				*/
+				StartNewContainerHolder act=new StartNewContainerHolder();
+				act.setName(name);
+				act.setTo_be_added(ontologyRepresentation);
+				act.setRandomize(Boolean.parseBoolean(ev.getParameter(4).toString()));
+				act.setPopulate(Boolean.parseBoolean(ev.getParameter(5).toString()));
+				this.addBehaviour(new requestStartAgent(this,harbourMaster,act));
+
+			
+				/*
 				AID address=new AID();
 				address.setName(a.getName());
 				SniffOn agact=new SniffOn();
@@ -172,6 +184,7 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester{
 				getContentManager().fillContent(msg,act);
 				msg.addReceiver(sniffer);
 				send(msg);
+				*/
 			}catch(Exception e){
 				e.printStackTrace();
 			}
@@ -179,10 +192,9 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester{
 			AID inQuestion=new AID();
 			inQuestion.setLocalName(ev.getParameter(0).toString());
 
-			this.addBehaviour(new getOntologyRepresentation(this,inQuestion, ContainerAgent.getFirstAIDFromDF("harbor-managing",this)));
+			this.addBehaviour(new getOntologyRepresentation(this,inQuestion, harbourMaster));
 		}else if(command == -1){ // GUI closed
 			this.doDelete();
-			//System.exit(0);
 		}
 
 	}
@@ -191,34 +203,14 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester{
 	protected void setup(){
 		// Instanciate the gui
 
-		/*
-		Object[] args=this.getArguments();
-		if((args != null) && (args[0] instanceof JDesktopPane)){
-			this.canvas=(JDesktopPane) args[0];
-		}
-		if(this.canvas == null){
-			ContMASContainer CMC=new ContMASContainer();
-			CMC.setVisible(true);
-			this.canvas=CMC.getJDesktopPane();
-		}*/
-
 		this.myGui=new ControlGUI(this);
 
 		AgentDesktop ad=new AgentDesktop("ContMAS");
 		this.canvas=ad.getDesktopPane();
 		this.myGui.displayOn(this.canvas);
-//		this.canvas.add(this.myGui);
 		this.myGui.setVisible(true);
 		if(ad.getStandaloneMode() == AgentDesktop.AGENTDESKTOP_STANDALONE){
 			this.myGui.getCanvas().getParent().getParent().getParent().getParent().setSize(this.myGui.getWidth() + 10,this.myGui.getHeight() + 30);
-/*
-			try{
-				this.myGui.setMaximum(true);
-			}catch(PropertyVetoException e1){
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-*/
 		}
 
 		try{
@@ -248,6 +240,8 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester{
 			a.start();
 			a=c.createNewAgent("HarborMaster","contmas.agents.HarborMasterAgent",null);
 			a.start();
+			this.harbourMaster=new AID();
+			this.harbourMaster.setName(a.getName());
 			a=c.createNewAgent("Sniffer","jade.tools.sniffer.Sniffer",new Object[] {"Yard;StraddleCarrier-#1;Apron;Crane-#2;Crane-#1"});
 			a.start();
 			this.sniffer=new AID();

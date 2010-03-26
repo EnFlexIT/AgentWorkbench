@@ -28,5 +28,5 @@ import contmas.ontology.ContainerHolder;
  *
  */
 public interface OntRepRequester{
-	public void processOntRep(ContainerHolder recieved, AID agent);
+	public void processOntologyRepresentation(ContainerHolder recieved, AID agent);
 }

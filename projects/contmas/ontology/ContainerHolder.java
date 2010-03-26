@@ -7,20 +7,41 @@ import jade.core.*;
 /**
 * Protege name: ContainerHolder
 * @author ontology bean generator
-* @version 2010/03/21, 12:51:20
+* @version 2010/03/25, 18:36:32
 */
 public class ContainerHolder extends AID{ 
 
    /**
-* Protege name: contains
+* Protege name: service_type
    */
-   private BayMap contains;
-   public void setContains(BayMap value) { 
-    this.contains=value;
+   private String service_type;
+   public void setService_type(String value) { 
+    this.service_type=value;
    }
-   public BayMap getContains() {
-     return this.contains;
+   public String getService_type() {
+     return this.service_type;
    }
+
+   /**
+* Protege name: container_states
+   */
+   private List container_states = new ArrayList();
+   public void addContainer_states(TOCHasState elem) { 
+     List oldList = this.container_states;
+     container_states.add(elem);
+   }
+   public boolean removeContainer_states(TOCHasState elem) {
+     List oldList = this.container_states;
+     boolean result = container_states.remove(elem);
+     return result;
+   }
+   public void clearAllContainer_states() {
+     List oldList = this.container_states;
+     container_states.clear();
+   }
+   public Iterator getAllContainer_states() {return container_states.iterator(); }
+   public List getContainer_states() {return container_states; }
+   public void setContainer_states(List l) {container_states = l; }
 
    /**
 * Protege name: lives_in
@@ -55,35 +76,14 @@ public class ContainerHolder extends AID{
    public void setContractors(List l) {contractors = l; }
 
    /**
-* Protege name: service_type
+* Protege name: contains
    */
-   private String service_type;
-   public void setService_type(String value) { 
-    this.service_type=value;
+   private BayMap contains;
+   public void setContains(BayMap value) { 
+    this.contains=value;
    }
-   public String getService_type() {
-     return this.service_type;
+   public BayMap getContains() {
+     return this.contains;
    }
-
-   /**
-* Protege name: container_states
-   */
-   private List container_states = new ArrayList();
-   public void addContainer_states(TOCHasState elem) { 
-     List oldList = this.container_states;
-     container_states.add(elem);
-   }
-   public boolean removeContainer_states(TOCHasState elem) {
-     List oldList = this.container_states;
-     boolean result = container_states.remove(elem);
-     return result;
-   }
-   public void clearAllContainer_states() {
-     List oldList = this.container_states;
-     container_states.clear();
-   }
-   public Iterator getAllContainer_states() {return container_states.iterator(); }
-   public List getContainer_states() {return container_states; }
-   public void setContainer_states(List l) {container_states = l; }
 
 }

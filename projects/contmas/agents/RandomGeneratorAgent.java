@@ -24,6 +24,7 @@ import jade.proto.AchieveREResponder;
 
 import java.util.Random;
 
+import contmas.main.MatchAgentAction;
 import contmas.ontology.*;
 
 public class RandomGeneratorAgent extends ContainerAgent{
@@ -164,14 +165,15 @@ public class RandomGeneratorAgent extends ContainerAgent{
 	protected void setup(){
 		super.setup();
 		//create filter for incoming messages
-		/*
-		 * MessageTemplate mt =
-		 * AchieveREResponder.createMessageTemplate(FIPANames
-		 * .InteractionProtocol.FIPA_REQUEST); addBehaviour(new
-		 * createRandomBayMap (this,mt));
-		 */
 
 		MessageTemplate mt=AchieveREResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_REQUEST);
+		mt=MessageTemplate.and(mt,new MessageTemplate(new MatchAgentAction(this,new RequestRandomBayMap())));
+		addBehaviour(new createRandomBayMap(this,mt));
+
+
+		mt=AchieveREResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_REQUEST);
+		mt=MessageTemplate.and(mt,new MessageTemplate(new MatchAgentAction(this,new RequestPopulatedBayMap())));
+
 		this.addBehaviour(new populateBayMap(this,mt));
 
 	}

@@ -46,6 +46,10 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		}
 		return null;
 	}
+	
+	public ContainerHolder getOntologyRepresentation(){
+		return getOntologyRepresentation(this.getAID());
+	}
 
 	public Integer lengthOfProposeQueue=2;
 

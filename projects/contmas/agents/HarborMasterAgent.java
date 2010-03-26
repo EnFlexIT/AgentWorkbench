@@ -22,10 +22,7 @@ import jade.wrapper.StaleProxyException;
 
 import java.util.HashMap;
 
-import contmas.behaviours.getOntologyRepresentation;
-import contmas.behaviours.listenForEnroll;
-import contmas.behaviours.listenForOntRepRequest;
-import contmas.behaviours.offerCraneList;
+import contmas.behaviours.*;
 import contmas.ontology.*;
 
 public class HarborMasterAgent extends ContainerAgent implements OntRepProvider, OntRepRequester{
@@ -45,7 +42,7 @@ public class HarborMasterAgent extends ContainerAgent implements OntRepProvider,
 		return lookedForOntRep;
 	}
 
-	public void processOntRep(ContainerHolder ontRep, AID agent){
+	public void processOntologyRepresentation(ContainerHolder ontRep, AID agent){
 		this.activeContainerHolders.put(agent,ontRep);
 	}
 
@@ -66,6 +63,7 @@ public class HarborMasterAgent extends ContainerAgent implements OntRepProvider,
 		this.addBehaviour(new listenForEnroll(this));
 		this.addBehaviour(new offerCraneList(this));
 		this.addBehaviour(new listenForOntRepRequest(this));
+		this.addBehaviour(new listenForStartAgentReq(this));
 	}
 
 	public ContainerHolder getOntologyRepresentation(AID inQuestion){
@@ -178,5 +176,13 @@ public class HarborMasterAgent extends ContainerAgent implements OntRepProvider,
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see contmas.agents.OntRepProvider#getOntologyRepresentation()
+	 */
+	@Override
+	public ContainerHolder getOntologyRepresentation(){
+		return null;
 	}
 }

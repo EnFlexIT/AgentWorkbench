@@ -40,6 +40,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListModel;
+import javax.swing.JCheckBox;
 
 public class ControlGUI extends JInternalFrame implements ActionListener{
 
@@ -72,6 +73,8 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JScrollPane jScrollPane = null;
 	private JLabel ontRepAgentName = null;
 	private JList jList = null;
+	private JCheckBox populateCheckBox = null;
+	private JCheckBox randomizeCheckBox = null;
 
 	/**
 	 * This is the default constructor
@@ -102,7 +105,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 		if(this.ButtonCreateShip == null){
 			this.ButtonCreateShip=new JButton();
 
-			this.ButtonCreateShip.setBounds(new Rectangle(5,185,196,20));
+			this.ButtonCreateShip.setBounds(new Rectangle(5, 185, 126, 20));
 			this.ButtonCreateShip.setText("Start ShipAgent");
 
 			this.ButtonCreateShip.addActionListener(new ActionListener(){
@@ -112,6 +115,8 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 					ge.addParameter(ControlGUI.this.TFShipX.getText());
 					ge.addParameter(ControlGUI.this.TFShipY.getText());
 					ge.addParameter(ControlGUI.this.TFShipZ.getText());
+					ge.addParameter(ControlGUI.this.randomizeCheckBox.isSelected());
+					ge.addParameter(ControlGUI.this.populateCheckBox.isSelected());
 					ge.addParameter(ControlGUI.this.TFShipLength.getText());
 					ControlGUI.this.myAgent.postGuiEvent(ge);
 				}
@@ -176,6 +181,8 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 			this.jContentPane.add(this.getOntRepScrollPane(),null);
 			jContentPane.add(getJScrollPane(), null);
 			jContentPane.add(ontRepAgentName, null);
+			jContentPane.add(getPopulateCheckBox(), null);
+			jContentPane.add(getRandomizeCheckBox(), null);
 			this.jContentPane.add(this.ShipLabelLength,null);
 			this.jContentPane.add(this.Heading,null);
 			this.jContentPane.add(this.ShipLabelName,null);
@@ -332,7 +339,8 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 			public void run(){
 				Document doc=ControlGUI.this.getOntRep().getDocument();
 				try{
-					doc.insertString(doc.getLength(),content + "\n",null);
+					doc.remove(0,doc.getLength());
+					doc.insertString(0,content + "\n",null);
 				}catch(BadLocationException ex){
 					ex.printStackTrace();
 				}
@@ -491,6 +499,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 		if(this.ontRep == null){
 			this.ontRep=new JTextArea();
 			this.ontRep.setEditable(false);
+			ontRep.setTabSize(2);
 		}
 		return this.ontRep;
 	}
@@ -536,6 +545,37 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 		this.getJList().setModel(containerList);
 
 		
+	}
+
+	/**
+	 * This method initializes populateCheckBox	
+	 * 	
+	 * @return javax.swing.JCheckBox	
+	 */
+	private JCheckBox getPopulateCheckBox(){
+		if(populateCheckBox == null){
+			populateCheckBox=new JCheckBox();
+			populateCheckBox.setBounds(new Rectangle(145, 117, 91, 21));
+			populateCheckBox.setSelected(true);
+			populateCheckBox.setText("populate");
+		}
+		return populateCheckBox;
+	}
+
+	/**
+	 * This method initializes randomizeCheckBox	
+	 * 	
+	 * @return javax.swing.JCheckBox	
+	 */
+	private JCheckBox getRandomizeCheckBox(){
+		if(randomizeCheckBox == null){
+			randomizeCheckBox=new JCheckBox();
+			randomizeCheckBox.setBounds(new Rectangle(145, 89, 91, 24));
+			randomizeCheckBox.setText("randomize");
+			randomizeCheckBox.setEnabled(true);
+			randomizeCheckBox.setSelected(false);
+		}
+		return randomizeCheckBox;
 	}
 
 } //  @jve:decl-index=0:visual-constraint="30,15"
