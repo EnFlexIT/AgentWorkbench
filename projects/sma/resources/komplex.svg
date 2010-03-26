@@ -21,14 +21,10 @@
           height="67.796608" style="fill:green;stroke:none"/>
     <rect x="259.32202" width="28.81356" id="AgentBrown" y="206.77966"
           height="37.288136" style="fill:#520;stroke:none"/>
-    <rect x="254.23729" width="116.94915" id="ObstYellow" y="138.98305"
-          height="32.203388" style="fill:yellow;stroke:none"/>
+    <rect x="267.7966" width="84.745758" id="ObstYellow" y="149.15254"
+          height="15.254235" style="fill:yellow;stroke:none"/>
     <rect x="325.42374" width="30.508474" id="AgentPink" y="72.881355"
           height="32.203388" style="fill:fuchsia;stroke:none"/>
-    <rect fill="none" width="599" stroke-width="1" id="border" height="399"
-          stroke="black"/>
-    <rect fill="none" width="599" height="399" id="border" stroke-width="1"
-          stroke="black"/>
-    <rect fill="none" width="599" stroke-width="1" id="border" height="399"
-          stroke="black"/>
+    <rect x="0" width="599" id="border" y="0" height="399"
+          style="fill:none;stroke:black;stroke-width:1"/>
 </svg>

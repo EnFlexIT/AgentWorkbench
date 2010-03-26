@@ -18,8 +18,9 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import sma.ontology.Environment;
+
 import mas.agents.AgentConfiguration;
-import mas.environment.Old_EnvironmentController;
 import mas.onto.OntologyClass;
 
 @XmlRootElement public class Project extends Observable {
@@ -38,8 +39,24 @@ import mas.onto.OntologyClass;
 	@XmlTransient private String ProjectFolderFullPath;
 	@XmlTransient private Vector<Class<?>> ProjectAgents;
 	@XmlTransient public OntologyClass Ontology = new OntologyClass(this);
-	@XmlTransient public Old_EnvironmentController ec; 
+	@XmlTransient private Environment environment;
 	
+	
+	/**
+	 * @return the environment
+	 */
+	@XmlTransient
+	public Environment getEnvironment() {
+		return environment;
+	}
+
+	/**
+	 * @param environment the environment to set
+	 */
+	public void setEnvironment(Environment environment) {
+		this.environment = environment;
+	}
+
 	// --- Speichervariablen der Projektdatei ------------------ 
 	@XmlElement(name="projectName")
 	private String ProjectName;
@@ -317,15 +334,6 @@ import mas.onto.OntologyClass;
 	public void setEnvFile(String fileName){
 		this.envFile = fileName;
 		this.ProjectUnsaved = true;
-	}
-	
-	@XmlTransient
-	public Old_EnvironmentController getEnvironmentController(){
-		return this.ec;
-	}
-	
-	public void setEnvironmentController(Old_EnvironmentController ec){
-		this.ec = ec;
 	}
 
 }

@@ -9,7 +9,7 @@ import jade.core.*;
    * A project's environment definition
 * Protege name: Environment
 * @author ontology bean generator
-* @version 2010/03/16, 20:55:13
+* @version 2010/03/25, 19:30:25
 */
 public class Environment implements Concept {
 
@@ -26,18 +26,6 @@ public class Environment implements Concept {
    }
 
    /**
-   * Root of the project's environment representation, containing all it's EnvironmentObjects
-* Protege name: rootPlayground
-   */
-   private PlaygroundObject rootPlayground;
-   public void setRootPlayground(PlaygroundObject value) { 
-    this.rootPlayground=value;
-   }
-   public PlaygroundObject getRootPlayground() {
-     return this.rootPlayground;
-   }
-
-   /**
    * The project's name
 * Protege name: projectName
    */
@@ -47,6 +35,18 @@ public class Environment implements Concept {
    }
    public String getProjectName() {
      return this.projectName;
+   }
+
+   /**
+   * Root of the project's environment representation, containing all it's EnvironmentObjects
+* Protege name: rootPlayground
+   */
+   private PlaygroundObject rootPlayground;
+   public void setRootPlayground(PlaygroundObject value) { 
+    this.rootPlayground=value;
+   }
+   public PlaygroundObject getRootPlayground() {
+     return this.rootPlayground;
    }
 
    /**

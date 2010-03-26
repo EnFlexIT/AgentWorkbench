@@ -1,21 +1,18 @@
 package mas.display;
 
 
-import java.awt.Rectangle;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-
-
-import javax.swing.JButton;
-import javax.swing.JPanel;
+import java.util.HashSet;
+import java.util.Iterator;
 
 import org.apache.batik.dom.svg.SVGDOMImplementation;
+import org.apache.batik.script.Window;
+import org.apache.batik.swing.JSVGCanvas;
+import org.apache.batik.swing.gvt.GVTTreeRendererAdapter;
+import org.apache.batik.swing.gvt.GVTTreeRendererEvent;
+import org.w3c.dom.Element;
 
-import application.Application;
-import application.Language;
+import sma.ontology.AbstractObject;
+
 import application.Project;
 
 /**
@@ -23,12 +20,14 @@ import application.Project;
  * @author nils
  *
  */
-public class DisplayAgentGUI extends JPanel {
+public class DisplayAgentGUI extends BasicSvgGUI {
 	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	
 
 	// Currrent Agent-Project of AgentGUI
 	Project currentProject = null;
@@ -36,75 +35,53 @@ public class DisplayAgentGUI extends JPanel {
 	// SVG Namespace
 	public static final String svgNs=SVGDOMImplementation.SVG_NAMESPACE_URI;
 	
-	// DisplayAgent controlling this GUI
-		
-	// Pre-start components
-	JButton btnStart = null;
+	private DisplayAgent myAgent = null;
 	
+	public DisplayAgentGUI(){
+		super();
+		this.getCanvas().setDocumentState(JSVGCanvas.ALWAYS_DYNAMIC);
+		this.getCanvas().addGVTTreeRendererListener(new GVTTreeRendererAdapter(){
+			public void gvtRenderingCompleted(GVTTreeRendererEvent re){
+				
+				Window window = getCanvas().getUpdateManager().getScriptingEnvironment().createWindow();
+				window.setInterval(new Animation(), 100);
+			}
+		});
+		
+	}
+	
+	public void setAgent(DisplayAgent agent){
+		this.myAgent = agent;
+	}
 	
 	/**
-	 * This constructor is called when the GUI is created first (embedded mode)
+	 * Responsible for updating the SVG element positions
+	 * @author Nils
+	 *
 	 */
-	public DisplayAgentGUI( Project CP ){
-		
-		this.currentProject = CP;
-		
-		final int btnWidth = 150;
-		final int btnHeight = 25;
-		
-		this.setLayout(null);
+	private class Animation implements Runnable{
 
+		@Override
+		public void run() {
+			HashSet<AbstractObject> set = myAgent.getMovedObjects();
+			Iterator<AbstractObject> iter = set.iterator();
+			while(iter.hasNext()){
+				AbstractObject object = iter.next();	
 				
-		btnStart = new JButton();
-		btnStart.setText(Language.translate("Simulation starten"));
-		btnStart.addActionListener(new ActionListener(){
-			// Starting a display agent and enabling the GUI
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				if ( Application.JadePlatform.jadeMainContainerIsRunning(true)) {
-					// Entferne Label und Button
-					DisplayAgentGUI.this.remove(btnStart);
-					
-					// Starte DisplayAgent
-					String agentNameBase = "DA";
-					int agentNameSuffix = 1;
-					String agentName = agentNameBase+agentNameSuffix;
-					
-					while( Application.JadePlatform.jadeAgentIsRunning(agentName)){
-						agentNameSuffix++;
-						agentName = agentNameBase + agentNameSuffix;
-					}	
-					System.out.println("Agent name "+agentNameBase);	
-					
-					// Markierungen vor dem Start entfernen
-//					currentProject.getEnvironmentController().setSelectedElement(null);
-//								
-//					Object[] args = new Object[3];
-//					args[0] = currentProject.getEnvironmentController().getMainPlayground();
-//					args[1] = currentProject.getEnvironmentController().getSvgDoc();
-//					args[2] = DisplayAgentGUI.this;
-//					Application.JadePlatform.jadeAgentStart(agentName, "mas.display.DisplayAgent", args, currentProject.getProjectFolder() );
-//					
-//					// Starte in der Umgebung definierte Agenten
-//					currentProject.getEnvironmentController().startSimulation();
-				}
+				Element element = DisplayAgentGUI.this.getCanvas().getSVGDocument().getElementById(object.getId());
+				float posX = Float.parseFloat(element.getAttributeNS(null, "x"));
+				float posY = Float.parseFloat(element.getAttributeNS(null, "y"));
+				
+				posX = object.getPosition().getXPos();
+				posY = object.getPosition().getYPos();
+				
+				element.setAttributeNS(null, "x", ""+posX);
+				element.setAttributeNS(null, "y", ""+posY);				
 			}
 			
-		});
-		this.add(btnStart, null);
-		this.addComponentListener(new ComponentAdapter(){
-			// Fit button position to pane size
-			public void componentResized(ComponentEvent ce){
-				int btnX = (DisplayAgentGUI.this.getWidth()/2-btnWidth/2);
-				int btnY = (DisplayAgentGUI.this.getHeight()/2-btnHeight/2);
-				btnStart.setBounds(new Rectangle(btnX, btnY, btnWidth, btnHeight));
-				
-			}
+			set.clear();			
+		}
 		
-			
-		});
-		this.setVisible(true);
 	}
 			
 }

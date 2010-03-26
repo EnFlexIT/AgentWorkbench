@@ -8,9 +8,33 @@ import jade.core.*;
 /**
 * Protege name: AbstractObject
 * @author ontology bean generator
-* @version 2010/03/16, 20:55:13
+* @version 2010/03/25, 19:30:25
 */
 public class AbstractObject implements Concept {
+
+   /**
+   * This EnvironmentObject's size
+* Protege name: size
+   */
+   private Size size;
+   public void setSize(Size value) { 
+    this.size=value;
+   }
+   public Size getSize() {
+     return this.size;
+   }
+
+   /**
+   * Unique id to identify this object
+* Protege name: id
+   */
+   private String id;
+   public void setId(String value) { 
+    this.id=value;
+   }
+   public String getId() {
+     return this.id;
+   }
 
    /**
    * This EnvironmentObject's position
@@ -34,30 +58,6 @@ public class AbstractObject implements Concept {
    }
    public PlaygroundObject getParent() {
      return this.parent;
-   }
-
-   /**
-   * Unique id to identify this object
-* Protege name: id
-   */
-   private String id;
-   public void setId(String value) { 
-    this.id=value;
-   }
-   public String getId() {
-     return this.id;
-   }
-
-   /**
-   * This EnvironmentObject's size
-* Protege name: size
-   */
-   private Size size;
-   public void setSize(Size value) { 
-    this.size=value;
-   }
-   public Size getSize() {
-     return this.size;
    }
 
 }

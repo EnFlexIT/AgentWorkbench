@@ -1,4 +1,4 @@
-LANG_DEFAULT;1;;;
+LANG_DEFAULT;0;;;
 LANG_DE;LANG_EN;LANG_IT;LANG_ES;LANG_FR
 Fertig;Ready;;;
 Programmstart ...;Starting Program ...;;;
@@ -152,3 +152,13 @@ Objekt hinzufügen;;;;
 Objekt entfernen;;;;
 Keine Umgebungsdatei definiert;;;;
 Keine SVG-Datei definiert;;;;
+Keine Umgebung definiert;;;;
+Klasse;;;;
+Typ;;;;
+SVG Laden;;;;
+Keiner;;;;
+Anwenden;;;;
+Simulation Starten;;;;
+Keine Umgebung übergeben;;;;
+Kein Container übergeben, starte im Stand Alone Modus;;;;
+XML Dateien;;;;

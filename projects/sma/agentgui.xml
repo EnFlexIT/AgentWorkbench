@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <project>
-    <envFile>environment.xml</envFile>
+    <projectName>SMA</projectName>
     <projectDescription>Simple Moving Agent
 
 Einfaches Demo-Projekt für die Visualisierung</projectDescription>
-    <projectFolder>sma</projectFolder>
-    <projectName>SMA</projectName>
+    <agentConfiguration/>
+    <envFile>environment.xml</envFile>
     <svgFile>komplex.svg</svgFile>
 </project>

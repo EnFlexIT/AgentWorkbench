@@ -1,4 +1,4 @@
-; Tue Mar 16 21:58:38 CET 2010
+; Thu Mar 25 19:30:38 CET 2010
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -20,7 +20,7 @@
 
 ([BROWSER_SLOT_NAMES] of  Property_List
 
-	(properties [DisplayOntology_ProjectKB_Instance_10148]))
+	(properties [DisplayOntology_ProjectKB_Instance_10143]))
 
 ([CLSES_TAB] of  Widget
 
@@ -69,52 +69,33 @@
 ([DisplayOntology_ProjectKB_Instance_10142] of  Property_List
 )
 
-([DisplayOntology_ProjectKB_Instance_10143] of  Boolean
-
-	(boolean_value FALSE)
-	(name "ButtonDisplayed-View References to Value"))
-
-([DisplayOntology_ProjectKB_Instance_10144] of  Boolean
-
-	(boolean_value FALSE)
-	(name "ButtonDisplayed-Delete Instance"))
-
-([DisplayOntology_ProjectKB_Instance_10145] of  Property_List
-)
-
-([DisplayOntology_ProjectKB_Instance_10146] of  Property_List
-)
-
-([DisplayOntology_ProjectKB_Instance_10147] of  Property_List
-)
-
-([DisplayOntology_ProjectKB_Instance_10148] of  String
+([DisplayOntology_ProjectKB_Instance_10143] of  String
 
 	(name ":INSTANCE-ANNOTATION")
 	(string_value "%3AANNOTATION-TEXT"))
 
-([DisplayOntology_ProjectKB_Instance_10149] of  Map_Entry
+([DisplayOntology_ProjectKB_Instance_10144] of  Map_Entry
 
 	(key "add_name_on_instance_form")
 	(key_class "java.lang.String")
 	(value "false")
 	(value_class "java.lang.String"))
 
-([DisplayOntology_ProjectKB_Instance_10150] of  Map_Entry
+([DisplayOntology_ProjectKB_Instance_10145] of  Map_Entry
 
 	(key "change_tracking_active")
 	(key_class "java.lang.String")
 	(value "false")
 	(value_class "java.lang.String"))
 
-([DisplayOntology_ProjectKB_Instance_10151] of  Map
+([DisplayOntology_ProjectKB_Instance_10146] of  Map
 )
 
-([DisplayOntology_ProjectKB_Instance_10152] of  Map_Entry
+([DisplayOntology_ProjectKB_Instance_10147] of  Map_Entry
 
 	(key "InstanceDisplay.yellow_stickies")
 	(key_class "java.lang.String")
-	(value "DisplayOntology_ProjectKB_Instance_10151")
+	(value "DisplayOntology_ProjectKB_Instance_10146")
 	(value_class "java.util.Map"))
 
 ([DisplayOntology_ProjectKB_Instance_133] of  Widget
@@ -451,10 +432,10 @@
 ([DisplayOntology_ProjectKB_Instance_221] of  Map
 
 	(entries
-		[DisplayOntology_ProjectKB_Instance_10149]
-		[DisplayOntology_ProjectKB_Instance_10150]
-		[DisplayOntology_ProjectKB_Instance_10152])
-	(referenced_maps [DisplayOntology_ProjectKB_Instance_10151]))
+		[DisplayOntology_ProjectKB_Instance_10144]
+		[DisplayOntology_ProjectKB_Instance_10145]
+		[DisplayOntology_ProjectKB_Instance_10147])
+	(referenced_maps [DisplayOntology_ProjectKB_Instance_10146]))
 
 ([DisplayOntology_ProjectKB_Instance_98] of  String
 

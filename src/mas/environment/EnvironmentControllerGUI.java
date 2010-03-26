@@ -88,6 +88,8 @@ public class EnvironmentControllerGUI extends JSplitPane {
 	 */
 	private String originalStyle = null;
 	
+	private HashMap<String, String> agentClasses = null;
+	
 	private EnvironmentController controller = null;
 	private JButton btnRemove = null;
 	/**
@@ -174,7 +176,7 @@ public class EnvironmentControllerGUI extends JSplitPane {
 	private JTree getTreeEnvironment() {
 		if (treeEnvironment == null) {
 			treeEnvironment = new JTree();
-			treeEnvironment.setModel(new DefaultTreeModel(new DefaultMutableTreeNode("Not specified")));
+			treeEnvironment.setModel(new DefaultTreeModel(new DefaultMutableTreeNode(Language.translate("Keine Umgebung definiert"))));
 			
 			// Node selection
 			treeEnvironment.addTreeSelectionListener(new TreeSelectionListener(){
@@ -261,8 +263,8 @@ public class EnvironmentControllerGUI extends JSplitPane {
 	private DefaultMutableTreeNode getSubTree(PlaygroundObject pg){
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode(pg.getId());
 		
-		DefaultMutableTreeNode agents = new DefaultMutableTreeNode("Agents");
-		DefaultMutableTreeNode obstacles = new DefaultMutableTreeNode("Obstacles");
+		DefaultMutableTreeNode agents = new DefaultMutableTreeNode(Language.translate("Agenten"));
+		DefaultMutableTreeNode obstacles = new DefaultMutableTreeNode(Language.translate("Hindernisse"));
 		DefaultMutableTreeNode playgrounds = new DefaultMutableTreeNode("Playgrounds");
 		
 		Iterator<AbstractObject> children = pg.getAllChildObjects();
@@ -304,11 +306,11 @@ public class EnvironmentControllerGUI extends JSplitPane {
 			pnlEnvironment = new JPanel();
 			pnlEnvironment.setLayout(null);
 			lblClass = new JLabel();
-			lblClass.setText("Class");
-			lblClass.setSize(new Dimension(35, 16));
+			lblClass.setText(Language.translate("Klasse"));
+			lblClass.setSize(new Dimension(45, 16));
 			lblClass.setLocation(new Point(10, 80));
 			lblType = new JLabel();
-			lblType.setText("Type");
+			lblType.setText(Language.translate("Typ"));
 			lblType.setSize(new Dimension(30, 16));
 			lblType.setLocation(new Point(10, 40));
 			lblId = new JLabel();
@@ -338,7 +340,7 @@ public class EnvironmentControllerGUI extends JSplitPane {
 	private JButton getBtnLoadSVG() {
 		if (btnLoadSVG == null) {
 			btnLoadSVG = new JButton();
-			btnLoadSVG.setText("Load SVG");
+			btnLoadSVG.setText(Language.translate("SVG Laden"));
 			btnLoadSVG.setSize(new Dimension(150, 26));
 			btnLoadSVG.setLocation(new Point(10, 180));
 			btnLoadSVG.addActionListener(new ActionListener(){
@@ -402,7 +404,7 @@ public class EnvironmentControllerGUI extends JSplitPane {
 	private JButton getBtnSaveEnvironment() {
 		if (btnSaveEnvironment == null) {
 			btnSaveEnvironment = new JButton();
-			btnSaveEnvironment.setText("Save Environment");
+			btnSaveEnvironment.setText(Language.translate("Umgebung speichern"));
 			btnSaveEnvironment.setSize(new Dimension(150, 26));
 			btnSaveEnvironment.setLocation(new Point(10, 215));
 			btnSaveEnvironment.addActionListener(new ActionListener(){
@@ -411,6 +413,7 @@ public class EnvironmentControllerGUI extends JSplitPane {
 				public void actionPerformed(ActionEvent arg0) {
 					if(getFcSaveEnvironment().showSaveDialog(EnvironmentControllerGUI.this) == JFileChooser.APPROVE_OPTION){
 						String filePath = fcSaveEnvironment.getSelectedFile().getAbsolutePath();
+						// Add extension if necessary
 						if(!filePath.substring(filePath.length()-4).equalsIgnoreCase(".xml")){
 							filePath = filePath+".xml";
 						}
@@ -428,8 +431,7 @@ public class EnvironmentControllerGUI extends JSplitPane {
 			fcSaveEnvironment = new JFileChooser();
 			fcSaveEnvironment.setFileFilter(new FileNameExtensionFilter(Language.translate("XML Dateien"), "xml"));
 			fcSaveEnvironment.setCurrentDirectory(new File(controller.getCurrentProject().getProjectFolderFullPath()+"resources"));
-		}
-		
+		}		
 		return fcSaveEnvironment;
 	}
 
@@ -442,7 +444,7 @@ public class EnvironmentControllerGUI extends JSplitPane {
 		if (tfId == null) {
 			tfId = new JTextField();
 			tfId.setSize(new Dimension(80, 22));
-			tfId.setLocation(new Point(30, 10));
+			tfId.setLocation(new Point(70, 10));
 		}
 		return tfId;
 	}
@@ -456,10 +458,10 @@ public class EnvironmentControllerGUI extends JSplitPane {
 		if (cbType == null) {
 			cbType = new JComboBox();
 			cbType.setSize(new Dimension(100, 25));
-			cbType.setLocation(new Point(50, 38));
+			cbType.setLocation(new Point(70, 38));
 			cbType.setEnabled(false);
 			Vector<String> types = new Vector<String>();
-			types.add("UNDEFINED");
+			types.add(Language.translate("Keiner"));
 			for(ObjectTypes type : ObjectTypes.values()){
 				types.add(type.toString());
 			}
@@ -495,15 +497,20 @@ public class EnvironmentControllerGUI extends JSplitPane {
 	private JComboBox getCbClass() {
 		if (cbClass == null) {
 			cbClass = new JComboBox();
-			cbClass.setLocation(new Point(50, 73));
+			cbClass.setLocation(new Point(70, 73));
 			cbClass.setSize(new Dimension(100, 25));
 			cbClass.setEnabled(false);
-			Vector<Class<?>> agentClasses = controller.getCurrentProject().getProjectAgents();
-			Vector<String> classNames = new Vector<String>();
-			for(int i=0; i<agentClasses.size(); i++){
-				classNames.add(agentClasses.get(i).getSimpleName());
+			Vector<Class<?>> classes = controller.getCurrentProject().getProjectAgents();
+			Vector<String> names = new Vector<String>();
+			
+			this.agentClasses = new HashMap<String, String>();
+			
+			for(int i=0; i<classes.size(); i++){
+				names.add(classes.get(i).getSimpleName());
+				this.agentClasses.put(classes.get(i).getSimpleName(), classes.get(i).getName());
+				
 			}
-			cbClass.setModel(new DefaultComboBoxModel(classNames));
+			cbClass.setModel(new DefaultComboBoxModel(names));
 		}
 		return cbClass;
 	}
@@ -517,7 +524,7 @@ public class EnvironmentControllerGUI extends JSplitPane {
 		settings.put("id", tfId.getText());
 		settings.put("type", cbType.getSelectedItem().toString());
 		if(cbClass.isEnabled()){
-			settings.put("class", cbClass.getSelectedItem().toString());			
+			settings.put("class", agentClasses.get(cbClass.getSelectedItem().toString()));			
 		}
 		
 		return settings;
@@ -545,7 +552,7 @@ public class EnvironmentControllerGUI extends JSplitPane {
 			}
 			btnRemove.setEnabled(true);
 		}else{
-			cbType.setSelectedItem("UNDEFINED");
+			cbType.setSelectedItem(Language.translate("Keiner"));
 			btnRemove.setEnabled(false);
 		}
 	}
@@ -558,8 +565,8 @@ public class EnvironmentControllerGUI extends JSplitPane {
 	private JButton getBtnApply() {
 		if (btnApply == null) {
 			btnApply = new JButton();
-			btnApply.setText("Apply");
-			btnApply.setSize(new Dimension(100, 26));
+			btnApply.setText(Language.translate("Anwenden"));
+			btnApply.setSize(new Dimension(150, 26));
 			btnApply.setLocation(new Point(10, 110));
 			btnApply.setEnabled(false);
 			btnApply.addActionListener(new ActionListener(){
@@ -584,9 +591,9 @@ public class EnvironmentControllerGUI extends JSplitPane {
 		if (btnRemove == null) {
 			btnRemove = new JButton();
 			btnRemove.setLocation(new Point(10, 145));
-			btnRemove.setText("Remove");
+			btnRemove.setText(Language.translate("Objekt entfernen"));
 			btnRemove.setEnabled(false);
-			btnRemove.setSize(new Dimension(100, 26));
+			btnRemove.setSize(new Dimension(150, 26));
 			btnRemove.addActionListener(new ActionListener(){
 	
 				@Override

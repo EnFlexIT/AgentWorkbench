@@ -9,7 +9,7 @@ import jade.core.*;
    * Registration request from a Displayable Agent
 * Protege name: RegisterDisplayable
 * @author ontology bean generator
-* @version 2010/03/16, 20:55:13
+* @version 2010/03/25, 19:30:25
 */
 public class RegisterDisplayable implements AgentAction {
 

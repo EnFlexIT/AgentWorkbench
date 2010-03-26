@@ -14,7 +14,6 @@ import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Observable;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -50,7 +49,7 @@ import sma.ontology.Size;
 
 import mas.display.SvgTypes;
 
-public class EnvironmentController extends Observable {
+public class EnvironmentController{
 	
 	private Project currentProject;
 	
@@ -77,7 +76,10 @@ public class EnvironmentController extends Observable {
 		}
 		if(this.environment == null){
 			newEnv = true;
+		}else{
+			currentProject.setEnvironment(this.environment);
 		}
+		
 		
 		if(currentProject.getSvgFile() != null){
 			loadSVG(new File(currentProject.getSvgPath()), newEnv);
@@ -146,17 +148,19 @@ public class EnvironmentController extends Observable {
 				svgDoc = factory.createDocument(svgFile.toURI().toURL().toString());
 				
 				Element svgRoot = svgDoc.getDocumentElement();
-				Element border = svgDoc.createElementNS(SVGDOMImplementation.SVG_NAMESPACE_URI, "rect");
 				
-				float width = Float.parseFloat(svgRoot.getAttributeNS(null, "width"))-1;
-				float height = Float.parseFloat(svgRoot.getAttributeNS(null, "height"))-1;
-				border.setAttributeNS(null, "id", "border");
-				border.setAttributeNS(null, "width", ""+(int)width);
-				border.setAttributeNS(null, "height", ""+(int)height);
-				border.setAttributeNS(null, "fill", "none");
-				border.setAttributeNS(null, "stroke", "black");
-				border.setAttributeNS(null, "stroke-width", "1");
-				svgRoot.appendChild(border);
+				if(svgDoc.getElementById("border") == null){
+					Element border = svgDoc.createElementNS(SVGDOMImplementation.SVG_NAMESPACE_URI, "rect");
+					float width = Float.parseFloat(svgRoot.getAttributeNS(null, "width"))-1;
+					float height = Float.parseFloat(svgRoot.getAttributeNS(null, "height"))-1;
+					border.setAttributeNS(null, "id", "border");
+					border.setAttributeNS(null, "width", ""+(int)width);
+					border.setAttributeNS(null, "height", ""+(int)height);
+					border.setAttributeNS(null, "fill", "none");
+					border.setAttributeNS(null, "stroke", "black");
+					border.setAttributeNS(null, "stroke-width", "1");
+					svgRoot.appendChild(border);
+				}
 				
 				myGUI.setSVGDoc(svgDoc);
 				
@@ -164,6 +168,8 @@ public class EnvironmentController extends Observable {
 					createNewEnvironment();
 					currentProject.setEnvFile(null);
 				}
+				
+				environment.setSvgDoc(svgDoc);
 				
 				rebuildObjectHash();
 				
@@ -197,10 +203,8 @@ public class EnvironmentController extends Observable {
 			t.transcode(new TranscoderInput(svgDoc), new TranscoderOutput(writer));
 			writer.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (TranscoderException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -217,7 +221,9 @@ public class EnvironmentController extends Observable {
 		initFromSVG(rootPg, svgDoc.getDocumentElement());
 		rootPg.setId("rootPlayground");
 		this.environment.setRootPlayground(rootPg);
-		rebuildObjectHash();		
+		rebuildObjectHash();
+		
+		currentProject.setEnvironment(environment);
 	}
 	
 	public HashMap<String, AbstractObject> getObjectHash() {
@@ -228,6 +234,11 @@ public class EnvironmentController extends Observable {
 		return objectHash.get(id);
 	}
 
+	/**
+	 * This method initializes an environment object using data 
+	 * @param object
+	 * @param svg
+	 */
 	private void initFromSVG(AbstractObject object, Element svg){
 		SvgTypes type = SvgTypes.getType(svg);
 		if(type == null){
@@ -445,10 +456,8 @@ public class EnvironmentController extends Observable {
 			
 			
 		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -509,22 +518,20 @@ public class EnvironmentController extends Observable {
 				FileReader reader = new FileReader(envFile);
 				InputSource source = new InputSource(reader);
 				parser.parse(source);
-				Element root = (Element) parser.getDocument().getDocumentElement().getElementsByTagName("playground").item(0);
-				if(root != null){
+				Element rootPg = (Element) parser.getDocument().getDocumentElement().getElementsByTagName("playground").item(0);
+				if(rootPg != null){
 					System.out.println(Language.translate("Lade Umgebung aus")+" "+envFile.getName()+"...");
 					this.environment = new Environment();
-					this.environment.setRootPlayground((PlaygroundObject) loadObject(root));
+					this.environment.setProjectName(currentProject.getProjectName());
+					this.environment.setRootPlayground((PlaygroundObject) loadObject(rootPg));
 					rebuildObjectHash();					
 				}				
 				
 			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (SAXException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}else{

@@ -11,8 +11,8 @@ import org.w3c.dom.Document;
 import java.awt.BorderLayout;
 
 /**
- * Grund-GUI zur Darstellung von SVGs
- * Scrollbarer JSVGCanvas plus Zoomfunktion   
+ * Basic GUI for displaying SVG graphics
+ * JSVGCanvas on Scrollpane + Zoom buttons   
  * @author Nils
  *
  */
@@ -35,15 +35,6 @@ public class BasicSvgGUI extends JPanel {
 		initialize();
 	}
 	
-	/**
-	 * 
-	 */
-	public BasicSvgGUI(JSVGCanvas canvas){
-		super();
-		this.canvas = canvas;
-		initialize();
-	}
-
 	/**
 	 * This method initializes this
 	 * 

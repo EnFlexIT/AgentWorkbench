@@ -1,230 +1,229 @@
 package sma.agents;
 
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 
-import mas.environment.Old_AgentObject;
-import mas.environment.Old_ObstacleObject;
+import sma.ontology.AbstractObject;
+import sma.ontology.AgentObject;
+import sma.ontology.DisplayOntology;
+import sma.ontology.Movement;
+import sma.ontology.PlaygroundObject;
+import sma.ontology.Position;
+import sma.ontology.Speed;
+import jade.content.lang.Codec;
+import jade.content.lang.Codec.CodecException;
+import jade.content.lang.sl.SLCodec;
+import jade.content.onto.Ontology;
+import jade.content.onto.OntologyException;
+import jade.content.onto.basic.Action;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.ServiceException;
-import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.TickerBehaviour;
 import jade.core.messaging.TopicManagementHelper;
 import jade.lang.acl.ACLMessage;
-import jade.lang.acl.MessageTemplate;
 
 /**
- * Dummy-Implementierung zum Testen des Displayagent
+ * Dummy-Implementation for testing the DisplayAgent
  * @author Nils
  *
  */
 public class SoftBot extends Agent {
-	
+
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
-	private int width;
-	private int height;
-	private int posX;
-	private int posY;
-	private int speedX = 5;
-	private int speedY = 2;
-	private int envWidth;
-	private int envHeight;
 	
-	private Collection<Old_ObstacleObject> obstacles = null;
+	/**
+	 * Ontology object instance of this agent
+	 */
+	private AgentObject self = null;
 	
-	private HashMap<String, Old_AgentObject> agents = null;
+	/**
+	 * Ontology object instance of the playground this agent lives in
+	 */
+	private PlaygroundObject playground = null;
+	
+	private AID posTopic = null;
+	
+	private Codec codec = new SLCodec();
+	private Ontology ontology = DisplayOntology.getInstance();
 	
 	public void setup(){
-		// Initialize with values from environment definition
+		
+		getContentManager().registerLanguage(codec);
+		getContentManager().registerOntology(ontology);
+		
 		Object[] args = getArguments();
-		if(args[0] != null && args[0] instanceof Old_AgentObject){
-			Old_AgentObject self = (Old_AgentObject) args[0];
-			this.width = self.getWidth();
-			this.height = self.getHeight();
-			this.posX = self.getPosX();
-			this.posY = self.getPosY();
-			this.envHeight = self.getParentPlayground().getHeight();
-			this.envWidth = self.getParentPlayground().getWidth();
-			this.obstacles = self.getParentPlayground().getObstacles();
-			this.agents = self.getParentPlayground().getAgents();
-			this.addBehaviour(new MoveExampleBehaviour(this, 50));
+		if(args != null && args.length>0 && args[0] instanceof AgentObject){
+			this.self = (AgentObject) args[0];
+			this.playground = self.getParent();
+			
+//			DFAgentDescription template = new DFAgentDescription();
+//			ServiceDescription sd = new ServiceDescription();
+//			sd.setType("DisplayService");
+//			sd.setName("SMA");
+//			template.addServices(sd);
+//			
+//			try {
+//				DFAgentDescription[] results = DFService.search(SoftBot.this, template);
+//				if(results != null && results.length>0){
+//					displayAgent = results[0].getName();
+//					System.out.println(getLocalName()+" found DisplayAgent "+displayAgent.getLocalName());
+//				}else{
+//					System.out.println("No DA found");
+//				}
+////				System.out.println(getLocalName()+" found DisplayAgent "+displayAgent.getLocalName());
+//				
+//			} catch (FIPAException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+			
 			try {
 				TopicManagementHelper tmh = (TopicManagementHelper) getHelper(TopicManagementHelper.SERVICE_NAME);
-				AID positionTopic = tmh.createTopic("position");
-				tmh.register(positionTopic);
-				addBehaviour(new PosUpdateBehaviour(MessageTemplate.MatchTopic(positionTopic)));
-			
+				this.posTopic = tmh.createTopic("position");
+				tmh.register(posTopic);
 			} catch (ServiceException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}		
-	}
-	
-	/**
-	 * 
-	 */
-	public void takeDown(){
-		TopicManagementHelper tmh;
-		try {
-			tmh = (TopicManagementHelper) getHelper(TopicManagementHelper.SERVICE_NAME);
-			AID positionTopic = tmh.createTopic("position");
-			tmh.deregister(positionTopic);
-		} catch (ServiceException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			
+			
+			addBehaviour(new MovingBehaviour(this, 100));
+			
+			System.out.println("Starting "+getLocalName()+" in playground "+this.playground.getId());
 		}
-		
 	}
-	
-	class MoveExampleBehaviour extends TickerBehaviour{
+
+	/**
+	 * Simple movement example behaviour
+	 * @author Nils
+	 *
+	 */
+	private class MovingBehaviour extends TickerBehaviour{
 		
 		/**
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
-		TopicManagementHelper tmh = null;
-		AID positionTopic = null;
 
-		public MoveExampleBehaviour(Agent a, long period) {
+		public MovingBehaviour(Agent a, long period) {
 			super(a, period);
+			Speed speed = new Speed();
+			speed.setXSpeed(5);
+			speed.setYSpeed(2);
+			self.setCurrentSpeed(speed);
+			// TODO Auto-generated constructor stub
+		}
+	
+		@Override
+		protected void onTick() {
+			int oldXPos = self.getPosition().getXPos();
+			int oldYPos = self.getPosition().getYPos();
+			int xSpeed = self.getCurrentSpeed().getXSpeed();
+			int ySpeed = self.getCurrentSpeed().getYSpeed();
+						
+			int newXPos = oldXPos + xSpeed;
+			int newYPos = oldYPos + ySpeed;
+			
+			self.getPosition().setXPos(newXPos);
+			self.getPosition().setYPos(newYPos);
+			
+			checkCollisions();			
+			
+			Movement movement = new Movement();
+			movement.setStartPos(new Position());
+			movement.getStartPos().setXPos(oldXPos);
+			movement.getStartPos().setYPos(oldYPos);
+			movement.setSpeed(self.getCurrentSpeed());
+			
+			Action act = new Action();
+			act.setActor(getAID());
+			act.setAction(movement);
+			
+			ACLMessage movementInfo = new ACLMessage(ACLMessage.INFORM);
+			movementInfo.addReceiver(posTopic);
+			movementInfo.setLanguage(codec.getName());
+			movementInfo.setOntology(ontology.getName());
 			
 			try {
-				tmh = (TopicManagementHelper) a.getHelper(TopicManagementHelper.SERVICE_NAME);
-				
-				
-				positionTopic = tmh.createTopic("position");
-			} catch (ServiceException e) {
+				getContentManager().fillContent(movementInfo, act);
+				send(movementInfo);
+			} catch (CodecException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (OntologyException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}			
 		}
-
-		@Override
-		protected void onTick() {
-			int oldX = posX;
-			int oldY = posY;
+		
+		/**
+		 * Checks for collisions, inverting speed if collision detected
+		 */
+		@SuppressWarnings("unchecked")
+		private void checkCollisions(){
+			
 			boolean collX = false;
 			boolean collY = false;
 			
-			posX += speedX;
-			posY += speedY;
-			if(posX < 0 || posX+width >= envWidth){
+			int myXPos = self.getPosition().getXPos();
+			int myYPos = self.getPosition().getYPos();
+			int myWidth = self.getSize().getWidth();
+			int myHeight = self.getSize().getHeight();
+			
+			int parentXPos = self.getParent().getPosition().getXPos();
+			int parentYPos = self.getParent().getPosition().getYPos();
+			int parentWidth = self.getParent().getSize().getWidth();
+			int parentHeight = self.getParent().getSize().getHeight();
+			
+			// Check for collisions with playground borders
+			if(myXPos <= parentXPos || myXPos+myWidth >= parentXPos + parentWidth){
 				collX = true;
 			}
-			if(posY <= 0 || posY+height >= envHeight){
+			if(myYPos <= parentYPos || myYPos+myHeight >= parentYPos + parentHeight){
 				collY = true;
 			}
-			Iterator<Old_ObstacleObject> iter = obstacles.iterator();
-			while(iter.hasNext()){
-				Old_ObstacleObject oo = iter.next();
-				
-				// X Richtung
-				if(oldY+height>oo.getPosY()&&oldY<oo.getPosY()+oo.getHeight()){
-					if(posX+width>oo.getPosX()&&posX<oo.getPosX()+oo.getWidth()
-							&&!(oldX+width>oo.getPosX()&&oldX<oo.getPosX()+oo.getWidth()))
-						collX = true;
-				}
-				// Y Richtung
-				if(oldX+width>oo.getPosX()&&oldX<oo.getPosX()+oo.getWidth()){
-					if(posY+height>oo.getPosY()&&posY<oo.getPosY()+oo.getHeight()
-							&&!(oldY+height>oo.getPosY()&&oldY<oo.getPosY()+oo.getHeight()))
-						collY = true;
-				}				
-			}
 			
-			Iterator<Old_AgentObject> aIter = agents.values().iterator();
-			while(aIter.hasNext()){
-				Old_AgentObject ao = aIter.next();
+			// Check for collisions with other objects
+			int oldX = myXPos - self.getCurrentSpeed().getXSpeed();
+			int oldY = myYPos - self.getCurrentSpeed().getYSpeed();
+			Iterator<AbstractObject> objects = playground.getAllChildObjects();
+			while(objects.hasNext()){
+				AbstractObject object = objects.next();
+				int objectXPos = object.getPosition().getXPos();
+				int objectYPos = object.getPosition().getYPos();
+				int objectWidth = object.getSize().getWidth();
+				int objectHeight = object.getSize().getHeight();
 				
-				// X Richtung
-				if(oldY+height>ao.getPosY()&&oldY<ao.getPosY()+ao.getHeight()){
-					if(posX+width>ao.getPosX()&&posX<ao.getPosX()+ao.getWidth()
-							&&!(oldX+width>ao.getPosX()&&oldX<ao.getPosX()+ao.getWidth())){
-						collX = true;
-						System.out.println("Agent collision");
+				// X direction
+				if(oldY+myHeight>objectYPos&&oldY<objectYPos+objectHeight){
+					if(myXPos+myWidth>objectXPos&&myXPos<objectXPos+objectWidth
+							&&!(oldX+myWidth>objectXPos&&oldX<objectXPos+objectWidth)){
+						collX = true;						
 					}
 						
 				}
-				// Y Richtung
-				if(oldX+width>ao.getPosX()&&oldX<ao.getPosX()+ao.getWidth()){
-					if(posY+height>ao.getPosY()&&posY<ao.getPosY()+ao.getHeight()
-							&&!(oldY+height>ao.getPosY()&&oldY<ao.getPosY()+ao.getHeight())){
-						collY = true;
-						System.out.println("Agent collision");
+				// Y direction
+				if(oldX+myWidth>objectXPos&&oldX<objectXPos+objectWidth){
+					if(myYPos+myHeight>objectYPos&&myYPos<objectYPos+objectHeight
+							&&!(oldY+myHeight>objectYPos&&oldY<objectYPos+objectHeight)){
+						collY = true;						
 					}
 						
-				}				
+				}
 			}
 			
+			// Invert speed if collision detected
 			if(collX){
-				speedX = -speedX;
+				self.getCurrentSpeed().setXSpeed(-self.getCurrentSpeed().getXSpeed());				
 			}
 			if(collY){
-				speedY = -speedY;
+				self.getCurrentSpeed().setYSpeed(-self.getCurrentSpeed().getYSpeed());
 			}
-			
-			
-			ACLMessage posUpdate = new ACLMessage(ACLMessage.INFORM);
-			
-			posUpdate.addReceiver(positionTopic);
-			posUpdate.setContent(posX+","+posY);		
-			myAgent.send(posUpdate);
-			
 		}
-		
-		public int onEnd(){
-			ACLMessage bye = new ACLMessage(ACLMessage.INFORM);
-			bye.addReceiver(positionTopic);
-			bye.setContent("bye");
-			myAgent.send(bye);
-			return 0;
-		}
-		
+			
 	}
-	
-	class PosUpdateBehaviour extends CyclicBehaviour{
-		
-		/**
-		 * Empfängt Positionsupdates anderer Agenten
-		 */
-		private static final long serialVersionUID = 1L;
-		MessageTemplate positionTemplate;
-		
-		public PosUpdateBehaviour(MessageTemplate mt){
-			this.positionTemplate = mt;
-		}
-
-		@Override
-		public void action() {
-			ACLMessage posUpdate = receive(positionTemplate);
-			if(posUpdate != null){
-				String sender = posUpdate.getSender().getLocalName();
-				String content = posUpdate.getContent();
-				if(content.equals("bye")){
-					// Agent wurde beendet -> entferne aus HashMap
-					agents.remove(sender);
-				}else{
-					String[] pos = content.split(",");
-					Old_AgentObject agent = agents.get(sender);
-					agent.setPosX(Integer.parseInt(pos[0]));
-					agent.setPosY(Integer.parseInt(pos[1]));					
-				}
-				
-			}else{
-				block();
-			}
-				
-			
-		}
-		
-	}
-	
 	
 }
