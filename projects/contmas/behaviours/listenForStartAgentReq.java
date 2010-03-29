@@ -20,14 +20,9 @@
  */
 package contmas.behaviours;
 
-import contmas.agents.ContainerAgent;
-import contmas.agents.OntRepProvider;
-import contmas.agents.ShipAgent;
+import contmas.agents.*;
 import contmas.main.MatchAgentAction;
-import contmas.ontology.ContainerHolder;
-import contmas.ontology.RequestOntologyRepresentation;
-import contmas.ontology.Ship;
-import contmas.ontology.StartNewContainerHolder;
+import contmas.ontology.*;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
@@ -63,9 +58,8 @@ public class listenForStartAgentReq extends SequentialBehaviour implements OntRe
 		this.setDataStore(b.getDataStore());
 		this.addSubBehaviour(b);
 
-
 	}
-	
+
 	public void nextStep(){
 		Behaviour b;
 		if(randomize){
@@ -116,9 +110,20 @@ public class listenForStartAgentReq extends SequentialBehaviour implements OntRe
 			ACLMessage request=START_AGENT_REQUEST_KEY;
 			StartNewContainerHolder act=(StartNewContainerHolder) ContainerAgent.extractAction(myAgent,request);
 			AgentContainer c=myAgent.getContainerController();
-			AgentController a;
+			AgentController a=null;
+			ContainerHolder ontRep=getOntologyRepresentation();
 			try{
-				a=c.acceptNewAgent(act.getName(),new ShipAgent((Ship) getOntologyRepresentation()));
+				if(ontRep instanceof Ship){
+					a=c.acceptNewAgent(act.getName(),new ShipAgent((Ship) ontRep));
+				}else if(ontRep instanceof Crane){
+					a=c.acceptNewAgent(act.getName(),new CraneAgent((Crane) ontRep));
+				}else if(ontRep instanceof Apron){
+					a=c.acceptNewAgent(act.getName(),new ApronAgent((Apron) ontRep));
+				}else if(ontRep instanceof StraddleCarrier){
+					a=c.acceptNewAgent(act.getName(),new StraddleCarrierAgent((StraddleCarrier) ontRep));
+				}else if(ontRep instanceof Yard){
+					a=c.acceptNewAgent(act.getName(),new YardAgent((Yard) ontRep));
+				}
 				a.start();
 			}catch(StaleProxyException e){
 				// TODO Auto-generated catch block
@@ -126,7 +131,7 @@ public class listenForStartAgentReq extends SequentialBehaviour implements OntRe
 			}
 			ACLMessage inform=START_AGENT_RESPONSE_KEY;
 			myAgent.send(inform);
-			
+
 			//Restart
 			Agent tmp=myAgent;
 			myAgent.removeBehaviour(this);

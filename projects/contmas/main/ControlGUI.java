@@ -48,15 +48,15 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 
 	private static final long serialVersionUID=1L;
 	private JPanel jContentPane=null;
-	private JButton ButtonCreateShip=null;
+	private JButton ButtonCreateAgent=null;
 	private JLabel AgentLabelX=null;
-	private JTextField TFShipX=null;
+	private JTextField TFAgentX=null;
 	private JLabel AgentLabelY=null;
-	private JTextField TFShipY=null;
-	private JTextField TFShipZ=null;
+	private JTextField TFAgentY=null;
+	private JTextField TFAgentZ=null;
 	private JLabel AgentLabelZ=null;
 	private JLabel AgentLabelName=null;
-	private JTextField TFShipName=null;
+	private JTextField TFAgentName=null;
 	private ControlGUIAgent myAgent;
 	private JLabel Heading=null;
 	private JLabel AgentLabelLength=null;
@@ -102,32 +102,36 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	}
 
 	/**
-	 * This method initializes ButtonCreateShip
+	 * This method initializes ButtonCreateAgent
 	 * 
 	 * @return javax.swing.JButton
 	 */
-	private JButton getButtonCreateShip(){
-		if(this.ButtonCreateShip == null){
-			this.ButtonCreateShip=new JButton();
+	private JButton getButtonCreateAgent(){
+		if(this.ButtonCreateAgent == null){
+			this.ButtonCreateAgent=new JButton();
 
-			this.ButtonCreateShip.setBounds(new Rectangle(8, 327, 126, 20));
-			this.ButtonCreateShip.setText("Start Agent");
+			this.ButtonCreateAgent.setBounds(new Rectangle(8, 327, 126, 20));
+			this.ButtonCreateAgent.setText("Start Agent");
 
-			this.ButtonCreateShip.addActionListener(new ActionListener(){
+			this.ButtonCreateAgent.addActionListener(new ActionListener(){
 				public void actionPerformed(ActionEvent e){
 					GuiEvent ge=new GuiEvent(this,1);
-					ge.addParameter(ControlGUI.this.TFShipName.getText());
-					ge.addParameter(ControlGUI.this.TFShipX.getText());
-					ge.addParameter(ControlGUI.this.TFShipY.getText());
-					ge.addParameter(ControlGUI.this.TFShipZ.getText());
+					ge.addParameter(ControlGUI.this.TFAgentName.getText());
+					ge.addParameter(ControlGUI.this.TFAgentX.getText());
+					ge.addParameter(ControlGUI.this.TFAgentY.getText());
+					ge.addParameter(ControlGUI.this.TFAgentZ.getText());
 					ge.addParameter(ControlGUI.this.randomizeCheckBox.isSelected());
 					ge.addParameter(ControlGUI.this.populateCheckBox.isSelected());
 					ge.addParameter(ControlGUI.this.TFShipLength.getText());
+					ge.addParameter(((AgentClassElement) getAgentType().getSelectedItem()).getAgentClass());
+					ge.addParameter(((DefaultListModel) getHabitatList().getModel()).toArray()[0]);
+					ge.addParameter(((DefaultListModel) getCapabilitiesList().getModel()).toArray());
+
 					ControlGUI.this.myAgent.postGuiEvent(ge);
 				}
 			});
 		}
-		return this.ButtonCreateShip;
+		return this.ButtonCreateAgent;
 	}
 
 	public JDesktopPane getCanvas(){
@@ -170,18 +174,18 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 			AgentLabelX.setBounds(new Rectangle(5, 100, 55, 16));
 			this.jContentPane=new JPanel();
 			this.jContentPane.setLayout(null);
-			this.jContentPane.add(this.getTFShipName(),null);
-			this.jContentPane.add(this.getTFShipX(),null);
+			this.jContentPane.add(this.getTFAgentName(),null);
+			this.jContentPane.add(this.getTFAgentX(),null);
 			this.jContentPane.add(this.AgentLabelX,null);
 			this.jContentPane.add(this.AgentLabelY,null);
-			this.jContentPane.add(this.getTFShipY(),null);
-			this.jContentPane.add(this.getTFShipZ(),null);
+			this.jContentPane.add(this.getTFAgentY(),null);
+			this.jContentPane.add(this.getTFAgentZ(),null);
 			this.jContentPane.add(this.AgentLabelZ,null);
 			this.jContentPane.add(this.AgentLabelName,null);
 			this.jContentPane.add(this.Heading,null);
 			this.jContentPane.add(this.AgentLabelLength,null);
 			this.jContentPane.add(this.getTFShipLength(),null);
-			this.jContentPane.add(this.getButtonCreateShip(),null);
+			this.jContentPane.add(this.getButtonCreateAgent(),null);
 			this.jContentPane.add(this.getConsoleScrollPane(),null);
 			this.jContentPane.add(this.getAgentTreeScrollPane(),null);
 			this.jContentPane.add(this.getSystemConsoleScrollPane(),null);
@@ -237,59 +241,59 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	}
 
 	/**
-	 * This method initializes TFShipName
+	 * This method initializes TFAgentName
 	 * 
 	 * @return javax.swing.JTextField
 	 */
-	private JTextField getTFShipName(){
-		if(this.TFShipName == null){
-			this.TFShipName=new JTextField();
-			this.TFShipName.setBounds(new Rectangle(65, 65, 136, 25));
-			this.TFShipName.setText("MV Ship");
+	private JTextField getTFAgentName(){
+		if(this.TFAgentName == null){
+			this.TFAgentName=new JTextField();
+			this.TFAgentName.setBounds(new Rectangle(65, 65, 136, 25));
+			this.TFAgentName.setText("MV Ship");
 		}
-		return this.TFShipName;
+		return this.TFAgentName;
 	}
 
 	/**
-	 * This method initializes TFShipX
+	 * This method initializes TFAgentX
 	 * 
 	 * @return javax.swing.JTextField
 	 */
-	private JTextField getTFShipX(){
-		if(this.TFShipX == null){
-			this.TFShipX=new JTextField();
-			this.TFShipX.setBounds(new Rectangle(65, 95, 46, 25));
-			this.TFShipX.setText("2");
+	private JTextField getTFAgentX(){
+		if(this.TFAgentX == null){
+			this.TFAgentX=new JTextField();
+			this.TFAgentX.setBounds(new Rectangle(65, 95, 46, 25));
+			this.TFAgentX.setText("2");
 		}
-		return this.TFShipX;
+		return this.TFAgentX;
 	}
 
 	/**
-	 * This method initializes TFShipY
+	 * This method initializes TFAgentY
 	 * 
 	 * @return javax.swing.JTextField
 	 */
-	private JTextField getTFShipY(){
-		if(this.TFShipY == null){
-			this.TFShipY=new JTextField();
-			this.TFShipY.setBounds(new Rectangle(65, 125, 46, 25));
-			this.TFShipY.setText("1");
+	private JTextField getTFAgentY(){
+		if(this.TFAgentY == null){
+			this.TFAgentY=new JTextField();
+			this.TFAgentY.setBounds(new Rectangle(65, 125, 46, 25));
+			this.TFAgentY.setText("1");
 		}
-		return this.TFShipY;
+		return this.TFAgentY;
 	}
 
 	/**
-	 * This method initializes TFShipZ
+	 * This method initializes TFAgentZ
 	 * 
 	 * @return javax.swing.JTextField
 	 */
-	private JTextField getTFShipZ(){
-		if(this.TFShipZ == null){
-			this.TFShipZ=new JTextField();
-			this.TFShipZ.setBounds(new Rectangle(65, 155, 46, 25));
-			this.TFShipZ.setText("1");
+	private JTextField getTFAgentZ(){
+		if(this.TFAgentZ == null){
+			this.TFAgentZ=new JTextField();
+			this.TFAgentZ.setBounds(new Rectangle(65, 155, 46, 25));
+			this.TFAgentZ.setText("1");
 		}
-		return this.TFShipZ;
+		return this.TFAgentZ;
 	}
 
 	/**
@@ -645,11 +649,11 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 			agentType=new JComboBox();
 			agentType.setBounds(new Rectangle(66, 32, 134, 22));
 			DefaultComboBoxModel modl=new DefaultComboBoxModel();
-			modl.addElement(Ship.class.getSimpleName());
-			modl.addElement(Crane.class.getSimpleName());
-			modl.addElement(Apron.class.getSimpleName());
-			modl.addElement(StraddleCarrier.class.getSimpleName());
-			modl.addElement(Yard.class.getSimpleName());
+			modl.addElement(new AgentClassElement(Ship.class));
+			modl.addElement(new AgentClassElement(Crane.class));
+			modl.addElement(new AgentClassElement(Apron.class));
+			modl.addElement(new AgentClassElement(StraddleCarrier.class));
+			modl.addElement(new AgentClassElement(Yard.class));
 			agentType.setModel(modl);
 		}
 		return agentType;

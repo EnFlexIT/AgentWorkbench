@@ -52,6 +52,8 @@ import contmas.behaviours.requestStartAgent;
 import contmas.behaviours.subscribeToDF;
 import contmas.main.AgentDesktop;
 import contmas.main.ControlGUI;
+import contmas.main.DomainOntologyElement;
+import contmas.main.OntologyElement;
 import contmas.ontology.*;
 
 public class ControlGUIAgent extends GuiAgent implements OntRepRequester{
@@ -150,16 +152,30 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester{
 			try{
 				String name=ev.getParameter(0).toString();
 				//	            AgentController a = c.createNewAgent(name , "contmas.agents.ShipAgent", null );
-				Ship ontologyRepresentation=new Ship();
-				Domain habitat=new Sea();
-				ontologyRepresentation.setLives_in(habitat);
+				Class selectedContainerHolderType=(Class) ev.getParameter(7);
+				ContainerHolder ontologyRepresentation=(ContainerHolder) selectedContainerHolderType.newInstance();
+
 				if((ev.getParameter(1).toString() != "") && (ev.getParameter(1).toString() != "") && (ev.getParameter(1).toString() != "")){
 					BayMap loadBay=new BayMap();
 					loadBay.setX_dimension(Integer.parseInt(ev.getParameter(1).toString()));
 					loadBay.setY_dimension(Integer.parseInt(ev.getParameter(2).toString()));
 					loadBay.setZ_dimension(Integer.parseInt(ev.getParameter(3).toString()));
 					ontologyRepresentation.setContains(loadBay);
-					ontologyRepresentation.setLength(Float.parseFloat(ev.getParameter(6).toString()));
+				}
+				if(ontologyRepresentation instanceof Ship){
+					((Ship) ontologyRepresentation).setLength(Float.parseFloat(ev.getParameter(6).toString()));
+					Domain habitat=new Sea();
+					ontologyRepresentation.setLives_in(habitat);
+				}else{
+					DomainOntologyElement habitat=((DomainOntologyElement) ev.getParameter(8));
+					ontologyRepresentation.setLives_in(habitat.getDomain());
+					if(ontologyRepresentation instanceof ActiveContainerHolder){
+						Object[] capabilities=((Object[]) ev.getParameter(9));
+						for(int i=0;i < capabilities.length;i++){
+							DomainOntologyElement domainOntologyElement=(DomainOntologyElement) capabilities[i];
+							((ActiveContainerHolder) ontologyRepresentation).addCapable_of(domainOntologyElement.getDomain());
+						}
+					}
 				}
 				/*
 				//				habitat.setLies_in(terminalArea);
@@ -254,7 +270,7 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		this.addBehaviour(new getHarbourSetup(this,harbourMaster));
 
 	}
@@ -297,16 +313,17 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		DefaultMutableTreeNode root=renderDomain(current_harbour_layout);
+		DomainOntologyElement root=renderDomain(current_harbour_layout);
 
 		this.myGui.displayHarbourLayout(root);
 
 //		this.myGui.displayHarbourLayout(current_harbour_layout);
 	}
-	private DefaultMutableTreeNode renderDomain(Domain dohmein){
+
+	private DomainOntologyElement renderDomain(Domain dohmein){
 		Iterator agentIter=dohmein.getAllHas_subdomains();
-		DefaultMutableTreeNode root=new DefaultMutableTreeNode(dohmein.getClass().getSimpleName()+" - "+dohmein.getId());
-		DefaultMutableTreeNode domNode=null;
+		DomainOntologyElement root=new DomainOntologyElement(dohmein);//dohmein.getClass().getSimpleName()+" - "+dohmein.getId());
+		DomainOntologyElement domNode=null;
 
 		while(agentIter.hasNext()){
 			Domain curDom=(Domain) agentIter.next();
