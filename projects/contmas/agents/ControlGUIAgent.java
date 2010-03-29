@@ -41,7 +41,12 @@ import javax.swing.DefaultListModel;
 import javax.swing.JDesktopPane;
 import javax.swing.JList;
 import javax.swing.ListModel;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreeNode;
 
+import contmas.behaviours.getHarbourSetup;
 import contmas.behaviours.getOntologyRepresentation;
 import contmas.behaviours.requestStartAgent;
 import contmas.behaviours.subscribeToDF;
@@ -84,15 +89,16 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester{
 
 		}
 	}
+
 	@Override
-	public void processOntologyRepresentation(ContainerHolder ontRep, AID agent){
-		if(ontRep==null){
+	public void processOntologyRepresentation(ContainerHolder ontRep,AID agent){
+		if(ontRep == null){
 			return;
 		}
 		XMLCodec xmlCodec=new XMLCodec();
 		String s;
 		try{
-			s=xmlCodec.encodeObject(ContainerTerminalOntology.getInstance(), ontRep, true);
+			s=xmlCodec.encodeObject(ContainerTerminalOntology.getInstance(),ontRep,true);
 			this.myGui.printOntRep(s);
 		}catch(CodecException e){
 			// TODO Auto-generated catch block
@@ -109,23 +115,22 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester{
 			TOCHasState contState=(TOCHasState) allContStates.next();
 			String administeredContBic=contState.getSubjected_toc().getTransports().getBic_code();
 			String dispString=administeredContBic;
-			dispString+=" - "+contState.getState().getClass().getSimpleName();
+			dispString+=" - " + contState.getState().getClass().getSimpleName();
 			Iterator allConts=allContsList.iterator();
 			Boolean found=false;
 			while(allConts.hasNext()){
 				found=false;
 				BlockAddress curCont=(BlockAddress) allConts.next();
 				if(curCont.getLocates().getBic_code().equals(administeredContBic)){
-					dispString+=" (x="+curCont.getX_dimension()+", y="+curCont.getY_dimension()+", z="+curCont.getZ_dimension()+")";
+					dispString+=" (x=" + curCont.getX_dimension() + ", y=" + curCont.getY_dimension() + ", z=" + curCont.getZ_dimension() + ")";
 					found=true;
 				}
 			}
-			if(found==false){
+			if(found == false){
 				dispString+=" [ERROR]";
 			}
 			containerList.addElement(dispString);
 		}
-//		containerList.setModel(new ListModel());
 		this.myGui.setContainerList(containerList);
 	}
 
@@ -168,7 +173,6 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester{
 				act.setPopulate(Boolean.parseBoolean(ev.getParameter(5).toString()));
 				this.addBehaviour(new requestStartAgent(this,harbourMaster,act));
 
-			
 				/*
 				AID address=new AID();
 				address.setName(a.getName());
@@ -192,7 +196,7 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester{
 			AID inQuestion=new AID();
 			inQuestion.setLocalName(ev.getParameter(0).toString());
 
-			this.addBehaviour(new getOntologyRepresentation(this,inQuestion, harbourMaster));
+			this.addBehaviour(new getOntologyRepresentation(this,inQuestion,harbourMaster));
 		}else if(command == -1){ // GUI closed
 			this.doDelete();
 		}
@@ -242,7 +246,7 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester{
 			a.start();
 			this.harbourMaster=new AID();
 			this.harbourMaster.setName(a.getName());
-			a=c.createNewAgent("Sniffer","jade.tools.sniffer.Sniffer",new Object[] {"Yard;StraddleCarrier-#1;Apron;Crane-#2;Crane-#1"});
+			a=c.createNewAgent("Sniffer","jade.tools.sniffer.Sniffer",new Object[] {"Yard;StraddleCarrier;Apron;Crane-#2;Crane-#1"});
 			a.start();
 			this.sniffer=new AID();
 			this.sniffer.setName(a.getName());
@@ -250,6 +254,9 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		this.addBehaviour(new getHarbourSetup(this,harbourMaster));
+
 	}
 
 	@Override
@@ -272,5 +279,40 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester{
 	 */
 	public void writeLogMsg(String content){
 		this.myGui.writeLogMsg(content);
+	}
+
+	/**
+	 * @param current_harbour_layout
+	 */
+	public void processHarbourLayout(Domain current_harbour_layout){
+		XMLCodec xmlCodec=new XMLCodec();
+		String s;
+		try{
+			s=xmlCodec.encodeObject(ContainerTerminalOntology.getInstance(),current_harbour_layout,true);
+			this.myGui.printOntRep(s);
+		}catch(CodecException e){
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}catch(OntologyException e){
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		DefaultMutableTreeNode root=renderDomain(current_harbour_layout);
+
+		this.myGui.displayHarbourLayout(root);
+
+//		this.myGui.displayHarbourLayout(current_harbour_layout);
+	}
+	private DefaultMutableTreeNode renderDomain(Domain dohmein){
+		Iterator agentIter=dohmein.getAllHas_subdomains();
+		DefaultMutableTreeNode root=new DefaultMutableTreeNode(dohmein.getClass().getSimpleName()+" - "+dohmein.getId());
+		DefaultMutableTreeNode domNode=null;
+
+		while(agentIter.hasNext()){
+			Domain curDom=(Domain) agentIter.next();
+			domNode=renderDomain(curDom);
+			root.add(domNode);
+		}
+		return root;
 	}
 }

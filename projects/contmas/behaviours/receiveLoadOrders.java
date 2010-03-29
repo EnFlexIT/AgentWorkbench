@@ -29,6 +29,7 @@ import jade.util.leap.Iterator;
 import contmas.agents.ContainerAgent;
 import contmas.agents.ContainerHolderAgent;
 import contmas.agents.TransportOrderOfferer;
+import contmas.main.MatchAgentAction;
 import contmas.ontology.*;
 
 public class receiveLoadOrders extends ContractNetResponder{
@@ -126,83 +127,73 @@ public class receiveLoadOrders extends ContractNetResponder{
 	private static final long serialVersionUID= -3409830399764472591L;
 	private final ContainerHolderAgent myCAgent=(ContainerHolderAgent) this.myAgent;
 
-	private static MessageTemplate getMessageTemplate(Agent a){
-		MessageTemplate mt=AchieveREResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
-//		MessageTemplate.and(mt,new MessageTemplate(new MatchAgentAction(a,new EnrollAtHarbor())));
-		return mt;
+	private static MessageTemplate createMessageTemplate(Agent a){
+		MessageTemplate mtallg=AchieveREResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
+		MessageTemplate mtthissect=null;
+		MessageTemplate mtsect=null;
+
+		mtthissect=new MessageTemplate(new MatchAgentAction(a,new CallForProposalsOnLoadStage()));
+		mtthissect=MessageTemplate.and(mtthissect,MessageTemplate.MatchPerformative(ACLMessage.CFP));
+		mtsect=mtthissect;
+
+		mtthissect=new MessageTemplate(new MatchAgentAction(a,new AcceptLoadOffer()));
+		mtthissect=MessageTemplate.and(mtthissect,MessageTemplate.MatchPerformative(ACLMessage.ACCEPT_PROPOSAL));
+		mtsect=MessageTemplate.or(mtsect,mtthissect);
+
+		mtthissect=MessageTemplate.MatchPerformative(ACLMessage.REJECT_PROPOSAL);
+		mtsect=MessageTemplate.or(mtsect,mtthissect);
+
+		return MessageTemplate.and(mtallg,mtsect);
 	}
 
 	public receiveLoadOrders(Agent a){
-		super(a,receiveLoadOrders.getMessageTemplate(a));
+		super(a,receiveLoadOrders.createMessageTemplate(a));
 		this.registerHandleAcceptProposal(new handleAcceptProposal(this.myCAgent));
 	}
 
 	@Override
 	protected ACLMessage handleCfp(ACLMessage cfp){
 		ACLMessage reply=cfp.createReply();
-		Concept content;
-		//		((ContainerAgent)myAgent).echoStatus("CFP empfangen");
-		if(cfp.getPerformative() != ACLMessage.CFP){
-			this.myAgent.putBack(cfp);
-			this.reset();
-			return null;
-		}
-		if(cfp.getContent() == null){ //CFP leer
-			this.myCAgent.echoStatus("no content",ContainerAgent.LOGGING_ERROR);
-			reply.setContent("no content");
-			reply.setPerformative(ACLMessage.FAILURE);
-			return reply;
-		}
-		content=this.myCAgent.extractAction(cfp);
 
-		if(content instanceof CallForProposalsOnLoadStage){
-			//			((ContainerAgent)myAgent).echoStatus("Stringifyd: "+this.stringifyTransitionTable());
-
-			CallForProposalsOnLoadStage call=(CallForProposalsOnLoadStage) content;
-			LoadList liste=call.getRequired_turnover_capacity();
-			Iterator allTocs=liste.getAllConsists_of();
-			TransportOrderChain curTOC=(TransportOrderChain) allTocs.next();
+		CallForProposalsOnLoadStage call=(CallForProposalsOnLoadStage) this.myCAgent.extractAction(cfp);
+		LoadList liste=call.getRequired_turnover_capacity();
+		Iterator allTocs=liste.getAllConsists_of();
+		TransportOrderChain curTOC=(TransportOrderChain) allTocs.next();
 //			((ContainerAgent)myAgent).echoStatus("Ausschreibung erhalten.",curTOC);
 
-			if( !this.myCAgent.isQueueNotFull()){//schon auf genug Aufträge beworben
-				this.myCAgent.echoStatus("schon genug Aufträge, refusing",ContainerAgent.LOGGING_INFORM);
-				reply.setContent("schon genug Aufträge");
-				reply.setPerformative(ACLMessage.REFUSE);
-				return reply;
-				/*
-				}else if((this.myCAgent.determineContractors() != null) && this.myCAgent.determineContractors().isEmpty()){ //won't work any more like this
-				this.myCAgent.echoStatus("Habe keine Subunternehmer, lehne ab.");
-				reply.setContent("Habe keine Subunternehmer, lehne ab.");
-				reply.setPerformative(ACLMessage.REFUSE);
-				return reply;
-				*/
-			}else if((this.myCAgent.determineContractors() == null) && !this.myCAgent.hasBayMapRoom()){
-				this.myCAgent.echoStatus("Habe keine Subunternehmer und bin voll, lehne ab.",ContainerAgent.LOGGING_NOTICE);
-				reply.setContent("Habe keine Subunternehmer und bin voll, lehne ab.");
-				reply.setPerformative(ACLMessage.REFUSE);
-				return reply;
-			}else{ //noch Kapazitäten vorhanden und Anfrage plausibel
-				//((ContainerAgent)myAgent).echoStatus("noch Kapazitäten vorhanden");
-				ProposeLoadOffer act=this.myCAgent.getLoadProposal(curTOC);
-				if(act != null){
-					this.myCAgent.echoStatus("Bewerbe mich für Ausschreibung.",curTOC,ContainerAgent.LOGGING_INFORM);
-					this.myCAgent.fillMessage(reply,act);
-					reply.setPerformative(ACLMessage.PROPOSE);
-					return reply;
-				}else{
-					this.myCAgent.echoStatus("Lehne Ausschreibung ab.",curTOC,ContainerAgent.LOGGING_INFORM);
-					reply.setContent("keine TransportOrder passt zu mir");
-					reply.setPerformative(ACLMessage.REFUSE);
-					return reply;
-				}
-			}
-		}else{ //unbekannter inhalt in CFP
-			this.myCAgent.echoStatus("ERROR: Unbekannter Inhalt in CFP: " + cfp.getContent(),ContainerAgent.LOGGING_ERROR);
-			reply.setContent("ERROR: Unbekannter Inhalt in CFP: " + cfp.getContent());
-			reply.setPerformative(ACLMessage.FAILURE);
-
+		if( !this.myCAgent.isQueueNotFull()){//schon auf genug Aufträge beworben
+			this.myCAgent.echoStatus("schon genug Aufträge, refusing",ContainerAgent.LOGGING_INFORM);
+			reply.setContent("schon genug Aufträge");
+			reply.setPerformative(ACLMessage.REFUSE);
 			return reply;
+			/*
+			}else if((this.myCAgent.determineContractors() != null) && this.myCAgent.determineContractors().isEmpty()){ //won't work any more like this
+			this.myCAgent.echoStatus("Habe keine Subunternehmer, lehne ab.");
+			reply.setContent("Habe keine Subunternehmer, lehne ab.");
+			reply.setPerformative(ACLMessage.REFUSE);
+			return reply;
+			*/
+		}else if((this.myCAgent.determineContractors() == null) && !this.myCAgent.hasBayMapRoom()){
+			this.myCAgent.echoStatus("Habe keine Subunternehmer und bin voll, lehne ab.",ContainerAgent.LOGGING_NOTICE);
+			reply.setContent("Habe keine Subunternehmer und bin voll, lehne ab.");
+			reply.setPerformative(ACLMessage.REFUSE);
+			return reply;
+		}else{ //noch Kapazitäten vorhanden und Anfrage plausibel
+			//((ContainerAgent)myAgent).echoStatus("noch Kapazitäten vorhanden");
+			ProposeLoadOffer act=this.myCAgent.getLoadProposal(curTOC);
+			if(act != null){
+				this.myCAgent.echoStatus("Bewerbe mich für Ausschreibung.",curTOC,ContainerAgent.LOGGING_INFORM);
+				this.myCAgent.fillMessage(reply,act);
+				reply.setPerformative(ACLMessage.PROPOSE);
+				return reply;
+			}else{
+				this.myCAgent.echoStatus("Lehne Ausschreibung ab.",curTOC,ContainerAgent.LOGGING_INFORM);
+				reply.setContent("keine TransportOrder passt zu mir");
+				reply.setPerformative(ACLMessage.REFUSE);
+				return reply;
+			}
 		}
+
 	}
 
 	@Override

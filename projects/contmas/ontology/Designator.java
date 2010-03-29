@@ -8,9 +8,20 @@ import jade.core.*;
 /**
 * Protege name: Designator
 * @author ontology bean generator
-* @version 2010/03/25, 18:36:31
+* @version 2010/03/27, 20:53:54
 */
 public class Designator implements Concept {
+
+   /**
+* Protege name: concrete_designation
+   */
+   private AID concrete_designation;
+   public void setConcrete_designation(AID value) { 
+    this.concrete_designation=value;
+   }
+   public AID getConcrete_designation() {
+     return this.concrete_designation;
+   }
 
    /**
 * Protege name: type
@@ -32,17 +43,6 @@ public class Designator implements Concept {
    }
    public Domain getAbstract_designation() {
      return this.abstract_designation;
-   }
-
-   /**
-* Protege name: concrete_designation
-   */
-   private AID concrete_designation;
-   public void setConcrete_designation(AID value) { 
-    this.concrete_designation=value;
-   }
-   public AID getConcrete_designation() {
-     return this.concrete_designation;
    }
 
 }

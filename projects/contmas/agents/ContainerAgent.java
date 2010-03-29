@@ -160,9 +160,12 @@ public class ContainerAgent extends Agent{
 		if(aids.length > 0){
 			return aids[0];
 		}else{
-			System.out.println("Kein Agent der Art vorhanden.");
-
-			//			searcher.echoStatus("Kein Agent der Art vorhanden.",ContainerAgent.LOGGING_NOTICE);
+			String ermsg="Kein Agent der Art '"+serviceType+"' vorhanden.";
+			if(searcher instanceof ContainerAgent){
+				((ContainerAgent) searcher).echoStatus(ermsg,ContainerAgent.LOGGING_NOTICE);
+			} else {
+				System.out.println(searcher.getLocalName()+": "+ermsg);
+			}
 		}
 		return null;
 	}
@@ -199,8 +202,22 @@ public class ContainerAgent extends Agent{
 	}
 
 	protected String ownServiceType;
-	protected AID harborManager=null;
-	public AID randomGenerator=null;
+	private AID harborManager=null;
+	public AID getHarborManager(){
+		if(this.harborManager==null){
+			
+		}
+		return this.harborManager;
+	}
+
+	public AID getRandomGenerator(){
+		if(this.randomGenerator==null){
+			
+		}
+		return this.randomGenerator;
+	}
+
+	private AID randomGenerator=null;
 
 	/**
 	 * 

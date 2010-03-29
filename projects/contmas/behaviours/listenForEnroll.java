@@ -30,14 +30,14 @@ import contmas.ontology.Sea;
 public class listenForEnroll extends AchieveREResponder{
 	private static final long serialVersionUID= -4440040520781720185L;
 
-	private static MessageTemplate getMessageTemplate(Agent a){
+	private static MessageTemplate createMessageTemplate(Agent a){
 		MessageTemplate mt=AchieveREResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_REQUEST);
 		mt=MessageTemplate.and(mt,new MessageTemplate(new MatchAgentAction(a,new EnrollAtHarbor())));
 		return mt;
 	}
 
 	public listenForEnroll(Agent a){
-		super(a,listenForEnroll.getMessageTemplate(a));
+		super(a,listenForEnroll.createMessageTemplate(a));
 	}
 
 	@Override
@@ -52,6 +52,7 @@ public class listenForEnroll extends AchieveREResponder{
 		Quay concept=new Quay();
 		concept.setLies_in(new Sea());
 		act.setAssigned_quay(concept);
+		act.setAvailable_cranes(ContainerAgent.toAIDList(((ContainerAgent) this.myAgent).getAIDsFromDF("craning")));
 		((ContainerAgent) this.myAgent).fillMessage(reply,act);
 		return reply;
 

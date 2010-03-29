@@ -72,10 +72,9 @@ public class fetchRandomBayMap extends AchieveREInitiator{
 		setParent();
 		request.addReceiver(randomGenerator);
 		RequestRandomBayMap act=new RequestRandomBayMap();
-		//TODO hardcoded
-		act.setX_dimension(4);
-		act.setY_dimension(4);
-		act.setZ_dimension(2);
+		act.setX_dimension(parent.getOntologyRepresentation().getContains().getX_dimension());
+		act.setY_dimension(parent.getOntologyRepresentation().getContains().getY_dimension());
+		act.setZ_dimension(parent.getOntologyRepresentation().getContains().getZ_dimension());
 		((ContainerAgent) this.myAgent).fillMessage(request,act);
 		Vector<ACLMessage> messages=new Vector<ACLMessage>();
 		messages.add(request);

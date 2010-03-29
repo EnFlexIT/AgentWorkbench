@@ -22,24 +22,19 @@ public class CraneAgent extends ActiveContainerAgent implements TransportOrderHa
 
 	private static final long serialVersionUID= -193864979181761694L;
 
-	public CraneAgent(){
-		this(new Crane());
-	}
-
 	public CraneAgent(Crane ontologyRepresentation){
 		super("craning",ontologyRepresentation);
 		this.targetAgentServiceType="short-time-storage";
 		this.targetAbstractDomain=new ApronArea();
 	}
-
+	
+	@Override
 	public void handleTransportOrder(){
 		this.addBehaviour(new receiveLoadOrders(this));
 	}
 
 	@Override
-	public void offerTransportOrder(){
-		// TODO Auto-generated method stub
-	}
+	public void offerTransportOrder(){}
 
 	@Override
 	public void setup(){
@@ -47,5 +42,4 @@ public class CraneAgent extends ActiveContainerAgent implements TransportOrderHa
 		this.handleTransportOrder();
 		this.offerTransportOrder();
 	}
-
 }

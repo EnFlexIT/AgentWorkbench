@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: ProvideCraneList
 * @author ontology bean generator
-* @version 2010/03/25, 18:36:32
+* @version 2010/03/25, 20:26:32
 */
 public class ProvideCraneList implements AgentAction {
 

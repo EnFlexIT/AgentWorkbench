@@ -14,42 +14,39 @@
 
 package contmas.behaviours;
 
+import jade.content.ContentElement;
 import jade.core.Agent;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.proto.AchieveREResponder;
 import contmas.agents.ContainerAgent;
+import contmas.agents.HarborMasterAgent;
 import contmas.main.MatchAgentAction;
-import contmas.ontology.GetCraneList;
-import contmas.ontology.ProvideCraneList;
+import contmas.ontology.*;
 
-public class offerCraneList extends AchieveREResponder{
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID= -4313612086308829396L;
+public class listenForHarbourAreaReq extends AchieveREResponder{
+	private static final long serialVersionUID= -4440040520781720185L;
 
-	private static MessageTemplate getMessageTemplate(Agent a){
+	private static MessageTemplate createMessageTemplate(Agent a){
 		MessageTemplate mt=AchieveREResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_REQUEST);
-		mt=MessageTemplate.and(mt,new MessageTemplate(new MatchAgentAction(a,new GetCraneList())));
+		mt=MessageTemplate.and(mt,new MessageTemplate(new MatchAgentAction(a,new RequestHarbourSetup())));
 		return mt;
 	}
 
-	public offerCraneList(Agent a){
-		super(a,offerCraneList.getMessageTemplate(a));
+	public listenForHarbourAreaReq(Agent a){
+		super(a,listenForHarbourAreaReq.createMessageTemplate(a));
 	}
 
 	@Override
 	protected ACLMessage handleRequest(ACLMessage request){
-//			echoStatus("offerCraneList - prepareResponse: "+request.getContent());
-
 		ACLMessage reply=request.createReply();
-		((ContainerAgent) this.myAgent).extractAction(request);
 		reply.setPerformative(ACLMessage.INFORM);
-		ProvideCraneList act=new ProvideCraneList();
-		//look for Cranes
-		act.setAvailable_cranes(ContainerAgent.toAIDList(((ContainerAgent) this.myAgent).getAIDsFromDF("craning")));
+		ProvideHarbourSetup act=new ProvideHarbourSetup();
+
+		act.setCurrent_harbour_layout(
+		((HarborMasterAgent) myAgent).getHarbourArea());
+		
 		((ContainerAgent) this.myAgent).fillMessage(reply,act);
 		return reply;
 

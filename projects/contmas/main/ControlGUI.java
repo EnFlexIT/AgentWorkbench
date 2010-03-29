@@ -21,6 +21,7 @@ import jade.gui.AgentTree.AgentNode;
 import jade.gui.AgentTree.Node;
 import jade.util.leap.List;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Rectangle;
@@ -33,31 +34,32 @@ import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
-import javax.swing.tree.TreePath;
+import javax.swing.tree.*;
 
 import contmas.agents.ControlGUIAgent;
-import javax.swing.JScrollPane;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.ListModel;
-import javax.swing.JCheckBox;
+import contmas.ontology.*;
+
+import javax.swing.*;
+import java.awt.event.KeyEvent;
+import javax.swing.SwingConstants;
+import javax.swing.JButton;
 
 public class ControlGUI extends JInternalFrame implements ActionListener{
 
 	private static final long serialVersionUID=1L;
 	private JPanel jContentPane=null;
 	private JButton ButtonCreateShip=null;
-	private JLabel ShipLabelX=null;
+	private JLabel AgentLabelX=null;
 	private JTextField TFShipX=null;
-	private JLabel ShipLabelY=null;
+	private JLabel AgentLabelY=null;
 	private JTextField TFShipY=null;
 	private JTextField TFShipZ=null;
-	private JLabel ShipLabelZ=null;
-	private JLabel ShipLabelName=null;
+	private JLabel AgentLabelZ=null;
+	private JLabel AgentLabelName=null;
 	private JTextField TFShipName=null;
 	private ControlGUIAgent myAgent;
 	private JLabel Heading=null;
-	private JLabel ShipLabelLength=null;
+	private JLabel AgentLabelLength=null;
 	private JTextField TFShipLength=null;
 	private JDesktopPane canvas=null;
 	private JTextArea console=null;
@@ -67,14 +69,23 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JScrollPane systemConsoleScrollPane=null;
 	private JTextArea systemConsole=null;
 	private JButton ButtonGetOntRep=null;
-	private JButton ButtonSetOntRep=null;
 	private JScrollPane ontRepScrollPane=null;
 	private JTextArea ontRep=null;
-	private JScrollPane jScrollPane = null;
-	private JLabel ontRepAgentName = null;
-	private JList jList = null;
-	private JCheckBox populateCheckBox = null;
-	private JCheckBox randomizeCheckBox = null;
+	private JScrollPane loadListScrollPane=null;
+	private JLabel ontRepAgentName=null;
+	private JList loadList=null;
+	private JCheckBox populateCheckBox=null;
+	private JCheckBox randomizeCheckBox=null;
+	private JScrollPane harbourSetupScrollPane=null;
+	private JTree HarbourSetupTree=null;
+	private JComboBox agentType = null;
+	private JLabel AgentLabelType = null;
+	private JList habitatList = null;
+	private JScrollPane capabilitiesScrollPane = null;
+	private JList capabilitiesList = null;
+	private JButton ButtonSetHabitat = null;
+	private JButton ButtonAddCapability = null;
+	private JButton ButtonCapabilityRemove = null;
 
 	/**
 	 * This is the default constructor
@@ -83,12 +94,6 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 		super();
 		this.myAgent=a;
 		this.initialize();
-	}
-
-	public void actionPerformed(ActionEvent ae){
-		if(ae.getSource() == this.ButtonCreateShip){
-
-		}
 	}
 
 	public void displayOn(JDesktopPane canvas){
@@ -105,8 +110,8 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 		if(this.ButtonCreateShip == null){
 			this.ButtonCreateShip=new JButton();
 
-			this.ButtonCreateShip.setBounds(new Rectangle(5, 185, 126, 20));
-			this.ButtonCreateShip.setText("Start ShipAgent");
+			this.ButtonCreateShip.setBounds(new Rectangle(8, 327, 126, 20));
+			this.ButtonCreateShip.setText("Start Agent");
 
 			this.ButtonCreateShip.addActionListener(new ActionListener(){
 				public void actionPerformed(ActionEvent e){
@@ -136,65 +141,82 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	 */
 	private JPanel getJContentPane(){
 		if(this.jContentPane == null){
-			ontRepAgentName = new JLabel();
-			ontRepAgentName.setBounds(new Rectangle(439, 67, 199, 16));
+			AgentLabelType = new JLabel();
+			AgentLabelType.setBounds(new Rectangle(6, 38, 38, 16));
+			AgentLabelType.setDisplayedMnemonic(KeyEvent.VK_UNDEFINED);
+			AgentLabelType.setText("Type");
+			ontRepAgentName=new JLabel();
+			ontRepAgentName.setBounds(new Rectangle(439,67,199,16));
 			ontRepAgentName.setName("ontRepAgentName");
 			ontRepAgentName.setText("[No Agent Yet]");
-			this.ShipLabelLength=new JLabel();
-			this.ShipLabelLength.setText("Length");
-			this.ShipLabelLength.setBounds(new Rectangle(5,158,55,16));
+			this.AgentLabelLength=new JLabel();
+			this.AgentLabelLength.setText("Length");
+			AgentLabelLength.setBounds(new Rectangle(2, 186, 55, 16));
 			this.Heading=new JLabel();
 			this.Heading.setFont(new Font("Dialog",Font.BOLD,14));
-			this.Heading.setBounds(new Rectangle(5,5,196,15));
-			this.Heading.setText("Create new Ship");
-			this.ShipLabelName=new JLabel();
-			this.ShipLabelName.setText("Name");
-			this.ShipLabelName.setBounds(new Rectangle(5,38,55,16));
-			this.ShipLabelZ=new JLabel();
-			this.ShipLabelZ.setText("Size Z");
-			this.ShipLabelZ.setBounds(new Rectangle(5,128,55,16));
-			this.ShipLabelY=new JLabel();
-			this.ShipLabelY.setText("Size Y");
-			this.ShipLabelY.setBounds(new Rectangle(5,98,55,16));
-			this.ShipLabelX=new JLabel();
-			this.ShipLabelX.setText("Size X");
-			this.ShipLabelX.setBounds(new Rectangle(5,68,55,16));
+			Heading.setBounds(new Rectangle(6, 10, 196, 15));
+			this.Heading.setText("Create new Agent");
+			this.AgentLabelName=new JLabel();
+			this.AgentLabelName.setText("Name");
+			AgentLabelName.setBounds(new Rectangle(5, 69, 55, 16));
+			this.AgentLabelZ=new JLabel();
+			this.AgentLabelZ.setText("Size Z");
+			AgentLabelZ.setBounds(new Rectangle(4, 154, 55, 16));
+			this.AgentLabelY=new JLabel();
+			this.AgentLabelY.setText("Size Y");
+			AgentLabelY.setBounds(new Rectangle(6, 127, 55, 16));
+			this.AgentLabelX=new JLabel();
+			this.AgentLabelX.setText("Size X");
+			AgentLabelX.setBounds(new Rectangle(5, 100, 55, 16));
 			this.jContentPane=new JPanel();
 			this.jContentPane.setLayout(null);
 			this.jContentPane.add(this.getTFShipName(),null);
 			this.jContentPane.add(this.getTFShipX(),null);
-			this.jContentPane.add(this.ShipLabelX,null);
-			this.jContentPane.add(this.ShipLabelY,null);
+			this.jContentPane.add(this.AgentLabelX,null);
+			this.jContentPane.add(this.AgentLabelY,null);
 			this.jContentPane.add(this.getTFShipY(),null);
 			this.jContentPane.add(this.getTFShipZ(),null);
-			this.jContentPane.add(this.ShipLabelZ,null);
-			this.jContentPane.add(this.ShipLabelName,null);
+			this.jContentPane.add(this.AgentLabelZ,null);
+			this.jContentPane.add(this.AgentLabelName,null);
 			this.jContentPane.add(this.Heading,null);
-			this.jContentPane.add(this.ShipLabelLength,null);
+			this.jContentPane.add(this.AgentLabelLength,null);
 			this.jContentPane.add(this.getTFShipLength(),null);
 			this.jContentPane.add(this.getButtonCreateShip(),null);
 			this.jContentPane.add(this.getConsoleScrollPane(),null);
 			this.jContentPane.add(this.getAgentTreeScrollPane(),null);
 			this.jContentPane.add(this.getSystemConsoleScrollPane(),null);
 			this.jContentPane.add(this.getButtonGetOntRep(),null);
-			this.jContentPane.add(this.getButtonSetOntRep(),null);
 			this.jContentPane.add(this.getOntRepScrollPane(),null);
-			jContentPane.add(getJScrollPane(), null);
-			jContentPane.add(ontRepAgentName, null);
-			jContentPane.add(getPopulateCheckBox(), null);
-			jContentPane.add(getRandomizeCheckBox(), null);
-			this.jContentPane.add(this.ShipLabelLength,null);
+			jContentPane.add(getLoadListScrollPane(),null);
+			jContentPane.add(ontRepAgentName,null);
+			jContentPane.add(getPopulateCheckBox(),null);
+			jContentPane.add(getRandomizeCheckBox(),null);
+			jContentPane.add(getHarbourSetupScrollPane(),null);
+			jContentPane.add(getAgentType(), null);
+			jContentPane.add(AgentLabelX, null);
+			jContentPane.add(AgentLabelY, null);
+			jContentPane.add(Heading, null);
+			jContentPane.add(AgentLabelLength, null);
+			jContentPane.add(AgentLabelName, null);
+			jContentPane.add(AgentLabelZ, null);
+			jContentPane.add(AgentLabelType, null);
+			jContentPane.add(getHabitatList(), null);
+			jContentPane.add(getCapabilitiesScrollPane(), null);
+			jContentPane.add(getButtonSetHabitat(), null);
+			jContentPane.add(getButtonAddCapability(), null);
+			jContentPane.add(getButtonCapabilityRemove(), null);
+			this.jContentPane.add(this.AgentLabelLength,null);
 			this.jContentPane.add(this.Heading,null);
-			this.jContentPane.add(this.ShipLabelName,null);
-			this.jContentPane.add(this.ShipLabelZ,null);
-			this.jContentPane.add(this.ShipLabelY,null);
-			this.jContentPane.add(this.ShipLabelX,null);
-			this.jContentPane.add(this.ShipLabelLength,null);
+			this.jContentPane.add(this.AgentLabelName,null);
+			this.jContentPane.add(this.AgentLabelZ,null);
+			this.jContentPane.add(this.AgentLabelY,null);
+			this.jContentPane.add(this.AgentLabelX,null);
+			this.jContentPane.add(this.AgentLabelLength,null);
 			this.jContentPane.add(this.Heading,null);
-			this.jContentPane.add(this.ShipLabelName,null);
-			this.jContentPane.add(this.ShipLabelZ,null);
-			this.jContentPane.add(this.ShipLabelX,null);
-			this.jContentPane.add(this.ShipLabelY,null);
+			this.jContentPane.add(this.AgentLabelName,null);
+			this.jContentPane.add(this.AgentLabelZ,null);
+			this.jContentPane.add(this.AgentLabelX,null);
+			this.jContentPane.add(this.AgentLabelY,null);
 		}
 		return this.jContentPane;
 
@@ -208,7 +230,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JTextField getTFShipLength(){
 		if(this.TFShipLength == null){
 			this.TFShipLength=new JTextField();
-			this.TFShipLength.setBounds(new Rectangle(65,155,46,25));
+			this.TFShipLength.setBounds(new Rectangle(65, 185, 46, 25));
 			this.TFShipLength.setText("120.5");
 		}
 		return this.TFShipLength;
@@ -222,7 +244,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JTextField getTFShipName(){
 		if(this.TFShipName == null){
 			this.TFShipName=new JTextField();
-			this.TFShipName.setBounds(new Rectangle(65,35,136,25));
+			this.TFShipName.setBounds(new Rectangle(65, 65, 136, 25));
 			this.TFShipName.setText("MV Ship");
 		}
 		return this.TFShipName;
@@ -236,7 +258,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JTextField getTFShipX(){
 		if(this.TFShipX == null){
 			this.TFShipX=new JTextField();
-			this.TFShipX.setBounds(new Rectangle(65,65,46,25));
+			this.TFShipX.setBounds(new Rectangle(65, 95, 46, 25));
 			this.TFShipX.setText("2");
 		}
 		return this.TFShipX;
@@ -250,7 +272,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JTextField getTFShipY(){
 		if(this.TFShipY == null){
 			this.TFShipY=new JTextField();
-			this.TFShipY.setBounds(new Rectangle(65,95,46,25));
+			this.TFShipY.setBounds(new Rectangle(65, 125, 46, 25));
 			this.TFShipY.setText("1");
 		}
 		return this.TFShipY;
@@ -264,7 +286,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JTextField getTFShipZ(){
 		if(this.TFShipZ == null){
 			this.TFShipZ=new JTextField();
-			this.TFShipZ.setBounds(new Rectangle(65,125,46,25));
+			this.TFShipZ.setBounds(new Rectangle(65, 155, 46, 25));
 			this.TFShipZ.setText("1");
 		}
 		return this.TFShipZ;
@@ -276,7 +298,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	 * @return void
 	 */
 	private void initialize(){
-		this.setSize(653, 511);
+		this.setSize(653,511);
 		this.setClosable(true);
 
 		this.setMaximizable(true);
@@ -357,7 +379,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JScrollPane getConsoleScrollPane(){
 		if(this.consoleScrollPane == null){
 			this.consoleScrollPane=new JScrollPane();
-			this.consoleScrollPane.setBounds(new Rectangle(5,208,429,115));
+			this.consoleScrollPane.setBounds(new Rectangle(5, 351, 429, 120));
 			this.consoleScrollPane.setViewportView(this.getConsole());
 		}
 		return this.consoleScrollPane;
@@ -389,13 +411,13 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	}
 
 	public void updateAgentTree(List newAgents){
-		this.getAgentTree();
+		AgentTree agentTree=this.getAgentTree();
 		Iterator<AID> agentIter=newAgents.iterator();
 		while(agentIter.hasNext()){
 			AID curAgent=agentIter.next();
-			this.AT.addAgentNode(curAgent.getLocalName(),"","contmas");
+			agentTree.addAgentNode(curAgent.getLocalName(),"","contmas");
 		}
-		ControlGUI.expandTree(this.AT.tree);
+		ControlGUI.expandTree(agentTree.tree);
 	}
 
 	public static JTree expandTree(JTree inputTree){
@@ -413,7 +435,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JScrollPane getSystemConsoleScrollPane(){
 		if(this.systemConsoleScrollPane == null){
 			this.systemConsoleScrollPane=new JScrollPane();
-			this.systemConsoleScrollPane.setBounds(new Rectangle(5, 326, 429, 149));
+			this.systemConsoleScrollPane.setBounds(new Rectangle(583, 365, 26, 31));
 			this.systemConsoleScrollPane.setViewportView(this.getSystemConsole());
 		}
 		return this.systemConsoleScrollPane;
@@ -440,7 +462,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JButton getButtonGetOntRep(){
 		if(this.ButtonGetOntRep == null){
 			this.ButtonGetOntRep=new JButton();
-			this.ButtonGetOntRep.setBounds(new Rectangle(437, 7, 202, 23));
+			this.ButtonGetOntRep.setBounds(new Rectangle(437,7,202,23));
 			this.ButtonGetOntRep.setText("> Get ontologyRepresentation");
 			this.ButtonGetOntRep.addActionListener(new ActionListener(){
 				public void actionPerformed(ActionEvent e){
@@ -463,20 +485,6 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	}
 
 	/**
-	 * This method initializes ButtonSetOntRep	
-	 * 	
-	 * @return javax.swing.JButton	
-	 */
-	private JButton getButtonSetOntRep(){
-		if(this.ButtonSetOntRep == null){
-			this.ButtonSetOntRep=new JButton();
-			this.ButtonSetOntRep.setBounds(new Rectangle(436, 36, 203, 23));
-			this.ButtonSetOntRep.setText("< Set ontologyRepresentation");
-		}
-		return this.ButtonSetOntRep;
-	}
-
-	/**
 	 * This method initializes ontRepScrollPane	
 	 * 	
 	 * @return javax.swing.JScrollPane	
@@ -484,7 +492,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JScrollPane getOntRepScrollPane(){
 		if(this.ontRepScrollPane == null){
 			this.ontRepScrollPane=new JScrollPane();
-			this.ontRepScrollPane.setBounds(new Rectangle(436, 88, 203, 115));
+			this.ontRepScrollPane.setBounds(new Rectangle(436,88,203,115));
 			this.ontRepScrollPane.setViewportView(this.getOntRep());
 		}
 		return this.ontRepScrollPane;
@@ -505,29 +513,30 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	}
 
 	/**
-	 * This method initializes jScrollPane	
+	 * This method initializes loadListScrollPane	
 	 * 	
 	 * @return javax.swing.JScrollPane	
 	 */
-	private JScrollPane getJScrollPane(){
-		if(jScrollPane == null){
-			jScrollPane=new JScrollPane();
-			jScrollPane.setBounds(new Rectangle(437, 209, 201, 113));
-			jScrollPane.setViewportView(getJList());
+	private JScrollPane getLoadListScrollPane(){
+		if(loadListScrollPane == null){
+			loadListScrollPane=new JScrollPane();
+			loadListScrollPane.setBounds(new Rectangle(437,209,201,113));
+			loadListScrollPane.setViewportView(getLoadList());
 		}
-		return jScrollPane;
+		return loadListScrollPane;
 	}
 
 	/**
-	 * This method initializes jList	
+	 * This method initializes loadList	
 	 * 	
 	 * @return javax.swing.JList	
 	 */
-	private JList getJList(){
-		if(jList == null){
-			jList=new JList();
+	private JList getLoadList(){
+		if(loadList == null){
+			loadList=new JList();
+			loadList.setModel(new DefaultListModel());
 		}
-		return jList;
+		return loadList;
 	}
 
 	/**
@@ -541,10 +550,8 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	 * @param containerList
 	 */
 	public void setContainerList(ListModel containerList){
-		// TODO Auto-generated method stub
-		this.getJList().setModel(containerList);
+		this.getLoadList().setModel(containerList);
 
-		
 	}
 
 	/**
@@ -555,7 +562,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JCheckBox getPopulateCheckBox(){
 		if(populateCheckBox == null){
 			populateCheckBox=new JCheckBox();
-			populateCheckBox.setBounds(new Rectangle(145, 117, 91, 21));
+			populateCheckBox.setBounds(new Rectangle(145, 147, 91, 21));
 			populateCheckBox.setSelected(true);
 			populateCheckBox.setText("populate");
 		}
@@ -570,12 +577,208 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JCheckBox getRandomizeCheckBox(){
 		if(randomizeCheckBox == null){
 			randomizeCheckBox=new JCheckBox();
-			randomizeCheckBox.setBounds(new Rectangle(145, 89, 91, 24));
+			randomizeCheckBox.setBounds(new Rectangle(145, 119, 91, 24));
 			randomizeCheckBox.setText("randomize");
 			randomizeCheckBox.setEnabled(true);
 			randomizeCheckBox.setSelected(false);
 		}
 		return randomizeCheckBox;
+	}
+
+	/**
+	 * This method initializes harbourSetupScrollPane	
+	 * 	
+	 * @return javax.swing.JScrollPane	
+	 */
+	private JScrollPane getHarbourSetupScrollPane(){
+		if(harbourSetupScrollPane == null){
+			harbourSetupScrollPane=new JScrollPane();
+			harbourSetupScrollPane.setBounds(new Rectangle(239, 206, 195, 141));
+			harbourSetupScrollPane.setViewportView(getHarbourSetupTree());
+		}
+		return harbourSetupScrollPane;
+	}
+
+	/**
+	 * This method initializes HarbourSetupTree	
+	 * 	
+	 * @return javax.swing.JTree	
+	 */
+	private JTree getHarbourSetupTree(){
+		if(HarbourSetupTree == null){
+			HarbourSetupTree=new JTree();
+			HarbourSetupTree.setModel(new DefaultTreeModel(new DefaultMutableTreeNode()));
+		}
+		return HarbourSetupTree;
+	}
+
+	/**
+	 * @param root
+	 */
+	public void displayHarbourLayout(final TreeNode root){
+		Runnable addIt=new Runnable(){
+			public void run(){
+				JTree domainTree=getHarbourSetupTree();
+				domainTree.setModel(new DefaultTreeModel(root));
+				ControlGUI.expandTree(domainTree);
+			}
+		};
+		SwingUtilities.invokeLater(addIt);		
+	}
+
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
+	@Override
+	public void actionPerformed(ActionEvent arg0){
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * This method initializes agentType	
+	 * 	
+	 * @return javax.swing.JComboBox	
+	 */
+	private JComboBox getAgentType(){
+		if(agentType == null){
+			agentType=new JComboBox();
+			agentType.setBounds(new Rectangle(66, 32, 134, 22));
+			DefaultComboBoxModel modl=new DefaultComboBoxModel();
+			modl.addElement(Ship.class.getSimpleName());
+			modl.addElement(Crane.class.getSimpleName());
+			modl.addElement(Apron.class.getSimpleName());
+			modl.addElement(StraddleCarrier.class.getSimpleName());
+			modl.addElement(Yard.class.getSimpleName());
+			agentType.setModel(modl);
+		}
+		return agentType;
+	}
+
+	/**
+	 * This method initializes habitatList	
+	 * 	
+	 * @return javax.swing.JList	
+	 */
+	private JList getHabitatList(){
+		if(habitatList == null){
+			habitatList=new JList();
+			habitatList.setBounds(new Rectangle(5, 217, 175, 24));
+			habitatList.setModel(new DefaultListModel());
+		}
+		return habitatList;
+	}
+
+	/**
+	 * This method initializes capabilitiesScrollPane	
+	 * 	
+	 * @return javax.swing.JScrollPane	
+	 */
+	private JScrollPane getCapabilitiesScrollPane(){
+		if(capabilitiesScrollPane == null){
+			capabilitiesScrollPane=new JScrollPane();
+			capabilitiesScrollPane.setBounds(new Rectangle(5, 244, 174, 75));
+			capabilitiesScrollPane.setViewportView(getCapabilitiesList());
+		}
+		return capabilitiesScrollPane;
+	}
+
+	/**
+	 * This method initializes capabilitiesList	
+	 * 	
+	 * @return javax.swing.JList	
+	 */
+	private JList getCapabilitiesList(){
+		if(capabilitiesList == null){
+			capabilitiesList=new JList();
+			capabilitiesList.setModel(new DefaultListModel());
+		}
+		return capabilitiesList;
+	}
+
+	/**
+	 * This method initializes ButtonSetHabitat	
+	 * 	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getButtonSetHabitat(){
+		if(ButtonSetHabitat == null){
+			ButtonSetHabitat=new JButton();
+			ButtonSetHabitat.setBounds(new Rectangle(182, 217, 55, 24));
+			ButtonSetHabitat.setHorizontalTextPosition(SwingConstants.LEFT);
+			ButtonSetHabitat.setPreferredSize(new Dimension(53, 50));
+			ButtonSetHabitat.setHorizontalAlignment(SwingConstants.LEFT);
+			ButtonSetHabitat.setText("Set");
+			ButtonSetHabitat.addActionListener(new java.awt.event.ActionListener(){
+				public void actionPerformed(java.awt.event.ActionEvent e){
+					TreePath paths[];
+					paths=getHarbourSetupTree().getSelectionPaths();
+					if(paths != null){
+						for(int i=0;i < paths.length;i++){
+							MutableTreeNode now=(MutableTreeNode) (paths[i].getLastPathComponent());
+							if(now instanceof MutableTreeNode){
+								((DefaultListModel) getHabitatList().getModel()).removeAllElements();
+								((DefaultListModel) getHabitatList().getModel()).addElement(now);
+							}
+						}
+					}
+				}
+			});
+		}
+		return ButtonSetHabitat;
+	}
+
+	/**
+	 * This method initializes ButtonAddCapability	
+	 * 	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getButtonAddCapability(){
+		if(ButtonAddCapability == null){
+			ButtonAddCapability=new JButton();
+			ButtonAddCapability.setBounds(new Rectangle(181, 245, 57, 23));
+			ButtonAddCapability.setText("Add");
+			ButtonAddCapability.addActionListener(new java.awt.event.ActionListener(){
+				public void actionPerformed(java.awt.event.ActionEvent e){
+					TreePath paths[];
+					paths=getHarbourSetupTree().getSelectionPaths();
+					if(paths != null){
+						for(int i=0;i < paths.length;i++){
+							MutableTreeNode now=(MutableTreeNode) (paths[i].getLastPathComponent());
+							if(now instanceof MutableTreeNode){
+								((DefaultListModel) getCapabilitiesList().getModel()).addElement(now);
+							}
+						}
+					}
+				}
+			});
+		}
+		return ButtonAddCapability;
+	}
+
+	/**
+	 * This method initializes ButtonCapabilityRemove	
+	 * 	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getButtonCapabilityRemove(){
+		if(ButtonCapabilityRemove == null){
+			ButtonCapabilityRemove=new JButton();
+			ButtonCapabilityRemove.setBounds(new Rectangle(180, 271, 60, 22));
+			ButtonCapabilityRemove.setText("Rmv");
+			ButtonCapabilityRemove.addActionListener(new java.awt.event.ActionListener(){
+				public void actionPerformed(java.awt.event.ActionEvent e){
+					Object[] paths;
+					paths= getCapabilitiesList().getSelectedValues();
+					if(paths != null){
+						for(int i=0;i < paths.length;i++){
+							((DefaultListModel) getCapabilitiesList().getModel()).removeElement(paths[i]);
+						}
+					}
+				}
+			});
+		}
+		return ButtonCapabilityRemove;
 	}
 
 } //  @jve:decl-index=0:visual-constraint="30,15"

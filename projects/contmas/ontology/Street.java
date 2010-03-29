@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: Street
 * @author ontology bean generator
-* @version 2010/03/25, 18:36:31
+* @version 2010/03/27, 20:53:54
 */
 public class Street extends Domain{ 
 

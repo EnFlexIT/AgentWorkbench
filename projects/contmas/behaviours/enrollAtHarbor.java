@@ -25,65 +25,54 @@ import jade.core.Agent;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.proto.AchieveREInitiator;
-import jade.util.leap.Iterator;
+import jade.util.leap.List;
 
 import java.util.Vector;
 
 import contmas.agents.ContainerAgent;
-import contmas.agents.ContainerHolderAgent;
-import contmas.agents.OntRepProvider;
-import contmas.ontology.*;
+import contmas.agents.ShipAgent;
+import contmas.agents.ShipAgent.unload;
+import contmas.ontology.AssignHarborQuay;
+import contmas.ontology.EnrollAtHarbor;
+import contmas.ontology.Ship;
 
-public class getPopulatedBayMap extends AchieveREInitiator{
-	private OntRepProvider parent=null;
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID= -6587230887404034233L;
+public class enrollAtHarbor extends AchieveREInitiator{
+
+	private static final long serialVersionUID= -1583891049645164006L;
+	private ShipAgent mySAgent=null;
 
 	private static ACLMessage getRequestMessage(Agent a){
 		ACLMessage msg=new ACLMessage(ACLMessage.REQUEST);
 		msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
 		return msg;
 	}
-
-	public getPopulatedBayMap(Agent a){
+	
+	public enrollAtHarbor(Agent a){
 		super(a,getRequestMessage(a));
+		this.mySAgent=((ShipAgent) this.myAgent);
 	}
 
 	@Override
-	protected Vector<?> prepareRequests(ACLMessage request){
-		setParent();
-		request.addReceiver(((ContainerAgent) this.myAgent).getRandomGenerator());
-		//BayMap aus Agent auslesen
-		RequestPopulatedBayMap act=new RequestPopulatedBayMap();
-		act.setPopulate_on(parent.getOntologyRepresentation().getContains());
+	protected Vector<ACLMessage> prepareRequests(ACLMessage request){
+		request.addReceiver(this.mySAgent.getHarborManager());
+		EnrollAtHarbor act=new EnrollAtHarbor();
+		act.setShip_length(((Ship) this.mySAgent.getOntologyRepresentation()).getLength());
 		((ContainerAgent) this.myAgent).fillMessage(request,act);
+
 		Vector<ACLMessage> messages=new Vector<ACLMessage>();
 		messages.add(request);
 		return messages;
 	}
-
+	
 	@Override
 	protected void handleInform(ACLMessage msg){
 		Concept content;
-		ContainerHolder ontRep=parent.getOntologyRepresentation();
 		content=((ContainerAgent) this.myAgent).extractAction(msg);
-		ontRep.setContains(((ProvidePopulatedBayMap) content).getProvides());
-		Iterator allConts=ontRep.getContains().getAllIs_filled_with();
-		while(allConts.hasNext()){
-			BlockAddress curBaymap=(BlockAddress) allConts.next();
-			TransportOrderChain curTOC=new TransportOrderChain();
-			curTOC.setTransports(curBaymap.getLocates());
-			ContainerHolderAgent.touchTOCState(curTOC,new Administered(),true,ontRep);
-		}
-	}
 
-	private void setParent(){
-		if(super.parent != null){ //as subBehaviour of listenforStartAgent
-			this.parent=((OntRepProvider) super.parent);
-		}else{ //standalone, i.e. directly run by an agent
-			this.parent=((OntRepProvider) myAgent);
+		if(content instanceof AssignHarborQuay){
+			List craneList=((AssignHarborQuay) content).getAvailable_cranes();
+			this.mySAgent.getOntologyRepresentation().setContractors(craneList);
+			this.myAgent.addBehaviour(this.mySAgent.new unload(this.myAgent));
 		}
 	}
 }

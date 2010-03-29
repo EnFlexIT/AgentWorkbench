@@ -48,14 +48,14 @@ public class receiveStartAgentRequest extends AchieveREResponder{
 	private static final long serialVersionUID=3755512724278640204L;
 	private listenForStartAgentReq parent=null;
 
-	private static MessageTemplate getMessageTemplate(Agent a){
+	private static MessageTemplate createMessageTemplate(Agent a){
 		MessageTemplate mt=AchieveREResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_REQUEST);
 		mt=MessageTemplate.and(mt,new MessageTemplate(new MatchAgentAction(a,new StartNewContainerHolder())));
 		return mt;
 	}
 
 	public receiveStartAgentRequest(Agent a){
-		super(a,receiveStartAgentRequest.getMessageTemplate(a));
+		super(a,receiveStartAgentRequest.createMessageTemplate(a));
 	}
 
 	@Override

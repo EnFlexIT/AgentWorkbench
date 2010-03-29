@@ -8,20 +8,9 @@ import jade.core.*;
 /**
 * Protege name: Domain
 * @author ontology bean generator
-* @version 2010/03/25, 18:36:31
+* @version 2010/03/27, 20:53:54
 */
 public class Domain implements Concept {
-
-   /**
-* Protege name: id
-   */
-   private String id;
-   public void setId(String value) { 
-    this.id=value;
-   }
-   public String getId() {
-     return this.id;
-   }
 
    /**
 * Protege name: lies_in
@@ -54,5 +43,16 @@ public class Domain implements Concept {
    public Iterator getAllHas_subdomains() {return has_subdomains.iterator(); }
    public List getHas_subdomains() {return has_subdomains; }
    public void setHas_subdomains(List l) {has_subdomains = l; }
+
+   /**
+* Protege name: id
+   */
+   private String id;
+   public void setId(String value) { 
+    this.id=value;
+   }
+   public String getId() {
+     return this.id;
+   }
 
 }

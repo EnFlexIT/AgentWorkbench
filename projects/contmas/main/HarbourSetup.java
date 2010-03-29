@@ -29,6 +29,7 @@ import contmas.ontology.*;
 public final class HarbourSetup{
 
 	private Domain HarbourArea=null;
+	private ContainerHolder[] ontReps=null;
 
 	/**
 	 * 
@@ -37,8 +38,35 @@ public final class HarbourSetup{
 		// TODO Auto-generated constructor stub
 	}
 
+	public static HarbourSetup getInstance(){
+		return new HarbourSetup();
+	}
+
+	public static void addSub(Domain master,Domain sub){
+//		sub.setLies_in(master);
+
+		master.addHas_subdomains(sub);
+	}
+
+	public ContainerHolder[] getOntReps(){
+		getHarbourArea();
+		return ontReps;
+	}
+
 	public Domain getHarbourArea(){
 		if(this.HarbourArea == null){
+			ontReps=new ContainerHolder[5];
+			ontReps[0]=new Crane();
+			ontReps[0].setLocalName("Crane-#1");
+			ontReps[1]=new Crane();
+			ontReps[1].setLocalName("Crane-#2");
+			ontReps[2]=new Apron();
+			ontReps[2].setLocalName("Apron");
+			ontReps[3]=new StraddleCarrier();
+			ontReps[3].setLocalName("StraddleCarrier");
+			ontReps[4]=new Yard();
+			ontReps[4].setLocalName("Yard");
+
 			Domain workingDomainOne=null;
 			Domain workingDomainTwo=null;
 
@@ -46,24 +74,51 @@ public final class HarbourSetup{
 			this.HarbourArea.setId("Port of Otago");
 
 			workingDomainOne=new Sea();
-			workingDomainOne.setLies_in(this.HarbourArea);
+			workingDomainOne.setId("Pacific");
+			((Crane) ontReps[0]).addCapable_of(workingDomainOne); //Crane1
+			((Crane) ontReps[1]).addCapable_of(workingDomainOne); //Crane2
+			addSub(this.HarbourArea,workingDomainOne);
 
 			workingDomainTwo=new Berth();
-			workingDomainTwo.setLies_in(workingDomainOne);
+			workingDomainTwo.setId("BerthNumberOne");
+			addSub(workingDomainOne,workingDomainTwo);
+
 
 			workingDomainOne=new Land();
-			workingDomainOne.setLies_in(this.HarbourArea);
+			addSub(this.HarbourArea,workingDomainOne);
+
+			workingDomainTwo=new Rail();
+			workingDomainTwo.setId("TrainRails");
+			((Crane) ontReps[0]).addCapable_of(workingDomainOne); //Crane1
+			((Crane) ontReps[1]).addCapable_of(workingDomainOne); //Crane2
+			addSub(workingDomainOne,workingDomainTwo);
 
 			workingDomainTwo=new Rail();
 			workingDomainTwo.setId("CraneRails");
-			workingDomainTwo.setLies_in(workingDomainOne);
+			ontReps[0].setLives_in(workingDomainTwo); //Crane1
+			ontReps[1].setLives_in(workingDomainTwo); //Crane2
+			addSub(workingDomainOne,workingDomainTwo);
+
 			workingDomainTwo=new YardArea();
-			workingDomainTwo.setLies_in(workingDomainOne);
+			workingDomainTwo.setId("StorageYard");
+			ontReps[4].setLives_in(workingDomainTwo); //Yard
+			((StraddleCarrier) ontReps[3]).addCapable_of(workingDomainTwo); //StraddleCarrier
+			addSub(workingDomainOne,workingDomainTwo);
+
+
 			workingDomainTwo=new Street();
-			workingDomainTwo.setLies_in(workingDomainOne);
+			workingDomainTwo.setId("StraddleCarrierStreet");
+			ontReps[3].setLives_in(workingDomainTwo); //StraddleCarrier
+			addSub(workingDomainOne,workingDomainTwo);
+
 			workingDomainOne=workingDomainTwo;
 			workingDomainTwo=new ApronArea();
-			workingDomainTwo.setLies_in(workingDomainOne);
+			workingDomainTwo.setId("CraneApron");
+			ontReps[2].setLives_in(workingDomainTwo); //ApronAgent
+			((Crane) ontReps[0]).addCapable_of(workingDomainTwo); //Crane1
+			((Crane) ontReps[1]).addCapable_of(workingDomainTwo); //Crane2
+			((StraddleCarrier) ontReps[3]).addCapable_of(workingDomainTwo); //StraddleCarrier
+			addSub(workingDomainOne,workingDomainTwo);
 
 		}
 		return this.HarbourArea;

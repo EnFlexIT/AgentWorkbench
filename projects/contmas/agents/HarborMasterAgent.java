@@ -23,12 +23,15 @@ import jade.wrapper.StaleProxyException;
 import java.util.HashMap;
 
 import contmas.behaviours.*;
+import contmas.main.HarbourSetup;
 import contmas.ontology.*;
 
 public class HarborMasterAgent extends ContainerAgent implements OntRepProvider, OntRepRequester{
 	private HashMap<AID, ContainerHolder> activeContainerHolders=new HashMap<AID, ContainerHolder>();
 	private HashMap<AID, Behaviour> ontRepInquieries=new HashMap<AID, Behaviour>();
-
+	private HarbourSetup harbourSetup=HarbourSetup.getInstance();
+	private Domain harbourArea=harbourSetup.getHarbourArea();
+	
 	public boolean isAlreadyCached(String lookForAgent){
 		if(this.activeContainerHolders.get(lookForAgent) != null){
 			return true;
@@ -61,9 +64,9 @@ public class HarborMasterAgent extends ContainerAgent implements OntRepProvider,
 
 		this.setupEnvironment();
 		this.addBehaviour(new listenForEnroll(this));
-		this.addBehaviour(new offerCraneList(this));
-		this.addBehaviour(new listenForOntRepRequest(this));
+		this.addBehaviour(new listenForOntRepReq(this));
 		this.addBehaviour(new listenForStartAgentReq(this));
+		this.addBehaviour(new listenForHarbourAreaReq(this));
 	}
 
 	public ContainerHolder getOntologyRepresentation(AID inQuestion){
@@ -82,10 +85,35 @@ public class HarborMasterAgent extends ContainerAgent implements OntRepProvider,
 		}
 	}
 
+	public Domain getHarbourArea(){
+		return harbourArea;
+	}
+	
 	protected void setupEnvironment(){
+		
 		AgentContainer c=this.getContainerController();
-		AgentController a;
+		AgentController a=null;
+		ContainerHolderAgent ag=null;
 		try{
+			
+			ContainerHolder[] ontReps=harbourSetup.getOntReps();
+			for(int i=0;i < ontReps.length;i++){
+				ContainerHolder containerHolder=ontReps[i];
+				if(containerHolder instanceof Crane){
+					ag=new CraneAgent((Crane) containerHolder);
+				} else if(containerHolder instanceof Apron){
+					ag=new ApronAgent((Apron) containerHolder);
+				} else if(containerHolder instanceof StraddleCarrier){
+					ag=new StraddleCarrierAgent((StraddleCarrier) containerHolder);
+				} else if(containerHolder instanceof Yard){
+					ag=new YardAgent((Yard) containerHolder);
+				}
+				if(ag!=null){
+					a=c.acceptNewAgent(containerHolder.getLocalName(),ag);
+					a.start();
+				}
+			}
+/*			
 			Crane ontologyRepresentation=new Crane();
 			Domain terminalArea=new Land();
 			Domain habitat=new Rail();
@@ -148,7 +176,7 @@ public class HarborMasterAgent extends ContainerAgent implements OntRepProvider,
 
 			a=c.acceptNewAgent("Yard",new YardAgent(YardontologyRepresentation));
 			a.start();
-
+*/
 			/*
 			AGV AGVontologyRepresentation=new AGV();
 			habitat=new Street();

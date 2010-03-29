@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: RequestOntologyRepresentation
 * @author ontology bean generator
-* @version 2010/03/25, 18:36:32
+* @version 2010/03/27, 20:53:54
 */
 public class RequestOntologyRepresentation implements AgentAction {
 

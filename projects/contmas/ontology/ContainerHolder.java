@@ -7,9 +7,20 @@ import jade.core.*;
 /**
 * Protege name: ContainerHolder
 * @author ontology bean generator
-* @version 2010/03/25, 18:36:32
+* @version 2010/03/27, 20:53:54
 */
 public class ContainerHolder extends AID{ 
+
+   /**
+* Protege name: lives_in
+   */
+   private Domain lives_in;
+   public void setLives_in(Domain value) { 
+    this.lives_in=value;
+   }
+   public Domain getLives_in() {
+     return this.lives_in;
+   }
 
    /**
 * Protege name: service_type
@@ -23,35 +34,14 @@ public class ContainerHolder extends AID{
    }
 
    /**
-* Protege name: container_states
+* Protege name: contains
    */
-   private List container_states = new ArrayList();
-   public void addContainer_states(TOCHasState elem) { 
-     List oldList = this.container_states;
-     container_states.add(elem);
+   private BayMap contains;
+   public void setContains(BayMap value) { 
+    this.contains=value;
    }
-   public boolean removeContainer_states(TOCHasState elem) {
-     List oldList = this.container_states;
-     boolean result = container_states.remove(elem);
-     return result;
-   }
-   public void clearAllContainer_states() {
-     List oldList = this.container_states;
-     container_states.clear();
-   }
-   public Iterator getAllContainer_states() {return container_states.iterator(); }
-   public List getContainer_states() {return container_states; }
-   public void setContainer_states(List l) {container_states = l; }
-
-   /**
-* Protege name: lives_in
-   */
-   private Domain lives_in;
-   public void setLives_in(Domain value) { 
-    this.lives_in=value;
-   }
-   public Domain getLives_in() {
-     return this.lives_in;
+   public BayMap getContains() {
+     return this.contains;
    }
 
    /**
@@ -76,14 +66,24 @@ public class ContainerHolder extends AID{
    public void setContractors(List l) {contractors = l; }
 
    /**
-* Protege name: contains
+* Protege name: container_states
    */
-   private BayMap contains;
-   public void setContains(BayMap value) { 
-    this.contains=value;
+   private List container_states = new ArrayList();
+   public void addContainer_states(TOCHasState elem) { 
+     List oldList = this.container_states;
+     container_states.add(elem);
    }
-   public BayMap getContains() {
-     return this.contains;
+   public boolean removeContainer_states(TOCHasState elem) {
+     List oldList = this.container_states;
+     boolean result = container_states.remove(elem);
+     return result;
    }
+   public void clearAllContainer_states() {
+     List oldList = this.container_states;
+     container_states.clear();
+   }
+   public Iterator getAllContainer_states() {return container_states.iterator(); }
+   public List getContainer_states() {return container_states; }
+   public void setContainer_states(List l) {container_states = l; }
 
 }

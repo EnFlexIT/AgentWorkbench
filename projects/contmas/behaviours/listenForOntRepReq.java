@@ -39,7 +39,7 @@ import contmas.ontology.ContainerHolder;
 import contmas.ontology.ProvideOntologyRepresentation;
 import contmas.ontology.RequestOntologyRepresentation;
 
-public class listenForOntRepRequest extends AchieveREResponder{
+public class listenForOntRepReq extends AchieveREResponder{
 	/**
 	 * 
 	 */
@@ -52,8 +52,8 @@ public class listenForOntRepRequest extends AchieveREResponder{
 		return mt;
 	}
 
-	public listenForOntRepRequest(Agent a){
-		super(a,listenForOntRepRequest.getMessageTemplate(a));
+	public listenForOntRepReq(Agent a){
+		super(a,listenForOntRepReq.getMessageTemplate(a));
 	}
 
 	@Override

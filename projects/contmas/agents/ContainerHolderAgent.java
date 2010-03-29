@@ -23,7 +23,7 @@ import jade.util.leap.List;
 import java.util.Random;
 
 import contmas.behaviours.announceLoadOrders;
-import contmas.behaviours.listenForOntRepRequest;
+import contmas.behaviours.listenForOntRepReq;
 import contmas.behaviours.subscribeToDF;
 import contmas.ontology.*;
 
@@ -99,7 +99,11 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 	}
 
 	public TransportOrderChainState touchTOCState(TransportOrderChain needleTOC,TransportOrderChainState toState,Boolean addRemoveSwitch){
-		Iterator queue=this.ontologyRepresentation.getAllContainer_states();
+		return touchTOCState(needleTOC,toState,addRemoveSwitch,this.getOntologyRepresentation());
+	}
+	
+	public static TransportOrderChainState touchTOCState(TransportOrderChain needleTOC,TransportOrderChainState toState,Boolean addRemoveSwitch, ContainerHolder ontRep){
+		Iterator queue=ontRep.getAllContainer_states();
 		while(queue.hasNext()){
 			TOCHasState queuedTOCState=(TOCHasState) queue.next();
 			if(needleTOC.getTransports().getBic_code().equals(queuedTOCState.getSubjected_toc().getTransports().getBic_code())){
@@ -117,12 +121,27 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 			TOCHasState state=new TOCHasState();
 			state.setState(toState);
 			state.setSubjected_toc(needleTOC);
-			this.ontologyRepresentation.getContainer_states().add(state);
+			ontRep.getContainer_states().add(state);
 			return state.getState();
 		}
 		return null; //nicht gefunden
 	}
 
+
+	public BlockAddress getUpmost(Integer x, Integer y){
+		BlockAddress upmostContainer=null;
+		Iterator allContainers=this.ontologyRepresentation.getContains().getAllIs_filled_with();
+		while(allContainers.hasNext()){ //alle geladenen Container überprüfen 
+			BlockAddress curContainer=(BlockAddress) allContainers.next();
+			if((curContainer.getX_dimension() == x) && (curContainer.getY_dimension() == y)){ //betrachteter Container steht im stapel auf momentaner koordinate
+				if((upmostContainer == null) || (upmostContainer.getZ_dimension() < curContainer.getZ_dimension())){
+					upmostContainer=curContainer;
+				}
+			}
+		} //end while
+		return upmostContainer;
+	}
+	
 	public Integer countTOCInState(TransportOrderChainState TOCState){
 		Integer queueCount=0;
 		Iterator queue=this.ontologyRepresentation.getAllContainer_states();
@@ -258,14 +277,37 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 	}
 
 	public TransportOrderChain getSomeTOCOfState(TransportOrderChainState needleState){
-		Iterator queue=this.ontologyRepresentation.getAllContainer_states();
+		Iterator queue=this.getOntologyRepresentation().getAllContainer_states();
 		while(queue.hasNext()){
 			TOCHasState queuedTOCState=(TOCHasState) queue.next();
 			if(needleState.getClass() == queuedTOCState.getState().getClass()){
-				return queuedTOCState.getSubjected_toc();
+				if(isUpmostContainer(queuedTOCState.getSubjected_toc())){
+					return queuedTOCState.getSubjected_toc();
+				}
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * @param subjectedToc
+	 * @return
+	 */
+	private Boolean isUpmostContainer(TransportOrderChain subjectedToc){
+		BayMap LoadBay=this.getOntologyRepresentation().getContains();
+
+		for(int x=0;x < LoadBay.getX_dimension();x++){ //baymap zeilen-
+			for(int y=0;y < LoadBay.getY_dimension();y++){ //und spaltenweise durchlaufen
+				BlockAddress upmostContainer=getUpmost(x,y);
+				if(upmostContainer != null){ //an dieser Koordinate steht ein Container obenauf
+					if(upmostContainer.getLocates().getBic_code().equals(subjectedToc.getTransports().getBic_code())){
+						return true;
+					}
+				}
+			}
+		}
+
+		return false;
 	}
 
 	public boolean hasBayMapRoom(){
@@ -360,6 +402,6 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		}
 
 		this.determineContractors();
-		this.addBehaviour(new listenForOntRepRequest(this));
+		this.addBehaviour(new listenForOntRepReq(this));
 	}
 }
