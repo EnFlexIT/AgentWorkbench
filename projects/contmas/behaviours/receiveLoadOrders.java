@@ -66,6 +66,7 @@ public class receiveLoadOrders extends ContractNetResponder{
 						this.myCAgent.fillMessage(rply,loadStatus);
 						ds.put(receiveLoadOrders.this.REPLY_KEY,rply);
 						this.isDone=true;
+						myAgent.doWake();
 						return;
 					}else{
 						this.myCAgent.echoStatus("ERROR: Auftrag kann nicht ausgeführt werden.",acceptedTOC,ContainerAgent.LOGGING_ERROR);
@@ -175,7 +176,10 @@ public class receiveLoadOrders extends ContractNetResponder{
 			*/
 		}else if((this.myCAgent.determineContractors() == null) && !this.myCAgent.hasBayMapRoom()){
 			this.myCAgent.echoStatus("Habe keine Subunternehmer und bin voll, lehne ab.",ContainerAgent.LOGGING_NOTICE);
-			reply.setContent("Habe keine Subunternehmer und bin voll, lehne ab.");
+//			reply.setContent("Habe keine Subunternehmer und bin voll, lehne ab.");
+			AnnounceLoadStatus loadStatus=ContainerAgent.getLoadStatusAnnouncement(curTOC,"REFUSED");
+			this.myCAgent.fillMessage(reply,loadStatus);
+
 			reply.setPerformative(ACLMessage.REFUSE);
 			return reply;
 		}else{ //noch Kapazitäten vorhanden und Anfrage plausibel

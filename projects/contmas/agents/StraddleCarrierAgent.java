@@ -21,6 +21,7 @@
 package contmas.agents;
 
 import contmas.behaviours.receiveLoadOrders;
+import contmas.behaviours.unload;
 import contmas.ontology.StraddleCarrier;
 import contmas.ontology.YardArea;
 
@@ -61,8 +62,7 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 	 */
 	@Override
 	public void offerTransportOrder(){
-		// TODO Auto-generated method stub
-
+		this.addBehaviour(new unload(this));
 	}
 
 	@Override
@@ -71,5 +71,4 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 		this.handleTransportOrder();
 		this.offerTransportOrder();
 	}
-
 }

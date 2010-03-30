@@ -15,6 +15,7 @@
 package contmas.agents;
 
 import contmas.behaviours.receiveLoadOrders;
+import contmas.behaviours.unload;
 import contmas.ontology.ApronArea;
 import contmas.ontology.Crane;
 
@@ -34,7 +35,9 @@ public class CraneAgent extends ActiveContainerAgent implements TransportOrderHa
 	}
 
 	@Override
-	public void offerTransportOrder(){}
+	public void offerTransportOrder(){
+		this.addBehaviour(new unload(this));
+	}
 
 	@Override
 	public void setup(){

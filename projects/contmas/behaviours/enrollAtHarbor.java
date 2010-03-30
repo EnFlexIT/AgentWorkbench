@@ -31,7 +31,6 @@ import java.util.Vector;
 
 import contmas.agents.ContainerAgent;
 import contmas.agents.ShipAgent;
-import contmas.agents.ShipAgent.unload;
 import contmas.ontology.AssignHarborQuay;
 import contmas.ontology.EnrollAtHarbor;
 import contmas.ontology.Ship;
@@ -72,7 +71,6 @@ public class enrollAtHarbor extends AchieveREInitiator{
 		if(content instanceof AssignHarborQuay){
 			List craneList=((AssignHarborQuay) content).getAvailable_cranes();
 			this.mySAgent.getOntologyRepresentation().setContractors(craneList);
-			this.myAgent.addBehaviour(this.mySAgent.new unload(this.myAgent));
 		}
 	}
 }

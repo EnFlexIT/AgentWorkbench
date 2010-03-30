@@ -21,6 +21,7 @@
 package contmas.agents;
 
 import contmas.behaviours.receiveLoadOrders;
+import contmas.behaviours.unload;
 import contmas.ontology.Apron;
 import contmas.ontology.Street;
 
@@ -37,18 +38,10 @@ public class ApronAgent extends StaticContainerAgent implements TransportOrderHa
 	/**
 	 *
 	 */
-	public ApronAgent(){
-		this(new Apron());
-	}
-
-	/**
-	 *
-	 */
 	public ApronAgent(Apron ontologyRepresentation){
 		super("short-time-storage",ontologyRepresentation);
 		this.targetAgentServiceType="container-distributing";
 		this.targetAbstractDomain=new Street();
-
 	}
 
 	/* (non-Javadoc)
@@ -64,8 +57,7 @@ public class ApronAgent extends StaticContainerAgent implements TransportOrderHa
 	 */
 	@Override
 	public void offerTransportOrder(){
-		// TODO Auto-generated method stub
-
+		this.addBehaviour(new unload(this));
 	}
 
 	@Override
@@ -74,5 +66,4 @@ public class ApronAgent extends StaticContainerAgent implements TransportOrderHa
 		this.handleTransportOrder();
 		this.offerTransportOrder();
 	}
-
 }

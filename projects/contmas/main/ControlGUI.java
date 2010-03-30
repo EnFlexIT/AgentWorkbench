@@ -66,8 +66,6 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JScrollPane consoleScrollPane=null;
 	private JScrollPane AgentTreeScrollPane=null;
 	private AgentTree AT=null;
-	private JScrollPane systemConsoleScrollPane=null;
-	private JTextArea systemConsole=null;
 	private JButton ButtonGetOntRep=null;
 	private JScrollPane ontRepScrollPane=null;
 	private JTextArea ontRep=null;
@@ -78,14 +76,14 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JCheckBox randomizeCheckBox=null;
 	private JScrollPane harbourSetupScrollPane=null;
 	private JTree HarbourSetupTree=null;
-	private JComboBox agentType = null;
-	private JLabel AgentLabelType = null;
-	private JList habitatList = null;
-	private JScrollPane capabilitiesScrollPane = null;
-	private JList capabilitiesList = null;
-	private JButton ButtonSetHabitat = null;
-	private JButton ButtonAddCapability = null;
-	private JButton ButtonCapabilityRemove = null;
+	private JComboBox agentType=null;
+	private JLabel AgentLabelType=null;
+	private JList habitatList=null;
+	private JScrollPane capabilitiesScrollPane=null;
+	private JList capabilitiesList=null;
+	private JButton ButtonSetHabitat=null;
+	private JButton ButtonAddCapability=null;
+	private JButton ButtonCapabilityRemove=null;
 
 	/**
 	 * This is the default constructor
@@ -110,7 +108,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 		if(this.ButtonCreateAgent == null){
 			this.ButtonCreateAgent=new JButton();
 
-			this.ButtonCreateAgent.setBounds(new Rectangle(8, 327, 126, 20));
+			this.ButtonCreateAgent.setBounds(new Rectangle(8,327,126,20));
 			this.ButtonCreateAgent.setText("Start Agent");
 
 			this.ButtonCreateAgent.addActionListener(new ActionListener(){
@@ -124,9 +122,12 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 					ge.addParameter(ControlGUI.this.populateCheckBox.isSelected());
 					ge.addParameter(ControlGUI.this.TFShipLength.getText());
 					ge.addParameter(((AgentClassElement) getAgentType().getSelectedItem()).getAgentClass());
-					ge.addParameter(((DefaultListModel) getHabitatList().getModel()).toArray()[0]);
-					ge.addParameter(((DefaultListModel) getCapabilitiesList().getModel()).toArray());
-
+					if(((DefaultListModel) getHabitatList().getModel()).toArray().length == 1){
+						ge.addParameter(((DefaultListModel) getHabitatList().getModel()).toArray()[0]);
+					}
+					if(((DefaultListModel) getCapabilitiesList().getModel()).toArray().length > 0){
+						ge.addParameter(((DefaultListModel) getCapabilitiesList().getModel()).toArray());
+					}
 					ControlGUI.this.myAgent.postGuiEvent(ge);
 				}
 			});
@@ -145,8 +146,8 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	 */
 	private JPanel getJContentPane(){
 		if(this.jContentPane == null){
-			AgentLabelType = new JLabel();
-			AgentLabelType.setBounds(new Rectangle(6, 38, 38, 16));
+			AgentLabelType=new JLabel();
+			AgentLabelType.setBounds(new Rectangle(6,38,38,16));
 			AgentLabelType.setDisplayedMnemonic(KeyEvent.VK_UNDEFINED);
 			AgentLabelType.setText("Type");
 			ontRepAgentName=new JLabel();
@@ -155,23 +156,23 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 			ontRepAgentName.setText("[No Agent Yet]");
 			this.AgentLabelLength=new JLabel();
 			this.AgentLabelLength.setText("Length");
-			AgentLabelLength.setBounds(new Rectangle(2, 186, 55, 16));
+			AgentLabelLength.setBounds(new Rectangle(2,186,55,16));
 			this.Heading=new JLabel();
 			this.Heading.setFont(new Font("Dialog",Font.BOLD,14));
-			Heading.setBounds(new Rectangle(6, 10, 196, 15));
+			Heading.setBounds(new Rectangle(6,10,196,15));
 			this.Heading.setText("Create new Agent");
 			this.AgentLabelName=new JLabel();
 			this.AgentLabelName.setText("Name");
-			AgentLabelName.setBounds(new Rectangle(5, 69, 55, 16));
+			AgentLabelName.setBounds(new Rectangle(5,69,55,16));
 			this.AgentLabelZ=new JLabel();
 			this.AgentLabelZ.setText("Size Z");
-			AgentLabelZ.setBounds(new Rectangle(4, 154, 55, 16));
+			AgentLabelZ.setBounds(new Rectangle(4,154,55,16));
 			this.AgentLabelY=new JLabel();
 			this.AgentLabelY.setText("Size Y");
-			AgentLabelY.setBounds(new Rectangle(6, 127, 55, 16));
+			AgentLabelY.setBounds(new Rectangle(6,127,55,16));
 			this.AgentLabelX=new JLabel();
 			this.AgentLabelX.setText("Size X");
-			AgentLabelX.setBounds(new Rectangle(5, 100, 55, 16));
+			AgentLabelX.setBounds(new Rectangle(5,100,55,16));
 			this.jContentPane=new JPanel();
 			this.jContentPane.setLayout(null);
 			this.jContentPane.add(this.getTFAgentName(),null);
@@ -188,7 +189,6 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 			this.jContentPane.add(this.getButtonCreateAgent(),null);
 			this.jContentPane.add(this.getConsoleScrollPane(),null);
 			this.jContentPane.add(this.getAgentTreeScrollPane(),null);
-			this.jContentPane.add(this.getSystemConsoleScrollPane(),null);
 			this.jContentPane.add(this.getButtonGetOntRep(),null);
 			this.jContentPane.add(this.getOntRepScrollPane(),null);
 			jContentPane.add(getLoadListScrollPane(),null);
@@ -196,19 +196,19 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 			jContentPane.add(getPopulateCheckBox(),null);
 			jContentPane.add(getRandomizeCheckBox(),null);
 			jContentPane.add(getHarbourSetupScrollPane(),null);
-			jContentPane.add(getAgentType(), null);
-			jContentPane.add(AgentLabelX, null);
-			jContentPane.add(AgentLabelY, null);
-			jContentPane.add(Heading, null);
-			jContentPane.add(AgentLabelLength, null);
-			jContentPane.add(AgentLabelName, null);
-			jContentPane.add(AgentLabelZ, null);
-			jContentPane.add(AgentLabelType, null);
-			jContentPane.add(getHabitatList(), null);
-			jContentPane.add(getCapabilitiesScrollPane(), null);
-			jContentPane.add(getButtonSetHabitat(), null);
-			jContentPane.add(getButtonAddCapability(), null);
-			jContentPane.add(getButtonCapabilityRemove(), null);
+			jContentPane.add(getAgentType(),null);
+			jContentPane.add(AgentLabelX,null);
+			jContentPane.add(AgentLabelY,null);
+			jContentPane.add(Heading,null);
+			jContentPane.add(AgentLabelLength,null);
+			jContentPane.add(AgentLabelName,null);
+			jContentPane.add(AgentLabelZ,null);
+			jContentPane.add(AgentLabelType,null);
+			jContentPane.add(getHabitatList(),null);
+			jContentPane.add(getCapabilitiesScrollPane(),null);
+			jContentPane.add(getButtonSetHabitat(),null);
+			jContentPane.add(getButtonAddCapability(),null);
+			jContentPane.add(getButtonCapabilityRemove(),null);
 			this.jContentPane.add(this.AgentLabelLength,null);
 			this.jContentPane.add(this.Heading,null);
 			this.jContentPane.add(this.AgentLabelName,null);
@@ -234,7 +234,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JTextField getTFShipLength(){
 		if(this.TFShipLength == null){
 			this.TFShipLength=new JTextField();
-			this.TFShipLength.setBounds(new Rectangle(65, 185, 46, 25));
+			this.TFShipLength.setBounds(new Rectangle(65,185,46,25));
 			this.TFShipLength.setText("120.5");
 		}
 		return this.TFShipLength;
@@ -248,7 +248,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JTextField getTFAgentName(){
 		if(this.TFAgentName == null){
 			this.TFAgentName=new JTextField();
-			this.TFAgentName.setBounds(new Rectangle(65, 65, 136, 25));
+			this.TFAgentName.setBounds(new Rectangle(65,65,136,25));
 			this.TFAgentName.setText("MV Ship");
 		}
 		return this.TFAgentName;
@@ -262,7 +262,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JTextField getTFAgentX(){
 		if(this.TFAgentX == null){
 			this.TFAgentX=new JTextField();
-			this.TFAgentX.setBounds(new Rectangle(65, 95, 46, 25));
+			this.TFAgentX.setBounds(new Rectangle(65,95,46,25));
 			this.TFAgentX.setText("2");
 		}
 		return this.TFAgentX;
@@ -276,7 +276,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JTextField getTFAgentY(){
 		if(this.TFAgentY == null){
 			this.TFAgentY=new JTextField();
-			this.TFAgentY.setBounds(new Rectangle(65, 125, 46, 25));
+			this.TFAgentY.setBounds(new Rectangle(65,125,46,25));
 			this.TFAgentY.setText("1");
 		}
 		return this.TFAgentY;
@@ -290,7 +290,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JTextField getTFAgentZ(){
 		if(this.TFAgentZ == null){
 			this.TFAgentZ=new JTextField();
-			this.TFAgentZ.setBounds(new Rectangle(65, 155, 46, 25));
+			this.TFAgentZ.setBounds(new Rectangle(65,155,46,25));
 			this.TFAgentZ.setText("1");
 		}
 		return this.TFAgentZ;
@@ -314,8 +314,6 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 				ControlGUI.this.shutDown();
 			}
 		});
-
-//		new setConsole(this.getSystemConsole());
 	}
 
 	void shutDown(){
@@ -383,7 +381,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JScrollPane getConsoleScrollPane(){
 		if(this.consoleScrollPane == null){
 			this.consoleScrollPane=new JScrollPane();
-			this.consoleScrollPane.setBounds(new Rectangle(5, 351, 429, 120));
+			this.consoleScrollPane.setBounds(new Rectangle(5,351,429,120));
 			this.consoleScrollPane.setViewportView(this.getConsole());
 		}
 		return this.consoleScrollPane;
@@ -429,33 +427,6 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 			inputTree.expandRow(i);
 		}
 		return inputTree;
-	}
-
-	/**
-	 * This method initializes systemConsoleScrollPane	
-	 * 	
-	 * @return javax.swing.JScrollPane	
-	 */
-	private JScrollPane getSystemConsoleScrollPane(){
-		if(this.systemConsoleScrollPane == null){
-			this.systemConsoleScrollPane=new JScrollPane();
-			this.systemConsoleScrollPane.setBounds(new Rectangle(583, 365, 26, 31));
-			this.systemConsoleScrollPane.setViewportView(this.getSystemConsole());
-		}
-		return this.systemConsoleScrollPane;
-	}
-
-	/**
-	 * This method initializes systemConsole	
-	 * 	
-	 * @return javax.swing.JTextArea	
-	 */
-	private JTextArea getSystemConsole(){
-		if(this.systemConsole == null){
-			this.systemConsole=new JTextArea();
-			this.systemConsole.setEditable(false);
-		}
-		return this.systemConsole;
 	}
 
 	/**
@@ -511,7 +482,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 		if(this.ontRep == null){
 			this.ontRep=new JTextArea();
 			this.ontRep.setEditable(false);
-			ontRep.setTabSize(2);
+			ontRep.setTabSize(1);
 		}
 		return this.ontRep;
 	}
@@ -566,7 +537,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JCheckBox getPopulateCheckBox(){
 		if(populateCheckBox == null){
 			populateCheckBox=new JCheckBox();
-			populateCheckBox.setBounds(new Rectangle(145, 147, 91, 21));
+			populateCheckBox.setBounds(new Rectangle(145,147,91,21));
 			populateCheckBox.setSelected(true);
 			populateCheckBox.setText("populate");
 		}
@@ -581,7 +552,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JCheckBox getRandomizeCheckBox(){
 		if(randomizeCheckBox == null){
 			randomizeCheckBox=new JCheckBox();
-			randomizeCheckBox.setBounds(new Rectangle(145, 119, 91, 24));
+			randomizeCheckBox.setBounds(new Rectangle(145,119,91,24));
 			randomizeCheckBox.setText("randomize");
 			randomizeCheckBox.setEnabled(true);
 			randomizeCheckBox.setSelected(false);
@@ -597,7 +568,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JScrollPane getHarbourSetupScrollPane(){
 		if(harbourSetupScrollPane == null){
 			harbourSetupScrollPane=new JScrollPane();
-			harbourSetupScrollPane.setBounds(new Rectangle(239, 206, 195, 141));
+			harbourSetupScrollPane.setBounds(new Rectangle(239,206,195,141));
 			harbourSetupScrollPane.setViewportView(getHarbourSetupTree());
 		}
 		return harbourSetupScrollPane;
@@ -624,10 +595,17 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 			public void run(){
 				JTree domainTree=getHarbourSetupTree();
 				domainTree.setModel(new DefaultTreeModel(root));
+				for(Integer i=0;i < domainTree.getRowCount();i++){
+					
+					if(((DomainOntologyElement) domainTree.getPathForRow(i).getLastPathComponent()).getDomain().getClass()==Sea.class){
+						domainTree.setSelectionRow(i);
+						setHabitat();
+					}
+				}
 				ControlGUI.expandTree(domainTree);
 			}
 		};
-		SwingUtilities.invokeLater(addIt);		
+		SwingUtilities.invokeLater(addIt);
 	}
 
 	/* (non-Javadoc)
@@ -636,7 +614,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent arg0){
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	/**
@@ -647,7 +625,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JComboBox getAgentType(){
 		if(agentType == null){
 			agentType=new JComboBox();
-			agentType.setBounds(new Rectangle(66, 32, 134, 22));
+			agentType.setBounds(new Rectangle(66,32,134,22));
 			DefaultComboBoxModel modl=new DefaultComboBoxModel();
 			modl.addElement(new AgentClassElement(Ship.class));
 			modl.addElement(new AgentClassElement(Crane.class));
@@ -667,7 +645,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JList getHabitatList(){
 		if(habitatList == null){
 			habitatList=new JList();
-			habitatList.setBounds(new Rectangle(5, 217, 175, 24));
+			habitatList.setBounds(new Rectangle(5,217,175,24));
 			habitatList.setModel(new DefaultListModel());
 		}
 		return habitatList;
@@ -681,7 +659,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JScrollPane getCapabilitiesScrollPane(){
 		if(capabilitiesScrollPane == null){
 			capabilitiesScrollPane=new JScrollPane();
-			capabilitiesScrollPane.setBounds(new Rectangle(5, 244, 174, 75));
+			capabilitiesScrollPane.setBounds(new Rectangle(5,244,174,75));
 			capabilitiesScrollPane.setViewportView(getCapabilitiesList());
 		}
 		return capabilitiesScrollPane;
@@ -708,24 +686,14 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JButton getButtonSetHabitat(){
 		if(ButtonSetHabitat == null){
 			ButtonSetHabitat=new JButton();
-			ButtonSetHabitat.setBounds(new Rectangle(182, 217, 55, 24));
+			ButtonSetHabitat.setBounds(new Rectangle(182,217,55,24));
 			ButtonSetHabitat.setHorizontalTextPosition(SwingConstants.LEFT);
-			ButtonSetHabitat.setPreferredSize(new Dimension(53, 50));
+			ButtonSetHabitat.setPreferredSize(new Dimension(53,50));
 			ButtonSetHabitat.setHorizontalAlignment(SwingConstants.LEFT);
 			ButtonSetHabitat.setText("Set");
 			ButtonSetHabitat.addActionListener(new java.awt.event.ActionListener(){
 				public void actionPerformed(java.awt.event.ActionEvent e){
-					TreePath paths[];
-					paths=getHarbourSetupTree().getSelectionPaths();
-					if(paths != null){
-						for(int i=0;i < paths.length;i++){
-							MutableTreeNode now=(MutableTreeNode) (paths[i].getLastPathComponent());
-							if(now instanceof MutableTreeNode){
-								((DefaultListModel) getHabitatList().getModel()).removeAllElements();
-								((DefaultListModel) getHabitatList().getModel()).addElement(now);
-							}
-						}
-					}
+					setHabitat();
 				}
 			});
 		}
@@ -740,7 +708,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JButton getButtonAddCapability(){
 		if(ButtonAddCapability == null){
 			ButtonAddCapability=new JButton();
-			ButtonAddCapability.setBounds(new Rectangle(181, 245, 57, 23));
+			ButtonAddCapability.setBounds(new Rectangle(181,245,57,23));
 			ButtonAddCapability.setText("Add");
 			ButtonAddCapability.addActionListener(new java.awt.event.ActionListener(){
 				public void actionPerformed(java.awt.event.ActionEvent e){
@@ -768,12 +736,12 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JButton getButtonCapabilityRemove(){
 		if(ButtonCapabilityRemove == null){
 			ButtonCapabilityRemove=new JButton();
-			ButtonCapabilityRemove.setBounds(new Rectangle(180, 271, 60, 22));
+			ButtonCapabilityRemove.setBounds(new Rectangle(180,271,60,22));
 			ButtonCapabilityRemove.setText("Rmv");
 			ButtonCapabilityRemove.addActionListener(new java.awt.event.ActionListener(){
 				public void actionPerformed(java.awt.event.ActionEvent e){
 					Object[] paths;
-					paths= getCapabilitiesList().getSelectedValues();
+					paths=getCapabilitiesList().getSelectedValues();
 					if(paths != null){
 						for(int i=0;i < paths.length;i++){
 							((DefaultListModel) getCapabilitiesList().getModel()).removeElement(paths[i]);
@@ -783,6 +751,23 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 			});
 		}
 		return ButtonCapabilityRemove;
+	}
+
+	/**
+	 * 
+	 */
+	private void setHabitat(){
+		TreePath paths[];
+		paths=getHarbourSetupTree().getSelectionPaths();
+		if(paths != null){
+			for(int i=0;i < paths.length;i++){
+				MutableTreeNode now=(MutableTreeNode) (paths[i].getLastPathComponent());
+				if(now instanceof MutableTreeNode){
+					((DefaultListModel) getHabitatList().getModel()).removeAllElements();
+					((DefaultListModel) getHabitatList().getModel()).addElement(now);
+				}
+			}
+		}
 	}
 
 } //  @jve:decl-index=0:visual-constraint="30,15"

@@ -164,17 +164,14 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester{
 				}
 				if(ontologyRepresentation instanceof Ship){
 					((Ship) ontologyRepresentation).setLength(Float.parseFloat(ev.getParameter(6).toString()));
-					Domain habitat=new Sea();
-					ontologyRepresentation.setLives_in(habitat);
-				}else{
-					DomainOntologyElement habitat=((DomainOntologyElement) ev.getParameter(8));
-					ontologyRepresentation.setLives_in(habitat.getDomain());
-					if(ontologyRepresentation instanceof ActiveContainerHolder){
-						Object[] capabilities=((Object[]) ev.getParameter(9));
-						for(int i=0;i < capabilities.length;i++){
-							DomainOntologyElement domainOntologyElement=(DomainOntologyElement) capabilities[i];
-							((ActiveContainerHolder) ontologyRepresentation).addCapable_of(domainOntologyElement.getDomain());
-						}
+				}
+				DomainOntologyElement habitat=((DomainOntologyElement) ev.getParameter(8));
+				ontologyRepresentation.setLives_in(habitat.getDomain());
+				if(ontologyRepresentation instanceof ActiveContainerHolder){
+					Object[] capabilities=((Object[]) ev.getParameter(9));
+					for(int i=0;i < capabilities.length;i++){
+						DomainOntologyElement domainOntologyElement=(DomainOntologyElement) capabilities[i];
+						((ActiveContainerHolder) ontologyRepresentation).addCapable_of(domainOntologyElement.getDomain());
 					}
 				}
 				/*

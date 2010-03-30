@@ -94,115 +94,32 @@ public class HarborMasterAgent extends ContainerAgent implements OntRepProvider,
 		AgentContainer c=this.getContainerController();
 		AgentController a=null;
 		ContainerHolderAgent ag=null;
-		try{
+		ContainerHolder[] ontReps=harbourSetup.getOntReps();
+		for(int i=0;i < ontReps.length;i++){
+			ContainerHolder containerHolder=ontReps[i];
 			
-			ContainerHolder[] ontReps=harbourSetup.getOntReps();
-			for(int i=0;i < ontReps.length;i++){
-				ContainerHolder containerHolder=ontReps[i];
-				if(containerHolder instanceof Crane){
-					ag=new CraneAgent((Crane) containerHolder);
-				} else if(containerHolder instanceof Apron){
-					ag=new ApronAgent((Apron) containerHolder);
-				} else if(containerHolder instanceof StraddleCarrier){
-					ag=new StraddleCarrierAgent((StraddleCarrier) containerHolder);
-				} else if(containerHolder instanceof Yard){
-					ag=new YardAgent((Yard) containerHolder);
-				}
-				if(ag!=null){
-					a=c.acceptNewAgent(containerHolder.getLocalName(),ag);
-					a.start();
-				}
-			}
-/*			
-			Crane ontologyRepresentation=new Crane();
-			Domain terminalArea=new Land();
-			Domain habitat=new Rail();
-			habitat.setLies_in(terminalArea);
-			ontologyRepresentation.setLives_in(habitat);
-			Domain capability=new Rail();
-			ontologyRepresentation.addCapable_of(capability);
-			capability=new Street();
-			ontologyRepresentation.addCapable_of(capability);
-			capability=new Sea();
-			ontologyRepresentation.addCapable_of(capability);
-			capability=new ApronArea();
-			ontologyRepresentation.addCapable_of(capability);
-			a=c.acceptNewAgent("Crane-#1",new CraneAgent(ontologyRepresentation));
-			a.start();
+			StartNewContainerHolder act=new StartNewContainerHolder();
+			act.setName(containerHolder.getLocalName());
+			act.setTo_be_added(containerHolder);
+			act.setRandomize(false);
+			act.setPopulate(false);
+			this.addBehaviour(new requestStartAgent(this,this.getAID(),act));
 
-			ontologyRepresentation=new Crane();
-			ontologyRepresentation.setLives_in(habitat);
-			capability=habitat;
-			ontologyRepresentation.addCapable_of(capability);
-			capability=new Street();
-			ontologyRepresentation.addCapable_of(capability);
-			capability=new Sea();
-			ontologyRepresentation.addCapable_of(capability);
-			capability=new ApronArea();
-			ontologyRepresentation.addCapable_of(capability);
-			a=c.acceptNewAgent("Crane-#2",new CraneAgent(ontologyRepresentation));
-			a.start();
-
-			Apron ApronontologyRepresentation=new Apron();
-			habitat=new ApronArea();
-			habitat.setLies_in(terminalArea);
-			ApronontologyRepresentation.setLives_in(habitat);
-			a=c.acceptNewAgent("Apron",new ApronAgent(ApronontologyRepresentation));
-			a.start();
-
-			StraddleCarrier StraddleCarrierontologyRepresentation=new StraddleCarrier();
-			habitat=new Street();
-			habitat.setLies_in(terminalArea);
-			StraddleCarrierontologyRepresentation.setLives_in(habitat);
-			capability=new Rail();
-			StraddleCarrierontologyRepresentation.addCapable_of(capability);
-			capability=new Street();
-			StraddleCarrierontologyRepresentation.addCapable_of(capability);
-			capability=new YardArea();
-			StraddleCarrierontologyRepresentation.addCapable_of(capability);
-			capability=new ApronArea();
-			StraddleCarrierontologyRepresentation.addCapable_of(capability);
-			a=c.acceptNewAgent("StraddleCarrier-#1",new StraddleCarrierAgent(StraddleCarrierontologyRepresentation));
-			a.start();
-
-			Yard YardontologyRepresentation=new Yard();
-			habitat=new YardArea();
-			habitat.setLies_in(terminalArea);
-			YardontologyRepresentation.setLives_in(habitat);
-			YardontologyRepresentation.setContains(new BayMap());
-			YardontologyRepresentation.getContains().setX_dimension(1);
-			YardontologyRepresentation.getContains().setY_dimension(1);
-			YardontologyRepresentation.getContains().setZ_dimension(1);
-
-			a=c.acceptNewAgent("Yard",new YardAgent(YardontologyRepresentation));
-			a.start();
-*/
 			/*
-			AGV AGVontologyRepresentation=new AGV();
-			habitat=new Street();
-			habitat.setLies_in(terminalArea);
-			AGVontologyRepresentation.setLives_in(habitat);
-			a=c.acceptNewAgent("AGV #1",new AGVAgent(AGVontologyRepresentation));
-			a.start();
-
-			AGVontologyRepresentation=new AGV();
-			habitat=new Street();
-			habitat.setLies_in(terminalArea);
-			AGVontologyRepresentation.setLives_in(habitat);
-			a=c.acceptNewAgent("AGV #2",new AGVAgent(AGVontologyRepresentation));
-			a.start();
-
-			AGVontologyRepresentation=new AGV();
-			habitat=new Street();
-			habitat.setLies_in(terminalArea);
-			AGVontologyRepresentation.setLives_in(habitat);
-			a=c.acceptNewAgent("AGV #3",new AGVAgent(AGVontologyRepresentation));
-			a.start();
+			if(containerHolder instanceof Crane){
+				ag=new CraneAgent((Crane) containerHolder);
+			} else if(containerHolder instanceof Apron){
+				ag=new ApronAgent((Apron) containerHolder);
+			} else if(containerHolder instanceof StraddleCarrier){
+				ag=new StraddleCarrierAgent((StraddleCarrier) containerHolder);
+			} else if(containerHolder instanceof Yard){
+				ag=new YardAgent((Yard) containerHolder);
+			}
+			if(ag!=null){
+				a=c.acceptNewAgent(containerHolder.getLocalName(),ag);
+				a.start();
+			}
 			*/
-
-		}catch(StaleProxyException e){
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 

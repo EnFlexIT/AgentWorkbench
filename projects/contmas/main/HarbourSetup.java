@@ -89,8 +89,8 @@ public final class HarbourSetup{
 
 			workingDomainTwo=new Rail();
 			workingDomainTwo.setId("TrainRails");
-			((Crane) ontReps[0]).addCapable_of(workingDomainOne); //Crane1
-			((Crane) ontReps[1]).addCapable_of(workingDomainOne); //Crane2
+			((Crane) ontReps[0]).addCapable_of(workingDomainTwo); //Crane1
+			((Crane) ontReps[1]).addCapable_of(workingDomainTwo); //Crane2
 			addSub(workingDomainOne,workingDomainTwo);
 
 			workingDomainTwo=new Rail();
