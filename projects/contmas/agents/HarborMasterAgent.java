@@ -16,22 +16,21 @@ package contmas.agents;
 
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
-import jade.wrapper.AgentContainer;
-import jade.wrapper.AgentController;
-import jade.wrapper.StaleProxyException;
 
 import java.util.HashMap;
 
 import contmas.behaviours.*;
 import contmas.main.HarbourSetup;
-import contmas.ontology.*;
+import contmas.ontology.ContainerHolder;
+import contmas.ontology.Domain;
+import contmas.ontology.StartNewContainerHolder;
 
-public class HarborMasterAgent extends ContainerAgent implements OntRepProvider, OntRepRequester{
+public class HarborMasterAgent extends ContainerAgent implements OntRepProvider,OntRepRequester{
 	private HashMap<AID, ContainerHolder> activeContainerHolders=new HashMap<AID, ContainerHolder>();
 	private HashMap<AID, Behaviour> ontRepInquieries=new HashMap<AID, Behaviour>();
 	private HarbourSetup harbourSetup=HarbourSetup.getInstance();
-	private Domain harbourArea=harbourSetup.getHarbourArea();
-	
+	private Domain harbourArea=this.harbourSetup.getHarbourArea();
+
 	public boolean isAlreadyCached(String lookForAgent){
 		if(this.activeContainerHolders.get(lookForAgent) != null){
 			return true;
@@ -45,7 +44,7 @@ public class HarborMasterAgent extends ContainerAgent implements OntRepProvider,
 		return lookedForOntRep;
 	}
 
-	public void processOntologyRepresentation(ContainerHolder ontRep, AID agent){
+	public void processOntologyRepresentation(ContainerHolder ontRep,AID agent){
 		this.activeContainerHolders.put(agent,ontRep);
 	}
 
@@ -67,6 +66,7 @@ public class HarborMasterAgent extends ContainerAgent implements OntRepProvider,
 		this.addBehaviour(new listenForOntRepReq(this));
 		this.addBehaviour(new listenForStartAgentReq(this));
 		this.addBehaviour(new listenForHarbourAreaReq(this));
+
 	}
 
 	public ContainerHolder getOntologyRepresentation(AID inQuestion){
@@ -74,9 +74,9 @@ public class HarborMasterAgent extends ContainerAgent implements OntRepProvider,
 		ContainerHolder ontRep=this.getCachedOntRep(inQuestion);
 		if(ontRep == null){
 			if( !this.ontRepInquieries.containsKey(inQuestion)){
-					Behaviour b=new getOntologyRepresentation(this,inQuestion);
-					this.addBehaviour(b);
-					this.ontRepInquieries.put(inQuestion,b);
+				Behaviour b=new getOntologyRepresentation(this,inQuestion);
+				this.addBehaviour(b);
+				this.ontRepInquieries.put(inQuestion,b);
 			}
 			return null;
 		}else{
@@ -86,40 +86,21 @@ public class HarborMasterAgent extends ContainerAgent implements OntRepProvider,
 	}
 
 	public Domain getHarbourArea(){
-		return harbourArea;
+		return this.harbourArea;
 	}
-	
+
 	protected void setupEnvironment(){
-		
-		AgentContainer c=this.getContainerController();
-		AgentController a=null;
-		ContainerHolderAgent ag=null;
-		ContainerHolder[] ontReps=harbourSetup.getOntReps();
+
+		ContainerHolder[] ontReps=this.harbourSetup.getOntReps();
 		for(int i=0;i < ontReps.length;i++){
 			ContainerHolder containerHolder=ontReps[i];
-			
+
 			StartNewContainerHolder act=new StartNewContainerHolder();
 			act.setName(containerHolder.getLocalName());
 			act.setTo_be_added(containerHolder);
 			act.setRandomize(false);
 			act.setPopulate(false);
 			this.addBehaviour(new requestStartAgent(this,this.getAID(),act));
-
-			/*
-			if(containerHolder instanceof Crane){
-				ag=new CraneAgent((Crane) containerHolder);
-			} else if(containerHolder instanceof Apron){
-				ag=new ApronAgent((Apron) containerHolder);
-			} else if(containerHolder instanceof StraddleCarrier){
-				ag=new StraddleCarrierAgent((StraddleCarrier) containerHolder);
-			} else if(containerHolder instanceof Yard){
-				ag=new YardAgent((Yard) containerHolder);
-			}
-			if(ag!=null){
-				a=c.acceptNewAgent(containerHolder.getLocalName(),ag);
-				a.start();
-			}
-			*/
 		}
 	}
 

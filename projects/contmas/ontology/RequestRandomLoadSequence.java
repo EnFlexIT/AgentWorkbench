@@ -6,11 +6,11 @@ import jade.util.leap.*;
 import jade.core.*;
 
 /**
-* Protege name: ProvidePopulatedBayMap
+* Protege name: RequestRandomLoadSequence
 * @author ontology bean generator
-* @version 2010/03/30, 14:14:15
+* @version 2010/03/30, 14:14:16
 */
-public class ProvidePopulatedBayMap implements AgentAction {
+public class RequestRandomLoadSequence implements AgentAction {
 
    /**
 * Protege name: provides

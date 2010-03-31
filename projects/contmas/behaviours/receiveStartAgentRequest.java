@@ -20,22 +20,15 @@
  */
 package contmas.behaviours;
 
-import contmas.agents.ContainerAgent;
-import contmas.agents.OntRepProvider;
-import contmas.agents.OntRepRequester;
-import contmas.main.MatchAgentAction;
-import contmas.ontology.ContainerHolder;
-import contmas.ontology.ProvideOntologyRepresentation;
-import contmas.ontology.RequestOntologyRepresentation;
-import contmas.ontology.StartNewContainerHolder;
 import jade.content.Concept;
-import jade.core.AID;
 import jade.core.Agent;
-import jade.core.behaviours.SequentialBehaviour;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.proto.AchieveREResponder;
+import contmas.agents.ContainerAgent;
+import contmas.main.MatchAgentAction;
+import contmas.ontology.StartNewContainerHolder;
 
 /**
  * @author Hanno - Felix Wagner
@@ -70,12 +63,12 @@ public class receiveStartAgentRequest extends AchieveREResponder{
 		this.parent.ontRep=act.getTo_be_added();
 		this.parent.randomize=act.getRandomize();
 		this.parent.populate=act.getPopulate();
-		
+
 		this.parent.START_AGENT_RESPONSE_KEY=reply;
 		this.parent.START_AGENT_REQUEST_KEY=request;
-		
+
 		this.parent.nextStep();
-		parent.removeSubBehaviour(this);
+		this.parent.removeSubBehaviour(this);
 
 		return reply;
 	}

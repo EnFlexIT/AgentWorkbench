@@ -22,7 +22,6 @@ package contmas.behaviours;
 
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
-import jade.core.behaviours.TickerBehaviour;
 import contmas.agents.ContainerHolderAgent;
 import contmas.ontology.Administered;
 import contmas.ontology.TransportOrderChain;

@@ -20,61 +20,63 @@
  */
 package contmas.behaviours;
 
-import java.util.Vector;
-
-import contmas.agents.ContainerAgent;
-import contmas.agents.ContainerHolderAgent;
-import contmas.agents.OntRepProvider;
-import contmas.agents.ShipAgent;
-import contmas.ontology.ProvideBayMap;
-import contmas.ontology.RequestRandomBayMap;
-import contmas.ontology.StartNewContainerHolder;
-import jade.content.Concept;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.proto.AchieveREInitiator;
 
+import java.util.Vector;
+
+import contmas.agents.ContainerAgent;
+import contmas.ontology.BayMap;
+import contmas.ontology.ProvideRandomLoadSequence;
+import contmas.ontology.RequestRandomLoadSequence;
+
 /**
  * @author Hanno - Felix Wagner
  *
  */
-public class fetchRandomBayMap extends AchieveREInitiator{
+public class getRandomLoadSequence extends AchieveREInitiator{
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID= -1832052412333457494L;
 	private AID randomGenerator=null;
-	private OntRepProvider parent=null;
+	private BayMap bayMapToBeSequenced=null;
+	private AID agentForWhich=null;
+
+	private LoadingReceiver parent=null;
 
 	private static ACLMessage getRequestMessage(Agent a){
 		ACLMessage msg=new ACLMessage(ACLMessage.REQUEST);
 		msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
 		return msg;
 	}
-	
-	public fetchRandomBayMap(Agent a){
-		super(a,getRequestMessage(a));
-		this.randomGenerator=(AID) ((ContainerAgent) myAgent).getFirstAIDFromDF("random-generation");
+
+	public getRandomLoadSequence(Agent a,BayMap bayMap,AID agent){
+		super(a,getRandomLoadSequence.getRequestMessage(a));
+		this.randomGenerator=((ContainerAgent) this.myAgent).getFirstAIDFromDF("random-generation");
+		this.bayMapToBeSequenced=bayMap;
+		this.agentForWhich=agent;
+
 	}
-	
+
 	private void setParent(){
-		if(super.parent!=null){ //as subBehaviour of listenforStartAgent
-			this.parent=((OntRepProvider) super.parent);
-		} else { //standalone, i.e. directly run by an agent
-			this.parent=((OntRepProvider) myAgent);
+		if(super.parent != null){ //as subBehaviour of listenforStartAgent
+			this.parent=((LoadingReceiver) super.parent);
+		}else{ //standalone, i.e. directly run by an agent
+			this.parent=((LoadingReceiver) this.myAgent);
 		}
 	}
-	
+
 	@Override
 	protected Vector<?> prepareRequests(ACLMessage request){
-		setParent();
-		request.addReceiver(randomGenerator);
-		RequestRandomBayMap act=new RequestRandomBayMap();
-		act.setX_dimension(parent.getOntologyRepresentation().getContains().getX_dimension());
-		act.setY_dimension(parent.getOntologyRepresentation().getContains().getY_dimension());
-		act.setZ_dimension(parent.getOntologyRepresentation().getContains().getZ_dimension());
+		this.setParent();
+		request.addReceiver(this.randomGenerator);
+		RequestRandomLoadSequence act=new RequestRandomLoadSequence();
+		act.setProvides(this.bayMapToBeSequenced);
+
 		((ContainerAgent) this.myAgent).fillMessage(request,act);
 		Vector<ACLMessage> messages=new Vector<ACLMessage>();
 		messages.add(request);
@@ -83,7 +85,7 @@ public class fetchRandomBayMap extends AchieveREInitiator{
 
 	@Override
 	protected void handleInform(ACLMessage msg){
-		Concept content=((ContainerAgent) this.myAgent).extractAction(msg);
-		this.parent.getOntologyRepresentation().setContains(((ProvideBayMap) content).getProvides());
+		ProvideRandomLoadSequence act=((ProvideRandomLoadSequence) ((ContainerAgent) this.myAgent).extractAction(msg));
+		this.parent.processLoadSequence(act.getNext_step(),this.agentForWhich);
 	}
 }

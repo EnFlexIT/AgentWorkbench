@@ -15,7 +15,7 @@ package contmas.agents;
 
 import jade.util.leap.List;
 import contmas.behaviours.enrollAtHarbor;
-import contmas.behaviours.scheduleUnloadStart;
+import contmas.behaviours.listenForLoadingStreamIni;
 import contmas.behaviours.unload;
 import contmas.ontology.Rail;
 import contmas.ontology.Ship;
@@ -33,7 +33,7 @@ public class ShipAgent extends StaticContainerAgent implements TransportOrderOff
 	public List determineContractors(){
 		return this.ontologyRepresentation.getContractors();
 	}
-	
+
 	@Override
 	public void offerTransportOrder(){
 		this.addBehaviour(new unload(this));
@@ -43,6 +43,8 @@ public class ShipAgent extends StaticContainerAgent implements TransportOrderOff
 	protected void setup(){
 		super.setup();
 		this.addBehaviour(new enrollAtHarbor(this));
-		this.addBehaviour(new scheduleUnloadStart(this));
+		this.addBehaviour(new listenForLoadingStreamIni(this));
+
+//		this.addBehaviour(new scheduleUnloadStart(this));
 	}
 }

@@ -15,19 +15,12 @@
 package contmas.agents;
 
 import jade.content.lang.Codec.CodecException;
-import jade.content.lang.sl.SLCodec;
 import jade.content.lang.xml.XMLCodec;
 import jade.content.onto.OntologyException;
-import jade.content.onto.basic.Action;
 import jade.core.AID;
 import jade.core.ServiceException;
-import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.messaging.TopicManagementHelper;
-import jade.domain.FIPAAgentManagement.DFAgentDescription;
-import jade.domain.FIPAAgentManagement.ServiceDescription;
-import jade.domain.JADEAgentManagement.JADEManagementOntology;
-import jade.domain.JADEAgentManagement.SniffOn;
 import jade.gui.GuiAgent;
 import jade.gui.GuiEvent;
 import jade.lang.acl.ACLMessage;
@@ -39,24 +32,14 @@ import jade.wrapper.AgentController;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JDesktopPane;
-import javax.swing.JList;
-import javax.swing.ListModel;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.MutableTreeNode;
-import javax.swing.tree.TreeNode;
 
-import contmas.behaviours.getHarbourSetup;
-import contmas.behaviours.getOntologyRepresentation;
-import contmas.behaviours.requestStartAgent;
-import contmas.behaviours.subscribeToDF;
+import contmas.behaviours.*;
 import contmas.main.AgentDesktop;
 import contmas.main.ControlGUI;
 import contmas.main.DomainOntologyElement;
-import contmas.main.OntologyElement;
 import contmas.ontology.*;
 
-public class ControlGUIAgent extends GuiAgent implements OntRepRequester{
+public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubscriber{
 
 	class listenForLogMessage extends CyclicBehaviour{
 		/**
@@ -94,7 +77,7 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester{
 
 	@Override
 	public void processOntologyRepresentation(ContainerHolder ontRep,AID agent){
-		if(ontRep == null){
+		if((ontRep == null) || (ontRep.getContains() == null)){
 			return;
 		}
 		XMLCodec xmlCodec=new XMLCodec();
@@ -148,7 +131,7 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester{
 	protected void onGuiEvent(GuiEvent ev){
 		int command=ev.getType();
 		if(command == 1){ //create new ship
-			AgentContainer c=this.getContainerController();
+			this.getContainerController();
 			try{
 				String name=ev.getParameter(0).toString();
 				//	            AgentController a = c.createNewAgent(name , "contmas.agents.ShipAgent", null );
@@ -184,7 +167,7 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester{
 				act.setTo_be_added(ontologyRepresentation);
 				act.setRandomize(Boolean.parseBoolean(ev.getParameter(4).toString()));
 				act.setPopulate(Boolean.parseBoolean(ev.getParameter(5).toString()));
-				this.addBehaviour(new requestStartAgent(this,harbourMaster,act));
+				this.addBehaviour(new requestStartAgent(this,this.harbourMaster,act));
 
 				/*
 				AID address=new AID();
@@ -209,7 +192,7 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester{
 			AID inQuestion=new AID();
 			inQuestion.setLocalName(ev.getParameter(0).toString());
 
-			this.addBehaviour(new getOntologyRepresentation(this,inQuestion,harbourMaster));
+			this.addBehaviour(new getOntologyRepresentation(this,inQuestion,this.harbourMaster));
 		}else if(command == -1){ // GUI closed
 			this.doDelete();
 		}
@@ -241,15 +224,7 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester{
 
 		this.addBehaviour(new listenForLogMessage(this));
 
-		try{
-			this.addBehaviour(new subscribeToDF(this,this.getClass().getMethod("updateAgentTree",List.class),"container-handling"));
-		}catch(SecurityException e1){
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}catch(NoSuchMethodException e1){
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+		this.addBehaviour(new subscribeToDF(this,"container-handling"));
 
 		AgentContainer c=this.getContainerController();
 		try{
@@ -268,7 +243,7 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester{
 			e.printStackTrace();
 		}
 
-		this.addBehaviour(new getHarbourSetup(this,harbourMaster));
+		this.addBehaviour(new getHarbourSetup(this,this.harbourMaster));
 
 	}
 
@@ -283,8 +258,8 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester{
 		}
 	}
 
-	public void updateAgentTree(List newAgents){
-		this.myGui.updateAgentTree(newAgents);
+	public void updateAgentTree(List newAgents,Boolean remove){
+		this.myGui.updateAgentTree(newAgents,remove);
 	}
 
 	/**
@@ -310,7 +285,7 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		DomainOntologyElement root=renderDomain(current_harbour_layout);
+		DomainOntologyElement root=this.renderDomain(current_harbour_layout);
 
 		this.myGui.displayHarbourLayout(root);
 
@@ -324,9 +299,17 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester{
 
 		while(agentIter.hasNext()){
 			Domain curDom=(Domain) agentIter.next();
-			domNode=renderDomain(curDom);
+			domNode=this.renderDomain(curDom);
 			root.add(domNode);
 		}
 		return root;
+	}
+
+	/* (non-Javadoc)
+	 * @see contmas.behaviours.DFSubscriber#processSubscriptionUpdate(jade.util.leap.List, java.lang.Boolean)
+	 */
+	@Override
+	public void processSubscriptionUpdate(List updatedAgents,Boolean remove){
+		this.updateAgentTree(updatedAgents,remove);
 	}
 }

@@ -21,12 +21,12 @@ import jade.gui.AgentTree.AgentNode;
 import jade.gui.AgentTree.Node;
 import jade.util.leap.List;
 
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.util.Iterator;
 
 import javax.swing.*;
@@ -38,11 +38,6 @@ import javax.swing.tree.*;
 
 import contmas.agents.ControlGUIAgent;
 import contmas.ontology.*;
-
-import javax.swing.*;
-import java.awt.event.KeyEvent;
-import javax.swing.SwingConstants;
-import javax.swing.JButton;
 
 public class ControlGUI extends JInternalFrame implements ActionListener{
 
@@ -121,12 +116,12 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 					ge.addParameter(ControlGUI.this.randomizeCheckBox.isSelected());
 					ge.addParameter(ControlGUI.this.populateCheckBox.isSelected());
 					ge.addParameter(ControlGUI.this.TFShipLength.getText());
-					ge.addParameter(((AgentClassElement) getAgentType().getSelectedItem()).getAgentClass());
-					if(((DefaultListModel) getHabitatList().getModel()).toArray().length == 1){
-						ge.addParameter(((DefaultListModel) getHabitatList().getModel()).toArray()[0]);
+					ge.addParameter(((AgentClassElement) ControlGUI.this.getAgentType().getSelectedItem()).getAgentClass());
+					if(((DefaultListModel) ControlGUI.this.getHabitatList().getModel()).toArray().length == 1){
+						ge.addParameter(((DefaultListModel) ControlGUI.this.getHabitatList().getModel()).toArray()[0]);
 					}
-					if(((DefaultListModel) getCapabilitiesList().getModel()).toArray().length > 0){
-						ge.addParameter(((DefaultListModel) getCapabilitiesList().getModel()).toArray());
+					if(((DefaultListModel) ControlGUI.this.getCapabilitiesList().getModel()).toArray().length > 0){
+						ge.addParameter(((DefaultListModel) ControlGUI.this.getCapabilitiesList().getModel()).toArray());
 					}
 					ControlGUI.this.myAgent.postGuiEvent(ge);
 				}
@@ -146,33 +141,33 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	 */
 	private JPanel getJContentPane(){
 		if(this.jContentPane == null){
-			AgentLabelType=new JLabel();
-			AgentLabelType.setBounds(new Rectangle(6,38,38,16));
-			AgentLabelType.setDisplayedMnemonic(KeyEvent.VK_UNDEFINED);
-			AgentLabelType.setText("Type");
-			ontRepAgentName=new JLabel();
-			ontRepAgentName.setBounds(new Rectangle(439,67,199,16));
-			ontRepAgentName.setName("ontRepAgentName");
-			ontRepAgentName.setText("[No Agent Yet]");
+			this.AgentLabelType=new JLabel();
+			this.AgentLabelType.setBounds(new Rectangle(6,38,38,16));
+			this.AgentLabelType.setDisplayedMnemonic(KeyEvent.VK_UNDEFINED);
+			this.AgentLabelType.setText("Type");
+			this.ontRepAgentName=new JLabel();
+			this.ontRepAgentName.setBounds(new Rectangle(439,67,199,16));
+			this.ontRepAgentName.setName("ontRepAgentName");
+			this.ontRepAgentName.setText("[No Agent Yet]");
 			this.AgentLabelLength=new JLabel();
 			this.AgentLabelLength.setText("Length");
-			AgentLabelLength.setBounds(new Rectangle(2,186,55,16));
+			this.AgentLabelLength.setBounds(new Rectangle(2,186,55,16));
 			this.Heading=new JLabel();
 			this.Heading.setFont(new Font("Dialog",Font.BOLD,14));
-			Heading.setBounds(new Rectangle(6,10,196,15));
+			this.Heading.setBounds(new Rectangle(6,10,196,15));
 			this.Heading.setText("Create new Agent");
 			this.AgentLabelName=new JLabel();
 			this.AgentLabelName.setText("Name");
-			AgentLabelName.setBounds(new Rectangle(5,69,55,16));
+			this.AgentLabelName.setBounds(new Rectangle(5,69,55,16));
 			this.AgentLabelZ=new JLabel();
 			this.AgentLabelZ.setText("Size Z");
-			AgentLabelZ.setBounds(new Rectangle(4,154,55,16));
+			this.AgentLabelZ.setBounds(new Rectangle(4,154,55,16));
 			this.AgentLabelY=new JLabel();
 			this.AgentLabelY.setText("Size Y");
-			AgentLabelY.setBounds(new Rectangle(6,127,55,16));
+			this.AgentLabelY.setBounds(new Rectangle(6,127,55,16));
 			this.AgentLabelX=new JLabel();
 			this.AgentLabelX.setText("Size X");
-			AgentLabelX.setBounds(new Rectangle(5,100,55,16));
+			this.AgentLabelX.setBounds(new Rectangle(5,100,55,16));
 			this.jContentPane=new JPanel();
 			this.jContentPane.setLayout(null);
 			this.jContentPane.add(this.getTFAgentName(),null);
@@ -191,24 +186,24 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 			this.jContentPane.add(this.getAgentTreeScrollPane(),null);
 			this.jContentPane.add(this.getButtonGetOntRep(),null);
 			this.jContentPane.add(this.getOntRepScrollPane(),null);
-			jContentPane.add(getLoadListScrollPane(),null);
-			jContentPane.add(ontRepAgentName,null);
-			jContentPane.add(getPopulateCheckBox(),null);
-			jContentPane.add(getRandomizeCheckBox(),null);
-			jContentPane.add(getHarbourSetupScrollPane(),null);
-			jContentPane.add(getAgentType(),null);
-			jContentPane.add(AgentLabelX,null);
-			jContentPane.add(AgentLabelY,null);
-			jContentPane.add(Heading,null);
-			jContentPane.add(AgentLabelLength,null);
-			jContentPane.add(AgentLabelName,null);
-			jContentPane.add(AgentLabelZ,null);
-			jContentPane.add(AgentLabelType,null);
-			jContentPane.add(getHabitatList(),null);
-			jContentPane.add(getCapabilitiesScrollPane(),null);
-			jContentPane.add(getButtonSetHabitat(),null);
-			jContentPane.add(getButtonAddCapability(),null);
-			jContentPane.add(getButtonCapabilityRemove(),null);
+			this.jContentPane.add(this.getLoadListScrollPane(),null);
+			this.jContentPane.add(this.ontRepAgentName,null);
+			this.jContentPane.add(this.getPopulateCheckBox(),null);
+			this.jContentPane.add(this.getRandomizeCheckBox(),null);
+			this.jContentPane.add(this.getHarbourSetupScrollPane(),null);
+			this.jContentPane.add(this.getAgentType(),null);
+			this.jContentPane.add(this.AgentLabelX,null);
+			this.jContentPane.add(this.AgentLabelY,null);
+			this.jContentPane.add(this.Heading,null);
+			this.jContentPane.add(this.AgentLabelLength,null);
+			this.jContentPane.add(this.AgentLabelName,null);
+			this.jContentPane.add(this.AgentLabelZ,null);
+			this.jContentPane.add(this.AgentLabelType,null);
+			this.jContentPane.add(this.getHabitatList(),null);
+			this.jContentPane.add(this.getCapabilitiesScrollPane(),null);
+			this.jContentPane.add(this.getButtonSetHabitat(),null);
+			this.jContentPane.add(this.getButtonAddCapability(),null);
+			this.jContentPane.add(this.getButtonCapabilityRemove(),null);
 			this.jContentPane.add(this.AgentLabelLength,null);
 			this.jContentPane.add(this.Heading,null);
 			this.jContentPane.add(this.AgentLabelName,null);
@@ -412,12 +407,18 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 		return this.AT;
 	}
 
-	public void updateAgentTree(List newAgents){
+	public void updateAgentTree(List newAgents,Boolean remove){
 		AgentTree agentTree=this.getAgentTree();
 		Iterator<AID> agentIter=newAgents.iterator();
+
 		while(agentIter.hasNext()){
 			AID curAgent=agentIter.next();
-			agentTree.addAgentNode(curAgent.getLocalName(),"","contmas");
+			if( !remove){
+				agentTree.addAgentNode(curAgent.getLocalName(),"","contmas");
+			}else{
+				agentTree.removeAgentNode("contmas",curAgent.getLocalName());
+
+			}
 		}
 		ControlGUI.expandTree(agentTree.tree);
 	}
@@ -482,7 +483,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 		if(this.ontRep == null){
 			this.ontRep=new JTextArea();
 			this.ontRep.setEditable(false);
-			ontRep.setTabSize(1);
+			this.ontRep.setTabSize(1);
 		}
 		return this.ontRep;
 	}
@@ -493,12 +494,12 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	 * @return javax.swing.JScrollPane	
 	 */
 	private JScrollPane getLoadListScrollPane(){
-		if(loadListScrollPane == null){
-			loadListScrollPane=new JScrollPane();
-			loadListScrollPane.setBounds(new Rectangle(437,209,201,113));
-			loadListScrollPane.setViewportView(getLoadList());
+		if(this.loadListScrollPane == null){
+			this.loadListScrollPane=new JScrollPane();
+			this.loadListScrollPane.setBounds(new Rectangle(437,209,201,113));
+			this.loadListScrollPane.setViewportView(this.getLoadList());
 		}
-		return loadListScrollPane;
+		return this.loadListScrollPane;
 	}
 
 	/**
@@ -507,11 +508,11 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	 * @return javax.swing.JList	
 	 */
 	private JList getLoadList(){
-		if(loadList == null){
-			loadList=new JList();
-			loadList.setModel(new DefaultListModel());
+		if(this.loadList == null){
+			this.loadList=new JList();
+			this.loadList.setModel(new DefaultListModel());
 		}
-		return loadList;
+		return this.loadList;
 	}
 
 	/**
@@ -535,13 +536,13 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	 * @return javax.swing.JCheckBox	
 	 */
 	private JCheckBox getPopulateCheckBox(){
-		if(populateCheckBox == null){
-			populateCheckBox=new JCheckBox();
-			populateCheckBox.setBounds(new Rectangle(145,147,91,21));
-			populateCheckBox.setSelected(true);
-			populateCheckBox.setText("populate");
+		if(this.populateCheckBox == null){
+			this.populateCheckBox=new JCheckBox();
+			this.populateCheckBox.setBounds(new Rectangle(145,147,91,21));
+			this.populateCheckBox.setSelected(true);
+			this.populateCheckBox.setText("populate");
 		}
-		return populateCheckBox;
+		return this.populateCheckBox;
 	}
 
 	/**
@@ -550,14 +551,14 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	 * @return javax.swing.JCheckBox	
 	 */
 	private JCheckBox getRandomizeCheckBox(){
-		if(randomizeCheckBox == null){
-			randomizeCheckBox=new JCheckBox();
-			randomizeCheckBox.setBounds(new Rectangle(145,119,91,24));
-			randomizeCheckBox.setText("randomize");
-			randomizeCheckBox.setEnabled(true);
-			randomizeCheckBox.setSelected(false);
+		if(this.randomizeCheckBox == null){
+			this.randomizeCheckBox=new JCheckBox();
+			this.randomizeCheckBox.setBounds(new Rectangle(145,119,91,24));
+			this.randomizeCheckBox.setText("randomize");
+			this.randomizeCheckBox.setEnabled(true);
+			this.randomizeCheckBox.setSelected(false);
 		}
-		return randomizeCheckBox;
+		return this.randomizeCheckBox;
 	}
 
 	/**
@@ -566,12 +567,12 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	 * @return javax.swing.JScrollPane	
 	 */
 	private JScrollPane getHarbourSetupScrollPane(){
-		if(harbourSetupScrollPane == null){
-			harbourSetupScrollPane=new JScrollPane();
-			harbourSetupScrollPane.setBounds(new Rectangle(239,206,195,141));
-			harbourSetupScrollPane.setViewportView(getHarbourSetupTree());
+		if(this.harbourSetupScrollPane == null){
+			this.harbourSetupScrollPane=new JScrollPane();
+			this.harbourSetupScrollPane.setBounds(new Rectangle(239,206,195,141));
+			this.harbourSetupScrollPane.setViewportView(this.getHarbourSetupTree());
 		}
-		return harbourSetupScrollPane;
+		return this.harbourSetupScrollPane;
 	}
 
 	/**
@@ -580,11 +581,11 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	 * @return javax.swing.JTree	
 	 */
 	private JTree getHarbourSetupTree(){
-		if(HarbourSetupTree == null){
-			HarbourSetupTree=new JTree();
-			HarbourSetupTree.setModel(new DefaultTreeModel(new DefaultMutableTreeNode()));
+		if(this.HarbourSetupTree == null){
+			this.HarbourSetupTree=new JTree();
+			this.HarbourSetupTree.setModel(new DefaultTreeModel(new DefaultMutableTreeNode()));
 		}
-		return HarbourSetupTree;
+		return this.HarbourSetupTree;
 	}
 
 	/**
@@ -593,13 +594,13 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	public void displayHarbourLayout(final TreeNode root){
 		Runnable addIt=new Runnable(){
 			public void run(){
-				JTree domainTree=getHarbourSetupTree();
+				JTree domainTree=ControlGUI.this.getHarbourSetupTree();
 				domainTree.setModel(new DefaultTreeModel(root));
 				for(Integer i=0;i < domainTree.getRowCount();i++){
-					
-					if(((DomainOntologyElement) domainTree.getPathForRow(i).getLastPathComponent()).getDomain().getClass()==Sea.class){
+
+					if(((DomainOntologyElement) domainTree.getPathForRow(i).getLastPathComponent()).getDomain().getClass() == Sea.class){
 						domainTree.setSelectionRow(i);
-						setHabitat();
+						ControlGUI.this.setHabitat();
 					}
 				}
 				ControlGUI.expandTree(domainTree);
@@ -623,18 +624,18 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	 * @return javax.swing.JComboBox	
 	 */
 	private JComboBox getAgentType(){
-		if(agentType == null){
-			agentType=new JComboBox();
-			agentType.setBounds(new Rectangle(66,32,134,22));
+		if(this.agentType == null){
+			this.agentType=new JComboBox();
+			this.agentType.setBounds(new Rectangle(66,32,134,22));
 			DefaultComboBoxModel modl=new DefaultComboBoxModel();
 			modl.addElement(new AgentClassElement(Ship.class));
 			modl.addElement(new AgentClassElement(Crane.class));
 			modl.addElement(new AgentClassElement(Apron.class));
 			modl.addElement(new AgentClassElement(StraddleCarrier.class));
 			modl.addElement(new AgentClassElement(Yard.class));
-			agentType.setModel(modl);
+			this.agentType.setModel(modl);
 		}
-		return agentType;
+		return this.agentType;
 	}
 
 	/**
@@ -643,12 +644,12 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	 * @return javax.swing.JList	
 	 */
 	private JList getHabitatList(){
-		if(habitatList == null){
-			habitatList=new JList();
-			habitatList.setBounds(new Rectangle(5,217,175,24));
-			habitatList.setModel(new DefaultListModel());
+		if(this.habitatList == null){
+			this.habitatList=new JList();
+			this.habitatList.setBounds(new Rectangle(5,217,175,24));
+			this.habitatList.setModel(new DefaultListModel());
 		}
-		return habitatList;
+		return this.habitatList;
 	}
 
 	/**
@@ -657,12 +658,12 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	 * @return javax.swing.JScrollPane	
 	 */
 	private JScrollPane getCapabilitiesScrollPane(){
-		if(capabilitiesScrollPane == null){
-			capabilitiesScrollPane=new JScrollPane();
-			capabilitiesScrollPane.setBounds(new Rectangle(5,244,174,75));
-			capabilitiesScrollPane.setViewportView(getCapabilitiesList());
+		if(this.capabilitiesScrollPane == null){
+			this.capabilitiesScrollPane=new JScrollPane();
+			this.capabilitiesScrollPane.setBounds(new Rectangle(5,244,174,75));
+			this.capabilitiesScrollPane.setViewportView(this.getCapabilitiesList());
 		}
-		return capabilitiesScrollPane;
+		return this.capabilitiesScrollPane;
 	}
 
 	/**
@@ -671,11 +672,11 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	 * @return javax.swing.JList	
 	 */
 	private JList getCapabilitiesList(){
-		if(capabilitiesList == null){
-			capabilitiesList=new JList();
-			capabilitiesList.setModel(new DefaultListModel());
+		if(this.capabilitiesList == null){
+			this.capabilitiesList=new JList();
+			this.capabilitiesList.setModel(new DefaultListModel());
 		}
-		return capabilitiesList;
+		return this.capabilitiesList;
 	}
 
 	/**
@@ -684,20 +685,20 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	 * @return javax.swing.JButton	
 	 */
 	private JButton getButtonSetHabitat(){
-		if(ButtonSetHabitat == null){
-			ButtonSetHabitat=new JButton();
-			ButtonSetHabitat.setBounds(new Rectangle(182,217,55,24));
-			ButtonSetHabitat.setHorizontalTextPosition(SwingConstants.LEFT);
-			ButtonSetHabitat.setPreferredSize(new Dimension(53,50));
-			ButtonSetHabitat.setHorizontalAlignment(SwingConstants.LEFT);
-			ButtonSetHabitat.setText("Set");
-			ButtonSetHabitat.addActionListener(new java.awt.event.ActionListener(){
+		if(this.ButtonSetHabitat == null){
+			this.ButtonSetHabitat=new JButton();
+			this.ButtonSetHabitat.setBounds(new Rectangle(182,217,55,24));
+			this.ButtonSetHabitat.setHorizontalTextPosition(SwingConstants.LEFT);
+			this.ButtonSetHabitat.setPreferredSize(new Dimension(53,50));
+			this.ButtonSetHabitat.setHorizontalAlignment(SwingConstants.LEFT);
+			this.ButtonSetHabitat.setText("Set");
+			this.ButtonSetHabitat.addActionListener(new java.awt.event.ActionListener(){
 				public void actionPerformed(java.awt.event.ActionEvent e){
-					setHabitat();
+					ControlGUI.this.setHabitat();
 				}
 			});
 		}
-		return ButtonSetHabitat;
+		return this.ButtonSetHabitat;
 	}
 
 	/**
@@ -706,26 +707,26 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	 * @return javax.swing.JButton	
 	 */
 	private JButton getButtonAddCapability(){
-		if(ButtonAddCapability == null){
-			ButtonAddCapability=new JButton();
-			ButtonAddCapability.setBounds(new Rectangle(181,245,57,23));
-			ButtonAddCapability.setText("Add");
-			ButtonAddCapability.addActionListener(new java.awt.event.ActionListener(){
+		if(this.ButtonAddCapability == null){
+			this.ButtonAddCapability=new JButton();
+			this.ButtonAddCapability.setBounds(new Rectangle(181,245,57,23));
+			this.ButtonAddCapability.setText("Add");
+			this.ButtonAddCapability.addActionListener(new java.awt.event.ActionListener(){
 				public void actionPerformed(java.awt.event.ActionEvent e){
 					TreePath paths[];
-					paths=getHarbourSetupTree().getSelectionPaths();
+					paths=ControlGUI.this.getHarbourSetupTree().getSelectionPaths();
 					if(paths != null){
 						for(int i=0;i < paths.length;i++){
 							MutableTreeNode now=(MutableTreeNode) (paths[i].getLastPathComponent());
 							if(now instanceof MutableTreeNode){
-								((DefaultListModel) getCapabilitiesList().getModel()).addElement(now);
+								((DefaultListModel) ControlGUI.this.getCapabilitiesList().getModel()).addElement(now);
 							}
 						}
 					}
 				}
 			});
 		}
-		return ButtonAddCapability;
+		return this.ButtonAddCapability;
 	}
 
 	/**
@@ -734,23 +735,23 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	 * @return javax.swing.JButton	
 	 */
 	private JButton getButtonCapabilityRemove(){
-		if(ButtonCapabilityRemove == null){
-			ButtonCapabilityRemove=new JButton();
-			ButtonCapabilityRemove.setBounds(new Rectangle(180,271,60,22));
-			ButtonCapabilityRemove.setText("Rmv");
-			ButtonCapabilityRemove.addActionListener(new java.awt.event.ActionListener(){
+		if(this.ButtonCapabilityRemove == null){
+			this.ButtonCapabilityRemove=new JButton();
+			this.ButtonCapabilityRemove.setBounds(new Rectangle(180,271,60,22));
+			this.ButtonCapabilityRemove.setText("Rmv");
+			this.ButtonCapabilityRemove.addActionListener(new java.awt.event.ActionListener(){
 				public void actionPerformed(java.awt.event.ActionEvent e){
 					Object[] paths;
-					paths=getCapabilitiesList().getSelectedValues();
+					paths=ControlGUI.this.getCapabilitiesList().getSelectedValues();
 					if(paths != null){
 						for(int i=0;i < paths.length;i++){
-							((DefaultListModel) getCapabilitiesList().getModel()).removeElement(paths[i]);
+							((DefaultListModel) ControlGUI.this.getCapabilitiesList().getModel()).removeElement(paths[i]);
 						}
 					}
 				}
 			});
 		}
-		return ButtonCapabilityRemove;
+		return this.ButtonCapabilityRemove;
 	}
 
 	/**
@@ -758,13 +759,13 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	 */
 	private void setHabitat(){
 		TreePath paths[];
-		paths=getHarbourSetupTree().getSelectionPaths();
+		paths=this.getHarbourSetupTree().getSelectionPaths();
 		if(paths != null){
 			for(int i=0;i < paths.length;i++){
 				MutableTreeNode now=(MutableTreeNode) (paths[i].getLastPathComponent());
 				if(now instanceof MutableTreeNode){
-					((DefaultListModel) getHabitatList().getModel()).removeAllElements();
-					((DefaultListModel) getHabitatList().getModel()).addElement(now);
+					((DefaultListModel) this.getHabitatList().getModel()).removeAllElements();
+					((DefaultListModel) this.getHabitatList().getModel()).addElement(now);
 				}
 			}
 		}

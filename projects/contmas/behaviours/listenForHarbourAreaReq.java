@@ -14,7 +14,6 @@
 
 package contmas.behaviours;
 
-import jade.content.ContentElement;
 import jade.core.Agent;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
@@ -23,7 +22,8 @@ import jade.proto.AchieveREResponder;
 import contmas.agents.ContainerAgent;
 import contmas.agents.HarborMasterAgent;
 import contmas.main.MatchAgentAction;
-import contmas.ontology.*;
+import contmas.ontology.ProvideHarbourSetup;
+import contmas.ontology.RequestHarbourSetup;
 
 public class listenForHarbourAreaReq extends AchieveREResponder{
 	private static final long serialVersionUID= -4440040520781720185L;
@@ -44,9 +44,8 @@ public class listenForHarbourAreaReq extends AchieveREResponder{
 		reply.setPerformative(ACLMessage.INFORM);
 		ProvideHarbourSetup act=new ProvideHarbourSetup();
 
-		act.setCurrent_harbour_layout(
-		((HarborMasterAgent) myAgent).getHarbourArea());
-		
+		act.setCurrent_harbour_layout(((HarborMasterAgent) this.myAgent).getHarbourArea());
+
 		((ContainerAgent) this.myAgent).fillMessage(reply,act);
 		return reply;
 

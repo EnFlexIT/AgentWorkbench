@@ -14,7 +14,6 @@
 
 package contmas.behaviours;
 
-import jade.content.ContentElement;
 import jade.core.Agent;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
@@ -45,8 +44,7 @@ public class listenForEnroll extends AchieveREResponder{
 //			echoStatus("listenForEnroll - prepareResponse: "+request.getContent());
 		ACLMessage reply=request.createReply();
 
-		ContentElement content;
-		content=((ContainerAgent) this.myAgent).extractAction(request);
+		((ContainerAgent) this.myAgent).extractAction(request);
 		reply.setPerformative(ACLMessage.INFORM);
 		AssignHarborQuay act=new AssignHarborQuay();
 		Quay concept=new Quay();

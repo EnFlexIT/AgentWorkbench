@@ -16,18 +16,18 @@ package contmas.agents;
 
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
-import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.util.leap.Iterator;
 import jade.util.leap.List;
 
 import java.util.Random;
 
+import contmas.behaviours.DFSubscriber;
 import contmas.behaviours.announceLoadOrders;
 import contmas.behaviours.listenForOntRepReq;
 import contmas.behaviours.subscribeToDF;
 import contmas.ontology.*;
 
-public class ContainerHolderAgent extends ContainerAgent implements OntRepProvider{
+public class ContainerHolderAgent extends ContainerAgent implements OntRepProvider,DFSubscriber{
 
 	/**
 	 * 
@@ -46,9 +46,9 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		}
 		return null;
 	}
-	
+
 	public ContainerHolder getOntologyRepresentation(){
-		return getOntologyRepresentation(this.getAID());
+		return this.getOntologyRepresentation(this.getAID());
 	}
 
 	public Integer lengthOfProposeQueue=2;
@@ -62,8 +62,12 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		this.ontologyRepresentation=ontologyRepresentation;
 	}
 
-	public void addToContractors(List newContractors){
-		ContainerAgent.addToList(this.ontologyRepresentation.getContractors(),newContractors);
+	public void addToContractors(List newContractors,Boolean remove){
+		if( !remove){
+			ContainerAgent.addToList(this.ontologyRepresentation.getContractors(),newContractors);
+		}else{
+			this.removeFromContractors(newContractors);
+		}
 	}
 
 	public Boolean aquireContainer(TransportOrderChain targetContainer){ //eigentlicher Vorgang des Container-Aufnehmens
@@ -99,10 +103,10 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 	}
 
 	public TransportOrderChainState touchTOCState(TransportOrderChain needleTOC,TransportOrderChainState toState,Boolean addRemoveSwitch){
-		return touchTOCState(needleTOC,toState,addRemoveSwitch,this.getOntologyRepresentation());
+		return ContainerHolderAgent.touchTOCState(needleTOC,toState,addRemoveSwitch,this.getOntologyRepresentation());
 	}
-	
-	public static TransportOrderChainState touchTOCState(TransportOrderChain needleTOC,TransportOrderChainState toState,Boolean addRemoveSwitch, ContainerHolder ontRep){
+
+	public static TransportOrderChainState touchTOCState(TransportOrderChain needleTOC,TransportOrderChainState toState,Boolean addRemoveSwitch,ContainerHolder ontRep){
 		Iterator queue=ontRep.getAllContainer_states();
 		while(queue.hasNext()){
 			TOCHasState queuedTOCState=(TOCHasState) queue.next();
@@ -127,8 +131,7 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		return null; //nicht gefunden
 	}
 
-
-	public BlockAddress getUpmost(Integer x, Integer y){
+	public BlockAddress getUpmost(Integer x,Integer y){
 		BlockAddress upmostContainer=null;
 		Iterator allContainers=this.ontologyRepresentation.getContains().getAllIs_filled_with();
 		while(allContainers.hasNext()){ //alle geladenen Container überprüfen 
@@ -141,7 +144,7 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		} //end while
 		return upmostContainer;
 	}
-	
+
 	public Integer countTOCInState(TransportOrderChainState TOCState){
 		Integer queueCount=0;
 		Iterator queue=this.ontologyRepresentation.getAllContainer_states();
@@ -164,18 +167,10 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 			DFsubscribePreparer=new prepareSubscribeToDF(this,this.ontologyRepresentation.getContractors(),this.targetDFAgentDescription);
 			this.addBehaviour(DFsubscribePreparer);
 */
-			Behaviour DFsubscribePreparer;
+			Behaviour DFsubscriber;
 
-			try{
-				DFsubscribePreparer=new subscribeToDF(this,this.getClass().getMethod("addToContractors",List.class),this.targetAgentServiceType);
-				this.addBehaviour(DFsubscribePreparer);
-			}catch(SecurityException e){
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}catch(NoSuchMethodException e){
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			DFsubscriber=new subscribeToDF(this,this.targetAgentServiceType);
+			this.addBehaviour(DFsubscriber);
 
 		}
 		return this.ontologyRepresentation.getContractors();
@@ -281,7 +276,7 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		while(queue.hasNext()){
 			TOCHasState queuedTOCState=(TOCHasState) queue.next();
 			if(needleState.getClass() == queuedTOCState.getState().getClass()){
-				if(isUpmostContainer(queuedTOCState.getSubjected_toc())){
+				if(this.isUpmostContainer(queuedTOCState.getSubjected_toc())){
 					return queuedTOCState.getSubjected_toc();
 				}
 			}
@@ -298,7 +293,7 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 
 		for(int x=0;x < LoadBay.getX_dimension();x++){ //baymap zeilen-
 			for(int y=0;y < LoadBay.getY_dimension();y++){ //und spaltenweise durchlaufen
-				BlockAddress upmostContainer=getUpmost(x,y);
+				BlockAddress upmostContainer=this.getUpmost(x,y);
 				if(upmostContainer != null){ //an dieser Koordinate steht ein Container obenauf
 					if(upmostContainer.getLocates().getBic_code().equals(subjectedToc.getTransports().getBic_code())){
 						return true;
@@ -390,6 +385,18 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		return false;
 	}
 
+	public boolean removeFromContractors(List badContractors){
+		Iterator contractorList=badContractors.iterator();
+		Boolean someoneRemoved=false;
+		while(contractorList.hasNext()){
+			AID contractor=(AID) contractorList.next();
+			if(this.removeFromContractors(contractor)){
+				someoneRemoved=true;
+			}
+		}
+		return someoneRemoved;
+	}
+
 	@Override
 	protected void setup(){
 		super.setup();
@@ -403,5 +410,13 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 
 		this.determineContractors();
 		this.addBehaviour(new listenForOntRepReq(this));
+	}
+
+	/* (non-Javadoc)
+	 * @see contmas.behaviours.DFSubscriber#processSubscriptionUpdate(jade.util.leap.List, java.lang.Boolean)
+	 */
+	@Override
+	public void processSubscriptionUpdate(List updatedAgents,Boolean remove){
+		this.addToContractors(updatedAgents,remove);
 	}
 }

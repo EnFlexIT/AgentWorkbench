@@ -55,12 +55,12 @@ public class announceLoadOrders extends ContractNetInitiator{
 	protected Vector<ACLMessage> prepareCfps(ACLMessage cfp){
 		TransportOrderChain curTOC=(TransportOrderChain) this.currentLoadList.getConsists_of().iterator().next();
 		TransportOrderChainState oldState=this.myCAgent.touchTOCState(curTOC,new Announced());
-		if( oldState instanceof Administered){
+		if(oldState instanceof Administered){
 			//OK, go on
-		} else if(oldState instanceof Announced){
+		}else if(oldState instanceof Announced){
 			this.myCAgent.echoStatus("Auftrag bereits ausgeschrieben, nicht nocheinmal.",curTOC,ContainerAgent.LOGGING_INFORM);
 			return null;
-		} else{
+		}else{
 			this.myCAgent.echoStatus("FAILURE: Auftrag wird nicht ausgeschrieben werden, nicht administriert, wahrscheinlich schon failure.",curTOC,ContainerAgent.LOGGING_NOTICE);
 			this.myCAgent.touchTOCState(curTOC,new Failed());
 			return null;

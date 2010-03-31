@@ -8,20 +8,9 @@ import jade.core.*;
 /**
 * Protege name: AssignHarborQuay
 * @author ontology bean generator
-* @version 2010/03/27, 20:53:54
+* @version 2010/03/30, 14:14:15
 */
 public class AssignHarborQuay implements AgentAction {
-
-   /**
-* Protege name: assigned_quay
-   */
-   private Quay assigned_quay;
-   public void setAssigned_quay(Quay value) { 
-    this.assigned_quay=value;
-   }
-   public Quay getAssigned_quay() {
-     return this.assigned_quay;
-   }
 
    /**
 * Protege name: available_cranes
@@ -43,5 +32,16 @@ public class AssignHarborQuay implements AgentAction {
    public Iterator getAllAvailable_cranes() {return available_cranes.iterator(); }
    public List getAvailable_cranes() {return available_cranes; }
    public void setAvailable_cranes(List l) {available_cranes = l; }
+
+   /**
+* Protege name: assigned_quay
+   */
+   private Quay assigned_quay;
+   public void setAssigned_quay(Quay value) { 
+    this.assigned_quay=value;
+   }
+   public Quay getAssigned_quay() {
+     return this.assigned_quay;
+   }
 
 }

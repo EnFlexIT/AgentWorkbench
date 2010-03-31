@@ -20,28 +20,27 @@
  */
 package contmas.behaviours;
 
-import contmas.agents.*;
-import contmas.main.MatchAgentAction;
-import contmas.ontology.*;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
-import jade.core.behaviours.DataStore;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.core.behaviours.SequentialBehaviour;
-import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
-import jade.lang.acl.MessageTemplate;
-import jade.proto.AchieveREResponder;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
 import jade.wrapper.StaleProxyException;
+import contmas.agents.*;
+import contmas.ontology.*;
 
 /**
  * @author Hanno - Felix Wagner
  *
  */
 public class listenForStartAgentReq extends SequentialBehaviour implements OntRepProvider{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID=6436880516223032996L;
 	public ContainerHolder ontRep=null;
 	public Boolean populate=true;
 	public Boolean randomize=false;
@@ -62,17 +61,17 @@ public class listenForStartAgentReq extends SequentialBehaviour implements OntRe
 
 	public void nextStep(){
 		Behaviour b;
-		if(randomize){
-			b=new fetchRandomBayMap(myAgent);//GetRandomBayMap
+		if(this.randomize){
+			b=new getRandomBayMap(this.myAgent);//GetRandomBayMap
 			this.addSubBehaviour(b);
 			b.setDataStore(this.getDataStore());
 		}
-		if(populate){
-			b=new getPopulatedBayMap(myAgent);//PopulateBayMap
+		if(this.populate){
+			b=new getPopulatedBayMap(this.myAgent);//PopulateBayMap
 			this.addSubBehaviour(b);
 			b.setDataStore(this.getDataStore());
 		}
-		b=new startAgent(myAgent);//Start the Agent and send inform
+		b=new startAgent(this.myAgent);//Start the Agent and send inform
 		this.addSubBehaviour(b);
 		b.setDataStore(this.getDataStore());
 	}
@@ -90,10 +89,15 @@ public class listenForStartAgentReq extends SequentialBehaviour implements OntRe
 	 */
 	@Override
 	public ContainerHolder getOntologyRepresentation(){
-		return ontRep;
+		return this.ontRep;
 	}
 
 	class startAgent extends OneShotBehaviour{
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID=2215461542689039091L;
 
 		/**
 		 * @param a
@@ -107,11 +111,11 @@ public class listenForStartAgentReq extends SequentialBehaviour implements OntRe
 		 */
 		@Override
 		public void action(){
-			ACLMessage request=START_AGENT_REQUEST_KEY;
-			StartNewContainerHolder act=(StartNewContainerHolder) ContainerAgent.extractAction(myAgent,request);
-			AgentContainer c=myAgent.getContainerController();
+			ACLMessage request=listenForStartAgentReq.this.START_AGENT_REQUEST_KEY;
+			StartNewContainerHolder act=(StartNewContainerHolder) ContainerAgent.extractAction(this.myAgent,request);
+			AgentContainer c=this.myAgent.getContainerController();
 			AgentController a=null;
-			ContainerHolder ontRep=getOntologyRepresentation();
+			ContainerHolder ontRep=listenForStartAgentReq.this.getOntologyRepresentation();
 			try{
 				if(ontRep instanceof Ship){
 					a=c.acceptNewAgent(act.getName(),new ShipAgent((Ship) ontRep));
@@ -129,12 +133,12 @@ public class listenForStartAgentReq extends SequentialBehaviour implements OntRe
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			ACLMessage inform=START_AGENT_RESPONSE_KEY;
-			myAgent.send(inform);
+			ACLMessage inform=listenForStartAgentReq.this.START_AGENT_RESPONSE_KEY;
+			this.myAgent.send(inform);
 
 			//Restart
-			Agent tmp=myAgent;
-			myAgent.removeBehaviour(this);
+			Agent tmp=this.myAgent;
+			this.myAgent.removeBehaviour(this);
 			tmp.addBehaviour(new listenForStartAgentReq(tmp));
 		}
 	}

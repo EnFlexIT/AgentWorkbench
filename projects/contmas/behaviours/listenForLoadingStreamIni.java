@@ -21,65 +21,52 @@
 package contmas.behaviours;
 
 import jade.content.Concept;
-import jade.core.AID;
 import jade.core.Agent;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.proto.AchieveREResponder;
+import jade.util.leap.Iterator;
 import contmas.agents.ContainerAgent;
-import contmas.agents.OntRepProvider;
-import contmas.agents.OntRepRequester;
+import contmas.agents.ContainerHolderAgent;
 import contmas.main.MatchAgentAction;
-import contmas.ontology.ContainerHolder;
-import contmas.ontology.ProvideOntologyRepresentation;
-import contmas.ontology.RequestOntologyRepresentation;
+import contmas.ontology.LoadList;
+import contmas.ontology.RequestExecuteLoadSequence;
+import contmas.ontology.TransportOrderChain;
 
-public class listenForOntRepReq extends AchieveREResponder{
+public class listenForLoadingStreamIni extends AchieveREResponder{
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID=3755512724278640204L;
-	private ContainerHolder accordingOntrep=null;
 
 	private static MessageTemplate getMessageTemplate(Agent a){
 		MessageTemplate mt=AchieveREResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_REQUEST);
-		mt=MessageTemplate.and(mt,new MessageTemplate(new MatchAgentAction(a,new RequestOntologyRepresentation())));
+		mt=MessageTemplate.and(mt,new MessageTemplate(new MatchAgentAction(a,new RequestExecuteLoadSequence())));
 		return mt;
 	}
 
-	public listenForOntRepReq(Agent a){
-		super(a,listenForOntRepReq.getMessageTemplate(a));
+	public listenForLoadingStreamIni(Agent a){
+		super(a,listenForLoadingStreamIni.getMessageTemplate(a));
 	}
 
 	@Override
 	protected ACLMessage handleRequest(ACLMessage request){
 		Concept content=((ContainerAgent) this.myAgent).extractAction(request);
 		ACLMessage reply=request.createReply();
-		AID inQuestion=((RequestOntologyRepresentation) content).getAgent_in_question();
-		this.accordingOntrep=((OntRepProvider) this.myAgent).getOntologyRepresentation(inQuestion);
-
-		if((this.myAgent instanceof OntRepRequester) && inQuestion.equals(this.myAgent.getAID())){ //request is asking myself, and i'm the harbourmaster or not-understood got yet
-			reply.setPerformative(ACLMessage.REFUSE);
-			return reply;
-		}
-
-		if(this.accordingOntrep == null){
-			this.block();
-			this.myAgent.putBack(request);
-			return null;
-		}else{
-			if(this.accordingOntrep.getContains() == null){ //request is asking myself, and i'm the harbourmaster or not-understood got yet
-				reply.setPerformative(ACLMessage.REFUSE);
-				return reply;
-			}else{
-				reply.setPerformative(ACLMessage.INFORM);
-				ProvideOntologyRepresentation act=new ProvideOntologyRepresentation();
-				act.setAccording_ontrep(this.accordingOntrep);
-				((ContainerAgent) this.myAgent).fillMessage(reply,act);
-				return reply;
+		LoadList toInitiate=((RequestExecuteLoadSequence) content).getNext_step();
+		reply.setPerformative(ACLMessage.AGREE);
+		while(toInitiate != null){
+			Iterator allCurTOCs=toInitiate.getAllConsists_of();
+			while(allCurTOCs.hasNext()){
+				TransportOrderChain curTOC=(TransportOrderChain) allCurTOCs.next();
+				((ContainerHolderAgent) this.myAgent).releaseContainer(curTOC,null);
+				toInitiate=toInitiate.getNext_step();
 			}
 		}
+
+		return reply;
+
 	}
 
 	@Override

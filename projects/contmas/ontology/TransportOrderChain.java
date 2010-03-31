@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: TransportOrderChain
 * @author ontology bean generator
-* @version 2010/03/27, 20:53:54
+* @version 2010/03/30, 14:14:15
 */
 public class TransportOrderChain implements Concept {
 

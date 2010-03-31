@@ -49,23 +49,23 @@ public final class HarbourSetup{
 	}
 
 	public ContainerHolder[] getOntReps(){
-		getHarbourArea();
-		return ontReps;
+		this.getHarbourArea();
+		return this.ontReps;
 	}
 
 	public Domain getHarbourArea(){
 		if(this.HarbourArea == null){
-			ontReps=new ContainerHolder[5];
-			ontReps[0]=new Crane();
-			ontReps[0].setLocalName("Crane-#1");
-			ontReps[1]=new Crane();
-			ontReps[1].setLocalName("Crane-#2");
-			ontReps[2]=new Apron();
-			ontReps[2].setLocalName("Apron");
-			ontReps[3]=new StraddleCarrier();
-			ontReps[3].setLocalName("StraddleCarrier");
-			ontReps[4]=new Yard();
-			ontReps[4].setLocalName("Yard");
+			this.ontReps=new ContainerHolder[5];
+			this.ontReps[0]=new Crane();
+			this.ontReps[0].setLocalName("Crane-#1");
+			this.ontReps[1]=new Crane();
+			this.ontReps[1].setLocalName("Crane-#2");
+			this.ontReps[2]=new Apron();
+			this.ontReps[2].setLocalName("Apron");
+			this.ontReps[3]=new StraddleCarrier();
+			this.ontReps[3].setLocalName("StraddleCarrier");
+			this.ontReps[4]=new Yard();
+			this.ontReps[4].setLocalName("Yard");
 
 			Domain workingDomainOne=null;
 			Domain workingDomainTwo=null;
@@ -75,50 +75,48 @@ public final class HarbourSetup{
 
 			workingDomainOne=new Sea();
 			workingDomainOne.setId("Pacific");
-			((Crane) ontReps[0]).addCapable_of(workingDomainOne); //Crane1
-			((Crane) ontReps[1]).addCapable_of(workingDomainOne); //Crane2
-			addSub(this.HarbourArea,workingDomainOne);
+			((Crane) this.ontReps[0]).addCapable_of(workingDomainOne); //Crane1
+			((Crane) this.ontReps[1]).addCapable_of(workingDomainOne); //Crane2
+			HarbourSetup.addSub(this.HarbourArea,workingDomainOne);
 
 			workingDomainTwo=new Berth();
 			workingDomainTwo.setId("BerthNumberOne");
-			addSub(workingDomainOne,workingDomainTwo);
-
+			HarbourSetup.addSub(workingDomainOne,workingDomainTwo);
 
 			workingDomainOne=new Land();
-			addSub(this.HarbourArea,workingDomainOne);
+			HarbourSetup.addSub(this.HarbourArea,workingDomainOne);
 
 			workingDomainTwo=new Rail();
 			workingDomainTwo.setId("TrainRails");
-			((Crane) ontReps[0]).addCapable_of(workingDomainTwo); //Crane1
-			((Crane) ontReps[1]).addCapable_of(workingDomainTwo); //Crane2
-			addSub(workingDomainOne,workingDomainTwo);
+			((Crane) this.ontReps[0]).addCapable_of(workingDomainTwo); //Crane1
+			((Crane) this.ontReps[1]).addCapable_of(workingDomainTwo); //Crane2
+			HarbourSetup.addSub(workingDomainOne,workingDomainTwo);
 
 			workingDomainTwo=new Rail();
 			workingDomainTwo.setId("CraneRails");
-			ontReps[0].setLives_in(workingDomainTwo); //Crane1
-			ontReps[1].setLives_in(workingDomainTwo); //Crane2
-			addSub(workingDomainOne,workingDomainTwo);
+			this.ontReps[0].setLives_in(workingDomainTwo); //Crane1
+			this.ontReps[1].setLives_in(workingDomainTwo); //Crane2
+			HarbourSetup.addSub(workingDomainOne,workingDomainTwo);
 
 			workingDomainTwo=new YardArea();
 			workingDomainTwo.setId("StorageYard");
-			ontReps[4].setLives_in(workingDomainTwo); //Yard
-			((StraddleCarrier) ontReps[3]).addCapable_of(workingDomainTwo); //StraddleCarrier
-			addSub(workingDomainOne,workingDomainTwo);
-
+			this.ontReps[4].setLives_in(workingDomainTwo); //Yard
+			((StraddleCarrier) this.ontReps[3]).addCapable_of(workingDomainTwo); //StraddleCarrier
+			HarbourSetup.addSub(workingDomainOne,workingDomainTwo);
 
 			workingDomainTwo=new Street();
 			workingDomainTwo.setId("StraddleCarrierStreet");
-			ontReps[3].setLives_in(workingDomainTwo); //StraddleCarrier
-			addSub(workingDomainOne,workingDomainTwo);
+			this.ontReps[3].setLives_in(workingDomainTwo); //StraddleCarrier
+			HarbourSetup.addSub(workingDomainOne,workingDomainTwo);
 
 			workingDomainOne=workingDomainTwo;
 			workingDomainTwo=new ApronArea();
 			workingDomainTwo.setId("CraneApron");
-			ontReps[2].setLives_in(workingDomainTwo); //ApronAgent
-			((Crane) ontReps[0]).addCapable_of(workingDomainTwo); //Crane1
-			((Crane) ontReps[1]).addCapable_of(workingDomainTwo); //Crane2
-			((StraddleCarrier) ontReps[3]).addCapable_of(workingDomainTwo); //StraddleCarrier
-			addSub(workingDomainOne,workingDomainTwo);
+			this.ontReps[2].setLives_in(workingDomainTwo); //ApronAgent
+			((Crane) this.ontReps[0]).addCapable_of(workingDomainTwo); //Crane1
+			((Crane) this.ontReps[1]).addCapable_of(workingDomainTwo); //Crane2
+			((StraddleCarrier) this.ontReps[3]).addCapable_of(workingDomainTwo); //StraddleCarrier
+			HarbourSetup.addSub(workingDomainOne,workingDomainTwo);
 
 		}
 		return this.HarbourArea;

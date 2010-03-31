@@ -22,21 +22,21 @@ package contmas.main;
 
 import jade.content.Concept;
 
-import java.util.Enumeration;
-
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.MutableTreeNode;
-import javax.swing.tree.TreeNode;
-
 
 /**
  * @author Hanno - Felix Wagner
  *
  */
 public class OntologyElement extends DefaultMutableTreeNode{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID= -4666450144015812982L;
 	protected Object ontologyConcept;
+
 	public Concept getOntologyConcept(){
-		if(ontologyConcept instanceof Concept){
+		if(this.ontologyConcept instanceof Concept){
 			return (Concept) this.ontologyConcept;
 		}else{
 			return null;
@@ -50,10 +50,11 @@ public class OntologyElement extends DefaultMutableTreeNode{
 	public OntologyElement(Concept ontologyConcept){
 		this.ontologyConcept=ontologyConcept;
 	}
+
 	public OntologyElement(Object ontologyConcept){
 		this.ontologyConcept=ontologyConcept;
 	}
-	
+
 	@Override
 	public String toString(){
 		String renderedString=this.ontologyConcept.getClass().getSimpleName();

@@ -21,6 +21,7 @@ import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.proto.AchieveREResponder;
+import jade.util.leap.Iterator;
 
 import java.util.Random;
 
@@ -29,6 +30,7 @@ import contmas.ontology.*;
 
 public class RandomGeneratorAgent extends ContainerAgent{
 	private Random RandomGenerator=new Random();
+
 	public class createRandomBayMap extends AchieveREResponder{
 
 		private static final long serialVersionUID=1611868636574647177L;
@@ -45,9 +47,9 @@ public class RandomGeneratorAgent extends ContainerAgent{
 			RequestRandomBayMap input=(RequestRandomBayMap) content;
 			reply.setPerformative(ACLMessage.INFORM);
 			Integer width, length, height;
-			width=RandomGenerator.nextInt(input.getX_dimension()) + 1;
-			length=RandomGenerator.nextInt(input.getY_dimension()) + 1;
-			height=RandomGenerator.nextInt(input.getZ_dimension()) + 1;
+			width=RandomGeneratorAgent.this.RandomGenerator.nextInt(input.getX_dimension()) + 1;
+			length=RandomGeneratorAgent.this.RandomGenerator.nextInt(input.getY_dimension()) + 1;
+			height=RandomGeneratorAgent.this.RandomGenerator.nextInt(input.getZ_dimension()) + 1;
 			BayMap LoadBay=new BayMap();
 			LoadBay.setX_dimension(width);
 			LoadBay.setY_dimension(length);
@@ -94,7 +96,7 @@ public class RandomGeneratorAgent extends ContainerAgent{
 //						if(RandomGenerator.nextInt(2)==1){ 
 						if(true){
 							c=new Container();
-							containerName="ABC " + RandomGenerator.nextInt(65000);
+							containerName="ABC " + RandomGeneratorAgent.this.RandomGenerator.nextInt(65000);
 							c.setBic_code(containerName);
 							ba=new BlockAddress();
 							ba.setLocates(c);
@@ -117,6 +119,46 @@ public class RandomGeneratorAgent extends ContainerAgent{
 		}
 	}
 
+	public class createRandomLoadSequence extends AchieveREResponder{
+
+		private static final long serialVersionUID=1611868636574647177L;
+
+		public createRandomLoadSequence(Agent a,MessageTemplate mt){
+			super(a,mt);
+		}
+
+		@Override
+		protected ACLMessage handleRequest(ACLMessage request){
+			ACLMessage reply=request.createReply();
+			Concept content;
+			content=((ContainerAgent) this.myAgent).extractAction(request);
+			RequestRandomLoadSequence input=(RequestRandomLoadSequence) content;
+			BayMap loadBay=input.getProvides();
+			Iterator allCont=loadBay.getAllIs_filled_with();
+			ProvideRandomLoadSequence act=new ProvideRandomLoadSequence();
+			LoadList curLoadList=null;
+			LoadList lastLoadList=null;
+
+			while(allCont.hasNext()){
+				BlockAddress curCont=(BlockAddress) allCont.next();
+				curLoadList=new LoadList();
+				TransportOrderChain curTOC=new TransportOrderChain();
+				curTOC.setTransports(curCont.getLocates());
+				curLoadList.addConsists_of(curTOC);
+				if(lastLoadList == null){
+					act.setNext_step(curLoadList);
+				}else{
+					lastLoadList.setNext_step(curLoadList);
+				}
+				lastLoadList=curLoadList;
+			}
+
+			reply.setPerformative(ACLMessage.INFORM);
+			((ContainerAgent) this.myAgent).fillMessage(reply,act);
+			return reply;
+		}
+	}
+
 	/**
 	 * 
 	 */
@@ -132,10 +174,15 @@ public class RandomGeneratorAgent extends ContainerAgent{
 
 		MessageTemplate mt=AchieveREResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_REQUEST);
 		mt=MessageTemplate.and(mt,new MessageTemplate(new MatchAgentAction(this,new RequestRandomBayMap())));
-		addBehaviour(new createRandomBayMap(this,mt));
+		this.addBehaviour(new createRandomBayMap(this,mt));
 
 		mt=AchieveREResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_REQUEST);
 		mt=MessageTemplate.and(mt,new MessageTemplate(new MatchAgentAction(this,new RequestPopulatedBayMap())));
 		this.addBehaviour(new populateBayMap(this,mt));
+
+		mt=AchieveREResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_REQUEST);
+		mt=MessageTemplate.and(mt,new MessageTemplate(new MatchAgentAction(this,new RequestRandomLoadSequence())));
+		this.addBehaviour(new createRandomLoadSequence(this,mt));
+
 	}
 }

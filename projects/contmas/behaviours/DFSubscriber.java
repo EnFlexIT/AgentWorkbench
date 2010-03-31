@@ -1,5 +1,5 @@
 /**
- * @author Hanno - Felix Wagner, 28.03.2010
+ * @author Hanno - Felix Wagner, 30.03.2010
  * Copyright 2010 Hanno - Felix Wagner
  * 
  * This file is part of ContMAS.
@@ -18,33 +18,14 @@
  * along with ContMAS.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package contmas.main;
+package contmas.behaviours;
 
-import javax.swing.tree.DefaultMutableTreeNode;
+import jade.util.leap.List;
 
-public class AgentClassElement extends DefaultMutableTreeNode{
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID=2985328639001370325L;
-	private Class agentClass;
-
-	/**
-	 * @param agentClass
-	 */
-	public AgentClassElement(Class agentClass){
-		super(agentClass);
-		this.agentClass=agentClass;
-	}
-
-	public Class getAgentClass(){
-		return this.agentClass;
-	}
-
-	@Override
-	public String toString(){
-		return this.agentClass.getSimpleName();
-	}
-
+/**
+ * @author Hanno - Felix Wagner
+ *
+ */
+public interface DFSubscriber{
+	public void processSubscriptionUpdate(List updatedAgents,Boolean remove);
 }

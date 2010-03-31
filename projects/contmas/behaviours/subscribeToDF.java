@@ -27,10 +27,7 @@ import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.proto.SubscriptionInitiator;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
+import jade.util.leap.Iterator;
 import contmas.agents.ContainerAgent;
 
 /**
@@ -43,35 +40,52 @@ public class subscribeToDF extends SubscriptionInitiator{
 	 * 
 	 */
 	private static final long serialVersionUID=5004964558751306936L;
-	private Method callbackMethod=null;
+	private DFSubscriber parent;
 
 	private static ACLMessage getSubscriptionMessage(Agent a,String serviceType){
 		DFAgentDescription dfd=new DFAgentDescription();
 		ServiceDescription sd=new ServiceDescription();
 		sd.setType(serviceType);
 		dfd.addServices(sd);
-		 ACLMessage subscriptionMessage=DFService.createSubscriptionMessage(a,a.getDefaultDF(),dfd,null);
-		 return subscriptionMessage;
+		ACLMessage subscriptionMessage=DFService.createSubscriptionMessage(a,a.getDefaultDF(),dfd,null);
+		return subscriptionMessage;
 	}
-	
-	public subscribeToDF(Agent a,Method methode, String serviceType){
-		super(a,getSubscriptionMessage(a,serviceType));
-		this.callbackMethod=methode;
+
+	public subscribeToDF(Agent a,String serviceType){
+		super(a,subscribeToDF.getSubscriptionMessage(a,serviceType));
+	}
+
+	private void setParent(){
+		if(super.parent != null){ //as subBehaviour
+			this.parent=((DFSubscriber) super.parent);
+		}else{ //standalone, i.e. directly run by an agent
+			this.parent=((DFSubscriber) this.myAgent);
+		}
 	}
 
 	@Override
 	protected void handleInform(ACLMessage inform){
+		this.setParent();
 		try{
 			DFAgentDescription[] dfds=DFService.decodeNotification(inform.getContent());
+			DFAgentDescription[] subscribe=new DFAgentDescription[dfds.length];
+			DFAgentDescription[] unsubscribe=new DFAgentDescription[dfds.length];
 			try{
-				this.callbackMethod.invoke(this.myAgent,ContainerAgent.toAIDList(ContainerAgent.agentDescToAIDArray(dfds)));
+				for(int i=0;i < dfds.length;i++){
+					DFAgentDescription agentDescription=dfds[i];
+					Iterator services=agentDescription.getAllServices();
+					if(services.hasNext()){
+						subscribe[i]=agentDescription;
+					}else{
+						unsubscribe[i]=agentDescription;
+					}
+				}
+
+				this.parent.processSubscriptionUpdate(ContainerAgent.toAIDList(ContainerAgent.agentDescToAIDArray(subscribe)),false);
+
+				this.parent.processSubscriptionUpdate(ContainerAgent.toAIDList(ContainerAgent.agentDescToAIDArray(unsubscribe)),true);
+
 			}catch(IllegalArgumentException e){
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}catch(IllegalAccessException e){
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}catch(InvocationTargetException e){
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}

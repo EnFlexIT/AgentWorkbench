@@ -77,7 +77,9 @@ public class ContainerAgent extends Agent{
 	public static AID[] agentDescToAIDArray(DFAgentDescription[] agents){
 		AID[] result=new AID[agents.length];
 		for(int i=0;i < agents.length;i++){
-			result[i]=agents[i].getName();
+			if(agents[i] != null){
+				result[i]=agents[i].getName();
+			}
 		}
 		return result;
 	}
@@ -105,8 +107,12 @@ public class ContainerAgent extends Agent{
 
 	public static List toAIDList(AID[] input){
 		List output=new ArrayList();
-		for(AID aid: input){
-			output.add(aid);
+		for(int i=0;i < input.length;i++){
+			AID aid=input[i];
+			if(aid != null){
+				output.add(aid);
+			}
+
 		}
 		return output;
 	}
@@ -160,11 +166,11 @@ public class ContainerAgent extends Agent{
 		if(aids.length > 0){
 			return aids[0];
 		}else{
-			String ermsg="Kein Agent der Art '"+serviceType+"' vorhanden.";
+			String ermsg="Kein Agent der Art '" + serviceType + "' vorhanden.";
 			if(searcher instanceof ContainerAgent){
 				((ContainerAgent) searcher).echoStatus(ermsg,ContainerAgent.LOGGING_NOTICE);
-			} else {
-				System.out.println(searcher.getLocalName()+": "+ermsg);
+			}else{
+				System.out.println(searcher.getLocalName() + ": " + ermsg);
 			}
 		}
 		return null;
@@ -203,16 +209,17 @@ public class ContainerAgent extends Agent{
 
 	protected String ownServiceType;
 	private AID harborManager=null;
+
 	public AID getHarborManager(){
-		if(this.harborManager==null){
-			
+		if(this.harborManager == null){
+
 		}
 		return this.harborManager;
 	}
 
 	public AID getRandomGenerator(){
-		if(this.randomGenerator==null){
-			
+		if(this.randomGenerator == null){
+
 		}
 		return this.randomGenerator;
 	}
@@ -242,7 +249,7 @@ public class ContainerAgent extends Agent{
 		//register self at DF
 		this.echoStatus(this.ownServiceType,ContainerAgent.LOGGING_INFORM);
 		this.register(this.ownServiceType);
-		
+
 		//look for RandomGeneratorAgent
 		this.randomGenerator=this.getFirstAIDFromDF("random-generation");
 		this.harborManager=this.getFirstAIDFromDF("harbor-managing");

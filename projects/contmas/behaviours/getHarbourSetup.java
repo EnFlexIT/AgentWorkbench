@@ -26,14 +26,12 @@ import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.proto.AchieveREInitiator;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Vector;
 
 import contmas.agents.ContainerAgent;
 import contmas.agents.ControlGUIAgent;
-import contmas.agents.HarborMasterAgent;
-import contmas.agents.OntRepRequester;
-import contmas.ontology.*;
+import contmas.ontology.ProvideHarbourSetup;
+import contmas.ontology.RequestHarbourSetup;
 
 public class getHarbourSetup extends AchieveREInitiator{
 	/**
@@ -75,7 +73,7 @@ public class getHarbourSetup extends AchieveREInitiator{
 
 	@Override
 	protected void handleInform(ACLMessage msg){
-		ProvideHarbourSetup act=(ProvideHarbourSetup) ContainerAgent.extractAction(myAgent,msg);
-		((ControlGUIAgent) myAgent).processHarbourLayout(act.getCurrent_harbour_layout());
+		ProvideHarbourSetup act=(ProvideHarbourSetup) ContainerAgent.extractAction(this.myAgent,msg);
+		((ControlGUIAgent) this.myAgent).processHarbourLayout(act.getCurrent_harbour_layout());
 	}
 }

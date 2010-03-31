@@ -28,7 +28,7 @@ public class CraneAgent extends ActiveContainerAgent implements TransportOrderHa
 		this.targetAgentServiceType="short-time-storage";
 		this.targetAbstractDomain=new ApronArea();
 	}
-	
+
 	@Override
 	public void handleTransportOrder(){
 		this.addBehaviour(new receiveLoadOrders(this));

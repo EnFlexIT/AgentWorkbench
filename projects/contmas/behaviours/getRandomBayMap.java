@@ -20,6 +20,7 @@
  */
 package contmas.behaviours;
 
+import jade.content.Concept;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.domain.FIPANames;
@@ -29,20 +30,21 @@ import jade.proto.AchieveREInitiator;
 import java.util.Vector;
 
 import contmas.agents.ContainerAgent;
-import contmas.ontology.StartNewContainerHolder;
+import contmas.agents.OntRepProvider;
+import contmas.ontology.ProvideBayMap;
+import contmas.ontology.RequestRandomBayMap;
 
 /**
  * @author Hanno - Felix Wagner
  *
  */
-public class requestStartAgent extends AchieveREInitiator{
-
+public class getRandomBayMap extends AchieveREInitiator{
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID= -1067315000037572948L;
-	private AID harbourMaster=null;
-	private StartNewContainerHolder act=null;
+	private static final long serialVersionUID= -1832052412333457494L;
+	private AID randomGenerator=null;
+	private OntRepProvider parent=null;
 
 	private static ACLMessage getRequestMessage(Agent a){
 		ACLMessage msg=new ACLMessage(ACLMessage.REQUEST);
@@ -50,20 +52,28 @@ public class requestStartAgent extends AchieveREInitiator{
 		return msg;
 	}
 
-	public requestStartAgent(Agent a,AID harbourMaster,StartNewContainerHolder act){
-		super(a,requestStartAgent.getRequestMessage(a));
-		this.harbourMaster=harbourMaster;
+	public getRandomBayMap(Agent a){
+		super(a,getRandomBayMap.getRequestMessage(a));
+		this.randomGenerator=((ContainerAgent) this.myAgent).getFirstAIDFromDF("random-generation");
+	}
 
-		this.act=act;
+	private void setParent(){
+		if(super.parent != null){ //as subBehaviour of listenforStartAgent
+			this.parent=((OntRepProvider) super.parent);
+		}else{ //standalone, i.e. directly run by an agent
+			this.parent=((OntRepProvider) this.myAgent);
+		}
 	}
 
 	@Override
-	protected Vector<ACLMessage> prepareRequests(ACLMessage request){
-		request.addReceiver(this.harbourMaster);
-
-		ContainerAgent.enableForCommunication(this.myAgent);
-		ContainerAgent.fillMessage(request,this.act,this.myAgent);
-
+	protected Vector<?> prepareRequests(ACLMessage request){
+		this.setParent();
+		request.addReceiver(this.randomGenerator);
+		RequestRandomBayMap act=new RequestRandomBayMap();
+		act.setX_dimension(this.parent.getOntologyRepresentation().getContains().getX_dimension());
+		act.setY_dimension(this.parent.getOntologyRepresentation().getContains().getY_dimension());
+		act.setZ_dimension(this.parent.getOntologyRepresentation().getContains().getZ_dimension());
+		((ContainerAgent) this.myAgent).fillMessage(request,act);
 		Vector<ACLMessage> messages=new Vector<ACLMessage>();
 		messages.add(request);
 		return messages;
@@ -71,13 +81,7 @@ public class requestStartAgent extends AchieveREInitiator{
 
 	@Override
 	protected void handleInform(ACLMessage msg){
-	}
-
-	@Override
-	protected void handleRefuse(ACLMessage msg){
-	}
-
-	@Override
-	protected void handleNotUnderstood(ACLMessage msg){
+		Concept content=((ContainerAgent) this.myAgent).extractAction(msg);
+		this.parent.getOntologyRepresentation().setContains(((ProvideBayMap) content).getProvides());
 	}
 }

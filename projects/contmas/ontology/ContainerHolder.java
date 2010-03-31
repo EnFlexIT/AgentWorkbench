@@ -7,20 +7,9 @@ import jade.core.*;
 /**
 * Protege name: ContainerHolder
 * @author ontology bean generator
-* @version 2010/03/27, 20:53:54
+* @version 2010/03/30, 14:14:16
 */
 public class ContainerHolder extends AID{ 
-
-   /**
-* Protege name: lives_in
-   */
-   private Domain lives_in;
-   public void setLives_in(Domain value) { 
-    this.lives_in=value;
-   }
-   public Domain getLives_in() {
-     return this.lives_in;
-   }
 
    /**
 * Protege name: service_type
@@ -31,17 +20,6 @@ public class ContainerHolder extends AID{
    }
    public String getService_type() {
      return this.service_type;
-   }
-
-   /**
-* Protege name: contains
-   */
-   private BayMap contains;
-   public void setContains(BayMap value) { 
-    this.contains=value;
-   }
-   public BayMap getContains() {
-     return this.contains;
    }
 
    /**
@@ -64,6 +42,28 @@ public class ContainerHolder extends AID{
    public Iterator getAllContractors() {return contractors.iterator(); }
    public List getContractors() {return contractors; }
    public void setContractors(List l) {contractors = l; }
+
+   /**
+* Protege name: lives_in
+   */
+   private Domain lives_in;
+   public void setLives_in(Domain value) { 
+    this.lives_in=value;
+   }
+   public Domain getLives_in() {
+     return this.lives_in;
+   }
+
+   /**
+* Protege name: contains
+   */
+   private BayMap contains;
+   public void setContains(BayMap value) { 
+    this.contains=value;
+   }
+   public BayMap getContains() {
+     return this.contains;
+   }
 
    /**
 * Protege name: container_states

@@ -8,30 +8,19 @@ import jade.core.*;
 /**
 * Protege name: Container
 * @author ontology bean generator
-* @version 2010/03/27, 20:53:54
+* @version 2010/03/30, 14:14:15
 */
 public class Container implements Concept {
 
    /**
-* Protege name: width
+* Protege name: weight
    */
-   private float width;
-   public void setWidth(float value) { 
-    this.width=value;
+   private float weight;
+   public void setWeight(float value) { 
+    this.weight=value;
    }
-   public float getWidth() {
-     return this.width;
-   }
-
-   /**
-* Protege name: height
-   */
-   private float height;
-   public void setHeight(float value) { 
-    this.height=value;
-   }
-   public float getHeight() {
-     return this.height;
+   public float getWeight() {
+     return this.weight;
    }
 
    /**
@@ -46,14 +35,25 @@ public class Container implements Concept {
    }
 
    /**
-* Protege name: weight
+* Protege name: height
    */
-   private float weight;
-   public void setWeight(float value) { 
-    this.weight=value;
+   private float height;
+   public void setHeight(float value) { 
+    this.height=value;
    }
-   public float getWeight() {
-     return this.weight;
+   public float getHeight() {
+     return this.height;
+   }
+
+   /**
+* Protege name: width
+   */
+   private float width;
+   public void setWidth(float value) { 
+    this.width=value;
+   }
+   public float getWidth() {
+     return this.width;
    }
 
    /**

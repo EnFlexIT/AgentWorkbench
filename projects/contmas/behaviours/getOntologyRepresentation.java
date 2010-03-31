@@ -26,12 +26,9 @@ import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.proto.AchieveREInitiator;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Vector;
 
 import contmas.agents.ContainerAgent;
-import contmas.agents.ControlGUIAgent;
-import contmas.agents.HarborMasterAgent;
 import contmas.agents.OntRepRequester;
 import contmas.ontology.ContainerHolder;
 import contmas.ontology.ProvideOntologyRepresentation;
@@ -47,6 +44,7 @@ public class getOntologyRepresentation extends AchieveREInitiator{
 	 */
 	private AID agentInQuestion=null;
 	private AID requestFrom;
+	private OntRepRequester parent;
 
 	public static ACLMessage getRequestMessage(){
 		ACLMessage msg=new ACLMessage(ACLMessage.REQUEST);
@@ -61,7 +59,7 @@ public class getOntologyRepresentation extends AchieveREInitiator{
 	public getOntologyRepresentation(Agent myAgent,AID inQuestion){
 		super(myAgent,getOntologyRepresentation.getRequestMessage());
 		this.agentInQuestion=inQuestion;
-		this.requestFrom=agentInQuestion;
+		this.requestFrom=this.agentInQuestion;
 	}
 
 	/**
@@ -70,13 +68,22 @@ public class getOntologyRepresentation extends AchieveREInitiator{
 	 * @param relayServer TODO
 	 * @param newParam TODO
 	 */
-	public getOntologyRepresentation(Agent myAgent,AID inQuestion, AID requestFrom){
+	public getOntologyRepresentation(Agent myAgent,AID inQuestion,AID requestFrom){
 		this(myAgent,inQuestion);
 		this.requestFrom=requestFrom;
 	}
 
+	private void setParent(){
+		if(super.parent != null){ //as subBehaviour
+			this.parent=((OntRepRequester) super.parent);
+		}else{ //standalone, i.e. directly run by an agent
+			this.parent=((OntRepRequester) this.myAgent);
+		}
+	}
+
 	@Override
 	protected Vector<ACLMessage> prepareRequests(ACLMessage request){
+		this.setParent();
 		request.addReceiver(this.requestFrom);
 		RequestOntologyRepresentation act=new RequestOntologyRepresentation();
 		act.setAgent_in_question(this.agentInQuestion);
@@ -91,16 +98,17 @@ public class getOntologyRepresentation extends AchieveREInitiator{
 
 	@Override
 	protected void handleInform(ACLMessage msg){
-		ProvideOntologyRepresentation act=(ProvideOntologyRepresentation) ContainerAgent.extractAction(myAgent,msg);
-		((OntRepRequester) myAgent).processOntologyRepresentation(act.getAccording_ontrep(), this.agentInQuestion);
+		ProvideOntologyRepresentation act=(ProvideOntologyRepresentation) ContainerAgent.extractAction(this.myAgent,msg);
+		this.parent.processOntologyRepresentation(act.getAccording_ontrep(),this.agentInQuestion);
 	}
-	
+
 	@Override
 	protected void handleRefuse(ACLMessage msg){
+		this.parent.processOntologyRepresentation(new ContainerHolder(),this.agentInQuestion);
 	}
-	
+
 	@Override
 	protected void handleNotUnderstood(ACLMessage msg){
-		((OntRepRequester) myAgent).processOntologyRepresentation(new ContainerHolder(), this.agentInQuestion);
+		this.parent.processOntologyRepresentation(new ContainerHolder(),this.agentInQuestion);
 	}
 }

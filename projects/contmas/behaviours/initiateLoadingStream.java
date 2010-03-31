@@ -1,5 +1,5 @@
 /**
- * @author Hanno - Felix Wagner, 25.03.2010
+ * @author Hanno - Felix Wagner, 24.03.2010
  * Copyright 2010 Hanno - Felix Wagner
  * 
  * This file is part of ContMAS.
@@ -20,25 +20,29 @@
  */
 package contmas.behaviours;
 
-import jade.content.Concept;
+import jade.core.AID;
 import jade.core.Agent;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.proto.AchieveREInitiator;
-import jade.util.leap.List;
 
 import java.util.Vector;
 
 import contmas.agents.ContainerAgent;
-import contmas.agents.ShipAgent;
-import contmas.ontology.AssignHarborQuay;
-import contmas.ontology.EnrollAtHarbor;
-import contmas.ontology.Ship;
+import contmas.ontology.LoadList;
+import contmas.ontology.RequestExecuteLoadSequence;
 
-public class enrollAtHarbor extends AchieveREInitiator{
-
-	private static final long serialVersionUID= -1583891049645164006L;
-	private ShipAgent mySAgent=null;
+/**
+ * @author Hanno - Felix Wagner
+ *
+ */
+public class initiateLoadingStream extends AchieveREInitiator{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID= -1832052412333457494L;
+	private LoadList sequenceToInitiate=null;
+	private AID agentFrom=null;
 
 	private static ACLMessage getRequestMessage(Agent a){
 		ACLMessage msg=new ACLMessage(ACLMessage.REQUEST);
@@ -46,31 +50,26 @@ public class enrollAtHarbor extends AchieveREInitiator{
 		return msg;
 	}
 
-	public enrollAtHarbor(Agent a){
-		super(a,enrollAtHarbor.getRequestMessage(a));
-		this.mySAgent=((ShipAgent) this.myAgent);
+	public initiateLoadingStream(Agent a,LoadList loadSequence,AID agentFrom){
+		super(a,initiateLoadingStream.getRequestMessage(a));
+		this.sequenceToInitiate=loadSequence;
+		this.agentFrom=agentFrom;
 	}
 
 	@Override
-	protected Vector<ACLMessage> prepareRequests(ACLMessage request){
-		request.addReceiver(this.mySAgent.getHarborManager());
-		EnrollAtHarbor act=new EnrollAtHarbor();
-		act.setShip_length(((Ship) this.mySAgent.getOntologyRepresentation()).getLength());
-		((ContainerAgent) this.myAgent).fillMessage(request,act);
+	protected Vector<?> prepareRequests(ACLMessage request){
+		RequestExecuteLoadSequence act=new RequestExecuteLoadSequence();
+		act.setNext_step(this.sequenceToInitiate);
+		request.addReceiver(this.agentFrom);
 
+		((ContainerAgent) this.myAgent).fillMessage(request,act);
 		Vector<ACLMessage> messages=new Vector<ACLMessage>();
 		messages.add(request);
 		return messages;
 	}
 
 	@Override
-	protected void handleInform(ACLMessage msg){
-		Concept content;
-		content=((ContainerAgent) this.myAgent).extractAction(msg);
-
-		if(content instanceof AssignHarborQuay){
-			List craneList=((AssignHarborQuay) content).getAvailable_cranes();
-			this.mySAgent.getOntologyRepresentation().setContractors(craneList);
-		}
+	protected void handleAgree(ACLMessage msg){
+		((ContainerAgent) this.myAgent).echoStatus("Loading Stream initiation agree received.",ContainerAgent.LOGGING_NOTICE);
 	}
 }

@@ -48,16 +48,16 @@ public class getPopulatedBayMap extends AchieveREInitiator{
 	}
 
 	public getPopulatedBayMap(Agent a){
-		super(a,getRequestMessage(a));
+		super(a,getPopulatedBayMap.getRequestMessage(a));
 	}
 
 	@Override
 	protected Vector<?> prepareRequests(ACLMessage request){
-		setParent();
+		this.setParent();
 		request.addReceiver(((ContainerAgent) this.myAgent).getRandomGenerator());
 		//BayMap aus Agent auslesen
 		RequestPopulatedBayMap act=new RequestPopulatedBayMap();
-		act.setPopulate_on(parent.getOntologyRepresentation().getContains());
+		act.setPopulate_on(this.parent.getOntologyRepresentation().getContains());
 		((ContainerAgent) this.myAgent).fillMessage(request,act);
 		Vector<ACLMessage> messages=new Vector<ACLMessage>();
 		messages.add(request);
@@ -67,7 +67,7 @@ public class getPopulatedBayMap extends AchieveREInitiator{
 	@Override
 	protected void handleInform(ACLMessage msg){
 		Concept content;
-		ContainerHolder ontRep=parent.getOntologyRepresentation();
+		ContainerHolder ontRep=this.parent.getOntologyRepresentation();
 		content=((ContainerAgent) this.myAgent).extractAction(msg);
 		ontRep.setContains(((ProvidePopulatedBayMap) content).getProvides());
 		Iterator allConts=ontRep.getContains().getAllIs_filled_with();
@@ -83,7 +83,7 @@ public class getPopulatedBayMap extends AchieveREInitiator{
 		if(super.parent != null){ //as subBehaviour of listenforStartAgent
 			this.parent=((OntRepProvider) super.parent);
 		}else{ //standalone, i.e. directly run by an agent
-			this.parent=((OntRepProvider) myAgent);
+			this.parent=((OntRepProvider) this.myAgent);
 		}
 	}
 }

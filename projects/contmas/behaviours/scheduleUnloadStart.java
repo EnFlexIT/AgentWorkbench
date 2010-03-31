@@ -30,6 +30,10 @@ public class scheduleUnloadStart extends SimpleBehaviour{
 	/**
 	 * 
 	 */
+	private static final long serialVersionUID=4696797514162476136L;
+	/**
+	 * 
+	 */
 	Boolean done=false;
 
 	public scheduleUnloadStart(Agent a){
@@ -38,14 +42,14 @@ public class scheduleUnloadStart extends SimpleBehaviour{
 
 	@Override
 	public void action(){
-		if( ((ContainerHolderAgent) myAgent).getSomeTOCOfState(new Administered())!=null && !((ContainerHolderAgent) myAgent).determineContractors().isEmpty()){
-			((TransportOrderOfferer) myAgent).offerTransportOrder();
-			done=true;
+		if((((ContainerHolderAgent) this.myAgent).getSomeTOCOfState(new Administered()) != null) && !((ContainerHolderAgent) this.myAgent).determineContractors().isEmpty()){
+			((TransportOrderOfferer) this.myAgent).offerTransportOrder();
+			this.done=true;
 		}
 	}
 
 	@Override
 	public boolean done(){
-		return done;
+		return this.done;
 	}
 }

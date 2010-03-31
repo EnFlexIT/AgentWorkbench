@@ -66,7 +66,7 @@ public class receiveLoadOrders extends ContractNetResponder{
 						this.myCAgent.fillMessage(rply,loadStatus);
 						ds.put(receiveLoadOrders.this.REPLY_KEY,rply);
 						this.isDone=true;
-						myAgent.doWake();
+						this.myAgent.doWake();
 						return;
 					}else{
 						this.myCAgent.echoStatus("ERROR: Auftrag kann nicht ausgeführt werden.",acceptedTOC,ContainerAgent.LOGGING_ERROR);

@@ -25,20 +25,25 @@ import contmas.ontology.Domain;
 public class DomainOntologyElement extends OntologyElement{
 
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID= -1355652158820767514L;
+
+	/**
 	 * @param ontologyConcept
 	 */
 	public DomainOntologyElement(Domain ontologyConcept){
 		super(ontologyConcept);
 	}
-	
+
 	public Domain getDomain(){
 		return (Domain) this.ontologyConcept;
 	}
-	
+
 	@Override
 	public String toString(){
-		String renderedString=super.toString()+" - "+((Domain) this.ontologyConcept).getId();
+		String renderedString=super.toString() + " - " + ((Domain) this.ontologyConcept).getId();
 		return renderedString;
 	}
-	
+
 }

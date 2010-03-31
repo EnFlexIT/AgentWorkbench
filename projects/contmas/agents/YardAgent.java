@@ -21,6 +21,7 @@
 package contmas.agents;
 
 import contmas.behaviours.receiveLoadOrders;
+import contmas.behaviours.striveForLoading;
 import contmas.ontology.Yard;
 
 /**
@@ -60,6 +61,7 @@ public class YardAgent extends StaticContainerAgent implements TransportOrderHan
 	public void setup(){
 		super.setup();
 		this.handleTransportOrder();
-	}
+		this.addBehaviour(new striveForLoading(this));
 
+	}
 }
