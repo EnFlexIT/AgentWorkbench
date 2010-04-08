@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: EnvironmentUpdate
 * @author ontology bean generator
-* @version 2010/03/25, 19:30:25
+* @version 2010/04/7, 20:19:12
 */
 public class EnvironmentUpdate implements AgentAction {
 

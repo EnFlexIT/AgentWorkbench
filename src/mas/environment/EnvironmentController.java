@@ -1,9 +1,5 @@
 package mas.environment;
 
-import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.geom.Area;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -48,27 +44,46 @@ import sma.ontology.Position;
 import sma.ontology.Size;
 
 import mas.display.SvgTypes;
+import mas.environment.EnvironmentUtilities;
 
+/**
+ * This class is responsible for managing the environment definition
+ * @author Nils
+ *
+ */
 public class EnvironmentController{
-	
+	/**
+	 * The current project
+	 */
 	private Project currentProject;
-	
+	/**
+	 * The project's environment
+	 */
 	private Environment environment;
-	
-	private EnvironmentControllerAgent controllerAgent;
-	
+	/**
+	 * The SVG document representing the environment
+	 */
 	private Document svgDoc;
-	
+	/**
+	 * The GUI for interacting with this environment controller
+	 */
 	private EnvironmentControllerGUI myGUI;
-	
+	/**
+	 * HashMap for object access via id
+	 */
 	private HashMap<String, AbstractObject> objectHash = null;
 	
+	/**
+	 * Constructor
+	 * @param project The project the environment belongs to
+	 * @param gui The GUI to interact with this EnvironmentController
+	 */
 	public EnvironmentController(Project project, EnvironmentControllerGUI gui){
 		
 		boolean newEnv = false;
 		this.currentProject = project;
 		this.myGUI = gui;
-		
+		// Load environment from file if specified
 		if(currentProject.getEnvFile() != null){
 			loadEnvironment(new File(currentProject.getEnvPath()));
 		}else{
@@ -80,7 +95,7 @@ public class EnvironmentController{
 			currentProject.setEnvironment(this.environment);
 		}
 		
-		
+		// Load SVG from file if specified
 		if(currentProject.getSvgFile() != null){
 			loadSVG(new File(currentProject.getSvgPath()), newEnv);
 		}else{
@@ -88,7 +103,7 @@ public class EnvironmentController{
 		}
 		
 	}
-
+	
 	public Project getCurrentProject() {
 		return currentProject;
 	}
@@ -103,14 +118,6 @@ public class EnvironmentController{
 
 	public void setEnvironment(Environment environment) {
 		this.environment = environment;
-	}
-
-	public EnvironmentControllerAgent getControllerAgent() {
-		return controllerAgent;
-	}
-
-	public void setControllerAgent(EnvironmentControllerAgent controllerAgent) {
-		this.controllerAgent = controllerAgent;
 	}
 
 	public Document getSvgDoc() {
@@ -131,8 +138,8 @@ public class EnvironmentController{
 	
 	/**
 	 * Loading a new SVG file. If newEnv = true, creating a new Environment from the SVGs root element.
-	 * @param svgFile
-	 * @param newEnv
+	 * @param svgFile The file to load the SVG from
+	 * @param newEnv If true, an new environment instance will be created, using the SVG root as main playground
 	 */
 	public void loadSVG(File svgFile, boolean newEnv){
 		if(svgFile.exists()){
@@ -187,7 +194,7 @@ public class EnvironmentController{
 	
 	/**
 	 * Saving the SVG document to a file 
-	 * @param svgFile
+	 * @param svgFile The file to save the SVG to
 	 */
 	public void saveSVG(File svgFile){
 		try {
@@ -211,7 +218,6 @@ public class EnvironmentController{
 	
 	/**
 	 * Creating a new environment using the SVG root element as root playground
-	 * @return
 	 */
 	private void createNewEnvironment(){
 		
@@ -229,7 +235,11 @@ public class EnvironmentController{
 	public HashMap<String, AbstractObject> getObjectHash() {
 		return objectHash;
 	}
-	
+	/**
+	 * Gets the environment object with the specified id, or null if there is no object with this id in the environment
+	 * @param id String The id to search for
+	 * @return AbstractObject The object if found, else null
+	 */
 	public AbstractObject getObjectById(String id){
 		return objectHash.get(id);
 	}
@@ -277,8 +287,8 @@ public class EnvironmentController{
 			}
 			
 			object.setPosition(new Position());
-			object.getPosition().setXPos((int)xPos);
-			object.getPosition().setYPos((int)yPos);
+			object.getPosition().setX((int)xPos);
+			object.getPosition().setY((int)yPos);
 			
 			object.setSize(new Size());
 			object.getSize().setWidth((int)width);
@@ -288,6 +298,9 @@ public class EnvironmentController{
 		}
 	}
 	
+	/**
+	 * Rebuilding the objectHash with the objects currently present in the environment
+	 */
 	@SuppressWarnings("unchecked")
 	private void rebuildObjectHash(){
 		Iterator<AbstractObject> objects = environment.getAllObjects();
@@ -300,8 +313,8 @@ public class EnvironmentController{
 	
 	/**
 	 * Creating a new environment object
-	 * @param svg
-	 * @param settings
+	 * @param svg The SVG element representing the new object
+	 * @param settings HashMap containing the properties of the new object
 	 */
 	public void createObject(Element svg, HashMap<String, String> settings){
 			
@@ -344,8 +357,8 @@ public class EnvironmentController{
 	
 	/**
 	 * Deleting the selected environment object
-	 * @param id
-	 * @param removeChildren
+	 * @param id String The id of the object to be deleted
+	 * @param removeChildren boolean If true, child objects will be deleted too. If false, they will be moved to the parent playground
 	 */
 	@SuppressWarnings("unchecked")
 	public void deleteObject(String id, boolean removeChildren){
@@ -372,14 +385,14 @@ public class EnvironmentController{
 	
 	/**
 	 * Moves an environment object to another playground 
-	 * @param object
-	 * @param target
-	 * @return
+	 * @param object The object to be moved
+	 * @param target The destination playground 
+	 * @return True if moving was possible, false if not (if the object is outside the playgrounds area
 	 */
 	public boolean moveObject(AbstractObject object, PlaygroundObject target){
 		
 		boolean success = false;
-		if(success = pgContains(target, object)){
+		if(success = EnvironmentUtilities.pgContains(target, object)){
 			object.getParent().removeChildObjects(object);
 			target.addChildObjects(object);
 			object.setParent(target);
@@ -391,29 +404,8 @@ public class EnvironmentController{
 	}
 	
 	/**
-	 * Checks if the playgrounds area contains the object
-	 * @param playground
-	 * @param object
-	 * @return
-	 */
-	private boolean pgContains(PlaygroundObject playground, AbstractObject object){
-		
-		Point pgPos = new Point(playground.getPosition().getXPos(), playground.getPosition().getYPos());
-		Dimension pgSize = new Dimension(playground.getSize().getWidth(), playground.getSize().getHeight());
-		Area pgArea = new Area(new Rectangle(pgPos, pgSize));
-		
-		Point objectPos = new Point(object.getPosition().getXPos(), object.getPosition().getYPos());
-		Dimension objectSize = new Dimension(object.getSize().getWidth(), object.getSize().getHeight());
-		Rectangle objectRect = new Rectangle(objectPos, objectSize);
-		
-		return pgArea.contains(objectRect);
-		
-		
-	}
-	
-	/**
 	 * Save the environment to a XML file
-	 * @param envFile
+	 * @param envFile Path of the file to save the environment to
 	 */
 	public void saveEnvironment(File envFile){
 		
@@ -464,10 +456,10 @@ public class EnvironmentController{
 	}
 	
 	/**
-	 * Creating a XML element saving an environment object
-	 * @param object
-	 * @param document
-	 * @return
+	 * Creating a XML element to save an environment object
+	 * @param object The AbstractObject subclass instance to be saved
+	 * @param document The XML document  the element will be part of
+	 * @return An XML element containing the objects data
 	 */
 	@SuppressWarnings("unchecked")
 	private Element saveObject(AbstractObject object, Document document){
@@ -497,8 +489,8 @@ public class EnvironmentController{
 		
 		// Common parts
 		element.setAttribute("id", ""+object.getId());
-		element.setAttribute("xPos", ""+object.getPosition().getXPos());
-		element.setAttribute("yPos", ""+object.getPosition().getYPos());
+		element.setAttribute("xPos", ""+object.getPosition().getX());
+		element.setAttribute("yPos", ""+object.getPosition().getY());
 		element.setAttribute("width", ""+object.getSize().getWidth());
 		element.setAttribute("height", ""+object.getSize().getHeight());
 		
@@ -507,7 +499,7 @@ public class EnvironmentController{
 	
 	/**
 	 * Loading the environment from the passed file object
-	 * @param envFile
+	 * @param envFile The pate of the file containing the environment
 	 */
 	public void loadEnvironment(File envFile){
 		
@@ -541,8 +533,8 @@ public class EnvironmentController{
 	
 	/**
 	 * Creates an environment object from the passed XML element
-	 * @param element
-	 * @return
+	 * @param element The XML element containing the object data
+	 * @return The AbstractObject created
 	 */
 	private AbstractObject loadObject(Element element){
 		AbstractObject object = null;
@@ -577,11 +569,11 @@ public class EnvironmentController{
 		// Common parts
 		object.setId(element.getAttribute("id"));
 		object.setPosition(new Position());
-		object.getPosition().setXPos(Integer.parseInt(element.getAttribute("xPos")));
-		object.getPosition().setYPos(Integer.parseInt(element.getAttribute("yPos")));
+		object.getPosition().setX(Float.parseFloat(element.getAttribute("xPos")));
+		object.getPosition().setY(Float.parseFloat(element.getAttribute("yPos")));
 		object.setSize(new Size());
-		object.getSize().setWidth(Integer.parseInt(element.getAttribute("width")));
-		object.getSize().setHeight(Integer.parseInt(element.getAttribute("height")));
+		object.getSize().setWidth(Float.parseFloat(element.getAttribute("width")));
+		object.getSize().setHeight(Float.parseFloat(element.getAttribute("height")));
 		
 		environment.addObjects(object);
 		return object;

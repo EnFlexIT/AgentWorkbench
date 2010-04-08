@@ -3,13 +3,17 @@ package mas.display;
 import org.w3c.dom.Element;
 
 /**
- * Definiert die SVG-Elemente, die zur Darstellung von Umgebungsobjekten benutzt werden können
+ * The types of SVG elements supported 
  * @author Nils
  *
  */
 public enum SvgTypes {
 	SVG, RECT, CIRCLE, ELLIPSE;
-	
+	/**
+	 * Returns the type constant for a given SVG element
+	 * @param element The SVG element
+	 * @return The type constant, or null if the type is not supported
+	 */
 	public static SvgTypes getType(Element element){
 		SvgTypes type = null;
 		

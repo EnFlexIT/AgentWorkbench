@@ -11,20 +11,19 @@
     <defs id="defs2846"/>
     <rect x="227.11864" width="174.57628" height="216.94914" y="47.45763"
           id="subPlayground" style="fill:aqua;stroke:black"/>
-    <rect x="44.067795" width="37.288136" height="32.203388" y="38.983051"
-          id="AgentRed" style="fill:red;stroke:none"/>
+    <circle r="20" id="AgentRed" style="fill:red;stroke:none" cx="45" cy="40"/>
     <rect x="40.677967" width="111.8644" height="15.254239" y="235.5932"
           id="ObstBlue" style="fill:blue;stroke:none"/>
-    <rect x="510.16949" width="38.983051" height="40.677967" y="118.64407"
-          id="AgentGrey" style="fill:gray;stroke:none"/>
+    <circle r="20" id="AgentGrey" style="fill:gray;stroke:none" cx="510"
+            cy="120"/>
     <rect x="301.69492" width="16.949152" height="67.796608" y="303.38983"
           id="ObstGreen" style="fill:green;stroke:none"/>
-    <rect x="259.32202" width="28.81356" height="37.288136" y="206.77966"
-          id="AgentBrown" style="fill:#520;stroke:none"/>
+    <circle r="15" id="AgentBrown" style="fill:#520;stroke:none" cx="260"
+            cy="210"/>
     <rect x="267.7966" width="84.745758" height="15.254235" y="149.15254"
           id="ObstYellow" style="fill:yellow;stroke:none"/>
-    <rect x="325.42374" width="30.508474" height="32.203388" y="72.881355"
-          id="AgentPink" style="fill:fuchsia;stroke:none"/>
+    <circle r="15" id="AgentPink" style="fill:fuchsia;stroke:none" cx="325"
+            cy="75"/>
     <rect x="0" width="599" height="399" y="0" id="border"
           style="fill:none;stroke:black;stroke-width:1"/>
 </svg>

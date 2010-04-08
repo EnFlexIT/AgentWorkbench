@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.0//EN' 'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'>
+
+
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg contentScriptType="text/ecmascript" width="600"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     xmlns:svg="http://www.w3.org/2000/svg" zoomAndPan="magnify"
+     contentStyleType="text/css" id="svg2" height="400"
+     preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"
+     version="1.1">
+    <defs id="defs4"/>
+    <g id="layer1" transform="translate(0,-652.36218)">
+        <rect x="211.42857" width="114.28571" id="ObstGrey" y="746.64789"
+              height="205.71428" style="fill:#999999;stroke:none"/>
+        <circle r="30" id="AgentRed" style="fill:#ff0000;stroke:none"
+                cx="63.57143" transform="translate(0,652.36218)" cy="323.57144"/>
+    </g>
+    <rect fill="none" width="599" stroke-width="1" id="border" height="399"
+          stroke="black"/>
+</svg>

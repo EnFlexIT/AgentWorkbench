@@ -5,6 +5,6 @@
 
 Einfaches Demo-Projekt für die Visualisierung</projectDescription>
     <agentConfiguration/>
-    <envFile>environment.xml</envFile>
-    <svgFile>komplex.svg</svgFile>
+    <envFile>environment3.xml</envFile>
+    <svgFile>simpel2.svg</svgFile>
 </project>

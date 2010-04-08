@@ -1,17 +1,9 @@
 package mas.display;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-
 import javax.swing.JFrame;
-
-import mas.environment.ObjectTypes;
 
 import org.w3c.dom.Document;
 
-import application.Language;
-import sma.ontology.AbstractObject;
 import sma.ontology.DisplayOntology;
 import sma.ontology.Environment;
 import sma.ontology.Movement;
@@ -28,32 +20,53 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.core.messaging.TopicManagementHelper;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-
+/**
+ * This type of agent is controlling a DisplayAgentGUI instance
+ * @author Nils
+ *
+ */
 public class DisplayAgent extends Agent {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+	/**
+	 * Ontology object containing the projects environment
+	 */
 	private Environment environment = null;
-	
+	/**
+	 * The GUI this agent controls
+	 */
 	private DisplayAgentGUI daGUI = null;
-	
+	/**
+	 * Container for the DisplayAgentGUI, only needed in stand alone mode
+	 */
 	private JFrame frame = null;
-	
+	/**
+	 * The SVG document showing the projects current state
+	 */
 	private Document svgDoc = null;
-	
+	/**
+	 * MessageTemplate for the TopicManagementHelper
+	 */
 	private MessageTemplate posTemplate = null;
-	
+	/**
+	 * The language codec
+	 */
 	private Codec codec = new SLCodec();
-	
+	/**
+	 * The ontology
+	 */
 	private Ontology ontology = DisplayOntology.getInstance();
-	
-	private HashMap<String, AbstractObject> movableObjects = null;
-	
-	private HashSet<AbstractObject> movedObjects = null;
-	
+	/**
+	 * The project's name	
+	 */
+	private String projectName = null;
+	/**
+	 * The project's EnvironmentControllerAgent
+	 */
+	private AID masterAgent;
 	
 	
 	/**
@@ -68,14 +81,13 @@ public class DisplayAgent extends Agent {
 		
 		Object[] args = getArguments();
 		// Environment
-		if( args != null && args.length > 0 && args[0] instanceof Environment){
-			this.environment = (Environment) args[0];
+		if( args != null && args.length > 2 && args[2] instanceof Environment){
+			this.environment = (Environment) args[2];
 		}
-		if(this.environment != null){
-			movableObjects = buildMovableHash(this.environment);
-			movedObjects = new HashSet<AbstractObject>();			
-		}else{
-			System.err.println(Language.translate("Keine Umgebung übergeben"));
+				
+		// Project name
+		if( args != null && args.length > 0 && args[0] instanceof String){
+			this.projectName = (String) args[0];
 		}
 		
 		// GUI
@@ -90,12 +102,17 @@ public class DisplayAgent extends Agent {
 			frame.add(this.daGUI);
 			frame.setVisible(true);			
 		}
+		
+		
 		this.daGUI.setAgent(this);
 		this.svgDoc = (Document) this.environment.getSvgDoc();
 		if(svgDoc != null){
 			this.daGUI.setSVGDoc(svgDoc);
 		}
 		
+//		addBehaviour(new EnvironmentRequestBehaviour(this));
+		
+		// TopicManagementHelper 		
 		TopicManagementHelper tmh;
 		try {
 			tmh = (TopicManagementHelper) getHelper(TopicManagementHelper.SERVICE_NAME);
@@ -110,40 +127,52 @@ public class DisplayAgent extends Agent {
 		addBehaviour(new MovementReceiver());		
 	}
 	
+	
+	
+	
 	/**
-	 * Stores all movable environment objects in a HashMap for easy access via id
+	 * @return The agent's ontology
+	 */
+	public Ontology getOntology(){
+		return this.ontology;
+	}
+	/**
+	 * @return The codec
+	 */
+	public Codec getCodec(){
+		return this.codec;
+	}
+	/**
+	 * @return The project's name
+	 */
+	public String getProjectName(){
+		return this.projectName;
+	}
+	/**
 	 * @param env The project's environment
-	 * @return A HashMap containing all movable environment objects, using their id as key
 	 */
-	@SuppressWarnings("unchecked")
-	private HashMap<String, AbstractObject> buildMovableHash(Environment env){
-		HashMap<String, AbstractObject> mh = new HashMap<String, AbstractObject>();
+	public void setEnvironment(Environment env){
+		this.environment = env;
 		
-		Iterator<AbstractObject> objects = env.getAllObjects();
-		while(objects.hasNext()){
-			AbstractObject object = objects.next();
-			
-			switch(ObjectTypes.getType(object)){
-			case AGENT:
-			// When adding more movable types, put them here
-				mh.put(object.getId(), object);
-			break;
-			}
-			
-		}
-		
-		
-		return mh;
+		System.out.println(getLocalName()+" received environment");
+//		this.svgDoc = (Document) env.getSvgDoc();
 	}
+	
 	
 	/**
-	 * @return Iterator of AbstractObjects with changed positions
+	 * @param masterAgent the masterAgent to set
 	 */
-	public HashSet<AbstractObject>getMovedObjects(){
-		return movedObjects;
+	public void setMasterAgent(AID masterAgent) {
+		this.masterAgent = masterAgent;
 	}
-	
-	private class MovementReceiver extends CyclicBehaviour{
+
+
+	/**
+	 * Behaviour receiving GUI position updates from moving objects and storing them to movedObjects
+	 * @author Nils
+	 *
+	 */
+	class MovementReceiver extends CyclicBehaviour{
 
 		/**
 		 * 
@@ -158,12 +187,7 @@ public class DisplayAgent extends Agent {
 					Action act = (Action) getContentManager().extractContent(update);
 					Movement mv = (Movement) act.getAction();
 					if(mv != null){
-						AbstractObject moved = movableObjects.get(act.getActor().getLocalName());
-						int newX = mv.getStartPos().getXPos()+mv.getSpeed().getXSpeed();
-						int newY = mv.getStartPos().getYPos()+mv.getSpeed().getYSpeed();
-						moved.getPosition().setXPos(newX);
-						moved.getPosition().setYPos(newY);
-						movedObjects.add(moved);
+						daGUI.addMovement(update.getSender().getLocalName(), mv);
 					}
 				} catch (CodecException e) {
 					// TODO Auto-generated catch block

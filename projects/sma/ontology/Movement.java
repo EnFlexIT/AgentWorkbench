@@ -8,32 +8,29 @@ import jade.core.*;
 /**
 * Protege name: Movement
 * @author ontology bean generator
-* @version 2010/03/25, 19:30:25
+* @version 2010/04/7, 20:19:12
 */
 public class Movement implements AgentAction {
 
    /**
-   * Position change
-* Protege name: speed
+* Protege name: Steps
    */
-   private Speed speed;
-   public void setSpeed(Speed value) { 
-    this.speed=value;
+   private List steps = new ArrayList();
+   public void addSteps(Position elem) { 
+     List oldList = this.steps;
+     steps.add(elem);
    }
-   public Speed getSpeed() {
-     return this.speed;
+   public boolean removeSteps(Position elem) {
+     List oldList = this.steps;
+     boolean result = steps.remove(elem);
+     return result;
    }
-
-   /**
-   * Start position
-* Protege name: startPos
-   */
-   private Position startPos;
-   public void setStartPos(Position value) { 
-    this.startPos=value;
+   public void clearAllSteps() {
+     List oldList = this.steps;
+     steps.clear();
    }
-   public Position getStartPos() {
-     return this.startPos;
-   }
+   public Iterator getAllSteps() {return steps.iterator(); }
+   public List getSteps() {return steps; }
+   public void setSteps(List l) {steps = l; }
 
 }

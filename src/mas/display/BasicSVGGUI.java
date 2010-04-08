@@ -16,7 +16,7 @@ import java.awt.BorderLayout;
  * @author Nils
  *
  */
-public class BasicSvgGUI extends JPanel {
+public class BasicSVGGUI extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel pnlZoom = null;
@@ -29,7 +29,7 @@ public class BasicSvgGUI extends JPanel {
 	/**
 	 * This is the default constructor
 	 */
-	public BasicSvgGUI() {
+	public BasicSVGGUI() {
 		super();
 		this.canvas = new JSVGCanvas();
 		initialize();

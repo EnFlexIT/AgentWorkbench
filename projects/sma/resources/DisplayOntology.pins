@@ -1,4 +1,4 @@
-; Thu Mar 25 19:30:38 CET 2010
+; Wed Apr 07 18:11:44 CEST 2010
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -31,6 +31,10 @@
 
 	(%3AJADE-IGNORE FALSE))
 
+([Point] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
 ([Position] of  %3AJADE-CLASS
 
 	(%3AJADE-IGNORE FALSE))
@@ -41,10 +45,6 @@
 	(%3AONTOLOGYNAME "Display")
 	(%3APACKAGE "sma.ontology")
 	(%3ASUPPORT "j2se"))
-
-([RegisterDisplayable] of  %3AJADE-CLASS
-
-	(%3AJADE-IGNORE FALSE))
 
 ([Size] of  %3AJADE-CLASS
 

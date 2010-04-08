@@ -9,32 +9,20 @@ import jade.core.*;
    * Represents the speed of an object moving in a 2D environment
 * Protege name: Speed
 * @author ontology bean generator
-* @version 2010/03/25, 19:30:25
+* @version 2010/04/7, 20:19:12
 */
 public class Speed implements Concept {
 
    /**
-   * Object's position change in x direction per step
-* Protege name: xSpeed
+   * // The speed (currently px/step)
+* Protege name: speed
    */
-   private int xSpeed;
-   public void setXSpeed(int value) { 
-    this.xSpeed=value;
+   private float speed;
+   public void setSpeed(float value) { 
+    this.speed=value;
    }
-   public int getXSpeed() {
-     return this.xSpeed;
-   }
-
-   /**
-   * Object's position change in y direction per step
-* Protege name: ySpeed
-   */
-   private int ySpeed;
-   public void setYSpeed(int value) { 
-    this.ySpeed=value;
-   }
-   public int getYSpeed() {
-     return this.ySpeed;
+   public float getSpeed() {
+     return this.speed;
    }
 
 }

@@ -52,7 +52,7 @@ import sma.ontology.PlaygroundObject;
 import application.Language;
 import application.Project;
 
-import mas.display.BasicSvgGUI;
+import mas.display.BasicSVGGUI;
 import mas.display.SvgTypes;
 
 public class EnvironmentControllerGUI extends JSplitPane {
@@ -61,7 +61,7 @@ public class EnvironmentControllerGUI extends JSplitPane {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private BasicSvgGUI svgGUI = null;
+	private BasicSVGGUI svgGUI = null;
 	private JSplitPane splitControlls = null;
 	private JScrollPane scpTree = null;
 	private JTree treeEnvironment = null;
@@ -127,9 +127,9 @@ public class EnvironmentControllerGUI extends JSplitPane {
 	 * 	
 	 * @return javax.swing.JPanel	
 	 */
-	private BasicSvgGUI getSvgGUI() {
+	private BasicSVGGUI getSvgGUI() {
 		if (svgGUI == null) {
-			svgGUI = new BasicSvgGUI();
+			svgGUI = new BasicSVGGUI();
 			svgGUI.getCanvas().setDocumentState(JSVGCanvas.ALWAYS_DYNAMIC);
 		}
 		return svgGUI;

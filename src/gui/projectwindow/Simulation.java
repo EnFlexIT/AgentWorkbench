@@ -9,7 +9,6 @@ import java.util.Observer;
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
 
-import sma.agents.SoftBot;
 import sma.ontology.AbstractObject;
 import sma.ontology.AgentObject;
 
@@ -90,6 +89,15 @@ public class Simulation extends JScrollPane implements Observer, ActionListener 
 		this.daGUI.setVisible(true);
 		
 		if ( Application.JadePlatform.jadeMainContainerIsRunning(true)){
+			
+			
+			String projectContainer = CurrProject.getProjectFolder();
+			
+			Object[] args = {CurrProject.getEnvironment()};
+			String ecaName = "MasterAgent"+CurrProject.getProjectName();
+			Application.JadePlatform.jadeAgentStart(ecaName, "mas.environment.EnvironmentControllerAgent", args, projectContainer);
+				
+			// Start DisplayAgent
 			// Find name
 			String agentNameBase = "DA";
 			int agentNameSuffix = 1;
@@ -98,21 +106,17 @@ public class Simulation extends JScrollPane implements Observer, ActionListener 
 				agentNameSuffix++;
 				agentName = agentNameBase + agentNameSuffix;
 			}
-			
-			String agentClass = "mas.display.DisplayAgent";
-			String projectContainer = CurrProject.getProjectFolder();
-				
-			// Start DisplayAgent 
-			Object[] args = {CurrProject.getEnvironment(), this.daGUI};
-			Application.JadePlatform.jadeAgentStart(agentName, agentClass, args, projectContainer );
+			args = new Object[]{CurrProject.getProjectName(), this.daGUI, CurrProject.getEnvironment()};
+			Application.JadePlatform.jadeAgentStart(agentName, "mas.display.DisplayAgent", args, projectContainer );
 			
 			// Start project agents
 			Iterator<AbstractObject> objects = CurrProject.getEnvironment().getAllObjects();
+			
 			while(objects.hasNext()){
 				AbstractObject object = objects.next();
 				if(ObjectTypes.getType(object) == ObjectTypes.AGENT){
 					agentName = object.getId();
-					agentClass = ((AgentObject)object).getAgentClass();
+					String agentClass = ((AgentObject)object).getAgentClass();
 					args = new Object[]{object};					
 					Application.JadePlatform.jadeAgentStart(agentName, agentClass, args, projectContainer );
 				}
