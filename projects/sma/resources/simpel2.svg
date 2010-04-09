@@ -9,12 +9,10 @@
      preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"
      version="1.1">
     <defs id="defs4"/>
-    <g id="layer1" transform="translate(0,-652.36218)">
-        <rect x="211.42857" width="114.28571" id="ObstGrey" y="746.64789"
-              height="205.71428" style="fill:#999999;stroke:none"/>
-        <circle r="30" id="AgentRed" style="fill:#ff0000;stroke:none"
-                cx="63.57143" transform="translate(0,652.36218)" cy="323.57144"/>
-    </g>
+    <rect x="247.02179" width="114.28571" id="ObstGrey" y="7.8450274"
+          height="300.62955" style="fill:#999;stroke:none"/>
+    <circle r="30" id="AgentRed" style="fill:red;stroke:none" cx="80.520583"
+            cy="45.60534"/>
     <rect fill="none" width="599" stroke-width="1" id="border" height="399"
           stroke="black"/>
 </svg>

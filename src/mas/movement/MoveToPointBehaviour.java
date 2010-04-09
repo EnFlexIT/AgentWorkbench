@@ -1,6 +1,7 @@
 package mas.movement;
 
 import java.awt.geom.Point2D;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -29,10 +30,6 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 	 */
 	private static final long serialVersionUID = 1L;
 	/**
-	 * Position to move to
-	 */
-	private Position destPos;
-	/**
 	 * The agent's current position
 	 */
 	private Position startPos;
@@ -41,17 +38,13 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 	 */
 	float speed;
 	/**
-	 * The agent's current speed in direction x
-	 */
-	private double speedX;
-	/**
-	 * The agent's current speed in direction y
-	 */
-	private double speedY;
-	/**
 	 * The acting agent
 	 */
 	private DisplayableAgent agent;
+	/**
+	 * Waypoints to follow
+	 */
+	private Vector<Position> waypoints;
 	/**
 	 * The steps 
 	 */
@@ -68,27 +61,32 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 	public MoveToPointBehaviour(DisplayableAgent a, Position destPos, Speed speed) {
 		super((Agent) a, DisplayConstants.PERIOD);
 		this.agent = a;
-		this.destPos = destPos;
+		this.waypoints = new Vector<Position>();
+		this.waypoints.add(destPos);
 		this.speed = speed.getSpeed();
 		this.startPos = agent.getPosition();		
+	}
+	
+	public MoveToPointBehaviour(DisplayableAgent a, Vector<Position> waypoints, Speed speed){
+		super((Agent) a, DisplayConstants.PERIOD);
+		this.agent = a;
+		this.waypoints = waypoints;
+		this.speed = speed.getSpeed();
+		this.startPos = agent.getPosition();
 	}
 		
 	public void onStart(){
 		
-		Point2D.Float start = new Point2D.Float(startPos.getX(), startPos.getY());
-		Point2D.Float dest = new Point2D.Float(destPos.getX(), destPos.getY());
+		Iterator<Position> wpIterator = waypoints.iterator();
+		Position current = startPos;
 		
-		double distance = dest.distance(start);
+		this.steps = new Vector<Position>();
+		while(wpIterator.hasNext()){
+			Position next = wpIterator.next();
+			steps.addAll(calculateSteps(current, next));
+			current = next;
+		}
 		
-		double distX = destPos.getX() - startPos.getX();
-		double distY = destPos.getY() - startPos.getY();
-		
-		double factor = distance / speed;
-		
-		speedX = distX / factor;
-		speedY = distY / factor;
-		
-		this.steps = calculateSteps();
 		this.stepIterator = steps.iterator();		
 		
 		try {
@@ -120,36 +118,56 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 		
 	}
 	
-	private Vector<Position> calculateSteps(){
+	
+	
+	private Vector<Position> calculateSteps(Position from, Position to){
+		
 		Vector<Position> steps = new Vector<Position>();
 		
-		float posX = startPos.getX();
-		float posY = startPos.getY();		
+		System.out.println("Calculating steps from "+
+				from.getX()+":"+from.getY()+
+				" to "+to.getX()+":"+to.getY());
 		
-		while( posX != destPos.getX() && posY != destPos.getY()){
-			
-			float distX = destPos.getX() - posX;
-			float distY = destPos.getY() - posY;
-			
+		// Calculate distance and speed
+		Point2D.Float start = new Point2D.Float(from.getX(), from.getY());
+		Point2D.Float dest = new Point2D.Float(to.getX(), to.getY());
+		
+		double distance = dest.distance(start);
+		
+		double distX = dest.getX() - start.getX();
+		double distY = dest.getY() - start.getY();
+		
+		double factor = (float) (distance / this.speed);
+		
+		float speedX = (float) (distX / factor);
+		float speedY = (float) (distY / factor);
+		
+		// Calculate steps
+		float posX = from.getX();
+		float posY = from.getY();
+		
+		while(!(posX == dest.getX() && posY == dest.getY()) ){
 			if(Math.abs(distX) > Math.abs(speedX)){
 				posX += speedX;
 			}else{
-				posX += distX;
+				posX = to.getX();
 			}
 			
-			if(Math.abs(distY) > Math.abs(speedX)){
+			if(Math.abs(distY) > Math.abs(speedY)){
 				posY += speedY;
 			}else{
-				posY += distY;
+				posY = to.getY();
 			}
 			
 			Position step = new Position();
 			step.setX(posX);
 			step.setY(posY);
-			
 			steps.add(step);
+			
+			distX = to.getX() - posX;
+			distY = to.getY() - posY;
 		}
-		
+				
 		return steps;
 	}
 
