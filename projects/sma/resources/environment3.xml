@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<environment date="Fri Apr 09 13:21:12 CEST 2010" project="SMA">
-  <playground height="400.0" id="rootPlayground" width="600.0"
-    xPos="0.0" yPos="0.0">
-    <agent class="sma.agents.SoftBot" height="30.0" id="AgentRed"
-      width="30.0" xPos="65.0" yPos="30.0"/>
-    <obstacle height="300.0" id="ObstGrey" width="114.0" xPos="247.0" yPos="7.0"/>
-  </playground>
-</environment>

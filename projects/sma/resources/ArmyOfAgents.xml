@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<environment date="Tue Apr 13 15:26:54 CEST 2010" project="SMA">
+  <playground height="400.0" id="rootPlayground" width="600.0"
+    xPos="0.0" yPos="0.0">
+    <obstacle height="300.0" id="ObstGrey" width="73.0" xPos="287.0" yPos="7.0"/>
+    <agent class="sma.agents.SoftBot" height="20.0" id="rect2949-82-2"
+      width="20.0" xPos="6.0" yPos="276.0"/>
+    <agent class="sma.agents.SoftBot" height="20.0" id="rect2949-135-6"
+      width="20.0" xPos="40.0" yPos="272.0"/>
+    <agent class="sma.agents.SoftBot" height="20.0" id="rect2949-40-0"
+      width="20.0" xPos="74.0" yPos="276.0"/>
+    <agent class="sma.agents.SoftBot" height="20.0" id="rect2949-36-1"
+      width="20.0" xPos="111.0" yPos="276.0"/>
+    <agent class="sma.agents.SoftBot" height="20.0" id="rect2949-42-6"
+      width="20.0" xPos="145.0" yPos="276.0"/>
+    <agent class="sma.agents.SoftBot" height="20.0" id="rect2949-63-7"
+      width="20.0" xPos="144.0" yPos="240.0"/>
+    <agent class="sma.agents.SoftBot" height="20.0" id="rect2949-18-3"
+      width="20.0" xPos="108.0" yPos="238.0"/>
+    <agent class="sma.agents.SoftBot" height="20.0" id="rect2949-60-7"
+      width="20.0" xPos="72.0" yPos="233.0"/>
+    <agent class="sma.agents.SoftBot" height="20.0" id="rect2949-3-9"
+      width="20.0" xPos="40.0" yPos="233.0"/>
+    <agent class="sma.agents.SoftBot" height="20.0" id="rect2949-13-0"
+      width="20.0" xPos="6.0" yPos="232.0"/>
+    <agent class="sma.agents.SoftBot" height="20.0" id="rect2949-82"
+      width="20.0" xPos="5.0" yPos="198.0"/>
+    <agent class="sma.agents.SoftBot" height="20.0" id="rect2949-135"
+      width="20.0" xPos="38.0" yPos="194.0"/>
+    <agent class="sma.agents.SoftBot" height="20.0" id="rect2949-40"
+      width="20.0" xPos="72.0" yPos="198.0"/>
+    <agent class="sma.agents.SoftBot" height="20.0" id="rect2949-36"
+      width="20.0" xPos="110.0" yPos="198.0"/>
+    <agent class="sma.agents.SoftBot" height="20.0" id="rect2949-42"
+      width="20.0" xPos="144.0" yPos="198.0"/>
+    <agent class="sma.agents.SoftBot" height="20.0" id="rect2949-13"
+      width="20.0" xPos="5.0" yPos="154.0"/>
+    <agent class="sma.agents.SoftBot" height="20.0" id="rect2949-3"
+      width="20.0" xPos="38.0" yPos="155.0"/>
+    <agent class="sma.agents.SoftBot" height="20.0" id="rect2949-60"
+      width="20.0" xPos="71.0" yPos="155.0"/>
+    <agent class="sma.agents.SoftBot" height="20.0" id="rect2949-18"
+      width="20.0" xPos="106.0" yPos="161.0"/>
+    <agent class="sma.agents.SoftBot" height="20.0" id="rect2949-63"
+      width="20.0" xPos="142.0" yPos="162.0"/>
+    <agent class="sma.agents.SoftBot" height="20.0" id="rect2949-82-2-7"
+      width="20.0" xPos="9.0" yPos="125.0"/>
+    <agent class="sma.agents.SoftBot" height="20.0"
+      id="rect2949-135-6-3" width="20.0" xPos="43.0" yPos="122.0"/>
+    <agent class="sma.agents.SoftBot" height="20.0" id="rect2949-40-0-3"
+      width="20.0" xPos="77.0" yPos="125.0"/>
+    <agent class="sma.agents.SoftBot" height="20.0" id="rect2949-36-1-5"
+      width="20.0" xPos="114.0" yPos="125.0"/>
+    <agent class="sma.agents.SoftBot" height="20.0" id="rect2949-42-6-9"
+      width="20.0" xPos="148.0" yPos="125.0"/>
+    <agent class="sma.agents.SoftBot" height="20.0" id="rect2949-63-7-7"
+      width="20.0" xPos="146.0" yPos="89.0"/>
+    <agent class="sma.agents.SoftBot" height="20.0" id="rect2949-18-3-7"
+      width="20.0" xPos="111.0" yPos="88.0"/>
+    <agent class="sma.agents.SoftBot" height="20.0" id="rect2949-60-7-7"
+      width="20.0" xPos="75.0" yPos="83.0"/>
+    <agent class="sma.agents.SoftBot" height="20.0" id="rect2949-3-9-1"
+      width="20.0" xPos="43.0" yPos="83.0"/>
+    <agent class="sma.agents.SoftBot" height="20.0" id="rect2949-13-0-7"
+      width="20.0" xPos="9.0" yPos="81.0"/>
+    <agent class="sma.agents.SoftBot" height="20.0" id="rect2949-82-20"
+      width="20.0" xPos="7.0" yPos="47.0"/>
+    <agent class="sma.agents.SoftBot" height="20.0" id="rect2949-135-0"
+      width="20.0" xPos="41.0" yPos="44.0"/>
+    <agent class="sma.agents.SoftBot" height="20.0" id="rect2949-40-1"
+      width="20.0" xPos="75.0" yPos="47.0"/>
+    <agent class="sma.agents.SoftBot" height="20.0" id="rect2949-36-4"
+      width="20.0" xPos="112.0" yPos="47.0"/>
+    <agent class="sma.agents.SoftBot" height="20.0" id="rect2949-42-60"
+      width="20.0" xPos="146.0" yPos="47.0"/>
+    <agent class="sma.agents.SoftBot" height="20.0" id="rect2949-63-1"
+      width="20.0" xPos="144.0" yPos="11.0"/>
+    <agent class="sma.agents.SoftBot" height="20.0" id="rect2949-18-4"
+      width="20.0" xPos="109.0" yPos="10.0"/>
+    <agent class="sma.agents.SoftBot" height="20.0" id="rect2949-60-5"
+      width="20.0" xPos="73.0" yPos="5.0"/>
+    <agent class="sma.agents.SoftBot" height="20.0" id="rect2949-3-7"
+      width="20.0" xPos="41.0" yPos="5.0"/>
+    <agent class="sma.agents.SoftBot" height="20.0" id="rect2949-13-5"
+      width="20.0" xPos="7.0" yPos="3.0"/>
+  </playground>
+</environment>

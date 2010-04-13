@@ -19,4 +19,6 @@ public interface DisplayableAgent {
 	public Codec getDisplayCodec();
 	public Ontology getDisplayOntology();
 	public AID getUpdateReceiver();
+	public void setMoving(boolean moving);
+	public boolean isMoving();
 }

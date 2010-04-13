@@ -321,7 +321,7 @@ public class EnvironmentController{
 		AbstractObject object = null;
 		
 		// If there is another object using the same SVG element, delete it first
-		deleteObject(settings.get("id"), false);
+		deleteObject(svg.getAttributeNS(null, "id"), false);
 		
 		ObjectTypes type = ObjectTypes.getType(settings.get("type"));
 		

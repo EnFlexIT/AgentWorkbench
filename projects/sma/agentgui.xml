@@ -3,8 +3,8 @@
     <projectName>SMA</projectName>
     <projectDescription>Simple Moving Agent
 
-Einfaches Demo-Projekt für die Visualisierung</projectDescription>
+Einfaches Demo-Projekt fr die Visualisierung</projectDescription>
     <agentConfiguration/>
-    <envFile>environment3.xml</envFile>
-    <svgFile>simpel2.svg</svgFile>
+    <envFile>ArmyOfAgents.xml</envFile>
+    <svgFile>ArmyOfAgents.svg</svgFile>
 </project>

@@ -51,7 +51,25 @@ public abstract class MovingAgent extends Agent implements DisplayableAgent{
 	 * The agent's (center) position
 	 */
 	private Position position = null;
+	/**
+	 * Is this agent currently moving?
+	 */
+	private boolean moving = false;
 	
+	/**
+	 * @return Is this agent moving?
+	 */
+	public boolean isMoving() {
+		return moving;
+	}
+
+	/**
+	 * @param moving The movement state
+	 */
+	public void setMoving(boolean moving) {
+		this.moving = moving;
+	}
+
 	/**
 	 * 
 	 */

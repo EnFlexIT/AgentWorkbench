@@ -34,6 +34,10 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 	 */
 	private Position startPos;
 	/**
+	 * The destination
+	 */
+	private Position destPos;
+	/**
 	 * The agent's current speed
 	 */
 	float speed;
@@ -51,6 +55,9 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 	private Vector<Position> steps;
 	
 	private Iterator<Position> stepIterator;
+	
+	public static final int DEST_REACHED = 1;
+	public static final int DEST_NOT_REACHED = 0;
 
 	/**
 	 * Constructor 	
@@ -61,6 +68,7 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 	public MoveToPointBehaviour(DisplayableAgent a, Position destPos, Speed speed) {
 		super((Agent) a, DisplayConstants.PERIOD);
 		this.agent = a;
+		this.destPos = destPos;
 		this.waypoints = new Vector<Position>();
 		this.waypoints.add(destPos);
 		this.speed = speed.getSpeed();
@@ -71,6 +79,7 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 		super((Agent) a, DisplayConstants.PERIOD);
 		this.agent = a;
 		this.waypoints = waypoints;
+		this.destPos = this.waypoints.lastElement();
 		this.speed = speed.getSpeed();
 		this.startPos = agent.getPosition();
 	}
@@ -105,6 +114,7 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 			movementInfo.setOntology(agent.getDisplayOntology().getName());
 			myAgent.getContentManager().fillContent(movementInfo, act);
 			myAgent.send(movementInfo);
+			agent.setMoving(true);
 			
 		} catch (CodecException e) {
 			// TODO Auto-generated catch block
@@ -112,21 +122,31 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 		} catch (OntologyException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		
-		
-		
+		}		
 	}
 	
+	public int onEnd(){
+		agent.setMoving(false);
+		if(agent.getPosition().getX() == destPos.getX()	&& agent.getPosition().getY() == destPos.getY()){
+			return DEST_REACHED;
+		}else{
+			return DEST_NOT_REACHED;
+		}
+	}
 	
-	
+	/**
+	 * Calculates the agents position for each step on it's way between from and to
+	 * @param from The start position for this movement (part)
+	 * @param to The destination for this movement (part)
+	 * @return Vector containing Position instances for each step
+	 */
 	private Vector<Position> calculateSteps(Position from, Position to){
 		
 		Vector<Position> steps = new Vector<Position>();
 		
-		System.out.println("Calculating steps from "+
-				from.getX()+":"+from.getY()+
-				" to "+to.getX()+":"+to.getY());
+//		System.out.println("Calculating steps from "+
+//				from.getX()+":"+from.getY()+
+//				" to "+to.getX()+":"+to.getY());
 		
 		// Calculate distance and speed
 		Point2D.Float start = new Point2D.Float(from.getX(), from.getY());

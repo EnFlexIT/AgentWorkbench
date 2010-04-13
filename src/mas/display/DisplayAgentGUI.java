@@ -2,6 +2,10 @@ package mas.display;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 
 import mas.environment.DisplayConstants;
 
@@ -45,6 +49,8 @@ public class DisplayAgentGUI extends BasicSVGGUI {
 	 */
 	private HashMap<String, Iterator<Position>> movements;
 	
+	private final ReadWriteLock lock = new ReentrantReadWriteLock(true);
+		
 	public DisplayAgentGUI(){
 		super();
 		this.getCanvas().setDocumentState(JSVGCanvas.ALWAYS_DYNAMIC);
@@ -69,8 +75,28 @@ public class DisplayAgentGUI extends BasicSVGGUI {
 	 */
 	@SuppressWarnings("unchecked")
 	public void addMovement(String id, Movement mv){
+		lock.readLock().lock();
+		// If another movement for the same id is defined, remove it 
+		if(this.movements.get(id) != null){
+			this.movements.remove(id);
+			
+		}
 		this.movements.put(id, mv.getAllSteps());
+		lock.readLock().unlock();
 		System.out.println(id+" movement started");
+	}
+	
+	/**
+	 * Removes the movement of the agent with the given id
+	 * @param id The id of the agent whose movement will be removed
+	 */
+	public void removeMovement(String id){
+		lock.readLock().lock();
+		if(this.movements.get(id) != null){
+			this.movements.remove(id);
+			System.out.println(id+" movement aborted.");
+		}
+		lock.readLock().unlock();
 	}
 	
 	/**
@@ -82,6 +108,7 @@ public class DisplayAgentGUI extends BasicSVGGUI {
 
 		@Override
 		public void run() {
+			lock.writeLock().lock();
 						
 			Iterator<String> ids= movements.keySet().iterator();
 			while(ids.hasNext()){
@@ -92,8 +119,10 @@ public class DisplayAgentGUI extends BasicSVGGUI {
 				}else{
 					movements.remove(id);
 					System.out.println(id+" movement finished");
+					ids = movements.keySet().iterator();
 				}
-			}		
+			}
+			lock.writeLock().unlock();
 		}
 		
 		private void changePos(String id, Position pos){
