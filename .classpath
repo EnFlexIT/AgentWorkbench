@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="projects"/>
+	<classpathentry excluding="contmas/lib/jade/|contmas/lib/|contmas/resources/" kind="src" path="projects"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="lib" path="lib/batik/batik-rasterizer.jar"/>
 	<classpathentry kind="lib" path="lib/batik/batik-slideshow.jar"/>
@@ -25,7 +25,13 @@
 	<classpathentry kind="lib" path="lib/batik/lib/batik-xml.jar"/>
 	<classpathentry kind="lib" path="lib/batik/lib/batik-util.jar"/>
 	<classpathentry kind="lib" path="lib/jade/lib/XMLCodec.jar"/>
-	<classpathentry kind="lib" path="lib/owlapi-bin.jar"/>
 	<classpathentry kind="lib" path="lib/batik/lib/batik-transcoder.jar"/>
+	<classpathentry kind="lib" path="lib/jena/icu4j-3.4.4.jar"/>
+	<classpathentry kind="lib" path="lib/jena/iri-0.7.jar"/>
+	<classpathentry kind="lib" path="lib/jena/jena-2.6.2.jar"/>
+	<classpathentry kind="lib" path="lib/jena/log4j-1.2.13.jar"/>
+	<classpathentry kind="lib" path="lib/jena/slf4j-api-1.5.6.jar"/>
+	<classpathentry kind="lib" path="lib/jena/slf4j-log4j12-1.5.6.jar"/>
+	<classpathentry kind="lib" path="lib/jena/xercesImpl-2.7.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

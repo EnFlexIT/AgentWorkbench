@@ -20,7 +20,15 @@
  */
 package contmas.main;
 
-import contmas.ontology.*;
+import jade.util.leap.Iterator;
+
+import java.util.List;
+
+import com.hp.hpl.jena.rdf.model.Resource;
+
+import contmas.ontology.ContainerHolder;
+import contmas.ontology.Domain;
+import contmas.ontology.Harbour;
 
 /**
  * @author Hanno - Felix Wagner
@@ -30,12 +38,21 @@ public final class HarbourSetup{
 
 	private Domain HarbourArea=null;
 	private ContainerHolder[] ontReps=null;
+	private OWLImportMapper mapper=null;
 
 	/**
 	 * 
 	 */
 	private HarbourSetup(){
-		// TODO Auto-generated constructor stub
+		final String individualFileName="resources\\Container-Ontologie-OWL_indiv.owl";
+		final String structureFileName="resources\\Container-Ontologie-OWL.owl";
+		final String ontologyGeneratorFileName="resources\\OWLSimpleJADEAbstractOntology.owl";
+
+		String ontologyJavaPackage=this.getClass().getPackage().getName();
+		ontologyJavaPackage=ontologyJavaPackage.substring(0,ontologyJavaPackage.lastIndexOf(".")) + ".ontology";
+		this.mapper=new OWLImportMapper(individualFileName,ontologyJavaPackage);
+		this.mapper.setStructureFile(structureFileName);
+		this.mapper.setBeanGeneratorFile(ontologyGeneratorFileName);
 	}
 
 	public static HarbourSetup getInstance(){
@@ -48,77 +65,41 @@ public final class HarbourSetup{
 		master.addHas_subdomains(sub);
 	}
 
+	public static void removeBacklink(Domain master){
+		master.setLies_in(null);
+		Iterator sub=master.getAllHas_subdomains();
+		while(sub.hasNext()){
+			Domain subDomain=(Domain) sub.next();
+			HarbourSetup.removeBacklink(subDomain);
+		}
+	}
+
 	public ContainerHolder[] getOntReps(){
-		this.getHarbourArea();
+		this.getHarbourArea(); //TODO workaround: if missing, only some Domains get displayed, reason unknown
+		if(this.ontReps == null){
+			List<Resource> allCHClasses=this.mapper.getSubConceptsOf("ContainerHolder",true);
+			List<Object> allContainerHolder=this.mapper.getMappedIndividualsOf(allCHClasses);
+			this.ontReps=allContainerHolder.toArray(new ContainerHolder[allContainerHolder.size()]);
+		}
 		return this.ontReps;
 	}
 
 	public Domain getHarbourArea(){
 		if(this.HarbourArea == null){
-			this.ontReps=new ContainerHolder[5];
-			this.ontReps[0]=new Crane();
-			this.ontReps[0].setLocalName("Crane-#1");
-			this.ontReps[1]=new Crane();
-			this.ontReps[1].setLocalName("Crane-#2");
-			this.ontReps[2]=new Apron();
-			this.ontReps[2].setLocalName("Apron");
-			this.ontReps[3]=new StraddleCarrier();
-			this.ontReps[3].setLocalName("StraddleCarrier");
-			this.ontReps[4]=new Yard();
-			this.ontReps[4].setLocalName("Yard");
-
-			Domain workingDomainOne=null;
-			Domain workingDomainTwo=null;
-
-			this.HarbourArea=new Harbour();
-			this.HarbourArea.setId("Port of Otago");
-
-			workingDomainOne=new Sea();
-			workingDomainOne.setId("Pacific");
-			((Crane) this.ontReps[0]).addCapable_of(workingDomainOne); //Crane1
-			((Crane) this.ontReps[1]).addCapable_of(workingDomainOne); //Crane2
-			HarbourSetup.addSub(this.HarbourArea,workingDomainOne);
-
-			workingDomainTwo=new Berth();
-			workingDomainTwo.setId("BerthNumberOne");
-			HarbourSetup.addSub(workingDomainOne,workingDomainTwo);
-
-			workingDomainOne=new Land();
-			HarbourSetup.addSub(this.HarbourArea,workingDomainOne);
-
-			workingDomainTwo=new Rail();
-			workingDomainTwo.setId("TrainRails");
-			((Crane) this.ontReps[0]).addCapable_of(workingDomainTwo); //Crane1
-			((Crane) this.ontReps[1]).addCapable_of(workingDomainTwo); //Crane2
-			HarbourSetup.addSub(workingDomainOne,workingDomainTwo);
-
-			workingDomainTwo=new Rail();
-			workingDomainTwo.setId("CraneRails");
-			this.ontReps[0].setLives_in(workingDomainTwo); //Crane1
-			this.ontReps[1].setLives_in(workingDomainTwo); //Crane2
-			HarbourSetup.addSub(workingDomainOne,workingDomainTwo);
-
-			workingDomainTwo=new YardArea();
-			workingDomainTwo.setId("StorageYard");
-			this.ontReps[4].setLives_in(workingDomainTwo); //Yard
-			((StraddleCarrier) this.ontReps[3]).addCapable_of(workingDomainTwo); //StraddleCarrier
-			HarbourSetup.addSub(workingDomainOne,workingDomainTwo);
-
-			workingDomainTwo=new Street();
-			workingDomainTwo.setId("StraddleCarrierStreet");
-			this.ontReps[3].setLives_in(workingDomainTwo); //StraddleCarrier
-			HarbourSetup.addSub(workingDomainOne,workingDomainTwo);
-
-			workingDomainOne=workingDomainTwo;
-			workingDomainTwo=new ApronArea();
-			workingDomainTwo.setId("CraneApron");
-			this.ontReps[2].setLives_in(workingDomainTwo); //ApronAgent
-			((Crane) this.ontReps[0]).addCapable_of(workingDomainTwo); //Crane1
-			((Crane) this.ontReps[1]).addCapable_of(workingDomainTwo); //Crane2
-			((StraddleCarrier) this.ontReps[3]).addCapable_of(workingDomainTwo); //StraddleCarrier
-			HarbourSetup.addSub(workingDomainOne,workingDomainTwo);
-
+			this.HarbourArea=this.getOWLHarbourArea();
 		}
 		return this.HarbourArea;
+	}
+
+	/**
+	 * @return
+	 */
+	private Domain getOWLHarbourArea(){
+		java.util.Iterator<Object> allHarbours=this.mapper.getMappedIndividualsOf("Harbour").iterator();
+		while(allHarbours.hasNext()){
+			Harbour curHarbour=(Harbour) allHarbours.next();
+			return curHarbour;
+		}
+		return null;
 	}
 }

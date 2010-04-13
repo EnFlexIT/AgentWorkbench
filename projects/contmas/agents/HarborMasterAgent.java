@@ -29,7 +29,6 @@ public class HarborMasterAgent extends ContainerAgent implements OntRepProvider,
 	private HashMap<AID, ContainerHolder> activeContainerHolders=new HashMap<AID, ContainerHolder>();
 	private HashMap<AID, Behaviour> ontRepInquieries=new HashMap<AID, Behaviour>();
 	private HarbourSetup harbourSetup=HarbourSetup.getInstance();
-	private Domain harbourArea=this.harbourSetup.getHarbourArea();
 
 	public boolean isAlreadyCached(String lookForAgent){
 		if(this.activeContainerHolders.get(lookForAgent) != null){
@@ -86,7 +85,8 @@ public class HarborMasterAgent extends ContainerAgent implements OntRepProvider,
 	}
 
 	public Domain getHarbourArea(){
-		return this.harbourArea;
+
+		return this.harbourSetup.getHarbourArea();
 	}
 
 	protected void setupEnvironment(){
@@ -109,6 +109,8 @@ public class HarborMasterAgent extends ContainerAgent implements OntRepProvider,
 	 */
 	@Override
 	public ContainerHolder getOntologyRepresentation(){
-		return null;
+		ContainerHolder test=new ContainerHolder();
+		test.setLives_in(this.getHarbourArea());
+		return test;
 	}
 }

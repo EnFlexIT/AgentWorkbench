@@ -1,59 +1,68 @@
 package contmas.ontology;
 
-
-import jade.content.*;
-import jade.util.leap.*;
-import jade.core.*;
+import jade.content.AgentAction;
 
 /**
 * Protege name: StartNewContainerHolder
 * @author ontology bean generator
-* @version 2010/03/30, 14:14:15
+* @version 2010/04/12, 23:13:31
 */
-public class StartNewContainerHolder implements AgentAction {
+public class StartNewContainerHolder implements AgentAction{
 
-   /**
-* Protege name: name
-   */
-   private String name;
-   public void setName(String value) { 
-    this.name=value;
-   }
-   public String getName() {
-     return this.name;
-   }
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID= -6559804446687878541L;
+	/**
+	* Protege name: randomize
+	   */
+	private boolean randomize;
 
-   /**
-* Protege name: populate
-   */
-   private boolean populate;
-   public void setPopulate(boolean value) { 
-    this.populate=value;
-   }
-   public boolean getPopulate() {
-     return this.populate;
-   }
+	public void setRandomize(boolean value){
+		this.randomize=value;
+	}
 
-   /**
-* Protege name: to_be_added
-   */
-   private ContainerHolder to_be_added;
-   public void setTo_be_added(ContainerHolder value) { 
-    this.to_be_added=value;
-   }
-   public ContainerHolder getTo_be_added() {
-     return this.to_be_added;
-   }
+	public boolean getRandomize(){
+		return this.randomize;
+	}
 
-   /**
-* Protege name: randomize
-   */
-   private boolean randomize;
-   public void setRandomize(boolean value) { 
-    this.randomize=value;
-   }
-   public boolean getRandomize() {
-     return this.randomize;
-   }
+	/**
+	* Protege name: populate
+	*/
+	private boolean populate;
+
+	public void setPopulate(boolean value){
+		this.populate=value;
+	}
+
+	public boolean getPopulate(){
+		return this.populate;
+	}
+
+	/**
+	* Protege name: to_be_added
+	*/
+	private ContainerHolder to_be_added;
+
+	public void setTo_be_added(ContainerHolder value){
+		this.to_be_added=value;
+	}
+
+	public ContainerHolder getTo_be_added(){
+		return this.to_be_added;
+	}
+
+	/**
+	* Protege name: name
+	*/
+	private String name;
+
+	public void setName(String value){
+		this.name=value;
+	}
+
+	public String getName(){
+		return this.name;
+	}
 
 }

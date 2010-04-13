@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <project>
+    <projectName>ContMAS</projectName>
     <projectDescription>Container-Multiagentensystem - Multiagentensytem zur logischen Abbildung eines Containerhafens.
 
 Dieses Projekt beinhaltet Agenten, die die verschiedenen Akteure innerhalb eines Container-Hafens darstellen.
@@ -9,6 +10,5 @@ Bislang stehen nur die Agenten für Ship, Crane und AGV zur Verfügung. Der Gesamt
 Zum Start muss ein ControlGUIAgent gestartet werden, der einen Simulationsaufbau vornimmt, indem er seinerseits 2 Cranes und 3 AGVs sowie HarbourMaster und RandomGenerator startet. In der sodann angezeigten Oberfläche ControlGUI kann ein Ship mit bestimmten Abmessungen des Laderaums gestartet werden. (Ist eine der Abmessungen 0, wird sich das Ship vom RandomGenerator einen Laderaum zufälliger Größe erzeugen lassen.) Es wird dann vom RandomGenerator seinen Laderaum mit zufällig erzeugten Containern füllen lassen und diese Container zur Entladung ausschreiben.
 
 Die Abläufe lassen sich am Besten beobachten, wenn vor der Erzeugung des Schiffs ein Sniffer Agent gestartet wird, der alle Cranes und AGVs überwacht. Es gibt weiterhin Debug-Ausgaben in der Sytemkonsole</projectDescription>
-    <projectFolder>contmas</projectFolder>
-    <projectName>ContMAS</projectName>
+    <agentConfiguration/>
 </project>

@@ -28,17 +28,17 @@ public class AgentClassElement extends DefaultMutableTreeNode{
 	 * 
 	 */
 	private static final long serialVersionUID=2985328639001370325L;
-	private Class agentClass;
+	private Class<?> agentClass;
 
 	/**
 	 * @param agentClass
 	 */
-	public AgentClassElement(Class agentClass){
+	public AgentClassElement(Class<?> agentClass){
 		super(agentClass);
 		this.agentClass=agentClass;
 	}
 
-	public Class getAgentClass(){
+	public Class<?> getAgentClass(){
 		return this.agentClass;
 	}
 

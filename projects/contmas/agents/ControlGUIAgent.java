@@ -135,7 +135,7 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 			try{
 				String name=ev.getParameter(0).toString();
 				//	            AgentController a = c.createNewAgent(name , "contmas.agents.ShipAgent", null );
-				Class selectedContainerHolderType=(Class) ev.getParameter(7);
+				Class<?> selectedContainerHolderType=(Class<?>) ev.getParameter(7);
 				ContainerHolder ontologyRepresentation=(ContainerHolder) selectedContainerHolderType.newInstance();
 
 				if((ev.getParameter(1).toString() != "") && (ev.getParameter(1).toString() != "") && (ev.getParameter(1).toString() != "")){

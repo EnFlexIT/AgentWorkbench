@@ -1,26 +1,29 @@
 package contmas.ontology;
 
-
-import jade.content.*;
-import jade.util.leap.*;
-import jade.core.*;
+import jade.content.AgentAction;
 
 /**
 * Protege name: CallForProposalsOnLoadStage
 * @author ontology bean generator
-* @version 2010/03/30, 14:14:16
+* @version 2010/04/12, 23:13:31
 */
-public class CallForProposalsOnLoadStage implements AgentAction {
+public class CallForProposalsOnLoadStage implements AgentAction{
 
-   /**
-* Protege name: required_turnover_capacity
-   */
-   private LoadList required_turnover_capacity;
-   public void setRequired_turnover_capacity(LoadList value) { 
-    this.required_turnover_capacity=value;
-   }
-   public LoadList getRequired_turnover_capacity() {
-     return this.required_turnover_capacity;
-   }
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID= -1006014859113916450L;
+	/**
+	* Protege name: required_turnover_capacity
+	   */
+	private LoadList required_turnover_capacity;
+
+	public void setRequired_turnover_capacity(LoadList value){
+		this.required_turnover_capacity=value;
+	}
+
+	public LoadList getRequired_turnover_capacity(){
+		return this.required_turnover_capacity;
+	}
 
 }
