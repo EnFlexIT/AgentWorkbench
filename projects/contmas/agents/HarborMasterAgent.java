@@ -28,8 +28,18 @@ import contmas.ontology.StartNewContainerHolder;
 public class HarborMasterAgent extends ContainerAgent implements OntRepProvider,OntRepRequester{
 	private HashMap<AID, ContainerHolder> activeContainerHolders=new HashMap<AID, ContainerHolder>();
 	private HashMap<AID, Behaviour> ontRepInquieries=new HashMap<AID, Behaviour>();
-	private HarbourSetup harbourSetup=HarbourSetup.getInstance();
+	private HarbourSetup harbourSetup=null;
 
+	private HarbourSetup getHarbourSetup(){
+		String[] args=(String[]) getArguments();
+		if(harbourSetup==null){
+			harbourSetup=HarbourSetup.getInstance(args[0]);
+//			harbourSetup=HarbourSetup.getInstance("");
+
+		}
+		return harbourSetup;
+	}
+	
 	public boolean isAlreadyCached(String lookForAgent){
 		if(this.activeContainerHolders.get(lookForAgent) != null){
 			return true;
@@ -85,13 +95,12 @@ public class HarborMasterAgent extends ContainerAgent implements OntRepProvider,
 	}
 
 	public Domain getHarbourArea(){
-
-		return this.harbourSetup.getHarbourArea();
+		return this.getHarbourSetup().getHarbourArea();
 	}
 
 	protected void setupEnvironment(){
 
-		ContainerHolder[] ontReps=this.harbourSetup.getOntReps();
+		ContainerHolder[] ontReps=this.getHarbourSetup().getOntReps();
 		for(int i=0;i < ontReps.length;i++){
 			ContainerHolder containerHolder=ontReps[i];
 

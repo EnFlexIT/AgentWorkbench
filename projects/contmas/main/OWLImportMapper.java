@@ -19,6 +19,7 @@ package contmas.main;
  *
  */
 
+import java.io.File;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -57,6 +58,10 @@ public class OWLImportMapper{
 	}
 
 	protected OntModel readModel(String inputFileName){
+		System.out.println("IndividualsFile: "+inputFileName);
+		File a=new File(inputFileName);
+		System.out.println("Exists: "+a.exists());
+		
 		OntDocumentManager mgr=new OntDocumentManager();
 		mgr.setProcessImports(false);
 		OntModelSpec s=new OntModelSpec(OntModelSpec.OWL_MEM);

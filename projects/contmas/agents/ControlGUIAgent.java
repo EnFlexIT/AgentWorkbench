@@ -29,6 +29,7 @@ import jade.util.leap.Iterator;
 import jade.util.leap.List;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
+import jade.wrapper.StaleProxyException;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JDesktopPane;
@@ -227,21 +228,32 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 		this.addBehaviour(new subscribeToDF(this,"container-handling"));
 
 		AgentContainer c=this.getContainerController();
-		try{
-			AgentController a=c.createNewAgent("RandomGenerator","contmas.agents.RandomGeneratorAgent",null);
-			a.start();
-			a=c.createNewAgent("HarborMaster","contmas.agents.HarborMasterAgent",null);
-			a.start();
-			this.harbourMaster=new AID();
-			this.harbourMaster.setName(a.getName());
-			a=c.createNewAgent("Sniffer","jade.tools.sniffer.Sniffer",new Object[] {"Yard;StraddleCarrier;Apron;Crane-#2;Crane-#1"});
-			a.start();
-			this.sniffer=new AID();
-			this.sniffer.setName(a.getName());
-		}catch(Exception e){
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
+			AgentController a;
+			try{
+				a=c.createNewAgent("RandomGenerator","contmas.agents.RandomGeneratorAgent",null);
+				a.start();
+				String[] args=new String[1]; //Because of different working directories 
+				if(ad.getStandaloneMode() == AgentDesktop.AGENTDESKTOP_STANDALONE){
+					args[0]="";
+				}else{
+					args[0]="projects\\contmas\\";
+				}
+
+				a=c.createNewAgent("HarborMaster","contmas.agents.HarborMasterAgent",args);
+				a.start();
+				this.harbourMaster=new AID();
+				this.harbourMaster.setName(a.getName());
+				a=c.createNewAgent("Sniffer","jade.tools.sniffer.Sniffer",new Object[] {"Yard;StraddleCarrier;Apron;Crane-#2;Crane-#1"});
+				a.start();
+				this.sniffer=new AID();
+				this.sniffer.setName(a.getName());
+			}catch(StaleProxyException e){
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+
 
 		this.addBehaviour(new getHarbourSetup(this,this.harbourMaster));
 
