@@ -19,7 +19,6 @@ package contmas.main;
  *
  */
 
-import java.io.File;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -58,10 +57,6 @@ public class OWLImportMapper{
 	}
 
 	protected OntModel readModel(String inputFileName){
-		System.out.println("IndividualsFile: "+inputFileName);
-		File a=new File(inputFileName);
-		System.out.println("Exists: "+a.exists());
-		
 		OntDocumentManager mgr=new OntDocumentManager();
 		mgr.setProcessImports(false);
 		OntModelSpec s=new OntModelSpec(OntModelSpec.OWL_MEM);
@@ -110,17 +105,42 @@ public class OWLImportMapper{
 
 	public List<Object> getMappedIndividualsOf(Resource concept){
 		List<Object> mappedIndividuals=new ArrayList<Object>();
-		System.out.println("All Individuals of " + concept + ":");
+//		System.out.println("All Individuals of " + concept + ":");
 
 		ExtendedIterator<Individual> iter=this.model.listIndividuals(concept);
 		while(iter.hasNext()){
 			Individual res=iter.next();
-			System.out.println(res);
+//			System.out.println(res);
 			Object mappedIndividual=this.getMappedIndividual(res);
 
 			mappedIndividuals.add(mappedIndividual);
 		}
 		return mappedIndividuals;
+	}
+
+	public HashMap<String, Object> getNamedMappedIndividualsOf(String concept){
+		return this.getNamedMappedIndividualsOf(this.model.createResource(this.structureNS + concept));
+	}
+
+	public HashMap<String, Object> getNamedMappedIndividualsOf(Resource concept){
+		HashMap<String, Object> mappedIndividuals=new HashMap<String, Object>();
+		ExtendedIterator<Individual> iter=this.model.listIndividuals(concept);
+		while(iter.hasNext()){
+			Individual res=iter.next();
+//			System.out.println(res);
+			Object mappedIndividual=this.getMappedIndividual(res);
+
+			mappedIndividuals.put(this.getResourceName(res),mappedIndividual);
+		}
+		return mappedIndividuals;
+	}
+
+	public String getResourceName(Resource res){
+		if(res.isAnon()){
+			return res.getId().getLabelString();
+		}else{
+			return res.getLocalName();
+		}
 	}
 
 	public List<Object> getMappedIndividualsOf(List<Resource> allConcepts){

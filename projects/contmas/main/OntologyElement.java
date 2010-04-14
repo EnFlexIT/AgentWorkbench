@@ -34,6 +34,7 @@ public class OntologyElement extends DefaultMutableTreeNode{
 	 */
 	private static final long serialVersionUID= -4666450144015812982L;
 	protected Object ontologyConcept;
+	protected String label="";
 
 	public Concept getOntologyConcept(){
 		if(this.ontologyConcept instanceof Concept){
@@ -47,6 +48,19 @@ public class OntologyElement extends DefaultMutableTreeNode{
 		this.ontologyConcept=ontologyConcept;
 	}
 
+	public void setLabel(String label){
+		this.label=label;
+	}
+
+	public String getLabel(){
+		return this.label;
+	}
+
+	public OntologyElement(Concept ontologyConcept,String label){
+		this(ontologyConcept);
+		this.setLabel(label);
+	}
+
 	public OntologyElement(Concept ontologyConcept){
 		this.ontologyConcept=ontologyConcept;
 	}
@@ -58,6 +72,6 @@ public class OntologyElement extends DefaultMutableTreeNode{
 	@Override
 	public String toString(){
 		String renderedString=this.ontologyConcept.getClass().getSimpleName();
-		return renderedString;
+		return renderedString + this.label;
 	}
 }

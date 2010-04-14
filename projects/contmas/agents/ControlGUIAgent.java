@@ -138,21 +138,24 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 				//	            AgentController a = c.createNewAgent(name , "contmas.agents.ShipAgent", null );
 				Class<?> selectedContainerHolderType=(Class<?>) ev.getParameter(7);
 				ContainerHolder ontologyRepresentation=(ContainerHolder) selectedContainerHolderType.newInstance();
-
-				if((ev.getParameter(1).toString() != "") && (ev.getParameter(1).toString() != "") && (ev.getParameter(1).toString() != "")){
-					BayMap loadBay=new BayMap();
-					loadBay.setX_dimension(Integer.parseInt(ev.getParameter(1).toString()));
-					loadBay.setY_dimension(Integer.parseInt(ev.getParameter(2).toString()));
-					loadBay.setZ_dimension(Integer.parseInt(ev.getParameter(3).toString()));
-					ontologyRepresentation.setContains(loadBay);
+				if(ev.getParameter(8) instanceof BayMap){ //Loaded BayMap present
+					ontologyRepresentation.setContains((BayMap) ev.getParameter(8));
+				}else{
+					if((ev.getParameter(1).toString() != "") && (ev.getParameter(2).toString() != "") && (ev.getParameter(3).toString() != "")){
+						BayMap loadBay=new BayMap();
+						loadBay.setX_dimension(Integer.parseInt(ev.getParameter(1).toString()));
+						loadBay.setY_dimension(Integer.parseInt(ev.getParameter(2).toString()));
+						loadBay.setZ_dimension(Integer.parseInt(ev.getParameter(3).toString()));
+						ontologyRepresentation.setContains(loadBay);
+					}
 				}
 				if(ontologyRepresentation instanceof Ship){
 					((Ship) ontologyRepresentation).setLength(Float.parseFloat(ev.getParameter(6).toString()));
 				}
-				DomainOntologyElement habitat=((DomainOntologyElement) ev.getParameter(8));
+				DomainOntologyElement habitat=((DomainOntologyElement) ev.getParameter(9));
 				ontologyRepresentation.setLives_in(habitat.getDomain());
 				if(ontologyRepresentation instanceof ActiveContainerHolder){
-					Object[] capabilities=((Object[]) ev.getParameter(9));
+					Object[] capabilities=((Object[]) ev.getParameter(10));
 					for(int i=0;i < capabilities.length;i++){
 						DomainOntologyElement domainOntologyElement=(DomainOntologyElement) capabilities[i];
 						((ActiveContainerHolder) ontologyRepresentation).addCapable_of(domainOntologyElement.getDomain());
@@ -229,31 +232,29 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 
 		AgentContainer c=this.getContainerController();
 
-			AgentController a;
-			try{
-				a=c.createNewAgent("RandomGenerator","contmas.agents.RandomGeneratorAgent",null);
-				a.start();
-				String[] args=new String[1]; //Because of different working directories 
-				if(ad.getStandaloneMode() == AgentDesktop.AGENTDESKTOP_STANDALONE){
-					args[0]="";
-				}else{
-					args[0]="projects\\contmas\\";
-				}
-
-				a=c.createNewAgent("HarborMaster","contmas.agents.HarborMasterAgent",args);
-				a.start();
-				this.harbourMaster=new AID();
-				this.harbourMaster.setName(a.getName());
-				a=c.createNewAgent("Sniffer","jade.tools.sniffer.Sniffer",new Object[] {"Yard;StraddleCarrier;Apron;Crane-#2;Crane-#1"});
-				a.start();
-				this.sniffer=new AID();
-				this.sniffer.setName(a.getName());
-			}catch(StaleProxyException e){
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		AgentController a;
+		try{
+			a=c.createNewAgent("RandomGenerator","contmas.agents.RandomGeneratorAgent",null);
+			a.start();
+			String[] args=new String[1]; //Because of different working directories 
+			if(ad.getStandaloneMode() == AgentDesktop.AGENTDESKTOP_STANDALONE){
+				args[0]="";
+			}else{
+				args[0]="projects\\contmas\\";
 			}
 
-
+			a=c.createNewAgent("HarborMaster","contmas.agents.HarborMasterAgent",args);
+			a.start();
+			this.harbourMaster=new AID();
+			this.harbourMaster.setName(a.getName());
+			a=c.createNewAgent("Sniffer","jade.tools.sniffer.Sniffer",new Object[] {"Yard;StraddleCarrier;Apron;Crane-#2;Crane-#1"});
+			a.start();
+			this.sniffer=new AID();
+			this.sniffer.setName(a.getName());
+		}catch(StaleProxyException e){
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		this.addBehaviour(new getHarbourSetup(this,this.harbourMaster));
 

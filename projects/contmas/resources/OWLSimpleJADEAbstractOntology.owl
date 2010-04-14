@@ -6,6 +6,9 @@
     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
   xml:base="http://jade.cselt.it/beangenerator">
   <owl:Ontology rdf:about="">
+    <rdfs:isDefinedBy rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Chris van Aart</rdfs:isDefinedBy>
+    <rdfs:seeAlso rdf:resource="http://gaper.swi.psy.uva.nl/beangenerator"/>
     <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >With the beangenerator you can generate java files representing an ontology that can be used within the JADE Toolkit (3.1). The beangenerator is implemented as a plug-in for Protégé (2.1). 
 This version is to be used when generating beans from an OWL ontology.
@@ -31,9 +34,6 @@ This version is to be used when generating beans from an OWL ontology.
  -you (the agents) are ready to go!</rdfs:comment>
     <owl:versionInfo rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >1.0</owl:versionInfo>
-    <rdfs:seeAlso rdf:resource="http://gaper.swi.psy.uva.nl/beangenerator"/>
-    <rdfs:isDefinedBy rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >Chris van Aart</rdfs:isDefinedBy>
   </owl:Ontology>
   <owl:Class rdf:ID="JADE-CLASS">
     <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
@@ -47,17 +47,16 @@ This version is to be used when generating beans from an OWL ontology.
     <rdfs:domain rdf:resource="#JADE-SLOT"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="JADE-JAVA-BASE-CLASS">
+    <rdfs:domain rdf:resource="#JADE-CLASS"/>
     <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
-    <rdfs:domain rdf:resource="#JADE-CLASS"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="JADE-IGNORE">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
     <rdfs:domain rdf:resource="#JADE-CLASS"/>
     <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="JADE-NAME">
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
     <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
     <rdfs:domain>
       <owl:Class>
@@ -67,11 +66,12 @@ This version is to be used when generating beans from an OWL ontology.
         </owl:unionOf>
       </owl:Class>
     </rdfs:domain>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="JADE-JAVA-CODE">
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
-    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
     <rdfs:domain rdf:resource="#JADE-CLASS"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
   </owl:FunctionalProperty>
   <p1:JADE-CLASS rdf:ID="Concept">
     <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
@@ -87,9 +87,9 @@ This version is to be used when generating beans from an OWL ontology.
     >The common ancestor for all predicates in an ontology (e.g. FatherOf...).</rdfs:comment>
   </p1:JADE-CLASS>
   <p1:JADE-CLASS rdf:ID="AID">
+    <rdfs:subClassOf rdf:resource="#Concept"/>
     <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Agent IDentifier.</rdfs:comment>
-    <rdfs:subClassOf rdf:resource="#Concept"/>
   </p1:JADE-CLASS>
 </rdf:RDF>
 

@@ -79,6 +79,11 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JButton ButtonSetHabitat=null;
 	private JButton ButtonAddCapability=null;
 	private JButton ButtonCapabilityRemove=null;
+	private JButton buttonLoadBayMap=null;
+	private JCheckBox loadCheckBox=null;
+	private LoadBayMapFrame dialog=new LoadBayMapFrame();
+	protected BayMap loadedBayMap;
+	private JButton jButton=null;
 
 	/**
 	 * This is the default constructor
@@ -117,11 +122,16 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 					ge.addParameter(ControlGUI.this.populateCheckBox.isSelected());
 					ge.addParameter(ControlGUI.this.TFShipLength.getText());
 					ge.addParameter(((AgentClassElement) ControlGUI.this.getAgentType().getSelectedItem()).getAgentClass());
+					ge.addParameter(ControlGUI.this.loadedBayMap);
 					if(((DefaultListModel) ControlGUI.this.getHabitatList().getModel()).toArray().length == 1){
 						ge.addParameter(((DefaultListModel) ControlGUI.this.getHabitatList().getModel()).toArray()[0]);
+					}else{
+						ge.addParameter(null);
 					}
 					if(((DefaultListModel) ControlGUI.this.getCapabilitiesList().getModel()).toArray().length > 0){
 						ge.addParameter(((DefaultListModel) ControlGUI.this.getCapabilitiesList().getModel()).toArray());
+					}else{
+						ge.addParameter(null);
 					}
 					ControlGUI.this.myAgent.postGuiEvent(ge);
 				}
@@ -204,6 +214,9 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 			this.jContentPane.add(this.getButtonSetHabitat(),null);
 			this.jContentPane.add(this.getButtonAddCapability(),null);
 			this.jContentPane.add(this.getButtonCapabilityRemove(),null);
+			this.jContentPane.add(this.getButtonLoadBayMap(),null);
+			this.jContentPane.add(this.getLoadCheckBox(),null);
+			this.jContentPane.add(this.getJButton(),null);
 			this.jContentPane.add(this.AgentLabelLength,null);
 			this.jContentPane.add(this.Heading,null);
 			this.jContentPane.add(this.AgentLabelName,null);
@@ -769,6 +782,64 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 				}
 			}
 		}
+	}
+
+	/**
+	 * This method initializes buttonLoadBayMap	
+	 * 	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getButtonLoadBayMap(){
+		if(this.buttonLoadBayMap == null){
+			this.buttonLoadBayMap=new JButton();
+			this.buttonLoadBayMap.setBounds(new Rectangle(169,96,62,22));
+			this.buttonLoadBayMap.setText("Load");
+			this.buttonLoadBayMap.addActionListener(new java.awt.event.ActionListener(){
+				public void actionPerformed(java.awt.event.ActionEvent e){
+					ControlGUI.this.dialog.setVisible(true);
+					BayMap chosenBayMap=ControlGUI.this.dialog.getChosenBayMap();
+					if(chosenBayMap != null){
+						ControlGUI.this.loadedBayMap=chosenBayMap;
+						ControlGUI.this.getLoadCheckBox().setSelected(true);
+					}
+				}
+			});
+		}
+		return this.buttonLoadBayMap;
+	}
+
+	/**
+	 * This method initializes loadCheckBox	
+	 * 	
+	 * @return javax.swing.JCheckBox	
+	 */
+	private JCheckBox getLoadCheckBox(){
+		if(this.loadCheckBox == null){
+			this.loadCheckBox=new JCheckBox();
+			this.loadCheckBox.setBounds(new Rectangle(146,96,21,21));
+			this.loadCheckBox.addChangeListener(new javax.swing.event.ChangeListener(){
+				public void stateChanged(javax.swing.event.ChangeEvent e){
+					if( !((JCheckBox) e.getSource()).isSelected()){ //checkbox unchecked, so purge the maybe-obtained baymap
+						ControlGUI.this.loadedBayMap=null;
+					}
+				}
+			});
+		}
+		return this.loadCheckBox;
+	}
+
+	/**
+	 * This method initializes jButton	
+	 * 	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getJButton(){
+		if(this.jButton == null){
+			this.jButton=new JButton();
+			this.jButton.setBounds(new Rectangle(438,37,200,21));
+			this.jButton.setText("export ontRep >");
+		}
+		return this.jButton;
 	}
 
 } //  @jve:decl-index=0:visual-constraint="30,15"

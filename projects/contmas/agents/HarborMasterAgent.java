@@ -31,15 +31,13 @@ public class HarborMasterAgent extends ContainerAgent implements OntRepProvider,
 	private HarbourSetup harbourSetup=null;
 
 	private HarbourSetup getHarbourSetup(){
-		String[] args=(String[]) getArguments();
-		if(harbourSetup==null){
-			harbourSetup=HarbourSetup.getInstance(args[0]);
-//			harbourSetup=HarbourSetup.getInstance("");
-
+		String[] args=(String[]) this.getArguments();
+		if(this.harbourSetup == null){
+			this.harbourSetup=HarbourSetup.getInstance(args[0]);
 		}
-		return harbourSetup;
+		return this.harbourSetup;
 	}
-	
+
 	public boolean isAlreadyCached(String lookForAgent){
 		if(this.activeContainerHolders.get(lookForAgent) != null){
 			return true;

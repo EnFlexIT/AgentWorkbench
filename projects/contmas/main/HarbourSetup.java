@@ -24,8 +24,6 @@ import jade.util.leap.Iterator;
 
 import java.util.List;
 
-import javax.management.InstanceAlreadyExistsException;
-
 import com.hp.hpl.jena.rdf.model.Resource;
 
 import contmas.ontology.ContainerHolder;
@@ -47,9 +45,9 @@ public final class HarbourSetup{
 	 * 
 	 */
 	private HarbourSetup(String workingDir){
-		final String individualFileName=workingDir+"resources\\Container-Ontologie-OWL_indiv.owl";
-		final String structureFileName=workingDir+"resources\\Container-Ontologie-OWL.owl";
-		final String ontologyGeneratorFileName=workingDir+"resources\\OWLSimpleJADEAbstractOntology.owl";
+		final String individualFileName=workingDir + "resources\\Container-Ontologie-OWL_indiv.owl";
+		final String structureFileName=workingDir + "resources\\Container-Ontologie-OWL.owl";
+		final String ontologyGeneratorFileName=workingDir + "resources\\OWLSimpleJADEAbstractOntology.owl";
 
 		String ontologyJavaPackage=this.getClass().getPackage().getName();
 		ontologyJavaPackage=ontologyJavaPackage.substring(0,ontologyJavaPackage.lastIndexOf(".")) + ".ontology";
@@ -59,10 +57,10 @@ public final class HarbourSetup{
 	}
 
 	public static HarbourSetup getInstance(String workingDirectory){
-		if(instance==null ){
-			instance=new HarbourSetup(workingDirectory);
+		if(HarbourSetup.instance == null){
+			HarbourSetup.instance=new HarbourSetup(workingDirectory);
 		}
-		return instance;
+		return HarbourSetup.instance;
 	}
 
 	public static void addSub(Domain master,Domain sub){
