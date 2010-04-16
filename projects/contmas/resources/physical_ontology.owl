@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<rdf:RDF
+    xmlns:j0="http://jade.cselt.it/beangenerator#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:protege="http://protege.stanford.edu/plugins/owl/protege#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns="http://www.owl-ontologies.com/physical_ontology.owl#"
+  xml:base="http://www.owl-ontologies.com/physical_ontology.owl">
+  <owl:Ontology rdf:about="">
+    <owl:imports rdf:resource="http://jade.cselt.it/beangenerator"/>
+  </owl:Ontology>
+  <owl:FunctionalProperty rdf:ID="x_dimension">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    <rdfs:domain>
+      <j0:JADE-CLASS rdf:ID="Position">
+        <rdfs:subClassOf rdf:resource="http://jade.cselt.it/beangenerator#Concept"/>
+      </j0:JADE-CLASS>
+    </rdfs:domain>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+  </owl:FunctionalProperty>
+  <owl:FunctionalProperty rdf:ID="y_dimension">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    <rdfs:domain rdf:resource="#Position"/>
+  </owl:FunctionalProperty>
+  <owl:FunctionalProperty rdf:ID="z_dimension">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    <rdfs:domain rdf:resource="#Position"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+  </owl:FunctionalProperty>
+</rdf:RDF>
+
+<!-- Created with Protege (with OWL Plugin 3.3.1, Build 430)  http://protege.stanford.edu -->

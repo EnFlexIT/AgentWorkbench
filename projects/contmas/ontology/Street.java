@@ -1,16 +1,14 @@
 package contmas.ontology;
 
+import jade.content.*;
+import jade.util.leap.*;
+import jade.core.*;
 
 /**
 * Protege name: Street
 * @author ontology bean generator
-* @version 2010/04/12, 23:13:31
+* @version 2010/04/16, 17:21:33
 */
-public class Street extends Domain{
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID= -7056845917581090694L;
+public class Street extends Domain{ 
 
 }

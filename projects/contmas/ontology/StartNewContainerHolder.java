@@ -1,68 +1,59 @@
 package contmas.ontology;
 
-import jade.content.AgentAction;
+
+import jade.content.*;
+import jade.util.leap.*;
+import jade.core.*;
 
 /**
 * Protege name: StartNewContainerHolder
 * @author ontology bean generator
-* @version 2010/04/12, 23:13:31
+* @version 2010/04/16, 17:21:35
 */
-public class StartNewContainerHolder implements AgentAction{
+public class StartNewContainerHolder implements AgentAction {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID= -6559804446687878541L;
-	/**
-	* Protege name: randomize
-	   */
-	private boolean randomize;
+   /**
+* Protege name: randomize
+   */
+   private boolean randomize;
+   public void setRandomize(boolean value) { 
+    this.randomize=value;
+   }
+   public boolean getRandomize() {
+     return this.randomize;
+   }
 
-	public void setRandomize(boolean value){
-		this.randomize=value;
-	}
+   /**
+* Protege name: name
+   */
+   private String name;
+   public void setName(String value) { 
+    this.name=value;
+   }
+   public String getName() {
+     return this.name;
+   }
 
-	public boolean getRandomize(){
-		return this.randomize;
-	}
+   /**
+* Protege name: populate
+   */
+   private boolean populate;
+   public void setPopulate(boolean value) { 
+    this.populate=value;
+   }
+   public boolean getPopulate() {
+     return this.populate;
+   }
 
-	/**
-	* Protege name: populate
-	*/
-	private boolean populate;
-
-	public void setPopulate(boolean value){
-		this.populate=value;
-	}
-
-	public boolean getPopulate(){
-		return this.populate;
-	}
-
-	/**
-	* Protege name: to_be_added
-	*/
-	private ContainerHolder to_be_added;
-
-	public void setTo_be_added(ContainerHolder value){
-		this.to_be_added=value;
-	}
-
-	public ContainerHolder getTo_be_added(){
-		return this.to_be_added;
-	}
-
-	/**
-	* Protege name: name
-	*/
-	private String name;
-
-	public void setName(String value){
-		this.name=value;
-	}
-
-	public String getName(){
-		return this.name;
-	}
+   /**
+* Protege name: to_be_added
+   */
+   private ContainerHolder to_be_added;
+   public void setTo_be_added(ContainerHolder value) { 
+    this.to_be_added=value;
+   }
+   public ContainerHolder getTo_be_added() {
+     return this.to_be_added;
+   }
 
 }

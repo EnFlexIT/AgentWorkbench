@@ -1,28 +1,25 @@
 package contmas.ontology;
 
+import jade.content.*;
+import jade.util.leap.*;
+import jade.core.*;
 
 /**
 * Protege name: Ship
 * @author ontology bean generator
-* @version 2010/04/12, 23:13:31
+* @version 2010/04/16, 17:21:35
 */
-public class Ship extends StaticContainerHolder{
+public class Ship extends StaticContainerHolder{ 
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID= -2726135368196508077L;
-	/**
-	* Protege name: length
-	   */
-	private float length;
-
-	public void setLength(float value){
-		this.length=value;
-	}
-
-	public float getLength(){
-		return this.length;
-	}
+   /**
+* Protege name: ship_length
+   */
+   private float ship_length;
+   public void setShip_length(float value) { 
+    this.ship_length=value;
+   }
+   public float getShip_length() {
+     return this.ship_length;
+   }
 
 }

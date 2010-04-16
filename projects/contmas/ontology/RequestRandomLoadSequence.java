@@ -1,29 +1,26 @@
 package contmas.ontology;
 
-import jade.content.AgentAction;
+
+import jade.content.*;
+import jade.util.leap.*;
+import jade.core.*;
 
 /**
 * Protege name: RequestRandomLoadSequence
 * @author ontology bean generator
-* @version 2010/04/12, 23:13:31
+* @version 2010/04/16, 17:21:35
 */
-public class RequestRandomLoadSequence implements AgentAction{
+public class RequestRandomLoadSequence implements AgentAction {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID= -6862984917307693932L;
-	/**
-	* Protege name: provides
-	   */
-	private BayMap provides;
-
-	public void setProvides(BayMap value){
-		this.provides=value;
-	}
-
-	public BayMap getProvides(){
-		return this.provides;
-	}
+   /**
+* Protege name: provides
+   */
+   private BayMap provides;
+   public void setProvides(BayMap value) { 
+    this.provides=value;
+   }
+   public BayMap getProvides() {
+     return this.provides;
+   }
 
 }

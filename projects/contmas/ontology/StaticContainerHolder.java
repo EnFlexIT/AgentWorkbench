@@ -1,16 +1,14 @@
 package contmas.ontology;
 
+import jade.content.*;
+import jade.util.leap.*;
+import jade.core.*;
 
 /**
 * Protege name: StaticContainerHolder
 * @author ontology bean generator
-* @version 2010/04/12, 23:13:31
+* @version 2010/04/16, 17:21:35
 */
-public class StaticContainerHolder extends ContainerHolder{
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID= -8886488223831991931L;
+public class StaticContainerHolder extends ContainerHolder{ 
 
 }

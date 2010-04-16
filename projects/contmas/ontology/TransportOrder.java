@@ -1,55 +1,48 @@
 package contmas.ontology;
 
-import jade.content.Concept;
+
+import jade.content.*;
+import jade.util.leap.*;
+import jade.core.*;
 
 /**
 * Protege name: TransportOrder
 * @author ontology bean generator
-* @version 2010/04/12, 23:13:31
+* @version 2010/04/16, 17:21:34
 */
-public class TransportOrder implements Concept{
+public class TransportOrder implements Concept {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID=4648227166113507592L;
-	/**
-	* Protege name: takes
-	   */
-	private float takes;
+   /**
+* Protege name: starts_at
+   */
+   private Designator starts_at;
+   public void setStarts_at(Designator value) { 
+    this.starts_at=value;
+   }
+   public Designator getStarts_at() {
+     return this.starts_at;
+   }
 
-	public void setTakes(float value){
-		this.takes=value;
-	}
+   /**
+* Protege name: ends_at
+   */
+   private Designator ends_at;
+   public void setEnds_at(Designator value) { 
+    this.ends_at=value;
+   }
+   public Designator getEnds_at() {
+     return this.ends_at;
+   }
 
-	public float getTakes(){
-		return this.takes;
-	}
-
-	/**
-	* Protege name: starts_at
-	*/
-	private Designator starts_at;
-
-	public void setStarts_at(Designator value){
-		this.starts_at=value;
-	}
-
-	public Designator getStarts_at(){
-		return this.starts_at;
-	}
-
-	/**
-	* Protege name: ends_at
-	*/
-	private Designator ends_at;
-
-	public void setEnds_at(Designator value){
-		this.ends_at=value;
-	}
-
-	public Designator getEnds_at(){
-		return this.ends_at;
-	}
+   /**
+* Protege name: takes
+   */
+   private float takes;
+   public void setTakes(float value) { 
+    this.takes=value;
+   }
+   public float getTakes() {
+     return this.takes;
+   }
 
 }

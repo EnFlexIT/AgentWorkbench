@@ -68,24 +68,34 @@ public class OWLImportMapper{
 		}
 
 		curModel.read(in,"");
+//		curModel.get
 		return curModel;
 	}
 
 	public void setStructureFile(String inputFileName){
 		OntModel structureModel=this.readModel(inputFileName);
 		this.structureNS=structureModel.getNsPrefixMap().get(""); //set URI of current ontology as namespace URI with blank prefix
+		System.out.println("structureNS: "+structureNS);
 		this.model.addSubModel(structureModel,true);
 	}
 
 	protected void setIndividualsFile(String inputFileName){
 		OntModel individualModel=this.readModel(inputFileName);
 		this.individualNS=individualModel.getNsPrefixMap().get(""); //set URI of current ontology as namespace URI with blank prefix
+		System.out.println("individualNS: "+individualNS);
 		this.model=individualModel;
 	}
 
 	public void setBeanGeneratorFile(String inputFileName){
 		OntModel beanGenModel=this.readModel(inputFileName);
-		this.model.addSubModel(beanGenModel,true);;
+		this.model.addSubModel(beanGenModel,true);
+		this.model.addLoadedImport(beanGenModel.getNsPrefixMap().get(""));
+	}
+	
+	public void addSubOntology(String inputFileName){
+		OntModel subModel=this.readModel(inputFileName);
+		this.model.addSubModel(subModel,true);
+		this.model.addLoadedImport(subModel.getNsPrefixMap().get(""));
 	}
 
 	public Model getModel(){
@@ -200,17 +210,18 @@ public class OWLImportMapper{
 		Iterator<Entry<OntProperty, List<RDFNode>>> iter=properties.entrySet().iterator();
 		while(iter.hasNext()){
 			Entry<OntProperty, List<RDFNode>> entry=iter.next();
-			String prefix=SET;
+			String action=SET;
 
 			if(entry.getKey().canAs(FunctionalProperty.class)){
-				prefix=SET;
+				action=SET;
 			}else{
-				prefix=ADD;
+				action=ADD;
 			}
 			Iterator<RDFNode> valIter=entry.getValue().iterator();
 			try{
 				Class<?> claas=OWLImportMapper.convertClass(this.getClassOfProperty(entry));
-				Method setter=on.getClass().getMethod(prefix + OWLImportMapper.capitalStart(entry.getKey().getLocalName()),claas);
+				String propertyName=getJavaName(entry.getKey());
+				Method setter=on.getClass().getMethod(action + propertyName,claas);
 				while(valIter.hasNext()){
 					RDFNode node=valIter.next();
 					if(node.isLiteral()){
@@ -298,10 +309,19 @@ public class OWLImportMapper{
 		return subConcepts;
 	}
 
-	protected Class<?> mapResourceAsClass(Resource toBeMapped){
+	protected String getJavaName(Resource toBeMapped){
 		String resourceName=toBeMapped.getLocalName();
+		String ns=toBeMapped.getNameSpace();
+//		System.out.println("getJavaClassName "+toBeMapped+" ns: "+ns);
+		if(!ns.equals(structureNS)){
+			resourceName= model.getNsURIPrefix(ns)+"_"+resourceName;
+		}
+		return OWLImportMapper.capitalStart(resourceName);
+	}
+	
+	protected Class<?> mapResourceAsClass(Resource toBeMapped){
 		try{
-			Class<?> conceptClass=Class.forName(this.ontologyJavaPackage + "." + OWLImportMapper.capitalStart(resourceName));
+			Class<?> conceptClass=Class.forName(this.ontologyJavaPackage + "." + getJavaName(toBeMapped));
 			return conceptClass;
 		}catch(ClassNotFoundException e){
 			// TODO Auto-generated catch block

@@ -150,7 +150,7 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 					}
 				}
 				if(ontologyRepresentation instanceof Ship){
-					((Ship) ontologyRepresentation).setLength(Float.parseFloat(ev.getParameter(6).toString()));
+					((Ship) ontologyRepresentation).setShip_length(Float.parseFloat(ev.getParameter(6).toString()));
 				}
 				DomainOntologyElement habitat=((DomainOntologyElement) ev.getParameter(9));
 				ontologyRepresentation.setLives_in(habitat.getDomain());

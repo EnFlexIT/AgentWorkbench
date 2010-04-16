@@ -1,16 +1,14 @@
 package contmas.ontology;
 
+import jade.content.*;
+import jade.util.leap.*;
+import jade.core.*;
 
 /**
 * Protege name: YardArea
 * @author ontology bean generator
-* @version 2010/04/12, 23:13:31
+* @version 2010/04/16, 17:21:34
 */
-public class YardArea extends Domain{
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID= -1989747922687190216L;
+public class YardArea extends Domain{ 
 
 }

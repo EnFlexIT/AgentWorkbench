@@ -55,7 +55,7 @@ public class enrollAtHarbor extends AchieveREInitiator{
 	protected Vector<ACLMessage> prepareRequests(ACLMessage request){
 		request.addReceiver(this.mySAgent.getHarborManager());
 		EnrollAtHarbor act=new EnrollAtHarbor();
-		act.setShip_length(((Ship) this.mySAgent.getOntologyRepresentation()).getLength());
+		act.setShip_length(((Ship) this.mySAgent.getOntologyRepresentation()).getShip_length());
 		((ContainerAgent) this.myAgent).fillMessage(request,act);
 
 		Vector<ACLMessage> messages=new Vector<ACLMessage>();

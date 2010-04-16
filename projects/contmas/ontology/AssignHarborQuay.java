@@ -1,63 +1,47 @@
 package contmas.ontology;
 
-import jade.content.AgentAction;
-import jade.core.AID;
-import jade.util.leap.ArrayList;
-import jade.util.leap.Iterator;
-import jade.util.leap.List;
+
+import jade.content.*;
+import jade.util.leap.*;
+import jade.core.*;
 
 /**
 * Protege name: AssignHarborQuay
 * @author ontology bean generator
-* @version 2010/04/12, 23:13:31
+* @version 2010/04/16, 17:21:35
 */
-public class AssignHarborQuay implements AgentAction{
+public class AssignHarborQuay implements AgentAction {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID=1952149312666441386L;
-	/**
-	* Protege name: assigned_quay
-	   */
-	private Quay assigned_quay;
+   /**
+* Protege name: available_cranes
+   */
+   private List available_cranes = new ArrayList();
+   public void addAvailable_cranes(AID elem) { 
+     List oldList = this.available_cranes;
+     available_cranes.add(elem);
+   }
+   public boolean removeAvailable_cranes(AID elem) {
+     List oldList = this.available_cranes;
+     boolean result = available_cranes.remove(elem);
+     return result;
+   }
+   public void clearAllAvailable_cranes() {
+     List oldList = this.available_cranes;
+     available_cranes.clear();
+   }
+   public Iterator getAllAvailable_cranes() {return available_cranes.iterator(); }
+   public List getAvailable_cranes() {return available_cranes; }
+   public void setAvailable_cranes(List l) {available_cranes = l; }
 
-	public void setAssigned_quay(Quay value){
-		this.assigned_quay=value;
-	}
-
-	public Quay getAssigned_quay(){
-		return this.assigned_quay;
-	}
-
-	/**
-	* Protege name: available_cranes
-	*/
-	private List available_cranes=new ArrayList();
-
-	public void addAvailable_cranes(AID elem){
-		this.available_cranes.add(elem);
-	}
-
-	public boolean removeAvailable_cranes(AID elem){
-		boolean result=this.available_cranes.remove(elem);
-		return result;
-	}
-
-	public void clearAllAvailable_cranes(){
-		this.available_cranes.clear();
-	}
-
-	public Iterator getAllAvailable_cranes(){
-		return this.available_cranes.iterator();
-	}
-
-	public List getAvailable_cranes(){
-		return this.available_cranes;
-	}
-
-	public void setAvailable_cranes(List l){
-		this.available_cranes=l;
-	}
+   /**
+* Protege name: assigned_quay
+   */
+   private Quay assigned_quay;
+   public void setAssigned_quay(Quay value) { 
+    this.assigned_quay=value;
+   }
+   public Quay getAssigned_quay() {
+     return this.assigned_quay;
+   }
 
 }

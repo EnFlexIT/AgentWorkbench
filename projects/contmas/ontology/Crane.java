@@ -1,16 +1,14 @@
 package contmas.ontology;
 
+import jade.content.*;
+import jade.util.leap.*;
+import jade.core.*;
 
 /**
 * Protege name: Crane
 * @author ontology bean generator
-* @version 2010/04/12, 23:13:31
+* @version 2010/04/16, 17:21:35
 */
-public class Crane extends ActiveContainerHolder{
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID= -6097101123513087095L;
+public class Crane extends ActiveContainerHolder{ 
 
 }

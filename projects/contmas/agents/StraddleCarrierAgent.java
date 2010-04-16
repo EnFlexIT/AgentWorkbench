@@ -22,8 +22,8 @@ package contmas.agents;
 
 import contmas.behaviours.receiveLoadOrders;
 import contmas.behaviours.unload;
-import contmas.ontology.StraddleCarrier;
-import contmas.ontology.YardArea;
+import contmas.main.UncompatibleDimensionsException;
+import contmas.ontology.*;
 
 /**
  * @author Hanno - Felix Wagner
@@ -70,5 +70,59 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 		super.setup();
 		this.handleTransportOrder();
 		this.offerTransportOrder();
+		echoStatus("my current relative position: "+positionToString(getRelativePosition()));
+		echoStatus("my current absolute position: "+positionToString(getAbsolutePosition()));
+
+	}
+
+	public String positionToString(Phy_Position in){
+		String out="";
+		out+="x=";
+		out+=in.getPhy_x_dimension();
+		out+="; y=";
+		out+=in.getPhy_y_dimension();
+		return out;
+	}
+
+	public Phy_Position getAbsolutePosition(){
+		Phy_Position relPosition=getRelativePosition();
+		Phy_Position positionOfHabitat=this.getOntologyRepresentation().getLives_in().getIs_in_position();
+		Phy_Position absPosition=null;
+		try{
+			absPosition=calculateAbsolutePosition((Phy_Position)positionOfHabitat,(Phy_Position)relPosition);
+		}catch(UncompatibleDimensionsException e){
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return absPosition;
+	}
+
+	public Phy_Position getRelativePosition(){
+		Phy_Position position=(Phy_Position) this.getOntologyRepresentation().getIs_in_position2();
+		return position;
+	}
+/*
+	public P1_Size getSize(){
+		P1_Size size=this.getOntologyRepresentation().getHas_size();
+		return size;
+	}
+*/
+	public static Phy_Position calculateAbsolutePosition(Phy_Position master,Phy_Position slave) throws UncompatibleDimensionsException{
+		Phy_Position absPosition=new Phy_Position();
+		if(master instanceof Phy_Position){
+			absPosition=new Phy_Position();
+			if(slave instanceof Phy_Position){
+				((Phy_Position) absPosition).setPhy_z_dimension(((Phy_Position) master).getPhy_z_dimension() + ((Phy_Position) slave).getPhy_z_dimension());
+			}else{
+				((Phy_Position) absPosition).setPhy_z_dimension(((Phy_Position) master).getPhy_z_dimension() + 0);
+
+			}
+		}else if(slave instanceof Phy_Position){ //3d position in a 2d environment
+			throw new UncompatibleDimensionsException();
+		}
+		absPosition.setPhy_x_dimension(master.getPhy_x_dimension() + slave.getPhy_x_dimension());
+		absPosition.setPhy_y_dimension(master.getPhy_y_dimension() + slave.getPhy_y_dimension());
+
+		return absPosition;
 	}
 }

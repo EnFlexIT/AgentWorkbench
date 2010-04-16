@@ -48,12 +48,18 @@ public final class HarbourSetup{
 		final String individualFileName=workingDir + "resources\\Container-Ontologie-OWL_indiv.owl";
 		final String structureFileName=workingDir + "resources\\Container-Ontologie-OWL.owl";
 		final String ontologyGeneratorFileName=workingDir + "resources\\OWLSimpleJADEAbstractOntology.owl";
+		final String physicalOntologyFileName=workingDir + "resources\\physical_ontology.owl";
 
+		
 		String ontologyJavaPackage=this.getClass().getPackage().getName();
 		ontologyJavaPackage=ontologyJavaPackage.substring(0,ontologyJavaPackage.lastIndexOf(".")) + ".ontology";
 		this.mapper=new OWLImportMapper(individualFileName,ontologyJavaPackage);
 		this.mapper.setStructureFile(structureFileName);
 		this.mapper.setBeanGeneratorFile(ontologyGeneratorFileName);
+//		this.mapper.printNSPrefixMap();
+
+		this.mapper.addSubOntology(physicalOntologyFileName);
+//		this.mapper.printNSPrefixMap();
 	}
 
 	public static HarbourSetup getInstance(String workingDirectory){
