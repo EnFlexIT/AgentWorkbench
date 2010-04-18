@@ -796,6 +796,8 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 			this.buttonLoadBayMap.setText("Load");
 			this.buttonLoadBayMap.addActionListener(new java.awt.event.ActionListener(){
 				public void actionPerformed(java.awt.event.ActionEvent e){
+					System.out.println("cwd="+myAgent.getWorkingDir());
+					ControlGUI.this.dialog.setWorkingDir(myAgent.getWorkingDir());
 					ControlGUI.this.dialog.setVisible(true);
 					BayMap chosenBayMap=ControlGUI.this.dialog.getChosenBayMap();
 					if(chosenBayMap != null){

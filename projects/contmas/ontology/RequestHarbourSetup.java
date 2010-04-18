@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: RequestHarbourSetup
 * @author ontology bean generator
-* @version 2010/04/16, 17:21:35
+* @version 2010/04/18, 11:36:17
 */
 public class RequestHarbourSetup implements AgentAction {
 

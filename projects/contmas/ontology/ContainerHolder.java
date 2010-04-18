@@ -7,9 +7,20 @@ import jade.core.*;
 /**
 * Protege name: ContainerHolder
 * @author ontology bean generator
-* @version 2010/04/16, 17:21:35
+* @version 2010/04/18, 11:36:17
 */
 public class ContainerHolder extends AID{ 
+
+   /**
+* Protege name: localName
+   */
+   private String localName;
+   public void setLocalName(String value) { 
+    this.localName=value;
+   }
+   public String getLocalName() {
+     return this.localName;
+   }
 
    /**
 * Protege name: contractors
@@ -33,25 +44,25 @@ public class ContainerHolder extends AID{
    public void setContractors(List l) {contractors = l; }
 
    /**
-* Protege name: service_type
+* Protege name: contains
    */
-   private String service_type;
-   public void setService_type(String value) { 
-    this.service_type=value;
+   private BayMap contains;
+   public void setContains(BayMap value) { 
+    this.contains=value;
    }
-   public String getService_type() {
-     return this.service_type;
+   public BayMap getContains() {
+     return this.contains;
    }
 
    /**
-* Protege name: is_in_position2
+* Protege name: lives_in
    */
-   private Phy_Position is_in_position2;
-   public void setIs_in_position2(Phy_Position value) { 
-    this.is_in_position2=value;
+   private Domain lives_in;
+   public void setLives_in(Domain value) { 
+    this.lives_in=value;
    }
-   public Phy_Position getIs_in_position2() {
-     return this.is_in_position2;
+   public Domain getLives_in() {
+     return this.lives_in;
    }
 
    /**
@@ -76,36 +87,25 @@ public class ContainerHolder extends AID{
    public void setContainer_states(List l) {container_states = l; }
 
    /**
-* Protege name: localName
+* Protege name: service_type
    */
-   private String localName;
-   public void setLocalName(String value) { 
-    this.localName=value;
+   private String service_type;
+   public void setService_type(String value) { 
+    this.service_type=value;
    }
-   public String getLocalName() {
-     return this.localName;
+   public String getService_type() {
+     return this.service_type;
    }
 
    /**
-* Protege name: lives_in
+* Protege name: is_in_position2
    */
-   private Domain lives_in;
-   public void setLives_in(Domain value) { 
-    this.lives_in=value;
+   private Phy_Position is_in_position2;
+   public void setIs_in_position2(Phy_Position value) { 
+    this.is_in_position2=value;
    }
-   public Domain getLives_in() {
-     return this.lives_in;
-   }
-
-   /**
-* Protege name: contains
-   */
-   private BayMap contains;
-   public void setContains(BayMap value) { 
-    this.contains=value;
-   }
-   public BayMap getContains() {
-     return this.contains;
+   public Phy_Position getIs_in_position2() {
+     return this.is_in_position2;
    }
 
 }

@@ -75,14 +75,14 @@ public class OWLImportMapper{
 	public void setStructureFile(String inputFileName){
 		OntModel structureModel=this.readModel(inputFileName);
 		this.structureNS=structureModel.getNsPrefixMap().get(""); //set URI of current ontology as namespace URI with blank prefix
-		System.out.println("structureNS: "+structureNS);
+//		System.out.println("structureNS: "+structureNS);
 		this.model.addSubModel(structureModel,true);
 	}
 
 	protected void setIndividualsFile(String inputFileName){
 		OntModel individualModel=this.readModel(inputFileName);
 		this.individualNS=individualModel.getNsPrefixMap().get(""); //set URI of current ontology as namespace URI with blank prefix
-		System.out.println("individualNS: "+individualNS);
+//		System.out.println("individualNS: "+individualNS);
 		this.model=individualModel;
 	}
 
@@ -164,6 +164,7 @@ public class OWLImportMapper{
 	}
 
 	protected HashMap<OntProperty, List<RDFNode>> getPropertiesOf(Individual indiv){
+//		System.out.println("getPropertiesOf "+indiv);
 		HashMap<OntProperty, List<RDFNode>> properties=new HashMap<OntProperty, List<RDFNode>>();
 		StmtIterator iter=this.model.listStatements(new SimpleSelector(indiv,null,(RDFNode) null));
 //		StmtIterator iter=indiv.getOntClass().listProperties();
@@ -172,11 +173,21 @@ public class OWLImportMapper{
 		while(iter.hasNext()){
 			Statement stmt=iter.next();
 			Property predicate=stmt.getPredicate();
+//			System.out.print("	"+predicate+"=");
+			/*
+			if( predicate.getLocalName().equals("type")){ //internal ../22-rdf-syntax-ns#type property
+				continue;
+			}
+			*/
+			
 			if( !predicate.canAs(OntProperty.class)){ //internal ../22-rdf-syntax-ns#type property
 				continue;
 			}
+			
 			OntProperty prop=stmt.getPredicate().as(OntProperty.class);
 			RDFNode value=stmt.getObject();
+//			System.out.println(value);
+
 			if(properties.containsKey(prop)){ //one value of this property has already been added, thus creating a list
 				valueList=properties.get(prop);
 			}else{ //property not yet known, create new list
@@ -193,12 +204,11 @@ public class OWLImportMapper{
 		while(iter.hasNext()){
 			Entry<OntProperty, List<RDFNode>> entry=iter.next();
 			System.out.println("OntProperty: " + entry.getKey().getLocalName());
-//			System.out.println("          " + entry.getKey().toString());
 			Iterator<RDFNode> valueIter=entry.getValue().iterator();
 			while(valueIter.hasNext()){
 				RDFNode node=valueIter.next();
-				System.out.println("        Value:    " + node.toString());
-				System.out.println("              isLiteral: " + node.isLiteral());
+				System.out.println("	Value:    " + node.toString());
+				System.out.println("		isLiteral: " + node.isLiteral());
 			}
 		}
 	}
@@ -221,9 +231,12 @@ public class OWLImportMapper{
 			try{
 				Class<?> claas=OWLImportMapper.convertClass(this.getClassOfProperty(entry));
 				String propertyName=getJavaName(entry.getKey());
+//				System.out.println("set property "+propertyName+" as:");
 				Method setter=on.getClass().getMethod(action + propertyName,claas);
 				while(valIter.hasNext()){
 					RDFNode node=valIter.next();
+//					System.out.println("	"+node);
+
 					if(node.isLiteral()){
 						setter.invoke(on,node.as(Literal.class).getValue());
 					}else{
@@ -339,7 +352,9 @@ public class OWLImportMapper{
 	protected Object mapIndividualAsInstance(Individual individual){
 		try{
 			Class<?> of=this.mapResourceAsClass(individual.getRDFType());
-
+			
+//			System.out.println("map Individual "+individual+" as Instance of "+of);
+			
 			String hash=individual.toString();
 			Constructor<?> conceptConstructor=of.getConstructor();
 			Object conceptObject=conceptConstructor.newInstance();

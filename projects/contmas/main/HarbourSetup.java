@@ -48,7 +48,8 @@ public final class HarbourSetup{
 		final String individualFileName=workingDir + "resources\\Container-Ontologie-OWL_indiv.owl";
 		final String structureFileName=workingDir + "resources\\Container-Ontologie-OWL.owl";
 		final String ontologyGeneratorFileName=workingDir + "resources\\OWLSimpleJADEAbstractOntology.owl";
-		final String physicalOntologyFileName=workingDir + "resources\\physical_ontology.owl";
+//		final String physicalOntologyFileName=workingDir + "sma\resources\\physical_ontology.owl";
+		final String physicalOntologyFileName=workingDir + "..\\sma\\resources\\DisplayOntologyOWL.owl";
 
 		
 		String ontologyJavaPackage=this.getClass().getPackage().getName();

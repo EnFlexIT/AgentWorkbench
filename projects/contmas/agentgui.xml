@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <project>
     <projectName>ContMAS</projectName>
-    <projectDescription>Container-Multiagentensystem - Multiagentensytem zur logischen Abbildung eines Containerhafens.
+    <projectDescription>Container-Multiagentensystem - Multiagentensytem zur Emulation eines Containerhafens.
 
 Dieses Projekt beinhaltet Agenten, die die verschiedenen Akteure innerhalb eines Container-Hafens darstellen.
 
-Bislang stehen nur die Agenten für Ship, Crane und AGV zur Verfügung. Der Gesamtfunktionsumfang beschränkt sich darauf, dass ein erzeugtes Ship versucht, alle geladenen Container an die Cranes und diese wiederum an die AGVs abzugeben. Fehlerbehandlung findet nur rudimentär statt.
+Es stehen nur Agenten für Ship, Crane, Apron, StraddleCarrier und Yard zur Verfügung. Ein erzeugtes Ship versucht, alle geladenen Container an die Cranes abzugeben, diese geben sie an Apron, StraddleCarrier und Yard weiter. Fehlerbehandlung findet nur rudimentär statt.
 
-Zum Start muss ein ControlGUIAgent gestartet werden, der einen Simulationsaufbau vornimmt, indem er seinerseits 2 Cranes und 3 AGVs sowie HarbourMaster und RandomGenerator startet. In der sodann angezeigten Oberfläche ControlGUI kann ein Ship mit bestimmten Abmessungen des Laderaums gestartet werden. (Ist eine der Abmessungen 0, wird sich das Ship vom RandomGenerator einen Laderaum zufälliger Größe erzeugen lassen.) Es wird dann vom RandomGenerator seinen Laderaum mit zufällig erzeugten Containern füllen lassen und diese Container zur Entladung ausschreiben.
+Zum Start muss ein ControlGUIAgent gestartet werden, der einen Simulationsaufbau vornimmt, indem er seinerseits 2 Cranes, 1 Apron, 1 StraddleCarrier und 1 Yard sowie HarbourMaster und RandomGenerator startet. In der sodann angezeigten Oberfläche ControlGUI kann ein Ship mit bestimmten Abmessungen des Laderaums gestartet werden. Die Größe kann wahlweise auch zufällig vom RandomGenerator bestimmt werden oder es kann eine vorgefertigte BayMap geladen werden (als .owl-Datei). Wenn die entsprechende Option gewählt ist, wird der Laderaum dann vom RandomGenerator mit zufällig erzeugten Containern gefüllt. Das Schiff schreibt diese Container zur Entladung aus.
 
-Die Abläufe lassen sich am Besten beobachten, wenn vor der Erzeugung des Schiffs ein Sniffer Agent gestartet wird, der alle Cranes und AGVs überwacht. Es gibt weiterhin Debug-Ausgaben in der Sytemkonsole</projectDescription>
+Die Abläufe lassen sich am besten im automatisch erzeugten Sniffer einsehen. Die ControlGUI bietet noch einige weitere Möglichkeiten.</projectDescription>
     <agentConfiguration/>
 </project>

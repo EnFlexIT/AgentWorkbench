@@ -78,9 +78,9 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 	public String positionToString(Phy_Position in){
 		String out="";
 		out+="x=";
-		out+=in.getPhy_x_dimension();
+		out+=in.getPhy_x();
 		out+="; y=";
-		out+=in.getPhy_y_dimension();
+		out+=in.getPhy_y();
 		return out;
 	}
 
@@ -109,19 +109,23 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 */
 	public static Phy_Position calculateAbsolutePosition(Phy_Position master,Phy_Position slave) throws UncompatibleDimensionsException{
 		Phy_Position absPosition=new Phy_Position();
+		/*
 		if(master instanceof Phy_Position){
 			absPosition=new Phy_Position();
+			
 			if(slave instanceof Phy_Position){
 				((Phy_Position) absPosition).setPhy_z_dimension(((Phy_Position) master).getPhy_z_dimension() + ((Phy_Position) slave).getPhy_z_dimension());
 			}else{
 				((Phy_Position) absPosition).setPhy_z_dimension(((Phy_Position) master).getPhy_z_dimension() + 0);
 
 			}
+			
 		}else if(slave instanceof Phy_Position){ //3d position in a 2d environment
 			throw new UncompatibleDimensionsException();
 		}
-		absPosition.setPhy_x_dimension(master.getPhy_x_dimension() + slave.getPhy_x_dimension());
-		absPosition.setPhy_y_dimension(master.getPhy_y_dimension() + slave.getPhy_y_dimension());
+		*/
+		absPosition.setPhy_x(master.getPhy_x() + slave.getPhy_x());
+		absPosition.setPhy_y(master.getPhy_y() + slave.getPhy_y());
 
 		return absPosition;
 	}

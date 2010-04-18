@@ -50,6 +50,7 @@ public class LoadBayMapFrame extends JDialog implements ActionListener{
 	private JButton buttonChooseBayMap=null;
 	private JScrollPane scrollPaneBayMaps=null;
 	private JList listBayMaps=null;
+	protected String workingDir="";
 
 	/**
 	 * This method initializes 
@@ -70,6 +71,10 @@ public class LoadBayMapFrame extends JDialog implements ActionListener{
 		this.setTitle("Load BayMap");
 		this.setContentPane(this.getJPanel());
 
+	}
+	
+	public void setWorkingDir(String workingDir){
+		this.workingDir=workingDir;
 	}
 
 	private OWLImportMapper getMapper(String fileName){
@@ -123,9 +128,8 @@ public class LoadBayMapFrame extends JDialog implements ActionListener{
 
 				public void actionPerformed(java.awt.event.ActionEvent e){
 					final JFileChooser fc=new JFileChooser();
-					final String workingDir="";
-					final String structureFileName=workingDir + "resources\\Container-Ontologie-OWL.owl";
-					final String ontologyGeneratorFileName=workingDir + "resources\\OWLSimpleJADEAbstractOntology.owl";
+					final String structureFileName="resources\\Container-Ontologie-OWL.owl";
+					final String ontologyGeneratorFileName="resources\\OWLSimpleJADEAbstractOntology.owl";
 
 					Integer returnVal=fc.showOpenDialog(LoadBayMapFrame.this.jPanel);
 
@@ -133,8 +137,8 @@ public class LoadBayMapFrame extends JDialog implements ActionListener{
 						File file=fc.getSelectedFile();
 						LoadBayMapFrame.this.getTextFieldFileName().setText(file.getAbsolutePath());
 						OWLImportMapper mapper=LoadBayMapFrame.this.getMapper(file.getAbsolutePath());
-						mapper.setStructureFile(structureFileName);
-						mapper.setBeanGeneratorFile(ontologyGeneratorFileName);
+						mapper.setStructureFile(workingDir + structureFileName);
+						mapper.setBeanGeneratorFile(workingDir + ontologyGeneratorFileName);
 						HashMap<String, Object> allBayMaps=mapper.getNamedMappedIndividualsOf("BayMap");
 						java.util.Iterator<String> iter=allBayMaps.keySet().iterator();
 

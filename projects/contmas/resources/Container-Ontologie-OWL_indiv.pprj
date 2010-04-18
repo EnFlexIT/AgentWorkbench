@@ -1,4 +1,4 @@
-; Fri Apr 16 17:18:40 NZST 2010
+; Sun Apr 18 12:50:21 NZST 2010
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -6,11 +6,11 @@
 ([BROWSER_SLOT_NAMES] of  Property_List
 
 	(properties
-		[Container-Ontologie-OWL_indiv_ProjectKB_Instance_10214]
-		[Container-Ontologie-OWL_indiv_ProjectKB_Instance_10215]
-		[Container-Ontologie-OWL_indiv_ProjectKB_Instance_10216]
-		[Container-Ontologie-OWL_indiv_ProjectKB_Instance_10217]
-		[Container-Ontologie-OWL_indiv_ProjectKB_Instance_10218]))
+		[Container-Ontologie-OWL_indiv_ProjectKB_Instance_83]
+		[Container-Ontologie-OWL_indiv_ProjectKB_Instance_84]
+		[Container-Ontologie-OWL_indiv_ProjectKB_Instance_85]
+		[Container-Ontologie-OWL_indiv_ProjectKB_Instance_86]
+		[Container-Ontologie-OWL_indiv_ProjectKB_Instance_87]))
 
 ([CLSES_TAB] of  Widget
 
@@ -33,31 +33,6 @@
 	(is_hidden TRUE)
 	(property_list [Container-Ontologie-OWL_indiv_ProjectKB_Instance_11])
 	(widget_class_name "edu.stanford.smi.protege.widget.instance_tree.InstanceTreeTab"))
-
-([Container-Ontologie-OWL_indiv_ProjectKB_Instance_10214] of  String
-
-	(name "owl:Thing")
-	(string_value "%3ANAME"))
-
-([Container-Ontologie-OWL_indiv_ProjectKB_Instance_10215] of  String
-
-	(name ":PAL-CONSTRAINT")
-	(string_value "%3APAL-NAME"))
-
-([Container-Ontologie-OWL_indiv_ProjectKB_Instance_10216] of  String
-
-	(name ":INSTANCE-ANNOTATION")
-	(string_value "%3AANNOTATION-TEXT"))
-
-([Container-Ontologie-OWL_indiv_ProjectKB_Instance_10217] of  String
-
-	(name ":META-CLASS")
-	(string_value "%3ANAME"))
-
-([Container-Ontologie-OWL_indiv_ProjectKB_Instance_10218] of  String
-
-	(name "owl:Class")
-	(string_value "%3ANAME"))
 
 ([Container-Ontologie-OWL_indiv_ProjectKB_Instance_11] of  Property_List
 )
@@ -274,6 +249,31 @@
 	(is_hidden TRUE)
 	(property_list [Container-Ontologie-OWL_indiv_ProjectKB_Instance_9])
 	(widget_class_name "ca.uvic.csr.shrimp.jambalaya.JambalayaTab"))
+
+([Container-Ontologie-OWL_indiv_ProjectKB_Instance_83] of  String
+
+	(name "owl:Thing")
+	(string_value "%3ANAME"))
+
+([Container-Ontologie-OWL_indiv_ProjectKB_Instance_84] of  String
+
+	(name ":PAL-CONSTRAINT")
+	(string_value "%3APAL-NAME"))
+
+([Container-Ontologie-OWL_indiv_ProjectKB_Instance_85] of  String
+
+	(name ":INSTANCE-ANNOTATION")
+	(string_value "%3AANNOTATION-TEXT"))
+
+([Container-Ontologie-OWL_indiv_ProjectKB_Instance_86] of  String
+
+	(name ":META-CLASS")
+	(string_value "%3ANAME"))
+
+([Container-Ontologie-OWL_indiv_ProjectKB_Instance_87] of  String
+
+	(name "owl:Class")
+	(string_value "%3ANAME"))
 
 ([Container-Ontologie-OWL_indiv_ProjectKB_Instance_9] of  Property_List
 )

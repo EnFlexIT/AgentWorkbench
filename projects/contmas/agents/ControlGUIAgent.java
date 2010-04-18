@@ -49,6 +49,7 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 		private static final long serialVersionUID=3580181910527477281L;
 		MessageTemplate loggingTemplate=MessageTemplate.MatchTopic(((ControlGUIAgent) this.myAgent).loggingTopic);
 
+		
 		/**
 		 * @param controlGUIAgent
 		 */
@@ -76,6 +77,16 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 		}
 	}
 
+	private String workingDir="";
+
+	public String getWorkingDir(){
+		return workingDir;
+	}
+	
+	public void setWorkingDir(String workingDir){
+		this.workingDir=workingDir;
+	}
+	
 	@Override
 	public void processOntologyRepresentation(ContainerHolder ontRep,AID agent){
 		if((ontRep == null) || (ontRep.getContains() == null)){
@@ -215,6 +226,8 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 		this.myGui.setVisible(true);
 		if(ad.getStandaloneMode() == AgentDesktop.AGENTDESKTOP_STANDALONE){
 			this.myGui.getCanvas().getParent().getParent().getParent().getParent().setSize(this.myGui.getWidth() + 10,this.myGui.getHeight() + 30);
+		} else{
+			this.setWorkingDir("projects\\contmas\\");
 		}
 
 		try{
@@ -236,12 +249,9 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 		try{
 			a=c.createNewAgent("RandomGenerator","contmas.agents.RandomGeneratorAgent",null);
 			a.start();
+			
 			String[] args=new String[1]; //Because of different working directories 
-			if(ad.getStandaloneMode() == AgentDesktop.AGENTDESKTOP_STANDALONE){
-				args[0]="";
-			}else{
-				args[0]="projects\\contmas\\";
-			}
+			args[0]=getWorkingDir();
 
 			a=c.createNewAgent("HarborMaster","contmas.agents.HarborMasterAgent",args);
 			a.start();
