@@ -67,7 +67,6 @@ public class EnvironmentControllerGUI extends JSplitPane {
 	private JTree treeEnvironment = null;
 	private JPanel pnlEnvironment = null;
 	private JButton btnLoadSVG = null;
-	private JButton btnSaveEnvironment = null;
 	private JTextField tfId = null;
 	private JComboBox cbType = null;
 	private JComboBox cbClass = null;
@@ -76,8 +75,7 @@ public class EnvironmentControllerGUI extends JSplitPane {
 	private JLabel lblType = null;
 	private JLabel lblClass = null;
 	private JFileChooser fcLoadSVG = null;
-	private JFileChooser fcSaveEnvironment = null;
-	
+		
 	private Element selectedElement = null;
 	/**
 	 * Style attribute for marking selected elements
@@ -107,11 +105,11 @@ public class EnvironmentControllerGUI extends JSplitPane {
 	 */
 	private void initialize(Project project) {
 		this.controller = new EnvironmentController(project, this);
-        this.setRightComponent(getSplitControlls());
-        this.setLeftComponent(getSvgGUI());
+        this.setLeftComponent(getSplitControlls());
+        this.setRightComponent(getSvgGUI());
         this.addComponentListener(new ComponentAdapter(){
         	public void componentResized(ComponentEvent ce){
-        		setDividerLocation(getWidth()-200);
+        		setDividerLocation(200);
         		splitControlls.setDividerLocation(splitControlls.getHeight()-260);
         	}
         });
@@ -123,9 +121,9 @@ public class EnvironmentControllerGUI extends JSplitPane {
 	}
 
 	/**
-	 * This method initializes pnlTemp	
+	 * This method initializes svgGUI	
 	 * 	
-	 * @return javax.swing.JPanel	
+	 * @return BasicSVGGUI	
 	 */
 	private BasicSVGGUI getSvgGUI() {
 		if (svgGUI == null) {
@@ -135,9 +133,17 @@ public class EnvironmentControllerGUI extends JSplitPane {
 		return svgGUI;
 	}
 	
+	/**
+	 * This method sets the svgDoc
+	 * @param doc SVG Document
+	 */
 	public void setSVGDoc(Document doc){
 		addElementListeners(doc.getDocumentElement());
 		this.getSvgGUI().getCanvas().setDocument(doc);		
+	}
+	
+	public Document getSVGDoc(){
+		return getSvgGUI().getCanvas().getSVGDocument();
 	}
 
 	/**
@@ -321,7 +327,6 @@ public class EnvironmentControllerGUI extends JSplitPane {
 			pnlEnvironment.add(lblType, null);
 			pnlEnvironment.add(lblClass, null);			
 			pnlEnvironment.add(getBtnLoadSVG(), null);
-			pnlEnvironment.add(getBtnSaveEnvironment(), null);
 			pnlEnvironment.add(getTfId());
 			pnlEnvironment.add(getCbType());
 			pnlEnvironment.add(getCbClass());
@@ -340,7 +345,7 @@ public class EnvironmentControllerGUI extends JSplitPane {
 	private JButton getBtnLoadSVG() {
 		if (btnLoadSVG == null) {
 			btnLoadSVG = new JButton();
-			btnLoadSVG.setText(Language.translate("SVG Laden"));
+			btnLoadSVG.setText(Language.translate("SVG zuweisen"));
 			btnLoadSVG.setSize(new Dimension(150, 26));
 			btnLoadSVG.setLocation(new Point(10, 180));
 			btnLoadSVG.addActionListener(new ActionListener(){
@@ -348,7 +353,7 @@ public class EnvironmentControllerGUI extends JSplitPane {
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
 					if(getFcLoadSVG().showOpenDialog(EnvironmentControllerGUI.this) == JFileChooser.APPROVE_OPTION){
-						controller.loadSVG(fcLoadSVG.getSelectedFile(), true);
+						controller.setSVGFile(fcLoadSVG.getSelectedFile());
 						
 						rebuildEnvironmentTree();
 					}					
@@ -392,48 +397,7 @@ public class EnvironmentControllerGUI extends JSplitPane {
 				addElementListeners(children.item(i));
 			}
 		}
-	}
-	
-	
-
-	/**
-	 * This method initializes btnSaveEnvironment	
-	 * 	
-	 * @return javax.swing.JButton	
-	 */
-	private JButton getBtnSaveEnvironment() {
-		if (btnSaveEnvironment == null) {
-			btnSaveEnvironment = new JButton();
-			btnSaveEnvironment.setText(Language.translate("Umgebung speichern"));
-			btnSaveEnvironment.setSize(new Dimension(150, 26));
-			btnSaveEnvironment.setLocation(new Point(10, 215));
-			btnSaveEnvironment.addActionListener(new ActionListener(){
-
-				@Override
-				public void actionPerformed(ActionEvent arg0) {
-					if(getFcSaveEnvironment().showSaveDialog(EnvironmentControllerGUI.this) == JFileChooser.APPROVE_OPTION){
-						String filePath = fcSaveEnvironment.getSelectedFile().getAbsolutePath();
-						// Add extension if necessary
-						if(!filePath.substring(filePath.length()-4).equalsIgnoreCase(".xml")){
-							filePath = filePath+".xml";
-						}
-						controller.saveEnvironment(new File(filePath));
-					}
-				}
-				
-			});
-		}
-		return btnSaveEnvironment;
-	}
-	
-	private JFileChooser getFcSaveEnvironment(){
-		if(fcSaveEnvironment == null){
-			fcSaveEnvironment = new JFileChooser();
-			fcSaveEnvironment.setFileFilter(new FileNameExtensionFilter(Language.translate("XML Dateien"), "xml"));
-			fcSaveEnvironment.setCurrentDirectory(new File(controller.getCurrentProject().getProjectFolderFullPath()+"resources"));
-		}		
-		return fcSaveEnvironment;
-	}
+	}	
 
 	/**
 	 * This method initializes tfId	

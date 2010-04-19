@@ -141,6 +141,7 @@ public class DisplayAgentGUI extends BasicSVGGUI {
 				break;
 				
 				case RECT:
+				case IMAGE:
 					// RECTs use top left coordinates
 					float width = Float.parseFloat(element.getAttributeNS(null, "width"));
 					float height = Float.parseFloat(element.getAttributeNS(null, "height"));

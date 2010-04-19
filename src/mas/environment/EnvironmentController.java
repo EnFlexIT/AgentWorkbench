@@ -61,10 +61,6 @@ public class EnvironmentController{
 	 */
 	private Environment environment;
 	/**
-	 * The SVG document representing the environment
-	 */
-	private Document svgDoc;
-	/**
 	 * The GUI for interacting with this environment controller
 	 */
 	private EnvironmentControllerGUI myGUI;
@@ -80,27 +76,34 @@ public class EnvironmentController{
 	 */
 	public EnvironmentController(Project project, EnvironmentControllerGUI gui){
 		
-		boolean newEnv = false;
+		String svgPath, envPath;
+		
 		this.currentProject = project;
+		currentProject.setEnvironmentController(this);
 		this.myGUI = gui;
 		// Load environment from file if specified
-		if(currentProject.getEnvFile() != null){
-			loadEnvironment(new File(currentProject.getEnvPath()));
-		}else{
-			System.out.println(Language.translate("Keine Umgebungsdatei definiert"));
+		if((envPath = currentProject.getEnvPath()) != null){
+			loadEnvironment(new File(envPath));
+			if(this.environment != null){
+				rebuildObjectHash();
+				
+			}else{
+				System.err.println(Language.translate("Umgebungsdatei")+" "+envPath+" "+Language.translate("nicht gefunden!"));
+			}
 		}
-		if(this.environment == null){
-			newEnv = true;
+		// Load SVG from file if specified
+		if((svgPath = currentProject.getSvgPath()) != null){
+			Document svgDoc = loadSVG(new File(svgPath));
+			if(svgDoc != null){
+				this.setSvgDoc(svgDoc);
+			}else{
+				System.err.println(Language.translate("SVG-Datei")+" "+svgPath+" "+Language.translate("nicht gefunden!"));
+			}
 		}else{
-			currentProject.setEnvironment(this.environment);
+			Language.translate("Keine SVG-Datei definiert");
 		}
 		
-		// Load SVG from file if specified
-		if(currentProject.getSvgFile() != null){
-			loadSVG(new File(currentProject.getSvgPath()), newEnv);
-		}else{
-			System.out.println(Language.translate("Keine SVG-Datei definiert"));
-		}
+		
 		
 	}
 	
@@ -121,11 +124,12 @@ public class EnvironmentController{
 	}
 
 	public Document getSvgDoc() {
-		return svgDoc;
+		return myGUI.getSVGDoc();
 	}
 
 	public void setSvgDoc(Document svgDoc) {
-		this.svgDoc = svgDoc;
+		this.myGUI.setSVGDoc(svgDoc);
+		this.environment.setSvgDoc(svgDoc);
 	}
 
 	public EnvironmentControllerGUI getMyGUI() {
@@ -137,51 +141,42 @@ public class EnvironmentController{
 	}
 	
 	/**
-	 * Loading a new SVG file. If newEnv = true, creating a new Environment from the SVGs root element.
-	 * @param svgFile The file to load the SVG from
-	 * @param newEnv If true, an new environment instance will be created, using the SVG root as main playground
+	 * Sets the projects SVG and environment file paths and copies the SVG to the right folder if necessary
+	 * @param svgFile The SVG file
 	 */
-	public void loadSVG(File svgFile, boolean newEnv){
+	public void setSVGFile(File svgFile){
+		// Copy to the default folder if necessary
+		if(!(svgFile.getParent().equals(currentProject.getProjectFolderFullPath()+"env-setups"))){
+			copyToDefaultFolder(svgFile);
+		}
+		// Set project variables
+		String svgFileName = svgFile.getName();
+		currentProject.setSvgFile(svgFileName);
+		String envFileName = svgFileName.substring(0, svgFileName.lastIndexOf('.'));
+		currentProject.setEnvFile(envFileName+".xml");
+		
+		Document svgDoc = loadSVG(svgFile);
+		prepareSVGDoc(svgDoc);
+		myGUI.setSVGDoc(svgDoc);
+		createNewEnvironment();
+		environment.setSvgDoc(svgDoc);
+	}
+	
+	/**
+	 * Loading a SVG document from a file
+	 * @param svgFile The file to load the SVG from
+	 */
+	public Document loadSVG(File svgFile){
+		Document svgDoc = null;
+		
 		if(svgFile.exists()){
-			if(!svgFile.getName().equals(currentProject.getSvgFile())){
-				currentProject.setSvgFile(svgFile.getName());
-			}
-			
 			System.out.println(Language.translate("Lade SVG-Datei")+" "+svgFile.getName());
-			
 			SAXSVGDocumentFactory factory = new SAXSVGDocumentFactory(XMLResourceDescriptor.getXMLParserClassName());
 			
 			try {
 				svgDoc = factory.createDocument(svgFile.toURI().toURL().toString());
 				
-				Element svgRoot = svgDoc.getDocumentElement();
-				
-				if(svgDoc.getElementById("border") == null){
-					Element border = svgDoc.createElementNS(SVGDOMImplementation.SVG_NAMESPACE_URI, "rect");
-					float width = Float.parseFloat(svgRoot.getAttributeNS(null, "width"))-1;
-					float height = Float.parseFloat(svgRoot.getAttributeNS(null, "height"))-1;
-					border.setAttributeNS(null, "id", "border");
-					border.setAttributeNS(null, "width", ""+(int)width);
-					border.setAttributeNS(null, "height", ""+(int)height);
-					border.setAttributeNS(null, "fill", "none");
-					border.setAttributeNS(null, "stroke", "black");
-					border.setAttributeNS(null, "stroke-width", "1");
-					svgRoot.appendChild(border);
-				}
-				
-				myGUI.setSVGDoc(svgDoc);
-				
-				if(newEnv){
-					createNewEnvironment();
-					currentProject.setEnvFile(null);
-				}
-				
-				environment.setSvgDoc(svgDoc);
-				
-				rebuildObjectHash();
-				
-				
-				
+								
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -189,15 +184,67 @@ public class EnvironmentController{
 			} 			
 		}else{
 			System.err.println(Language.translate("SVG-Datei")+" "+svgFile.getAbsolutePath()+" "+Language.translate("nicht gefunden!"));
+		}		
+		return svgDoc;
+	}
+	
+	/**
+	 * This method prepares the SVG doc for being used for display
+	 */
+	private void prepareSVGDoc(Document svgDoc){
+		Element svgRoot = svgDoc.getDocumentElement();
+		// Adding a border if not already present
+		if(svgDoc.getElementById("border") == null){
+			Element border = svgDoc.createElementNS(SVGDOMImplementation.SVG_NAMESPACE_URI, "rect");
+			float width = Float.parseFloat(svgRoot.getAttributeNS(null, "width"))-1;
+			float height = Float.parseFloat(svgRoot.getAttributeNS(null, "height"))-1;
+			border.setAttributeNS(null, "id", "border");
+			border.setAttributeNS(null, "width", ""+(int)width);
+			border.setAttributeNS(null, "height", ""+(int)height);
+			border.setAttributeNS(null, "fill", "none");
+			border.setAttributeNS(null, "stroke", "black");
+			border.setAttributeNS(null, "stroke-width", "1");
+			svgRoot.appendChild(border);
 		}
+	}
+	
+	private void copyToDefaultFolder(File file){
+		
+		
+		try {
+			File inFile = file;
+			File outFile = new File(currentProject.getProjectFolderFullPath()+"env-setups"+File.separator+file.getName());
+			if(!outFile.exists()){
+				outFile.createNewFile();
+			}
+			FileReader reader = new FileReader(inFile);
+			FileWriter writer = new FileWriter(outFile);
+			
+			int c;
+			while((c = reader.read()) != -1){
+				writer.write(c);
+			}
+			
+			reader.close();
+			writer.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	
 	/**
 	 * Saving the SVG document to a file 
 	 * @param svgFile The file to save the SVG to
 	 */
-	public void saveSVG(File svgFile){
+	public void saveSVG(){
+		File svgFile = new File(currentProject.getSvgPath());
 		try {
+			System.out.println(Language.translate("Speichere SVG nach")+" "+svgFile.getName());
 			FileWriter fw = new FileWriter(svgFile);
 			PrintWriter writer = new PrintWriter(fw);
 			writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
@@ -207,7 +254,7 @@ public class EnvironmentController{
 			writer.write(SVGConstants.SVG_SYSTEM_ID);
 			writer.write("'>\n\n");
 			SVGTranscoder t = new SVGTranscoder();
-			t.transcode(new TranscoderInput(svgDoc), new TranscoderOutput(writer));
+			t.transcode(new TranscoderInput(myGUI.getSVGDoc()), new TranscoderOutput(writer));
 			writer.close();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -224,12 +271,10 @@ public class EnvironmentController{
 		this.environment = new Environment();
 		this.environment.setProjectName(currentProject.getProjectName());
 		PlaygroundObject rootPg = new PlaygroundObject();
-		initFromSVG(rootPg, svgDoc.getDocumentElement());
+		initFromSVG(rootPg, myGUI.getSVGDoc().getDocumentElement());
 		rootPg.setId("rootPlayground");
 		this.environment.setRootPlayground(rootPg);
-		rebuildObjectHash();
-		
-		currentProject.setEnvironment(environment);
+		rebuildObjectHash();		
 	}
 	
 	public HashMap<String, AbstractObject> getObjectHash() {
@@ -407,9 +452,10 @@ public class EnvironmentController{
 	 * Save the environment to a XML file
 	 * @param envFile Path of the file to save the environment to
 	 */
-	public void saveEnvironment(File envFile){
+	public void saveEnvironment(){
 		
 		try {
+			
 			// Create the XML Document
 			DOMImplementation impl = DocumentBuilderFactory.newInstance().newDocumentBuilder().getDOMImplementation();
 			Document envDoc = impl.createDocument(null, "environment", null);
@@ -420,13 +466,10 @@ public class EnvironmentController{
 			// Save the root playground (including child objects 
 			envRoot.appendChild(saveObject(environment.getRootPlayground(), envDoc));
 			
+			File envFile = new File(currentProject.getEnvPath());
 			if(!envFile.exists()){
 				envFile.createNewFile();
-			}
-			
-			if(!envFile.getName().equals(currentProject.getEnvFile())){
-				currentProject.setEnvFile(envFile.getName());
-			}
+			}			
 			
 			System.out.println(Language.translate("Speichere Umgebung nach")+" "+envFile.getName());
 			
@@ -439,14 +482,6 @@ public class EnvironmentController{
 			XMLSerializer serializer = new XMLSerializer(fos, format);
 		    serializer.serialize(envDoc);
 		    fos.close();
-		    
-		    // Save the SVG
-		    saveSVG(new File(currentProject.getSvgPath()));
-			
-			
-			
-			
-			
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -499,9 +534,11 @@ public class EnvironmentController{
 	
 	/**
 	 * Loading the environment from the passed file object
-	 * @param envFile The pate of the file containing the environment
+	 * @param envFile The path of the file containing the environment
 	 */
 	public void loadEnvironment(File envFile){
+		
+		
 		
 		if(envFile.exists()){
 			try {
@@ -515,8 +552,7 @@ public class EnvironmentController{
 					System.out.println(Language.translate("Lade Umgebung aus")+" "+envFile.getName()+"...");
 					this.environment = new Environment();
 					this.environment.setProjectName(currentProject.getProjectName());
-					this.environment.setRootPlayground((PlaygroundObject) loadObject(rootPg));
-					rebuildObjectHash();					
+					this.environment.setRootPlayground((PlaygroundObject) loadObject(rootPg));										
 				}				
 				
 			} catch (FileNotFoundException e) {
@@ -528,7 +564,7 @@ public class EnvironmentController{
 			}
 		}else{
 			System.err.println(Language.translate("Umgebungsdatei")+" "+envFile.getAbsolutePath()+" "+Language.translate("nicht gefunden!"));
-		}
+		}		
 	}
 	
 	/**

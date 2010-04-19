@@ -5,6 +5,6 @@
 
 Einfaches Demo-Projekt fr die Visualisierung</projectDescription>
     <agentConfiguration/>
-    <envFile>ArmyOfAgents.xml</envFile>
-    <svgFile>ArmyOfAgents.svg</svgFile>
+    <envFile>AgentSponge.xml</envFile>
+    <svgFile>AgentSponge.svg</svgFile>
 </project>

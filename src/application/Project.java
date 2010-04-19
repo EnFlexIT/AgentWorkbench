@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import sma.ontology.Environment;
 
 import mas.agents.AgentConfiguration;
+import mas.environment.EnvironmentController;
 import mas.onto.OntologyClass;
 
 @XmlRootElement public class Project extends Observable {
@@ -39,7 +40,8 @@ import mas.onto.OntologyClass;
 	@XmlTransient private String ProjectFolderFullPath;
 	@XmlTransient private Vector<Class<?>> ProjectAgents;
 	@XmlTransient public OntologyClass Ontology = new OntologyClass(this);
-	@XmlTransient private Environment environment;
+//	@XmlTransient private Environment environment;
+	@XmlTransient private EnvironmentController environmentController;
 	
 	
 	/**
@@ -47,14 +49,14 @@ import mas.onto.OntologyClass;
 	 */
 	@XmlTransient
 	public Environment getEnvironment() {
-		return environment;
+		return this.environmentController.getEnvironment();
 	}
 
 	/**
 	 * @param environment the environment to set
 	 */
-	public void setEnvironment(Environment environment) {
-		this.environment = environment;
+	public void setEnvironmentController(EnvironmentController ec) {
+		this.environmentController = ec;
 	}
 
 	// --- Speichervariablen der Projektdatei ------------------ 
@@ -91,7 +93,16 @@ import mas.onto.OntologyClass;
 			// --- Objektwerte in xml-Datei schreiben -----
 			Writer pw = new FileWriter( ProjectFolderFullPath + Application.RunInfo.MASFile() );
 			pm.marshal( this, pw );
-			ProjectUnsaved = false;
+			
+			// --- Speichern von Umgebung und SVG ---------
+			if(this.svgFile != null){
+				this.environmentController.saveSVG();
+			}
+			if(this.envFile != null){
+				this.environmentController.saveEnvironment();
+			}
+			
+			ProjectUnsaved = false;			
 		} 
 		catch (Exception e) {
 			System.out.println("XML - Fehler !");
@@ -286,45 +297,44 @@ import mas.onto.OntologyClass;
 		notifyObservers("AgentReferences");
 	}
 	
-	
-	/**
-	 * Getter für svgFile
-	 * @return Dateiname der SVG-Datei
-	 */
 	public String getSvgFile(){
 		return svgFile;
 	}
 	
+	
 	/**
-	 * 
-	 * @return Pfad zur SVG-Datei (Ressources-Ordner + Dateiname)
+	 * Gets the SVG file path
+	 * @return The SVG file path
 	 */
 	public String getSvgPath(){
-		return this.getProjectFolderFullPath()+"resources"+File.separator+this.svgFile;
+		if(this.svgFile != null){
+			return getEnvSetupPath()+this.svgFile;
+		}else{
+			return null;
+		}
 	}
 
 	/**
-	 * Setter für svgFile 
-	 * @param fileName Dateiname der SVG-Datei
+	 * Setter for svgFile 
+	 * @param fileName Name of the SVG file
 	 */
 	public void setSvgFile(String fileName){
 		this.svgFile = fileName;	
 		this.ProjectUnsaved = true;
-	}	
-	/**
-	 * Getter für envFile
-	 * @return Dateiname der Umgebungsdatei 
-	 */
+	}
 	public String getEnvFile(){
 		return envFile;
 	}
-	
 	/**
-	 * 
-	 * @return Pfad zur Umgebungsdatei (Ressources-Ordner + Dateiname)
+	 * Gets the environment file path
+	 * @return The environment file path
 	 */
 	public String getEnvPath(){
-		return this.getProjectFolderFullPath()+"resources"+File.separator+this.envFile;
+		if(this.envFile != null){
+			return getEnvSetupPath()+this.envFile;
+		}else{
+			return null;
+		}		
 	}
 	
 	/**
@@ -334,6 +344,13 @@ import mas.onto.OntologyClass;
 	public void setEnvFile(String fileName){
 		this.envFile = fileName;
 		this.ProjectUnsaved = true;
+	}
+	/**
+	 * Gets the default environment setup folder
+	 * @return The default environment setup folder
+	 */
+	public String getEnvSetupPath(){
+		return ProjectFolderFullPath+"env-setups"+File.separator;
 	}
 
 }

@@ -8,7 +8,7 @@ import org.w3c.dom.Element;
  *
  */
 public enum SvgTypes {
-	SVG, RECT, CIRCLE, ELLIPSE;
+	SVG, RECT, CIRCLE, ELLIPSE, IMAGE;
 	/**
 	 * Returns the type constant for a given SVG element
 	 * @param element The SVG element
@@ -25,6 +25,8 @@ public enum SvgTypes {
 			type = CIRCLE;
 		}else if(element.getTagName().equals("ellipse")){
 			type = ELLIPSE;
+		}else if(element.getTagName().equals("image")){
+			type = IMAGE;
 		}
 		
 		return type;
