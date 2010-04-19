@@ -26,7 +26,7 @@ import mas.onto.OntologyClass;
 @XmlRootElement public class Project extends Observable {
 
 	// --- Konstanten ------------------------------------------
-	@XmlTransient private static String[] DefaultSubFolders = {"agents", "ontology", "resources"};
+	@XmlTransient private static String[] DefaultSubFolders = {"agents", "ontology", "env-setups", "resources"};
 	@XmlTransient private static final String NewLine = Application.RunInfo.AppNewLineString();	
 	
 	// --- GUI der aktuellen Projekt-Instanz -------------------
