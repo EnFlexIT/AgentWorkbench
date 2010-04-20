@@ -51,7 +51,6 @@ public final class HarbourSetup{
 //		final String physicalOntologyFileName=workingDir + "sma\resources\\physical_ontology.owl";
 		final String physicalOntologyFileName=workingDir + "..\\sma\\resources\\DisplayOntologyOWL.owl";
 
-		
 		String ontologyJavaPackage=this.getClass().getPackage().getName();
 		ontologyJavaPackage=ontologyJavaPackage.substring(0,ontologyJavaPackage.lastIndexOf(".")) + ".ontology";
 		this.mapper=new OWLImportMapper(individualFileName,ontologyJavaPackage);
@@ -76,17 +75,31 @@ public final class HarbourSetup{
 		master.addHas_subdomains(sub);
 	}
 
-	public static void removeBacklink(Domain master){
-		master.setLies_in(null);
-		Iterator sub=master.getAllHas_subdomains();
-		while(sub.hasNext()){
-			Domain subDomain=(Domain) sub.next();
-			HarbourSetup.removeBacklink(subDomain);
+	public static void removeBacklink(Domain master,Boolean topDown){
+		jade.util.leap.List subList=master.getHas_subdomains();
+		Domain parent=master.getLies_in();
+		if(subList != null){
+			Iterator sub=subList.iterator();
+
+			if(topDown){ //remove lies in - top down tree
+				master.setLies_in(null);
+
+			}else{ //remove has_subdomains - bottom up trace
+				master.setHas_subdomains(null);
+			}
+			if(parent != null){
+				removeBacklink(parent,topDown);
+			}
+			while(sub.hasNext()){
+				Domain subDomain=(Domain) sub.next();
+				HarbourSetup.removeBacklink(subDomain,topDown);
+			}
 		}
 	}
 
 	public ContainerHolder[] getOntReps(){
-		this.getHarbourArea(); //TODO workaround: if missing, only some Domains get displayed, reason unknown
+//		this.getHarbourArea(); //TODO workaround: if missing, only some Domains get displayed, reason unknown
+		this.mapper.resetMappings();
 		if(this.ontReps == null){
 			List<Resource> allCHClasses=this.mapper.getSubConceptsOf("ContainerHolder",true);
 			List<Object> allContainerHolder=this.mapper.getMappedIndividualsOf(allCHClasses);
@@ -96,9 +109,15 @@ public final class HarbourSetup{
 	}
 
 	public Domain getHarbourArea(){
+		/*
 		if(this.HarbourArea == null){
 			this.HarbourArea=this.getOWLHarbourArea();
 		}
+		*/
+		this.mapper.resetMappings();
+		this.HarbourArea=this.getOWLHarbourArea();
+		removeBacklink(this.HarbourArea,true);
+
 		return this.HarbourArea;
 	}
 

@@ -55,6 +55,11 @@ public class OWLImportMapper{
 
 		this.ontologyJavaPackage=ontologyJavaPackage;
 	}
+	
+	public void resetMappings(){
+		allMappedConcepts=new HashMap<String, Object>();
+		allKnownProperties=new HashMap<Individual, HashMap<OntProperty, List<RDFNode>>>();
+	}
 
 	protected OntModel readModel(String inputFileName){
 		OntDocumentManager mgr=new OntDocumentManager();
@@ -284,9 +289,13 @@ public class OWLImportMapper{
 		Object found;
 		if(this.allMappedConcepts.containsKey(lookFor.toString())){
 			found=this.allMappedConcepts.get(lookFor.toString());
+//			System.out.print("Individual "+lookFor+" was already mapped as ");
 		}else{
 			found=this.mapIndividualAsInstance(lookFor);
+//			System.out.print("Individual "+lookFor+" newly mapped as ");
 		}
+//		System.out.println(found);
+
 		return found;
 	}
 
@@ -360,8 +369,9 @@ public class OWLImportMapper{
 			Object conceptObject=conceptConstructor.newInstance();
 
 			HashMap<OntProperty, List<RDFNode>> properties=this.filterProperties(this.getPropertiesOf(individual),individual);
-			this.mapAllProperties(properties,conceptObject);
 			this.allMappedConcepts.put(hash,conceptObject);
+
+			this.mapAllProperties(properties,conceptObject);
 
 			return conceptObject;
 		}catch(IllegalArgumentException e){

@@ -16,11 +16,13 @@ package contmas.agents;
 
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
+import jade.util.leap.Iterator;
 
 import java.util.HashMap;
 
 import contmas.behaviours.*;
 import contmas.main.HarbourSetup;
+import contmas.ontology.ActiveContainerHolder;
 import contmas.ontology.ContainerHolder;
 import contmas.ontology.Domain;
 import contmas.ontology.StartNewContainerHolder;
@@ -104,7 +106,16 @@ public class HarborMasterAgent extends ContainerAgent implements OntRepProvider,
 
 			StartNewContainerHolder act=new StartNewContainerHolder();
 			act.setName(containerHolder.getLocalName());
+			HarbourSetup.removeBacklink(containerHolder.getLives_in(),false); //remove has_subdomains
+			if(containerHolder instanceof ActiveContainerHolder){
+				Iterator iter=((ActiveContainerHolder) containerHolder).getAllCapable_of();
+				while(iter.hasNext()){
+					Domain dom=(Domain) iter.next();
+					HarbourSetup.removeBacklink(dom,false); //remove has_subdomains
+				}
+			}
 			act.setTo_be_added(containerHolder);
+			
 			act.setRandomize(false);
 			act.setPopulate(false);
 			this.addBehaviour(new requestStartAgent(this,this.getAID(),act));

@@ -9,9 +9,33 @@ import jade.core.*;
    * 
 * Protege name: phy:AbstractObject
 * @author ontology bean generator
-* @version 2010/04/18, 11:36:16
+* @version 2010/04/20, 14:23:52
 */
 public class Phy_AbstractObject implements Concept {
+
+   /**
+   * The playground containing this EnvironmentObject
+* Protege name: phy:parent
+   */
+   private Phy_PlaygroundObject phy_parent;
+   public void setPhy_parent(Phy_PlaygroundObject value) { 
+    this.phy_parent=value;
+   }
+   public Phy_PlaygroundObject getPhy_parent() {
+     return this.phy_parent;
+   }
+
+   /**
+   * This EnvironmentObject's size
+* Protege name: phy:size
+   */
+   private Phy_Size phy_size;
+   public void setPhy_size(Phy_Size value) { 
+    this.phy_size=value;
+   }
+   public Phy_Size getPhy_size() {
+     return this.phy_size;
+   }
 
    /**
    * This EnvironmentObject's center position
@@ -35,30 +59,6 @@ public class Phy_AbstractObject implements Concept {
    }
    public String getPhy_id() {
      return this.phy_id;
-   }
-
-   /**
-   * This EnvironmentObject's size
-* Protege name: phy:size
-   */
-   private Phy_Size phy_size;
-   public void setPhy_size(Phy_Size value) { 
-    this.phy_size=value;
-   }
-   public Phy_Size getPhy_size() {
-     return this.phy_size;
-   }
-
-   /**
-   * The playground containing this EnvironmentObject
-* Protege name: phy:parent
-   */
-   private Phy_PlaygroundObject phy_parent;
-   public void setPhy_parent(Phy_PlaygroundObject value) { 
-    this.phy_parent=value;
-   }
-   public Phy_PlaygroundObject getPhy_parent() {
-     return this.phy_parent;
    }
 
 }

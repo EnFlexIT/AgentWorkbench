@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: Designator
 * @author ontology bean generator
-* @version 2010/04/18, 11:36:17
+* @version 2010/04/20, 14:23:51
 */
 public class Designator implements Concept {
 
