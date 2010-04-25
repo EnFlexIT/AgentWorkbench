@@ -9,7 +9,7 @@ import jade.core.CaseInsensitiveString;
 
 /** file: DisplayOntology.java
  * @author ontology bean generator
- * @version 2010/04/7, 20:19:12
+ * @version 2010/04/25, 13:46:18
  */
 public class DisplayOntology extends jade.content.onto.Ontology  {
   //NAME
@@ -23,38 +23,42 @@ public class DisplayOntology extends jade.content.onto.Ontology  {
 
 
    // VOCABULARY
-    public static final String ENVIRONMENTUPDATE_ENVIRONMENT="environment";
-    public static final String ENVIRONMENTUPDATE="EnvironmentUpdate";
     public static final String MOVEMENT_STEPS="Steps";
     public static final String MOVEMENT="Movement";
-    public static final String ABSTRACTOBJECT_SIZE="size";
-    public static final String ABSTRACTOBJECT_PARENT="parent";
-    public static final String ABSTRACTOBJECT_POSITION="position";
-    public static final String ABSTRACTOBJECT_ID="id";
-    public static final String ABSTRACTOBJECT="AbstractObject";
+    public static final String ENVIRONMENTUPDATE_ENVIRONMENT="environment";
+    public static final String ENVIRONMENTUPDATE="EnvironmentUpdate";
+    public static final String SPEED_SPEED="speed";
+    public static final String SPEED="Speed";
     public static final String SIZE_WIDTH="width";
     public static final String SIZE_HEIGHT="height";
     public static final String SIZE="Size";
-    public static final String POINT_X="x";
-    public static final String POINT_Y="y";
-    public static final String POINT="Point";
-    public static final String POSITION="Position";
-    public static final String AGENTOBJECT_MAXSPEED="maxSpeed";
-    public static final String AGENTOBJECT_CURRENTSPEED="currentSpeed";
-    public static final String AGENTOBJECT_AGENTCLASS="agentClass";
-    public static final String AGENTOBJECT_COLLISIONPOINTS="collisionPoints";
-    public static final String AGENTOBJECT_AID="aid";
-    public static final String AGENTOBJECT="AgentObject";
-    public static final String OBSTACLEOBJECT="ObstacleObject";
-    public static final String SPEED_SPEED="speed";
-    public static final String SPEED="Speed";
-    public static final String ENVIRONMENT_OBJECTS="objects";
     public static final String ENVIRONMENT_PROJECTNAME="projectName";
+    public static final String ENVIRONMENT_OBJECTS="objects";
     public static final String ENVIRONMENT_SVGDOC="svgDoc";
+    public static final String ENVIRONMENT_SCALE="scale";
     public static final String ENVIRONMENT_ROOTPLAYGROUND="rootPlayground";
     public static final String ENVIRONMENT="Environment";
     public static final String PLAYGROUNDOBJECT_CHILDOBJECTS="childObjects";
     public static final String PLAYGROUNDOBJECT="PlaygroundObject";
+    public static final String OBSTACLEOBJECT="ObstacleObject";
+    public static final String ABSTRACTOBJECT_POSITION="position";
+    public static final String ABSTRACTOBJECT_ID="id";
+    public static final String ABSTRACTOBJECT_SIZE="size";
+    public static final String ABSTRACTOBJECT_PARENT="parent";
+    public static final String ABSTRACTOBJECT="AbstractObject";
+    public static final String AGENTOBJECT_CURRENTSPEED="currentSpeed";
+    public static final String AGENTOBJECT_MAXSPEED="maxSpeed";
+    public static final String AGENTOBJECT_AGENTCLASS="agentClass";
+    public static final String AGENTOBJECT_COLLISIONPOINTS="collisionPoints";
+    public static final String AGENTOBJECT_AID="aid";
+    public static final String AGENTOBJECT="AgentObject";
+    public static final String POSITION_X="x";
+    public static final String POSITION_Y="y";
+    public static final String POSITION="Position";
+    public static final String SCALE_PIXEL="pixel";
+    public static final String SCALE_VALUE="value";
+    public static final String SCALE_UNIT="unit";
+    public static final String SCALE="Scale";
 
   /**
    * Constructor
@@ -64,30 +68,30 @@ public class DisplayOntology extends jade.content.onto.Ontology  {
     try { 
 
     // adding Concept(s)
+    ConceptSchema scaleSchema = new ConceptSchema(SCALE);
+    add(scaleSchema, sma.ontology.Scale.class);
+    ConceptSchema positionSchema = new ConceptSchema(POSITION);
+    add(positionSchema, sma.ontology.Position.class);
+    ConceptSchema agentObjectSchema = new ConceptSchema(AGENTOBJECT);
+    add(agentObjectSchema, sma.ontology.AgentObject.class);
+    ConceptSchema abstractObjectSchema = new ConceptSchema(ABSTRACTOBJECT);
+    add(abstractObjectSchema, sma.ontology.AbstractObject.class);
+    ConceptSchema obstacleObjectSchema = new ConceptSchema(OBSTACLEOBJECT);
+    add(obstacleObjectSchema, sma.ontology.ObstacleObject.class);
     ConceptSchema playgroundObjectSchema = new ConceptSchema(PLAYGROUNDOBJECT);
     add(playgroundObjectSchema, sma.ontology.PlaygroundObject.class);
     ConceptSchema environmentSchema = new ConceptSchema(ENVIRONMENT);
     add(environmentSchema, sma.ontology.Environment.class);
-    ConceptSchema speedSchema = new ConceptSchema(SPEED);
-    add(speedSchema, sma.ontology.Speed.class);
-    ConceptSchema obstacleObjectSchema = new ConceptSchema(OBSTACLEOBJECT);
-    add(obstacleObjectSchema, sma.ontology.ObstacleObject.class);
-    ConceptSchema agentObjectSchema = new ConceptSchema(AGENTOBJECT);
-    add(agentObjectSchema, sma.ontology.AgentObject.class);
-    ConceptSchema positionSchema = new ConceptSchema(POSITION);
-    add(positionSchema, sma.ontology.Position.class);
-    ConceptSchema pointSchema = new ConceptSchema(POINT);
-    add(pointSchema, sma.ontology.Point.class);
     ConceptSchema sizeSchema = new ConceptSchema(SIZE);
     add(sizeSchema, sma.ontology.Size.class);
-    ConceptSchema abstractObjectSchema = new ConceptSchema(ABSTRACTOBJECT);
-    add(abstractObjectSchema, sma.ontology.AbstractObject.class);
+    ConceptSchema speedSchema = new ConceptSchema(SPEED);
+    add(speedSchema, sma.ontology.Speed.class);
 
     // adding AgentAction(s)
-    AgentActionSchema movementSchema = new AgentActionSchema(MOVEMENT);
-    add(movementSchema, sma.ontology.Movement.class);
     AgentActionSchema environmentUpdateSchema = new AgentActionSchema(ENVIRONMENTUPDATE);
     add(environmentUpdateSchema, sma.ontology.EnvironmentUpdate.class);
+    AgentActionSchema movementSchema = new AgentActionSchema(MOVEMENT);
+    add(movementSchema, sma.ontology.Movement.class);
 
     // adding AID(s)
 
@@ -95,35 +99,38 @@ public class DisplayOntology extends jade.content.onto.Ontology  {
 
 
     // adding fields
-    playgroundObjectSchema.add(PLAYGROUNDOBJECT_CHILDOBJECTS, abstractObjectSchema, 0, ObjectSchema.UNLIMITED);
-    environmentSchema.add(ENVIRONMENT_ROOTPLAYGROUND, playgroundObjectSchema, ObjectSchema.MANDATORY);
-    environmentSchema.add(ENVIRONMENT_SVGDOC, new ConceptSchema("Concept"), ObjectSchema.MANDATORY);
-    environmentSchema.add(ENVIRONMENT_PROJECTNAME, (TermSchema)getSchema(BasicOntology.STRING), ObjectSchema.MANDATORY);
-    environmentSchema.add(ENVIRONMENT_OBJECTS, abstractObjectSchema, 0, ObjectSchema.UNLIMITED);
-    speedSchema.add(SPEED_SPEED, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
+    scaleSchema.add(SCALE_UNIT, (TermSchema)getSchema(BasicOntology.STRING), ObjectSchema.OPTIONAL);
+    scaleSchema.add(SCALE_VALUE, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
+    scaleSchema.add(SCALE_PIXEL, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
+    positionSchema.add(POSITION_Y, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
+    positionSchema.add(POSITION_X, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
     agentObjectSchema.add(AGENTOBJECT_AID, (ConceptSchema)getSchema(BasicOntology.AID), ObjectSchema.OPTIONAL);
-    agentObjectSchema.add(AGENTOBJECT_COLLISIONPOINTS, pointSchema, 0, ObjectSchema.UNLIMITED);
+    agentObjectSchema.add(AGENTOBJECT_COLLISIONPOINTS, new ConceptSchema("Concept"), 0, ObjectSchema.UNLIMITED);
     agentObjectSchema.add(AGENTOBJECT_AGENTCLASS, (TermSchema)getSchema(BasicOntology.STRING), ObjectSchema.OPTIONAL);
-    agentObjectSchema.add(AGENTOBJECT_CURRENTSPEED, speedSchema, ObjectSchema.OPTIONAL);
     agentObjectSchema.add(AGENTOBJECT_MAXSPEED, speedSchema, ObjectSchema.OPTIONAL);
-    pointSchema.add(POINT_Y, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
-    pointSchema.add(POINT_X, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
-    sizeSchema.add(SIZE_HEIGHT, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
-    sizeSchema.add(SIZE_WIDTH, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
-    abstractObjectSchema.add(ABSTRACTOBJECT_ID, (TermSchema)getSchema(BasicOntology.STRING), ObjectSchema.OPTIONAL);
-    abstractObjectSchema.add(ABSTRACTOBJECT_POSITION, positionSchema, ObjectSchema.OPTIONAL);
+    agentObjectSchema.add(AGENTOBJECT_CURRENTSPEED, speedSchema, ObjectSchema.OPTIONAL);
     abstractObjectSchema.add(ABSTRACTOBJECT_PARENT, playgroundObjectSchema, ObjectSchema.OPTIONAL);
     abstractObjectSchema.add(ABSTRACTOBJECT_SIZE, sizeSchema, ObjectSchema.OPTIONAL);
-    movementSchema.add(MOVEMENT_STEPS, positionSchema, 0, ObjectSchema.UNLIMITED);
+    abstractObjectSchema.add(ABSTRACTOBJECT_ID, (TermSchema)getSchema(BasicOntology.STRING), ObjectSchema.OPTIONAL);
+    abstractObjectSchema.add(ABSTRACTOBJECT_POSITION, positionSchema, ObjectSchema.OPTIONAL);
+    playgroundObjectSchema.add(PLAYGROUNDOBJECT_CHILDOBJECTS, abstractObjectSchema, 0, ObjectSchema.UNLIMITED);
+    environmentSchema.add(ENVIRONMENT_ROOTPLAYGROUND, playgroundObjectSchema, ObjectSchema.OPTIONAL);
+    environmentSchema.add(ENVIRONMENT_SCALE, scaleSchema, ObjectSchema.OPTIONAL);
+    environmentSchema.add(ENVIRONMENT_SVGDOC, new ConceptSchema("Concept"), ObjectSchema.OPTIONAL);
+    environmentSchema.add(ENVIRONMENT_OBJECTS, abstractObjectSchema, 0, ObjectSchema.UNLIMITED);
+    environmentSchema.add(ENVIRONMENT_PROJECTNAME, (TermSchema)getSchema(BasicOntology.STRING), ObjectSchema.OPTIONAL);
+    sizeSchema.add(SIZE_HEIGHT, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
+    sizeSchema.add(SIZE_WIDTH, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
+    speedSchema.add(SPEED_SPEED, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
     environmentUpdateSchema.add(ENVIRONMENTUPDATE_ENVIRONMENT, environmentSchema, ObjectSchema.OPTIONAL);
+    movementSchema.add(MOVEMENT_STEPS, positionSchema, 0, ObjectSchema.UNLIMITED);
 
     // adding name mappings
 
     // adding inheritance
-    playgroundObjectSchema.addSuperSchema(abstractObjectSchema);
-    obstacleObjectSchema.addSuperSchema(abstractObjectSchema);
     agentObjectSchema.addSuperSchema(abstractObjectSchema);
-    positionSchema.addSuperSchema(pointSchema);
+    obstacleObjectSchema.addSuperSchema(abstractObjectSchema);
+    playgroundObjectSchema.addSuperSchema(abstractObjectSchema);
 
    }catch (java.lang.Exception e) {e.printStackTrace();}
   }

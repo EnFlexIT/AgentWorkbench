@@ -9,7 +9,7 @@ import jade.core.*;
    * A project's environment definition
 * Protege name: Environment
 * @author ontology bean generator
-* @version 2010/04/7, 20:19:12
+* @version 2010/04/25, 13:46:18
 */
 public class Environment implements Concept {
 
@@ -26,6 +26,17 @@ public class Environment implements Concept {
    }
 
    /**
+* Protege name: scale
+   */
+   private Scale scale;
+   public void setScale(Scale value) { 
+    this.scale=value;
+   }
+   public Scale getScale() {
+     return this.scale;
+   }
+
+   /**
    * The SVG document object
 * Protege name: svgDoc
    */
@@ -35,18 +46,6 @@ public class Environment implements Concept {
    }
    public Object getSvgDoc() {
      return this.svgDoc;
-   }
-
-   /**
-   * The project's name
-* Protege name: projectName
-   */
-   private String projectName;
-   public void setProjectName(String value) { 
-    this.projectName=value;
-   }
-   public String getProjectName() {
-     return this.projectName;
    }
 
    /**
@@ -70,5 +69,17 @@ public class Environment implements Concept {
    public Iterator getAllObjects() {return objects.iterator(); }
    public List getObjects() {return objects; }
    public void setObjects(List l) {objects = l; }
+
+   /**
+   * The project's name
+* Protege name: projectName
+   */
+   private String projectName;
+   public void setProjectName(String value) { 
+    this.projectName=value;
+   }
+   public String getProjectName() {
+     return this.projectName;
+   }
 
 }

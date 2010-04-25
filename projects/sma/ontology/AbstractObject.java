@@ -6,35 +6,12 @@ import jade.util.leap.*;
 import jade.core.*;
 
 /**
+   * 
 * Protege name: AbstractObject
 * @author ontology bean generator
-* @version 2010/04/7, 20:19:12
+* @version 2010/04/25, 13:46:18
 */
 public class AbstractObject implements Concept {
-
-   /**
-   * Unique id to identify this object
-* Protege name: id
-   */
-   private String id;
-   public void setId(String value) { 
-    this.id=value;
-   }
-   public String getId() {
-     return this.id;
-   }
-
-   /**
-   * This EnvironmentObject's center position
-* Protege name: position
-   */
-   private Position position;
-   public void setPosition(Position value) { 
-    this.position=value;
-   }
-   public Position getPosition() {
-     return this.position;
-   }
 
    /**
    * The playground containing this EnvironmentObject
@@ -58,6 +35,30 @@ public class AbstractObject implements Concept {
    }
    public Size getSize() {
      return this.size;
+   }
+
+   /**
+   * Unique id to identify this object
+* Protege name: id
+   */
+   private String id;
+   public void setId(String value) { 
+    this.id=value;
+   }
+   public String getId() {
+     return this.id;
+   }
+
+   /**
+   * This EnvironmentObject's center position
+* Protege name: position
+   */
+   private Position position;
+   public void setPosition(Position value) { 
+    this.position=value;
+   }
+   public Position getPosition() {
+     return this.position;
    }
 
 }

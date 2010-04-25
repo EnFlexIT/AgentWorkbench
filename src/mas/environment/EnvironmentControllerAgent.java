@@ -53,8 +53,8 @@ public class EnvironmentControllerAgent extends Agent {
 		dfd.setName(getAID());
 		
 		ServiceDescription sd = new ServiceDescription();
-		sd.setType(EnvironmentUtilities.ENVIRONMENT_PROVIDER_SERVICE);
-		sd.setName(EnvironmentUtilities.ENVIRONMENT_PROVIDER_SERVICE+"_"+projectName);
+		sd.setType("EnvironmentProvider");
+		sd.setName("EnvironmentProvider_"+projectName);
 		dfd.addServices(sd);
 		dfd.addOntologies(ontology.getName());
 		dfd.addLanguages(codec.getName());

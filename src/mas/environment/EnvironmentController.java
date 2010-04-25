@@ -41,10 +41,11 @@ import sma.ontology.Environment;
 import sma.ontology.ObstacleObject;
 import sma.ontology.PlaygroundObject;
 import sma.ontology.Position;
+import sma.ontology.Scale;
 import sma.ontology.Size;
 
 import mas.display.SvgTypes;
-import mas.environment.EnvironmentUtilities;
+import mas.environment.OntoUtilities;
 
 /**
  * This class is responsible for managing the environment definition
@@ -270,11 +271,23 @@ public class EnvironmentController{
 		
 		this.environment = new Environment();
 		this.environment.setProjectName(currentProject.getProjectName());
+		
+		// Set default scale
+		Scale scale = new Scale();
+		scale.setValue(1);
+		scale.setUnit("m");
+		scale.setPixel(10);
+		this.environment.setScale(scale);
+		myGUI.setScale(scale);
+		
+		// Create root playground from SVG root
 		PlaygroundObject rootPg = new PlaygroundObject();
 		initFromSVG(rootPg, myGUI.getSVGDoc().getDocumentElement());
 		rootPg.setId("rootPlayground");
 		this.environment.setRootPlayground(rootPg);
-		rebuildObjectHash();		
+		
+		// 
+		rebuildObjectHash();	
 	}
 	
 	public HashMap<String, AbstractObject> getObjectHash() {
@@ -437,7 +450,7 @@ public class EnvironmentController{
 	public boolean moveObject(AbstractObject object, PlaygroundObject target){
 		
 		boolean success = false;
-		if(success = EnvironmentUtilities.pgContains(target, object)){
+		if(success = OntoUtilities.pgContains(target, object)){
 			object.getParent().removeChildObjects(object);
 			target.addChildObjects(object);
 			object.setParent(target);
@@ -462,6 +475,14 @@ public class EnvironmentController{
 			Element envRoot = envDoc.getDocumentElement();
 			envRoot.setAttribute("project", currentProject.getProjectName());
 			envRoot.setAttribute("date", new java.util.Date().toString());
+			Scale scaleObject = environment.getScale();
+			if(scaleObject != null){
+				Element scaleElement = envDoc.createElement("scale");
+				scaleElement.setAttribute("value", ""+scaleObject.getValue());
+				scaleElement.setAttribute("unit", scaleObject.getUnit());
+				scaleElement.setAttribute("pixel", ""+scaleObject.getPixel());
+				envRoot.appendChild(scaleElement);
+			}
 			
 			// Save the root playground (including child objects 
 			envRoot.appendChild(saveObject(environment.getRootPlayground(), envDoc));
@@ -547,12 +568,24 @@ public class EnvironmentController{
 				FileReader reader = new FileReader(envFile);
 				InputSource source = new InputSource(reader);
 				parser.parse(source);
-				Element rootPg = (Element) parser.getDocument().getDocumentElement().getElementsByTagName("playground").item(0);
+				Document envDoc = parser.getDocument();
+				Element rootPg = (Element) envDoc.getElementsByTagName("playground").item(0);
 				if(rootPg != null){
 					System.out.println(Language.translate("Lade Umgebung aus")+" "+envFile.getName()+"...");
 					this.environment = new Environment();
 					this.environment.setProjectName(currentProject.getProjectName());
-					this.environment.setRootPlayground((PlaygroundObject) loadObject(rootPg));										
+					this.environment.setRootPlayground((PlaygroundObject) loadObject(rootPg));
+					Element scaleElement = (Element) envDoc.getElementsByTagName("scale").item(0);
+					if(scaleElement != null){
+						Scale scaleObject = new Scale();
+						scaleObject.setValue(Float.parseFloat(scaleElement.getAttribute("value")));
+						scaleObject.setUnit(scaleElement.getAttribute("unit"));
+						scaleObject.setPixel(Float.parseFloat(scaleElement.getAttribute("pixel")));
+						this.environment.setScale(scaleObject);
+						myGUI.setScale(scaleObject);
+						
+					}
+					
 				}				
 				
 			} catch (FileNotFoundException e) {
@@ -613,6 +646,11 @@ public class EnvironmentController{
 		
 		environment.addObjects(object);
 		return object;
+	}
+	
+	public void setScale(Scale scale){
+		this.environment.setScale(scale);
+		System.out.println(Language.translate("Lege Maﬂstad fest:")+" "+scale.getValue()+scale.getUnit()+":"+scale.getPixel()+"px");
 	}
 	
 }

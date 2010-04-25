@@ -1,7 +1,7 @@
 package mas.movement;
 
 import mas.display.DisplayableAgent;
-import mas.environment.EnvironmentUtilities;
+import mas.environment.OntoUtilities;
 import sma.ontology.AgentObject;
 import sma.ontology.DisplayOntology;
 import sma.ontology.PlaygroundObject;
@@ -84,8 +84,8 @@ public abstract class MovingAgent extends Agent implements DisplayableAgent{
 		// Get the EnvironmentControllerAgent from the DF
 		DFAgentDescription dfd = new DFAgentDescription();
 		ServiceDescription sd = new ServiceDescription();
-		sd.setType(EnvironmentUtilities.ENVIRONMENT_PROVIDER_SERVICE);
-		sd.setName(EnvironmentUtilities.ENVIRONMENT_PROVIDER_SERVICE+"_SMA");
+		sd.setType("EnvironmentProvider");
+		sd.setName("EnvironmentProvider_SMA");
 		dfd.addServices(sd);
 		
 		try {

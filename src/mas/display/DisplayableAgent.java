@@ -3,7 +3,6 @@ package mas.display;
 import jade.content.lang.Codec;
 import jade.content.onto.Ontology;
 import jade.core.AID;
-import sma.ontology.Point;
 import sma.ontology.Position;
 import sma.ontology.Speed;
 /**

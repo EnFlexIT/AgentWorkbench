@@ -8,6 +8,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.DropMode;
 import javax.swing.JFileChooser;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTree;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -48,12 +49,14 @@ import org.w3c.dom.events.EventTarget;
 import sma.ontology.AbstractObject;
 import sma.ontology.AgentObject;
 import sma.ontology.PlaygroundObject;
+import sma.ontology.Scale;
 
 import application.Language;
 import application.Project;
 
 import mas.display.BasicSVGGUI;
 import mas.display.SvgTypes;
+import java.awt.Rectangle;
 
 public class EnvironmentControllerGUI extends JSplitPane {
 
@@ -65,7 +68,8 @@ public class EnvironmentControllerGUI extends JSplitPane {
 	private JSplitPane splitControlls = null;
 	private JScrollPane scpTree = null;
 	private JTree treeEnvironment = null;
-	private JPanel pnlEnvironment = null;
+	private JPanel pnlObjectSettings = null;
+	private JPanel pnlEnvSettings = null;
 	private JButton btnLoadSVG = null;
 	private JTextField tfId = null;
 	private JComboBox cbType = null;
@@ -75,6 +79,14 @@ public class EnvironmentControllerGUI extends JSplitPane {
 	private JLabel lblType = null;
 	private JLabel lblClass = null;
 	private JFileChooser fcLoadSVG = null;
+	private JTabbedPane tpSettings;
+	private JButton btnRemove = null;
+	private JLabel lblScale = null;
+	private JTextField tfRwu = null;
+	private JTextField tfPx = null;
+	private JComboBox cbUnit = null;
+	private JLabel lblPx = null;
+	private JButton btnSetScale = null;
 		
 	private Element selectedElement = null;
 	/**
@@ -89,7 +101,9 @@ public class EnvironmentControllerGUI extends JSplitPane {
 	private HashMap<String, String> agentClasses = null;
 	
 	private EnvironmentController controller = null;
-	private JButton btnRemove = null;
+	
+	// Initialization of global stuff
+	
 	/**
 	 * This method initializes 
 	 * 
@@ -110,7 +124,7 @@ public class EnvironmentControllerGUI extends JSplitPane {
         this.addComponentListener(new ComponentAdapter(){
         	public void componentResized(ComponentEvent ce){
         		setDividerLocation(200);
-        		splitControlls.setDividerLocation(splitControlls.getHeight()-260);
+        		splitControlls.setDividerLocation(splitControlls.getHeight()-350);
         	}
         });
         
@@ -145,7 +159,9 @@ public class EnvironmentControllerGUI extends JSplitPane {
 	public Document getSVGDoc(){
 		return getSvgGUI().getCanvas().getSVGDocument();
 	}
-
+	
+	// Initialization of the controlls section
+	
 	/**
 	 * This method initializes pnlControlls	
 	 * 	
@@ -156,10 +172,12 @@ public class EnvironmentControllerGUI extends JSplitPane {
 			splitControlls = new JSplitPane();
 			splitControlls.setOrientation(JSplitPane.VERTICAL_SPLIT);
 			splitControlls.setTopComponent(getScpTree());
-			splitControlls.setBottomComponent(getPnlEnvironment());
+			splitControlls.setBottomComponent(getTpSettings());
 		}
 		return splitControlls;
 	}
+	
+	// Environment tree related stuff
 
 	/**
 	 * This method initializes scpTree	
@@ -301,40 +319,118 @@ public class EnvironmentControllerGUI extends JSplitPane {
 		
 		return root;
 	}
+	
+	private JTabbedPane getTpSettings(){
+		if(tpSettings == null){
+			tpSettings = new JTabbedPane();
+			tpSettings.addTab(Language.translate("Umgebung"), getPnlEnvSettings());
+			tpSettings.addTab(Language.translate("Objekt"), getPnlObjectSettings());
+		}
+		return tpSettings;
+	}
+	
+	// Environment settings tab
+
+	private JPanel getPnlEnvSettings(){
+		if(pnlEnvSettings == null){
+			lblPx = new JLabel();
+			lblPx.setBounds(new Rectangle(70, 80, 38, 16));
+			lblPx.setText("Pixel");
+			lblScale = new JLabel();
+			lblScale.setText(Language.translate("Maßstab"));
+			lblScale.setSize(new Dimension(50, 16));
+			lblScale.setLocation(new Point(10, 10));
+			pnlEnvSettings = new JPanel();
+			pnlEnvSettings.setLayout(null);
+			pnlEnvSettings.add(lblScale, null);
+			pnlEnvSettings.add(getTfRwu(), null);
+			pnlEnvSettings.add(getTfPx(), null);
+			pnlEnvSettings.add(getCbUnit(), null);
+			pnlEnvSettings.add(lblPx, null);
+			pnlEnvSettings.add(getBtnSetScale(), null);
+			pnlEnvSettings.add(getBtnLoadSVG(), null);
+		}
+		return pnlEnvSettings;
+	}
 
 	/**
-	 * This method initializes pnlEnvironment	
+	 * This method initializes tfRwu	
 	 * 	
-	 * @return javax.swing.JPanel	
+	 * @return javax.swing.JTextField	
 	 */
-	private JPanel getPnlEnvironment() {
-		if (pnlEnvironment == null) {
-			pnlEnvironment = new JPanel();
-			pnlEnvironment.setLayout(null);
-			lblClass = new JLabel();
-			lblClass.setText(Language.translate("Klasse"));
-			lblClass.setSize(new Dimension(45, 16));
-			lblClass.setLocation(new Point(10, 80));
-			lblType = new JLabel();
-			lblType.setText(Language.translate("Typ"));
-			lblType.setSize(new Dimension(30, 16));
-			lblType.setLocation(new Point(10, 40));
-			lblId = new JLabel();
-			lblId.setText("ID");
-			lblId.setLocation(new Point(10, 10));
-			lblId.setSize(new Dimension(15, 16));
-			pnlEnvironment.add(lblId, null);
-			pnlEnvironment.add(lblType, null);
-			pnlEnvironment.add(lblClass, null);			
-			pnlEnvironment.add(getBtnLoadSVG(), null);
-			pnlEnvironment.add(getTfId());
-			pnlEnvironment.add(getCbType());
-			pnlEnvironment.add(getCbClass());
-			pnlEnvironment.add(getBtnApply());
-			pnlEnvironment.add(getBtnRemove());
-			
+	private JTextField getTfRwu() {
+		if (tfRwu == null) {
+			tfRwu = new JTextField();
+			tfRwu.setLocation(new Point(10, 40));
+			tfRwu.setSize(new Dimension(50, 25));			
 		}
-		return pnlEnvironment;
+		return tfRwu;
+	}
+
+	/**
+	 * This method initializes cbUnit	
+	 * 	
+	 * @return javax.swing.JComboBox	
+	 */
+	private JComboBox getCbUnit() {
+		if (cbUnit == null) {
+			cbUnit = new JComboBox();
+			cbUnit.setSize(90, 30);
+			cbUnit.setLocation(new Point(70,40));
+			String[] units = {"m", "cm", "mm", "inch", "feet"};
+			cbUnit.setModel(new DefaultComboBoxModel(units));			
+		}
+		return cbUnit;
+	}
+
+	/**
+	 * This method initializes tfPx	
+	 * 	
+	 * @return javax.swing.JTextField	
+	 */
+	private JTextField getTfPx() {
+		if (tfPx == null) {
+			tfPx = new JTextField();
+			tfPx.setLocation(new Point(10, 75));
+			tfPx.setSize(new Dimension(50, 25));			
+		}
+		return tfPx;
+	}
+
+	private JButton getBtnSetScale(){
+		if(btnSetScale == null){
+			btnSetScale = new JButton();
+			btnSetScale.setText(Language.translate("Maßstab festlegen"));
+			btnSetScale.setSize(new Dimension(150, 26));
+			btnSetScale.setLocation(new Point(10,115));
+			btnSetScale.addActionListener(new ActionListener(){
+
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					Scale scale = new Scale();
+					boolean error = false;
+					
+					try{
+						scale.setValue(Float.parseFloat(tfRwu.getText().replace(',', '.')));
+					}catch(NumberFormatException ex){
+						System.err.println(Language.translate("Ungültige Eingabe, ausschließlich zahlenwerte zulässig!"));
+						error=true;
+					}					
+					scale.setUnit(cbUnit.getSelectedItem().toString());
+					try{
+						scale.setPixel(Float.parseFloat(tfPx.getText().replace(',', '.')));
+					}catch(NumberFormatException ex){
+						System.err.println(Language.translate("Ungültige Eingabe, ausschließlich zahlenwerte zulässig!"));
+						error=true;
+					}
+					if(!error){
+						controller.setScale(scale);
+					}
+				}
+				
+			});
+		}
+		return btnSetScale;
 	}
 
 	/**
@@ -347,9 +443,9 @@ public class EnvironmentControllerGUI extends JSplitPane {
 			btnLoadSVG = new JButton();
 			btnLoadSVG.setText(Language.translate("SVG zuweisen"));
 			btnLoadSVG.setSize(new Dimension(150, 26));
-			btnLoadSVG.setLocation(new Point(10, 180));
+			btnLoadSVG.setLocation(new Point(10, 150));
 			btnLoadSVG.addActionListener(new ActionListener(){
-
+	
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
 					if(getFcLoadSVG().showOpenDialog(EnvironmentControllerGUI.this) == JFileChooser.APPROVE_OPTION){
@@ -363,7 +459,7 @@ public class EnvironmentControllerGUI extends JSplitPane {
 		}
 		return btnLoadSVG;
 	}
-	
+
 	private JFileChooser getFcLoadSVG(){
 		if(fcLoadSVG == null){
 			fcLoadSVG = new JFileChooser();
@@ -372,33 +468,49 @@ public class EnvironmentControllerGUI extends JSplitPane {
 		}
 		return fcLoadSVG;
 	}
+	
+	// Sets the scale inputs after the scale has been changed from
+	void setScale(Scale scale){
+		getTfRwu().setText(""+scale.getValue());
+		getCbUnit().setSelectedItem(scale.getUnit());
+		getTfPx().setText(""+scale.getPixel());
+	}
+	
+	// Object settings tab
 
 	/**
-	 * Adding onClick listeners to all relevant SVG elements
-	 * @param root
+	 * This method initializes pnlObjectSettings	
+	 * 	
+	 * @return javax.swing.JPanel	
 	 */
-	private void addElementListeners(Node root){
-		if((root instanceof Element) 
-				&& (SvgTypes.getType((Element) root) != null) 
-				&& (((Element)root).getAttributeNS(null, "id") != "border")){
-			((EventTarget) root).addEventListener("click", new EventListener(){
-				public void handleEvent(Event arg0) {
-					setSelectedElement((Element) arg0.getTarget());					
-				}
-
-								
-			}, true);
-
+	private JPanel getPnlObjectSettings() {
+		if (pnlObjectSettings == null) {
+			pnlObjectSettings = new JPanel();
+			pnlObjectSettings.setLayout(null);
+			lblClass = new JLabel();
+			lblClass.setText(Language.translate("Klasse"));
+			lblClass.setSize(new Dimension(45, 16));
+			lblClass.setLocation(new Point(10, 83));
+			lblType = new JLabel();
+			lblType.setText(Language.translate("Typ"));
+			lblType.setSize(new Dimension(30, 16));
+			lblType.setLocation(new Point(10, 48));
+			lblId = new JLabel();
+			lblId.setText("ID");
+			lblId.setLocation(new Point(10, 10));
+			lblId.setSize(new Dimension(15, 16));
+			pnlObjectSettings.add(lblId, null);
+			pnlObjectSettings.add(lblType, null);
+			pnlObjectSettings.add(lblClass, null);			
+			pnlObjectSettings.add(getTfId());
+			pnlObjectSettings.add(getCbType());
+			pnlObjectSettings.add(getCbClass());
+			pnlObjectSettings.add(getBtnApply());
+			pnlObjectSettings.add(getBtnRemove());
 		}
-		
-		if(root.hasChildNodes()){
-			NodeList children = root.getChildNodes();
-			for(int i=0; i<children.getLength(); i++){
-				addElementListeners(children.item(i));
-			}
-		}
-	}	
-
+		return pnlObjectSettings;
+	}
+	
 	/**
 	 * This method initializes tfId	
 	 * 	
@@ -407,8 +519,8 @@ public class EnvironmentControllerGUI extends JSplitPane {
 	private JTextField getTfId() {
 		if (tfId == null) {
 			tfId = new JTextField();
-			tfId.setSize(new Dimension(80, 22));
-			tfId.setLocation(new Point(70, 10));
+			tfId.setSize(new Dimension(100, 30));
+			tfId.setLocation(new Point(70, 7));
 		}
 		return tfId;
 	}
@@ -422,7 +534,7 @@ public class EnvironmentControllerGUI extends JSplitPane {
 		if (cbType == null) {
 			cbType = new JComboBox();
 			cbType.setSize(new Dimension(100, 25));
-			cbType.setLocation(new Point(70, 38));
+			cbType.setLocation(new Point(70, 43));
 			cbType.setEnabled(false);
 			Vector<String> types = new Vector<String>();
 			types.add(Language.translate("Keiner"));
@@ -431,7 +543,7 @@ public class EnvironmentControllerGUI extends JSplitPane {
 			}
 			cbType.setModel(new DefaultComboBoxModel(types));
 			cbType.addActionListener(new ActionListener(){
-
+	
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
 					if(ObjectTypes.getType(cbType.getSelectedItem().toString()) != null){
@@ -461,7 +573,7 @@ public class EnvironmentControllerGUI extends JSplitPane {
 	private JComboBox getCbClass() {
 		if (cbClass == null) {
 			cbClass = new JComboBox();
-			cbClass.setLocation(new Point(70, 73));
+			cbClass.setLocation(new Point(70, 78));
 			cbClass.setSize(new Dimension(100, 25));
 			cbClass.setEnabled(false);
 			Vector<Class<?>> classes = controller.getCurrentProject().getProjectAgents();
@@ -477,6 +589,56 @@ public class EnvironmentControllerGUI extends JSplitPane {
 			cbClass.setModel(new DefaultComboBoxModel(names));
 		}
 		return cbClass;
+	}
+
+	/**
+	 * This method initializes btnApply	
+	 * 	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getBtnApply() {
+		if (btnApply == null) {
+			btnApply = new JButton();
+			btnApply.setText(Language.translate("Anwenden"));
+			btnApply.setSize(new Dimension(150, 26));
+			btnApply.setLocation(new Point(10, 110));
+			btnApply.setEnabled(false);
+			btnApply.addActionListener(new ActionListener(){
+	
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					controller.createObject(selectedElement, getObjectSettings());
+					setSelectedElement(null);
+				}
+				
+			});
+		}
+		return btnApply;
+	}
+
+	/**
+	 * This method initializes btnRemove	
+	 * 	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getBtnRemove() {
+		if (btnRemove == null) {
+			btnRemove = new JButton();
+			btnRemove.setLocation(new Point(10, 145));
+			btnRemove.setText(Language.translate("Objekt entfernen"));
+			btnRemove.setEnabled(false);
+			btnRemove.setSize(new Dimension(150, 26));
+			btnRemove.addActionListener(new ActionListener(){
+	
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					controller.deleteObject(selectedElement.getAttributeNS(null, "id"), false);
+					setSelectedElement(null);
+				}
+				
+			});
+		}
+		return btnRemove;
 	}
 
 	/**
@@ -522,54 +684,30 @@ public class EnvironmentControllerGUI extends JSplitPane {
 	}
 
 	/**
-	 * This method initializes btnApply	
-	 * 	
-	 * @return javax.swing.JButton	
+	 * Adding onClick listeners to all relevant SVG elements
+	 * @param root
 	 */
-	private JButton getBtnApply() {
-		if (btnApply == null) {
-			btnApply = new JButton();
-			btnApply.setText(Language.translate("Anwenden"));
-			btnApply.setSize(new Dimension(150, 26));
-			btnApply.setLocation(new Point(10, 110));
-			btnApply.setEnabled(false);
-			btnApply.addActionListener(new ActionListener(){
+	private void addElementListeners(Node root){
+		if((root instanceof Element) 
+				&& (SvgTypes.getType((Element) root) != null) 
+				&& (((Element)root).getAttributeNS(null, "id") != "border")){
+			((EventTarget) root).addEventListener("click", new EventListener(){
+				public void handleEvent(Event arg0) {
+					setSelectedElement((Element) arg0.getTarget());					
+				}
 
-				@Override
-				public void actionPerformed(ActionEvent arg0) {
-					controller.createObject(selectedElement, getObjectSettings());
-					setSelectedElement(null);
-				}
-				
-			});
+								
+			}, true);
+
 		}
-		return btnApply;
-	}
-	
-	/**
-	 * This method initializes btnRemove	
-	 * 	
-	 * @return javax.swing.JButton	
-	 */
-	private JButton getBtnRemove() {
-		if (btnRemove == null) {
-			btnRemove = new JButton();
-			btnRemove.setLocation(new Point(10, 145));
-			btnRemove.setText(Language.translate("Objekt entfernen"));
-			btnRemove.setEnabled(false);
-			btnRemove.setSize(new Dimension(150, 26));
-			btnRemove.addActionListener(new ActionListener(){
-	
-				@Override
-				public void actionPerformed(ActionEvent arg0) {
-					controller.deleteObject(selectedElement.getAttributeNS(null, "id"), false);
-					setSelectedElement(null);
-				}
-				
-			});
+		
+		if(root.hasChildNodes()){
+			NodeList children = root.getChildNodes();
+			for(int i=0; i<children.getLength(); i++){
+				addElementListeners(children.item(i));
+			}
 		}
-		return btnRemove;
-	}
+	}	
 
 	/**
 	 * Sets the selected element
