@@ -29,6 +29,7 @@ import jade.lang.acl.ACLMessage;
 import jade.proto.SubscriptionInitiator;
 import jade.util.leap.Iterator;
 import contmas.agents.ContainerAgent;
+import contmas.interfaces.DFSubscriber;
 
 /**
  * @author Hanno - Felix Wagner

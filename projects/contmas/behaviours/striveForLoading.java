@@ -28,7 +28,9 @@ import jade.util.leap.ArrayList;
 import jade.util.leap.Iterator;
 import jade.util.leap.List;
 import contmas.agents.ContainerAgent;
-import contmas.agents.OntRepRequester;
+import contmas.interfaces.DFSubscriber;
+import contmas.interfaces.LoadingReceiver;
+import contmas.interfaces.OntRepRequester;
 import contmas.ontology.BlockAddress;
 import contmas.ontology.Container;
 import contmas.ontology.ContainerHolder;
@@ -58,7 +60,7 @@ public class striveForLoading extends ParallelBehaviour implements DFSubscriber,
 			ContainerAgent.addToList(this.allSourceAgents,updatedAgents);
 			while(avIt.hasNext()){
 				AID curAvAg=(AID) avIt.next();
-				this.addSubBehaviour(new getOntologyRepresentation(this.myAgent,curAvAg,((ContainerAgent) this.myAgent).getHarborManager()));
+				this.addSubBehaviour(new getOntologyRepresentation(this.myAgent,curAvAg,((ContainerAgent) this.myAgent).getHarbourMaster()));
 			}
 		}
 	}

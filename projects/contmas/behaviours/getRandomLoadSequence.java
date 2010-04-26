@@ -29,6 +29,7 @@ import jade.proto.AchieveREInitiator;
 import java.util.Vector;
 
 import contmas.agents.ContainerAgent;
+import contmas.interfaces.LoadingReceiver;
 import contmas.ontology.BayMap;
 import contmas.ontology.ProvideRandomLoadSequence;
 import contmas.ontology.RequestRandomLoadSequence;

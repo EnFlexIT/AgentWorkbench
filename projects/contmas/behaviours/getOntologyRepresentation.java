@@ -29,7 +29,7 @@ import jade.proto.AchieveREInitiator;
 import java.util.Vector;
 
 import contmas.agents.ContainerAgent;
-import contmas.agents.OntRepRequester;
+import contmas.interfaces.OntRepRequester;
 import contmas.ontology.ContainerHolder;
 import contmas.ontology.ProvideOntologyRepresentation;
 import contmas.ontology.RequestOntologyRepresentation;

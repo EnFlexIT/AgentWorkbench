@@ -12,8 +12,8 @@
  *         <http://www.gnu.org/licenses/>.
  */
 
-package contmas.agents;
+package contmas.interfaces;
 
-public interface TransportOrderOfferer{
-	public void offerTransportOrder();
+public interface TransportOrderHandler{
+	public void handleTransportOrder();
 }

@@ -31,7 +31,7 @@ import java.util.Vector;
 
 import contmas.agents.ContainerAgent;
 import contmas.agents.ContainerHolderAgent;
-import contmas.agents.OntRepProvider;
+import contmas.interfaces.OntRepProvider;
 import contmas.ontology.*;
 
 public class getPopulatedBayMap extends AchieveREInitiator{

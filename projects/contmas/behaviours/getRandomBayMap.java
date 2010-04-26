@@ -30,7 +30,7 @@ import jade.proto.AchieveREInitiator;
 import java.util.Vector;
 
 import contmas.agents.ContainerAgent;
-import contmas.agents.OntRepProvider;
+import contmas.interfaces.OntRepProvider;
 import contmas.ontology.ProvideBayMap;
 import contmas.ontology.RequestRandomBayMap;
 

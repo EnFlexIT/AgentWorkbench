@@ -28,7 +28,7 @@ import jade.proto.ContractNetResponder;
 import jade.util.leap.Iterator;
 import contmas.agents.ContainerAgent;
 import contmas.agents.ContainerHolderAgent;
-import contmas.agents.TransportOrderOfferer;
+import contmas.interfaces.TransportOrderOfferer;
 import contmas.main.MatchAgentAction;
 import contmas.ontology.*;
 
@@ -39,6 +39,7 @@ public class receiveLoadOrders extends ContractNetResponder{
 		private static final long serialVersionUID= -1740553491760609807L;
 		private final ContainerHolderAgent myCAgent;
 		private Boolean isDone=false;
+		private Long acceptReceivedAt=null;
 
 		handleAcceptProposal(ContainerHolderAgent myCAgent){
 			this.myCAgent=myCAgent;
@@ -49,7 +50,7 @@ public class receiveLoadOrders extends ContractNetResponder{
 			DataStore ds=this.getDataStore();
 			ACLMessage accept=(ACLMessage) ds.get(receiveLoadOrders.this.ACCEPT_PROPOSAL_KEY);
 			Concept content=this.myCAgent.extractAction(accept);
-			TransportOrderChain acceptedTOC=((AcceptLoadOffer) content).getLoad_offer();
+			TransportOrderChain acceptedTOC=((AcceptLoadOffer) content).getCorresponds_to();
 			ACLMessage rply=accept.createReply();
 
 			this.myCAgent.echoStatus("Bewerbung wurde akzeptiert. Überprüfe Kapazitäten für ",acceptedTOC,ContainerAgent.LOGGING_INFORM);
@@ -57,7 +58,22 @@ public class receiveLoadOrders extends ContractNetResponder{
 			TransportOrderChainState curState=this.myCAgent.touchTOCState(acceptedTOC);
 			if(curState instanceof ProposedFor){//Angebot wurde angenommen->Alles weitere in die Wege leiten
 				if(this.myCAgent.hasBayMapRoom()){
+					TransportOrder offer=this.myCAgent.findMatchingOrder(acceptedTOC); //get transport order TO me
+					if(!proposedEffort.equals(offer.getTakes())){
+						myCAgent.echoStatus("I proposed " + proposedEffort + ", now received " + offer.getTakes(),ContainerAgent.LOGGING_ERROR);
+					}
 //					((ContainerAgent)myAgent).echoStatus("BayMap hat noch Platz.");
+					if(acceptReceivedAt == null){ //First run, determine time of receival
+						acceptReceivedAt=System.currentTimeMillis();
+					}
+					Float reqTime=(proposedEffort * 100); //TODO hardcoded, use speed of agent
+					Long eta=acceptReceivedAt + reqTime.longValue();
+					if(System.currentTimeMillis() < eta){
+						myCAgent.echoStatus("Executing accepted transport order, " + (eta - System.currentTimeMillis()) + "ms left:",acceptedTOC,ContainerAgent.LOGGING_NOTICE);
+						this.block(eta - System.currentTimeMillis());
+						this.isDone=false;
+						return;
+					}
 
 					if(this.myCAgent.aquireContainer(acceptedTOC)){
 //						((ContainerAgent)myAgent).echoStatus("Auftrag erfüllt, Container aufgenommen.",acceptedTOC);
@@ -66,6 +82,7 @@ public class receiveLoadOrders extends ContractNetResponder{
 						this.myCAgent.fillMessage(rply,loadStatus);
 						ds.put(receiveLoadOrders.this.REPLY_KEY,rply);
 						this.isDone=true;
+						acceptReceivedAt=null;
 						this.myAgent.doWake();
 						return;
 					}else{
@@ -73,11 +90,11 @@ public class receiveLoadOrders extends ContractNetResponder{
 					}
 				}else{
 					if(this.myCAgent instanceof TransportOrderOfferer){
-						TransportOrderChain curTOC=this.myCAgent.getSomeTOCOfState(new Administered());
-						if(curTOC != null){
+						TransportOrderChain someTOC=this.myCAgent.getSomeTOCOfState(new Administered());
+						if(someTOC != null){
 							this.myCAgent.echoStatus("BayMap voll, versuche Räumung für",acceptedTOC,ContainerAgent.LOGGING_INFORM);
 							this.myCAgent.touchTOCState(acceptedTOC,new PendingForSubCFP());
-							this.myCAgent.releaseContainer(curTOC,this);
+							this.myCAgent.releaseContainer(someTOC,this);
 							this.block();
 							this.isDone=false;
 							return;
@@ -127,6 +144,7 @@ public class receiveLoadOrders extends ContractNetResponder{
 	 */
 	private static final long serialVersionUID= -3409830399764472591L;
 	private final ContainerHolderAgent myCAgent=(ContainerHolderAgent) this.myAgent;
+	private Float proposedEffort=null;
 
 	private static MessageTemplate createMessageTemplate(Agent a){
 		MessageTemplate mtallg=AchieveREResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
@@ -186,8 +204,10 @@ public class receiveLoadOrders extends ContractNetResponder{
 			//((ContainerAgent)myAgent).echoStatus("noch Kapazitäten vorhanden");
 			ProposeLoadOffer act=this.myCAgent.getLoadProposal(curTOC);
 			if(act != null){
+				this.proposedEffort=act.getLoad_offer().getTakes();
 				this.myCAgent.echoStatus("Bewerbe mich für Ausschreibung.",curTOC,ContainerAgent.LOGGING_INFORM);
 				this.myCAgent.fillMessage(reply,act);
+
 				reply.setPerformative(ACLMessage.PROPOSE);
 				return reply;
 			}else{
@@ -208,7 +228,7 @@ public class receiveLoadOrders extends ContractNetResponder{
 	@Override
 	protected void handleRejectProposal(ACLMessage cfp,ACLMessage propose,ACLMessage accept){
 		Concept content=this.myCAgent.extractAction(propose);
-		TransportOrderChain acceptedTOC=((ProposeLoadOffer) content).getLoad_offer();
+		TransportOrderChain acceptedTOC=((ProposeLoadOffer) content).getCorresponds_to();
 		//		((ContainerAgent)myAgent).echoStatus("Meine Bewerbung wurde abgelehnt");
 		if( !(this.myCAgent.touchTOCState(acceptedTOC,null,true) instanceof ProposedFor)){ //wenn der untersuchte Container dem entspricht, für den sich beworben wurde
 			this.myCAgent.echoStatus("ERROR: Auftrag, auf den ich mich beworben habe (abgelehnt), nicht zum Entfernen gefunden.",acceptedTOC,ContainerAgent.LOGGING_ERROR);

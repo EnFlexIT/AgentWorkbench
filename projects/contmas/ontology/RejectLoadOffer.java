@@ -8,19 +8,19 @@ import jade.core.*;
 /**
 * Protege name: RejectLoadOffer
 * @author ontology bean generator
-* @version 2010/04/20, 14:23:52
+* @version 2010/04/22, 16:03:29
 */
 public class RejectLoadOffer implements AgentAction {
 
    /**
-* Protege name: load_offer
+* Protege name: corresponds_to
    */
-   private TransportOrderChain load_offer;
-   public void setLoad_offer(TransportOrderChain value) { 
-    this.load_offer=value;
+   private TransportOrderChain corresponds_to;
+   public void setCorresponds_to(TransportOrderChain value) { 
+    this.corresponds_to=value;
    }
-   public TransportOrderChain getLoad_offer() {
-     return this.load_offer;
+   public TransportOrderChain getCorresponds_to() {
+     return this.corresponds_to;
    }
 
 }

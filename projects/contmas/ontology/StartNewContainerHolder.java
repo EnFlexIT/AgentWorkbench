@@ -8,30 +8,19 @@ import jade.core.*;
 /**
 * Protege name: StartNewContainerHolder
 * @author ontology bean generator
-* @version 2010/04/20, 14:23:52
+* @version 2010/04/22, 16:03:29
 */
 public class StartNewContainerHolder implements AgentAction {
 
    /**
-* Protege name: populate
+* Protege name: name
    */
-   private boolean populate;
-   public void setPopulate(boolean value) { 
-    this.populate=value;
+   private String name;
+   public void setName(String value) { 
+    this.name=value;
    }
-   public boolean getPopulate() {
-     return this.populate;
-   }
-
-   /**
-* Protege name: to_be_added
-   */
-   private ContainerHolder to_be_added;
-   public void setTo_be_added(ContainerHolder value) { 
-    this.to_be_added=value;
-   }
-   public ContainerHolder getTo_be_added() {
-     return this.to_be_added;
+   public String getName() {
+     return this.name;
    }
 
    /**
@@ -46,14 +35,25 @@ public class StartNewContainerHolder implements AgentAction {
    }
 
    /**
-* Protege name: name
+* Protege name: to_be_added
    */
-   private String name;
-   public void setName(String value) { 
-    this.name=value;
+   private ContainerHolder to_be_added;
+   public void setTo_be_added(ContainerHolder value) { 
+    this.to_be_added=value;
    }
-   public String getName() {
-     return this.name;
+   public ContainerHolder getTo_be_added() {
+     return this.to_be_added;
+   }
+
+   /**
+* Protege name: populate
+   */
+   private boolean populate;
+   public void setPopulate(boolean value) { 
+    this.populate=value;
+   }
+   public boolean getPopulate() {
+     return this.populate;
    }
 
 }

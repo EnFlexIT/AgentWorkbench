@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: StraddleCarrier
 * @author ontology bean generator
-* @version 2010/04/20, 14:23:52
+* @version 2010/04/22, 16:03:30
 */
 public class StraddleCarrier extends ActiveContainerHolder{ 
 

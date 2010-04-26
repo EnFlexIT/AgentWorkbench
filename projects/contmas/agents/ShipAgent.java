@@ -17,6 +17,7 @@ import jade.util.leap.List;
 import contmas.behaviours.enrollAtHarbor;
 import contmas.behaviours.listenForLoadingStreamIni;
 import contmas.behaviours.unload;
+import contmas.interfaces.TransportOrderOfferer;
 import contmas.ontology.Rail;
 import contmas.ontology.Ship;
 
@@ -26,7 +27,8 @@ public class ShipAgent extends StaticContainerAgent implements TransportOrderOff
 	public ShipAgent(Ship ontologyRepresentation){
 		super("long-term-transporting",ontologyRepresentation);
 		this.targetAgentServiceType="craning"; //unneccesary, because done by enroll behaviour
-		this.targetAbstractDomain=new Rail(); //TODO should be done by enroll behaviour 
+		this.targetAbstractDomain=new Rail(); //TODO should be done by enroll behaviour
+		this.targetAbstractDomain.setId("CraneRails");
 	}
 
 	@Override

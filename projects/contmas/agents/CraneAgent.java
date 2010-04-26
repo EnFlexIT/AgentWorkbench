@@ -16,6 +16,8 @@ package contmas.agents;
 
 import contmas.behaviours.receiveLoadOrders;
 import contmas.behaviours.unload;
+import contmas.interfaces.TransportOrderHandler;
+import contmas.interfaces.TransportOrderOfferer;
 import contmas.ontology.ApronArea;
 import contmas.ontology.Crane;
 
@@ -27,6 +29,8 @@ public class CraneAgent extends ActiveContainerAgent implements TransportOrderHa
 		super("craning",ontologyRepresentation);
 		this.targetAgentServiceType="short-time-storage";
 		this.targetAbstractDomain=new ApronArea();
+		this.targetAbstractDomain.setId("CraneApron");
+
 	}
 
 	@Override

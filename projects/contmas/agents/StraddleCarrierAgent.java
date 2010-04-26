@@ -20,8 +20,15 @@
  */
 package contmas.agents;
 
+import jade.domain.FIPANames;
+import jade.lang.acl.ACLMessage;
+import jade.util.leap.Iterator;
+import contmas.behaviours.getHarbourSetup;
 import contmas.behaviours.receiveLoadOrders;
 import contmas.behaviours.unload;
+import contmas.interfaces.HarbourLayoutRequester;
+import contmas.interfaces.TransportOrderHandler;
+import contmas.interfaces.TransportOrderOfferer;
 import contmas.main.UncompatibleDimensionsException;
 import contmas.ontology.*;
 
@@ -29,8 +36,9 @@ import contmas.ontology.*;
  * @author Hanno - Felix Wagner
  *
  */
-public class StraddleCarrierAgent extends ActiveContainerAgent implements TransportOrderHandler,TransportOrderOfferer{
+public class StraddleCarrierAgent extends ActiveContainerAgent implements TransportOrderHandler,TransportOrderOfferer,HarbourLayoutRequester{
 	private static final Float speed=1.0F;
+	private Domain harbourMap;
 	/**
 	 * 
 	 */
@@ -47,6 +55,7 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 		super("container-distributing",ontologyRepresentation);
 		this.targetAgentServiceType="container-storing";
 		this.targetAbstractDomain=new YardArea();
+		this.targetAbstractDomain.setId("StorageYard"); //TODO hardcoded
 	}
 
 	/* (non-Javadoc)
@@ -70,9 +79,15 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 		super.setup();
 		this.handleTransportOrder();
 		this.offerTransportOrder();
-		echoStatus("my current relative position: " + positionToString(getRelativePosition()));
-		echoStatus("my current absolute position: " + positionToString(getAbsolutePosition()));
+		this.addBehaviour(new getHarbourSetup(this,this.getHarbourMaster()));
 
+//		echoStatus("my current relative position: " + positionToString(getRelativePosition()));
+//		echoStatus("my current absolute position: " + positionToString(getAbsolutePosition()));
+		Domain root=findRootDomain(this.getOntologyRepresentation().getLives_in());
+
+//		echoStatus("my root domain: " + root);
+
+//		experiment();
 	}
 
 	public String positionToString(Phy_Position in){
@@ -128,14 +143,13 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 		*/
 		absPosition=addPositions(master,slave);
 
-
 		return absPosition;
 	}
 
 	public void printTOInfo(TransportOrder call){
 
-		System.out.println("Starts at: " + call.getStarts_at().getAbstract_designation());
-		System.out.println("Ends at: " + call.getEnds_at().getAbstract_designation());
+//		echoStatus("Starts at: " + call.getStarts_at().getAbstract_designation());
+//		echoStatus("Ends at: " + call.getEnds_at().getAbstract_designation());
 
 		Phy_Size startSize=call.getStarts_at().getAbstract_designation().getHas_size();
 		Phy_Position startPos=call.getStarts_at().getAbstract_designation().getIs_in_position();
@@ -152,72 +166,75 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 			startSizeStr="width=" + startSize.getPhy_width() + ", height:" + startSize.getPhy_height();
 			startPosStr="x=" + startPos.getPhy_x() + ", y:" + startPos.getPhy_x();
 		}catch(NullPointerException e){
-			System.out.println("Bad start: size=" + startSize + "; pos=:" + startPos);
+			echoStatus("Bad start: size=" + startSize + "; pos=:" + startPos);
 		}
 
 		try{
 			endSizeStr="width=" + endSize.getPhy_width() + ", height:" + endSize.getPhy_height();
 			endPosStr="x=" + endPos.getPhy_x() + ", y:" + endPos.getPhy_y();
 		}catch(NullPointerException e){
-			System.out.println("Bad end: size=" + endSize + "; pos=:" + endPos);
+			echoStatus("Bad end: size=" + endSize + "; pos=:" + endPos);
 		}
 
-		System.out.println("startSize: " + startSizeStr + "; startPos:" + startPosStr + "; endSize:" + endSizeStr + "; endPos:" + endPosStr);
+		echoStatus("startSize: " + startSizeStr + "; startPos:" + startPosStr + "; endSize:" + endSizeStr + "; endPos:" + endPosStr);
 
 	}
 
 	@Override
 	public TransportOrder calculateEffort(TransportOrder call){
 		TransportOrder out=super.calculateEffort(call);
-		
-		Domain ccd=findClosestCommonDomain(this.getOntologyRepresentation().getLives_in(), call.getStarts_at().getAbstract_designation());
-		ccd=findClosestCommonDomain(ccd,call.getEnds_at().getAbstract_designation());
-		
-		System.out.println(ccd);
-		
-		Phy_Position currentPos=getPositionRelativeTo(this.getOntologyRepresentation().getIs_in_position2(),this.getOntologyRepresentation().getLives_in(),ccd);
-		Phy_Position startPos=getPositionRelativeTo(call.getStarts_at().getAbstract_designation().getIs_in_position(),call.getStarts_at().getAbstract_designation(),ccd);
-		Phy_Position endPos=getPositionRelativeTo(call.getEnds_at().getAbstract_designation().getIs_in_position(),call.getEnds_at().getAbstract_designation(),ccd);
 
-		System.out.println("currentPos: "+positionToString(currentPos));
-		System.out.println("startPos: "+positionToString(startPos));
-		System.out.println("endPos: "+positionToString(endPos));
-		
+		Domain ccd=findClosestCommonDomain(this.getOntologyRepresentation().getLives_in(),call.getStarts_at().getAbstract_designation());
+		ccd=findClosestCommonDomain(ccd,call.getEnds_at().getAbstract_designation());
+
+//		echoStatus("ClosestCommonDomain: "+ccd);
+
+		Phy_Position currentPos=getPositionRelativeTo(this.getOntologyRepresentation().getIs_in_position2(),this.getOntologyRepresentation().getLives_in(),ccd);
+		Phy_Position startPos=getPositionRelativeTo(call.getStarts_at().getAbstract_designation().getIs_in_position(),call.getStarts_at().getAbstract_designation().getLies_in(),ccd);
+//		Phy_Position endPos=getPositionRelativeTo(call.getEnds_at().getAbstract_designation().getIs_in_position(),call.getEnds_at().getAbstract_designation(),ccd);
+
+//		echoStatus("currentPos: " + positionToString(currentPos));
+//		echoStatus("startPos: " + positionToString(startPos));
+//		System.out.println("endPos: "+positionToString(endPos));
+
 		//transfer from current position to start position
 		Float positioningEffort=getManhattanDistance(currentPos,startPos);
 
 		//pickup
 
+		//NO FURTHER EFFORTS needed so far!
 		//transfer from start position to end position
-		Float transferEffort=getManhattanDistance(startPos,endPos);
+//		Float transferEffort=getManhattanDistance(startPos,endPos);
 
 		//drop
 
-		printTOInfo(call);
+//		printTOInfo(call);
 
-		System.out.println("randomized effort: " + out.getTakes());
+//		echoStatus("randomized effort: " + out.getTakes());
 
-		out.setTakes(positioningEffort + transferEffort);
-		System.out.println("calculated effort: positioningEffort (" + positioningEffort + ")+transferEffort (" + transferEffort + ")=" + out.getTakes());
+		out.setTakes(positioningEffort); // + transferEffort);
+		echoStatus("calculated effort: positioningEffort (" + positioningEffort + ")=" + out.getTakes()); // ")  +transferEffort (" + transferEffort + ")=" + out.getTakes());
 
 		return out;
 	}
+
 	/*
 	 * Assumes, that subDomain lies_in containingDomain or containingDomain has_subdomain subDomain transitively
 	 */
-	public Phy_Position getPositionRelativeTo(Phy_Position positionInSubDomain, Domain subDomain, Domain containingDomain){
+	public Phy_Position getPositionRelativeTo(Phy_Position positionInSubDomain,Domain subDomain,Domain containingDomain){
 		if(subDomain.getId().equals(containingDomain.getId())){
-			return getZeroPosition();
+			return positionInSubDomain;
+//			return getZeroPosition();
 		}
-		
+
 		//TODO so SOMETHING with containingDomain. Some kind of check or so.
 		Phy_Position a=positionInSubDomain;
 		Phy_Position b=subDomain.getIs_in_position();
 		Phy_Position insidePosition=addPositions(a,b);
-		
+
 		return insidePosition;
 	}
-	
+
 	public static Phy_Position addPositions(Phy_Position a,Phy_Position b){
 		Phy_Position added=new Phy_Position();
 		added.setPhy_x(a.getPhy_x() + b.getPhy_x());
@@ -231,7 +248,7 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 		zero.setPhy_y(0.0F);
 		return zero;
 	}
-	
+
 	public Domain findClosestCommonDomain(Domain a,Domain b){
 
 		return a; //TODO algorithm
@@ -241,7 +258,106 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 		Float lambdaX=from.getPhy_x() - to.getPhy_x();
 		Float lambdaY=from.getPhy_y() - to.getPhy_y();
 
-		return Math.abs(lambdaX + lambdaY);
+		return Math.abs(lambdaX) + Math.abs(lambdaY);
 	}
 
+	public void experiment(){
+		echoStatus("experiment starts");
+		ACLMessage test=new ACLMessage(ACLMessage.CFP);
+		Domain master=new Domain();
+		Domain slave=new Domain();
+
+		master.addHas_subdomains(slave);
+		slave.setLies_in(master);
+
+		ProvideHarbourSetup haSet=new ProvideHarbourSetup();
+		haSet.setCurrent_harbour_layout(master);
+		this.fillMessage(test,haSet);
+		echoStatus("experiment ended");
+	}
+
+	@Override
+	public Boolean aquireContainer(TransportOrderChain targetContainer){ //eigentlicher Vorgang des Container-Aufnehmens
+		TransportOrder targetTO=findMatchingOrder(targetContainer);
+		Domain start=targetTO.getStarts_at().getAbstract_designation();
+		echoStatus("Container is going to be picked up at "+start.getId()+" "+positionToString(start.getIs_in_position()));
+		moveTo(start.getIs_in_position());
+
+		return super.aquireContainer(targetContainer);
+	}
+
+	public void moveTo(Phy_Position to){
+		echoStatus("Moving to "+positionToString(to));
+		getOntologyRepresentation().getIs_in_position2().setPhy_x(to.getPhy_x());
+		getOntologyRepresentation().getIs_in_position2().setPhy_y(to.getPhy_y());
+	}
+	
+	@Override
+	public boolean dropContainer(TransportOrderChain load_offer){
+
+		//set position to be where the container was dropped (start designator of NEXT TO)
+
+		TransportOrder targetTO=findMatchingOrder(load_offer,false);
+		Domain end=targetTO.getEnds_at().getAbstract_designation();
+		echoStatus("Container is going to be dropped at "+end.getId()+" "+positionToString(end.getIs_in_position()));
+		moveTo(end.getIs_in_position());
+		
+//		this.getOntologyRepresentation().setIs_in_position2(value);
+		return super.dropContainer(load_offer);
+	}
+
+	public Domain findRootDomain(Domain accessPoint){
+		Domain liesIn=accessPoint.getLies_in();
+		if(liesIn == null){
+			return accessPoint;
+		}else{
+			return findRootDomain(liesIn);
+		}
+	}
+
+	//Has_subdomains variant
+	public Domain findDomain(String lookForID, Domain in){
+		if(in.getId().equals(lookForID)){
+			return in;
+		}
+		Iterator iter=in.getAllHas_subdomains();
+		Domain found=null;
+		while(iter.hasNext()){
+			Domain curDom=(Domain) iter.next();
+
+			found=findDomain(lookForID,curDom);
+			if(found!=null){
+				return found;
+			}
+		}
+		return null;
+	}
+	
+/*	//Lies_in variant
+	public Domain findDomain(String lookForID,Domain in){
+		if(in.getId().equals(lookForID)){
+			return in;
+		}else{
+			return findDomain(lookForID,in.getLies_in());
+		}
+	}
+*/
+	/* (non-Javadoc)
+	 * @see contmas.interfaces.HarbourLayoutRequester#processHarbourLayout(contmas.ontology.Domain)
+	 */
+	@Override
+	public void processHarbourLayout(Domain current_harbour_layout){
+		// TODO Auto-generated method stub
+		harbourMap=current_harbour_layout;
+//		echoStatus("found domain: " + findDomain(this.targetAbstractDomain.getId(),harbourMap));
+	}
+/*
+	@Override
+	public Designator getAbstractTargetDesignator(){
+		Designator target=new Designator(); //TODO mögliche ziele herausfinden
+		target.setType("abstract");
+		target.setAbstract_designation(this.targetAbstractDomain);
+		return target;
+	}
+*/
 }

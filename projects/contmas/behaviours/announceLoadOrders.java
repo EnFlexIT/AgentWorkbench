@@ -110,11 +110,11 @@ public class announceLoadOrders extends ContractNetInitiator{
 				content=this.myCAgent.extractAction(propose);
 				if(content instanceof ProposeLoadOffer){
 					ProposeLoadOffer proposal=(ProposeLoadOffer) content;
-					TransportOrder offer=this.myCAgent.findMatchingOrder(proposal.getLoad_offer(),false);
+					TransportOrder offer=this.myCAgent.findMatchingOrder(proposal.getCorresponds_to(),false);
 					if((bestOffer == null) || (offer.getTakes() < bestOffer.getTakes())){ //bisher beste Zeit
 						bestOffer=offer;
 						bestOfferMessage=propose;
-						bestOfferToc=proposal.getLoad_offer();
+						bestOfferToc=proposal.getCorresponds_to();
 					}
 				}
 			} // End if content !=null
@@ -149,7 +149,7 @@ public class announceLoadOrders extends ContractNetInitiator{
 		if(bestOffer != null){
 			accept=bestOfferMessage.createReply();
 			AcceptLoadOffer act=new AcceptLoadOffer();
-			act.setLoad_offer(bestOfferToc);
+			act.setCorresponds_to(bestOfferToc);
 			this.myCAgent.fillMessage(accept,act);
 			accept.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
 			acceptances.add(accept);
@@ -171,12 +171,10 @@ public class announceLoadOrders extends ContractNetInitiator{
 			AgentAction content=this.myCAgent.extractAction(notification);
 			if(content instanceof AnnounceLoadStatus){
 				AnnounceLoadStatus loadStatus=(AnnounceLoadStatus) content;
-				TransportOrderChain load_offer=loadStatus.getLoad_offer();
+				TransportOrderChain load_offer=loadStatus.getCorresponds_to();
 				if((notification.getPerformative() == ACLMessage.INFORM) && loadStatus.getLoad_status().equals("FINISHED")){
 					//					((ContainerAgent)myAgent).echoStatus("AnnounceLoadStatus FINISHED empfangen, bearbeiten");
-					if(this.myCAgent.removeContainerFromBayMap(load_offer)){
-						this.myCAgent.touchTOCState(load_offer,null,true);
-						this.myCAgent.echoStatus("Erfolgreich losgeworden (Meldung+BayMap-Entfernung).",load_offer,ContainerAgent.LOGGING_INFORM);
+					if(this.myCAgent.dropContainer(load_offer)){
 						if(this.masterBehaviour != null){
 							this.myCAgent.echoStatus("INFORM: MasterBehaviour wird neugestartet.",ContainerAgent.LOGGING_INFORM);
 							this.masterBehaviour.restart();

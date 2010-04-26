@@ -7,19 +7,40 @@ import jade.core.*;
 /**
 * Protege name: ContainerHolder
 * @author ontology bean generator
-* @version 2010/04/20, 14:23:52
+* @version 2010/04/22, 16:03:30
 */
 public class ContainerHolder extends AID{ 
 
    /**
-* Protege name: localName
+* Protege name: container_states
    */
-   private String localName;
-   public void setLocalName(String value) { 
-    this.localName=value;
+   private List container_states = new ArrayList();
+   public void addContainer_states(TOCHasState elem) { 
+     List oldList = this.container_states;
+     container_states.add(elem);
    }
-   public String getLocalName() {
-     return this.localName;
+   public boolean removeContainer_states(TOCHasState elem) {
+     List oldList = this.container_states;
+     boolean result = container_states.remove(elem);
+     return result;
+   }
+   public void clearAllContainer_states() {
+     List oldList = this.container_states;
+     container_states.clear();
+   }
+   public Iterator getAllContainer_states() {return container_states.iterator(); }
+   public List getContainer_states() {return container_states; }
+   public void setContainer_states(List l) {container_states = l; }
+
+   /**
+* Protege name: is_in_position2
+   */
+   private Phy_Position is_in_position2;
+   public void setIs_in_position2(Phy_Position value) { 
+    this.is_in_position2=value;
+   }
+   public Phy_Position getIs_in_position2() {
+     return this.is_in_position2;
    }
 
    /**
@@ -45,46 +66,14 @@ public class ContainerHolder extends AID{
    }
 
    /**
-* Protege name: is_in_position2
+* Protege name: localName
    */
-   private Phy_Position is_in_position2;
-   public void setIs_in_position2(Phy_Position value) { 
-    this.is_in_position2=value;
+   private String localName;
+   public void setLocalName(String value) { 
+    this.localName=value;
    }
-   public Phy_Position getIs_in_position2() {
-     return this.is_in_position2;
-   }
-
-   /**
-* Protege name: container_states
-   */
-   private List container_states = new ArrayList();
-   public void addContainer_states(TOCHasState elem) { 
-     List oldList = this.container_states;
-     container_states.add(elem);
-   }
-   public boolean removeContainer_states(TOCHasState elem) {
-     List oldList = this.container_states;
-     boolean result = container_states.remove(elem);
-     return result;
-   }
-   public void clearAllContainer_states() {
-     List oldList = this.container_states;
-     container_states.clear();
-   }
-   public Iterator getAllContainer_states() {return container_states.iterator(); }
-   public List getContainer_states() {return container_states; }
-   public void setContainer_states(List l) {container_states = l; }
-
-   /**
-* Protege name: service_type
-   */
-   private String service_type;
-   public void setService_type(String value) { 
-    this.service_type=value;
-   }
-   public String getService_type() {
-     return this.service_type;
+   public String getLocalName() {
+     return this.localName;
    }
 
    /**
@@ -107,5 +96,16 @@ public class ContainerHolder extends AID{
    public Iterator getAllContractors() {return contractors.iterator(); }
    public List getContractors() {return contractors; }
    public void setContractors(List l) {contractors = l; }
+
+   /**
+* Protege name: service_type
+   */
+   private String service_type;
+   public void setService_type(String value) { 
+    this.service_type=value;
+   }
+   public String getService_type() {
+     return this.service_type;
+   }
 
 }

@@ -22,6 +22,8 @@ package contmas.agents;
 
 import contmas.behaviours.receiveLoadOrders;
 import contmas.behaviours.unload;
+import contmas.interfaces.TransportOrderHandler;
+import contmas.interfaces.TransportOrderOfferer;
 import contmas.ontology.Apron;
 import contmas.ontology.Street;
 
@@ -42,6 +44,8 @@ public class ApronAgent extends StaticContainerAgent implements TransportOrderHa
 		super("short-time-storage",ontologyRepresentation);
 		this.targetAgentServiceType="container-distributing";
 		this.targetAbstractDomain=new Street();
+		this.targetAbstractDomain.setId("StraddleCarrierStreet"); //TODO hardcoded
+
 	}
 
 	/* (non-Javadoc)

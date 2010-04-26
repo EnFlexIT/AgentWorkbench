@@ -8,20 +8,9 @@ import jade.core.*;
 /**
 * Protege name: TOCHasState
 * @author ontology bean generator
-* @version 2010/04/20, 14:23:52
+* @version 2010/04/22, 16:03:29
 */
 public class TOCHasState implements Concept {
-
-   /**
-* Protege name: subjected_toc
-   */
-   private TransportOrderChain subjected_toc;
-   public void setSubjected_toc(TransportOrderChain value) { 
-    this.subjected_toc=value;
-   }
-   public TransportOrderChain getSubjected_toc() {
-     return this.subjected_toc;
-   }
 
    /**
 * Protege name: state
@@ -32,6 +21,17 @@ public class TOCHasState implements Concept {
    }
    public TransportOrderChainState getState() {
      return this.state;
+   }
+
+   /**
+* Protege name: subjected_toc
+   */
+   private TransportOrderChain subjected_toc;
+   public void setSubjected_toc(TransportOrderChain value) { 
+    this.subjected_toc=value;
+   }
+   public TransportOrderChain getSubjected_toc() {
+     return this.subjected_toc;
    }
 
 }

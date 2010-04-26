@@ -8,9 +8,20 @@ import jade.core.*;
 /**
 * Protege name: ProvideHarbourSetup
 * @author ontology bean generator
-* @version 2010/04/20, 14:23:52
+* @version 2010/04/22, 16:03:29
 */
 public class ProvideHarbourSetup implements AgentAction {
+
+   /**
+* Protege name: current_harbour_layout
+   */
+   private Domain current_harbour_layout;
+   public void setCurrent_harbour_layout(Domain value) { 
+    this.current_harbour_layout=value;
+   }
+   public Domain getCurrent_harbour_layout() {
+     return this.current_harbour_layout;
+   }
 
    /**
 * Protege name: currently_active_container_holders
@@ -32,16 +43,5 @@ public class ProvideHarbourSetup implements AgentAction {
    public Iterator getAllCurrently_active_container_holders() {return currently_active_container_holders.iterator(); }
    public List getCurrently_active_container_holders() {return currently_active_container_holders; }
    public void setCurrently_active_container_holders(List l) {currently_active_container_holders = l; }
-
-   /**
-* Protege name: current_harbour_layout
-   */
-   private Domain current_harbour_layout;
-   public void setCurrent_harbour_layout(Domain value) { 
-    this.current_harbour_layout=value;
-   }
-   public Domain getCurrent_harbour_layout() {
-     return this.current_harbour_layout;
-   }
 
 }

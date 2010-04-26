@@ -1,4 +1,4 @@
-; Tue Apr 20 16:24:06 NZST 2010
+; Sat Apr 24 22:37:43 NZST 2010
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -6,11 +6,11 @@
 ([BROWSER_SLOT_NAMES] of  Property_List
 
 	(properties
-		[Container-Ontologie-OWL_indiv_ProjectKB_Instance_238]
-		[Container-Ontologie-OWL_indiv_ProjectKB_Instance_239]
-		[Container-Ontologie-OWL_indiv_ProjectKB_Instance_240]
-		[Container-Ontologie-OWL_indiv_ProjectKB_Instance_241]
-		[Container-Ontologie-OWL_indiv_ProjectKB_Instance_242]))
+		[Container-Ontologie-OWL_indiv_ProjectKB_Instance_10249]
+		[Container-Ontologie-OWL_indiv_ProjectKB_Instance_10250]
+		[Container-Ontologie-OWL_indiv_ProjectKB_Instance_10251]
+		[Container-Ontologie-OWL_indiv_ProjectKB_Instance_10252]
+		[Container-Ontologie-OWL_indiv_ProjectKB_Instance_10253]))
 
 ([CLSES_TAB] of  Widget
 
@@ -33,6 +33,31 @@
 	(is_hidden TRUE)
 	(property_list [Container-Ontologie-OWL_indiv_ProjectKB_Instance_11])
 	(widget_class_name "edu.stanford.smi.protege.widget.instance_tree.InstanceTreeTab"))
+
+([Container-Ontologie-OWL_indiv_ProjectKB_Instance_10249] of  String
+
+	(name "owl:Thing")
+	(string_value "%3ANAME"))
+
+([Container-Ontologie-OWL_indiv_ProjectKB_Instance_10250] of  String
+
+	(name ":PAL-CONSTRAINT")
+	(string_value "%3APAL-NAME"))
+
+([Container-Ontologie-OWL_indiv_ProjectKB_Instance_10251] of  String
+
+	(name ":INSTANCE-ANNOTATION")
+	(string_value "%3AANNOTATION-TEXT"))
+
+([Container-Ontologie-OWL_indiv_ProjectKB_Instance_10252] of  String
+
+	(name ":META-CLASS")
+	(string_value "%3ANAME"))
+
+([Container-Ontologie-OWL_indiv_ProjectKB_Instance_10253] of  String
+
+	(name "owl:Class")
+	(string_value "%3ANAME"))
 
 ([Container-Ontologie-OWL_indiv_ProjectKB_Instance_11] of  Property_List
 )
@@ -97,36 +122,11 @@
 ([Container-Ontologie-OWL_indiv_ProjectKB_Instance_23] of  Property_List
 )
 
-([Container-Ontologie-OWL_indiv_ProjectKB_Instance_238] of  String
-
-	(name "owl:Thing")
-	(string_value "%3ANAME"))
-
-([Container-Ontologie-OWL_indiv_ProjectKB_Instance_239] of  String
-
-	(name ":PAL-CONSTRAINT")
-	(string_value "%3APAL-NAME"))
-
 ([Container-Ontologie-OWL_indiv_ProjectKB_Instance_24] of  Widget
 
 	(is_hidden TRUE)
 	(property_list [Container-Ontologie-OWL_indiv_ProjectKB_Instance_25])
 	(widget_class_name "org.algernon.kb.okbc.protege.plugins.AlgernonTab"))
-
-([Container-Ontologie-OWL_indiv_ProjectKB_Instance_240] of  String
-
-	(name ":INSTANCE-ANNOTATION")
-	(string_value "%3AANNOTATION-TEXT"))
-
-([Container-Ontologie-OWL_indiv_ProjectKB_Instance_241] of  String
-
-	(name ":META-CLASS")
-	(string_value "%3ANAME"))
-
-([Container-Ontologie-OWL_indiv_ProjectKB_Instance_242] of  String
-
-	(name "owl:Class")
-	(string_value "%3ANAME"))
 
 ([Container-Ontologie-OWL_indiv_ProjectKB_Instance_25] of  Property_List
 )

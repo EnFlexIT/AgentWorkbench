@@ -30,6 +30,7 @@ import java.util.Vector;
 
 import contmas.agents.ContainerAgent;
 import contmas.agents.ControlGUIAgent;
+import contmas.interfaces.HarbourLayoutRequester;
 import contmas.ontology.ProvideHarbourSetup;
 import contmas.ontology.RequestHarbourSetup;
 
@@ -38,6 +39,8 @@ public class getHarbourSetup extends AchieveREInitiator{
 	 * 
 	 */
 	private static final long serialVersionUID=3852209142960173705L;
+	
+	private HarbourLayoutRequester owner;
 	/**
 	 * 
 	 */
@@ -56,6 +59,7 @@ public class getHarbourSetup extends AchieveREInitiator{
 	public getHarbourSetup(Agent myAgent,AID requestFrom){
 		super(myAgent,getHarbourSetup.getRequestMessage());
 		this.requestFrom=requestFrom;
+		this.owner=(HarbourLayoutRequester) myAgent;
 	}
 
 	@Override
@@ -74,6 +78,6 @@ public class getHarbourSetup extends AchieveREInitiator{
 	@Override
 	protected void handleInform(ACLMessage msg){
 		ProvideHarbourSetup act=(ProvideHarbourSetup) ContainerAgent.extractAction(this.myAgent,msg);
-		((ControlGUIAgent) this.myAgent).processHarbourLayout(act.getCurrent_harbour_layout());
+		 this.owner.processHarbourLayout(act.getCurrent_harbour_layout());
 	}
 }

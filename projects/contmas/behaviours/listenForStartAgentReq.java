@@ -30,6 +30,7 @@ import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
 import jade.wrapper.StaleProxyException;
 import contmas.agents.*;
+import contmas.interfaces.OntRepProvider;
 import contmas.ontology.*;
 
 /**

@@ -35,12 +35,15 @@ import javax.swing.DefaultListModel;
 import javax.swing.JDesktopPane;
 
 import contmas.behaviours.*;
+import contmas.interfaces.DFSubscriber;
+import contmas.interfaces.HarbourLayoutRequester;
+import contmas.interfaces.OntRepRequester;
 import contmas.main.AgentDesktop;
 import contmas.main.ControlGUI;
 import contmas.main.DomainOntologyElement;
 import contmas.ontology.*;
 
-public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubscriber{
+public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubscriber,HarbourLayoutRequester{
 
 	class listenForLogMessage extends CyclicBehaviour{
 		/**
@@ -49,7 +52,6 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 		private static final long serialVersionUID=3580181910527477281L;
 		MessageTemplate loggingTemplate=MessageTemplate.MatchTopic(((ControlGUIAgent) this.myAgent).loggingTopic);
 
-		
 		/**
 		 * @param controlGUIAgent
 		 */
@@ -82,11 +84,11 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 	public String getWorkingDir(){
 		return workingDir;
 	}
-	
+
 	public void setWorkingDir(String workingDir){
 		this.workingDir=workingDir;
 	}
-	
+
 	@Override
 	public void processOntologyRepresentation(ContainerHolder ontRep,AID agent){
 		if((ontRep == null) || (ontRep.getContains() == null)){
@@ -116,7 +118,6 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 			Iterator allConts=allContsList.iterator();
 			Boolean found=false;
 			while(allConts.hasNext()){
-				found=false;
 				BlockAddress curCont=(BlockAddress) allConts.next();
 				if(curCont.getLocates().getBic_code().equals(administeredContBic)){
 					dispString+=" (x=" + curCont.getX_dimension() + ", y=" + curCont.getY_dimension() + ", z=" + curCont.getZ_dimension() + ")";
@@ -226,7 +227,7 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 		this.myGui.setVisible(true);
 		if(ad.getStandaloneMode() == AgentDesktop.AGENTDESKTOP_STANDALONE){
 			this.myGui.getCanvas().getParent().getParent().getParent().getParent().setSize(this.myGui.getWidth() + 10,this.myGui.getHeight() + 30);
-		} else{
+		}else{
 			this.setWorkingDir("projects\\contmas\\");
 		}
 
@@ -249,7 +250,7 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 		try{
 			a=c.createNewAgent("RandomGenerator","contmas.agents.RandomGeneratorAgent",null);
 			a.start();
-			
+
 			String[] args=new String[1]; //Because of different working directories 
 			args[0]=getWorkingDir();
 

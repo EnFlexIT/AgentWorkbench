@@ -23,9 +23,10 @@ package contmas.behaviours;
 import jade.core.Agent;
 import jade.core.behaviours.SimpleBehaviour;
 import contmas.agents.ContainerHolderAgent;
-import contmas.agents.TransportOrderOfferer;
+import contmas.interfaces.TransportOrderOfferer;
 import contmas.ontology.Administered;
 
+@Deprecated
 public class scheduleUnloadStart extends SimpleBehaviour{
 	/**
 	 * 

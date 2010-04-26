@@ -8,9 +8,20 @@ import jade.core.*;
 /**
 * Protege name: TransportOrderChain
 * @author ontology bean generator
-* @version 2010/04/20, 14:23:52
+* @version 2010/04/22, 16:03:29
 */
 public class TransportOrderChain implements Concept {
+
+   /**
+* Protege name: transports
+   */
+   private Container transports;
+   public void setTransports(Container value) { 
+    this.transports=value;
+   }
+   public Container getTransports() {
+     return this.transports;
+   }
 
    /**
 * Protege name: terminates_at
@@ -43,16 +54,5 @@ public class TransportOrderChain implements Concept {
    public Iterator getAllIs_linked_by() {return is_linked_by.iterator(); }
    public List getIs_linked_by() {return is_linked_by; }
    public void setIs_linked_by(List l) {is_linked_by = l; }
-
-   /**
-* Protege name: transports
-   */
-   private Container transports;
-   public void setTransports(Container value) { 
-    this.transports=value;
-   }
-   public Container getTransports() {
-     return this.transports;
-   }
 
 }

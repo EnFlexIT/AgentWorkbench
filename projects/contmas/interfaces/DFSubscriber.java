@@ -1,5 +1,5 @@
 /**
- * @author Hanno - Felix Wagner, 23.03.2010
+ * @author Hanno - Felix Wagner, 30.03.2010
  * Copyright 2010 Hanno - Felix Wagner
  * 
  * This file is part of ContMAS.
@@ -18,20 +18,14 @@
  * along with ContMAS.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package contmas.agents;
+package contmas.interfaces;
 
-import jade.core.AID;
-import contmas.ontology.ContainerHolder;
+import jade.util.leap.List;
 
 /**
  * @author Hanno - Felix Wagner
  *
  */
-public interface OntRepProvider{
-	public ContainerHolder getOntologyRepresentation(AID request);
-
-	/**
-	 * @return
-	 */
-	public ContainerHolder getOntologyRepresentation();
+public interface DFSubscriber{
+	public void processSubscriptionUpdate(List updatedAgents,Boolean remove);
 }

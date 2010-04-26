@@ -21,10 +21,12 @@ import jade.util.leap.List;
 
 import java.util.Random;
 
-import contmas.behaviours.DFSubscriber;
 import contmas.behaviours.announceLoadOrders;
 import contmas.behaviours.listenForOntRepReq;
 import contmas.behaviours.subscribeToDF;
+import contmas.interfaces.DFSubscriber;
+import contmas.interfaces.OntRepProvider;
+import contmas.interfaces.TransportOrderOfferer;
 import contmas.ontology.*;
 
 public class ContainerHolderAgent extends ContainerAgent implements OntRepProvider,DFSubscriber{
@@ -39,6 +41,8 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 	protected Domain targetAbstractDomain=null;
 
 	protected ContainerHolder ontologyRepresentation;
+
+	private Random RandomGenerator=new Random();
 
 	public ContainerHolder getOntologyRepresentation(AID myAID){
 		if(myAID.equals(this.getAID())){
@@ -89,7 +93,6 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 	}
 
 	public TransportOrder calculateEffort(TransportOrder call){
-		Random RandomGenerator=new Random();
 		call.setTakes(RandomGenerator.nextFloat() + this.getBayUtilization());
 		return call;
 	}
@@ -198,11 +201,10 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 				}
 			}
 
-			/*
-			if( matchIncoming && this.matchAID(curTO.getEnds_at())){ //exactly for this agent
+			//	/*// why did i comment this out ?
+			if(matchIncoming && this.matchAID(curTO.getEnds_at())){ //exactly for this agent
 				return curTO;
 			}
-			*/
 
 			if(matchIncoming){
 				matchRating=this.matchOrder(curTO);
@@ -237,11 +239,30 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 	}
 
 	public BlockAddress getEmptyBlockAddress(){
-		BlockAddress empty=new BlockAddress();
-		empty.setX_dimension(0);
-		empty.setY_dimension(0);
-		empty.setZ_dimension(0);
-		return empty;
+		BayMap LoadBay=this.getOntologyRepresentation().getContains();
+		Integer tries=0;
+		Integer maxTries=getBaySize();
+		Integer x, y, z;
+		while(tries < maxTries){
+			x=RandomGenerator.nextInt(LoadBay.getX_dimension());
+			y=RandomGenerator.nextInt(LoadBay.getY_dimension());
+			BlockAddress upmostContainer=this.getUpmost(x,y);
+			z=0;
+			if(upmostContainer != null){
+				if(upmostContainer.getZ_dimension() < LoadBay.getZ_dimension()){ //there is room on top
+					z=upmostContainer.getZ_dimension() + 1;
+				}else{
+					tries++;
+					continue;
+				}
+			}
+			BlockAddress emptyBA=new BlockAddress();
+			emptyBA.setX_dimension(x);
+			emptyBA.setY_dimension(y);
+			emptyBA.setZ_dimension(z);
+			return emptyBA;
+		}
+		return null;
 	}
 
 	public ProposeLoadOffer getLoadProposal(TransportOrderChain curTOC){
@@ -254,7 +275,8 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 
 			act=new ProposeLoadOffer();
 			this.calculateEffort(matchingOrder);
-			act.setLoad_offer(curTOC);
+			act.setLoad_offer(matchingOrder);
+			act.setCorresponds_to(curTOC);
 			// put this TOC in the queue of TOC proposed for
 			this.touchTOCState(curTOC,new ProposedFor(),true);
 		}else{
@@ -304,6 +326,7 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 
 		return false;
 	}
+
 
 	public boolean hasBayMapRoom(){
 		return this.getBaySize() > this.getBayUtilization();
@@ -357,7 +380,7 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		this.addBehaviour(b);
 	}
 
-	public boolean removeContainerFromBayMap(TransportOrderChain load_offer){
+	public boolean dropContainer(TransportOrderChain load_offer){
 		//		echoStatus("removeContainerFromBayMap:",load_offer);
 		Iterator allContainers=this.ontologyRepresentation.getContains().getIs_filled_with().iterator();
 		while(allContainers.hasNext()){
@@ -366,6 +389,9 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 			if(curContainer.getBic_code().equals(load_offer.getTransports().getBic_code())){
 				allContainers.remove();
 				//				echoStatus("Container found and removed.",load_offer);
+				touchTOCState(load_offer,null,true);
+				echoStatus("Container dropped successfully (Message, BayMap, TOCState).",load_offer,ContainerAgent.LOGGING_INFORM);
+
 				return true;
 			}
 		}
@@ -410,6 +436,12 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 
 		this.determineContractors();
 		this.addBehaviour(new listenForOntRepReq(this));
+	}
+	
+	public Domain flattenDomain(Domain dom){
+		Domain newDom=new Domain();
+		newDom.setId(dom.getId());
+		return dom;
 	}
 
 	/* (non-Javadoc)

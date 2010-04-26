@@ -23,6 +23,8 @@ package contmas.agents;
 import jade.content.AgentAction;
 import jade.content.lang.Codec;
 import jade.content.lang.Codec.CodecException;
+import jade.content.lang.leap.LEAPCodec;
+import jade.content.lang.sl.SLCodec;
 import jade.content.lang.xml.XMLCodec;
 import jade.content.onto.Ontology;
 import jade.content.onto.OntologyException;
@@ -64,6 +66,9 @@ public class ContainerAgent extends Agent{
 	private static final Integer LOGGING_DEFAULT=ContainerAgent.LOGGING_DEBUG;
 	private static final long serialVersionUID=202350816610492193L;
 	private static final Codec codec=new XMLCodec();
+//	private static final Codec codec=new LEAPCodec();
+//	private static final Codec codec=new SLCodec();
+
 	private static final Ontology ontology=ContainerTerminalOntology.getInstance();
 
 	public static List addToList(List base,List addition){
@@ -87,13 +92,13 @@ public class ContainerAgent extends Agent{
 	public static AnnounceLoadStatus getLoadStatusAnnouncement(TransportOrderChain curTOC,String content){
 		AnnounceLoadStatus loadStatus=new AnnounceLoadStatus();
 		loadStatus.setLoad_status(content);
-		loadStatus.setLoad_offer(curTOC);
+		loadStatus.setCorresponds_to(curTOC);
 		return loadStatus;
 	}
 
 	public static Integer matchDomainsTransitive(Domain inQuestion,Domain suspectedIn){
 		//		System.out.println(inQuestion.getClass() + " in " + suspectedIn.getClass() + "?");
-		if(inQuestion.getClass() == suspectedIn.getClass()){
+		if(inQuestion.getId().equals(suspectedIn.getId())){
 			return 2; //passt genau
 		}
 		if(inQuestion.getLies_in() != null){
@@ -208,13 +213,13 @@ public class ContainerAgent extends Agent{
 	}
 
 	protected String ownServiceType;
-	private AID harborManager=null;
+	private AID harbourMaster=null;
 
-	public AID getHarborManager(){
-		if(this.harborManager == null){
+	public AID getHarbourMaster(){
+		if(this.harbourMaster == null){
 
 		}
-		return this.harborManager;
+		return this.harbourMaster;
 	}
 
 	public AID getRandomGenerator(){
@@ -252,7 +257,7 @@ public class ContainerAgent extends Agent{
 
 		//look for RandomGeneratorAgent
 		this.randomGenerator=this.getFirstAIDFromDF("random-generation");
-		this.harborManager=this.getFirstAIDFromDF("harbor-managing");
+		this.harbourMaster=this.getFirstAIDFromDF("harbor-managing");
 
 	}
 

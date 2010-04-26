@@ -8,9 +8,20 @@ import jade.core.*;
 /**
 * Protege name: BayMap
 * @author ontology bean generator
-* @version 2010/04/20, 14:23:52
+* @version 2010/04/22, 16:03:29
 */
 public class BayMap implements Concept {
+
+   /**
+* Protege name: y_dimension
+   */
+   private int y_dimension;
+   public void setY_dimension(int value) { 
+    this.y_dimension=value;
+   }
+   public int getY_dimension() {
+     return this.y_dimension;
+   }
 
    /**
 * Protege name: z_dimension
@@ -43,17 +54,6 @@ public class BayMap implements Concept {
    public Iterator getAllIs_filled_with() {return is_filled_with.iterator(); }
    public List getIs_filled_with() {return is_filled_with; }
    public void setIs_filled_with(List l) {is_filled_with = l; }
-
-   /**
-* Protege name: y_dimension
-   */
-   private int y_dimension;
-   public void setY_dimension(int value) { 
-    this.y_dimension=value;
-   }
-   public int getY_dimension() {
-     return this.y_dimension;
-   }
 
    /**
 * Protege name: x_dimension

@@ -21,6 +21,8 @@ import jade.util.leap.Iterator;
 import java.util.HashMap;
 
 import contmas.behaviours.*;
+import contmas.interfaces.OntRepProvider;
+import contmas.interfaces.OntRepRequester;
 import contmas.main.HarbourSetup;
 import contmas.ontology.ActiveContainerHolder;
 import contmas.ontology.ContainerHolder;
