@@ -1,6 +1,7 @@
 package mas.environment;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -8,6 +9,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -16,6 +19,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
+import org.apache.batik.dom.svg.SVGOMImageElement;
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
@@ -102,10 +106,7 @@ public class EnvironmentController{
 			}
 		}else{
 			Language.translate("Keine SVG-Datei definiert");
-		}
-		
-		
-		
+		}		
 	}
 	
 	public Project getCurrentProject() {
@@ -147,8 +148,9 @@ public class EnvironmentController{
 	 */
 	public void setSVGFile(File svgFile){
 		// Copy to the default folder if necessary
-		if(!(svgFile.getParent().equals(currentProject.getProjectFolderFullPath()+"env-setups"))){
-			copyToDefaultFolder(svgFile);
+		if(!(svgFile.getParent().equals(currentProject.getEnvSetupPath()))){
+			File targetFile = new File(currentProject.getEnvSetupPath()+File.separator+svgFile.getName());
+			copyTextFile(svgFile, targetFile);
 		}
 		// Set project variables
 		String svgFileName = svgFile.getName();
@@ -157,12 +159,101 @@ public class EnvironmentController{
 		currentProject.setEnvFile(envFileName+".xml");
 		
 		Document svgDoc = loadSVG(svgFile);
+		
 		prepareSVGDoc(svgDoc);
 		myGUI.setSVGDoc(svgDoc);
 		createNewEnvironment();
 		environment.setSvgDoc(svgDoc);
 	}
 	
+	/**
+	 * - Copies embedded images to the project's resource folder
+	 * - Sets relative href paths
+	 * @param images
+	 */
+	private void checkEmbeddedImages(NodeList images){
+		for(int i=0; i<images.getLength(); i++){
+			SVGOMImageElement image = (SVGOMImageElement) images.item(i);
+			String href = image.getHref().getBaseVal();
+			
+			int lastSlash = href.lastIndexOf('/');
+			
+			if(!href.substring(0, lastSlash).equals("../resources")){
+				try {
+					String targetPath = currentProject.getProjectFolderFullPath()+"resources"+File.separator+href.substring(lastSlash+1);
+					URL sourceURL = new URL(href);
+					File sourceFile = new File(sourceURL.toURI());
+					File targetFile = new File(targetPath);
+					copyBinFile(sourceFile, targetFile);
+					image.getHref().setBaseVal("../resources"+href.substring(lastSlash));
+				} catch (MalformedURLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (URISyntaxException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Utility method for copying text files
+	 * @param from The source file
+	 * @param to The target file
+	 */
+	private void copyTextFile(File from, File to){
+		try {
+			if(!to.exists()){
+				to.createNewFile();
+				FileReader reader = new FileReader(from);
+				FileWriter writer = new FileWriter(to);
+				
+				int c;
+				while((c = reader.read()) != -1){
+					writer.write(c);
+				}
+				
+				reader.close();
+				writer.close();
+			}
+			
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Utility method for copying non-text files
+	 * @param from The source file
+	 * @param to The target file
+	 */
+	private void copyBinFile(File from, File to){
+		try {
+			if(!to.exists()){
+				to.createNewFile();
+				
+				FileInputStream reader = new FileInputStream(from);
+				FileOutputStream writer = new FileOutputStream(to);
+				
+				int c;
+				while((c = reader.read()) != -1){
+					writer.write(c);
+				}
+				
+				reader.close();
+				writer.close();
+			}
+			
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 	/**
 	 * Loading a SVG document from a file
 	 * @param svgFile The file to load the SVG from
@@ -191,6 +282,8 @@ public class EnvironmentController{
 	
 	/**
 	 * This method prepares the SVG doc for being used for display
+	 * - Adding the border
+	 * - Calling checkEmbeddedImages to prepare the embedded images (if any)
 	 */
 	private void prepareSVGDoc(Document svgDoc){
 		Element svgRoot = svgDoc.getDocumentElement();
@@ -207,35 +300,11 @@ public class EnvironmentController{
 			border.setAttributeNS(null, "stroke-width", "1");
 			svgRoot.appendChild(border);
 		}
-	}
-	
-	private void copyToDefaultFolder(File file){
 		
-		
-		try {
-			File inFile = file;
-			File outFile = new File(currentProject.getProjectFolderFullPath()+"env-setups"+File.separator+file.getName());
-			if(!outFile.exists()){
-				outFile.createNewFile();
-			}
-			FileReader reader = new FileReader(inFile);
-			FileWriter writer = new FileWriter(outFile);
-			
-			int c;
-			while((c = reader.read()) != -1){
-				writer.write(c);
-			}
-			
-			reader.close();
-			writer.close();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		NodeList images = svgDoc.getElementsByTagName("image");
+		if(images.getLength()>0){
+			checkEmbeddedImages(images);
 		}
-		
 	}
 	
 	/**

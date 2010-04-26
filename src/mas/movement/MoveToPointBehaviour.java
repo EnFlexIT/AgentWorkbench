@@ -1,7 +1,6 @@
 package mas.movement;
 
 import java.awt.geom.Point2D;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.Vector;
 

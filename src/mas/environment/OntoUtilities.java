@@ -51,6 +51,41 @@ public class OntoUtilities {
 		return localPos;
 	}
 	
+	/**
+	 * Sets the objects standard (= top left global) position according to the passed center (global) position  
+	 * @param object The object
+	 * @param centerPosition The center related position
+	 */
+	public static void setCenterPosition(AbstractObject object, Position centerPosition){
+		float x = centerPosition.getX() - object.getSize().getWidth()/2;
+		float y = centerPosition.getY() - object.getSize().getHeight()/2;
+		
+		object.getPosition().setX(x);
+		object.getPosition().setY(y);
+	}
+	
+	/**
+	 * Sets the objects standard (= top left global) position according to the passed local (top left) position 
+	 * @param object The object
+	 * @param localPosition The local position
+	 */
+	public static void setLocalPosition(AbstractObject object, Position localPosition){
+		float x = localPosition.getX() + object.getParent().getPosition().getX();
+		float y = localPosition.getY() + object.getParent().getPosition().getY();
+		
+		object.getPosition().setX(x);
+		object.getPosition().setY(y);
+	}
+	
+	/**
+	 * Sets the objects standard (= top left global) position according to the passed local center position
+	 * @param object The object
+	 * @param localCenterPosition The local center position
+	 */
+	public static void setLocalCenterPosition(AbstractObject object, Position localCenterPosition){
+		setCenterPosition(object, localCenterPosition);		// Conversion center -> top left
+		setLocalPosition(object, object.getPosition());		// Conversion local -> global
+	}
 	
 	/**
 	 * Checks if an environment object is inside a playgrounds area

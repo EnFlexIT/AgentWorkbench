@@ -308,7 +308,7 @@ import mas.onto.OntologyClass;
 	 */
 	public String getSvgPath(){
 		if(this.svgFile != null){
-			return getEnvSetupPath()+this.svgFile;
+			return getEnvSetupPath()+File.separator+this.svgFile;
 		}else{
 			return null;
 		}
@@ -331,7 +331,7 @@ import mas.onto.OntologyClass;
 	 */
 	public String getEnvPath(){
 		if(this.envFile != null){
-			return getEnvSetupPath()+this.envFile;
+			return getEnvSetupPath()+File.separator+this.envFile;
 		}else{
 			return null;
 		}		
@@ -350,7 +350,7 @@ import mas.onto.OntologyClass;
 	 * @return The default environment setup folder
 	 */
 	public String getEnvSetupPath(){
-		return ProjectFolderFullPath+"env-setups"+File.separator;
+		return ProjectFolderFullPath+"env-setups";
 	}
 
 }

@@ -1,7 +1,6 @@
 package mas.movement;
 
 import mas.display.DisplayableAgent;
-import mas.environment.OntoUtilities;
 import sma.ontology.AgentObject;
 import sma.ontology.DisplayOntology;
 import sma.ontology.PlaygroundObject;
