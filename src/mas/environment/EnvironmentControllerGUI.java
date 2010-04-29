@@ -87,6 +87,16 @@ public class EnvironmentControllerGUI extends JSplitPane {
 	private JComboBox cbUnit = null;
 	private JLabel lblPx = null;
 	private JButton btnSetScale = null;
+	private JLabel lblPos = null;
+	private JLabel lblSize = null;
+	private JLabel lblX1 = null;
+	private JLabel lblX2 = null;
+	private JLabel lblUnit1 = null;
+	private JLabel lblUnit2 = null;
+	private JTextField tfX = null;
+	private JTextField tfY = null;
+	private JTextField tfWidth = null;
+	private JTextField tfHeight = null;
 		
 	private Element selectedElement = null;
 	/**
@@ -505,6 +515,40 @@ public class EnvironmentControllerGUI extends JSplitPane {
 			pnlObjectSettings.add(getTfId());
 			pnlObjectSettings.add(getCbType());
 			pnlObjectSettings.add(getCbClass());
+			lblPos = new JLabel();
+			lblPos.setText(Language.translate("Position"));
+			lblPos.setSize(lblPos.getPreferredSize());
+			lblPos.setLocation(new Point(10,118));
+			lblX1 = new JLabel();
+			lblX1.setText(":");
+			lblX1.setSize(lblX1.getPreferredSize());
+			lblX1.setLocation(new Point(65, 142));
+			lblUnit1 = new JLabel();
+			lblUnit1.setText(controller.getEnvironment().getScale().getUnit());
+			lblUnit1.setSize(lblUnit1.getPreferredSize());
+			lblUnit1.setLocation(new Point(122, 142));
+			lblSize = new JLabel();
+			lblSize.setText(Language.translate("Größe"));
+			lblSize.setSize(lblSize.getPreferredSize());
+			lblSize.setLocation(new Point(10,183));
+			lblX2 = new JLabel();
+			lblX2.setText("x");
+			lblX2.setSize(lblX2.getPreferredSize());
+			lblX2.setLocation(new Point(63, 212));
+			lblUnit2 = new JLabel();
+			lblUnit2.setText(controller.getEnvironment().getScale().getUnit());
+			lblUnit2.setSize(lblUnit2.getPreferredSize());
+			lblUnit2.setLocation(new Point(122, 212));
+			pnlObjectSettings.add(lblPos, null);
+			pnlObjectSettings.add(getTfX());
+			pnlObjectSettings.add(getTfY());
+			pnlObjectSettings.add(lblX1, null);
+			pnlObjectSettings.add(lblUnit1, null);
+			pnlObjectSettings.add(lblSize, null);
+			pnlObjectSettings.add(lblX2, null);
+			pnlObjectSettings.add(lblUnit2, null);
+			pnlObjectSettings.add(getTfWidth());
+			pnlObjectSettings.add(getTfHeight());
 			pnlObjectSettings.add(getBtnApply());
 			pnlObjectSettings.add(getBtnRemove());
 		}
@@ -590,6 +634,42 @@ public class EnvironmentControllerGUI extends JSplitPane {
 		}
 		return cbClass;
 	}
+	
+	private JTextField getTfX(){
+		if(tfX == null){
+			tfX = new JTextField();
+			tfX.setSize(new Dimension(50,25));
+			tfX.setLocation(new Point(10, 140));
+		}
+		return tfX;
+	}
+	
+	private JTextField getTfY(){
+		if(tfY == null){
+			tfY = new JTextField();
+			tfY.setSize(new Dimension(50,25));
+			tfY.setLocation(new Point(70, 140));
+		}
+		return tfY;
+	}
+	
+	private JTextField getTfWidth(){
+		if(tfWidth == null){
+			tfWidth = new JTextField();
+			tfWidth.setSize(new Dimension(50,25));
+			tfWidth.setLocation(new Point(10, 210));
+		}
+		return tfWidth;
+	}
+	
+	private JTextField getTfHeight(){
+		if(tfHeight == null){
+			tfHeight = new JTextField();
+			tfHeight.setSize(new Dimension(50,25));
+			tfHeight.setLocation(new Point(70, 210));
+		}
+		return tfHeight;
+	}
 
 	/**
 	 * This method initializes btnApply	
@@ -601,7 +681,7 @@ public class EnvironmentControllerGUI extends JSplitPane {
 			btnApply = new JButton();
 			btnApply.setText(Language.translate("Anwenden"));
 			btnApply.setSize(new Dimension(150, 26));
-			btnApply.setLocation(new Point(10, 110));
+			btnApply.setLocation(new Point(10, 245));
 			btnApply.setEnabled(false);
 			btnApply.addActionListener(new ActionListener(){
 	
@@ -624,7 +704,7 @@ public class EnvironmentControllerGUI extends JSplitPane {
 	private JButton getBtnRemove() {
 		if (btnRemove == null) {
 			btnRemove = new JButton();
-			btnRemove.setLocation(new Point(10, 145));
+			btnRemove.setLocation(new Point(10, 280));
 			btnRemove.setText(Language.translate("Objekt entfernen"));
 			btnRemove.setEnabled(false);
 			btnRemove.setSize(new Dimension(150, 26));
@@ -666,8 +746,43 @@ public class EnvironmentControllerGUI extends JSplitPane {
 			id = selectedElement.getAttributeNS(null, "id");
 			object = controller.getObjectHash().get(id);
 			cbType.setEnabled(true);
+			float xPos=0, yPos=0, width=0, height=0;
+			switch(SvgTypes.getType(selectedElement)){
+				case RECT:
+				case IMAGE:
+					xPos = Float.parseFloat(selectedElement.getAttributeNS(null, "x"));
+					yPos = Float.parseFloat(selectedElement.getAttributeNS(null, "y"));
+					width = Float.parseFloat(selectedElement.getAttributeNS(null, "width"));
+					height = Float.parseFloat(selectedElement.getAttributeNS(null, "height"));
+				break;
+				case CIRCLE:
+					xPos = Float.parseFloat(selectedElement.getAttributeNS(null, "cx"));
+					yPos = Float.parseFloat(selectedElement.getAttributeNS(null, "cy"));
+					width = height = Float.parseFloat(selectedElement.getAttributeNS(null, "r"))*2;
+				break;
+				case ELLIPSE:
+					xPos = Float.parseFloat(selectedElement.getAttributeNS(null, "cx"));
+					yPos = Float.parseFloat(selectedElement.getAttributeNS(null, "cy"));
+					width = Float.parseFloat(selectedElement.getAttributeNS(null, "r1"))*2;
+					height = Float.parseFloat(selectedElement.getAttributeNS(null, "r2"))*2;
+				break;					
+			}
+			xPos = OntoUtilities.calcRWU(xPos, controller.getEnvironment().getScale());
+			yPos = OntoUtilities.calcRWU(yPos, controller.getEnvironment().getScale());
+			width = OntoUtilities.calcRWU(width, controller.getEnvironment().getScale());
+			height = OntoUtilities.calcRWU(height, controller.getEnvironment().getScale());
+			
+			getTfX().setText(""+xPos);
+			getTfY().setText(""+yPos);
+			getTfWidth().setText(""+width);
+			getTfHeight().setText(""+height);
+			
 		}else{
 			cbType.setEnabled(false);
+			getTfX().setText("");
+			getTfY().setText("");
+			getTfWidth().setText("");
+			getTfHeight().setText("");
 		}
 		tfId.setText(id);
 		if(object != null){

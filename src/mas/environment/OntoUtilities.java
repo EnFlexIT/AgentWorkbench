@@ -6,6 +6,7 @@ import java.awt.geom.Rectangle2D;
 import sma.ontology.AbstractObject;
 import sma.ontology.PlaygroundObject;
 import sma.ontology.Position;
+import sma.ontology.Scale;
 /**
  * Some constants, static utility methods etc.
  * @author Nils
@@ -110,5 +111,25 @@ public class OntoUtilities {
 		);
 		
 		return pgArea.contains(objectRect);
+	}
+	
+	/**
+	 * Calculates the number of real world units corresponding to the given number of pixels at given Scale
+	 * @param px The number of pixels
+	 * @param scale 
+	 * @return The number of real world units
+	 */
+	public static float calcRWU(float px, Scale scale){
+		return (px / scale.getPixel()) * scale.getValue(); 
+	}
+	
+	/**
+	 * Calculates the number of pixels corresponding to the given number of real world units at given Scale
+	 * @param rwu The number of real world units
+	 * @param scale The Scale
+	 * @return The number of pixels
+	 */
+	public static float calcPixel(float rwu, Scale scale){
+		return (rwu / scale.getValue()) * scale.getPixel();
 	}
 }

@@ -392,6 +392,7 @@ public class EnvironmentController{
 				break;
 				
 				case RECT:
+				case IMAGE:
 					width = Float.parseFloat(svg.getAttributeNS(null, "width"));
 					height = Float.parseFloat(svg.getAttributeNS(null, "height"));
 					xPos = Float.parseFloat(svg.getAttributeNS(null, "x"));
