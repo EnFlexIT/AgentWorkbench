@@ -16,6 +16,8 @@ import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
+import network.PortChecker;
+
 import application.Application;
 import application.Language;
 
@@ -67,13 +69,18 @@ public class Platform extends java.lang.Object {
 				// --- Services zusammenstellen ---------------------
 				String ServiceList = new String();
 				ServiceList = ServiceList.concat("jade.core.event.NotificationService;");
-				ServiceList = ServiceList.concat("jade.core.messaging.TopicManagementService;");
 				ServiceList = ServiceList.concat("jade.core.mobility.AgentMobilityService;");
+				ServiceList = ServiceList.concat("jade.core.messaging.TopicManagementService;");
 				ServiceList = ServiceList.concat("jade.core.migration.InterPlatformMobilityService;");
-												  
+				
+				// --- Freien Port für die Plattform finden ---------
+				PortChecker portCheck = new PortChecker(Application.RunInfo.getJadeLocalPort());
+				Integer usePort = portCheck.getFreePort();
+				
 				// --- MainContainer starten ------------------------				
 				Profile pMain = new ProfileImpl();
-				pMain.setParameter(Profile.SERVICES, ServiceList ); 
+				pMain.setParameter(Profile.SERVICES, ServiceList );
+				pMain.setParameter(Profile.LOCAL_PORT, usePort.toString());
 				MASmc = MASrt.createMainContainer( pMain );				
 			}
 			catch ( Exception e ) {

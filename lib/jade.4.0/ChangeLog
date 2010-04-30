@@ -1,3 +1,113 @@
+MAJOR CHANGES in JADE 4.0 (20 04 2010)
+==========================================================================
+GENERAL IMPROVEMENTS:
+Kernel
+- Restructured JADE kernel so that JADE and JADE-LEAP are now a single platform that can use two different IMTP modules for container-to-container interactions:
+  - The LEAP IMTP (jade.imtp.leap.LEAPIMTPManager class) 
+  - The RMI IMTP (jade.imtp.rmi.RMIIMTPManager class)
+  The configuration can be done by means of the -imtp configuration option.
+- Added support for checking if an UNREACHABLE node appears to be dead due to a long network disconnection by means of the NetworkChecker interface
+- Added property Profile.NO_DISPLAY to avoid initializing AWT stuff when JADE is launched without the display 
+- Added support for NO_CLONE and SYNCH_DELIVERY (ACLMessage user defined properties) in ACL Message delivery system.
+- Added support for "local" services i.e. services that do not require their class to be in the classpath of the Main Container
+- Modified LEAP IMTP to support having containers belonging to different platforms in the same JVM (see the jade.enable.multiple.platforms System property)
+- Substituted deprecated methods show() and hide() with setVisible(true|false) in jade.gui and jade.tools packages
+- Restructured/simplified "extended properties" hierarchy
+
+Behaviours
+- Added OntologyServer class to handle REQUESTs refering  to a given ontology in a simplified way 
+
+Content Language and Ontologies
+- BeanOntology class and related classes moved from the Misc add-on to the JADE core distribution
+- Properly managed fields of type byte[] (array of bytes) as ontological primitive types
+- Added Facets for Permitted-Values, Default-Value, Documentation, Regexp
+
+Others
+- Added support for registering connection/disconnection listeners to the JadeGateway
+
+
+BUG-FIXES:
+- Fixed bug in Sniffer Agent: it did not serve correctly requests to start sniffing agents received as ACLMessages. Bug reported by  Hanno Felix Wagner (University of Duisburg-Essen)
+- Fixed bug in Sniffer Agent: the scrollbar disappeared when starting to sniff a new agent. Fix by Hanno Felix Wagner (University Of Duisburg-Essen)
+- Fixed bug in HTTP MTP: when installing both an HTTP MTP and an HTTPS MTP in the same platform (different containers), messages were not properly routed to the right MTP. Fix by Libor Svehlak (Siemens)  
+- Fixed bug in IteratedAchieveREInitiator: there was an Inconsistent FSM error introduced by a previous modification on FSMBehaviour.deregisterState(). Bug reported by José Miguel Benedicto Ruiz
+- Fixed bug in AgentMobilityService: An exception occurred when a migrated agent terminated and its home container was no longer there. Bug reported by sawal xp
+
+
+JADE-OSGi: 
+  - Redefined isLocal() method of the OSGiBridgeService class to avoid requiring it to be present in the Main Container classpath
+  - Fixed annoying exception when stopping the JADEOSGi bundle (problem notified by ALVARO CARRERA BARROSO - Telefonica I+D)
+
+ADD-ONS:
+- TrustedAgents Add-On (NEW!)
+  - New add-on developed by Eduard Drenth (Logica) that allows making sure only agents with a token that can be validated will be allowed to join the Jade Platform.
+
+- Misc Add-On: 
+  - BeanOntology class and related classes moved into the JADE core distribution
+  - ContainerMonitorAgent: Implemented the action DUMP-SERVICES, returning the services installed on a given container
+
+- Web Service Dynamic Client - WSDC Add-On:
+  - Added defaultValue, regex, permitted values and cardinality in parameters, headers and schemas
+  -Added update definition function for cached WSDL 
+  -Added security settings in DynamicClientCache
+  -Added HTTP Basic Authentication
+  -Added WS-Security Username Token 
+  -Added WS-Security mustUnderstand flag
+  -Added WS-Security Timestamp
+  -Fixed bugs: DynamicClient thread-safe
+  -Fixed bugs: SOAP 1.2 compatibility
+
+- Security Add-On:
+  - Fixed bug when encrypting a message with more than one receiver (reported by Popp, Caroline J.) due to non-deep-cloning of envelope properties and SecurityObjects
+  - Also inverted preferred position of SignatureService and EncryptionService (now we encrypt a signed message) in order to keep the same signature for each receiver when more than one is specified.
+
+- Test Suite Add-On:
+  - Modified to use the JAVA_HOME environment variable (if present) when launching a new JADE instance
+
+- XMLCodec Add-On
+  - Modified to use friendly primitive types instead of BasicOntology ones
+  - Modified decoding by order to try to assign values to slots on the basis of their types when some values is missing 
+
+EXAMPLES:
+- Fixed problem in examples.bookTrading.BookSellerGui (fix by Doru Kaytar)
+- Simplified examples.PingAgent.PingAgent and aligned with the revisited JADE Administration Tutorial
+
+DOCUMENTATION:
+- Fully revisited the JADE Administration Tutorial according to the evolutions in JADE 4.0
+- Reorganized Online documentation index
+- Updated/revisited according to the evolutions in JADE 4.0
+  - JADE Programmar's guide
+  - JADE Administrator's guide
+  - JADE Programming Tutorial
+  - LEAP User Guide 
+  - JADE OSGi Guide
+  - BeanOntology Tutorial
+  - Content Language and Ontology Tutorial
+  - Arguments and Properties Tutorial
+- Fixed name of property jade_mtp_http_https_friendListFilePass as indicated by Libor Svehlak (Siemens)
+- NEW Jade tutorial in Portuguese by Andre Filipe
+
+
+POSSIBLE BACKWARD INCOMPATIBILITIES:
+- API
+  - The "extended properties" classes in the jade.util package have been fully restructured and merged
+    into a single class called ExtendedProperties
+   
+- Command line
+  - The agent specification syntax in the command line has changed according to the LEAP style:
+    - The separator between agent specifiers is the ';' instead of the blank
+    - The separator between agent arguments (if any) is now the ',' instead of the blank
+    - Blanks are NOT allowed!
+    See the example below
+    java -cp ... jade.Boot -gui a1:myPackage.MyClass(arg1,arg2);a2:myPackage.MyClass
+    The old style syntax can still be used by means of the jade.Boot3 bootstrap class as below:
+    java -cp ... jade.Boot3 -gui a1:myPackage.MyClass(arg1 arg2) a2:myPackage.MyClass
+
+- jar files
+  - All JADE classes are now included into a single jar file called jade.jar (while until version 3.7 they where scattered accross 4 files: jade.jar, jadeTools.jar, http.jar and iiop.jar) 
+   
+
+
 MAJOR CHANGES in JADE 3.7 (01 07 2009)
 ==========================================================================
 GENERAL IMPROVEMENTS:

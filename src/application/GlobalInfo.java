@@ -14,8 +14,9 @@ public class GlobalInfo {
 	final private static String LocalAppNewLineString = System.getProperty("line.separator");
 	final private static String LocalAppNewLineStringReplacer = "<br>";
 	final private static String LocalPathImageIntern = "/img/";
-	final private static String LocalJadeVersion = jade.core.Runtime.getVersion();
 	
+	// --- Jade-Variablen ---------------------------------------------------
+	private int LocaleJadeLocalPort = 1099;
 	final private static String LocalProjectFileEnd =  ".mas";
 	
 	final private static Color LocalColorMenuHighLight =  new Color(0,0,192);
@@ -291,11 +292,25 @@ public class GlobalInfo {
 	// ---------------------------------------------------------
 
 	
+	/**
+	 * @param localeJadeDefaultPort the localeJadeDefaultPort to set
+	 */
+	public void setJadeLocalPort(int localeJadeDefaultPort) {
+		LocaleJadeLocalPort = localeJadeDefaultPort;
+	}
+	/**
+	 * @return the localeJadeDefaultPort
+	 */
+	public int getJadeLocalPort() {
+		return LocaleJadeLocalPort;
+	}
+
+
 	// ---------------------------------------------------------
 	// --- Laufzeitinformationen zu Jade -----------------------
 	// ---------------------------------------------------------
 	public String getJadeVersion(){
-		return LocalJadeVersion;
+		return jade.core.Runtime.getVersion();
 	}
 	
 	// ---------------------------------------------------------
