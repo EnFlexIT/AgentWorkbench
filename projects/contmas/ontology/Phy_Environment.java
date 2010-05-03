@@ -9,33 +9,9 @@ import jade.core.*;
    * A project's environment definition
 * Protege name: phy:Environment
 * @author ontology bean generator
-* @version 2010/04/22, 16:03:29
+* @version 2010/05/3, 17:06:09
 */
 public class Phy_Environment implements Concept {
-
-   /**
-   * Root of the project's environment representation, containing all it's EnvironmentObjects
-* Protege name: phy:rootPlayground
-   */
-   private Phy_PlaygroundObject phy_rootPlayground;
-   public void setPhy_rootPlayground(Phy_PlaygroundObject value) { 
-    this.phy_rootPlayground=value;
-   }
-   public Phy_PlaygroundObject getPhy_rootPlayground() {
-     return this.phy_rootPlayground;
-   }
-
-   /**
-   * The project's name
-* Protege name: phy:projectName
-   */
-   private String phy_projectName;
-   public void setPhy_projectName(String value) { 
-    this.phy_projectName=value;
-   }
-   public String getPhy_projectName() {
-     return this.phy_projectName;
-   }
 
    /**
    * All objects existing in this environment
@@ -60,6 +36,17 @@ public class Phy_Environment implements Concept {
    public void setPhy_objects(List l) {phy_objects = l; }
 
    /**
+* Protege name: phy:scale
+   */
+   private Phy_Scale phy_scale;
+   public void setPhy_scale(Phy_Scale value) { 
+    this.phy_scale=value;
+   }
+   public Phy_Scale getPhy_scale() {
+     return this.phy_scale;
+   }
+
+   /**
    * The SVG document object
 * Protege name: phy:svgDoc
    */
@@ -69,6 +56,30 @@ public class Phy_Environment implements Concept {
    }
    public Object getPhy_svgDoc() {
      return this.phy_svgDoc;
+   }
+
+   /**
+   * Root of the project's environment representation, containing all it's EnvironmentObjects
+* Protege name: phy:rootPlayground
+   */
+   private Phy_PlaygroundObject phy_rootPlayground;
+   public void setPhy_rootPlayground(Phy_PlaygroundObject value) { 
+    this.phy_rootPlayground=value;
+   }
+   public Phy_PlaygroundObject getPhy_rootPlayground() {
+     return this.phy_rootPlayground;
+   }
+
+   /**
+   * The project's name
+* Protege name: phy:projectName
+   */
+   private String phy_projectName;
+   public void setPhy_projectName(String value) { 
+    this.phy_projectName=value;
+   }
+   public String getPhy_projectName() {
+     return this.phy_projectName;
    }
 
 }

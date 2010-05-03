@@ -111,7 +111,7 @@ public class announceLoadOrders extends ContractNetInitiator{
 				if(content instanceof ProposeLoadOffer){
 					ProposeLoadOffer proposal=(ProposeLoadOffer) content;
 					TransportOrder offer=this.myCAgent.findMatchingOrder(proposal.getCorresponds_to(),false);
-					if((bestOffer == null) || (offer.getTakes() < bestOffer.getTakes())){ //bisher beste Zeit
+					if((bestOffer == null) || (Long.parseLong(offer.getTakes_until()) < Long.parseLong(bestOffer.getTakes_until()))){ //bisher beste Zeit
 						bestOffer=offer;
 						bestOfferMessage=propose;
 						bestOfferToc=proposal.getCorresponds_to();

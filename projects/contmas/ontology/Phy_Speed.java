@@ -9,7 +9,7 @@ import jade.core.*;
    * Represents the speed of an object moving in a 2D environment
 * Protege name: phy:Speed
 * @author ontology bean generator
-* @version 2010/04/22, 16:03:29
+* @version 2010/05/3, 17:06:09
 */
 public class Phy_Speed implements Concept {
 

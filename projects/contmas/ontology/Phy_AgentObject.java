@@ -8,7 +8,7 @@ import jade.core.*;
    * Represents an agent that can move in the environment
 * Protege name: phy:AgentObject
 * @author ontology bean generator
-* @version 2010/04/22, 16:03:29
+* @version 2010/05/3, 17:06:09
 */
 public class Phy_AgentObject extends Phy_AbstractObject{ 
 
@@ -21,18 +21,6 @@ public class Phy_AgentObject extends Phy_AbstractObject{
    }
    public Phy_Speed getPhy_maxSpeed() {
      return this.phy_maxSpeed;
-   }
-
-   /**
-   * This agent's AID
-* Protege name: phy:aid
-   */
-   private AID phy_aid;
-   public void setPhy_aid(AID value) { 
-    this.phy_aid=value;
-   }
-   public AID getPhy_aid() {
-     return this.phy_aid;
    }
 
    /**
@@ -51,11 +39,11 @@ public class Phy_AgentObject extends Phy_AbstractObject{
 * Protege name: phy:collisionPoints
    */
    private List phy_collisionPoints = new ArrayList();
-   public void addPhy_collisionPoints(Phy_Point elem) { 
+   public void addPhy_collisionPoints(Object elem) { 
      List oldList = this.phy_collisionPoints;
      phy_collisionPoints.add(elem);
    }
-   public boolean removePhy_collisionPoints(Phy_Point elem) {
+   public boolean removePhy_collisionPoints(Object elem) {
      List oldList = this.phy_collisionPoints;
      boolean result = phy_collisionPoints.remove(elem);
      return result;
@@ -78,6 +66,18 @@ public class Phy_AgentObject extends Phy_AbstractObject{
    }
    public String getPhy_agentClass() {
      return this.phy_agentClass;
+   }
+
+   /**
+   * This agent's AID
+* Protege name: phy:aid
+   */
+   private AID phy_aid;
+   public void setPhy_aid(AID value) { 
+    this.phy_aid=value;
+   }
+   public AID getPhy_aid() {
+     return this.phy_aid;
    }
 
 }

@@ -79,7 +79,6 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 		super.setup();
 		this.handleTransportOrder();
 		this.offerTransportOrder();
-		this.addBehaviour(new getHarbourSetup(this,this.getHarbourMaster()));
 
 //		echoStatus("my current relative position: " + positionToString(getRelativePosition()));
 //		echoStatus("my current absolute position: " + positionToString(getAbsolutePosition()));
@@ -184,13 +183,16 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 	public TransportOrder calculateEffort(TransportOrder call){
 		TransportOrder out=super.calculateEffort(call);
 
-		Domain ccd=findClosestCommonDomain(this.getOntologyRepresentation().getLives_in(),call.getStarts_at().getAbstract_designation());
-		ccd=findClosestCommonDomain(ccd,call.getEnds_at().getAbstract_designation());
+		Domain startAt=inflateDomain(call.getStarts_at().getAbstract_designation());
+		Domain endAt=inflateDomain(call.getEnds_at().getAbstract_designation());
+
+		Domain ccd=findClosestCommonDomain(this.getOntologyRepresentation().getLives_in(),startAt);
+		ccd=findClosestCommonDomain(ccd,endAt);
 
 //		echoStatus("ClosestCommonDomain: "+ccd);
 
 		Phy_Position currentPos=getPositionRelativeTo(this.getOntologyRepresentation().getIs_in_position2(),this.getOntologyRepresentation().getLives_in(),ccd);
-		Phy_Position startPos=getPositionRelativeTo(call.getStarts_at().getAbstract_designation().getIs_in_position(),call.getStarts_at().getAbstract_designation().getLies_in(),ccd);
+		Phy_Position startPos=getPositionRelativeTo(startAt.getIs_in_position(),startAt.getLies_in(),ccd);
 //		Phy_Position endPos=getPositionRelativeTo(call.getEnds_at().getAbstract_designation().getIs_in_position(),call.getEnds_at().getAbstract_designation(),ccd);
 
 //		echoStatus("currentPos: " + positionToString(currentPos));
@@ -198,8 +200,9 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 //		System.out.println("endPos: "+positionToString(endPos));
 
 		//transfer from current position to start position
-		Float positioningEffort=getManhattanDistance(currentPos,startPos);
-
+		Long positioningEffort=getManhattanDistance(currentPos,startPos).longValue();
+		positioningEffort=positioningEffort*100;  //TODO hardcoded, use speed of agent
+		positioningEffort+=System.currentTimeMillis();
 		//pickup
 
 		//NO FURTHER EFFORTS needed so far!
@@ -212,8 +215,8 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 
 //		echoStatus("randomized effort: " + out.getTakes());
 
-		out.setTakes(positioningEffort); // + transferEffort);
-		echoStatus("calculated effort: positioningEffort (" + positioningEffort + ")=" + out.getTakes()); // ")  +transferEffort (" + transferEffort + ")=" + out.getTakes());
+		out.setTakes_until(positioningEffort+""); // + transferEffort);
+		echoStatus("calculated effort: positioningEffort (" + positioningEffort + ")=" + out.getTakes_until()); // ")  +transferEffort (" + transferEffort + ")=" + out.getTakes());
 
 		return out;
 	}
@@ -279,29 +282,29 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 	@Override
 	public Boolean aquireContainer(TransportOrderChain targetContainer){ //eigentlicher Vorgang des Container-Aufnehmens
 		TransportOrder targetTO=findMatchingOrder(targetContainer);
-		Domain start=targetTO.getStarts_at().getAbstract_designation();
-		echoStatus("Container is going to be picked up at "+start.getId()+" "+positionToString(start.getIs_in_position()));
+		Domain start=inflateDomain(targetTO.getStarts_at().getAbstract_designation());
+		echoStatus("Container is going to be picked up at " + start.getId() + " " + positionToString(start.getIs_in_position()));
 		moveTo(start.getIs_in_position());
 
 		return super.aquireContainer(targetContainer);
 	}
 
 	public void moveTo(Phy_Position to){
-		echoStatus("Moving to "+positionToString(to));
+		echoStatus("Moving to " + positionToString(to));
 		getOntologyRepresentation().getIs_in_position2().setPhy_x(to.getPhy_x());
 		getOntologyRepresentation().getIs_in_position2().setPhy_y(to.getPhy_y());
 	}
-	
+
 	@Override
 	public boolean dropContainer(TransportOrderChain load_offer){
 
 		//set position to be where the container was dropped (start designator of NEXT TO)
 
 		TransportOrder targetTO=findMatchingOrder(load_offer,false);
-		Domain end=targetTO.getEnds_at().getAbstract_designation();
-		echoStatus("Container is going to be dropped at "+end.getId()+" "+positionToString(end.getIs_in_position()));
+		Domain end=inflateDomain(targetTO.getEnds_at().getAbstract_designation());
+		echoStatus("Container is going to be dropped at " + end.getId() + " " + positionToString(end.getIs_in_position()));
 		moveTo(end.getIs_in_position());
-		
+
 //		this.getOntologyRepresentation().setIs_in_position2(value);
 		return super.dropContainer(load_offer);
 	}
@@ -315,24 +318,8 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 		}
 	}
 
-	//Has_subdomains variant
-	public Domain findDomain(String lookForID, Domain in){
-		if(in.getId().equals(lookForID)){
-			return in;
-		}
-		Iterator iter=in.getAllHas_subdomains();
-		Domain found=null;
-		while(iter.hasNext()){
-			Domain curDom=(Domain) iter.next();
 
-			found=findDomain(lookForID,curDom);
-			if(found!=null){
-				return found;
-			}
-		}
-		return null;
-	}
-	
+
 /*	//Lies_in variant
 	public Domain findDomain(String lookForID,Domain in){
 		if(in.getId().equals(lookForID)){
@@ -342,15 +329,8 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 		}
 	}
 */
-	/* (non-Javadoc)
-	 * @see contmas.interfaces.HarbourLayoutRequester#processHarbourLayout(contmas.ontology.Domain)
-	 */
-	@Override
-	public void processHarbourLayout(Domain current_harbour_layout){
-		// TODO Auto-generated method stub
-		harbourMap=current_harbour_layout;
-//		echoStatus("found domain: " + findDomain(this.targetAbstractDomain.getId(),harbourMap));
-	}
+
+
 /*
 	@Override
 	public Designator getAbstractTargetDesignator(){
@@ -360,4 +340,9 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 		return target;
 	}
 */
+
+
+
+
+
 }

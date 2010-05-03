@@ -96,19 +96,7 @@ public class ContainerAgent extends Agent{
 		return loadStatus;
 	}
 
-	public static Integer matchDomainsTransitive(Domain inQuestion,Domain suspectedIn){
-		//		System.out.println(inQuestion.getClass() + " in " + suspectedIn.getClass() + "?");
-		if(inQuestion.getId().equals(suspectedIn.getId())){
-			return 2; //passt genau
-		}
-		if(inQuestion.getLies_in() != null){
-			Integer match=ContainerAgent.matchDomainsTransitive(inQuestion.getLies_in(),suspectedIn);
-			if(match > -1){
-				return match + 1;
-			}
-		}
-		return -1; //passt gar nicht
-	}
+
 
 	public static List toAIDList(AID[] input){
 		List output=new ArrayList();

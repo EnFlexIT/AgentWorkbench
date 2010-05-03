@@ -8,19 +8,19 @@ import jade.core.*;
 /**
 * Protege name: TransportOrder
 * @author ontology bean generator
-* @version 2010/04/22, 16:03:29
+* @version 2010/05/3, 17:06:09
 */
 public class TransportOrder implements Concept {
 
    /**
-* Protege name: takes
+* Protege name: takes_until
    */
-   private float takes;
-   public void setTakes(float value) { 
-    this.takes=value;
+   private String takes_until;
+   public void setTakes_until(String value) { 
+    this.takes_until=value;
    }
-   public float getTakes() {
-     return this.takes;
+   public String getTakes_until() {
+     return this.takes_until;
    }
 
    /**

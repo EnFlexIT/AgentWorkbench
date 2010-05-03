@@ -22,14 +22,16 @@ import jade.util.leap.List;
 import java.util.Random;
 
 import contmas.behaviours.announceLoadOrders;
+import contmas.behaviours.getHarbourSetup;
 import contmas.behaviours.listenForOntRepReq;
 import contmas.behaviours.subscribeToDF;
 import contmas.interfaces.DFSubscriber;
+import contmas.interfaces.HarbourLayoutRequester;
 import contmas.interfaces.OntRepProvider;
 import contmas.interfaces.TransportOrderOfferer;
 import contmas.ontology.*;
 
-public class ContainerHolderAgent extends ContainerAgent implements OntRepProvider,DFSubscriber{
+public class ContainerHolderAgent extends ContainerAgent implements OntRepProvider,DFSubscriber,HarbourLayoutRequester{
 
 	/**
 	 * 
@@ -56,6 +58,8 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 	}
 
 	public Integer lengthOfProposeQueue=2;
+
+	private Domain harbourMap;
 
 	public ContainerHolderAgent(String serviceType){
 		this(serviceType,new ContainerHolder());
@@ -93,8 +97,11 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 	}
 
 	public TransportOrder calculateEffort(TransportOrder call){
-		call.setTakes(RandomGenerator.nextFloat() + this.getBayUtilization());
+		//call.setTakes_until(Math.abs((RandomGenerator.nextLong() + this.getBayUtilization()))+"");
+		;
+		call.setTakes_until((Math.abs(RandomGenerator.nextInt(10)) + this.getBayUtilization() + System.currentTimeMillis())+"");
 		return call;
+		
 	}
 
 	public TransportOrderChainState touchTOCState(TransportOrderChain needleTOC){
@@ -193,6 +200,10 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 			//			echoStatus("Ausschreibung ausprobieren.");
 
 			TransportOrder curTO=(TransportOrder) toc.next();
+			/*
+			curTO.getStarts_at().setAbstract_designation(inflateDomain(curTO.getStarts_at().getAbstract_designation()));
+			curTO.getEnds_at().setAbstract_designation(inflateDomain(curTO.getEnds_at().getAbstract_designation()));
+			 */
 			if( !matchIncoming){
 				if(this.matchAID(curTO.getStarts_at())){//exactly from this agent
 					return curTO;
@@ -289,7 +300,7 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		Designator myself=new Designator();
 		myself.setType("concrete");
 		myself.setConcrete_designation(this.getAID());
-		myself.setAbstract_designation(this.ontologyRepresentation.getLives_in());
+		myself.setAbstract_designation(reduceDomain(this.ontologyRepresentation.getLives_in()));
 		return myself;
 	}
 
@@ -362,10 +373,27 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 //			echoStatus("Genau für mich bestimmt",LOGGING_INFORM);
 			return 0;
 		}else if(end.getType().equals("abstract")){
-			return ContainerAgent.matchDomainsTransitive(this.ontologyRepresentation.getLives_in(),end.getAbstract_designation());
+			return matchDomainsTransitive(this.ontologyRepresentation.getLives_in(),end.getAbstract_designation());
 		}else{
 			return -1;
 		}
+	}
+	
+	public Integer matchDomainsTransitive(Domain inQuestion,Domain suspectedIn){
+		//		System.out.println(inQuestion.getClass() + " in " + suspectedIn.getClass() + "?");
+		inQuestion=inflateDomain(inQuestion);
+		suspectedIn=inflateDomain(suspectedIn);
+
+		if(inQuestion.getId().equals(suspectedIn.getId())){
+			return 2; //passt genau
+		}
+		if(inQuestion.getLies_in() != null){
+			Integer match=matchDomainsTransitive(inQuestion.getLies_in(),suspectedIn);
+			if(match > -1){
+				return match + 1;
+			}
+		}
+		return -1; //passt gar nicht
 	}
 
 	public void releaseContainer(TransportOrderChain curTOC,Behaviour MasterBehaviour){
@@ -436,6 +464,8 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 
 		this.determineContractors();
 		this.addBehaviour(new listenForOntRepReq(this));
+		this.addBehaviour(new getHarbourSetup(this,this.getHarbourMaster()));
+
 	}
 	
 	public Domain flattenDomain(Domain dom){
@@ -451,4 +481,55 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 	public void processSubscriptionUpdate(List updatedAgents,Boolean remove){
 		this.addToContractors(updatedAgents,remove);
 	}
+	
+	/* (non-Javadoc)
+	 * @see contmas.interfaces.HarbourLayoutRequester#processHarbourLayout(contmas.ontology.Domain)
+	 */
+	@Override
+	public void processHarbourLayout(Domain current_harbour_layout){
+		// TODO Auto-generated method stub
+		harbourMap=interlaceDomains(current_harbour_layout);
+//		echoStatus("found domain: " + findDomain(this.targetAbstractDomain.getId(),harbourMap));
+	}
+	
+	public Domain interlaceDomains(Domain input){
+		Domain output=input;
+		Iterator iter=input.getAllHas_subdomains();
+		while(iter.hasNext()){
+			Domain curSubDom=(Domain) iter.next();
+			curSubDom.setLies_in(input);
+			interlaceDomains(curSubDom);
+		}
+		return output;
+	}
+	
+	public Domain reduceDomain(Domain input){
+		Domain output=new Domain();
+		output.setId(input.getId());
+		return output;
+	}
+
+	public Domain inflateDomain(Domain input){
+		Domain output=findDomain(input.getId(),harbourMap);
+		return output;
+	}
+	
+	//Has_subdomains variant
+	public Domain findDomain(String lookForID,Domain in){
+		if(in.getId().equals(lookForID)){
+			return in;
+		}
+		Iterator iter=in.getAllHas_subdomains();
+		Domain found=null;
+		while(iter.hasNext()){
+			Domain curDom=(Domain) iter.next();
+
+			found=findDomain(lookForID,curDom);
+			if(found != null){
+				return found;
+			}
+		}
+		return null;
+	}
+	
 }

@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: ContainerHolder
 * @author ontology bean generator
-* @version 2010/04/22, 16:03:30
+* @version 2010/05/3, 17:06:09
 */
 public class ContainerHolder extends AID{ 
 
@@ -55,17 +55,6 @@ public class ContainerHolder extends AID{
    }
 
    /**
-* Protege name: lives_in
-   */
-   private Domain lives_in;
-   public void setLives_in(Domain value) { 
-    this.lives_in=value;
-   }
-   public Domain getLives_in() {
-     return this.lives_in;
-   }
-
-   /**
 * Protege name: localName
    */
    private String localName;
@@ -106,6 +95,17 @@ public class ContainerHolder extends AID{
    }
    public String getService_type() {
      return this.service_type;
+   }
+
+   /**
+* Protege name: lives_in
+   */
+   private Domain lives_in;
+   public void setLives_in(Domain value) { 
+    this.lives_in=value;
+   }
+   public Domain getLives_in() {
+     return this.lives_in;
    }
 
 }

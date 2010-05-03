@@ -27,5 +27,8 @@
 	<classpathentry kind="lib" path="lib/jade/lib/jade.jar"/>
 	<classpathentry kind="lib" path="lib/jade/lib/migration.jar"/>
 	<classpathentry kind="lib" path="lib/jade/lib/XMLCodec.jar"/>
+	<classpathentry kind="lib" path="lib/batik/lib/batik-css.jar"/>
+	<classpathentry kind="lib" path="lib/batik/lib/batik-dom.jar"/>
+	<classpathentry kind="lib" path="lib/batik/lib/batik-ext.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
