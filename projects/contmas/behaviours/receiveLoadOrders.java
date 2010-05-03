@@ -66,7 +66,6 @@ public class receiveLoadOrders extends ContractNetResponder{
 					if(acceptReceivedAt == null){ //First run, determine time of receival
 						acceptReceivedAt=System.currentTimeMillis();
 					}
-			//		Long reqTime=((proposedTakesUntil-acceptReceivedAt) * 100); //TODO hardcoded, use speed of agent
 					Long eta=proposedTakesUntil;
 					if(System.currentTimeMillis() < eta){
 						myCAgent.echoStatus("Executing accepted transport order, " + (eta - System.currentTimeMillis()) + "ms left:",acceptedTOC,ContainerAgent.LOGGING_NOTICE);

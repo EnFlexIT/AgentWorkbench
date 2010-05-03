@@ -22,11 +22,15 @@ package contmas.agents;
 
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
+import jade.util.leap.ArrayList;
 import jade.util.leap.Iterator;
+import jade.util.leap.List;
+import contmas.behaviours.executeMovements;
 import contmas.behaviours.getHarbourSetup;
 import contmas.behaviours.receiveLoadOrders;
 import contmas.behaviours.unload;
 import contmas.interfaces.HarbourLayoutRequester;
+import contmas.interfaces.MoveableAgent;
 import contmas.interfaces.TransportOrderHandler;
 import contmas.interfaces.TransportOrderOfferer;
 import contmas.main.UncompatibleDimensionsException;
@@ -36,9 +40,12 @@ import contmas.ontology.*;
  * @author Hanno - Felix Wagner
  *
  */
-public class StraddleCarrierAgent extends ActiveContainerAgent implements TransportOrderHandler,TransportOrderOfferer,HarbourLayoutRequester{
+public class StraddleCarrierAgent extends ActiveContainerAgent implements TransportOrderHandler,TransportOrderOfferer,HarbourLayoutRequester,MoveableAgent{
 	private static final Float speed=1.0F;
 	private Domain harbourMap;
+	private List pendingMovements=new ArrayList();
+	private executeMovements moveBehaviour; 
+	
 	/**
 	 * 
 	 */
@@ -80,6 +87,9 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 		this.handleTransportOrder();
 		this.offerTransportOrder();
 
+		moveBehaviour=new executeMovements(this);
+		addBehaviour(moveBehaviour);
+
 //		echoStatus("my current relative position: " + positionToString(getRelativePosition()));
 //		echoStatus("my current absolute position: " + positionToString(getAbsolutePosition()));
 		Domain root=findRootDomain(this.getOntologyRepresentation().getLives_in());
@@ -89,7 +99,7 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 //		experiment();
 	}
 
-	public String positionToString(Phy_Position in){
+	public static String positionToString(Phy_Position in){
 		String out="";
 		out+="x=";
 		out+=in.getPhy_x();
@@ -116,6 +126,10 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 
 		return position;
 	}
+	public Phy_Position getCurrentPosition(){
+		return getRelativePosition();
+	}
+	
 
 /*
 	public P1_Size getSize(){
@@ -163,14 +177,14 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 
 		try{
 			startSizeStr="width=" + startSize.getPhy_width() + ", height:" + startSize.getPhy_height();
-			startPosStr="x=" + startPos.getPhy_x() + ", y:" + startPos.getPhy_x();
+			startPosStr=positionToString(startPos);
 		}catch(NullPointerException e){
 			echoStatus("Bad start: size=" + startSize + "; pos=:" + startPos);
 		}
 
 		try{
 			endSizeStr="width=" + endSize.getPhy_width() + ", height:" + endSize.getPhy_height();
-			endPosStr="x=" + endPos.getPhy_x() + ", y:" + endPos.getPhy_y();
+			endPosStr=positionToString(endPos);
 		}catch(NullPointerException e){
 			echoStatus("Bad end: size=" + endSize + "; pos=:" + endPos);
 		}
@@ -178,7 +192,7 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 		echoStatus("startSize: " + startSizeStr + "; startPos:" + startPosStr + "; endSize:" + endSizeStr + "; endPos:" + endPosStr);
 
 	}
-
+	
 	@Override
 	public TransportOrder calculateEffort(TransportOrder call){
 		TransportOrder out=super.calculateEffort(call);
@@ -303,7 +317,9 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 		TransportOrder targetTO=findMatchingOrder(load_offer,false);
 		Domain end=inflateDomain(targetTO.getEnds_at().getAbstract_designation());
 		echoStatus("Container is going to be dropped at " + end.getId() + " " + positionToString(end.getIs_in_position()));
-		moveTo(end.getIs_in_position());
+		
+		addMovementTo(end.getIs_in_position());
+//		moveTo(end.getIs_in_position());
 
 //		this.getOntologyRepresentation().setIs_in_position2(value);
 		return super.dropContainer(load_offer);
@@ -316,6 +332,24 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 		}else{
 			return findRootDomain(liesIn);
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see contmas.interfaces.MoveableAgent#addMovementTo(contmas.ontology.Phy_Position)
+	 */
+	@Override
+	public void addMovementTo(Phy_Position to){
+		// TODO Auto-generated method stub
+		pendingMovements.add(to);
+		moveBehaviour.restart();
+	}
+
+	/* (non-Javadoc)
+	 * @see contmas.interfaces.MoveableAgent#getPendingMoves()
+	 */
+	@Override
+	public List getPendingMovements(){
+		return pendingMovements;
 	}
 
 
