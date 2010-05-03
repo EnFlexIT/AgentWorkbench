@@ -525,6 +525,7 @@ public class EnvironmentControllerGUI extends JSplitPane {
 			lblX1.setLocation(new Point(65, 142));
 			lblUnit1 = new JLabel();
 //			lblUnit1.setText(controller.getEnvironment().getScale().getUnit());
+			lblUnit1.setText("m");
 			lblUnit1.setSize(lblUnit1.getPreferredSize());
 			lblUnit1.setLocation(new Point(122, 142));
 			lblSize = new JLabel();
@@ -537,6 +538,7 @@ public class EnvironmentControllerGUI extends JSplitPane {
 			lblX2.setLocation(new Point(63, 212));
 			lblUnit2 = new JLabel();
 //			lblUnit2.setText(controller.getEnvironment().getScale().getUnit());
+			lblUnit2.setText("m");
 			lblUnit2.setSize(lblUnit2.getPreferredSize());
 			lblUnit2.setLocation(new Point(122, 212));
 			pnlObjectSettings.add(lblPos, null);

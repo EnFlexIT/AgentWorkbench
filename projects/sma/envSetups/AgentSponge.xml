@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<environment date="Mon May 03 20:42:36 CEST 2010" project="SMA">
+<environment date="Mon May 03 22:22:18 CEST 2010" project="SMA">
   <scale pixel="10.0" unit="m" value="1.0"/>
   <playground height="40.0" id="rootPlayground" width="60.0" xPos="0.0" yPos="0.0">
     <agent class="sma.agents.SoftBot" height="8.0" id="AgentSponge"

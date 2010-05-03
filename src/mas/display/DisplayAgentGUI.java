@@ -143,8 +143,11 @@ public class DisplayAgentGUI extends BasicSVGGUI {
 			float posX, posY;
 			
 			// Convert from real world units to pixel
-			posX = OntoUtilities.calcRWU(pos.getX(), scale);
-			posY = OntoUtilities.calcRWU(pos.getY(), scale);
+//			posX = OntoUtilities.calcPixel(pos.getX(), scale);
+//			posY = OntoUtilities.calcPixel(pos.getY(), scale);
+			
+			posX = pos.getX();
+			posY = pos.getY();
 			
 			Element element = DisplayAgentGUI.this.getCanvas().getSVGDocument().getElementById(id);
 			

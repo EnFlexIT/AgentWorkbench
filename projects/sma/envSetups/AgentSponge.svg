@@ -9,13 +9,13 @@
      preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"
      version="1.1">
     <defs id="defs4"/>
-    <rect x="247.02179" width="114.28571" id="ObstGrey" y="7.8450274"
+    <rect x="247.02179" width="114.28572" id="ObstGrey" y="7.8450274"
           height="300.62955" style="fill:#999999;stroke:none"/>
-    <image x="39.296608" y="24.40678" width="57"
+    <image x="471.5" y="10.0" width="57.0"
            xmlns:xlink="http://www.w3.org/1999/xlink"
            xlink:href="../resources/SmallSponge.jpg"
            style=";stroke:orange;stroke-width:5px" xlink:type="simple"
-           xlink:actuate="onLoad" id="AgentSponge" height="80"
+           xlink:actuate="onLoad" id="AgentSponge" height="80.0"
            preserveAspectRatio="xMidYMid meet" xlink:show="embed"/>
     <rect fill="none" width="599" stroke-width="1" id="border" height="399"
           stroke="black"/>
