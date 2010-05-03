@@ -2,12 +2,11 @@ package mas.display;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 
 import mas.environment.DisplayConstants;
+import mas.environment.OntoUtilities;
 
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.script.Window;
@@ -18,6 +17,7 @@ import org.w3c.dom.Element;
 
 import sma.ontology.Movement;
 import sma.ontology.Position;
+import sma.ontology.Scale;
 
 import application.Project;
 
@@ -48,9 +48,19 @@ public class DisplayAgentGUI extends BasicSVGGUI {
 	 * Movements to be processed
 	 */
 	private HashMap<String, Iterator<Position>> movements;
-	
+	/**
+	 * The project environments scale
+	 */
+	private Scale scale;
+	/**
+	 * Preventing concurrency problems when accessing the movements HashMap 
+	 */
 	private final ReadWriteLock lock = new ReentrantReadWriteLock(true);
-		
+	
+	/**
+	 * Constructor
+	 * @param scale The project environment's scale
+	 */
 	public DisplayAgentGUI(){
 		super();
 		this.getCanvas().setDocumentState(JSVGCanvas.ALWAYS_DYNAMIC);
@@ -67,6 +77,10 @@ public class DisplayAgentGUI extends BasicSVGGUI {
 	
 	public void setAgent(DisplayAgent agent){
 		this.myAgent = agent;
+	}
+	
+	void setScale(Scale scale){
+		this.scale = scale;
 	}
 	/**
 	 * Adds all steps of a new movement to this.movements
@@ -128,8 +142,9 @@ public class DisplayAgentGUI extends BasicSVGGUI {
 		private void changePos(String id, Position pos){
 			float posX, posY;
 			
-			posX = pos.getX();
-			posY = pos.getY();
+			// Convert from real world units to pixel
+			posX = OntoUtilities.calcRWU(pos.getX(), scale);
+			posY = OntoUtilities.calcRWU(pos.getY(), scale);
 			
 			Element element = DisplayAgentGUI.this.getCanvas().getSVGDocument().getElementById(id);
 			

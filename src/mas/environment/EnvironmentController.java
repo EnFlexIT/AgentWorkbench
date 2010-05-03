@@ -382,34 +382,36 @@ public class EnvironmentController{
 			System.out.println(Language.translate("Element-Typ")+" "+svg.getTagName()+" "+Language.translate("nicht unterstützt"));
 		}else{
 			float xPos=0, yPos=0, width=0, height=0;
+			Scale scale = environment.getScale();
+			// Get position and size from the SVG, converting pixel to real world units 
 			switch(type){
 				
 				case SVG:
-					width = Float.parseFloat(svg.getAttributeNS(null, "width"));
-					height = Float.parseFloat(svg.getAttributeNS(null, "height"));
+					width = OntoUtilities.calcRWU(Float.parseFloat(svg.getAttributeNS(null, "width")), scale);
+					height = OntoUtilities.calcRWU(Float.parseFloat(svg.getAttributeNS(null, "height")), scale);
 					xPos = 0;
 					yPos = 0;
 				break;
 				
 				case RECT:
 				case IMAGE:
-					width = Float.parseFloat(svg.getAttributeNS(null, "width"));
-					height = Float.parseFloat(svg.getAttributeNS(null, "height"));
-					xPos = Float.parseFloat(svg.getAttributeNS(null, "x"));
-					yPos = Float.parseFloat(svg.getAttributeNS(null, "y"));					
+					width = OntoUtilities.calcRWU(Float.parseFloat(svg.getAttributeNS(null, "width")), scale);
+					height = OntoUtilities.calcRWU(Float.parseFloat(svg.getAttributeNS(null, "height")), scale);
+					xPos = OntoUtilities.calcRWU(Float.parseFloat(svg.getAttributeNS(null, "x")), scale);
+					yPos = OntoUtilities.calcRWU(Float.parseFloat(svg.getAttributeNS(null, "y")), scale);					
 				break;
 				
 				case CIRCLE:
-					width = height = Float.parseFloat(svg.getAttributeNS(null, "r"));
-					xPos = Float.parseFloat(svg.getAttributeNS(null, "cx"))-(width/2);
-					yPos = Float.parseFloat(svg.getAttributeNS(null, "cy"))-(height/2);
+					width = height = OntoUtilities.calcRWU(Float.parseFloat(svg.getAttributeNS(null, "r")), scale);
+					xPos = OntoUtilities.calcRWU(Float.parseFloat(svg.getAttributeNS(null, "cx"))-(width/2), scale);
+					yPos = OntoUtilities.calcRWU(Float.parseFloat(svg.getAttributeNS(null, "cy"))-(height/2), scale);
 				break;
 				
 				case ELLIPSE:
-					width = Float.parseFloat(svg.getAttributeNS(null, "rx"));
-					height = Float.parseFloat(svg.getAttributeNS(null, "ry"));
-					xPos = Float.parseFloat(svg.getAttributeNS(null, "cx"))-(width/2);
-					yPos = Float.parseFloat(svg.getAttributeNS(null, "cy"))-(height/2);
+					width = OntoUtilities.calcRWU(Float.parseFloat(svg.getAttributeNS(null, "rx")), scale);
+					height = OntoUtilities.calcRWU(Float.parseFloat(svg.getAttributeNS(null, "ry")), scale);
+					xPos = OntoUtilities.calcRWU(Float.parseFloat(svg.getAttributeNS(null, "cx"))-(width/2), scale);
+					yPos = OntoUtilities.calcRWU(Float.parseFloat(svg.getAttributeNS(null, "cy"))-(height/2), scale);
 				break;
 					
 			}

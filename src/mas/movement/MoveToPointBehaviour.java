@@ -114,6 +114,7 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 			myAgent.getContentManager().fillContent(movementInfo, act);
 			myAgent.send(movementInfo);
 			agent.setMoving(true);
+			System.out.println(myAgent.getLocalName()+": Message sent.");
 			
 		} catch (CodecException e) {
 			// TODO Auto-generated catch block

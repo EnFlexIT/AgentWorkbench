@@ -105,6 +105,7 @@ public class DisplayAgent extends Agent {
 		
 		
 		this.daGUI.setAgent(this);
+		this.daGUI.setScale(environment.getScale());
 		this.svgDoc = (Document) this.environment.getSvgDoc();
 		if(svgDoc != null){
 			this.daGUI.setSVGDoc(svgDoc);

@@ -687,8 +687,16 @@ public class EnvironmentControllerGUI extends JSplitPane {
 	
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
+					// Create an ontology object 
 					controller.createObject(selectedElement, getObjectSettings());
-					setSelectedElement(null);
+					
+					// Change position and size
+					UpdateManager um = svgGUI.getCanvas().getUpdateManager();
+					um.getUpdateRunnableQueue().invokeLater(new ElementChanger());					
+					
+					// Remove selection
+					setSelectedElement(null);					
+					
 				}
 				
 			});
@@ -829,6 +837,7 @@ public class EnvironmentControllerGUI extends JSplitPane {
 	 * @param element
 	 */
 	public void setSelectedElement(Element element){
+		tpSettings.setSelectedIndex(1);
 		UpdateManager um = this.svgGUI.getCanvas().getUpdateManager();
 		
 		um.getUpdateRunnableQueue().invokeLater(new ElementSelector(element));
@@ -885,6 +894,49 @@ public class EnvironmentControllerGUI extends JSplitPane {
 			// Set selected element and input values
 			selectedElement = element;			
 			setObjectSettings();
+		}
+		
+	}
+	
+	private class ElementChanger implements Runnable{
+
+		@Override
+		public void run() {
+			
+			Scale scale = controller.getEnvironment().getScale();
+			
+			float x = Float.parseFloat(tfX.getText());
+			float y = Float.parseFloat(tfY.getText());
+			float width = Float.parseFloat(tfWidth.getText());
+			float height = Float.parseFloat(tfHeight.getText());
+			
+			x = OntoUtilities.calcPixel(x, scale);
+			y = OntoUtilities.calcPixel(y, scale);
+			width = OntoUtilities.calcPixel(width, scale);
+			height = OntoUtilities.calcPixel(height, scale);
+			
+			switch(SvgTypes.getType(selectedElement)){
+				case RECT:
+				case IMAGE:
+					selectedElement.setAttributeNS(null, "x", ""+x);
+					selectedElement.setAttributeNS(null, "y", ""+y);
+					selectedElement.setAttributeNS(null, "width", ""+width);
+					selectedElement.setAttributeNS(null, "height", ""+height);
+				break;
+					
+				case CIRCLE:
+					selectedElement.setAttributeNS(null, "cx", ""+(x+width/2));
+					selectedElement.setAttributeNS(null, "cy", ""+(y+height/2));
+					selectedElement.setAttributeNS(null, "r", ""+(width/2));
+				break;
+					
+				case ELLIPSE:
+					selectedElement.setAttributeNS(null, "cx", ""+(x+width/2));
+					selectedElement.setAttributeNS(null, "cy", ""+(y+height/2));
+					selectedElement.setAttributeNS(null, "r1", ""+(width/2));
+					selectedElement.setAttributeNS(null, "r2", ""+(height/2));
+				break;				
+			}
 		}
 		
 	}

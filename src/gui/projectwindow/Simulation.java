@@ -109,6 +109,8 @@ public class Simulation extends JScrollPane implements Observer, ActionListener 
 			args = new Object[]{CurrProject.getProjectName(), this.daGUI, CurrProject.getEnvironment()};
 			Application.JadePlatform.jadeAgentStart(agentName, "mas.display.DisplayAgent", args, projectContainer );
 			
+			for(int i=0; i < 100000; i++);
+			
 			// Start project agents
 			Iterator<AbstractObject> objects = CurrProject.getEnvironment().getAllObjects();
 			
