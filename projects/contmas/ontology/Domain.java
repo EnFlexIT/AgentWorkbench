@@ -8,19 +8,19 @@ import jade.core.*;
 /**
 * Protege name: Domain
 * @author ontology bean generator
-* @version 2010/05/3, 17:06:09
+* @version 2010/05/3, 22:21:54
 */
 public class Domain implements Concept {
 
    /**
-* Protege name: is_in_position
+* Protege name: id
    */
-   private Phy_Position is_in_position;
-   public void setIs_in_position(Phy_Position value) { 
-    this.is_in_position=value;
+   private String id;
+   public void setId(String value) { 
+    this.id=value;
    }
-   public Phy_Position getIs_in_position() {
-     return this.is_in_position;
+   public String getId() {
+     return this.id;
    }
 
    /**
@@ -35,6 +35,17 @@ public class Domain implements Concept {
    }
 
    /**
+* Protege name: is_in_position
+   */
+   private Phy_Position is_in_position;
+   public void setIs_in_position(Phy_Position value) { 
+    this.is_in_position=value;
+   }
+   public Phy_Position getIs_in_position() {
+     return this.is_in_position;
+   }
+
+   /**
 * Protege name: lies_in
    */
    private Domain lies_in;
@@ -43,17 +54,6 @@ public class Domain implements Concept {
    }
    public Domain getLies_in() {
      return this.lies_in;
-   }
-
-   /**
-* Protege name: id
-   */
-   private String id;
-   public void setId(String value) { 
-    this.id=value;
-   }
-   public String getId() {
-     return this.id;
    }
 
    /**

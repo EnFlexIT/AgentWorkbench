@@ -20,6 +20,7 @@
  */
 package contmas.interfaces;
 
+import contmas.ontology.Movement;
 import contmas.ontology.Phy_Position;
 import jade.util.leap.List;
 
@@ -32,8 +33,9 @@ public interface MoveableAgent{
 	List getPendingMovements();
 
 
-	void moveTo(Phy_Position to);
-	void addMovementTo(Phy_Position to);
+	void setAt(Phy_Position to);
+	void addMovement(Phy_Position to, String eta);
 	public Phy_Position getCurrentPosition();
+	public Phy_Position interpolatePosition(Movement mov);
 
 }

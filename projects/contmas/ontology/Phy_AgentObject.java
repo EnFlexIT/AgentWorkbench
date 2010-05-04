@@ -8,30 +8,20 @@ import jade.core.*;
    * Represents an agent that can move in the environment
 * Protege name: phy:AgentObject
 * @author ontology bean generator
-* @version 2010/05/3, 17:06:09
+* @version 2010/05/3, 22:21:54
 */
 public class Phy_AgentObject extends Phy_AbstractObject{ 
 
    /**
-* Protege name: phy:maxSpeed
+   * Name of the agent class (subclass of jade.core.agent) this agent is an instance of
+* Protege name: phy:agentClass
    */
-   private Phy_Speed phy_maxSpeed;
-   public void setPhy_maxSpeed(Phy_Speed value) { 
-    this.phy_maxSpeed=value;
+   private String phy_agentClass;
+   public void setPhy_agentClass(String value) { 
+    this.phy_agentClass=value;
    }
-   public Phy_Speed getPhy_maxSpeed() {
-     return this.phy_maxSpeed;
-   }
-
-   /**
-* Protege name: phy:currentSpeed
-   */
-   private Phy_Speed phy_currentSpeed;
-   public void setPhy_currentSpeed(Phy_Speed value) { 
-    this.phy_currentSpeed=value;
-   }
-   public Phy_Speed getPhy_currentSpeed() {
-     return this.phy_currentSpeed;
+   public String getPhy_agentClass() {
+     return this.phy_agentClass;
    }
 
    /**
@@ -57,15 +47,25 @@ public class Phy_AgentObject extends Phy_AbstractObject{
    public void setPhy_collisionPoints(List l) {phy_collisionPoints = l; }
 
    /**
-   * Name of the agent class (subclass of jade.core.agent) this agent is an instance of
-* Protege name: phy:agentClass
+* Protege name: phy:currentSpeed
    */
-   private String phy_agentClass;
-   public void setPhy_agentClass(String value) { 
-    this.phy_agentClass=value;
+   private Phy_Speed phy_currentSpeed;
+   public void setPhy_currentSpeed(Phy_Speed value) { 
+    this.phy_currentSpeed=value;
    }
-   public String getPhy_agentClass() {
-     return this.phy_agentClass;
+   public Phy_Speed getPhy_currentSpeed() {
+     return this.phy_currentSpeed;
+   }
+
+   /**
+* Protege name: phy:maxSpeed
+   */
+   private Phy_Speed phy_maxSpeed;
+   public void setPhy_maxSpeed(Phy_Speed value) { 
+    this.phy_maxSpeed=value;
+   }
+   public Phy_Speed getPhy_maxSpeed() {
+     return this.phy_maxSpeed;
    }
 
    /**

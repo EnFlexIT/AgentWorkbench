@@ -8,9 +8,20 @@ import jade.core.*;
 /**
 * Protege name: LoadList
 * @author ontology bean generator
-* @version 2010/05/3, 17:06:09
+* @version 2010/05/3, 22:21:54
 */
 public class LoadList implements Concept {
+
+   /**
+* Protege name: next_step
+   */
+   private LoadList next_step;
+   public void setNext_step(LoadList value) { 
+    this.next_step=value;
+   }
+   public LoadList getNext_step() {
+     return this.next_step;
+   }
 
    /**
 * Protege name: consists_of
@@ -32,16 +43,5 @@ public class LoadList implements Concept {
    public Iterator getAllConsists_of() {return consists_of.iterator(); }
    public List getConsists_of() {return consists_of; }
    public void setConsists_of(List l) {consists_of = l; }
-
-   /**
-* Protege name: next_step
-   */
-   private LoadList next_step;
-   public void setNext_step(LoadList value) { 
-    this.next_step=value;
-   }
-   public LoadList getNext_step() {
-     return this.next_step;
-   }
 
 }

@@ -7,9 +7,30 @@ import jade.core.*;
 /**
 * Protege name: ContainerHolder
 * @author ontology bean generator
-* @version 2010/05/3, 17:06:09
+* @version 2010/05/3, 22:21:54
 */
 public class ContainerHolder extends AID{ 
+
+   /**
+* Protege name: contractors
+   */
+   private List contractors = new ArrayList();
+   public void addContractors(AID elem) { 
+     List oldList = this.contractors;
+     contractors.add(elem);
+   }
+   public boolean removeContractors(AID elem) {
+     List oldList = this.contractors;
+     boolean result = contractors.remove(elem);
+     return result;
+   }
+   public void clearAllContractors() {
+     List oldList = this.contractors;
+     contractors.clear();
+   }
+   public Iterator getAllContractors() {return contractors.iterator(); }
+   public List getContractors() {return contractors; }
+   public void setContractors(List l) {contractors = l; }
 
    /**
 * Protege name: container_states
@@ -44,49 +65,6 @@ public class ContainerHolder extends AID{
    }
 
    /**
-* Protege name: contains
-   */
-   private BayMap contains;
-   public void setContains(BayMap value) { 
-    this.contains=value;
-   }
-   public BayMap getContains() {
-     return this.contains;
-   }
-
-   /**
-* Protege name: localName
-   */
-   private String localName;
-   public void setLocalName(String value) { 
-    this.localName=value;
-   }
-   public String getLocalName() {
-     return this.localName;
-   }
-
-   /**
-* Protege name: contractors
-   */
-   private List contractors = new ArrayList();
-   public void addContractors(AID elem) { 
-     List oldList = this.contractors;
-     contractors.add(elem);
-   }
-   public boolean removeContractors(AID elem) {
-     List oldList = this.contractors;
-     boolean result = contractors.remove(elem);
-     return result;
-   }
-   public void clearAllContractors() {
-     List oldList = this.contractors;
-     contractors.clear();
-   }
-   public Iterator getAllContractors() {return contractors.iterator(); }
-   public List getContractors() {return contractors; }
-   public void setContractors(List l) {contractors = l; }
-
-   /**
 * Protege name: service_type
    */
    private String service_type;
@@ -106,6 +84,28 @@ public class ContainerHolder extends AID{
    }
    public Domain getLives_in() {
      return this.lives_in;
+   }
+
+   /**
+* Protege name: contains
+   */
+   private BayMap contains;
+   public void setContains(BayMap value) { 
+    this.contains=value;
+   }
+   public BayMap getContains() {
+     return this.contains;
+   }
+
+   /**
+* Protege name: localName
+   */
+   private String localName;
+   public void setLocalName(String value) { 
+    this.localName=value;
+   }
+   public String getLocalName() {
+     return this.localName;
    }
 
 }

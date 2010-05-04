@@ -23,6 +23,7 @@ package contmas.behaviours;
 import contmas.agents.ContainerAgent;
 import contmas.agents.StraddleCarrierAgent;
 import contmas.interfaces.MoveableAgent;
+import contmas.ontology.Movement;
 import contmas.ontology.Phy_Position;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
@@ -54,10 +55,17 @@ public class executeMovements extends CyclicBehaviour{
 		Iterator iter=movementList.iterator();
 		while(iter.hasNext()){
 			
-			Phy_Position nextMove=(Phy_Position) iter.next();
-			myCAgent.echoStatus("moveTo "+StraddleCarrierAgent.positionToString(nextMove));
-
-			myAgent.moveTo(nextMove);
+			Movement nextMove=(Movement) iter.next();
+			myCAgent.echoStatus("pending movement to "+StraddleCarrierAgent.positionToString(nextMove.getMove_to()));
+			Phy_Position intermediate=myAgent.interpolatePosition(nextMove);
+			myAgent.setAt(intermediate);
+			if(intermediate.getPhy_x()==nextMove.getMove_to().getPhy_x() && intermediate.getPhy_y()==nextMove.getMove_to().getPhy_y()){
+				iter.remove();
+			} else {
+				block(1000);
+			}
+			
+//			this.restart();
 		}
 		block();
 	}

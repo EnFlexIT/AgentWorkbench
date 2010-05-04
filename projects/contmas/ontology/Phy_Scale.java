@@ -9,21 +9,9 @@ import jade.core.*;
    * Defining the scale used for displaying the environment
 * Protege name: phy:Scale
 * @author ontology bean generator
-* @version 2010/05/3, 17:06:09
+* @version 2010/05/3, 22:21:53
 */
 public class Phy_Scale implements Concept {
-
-   /**
-   * The number of pixel standing for the number of real world untis specified in value
-* Protege name: phy:pixel
-   */
-   private float phy_pixel;
-   public void setPhy_pixel(float value) { 
-    this.phy_pixel=value;
-   }
-   public float getPhy_pixel() {
-     return this.phy_pixel;
-   }
 
    /**
    * The number of real world untis represented by the number of pixels specified in pixels
@@ -35,6 +23,18 @@ public class Phy_Scale implements Concept {
    }
    public float getPhy_value() {
      return this.phy_value;
+   }
+
+   /**
+   * The number of pixel standing for the number of real world untis specified in value
+* Protege name: phy:pixel
+   */
+   private float phy_pixel;
+   public void setPhy_pixel(float value) { 
+    this.phy_pixel=value;
+   }
+   public float getPhy_pixel() {
+     return this.phy_pixel;
    }
 
    /**

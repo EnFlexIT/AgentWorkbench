@@ -5,10 +5,10 @@ import jade.util.leap.*;
 import jade.core.*;
 
 /**
-* Protege name: Land
+* Protege name: InExecution
 * @author ontology bean generator
 * @version 2010/05/3, 22:21:54
 */
-public class Land extends Domain{ 
+public class InExecution extends TransportOrderChainState{ 
 
 }

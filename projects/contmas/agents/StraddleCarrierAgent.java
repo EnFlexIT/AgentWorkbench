@@ -41,9 +41,7 @@ import contmas.ontology.*;
  *
  */
 public class StraddleCarrierAgent extends ActiveContainerAgent implements TransportOrderHandler,TransportOrderOfferer,HarbourLayoutRequester,MoveableAgent{
-	private static final Float speed=1.0F;
-	private Domain harbourMap;
-	private List pendingMovements=new ArrayList();
+	private static final Float speed=1F/100F;
 	private executeMovements moveBehaviour; 
 	
 	/**
@@ -97,6 +95,7 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 //		echoStatus("my root domain: " + root);
 
 //		experiment();
+//		getManhattanPositionTester();
 	}
 
 	public static String positionToString(Phy_Position in){
@@ -214,9 +213,8 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 //		System.out.println("endPos: "+positionToString(endPos));
 
 		//transfer from current position to start position
-		Long positioningEffort=getManhattanDistance(currentPos,startPos).longValue();
-		positioningEffort=positioningEffort*100;  //TODO hardcoded, use speed of agent
-		positioningEffort+=System.currentTimeMillis();
+		Long positioningEffort=calculateDuration(getManhattanDistance(currentPos,startPos).longValue());
+		Long eta=positioningEffort+System.currentTimeMillis();
 		//pickup
 
 		//NO FURTHER EFFORTS needed so far!
@@ -229,10 +227,16 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 
 //		echoStatus("randomized effort: " + out.getTakes());
 
-		out.setTakes_until(positioningEffort+""); // + transferEffort);
+		out.setTakes_until(eta+""); // + transferEffort);
 		echoStatus("calculated effort: positioningEffort (" + positioningEffort + ")=" + out.getTakes_until()); // ")  +transferEffort (" + transferEffort + ")=" + out.getTakes());
 
 		return out;
+	}
+	
+	public Long calculateDuration(Long distance){
+//		echoStatus("speed="+speed);
+		Float duration= (distance/speed);
+		return duration.longValue();
 	}
 
 	/*
@@ -272,10 +276,10 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 	}
 
 	public Float getManhattanDistance(Phy_Position from,Phy_Position to){
-		Float lambdaX=from.getPhy_x() - to.getPhy_x();
-		Float lambdaY=from.getPhy_y() - to.getPhy_y();
+		Float deltaX=from.getPhy_x() - to.getPhy_x();
+		Float deltaY=from.getPhy_y() - to.getPhy_y();
 
-		return Math.abs(lambdaX) + Math.abs(lambdaY);
+		return Math.abs(deltaX) + Math.abs(deltaY);
 	}
 
 	public void experiment(){
@@ -298,17 +302,79 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 		TransportOrder targetTO=findMatchingOrder(targetContainer);
 		Domain start=inflateDomain(targetTO.getStarts_at().getAbstract_designation());
 		echoStatus("Container is going to be picked up at " + start.getId() + " " + positionToString(start.getIs_in_position()));
-		moveTo(start.getIs_in_position());
+		setAt(start.getIs_in_position());
 
 		return super.aquireContainer(targetContainer);
 	}
 
-	public void moveTo(Phy_Position to){
-		echoStatus("Moving to " + positionToString(to));
+	public void setAt(Phy_Position to){
+		echoStatus("I am now at " + positionToString(to));
 		getOntologyRepresentation().getIs_in_position2().setPhy_x(to.getPhy_x());
 		getOntologyRepresentation().getIs_in_position2().setPhy_y(to.getPhy_y());
 	}
+	
+	public Phy_Position interpolatePosition(Movement mov){
+		Phy_Position oldPos=getCurrentPosition();
+		Long curTime=System.currentTimeMillis();
+		
+		Phy_Position targetPos=mov.getMove_to();
+		Long targetEta=Long.parseLong(mov.getBe_there_at());
+		
+		Long ttg=targetEta-curTime;
+//		echoStatus("targetEta: "+targetEta+" curTime: "+curTime+" ttg: "+ttg);
+		if(ttg<0){
+			ttg=0L;
+		}
+		Float dtg=ttg*speed;
+		
+//		echoStatus("oldPos "+positionToString(oldPos)+" targetPos "+positionToString(targetPos)+ " dtg "+dtg);
+		
+		return getManhattanPosition(oldPos,targetPos,dtg);
 
+	}
+	
+	public Phy_Position getManhattanPosition(Phy_Position from,Phy_Position to,Float dtg){
+		Float distance=getManhattanDistance(from,to)- dtg;
+		Phy_Position interpolatedPosition=new Phy_Position();
+		Float deltaX=to.getPhy_x() - from.getPhy_x();
+		Float deltaY=to.getPhy_y() - from.getPhy_y();
+		Float calcX; 
+		Float calcY;
+		if(distance<=Math.abs(deltaX)){
+			calcX=distance;
+			calcY=0F;
+		} else {
+			calcX=Math.abs(deltaX);
+			calcY=distance-Math.abs(deltaX);
+		}
+		
+		if(deltaX<0){
+			calcX=-calcX;
+		}
+		if(deltaY<0){
+			calcY=-calcY;
+		}
+		interpolatedPosition.setPhy_x(from.getPhy_x()+calcX);
+		interpolatedPosition.setPhy_y(from.getPhy_y()+calcY);
+
+//		echoStatus("interpolated position "+positionToString(interpolatedPosition));
+		
+		return interpolatedPosition;
+	}
+	/*
+	public void getManhattanPositionTester(){
+		Phy_Position pos1=new Phy_Position();
+		pos1.setPhy_x(0.0F);
+		pos1.setPhy_y(0.0F);
+		Phy_Position pos2=new Phy_Position();
+		pos2.setPhy_x(2.0F);
+		pos2.setPhy_y(2.0F);
+		
+		Phy_Position interPos=getManhattanPosition(pos1,pos2,1.0F);
+
+		echoStatus(positionToString(interPos));
+	}
+*/
 	@Override
 	public boolean dropContainer(TransportOrderChain load_offer){
 
@@ -316,9 +382,11 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 
 		TransportOrder targetTO=findMatchingOrder(load_offer,false);
 		Domain end=inflateDomain(targetTO.getEnds_at().getAbstract_designation());
-		echoStatus("Container is going to be dropped at " + end.getId() + " " + positionToString(end.getIs_in_position()));
-		
-		addMovementTo(end.getIs_in_position());
+		echoStatus("Container is going to be dropped at " + end.getId() + " " + positionToString(end.getIs_in_position())+", current position: "+positionToString(getCurrentPosition()));
+		Float distance=getManhattanDistance(getCurrentPosition(),end.getIs_in_position());
+//		echoStatus("distance: "+distance+" distance.longValue"+distance.longValue());
+		Long eta=calculateDuration(distance.longValue())+System.currentTimeMillis();
+		addMovement(end.getIs_in_position(),eta.toString());
 //		moveTo(end.getIs_in_position());
 
 //		this.getOntologyRepresentation().setIs_in_position2(value);
@@ -338,9 +406,11 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 	 * @see contmas.interfaces.MoveableAgent#addMovementTo(contmas.ontology.Phy_Position)
 	 */
 	@Override
-	public void addMovementTo(Phy_Position to){
-		// TODO Auto-generated method stub
-		pendingMovements.add(to);
+	public void addMovement(Phy_Position to, String eta){
+		Movement mov=new Movement();
+		mov.setMove_to(to);
+		mov.setBe_there_at(eta);
+		((ActiveContainerHolder)getOntologyRepresentation()).getScheduled_movements().add(mov);
 		moveBehaviour.restart();
 	}
 
@@ -349,10 +419,8 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 	 */
 	@Override
 	public List getPendingMovements(){
-		return pendingMovements;
+		return ((ActiveContainerHolder)getOntologyRepresentation()).getScheduled_movements();
 	}
-
-
 
 /*	//Lies_in variant
 	public Domain findDomain(String lookForID,Domain in){
@@ -364,7 +432,6 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 	}
 */
 
-
 /*
 	@Override
 	public Designator getAbstractTargetDesignator(){
@@ -374,9 +441,4 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 		return target;
 	}
 */
-
-
-
-
-
 }

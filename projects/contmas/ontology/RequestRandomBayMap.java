@@ -8,20 +8,9 @@ import jade.core.*;
 /**
 * Protege name: RequestRandomBayMap
 * @author ontology bean generator
-* @version 2010/05/3, 17:06:09
+* @version 2010/05/3, 22:21:54
 */
 public class RequestRandomBayMap implements AgentAction {
-
-   /**
-* Protege name: y_dimension
-   */
-   private int y_dimension;
-   public void setY_dimension(int value) { 
-    this.y_dimension=value;
-   }
-   public int getY_dimension() {
-     return this.y_dimension;
-   }
 
    /**
 * Protege name: z_dimension
@@ -43,6 +32,17 @@ public class RequestRandomBayMap implements AgentAction {
    }
    public int getX_dimension() {
      return this.x_dimension;
+   }
+
+   /**
+* Protege name: y_dimension
+   */
+   private int y_dimension;
+   public void setY_dimension(int value) { 
+    this.y_dimension=value;
+   }
+   public int getY_dimension() {
+     return this.y_dimension;
    }
 
 }
