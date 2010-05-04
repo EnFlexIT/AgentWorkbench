@@ -302,11 +302,21 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 		TransportOrder targetTO=findMatchingOrder(targetContainer);
 		Domain start=inflateDomain(targetTO.getStarts_at().getAbstract_designation());
 		echoStatus("Container is going to be picked up at " + start.getId() + " " + positionToString(start.getIs_in_position()));
-		setAt(start.getIs_in_position());
+		addAsapMovementTo(start.getIs_in_position());
+
+//		setAt(start.getIs_in_position());
 
 		return super.aquireContainer(targetContainer);
 	}
+	@Override
+	public boolean dropContainer(TransportOrderChain load_offer){
+		TransportOrder targetTO=findMatchingOrder(load_offer,false);
+		Domain end=inflateDomain(targetTO.getEnds_at().getAbstract_designation());
+		echoStatus("Container is going to be dropped at " + end.getId() + " " + positionToString(end.getIs_in_position())+", current position: "+positionToString(getCurrentPosition()));
+		addAsapMovementTo(end.getIs_in_position());
 
+		return super.dropContainer(load_offer);
+	}
 	public void setAt(Phy_Position to){
 		echoStatus("I am now at " + positionToString(to));
 		getOntologyRepresentation().getIs_in_position2().setPhy_x(to.getPhy_x());
@@ -375,23 +385,7 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 		echoStatus(positionToString(interPos));
 	}
 */
-	@Override
-	public boolean dropContainer(TransportOrderChain load_offer){
 
-		//set position to be where the container was dropped (start designator of NEXT TO)
-
-		TransportOrder targetTO=findMatchingOrder(load_offer,false);
-		Domain end=inflateDomain(targetTO.getEnds_at().getAbstract_designation());
-		echoStatus("Container is going to be dropped at " + end.getId() + " " + positionToString(end.getIs_in_position())+", current position: "+positionToString(getCurrentPosition()));
-		Float distance=getManhattanDistance(getCurrentPosition(),end.getIs_in_position());
-//		echoStatus("distance: "+distance+" distance.longValue"+distance.longValue());
-		Long eta=calculateDuration(distance.longValue())+System.currentTimeMillis();
-		addMovement(end.getIs_in_position(),eta.toString());
-//		moveTo(end.getIs_in_position());
-
-//		this.getOntologyRepresentation().setIs_in_position2(value);
-		return super.dropContainer(load_offer);
-	}
 
 	public Domain findRootDomain(Domain accessPoint){
 		Domain liesIn=accessPoint.getLies_in();
@@ -406,10 +400,15 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 	 * @see contmas.interfaces.MoveableAgent#addMovementTo(contmas.ontology.Phy_Position)
 	 */
 	@Override
-	public void addMovement(Phy_Position to, String eta){
+	public void addAsapMovementTo(Phy_Position to){
+		echoStatus("adding asap movement to "+positionToString(to));
+		Float distance=getManhattanDistance(getCurrentPosition(),to);
+//		echoStatus("distance: "+distance+" distance.longValue"+distance.longValue());
+		Long eta=calculateDuration(distance.longValue())+System.currentTimeMillis();
+
 		Movement mov=new Movement();
 		mov.setMove_to(to);
-		mov.setBe_there_at(eta);
+		mov.setBe_there_at(eta.toString());
 		((ActiveContainerHolder)getOntologyRepresentation()).getScheduled_movements().add(mov);
 		moveBehaviour.restart();
 	}
