@@ -5,6 +5,7 @@ import sma.ontology.AgentObject;
 import sma.ontology.DisplayOntology;
 import sma.ontology.PlaygroundObject;
 import sma.ontology.Position;
+import sma.ontology.Size;
 import sma.ontology.Speed;
 import jade.content.lang.Codec;
 import jade.content.lang.sl.SLCodec;
@@ -46,10 +47,10 @@ public abstract class MovingAgent extends Agent implements DisplayableAgent{
 	 */
 	Ontology ontology = DisplayOntology.getInstance();
 	
-	/**
-	 * The agent's (center) position
-	 */
-	private Position position = null;
+//	/**
+//	 * The agent's (center) position
+//	 */
+//	private Position position = null;
 	/**
 	 * Is this agent currently moving?
 	 */
@@ -104,8 +105,7 @@ public abstract class MovingAgent extends Agent implements DisplayableAgent{
 		Object[] args = getArguments();
 		if(args != null && args.length>0 && args[0] instanceof AgentObject){
 			this.self = (AgentObject) args[0];			
-			this.playground = self.getParent();
-			this.position = self.getPosition();
+			this.playground = self.getParent();			
 			
 			try {
 				TopicManagementHelper tmh = (TopicManagementHelper) getHelper(TopicManagementHelper.SERVICE_NAME);
@@ -147,12 +147,16 @@ public abstract class MovingAgent extends Agent implements DisplayableAgent{
 
 	@Override
 	public Position getPosition() {
-		return this.position;
+		return this.self.getPosition();
+	}
+	
+	public Size getSize(){
+		return this.self.getSize();
 	}
 
 	@Override
 	public void setPosition(Position position) {
-		this.position = position;		
+		this.self.setPosition(position);		
 	}
 	
 	@Override

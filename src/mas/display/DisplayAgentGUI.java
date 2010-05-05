@@ -143,28 +143,31 @@ public class DisplayAgentGUI extends BasicSVGGUI {
 			float posX, posY;
 			
 			// Convert from real world units to pixel
-//			posX = OntoUtilities.calcPixel(pos.getX(), scale);
-//			posY = OntoUtilities.calcPixel(pos.getY(), scale);
+			posX = OntoUtilities.calcPixel(pos.getX(), scale);
+			posY = OntoUtilities.calcPixel(pos.getY(), scale);
 			
-			posX = pos.getX();
-			posY = pos.getY();
+//			System.out.println("Setting new pos: "+posX+":"+posY);
 			
 			Element element = DisplayAgentGUI.this.getCanvas().getSVGDocument().getElementById(id);
 			
 			switch(SvgTypes.getType(element)){
 				case CIRCLE:
+					float r = Float.parseFloat(element.getAttributeNS(null, "r"));
+					posX += r;
+					posY += r;
+					element.setAttributeNS(null, "cx", ""+posX);
+					element.setAttributeNS(null, "cy", ""+posY);
 				case ELLIPSE:
+					float r1 = Float.parseFloat(element.getAttributeNS(null, "r1"));
+					float r2 = Float.parseFloat(element.getAttributeNS(null, "r2"));
+					posX += r1;
+					posY += r2;
 					element.setAttributeNS(null, "cx", ""+posX);
 					element.setAttributeNS(null, "cy", ""+posY);
 				break;
 				
 				case RECT:
 				case IMAGE:
-					// RECTs use top left coordinates
-					float width = Float.parseFloat(element.getAttributeNS(null, "width"));
-					float height = Float.parseFloat(element.getAttributeNS(null, "height"));
-					posX -= width/2;
-					posY -= height/2;
 					element.setAttributeNS(null, "x", ""+posX);
 					element.setAttributeNS(null, "y", ""+posY);
 				break;

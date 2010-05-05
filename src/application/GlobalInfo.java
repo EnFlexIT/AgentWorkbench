@@ -8,7 +8,7 @@ public class GlobalInfo {
 
 	// --- Konstanten ------------------------------------------------------- 
 	final private static String LocalAppTitel = "Agent.GUI";
-	final private static boolean LocalAppUseInternalConsole = false;
+	final private static boolean LocalAppUseInternalConsole = true;
 	
 	final private static String LocalAppPathSeparatorString = File.separator;
 	final private static String LocalAppNewLineString = System.getProperty("line.separator");

@@ -23,29 +23,28 @@ public class SoftBot extends MovingAgent {
 		super.setup();
 		
 		this.self.setCurrentSpeed(new Speed());
-		this.self.getCurrentSpeed().setSpeed(10.0f);
-		
-//		Position dest = new Position();
-//		dest.setX(500);
-//		dest.setY(50);
+		this.self.getCurrentSpeed().setSpeed(1.0f);
 		
 		Vector<Position> wps = new Vector<Position>();
 		
 		Position pos1 = new Position();
-		pos1.setX(200);
-		pos1.setY(350);
+		pos1.setX(20);
+		pos1.setY(30);
 		
 		Position pos2 = new Position();
-		pos2.setX(400);
-		pos2.setY(350);
+		pos2.setX(35);
+		pos2.setY(30);
 		
 		Position pos3 = new Position();
-		pos3.setX(500);
-		pos3.setY(50);
+		pos3.setX(50);
+		pos3.setY(2);
 		
 		wps.add(0, pos1);
 		wps.add(1, pos2);
-		wps.add(2, pos3);		
+		wps.add(2, pos3);
+		
+		// Temporäre Lösung des Start-Timing-Problems
+		this.doWait(500);
 		
 		addBehaviour(new MoveToPointBehaviour(this, wps, this.getCurrentSpeed()));
 	}		

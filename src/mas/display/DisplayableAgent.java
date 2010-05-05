@@ -4,6 +4,7 @@ import jade.content.lang.Codec;
 import jade.content.onto.Ontology;
 import jade.core.AID;
 import sma.ontology.Position;
+import sma.ontology.Size;
 import sma.ontology.Speed;
 /**
  * This interface has to be implemented by all agents using the display functionality. A default implementation is provided in mas.movement.MovingAgent
@@ -12,6 +13,7 @@ import sma.ontology.Speed;
  */
 public interface DisplayableAgent {
 	public Position getPosition();
+	public Size getSize();
 	public void setPosition(Position position);
 	public Speed getCurrentSpeed();
 	public Speed getMaxSpeed();

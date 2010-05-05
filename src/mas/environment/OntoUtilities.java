@@ -120,7 +120,7 @@ public class OntoUtilities {
 	 * @return The number of real world units
 	 */
 	public static float calcRWU(float px, Scale scale){
-		return (px / scale.getPixel()) * scale.getValue(); 
+		return (px / scale.getPixel()) * scale.getValue();		
 	}
 	
 	/**

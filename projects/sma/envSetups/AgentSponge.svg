@@ -9,9 +9,9 @@
      preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"
      version="1.1">
     <defs id="defs4"/>
-    <rect x="247.02179" width="114.28572" id="ObstGrey" y="7.8450274"
-          height="300.62955" style="fill:#999999;stroke:none"/>
-    <image x="471.5" y="10.0" width="57.0"
+    <rect x="247.02179" width="100.0" id="ObstGrey" y="7.8450274" height="250.0"
+          style="fill:#999999;stroke:none"/>
+    <image x="20.0" y="30.0" width="57.0"
            xmlns:xlink="http://www.w3.org/1999/xlink"
            xlink:href="../resources/SmallSponge.jpg"
            style=";stroke:orange;stroke-width:5px" xlink:type="simple"

@@ -114,7 +114,7 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 			myAgent.getContentManager().fillContent(movementInfo, act);
 			myAgent.send(movementInfo);
 			agent.setMoving(true);
-			System.out.println(myAgent.getLocalName()+": Message sent.");
+//			System.out.println(myAgent.getLocalName()+": Message sent.");
 			
 		} catch (CodecException e) {
 			// TODO Auto-generated catch block
@@ -153,7 +153,7 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 		Point2D.Float dest = new Point2D.Float(to.getX(), to.getY());
 		
 		double distance = dest.distance(start);
-		
+				
 		double distX = dest.getX() - start.getX();
 		double distY = dest.getY() - start.getY();
 		
@@ -182,7 +182,7 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 			Position step = new Position();
 			step.setX(posX);
 			step.setY(posY);
-			steps.add(step);
+			steps.add(step);			
 			
 			distX = to.getX() - posX;
 			distY = to.getY() - posY;

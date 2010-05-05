@@ -184,7 +184,7 @@ public class DisplayAgent extends Agent {
 		public void action() {
 			ACLMessage update = receive(posTemplate);
 			if(update != null){
-				System.out.println(getLocalName()+" received movement message from "+update.getSender().getLocalName());
+//				System.out.println(getLocalName()+" received movement message from "+update.getSender().getLocalName());
 				try {
 					Action act = (Action) getContentManager().extractContent(update);
 					Movement mv = (Movement) act.getAction();
@@ -199,7 +199,7 @@ public class DisplayAgent extends Agent {
 					e.printStackTrace();
 				}
 			}else{
-				System.out.println(getLocalName()+" waiting for movement messages");
+//				System.out.println(getLocalName()+" waiting for movement messages");
 				block();
 			}
 		}
