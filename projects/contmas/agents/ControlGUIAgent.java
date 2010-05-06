@@ -21,14 +21,12 @@ import jade.content.onto.OntologyException;
 import jade.content.onto.basic.Action;
 import jade.core.AID;
 import jade.core.ServiceException;
-import jade.core.behaviours.CyclicBehaviour;
 import jade.core.messaging.TopicManagementHelper;
 import jade.domain.JADEAgentManagement.JADEManagementOntology;
 import jade.domain.JADEAgentManagement.SniffOn;
 import jade.gui.GuiAgent;
 import jade.gui.GuiEvent;
 import jade.lang.acl.ACLMessage;
-import jade.lang.acl.MessageTemplate;
 import jade.util.leap.Iterator;
 import jade.util.leap.List;
 import jade.wrapper.AgentContainer;
@@ -41,46 +39,18 @@ import javax.swing.JDesktopPane;
 import contmas.behaviours.*;
 import contmas.interfaces.DFSubscriber;
 import contmas.interfaces.HarbourLayoutRequester;
+import contmas.interfaces.Logger;
 import contmas.interfaces.OntRepRequester;
 import contmas.main.AgentDesktop;
 import contmas.main.ControlGUI;
 import contmas.main.DomainOntologyElement;
 import contmas.ontology.*;
 
-public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubscriber,HarbourLayoutRequester{
+public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubscriber,HarbourLayoutRequester,Logger{
 
-	class listenForLogMessage extends CyclicBehaviour{
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID=3580181910527477281L;
-		MessageTemplate loggingTemplate=MessageTemplate.MatchTopic(((ControlGUIAgent) this.myAgent).loggingTopic);
-
-		/**
-		 * @param controlGUIAgent
-		 */
-		public listenForLogMessage(ControlGUIAgent myCAgent){
-			super(myCAgent);
-		}
-
-		/**
-		 * 
-		 */
-
-		/* (non-Javadoc)
-		 * @see jade.core.behaviours.Behaviour#action()
-		 */
-		@Override
-		public void action(){
-			ACLMessage logMsg=ControlGUIAgent.this.receive(this.loggingTemplate);
-			if(logMsg != null){
-				String content=logMsg.getContent();
-				((ControlGUIAgent) this.myAgent).writeLogMsg(content);
-			}else{
-				this.block();
-			}
-
-		}
+	@Override
+	public void processLogMsg(String logMsg){
+		writeLogMsg(logMsg);
 	}
 
 	private String workingDir="";
@@ -140,8 +110,7 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 	private JDesktopPane canvas=null;
 	public ControlGUI myGui=null;
 	private AID harbourMaster=null;
-	private TopicManagementHelper tmh;
-	private AID loggingTopic=null;
+
 	private AID sniffer=null;
 
 	@Override
@@ -245,15 +214,6 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 			this.setWorkingDir("projects\\contmas\\");
 		}
 
-		try{
-			this.tmh=(TopicManagementHelper) this.getHelper(TopicManagementHelper.SERVICE_NAME);
-			this.loggingTopic=this.tmh.createTopic("container-harbour-logging");
-			this.tmh.register(this.loggingTopic);
-		}catch(ServiceException e1){
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-
 		this.addBehaviour(new listenForLogMessage(this));
 
 		this.addBehaviour(new subscribeToDF(this,"involved-in-container-port"));
@@ -279,6 +239,9 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 			
 			a=c.createNewAgent("SimulationController","contmas.agents.SimulationControlAgent",args);
 			a.start();
+			
+			a=c.createNewAgent("Visualiser","contmas.agents.VisualisationAgent",args);
+			a.start();
 		}catch(StaleProxyException e){
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -291,12 +254,6 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 	@Override
 	protected void takeDown(){
 		this.myGui.dispose();
-		try{
-			this.tmh.deregister(this.loggingTopic); //does it work?
-		}catch(ServiceException e){
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 	public void updateAgentTree(List newAgents,Boolean remove){
@@ -326,21 +283,21 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		DomainOntologyElement root=this.renderDomain(current_harbour_layout);
+		DomainOntologyElement root=ControlGUIAgent.renderDomain(current_harbour_layout);
 
 		this.myGui.displayHarbourLayout(root);
 
 //		this.myGui.displayHarbourLayout(current_harbour_layout);
 	}
 
-	private DomainOntologyElement renderDomain(Domain dohmein){
+	private static DomainOntologyElement renderDomain(Domain dohmein){
 		Iterator agentIter=dohmein.getAllHas_subdomains();
 		DomainOntologyElement root=new DomainOntologyElement(dohmein);//dohmein.getClass().getSimpleName()+" - "+dohmein.getId());
 		DomainOntologyElement domNode=null;
 
 		while(agentIter.hasNext()){
 			Domain curDom=(Domain) agentIter.next();
-			domNode=this.renderDomain(curDom);
+			domNode=renderDomain(curDom);
 			root.add(domNode);
 		}
 		return root;
@@ -360,4 +317,6 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 			}
 		}
 	}
+
+
 }

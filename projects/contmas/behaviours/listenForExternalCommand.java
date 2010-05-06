@@ -16,7 +16,7 @@ public class listenForExternalCommand extends AchieveREResponder{
 
 	/**
 	 * @param a
-	 * @param simulationControlAgent TODO
+	 * 
 	 */
 	ContainerAgent myAgent;
 	
