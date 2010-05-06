@@ -8,9 +8,30 @@ import jade.core.*;
 /**
 * Protege name: TransportOrderChain
 * @author ontology bean generator
-* @version 2010/05/3, 22:21:54
+* @version 2010/05/6, 12:41:03
 */
 public class TransportOrderChain implements Concept {
+
+   /**
+* Protege name: is_linked_by
+   */
+   private List is_linked_by = new ArrayList();
+   public void addIs_linked_by(TransportOrder elem) { 
+     List oldList = this.is_linked_by;
+     is_linked_by.add(elem);
+   }
+   public boolean removeIs_linked_by(TransportOrder elem) {
+     List oldList = this.is_linked_by;
+     boolean result = is_linked_by.remove(elem);
+     return result;
+   }
+   public void clearAllIs_linked_by() {
+     List oldList = this.is_linked_by;
+     is_linked_by.clear();
+   }
+   public Iterator getAllIs_linked_by() {return is_linked_by.iterator(); }
+   public List getIs_linked_by() {return is_linked_by; }
+   public void setIs_linked_by(List l) {is_linked_by = l; }
 
    /**
 * Protege name: transports
@@ -33,26 +54,5 @@ public class TransportOrderChain implements Concept {
    public String getTerminates_at() {
      return this.terminates_at;
    }
-
-   /**
-* Protege name: is_linked_by
-   */
-   private List is_linked_by = new ArrayList();
-   public void addIs_linked_by(TransportOrder elem) { 
-     List oldList = this.is_linked_by;
-     is_linked_by.add(elem);
-   }
-   public boolean removeIs_linked_by(TransportOrder elem) {
-     List oldList = this.is_linked_by;
-     boolean result = is_linked_by.remove(elem);
-     return result;
-   }
-   public void clearAllIs_linked_by() {
-     List oldList = this.is_linked_by;
-     is_linked_by.clear();
-   }
-   public Iterator getAllIs_linked_by() {return is_linked_by.iterator(); }
-   public List getIs_linked_by() {return is_linked_by; }
-   public void setIs_linked_by(List l) {is_linked_by = l; }
 
 }

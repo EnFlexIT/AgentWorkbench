@@ -9,7 +9,7 @@ import jade.core.*;
    * 
 * Protege name: phy:AbstractObject
 * @author ontology bean generator
-* @version 2010/05/3, 22:21:54
+* @version 2010/05/6, 12:41:04
 */
 public class Phy_AbstractObject implements Concept {
 
@@ -26,18 +26,6 @@ public class Phy_AbstractObject implements Concept {
    }
 
    /**
-   * The playground containing this EnvironmentObject
-* Protege name: phy:parent
-   */
-   private Phy_PlaygroundObject phy_parent;
-   public void setPhy_parent(Phy_PlaygroundObject value) { 
-    this.phy_parent=value;
-   }
-   public Phy_PlaygroundObject getPhy_parent() {
-     return this.phy_parent;
-   }
-
-   /**
    * Unique id to identify this object
 * Protege name: phy:id
    */
@@ -47,6 +35,18 @@ public class Phy_AbstractObject implements Concept {
    }
    public String getPhy_id() {
      return this.phy_id;
+   }
+
+   /**
+   * The playground containing this EnvironmentObject
+* Protege name: phy:parent
+   */
+   private Phy_PlaygroundObject phy_parent;
+   public void setPhy_parent(Phy_PlaygroundObject value) { 
+    this.phy_parent=value;
+   }
+   public Phy_PlaygroundObject getPhy_parent() {
+     return this.phy_parent;
    }
 
    /**

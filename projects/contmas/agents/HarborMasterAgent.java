@@ -17,10 +17,14 @@ package contmas.agents;
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
 import jade.util.leap.Iterator;
+import jade.util.leap.List;
 
+import jade.util.leap.ArrayList;
 import java.util.HashMap;
+import java.util.NoSuchElementException;
 
 import contmas.behaviours.*;
+import contmas.interfaces.DFSubscriber;
 import contmas.interfaces.OntRepProvider;
 import contmas.interfaces.OntRepRequester;
 import contmas.main.HarbourSetup;
@@ -29,10 +33,11 @@ import contmas.ontology.ContainerHolder;
 import contmas.ontology.Domain;
 import contmas.ontology.StartNewContainerHolder;
 
-public class HarborMasterAgent extends ContainerAgent implements OntRepProvider,OntRepRequester{
+public class HarborMasterAgent extends ContainerAgent implements OntRepProvider,OntRepRequester,DFSubscriber{
 	private HashMap<AID, ContainerHolder> activeContainerHolders=new HashMap<AID, ContainerHolder>();
 	private HashMap<AID, Behaviour> ontRepInquieries=new HashMap<AID, Behaviour>();
 	private HarbourSetup harbourSetup=null;
+	public List allContainerHandlers=new ArrayList();
 
 	private HarbourSetup getHarbourSetup(){
 		String[] args=(String[]) this.getArguments();
@@ -72,12 +77,13 @@ public class HarborMasterAgent extends ContainerAgent implements OntRepProvider,
 	protected void setup(){
 		super.setup();
 
-		this.setupEnvironment();
+		this.addBehaviour(new setupEnvironment(this));
 		this.addBehaviour(new listenForEnroll(this));
 		this.addBehaviour(new listenForOntRepReq(this));
 		this.addBehaviour(new listenForStartAgentReq(this));
 		this.addBehaviour(new listenForHarbourAreaReq(this));
-
+		this.addBehaviour(new subscribeToDF(this,"container-handling"));
+		this.addBehaviour(new listenForEnvironmentResetRequest(this));
 	}
 
 	public ContainerHolder getOntologyRepresentation(AID inQuestion){
@@ -100,7 +106,7 @@ public class HarborMasterAgent extends ContainerAgent implements OntRepProvider,
 		return this.getHarbourSetup().getHarbourArea();
 	}
 
-	protected void setupEnvironment(){
+	public void setupEnvironment(){
 
 		ContainerHolder[] ontReps=this.getHarbourSetup().getOntReps();
 		for(int i=0;i < ontReps.length;i++){
@@ -123,6 +129,15 @@ public class HarborMasterAgent extends ContainerAgent implements OntRepProvider,
 			this.addBehaviour(new requestStartAgent(this,this.getAID(),act));
 		}
 	}
+	
+	public void clearHarbourEnvironment(){
+		this.addBehaviour(new setupEnvironment(this));
+
+		Iterator allActiveAgents=allContainerHandlers.iterator();
+		while(allActiveAgents.hasNext()){
+			this.addBehaviour(new killAgent(this,(AID) allActiveAgents.next()));
+		}
+	}
 
 	/* (non-Javadoc)
 	 * @see contmas.agents.OntRepProvider#getOntologyRepresentation()
@@ -132,5 +147,17 @@ public class HarborMasterAgent extends ContainerAgent implements OntRepProvider,
 		ContainerHolder test=new ContainerHolder();
 		test.setLives_in(this.getHarbourArea());
 		return test;
+	}
+
+	/* (non-Javadoc)
+	 * @see contmas.interfaces.DFSubscriber#processSubscriptionUpdate(jade.util.leap.List, java.lang.Boolean)
+	 */
+	@Override
+	public void processSubscriptionUpdate(List updatedAgents,Boolean remove){
+		if( !remove){
+			ContainerAgent.addToList(allContainerHandlers,updatedAgents);
+		}else{
+			ContainerAgent.removeFromList(allContainerHandlers,updatedAgents);
+		}
 	}
 }

@@ -1,4 +1,4 @@
-; Mon May 03 22:20:42 NZST 2010
+; Thu May 06 12:40:30 NZST 2010
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -6,11 +6,11 @@
 ([BROWSER_SLOT_NAMES] of  Property_List
 
 	(properties
-		[Container-Ontologie-OWL_ProjectKB_Instance_30067]
-		[Container-Ontologie-OWL_ProjectKB_Instance_30068]
-		[Container-Ontologie-OWL_ProjectKB_Instance_30069]
-		[Container-Ontologie-OWL_ProjectKB_Instance_30070]
-		[Container-Ontologie-OWL_ProjectKB_Instance_30071]))
+		[Container-Ontologie-OWL_ProjectKB_Instance_20060]
+		[Container-Ontologie-OWL_ProjectKB_Instance_20061]
+		[Container-Ontologie-OWL_ProjectKB_Instance_20062]
+		[Container-Ontologie-OWL_ProjectKB_Instance_20063]
+		[Container-Ontologie-OWL_ProjectKB_Instance_20064]))
 
 ([CLSES_TAB] of  Widget
 
@@ -99,8 +99,8 @@
 ([Container-Ontologie-OWL_ProjectKB_Instance_123] of  Map
 
 	(entries
-		[Container-Ontologie-OWL_ProjectKB_Instance_30072]
-		[Container-Ontologie-OWL_ProjectKB_Instance_30073]))
+		[Container-Ontologie-OWL_ProjectKB_Instance_20065]
+		[Container-Ontologie-OWL_ProjectKB_Instance_20066]))
 
 ([Container-Ontologie-OWL_ProjectKB_Instance_13] of  Widget
 
@@ -140,6 +140,45 @@
 
 ([Container-Ontologie-OWL_ProjectKB_Instance_20] of  Property_List
 )
+
+([Container-Ontologie-OWL_ProjectKB_Instance_20060] of  String
+
+	(name "owl:Thing")
+	(string_value "%3ANAME"))
+
+([Container-Ontologie-OWL_ProjectKB_Instance_20061] of  String
+
+	(name ":PAL-CONSTRAINT")
+	(string_value "%3APAL-NAME"))
+
+([Container-Ontologie-OWL_ProjectKB_Instance_20062] of  String
+
+	(name ":INSTANCE-ANNOTATION")
+	(string_value "%3AANNOTATION-TEXT"))
+
+([Container-Ontologie-OWL_ProjectKB_Instance_20063] of  String
+
+	(name ":META-CLASS")
+	(string_value "%3ANAME"))
+
+([Container-Ontologie-OWL_ProjectKB_Instance_20064] of  String
+
+	(name "owl:Class")
+	(string_value "%3ANAME"))
+
+([Container-Ontologie-OWL_ProjectKB_Instance_20065] of  Map_Entry
+
+	(key "add_name_on_instance_form")
+	(key_class "java.lang.String")
+	(value "false")
+	(value_class "java.lang.String"))
+
+([Container-Ontologie-OWL_ProjectKB_Instance_20066] of  Map_Entry
+
+	(key "change_tracking_active")
+	(key_class "java.lang.String")
+	(value "false")
+	(value_class "java.lang.String"))
 
 ([Container-Ontologie-OWL_ProjectKB_Instance_21] of  Widget
 
@@ -191,45 +230,6 @@
 
 ([Container-Ontologie-OWL_ProjectKB_Instance_30] of  Property_List
 )
-
-([Container-Ontologie-OWL_ProjectKB_Instance_30067] of  String
-
-	(name "owl:Thing")
-	(string_value "%3ANAME"))
-
-([Container-Ontologie-OWL_ProjectKB_Instance_30068] of  String
-
-	(name ":PAL-CONSTRAINT")
-	(string_value "%3APAL-NAME"))
-
-([Container-Ontologie-OWL_ProjectKB_Instance_30069] of  String
-
-	(name ":INSTANCE-ANNOTATION")
-	(string_value "%3AANNOTATION-TEXT"))
-
-([Container-Ontologie-OWL_ProjectKB_Instance_30070] of  String
-
-	(name ":META-CLASS")
-	(string_value "%3ANAME"))
-
-([Container-Ontologie-OWL_ProjectKB_Instance_30071] of  String
-
-	(name "owl:Class")
-	(string_value "%3ANAME"))
-
-([Container-Ontologie-OWL_ProjectKB_Instance_30072] of  Map_Entry
-
-	(key "add_name_on_instance_form")
-	(key_class "java.lang.String")
-	(value "false")
-	(value_class "java.lang.String"))
-
-([Container-Ontologie-OWL_ProjectKB_Instance_30073] of  Map_Entry
-
-	(key "change_tracking_active")
-	(key_class "java.lang.String")
-	(value "false")
-	(value_class "java.lang.String"))
 
 ([Container-Ontologie-OWL_ProjectKB_Instance_31] of  Widget
 
@@ -7270,12 +7270,12 @@
 	(customized_instance_widgets
 		[PAL_FORM_WIDGET]
 		[KB_713803_Instance_477]
-		[INSTANCE_ANNOTATION_FORM_WIDGET]
 		[KB_713803_Instance_780]
-		[KB_301165_Instance_856]
+		[INSTANCE_ANNOTATION_FORM_WIDGET]
 		[KB_713803_Instance_693]
-		[KB_691299_Instance_537]
+		[KB_301165_Instance_856]
 		[KB_713803_Instance_648]
+		[KB_691299_Instance_537]
 		[KB_691299_Instance_398]
 		[KB_303942_Instance_68]
 		[KB_938545_Instance_166]
@@ -7362,15 +7362,15 @@
 		":SYSTEM-CLASS"
 		"owl:oneOf"
 		"owl:DataRange"
-		"owl:DeprecatedProperty"
 		"rdf:Property"
+		"owl:DeprecatedProperty"
 		"owl:DeprecatedClass"
 		"rdf:Statement"
 		"rdf:type"
 		"rdf:subject"
 		"rdf:predicate"
-		"rdf:object"
 		":OWL-ANONYMOUS-ROOT"
+		"rdf:object"
 		"rdfs:Container"
 		"owl:AllDifferent"
 		"owl:distinctMembers"

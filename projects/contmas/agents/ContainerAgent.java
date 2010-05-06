@@ -78,6 +78,21 @@ public class ContainerAgent extends Agent{
 		}
 		return base;
 	}
+	
+	public static List removeFromList(List base,List removals){
+		Iterator iter=removals.iterator();
+		while(iter.hasNext()){
+			Object remObj=(Object) iter.next();
+			Iterator baseIter=base.iterator();
+			while(baseIter.hasNext()){
+				Object curObj=(Object) baseIter.next();
+				if(remObj.equals(curObj)){
+					baseIter.remove();
+				}
+			}
+		}
+		return base;
+	}
 
 	public static AID[] agentDescToAIDArray(DFAgentDescription[] agents){
 		AID[] result=new AID[agents.length];
@@ -200,7 +215,7 @@ public class ContainerAgent extends Agent{
 		}
 	}
 
-	protected String ownServiceType;
+//	protected String ownServiceType;
 	private AID harbourMaster=null;
 
 	public AID getHarbourMaster(){
@@ -218,16 +233,18 @@ public class ContainerAgent extends Agent{
 	}
 
 	private AID randomGenerator=null;
+	protected java.util.ArrayList<String> serviceTypeStrings=new java.util.ArrayList<String>();
 
 	/**
 	 * 
 	 */
 	public ContainerAgent(){
-		this("container-handling");
+		this.serviceTypeStrings.add("involved-in-container-port");
 	}
 
 	public ContainerAgent(String serviceType){
-		this.ownServiceType=serviceType;
+		this();
+		this.serviceTypeStrings.add(serviceType);
 	}
 
 	@Deprecated
@@ -240,8 +257,7 @@ public class ContainerAgent extends Agent{
 		ContainerAgent.enableForCommunication(this);
 
 		//register self at DF
-		this.echoStatus(this.ownServiceType,ContainerAgent.LOGGING_INFORM);
-		this.register(this.ownServiceType);
+		this.register();
 
 		//look for RandomGeneratorAgent
 		this.randomGenerator=this.getFirstAIDFromDF("random-generation");
@@ -309,15 +325,10 @@ public class ContainerAgent extends Agent{
 		}
 	}
 
-	public void register(String serviceType){
-		String[] allSTs=new String[] {"container-handling", serviceType};
-		this.register(allSTs);
-	}
-
-	public void register(String[] serviceType){
-		ServiceDescription[] allSDs=new ServiceDescription[serviceType.length];
-		for(int i=0;i < serviceType.length;i++){
-			String sT=serviceType[i];
+	public void register(){
+		ServiceDescription[] allSDs=new ServiceDescription[serviceTypeStrings.size()];
+		for(int i=0;i < serviceTypeStrings.size();i++){
+			String sT=serviceTypeStrings.get(i);
 			ServiceDescription sd=new ServiceDescription();
 			sd.setType(sT);
 			sd.setName(this.getLocalName());

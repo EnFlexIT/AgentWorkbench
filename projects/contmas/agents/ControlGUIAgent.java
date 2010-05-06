@@ -15,12 +15,16 @@
 package contmas.agents;
 
 import jade.content.lang.Codec.CodecException;
+import jade.content.lang.sl.SLCodec;
 import jade.content.lang.xml.XMLCodec;
 import jade.content.onto.OntologyException;
+import jade.content.onto.basic.Action;
 import jade.core.AID;
 import jade.core.ServiceException;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.messaging.TopicManagementHelper;
+import jade.domain.JADEAgentManagement.JADEManagementOntology;
+import jade.domain.JADEAgentManagement.SniffOn;
 import jade.gui.GuiAgent;
 import jade.gui.GuiEvent;
 import jade.lang.acl.ACLMessage;
@@ -185,22 +189,7 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 				act.setPopulate(Boolean.parseBoolean(ev.getParameter(5).toString()));
 				this.addBehaviour(new requestStartAgent(this,this.harbourMaster,act));
 
-				/*
-				AID address=new AID();
-				address.setName(a.getName());
-				SniffOn agact=new SniffOn();
-				agact.addSniffedAgents(address);
-				agact.setSniffer(sniffer);
-				ACLMessage msg=new ACLMessage(ACLMessage.REQUEST);
-				msg.setLanguage(new SLCodec().getName());
-				msg.setOntology(JADEManagementOntology.getInstance().getName());
-				getContentManager().registerLanguage(new SLCodec());
-				getContentManager().registerOntology(JADEManagementOntology.getInstance());
-				Action act=new Action(sniffer,agact);
-				getContentManager().fillContent(msg,act);
-				msg.addReceiver(sniffer);
-				send(msg);
-				*/
+
 			}catch(Exception e){
 				e.printStackTrace();
 			}
@@ -213,6 +202,31 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 			this.doDelete();
 		}
 
+	}
+	
+	protected void addToSniffer(AID agentToSniff){
+		AID address=new AID();
+		address.setName(agentToSniff.getName());
+		SniffOn agact=new SniffOn();
+		agact.addSniffedAgents(address);
+		agact.setSniffer(sniffer);
+		ACLMessage msg=new ACLMessage(ACLMessage.REQUEST);
+		msg.setLanguage(new SLCodec().getName());
+		msg.setOntology(JADEManagementOntology.getInstance().getName());
+		getContentManager().registerLanguage(new SLCodec());
+		getContentManager().registerOntology(JADEManagementOntology.getInstance());
+		Action act=new Action(sniffer,agact);
+		try{
+			getContentManager().fillContent(msg,act);
+		}catch(CodecException e){
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}catch(OntologyException e){
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		msg.addReceiver(sniffer);
+		send(msg);
 	}
 
 	@Override
@@ -242,7 +256,7 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 
 		this.addBehaviour(new listenForLogMessage(this));
 
-		this.addBehaviour(new subscribeToDF(this,"container-handling"));
+		this.addBehaviour(new subscribeToDF(this,"involved-in-container-port"));
 
 		AgentContainer c=this.getContainerController();
 
@@ -258,10 +272,13 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 			a.start();
 			this.harbourMaster=new AID();
 			this.harbourMaster.setName(a.getName());
-			a=c.createNewAgent("Sniffer","jade.tools.sniffer.Sniffer",new Object[] {"Yard;StraddleCarrier;Apron;Crane-#2;Crane-#1"});
+			a=c.createNewAgent("Sniffer","jade.tools.sniffer.Sniffer",null);//new Object[] {"Yard;StraddleCarrier;Apron;Crane-#2;Crane-#1"});
 			a.start();
 			this.sniffer=new AID();
 			this.sniffer.setName(a.getName());
+			
+			a=c.createNewAgent("SimulationController","contmas.agents.SimulationControlAgent",args);
+			a.start();
 		}catch(StaleProxyException e){
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -335,5 +352,12 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 	@Override
 	public void processSubscriptionUpdate(List updatedAgents,Boolean remove){
 		this.updateAgentTree(updatedAgents,remove);
+		if(!remove){
+			Iterator allAgents=updatedAgents.iterator();
+			while(allAgents.hasNext()){
+				AID curAgent=(AID) allAgents.next();
+				addToSniffer(curAgent);
+			}
+		}
 	}
 }

@@ -67,10 +67,11 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 
 	public ContainerHolderAgent(String serviceType,ContainerHolder ontologyRepresentation){
 		super(serviceType);
+		this.serviceTypeStrings.add("container-handling");
 		this.ontologyRepresentation=ontologyRepresentation;
 	}
 
-	public void addToContractors(List newContractors,Boolean remove){
+	public void updateContractors(List newContractors,Boolean remove){
 		if( !remove){
 			ContainerAgent.addToList(this.ontologyRepresentation.getContractors(),newContractors);
 		}else{
@@ -479,7 +480,7 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 	 */
 	@Override
 	public void processSubscriptionUpdate(List updatedAgents,Boolean remove){
-		this.addToContractors(updatedAgents,remove);
+		this.updateContractors(updatedAgents,remove);
 	}
 	
 	/* (non-Javadoc)

@@ -8,7 +8,7 @@ import jade.core.*;
    * Represents an agent that can move in the environment
 * Protege name: phy:AgentObject
 * @author ontology bean generator
-* @version 2010/05/3, 22:21:54
+* @version 2010/05/6, 12:41:04
 */
 public class Phy_AgentObject extends Phy_AbstractObject{ 
 
@@ -47,14 +47,15 @@ public class Phy_AgentObject extends Phy_AbstractObject{
    public void setPhy_collisionPoints(List l) {phy_collisionPoints = l; }
 
    /**
-* Protege name: phy:currentSpeed
+   * This agent's AID
+* Protege name: phy:aid
    */
-   private Phy_Speed phy_currentSpeed;
-   public void setPhy_currentSpeed(Phy_Speed value) { 
-    this.phy_currentSpeed=value;
+   private AID phy_aid;
+   public void setPhy_aid(AID value) { 
+    this.phy_aid=value;
    }
-   public Phy_Speed getPhy_currentSpeed() {
-     return this.phy_currentSpeed;
+   public AID getPhy_aid() {
+     return this.phy_aid;
    }
 
    /**
@@ -69,15 +70,14 @@ public class Phy_AgentObject extends Phy_AbstractObject{
    }
 
    /**
-   * This agent's AID
-* Protege name: phy:aid
+* Protege name: phy:currentSpeed
    */
-   private AID phy_aid;
-   public void setPhy_aid(AID value) { 
-    this.phy_aid=value;
+   private Phy_Speed phy_currentSpeed;
+   public void setPhy_currentSpeed(Phy_Speed value) { 
+    this.phy_currentSpeed=value;
    }
-   public AID getPhy_aid() {
-     return this.phy_aid;
+   public Phy_Speed getPhy_currentSpeed() {
+     return this.phy_currentSpeed;
    }
 
 }

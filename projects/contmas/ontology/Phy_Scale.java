@@ -9,7 +9,7 @@ import jade.core.*;
    * Defining the scale used for displaying the environment
 * Protege name: phy:Scale
 * @author ontology bean generator
-* @version 2010/05/3, 22:21:53
+* @version 2010/05/6, 12:41:04
 */
 public class Phy_Scale implements Concept {
 

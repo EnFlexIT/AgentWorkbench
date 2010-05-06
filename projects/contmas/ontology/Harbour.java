@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: Harbour
 * @author ontology bean generator
-* @version 2010/05/3, 22:21:54
+* @version 2010/05/6, 12:41:03
 */
 public class Harbour extends Domain{ 
 
