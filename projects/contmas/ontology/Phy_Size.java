@@ -9,21 +9,9 @@ import jade.core.*;
    * Represents an object's size in a 2D environment
 * Protege name: phy:Size
 * @author ontology bean generator
-* @version 2010/05/6, 12:41:04
+* @version 2010/05/7, 17:07:53
 */
 public class Phy_Size implements Concept {
-
-   /**
-   * The object's width
-* Protege name: phy:width
-   */
-   private float phy_width;
-   public void setPhy_width(float value) { 
-    this.phy_width=value;
-   }
-   public float getPhy_width() {
-     return this.phy_width;
-   }
 
    /**
    * The object's height
@@ -35,6 +23,18 @@ public class Phy_Size implements Concept {
    }
    public float getPhy_height() {
      return this.phy_height;
+   }
+
+   /**
+   * The object's width
+* Protege name: phy:width
+   */
+   private float phy_width;
+   public void setPhy_width(float value) { 
+    this.phy_width=value;
+   }
+   public float getPhy_width() {
+     return this.phy_width;
    }
 
 }

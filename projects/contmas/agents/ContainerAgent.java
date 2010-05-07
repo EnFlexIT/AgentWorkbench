@@ -277,7 +277,7 @@ public class ContainerAgent extends Agent{
 
 	@Deprecated
 	public void echoStatus(String statusMessage,TransportOrderChain subject){
-		this.echoStatus(statusMessage,subject,ContainerAgent.LOGGING_INFORM);
+		this.echoStatus(statusMessage,subject,ContainerAgent.LOGGING_DEFAULT);
 	}
 
 	public void echoStatus(String statusMessage,TransportOrderChain subject,Integer severity){

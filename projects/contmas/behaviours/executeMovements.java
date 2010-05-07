@@ -38,35 +38,52 @@ public class executeMovements extends CyclicBehaviour{
 
 	MoveableAgent myAgent;
 	ContainerAgent myCAgent;
-	
+	Movement curMovement=null;
+
 	public executeMovements(Agent a){
 		super(a);
 		myAgent=(MoveableAgent) a;
 		myCAgent=(ContainerAgent) a;
 	}
+
 	/* (non-Javadoc)
 	 * @see jade.core.behaviours.Behaviour#action()
 	 */
 	@Override
 	public void action(){
-		myCAgent.echoStatus("Executing pending movements now.");
+//		myCAgent.echoStatus("Considering movements now.");
 
-		List movementList=myAgent.getPendingMovements();
-		Iterator iter=movementList.iterator();
-		while(iter.hasNext()){
-			
-			Movement nextMove=(Movement) iter.next();
-			myCAgent.echoStatus("pending movement to "+StraddleCarrierAgent.positionToString(nextMove.getMove_to()));
-			Phy_Position intermediate=myAgent.interpolatePosition(nextMove);
-			myAgent.setAt(intermediate);
-			if(intermediate.getPhy_x()==nextMove.getMove_to().getPhy_x() && intermediate.getPhy_y()==nextMove.getMove_to().getPhy_y()){
-				iter.remove();
-			} else {
+		Movement activeMove=getCurrentMovement();
+		if(activeMove != null){
+			myCAgent.echoStatus("Executing pending movement to " + StraddleCarrierAgent.positionToString(activeMove.getMove_to()));
+			Phy_Position intermediatePos=myAgent.interpolatePosition(activeMove);
+			Phy_Position moveToPos=activeMove.getMove_to();
+			myAgent.setAt(intermediatePos);
+			if(myAgent.isAt(moveToPos)){
+				stopMoving();
+			}else{
 				block(1000);
 			}
-			
+
 //			this.restart();
 		}
 		block();
 	}
+
+	public Movement getCurrentMovement(){
+		if(curMovement == null){
+			List movementList=myAgent.getPendingMovements();
+			Iterator iter=movementList.iterator();
+			if(iter.hasNext()){
+				curMovement=(Movement) iter.next();
+				iter.remove();
+			}
+		}
+		return curMovement;
+	}
+	
+	public void stopMoving(){
+		curMovement=null;
+	}
+	
 }

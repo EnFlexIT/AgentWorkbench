@@ -131,20 +131,22 @@ public class announceLoadOrders extends ContractNetInitiator{
 			}
 			this.reset();
 			return;
-
-			/*
-			 * Alt: warten, benötigt aber weiteren zwischenspeicher oder so
-			 * if(((ContainerAgent)myAgent).isInFailedQueue(curTOC)){
-			 * if(masterBehaviour!=null){((ContainerAgent)myAgent).echoStatus(
-			 * "REFUSE: MasterBehaviour wird neugestartet.");
-			 * masterBehaviour.restart(); } return; } else {
-			 * ((ContainerAgent)myAgent
-			 * ).echoStatus("Nur Ablehnungen empfangen, versuche es nochmal");
-			 * ((ContainerAgent)myAgent).doWait(1000); //kurz warten, vielleicht
-			 * beruhigt sich ja die Lage
-			 * ((ContainerAgent)myAgent).changeTOCState(curTOC, new Failed());
-			 * this.reset(); return; }
-			 */
+/*
+			// Alt: warten, benötigt aber weiteren zwischenspeicher oder so
+			if(((ContainerAgent) myAgent).isInFailedQueue(curTOC)){
+				if(masterBehaviour != null){
+					((ContainerAgent) myAgent).echoStatus("REFUSE: MasterBehaviour wird neugestartet.");
+					masterBehaviour.restart();
+				}
+				return;
+			}else{
+				((ContainerAgent) myAgent).echoStatus("Nur Ablehnungen empfangen, versuche es nochmal");
+				((ContainerHolderAgent) myAgent).doWait(1000); //kurz warten, vielleicht beruhigt sich ja die Lage
+				((ContainerHolderAgent) myAgent).touchTOCState(curTOC,new Failed());
+				this.reset();
+				return;
+			}
+*/
 		}
 		if(bestOffer != null){
 			accept=bestOfferMessage.createReply();
@@ -163,7 +165,7 @@ public class announceLoadOrders extends ContractNetInitiator{
 			}
 		}
 	}
-
+	
 	@Override
 	protected void handleAllResultNotifications(Vector resultNotifications){
 		for(Object message: resultNotifications){
@@ -174,6 +176,12 @@ public class announceLoadOrders extends ContractNetInitiator{
 				TransportOrderChain load_offer=loadStatus.getCorresponds_to();
 				if((notification.getPerformative() == ACLMessage.INFORM) && loadStatus.getLoad_status().equals("FINISHED")){
 					//					((ContainerAgent)myAgent).echoStatus("AnnounceLoadStatus FINISHED empfangen, bearbeiten");
+					ACLMessage statusAnnouncement=notification.createReply();
+					statusAnnouncement.setPerformative(ACLMessage.INFORM);
+					loadStatus=new AnnounceLoadStatus();
+					loadStatus.setLoad_status("XyZpendingXyZ");
+					this.myCAgent.fillMessage(statusAnnouncement,loadStatus);
+					this.myCAgent.send(statusAnnouncement);
 					if(this.myCAgent.dropContainer(load_offer)){
 						if(this.masterBehaviour != null){
 							this.myCAgent.echoStatus("INFORM: MasterBehaviour wird neugestartet.",ContainerAgent.LOGGING_INFORM);

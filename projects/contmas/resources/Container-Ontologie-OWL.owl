@@ -10,8 +10,8 @@
     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
   xml:base="http://www.owl-ontologies.com/Container-Ontologie-OWL.owl">
   <owl:Ontology rdf:about="">
-    <owl:imports rdf:resource="http://www.owl-ontologies.com/display_ontology.owl"/>
     <owl:imports rdf:resource="http://jade.cselt.it/beangenerator"/>
+    <owl:imports rdf:resource="http://www.owl-ontologies.com/display_ontology.owl"/>
   </owl:Ontology>
   <owl:ObjectProperty rdf:ID="scheduled_movements">
     <rdfs:range>
@@ -296,9 +296,23 @@
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
     <rdfs:range rdf:resource="#TransportOrder"/>
     <rdfs:domain>
-      <j0:JADE-CLASS rdf:ID="ProposeLoadOffer">
-        <rdfs:subClassOf rdf:resource="http://jade.cselt.it/beangenerator#AgentAction"/>
-      </j0:JADE-CLASS>
+      <owl:Class>
+        <owl:unionOf rdf:parseType="Collection">
+          <j0:JADE-CLASS rdf:ID="ProposeLoadOffer">
+            <rdfs:subClassOf rdf:resource="http://jade.cselt.it/beangenerator#AgentAction"/>
+          </j0:JADE-CLASS>
+          <j0:JADE-CLASS rdf:ID="InExecution">
+            <rdfs:subClassOf>
+              <j0:JADE-CLASS rdf:ID="TransportOrderChainState">
+                <rdfs:subClassOf rdf:resource="http://jade.cselt.it/beangenerator#Concept"/>
+              </j0:JADE-CLASS>
+            </rdfs:subClassOf>
+          </j0:JADE-CLASS>
+          <j0:JADE-CLASS rdf:ID="Assigned">
+            <rdfs:subClassOf rdf:resource="#TransportOrderChainState"/>
+          </j0:JADE-CLASS>
+        </owl:unionOf>
+      </owl:Class>
     </rdfs:domain>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="concrete_designation">
@@ -330,11 +344,7 @@
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="state">
-    <rdfs:range>
-      <j0:JADE-CLASS rdf:ID="TransportOrderChainState">
-        <rdfs:subClassOf rdf:resource="http://jade.cselt.it/beangenerator#Concept"/>
-      </j0:JADE-CLASS>
-    </rdfs:range>
+    <rdfs:range rdf:resource="#TransportOrderChainState"/>
     <rdfs:domain rdf:resource="#TOCHasState"/>
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
   </owl:FunctionalProperty>
@@ -495,9 +505,6 @@
   <j0:JADE-CLASS rdf:ID="PendingForSubCFP">
     <rdfs:subClassOf rdf:resource="#TransportOrderChainState"/>
   </j0:JADE-CLASS>
-  <j0:JADE-CLASS rdf:ID="InExecution">
-    <rdfs:subClassOf rdf:resource="#TransportOrderChainState"/>
-  </j0:JADE-CLASS>
   <j0:JADE-CLASS rdf:ID="Planned">
     <rdfs:subClassOf rdf:resource="#TransportOrderChainState"/>
   </j0:JADE-CLASS>
@@ -515,16 +522,16 @@
   </j0:JADE-CLASS>
   <j0:JADE-CLASS rdf:ID="AGV">
     <rdfs:subClassOf>
-      <j0:JADE-CLASS rdf:ID="PassiveContainerHolder">
-        <rdfs:subClassOf rdf:resource="#ContainerHolder"/>
-      </j0:JADE-CLASS>
-    </rdfs:subClassOf>
-    <rdfs:subClassOf>
       <owl:Restriction>
         <owl:onProperty rdf:resource="#service_type"/>
         <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
         >container-distribution</owl:hasValue>
       </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <j0:JADE-CLASS rdf:ID="PassiveContainerHolder">
+        <rdfs:subClassOf rdf:resource="#ContainerHolder"/>
+      </j0:JADE-CLASS>
     </rdfs:subClassOf>
   </j0:JADE-CLASS>
   <j0:JADE-CLASS rdf:ID="ApronArea">

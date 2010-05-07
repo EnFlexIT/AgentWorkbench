@@ -9,20 +9,20 @@ import jade.core.*;
    * 
 * Protege name: phy:AbstractObject
 * @author ontology bean generator
-* @version 2010/05/6, 12:41:04
+* @version 2010/05/7, 17:07:53
 */
 public class Phy_AbstractObject implements Concept {
 
    /**
-   * This EnvironmentObject's center position
-* Protege name: phy:position
+   * This EnvironmentObject's size
+* Protege name: phy:size
    */
-   private Phy_Position phy_position;
-   public void setPhy_position(Phy_Position value) { 
-    this.phy_position=value;
+   private Phy_Size phy_size;
+   public void setPhy_size(Phy_Size value) { 
+    this.phy_size=value;
    }
-   public Phy_Position getPhy_position() {
-     return this.phy_position;
+   public Phy_Size getPhy_size() {
+     return this.phy_size;
    }
 
    /**
@@ -50,15 +50,15 @@ public class Phy_AbstractObject implements Concept {
    }
 
    /**
-   * This EnvironmentObject's size
-* Protege name: phy:size
+   * This EnvironmentObject's center position
+* Protege name: phy:position
    */
-   private Phy_Size phy_size;
-   public void setPhy_size(Phy_Size value) { 
-    this.phy_size=value;
+   private Phy_Position phy_position;
+   public void setPhy_position(Phy_Position value) { 
+    this.phy_position=value;
    }
-   public Phy_Size getPhy_size() {
-     return this.phy_size;
+   public Phy_Position getPhy_position() {
+     return this.phy_position;
    }
 
 }

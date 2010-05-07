@@ -5,11 +5,11 @@ import jade.util.leap.*;
 import jade.core.*;
 
 /**
-* Protege name: InExecution
+* Protege name: Assigned
 * @author ontology bean generator
 * @version 2010/05/7, 17:07:53
 */
-public class InExecution extends TransportOrderChainState{ 
+public class Assigned extends TransportOrderChainState{ 
 
    /**
 * Protege name: load_offer

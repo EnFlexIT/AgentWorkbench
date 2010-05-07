@@ -34,6 +34,7 @@ public interface MoveableAgent{
 
 
 	void setAt(Phy_Position to);
+	public Boolean isAt(Phy_Position requested);
 	void addAsapMovementTo(Phy_Position to);
 	public Phy_Position getCurrentPosition();
 	public Phy_Position interpolatePosition(Movement mov);

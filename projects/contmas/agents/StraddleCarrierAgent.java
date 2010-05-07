@@ -298,17 +298,6 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 	}
 
 	@Override
-	public Boolean aquireContainer(TransportOrderChain targetContainer){ //eigentlicher Vorgang des Container-Aufnehmens
-		TransportOrder targetTO=findMatchingOrder(targetContainer);
-		Domain start=inflateDomain(targetTO.getStarts_at().getAbstract_designation());
-		echoStatus("Container is going to be picked up at " + start.getId() + " " + positionToString(start.getIs_in_position()));
-		addAsapMovementTo(start.getIs_in_position());
-
-//		setAt(start.getIs_in_position());
-
-		return super.aquireContainer(targetContainer);
-	}
-	@Override
 	public boolean dropContainer(TransportOrderChain load_offer){
 		TransportOrder targetTO=findMatchingOrder(load_offer,false);
 		Domain end=inflateDomain(targetTO.getEnds_at().getAbstract_designation());
@@ -321,6 +310,18 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 		echoStatus("I am now at " + positionToString(to));
 		getOntologyRepresentation().getIs_in_position2().setPhy_x(to.getPhy_x());
 		getOntologyRepresentation().getIs_in_position2().setPhy_y(to.getPhy_y());
+	}
+	
+	public Boolean isAt(Phy_Position requested){
+//		echoStatus("isAt requestet " + positionToString(requested));
+
+		Phy_Position curPos=getCurrentPosition();
+//		echoStatus("isAt current " + positionToString(curPos));
+
+		if(requested.getPhy_x() == curPos.getPhy_x() && requested.getPhy_y() == curPos.getPhy_y()){
+			return true;
+		}
+		return false;
 	}
 	
 	public Phy_Position interpolatePosition(Movement mov){

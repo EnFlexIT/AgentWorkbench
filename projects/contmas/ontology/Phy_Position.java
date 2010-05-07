@@ -9,21 +9,9 @@ import jade.core.*;
    * Represents an object's position in a 2D environment
 * Protege name: phy:Position
 * @author ontology bean generator
-* @version 2010/05/6, 12:41:04
+* @version 2010/05/7, 17:07:53
 */
 public class Phy_Position implements Concept {
-
-   /**
-   * The pont's y coordinate
-* Protege name: phy:y
-   */
-   private float phy_y;
-   public void setPhy_y(float value) { 
-    this.phy_y=value;
-   }
-   public float getPhy_y() {
-     return this.phy_y;
-   }
 
    /**
    * The point's x coordinate
@@ -35,6 +23,18 @@ public class Phy_Position implements Concept {
    }
    public float getPhy_x() {
      return this.phy_x;
+   }
+
+   /**
+   * The pont's y coordinate
+* Protege name: phy:y
+   */
+   private float phy_y;
+   public void setPhy_y(float value) { 
+    this.phy_y=value;
+   }
+   public float getPhy_y() {
+     return this.phy_y;
    }
 
 }
