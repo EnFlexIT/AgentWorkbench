@@ -1,25 +1,47 @@
 package mas.display;
 
+import java.io.IOException;
+import java.io.StringReader;
+
 import javax.swing.JFrame;
 
+import mas.environment.OntoUtilities;
+
+import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
+import org.apache.batik.dom.svg.SVGDOMImplementation;
+import org.apache.batik.transcoder.TranscoderException;
+import org.apache.batik.transcoder.TranscoderInput;
+import org.apache.batik.transcoder.TranscoderOutput;
+import org.apache.batik.transcoder.svg2svg.SVGTranscoder;
+import org.apache.batik.util.XMLResourceDescriptor;
+import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 
 import sma.ontology.DisplayOntology;
 import sma.ontology.Environment;
+import sma.ontology.EnvironmentInfo;
 import sma.ontology.Movement;
 import jade.content.lang.Codec;
 import jade.content.lang.Codec.CodecException;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.Ontology;
 import jade.content.onto.OntologyException;
+import jade.content.onto.UngroundedException;
 import jade.content.onto.basic.Action;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.ServiceException;
 import jade.core.behaviours.CyclicBehaviour;
+import jade.core.behaviours.OneShotBehaviour;
 import jade.core.messaging.TopicManagementHelper;
+import jade.domain.DFService;
+import jade.domain.FIPAException;
+import jade.domain.FIPANames;
+import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import jade.proto.AchieveREInitiator;
 /**
  * This type of agent is controlling a DisplayAgentGUI instance
  * @author Nils
@@ -76,14 +98,16 @@ public class DisplayAgent extends Agent {
 	 */
 	public void setup(){
 		
+		this.doWait(500);
+		
 		getContentManager().registerLanguage(codec);
 		getContentManager().registerOntology(ontology);
 		
 		Object[] args = getArguments();
-		// Environment
-		if( args != null && args.length > 2 && args[2] instanceof Environment){
-			this.environment = (Environment) args[2];
-		}
+//		// Environment
+//		if( args != null && args.length > 2 && args[2] instanceof Environment){
+//			this.environment = (Environment) args[2];
+//		}
 				
 		// Project name
 		if( args != null && args.length > 0 && args[0] instanceof String){
@@ -105,13 +129,78 @@ public class DisplayAgent extends Agent {
 		
 		
 		this.daGUI.setAgent(this);
-		this.daGUI.setScale(environment.getScale());
-		this.svgDoc = (Document) this.environment.getSvgDoc();
-		if(svgDoc != null){
-			this.daGUI.setSVGDoc(svgDoc);
+//		this.daGUI.setScale(environment.getScale());
+		
+//		StringReader reader= new StringReader(environment.getSvgDoc());
+//		SAXSVGDocumentFactory factory = new SAXSVGDocumentFactory(XMLResourceDescriptor.getXMLParserClassName());
+//		
+//		try {
+//			svgDoc = factory.createDocument(null, reader);
+//		} catch (IOException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
+//	
+//		
+//		
+//		if(svgDoc != null){
+//			this.daGUI.setSVGDoc(svgDoc);
+//		}
+		
+		// Get the EnvironmentControllerAgent
+		DFAgentDescription dfd = new DFAgentDescription();
+		ServiceDescription sd = new ServiceDescription();
+		sd.setType("EnvironmentController");
+		sd.setName(sd.getType()+"_"+projectName);
+		dfd.addServices(sd);
+		
+		try {
+			DFAgentDescription[] results = DFService.search(this, dfd);
+			if(results != null && results.length > 0){
+				masterAgent = results[0].getName();
+			}else{
+				System.err.println("No ECA found.");
+			}
+		} catch (FIPAException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
 		
-//		addBehaviour(new EnvironmentRequestBehaviour(this));
+		if(masterAgent != null){
+			ACLMessage request = new ACLMessage(ACLMessage.QUERY_REF);
+			request.addReceiver(masterAgent);
+			request.setProtocol(FIPANames.InteractionProtocol.FIPA_QUERY);
+			request.setLanguage(codec.getName());
+			request.setOntology(ontology.getName());
+			
+			this.addBehaviour(new AchieveREInitiator(this, request){
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = 1L;
+
+				protected void handleInform(ACLMessage inform){
+					System.out.println("DA: Environment information received");
+					try {
+						Action act = (Action) getContentManager().extractContent(inform);
+						EnvironmentInfo envInf = (EnvironmentInfo) act.getAction();
+						System.out.println(envInf.getEnvironment().getSvgDoc());
+						setEnvironment(envInf.getEnvironment());
+						addBehaviour(new MovementReceiver());
+					} catch (UngroundedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (CodecException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (OntologyException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			});
+		}
+		
 		
 		// TopicManagementHelper 		
 		TopicManagementHelper tmh;
@@ -123,9 +212,7 @@ public class DisplayAgent extends Agent {
 		} catch (ServiceException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		
-		addBehaviour(new MovementReceiver());		
+		}				
 	}
 	
 	
@@ -153,7 +240,26 @@ public class DisplayAgent extends Agent {
 	 * @param env The project's environment
 	 */
 	public void setEnvironment(Environment env){
+		
+		OntoUtilities.setParent(env.getRootPlayground());
 		this.environment = env;
+		this.daGUI.setScale(env.getScale());
+		
+		StringReader reader= new StringReader(environment.getSvgDoc());
+		SAXSVGDocumentFactory factory = new SAXSVGDocumentFactory(XMLResourceDescriptor.getXMLParserClassName());
+		
+		try {
+			svgDoc = factory.createDocument(null, reader);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		if(svgDoc != null){
+			this.daGUI.setSVGDoc(svgDoc);
+		}
+		
+		
 		
 		System.out.println(getLocalName()+" received environment");
 //		this.svgDoc = (Document) env.getSvgDoc();

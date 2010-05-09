@@ -145,10 +145,9 @@
     <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="svgDoc">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
     <rdfs:domain rdf:resource="#Environment"/>
-    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >The SVG document object</rdfs:comment>
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="scale">
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
@@ -179,7 +178,7 @@
   <owl:FunctionalProperty rdf:ID="environment">
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
     <rdfs:domain>
-      <j0:JADE-CLASS rdf:ID="EnvironmentUpdate">
+      <j0:JADE-CLASS rdf:ID="EnvironmentInfo">
         <rdfs:subClassOf rdf:resource="http://jade.cselt.it/beangenerator#AgentAction"/>
       </j0:JADE-CLASS>
     </rdfs:domain>

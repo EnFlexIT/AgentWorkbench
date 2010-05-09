@@ -1,4 +1,4 @@
-; Thu Apr 29 20:04:41 CEST 2010
+; Sun May 09 17:07:49 CEST 2010
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -6,11 +6,11 @@
 ([BROWSER_SLOT_NAMES] of  Property_List
 
 	(properties
-		[DisplayOntologyOWL_ProjectKB_Instance_20089]
-		[DisplayOntologyOWL_ProjectKB_Instance_20090]
-		[DisplayOntologyOWL_ProjectKB_Instance_20091]
-		[DisplayOntologyOWL_ProjectKB_Instance_20092]
-		[DisplayOntologyOWL_ProjectKB_Instance_20093]))
+		[DisplayOntologyOWL_ProjectKB_Instance_20068]
+		[DisplayOntologyOWL_ProjectKB_Instance_20069]
+		[DisplayOntologyOWL_ProjectKB_Instance_20070]
+		[DisplayOntologyOWL_ProjectKB_Instance_20071]
+		[DisplayOntologyOWL_ProjectKB_Instance_20072]))
 
 ([CLSES_TAB] of  Widget
 
@@ -40,8 +40,8 @@
 ([DisplayOntologyOWL_ProjectKB_Instance_117] of  Map
 
 	(entries
-		[DisplayOntologyOWL_ProjectKB_Instance_20094]
-		[DisplayOntologyOWL_ProjectKB_Instance_20095]))
+		[DisplayOntologyOWL_ProjectKB_Instance_20073]
+		[DisplayOntologyOWL_ProjectKB_Instance_20074]))
 
 ([DisplayOntologyOWL_ProjectKB_Instance_12] of  Widget
 
@@ -91,39 +91,43 @@
 	(property_list [DisplayOntologyOWL_ProjectKB_Instance_21])
 	(widget_class_name "edu.stanford.smi.RemoteKBTab.UMLSTab"))
 
-([DisplayOntologyOWL_ProjectKB_Instance_20089] of  String
+([DisplayOntologyOWL_ProjectKB_Instance_20060] of  String
+
+	(name "RenameAcrossFiles"))
+
+([DisplayOntologyOWL_ProjectKB_Instance_20068] of  String
 
 	(name "owl:Thing")
 	(string_value "%3ANAME"))
 
-([DisplayOntologyOWL_ProjectKB_Instance_20090] of  String
+([DisplayOntologyOWL_ProjectKB_Instance_20069] of  String
 
 	(name ":PAL-CONSTRAINT")
 	(string_value "%3APAL-NAME"))
 
-([DisplayOntologyOWL_ProjectKB_Instance_20091] of  String
+([DisplayOntologyOWL_ProjectKB_Instance_20070] of  String
 
 	(name ":INSTANCE-ANNOTATION")
 	(string_value "%3AANNOTATION-TEXT"))
 
-([DisplayOntologyOWL_ProjectKB_Instance_20092] of  String
+([DisplayOntologyOWL_ProjectKB_Instance_20071] of  String
 
 	(name ":META-CLASS")
 	(string_value "%3ANAME"))
 
-([DisplayOntologyOWL_ProjectKB_Instance_20093] of  String
+([DisplayOntologyOWL_ProjectKB_Instance_20072] of  String
 
 	(name "owl:Class")
 	(string_value "%3ANAME"))
 
-([DisplayOntologyOWL_ProjectKB_Instance_20094] of  Map_Entry
+([DisplayOntologyOWL_ProjectKB_Instance_20073] of  Map_Entry
 
 	(key "add_name_on_instance_form")
 	(key_class "java.lang.String")
 	(value "false")
 	(value_class "java.lang.String"))
 
-([DisplayOntologyOWL_ProjectKB_Instance_20095] of  Map_Entry
+([DisplayOntologyOWL_ProjectKB_Instance_20074] of  Map_Entry
 
 	(key "change_tracking_active")
 	(key_class "java.lang.String")
@@ -7394,7 +7398,8 @@
 		[OWL_ProjectKB_Instance_3]
 		[KB_444675_Instance_0]
 		[KB_632156_Instance_0]
-		[KB_461394_Instance_0]))
+		[KB_461394_Instance_0]
+		[DisplayOntologyOWL_ProjectKB_Instance_20060]))
 
 ([STANDARD_CLASS_FORM_WIDGET] of  Widget
 

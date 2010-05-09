@@ -2,17 +2,26 @@ package mas.environment;
 
 import sma.ontology.DisplayOntology;
 import sma.ontology.Environment;
+import sma.ontology.EnvironmentInfo;
 import jade.content.lang.Codec;
+import jade.content.lang.Codec.CodecException;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.Ontology;
+import jade.content.onto.OntologyException;
+import jade.content.onto.basic.Action;
 import jade.core.Agent;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
+import jade.domain.FIPANames;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
+import jade.proto.AchieveREResponder;
 
 /**
  * Central controller agent class
+ * - Sending the environment definition to DisplayAgents
  * @author Nils
  *
  */
@@ -53,11 +62,11 @@ public class EnvironmentControllerAgent extends Agent {
 		dfd.setName(getAID());
 		
 		ServiceDescription sd = new ServiceDescription();
-		sd.setType("EnvironmentProvider");
-		sd.setName("EnvironmentProvider_"+projectName);
+		sd.setType("EnvironmentController");
+		sd.setName("EnvironmentController_"+projectName);
 		dfd.addServices(sd);
-		dfd.addOntologies(ontology.getName());
-		dfd.addLanguages(codec.getName());
+//		dfd.addOntologies(ontology.getName());
+//		dfd.addLanguages(codec.getName());
 		
 		try {
 			DFService.register(this, dfd);
@@ -66,8 +75,43 @@ public class EnvironmentControllerAgent extends Agent {
 			e.printStackTrace();
 		}
 		
-		
-		
+		MessageTemplate envRequestTemplate = AchieveREResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_QUERY);
+		this.addBehaviour(new AchieveREResponder(this, envRequestTemplate){
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+			
+			protected ACLMessage prepareResultNotification(ACLMessage request, ACLMessage response){
+				System.out.println("ECA: Environment request received");
+				ACLMessage reply = request.createReply();
+				reply.setPerformative(ACLMessage.INFORM);
+				
+				OntoUtilities.unsetParent(environment.getRootPlayground());
+				
+				EnvironmentInfo envInf = new EnvironmentInfo();
+				envInf.setEnvironment(environment);
+								
+				
+				Action act = new Action();
+				act.setActor(getAID());
+				act.setAction(envInf);
+				
+				try {
+					getContentManager().fillContent(reply, act);
+				} catch (CodecException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (OntologyException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				OntoUtilities.setParent(environment.getRootPlayground());
+				
+				return reply;				
+			}
+		}); 
 		
 	}
 	

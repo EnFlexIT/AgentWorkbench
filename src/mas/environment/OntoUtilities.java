@@ -2,6 +2,7 @@ package mas.environment;
 
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
+import java.util.Iterator;
 
 import sma.ontology.AbstractObject;
 import sma.ontology.PlaygroundObject;
@@ -131,5 +132,36 @@ public class OntoUtilities {
 	 */
 	public static float calcPixel(float rwu, Scale scale){
 		return (rwu / scale.getValue()) * scale.getPixel();
+	}
+	
+	/**
+	 * Setting the child object's parent property to null to avoid problems with recursion when serializing
+	 * @param root The playground containing the child objects
+	 */
+	@SuppressWarnings("unchecked")
+	public static void unsetParent(PlaygroundObject root){
+		Iterator<AbstractObject> objects = root.getAllChildObjects();
+		while(objects.hasNext()){
+			AbstractObject object = objects.next();
+			object.setParent(null);
+			if(ObjectTypes.getType(object) == ObjectTypes.PLAYGROUND){
+				unsetParent((PlaygroundObject) object);
+			}
+		}
+	}
+	
+	/**
+	 * Setting the child object's parent property
+	 * @param root The playground containing the child objects
+	 */
+	public static void setParent(PlaygroundObject root){
+		Iterator<AbstractObject> objects = root.getAllChildObjects();
+		while(objects.hasNext()){
+			AbstractObject object = objects.next();
+			object.setParent(root);
+			if(ObjectTypes.getType(object) == ObjectTypes.PLAYGROUND){
+				setParent((PlaygroundObject) object);
+			}
+		}
 	}
 }

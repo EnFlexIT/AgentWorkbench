@@ -144,10 +144,6 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 		
 		Vector<Position> steps = new Vector<Position>();
 		
-//		System.out.println("Calculating steps from "+
-//				from.getX()+":"+from.getY()+
-//				" to "+to.getX()+":"+to.getY());
-		
 		// Calculate distance and speed
 		Point2D.Float start = new Point2D.Float(from.getX(), from.getY());
 		Point2D.Float dest = new Point2D.Float(to.getX(), to.getY());

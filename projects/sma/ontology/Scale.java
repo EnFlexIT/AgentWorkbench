@@ -9,7 +9,7 @@ import jade.core.*;
    * Defining the scale used for displaying the environment
 * Protege name: Scale
 * @author ontology bean generator
-* @version 2010/04/25, 13:46:18
+* @version 2010/05/9, 17:23:54
 */
 public class Scale implements Concept {
 

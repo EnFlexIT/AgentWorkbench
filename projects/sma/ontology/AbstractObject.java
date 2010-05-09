@@ -9,21 +9,9 @@ import jade.core.*;
    * 
 * Protege name: AbstractObject
 * @author ontology bean generator
-* @version 2010/04/25, 13:46:18
+* @version 2010/05/9, 17:23:54
 */
 public class AbstractObject implements Concept {
-
-   /**
-   * The playground containing this EnvironmentObject
-* Protege name: parent
-   */
-   private PlaygroundObject parent;
-   public void setParent(PlaygroundObject value) { 
-    this.parent=value;
-   }
-   public PlaygroundObject getParent() {
-     return this.parent;
-   }
 
    /**
    * This EnvironmentObject's size
@@ -47,6 +35,18 @@ public class AbstractObject implements Concept {
    }
    public String getId() {
      return this.id;
+   }
+
+   /**
+   * The playground containing this EnvironmentObject
+* Protege name: parent
+   */
+   private PlaygroundObject parent;
+   public void setParent(PlaygroundObject value) { 
+    this.parent=value;
+   }
+   public PlaygroundObject getParent() {
+     return this.parent;
    }
 
    /**

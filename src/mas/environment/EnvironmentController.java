@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -131,7 +132,7 @@ public class EnvironmentController{
 
 	public void setSvgDoc(Document svgDoc) {
 		this.myGUI.setSVGDoc(svgDoc);
-		this.environment.setSvgDoc(svgDoc);
+		this.environment.setSvgDoc(svg2String(svgDoc));
 	}
 
 	public EnvironmentControllerGUI getMyGUI() {
@@ -163,7 +164,7 @@ public class EnvironmentController{
 		prepareSVGDoc(svgDoc);
 		myGUI.setSVGDoc(svgDoc);
 		createNewEnvironment();
-		environment.setSvgDoc(svgDoc);
+		environment.setSvgDoc(svg2String(svgDoc));
 	}
 	
 	/**
@@ -331,6 +332,31 @@ public class EnvironmentController{
 		} catch (TranscoderException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * Gets the SVG documents XML code as String
+	 * @param svg The SVG document
+	 * @return The XML code
+	 */
+	private String svg2String(Document svg){
+		StringWriter writer = new StringWriter();
+				
+		try {
+			SVGTranscoder t = new SVGTranscoder();
+//			PrintWriter writer = new PrintWriter(svgString);
+			writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+			writer.write("<!DOCTYPE svg PUBLIC '");
+			writer.write(SVGConstants.SVG_PUBLIC_ID);
+			writer.write("' '");
+			writer.write(SVGConstants.SVG_SYSTEM_ID);
+			writer.write("'>\n\n");			
+			t.transcode(new TranscoderInput(myGUI.getSVGDoc()), new TranscoderOutput(writer));
+		} catch (TranscoderException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+		return writer.toString();
 	}
 	
 	/**

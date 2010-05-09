@@ -9,9 +9,32 @@ import jade.core.*;
    * A project's environment definition
 * Protege name: Environment
 * @author ontology bean generator
-* @version 2010/04/25, 13:46:18
+* @version 2010/05/9, 17:23:54
 */
 public class Environment implements Concept {
+
+   /**
+   * The project's name
+* Protege name: projectName
+   */
+   private String projectName;
+   public void setProjectName(String value) { 
+    this.projectName=value;
+   }
+   public String getProjectName() {
+     return this.projectName;
+   }
+
+   /**
+* Protege name: svgDoc
+   */
+   private String svgDoc;
+   public void setSvgDoc(String value) { 
+    this.svgDoc=value;
+   }
+   public String getSvgDoc() {
+     return this.svgDoc;
+   }
 
    /**
    * Root of the project's environment representation, containing all it's EnvironmentObjects
@@ -23,29 +46,6 @@ public class Environment implements Concept {
    }
    public PlaygroundObject getRootPlayground() {
      return this.rootPlayground;
-   }
-
-   /**
-* Protege name: scale
-   */
-   private Scale scale;
-   public void setScale(Scale value) { 
-    this.scale=value;
-   }
-   public Scale getScale() {
-     return this.scale;
-   }
-
-   /**
-   * The SVG document object
-* Protege name: svgDoc
-   */
-   private Object svgDoc;
-   public void setSvgDoc(Object value) { 
-    this.svgDoc=value;
-   }
-   public Object getSvgDoc() {
-     return this.svgDoc;
    }
 
    /**
@@ -71,15 +71,14 @@ public class Environment implements Concept {
    public void setObjects(List l) {objects = l; }
 
    /**
-   * The project's name
-* Protege name: projectName
+* Protege name: scale
    */
-   private String projectName;
-   public void setProjectName(String value) { 
-    this.projectName=value;
+   private Scale scale;
+   public void setScale(Scale value) { 
+    this.scale=value;
    }
-   public String getProjectName() {
-     return this.projectName;
+   public Scale getScale() {
+     return this.scale;
    }
 
 }

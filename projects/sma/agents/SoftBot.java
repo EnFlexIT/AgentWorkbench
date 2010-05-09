@@ -44,7 +44,7 @@ public class SoftBot extends MovingAgent {
 		wps.add(2, pos3);
 		
 		// Temporäre Lösung des Start-Timing-Problems
-		this.doWait(500);
+		this.doWait(1000);
 		
 		addBehaviour(new MoveToPointBehaviour(this, wps, this.getCurrentSpeed()));
 	}		

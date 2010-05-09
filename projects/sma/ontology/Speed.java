@@ -9,7 +9,7 @@ import jade.core.*;
    * Represents the speed of an object moving in a 2D environment
 * Protege name: Speed
 * @author ontology bean generator
-* @version 2010/04/25, 13:46:18
+* @version 2010/05/9, 17:23:54
 */
 public class Speed implements Concept {
 
