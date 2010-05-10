@@ -27,47 +27,30 @@ import contmas.interfaces.TransportOrderOfferer;
 import contmas.ontology.Apron;
 import contmas.ontology.Street;
 
-/**
- * @author Hanno - Felix Wagner
- *
- */
 public class ApronAgent extends StaticContainerAgent implements TransportOrderHandler,TransportOrderOfferer{
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID=4904170788284891727L;
 
-	/**
-	 *
-	 */
 	public ApronAgent(Apron ontologyRepresentation){
 		super("short-time-storage",ontologyRepresentation);
 		this.targetAgentServiceType="container-distributing";
 		this.targetAbstractDomain=new Street();
 		this.targetAbstractDomain.setId("StraddleCarrierStreet"); //TODO hardcoded
-
 	}
-
-	/* (non-Javadoc)
-	 * @see contmas.agents.TransportOrderHandler#handleTransportOrder()
-	 */
-	@Override
-	public void handleTransportOrder(){
-		this.addBehaviour(new receiveLoadOrders(this));
-	}
-
-	/* (non-Javadoc)
-	 * @see contmas.agents.TransportOrderOfferer#offerTransportOrder()
-	 */
-	@Override
-	public void offerTransportOrder(){
-		this.addBehaviour(new unload(this));
-	}
-
+	
 	@Override
 	public void setup(){
 		super.setup();
 		this.handleTransportOrder();
 		this.offerTransportOrder();
+	}
+
+	@Override
+	public void handleTransportOrder(){
+		this.addBehaviour(new receiveLoadOrders(this));
+	}
+
+	@Override
+	public void offerTransportOrder(){
+		this.addBehaviour(new unload(this));
 	}
 }

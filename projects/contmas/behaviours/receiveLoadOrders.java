@@ -26,9 +26,7 @@ import jade.lang.acl.MessageTemplate;
 import jade.proto.AchieveREResponder;
 import jade.proto.ContractNetResponder;
 import jade.util.leap.Iterator;
-import contmas.agents.ContainerAgent;
-import contmas.agents.ContainerHolderAgent;
-import contmas.agents.StraddleCarrierAgent;
+import contmas.agents.*;
 import contmas.interfaces.TransportOrderOfferer;
 import contmas.main.MatchAgentAction;
 import contmas.ontology.*;
@@ -39,7 +37,6 @@ public class receiveLoadOrders extends ContractNetResponder{
 	 */
 	private static final long serialVersionUID= -3409830399764472591L;
 	private final ContainerHolderAgent myCAgent=(ContainerHolderAgent) this.myAgent;
-	private Long proposedTakesUntil=null;
 
 	private static MessageTemplate createMessageTemplate(Agent a){
 		MessageTemplate mtallg=AchieveREResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
@@ -99,7 +96,6 @@ public class receiveLoadOrders extends ContractNetResponder{
 			//((ContainerAgent)myAgent).echoStatus("noch Kapazitäten vorhanden");
 			ProposeLoadOffer act=this.myCAgent.getLoadProposal(curTOC);
 			if(act != null){
-				this.proposedTakesUntil=Long.parseLong(act.getLoad_offer().getTakes_until());
 				this.myCAgent.echoStatus("Bewerbe mich für Ausschreibung.",curTOC,ContainerAgent.LOGGING_INFORM);
 				this.myCAgent.fillMessage(reply,act);
 
@@ -161,35 +157,54 @@ public class receiveLoadOrders extends ContractNetResponder{
 							Domain startsAt=myCAgent.inflateDomain(currentOrder.getStarts_at().getAbstract_designation());
 
 							if(strad.isAt(startsAt.getIs_in_position())){
-								myCAgent.echoStatus("is in target position",acceptedTOC);
+								myCAgent.echoStatus("I am in target pickup position",acceptedTOC);
 							}else{
-								myCAgent.echoStatus("not yet reached target position: block",acceptedTOC);
+//								myCAgent.echoStatus("i have not yet reached target pickup position: block",acceptedTOC);
 								block(1000);
 								this.isDone=false;
 								return;
 							}
 						}
 					}
-
-					if(this.myCAgent.aquireContainer(acceptedTOC)){
-//						((ContainerAgent)myAgent).echoStatus("Auftrag erfüllt, Container aufgenommen.",acceptedTOC);
-						AnnounceLoadStatus loadStatus=ContainerAgent.getLoadStatusAnnouncement(acceptedTOC,"FINISHED");
-						
-						rply.setPerformative(ACLMessage.INFORM);
-						this.myCAgent.fillMessage(rply,loadStatus);
-						ds.put(receiveLoadOrders.this.REPLY_KEY,rply);
+					AnnounceLoadStatus loadStatus;
+					if(myAgent instanceof YardAgent){
+						loadStatus=ContainerAgent.getLoadStatusAnnouncement(acceptedTOC,"READY");
 						myCAgent.addBehaviour(new listenForLoadStatusAnnouncement(myCAgent,rply));
-
-						this.isDone=true;
-						firstRun=true;
-						this.myAgent.doWake();
-						return;
-					}else{ //not able to aquire
-						this.myCAgent.echoStatus("ERROR: Auftrag kann nicht ausgeführt werden.",acceptedTOC,ContainerAgent.LOGGING_ERROR);
+					}else{
+						loadStatus=ContainerAgent.getLoadStatusAnnouncement(acceptedTOC,"FINISHED");
+						if(this.myCAgent.aquireContainer(acceptedTOC)){
+//							((ContainerAgent)myAgent).echoStatus("Order executed, Container aquired.",acceptedTOC);
+						}else{ //not able to aquire
+							this.myCAgent.echoStatus("ERROR: Auftrag kann nicht ausgeführt werden.",acceptedTOC,ContainerAgent.LOGGING_ERROR);
+						}
 					}
+					this.isDone=true;
+					firstRun=true;
+					rply.setPerformative(ACLMessage.INFORM);
+					this.myCAgent.fillMessage(rply,loadStatus);
+					ds.put(receiveLoadOrders.this.REPLY_KEY,rply);
+					this.myAgent.doWake();
+					return;
+
 				}else{ //no room in bay map
 					if(this.myCAgent instanceof TransportOrderOfferer){
 						TransportOrderChain someTOC=this.myCAgent.getSomeTOCOfState(new Administered());
+						if(someTOC == null){
+							someTOC=this.myCAgent.getSomeTOCOfState(new Announced());
+							if(someTOC == null){
+								someTOC=this.myCAgent.getSomeTOCOfState(new InExecution());
+							}
+							if(someTOC == null){
+								someTOC=this.myCAgent.getSomeTOCOfState(new Assigned());
+							}
+							if(someTOC != null){
+								myCAgent.registerForWakeUpCall(this);
+								this.block();
+								this.isDone=false;
+								return;
+							}
+						}
+
 						if(someTOC != null){
 							this.myCAgent.echoStatus("BayMap voll, versuche Räumung für",acceptedTOC,ContainerAgent.LOGGING_INFORM);
 							this.myCAgent.touchTOCState(acceptedTOC,new PendingForSubCFP());
@@ -198,7 +213,7 @@ public class receiveLoadOrders extends ContractNetResponder{
 							this.isDone=false;
 							return;
 						}else{ //keine administrierten TOCs da
-							this.myCAgent.echoStatus("FAILURE: BayMap voll, keine administrierten TOCs da, Räumung nicht möglich.",ContainerAgent.LOGGING_NOTICE);
+							this.myCAgent.echoStatus("FAILURE: BayMap full, no administered TOCs available, clearing not possible.",ContainerAgent.LOGGING_NOTICE);
 						}
 					}else{//Agent kann keine Aufträge abgeben=>Senke
 						this.myCAgent.echoStatus("FAILURE: Bin Senke, kann keine Aufträge weitergeben.",ContainerAgent.LOGGING_NOTICE);

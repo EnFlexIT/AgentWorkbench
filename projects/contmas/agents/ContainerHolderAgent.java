@@ -16,6 +16,7 @@ package contmas.agents;
 
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
+import jade.util.leap.ArrayList;
 import jade.util.leap.Iterator;
 import jade.util.leap.List;
 
@@ -60,6 +61,8 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 	public Integer lengthOfProposeQueue=2;
 
 	private Domain harbourMap;
+	
+	private List sleepingBehaviours=new ArrayList();
 
 	public ContainerHolderAgent(String serviceType){
 		this(serviceType,new ContainerHolder());
@@ -79,6 +82,10 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		}
 	}
 
+	public void registerForWakeUpCall(Behaviour b){
+		sleepingBehaviours.add(b);
+	}
+	
 	public Boolean aquireContainer(TransportOrderChain targetContainer){ //eigentlicher Vorgang des Container-Aufnehmens
 		//		ontologyRepresentation.getAdministers().addConsists_of(targetContainer); //Container zu Auftragsbuch hinzufügen
 		if(this.touchTOCState(targetContainer,new Administered()) == null){
@@ -410,22 +417,31 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 	}
 
 	public boolean dropContainer(TransportOrderChain load_offer){
-		//		echoStatus("removeContainerFromBayMap:",load_offer);
+//		echoStatus("removeContainerFromBayMap:",load_offer);
 		Iterator allContainers=this.ontologyRepresentation.getContains().getIs_filled_with().iterator();
 		while(allContainers.hasNext()){
 			Container curContainer=((BlockAddress) allContainers.next()).getLocates();
-			//			echoStatus("curContainerID: "+curContainer.getId()+"load_offerID: "+load_offer.getTransports().getId());
+//			echoStatus("curContainerID: "+curContainer.getBic_code()+"load_offerID: ",load_offer);
 			if(curContainer.getBic_code().equals(load_offer.getTransports().getBic_code())){
 				allContainers.remove();
-				//				echoStatus("Container found and removed.",load_offer);
+//				echoStatus("Container found and removed.",load_offer);
 				touchTOCState(load_offer,null,true);
 				echoStatus("Container dropped successfully (Message, BayMap, TOCState).",load_offer,ContainerAgent.LOGGING_INFORM);
-
+				wakeSleepingBehaviours(load_offer);
 				return true;
 			}
 		}
 		this.echoStatus("ERROR: Container NOT found to remove from BayMap.",load_offer,ContainerAgent.LOGGING_ERROR);
 		return false;
+	}
+	
+	public void wakeSleepingBehaviours(TransportOrderChain event){
+		echoStatus("wakeSleepingBehaviours because container was removed",event,LOGGING_INFORM);
+		for(Iterator iterator=sleepingBehaviours.iterator();iterator.hasNext();){
+			Behaviour b=(Behaviour) iterator.next();
+			b.restart();
+			iterator.remove();
+		}
 	}
 
 	public boolean removeFromContractors(AID badContractor){
@@ -467,12 +483,6 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		this.addBehaviour(new listenForOntRepReq(this));
 		this.addBehaviour(new getHarbourSetup(this,this.getHarbourMaster()));
 
-	}
-	
-	public Domain flattenDomain(Domain dom){
-		Domain newDom=new Domain();
-		newDom.setId(dom.getId());
-		return dom;
 	}
 
 	/* (non-Javadoc)

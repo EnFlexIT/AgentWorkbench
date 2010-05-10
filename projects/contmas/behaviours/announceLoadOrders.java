@@ -19,6 +19,8 @@ import jade.content.Concept;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
+import jade.core.behaviours.DataStore;
+import jade.core.behaviours.SimpleBehaviour;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.proto.ContractNetInitiator;
@@ -30,6 +32,7 @@ import java.util.Vector;
 
 import contmas.agents.ContainerAgent;
 import contmas.agents.ContainerHolderAgent;
+import contmas.agents.StraddleCarrierAgent;
 import contmas.ontology.*;
 
 public class announceLoadOrders extends ContractNetInitiator{
@@ -49,6 +52,10 @@ public class announceLoadOrders extends ContractNetInitiator{
 		super(a,null);
 		this.currentLoadList=currentLoadList;
 		this.masterBehaviour=masterBehaviour;
+
+		Behaviour b=new handleAllResultNotifications();
+		b.setDataStore(getDataStore());
+		this.registerHandleAllResultNotifications(b);
 	}
 
 	@Override
@@ -87,7 +94,7 @@ public class announceLoadOrders extends ContractNetInitiator{
 		act.setRequired_turnover_capacity(this.currentLoadList);
 		this.myCAgent.fillMessage(cfp,act);
 		Vector<ACLMessage> messages=new Vector<ACLMessage>();
-		cfp.setReplyByDate(new Date(System.currentTimeMillis() + 5000)); //500000
+		cfp.setReplyByDate(new Date(System.currentTimeMillis() + 50000)); //500000
 		messages.add(cfp);
 
 		//		((ContainerAgent)myAgent).echoStatus("Auftrag ausgeschrieben.",curTOC);
@@ -131,22 +138,22 @@ public class announceLoadOrders extends ContractNetInitiator{
 			}
 			this.reset();
 			return;
-/*
-			// Alt: warten, benötigt aber weiteren zwischenspeicher oder so
-			if(((ContainerAgent) myAgent).isInFailedQueue(curTOC)){
-				if(masterBehaviour != null){
-					((ContainerAgent) myAgent).echoStatus("REFUSE: MasterBehaviour wird neugestartet.");
-					masterBehaviour.restart();
-				}
-				return;
-			}else{
-				((ContainerAgent) myAgent).echoStatus("Nur Ablehnungen empfangen, versuche es nochmal");
-				((ContainerHolderAgent) myAgent).doWait(1000); //kurz warten, vielleicht beruhigt sich ja die Lage
-				((ContainerHolderAgent) myAgent).touchTOCState(curTOC,new Failed());
-				this.reset();
-				return;
-			}
-*/
+
+//			// Alt: warten, benötigt aber weiteren zwischenspeicher oder so
+//			if(((ContainerAgent) myAgent).isInFailedQueue(curTOC)){
+//				if(masterBehaviour != null){
+//					((ContainerAgent) myAgent).echoStatus("REFUSE: MasterBehaviour wird neugestartet.");
+//					masterBehaviour.restart();
+//				}
+//				return;
+//			}else{
+//				((ContainerAgent) myAgent).echoStatus("Nur Ablehnungen empfangen, versuche es nochmal");
+//				((ContainerHolderAgent) myAgent).doWait(1000); //kurz warten, vielleicht beruhigt sich ja die Lage
+//				((ContainerHolderAgent) myAgent).touchTOCState(curTOC,new Failed());
+//				this.reset();
+//				return;
+//			}
+
 		}
 		if(bestOffer != null){
 			accept=bestOfferMessage.createReply();
@@ -165,40 +172,102 @@ public class announceLoadOrders extends ContractNetInitiator{
 			}
 		}
 	}
-	
+
 	@Override
 	protected void handleAllResultNotifications(Vector resultNotifications){
-		for(Object message: resultNotifications){
-			ACLMessage notification=(ACLMessage) message;
-			AgentAction content=this.myCAgent.extractAction(notification);
-			if(content instanceof AnnounceLoadStatus){
-				AnnounceLoadStatus loadStatus=(AnnounceLoadStatus) content;
-				TransportOrderChain load_offer=loadStatus.getCorresponds_to();
-				if((notification.getPerformative() == ACLMessage.INFORM) && loadStatus.getLoad_status().equals("FINISHED")){
-					//					((ContainerAgent)myAgent).echoStatus("AnnounceLoadStatus FINISHED empfangen, bearbeiten");
-					ACLMessage statusAnnouncement=notification.createReply();
-					statusAnnouncement.setPerformative(ACLMessage.INFORM);
-					loadStatus=new AnnounceLoadStatus();
-					loadStatus.setLoad_status("XyZpendingXyZ");
-					this.myCAgent.fillMessage(statusAnnouncement,loadStatus);
-					this.myCAgent.send(statusAnnouncement);
-					if(this.myCAgent.dropContainer(load_offer)){
-						if(this.masterBehaviour != null){
-							this.myCAgent.echoStatus("INFORM: MasterBehaviour wird neugestartet.",ContainerAgent.LOGGING_INFORM);
-							this.masterBehaviour.restart();
-						}
+
+	}
+
+	class handleAllResultNotifications extends SimpleBehaviour{
+		Boolean isDone=false;
+
+		/* (non-Javadoc)
+		 * @see jade.core.behaviours.Behaviour#action()
+		 */
+		@Override
+		public void action(){
+			Vector<ACLMessage> resultNotifications=(Vector) this.getDataStore().get(ALL_RESULT_NOTIFICATIONS_KEY);
+
+			for(ACLMessage notification: resultNotifications){
+				AgentAction content=myCAgent.extractAction(notification);
+				if(content instanceof AnnounceLoadStatus){
+					AnnounceLoadStatus loadStatus=(AnnounceLoadStatus) content;
+					TransportOrderChain load_offer=loadStatus.getCorresponds_to();
+					
+					if(!(myCAgent instanceof StraddleCarrierAgent)){
+						loadStatus.setLoad_status("FINISHED");
 					}
-				}else if(notification.getPerformative() == ACLMessage.FAILURE){ // && loadStatus.getLoad_status().substring(0, 4).equals("ERROR")) {
-					this.myCAgent.removeFromContractors(notification.getSender());
-					this.myCAgent.touchTOCState(load_offer,new Failed());
-					this.myCAgent.echoStatus("Containerabgabe fehlgeschlagen. " + loadStatus.getLoad_status(),load_offer,ContainerAgent.LOGGING_NOTICE);
-					if(this.masterBehaviour != null){
-						this.myCAgent.echoStatus("FAILURE: MasterBehaviour wird neugestartet.",ContainerAgent.LOGGING_INFORM);
-						this.masterBehaviour.restart();
+					
+					if(myCAgent.touchTOCState(load_offer) instanceof Assigned){
+						StraddleCarrierAgent strad=(StraddleCarrierAgent) myCAgent;
+						TransportOrder targetTO=myCAgent.findMatchingOrder(load_offer,false);
+						Domain end=myCAgent.inflateDomain(targetTO.getEnds_at().getAbstract_designation());
+
+						if(strad.isAt(end.getIs_in_position())){
+							myCAgent.echoStatus("I am in target drop position",load_offer);
+						}else{
+//							myCAgent.echoStatus("i have not yet reached target drop position: block",load_offer);
+							block(1000);
+							this.isDone=false;
+							return;
+						}
+						if(myCAgent.dropContainer(load_offer)){
+							if(masterBehaviour != null){
+								myCAgent.echoStatus("INFORM: MasterBehaviour wird neugestartet.",ContainerAgent.LOGGING_INFORM);
+								masterBehaviour.restart();
+							}
+							ACLMessage statusAnnouncement=notification.createReply();
+							statusAnnouncement.setPerformative(ACLMessage.INFORM);
+							loadStatus=ContainerAgent.getLoadStatusAnnouncement(load_offer,"FINISHED");
+							myCAgent.fillMessage(statusAnnouncement,loadStatus);
+							myCAgent.send(statusAnnouncement);
+							this.isDone=true;
+							return;
+						}
+
+					}
+					if((notification.getPerformative() == ACLMessage.INFORM) && loadStatus.getLoad_status().equals("READY")){
+
+						myCAgent.touchTOCState(load_offer,new Assigned());
+						TransportOrder targetTO=myCAgent.findMatchingOrder(load_offer,false);
+						Domain end=myCAgent.inflateDomain(targetTO.getEnds_at().getAbstract_designation());
+						StraddleCarrierAgent strad=(StraddleCarrierAgent) myCAgent;
+						myCAgent.echoStatus("Container is going to be dropped at " + end.getId() + " " + strad.positionToString(end.getIs_in_position()) + ", current position: " + strad.positionToString(strad.getCurrentPosition()));
+						strad.addAsapMovementTo(end.getIs_in_position());
+						isDone=false;
+						return;
+
+					}else if((notification.getPerformative() == ACLMessage.INFORM) && loadStatus.getLoad_status().equals("FINISHED")){
+						//					((ContainerAgent)myAgent).echoStatus("AnnounceLoadStatus FINISHED empfangen, bearbeiten");
+						if(myCAgent.dropContainer(load_offer)){
+							if(masterBehaviour != null){
+								myCAgent.echoStatus("INFORM: MasterBehaviour wird neugestartet.",ContainerAgent.LOGGING_INFORM);
+								masterBehaviour.restart();
+							}
+						}
+					}else if(notification.getPerformative() == ACLMessage.FAILURE){ // && loadStatus.getLoad_status().substring(0, 4).equals("ERROR")) {
+						myCAgent.removeFromContractors(notification.getSender());
+						myCAgent.touchTOCState(load_offer,new Failed());
+						myCAgent.echoStatus("Containerabgabe fehlgeschlagen. " + loadStatus.getLoad_status(),load_offer,ContainerAgent.LOGGING_NOTICE);
+						if(masterBehaviour != null){
+							myCAgent.echoStatus("FAILURE: MasterBehaviour wird neugestartet.",ContainerAgent.LOGGING_INFORM);
+							masterBehaviour.restart();
+						}
 					}
 				}
 			}
+
+			isDone=true;
 		}
+
+		/* (non-Javadoc)
+		 * @see jade.core.behaviours.Behaviour#done()
+		 */
+		@Override
+		public boolean done(){
+			return isDone;
+		}
+
 	}
 
 	@Override

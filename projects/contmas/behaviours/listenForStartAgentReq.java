@@ -117,6 +117,14 @@ public class listenForStartAgentReq extends SequentialBehaviour implements OntRe
 			AgentContainer c=this.myAgent.getContainerController();
 			AgentController a=null;
 			ContainerHolder ontRep=listenForStartAgentReq.this.getOntologyRepresentation();
+			
+			if(ontRep.getIs_in_position2()==null){
+				Phy_Position defaultPos=new Phy_Position();
+				defaultPos.setPhy_x(0.0F);
+				defaultPos.setPhy_y(0.0F);
+				ontRep.setIs_in_position2(defaultPos);
+			}
+			
 			try{
 				if(ontRep instanceof Ship){
 					a=c.acceptNewAgent(act.getName(),new ShipAgent((Ship) ontRep));

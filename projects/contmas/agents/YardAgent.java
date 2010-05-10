@@ -25,44 +25,24 @@ import contmas.behaviours.striveForLoading;
 import contmas.interfaces.TransportOrderHandler;
 import contmas.ontology.Yard;
 
-/**
- * @author Hanno - Felix Wagner
- *
- */
 public class YardAgent extends StaticContainerAgent implements TransportOrderHandler{
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID= -3774026871349327373L;
 
-	public YardAgent(){
-		this(new Yard());
-	}
-
-	/**
-	 * @param serviceType
-	 * @param ontologyRepresentation
-	 */
 	public YardAgent(Yard ontologyRepresentation){
 		super("container-storing",ontologyRepresentation);
 		this.targetAgentServiceType="";
 		this.targetAbstractDomain=null;
 	}
-
-	/* (non-Javadoc)
-	 * @see contmas.agents.TransportOrderHandler#handleTransportOrder()
-	 */
-	@Override
-	public void handleTransportOrder(){
-		this.addBehaviour(new receiveLoadOrders(this));
-	}
-
+	
 	@Override
 	public void setup(){
 		super.setup();
 		this.handleTransportOrder();
 		this.addBehaviour(new striveForLoading(this));
+	}
 
+	@Override
+	public void handleTransportOrder(){
+		this.addBehaviour(new receiveLoadOrders(this));
 	}
 }

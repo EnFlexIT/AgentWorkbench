@@ -20,12 +20,13 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.proto.states.MsgReceiver;
 import contmas.agents.ContainerAgent;
+import contmas.agents.ContainerHolderAgent;
 import contmas.main.MatchAgentAction;
 import contmas.ontology.AnnounceLoadStatus;
 
 public class listenForLoadStatusAnnouncement extends MsgReceiver{
 	private static final long serialVersionUID= -4440040520781720185L;
-	private ContainerAgent myAgent;
+	private ContainerHolderAgent myAgent;
 	
 //	private final String ANNOUNCEMENT_KEY="__announcement"+hashCode();
 
@@ -41,14 +42,19 @@ public class listenForLoadStatusAnnouncement extends MsgReceiver{
 
 	public listenForLoadStatusAnnouncement(Agent a,ACLMessage reservationNotice){
 		super(a,listenForLoadStatusAnnouncement.createMessageTemplate(a,reservationNotice),-1, new DataStore(),"__announcement"+reservationNotice.getConversationId());
-		myAgent=(ContainerAgent) a;
-		myAgent.echoStatus("receival installed: ");
-
+		myAgent=(ContainerHolderAgent) a;
 	}
 
 	@Override
 	public void handleMessage(ACLMessage request){
-		AnnounceLoadStatus act=(AnnounceLoadStatus) ((ContainerAgent) this.myAgent).extractAction(request);
+		AnnounceLoadStatus act=(AnnounceLoadStatus) this.myAgent.extractAction(request);
+		if(act.getLoad_status().equals("FINISHED")){
+			if(act.getCorresponds_to()==null){
+				myAgent.echoStatus("aha");
+
+			}
+			myAgent.aquireContainer(act.getCorresponds_to());
+		}
 		myAgent.echoStatus("LoadStatus received: "+act.getLoad_status());
 	}
 }

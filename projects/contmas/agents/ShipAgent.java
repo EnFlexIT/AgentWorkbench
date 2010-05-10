@@ -28,17 +28,7 @@ public class ShipAgent extends StaticContainerAgent implements TransportOrderOff
 		super("long-term-transporting",ontologyRepresentation);
 		this.targetAgentServiceType="craning"; //unneccesary, because done by enroll behaviour
 		this.targetAbstractDomain=new Rail(); //TODO should be done by enroll behaviour
-		this.targetAbstractDomain.setId("CraneRails");
-	}
-
-	@Override
-	public List determineContractors(){
-		return this.ontologyRepresentation.getContractors();
-	}
-
-	@Override
-	public void offerTransportOrder(){
-		this.addBehaviour(new unload(this));
+		this.targetAbstractDomain.setId("CraneRails"); //TODO hardcoded
 	}
 
 	@Override
@@ -48,5 +38,15 @@ public class ShipAgent extends StaticContainerAgent implements TransportOrderOff
 		this.addBehaviour(new listenForLoadingStreamIni(this));
 
 //		this.addBehaviour(new scheduleUnloadStart(this));
+	}
+	
+	@Override
+	public void offerTransportOrder(){
+		this.addBehaviour(new unload(this));
+	}
+	
+	@Override
+	public List determineContractors(){
+		return this.ontologyRepresentation.getContractors();
 	}
 }

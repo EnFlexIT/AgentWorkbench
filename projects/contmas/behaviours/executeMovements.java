@@ -30,12 +30,8 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.util.leap.Iterator;
 import jade.util.leap.List;
 
-/**
- * @author Hanno - Felix Wagner
- *
- */
 public class executeMovements extends CyclicBehaviour{
-
+	private static final long serialVersionUID=5797840123323315484L;
 	MoveableAgent myAgent;
 	ContainerAgent myCAgent;
 	Movement curMovement=null;
@@ -55,9 +51,9 @@ public class executeMovements extends CyclicBehaviour{
 
 		Movement activeMove=getCurrentMovement();
 		if(activeMove != null){
-			myCAgent.echoStatus("Executing pending movement to " + StraddleCarrierAgent.positionToString(activeMove.getMove_to()));
 			Phy_Position intermediatePos=myAgent.interpolatePosition(activeMove);
 			Phy_Position moveToPos=activeMove.getMove_to();
+			myCAgent.echoStatus("Executing pending movement to " + StraddleCarrierAgent.positionToString(activeMove.getMove_to())+", I am now at "+StraddleCarrierAgent.positionToString(intermediatePos));
 			myAgent.setAt(intermediatePos);
 			if(myAgent.isAt(moveToPos)){
 				stopMoving();

@@ -11,7 +11,6 @@
  *         Lesser General Public License along with ContMAS. If not, see
  *         <http://www.gnu.org/licenses/>.
  */
-
 package contmas.agents;
 
 import contmas.behaviours.receiveLoadOrders;
@@ -22,7 +21,6 @@ import contmas.ontology.ApronArea;
 import contmas.ontology.Crane;
 
 public class CraneAgent extends ActiveContainerAgent implements TransportOrderHandler,TransportOrderOfferer{
-
 	private static final long serialVersionUID= -193864979181761694L;
 
 	public CraneAgent(Crane ontologyRepresentation){
@@ -30,9 +28,15 @@ public class CraneAgent extends ActiveContainerAgent implements TransportOrderHa
 		this.targetAgentServiceType="short-time-storage";
 		this.targetAbstractDomain=new ApronArea();
 		this.targetAbstractDomain.setId("CraneApron");
-
 	}
 
+	@Override
+	public void setup(){
+		super.setup();
+		this.handleTransportOrder();
+		this.offerTransportOrder();
+	}
+	
 	@Override
 	public void handleTransportOrder(){
 		this.addBehaviour(new receiveLoadOrders(this));
@@ -41,12 +45,5 @@ public class CraneAgent extends ActiveContainerAgent implements TransportOrderHa
 	@Override
 	public void offerTransportOrder(){
 		this.addBehaviour(new unload(this));
-	}
-
-	@Override
-	public void setup(){
-		super.setup();
-		this.handleTransportOrder();
-		this.offerTransportOrder();
 	}
 }

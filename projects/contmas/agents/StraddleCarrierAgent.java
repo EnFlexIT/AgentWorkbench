@@ -228,7 +228,7 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 //		echoStatus("randomized effort: " + out.getTakes());
 
 		out.setTakes_until(eta+""); // + transferEffort);
-		echoStatus("calculated effort: positioningEffort (" + positioningEffort + ")=" + out.getTakes_until()); // ")  +transferEffort (" + transferEffort + ")=" + out.getTakes());
+//		echoStatus("calculated Takes_until: positioningEffort (" + positioningEffort + ")=" + out.getTakes_until()); // ")  +transferEffort (" + transferEffort + ")=" + out.getTakes());
 
 		return out;
 	}
@@ -296,18 +296,9 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 		this.fillMessage(test,haSet);
 		echoStatus("experiment ended");
 	}
-
-	@Override
-	public boolean dropContainer(TransportOrderChain load_offer){
-		TransportOrder targetTO=findMatchingOrder(load_offer,false);
-		Domain end=inflateDomain(targetTO.getEnds_at().getAbstract_designation());
-		echoStatus("Container is going to be dropped at " + end.getId() + " " + positionToString(end.getIs_in_position())+", current position: "+positionToString(getCurrentPosition()));
-		addAsapMovementTo(end.getIs_in_position());
-
-		return super.dropContainer(load_offer);
-	}
+	
 	public void setAt(Phy_Position to){
-		echoStatus("I am now at " + positionToString(to));
+//		echoStatus("I am now at " + positionToString(to));
 		getOntologyRepresentation().getIs_in_position2().setPhy_x(to.getPhy_x());
 		getOntologyRepresentation().getIs_in_position2().setPhy_y(to.getPhy_y());
 	}

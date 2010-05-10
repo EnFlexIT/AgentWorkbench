@@ -145,9 +145,9 @@ public class RandomGeneratorAgent extends ContainerAgent{
 				TransportOrderChain curTOC=new TransportOrderChain();
 				curTOC.setTransports(curCont.getLocates());
 				curLoadList.addConsists_of(curTOC);
-				if(lastLoadList == null){
+				if(lastLoadList == null){ //this is the first run
 					act.setNext_step(curLoadList);
-				}else{
+				}else{ //all later runs
 					lastLoadList.setNext_step(curLoadList);
 				}
 				lastLoadList=curLoadList;
