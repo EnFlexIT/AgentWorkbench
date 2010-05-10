@@ -426,7 +426,7 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 				allContainers.remove();
 //				echoStatus("Container found and removed.",load_offer);
 				touchTOCState(load_offer,null,true);
-				echoStatus("Container dropped successfully (Message, BayMap, TOCState).",load_offer,ContainerAgent.LOGGING_INFORM);
+//				echoStatus("Container dropped successfully (Message, BayMap, TOCState).",load_offer);//,ContainerAgent.LOGGING_INFORM);
 				wakeSleepingBehaviours(load_offer);
 				return true;
 			}

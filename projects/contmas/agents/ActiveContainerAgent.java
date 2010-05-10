@@ -15,11 +15,11 @@
 package contmas.agents;
 
 import jade.util.leap.Iterator;
-import contmas.ontology.ActiveContainerHolder;
-import contmas.ontology.Domain;
-import contmas.ontology.TransportOrder;
+import jade.util.leap.List;
+import contmas.interfaces.MoveableAgent;
+import contmas.ontology.*;
 
-public class ActiveContainerAgent extends ContainerHolderAgent{
+public class ActiveContainerAgent extends ContainerHolderAgent implements MoveableAgent{
 
 	/**
 	 * 
@@ -65,6 +65,60 @@ public class ActiveContainerAgent extends ContainerHolderAgent{
 			}
 		}
 		return -1; //order matcht nicht
+	}
+
+	/* (non-Javadoc)
+	 * @see contmas.interfaces.MoveableAgent#addAsapMovementTo(contmas.ontology.Phy_Position)
+	 */
+	@Override
+	public void addAsapMovementTo(Phy_Position to){
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see contmas.interfaces.MoveableAgent#getCurrentPosition()
+	 */
+	@Override
+	public Phy_Position getCurrentPosition(){
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see contmas.interfaces.MoveableAgent#getPendingMovements()
+	 */
+	@Override
+	public List getPendingMovements(){
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see contmas.interfaces.MoveableAgent#interpolatePosition(contmas.ontology.Movement)
+	 */
+	@Override
+	public Phy_Position interpolatePosition(Movement mov){
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see contmas.interfaces.MoveableAgent#isAt(contmas.ontology.Phy_Position)
+	 */
+	@Override
+	public Boolean isAt(Phy_Position requested){
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see contmas.interfaces.MoveableAgent#setAt(contmas.ontology.Phy_Position)
+	 */
+	@Override
+	public void setAt(Phy_Position to){
+		// TODO Auto-generated method stub
+		
 	}
 
 }

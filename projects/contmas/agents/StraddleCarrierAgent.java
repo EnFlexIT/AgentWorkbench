@@ -40,7 +40,7 @@ import contmas.ontology.*;
  * @author Hanno - Felix Wagner
  *
  */
-public class StraddleCarrierAgent extends ActiveContainerAgent implements TransportOrderHandler,TransportOrderOfferer,HarbourLayoutRequester,MoveableAgent{
+public class StraddleCarrierAgent extends ActiveContainerAgent implements TransportOrderHandler,TransportOrderOfferer,HarbourLayoutRequester{
 	private static final Float speed=1F/100F;
 	private executeMovements moveBehaviour; 
 	
@@ -100,10 +100,14 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 
 	public static String positionToString(Phy_Position in){
 		String out="";
+		if(in!=null){
 		out+="x=";
 		out+=in.getPhy_x();
 		out+="; y=";
 		out+=in.getPhy_y();
+		} else{
+			out+="[NULL!]";
+		}
 		return out;
 	}
 

@@ -167,7 +167,8 @@ public class receiveLoadOrders extends ContractNetResponder{
 						}
 					}
 					AnnounceLoadStatus loadStatus;
-					if(myAgent instanceof YardAgent){
+					
+					if(myAgent instanceof YardAgent || myAgent instanceof ApronAgent){
 						loadStatus=ContainerAgent.getLoadStatusAnnouncement(acceptedTOC,"READY");
 						myCAgent.addBehaviour(new listenForLoadStatusAnnouncement(myCAgent,rply));
 					}else{

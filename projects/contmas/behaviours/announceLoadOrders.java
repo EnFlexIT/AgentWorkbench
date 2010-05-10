@@ -18,12 +18,12 @@ import jade.content.AgentAction;
 import jade.content.Concept;
 import jade.core.AID;
 import jade.core.Agent;
-import jade.core.behaviours.Behaviour;
-import jade.core.behaviours.DataStore;
-import jade.core.behaviours.SimpleBehaviour;
+import jade.core.behaviours.*;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.proto.ContractNetInitiator;
+import jade.proto.states.MsgReceiver;
+import jade.proto.states.ReplySender;
 import jade.util.leap.List;
 
 import java.util.Date;
@@ -33,6 +33,7 @@ import java.util.Vector;
 import contmas.agents.ContainerAgent;
 import contmas.agents.ContainerHolderAgent;
 import contmas.agents.StraddleCarrierAgent;
+import contmas.interfaces.MoveableAgent;
 import contmas.ontology.*;
 
 public class announceLoadOrders extends ContractNetInitiator{
@@ -43,6 +44,7 @@ public class announceLoadOrders extends ContractNetInitiator{
 	private final LoadList currentLoadList;
 	private final Behaviour masterBehaviour;
 	private final ContainerHolderAgent myCAgent=(ContainerHolderAgent) this.myAgent;
+	String ACCEPT_KEY="__accept" + hashCode();
 
 	public announceLoadOrders(Agent a,LoadList currentLoadList){
 		this(a,currentLoadList,null);
@@ -53,8 +55,9 @@ public class announceLoadOrders extends ContractNetInitiator{
 		this.currentLoadList=currentLoadList;
 		this.masterBehaviour=masterBehaviour;
 
-		Behaviour b=new handleAllResultNotifications();
+		Behaviour b=new handleAllResultNotifications(a,getDataStore());
 		b.setDataStore(getDataStore());
+
 		this.registerHandleAllResultNotifications(b);
 	}
 
@@ -132,28 +135,11 @@ public class announceLoadOrders extends ContractNetInitiator{
 		if(bestOffer == null){ //Abnehmer momentan alle beschäftigt
 			this.myCAgent.echoStatus("FAILURE: Nur Ablehnungen empfangen, Abbruch.",ContainerAgent.LOGGING_NOTICE);
 			this.myCAgent.touchTOCState(curTOC,new Failed());
-			if(this.masterBehaviour != null){
-				this.myCAgent.echoStatus("REFUSE: MasterBehaviour wird neugestartet.",ContainerAgent.LOGGING_INFORM);
-				this.masterBehaviour.restart();
-			}
+
+			notifyMaster("REFUSE");
+			
 			this.reset();
 			return;
-
-//			// Alt: warten, benötigt aber weiteren zwischenspeicher oder so
-//			if(((ContainerAgent) myAgent).isInFailedQueue(curTOC)){
-//				if(masterBehaviour != null){
-//					((ContainerAgent) myAgent).echoStatus("REFUSE: MasterBehaviour wird neugestartet.");
-//					masterBehaviour.restart();
-//				}
-//				return;
-//			}else{
-//				((ContainerAgent) myAgent).echoStatus("Nur Ablehnungen empfangen, versuche es nochmal");
-//				((ContainerHolderAgent) myAgent).doWait(1000); //kurz warten, vielleicht beruhigt sich ja die Lage
-//				((ContainerHolderAgent) myAgent).touchTOCState(curTOC,new Failed());
-//				this.reset();
-//				return;
-//			}
-
 		}
 		if(bestOffer != null){
 			accept=bestOfferMessage.createReply();
@@ -161,6 +147,7 @@ public class announceLoadOrders extends ContractNetInitiator{
 			act.setCorresponds_to(bestOfferToc);
 			this.myCAgent.fillMessage(accept,act);
 			accept.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
+			getDataStore().put(ACCEPT_KEY,accept);
 			acceptances.add(accept);
 		}
 		for(Object message: responses){
@@ -173,106 +160,152 @@ public class announceLoadOrders extends ContractNetInitiator{
 		}
 	}
 
-	@Override
-	protected void handleAllResultNotifications(Vector resultNotifications){
+	class handleAllResultNotifications extends SequentialBehaviour{
+		String READY_NOTIFICATION_KEY="__ready-notification" + hashCode();
+		String RESULT_NOTIFICATION_KEY="__result-notification" + hashCode();
+		TransportOrderChain curTOC;
+		TransportOrder currentTO;
+		Domain endDomain;
 
-	}
+		
+		handleAllResultNotifications(Agent a,DataStore ds){
+			super(a);
+			this.setDataStore(ds);
 
-	class handleAllResultNotifications extends SimpleBehaviour{
-		Boolean isDone=false;
+			Behaviour b=new StartMoving(myAgent,getDataStore());
+			addSubBehaviour(b);
 
-		/* (non-Javadoc)
-		 * @see jade.core.behaviours.Behaviour#action()
-		 */
-		@Override
-		public void action(){
-			Vector<ACLMessage> resultNotifications=(Vector) this.getDataStore().get(ALL_RESULT_NOTIFICATIONS_KEY);
+			b=new Mover(myAgent,getDataStore());
+			addSubBehaviour(b);
+			/*
+			b=new GetInformReady(myAgent,getDataStore());
+			addSubBehaviour(b);
+			*/
+			b=new Dropper(myAgent,getDataStore());
+			addSubBehaviour(b);
 
-			for(ACLMessage notification: resultNotifications){
-				AgentAction content=myCAgent.extractAction(notification);
-				if(content instanceof AnnounceLoadStatus){
-					AnnounceLoadStatus loadStatus=(AnnounceLoadStatus) content;
-					TransportOrderChain load_offer=loadStatus.getCorresponds_to();
-					
-					if(!(myCAgent instanceof StraddleCarrierAgent)){
-						loadStatus.setLoad_status("FINISHED");
-					}
-					
-					if(myCAgent.touchTOCState(load_offer) instanceof Assigned){
-						StraddleCarrierAgent strad=(StraddleCarrierAgent) myCAgent;
-						TransportOrder targetTO=myCAgent.findMatchingOrder(load_offer,false);
-						Domain end=myCAgent.inflateDomain(targetTO.getEnds_at().getAbstract_designation());
+			b=new SendInformFinished(myAgent,getDataStore(),RESULT_NOTIFICATION_KEY,READY_NOTIFICATION_KEY);
+			addSubBehaviour(b);
+		}
 
-						if(strad.isAt(end.getIs_in_position())){
-							myCAgent.echoStatus("I am in target drop position",load_offer);
-						}else{
-//							myCAgent.echoStatus("i have not yet reached target drop position: block",load_offer);
-							block(1000);
-							this.isDone=false;
+		class StartMoving extends OneShotBehaviour{
+			StartMoving(Agent a,DataStore ds){
+				super(a);
+				this.setDataStore(ds);
+			}
+
+			@Override
+			public void action(){
+				Vector<ACLMessage> resultNotifications=(Vector) this.getDataStore().get(ALL_RESULT_NOTIFICATIONS_KEY);
+				for(ACLMessage notification: resultNotifications){ //TODO check on multiple notifications!
+									
+					AgentAction content=myCAgent.extractAction(notification);
+					if(content instanceof AnnounceLoadStatus){
+						AnnounceLoadStatus loadStatus=(AnnounceLoadStatus) content;
+						
+						if(notification.getPerformative() == ACLMessage.FAILURE){ // && loadStatus.getLoad_status().substring(0, 4).equals("ERROR")) {
+							myCAgent.removeFromContractors(notification.getSender());
+							myCAgent.touchTOCState(curTOC,new Failed());
+							myCAgent.echoStatus("Containerabgabe fehlgeschlagen. " + loadStatus.getLoad_status(),curTOC,ContainerAgent.LOGGING_NOTICE);
+							
+							notifyMaster("FAILURE");
+
 							return;
 						}
-						if(myCAgent.dropContainer(load_offer)){
-							if(masterBehaviour != null){
-								myCAgent.echoStatus("INFORM: MasterBehaviour wird neugestartet.",ContainerAgent.LOGGING_INFORM);
-								masterBehaviour.restart();
-							}
-							ACLMessage statusAnnouncement=notification.createReply();
-							statusAnnouncement.setPerformative(ACLMessage.INFORM);
-							loadStatus=ContainerAgent.getLoadStatusAnnouncement(load_offer,"FINISHED");
-							myCAgent.fillMessage(statusAnnouncement,loadStatus);
-							myCAgent.send(statusAnnouncement);
-							this.isDone=true;
-							return;
-						}
-
-					}
-					if((notification.getPerformative() == ACLMessage.INFORM) && loadStatus.getLoad_status().equals("READY")){
-
-						myCAgent.touchTOCState(load_offer,new Assigned());
-						TransportOrder targetTO=myCAgent.findMatchingOrder(load_offer,false);
-						Domain end=myCAgent.inflateDomain(targetTO.getEnds_at().getAbstract_designation());
-						StraddleCarrierAgent strad=(StraddleCarrierAgent) myCAgent;
-						myCAgent.echoStatus("Container is going to be dropped at " + end.getId() + " " + strad.positionToString(end.getIs_in_position()) + ", current position: " + strad.positionToString(strad.getCurrentPosition()));
-						strad.addAsapMovementTo(end.getIs_in_position());
-						isDone=false;
-						return;
-
-					}else if((notification.getPerformative() == ACLMessage.INFORM) && loadStatus.getLoad_status().equals("FINISHED")){
-						//					((ContainerAgent)myAgent).echoStatus("AnnounceLoadStatus FINISHED empfangen, bearbeiten");
-						if(myCAgent.dropContainer(load_offer)){
-							if(masterBehaviour != null){
-								myCAgent.echoStatus("INFORM: MasterBehaviour wird neugestartet.",ContainerAgent.LOGGING_INFORM);
-								masterBehaviour.restart();
-							}
-						}
-					}else if(notification.getPerformative() == ACLMessage.FAILURE){ // && loadStatus.getLoad_status().substring(0, 4).equals("ERROR")) {
-						myCAgent.removeFromContractors(notification.getSender());
-						myCAgent.touchTOCState(load_offer,new Failed());
-						myCAgent.echoStatus("Containerabgabe fehlgeschlagen. " + loadStatus.getLoad_status(),load_offer,ContainerAgent.LOGGING_NOTICE);
-						if(masterBehaviour != null){
-							myCAgent.echoStatus("FAILURE: MasterBehaviour wird neugestartet.",ContainerAgent.LOGGING_INFORM);
-							masterBehaviour.restart();
+						
+						this.getDataStore().put(READY_NOTIFICATION_KEY,notification);
+					
+						curTOC=loadStatus.getCorresponds_to();
+						currentTO=myCAgent.findMatchingOrder(curTOC,false);
+						endDomain=myCAgent.inflateDomain(currentTO.getEnds_at().getAbstract_designation());
+						if(myCAgent instanceof MoveableAgent){
+							MoveableAgent myMoveableAgent=(MoveableAgent) myCAgent;
+							myCAgent.touchTOCState(curTOC,new Assigned());
+							myCAgent.echoStatus("Container is going to be dropped at " + endDomain.getId() + " " + StraddleCarrierAgent.positionToString(endDomain.getIs_in_position()) + ", current position: " + StraddleCarrierAgent.positionToString(myMoveableAgent.getCurrentPosition()));
+							myMoveableAgent.addAsapMovementTo(endDomain.getIs_in_position());
 						}
 					}
 				}
 			}
-
-			isDone=true;
 		}
 
-		/* (non-Javadoc)
-		 * @see jade.core.behaviours.Behaviour#done()
-		 */
-		@Override
-		public boolean done(){
-			return isDone;
+		class Mover extends SimpleBehaviour{
+			Mover(Agent a,DataStore ds){
+				super(a);
+				this.setDataStore(ds);
+			}
+
+			private static final long serialVersionUID=5033799889547692668L;
+			Boolean isDone;
+
+			@Override
+			public void action(){
+				isDone=true;
+				if(myCAgent instanceof MoveableAgent){
+					MoveableAgent myMoveableAgent=(MoveableAgent) myCAgent;
+					isDone=myMoveableAgent.isAt(endDomain.getIs_in_position());
+					if(isDone){
+						myCAgent.echoStatus("I am in target drop position",curTOC);
+					}else{
+//						myCAgent.echoStatus("i have not yet reached target drop position: block",curTOC);
+						block(1000);
+					}
+				}
+			}
+
+			@Override
+			public boolean done(){
+				return isDone;
+			}
+		}
+/*
+		class GetInformReady extends MsgReceiver{
+			GetInformReady(Agent a,DataStore ds){
+				super(a,replyTemplate,MsgReceiver.INFINITE,ds,READY_NOTIFICATION_KEY);
+				this.setDataStore(ds);
+			}
+		}
+*/
+		class Dropper extends OneShotBehaviour{
+
+			public Dropper(Agent a,DataStore ds){
+				super(a);
+				setDataStore(ds);
+			}
+
+			@Override
+			public void action(){
+				ACLMessage readyNotification=(ACLMessage) getDataStore().get(READY_NOTIFICATION_KEY);
+				if(myCAgent.dropContainer(curTOC)){
+					notifyMaster("INFORM");
+
+					ACLMessage statusAnnouncement=readyNotification.createReply();
+					statusAnnouncement.setPerformative(ACLMessage.INFORM);
+					AnnounceLoadStatus loadStatus=ContainerAgent.getLoadStatusAnnouncement(curTOC,"FINISHED");
+					myCAgent.fillMessage(statusAnnouncement,loadStatus);
+					getDataStore().put(RESULT_NOTIFICATION_KEY,statusAnnouncement);
+				}else{
+					myCAgent.echoStatus("FAILURE: Something went hilariously wrong!");
+				}
+			}
 		}
 
+		class SendInformFinished extends ReplySender{
+			public SendInformFinished(Agent a,DataStore ds,String replyKey,String msgKey){
+				super(a,replyKey,msgKey,ds);
+			}			
+		}
 	}
 
 	@Override
 	protected void handleOutOfSequence(ACLMessage msg){
 		this.myCAgent.echoStatus("ERROR: Unerwartete Nachricht bei announce (" + msg.getPerformative() + ") empfangen von " + msg.getSender().getLocalName() + ": " + msg.getContent(),ContainerAgent.LOGGING_ERROR);
 	}
-
+	
+	private void notifyMaster(String cause){
+		if(masterBehaviour != null){
+			myCAgent.echoStatus(cause+": MasterBehaviour wird neugestartet.",ContainerAgent.LOGGING_INFORM);
+			masterBehaviour.restart();
+		}
+	}
 }
