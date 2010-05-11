@@ -40,8 +40,8 @@ public class listenForLoadStatusAnnouncement extends MsgReceiver{
 		return mt;
 	}
 
-	public listenForLoadStatusAnnouncement(Agent a,ACLMessage reservationNotice){
-		super(a,listenForLoadStatusAnnouncement.createMessageTemplate(a,reservationNotice),-1, new DataStore(),"__announcement"+reservationNotice.getConversationId());
+	public listenForLoadStatusAnnouncement(Agent a, ACLMessage reservationNotice){
+		super(a,listenForLoadStatusAnnouncement.createMessageTemplate(a,reservationNotice),MsgReceiver.INFINITE, new DataStore(),"__announcement"+reservationNotice.getConversationId());
 		myAgent=(ContainerHolderAgent) a;
 	}
 

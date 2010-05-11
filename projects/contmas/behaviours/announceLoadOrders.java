@@ -18,11 +18,13 @@ import jade.content.AgentAction;
 import jade.content.Concept;
 import jade.core.AID;
 import jade.core.Agent;
-import jade.core.behaviours.*;
+import jade.core.behaviours.Behaviour;
+import jade.core.behaviours.DataStore;
+import jade.core.behaviours.OneShotBehaviour;
+import jade.core.behaviours.SequentialBehaviour;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.proto.ContractNetInitiator;
-import jade.proto.states.MsgReceiver;
 import jade.proto.states.ReplySender;
 import jade.util.leap.List;
 
@@ -42,6 +44,10 @@ public class announceLoadOrders extends ContractNetInitiator{
 	 */
 	private static final long serialVersionUID=7080809105355535853L;
 	private final LoadList currentLoadList;
+	TransportOrderChain curTOC;
+	TransportOrder curTO;
+	Domain endDomain;
+
 	private final Behaviour masterBehaviour;
 	private final ContainerHolderAgent myCAgent=(ContainerHolderAgent) this.myAgent;
 	String ACCEPT_KEY="__accept" + hashCode();
@@ -130,7 +136,7 @@ public class announceLoadOrders extends ContractNetInitiator{
 			} // End if content !=null
 		}
 		ACLMessage accept=null;
-		TransportOrderChain curTOC=(TransportOrderChain) this.currentLoadList.getConsists_of().iterator().next();
+		curTOC=(TransportOrderChain) this.currentLoadList.getConsists_of().iterator().next();
 
 		if(bestOffer == null){ //Abnehmer momentan alle beschäftigt
 			this.myCAgent.echoStatus("FAILURE: Nur Ablehnungen empfangen, Abbruch.",ContainerAgent.LOGGING_NOTICE);
@@ -142,6 +148,8 @@ public class announceLoadOrders extends ContractNetInitiator{
 			return;
 		}
 		if(bestOffer != null){
+			curTO=bestOffer;
+			endDomain=myCAgent.inflateDomain(curTO.getEnds_at().getAbstract_designation());
 			accept=bestOfferMessage.createReply();
 			AcceptLoadOffer act=new AcceptLoadOffer();
 			act.setCorresponds_to(bestOfferToc);
@@ -163,10 +171,7 @@ public class announceLoadOrders extends ContractNetInitiator{
 	class handleAllResultNotifications extends SequentialBehaviour{
 		String READY_NOTIFICATION_KEY="__ready-notification" + hashCode();
 		String RESULT_NOTIFICATION_KEY="__result-notification" + hashCode();
-		TransportOrderChain curTOC;
-		TransportOrder currentTO;
-		Domain endDomain;
-
+		WaitUntilTargetReached positionChecker;
 		
 		handleAllResultNotifications(Agent a,DataStore ds){
 			super(a);
@@ -175,8 +180,11 @@ public class announceLoadOrders extends ContractNetInitiator{
 			Behaviour b=new StartMoving(myAgent,getDataStore());
 			addSubBehaviour(b);
 
-			b=new Mover(myAgent,getDataStore());
+			positionChecker=new WaitUntilTargetReached(myAgent,getDataStore());
+			b=positionChecker;
 			addSubBehaviour(b);
+			
+			
 			/*
 			b=new GetInformReady(myAgent,getDataStore());
 			addSubBehaviour(b);
@@ -214,51 +222,20 @@ public class announceLoadOrders extends ContractNetInitiator{
 						}
 						
 						this.getDataStore().put(READY_NOTIFICATION_KEY,notification);
-					
-						curTOC=loadStatus.getCorresponds_to();
-						currentTO=myCAgent.findMatchingOrder(curTOC,false);
-						endDomain=myCAgent.inflateDomain(currentTO.getEnds_at().getAbstract_designation());
+
 						if(myCAgent instanceof MoveableAgent){
 							MoveableAgent myMoveableAgent=(MoveableAgent) myCAgent;
 							myCAgent.touchTOCState(curTOC,new Assigned());
 							myCAgent.echoStatus("Container is going to be dropped at " + endDomain.getId() + " " + StraddleCarrierAgent.positionToString(endDomain.getIs_in_position()) + ", current position: " + StraddleCarrierAgent.positionToString(myMoveableAgent.getCurrentPosition()));
 							myMoveableAgent.addAsapMovementTo(endDomain.getIs_in_position());
+							setTargetPosition(endDomain.getIs_in_position());
 						}
 					}
 				}
 			}
 		}
 
-		class Mover extends SimpleBehaviour{
-			Mover(Agent a,DataStore ds){
-				super(a);
-				this.setDataStore(ds);
-			}
-
-			private static final long serialVersionUID=5033799889547692668L;
-			Boolean isDone;
-
-			@Override
-			public void action(){
-				isDone=true;
-				if(myCAgent instanceof MoveableAgent){
-					MoveableAgent myMoveableAgent=(MoveableAgent) myCAgent;
-					isDone=myMoveableAgent.isAt(endDomain.getIs_in_position());
-					if(isDone){
-						myCAgent.echoStatus("I am in target drop position",curTOC);
-					}else{
-//						myCAgent.echoStatus("i have not yet reached target drop position: block",curTOC);
-						block(1000);
-					}
-				}
-			}
-
-			@Override
-			public boolean done(){
-				return isDone;
-			}
-		}
-/*
+		/*
 		class GetInformReady extends MsgReceiver{
 			GetInformReady(Agent a,DataStore ds){
 				super(a,replyTemplate,MsgReceiver.INFINITE,ds,READY_NOTIFICATION_KEY);
@@ -295,6 +272,13 @@ public class announceLoadOrders extends ContractNetInitiator{
 				super(a,replyKey,msgKey,ds);
 			}			
 		}
+		
+		
+		
+		private void setTargetPosition(Phy_Position targetPosition){
+			positionChecker.setTargetPosition(targetPosition);
+		}
+		
 	}
 
 	@Override
@@ -308,4 +292,6 @@ public class announceLoadOrders extends ContractNetInitiator{
 			masterBehaviour.restart();
 		}
 	}
+	
+
 }
