@@ -24,6 +24,7 @@ import jade.core.Agent;
 import jade.core.behaviours.DataStore;
 import jade.core.behaviours.SimpleBehaviour;
 import contmas.agents.ContainerAgent;
+import contmas.agents.PositionReporter;
 import contmas.interfaces.MoveableAgent;
 import contmas.ontology.Phy_Position;
 
@@ -51,6 +52,9 @@ class WaitUntilTargetReached extends SimpleBehaviour{
 						((ContainerAgent)myAgent).echoStatus("I am in target position");
 					}else{
 //						((ContainerAgent)myAgent).echoStatus("i have not yet reached target drop position: block",curTOC);
+						if(myAgent instanceof PositionReporter){
+							((PositionReporter)myAgent).reportPosition();
+						}
 						block(1000);
 					}
 				}

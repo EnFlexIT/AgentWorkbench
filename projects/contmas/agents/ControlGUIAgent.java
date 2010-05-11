@@ -240,6 +240,9 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 			a=c.createNewAgent("SimulationController","contmas.agents.SimulationControlAgent",args);
 			a.start();
 			
+			a=c.createNewAgent("VisualisationProxy","contmas.agents.AgentGUIVisualisationProxyAgent",args);
+			a.start();
+			
 			a=c.createNewAgent("Visualiser","contmas.agents.VisualisationAgent",args);
 //			a.start();
 		}catch(StaleProxyException e){

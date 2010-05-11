@@ -25,10 +25,7 @@ import jade.lang.acl.ACLMessage;
 import jade.util.leap.ArrayList;
 import jade.util.leap.Iterator;
 import jade.util.leap.List;
-import contmas.behaviours.executeMovements;
-import contmas.behaviours.getHarbourSetup;
-import contmas.behaviours.receiveLoadOrders;
-import contmas.behaviours.unload;
+import contmas.behaviours.*;
 import contmas.interfaces.HarbourLayoutRequester;
 import contmas.interfaces.MoveableAgent;
 import contmas.interfaces.TransportOrderHandler;
@@ -40,7 +37,7 @@ import contmas.ontology.*;
  * @author Hanno - Felix Wagner
  *
  */
-public class StraddleCarrierAgent extends ActiveContainerAgent implements TransportOrderHandler,TransportOrderOfferer,HarbourLayoutRequester{
+public class StraddleCarrierAgent extends ActiveContainerAgent implements TransportOrderHandler,TransportOrderOfferer,HarbourLayoutRequester,PositionReporter{
 	private static final Float speed=1F/100F;
 	private executeMovements moveBehaviour; 
 	
@@ -415,6 +412,15 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 	@Override
 	public List getPendingMovements(){
 		return ((ActiveContainerHolder)getOntologyRepresentation()).getScheduled_movements();
+	}
+
+	/* (non-Javadoc)
+	 * @see contmas.agents.PositionReporter#reportPosition()
+	 */
+	@Override
+	public void reportPosition(){
+		getOntologyRepresentation().getIs_in_position2();
+		this.addBehaviour(new sendPositionUpdate(this,getOntologyRepresentation().getIs_in_position2()));
 	}
 
 /*	//Lies_in variant
