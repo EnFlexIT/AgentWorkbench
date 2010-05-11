@@ -180,11 +180,11 @@ public class DisplayAgent extends Agent {
 				private static final long serialVersionUID = 1L;
 
 				protected void handleInform(ACLMessage inform){
-					System.out.println("DA: Environment information received");
+//					System.out.println("DA: Environment information received");
 					try {
 						Action act = (Action) getContentManager().extractContent(inform);
 						EnvironmentInfo envInf = (EnvironmentInfo) act.getAction();
-						System.out.println(envInf.getEnvironment().getSvgDoc());
+//						System.out.println(envInf.getEnvironment().getSvgDoc());
 						setEnvironment(envInf.getEnvironment());
 						addBehaviour(new MovementReceiver());
 					} catch (UngroundedException e) {
@@ -261,7 +261,7 @@ public class DisplayAgent extends Agent {
 		
 		
 		
-		System.out.println(getLocalName()+" received environment");
+//		System.out.println(getLocalName()+" received environment");
 //		this.svgDoc = (Document) env.getSvgDoc();
 	}
 	

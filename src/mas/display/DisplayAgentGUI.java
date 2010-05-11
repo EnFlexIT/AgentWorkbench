@@ -146,7 +146,7 @@ public class DisplayAgentGUI extends BasicSVGGUI {
 			posX = OntoUtilities.calcPixel(pos.getX(), scale);
 			posY = OntoUtilities.calcPixel(pos.getY(), scale);
 			
-//			System.out.println("Setting new pos: "+posX+":"+posY);
+			System.out.println("Setting new pos: "+posX+":"+posY);
 			
 			Element element = DisplayAgentGUI.this.getCanvas().getSVGDocument().getElementById(id);
 			

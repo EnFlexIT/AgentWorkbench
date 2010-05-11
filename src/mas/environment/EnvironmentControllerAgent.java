@@ -83,7 +83,7 @@ public class EnvironmentControllerAgent extends Agent {
 			private static final long serialVersionUID = 1L;
 			
 			protected ACLMessage prepareResultNotification(ACLMessage request, ACLMessage response){
-				System.out.println("ECA: Environment request received");
+//				System.out.println("ECA: Environment request received");
 				ACLMessage reply = request.createReply();
 				reply.setPerformative(ACLMessage.INFORM);
 				

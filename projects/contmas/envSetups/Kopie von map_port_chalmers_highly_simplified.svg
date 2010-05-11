@@ -30,26 +30,26 @@
                               inkscape:vp_y="0 : 1000 : 0"/></defs>
     <sodipodi:namedview objecttolerance="10.0" bordercolor="#666666"
                         inkscape:window-height="721" inkscape:zoom="1.2413099"
-                        id="base" gridtolerance="10.0"
+                        gridtolerance="10.0" id="base"
                         inkscape:current-layer="layer26" inkscape:window-y="20"
                         inkscape:cy="293.00493" inkscape:window-x="0"
                         inkscape:cx="185.23752" showgrid="false"
                         guidetolerance="10.0" inkscape:pageopacity="0.0"
                         inkscape:pageshadow="2" inkscape:window-width="1024"
                         borderopacity="1.0" pagecolor="#ffffff"/>
-    <g inkscape:groupmode="layer" sodipodi:insensitive="true" id="layer4"
+    <g sodipodi:insensitive="true" inkscape:groupmode="layer" id="layer4"
        style="display:none" transform="translate(-268.55561,-315.56199)"
        inkscape:label="TRails">
         <rect x="432.60754" width="246.51379" y="553.44769" height="7.2504058"
               id="rect6632"
               style="fill:#ff0000;fill-opacity:0.50196078;fill-rule:nonzero;stroke:#000000;stroke-width:0.1;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"/></g>
-    <g inkscape:groupmode="layer" sodipodi:insensitive="true" id="layer3"
+    <g sodipodi:insensitive="true" inkscape:groupmode="layer" id="layer3"
        style="display:none" transform="translate(-268.55561,-315.56199)"
        inkscape:label="CRails">
         <rect x="410.05072" width="260.20901" y="543.78046" height="22.959618"
               id="rect6629"
               style="fill:#ff0000;fill-opacity:0.50196078;fill-rule:nonzero;stroke:#000000;stroke-width:0.1;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"/></g>
-    <g inkscape:groupmode="layer" sodipodi:insensitive="true" id="layer22"
+    <g sodipodi:insensitive="true" inkscape:groupmode="layer" id="layer22"
        style="display:inline" transform="translate(-268.55561,-315.56199)"
        inkscape:label="NorthMarkShape">
         <path style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;display:inline"
@@ -2789,7 +2789,7 @@
               d="M 750.06329,842.53078 L 750.98129,842.07421 L 750.14512,842.44303 L 750.06329,842.53078"
               style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;display:inline"
               transform="matrix(1.25,0,0,-1.25,0,1488.75)"/></g>
-    <g inkscape:groupmode="layer" sodipodi:insensitive="true" id="layer23"
+    <g sodipodi:insensitive="true" inkscape:groupmode="layer" id="layer23"
        style="display:inline" transform="translate(-268.55561,-315.56199)"
        inkscape:label="QuayShape">
         <path id="path2644"
@@ -2871,10 +2871,10 @@
               d="M 301.88313,690.24041 L 302.74299,690.55001 L 313.41501,714.1204 L 301.88313,690.24041"
               style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;display:inline"
               transform="matrix(1.25,0,0,-1.25,0,1488.75)"/></g>
-    <g inkscape:groupmode="layer" sodipodi:insensitive="true" id="layer18"
+    <g sodipodi:insensitive="true" inkscape:groupmode="layer" id="layer18"
        style="display:inline" transform="translate(-268.55561,-315.56199)"
        inkscape:label="CraneShapes">
-        <g inkscape:groupmode="layer" sodipodi:insensitive="true" id="layer29"
+        <g sodipodi:insensitive="true" inkscape:groupmode="layer" id="layer29"
            style="display:inline" inkscape:label="Crane 2">
             <path id="path14290"
                   d="M 454.67807,767.09228 L 449.83553,767.00667 L 449.83067,689.06449 L 454.67807,767.09228"
@@ -2924,7 +2924,7 @@
                   d="M 461.13373,737.9993 L 443.641,737.93092 L 443.60547,736.91331 L 461.13373,737.9993"
                   style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;display:inline"
                   transform="matrix(1.25,0,0,-1.25,0,1488.75)"/></g>
-        <g inkscape:groupmode="layer" sodipodi:insensitive="true" id="layer30"
+        <g sodipodi:insensitive="true" inkscape:groupmode="layer" id="layer30"
            style="display:inline" inkscape:label="Crane 1">
             <path id="path14270"
                   d="M 363.50098,767.3895 L 363.49613,689.44731 L 368.25091,689.45107 L 368.25577,767.39327 L 363.50098,767.3895 z"
@@ -2974,7 +2974,7 @@
                   d="M 374.71142,738.30029 L 357.13685,738.31968 L 357.18317,737.21429 L 374.71142,738.30029"
                   style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;display:inline"
                   transform="matrix(1.25,0,0,-1.25,0,1488.75)"/></g></g>
-    <g inkscape:groupmode="layer" sodipodi:insensitive="true" id="layer14"
+    <g sodipodi:insensitive="true" inkscape:groupmode="layer" id="layer14"
        style="display:inline" transform="translate(-268.55561,-315.56199)"
        inkscape:label="TrainRailShape">
         <path id="path3346"
@@ -2988,7 +2988,7 @@
         <path id="path3342" d="M 733.60702,818.65294 L 575.64055,751.74569"
               style="fill:none;stroke:#000000;stroke-width:0.47999999;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1;display:inline"
               transform="matrix(1.25,0,0,-1.25,0,1488.75)"/></g>
-    <g inkscape:groupmode="layer" sodipodi:insensitive="true" id="layer13"
+    <g sodipodi:insensitive="true" inkscape:groupmode="layer" id="layer13"
        style="display:inline" transform="translate(-268.55561,-315.56199)"
        inkscape:label="CraneRailShape">
         <path id="path5358"
@@ -2999,7 +2999,7 @@
               d="M 327.93728,755.55612 L 533.57435,755.50709 L 538.50466,755.67454 L 543.27721,756.18711 L 548.06754,757.2085 L 552.70009,758.575 L 557.25675,760.19888 L 742.20128,838.64501"
               style="fill:none;stroke:#000000;stroke-width:0.12;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1;display:inline"
               transform="matrix(1.25,0,0,-1.25,0,1488.75)"/></g>
-    <g inkscape:groupmode="layer" sodipodi:insensitive="true" id="layer5"
+    <g sodipodi:insensitive="true" inkscape:groupmode="layer" id="layer5"
        style="display:inline" transform="translate(-268.55561,-315.56199)"
        inkscape:label="BerthAreas">
         <g inkscape:groupmode="layer" id="layer16" style="display:inline"
@@ -3011,24 +3011,27 @@
        transform="translate(-268.55561,-315.56199)"
        inkscape:label="StraddleCarrierDomain">
         <rect x="378.24472" y="389.33392" width="285.96213"
+              inkscape:label="#rect12298"
               style="fill:#008000;fill-opacity:0.50196078;fill-rule:nonzero;stroke:#000000;stroke-width:0.1;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;display:inline"
-              inkscape:label="#rect12298" id="StraddleCarrierDomain"
-              height="177.72961"/></g>
+              id="StraddleCarrierDomain" height="177.72961"/></g>
     <g inkscape:groupmode="layer" id="layer20" style="display:inline"
        transform="translate(-268.55561,-315.56199)" inkscape:label="CraneDomain">
         <rect x="419.25922" y="541.99896" width="244.94771"
+              inkscape:label="#rect12296"
               style="fill:#000080;fill-opacity:0.50196078;fill-rule:nonzero;stroke:#000000;stroke-width:0.1;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-              inkscape:label="#rect12296" id="CraneDomain" height="85.446861"/></g>
+              id="CraneDomain" height="85.446861"/></g>
     <g inkscape:groupmode="layer" id="layer2" style="display:inline"
        transform="translate(-268.55561,-315.56199)" inkscape:label="ApronArea">
         <rect x="406.02274" y="547.00287" width="258.59781"
+              inkscape:label="#rect6628"
               style="fill:#ff0000;fill-opacity:0.50196078;fill-rule:nonzero;stroke:#000000;stroke-width:0.1;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;display:inline"
-              inkscape:label="#rect6628" id="ApronHanno" height="16.917614"/></g>
+              id="ApronHanno" height="16.917614"/></g>
     <g inkscape:groupmode="layer" id="layer1" style="display:inline"
        transform="translate(-268.55561,-315.56199)" inkscape:label="YardAreas">
         <rect x="467.10947" y="455.41272" width="102.82104"
+              inkscape:label="#rect17265"
               style="fill:#ff0000;fill-opacity:0.50196078;fill-rule:nonzero;stroke:#000000;stroke-width:0.1;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-              inkscape:label="#rect17265" id="YardHanno" height="68.072662"/>
+              id="YardHanno" height="68.072662"/>
         <rect x="380.23849" width="64.085136" y="461.96365" height="78.041458"
               id="rect18037"
               style="fill:#ff0000;fill-opacity:0.50196078;fill-rule:nonzero;stroke:#000000;stroke-width:0.1;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;display:inline"/>
@@ -3037,21 +3040,25 @@
               style="fill:#ff0000;fill-opacity:0.50196078;fill-rule:nonzero;stroke:#000000;stroke-width:0.1;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;display:inline"/></g>
     <g inkscape:label="ShipAgent" inkscape:groupmode="layer" id="layer27">
         <rect x="159.50891" y="255.28574" width="153.06412"
+              inkscape:label="#rect12316"
               style="fill:#ffff00;fill-opacity:0.50196078;fill-rule:nonzero;stroke:#000000;stroke-width:0.1;stroke-miterlimit:10;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-              inkscape:label="#rect12316" id="ShipHanno" height="46.724834"/></g>
+              id="ShipHanno" height="46.724834"/></g>
     <g inkscape:groupmode="layer" id="layer25" style="display:inline"
+       transform="translate(-268.55561,-315.56199)"
        inkscape:label="StraddleCarrierAgent">
         <rect x="453.14105" y="462.88715" width="5.538504"
+              inkscape:label="#rect12306"
               style="fill:#ff00ff;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.1;stroke-miterlimit:10;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-              inkscape:label="#rect12306" id="StraddleCarrierShadow"
-              height="2.4671519"/></g>
+              id="StraddleCarrierShadow" height="2.4671519"/></g>
     <g inkscape:groupmode="layer" id="layer26" style="display:inline"
        transform="translate(-268.55561,-315.56199)" inkscape:label="CraneAgent">
         <rect x="561.32239" y="553.79602" width="5.5385041"
+              inkscape:label="#rect12308"
               style="fill:#ff00ff;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.1;stroke-miterlimit:10;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;display:inline"
-              inkscape:label="#rect12308" id="Crane2Hanno" height="2.4671519"/>
+              id="Crane2Hanno" height="2.4671519"/>
         <rect x="454.22894" y="553.15515" width="5.5385041"
+              inkscape:label="#rect12310"
               style="fill:#ff00ff;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.1;stroke-miterlimit:10;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;display:inline"
-              inkscape:label="#rect12310" id="Crane1Hanno" height="2.4671519"/></g>
+              id="Crane1Hanno" height="2.4671519"/></g>
     <rect fill="none" width="768" stroke-width="1" id="border" height="544"
           stroke="black"/></svg>
