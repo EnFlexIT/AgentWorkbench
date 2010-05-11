@@ -11,4 +11,6 @@ Zum Start muss ein ControlGUIAgent gestartet werden, der einen Simulationsaufbau
 
 Die Abläufe lassen sich am besten im automatisch erzeugten Sniffer einsehen. Die ControlGUI bietet noch einige weitere Möglichkeiten.</projectDescription>
     <agentConfiguration/>
+    <envFile>map_port_chalmers_highly_simplified.xml</envFile>
+    <svgFile>map_port_chalmers_highly_simplified.svg</svgFile>
 </project>
