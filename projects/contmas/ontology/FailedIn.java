@@ -5,10 +5,10 @@ import jade.util.leap.*;
 import jade.core.*;
 
 /**
-* Protege name: Failed
+* Protege name: FailedIn
 * @author ontology bean generator
-* @version 2010/05/7, 17:07:53
+* @version 2010/05/12, 12:12:40
 */
-public class Failed extends TransportOrderChainState{ 
+public class FailedIn extends TransportOrderChainState{ 
 
 }

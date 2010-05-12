@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: ContainerHolder
 * @author ontology bean generator
-* @version 2010/05/7, 17:07:53
+* @version 2010/05/12, 12:12:41
 */
 public class ContainerHolder extends AID{ 
 
@@ -33,17 +33,6 @@ public class ContainerHolder extends AID{
    public void setContainer_states(List l) {container_states = l; }
 
    /**
-* Protege name: service_type
-   */
-   private String service_type;
-   public void setService_type(String value) { 
-    this.service_type=value;
-   }
-   public String getService_type() {
-     return this.service_type;
-   }
-
-   /**
 * Protege name: is_in_position2
    */
    private Phy_Position is_in_position2;
@@ -66,17 +55,6 @@ public class ContainerHolder extends AID{
    }
 
    /**
-* Protege name: localName
-   */
-   private String localName;
-   public void setLocalName(String value) { 
-    this.localName=value;
-   }
-   public String getLocalName() {
-     return this.localName;
-   }
-
-   /**
 * Protege name: lives_in
    */
    private Domain lives_in;
@@ -85,6 +63,17 @@ public class ContainerHolder extends AID{
    }
    public Domain getLives_in() {
      return this.lives_in;
+   }
+
+   /**
+* Protege name: localName
+   */
+   private String localName;
+   public void setLocalName(String value) { 
+    this.localName=value;
+   }
+   public String getLocalName() {
+     return this.localName;
    }
 
    /**
@@ -107,5 +96,16 @@ public class ContainerHolder extends AID{
    public Iterator getAllContractors() {return contractors.iterator(); }
    public List getContractors() {return contractors; }
    public void setContractors(List l) {contractors = l; }
+
+   /**
+* Protege name: service_type
+   */
+   private String service_type;
+   public void setService_type(String value) { 
+    this.service_type=value;
+   }
+   public String getService_type() {
+     return this.service_type;
+   }
 
 }

@@ -53,7 +53,10 @@ public class listenForLoadStatusAnnouncement extends MsgReceiver{
 				myAgent.echoStatus("aha");
 
 			}
-			myAgent.aquireContainer(act.getCorresponds_to());
+			if(!myAgent.aquireContainer(act.getCorresponds_to())){
+				myAgent.echoStatus("Something went wrong! Couldn't aquire!");
+
+			}
 		}
 		myAgent.echoStatus("LoadStatus received: "+act.getLoad_status());
 	}

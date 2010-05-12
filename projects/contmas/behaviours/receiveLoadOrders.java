@@ -38,8 +38,8 @@ public class receiveLoadOrders extends ContractNetResponder{
 	 */
 	private static final long serialVersionUID= -3409830399764472591L;
 	private final ContainerHolderAgent myCAgent=(ContainerHolderAgent) this.myAgent;
-//	private final String ANNOUNCEMENT_KEY="__announcement"+hashCode();
 
+//	private final String ANNOUNCEMENT_KEY="__announcement"+hashCode();
 
 	private static MessageTemplate createMessageTemplate(Agent a){
 		MessageTemplate mtallg=AchieveREResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
@@ -53,14 +53,14 @@ public class receiveLoadOrders extends ContractNetResponder{
 		mtThisSect=new MessageTemplate(new MatchAgentAction(a,new AcceptLoadOffer()));
 		mtThisSect=MessageTemplate.and(mtThisSect,MessageTemplate.MatchPerformative(ACLMessage.ACCEPT_PROPOSAL));
 		mtSect=MessageTemplate.or(mtSect,mtThisSect);
-		
+
 		mtThisSect=MessageTemplate.MatchPerformative(ACLMessage.REJECT_PROPOSAL);
 		mtSect=MessageTemplate.or(mtSect,mtThisSect);
 
 		return MessageTemplate.and(mtallg,mtSect);
 	}
-	
-	private static MessageTemplate createExtMessageTemplate(Agent a, ACLMessage reservationNotice){
+
+	private static MessageTemplate createExtMessageTemplate(Agent a,ACLMessage reservationNotice){
 		ACLMessage templateMessage=reservationNotice.createReply();
 		templateMessage.setPerformative(ACLMessage.INFORM);
 		templateMessage.setReplyWith(null);
@@ -69,7 +69,6 @@ public class receiveLoadOrders extends ContractNetResponder{
 		mt=MessageTemplate.and(mt,new MessageTemplate(new MatchAgentAction(a,new AnnounceLoadStatus())));
 		return mt;
 	}
-
 
 	public receiveLoadOrders(Agent a){
 		super(a,receiveLoadOrders.createMessageTemplate(a));
@@ -126,7 +125,23 @@ public class receiveLoadOrders extends ContractNetResponder{
 		}
 	}
 
-	protected class handleAcceptProposal extends SequentialBehaviour{
+	protected class handleAcceptProposal extends FSMBehaviour{
+		//FSM events
+		private final Integer HAS_ROOM=0;
+		private final Integer TRY_FREEING= -1;
+
+		//FSM State strings
+		private static final String START_HANDLING="start_handling";
+		private static final String ENSURE_ROOM="ensure_room";
+		private static final String CHECK_FOR_PENDING_SUB_CFP="check_for_pending_sub_cfp";
+		private static final String START_MOVING="start_moving";
+		private static final String WAIT_UNTIL_TARGET_REACHED="wait_until_target_reached";
+		private static final String ENSURE_ROOM2="ensure_room2";
+		private static final String CHECK_FOR_PENDING_SUB_CFP2="check_for_pending_sub_cfp2";
+		private static final String SEND_READY="send_ready";
+//		private static final String SEND_REFUSE = "send_refuse";
+		private static final String SEND_FAILURE="send_failure";
+
 		TransportOrderChain acceptedTOC;
 		TransportOrder acceptedTO;
 
@@ -136,24 +151,35 @@ public class receiveLoadOrders extends ContractNetResponder{
 			super(a);
 			this.setDataStore(ds);
 
-			Behaviour b=new StartHandling(a,ds);
-			addSubBehaviour(b);
-
-			b=new EnsureRoom(a,ds);
-			addSubBehaviour(b);
-
-			b=new checkForPendingSubCFP(a,ds);
-			addSubBehaviour(b);
-
-			b=new StartMoving(a,ds);
-			addSubBehaviour(b);
-
+			//register states
+			registerFirstState(new StartHandling(a,ds),START_HANDLING);
+			registerState(new EnsureRoom(a,ds),ENSURE_ROOM);
+			registerState(new checkForPendingSubCFP(a,ds),CHECK_FOR_PENDING_SUB_CFP);
+			registerState(new StartMoving(a,ds),START_MOVING);
 			positionChecker=new WaitUntilTargetReached(a,ds);
-			b=positionChecker;
-			addSubBehaviour(b);
+			registerState(positionChecker,WAIT_UNTIL_TARGET_REACHED);
+			registerState(new EnsureRoom(a,ds),ENSURE_ROOM2);
+			registerState(new checkForPendingSubCFP(a,ds),CHECK_FOR_PENDING_SUB_CFP2);
+			registerLastState(new SendReady(a,ds),SEND_READY);
+//			registerLastState(new SendRefuse(a,ds),SEND_REFUSE);
+			registerLastState(new SendFailure(a,ds),SEND_FAILURE);
 
-			b=new SendReady(a,ds);
-			addSubBehaviour(b);
+			//register transitions
+			registerDefaultTransition(START_HANDLING,ENSURE_ROOM);
+			registerTransition(ENSURE_ROOM,CHECK_FOR_PENDING_SUB_CFP,TRY_FREEING);
+			registerTransition(ENSURE_ROOM,START_MOVING,HAS_ROOM);
+			registerTransition(ENSURE_ROOM,SEND_FAILURE,ACLMessage.REFUSE);
+
+			registerDefaultTransition(CHECK_FOR_PENDING_SUB_CFP,START_MOVING);
+			registerDefaultTransition(START_MOVING,WAIT_UNTIL_TARGET_REACHED);
+			registerDefaultTransition(WAIT_UNTIL_TARGET_REACHED,ENSURE_ROOM2);
+
+			registerTransition(ENSURE_ROOM2,CHECK_FOR_PENDING_SUB_CFP2,TRY_FREEING);
+			registerTransition(ENSURE_ROOM2,SEND_READY,HAS_ROOM);
+			registerDefaultTransition(CHECK_FOR_PENDING_SUB_CFP2,SEND_READY);
+
+			registerTransition(ENSURE_ROOM2,SEND_FAILURE,ACLMessage.REFUSE);
+
 		}
 
 		class StartHandling extends OneShotBehaviour{
@@ -176,6 +202,8 @@ public class receiveLoadOrders extends ContractNetResponder{
 		}
 
 		class EnsureRoom extends OneShotBehaviour{
+			Integer returnState=HAS_ROOM;
+
 			EnsureRoom(Agent a,DataStore ds){
 				super(a);
 				setDataStore(ds);
@@ -186,7 +214,6 @@ public class receiveLoadOrders extends ContractNetResponder{
 			 */
 			@Override
 			public void action(){
-
 				if( !myCAgent.hasBayMapRoom()){
 					if(myCAgent instanceof TransportOrderOfferer){
 						TransportOrderChain someTOC;
@@ -206,14 +233,21 @@ public class receiveLoadOrders extends ContractNetResponder{
 							}
 						}
 
-						if(someTOC != null){
+						if(someTOC != null){ // TOC is in one of the above states, so all steps taken, just sit back and relax
 							myCAgent.registerForWakeUpCall(this);
 							this.block();
+							returnState=TRY_FREEING;
 						}else{ //keine administrierten TOCs da
 							myCAgent.echoStatus("FAILURE: BayMap full, no administered TOCs available, clearing not possible.",ContainerAgent.LOGGING_NOTICE);
+							returnState=ACLMessage.REFUSE;
 						}
 					}
 				}
+			}
+
+			@Override
+			public int onEnd(){
+				return returnState;
 			}
 		}
 
@@ -234,6 +268,7 @@ public class receiveLoadOrders extends ContractNetResponder{
 					//TOC bereits angenommen, aber noch kein Platz
 					if(myCAgent.countTOCInState(new Announced()) != 0){ // ausschreibungsqueue hat noch inhalt
 						myCAgent.echoStatus("Unterauftrag läuft noch:",acceptedTOC,ContainerAgent.LOGGING_INFORM);
+						myCAgent.registerForWakeUpCall(this);
 						isDone=false;
 						block();
 					}else{ // ausschreibungsqueque ist leer
@@ -287,6 +322,45 @@ public class receiveLoadOrders extends ContractNetResponder{
 				myCAgent.fillMessage(rply,loadStatusAnnouncement);
 				getDataStore().put(receiveLoadOrders.this.REPLY_KEY,rply);
 				myCAgent.addBehaviour(new listenForLoadStatusAnnouncement(myCAgent,rply));
+				myCAgent.doWake();
+			}
+		}
+
+		class SendRefuse extends OneShotBehaviour{
+			SendRefuse(Agent a,DataStore ds){
+				super(a);
+				this.setDataStore(ds);
+			}
+
+			@Override
+			public void action(){
+				ACLMessage accept=(ACLMessage) getDataStore().get(ACCEPT_PROPOSAL_KEY);
+				ACLMessage rply=accept.createReply();
+
+				rply.setPerformative(ACLMessage.REFUSE);
+				getDataStore().put(receiveLoadOrders.this.REPLY_KEY,rply);
+				myCAgent.doWake();
+			}
+		}
+
+		class SendFailure extends OneShotBehaviour{
+			SendFailure(Agent a,DataStore ds){
+				super(a);
+				this.setDataStore(ds);
+			}
+
+			@Override
+			public void action(){
+				ACLMessage accept=(ACLMessage) getDataStore().get(ACCEPT_PROPOSAL_KEY);
+				ACLMessage rply=accept.createReply();
+
+				myCAgent.touchTOCState(acceptedTOC,new FailedIn());
+
+				AnnounceLoadStatus loadStatus=ContainerAgent.getLoadStatusAnnouncement(acceptedTOC,"BayMap voll und kann nicht geräumt werden.");
+				rply.setPerformative(ACLMessage.FAILURE);
+				myCAgent.fillMessage(rply,loadStatus);
+
+				getDataStore().put(receiveLoadOrders.this.REPLY_KEY,rply);
 				myCAgent.doWake();
 			}
 		}

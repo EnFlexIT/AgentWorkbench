@@ -8,9 +8,33 @@ import jade.core.*;
    * Represents an agent that can move in the environment
 * Protege name: phy:AgentObject
 * @author ontology bean generator
-* @version 2010/05/7, 17:07:53
+* @version 2010/05/12, 12:12:40
 */
 public class Phy_AgentObject extends Phy_AbstractObject{ 
+
+   /**
+   * Name of the agent class (subclass of jade.core.agent) this agent is an instance of
+* Protege name: phy:agentClass
+   */
+   private String phy_agentClass;
+   public void setPhy_agentClass(String value) { 
+    this.phy_agentClass=value;
+   }
+   public String getPhy_agentClass() {
+     return this.phy_agentClass;
+   }
+
+   /**
+   * This agent's AID
+* Protege name: phy:aid
+   */
+   private AID phy_aid;
+   public void setPhy_aid(AID value) { 
+    this.phy_aid=value;
+   }
+   public AID getPhy_aid() {
+     return this.phy_aid;
+   }
 
    /**
 * Protege name: phy:currentSpeed
@@ -35,18 +59,6 @@ public class Phy_AgentObject extends Phy_AbstractObject{
    }
 
    /**
-   * This agent's AID
-* Protege name: phy:aid
-   */
-   private AID phy_aid;
-   public void setPhy_aid(AID value) { 
-    this.phy_aid=value;
-   }
-   public AID getPhy_aid() {
-     return this.phy_aid;
-   }
-
-   /**
    * Points for collision checks
 * Protege name: phy:collisionPoints
    */
@@ -67,17 +79,5 @@ public class Phy_AgentObject extends Phy_AbstractObject{
    public Iterator getAllPhy_collisionPoints() {return phy_collisionPoints.iterator(); }
    public List getPhy_collisionPoints() {return phy_collisionPoints; }
    public void setPhy_collisionPoints(List l) {phy_collisionPoints = l; }
-
-   /**
-   * Name of the agent class (subclass of jade.core.agent) this agent is an instance of
-* Protege name: phy:agentClass
-   */
-   private String phy_agentClass;
-   public void setPhy_agentClass(String value) { 
-    this.phy_agentClass=value;
-   }
-   public String getPhy_agentClass() {
-     return this.phy_agentClass;
-   }
 
 }

@@ -26,6 +26,7 @@ import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.proto.AchieveREInitiator;
 
+import java.util.Date;
 import java.util.Vector;
 
 import contmas.agents.ContainerAgent;
@@ -91,11 +92,23 @@ public class getOntologyRepresentation extends AchieveREInitiator{
 		ContainerAgent.enableForCommunication(this.myAgent);
 		ContainerAgent.fillMessage(request,act,this.myAgent);
 
+		request.setReplyByDate(new Date(System.currentTimeMillis() + 1000));
+
 		Vector<ACLMessage> messages=new Vector<ACLMessage>();
 		messages.add(request);
 		return messages;
 	}
 
+	/*
+	@Override
+	// TODO work on this one ...
+	protected void handleAllResponses(Vector responses){
+		if(responses.iterator().hasNext()){
+			((ContainerAgent)this.myAgent).echoStatus("Timeout occured and handled");
+			this.reset();
+		}
+	}
+	*/
 	@Override
 	protected void handleInform(ACLMessage msg){
 		ProvideOntologyRepresentation act=(ProvideOntologyRepresentation) ContainerAgent.extractAction(this.myAgent,msg);

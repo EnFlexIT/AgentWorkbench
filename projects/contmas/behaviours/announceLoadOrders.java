@@ -18,10 +18,7 @@ import jade.content.AgentAction;
 import jade.content.Concept;
 import jade.core.AID;
 import jade.core.Agent;
-import jade.core.behaviours.Behaviour;
-import jade.core.behaviours.DataStore;
-import jade.core.behaviours.OneShotBehaviour;
-import jade.core.behaviours.SequentialBehaviour;
+import jade.core.behaviours.*;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.proto.ContractNetInitiator;
@@ -35,6 +32,8 @@ import java.util.Vector;
 import contmas.agents.ContainerAgent;
 import contmas.agents.ContainerHolderAgent;
 import contmas.agents.StraddleCarrierAgent;
+import contmas.behaviours.receiveLoadOrders.handleAcceptProposal.SendReady;
+import contmas.behaviours.receiveLoadOrders.handleAcceptProposal.StartHandling;
 import contmas.interfaces.MoveableAgent;
 import contmas.ontology.*;
 
@@ -78,7 +77,7 @@ public class announceLoadOrders extends ContractNetInitiator{
 			return null;
 		}else{
 			this.myCAgent.echoStatus("FAILURE: Auftrag wird nicht ausgeschrieben werden, nicht administriert, wahrscheinlich schon failure.",curTOC,ContainerAgent.LOGGING_NOTICE);
-			this.myCAgent.touchTOCState(curTOC,new Failed());
+			this.myCAgent.touchTOCState(curTOC,new FailedOut());
 			return null;
 		}
 		this.myCAgent.echoStatus("Schreibe Auftrag aus.",curTOC,ContainerAgent.LOGGING_INFORM);
@@ -91,7 +90,7 @@ public class announceLoadOrders extends ContractNetInitiator{
 				this.masterBehaviour.restart();
 			}
 			this.myCAgent.echoStatus("FAILURE: Keine Contractors mehr vorhanden. Ausschreibung nicht möglich.",curTOC,ContainerAgent.LOGGING_NOTICE);
-			this.myCAgent.touchTOCState(curTOC,new Failed());
+			this.myCAgent.touchTOCState(curTOC,new FailedOut());
 			return null;
 		}
 		Iterator<?> allContractors=contractorList.iterator();
@@ -137,10 +136,10 @@ public class announceLoadOrders extends ContractNetInitiator{
 		}
 		ACLMessage accept=null;
 		curTOC=(TransportOrderChain) this.currentLoadList.getConsists_of().iterator().next();
-
+		
 		if(bestOffer == null){ //Abnehmer momentan alle beschäftigt
 			this.myCAgent.echoStatus("FAILURE: Nur Ablehnungen empfangen, Abbruch.",ContainerAgent.LOGGING_NOTICE);
-			this.myCAgent.touchTOCState(curTOC,new Failed());
+			this.myCAgent.touchTOCState(curTOC,new FailedOut());
 
 			notifyMaster("REFUSE");
 			
@@ -168,35 +167,52 @@ public class announceLoadOrders extends ContractNetInitiator{
 		}
 	}
 
-	class handleAllResultNotifications extends SequentialBehaviour{
+	class handleAllResultNotifications extends FSMBehaviour{
 		String READY_NOTIFICATION_KEY="__ready-notification" + hashCode();
 		String RESULT_NOTIFICATION_KEY="__result-notification" + hashCode();
+		
+		//FSM events
+		private final Integer CONTRACTOR_READY=1;
+		private final Integer CONTRACTOR_NOT_READY=0;
+
+
+		//FSM State strings
+		private static final String START_MOVING="start_moving";
+		private static final String WAIT_UNTIL_TARGET_REACHED="wait_until_target_reached";
+		private static final String DROPPER="dropper";
+		private static final String SEND_INFORM_FINISHED="send_inform_finished";
+		private static final String DUMMY_END="dummy_end";
+
 		WaitUntilTargetReached positionChecker;
 		
 		handleAllResultNotifications(Agent a,DataStore ds){
 			super(a);
 			this.setDataStore(ds);
-
-			Behaviour b=new StartMoving(myAgent,getDataStore());
-			addSubBehaviour(b);
-
-			positionChecker=new WaitUntilTargetReached(myAgent,getDataStore());
-			b=positionChecker;
-			addSubBehaviour(b);
 			
-			
+			registerFirstState(new StartMoving(a,ds),START_MOVING);
+			positionChecker=new WaitUntilTargetReached(a,ds);
+			registerState(positionChecker,WAIT_UNTIL_TARGET_REACHED);
+			registerState(new Dropper(myAgent,getDataStore()),DROPPER);
 			/*
 			b=new GetInformReady(myAgent,getDataStore());
 			addSubBehaviour(b);
 			*/
-			b=new Dropper(myAgent,getDataStore());
-			addSubBehaviour(b);
+			registerLastState(new SendNotification(myAgent,getDataStore(),RESULT_NOTIFICATION_KEY,READY_NOTIFICATION_KEY),SEND_INFORM_FINISHED);
+			class DummyClass extends OneShotBehaviour{public void action(){/*myCAgent.echoStatus("DUMMYALARM!");*/}}
+			registerLastState(new DummyClass(),DUMMY_END);
+			
+			//register transitions
+			registerTransition(START_MOVING,WAIT_UNTIL_TARGET_REACHED,CONTRACTOR_READY);
+			registerTransition(START_MOVING,DUMMY_END,CONTRACTOR_NOT_READY);
 
-			b=new SendInformFinished(myAgent,getDataStore(),RESULT_NOTIFICATION_KEY,READY_NOTIFICATION_KEY);
-			addSubBehaviour(b);
+			registerDefaultTransition(START_MOVING,WAIT_UNTIL_TARGET_REACHED);
+			registerDefaultTransition(WAIT_UNTIL_TARGET_REACHED,DROPPER);
+			registerDefaultTransition(DROPPER,SEND_INFORM_FINISHED);
+
 		}
 
 		class StartMoving extends OneShotBehaviour{
+			Integer returnEvent=CONTRACTOR_READY;
 			StartMoving(Agent a,DataStore ds){
 				super(a);
 				this.setDataStore(ds);
@@ -210,28 +226,31 @@ public class announceLoadOrders extends ContractNetInitiator{
 					AgentAction content=myCAgent.extractAction(notification);
 					if(content instanceof AnnounceLoadStatus){
 						AnnounceLoadStatus loadStatus=(AnnounceLoadStatus) content;
+						this.getDataStore().put(READY_NOTIFICATION_KEY,notification);
 						
 						if(notification.getPerformative() == ACLMessage.FAILURE){ // && loadStatus.getLoad_status().substring(0, 4).equals("ERROR")) {
 							myCAgent.removeFromContractors(notification.getSender());
-							myCAgent.touchTOCState(curTOC,new Failed());
-							myCAgent.echoStatus("Containerabgabe fehlgeschlagen. " + loadStatus.getLoad_status(),curTOC,ContainerAgent.LOGGING_NOTICE);
+							myCAgent.touchTOCState(curTOC,new FailedOut());
+							myCAgent.echoStatus("Containerabgabe fehlgeschlagen. Msg=" + loadStatus.getLoad_status(),curTOC,ContainerAgent.LOGGING_NOTICE);
 							
 							notifyMaster("FAILURE");
-
-							return;
-						}
-						
-						this.getDataStore().put(READY_NOTIFICATION_KEY,notification);
-
-						if(myCAgent instanceof MoveableAgent){
-							MoveableAgent myMoveableAgent=(MoveableAgent) myCAgent;
-							myCAgent.touchTOCState(curTOC,new Assigned());
-							myCAgent.echoStatus("Container is going to be dropped at " + endDomain.getId() + " " + StraddleCarrierAgent.positionToString(endDomain.getIs_in_position()) + ", current position: " + StraddleCarrierAgent.positionToString(myMoveableAgent.getCurrentPosition()));
-							myMoveableAgent.addAsapMovementTo(endDomain.getIs_in_position());
-							setTargetPosition(endDomain.getIs_in_position());
+							myCAgent.wakeSleepingBehaviours(curTOC);
+							returnEvent=CONTRACTOR_NOT_READY;
+						} else {
+							if(myCAgent instanceof MoveableAgent){
+								MoveableAgent myMoveableAgent=(MoveableAgent) myCAgent;
+								myCAgent.touchTOCState(curTOC,new Assigned());
+								myCAgent.echoStatus("Container is going to be dropped at " + endDomain.getId() + " " + StraddleCarrierAgent.positionToString(endDomain.getIs_in_position()) + ", current position: " + StraddleCarrierAgent.positionToString(myMoveableAgent.getCurrentPosition()));
+								myMoveableAgent.addAsapMovementTo(endDomain.getIs_in_position());
+								setTargetPosition(endDomain.getIs_in_position());
+							}
 						}
 					}
 				}
+			}
+			@Override
+			public int onEnd(){
+				return returnEvent;
 			}
 		}
 
@@ -267,8 +286,8 @@ public class announceLoadOrders extends ContractNetInitiator{
 			}
 		}
 
-		class SendInformFinished extends ReplySender{
-			public SendInformFinished(Agent a,DataStore ds,String replyKey,String msgKey){
+		class SendNotification extends ReplySender{
+			public SendNotification(Agent a,DataStore ds,String replyKey,String msgKey){
 				super(a,replyKey,msgKey,ds);
 			}			
 		}

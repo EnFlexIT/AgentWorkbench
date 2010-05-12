@@ -162,11 +162,11 @@ class handleAcceptProposalOLD extends SimpleBehaviour{
 					this.isDone=false;
 					return;
 				}
-			}else if(curState instanceof Failed){
+			}else if(curState instanceof FailedOut){
 				this.myCAgent.echoStatus("FAILURE: Ausschreibung des Unterauftrags ist bereits fehlgeschlagen.",ContainerAgent.LOGGING_NOTICE);
 			}
 			//Ausschreibung ist fehlgeschlagen, keine administrierten TOCs da, Irgendwas schiefgelaufen bei der Ausschreibung des Unterauftrags
-			this.myCAgent.touchTOCState(acceptedTOC,new Failed());
+			this.myCAgent.touchTOCState(acceptedTOC,new FailedIn());
 
 			AnnounceLoadStatus loadStatus=ContainerAgent.getLoadStatusAnnouncement(acceptedTOC,"BayMap voll und kann nicht geräumt werden.");
 			rply.setPerformative(ACLMessage.FAILURE);

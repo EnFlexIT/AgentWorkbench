@@ -5,10 +5,10 @@ import jade.util.leap.*;
 import jade.core.*;
 
 /**
-* Protege name: AGV
+* Protege name: FailedOut
 * @author ontology bean generator
-* @version 2010/05/12, 12:12:41
+* @version 2010/05/12, 12:12:40
 */
-public class AGV extends PassiveContainerHolder{ 
+public class FailedOut extends TransportOrderChainState{ 
 
 }

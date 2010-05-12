@@ -94,6 +94,9 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		//physikalische Aktionen
 
 		BlockAddress destination=this.getEmptyBlockAddress(); //zieladresse besorgen
+		if(destination==null){
+			return false;
+		}
 		destination.setLocates(targetContainer.getTransports());
 		this.ontologyRepresentation.getContains().addIs_filled_with(destination); //Container mit neuer BlockAdress in eigene BayMap aufnehmens
 		//		echoStatus("Nun wird der Container von mir transportiert");
@@ -426,7 +429,7 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 				allContainers.remove();
 //				echoStatus("Container found and removed.",load_offer);
 				touchTOCState(load_offer,null,true);
-//				echoStatus("Container dropped successfully (Message, BayMap, TOCState).",load_offer);//,ContainerAgent.LOGGING_INFORM);
+//				echoStatus("Container dropped successfully (Message, BayMap, TOCState).",load_offer,ContainerAgent.LOGGING_INFORM);
 				wakeSleepingBehaviours(load_offer);
 				return true;
 			}

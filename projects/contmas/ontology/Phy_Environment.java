@@ -9,33 +9,9 @@ import jade.core.*;
    * A project's environment definition
 * Protege name: phy:Environment
 * @author ontology bean generator
-* @version 2010/05/7, 17:07:53
+* @version 2010/05/12, 12:12:40
 */
 public class Phy_Environment implements Concept {
-
-   /**
-   * The project's name
-* Protege name: phy:projectName
-   */
-   private String phy_projectName;
-   public void setPhy_projectName(String value) { 
-    this.phy_projectName=value;
-   }
-   public String getPhy_projectName() {
-     return this.phy_projectName;
-   }
-
-   /**
-   * Root of the project's environment representation, containing all it's EnvironmentObjects
-* Protege name: phy:rootPlayground
-   */
-   private Phy_PlaygroundObject phy_rootPlayground;
-   public void setPhy_rootPlayground(Phy_PlaygroundObject value) { 
-    this.phy_rootPlayground=value;
-   }
-   public Phy_PlaygroundObject getPhy_rootPlayground() {
-     return this.phy_rootPlayground;
-   }
 
    /**
 * Protege name: phy:scale
@@ -46,18 +22,6 @@ public class Phy_Environment implements Concept {
    }
    public Phy_Scale getPhy_scale() {
      return this.phy_scale;
-   }
-
-   /**
-   * The SVG document object
-* Protege name: phy:svgDoc
-   */
-   private Object phy_svgDoc;
-   public void setPhy_svgDoc(Object value) { 
-    this.phy_svgDoc=value;
-   }
-   public Object getPhy_svgDoc() {
-     return this.phy_svgDoc;
    }
 
    /**
@@ -81,5 +45,41 @@ public class Phy_Environment implements Concept {
    public Iterator getAllPhy_objects() {return phy_objects.iterator(); }
    public List getPhy_objects() {return phy_objects; }
    public void setPhy_objects(List l) {phy_objects = l; }
+
+   /**
+   * Root of the project's environment representation, containing all it's EnvironmentObjects
+* Protege name: phy:rootPlayground
+   */
+   private Phy_PlaygroundObject phy_rootPlayground;
+   public void setPhy_rootPlayground(Phy_PlaygroundObject value) { 
+    this.phy_rootPlayground=value;
+   }
+   public Phy_PlaygroundObject getPhy_rootPlayground() {
+     return this.phy_rootPlayground;
+   }
+
+   /**
+   * The project's name
+* Protege name: phy:projectName
+   */
+   private String phy_projectName;
+   public void setPhy_projectName(String value) { 
+    this.phy_projectName=value;
+   }
+   public String getPhy_projectName() {
+     return this.phy_projectName;
+   }
+
+   /**
+   * The SVG document object
+* Protege name: phy:svgDoc
+   */
+   private Object phy_svgDoc;
+   public void setPhy_svgDoc(Object value) { 
+    this.phy_svgDoc=value;
+   }
+   public Object getPhy_svgDoc() {
+     return this.phy_svgDoc;
+   }
 
 }

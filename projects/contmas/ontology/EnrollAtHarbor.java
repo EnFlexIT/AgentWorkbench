@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: EnrollAtHarbor
 * @author ontology bean generator
-* @version 2010/05/7, 17:07:53
+* @version 2010/05/12, 12:12:40
 */
 public class EnrollAtHarbor implements AgentAction {
 
