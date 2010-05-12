@@ -57,7 +57,9 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 	
 	public static final int DEST_REACHED = 1;
 	public static final int DEST_NOT_REACHED = 0;
-
+	
+	private String svgId;
+	
 	/**
 	 * Constructor 	
 	 * @param a	The acting agent
@@ -65,17 +67,27 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 	 * @param speed The agents speed
 	 */
 	public MoveToPointBehaviour(DisplayableAgent a, Position destPos, Speed speed) {
+		this(a.getAID().getLocalName(), a, destPos, speed);
+	}
+	
+	public MoveToPointBehaviour(String svgId, DisplayableAgent a, Position destPos, Speed speed){
 		super((Agent) a, DisplayConstants.PERIOD);
+		this.svgId = svgId;
 		this.agent = a;
 		this.destPos = destPos;
 		this.waypoints = new Vector<Position>();
 		this.waypoints.add(destPos);
 		this.speed = speed.getSpeed();
-		this.startPos = agent.getPosition();		
+		this.startPos = agent.getPosition();
 	}
 	
 	public MoveToPointBehaviour(DisplayableAgent a, Vector<Position> waypoints, Speed speed){
+		this(a.getAID().getLocalName(), a, waypoints, speed);
+	}
+	
+	public MoveToPointBehaviour(String svgId, DisplayableAgent a, Vector<Position> waypoints, Speed speed){
 		super((Agent) a, DisplayConstants.PERIOD);
+		this.svgId = svgId;
 		this.agent = a;
 		this.waypoints = waypoints;
 		this.destPos = this.waypoints.lastElement();
@@ -99,6 +111,7 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 		
 		try {
 			Movement movement = new Movement();
+			movement.setSvgId(svgId);
 			for(int i=0; i<steps.size(); i++){
 				movement.addSteps(steps.get(i));
 			}

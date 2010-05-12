@@ -8,7 +8,7 @@ import jade.core.*;
    * Represents an agent that can move in the environment
 * Protege name: AgentObject
 * @author ontology bean generator
-* @version 2010/05/9, 17:23:54
+* @version 2010/05/12, 16:14:24
 */
 public class AgentObject extends AbstractObject{ 
 
@@ -25,17 +25,6 @@ public class AgentObject extends AbstractObject{
    }
 
    /**
-* Protege name: currentSpeed
-   */
-   private Speed currentSpeed;
-   public void setCurrentSpeed(Speed value) { 
-    this.currentSpeed=value;
-   }
-   public Speed getCurrentSpeed() {
-     return this.currentSpeed;
-   }
-
-   /**
 * Protege name: maxSpeed
    */
    private Speed maxSpeed;
@@ -44,6 +33,17 @@ public class AgentObject extends AbstractObject{
    }
    public Speed getMaxSpeed() {
      return this.maxSpeed;
+   }
+
+   /**
+* Protege name: currentSpeed
+   */
+   private Speed currentSpeed;
+   public void setCurrentSpeed(Speed value) { 
+    this.currentSpeed=value;
+   }
+   public Speed getCurrentSpeed() {
+     return this.currentSpeed;
    }
 
    /**

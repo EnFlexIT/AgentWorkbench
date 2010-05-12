@@ -8,7 +8,7 @@ import jade.core.*;
    * Represents a 2D envoronment or subenvironment, can contain all kinds of EnvironmentObjects
 * Protege name: PlaygroundObject
 * @author ontology bean generator
-* @version 2010/05/9, 17:23:54
+* @version 2010/05/12, 16:14:24
 */
 public class PlaygroundObject extends AbstractObject{ 
 

@@ -295,7 +295,7 @@ public class DisplayAgent extends Agent {
 					Action act = (Action) getContentManager().extractContent(update);
 					Movement mv = (Movement) act.getAction();
 					if(mv != null){
-						daGUI.addMovement(update.getSender().getLocalName(), mv);
+						daGUI.addMovement(mv.getSvgId(), mv);
 					}
 				} catch (CodecException e) {
 					// TODO Auto-generated catch block

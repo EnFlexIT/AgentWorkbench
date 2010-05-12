@@ -8,9 +8,20 @@ import jade.core.*;
 /**
 * Protege name: Movement
 * @author ontology bean generator
-* @version 2010/05/9, 17:23:54
+* @version 2010/05/12, 16:14:34
 */
 public class Movement implements AgentAction {
+
+   /**
+* Protege name: svgId
+   */
+   private String svgId;
+   public void setSvgId(String value) { 
+    this.svgId=value;
+   }
+   public String getSvgId() {
+     return this.svgId;
+   }
 
    /**
 * Protege name: Steps

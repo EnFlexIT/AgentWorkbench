@@ -14,6 +14,7 @@ import sma.ontology.Speed;
 public interface DisplayableAgent {
 	public Position getPosition();
 	public Size getSize();
+	public AID getAID();
 	public void setPosition(Position position);
 	public Speed getCurrentSpeed();
 	public Speed getMaxSpeed();
