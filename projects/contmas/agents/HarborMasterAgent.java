@@ -38,6 +38,25 @@ public class HarborMasterAgent extends ContainerAgent implements OntRepProvider,
 	private HashMap<AID, Behaviour> ontRepInquieries=new HashMap<AID, Behaviour>();
 	private HarbourSetup harbourSetup=null;
 	public List allContainerHandlers=new ArrayList();
+	private static final long serialVersionUID= -2094037480381093187L;
+
+	public HarborMasterAgent(){
+		super("harbor-managing");
+	}
+
+	@Override
+	protected void setup(){
+		super.setup();
+
+		this.addBehaviour(new setupEnvironment(this));
+		this.addBehaviour(new listenForEnroll(this));
+		this.addBehaviour(new listenForOntRepReq(this));
+		this.addBehaviour(new listenForStartAgentReq(this));
+		this.addBehaviour(new listenForHarbourAreaReq(this));
+		this.addBehaviour(new subscribeToDF(this,"container-handling"));
+		this.addBehaviour(new listenForEnvironmentResetRequest(this));
+	}
+
 
 	private HarbourSetup getHarbourSetup(){
 		String[] args=(String[]) this.getArguments();
@@ -64,34 +83,13 @@ public class HarborMasterAgent extends ContainerAgent implements OntRepProvider,
 		this.activeContainerHolders.put(agent,ontRep);
 	}
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID= -2094037480381093187L;
-
-	public HarborMasterAgent(){
-		super("harbor-managing");
-	}
-
-	@Override
-	protected void setup(){
-		super.setup();
-
-		this.addBehaviour(new setupEnvironment(this));
-		this.addBehaviour(new listenForEnroll(this));
-		this.addBehaviour(new listenForOntRepReq(this));
-		this.addBehaviour(new listenForStartAgentReq(this));
-		this.addBehaviour(new listenForHarbourAreaReq(this));
-		this.addBehaviour(new subscribeToDF(this,"container-handling"));
-		this.addBehaviour(new listenForEnvironmentResetRequest(this));
-	}
 
 	public ContainerHolder getOntologyRepresentation(AID inQuestion){
 
 		ContainerHolder ontRep=this.getCachedOntRep(inQuestion);
 		if(ontRep == null){
 			if( !this.ontRepInquieries.containsKey(inQuestion)){
-				Behaviour b=new getOntologyRepresentation(this,inQuestion);
+				Behaviour b=new requestOntologyRepresentation(this,inQuestion);
 				this.addBehaviour(b);
 				this.ontRepInquieries.put(inQuestion,b);
 			}

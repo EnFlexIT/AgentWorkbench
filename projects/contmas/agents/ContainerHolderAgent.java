@@ -22,46 +22,19 @@ import jade.util.leap.List;
 
 import java.util.Random;
 
-import contmas.behaviours.announceLoadOrders;
-import contmas.behaviours.getHarbourSetup;
-import contmas.behaviours.listenForOntRepReq;
-import contmas.behaviours.subscribeToDF;
-import contmas.interfaces.DFSubscriber;
-import contmas.interfaces.HarbourLayoutRequester;
-import contmas.interfaces.OntRepProvider;
-import contmas.interfaces.TransportOrderOfferer;
+import contmas.behaviours.*;
+import contmas.interfaces.*;
+import contmas.main.NotYetReadyException;
 import contmas.ontology.*;
 
 public class ContainerHolderAgent extends ContainerAgent implements OntRepProvider,DFSubscriber,HarbourLayoutRequester{
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID=2742858685553327016L;
-
 	protected String targetAgentServiceType=null;
-
 	protected Domain targetAbstractDomain=null;
-
 	protected ContainerHolder ontologyRepresentation;
-
 	private Random RandomGenerator=new Random();
-
-	public ContainerHolder getOntologyRepresentation(AID myAID){
-		if(myAID.equals(this.getAID())){
-			return this.ontologyRepresentation;
-		}
-		return null;
-	}
-
-	public ContainerHolder getOntologyRepresentation(){
-		return this.getOntologyRepresentation(this.getAID());
-	}
-
 	public Integer lengthOfProposeQueue=2;
-
 	private Domain harbourMap;
-	
 	private List sleepingBehaviours=new ArrayList();
 
 	public ContainerHolderAgent(String serviceType){
@@ -72,6 +45,33 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		super(serviceType);
 		this.serviceTypeStrings.add("container-handling");
 		this.ontologyRepresentation=ontologyRepresentation;
+	}
+
+	public ContainerHolder getOntologyRepresentation(AID myAID){
+		if(myAID.equals(this.getAID())){
+			return this.ontologyRepresentation;
+		}
+		return null;
+	}
+
+	@Override
+	protected void setup(){
+		super.setup();
+		if(this.ontologyRepresentation.getContains() == null){
+			BayMap LoadBay=new BayMap();
+			LoadBay.setX_dimension(1);
+			LoadBay.setY_dimension(1);
+			LoadBay.setZ_dimension(1);
+			this.ontologyRepresentation.setContains(LoadBay);
+		}
+
+		this.determineContractors();
+		this.addBehaviour(new listenForOntRepReq(this));
+		this.addBehaviour(new requestHarbourSetup(this,this.getHarbourMaster()));
+	}
+
+	public ContainerHolder getOntologyRepresentation(){
+		return this.getOntologyRepresentation(this.getAID());
 	}
 
 	public void updateContractors(List newContractors,Boolean remove){
@@ -85,18 +85,16 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 	public void registerForWakeUpCall(Behaviour b){
 		sleepingBehaviours.add(b);
 	}
-	
-	public Boolean aquireContainer(TransportOrderChain targetContainer){ //eigentlicher Vorgang des Container-Aufnehmens
+
+	public Boolean aquireContainer(TransportOrderChain targetContainer, BlockAddress destination){ //eigentlicher Vorgang des Container-Aufnehmens
+//		this.echoStatus("aquireingContainer",targetContainer);
+
 		//		ontologyRepresentation.getAdministers().addConsists_of(targetContainer); //Container zu Auftragsbuch hinzufügen
 		if(this.touchTOCState(targetContainer,new Administered()) == null){
 			this.echoStatus("ERROR: war noch nicht in States",targetContainer,ContainerAgent.LOGGING_ERROR);
 		}
 		//physikalische Aktionen
 
-		BlockAddress destination=this.getEmptyBlockAddress(); //zieladresse besorgen
-		if(destination==null){
-			return false;
-		}
 		destination.setLocates(targetContainer.getTransports());
 		this.ontologyRepresentation.getContains().addIs_filled_with(destination); //Container mit neuer BlockAdress in eigene BayMap aufnehmens
 		//		echoStatus("Nun wird der Container von mir transportiert");
@@ -110,9 +108,9 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 	public TransportOrder calculateEffort(TransportOrder call){
 		//call.setTakes_until(Math.abs((RandomGenerator.nextLong() + this.getBayUtilization()))+"");
 		;
-		call.setTakes_until((Math.abs(RandomGenerator.nextInt(10)) + this.getBayUtilization() + System.currentTimeMillis())+"");
+		call.setTakes_until((Math.abs(RandomGenerator.nextInt(10)) + this.getBayUtilization() + System.currentTimeMillis()) + "");
 		return call;
-		
+
 	}
 
 	public TransportOrderChainState touchTOCState(TransportOrderChain needleTOC){
@@ -260,7 +258,7 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		return this.ontologyRepresentation.getContains().getIs_filled_with().size();
 	}
 
-	public BlockAddress getEmptyBlockAddress(){
+	public BlockAddress getEmptyBlockAddress(TransportOrderChain subject){
 		BayMap LoadBay=this.getOntologyRepresentation().getContains();
 		Integer tries=0;
 		Integer maxTries=getBaySize();
@@ -349,7 +347,6 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		return false;
 	}
 
-
 	public boolean hasBayMapRoom(){
 		return this.getBaySize() > this.getBayUtilization();
 	}
@@ -389,7 +386,7 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 			return -1;
 		}
 	}
-	
+
 	public Integer matchDomainsTransitive(Domain inQuestion,Domain suspectedIn){
 		//		System.out.println(inQuestion.getClass() + " in " + suspectedIn.getClass() + "?");
 		inQuestion=inflateDomain(inQuestion);
@@ -437,7 +434,7 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		this.echoStatus("ERROR: Container NOT found to remove from BayMap.",load_offer,ContainerAgent.LOGGING_ERROR);
 		return false;
 	}
-	
+
 	public void wakeSleepingBehaviours(TransportOrderChain event){
 		echoStatus("wakeSleepingBehaviours because container was removed",event,LOGGING_INFORM);
 		for(Iterator iterator=sleepingBehaviours.iterator();iterator.hasNext();){
@@ -471,23 +468,6 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		return someoneRemoved;
 	}
 
-	@Override
-	protected void setup(){
-		super.setup();
-		if(this.ontologyRepresentation.getContains() == null){
-			BayMap LoadBay=new BayMap();
-			LoadBay.setX_dimension(1);
-			LoadBay.setY_dimension(1);
-			LoadBay.setZ_dimension(1);
-			this.ontologyRepresentation.setContains(LoadBay);
-		}
-
-		this.determineContractors();
-		this.addBehaviour(new listenForOntRepReq(this));
-		this.addBehaviour(new getHarbourSetup(this,this.getHarbourMaster()));
-
-	}
-
 	/* (non-Javadoc)
 	 * @see contmas.behaviours.DFSubscriber#processSubscriptionUpdate(jade.util.leap.List, java.lang.Boolean)
 	 */
@@ -495,7 +475,7 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 	public void processSubscriptionUpdate(List updatedAgents,Boolean remove){
 		this.updateContractors(updatedAgents,remove);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see contmas.interfaces.HarbourLayoutRequester#processHarbourLayout(contmas.ontology.Domain)
 	 */
@@ -505,7 +485,7 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		harbourMap=interlaceDomains(current_harbour_layout);
 //		echoStatus("found domain: " + findDomain(this.targetAbstractDomain.getId(),harbourMap));
 	}
-	
+
 	public Domain interlaceDomains(Domain input){
 		Domain output=input;
 		Iterator iter=input.getAllHas_subdomains();
@@ -516,7 +496,7 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		}
 		return output;
 	}
-	
+
 	public Domain reduceDomain(Domain input){
 		Domain output=new Domain();
 		output.setId(input.getId());
@@ -527,7 +507,7 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		Domain output=findDomain(input.getId(),harbourMap);
 		return output;
 	}
-	
+
 	//Has_subdomains variant
 	public Domain findDomain(String lookForID,Domain in){
 		if(in.getId().equals(lookForID)){
@@ -545,5 +525,4 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		}
 		return null;
 	}
-	
 }

@@ -24,12 +24,14 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.proto.AchieveREResponder;
 import jade.proto.ContractNetResponder;
+import jade.proto.states.MsgReceiver;
 import jade.util.leap.Iterator;
 import contmas.agents.ContainerAgent;
 import contmas.agents.ContainerHolderAgent;
 import contmas.interfaces.MoveableAgent;
 import contmas.interfaces.TransportOrderOfferer;
 import contmas.main.MatchAgentAction;
+import contmas.main.NotYetReadyException;
 import contmas.ontology.*;
 
 public class receiveLoadOrders extends ContractNetResponder{
@@ -39,7 +41,7 @@ public class receiveLoadOrders extends ContractNetResponder{
 	private static final long serialVersionUID= -3409830399764472591L;
 	private final ContainerHolderAgent myCAgent=(ContainerHolderAgent) this.myAgent;
 
-//	private final String ANNOUNCEMENT_KEY="__announcement"+hashCode();
+	private final String ANNOUNCEMENT_KEY="__announcement";
 
 	private static MessageTemplate createMessageTemplate(Agent a){
 		MessageTemplate mtallg=AchieveREResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
@@ -60,7 +62,19 @@ public class receiveLoadOrders extends ContractNetResponder{
 		return MessageTemplate.and(mtallg,mtSect);
 	}
 
-	private static MessageTemplate createExtMessageTemplate(Agent a,ACLMessage reservationNotice){
+	String conversationID;
+
+//	private MessageTemplate createMessageTemplateFinished(Agent a){
+//		
+//		MessageTemplate mt=new MessageTemplate(new MatchAgentAction(a,new AnnounceLoadStatus()));
+//		/*
+//		MessageTemplate mt=MessageTemplate.MatchConversationId(conversationID);
+//		mt=MessageTemplate.and(mt,new MessageTemplate(new MatchAgentAction(a,new AnnounceLoadStatus())));
+//		*/
+//		return mt;
+//	}
+
+	private MessageTemplate createMessageTemplateFinished(Agent a,ACLMessage reservationNotice){
 		ACLMessage templateMessage=reservationNotice.createReply();
 		templateMessage.setPerformative(ACLMessage.INFORM);
 		templateMessage.setReplyWith(null);
@@ -80,6 +94,8 @@ public class receiveLoadOrders extends ContractNetResponder{
 	@Override
 	protected ACLMessage handleCfp(ACLMessage cfp){
 		ACLMessage reply=cfp.createReply();
+
+		conversationID=cfp.getConversationId();
 
 		CallForProposalsOnLoadStage call=(CallForProposalsOnLoadStage) this.myCAgent.extractAction(cfp);
 		LoadList liste=call.getRequired_turnover_capacity();
@@ -126,6 +142,9 @@ public class receiveLoadOrders extends ContractNetResponder{
 	}
 
 	protected class handleAcceptProposal extends FSMBehaviour{
+		//DS Key strings
+		private static final String FINISH_ANNOUNCEMENT_KEY="__finish_announcement";
+
 		//FSM events
 		private final Integer HAS_ROOM=0;
 		private final Integer TRY_FREEING= -1;
@@ -141,11 +160,18 @@ public class receiveLoadOrders extends ContractNetResponder{
 		private static final String SEND_READY="send_ready";
 //		private static final String SEND_REFUSE = "send_refuse";
 		private static final String SEND_FAILURE="send_failure";
+		private static final String RECEIVE_FINISHED="receive_finished";
+		private static final String GET_FREE_BLOCK_ADDRESS="get_free_block_address";
+
+		private static final String DO_AQUIRE="do_aquire";
 
 		TransportOrderChain acceptedTOC;
 		TransportOrder acceptedTO;
+		BlockAddress destinationAddress;
 
 		WaitUntilTargetReached positionChecker;
+
+		ACLMessage reservationNotice;
 
 		handleAcceptProposal(Agent a,DataStore ds){
 			super(a);
@@ -160,9 +186,12 @@ public class receiveLoadOrders extends ContractNetResponder{
 			registerState(positionChecker,WAIT_UNTIL_TARGET_REACHED);
 			registerState(new EnsureRoom(a,ds),ENSURE_ROOM2);
 			registerState(new checkForPendingSubCFP(a,ds),CHECK_FOR_PENDING_SUB_CFP2);
-			registerLastState(new SendReady(a,ds),SEND_READY);
+			registerState(new SendReady(a,ds),SEND_READY);
 //			registerLastState(new SendRefuse(a,ds),SEND_REFUSE);
 			registerLastState(new SendFailure(a,ds),SEND_FAILURE);
+			registerState(new ReceiveFinishedAnnouncement(a,ds),RECEIVE_FINISHED);
+			registerState(new GetFreeBlockAddress(a,ds),GET_FREE_BLOCK_ADDRESS);
+			registerLastState(new DoAquire(a,ds),DO_AQUIRE);
 
 			//register transitions
 			registerDefaultTransition(START_HANDLING,ENSURE_ROOM);
@@ -177,6 +206,9 @@ public class receiveLoadOrders extends ContractNetResponder{
 			registerTransition(ENSURE_ROOM2,CHECK_FOR_PENDING_SUB_CFP2,TRY_FREEING);
 			registerTransition(ENSURE_ROOM2,SEND_READY,HAS_ROOM);
 			registerDefaultTransition(CHECK_FOR_PENDING_SUB_CFP2,SEND_READY);
+			registerDefaultTransition(SEND_READY,RECEIVE_FINISHED);
+			registerDefaultTransition(RECEIVE_FINISHED,GET_FREE_BLOCK_ADDRESS);
+			registerDefaultTransition(GET_FREE_BLOCK_ADDRESS,DO_AQUIRE);
 
 			registerTransition(ENSURE_ROOM2,SEND_FAILURE,ACLMessage.REFUSE);
 
@@ -198,6 +230,7 @@ public class receiveLoadOrders extends ContractNetResponder{
 				Concept content=myCAgent.extractAction(accept);
 				acceptedTOC=((AcceptLoadOffer) content).getCorresponds_to();
 				acceptedTO=myCAgent.findMatchingOrder(acceptedTOC); //get transport order TO me
+				destinationAddress=null;
 			}
 		}
 
@@ -291,6 +324,7 @@ public class receiveLoadOrders extends ContractNetResponder{
 			}
 
 			public void action(){
+
 				if(myCAgent instanceof MoveableAgent){
 					Domain startsAt=myCAgent.inflateDomain(acceptedTO.getStarts_at().getAbstract_designation());
 					MoveableAgent myMovableAgent=((MoveableAgent) myAgent);
@@ -320,9 +354,136 @@ public class receiveLoadOrders extends ContractNetResponder{
 
 				rply.setPerformative(ACLMessage.INFORM);
 				myCAgent.fillMessage(rply,loadStatusAnnouncement);
+				reservationNotice=rply;
 				getDataStore().put(receiveLoadOrders.this.REPLY_KEY,rply);
-				myCAgent.addBehaviour(new listenForLoadStatusAnnouncement(myCAgent,rply));
+				myCAgent.send(rply);
 				myCAgent.doWake();
+
+			}
+
+		}
+
+		public class ReceiveFinishedAnnouncement extends SimpleBehaviour{
+			ContainerHolderAgent myAgent;
+			private Boolean isDone;
+			private static final long serialVersionUID= -4440040520781720185L;
+
+			public ReceiveFinishedAnnouncement(Agent a,DataStore ds){
+				super(a);
+				myAgent=(ContainerHolderAgent) a;
+				setDataStore(ds);
+			}
+
+			@Override
+			public void action(){
+				isDone=false;
+				MessageTemplate mt=createMessageTemplateFinished(myAgent,reservationNotice);
+//				myCAgent.echoStatus("ReceiveFinishedAnnouncement");
+				ACLMessage msg=myCAgent.receive(mt);
+				if(msg != null){
+//					myCAgent.echoStatus("something received");
+
+					if(this.myAgent.extractAction(msg) instanceof AnnounceLoadStatus){
+//						myCAgent.echoStatus("AnnounceLoadStatus extracted");
+
+						AnnounceLoadStatus act=(AnnounceLoadStatus) this.myAgent.extractAction(msg);
+
+						if(act.getLoad_status().equals("FINISHED")){
+//							myAgent.echoStatus("fine");
+							getDataStore().put(FINISH_ANNOUNCEMENT_KEY,msg);
+							isDone=true;
+						}
+					}
+				}else{
+//					myAgent.echoStatus("ReceiveFinishedAnnouncement: blocking");
+
+					block();
+				}
+			}
+
+			@Override
+			public boolean done(){
+				return isDone;
+			}
+		}
+
+		class GetFreeBlockAddress extends SimpleBehaviour{
+			ContainerHolderAgent myAgent;
+
+			GetFreeBlockAddress(Agent a,DataStore ds){
+				super(a);
+				myAgent=(ContainerHolderAgent) a;
+				setDataStore(ds);
+			}
+
+			private Boolean isDone;
+
+			/* (non-Javadoc)
+			 * @see jade.core.behaviours.Behaviour#action()
+			 */
+			@Override
+			public void action(){
+				isDone=true;
+				if(destinationAddress == null){
+					destinationAddress=myAgent.getEmptyBlockAddress(acceptedTOC); //zieladresse besorgen
+					isDone=false;
+				}else if(destinationAddress.getX_dimension() == -1 || destinationAddress.getY_dimension() == -1 || destinationAddress.getZ_dimension() == -1){
+					isDone=false;
+					block(10);
+				}
+			}
+
+			/* (non-Javadoc)
+			 * @see jade.core.behaviours.Behaviour#done()
+			 */
+			@Override
+			public boolean done(){
+				return isDone;
+			}
+		}
+
+		class DoAquire extends SimpleBehaviour{
+			ContainerHolderAgent myAgent;
+
+			DoAquire(Agent a,DataStore ds){
+				super(a);
+				myAgent=(ContainerHolderAgent) a;
+				setDataStore(ds);
+			}
+
+			private Boolean isDone;
+
+			/* (non-Javadoc)
+			 * @see jade.core.behaviours.Behaviour#action()
+			 */
+			@Override
+			public void action(){
+//				myAgent.echoStatus("doAquire");
+				isDone=true;
+
+				ACLMessage request=(ACLMessage) getDataStore().get(FINISH_ANNOUNCEMENT_KEY);
+				AnnounceLoadStatus act=(AnnounceLoadStatus) this.myAgent.extractAction(request);
+				if(act.getLoad_status().equals("FINISHED")){
+					if(act.getCorresponds_to() == null){
+//						myAgent.echoStatus("FINISHED recieved, but getCorresponds_to== null");
+
+					}
+					if( !myAgent.aquireContainer(act.getCorresponds_to(),destinationAddress)){
+						myAgent.echoStatus("Something went wrong! Couldn't aquire!");
+					}
+					myAgent.doWake();
+
+				}
+				myAgent.echoStatus("LoadStatus received: " + act.getLoad_status());
+				getDataStore().remove(receiveLoadOrders.this.REPLY_KEY);
+			}
+
+			/* (non-Javadoc)
+			 * @see jade.core.behaviours.Behaviour#done()
+			 */
+			@Override
+			public boolean done(){
+				return isDone;
 			}
 		}
 

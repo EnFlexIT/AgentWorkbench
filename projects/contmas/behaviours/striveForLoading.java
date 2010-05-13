@@ -60,7 +60,7 @@ public class striveForLoading extends ParallelBehaviour implements DFSubscriber,
 			ContainerAgent.addToList(this.allSourceAgents,updatedAgents);
 			while(avIt.hasNext()){
 				AID curAvAg=(AID) avIt.next();
-				this.addSubBehaviour(new getOntologyRepresentation(this.myAgent,curAvAg,((ContainerAgent) this.myAgent).getHarbourMaster()));
+				this.addSubBehaviour(new requestOntologyRepresentation(this.myAgent,curAvAg,((ContainerAgent) this.myAgent).getHarbourMaster()));
 			}
 		}
 	}
@@ -75,7 +75,7 @@ public class striveForLoading extends ParallelBehaviour implements DFSubscriber,
 			Container curCont=((BlockAddress) allContainer.next()).getLocates();
 			((ContainerAgent) this.myAgent).echoStatus("Ship has Container available: " + curCont.getBic_code(),ContainerAgent.LOGGING_NOTICE);
 		}
-		this.addSubBehaviour(new getRandomLoadSequence(this.myAgent,recieved.getContains(),agent));
+		this.addSubBehaviour(new requestRandomLoadSequence(this.myAgent,recieved.getContains(),agent));
 	}
 
 	/* (non-Javadoc)

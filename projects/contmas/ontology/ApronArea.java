@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: ApronArea
 * @author ontology bean generator
-* @version 2010/05/12, 12:12:40
+* @version 2010/05/13, 15:13:18
 */
 public class ApronArea extends Domain{ 
 

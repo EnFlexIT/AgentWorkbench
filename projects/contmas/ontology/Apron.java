@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: Apron
 * @author ontology bean generator
-* @version 2010/05/12, 12:12:41
+* @version 2010/05/13, 15:13:19
 */
 public class Apron extends StaticContainerHolder{ 
 

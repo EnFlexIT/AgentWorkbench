@@ -35,7 +35,7 @@ import contmas.ontology.ContainerHolder;
 import contmas.ontology.ProvideOntologyRepresentation;
 import contmas.ontology.RequestOntologyRepresentation;
 
-public class getOntologyRepresentation extends AchieveREInitiator{
+public class requestOntologyRepresentation extends AchieveREInitiator{
 	/**
 	 * 
 	 */
@@ -57,8 +57,8 @@ public class getOntologyRepresentation extends AchieveREInitiator{
 	 * @param myAgent
 	 * @param inQuestion
 	 */
-	public getOntologyRepresentation(Agent myAgent,AID inQuestion){
-		super(myAgent,getOntologyRepresentation.getRequestMessage());
+	public requestOntologyRepresentation(Agent myAgent,AID inQuestion){
+		super(myAgent,requestOntologyRepresentation.getRequestMessage());
 		this.agentInQuestion=inQuestion;
 		this.requestFrom=this.agentInQuestion;
 	}
@@ -69,7 +69,7 @@ public class getOntologyRepresentation extends AchieveREInitiator{
 	 * @param relayServer TODO
 	 * @param newParam TODO
 	 */
-	public getOntologyRepresentation(Agent myAgent,AID inQuestion,AID requestFrom){
+	public requestOntologyRepresentation(Agent myAgent,AID inQuestion,AID requestFrom){
 		this(myAgent,inQuestion);
 		this.requestFrom=requestFrom;
 	}

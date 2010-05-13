@@ -22,15 +22,17 @@ import jade.proto.states.MsgReceiver;
 import contmas.agents.ContainerAgent;
 import contmas.agents.ContainerHolderAgent;
 import contmas.main.MatchAgentAction;
+import contmas.main.NotYetReadyException;
 import contmas.ontology.AnnounceLoadStatus;
+import contmas.ontology.BlockAddress;
 
 public class listenForLoadStatusAnnouncement extends MsgReceiver{
 	private static final long serialVersionUID= -4440040520781720185L;
 	private ContainerHolderAgent myAgent;
-	
+
 //	private final String ANNOUNCEMENT_KEY="__announcement"+hashCode();
 
-	private static MessageTemplate createMessageTemplate(Agent a, ACLMessage reservationNotice){
+	private static MessageTemplate createMessageTemplate(Agent a,ACLMessage reservationNotice){
 		ACLMessage templateMessage=reservationNotice.createReply();
 		templateMessage.setPerformative(ACLMessage.INFORM);
 		templateMessage.setReplyWith(null);
@@ -40,8 +42,8 @@ public class listenForLoadStatusAnnouncement extends MsgReceiver{
 		return mt;
 	}
 
-	public listenForLoadStatusAnnouncement(Agent a, ACLMessage reservationNotice){
-		super(a,listenForLoadStatusAnnouncement.createMessageTemplate(a,reservationNotice),MsgReceiver.INFINITE, new DataStore(),"__announcement"+reservationNotice.getConversationId());
+	public listenForLoadStatusAnnouncement(Agent a,ACLMessage reservationNotice){
+		super(a,listenForLoadStatusAnnouncement.createMessageTemplate(a,reservationNotice),MsgReceiver.INFINITE,new DataStore(),"__announcement" + reservationNotice.getConversationId());
 		myAgent=(ContainerHolderAgent) a;
 	}
 
@@ -49,15 +51,17 @@ public class listenForLoadStatusAnnouncement extends MsgReceiver{
 	public void handleMessage(ACLMessage request){
 		AnnounceLoadStatus act=(AnnounceLoadStatus) this.myAgent.extractAction(request);
 		if(act.getLoad_status().equals("FINISHED")){
-			if(act.getCorresponds_to()==null){
+			if(act.getCorresponds_to() == null){
 				myAgent.echoStatus("aha");
 
 			}
-			if(!myAgent.aquireContainer(act.getCorresponds_to())){
+
+			if( !myAgent.aquireContainer(act.getCorresponds_to(),new BlockAddress())){
 				myAgent.echoStatus("Something went wrong! Couldn't aquire!");
 
 			}
+
 		}
-		myAgent.echoStatus("LoadStatus received: "+act.getLoad_status());
+		myAgent.echoStatus("LoadStatus received: " + act.getLoad_status());
 	}
 }

@@ -51,10 +51,6 @@ import contmas.ontology.TransportOrderChain;
  *
  */
 public class ContainerAgent extends Agent{
-
-	/**
-	 * 
-	 */
 	public static final Integer LOGGING_ALL=5;
 	public static final Integer LOGGING_INFORM=4;
 	public static final Integer LOGGING_NOTICE=3;
@@ -65,12 +61,36 @@ public class ContainerAgent extends Agent{
 	private static final Integer GUI_LOGGING=ContainerAgent.LOGGING_NOTICE;
 	private static final Integer LOGGING_DEFAULT=ContainerAgent.LOGGING_DEBUG;
 	private static final long serialVersionUID=202350816610492193L;
+	private static final Ontology ontology=ContainerTerminalOntology.getInstance();
 	private static final Codec codec=new XMLCodec();
 //	private static final Codec codec=new LEAPCodec();
 //	private static final Codec codec=new SLCodec();
+//	protected String ownServiceType;
+	private AID harbourMaster=null;
+	private AID randomGenerator=null;
+	protected java.util.ArrayList<String> serviceTypeStrings=new java.util.ArrayList<String>();
 
-	private static final Ontology ontology=ContainerTerminalOntology.getInstance();
+	public ContainerAgent(){
+		this.serviceTypeStrings.add("involved-in-container-port");
+	}
 
+	public ContainerAgent(String serviceType){
+		this();
+		this.serviceTypeStrings.add(serviceType);
+	}
+
+	@Override
+	protected void setup(){
+		ContainerAgent.enableForCommunication(this);
+
+		//register self at DF
+		this.register();
+
+		//look for RandomGeneratorAgent
+		this.randomGenerator=this.getFirstAIDFromDF("random-generation");
+		this.harbourMaster=this.getFirstAIDFromDF("harbor-managing");
+	}
+	
 	public static List addToList(List base,List addition){
 		Iterator it=addition.iterator();
 		while(it.hasNext()){
@@ -215,8 +235,7 @@ public class ContainerAgent extends Agent{
 		}
 	}
 
-//	protected String ownServiceType;
-	private AID harbourMaster=null;
+
 
 	public AID getHarbourMaster(){
 		if(this.harbourMaster == null){
@@ -231,38 +250,9 @@ public class ContainerAgent extends Agent{
 		}
 		return this.randomGenerator;
 	}
-
-	private AID randomGenerator=null;
-	protected java.util.ArrayList<String> serviceTypeStrings=new java.util.ArrayList<String>();
-
-	/**
-	 * 
-	 */
-	public ContainerAgent(){
-		this.serviceTypeStrings.add("involved-in-container-port");
-	}
-
-	public ContainerAgent(String serviceType){
-		this();
-		this.serviceTypeStrings.add(serviceType);
-	}
-
 	@Deprecated
 	public void echoStatus(String statusMessage){
 		this.echoStatus(statusMessage,ContainerAgent.LOGGING_DEFAULT);
-	}
-
-	@Override
-	protected void setup(){
-		ContainerAgent.enableForCommunication(this);
-
-		//register self at DF
-		this.register();
-
-		//look for RandomGeneratorAgent
-		this.randomGenerator=this.getFirstAIDFromDF("random-generation");
-		this.harbourMaster=this.getFirstAIDFromDF("harbor-managing");
-
 	}
 
 	public void echoStatus(String statusMessage,Integer severity){
@@ -337,6 +327,14 @@ public class ContainerAgent extends Agent{
 		this.register(allSDs);
 	}
 
+	public AgentAction extractAction(ACLMessage msg){
+		return ContainerAgent.extractAction(this,msg);
+	}
+
+	public void fillMessage(ACLMessage msg,AgentAction agact){
+		ContainerAgent.fillMessage(msg,agact,this);
+	}
+	
 	@Override
 	protected void takeDown(){
 		try{
@@ -345,13 +343,5 @@ public class ContainerAgent extends Agent{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-
-	public AgentAction extractAction(ACLMessage msg){
-		return ContainerAgent.extractAction(this,msg);
-	}
-
-	public void fillMessage(ACLMessage msg,AgentAction agact){
-		ContainerAgent.fillMessage(msg,agact,this);
 	}
 }

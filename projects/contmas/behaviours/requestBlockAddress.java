@@ -20,7 +20,6 @@
  */
 package contmas.behaviours;
 
-import jade.content.Concept;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.domain.FIPANames;
@@ -30,21 +29,24 @@ import jade.proto.AchieveREInitiator;
 import java.util.Vector;
 
 import contmas.agents.ContainerAgent;
-import contmas.interfaces.OntRepProvider;
-import contmas.ontology.ProvideBayMap;
-import contmas.ontology.RequestRandomBayMap;
+import contmas.agents.ContainerHolderAgent;
+import contmas.interfaces.LoadingReceiver;
+import contmas.ontology.*;
 
 /**
  * @author Hanno - Felix Wagner
  *
  */
-public class getRandomBayMap extends AchieveREInitiator{
+public class requestBlockAddress extends AchieveREInitiator{
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID= -1832052412333457494L;
-	private AID randomGenerator=null;
-	private OntRepProvider parent=null;
+	ContainerHolderAgent myAgent=null;
+	private AID optimizer=null;
+	private BayMap rawBayMap=null;
+	private TransportOrderChain subject=null;
+	private BlockAddress resultMemory;
 
 	private static ACLMessage getRequestMessage(Agent a){
 		ACLMessage msg=new ACLMessage(ACLMessage.REQUEST);
@@ -52,27 +54,22 @@ public class getRandomBayMap extends AchieveREInitiator{
 		return msg;
 	}
 
-	public getRandomBayMap(Agent a){
-		super(a,getRandomBayMap.getRequestMessage(a));
-		this.randomGenerator=((ContainerAgent) this.myAgent).getFirstAIDFromDF("random-generation");
-	}
-
-	private void setParent(){
-		if(super.parent != null){ //as subBehaviour of listenforStartAgent
-			this.parent=((OntRepProvider) super.parent);
-		}else{ //standalone, i.e. directly run by an agent
-			this.parent=((OntRepProvider) this.myAgent);
-		}
+	public requestBlockAddress(ContainerHolderAgent a,BayMap rawBayMap,TransportOrderChain subject, BlockAddress resultMemory){
+		super(a,requestBlockAddress.getRequestMessage(a));
+		myAgent=a;
+		this.optimizer=this.myAgent.getFirstAIDFromDF("optimizing-bay-maps");
+		this.rawBayMap=rawBayMap;
+		this.subject=subject;
+		this.resultMemory=resultMemory;
 	}
 
 	@Override
 	protected Vector<?> prepareRequests(ACLMessage request){
-		this.setParent();
-		request.addReceiver(this.randomGenerator);
-		RequestRandomBayMap act=new RequestRandomBayMap();
-		act.setX_dimension(this.parent.getOntologyRepresentation().getContains().getX_dimension());
-		act.setY_dimension(this.parent.getOntologyRepresentation().getContains().getY_dimension());
-		act.setZ_dimension(this.parent.getOntologyRepresentation().getContains().getZ_dimension());
+		request.addReceiver(this.optimizer);
+		RequestBlockAddress act=new RequestBlockAddress();
+		act.setProvides(this.rawBayMap);
+		act.setSubjected_toc(subject);
+
 		((ContainerAgent) this.myAgent).fillMessage(request,act);
 		Vector<ACLMessage> messages=new Vector<ACLMessage>();
 		messages.add(request);
@@ -81,7 +78,12 @@ public class getRandomBayMap extends AchieveREInitiator{
 
 	@Override
 	protected void handleInform(ACLMessage msg){
-		Concept content=((ContainerAgent) this.myAgent).extractAction(msg);
-		this.parent.getOntologyRepresentation().setContains(((ProvideBayMap) content).getProvides());
+		myAgent.echoStatus("requestBlockAddress - handleInform");
+		ProvideBlockAddress act=(ProvideBlockAddress) this.myAgent.extractAction(msg);
+		BlockAddress suitingAddress=act.getSuiting_address();
+		resultMemory.setLocates(suitingAddress.getLocates());
+		resultMemory.setX_dimension(suitingAddress.getX_dimension());
+		resultMemory.setY_dimension(suitingAddress.getY_dimension());
+		resultMemory.setZ_dimension(suitingAddress.getZ_dimension());
 	}
 }

@@ -97,7 +97,7 @@ public class AgentGUIVisualisationProxyAgent extends MovingAgent implements Logg
 		Behaviour b;
 
 		if(self != null){
-			b=new MoveToPointBehaviour(this,destPos,this.getCurrentSpeed());
+			b=new MoveToPointBehaviour(from.getLocalName()+"Shadow",this,destPos,this.getCurrentSpeed());
 //		b=new MoveToPointBehaviour(this,waypoints,speed);
 			addBehaviour(b);
 		}

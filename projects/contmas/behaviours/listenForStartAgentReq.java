@@ -63,12 +63,12 @@ public class listenForStartAgentReq extends SequentialBehaviour implements OntRe
 	public void nextStep(){
 		Behaviour b;
 		if(this.randomize){
-			b=new getRandomBayMap(this.myAgent);//GetRandomBayMap
+			b=new requestRandomBayMap(this.myAgent);//GetRandomBayMap
 			this.addSubBehaviour(b);
 			b.setDataStore(this.getDataStore());
 		}
 		if(this.populate){
-			b=new getPopulatedBayMap(this.myAgent);//PopulateBayMap
+			b=new requestPopulatedBayMap(this.myAgent);//PopulateBayMap
 			this.addSubBehaviour(b);
 			b.setDataStore(this.getDataStore());
 		}

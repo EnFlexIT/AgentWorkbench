@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:protege="http://protege.stanford.edu/plugins/owl/protege#"
+    xmlns="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/contmas_ontology_import_filter_demo_individuals.owl#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+  xml:base="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/contmas_ontology_import_filter_demo_individuals.owl">
+  <owl:Ontology rdf:about="">
+    <owl:imports rdf:resource="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/contmas_ontology.owl"/>
+  </owl:Ontology>
+  <BlockAddress rdf:ID="ExampleAddressOne">
+    <locates>
+      <TwentyFootContainer rdf:ID="ExampleTwentyFootContainerOne">
+        <bic_code rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >ABC12345</bic_code>
+      </TwentyFootContainer>
+    </locates>
+    <z_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+    >0</z_dimension>
+    <y_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+    >0</y_dimension>
+    <x_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+    >0</x_dimension>
+  </BlockAddress>
+  <TOCHasState rdf:ID="ExampleAdministrationEntryOne">
+    <subjected_toc>
+      <TransportOrderChain rdf:ID="ExampleTransportOrderChain">
+        <transports>
+          <TwentyFootContainer rdf:ID="ExampleContainerTwo">
+            <bic_code rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+            >DEF123456</bic_code>
+          </TwentyFootContainer>
+        </transports>
+        <terminates_at rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >PortChalmers</terminates_at>
+      </TransportOrderChain>
+    </subjected_toc>
+    <state>
+      <Administered rdf:ID="Administered_1"/>
+    </state>
+  </TOCHasState>
+  <BayMap rdf:ID="ExampleBayMap">
+    <z_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+    >2</z_dimension>
+    <x_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+    >2</x_dimension>
+    <y_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+    >5</y_dimension>
+    <is_filled_with rdf:resource="#ExampleAddressOne"/>
+    <is_filled_with>
+      <BlockAddress rdf:ID="ExampleAddressTwo">
+        <locates rdf:resource="#ExampleContainerTwo"/>
+        <z_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >0</z_dimension>
+        <y_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >4</y_dimension>
+        <x_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >2</x_dimension>
+      </BlockAddress>
+    </is_filled_with>
+  </BayMap>
+  <TOCHasState rdf:ID="ExampleAdministrationEntryTwo">
+    <subjected_toc>
+      <TransportOrderChain rdf:ID="ExampleTransportOrderChainTwo">
+        <transports rdf:resource="#ExampleContainerTwo"/>
+        <terminates_at rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >PortChalmers</terminates_at>
+      </TransportOrderChain>
+    </subjected_toc>
+    <state>
+      <Administered rdf:ID="Administered_2"/>
+    </state>
+  </TOCHasState>
+  <Ship rdf:ID="ExampleShip">
+    <container_states rdf:resource="#ExampleAdministrationEntryOne"/>
+    <container_states rdf:resource="#ExampleAdministrationEntryTwo"/>
+    <contains rdf:resource="#ExampleBayMap"/>
+  </Ship>
+</rdf:RDF>
+
+<!-- Created with Protege (with OWL Plugin 3.3.1, Build 430)  http://protege.stanford.edu -->

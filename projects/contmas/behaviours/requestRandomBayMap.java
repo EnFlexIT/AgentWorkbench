@@ -1,5 +1,5 @@
 /**
- * @author Hanno - Felix Wagner, 25.03.2010
+ * @author Hanno - Felix Wagner, 24.03.2010
  * Copyright 2010 Hanno - Felix Wagner
  * 
  * This file is part of ContMAS.
@@ -21,25 +21,30 @@
 package contmas.behaviours;
 
 import jade.content.Concept;
+import jade.core.AID;
 import jade.core.Agent;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.proto.AchieveREInitiator;
-import jade.util.leap.Iterator;
 
 import java.util.Vector;
 
 import contmas.agents.ContainerAgent;
-import contmas.agents.ContainerHolderAgent;
 import contmas.interfaces.OntRepProvider;
-import contmas.ontology.*;
+import contmas.ontology.ProvideBayMap;
+import contmas.ontology.RequestRandomBayMap;
 
-public class getPopulatedBayMap extends AchieveREInitiator{
-	private OntRepProvider parent=null;
+/**
+ * @author Hanno - Felix Wagner
+ *
+ */
+public class requestRandomBayMap extends AchieveREInitiator{
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID= -6587230887404034233L;
+	private static final long serialVersionUID= -1832052412333457494L;
+	private AID randomGenerator=null;
+	private OntRepProvider parent=null;
 
 	private static ACLMessage getRequestMessage(Agent a){
 		ACLMessage msg=new ACLMessage(ACLMessage.REQUEST);
@@ -47,36 +52,9 @@ public class getPopulatedBayMap extends AchieveREInitiator{
 		return msg;
 	}
 
-	public getPopulatedBayMap(Agent a){
-		super(a,getPopulatedBayMap.getRequestMessage(a));
-	}
-
-	@Override
-	protected Vector<?> prepareRequests(ACLMessage request){
-		this.setParent();
-		request.addReceiver(((ContainerAgent) this.myAgent).getRandomGenerator());
-		//BayMap aus Agent auslesen
-		RequestPopulatedBayMap act=new RequestPopulatedBayMap();
-		act.setPopulate_on(this.parent.getOntologyRepresentation().getContains());
-		((ContainerAgent) this.myAgent).fillMessage(request,act);
-		Vector<ACLMessage> messages=new Vector<ACLMessage>();
-		messages.add(request);
-		return messages;
-	}
-
-	@Override
-	protected void handleInform(ACLMessage msg){
-		Concept content;
-		ContainerHolder ontRep=this.parent.getOntologyRepresentation();
-		content=((ContainerAgent) this.myAgent).extractAction(msg);
-		ontRep.setContains(((ProvidePopulatedBayMap) content).getProvides());
-		Iterator allConts=ontRep.getContains().getAllIs_filled_with();
-		while(allConts.hasNext()){
-			BlockAddress curBaymap=(BlockAddress) allConts.next();
-			TransportOrderChain curTOC=new TransportOrderChain();
-			curTOC.setTransports(curBaymap.getLocates());
-			ContainerHolderAgent.touchTOCState(curTOC,new Administered(),true,ontRep);
-		}
+	public requestRandomBayMap(Agent a){
+		super(a,requestRandomBayMap.getRequestMessage(a));
+		this.randomGenerator=((ContainerAgent) this.myAgent).getFirstAIDFromDF("random-generation");
 	}
 
 	private void setParent(){
@@ -85,5 +63,25 @@ public class getPopulatedBayMap extends AchieveREInitiator{
 		}else{ //standalone, i.e. directly run by an agent
 			this.parent=((OntRepProvider) this.myAgent);
 		}
+	}
+
+	@Override
+	protected Vector<?> prepareRequests(ACLMessage request){
+		this.setParent();
+		request.addReceiver(this.randomGenerator);
+		RequestRandomBayMap act=new RequestRandomBayMap();
+		act.setX_dimension(this.parent.getOntologyRepresentation().getContains().getX_dimension());
+		act.setY_dimension(this.parent.getOntologyRepresentation().getContains().getY_dimension());
+		act.setZ_dimension(this.parent.getOntologyRepresentation().getContains().getZ_dimension());
+		((ContainerAgent) this.myAgent).fillMessage(request,act);
+		Vector<ACLMessage> messages=new Vector<ACLMessage>();
+		messages.add(request);
+		return messages;
+	}
+
+	@Override
+	protected void handleInform(ACLMessage msg){
+		Concept content=((ContainerAgent) this.myAgent).extractAction(msg);
+		this.parent.getOntologyRepresentation().setContains(((ProvideBayMap) content).getProvides());
 	}
 }

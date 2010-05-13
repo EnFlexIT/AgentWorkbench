@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: AssignHarborQuay
 * @author ontology bean generator
-* @version 2010/05/12, 12:12:40
+* @version 2010/05/13, 15:13:19
 */
 public class AssignHarborQuay implements AgentAction {
 

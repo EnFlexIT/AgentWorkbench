@@ -38,7 +38,7 @@ import contmas.ontology.RequestRandomLoadSequence;
  * @author Hanno - Felix Wagner
  *
  */
-public class getRandomLoadSequence extends AchieveREInitiator{
+public class requestRandomLoadSequence extends AchieveREInitiator{
 	/**
 	 * 
 	 */
@@ -55,8 +55,8 @@ public class getRandomLoadSequence extends AchieveREInitiator{
 		return msg;
 	}
 
-	public getRandomLoadSequence(Agent a,BayMap bayMap,AID agent){
-		super(a,getRandomLoadSequence.getRequestMessage(a));
+	public requestRandomLoadSequence(Agent a,BayMap bayMap,AID agent){
+		super(a,requestRandomLoadSequence.getRequestMessage(a));
 		this.randomGenerator=((ContainerAgent) this.myAgent).getFirstAIDFromDF("random-generation");
 		this.bayMapToBeSequenced=bayMap;
 		this.agentForWhich=agent;

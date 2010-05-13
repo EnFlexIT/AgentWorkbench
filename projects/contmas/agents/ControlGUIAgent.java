@@ -166,7 +166,7 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 			AID inQuestion=new AID();
 			inQuestion.setLocalName(ev.getParameter(0).toString());
 
-			this.addBehaviour(new getOntologyRepresentation(this,inQuestion,this.harbourMaster));
+			this.addBehaviour(new requestOntologyRepresentation(this,inQuestion,this.harbourMaster));
 		}else if(command == -1){ // GUI closed
 			this.doDelete();
 		}
@@ -245,12 +245,15 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 			
 			a=c.createNewAgent("Visualiser","contmas.agents.VisualisationAgent",args);
 //			a.start();
+			
+			a=c.createNewAgent("Optimizer","contmas.agents.BayMapOptimisationAgent",args);
+			a.start();
 		}catch(StaleProxyException e){
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-		this.addBehaviour(new getHarbourSetup(this,this.harbourMaster));
+		this.addBehaviour(new requestHarbourSetup(this,this.harbourMaster));
 
 	}
 

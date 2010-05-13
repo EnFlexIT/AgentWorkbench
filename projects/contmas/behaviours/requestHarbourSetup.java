@@ -34,7 +34,7 @@ import contmas.interfaces.HarbourLayoutRequester;
 import contmas.ontology.ProvideHarbourSetup;
 import contmas.ontology.RequestHarbourSetup;
 
-public class getHarbourSetup extends AchieveREInitiator{
+public class requestHarbourSetup extends AchieveREInitiator{
 	/**
 	 * 
 	 */
@@ -56,8 +56,8 @@ public class getHarbourSetup extends AchieveREInitiator{
 	 * @param myAgent
 	 * @param inQuestion
 	 */
-	public getHarbourSetup(Agent myAgent,AID requestFrom){
-		super(myAgent,getHarbourSetup.getRequestMessage());
+	public requestHarbourSetup(Agent myAgent,AID requestFrom){
+		super(myAgent,requestHarbourSetup.getRequestMessage());
 		this.requestFrom=requestFrom;
 		this.owner=(HarbourLayoutRequester) myAgent;
 	}

@@ -8,7 +8,7 @@ import jade.core.*;
    * Represents an agent that can move in the environment
 * Protege name: phy:AgentObject
 * @author ontology bean generator
-* @version 2010/05/12, 12:12:40
+* @version 2010/05/13, 15:13:18
 */
 public class Phy_AgentObject extends Phy_AbstractObject{ 
 
@@ -22,18 +22,6 @@ public class Phy_AgentObject extends Phy_AbstractObject{
    }
    public String getPhy_agentClass() {
      return this.phy_agentClass;
-   }
-
-   /**
-   * This agent's AID
-* Protege name: phy:aid
-   */
-   private AID phy_aid;
-   public void setPhy_aid(AID value) { 
-    this.phy_aid=value;
-   }
-   public AID getPhy_aid() {
-     return this.phy_aid;
    }
 
    /**
@@ -56,6 +44,18 @@ public class Phy_AgentObject extends Phy_AbstractObject{
    }
    public Phy_Speed getPhy_maxSpeed() {
      return this.phy_maxSpeed;
+   }
+
+   /**
+   * This agent's AID
+* Protege name: phy:aid
+   */
+   private AID phy_aid;
+   public void setPhy_aid(AID value) { 
+    this.phy_aid=value;
+   }
+   public AID getPhy_aid() {
+     return this.phy_aid;
    }
 
    /**

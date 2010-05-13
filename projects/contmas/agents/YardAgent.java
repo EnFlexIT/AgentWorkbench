@@ -21,11 +21,16 @@
 package contmas.agents;
 
 import contmas.behaviours.receiveLoadOrders;
+import contmas.behaviours.requestBlockAddress;
 import contmas.behaviours.striveForLoading;
+import contmas.interfaces.OptimisationClient;
 import contmas.interfaces.TransportOrderHandler;
+import contmas.ontology.BayMap;
+import contmas.ontology.BlockAddress;
+import contmas.ontology.TransportOrderChain;
 import contmas.ontology.Yard;
 
-public class YardAgent extends StaticContainerAgent implements TransportOrderHandler{
+public class YardAgent extends StaticContainerAgent implements TransportOrderHandler, OptimisationClient{
 	private static final long serialVersionUID= -3774026871349327373L;
 
 	public YardAgent(Yard ontologyRepresentation){
@@ -44,5 +49,25 @@ public class YardAgent extends StaticContainerAgent implements TransportOrderHan
 	@Override
 	public void handleTransportOrder(){
 		this.addBehaviour(new receiveLoadOrders(this));
+	}
+	
+	/* (non-Javadoc)
+	 * @see contmas.interfaces.OptimisationClient#getOptimizedBayMap(contmas.ontology.BayMap)
+	 */
+	@Override
+	public BlockAddress getEmptyBlockAddressFor(BayMap rawBayMap,TransportOrderChain subject){
+		BlockAddress outputMemory=new BlockAddress();
+		outputMemory.setX_dimension(-1);
+		outputMemory.setY_dimension(-1);
+		outputMemory.setZ_dimension(-1);
+
+		addBehaviour(new requestBlockAddress(this,rawBayMap,subject, outputMemory));
+		return outputMemory;
+	}
+	@Override
+	public BlockAddress getEmptyBlockAddress(TransportOrderChain subject){
+		BlockAddress ownSolution=super.getEmptyBlockAddress(subject);
+		BlockAddress optimisedSolution=getEmptyBlockAddressFor(getOntologyRepresentation().getContains(),subject);
+		return optimisedSolution;
 	}
 }
