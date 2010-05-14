@@ -9,9 +9,21 @@ import jade.core.*;
    * A project's environment definition
 * Protege name: phy:Environment
 * @author ontology bean generator
-* @version 2010/05/13, 15:13:18
+* @version 2010/05/14, 17:12:06
 */
 public class Phy_Environment implements Concept {
+
+   /**
+   * Root of the project's environment representation, containing all it's EnvironmentObjects
+* Protege name: phy:rootPlayground
+   */
+   private Phy_PlaygroundObject phy_rootPlayground;
+   public void setPhy_rootPlayground(Phy_PlaygroundObject value) { 
+    this.phy_rootPlayground=value;
+   }
+   public Phy_PlaygroundObject getPhy_rootPlayground() {
+     return this.phy_rootPlayground;
+   }
 
    /**
    * The project's name
@@ -58,18 +70,6 @@ public class Phy_Environment implements Concept {
    public Iterator getAllPhy_objects() {return phy_objects.iterator(); }
    public List getPhy_objects() {return phy_objects; }
    public void setPhy_objects(List l) {phy_objects = l; }
-
-   /**
-   * Root of the project's environment representation, containing all it's EnvironmentObjects
-* Protege name: phy:rootPlayground
-   */
-   private Phy_PlaygroundObject phy_rootPlayground;
-   public void setPhy_rootPlayground(Phy_PlaygroundObject value) { 
-    this.phy_rootPlayground=value;
-   }
-   public Phy_PlaygroundObject getPhy_rootPlayground() {
-     return this.phy_rootPlayground;
-   }
 
    /**
 * Protege name: phy:scale

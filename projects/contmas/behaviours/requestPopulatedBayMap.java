@@ -70,13 +70,7 @@ public class requestPopulatedBayMap extends AchieveREInitiator{
 		ContainerHolder ontRep=this.parent.getOntologyRepresentation();
 		content=((ContainerAgent) this.myAgent).extractAction(msg);
 		ontRep.setContains(((ProvidePopulatedBayMap) content).getProvides());
-		Iterator allConts=ontRep.getContains().getAllIs_filled_with();
-		while(allConts.hasNext()){
-			BlockAddress curBaymap=(BlockAddress) allConts.next();
-			TransportOrderChain curTOC=new TransportOrderChain();
-			curTOC.setTransports(curBaymap.getLocates());
-			ContainerHolderAgent.touchTOCState(curTOC,new Administered(),true,ontRep);
-		}
+		ontRep.setContainer_states(((ProvidePopulatedBayMap) content).getProvides_population());
 	}
 
 	private void setParent(){

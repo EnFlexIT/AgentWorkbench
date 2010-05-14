@@ -21,7 +21,9 @@ import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.proto.AchieveREResponder;
+import jade.util.leap.ArrayList;
 import jade.util.leap.Iterator;
+import jade.util.leap.List;
 
 import java.util.Random;
 
@@ -77,7 +79,7 @@ public class RandomGeneratorAgent extends ContainerAgent{
 			ACLMessage reply=request.createReply();
 			AgentAction content=((ContainerAgent) this.myAgent).extractAction(request);
 
-			BayMap LoadBay=((RequestPopulatedBayMap) content).getPopulate_on();
+			BayMap loadBay=((RequestPopulatedBayMap) content).getPopulate_on();
 
 			reply.setPerformative(ACLMessage.INFORM);
 
@@ -85,10 +87,13 @@ public class RandomGeneratorAgent extends ContainerAgent{
 			String containerName;
 			Container c;
 			BlockAddress ba;
+			List population=new ArrayList();
+			TOCHasState tocState;
+			Administered state;
 
-			width=LoadBay.getX_dimension();
-			length=LoadBay.getY_dimension();
-			height=LoadBay.getZ_dimension();
+			width=loadBay.getX_dimension();
+			length=loadBay.getY_dimension();
+			height=loadBay.getZ_dimension();
 			for(int z=0;z < height;z++){
 				for(int y=0;y < length;y++){
 					for(int x=0;x < width;x++){
@@ -103,15 +108,23 @@ public class RandomGeneratorAgent extends ContainerAgent{
 							ba.setX_dimension(x);
 							ba.setY_dimension(y);
 							ba.setZ_dimension(z);
-
-							LoadBay.addIs_filled_with(ba);
+							
+							tocState=new TOCHasState();
+							state=new Administered();
+							state.setAt_address(ba);
+							tocState.setState(state);
+							tocState.setSubjected_toc(new TransportOrderChain());
+							tocState.getSubjected_toc().setTransports(c);
+							
+							population.add(tocState);
 						}
 					}
 				}
 			}
 
 			ProvidePopulatedBayMap act=new ProvidePopulatedBayMap();
-			act.setProvides(LoadBay);
+			act.setProvides(loadBay);
+			act.setProvides_population(population);
 
 			((ContainerAgent) this.myAgent).fillMessage(reply,act);
 
@@ -133,14 +146,15 @@ public class RandomGeneratorAgent extends ContainerAgent{
 			Concept content;
 			content=((ContainerAgent) this.myAgent).extractAction(request);
 			RequestRandomLoadSequence input=(RequestRandomLoadSequence) content;
-			BayMap loadBay=input.getProvides();
-			Iterator allCont=loadBay.getAllIs_filled_with();
+
+			Iterator allCont=input.getAllProvides_population();
 			ProvideRandomLoadSequence act=new ProvideRandomLoadSequence();
 			LoadList curLoadList=null;
 			LoadList lastLoadList=null;
 
 			while(allCont.hasNext()){
-				BlockAddress curCont=(BlockAddress) allCont.next();
+				Holding curState=(Holding) ((TOCHasState) allCont.next()).getState();
+				BlockAddress curCont=curState.getAt_address();
 				curLoadList=new LoadList();
 				TransportOrderChain curTOC=new TransportOrderChain();
 				curTOC.setTransports(curCont.getLocates());

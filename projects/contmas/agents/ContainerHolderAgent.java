@@ -86,23 +86,24 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		sleepingBehaviours.add(b);
 	}
 
-	public Boolean aquireContainer(TransportOrderChain targetContainer, BlockAddress destination){ //eigentlicher Vorgang des Container-Aufnehmens
-//		this.echoStatus("aquireingContainer",targetContainer);
+	public Boolean aquireContainer(TransportOrderChain targetContainer,BlockAddress destination){ //eigentlicher Vorgang des Container-Aufnehmens
+//		this.echoStatus("aquiringContainer",targetContainer);
 
 		//		ontologyRepresentation.getAdministers().addConsists_of(targetContainer); //Container zu Auftragsbuch hinzufügen
-		if(this.touchTOCState(targetContainer,new Administered()) == null){
+		Administered newState=new Administered();
+		newState.setAt_address(destination);
+		if(this.touchTOCState(targetContainer,newState) == null){
 			this.echoStatus("ERROR: war noch nicht in States",targetContainer,ContainerAgent.LOGGING_ERROR);
+			this.echoStatus("ERROR: Ausschreibung, auf die ich mich beworben habe, nicht gefunden.",targetContainer,ContainerAgent.LOGGING_ERROR);
+
+			return false;
 		}
 		//physikalische Aktionen
 
 		destination.setLocates(targetContainer.getTransports());
-		this.ontologyRepresentation.getContains().addIs_filled_with(destination); //Container mit neuer BlockAdress in eigene BayMap aufnehmens
+//		this.ontologyRepresentation.getContains().addIs_filled_with(destination); //Container mit neuer BlockAdress in eigene BayMap aufnehmens
 		//		echoStatus("Nun wird der Container von mir transportiert");
-		if(this.touchTOCState(targetContainer,new Administered()) instanceof Administered){ //Auftrag aus Liste von Bewerbungen streichen
-			return true;
-		}
-		this.echoStatus("ERROR: Ausschreibung, auf die ich mich beworben habe, nicht gefunden.",targetContainer,ContainerAgent.LOGGING_ERROR);
-		return false;
+		return true;
 	}
 
 	public TransportOrder calculateEffort(TransportOrder call){
@@ -150,11 +151,25 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		return null; //nicht gefunden
 	}
 
+	public List getAllHeldContainers(){
+		List output=new ArrayList();
+		for(Iterator it=ontologyRepresentation.getAllContainer_states();it.hasNext();){
+			TOCHasState curTocState=(TOCHasState) it.next();
+			if(curTocState.getState() instanceof Holding){
+				output.add(curTocState.getSubjected_toc());
+			}
+		}
+		return output;
+	}
+	
 	public BlockAddress getUpmost(Integer x,Integer y){
 		BlockAddress upmostContainer=null;
-		Iterator allContainers=this.ontologyRepresentation.getContains().getAllIs_filled_with();
+		List allHeldContainers=getAllHeldContainers();
+		Iterator allContainers=allHeldContainers.iterator();
 		while(allContainers.hasNext()){ //alle geladenen Container überprüfen 
-			BlockAddress curContainer=(BlockAddress) allContainers.next();
+			TransportOrderChain curTOC=(TransportOrderChain) allContainers.next();
+			Holding curState=(Holding) touchTOCState(curTOC);
+			BlockAddress curContainer=curState.getAt_address();
 			if((curContainer.getX_dimension() == x) && (curContainer.getY_dimension() == y)){ //betrachteter Container steht im stapel auf momentaner koordinate
 				if((upmostContainer == null) || (upmostContainer.getZ_dimension() < curContainer.getZ_dimension())){
 					upmostContainer=curContainer;
@@ -255,7 +270,7 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 	}
 
 	public Integer getBayUtilization(){
-		return this.ontologyRepresentation.getContains().getIs_filled_with().size();
+		return getAllHeldContainers().size();
 	}
 
 	public BlockAddress getEmptyBlockAddress(TransportOrderChain subject){
@@ -418,9 +433,10 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 
 	public boolean dropContainer(TransportOrderChain load_offer){
 //		echoStatus("removeContainerFromBayMap:",load_offer);
-		Iterator allContainers=this.ontologyRepresentation.getContains().getIs_filled_with().iterator();
-		while(allContainers.hasNext()){
-			Container curContainer=((BlockAddress) allContainers.next()).getLocates();
+		List allHeldContainers=getAllHeldContainers();
+		Iterator allContainers=allHeldContainers.iterator();
+		while(allContainers.hasNext()){ //alle geladenen Container überprüfen 
+			Container curContainer=((TransportOrderChain) allContainers.next()).getTransports();
 //			echoStatus("curContainerID: "+curContainer.getBic_code()+"load_offerID: ",load_offer);
 			if(curContainer.getBic_code().equals(load_offer.getTransports().getBic_code())){
 				allContainers.remove();

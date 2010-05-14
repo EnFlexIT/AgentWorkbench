@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: StartNewContainerHolder
 * @author ontology bean generator
-* @version 2010/05/13, 15:13:19
+* @version 2010/05/14, 17:12:06
 */
 public class StartNewContainerHolder implements AgentAction {
 
@@ -35,17 +35,6 @@ public class StartNewContainerHolder implements AgentAction {
    }
 
    /**
-* Protege name: populate
-   */
-   private boolean populate;
-   public void setPopulate(boolean value) { 
-    this.populate=value;
-   }
-   public boolean getPopulate() {
-     return this.populate;
-   }
-
-   /**
 * Protege name: name
    */
    private String name;
@@ -54,6 +43,17 @@ public class StartNewContainerHolder implements AgentAction {
    }
    public String getName() {
      return this.name;
+   }
+
+   /**
+* Protege name: populate
+   */
+   private boolean populate;
+   public void setPopulate(boolean value) { 
+    this.populate=value;
+   }
+   public boolean getPopulate() {
+     return this.populate;
    }
 
 }

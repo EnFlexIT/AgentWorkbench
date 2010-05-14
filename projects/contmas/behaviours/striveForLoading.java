@@ -31,10 +31,7 @@ import contmas.agents.ContainerAgent;
 import contmas.interfaces.DFSubscriber;
 import contmas.interfaces.LoadingReceiver;
 import contmas.interfaces.OntRepRequester;
-import contmas.ontology.BlockAddress;
-import contmas.ontology.Container;
-import contmas.ontology.ContainerHolder;
-import contmas.ontology.LoadList;
+import contmas.ontology.*;
 
 public class striveForLoading extends ParallelBehaviour implements DFSubscriber,OntRepRequester,LoadingReceiver{
 	/**
@@ -70,12 +67,12 @@ public class striveForLoading extends ParallelBehaviour implements DFSubscriber,
 	 */
 	@Override
 	public void processOntologyRepresentation(ContainerHolder recieved,AID agent){
-		Iterator allContainer=recieved.getContains().getAllIs_filled_with();
+		Iterator allContainer=recieved.getAllContainer_states();
 		while(allContainer.hasNext()){
-			Container curCont=((BlockAddress) allContainer.next()).getLocates();
+			Container curCont=((TOCHasState) allContainer.next()).getSubjected_toc().getTransports();
 			((ContainerAgent) this.myAgent).echoStatus("Ship has Container available: " + curCont.getBic_code(),ContainerAgent.LOGGING_NOTICE);
 		}
-		this.addSubBehaviour(new requestRandomLoadSequence(this.myAgent,recieved.getContains(),agent));
+		this.addSubBehaviour(new requestRandomLoadSequence(this.myAgent,recieved.getContains(),recieved.getContainer_states(),agent));
 	}
 
 	/* (non-Javadoc)

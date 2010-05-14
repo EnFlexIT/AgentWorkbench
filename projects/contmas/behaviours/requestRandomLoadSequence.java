@@ -25,6 +25,7 @@ import jade.core.Agent;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.proto.AchieveREInitiator;
+import jade.util.leap.List;
 
 import java.util.Vector;
 
@@ -44,10 +45,11 @@ public class requestRandomLoadSequence extends AchieveREInitiator{
 	 */
 	private static final long serialVersionUID= -1832052412333457494L;
 	private AID randomGenerator=null;
-	private BayMap bayMapToBeSequenced=null;
+	private BayMap bayMapToSequence=null;
 	private AID agentForWhich=null;
 
 	private LoadingReceiver parent=null;
+	private List populationToSequence;
 
 	private static ACLMessage getRequestMessage(Agent a){
 		ACLMessage msg=new ACLMessage(ACLMessage.REQUEST);
@@ -55,12 +57,12 @@ public class requestRandomLoadSequence extends AchieveREInitiator{
 		return msg;
 	}
 
-	public requestRandomLoadSequence(Agent a,BayMap bayMap,AID agent){
+	public requestRandomLoadSequence(Agent a,BayMap bayMap,List populationToSequence,AID agent){
 		super(a,requestRandomLoadSequence.getRequestMessage(a));
 		this.randomGenerator=((ContainerAgent) this.myAgent).getFirstAIDFromDF("random-generation");
-		this.bayMapToBeSequenced=bayMap;
+		this.bayMapToSequence=bayMap;
 		this.agentForWhich=agent;
-
+		this.populationToSequence=populationToSequence;
 	}
 
 	private void setParent(){
@@ -76,7 +78,8 @@ public class requestRandomLoadSequence extends AchieveREInitiator{
 		this.setParent();
 		request.addReceiver(this.randomGenerator);
 		RequestRandomLoadSequence act=new RequestRandomLoadSequence();
-		act.setProvides(this.bayMapToBeSequenced);
+		act.setProvides(this.bayMapToSequence);
+		act.setProvides_population(this.populationToSequence);
 
 		((ContainerAgent) this.myAgent).fillMessage(request,act);
 		Vector<ACLMessage> messages=new Vector<ACLMessage>();

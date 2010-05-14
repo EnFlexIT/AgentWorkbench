@@ -9,7 +9,7 @@ import jade.core.*;
    * Represents an object's size in a 2D environment
 * Protege name: phy:Size
 * @author ontology bean generator
-* @version 2010/05/13, 15:13:18
+* @version 2010/05/14, 17:12:06
 */
 public class Phy_Size implements Concept {
 

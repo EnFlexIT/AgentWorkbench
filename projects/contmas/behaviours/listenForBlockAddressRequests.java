@@ -30,6 +30,7 @@ import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.proto.AchieveREResponder;
+import jade.util.leap.List;
 
 /**
  * @author Hanno - Felix Wagner
@@ -62,11 +63,12 @@ public class listenForBlockAddressRequests extends AchieveREResponder{
 		content=this.myAgent.extractAction(request);
 		RequestBlockAddress req=(RequestBlockAddress) content;
 		BayMap loadBay=req.getProvides();
+		List population=req.getProvides_population();
 		TransportOrderChain subject=req.getSubjected_toc();
 
 		ProvideBlockAddress act=new ProvideBlockAddress();
 
-		act.setSuiting_address(myAgent.getEmptyBlockAddress(loadBay,subject));
+		act.setSuiting_address(myAgent.getEmptyBlockAddress(loadBay,subject,population));
 		
 		reply.setPerformative(ACLMessage.INFORM);
 		((ContainerAgent) this.myAgent).fillMessage(reply,act);

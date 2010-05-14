@@ -7,9 +7,9 @@ import jade.core.*;
 /**
 * Protege name: InExecution
 * @author ontology bean generator
-* @version 2010/05/13, 15:13:18
+* @version 2010/05/14, 17:12:06
 */
-public class InExecution extends TransportOrderChainState{ 
+public class InExecution extends NotHolding{ 
 
    /**
 * Protege name: load_offer

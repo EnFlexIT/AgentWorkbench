@@ -83,22 +83,15 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 		this.myGui.setOntRepAgent(agent.getLocalName());
 		DefaultListModel containerList=new DefaultListModel();
 		Iterator allContStates=ontRep.getAllContainer_states();
-		List allContsList=ontRep.getContains().getIs_filled_with();
 		while(allContStates.hasNext()){
 			TOCHasState contState=(TOCHasState) allContStates.next();
 			String administeredContBic=contState.getSubjected_toc().getTransports().getBic_code();
 			String dispString=administeredContBic;
 			dispString+=" - " + contState.getState().getClass().getSimpleName();
-			Iterator allConts=allContsList.iterator();
-			Boolean found=false;
-			while(allConts.hasNext()){
-				BlockAddress curCont=(BlockAddress) allConts.next();
-				if(curCont.getLocates().getBic_code().equals(administeredContBic)){
-					dispString+=" (x=" + curCont.getX_dimension() + ", y=" + curCont.getY_dimension() + ", z=" + curCont.getZ_dimension() + ")";
-					found=true;
-				}
-			}
-			if(found == false){
+			if(contState.getState() instanceof Holding){
+				BlockAddress curCont=((Holding)contState.getState()).getAt_address();
+				dispString+=" (x=" + curCont.getX_dimension() + ", y=" + curCont.getY_dimension() + ", z=" + curCont.getZ_dimension() + ")";
+			} else{
 				dispString+=" [ERROR]";
 			}
 			containerList.addElement(dispString);

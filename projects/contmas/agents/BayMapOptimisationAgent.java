@@ -7,10 +7,7 @@ import contmas.behaviours.listenForLogMessage;
 import contmas.behaviours.subscribeToDF;
 import contmas.interfaces.DFSubscriber;
 import contmas.interfaces.Logger;
-import contmas.ontology.BayMap;
-import contmas.ontology.BlockAddress;
-import contmas.ontology.Container;
-import contmas.ontology.TransportOrderChain;
+import contmas.ontology.*;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.util.leap.ArrayList;
@@ -33,14 +30,14 @@ public class BayMapOptimisationAgent extends ContainerAgent{
 		addBehaviour(new listenForBlockAddressRequests(this));
 	}
 	
-	public BlockAddress getEmptyBlockAddress(BayMap loadBay){
+	public BlockAddress getEmptyBlockAddress(BayMap loadBay, List allContainers){
 		Integer tries=0;
 		Integer maxTries=getBayMapCapacity(loadBay);
 		Integer x, y, z;
 		while(tries < maxTries){
 			x=RandomGenerator.nextInt(loadBay.getX_dimension());
 			y=RandomGenerator.nextInt(loadBay.getY_dimension());
-			BlockAddress upmostContainer=this.getUpmostOcuupiedBlockAddress(x,y,loadBay);
+			BlockAddress upmostContainer=this.getUpmostOccupiedBlockAddress(x,y,loadBay,allContainers);
 			z=0;
 			if(upmostContainer != null){
 				if(upmostContainer.getZ_dimension() < loadBay.getZ_dimension()){ //there is room on top
@@ -58,8 +55,8 @@ public class BayMapOptimisationAgent extends ContainerAgent{
 		}
 		return null;
 	}
-	public BlockAddress getEmptyBlockAddress(BayMap loadBay, TransportOrderChain subject){
-		BlockAddress solution=getEmptyBlockAddress(loadBay);
+	public BlockAddress getEmptyBlockAddress(BayMap loadBay, TransportOrderChain subject, List allContainers){
+		BlockAddress solution=getEmptyBlockAddress(loadBay,allContainers);
 		echoStatus("When asked for an EmptyBlockAddress, I say: Random!");
 		return solution;
 	}
@@ -70,11 +67,12 @@ public class BayMapOptimisationAgent extends ContainerAgent{
 		return baySize;
 	}
 	
-	public BlockAddress getUpmostOcuupiedBlockAddress(Integer x,Integer y, BayMap loadBay){
+	public BlockAddress getUpmostOccupiedBlockAddress(Integer x,Integer y, BayMap loadBay, List allContainers){
 		BlockAddress upmostContainer=null;
-		Iterator allContainers=loadBay.getAllIs_filled_with();
-		while(allContainers.hasNext()){ //alle geladenen Container überprüfen 
-			BlockAddress curContainer=(BlockAddress) allContainers.next();
+		Iterator allConts=allContainers.iterator();
+		while(allConts.hasNext()){ //alle geladenen Container überprüfen 
+			Holding curState=(Holding) ((TOCHasState) allConts.next()).getState();
+			BlockAddress curContainer=(BlockAddress) curState.getAt_address();
 			if((curContainer.getX_dimension() == x) && (curContainer.getY_dimension() == y)){ //betrachteter Container steht im stapel auf momentaner koordinate
 				if((upmostContainer == null) || (upmostContainer.getZ_dimension() < curContainer.getZ_dimension())){
 					upmostContainer=curContainer;

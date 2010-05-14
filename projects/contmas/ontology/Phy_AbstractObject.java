@@ -9,20 +9,20 @@ import jade.core.*;
    * 
 * Protege name: phy:AbstractObject
 * @author ontology bean generator
-* @version 2010/05/13, 15:13:18
+* @version 2010/05/14, 17:12:06
 */
 public class Phy_AbstractObject implements Concept {
 
    /**
-   * Unique id to identify this object
-* Protege name: phy:id
+   * This EnvironmentObject's size
+* Protege name: phy:size
    */
-   private String phy_id;
-   public void setPhy_id(String value) { 
-    this.phy_id=value;
+   private Phy_Size phy_size;
+   public void setPhy_size(Phy_Size value) { 
+    this.phy_size=value;
    }
-   public String getPhy_id() {
-     return this.phy_id;
+   public Phy_Size getPhy_size() {
+     return this.phy_size;
    }
 
    /**
@@ -38,15 +38,15 @@ public class Phy_AbstractObject implements Concept {
    }
 
    /**
-   * This EnvironmentObject's size
-* Protege name: phy:size
+   * Unique id to identify this object
+* Protege name: phy:id
    */
-   private Phy_Size phy_size;
-   public void setPhy_size(Phy_Size value) { 
-    this.phy_size=value;
+   private String phy_id;
+   public void setPhy_id(String value) { 
+    this.phy_id=value;
    }
-   public Phy_Size getPhy_size() {
-     return this.phy_size;
+   public String getPhy_id() {
+     return this.phy_id;
    }
 
    /**
