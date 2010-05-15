@@ -7,6 +7,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JScrollPane;
 
 import sma.ontology.AbstractObject;
@@ -30,6 +31,8 @@ public class Simulation extends JScrollPane implements Observer, ActionListener 
 	private Project CurrProject;
 	
 	private JButton btnStart = null;
+	
+	private JCheckBox cbStartAgents = null;
 	
 	private DisplayAgentGUI daGUI;
 	
@@ -56,6 +59,7 @@ public class Simulation extends JScrollPane implements Observer, ActionListener 
 		this.setFocusable(true);
 		
 		this.add(getBtnStart());
+		this.add(getCbStartAgents());
 		
 		this.setVisible(true);		
 	}
@@ -76,15 +80,26 @@ public class Simulation extends JScrollPane implements Observer, ActionListener 
 		return btnStart;
 	}
 	
+	private JCheckBox getCbStartAgents(){
+		if(cbStartAgents == null){
+			cbStartAgents = new JCheckBox("Start Project Agents?", true);
+			cbStartAgents.setSize(cbStartAgents.getPreferredSize());
+			cbStartAgents.setLocation(getBtnStart().getLocation().x, getBtnStart().getLocation().y - 30 );
+		}
+		
+		return cbStartAgents;
+	}
+	
 	/**
 	 * Starts a DisplayAgent and the project agents (later)
 	 */
 	@SuppressWarnings("unchecked")
-	private void startSimulation(){
+	private void startSimulation(boolean agents){
 		
 		this.daGUI = new DisplayAgentGUI();
 		this.daGUI.setSize(this.getWidth(), this.getHeight());
 		this.remove(btnStart);
+		this.remove(cbStartAgents);
 		this.add(this.daGUI);
 		this.daGUI.setVisible(true);
 		
@@ -112,15 +127,19 @@ public class Simulation extends JScrollPane implements Observer, ActionListener 
 			for(int i=0; i < 100000; i++);
 			
 			// Start project agents
-			Iterator<AbstractObject> objects = CurrProject.getEnvironment().getAllObjects();
+			if(agents){
+				
 			
-			while(objects.hasNext()){
-				AbstractObject object = objects.next();
-				if(ObjectTypes.getType(object) == ObjectTypes.AGENT){
-					agentName = object.getId();
-					String agentClass = ((AgentObject)object).getAgentClass();
-					args = new Object[]{object};					
-					Application.JadePlatform.jadeAgentStart(agentName, agentClass, args, projectContainer );
+				Iterator<AbstractObject> objects = CurrProject.getEnvironment().getAllObjects();
+				
+				while(objects.hasNext()){
+					AbstractObject object = objects.next();
+					if(ObjectTypes.getType(object) == ObjectTypes.AGENT){
+						agentName = object.getId();
+						String agentClass = ((AgentObject)object).getAgentClass();
+						args = new Object[]{object};					
+						Application.JadePlatform.jadeAgentStart(agentName, agentClass, args, projectContainer );
+					}
 				}
 			}
 
@@ -153,7 +172,7 @@ public class Simulation extends JScrollPane implements Observer, ActionListener 
 		else if ( Trigger == "ProjectDescription" ) {
 			CurrProject.setProjectDescription( ae.getActionCommand() );
 		}else if( Trigger == btnStart){
-			startSimulation();
+			startSimulation(getCbStartAgents().isSelected());
 		}
 		else {
 			
