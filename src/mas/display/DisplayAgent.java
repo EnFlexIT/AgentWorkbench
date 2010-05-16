@@ -150,8 +150,8 @@ public class DisplayAgent extends Agent {
 		// Get the EnvironmentControllerAgent
 		DFAgentDescription dfd = new DFAgentDescription();
 		ServiceDescription sd = new ServiceDescription();
-		sd.setType("EnvironmentController");
-		sd.setName(sd.getType()+"_"+projectName);
+		sd.setType(DisplayConstants.ECA_SERVICE_TYPE);
+		sd.setName(DisplayConstants.ECA_SERVICE_TYPE+"_"+projectName);
 		dfd.addServices(sd);
 		
 		try {

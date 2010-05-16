@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<environment date="Fri May 14 15:18:00 NZST 2010" project="ContMAS">
+<environment date="Sun May 16 12:14:29 CEST 2010" project="ContMAS">
   <scale pixel="10.0" unit="m" value="1.0"/>
   <playground height="54.0" id="rootPlayground" width="76.0" xPos="0.0" yPos="0.0">
     <agent class="contmas.agents.AgentGUIVisualisationProxyAgent"

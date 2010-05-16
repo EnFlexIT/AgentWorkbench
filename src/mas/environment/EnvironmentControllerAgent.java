@@ -1,5 +1,6 @@
 package mas.environment;
 
+import mas.display.DisplayConstants;
 import sma.ontology.DisplayOntology;
 import sma.ontology.Environment;
 import sma.ontology.EnvironmentInfo;
@@ -62,8 +63,8 @@ public class EnvironmentControllerAgent extends Agent {
 		dfd.setName(getAID());
 		
 		ServiceDescription sd = new ServiceDescription();
-		sd.setType("EnvironmentController");
-		sd.setName("EnvironmentController_"+projectName);
+		sd.setType(DisplayConstants.ECA_SERVICE_TYPE);
+		sd.setName(DisplayConstants.ECA_SERVICE_TYPE+"_"+projectName);
 		dfd.addServices(sd);
 //		dfd.addOntologies(ontology.getName());
 //		dfd.addLanguages(codec.getName());

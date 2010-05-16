@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import mas.environment.DisplayConstants;
 import mas.environment.OntoUtilities;
 
 import org.apache.batik.dom.svg.SVGDOMImplementation;

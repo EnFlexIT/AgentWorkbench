@@ -4,8 +4,8 @@ import java.awt.geom.Point2D;
 import java.util.Iterator;
 import java.util.Vector;
 
+import mas.display.DisplayConstants;
 import mas.display.DisplayableAgent;
-import mas.environment.DisplayConstants;
 
 import sma.ontology.Movement;
 import sma.ontology.Position;

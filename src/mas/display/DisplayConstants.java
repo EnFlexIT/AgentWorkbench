@@ -1,4 +1,4 @@
-package mas.environment;
+package mas.display;
 
 public class DisplayConstants {
 	/**
