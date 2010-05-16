@@ -90,13 +90,16 @@ public class AgentGUIVisualisationProxyAgent extends MovingAgent implements Logg
 		outPos.setX(in.getPhy_x());
 		outPos.setY(in.getPhy_y());
 		Speed speed=new Speed();
-		speed.setSpeed(10.0F);
+		speed.setSpeed(1.0F); //(10.0F seems to be slower than 1.0F)
+//		speed=this.getCurrentSpeed();
 		Position destPos=outPos;
 		Vector<Position> waypoints=new Vector<Position>();
 		waypoints.add(destPos);
 		Behaviour b;
 
 		if(self != null){
+//			b=new MoveToPointBehaviour(from.getLocalName()+"Shadow",this,destPos,speed);
+
 			b=new MoveToPointBehaviour(from.getLocalName()+"Shadow",this,this.getPosition(),destPos,speed);
 //		b=new MoveToPointBehaviour(this,waypoints,speed);
 			addBehaviour(b);
