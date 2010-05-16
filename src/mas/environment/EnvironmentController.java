@@ -488,7 +488,10 @@ public class EnvironmentController{
 				object = new AgentObject();
 				((AgentObject)object).setAgentClass(settings.get("class"));
 				Speed speed = new Speed();
-				speed.setSpeed(Float.parseFloat(settings.get("speed")));
+				speed.setSpeed(100.0F);
+				if(!settings.get("speed").isEmpty()){
+					speed.setSpeed(Float.parseFloat(settings.get("speed")));
+				}
 				((AgentObject)object).setCurrentSpeed(speed);
 			break;
 			

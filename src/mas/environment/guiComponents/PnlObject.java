@@ -322,7 +322,7 @@ public class PnlObject extends JPanel {
 						tfSpeed.setEditable(true);
 					}else{
 						cbClass.setEnabled(false);
-						tfSpeed.setEnabled(false);
+						tfSpeed.setEditable(false);
 					}
 				}
 				

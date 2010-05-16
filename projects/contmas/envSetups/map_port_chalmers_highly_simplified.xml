@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<environment date="Sun May 16 20:21:15 CEST 2010" project="ContMAS">
-  <scale pixel="10.0" unit="m" value="1.0"/>
+<environment date="Mon May 17 11:08:41 NZST 2010" project="ContMAS">
+  <scale pixel="1.0" unit="m" value="1.0"/>
   <playground height="54.0" id="rootPlayground" width="76.0" xPos="0.0" yPos="0.0">
     <agent class="contmas.agents.AgentGUIVisualisationProxyAgent"
-      height="0.0" id="StraddleCarrierShadow" width="0.0" xPos="45.0" yPos="46.0"/>
+      height="2.0" id="StraddleCarrierShadow" speed="1.0" width="5.0"
+      xPos="120.46933" yPos="200.62283"/>
   </playground>
 </environment>
