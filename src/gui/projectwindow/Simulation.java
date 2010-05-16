@@ -109,20 +109,25 @@ public class Simulation extends JScrollPane implements Observer, ActionListener 
 			String projectContainer = CurrProject.getProjectFolder();
 			
 			Object[] args = {CurrProject.getEnvironment()};
-			String ecaName = "MasterAgent"+CurrProject.getProjectName();
+			String ecaBaseName = "ECA_"+CurrProject.getProjectName();
+			String ecaName = ecaBaseName;
+			int ecaSuffix = 0;
+			while( Application.JadePlatform.jadeAgentIsRunning(ecaName)){
+				ecaName = ecaBaseName + (++ecaSuffix);
+			}
+			
 			Application.JadePlatform.jadeAgentStart(ecaName, "mas.environment.EnvironmentControllerAgent", args, projectContainer);
 				
 			// Start DisplayAgent
 			// Find name
-			String agentNameBase = "DA";
-			int agentNameSuffix = 1;
-			String agentName = agentNameBase+agentNameSuffix;
-			while( Application.JadePlatform.jadeAgentIsRunning(agentName)){
-				agentNameSuffix++;
-				agentName = agentNameBase + agentNameSuffix;
+			String daNameBase = "DA";
+			int daSuffix = 0;
+			String daName = daNameBase+daSuffix;
+			while( Application.JadePlatform.jadeAgentIsRunning(daName)){
+				daName = daNameBase + (++daSuffix);
 			}
 			args = new Object[]{CurrProject.getProjectName(), this.daGUI, CurrProject.getEnvironment()};
-			Application.JadePlatform.jadeAgentStart(agentName, "mas.display.DisplayAgent", args, projectContainer );
+			Application.JadePlatform.jadeAgentStart(daName, "mas.display.DisplayAgent", args, projectContainer );
 			
 			for(int i=0; i < 100000; i++);
 			
@@ -135,10 +140,10 @@ public class Simulation extends JScrollPane implements Observer, ActionListener 
 				while(objects.hasNext()){
 					AbstractObject object = objects.next();
 					if(ObjectTypes.getType(object) == ObjectTypes.AGENT){
-						agentName = object.getId();
+						daName = object.getId();
 						String agentClass = ((AgentObject)object).getAgentClass();
 						args = new Object[]{object};					
-						Application.JadePlatform.jadeAgentStart(agentName, agentClass, args, projectContainer );
+						Application.JadePlatform.jadeAgentStart(daName, agentClass, args, projectContainer );
 					}
 				}
 			}

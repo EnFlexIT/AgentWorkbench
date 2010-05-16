@@ -9,7 +9,7 @@ import jade.core.*;
    * Represents an object's size in a 2D environment
 * Protege name: Size
 * @author ontology bean generator
-* @version 2010/05/12, 16:14:23
+* @version 2010/05/16, 13:04:47
 */
 public class Size implements Concept {
 

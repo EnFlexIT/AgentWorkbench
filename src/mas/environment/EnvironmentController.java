@@ -48,6 +48,7 @@ import sma.ontology.PlaygroundObject;
 import sma.ontology.Position;
 import sma.ontology.Scale;
 import sma.ontology.Size;
+import sma.ontology.Speed;
 
 import mas.display.SvgTypes;
 import mas.environment.OntoUtilities;
@@ -486,6 +487,9 @@ public class EnvironmentController{
 			case AGENT:
 				object = new AgentObject();
 				((AgentObject)object).setAgentClass(settings.get("class"));
+				Speed speed = new Speed();
+				speed.setSpeed(Float.parseFloat(settings.get("speed")));
+				((AgentObject)object).setCurrentSpeed(speed);
 			break;
 			
 			case OBSTACLE:
@@ -625,6 +629,8 @@ public class EnvironmentController{
 			case AGENT:
 				element = document.createElement("agent");
 				element.setAttribute("class", ((AgentObject)object).getAgentClass());
+				if(((AgentObject)object).getCurrentSpeed() != null)
+					element.setAttribute("speed", ""+((AgentObject)object).getCurrentSpeed().getSpeed());
 			break;
 			
 			case OBSTACLE:
@@ -716,6 +722,12 @@ public class EnvironmentController{
 			case AGENT:
 				object = new AgentObject();
 				((AgentObject)object).setAgentClass(element.getAttribute("class"));
+				String temp = element.getAttribute("speed");
+				if(temp != null && temp.length() >0){
+					Speed speed = new Speed();
+					speed.setSpeed(Float.parseFloat(element.getAttribute("speed")));
+					((AgentObject)object).setCurrentSpeed(speed);
+				}
 			break;
 			
 			case PLAYGROUND:

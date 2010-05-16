@@ -8,7 +8,7 @@ import jade.core.*;
    * Represents a static, non movable object in the environment
 * Protege name: ObstacleObject
 * @author ontology bean generator
-* @version 2010/05/12, 16:14:24
+* @version 2010/05/16, 13:04:47
 */
 public class ObstacleObject extends AbstractObject{ 
 

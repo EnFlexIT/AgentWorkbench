@@ -61,16 +61,76 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 	private String svgId;
 	
 	/**
-	 * Constructor 	
-	 * @param a	The acting agent
-	 * @param destPos The position the agent shall move to
-	 * @param speed The agents speed
+	 * Constructor: SVG element id == localName, one DisplayableAgent per Agent, one destPos. Speed and startPos taken from the DisplayableAgent 
+	 * @param a DisplayableAgent representing the agent to be moved
+	 * @param destPos Destination position
 	 */
-	public MoveToPointBehaviour(DisplayableAgent a, Position destPos, Speed speed) {
-		this(a.getAID().getLocalName(), a, destPos, speed);
+	public MoveToPointBehaviour(DisplayableAgent a, Position destPos) {
+		this(a.getAID().getLocalName(), a, destPos);
 	}
 	
-	public MoveToPointBehaviour(String svgId, DisplayableAgent a, Position destPos, Speed speed){
+	/**
+	 * Constructor: SVG element id specified by parameter , one DisplayableAgent per Agent, one destPos. Speed and startPos taken from the DisplayableAgent
+	 * @param svgId ID attribute of the SVG element representing the moving agent
+	 * @param a DisplayableAgent representing the agent to be moved
+	 * @param destPos Destination position
+	 */
+	public MoveToPointBehaviour(String svgId, DisplayableAgent a, Position destPos){
+		super((Agent) a, DisplayConstants.PERIOD);
+		this.svgId = svgId;
+		this.agent = a;
+		this.destPos = destPos;
+		this.waypoints = new Vector<Position>();
+		this.waypoints.add(destPos);
+		this.speed = a.getCurrentSpeed().getSpeed();
+		this.startPos = a.getPosition();
+	}
+	
+	/**
+	 * Constructor: SVG element id == localName, one DisplayableAgent per Agent, several waypoints, destPos == last waypoint. Speed and startPos taken from the DisplayableAgent 
+	 * @param a DisplayableAgent representing the agent to be moved
+	 * @param waypoints The waypoints
+	 */
+	public MoveToPointBehaviour(DisplayableAgent a, Vector<Position> waypoints){
+		this(a.getAID().getLocalName(), a, waypoints);
+	}
+	
+	/**
+	 * Constructor: SVG element id == localName, one DisplayableAgent per Agent, several waypoints, destPos == last waypoint. Speed and startPos taken from the DisplayableAgent
+	 * @param svgId ID attribute of the SVG element representing the moving agent
+	 * @param a DisplayableAgent representing the agent to be moved
+	 * @param waypoints The waypoints
+	 */
+	public MoveToPointBehaviour(String svgId, DisplayableAgent a, Vector<Position> waypoints){
+		super((Agent) a, DisplayConstants.PERIOD);
+		this.svgId = svgId;
+		this.agent = a;
+		this.waypoints = waypoints;
+		this.destPos = this.waypoints.lastElement();
+		this.speed = a.getCurrentSpeed().getSpeed();
+		this.startPos = a.getPosition();
+	}
+	
+	/**
+	 * Constructor: Proxy Mode, one DisplayableAgent speaking for several agents. StartPos, destPos and speed specified by parameter, SVG element id == DisplayableAgent's local Name 
+	 * @param a DisplayableAgent representing the proxy
+	 * @param startPos The agents current position
+	 * @param destPos The agents destination position
+	 * @param speed The agents speed
+	 */
+	public MoveToPointBehaviour(DisplayableAgent a, Position startPos, Position destPos, Speed speed) {
+		this(a.getAID().getLocalName(), a, startPos, destPos, speed);
+	}
+	
+	/**
+	 * Constructor: Proxy Mode, one DisplayableAgent speaking for several agents. SVG element id, StartPos and speed specified by parameter
+	 * @param svgId ID attribute of the SVG element representing the moving agent
+	 * @param a DisplayableAgent representing the proxy
+	 * @param startPos The agents current position
+	 * @param destPos The agents destination position
+	 * @param speed The agents speed
+	 */
+	public MoveToPointBehaviour(String svgId, DisplayableAgent a, Position startPos, Position destPos, Speed speed){
 		super((Agent) a, DisplayConstants.PERIOD);
 		this.svgId = svgId;
 		this.agent = a;
@@ -78,21 +138,36 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 		this.waypoints = new Vector<Position>();
 		this.waypoints.add(destPos);
 		this.speed = speed.getSpeed();
-		this.startPos = agent.getPosition();
+		this.startPos = startPos;
 	}
 	
-	public MoveToPointBehaviour(DisplayableAgent a, Vector<Position> waypoints, Speed speed){
-		this(a.getAID().getLocalName(), a, waypoints, speed);
+	/**
+	 * Constructor: Proxy Mode, one DisplayableAgent speaking for several agents. Several waypoints, destPos == last waypoint. StartPos and speed specified by parameter, SVG element id == DisplayableAgent's local name
+	 * @param a DisplayableAgent representing the proxy
+	 * @param startPos The agents current position
+	 * @param waypoints The waypoints
+	 * @param speed The agents speed
+	 */
+	public MoveToPointBehaviour(DisplayableAgent a, Position startPos, Vector<Position> waypoints, Speed speed){
+		this(a.getAID().getLocalName(), a, startPos, waypoints, speed);
 	}
 	
-	public MoveToPointBehaviour(String svgId, DisplayableAgent a, Vector<Position> waypoints, Speed speed){
+	/**
+	 * Constructor: Proxy Mode, one DisplayableAgent speaking for several agents. Several waypoints, destPos == last waypoint. SVG element id, StartPos and speed specified by parameter
+	 * @param svgId svgId ID attribute of the SVG element representing the moving agent
+	 * @param a DisplayableAgent representing the proxy
+	 * @param startPos The agents current position
+	 * @param waypoints The waypoints
+	 * @param speed The agents speed
+	 */
+	public MoveToPointBehaviour(String svgId, DisplayableAgent a, Position startPos, Vector<Position> waypoints, Speed speed){
 		super((Agent) a, DisplayConstants.PERIOD);
 		this.svgId = svgId;
 		this.agent = a;
 		this.waypoints = waypoints;
 		this.destPos = this.waypoints.lastElement();
 		this.speed = speed.getSpeed();
-		this.startPos = agent.getPosition();
+		this.startPos = startPos;
 	}
 		
 	public void onStart(){
@@ -162,11 +237,15 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 		Point2D.Float dest = new Point2D.Float(to.getX(), to.getY());
 		
 		double distance = dest.distance(start);
+		
+		System.out.println("Distance: "+distance+" meters");
+		float speed = this.speed * (DisplayConstants.PERIOD / 1000f);
+		System.out.println("Speed: "+this.speed+" meters / s = "+speed+" meters / "+DisplayConstants.PERIOD+" ms");
 				
 		double distX = dest.getX() - start.getX();
 		double distY = dest.getY() - start.getY();
 		
-		double factor = (float) (distance / this.speed);
+		double factor = (float) (distance / speed);
 		
 		float speedX = (float) (distX / factor);
 		float speedY = (float) (distY / factor);

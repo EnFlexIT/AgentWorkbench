@@ -9,7 +9,7 @@ import jade.core.*;
    * Defining the scale used for displaying the environment
 * Protege name: Scale
 * @author ontology bean generator
-* @version 2010/05/12, 16:14:34
+* @version 2010/05/16, 13:04:47
 */
 public class Scale implements Concept {
 
@@ -26,18 +26,6 @@ public class Scale implements Concept {
    }
 
    /**
-   * The number of pixel standing for the number of real world untis specified in value
-* Protege name: pixel
-   */
-   private float pixel;
-   public void setPixel(float value) { 
-    this.pixel=value;
-   }
-   public float getPixel() {
-     return this.pixel;
-   }
-
-   /**
    * The number of real world untis represented by the number of pixels specified in pixels
 * Protege name: value
    */
@@ -47,6 +35,18 @@ public class Scale implements Concept {
    }
    public float getValue() {
      return this.value;
+   }
+
+   /**
+   * The number of pixel standing for the number of real world untis specified in value
+* Protege name: pixel
+   */
+   private float pixel;
+   public void setPixel(float value) { 
+    this.pixel=value;
+   }
+   public float getPixel() {
+     return this.pixel;
    }
 
 }

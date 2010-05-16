@@ -26,7 +26,7 @@ import java.awt.event.ComponentEvent;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Vector;
+
 
 import javax.swing.JLabel;
 import javax.swing.event.TreeSelectionEvent;
@@ -47,15 +47,18 @@ import org.w3c.dom.events.EventListener;
 import org.w3c.dom.events.EventTarget;
 
 import sma.ontology.AbstractObject;
-import sma.ontology.AgentObject;
 import sma.ontology.PlaygroundObject;
+import sma.ontology.Position;
 import sma.ontology.Scale;
+import sma.ontology.Size;
 
 import application.Language;
 import application.Project;
 
 import mas.display.BasicSVGGUI;
 import mas.display.SvgTypes;
+import mas.environment.guiComponents.PnlObject;
+
 import java.awt.Rectangle;
 
 public class EnvironmentControllerGUI extends JSplitPane {
@@ -68,35 +71,17 @@ public class EnvironmentControllerGUI extends JSplitPane {
 	private JSplitPane splitControlls = null;
 	private JScrollPane scpTree = null;
 	private JTree treeEnvironment = null;
-	private JPanel pnlObjectSettings = null;
 	private JPanel pnlEnvSettings = null;
 	private JButton btnLoadSVG = null;
-	private JTextField tfId = null;
-	private JComboBox cbType = null;
-	private JComboBox cbClass = null;
-	private JButton btnApply = null;
-	private JLabel lblId = null;
-	private JLabel lblType = null;
-	private JLabel lblClass = null;
+
 	private JFileChooser fcLoadSVG = null;
 	private JTabbedPane tpSettings;
-	private JButton btnRemove = null;
 	private JLabel lblScale = null;
 	private JTextField tfRwu = null;
 	private JTextField tfPx = null;
 	private JComboBox cbUnit = null;
 	private JLabel lblPx = null;
 	private JButton btnSetScale = null;
-	private JLabel lblPos = null;
-	private JLabel lblSize = null;
-	private JLabel lblX1 = null;
-	private JLabel lblX2 = null;
-	private JLabel lblUnit1 = null;
-	private JLabel lblUnit2 = null;
-	private JTextField tfX = null;
-	private JTextField tfY = null;
-	private JTextField tfWidth = null;
-	private JTextField tfHeight = null;
 		
 	private Element selectedElement = null;
 	/**
@@ -111,6 +96,8 @@ public class EnvironmentControllerGUI extends JSplitPane {
 	private HashMap<String, String> agentClasses = null;
 	
 	private EnvironmentController controller = null;
+	
+	private PnlObject objectSettings;
 	
 	// Initialization of global stuff
 	
@@ -149,7 +136,7 @@ public class EnvironmentControllerGUI extends JSplitPane {
 	 * 	
 	 * @return BasicSVGGUI	
 	 */
-	private BasicSVGGUI getSvgGUI() {
+	public BasicSVGGUI getSvgGUI() {
 		if (svgGUI == null) {
 			svgGUI = new BasicSVGGUI();
 			svgGUI.getCanvas().setDocumentState(JSVGCanvas.ALWAYS_DYNAMIC);
@@ -334,7 +321,8 @@ public class EnvironmentControllerGUI extends JSplitPane {
 		if(tpSettings == null){
 			tpSettings = new JTabbedPane();
 			tpSettings.addTab(Language.translate("Umgebung"), getPnlEnvSettings());
-			tpSettings.addTab(Language.translate("Objekt"), getPnlObjectSettings());
+			this.objectSettings = new PnlObject(this);
+			tpSettings.addTab(Language.translate("Objekt"), this.objectSettings);
 		}
 		return tpSettings;
 	}
@@ -488,325 +476,25 @@ public class EnvironmentControllerGUI extends JSplitPane {
 	
 	// Object settings tab
 
-	/**
-	 * This method initializes pnlObjectSettings	
-	 * 	
-	 * @return javax.swing.JPanel	
-	 */
-	private JPanel getPnlObjectSettings() {
-		if (pnlObjectSettings == null) {
-			pnlObjectSettings = new JPanel();
-			pnlObjectSettings.setLayout(null);
-			lblClass = new JLabel();
-			lblClass.setText(Language.translate("Klasse"));
-			lblClass.setSize(new Dimension(45, 16));
-			lblClass.setLocation(new Point(10, 83));
-			lblType = new JLabel();
-			lblType.setText(Language.translate("Typ"));
-			lblType.setSize(new Dimension(30, 16));
-			lblType.setLocation(new Point(10, 48));
-			lblId = new JLabel();
-			lblId.setText("ID");
-			lblId.setLocation(new Point(10, 10));
-			lblId.setSize(new Dimension(15, 16));
-			pnlObjectSettings.add(lblId, null);
-			pnlObjectSettings.add(lblType, null);
-			pnlObjectSettings.add(lblClass, null);			
-			pnlObjectSettings.add(getTfId());
-			pnlObjectSettings.add(getCbType());
-			pnlObjectSettings.add(getCbClass());
-			lblPos = new JLabel();
-			lblPos.setText(Language.translate("Position"));
-			lblPos.setSize(lblPos.getPreferredSize());
-			lblPos.setLocation(new Point(10,118));
-			lblX1 = new JLabel();
-			lblX1.setText(":");
-			lblX1.setSize(lblX1.getPreferredSize());
-			lblX1.setLocation(new Point(65, 142));
-			lblUnit1 = new JLabel();
-//			lblUnit1.setText(controller.getEnvironment().getScale().getUnit());
-			lblUnit1.setText("m");
-			lblUnit1.setSize(lblUnit1.getPreferredSize());
-			lblUnit1.setLocation(new Point(122, 142));
-			lblSize = new JLabel();
-			lblSize.setText(Language.translate("Größe"));
-			lblSize.setSize(lblSize.getPreferredSize());
-			lblSize.setLocation(new Point(10,183));
-			lblX2 = new JLabel();
-			lblX2.setText("x");
-			lblX2.setSize(lblX2.getPreferredSize());
-			lblX2.setLocation(new Point(63, 212));
-			lblUnit2 = new JLabel();
-//			lblUnit2.setText(controller.getEnvironment().getScale().getUnit());
-			lblUnit2.setText("m");
-			lblUnit2.setSize(lblUnit2.getPreferredSize());
-			lblUnit2.setLocation(new Point(122, 212));
-			pnlObjectSettings.add(lblPos, null);
-			pnlObjectSettings.add(getTfX());
-			pnlObjectSettings.add(getTfY());
-			pnlObjectSettings.add(lblX1, null);
-			pnlObjectSettings.add(lblUnit1, null);
-			pnlObjectSettings.add(lblSize, null);
-			pnlObjectSettings.add(lblX2, null);
-			pnlObjectSettings.add(lblUnit2, null);
-			pnlObjectSettings.add(getTfWidth());
-			pnlObjectSettings.add(getTfHeight());
-			pnlObjectSettings.add(getBtnApply());
-			pnlObjectSettings.add(getBtnRemove());
-		}
-		return pnlObjectSettings;
-	}
 	
-	/**
-	 * This method initializes tfId	
-	 * 	
-	 * @return javax.swing.JTextField	
-	 */
-	private JTextField getTfId() {
-		if (tfId == null) {
-			tfId = new JTextField();
-			tfId.setSize(new Dimension(100, 30));
-			tfId.setLocation(new Point(70, 7));
-		}
-		return tfId;
+
+	
+	
+	public void setAgentClasses(HashMap<String, String> agentClasses) {
+		this.agentClasses = agentClasses;
 	}
 
-	/**
-	 * This method initializes cbType	
-	 * 	
-	 * @return javax.swing.JComboBox	
-	 */
-	private JComboBox getCbType() {
-		if (cbType == null) {
-			cbType = new JComboBox();
-			cbType.setSize(new Dimension(100, 25));
-			cbType.setLocation(new Point(70, 43));
-			cbType.setEnabled(false);
-			Vector<String> types = new Vector<String>();
-			types.add(Language.translate("Keiner"));
-			for(ObjectTypes type : ObjectTypes.values()){
-				types.add(type.toString());
-			}
-			cbType.setModel(new DefaultComboBoxModel(types));
-			cbType.addActionListener(new ActionListener(){
-	
-				@Override
-				public void actionPerformed(ActionEvent arg0) {
-					if(ObjectTypes.getType(cbType.getSelectedItem().toString()) != null){
-						btnApply.setEnabled(true);						
-					}else{
-						btnApply.setEnabled(false);						
-					}
-					
-					if(cbType.getSelectedItem().equals("AGENT")){
-						cbClass.setEnabled(true);
-					}else{
-						cbClass.setEnabled(false);
-					}
-				}
-				
-			});
-		}
-		
-		return cbType;
+	public HashMap<String, String> getAgentClasses() {
+		return agentClasses;
 	}
 
-	/**
-	 * This method initializes cbClass	
-	 * 	
-	 * @return javax.swing.JComboBox	
-	 */
-	private JComboBox getCbClass() {
-		if (cbClass == null) {
-			cbClass = new JComboBox();
-			cbClass.setLocation(new Point(70, 78));
-			cbClass.setSize(new Dimension(100, 25));
-			cbClass.setEnabled(false);
-			Vector<Class<?>> classes = controller.getCurrentProject().getProjectAgents();
-			Vector<String> names = new Vector<String>();
-			
-			this.agentClasses = new HashMap<String, String>();
-			
-			for(int i=0; i<classes.size(); i++){
-				names.add(classes.get(i).getSimpleName());
-				this.agentClasses.put(classes.get(i).getSimpleName(), classes.get(i).getName());
-				
-			}
-			cbClass.setModel(new DefaultComboBoxModel(names));
-		}
-		return cbClass;
-	}
-	
-	private JTextField getTfX(){
-		if(tfX == null){
-			tfX = new JTextField();
-			tfX.setSize(new Dimension(50,25));
-			tfX.setLocation(new Point(10, 140));
-		}
-		return tfX;
-	}
-	
-	private JTextField getTfY(){
-		if(tfY == null){
-			tfY = new JTextField();
-			tfY.setSize(new Dimension(50,25));
-			tfY.setLocation(new Point(70, 140));
-		}
-		return tfY;
-	}
-	
-	private JTextField getTfWidth(){
-		if(tfWidth == null){
-			tfWidth = new JTextField();
-			tfWidth.setSize(new Dimension(50,25));
-			tfWidth.setLocation(new Point(10, 210));
-		}
-		return tfWidth;
-	}
-	
-	private JTextField getTfHeight(){
-		if(tfHeight == null){
-			tfHeight = new JTextField();
-			tfHeight.setSize(new Dimension(50,25));
-			tfHeight.setLocation(new Point(70, 210));
-		}
-		return tfHeight;
+	public EnvironmentController getController() {
+		return controller;
 	}
 
-	/**
-	 * This method initializes btnApply	
-	 * 	
-	 * @return javax.swing.JButton	
-	 */
-	private JButton getBtnApply() {
-		if (btnApply == null) {
-			btnApply = new JButton();
-			btnApply.setText(Language.translate("Anwenden"));
-			btnApply.setSize(new Dimension(150, 26));
-			btnApply.setLocation(new Point(10, 245));
-			btnApply.setEnabled(false);
-			btnApply.addActionListener(new ActionListener(){
-	
-				@Override
-				public void actionPerformed(ActionEvent arg0) {
-					// Create an ontology object 
-					controller.createObject(selectedElement, getObjectSettings());
-					
-					// Change position and size
-					UpdateManager um = svgGUI.getCanvas().getUpdateManager();
-					um.getUpdateRunnableQueue().invokeLater(new ElementChanger());					
-					
-					// Remove selection
-					setSelectedElement(null);					
-					
-				}
-				
-			});
-		}
-		return btnApply;
-	}
-
-	/**
-	 * This method initializes btnRemove	
-	 * 	
-	 * @return javax.swing.JButton	
-	 */
-	private JButton getBtnRemove() {
-		if (btnRemove == null) {
-			btnRemove = new JButton();
-			btnRemove.setLocation(new Point(10, 280));
-			btnRemove.setText(Language.translate("Objekt entfernen"));
-			btnRemove.setEnabled(false);
-			btnRemove.setSize(new Dimension(150, 26));
-			btnRemove.addActionListener(new ActionListener(){
-	
-				@Override
-				public void actionPerformed(ActionEvent arg0) {
-					controller.deleteObject(selectedElement.getAttributeNS(null, "id"), false);
-					setSelectedElement(null);
-				}
-				
-			});
-		}
-		return btnRemove;
-	}
-
-	/**
-	 * Collecting all important input values for creating a new environment object 
-	 * @return HashMap<String, String>
-	 */
-	public HashMap<String, String> getObjectSettings(){
-		HashMap<String, String> settings = new HashMap<String, String>();
-		settings.put("id", tfId.getText());
-		settings.put("type", cbType.getSelectedItem().toString());
-		if(cbClass.isEnabled()){
-			settings.put("class", agentClasses.get(cbClass.getSelectedItem().toString()));			
-		}
-		
-		return settings;
-	}
-
-	/**
-	 * Setting the values of all controls when an object/element is selected 
-	 */
-	public void setObjectSettings(){
-		String id = null;
-		AbstractObject object = null;
-		if(selectedElement != null){
-			id = selectedElement.getAttributeNS(null, "id");
-			object = controller.getObjectHash().get(id);
-			cbType.setEnabled(true);
-			float xPos=0, yPos=0, width=0, height=0;
-			switch(SvgTypes.getType(selectedElement)){
-				case RECT:
-				case IMAGE:
-					xPos = Float.parseFloat(selectedElement.getAttributeNS(null, "x"));
-					yPos = Float.parseFloat(selectedElement.getAttributeNS(null, "y"));
-					width = Float.parseFloat(selectedElement.getAttributeNS(null, "width"));
-					height = Float.parseFloat(selectedElement.getAttributeNS(null, "height"));
-				break;
-				case CIRCLE:
-					xPos = Float.parseFloat(selectedElement.getAttributeNS(null, "cx"));
-					yPos = Float.parseFloat(selectedElement.getAttributeNS(null, "cy"));
-					width = height = Float.parseFloat(selectedElement.getAttributeNS(null, "r"))*2;
-				break;
-				case ELLIPSE:
-					xPos = Float.parseFloat(selectedElement.getAttributeNS(null, "cx"));
-					yPos = Float.parseFloat(selectedElement.getAttributeNS(null, "cy"));
-					width = Float.parseFloat(selectedElement.getAttributeNS(null, "r1"))*2;
-					height = Float.parseFloat(selectedElement.getAttributeNS(null, "r2"))*2;
-				break;					
-			}
-			xPos = OntoUtilities.calcRWU(xPos, controller.getEnvironment().getScale());
-			yPos = OntoUtilities.calcRWU(yPos, controller.getEnvironment().getScale());
-			width = OntoUtilities.calcRWU(width, controller.getEnvironment().getScale());
-			height = OntoUtilities.calcRWU(height, controller.getEnvironment().getScale());
-			
-			getTfX().setText(""+xPos);
-			getTfY().setText(""+yPos);
-			getTfWidth().setText(""+width);
-			getTfHeight().setText(""+height);
-			
-		}else{
-			cbType.setEnabled(false);
-			getTfX().setText("");
-			getTfY().setText("");
-			getTfWidth().setText("");
-			getTfHeight().setText("");
-		}
-		tfId.setText(id);
-		if(object != null){
-			ObjectTypes type = ObjectTypes.getType(object);
-			cbType.setSelectedItem(type.toString());
-			if(type == ObjectTypes.AGENT){
-				cbClass.setSelectedItem(((AgentObject)object).getAgentClass());
-			}
-			btnRemove.setEnabled(true);
-		}else{
-			cbType.setSelectedItem(Language.translate("Keiner"));
-			btnRemove.setEnabled(false);
-		}
-	}
+	public Element getSelectedElement() {
+		return selectedElement;
+	}	
 
 	/**
 	 * Adding onClick listeners to all relevant SVG elements
@@ -895,22 +583,30 @@ public class EnvironmentControllerGUI extends JSplitPane {
 			
 			// Set selected element and input values
 			selectedElement = element;			
-			setObjectSettings();
+			objectSettings.setObjectSettings();
 		}
 		
 	}
 	
-	private class ElementChanger implements Runnable{
+	public class ElementChanger implements Runnable{
+		
+		Position pos;
+		Size size;
+		
+		public ElementChanger(Position pos, Size size){
+			this.pos = pos;
+			this.size = size;
+		}
 
 		@Override
 		public void run() {
 			
 			Scale scale = controller.getEnvironment().getScale();
 			
-			float x = Float.parseFloat(tfX.getText());
-			float y = Float.parseFloat(tfY.getText());
-			float width = Float.parseFloat(tfWidth.getText());
-			float height = Float.parseFloat(tfHeight.getText());
+			float x = pos.getX();
+			float y = pos.getY();
+			float width = size.getWidth();
+			float height = size.getHeight();
 			
 			x = OntoUtilities.calcPixel(x, scale);
 			y = OntoUtilities.calcPixel(y, scale);
