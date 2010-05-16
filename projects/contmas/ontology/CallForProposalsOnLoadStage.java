@@ -8,19 +8,19 @@ import jade.core.*;
 /**
 * Protege name: CallForProposalsOnLoadStage
 * @author ontology bean generator
-* @version 2010/05/14, 17:12:06
+* @version 2010/05/16, 12:52:00
 */
 public class CallForProposalsOnLoadStage implements AgentAction {
 
    /**
-* Protege name: required_turnover_capacity
+* Protege name: corresponds_to
    */
-   private LoadList required_turnover_capacity;
-   public void setRequired_turnover_capacity(LoadList value) { 
-    this.required_turnover_capacity=value;
+   private TransportOrderChain corresponds_to;
+   public void setCorresponds_to(TransportOrderChain value) { 
+    this.corresponds_to=value;
    }
-   public LoadList getRequired_turnover_capacity() {
-     return this.required_turnover_capacity;
+   public TransportOrderChain getCorresponds_to() {
+     return this.corresponds_to;
    }
 
 }

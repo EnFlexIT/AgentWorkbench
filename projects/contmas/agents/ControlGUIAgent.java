@@ -265,6 +265,8 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 	public void writeLogMsg(String content){
 		this.myGui.writeLogMsg(content);
 	}
+	
+	
 
 	/**
 	 * @param current_harbour_layout
@@ -315,6 +317,10 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 				addToSniffer(curAgent);
 			}
 		}
+	}
+	
+	public void alterAgentName(){
+		myGui.alterAgentName();
 	}
 
 

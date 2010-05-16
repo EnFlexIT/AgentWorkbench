@@ -128,7 +128,7 @@ public class LoadBayMapFrame extends JDialog implements ActionListener{
 
 				public void actionPerformed(java.awt.event.ActionEvent e){
 					final JFileChooser fc=new JFileChooser();
-					final String structureFileName="resources\\Container-Ontologie-OWL.owl";
+					final String structureFileName="resources\\contmas_ontology.owl";
 					final String ontologyGeneratorFileName="resources\\OWLSimpleJADEAbstractOntology.owl";
 
 					Integer returnVal=fc.showOpenDialog(LoadBayMapFrame.this.jPanel);

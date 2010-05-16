@@ -138,12 +138,22 @@ public class listenForStartAgentReq extends SequentialBehaviour implements OntRe
 					a=c.acceptNewAgent(act.getName(),new YardAgent((Yard) ontRep));
 				}
 				a.start();
+				ACLMessage inform=listenForStartAgentReq.this.START_AGENT_RESPONSE_KEY;
+				this.myAgent.send(inform);
 			}catch(StaleProxyException e){
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+
+				if (e.getMessage().startsWith("Name-clash Agent")){
+					((ContainerAgent) myAgent).echoStatus(e.getMessage(),ContainerAgent.LOGGING_NOTICE);
+					ACLMessage response=listenForStartAgentReq.this.START_AGENT_RESPONSE_KEY;
+					response.setPerformative(ACLMessage.FAILURE);
+					response.setContent(e.getMessage());
+					this.myAgent.send(response);
+
+				} else {
+					e.printStackTrace();
+				}
 			}
-			ACLMessage inform=listenForStartAgentReq.this.START_AGENT_RESPONSE_KEY;
-			this.myAgent.send(inform);
+
 
 			//Restart
 			Agent tmp=this.myAgent;

@@ -127,13 +127,17 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 	}
 
 	public static TransportOrderChainState touchTOCState(TransportOrderChain needleTOC,TransportOrderChainState toState,Boolean addRemoveSwitch,ContainerHolder ontRep){
+
 		Iterator queue=ontRep.getAllContainer_states();
 		while(queue.hasNext()){
-			TOCHasState queuedTOCState=(TOCHasState) queue.next();
-			if(needleTOC.getTransports().getBic_code().equals(queuedTOCState.getSubjected_toc().getTransports().getBic_code())){
-				TransportOrderChainState curState=queuedTOCState.getState();
+			TOCHasState storedTOCState=(TOCHasState) queue.next();
+			if(needleTOC.getTransports().getBic_code().equals(storedTOCState.getSubjected_toc().getTransports().getBic_code())){
+				TransportOrderChainState curState=storedTOCState.getState();
 				if(toState != null){
-					queuedTOCState.setState(toState); //set-Methode
+					if(toState instanceof Holding && curState instanceof Holding && ((Holding)toState).getAt_address()==null){
+						((Holding)toState).setAt_address(((Holding)curState).getAt_address()); //transfer BlockAddress from old to new state
+					}
+					storedTOCState.setState(toState); //set-Methode
 				}
 				if((toState == null) && addRemoveSwitch){ //remove-Methode
 					queue.remove();
@@ -156,27 +160,28 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		for(Iterator it=ontologyRepresentation.getAllContainer_states();it.hasNext();){
 			TOCHasState curTocState=(TOCHasState) it.next();
 			if(curTocState.getState() instanceof Holding){
-				output.add(curTocState.getSubjected_toc());
+				output.add(curTocState);
 			}
 		}
 		return output;
 	}
 	
 	public BlockAddress getUpmost(Integer x,Integer y){
-		BlockAddress upmostContainer=null;
+		BlockAddress upmostContainerPos=null;
 		List allHeldContainers=getAllHeldContainers();
 		Iterator allContainers=allHeldContainers.iterator();
 		while(allContainers.hasNext()){ //alle geladenen Container überprüfen 
-			TransportOrderChain curTOC=(TransportOrderChain) allContainers.next();
-			Holding curState=(Holding) touchTOCState(curTOC);
-			BlockAddress curContainer=curState.getAt_address();
-			if((curContainer.getX_dimension() == x) && (curContainer.getY_dimension() == y)){ //betrachteter Container steht im stapel auf momentaner koordinate
-				if((upmostContainer == null) || (upmostContainer.getZ_dimension() < curContainer.getZ_dimension())){
-					upmostContainer=curContainer;
+			TOCHasState curTOCState=(TOCHasState) allContainers.next();
+			Holding curState=(Holding) curTOCState.getState();
+			BlockAddress curContainerPos=curState.getAt_address();
+			
+			if((curContainerPos.getX_dimension() == x) && (curContainerPos.getY_dimension() == y)){ //betrachteter Container steht im stapel auf momentaner koordinate
+				if((upmostContainerPos == null) || (upmostContainerPos.getZ_dimension() < curContainerPos.getZ_dimension())){
+					upmostContainerPos=curContainerPos;
 				}
 			}
 		} //end while
-		return upmostContainer;
+		return upmostContainerPos;
 	}
 
 	public Integer countTOCInState(TransportOrderChainState TOCState){
@@ -264,8 +269,8 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 	}
 
 	public Integer getBaySize(){
-		BayMap LoadBay=this.ontologyRepresentation.getContains();
-		Integer baySize=LoadBay.getX_dimension() * LoadBay.getY_dimension() * LoadBay.getZ_dimension();
+		BayMap loadBay=this.ontologyRepresentation.getContains();
+		Integer baySize=loadBay.getX_dimension() * loadBay.getY_dimension() * loadBay.getZ_dimension();
 		return baySize;
 	}
 
@@ -423,32 +428,21 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		TransportOrder TO=new TransportOrder();
 
 		TO.setStarts_at(this.getMyselfDesignator());
+		TO.getStarts_at().setAt_address(((Holding)touchTOCState(curTOC)).getAt_address()); // add current position of container to start designator 
 		TO.setEnds_at(this.getAbstractTargetDesignator());
 		curTOC.addIs_linked_by(TO);
-		LoadList newCommission=new LoadList();
-		newCommission.addConsists_of(curTOC);
-		Behaviour b=new announceLoadOrders(this,newCommission,MasterBehaviour);
+		Behaviour b=new announceLoadOrders(this,curTOC,MasterBehaviour);
 		this.addBehaviour(b);
 	}
 
 	public boolean dropContainer(TransportOrderChain load_offer){
 //		echoStatus("removeContainerFromBayMap:",load_offer);
-		List allHeldContainers=getAllHeldContainers();
-		Iterator allContainers=allHeldContainers.iterator();
-		while(allContainers.hasNext()){ //alle geladenen Container überprüfen 
-			Container curContainer=((TransportOrderChain) allContainers.next()).getTransports();
-//			echoStatus("curContainerID: "+curContainer.getBic_code()+"load_offerID: ",load_offer);
-			if(curContainer.getBic_code().equals(load_offer.getTransports().getBic_code())){
-				allContainers.remove();
-//				echoStatus("Container found and removed.",load_offer);
-				touchTOCState(load_offer,null,true);
-//				echoStatus("Container dropped successfully (Message, BayMap, TOCState).",load_offer,ContainerAgent.LOGGING_INFORM);
-				wakeSleepingBehaviours(load_offer);
-				return true;
-			}
-		}
-		this.echoStatus("ERROR: Container NOT found to remove from BayMap.",load_offer,ContainerAgent.LOGGING_ERROR);
-		return false;
+		
+		touchTOCState(load_offer,null,true);
+//		echoStatus("Container dropped successfully (Message, TOCState).",load_offer,ContainerAgent.LOGGING_INFORM);
+		wakeSleepingBehaviours(load_offer);
+		return true;
+
 	}
 
 	public void wakeSleepingBehaviours(TransportOrderChain event){

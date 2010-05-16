@@ -8,20 +8,9 @@ import jade.core.*;
 /**
 * Protege name: ProposeLoadOffer
 * @author ontology bean generator
-* @version 2010/05/14, 17:12:06
+* @version 2010/05/16, 12:52:00
 */
 public class ProposeLoadOffer implements AgentAction {
-
-   /**
-* Protege name: corresponds_to
-   */
-   private TransportOrderChain corresponds_to;
-   public void setCorresponds_to(TransportOrderChain value) { 
-    this.corresponds_to=value;
-   }
-   public TransportOrderChain getCorresponds_to() {
-     return this.corresponds_to;
-   }
 
    /**
 * Protege name: load_offer
@@ -32,6 +21,17 @@ public class ProposeLoadOffer implements AgentAction {
    }
    public TransportOrder getLoad_offer() {
      return this.load_offer;
+   }
+
+   /**
+* Protege name: corresponds_to
+   */
+   private TransportOrderChain corresponds_to;
+   public void setCorresponds_to(TransportOrderChain value) { 
+    this.corresponds_to=value;
+   }
+   public TransportOrderChain getCorresponds_to() {
+     return this.corresponds_to;
    }
 
 }

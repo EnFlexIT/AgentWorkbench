@@ -29,6 +29,7 @@ import jade.proto.AchieveREInitiator;
 import java.util.Vector;
 
 import contmas.agents.ContainerAgent;
+import contmas.agents.ControlGUIAgent;
 import contmas.ontology.StartNewContainerHolder;
 
 /**
@@ -73,6 +74,11 @@ public class requestStartAgent extends AchieveREInitiator{
 	protected void handleInform(ACLMessage msg){
 	}
 
+	@Override
+	protected void handleFailure(ACLMessage msg){
+		((ControlGUIAgent) myAgent).alterAgentName();
+	}
+	
 	@Override
 	protected void handleRefuse(ACLMessage msg){
 	}

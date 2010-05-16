@@ -38,7 +38,7 @@ import contmas.ontology.*;
  *
  */
 public class StraddleCarrierAgent extends ActiveContainerAgent implements TransportOrderHandler,TransportOrderOfferer,HarbourLayoutRequester,PositionReporter{
-	private static final Float speed=1F/100F;
+	private static final Float speed=1F/10F;
 	private executeMovements moveBehaviour; 
 	
 	/**

@@ -112,6 +112,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 			this.ButtonCreateAgent.setText("Start Agent");
 
 			this.ButtonCreateAgent.addActionListener(new ActionListener(){
+				@Override
 				public void actionPerformed(ActionEvent e){
 					GuiEvent ge=new GuiEvent(this,1);
 					ge.addParameter(ControlGUI.this.TFAgentName.getText());
@@ -134,6 +135,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 						ge.addParameter(null);
 					}
 					ControlGUI.this.myAgent.postGuiEvent(ge);
+					alterAgentName();
 				}
 			});
 		}
@@ -842,6 +844,23 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 			this.jButton.setText("export ontRep >");
 		}
 		return this.jButton;
+	}
+
+	/**
+	 * 
+	 */
+	public void alterAgentName(){
+		String curName=this.getTFAgentName().getText();
+		String seperator="-#";
+		String[] parts=curName.split(seperator);
+		String name=parts[0];
+		Integer number=0;
+		if(parts.length==2){
+			number=Integer.valueOf(parts[1]);
+		}
+		number++;
+		name=((AgentClassElement) ControlGUI.this.getAgentType().getSelectedItem()).toString();
+		this.getTFAgentName().setText(name+seperator+number);
 	}
 
 } //  @jve:decl-index=0:visual-constraint="30,15"
