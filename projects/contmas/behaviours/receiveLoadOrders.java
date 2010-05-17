@@ -345,6 +345,9 @@ public class receiveLoadOrders extends ContractNetResponder{
 					block(100);
 				}
 				curTO.getEnds_at().setAt_address(destinationAddress);
+				TransportOrderChainState state=new Reserved();
+				state.setAt_address(destinationAddress);
+				myCAgent.touchTOCState(curTOC,state);
 			}
 
 			/* (non-Javadoc)
@@ -630,8 +633,9 @@ public class receiveLoadOrders extends ContractNetResponder{
 		Concept content=this.myCAgent.extractAction(propose);
 		TransportOrderChain acceptedTOC=((ProposeLoadOffer) content).getCorresponds_to();
 		//		((ContainerAgent)myAgent).echoStatus("Meine Bewerbung wurde abgelehnt");
-		if( !(this.myCAgent.touchTOCState(acceptedTOC,null,true) instanceof ProposedFor)){ //wenn der untersuchte Container dem entspricht, für den sich beworben wurde
-			this.myCAgent.echoStatus("ERROR: Auftrag, auf den ich mich beworben habe (abgelehnt), nicht zum Entfernen gefunden.",acceptedTOC,ContainerAgent.LOGGING_ERROR);
+		TransportOrderChainState oldState=this.myCAgent.touchTOCState(acceptedTOC,null,true);
+		if( !(oldState instanceof ProposedFor)){ //wenn der untersuchte Container dem entspricht, für den sich beworben wurde
+			this.myCAgent.echoStatus("ERROR: Auftrag, auf den ich mich beworben habe (abgelehnt), nicht zum Entfernen gefunden. War "+oldState.getClass().getSimpleName(),acceptedTOC,ContainerAgent.LOGGING_ERROR);
 		}else{
 			//			((ContainerAgent)myAgent).echoStatus("Abgelehnten Auftrag entfernt.",acceptedTOC);
 		}

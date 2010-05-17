@@ -5,10 +5,10 @@ import jade.util.leap.*;
 import jade.core.*;
 
 /**
-* Protege name: Rail
+* Protege name: PlannedOut
 * @author ontology bean generator
 * @version 2010/05/17, 22:08:19
 */
-public class Rail extends Domain{ 
+public class PlannedOut extends Holding{ 
 
 }

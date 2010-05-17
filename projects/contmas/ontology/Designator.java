@@ -8,31 +8,9 @@ import jade.core.*;
 /**
 * Protege name: Designator
 * @author ontology bean generator
-* @version 2010/05/16, 12:51:59
+* @version 2010/05/17, 22:08:19
 */
 public class Designator implements Concept {
-
-   /**
-* Protege name: at_address
-   */
-   private BlockAddress at_address;
-   public void setAt_address(BlockAddress value) { 
-    this.at_address=value;
-   }
-   public BlockAddress getAt_address() {
-     return this.at_address;
-   }
-
-   /**
-* Protege name: abstract_designation
-   */
-   private Domain abstract_designation;
-   public void setAbstract_designation(Domain value) { 
-    this.abstract_designation=value;
-   }
-   public Domain getAbstract_designation() {
-     return this.abstract_designation;
-   }
 
    /**
 * Protege name: concrete_designation
@@ -54,6 +32,28 @@ public class Designator implements Concept {
    }
    public String getType() {
      return this.type;
+   }
+
+   /**
+* Protege name: at_address
+   */
+   private BlockAddress at_address;
+   public void setAt_address(BlockAddress value) { 
+    this.at_address=value;
+   }
+   public BlockAddress getAt_address() {
+     return this.at_address;
+   }
+
+   /**
+* Protege name: abstract_designation
+   */
+   private Domain abstract_designation;
+   public void setAbstract_designation(Domain value) { 
+    this.abstract_designation=value;
+   }
+   public Domain getAbstract_designation() {
+     return this.abstract_designation;
    }
 
 }

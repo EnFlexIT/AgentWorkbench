@@ -1,4 +1,4 @@
-; Sun May 16 17:10:23 NZST 2010
+; Mon May 17 22:08:13 NZST 2010
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -6,11 +6,11 @@
 ([BROWSER_SLOT_NAMES] of  Property_List
 
 	(properties
-		[contmas_ontology_ProjectKB_Instance_117]
-		[contmas_ontology_ProjectKB_Instance_118]
-		[contmas_ontology_ProjectKB_Instance_119]
-		[contmas_ontology_ProjectKB_Instance_120]
-		[contmas_ontology_ProjectKB_Instance_121]))
+		[contmas_ontology_ProjectKB_Instance_20074]
+		[contmas_ontology_ProjectKB_Instance_20075]
+		[contmas_ontology_ProjectKB_Instance_20076]
+		[contmas_ontology_ProjectKB_Instance_20077]
+		[contmas_ontology_ProjectKB_Instance_20078]))
 
 ([CLSES_TAB] of  Widget
 
@@ -37,56 +37,17 @@
 ([contmas_ontology_ProjectKB_Instance_11] of  Property_List
 )
 
-([contmas_ontology_ProjectKB_Instance_117] of  String
-
-	(name "owl:Thing")
-	(string_value "%3ANAME"))
-
-([contmas_ontology_ProjectKB_Instance_118] of  String
-
-	(name ":PAL-CONSTRAINT")
-	(string_value "%3APAL-NAME"))
-
-([contmas_ontology_ProjectKB_Instance_119] of  String
-
-	(name ":INSTANCE-ANNOTATION")
-	(string_value "%3AANNOTATION-TEXT"))
-
 ([contmas_ontology_ProjectKB_Instance_12] of  Widget
 
 	(is_hidden TRUE)
 	(property_list [contmas_ontology_ProjectKB_Instance_13])
 	(widget_class_name "edu.stanford.smi.protegex.widget.pal.PalConstraintsTab"))
 
-([contmas_ontology_ProjectKB_Instance_120] of  String
-
-	(name ":META-CLASS")
-	(string_value "%3ANAME"))
-
-([contmas_ontology_ProjectKB_Instance_121] of  String
-
-	(name "owl:Class")
-	(string_value "%3ANAME"))
-
 ([contmas_ontology_ProjectKB_Instance_122] of  Map
 
 	(entries
-		[contmas_ontology_ProjectKB_Instance_123]
-		[contmas_ontology_ProjectKB_Instance_124]))
-
-([contmas_ontology_ProjectKB_Instance_123] of  Map_Entry
-
-	(key "add_name_on_instance_form")
-	(key_class "java.lang.String")
-	(value "false")
-	(value_class "java.lang.String"))
-
-([contmas_ontology_ProjectKB_Instance_124] of  Map_Entry
-
-	(key "change_tracking_active")
-	(key_class "java.lang.String")
-	(value "false")
-	(value_class "java.lang.String"))
+		[contmas_ontology_ProjectKB_Instance_20079]
+		[contmas_ontology_ProjectKB_Instance_20080]))
 
 ([contmas_ontology_ProjectKB_Instance_13] of  Property_List
 )
@@ -129,6 +90,45 @@
 	(is_hidden TRUE)
 	(property_list [contmas_ontology_ProjectKB_Instance_21])
 	(widget_class_name "edu.stanford.smi.RemoteKBTab.UMLSTab"))
+
+([contmas_ontology_ProjectKB_Instance_20074] of  String
+
+	(name "owl:Thing")
+	(string_value "%3ANAME"))
+
+([contmas_ontology_ProjectKB_Instance_20075] of  String
+
+	(name ":PAL-CONSTRAINT")
+	(string_value "%3APAL-NAME"))
+
+([contmas_ontology_ProjectKB_Instance_20076] of  String
+
+	(name ":INSTANCE-ANNOTATION")
+	(string_value "%3AANNOTATION-TEXT"))
+
+([contmas_ontology_ProjectKB_Instance_20077] of  String
+
+	(name ":META-CLASS")
+	(string_value "%3ANAME"))
+
+([contmas_ontology_ProjectKB_Instance_20078] of  String
+
+	(name "owl:Class")
+	(string_value "%3ANAME"))
+
+([contmas_ontology_ProjectKB_Instance_20079] of  Map_Entry
+
+	(key "add_name_on_instance_form")
+	(key_class "java.lang.String")
+	(value "false")
+	(value_class "java.lang.String"))
+
+([contmas_ontology_ProjectKB_Instance_20080] of  Map_Entry
+
+	(key "change_tracking_active")
+	(key_class "java.lang.String")
+	(value "false")
+	(value_class "java.lang.String"))
 
 ([contmas_ontology_ProjectKB_Instance_21] of  Property_List
 )

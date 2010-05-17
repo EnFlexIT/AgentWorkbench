@@ -8,20 +8,9 @@ import jade.core.*;
 /**
 * Protege name: TransportOrder
 * @author ontology bean generator
-* @version 2010/05/16, 12:52:00
+* @version 2010/05/17, 22:08:19
 */
 public class TransportOrder implements Concept {
-
-   /**
-* Protege name: starts_at
-   */
-   private Designator starts_at;
-   public void setStarts_at(Designator value) { 
-    this.starts_at=value;
-   }
-   public Designator getStarts_at() {
-     return this.starts_at;
-   }
 
    /**
 * Protege name: ends_at
@@ -43,6 +32,17 @@ public class TransportOrder implements Concept {
    }
    public String getTakes_until() {
      return this.takes_until;
+   }
+
+   /**
+* Protege name: starts_at
+   */
+   private Designator starts_at;
+   public void setStarts_at(Designator value) { 
+    this.starts_at=value;
+   }
+   public Designator getStarts_at() {
+     return this.starts_at;
    }
 
 }

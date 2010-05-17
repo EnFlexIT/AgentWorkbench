@@ -8,20 +8,9 @@ import jade.core.*;
 /**
 * Protege name: RequestBlockAddress
 * @author ontology bean generator
-* @version 2010/05/16, 12:52:00
+* @version 2010/05/17, 22:08:19
 */
 public class RequestBlockAddress implements AgentAction {
-
-   /**
-* Protege name: subjected_toc
-   */
-   private TransportOrderChain subjected_toc;
-   public void setSubjected_toc(TransportOrderChain value) { 
-    this.subjected_toc=value;
-   }
-   public TransportOrderChain getSubjected_toc() {
-     return this.subjected_toc;
-   }
 
    /**
 * Protege name: provides
@@ -32,6 +21,17 @@ public class RequestBlockAddress implements AgentAction {
    }
    public BayMap getProvides() {
      return this.provides;
+   }
+
+   /**
+* Protege name: subjected_toc
+   */
+   private TransportOrderChain subjected_toc;
+   public void setSubjected_toc(TransportOrderChain value) { 
+    this.subjected_toc=value;
+   }
+   public TransportOrderChain getSubjected_toc() {
+     return this.subjected_toc;
    }
 
    /**

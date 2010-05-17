@@ -8,20 +8,9 @@ import jade.core.*;
    * Represents an agent that can move in the environment
 * Protege name: phy:AgentObject
 * @author ontology bean generator
-* @version 2010/05/16, 12:51:59
+* @version 2010/05/17, 22:08:19
 */
 public class Phy_AgentObject extends Phy_AbstractObject{ 
-
-   /**
-* Protege name: phy:maxSpeed
-   */
-   private Phy_Speed phy_maxSpeed;
-   public void setPhy_maxSpeed(Phy_Speed value) { 
-    this.phy_maxSpeed=value;
-   }
-   public Phy_Speed getPhy_maxSpeed() {
-     return this.phy_maxSpeed;
-   }
 
    /**
 * Protege name: phy:currentSpeed
@@ -35,18 +24,6 @@ public class Phy_AgentObject extends Phy_AbstractObject{
    }
 
    /**
-   * Name of the agent class (subclass of jade.core.agent) this agent is an instance of
-* Protege name: phy:agentClass
-   */
-   private String phy_agentClass;
-   public void setPhy_agentClass(String value) { 
-    this.phy_agentClass=value;
-   }
-   public String getPhy_agentClass() {
-     return this.phy_agentClass;
-   }
-
-   /**
    * This agent's AID
 * Protege name: phy:aid
    */
@@ -56,6 +33,18 @@ public class Phy_AgentObject extends Phy_AbstractObject{
    }
    public AID getPhy_aid() {
      return this.phy_aid;
+   }
+
+   /**
+   * Name of the agent class (subclass of jade.core.agent) this agent is an instance of
+* Protege name: phy:agentClass
+   */
+   private String phy_agentClass;
+   public void setPhy_agentClass(String value) { 
+    this.phy_agentClass=value;
+   }
+   public String getPhy_agentClass() {
+     return this.phy_agentClass;
    }
 
    /**
@@ -79,5 +68,16 @@ public class Phy_AgentObject extends Phy_AbstractObject{
    public Iterator getAllPhy_collisionPoints() {return phy_collisionPoints.iterator(); }
    public List getPhy_collisionPoints() {return phy_collisionPoints; }
    public void setPhy_collisionPoints(List l) {phy_collisionPoints = l; }
+
+   /**
+* Protege name: phy:maxSpeed
+   */
+   private Phy_Speed phy_maxSpeed;
+   public void setPhy_maxSpeed(Phy_Speed value) { 
+    this.phy_maxSpeed=value;
+   }
+   public Phy_Speed getPhy_maxSpeed() {
+     return this.phy_maxSpeed;
+   }
 
 }

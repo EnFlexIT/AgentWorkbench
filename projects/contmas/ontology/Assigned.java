@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: Assigned
 * @author ontology bean generator
-* @version 2010/05/16, 12:51:59
+* @version 2010/05/17, 22:08:19
 */
 public class Assigned extends Holding{ 
 

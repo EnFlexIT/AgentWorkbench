@@ -25,6 +25,7 @@ import jade.core.Agent;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.proto.AchieveREInitiator;
+import jade.util.leap.List;
 
 import java.util.Vector;
 
@@ -47,6 +48,7 @@ public class requestBlockAddress extends AchieveREInitiator{
 	private BayMap rawBayMap=null;
 	private TransportOrderChain subject=null;
 	private BlockAddress resultMemory;
+	private List population;
 
 	private static ACLMessage getRequestMessage(Agent a){
 		ACLMessage msg=new ACLMessage(ACLMessage.REQUEST);
@@ -54,13 +56,14 @@ public class requestBlockAddress extends AchieveREInitiator{
 		return msg;
 	}
 
-	public requestBlockAddress(ContainerHolderAgent a,BayMap rawBayMap,TransportOrderChain subject, BlockAddress resultMemory){
+	public requestBlockAddress(ContainerHolderAgent a,BayMap rawBayMap,List population,TransportOrderChain subject, BlockAddress resultMemory){
 		super(a,requestBlockAddress.getRequestMessage(a));
 		myAgent=a;
 		this.optimizer=this.myAgent.getFirstAIDFromDF("optimizing-bay-maps");
 		this.rawBayMap=rawBayMap;
 		this.subject=subject;
 		this.resultMemory=resultMemory;
+		this.population=population;
 	}
 
 	@Override
@@ -69,7 +72,8 @@ public class requestBlockAddress extends AchieveREInitiator{
 		RequestBlockAddress act=new RequestBlockAddress();
 		act.setProvides(this.rawBayMap);
 		act.setSubjected_toc(subject);
-
+		act.setProvides_population(population);
+		
 		((ContainerAgent) this.myAgent).fillMessage(request,act);
 		Vector<ACLMessage> messages=new Vector<ACLMessage>();
 		messages.add(request);

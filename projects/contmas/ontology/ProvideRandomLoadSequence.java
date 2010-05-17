@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: ProvideRandomLoadSequence
 * @author ontology bean generator
-* @version 2010/05/16, 12:52:00
+* @version 2010/05/17, 22:08:19
 */
 public class ProvideRandomLoadSequence implements AgentAction {
 

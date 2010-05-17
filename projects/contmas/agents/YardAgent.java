@@ -61,7 +61,7 @@ public class YardAgent extends StaticContainerAgent implements TransportOrderHan
 		outputMemory.setY_dimension(-1);
 		outputMemory.setZ_dimension(-1);
 
-		addBehaviour(new requestBlockAddress(this,rawBayMap,subject, outputMemory));
+		addBehaviour(new requestBlockAddress(this,rawBayMap,getAllHeldContainers(true),subject, outputMemory));
 		return outputMemory;
 	}
 	@Override

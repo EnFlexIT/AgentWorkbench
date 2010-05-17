@@ -134,8 +134,8 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 			if(needleTOC.getTransports().getBic_code().equals(storedTOCState.getSubjected_toc().getTransports().getBic_code())){
 				TransportOrderChainState curState=storedTOCState.getState();
 				if(toState != null){
-					if(toState instanceof Holding && curState instanceof Holding && ((Holding)toState).getAt_address()==null){
-						((Holding)toState).setAt_address(((Holding)curState).getAt_address()); //transfer BlockAddress from old to new state
+					if(toState.getAt_address()==null){
+						toState.setAt_address(curState.getAt_address()); //transfer BlockAddress from old to new state
 					}
 					storedTOCState.setState(toState); //set-Methode
 				}
@@ -156,10 +156,17 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 	}
 
 	public List getAllHeldContainers(){
+		return getAllHeldContainers(false);
+	}
+	
+	public List getAllHeldContainers(Boolean alsoReserved){
 		List output=new ArrayList();
 		for(Iterator it=ontologyRepresentation.getAllContainer_states();it.hasNext();){
 			TOCHasState curTocState=(TOCHasState) it.next();
 			if(curTocState.getState() instanceof Holding){
+				output.add(curTocState);
+			}
+			if(alsoReserved && curTocState.getState() instanceof Reserved && curTocState.getState().getAt_address()!=null){
 				output.add(curTocState);
 			}
 		}
