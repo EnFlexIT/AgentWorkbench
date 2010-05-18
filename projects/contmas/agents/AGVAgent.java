@@ -15,6 +15,7 @@
 package contmas.agents;
 
 import jade.util.leap.List;
+import contmas.behaviours.listenForExecuteAppointmentReq;
 import contmas.behaviours.receiveLoadOrders;
 import contmas.interfaces.TransportOrderHandler;
 import contmas.ontology.AGV;
@@ -45,6 +46,7 @@ public class AGVAgent extends PassiveContainerAgent implements TransportOrderHan
 
 	public void handleTransportOrder(){
 		this.addBehaviour(new receiveLoadOrders(this));
+		this.addBehaviour(new listenForExecuteAppointmentReq(this));
 	}
 
 	@Override

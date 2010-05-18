@@ -431,14 +431,14 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		return -1; //passt gar nicht
 	}
 
-	public void releaseContainer(TransportOrderChain curTOC,Behaviour MasterBehaviour){
+	public void releaseContainer(TransportOrderChain curTOC){
 		TransportOrder TO=new TransportOrder();
 
 		TO.setStarts_at(this.getMyselfDesignator());
 		TO.getStarts_at().setAt_address(((Holding)touchTOCState(curTOC)).getAt_address()); // add current position of container to start designator 
 		TO.setEnds_at(this.getAbstractTargetDesignator());
 		curTOC.addIs_linked_by(TO);
-		Behaviour b=new announceLoadOrders(this,curTOC,MasterBehaviour);
+		Behaviour b=new announceLoadOrders(this,curTOC);
 		this.addBehaviour(b);
 	}
 

@@ -66,6 +66,7 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 	@Override
 	public void handleTransportOrder(){
 		this.addBehaviour(new receiveLoadOrders(this));
+		this.addBehaviour(new listenForExecuteAppointmentReq(this));
 	}
 
 	/* (non-Javadoc)

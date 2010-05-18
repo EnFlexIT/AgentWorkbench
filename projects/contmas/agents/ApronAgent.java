@@ -20,6 +20,7 @@
  */
 package contmas.agents;
 
+import contmas.behaviours.listenForExecuteAppointmentReq;
 import contmas.behaviours.receiveLoadOrders;
 import contmas.behaviours.unload;
 import contmas.interfaces.TransportOrderHandler;
@@ -47,6 +48,7 @@ public class ApronAgent extends StaticContainerAgent implements TransportOrderHa
 	@Override
 	public void handleTransportOrder(){
 		this.addBehaviour(new receiveLoadOrders(this));
+		this.addBehaviour(new listenForExecuteAppointmentReq(this));
 	}
 
 	@Override

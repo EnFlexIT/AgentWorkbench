@@ -143,7 +143,7 @@ public class listenForLoadingStreamIni extends AchieveREResponder{
 				TransportOrderChainState curState=myCAgent.touchTOCState(curTOC);
 
 				if(curState instanceof Administered){
-					myCAgent.releaseContainer(curTOC,null);
+					myCAgent.releaseContainer(curTOC);
 				}
 				completelyExecuted=completelyExecuted && (curState == null);
 			}

@@ -44,28 +44,19 @@ public class announceLoadOrders extends ContractNetInitiator{
 	private TransportOrder curTO;
 	Domain endDomain;
 
-	private final Behaviour masterBehaviour;
 	private final ContainerHolderAgent myCAgent=(ContainerHolderAgent) this.myAgent;
-	String ACCEPT_KEY="__accept" + hashCode();
 
 	public announceLoadOrders(Agent a,TransportOrderChain currentTOC){
-		this(a,currentTOC,null);
-	}
-
-	public announceLoadOrders(Agent a,TransportOrderChain currentTOC,Behaviour masterBehaviour){
 		super(a,null);
 		this.curTOC=currentTOC;
-		this.masterBehaviour=masterBehaviour;
-
-		Behaviour b=new handleAllResultNotifications(a,getDataStore());
-		b.setDataStore(getDataStore());
-
-		this.registerHandleAllResultNotifications(b);
 	}
 
 	@Override
 	protected Vector<ACLMessage> prepareCfps(ACLMessage cfp){
 		TransportOrderChainState oldState=this.myCAgent.touchTOCState(curTOC,new Announced());
+		this.myCAgent.echoStatus("announceLoadOrders - prepareCfps state set to Announced",curTOC);
+
+		Vector<ACLMessage> messages=new Vector<ACLMessage>();
 
 		if(oldState instanceof Announced){
 			this.myCAgent.echoStatus("Auftrag bereits ausgeschrieben, nicht nocheinmal.",curTOC,ContainerAgent.LOGGING_INFORM);
@@ -76,13 +67,9 @@ public class announceLoadOrders extends ContractNetInitiator{
 			cfp.setProtocol(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
 			List contractorList=this.myCAgent.determineContractors();
 			if((contractorList == null) || contractorList.isEmpty()){
-				if(this.masterBehaviour != null){
-					this.myCAgent.echoStatus("MasterBehaviour wird neugestartet.",ContainerAgent.LOGGING_INFORM);
-					this.masterBehaviour.restart();
-				}
 				this.myCAgent.echoStatus("FAILURE: Keine Contractors mehr vorhanden. Ausschreibung nicht möglich.",curTOC,ContainerAgent.LOGGING_NOTICE);
 				this.myCAgent.touchTOCState(curTOC,new FailedOut());
-				return null;
+				messages=null;
 			}
 			Iterator<?> allContractors=contractorList.iterator();
 
@@ -92,18 +79,18 @@ public class announceLoadOrders extends ContractNetInitiator{
 			CallForProposalsOnLoadStage act=new CallForProposalsOnLoadStage();
 			act.setCorresponds_to(this.curTOC);
 			this.myCAgent.fillMessage(cfp,act);
-			Vector<ACLMessage> messages=new Vector<ACLMessage>();
 			cfp.setReplyByDate(new Date(System.currentTimeMillis() + 50000)); //500000
 			messages.add(cfp);
 
 			//		((ContainerAgent)myAgent).echoStatus("Auftrag ausgeschrieben.",curTOC);
-			return messages;
 		}else{
-			this.myCAgent.echoStatus("FAILURE: TOC is not going to be announced, currentState:"+oldState.getClass().getSimpleName(),curTOC,ContainerAgent.LOGGING_NOTICE);
+			this.myCAgent.echoStatus("FAILURE: TOC is not going to be announced, currentState:" + oldState.getClass().getSimpleName(),curTOC,ContainerAgent.LOGGING_NOTICE);
 			this.myCAgent.touchTOCState(curTOC,new FailedOut());
 			this.myCAgent.wakeSleepingBehaviours(curTOC);
-			return null;
+			messages=null;
 		}
+		myCAgent.wakeSleepingBehaviours(curTOC);
+		return messages;
 	}
 
 	@Override
@@ -136,8 +123,7 @@ public class announceLoadOrders extends ContractNetInitiator{
 		if(bestOffer == null){ //Abnehmer momentan alle beschäftigt
 			this.myCAgent.echoStatus("FAILURE: Nur Ablehnungen empfangen, Abbruch.",ContainerAgent.LOGGING_NOTICE);
 			this.myCAgent.touchTOCState(curTOC,new FailedOut());
-
-			notifyMaster("REFUSE");
+			myCAgent.wakeSleepingBehaviours(curTOC);
 
 			this.reset();
 			return;
@@ -150,7 +136,6 @@ public class announceLoadOrders extends ContractNetInitiator{
 			act.setCorresponds_to(bestOfferToc);
 			this.myCAgent.fillMessage(accept,act);
 			accept.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
-			getDataStore().put(ACCEPT_KEY,accept);
 			acceptances.add(accept);
 		}
 		for(Object message: responses){
@@ -163,152 +148,21 @@ public class announceLoadOrders extends ContractNetInitiator{
 		}
 	}
 
-	class handleAllResultNotifications extends FSMBehaviour{
-		String READY_NOTIFICATION_KEY="__ready-notification" + hashCode();
-		String RESULT_NOTIFICATION_KEY="__result-notification" + hashCode();
-
-		//FSM events
-		private final Integer CONTRACTOR_READY=1;
-		private final Integer CONTRACTOR_NOT_READY=0;
-
-		//FSM State strings
-		private static final String START_MOVING="start_moving";
-		private static final String WAIT_UNTIL_TARGET_REACHED="wait_until_target_reached";
-		private static final String DROPPER="dropper";
-		private static final String SEND_INFORM_FINISHED="send_inform_finished";
-		private static final String DUMMY_END="dummy_end";
-
-		WaitUntilTargetReached positionChecker;
-
-		handleAllResultNotifications(Agent a,DataStore ds){
-			super(a);
-			this.setDataStore(ds);
-
-			registerFirstState(new StartMoving(a,ds),START_MOVING);
-			positionChecker=new WaitUntilTargetReached(a,ds);
-			registerState(positionChecker,WAIT_UNTIL_TARGET_REACHED);
-			registerState(new Dropper(myAgent,getDataStore()),DROPPER);
-			/*
-			b=new GetInformReady(myAgent,getDataStore());
-			addSubBehaviour(b);
-			*/
-			registerLastState(new SendNotification(myAgent,getDataStore(),RESULT_NOTIFICATION_KEY,READY_NOTIFICATION_KEY),SEND_INFORM_FINISHED);
-			class DummyClass extends OneShotBehaviour{
-				public void action(){/*myCAgent.echoStatus("DUMMYALARM!");*/
-				}
-			}
-			registerLastState(new DummyClass(),DUMMY_END);
-
-			//register transitions
-			registerTransition(START_MOVING,WAIT_UNTIL_TARGET_REACHED,CONTRACTOR_READY);
-			registerTransition(START_MOVING,DUMMY_END,CONTRACTOR_NOT_READY);
-
-			registerDefaultTransition(START_MOVING,WAIT_UNTIL_TARGET_REACHED);
-			registerDefaultTransition(WAIT_UNTIL_TARGET_REACHED,DROPPER);
-			registerDefaultTransition(DROPPER,SEND_INFORM_FINISHED);
-
-		}
-
-		class StartMoving extends OneShotBehaviour{
-			Integer returnEvent=CONTRACTOR_READY;
-
-			StartMoving(Agent a,DataStore ds){
-				super(a);
-				this.setDataStore(ds);
-			}
-
-			@Override
-			public void action(){
-				Vector<ACLMessage> resultNotifications=(Vector) this.getDataStore().get(ALL_RESULT_NOTIFICATIONS_KEY);
-				for(ACLMessage notification: resultNotifications){ //TODO check on multiple notifications!
-
-					AgentAction content=myCAgent.extractAction(notification);
-					if(content instanceof AnnounceLoadStatus){
-						AnnounceLoadStatus loadStatus=(AnnounceLoadStatus) content;
-						this.getDataStore().put(READY_NOTIFICATION_KEY,notification);
-
-						if(notification.getPerformative() == ACLMessage.FAILURE){ // && loadStatus.getLoad_status().substring(0, 4).equals("ERROR")) {
-							myCAgent.removeFromContractors(notification.getSender());
-							myCAgent.touchTOCState(curTOC,new FailedOut());
-							myCAgent.echoStatus("Containerabgabe fehlgeschlagen. Msg=" + loadStatus.getLoad_status(),curTOC,ContainerAgent.LOGGING_NOTICE);
-
-							notifyMaster("FAILURE");
-							myCAgent.wakeSleepingBehaviours(curTOC);
-							returnEvent=CONTRACTOR_NOT_READY;
-						}else{
-							if(myCAgent instanceof MoveableAgent){
-								MoveableAgent myMoveableAgent=(MoveableAgent) myCAgent;
-								TransportOrderChainState oldState=myCAgent.touchTOCState(curTOC,new Assigned());
-
-								myCAgent.echoStatus("Container is going to be dropped at " + endDomain.getId() + " " + StraddleCarrierAgent.positionToString(endDomain.getIs_in_position()) + ", current position: " + StraddleCarrierAgent.positionToString(myMoveableAgent.getCurrentPosition()));
-								myMoveableAgent.addAsapMovementTo(endDomain.getIs_in_position());
-								setTargetPosition(endDomain.getIs_in_position());
-							}
-						}
-					}
-				}
-			}
-
-			@Override
-			public int onEnd(){
-				return returnEvent;
+	@Override
+	protected void handleAllResultNotifications(Vector resultNotifications){
+		myCAgent.echoStatus("handleAllResultNotifications");
+		for(Iterator iterator=resultNotifications.iterator();iterator.hasNext();){
+			ACLMessage resNot=(ACLMessage) iterator.next();
+			AnnounceLoadStatus act=(AnnounceLoadStatus) myCAgent.extractAction(resNot);
+			if(act.getLoad_status().equals("PENDING")){
+				myCAgent.touchTOCState(curTOC,new PlannedOut());
+				myCAgent.addBehaviour(new requestExecuteAppointment(myCAgent,curTOC,curTO));
 			}
 		}
-
-		/*
-		class GetInformReady extends MsgReceiver{
-			GetInformReady(Agent a,DataStore ds){
-				super(a,replyTemplate,MsgReceiver.INFINITE,ds,READY_NOTIFICATION_KEY);
-				this.setDataStore(ds);
-			}
-		}
-		*/
-		class Dropper extends OneShotBehaviour{
-
-			public Dropper(Agent a,DataStore ds){
-				super(a);
-				setDataStore(ds);
-			}
-
-			@Override
-			public void action(){
-				ACLMessage readyNotification=(ACLMessage) getDataStore().get(READY_NOTIFICATION_KEY);
-				if(myCAgent.dropContainer(curTOC)){
-					notifyMaster("INFORM");
-
-					ACLMessage statusAnnouncement=readyNotification.createReply();
-					statusAnnouncement.setPerformative(ACLMessage.INFORM);
-					AnnounceLoadStatus loadStatus=ContainerAgent.getLoadStatusAnnouncement(curTOC,"FINISHED");
-					myCAgent.fillMessage(statusAnnouncement,loadStatus);
-					getDataStore().put(RESULT_NOTIFICATION_KEY,statusAnnouncement);
-				}else{
-					myCAgent.echoStatus("FAILURE: Something went hilariously wrong!",curTOC,ContainerAgent.LOGGING_ERROR);
-				}
-			}
-		}
-
-		class SendNotification extends ReplySender{
-			public SendNotification(Agent a,DataStore ds,String replyKey,String msgKey){
-				super(a,replyKey,msgKey,ds);
-			}
-		}
-
-		private void setTargetPosition(Phy_Position targetPosition){
-			positionChecker.setTargetPosition(targetPosition);
-		}
-
 	}
 
 	@Override
 	protected void handleOutOfSequence(ACLMessage msg){
 		this.myCAgent.echoStatus("ERROR: Unerwartete Nachricht bei announce (" + msg.getPerformative() + ") empfangen von " + msg.getSender().getLocalName() + ": " + msg.getContent(),ContainerAgent.LOGGING_ERROR);
 	}
-
-	private void notifyMaster(String cause){
-		if(masterBehaviour != null){
-			myCAgent.echoStatus(cause + ": MasterBehaviour wird neugestartet.",ContainerAgent.LOGGING_INFORM);
-			masterBehaviour.restart();
-		}
-	}
-
 }

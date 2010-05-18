@@ -20,6 +20,7 @@
  */
 package contmas.agents;
 
+import contmas.behaviours.listenForExecuteAppointmentReq;
 import contmas.behaviours.receiveLoadOrders;
 import contmas.behaviours.requestBlockAddress;
 import contmas.behaviours.striveForLoading;
@@ -49,6 +50,7 @@ public class YardAgent extends StaticContainerAgent implements TransportOrderHan
 	@Override
 	public void handleTransportOrder(){
 		this.addBehaviour(new receiveLoadOrders(this));
+		this.addBehaviour(new listenForExecuteAppointmentReq(this));
 	}
 	
 	/* (non-Javadoc)

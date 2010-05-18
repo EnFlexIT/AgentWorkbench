@@ -9,8 +9,8 @@
     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
   xml:base="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/contmas_ontology.owl">
   <owl:Ontology rdf:about="">
-    <owl:imports rdf:resource="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/agentgui_display_ontology.owl"/>
     <owl:imports rdf:resource="http://jade.cselt.it/beangenerator"/>
+    <owl:imports rdf:resource="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/agentgui_display_ontology.owl"/>
   </owl:Ontology>
   <owl:ObjectProperty rdf:ID="available_cranes">
     <rdfs:range rdf:resource="http://jade.cselt.it/beangenerator#AID"/>
@@ -218,23 +218,11 @@
           <j0:JADE-CLASS rdf:ID="ProposeLoadOffer">
             <rdfs:subClassOf rdf:resource="http://jade.cselt.it/beangenerator#AgentAction"/>
           </j0:JADE-CLASS>
-          <j0:JADE-CLASS rdf:ID="InExecution">
-            <rdfs:subClassOf>
-              <j0:JADE-CLASS rdf:ID="Reserved">
-                <rdfs:subClassOf>
-                  <j0:JADE-CLASS rdf:ID="TransportOrderChainState">
-                    <rdfs:subClassOf rdf:resource="http://jade.cselt.it/beangenerator#Concept"/>
-                  </j0:JADE-CLASS>
-                </rdfs:subClassOf>
-              </j0:JADE-CLASS>
-            </rdfs:subClassOf>
+          <j0:JADE-CLASS rdf:ID="RequestExecuteAppointment">
+            <rdfs:subClassOf rdf:resource="http://jade.cselt.it/beangenerator#AgentAction"/>
           </j0:JADE-CLASS>
-          <j0:JADE-CLASS rdf:ID="Assigned">
-            <rdfs:subClassOf>
-              <j0:JADE-CLASS rdf:ID="Holding">
-                <rdfs:subClassOf rdf:resource="#TransportOrderChainState"/>
-              </j0:JADE-CLASS>
-            </rdfs:subClassOf>
+          <j0:JADE-CLASS rdf:ID="TransportOrderChainState">
+            <rdfs:subClassOf rdf:resource="http://jade.cselt.it/beangenerator#Concept"/>
           </j0:JADE-CLASS>
         </owl:unionOf>
       </owl:Class>
@@ -319,6 +307,7 @@
           <j0:JADE-CLASS rdf:ID="CallForProposalsOnLoadStage">
             <rdfs:subClassOf rdf:resource="http://jade.cselt.it/beangenerator#AgentAction"/>
           </j0:JADE-CLASS>
+          <j0:JADE-CLASS rdf:about="#RequestExecuteAppointment"/>
         </owl:unionOf>
       </owl:Class>
     </rdfs:domain>
@@ -532,6 +521,13 @@
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
   </owl:InverseFunctionalProperty>
   <j0:JADE-CLASS rdf:ID="Administered">
+    <rdfs:subClassOf>
+      <j0:JADE-CLASS rdf:ID="Holding">
+        <rdfs:subClassOf rdf:resource="#TransportOrderChainState"/>
+      </j0:JADE-CLASS>
+    </rdfs:subClassOf>
+  </j0:JADE-CLASS>
+  <j0:JADE-CLASS rdf:ID="Assigned">
     <rdfs:subClassOf rdf:resource="#Holding"/>
   </j0:JADE-CLASS>
   <j0:JADE-CLASS rdf:ID="YardArea">
@@ -553,7 +549,11 @@
     <rdfs:subClassOf rdf:resource="#ActiveContainerHolder"/>
   </j0:JADE-CLASS>
   <j0:JADE-CLASS rdf:ID="PlannedIn">
-    <rdfs:subClassOf rdf:resource="#Reserved"/>
+    <rdfs:subClassOf>
+      <j0:JADE-CLASS rdf:ID="Reserved">
+        <rdfs:subClassOf rdf:resource="#TransportOrderChainState"/>
+      </j0:JADE-CLASS>
+    </rdfs:subClassOf>
   </j0:JADE-CLASS>
   <j0:JADE-CLASS rdf:ID="RequestEnvironmentReset">
     <rdfs:subClassOf rdf:resource="http://jade.cselt.it/beangenerator#AgentAction"/>
@@ -575,16 +575,16 @@
   </j0:JADE-CLASS>
   <j0:JADE-CLASS rdf:ID="AGV">
     <rdfs:subClassOf>
-      <j0:JADE-CLASS rdf:ID="PassiveContainerHolder">
-        <rdfs:subClassOf rdf:resource="#ContainerHolder"/>
-      </j0:JADE-CLASS>
-    </rdfs:subClassOf>
-    <rdfs:subClassOf>
       <owl:Restriction>
         <owl:onProperty rdf:resource="#service_type"/>
         <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
         >container-distribution</owl:hasValue>
       </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <j0:JADE-CLASS rdf:ID="PassiveContainerHolder">
+        <rdfs:subClassOf rdf:resource="#ContainerHolder"/>
+      </j0:JADE-CLASS>
     </rdfs:subClassOf>
   </j0:JADE-CLASS>
   <j0:JADE-CLASS rdf:ID="RMG">
@@ -616,6 +616,9 @@
   </j0:JADE-CLASS>
   <j0:JADE-CLASS rdf:ID="Berth">
     <rdfs:subClassOf rdf:resource="#Domain"/>
+  </j0:JADE-CLASS>
+  <j0:JADE-CLASS rdf:ID="InExecution">
+    <rdfs:subClassOf rdf:resource="#Reserved"/>
   </j0:JADE-CLASS>
   <j0:JADE-CLASS rdf:ID="Street">
     <rdfs:subClassOf rdf:resource="#Domain"/>

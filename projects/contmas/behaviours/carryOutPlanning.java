@@ -1,5 +1,5 @@
 /**
- * @author Hanno - Felix Wagner, 28.03.2010
+ * @author Hanno - Felix Wagner, 03.05.2010
  * Copyright 2010 Hanno - Felix Wagner
  * 
  * This file is part of ContMAS.
@@ -22,27 +22,34 @@ package contmas.behaviours;
 
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
+import contmas.agents.ContainerAgent;
 import contmas.agents.ContainerHolderAgent;
-import contmas.ontology.Administered;
+import contmas.interfaces.MoveableAgent;
+import contmas.ontology.PlannedOut;
+import contmas.ontology.TransportOrder;
 import contmas.ontology.TransportOrderChain;
 
-public class unload extends CyclicBehaviour{
-	private final ContainerHolderAgent myCAgent;
-	private static final long serialVersionUID=3933460156486819068L;
+public class carryOutPlanning extends CyclicBehaviour{
+	MoveableAgent myAgent;
+	ContainerHolderAgent myCAgent;
 
-	public unload(Agent a){
+	public carryOutPlanning(Agent a){
 		super(a);
-		this.myCAgent=((ContainerHolderAgent) this.myAgent);
+		myAgent=(MoveableAgent) a;
+		myCAgent=(ContainerHolderAgent) a;
 	}
 
+	/* (non-Javadoc)
+	 * @see jade.core.behaviours.Behaviour#action()
+	 */
 	@Override
 	public void action(){
-		TransportOrderChain someTOC=this.myCAgent.getSomeTOCOfState(new Administered());
-		if(someTOC != null){
-			this.myCAgent.releaseContainer(someTOC);
-		}else{
-			myCAgent.registerForWakeUpCall(this);
-			this.block();
+		TransportOrderChain curTOC=myCAgent.getSomeTOCOfState(new PlannedOut());
+		if(curTOC != null){
+			TransportOrder curTO=((PlannedOut) myCAgent.touchTOCState(curTOC)).getLoad_offer();
+			myCAgent.addBehaviour(new requestExecuteAppointment(myCAgent,curTOC,curTO));
+			myCAgent.echoStatus("added plan execution");
 		}
+		block();
 	}
 }

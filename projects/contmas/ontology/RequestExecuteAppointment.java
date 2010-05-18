@@ -6,11 +6,11 @@ import jade.util.leap.*;
 import jade.core.*;
 
 /**
-* Protege name: ProposeLoadOffer
+* Protege name: RequestExecuteAppointment
 * @author ontology bean generator
 * @version 2010/05/18, 12:29:37
 */
-public class ProposeLoadOffer implements AgentAction {
+public class RequestExecuteAppointment implements AgentAction {
 
    /**
 * Protege name: load_offer
