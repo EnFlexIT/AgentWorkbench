@@ -1,4 +1,4 @@
-LANG_DEFAULT;1;;;
+LANG_DEFAULT;0;;;
 LANG_DE;LANG_EN;LANG_IT;LANG_ES;LANG_FR
 Fertig;Ready;;;
 Programmstart ...;Starting Program ...;;;
@@ -177,3 +177,14 @@ Ungültige Eingabe, ausschließlich zahlenwerte zulässig!;;;;
 Lege Maßstad fest:;;;;
 Element-Typ;;;;
 liegt außerhalb von Playground;;;;
+Ontologie hinzufügen;;;;
+Auswahl Ontologien;;;;
+Ansicht:;;;;
+Alle Ontologien;;;;
+Nur Nicht-Jade-Ontologien;;;;
+Hinzufügen;;;;
+Abbrechen;;;;
+Warte auf Ontologie-Liste...;;;;
+Fehlende Auswahl !;;;;
+Zum Löschen, wählen Sie bitte eine der dargestellten Ontologie aus!;;;;
+Das von Ihnen gewählte Projektverzeichnis wird bereits verwendet!<br><br>Bitte wählen Sie einen anderen Namen für Ihr Verzeichnis;;;;

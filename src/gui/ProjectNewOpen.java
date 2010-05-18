@@ -23,8 +23,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.WindowConstants;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.text.BadLocationException;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
@@ -168,10 +171,71 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 			ProjectName.setName("ProjectTitel");
 			ProjectName.setBounds(new Rectangle(120, 15, 363, 26));			
 			ProjectName.setFont(new Font("Dialog", Font.PLAIN, 12));
-			ProjectName.addActionListener(this);			
+			ProjectName.getDocument().addDocumentListener(new DocumentListener() {
+				
+				private String currText = null;
+				@Override
+				public void removeUpdate(DocumentEvent e) {
+					this.getCurrText(e);
+					ProjectFolder.setText( getSuggestProjectFolder() );
+				}
+				@Override
+				public void insertUpdate(DocumentEvent e) {
+					this.getCurrText(e);
+					ProjectFolder.setText( getSuggestProjectFolder() );
+				}
+				@Override
+				public void changedUpdate(DocumentEvent e) {
+					this.getCurrText(e);
+					ProjectFolder.setText( getSuggestProjectFolder() );					
+				}
+				private String getCurrText(DocumentEvent e) {
+					try {
+						currText = e.getDocument().getText(0, e.getDocument().getLength());
+					} catch (BadLocationException e1) {
+						e1.printStackTrace();
+					}
+					return currText;
+				}
+				private String getSuggestProjectFolder() {
+					
+					String RegExp = "[a-z;_]";
+					String suggest = currText;
+					String suggestNew = "";
+					int cut = 0;
+					
+					// --- Vorarbeiten ------------------------------
+					suggest = suggest.toLowerCase();
+					suggest = suggest.replaceAll("  ", " ");
+					suggest = suggest.replace(" ", "_");
+					suggest = suggest.replace("ä", "ae");
+					suggest = suggest.replace("ö", "oe");
+					suggest = suggest.replace("ü", "ue");
+					
+					// --- Alle Buchstaben untersuchen --------------
+					for (int i = 0; i < suggest.length(); i++) {
+						String SngChar = "" + suggest.charAt(i);
+						if ( SngChar.matches( RegExp ) == true ) {
+							suggestNew = suggestNew + SngChar;	
+						}						
+				    }
+					suggest = suggestNew;
+					suggest = suggest.replaceAll("__", "_");
+					
+					// --- Auf max. Länge beschränken ---------------
+					if (suggest.length()>20) {
+						cut = 20;
+					} else {
+						cut = suggest.length();
+					}
+					return suggest.substring(0,cut);
+				}
+				
+			});
 		}
 		return ProjectName;
 	}
+	
 	/**
 	 * This method initializes jTextField	
 	 * @return javax.swing.JTextField	
@@ -322,7 +386,7 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 			setVisible(false);
 		}
 		else if ( Act == ProjectName ) {
-			// do nothing
+			// --- Do Nothing yet
 		}
 		else if ( Act == ProjectFolder ) {
 			jButtonOK.doClick();
@@ -475,7 +539,7 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 				String XMLFileName = Application.RunInfo.PathProjects(true, false) + 
 									 ProFolder + 
 									 Application.RunInfo.AppPathSeparatorString() +
-									 Application.RunInfo.MASFile();
+									 Application.RunInfo.getFileNameProject();
 				File f = new File( XMLFileName );
 				if ( f.isFile() == false ) {
 					ProErrorSrc = "ProFolderAgentGUIxml";
@@ -493,8 +557,8 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 				else if ( ProErrorSrc == "ProFolderAgentGUIxml" ) {
 					MsgHead = Language.translate("Fehler - '@'");
 					MsgText = Language.translate("Die Datei '@' wurde nicht gefunden!");	
-					MsgHead = MsgHead.replace("@", Application.RunInfo.MASFile() );
-					MsgText = MsgText.replace("@", Application.RunInfo.MASFile() );					
+					MsgHead = MsgHead.replace("@", Application.RunInfo.getFileNameProject() );
+					MsgText = MsgText.replace("@", Application.RunInfo.getFileNameProject() );					
 				}				
 				JOptionPane.showInternalMessageDialog( this.getContentPane(), MsgText, MsgHead, JOptionPane.ERROR_MESSAGE);
 			}

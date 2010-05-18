@@ -11,7 +11,7 @@ import jade.core.*;
 /**
 * Protege name: TimeDetector
 * @author ontology bean generator
-* @version 2010/02/18, 17:09:44
+* @version 2010/05/16, 22:23:22
 */
 public class TimeDetector implements Concept, Serializable {
    // bean stuff

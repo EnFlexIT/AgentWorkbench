@@ -4,7 +4,6 @@ import gui.CoreWindow;
 import gui.CoreWindowConsole;
 import mas.Platform;
 /**
- * Diese Klasse verwaltet alle 	 
  * @author: Christian Derksen  	
  */
 public class Application {
@@ -25,13 +24,11 @@ public class Application {
 	public static void main( String[] args ) {
 		// --- Start Application -----------------------
 		RunInfo = new GlobalInfo();
-
-		Console=new CoreWindowConsole();
+		Console = new CoreWindowConsole();
 		Projects = new ProjectsLoaded();
-		
 		JadePlatform = new Platform();
-
 		startApplication();
+
 		System.out.println( Language.translate("Programmstart ..." ) );
 		MainWindow.setStatusBar( Language.translate("Fertig") );
 		Projects.setProjectMenuItems();

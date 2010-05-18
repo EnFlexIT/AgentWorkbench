@@ -1,4 +1,4 @@
-; Fri Mar 05 13:41:21 CET 2010
+; Sun May 16 22:24:05 CEST 2010
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -20,7 +20,7 @@
 
 ([BROWSER_SLOT_NAMES] of  Property_List
 
-	(properties [MonitorMAS_ProjectKB_Instance_20159]))
+	(properties [MonitorMAS_ProjectKB_Instance_10143]))
 
 ([CLSES_TAB] of  Widget
 
@@ -215,6 +215,35 @@
 
 ([MonitorMAS_ProjectKB_Instance_10142] of  Property_List
 )
+
+([MonitorMAS_ProjectKB_Instance_10143] of  String
+
+	(name ":INSTANCE-ANNOTATION")
+	(string_value "%3AANNOTATION-TEXT"))
+
+([MonitorMAS_ProjectKB_Instance_10144] of  Map_Entry
+
+	(key "add_name_on_instance_form")
+	(key_class "java.lang.String")
+	(value "false")
+	(value_class "java.lang.String"))
+
+([MonitorMAS_ProjectKB_Instance_10145] of  Map_Entry
+
+	(key "change_tracking_active")
+	(key_class "java.lang.String")
+	(value "false")
+	(value_class "java.lang.String"))
+
+([MonitorMAS_ProjectKB_Instance_10146] of  Map
+)
+
+([MonitorMAS_ProjectKB_Instance_10147] of  Map_Entry
+
+	(key "InstanceDisplay.yellow_stickies")
+	(key_class "java.lang.String")
+	(value "MonitorMAS_ProjectKB_Instance_10146")
+	(value_class "java.util.Map"))
 
 ([MonitorMAS_ProjectKB_Instance_133] of  Widget
 
@@ -528,54 +557,6 @@
 	(property_list [MonitorMAS_ProjectKB_Instance_202])
 	(widget_class_name "edu.stanford.smi.protegex.changes.stats.ChangeStatisticsTab"))
 
-([MonitorMAS_ProjectKB_Instance_20154] of  Boolean
-
-	(boolean_value FALSE)
-	(name "ButtonDisplayed-View References to Value"))
-
-([MonitorMAS_ProjectKB_Instance_20155] of  Boolean
-
-	(boolean_value FALSE)
-	(name "ButtonDisplayed-Delete Instance"))
-
-([MonitorMAS_ProjectKB_Instance_20156] of  Property_List
-)
-
-([MonitorMAS_ProjectKB_Instance_20157] of  Property_List
-)
-
-([MonitorMAS_ProjectKB_Instance_20158] of  Property_List
-)
-
-([MonitorMAS_ProjectKB_Instance_20159] of  String
-
-	(name ":INSTANCE-ANNOTATION")
-	(string_value "%3AANNOTATION-TEXT"))
-
-([MonitorMAS_ProjectKB_Instance_20160] of  Map_Entry
-
-	(key "add_name_on_instance_form")
-	(key_class "java.lang.String")
-	(value "false")
-	(value_class "java.lang.String"))
-
-([MonitorMAS_ProjectKB_Instance_20161] of  Map_Entry
-
-	(key "change_tracking_active")
-	(key_class "java.lang.String")
-	(value "false")
-	(value_class "java.lang.String"))
-
-([MonitorMAS_ProjectKB_Instance_20162] of  Map
-)
-
-([MonitorMAS_ProjectKB_Instance_20163] of  Map_Entry
-
-	(key "InstanceDisplay.yellow_stickies")
-	(key_class "java.lang.String")
-	(value "MonitorMAS_ProjectKB_Instance_20162")
-	(value_class "java.util.Map"))
-
 ([MonitorMAS_ProjectKB_Instance_202] of  Property_List
 )
 
@@ -598,10 +579,10 @@
 ([MonitorMAS_ProjectKB_Instance_78] of  Map
 
 	(entries
-		[MonitorMAS_ProjectKB_Instance_20160]
-		[MonitorMAS_ProjectKB_Instance_20161]
-		[MonitorMAS_ProjectKB_Instance_20163])
-	(referenced_maps [MonitorMAS_ProjectKB_Instance_20162]))
+		[MonitorMAS_ProjectKB_Instance_10144]
+		[MonitorMAS_ProjectKB_Instance_10145]
+		[MonitorMAS_ProjectKB_Instance_10147])
+	(referenced_maps [MonitorMAS_ProjectKB_Instance_10146]))
 
 ([PAL_DESCRIPTION_WIDGET] of  Widget
 

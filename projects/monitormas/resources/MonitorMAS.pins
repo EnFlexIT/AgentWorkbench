@@ -1,7 +1,11 @@
-; Fri Mar 05 13:41:21 CET 2010
+; Sun May 16 22:24:05 CEST 2010
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
+
+([EnvironmentInfo] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
 
 ([MonitorMAS_Instance_0] of  TimeDetector
 )

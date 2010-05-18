@@ -1,4 +1,4 @@
-; Fri Mar 05 13:41:21 CET 2010
+; Sun May 16 22:24:05 CEST 2010
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -25,6 +25,10 @@
 		(create-accessor read-write)))
 
 (defclass Move2Workplace
+	(is-a AgentAction)
+	(role concrete))
+
+(defclass EnvironmentInfo
 	(is-a AgentAction)
 	(role concrete))
 

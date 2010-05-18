@@ -1,5 +1,5 @@
 /**
- * @author Christian Derksen
+ * @author Christian Derksen - DAWIS - ICB - University Duisburg-Essen
  * Copyright 2010 Christian Derksen
  * 
  * This file is free software: you can redistribute it and/or modify

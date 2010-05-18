@@ -1,14 +1,16 @@
 package mas.onto;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Iterator;
 
+import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
-import application.Project;
-import application.reflection.ReflectClassFiles;
+import reflection.ReflectClassFiles;
+
+import application.Application;
 
 public class OntologyClassTree extends DefaultTreeModel implements Serializable {
 
@@ -18,13 +20,14 @@ public class OntologyClassTree extends DefaultTreeModel implements Serializable 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private Project CurrProject;
-	private DefaultMutableTreeNode RootNode;
+	private OntologyClass currOntoClass;
 	private DefaultMutableTreeNode CurrentNode;
 	private DefaultMutableTreeNode ParentNode;
+	private DefaultMutableTreeNode RootNode;
 	private DefaultMutableTreeNode ConceptNode;
 	private DefaultMutableTreeNode AidNode;
 	private DefaultMutableTreeNode AActionNode;
+	private DefaultMutableTreeNode PredicateNode;
 	
 	private String SearchIN;
 	
@@ -36,149 +39,206 @@ public class OntologyClassTree extends DefaultTreeModel implements Serializable 
 	private final static String BaseClassOnto = "jade.content.onto.Ontology";
 	private final static String BaseClassConcept = "jade.content.Concept";
 	private final static String BaseClassAID = "jade.core.AID";
+	private final static String BaseClassPredicate = "jade.content.Predicate";
 	private final static String BaseClassAAction = "jade.content.AgentAction";
 	private final static String BaseClassObject = "java.lang.Object";
 	// --------------------------------------------------------------------------
 	
-	public OntologyClassTree(DefaultMutableTreeNode root, Project CurrPro) {
-		super(root);		
-		CurrProject = CurrPro;
+	public OntologyClassTree(DefaultMutableTreeNode root, OntologyClass ontoClass, String ontologieSourcePackage) {
+		super(root);
+		currOntoClass = ontoClass;
+		
+		String logMsgOnto = "";
+		String logMsgTitleOnto = "Ontology - Error !";
+		int baseClassOntoCount = 0; 
+		boolean logMsgShow = false;
+		
+		// --- Suchverzeichnis festlegen ----------------------
+		SearchIN = ontologieSourcePackage;
 		// --- Basisstruktur erstellen -------------------------
 		RootNode = root;
 		
 		// --- Den Knoten 'Concept' hinzufügen -----------------
-		ConceptNode = new DefaultMutableTreeNode( new OntologyClassTreeObject(CurrPro.Ontology, "Concept") );
-		RootNode.add( ConceptNode );		
-
+		ConceptNode = new DefaultMutableTreeNode( new OntologyClassTreeObject(currOntoClass, "Concept") );
+		RootNode.add( ConceptNode );
+		
 		// --- Den Knoten AID 'Agent-Identifier' hinzufügen ----
 		try {
 			Class<?> AIDClass = Class.forName(BaseClassAID);
-			AidNode = new DefaultMutableTreeNode( new OntologyClassTreeObject(CurrPro.Ontology, AIDClass) );			
+			AidNode = new DefaultMutableTreeNode( new OntologyClassTreeObject(currOntoClass, AIDClass) );			
 		} catch (ClassNotFoundException e) {
 			//e.printStackTrace();
 			System.out.println( "Could not find AID-Class !!!" );
-			AidNode = new DefaultMutableTreeNode( new OntologyClassTreeObject(CurrPro.Ontology, "AID") );
+			AidNode = new DefaultMutableTreeNode( new OntologyClassTreeObject(currOntoClass, "AID") );
 		}
 		ConceptNode.add( AidNode );
 		
-		// --- Den Knoten AgentAction hinzufügen --------------
-		AActionNode = new DefaultMutableTreeNode( new OntologyClassTreeObject(CurrPro.Ontology, "AgentAction") );
+		// --- Den Knoten AgentAction hinzufügen ---------------
+		AActionNode = new DefaultMutableTreeNode( new OntologyClassTreeObject(currOntoClass, "AgentAction") );
 		ConceptNode.add( AActionNode );		
 		
-		// --- Suchverzeichnis festlegen ----------------------
-		SearchIN = CurrPro.getProjectFolder()+".ontology";
+		// --- Den Knoten Predicate hinzufügen -----------------
+		PredicateNode = new DefaultMutableTreeNode( new OntologyClassTreeObject(currOntoClass, "Predicate") );
+		RootNode.add( PredicateNode );
+		
 		
 		// --- Auslesen der class-Files ------------------------
-		ReflectClassFiles ProOnto = new ReflectClassFiles(SearchIN); 		
-		Iterator<String> ClLi = ProOnto.listIterator();
-		
+		ArrayList<String> ProOnto = new ReflectClassFiles(SearchIN);
+
 		// --- Klassen untersuchen -----------------------------
 		Class<?> Cla = null;
 		Class<?>[] ClaInt = null;
 		Class<?> ClaPare = null;
-		String ClaRef = null, ClaRefPrev = null;
+		String ClaRef = null;
 		String ClaIntName, ClaPareName;
-		boolean ClaIsBaseOnto, ClaIsConcept, ClaIsAAction, ClaIsAID;
-		int ClLiCount = 0, ClLiIndex = 0;
+		boolean ClaIsBaseOnto, ClaIsConcept, ClaIsAAction, ClaIsAID, ClaIsPredicate;
+		int ClLiIndex = 0, LastClLiIndexResetAtSize = -1;
 		
-	    while ( ClLi.hasNext() ) {
-	    	// --- Zähler --------------------------------------
-	    	ClLiCount++;
-	    	ClLiIndex = ClLiCount-1 ;
+		while ( ProOnto.size() > 0 ) {
 	    	// --- Referenz auf die Klasse ---------------------
-	    	ClaRefPrev = ClaRef ;
-	    	ClaRef = ClLi.next();
-	    	
+	    	if (ClLiIndex > ProOnto.size()-1 ) {
+	    		ClLiIndex=0;
+	    	}
+			ClaRef = ProOnto.get(ClLiIndex);
+	    	//System.out.println( "Größe: " + ProOnto.size() + " - " + ClLiIndex + " => " + ClaRef );
 	        try {
 	        	// ---------------------------------------------
 	        	// --- Klassen anfassen ------------------------	        	
 	        	Cla = Class.forName( ClaRef );
-	        	// --- Superclass ------------------------------
-	        	ClaPare = Cla.getSuperclass();
-	        	ClaPareName = ClaPare.getName();
-	        	// --- Interfaces der Klasse ermitteln ---------
-	        	ClaInt = Cla.getInterfaces();
-	        	// --- Default ---------------------------------
-	        	ClaIsBaseOnto = false;
-		    	ClaIsConcept = false;
-		    	ClaIsAAction = false;
-		    	ClaIsAID = false;
-	        	// --- Parent-Class untersuchen ----------------
-		    	if ( ClaPareName == BaseClassOnto ) {
-	        		// --- Found: BaseClass of Ontology ----   
-	        		ClaIsBaseOnto = true;	        		
-    			} else if ( ClaPareName == BaseClassAID ) {
-    				// --- Found: BaseClass of AID ----------
-    				ClaIsAID = true;
-		    	} else if ( ClaPareName == BaseClassObject ) {
-	        		// --- Found: Normal Object -------------
-	        		// --- Serach Interfaces ----------------
-	        		// --- => Concept, AID or AgentAction? --
-	        		for (int i = 0; i < ClaInt.length; i++) {
-		    			ClaIntName = ClaInt[i].getName();
-		    			if ( ClaIntName == BaseClassConcept ) {
-		    				ClaIsConcept = true;
-		    				break;
-		    			} else if ( ClaIntName == BaseClassAAction ) {
-		    				ClaIsAAction = true;
-		    				break;
-		    			}
-		    		}
+	        	// ------------------------------------------------------------
+        		// --- Die aktuelle Klasse ist nichts verbotenes --------------	        		
+	        	// ------------------------------------------------------------
+	        	if ( Cla.isInterface() == true ) {
+	        		ProOnto.remove(ClaRef);
 	        	} else {
-	        		// --- Found: Chld-Object ----------------
-	        	}
-	        	
-	        	// ---------------------------------------------
-	        	// --- Aktuelle Klasse in Tree darstellen ------
-	        	CurrentNode = new DefaultMutableTreeNode( new OntologyClassTreeObject(CurrPro.Ontology, Cla) );
-	        	if ( ClaIsBaseOnto == true ) {
-	        		// --- Vokabular der Ontologie auslesen ----
-	        		// --- und im Project-Objekt bereitstellen -
-	        		CurrProject.Ontology.setOntologyVocabulary( Cla );
-	        		// --- Root-Object neu belegen -------------
-	        		OntologyClassTreeObject OCTO = new OntologyClassTreeObject(CurrPro.Ontology, Cla);
-	        		OCTO.setObjectTitle( CurrProject.Ontology.getOntologyWord("ONTOLOGY_NAME") );
-	        		RootNode.setUserObject( OCTO );   
-	        	} else if ( ClaIsConcept == true ) {
-		    		ConceptNode.add( CurrentNode );	
-	        	} else if ( ClaIsAAction == true ){
-	        		AActionNode.add( CurrentNode );
-	        	} else if ( ClaIsAID == true ){
-	        		AidNode.add( CurrentNode );
-	        	} else {
-	        		// --- An den entsprechenden Knoten hängen -	        		
-	        		ParentNode = getTreeNode( ClaPareName );
-	        		if ( !(ParentNode == null) ) {
-	        			ParentNode.add( CurrentNode );
-	        		} else {
-	        			// Falls kein Knoten gefunden wurde, ist 
-	        			// dieser ggf. noch nicht erstellt worden
-	        			// => Hinten einsortieren 
-	        			ProOnto.remove( ClLiIndex );
-	        			ProOnto.add( ClaRef );	        	
-	        			
-	        			ClLiCount = 0;	// --- Neu hochzählen ---------
-	        			ClLi = ProOnto.listIterator();
-	        			if ( ClaRefPrev != null ) {
-	        				//------------------------------------------
-	        				// Zur vorherigen Refernce laufen ...
-		        			while ( ClLi.hasNext() ) {
-		        				ClLiCount++;
-		        				ClaRef = ClLi.next();		        				
-		        				if ( ClaRef.equalsIgnoreCase(ClaRefPrev)) {		        					
+		        	// --- Superclass ------------------------------
+		        	ClaPare = Cla.getSuperclass();
+		        	ClaPareName = ClaPare.getName();
+		        	// --- Interfaces der Klasse ermitteln ---------
+		        	ClaInt = Cla.getInterfaces();
+		        	// --- Default ---------------------------------
+		        	ClaIsBaseOnto = false;
+			    	ClaIsConcept = false;
+			    	ClaIsAAction = false;
+			    	ClaIsAID = false;
+			    	ClaIsPredicate = false;
+		        	// --- Parent-Class untersuchen ----------------
+			    	if ( ClaPareName == BaseClassOnto ) {
+		        		// --- Found: BaseClass of Ontology ----   
+		        		ClaIsBaseOnto = true;	        		
+	    			} else if ( ClaPareName == BaseClassAID ) {
+	    				// --- Found: BaseClass of AID ----------
+	    				ClaIsAID = true;
+			    	} else if ( ClaPareName == BaseClassObject ) {
+		        		// --- Found: Normal Object -------------
+		        		// --- Serach Interfaces ----------------
+		        		// --- => Concept, AID or AgentAction? --
+		        		for (int i = 0; i < ClaInt.length; i++) {
+			    			ClaIntName = ClaInt[i].getName();
+			    			if ( ClaIntName == BaseClassConcept ) {
+			    				ClaIsConcept = true;
+			    				break;
+			    			} else if ( ClaIntName == BaseClassAAction ) {
+			    				ClaIsAAction = true;
+			    				break;
+			    			} else if ( ClaIntName == BaseClassPredicate ) {
+			    				ClaIsPredicate = true;
+			    				break;
+			    			}
+			    		}
+		        	} else {
+		        		// --- Found: Child-Object ----------------
+		        	}
+		        	
+			    	// ---------------------------------------------
+		        	// --- UserObject für Knoten erstellen --------
+			    	OntologyClassTreeObject userObject = new OntologyClassTreeObject(currOntoClass, Cla); 
+			    	userObject.setIsConcept(ClaIsConcept);
+			    	userObject.setIsAgentAction(ClaIsAAction);
+			    	userObject.setIsPredicate(ClaIsPredicate);
+			    	
+			    	// ---------------------------------------------
+		        	// --- Aktuelle Klasse in Tree darstellen ------
+		        	CurrentNode = new DefaultMutableTreeNode( userObject );
+		        	if ( ClaIsBaseOnto == true ) {
+		        		// --- ggf. die Klasse 'AgentGUIProjectOntology' ignorieren? ---
+		        		if (Cla.getName().toLowerCase().endsWith(Application.RunInfo.getFileNameProjectOntology().toLowerCase())==false) {
+			        		baseClassOntoCount++;
+		        			logMsgOnto += "Found " + baseClassOntoCount + ". Class for Ontology which inherites from '" + ClaPareName + "':\n";
+		        			logMsgOnto += "=> " + Cla.getName() + "\n";
+			        		if ( baseClassOntoCount>1 ) {
+			        			logMsgShow = true;		        			
+			        		} else {
+				        		// --- Vokabular der Ontologie auslesen ----
+				        		// --- und im Project-Objekt bereitstellen -
+				        		currOntoClass.setOntologyVocabulary(Cla);
+				        		currOntoClass.setOntologyName(currOntoClass.getOntologyWord("ONTOLOGY_NAME"));
+				        		currOntoClass.setOntologyMainClass(Cla.getName());
+				        		// --- Root-Object neu belegen -------------
+				        		OntologyClassTreeObject OCTO = new OntologyClassTreeObject(currOntoClass, Cla);
+				        		OCTO.setObjectTitle(currOntoClass.getOntologyName());
+				        		RootNode.setUserObject(OCTO);  
+			        		}
+		        		}
+		        		ProOnto.remove(ClaRef);
+		        	} else if ( ClaIsConcept == true ) {
+			    		ConceptNode.add( CurrentNode );
+			    		ProOnto.remove(ClaRef);
+		        	} else if ( ClaIsAAction == true ){
+		        		AActionNode.add( CurrentNode );
+		        		ProOnto.remove(ClaRef);
+		        	} else if ( ClaIsAID == true ){
+		        		AidNode.add( CurrentNode );
+		        		ProOnto.remove(ClaRef);
+		        	} else if ( ClaIsPredicate == true ){
+		        		PredicateNode.add( CurrentNode );
+		        		ProOnto.remove(ClaRef);
+		        	} else {
+		        		// --- An den entsprechenden Knoten hängen -	        		
+		        		ParentNode = getTreeNode( ClaPareName );
+		        		if ( !(ParentNode == null) ) {
+		        			ParentNode.add( CurrentNode );
+		        			ProOnto.remove(ClaRef);
+		        		} else {
+		        			// Falls kein Knoten gefunden wurde, ist 
+		        			// dieser ggf. noch nicht erstellt worden
+		        			// => Hinten einsortieren 
+		        			ProOnto.remove( ClaRef );
+		        			ProOnto.add( ClaRef );	        	
+		        			
+		        			ClLiIndex++;
+		        			if ( ClLiIndex>0 && ProOnto.size()==ClLiIndex ) {
+		        				ClLiIndex = 0;
+		        				if (ProOnto.size()==LastClLiIndexResetAtSize) {
 		        					break;
-		        				}
+		        				}		        				
+		        				LastClLiIndexResetAtSize = ProOnto.size();
 		        			}
-	        				//------------------------------------------
-	        			}
-	        		}
-	        	}      	
+		        		}
+		        		// -----------------------------------------
+		        	}   	        		
+	        	}
+	        	// ------------------------------------------------------------
+        		// --- Die aktuelle Klasse ist nichts verbotenes --------------
+	        	// ------------------------------------------------------------	        		
 			} catch (ClassNotFoundException ErrCl) {
 				// --- Fehlerfall ------------------------------ 
 				ErrCl.printStackTrace();
 			}
 	      } // --- end while ---		
-	    return;
+	    
+		if ( logMsgShow == true ) {
+			// --- If an error occures, show the message ----------------------	
+			String MsgHead = Application.RunInfo.AppTitel() + ": " +  logMsgTitleOnto;
+			String MsgText = ontologieSourcePackage + ":\n" + logMsgOnto;			
+
+			// --- Send Message to user of AgentGUI --------------------------- 
+			JOptionPane.showInternalMessageDialog( Application.MainWindow.getContentPane(), MsgText, MsgHead, JOptionPane.ERROR_MESSAGE);
+			
+			// --- Add the Error to the current ontology class ----------------
+			currOntoClass.ontologyErrorStack += MsgText;
+		}
+		
 	}
 	
 	/**

@@ -107,7 +107,7 @@ public class OntologyTabClassView extends JPanel {
 			ClassName.setPreferredSize(new Dimension(120, 26));
 			ClassName.setEditable(false);
 			ClassName.setFont(new Font("Dialog", Font.BOLD, 12));
-			ClassName.setText( CurrOntoObject.toString() );
+			ClassName.setText( CurrOntoObject.getClassReference() );
 		}
 		return ClassName;
 	}

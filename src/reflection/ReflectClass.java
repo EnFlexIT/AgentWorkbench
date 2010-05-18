@@ -1,4 +1,4 @@
-package application.reflection;
+package reflection;
 
 import java.lang.reflect.Method;
 import java.util.Collections;
@@ -86,7 +86,6 @@ public class ReflectClass extends Object {
 			// --- Beschreibungsparameter ermitteln -----------------
 			N_Methods = MethodList.size();
 			Method SingleMethod;
-			
 			if ( N_Methods == 2 ) {
 				// --- "einfache" Variablen mit Getter und Setter ---
 				Cardinality = "single";
@@ -136,8 +135,15 @@ public class ReflectClass extends Object {
 			String CurrSlotNa = SlotName.toLowerCase();
 			Method[] theMethods = CurrClass.getMethods();
 			for (int i = 0; i < theMethods.length; i++) {
-				String methodName = theMethods[i].getName().toLowerCase();				
-				if ( methodName.endsWith( CurrSlotNa ) ) {				
+				String methodName = theMethods[i].getName().toLowerCase();
+				if ( methodName.equalsIgnoreCase("wait") == false &&
+					 methodName.equalsIgnoreCase("equals") == false &&
+					 methodName.equalsIgnoreCase("tostring") == false &&
+					 methodName.equalsIgnoreCase("hashcode") == false &&
+					 methodName.equalsIgnoreCase("getclass") == false &&
+					 methodName.equalsIgnoreCase("notify") == false &&
+				  	 methodName.equalsIgnoreCase("notifyall") == false &&
+				 	 methodName.endsWith( CurrSlotNa ) ) {
 					// ---------------------------------------------------------
 					// --- Wenn die aktuelle Methode schon mit 'get' oder    ---
 					// --- 'set' anfängt, dann sollte der Name auch komplett ---

@@ -19,6 +19,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import mas.onto.Ontologies4Project;
+
 public class ProjectsLoaded {
 
 	// --- Listing of the open projects -------------------------------
@@ -140,14 +142,14 @@ public class ProjectsLoaded {
 		NewPro.setProjectFolder( LocalTmpProjectFolder );
 
 		if ( addNew == true ) {			
-			// --- Unterverzeichnise anlegen ------------------
-			NewPro.CheckCreateSubFolders();
+			// --- Standardstruktur anlegen -------------------
+			NewPro.createDefaultProjectStructure();
 		}
 		else {
 			// --- XML-Datei einlesen -------------------------
 			JAXBContext pc;
 			Unmarshaller um = null;
-			String XMLFileName = NewPro.getProjectFolderFullPath() + Application.RunInfo.MASFile();			
+			String XMLFileName = NewPro.getProjectFolderFullPath() + Application.RunInfo.getFileNameProject();			
 			try {
 				pc = JAXBContext.newInstance( NewPro.getClass() );
 				um = pc.createUnmarshaller();
@@ -164,6 +166,9 @@ public class ProjectsLoaded {
 		// --- Die Agenten zu diesem Projekt ermitteln ----
 		NewPro.filterProjectAgents();
 
+		// --- Das Ontologie-Objekt beladen --------------- 
+		NewPro.ontologies4Project = new Ontologies4Project(NewPro);
+		
 		// --- Neues Projektfenster öffnen ----------------
 		NewPro.ProjectGUI = new ProjectWindow( NewPro );
 		
@@ -181,6 +186,11 @@ public class ProjectsLoaded {
 		Application.setStatusBar( Language.translate("Fertig") );	
 		NewPro.setMaximized();
 		NewPro.save();   // --- Erstmalig speichern -------
+		
+		// --- Ggf. noch nach Ontologien suchen -----------
+		if (Application.JadePlatform.OntologyVector==null) {
+			Application.JadePlatform.jadeFindOntologyClasse();
+		}
 		return NewPro;
 	}
 

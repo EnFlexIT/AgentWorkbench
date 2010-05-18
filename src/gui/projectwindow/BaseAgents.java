@@ -1,6 +1,7 @@
 package gui.projectwindow;
 
 import java.awt.BorderLayout;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -97,7 +98,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 		jButtonReferencesRemove.setToolTipText(Language.translate("Objekt entfernen"));
 		
 		// --- Basis-Verzeichnisse im OntoTree anzeigen -------
-		OntoTreeExpand2Level(3, true);
+		this.OntoTreeExpand2Level(3, true);
 		
 
 	}
@@ -255,7 +256,6 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 	 */
 	private JList getJAgentList() {
 		if (jAgentList == null) {
-			jAgentList = new JList();
 			Vector<Class<?>> AgentList = CurrProject.getProjectAgents();
 			DefaultListModel jAgentListModel = new DefaultListModel();
 			for (int i =0; i<AgentList.size();i++) {
@@ -579,7 +579,8 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 	private JTree getJTreeOntology() {
 		if (jTreeOntology == null) {
 			jTreeOntology = new JTree();
-			jTreeOntology = new JTree( CurrProject.Ontology.getOntologyTree() );
+			//jTreeOntology = new JTree( CurrProject.Ontology.getOntologyTree() );
+			jTreeOntology = new JTree( CurrProject.ontologies4Project.getOntologyTree() );
 			jTreeOntology.setName("OntoTree");
 			jTreeOntology.setShowsRootHandles(false);
 			jTreeOntology.setRootVisible(true);
@@ -613,7 +614,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
     	Integer CurrNodeLevel = 1;
     	if ( Up2TreeLevel == null ) 
     		Up2TreeLevel = 1000;
-    	OntoTreeExpand( new TreePath( CurrProject.Ontology.getOntologyTree().getRoot() ), expand, CurrNodeLevel, Up2TreeLevel);
+    	OntoTreeExpand( new TreePath( CurrProject.ontologies4Project.getOntologyTree().getRoot() ), expand, CurrNodeLevel, Up2TreeLevel);
     }
     @SuppressWarnings("unchecked")
 	private void OntoTreeExpand( TreePath parent, boolean expand, Integer CurrNodeLevel, Integer Up2TreeLevel) {
@@ -704,13 +705,15 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 
 		if ( Trigger == jButtonAgentListRefresh ) {
 			// --- AgentList aktualisieren ----------------
+			Application.setStatusBar( Language.translate("Aktualisiere Agenten-Liste...") );
+			Application.MainWindow.setCursor( Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR) );	
+			Application.JadePlatform.jadeFindAgentClasse();
 			jTextAgent.setText(null);
 			jTextAgentStartAs.setText(null);
 			jListReferences.setListData(new Vector<String>());
-			Application.JadePlatform.jadeFindAgentClasse();
 			CurrProject.filterProjectAgents();
-			setCurrAgentConfig();
-			setTmpAgentConfig();
+			this.setCurrAgentConfig();
+			this.setTmpAgentConfig();
 		}
 		else if ( Trigger == jButtonStartAgent ) {
 			// --- Den ausgewählten Agenten starten -------
@@ -787,7 +790,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 			ontoReference = null;
 		} else {
 			if ( CurrOntoObject.isClass() ) {
-				ontoReference = CurrOntoObject.getOntoClass().getName();	
+				ontoReference = CurrOntoObject.getOntologySubClass().getName();	
 			} else {
 				ontoReference = null;	
 			}
@@ -801,8 +804,12 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 		if ( ObjectName.equalsIgnoreCase( "AgentReferences" ) ) {
 			// --- Liste der Agenten-Referenzen aktualisieren ---
 			updateView4AgentConfig();			
+		} else if ( ObjectName.equalsIgnoreCase( "ProjectOntology" ) ) {
+			// --- Ansicht auf die projekt-Ontologie aktualisieren --
+			this.jTreeOntology.setModel( CurrProject.ontologies4Project.getOntologyTree() );
+			this.OntoTreeExpand2Level(3, true);
 		} else {
-			//System.out.println("Unbekannte Meldung vom Observer: " + ObjectName);
+			System.out.println("Unbekannte Meldung vom Observer: " + ObjectName);
 		}
 	}
 	

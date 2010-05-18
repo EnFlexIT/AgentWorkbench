@@ -2,89 +2,93 @@ package application;
 
 import java.awt.Color;
 import java.io.File;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Vector;
 
 public class GlobalInfo {
 
 	// --- Konstanten ------------------------------------------------------- 
-	final private static String LocalAppTitel = "Agent.GUI";
-	final private static boolean LocalAppUseInternalConsole = false;
+	final private static String localAppTitel = "Agent.GUI";
+	final private static boolean localAppUseInternalConsole = false;
 	
-	final private static String LocalAppPathSeparatorString = File.separator;
-	final private static String LocalAppNewLineString = System.getProperty("line.separator");
-	final private static String LocalAppNewLineStringReplacer = "<br>";
-	final private static String LocalPathImageIntern = "/img/";
+	final private static String localAppPathSeparatorString = File.separator;
+	final private static String localAppNewLineString = System.getProperty("line.separator");
+	final private static String localAppNewLineStringReplacer = "<br>";
+	final private static String localPathImageIntern = "/img/";
 	
 	// --- Jade-Variablen ---------------------------------------------------
-	private int LocaleJadeLocalPort = 1099;
-	final private static String LocalProjectFileEnd =  ".mas";
+	private int localeJadeLocalPort = 1099;
 	
-	final private static Color LocalColorMenuHighLight =  new Color(0,0,192);
+	final private static Color localColorMenuHighLight =  new Color(0,0,192);
 	
 	// --- Variablen --------------------------------------------------------
-	private static String LocalAppExecutedOver = "IDE";
-	private static String LocalAppLnF = "com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel";
+	private static Vector<String> localClassPathEntries = new Vector<String>();
+	private static String localAppExecutedOver = "IDE";
+	private static String localAppLnF = "com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel";
 	
-	private static String LocalBaseDir = "";
-	private static String LocalPathAgentGUI	= "bin";
-	private static String LocalPathJade		= "lib" + LocalAppPathSeparatorString + "jade" +  LocalAppPathSeparatorString + "lib";
-	private static String LocalPathBatik	= "lib" + LocalAppPathSeparatorString + "batik";	
-	private static String LocalPathProperty = "properties" + LocalAppPathSeparatorString;
-	private static String LocalPathProjects =  "projects" + LocalAppPathSeparatorString;
-	//private static String LocalPathProjectsIDE =  "src" + LocalAppPathSeparatorString +  "mas" + LocalAppPathSeparatorString + LocalPathProjects;
-	private static String LocalPathProjectsIDE =  LocalPathProjects;
-	private static String[] LocalProjects = null;
+	private static String localBaseDir = "";
+	private static String localPathAgentGUI	= "bin";
+	private static String localPathJade		= "lib" + localAppPathSeparatorString + "jade" +  localAppPathSeparatorString + "lib";
+	private static String localPathBatik	= "lib" + localAppPathSeparatorString + "batik";	
+	private static String localPathProperty = "properties" + localAppPathSeparatorString;
+	private static String localPathProjects =  "projects" + localAppPathSeparatorString;
+
+	private static String localPathProjectsIDE =  localPathProjects;
+	private static String[] localProjects = null;
 	
-	private static String LocalFileRunnableJar = "AgentGui.jar";
-	private static String LocalFileDictionary  = LocalPathProperty + "dictionary.csv";
-	private static String LocalMASFile = "agentgui.xml";
+	private static String localFileRunnableJar = "AgentGui.jar";
+	private static String localFileDictionary  = localPathProperty + "dictionary.csv";
+	private static String localFileNameProject = "agentgui.xml";
+	private static String localFileNameProjectOntology = "AgentGUIProjectOntology";
 	
 	// ----------------------------------------------------------------------
 	// --- Objekt-Initialisierung -------------------------------------------
 	// ----------------------------------------------------------------------
+	/**
+	 * Constructor of this class
+	 */
 	public GlobalInfo() {
-		/**
-		 * Ermittlung der lokalen Einstellungen, sobald ein 
-		 * Objekt dieser Klasse erzeugt wird.  
-		 */
+
 		Integer  CutAt = 0;
-		String[] JCP_Files = System.getProperty("java.class.path").split( System.getProperty("path.separator") );
+		String[] JCP_Files = System.getProperty("java.class.path").split(System.getProperty("path.separator"));
 		String[] JCP_Folders = JCP_Files.clone(); 
 		HashSet<String> Folders = new HashSet<String>();  
+		localClassPathEntries.addAll( Arrays.asList( JCP_Files ) );		
 		
 		// ------------------------------------------------------------------
 		// --- Class-Path untersuchen ---------------------------------------
 		for (int i=0; i<JCP_Files.length; i++) {
-			if ( JCP_Files[i].endsWith( LocalFileRunnableJar )  ) {
-				LocalAppExecutedOver = "Executable";
-				CutAt = JCP_Files[i].lastIndexOf( LocalAppPathSeparatorString ) + 1;
-				LocalBaseDir =  JCP_Folders[i].substring(0, CutAt);				 
+			if ( JCP_Files[i].endsWith( localFileRunnableJar )  ) {
+				localAppExecutedOver = "Executable";
+				CutAt = JCP_Files[i].lastIndexOf( localAppPathSeparatorString ) + 1;
+				localBaseDir = JCP_Folders[i].substring(0, CutAt);				 
 			};
 			if ( JCP_Files[i].endsWith(".jar")  ) {
 				// ----------------------------------------------------------
 				// --- Dateinamen herausnehmen ------------------------------
-				CutAt = JCP_Files[i].lastIndexOf( LocalAppPathSeparatorString );
+				CutAt = JCP_Files[i].lastIndexOf( localAppPathSeparatorString );
 				JCP_Folders[i] = JCP_Folders[i].substring(0, CutAt);
 			}	
 			Folders.add(JCP_Folders[i]);						
 		}
-		if ( LocalAppExecutedOver == "IDE"  ) {
+		if ( localAppExecutedOver == "IDE"  ) {
 			// -------------------------------------------------------------
 			// --- Verzeichnis-Eintraege eindeutig (unique) machen -----------
 			JCP_Folders = (String[])Folders.toArray(new String[Folders.size()]);
 			for (int j = 0; j < JCP_Folders.length; j++) {				
-				if ( JCP_Folders[j].indexOf( LocalPathAgentGUI ) != -1 ) {
+				if ( JCP_Folders[j].indexOf( localPathAgentGUI ) != -1 ) {
 					// --- bin-Verzeichnis gefunden ---					
-					CutAt = JCP_Folders[j].lastIndexOf( LocalPathAgentGUI );
-					LocalBaseDir =  JCP_Folders[j].substring(0, CutAt);
+					CutAt = JCP_Folders[j].lastIndexOf( localPathAgentGUI );
+					localBaseDir =  JCP_Folders[j].substring(0, CutAt);
 					break;
 				}
 			} // -- End 'for' --
 
 			// --------------------------------------------------------------
 			// --- Bei Ausfuehrung IDE, einige Variablen umstellen -----------			
-			LocalFileRunnableJar = null;
-			LocalPathProjects =  LocalPathProjectsIDE;
+			localFileRunnableJar = null;
+			localPathProjects =  localPathProjectsIDE;
 			
 		}
 		// ------------------------------------------------------------------
@@ -94,126 +98,146 @@ public class GlobalInfo {
 	
 	// ----------------------------------------------------------------------
 	// ----------------------------------------------------------------------
+	/**
+	 * Returns the titel of the application 
+	 */
 	public String AppTitel() {
-		/**
-		 * Returns the titel of the application 
-		 */
-		return LocalAppTitel;
+		return localAppTitel;
 	};
+	/**
+	 * Returns if the System-Output ('Out' or 'Err') goe's throw this application 
+	 */
 	public boolean AppUseInternalConsole() {
-		/**
-		 * Returns if the System-Output ('Out' or 'Err') goe's throw this application 
-		 */
-		return LocalAppUseInternalConsole;
-	};
-	public String ProjectFileEnd() {
-		/**
-		 * Returns the File-End for Project-Files => ".mas"
-		 */
-		return LocalProjectFileEnd;
+		return localAppUseInternalConsole;
 	};
 	// -------------------------------
 	// --- Look and Feel -------------
 	// -------------------------------
+	/**
+	 * Aktuelle Look and Feel - Einstellung 
+	 */
 	public String AppLnF() {
-		/**
-		 * Aktuelle Look and Feel - Einstellung 
-		 */
-		return LocalAppLnF;
+		return localAppLnF;
 	};
+	/**
+	 * Look and Feel - Einstellung  aendern
+	 */
 	public void setAppLnf( String NewLnF ) {
-		/**
-		 * Look and Feel - Einstellung  aendern
-		 */
-		LocalAppLnF = NewLnF;
+		localAppLnF = NewLnF;
 	};
+	/**
+	 * @return the ClassPath-Entries of the application
+	 */
+	public Vector<String> getClassPathEntries() {
+		return localClassPathEntries;
+	}
+	/**
+	 * This Method returns all external jar-Files, which 
+	 * are part of the ClassPath
+	 * @return
+	 */
+	public Vector<String> getClassPathExternalJars() {
+		Vector<String> external = new Vector<String>();
+		for (String classPathEntry : localClassPathEntries) {
+			if ( classPathEntry.endsWith(".jar")==true ){
+				if (localFileRunnableJar==null) {
+					external.add(classPathEntry);
+				} else {
+					if (classPathEntry.endsWith(localFileRunnableJar)==false) {
+						external.add(classPathEntry);
+					}
+				}
+			}
+		}
+		return external;
+	}
 	// -------------------------------
+	/**
+	 * 'IDE' oder 'Executable' (jar-File) 
+	 */
 	public String AppExecutedOver() {
-		/**
-		 * 'IDE' oder 'Executable' (jar-File) 
-		 */
-		return LocalAppExecutedOver;
+		return localAppExecutedOver;
 	}
+	/**
+	 * Verzeichnistrenner: Win='\' Linux='/'
+	 */
 	public String AppPathSeparatorString() {
-		/**
-		 * Verzeichnistrenner: Win='\' Linux='/'
-		 */
-		return LocalAppPathSeparatorString;
+		return localAppPathSeparatorString;
 	}
+	/**
+	 * String for the 'new line' charakter inside of this application
+	 */
 	public String AppNewLineString(){
-		/**
-		 * String for the 'new line' charakter inside of this application
-		 */
-		return LocalAppNewLineString;
+		return localAppNewLineString;
 	}
+	/**
+	 * String for the 'new line' charakter inside of a text file
+	 */
 	public String AppNewLineStringReplacer(){
-		/**
-		 * String for the 'new line' charakter inside of a text file
-		 */
-		return LocalAppNewLineStringReplacer;
+		return localAppNewLineStringReplacer;
 	}
 
 	// --- Allgemeine Verzeichnisangaben ---------------------
+	/**
+	 * Aktuelles Basisverzeichnis der Anwendung
+	 */
 	public String PathBaseDir( ) {
-		/**
-		 * Aktuelles Basisverzeichnis der Anwendung
-		 */
-		return LocalBaseDir;
+		return localBaseDir;
 	}	
+	/**
+	 * Aktuelles KLassenverzeichnis der Anwendung fuer die IDE-Umgebung
+	 */
 	public String PathBaseDirIDE_BIN( ) {
-		/**
-		 * Aktuelles KLassenverzeichnis der Anwendung fuer die IDE-Umgebung
-		 */
-		return LocalBaseDir + LocalPathAgentGUI + LocalAppPathSeparatorString;
+		return localBaseDir + localPathAgentGUI + localAppPathSeparatorString;
 	}	
+	/**
+	 * Unterverzeichnis fuer die Jade-Libraries
+	 */
 	public String PathJade( Boolean Absolute ){
-		/**
-		 * Unterverzeichnis fuer die Jade-Libraries
-		 */
 		if ( Absolute == true ) { 
-			return FilePath2Absolute( LocalPathJade );
+			return FilePath2Absolute( localPathJade );
 		}
 		else {
-			return LocalPathJade;	
+			return localPathJade;	
 		}		
 	}
+	/**
+	 * Unterverzeichnis fuer die Batik-Libraries
+	 */
 	public String PathBatik( Boolean Absolute ){
-		/**
-		 * Unterverzeichnis fuer die Batik-Libraries
-		 */
 		if ( Absolute == true ) { 
-			return FilePath2Absolute( LocalPathBatik );
+			return FilePath2Absolute( localPathBatik );
 		}
 		else {
-			return LocalPathBatik;	
+			return localPathBatik;	
 		}	
 	}
+	/**
+	 * Unterverzeichnis fuer Eigenschaftsdateien
+	 */
 	public String PathProperty( Boolean Absolute ){
-		/**
-		 * Unterverzeichnis fuer Eigenschaftsdateien
-		 */
 		if ( Absolute == true ) { 
-			return FilePath2Absolute( LocalPathProperty );
+			return FilePath2Absolute( localPathProperty );
 		}
 		else {
-			return LocalPathProperty;	
+			return localPathProperty;	
 		}	
 	}
+	/**
+	 * Unterverzeichnis fuer Projekte
+	 */
 	public String PathProjects( Boolean Absolute, boolean UseImportSpecification ){
-		/**
-		 * Unterverzeichnis fuer Projekte
-		 */
 		if ( UseImportSpecification == true ) {
-			String ImportPath = LocalPathProjects;
-			ImportPath = ImportPath.replace( LocalAppPathSeparatorString, "." );
+			String ImportPath = localPathProjects;
+			ImportPath = ImportPath.replace( localAppPathSeparatorString, "." );
 			ImportPath = ImportPath.replace("src.","");
 			return ImportPath;
 		}
 		if ( Absolute == true ) { 
-			return FilePath2Absolute( LocalPathProjects );
+			return FilePath2Absolute( localPathProjects );
 		}
 		else {
-			return LocalPathProjects;	
+			return localPathProjects;	
 		}	
 	}
 	
@@ -222,70 +246,76 @@ public class GlobalInfo {
 	 */
 	public String[] getIDEProjects( ){		
 		// --- Projektverzeichnis nach Unterverzeichnissen durchsuchen --
-		LocalProjects = null;
+		localProjects = null;
 		
 		File maindir = new File( PathProjects( true, false ) ) ;
 		File files[] = maindir.listFiles();
 		for (int i = 0; i < files.length; i++) {
 			if (files[i].isDirectory() && !files[i].getName().substring(0, 1).equals(".") ) {
-				if (LocalProjects == null) {						
+				if (localProjects == null) {						
 					String[] AddEr = { files[i].getName() };	
-					LocalProjects = AddEr;	
+					localProjects = AddEr;	
 				}
 				else {
-					String[] AddEr = new String[LocalProjects.length+1];
-					System.arraycopy( LocalProjects, 0, AddEr, 0, LocalProjects.length );
+					String[] AddEr = new String[localProjects.length+1];
+					System.arraycopy( localProjects, 0, AddEr, 0, localProjects.length );
 					AddEr[AddEr.length-1] = files[i].getName();
-					LocalProjects = AddEr;
+					localProjects = AddEr;
 				}
 			} 
 		}
-		return LocalProjects;		
+		return localProjects;		
 	}	
 	
+	/**
+	 * Bild-Unterverzeichnis fuer das Projekt
+	 */
 	public String PathImageIntern( ){
-		/**
-		 * Bild-Unterverzeichnis fuer das Projekt
-		 */
-		return LocalPathImageIntern;
+		return localPathImageIntern;
 	}
 	
 	// --- Allgemeine Dateiangaben ---------------------
+	/**
+	 * Standardname *.jar-Bezeichner dieses Projekts (Default: 'AgentGui.jar') 
+	 */
 	public String AppFileRunnableJar( Boolean Absolute ){
-		/**
-		 * Standardname *.jar-Bezeichner dieses Projekts (Default: 'AgentGui.jar') 
-		 */
-		if ( Absolute == true && LocalFileRunnableJar != null ) { 
-			return FilePath2Absolute( LocalFileRunnableJar );
+		if ( Absolute == true && localFileRunnableJar != null ) { 
+			return FilePath2Absolute( localFileRunnableJar );
 		}
 		else {
-			return LocalFileRunnableJar;	
+			return localFileRunnableJar;	
 		}	
 	}
+	/**
+	 * Verweis auf die Dictionary-Datei zur Sprachuebersetzung
+	 */
 	public String FileDictionary( Boolean Absolute ){
-		/**
-		 * Verweis auf die Dictionary-Datei zur Sprachuebersetzung
-		 */
 		if ( Absolute== true ) { 
-			return FilePath2Absolute( LocalFileDictionary );
+			return FilePath2Absolute( localFileDictionary );
 		}
 		else {
-			return LocalFileDictionary;	
+			return localFileDictionary;	
 		}
 	}
-	public String MASFile( ){
-		return LocalMASFile;
+	public String getFileNameProject() {
+		return localFileNameProject;
 	};
-	
-	
+	/**
+	 * @return the localFileProjectOntology
+	 */
+	public String getFileNameProjectOntology() {
+		return localFileNameProjectOntology;
+	}
+
+
 	// ---------------------------------------------------------
 	// ---------------------------------------------------------
+	/**
+	 * Macht aus einer relativen Verzeichnisangabe eine 
+	 * Absolute Verzeichnisangabe
+	 */
 	private String FilePath2Absolute( String FilePathRelative ){
-		/**
-		 * Macht aus einer relativen Verzeichnisangabe eine 
-		 * Absolute Verzeichnisangabe
-		 */
-		String PathAbsolute = LocalBaseDir + FilePathRelative;
+		String PathAbsolute = localBaseDir + FilePathRelative;
 		return PathAbsolute;		
 	}
 	// ---------------------------------------------------------
@@ -296,13 +326,13 @@ public class GlobalInfo {
 	 * @param localeJadeDefaultPort the localeJadeDefaultPort to set
 	 */
 	public void setJadeLocalPort(int localeJadeDefaultPort) {
-		LocaleJadeLocalPort = localeJadeDefaultPort;
+		localeJadeLocalPort = localeJadeDefaultPort;
 	}
 	/**
 	 * @return the localeJadeDefaultPort
 	 */
 	public int getJadeLocalPort() {
-		return LocaleJadeLocalPort;
+		return localeJadeLocalPort;
 	}
 
 
@@ -317,7 +347,7 @@ public class GlobalInfo {
 	// --- Farbvariablen ---------------------------------------
 	// ---------------------------------------------------------
 	public Color ColorMenuHighLight () {
-		return LocalColorMenuHighLight;
+		return localColorMenuHighLight;
 	}
 	
 }

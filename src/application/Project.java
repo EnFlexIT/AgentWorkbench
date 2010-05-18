@@ -18,16 +18,25 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import sma.ontology.Environment;
-
 import mas.agents.AgentConfiguration;
 import mas.environment.EnvironmentController;
-import mas.onto.OntologyClass;
+import mas.onto.Ontologies4Project;
+import rollout.TextFileRessourceRollOut;
+import sma.ontology.Environment;
 
 @XmlRootElement public class Project extends Observable {
 
 	// --- Konstanten ------------------------------------------
-	@XmlTransient private static String[] DefaultSubFolders = {"agents", "ontology", "envSetups", "resources"};
+	@XmlTransient private String defaultSubFolderAgents 	= "agents";
+	@XmlTransient private String defaultSubFolderOntology 	= "ontology";
+	@XmlTransient private String defaultSubFolderEnvSetups 	= "envSetups";
+	@XmlTransient private String defaultSubFolderResources 	= "resources";
+	@XmlTransient private String[] defaultSubFolders	= { defaultSubFolderAgents, 
+															defaultSubFolderOntology, 
+															defaultSubFolderEnvSetups, 
+															defaultSubFolderResources
+															};
+	
 	@XmlTransient private static final String NewLine = Application.RunInfo.AppNewLineString();	
 	
 	// --- GUI der aktuellen Projekt-Instanz -------------------
@@ -39,26 +48,11 @@ import mas.onto.OntologyClass;
 	@XmlTransient private String ProjectFolder;
 	@XmlTransient private String ProjectFolderFullPath;
 	@XmlTransient private Vector<Class<?>> ProjectAgents;
-	@XmlTransient public OntologyClass Ontology = new OntologyClass(this);
-//	@XmlTransient private Environment environment;
+	@XmlTransient public Ontologies4Project ontologies4Project;
+
+	//	@XmlTransient private Environment environment;
 	@XmlTransient private EnvironmentController environmentController;
 	
-	
-	/**
-	 * @return the environment
-	 */
-	@XmlTransient
-	public Environment getEnvironment() {
-		return this.environmentController.getEnvironment();
-	}
-
-	/**
-	 * @param environment the environment to set
-	 */
-	public void setEnvironmentController(EnvironmentController ec) {
-		this.environmentController = ec;
-	}
-
 	// --- Speichervariablen der Projektdatei ------------------ 
 	@XmlElement(name="projectName")
 	private String ProjectName;
@@ -68,6 +62,9 @@ import mas.onto.OntologyClass;
 	private String svgFile;		// SVG-Datei
 	private String envFile;		// Umgebungsdatei
 
+	@XmlElementWrapper(name = "subOntologies")
+	@XmlElement(name="subOntology")
+	public Vector<String> subOntologies = new Vector<String>();
 	@XmlElementWrapper(name = "agentConfiguration")
 	public AgentConfiguration AgentConfig = new AgentConfiguration(this);
 		
@@ -91,7 +88,7 @@ import mas.onto.OntologyClass;
 			pm.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE ); 
 			//pm.marshal( this, System.out );
 			// --- Objektwerte in xml-Datei schreiben -----
-			Writer pw = new FileWriter( ProjectFolderFullPath + Application.RunInfo.MASFile() );
+			Writer pw = new FileWriter( ProjectFolderFullPath + Application.RunInfo.getFileNameProject() );
 			pm.marshal( this, pw );
 			
 			// --- Speichern von Umgebung und SVG ---------
@@ -160,18 +157,29 @@ import mas.onto.OntologyClass;
 	}
 	
 	/**
+	 * This Procedure creates the default Project-Structure  for a new project. It creates the 
+	 * deault folders ('agents' 'ontology' 'envSetups' 'resources') and creates default fils
+	 * like the Project-Ontology main class 'AgentGUIProjectOntology'
+	 */
+	public void createDefaultProjectStructure() {
+		// --- create default folders --------------------- 
+		this.checkCreateSubFolders();
+		// --- create Project-Ontolgy ---------------------
+		this.createDefaultProjectOntology();
+	}
+	/**
 	 * Controls and/or Creates wether the Subfolder-Structure exists 
 	 * @return boolean true or false
 	 */	
-	public boolean CheckCreateSubFolders() {
+	private boolean checkCreateSubFolders() {
 		
 		String NewDirName = null;
 		File f = null;
 		boolean Error = false;
 		
-		for (int i=0; i< DefaultSubFolders.length; i++  ) {
+		for (int i=0; i< defaultSubFolders.length; i++  ) {
 			// --- ggf. Verzeichnis anlegen ---------------
-			NewDirName = this.ProjectFolderFullPath + DefaultSubFolders[i];
+			NewDirName = this.ProjectFolderFullPath + defaultSubFolders[i];
 			f = new File(NewDirName);
 			if ( f.isDirectory() ) {
 				// => Do nothing (yet)
@@ -192,9 +200,25 @@ import mas.onto.OntologyClass;
 			return true;	
 		}		
 	}
+	/**
+	 * Here the default project-Ontolgy will be created (copied)
+	 */
+	private void createDefaultProjectOntology() {
+			
+		String srcReference 	 = "mas/onto/" + Application.RunInfo.getFileNameProjectOntology() + ".txt"; 
+		String destPath 		 = this.ProjectFolderFullPath + defaultSubFolderOntology + "\\" + Application.RunInfo.getFileNameProjectOntology() + ".java";
+		String destPackageString = "package " + this.ProjectFolder + "." + defaultSubFolderOntology;
+		String fileContent		 = null;
+		
+		TextFileRessourceRollOut txtRollOut = new TextFileRessourceRollOut(srcReference, destPath, false);
+		fileContent = txtRollOut.getFileString();
+		fileContent = fileContent.replace("[DestinationPackage]", destPackageString);
+		txtRollOut.writeFile(fileContent);
+
+	}
 	
 	/**
-	 * Moves the requested Projectwindow to the front
+	 * Moves the requested Project-Window to the front
 	 */
 	public void setFocus() {
 		ProjectGUI.moveToFront();
@@ -203,14 +227,14 @@ import mas.onto.OntologyClass;
 		Application.Projects.setProjectMenuItems();
 		setMaximized();
 	}
-
+	/**
+	 * Maximze the Project-Window within the AgenGUI-Application
+	 */
 	public void setMaximized() {
 		Application.MainWindow.validate();
 		((BasicInternalFrameUI) Application.ProjectCurr.ProjectGUI.getUI()).setNorthPane(null);
 		Application.MainWindow.ProjectDesktop.getDesktopManager().maximizeFrame( ProjectGUI );				
 	}
-
-	
 	
 	/**
 	 * @param projectFolder the projectName to set
@@ -278,7 +302,7 @@ import mas.onto.OntologyClass;
 	 * @param projectAgents the projectAgents to set
 	 */
 	public void filterProjectAgents() {
-		ProjectAgents = Application.JadePlatform.jadeGetAgentClasses( getProjectFolder() );
+		ProjectAgents = Application.JadePlatform.jadeGetAgentClasses( this.getProjectFolder() );
 		setChanged();
 		notifyObservers("ProjectAgents");
 	}
@@ -350,7 +374,96 @@ import mas.onto.OntologyClass;
 	 * @return The default environment setup folder
 	 */
 	public String getEnvSetupPath(){
-		return ProjectFolderFullPath+"envSetups";
+		return ProjectFolderFullPath+defaultSubFolderEnvSetups;
+	}
+	/**
+	 * @return the environment
+	 */
+	@XmlTransient
+	public Environment getEnvironment() {
+		return this.environmentController.getEnvironment();
+	}
+	/**
+	 * @param environment the environment to set
+	 */
+	public void setEnvironmentController(EnvironmentController ec) {
+		this.environmentController = ec;
 	}
 
+	
+	/**
+	 * @param defaultSubFolderAgents the defaultSubFolderAgents to set
+	 */
+	public void setSubFolderAgents(String newSubFolderAgents) {
+		defaultSubFolderAgents = newSubFolderAgents;
+	}
+	/**
+	 * @return the defaultSubFolderAgents
+	 */
+	public String getSubFolderAgents() {
+		return defaultSubFolderAgents;
+	}
+
+	/**
+	 * @param defaultSubFolderOntology the defaultSubFolderOntology to set
+	 */
+	public void setSubFolderOntology(String newSubFolderOntology) {
+		defaultSubFolderOntology = newSubFolderOntology;
+	}
+	/**
+	 * @return the defaultSubFolderOntology
+	 */
+	public String getSubFolderOntology() {
+		return defaultSubFolderOntology;
+	}
+
+	/**
+	 * @param defaultSubFolderEnvSetups the defaultSubFolderEnvSetups to set
+	 */
+	public void setSubFolderEnvSetups(String newSubFolderEnvSetups) {
+		defaultSubFolderEnvSetups = newSubFolderEnvSetups;
+	}
+	/**
+	 * @return the defaultSubFolderEnvSetups
+	 */
+	public String getSubFolderEnvSetups() {
+		return defaultSubFolderEnvSetups;
+	}
+
+	/**
+	 * @param defaultSubFolderResources the defaultSubFolderResources to set
+	 */
+	public void setSubFolderResources(String newSubFolderResources) {
+		defaultSubFolderResources = newSubFolderResources;
+	}
+	/**
+	 * @return the defaultSubFolderResources
+	 */
+	public String getSubFolderResources() {
+		return defaultSubFolderResources;
+	}
+
+	/**
+	 * Adds a new sub ontology to the current project onology 
+	 * @param newSubOntology
+	 */
+	public void subOntologyAdd(String newSubOntology) {
+		if (this.subOntologies.contains(newSubOntology)==false) {
+			this.ontologies4Project.addSubOntology(newSubOntology);
+			ProjectUnsaved = true;
+			setChanged();
+			notifyObservers("ProjectOntology");
+		} 
+	}
+	/**
+	 * Removes a new sub ontology from the current project onology 
+	 * @param removableSubOntology
+	 */
+	public void subOntologyRemove(String removableSubOntology) {
+		this.ontologies4Project.removeSubOntology(removableSubOntology);
+		ProjectUnsaved = true;
+		setChanged();
+		notifyObservers("ProjectOntology");
+	}
+	
 }

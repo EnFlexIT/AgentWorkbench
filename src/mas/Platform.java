@@ -21,7 +21,7 @@ import network.PortChecker;
 import application.Application;
 import application.Language;
 
-public class Platform extends java.lang.Object {
+public class Platform extends Object {
 
 	/**
 	 * This class manages the jade-platform 
@@ -32,15 +32,14 @@ public class Platform extends java.lang.Object {
 	public static Vector<AgentContainer> MAScontainer = new Vector<AgentContainer>();
 		
 	private jadeClasses Agents; 
-	public static Vector<Class<?>> AgentsVector;
+	private jadeClasses Ontologies;
+	public Vector<Class<?>> AgentsVector   = null;
+	public Vector<Class<?>> OntologyVector = null;
 	
-
 	public Platform() {
+		// --- Search for all Agent-Classes -------------
+		this.jadeFindAgentClasse(); // new Thread !! 
 		
-		// ----------------------------------------------
-		// --- Nach allen Agent-Klassen suchen ----------
-		jadeFindAgentClasse(); // Extra Thread !! -------
-		// ----------------------------------------------
 		/*String Res = PlatformRMI.isJADERunning("rudel1", "1100");
 		System.out.println( Res );
 		jade.domain.FIPAAgentManagement.APDescription AP  = new jade.domain.FIPAAgentManagement.APDescription();
@@ -437,7 +436,21 @@ public class Platform extends java.lang.Object {
 
 	}
 	
-	
+	/**
+	 * Starts the search for Agents in the  
+	 * current environment in an own Thread
+	 */
+	public void jadeFindAgentClasse() {
+		Agents = new jadeClasses("jade.core.Agent");
+		Thread th = new Thread( Agents  );
+		th.setName("Search4Agents");
+		th.start();
+	}	
+	/**
+	 * 
+	 * @param FilterFor
+	 * @return
+	 */
 	public Vector<Class<?>> jadeGetAgentClasses( String FilterFor ) {
 		
 		boolean PrintMsg = true;
@@ -448,11 +461,20 @@ public class Platform extends java.lang.Object {
 		// -------------------------------------------------------------
 		// --- Falls noch keine Klassen gefunden wurden, warten ...  ---
 		// -------------------------------------------------------------
-		while ( Agents.getClassesCount() == 0 ) {
+		if (Agents==null) {
+			this.jadeFindAgentClasse();
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		while ( Agents.getResultCount()==0 ) {
 			try {
 				if ( PrintMsg == true ) {
 					Application.setStatusBar( Language.translate("Warte auf Agentenliste...") );
 					Application.MainWindow.setCursor( Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR) );															
+					Application.MainWindow.repaint();
 					PrintMsg = false;
 				}				
 				Thread.sleep(1000);
@@ -463,6 +485,8 @@ public class Platform extends java.lang.Object {
 		}		
 		Application.setStatusBar( Language.translate("Fertig") );
 		Application.MainWindow.setCursor( Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR) );
+		Application.MainWindow.repaint();
+		
 		// -------------------------------------------------------------
 		// --- Agentenliste auslesen und ggf. filtern ------------------
 		// -------------------------------------------------------------
@@ -478,48 +502,89 @@ public class Platform extends java.lang.Object {
 		return FilteredVector;
 	}
 	/**
-	 * Starts the search for Agents in the  
+	 * Starts the search for Ontologies in the  
 	 * current environment in an own Thread
 	 */
-	public void jadeFindAgentClasse() {
-		Agents = new jadeClasses("jade.core.Agent");
-		Thread Th = new Thread( Agents );		
-		Th.start();		
+	public void jadeFindOntologyClasse() {
+		Ontologies = new jadeClasses("jade.content.onto.Ontology");
+		Thread th = new Thread( Ontologies );
+		th.setName("Search4Ontologies");
+		th.start();
+	}
+	/**
+	 * This method returns all known Ontologies  
+	 * from the current environment
+	 * @return
+	 */
+	public Vector<Class<?>> jadeGetOntologyClasse() {
+		
+		boolean PrintMsg = true;
+		// -------------------------------------------------------------
+		// --- Falls noch keine Klassen gefunden wurden, warten ...  ---
+		// -------------------------------------------------------------
+		if (Ontologies==null) {
+			this.jadeFindOntologyClasse();
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		while ( Ontologies.getResultCount()==0 ) {
+			try {
+				if ( PrintMsg == true ) {
+					Application.setStatusBar( Language.translate("Warte auf Ontologie-Liste...") );
+					Application.MainWindow.setCursor( Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR) );	
+					Application.MainWindow.repaint();
+					PrintMsg = false;
+				}				
+				Thread.sleep(1000);
+			} 
+			catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}		
+		Application.setStatusBar( Language.translate("Fertig") );
+		Application.MainWindow.setCursor( Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR) );
+		Application.MainWindow.repaint();
+		
+		OntologyVector = Ontologies.getClassesFound();
+		return OntologyVector;
 	}	
+	
 	/**
 	 * Class for searching special classe, given
 	 * by an example (e. g. 'jade.core.Agent') 
 	 */
 	public class jadeClasses implements Runnable {
 
-		private Vector<Class<?>> ClassVector = null;
-		private String SuperClass = null;
+		private ClassFinder cf = null;
+		private Vector<Class<?>> classVector = new Vector<Class<?>>();
+		private String superClass = null;
 		
-		public jadeClasses(String SuperClazz) {
-			SuperClass = SuperClazz;			
+		public jadeClasses( String superClazz ) {
+			superClass = superClazz;			
 		}		
 		@Override
 		public void run() {
-			ClassVector = null;
-			FindClasse(SuperClass);
+			this.FindClasse(superClass);
 		}
 		@SuppressWarnings("unchecked")
 		public void FindClasse(String SuperClass)  {
-			ClassFinder cf = new ClassFinder();
-			ClassVector = cf.findSubclasses(SuperClass);
-			//System.out.println( Language.translate( "Suche nach Agenten beendet .. " ) );
+			cf = new ClassFinder();
+			classVector = cf.findSubclasses(SuperClass);
+			//System.out.println( Language.translate( "Suche nach " + SuperClass + " beendet .. " ) );
 		}	
 		public Vector<Class<?>> getClassesFound() {
-			return ClassVector;
+			return classVector;
 		}
-		public int getClassesCount() {
-			if ( ClassVector== null || ClassVector.isEmpty() ) {
-				return 0;
-			}
-			else {
-				return ClassVector.size();	
-			}			
-		}		
+		public boolean isWorking() {
+			return cf.isWorking();
+		}
+		public int getResultCount() {
+			return classVector.size();
+		}
+
 	} // -- End Sub-Class ---
 	
 	

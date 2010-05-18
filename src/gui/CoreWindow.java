@@ -174,7 +174,7 @@ public class CoreWindow extends JFrame implements ComponentListener{
 		}
 		else {
 			StatusBar.setText("  " + Message);
-		};		
+		};	
 	}
 	public void setTitelAddition( String Add2BasicTitel ) {
 		if ( Add2BasicTitel != "" ) {

@@ -7,8 +7,9 @@ import java.util.Vector;
 
 import javax.swing.table.DefaultTableModel;
 
-import application.reflection.ReflectClass;
-import application.reflection.ReflectClass.Slot;
+import reflection.ReflectClass;
+import reflection.ReflectClass.Slot;
+
 
 
 public class OntologyClassTreeObject extends Object {
@@ -17,44 +18,47 @@ public class OntologyClassTreeObject extends Object {
 	 * The instances of this class represents the UserObjects
 	 * which are located in the Nodes of the OntologyTree 
 	 */
-	private OntologyClass Ontology = null;
-	private Class<?> OntoClass = null;
-	private String ObjectTitle = null;
+	private OntologyClass ontologyClass = null;
+	private Class<?> ontologySubClass = null;
+	private String objectTitle = null;
+	private boolean isAConcept = false;
+	private boolean isAAgentAction = false;
+	private boolean isAPredicate = false;
 	
 	/**
 	 * Defines the Class belonging to the represented node
 	 * @param Clazz
 	 */
-	public OntologyClassTreeObject (OntologyClass onto, Class<?> Clazz) {
-		Ontology = onto;
-		OntoClass = Clazz;
+	public OntologyClassTreeObject (OntologyClass ontologyClazz, Class<?> clazz) {
+		ontologyClass = ontologyClazz;
+		ontologySubClass = clazz;
 	}
 	/**
 	 * In case, that there is no class, a node can be
 	 * represented by a simple String. E.g. in case of
 	 * 'Concept' or 'AgentAction' there is no class
 	 * related to this node. 
-	 * @param NodeTitle
+	 * @param ontologyClazz, nodeTitle
 	 */
-	public OntologyClassTreeObject (OntologyClass onto, String NodeTitle) {
-		Ontology = onto;
-		ObjectTitle = NodeTitle;
+	public OntologyClassTreeObject (OntologyClass ontologyClazz, String nodeTitle) {
+		ontologyClass = ontologyClazz;
+		objectTitle = nodeTitle;
 	}
 	/**
 	 * returns the title of this node object
 	 */
 	public String toString() {
-		if ( OntoClass == null) {
-			if ( ObjectTitle == null ) {
+		if ( ontologySubClass == null) {
+			if ( objectTitle == null ) {
 				return "-";	
 			} else {
-				return ObjectTitle;
+				return objectTitle;
 			}			
 		} else {
-			if ( ObjectTitle == null ) {
+			if ( objectTitle == null ) {
 				return getClassTextSimple();
 			} else {
-				return ObjectTitle;	
+				return objectTitle;	
 			}
 		}
 	}
@@ -64,7 +68,7 @@ public class OntologyClassTreeObject extends Object {
 	 * @return boolean
 	 */
 	public boolean isClass() {
-		if (OntoClass == null) {
+		if (ontologySubClass == null) {
 			return false;
 		} else {
 			return true;
@@ -72,27 +76,50 @@ public class OntologyClassTreeObject extends Object {
 	}
 	/**
 	 * Returns the simple class name from a class-reference
-	 * @param Reference
 	 * @return String
 	 */
 	public String getClassTextSimple() {
-		String Reference = OntoClass.getName();
+		String Reference = ontologySubClass.getName();
 		return Reference.substring( Reference.lastIndexOf(".")+1 );
 	}
 	/**
-	 * returns the Class of the ontology node
+	 * Refurns the full class-reference of the current ontology-sub-class
 	 * @return
 	 */
-	public Class<?> getOntoClass() {
-		return OntoClass;
+	public String getClassReference() {
+		if (ontologySubClass==null) {
+			if (ontologyClass==null) {
+				return this.toString();
+			} else {
+				return ontologyClass.getOntologySourcePackage() + "." + this.toString();	
+			}
+		} else {
+			return ontologySubClass.getName();	
+		}
+	}
+	/**
+	 * This method returns the instance of the OntologyClass which
+	 * belongs to the current Tree-Object. 
+	 * Here, the basic informaions about the Ontology are available!
+	 * @return
+	 */
+	public OntologyClass getOntologyClass() {
+		return this.ontologyClass;
+	}
+	/**
+	 * returns the Class of the current ontology node
+	 * @return
+	 */
+	public Class<?> getOntologySubClass() {
+		return ontologySubClass;
 	}
 	/**
 	 * Allows to set the node title, even if there is a 
 	 * concrete class (with reference and title)
 	 * @param OntologyTitle
 	 */
-	public void setObjectTitle(String OntologyTitle){
-		ObjectTitle = OntologyTitle;
+	public void setObjectTitle(String ontologyTitle){
+		objectTitle = ontologyTitle;
 	}
 	/**
 	 * This returns the 'DefaultTableModel' for a single
@@ -110,13 +137,13 @@ public class OntologyClassTreeObject extends Object {
 		tm4s.addColumn("Type");
 		tm4s.addColumn("Other Facets");		
 
-		if ( OntoClass == null ) {
+		if ( ontologySubClass == null ) {
 			return tm4s;
 		}
 		
 		// --- Nach den entsprechenden Slots im Vokabular filtern ---
-		Hashtable<String, String> OntoSlotHash = Ontology.OntologieVocabulary.getSlots( OntoClass );
-		ReflectClass RefCla = new ReflectClass( OntoClass, OntoSlotHash );
+		Hashtable<String, String> OntoSlotHash = ontologyClass.ontologieVocabulary.getSlots( ontologySubClass );
+		ReflectClass RefCla = new ReflectClass( ontologySubClass, OntoSlotHash );
 		
 		Vector<String> v = new Vector<String>( OntoSlotHash.keySet() );
 	    Collections.sort(v);
@@ -139,5 +166,41 @@ public class OntologyClassTreeObject extends Object {
 	    	tm4s.addRow(rowData);
 	    }		
 		return tm4s;		
+	}
+	/**
+	 * @param isAConcept the isAConcept to set
+	 */
+	public void setIsConcept(boolean isConcept) {
+		this.isAConcept = isConcept;
+	}
+	/**
+	 * @return the isAConcept
+	 */
+	public boolean isConcept() {
+		return isAConcept;
+	}
+	/**
+	 * @param isAAgentAction the isAAgentAction to set
+	 */
+	public void setIsAgentAction(boolean isAgentAction) {
+		this.isAAgentAction = isAgentAction;
+	}
+	/**
+	 * @return the isAAgentAction
+	 */
+	public boolean isAgentAction() {
+		return isAAgentAction;
+	}
+	/**
+	 * @param isAPredicate the isAPredicate to set
+	 */
+	public void setIsPredicate(boolean isPredicate) {
+		this.isAPredicate = isPredicate;
+	}
+	/**
+	 * @return the isAPredicate
+	 */
+	public boolean isPredicate() {
+		return isAPredicate;
 	}
 }

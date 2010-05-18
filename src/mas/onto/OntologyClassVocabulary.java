@@ -26,7 +26,6 @@ public class OntologyClassVocabulary extends Hashtable<String, String> implement
 	public OntologyClassVocabulary (Class<?> Clazz) {
 		
 		if ( Clazz == null ) return;
-		
 		Hashtable<String, String> UnsortedHash = new Hashtable<String, String>();
 		
 		Field[] publicFields = Clazz.getFields();
@@ -40,10 +39,11 @@ public class OntologyClassVocabulary extends Hashtable<String, String> implement
 				UnsortedHash.put(fieldName, fieldValue);
 				//System.out.println("Name: " + fieldName + ", Value.: "+fieldValue);								
 			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
+				//e.printStackTrace();
 			} catch (IllegalAccessException e) {
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
+			
 			
 		}
 		this.putAll(UnsortedHash);
@@ -82,8 +82,8 @@ public class OntologyClassVocabulary extends Hashtable<String, String> implement
 	 */
 	public Hashtable<String, String> getSlots( DefaultMutableTreeNode Node  ) {
 		Object UObject = Node.getUserObject();
-		OntologyClassTreeObject OCTO = (OntologyClassTreeObject ) UObject;		
-		return getSlots( OCTO.getOntoClass() );
+		OntologyClassTreeObject OCTO = (OntologyClassTreeObject) UObject;		
+		return getSlots( OCTO.getOntologySubClass() );
 	}
 	/**
 	 * Filter the Vocabulary for a special Ontology-Class, to get

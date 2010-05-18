@@ -9,7 +9,7 @@ import jade.core.CaseInsensitiveString;
 
 /** file: MonitorMASOntology.java
  * @author ontology bean generator
- * @version 2010/02/18, 17:09:44
+ * @version 2010/05/16, 22:23:22
  */
 public class MonitorMASOntology extends jade.content.onto.Ontology  {
   //NAME
@@ -23,6 +23,7 @@ public class MonitorMASOntology extends jade.content.onto.Ontology  {
 
 
    // VOCABULARY
+    public static final String ENVIRONMENTINFO="EnvironmentInfo";
     public static final String MOVE2WORKPLACE="Move2Workplace";
     public static final String TIMEDETECTOR_TIME_RECEIVE_START="Time_Receive_Start";
     public static final String TIMEDETECTOR_TIME_RECEIVE_END="Time_Receive_End";
@@ -44,6 +45,8 @@ public class MonitorMASOntology extends jade.content.onto.Ontology  {
     // adding AgentAction(s)
     AgentActionSchema move2WorkplaceSchema = new AgentActionSchema(MOVE2WORKPLACE);
     add(move2WorkplaceSchema, monitormas.ontology.Move2Workplace.class);
+    AgentActionSchema environmentInfoSchema = new AgentActionSchema(ENVIRONMENTINFO);
+    add(environmentInfoSchema, monitormas.ontology.EnvironmentInfo.class);
 
     // adding AID(s)
 
