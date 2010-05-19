@@ -37,6 +37,12 @@ public class OWLImportMapper{
 	protected static final String AGENTACTION="AgentAction";
 	protected static final String CONCEPT="Concept";
 	protected static final String PREDICATE="Predicate";
+	
+	protected static final String AID_PACKAGE="jade.core";
+	protected static final String AGENTACTION_PACKAGE="jade.content";
+	protected static final String CONCEPT_PACKAGE="jade.content";
+	protected static final String PREDICATE_PACKAGE="jade.content";
+
 
 	protected static final String beanGeneratorNS="http://jade.cselt.it/beangenerator#"; //NS prefix j.0 
 	protected static final String w3cRDFURI="http://www.w3.org/2000/01/rdf-schema#"; //NS prefix rdfs
@@ -331,19 +337,49 @@ public class OWLImportMapper{
 		return subConcepts;
 	}
 
+	protected String getCompleteJavaName(Resource toBeMapped){
+		if(toBeMapped==null){
+			System.out.println("Ohshit");
+			return "";
+		}
+		
+		String resourceName=toBeMapped.getLocalName();
+		String ns=toBeMapped.getNameSpace();
+		String packageName="";
+
+		String out=getJavaName(toBeMapped);
+		if(ns.equals(beanGeneratorNS)){
+//			System.out.println("JADE class detected: "+resourceName);
+			if(resourceName.equals(AID)){
+				packageName=AID_PACKAGE;
+			} else if(resourceName.equals(PREDICATE)){
+				packageName=PREDICATE_PACKAGE;
+			} else if(resourceName.equals(AGENTACTION)){
+				packageName=AGENTACTION_PACKAGE;
+			}
+		} else{
+			packageName=this.ontologyJavaPackage;
+		}
+		out= packageName + "." + out;
+		return out;
+		
+	}
+	
 	protected String getJavaName(Resource toBeMapped){
 		String resourceName=toBeMapped.getLocalName();
 		String ns=toBeMapped.getNameSpace();
 //		System.out.println("getJavaClassName "+toBeMapped+" ns: "+ns);
-		if(!ns.equals(structureNS)){
+
+		if(!ns.equals(structureNS) && !ns.equals(beanGeneratorNS)){
 			resourceName= model.getNsURIPrefix(ns)+"_"+resourceName;
 		}
+
 		return OWLImportMapper.capitalStart(resourceName);
 	}
 	
 	protected Class<?> mapResourceAsClass(Resource toBeMapped){
 		try{
-			Class<?> conceptClass=Class.forName(this.ontologyJavaPackage + "." + getJavaName(toBeMapped));
+			Class<?> conceptClass=Class.forName(getCompleteJavaName(toBeMapped));
 			return conceptClass;
 		}catch(ClassNotFoundException e){
 			// TODO Auto-generated catch block
@@ -360,6 +396,10 @@ public class OWLImportMapper{
 
 	protected Object mapIndividualAsInstance(Individual individual){
 		try{
+			if(individual.getRDFType()==null){ //prevent trying to map unknown types
+				return null;
+			}
+
 			Class<?> of=this.mapResourceAsClass(individual.getRDFType());
 			
 //			System.out.println("map Individual "+individual+" as Instance of "+of);

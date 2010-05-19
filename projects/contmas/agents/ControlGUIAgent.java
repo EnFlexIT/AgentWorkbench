@@ -92,7 +92,7 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 				BlockAddress curCont=((Holding)contState.getState()).getAt_address();
 				dispString+=" (x=" + curCont.getX_dimension() + ", y=" + curCont.getY_dimension() + ", z=" + curCont.getZ_dimension() + ")";
 			} else{
-				dispString+=" [ERROR]";
+				dispString+=" [NotHolded]";
 			}
 			containerList.addElement(dispString);
 		}
@@ -127,13 +127,16 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 						ontologyRepresentation.setContains(loadBay);
 					}
 				}
+				if(ev.getParameter(9) instanceof List){ //Loaded Containers present
+					ontologyRepresentation.setContainer_states((List) ev.getParameter(9));
+				}
 				if(ontologyRepresentation instanceof Ship){
 					((Ship) ontologyRepresentation).setShip_length(Float.parseFloat(ev.getParameter(6).toString()));
 				}
-				DomainOntologyElement habitat=((DomainOntologyElement) ev.getParameter(9));
+				DomainOntologyElement habitat=((DomainOntologyElement) ev.getParameter(10));
 				ontologyRepresentation.setLives_in(habitat.getDomain());
 				if(ontologyRepresentation instanceof ActiveContainerHolder){
-					Object[] capabilities=((Object[]) ev.getParameter(10));
+					Object[] capabilities=((Object[]) ev.getParameter(11));
 					for(int i=0;i < capabilities.length;i++){
 						DomainOntologyElement domainOntologyElement=(DomainOntologyElement) capabilities[i];
 						((ActiveContainerHolder) ontologyRepresentation).addCapable_of(domainOntologyElement.getDomain());
@@ -148,7 +151,11 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 				act.setName(name);
 				act.setTo_be_added(ontologyRepresentation);
 				act.setRandomize(Boolean.parseBoolean(ev.getParameter(4).toString()));
-				act.setPopulate(Boolean.parseBoolean(ev.getParameter(5).toString()));
+				if(ev.getParameter(9) instanceof List){ //Loaded Containers present
+					act.setPopulate(false);
+				}else{
+					act.setPopulate(Boolean.parseBoolean(ev.getParameter(5).toString()));
+				}
 				this.addBehaviour(new requestStartAgent(this,this.harbourMaster,act));
 
 

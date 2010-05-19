@@ -21,6 +21,7 @@
 package contmas.main;
 
 import jade.content.Concept;
+import jade.core.AID;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
@@ -43,6 +44,14 @@ public class OntologyElement extends DefaultMutableTreeNode{
 			return null;
 		}
 	}
+	
+	public AID getOntologyConceptAsAID(){
+		if(this.ontologyConcept instanceof AID){
+			return (AID) this.ontologyConcept;
+		}else{
+			return null;
+		}
+	}
 
 	public void setOntologyConcept(Concept ontologyConcept){
 		this.ontologyConcept=ontologyConcept;
@@ -60,6 +69,11 @@ public class OntologyElement extends DefaultMutableTreeNode{
 		this(ontologyConcept);
 		this.setLabel(label);
 	}
+	
+	public OntologyElement(Object ontologyConcept,String label){
+		this(ontologyConcept);
+		this.setLabel(label);
+	}	
 
 	public OntologyElement(Concept ontologyConcept){
 		this.ontologyConcept=ontologyConcept;

@@ -21,6 +21,7 @@
 package contmas.main;
 
 import jade.content.Concept;
+import jade.core.AID;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
@@ -31,13 +32,13 @@ import java.util.HashMap;
 
 import javax.swing.*;
 
-import contmas.ontology.BayMap;
+import contmas.ontology.ContainerHolder;
 
 /**
  * @author Hanno - Felix Wagner
  *
  */
-public class LoadBayMapFrame extends JDialog implements ActionListener{
+public class LoadContainerHolderFrame extends JDialog implements ActionListener{
 
 	/**
 	 * 
@@ -47,16 +48,16 @@ public class LoadBayMapFrame extends JDialog implements ActionListener{
 	private JButton buttonLookupFile=null;
 	private JTextField textFieldFileName=null;
 	private JLabel labelFile=null;
-	private JButton buttonChooseBayMap=null;
-	private JScrollPane scrollPaneBayMaps=null;
-	private JList listBayMaps=null;
+	private JButton buttonChooseContainerHolder=null;
+	private JScrollPane scrollPaneContainerHolders=null;
+	private JList listContainerHolders=null;
 	protected String workingDir="";
 
 	/**
 	 * This method initializes 
 	 * 
 	 */
-	public LoadBayMapFrame(){
+	public LoadContainerHolderFrame(){
 		super();
 		this.initialize();
 	}
@@ -68,7 +69,7 @@ public class LoadBayMapFrame extends JDialog implements ActionListener{
 	private void initialize(){
 		this.setSize(new Dimension(268,168));
 		this.setModal(true);
-		this.setTitle("Load BayMap");
+		this.setTitle("Load ContainerHolder");
 		this.setContentPane(this.getJPanel());
 
 	}
@@ -108,8 +109,8 @@ public class LoadBayMapFrame extends JDialog implements ActionListener{
 			this.jPanel.add(this.getButtonLookupFile(),null);
 			this.jPanel.add(this.getTextFieldFileName(),null);
 			this.jPanel.add(this.labelFile,null);
-			this.jPanel.add(this.getButtonChooseBayMap(),null);
-			this.jPanel.add(this.getScrollPaneBayMaps(),null);
+			this.jPanel.add(this.getButtonChooseContainerHolder(),null);
+			this.jPanel.add(this.getScrollPaneContainerHolders(),null);
 		}
 		return this.jPanel;
 	}
@@ -131,25 +132,24 @@ public class LoadBayMapFrame extends JDialog implements ActionListener{
 					final String structureFileName="resources\\contmas_ontology.owl";
 					final String ontologyGeneratorFileName="resources\\OWLSimpleJADEAbstractOntology.owl";
 
-					Integer returnVal=fc.showOpenDialog(LoadBayMapFrame.this.jPanel);
+					Integer returnVal=fc.showOpenDialog(LoadContainerHolderFrame.this.jPanel);
 
 					if(returnVal == JFileChooser.APPROVE_OPTION){
 						File file=fc.getSelectedFile();
-						LoadBayMapFrame.this.getTextFieldFileName().setText(file.getAbsolutePath());
-						OWLImportMapper mapper=LoadBayMapFrame.this.getMapper(file.getAbsolutePath());
+						LoadContainerHolderFrame.this.getTextFieldFileName().setText(file.getAbsolutePath());
+						OWLImportMapper mapper=LoadContainerHolderFrame.this.getMapper(file.getAbsolutePath());
 						mapper.setStructureFile(workingDir + structureFileName);
 						mapper.setBeanGeneratorFile(workingDir + ontologyGeneratorFileName);
-						HashMap<String, Object> allBayMaps=mapper.getNamedMappedIndividualsOf("BayMap");
-						java.util.Iterator<String> iter=allBayMaps.keySet().iterator();
+						HashMap<String, Object> allContainerHolders=mapper.getNamedMappedIndividualsOf("Ship");
+						java.util.Iterator<String> iter=allContainerHolders.keySet().iterator();
 
-						DefaultListModel bayMapList=new DefaultListModel();
-
+						DefaultListModel ContainerHolderList=new DefaultListModel();
 						while(iter.hasNext()){
 							String curName=iter.next();
-							BayMap curBayMap=(BayMap) allBayMaps.get(curName);
-							bayMapList.addElement(new OntologyElement(curBayMap," " + curName));
+							ContainerHolder curContainerHolder=(ContainerHolder) allContainerHolders.get(curName);
+							ContainerHolderList.addElement(new OntologyElement(curContainerHolder," " + curName));
 						}
-						LoadBayMapFrame.this.getListBayMaps().setModel(bayMapList);
+						LoadContainerHolderFrame.this.getListContainerHolders().setModel(ContainerHolderList);
 					}
 				}
 			});
@@ -171,56 +171,56 @@ public class LoadBayMapFrame extends JDialog implements ActionListener{
 	}
 
 	/**
-	 * This method initializes buttonChooseBayMap	
+	 * This method initializes buttonChooseContainerHolder	
 	 * 	
 	 * @return javax.swing.JButton	
 	 */
-	private JButton getButtonChooseBayMap(){
-		if(this.buttonChooseBayMap == null){
-			this.buttonChooseBayMap=new JButton();
-			this.buttonChooseBayMap.setBounds(new Rectangle(11,115,244,20));
-			this.buttonChooseBayMap.setText("Choose BayMap");
-			this.buttonChooseBayMap.addActionListener(new java.awt.event.ActionListener(){
+	private JButton getButtonChooseContainerHolder(){
+		if(this.buttonChooseContainerHolder == null){
+			this.buttonChooseContainerHolder=new JButton();
+			this.buttonChooseContainerHolder.setBounds(new Rectangle(11,115,244,20));
+			this.buttonChooseContainerHolder.setText("Choose ContainerHolder");
+			this.buttonChooseContainerHolder.addActionListener(new java.awt.event.ActionListener(){
 				public void actionPerformed(java.awt.event.ActionEvent e){
-					LoadBayMapFrame.this.setVisible(false);
+					LoadContainerHolderFrame.this.setVisible(false);
 				}
 			});
 		}
-		return this.buttonChooseBayMap;
+		return this.buttonChooseContainerHolder;
 	}
 
 	/**
-	 * This method initializes scrollPaneBayMaps	
+	 * This method initializes scrollPaneContainerHolders	
 	 * 	
 	 * @return javax.swing.JScrollPane	
 	 */
-	private JScrollPane getScrollPaneBayMaps(){
-		if(this.scrollPaneBayMaps == null){
-			this.scrollPaneBayMaps=new JScrollPane();
-			this.scrollPaneBayMaps.setBounds(new Rectangle(9,33,244,80));
-			this.scrollPaneBayMaps.setViewportView(this.getListBayMaps());
+	private JScrollPane getScrollPaneContainerHolders(){
+		if(this.scrollPaneContainerHolders == null){
+			this.scrollPaneContainerHolders=new JScrollPane();
+			this.scrollPaneContainerHolders.setBounds(new Rectangle(9,33,244,80));
+			this.scrollPaneContainerHolders.setViewportView(this.getListContainerHolders());
 		}
-		return this.scrollPaneBayMaps;
+		return this.scrollPaneContainerHolders;
 	}
 
 	/**
-	 * This method initializes listBayMaps	
+	 * This method initializes listContainerHolders	
 	 * 	
 	 * @return javax.swing.JList	
 	 */
-	private JList getListBayMaps(){
-		if(this.listBayMaps == null){
-			this.listBayMaps=new JList();
-			this.listBayMaps.setModel(new DefaultListModel());
+	private JList getListContainerHolders(){
+		if(this.listContainerHolders == null){
+			this.listContainerHolders=new JList();
+			this.listContainerHolders.setModel(new DefaultListModel());
 		}
-		return this.listBayMaps;
+		return this.listContainerHolders;
 	}
 
-	public BayMap getChosenBayMap(){
-		if( !this.getListBayMaps().isSelectionEmpty()){
-			Concept chosenBayMap=((OntologyElement) this.getListBayMaps().getSelectedValue()).getOntologyConcept();
-			if((chosenBayMap != null) & (chosenBayMap instanceof BayMap)){
-				return (BayMap) chosenBayMap;
+	public ContainerHolder getChosenContainerHolder(){
+		if( !this.getListContainerHolders().isSelectionEmpty()){
+			AID chosenContainerHolder=((OntologyElement) this.getListContainerHolders().getSelectedValue()).getOntologyConceptAsAID();
+			if((chosenContainerHolder != null) & (chosenContainerHolder instanceof ContainerHolder)){
+				return (ContainerHolder) chosenContainerHolder;
 			}
 		}
 		return null;

@@ -79,10 +79,10 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private JButton ButtonSetHabitat=null;
 	private JButton ButtonAddCapability=null;
 	private JButton ButtonCapabilityRemove=null;
-	private JButton buttonLoadBayMap=null;
+	private JButton buttonLoadContainerHolder=null;
 	private JCheckBox loadCheckBox=null;
-	private LoadBayMapFrame dialog=new LoadBayMapFrame();
-	protected BayMap loadedBayMap;
+	private LoadContainerHolderFrame dialog=new LoadContainerHolderFrame();
+	protected ContainerHolder loadedContainerHolder;
 	private JButton jButton=null;
 
 	/**
@@ -123,7 +123,15 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 					ge.addParameter(ControlGUI.this.populateCheckBox.isSelected());
 					ge.addParameter(ControlGUI.this.TFShipLength.getText());
 					ge.addParameter(((AgentClassElement) ControlGUI.this.getAgentType().getSelectedItem()).getAgentClass());
-					ge.addParameter(ControlGUI.this.loadedBayMap);
+					if(ControlGUI.this.loadedContainerHolder !=null){
+						ge.addParameter(((ContainerHolder)ControlGUI.this.loadedContainerHolder).getContains());
+						ge.addParameter(((ContainerHolder)ControlGUI.this.loadedContainerHolder).getContainer_states());	
+					} else{
+						ge.addParameter(null);
+						ge.addParameter(null);
+					}
+
+
 					if(((DefaultListModel) ControlGUI.this.getHabitatList().getModel()).toArray().length == 1){
 						ge.addParameter(((DefaultListModel) ControlGUI.this.getHabitatList().getModel()).toArray()[0]);
 					}else{
@@ -216,7 +224,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 			this.jContentPane.add(this.getButtonSetHabitat(),null);
 			this.jContentPane.add(this.getButtonAddCapability(),null);
 			this.jContentPane.add(this.getButtonCapabilityRemove(),null);
-			this.jContentPane.add(this.getButtonLoadBayMap(),null);
+			this.jContentPane.add(this.getButtonLoadContainerHolder(),null);
 			this.jContentPane.add(this.getLoadCheckBox(),null);
 			this.jContentPane.add(this.getJButton(),null);
 			this.jContentPane.add(this.AgentLabelLength,null);
@@ -787,29 +795,29 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	}
 
 	/**
-	 * This method initializes buttonLoadBayMap	
+	 * This method initializes buttonLoadContainerHolder	
 	 * 	
 	 * @return javax.swing.JButton	
 	 */
-	private JButton getButtonLoadBayMap(){
-		if(this.buttonLoadBayMap == null){
-			this.buttonLoadBayMap=new JButton();
-			this.buttonLoadBayMap.setBounds(new Rectangle(169,96,62,22));
-			this.buttonLoadBayMap.setText("Load");
-			this.buttonLoadBayMap.addActionListener(new java.awt.event.ActionListener(){
+	private JButton getButtonLoadContainerHolder(){
+		if(this.buttonLoadContainerHolder == null){
+			this.buttonLoadContainerHolder=new JButton();
+			this.buttonLoadContainerHolder.setBounds(new Rectangle(169,96,62,22));
+			this.buttonLoadContainerHolder.setText("Load");
+			this.buttonLoadContainerHolder.addActionListener(new java.awt.event.ActionListener(){
 				public void actionPerformed(java.awt.event.ActionEvent e){
 					System.out.println("cwd="+myAgent.getWorkingDir());
 					ControlGUI.this.dialog.setWorkingDir(myAgent.getWorkingDir());
 					ControlGUI.this.dialog.setVisible(true);
-					BayMap chosenBayMap=ControlGUI.this.dialog.getChosenBayMap();
-					if(chosenBayMap != null){
-						ControlGUI.this.loadedBayMap=chosenBayMap;
+					ContainerHolder chosenContainerHolder=ControlGUI.this.dialog.getChosenContainerHolder();
+					if(chosenContainerHolder != null){
+						ControlGUI.this.loadedContainerHolder=chosenContainerHolder;
 						ControlGUI.this.getLoadCheckBox().setSelected(true);
 					}
 				}
 			});
 		}
-		return this.buttonLoadBayMap;
+		return this.buttonLoadContainerHolder;
 	}
 
 	/**
@@ -824,7 +832,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 			this.loadCheckBox.addChangeListener(new javax.swing.event.ChangeListener(){
 				public void stateChanged(javax.swing.event.ChangeEvent e){
 					if( !((JCheckBox) e.getSource()).isSelected()){ //checkbox unchecked, so purge the maybe-obtained baymap
-						ControlGUI.this.loadedBayMap=null;
+						ControlGUI.this.loadedContainerHolder=null;
 					}
 				}
 			});
