@@ -101,8 +101,8 @@ public class requestExecuteAppointment extends AchieveREInitiator{
 
 			@Override
 			public void action(){
-				Domain endDomain=myCAgent.inflateDomain(curTO.getEnds_at().getAbstract_designation());
 				if(myCAgent instanceof MoveableAgent){
+					Domain endDomain=myCAgent.inflateDomain(curTO.getEnds_at().getAbstract_designation());
 					MoveableAgent myMoveableAgent=(MoveableAgent) myCAgent;
 					TransportOrderChainState oldState=myCAgent.touchTOCState(curTOC,new Assigned());
 
@@ -124,7 +124,9 @@ public class requestExecuteAppointment extends AchieveREInitiator{
 
 				ACLMessage request=(ACLMessage) getDataStore().get(INITIATION_K);
 
-				request.addReceiver(curTO.getEnds_at().getConcrete_designation());
+				request.addReceiver(curTO.
+						getEnds_at().
+						getConcrete_designation());
 
 				RequestExecuteAppointment act=new RequestExecuteAppointment();
 				act.setCorresponds_to(curTOC);

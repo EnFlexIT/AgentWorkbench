@@ -124,6 +124,9 @@ public class receiveLoadOrders extends ContractNetResponder{
 						someTOC=myCAgent.getSomeTOCOfState(new Assigned());
 					}
 					if(someTOC == null){
+						someTOC=myCAgent.getSomeTOCOfState(new PlannedOut());
+					}
+					if(someTOC == null){
 						someTOC=myCAgent.getSomeTOCOfState(new Administered());
 						if(someTOC != null){
 							myCAgent.echoStatus("BayMap voll, versuche Räumung für",curTOC,ContainerAgent.LOGGING_INFORM);

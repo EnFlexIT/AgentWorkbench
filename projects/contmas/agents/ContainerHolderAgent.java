@@ -500,6 +500,8 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 	public void processHarbourLayout(Domain current_harbour_layout){
 		// TODO Auto-generated method stub
 		harbourMap=interlaceDomains(current_harbour_layout);
+//		this.ontologyRepresentation.setLives_in(inflateDomain(this.ontologyRepresentation.getLives_in()));
+
 //		echoStatus("found domain: " + findDomain(this.targetAbstractDomain.getId(),harbourMap));
 	}
 
@@ -527,6 +529,9 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 
 	//Has_subdomains variant
 	public Domain findDomain(String lookForID,Domain in){
+		if(in==null){
+			System.out.println("ERROR: lookForID="+lookForID);
+		}
 		if(in.getId().equals(lookForID)){
 			return in;
 		}

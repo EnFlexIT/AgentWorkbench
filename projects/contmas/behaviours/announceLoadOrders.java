@@ -86,7 +86,6 @@ public class announceLoadOrders extends ContractNetInitiator{
 		}else{
 			this.myCAgent.echoStatus("FAILURE: TOC is not going to be announced, currentState:" + oldState.getClass().getSimpleName(),curTOC,ContainerAgent.LOGGING_NOTICE);
 			this.myCAgent.touchTOCState(curTOC,new FailedOut());
-			this.myCAgent.wakeSleepingBehaviours(curTOC);
 			messages=null;
 		}
 		myCAgent.wakeSleepingBehaviours(curTOC);
@@ -155,8 +154,12 @@ public class announceLoadOrders extends ContractNetInitiator{
 			ACLMessage resNot=(ACLMessage) iterator.next();
 			AnnounceLoadStatus act=(AnnounceLoadStatus) myCAgent.extractAction(resNot);
 			if(act.getLoad_status().equals("PENDING")){
-				myCAgent.touchTOCState(curTOC,new PlannedOut());
-				myCAgent.addBehaviour(new requestExecuteAppointment(myCAgent,curTOC,curTO));
+				PlannedOut newState=new PlannedOut();
+				newState.setLoad_offer(curTO);
+				myCAgent.touchTOCState(curTOC,newState);
+				
+				myCAgent.wakeSleepingBehaviours(curTOC);
+//				myCAgent.addBehaviour(new requestExecuteAppointment(myCAgent,curTOC,curTO));
 			}
 		}
 	}

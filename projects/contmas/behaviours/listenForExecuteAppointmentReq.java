@@ -146,6 +146,7 @@ public class listenForExecuteAppointmentReq extends AchieveREResponder{
 				if( !myAgent.aquireContainer(curTOC,destinationAddress)){
 					myAgent.echoStatus("Something went wrong! Couldn't aquire!",curTOC,ContainerAgent.LOGGING_ERROR);
 				}
+				myAgent.wakeSleepingBehaviours(curTOC);
 				myAgent.echoStatus("aquired: ",curTOC);
 			}
 		}

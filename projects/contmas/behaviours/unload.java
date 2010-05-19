@@ -27,22 +27,26 @@ import contmas.ontology.Administered;
 import contmas.ontology.TransportOrderChain;
 
 public class unload extends CyclicBehaviour{
-	private final ContainerHolderAgent myCAgent;
 	private static final long serialVersionUID=3933460156486819068L;
+	private final ContainerHolderAgent myCAgent;
 
 	public unload(Agent a){
 		super(a);
-		this.myCAgent=((ContainerHolderAgent) this.myAgent);
+		this.myCAgent=(ContainerHolderAgent) a;
 	}
 
+	/* (non-Javadoc)
+	 * @see jade.core.behaviours.Behaviour#action()
+	 */
 	@Override
 	public void action(){
 		TransportOrderChain someTOC=this.myCAgent.getSomeTOCOfState(new Administered());
 		if(someTOC != null){
+			
 			this.myCAgent.releaseContainer(someTOC);
-		}else{
-			myCAgent.registerForWakeUpCall(this);
-			this.block();
+//			myCAgent.echoStatus("announcing TOC");
 		}
+		myCAgent.registerForWakeUpCall(this);
+		this.block();
 	}
 }

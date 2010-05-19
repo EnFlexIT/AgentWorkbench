@@ -14,6 +14,7 @@
 package contmas.agents;
 
 import jade.util.leap.List;
+import contmas.behaviours.carryOutPlanning;
 import contmas.behaviours.enrollAtHarbor;
 import contmas.behaviours.listenForLoadingStreamIni;
 import contmas.behaviours.unload;
@@ -36,13 +37,14 @@ public class ShipAgent extends StaticContainerAgent implements TransportOrderOff
 		super.setup();
 		this.addBehaviour(new enrollAtHarbor(this));
 		this.addBehaviour(new listenForLoadingStreamIni(this));
-
+		offerTransportOrder();
 //		this.addBehaviour(new scheduleUnloadStart(this));
 	}
 	
 	@Override
 	public void offerTransportOrder(){
-		this.addBehaviour(new unload(this));
+//		this.addBehaviour(new unload(this));
+		this.addBehaviour(new carryOutPlanning(this));
 	}
 	
 	@Override

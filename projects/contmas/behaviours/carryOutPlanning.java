@@ -22,21 +22,18 @@ package contmas.behaviours;
 
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
-import contmas.agents.ContainerAgent;
 import contmas.agents.ContainerHolderAgent;
-import contmas.interfaces.MoveableAgent;
 import contmas.ontology.PlannedOut;
 import contmas.ontology.TransportOrder;
 import contmas.ontology.TransportOrderChain;
 
 public class carryOutPlanning extends CyclicBehaviour{
-	MoveableAgent myAgent;
-	ContainerHolderAgent myCAgent;
+	private static final long serialVersionUID=1198231234951152102L;
+	private final ContainerHolderAgent myCAgent;
 
 	public carryOutPlanning(Agent a){
 		super(a);
-		myAgent=(MoveableAgent) a;
-		myCAgent=(ContainerHolderAgent) a;
+		this.myCAgent=(ContainerHolderAgent) a;
 	}
 
 	/* (non-Javadoc)
@@ -44,12 +41,13 @@ public class carryOutPlanning extends CyclicBehaviour{
 	 */
 	@Override
 	public void action(){
-		TransportOrderChain curTOC=myCAgent.getSomeTOCOfState(new PlannedOut());
-		if(curTOC != null){
-			TransportOrder curTO=((PlannedOut) myCAgent.touchTOCState(curTOC)).getLoad_offer();
-			myCAgent.addBehaviour(new requestExecuteAppointment(myCAgent,curTOC,curTO));
+		TransportOrderChain someTOC=this.myCAgent.getSomeTOCOfState(new PlannedOut());
+		if(someTOC != null){
+			TransportOrder curTO=((PlannedOut) myCAgent.touchTOCState(someTOC)).getLoad_offer();
+			myCAgent.addBehaviour(new requestExecuteAppointment(myCAgent,someTOC,curTO));
 			myCAgent.echoStatus("added plan execution");
 		}
-		block();
+		myCAgent.registerForWakeUpCall(this);
+		this.block();
 	}
 }

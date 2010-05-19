@@ -75,6 +75,7 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 	@Override
 	public void offerTransportOrder(){
 		this.addBehaviour(new unload(this));
+		this.addBehaviour(new carryOutPlanning(this));
 	}
 
 	@Override

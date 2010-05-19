@@ -13,6 +13,7 @@
  */
 package contmas.agents;
 
+import contmas.behaviours.carryOutPlanning;
 import contmas.behaviours.listenForExecuteAppointmentReq;
 import contmas.behaviours.receiveLoadOrders;
 import contmas.behaviours.unload;
@@ -47,5 +48,6 @@ public class CraneAgent extends ActiveContainerAgent implements TransportOrderHa
 	@Override
 	public void offerTransportOrder(){
 		this.addBehaviour(new unload(this));
+		this.addBehaviour(new carryOutPlanning(this));
 	}
 }
