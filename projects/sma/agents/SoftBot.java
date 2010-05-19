@@ -21,8 +21,6 @@ public class SoftBot extends MovingAgent {
 	
 	public void setup(){
 		super.setup();
-		
-		this.self.setCurrentSpeed(new Speed());
 				
 		Vector<Position> wps = new Vector<Position>();
 		

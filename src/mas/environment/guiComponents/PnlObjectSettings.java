@@ -2,11 +2,8 @@ package mas.environment.guiComponents;
 
 import javax.swing.JPanel;
 import javax.swing.JLabel;
-import java.awt.Rectangle;
 import java.awt.Point;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -15,21 +12,16 @@ import javax.swing.JButton;
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
 
-import org.apache.batik.bridge.UpdateManager;
-
 import sma.ontology.AbstractObject;
 import sma.ontology.AgentObject;
-import sma.ontology.Position;
-import sma.ontology.Size;
 
 import application.Language;
 
 import mas.display.SvgTypes;
-import mas.environment.EnvironmentControllerGUI;
 import mas.environment.ObjectTypes;
 import mas.environment.OntoUtilities;
 
-public class PnlObject extends JPanel {
+public class PnlObjectSettings extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	private JLabel lblId = null;
@@ -58,7 +50,7 @@ public class PnlObject extends JPanel {
 	/**
 	 * This is the default constructor
 	 */
-	public PnlObject(EnvironmentControllerGUI parent) {
+	public PnlObjectSettings(EnvironmentControllerGUI parent) {
 		super();
 		this.parent = parent;
 		initialize();
@@ -72,50 +64,48 @@ public class PnlObject extends JPanel {
 	private void initialize() {
 		lblUnit3 = new JLabel();
 		lblUnit3.setText("m/s");
-		lblUnit3.setLocation(new Point(150,230));
+		lblUnit3.setLocation(new Point(155, 202));
 		lblUnit3.setSize(lblUnit3.getPreferredSize());
 		lblUnit2 = new JLabel();
 		lblUnit2.setText("m");
-		lblUnit2.setLocation(new Point(150,195));
+		lblUnit2.setLocation(new Point(150, 162));
 		lblUnit2.setSize(lblUnit2.getPreferredSize());
 		lblUnit1 = new JLabel();
-		lblUnit1.setBounds(new Rectangle(146, 141, 38, 16));
 		lblUnit1.setText("m");
-		lblUnit1.setLocation(new Point(145,140));
+		lblUnit1.setLocation(new Point(145, 122));
 		lblUnit1.setSize(lblUnit1.getPreferredSize());
 		lblPosSeparator = new JLabel();
 		lblPosSeparator.setText(":");
-		lblPosSeparator.setLocation(new Point(70, 142));
+		lblPosSeparator.setLocation(new Point(70, 122));
 		lblPosSeparator.setSize(lblPosSeparator.getPreferredSize());
 		lblSizeSeparator = new JLabel();
 		lblSizeSeparator.setText("x");
-		lblSizeSeparator.setLocation(new Point(70, 192));
+		lblSizeSeparator.setLocation(new Point(70, 162));
 		lblSizeSeparator.setSize(lblSizeSeparator.getPreferredSize());
 		lblSpeed = new JLabel();
 		lblSpeed.setText("Geschwindigkeit");
-		lblSpeed.setLocation(new Point(10, 230));
+		lblSpeed.setLocation(new Point(10, 202));
 		lblSpeed.setSize(lblSpeed.getPreferredSize());
 		lblSize = new JLabel();
 		lblSize.setText("Größe");
-		lblSize.setLocation(new Point(15,165));
+		lblSize.setLocation(new Point(15, 145));
 		lblSize.setSize(lblSize.getPreferredSize());		
 		lblPosition = new JLabel();
 		lblPosition.setText("Position");
-		lblPosition.setLocation(new Point(16, 119));
+		lblPosition.setLocation(new Point(16, 105));
 		lblPosition.setSize(lblPosition.getPreferredSize());
 		lblType = new JLabel();
 		lblType.setText("Typ");
-		lblType.setLocation(new Point(10, 45));
+		lblType.setLocation(new Point(10, 50));
 		lblType.setSize(lblType.getPreferredSize());
 		lblClass = new JLabel();
 		lblClass.setText("Klasse");
-		lblClass.setLocation(new Point(10, 85));
+		lblClass.setLocation(new Point(10, 80));
 		lblClass.setSize(lblClass.getPreferredSize());
 		lblId = new JLabel();
 		lblId.setText("ID");
 		lblId.setLocation(new Point(10, 15));
 		lblId.setSize(lblId.getPreferredSize());
-//		this.setSize(200, 350);
 		this.setLayout(null);
 		this.add(lblId, null);
 		this.add(lblClass, null);
@@ -145,36 +135,13 @@ public class PnlObject extends JPanel {
 	 * 	
 	 * @return javax.swing.JButton	
 	 */
-	private JButton getBtnApply() {
+	JButton getBtnApply() {
 		if (btnApply == null) {
 			btnApply = new JButton();
 			btnApply.setText("Anwenden");
 			btnApply.setSize(new Dimension(150, 26));
-			btnApply.setLocation(new Point(25, 270));
-			btnApply.addActionListener(new ActionListener(){
-				
-				@Override
-				public void actionPerformed(ActionEvent arg0) {
-					// Create an ontology object 
-					parent.getController().createObject(parent.getSelectedElement(), getObjectSettings());
-					
-					// Change position and size
-					Position pos = new Position();
-					pos.setX(Float.parseFloat(tfPosX.getText()));
-					pos.setY(Float.parseFloat(tfPosY.getText()));
-					
-					Size size = new Size();
-					size.setWidth(Float.parseFloat(tfWidth.getText()));
-					size.setHeight(Float.parseFloat(tfHeight.getText()));
-					UpdateManager um = parent.getSvgGUI().getCanvas().getUpdateManager();
-					um.getUpdateRunnableQueue().invokeLater(parent.new ElementChanger(pos, size));					
-					
-					// Remove selection
-					parent.setSelectedElement(null);					
-					
-				}
-				
-			});
+			btnApply.setLocation(new Point(25, 240));
+			btnApply.addActionListener(parent);
 		}
 		return btnApply;
 	}
@@ -184,24 +151,15 @@ public class PnlObject extends JPanel {
 	 * 	
 	 * @return javax.swing.JButton	
 	 */
-	private JButton getBtnRemove() {
+	JButton getBtnRemove() {
 		if (btnRemove == null) {
 			btnRemove = new JButton();
 			btnRemove.setText("Objekt Entfernen");
 			btnRemove.setSize(new Dimension(150, 26));
-			btnRemove.setLocation(new Point(25, 310));
+			btnRemove.setLocation(new Point(25, 270));
 			btnRemove.setEnabled(false);
 			btnRemove.setSize(new Dimension(150, 26));
-			btnRemove.addActionListener(new ActionListener(){
-	
-				@Override
-				public void actionPerformed(ActionEvent arg0) {
-					parent.getController().deleteObject(parent.getSelectedElement().getAttributeNS(null, "id"), false);
-					parent.setSelectedElement(null);
-				}
-				
-			});
-		
+			btnRemove.addActionListener(parent);		
 		}
 		return btnRemove;
 	}
@@ -211,11 +169,11 @@ public class PnlObject extends JPanel {
 	 * 	
 	 * @return javax.swing.JTextField	
 	 */
-	private JTextField getTfSpeed() {
+	JTextField getTfSpeed() {
 		if (tfSpeed == null) {
 			tfSpeed = new JTextField();
-			tfSpeed.setLocation(new Point(103, 226));
-			tfSpeed.setSize(new Dimension(32, 25));
+			tfSpeed.setLocation(new Point(110, 200));
+			tfSpeed.setSize(new Dimension(40, 25));
 		}
 		return tfSpeed;
 	}
@@ -225,11 +183,11 @@ public class PnlObject extends JPanel {
 	 * 	
 	 * @return javax.swing.JTextField	
 	 */
-	private JTextField getTfWidth() {
+	JTextField getTfWidth() {
 		if (tfWidth == null) {
 			tfWidth = new JTextField();
 			tfWidth.setSize(new Dimension(50, 25));
-			tfWidth.setLocation(new Point(15, 188));
+			tfWidth.setLocation(new Point(16, 160));
 		}
 		return tfWidth;
 	}
@@ -239,11 +197,11 @@ public class PnlObject extends JPanel {
 	 * 	
 	 * @return javax.swing.JTextField	
 	 */
-	private JTextField getTfHeight() {
+	JTextField getTfHeight() {
 		if (tfHeight == null) {
 			tfHeight = new JTextField();
 			tfHeight.setSize(new Dimension(50, 25));
-			tfHeight.setLocation(new Point(86, 190));
+			tfHeight.setLocation(new Point(80, 160));
 		}
 		return tfHeight;
 	}
@@ -253,10 +211,10 @@ public class PnlObject extends JPanel {
 	 * 	
 	 * @return javax.swing.JTextField	
 	 */
-	private JTextField getTfPosX() {
+	JTextField getTfPosX() {
 		if (tfPosX == null) {
 			tfPosX = new JTextField();
-			tfPosX.setLocation(new Point(16, 141));
+			tfPosX.setLocation(new Point(16, 120));
 			tfPosX.setSize(new Dimension(50, 25));
 		}
 		return tfPosX;
@@ -267,10 +225,10 @@ public class PnlObject extends JPanel {
 	 * 	
 	 * @return javax.swing.JTextField	
 	 */
-	private JTextField getTfPosY() {
+	JTextField getTfPosY() {
 		if (tfPosY == null) {
 			tfPosY = new JTextField();
-			tfPosY.setLocation(new Point(84, 140));
+			tfPosY.setLocation(new Point(80, 120));
 			tfPosY.setSize(new Dimension(50, 25));
 		}
 		return tfPosY;
@@ -281,7 +239,7 @@ public class PnlObject extends JPanel {
 	 * 	
 	 * @return javax.swing.JTextField	
 	 */
-	private JTextField getTfId() {
+	JTextField getTfId() {
 		if (tfId == null) {
 			tfId = new JTextField();
 			tfId.setLocation(new Point(78, 14));
@@ -295,38 +253,19 @@ public class PnlObject extends JPanel {
 	 * 	
 	 * @return javax.swing.JComboBox	
 	 */
-	private JComboBox getCbType() {
+	JComboBox getCbType() {
 		if (cbType == null) {
 			cbType = new JComboBox();
 			cbType.setLocation(new Point(80, 47));
 			cbType.setSize(new Dimension(100, 25));
-//			cbType.setEnabled(false);
+			cbType.setEnabled(false);
 			Vector<String> types = new Vector<String>();
 			types.add(Language.translate("Keiner"));
 			for(ObjectTypes type : ObjectTypes.values()){
 				types.add(type.toString());
 			}
 			cbType.setModel(new DefaultComboBoxModel(types));
-			cbType.addActionListener(new ActionListener(){
-	
-				@Override
-				public void actionPerformed(ActionEvent arg0) {
-					if(ObjectTypes.getType(cbType.getSelectedItem().toString()) != null){
-						btnApply.setEnabled(true);						
-					}else{
-						btnApply.setEnabled(false);						
-					}
-					
-					if(cbType.getSelectedItem().equals("AGENT")){
-						cbClass.setEnabled(true);
-						tfSpeed.setEditable(true);
-					}else{
-						cbClass.setEnabled(false);
-						tfSpeed.setEditable(false);
-					}
-				}
-				
-			});
+			cbType.addActionListener(parent);
 		}
 		return cbType;
 	}
@@ -336,12 +275,12 @@ public class PnlObject extends JPanel {
 	 * 	
 	 * @return javax.swing.JComboBox	
 	 */
-	private JComboBox getCbClass() {
+	JComboBox getCbClass() {
 		if (cbClass == null) {
 			cbClass = new JComboBox();
-			cbClass.setLocation(new Point(78, 82));
+			cbClass.setLocation(new Point(80, 78));
 			cbClass.setSize(new Dimension(100, 25));
-//			cbClass.setEnabled(false);
+			cbClass.setEnabled(false);
 			Vector<Class<?>> classes = parent.getController().getCurrentProject().getProjectAgents();
 			Vector<String> names = new Vector<String>();
 			
@@ -361,7 +300,7 @@ public class PnlObject extends JPanel {
 	 * Collecting all important input values for creating a new environment object 
 	 * @return HashMap<String, String>
 	 */
-	public HashMap<String, String> getObjectSettings(){
+	HashMap<String, String> getObjectSettings(){
 		HashMap<String, String> settings = new HashMap<String, String>();
 		settings.put("id", tfId.getText());
 		settings.put("type", cbType.getSelectedItem().toString());
@@ -376,7 +315,7 @@ public class PnlObject extends JPanel {
 	/**
 	 * Setting the values of all controls when an object/element is selected 
 	 */
-	public void setObjectSettings(){
+	void setObjectSettings(){
 		String id = null;
 		AbstractObject object = null;
 		if(parent.getSelectedElement() != null){
@@ -420,13 +359,17 @@ public class PnlObject extends JPanel {
 			getTfPosY().setText("");
 			getTfWidth().setText("");
 			getTfHeight().setText("");
+			getTfSpeed().setText("");
+			
 		}
 		tfId.setText(id);
 		if(object != null){
 			ObjectTypes type = ObjectTypes.getType(object);
 			cbType.setSelectedItem(type.toString());
 			if(type == ObjectTypes.AGENT){
-				cbClass.setSelectedItem(((AgentObject)object).getAgentClass());
+				String className = ((AgentObject)object).getAgentClass();
+				className = className.substring(className.lastIndexOf('.')+1);
+				cbClass.setSelectedItem(className);
 				if(((AgentObject)object).getCurrentSpeed() != null)
 					tfSpeed.setText(""+((AgentObject)object).getCurrentSpeed().getSpeed());
 			}

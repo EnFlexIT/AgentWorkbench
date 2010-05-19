@@ -52,6 +52,7 @@ import sma.ontology.Speed;
 
 import mas.display.SvgTypes;
 import mas.environment.OntoUtilities;
+import mas.environment.guiComponents.EnvironmentControllerGUI;
 
 /**
  * This class is responsible for managing the environment definition
