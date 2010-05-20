@@ -20,6 +20,16 @@
  */
 package contmas.agents;
 
+import java.util.Vector;
+
+import mas.display.DisplayableAgent;
+import mas.movement.MoveToPointBehaviour;
+import sma.ontology.Position;
+import sma.ontology.Size;
+import sma.ontology.Speed;
+import jade.content.lang.Codec;
+import jade.content.onto.Ontology;
+import jade.core.AID;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.util.leap.ArrayList;
@@ -30,6 +40,7 @@ import contmas.interfaces.HarbourLayoutRequester;
 import contmas.interfaces.MoveableAgent;
 import contmas.interfaces.TransportOrderHandler;
 import contmas.interfaces.TransportOrderOfferer;
+import contmas.main.AgentGUIHelper;
 import contmas.main.UncompatibleDimensionsException;
 import contmas.ontology.*;
 
@@ -37,9 +48,13 @@ import contmas.ontology.*;
  * @author Hanno - Felix Wagner
  *
  */
-public class StraddleCarrierAgent extends ActiveContainerAgent implements TransportOrderHandler,TransportOrderOfferer,HarbourLayoutRequester,PositionReporter{
+public class StraddleCarrierAgent extends ActiveContainerAgent implements TransportOrderHandler,TransportOrderOfferer,HarbourLayoutRequester,DisplayableAgent{
 	private static final Float speed=1F/10F;
 	private executeMovements moveBehaviour; 
+	
+	private static final String SHADOW_SUFFIX="Shadow";
+
+	private static final Float SPEED_VALUE=100.0F;
 	
 	/**
 	 * 
@@ -81,6 +96,9 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 	@Override
 	public void setup(){
 		super.setup();
+		
+		AgentGUIHelper.enableForCommunication(this);
+		
 		this.handleTransportOrder();
 		this.offerTransportOrder();
 
@@ -407,9 +425,8 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 		mov.setBe_there_at(eta.toString());
 		((ActiveContainerHolder)getOntologyRepresentation()).getScheduled_movements().add(mov);
 		
-//		reportMovement(to);
+		addDisplayMove(getAID().getLocalName(),to);
 
-		reportPosition();
 		moveBehaviour.restart();
 	}
 
@@ -437,15 +454,14 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 	/* (non-Javadoc)
 	 * @see contmas.agents.PositionReporter#reportPosition()
 	 */
-	@Override
 	public void reportPosition(){
-		this.addBehaviour(new sendPositionUpdate(this,getOntologyRepresentation().getIs_in_position2()));
+//		this.addBehaviour(new sendPositionUpdate(this,getOntologyRepresentation().getIs_in_position2()));
+		addDisplayMove(getAID().getLocalName(),getOntologyRepresentation().getIs_in_position2());
 	}
 	
 	/* (non-Javadoc)
 	 * @see contmas.agents.PositionReporter#reportPosition()
 	 */
-	@Override
 	public void reportMovement(Phy_Position to){
 		sendPositionUpdate positionUpdateSender=new sendPositionUpdate(this,to);
 		echoStatus("reporting movement to: "+positionToString(to)+" turning point="+positionToString(getManhattanTurningPoint(to)));
@@ -472,4 +488,69 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 		return target;
 	}
 */
+	
+	
+	public MoveToPointBehaviour addDisplayMove(String reporter,Phy_Position destPos){
+		Speed speed=new Speed();
+		speed.setSpeed(SPEED_VALUE);
+		MoveToPointBehaviour movingBehaviour;
+
+		movingBehaviour=new MoveToPointBehaviour(reporter + SHADOW_SUFFIX,this,getPosition(), AgentGUIHelper.convertPosition(destPos),speed);
+
+		addBehaviour(movingBehaviour);
+		return movingBehaviour;
+	}
+	
+	
+	private Boolean isMoving=false;
+
+	@Override
+	public boolean isMoving(){
+		return isMoving;
+	}
+
+	@Override
+	public void setMoving(boolean moving){
+		isMoving=moving;
+	}
+
+	@Override
+	public Speed getCurrentSpeed(){
+		return null;
+	}
+
+	@Override
+	public Speed getMaxSpeed(){
+		return null;
+	}
+
+	@Override
+	public Size getSize(){
+		return null;
+	}
+
+	@Override
+	public AID getUpdateReceiver(){
+		return AgentGUIHelper.getDisplayTopic(this);
+	}
+
+	@Override
+	public Codec getDisplayCodec(){
+		return AgentGUIHelper.getDisplayCodec();
+	}
+
+	@Override
+	public Ontology getDisplayOntology(){
+		return AgentGUIHelper.getDisplayOntology();
+	}
+
+	@Override
+	public Position getPosition(){
+		return AgentGUIHelper.convertPosition(ontologyRepresentation.getIs_in_position2());
+	}
+
+	@Override
+	public void setPosition(Position position){
+		ontologyRepresentation.setIs_in_position2(AgentGUIHelper.convertPosition(position));
+	}
 }

@@ -1,31 +1,21 @@
 package contmas.agents;
 
+import jade.core.AID;
+import jade.core.ServiceException;
+import jade.core.behaviours.TickerBehaviour;
+import jade.core.messaging.TopicManagementHelper;
+
 import java.util.HashMap;
 import java.util.Vector;
 
+import mas.movement.MoveToPointBehaviour;
+import mas.movement.MovingAgent;
 import sma.ontology.AgentObject;
 import sma.ontology.Position;
 import sma.ontology.Speed;
-import mas.display.DisplayableAgent;
-import mas.movement.MoveToPointBehaviour;
-import mas.movement.MovingAgent;
-import contmas.behaviours.SendPositionUpdateBehaviour;
-import contmas.behaviours.listenForLogMessage;
 import contmas.behaviours.listenForPositionUpdate;
-import contmas.behaviours.subscribeToDF;
-import contmas.interfaces.DFSubscriber;
-import contmas.interfaces.Logger;
 import contmas.interfaces.PositionPlotter;
 import contmas.ontology.Phy_Position;
-import jade.core.AID;
-import jade.core.Agent;
-import jade.core.ServiceException;
-import jade.core.behaviours.Behaviour;
-import jade.core.behaviours.TickerBehaviour;
-import jade.core.messaging.TopicManagementHelper;
-import jade.util.leap.ArrayList;
-import jade.util.leap.Iterator;
-import jade.util.leap.List;
 
 public class AgentGUIVisualisationProxyAgent extends MovingAgent implements PositionPlotter{
 

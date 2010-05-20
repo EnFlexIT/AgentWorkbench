@@ -239,11 +239,11 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 			a=c.createNewAgent("RandomGenerator","contmas.agents.RandomGeneratorAgent",null);
 			a.start();
 
-			a=c.createNewAgent("VisualisationProxy","contmas.agents.AgentGUIVisualisationProxyAgent",null);
-			a.start();
-			
 			a=c.createNewAgent("Optimizer","contmas.agents.BayMapOptimisationAgent",null);
 			a.start();
+			
+//			a=c.createNewAgent("VisualisationProxy","contmas.agents.AgentGUIVisualisationProxyAgent",null);
+//			a.start();
 			
 //			a=c.createNewAgent("SimulationController","contmas.agents.SimulationControlAgent",null);
 //			a.start();
