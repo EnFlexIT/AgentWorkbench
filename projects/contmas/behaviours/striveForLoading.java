@@ -44,7 +44,6 @@ public class striveForLoading extends ParallelBehaviour implements DFSubscriber,
 		super(a,ParallelBehaviour.WHEN_ALL);
 
 		this.addSubBehaviour(new subscribeToDF(a,"long-term-transporting"));
-
 	}
 
 	/* (non-Javadoc)
@@ -70,7 +69,7 @@ public class striveForLoading extends ParallelBehaviour implements DFSubscriber,
 		Iterator allContainer=recieved.getAllContainer_states();
 		while(allContainer.hasNext()){
 			Container curCont=((TOCHasState) allContainer.next()).getSubjected_toc().getTransports();
-			((ContainerAgent) this.myAgent).echoStatus("Ship has Container available: " + curCont.getBic_code(),ContainerAgent.LOGGING_NOTICE);
+			((ContainerAgent) this.myAgent).echoStatus("Ship has Container available: " + curCont.getBic_code(),ContainerAgent.LOGGING_INFORM);
 		}
 		this.addSubBehaviour(new requestRandomLoadSequence(this.myAgent,recieved.getContains(),recieved.getContainer_states(),agent));
 	}

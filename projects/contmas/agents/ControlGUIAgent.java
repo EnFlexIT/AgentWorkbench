@@ -222,32 +222,34 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 
 		AgentController a;
 		try{
-			a=c.createNewAgent("RandomGenerator","contmas.agents.RandomGeneratorAgent",null);
-			a.start();
-
-			String[] args=new String[1]; //Because of different working directories 
-			args[0]=getWorkingDir();
-
-			a=c.createNewAgent("HarborMaster","contmas.agents.HarborMasterAgent",args);
-			a.start();
-			this.harbourMaster=new AID();
-			this.harbourMaster.setName(a.getName());
 			a=c.createNewAgent("Sniffer","jade.tools.sniffer.Sniffer",null);//new Object[] {"Yard;StraddleCarrier;Apron;Crane-#2;Crane-#1"});
 			a.start();
 			this.sniffer=new AID();
 			this.sniffer.setName(a.getName());
 			
-			a=c.createNewAgent("SimulationController","contmas.agents.SimulationControlAgent",args);
+			String[] args=new String[1]; //Because of different working directories 
+			args[0]=getWorkingDir();
+
+			a=c.createNewAgent("HarborMaster","contmas.agents.HarborMasterAgent",args);
 			a.start();
 			
-			a=c.createNewAgent("VisualisationProxy","contmas.agents.AgentGUIVisualisationProxyAgent",args);
+			this.harbourMaster=new AID();
+			this.harbourMaster.setName(a.getName());
+			
+			a=c.createNewAgent("RandomGenerator","contmas.agents.RandomGeneratorAgent",null);
+			a.start();
+
+			a=c.createNewAgent("VisualisationProxy","contmas.agents.AgentGUIVisualisationProxyAgent",null);
 			a.start();
 			
-			a=c.createNewAgent("Visualiser","contmas.agents.VisualisationAgent",args);
+			a=c.createNewAgent("Optimizer","contmas.agents.BayMapOptimisationAgent",null);
+			a.start();
+			
+//			a=c.createNewAgent("SimulationController","contmas.agents.SimulationControlAgent",null);
 //			a.start();
 			
-			a=c.createNewAgent("Optimizer","contmas.agents.BayMapOptimisationAgent",args);
-			a.start();
+//			a=c.createNewAgent("Visualiser","contmas.agents.VisualisationAgent",null);
+//			a.start();
 		}catch(StaleProxyException e){
 			// TODO Auto-generated catch block
 			e.printStackTrace();

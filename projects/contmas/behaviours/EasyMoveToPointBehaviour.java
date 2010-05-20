@@ -1,5 +1,5 @@
 /**
- * @author Hanno - Felix Wagner, 11.05.2010
+ * @author Hanno - Felix Wagner, 20.05.2010
  * Copyright 2010 Hanno - Felix Wagner
  * 
  * This file is part of ContMAS.
@@ -18,19 +18,39 @@
  * along with ContMAS.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package contmas.agents;
+package contmas.behaviours;
 
-import contmas.ontology.Phy_Position;
+import jade.core.Agent;
+import mas.display.DisplayableAgent;
+import mas.movement.MoveToPointBehaviour;
+import sma.ontology.Position;
+import sma.ontology.Speed;
 
 /**
  * @author Hanno - Felix Wagner
  *
  */
-public interface PositionReporter{
-	public void reportPosition();
+public class EasyMoveToPointBehaviour extends MoveToPointBehaviour{
+	
+	private static Speed startSpeed(){
+		Speed speed=new Speed();
+		speed.setSpeed(100.0F);
+		return speed;
+	}
+	
+	private static Position startPosition(){
+		Position position=new Position();
+		position.setX(10.0F);
+		position.setY(10.0F);
+		return position;
+	}
 
 	/**
-	 * @param to
+	 * @param svgId
+	 * @param a
+	 * @param destPos
 	 */
-	void reportMovement(Phy_Position to);
+	public EasyMoveToPointBehaviour(Agent a, String svgId, Position destPos){
+		super(svgId,(DisplayableAgent) a,startPosition(),destPos,startSpeed());
+	}
 }

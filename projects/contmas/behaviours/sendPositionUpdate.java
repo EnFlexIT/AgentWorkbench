@@ -36,6 +36,8 @@ public class sendPositionUpdate extends OneShotBehaviour{
 	MessageTemplate posUpdTemplate=null;
 	Phy_Position newPosition=null;
 	protected AID loggingTopic=null;
+	Phy_Position turningPoint=null;
+
 
 	/**
 	 * 
@@ -56,6 +58,10 @@ public class sendPositionUpdate extends OneShotBehaviour{
 		}
 		this.posUpdTemplate=MessageTemplate.MatchTopic(this.loggingTopic);
 	}
+	
+	public void setTurningPoint(Phy_Position turningPoint){
+		this.turningPoint=turningPoint;
+	}
 
 	/* (non-Javadoc)
 	 * @see jade.core.behaviours.Behaviour#action()
@@ -67,7 +73,11 @@ public class sendPositionUpdate extends OneShotBehaviour{
 		updMsg.addReceiver(this.loggingTopic);
 		Phy_Movement agact=new Phy_Movement();
 		List steps=new ArrayList();
+		if(this.turningPoint!=null){
+			steps.add(turningPoint);
+		}
 		steps.add(newPosition);
+
 		agact.setPhy_Steps(steps);
 		myCAgent.fillMessage(updMsg,agact);
 

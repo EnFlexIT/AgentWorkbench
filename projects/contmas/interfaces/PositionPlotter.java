@@ -21,6 +21,7 @@
 package contmas.interfaces;
 
 import jade.core.AID;
+import jade.util.leap.List;
 import contmas.ontology.Phy_Position;
 
 /**
@@ -29,4 +30,10 @@ import contmas.ontology.Phy_Position;
  */
 public interface PositionPlotter{
 	public void processPositionUpdate(Phy_Position in, AID from);
+
+	/**
+	 * @param phySteps
+	 * @param sender
+	 */
+	public void processPositionUpdate(Phy_Position in,AID sender,Phy_Position turningPoint);
 }

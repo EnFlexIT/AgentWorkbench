@@ -106,7 +106,7 @@ public class requestExecuteAppointment extends AchieveREInitiator{
 					MoveableAgent myMoveableAgent=(MoveableAgent) myCAgent;
 					TransportOrderChainState oldState=myCAgent.touchTOCState(curTOC,new Assigned());
 
-					myCAgent.echoStatus("Container is going to be dropped at " + endDomain.getId() + " " + StraddleCarrierAgent.positionToString(endDomain.getIs_in_position()) + ", current position: " + StraddleCarrierAgent.positionToString(myMoveableAgent.getCurrentPosition()));
+					myCAgent.echoStatus("Container is going to be dropped at " + endDomain.getId() + " " + StraddleCarrierAgent.positionToString(endDomain.getIs_in_position()) + ", current position: " + StraddleCarrierAgent.positionToString(myMoveableAgent.getCurrentPosition()),ContainerAgent.LOGGING_INFORM);
 					myMoveableAgent.addAsapMovementTo(endDomain.getIs_in_position());
 					setTargetPosition(endDomain.getIs_in_position());
 				}
@@ -137,7 +137,7 @@ public class requestExecuteAppointment extends AchieveREInitiator{
 				messages.add(request);
 
 				TransportOrderChainState oldState=myCAgent.touchTOCState(curTOC,new InExecution());
-				myCAgent.echoStatus("sent RequestExecuteAppointment, state was " + oldState,curTOC);
+				myCAgent.echoStatus("sent RequestExecuteAppointment, state was " + oldState,curTOC,ContainerAgent.LOGGING_INFORM);
 
 				getDataStore().put(ALL_REQUESTS_KEY,messages);
 			}

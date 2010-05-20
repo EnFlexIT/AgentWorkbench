@@ -95,6 +95,7 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 
 //		experiment();
 //		getManhattanPositionTester();
+		reportPosition();
 	}
 
 	public static String positionToString(Phy_Position in){
@@ -396,7 +397,7 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 	 */
 	@Override
 	public void addAsapMovementTo(Phy_Position to){
-		echoStatus("adding asap movement to "+positionToString(to));
+		echoStatus("adding asap movement to "+positionToString(to),ContainerAgent.LOGGING_INFORM);
 		Float distance=getManhattanDistance(getCurrentPosition(),to);
 //		echoStatus("distance: "+distance+" distance.longValue"+distance.longValue());
 		Long eta=calculateDuration(distance.longValue())+System.currentTimeMillis();
@@ -405,9 +406,26 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 		mov.setMove_to(to);
 		mov.setBe_there_at(eta.toString());
 		((ActiveContainerHolder)getOntologyRepresentation()).getScheduled_movements().add(mov);
+		
+//		reportMovement(to);
+
+		reportPosition();
 		moveBehaviour.restart();
 	}
 
+	public Phy_Position getManhattanTurningPoint(Phy_Position to){
+		echoStatus("getManhattanTurningPoint");
+
+		Phy_Position curPos=getCurrentPosition();
+		Float deltaY=Math.abs(Math.abs(to.getPhy_y()) - Math.abs(curPos.getPhy_y()));
+		echoStatus("curPos="+positionToString(curPos));
+		echoStatus("to="+positionToString(to));
+		echoStatus("deltaY="+(deltaY));
+		echoStatus("ManhattanPosition="+positionToString(getManhattanPosition(curPos,to,deltaY)));
+
+		return getManhattanPosition(curPos,to,deltaY);
+	}
+	
 	/* (non-Javadoc)
 	 * @see contmas.interfaces.MoveableAgent#getPendingMoves()
 	 */
@@ -421,8 +439,18 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 	 */
 	@Override
 	public void reportPosition(){
-		getOntologyRepresentation().getIs_in_position2();
 		this.addBehaviour(new sendPositionUpdate(this,getOntologyRepresentation().getIs_in_position2()));
+	}
+	
+	/* (non-Javadoc)
+	 * @see contmas.agents.PositionReporter#reportPosition()
+	 */
+	@Override
+	public void reportMovement(Phy_Position to){
+		sendPositionUpdate positionUpdateSender=new sendPositionUpdate(this,to);
+		echoStatus("reporting movement to: "+positionToString(to)+" turning point="+positionToString(getManhattanTurningPoint(to)));
+		positionUpdateSender.setTurningPoint(getManhattanTurningPoint(to));
+		this.addBehaviour(positionUpdateSender);
 	}
 
 /*	//Lies_in variant

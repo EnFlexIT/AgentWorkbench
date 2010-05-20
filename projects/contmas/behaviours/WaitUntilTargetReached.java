@@ -49,13 +49,13 @@ class WaitUntilTargetReached extends SimpleBehaviour{
 					MoveableAgent myMoveableAgent=(MoveableAgent) this.myAgent;
 					isDone=myMoveableAgent.isAt(targetPosition);
 					if(isDone){
-						((ContainerAgent)myAgent).echoStatus("I am in target position");
+						((ContainerAgent)myAgent).echoStatus("I am in target position",ContainerAgent.LOGGING_INFORM);
 					}else{
 //						((ContainerAgent)myAgent).echoStatus("i have not yet reached target drop position: block",curTOC);
 						if(myAgent instanceof PositionReporter){
 							((PositionReporter)myAgent).reportPosition();
 						}
-						block(1000);
+						block(200);
 					}
 				}
 			}

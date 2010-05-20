@@ -1,12 +1,15 @@
 package contmas.agents;
 
+import java.util.HashMap;
 import java.util.Vector;
 
+import sma.ontology.AgentObject;
 import sma.ontology.Position;
 import sma.ontology.Speed;
 import mas.display.DisplayableAgent;
 import mas.movement.MoveToPointBehaviour;
 import mas.movement.MovingAgent;
+import contmas.behaviours.SendPositionUpdateBehaviour;
 import contmas.behaviours.listenForLogMessage;
 import contmas.behaviours.listenForPositionUpdate;
 import contmas.behaviours.subscribeToDF;
@@ -16,16 +19,27 @@ import contmas.interfaces.PositionPlotter;
 import contmas.ontology.Phy_Position;
 import jade.core.AID;
 import jade.core.Agent;
+import jade.core.ServiceException;
 import jade.core.behaviours.Behaviour;
+import jade.core.behaviours.TickerBehaviour;
+import jade.core.messaging.TopicManagementHelper;
 import jade.util.leap.ArrayList;
 import jade.util.leap.Iterator;
 import jade.util.leap.List;
 
-public class AgentGUIVisualisationProxyAgent extends MovingAgent implements Logger,DFSubscriber,PositionPlotter{
+public class AgentGUIVisualisationProxyAgent extends MovingAgent implements PositionPlotter{
 
 	private static final long serialVersionUID= -2081699287513185474L;
 
-	List allActors=new ArrayList();
+	private static final String SHADOW_SUFFIX="Shadow";
+
+	private static final String POSITION_TOPIC_NAME="position";
+
+	private static final Float SPEED_VALUE=100.0F;
+
+	private HashMap<String, Position> allActorsPos=new HashMap<String, Position>();
+	private TickerBehaviour movingBehaviour;
+	private Position turningPoint=null;
 
 	public AgentGUIVisualisationProxyAgent(){
 		super();
@@ -34,80 +48,113 @@ public class AgentGUIVisualisationProxyAgent extends MovingAgent implements Logg
 	@Override
 	public void setup(){
 		super.setup();
-		
-		if(this.self!=null){
-			this.self.setCurrentSpeed(new Speed());
-			this.self.getCurrentSpeed().setSpeed(1.0f);
-		}
-		
+
+		this.self=new AgentObject();
+		this.self.setPosition(getDefaultPosition());
+
 		ContainerAgent.enableForCommunication(this);
-		addBehaviour(new listenForLogMessage(this));
-		addBehaviour(new subscribeToDF(this,"container-handling"));
 		addBehaviour(new listenForPositionUpdate(this));
-		
-		this.doWait(1000);
+
+//		this.doWait(1000);
+	}
+
+	private static Position getDefaultPosition(){
+		Position defPos=new Position();
+		defPos.setX(0.0F);
+		defPos.setY(0.0F);
+		return defPos;
+	}
+
+	private Position getCurPosition(String reporter){
+		Position curPos=allActorsPos.get(reporter);
+		return curPos;
+	}
+
+	private void setCurrentPosition(String reporter,Position curPos){
+		allActorsPos.put(reporter,curPos);
 	}
 
 	/* (non-Javadoc)
-	 * @see contmas.interfaces.Logger#processLogMsg(java.lang.String)
+	 * @see contmas.interfaces.PositionPlotter#processPositionUpdate(jade.util.leap.List, jade.core.AID)
 	 */
 	@Override
-	public void processLogMsg(String logMsg){
-//		echo("[VisualisationAgent says] "+logMsg);
-	}
-
-	/* (non-Javadoc)
-	 * @see contmas.interfaces.DFSubscriber#processSubscriptionUpdate(jade.util.leap.List, java.lang.Boolean)
-	 */
-	@Override
-	public void processSubscriptionUpdate(List updatedAgents,Boolean remove){
-		if( !remove){
-			ContainerAgent.addToList(allActors,updatedAgents);
-		}else{
-			ContainerAgent.removeFromList(allActors,updatedAgents);
-		}
-		if( !updatedAgents.isEmpty()){
-			String msg="";
-			msg+="[VisualisationAgent says] Agents ";
-			if(remove){
-				msg+="disappeared: ";
-			}else{
-				msg+="emerged: ";
-			}
-			Iterator iter=updatedAgents.iterator();
-			while(iter.hasNext()){
-				AID actor=(AID) iter.next();
-				msg+=actor.getLocalName();
-			}
-			msg+="\n";
-//			echo(msg);
-		}
+	public void processPositionUpdate(Phy_Position in,AID from,Phy_Position turningPoint){
+		Position turPoPos=new Position();
+		turPoPos.setX(turningPoint.getPhy_x());
+		turPoPos.setY(turningPoint.getPhy_y());
+		this.turningPoint=turPoPos;
+		processPositionUpdate(in,from);
 	}
 
 	public void processPositionUpdate(Phy_Position in,AID from){
-		echo("processing PositionUpdate from " + from.getLocalName() + ", new position is: " + StraddleCarrierAgent.positionToString(in));
-		Position outPos=new Position();
-		outPos.setX(in.getPhy_x());
-		outPos.setY(in.getPhy_y());
-		Speed speed=new Speed();
-		speed.setSpeed(1.0F); //(10.0F seems to be slower than 1.0F)
-//		speed=this.getCurrentSpeed();
-		Position destPos=outPos;
-		Vector<Position> waypoints=new Vector<Position>();
-		waypoints.add(destPos);
-		Behaviour b;
+		String reporter=from.getLocalName();
 
-		if(self != null){
-//			b=new MoveToPointBehaviour(from.getLocalName()+"Shadow",this,destPos,speed);
+		echo("processing PositionUpdate from " + reporter + ", new position is: " + StraddleCarrierAgent.positionToString(in));
 
-			b=new MoveToPointBehaviour(from.getLocalName()+"Shadow",this,this.getPosition(),destPos,speed);
-//		b=new MoveToPointBehaviour(this,waypoints,speed);
-			addBehaviour(b);
+		Position destPos=new Position();
+		destPos.setX(in.getPhy_x());
+		destPos.setY(in.getPhy_y());
+
+		if(movingBehaviour == null){
+			movingBehaviour=addMove(reporter,destPos);
+		}else{
+			if(movingBehaviour.done()){
+				movingBehaviour=addMove(reporter,destPos);
+			}else{
+				echo("doing nothing");
+			}
 		}
 	}
 
+	private MoveToPointBehaviour addMove(String reporter,Position destPos){
+		Position curPos=getCurPosition(reporter);
+		if(curPos == null){ //if this is the first update for the specific agent, the shadow has to be initially placed
+			curPos=destPos;
+		}
+
+		return addMove(reporter,curPos,destPos);
+	}
+
+	private MoveToPointBehaviour addMove(String reporter,Position curPos,Position destPos){
+		setCurrentPosition(reporter,destPos);
+		Speed speed=new Speed();
+		speed.setSpeed(SPEED_VALUE);
+		MoveToPointBehaviour movingBehaviour;
+
+		if(turningPoint==null){
+			echo("turningPoint==null, curPosX="+curPos.getX()+" destPosX="+destPos.getX());
+			movingBehaviour=new MoveToPointBehaviour(reporter + SHADOW_SUFFIX,this,curPos,destPos,speed);
+		} else {
+			echo("curPosX="+curPos.getX()+" destPosX="+destPos.getX()+" turningPointX="+turningPoint.getX());
+
+			Vector<Position> wp=new Vector<Position>();
+			wp.add(destPos);
+			wp.add(turningPoint);
+
+			movingBehaviour=new MoveToPointBehaviour(reporter + SHADOW_SUFFIX,this,curPos,wp,speed);
+
+		}
+		addBehaviour(movingBehaviour);
+		return movingBehaviour;
+	}
+
+	@Override
+	public AID getUpdateReceiver(){
+		if(posTopic == null){
+			try{
+				TopicManagementHelper tmh=(TopicManagementHelper) getHelper(TopicManagementHelper.SERVICE_NAME);
+				this.posTopic=tmh.createTopic(POSITION_TOPIC_NAME);
+				tmh.register(posTopic);
+			}catch(ServiceException e){
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return posTopic;
+	}
+
 	public void echo(String msg){
-		System.out.println("["+this.getLocalName()+"] "+ msg);
+		System.out.println("[" + this.getLocalName() + "] " + msg);
 	}
 
 }

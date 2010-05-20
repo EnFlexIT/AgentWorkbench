@@ -26,7 +26,6 @@ import jade.proto.AchieveREResponder;
 import jade.proto.ContractNetResponder;
 import contmas.agents.ContainerAgent;
 import contmas.agents.ContainerHolderAgent;
-import contmas.interfaces.MoveableAgent;
 import contmas.interfaces.TransportOrderOfferer;
 import contmas.main.MatchAgentAction;
 import contmas.ontology.*;
@@ -479,7 +478,7 @@ public class receiveLoadOrders extends ContractNetResponder{
 		TransportOrderChain acceptedTOC=((ProposeLoadOffer) content).getCorresponds_to();
 		//		((ContainerAgent)myAgent).echoStatus("Meine Bewerbung wurde abgelehnt");
 		TransportOrderChainState oldState=this.myCAgent.touchTOCState(acceptedTOC,null,true);
-		if( !(oldState instanceof ProposedFor)){ //wenn der untersuchte Container dem entspricht, für den sich beworben wurde
+		if( !(oldState instanceof Reserved)){ //wenn der untersuchte Container dem entspricht, für den sich beworben wurde
 			this.myCAgent.echoStatus("ERROR: Auftrag, auf den ich mich beworben habe (abgelehnt), nicht zum Entfernen gefunden. War "+oldState.getClass().getSimpleName(),acceptedTOC,ContainerAgent.LOGGING_ERROR);
 		}else{
 			//			((ContainerAgent)myAgent).echoStatus("Abgelehnten Auftrag entfernt.",acceptedTOC);

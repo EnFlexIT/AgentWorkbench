@@ -58,7 +58,7 @@ public class executeMovements extends CyclicBehaviour{
 			if(myAgent.isAt(moveToPos)){
 				stopMoving();
 			}else{
-				block(200);
+				block(100);
 			}
 
 //			this.restart();

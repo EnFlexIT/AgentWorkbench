@@ -27,6 +27,7 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.core.messaging.TopicManagementHelper;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import jade.util.leap.Iterator;
 import contmas.agents.ContainerAgent;
 import contmas.interfaces.PositionPlotter;
 import contmas.ontology.Phy_Movement;
@@ -41,18 +42,18 @@ public class listenForPositionUpdate extends CyclicBehaviour{
 	PositionPlotter myAgent;
 	private TopicManagementHelper tmh;
 	private AID posUpdTopic=null;
-	
+
 	private static MessageTemplate createMessageTemplate(AID topic){
 		MessageTemplate mt=MessageTemplate.MatchTopic(topic);
 		return mt;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see contmas.interfaces.Logger#getLoggingTopic()
 	 */
 
 	public AID getPosUpdTopic(){
-		if(posUpdTopic==null){
+		if(posUpdTopic == null){
 			try{
 				this.tmh=(TopicManagementHelper) ((Agent) myAgent).getHelper(TopicManagementHelper.SERVICE_NAME);
 				this.posUpdTopic=this.tmh.createTopic("container-harbour-position-update");
@@ -65,7 +66,7 @@ public class listenForPositionUpdate extends CyclicBehaviour{
 
 		return posUpdTopic;
 	}
-	
+
 	/**
 	 * @param controlGUIAgent
 	 */
@@ -83,15 +84,23 @@ public class listenForPositionUpdate extends CyclicBehaviour{
 		ACLMessage updMsg=(super.myAgent).receive(this.posUpdTemplate);
 		if(updMsg != null){
 			Phy_Movement movementUpdate=(Phy_Movement) ContainerAgent.extractAction(super.myAgent,updMsg);
-			Phy_Position newPos=(Phy_Position) movementUpdate.getAllPhy_Steps().next();
-			if(newPos!=null){
-				myAgent.processPositionUpdate(newPos,updMsg.getSender());
+			Iterator wps=movementUpdate.getAllPhy_Steps();
+			Phy_Position newPos=(Phy_Position) wps.next();
+			if(newPos != null){
+				if(wps.hasNext()){
+					Phy_Position turningPoint=newPos;
+					newPos=(Phy_Position) wps.next();
+					myAgent.processPositionUpdate(newPos,updMsg.getSender(),turningPoint);
+
+				}else{
+					myAgent.processPositionUpdate(newPos,updMsg.getSender());
+				}
 			}
 		}else{
 			this.block();
 		}
 	}
-	
+
 	@Override
 	public int onEnd(){
 		System.out.println("Ja, geht");
@@ -103,5 +112,5 @@ public class listenForPositionUpdate extends CyclicBehaviour{
 		}
 		return 0;
 	}
-	
+
 }

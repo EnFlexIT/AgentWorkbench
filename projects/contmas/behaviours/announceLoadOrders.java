@@ -54,7 +54,7 @@ public class announceLoadOrders extends ContractNetInitiator{
 	@Override
 	protected Vector<ACLMessage> prepareCfps(ACLMessage cfp){
 		TransportOrderChainState oldState=this.myCAgent.touchTOCState(curTOC,new Announced());
-		this.myCAgent.echoStatus("announceLoadOrders - prepareCfps state set to Announced",curTOC);
+//		this.myCAgent.echoStatus("announceLoadOrders - prepareCfps state set to Announced",curTOC);
 
 		Vector<ACLMessage> messages=new Vector<ACLMessage>();
 
@@ -149,7 +149,7 @@ public class announceLoadOrders extends ContractNetInitiator{
 
 	@Override
 	protected void handleAllResultNotifications(Vector resultNotifications){
-		myCAgent.echoStatus("handleAllResultNotifications");
+//		myCAgent.echoStatus("handleAllResultNotifications");
 		for(Iterator iterator=resultNotifications.iterator();iterator.hasNext();){
 			ACLMessage resNot=(ACLMessage) iterator.next();
 			AnnounceLoadStatus act=(AnnounceLoadStatus) myCAgent.extractAction(resNot);

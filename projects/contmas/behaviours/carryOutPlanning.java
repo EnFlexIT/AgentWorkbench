@@ -22,6 +22,7 @@ package contmas.behaviours;
 
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
+import contmas.agents.ContainerAgent;
 import contmas.agents.ContainerHolderAgent;
 import contmas.ontology.PlannedOut;
 import contmas.ontology.TransportOrder;
@@ -45,7 +46,7 @@ public class carryOutPlanning extends CyclicBehaviour{
 		if(someTOC != null){
 			TransportOrder curTO=((PlannedOut) myCAgent.touchTOCState(someTOC)).getLoad_offer();
 			myCAgent.addBehaviour(new requestExecuteAppointment(myCAgent,someTOC,curTO));
-			myCAgent.echoStatus("added plan execution");
+			myCAgent.echoStatus("added plan execution",ContainerAgent.LOGGING_INFORM);
 		}
 		myCAgent.registerForWakeUpCall(this);
 		this.block();

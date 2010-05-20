@@ -82,7 +82,7 @@ public class requestBlockAddress extends AchieveREInitiator{
 
 	@Override
 	protected void handleInform(ACLMessage msg){
-		myAgent.echoStatus("requestBlockAddress - handleInform");
+//		myAgent.echoStatus("requestBlockAddress - handleInform");
 		ProvideBlockAddress act=(ProvideBlockAddress) this.myAgent.extractAction(msg);
 		BlockAddress suitingAddress=act.getSuiting_address();
 		resultMemory.setLocates(suitingAddress.getLocates());

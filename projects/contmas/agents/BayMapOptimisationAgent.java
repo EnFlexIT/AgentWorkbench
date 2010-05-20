@@ -26,7 +26,7 @@ public class BayMapOptimisationAgent extends ContainerAgent{
 	@Override
 	protected void setup(){
 		super.setup();
-		echoStatus("I setup, therefore I am");
+		echoStatus("I setup, therefore I am",ContainerAgent.LOGGING_INFORM);
 		addBehaviour(new listenForBlockAddressRequests(this));
 	}
 	
@@ -57,7 +57,7 @@ public class BayMapOptimisationAgent extends ContainerAgent{
 	}
 	public BlockAddress getEmptyBlockAddress(BayMap loadBay, TransportOrderChain subject, List allContainers){
 		BlockAddress solution=getEmptyBlockAddress(loadBay,allContainers);
-		echoStatus("When asked for an EmptyBlockAddress, I say: Random!");
+		echoStatus("When asked for an EmptyBlockAddress, I say: Random!",ContainerAgent.LOGGING_INFORM);
 		return solution;
 	}
 	

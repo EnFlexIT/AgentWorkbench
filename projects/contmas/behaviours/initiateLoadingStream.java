@@ -70,11 +70,11 @@ public class initiateLoadingStream extends AchieveREInitiator{
 
 	@Override
 	protected void handleAgree(ACLMessage msg){
-		((ContainerAgent) this.myAgent).echoStatus("Loading Stream initiation agree received: "+msg.getContent());
+		((ContainerAgent) this.myAgent).echoStatus("Loading Stream initiation agree received: "+msg.getContent(),ContainerAgent.LOGGING_INFORM);
 	}
 	
 	@Override
 	protected void handleInform(ACLMessage msg){
-		((ContainerAgent) this.myAgent).echoStatus("Loading Stream inform received: "+msg.getContent());
+		((ContainerAgent) this.myAgent).echoStatus("Loading Stream inform received: "+msg.getContent(),ContainerAgent.LOGGING_INFORM);
 	}
 }

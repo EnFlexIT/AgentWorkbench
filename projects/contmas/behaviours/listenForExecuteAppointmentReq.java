@@ -14,8 +14,6 @@
 
 package contmas.behaviours;
 
-import java.util.Vector;
-
 import jade.core.Agent;
 import jade.core.behaviours.DataStore;
 import jade.core.behaviours.FSMBehaviour;
@@ -26,7 +24,6 @@ import jade.lang.acl.MessageTemplate;
 import jade.proto.AchieveREResponder;
 import contmas.agents.ContainerAgent;
 import contmas.agents.ContainerHolderAgent;
-import contmas.agents.HarborMasterAgent;
 import contmas.agents.StraddleCarrierAgent;
 import contmas.interfaces.MoveableAgent;
 import contmas.main.MatchAgentAction;
@@ -102,7 +99,7 @@ public class listenForExecuteAppointmentReq extends AchieveREResponder{
 				TransportOrderChainState curState=myCAgent.touchTOCState(curTOC);
 				destinationAddress=curState.getAt_address();
 				if( !(curState instanceof PlannedIn)){
-					myCAgent.echoStatus("TOC not PlannedIn",curTOC);
+					myCAgent.echoStatus("ERROR: TOC not PlannedIn",curTOC,ContainerAgent.LOGGING_ERROR);
 				}
 			}
 		}
@@ -120,7 +117,7 @@ public class listenForExecuteAppointmentReq extends AchieveREResponder{
 					MoveableAgent myMoveableAgent=(MoveableAgent) myCAgent;
 					TransportOrderChainState oldState=myCAgent.touchTOCState(curTOC,new Assigned());
 
-					myCAgent.echoStatus("Container is going to be picked up at " + startDomain.getId() + " " + StraddleCarrierAgent.positionToString(startDomain.getIs_in_position()) + ", current position: " + StraddleCarrierAgent.positionToString(myMoveableAgent.getCurrentPosition()));
+					myCAgent.echoStatus("Container is going to be picked up at " + startDomain.getId() + " " + StraddleCarrierAgent.positionToString(startDomain.getIs_in_position()) + ", current position: " + StraddleCarrierAgent.positionToString(myMoveableAgent.getCurrentPosition()),ContainerAgent.LOGGING_INFORM);
 					myMoveableAgent.addAsapMovementTo(startDomain.getIs_in_position());
 					setTargetPosition(startDomain.getIs_in_position());
 				}
@@ -147,7 +144,7 @@ public class listenForExecuteAppointmentReq extends AchieveREResponder{
 					myAgent.echoStatus("Something went wrong! Couldn't aquire!",curTOC,ContainerAgent.LOGGING_ERROR);
 				}
 				myAgent.wakeSleepingBehaviours(curTOC);
-				myAgent.echoStatus("aquired: ",curTOC);
+				myAgent.echoStatus("aquired: ",curTOC,ContainerAgent.LOGGING_INFORM);
 			}
 		}
 
@@ -170,7 +167,7 @@ public class listenForExecuteAppointmentReq extends AchieveREResponder{
 				act.setLoad_status("FINISHED");
 
 				((ContainerAgent) this.myAgent).fillMessage(reply,act);
-				myCAgent.echoStatus("sent INFORM FINISHED");
+				myCAgent.echoStatus("sent INFORM FINISHED",ContainerAgent.LOGGING_INFORM);
 
 				getDataStore().put(RESPONSE_KEY,reply);
 			}
