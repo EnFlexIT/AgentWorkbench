@@ -341,11 +341,15 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 	}
 
 	public TransportOrderChain getSomeTOCOfState(TransportOrderChainState needleState){
+		return getSomeTOCOfState(needleState, true);
+	}
+	
+	public TransportOrderChain getSomeTOCOfState(TransportOrderChainState needleState,Boolean careOverstowed){
 		Iterator queue=this.getOntologyRepresentation().getAllContainer_states();
 		while(queue.hasNext()){
 			TOCHasState queuedTOCState=(TOCHasState) queue.next();
 			if(needleState.getClass() == queuedTOCState.getState().getClass()){
-				if(this.isUpmostContainer(queuedTOCState.getSubjected_toc())){
+				if(careOverstowed && this.isUpmostContainer(queuedTOCState.getSubjected_toc())){
 					return queuedTOCState.getSubjected_toc();
 				}
 			}
@@ -364,7 +368,12 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 			for(int y=0;y < LoadBay.getY_dimension();y++){ //und spaltenweise durchlaufen
 				BlockAddress upmostContainer=this.getUpmost(x,y);
 				if(upmostContainer != null){ //an dieser Koordinate steht ein Container obenauf
-					if(upmostContainer.getLocates().getBic_code().equals(subjectedToc.getTransports().getBic_code())){
+					if(upmostContainer.
+							getLocates().
+							getBic_code().
+							equals(subjectedToc.
+									getTransports().
+									getBic_code())){
 						return true;
 					}
 				}

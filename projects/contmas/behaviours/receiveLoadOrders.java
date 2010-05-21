@@ -36,6 +36,7 @@ public class receiveLoadOrders extends ContractNetResponder{
 	 */
 	private static final long serialVersionUID= -3409830399764472591L;
 	private final ContainerHolderAgent myCAgent=(ContainerHolderAgent) this.myAgent;
+	private ProposeLoadOffer loadOffer;
 	private TransportOrderChain curTOC;
 	private TransportOrder curTO;
 	BlockAddress destinationAddress;
@@ -288,22 +289,19 @@ public class receiveLoadOrders extends ContractNetResponder{
 
 				}else{ //noch Kapazitäten vorhanden und Anfrage plausibel
 					//((ContainerAgent)myAgent).echoStatus("noch Kapazitäten vorhanden");
-					ProposeLoadOffer act=myCAgent.getLoadProposal(curTOC);
-					if(act != null){
-						myCAgent.echoStatus("Bewerbe mich für Ausschreibung.",curTOC,ContainerAgent.LOGGING_INFORM);
-						myCAgent.fillMessage(reply,act);
-
-						curTO=act.getLoad_offer(); //get transport order TO me
-						//curTO.getStarts_at().getAt_address(); //startaddress available here
-
-						reply.setPerformative(ACLMessage.PROPOSE);
-						returnState=CFP_OK;
-
-					}else{
+					loadOffer=myCAgent.getLoadProposal(curTOC);
+					if(loadOffer == null){
 						myCAgent.echoStatus("Lehne Ausschreibung ab.",curTOC,ContainerAgent.LOGGING_INFORM);
 						reply.setContent("keine TransportOrder passt zu mir");
 						reply.setPerformative(ACLMessage.REFUSE);
 						returnState=CFP_NOT_SUITABLE;
+					}else{
+						myCAgent.echoStatus("Bewerbe mich für Ausschreibung.",curTOC,ContainerAgent.LOGGING_INFORM);
+
+						curTO=loadOffer.getLoad_offer(); //get transport order TO me
+						//curTO.getStarts_at().getAt_address(); //startaddress available here
+						
+						returnState=CFP_OK;
 					}
 				}
 
@@ -344,8 +342,11 @@ public class receiveLoadOrders extends ContractNetResponder{
 					block(100);
 				}
 				curTO.getEnds_at().setAt_address(destinationAddress);
+				loadOffer.getLoad_offer().getEnds_at().setAt_address(destinationAddress);
+
 				TransportOrderChainState state=new Reserved();
 				state.setAt_address(destinationAddress);
+				state.setLoad_offer(curTO);
 				myCAgent.touchTOCState(curTOC,state);
 			}
 
@@ -388,6 +389,15 @@ public class receiveLoadOrders extends ContractNetResponder{
 //					myCAgent.echoStatus("REFUSE because of no empty address available");
 
 					myAgent.doWake();
+				} else {
+					ACLMessage cfp=(ACLMessage) getDataStore().get(CFP_KEY);
+					ACLMessage reply=cfp.createReply();
+
+					myCAgent.fillMessage(reply,loadOffer);
+
+					reply.setPerformative(ACLMessage.PROPOSE);
+					getDataStore().put(REPLY_KEY,reply);
+
 				}
 			}
 

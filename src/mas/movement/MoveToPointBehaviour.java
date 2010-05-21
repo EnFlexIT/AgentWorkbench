@@ -238,9 +238,9 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 		
 		double distance = dest.distance(start);
 		
-		System.out.println("Distance: "+distance+" meters");
+//		System.out.println("Distance: "+distance+" meters");
 		float speed = this.speed * (DisplayConstants.PERIOD / 1000f);
-		System.out.println("Speed: "+this.speed+" meters / s = "+speed+" meters / "+DisplayConstants.PERIOD+" ms");
+//		System.out.println("Speed: "+this.speed+" meters / s = "+speed+" meters / "+DisplayConstants.PERIOD+" ms");
 				
 		double distX = dest.getX() - start.getX();
 		double distY = dest.getY() - start.getY();

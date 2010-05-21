@@ -30,10 +30,12 @@ import jade.proto.AchieveREInitiator;
 
 import java.util.Vector;
 
+import mas.display.DisplayableAgent;
+
 import contmas.agents.ContainerAgent;
 import contmas.agents.ContainerHolderAgent;
-import contmas.agents.StraddleCarrierAgent;
 import contmas.interfaces.MoveableAgent;
+import contmas.main.Const;
 import contmas.ontology.*;
 
 /**
@@ -59,6 +61,11 @@ public class requestExecuteAppointment extends AchieveREInitiator{
 		myCAgent=(ContainerHolderAgent) a;
 		this.curTOC=curTOC;
 		this.curTO=curTO;
+		
+//		myCAgent.echoStatus("appointmentExecution, startBA="+Const.blockAddressToString(curTO.getStarts_at().getAt_address()),curTOC);
+//		myCAgent.echoStatus("appointmentExecution, endBA="+Const.blockAddressToString(curTO.getEnds_at().getAt_address()),curTOC);
+
+		
 		DataStore ds=getDataStore();
 
 		registerHandleInform(new handleInform(a,ds));
@@ -101,14 +108,22 @@ public class requestExecuteAppointment extends AchieveREInitiator{
 
 			@Override
 			public void action(){
-				if(myCAgent instanceof MoveableAgent){
+				if(myCAgent instanceof DisplayableAgent){
 					Domain endDomain=myCAgent.inflateDomain(curTO.getEnds_at().getAbstract_designation());
+					BlockAddress endAddress=curTO.getEnds_at().getAt_address();
+
 					MoveableAgent myMoveableAgent=(MoveableAgent) myCAgent;
 					TransportOrderChainState oldState=myCAgent.touchTOCState(curTOC,new Assigned());
 
-					myCAgent.echoStatus("Container is going to be dropped at " + endDomain.getId() + " " + StraddleCarrierAgent.positionToString(endDomain.getIs_in_position()) + ", current position: " + StraddleCarrierAgent.positionToString(myMoveableAgent.getCurrentPosition()),ContainerAgent.LOGGING_INFORM);
-					myMoveableAgent.addAsapMovementTo(endDomain.getIs_in_position());
-					setTargetPosition(endDomain.getIs_in_position());
+					myCAgent.echoStatus("Container is going to be dropped at " + endDomain.getId() + " " + Const.positionToString(endDomain.getIs_in_position()) + ", current position: " + Const.positionToString(myMoveableAgent.getCurrentPosition()),ContainerAgent.LOGGING_INFORM);
+					
+					Phy_Position targetPosition=Const.addPositions(endDomain.getIs_in_position(),Const.getDisplayPositionBlock(endAddress));
+					
+//					myCAgent.echoStatus("moving to target position " + Const.positionToString(targetPosition));
+
+					
+					myMoveableAgent.addAsapMovementTo(targetPosition);
+					setTargetPosition(targetPosition);
 				}
 			}
 		}

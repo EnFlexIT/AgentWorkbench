@@ -1,4 +1,4 @@
-; Fri May 14 21:44:21 NZST 2010
+; Fri May 21 12:56:31 NZST 2010
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -6,11 +6,11 @@
 ([BROWSER_SLOT_NAMES] of  Property_List
 
 	(properties
-		[contmas_ontology_individuals_ProjectKB_Instance_52]
-		[contmas_ontology_individuals_ProjectKB_Instance_53]
-		[contmas_ontology_individuals_ProjectKB_Instance_54]
-		[contmas_ontology_individuals_ProjectKB_Instance_55]
-		[contmas_ontology_individuals_ProjectKB_Instance_56]))
+		[contmas_ontology_individuals_ProjectKB_Instance_239]
+		[contmas_ontology_individuals_ProjectKB_Instance_240]
+		[contmas_ontology_individuals_ProjectKB_Instance_241]
+		[contmas_ontology_individuals_ProjectKB_Instance_242]
+		[contmas_ontology_individuals_ProjectKB_Instance_243]))
 
 ([CLSES_TAB] of  Widget
 
@@ -97,11 +97,36 @@
 ([contmas_ontology_individuals_ProjectKB_Instance_23] of  Property_List
 )
 
+([contmas_ontology_individuals_ProjectKB_Instance_239] of  String
+
+	(name "owl:Thing")
+	(string_value "%3ANAME"))
+
 ([contmas_ontology_individuals_ProjectKB_Instance_24] of  Widget
 
 	(is_hidden TRUE)
 	(property_list [contmas_ontology_individuals_ProjectKB_Instance_25])
 	(widget_class_name "org.algernon.kb.okbc.protege.plugins.AlgernonTab"))
+
+([contmas_ontology_individuals_ProjectKB_Instance_240] of  String
+
+	(name ":PAL-CONSTRAINT")
+	(string_value "%3APAL-NAME"))
+
+([contmas_ontology_individuals_ProjectKB_Instance_241] of  String
+
+	(name ":INSTANCE-ANNOTATION")
+	(string_value "%3AANNOTATION-TEXT"))
+
+([contmas_ontology_individuals_ProjectKB_Instance_242] of  String
+
+	(name ":META-CLASS")
+	(string_value "%3ANAME"))
+
+([contmas_ontology_individuals_ProjectKB_Instance_243] of  String
+
+	(name "owl:Class")
+	(string_value "%3ANAME"))
 
 ([contmas_ontology_individuals_ProjectKB_Instance_25] of  Property_List
 )
@@ -234,31 +259,6 @@
 
 ([contmas_ontology_individuals_ProjectKB_Instance_51] of  Property_List
 )
-
-([contmas_ontology_individuals_ProjectKB_Instance_52] of  String
-
-	(name "owl:Thing")
-	(string_value "%3ANAME"))
-
-([contmas_ontology_individuals_ProjectKB_Instance_53] of  String
-
-	(name ":PAL-CONSTRAINT")
-	(string_value "%3APAL-NAME"))
-
-([contmas_ontology_individuals_ProjectKB_Instance_54] of  String
-
-	(name ":INSTANCE-ANNOTATION")
-	(string_value "%3AANNOTATION-TEXT"))
-
-([contmas_ontology_individuals_ProjectKB_Instance_55] of  String
-
-	(name ":META-CLASS")
-	(string_value "%3ANAME"))
-
-([contmas_ontology_individuals_ProjectKB_Instance_56] of  String
-
-	(name "owl:Class")
-	(string_value "%3ANAME"))
 
 ([contmas_ontology_individuals_ProjectKB_Instance_6] of  Widget
 
@@ -7190,12 +7190,12 @@
 	(customized_instance_widgets
 		[PAL_FORM_WIDGET]
 		[KB_713803_Instance_477]
-		[KB_713803_Instance_780]
 		[INSTANCE_ANNOTATION_FORM_WIDGET]
-		[KB_713803_Instance_693]
+		[KB_713803_Instance_780]
 		[KB_301165_Instance_856]
-		[KB_713803_Instance_648]
+		[KB_713803_Instance_693]
 		[KB_691299_Instance_537]
+		[KB_713803_Instance_648]
 		[KB_691299_Instance_398]
 		[KB_303942_Instance_68]
 		[KB_938545_Instance_166]
@@ -7282,15 +7282,15 @@
 		":SYSTEM-CLASS"
 		"owl:oneOf"
 		"owl:DataRange"
-		"rdf:Property"
 		"owl:DeprecatedProperty"
+		"rdf:Property"
 		"owl:DeprecatedClass"
 		"rdf:Statement"
 		"rdf:type"
 		"rdf:subject"
 		"rdf:predicate"
-		":OWL-ANONYMOUS-ROOT"
 		"rdf:object"
+		":OWL-ANONYMOUS-ROOT"
 		"rdfs:Container"
 		"owl:AllDifferent"
 		"owl:distinctMembers"

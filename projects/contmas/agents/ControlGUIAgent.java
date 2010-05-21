@@ -42,6 +42,7 @@ import contmas.interfaces.HarbourLayoutRequester;
 import contmas.interfaces.Logger;
 import contmas.interfaces.OntRepRequester;
 import contmas.main.AgentDesktop;
+import contmas.main.Const;
 import contmas.main.ControlGUI;
 import contmas.main.DomainOntologyElement;
 import contmas.ontology.*;
@@ -90,9 +91,9 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 			dispString+=" - " + contState.getState().getClass().getSimpleName();
 			if(contState.getState() instanceof Holding){
 				BlockAddress curCont=((Holding)contState.getState()).getAt_address();
-				dispString+=" (x=" + curCont.getX_dimension() + ", y=" + curCont.getY_dimension() + ", z=" + curCont.getZ_dimension() + ")";
+				dispString+=" ("+Const.blockAddressToString(curCont)+")";
 			} else{
-				dispString+=" [NotHolded]";
+				dispString+=" [NotHeld]";
 			}
 			containerList.addElement(dispString);
 		}

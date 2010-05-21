@@ -51,10 +51,10 @@ public class executeMovements extends CyclicBehaviour{
 
 		Movement activeMove=getCurrentMovement();
 		if(activeMove != null){
-			Phy_Position intermediatePos=myAgent.interpolatePosition(activeMove);
+//			Phy_Position intermediatePos=myAgent.interpolatePosition(activeMove);
 			Phy_Position moveToPos=activeMove.getMove_to();
 //			myCAgent.echoStatus("Executing pending movement to " + StraddleCarrierAgent.positionToString(activeMove.getMove_to())+", I am now at "+StraddleCarrierAgent.positionToString(intermediatePos));
-			myAgent.setAt(intermediatePos);
+	//		myAgent.setAt(intermediatePos);
 			if(myAgent.isAt(moveToPos)){
 				stopMoving();
 			}else{

@@ -14,6 +14,7 @@
 
 package contmas.behaviours;
 
+import mas.display.DisplayableAgent;
 import jade.core.Agent;
 import jade.core.behaviours.DataStore;
 import jade.core.behaviours.FSMBehaviour;
@@ -24,8 +25,8 @@ import jade.lang.acl.MessageTemplate;
 import jade.proto.AchieveREResponder;
 import contmas.agents.ContainerAgent;
 import contmas.agents.ContainerHolderAgent;
-import contmas.agents.StraddleCarrierAgent;
 import contmas.interfaces.MoveableAgent;
+import contmas.main.Const;
 import contmas.main.MatchAgentAction;
 import contmas.ontology.*;
 
@@ -113,13 +114,20 @@ public class listenForExecuteAppointmentReq extends AchieveREResponder{
 			@Override
 			public void action(){
 				Domain startDomain=myCAgent.inflateDomain(curTO.getStarts_at().getAbstract_designation());
-				if(myCAgent instanceof MoveableAgent){
+				BlockAddress startAddress=curTO.getStarts_at().getAt_address();
+				if(myCAgent instanceof DisplayableAgent){
 					MoveableAgent myMoveableAgent=(MoveableAgent) myCAgent;
 					TransportOrderChainState oldState=myCAgent.touchTOCState(curTOC,new Assigned());
 
-					myCAgent.echoStatus("Container is going to be picked up at " + startDomain.getId() + " " + StraddleCarrierAgent.positionToString(startDomain.getIs_in_position()) + ", current position: " + StraddleCarrierAgent.positionToString(myMoveableAgent.getCurrentPosition()),ContainerAgent.LOGGING_INFORM);
-					myMoveableAgent.addAsapMovementTo(startDomain.getIs_in_position());
-					setTargetPosition(startDomain.getIs_in_position());
+					myCAgent.echoStatus("Container is going to be picked up at " + startDomain.getId() + " " + Const.positionToString(startDomain.getIs_in_position()) + ", current position: " + Const.positionToString(myMoveableAgent.getCurrentPosition()),ContainerAgent.LOGGING_INFORM);
+					
+					Phy_Position targetPosition=Const.addPositions(startDomain.getIs_in_position(),Const.getDisplayPositionBlock(startAddress));
+					
+//					myCAgent.echoStatus("moving to target position " + Const.positionToString(targetPosition));
+
+					
+					myMoveableAgent.addAsapMovementTo(targetPosition);
+					setTargetPosition(targetPosition);
 				}
 			}
 		}

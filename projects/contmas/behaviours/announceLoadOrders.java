@@ -33,6 +33,7 @@ import contmas.agents.ContainerAgent;
 import contmas.agents.ContainerHolderAgent;
 import contmas.agents.StraddleCarrierAgent;
 import contmas.interfaces.MoveableAgent;
+import contmas.main.Const;
 import contmas.ontology.*;
 
 public class announceLoadOrders extends ContractNetInitiator{
@@ -108,7 +109,8 @@ public class announceLoadOrders extends ContractNetInitiator{
 				content=this.myCAgent.extractAction(propose);
 				if(content instanceof ProposeLoadOffer){
 					ProposeLoadOffer proposal=(ProposeLoadOffer) content;
-					TransportOrder offer=this.myCAgent.findMatchingOrder(proposal.getCorresponds_to(),false);
+					TransportOrder offer=proposal.getLoad_offer();
+//					TransportOrder offer=this.myCAgent.findMatchingOrder(proposal.getCorresponds_to(),false);
 					if((bestOffer == null) || (Long.parseLong(offer.getTakes_until()) < Long.parseLong(bestOffer.getTakes_until()))){ //bisher beste Zeit
 						bestOffer=offer;
 						bestOfferMessage=propose;
@@ -149,6 +151,7 @@ public class announceLoadOrders extends ContractNetInitiator{
 
 	@Override
 	protected void handleAllResultNotifications(Vector resultNotifications){
+
 //		myCAgent.echoStatus("handleAllResultNotifications");
 		for(Iterator iterator=resultNotifications.iterator();iterator.hasNext();){
 			ACLMessage resNot=(ACLMessage) iterator.next();
@@ -156,7 +159,23 @@ public class announceLoadOrders extends ContractNetInitiator{
 			if(act.getLoad_status().equals("PENDING")){
 				PlannedOut newState=new PlannedOut();
 				newState.setLoad_offer(curTO);
+//				newState.setAt_address(curTO.getEnds_at().getAt_address());
+//				myCAgent.echoStatus("BIC="+curTOC.getTransports().getBic_code(),curTOC);
+
+				
+			
+//				myCAgent.echoStatus("negotiation, received loadStatus PENDING, changing TOCState to PlannedOut, startBA="+Const.blockAddressToString(curTO.getStarts_at().getAt_address()),curTOC);
+//				myCAgent.echoStatus("negotiation, received loadStatus PENDING, changing TOCState to PlannedOut, endBA="+Const.blockAddressToString(curTO.getEnds_at().getAt_address()),curTOC);
+
+				
 				myCAgent.touchTOCState(curTOC,newState);
+				
+//				myCAgent.echoStatus("currently stored at myself,BA="+Const.blockAddressToString(myCAgent.touchTOCState(curTOC).getAt_address()));
+//				myCAgent.echoStatus("bestOffer has endBA="+Const.blockAddressToString(myCAgent.touchTOCState(curTOC).getLoad_offer().getEnds_at().getAt_address()));
+
+				
+				
+
 				
 				myCAgent.wakeSleepingBehaviours(curTOC);
 //				myCAgent.addBehaviour(new requestExecuteAppointment(myCAgent,curTOC,curTO));
