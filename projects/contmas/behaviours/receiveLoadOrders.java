@@ -492,6 +492,7 @@ public class receiveLoadOrders extends ContractNetResponder{
 			this.myCAgent.echoStatus("ERROR: Auftrag, auf den ich mich beworben habe (abgelehnt), nicht zum Entfernen gefunden. War "+oldState.getClass().getSimpleName(),acceptedTOC,ContainerAgent.LOGGING_ERROR);
 		}else{
 			//			((ContainerAgent)myAgent).echoStatus("Abgelehnten Auftrag entfernt.",acceptedTOC);
+			this.myCAgent.memorizeTacticalTarget(oldState.getLoad_offer().getStarts_at());
 		}
 	}
 

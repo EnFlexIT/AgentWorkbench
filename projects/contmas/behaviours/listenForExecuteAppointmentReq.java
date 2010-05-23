@@ -113,23 +113,17 @@ public class listenForExecuteAppointmentReq extends AchieveREResponder{
 
 			@Override
 			public void action(){
-				Domain startDomain=myCAgent.inflateDomain(curTO.getStarts_at().getAbstract_designation());
-				BlockAddress startAddress=curTO.getStarts_at().getAt_address();
 				if(myCAgent instanceof DisplayableAgent){
 					MoveableAgent myMoveableAgent=(MoveableAgent) myCAgent;
-					TransportOrderChainState oldState=myCAgent.touchTOCState(curTOC,new Assigned());
-
-					myCAgent.echoStatus("Container is going to be picked up at " + startDomain.getId() + " " + Const.positionToString(startDomain.getIs_in_position()) + ", current position: " + Const.positionToString(myMoveableAgent.getCurrentPosition()),ContainerAgent.LOGGING_INFORM);
+					TransportOrderChainState oldState=myCAgent.touchTOCState(curTOC,new InExecution());
 					
-					Phy_Position targetPosition=Const.addPositions(startDomain.getIs_in_position(),Const.getDisplayPositionBlock(startAddress));
-					
-//					myCAgent.echoStatus("moving to target position " + Const.positionToString(targetPosition));
-
+					Phy_Position targetPosition=myCAgent.calculateTargetPosition(curTO.getStarts_at());
 					
 					myMoveableAgent.addAsapMovementTo(targetPosition);
 					setTargetPosition(targetPosition);
 				}
 			}
+
 		}
 
 		class DoAquire extends OneShotBehaviour{

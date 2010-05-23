@@ -24,6 +24,8 @@ import java.util.Random;
 
 import contmas.behaviours.*;
 import contmas.interfaces.*;
+import contmas.main.Const;
+import contmas.main.HarbourSetup;
 import contmas.main.NotYetReadyException;
 import contmas.ontology.*;
 
@@ -507,42 +509,66 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 	 */
 	@Override
 	public void processHarbourLayout(Domain current_harbour_layout){
-		// TODO Auto-generated method stub
-		harbourMap=interlaceDomains(current_harbour_layout);
-//		this.ontologyRepresentation.setLives_in(inflateDomain(this.ontologyRepresentation.getLives_in()));
+//		echoStatus("processHarbourLayout");
 
-//		echoStatus("found domain: " + findDomain(this.targetAbstractDomain.getId(),harbourMap));
+		interlaceDomains(current_harbour_layout);
+		harbourMap=current_harbour_layout;
+//		entangleOntologyRepresentation();
+	}
+	
+	public void entangleOntologyRepresentation(){
+		echoStatus("lives in "+getOntologyRepresentation().getLives_in().getId());
+		getOntologyRepresentation().setLives_in(inflateDomain(getOntologyRepresentation().getLives_in()));
+		
+		if(getOntologyRepresentation() instanceof ActiveContainerHolder){
+			List inflatedCapabilities=new ArrayList();
+			Iterator iter=((ActiveContainerHolder) getOntologyRepresentation()).getAllCapable_of();
+			while(iter.hasNext()){
+				inflatedCapabilities.add(inflateDomain((Domain) iter.next()));
+			}
+			((ActiveContainerHolder) getOntologyRepresentation()).setCapable_of(inflatedCapabilities);
+		}
 	}
 
-	public Domain interlaceDomains(Domain input){
-		Domain output=input;
+	/*
+	 * completes Domains which only have has_subdomains with the backlink lies_in
+	 */
+	public static void interlaceDomains(Domain input){
 		Iterator iter=input.getAllHas_subdomains();
 		while(iter.hasNext()){
 			Domain curSubDom=(Domain) iter.next();
 			curSubDom.setLies_in(input);
 			interlaceDomains(curSubDom);
 		}
-		return output;
 	}
 
-	public Domain reduceDomain(Domain input){
+	/*
+	 * Reduces an input Domain to its ID, to get transmitted by ACLMessage
+	 */
+	public static Domain reduceDomain(Domain input){
 		Domain output=new Domain();
 		output.setId(input.getId());
 		return output;
 	}
-
+	
+	/*
+	 * Blows up an input Domain to it's whole lies_in and has_subdomains properties, by finding it in the harbourMap
+	 */
 	public Domain inflateDomain(Domain input){
 		Domain output=findDomain(input.getId(),harbourMap);
 		return output;
 	}
 
 	//Has_subdomains variant
-	public Domain findDomain(String lookForID,Domain in){
+	public static Domain findDomain(String lookForID,Domain in){
 		if(in==null){
 			System.out.println("ERROR: lookForID="+lookForID);
 		}
 		if(in.getId().equals(lookForID)){
 			return in;
+		}
+		if(in.getHas_subdomains()==null){
+			System.out.println("ERROR: findDomain getHas_subdomains==null, lookForID="+lookForID+", inID="+in.getId());
 		}
 		Iterator iter=in.getAllHas_subdomains();
 		Domain found=null;
@@ -555,5 +581,23 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 			}
 		}
 		return null;
+	}
+	
+	public Phy_Position calculateTargetPosition(Designator desig){
+		Domain dom=inflateDomain(desig.getAbstract_designation());
+		BlockAddress address=desig.getAt_address();
+		Phy_Position targetPosition=Const.addPositions(dom.getIs_in_position(),Const.getDisplayPositionBlock(address));
+		/*
+		echoStatus("dom "+dom.getId()+" Is_in_position="+ Const.positionToString(dom.getIs_in_position()));
+		echoStatus("ba "+Const.blockAddressToString(address)+" is at="+ Const.positionToString(Const.getDisplayPositionBlock(address)));
+
+		echoStatus("targetPosition="+ Const.positionToString(targetPosition));
+		*/
+		return targetPosition;
+	}
+	
+	protected List tacticalTargets=new ArrayList(); //<Phy_Position>
+	
+	public void memorizeTacticalTarget(Designator target){ //Hook for considering functions in specific agents
 	}
 }

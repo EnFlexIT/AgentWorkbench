@@ -112,14 +112,8 @@ public class HarborMasterAgent extends ContainerAgent implements OntRepProvider,
 
 			StartNewContainerHolder act=new StartNewContainerHolder();
 			act.setName(containerHolder.getLocalName());
-			HarbourSetup.removeBacklink(containerHolder.getLives_in(),false); //remove has_subdomains
-			if(containerHolder instanceof ActiveContainerHolder){
-				Iterator iter=((ActiveContainerHolder) containerHolder).getAllCapable_of();
-				while(iter.hasNext()){
-					Domain dom=(Domain) iter.next();
-					HarbourSetup.removeBacklink(dom,false); //remove has_subdomains
-				}
-			}
+			HarbourSetup.reduceCH(containerHolder);
+
 			act.setTo_be_added(containerHolder);
 			
 			act.setRandomize(false);

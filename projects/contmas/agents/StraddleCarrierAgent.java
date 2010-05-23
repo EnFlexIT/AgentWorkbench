@@ -402,12 +402,12 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 		Float distance=getManhattanDistance(getCurrentPosition(),to);
 //		echoStatus("distance: "+distance+" distance.longValue"+distance.longValue());
 		Long eta=calculateDuration(distance.longValue())+System.currentTimeMillis();
-
+/*
 		Movement mov=new Movement();
 		mov.setMove_to(to);
 		mov.setBe_there_at(eta.toString());
 		((ActiveContainerHolder)getOntologyRepresentation()).getScheduled_movements().add(mov);
-		
+		*/
 		addDisplayMove(getAID().getLocalName(),to);
 
 //		moveBehaviour.restart();
@@ -523,5 +523,12 @@ public class StraddleCarrierAgent extends ActiveContainerAgent implements Transp
 		Phy_Position setPos=AgentGUIHelper.convertPosition(position);
 //		setPos=null;
 		ontologyRepresentation.setIs_in_position2(setPos);
+	}
+	
+	@Override
+	public void memorizeTacticalTarget(Designator target){
+		Phy_Position targetPosition=inflateDomain(target.getAbstract_designation()).getIs_in_position();
+		echoStatus("memorizing tactical target "+Const.positionToString(targetPosition));
+		tacticalTargets.add(targetPosition);
 	}
 }

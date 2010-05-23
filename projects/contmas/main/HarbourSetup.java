@@ -20,12 +20,15 @@
  */
 package contmas.main;
 
+import jade.util.leap.ArrayList;
 import jade.util.leap.Iterator;
 
 import java.util.List;
 
 import com.hp.hpl.jena.rdf.model.Resource;
 
+import contmas.agents.ContainerHolderAgent;
+import contmas.ontology.ActiveContainerHolder;
 import contmas.ontology.ContainerHolder;
 import contmas.ontology.Domain;
 import contmas.ontology.Harbour;
@@ -95,6 +98,37 @@ public final class HarbourSetup{
 				Domain subDomain=(Domain) sub.next();
 				HarbourSetup.removeBacklink(subDomain,topDown);
 			}
+		}
+	}
+	
+	public static void inflateCH(ContainerHolder containerHolder,Domain harbourMap){
+
+		containerHolder.setLives_in(ContainerHolderAgent.findDomain(containerHolder.getLives_in().getId(),harbourMap));
+		if(containerHolder instanceof ActiveContainerHolder){
+			Iterator iter=((ActiveContainerHolder) containerHolder).getAllCapable_of();
+			jade.util.leap.List newCapas=new ArrayList();
+			while(iter.hasNext()){
+				Domain dom=(Domain) iter.next();
+				Domain newCapa=ContainerHolderAgent.findDomain(dom.getId(),harbourMap);
+
+				newCapas.add(newCapa);
+			}
+			((ActiveContainerHolder) containerHolder).setCapable_of(newCapas);
+		}
+	}
+	
+	public static void reduceCH(ContainerHolder containerHolder){
+		containerHolder.setLives_in(ContainerHolderAgent.reduceDomain(containerHolder.getLives_in()));
+		if(containerHolder instanceof ActiveContainerHolder){
+			Iterator iter=((ActiveContainerHolder) containerHolder).getAllCapable_of();
+			jade.util.leap.List newCapas=new ArrayList();
+			while(iter.hasNext()){
+				Domain dom=(Domain) iter.next();
+				Domain newCapa=ContainerHolderAgent.reduceDomain(dom);
+
+				newCapas.add(newCapa);
+			}
+			((ActiveContainerHolder) containerHolder).setCapable_of(newCapas);
 		}
 	}
 

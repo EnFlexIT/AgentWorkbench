@@ -109,18 +109,10 @@ public class requestExecuteAppointment extends AchieveREInitiator{
 			@Override
 			public void action(){
 				if(myCAgent instanceof DisplayableAgent){
-					Domain endDomain=myCAgent.inflateDomain(curTO.getEnds_at().getAbstract_designation());
-					BlockAddress endAddress=curTO.getEnds_at().getAt_address();
-
 					MoveableAgent myMoveableAgent=(MoveableAgent) myCAgent;
 					TransportOrderChainState oldState=myCAgent.touchTOCState(curTOC,new Assigned());
-
-					myCAgent.echoStatus("Container is going to be dropped at " + endDomain.getId() + " " + Const.positionToString(endDomain.getIs_in_position()) + ", current position: " + Const.positionToString(myMoveableAgent.getCurrentPosition()),ContainerAgent.LOGGING_INFORM);
 					
-					Phy_Position targetPosition=Const.addPositions(endDomain.getIs_in_position(),Const.getDisplayPositionBlock(endAddress));
-					
-//					myCAgent.echoStatus("moving to target position " + Const.positionToString(targetPosition));
-
+					Phy_Position targetPosition=myCAgent.calculateTargetPosition(curTO.getEnds_at());
 					
 					myMoveableAgent.addAsapMovementTo(targetPosition);
 					setTargetPosition(targetPosition);

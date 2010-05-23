@@ -29,8 +29,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.swing.*;
+
+import com.hp.hpl.jena.rdf.model.Resource;
 
 import contmas.ontology.ContainerHolder;
 
@@ -140,7 +143,8 @@ public class LoadContainerHolderFrame extends JDialog implements ActionListener{
 						OWLImportMapper mapper=LoadContainerHolderFrame.this.getMapper(file.getAbsolutePath());
 						mapper.setStructureFile(workingDir + structureFileName);
 						mapper.setBeanGeneratorFile(workingDir + ontologyGeneratorFileName);
-						HashMap<String, Object> allContainerHolders=mapper.getNamedMappedIndividualsOf("Ship");
+						List<Resource> allCHClasses=mapper.getSubConceptsOf("ContainerHolder",true);
+						HashMap<String, Object> allContainerHolders=mapper.getNamedMappedIndividualsOf(allCHClasses);
 						java.util.Iterator<String> iter=allContainerHolders.keySet().iterator();
 
 						DefaultListModel ContainerHolderList=new DefaultListModel();

@@ -41,14 +41,13 @@ import contmas.interfaces.DFSubscriber;
 import contmas.interfaces.HarbourLayoutRequester;
 import contmas.interfaces.Logger;
 import contmas.interfaces.OntRepRequester;
-import contmas.main.AgentDesktop;
-import contmas.main.Const;
-import contmas.main.ControlGUI;
-import contmas.main.DomainOntologyElement;
+import contmas.main.*;
 import contmas.ontology.*;
 
 public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubscriber,HarbourLayoutRequester,Logger{
 
+	private Domain harbourMap;
+	
 	@Override
 	public void processLogMsg(String logMsg){
 		writeLogMsg(logMsg);
@@ -143,11 +142,9 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 						((ActiveContainerHolder) ontologyRepresentation).addCapable_of(domainOntologyElement.getDomain());
 					}
 				}
-				/*
-				//				habitat.setLies_in(terminalArea);
-				AgentController a=c.acceptNewAgent(name,new ShipAgent(ontologyRepresentation));
-				a.start();
-				*/
+				
+				HarbourSetup.inflateCH(ontologyRepresentation,harbourMap);
+				
 				StartNewContainerHolder act=new StartNewContainerHolder();
 				act.setName(name);
 				act.setTo_be_added(ontologyRepresentation);
@@ -282,6 +279,7 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 	 * @param current_harbour_layout
 	 */
 	public void processHarbourLayout(Domain current_harbour_layout){
+		harbourMap=current_harbour_layout;
 		XMLCodec xmlCodec=new XMLCodec();
 		String s;
 		try{

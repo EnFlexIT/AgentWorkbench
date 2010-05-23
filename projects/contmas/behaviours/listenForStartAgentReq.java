@@ -31,6 +31,7 @@ import jade.wrapper.AgentController;
 import jade.wrapper.StaleProxyException;
 import contmas.agents.*;
 import contmas.interfaces.OntRepProvider;
+import contmas.main.HarbourSetup;
 import contmas.ontology.*;
 
 /**
@@ -124,6 +125,14 @@ public class listenForStartAgentReq extends SequentialBehaviour implements OntRe
 				defaultPos.setPhy_y(0.0F);
 				ontRep.setIs_in_position2(defaultPos);
 			}
+			HarbourSetup.reduceCH(ontRep);
+
+			Domain harbourMap=((HarborMasterAgent)myAgent).getHarbourArea();
+			HarbourSetup.removeBacklink(harbourMap,true); //remove lies_in
+
+			HarbourSetup.inflateCH(ontRep,harbourMap);
+
+//			HarbourSetup.cleanDomainsOf(ontRep,((HarborMasterAgent)myAgent).getHarbourArea());
 			
 			try{
 				if(ontRep instanceof Ship){

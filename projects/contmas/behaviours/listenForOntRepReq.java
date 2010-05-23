@@ -20,6 +20,8 @@
  */
 package contmas.behaviours;
 
+import java.io.Serializable;
+
 import jade.content.Concept;
 import jade.core.AID;
 import jade.core.Agent;
@@ -28,8 +30,10 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.proto.AchieveREResponder;
 import contmas.agents.ContainerAgent;
+import contmas.agents.ContainerHolderAgent;
 import contmas.interfaces.OntRepProvider;
 import contmas.interfaces.OntRepRequester;
+import contmas.main.HarbourSetup;
 import contmas.main.MatchAgentAction;
 import contmas.ontology.ContainerHolder;
 import contmas.ontology.ProvideOntologyRepresentation;
@@ -69,14 +73,16 @@ public class listenForOntRepReq extends AchieveREResponder{
 			this.myAgent.putBack(request);
 			return null;
 		}else{
-			if(this.accordingOntrep.getContains() == null){ //request is asking myself, and i'm the harbourmaster or not-understood got yet
+			if(this.accordingOntrep.getContains() == null){ //request is asking myself, and i'm the harbourmaster or already got not-understood 
 				reply.setPerformative(ACLMessage.REFUSE);
 				return reply;
 			}else{
 				reply.setPerformative(ACLMessage.INFORM);
 				ProvideOntologyRepresentation act=new ProvideOntologyRepresentation();
+
 				act.setAccording_ontrep(this.accordingOntrep);
 				((ContainerAgent) this.myAgent).fillMessage(reply,act);
+
 				return reply;
 			}
 		}

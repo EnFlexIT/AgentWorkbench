@@ -30,4 +30,5 @@ public class StaticContainerAgent extends ContainerHolderAgent{
 	public StaticContainerAgent(String serviceType,StaticContainerHolder ontologyRepresentation){
 		super(serviceType,ontologyRepresentation);
 	}
+
 }

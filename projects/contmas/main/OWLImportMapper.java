@@ -121,57 +121,54 @@ public class OWLImportMapper{
 	}
 
 	public List<Object> getMappedIndividualsOf(String concept){
-		return this.getMappedIndividualsOf(this.model.createResource(this.structureNS + concept));
+		return new ArrayList<Object>(getNamedMappedIndividualsOf(concept).values());
+	}
+	
+	public List<Object> getMappedIndividualsOf(List<Resource> allConcepts){
+		return new ArrayList<Object>(getNamedMappedIndividualsOf(allConcepts).values());
 	}
 
 	public List<Object> getMappedIndividualsOf(Resource concept){
-		List<Object> mappedIndividuals=new ArrayList<Object>();
-//		System.out.println("All Individuals of " + concept + ":");
-
-		ExtendedIterator<Individual> iter=this.model.listIndividuals(concept);
-		while(iter.hasNext()){
-			Individual res=iter.next();
-//			System.out.println(res);
-			Object mappedIndividual=this.getMappedIndividual(res);
-
-			mappedIndividuals.add(mappedIndividual);
-		}
-		return mappedIndividuals;
+		return new ArrayList<Object>(getNamedMappedIndividualsOf(concept).values());
 	}
-
+	
 	public HashMap<String, Object> getNamedMappedIndividualsOf(String concept){
 		return this.getNamedMappedIndividualsOf(this.model.createResource(this.structureNS + concept));
 	}
 
+	public HashMap<String, Object> getNamedMappedIndividualsOf(List<Resource> allConcepts){
+		HashMap<String, Object> allMappedIndividuals=new HashMap<String, Object>();
+		Iterator<Resource> iter=allConcepts.iterator();
+		while(iter.hasNext()){
+			Resource curConcept=iter.next();
+			HashMap<String, Object> mappedIndividuals=this.getNamedMappedIndividualsOf(curConcept);
+			allMappedIndividuals.putAll(mappedIndividuals);
+		}
+		return allMappedIndividuals;
+	}	
+	
 	public HashMap<String, Object> getNamedMappedIndividualsOf(Resource concept){
 		HashMap<String, Object> mappedIndividuals=new HashMap<String, Object>();
 		ExtendedIterator<Individual> iter=this.model.listIndividuals(concept);
 		while(iter.hasNext()){
-			Individual res=iter.next();
+			Individual curConcept=iter.next();
 //			System.out.println(res);
-			Object mappedIndividual=this.getMappedIndividual(res);
+			Object mappedIndividual=this.getMappedIndividual(curConcept);
 
-			mappedIndividuals.put(this.getResourceName(res),mappedIndividual);
+			mappedIndividuals.put(this.getResourceName(curConcept),mappedIndividual);
 		}
+		
 		return mappedIndividuals;
 	}
 
+
+	
 	public String getResourceName(Resource res){
 		if(res.isAnon()){
 			return res.getId().getLabelString();
 		}else{
 			return res.getLocalName();
 		}
-	}
-
-	public List<Object> getMappedIndividualsOf(List<Resource> allConcepts){
-		List<Object> allIndividuals=new ArrayList<Object>();
-		Iterator<Resource> iter=allConcepts.iterator();
-		while(iter.hasNext()){
-			Resource curConcept=iter.next();
-			allIndividuals.addAll(this.getMappedIndividualsOf(curConcept));
-		}
-		return allIndividuals;
 	}
 
 	protected HashMap<OntProperty, List<RDFNode>> getPropertiesOf(Individual indiv){
