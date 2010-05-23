@@ -20,10 +20,10 @@
  */
 package contmas.main;
 
+import mas.display.ontology.DisplayOntology;
+import mas.display.ontology.Position;
 import contmas.agents.ContainerAgent;
 import contmas.ontology.Phy_Position;
-import sma.ontology.DisplayOntology;
-import sma.ontology.Position;
 import jade.content.lang.Codec;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.Ontology;

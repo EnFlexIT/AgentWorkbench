@@ -8,11 +8,11 @@ import jade.core.messaging.TopicManagementHelper;
 import java.util.HashMap;
 import java.util.Vector;
 
+import mas.display.ontology.AgentObject;
+import mas.display.ontology.Position;
+import mas.display.ontology.Speed;
 import mas.movement.MoveToPointBehaviour;
 import mas.movement.MovingAgent;
-import sma.ontology.AgentObject;
-import sma.ontology.Position;
-import sma.ontology.Speed;
 import contmas.behaviours.listenForPositionUpdate;
 import contmas.interfaces.PositionPlotter;
 import contmas.main.Const;

@@ -1,9 +1,9 @@
 package mas.environment;
 
 import mas.display.DisplayConstants;
-import sma.ontology.DisplayOntology;
-import sma.ontology.Environment;
-import sma.ontology.EnvironmentInfo;
+import mas.display.ontology.DisplayOntology;
+import mas.display.ontology.Environment;
+import mas.display.ontology.EnvironmentInfo;
 import jade.content.lang.Codec;
 import jade.content.lang.Codec.CodecException;
 import jade.content.lang.sl.SLCodec;
@@ -88,7 +88,8 @@ public class EnvironmentControllerAgent extends Agent {
 				ACLMessage reply = request.createReply();
 				reply.setPerformative(ACLMessage.INFORM);
 				
-				OntoUtilities.unsetParent(environment.getRootPlayground());
+//				OntoUtilities.unsetParent(environment.getRootPlayground());
+				environment.getRootPlayground().unsetParent();
 				
 				EnvironmentInfo envInf = new EnvironmentInfo();
 				envInf.setEnvironment(environment);
@@ -108,7 +109,8 @@ public class EnvironmentControllerAgent extends Agent {
 					e.printStackTrace();
 				}
 				
-				OntoUtilities.setParent(environment.getRootPlayground());
+//				OntoUtilities.setParent(environment.getRootPlayground());
+				environment.getRootPlayground().setParent();
 				
 				return reply;				
 			}

@@ -12,14 +12,13 @@ import javax.swing.JButton;
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
 
-import sma.ontology.AbstractObject;
-import sma.ontology.AgentObject;
 
 import application.Language;
 
 import mas.display.SvgTypes;
+import mas.display.ontology.AbstractObject;
+import mas.display.ontology.AgentObject;
 import mas.environment.ObjectTypes;
-import mas.environment.OntoUtilities;
 
 public class PnlObjectSettings extends JPanel {
 
@@ -343,10 +342,15 @@ public class PnlObjectSettings extends JPanel {
 					height = Float.parseFloat(parent.getSelectedElement().getAttributeNS(null, "r2"))*2;
 				break;					
 			}
-			xPos = OntoUtilities.calcRWU(xPos, parent.getController().getEnvironment().getScale());
-			yPos = OntoUtilities.calcRWU(yPos, parent.getController().getEnvironment().getScale());
-			width = OntoUtilities.calcRWU(width, parent.getController().getEnvironment().getScale());
-			height = OntoUtilities.calcRWU(height, parent.getController().getEnvironment().getScale());
+//			xPos = OntoUtilities.calcRWU(xPos, parent.getController().getEnvironment().getScale());
+//			yPos = OntoUtilities.calcRWU(yPos, parent.getController().getEnvironment().getScale());
+//			width = OntoUtilities.calcRWU(width, parent.getController().getEnvironment().getScale());
+//			height = OntoUtilities.calcRWU(height, parent.getController().getEnvironment().getScale());
+			
+			xPos = parent.getController().getEnvironment().getScale().calcRwu(xPos);
+			yPos = parent.getController().getEnvironment().getScale().calcRwu(yPos);
+			width = parent.getController().getEnvironment().getScale().calcRwu(width);
+			height = parent.getController().getEnvironment().getScale().calcRwu(height);
 			
 			getTfPosX().setText(""+xPos);
 			getTfPosY().setText(""+yPos);

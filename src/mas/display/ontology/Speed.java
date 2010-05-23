@@ -1,4 +1,4 @@
-package sma.ontology;
+package mas.display.ontology;
 
 
 import jade.content.*;
@@ -9,7 +9,7 @@ import jade.core.*;
    * Represents the speed of an object moving in a 2D environment
 * Protege name: Speed
 * @author ontology bean generator
-* @version 2010/05/16, 13:04:47
+* @version 2010/05/23, 13:16:47
 */
 public class Speed implements Concept {
 

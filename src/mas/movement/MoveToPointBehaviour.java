@@ -6,10 +6,10 @@ import java.util.Vector;
 
 import mas.display.DisplayConstants;
 import mas.display.DisplayableAgent;
+import mas.display.ontology.Movement;
+import mas.display.ontology.Position;
+import mas.display.ontology.Speed;
 
-import sma.ontology.Movement;
-import sma.ontology.Position;
-import sma.ontology.Speed;
 import jade.content.lang.Codec.CodecException;
 import jade.content.onto.OntologyException;
 import jade.content.onto.basic.Action;

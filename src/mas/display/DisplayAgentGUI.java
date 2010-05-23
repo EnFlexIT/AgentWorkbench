@@ -5,7 +5,9 @@ import java.util.Iterator;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import mas.environment.OntoUtilities;
+import mas.display.ontology.Movement;
+import mas.display.ontology.Position;
+import mas.display.ontology.Scale;
 
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.script.Window;
@@ -14,9 +16,6 @@ import org.apache.batik.swing.gvt.GVTTreeRendererAdapter;
 import org.apache.batik.swing.gvt.GVTTreeRendererEvent;
 import org.w3c.dom.Element;
 
-import sma.ontology.Movement;
-import sma.ontology.Position;
-import sma.ontology.Scale;
 
 import application.Project;
 
@@ -142,8 +141,11 @@ public class DisplayAgentGUI extends BasicSVGGUI {
 			float posX, posY;
 			
 			// Convert from real world units to pixel
-			posX = OntoUtilities.calcPixel(pos.getX(), scale);
-			posY = OntoUtilities.calcPixel(pos.getY(), scale);
+//			posX = OntoUtilities.calcPixel(pos.getX(), scale);
+//			posY = OntoUtilities.calcPixel(pos.getY(), scale);
+			
+			posX = scale.calcPixel(pos.getX());
+			posY = scale.calcPixel(pos.getY());
 			
 //			System.out.println("Setting new pos: "+posX+":"+posY);
 			

@@ -38,20 +38,19 @@ import org.w3c.dom.events.Event;
 import org.w3c.dom.events.EventListener;
 import org.w3c.dom.events.EventTarget;
 
-import sma.ontology.AbstractObject;
-import sma.ontology.PlaygroundObject;
-import sma.ontology.Position;
-import sma.ontology.Scale;
-import sma.ontology.Size;
 
 import application.Language;
 import application.Project;
 
 import mas.display.BasicSVGGUI;
 import mas.display.SvgTypes;
+import mas.display.ontology.AbstractObject;
+import mas.display.ontology.PlaygroundObject;
+import mas.display.ontology.Position;
+import mas.display.ontology.Scale;
+import mas.display.ontology.Size;
 import mas.environment.EnvironmentController;
 import mas.environment.ObjectTypes;
-import mas.environment.OntoUtilities;
 
 public class EnvironmentControllerGUI extends JSplitPane implements ActionListener{
 
@@ -472,10 +471,15 @@ public class EnvironmentControllerGUI extends JSplitPane implements ActionListen
 			float width = size.getWidth();
 			float height = size.getHeight();
 			
-			x = OntoUtilities.calcPixel(x, scale);
-			y = OntoUtilities.calcPixel(y, scale);
-			width = OntoUtilities.calcPixel(width, scale);
-			height = OntoUtilities.calcPixel(height, scale);
+//			x = OntoUtilities.calcPixel(x, scale);
+//			y = OntoUtilities.calcPixel(y, scale);
+//			width = OntoUtilities.calcPixel(width, scale);
+//			height = OntoUtilities.calcPixel(height, scale);
+			
+			x = scale.calcPixel(x);
+			y = scale.calcPixel(y);
+			width = scale.calcPixel(width);
+			height = scale.calcPixel(height);
 			
 			switch(SvgTypes.getType(selectedElement)){
 				case RECT:

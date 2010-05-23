@@ -2,8 +2,8 @@ package sma.agents;
 
 import java.util.Vector;
 
-import sma.ontology.Position;
-import sma.ontology.Speed;
+import mas.display.ontology.Position;
+import mas.display.ontology.Speed;
 import mas.movement.MoveToPointBehaviour;
 import mas.movement.MovingAgent;
 

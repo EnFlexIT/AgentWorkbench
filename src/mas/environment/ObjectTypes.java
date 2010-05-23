@@ -16,14 +16,14 @@ public enum ObjectTypes {
 	 * @param object The object to be checked
 	 * @return The type constant or null
 	 */
-	public static ObjectTypes getType(sma.ontology.AbstractObject object){
+	public static ObjectTypes getType(mas.display.ontology.AbstractObject object){
 		ObjectTypes type = null;
 		
-		if(object instanceof sma.ontology.AgentObject){
+		if(object instanceof mas.display.ontology.AgentObject){
 			type = AGENT;
-		}else if(object instanceof sma.ontology.ObstacleObject){
+		}else if(object instanceof mas.display.ontology.ObstacleObject){
 			type = OBSTACLE;
-		}else if(object instanceof sma.ontology.PlaygroundObject){
+		}else if(object instanceof mas.display.ontology.PlaygroundObject){
 			type = PLAYGROUND;
 		}
 		

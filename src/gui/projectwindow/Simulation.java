@@ -10,10 +10,10 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JScrollPane;
 
-import sma.ontology.AbstractObject;
-import sma.ontology.AgentObject;
 
 import mas.display.DisplayAgentGUI;
+import mas.display.ontology.AbstractObject;
+import mas.display.ontology.AgentObject;
 import mas.environment.ObjectTypes;
 
 import application.Application;

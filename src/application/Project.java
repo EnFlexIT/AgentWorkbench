@@ -19,10 +19,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import mas.agents.AgentConfiguration;
+import mas.display.ontology.Environment;
 import mas.environment.EnvironmentController;
 import mas.onto.Ontologies4Project;
 import rollout.TextFileRessourceRollOut;
-import sma.ontology.Environment;
 
 @XmlRootElement public class Project extends Observable {
 

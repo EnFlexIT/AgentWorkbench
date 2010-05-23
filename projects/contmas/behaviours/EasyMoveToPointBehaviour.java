@@ -22,9 +22,9 @@ package contmas.behaviours;
 
 import jade.core.Agent;
 import mas.display.DisplayableAgent;
+import mas.display.ontology.Position;
+import mas.display.ontology.Speed;
 import mas.movement.MoveToPointBehaviour;
-import sma.ontology.Position;
-import sma.ontology.Speed;
 
 /**
  * @author Hanno - Felix Wagner

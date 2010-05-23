@@ -11,7 +11,8 @@ import javax.swing.JTextField;
 import java.awt.Dimension;
 import javax.swing.JLabel;
 
-import sma.ontology.Scale;
+import mas.display.ontology.Scale;
+
 
 import application.Language;
 

@@ -4,10 +4,11 @@ import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.util.Iterator;
 
-import sma.ontology.AbstractObject;
-import sma.ontology.PlaygroundObject;
-import sma.ontology.Position;
-import sma.ontology.Scale;
+import mas.display.ontology.AbstractObject;
+import mas.display.ontology.PlaygroundObject;
+import mas.display.ontology.Position;
+import mas.display.ontology.Scale;
+
 /**
  * Some constants, static utility methods etc.
  * @author Nils
@@ -91,7 +92,6 @@ public class OntoUtilities {
 	
 	/**
 	 * Checks if an environment object is inside a playgrounds area
-	 * @param playground The playground 
 	 * @param object The environment object
 	 * @return True if the object is inside the playgrounds area, false otherwise
 	 */

@@ -1,4 +1,4 @@
-package sma.ontology;
+package mas.display.ontology;
 
 
 import jade.content.*;
@@ -9,10 +9,12 @@ import jade.core.*;
    * Defining the scale used for displaying the environment
 * Protege name: Scale
 * @author ontology bean generator
-* @version 2010/05/16, 13:04:47
+* @version 2010/05/23, 13:16:47
 */
 public class Scale implements Concept {
 
+//////////////////////////// User code
+/**     * Calculating the number of real world units for a number of pixels     * @param pixel The number of pixels     * @return The number of real world units     */    public float calcRwu(float pixel){ 	   return (pixel / this.pixel * this.value);    }        /**     * Calculating the number of pixels for a number of real world units     * @param rwu The number of real world units     * @return The number of pixels     */    public float calcPixel(float rwu){ 	   return (rwu / this.value * this.pixel);    }
    /**
    * Name of the used real world unit. Just for display, no automatic conversion at the moment
 * Protege name: unit

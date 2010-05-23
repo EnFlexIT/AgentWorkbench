@@ -5,22 +5,16 @@ import java.io.StringReader;
 
 import javax.swing.JFrame;
 
+import mas.display.ontology.DisplayOntology;
+import mas.display.ontology.Environment;
+import mas.display.ontology.EnvironmentInfo;
+import mas.display.ontology.Movement;
 import mas.environment.OntoUtilities;
 
 import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
-import org.apache.batik.dom.svg.SVGDOMImplementation;
-import org.apache.batik.transcoder.TranscoderException;
-import org.apache.batik.transcoder.TranscoderInput;
-import org.apache.batik.transcoder.TranscoderOutput;
-import org.apache.batik.transcoder.svg2svg.SVGTranscoder;
 import org.apache.batik.util.XMLResourceDescriptor;
-import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 
-import sma.ontology.DisplayOntology;
-import sma.ontology.Environment;
-import sma.ontology.EnvironmentInfo;
-import sma.ontology.Movement;
 import jade.content.lang.Codec;
 import jade.content.lang.Codec.CodecException;
 import jade.content.lang.sl.SLCodec;
@@ -32,7 +26,6 @@ import jade.core.AID;
 import jade.core.Agent;
 import jade.core.ServiceException;
 import jade.core.behaviours.CyclicBehaviour;
-import jade.core.behaviours.OneShotBehaviour;
 import jade.core.messaging.TopicManagementHelper;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
@@ -241,7 +234,8 @@ public class DisplayAgent extends Agent {
 	 */
 	public void setEnvironment(Environment env){
 		
-		OntoUtilities.setParent(env.getRootPlayground());
+//		OntoUtilities.setParent(env.getRootPlayground());
+		env.getRootPlayground().setParent();
 		this.environment = env;
 		this.daGUI.setScale(env.getScale());
 		

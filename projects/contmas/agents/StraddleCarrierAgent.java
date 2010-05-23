@@ -23,10 +23,10 @@ package contmas.agents;
 import java.util.Vector;
 
 import mas.display.DisplayableAgent;
+import mas.display.ontology.Position;
+import mas.display.ontology.Size;
+import mas.display.ontology.Speed;
 import mas.movement.MoveToPointBehaviour;
-import sma.ontology.Position;
-import sma.ontology.Size;
-import sma.ontology.Speed;
 import jade.content.lang.Codec;
 import jade.content.onto.Ontology;
 import jade.core.AID;

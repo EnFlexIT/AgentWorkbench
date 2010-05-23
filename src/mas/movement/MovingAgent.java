@@ -1,12 +1,12 @@
 package mas.movement;
 
 import mas.display.DisplayableAgent;
-import sma.ontology.AgentObject;
-import sma.ontology.DisplayOntology;
-import sma.ontology.PlaygroundObject;
-import sma.ontology.Position;
-import sma.ontology.Size;
-import sma.ontology.Speed;
+import mas.display.ontology.AgentObject;
+import mas.display.ontology.DisplayOntology;
+import mas.display.ontology.PlaygroundObject;
+import mas.display.ontology.Position;
+import mas.display.ontology.Size;
+import mas.display.ontology.Speed;
 import jade.content.lang.Codec;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.Ontology;

@@ -1,11 +1,11 @@
 package mas.display;
 
+import mas.display.ontology.Position;
+import mas.display.ontology.Size;
+import mas.display.ontology.Speed;
 import jade.content.lang.Codec;
 import jade.content.onto.Ontology;
 import jade.core.AID;
-import sma.ontology.Position;
-import sma.ontology.Size;
-import sma.ontology.Speed;
 /**
  * This interface has to be implemented by all agents using the display functionality. A default implementation is provided in mas.movement.MovingAgent
  * @author Nils

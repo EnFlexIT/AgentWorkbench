@@ -40,17 +40,17 @@ import org.xml.sax.SAXException;
 import application.Language;
 import application.Project;
 
-import sma.ontology.AbstractObject;
-import sma.ontology.AgentObject;
-import sma.ontology.Environment;
-import sma.ontology.ObstacleObject;
-import sma.ontology.PlaygroundObject;
-import sma.ontology.Position;
-import sma.ontology.Scale;
-import sma.ontology.Size;
-import sma.ontology.Speed;
 
 import mas.display.SvgTypes;
+import mas.display.ontology.AbstractObject;
+import mas.display.ontology.AgentObject;
+import mas.display.ontology.Environment;
+import mas.display.ontology.ObstacleObject;
+import mas.display.ontology.PlaygroundObject;
+import mas.display.ontology.Position;
+import mas.display.ontology.Scale;
+import mas.display.ontology.Size;
+import mas.display.ontology.Speed;
 import mas.environment.OntoUtilities;
 import mas.environment.guiComponents.EnvironmentControllerGUI;
 
@@ -415,31 +415,47 @@ public class EnvironmentController{
 			switch(type){
 				
 				case SVG:
-					width = OntoUtilities.calcRWU(Float.parseFloat(svg.getAttributeNS(null, "width")), scale);
-					height = OntoUtilities.calcRWU(Float.parseFloat(svg.getAttributeNS(null, "height")), scale);
+//					width = OntoUtilities.calcRWU(Float.parseFloat(svg.getAttributeNS(null, "width")), scale);
+//					height = OntoUtilities.calcRWU(Float.parseFloat(svg.getAttributeNS(null, "height")), scale);
+					width = scale.calcRwu(Float.parseFloat(svg.getAttributeNS(null, "width")));
+					height = scale.calcRwu(Float.parseFloat(svg.getAttributeNS(null, "height")));
 					xPos = 0;
 					yPos = 0;
 				break;
 				
 				case RECT:
 				case IMAGE:
-					width = OntoUtilities.calcRWU(Float.parseFloat(svg.getAttributeNS(null, "width")), scale);
-					height = OntoUtilities.calcRWU(Float.parseFloat(svg.getAttributeNS(null, "height")), scale);
-					xPos = OntoUtilities.calcRWU(Float.parseFloat(svg.getAttributeNS(null, "x")), scale);
-					yPos = OntoUtilities.calcRWU(Float.parseFloat(svg.getAttributeNS(null, "y")), scale);					
+//					width = OntoUtilities.calcRWU(Float.parseFloat(svg.getAttributeNS(null, "width")), scale);
+//					height = OntoUtilities.calcRWU(Float.parseFloat(svg.getAttributeNS(null, "height")), scale);
+//					xPos = OntoUtilities.calcRWU(Float.parseFloat(svg.getAttributeNS(null, "x")), scale);
+//					yPos = OntoUtilities.calcRWU(Float.parseFloat(svg.getAttributeNS(null, "y")), scale);
+					
+					width = scale.calcRwu(Float.parseFloat(svg.getAttributeNS(null, "width")));
+					height = scale.calcRwu(Float.parseFloat(svg.getAttributeNS(null, "height")));
+					xPos = scale.calcRwu(Float.parseFloat(svg.getAttributeNS(null, "x")));
+					yPos = scale.calcRwu(Float.parseFloat(svg.getAttributeNS(null, "y")));
 				break;
 				
 				case CIRCLE:
-					width = height = OntoUtilities.calcRWU(Float.parseFloat(svg.getAttributeNS(null, "r")), scale);
-					xPos = OntoUtilities.calcRWU(Float.parseFloat(svg.getAttributeNS(null, "cx"))-(width/2), scale);
-					yPos = OntoUtilities.calcRWU(Float.parseFloat(svg.getAttributeNS(null, "cy"))-(height/2), scale);
+//					width = height = OntoUtilities.calcRWU(Float.parseFloat(svg.getAttributeNS(null, "r")), scale);
+//					xPos = OntoUtilities.calcRWU(Float.parseFloat(svg.getAttributeNS(null, "cx"))-(width/2), scale);
+//					yPos = OntoUtilities.calcRWU(Float.parseFloat(svg.getAttributeNS(null, "cy"))-(height/2), scale);
+					
+					width = height = scale.calcRwu(Float.parseFloat(svg.getAttributeNS(null, "r")));
+					xPos = scale.calcRwu(Float.parseFloat(svg.getAttributeNS(null, "cx"))-(width/2));
+					yPos = scale.calcRwu(Float.parseFloat(svg.getAttributeNS(null, "cy"))-(height/2));
 				break;
 				
 				case ELLIPSE:
-					width = OntoUtilities.calcRWU(Float.parseFloat(svg.getAttributeNS(null, "rx")), scale);
-					height = OntoUtilities.calcRWU(Float.parseFloat(svg.getAttributeNS(null, "ry")), scale);
-					xPos = OntoUtilities.calcRWU(Float.parseFloat(svg.getAttributeNS(null, "cx"))-(width/2), scale);
-					yPos = OntoUtilities.calcRWU(Float.parseFloat(svg.getAttributeNS(null, "cy"))-(height/2), scale);
+//					width = OntoUtilities.calcRWU(Float.parseFloat(svg.getAttributeNS(null, "rx")), scale);
+//					height = OntoUtilities.calcRWU(Float.parseFloat(svg.getAttributeNS(null, "ry")), scale);
+//					xPos = OntoUtilities.calcRWU(Float.parseFloat(svg.getAttributeNS(null, "cx"))-(width/2), scale);
+//					yPos = OntoUtilities.calcRWU(Float.parseFloat(svg.getAttributeNS(null, "cy"))-(height/2), scale);
+					
+					width = scale.calcRwu(Float.parseFloat(svg.getAttributeNS(null, "rx")));
+					height = scale.calcRwu(Float.parseFloat(svg.getAttributeNS(null, "ry")));
+					xPos = scale.calcRwu(Float.parseFloat(svg.getAttributeNS(null, "cx"))-(width/2));
+					yPos = scale.calcRwu(Float.parseFloat(svg.getAttributeNS(null, "cy"))-(height/2));
 				break;
 					
 			}
@@ -556,7 +572,7 @@ public class EnvironmentController{
 	public boolean moveObject(AbstractObject object, PlaygroundObject target){
 		
 		boolean success = false;
-		if(success = OntoUtilities.pgContains(target, object)){
+		if(success = target.contains(object)){
 			object.getParent().removeChildObjects(object);
 			target.addChildObjects(object);
 			object.setParent(target);
