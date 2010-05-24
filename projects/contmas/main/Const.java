@@ -20,9 +20,8 @@
  */
 package contmas.main;
 
-import contmas.ontology.BlockAddress;
-import contmas.ontology.Phy_Position;
-import contmas.ontology.Phy_Size;
+import contmas.agents.ContainerAgent;
+import contmas.ontology.*;
 
 /**
  * @author Hanno - Felix Wagner
@@ -119,4 +118,123 @@ public class Const{
 		}
 		return out;
 	}
+
+	public static Phy_Position getZeroPosition(){
+		Phy_Position zero=new Phy_Position();
+		zero.setPhy_x(0.0F);
+		zero.setPhy_y(0.0F);
+		return zero;
+	}
+
+	/*
+		 * Assumes, that subDomain lies_in containingDomain or containingDomain has_subdomain subDomain transitively
+		 */
+		public static Phy_Position getPositionRelativeTo(Phy_Position positionInSubDomain,Domain subDomain,Domain containingDomain){
+			if(subDomain.getId().equals(containingDomain.getId())){
+				return positionInSubDomain;
+	//			return getZeroPosition();
+			}
+	
+			//TODO so SOMETHING with containingDomain. Some kind of check or so.
+			Phy_Position a=positionInSubDomain;
+			Phy_Position b=subDomain.getIs_in_position();
+			Phy_Position insidePosition=addPositions(a,b);
+	
+			return insidePosition;
+		}
+
+		public static Domain findRootDomain(Domain accessPoint){
+			Domain liesIn=accessPoint.getLies_in();
+			if(liesIn == null){
+				return accessPoint;
+			}else{
+				return findRootDomain(liesIn);
+			}
+		}
+
+		public static void printTOInfo(TransportOrder call, ContainerAgent a){
+		
+		//		echoStatus("Starts at: " + call.getStarts_at().getAbstract_designation());
+		//		echoStatus("Ends at: " + call.getEnds_at().getAbstract_designation());
+		
+				Phy_Size startSize=call.getStarts_at().getAbstract_designation().getHas_size();
+				Phy_Position startPos=call.getStarts_at().getAbstract_designation().getIs_in_position();
+		
+				Phy_Size endSize=call.getEnds_at().getAbstract_designation().getHas_size();
+				Phy_Position endPos=call.getEnds_at().getAbstract_designation().getIs_in_position();
+		
+				String startSizeStr="";
+				String startPosStr="";
+				String endSizeStr="";
+				String endPosStr="";
+		
+				try{
+					startSizeStr="width=" + startSize.getPhy_width() + ", height:" + startSize.getPhy_height();
+					startPosStr=positionToString(startPos);
+				}catch(NullPointerException e){
+					a.echoStatus("Bad start: size=" + startSize + "; pos=:" + startPos);
+				}
+		
+				try{
+					endSizeStr="width=" + endSize.getPhy_width() + ", height:" + endSize.getPhy_height();
+					endPosStr=positionToString(endPos);
+				}catch(NullPointerException e){
+					a.echoStatus("Bad end: size=" + endSize + "; pos=:" + endPos);
+				}
+		
+				a.echoStatus("startSize: " + startSizeStr + "; startPos:" + startPosStr + "; endSize:" + endSizeStr + "; endPos:" + endPosStr);
+		
+			}
+
+		public static Phy_Position getManhattanPosition(Phy_Position from,Phy_Position to,Float dtg){
+				Float distance=Const.getManhattanDistance(from,to)- dtg;
+				Phy_Position interpolatedPosition=new Phy_Position();
+				Float deltaX=to.getPhy_x() - from.getPhy_x();
+				Float deltaY=to.getPhy_y() - from.getPhy_y();
+				Float calcX; 
+				Float calcY;
+				if(distance<=Math.abs(deltaX)){
+					calcX=distance;
+					calcY=0F;
+				} else {
+					calcX=Math.abs(deltaX);
+					calcY=distance-Math.abs(deltaX);
+				}
+				
+				if(deltaX<0){
+					calcX=-calcX;
+				}
+				if(deltaY<0){
+					calcY=-calcY;
+				}
+				interpolatedPosition.setPhy_x(from.getPhy_x()+calcX);
+				interpolatedPosition.setPhy_y(from.getPhy_y()+calcY);
+		
+		//		echoStatus("interpolated position "+positionToString(interpolatedPosition));
+				
+				return interpolatedPosition;
+			}
+
+		public static Float getManhattanDistance(Phy_Position from,Phy_Position to){
+			Float deltaX=from.getPhy_x() - to.getPhy_x();
+			Float deltaY=from.getPhy_y() - to.getPhy_y();
+		
+			return Math.abs(deltaX) + Math.abs(deltaY);
+		}
+
+		public static Phy_Position getManhattanTurningPoint(Phy_Position curPos,Phy_Position to){
+		//		Float deltaY=Math.abs(Math.abs(to.getPhy_y()) - Math.abs(curPos.getPhy_y()));
+				Phy_Position turningPoint=new Phy_Position();
+		
+				turningPoint.setPhy_x(curPos.getPhy_x());
+				turningPoint.setPhy_y(to.getPhy_y());
+		//		turningPoint=getManhattanPosition(curPos,to,deltaY);
+				
+				return turningPoint;
+			}
+
+		public static Domain findClosestCommonDomain(Domain a,Domain b){
+		
+			return a; //TODO algorithm
+		}
 }

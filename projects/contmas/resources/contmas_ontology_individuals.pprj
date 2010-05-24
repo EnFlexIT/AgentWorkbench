@@ -1,4 +1,4 @@
-; Fri May 21 12:56:31 NZST 2010
+; Mon May 24 14:06:50 NZST 2010
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -6,11 +6,11 @@
 ([BROWSER_SLOT_NAMES] of  Property_List
 
 	(properties
-		[contmas_ontology_individuals_ProjectKB_Instance_239]
-		[contmas_ontology_individuals_ProjectKB_Instance_240]
-		[contmas_ontology_individuals_ProjectKB_Instance_241]
-		[contmas_ontology_individuals_ProjectKB_Instance_242]
-		[contmas_ontology_individuals_ProjectKB_Instance_243]))
+		[contmas_ontology_individuals_ProjectKB_Instance_426]
+		[contmas_ontology_individuals_ProjectKB_Instance_427]
+		[contmas_ontology_individuals_ProjectKB_Instance_428]
+		[contmas_ontology_individuals_ProjectKB_Instance_429]
+		[contmas_ontology_individuals_ProjectKB_Instance_430]))
 
 ([CLSES_TAB] of  Widget
 
@@ -97,36 +97,11 @@
 ([contmas_ontology_individuals_ProjectKB_Instance_23] of  Property_List
 )
 
-([contmas_ontology_individuals_ProjectKB_Instance_239] of  String
-
-	(name "owl:Thing")
-	(string_value "%3ANAME"))
-
 ([contmas_ontology_individuals_ProjectKB_Instance_24] of  Widget
 
 	(is_hidden TRUE)
 	(property_list [contmas_ontology_individuals_ProjectKB_Instance_25])
 	(widget_class_name "org.algernon.kb.okbc.protege.plugins.AlgernonTab"))
-
-([contmas_ontology_individuals_ProjectKB_Instance_240] of  String
-
-	(name ":PAL-CONSTRAINT")
-	(string_value "%3APAL-NAME"))
-
-([contmas_ontology_individuals_ProjectKB_Instance_241] of  String
-
-	(name ":INSTANCE-ANNOTATION")
-	(string_value "%3AANNOTATION-TEXT"))
-
-([contmas_ontology_individuals_ProjectKB_Instance_242] of  String
-
-	(name ":META-CLASS")
-	(string_value "%3ANAME"))
-
-([contmas_ontology_individuals_ProjectKB_Instance_243] of  String
-
-	(name "owl:Class")
-	(string_value "%3ANAME"))
 
 ([contmas_ontology_individuals_ProjectKB_Instance_25] of  Property_List
 )
@@ -218,8 +193,33 @@
 	(property_list [contmas_ontology_individuals_ProjectKB_Instance_43])
 	(widget_class_name "edu.stanford.smi.protege.widget.instance_tree.KnowledgeTreeTab"))
 
+([contmas_ontology_individuals_ProjectKB_Instance_426] of  String
+
+	(name "owl:Thing")
+	(string_value "%3ANAME"))
+
+([contmas_ontology_individuals_ProjectKB_Instance_427] of  String
+
+	(name ":PAL-CONSTRAINT")
+	(string_value "%3APAL-NAME"))
+
+([contmas_ontology_individuals_ProjectKB_Instance_428] of  String
+
+	(name ":INSTANCE-ANNOTATION")
+	(string_value "%3AANNOTATION-TEXT"))
+
+([contmas_ontology_individuals_ProjectKB_Instance_429] of  String
+
+	(name ":META-CLASS")
+	(string_value "%3ANAME"))
+
 ([contmas_ontology_individuals_ProjectKB_Instance_43] of  Property_List
 )
+
+([contmas_ontology_individuals_ProjectKB_Instance_430] of  String
+
+	(name "owl:Class")
+	(string_value "%3ANAME"))
 
 ([contmas_ontology_individuals_ProjectKB_Instance_44] of  Widget
 

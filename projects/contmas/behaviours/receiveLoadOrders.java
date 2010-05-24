@@ -26,6 +26,7 @@ import jade.proto.AchieveREResponder;
 import jade.proto.ContractNetResponder;
 import contmas.agents.ContainerAgent;
 import contmas.agents.ContainerHolderAgent;
+import contmas.interfaces.TacticalMemorizer;
 import contmas.interfaces.TransportOrderOfferer;
 import contmas.main.MatchAgentAction;
 import contmas.ontology.*;
@@ -492,7 +493,9 @@ public class receiveLoadOrders extends ContractNetResponder{
 			this.myCAgent.echoStatus("ERROR: Auftrag, auf den ich mich beworben habe (abgelehnt), nicht zum Entfernen gefunden. War "+oldState.getClass().getSimpleName(),acceptedTOC,ContainerAgent.LOGGING_ERROR);
 		}else{
 			//			((ContainerAgent)myAgent).echoStatus("Abgelehnten Auftrag entfernt.",acceptedTOC);
-			this.myCAgent.memorizeTacticalTarget(oldState.getLoad_offer().getStarts_at());
+			if(this.myCAgent instanceof TacticalMemorizer){
+				((TacticalMemorizer) this.myCAgent).memorizeTacticalTarget(oldState.getLoad_offer().getStarts_at());
+			}
 		}
 	}
 

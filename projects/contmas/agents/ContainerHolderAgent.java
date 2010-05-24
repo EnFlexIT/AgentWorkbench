@@ -595,9 +595,4 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		*/
 		return targetPosition;
 	}
-	
-	protected List tacticalTargets=new ArrayList(); //<Phy_Position>
-	
-	public void memorizeTacticalTarget(Designator target){ //Hook for considering functions in specific agents
-	}
 }

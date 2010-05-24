@@ -657,6 +657,12 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 			modl.addElement(new AgentClassElement(StraddleCarrier.class));
 			modl.addElement(new AgentClassElement(Yard.class));
 			this.agentType.setModel(modl);
+			agentType.addActionListener(new java.awt.event.ActionListener(){
+				public void actionPerformed(java.awt.event.ActionEvent e){
+//					JComboBox cb=(JComboBox) e.getSource();
+					alterAgentName();
+				}
+			});
 		}
 		return this.agentType;
 	}

@@ -114,7 +114,9 @@ public class requestExecuteAppointment extends AchieveREInitiator{
 					
 					Phy_Position targetPosition=myCAgent.calculateTargetPosition(curTO.getEnds_at());
 					
-					myMoveableAgent.addAsapMovementTo(targetPosition);
+					myMoveableAgent.addDisplayMove(myCAgent.getAID().getLocalName(),targetPosition);
+
+					//				myMoveableAgent.addAsapMovementTo(targetPosition);
 					setTargetPosition(targetPosition);
 				}
 			}

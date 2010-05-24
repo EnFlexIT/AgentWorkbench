@@ -20,6 +20,7 @@
  */
 package contmas.interfaces;
 
+import mas.movement.MoveToPointBehaviour;
 import contmas.ontology.Movement;
 import contmas.ontology.Phy_Position;
 import jade.util.leap.List;
@@ -29,14 +30,36 @@ import jade.util.leap.List;
  *
  */
 public interface MoveableAgent{
+	
+	static final String SHADOW_SUFFIX="Shadow";
+
+	static final Float speed=1F/10F; // pixel pro ms= 0,1px/ms
+
+	static final Float SPEED_VALUE=100.0F; //realwelteinheiten pro sekunde = 100 px/s= 100px/1000ms= 1/10 px/ms= 0,1 px/ms
+
 
 	List getPendingMovements();
 
-
 	void setAt(Phy_Position to);
+
 	public Boolean isAt(Phy_Position requested);
-	void addAsapMovementTo(Phy_Position to);
+
+//	void addAsapMovementTo(Phy_Position to);
+
 	public Phy_Position getCurrentPosition();
+
 	public Phy_Position interpolatePosition(Movement mov);
 
+	public MoveToPointBehaviour addDisplayMove(String reporter,Phy_Position destPos);
+
+	/**
+	 * @param distance
+	 * @return
+	 */
+	Long calculateDuration(Long distance);
+
+	/**
+	 * @return
+	 */
+	Phy_Position getRelativePosition();
 }
