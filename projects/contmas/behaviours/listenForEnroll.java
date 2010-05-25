@@ -21,10 +21,7 @@ import jade.lang.acl.MessageTemplate;
 import jade.proto.AchieveREResponder;
 import contmas.agents.ContainerAgent;
 import contmas.main.MatchAgentAction;
-import contmas.ontology.AssignHarborQuay;
-import contmas.ontology.EnrollAtHarbor;
-import contmas.ontology.Quay;
-import contmas.ontology.Sea;
+import contmas.ontology.*;
 
 public class listenForEnroll extends AchieveREResponder{
 	private static final long serialVersionUID= -4440040520781720185L;
@@ -46,10 +43,10 @@ public class listenForEnroll extends AchieveREResponder{
 
 		((ContainerAgent) this.myAgent).extractAction(request);
 		reply.setPerformative(ACLMessage.INFORM);
-		AssignHarborQuay act=new AssignHarborQuay();
-		Quay concept=new Quay();
+		AssignBerth act=new AssignBerth();
+		Berth concept=new Berth();
 		concept.setLies_in(new Sea());
-		act.setAssigned_quay(concept);
+		act.setAssigned_berth(concept);
 		act.setAvailable_cranes(ContainerAgent.toAIDList(((ContainerAgent) this.myAgent).getAIDsFromDF("craning")));
 		((ContainerAgent) this.myAgent).fillMessage(reply,act);
 		return reply;

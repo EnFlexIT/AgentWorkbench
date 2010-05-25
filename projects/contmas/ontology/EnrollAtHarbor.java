@@ -8,20 +8,9 @@ import jade.core.*;
 /**
 * Protege name: EnrollAtHarbor
 * @author ontology bean generator
-* @version 2010/05/25, 11:52:34
+* @version 2010/05/25, 12:32:32
 */
 public class EnrollAtHarbor implements AgentAction {
-
-   /**
-* Protege name: required_turnover_capacity
-   */
-   private LoadList required_turnover_capacity;
-   public void setRequired_turnover_capacity(LoadList value) { 
-    this.required_turnover_capacity=value;
-   }
-   public LoadList getRequired_turnover_capacity() {
-     return this.required_turnover_capacity;
-   }
 
    /**
 * Protege name: ship_length
@@ -32,6 +21,17 @@ public class EnrollAtHarbor implements AgentAction {
    }
    public float getShip_length() {
      return this.ship_length;
+   }
+
+   /**
+* Protege name: required_turnover_capacity
+   */
+   private LoadList required_turnover_capacity;
+   public void setRequired_turnover_capacity(LoadList value) { 
+    this.required_turnover_capacity=value;
+   }
+   public LoadList getRequired_turnover_capacity() {
+     return this.required_turnover_capacity;
    }
 
 }

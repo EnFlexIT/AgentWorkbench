@@ -8,20 +8,9 @@ import jade.core.*;
 /**
 * Protege name: ProvidePopulatedBayMap
 * @author ontology bean generator
-* @version 2010/05/25, 11:52:34
+* @version 2010/05/25, 12:32:32
 */
 public class ProvidePopulatedBayMap implements AgentAction {
-
-   /**
-* Protege name: provides
-   */
-   private BayMap provides;
-   public void setProvides(BayMap value) { 
-    this.provides=value;
-   }
-   public BayMap getProvides() {
-     return this.provides;
-   }
 
    /**
 * Protege name: provides_population
@@ -43,5 +32,16 @@ public class ProvidePopulatedBayMap implements AgentAction {
    public Iterator getAllProvides_population() {return provides_population.iterator(); }
    public List getProvides_population() {return provides_population; }
    public void setProvides_population(List l) {provides_population = l; }
+
+   /**
+* Protege name: provides
+   */
+   private BayMap provides;
+   public void setProvides(BayMap value) { 
+    this.provides=value;
+   }
+   public BayMap getProvides() {
+     return this.provides;
+   }
 
 }

@@ -6,21 +6,21 @@ import jade.util.leap.*;
 import jade.core.*;
 
 /**
-* Protege name: AssignHarborQuay
+* Protege name: AssignBerth
 * @author ontology bean generator
-* @version 2010/05/25, 11:52:34
+* @version 2010/05/25, 12:32:32
 */
-public class AssignHarborQuay implements AgentAction {
+public class AssignBerth implements AgentAction {
 
    /**
-* Protege name: assigned_quay
+* Protege name: assigned_berth
    */
-   private Quay assigned_quay;
-   public void setAssigned_quay(Quay value) { 
-    this.assigned_quay=value;
+   private Object assigned_berth;
+   public void setAssigned_berth(Object value) { 
+    this.assigned_berth=value;
    }
-   public Quay getAssigned_quay() {
-     return this.assigned_quay;
+   public Object getAssigned_berth() {
+     return this.assigned_berth;
    }
 
    /**

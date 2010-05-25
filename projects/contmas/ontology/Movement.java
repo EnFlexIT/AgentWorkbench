@@ -8,20 +8,9 @@ import jade.core.*;
 /**
 * Protege name: Movement
 * @author ontology bean generator
-* @version 2010/05/25, 11:52:33
+* @version 2010/05/25, 12:32:32
 */
 public class Movement implements Concept {
-
-   /**
-* Protege name: move_to
-   */
-   private Phy_Position move_to;
-   public void setMove_to(Phy_Position value) { 
-    this.move_to=value;
-   }
-   public Phy_Position getMove_to() {
-     return this.move_to;
-   }
 
    /**
 * Protege name: be_there_at
@@ -32,6 +21,17 @@ public class Movement implements Concept {
    }
    public String getBe_there_at() {
      return this.be_there_at;
+   }
+
+   /**
+* Protege name: move_to
+   */
+   private Phy_Position move_to;
+   public void setMove_to(Phy_Position value) { 
+    this.move_to=value;
+   }
+   public Phy_Position getMove_to() {
+     return this.move_to;
    }
 
 }
