@@ -20,6 +20,8 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.proto.AchieveREResponder;
 import contmas.agents.ContainerAgent;
+import contmas.agents.ContainerHolderAgent;
+import contmas.agents.HarborMasterAgent;
 import contmas.main.MatchAgentAction;
 import contmas.ontology.*;
 
@@ -44,8 +46,9 @@ public class listenForEnroll extends AchieveREResponder{
 		((ContainerAgent) this.myAgent).extractAction(request);
 		reply.setPerformative(ACLMessage.INFORM);
 		AssignBerth act=new AssignBerth();
-		Berth concept=new Berth();
-		concept.setLies_in(new Sea());
+		Domain concept=new Berth();
+		concept.setId("QuaiOne");
+		concept=ContainerHolderAgent.reduceDomain(ContainerHolderAgent.findDomain("QuaiOne", ((HarborMasterAgent)myAgent).getHarbourArea()));
 		act.setAssigned_berth(concept);
 		act.setAvailable_cranes(ContainerAgent.toAIDList(((ContainerAgent) this.myAgent).getAIDsFromDF("craning")));
 		((ContainerAgent) this.myAgent).fillMessage(reply,act);

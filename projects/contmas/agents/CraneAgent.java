@@ -13,11 +13,17 @@
  */
 package contmas.agents;
 
+import jade.util.leap.ArrayList;
+import jade.util.leap.List;
 import contmas.behaviours.*;
 import contmas.interfaces.TransportOrderHandler;
 import contmas.interfaces.TransportOrderOfferer;
+import contmas.ontology.ActiveContainerHolder;
 import contmas.ontology.ApronArea;
 import contmas.ontology.Crane;
+import contmas.ontology.Domain;
+import contmas.ontology.RouteInformation;
+import contmas.ontology.YardArea;
 
 public class CraneAgent extends ActiveContainerAgent implements TransportOrderHandler,TransportOrderOfferer{
 	private static final long serialVersionUID= -193864979181761694L;
@@ -34,6 +40,15 @@ public class CraneAgent extends ActiveContainerAgent implements TransportOrderHa
 		super.setup();
 		this.handleTransportOrder();
 		this.offerTransportOrder();
+}
+	
+	@Override
+	public void processHarbourLayout(Domain current_harbour_layout){
+		super.processHarbourLayout(current_harbour_layout);
+		YardArea finalTarget=new YardArea();
+		finalTarget.setId("StorageYard");
+		
+		addDefaultRoute(finalTarget);
 	}
 	
 	@Override

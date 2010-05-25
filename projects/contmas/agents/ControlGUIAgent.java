@@ -227,15 +227,15 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 			
 			String[] args=new String[1]; //Because of different working directories 
 			args[0]=getWorkingDir();
-
+			
+			a=c.createNewAgent("RandomGenerator","contmas.agents.RandomGeneratorAgent",null);
+			a.start();
+			
 			a=c.createNewAgent("HarborMaster","contmas.agents.HarborMasterAgent",args);
 			a.start();
 			
 			this.harbourMaster=new AID();
 			this.harbourMaster.setName(a.getName());
-			
-			a=c.createNewAgent("RandomGenerator","contmas.agents.RandomGeneratorAgent",null);
-			a.start();
 
 			a=c.createNewAgent("Optimizer","contmas.agents.BayMapOptimisationAgent",null);
 			a.start();

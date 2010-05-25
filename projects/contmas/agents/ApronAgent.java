@@ -27,7 +27,9 @@ import contmas.behaviours.unload;
 import contmas.interfaces.TransportOrderHandler;
 import contmas.interfaces.TransportOrderOfferer;
 import contmas.ontology.Apron;
+import contmas.ontology.Domain;
 import contmas.ontology.Street;
+import contmas.ontology.YardArea;
 
 public class ApronAgent extends StaticContainerAgent implements TransportOrderHandler,TransportOrderOfferer{
 	private static final long serialVersionUID=4904170788284891727L;
@@ -44,6 +46,15 @@ public class ApronAgent extends StaticContainerAgent implements TransportOrderHa
 		super.setup();
 		this.handleTransportOrder();
 		this.offerTransportOrder();
+	}
+	
+	@Override
+	public void processHarbourLayout(Domain current_harbour_layout){
+		super.processHarbourLayout(current_harbour_layout);
+		YardArea finalTarget=new YardArea();
+		finalTarget.setId("StorageYard");
+		
+		addDefaultRoute(finalTarget);
 	}
 
 	@Override

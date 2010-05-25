@@ -110,7 +110,6 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 
 	public TransportOrder calculateEffort(TransportOrder call){
 		//call.setTakes_until(Math.abs((RandomGenerator.nextLong() + this.getBayUtilization()))+"");
-		;
 		call.setTakes_until((Math.abs(RandomGenerator.nextInt(10)) + this.getBayUtilization() + System.currentTimeMillis()) + "");
 		return call;
 
@@ -594,5 +593,14 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		echoStatus("targetPosition="+ Const.positionToString(targetPosition));
 		*/
 		return targetPosition;
+	}
+	
+	public void addDefaultRoute(Domain finalTarget){
+		List routingTable=new ArrayList();
+		RouteInformation route=new RouteInformation();
+		route.setTarget(inflateDomain(finalTarget));
+		route.setNext_hop(inflateDomain(targetAbstractDomain));
+		
+		this.getOntologyRepresentation().setReaches_eventually(routingTable);
 	}
 }
