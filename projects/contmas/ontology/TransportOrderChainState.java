@@ -8,20 +8,9 @@ import jade.core.*;
 /**
 * Protege name: TransportOrderChainState
 * @author ontology bean generator
-* @version 2010/05/18, 12:29:36
+* @version 2010/05/25, 11:52:34
 */
 public class TransportOrderChainState implements Concept {
-
-   /**
-* Protege name: load_offer
-   */
-   private TransportOrder load_offer;
-   public void setLoad_offer(TransportOrder value) { 
-    this.load_offer=value;
-   }
-   public TransportOrder getLoad_offer() {
-     return this.load_offer;
-   }
 
    /**
 * Protege name: at_address
@@ -32,6 +21,17 @@ public class TransportOrderChainState implements Concept {
    }
    public BlockAddress getAt_address() {
      return this.at_address;
+   }
+
+   /**
+* Protege name: load_offer
+   */
+   private TransportOrder load_offer;
+   public void setLoad_offer(TransportOrder value) { 
+    this.load_offer=value;
+   }
+   public TransportOrder getLoad_offer() {
+     return this.load_offer;
    }
 
 }
