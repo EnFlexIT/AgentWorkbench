@@ -96,11 +96,13 @@ public class listenForExecuteAppointmentReq extends AchieveREResponder{
 				RequestExecuteAppointment inAct=(RequestExecuteAppointment) myCAgent.extractAction(request);
 				curTO=inAct.getLoad_offer();
 				curTOC=inAct.getCorresponds_to();
+				
+				myCAgent.echoStatus("RequestExecuteAppointment received, parsing",curTOC,ContainerAgent.LOGGING_ERROR);
 
 				TransportOrderChainState curState=myCAgent.touchTOCState(curTOC);
 				destinationAddress=curState.getAt_address();
 				if( !(curState instanceof PlannedIn)){
-					myCAgent.echoStatus("ERROR: TOC not PlannedIn",curTOC,ContainerAgent.LOGGING_ERROR);
+					myCAgent.echoStatus("ERROR: TOC not PlannedIn, continuing anyway",curTOC,ContainerAgent.LOGGING_ERROR);
 				}
 			}
 		}
@@ -170,7 +172,7 @@ public class listenForExecuteAppointmentReq extends AchieveREResponder{
 				act.setLoad_status("FINISHED");
 
 				((ContainerAgent) this.myAgent).fillMessage(reply,act);
-				myCAgent.echoStatus("sent INFORM FINISHED",ContainerAgent.LOGGING_INFORM);
+				myCAgent.echoStatus("sent INFORM FINISHED",ContainerAgent.LOGGING_DEBUG);
 
 				getDataStore().put(RESPONSE_KEY,reply);
 			}

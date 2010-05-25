@@ -111,11 +111,11 @@ import rollout.TextFileRessourceRollOut;
 	}
 	
 	public boolean close() {
-		// --- Projekt schliessen ? -----------------------
+		// --- Projekt schlieﬂen ? -----------------------
 		String MsgHead = null;
 		String MsgText = null;
 
-		Application.MainWindow.setStatusBar(Language.translate("Projekt schliessen") + " ...");
+		Application.MainWindow.setStatusBar(Language.translate("Projekt schlieﬂen") + " ...");
 		if ( ProjectUnsaved == true ) {
 			MsgHead = Language.translate("Projekt '@' speichern?");
 			MsgHead = MsgHead.replace( "'@'", "'" + ProjectName + "'");			
@@ -159,7 +159,7 @@ import rollout.TextFileRessourceRollOut;
 	/**
 	 * This Procedure creates the default Project-Structure  for a new project. It creates the 
 	 * deault folders ('agents' 'ontology' 'envSetups' 'resources') and creates default fils
-	 * like the Project-Ontology main class 'AgentGUIProjectOntology'
+	 * like the project ontology main class 'AgentGUIProjectOntology'
 	 */
 	public void createDefaultProjectStructure() {
 		// --- create default folders --------------------- 

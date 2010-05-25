@@ -87,10 +87,10 @@ public class Platform extends Object {
 			}
 		}
 		else {
-			System.out.println( "Jade läuft bereits! => " + MASrt );			
+			System.out.println( "JADE läuft bereits! => " + MASrt );			
 		}
 		Application.MainWindow.setStatusJadeRunning(true);
-		// --- Jade-GUI zeigen --------------------------------------
+		// --- JADE-GUI zeigen --------------------------------------
 		jadeSystemAgentOpen( "rma", null );
 	}
 	
@@ -113,7 +113,7 @@ public class Platform extends Object {
 			}
 			if ( MASrt != null ) {
 				MASrt.shutDown();
-				System.out.println("Jade wurde beendet!");
+				System.out.println("JADE wurde beendet!");
 			}			
 		}
 		catch (Exception e) {
@@ -185,11 +185,11 @@ public class Platform extends Object {
 		
 		// --- Was the system already started? ---------------
 		if ( jadeMainContainerIsRunning() == false ) {
-			MsgHead = Language.translate("Jade wurde noch nicht gestartet!");
-			MsgText = Language.translate("Möchten Sie Jade nun starten und fortfahren?");
+			MsgHead = Language.translate("JADE wurde noch nicht gestartet!");
+			MsgText = Language.translate("Möchten Sie JADE nun starten und fortfahren?");
 			MsgAnswer =  JOptionPane.showInternalConfirmDialog( Application.MainWindow.getContentPane(), MsgText, MsgHead, JOptionPane.YES_NO_OPTION);
 			if ( MsgAnswer == 1 ) return; // --- NO,just exit 
-			// --- Start the Jade-Platform -------------------
+			// --- Start the JADE-Platform -------------------
 			jadeStart();
 			if ( RootAgentName == "rma" ) {
 				try {
@@ -352,7 +352,7 @@ public class Platform extends Object {
 		AgentContainer AgeCont = null;
 		String AgeContName = null;
 		
-		// --- Falls Jade noch nicht läuft ... ----------------
+		// --- Falls JADE noch nicht läuft ... ----------------
 		if ( jadeMainContainerIsRunning() == false ) {
 			return null;
 		}
@@ -414,11 +414,11 @@ public class Platform extends Object {
 
 		// --- Was the system already started? ---------------
 		if ( jadeMainContainerIsRunning() == false ) {
-			MsgHead = Language.translate("Jade wurde noch nicht gestartet!");
-			MsgText = Language.translate("Möchten Sie Jade nun starten und fortfahren?");
+			MsgHead = Language.translate("JADE wurde noch nicht gestartet!");
+			MsgText = Language.translate("Möchten Sie JADE nun starten und fortfahren?");
 			MsgAnswer = JOptionPane.showInternalConfirmDialog( Application.MainWindow.getContentPane(), MsgText, MsgHead, JOptionPane.YES_NO_OPTION);
 			if ( MsgAnswer == 1 ) return; // --- NO,just exit 
-			// --- Start the Jade-Platform -------------------
+			// --- Start the JADE-Platform -------------------
 			jadeStart();			
 		}
 		

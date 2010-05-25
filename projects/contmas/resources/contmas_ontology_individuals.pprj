@@ -1,4 +1,4 @@
-; Tue May 25 14:20:17 NZST 2010
+; Tue May 25 23:04:48 NZST 2010
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -6,11 +6,11 @@
 ([BROWSER_SLOT_NAMES] of  Property_List
 
 	(properties
-		[contmas_ontology_individuals_ProjectKB_Instance_270]
-		[contmas_ontology_individuals_ProjectKB_Instance_271]
-		[contmas_ontology_individuals_ProjectKB_Instance_272]
-		[contmas_ontology_individuals_ProjectKB_Instance_273]
-		[contmas_ontology_individuals_ProjectKB_Instance_274]))
+		[contmas_ontology_individuals_ProjectKB_Instance_546]
+		[contmas_ontology_individuals_ProjectKB_Instance_547]
+		[contmas_ontology_individuals_ProjectKB_Instance_548]
+		[contmas_ontology_individuals_ProjectKB_Instance_549]
+		[contmas_ontology_individuals_ProjectKB_Instance_550]))
 
 ([CLSES_TAB] of  Widget
 
@@ -114,31 +114,6 @@
 
 ([contmas_ontology_individuals_ProjectKB_Instance_27] of  Property_List
 )
-
-([contmas_ontology_individuals_ProjectKB_Instance_270] of  String
-
-	(name "owl:Thing")
-	(string_value "%3ANAME"))
-
-([contmas_ontology_individuals_ProjectKB_Instance_271] of  String
-
-	(name ":PAL-CONSTRAINT")
-	(string_value "%3APAL-NAME"))
-
-([contmas_ontology_individuals_ProjectKB_Instance_272] of  String
-
-	(name ":INSTANCE-ANNOTATION")
-	(string_value "%3AANNOTATION-TEXT"))
-
-([contmas_ontology_individuals_ProjectKB_Instance_273] of  String
-
-	(name ":META-CLASS")
-	(string_value "%3ANAME"))
-
-([contmas_ontology_individuals_ProjectKB_Instance_274] of  String
-
-	(name "owl:Class")
-	(string_value "%3ANAME"))
 
 ([contmas_ontology_individuals_ProjectKB_Instance_28] of  Widget
 
@@ -259,6 +234,31 @@
 
 ([contmas_ontology_individuals_ProjectKB_Instance_51] of  Property_List
 )
+
+([contmas_ontology_individuals_ProjectKB_Instance_546] of  String
+
+	(name "owl:Thing")
+	(string_value "%3ANAME"))
+
+([contmas_ontology_individuals_ProjectKB_Instance_547] of  String
+
+	(name ":PAL-CONSTRAINT")
+	(string_value "%3APAL-NAME"))
+
+([contmas_ontology_individuals_ProjectKB_Instance_548] of  String
+
+	(name ":INSTANCE-ANNOTATION")
+	(string_value "%3AANNOTATION-TEXT"))
+
+([contmas_ontology_individuals_ProjectKB_Instance_549] of  String
+
+	(name ":META-CLASS")
+	(string_value "%3ANAME"))
+
+([contmas_ontology_individuals_ProjectKB_Instance_550] of  String
+
+	(name "owl:Class")
+	(string_value "%3ANAME"))
 
 ([contmas_ontology_individuals_ProjectKB_Instance_6] of  Widget
 
@@ -7190,12 +7190,12 @@
 	(customized_instance_widgets
 		[PAL_FORM_WIDGET]
 		[KB_713803_Instance_477]
-		[KB_713803_Instance_780]
 		[INSTANCE_ANNOTATION_FORM_WIDGET]
-		[KB_713803_Instance_693]
+		[KB_713803_Instance_780]
 		[KB_301165_Instance_856]
-		[KB_713803_Instance_648]
+		[KB_713803_Instance_693]
 		[KB_691299_Instance_537]
+		[KB_713803_Instance_648]
 		[KB_691299_Instance_398]
 		[KB_303942_Instance_68]
 		[KB_938545_Instance_166]
@@ -7282,15 +7282,15 @@
 		":SYSTEM-CLASS"
 		"owl:oneOf"
 		"owl:DataRange"
-		"rdf:Property"
 		"owl:DeprecatedProperty"
+		"rdf:Property"
 		"owl:DeprecatedClass"
 		"rdf:Statement"
 		"rdf:type"
 		"rdf:subject"
 		"rdf:predicate"
-		":OWL-ANONYMOUS-ROOT"
 		"rdf:object"
+		":OWL-ANONYMOUS-ROOT"
 		"rdfs:Container"
 		"owl:AllDifferent"
 		"owl:distinctMembers"

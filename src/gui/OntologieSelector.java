@@ -69,7 +69,7 @@ public class OntologieSelector extends JDialog implements ActionListener{
 		jLabelOntoList.setText(Language.translate("Auswahl Ontologien"));
 		jLabelShow.setText(Language.translate("Ansicht:"));
 		jRadioButtonShowAll.setText(Language.translate("Alle Ontologien"));
-		jRadioButtonShowNoneJade.setText(Language.translate("Nur Nicht-Jade-Ontologien"));
+		jRadioButtonShowNoneJade.setText(Language.translate("Nur Nicht-JADE-Ontologien"));
 		jButtonSelect.setText(Language.translate("Hinzufügen"));
 		jButtonCancel.setText(Language.translate("Abbrechen"));
 		// --- Dialog zentrieren --------------------------
@@ -286,7 +286,7 @@ public class OntologieSelector extends JDialog implements ActionListener{
 	private JRadioButton getJRadioButtonShowNoneJade() {
 		if (jRadioButtonShowNoneJade == null) {
 			jRadioButtonShowNoneJade = new JRadioButton();
-			jRadioButtonShowNoneJade.setText("Nur Nicht-Jade-Ontologien");
+			jRadioButtonShowNoneJade.setText("Nur Nicht-JADE-Ontologien");
 			jRadioButtonShowNoneJade.setActionCommand("NoneJadeOntologiesOnly");
 			jRadioButtonShowNoneJade.setSelected(true);
 			jRadioButtonShowNoneJade.addActionListener(this);

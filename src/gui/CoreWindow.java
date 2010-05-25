@@ -125,7 +125,7 @@ public class CoreWindow extends JFrame implements ComponentListener{
 		this.add( getMainSplitpane() );
 		this.setSize(900, 600);	
 		
-		// --- Listener für das Schliessen der Applikation ----
+		// --- Listener für das Schließen der Applikation ----
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent evt) {
 			Application.quit();
@@ -186,11 +186,11 @@ public class CoreWindow extends JFrame implements ComponentListener{
 	}
 	public void setStatusJadeRunning(boolean runs) {
 		if ( runs == false ) { 
-			StatusJade.setText( Language.translate("Jade wurde noch nicht gestartet.") );
+			StatusJade.setText( Language.translate("JADE wurde noch nicht gestartet.") );
 			StatusJade.setIcon(iconRed);			
 		}
 		else {
-			StatusJade.setText( Language.translate("Jade wurde lokal gestartet.") );
+			StatusJade.setText( Language.translate("JADE wurde lokal gestartet.") );
 			StatusJade.setIcon(iconGreen);
 		};		
 	}
@@ -335,7 +335,7 @@ public class CoreWindow extends JFrame implements ComponentListener{
 			jMenuMainProject.setText(Language.translate("Projekte"));			
 			jMenuMainProject.add( new CWMenueItem( "ProjectNew", Language.translate("Neues Projekt"), "MBnew.png" )) ;
 			jMenuMainProject.add( new CWMenueItem( "ProjectOpen", Language.translate("Projekt öffnen"), "MBopen.png" )) ;
-			jMenuMainProject.add( new CWMenueItem( "ProjectClose", Language.translate("Projekt schliessen"), "MBclose.png" )) ;
+			jMenuMainProject.add( new CWMenueItem( "ProjectClose", Language.translate("Projekt schließen"), "MBclose.png" )) ;
 			jMenuMainProject.addSeparator();
 			jMenuMainProject.add( new CWMenueItem( "ProjectSave", Language.translate("Projekt speichern"), "MBsave.png" )) ;
 			jMenuMainProject.addSeparator();
@@ -344,7 +344,7 @@ public class CoreWindow extends JFrame implements ComponentListener{
 		return jMenuMainProject;
 	}
 	// ------------------------------------------------------------
-	// --- Menü "Jade" --------------------------------------------
+	// --- Menü "JADE" --------------------------------------------
 	// ------------------------------------------------------------
 	private JMenu getjMenuMainView() {
 		if (jMenuMainView == null) {
@@ -355,14 +355,14 @@ public class CoreWindow extends JFrame implements ComponentListener{
 		return jMenuMainView;
 	}
 	// ------------------------------------------------------------
-	// --- Menü "Jade" --------------------------------------------
+	// --- Menü "JADE" --------------------------------------------
 	// ------------------------------------------------------------
 	private JMenu getjMenuMainJade() {
 		if (jMenuMainJade == null) {
 			jMenuMainJade = new JMenu();
-			jMenuMainJade.setText(Language.translate("Jade"));			
-			jMenuMainJade.add( new CWMenueItem( "JadeStart", Language.translate("Jade starten"), "MBJadeOn.png" )) ;
-			jMenuMainJade.add( new CWMenueItem( "JadeStop", Language.translate("Jade stoppen"), "MBJadeOff.png" )) ;
+			jMenuMainJade.setText(Language.translate("JADE"));			
+			jMenuMainJade.add( new CWMenueItem( "JadeStart", Language.translate("JADE starten"), "MBJadeOn.png" )) ;
+			jMenuMainJade.add( new CWMenueItem( "JadeStop", Language.translate("JADE stoppen"), "MBJadeOff.png" )) ;
 			jMenuMainJade.addSeparator();
 			jMenuMainJade.add( new CWMenueItem( "PopRMAStart", Language.translate("RMA (Remote Monitoring Agent) öffnen"), "MBJadeRMA.gif" )) ;
 			jMenuMainJade.add( new CWMenueItem( "PopSniffer", Language.translate("Sniffer-Agenten starten"), "MBJadeSniffer.gif" )) ;
@@ -499,7 +499,7 @@ public class CoreWindow extends JFrame implements ComponentListener{
 		if (jMenuMainHelp == null) {
 			jMenuMainHelp = new JMenu();
 			jMenuMainHelp.setText(Language.translate("Hilfe"));
-			jMenuMainHelp.add( new CWMenueItem( "HelpAbout", Language.translate("Über ..."), null )) ;
+			jMenuMainHelp.add( new CWMenueItem( "HelpAbout", Language.translate("Über..."), null )) ;
 		}
 		return jMenuMainHelp;
 	}
@@ -522,7 +522,7 @@ public class CoreWindow extends JFrame implements ComponentListener{
 		if (jMenuCloseButton == null ) {
 			jMenuCloseButton = new CWMenueItem( "ProjectClose", "", "MBclose.png" );
 			jMenuCloseButton.setText("");
-			jMenuCloseButton.setToolTipText( Language.translate("Projekt schliessen") );
+			jMenuCloseButton.setToolTipText( Language.translate("Projekt schließen") );
 			jMenuCloseButton.setBorder( null );
 			jMenuCloseButton.setMargin( new Insets(0, 0, 0, 0) );
 			jMenuCloseButton.setComponentOrientation( ComponentOrientation.RIGHT_TO_LEFT );
@@ -695,9 +695,9 @@ public class CoreWindow extends JFrame implements ComponentListener{
 			jToolBarApp.add(new JToolBarButton( "ViewConsole", Language.translate("Konsole ein- oder ausblenden"), null, "MBConsole.png" ));
 			jToolBarApp.addSeparator();
 			
-			jToolBarApp.add(new JToolBarButton( "JadeStart", Language.translate("Jade starten"), null, "MBJadeOn.png" ));
-			jToolBarApp.add(new JToolBarButton( "JadeStop", Language.translate("Jade stoppen"), null, "MBJadeOff.png" ));
-			JadeTools = new JToolBarButton( "JadeTools", Language.translate("Jade-Tools ..."), null, "MBJadeTools.png" );
+			jToolBarApp.add(new JToolBarButton( "JadeStart", Language.translate("JADE starten"), null, "MBJadeOn.png" ));
+			jToolBarApp.add(new JToolBarButton( "JadeStop", Language.translate("JADE stoppen"), null, "MBJadeOff.png" ));
+			JadeTools = new JToolBarButton( "JadeTools", Language.translate("JADE-Tools..."), null, "MBJadeTools.png" );
 			jToolBarApp.add( JadeTools );
 			jToolBarApp.addSeparator();
 			

@@ -89,7 +89,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 		jLabelRecerence.setText(Language.translate("Objekte aus Projekt-Ontologie"));
 		jLabelOntologie.setText(Language.translate("Projekt-Ontologie"));
 		
-		jButtonStartAgent.setToolTipText(Language.translate("Agent starten ..."));
+		jButtonStartAgent.setToolTipText(Language.translate("Agent starten..."));
 		jButtonAgentListRefresh.setToolTipText(Language.translate("Agentenliste aktualisieren"));
 		jButtonMoveUp.setToolTipText(Language.translate("Objekt nach oben"));
 		jButtonMoveDown.setToolTipText(Language.translate("Objekt nach unten"));
@@ -210,7 +210,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 		if (jButtonStartAgent == null) {
 			jButtonStartAgent = new JButton();
 			jButtonStartAgent.setText("OK");
-			jButtonStartAgent.setToolTipText("Agent starten ...");
+			jButtonStartAgent.setToolTipText("Agent starten...");
 			jButtonStartAgent.setPreferredSize(new Dimension(50, 26));			
 			jButtonStartAgent.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonStartAgent.setActionCommand("AgentStart");

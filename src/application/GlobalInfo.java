@@ -17,7 +17,7 @@ public class GlobalInfo {
 	final private static String localAppNewLineStringReplacer = "<br>";
 	final private static String localPathImageIntern = "/img/";
 	
-	// --- Jade-Variablen ---------------------------------------------------
+	// --- JADE-Variablen ---------------------------------------------------
 	private int localeJadeLocalPort = 1099;
 	
 	final private static Color localColorMenuHighLight =  new Color(0,0,192);
@@ -191,7 +191,7 @@ public class GlobalInfo {
 		return localBaseDir + localPathAgentGUI + localAppPathSeparatorString;
 	}	
 	/**
-	 * Unterverzeichnis fuer die Jade-Libraries
+	 * Unterverzeichnis fuer die JADE-Libraries
 	 */
 	public String PathJade( Boolean Absolute ){
 		if ( Absolute == true ) { 
@@ -337,7 +337,7 @@ public class GlobalInfo {
 
 
 	// ---------------------------------------------------------
-	// --- Laufzeitinformationen zu Jade -----------------------
+	// --- Laufzeitinformationen zu JADE -----------------------
 	// ---------------------------------------------------------
 	public String getJadeVersion(){
 		return jade.core.Runtime.getVersion();

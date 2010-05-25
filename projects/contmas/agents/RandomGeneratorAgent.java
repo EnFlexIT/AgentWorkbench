@@ -108,14 +108,14 @@ public class RandomGeneratorAgent extends ContainerAgent{
 							ba.setX_dimension(x);
 							ba.setY_dimension(y);
 							ba.setZ_dimension(z);
-							
+
 							tocState=new TOCHasState();
 							state=new Administered();
 							state.setAt_address(ba);
 							tocState.setState(state);
 							tocState.setSubjected_toc(new TransportOrderChain());
 							tocState.getSubjected_toc().setTransports(c);
-							
+
 							population.add(tocState);
 						}
 					}
@@ -140,6 +140,8 @@ public class RandomGeneratorAgent extends ContainerAgent{
 			super(a,mt);
 		}
 
+		private final Integer CONT_AMOUNT_PER_LOADLIST=1;
+
 		@Override
 		protected ACLMessage handleRequest(ACLMessage request){
 			ACLMessage reply=request.createReply();
@@ -152,19 +154,27 @@ public class RandomGeneratorAgent extends ContainerAgent{
 			LoadList curLoadList=null;
 			LoadList lastLoadList=null;
 
+			Integer contNr=0;
+
 			while(allCont.hasNext()){
 				Holding curState=(Holding) ((TOCHasState) allCont.next()).getState();
 				BlockAddress curCont=curState.getAt_address();
-				curLoadList=new LoadList();
+				if((contNr % CONT_AMOUNT_PER_LOADLIST) == 0){
+					curLoadList=new LoadList();
+				}
 				TransportOrderChain curTOC=new TransportOrderChain();
 				curTOC.setTransports(curCont.getLocates());
 				curLoadList.addConsists_of(curTOC);
-				if(lastLoadList == null){ //this is the first run
-					act.setNext_step(curLoadList);
-				}else{ //all later runs
-					lastLoadList.setNext_step(curLoadList);
+				if((contNr % CONT_AMOUNT_PER_LOADLIST) == 0){
+
+					if(lastLoadList == null){ //this is the first run
+						act.setNext_step(curLoadList);
+					}else{ //all later runs
+						lastLoadList.setNext_step(curLoadList);
+					}
 				}
 				lastLoadList=curLoadList;
+				contNr++;
 			}
 
 			reply.setPerformative(ACLMessage.INFORM);

@@ -74,7 +74,7 @@ public class Simulation extends JScrollPane implements Observer, ActionListener 
 			btnStart = new JButton();
 			btnStart.setSize(150, 25);
 			btnStart.setLocation(this.getWidth()/2-75, this.getHeight()/2-15);
-			btnStart.setText(Language.translate("Simulation Starten"));
+			btnStart.setText(Language.translate("Simulation starten"));
 			btnStart.addActionListener(this);
 		}
 		return btnStart;

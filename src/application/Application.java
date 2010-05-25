@@ -29,7 +29,7 @@ public class Application {
 		JadePlatform = new Platform();
 		startApplication();
 
-		System.out.println( Language.translate("Programmstart ..." ) );
+		System.out.println( Language.translate("Programmstart..." ) );
 		MainWindow.setStatusBar( Language.translate("Fertig") );
 		Projects.setProjectMenuItems();
 	}	
@@ -48,12 +48,12 @@ public class Application {
 		// --------------------------------------------
 		// --- Anwendung beenden ---------------------- 
 		// --------------------------------------------
-		// --- Jade beenden ------------------------
+		// --- JADE beenden ------------------------
 		JadePlatform.jadeStop();
-		// --- Noch offene Projekte schliessen ------
+		// --- Noch offene Projekte schlieﬂen ------
 		if ( Projects.closeAll() == false ) return;
 		// --- Fertig ------------------------------
-		System.out.println( Language.translate("Programmende ... ") );
+		System.out.println( Language.translate("Programmende... ") );
 		Language.SaveDictionaryFile();
 		System.exit(0);		
 	}

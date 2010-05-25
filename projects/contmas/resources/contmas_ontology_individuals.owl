@@ -12,145 +12,160 @@
   <owl:Ontology rdf:about="">
     <owl:imports rdf:resource="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/contmas_ontology.owl"/>
   </owl:Ontology>
-  <j1:BayMap rdf:ID="YardBay">
+  <j1:BayMap rdf:ID="ApronBay">
     <j1:y_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
-    >5</j1:y_dimension>
+    >2</j1:y_dimension>
     <j1:z_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
     >1</j1:z_dimension>
     <j1:x_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
-    >2</j1:x_dimension>
+    >1</j1:x_dimension>
   </j1:BayMap>
-  <phy:Position rdf:ID="Position_2">
-    <phy:y rdf:datatype="http://www.w3.org/2001/XMLSchema#float"
-    >100.0</phy:y>
-    <phy:x rdf:datatype="http://www.w3.org/2001/XMLSchema#float"
-    >100.0</phy:x>
-  </phy:Position>
-  <j1:BayMap>
-    <j1:y_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
-    >3</j1:y_dimension>
-    <j1:x_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
-    >2</j1:x_dimension>
-    <j1:z_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
-    >1</j1:z_dimension>
-  </j1:BayMap>
-  <phy:Position rdf:ID="Position_6">
-    <phy:x rdf:datatype="http://www.w3.org/2001/XMLSchema#float"
-    >114.03252</phy:x>
+  <phy:Position rdf:ID="CraneRailPos">
     <phy:y rdf:datatype="http://www.w3.org/2001/XMLSchema#float"
     >226.43697</phy:y>
+    <phy:x rdf:datatype="http://www.w3.org/2001/XMLSchema#float"
+    >114.03252</phy:x>
   </phy:Position>
-  <j1:Rail rdf:ID="TrainRails">
-    <j1:id rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >TrainRails</j1:id>
-    <j1:is_in_position>
-      <phy:Position rdf:ID="Position_13">
-        <phy:y rdf:datatype="http://www.w3.org/2001/XMLSchema#float"
-        >1.0</phy:y>
-        <phy:x rdf:datatype="http://www.w3.org/2001/XMLSchema#float"
-        >1.0</phy:x>
-      </phy:Position>
-    </j1:is_in_position>
-    <j1:lies_in>
-      <j1:Land rdf:ID="Land_4">
-        <j1:is_in_position rdf:resource="#Position_2"/>
-        <j1:id rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-        >Land</j1:id>
-        <j1:has_subdomains rdf:resource="#TrainRails"/>
-        <j1:has_subdomains>
-          <j1:Rail rdf:ID="CraneRails">
-            <j1:lies_in rdf:resource="#Land_4"/>
-            <j1:is_in_position rdf:resource="#Position_6"/>
-            <j1:id rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-            >CraneRails</j1:id>
-          </j1:Rail>
-        </j1:has_subdomains>
-        <j1:has_subdomains>
-          <j1:YardArea rdf:ID="StorageYard">
-            <j1:lies_in rdf:resource="#Land_4"/>
-            <j1:id rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-            >StorageYard</j1:id>
-            <j1:is_in_position>
-              <phy:Position rdf:ID="YardPos">
-                <phy:x rdf:datatype="http://www.w3.org/2001/XMLSchema#float"
-                >162.0</phy:x>
-                <phy:y rdf:datatype="http://www.w3.org/2001/XMLSchema#float"
-                >140.0</phy:y>
-              </phy:Position>
-            </j1:is_in_position>
-          </j1:YardArea>
-        </j1:has_subdomains>
-        <j1:has_subdomains>
-          <j1:Street rdf:ID="StraddleCarrierStreet">
-            <j1:lies_in rdf:resource="#Land_4"/>
-            <j1:has_subdomains>
-              <j1:ApronArea rdf:ID="CraneApron">
+  <j1:BayMap rdf:ID="YardBay">
+    <j1:z_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+    >1</j1:z_dimension>
+    <j1:x_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+    >2</j1:x_dimension>
+    <j1:y_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+    >5</j1:y_dimension>
+  </j1:BayMap>
+  <j1:Yard>
+    <j1:contains rdf:resource="#YardBay"/>
+    <j1:lives_in>
+      <j1:YardArea rdf:ID="StorageYard">
+        <j1:lies_in>
+          <j1:Land rdf:ID="Land_4">
+            <j1:lies_in>
+              <j1:Harbour rdf:nodeID="A0">
+                <j1:id rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+                >Port of Otago</j1:id>
+                <j1:has_subdomains rdf:resource="#Land_4"/>
+                <j1:has_subdomains>
+                  <j1:Sea rdf:ID="Pacific">
+                    <j1:is_in_position>
+                      <phy:Position rdf:ID="ShipPos">
+                        <phy:y rdf:datatype="http://www.w3.org/2001/XMLSchema#float"
+                        >264.34595</phy:y>
+                        <phy:x rdf:datatype="http://www.w3.org/2001/XMLSchema#float"
+                        >138.45566</phy:x>
+                      </phy:Position>
+                    </j1:is_in_position>
+                    <j1:id rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+                    >Pacific</j1:id>
+                    <j1:lies_in rdf:nodeID="A0"/>
+                    <j1:has_subdomains>
+                      <j1:Berth rdf:ID="QuaiOne">
+                        <j1:lies_in rdf:resource="#Pacific"/>
+                        <j1:is_in_position rdf:resource="#ShipPos"/>
+                        <j1:id rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+                        >QuaiOne</j1:id>
+                      </j1:Berth>
+                    </j1:has_subdomains>
+                  </j1:Sea>
+                </j1:has_subdomains>
                 <j1:is_in_position>
-                  <phy:Position rdf:ID="ApronPos">
+                  <phy:Position rdf:ID="Origin">
                     <phy:y rdf:datatype="http://www.w3.org/2001/XMLSchema#float"
-                    >240.0</phy:y>
+                    >0.0</phy:y>
+                    <phy:x rdf:datatype="http://www.w3.org/2001/XMLSchema#float"
+                    >0.0</phy:x>
+                  </phy:Position>
+                </j1:is_in_position>
+              </j1:Harbour>
+            </j1:lies_in>
+            <j1:has_subdomains>
+              <j1:Street rdf:ID="StraddleCarrierStreet">
+                <j1:has_subdomains>
+                  <j1:ApronArea rdf:ID="CraneApron">
+                    <j1:lies_in rdf:resource="#StraddleCarrierStreet"/>
+                    <j1:id rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+                    >CraneApron</j1:id>
+                    <j1:is_in_position>
+                      <phy:Position rdf:ID="ApronPos">
+                        <phy:x rdf:datatype="http://www.w3.org/2001/XMLSchema#float"
+                        >150.0</phy:x>
+                        <phy:y rdf:datatype="http://www.w3.org/2001/XMLSchema#float"
+                        >240.0</phy:y>
+                      </phy:Position>
+                    </j1:is_in_position>
+                  </j1:ApronArea>
+                </j1:has_subdomains>
+                <j1:lies_in rdf:resource="#Land_4"/>
+                <j1:is_in_position>
+                  <phy:Position rdf:ID="StraddleCarrierStreetPos">
+                    <phy:y rdf:datatype="http://www.w3.org/2001/XMLSchema#float"
+                    >150.0</phy:y>
                     <phy:x rdf:datatype="http://www.w3.org/2001/XMLSchema#float"
                     >150.0</phy:x>
                   </phy:Position>
                 </j1:is_in_position>
-                <j1:lies_in rdf:resource="#StraddleCarrierStreet"/>
                 <j1:id rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-                >CraneApron</j1:id>
-              </j1:ApronArea>
+                >StraddleCarrierStreet</j1:id>
+              </j1:Street>
             </j1:has_subdomains>
-            <j1:id rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-            >StraddleCarrierStreet</j1:id>
-            <j1:is_in_position>
-              <phy:Position rdf:ID="Position_1">
-                <phy:y rdf:datatype="http://www.w3.org/2001/XMLSchema#float"
-                >150.0</phy:y>
-                <phy:x rdf:datatype="http://www.w3.org/2001/XMLSchema#float"
-                >150.0</phy:x>
-              </phy:Position>
-            </j1:is_in_position>
-          </j1:Street>
-        </j1:has_subdomains>
-        <j1:lies_in>
-          <j1:Harbour rdf:nodeID="A0">
-            <j1:is_in_position>
-              <phy:Position rdf:ID="Origin">
-                <phy:x rdf:datatype="http://www.w3.org/2001/XMLSchema#float"
-                >0.0</phy:x>
-                <phy:y rdf:datatype="http://www.w3.org/2001/XMLSchema#float"
-                >0.0</phy:y>
-              </phy:Position>
-            </j1:is_in_position>
-            <j1:id rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-            >Port of Otago</j1:id>
+            <j1:has_subdomains rdf:resource="#StorageYard"/>
             <j1:has_subdomains>
-              <j1:Sea rdf:ID="Pacific">
+              <j1:Rail rdf:ID="CraneRails">
+                <j1:id rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+                >CraneRails</j1:id>
+                <j1:is_in_position rdf:resource="#CraneRailPos"/>
+                <j1:lies_in rdf:resource="#Land_4"/>
+              </j1:Rail>
+            </j1:has_subdomains>
+            <j1:has_subdomains>
+              <j1:Rail rdf:ID="TrainRails">
+                <j1:lies_in rdf:resource="#Land_4"/>
+                <j1:id rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+                >TrainRails</j1:id>
                 <j1:is_in_position>
-                  <phy:Position rdf:ID="ShipPos">
+                  <phy:Position rdf:ID="TrainRailPos">
                     <phy:y rdf:datatype="http://www.w3.org/2001/XMLSchema#float"
-                    >264.34595</phy:y>
+                    >1.0</phy:y>
                     <phy:x rdf:datatype="http://www.w3.org/2001/XMLSchema#float"
-                    >138.45566</phy:x>
+                    >1.0</phy:x>
                   </phy:Position>
                 </j1:is_in_position>
-                <j1:has_subdomains>
-                  <j1:Berth rdf:ID="QuaiOne">
-                    <j1:lies_in rdf:resource="#Pacific"/>
-                    <j1:id rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-                    >QuaiOne</j1:id>
-                    <j1:is_in_position rdf:resource="#ShipPos"/>
-                  </j1:Berth>
-                </j1:has_subdomains>
-                <j1:id rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-                >Pacific</j1:id>
-                <j1:lies_in rdf:nodeID="A0"/>
-              </j1:Sea>
+              </j1:Rail>
             </j1:has_subdomains>
-            <j1:has_subdomains rdf:resource="#Land_4"/>
-          </j1:Harbour>
+            <j1:id rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+            >Land</j1:id>
+            <j1:is_in_position>
+              <phy:Position rdf:ID="LandPos">
+                <phy:y rdf:datatype="http://www.w3.org/2001/XMLSchema#float"
+                >100.0</phy:y>
+                <phy:x rdf:datatype="http://www.w3.org/2001/XMLSchema#float"
+                >100.0</phy:x>
+              </phy:Position>
+            </j1:is_in_position>
+          </j1:Land>
         </j1:lies_in>
-      </j1:Land>
-    </j1:lies_in>
-  </j1:Rail>
+        <j1:id rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >StorageYard</j1:id>
+        <j1:is_in_position>
+          <phy:Position rdf:ID="YardPos">
+            <phy:x rdf:datatype="http://www.w3.org/2001/XMLSchema#float"
+            >162.0</phy:x>
+            <phy:y rdf:datatype="http://www.w3.org/2001/XMLSchema#float"
+            >140.0</phy:y>
+          </phy:Position>
+        </j1:is_in_position>
+      </j1:YardArea>
+    </j1:lives_in>
+    <j1:localName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Yard</j1:localName>
+    <j1:is_in_position2 rdf:resource="#YardPos"/>
+  </j1:Yard>
+  <phy:Position rdf:ID="StraddleCarrierPos">
+    <phy:y rdf:datatype="http://www.w3.org/2001/XMLSchema#float"
+    >212.88715</phy:y>
+    <phy:x rdf:datatype="http://www.w3.org/2001/XMLSchema#float"
+    >203.14105</phy:x>
+  </phy:Position>
   <j1:BayMap rdf:ID="BayMap_2">
     <j1:y_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
     >0</j1:y_dimension>
@@ -159,89 +174,67 @@
     <j1:x_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
     >0</j1:x_dimension>
   </j1:BayMap>
-  <j1:Yard>
-    <j1:contains rdf:resource="#YardBay"/>
-    <j1:lives_in rdf:resource="#StorageYard"/>
-    <j1:localName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >Yard</j1:localName>
-    <j1:is_in_position2 rdf:resource="#YardPos"/>
-  </j1:Yard>
-  <phy:Position rdf:ID="Position_8">
-    <phy:x rdf:datatype="http://www.w3.org/2001/XMLSchema#float"
-    >256.0957</phy:x>
-    <phy:y rdf:datatype="http://www.w3.org/2001/XMLSchema#float"
-    >238.23402</phy:y>
-  </phy:Position>
-  <phy:Position rdf:ID="Position_14">
-    <phy:y rdf:datatype="http://www.w3.org/2001/XMLSchema#float"
-    >1.0</phy:y>
-    <phy:x rdf:datatype="http://www.w3.org/2001/XMLSchema#float"
-    >1.0</phy:x>
-  </phy:Position>
-  <phy:Position rdf:ID="Position_3">
-    <phy:x rdf:datatype="http://www.w3.org/2001/XMLSchema#float"
-    >203.14105</phy:x>
-    <phy:y rdf:datatype="http://www.w3.org/2001/XMLSchema#float"
-    >212.88715</phy:y>
-  </phy:Position>
-  <j1:Crane>
-    <j1:capable_of rdf:resource="#QuaiOne"/>
-    <j1:capable_of rdf:resource="#TrainRails"/>
-    <j1:capable_of rdf:resource="#CraneApron"/>
-    <j1:is_in_position2>
-      <phy:Position rdf:ID="Position_7">
-        <phy:y rdf:datatype="http://www.w3.org/2001/XMLSchema#float"
-        >237.59315</phy:y>
-        <phy:x rdf:datatype="http://www.w3.org/2001/XMLSchema#float"
-        >149.00224</phy:x>
-      </phy:Position>
-    </j1:is_in_position2>
-    <j1:lives_in rdf:resource="#CraneRails"/>
-    <j1:localName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >CraneOne</j1:localName>
-  </j1:Crane>
-  <j1:BayMap rdf:ID="BayMap_1">
-    <j1:z_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
-    >1</j1:z_dimension>
-    <j1:x_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
-    >1</j1:x_dimension>
-    <j1:y_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
-    >1</j1:y_dimension>
-  </j1:BayMap>
-  <j1:Apron>
-    <j1:lives_in rdf:resource="#CraneApron"/>
-    <j1:localName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >Apron</j1:localName>
-    <j1:is_in_position2 rdf:resource="#ApronPos"/>
-  </j1:Apron>
-  <phy:Position rdf:ID="Position_10">
-    <phy:y rdf:datatype="http://www.w3.org/2001/XMLSchema#float"
-    >100.0</phy:y>
-    <phy:x rdf:datatype="http://www.w3.org/2001/XMLSchema#float"
-    >100.0</phy:x>
-  </phy:Position>
   <j1:Crane>
     <j1:lives_in rdf:resource="#CraneRails"/>
     <j1:localName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >CraneTwo</j1:localName>
-    <j1:is_in_position2 rdf:resource="#Position_8"/>
-    <j1:capable_of rdf:resource="#QuaiOne"/>
+    <j1:is_in_position2>
+      <phy:Position rdf:ID="CraneTwoPos">
+        <phy:y rdf:datatype="http://www.w3.org/2001/XMLSchema#float"
+        >238.23402</phy:y>
+        <phy:x rdf:datatype="http://www.w3.org/2001/XMLSchema#float"
+        >256.0957</phy:x>
+      </phy:Position>
+    </j1:is_in_position2>
+    <j1:capable_of rdf:resource="#CraneApron"/>
     <j1:capable_of rdf:resource="#TrainRails"/>
-    <j1:capable_of rdf:resource="#CraneApron"/>
+    <j1:capable_of rdf:resource="#QuaiOne"/>
   </j1:Crane>
-  <phy:Position rdf:ID="Position_9">
+  <phy:Position rdf:ID="CraneOnePos">
     <phy:y rdf:datatype="http://www.w3.org/2001/XMLSchema#float"
-    >100.0</phy:y>
+    >237.59315</phy:y>
     <phy:x rdf:datatype="http://www.w3.org/2001/XMLSchema#float"
-    >100.0</phy:x>
+    >149.00224</phy:x>
   </phy:Position>
-  <j1:StraddleCarrier>
-    <j1:capable_of rdf:resource="#StorageYard"/>
+  <j1:Crane>
     <j1:capable_of rdf:resource="#CraneApron"/>
-    <j1:is_in_position2 rdf:resource="#Position_3"/>
+    <j1:capable_of rdf:resource="#TrainRails"/>
+    <j1:capable_of rdf:resource="#QuaiOne"/>
+    <j1:lives_in rdf:resource="#CraneRails"/>
+    <j1:localName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >CraneOne</j1:localName>
+    <j1:is_in_position2 rdf:resource="#CraneOnePos"/>
+  </j1:Crane>
+  <j1:BayMap rdf:ID="BayMap_1">
+    <j1:x_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+    >1</j1:x_dimension>
+    <j1:z_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+    >1</j1:z_dimension>
+    <j1:y_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+    >1</j1:y_dimension>
+  </j1:BayMap>
+  <j1:BayMap>
+    <j1:x_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+    >2</j1:x_dimension>
+    <j1:y_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+    >3</j1:y_dimension>
+    <j1:z_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+    >1</j1:z_dimension>
+  </j1:BayMap>
+  <j1:Apron>
+    <j1:lives_in rdf:resource="#CraneApron"/>
+    <j1:contains rdf:resource="#ApronBay"/>
+    <j1:is_in_position2 rdf:resource="#ApronPos"/>
+    <j1:localName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Apron</j1:localName>
+  </j1:Apron>
+  <j1:StraddleCarrier>
+    <j1:capable_of rdf:resource="#CraneApron"/>
+    <j1:capable_of rdf:resource="#StorageYard"/>
+    <j1:lives_in rdf:resource="#StraddleCarrierStreet"/>
+    <j1:is_in_position2 rdf:resource="#StraddleCarrierPos"/>
     <j1:localName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >StraddleCarrier</j1:localName>
-    <j1:lives_in rdf:resource="#StraddleCarrierStreet"/>
   </j1:StraddleCarrier>
 </rdf:RDF>
 

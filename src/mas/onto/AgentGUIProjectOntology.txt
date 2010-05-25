@@ -74,7 +74,7 @@ public class AgentGUIProjectOntology extends Ontology {
 	}
 	
 	/**
-	 * This Method actually builds the Project-Ontology and returns it 
+	 * This Method actually builds the project ontology and returns it 
 	 * @return
 	 */
 	private static AgentGUIProjectOntology createProjectOntology() {
@@ -133,7 +133,7 @@ public class AgentGUIProjectOntology extends Ontology {
 			ontologyList[1] = sma.ontology.DisplayOntology.getInstance();
 		}
 		
-		// --- Add the Ontology-Array to this Project-Ontology ----------------
+		// --- Add the Ontology-Array to this project ontology ----------------
 		try {
 			introspector = new ReflectiveIntrospector();
 			proOntology = new AgentGUIProjectOntology(ontologyList, introspector);

@@ -146,7 +146,7 @@ public class requestExecuteAppointment extends AchieveREInitiator{
 				messages.add(request);
 
 				TransportOrderChainState oldState=myCAgent.touchTOCState(curTOC,new InExecution());
-				myCAgent.echoStatus("sent RequestExecuteAppointment, state was " + oldState,curTOC,ContainerAgent.LOGGING_INFORM);
+				myCAgent.echoStatus("sent RequestExecuteAppointment, state was " + oldState,curTOC,ContainerAgent.LOGGING_DEBUG);
 
 				getDataStore().put(ALL_REQUESTS_KEY,messages);
 			}

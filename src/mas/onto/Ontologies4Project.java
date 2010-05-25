@@ -37,7 +37,7 @@ public class Ontologies4Project extends HashMap<String, OntologyClass> {
 	}
 	
 	/**
-	 * This method sets the whole TreeModel for the Project-Ontology, which
+	 * This method sets the whole TreeModel for the project ontology, which
 	 * can consist of one or more Sub-Ontologies
 	 * @return DefaultTreeModel
 	 */
@@ -68,12 +68,12 @@ public class Ontologies4Project extends HashMap<String, OntologyClass> {
 	}
 	
 	/**
-	 * This Method builds up the DefaultTreeModel for the Project-Ontology 
+	 * This Method builds up the DefaultTreeModel for the project ontology 
 	 */
 	private void buildOntologyTree() {
 		
-		// --- get Root-Node for the whole Project-Ontology -----
-		OntologyClassTreeObject root4ProjektOntology = new OntologyClassTreeObject(null, "Project-Ontology");
+		// --- get Root-Node for the whole project ontology -----
+		OntologyClassTreeObject root4ProjektOntology = new OntologyClassTreeObject(null, "Project ontology");
 		DefaultMutableTreeNode RootNode = new DefaultMutableTreeNode( root4ProjektOntology );
 		
 		// --- Create Tree-Object with it -----------------------
@@ -112,7 +112,7 @@ public class Ontologies4Project extends HashMap<String, OntologyClass> {
 		
 	}
 	/**
-	 * This method returns the whole TreeModel for the Project-Ontology, which
+	 * This method returns the whole TreeModel for the project ontology, which
 	 * can consist of one or more Sub-Ontologies
 	 * @return DefaultTreeModel
 	 */
@@ -179,7 +179,7 @@ public class Ontologies4Project extends HashMap<String, OntologyClass> {
 
 	// --- Start SubClass -------------------------------------------
 	/**
-	 * Checks the configuration of the current Project-Ontology.
+	 * Checks the configuration of the current project ontology.
 	 * In detail, this method looks for intersections between
 	 * all Ontology -Concepts, -AgentActions and -Predicates.
 	 * 
