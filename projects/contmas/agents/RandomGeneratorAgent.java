@@ -140,7 +140,7 @@ public class RandomGeneratorAgent extends ContainerAgent{
 			super(a,mt);
 		}
 
-		private final Integer CONT_AMOUNT_PER_LOADLIST=1;
+		private final Integer CONT_AMOUNT_PER_LOADLIST=4;
 
 		@Override
 		protected ACLMessage handleRequest(ACLMessage request){

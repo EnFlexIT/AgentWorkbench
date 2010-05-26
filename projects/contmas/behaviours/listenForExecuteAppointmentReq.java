@@ -15,6 +15,7 @@
 package contmas.behaviours;
 
 import mas.display.DisplayableAgent;
+import mas.movement.MoveToPointBehaviour;
 import jade.core.Agent;
 import jade.core.behaviours.DataStore;
 import jade.core.behaviours.FSMBehaviour;
@@ -97,7 +98,7 @@ public class listenForExecuteAppointmentReq extends AchieveREResponder{
 				curTO=inAct.getLoad_offer();
 				curTOC=inAct.getCorresponds_to();
 				
-				myCAgent.echoStatus("RequestExecuteAppointment received, parsing",curTOC,ContainerAgent.LOGGING_ERROR);
+				myCAgent.echoStatus("RequestExecuteAppointment received, parsing",curTOC,ContainerAgent.LOGGING_INFORM);
 
 				TransportOrderChainState curState=myCAgent.touchTOCState(curTOC);
 				destinationAddress=curState.getAt_address();
@@ -120,14 +121,17 @@ public class listenForExecuteAppointmentReq extends AchieveREResponder{
 					TransportOrderChainState oldState=myCAgent.touchTOCState(curTOC,new InExecution());
 					
 					Phy_Position targetPosition=myCAgent.calculateTargetPosition(curTO.getStarts_at());
-					myMoveableAgent.addDisplayMove(myCAgent.getAID().getLocalName(),targetPosition);
-
+					MoveToPointBehaviour movingBehaviour=myMoveableAgent.addDisplayMove(myCAgent.getAID().getLocalName(),targetPosition);
+					positionChecker.setMovingBehaviour(movingBehaviour);
+					
 	//				myMoveableAgent.addAsapMovementTo(targetPosition);
 					setTargetPosition(targetPosition);
 				}
 			}
 
 		}
+		
+		/* WaitUntilTargetReached */
 
 		class DoAquire extends OneShotBehaviour{
 			ContainerHolderAgent myAgent;
@@ -172,7 +176,7 @@ public class listenForExecuteAppointmentReq extends AchieveREResponder{
 				act.setLoad_status("FINISHED");
 
 				((ContainerAgent) this.myAgent).fillMessage(reply,act);
-				myCAgent.echoStatus("sent INFORM FINISHED",ContainerAgent.LOGGING_DEBUG);
+				myCAgent.echoStatus("sent INFORM FINISHED",curTOC,ContainerAgent.LOGGING_INFORM);
 
 				getDataStore().put(RESPONSE_KEY,reply);
 			}

@@ -32,6 +32,7 @@ import java.util.Vector;
 import contmas.agents.ContainerAgent;
 import contmas.agents.ContainerHolderAgent;
 import contmas.interfaces.LoadingReceiver;
+import contmas.interfaces.OptimisationClient;
 import contmas.ontology.*;
 
 /**
@@ -59,7 +60,7 @@ public class requestBlockAddress extends AchieveREInitiator{
 	public requestBlockAddress(ContainerHolderAgent a,BayMap rawBayMap,List population,TransportOrderChain subject, BlockAddress resultMemory){
 		super(a,requestBlockAddress.getRequestMessage(a));
 		myAgent=a;
-		this.optimizer=this.myAgent.getFirstAIDFromDF("optimizing-bay-maps");
+		this.optimizer=((OptimisationClient)this.myAgent).getOptimizer();
 		this.rawBayMap=rawBayMap;
 		this.subject=subject;
 		this.resultMemory=resultMemory;

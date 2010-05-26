@@ -31,6 +31,7 @@ import jade.proto.AchieveREInitiator;
 import java.util.Vector;
 
 import mas.display.DisplayableAgent;
+import mas.movement.MoveToPointBehaviour;
 
 import contmas.agents.ContainerAgent;
 import contmas.agents.ContainerHolderAgent;
@@ -114,8 +115,8 @@ public class requestExecuteAppointment extends AchieveREInitiator{
 					
 					Phy_Position targetPosition=myCAgent.calculateTargetPosition(curTO.getEnds_at());
 					
-					myMoveableAgent.addDisplayMove(myCAgent.getAID().getLocalName(),targetPosition);
-
+					MoveToPointBehaviour movingBehaviour=myMoveableAgent.addDisplayMove(myCAgent.getAID().getLocalName(),targetPosition);
+					positionChecker.setMovingBehaviour(movingBehaviour);
 					//				myMoveableAgent.addAsapMovementTo(targetPosition);
 					setTargetPosition(targetPosition);
 				}
@@ -145,8 +146,8 @@ public class requestExecuteAppointment extends AchieveREInitiator{
 				Vector<ACLMessage> messages=new Vector<ACLMessage>();
 				messages.add(request);
 
-				TransportOrderChainState oldState=myCAgent.touchTOCState(curTOC,new InExecution());
-				myCAgent.echoStatus("sent RequestExecuteAppointment, state was " + oldState,curTOC,ContainerAgent.LOGGING_DEBUG);
+				TransportOrderChainState oldState=myCAgent.touchTOCState(curTOC,new Assigned());
+				myCAgent.echoStatus("sent RequestExecuteAppointment, state was " + oldState,curTOC,ContainerAgent.LOGGING_INFORM);
 
 				getDataStore().put(ALL_REQUESTS_KEY,messages);
 			}

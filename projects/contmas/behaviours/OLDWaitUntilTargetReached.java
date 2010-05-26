@@ -20,7 +20,6 @@
  */
 package contmas.behaviours;
 
-import mas.movement.MoveToPointBehaviour;
 import jade.core.Agent;
 import jade.core.behaviours.DataStore;
 import jade.core.behaviours.SimpleBehaviour;
@@ -29,8 +28,8 @@ import contmas.agents.PositionReporter;
 import contmas.interfaces.MoveableAgent;
 import contmas.ontology.Phy_Position;
 
-class WaitUntilTargetReached extends SimpleBehaviour{
-			WaitUntilTargetReached(Agent a,DataStore ds){
+class OLDWaitUntilTargetReached extends SimpleBehaviour{
+			OLDWaitUntilTargetReached(Agent a,DataStore ds){
 				super(a);
 				this.setDataStore(ds);
 			}
@@ -38,14 +37,9 @@ class WaitUntilTargetReached extends SimpleBehaviour{
 			private static final long serialVersionUID=5033799889547692668L;
 			Boolean isDone;
 			Phy_Position targetPosition;
-			MoveToPointBehaviour movingBehaviour;
 			
 			void setTargetPosition(Phy_Position targetPosition){
 				this.targetPosition=targetPosition;
-			}
-			
-			void setMovingBehaviour(MoveToPointBehaviour movingBehaviour){
-				this.movingBehaviour=movingBehaviour;
 			}
 
 			@Override
@@ -53,8 +47,7 @@ class WaitUntilTargetReached extends SimpleBehaviour{
 				isDone=true;
 				if(myAgent instanceof MoveableAgent){
 					MoveableAgent myMoveableAgent=(MoveableAgent) this.myAgent;
-
-					isDone=movingBehaviour.done();
+					isDone=myMoveableAgent.isAt(targetPosition);
 					if(isDone){
 						((ContainerAgent)myAgent).echoStatus("I am in target position",ContainerAgent.LOGGING_INFORM);
 					}else{

@@ -110,6 +110,8 @@ public class ActiveContainerAgent extends ContainerHolderAgent implements Moveab
 //	}
 	@Override
 	public MoveToPointBehaviour addDisplayMove(String reporter,Phy_Position destPos){
+		echoStatus("Adding display move to "+Const.positionToString(destPos),ContainerAgent.LOGGING_INFORM);
+
 		Speed speed=new Speed();
 		speed.setSpeed(SPEED_VALUE);
 		MoveToPointBehaviour movingBehaviour;
@@ -286,7 +288,7 @@ public class ActiveContainerAgent extends ContainerHolderAgent implements Moveab
 	@Override
 	public void memorizeTacticalTarget(Designator target){
 		Phy_Position targetPosition=inflateDomain(target.getAbstract_designation()).getIs_in_position();
-		echoStatus("memorizing tactical target "+Const.positionToString(targetPosition));
+		echoStatus("memorizing tactical target "+Const.positionToString(targetPosition),LOGGING_INFORM);
 		tacticalTargets.add(targetPosition);
 	}
 	

@@ -18,7 +18,7 @@ public class BayMapOptimisationAgent extends ContainerAgent{
 
 	private static final long serialVersionUID= -2081698387513185474L;
 	private Random RandomGenerator=new Random();
-	
+
 	public BayMapOptimisationAgent(){
 		super("optimizing-bay-maps");
 	}
@@ -29,8 +29,8 @@ public class BayMapOptimisationAgent extends ContainerAgent{
 		echoStatus("I setup, therefore I am",ContainerAgent.LOGGING_INFORM);
 		addBehaviour(new listenForBlockAddressRequests(this));
 	}
-	
-	public BlockAddress getEmptyBlockAddress(BayMap loadBay, List allContainers){
+
+	public BlockAddress getEmptyBlockAddress(BayMap loadBay,List allContainers){
 		Integer tries=0;
 		Integer maxTries=getBayMapCapacity(loadBay);
 		Integer x, y, z;
@@ -55,28 +55,33 @@ public class BayMapOptimisationAgent extends ContainerAgent{
 		}
 		return null;
 	}
-	public BlockAddress getEmptyBlockAddress(BayMap loadBay, TransportOrderChain subject, List allContainers){
+
+	public BlockAddress getEmptyBlockAddress(BayMap loadBay,TransportOrderChain subject,List allContainers){
 		BlockAddress solution=getEmptyBlockAddress(loadBay,allContainers);
 		echoStatus("When asked for an EmptyBlockAddress, I say: Random!",ContainerAgent.LOGGING_INFORM);
 		return solution;
 	}
-	
-	
+
 	public Integer getBayMapCapacity(BayMap loadBay){
 		Integer baySize=loadBay.getX_dimension() * loadBay.getY_dimension() * loadBay.getZ_dimension();
 		return baySize;
 	}
-	
-	public BlockAddress getUpmostOccupiedBlockAddress(Integer x,Integer y, BayMap loadBay, List allContainers){
+
+	public BlockAddress getUpmostOccupiedBlockAddress(Integer x,Integer y,BayMap loadBay,List allContainers){
 		BlockAddress upmostContainer=null;
 		Iterator allConts=allContainers.iterator();
-		while(allConts.hasNext()){ //alle geladenen Container überprüfen 
-			Holding curState=(Holding) ((TOCHasState) allConts.next()).getState();
-			BlockAddress curContainer=(BlockAddress) curState.getAt_address();
-			if((curContainer.getX_dimension() == x) && (curContainer.getY_dimension() == y)){ //betrachteter Container steht im stapel auf momentaner koordinate
-				if((upmostContainer == null) || (upmostContainer.getZ_dimension() < curContainer.getZ_dimension())){
-					upmostContainer=curContainer;
+		while(allConts.hasNext()){ //alle geladenen Container überprüfen
+			TransportOrderChainState curState=((TOCHasState) allConts.next()).getState();
+			if(curState instanceof Holding){
+				BlockAddress curContainer=(BlockAddress) curState.getAt_address();
+				if((curContainer.getX_dimension() == x) && (curContainer.getY_dimension() == y)){ //betrachteter Container steht im stapel auf momentaner koordinate
+					if((upmostContainer == null) || (upmostContainer.getZ_dimension() < curContainer.getZ_dimension())){
+						upmostContainer=curContainer;
+					}
 				}
+			} else {
+				echoStatus("Currently inspected TOC not hold, but only planned, skipping.",ContainerAgent.LOGGING_INFORM);
+				continue;
 			}
 		} //end while
 		return upmostContainer;

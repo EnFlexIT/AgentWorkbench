@@ -20,6 +20,7 @@
  */
 package contmas.interfaces;
 
+import jade.core.AID;
 import contmas.ontology.BayMap;
 import contmas.ontology.BlockAddress;
 import contmas.ontology.TransportOrderChain;
@@ -30,4 +31,5 @@ import contmas.ontology.TransportOrderChain;
  */
 public interface OptimisationClient{
 	public BlockAddress getEmptyBlockAddressFor(BayMap rawBayMap,TransportOrderChain subject);
+	public AID getOptimizer();
 }

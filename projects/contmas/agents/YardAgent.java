@@ -20,6 +20,7 @@
  */
 package contmas.agents;
 
+import jade.core.AID;
 import contmas.behaviours.listenForExecuteAppointmentReq;
 import contmas.behaviours.receiveLoadOrders;
 import contmas.behaviours.requestBlockAddress;
@@ -33,6 +34,7 @@ import contmas.ontology.Yard;
 
 public class YardAgent extends StaticContainerAgent implements TransportOrderHandler, OptimisationClient{
 	private static final long serialVersionUID= -3774026871349327373L;
+	private AID optimizer;
 
 	public YardAgent(Yard ontologyRepresentation){
 		super("container-storing",ontologyRepresentation);
@@ -68,8 +70,19 @@ public class YardAgent extends StaticContainerAgent implements TransportOrderHan
 	}
 	@Override
 	public BlockAddress getEmptyBlockAddress(TransportOrderChain subject){
-		BlockAddress ownSolution=super.getEmptyBlockAddress(subject);
+//		BlockAddress ownSolution=super.getEmptyBlockAddress(subject);
 		BlockAddress optimisedSolution=getEmptyBlockAddressFor(getOntologyRepresentation().getContains(),subject);
 		return optimisedSolution;
+	}
+
+	/* (non-Javadoc)
+	 * @see contmas.interfaces.OptimisationClient#getOptimizer()
+	 */
+	@Override
+	public AID getOptimizer(){
+		if(this.optimizer==null){
+			this.optimizer=getFirstAIDFromDF("optimizing-bay-maps");
+		}
+		return this.optimizer;
 	}
 }

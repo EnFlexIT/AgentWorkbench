@@ -35,7 +35,7 @@ import jade.util.leap.List;
  *
  */
 public class TacticalStationer extends TickerBehaviour{
-	private static Integer TICK_INTERVAL=1000;
+	private static Integer TICK_INTERVAL=3000;
 	ContainerHolderAgent myAgent;
 	TacticalMemorizer owner;
 
