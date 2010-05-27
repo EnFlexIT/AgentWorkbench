@@ -140,7 +140,7 @@ public class listenForLoadingStreamIni extends AchieveREResponder{
 			Iterator allCurTOCs=toInitiate.getAllConsists_of();
 			while(allCurTOCs.hasNext()){
 				TransportOrderChain curTOC=(TransportOrderChain) allCurTOCs.next();
-				TransportOrderChainState curState=myCAgent.touchTOCState(curTOC);
+				TransportOrderChainState curState=myCAgent.getTOCState(curTOC);
 
 				if(curState instanceof Administered){
 					myCAgent.releaseContainer(curTOC);

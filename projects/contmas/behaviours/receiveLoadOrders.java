@@ -131,7 +131,9 @@ public class receiveLoadOrders extends ContractNetResponder{
 						someTOC=myCAgent.getSomeTOCOfState(new Administered());
 						if(someTOC != null){
 							myCAgent.echoStatus("BayMap voll, versuche Räumung für",curTOC,ContainerAgent.LOGGING_INFORM);
-							myCAgent.touchTOCState(curTOC,new PendingForSubCFP());
+							TransportOrderChainState state=new PendingForSubCFP();
+							state.setLoad_offer(curTO);
+							myCAgent.setTOCState(curTOC,state);
 							myCAgent.releaseContainer(someTOC);
 							myCAgent.registerForWakeUpCall(this);
 						}
@@ -167,7 +169,7 @@ public class receiveLoadOrders extends ContractNetResponder{
 		public void action(){
 			isDone=true;
 
-			TransportOrderChainState curState=myCAgent.touchTOCState(curTOC);
+			TransportOrderChainState curState=myCAgent.getTOCState(curTOC);
 			if(curState instanceof PendingForSubCFP){
 				//TOC bereits angenommen, aber noch kein Platz
 				if(myCAgent.countTOCInState(new Announced()) != 0){ // ausschreibungsqueue hat noch inhalt
@@ -176,7 +178,7 @@ public class receiveLoadOrders extends ContractNetResponder{
 					isDone=false;
 					block();
 				}else{ // ausschreibungsqueque ist leer
-					myCAgent.touchTOCState(curTOC,new ProposedFor());
+					myCAgent.setTOCState(curTOC,new ProposedFor());
 					myCAgent.echoStatus("Keine Unteraufträge mehr, erneut versuchen aufzunehmen.",ContainerAgent.LOGGING_INFORM);
 				}
 			}
@@ -348,7 +350,7 @@ public class receiveLoadOrders extends ContractNetResponder{
 				TransportOrderChainState state=new Reserved();
 				state.setAt_address(destinationAddress);
 				state.setLoad_offer(curTO);
-				myCAgent.touchTOCState(curTOC,state);
+				myCAgent.setTOCState(curTOC,state);
 			}
 
 			/* (non-Javadoc)
@@ -380,7 +382,7 @@ public class receiveLoadOrders extends ContractNetResponder{
 				if(destinationAddress == null){ //only, if no space available, i.e. no Address can be found
 					ACLMessage reply=(ACLMessage) getDataStore().get(REPLY_KEY);
 
-					myCAgent.touchTOCState(curTOC,new FailedIn());
+					myCAgent.setTOCState(curTOC,new FailedIn());
 
 					AnnounceLoadStatus loadStatus=ContainerAgent.getLoadStatusAnnouncement(curTOC,"BayMap voll und kann nicht geräumt werden.");
 					reply.setPerformative(ACLMessage.REFUSE);
@@ -451,7 +453,7 @@ public class receiveLoadOrders extends ContractNetResponder{
 				ACLMessage accept=(ACLMessage) getDataStore().get(ACCEPT_PROPOSAL_KEY);
 				ACLMessage rply=accept.createReply();
 
-				myCAgent.touchTOCState(curTOC,new PlannedIn());
+				myCAgent.setTOCState(curTOC,new PlannedIn());
 				
 				AnnounceLoadStatus loadStatusAnnouncement=ContainerAgent.getLoadStatusAnnouncement(curTOC,"PENDING");
 
@@ -472,7 +474,7 @@ public class receiveLoadOrders extends ContractNetResponder{
 				ACLMessage accept=(ACLMessage) getDataStore().get(ACCEPT_PROPOSAL_KEY);
 				ACLMessage rply=accept.createReply();
 
-				myCAgent.touchTOCState(curTOC,new FailedIn());
+				myCAgent.setTOCState(curTOC,new FailedIn());
 
 				AnnounceLoadStatus loadStatus=ContainerAgent.getLoadStatusAnnouncement(curTOC,"BayMap voll und kann nicht geräumt werden.");
 				rply.setPerformative(ACLMessage.FAILURE);

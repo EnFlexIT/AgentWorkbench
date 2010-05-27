@@ -157,7 +157,7 @@ public class ActiveContainerAgent extends ContainerHolderAgent implements Moveab
 
 		//transfer from current position to start position
 		Long positioningEffort=calculateDuration(Const.getManhattanDistance(currentPos,startPos).longValue());
-		Long eta=positioningEffort+System.currentTimeMillis();
+		Long eta=positioningEffort+getLastPlannedTOCFinishTime();
 		//pickup
 
 		//NO FURTHER EFFORTS needed so far!
@@ -174,6 +174,22 @@ public class ActiveContainerAgent extends ContainerHolderAgent implements Moveab
 //		echoStatus("calculated Takes_until: positioningEffort (" + positioningEffort + ")=" + out.getTakes_until()); // ")  +transferEffort (" + transferEffort + ")=" + out.getTakes());
 
 		return out;
+	}
+	
+	public Long getLastPlannedTOCFinishTime(){
+//		List allPlannedTOCs=getSomeTOCOfState(new PlannedIn());
+		Long lastPlannedFinishTime=System.currentTimeMillis();
+		java.util.List<TOCHasState> allPlannedTOCs=getAllTOCOfState(PlannedIn.class);
+		allPlannedTOCs.addAll(getAllTOCOfState(PlannedOut.class));
+
+		for(java.util.Iterator<TOCHasState> iterator=allPlannedTOCs.iterator();iterator.hasNext();){
+			TOCHasState tocHasState=iterator.next();
+			Long curFinishTime=Long.valueOf(tocHasState.getState().getLoad_offer().getTakes_until());
+			if(lastPlannedFinishTime<curFinishTime){
+				curFinishTime=lastPlannedFinishTime;
+			}
+		}
+		return lastPlannedFinishTime;
 	}
 	
 	@Override

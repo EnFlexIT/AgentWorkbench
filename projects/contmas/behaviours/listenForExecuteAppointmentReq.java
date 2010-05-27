@@ -100,7 +100,7 @@ public class listenForExecuteAppointmentReq extends AchieveREResponder{
 				
 				myCAgent.echoStatus("RequestExecuteAppointment received, parsing",curTOC,ContainerAgent.LOGGING_INFORM);
 
-				TransportOrderChainState curState=myCAgent.touchTOCState(curTOC);
+				TransportOrderChainState curState=myCAgent.getTOCState(curTOC);
 				destinationAddress=curState.getAt_address();
 				if( !(curState instanceof PlannedIn)){
 					myCAgent.echoStatus("ERROR: TOC not PlannedIn, continuing anyway",curTOC,ContainerAgent.LOGGING_ERROR);
@@ -118,7 +118,7 @@ public class listenForExecuteAppointmentReq extends AchieveREResponder{
 			public void action(){
 				if(myCAgent instanceof DisplayableAgent){
 					MoveableAgent myMoveableAgent=(MoveableAgent) myCAgent;
-					TransportOrderChainState oldState=myCAgent.touchTOCState(curTOC,new InExecution());
+					TransportOrderChainState oldState=myCAgent.setTOCState(curTOC,new InExecution());
 					
 					Phy_Position targetPosition=myCAgent.calculateTargetPosition(curTO.getStarts_at());
 					MoveToPointBehaviour movingBehaviour=myMoveableAgent.addDisplayMove(myCAgent.getAID().getLocalName(),targetPosition);

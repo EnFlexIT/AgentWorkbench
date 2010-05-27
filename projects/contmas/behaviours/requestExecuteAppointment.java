@@ -111,7 +111,7 @@ public class requestExecuteAppointment extends AchieveREInitiator{
 			public void action(){
 				if(myCAgent instanceof DisplayableAgent){
 					MoveableAgent myMoveableAgent=(MoveableAgent) myCAgent;
-					TransportOrderChainState oldState=myCAgent.touchTOCState(curTOC,new Assigned());
+					TransportOrderChainState oldState=myCAgent.setTOCState(curTOC,new Assigned());
 					
 					Phy_Position targetPosition=myCAgent.calculateTargetPosition(curTO.getEnds_at());
 					
@@ -146,7 +146,7 @@ public class requestExecuteAppointment extends AchieveREInitiator{
 				Vector<ACLMessage> messages=new Vector<ACLMessage>();
 				messages.add(request);
 
-				TransportOrderChainState oldState=myCAgent.touchTOCState(curTOC,new Assigned());
+				TransportOrderChainState oldState=myCAgent.setTOCState(curTOC,new Assigned());
 				myCAgent.echoStatus("sent RequestExecuteAppointment, state was " + oldState,curTOC,ContainerAgent.LOGGING_INFORM);
 
 				getDataStore().put(ALL_REQUESTS_KEY,messages);
@@ -191,7 +191,7 @@ public class requestExecuteAppointment extends AchieveREInitiator{
 				if(loadStatus.getLoad_status().equals("FINISHED") && myCAgent.dropContainer(curTOC)){
 					myCAgent.wakeSleepingBehaviours(curTOC);
 				}else{
-					myCAgent.echoStatus("FAILURE: Something went hilariously wrong! Load Status was "+loadStatus.getLoad_status()+" TOCState="+myCAgent.touchTOCState(curTOC),curTOC,ContainerAgent.LOGGING_ERROR);
+					myCAgent.echoStatus("FAILURE: Something went hilariously wrong! Load Status was "+loadStatus.getLoad_status()+" TOCState="+myCAgent.getTOCState(curTOC),curTOC,ContainerAgent.LOGGING_ERROR);
 				}
 			}
 		}

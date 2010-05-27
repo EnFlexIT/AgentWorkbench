@@ -101,7 +101,7 @@ public class killAgent extends AchieveREInitiator{
 		try{
 			Done done=(Done) myAgent.getContentManager().extractContent(msg);
 			String deadAgentName=((KillAgent)((Action)done.getAction()).getAction()).getAgent().getLocalName();
-			myAgent.echoStatus("Agent "+deadAgentName+" has been killed.");
+			myAgent.echoStatus("Agent "+deadAgentName+" has been killed.",ContainerAgent.LOGGING_INFORM);
 		}catch(UngroundedException e){
 			// TODO Auto-generated catch block
 			e.printStackTrace();

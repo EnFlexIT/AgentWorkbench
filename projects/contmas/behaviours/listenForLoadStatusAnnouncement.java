@@ -22,7 +22,6 @@ import jade.proto.states.MsgReceiver;
 import contmas.agents.ContainerAgent;
 import contmas.agents.ContainerHolderAgent;
 import contmas.main.MatchAgentAction;
-import contmas.main.NotYetReadyException;
 import contmas.ontology.AnnounceLoadStatus;
 import contmas.ontology.BlockAddress;
 
@@ -52,16 +51,16 @@ public class listenForLoadStatusAnnouncement extends MsgReceiver{
 		AnnounceLoadStatus act=(AnnounceLoadStatus) this.myAgent.extractAction(request);
 		if(act.getLoad_status().equals("FINISHED")){
 			if(act.getCorresponds_to() == null){
-				myAgent.echoStatus("aha");
+				myAgent.echoStatus("aha",ContainerAgent.LOGGING_DEBUG);
 
 			}
 
 			if( !myAgent.aquireContainer(act.getCorresponds_to(),new BlockAddress())){
-				myAgent.echoStatus("Something went wrong! Couldn't aquire!");
+				myAgent.echoStatus("Something went wrong! Couldn't aquire!",ContainerAgent.LOGGING_ERROR);
 
 			}
 
 		}
-		myAgent.echoStatus("LoadStatus received: " + act.getLoad_status());
+		myAgent.echoStatus("LoadStatus received: " + act.getLoad_status(),ContainerAgent.LOGGING_DEBUG);
 	}
 }

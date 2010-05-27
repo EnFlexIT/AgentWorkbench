@@ -38,6 +38,7 @@ import javax.swing.tree.*;
 
 import contmas.agents.ControlGUIAgent;
 import contmas.ontology.*;
+import java.awt.Point;
 
 public class ControlGUI extends JInternalFrame implements ActionListener{
 
@@ -321,6 +322,9 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	 */
 	private void initialize(){
 		this.setSize(653,511);
+		this.setResizable(true);
+		this.setLocation(new Point(10, 10));
+		this.setIconifiable(true);
 		this.setClosable(true);
 
 		this.setMaximizable(true);
@@ -425,7 +429,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 			this.AT=new AgentTree();
 			this.AT.refreshLocalPlatformName("Contmas");
 			this.AT.addContainerNode("contmas",null);
-			ControlGUI.expandTree(this.AT.tree);
+			Const.expandTree(this.AT.tree);
 		}
 		return this.AT;
 	}
@@ -443,14 +447,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 
 			}
 		}
-		ControlGUI.expandTree(agentTree.tree);
-	}
-
-	public static JTree expandTree(JTree inputTree){
-		for(Integer i=0;i < inputTree.getRowCount();i++){
-			inputTree.expandRow(i);
-		}
-		return inputTree;
+		Const.expandTree(agentTree.tree);
 	}
 
 	/**
@@ -626,7 +623,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 						ControlGUI.this.setHabitat();
 					}
 				}
-				ControlGUI.expandTree(domainTree);
+				Const.expandTree(domainTree);
 			}
 		};
 		SwingUtilities.invokeLater(addIt);

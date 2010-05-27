@@ -75,7 +75,7 @@ public class requestEnvironmentSetup extends AchieveREInitiator{
 	
 	@Override
 	protected void handleAgree(ACLMessage msg){
-		myAgent.echoStatus("HarbourMaster has agreed to reset.");
+		myAgent.echoStatus("HarbourMaster has agreed to reset.",ContainerAgent.LOGGING_INFORM);
 	}
 
 	@Override

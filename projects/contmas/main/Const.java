@@ -20,6 +20,8 @@
  */
 package contmas.main;
 
+import javax.swing.JTree;
+
 import contmas.agents.ContainerAgent;
 import contmas.ontology.*;
 
@@ -36,7 +38,7 @@ public class Const{
 
 	public static Float LENGTH_SPACING_STRADDLE=0.0F;
 	public static Float LENGTH_SPACING_BLOCK=0.0F;
-	public static Float WIDTH_SPACING_STRADDLE=CONTAINER_WIDTH;
+	public static Float WIDTH_SPACING_STRADDLE=CONTAINER_WIDTH/4;
 	public static Float WIDTH_SPACING_BLOCK=0.0F;
 
 	public static Phy_Size getPhySizeContainer(){
@@ -68,8 +70,8 @@ public class Const{
 //		System.out.println("BlockAddress="+blockAddressToString(address)+"");
 
 		
-		phyPosition.setPhy_x(((address.getX_dimension()) * contSize.getPhy_width()) + (address.getX_dimension() * spacer.getPhy_width()));
-		phyPosition.setPhy_y(((address.getY_dimension()) * contSize.getPhy_height()) + (address.getY_dimension() * spacer.getPhy_height()));
+		phyPosition.setPhy_x(((address.getX_dimension()) * contSize.getPhy_width()) + ((address.getX_dimension())+1 * spacer.getPhy_width()));
+		phyPosition.setPhy_y(((address.getY_dimension()) * contSize.getPhy_height()) + ((address.getY_dimension())+1 * spacer.getPhy_height()));
 		
 //		System.out.println("getDisplayPositionBlock "+positionToString(phyPosition));
 		
@@ -236,5 +238,12 @@ public class Const{
 		public static Domain findClosestCommonDomain(Domain a,Domain b){
 		
 			return a; //TODO algorithm
+		}
+
+		public static JTree expandTree(JTree inputTree){
+			for(Integer i=0;i < inputTree.getRowCount();i++){
+				inputTree.expandRow(i);
+			}
+			return inputTree;
 		}
 }

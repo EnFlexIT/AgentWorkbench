@@ -54,7 +54,7 @@ public class announceLoadOrders extends ContractNetInitiator{
 
 	@Override
 	protected Vector<ACLMessage> prepareCfps(ACLMessage cfp){
-		TransportOrderChainState oldState=this.myCAgent.touchTOCState(curTOC,new Announced());
+		TransportOrderChainState oldState=this.myCAgent.setTOCState(curTOC,new Announced());
 //		this.myCAgent.echoStatus("announceLoadOrders - prepareCfps state set to Announced",curTOC);
 
 		Vector<ACLMessage> messages=new Vector<ACLMessage>();
@@ -69,7 +69,7 @@ public class announceLoadOrders extends ContractNetInitiator{
 			List contractorList=this.myCAgent.determineContractors();
 			if((contractorList == null) || contractorList.isEmpty()){
 				this.myCAgent.echoStatus("FAILURE: Keine Contractors mehr vorhanden. Ausschreibung nicht möglich.",curTOC,ContainerAgent.LOGGING_NOTICE);
-				this.myCAgent.touchTOCState(curTOC,new FailedOut());
+				this.myCAgent.setTOCState(curTOC,new FailedOut());
 				messages=null;
 			}
 			Iterator<?> allContractors=contractorList.iterator();
@@ -86,7 +86,7 @@ public class announceLoadOrders extends ContractNetInitiator{
 			//		((ContainerAgent)myAgent).echoStatus("Auftrag ausgeschrieben.",curTOC);
 		}else{
 			this.myCAgent.echoStatus("FAILURE: TOC is not going to be announced, currentState:" + oldState.getClass().getSimpleName(),curTOC,ContainerAgent.LOGGING_NOTICE);
-			this.myCAgent.touchTOCState(curTOC,new FailedOut());
+			this.myCAgent.setTOCState(curTOC,new FailedOut());
 			messages=null;
 		}
 		myCAgent.wakeSleepingBehaviours(curTOC);
@@ -123,7 +123,7 @@ public class announceLoadOrders extends ContractNetInitiator{
 
 		if(bestOffer == null){ //Abnehmer momentan alle beschäftigt
 			this.myCAgent.echoStatus("FAILURE: Nur Ablehnungen empfangen, Abbruch.",ContainerAgent.LOGGING_NOTICE);
-			this.myCAgent.touchTOCState(curTOC,new FailedOut());
+			this.myCAgent.setTOCState(curTOC,new FailedOut());
 			myCAgent.wakeSleepingBehaviours(curTOC);
 
 			this.reset();
@@ -168,7 +168,7 @@ public class announceLoadOrders extends ContractNetInitiator{
 //				myCAgent.echoStatus("negotiation, received loadStatus PENDING, changing TOCState to PlannedOut, endBA="+Const.blockAddressToString(curTO.getEnds_at().getAt_address()),curTOC);
 
 				
-				myCAgent.touchTOCState(curTOC,newState);
+				myCAgent.setTOCState(curTOC,newState);
 				
 //				myCAgent.echoStatus("currently stored at myself,BA="+Const.blockAddressToString(myCAgent.touchTOCState(curTOC).getAt_address()));
 //				myCAgent.echoStatus("bestOffer has endBA="+Const.blockAddressToString(myCAgent.touchTOCState(curTOC).getLoad_offer().getEnds_at().getAt_address()));

@@ -248,6 +248,10 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 			
 //			a=c.createNewAgent("Visualiser","contmas.agents.VisualisationAgent",null);
 //			a.start();
+			
+			a=c.acceptNewAgent("Monitor",new MonitorAgent(canvas));
+			a.start();
+
 		}catch(StaleProxyException e){
 			// TODO Auto-generated catch block
 			e.printStackTrace();

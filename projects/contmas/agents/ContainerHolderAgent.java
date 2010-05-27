@@ -94,7 +94,7 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		//		ontologyRepresentation.getAdministers().addConsists_of(targetContainer); //Container zu Auftragsbuch hinzufügen
 		Administered newState=new Administered();
 		newState.setAt_address(destination);
-		if(this.touchTOCState(targetContainer,newState) == null){
+		if(this.setTOCState(targetContainer,newState) == null){
 			this.echoStatus("ERROR: war noch nicht in States",targetContainer,ContainerAgent.LOGGING_ERROR);
 			this.echoStatus("ERROR: Ausschreibung, auf die ich mich beworben habe, nicht gefunden.",targetContainer,ContainerAgent.LOGGING_ERROR);
 
@@ -115,12 +115,16 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 
 	}
 
-	public TransportOrderChainState touchTOCState(TransportOrderChain needleTOC){
-		return this.touchTOCState(needleTOC,null);
+	public TransportOrderChainState getTOCState(TransportOrderChain needleTOC){
+		return this.setTOCState(needleTOC,null);
 	}
 
-	public TransportOrderChainState touchTOCState(TransportOrderChain needleTOC,TransportOrderChainState toState){
-		return this.touchTOCState(needleTOC,toState,false);
+	public TransportOrderChainState setTOCState(TransportOrderChain needleTOC,TransportOrderChainState toState){
+		TransportOrderChainState oldState=this.touchTOCState(needleTOC,toState,false);
+//		if(toState!=null){
+//			echoStatus("ChangedTOCState from "+oldState+" to "+toState,needleTOC);
+//		}
+		return oldState;
 	}
 
 	public TransportOrderChainState touchTOCState(TransportOrderChain needleTOC,TransportOrderChainState toState,Boolean addRemoveSwitch){
@@ -138,6 +142,12 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 					if(toState.getAt_address()==null){
 						toState.setAt_address(curState.getAt_address()); //transfer BlockAddress from old to new state
 					}
+					if(toState.getLoad_offer()==null){
+//						System.out.println("preserving load offer");
+						toState.setLoad_offer(curState.getLoad_offer()); //transfer load offer from old to new state
+					}
+//					System.out.println("load offer="+toState.getLoad_offer());
+
 					storedTOCState.setState(toState); //set-Methode
 				}
 				if((toState == null) && addRemoveSwitch){ //remove-Methode
@@ -168,6 +178,34 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 				output.add(curTocState);
 			}
 			if(alsoReserved && curTocState.getState() instanceof Reserved && curTocState.getState().getAt_address()!=null){
+				output.add(curTocState);
+			}
+		}
+		return output;
+	}
+	
+	public TransportOrderChain getSomeTOCOfState(TransportOrderChainState needleState){
+		return getSomeTOCOfState(needleState, true);
+	}
+	
+	public TransportOrderChain getSomeTOCOfState(TransportOrderChainState needleState,Boolean careOverstowed){
+		Iterator queue=this.getOntologyRepresentation().getAllContainer_states();
+		while(queue.hasNext()){
+			TOCHasState queuedTOCState=(TOCHasState) queue.next();
+			if(needleState.getClass() == queuedTOCState.getState().getClass()){
+				if(careOverstowed && this.isUpmostContainer(queuedTOCState.getSubjected_toc())){
+					return queuedTOCState.getSubjected_toc();
+				}
+			}
+		}
+		return null;
+	}
+	
+	public java.util.List<TOCHasState> getAllTOCOfState(Class<? extends TransportOrderChainState> needleClass){
+		java.util.List<TOCHasState> output=new java.util.ArrayList<TOCHasState>();
+		for(Iterator it=ontologyRepresentation.getAllContainer_states();it.hasNext();){
+			TOCHasState curTocState=(TOCHasState) it.next();
+			if(needleClass.isInstance(curTocState.getState())){
 				output.add(curTocState);
 			}
 		}
@@ -341,23 +379,6 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		return myself;
 	}
 
-	public TransportOrderChain getSomeTOCOfState(TransportOrderChainState needleState){
-		return getSomeTOCOfState(needleState, true);
-	}
-	
-	public TransportOrderChain getSomeTOCOfState(TransportOrderChainState needleState,Boolean careOverstowed){
-		Iterator queue=this.getOntologyRepresentation().getAllContainer_states();
-		while(queue.hasNext()){
-			TOCHasState queuedTOCState=(TOCHasState) queue.next();
-			if(needleState.getClass() == queuedTOCState.getState().getClass()){
-				if(careOverstowed && this.isUpmostContainer(queuedTOCState.getSubjected_toc())){
-					return queuedTOCState.getSubjected_toc();
-				}
-			}
-		}
-		return null;
-	}
-
 	/**
 	 * @param subjectedToc
 	 * @return
@@ -445,7 +466,7 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		TransportOrder TO=new TransportOrder();
 
 		TO.setStarts_at(this.getMyselfDesignator());
-		TO.getStarts_at().setAt_address(((Holding)touchTOCState(curTOC)).getAt_address()); // add current position of container to start designator 
+		TO.getStarts_at().setAt_address(((Holding)getTOCState(curTOC)).getAt_address()); // add current position of container to start designator 
 		TO.setEnds_at(this.getAbstractTargetDesignator());
 		curTOC.addIs_linked_by(TO);
 		Behaviour b=new announceLoadOrders(this,curTOC);
@@ -516,7 +537,7 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 	}
 	
 	public void entangleOntologyRepresentation(){
-		echoStatus("lives in "+getOntologyRepresentation().getLives_in().getId());
+//		echoStatus("lives in "+getOntologyRepresentation().getLives_in().getId());
 		getOntologyRepresentation().setLives_in(inflateDomain(getOntologyRepresentation().getLives_in()));
 		
 		if(getOntologyRepresentation() instanceof ActiveContainerHolder){

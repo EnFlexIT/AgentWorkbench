@@ -127,7 +127,7 @@ public class TesterAgent extends ActiveContainerAgent implements TransportOrderH
 	@Override
 	public void memorizeTacticalTarget(Designator target){
 		Phy_Position targetPosition=inflateDomain(target.getAbstract_designation()).getIs_in_position();
-		echoStatus("memorizing tactical target "+Const.positionToString(targetPosition));
+		echoStatus("memorizing tactical target "+Const.positionToString(targetPosition),ContainerAgent.LOGGING_DEBUG);
 		tacticalTargets.add(targetPosition);
 	}
 	

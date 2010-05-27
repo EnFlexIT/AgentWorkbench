@@ -42,8 +42,8 @@ public class carryOutPlanning extends CyclicBehaviour{
 	public void action(){
 		TransportOrderChain someTOC=this.myCAgent.getSomeTOCOfState(new PlannedOut());
 		if(someTOC != null){
-			TransportOrder curTO=((PlannedOut) myCAgent.touchTOCState(someTOC)).getLoad_offer();
-			TransportOrderChainState oldState=myCAgent.touchTOCState(someTOC,new Assigned());
+			TransportOrder curTO=((PlannedOut) myCAgent.getTOCState(someTOC)).getLoad_offer();
+			TransportOrderChainState oldState=myCAgent.setTOCState(someTOC,new Assigned());
 
 			myCAgent.addBehaviour(new requestExecuteAppointment(myCAgent,someTOC,curTO));
 			myCAgent.echoStatus("added plan execution",someTOC,ContainerAgent.LOGGING_INFORM);
