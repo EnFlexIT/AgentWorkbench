@@ -158,6 +158,7 @@ public class DisplayAgentGUI extends BasicSVGGUI {
 					posY += r;
 					element.setAttributeNS(null, "cx", ""+posX);
 					element.setAttributeNS(null, "cy", ""+posY);
+				break;
 				case ELLIPSE:
 					float r1 = Float.parseFloat(element.getAttributeNS(null, "r1"));
 					float r2 = Float.parseFloat(element.getAttributeNS(null, "r2"));

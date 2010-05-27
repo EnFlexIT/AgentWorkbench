@@ -1,4 +1,4 @@
-LANG_DEFAULT;1;;;
+LANG_DEFAULT;0;;;
 LANG_DE;LANG_EN;LANG_IT;LANG_ES;LANG_FR
  ist bereits geöffnet!;is already opened;;;
 Abbrechen;Cancel;;;
@@ -175,3 +175,17 @@ Simulation starten;Start simulation;;;
  ist bereits geöffnet!;is already opened!;;;
 Projekt-Info;Project info;;;
 ' ist bereits geöffnet!;;;;
+Die Konsolenausgabe erfolgt nicht �ber die Anwendung;;;;
+Projekt �ffnen;;;;
+Projekt schlie�en;;;;
+RMA (Remote Monitoring Agent) �ffnen;;;;
+Franz�sisch;;;;
+�ber...;;;;
+Kein Projekt ge�ffnet !;;;;
+�ffnen;;;;
+Alle Objekte l�schen;;;;
+Objekt hinzuf�gen;;;;
+Ma�stab;;;;
+Ma�stab festlegen;;;;
+SVG Dateien;;;;
+Das aktuelle Projekt '@' ist noch nicht gespeichert!<br>Möchten Sie es nun speichern ?;;;;

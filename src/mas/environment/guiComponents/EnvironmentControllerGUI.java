@@ -271,6 +271,7 @@ public class EnvironmentControllerGUI extends JSplitPane implements ActionListen
 		DefaultMutableTreeNode agents = new DefaultMutableTreeNode(Language.translate("Agenten"));
 		DefaultMutableTreeNode obstacles = new DefaultMutableTreeNode(Language.translate("Hindernisse"));
 		DefaultMutableTreeNode playgrounds = new DefaultMutableTreeNode("Playgrounds");
+		DefaultMutableTreeNode generics = new DefaultMutableTreeNode("Generic Objects");
 		
 		Iterator<AbstractObject> children = pg.getAllChildObjects();
 		while(children.hasNext()){
@@ -287,6 +288,10 @@ public class EnvironmentControllerGUI extends JSplitPane implements ActionListen
 						obstacles.add(childNode);
 					break;
 					
+					case GENERIC:
+						generics.add(childNode);
+					break;
+					
 					case PLAYGROUND:
 						playgrounds.add(getSubTree((PlaygroundObject) childObject));
 					break;
@@ -297,6 +302,7 @@ public class EnvironmentControllerGUI extends JSplitPane implements ActionListen
 		root.add(agents);
 		root.add(obstacles);
 		root.add(playgrounds);
+		root.add(generics);
 		
 		return root;
 	}

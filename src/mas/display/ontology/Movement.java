@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: Movement
 * @author ontology bean generator
-* @version 2010/05/23, 13:16:47
+* @version 2010/05/24, 17:28:23
 */
 public class Movement implements AgentAction {
 

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<environment date="Wed May 26 19:47:10 CEST 2010" project="SMA">
+  <scale pixel="10.0" unit="m" value="1.0"/>
+  <playground height="40.0" id="rootPlayground" width="60.0" xPos="0.0" yPos="0.0">
+    <obstacle height="2.0" id="Obst1" width="16.0" xPos="0.0" yPos="17.0"/>
+    <obstacle height="11.0" id="Obst2" width="2.0" xPos="16.0" yPos="27.0"/>
+    <obstacle height="2.0" id="Obst3" width="22.0" xPos="28.0" yPos="17.0"/>
+    <obstacle height="16.0" id="Obst4" width="2.0" xPos="28.0" yPos="1.0"/>
+    <agent class="sma.agents.SoftBot" height="2.0" id="SoBo1"
+      speed="10.0" width="2.0" xPos="3.0" yPos="4.0"/>
+    <generic height="3.0" id="Box1" width="2.0" xPos="3.0" yPos="35.0"/>
+    <generic height="2.0" id="Box2" width="2.0" xPos="22.0" yPos="35.0"/>
+    <generic height="3.0" id="Box4" width="2.0" xPos="39.0" yPos="3.0"/>
+    <generic height="3.0" id="Box3" width="2.0" xPos="48.0" yPos="33.0"/>
+  </playground>
+</environment>

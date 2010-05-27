@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<environment date="Sun May 23 13:17:06 CEST 2010" project="SMA">
+<environment date="Tue May 25 20:38:13 CEST 2010" project="SMA">
   <scale pixel="10.0" unit="m" value="1.0"/>
   <playground height="40.0" id="rootPlayground" width="60.0" xPos="0.0" yPos="0.0">
     <obstacle height="30.0" id="ObstGrey" width="11.0" xPos="24.0" yPos="0.0"/>

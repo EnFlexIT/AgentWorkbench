@@ -8,20 +8,19 @@ import jade.core.*;
    * Represents an agent that can move in the environment
 * Protege name: AgentObject
 * @author ontology bean generator
-* @version 2010/05/23, 13:16:47
+* @version 2010/05/24, 17:28:23
 */
 public class AgentObject extends AbstractObject{ 
 
    /**
-   * This agent's AID
-* Protege name: aid
+* Protege name: maxSpeed
    */
-   private AID aid;
-   public void setAid(AID value) { 
-    this.aid=value;
+   private Speed maxSpeed;
+   public void setMaxSpeed(Speed value) { 
+    this.maxSpeed=value;
    }
-   public AID getAid() {
-     return this.aid;
+   public Speed getMaxSpeed() {
+     return this.maxSpeed;
    }
 
    /**
@@ -33,17 +32,6 @@ public class AgentObject extends AbstractObject{
    }
    public Speed getCurrentSpeed() {
      return this.currentSpeed;
-   }
-
-   /**
-* Protege name: maxSpeed
-   */
-   private Speed maxSpeed;
-   public void setMaxSpeed(Speed value) { 
-    this.maxSpeed=value;
-   }
-   public Speed getMaxSpeed() {
-     return this.maxSpeed;
    }
 
    /**
@@ -67,6 +55,18 @@ public class AgentObject extends AbstractObject{
    public Iterator getAllCollisionPoints() {return collisionPoints.iterator(); }
    public List getCollisionPoints() {return collisionPoints; }
    public void setCollisionPoints(List l) {collisionPoints = l; }
+
+   /**
+   * This agent's AID
+* Protege name: aid
+   */
+   private AID aid;
+   public void setAid(AID value) { 
+    this.aid=value;
+   }
+   public AID getAid() {
+     return this.aid;
+   }
 
    /**
    * Name of the agent class (subclass of jade.core.agent) this agent is an instance of

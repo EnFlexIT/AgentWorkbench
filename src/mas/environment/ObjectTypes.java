@@ -9,7 +9,7 @@ import application.Language;
  */
 public enum ObjectTypes {
 	
-	AGENT, OBSTACLE, PLAYGROUND;
+	AGENT, OBSTACLE, PLAYGROUND, GENERIC;
 	
 	/**
 	 * Returns the type constant for the given object, or null if it is not a supported type 
@@ -25,6 +25,8 @@ public enum ObjectTypes {
 			type = OBSTACLE;
 		}else if(object instanceof mas.display.ontology.PlaygroundObject){
 			type = PLAYGROUND;
+		}else if(object instanceof mas.display.ontology.GenericObject){
+			type = GENERIC;
 		}
 		
 		return type;
@@ -44,6 +46,8 @@ public enum ObjectTypes {
 			type = OBSTACLE;
 		}else if(name.equalsIgnoreCase("playground")){
 			type = PLAYGROUND;
+		}else if(name.equalsIgnoreCase("generic")){
+			type = GENERIC;
 		}
 		return type;
 	}

@@ -6,10 +6,10 @@
 Einfaches Demo-Projekt fr die Visualisierung</projectDescription>
     <subOntologies/>
     <agentConfiguration/>
-    <envFile>AgentSponge.xml</envFile>
+    <envFile>CollectBoxExample.xml</envFile>
     <subFolderAgents>agents</subFolderAgents>
     <subFolderEnvSetups>envSetups</subFolderEnvSetups>
     <subFolderOntology>ontology</subFolderOntology>
     <subFolderResources>resources</subFolderResources>
-    <svgFile>AgentSponge.svg</svgFile>
+    <svgFile>CollectBoxExample.svg</svgFile>
 </project>

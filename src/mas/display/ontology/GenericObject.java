@@ -5,11 +5,10 @@ import jade.util.leap.*;
 import jade.core.*;
 
 /**
-   * Represents a static, non movable object in the environment
-* Protege name: ObstacleObject
+* Protege name: GenericObject
 * @author ontology bean generator
 * @version 2010/05/24, 17:28:23
 */
-public class ObstacleObject extends AbstractObject{ 
+public class GenericObject extends AbstractObject{ 
 
 }

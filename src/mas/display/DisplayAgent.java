@@ -9,7 +9,6 @@ import mas.display.ontology.DisplayOntology;
 import mas.display.ontology.Environment;
 import mas.display.ontology.EnvironmentInfo;
 import mas.display.ontology.Movement;
-import mas.environment.OntoUtilities;
 
 import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
 import org.apache.batik.util.XMLResourceDescriptor;

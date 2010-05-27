@@ -45,13 +45,13 @@ import mas.display.SvgTypes;
 import mas.display.ontology.AbstractObject;
 import mas.display.ontology.AgentObject;
 import mas.display.ontology.Environment;
+import mas.display.ontology.GenericObject;
 import mas.display.ontology.ObstacleObject;
 import mas.display.ontology.PlaygroundObject;
 import mas.display.ontology.Position;
 import mas.display.ontology.Scale;
 import mas.display.ontology.Size;
 import mas.display.ontology.Speed;
-import mas.environment.OntoUtilities;
 import mas.environment.guiComponents.EnvironmentControllerGUI;
 
 /**
@@ -289,6 +289,7 @@ public class EnvironmentController{
 	 * - Calling checkEmbeddedImages to prepare the embedded images (if any)
 	 */
 	private void prepareSVGDoc(Document svgDoc){
+		System.out.println("PrepareSVG called");
 		Element svgRoot = svgDoc.getDocumentElement();
 		// Adding a border if not already present
 		if(svgDoc.getElementById("border") == null){
@@ -301,8 +302,10 @@ public class EnvironmentController{
 			border.setAttributeNS(null, "fill", "none");
 			border.setAttributeNS(null, "stroke", "black");
 			border.setAttributeNS(null, "stroke-width", "1");
-			svgRoot.appendChild(border);
+			svgRoot.appendChild(border);			
 		}
+		
+		TransformRemover.removeTransform(svgRoot, 0, 0);
 		
 		NodeList images = svgDoc.getElementsByTagName("image");
 		if(images.getLength()>0){
@@ -518,7 +521,11 @@ public class EnvironmentController{
 			
 			case PLAYGROUND:
 				object = new PlaygroundObject();
-			break;				
+			break;
+			
+			case GENERIC:
+				object = new GenericObject();
+			break;
 		}
 		
 		// Common parts
@@ -657,6 +664,10 @@ public class EnvironmentController{
 				element = document.createElement("obstacle");
 			break;
 			
+			case GENERIC:
+				element = document.createElement("generic");
+			break;
+			
 			case PLAYGROUND:
 				element = document.createElement("playground");
 				
@@ -737,6 +748,10 @@ public class EnvironmentController{
 		switch(type){
 			case OBSTACLE:
 				object = new ObstacleObject();
+			break;
+			
+			case GENERIC:
+				object = new GenericObject();
 			break;
 			
 			case AGENT:

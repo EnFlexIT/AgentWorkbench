@@ -129,6 +129,10 @@ public abstract class MovingAgent extends Agent implements DisplayableAgent{
 	public Speed getCurrentSpeed() {
 		return this.self.getCurrentSpeed();		
 	}
+	
+	public void setCurrentSpeed(Speed speed){
+		this.setCurrentSpeed(speed);
+	}
 
 	@Override
 	public Codec getDisplayCodec() {
@@ -144,20 +148,29 @@ public abstract class MovingAgent extends Agent implements DisplayableAgent{
 	public Speed getMaxSpeed() {
 		return this.self.getMaxSpeed();
 	}
+	
+	public void setMaxSpeed(Speed max){
+		this.self.setMaxSpeed(max);
+	}
 
 	@Override
 	public Position getPosition() {
 		return this.self.getPosition();
 	}
-	
-	public Size getSize(){
-		return this.self.getSize();
-	}
-
 	@Override
 	public void setPosition(Position position) {
 		this.self.setPosition(position);		
 	}
+	
+	public Size getSize(){
+		return this.self.getSize();
+	}
+	
+	public void setSize(Size size){
+		this.self.setSize(size);
+	}
+
+	
 	
 	@Override
 	public AID getUpdateReceiver() {
