@@ -1,85 +1,90 @@
 package gui.projectwindow;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Observable;
-import java.util.Observer;
+import gui.ProjectWindow;
 
-import javax.swing.JScrollPane;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 
+import javax.swing.Icon;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+
+import application.Language;
 import application.Project;
 
-/**
- * @author: Christian Derksen
- *
- */
-public class SetupSimulation extends JScrollPane implements Observer, ActionListener {
+public class SetupSimulation extends JPanel  {
 
-	private Project CurrProject;
-	
 	private static final long serialVersionUID = 1L;
+
+	private Project currProject = null;
+	private ProjectWindow pareComp = null;
+	
+	private JTabbedPane jTabbedPaneSimSetup = null;
 
 	/**
 	 * This is the default constructor
 	 */
-	public SetupSimulation( Project CP ) {
+	public SetupSimulation(Project project, ProjectWindow parentComponent) {
 		super();
-		this.CurrProject = CP;
-		this.CurrProject.addObserver(this);		
-		initialize();	
+		this.currProject = project;
+		this.pareComp = parentComponent;
+		initialize();
 	}
 
 	/**
 	 * This method initializes this
+	 * 
 	 * @return void
 	 */
 	private void initialize() {
+		GridBagConstraints gridBagConstraints = new GridBagConstraints();
+		gridBagConstraints.fill = GridBagConstraints.BOTH;
+		gridBagConstraints.gridy = 0;
+		gridBagConstraints.ipadx = 0;
+		gridBagConstraints.ipady = 0;
+		gridBagConstraints.weightx = 1.0;
+		gridBagConstraints.weighty = 1.0;
+		gridBagConstraints.insets = new Insets(10, 0, 0, 0);
+		gridBagConstraints.gridx = 0;
+		this.setLayout(new GridBagLayout());
+		this.setSize(421, 239);
+		this.add(getJTabbedPaneSimSetup(), gridBagConstraints);
 		
-		this.setLayout(null);
-		this.setSize(850, 500);
-		this.setAutoscrolls(true);		
-		this.setBorder(null);
-		this.setFocusable(true);
-		this.setVisible(true);
-		
+		// --- Die (optionalen) Karteikarten einblenden ----------
+		addProjectTab(Language.translate("Agenten-Konfiguration"), null, new SetupSimulationAgents(currProject), Language.translate("Agenten-Konfiguration"));
+		addProjectTab(Language.translate("JADE-Konfiguration"), null, new SetupSimulationJADE(currProject), Language.translate("JADE-Konfiguration"));
 		
 	}
 
 	/**
-	 * This method initializes ProjectTitel	
+	 * This method initializes jTabbedPaneSimSetup	
 	 * 	
-	 * @return javax.swing.JTextField	
+	 * @return javax.swing.JTabbedPane	
 	 */
-
-
-	@Override
-	public void actionPerformed(ActionEvent ae) {
-		// --- Das ActionCommand und den Auslöser des Events ermitteln ---
-		String ActCMD = ae.getActionCommand();
-		Object Trigger = ae.getSource();
-		System.out.println( "ActCMD/Wert => " + ActCMD );
-		System.out.println( "Auslöser => " + Trigger );
-
-		// --- Fallunterscheidung 'Auslöser' -----------------------------
-		if ( Trigger == "ProjectName" ) {
-			CurrProject.setProjectName( ae.getActionCommand() );
+	private JTabbedPane getJTabbedPaneSimSetup() {
+		if (jTabbedPaneSimSetup == null) {
+			jTabbedPaneSimSetup = new JTabbedPane();
+			jTabbedPaneSimSetup.setFont(new Font("Dialog", Font.BOLD, 12));
 		}
-		else if ( Trigger == "ProjectFolder" ) {
-			CurrProject.setProjectFolder( ae.getActionCommand() );
-		}
-		else if ( Trigger == "ProjectDescription" ) {
-			CurrProject.setProjectDescription( ae.getActionCommand() );
-		}
-		else {
-			
-		};
+		return jTabbedPaneSimSetup;
 	}
-
-	@Override
-	public void update(Observable arg0, Object arg1) {
-		// TODO Auto-generated method stub
-		
-	}
-
 	
-}  //  @jve:decl-index=0:visual-constraint="10,10"
+	/**
+	 * This method adds a Tab to the Simulation-Setup 
+	 * @param title
+	 * @param icon
+	 * @param component
+	 * @param tip
+	 */
+	public void addProjectTab( String title, Icon icon, Component component, String tip ) {
+		// --- GUI-Komponente in das TabbedPane-Objekt einfügen ------------------
+		component.setName( title ); 								// --- Component benennen ----
+		jTabbedPaneSimSetup.addTab( title, icon, component, tip);	// --- Component anhängen ----
+		// --- Neuen Unterknoten in Projektbaum einfügen -------------------------
+		pareComp.addProjectTabNode("Simulations-Setup", title);
+	}
+	
+}  //  @jve:decl-index=0:visual-constraint="10,21"

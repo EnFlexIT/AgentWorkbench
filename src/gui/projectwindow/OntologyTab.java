@@ -217,6 +217,7 @@ public class OntologyTab extends JPanel implements Observer, ActionListener {
 			gridBagConstraints.weighty = 1.0;
 			gridBagConstraints.gridx = 0;
 			gridBagConstraints.gridy = 1;
+			gridBagConstraints.insets = new Insets(0, 10, 0, 0);
 			gridBagConstraints.weightx = 1.0;
 			jPanelLeft = new JPanel();
 			jPanelLeft.setLayout(new GridBagLayout());

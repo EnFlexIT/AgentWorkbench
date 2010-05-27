@@ -67,9 +67,11 @@ public class Platform extends Object {
 				
 				// --- Services zusammenstellen ---------------------
 				String ServiceList = new String();
+				
+				//ServiceList = ServiceList.concat("jade.core.messaging.TopicManagementService;");
+				
 				ServiceList = ServiceList.concat("jade.core.event.NotificationService;");
-				ServiceList = ServiceList.concat("jade.core.mobility.AgentMobilityService;");
-				ServiceList = ServiceList.concat("jade.core.messaging.TopicManagementService;");
+				ServiceList = ServiceList.concat("jade.core.mobility.AgentMobilityService;");				
 				ServiceList = ServiceList.concat("jade.core.migration.InterPlatformMobilityService;");
 				
 				// --- Freien Port für die Plattform finden ---------

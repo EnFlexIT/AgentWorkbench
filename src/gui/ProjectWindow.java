@@ -3,12 +3,17 @@ package gui;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.TreeMap;
+import java.util.Vector;
 
 import javax.swing.Icon;
 import javax.swing.JInternalFrame;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
@@ -39,6 +44,7 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	private DefaultTreeModel ProjectTreeModel;
 	private DefaultMutableTreeNode RootNode;
 	private DefaultMutableTreeNode CurrentNode;  //  @jve:decl-index=0:
+	private TreeMap<Integer, String[]> additionalNodes = new TreeMap<Integer, String[]>();  //  @jve:decl-index=0:
 	
 	private JTabbedPane ProjectViewRightTabs = null;
 	private JSplitPane ProjectViewSplit = null;
@@ -61,18 +67,23 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 		this.initialize();		
 		
 		// --- Anzeige der Basisinformationen immer einblenden ---
-		addProjectTab( Language.translate("Projekt-Info"), null, new gui.projectwindow.ProjectInfo( CurrProject ), "Projekt-Info" );
+		this.addProjectTab(Language.translate("Projekt-Info"), null, new gui.projectwindow.ProjectInfo( CurrProject ), Language.translate("Projekt-Info"));
 
 		// --- Die (optionalen) Karteikarten einblenden ----------
-		addProjectTab(Language.translate("Ontologie"), null, new gui.projectwindow.OntologyTab(CurrProject), Language.translate("Kommunikation"));
-		addProjectTab(Language.translate("Basis-Agenten"), null, new gui.projectwindow.BaseAgents(CurrProject), Language.translate("Basis-Agenten"));
-		addProjectTab(Language.translate("Umgebungs-Setup"), null, new mas.environment.guiComponents.EnvironmentControllerGUI(CurrProject), Language.translate("Umgebungs-Setup"));
-		addProjectTab(Language.translate("Simulations-Setup"), null, new gui.projectwindow.SetupSimulation(CurrProject), Language.translate("Simulations-Setup"));
-		addProjectTab(Language.translate("Simulation"), null, new gui.projectwindow.Simulation(this.CurrProject), Language.translate("Simulation"));
-		addProjectTab(Language.translate("Simulationsmeldungen"), null, new gui.projectwindow.SimulationMessages(CurrProject), Language.translate("Simulationsmeldungen"));
+		this.addProjectTab(Language.translate("Ontologie"), null, new gui.projectwindow.OntologyTab(CurrProject), Language.translate("Kommunikation"));
+		this.addProjectTab(Language.translate("Basis-Agenten"), null, new gui.projectwindow.BaseAgents(CurrProject), Language.translate("Basis-Agenten"));
+		this.addProjectTab(Language.translate("Umgebungs-Setup"), null, new mas.environment.guiComponents.EnvironmentControllerGUI(CurrProject), Language.translate("Umgebungs-Setup"));
+		this.addProjectTab(Language.translate("Simulations-Setup"), null, new gui.projectwindow.SetupSimulation(CurrProject, this), Language.translate("Simulations-Setup"));
+		this.addProjectTab(Language.translate("Simulation"), null, new gui.projectwindow.Simulation(this.CurrProject), Language.translate("Simulation"));
+		this.addProjectTab(Language.translate("Simulationsmeldungen"), null, new gui.projectwindow.SimulationMessages(CurrProject), Language.translate("Simulationsmeldungen"));
+		
+		// --- Ggf. noch fehlende Nodes hinzufügen ---------------
+		if (additionalNodes.size()!=0) {
+			this.addAdditionalNodes();
+		}
 		
 		// --- Basis-Verzeichnisse im ProjectTree anzeigen -------
-		ProjectTreeExpand2Level(2, true);
+		this.ProjectTreeExpand2Level(3, true);
 		
 	}
 
@@ -147,21 +158,50 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 					// ----------------------------------------------------------
 					TreePath PathSelected = ts.getPath();
 					Integer PathLevel = PathSelected.getPathCount();
-					//System.out.println( PathLevel + " => "  + ts.getPath().toString() );
-					
+
 					// ----------------------------------------------------------
-					if ( PathLevel == 2 ) {
+					if ( PathLevel >= 2 ) {
 						// ------------------------------------------------------
 						// --- Fokus auf die entsprechende Karteikarte setzen ---
 						// ------------------------------------------------------
-						TreeNode BaseNode = (TreeNode) ts.getPath().getPathComponent(1);
-						String BaseNodeName = BaseNode.toString();
+						Component currComp = null;
+						JPanel subJPanel = null;
+						JTabbedPane subJTabs = null;
+						String FocusNodeName = PathSelected.getPathComponent(1).toString();
+						
+						// --- Nach entsprechender Karteikarte suchen -----------
 						for (int i=0; i<ProjectViewRightTabs.getComponentCount();  i++ ) {
-							if ( ProjectViewRightTabs.getComponent(i).getName() == BaseNodeName ) {
-								// --- Fokus setzen -----------------------------
-								ProjectViewRightTabs.setSelectedIndex(i);								
+							currComp = ProjectViewRightTabs.getComponent(i);
+							if ( currComp.getName() == FocusNodeName ) {
+								ProjectViewRightTabs.setSelectedIndex(i);
+								if ( currComp instanceof JPanel ) {
+									subJPanel = (JPanel) ProjectViewRightTabs.getComponent(i);	
+								}
 							}							
-						}					
+						}	
+						// ------------------------------------------------------
+						// --- Falls ein Aufruf aus einer tieferen Ebene kam ----
+						// ------------------------------------------------------
+						if (PathLevel>2 && subJPanel!=null) {
+							// --- Suche nach einer JTabbedPane -----------------
+							for (int i=0; i<subJPanel.getComponentCount();  i++ ) {
+								currComp = subJPanel.getComponent(i);
+								if ( currComp instanceof JTabbedPane ) {
+									subJTabs = (JTabbedPane) currComp;
+									break;									
+								}							
+							}	
+							FocusNodeName = PathSelected.getPathComponent(2).toString();
+							if (subJTabs!=null) {
+								// --- Fokus auf Karteikarte setzen -------------
+								for (int i=0; i<subJTabs.getComponentCount();  i++ ) {
+									if ( subJTabs.getComponent(i).getName() == FocusNodeName ) {
+										subJTabs.setSelectedIndex(i);
+									}							
+								}	
+							}
+						}
+						// ------------------------------------------------------
 					} 
 					// ----------------------------------------------------------
 					// --- Tree-Selection abfangen --- S T O P ------------------
@@ -254,12 +294,81 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	public void addProjectTab( String title, Icon icon, Component component, String tip ) {
 		// --- GUI-Komponente in das TabbedPane-Objekt einfï¿½gen -------------
 		component.setName( title ); 								// --- Component benennen ----
-		ProjectViewRightTabs.addTab( title, icon, component, tip);	// --- Component anhï¿½ngen ---
+		ProjectViewRightTabs.addTab( title, icon, component, tip);	// --- Component anhängen ----
 		// --- Neuen Basisknoten einfügen ------------------
-		CurrentNode = new DefaultMutableTreeNode( title );
-		RootNode.add( CurrentNode );		
+		addProjectTabNode(title);
 	}
 
+	/**
+	 * Adds a new node to the left Project-Tree
+	 * @param newNode
+	 */
+	public void addProjectTabNode( String newNode ) {
+		RootNode.add( new DefaultMutableTreeNode( newNode ) );
+	}
+	/**
+	 * Adds a child-node to a given parent node of the left Project-Tree.
+	 * If the node can not be found, the methode adds the textual node-definition
+	 * to the local TreeMap 'additionalNodes', for a later addition to the Tree
+	 * @param parentNode
+	 * @param newNode
+	 */
+	public void addProjectTabNode( String parentNodeName, String newNodeName ) {
+		DefaultMutableTreeNode currentNode = new DefaultMutableTreeNode( newNodeName );
+		DefaultMutableTreeNode parentNode  = getTreeNode(parentNodeName); 
+		if (parentNode!=null) {
+			parentNode.add( currentNode );			
+		} else {
+			String[] newNodeDef = new String[2];
+			newNodeDef[0] = parentNodeName;
+			newNodeDef[1] = newNodeName;
+			additionalNodes.put(additionalNodes.size()+1, newNodeDef);
+		}
+	}
+	/**
+	 * Adds some further nodes to the left Project-Tree if recommended
+	 * through the TreeMap 'additionalNodes' at the end of the 
+	 * constructor-method
+	 */
+	private void addAdditionalNodes() {
+		
+		Vector<Integer> nodeKeys = new Vector<Integer>( additionalNodes.keySet() );
+		Collections.sort(nodeKeys);
+		Iterator<Integer> it = nodeKeys.iterator();
+	    while (it.hasNext()) {
+	    	Integer key = it.next();
+	    	String[] newNodeDef = additionalNodes.get(key);
+	    	this.addProjectTabNode(newNodeDef[0], newNodeDef[1]);
+	    	additionalNodes.remove(key);
+	    }
+		if (additionalNodes.size()==0) {
+			additionalNodes = null;
+		}
+	    
+	}
+	/**
+	 * Returns the Tree-Node requested by the Reference 
+	 * @param Reference
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public DefaultMutableTreeNode getTreeNode( String Reference ) {
+		
+		DefaultMutableTreeNode NodeFound = null;
+		DefaultMutableTreeNode CurrNode = null;
+		String CurrNodeText;
+		
+		for (Enumeration<DefaultMutableTreeNode> e = RootNode.breadthFirstEnumeration(); e.hasMoreElements();) {
+			CurrNode = e.nextElement();
+			CurrNodeText = CurrNode.getUserObject().toString(); 
+			if ( CurrNodeText.equals(Reference) ) {				
+				NodeFound = CurrNode;
+				break;
+			} 
+		}
+		return NodeFound;
+	}
+	
 	/**
 	 * Setzt den Fokus auf eine bestimmte Karteikarte
 	 * @param title

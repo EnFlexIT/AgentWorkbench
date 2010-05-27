@@ -160,6 +160,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 			gridBagConstraints.gridy = 0;
 			gridBagConstraints.weightx = 1.0;
 			gridBagConstraints.gridwidth = 1;
+			gridBagConstraints.insets = new Insets(10, 0, 10, 0);
 			gridBagConstraints.gridx = 1;
 			jPanelNorth = new JPanel();
 			jPanelNorth.setLayout(new GridBagLayout());

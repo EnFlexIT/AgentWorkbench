@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <project>
     <projectName>Monitormas</projectName>
+    <subOntologies/>
     <agentConfiguration/>
+    <subFolderAgents>agents</subFolderAgents>
+    <subFolderEnvSetups>envSetups</subFolderEnvSetups>
+    <subFolderOntology>ontology</subFolderOntology>
+    <subFolderResources>resources</subFolderResources>
 </project>
