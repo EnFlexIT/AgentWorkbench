@@ -18,6 +18,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import mas.PlatformJadeConfig;
 import mas.agents.AgentConfiguration;
 import mas.display.ontology.Environment;
 import mas.environment.EnvironmentController;
@@ -65,9 +66,14 @@ import rollout.TextFileRessourceRollOut;
 	@XmlElementWrapper(name = "subOntologies")
 	@XmlElement(name="subOntology")
 	public Vector<String> subOntologies = new Vector<String>();
+	
 	@XmlElementWrapper(name = "agentConfiguration")
 	public AgentConfiguration AgentConfig = new AgentConfiguration(this);
-		
+	
+	@XmlElement(name="jadeConfiguration")
+	public PlatformJadeConfig JadeConfiguration = new PlatformJadeConfig();
+	
+	
 	/**
 	 * Default-Constructor
 	 */

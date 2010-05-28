@@ -1,25 +1,27 @@
 package gui.projectwindow;
 
+import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import application.Project;
 
-public class SetupSimulationJADE extends JPanel {
+public class SetupSimulationJADE extends JPanel implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
-	@SuppressWarnings("unused")
+	
 	private Project currProject = null;
 	
 	private JCheckBox jCheckBoxStartJade = null;
 	private JCheckBox jCheckBoxUseDefaults = null;
-	private JLabel jLabelServiceTitle = null;
 	private JCheckBox jCheckBoxTopicManagementService = null;
 	private JCheckBox jCheckBoxPersistentDeliveryService = null;
 	private JCheckBox jCheckBoxMainReplicationService = null;
@@ -28,8 +30,11 @@ public class SetupSimulationJADE extends JPanel {
 	private JCheckBox jCheckBoxFaultRecoveryService = null;
 	private JCheckBox jCheckBoxBEManagementService = null;
 	private JCheckBox jCheckBoxInterPlatformMobilityService = null;
-	private JLabel jLabelDummy = null;
+	private JTextField jTextFieldDefaultPort = null;
+	private JLabel jLabelServiceTitle = null;
 	private JLabel jLabelServiceTitleAddOn = null;
+	private JLabel jLabelPort = null;
+	private JLabel jLabelPortExplain = null;
 	/**
 	 * This is the default constructor
 	 */
@@ -37,6 +42,7 @@ public class SetupSimulationJADE extends JPanel {
 		super();
 		this.currProject = project;
 		initialize();
+		this.refreshView();
 	}
 
 	/**
@@ -45,97 +51,39 @@ public class SetupSimulationJADE extends JPanel {
 	 * @return void
 	 */
 	private void initialize() {
-		GridBagConstraints gridBagConstraints111 = new GridBagConstraints();
-		gridBagConstraints111.gridx = 0;
-		gridBagConstraints111.anchor = GridBagConstraints.WEST;
-		gridBagConstraints111.insets = new Insets(20, 30, 0, 0);
-		gridBagConstraints111.gridy = 10;
+		jLabelPortExplain = new JLabel();
+		jLabelPortExplain.setText("(Falls bereits verwendet, wird versucht den nächst höheren Port zu nutzen)");
+		jLabelPortExplain.setBounds(new Rectangle(40, 110, 445, 16));
+		jLabelPortExplain.setFont(new Font("Dialog", Font.PLAIN, 12));
+		jLabelPort = new JLabel();
+		jLabelPort.setFont(new Font("Dialog", Font.BOLD, 12));
+		jLabelPort.setBounds(new Rectangle(40, 94, 445, 16));
+		jLabelPort.setText("Starte JADE über Port-Nr.:");
 		jLabelServiceTitleAddOn = new JLabel();
 		jLabelServiceTitleAddOn.setFont(new Font("Dialog", Font.BOLD, 12));
+		jLabelServiceTitleAddOn.setBounds(new Rectangle(40, 368, 445, 16));
 		jLabelServiceTitleAddOn.setText("Folgende Add-On-Dienste starten:");
-		GridBagConstraints gridBagConstraints10 = new GridBagConstraints();
-		gridBagConstraints10.gridx = 0;
-		gridBagConstraints10.fill = GridBagConstraints.HORIZONTAL;
-		gridBagConstraints10.weighty = 1.0;
-		gridBagConstraints10.insets = new Insets(0, 10, 0, 0);
-		gridBagConstraints10.gridy = 12;
-		jLabelDummy = new JLabel();
-		jLabelDummy.setText(" ");
-		GridBagConstraints gridBagConstraints9 = new GridBagConstraints();
-		gridBagConstraints9.gridx = 0;
-		gridBagConstraints9.anchor = GridBagConstraints.WEST;
-		gridBagConstraints9.insets = new Insets(0, 30, 0, 0);
-		gridBagConstraints9.gridy = 11;
-		GridBagConstraints gridBagConstraints7 = new GridBagConstraints();
-		gridBagConstraints7.gridx = 0;
-		gridBagConstraints7.anchor = GridBagConstraints.WEST;
-		gridBagConstraints7.insets = new Insets(0, 30, 0, 0);
-		gridBagConstraints7.gridy = 9;
-		GridBagConstraints gridBagConstraints6 = new GridBagConstraints();
-		gridBagConstraints6.gridx = 0;
-		gridBagConstraints6.anchor = GridBagConstraints.WEST;
-		gridBagConstraints6.insets = new Insets(0, 30, 0, 0);
-		gridBagConstraints6.gridy = 4;
-		GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
-		gridBagConstraints5.gridx = 0;
-		gridBagConstraints5.anchor = GridBagConstraints.WEST;
-		gridBagConstraints5.insets = new Insets(0, 30, 0, 0);
-		gridBagConstraints5.gridy = 8;
-		GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
-		gridBagConstraints4.gridx = 0;
-		gridBagConstraints4.anchor = GridBagConstraints.WEST;
-		gridBagConstraints4.insets = new Insets(0, 30, 0, 0);
-		gridBagConstraints4.gridy = 5;
-		GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
-		gridBagConstraints3.gridx = 0;
-		gridBagConstraints3.anchor = GridBagConstraints.WEST;
-		gridBagConstraints3.insets = new Insets(0, 30, 0, 0);
-		gridBagConstraints3.gridy = 3;
-		GridBagConstraints gridBagConstraints21 = new GridBagConstraints();
-		gridBagConstraints21.gridx = 0;
-		gridBagConstraints21.anchor = GridBagConstraints.WEST;
-		gridBagConstraints21.insets = new Insets(0, 30, 0, 0);
-		gridBagConstraints21.gridy = 7;
-		GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
-		gridBagConstraints11.anchor = GridBagConstraints.WEST;
-		gridBagConstraints11.fill = GridBagConstraints.NONE;
-		gridBagConstraints11.weightx = 0.1;
-		gridBagConstraints11.weighty = 0.0;
-		gridBagConstraints11.insets = new Insets(10, 10, 0, 0);
-		gridBagConstraints11.ipadx = 0;
-		GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
-		gridBagConstraints2.gridx = 0;
-		gridBagConstraints2.anchor = GridBagConstraints.WEST;
-		gridBagConstraints2.insets = new Insets(0, 30, 0, 0);
-		gridBagConstraints2.gridy = 6;
-		GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
-		gridBagConstraints1.gridx = 0;
-		gridBagConstraints1.anchor = GridBagConstraints.WEST;
-		gridBagConstraints1.insets = new Insets(20, 30, 5, 0);
-		gridBagConstraints1.gridy = 2;
 		jLabelServiceTitle = new JLabel();
 		jLabelServiceTitle.setText("Folgende Plattform-Dienste starten:");
+		jLabelServiceTitle.setBounds(new Rectangle(40, 168, 445, 16));
 		jLabelServiceTitle.setFont(new Font("Dialog", Font.BOLD, 12));
-		GridBagConstraints gridBagConstraints = new GridBagConstraints();
-		gridBagConstraints.gridx = 0;
-		gridBagConstraints.anchor = GridBagConstraints.WEST;
-		gridBagConstraints.insets = new Insets(0, 10, 0, 0);
-		gridBagConstraints.gridy = 1;
-		this.setSize(579, 420);
-		this.setLayout(new GridBagLayout());
-		this.add(getJCheckBoxStartJade(), gridBagConstraints11);
-		this.add(getJCheckBoxUseDefaults(), gridBagConstraints);
-		this.add(jLabelServiceTitle, gridBagConstraints1);
-		this.add(getJCheckBoxTopicManagementService(), gridBagConstraints2);
-		this.add(getJCheckBoxPersistentDeliveryService(), gridBagConstraints21);
-		this.add(getJCheckBoxMainReplicationService(), gridBagConstraints3);
-		this.add(getJCheckBoxAddressNotificationService(), gridBagConstraints4);
-		this.add(getJCheckBoxUDPNodeMonitoringServ(), gridBagConstraints5);
-		this.add(getJCheckBoxFaultRecoveryService(), gridBagConstraints6);
-		this.add(getJCheckBoxBEManagementService(), gridBagConstraints7);
-		this.add(getJCheckBoxInterPlatformMobilityService(), gridBagConstraints9);
-		this.add(jLabelDummy, gridBagConstraints10);
-		this.add(jLabelServiceTitleAddOn, gridBagConstraints111);
+		this.setSize(591, 485);
+		this.setLayout(null);
+		this.add(getJCheckBoxStartJade(), null);
+		this.add(getJCheckBoxUseDefaults(), null);
+		this.add(jLabelServiceTitle, null);
+		this.add(getJCheckBoxTopicManagementService(), null);
+		this.add(getJCheckBoxPersistentDeliveryService(), null);
+		this.add(getJCheckBoxMainReplicationService(), null);
+		this.add(getJCheckBoxAddressNotificationService(), null);
+		this.add(getJCheckBoxUDPNodeMonitoringServ(), null);
+		this.add(getJCheckBoxFaultRecoveryService(), null);
+		this.add(getJCheckBoxBEManagementService(), null);
+		this.add(getJCheckBoxInterPlatformMobilityService(), null);
+		this.add(jLabelServiceTitleAddOn, null);
+		this.add(getJTextFieldDefaultPort(), null);
+		this.add(jLabelPort, null);
+		this.add(jLabelPortExplain, null);
 	}
 
 	/**
@@ -147,7 +95,10 @@ public class SetupSimulationJADE extends JPanel {
 		if (jCheckBoxStartJade == null) {
 			jCheckBoxStartJade = new JCheckBox();
 			jCheckBoxStartJade.setText("JADE zu Simulationsbeginn starten");
+			jCheckBoxStartJade.setBounds(new Rectangle(20, 20, 423, 27));
 			jCheckBoxStartJade.setFont(new Font("Dialog", Font.BOLD, 14));
+			jCheckBoxStartJade.setActionCommand("StartJade");
+			jCheckBoxStartJade.addActionListener(this);
 		}
 		return jCheckBoxStartJade;
 	}
@@ -161,7 +112,10 @@ public class SetupSimulationJADE extends JPanel {
 		if (jCheckBoxUseDefaults == null) {
 			jCheckBoxUseDefaults = new JCheckBox();
 			jCheckBoxUseDefaults.setText("AgentGUI - Standardeinstellungen verwenden");
+			jCheckBoxUseDefaults.setBounds(new Rectangle(20, 47, 423, 27));
 			jCheckBoxUseDefaults.setFont(new Font("Dialog", Font.BOLD, 14));
+			jCheckBoxUseDefaults.setActionCommand("UseDefaults");
+			jCheckBoxUseDefaults.addActionListener(this);
 		}
 		return jCheckBoxUseDefaults;
 	}
@@ -175,7 +129,10 @@ public class SetupSimulationJADE extends JPanel {
 		if (jCheckBoxTopicManagementService == null) {
 			jCheckBoxTopicManagementService = new JCheckBox();
 			jCheckBoxTopicManagementService.setText("TopicManagementService");
+			jCheckBoxTopicManagementService.setBounds(new Rectangle(40, 261, 167, 24));
 			jCheckBoxTopicManagementService.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jCheckBoxTopicManagementService.setActionCommand("TopicManagementService");
+			jCheckBoxTopicManagementService.addActionListener(this);
 		}
 		return jCheckBoxTopicManagementService;
 	}
@@ -189,7 +146,10 @@ public class SetupSimulationJADE extends JPanel {
 		if (jCheckBoxPersistentDeliveryService == null) {
 			jCheckBoxPersistentDeliveryService = new JCheckBox();
 			jCheckBoxPersistentDeliveryService.setText("PersistentDeliveryService");
+			jCheckBoxPersistentDeliveryService.setBounds(new Rectangle(40, 285, 164, 24));
 			jCheckBoxPersistentDeliveryService.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jCheckBoxPersistentDeliveryService.setActionCommand("PersistentDeliveryService");
+			jCheckBoxPersistentDeliveryService.addActionListener(this);
 		}
 		return jCheckBoxPersistentDeliveryService;
 	}
@@ -203,7 +163,10 @@ public class SetupSimulationJADE extends JPanel {
 		if (jCheckBoxMainReplicationService == null) {
 			jCheckBoxMainReplicationService = new JCheckBox();
 			jCheckBoxMainReplicationService.setText("MainReplicationService");
+			jCheckBoxMainReplicationService.setBounds(new Rectangle(40, 189, 153, 24));
 			jCheckBoxMainReplicationService.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jCheckBoxMainReplicationService.setActionCommand("MainReplicationService");
+			jCheckBoxMainReplicationService.addActionListener(this);			
 		}
 		return jCheckBoxMainReplicationService;
 	}
@@ -217,7 +180,10 @@ public class SetupSimulationJADE extends JPanel {
 		if (jCheckBoxAddressNotificationService == null) {
 			jCheckBoxAddressNotificationService = new JCheckBox();
 			jCheckBoxAddressNotificationService.setText("AddressNotificationService");
+			jCheckBoxAddressNotificationService.setBounds(new Rectangle(40, 237, 172, 24));
 			jCheckBoxAddressNotificationService.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jCheckBoxAddressNotificationService.setActionCommand("AddressNotificationService");
+			jCheckBoxAddressNotificationService.addActionListener(this);
 		}
 		return jCheckBoxAddressNotificationService;
 	}
@@ -231,7 +197,10 @@ public class SetupSimulationJADE extends JPanel {
 		if (jCheckBoxUDPNodeMonitoringServ == null) {
 			jCheckBoxUDPNodeMonitoringServ = new JCheckBox();
 			jCheckBoxUDPNodeMonitoringServ.setText("UDPNodeMonitoringService");
+			jCheckBoxUDPNodeMonitoringServ.setBounds(new Rectangle(40, 309, 178, 24));
 			jCheckBoxUDPNodeMonitoringServ.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jCheckBoxUDPNodeMonitoringServ.setActionCommand("UDPNodeMonitoringServ");
+			jCheckBoxUDPNodeMonitoringServ.addActionListener(this);
 		}
 		return jCheckBoxUDPNodeMonitoringServ;
 	}
@@ -245,7 +214,10 @@ public class SetupSimulationJADE extends JPanel {
 		if (jCheckBoxFaultRecoveryService == null) {
 			jCheckBoxFaultRecoveryService = new JCheckBox();
 			jCheckBoxFaultRecoveryService.setText("FaultRecoveryService");
+			jCheckBoxFaultRecoveryService.setBounds(new Rectangle(40, 213, 142, 24));
 			jCheckBoxFaultRecoveryService.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jCheckBoxFaultRecoveryService.setActionCommand("FaultRecoveryService");
+			jCheckBoxFaultRecoveryService.addActionListener(this);
 		}
 		return jCheckBoxFaultRecoveryService;
 	}
@@ -259,7 +231,10 @@ public class SetupSimulationJADE extends JPanel {
 		if (jCheckBoxBEManagementService == null) {
 			jCheckBoxBEManagementService = new JCheckBox();
 			jCheckBoxBEManagementService.setText("BEManagementService");
+			jCheckBoxBEManagementService.setBounds(new Rectangle(40, 333, 153, 24));
 			jCheckBoxBEManagementService.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jCheckBoxBEManagementService.setActionCommand("BEManagementService");
+			jCheckBoxBEManagementService.addActionListener(this);
 		}
 		return jCheckBoxBEManagementService;
 	}
@@ -273,9 +248,83 @@ public class SetupSimulationJADE extends JPanel {
 		if (jCheckBoxInterPlatformMobilityService == null) {
 			jCheckBoxInterPlatformMobilityService = new JCheckBox();
 			jCheckBoxInterPlatformMobilityService.setText("InterPlatformMobilityService");
+			jCheckBoxInterPlatformMobilityService.setBounds(new Rectangle(40, 384, 175, 24));
 			jCheckBoxInterPlatformMobilityService.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jCheckBoxInterPlatformMobilityService.setActionCommand("InterPlatformMobilityService");
+			jCheckBoxInterPlatformMobilityService.addActionListener(this);
 		}
 		return jCheckBoxInterPlatformMobilityService;
 	}
 
-}  //  @jve:decl-index=0:visual-constraint="10,10"
+	/**
+	 * This method initializes jTextFieldDefaultPort	
+	 * 	
+	 * @return javax.swing.JTextField	
+	 */
+	private JTextField getJTextFieldDefaultPort() {
+		if (jTextFieldDefaultPort == null) {
+			jTextFieldDefaultPort = new JTextField();
+			jTextFieldDefaultPort.setPreferredSize(new Dimension(400, 200));
+			jTextFieldDefaultPort.setLocation(new Point(40, 131));
+			jTextFieldDefaultPort.setSize(new Dimension(80, 26));
+			jTextFieldDefaultPort.setFont(new Font("Dialog", Font.BOLD, 12));
+			jTextFieldDefaultPort.setActionCommand("DefaultPort");
+			jTextFieldDefaultPort.addActionListener(this);
+		}
+		return jTextFieldDefaultPort;
+	}
+
+	
+	@Override
+	public void actionPerformed(ActionEvent ae) {
+		// TODO Auto-generated method stub
+		String ActCMD = ae.getActionCommand();
+		Object Trigger = ae.getSource();
+		
+		if (Trigger==jCheckBoxStartJade) {
+			currProject.JadeConfiguration.setStart4Simulation(jCheckBoxStartJade.isSelected());			
+		} else if (Trigger==jCheckBoxUseDefaults) {
+			currProject.JadeConfiguration.setUseDefaults(jCheckBoxUseDefaults.isSelected());
+		} else if (Trigger==jCheckBoxTopicManagementService) {
+			currProject.JadeConfiguration.runTopicManagementService(jCheckBoxTopicManagementService.isSelected());
+		} else if (Trigger==jCheckBoxPersistentDeliveryService) {
+			currProject.JadeConfiguration.runPersistentDeliveryService(jCheckBoxPersistentDeliveryService.isSelected());
+		} else if (Trigger==jCheckBoxMainReplicationService) {
+			currProject.JadeConfiguration.runMainReplicationService(jCheckBoxMainReplicationService.isSelected());
+		} else if (Trigger==jCheckBoxAddressNotificationService) {
+			currProject.JadeConfiguration.runAddressNotificationService(jCheckBoxAddressNotificationService.isSelected());
+		} else if (Trigger==jCheckBoxUDPNodeMonitoringServ) {
+			currProject.JadeConfiguration.runUDPNodeMonitoringServ(jCheckBoxUDPNodeMonitoringServ.isSelected());
+		} else if (Trigger==jCheckBoxFaultRecoveryService) {
+			currProject.JadeConfiguration.runFaultRecoveryService(jCheckBoxFaultRecoveryService.isSelected());
+		} else if (Trigger==jCheckBoxBEManagementService) {
+			currProject.JadeConfiguration.runBEManagementService(jCheckBoxBEManagementService.isSelected());
+		} else if (Trigger==jCheckBoxInterPlatformMobilityService) {
+			currProject.JadeConfiguration.runInterPlatformMobilityService(jCheckBoxInterPlatformMobilityService.isSelected());
+		} else if (Trigger==jTextFieldDefaultPort) {
+			
+		} else {
+			System.out.println( "Unknown Action " + ActCMD );
+			System.out.println( "Source.  " + Trigger );
+		}
+	}
+
+	private void refreshView() {
+		
+		jCheckBoxStartJade.setSelected(currProject.JadeConfiguration.isStart4Simulation());
+		jCheckBoxUseDefaults.setSelected(currProject.JadeConfiguration.isUseDefaults());
+		
+		jCheckBoxTopicManagementService.setSelected(currProject.JadeConfiguration.isTopicManagementService());
+		jCheckBoxPersistentDeliveryService.setSelected(currProject.JadeConfiguration.isPersistentDeliveryService());
+		jCheckBoxMainReplicationService.setSelected(currProject.JadeConfiguration.isMainReplicationService());
+		jCheckBoxAddressNotificationService.setSelected(currProject.JadeConfiguration.isAddressNotificationService());
+		jCheckBoxUDPNodeMonitoringServ.setSelected(currProject.JadeConfiguration.isUDPNodeMonitoringServ());
+		jCheckBoxFaultRecoveryService.setSelected(currProject.JadeConfiguration.isFaultRecoveryService());
+		jCheckBoxBEManagementService.setSelected(currProject.JadeConfiguration.isBEManagementService());
+		
+		jCheckBoxInterPlatformMobilityService.setSelected(currProject.JadeConfiguration.isInterPlatformMobilityService());
+		
+	}
+	
+	
+}  //  @jve:decl-index=0:visual-constraint="15,13"

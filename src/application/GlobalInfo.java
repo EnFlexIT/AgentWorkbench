@@ -1,10 +1,14 @@
 package application;
 
+import jade.core.Profile;
+
 import java.awt.Color;
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Vector;
+
+import mas.PlatformJadeConfig;
 
 public class GlobalInfo {
 
@@ -18,7 +22,7 @@ public class GlobalInfo {
 	final private static String localPathImageIntern = "/img/";
 	
 	// --- JADE-Variablen ---------------------------------------------------
-	private int localeJadeLocalPort = 1099;
+	private Integer localeJadeLocalPort = 1099;
 	
 	final private static Color localColorMenuHighLight =  new Color(0,0,192);
 	
@@ -331,10 +335,21 @@ public class GlobalInfo {
 	/**
 	 * @return the localeJadeDefaultPort
 	 */
-	public int getJadeLocalPort() {
+	public Integer getJadeLocalPort() {
 		return localeJadeLocalPort;
 	}
-
+	/**
+	 * @return the localeJadeDefaultProfile
+	 */
+	public Profile getJadeDefaultProfile() {
+		// --- Here the default-values can be configured -------------
+		PlatformJadeConfig jadeConfig = new PlatformJadeConfig();
+		jadeConfig.runNotificationService(true);
+		jadeConfig.runAgentMobilityService(true);
+		jadeConfig.runInterPlatformMobilityService(true);
+		jadeConfig.setLocalPort(localeJadeLocalPort);
+		return jadeConfig.getNewInstanceOfProfilImpl();
+	}
 
 	// ---------------------------------------------------------
 	// --- Laufzeitinformationen zu JADE -----------------------

@@ -16,8 +16,6 @@ import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
-import network.PortChecker;
-
 import application.Application;
 import application.Language;
 
@@ -30,7 +28,8 @@ public class Platform extends Object {
 	public static Runtime MASrt;
 	public static AgentContainer MASmc;
 	public static Vector<AgentContainer> MAScontainer = new Vector<AgentContainer>();
-		
+	public Profile MAScontainerProfile = Application.RunInfo.getJadeDefaultProfile(); 
+	
 	private jadeClasses Agents; 
 	private jadeClasses Ontologies;
 	public Vector<Class<?>> AgentsVector   = null;
@@ -64,25 +63,8 @@ public class Platform extends Object {
 						Application.MainWindow.setStatusJadeRunning(false);
 					}
 				});
-				
-				// --- Services zusammenstellen ---------------------
-				String ServiceList = new String();
-				
-				//ServiceList = ServiceList.concat("jade.core.messaging.TopicManagementService;");
-				
-				ServiceList = ServiceList.concat("jade.core.event.NotificationService;");
-				ServiceList = ServiceList.concat("jade.core.mobility.AgentMobilityService;");				
-				ServiceList = ServiceList.concat("jade.core.migration.InterPlatformMobilityService;");
-				
-				// --- Freien Port für die Plattform finden ---------
-				PortChecker portCheck = new PortChecker(Application.RunInfo.getJadeLocalPort());
-				Integer usePort = portCheck.getFreePort();
-				
 				// --- MainContainer starten ------------------------				
-				Profile pMain = new ProfileImpl();
-				pMain.setParameter(Profile.SERVICES, ServiceList );
-				pMain.setParameter(Profile.LOCAL_PORT, usePort.toString());
-				MASmc = MASrt.createMainContainer( pMain );				
+				MASmc = MASrt.createMainContainer( MAScontainerProfile );				
 			}
 			catch ( Exception e ) {
 				e.printStackTrace();
@@ -341,7 +323,7 @@ public class Platform extends Object {
 		
 		Profile pSub = new ProfileImpl();
 		pSub.setParameter( Profile.CONTAINER_NAME, ContainerName );
-		pSub.setParameter( Profile.SERVICES ,"jade.core.event.NotificationService;jade.core.messaging.TopicManagementService" );
+		System.out.println( "Hier: " + pSub.toString());
 		AgentContainer MAS_AgentContainer = MASrt.createAgentContainer( pSub );
 		MAScontainer.add( MAS_AgentContainer );
 		return MAS_AgentContainer;		
