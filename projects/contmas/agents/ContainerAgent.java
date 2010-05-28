@@ -239,7 +239,7 @@ public class ContainerAgent extends Agent{
 
 	public AID getHarbourMaster(){
 		if(this.harbourMaster == null){
-
+			echoStatus("ERROR: No harbourMaster available");
 		}
 		return this.harbourMaster;
 	}

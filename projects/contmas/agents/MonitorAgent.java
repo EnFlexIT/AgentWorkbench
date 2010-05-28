@@ -20,77 +20,103 @@
  */
 package contmas.agents;
 
-import javax.swing.JDesktopPane;
-
-import contmas.behaviours.subscribeToDF;
-import contmas.interfaces.DFSubscriber;
-import contmas.interfaces.OntRepRequester;
-import contmas.main.ControlGUI;
-import contmas.main.MonitorGUI;
-import contmas.ontology.ContainerHolder;
 import jade.core.AID;
 import jade.gui.GuiAgent;
 import jade.gui.GuiEvent;
 import jade.util.leap.List;
 
+import java.util.HashMap;
+
+import javax.swing.JDesktopPane;
+
+import contmas.behaviours.requestOntologyRepresentation;
+import contmas.behaviours.subscribeToDF;
+import contmas.interfaces.DFSubscriber;
+import contmas.interfaces.OntRepRequester;
+import contmas.main.AgentView;
+import contmas.main.MonitorGUI;
+import contmas.ontology.ContainerHolder;
+
 /**
  * @author Hanno - Felix Wagner
- *
+ * 
  */
-public class MonitorAgent extends GuiAgent implements OntRepRequester,DFSubscriber{
+public class MonitorAgent extends GuiAgent implements OntRepRequester,	DFSubscriber {
 
+	public static final Integer REFRESH = 0;
 	private MonitorGUI myGui;
 	private JDesktopPane canvas;
+	private AID harbourMaster;
 
 	/**
-	 * @param canvas 
+	 * @param canvas
 	 * 
 	 */
-	public MonitorAgent(JDesktopPane canvas){
-		this.canvas=canvas;
+	public MonitorAgent(JDesktopPane canvas) {
+		this.canvas = canvas;
 		// TODO Auto-generated constructor stub
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see jade.core.Agent#setup()
 	 */
 	@Override
-	protected void setup(){
+	protected void setup() {
 		super.setup();
-		this.myGui=new MonitorGUI(this,canvas);
+		this.myGui = new MonitorGUI(this, canvas);
 		this.myGui.setVisible(true);
-		this.addBehaviour(new subscribeToDF(this,"container-handling"));
-
+		ContainerAgent.enableForCommunication(this);
+		this.addBehaviour(new subscribeToDF(this, "container-handling"));
+		this.harbourMaster=ContainerAgent.getFirstAIDFromDF("harbor-managing",this);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see jade.gui.GuiAgent#onGuiEvent(jade.gui.GuiEvent)
 	 */
 	@Override
-	protected void onGuiEvent(GuiEvent ev){
-		// TODO Auto-generated method stub
+	protected void onGuiEvent(GuiEvent ev) {
+		if (ev.getType() == REFRESH) {
+			AID subject=(AID) ev.getParameter(0);
+			System.out.println("Refreshing view of "+subject.getLocalName());
+			this.addBehaviour(new requestOntologyRepresentation(this,subject,this.harbourMaster));
 
+		}
 	}
 
-	/* (non-Javadoc)
-	 * @see contmas.interfaces.OntRepRequester#processOntologyRepresentation(contmas.ontology.ContainerHolder, jade.core.AID)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * contmas.interfaces.OntRepRequester#processOntologyRepresentation(contmas
+	 * .ontology.ContainerHolder, jade.core.AID)
 	 */
 	@Override
-	public void processOntologyRepresentation(ContainerHolder recieved,AID agent){
-		// TODO Auto-generated method stub
-		
+	public void processOntologyRepresentation(ContainerHolder recieved,	AID agent) {
+		HashMap<AID, AgentView> monitoredAgents = myGui.getMonitoredAgents();
+		if(monitoredAgents.containsKey(agent)){
+			AgentView view = monitoredAgents.get(agent);
+			view.updateOntRep(recieved);
+		}
+
 	}
 
-	/* (non-Javadoc)
-	 * @see contmas.interfaces.DFSubscriber#processSubscriptionUpdate(jade.util.leap.List, java.lang.Boolean)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * contmas.interfaces.DFSubscriber#processSubscriptionUpdate(jade.util.leap
+	 * .List, java.lang.Boolean)
 	 */
 	@Override
-	public void processSubscriptionUpdate(List updatedAgents,Boolean remove){
-		this.updateAgentTree(updatedAgents,remove);
-	}
-	
-	public void updateAgentTree(List newAgents,Boolean remove){
-		this.myGui.updateAgentTree(newAgents,remove);
+	public void processSubscriptionUpdate(List updatedAgents, Boolean remove) {
+		this.updateAgentTree(updatedAgents, remove);
 	}
 
+	public void updateAgentTree(List newAgents, Boolean remove) {
+		this.myGui.updateAgentTree(newAgents, remove);
+	}
 }

@@ -22,6 +22,9 @@ package contmas.main;
 
 import jade.core.AID;
 import jade.gui.AgentTree;
+import jade.gui.GuiEvent;
+import jade.gui.AgentTree.AgentNode;
+import jade.gui.AgentTree.Node;
 import jade.util.leap.List;
 
 import java.awt.event.ActionEvent;
@@ -38,12 +41,14 @@ import javax.swing.JScrollPane;
 import javax.swing.JPanel;
 import java.awt.GridBagLayout;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import javax.swing.JButton;
 import java.awt.GridBagConstraints;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
 import javax.swing.JCheckBox;
+import javax.swing.tree.TreePath;
 
 /**
  * @author Hanno - Felix Wagner
@@ -51,7 +56,8 @@ import javax.swing.JCheckBox;
  */
 public class MonitorGUI extends JInternalFrame implements ActionListener{
 	private MonitorAgent myAgent;
-	private java.util.List<AID> monitoredCHs=new ArrayList<AID>();
+	private HashMap<AID, AgentView> monitoredCHs=new HashMap<AID, AgentView>();  //  @jve:decl-index=0:
+//	private java.util.List<AID> monitoredCHs=new ArrayList<AID>();  //  @jve:decl-index=0:
 	private JDesktopPane canvas;
 	private JSplitPane masterSplit = null;
 	private JDesktopPane agentViewDesktop = null;
@@ -63,7 +69,7 @@ public class MonitorGUI extends JInternalFrame implements ActionListener{
 	private JButton unmonitorButton = null;
 	private JTextField jTextField = null;
 	private JLabel jLabel = null;
-	private JCheckBox jCheckBox = null;
+	private JCheckBox autoMonitorCheckbox = null;
 	private JLabel jLabel1 = null;
 	
 	/**
@@ -222,7 +228,7 @@ public class MonitorGUI extends JInternalFrame implements ActionListener{
 			configPanel.add(getUnmonitorButton(), gridBagConstraints1);
 			configPanel.add(getJTextField(), gridBagConstraints11);
 			configPanel.add(jLabel, gridBagConstraints2);
-			configPanel.add(getJCheckBox(), gridBagConstraints3);
+			configPanel.add(getAutoMonitorCheckbox(), gridBagConstraints3);
 			configPanel.add(jLabel1, gridBagConstraints4);
 		}
 		return configPanel;
@@ -236,9 +242,12 @@ public class MonitorGUI extends JInternalFrame implements ActionListener{
 			AID curAgent=agentIter.next();
 			if( !remove){
 				agentTree.addAgentNode(curAgent.getLocalName(),"","contmas");
+				if(getAutoMonitorCheckbox().isSelected()){
+					monitorAgent(curAgent);
+				}
 			}else{
 				agentTree.removeAgentNode("contmas",curAgent.getLocalName());
-
+				unmonitorAgent(curAgent);
 			}
 		}
 		Const.expandTree(agentTree.tree);
@@ -253,6 +262,13 @@ public class MonitorGUI extends JInternalFrame implements ActionListener{
 		if(monitorButton == null){
 			monitorButton=new JButton();
 			monitorButton.setText("Monitor selected agent(s)");
+			monitorButton.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					monitorSelected();
+				}
+
+
+			});
 		}
 		return monitorButton;
 	}
@@ -266,9 +282,16 @@ public class MonitorGUI extends JInternalFrame implements ActionListener{
 		if(unmonitorButton == null){
 			unmonitorButton=new JButton();
 			unmonitorButton.setText("stop monitoring");
+			unmonitorButton.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					unmonitorSelected(); // TODO Auto-generated Event stub actionPerformed()
+				}
+			});
 		}
 		return unmonitorButton;
 	}
+
+
 
 	/**
 	 * This method initializes jTextField	
@@ -285,16 +308,73 @@ public class MonitorGUI extends JInternalFrame implements ActionListener{
 	}
 
 	/**
-	 * This method initializes jCheckBox	
+	 * This method initializes autoMonitorCheckbox	
 	 * 	
 	 * @return javax.swing.JCheckBox	
 	 */
-	private JCheckBox getJCheckBox(){
-		if(jCheckBox == null){
-			jCheckBox=new JCheckBox();
-			jCheckBox.setSelected(true);
+	private JCheckBox getAutoMonitorCheckbox(){
+		if(autoMonitorCheckbox == null){
+			autoMonitorCheckbox=new JCheckBox();
+			autoMonitorCheckbox.setSelected(true);
 		}
-		return jCheckBox;
+		return autoMonitorCheckbox;
+	}
+	
+	private java.util.List<AgentNode> getSelectedAgentNodes(){
+		java.util.List<AgentNode> nodes=new ArrayList<AgentNode>();
+		TreePath paths[];
+		paths=this.AT.tree.getSelectionPaths();
+		if(paths != null){
+			for(int i=0;i < paths.length;i++){
+				Node now=(Node) (paths[i].getLastPathComponent());
+				if(now instanceof AgentNode){
+					nodes.add((AgentNode) now);
+				}
+			}
+		}
+		return nodes;
+	}
+	
+	private void monitorSelected() {
+		java.util.List<AgentNode> nodes=getSelectedAgentNodes();
+		for (Iterator<AgentNode> iterator = nodes.iterator(); iterator.hasNext();) {
+			AgentNode agentNode = (AgentNode) iterator.next();
+			AID aid=new AID();
+			aid.setLocalName(agentNode.getName());
+			monitorAgent(aid);
+		}
+	}
+	
+	protected void unmonitorSelected() {
+		java.util.List<AgentNode> nodes=getSelectedAgentNodes();
+		for (Iterator<AgentNode> iterator = nodes.iterator(); iterator.hasNext();) {
+			AgentNode agentNode = (AgentNode) iterator.next();
+			AID aid=new AID();
+			aid.setLocalName(agentNode.getName());
+			unmonitorAgent(aid);
+		}
+	}
+
+	private void monitorAgent(AID aid) {
+		if(!monitoredCHs.containsKey(aid)){
+			AgentView curView=new AgentView(myAgent,aid);
+			getAgentViewDesktop().add(curView);
+			monitoredCHs.put(aid, curView);
+
+		}
+	}
+	
+	private void unmonitorAgent(AID aid){
+		if(monitoredCHs.containsKey(aid)){
+			AgentView curView=monitoredCHs.get(aid);
+			curView.dispose();
+			monitoredCHs.remove(aid);
+
+		}
+	}
+	
+	public HashMap<AID, AgentView> getMonitoredAgents(){
+		return monitoredCHs;
 	}
 
 }  //  @jve:decl-index=0:visual-constraint="10,10"
