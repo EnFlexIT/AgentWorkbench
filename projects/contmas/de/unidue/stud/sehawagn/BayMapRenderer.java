@@ -2,9 +2,12 @@ package contmas.de.unidue.stud.sehawagn;
 
 import java.applet.Applet;
 import java.awt.BorderLayout;
+import java.awt.Canvas;
 import java.awt.GraphicsConfiguration;
 
 import javax.media.j3d.*;
+import javax.swing.JApplet;
+import javax.swing.JPanel;
 import javax.vecmath.*;
 
 import com.sun.j3d.utils.behaviors.mouse.MouseBehavior;
@@ -13,7 +16,7 @@ import com.sun.j3d.utils.behaviors.mouse.MouseZoom;
 import com.sun.j3d.utils.geometry.Box;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 
-public class BayMapRenderer extends Applet{
+public class BayMapRenderer extends JApplet{
 	private static final long serialVersionUID=3992617966815924216L;
 
 	//some container constants
@@ -232,20 +235,27 @@ public class BayMapRenderer extends Applet{
 	}
 
 	public BayMapRenderer(){
+		super();
 		constructBayMapRendering(2,3,4); //BayMap-Dimensions: x=length, y=width, z=height
 	}
 
+	private Canvas3D canvas;
+	
+	public Canvas getCanvas(){
+		return canvas;
+	}
+	
 	private void constructBayMapRendering(Integer xCount,Integer yCount,Integer zCount){
 		this.setLayout(new BorderLayout());
 		GraphicsConfiguration config=SimpleUniverse.getPreferredConfiguration();
 
-		Canvas3D canvas3D=new Canvas3D(config);
-		this.add("Center",canvas3D);
+		canvas=new Canvas3D(config);
+		this.add("Center",canvas);
 
 		BranchGroup scene=this.createSceneGraph(xCount,yCount,zCount);
 
 		// SimpleUniverse is a Convenience Utility class
-		SimpleUniverse simpleU=new SimpleUniverse(canvas3D);
+		SimpleUniverse simpleU=new SimpleUniverse(canvas);
 		/*
 		TransformGroup vpTrans=simpleU.getViewingPlatform().getViewPlatformTransform();
 		MouseZoom myMouseZoom = new MouseZoom(MouseBehavior.INVERT_INPUT);
