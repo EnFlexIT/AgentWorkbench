@@ -345,6 +345,7 @@ public class GlobalInfo {
 		// --- Here the default-values can be configured -------------
 		PlatformJadeConfig jadeConfig = new PlatformJadeConfig();
 		jadeConfig.runNotificationService(true);
+		jadeConfig.runTopicManagementService(true);
 		jadeConfig.runAgentMobilityService(true);
 		jadeConfig.runInterPlatformMobilityService(true);
 		jadeConfig.setLocalPort(localeJadeLocalPort);

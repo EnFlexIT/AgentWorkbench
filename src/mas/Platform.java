@@ -1,7 +1,6 @@
 package mas;
 
 import jade.core.Profile;
-import jade.core.ProfileImpl;
 import jade.core.Runtime;
 import jade.util.ClassFinder;
 import jade.wrapper.AgentContainer;
@@ -18,6 +17,7 @@ import javax.swing.JOptionPane;
 
 import application.Application;
 import application.Language;
+import application.Project;
 
 public class Platform extends Object {
 
@@ -28,7 +28,7 @@ public class Platform extends Object {
 	public static Runtime MASrt;
 	public static AgentContainer MASmc;
 	public static Vector<AgentContainer> MAScontainer = new Vector<AgentContainer>();
-	public Profile MAScontainerProfile = Application.RunInfo.getJadeDefaultProfile(); 
+	public PlatformJadeConfig MASplatformConfig = null;
 	
 	private jadeClasses Agents; 
 	private jadeClasses Ontologies;
@@ -38,14 +38,6 @@ public class Platform extends Object {
 	public Platform() {
 		// --- Search for all Agent-Classes -------------
 		this.jadeFindAgentClasse(); // new Thread !! 
-		
-		/*String Res = PlatformRMI.isJADERunning("rudel1", "1100");
-		System.out.println( Res );
-		jade.domain.FIPAAgentManagement.APDescription AP  = new jade.domain.FIPAAgentManagement.APDescription();
-		AP.setName("Hallo");
-		System.out.println( AP.toString() );
-		*/
-		//PlatformSysInfo.getLoadAverage();
 	}	
 	
 	/**
@@ -64,7 +56,7 @@ public class Platform extends Object {
 					}
 				});
 				// --- MainContainer starten ------------------------				
-				MASmc = MASrt.createMainContainer( MAScontainerProfile );				
+				MASmc = MASrt.createMainContainer( this.jadeGetContainerProfile() );				
 			}
 			catch ( Exception e ) {
 				e.printStackTrace();
@@ -76,6 +68,37 @@ public class Platform extends Object {
 		Application.MainWindow.setStatusJadeRunning(true);
 		// --- JADE-GUI zeigen --------------------------------------
 		jadeSystemAgentOpen( "rma", null );
+	}
+	
+	/**
+	 * This method returns the JADE-Profile, which has to be used
+	 * for the container-profiles.
+	 * If a project is focused the specific project-configuration will
+	 * be used. Otherwise the default-configuration of AgentGUI will be
+	 * used.
+	 * @return Profile (for Jade-Containers)
+	 */
+	private Profile jadeGetContainerProfile() {
+
+		Profile MAScontainerProfile = null;
+		Project currProject = Application.ProjectCurr;
+		
+		// --- Configure the JADE-Profile to use --------------------
+		if (currProject==null) {
+			// --- Take the AgentGUI-Default-Profile ----------------
+			MAScontainerProfile = Application.RunInfo.getJadeDefaultProfile();
+			System.out.println("JADE-Profile: Use AgentGUI-defaults");
+		} else {
+			// --- Take the Profile of the current Project ----------
+			if (currProject.JadeConfiguration.isUseDefaults()==true) {
+				MAScontainerProfile = Application.RunInfo.getJadeDefaultProfile();
+				System.out.println("JADE-Profile: Use AgentGUI-defaults");
+			} else {
+				MAScontainerProfile = currProject.JadeConfiguration.getNewInstanceOfProfilImpl();
+				System.out.println("JADE-Profile: Use " + currProject.getProjectName() + "-configuration" );
+			}
+		}		
+		return MAScontainerProfile;
 	}
 	
 	/**
@@ -320,10 +343,8 @@ public class Platform extends Object {
 	 * Adding an AgentContainer to the local platform
 	 */
 	public AgentContainer jadeContainerCreate( String ContainerName ) {
-		
-		Profile pSub = new ProfileImpl();
+		Profile pSub = this.jadeGetContainerProfile();
 		pSub.setParameter( Profile.CONTAINER_NAME, ContainerName );
-		System.out.println( "Hier: " + pSub.toString());
 		AgentContainer MAS_AgentContainer = MASrt.createAgentContainer( pSub );
 		MAScontainer.add( MAS_AgentContainer );
 		return MAS_AgentContainer;		
