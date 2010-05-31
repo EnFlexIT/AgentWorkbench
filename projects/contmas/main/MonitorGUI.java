@@ -27,28 +27,24 @@ import jade.gui.AgentTree.AgentNode;
 import jade.gui.AgentTree.Node;
 import jade.util.leap.List;
 
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import javax.swing.JDesktopPane;
-import javax.swing.JInternalFrame;
-
-import contmas.agents.MonitorAgent;
-
-import java.awt.Dimension;
-import javax.swing.JSplitPane;
-import javax.swing.JScrollPane;
-import javax.swing.JPanel;
-import java.awt.GridBagLayout;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import javax.swing.JButton;
-import java.awt.GridBagConstraints;
-import javax.swing.JTextField;
-import javax.swing.JLabel;
-import javax.swing.JCheckBox;
+
+import javax.swing.*;
+import javax.swing.event.InternalFrameAdapter;
+import javax.swing.event.InternalFrameEvent;
 import javax.swing.tree.TreePath;
+
+import contmas.agents.MonitorAgent;
+import contmas.ontology.BayMap;
+import contmas.ontology.ContainerHolder;
+import javax.swing.JScrollPane;
 
 /**
  * @author Hanno - Felix Wagner
@@ -56,27 +52,26 @@ import javax.swing.tree.TreePath;
  */
 public class MonitorGUI extends JInternalFrame implements ActionListener{
 	private MonitorAgent myAgent;
-	private HashMap<AID, AgentView> monitoredCHs=new HashMap<AID, AgentView>();  //  @jve:decl-index=0:
+	private HashMap<AID, AgentView> monitoredCHs=new HashMap<AID, AgentView>(); //  @jve:decl-index=0:
 //	private java.util.List<AID> monitoredCHs=new ArrayList<AID>();  //  @jve:decl-index=0:
 	private JDesktopPane canvas;
-	private JSplitPane masterSplit = null;
-	private JDesktopPane agentViewDesktop = null;
-	private JScrollPane agentListScroller = null;
-	private AgentTree AT= null;  //  @jve:decl-index=0:
-	private JSplitPane configSplit = null;
-	private JPanel configPanel = null;
-	private JButton monitorButton = null;
-	private JButton unmonitorButton = null;
-	private JTextField jTextField = null;
-	private JLabel jLabel = null;
-	private JCheckBox autoMonitorCheckbox = null;
-	private JLabel jLabel1 = null;
-	
+	private JSplitPane masterSplit=null;
+	private JDesktopPane agentViewDesktop=null;
+	private JScrollPane agentListScroller=null;
+	private AgentTree AT=null; //  @jve:decl-index=0:
+	private JSplitPane configSplit=null;
+	private JPanel configPanel=null;
+	private JButton monitorButton=null;
+	private JButton unmonitorButton=null;
+	private JTextField treshholdInput=null;
+	private JLabel jLabel=null;
+	private JCheckBox autoMonitorCheckbox=null;
+	private JLabel jLabel1=null;
 	/**
 	 * @param monitorAgent
 	 * @param canvas 
 	 */
-	public MonitorGUI(MonitorAgent monitorAgent, JDesktopPane canvas){
+	public MonitorGUI(MonitorAgent monitorAgent,JDesktopPane canvas){
 		initialize();
 		myAgent=monitorAgent;
 		displayOn(canvas);
@@ -88,19 +83,18 @@ public class MonitorGUI extends JInternalFrame implements ActionListener{
 		this.grabFocus();
 	}
 
-
 	/**
 	 * This method initializes this
 	 * 
 	 */
-	private void initialize() {
-        this.setSize(new Dimension(500, 370));
-        this.setResizable(true);
-        this.setMaximizable(true);
-        this.setIconifiable(true);
-        this.setContentPane(getMasterSplit());
-        this.setTitle("Monitor");
-			
+	private void initialize(){
+		this.setSize(new Dimension(500,370));
+		this.setResizable(true);
+		this.setMaximizable(true);
+		this.setIconifiable(true);
+		this.setContentPane(getMasterSplit());
+		this.setTitle("Monitor");
+
 	}
 
 	/* (non-Javadoc)
@@ -122,13 +116,13 @@ public class MonitorGUI extends JInternalFrame implements ActionListener{
 			masterSplit=new JSplitPane();
 			masterSplit.setDividerLocation(180);
 			masterSplit.setDividerSize(5);
-			masterSplit.setLeftComponent(getConfigSplit());
+			masterSplit.setResizeWeight(0.0D);
 			masterSplit.setRightComponent(getAgentViewDesktop());
-//			masterSplit.setLeftComponent();
+			masterSplit.setLeftComponent(getConfigSplit());
 		}
 		return masterSplit;
 	}
-	
+
 	private AgentTree getAgentTree(){
 		if(this.AT == null){
 			this.AT=new AgentTree();
@@ -176,6 +170,7 @@ public class MonitorGUI extends JInternalFrame implements ActionListener{
 			configSplit.setOrientation(JSplitPane.VERTICAL_SPLIT);
 			configSplit.setDividerLocation(200);
 			configSplit.setDividerSize(5);
+			configSplit.setResizeWeight(1.0D);
 			configSplit.setTopComponent(getAgentListScroller());
 			configSplit.setBottomComponent(getConfigPanel());
 		}
@@ -189,51 +184,51 @@ public class MonitorGUI extends JInternalFrame implements ActionListener{
 	 */
 	private JPanel getConfigPanel(){
 		if(configPanel == null){
-			GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
-			gridBagConstraints4.gridx = 1;
-			gridBagConstraints4.anchor = GridBagConstraints.WEST;
-			gridBagConstraints4.gridy = 4;
-			jLabel1 = new JLabel();
+			GridBagConstraints gridBagConstraints4=new GridBagConstraints();
+			gridBagConstraints4.gridx=1;
+			gridBagConstraints4.anchor=GridBagConstraints.WEST;
+			gridBagConstraints4.gridy=4;
+			jLabel1=new JLabel();
 			jLabel1.setText("Auto monitor");
-			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
-			gridBagConstraints3.gridx = 0;
-			gridBagConstraints3.anchor = GridBagConstraints.EAST;
-			gridBagConstraints3.gridy = 4;
-			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
-			gridBagConstraints2.gridx = 0;
-			gridBagConstraints2.anchor = GridBagConstraints.EAST;
-			gridBagConstraints2.gridy = 3;
-			jLabel = new JLabel();
+			GridBagConstraints gridBagConstraints3=new GridBagConstraints();
+			gridBagConstraints3.gridx=0;
+			gridBagConstraints3.anchor=GridBagConstraints.EAST;
+			gridBagConstraints3.gridy=4;
+			GridBagConstraints gridBagConstraints2=new GridBagConstraints();
+			gridBagConstraints2.gridx=0;
+			gridBagConstraints2.anchor=GridBagConstraints.EAST;
+			gridBagConstraints2.gridy=3;
+			jLabel=new JLabel();
 			jLabel.setText("Threshold");
-			GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
-			gridBagConstraints11.fill = GridBagConstraints.HORIZONTAL;
-			gridBagConstraints11.gridy = 3;
-			gridBagConstraints11.weightx = 1.0D;
-			gridBagConstraints11.gridwidth = 1;
-			gridBagConstraints11.anchor = GridBagConstraints.WEST;
-			gridBagConstraints11.gridx = 1;
-			GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
-			gridBagConstraints1.gridx = 1;
-			gridBagConstraints1.anchor = GridBagConstraints.WEST;
-			gridBagConstraints1.gridy = 2;
-			GridBagConstraints gridBagConstraints = new GridBagConstraints();
-			gridBagConstraints.gridx = 0;
-			gridBagConstraints.gridwidth = 2;
-			gridBagConstraints.gridheight = 2;
-			gridBagConstraints.anchor = GridBagConstraints.WEST;
-			gridBagConstraints.gridy = 0;
+			GridBagConstraints gridBagConstraints11=new GridBagConstraints();
+			gridBagConstraints11.fill=GridBagConstraints.HORIZONTAL;
+			gridBagConstraints11.gridy=3;
+			gridBagConstraints11.weightx=1.0D;
+			gridBagConstraints11.gridwidth=1;
+			gridBagConstraints11.anchor=GridBagConstraints.WEST;
+			gridBagConstraints11.gridx=1;
+			GridBagConstraints gridBagConstraints1=new GridBagConstraints();
+			gridBagConstraints1.gridx=1;
+			gridBagConstraints1.anchor=GridBagConstraints.WEST;
+			gridBagConstraints1.gridy=2;
+			GridBagConstraints gridBagConstraints=new GridBagConstraints();
+			gridBagConstraints.gridx=0;
+			gridBagConstraints.gridwidth=2;
+			gridBagConstraints.gridheight=2;
+			gridBagConstraints.anchor=GridBagConstraints.WEST;
+			gridBagConstraints.gridy=0;
 			configPanel=new JPanel();
 			configPanel.setLayout(new GridBagLayout());
-			configPanel.add(getMonitorButton(), gridBagConstraints);
-			configPanel.add(getUnmonitorButton(), gridBagConstraints1);
-			configPanel.add(getJTextField(), gridBagConstraints11);
-			configPanel.add(jLabel, gridBagConstraints2);
-			configPanel.add(getAutoMonitorCheckbox(), gridBagConstraints3);
-			configPanel.add(jLabel1, gridBagConstraints4);
+			configPanel.add(getMonitorButton(),gridBagConstraints);
+			configPanel.add(getUnmonitorButton(),gridBagConstraints1);
+			configPanel.add(getTreshholdInput(),gridBagConstraints11);
+			configPanel.add(jLabel,gridBagConstraints2);
+			configPanel.add(getAutoMonitorCheckbox(),gridBagConstraints3);
+			configPanel.add(jLabel1,gridBagConstraints4);
 		}
 		return configPanel;
 	}
-	
+
 	public void updateAgentTree(List newAgents,Boolean remove){
 		AgentTree agentTree=this.getAgentTree();
 		Iterator<AID> agentIter=newAgents.iterator();
@@ -262,11 +257,10 @@ public class MonitorGUI extends JInternalFrame implements ActionListener{
 		if(monitorButton == null){
 			monitorButton=new JButton();
 			monitorButton.setText("Monitor selected agent(s)");
-			monitorButton.addActionListener(new java.awt.event.ActionListener() {
-				public void actionPerformed(java.awt.event.ActionEvent e) {
+			monitorButton.addActionListener(new java.awt.event.ActionListener(){
+				public void actionPerformed(java.awt.event.ActionEvent e){
 					monitorSelected();
 				}
-
 
 			});
 		}
@@ -282,8 +276,8 @@ public class MonitorGUI extends JInternalFrame implements ActionListener{
 		if(unmonitorButton == null){
 			unmonitorButton=new JButton();
 			unmonitorButton.setText("stop monitoring");
-			unmonitorButton.addActionListener(new java.awt.event.ActionListener() {
-				public void actionPerformed(java.awt.event.ActionEvent e) {
+			unmonitorButton.addActionListener(new java.awt.event.ActionListener(){
+				public void actionPerformed(java.awt.event.ActionEvent e){
 					unmonitorSelected(); // TODO Auto-generated Event stub actionPerformed()
 				}
 			});
@@ -291,20 +285,18 @@ public class MonitorGUI extends JInternalFrame implements ActionListener{
 		return unmonitorButton;
 	}
 
-
-
 	/**
-	 * This method initializes jTextField	
+	 * This method initializes treshholdInput	
 	 * 	
 	 * @return javax.swing.JTextField	
 	 */
-	private JTextField getJTextField(){
-		if(jTextField == null){
-			jTextField=new JTextField();
-			jTextField.setName("Threshold");
-			jTextField.setText("2");
+	private JTextField getTreshholdInput(){
+		if(treshholdInput == null){
+			treshholdInput=new JTextField();
+			treshholdInput.setName("Threshold");
+			treshholdInput.setText("2");
 		}
-		return jTextField;
+		return treshholdInput;
 	}
 
 	/**
@@ -319,7 +311,7 @@ public class MonitorGUI extends JInternalFrame implements ActionListener{
 		}
 		return autoMonitorCheckbox;
 	}
-	
+
 	private java.util.List<AgentNode> getSelectedAgentNodes(){
 		java.util.List<AgentNode> nodes=new ArrayList<AgentNode>();
 		TreePath paths[];
@@ -334,36 +326,61 @@ public class MonitorGUI extends JInternalFrame implements ActionListener{
 		}
 		return nodes;
 	}
-	
-	private void monitorSelected() {
+
+	private void monitorSelected(){
 		java.util.List<AgentNode> nodes=getSelectedAgentNodes();
-		for (Iterator<AgentNode> iterator = nodes.iterator(); iterator.hasNext();) {
-			AgentNode agentNode = (AgentNode) iterator.next();
+		for(Iterator<AgentNode> iterator=nodes.iterator();iterator.hasNext();){
+			AgentNode agentNode=iterator.next();
 			AID aid=new AID();
 			aid.setLocalName(agentNode.getName());
-			monitorAgent(aid);
+			monitorAgent(aid,null);
 		}
 	}
-	
-	protected void unmonitorSelected() {
+
+	protected void unmonitorSelected(){
 		java.util.List<AgentNode> nodes=getSelectedAgentNodes();
-		for (Iterator<AgentNode> iterator = nodes.iterator(); iterator.hasNext();) {
-			AgentNode agentNode = (AgentNode) iterator.next();
+		for(Iterator<AgentNode> iterator=nodes.iterator();iterator.hasNext();){
+			AgentNode agentNode=iterator.next();
 			AID aid=new AID();
 			aid.setLocalName(agentNode.getName());
 			unmonitorAgent(aid);
 		}
 	}
 
-	private void monitorAgent(AID aid) {
-		if(!monitoredCHs.containsKey(aid)){
-			AgentView curView=new AgentView(myAgent,aid);
-			getAgentViewDesktop().add(curView);
-			monitoredCHs.put(aid, curView);
+	public void monitorAgent(AID aid){
+		GuiEvent ge=new GuiEvent(this,MonitorAgent.REFRESH);
+		ge.addParameter(aid);
+		this.myAgent.postGuiEvent(ge);
 
+	}
+
+	/**
+	 * @param agent
+	 * @param recieved
+	 */
+	public void monitorAgent(AID aid,ContainerHolder recieved){
+		if( !monitoredCHs.containsKey(aid)){
+			Integer treshhold=Integer.valueOf(this.getTreshholdInput().getText());
+			Integer cap=treshhold;
+			if(recieved != null){
+				BayMap map=recieved.getContains();
+				cap=map.getX_dimension() * map.getY_dimension() * map.getZ_dimension();
+			}
+
+			if(cap >= treshhold){
+				AgentView curView=new AgentView(myAgent,aid,recieved);
+				curView.addInternalFrameListener(new InternalFrameAdapter(){
+					@Override
+					public void internalFrameClosing(InternalFrameEvent e){
+						unmonitorAgent(((AgentView) e.getInternalFrame()).getMonitoredAgent());
+					}
+				});
+				getAgentViewDesktop().add(curView);
+				monitoredCHs.put(aid,curView);
+			}
 		}
 	}
-	
+
 	private void unmonitorAgent(AID aid){
 		if(monitoredCHs.containsKey(aid)){
 			AgentView curView=monitoredCHs.get(aid);
@@ -372,9 +389,9 @@ public class MonitorGUI extends JInternalFrame implements ActionListener{
 
 		}
 	}
-	
+
 	public HashMap<AID, AgentView> getMonitoredAgents(){
 		return monitoredCHs;
 	}
 
-}  //  @jve:decl-index=0:visual-constraint="10,10"
+} //  @jve:decl-index=0:visual-constraint="10,10"

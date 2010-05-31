@@ -81,9 +81,8 @@ public class MonitorAgent extends GuiAgent implements OntRepRequester,	DFSubscri
 	protected void onGuiEvent(GuiEvent ev) {
 		if (ev.getType() == REFRESH) {
 			AID subject=(AID) ev.getParameter(0);
-			System.out.println("Refreshing view of "+subject.getLocalName());
+//			System.out.println("Refreshing view of "+subject.getLocalName());
 			this.addBehaviour(new requestOntologyRepresentation(this,subject,this.harbourMaster));
-
 		}
 	}
 
@@ -100,6 +99,8 @@ public class MonitorAgent extends GuiAgent implements OntRepRequester,	DFSubscri
 		if(monitoredAgents.containsKey(agent)){
 			AgentView view = monitoredAgents.get(agent);
 			view.updateOntRep(recieved);
+		} else{
+			myGui.monitorAgent(agent,recieved);
 		}
 
 	}
