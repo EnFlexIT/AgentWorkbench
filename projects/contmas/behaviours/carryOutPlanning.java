@@ -30,6 +30,8 @@ public class carryOutPlanning extends CyclicBehaviour{
 	private static final long serialVersionUID=1198231234951152102L;
 	private final ContainerHolderAgent myCAgent;
 
+	private requestExecuteAppointment requestingBehaviour;
+
 	public carryOutPlanning(Agent a){
 		super(a);
 		this.myCAgent=(ContainerHolderAgent) a;
@@ -40,15 +42,17 @@ public class carryOutPlanning extends CyclicBehaviour{
 	 */
 	@Override
 	public void action(){
-		TransportOrderChain someTOC=this.myCAgent.getSomeTOCOfState(new PlannedOut());
-		if(someTOC != null){
-			TransportOrder curTO=((PlannedOut) myCAgent.getTOCState(someTOC)).getLoad_offer();
-			TransportOrderChainState oldState=myCAgent.setTOCState(someTOC,new Assigned());
-
-			myCAgent.addBehaviour(new requestExecuteAppointment(myCAgent,someTOC,curTO));
-			myCAgent.echoStatus("added plan execution",someTOC,ContainerAgent.LOGGING_INFORM);
+		if(requestingBehaviour == null || requestingBehaviour.done()){
+			TransportOrderChain someTOC=this.myCAgent.getSomeTOCOfState(new PlannedOut());
+			if(someTOC != null){
+				TransportOrder curTO=((PlannedOut) myCAgent.getTOCState(someTOC)).getLoad_offer();
+				TransportOrderChainState oldState=myCAgent.setTOCState(someTOC,new Assigned());
+				requestingBehaviour=new requestExecuteAppointment(myCAgent,someTOC,curTO);
+				myCAgent.addBehaviour(requestingBehaviour);
+				myCAgent.echoStatus("added plan execution",someTOC,ContainerAgent.LOGGING_INFORM);
+			}
+			myCAgent.registerForWakeUpCall(this);
 		}
-		myCAgent.registerForWakeUpCall(this);
-		this.block();
 	}
+
 }

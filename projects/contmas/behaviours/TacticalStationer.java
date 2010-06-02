@@ -66,7 +66,7 @@ public class TacticalStationer extends TickerBehaviour{
 			}
 		}
 		if(tacPos!=null){
-			((ActiveContainerAgent) myAgent).addDisplayMove(myAgent.getAID().getLocalName(),tacPos);
+			((ActiveContainerAgent) myAgent).addDisplayMove(tacPos);
 
 		}
 

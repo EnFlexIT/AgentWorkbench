@@ -121,10 +121,10 @@ public class listenForExecuteAppointmentReq extends AchieveREResponder{
 					TransportOrderChainState oldState=myCAgent.setTOCState(curTOC,new InExecution());
 					
 					Phy_Position targetPosition=myCAgent.calculateTargetPosition(curTO.getStarts_at());
-					MoveToPointBehaviour movingBehaviour=myMoveableAgent.addDisplayMove(myCAgent.getAID().getLocalName(),targetPosition);
+					MoveToPointBehaviour movingBehaviour=myMoveableAgent.addDisplayMove(targetPosition);
 					positionChecker.setMovingBehaviour(movingBehaviour);
 					
-	//				myMoveableAgent.addAsapMovementTo(targetPosition);
+//					myMoveableAgent.addAsapMovementTo(targetPosition);
 					setTargetPosition(targetPosition);
 				}
 			}

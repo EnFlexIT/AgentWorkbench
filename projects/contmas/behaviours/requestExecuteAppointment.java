@@ -62,11 +62,10 @@ public class requestExecuteAppointment extends AchieveREInitiator{
 		myCAgent=(ContainerHolderAgent) a;
 		this.curTOC=curTOC;
 		this.curTO=curTO;
-		
+
 //		myCAgent.echoStatus("appointmentExecution, startBA="+Const.blockAddressToString(curTO.getStarts_at().getAt_address()),curTOC);
 //		myCAgent.echoStatus("appointmentExecution, endBA="+Const.blockAddressToString(curTO.getEnds_at().getAt_address()),curTOC);
 
-		
 		DataStore ds=getDataStore();
 
 		registerHandleInform(new handleInform(a,ds));
@@ -112,12 +111,12 @@ public class requestExecuteAppointment extends AchieveREInitiator{
 				if(myCAgent instanceof DisplayableAgent){
 					MoveableAgent myMoveableAgent=(MoveableAgent) myCAgent;
 					TransportOrderChainState oldState=myCAgent.setTOCState(curTOC,new Assigned());
-					
+
 					Phy_Position targetPosition=myCAgent.calculateTargetPosition(curTO.getEnds_at());
-					
-					MoveToPointBehaviour movingBehaviour=myMoveableAgent.addDisplayMove(myCAgent.getAID().getLocalName(),targetPosition);
+					MoveToPointBehaviour movingBehaviour=myMoveableAgent.addDisplayMove(targetPosition);
 					positionChecker.setMovingBehaviour(movingBehaviour);
-					//				myMoveableAgent.addAsapMovementTo(targetPosition);
+
+//					myMoveableAgent.addAsapMovementTo(targetPosition);
 					setTargetPosition(targetPosition);
 				}
 			}
@@ -134,9 +133,7 @@ public class requestExecuteAppointment extends AchieveREInitiator{
 
 				ACLMessage request=(ACLMessage) getDataStore().get(INITIATION_K);
 
-				request.addReceiver(curTO.
-						getEnds_at().
-						getConcrete_designation());
+				request.addReceiver(curTO.getEnds_at().getConcrete_designation());
 
 				RequestExecuteAppointment act=new RequestExecuteAppointment();
 				act.setCorresponds_to(curTOC);
@@ -191,7 +188,7 @@ public class requestExecuteAppointment extends AchieveREInitiator{
 				if(loadStatus.getLoad_status().equals("FINISHED") && myCAgent.dropContainer(curTOC)){
 					myCAgent.wakeSleepingBehaviours(curTOC);
 				}else{
-					myCAgent.echoStatus("FAILURE: Something went hilariously wrong! Load Status was "+loadStatus.getLoad_status()+" TOCState="+myCAgent.getTOCState(curTOC),curTOC,ContainerAgent.LOGGING_ERROR);
+					myCAgent.echoStatus("FAILURE: Something went hilariously wrong! Load Status was " + loadStatus.getLoad_status() + " TOCState=" + myCAgent.getTOCState(curTOC),curTOC,ContainerAgent.LOGGING_ERROR);
 				}
 			}
 		}

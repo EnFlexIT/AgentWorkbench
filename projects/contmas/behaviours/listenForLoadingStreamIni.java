@@ -123,7 +123,6 @@ public class listenForLoadingStreamIni extends AchieveREResponder{
 					myCAgent.send(reply);
 				}else{
 					myCAgent.registerForWakeUpCall(this);
-					block();
 				}
 			} else {
 				ACLMessage reply=((ACLMessage) getDataStore().get(REQUEST_KEY)).createReply();

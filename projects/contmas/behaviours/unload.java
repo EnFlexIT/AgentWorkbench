@@ -47,6 +47,5 @@ public class unload extends CyclicBehaviour{
 //			myCAgent.echoStatus("announcing TOC");
 		}
 		myCAgent.registerForWakeUpCall(this);
-		this.block();
 	}
 }

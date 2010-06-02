@@ -12,6 +12,12 @@ Zum Start muss ein ControlGUIAgent gestartet werden, der einen Simulationsaufbau
 Die Abläufe lassen sich am besten im automatisch erzeugten Sniffer einsehen. Die ControlGUI bietet noch einige weitere Möglichkeiten.</projectDescription>
     <subOntologies/>
     <agentConfiguration/>
+    <jadeConfiguration>
+        <start4Sim>true</start4Sim>
+        <useAppDefaults>true</useAppDefaults>
+        <useLocalPort>0</useLocalPort>
+        <serviceList/>
+    </jadeConfiguration>
     <envFile>map_port_chalmers_highly_simplified.xml</envFile>
     <subFolderAgents>agents</subFolderAgents>
     <subFolderEnvSetups>envSetups</subFolderEnvSetups>

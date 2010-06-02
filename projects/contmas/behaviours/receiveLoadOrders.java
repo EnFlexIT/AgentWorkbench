@@ -176,7 +176,6 @@ public class receiveLoadOrders extends ContractNetResponder{
 					myCAgent.echoStatus("Unterauftrag läuft noch:",curTOC,ContainerAgent.LOGGING_INFORM);
 					myCAgent.registerForWakeUpCall(this);
 					isDone=false;
-					block();
 				}else{ // ausschreibungsqueque ist leer
 					myCAgent.setTOCState(curTOC,new ProposedFor());
 					myCAgent.echoStatus("Keine Unteraufträge mehr, erneut versuchen aufzunehmen.",ContainerAgent.LOGGING_INFORM);

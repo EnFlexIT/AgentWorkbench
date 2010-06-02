@@ -36,9 +36,9 @@ class WaitUntilTargetReached extends SimpleBehaviour{
 			}
 
 			private static final long serialVersionUID=5033799889547692668L;
-			Boolean isDone;
-			Phy_Position targetPosition;
-			MoveToPointBehaviour movingBehaviour;
+			private Boolean isDone;
+			private Phy_Position targetPosition;
+			private MoveToPointBehaviour movingBehaviour;
 			
 			void setTargetPosition(Phy_Position targetPosition){
 				this.targetPosition=targetPosition;

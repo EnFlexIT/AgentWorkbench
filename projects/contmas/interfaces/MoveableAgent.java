@@ -21,6 +21,7 @@
 package contmas.interfaces;
 
 import mas.movement.MoveToPointBehaviour;
+import contmas.behaviours.MovementController;
 import contmas.ontology.Movement;
 import contmas.ontology.Phy_Position;
 import jade.util.leap.List;
@@ -50,7 +51,9 @@ public interface MoveableAgent{
 
 	public Phy_Position interpolatePosition(Movement mov);
 
-	public MoveToPointBehaviour addDisplayMove(String reporter,Phy_Position destPos);
+	public MoveToPointBehaviour addDisplayMove(Phy_Position destPos);
+	
+	public MovementController getMovementController();
 
 	/**
 	 * @param distance

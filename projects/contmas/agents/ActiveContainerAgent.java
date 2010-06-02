@@ -27,6 +27,7 @@ import jade.core.AID;
 import jade.util.leap.ArrayList;
 import jade.util.leap.Iterator;
 import jade.util.leap.List;
+import contmas.behaviours.MovementController;
 import contmas.interfaces.MoveableAgent;
 import contmas.interfaces.TacticalMemorizer;
 import contmas.main.AgentGUIHelper;
@@ -43,8 +44,15 @@ public class ActiveContainerAgent extends ContainerHolderAgent implements Moveab
 //	private executeMovements moveBehaviour; 
 	
 	public List tacticalTargets=new ArrayList(); //<Phy_Position>
+	
+	private MovementController movementController;
+	
+	MoveToPointBehaviour movingBehaviour;
+	
+	private String AGENT_ALIAS=new String();
 
-
+	private List enquequedMoves=new ArrayList();
+	
 	public ActiveContainerAgent(String serviceType){
 		this(serviceType,new ActiveContainerHolder());
 	}
@@ -52,7 +60,12 @@ public class ActiveContainerAgent extends ContainerHolderAgent implements Moveab
 	public ActiveContainerAgent(String serviceType,ActiveContainerHolder ontologyRepresentation){
 		super(serviceType,ontologyRepresentation);
 		AgentGUIHelper.enableForCommunication(this);
-
+	}
+	
+	@Override
+	public void setup(){
+		super.setup();
+		AGENT_ALIAS=this.getLocalName();
 	}
 
 	//TODO implement recursive transitive domain matching
@@ -109,21 +122,35 @@ public class ActiveContainerAgent extends ContainerHolderAgent implements Moveab
 ////		moveBehaviour.restart();
 //	}
 	@Override
-	public MoveToPointBehaviour addDisplayMove(String reporter,Phy_Position destPos){
+	public MoveToPointBehaviour addDisplayMove(Phy_Position destPos){
 		echoStatus("Adding display move to "+Const.positionToString(destPos),ContainerAgent.LOGGING_INFORM);
 
+		MoveToPointBehaviour newMovingBehaviour=createDisplayMove(destPos);
+		
+		if(movingBehaviour == null || movingBehaviour.done()){
+			echoStatus("not yet moving, adding for execution");
+
+			movingBehaviour=newMovingBehaviour;
+			addBehaviour(movingBehaviour);
+		} else {
+			echoStatus("moving not finished, adding to queque");
+			enquequedMoves.add(newMovingBehaviour);
+		}
+
+		return movingBehaviour;
+	}
+	
+	public MoveToPointBehaviour createDisplayMove(Phy_Position destPos){
+		MoveToPointBehaviour movingBehaviour;
 		Speed speed=new Speed();
 		speed.setSpeed(SPEED_VALUE);
-		MoveToPointBehaviour movingBehaviour;
 		
 		Vector<Position> wp=new Vector<Position>();
 		wp.add(AgentGUIHelper.convertPosition(Const.getManhattanTurningPoint(getCurrentPosition(),destPos)));
 		wp.add(AgentGUIHelper.convertPosition(destPos));
-		movingBehaviour=new MoveToPointBehaviour(reporter + SHADOW_SUFFIX,this,getPosition(), wp,speed);
 
-//		movingBehaviour=new MoveToPointBehaviour(reporter + SHADOW_SUFFIX,this,getPosition(), AgentGUIHelper.convertPosition(destPos),speed);
+		movingBehaviour=new MoveToPointBehaviour(AGENT_ALIAS + SHADOW_SUFFIX,this,getPosition(), wp,speed);
 
-		addBehaviour(movingBehaviour);
 		return movingBehaviour;
 	}
 	
@@ -311,6 +338,14 @@ public class ActiveContainerAgent extends ContainerHolderAgent implements Moveab
 	@Override
 	public List getTacticalTargets(){
 		return this.tacticalTargets;
+	}
+
+	/* (non-Javadoc)
+	 * @see contmas.interfaces.MoveableAgent#getMovementController()
+	 */
+	@Override
+	public MovementController getMovementController(){
+		return movementController;
 	}
 
 	

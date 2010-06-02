@@ -86,6 +86,7 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 
 	public void registerForWakeUpCall(Behaviour b){
 		sleepingBehaviours.add(b);
+		b.block();
 	}
 
 	public Boolean aquireContainer(TransportOrderChain targetContainer,BlockAddress destination){ //eigentlicher Vorgang des Container-Aufnehmens
@@ -484,7 +485,7 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 	}
 
 	public void wakeSleepingBehaviours(TransportOrderChain event){
-		echoStatus("wakeSleepingBehaviours because container was removed",event,LOGGING_INFORM);
+		echoStatus("wakeSleepingBehaviours",event,LOGGING_INFORM);
 		for(Iterator iterator=sleepingBehaviours.iterator();iterator.hasNext();){
 			Behaviour b=(Behaviour) iterator.next();
 			b.restart();
