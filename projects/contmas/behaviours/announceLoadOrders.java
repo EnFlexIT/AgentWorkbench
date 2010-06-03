@@ -61,7 +61,7 @@ public class announceLoadOrders extends ContractNetInitiator{
 
 		if(oldState instanceof Announced){
 			this.myCAgent.echoStatus("Auftrag bereits ausgeschrieben, nicht nocheinmal.",curTOC,ContainerAgent.LOGGING_INFORM);
-			return null;
+			messages=null;
 		}else if(oldState instanceof Administered){
 			this.myCAgent.echoStatus("Schreibe Auftrag aus.",curTOC,ContainerAgent.LOGGING_INFORM);
 			cfp=new ACLMessage(ACLMessage.CFP);

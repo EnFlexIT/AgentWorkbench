@@ -142,7 +142,7 @@ public class AgentView extends JInternalFrame{
 	}
 
 	public void initiateRefresh(){
-		GuiEvent ge=new GuiEvent(this,MonitorAgent.REFRESH);
+		GuiEvent ge=new GuiEvent(this,MonitorAgent.REFRESH_EVENT);
 		ge.addParameter(monitoredAgent);
 		this.myAgent.postGuiEvent(ge);
 	}

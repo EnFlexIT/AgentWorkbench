@@ -89,12 +89,24 @@ public class MonitorGUI extends JInternalFrame implements ActionListener{
 	 */
 	private void initialize(){
 		this.setSize(new Dimension(500,370));
+		this.setClosable(true);
 		this.setResizable(true);
 		this.setMaximizable(true);
 		this.setIconifiable(true);
 		this.setContentPane(getMasterSplit());
 		this.setTitle("Monitor");
+		this.addInternalFrameListener(new InternalFrameAdapter(){
+			@Override
+			public void internalFrameClosing(InternalFrameEvent e){
+				MonitorGUI.this.shutDown();
+			}
+		});
 
+	}
+
+	void shutDown(){
+		GuiEvent ge=new GuiEvent(this, myAgent.SHUT_DOWN_EVENT);
+		this.myAgent.postGuiEvent(ge);
 	}
 
 	/* (non-Javadoc)
@@ -348,7 +360,7 @@ public class MonitorGUI extends JInternalFrame implements ActionListener{
 	}
 
 	public void monitorAgent(AID aid){
-		GuiEvent ge=new GuiEvent(this,MonitorAgent.REFRESH);
+		GuiEvent ge=new GuiEvent(this,MonitorAgent.REFRESH_EVENT);
 		ge.addParameter(aid);
 		this.myAgent.postGuiEvent(ge);
 

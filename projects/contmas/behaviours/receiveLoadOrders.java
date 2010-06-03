@@ -27,7 +27,6 @@ import jade.proto.ContractNetResponder;
 import contmas.agents.ContainerAgent;
 import contmas.agents.ContainerHolderAgent;
 import contmas.interfaces.TacticalMemorizer;
-import contmas.interfaces.TransportOrderOfferer;
 import contmas.main.MatchAgentAction;
 import contmas.ontology.*;
 
@@ -36,19 +35,17 @@ public class receiveLoadOrders extends ContractNetResponder{
 	 * 
 	 */
 	private static final long serialVersionUID= -3409830399764472591L;
-	private final ContainerHolderAgent myCAgent=(ContainerHolderAgent) this.myAgent;
+	final ContainerHolderAgent myCAgent=(ContainerHolderAgent) this.myAgent;
 	private ProposeLoadOffer loadOffer;
-	private TransportOrderChain curTOC;
-	private TransportOrder curTO;
+	TransportOrderChain curTOC;
+	TransportOrder curTO;
 	BlockAddress destinationAddress;
+	private EnsureRoom roomEnsurer;
 
 	//FSM State strings
-	private static final String ENSURE_ROOM="ensure_room";
 	private static final String CHECK_FOR_PENDING_SUB_CFP="check_for_pending_sub_cfp";
 
-	//FSM events
-	private final Integer HAS_ROOM=0;
-	private final Integer TRY_FREEING= -1;
+
 
 	private static MessageTemplate createMessageTemplate(Agent a){
 		MessageTemplate mtallg=AchieveREResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
@@ -99,64 +96,6 @@ public class receiveLoadOrders extends ContractNetResponder{
 		this.registerHandleAcceptProposal(b);
 	}
 
-	class EnsureRoom extends OneShotBehaviour{
-		Integer returnState;
-
-		EnsureRoom(Agent a,DataStore ds){
-			super(a);
-			setDataStore(ds);
-		}
-
-		/* (non-Javadoc)
-		 * @see jade.core.behaviours.Behaviour#action()
-		 */
-		@Override
-		public void action(){
-			returnState=HAS_ROOM;
-
-			if( !myCAgent.hasBayMapRoom()){
-				if(myCAgent instanceof TransportOrderOfferer){
-					TransportOrderChain someTOC;
-					someTOC=myCAgent.getSomeTOCOfState(new Announced());
-					if(someTOC == null){
-						someTOC=myCAgent.getSomeTOCOfState(new InExecution());
-					}
-					if(someTOC == null){
-						someTOC=myCAgent.getSomeTOCOfState(new Assigned());
-					}
-					if(someTOC == null){
-						someTOC=myCAgent.getSomeTOCOfState(new PlannedOut());
-					}
-					if(someTOC == null){
-						someTOC=myCAgent.getSomeTOCOfState(new Administered());
-						if(someTOC != null){
-							myCAgent.echoStatus("BayMap voll, versuche Räumung für",curTOC,ContainerAgent.LOGGING_INFORM);
-							TransportOrderChainState state=new PendingForSubCFP();
-							state.setLoad_offer(curTO);
-							myCAgent.setTOCState(curTOC,state);
-							myCAgent.releaseContainer(someTOC);
-							myCAgent.registerForWakeUpCall(this);
-						}
-					}
-
-					if(someTOC != null){ // TOC is in one of the above states, so all steps taken, just sit back and relax
-						myCAgent.registerForWakeUpCall(this);
-						this.block();
-						returnState=TRY_FREEING;
-					}else{ //keine administrierten TOCs da
-						myCAgent.echoStatus("FAILURE: BayMap full, no administered TOCs available, clearing not possible.",ContainerAgent.LOGGING_ERROR);
-						returnState=ACLMessage.REFUSE;
-					}
-				}
-			}
-		}
-
-		@Override
-		public int onEnd(){
-			return returnState;
-		}
-	}
-
 	class checkForPendingSubCFP extends SimpleBehaviour{
 		Boolean isDone;
 
@@ -173,7 +112,7 @@ public class receiveLoadOrders extends ContractNetResponder{
 			if(curState instanceof PendingForSubCFP){
 				//TOC bereits angenommen, aber noch kein Platz
 				if(myCAgent.countTOCInState(new Announced()) != 0){ // ausschreibungsqueue hat noch inhalt
-					myCAgent.echoStatus("Unterauftrag läuft noch:",curTOC,ContainerAgent.LOGGING_INFORM);
+					myCAgent.echoStatus("Unterauftrag läuft noch:",curTOC,ContainerAgent.LOGGING_DEBUG);
 					myCAgent.registerForWakeUpCall(this);
 					isDone=false;
 				}else{ // ausschreibungsqueque ist leer
@@ -195,6 +134,8 @@ public class receiveLoadOrders extends ContractNetResponder{
 		private static final String PROLOG="prolog";
 		private static final String GET_FREE_BLOCK_ADDRESS="get_free_block_address";
 		private static final String EPILOG="epilog";
+		private static final String ENSURE_ROOM="ensure_room";
+
 		private static final String ENSURE_ROOM2="ensure_room2";
 
 		//FSM State events
@@ -210,9 +151,10 @@ public class receiveLoadOrders extends ContractNetResponder{
 			//register states
 			registerFirstState(new Prolog(a,ds),PROLOG);
 
-			registerState(new EnsureRoom(a,ds),ENSURE_ROOM);
+			roomEnsurer=new EnsureRoom(a,ds);
+			registerState(roomEnsurer,ENSURE_ROOM);
 			registerState(new checkForPendingSubCFP(a,ds),CHECK_FOR_PENDING_SUB_CFP);
-			registerState(new EnsureRoom(a,ds),ENSURE_ROOM2);
+			registerState(roomEnsurer,ENSURE_ROOM2);
 
 
 			registerState(new GetFreeBlockAddress(a,ds),GET_FREE_BLOCK_ADDRESS);
@@ -225,14 +167,14 @@ public class receiveLoadOrders extends ContractNetResponder{
 			registerTransition(PROLOG,EPILOG,CFP_NOT_SUITABLE);
 			registerTransition(PROLOG,ENSURE_ROOM,CFP_OK);
 
-			registerTransition(ENSURE_ROOM,CHECK_FOR_PENDING_SUB_CFP,TRY_FREEING);
-			registerTransition(ENSURE_ROOM,GET_FREE_BLOCK_ADDRESS,HAS_ROOM);
+			registerTransition(ENSURE_ROOM,CHECK_FOR_PENDING_SUB_CFP,EnsureRoom.TRY_FREEING);
+			registerTransition(ENSURE_ROOM,GET_FREE_BLOCK_ADDRESS,EnsureRoom.HAS_ROOM);
 			registerTransition(ENSURE_ROOM,EPILOG,ACLMessage.REFUSE);
 
 			registerDefaultTransition(CHECK_FOR_PENDING_SUB_CFP,ENSURE_ROOM2);
 			
-			registerTransition(ENSURE_ROOM2,CHECK_FOR_PENDING_SUB_CFP,TRY_FREEING);
-			registerTransition(ENSURE_ROOM2,GET_FREE_BLOCK_ADDRESS,HAS_ROOM);
+			registerTransition(ENSURE_ROOM2,CHECK_FOR_PENDING_SUB_CFP,EnsureRoom.TRY_FREEING);
+			registerTransition(ENSURE_ROOM2,GET_FREE_BLOCK_ADDRESS,EnsureRoom.HAS_ROOM);
 			registerTransition(ENSURE_ROOM2,EPILOG,ACLMessage.REFUSE);
 
 			registerDefaultTransition(GET_FREE_BLOCK_ADDRESS,EPILOG);
@@ -302,6 +244,8 @@ public class receiveLoadOrders extends ContractNetResponder{
 
 						curTO=loadOffer.getLoad_offer(); //get transport order TO me
 						//curTO.getStarts_at().getAt_address(); //startaddress available here
+						
+						roomEnsurer.configure(curTOC, curTO);
 						
 						returnState=CFP_OK;
 					}
@@ -408,7 +352,9 @@ public class receiveLoadOrders extends ContractNetResponder{
 
 	protected class handleAcceptProposal extends FSMBehaviour{
 		//FSM State strings
-		private static final String ENSURE_ROOM2="ensure_room2";
+		private static final String ENSURE_ROOM3="ensure_room3";
+
+//		private static final String ENSURE_ROOM4="ensure_room4";
 		private static final String CHECK_FOR_PENDING_SUB_CFP2="check_for_pending_sub_cfp2";
 		private static final String SEND_PENDING="send_pending";
 		private static final String SEND_FAILURE="send_failure";
@@ -418,26 +364,29 @@ public class receiveLoadOrders extends ContractNetResponder{
 			this.setDataStore(ds);
 
 			//register states
-			registerFirstState(new EnsureRoom(a,ds),ENSURE_ROOM);
+			registerFirstState(roomEnsurer,ENSURE_ROOM3);
 			registerState(new checkForPendingSubCFP(a,ds),CHECK_FOR_PENDING_SUB_CFP);
-			registerState(new EnsureRoom(a,ds),ENSURE_ROOM2);
+//			registerState(roomEnsurer,ENSURE_ROOM4);
 			registerState(new checkForPendingSubCFP(a,ds),CHECK_FOR_PENDING_SUB_CFP2);
 			registerLastState(new SendPending(a,ds),SEND_PENDING);
 			registerLastState(new SendFailure(a,ds),SEND_FAILURE);
 
 			//register transitions
-			registerTransition(ENSURE_ROOM,CHECK_FOR_PENDING_SUB_CFP,TRY_FREEING);
-			registerTransition(ENSURE_ROOM,SEND_PENDING,HAS_ROOM);
-			registerTransition(ENSURE_ROOM,SEND_FAILURE,ACLMessage.REFUSE);
+			registerTransition(ENSURE_ROOM3,CHECK_FOR_PENDING_SUB_CFP,EnsureRoom.TRY_FREEING);
+			registerTransition(ENSURE_ROOM3,SEND_PENDING,EnsureRoom.HAS_ROOM);
+			registerTransition(ENSURE_ROOM3,SEND_FAILURE,ACLMessage.REFUSE);
 
-			registerDefaultTransition(CHECK_FOR_PENDING_SUB_CFP,ENSURE_ROOM2);
+			registerDefaultTransition(CHECK_FOR_PENDING_SUB_CFP,SEND_PENDING);
+
+			/*
+			registerDefaultTransition(CHECK_FOR_PENDING_SUB_CFP,ENSURE_ROOM4);
 			
-			registerTransition(ENSURE_ROOM2,CHECK_FOR_PENDING_SUB_CFP2,TRY_FREEING);
-			registerTransition(ENSURE_ROOM2,SEND_PENDING,HAS_ROOM);
-			registerTransition(ENSURE_ROOM2,SEND_FAILURE,ACLMessage.REFUSE);
+			registerTransition(ENSURE_ROOM4,CHECK_FOR_PENDING_SUB_CFP2,EnsureRoom.TRY_FREEING);
+			registerTransition(ENSURE_ROOM4,SEND_PENDING,EnsureRoom.HAS_ROOM);
+			registerTransition(ENSURE_ROOM4,SEND_FAILURE,ACLMessage.REFUSE);
 
 			registerDefaultTransition(CHECK_FOR_PENDING_SUB_CFP2,SEND_PENDING);
-
+*/
 
 		}
 

@@ -85,8 +85,18 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 	}
 
 	public void registerForWakeUpCall(Behaviour b){
+//		echoStatus("registering "+b.getBehaviourName()+" for wakeUpCall");
 		sleepingBehaviours.add(b);
 		b.block();
+	}
+
+	public void wakeSleepingBehaviours(TransportOrderChain event){
+		echoStatus("wakeSleepingBehaviours",event,LOGGING_INFORM);
+		for(Iterator iterator=sleepingBehaviours.iterator();iterator.hasNext();){
+			Behaviour b=(Behaviour) iterator.next();
+			b.restart();
+			iterator.remove();
+		}
 	}
 
 	public Boolean aquireContainer(TransportOrderChain targetContainer,BlockAddress destination){ //eigentlicher Vorgang des Container-Aufnehmens
@@ -482,15 +492,6 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		wakeSleepingBehaviours(load_offer);
 		return true;
 
-	}
-
-	public void wakeSleepingBehaviours(TransportOrderChain event){
-		echoStatus("wakeSleepingBehaviours",event,LOGGING_INFORM);
-		for(Iterator iterator=sleepingBehaviours.iterator();iterator.hasNext();){
-			Behaviour b=(Behaviour) iterator.next();
-			b.restart();
-			iterator.remove();
-		}
 	}
 
 	public boolean removeFromContractors(AID badContractor){

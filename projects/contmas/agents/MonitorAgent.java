@@ -43,7 +43,8 @@ import contmas.ontology.ContainerHolder;
  */
 public class MonitorAgent extends GuiAgent implements OntRepRequester,	DFSubscriber {
 
-	public static final Integer REFRESH = 0;
+	public static final Integer REFRESH_EVENT = 0;
+	public static final int SHUT_DOWN_EVENT = -1;
 	private MonitorGUI myGui;
 	private JDesktopPane canvas;
 	private AID harbourMaster;
@@ -79,10 +80,12 @@ public class MonitorAgent extends GuiAgent implements OntRepRequester,	DFSubscri
 	 */
 	@Override
 	protected void onGuiEvent(GuiEvent ev) {
-		if (ev.getType() == REFRESH) {
+		if (ev.getType() == REFRESH_EVENT) {
 			AID subject=(AID) ev.getParameter(0);
 //			System.out.println("Refreshing view of "+subject.getLocalName());
 			this.addBehaviour(new requestOntologyRepresentation(this,subject,this.harbourMaster));
+		} else if(ev.getType() == SHUT_DOWN_EVENT){
+			this.doDelete();
 		}
 	}
 
@@ -119,5 +122,10 @@ public class MonitorAgent extends GuiAgent implements OntRepRequester,	DFSubscri
 
 	public void updateAgentTree(List newAgents, Boolean remove) {
 		this.myGui.updateAgentTree(newAgents, remove);
+	}
+	
+	@Override
+	protected void takeDown(){
+		this.myGui.dispose();
 	}
 }

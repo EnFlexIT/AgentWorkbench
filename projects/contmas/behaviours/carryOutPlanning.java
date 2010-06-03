@@ -42,7 +42,7 @@ public class carryOutPlanning extends CyclicBehaviour{
 	 */
 	@Override
 	public void action(){
-		if(requestingBehaviour == null || requestingBehaviour.done()){
+//		if(requestingBehaviour == null || requestingBehaviour.done()){
 			TransportOrderChain someTOC=this.myCAgent.getSomeTOCOfState(new PlannedOut());
 			if(someTOC != null){
 				TransportOrder curTO=((PlannedOut) myCAgent.getTOCState(someTOC)).getLoad_offer();
@@ -51,8 +51,8 @@ public class carryOutPlanning extends CyclicBehaviour{
 				myCAgent.addBehaviour(requestingBehaviour);
 				myCAgent.echoStatus("added plan execution",someTOC,ContainerAgent.LOGGING_INFORM);
 			}
-			myCAgent.registerForWakeUpCall(this);
-		}
+//			myCAgent.registerForWakeUpCall(this);
+//		}
 	}
 
 }

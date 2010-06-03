@@ -128,7 +128,7 @@ public class ActiveContainerAgent extends ContainerHolderAgent implements Moveab
 		MoveToPointBehaviour newMovingBehaviour=createDisplayMove(destPos);
 		
 		if(movingBehaviour == null || movingBehaviour.done()){
-			echoStatus("not yet moving, adding for execution");
+//			echoStatus("not yet moving, adding for execution");
 
 			movingBehaviour=newMovingBehaviour;
 			addBehaviour(movingBehaviour);
