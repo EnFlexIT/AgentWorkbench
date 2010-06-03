@@ -24,6 +24,7 @@ import contmas.agents.ActiveContainerAgent;
 import contmas.agents.ContainerHolderAgent;
 import contmas.agents.StraddleCarrierAgent;
 import contmas.interfaces.TacticalMemorizer;
+import contmas.main.AlreadyMovingException;
 import contmas.ontology.Phy_Position;
 import jade.core.Agent;
 import jade.core.behaviours.TickerBehaviour;
@@ -66,7 +67,11 @@ public class TacticalStationer extends TickerBehaviour{
 			}
 		}
 		if(tacPos!=null){
-			((ActiveContainerAgent) myAgent).addDisplayMove(tacPos);
+			try {
+				((ActiveContainerAgent) myAgent).addDisplayMove(tacPos);
+			} catch (AlreadyMovingException e) {
+				myAgent.echoStatus("already busy moving, not stationing tactically",myAgent.LOGGING_INFORM);
+			}
 
 		}
 

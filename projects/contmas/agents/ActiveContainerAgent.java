@@ -31,6 +31,7 @@ import contmas.behaviours.MovementController;
 import contmas.interfaces.MoveableAgent;
 import contmas.interfaces.TacticalMemorizer;
 import contmas.main.AgentGUIHelper;
+import contmas.main.AlreadyMovingException;
 import contmas.main.Const;
 import contmas.ontology.*;
 
@@ -51,7 +52,7 @@ public class ActiveContainerAgent extends ContainerHolderAgent implements Moveab
 	
 	private String AGENT_ALIAS=new String();
 
-	private List enquequedMoves=new ArrayList();
+	private List enquequedDestinations=new ArrayList();
 	
 	public ActiveContainerAgent(String serviceType){
 		this(serviceType,new ActiveContainerHolder());
@@ -122,19 +123,20 @@ public class ActiveContainerAgent extends ContainerHolderAgent implements Moveab
 ////		moveBehaviour.restart();
 //	}
 	@Override
-	public MoveToPointBehaviour addDisplayMove(Phy_Position destPos){
+	public MoveToPointBehaviour addDisplayMove(Phy_Position destPos) throws AlreadyMovingException{
 		echoStatus("Adding display move to "+Const.positionToString(destPos),ContainerAgent.LOGGING_INFORM);
-
-		MoveToPointBehaviour newMovingBehaviour=createDisplayMove(destPos);
 		
 		if(movingBehaviour == null || movingBehaviour.done()){
 //			echoStatus("not yet moving, adding for execution");
 
-			movingBehaviour=newMovingBehaviour;
+			movingBehaviour=createDisplayMove(destPos);
 			addBehaviour(movingBehaviour);
 		} else {
-			echoStatus("moving not finished, adding to queque");
-			enquequedMoves.add(newMovingBehaviour);
+//			echoStatus("moving not finished");
+
+			throw new AlreadyMovingException();
+
+//			enquequedDestinations.add(destPos);
 		}
 
 		return movingBehaviour;
@@ -284,6 +286,9 @@ public class ActiveContainerAgent extends ContainerHolderAgent implements Moveab
 	@Override
 	public void setMoving(boolean moving){
 		isMoving=moving;
+		if(moving==false){
+			wakeSleepingBehaviours(null);
+		}
 	}
 
 	@Override

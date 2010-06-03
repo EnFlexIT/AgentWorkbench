@@ -85,7 +85,7 @@ public class announceLoadOrders extends ContractNetInitiator{
 
 			//		((ContainerAgent)myAgent).echoStatus("Auftrag ausgeschrieben.",curTOC);
 		}else{
-			this.myCAgent.echoStatus("FAILURE: TOC is not going to be announced, currentState:" + oldState.getClass().getSimpleName(),curTOC,ContainerAgent.LOGGING_NOTICE);
+			this.myCAgent.echoStatus("FAILURE: TOC is not going to be announced, currentState: " + oldState.getClass().getSimpleName(),curTOC,ContainerAgent.LOGGING_NOTICE);
 			this.myCAgent.setTOCState(curTOC,new FailedOut());
 			messages=null;
 		}
@@ -122,7 +122,7 @@ public class announceLoadOrders extends ContractNetInitiator{
 		ACLMessage accept=null;
 
 		if(bestOffer == null){ //Abnehmer momentan alle beschäftigt
-			this.myCAgent.echoStatus("FAILURE: Nur Ablehnungen empfangen, Abbruch.",ContainerAgent.LOGGING_NOTICE);
+			this.myCAgent.echoStatus("FAILURE: No proper proposals received, canceling announcement process.",ContainerAgent.LOGGING_NOTICE);
 			this.myCAgent.setTOCState(curTOC,new FailedOut());
 			myCAgent.wakeSleepingBehaviours(curTOC);
 

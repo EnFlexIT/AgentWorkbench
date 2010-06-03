@@ -112,7 +112,7 @@ public class receiveLoadOrders extends ContractNetResponder{
 			if(curState instanceof PendingForSubCFP){
 				//TOC bereits angenommen, aber noch kein Platz
 				if(myCAgent.countTOCInState(new Announced()) != 0){ // ausschreibungsqueue hat noch inhalt
-					myCAgent.echoStatus("Unterauftrag läuft noch:",curTOC,ContainerAgent.LOGGING_DEBUG);
+					myCAgent.echoStatus("Suborder not yet finished:",curTOC,ContainerAgent.LOGGING_INFORM);
 					myCAgent.registerForWakeUpCall(this);
 					isDone=false;
 				}else{ // ausschreibungsqueque ist leer
@@ -223,7 +223,7 @@ public class receiveLoadOrders extends ContractNetResponder{
 					return reply;
 					*/
 				}else if((myCAgent.determineContractors() == null) && !myCAgent.hasBayMapRoom()){
-					myCAgent.echoStatus("Habe keine Subunternehmer und bin voll, lehne ab.",ContainerAgent.LOGGING_NOTICE);
+					myCAgent.echoStatus("Have no Contractors and am full, refusing.",ContainerAgent.LOGGING_NOTICE);
 //					reply.setContent("Habe keine Subunternehmer und bin voll, lehne ab.");
 					AnnounceLoadStatus loadStatus=ContainerAgent.getLoadStatusAnnouncement(curTOC,"REFUSED");
 					myCAgent.fillMessage(reply,loadStatus);

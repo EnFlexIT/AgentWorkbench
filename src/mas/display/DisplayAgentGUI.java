@@ -95,7 +95,7 @@ public class DisplayAgentGUI extends BasicSVGGUI {
 		}
 		this.movements.put(id, mv.getAllSteps());
 		lock.readLock().unlock();
-		System.out.println(id+" movement started");
+//		System.out.println(id+" movement started");
 	}
 	
 	/**
@@ -130,7 +130,7 @@ public class DisplayAgentGUI extends BasicSVGGUI {
 					changePos(id, steps.next());					
 				}else{
 					movements.remove(id);
-					System.out.println(id+" movement finished");
+//					System.out.println(id+" movement finished");
 					ids = movements.keySet().iterator();
 				}
 			}

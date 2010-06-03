@@ -24,6 +24,7 @@ import jade.core.Agent;
 import jade.core.behaviours.DataStore;
 import jade.core.behaviours.FSMBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
+import jade.core.behaviours.SimpleBehaviour;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.proto.AchieveREInitiator;
@@ -36,6 +37,7 @@ import mas.movement.MoveToPointBehaviour;
 import contmas.agents.ContainerAgent;
 import contmas.agents.ContainerHolderAgent;
 import contmas.interfaces.MoveableAgent;
+import contmas.main.AlreadyMovingException;
 import contmas.main.Const;
 import contmas.ontology.*;
 
@@ -100,7 +102,8 @@ public class requestExecuteAppointment extends AchieveREInitiator{
 			registerDefaultTransition(WAIT_UNTIL_TARGET_REACHED,SEND_REQUEST);
 		}
 
-		class StartMoving extends OneShotBehaviour{
+		class StartMoving extends SimpleBehaviour{
+			Boolean isDone;
 			StartMoving(Agent a,DataStore ds){
 				super(a);
 				this.setDataStore(ds);
@@ -108,17 +111,28 @@ public class requestExecuteAppointment extends AchieveREInitiator{
 
 			@Override
 			public void action(){
+				isDone=true;
 				if(myCAgent instanceof DisplayableAgent){
 					MoveableAgent myMoveableAgent=(MoveableAgent) myCAgent;
 					TransportOrderChainState oldState=myCAgent.setTOCState(curTOC,new Assigned());
 
 					Phy_Position targetPosition=myCAgent.calculateTargetPosition(curTO.getEnds_at());
-					MoveToPointBehaviour movingBehaviour=myMoveableAgent.addDisplayMove(targetPosition);
-					positionChecker.setMovingBehaviour(movingBehaviour);
+					try {
+						MoveToPointBehaviour movingBehaviour = myMoveableAgent.addDisplayMove(targetPosition);
+						positionChecker.setMovingBehaviour(movingBehaviour);
 
-//					myMoveableAgent.addAsapMovementTo(targetPosition);
-					setTargetPosition(targetPosition);
+//						myMoveableAgent.addAsapMovementTo(targetPosition);
+						setTargetPosition(targetPosition);
+					} catch (AlreadyMovingException e) {
+						myCAgent.registerForWakeUpCall(this);
+						isDone=false;
+					}
 				}
+			}
+
+			@Override
+			public boolean done() {
+				return isDone;
 			}
 		}
 
