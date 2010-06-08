@@ -198,7 +198,7 @@ public class Platform extends Object {
 			if ( MsgAnswer == 1 ) return; // --- NO,just exit 
 			// --- Start the JADE-Platform -------------------
 			jadeStart();
-			if ( RootAgentName == "rma" ) {
+			if ( AgentNameForStart.equalsIgnoreCase("rma") ) {
 				try {
 					AgeCon = MASmc.getAgent("rma");
 				} catch (ControllerException e) {
@@ -211,14 +211,13 @@ public class Platform extends Object {
 		// ---------------------------------------------------
 		// --- Can a path to the agent be found? -------------   
 		AgentNameClass = JadeSystemTools.get( AgentNameSearch );
-		
 		if ( AgentNameClass == null ) {
 			System.out.println( "jadeSystemAgentOpen: Unbekannter System-Agent => " + RootAgentName);
 			return;
 		}
 		
 		// --- Does an agent (see name) already exists? ------
-		if ( jadeAgentIsRunning( AgentNameForStart ) == true ) {
+		if ( jadeAgentIsRunning( AgentNameForStart ) == true && AgentNameForStart.equalsIgnoreCase("df")==false ) {
 			// --- Agent already EXISTS !! -------------------
 			MsgHead = Language.translate("Der Agent '") + RootAgentName +  Language.translate("' ist bereits geöffnet!");
 			MsgText = Language.translate("Möchten Sie einen weiteren Agenten dieser Art starten?");
@@ -237,22 +236,15 @@ public class Platform extends Object {
 		else {
 			// --- Agent doe's NOT EXISTS !! ---------------------
 			try {
-				if ( RootAgentName == "DF" ) {
+				if ( AgentNameForStart.equalsIgnoreCase("df") ) {
 					// --- Show the DF-GUI -----------------------
 					AgeCon = MASmc.createNewAgent("DFOpener", AgentNameClass, new Object[0]);
-					AgeCon.start();
-					try {
-						Thread.sleep(200);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-					AgeCon.kill();					
 				}
 				else {
 					// --- Show a standard jade ToolAgent --------
 					AgeCon = MASmc.createNewAgent(AgentNameForStart, AgentNameClass, new Object[0]);
-					AgeCon.start();					
 				}
+				AgeCon.start();
 			} 
 			catch (StaleProxyException e) {
 				e.printStackTrace();

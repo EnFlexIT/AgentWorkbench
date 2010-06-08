@@ -37,6 +37,8 @@ public class DFOpener extends Agent{
 			e.printStackTrace();
 		}
 		this.send(msg);
+		// --- Agents kills himself after sending his message -------
+		this.doDelete();
 		
 	}
 
