@@ -92,7 +92,7 @@ public class Platform extends Object {
 			// --- Take the Profile of the current Project ----------
 			if (currProject.JadeConfiguration.isUseDefaults()==true) {
 				MAScontainerProfile = Application.RunInfo.getJadeDefaultProfile();
-				System.out.println("JADE-Profile: Use AgentGUI-defaults");
+				System.out.println("JADE-Profile: Use Agent.GUI-defaults");
 			} else {
 				MAScontainerProfile = currProject.JadeConfiguration.getNewInstanceOfProfilImpl();
 				System.out.println("JADE-Profile: Use " + currProject.getProjectName() + "-configuration" );

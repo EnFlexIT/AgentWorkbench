@@ -1,5 +1,7 @@
 package mas;
-
+/**
+ * @author Chriostian Derksen
+ */
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 
@@ -12,12 +14,33 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlTransient;
 
 import network.PortChecker;
+import application.Application;
 
 public class PlatformJadeConfig implements Serializable {
 
 	/**
+	 * With this class, the Profile of a new JADE-Container can be configured.
+	 * To use this class, just create a new instance of it and go throw 
+	 * configurations like in the example below.
+	 * Be aware of the fact, that the default value of the 'UsesDefaults'-Variable 
+	 * is true. Therfore you should keep in mind, that for your own configuration, 
+	 * you should always set the value of 'UsesDefaults' to false first.
 	 * 
+	 * After configuration you can use the method 'getNewInstanceOfProfilImpl()'
+	 * which returns a new Instance of 'jade.core.Profile'. This can be used to 
+	 * create a new JADE-Container.
+	 *
+	 * EXAMPLE:
+	 * 
+	 *  PlatformJadeConfig pjc = new PlatformJadeConfig();
+	 *	pjc.setUseDefaults(false);
+	 *  pjc.runAgentMobilityService(true);	
+	 *  pjc.runInterPlatformMobilityService(true);
+	 *	pjc.setLocalPort(1234);
+	 *	Profile profil = pjc.getNewInstanceOfProfilImpl();
+	 *
 	 */
+	
 	private static final long serialVersionUID = -9062155032902746361L;
 	// --- Services "Active by default" ---------------------------------------
 	private final String SERVICE_AgentMobilityService = "jade.core.mobility.AgentMobilityService;";
@@ -41,52 +64,68 @@ public class PlatformJadeConfig implements Serializable {
 	@XmlElement(name="useAppDefaults")		
 	private boolean useDefaults = true;
 	@XmlElement(name="useLocalPort")	
-	private Integer useLocalPort = 0;
+	private Integer useLocalPort = Application.RunInfo.getJadeLocalPort();
 	
 	@XmlElementWrapper(name = "serviceList")
 	@XmlElement(name="service")			
 	private HashSet<String> useServiceList = new HashSet<String>();
 	
-	
+	/**
+	 * Constructor of this class
+	 */
 	public PlatformJadeConfig() {
-		
+	
 	}
 	
+	/**
+	 * This Method returns a new Instance of Profil, which   
+	 * can be used for starting a new JADE-Container
+	 * @return jade.core.Profile
+	 */
 	public Profile getNewInstanceOfProfilImpl(){
 		Profile prof = new ProfileImpl();
 		prof = this.setProfileLocalPort(prof);
 		prof = this.setProfileServices(prof);
 		return prof;
 	}
-	
-	public void addService(String service2add) {
-		this.useServiceList.add(service2add);
-	}
-	public void removeService(String service2remove) {
-		this.useServiceList.remove(service2remove);
-	}
-	
-	public void setLocalPort(int port2Use){
-		useLocalPort = port2Use;
-	}
+	/**
+	 * This Method scans for a free Port, which can be used
+	 * for the JADE-Container. It's starts searching for a free
+	 * Port on 'portSearchStart'. If not available, it checks
+	 * the next higher Port and so on. 
+	 * @param portSearchStart
+	 */
 	private void findFreePort(int portSearchStart){
 		// --- Freien Port für die Plattform finden ---------
 		PortChecker portCheck = new PortChecker(portSearchStart);
 		useLocalPort = portCheck.getFreePort();
 	}
-	
-	public Profile setProfileLocalPort(Profile profile){
+	/**
+	 * Adds the local configured 'LocalPort' to the input instance of Profile
+	 * @param profile
+	 * @return jade.core.Profile
+	 */
+	private Profile setProfileLocalPort(Profile profile){
 		this.findFreePort(useLocalPort);
 		profile.setParameter(Profile.LOCAL_PORT, useLocalPort.toString());
 		return profile;
 	}
-	public Profile setProfileServices(Profile profile){
+	/**
+	 * Adds the local configured services to the input instance of Profile
+	 * @param profile
+	 * @return jade.core.Profile
+	 */
+	private Profile setProfileServices(Profile profile){
 		String serviceListString = this.getServiceListArgument();
 		if (serviceListString.equalsIgnoreCase("")==false || serviceListString!=null) {
 			profile.setParameter(Profile.SERVICES, serviceListString);	
 		}
 		return profile;
 	}
+	/**
+	 * This method walks through the HashSet of configured Services and retuns them as on String 
+	 * @return String
+	 */
 	private String getServiceListArgument() {
 		String serviceListString = "";
 		Iterator<String> it = useServiceList.iterator();
@@ -95,7 +134,41 @@ public class PlatformJadeConfig implements Serializable {
 		}
 		return serviceListString;
 	}
+	/**
+	 * Checks if a Service is configured for this instance.
+	 * The requested Service can be given with the actual class of the service
+	 * @param requestedService
+	 * @return boolean
+	 */
+	public boolean isUsingService(String requestedService) {
+		if ( useServiceList.contains(requestedService) == true ) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	/**
+	 * Counts the number of services which are currently configured 
+	 * @return
+	 */
+	public Integer countUsedServices() {
+		return this.useServiceList.size();
+	}
 	
+	/**
+	 * With this class the LocalPort, which will be used from a JADE-Container can be set 
+	 * @param port2Use
+	 */
+	public void setLocalPort(int port2Use){
+		useLocalPort = port2Use;
+	}
+	/**
+	 * Returns the current Port which is  configured for a JADE-Container 
+	 * @return Integer
+	 */
+	public Integer getLocalPort() {
+		return useLocalPort;
+	}
 	/**
 	 * @param start4Simulation the start4Simulation to set
 	 */
@@ -230,6 +303,54 @@ public class PlatformJadeConfig implements Serializable {
 	// --- Add-On-Services ----------------------------------------------------
 	public boolean isInterPlatformMobilityService() {
 		return this.useServiceList.contains(SERVICE_InterPlatformMobilityService);	
+	}
+	
+	/**
+	 * This Method compares the current instance with another instances  
+	 * of this class and returns true, if they are logical identical
+	 * @param jadeConfig2
+	 * @return boolean
+	 */
+	public boolean isEqual(PlatformJadeConfig jadeConfig2) {
+		
+		// --- Selbe Anzahl der ausgewählten Services ? -------------
+		if ( this.countUsedServices() != jadeConfig2.countUsedServices() ) {
+			return false;
+		}
+		// --- Sind die ausgewählten Services identisch? ------------ 
+		Iterator<String> it = this.useServiceList.iterator();
+		while( it.hasNext() ) {
+			String currService = it.next();
+			if ( jadeConfig2.isUsingService(currService) == false ) {
+				return false;
+			}
+		}
+		// --- Soll der selbe Jade LocalPort verwendet werden ? ----
+		if ( jadeConfig2.getLocalPort().equals(this.getLocalPort()) ) {
+			return true;
+		} else {
+			return false;
+		}		
+	}
+
+	/**
+	 * This Method returns a String which shows the current 
+	 * configuration of this instance
+	 * @return String 
+	 */
+	public String toString() {
+		
+		String bugOut = ""; 
+		bugOut += "Start4Sim:" + start4Simulation + ";";
+		bugOut += "UseDefaults:" + useDefaults + ";";
+		bugOut += "LocalPort:" + useLocalPort + ";";
+		
+		bugOut += "Services:";
+		Iterator<String> it = this.useServiceList.iterator();
+		while( it.hasNext() ) {
+			bugOut += it.next();
+		}
+		return bugOut;
 	}
 	
 	

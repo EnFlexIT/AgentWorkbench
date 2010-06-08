@@ -338,10 +338,12 @@ public class GlobalInfo {
 	public Integer getJadeLocalPort() {
 		return localeJadeLocalPort;
 	}
+	
 	/**
-	 * @return the localeJadeDefaultProfile
+	 * This method return the default Platform-Configuration
+	 * @return instance of class 'PlatformJadeConfig'
 	 */
-	public Profile getJadeDefaultProfile() {
+	public PlatformJadeConfig getJadeDefaultPlatformConfig() {
 		// --- Here the default-values can be configured -------------
 		PlatformJadeConfig jadeConfig = new PlatformJadeConfig();
 		jadeConfig.runNotificationService(true);
@@ -349,6 +351,15 @@ public class GlobalInfo {
 		jadeConfig.runAgentMobilityService(true);
 		jadeConfig.runInterPlatformMobilityService(true);
 		jadeConfig.setLocalPort(localeJadeLocalPort);
+		return jadeConfig;
+	}
+	/**
+	 * This Method returns the default Jade-Container-Profile
+	 * of the AgentGUI-Application 
+	 * @return the localeJadeDefaultProfile
+	 */
+	public Profile getJadeDefaultProfile() {
+		PlatformJadeConfig jadeConfig = getJadeDefaultPlatformConfig();
 		return jadeConfig.getNewInstanceOfProfilImpl();
 	}
 

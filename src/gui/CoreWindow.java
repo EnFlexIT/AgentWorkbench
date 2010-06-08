@@ -123,7 +123,7 @@ public class CoreWindow extends JFrame implements ComponentListener{
 		this.add( getJToolBarApp(), BorderLayout.NORTH );
 		this.add( getStatusBar(), BorderLayout.SOUTH );
 		this.add( getMainSplitpane() );
-		this.setSize(900, 600);	
+		this.setSize(960, 640);	
 		
 		// --- Listener für das Schließen der Applikation ----
 		this.addWindowListener(new WindowAdapter() {

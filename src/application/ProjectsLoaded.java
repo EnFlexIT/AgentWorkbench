@@ -168,6 +168,11 @@ public class ProjectsLoaded {
 
 		// --- Das Ontologie-Objekt beladen --------------- 
 		NewPro.ontologies4Project = new Ontologies4Project(NewPro);
+
+		// --- ggf. AgentGUI - DefaultProfile übernehmen --
+		if( NewPro.JadeConfiguration.isUseDefaults()==true) {
+			NewPro.JadeConfiguration = Application.RunInfo.getJadeDefaultPlatformConfig();
+		}
 		
 		// --- Neues Projektfenster öffnen ----------------
 		NewPro.ProjectGUI = new ProjectWindow( NewPro );
