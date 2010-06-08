@@ -30,42 +30,32 @@ import java.util.Vector;
 import javax.swing.JTree;
 
 import contmas.agents.ContainerAgent;
+import contmas.de.unidue.stud.sehawagn.contmas.config.Constants;
 import contmas.ontology.*;
 
 /**
  * @author Hanno - Felix Wagner
  *
  */
-public class Const{
-	public static Float CONTAINER_WIDTH=2.438F; //8ft
-	public static Float CONTAINER_HEIGHT=2.591F; // 8ft 6inch
-	public static Float CONTAINER_HEIGHT_HC=2.900F; // 9ft 6inch
-	public static Float CONTAINER_LENGTH_20FT=6.058F; //20ft
-	public static Float CONTAINER_LENGTH_40FT=12.192F; //40ft
-
-	public static Float LENGTH_SPACING_STRADDLE=0.0F;
-	public static Float LENGTH_SPACING_BLOCK=0.0F;
-	public static Float WIDTH_SPACING_STRADDLE=CONTAINER_WIDTH / 4;
-	public static Float WIDTH_SPACING_BLOCK=0.0F;
-
+public class EnvironmentHelper{
 	public static Phy_Size getPhySizeContainer(){
 		Phy_Size phyDimensions=new Phy_Size();
-		phyDimensions.setPhy_width(CONTAINER_LENGTH_40FT);
-		phyDimensions.setPhy_height(CONTAINER_WIDTH);
+		phyDimensions.setPhy_width(Constants.CONTAINER_LENGTH_40FT);
+		phyDimensions.setPhy_height(Constants.CONTAINER_WIDTH);
 		return phyDimensions;
 	}
 
 	public static Phy_Size getPhySpacerStraddle(){
 		Phy_Size phyDimensions=new Phy_Size();
-		phyDimensions.setPhy_width(LENGTH_SPACING_STRADDLE);
-		phyDimensions.setPhy_height(WIDTH_SPACING_STRADDLE);
+		phyDimensions.setPhy_width(Constants.LENGTH_SPACING_STRADDLE);
+		phyDimensions.setPhy_height(Constants.WIDTH_SPACING_STRADDLE);
 		return phyDimensions;
 	}
 
 	public static Phy_Size getPhySpacerBlock(){
 		Phy_Size phyDimensions=new Phy_Size();
-		phyDimensions.setPhy_width(LENGTH_SPACING_BLOCK);
-		phyDimensions.setPhy_height(WIDTH_SPACING_BLOCK);
+		phyDimensions.setPhy_width(Constants.LENGTH_SPACING_BLOCK);
+		phyDimensions.setPhy_height(Constants.WIDTH_SPACING_BLOCK);
 		return phyDimensions;
 	}
 
@@ -195,7 +185,7 @@ public class Const{
 	}
 
 	public static Phy_Position getManhattanPosition(Phy_Position from,Phy_Position to,Float dtg){
-		Float distance=Const.getManhattanDistance(from,to) - dtg;
+		Float distance=EnvironmentHelper.getManhattanDistance(from,to) - dtg;
 		Phy_Position interpolatedPosition=new Phy_Position();
 		Float deltaX=to.getPhy_x() - from.getPhy_x();
 		Float deltaY=to.getPhy_y() - from.getPhy_y();

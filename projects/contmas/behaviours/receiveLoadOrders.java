@@ -40,13 +40,6 @@ public class receiveLoadOrders extends ContractNetResponder{
 	TransportOrderChain curTOC;
 	TransportOrder curTO;
 	BlockAddress destinationAddress;
-	private EnsureRoom roomEnsurer;
-
-	//FSM State strings
-	private static final String CHECK_FOR_PENDING_SUB_CFP="check_for_pending_sub_cfp";
-
-
-
 	private static MessageTemplate createMessageTemplate(Agent a){
 		MessageTemplate mtallg=AchieveREResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
 		MessageTemplate mtThisSect=null;
@@ -95,7 +88,7 @@ public class receiveLoadOrders extends ContractNetResponder{
 		b=new handleAcceptProposal(a,getDataStore());
 		this.registerHandleAcceptProposal(b);
 	}
-
+/*
 	class checkForPendingSubCFP extends SimpleBehaviour{
 		Boolean isDone;
 
@@ -127,16 +120,17 @@ public class receiveLoadOrders extends ContractNetResponder{
 			return isDone;
 		}
 	}
-
+*/
 	protected class handleCfp extends FSMBehaviour{
 
+		private EnsureRoom roomEnsurer;
 		//FSM State strings
 		private static final String PROLOG="prolog";
 		private static final String GET_FREE_BLOCK_ADDRESS="get_free_block_address";
 		private static final String EPILOG="epilog";
-		private static final String ENSURE_ROOM="ensure_room";
+		private static final String ENSURE_ROOM="ensure_room_handleCfp";
 
-		private static final String ENSURE_ROOM2="ensure_room2";
+//		private static final String ENSURE_ROOM2="ensure_room2";
 
 		//FSM State events
 		private final Integer I_AM_BUSY= -3;
@@ -153,8 +147,8 @@ public class receiveLoadOrders extends ContractNetResponder{
 
 			roomEnsurer=new EnsureRoom(a,ds);
 			registerState(roomEnsurer,ENSURE_ROOM);
-			registerState(new checkForPendingSubCFP(a,ds),CHECK_FOR_PENDING_SUB_CFP);
-			registerState(roomEnsurer,ENSURE_ROOM2);
+//			registerState(new checkForPendingSubCFP(a,ds),CHECK_FOR_PENDING_SUB_CFP);
+		//	registerState(roomEnsurer,ENSURE_ROOM2);
 
 
 			registerState(new GetFreeBlockAddress(a,ds),GET_FREE_BLOCK_ADDRESS);
@@ -167,15 +161,21 @@ public class receiveLoadOrders extends ContractNetResponder{
 			registerTransition(PROLOG,EPILOG,CFP_NOT_SUITABLE);
 			registerTransition(PROLOG,ENSURE_ROOM,CFP_OK);
 
-			registerTransition(ENSURE_ROOM,CHECK_FOR_PENDING_SUB_CFP,EnsureRoom.TRY_FREEING);
+//			registerTransition(ENSURE_ROOM,CHECK_FOR_PENDING_SUB_CFP,EnsureRoom.TRY_FREEING);
+//			registerTransition(ENSURE_ROOM,ENSURE_ROOM2,EnsureRoom.TRY_FREEING);
+		//	registerTransition(ENSURE_ROOM,ENSURE_ROOM,EnsureRoom.TRY_FREEING);
+
+			
 			registerTransition(ENSURE_ROOM,GET_FREE_BLOCK_ADDRESS,EnsureRoom.HAS_ROOM);
 			registerTransition(ENSURE_ROOM,EPILOG,ACLMessage.REFUSE);
 
-			registerDefaultTransition(CHECK_FOR_PENDING_SUB_CFP,ENSURE_ROOM2);
+//			registerDefaultTransition(CHECK_FOR_PENDING_SUB_CFP,ENSURE_ROOM2);
 			
-			registerTransition(ENSURE_ROOM2,CHECK_FOR_PENDING_SUB_CFP,EnsureRoom.TRY_FREEING);
-			registerTransition(ENSURE_ROOM2,GET_FREE_BLOCK_ADDRESS,EnsureRoom.HAS_ROOM);
-			registerTransition(ENSURE_ROOM2,EPILOG,ACLMessage.REFUSE);
+//			registerTransition(ENSURE_ROOM2,CHECK_FOR_PENDING_SUB_CFP,EnsureRoom.TRY_FREEING);
+//			registerTransition(ENSURE_ROOM2,CHECK_FOR_PENDING_SUB_CFP,EnsureRoom.TRY_FREEING);
+
+//			registerTransition(ENSURE_ROOM2,GET_FREE_BLOCK_ADDRESS,EnsureRoom.HAS_ROOM);
+//			registerTransition(ENSURE_ROOM2,EPILOG,ACLMessage.REFUSE);
 
 			registerDefaultTransition(GET_FREE_BLOCK_ADDRESS,EPILOG);
 		}
@@ -207,6 +207,8 @@ public class receiveLoadOrders extends ContractNetResponder{
 
 				CallForProposalsOnLoadStage call=(CallForProposalsOnLoadStage) myCAgent.extractAction(cfp);
 				curTOC=call.getCorresponds_to();
+//				myCAgent.echoStatus("handleCFP - Prolog",curTOC);
+
 //					((ContainerAgent)myAgent).echoStatus("Ausschreibung erhalten.",curTOC);
 
 				if( !myCAgent.isQueueNotFull()){//schon auf genug Aufträge beworben
@@ -240,7 +242,7 @@ public class receiveLoadOrders extends ContractNetResponder{
 						reply.setPerformative(ACLMessage.REFUSE);
 						returnState=CFP_NOT_SUITABLE;
 					}else{
-						myCAgent.echoStatus("Bewerbe mich für Ausschreibung.",curTOC,ContainerAgent.LOGGING_INFORM);
+						myCAgent.echoStatus("Proposing for Announcement.",curTOC,ContainerAgent.LOGGING_INFORM);
 
 						curTO=loadOffer.getLoad_offer(); //get transport order TO me
 						//curTO.getStarts_at().getAt_address(); //startaddress available here
@@ -256,7 +258,7 @@ public class receiveLoadOrders extends ContractNetResponder{
 
 			@Override
 			public int onEnd(){
-//				myCAgent.echoStatus("returnState"+returnState);
+//				myCAgent.echoStatus("returnState "+returnState,curTOC);
 				return returnState;
 			}
 
@@ -334,7 +336,6 @@ public class receiveLoadOrders extends ContractNetResponder{
 					getDataStore().put(REPLY_KEY,reply);
 //					myCAgent.echoStatus("REFUSE because of no empty address available");
 
-					myAgent.doWake();
 				} else {
 					ACLMessage cfp=(ACLMessage) getDataStore().get(CFP_KEY);
 					ACLMessage reply=cfp.createReply();
@@ -345,17 +346,20 @@ public class receiveLoadOrders extends ContractNetResponder{
 					getDataStore().put(REPLY_KEY,reply);
 
 				}
+				myCAgent.wakeSleepingBehaviours(curTOC); //TODO might be unnessec
+
 			}
 
 		}
 	}
 
 	protected class handleAcceptProposal extends FSMBehaviour{
+		EnsureRoom roomEnsurer;
 		//FSM State strings
-		private static final String ENSURE_ROOM3="ensure_room3";
+		private static final String ENSURE_ROOM="ensure_room_handleAcceptProposal";
 
 //		private static final String ENSURE_ROOM4="ensure_room4";
-		private static final String CHECK_FOR_PENDING_SUB_CFP2="check_for_pending_sub_cfp2";
+	//	private static final String CHECK_FOR_PENDING_SUB_CFP2="check_for_pending_sub_cfp2";
 		private static final String SEND_PENDING="send_pending";
 		private static final String SEND_FAILURE="send_failure";
 
@@ -364,19 +368,23 @@ public class receiveLoadOrders extends ContractNetResponder{
 			this.setDataStore(ds);
 
 			//register states
-			registerFirstState(roomEnsurer,ENSURE_ROOM3);
-			registerState(new checkForPendingSubCFP(a,ds),CHECK_FOR_PENDING_SUB_CFP);
+			roomEnsurer=new EnsureRoom(a,ds);
+			registerFirstState(roomEnsurer,ENSURE_ROOM);
+	//		registerState(new checkForPendingSubCFP(a,ds),CHECK_FOR_PENDING_SUB_CFP);
 //			registerState(roomEnsurer,ENSURE_ROOM4);
-			registerState(new checkForPendingSubCFP(a,ds),CHECK_FOR_PENDING_SUB_CFP2);
+	//		registerState(new checkForPendingSubCFP(a,ds),CHECK_FOR_PENDING_SUB_CFP2);
 			registerLastState(new SendPending(a,ds),SEND_PENDING);
 			registerLastState(new SendFailure(a,ds),SEND_FAILURE);
 
 			//register transitions
-			registerTransition(ENSURE_ROOM3,CHECK_FOR_PENDING_SUB_CFP,EnsureRoom.TRY_FREEING);
-			registerTransition(ENSURE_ROOM3,SEND_PENDING,EnsureRoom.HAS_ROOM);
-			registerTransition(ENSURE_ROOM3,SEND_FAILURE,ACLMessage.REFUSE);
+//			registerTransition(ENSURE_ROOM3,CHECK_FOR_PENDING_SUB_CFP,EnsureRoom.TRY_FREEING);
+		//	registerTransition(ENSURE_ROOM3,ENSURE_ROOM3,EnsureRoom.TRY_FREEING);
 
-			registerDefaultTransition(CHECK_FOR_PENDING_SUB_CFP,SEND_PENDING);
+			
+			registerTransition(ENSURE_ROOM,SEND_PENDING,EnsureRoom.HAS_ROOM);
+			registerTransition(ENSURE_ROOM,SEND_FAILURE,ACLMessage.REFUSE);
+
+//			registerDefaultTransition(CHECK_FOR_PENDING_SUB_CFP,SEND_PENDING);
 
 			/*
 			registerDefaultTransition(CHECK_FOR_PENDING_SUB_CFP,ENSURE_ROOM4);
@@ -400,6 +408,7 @@ public class receiveLoadOrders extends ContractNetResponder{
 			public void action(){
 				ACLMessage accept=(ACLMessage) getDataStore().get(ACCEPT_PROPOSAL_KEY);
 				ACLMessage rply=accept.createReply();
+				roomEnsurer.configure(curTOC,curTO);
 
 				myCAgent.setTOCState(curTOC,new PlannedIn());
 				
@@ -408,6 +417,7 @@ public class receiveLoadOrders extends ContractNetResponder{
 				rply.setPerformative(ACLMessage.INFORM);
 				myCAgent.fillMessage(rply,loadStatusAnnouncement);
 				getDataStore().put(receiveLoadOrders.this.REPLY_KEY,rply);
+				myCAgent.wakeSleepingBehaviours(curTOC);
 			}
 		}
 
@@ -436,17 +446,18 @@ public class receiveLoadOrders extends ContractNetResponder{
 	@Override
 	protected void handleRejectProposal(ACLMessage cfp,ACLMessage propose,ACLMessage accept){
 		Concept content=this.myCAgent.extractAction(propose);
-		TransportOrderChain acceptedTOC=((ProposeLoadOffer) content).getCorresponds_to();
+//		TransportOrderChain acceptedTOC=((ProposeLoadOffer) content).getCorresponds_to();
 		//		((ContainerAgent)myAgent).echoStatus("Meine Bewerbung wurde abgelehnt");
-		TransportOrderChainState oldState=this.myCAgent.touchTOCState(acceptedTOC,null,true);
+		TransportOrderChainState oldState=this.myCAgent.touchTOCState(curTOC,null,true);
 		if( !(oldState instanceof Reserved)){ //wenn der untersuchte Container dem entspricht, für den sich beworben wurde
-			this.myCAgent.echoStatus("ERROR: Auftrag, auf den ich mich beworben habe (abgelehnt), nicht zum Entfernen gefunden. War "+oldState.getClass().getSimpleName(),acceptedTOC,ContainerAgent.LOGGING_ERROR);
+			this.myCAgent.echoStatus("ERROR: Auftrag, auf den ich mich beworben habe (abgelehnt), nicht zum Entfernen gefunden. War "+oldState.getClass().getSimpleName(),curTOC,ContainerAgent.LOGGING_ERROR);
 		}else{
-			//			((ContainerAgent)myAgent).echoStatus("Abgelehnten Auftrag entfernt.",acceptedTOC);
+			((ContainerAgent)myAgent).echoStatus("Removed TOC of rejected proposal.",curTOC,ContainerAgent.LOGGING_INFORM);
 			if(this.myCAgent instanceof TacticalMemorizer){
 				((TacticalMemorizer) this.myCAgent).memorizeTacticalTarget(oldState.getLoad_offer().getStarts_at());
 			}
 		}
+		myCAgent.wakeSleepingBehaviours(curTOC);
 	}
 
 	@Override

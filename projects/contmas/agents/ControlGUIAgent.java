@@ -90,7 +90,7 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 			dispString+=" - " + contState.getState().getClass().getSimpleName();
 			if(contState.getState() instanceof Holding){
 				BlockAddress curCont=((Holding)contState.getState()).getAt_address();
-				dispString+=" ("+Const.blockAddressToString(curCont)+")";
+				dispString+=" ("+EnvironmentHelper.blockAddressToString(curCont)+")";
 			} else{
 				dispString+=" [NotHeld]";
 			}

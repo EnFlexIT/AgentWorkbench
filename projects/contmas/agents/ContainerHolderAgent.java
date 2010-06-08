@@ -24,7 +24,7 @@ import java.util.Random;
 
 import contmas.behaviours.*;
 import contmas.interfaces.*;
-import contmas.main.Const;
+import contmas.main.EnvironmentHelper;
 import contmas.main.HarbourSetup;
 import contmas.main.NotYetReadyException;
 import contmas.ontology.*;
@@ -85,7 +85,9 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 	}
 
 	public void registerForWakeUpCall(Behaviour b){
-//		echoStatus("registering "+b.getBehaviourName()+" for wakeUpCall");
+//		if( !b.getBehaviourName().equals("unload") && !b.getBehaviourName().equals("carryOutPlanning")){
+//			echoStatus("registering " + b.getBehaviourName() + " for wakeUpCall");
+//		}
 		sleepingBehaviours.add(b);
 		b.block();
 	}
@@ -135,6 +137,7 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 //		if(toState!=null){
 //			echoStatus("ChangedTOCState from "+oldState+" to "+toState,needleTOC);
 //		}
+//		wakeSleepingBehaviours(needleTOC);
 		return oldState;
 	}
 
@@ -150,10 +153,10 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 			if(needleTOC.getTransports().getBic_code().equals(storedTOCState.getSubjected_toc().getTransports().getBic_code())){
 				TransportOrderChainState curState=storedTOCState.getState();
 				if(toState != null){
-					if(toState.getAt_address()==null){
+					if(toState.getAt_address() == null){
 						toState.setAt_address(curState.getAt_address()); //transfer BlockAddress from old to new state
 					}
-					if(toState.getLoad_offer()==null){
+					if(toState.getLoad_offer() == null){
 //						System.out.println("preserving load offer");
 						toState.setLoad_offer(curState.getLoad_offer()); //transfer load offer from old to new state
 					}
@@ -180,7 +183,7 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 	public List getAllHeldContainers(){
 		return getAllHeldContainers(false);
 	}
-	
+
 	public List getAllHeldContainers(Boolean alsoReserved){
 		List output=new ArrayList();
 		for(Iterator it=ontologyRepresentation.getAllContainer_states();it.hasNext();){
@@ -188,17 +191,17 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 			if(curTocState.getState() instanceof Holding){
 				output.add(curTocState);
 			}
-			if(alsoReserved && curTocState.getState() instanceof Reserved && curTocState.getState().getAt_address()!=null){
+			if(alsoReserved && curTocState.getState() instanceof Reserved && curTocState.getState().getAt_address() != null){
 				output.add(curTocState);
 			}
 		}
 		return output;
 	}
-	
+
 	public TransportOrderChain getSomeTOCOfState(TransportOrderChainState needleState){
-		return getSomeTOCOfState(needleState, true);
+		return getSomeTOCOfState(needleState,true);
 	}
-	
+
 	public TransportOrderChain getSomeTOCOfState(TransportOrderChainState needleState,Boolean careOverstowed){
 		Iterator queue=this.getOntologyRepresentation().getAllContainer_states();
 		while(queue.hasNext()){
@@ -211,7 +214,7 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		}
 		return null;
 	}
-	
+
 	public java.util.List<TOCHasState> getAllTOCOfState(Class<? extends TransportOrderChainState> needleClass){
 		java.util.List<TOCHasState> output=new java.util.ArrayList<TOCHasState>();
 		for(Iterator it=ontologyRepresentation.getAllContainer_states();it.hasNext();){
@@ -222,7 +225,7 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		}
 		return output;
 	}
-	
+
 	public BlockAddress getUpmost(Integer x,Integer y){
 		BlockAddress upmostContainerPos=null;
 		List allHeldContainers=getAllHeldContainers();
@@ -231,7 +234,7 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 			TOCHasState curTOCState=(TOCHasState) allContainers.next();
 			Holding curState=(Holding) curTOCState.getState();
 			BlockAddress curContainerPos=curState.getAt_address();
-			
+
 			if((curContainerPos.getX_dimension() == x) && (curContainerPos.getY_dimension() == y)){ //betrachteter Container steht im stapel auf momentaner koordinate
 				if((upmostContainerPos == null) || (upmostContainerPos.getZ_dimension() < curContainerPos.getZ_dimension())){
 					upmostContainerPos=curContainerPos;
@@ -401,12 +404,7 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 			for(int y=0;y < LoadBay.getY_dimension();y++){ //und spaltenweise durchlaufen
 				BlockAddress upmostContainer=this.getUpmost(x,y);
 				if(upmostContainer != null){ //an dieser Koordinate steht ein Container obenauf
-					if(upmostContainer.
-							getLocates().
-							getBic_code().
-							equals(subjectedToc.
-									getTransports().
-									getBic_code())){
+					if(upmostContainer.getLocates().getBic_code().equals(subjectedToc.getTransports().getBic_code())){
 						return true;
 					}
 				}
@@ -477,7 +475,7 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		TransportOrder TO=new TransportOrder();
 
 		TO.setStarts_at(this.getMyselfDesignator());
-		TO.getStarts_at().setAt_address(((Holding)getTOCState(curTOC)).getAt_address()); // add current position of container to start designator 
+		TO.getStarts_at().setAt_address(((Holding) getTOCState(curTOC)).getAt_address()); // add current position of container to start designator 
 		TO.setEnds_at(this.getAbstractTargetDesignator());
 		curTOC.addIs_linked_by(TO);
 		Behaviour b=new announceLoadOrders(this,curTOC);
@@ -486,10 +484,10 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 
 	public boolean dropContainer(TransportOrderChain load_offer){
 //		echoStatus("removeContainerFromBayMap:",load_offer);
-		
+
 		touchTOCState(load_offer,null,true);
 //		echoStatus("Container dropped successfully (Message, TOCState).",load_offer,ContainerAgent.LOGGING_INFORM);
-		wakeSleepingBehaviours(load_offer);
+//		wakeSleepingBehaviours(load_offer);
 		return true;
 
 	}
@@ -537,11 +535,11 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		harbourMap=current_harbour_layout;
 //		entangleOntologyRepresentation();
 	}
-	
+
 	public void entangleOntologyRepresentation(){
 //		echoStatus("lives in "+getOntologyRepresentation().getLives_in().getId());
 		getOntologyRepresentation().setLives_in(inflateDomain(getOntologyRepresentation().getLives_in()));
-		
+
 		if(getOntologyRepresentation() instanceof ActiveContainerHolder){
 			List inflatedCapabilities=new ArrayList();
 			Iterator iter=((ActiveContainerHolder) getOntologyRepresentation()).getAllCapable_of();
@@ -572,7 +570,7 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		output.setId(input.getId());
 		return output;
 	}
-	
+
 	/*
 	 * Blows up an input Domain to it's whole lies_in and has_subdomains properties, by finding it in the harbourMap
 	 */
@@ -583,14 +581,14 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 
 	//Has_subdomains variant
 	public static Domain findDomain(String lookForID,Domain in){
-		if(in==null){
-			System.out.println("ERROR: lookForID="+lookForID);
+		if(in == null){
+			System.out.println("ERROR: lookForID=" + lookForID);
 		}
 		if(in.getId().equals(lookForID)){
 			return in;
 		}
-		if(in.getHas_subdomains()==null){
-			System.out.println("ERROR: findDomain getHas_subdomains==null, lookForID="+lookForID+", inID="+in.getId());
+		if(in.getHas_subdomains() == null){
+			System.out.println("ERROR: findDomain getHas_subdomains==null, lookForID=" + lookForID + ", inID=" + in.getId());
 		}
 		Iterator iter=in.getAllHas_subdomains();
 		Domain found=null;
@@ -604,11 +602,11 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		}
 		return null;
 	}
-	
+
 	public Phy_Position calculateTargetPosition(Designator desig){
 		Domain dom=inflateDomain(desig.getAbstract_designation());
 		BlockAddress address=desig.getAt_address();
-		Phy_Position targetPosition=Const.addPositions(dom.getIs_in_position(),Const.getDisplayPositionBlock(address));
+		Phy_Position targetPosition=EnvironmentHelper.addPositions(dom.getIs_in_position(),EnvironmentHelper.getDisplayPositionBlock(address));
 		/*
 		echoStatus("dom "+dom.getId()+" Is_in_position="+ Const.positionToString(dom.getIs_in_position()));
 		echoStatus("ba "+Const.blockAddressToString(address)+" is at="+ Const.positionToString(Const.getDisplayPositionBlock(address)));
@@ -617,13 +615,13 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		*/
 		return targetPosition;
 	}
-	
+
 	public void addDefaultRoute(Domain finalTarget){
 		List routingTable=new ArrayList();
 		RouteInformation route=new RouteInformation();
 		route.setTarget(inflateDomain(finalTarget));
 		route.setNext_hop(inflateDomain(targetAbstractDomain));
-		
+
 		this.getOntologyRepresentation().setReaches_eventually(routingTable);
 	}
 }

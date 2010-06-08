@@ -38,7 +38,7 @@ import contmas.agents.ContainerAgent;
 import contmas.agents.ContainerHolderAgent;
 import contmas.interfaces.MoveableAgent;
 import contmas.main.AlreadyMovingException;
-import contmas.main.Const;
+import contmas.main.EnvironmentHelper;
 import contmas.ontology.*;
 
 /**
@@ -112,6 +112,7 @@ public class requestExecuteAppointment extends AchieveREInitiator{
 			@Override
 			public void action(){
 				isDone=true;
+				
 				if(myCAgent instanceof DisplayableAgent){
 					MoveableAgent myMoveableAgent=(MoveableAgent) myCAgent;
 					TransportOrderChainState oldState=myCAgent.setTOCState(curTOC,new Assigned());
@@ -124,6 +125,8 @@ public class requestExecuteAppointment extends AchieveREInitiator{
 //						myMoveableAgent.addAsapMovementTo(targetPosition);
 						setTargetPosition(targetPosition);
 					} catch (AlreadyMovingException e) {
+						myCAgent.echoStatus("requestExecuteAppointment.prepareRequests.StartMoving AlreadyMovingException");
+						
 						myCAgent.registerForWakeUpCall(this);
 						isDone=false;
 					}
@@ -195,7 +198,7 @@ public class requestExecuteAppointment extends AchieveREInitiator{
 
 			@Override
 			public void action(){
-
+//				myCAgent.echoStatus("received INFORM",curTOC);
 				ACLMessage notification=(ACLMessage) getDataStore().get(REPLY_KEY);
 				AnnounceLoadStatus loadStatus=(AnnounceLoadStatus) myCAgent.extractAction(notification);
 
@@ -207,6 +210,11 @@ public class requestExecuteAppointment extends AchieveREInitiator{
 			}
 		}
 	}
+	@Override
+	public void handleFailure(ACLMessage msg){
+		myCAgent.echoStatus("received Failure");
+	}
+	
 /*
 	@Override
 	protected Vector<ACLMessage> prepareRequests(ACLMessage request){

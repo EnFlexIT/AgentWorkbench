@@ -15,7 +15,7 @@ import mas.movement.MoveToPointBehaviour;
 import mas.movement.MovingAgent;
 import contmas.behaviours.listenForPositionUpdate;
 import contmas.interfaces.PositionPlotter;
-import contmas.main.Const;
+import contmas.main.EnvironmentHelper;
 import contmas.ontology.Phy_Position;
 
 public class AgentGUIVisualisationProxyAgent extends MovingAgent implements PositionPlotter{
@@ -80,7 +80,7 @@ public class AgentGUIVisualisationProxyAgent extends MovingAgent implements Posi
 	public void processPositionUpdate(Phy_Position in,AID from){
 		String reporter=from.getLocalName();
 
-		echo("processing PositionUpdate from " + reporter + ", new position is: " + Const.positionToString(in));
+		echo("processing PositionUpdate from " + reporter + ", new position is: " + EnvironmentHelper.positionToString(in));
 
 		Position destPos=new Position();
 		destPos.setX(in.getPhy_x());

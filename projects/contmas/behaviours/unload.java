@@ -44,7 +44,7 @@ public class unload extends CyclicBehaviour{
 		if(someTOC != null){
 			
 			this.myCAgent.releaseContainer(someTOC);
-//			myCAgent.echoStatus("announcing TOC");
+//			myCAgent.echoStatus("releasingContainer TOC",someTOC);
 		}
 		myCAgent.registerForWakeUpCall(this);
 	}

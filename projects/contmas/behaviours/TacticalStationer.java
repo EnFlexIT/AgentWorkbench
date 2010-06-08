@@ -21,6 +21,7 @@
 package contmas.behaviours;
 
 import contmas.agents.ActiveContainerAgent;
+import contmas.agents.ContainerAgent;
 import contmas.agents.ContainerHolderAgent;
 import contmas.agents.StraddleCarrierAgent;
 import contmas.interfaces.TacticalMemorizer;
@@ -70,7 +71,7 @@ public class TacticalStationer extends TickerBehaviour{
 			try {
 				((ActiveContainerAgent) myAgent).addDisplayMove(tacPos);
 			} catch (AlreadyMovingException e) {
-				myAgent.echoStatus("already busy moving, not stationing tactically",myAgent.LOGGING_INFORM);
+				myAgent.echoStatus("already busy moving, not stationing tactically",ContainerHolderAgent.LOGGING_DEBUG);
 			}
 
 		}

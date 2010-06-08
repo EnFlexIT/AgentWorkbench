@@ -32,7 +32,7 @@ import contmas.interfaces.MoveableAgent;
 import contmas.interfaces.TacticalMemorizer;
 import contmas.main.AgentGUIHelper;
 import contmas.main.AlreadyMovingException;
-import contmas.main.Const;
+import contmas.main.EnvironmentHelper;
 import contmas.ontology.*;
 
 public class ActiveContainerAgent extends ContainerHolderAgent implements MoveableAgent,DisplayableAgent,TacticalMemorizer{
@@ -124,15 +124,15 @@ public class ActiveContainerAgent extends ContainerHolderAgent implements Moveab
 //	}
 	@Override
 	public MoveToPointBehaviour addDisplayMove(Phy_Position destPos) throws AlreadyMovingException{
-		echoStatus("Adding display move to "+Const.positionToString(destPos),ContainerAgent.LOGGING_INFORM);
+		echoStatus("Adding display move to "+EnvironmentHelper.positionToString(destPos),ContainerAgent.LOGGING_INFORM);
 		
 		if(movingBehaviour == null || movingBehaviour.done()){
-//			echoStatus("not yet moving, adding for execution");
+			echoStatus("not yet moving, adding for execution",LOGGING_INFORM);
 
 			movingBehaviour=createDisplayMove(destPos);
 			addBehaviour(movingBehaviour);
 		} else {
-//			echoStatus("moving not finished");
+			echoStatus("moving not finished");
 
 			throw new AlreadyMovingException();
 
@@ -148,7 +148,7 @@ public class ActiveContainerAgent extends ContainerHolderAgent implements Moveab
 		speed.setSpeed(SPEED_VALUE);
 		
 		Vector<Position> wp=new Vector<Position>();
-		wp.add(AgentGUIHelper.convertPosition(Const.getManhattanTurningPoint(getCurrentPosition(),destPos)));
+		wp.add(AgentGUIHelper.convertPosition(EnvironmentHelper.getManhattanTurningPoint(getCurrentPosition(),destPos)));
 		wp.add(AgentGUIHelper.convertPosition(destPos));
 
 		movingBehaviour=new MoveToPointBehaviour(AGENT_ALIAS + SHADOW_SUFFIX,this,getPosition(), wp,speed);
@@ -171,13 +171,13 @@ public class ActiveContainerAgent extends ContainerHolderAgent implements Moveab
 		Domain startAt=inflateDomain(call.getStarts_at().getAbstract_designation());
 		Domain endAt=inflateDomain(call.getEnds_at().getAbstract_designation());
 
-		Domain ccd=Const.findClosestCommonDomain(this.getOntologyRepresentation().getLives_in(),startAt);
-		ccd=Const.findClosestCommonDomain(ccd,endAt);
+		Domain ccd=EnvironmentHelper.findClosestCommonDomain(this.getOntologyRepresentation().getLives_in(),startAt);
+		ccd=EnvironmentHelper.findClosestCommonDomain(ccd,endAt);
 
 //		echoStatus("ClosestCommonDomain: "+ccd);
 
-		Phy_Position currentPos=Const.getPositionRelativeTo(this.getOntologyRepresentation().getIs_in_position2(),this.getOntologyRepresentation().getLives_in(),ccd);
-		Phy_Position startPos=Const.getPositionRelativeTo(startAt.getIs_in_position(),startAt.getLies_in(),ccd);
+		Phy_Position currentPos=EnvironmentHelper.getPositionRelativeTo(this.getOntologyRepresentation().getIs_in_position2(),this.getOntologyRepresentation().getLives_in(),ccd);
+		Phy_Position startPos=EnvironmentHelper.getPositionRelativeTo(startAt.getIs_in_position(),startAt.getLies_in(),ccd);
 //		Phy_Position endPos=Const.getPositionRelativeTo(call.getEnds_at().getAbstract_designation().getIs_in_position(),call.getEnds_at().getAbstract_designation(),ccd);
 
 //		echoStatus("currentPos: " + positionToString(currentPos));
@@ -185,7 +185,7 @@ public class ActiveContainerAgent extends ContainerHolderAgent implements Moveab
 //		System.out.println("endPos: "+positionToString(endPos));
 
 		//transfer from current position to start position
-		Long positioningEffort=calculateDuration(Const.getManhattanDistance(currentPos,startPos).longValue());
+		Long positioningEffort=calculateDuration(EnvironmentHelper.getManhattanDistance(currentPos,startPos).longValue());
 		Long eta=positioningEffort+getLastPlannedTOCFinishTime();
 		//pickup
 
@@ -262,7 +262,7 @@ public class ActiveContainerAgent extends ContainerHolderAgent implements Moveab
 		
 //		echoStatus("oldPos "+positionToString(oldPos)+" targetPos "+positionToString(targetPos)+ " dtg "+dtg);
 		
-		return Const.getManhattanPosition(oldPos,targetPos,dtg);
+		return EnvironmentHelper.getManhattanPosition(oldPos,targetPos,dtg);
 
 	}
 	@Override
@@ -336,7 +336,7 @@ public class ActiveContainerAgent extends ContainerHolderAgent implements Moveab
 	@Override
 	public void memorizeTacticalTarget(Designator target){
 		Phy_Position targetPosition=inflateDomain(target.getAbstract_designation()).getIs_in_position();
-		echoStatus("memorizing tactical target "+Const.positionToString(targetPosition),LOGGING_INFORM);
+		echoStatus("memorizing tactical target "+EnvironmentHelper.positionToString(targetPosition),LOGGING_INFORM);
 		tacticalTargets.add(targetPosition);
 	}
 	

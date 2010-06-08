@@ -30,7 +30,7 @@ import contmas.agents.PositionReporter;
 import contmas.interfaces.BehaviourNotAvailableException;
 import contmas.interfaces.MoveableAgent;
 import contmas.main.AgentGUIHelper;
-import contmas.main.Const;
+import contmas.main.EnvironmentHelper;
 import contmas.main.AlreadyMovingException;
 import contmas.main.MovementBlockedException;
 import contmas.ontology.*;
@@ -148,7 +148,7 @@ public class MovementController extends SimpleBehaviour{
 		speed.setSpeed(SPEED_VALUE);
 
 		Vector<Position> wp=new Vector<Position>();
-		wp.add(AgentGUIHelper.convertPosition(Const.getManhattanTurningPoint(myMoveableAgent.getCurrentPosition(),destPos)));
+		wp.add(AgentGUIHelper.convertPosition(EnvironmentHelper.getManhattanTurningPoint(myMoveableAgent.getCurrentPosition(),destPos)));
 		wp.add(AgentGUIHelper.convertPosition(destPos));
 		MoveToPointBehaviour movingBehaviour=new MoveToPointBehaviour(AGENT_ALIAS + SHADOW_SUFFIX,myDisplayableAgent,myDisplayableAgent.getPosition(),wp,speed);
 

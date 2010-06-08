@@ -29,7 +29,7 @@ import contmas.agents.ContainerAgent;
 import contmas.agents.ContainerHolderAgent;
 import contmas.interfaces.MoveableAgent;
 import contmas.main.AlreadyMovingException;
-import contmas.main.Const;
+import contmas.main.EnvironmentHelper;
 import contmas.main.MatchAgentAction;
 import contmas.ontology.*;
 
@@ -56,12 +56,18 @@ public class listenForExecuteAppointmentReq extends AchieveREResponder{
 
 		WaitUntilTargetReached positionChecker;
 
+		private EnsureRoom roomEnsurer;
+
 		//FSM State strings
 		private static final String PARSE_REQUEST="parse_request";
+		private static final String ENSURE_ROOM="ensure_room";
+
 		private static final String START_MOVING="start_moving";
 		private static final String WAIT_UNTIL_TARGET_REACHED="wait_until_target_reached";
 		private static final String DO_AQUIRE="do_aquire";
 		private static final String SEND_INFORM="send_inform";
+		private static final String SEND_FAILURE="send_failure";
+
 
 		/**
 		 * @param a
@@ -73,14 +79,29 @@ public class listenForExecuteAppointmentReq extends AchieveREResponder{
 
 			//register states
 			registerFirstState(new ParseRequest(a,ds),PARSE_REQUEST);
+			roomEnsurer=new EnsureRoom(a,ds);
+
+			registerState(roomEnsurer,ENSURE_ROOM);
+
 			registerState(new StartMoving(a,ds),START_MOVING);
 			positionChecker=new WaitUntilTargetReached(a,ds);
 			registerState(positionChecker,WAIT_UNTIL_TARGET_REACHED);
 			registerState(new DoAquire(a,ds),DO_AQUIRE);
+			
+			registerLastState(new SendFailure(myCAgent,ds),SEND_FAILURE);
+
 			registerLastState(new SendInform(myCAgent,ds),SEND_INFORM);
 
 			//register transitions
 			registerDefaultTransition(PARSE_REQUEST,START_MOVING);
+
+
+			registerDefaultTransition(PARSE_REQUEST,ENSURE_ROOM);
+
+//			registerTransition(ENSURE_ROOM,ENSURE_ROOM,EnsureRoom.TRY_FREEING);
+			registerTransition(ENSURE_ROOM,START_MOVING,EnsureRoom.HAS_ROOM);
+			registerTransition(ENSURE_ROOM,SEND_FAILURE,ACLMessage.REFUSE);			
+			
 			registerDefaultTransition(START_MOVING,WAIT_UNTIL_TARGET_REACHED);
 			registerDefaultTransition(WAIT_UNTIL_TARGET_REACHED,DO_AQUIRE);
 			registerDefaultTransition(DO_AQUIRE,SEND_INFORM);
@@ -99,7 +120,7 @@ public class listenForExecuteAppointmentReq extends AchieveREResponder{
 				RequestExecuteAppointment inAct=(RequestExecuteAppointment) myCAgent.extractAction(request);
 				curTO=inAct.getLoad_offer();
 				curTOC=inAct.getCorresponds_to();
-				
+				roomEnsurer.configure(curTOC,curTO);
 				myCAgent.echoStatus("RequestExecuteAppointment received, parsing",curTOC,ContainerAgent.LOGGING_INFORM);
 
 				TransportOrderChainState curState=myCAgent.getTOCState(curTOC);
@@ -134,6 +155,8 @@ public class listenForExecuteAppointmentReq extends AchieveREResponder{
 //						myMoveableAgent.addAsapMovementTo(targetPosition);
 						setTargetPosition(targetPosition);
 					} catch (AlreadyMovingException e) {
+						myCAgent.echoStatus("listenForExecuteAppointmentReq handleRequest StartMoving AlreadyMovingException");
+
 						myCAgent.registerForWakeUpCall(this);
 						isDone=false;
 					}
@@ -198,6 +221,29 @@ public class listenForExecuteAppointmentReq extends AchieveREResponder{
 			}
 
 		}
+		
+		class SendFailure extends OneShotBehaviour{
+			SendFailure(Agent a,DataStore ds){
+				super(a);
+				this.setDataStore(ds);
+			}
+
+			@Override
+			public void action(){
+				ACLMessage request=(ACLMessage) getDataStore().get(REQUEST_KEY);
+				ACLMessage rply=request.createReply();
+
+				myCAgent.setTOCState(curTOC,new FailedIn());
+
+				AnnounceLoadStatus loadStatus=ContainerAgent.getLoadStatusAnnouncement(curTOC,"BayMap voll und kann nicht geräumt werden.");
+				rply.setPerformative(ACLMessage.FAILURE);
+				myCAgent.fillMessage(rply,loadStatus);
+				getDataStore().put(RESPONSE_KEY,rply);
+				myCAgent.echoStatus("sent failure");
+
+			}
+		}
+
 
 		private void setTargetPosition(Phy_Position targetPosition){
 			positionChecker.setTargetPosition(targetPosition);

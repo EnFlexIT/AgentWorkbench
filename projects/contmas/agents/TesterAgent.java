@@ -38,7 +38,7 @@ import jade.util.leap.List;
 import contmas.behaviours.*;
 import contmas.interfaces.*;
 import contmas.main.AgentGUIHelper;
-import contmas.main.Const;
+import contmas.main.EnvironmentHelper;
 import contmas.main.UncompatibleDimensionsException;
 import contmas.ontology.*;
 
@@ -99,7 +99,7 @@ public class TesterAgent extends ActiveContainerAgent implements TransportOrderH
 */
 //		echoStatus("my current relative position: " + positionToString(getRelativePosition()));
 //		echoStatus("my current absolute position: " + positionToString(getAbsolutePosition()));
-		Domain root=Const.findRootDomain(this.getOntologyRepresentation().getLives_in());
+		Domain root=EnvironmentHelper.findRootDomain(this.getOntologyRepresentation().getLives_in());
 
 //		echoStatus("my root domain: " + root);
 
@@ -127,7 +127,7 @@ public class TesterAgent extends ActiveContainerAgent implements TransportOrderH
 	@Override
 	public void memorizeTacticalTarget(Designator target){
 		Phy_Position targetPosition=inflateDomain(target.getAbstract_designation()).getIs_in_position();
-		echoStatus("memorizing tactical target "+Const.positionToString(targetPosition),ContainerAgent.LOGGING_DEBUG);
+		echoStatus("memorizing tactical target "+EnvironmentHelper.positionToString(targetPosition),ContainerAgent.LOGGING_DEBUG);
 		tacticalTargets.add(targetPosition);
 	}
 	

@@ -429,7 +429,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 			this.AT=new AgentTree();
 			this.AT.refreshLocalPlatformName("Contmas");
 			this.AT.addContainerNode("contmas",null);
-			Const.expandTree(this.AT.tree);
+			EnvironmentHelper.expandTree(this.AT.tree);
 		}
 		return this.AT;
 	}
@@ -447,7 +447,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 
 			}
 		}
-		Const.expandTree(agentTree.tree);
+		EnvironmentHelper.expandTree(agentTree.tree);
 	}
 
 	/**
@@ -623,7 +623,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 						ControlGUI.this.setHabitat();
 					}
 				}
-				Const.expandTree(domainTree);
+				EnvironmentHelper.expandTree(domainTree);
 			}
 		};
 		SwingUtilities.invokeLater(addIt);

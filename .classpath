@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry excluding="contmas/lib/jade/|contmas/lib/|contmas/resources/|contmas/envSetups/|sma/envSetups/|sma/resources/|monitormas/envSetups/|monitormas/resources/" kind="src" path="projects"/>
+	<classpathentry excluding="contmas/lib/jade/|contmas/lib/|contmas/resources/|contmas/envSetups/|sma/envSetups/|sma/resources/|monitormas/envSetups/|monitormas/resources/|contmas/de/unidue/stud/sehawagn/contmas/monitor/BayMapRenderer.java" kind="src" path="projects"/>
 	<classpathentry kind="lib" path="lib/batik/batik-rasterizer.jar"/>
 	<classpathentry kind="lib" path="lib/batik/batik-slideshow.jar"/>
 	<classpathentry kind="lib" path="lib/batik/batik-squiggle.jar"/>
@@ -29,6 +29,7 @@
 	<classpathentry kind="lib" path="lib/batik/lib/batik-css.jar"/>
 	<classpathentry kind="lib" path="lib/batik/lib/batik-dom.jar"/>
 	<classpathentry kind="lib" path="lib/batik/lib/batik-ext.jar"/>
+	<classpathentry kind="lib" path="projects/contmas/lib/ContMASBayMapRenderer.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

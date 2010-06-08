@@ -21,6 +21,7 @@
 package contmas.behaviours;
 
 import contmas.agents.ContainerAgent;
+import contmas.agents.ContainerHolderAgent;
 import contmas.agents.StraddleCarrierAgent;
 import contmas.interfaces.MoveableAgent;
 import contmas.ontology.Movement;
@@ -33,13 +34,13 @@ import jade.util.leap.List;
 public class executeMovements extends CyclicBehaviour{
 	private static final long serialVersionUID=5797840123323315484L;
 	MoveableAgent myAgent;
-	ContainerAgent myCAgent;
+	ContainerHolderAgent myCAgent;
 	Movement curMovement=null;
 
 	public executeMovements(Agent a){
 		super(a);
 		myAgent=(MoveableAgent) a;
-		myCAgent=(ContainerAgent) a;
+		myCAgent=(ContainerHolderAgent) a;
 	}
 
 	/* (non-Javadoc)
@@ -63,7 +64,7 @@ public class executeMovements extends CyclicBehaviour{
 
 //			this.restart();
 		}
-		block();
+		myCAgent.registerForWakeUpCall(this);
 	}
 
 	public Movement getCurrentMovement(){

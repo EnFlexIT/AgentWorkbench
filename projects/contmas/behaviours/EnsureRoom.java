@@ -6,6 +6,7 @@ package contmas.behaviours;
 import jade.core.Agent;
 import jade.core.behaviours.DataStore;
 import jade.core.behaviours.OneShotBehaviour;
+import jade.core.behaviours.SimpleBehaviour;
 import jade.lang.acl.ACLMessage;
 import contmas.agents.ContainerAgent;
 import contmas.agents.ContainerHolderAgent;
@@ -20,10 +21,10 @@ import contmas.ontology.TransportOrder;
 import contmas.ontology.TransportOrderChain;
 import contmas.ontology.TransportOrderChainState;
 
-class EnsureRoom extends OneShotBehaviour{
+class EnsureRoom extends SimpleBehaviour{
 	//FSM events
 	final static Integer HAS_ROOM=0;
-	final static Integer TRY_FREEING= -1;
+//	final static Integer TRY_FREEING= -1;
 	private TransportOrderChain curTOC;
 	private TransportOrder curTO;
 	
@@ -32,6 +33,7 @@ class EnsureRoom extends OneShotBehaviour{
 	 */
 	private ContainerHolderAgent myCAgent;
 	Integer returnState;
+	private Boolean isDone;
 
 	EnsureRoom(Agent a,DataStore ds){
 		super(a);
@@ -46,6 +48,7 @@ class EnsureRoom extends OneShotBehaviour{
 	@Override
 	public void action(){
 		returnState=HAS_ROOM;
+		isDone=true;
 
 		if( !myCAgent.hasBayMapRoom()){
 			if(myCAgent instanceof TransportOrderOfferer){
@@ -66,15 +69,18 @@ class EnsureRoom extends OneShotBehaviour{
 						myCAgent.echoStatus("BayMap voll, versuche Räumung für",curTOC,ContainerAgent.LOGGING_INFORM);
 						TransportOrderChainState state=new PendingForSubCFP();
 						state.setLoad_offer(curTO);
-						myCAgent.setTOCState(curTOC,state);
+//						myCAgent.setTOCState(curTOC,state);
 						myCAgent.releaseContainer(someTOC);
 //						myCAgent.registerForWakeUpCall(this);
 					}
 				}
 
 				if(someTOC != null){ // TOC is in one of the above states, so all steps taken, just sit back and relax
-//					myCAgent.registerForWakeUpCall(this);
-					returnState=TRY_FREEING;
+					myCAgent.registerForWakeUpCall(this);
+					isDone=false;
+					myCAgent.echoStatus("BayMap full, trying to free.",ContainerAgent.LOGGING_INFORM);
+
+//					returnState=TRY_FREEING;
 				}else{ //keine administrierten TOCs da
 					myCAgent.echoStatus("FAILURE: BayMap full, no administered TOCs available, clearing not possible.",ContainerAgent.LOGGING_ERROR);
 					returnState=ACLMessage.REFUSE;
@@ -91,5 +97,13 @@ class EnsureRoom extends OneShotBehaviour{
 	@Override
 	public int onEnd(){
 		return returnState;
+	}
+
+	/* (non-Javadoc)
+	 * @see jade.core.behaviours.Behaviour#done()
+	 */
+	@Override
+	public boolean done(){
+		return isDone;
 	}
 }

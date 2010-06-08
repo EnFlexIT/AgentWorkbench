@@ -50,8 +50,10 @@ public class carryOutPlanning extends CyclicBehaviour{
 				requestingBehaviour=new requestExecuteAppointment(myCAgent,someTOC,curTO);
 				myCAgent.addBehaviour(requestingBehaviour);
 				myCAgent.echoStatus("added plan execution",someTOC,ContainerAgent.LOGGING_INFORM);
+			}else{
+//				myCAgent.echoStatus("carryOutPlanning - no planned TOC available, wait until", ContainerAgent.LOGGING_DEBUG);
+				myCAgent.registerForWakeUpCall(this); //no planned TOC available, wait until
 			}
-//			myCAgent.registerForWakeUpCall(this);
 //		}
 	}
 

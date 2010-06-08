@@ -33,7 +33,7 @@ import contmas.agents.ContainerAgent;
 import contmas.agents.ContainerHolderAgent;
 import contmas.agents.StraddleCarrierAgent;
 import contmas.interfaces.MoveableAgent;
-import contmas.main.Const;
+import contmas.main.EnvironmentHelper;
 import contmas.ontology.*;
 
 public class announceLoadOrders extends ContractNetInitiator{

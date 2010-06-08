@@ -41,10 +41,10 @@ import contmas.ontology.ContainerHolder;
  * @author Hanno - Felix Wagner
  * 
  */
-public class MonitorAgent extends GuiAgent implements OntRepRequester,	DFSubscriber {
+public class MonitorAgent extends GuiAgent implements OntRepRequester,DFSubscriber{
 
-	public static final Integer REFRESH_EVENT = 0;
-	public static final int SHUT_DOWN_EVENT = -1;
+	public static final Integer REFRESH_EVENT=0;
+	public static final int SHUT_DOWN_EVENT= -1;
 	private MonitorGUI myGui;
 	private JDesktopPane canvas;
 	private AID harbourMaster;
@@ -53,9 +53,8 @@ public class MonitorAgent extends GuiAgent implements OntRepRequester,	DFSubscri
 	 * @param canvas
 	 * 
 	 */
-	public MonitorAgent(JDesktopPane canvas) {
-		this.canvas = canvas;
-		// TODO Auto-generated constructor stub
+	public MonitorAgent(JDesktopPane canvas){
+		this.canvas=canvas;
 	}
 
 	/*
@@ -64,13 +63,21 @@ public class MonitorAgent extends GuiAgent implements OntRepRequester,	DFSubscri
 	 * @see jade.core.Agent#setup()
 	 */
 	@Override
-	protected void setup() {
+	protected void setup(){
 		super.setup();
-		this.myGui = new MonitorGUI(this, canvas);
-		this.myGui.setVisible(true);
-		ContainerAgent.enableForCommunication(this);
-		this.addBehaviour(new subscribeToDF(this, "container-handling"));
-		this.harbourMaster=ContainerAgent.getFirstAIDFromDF("harbor-managing",this);
+
+		try{ //check, if Java3D-Extension is installed
+			Class.forName("javax.media.j3d.Canvas3D");
+
+			this.myGui=new MonitorGUI(this,canvas);
+			this.myGui.setVisible(true);
+			ContainerAgent.enableForCommunication(this);
+			this.addBehaviour(new subscribeToDF(this,"container-handling"));
+			this.harbourMaster=ContainerAgent.getFirstAIDFromDF("harbor-managing",this);
+		}catch(ClassNotFoundException e){		//if not, monitor is useless, so end it
+			System.out.println("Java3D extension not found. MonitorAgent is not able to render BayMaps without it, therefore shutting itself down.");
+			this.doDelete();
+		}
 	}
 
 	/*
@@ -79,12 +86,12 @@ public class MonitorAgent extends GuiAgent implements OntRepRequester,	DFSubscri
 	 * @see jade.gui.GuiAgent#onGuiEvent(jade.gui.GuiEvent)
 	 */
 	@Override
-	protected void onGuiEvent(GuiEvent ev) {
-		if (ev.getType() == REFRESH_EVENT) {
+	protected void onGuiEvent(GuiEvent ev){
+		if(ev.getType() == REFRESH_EVENT){
 			AID subject=(AID) ev.getParameter(0);
 //			System.out.println("Refreshing view of "+subject.getLocalName());
 			this.addBehaviour(new requestOntologyRepresentation(this,subject,this.harbourMaster));
-		} else if(ev.getType() == SHUT_DOWN_EVENT){
+		}else if(ev.getType() == SHUT_DOWN_EVENT){
 			this.doDelete();
 		}
 	}
@@ -97,12 +104,12 @@ public class MonitorAgent extends GuiAgent implements OntRepRequester,	DFSubscri
 	 * .ontology.ContainerHolder, jade.core.AID)
 	 */
 	@Override
-	public void processOntologyRepresentation(ContainerHolder recieved,	AID agent) {
-		HashMap<AID, AgentView> monitoredAgents = myGui.getMonitoredAgents();
+	public void processOntologyRepresentation(ContainerHolder recieved,AID agent){
+		HashMap<AID, AgentView> monitoredAgents=myGui.getMonitoredAgents();
 		if(monitoredAgents.containsKey(agent)){
-			AgentView view = monitoredAgents.get(agent);
+			AgentView view=monitoredAgents.get(agent);
 			view.updateOntRep(recieved);
-		} else{
+		}else{
 			myGui.monitorAgent(agent,recieved);
 		}
 
@@ -116,16 +123,18 @@ public class MonitorAgent extends GuiAgent implements OntRepRequester,	DFSubscri
 	 * .List, java.lang.Boolean)
 	 */
 	@Override
-	public void processSubscriptionUpdate(List updatedAgents, Boolean remove) {
-		this.updateAgentTree(updatedAgents, remove);
+	public void processSubscriptionUpdate(List updatedAgents,Boolean remove){
+		this.updateAgentTree(updatedAgents,remove);
 	}
 
-	public void updateAgentTree(List newAgents, Boolean remove) {
-		this.myGui.updateAgentTree(newAgents, remove);
+	public void updateAgentTree(List newAgents,Boolean remove){
+		this.myGui.updateAgentTree(newAgents,remove);
 	}
-	
+
 	@Override
 	protected void takeDown(){
-		this.myGui.dispose();
+		if(this.myGui != null){
+			this.myGui.dispose();
+		}
 	}
 }

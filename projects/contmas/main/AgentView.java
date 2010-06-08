@@ -157,7 +157,7 @@ public class AgentView extends JInternalFrame{
 		} else {
 			bayMapRenderer.flushLoading();
 		}
-		HashMap<Vector<Integer>, String> loading=Const.convertLoading(map,ontRep.getContainer_states());
+		HashMap<Vector<Integer>, String> loading=EnvironmentHelper.convertLoading(map,ontRep.getContainer_states());
 		bayMapRenderer.renderLoading(loading);
 		this.ontRep=ontRep;
 

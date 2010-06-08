@@ -14,17 +14,17 @@ import com.sun.j3d.utils.geometry.Box;
 import com.sun.j3d.utils.geometry.Text2D;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 
-import contmas.main.Const;
+import contmas.de.unidue.stud.sehawagn.contmas.config.Constants;
 
 public class BayMapRenderer extends JApplet{
 	private static final long serialVersionUID=3992617966815924216L;
 
 	//some container constants
-	public static Float CONTAINER_WIDTH=Const.CONTAINER_WIDTH;
-	public static Float CONTAINER_HEIGHT=Const.CONTAINER_HEIGHT;
-	private static Float CONTAINER_LENGTH=Const.CONTAINER_LENGTH_40FT;
-	private static Float LENGTH_SPACING=Const.LENGTH_SPACING_STRADDLE;
-	private static Float WIDTH_SPACING=Const.WIDTH_SPACING_STRADDLE;
+	public static Float CONTAINER_WIDTH=Constants.CONTAINER_WIDTH;
+	public static Float CONTAINER_HEIGHT=Constants.CONTAINER_HEIGHT;
+	private static Float CONTAINER_LENGTH=Constants.CONTAINER_LENGTH_40FT;
+	private static Float LENGTH_SPACING=Constants.LENGTH_SPACING_STRADDLE;
+	private static Float WIDTH_SPACING=Constants.WIDTH_SPACING_STRADDLE;
 
 	private static Color3f GRID_COLOR=new Color3f(0.1f,0.8f,0.1f);
 	private static Color3f PLANE_COLOR=new Color3f(1.0f,1.0f,1.0f);
