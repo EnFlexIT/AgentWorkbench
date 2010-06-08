@@ -37,6 +37,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JDesktopPane;
 
 import contmas.behaviours.*;
+import contmas.de.unidue.stud.sehawagn.contmas.measurement.DashboardAgent;
 import contmas.interfaces.DFSubscriber;
 import contmas.interfaces.HarbourLayoutRequester;
 import contmas.interfaces.Logger;
@@ -248,6 +249,9 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 			
 //			a=c.createNewAgent("Visualiser","contmas.agents.VisualisationAgent",null);
 //			a.start();
+			
+			a=c.acceptNewAgent("Dashboard",new DashboardAgent(canvas));
+			a.start();
 			
 			a=c.acceptNewAgent("Monitor",new MonitorAgent(canvas));
 			a.start();

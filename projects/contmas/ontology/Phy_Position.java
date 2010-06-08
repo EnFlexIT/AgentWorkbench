@@ -9,7 +9,7 @@ import jade.core.*;
    * Represents an object's position in a 2D environment
 * Protege name: phy:Position
 * @author ontology bean generator
-* @version 2010/05/25, 12:32:32
+* @version 2010/06/8, 22:03:06
 */
 public class Phy_Position implements Concept {
 

@@ -8,9 +8,31 @@ import jade.core.*;
    * Represents an agent that can move in the environment
 * Protege name: phy:AgentObject
 * @author ontology bean generator
-* @version 2010/05/25, 12:32:32
+* @version 2010/06/8, 22:03:06
 */
 public class Phy_AgentObject extends Phy_AbstractObject{ 
+
+   /**
+   * Points for collision checks
+* Protege name: phy:collisionPoints
+   */
+   private List phy_collisionPoints = new ArrayList();
+   public void addPhy_collisionPoints(Object elem) { 
+     List oldList = this.phy_collisionPoints;
+     phy_collisionPoints.add(elem);
+   }
+   public boolean removePhy_collisionPoints(Object elem) {
+     List oldList = this.phy_collisionPoints;
+     boolean result = phy_collisionPoints.remove(elem);
+     return result;
+   }
+   public void clearAllPhy_collisionPoints() {
+     List oldList = this.phy_collisionPoints;
+     phy_collisionPoints.clear();
+   }
+   public Iterator getAllPhy_collisionPoints() {return phy_collisionPoints.iterator(); }
+   public List getPhy_collisionPoints() {return phy_collisionPoints; }
+   public void setPhy_collisionPoints(List l) {phy_collisionPoints = l; }
 
    /**
    * This agent's AID
@@ -37,26 +59,15 @@ public class Phy_AgentObject extends Phy_AbstractObject{
    }
 
    /**
-   * Points for collision checks
-* Protege name: phy:collisionPoints
+* Protege name: phy:currentSpeed
    */
-   private List phy_collisionPoints = new ArrayList();
-   public void addPhy_collisionPoints(Object elem) { 
-     List oldList = this.phy_collisionPoints;
-     phy_collisionPoints.add(elem);
+   private Phy_Speed phy_currentSpeed;
+   public void setPhy_currentSpeed(Phy_Speed value) { 
+    this.phy_currentSpeed=value;
    }
-   public boolean removePhy_collisionPoints(Object elem) {
-     List oldList = this.phy_collisionPoints;
-     boolean result = phy_collisionPoints.remove(elem);
-     return result;
+   public Phy_Speed getPhy_currentSpeed() {
+     return this.phy_currentSpeed;
    }
-   public void clearAllPhy_collisionPoints() {
-     List oldList = this.phy_collisionPoints;
-     phy_collisionPoints.clear();
-   }
-   public Iterator getAllPhy_collisionPoints() {return phy_collisionPoints.iterator(); }
-   public List getPhy_collisionPoints() {return phy_collisionPoints; }
-   public void setPhy_collisionPoints(List l) {phy_collisionPoints = l; }
 
    /**
 * Protege name: phy:maxSpeed
@@ -67,17 +78,6 @@ public class Phy_AgentObject extends Phy_AbstractObject{
    }
    public Phy_Speed getPhy_maxSpeed() {
      return this.phy_maxSpeed;
-   }
-
-   /**
-* Protege name: phy:currentSpeed
-   */
-   private Phy_Speed phy_currentSpeed;
-   public void setPhy_currentSpeed(Phy_Speed value) { 
-    this.phy_currentSpeed=value;
-   }
-   public Phy_Speed getPhy_currentSpeed() {
-     return this.phy_currentSpeed;
    }
 
 }

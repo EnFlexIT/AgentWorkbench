@@ -8,20 +8,9 @@ import jade.core.*;
 /**
 * Protege name: StartNewContainerHolder
 * @author ontology bean generator
-* @version 2010/05/25, 12:32:32
+* @version 2010/06/8, 22:03:06
 */
 public class StartNewContainerHolder implements AgentAction {
-
-   /**
-* Protege name: populate
-   */
-   private boolean populate;
-   public void setPopulate(boolean value) { 
-    this.populate=value;
-   }
-   public boolean getPopulate() {
-     return this.populate;
-   }
 
    /**
 * Protege name: name
@@ -35,17 +24,6 @@ public class StartNewContainerHolder implements AgentAction {
    }
 
    /**
-* Protege name: to_be_added
-   */
-   private ContainerHolder to_be_added;
-   public void setTo_be_added(ContainerHolder value) { 
-    this.to_be_added=value;
-   }
-   public ContainerHolder getTo_be_added() {
-     return this.to_be_added;
-   }
-
-   /**
 * Protege name: randomize
    */
    private boolean randomize;
@@ -54,6 +32,28 @@ public class StartNewContainerHolder implements AgentAction {
    }
    public boolean getRandomize() {
      return this.randomize;
+   }
+
+   /**
+* Protege name: populate
+   */
+   private boolean populate;
+   public void setPopulate(boolean value) { 
+    this.populate=value;
+   }
+   public boolean getPopulate() {
+     return this.populate;
+   }
+
+   /**
+* Protege name: to_be_added
+   */
+   private ContainerHolder to_be_added;
+   public void setTo_be_added(ContainerHolder value) { 
+    this.to_be_added=value;
+   }
+   public ContainerHolder getTo_be_added() {
+     return this.to_be_added;
    }
 
 }

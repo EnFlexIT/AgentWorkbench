@@ -9,21 +9,9 @@ import jade.core.*;
    * A project's environment definition
 * Protege name: phy:Environment
 * @author ontology bean generator
-* @version 2010/05/25, 12:32:32
+* @version 2010/06/8, 22:03:06
 */
 public class Phy_Environment implements Concept {
-
-   /**
-   * The SVG document object
-* Protege name: phy:svgDoc
-   */
-   private Object phy_svgDoc;
-   public void setPhy_svgDoc(Object value) { 
-    this.phy_svgDoc=value;
-   }
-   public Object getPhy_svgDoc() {
-     return this.phy_svgDoc;
-   }
 
    /**
    * Root of the project's environment representation, containing all it's EnvironmentObjects
@@ -38,17 +26,6 @@ public class Phy_Environment implements Concept {
    }
 
    /**
-* Protege name: phy:scale
-   */
-   private Phy_Scale phy_scale;
-   public void setPhy_scale(Phy_Scale value) { 
-    this.phy_scale=value;
-   }
-   public Phy_Scale getPhy_scale() {
-     return this.phy_scale;
-   }
-
-   /**
    * The project's name
 * Protege name: phy:projectName
    */
@@ -58,6 +35,18 @@ public class Phy_Environment implements Concept {
    }
    public String getPhy_projectName() {
      return this.phy_projectName;
+   }
+
+   /**
+   * The SVG document object
+* Protege name: phy:svgDoc
+   */
+   private Object phy_svgDoc;
+   public void setPhy_svgDoc(Object value) { 
+    this.phy_svgDoc=value;
+   }
+   public Object getPhy_svgDoc() {
+     return this.phy_svgDoc;
    }
 
    /**
@@ -81,5 +70,16 @@ public class Phy_Environment implements Concept {
    public Iterator getAllPhy_objects() {return phy_objects.iterator(); }
    public List getPhy_objects() {return phy_objects; }
    public void setPhy_objects(List l) {phy_objects = l; }
+
+   /**
+* Protege name: phy:scale
+   */
+   private Phy_Scale phy_scale;
+   public void setPhy_scale(Phy_Scale value) { 
+    this.phy_scale=value;
+   }
+   public Phy_Scale getPhy_scale() {
+     return this.phy_scale;
+   }
 
 }

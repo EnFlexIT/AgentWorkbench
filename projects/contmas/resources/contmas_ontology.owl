@@ -9,16 +9,16 @@
     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
   xml:base="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/contmas_ontology.owl">
   <owl:Ontology rdf:about="">
-    <owl:imports rdf:resource="http://jade.cselt.it/beangenerator"/>
     <owl:imports rdf:resource="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/agentgui_display_ontology.owl"/>
+    <owl:imports rdf:resource="http://jade.cselt.it/beangenerator"/>
   </owl:Ontology>
   <owl:ObjectProperty rdf:ID="available_cranes">
+    <rdfs:range rdf:resource="http://jade.cselt.it/beangenerator#AID"/>
     <rdfs:domain>
       <j0:JADE-CLASS rdf:ID="AssignBerth">
         <rdfs:subClassOf rdf:resource="http://jade.cselt.it/beangenerator#AgentAction"/>
       </j0:JADE-CLASS>
     </rdfs:domain>
-    <rdfs:range rdf:resource="http://jade.cselt.it/beangenerator#AID"/>
   </owl:ObjectProperty>
   <owl:ObjectProperty rdf:ID="capable_of">
     <rdfs:range>
@@ -69,48 +69,48 @@
     <rdfs:range rdf:resource="#TOCHasState"/>
   </owl:ObjectProperty>
   <owl:ObjectProperty rdf:ID="is_linked_by">
-    <rdfs:range>
-      <j0:JADE-CLASS rdf:ID="TransportOrder">
-        <rdfs:subClassOf rdf:resource="http://jade.cselt.it/beangenerator#Concept"/>
-      </j0:JADE-CLASS>
-    </rdfs:range>
     <rdfs:domain>
       <j0:JADE-CLASS rdf:ID="TransportOrderChain">
         <rdfs:subClassOf rdf:resource="http://jade.cselt.it/beangenerator#Concept"/>
       </j0:JADE-CLASS>
     </rdfs:domain>
+    <rdfs:range>
+      <j0:JADE-CLASS rdf:ID="TransportOrder">
+        <rdfs:subClassOf rdf:resource="http://jade.cselt.it/beangenerator#Concept"/>
+      </j0:JADE-CLASS>
+    </rdfs:range>
   </owl:ObjectProperty>
   <owl:ObjectProperty rdf:ID="scheduled_movements">
-    <rdfs:domain rdf:resource="#ActiveContainerHolder"/>
     <rdfs:range>
       <j0:JADE-CLASS rdf:ID="Movement">
         <rdfs:subClassOf rdf:resource="http://jade.cselt.it/beangenerator#Concept"/>
       </j0:JADE-CLASS>
     </rdfs:range>
+    <rdfs:domain rdf:resource="#ActiveContainerHolder"/>
   </owl:ObjectProperty>
   <owl:ObjectProperty rdf:ID="consists_of">
+    <rdfs:range rdf:resource="#TransportOrderChain"/>
     <rdfs:domain>
       <j0:JADE-CLASS rdf:ID="LoadList">
         <rdfs:subClassOf rdf:resource="http://jade.cselt.it/beangenerator#Concept"/>
       </j0:JADE-CLASS>
     </rdfs:domain>
-    <rdfs:range rdf:resource="#TransportOrderChain"/>
   </owl:ObjectProperty>
   <owl:ObjectProperty rdf:ID="container_states">
-    <rdfs:range rdf:resource="#TOCHasState"/>
     <rdfs:domain rdf:resource="#ContainerHolder"/>
+    <rdfs:range rdf:resource="#TOCHasState"/>
   </owl:ObjectProperty>
   <owl:ObjectProperty rdf:ID="reaches_eventually">
+    <rdfs:domain rdf:resource="#ContainerHolder"/>
     <rdfs:range>
       <j0:JADE-CLASS rdf:ID="RouteInformation">
         <rdfs:subClassOf rdf:resource="http://jade.cselt.it/beangenerator#Concept"/>
       </j0:JADE-CLASS>
     </rdfs:range>
-    <rdfs:domain rdf:resource="#ContainerHolder"/>
   </owl:ObjectProperty>
   <owl:ObjectProperty rdf:ID="contractors">
-    <rdfs:range rdf:resource="http://jade.cselt.it/beangenerator#AID"/>
     <rdfs:domain rdf:resource="#ContainerHolder"/>
+    <rdfs:range rdf:resource="http://jade.cselt.it/beangenerator#AID"/>
   </owl:ObjectProperty>
   <owl:ObjectProperty rdf:ID="currently_active_container_holders">
     <rdfs:domain>
@@ -121,8 +121,6 @@
     <rdfs:range rdf:resource="#ContainerHolder"/>
   </owl:ObjectProperty>
   <owl:FunctionalProperty rdf:ID="next_step">
-    <rdfs:range rdf:resource="#LoadList"/>
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
     <rdfs:domain>
       <owl:Class>
         <owl:unionOf rdf:parseType="Collection">
@@ -136,6 +134,8 @@
         </owl:unionOf>
       </owl:Class>
     </rdfs:domain>
+    <rdfs:range rdf:resource="#LoadList"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="id">
     <rdfs:domain rdf:resource="#Domain"/>
@@ -152,17 +152,17 @@
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="abstract_designation">
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
-    <rdfs:range rdf:resource="#Domain"/>
     <rdfs:domain>
       <j0:JADE-CLASS rdf:ID="Designator">
         <rdfs:subClassOf rdf:resource="http://jade.cselt.it/beangenerator#Concept"/>
       </j0:JADE-CLASS>
     </rdfs:domain>
+    <rdfs:range rdf:resource="#Domain"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="current_harbour_layout">
     <rdfs:range rdf:resource="#Domain"/>
-    <rdfs:domain rdf:resource="#ProvideHarbourSetup"/>
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:domain rdf:resource="#ProvideHarbourSetup"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="x_dimension">
     <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#int"/>
@@ -196,12 +196,13 @@
     <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="ends_at">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
     <rdfs:range rdf:resource="#Designator"/>
     <rdfs:domain rdf:resource="#TransportOrder"/>
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="z_dimension">
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#int"/>
     <rdfs:domain>
       <owl:Class>
         <owl:unionOf rdf:parseType="Collection">
@@ -211,14 +212,14 @@
         </owl:unionOf>
       </owl:Class>
     </rdfs:domain>
-    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#int"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="contains">
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
-    <rdfs:range rdf:resource="#BayMap"/>
     <rdfs:domain rdf:resource="#ContainerHolder"/>
+    <rdfs:range rdf:resource="#BayMap"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="load_offer">
+    <rdfs:range rdf:resource="#TransportOrder"/>
     <rdfs:domain>
       <owl:Class>
         <owl:unionOf rdf:parseType="Collection">
@@ -234,22 +235,21 @@
         </owl:unionOf>
       </owl:Class>
     </rdfs:domain>
-    <rdfs:range rdf:resource="#TransportOrder"/>
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="agent_in_question">
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
-    <rdfs:range rdf:resource="http://jade.cselt.it/beangenerator#AID"/>
     <rdfs:domain>
       <j0:JADE-CLASS rdf:ID="RequestOntologyRepresentation">
         <rdfs:subClassOf rdf:resource="http://jade.cselt.it/beangenerator#AgentAction"/>
       </j0:JADE-CLASS>
     </rdfs:domain>
+    <rdfs:range rdf:resource="http://jade.cselt.it/beangenerator#AID"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="starts_at">
     <rdfs:domain rdf:resource="#TransportOrder"/>
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
     <rdfs:range rdf:resource="#Designator"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="is_in_position2">
     <rdfs:domain rdf:resource="#ContainerHolder"/>
@@ -257,8 +257,6 @@
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="at_address">
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
-    <rdfs:range rdf:resource="#BlockAddress"/>
     <rdfs:domain>
       <owl:Class>
         <owl:unionOf rdf:parseType="Collection">
@@ -267,6 +265,8 @@
         </owl:unionOf>
       </owl:Class>
     </rdfs:domain>
+    <rdfs:range rdf:resource="#BlockAddress"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="assigned_berth">
     <rdfs:domain rdf:resource="#AssignBerth"/>
@@ -291,9 +291,18 @@
     <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="transports">
-    <rdfs:domain rdf:resource="#TransportOrderChain"/>
     <rdfs:range rdf:resource="#Container"/>
+    <rdfs:domain rdf:resource="#TransportOrderChain"/>
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+  </owl:FunctionalProperty>
+  <owl:FunctionalProperty rdf:ID="happend_at">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+    <rdfs:domain>
+      <j0:JADE-CLASS rdf:ID="AnnounceLoadStatus">
+        <rdfs:subClassOf rdf:resource="http://jade.cselt.it/beangenerator#AgentAction"/>
+      </j0:JADE-CLASS>
+    </rdfs:domain>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#int"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="next_hop">
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
@@ -301,18 +310,16 @@
     <rdfs:range rdf:resource="#Domain"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="move_to">
-    <rdfs:domain rdf:resource="#Movement"/>
-    <rdfs:range rdf:resource="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/agentgui_display_ontology.owl#Position"/>
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:range rdf:resource="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/agentgui_display_ontology.owl#Position"/>
+    <rdfs:domain rdf:resource="#Movement"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="corresponds_to">
     <rdfs:domain>
       <owl:Class>
         <owl:unionOf rdf:parseType="Collection">
           <j0:JADE-CLASS rdf:about="#ProposeLoadOffer"/>
-          <j0:JADE-CLASS rdf:ID="AnnounceLoadStatus">
-            <rdfs:subClassOf rdf:resource="http://jade.cselt.it/beangenerator#AgentAction"/>
-          </j0:JADE-CLASS>
+          <j0:JADE-CLASS rdf:about="#AnnounceLoadStatus"/>
           <j0:JADE-CLASS rdf:ID="RejectLoadOffer">
             <rdfs:subClassOf rdf:resource="http://jade.cselt.it/beangenerator#AgentAction"/>
           </j0:JADE-CLASS>
@@ -326,26 +333,25 @@
         </owl:unionOf>
       </owl:Class>
     </rdfs:domain>
-    <rdfs:range rdf:resource="#TransportOrderChain"/>
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:range rdf:resource="#TransportOrderChain"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="be_there_at">
-    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-    <rdfs:domain rdf:resource="#Movement"/>
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+    <rdfs:domain rdf:resource="#Movement"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="locates">
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
-    <rdfs:range rdf:resource="#Container"/>
     <rdfs:domain rdf:resource="#BlockAddress"/>
+    <rdfs:range rdf:resource="#Container"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="concrete_designation">
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
-    <rdfs:range rdf:resource="http://jade.cselt.it/beangenerator#AID"/>
     <rdfs:domain rdf:resource="#Designator"/>
+    <rdfs:range rdf:resource="http://jade.cselt.it/beangenerator#AID"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="type">
-    <rdfs:domain rdf:resource="#Designator"/>
     <rdfs:range>
       <owl:DataRange>
         <owl:oneOf rdf:parseType="Resource">
@@ -359,6 +365,7 @@
         </owl:oneOf>
       </owl:DataRange>
     </rdfs:range>
+    <rdfs:domain rdf:resource="#Designator"/>
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="populate">
@@ -379,9 +386,9 @@
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="is_in_position">
-    <rdfs:range rdf:resource="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/agentgui_display_ontology.owl#Position"/>
-    <rdfs:domain rdf:resource="#Domain"/>
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:domain rdf:resource="#Domain"/>
+    <rdfs:range rdf:resource="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/agentgui_display_ontology.owl#Position"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="weight">
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
@@ -389,26 +396,27 @@
     <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="suiting_address">
+    <rdfs:range rdf:resource="#BlockAddress"/>
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
     <rdfs:domain>
       <j0:JADE-CLASS rdf:ID="ProvideBlockAddress">
         <rdfs:subClassOf rdf:resource="http://jade.cselt.it/beangenerator#AgentAction"/>
       </j0:JADE-CLASS>
     </rdfs:domain>
-    <rdfs:range rdf:resource="#BlockAddress"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="to_be_added">
-    <rdfs:range rdf:resource="#ContainerHolder"/>
     <rdfs:domain rdf:resource="#StartNewContainerHolder"/>
+    <rdfs:range rdf:resource="#ContainerHolder"/>
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="state">
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
     <rdfs:domain rdf:resource="#TOCHasState"/>
     <rdfs:range rdf:resource="#TransportOrderChainState"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="y_dimension">
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#int"/>
     <rdfs:domain>
       <owl:Class>
         <owl:unionOf rdf:parseType="Collection">
@@ -418,12 +426,11 @@
         </owl:unionOf>
       </owl:Class>
     </rdfs:domain>
-    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#int"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="name">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
     <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
     <rdfs:domain rdf:resource="#StartNewContainerHolder"/>
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="provides">
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
@@ -442,11 +449,12 @@
     <rdfs:range rdf:resource="#BayMap"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="localName">
-    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
     <rdfs:domain rdf:resource="#ContainerHolder"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="load_status">
+    <rdfs:domain rdf:resource="#AnnounceLoadStatus"/>
     <rdfs:range>
       <owl:DataRange>
         <owl:oneOf rdf:parseType="Resource">
@@ -456,15 +464,14 @@
             <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
             >PENDING</rdf:first>
             <rdf:rest rdf:parseType="Resource">
+              <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
               <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
               >FINISHED</rdf:first>
-              <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
             </rdf:rest>
           </rdf:rest>
         </owl:oneOf>
       </owl:DataRange>
     </rdfs:range>
-    <rdfs:domain rdf:resource="#AnnounceLoadStatus"/>
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="subjected_toc">
@@ -476,22 +483,22 @@
         </owl:unionOf>
       </owl:Class>
     </rdfs:domain>
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
     <rdfs:range rdf:resource="#TransportOrderChain"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="populate_on">
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
-    <rdfs:range rdf:resource="#BayMap"/>
     <rdfs:domain>
       <j0:JADE-CLASS rdf:ID="RequestPopulatedBayMap">
         <rdfs:subClassOf rdf:resource="http://jade.cselt.it/beangenerator#AgentAction"/>
       </j0:JADE-CLASS>
     </rdfs:domain>
+    <rdfs:range rdf:resource="#BayMap"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="service_type">
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
     <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
     <rdfs:domain rdf:resource="#ContainerHolder"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="according_ontrep">
     <rdfs:domain>
@@ -509,29 +516,29 @@
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="randomize">
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
-    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
     <rdfs:domain rdf:resource="#StartNewContainerHolder"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="takes_until">
-    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-    <rdfs:domain rdf:resource="#TransportOrder"/>
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+    <rdfs:domain rdf:resource="#TransportOrder"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="target">
+    <rdfs:domain rdf:resource="#RouteInformation"/>
     <rdfs:range rdf:resource="#Domain"/>
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
-    <rdfs:domain rdf:resource="#RouteInformation"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="has_size">
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
     <rdfs:domain rdf:resource="#Domain"/>
     <rdfs:range rdf:resource="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/agentgui_display_ontology.owl#Size"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
   </owl:FunctionalProperty>
   <owl:InverseFunctionalProperty rdf:about="#has_subdomains">
-    <owl:inverseOf rdf:resource="#lies_in"/>
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
     <rdfs:domain rdf:resource="#Domain"/>
     <rdfs:range rdf:resource="#Domain"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <owl:inverseOf rdf:resource="#lies_in"/>
   </owl:InverseFunctionalProperty>
   <j0:JADE-CLASS rdf:ID="Administered">
     <rdfs:subClassOf>
@@ -588,16 +595,16 @@
   </j0:JADE-CLASS>
   <j0:JADE-CLASS rdf:ID="AGV">
     <rdfs:subClassOf>
-      <owl:Restriction>
-        <owl:onProperty rdf:resource="#service_type"/>
-        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-        >container-distribution</owl:hasValue>
-      </owl:Restriction>
-    </rdfs:subClassOf>
-    <rdfs:subClassOf>
       <j0:JADE-CLASS rdf:ID="PassiveContainerHolder">
         <rdfs:subClassOf rdf:resource="#ContainerHolder"/>
       </j0:JADE-CLASS>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >container-distribution</owl:hasValue>
+        <owl:onProperty rdf:resource="#service_type"/>
+      </owl:Restriction>
     </rdfs:subClassOf>
   </j0:JADE-CLASS>
   <j0:JADE-CLASS rdf:ID="RMG">

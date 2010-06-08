@@ -8,30 +8,9 @@ import jade.core.*;
 /**
 * Protege name: RequestBlockAddress
 * @author ontology bean generator
-* @version 2010/05/25, 12:32:32
+* @version 2010/06/8, 22:03:06
 */
 public class RequestBlockAddress implements AgentAction {
-
-   /**
-* Protege name: provides_population
-   */
-   private List provides_population = new ArrayList();
-   public void addProvides_population(TOCHasState elem) { 
-     List oldList = this.provides_population;
-     provides_population.add(elem);
-   }
-   public boolean removeProvides_population(TOCHasState elem) {
-     List oldList = this.provides_population;
-     boolean result = provides_population.remove(elem);
-     return result;
-   }
-   public void clearAllProvides_population() {
-     List oldList = this.provides_population;
-     provides_population.clear();
-   }
-   public Iterator getAllProvides_population() {return provides_population.iterator(); }
-   public List getProvides_population() {return provides_population; }
-   public void setProvides_population(List l) {provides_population = l; }
 
    /**
 * Protege name: provides
@@ -54,5 +33,26 @@ public class RequestBlockAddress implements AgentAction {
    public TransportOrderChain getSubjected_toc() {
      return this.subjected_toc;
    }
+
+   /**
+* Protege name: provides_population
+   */
+   private List provides_population = new ArrayList();
+   public void addProvides_population(TOCHasState elem) { 
+     List oldList = this.provides_population;
+     provides_population.add(elem);
+   }
+   public boolean removeProvides_population(TOCHasState elem) {
+     List oldList = this.provides_population;
+     boolean result = provides_population.remove(elem);
+     return result;
+   }
+   public void clearAllProvides_population() {
+     List oldList = this.provides_population;
+     provides_population.clear();
+   }
+   public Iterator getAllProvides_population() {return provides_population.iterator(); }
+   public List getProvides_population() {return provides_population; }
+   public void setProvides_population(List l) {provides_population = l; }
 
 }
