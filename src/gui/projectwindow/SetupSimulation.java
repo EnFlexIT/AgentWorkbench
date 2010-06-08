@@ -54,7 +54,7 @@ public class SetupSimulation extends JPanel  {
 		this.add(getJTabbedPaneSimSetup(), gridBagConstraints);
 		
 		// --- Die (optionalen) Karteikarten einblenden ----------
-		addProjectTab(Language.translate("Agenten-Konfiguration"), null, new SetupSimulationAgents(currProject), Language.translate("Agenten-Konfiguration"));
+		addProjectTab(Language.translate("Start-Konfiguration"), null, new SetupSimulationStart(currProject), Language.translate("Agenten-Konfiguration"));
 		addProjectTab(Language.translate("JADE-Konfiguration"), null, new SetupSimulationJADE(currProject), Language.translate("JADE-Konfiguration"));
 		
 	}

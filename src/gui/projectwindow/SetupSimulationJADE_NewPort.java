@@ -158,7 +158,7 @@ public class SetupSimulationJADE_NewPort extends JDialog implements ActionListen
 	private JButton getJButtonSetPortDefault() {
 		if (jButtonSetPortDefault == null) {
 			jButtonSetPortDefault = new JButton();
-			jButtonSetPortDefault.setText("Ok");
+			jButtonSetPortDefault.setText("OK");
 			jButtonSetPortDefault.setBounds(new Rectangle(215, 10, 77, 26));
 			jButtonSetPortDefault.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonSetPortDefault.setForeground(new Color(0, 153, 0));

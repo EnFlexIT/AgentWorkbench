@@ -47,7 +47,6 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 	private String agentReference = null;  //  @jve:decl-index=0:
 	private String ontoReference = null;  //  @jve:decl-index=0:
 	
-	private JPanel jPanelNorth = null;
 	private JLabel jLabelAgent = null;
 	private JTextField jTextAgent = null;
 	private JLabel jLabelStart = null;
@@ -57,7 +56,6 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 	private JScrollPane jAgentScroll = null;
 	private JList jAgentList = null;
 	private JPanel jPanelReferences = null;
-	private JPanel jPanelWest = null;
 	private JScrollPane jScrollReferences = null;
 	private JList jListReferences = null;
 	private JButton jButtonMoveUp = null;
@@ -65,7 +63,6 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 	private JButton jButtonRemoveAll = null;
 	private JButton jButtonReferencesAdd = null;
 	private JButton jButtonReferencesRemove = null;
-	private JSplitPane jSplitHrizontal = null;
 	private JSplitPane jSplitEast = null;
 	private JScrollPane jScrollOntology = null;
 	private JTree jTreeOntology = null;
@@ -74,6 +71,9 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 	private JLabel jLabelOntologie = null;
 	private JSplitPane jSplitOntologie = null;
 	private JPanel jPanelOntoSlots = null;
+	private JPanel jPanelWest = null;
+	private JPanel jPanelEast = null;
+	private JPanel jPanelEastTop = null;
 	/**
 	 * This is the default constructor
 	 */
@@ -86,7 +86,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 		// --- Übersetzung anschmeissen -------------------
 		jLabelAgent.setText(Language.translate("Agent:"));
 		jLabelStart.setText(Language.translate("Starten als:"));
-		jLabelRecerence.setText(Language.translate("Objekte aus Projekt-Ontologie"));
+		jLabelRecerence.setText(Language.translate("Start-Objekte aus Projekt-Ontologie"));
 		jLabelOntologie.setText(Language.translate("Projekt-Ontologie"));
 		
 		jButtonStartAgent.setToolTipText(Language.translate("Agent starten..."));
@@ -109,69 +109,16 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 	 * @return void
 	 */
 	private void initialize() {
-		BorderLayout borderLayout = new BorderLayout();
-		borderLayout.setHgap(0);
-		borderLayout.setVgap(0);
 		jLabelAgent = new JLabel();
 		jLabelAgent.setText("Agent:");
 		jLabelAgent.setFont(new Font("Dialog", Font.BOLD, 12));
-		this.setLayout(borderLayout);
-		this.setSize(819, 478);
-		this.add(getJPanelNorth(), BorderLayout.NORTH);
-		this.add(getJSplitHrizontal(), BorderLayout.CENTER);
-	}
-
-	/**
-	 * This method initializes jPanelNorth	
-	 * 	
-	 * @return javax.swing.JPanel	
-	 */
-	private JPanel getJPanelNorth() {
-		if (jPanelNorth == null) {
-			GridBagConstraints gridBagConstraints111 = new GridBagConstraints();
-			gridBagConstraints111.gridx = 0;
-			gridBagConstraints111.anchor = GridBagConstraints.WEST;
-			gridBagConstraints111.insets = new Insets(0, 10, 0, 0);
-			gridBagConstraints111.gridy = 0;
-			GridBagConstraints gridBagConstraints9 = new GridBagConstraints();
-			gridBagConstraints9.insets = new Insets(10, 10, 10, 5);
-			GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
-			gridBagConstraints4.gridx = 5;
-			gridBagConstraints4.insets = new Insets(0, 10, 0, 12);
-			gridBagConstraints4.gridy = 0;
-			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
-			gridBagConstraints3.gridx = 4;
-			gridBagConstraints3.insets = new Insets(0, 5, 0, 5);
-			gridBagConstraints3.gridy = 0;
-			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
-			gridBagConstraints2.fill = GridBagConstraints.HORIZONTAL;
-			gridBagConstraints2.gridy = 0;
-			gridBagConstraints2.weightx = 1.0;
-			gridBagConstraints2.gridx = 3;
-			GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
-			gridBagConstraints1.gridx = 2;
-			gridBagConstraints1.insets = new Insets(10, 10, 10, 5);
-			gridBagConstraints1.gridy = 0;
-			jLabelStart = new JLabel();
-			jLabelStart.setText("Starten als:");
-			jLabelStart.setFont(new Font("Dialog", Font.BOLD, 12));
-			GridBagConstraints gridBagConstraints = new GridBagConstraints();
-			gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
-			gridBagConstraints.gridy = 0;
-			gridBagConstraints.weightx = 1.0;
-			gridBagConstraints.gridwidth = 1;
-			gridBagConstraints.insets = new Insets(10, 0, 10, 0);
-			gridBagConstraints.gridx = 1;
-			jPanelNorth = new JPanel();
-			jPanelNorth.setLayout(new GridBagLayout());
-			jPanelNorth.add(jLabelAgent, gridBagConstraints9);
-			jPanelNorth.add(getJTextAgent(), gridBagConstraints);
-			jPanelNorth.add(jLabelStart, gridBagConstraints1);
-			jPanelNorth.add(getJTextAgentStartAs(), gridBagConstraints2);
-			jPanelNorth.add(getJButtonStartAgent(), gridBagConstraints3);
-			jPanelNorth.add(getJButtonAgentListRefresh(), gridBagConstraints4);
-		}
-		return jPanelNorth;
+		jLabelStart = new JLabel();
+		jLabelStart.setText("Starten als:");
+		jLabelStart.setFont(new Font("Dialog", Font.BOLD, 12));
+		this.setLayout(new BorderLayout());
+		this.setSize(new Dimension(777, 400));
+		this.add(getJPanelWest(), BorderLayout.WEST);
+		this.add(getJPanelEast(), BorderLayout.CENTER);
 	}
 
 	/**
@@ -183,7 +130,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 		if (jTextAgent == null) {
 			jTextAgent = new JTextField();
 			jTextAgent.setEditable(false);
-			jTextAgent.setPreferredSize(new Dimension(198, 26));
+			jTextAgent.setPreferredSize(new Dimension(200, 26));
 		}
 		return jTextAgent;
 	}
@@ -229,7 +176,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 		if (jButtonAgentListRefresh == null) {
 			jButtonAgentListRefresh = new JButton();
 			jButtonAgentListRefresh.setIcon(new ImageIcon(getClass().getResource("/img/Refresh.png")));
-			jButtonAgentListRefresh.setPreferredSize(new Dimension(30, 26));
+			jButtonAgentListRefresh.setPreferredSize(new Dimension(39, 26));
 			jButtonAgentListRefresh.setToolTipText("Agentenliste aktualisieren");
 			jButtonAgentListRefresh.setActionCommand("AgentsRefresh");
 			jButtonAgentListRefresh.addActionListener(this);			
@@ -245,6 +192,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 	private JScrollPane getJAgentScroll() {
 		if (jAgentScroll == null) {
 			jAgentScroll = new JScrollPane();
+			jAgentScroll.setPreferredSize(new Dimension(333, 300));
 			jAgentScroll.setViewportView(getJAgentList());
 		}
 		return jAgentScroll;
@@ -265,6 +213,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 			jAgentList = new JList(jAgentListModel);
 			jAgentList.setToolTipText("Agenten in diesem Projekt");
 			jAgentList.setVisibleRowCount(12);
+			jAgentList.setPreferredSize(new Dimension(500, 400));
 			jAgentList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			jAgentList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
 				public void valueChanged(javax.swing.event.ListSelectionEvent se) {
@@ -342,43 +291,43 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 			gridBagConstraints15.anchor = GridBagConstraints.WEST;
 			gridBagConstraints15.insets = new Insets(0, 10, 0, 0);
 			gridBagConstraints15.gridwidth = 2;
-			gridBagConstraints15.gridy = 0;
+			gridBagConstraints15.gridy = 1;
 			jLabelRecerence = new JLabel();
-			jLabelRecerence.setText("Objekte aus Projekt-Ontologie");
+			jLabelRecerence.setText("Start-Objekte aus Projekt-Ontologie");
 			jLabelRecerence.setFont(new Font("Dialog", Font.BOLD, 12));
 			GridBagConstraints gridBagConstraints12 = new GridBagConstraints();
 			gridBagConstraints12.gridx = 1;
 			gridBagConstraints12.insets = new Insets(5, 5, 0, 0);
 			gridBagConstraints12.anchor = GridBagConstraints.WEST;
 			gridBagConstraints12.weightx = 1.0;
-			gridBagConstraints12.gridy = 8;
+			gridBagConstraints12.gridy = 9;
 			GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
 			gridBagConstraints11.gridx = 0;
 			gridBagConstraints11.anchor = GridBagConstraints.EAST;
 			gridBagConstraints11.insets = new Insets(5, 0, 0, 5);
 			gridBagConstraints11.ipadx = 0;
 			gridBagConstraints11.weightx = 1.0;
-			gridBagConstraints11.gridy = 8;
+			gridBagConstraints11.gridy = 9;
 			GridBagConstraints gridBagConstraints10 = new GridBagConstraints();
 			gridBagConstraints10.gridx = 2;
 			gridBagConstraints10.insets = new Insets(10, 0, 0, 10);
 			gridBagConstraints10.anchor = GridBagConstraints.SOUTH;
-			gridBagConstraints10.gridy = 6;
+			gridBagConstraints10.gridy = 7;
 			GridBagConstraints gridBagConstraints8 = new GridBagConstraints();
 			gridBagConstraints8.gridx = 2;
 			gridBagConstraints8.insets = new Insets(0, 0, 5, 10);
-			gridBagConstraints8.gridy = 3;
+			gridBagConstraints8.gridy = 4;
 			GridBagConstraints gridBagConstraints7 = new GridBagConstraints();
 			gridBagConstraints7.gridx = 2;
 			gridBagConstraints7.insets = new Insets(0, 0, 3, 10);
-			gridBagConstraints7.gridy = 1;
+			gridBagConstraints7.gridy = 2;
 			GridBagConstraints gridBagConstraints6 = new GridBagConstraints();
 			gridBagConstraints6.fill = GridBagConstraints.BOTH;
 			gridBagConstraints6.weighty = 1.0;
 			gridBagConstraints6.insets = new Insets(0, 10, 0, 5);
 			gridBagConstraints6.gridheight = 6;
 			gridBagConstraints6.gridwidth = 2;
-			gridBagConstraints6.gridy = 1;
+			gridBagConstraints6.gridy = 2;
 			gridBagConstraints6.weightx = 1.0;
 			jPanelReferences = new JPanel();
 			jPanelReferences.setLayout(new GridBagLayout());
@@ -391,27 +340,6 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 			jPanelReferences.add(jLabelRecerence, gridBagConstraints15);
 		}
 		return jPanelReferences;
-	}
-
-	/**
-	 * This method initializes jPanelWest	
-	 * 	
-	 * @return javax.swing.JPanel	
-	 */
-	private JPanel getJPanelWest() {
-		if (jPanelWest == null) {
-			GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
-			gridBagConstraints5.fill = GridBagConstraints.BOTH;
-			gridBagConstraints5.gridx = -1;
-			gridBagConstraints5.gridy = -1;
-			gridBagConstraints5.weightx = 1.0;
-			gridBagConstraints5.weighty = 1.0;
-			gridBagConstraints5.insets = new Insets(0, 10, 0, 0);
-			jPanelWest = new JPanel();
-			jPanelWest.setLayout(new GridBagLayout());
-			jPanelWest.add(getJAgentScroll(), gridBagConstraints5);
-		}
-		return jPanelWest;
 	}
 
 	/**
@@ -522,23 +450,6 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 			jButtonReferencesRemove.addActionListener(this);
 		}
 		return jButtonReferencesRemove;
-	}
-
-	/**
-	 * This method initializes jSplitHrizontal	
-	 * 	
-	 * @return javax.swing.JSplitPane	
-	 */
-	private JSplitPane getJSplitHrizontal() {
-		if (jSplitHrizontal == null) {
-			jSplitHrizontal = new JSplitPane();
-			jSplitHrizontal.setDividerSize(1);
-			jSplitHrizontal.setResizeWeight(0.5D);
-			jSplitHrizontal.setDividerLocation(290);
-			jSplitHrizontal.setRightComponent(getJSplitEast());
-			jSplitHrizontal.setLeftComponent(getJPanelWest());
-		}
-		return jSplitHrizontal;
 	}
 
 	/**
@@ -812,6 +723,103 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 		} else {
 			System.out.println("Unbekannte Meldung vom Observer: " + ObjectName);
 		}
+	}
+
+	/**
+	 * This method initializes jPanelWest	
+	 * 	
+	 * @return javax.swing.JPanel	
+	 */
+	private JPanel getJPanelWest() {
+		if (jPanelWest == null) {
+			GridBagConstraints gridBagConstraints18 = new GridBagConstraints();
+			gridBagConstraints18.fill = GridBagConstraints.BOTH;
+			gridBagConstraints18.gridy = 2;
+			gridBagConstraints18.weightx = 0.0;
+			gridBagConstraints18.weighty = 1.0;
+			gridBagConstraints18.gridwidth = 2;
+			gridBagConstraints18.insets = new Insets(0, 10, 0, 0);
+			gridBagConstraints18.gridx = 0;
+			GridBagConstraints gridBagConstraints = new GridBagConstraints();
+			gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+			gridBagConstraints.gridwidth = 1;
+			gridBagConstraints.gridx = 1;
+			gridBagConstraints.gridy = 1;
+			gridBagConstraints.weightx = 0.0;
+			gridBagConstraints.insets = new Insets(10, 1, 10, 0);
+			GridBagConstraints gridBagConstraints9 = new GridBagConstraints();
+			gridBagConstraints9.insets = new Insets(10, 10, 10, 5);
+			gridBagConstraints9.gridy = 1;
+			gridBagConstraints9.gridx = 0;
+			jPanelWest = new JPanel();
+			jPanelWest.setLayout(new GridBagLayout());
+			jPanelWest.add(getJAgentScroll(), gridBagConstraints18);
+			jPanelWest.add(jLabelAgent, gridBagConstraints9);
+			jPanelWest.add(getJTextAgent(), gridBagConstraints);
+		}
+		return jPanelWest;
+	}
+
+	/**
+	 * This method initializes jPanelEast	
+	 * 	
+	 * @return javax.swing.JPanel	
+	 */
+	private JPanel getJPanelEast() {
+		if (jPanelEast == null) {
+			GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
+			gridBagConstraints5.fill = GridBagConstraints.HORIZONTAL;
+			gridBagConstraints5.weightx = 1.0;
+			GridBagConstraints gridBagConstraints16 = new GridBagConstraints();
+			gridBagConstraints16.fill = GridBagConstraints.BOTH;
+			gridBagConstraints16.gridy = 1;
+			gridBagConstraints16.weightx = 0.0;
+			gridBagConstraints16.weighty = 0.1;
+			gridBagConstraints16.gridwidth = 1;
+			gridBagConstraints16.gridx = 0;
+			jPanelEast = new JPanel();
+			jPanelEast.setLayout(new GridBagLayout());
+			jPanelEast.add(getJSplitEast(), gridBagConstraints16);
+			jPanelEast.add(getJPanelEastTop(), gridBagConstraints5);
+		}
+		return jPanelEast;
+	}
+
+	/**
+	 * This method initializes jPanelEastTop	
+	 * 	
+	 * @return javax.swing.JPanel	
+	 */
+	private JPanel getJPanelEastTop() {
+		if (jPanelEastTop == null) {
+			GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
+			gridBagConstraints4.fill = GridBagConstraints.NONE;
+			gridBagConstraints4.gridx = -1;
+			gridBagConstraints4.gridy = -1;
+			gridBagConstraints4.insets = new Insets(0, 0, 0, 13);
+			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
+			gridBagConstraints3.fill = GridBagConstraints.NONE;
+			gridBagConstraints3.gridx = -1;
+			gridBagConstraints3.gridy = -1;
+			gridBagConstraints3.insets = new Insets(0, 5, 0, 5);
+			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
+			gridBagConstraints2.fill = GridBagConstraints.HORIZONTAL;
+			gridBagConstraints2.gridx = -1;
+			gridBagConstraints2.gridy = -1;
+			gridBagConstraints2.weightx = 0.1;
+			gridBagConstraints2.insets = new Insets(10, 0, 10, 0);
+			GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
+			gridBagConstraints1.insets = new Insets(10, 10, 10, 5);
+			gridBagConstraints1.gridy = -1;
+			gridBagConstraints1.gridx = -1;
+			jPanelEastTop = new JPanel();
+			jPanelEastTop.setLayout(new GridBagLayout());
+			jPanelEastTop.add(jLabelStart, gridBagConstraints1);
+			jPanelEastTop.add(getJTextAgentStartAs(), gridBagConstraints2);
+			jPanelEastTop.add(getJButtonStartAgent(), gridBagConstraints3);
+			jPanelEastTop.add(getJButtonAgentListRefresh(), gridBagConstraints4);
+		}
+		return jPanelEastTop;
 	}
 	
 }  //  @jve:decl-index=0:visual-constraint="10,10"
