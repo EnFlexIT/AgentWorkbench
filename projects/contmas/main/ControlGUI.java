@@ -39,6 +39,7 @@ import javax.swing.tree.*;
 import contmas.agents.ControlGUIAgent;
 import contmas.ontology.*;
 import java.awt.Point;
+import javax.swing.JToggleButton;
 
 public class ControlGUI extends JInternalFrame implements ActionListener{
 
@@ -85,6 +86,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	private LoadContainerHolderFrame dialog=new LoadContainerHolderFrame();
 	protected ContainerHolder loadedContainerHolder;
 	private JButton jButton=null;
+	private JToggleButton holdButton = null;
 
 	/**
 	 * This is the default constructor
@@ -115,7 +117,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 			this.ButtonCreateAgent.addActionListener(new ActionListener(){
 				@Override
 				public void actionPerformed(ActionEvent e){
-					GuiEvent ge=new GuiEvent(this,1);
+					GuiEvent ge=new GuiEvent(this,ControlGUIAgent.EVENT_CREATE_AGENT);
 					ge.addParameter(ControlGUI.this.TFAgentName.getText());
 					ge.addParameter(ControlGUI.this.TFAgentX.getText());
 					ge.addParameter(ControlGUI.this.TFAgentY.getText());
@@ -228,6 +230,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 			this.jContentPane.add(this.getButtonLoadContainerHolder(),null);
 			this.jContentPane.add(this.getLoadCheckBox(),null);
 			this.jContentPane.add(this.getJButton(),null);
+			jContentPane.add(getHoldButton(), null);
 			this.jContentPane.add(this.AgentLabelLength,null);
 			this.jContentPane.add(this.Heading,null);
 			this.jContentPane.add(this.AgentLabelName,null);
@@ -339,7 +342,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 	}
 
 	void shutDown(){
-		GuiEvent ge=new GuiEvent(this, -1);
+		GuiEvent ge=new GuiEvent(this, ControlGUIAgent.EVENT_CLOSE);
 		this.myAgent.postGuiEvent(ge);
 	}
 
@@ -468,7 +471,7 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 						for(int i=0;i < paths.length;i++){
 							Node now=(Node) (paths[i].getLastPathComponent());
 							if(now instanceof AgentNode){
-								GuiEvent ge=new GuiEvent(this,2);
+								GuiEvent ge=new GuiEvent(this,ControlGUIAgent.EVENT_GET_ONT_REP);
 								ge.addParameter(((AgentNode) now).getName());
 								ControlGUI.this.myAgent.postGuiEvent(ge);
 							}
@@ -872,6 +875,31 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 		number++;
 		name=((AgentClassElement) ControlGUI.this.getAgentType().getSelectedItem()).toString();
 		this.getTFAgentName().setText(name+seperator+number);
+	}
+
+	/**
+	 * This method initializes holdButton	
+	 * 	
+	 * @return javax.swing.JToggleButton	
+	 */
+	private JToggleButton getHoldButton() {
+		if (holdButton == null) {
+			holdButton = new JToggleButton();
+			holdButton.setBounds(new Rectangle(443, 334, 185, 24));
+			holdButton.setText("Hold Simulation");
+			holdButton.addItemListener(new java.awt.event.ItemListener() {
+				public void itemStateChanged(java.awt.event.ItemEvent e) {
+					if( ((JToggleButton) e.getSource()).isSelected()){
+						GuiEvent ge=new GuiEvent(this, ControlGUIAgent.EVENT_HOLD_SIMULATION);
+						myAgent.postGuiEvent(ge);
+					} else {
+						GuiEvent ge=new GuiEvent(this, ControlGUIAgent.EVENT_RESUME_SIMULATION);
+						myAgent.postGuiEvent(ge);
+					}
+				}				
+			});
+		}
+		return holdButton;
 	}
 
 } //  @jve:decl-index=0:visual-constraint="30,15"

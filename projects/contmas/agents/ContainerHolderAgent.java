@@ -23,6 +23,7 @@ import jade.util.leap.List;
 import java.util.Random;
 
 import contmas.behaviours.*;
+import contmas.de.unidue.stud.sehawagn.contmas.control.Constants;
 import contmas.interfaces.*;
 import contmas.main.EnvironmentHelper;
 import contmas.main.HarbourSetup;
@@ -45,7 +46,7 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 
 	public ContainerHolderAgent(String serviceType,ContainerHolder ontologyRepresentation){
 		super(serviceType);
-		this.serviceTypeStrings.add("container-handling");
+		this.serviceTypeStrings.add(Constants.SERVICE_NAME_CONTAINER_HANDLING);
 		this.ontologyRepresentation=ontologyRepresentation;
 	}
 

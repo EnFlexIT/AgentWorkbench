@@ -1,6 +1,7 @@
 package contmas.behaviours;
 
 import contmas.agents.ContainerAgent;
+import contmas.de.unidue.stud.sehawagn.contmas.control.Constants;
 import jade.core.Agent;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
@@ -37,7 +38,7 @@ public class listenForExternalCommand extends AchieveREResponder{
 		ACLMessage reply=request.createReply();
 		reply.setPerformative(ACLMessage.INFORM);
 		reply.setContent(content);
-		myAgent.addBehaviour(new requestEnvironmentSetup(myAgent,myAgent.getHarbourMaster()));
+		myAgent.addBehaviour(new requestEnvironmentAction(myAgent,myAgent.getHarbourMaster(),Constants.ENVIRONMENT_ACTION_RESET));
 		return reply;
 	}
 

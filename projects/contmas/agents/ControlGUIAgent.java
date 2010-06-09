@@ -37,6 +37,8 @@ import javax.swing.DefaultListModel;
 import javax.swing.JDesktopPane;
 
 import contmas.behaviours.*;
+import contmas.de.unidue.stud.sehawagn.contmas.control.Constants;
+import contmas.de.unidue.stud.sehawagn.contmas.control.Helper;
 import contmas.de.unidue.stud.sehawagn.contmas.measurement.DashboardAgent;
 import contmas.interfaces.DFSubscriber;
 import contmas.interfaces.HarbourLayoutRequester;
@@ -48,6 +50,13 @@ import contmas.ontology.*;
 public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubscriber,HarbourLayoutRequester,Logger{
 
 	private static final long serialVersionUID= -7176620366025244274L;
+
+	public static final Integer EVENT_CLOSE=-1;
+	public static final Integer EVENT_CREATE_AGENT=1;
+	public static final Integer EVENT_GET_ONT_REP=2;
+	public static final Integer EVENT_HOLD_SIMULATION=3;
+	public static final Integer EVENT_RESUME_SIMULATION=4;
+
 
 	private String workingDir="";
 
@@ -131,8 +140,8 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 
 	@Override
 	protected void onGuiEvent(GuiEvent ev){
-		int command=ev.getType();
-		if(command == 1){ //create new ship
+		Integer command=ev.getType();
+		if(command.equals(EVENT_CREATE_AGENT)){ //create new ship
 			this.getContainerController();
 			try{
 				String name=ev.getParameter(0).toString();
@@ -183,13 +192,19 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 			}catch(Exception e){
 				e.printStackTrace();
 			}
-		}else if(command == 2){ // get ontologyRepresentation
+		}else if(command.equals(EVENT_GET_ONT_REP)){ // get ontologyRepresentation
 			AID inQuestion=new AID();
 			inQuestion.setLocalName(ev.getParameter(0).toString());
 
 			this.addBehaviour(new requestOntologyRepresentation(this,inQuestion,this.harbourMaster));
-		}else if(command == -1){ // GUI closed
+		}else if(command.equals(EVENT_CLOSE)){ // GUI closed
 			this.doDelete();
+		}else if(command.equals(EVENT_HOLD_SIMULATION)){ 
+			this.addBehaviour(new requestEnvironmentAction(this,this.harbourMaster,Constants.ENVIRONMENT_ACTION_HOLD));
+
+		}else if(command.equals(EVENT_RESUME_SIMULATION)){ 
+			this.addBehaviour(new requestEnvironmentAction(this,this.harbourMaster,Constants.ENVIRONMENT_ACTION_RESUME));
+
 		}
 
 	}
@@ -197,39 +212,96 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 	protected void addToSniffer(AID agentToSniff){
 		AID address=new AID();
 		address.setName(agentToSniff.getName());
-		SniffOn agact=new SniffOn();
-		agact.addSniffedAgents(address);
-		agact.setSniffer(sniffer);
-		ACLMessage msg=new ACLMessage(ACLMessage.REQUEST);
-		msg.setLanguage(new SLCodec().getName());
-		msg.setOntology(JADEManagementOntology.getInstance().getName());
-		getContentManager().registerLanguage(new SLCodec());
-		getContentManager().registerOntology(JADEManagementOntology.getInstance());
-		Action act=new Action(sniffer,agact);
-		try{
-			getContentManager().fillContent(msg,act);
-		}catch(CodecException e){
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}catch(OntologyException e){
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		msg.addReceiver(sniffer);
+		
+		ACLMessage msg=Helper.prepareManagementMessage(this, Constants.ENVIRONMENT_ACTION_SNIFF, address, sniffer);
+		
+//		SniffOn agact=new SniffOn();
+//		agact.addSniffedAgents(address);
+//		agact.setSniffer(sniffer);
+//		ACLMessage msg=new ACLMessage(ACLMessage.REQUEST);
+//		msg.setLanguage(new SLCodec().getName());
+//		msg.setOntology(JADEManagementOntology.getInstance().getName());
+//		getContentManager().registerLanguage(new SLCodec());
+//		getContentManager().registerOntology(JADEManagementOntology.getInstance());
+//		Action act=new Action(sniffer,agact);
+//		try{
+//			getContentManager().fillContent(msg,act);
+//		}catch(CodecException e){
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}catch(OntologyException e){
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		msg.addReceiver(sniffer);
 		send(msg);
 	}
 
-	@Override
-	public void processLogMsg(String logMsg){
-		writeLogMsg(logMsg);
+	private static DomainOntologyElement renderDomain(Domain dohmein){
+		Iterator agentIter=dohmein.getAllHas_subdomains();
+		DomainOntologyElement root=new DomainOntologyElement(dohmein);//dohmein.getClass().getSimpleName()+" - "+dohmein.getId());
+		DomainOntologyElement domNode=null;
+	
+		while(agentIter.hasNext()){
+			Domain curDom=(Domain) agentIter.next();
+			domNode=renderDomain(curDom);
+			root.add(domNode);
+		}
+		return root;
+	}
+
+	public void alterAgentName(){
+		myGui.alterAgentName();
+	}
+
+	public void setWorkingDir(String workingDir){
+		this.workingDir=workingDir;
 	}
 
 	public String getWorkingDir(){
 		return workingDir;
 	}
 
-	public void setWorkingDir(String workingDir){
-		this.workingDir=workingDir;
+	public void updateAgentTree(List newAgents,Boolean remove){
+		this.myGui.updateAgentTree(newAgents,remove);
+	}
+
+	/**
+	 * @param content
+	 */
+	public void writeLogMsg(String content){
+		this.myGui.writeLogMsg(content);
+	}
+	
+	
+
+	/**
+		 * @param current_harbour_layout
+		 */
+		public void processHarbourLayout(Domain current_harbour_layout){
+			harbourMap=current_harbour_layout;
+			XMLCodec xmlCodec=new XMLCodec();
+			String s;
+			try{
+				s=xmlCodec.encodeObject(ContainerTerminalOntology.getInstance(),current_harbour_layout,true);
+				this.myGui.printOntRep(s);
+			}catch(CodecException e){
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}catch(OntologyException e){
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			DomainOntologyElement root=ControlGUIAgent.renderDomain(current_harbour_layout);
+	
+			this.myGui.displayHarbourLayout(root);
+	
+	//		this.myGui.displayHarbourLayout(current_harbour_layout);
+		}
+
+	@Override
+	public void processLogMsg(String logMsg){
+		writeLogMsg(logMsg);
 	}
 
 	@Override
@@ -268,56 +340,6 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 		this.myGui.setContainerList(containerList);
 	}
 
-	public void updateAgentTree(List newAgents,Boolean remove){
-		this.myGui.updateAgentTree(newAgents,remove);
-	}
-
-	/**
-	 * @param content
-	 */
-	public void writeLogMsg(String content){
-		this.myGui.writeLogMsg(content);
-	}
-	
-	
-
-	/**
-	 * @param current_harbour_layout
-	 */
-	public void processHarbourLayout(Domain current_harbour_layout){
-		harbourMap=current_harbour_layout;
-		XMLCodec xmlCodec=new XMLCodec();
-		String s;
-		try{
-			s=xmlCodec.encodeObject(ContainerTerminalOntology.getInstance(),current_harbour_layout,true);
-			this.myGui.printOntRep(s);
-		}catch(CodecException e){
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}catch(OntologyException e){
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		DomainOntologyElement root=ControlGUIAgent.renderDomain(current_harbour_layout);
-
-		this.myGui.displayHarbourLayout(root);
-
-//		this.myGui.displayHarbourLayout(current_harbour_layout);
-	}
-
-	private static DomainOntologyElement renderDomain(Domain dohmein){
-		Iterator agentIter=dohmein.getAllHas_subdomains();
-		DomainOntologyElement root=new DomainOntologyElement(dohmein);//dohmein.getClass().getSimpleName()+" - "+dohmein.getId());
-		DomainOntologyElement domNode=null;
-
-		while(agentIter.hasNext()){
-			Domain curDom=(Domain) agentIter.next();
-			domNode=renderDomain(curDom);
-			root.add(domNode);
-		}
-		return root;
-	}
-
 	/* (non-Javadoc)
 	 * @see contmas.behaviours.DFSubscriber#processSubscriptionUpdate(jade.util.leap.List, java.lang.Boolean)
 	 */
@@ -331,10 +353,6 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 				addToSniffer(curAgent);
 			}
 		}
-	}
-	
-	public void alterAgentName(){
-		myGui.alterAgentName();
 	}
 
 	@Override

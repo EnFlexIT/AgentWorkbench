@@ -20,7 +20,6 @@
  */
 package contmas.behaviours;
 
-import jade.content.AgentAction;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.domain.FIPANames;
@@ -30,21 +29,22 @@ import jade.proto.AchieveREInitiator;
 import java.util.Vector;
 
 import contmas.agents.ContainerAgent;
-import contmas.ontology.RequestEnvironmentReset;
-import contmas.ontology.StartNewContainerHolder;
+import contmas.de.unidue.stud.sehawagn.contmas.control.Constants;
+import contmas.ontology.RequestEnvironmentAction;
 
 /**
  * @author Hanno - Felix Wagner
  *
  */
-public class requestEnvironmentSetup extends AchieveREInitiator{
+public class requestEnvironmentAction extends AchieveREInitiator{
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID= -1067315000037572948L;
 	private AID harbourMaster=null;
-	ContainerAgent myAgent;;
+	private String requestedAction=null;
+	
 
 	private static ACLMessage getRequestMessage(Agent a){
 		ACLMessage msg=new ACLMessage(ACLMessage.REQUEST);
@@ -52,17 +52,18 @@ public class requestEnvironmentSetup extends AchieveREInitiator{
 		return msg;
 	}
 
-	public requestEnvironmentSetup(Agent a,AID harbourMaster){
-		super(a,requestEnvironmentSetup.getRequestMessage(a));
-		myAgent=(ContainerAgent) a;
+	public requestEnvironmentAction(Agent a,AID harbourMaster, String requestedAction){
+		super(a,requestEnvironmentAction.getRequestMessage(a));
 		this.harbourMaster=harbourMaster;
+		this.requestedAction=requestedAction;
 	}
 
 	@Override
 	protected Vector<ACLMessage> prepareRequests(ACLMessage request){
 		request.addReceiver(this.harbourMaster);
-		AgentAction agAct=new RequestEnvironmentReset();
-		myAgent.fillMessage(request,agAct);
+		RequestEnvironmentAction agAct=new RequestEnvironmentAction();
+		agAct.setAction(requestedAction);
+		ContainerAgent.fillMessage(request,agAct,myAgent);
 		
 		Vector<ACLMessage> messages=new Vector<ACLMessage>();
 		messages.add(request);
@@ -75,7 +76,9 @@ public class requestEnvironmentSetup extends AchieveREInitiator{
 	
 	@Override
 	protected void handleAgree(ACLMessage msg){
-		myAgent.echoStatus("HarbourMaster has agreed to reset.",ContainerAgent.LOGGING_INFORM);
+		if(myAgent instanceof ContainerAgent){
+			((ContainerAgent)myAgent).echoStatus("HarbourMaster has agreed to requested action.",ContainerAgent.LOGGING_INFORM);
+		}
 	}
 
 	@Override

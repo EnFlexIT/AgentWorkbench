@@ -14,8 +14,17 @@
 
 package contmas.agents;
 
+import jade.content.lang.Codec.CodecException;
+import jade.content.lang.sl.SLCodec;
+import jade.content.onto.OntologyException;
+import jade.content.onto.basic.Action;
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
+import jade.domain.FIPAAgentManagement.AMSAgentDescription;
+import jade.domain.FIPAAgentManagement.Modify;
+import jade.domain.JADEAgentManagement.JADEManagementOntology;
+import jade.lang.acl.ACLMessage;
+import jade.tools.logging.ontology.GetAllLoggers;
 import jade.util.leap.Iterator;
 import jade.util.leap.List;
 
@@ -24,6 +33,8 @@ import java.util.HashMap;
 import java.util.NoSuchElementException;
 
 import contmas.behaviours.*;
+import contmas.de.unidue.stud.sehawagn.contmas.control.Constants;
+import contmas.de.unidue.stud.sehawagn.contmas.control.Helper;
 import contmas.interfaces.DFSubscriber;
 import contmas.interfaces.OntRepProvider;
 import contmas.interfaces.OntRepRequester;
@@ -53,8 +64,10 @@ public class HarborMasterAgent extends ContainerAgent implements OntRepProvider,
 		this.addBehaviour(new listenForOntRepReq(this));
 		this.addBehaviour(new listenForStartAgentReq(this));
 		this.addBehaviour(new listenForHarbourAreaReq(this));
-		this.addBehaviour(new subscribeToDF(this,"container-handling"));
+		this.addBehaviour(new subscribeToDF(this,Constants.SERVICE_NAME_CONTAINER_HANDLING));
 		this.addBehaviour(new listenForEnvironmentResetRequest(this));
+//		this.addBehaviour(new listenForEnvironmentSuspendRequest(this));
+
 	}
 
 
@@ -128,6 +141,26 @@ public class HarborMasterAgent extends ContainerAgent implements OntRepProvider,
 		Iterator allActiveAgents=allContainerHandlers.iterator();
 		while(allActiveAgents.hasNext()){
 			this.addBehaviour(new killAgent(this,(AID) allActiveAgents.next()));
+		}
+	}
+	
+	public void holdEnvironment(){
+		echoStatus("have been asked to holdEnvironment");
+
+		Iterator allActiveAgents=allContainerHandlers.iterator();
+		while(allActiveAgents.hasNext()){
+			ACLMessage msg=Helper.prepareManagementMessage(this, Constants.ENVIRONMENT_ACTION_HOLD, (AID) allActiveAgents.next(), null);
+			send(msg);
+		}
+	}
+
+	public void resumeEnvironment() {
+		echoStatus("have been asked to resumeEnvironment");
+
+		Iterator allActiveAgents=allContainerHandlers.iterator();
+		while(allActiveAgents.hasNext()){
+			ACLMessage msg=Helper.prepareManagementMessage(this, Constants.ENVIRONMENT_ACTION_RESUME, (AID) allActiveAgents.next(), null);
+			send(msg);
 		}
 	}
 
