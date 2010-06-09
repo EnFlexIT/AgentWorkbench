@@ -40,7 +40,8 @@ public class DynForm extends JPanel{
 		while (it.hasNext()) {
 			Integer startPosition = it.next();
 			String startObjectClass = startObjectList.get(startPosition);
-			System.out.println( startPosition + ": " + startObjectClass );
+			String startObjectPackage = startObjectClass.substring(0, startObjectClass.lastIndexOf("."));
+			System.out.println( startPosition + ": " + startObjectClass + " Package: " + startObjectPackage);
 			
 			// --- Get the Infos about the slots -------------------
 			DefaultTableModel tm = currProject.ontologies4Project.getSlots4Class(startObjectClass);

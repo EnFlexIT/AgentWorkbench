@@ -178,12 +178,12 @@ public class Ontologies4Project extends HashMap<String, OntologyClass> {
 	}
 	
 	/**
-	 * This Method returns a DefaultTableModel for a   
-	 * given class inside of the project-ontology 
+	 * This Method returns the 'OntologyClassTreeObject' for class to 
+	 * search, which is a part of the Project-Ontologie
 	 * @param classReference2Search
-	 * @return DefaultTableModel
+	 * @return
 	 */
-	public DefaultTableModel getSlots4Class(String classReference2Search) {
+	public OntologyClassTreeObject getClassTreeObject(String classReference2Search) {
 		
 		OntologyClass onCla = null;
 		String searchSrcPackage = classReference2Search.substring(0, classReference2Search.lastIndexOf("."));
@@ -207,7 +207,22 @@ public class Ontologies4Project extends HashMap<String, OntologyClass> {
 		OntologyClassTree onClaTree = onCla.getOntologyTree();
 		DefaultMutableTreeNode tn = onClaTree.getTreeNode(classReference2Search);
 		OntologyClassTreeObject userObject = (OntologyClassTreeObject) tn.getUserObject();
-		return userObject.getTableModel4Slot();
+		return userObject;
+	}
+	
+	/**
+	 * This Method returns a DefaultTableModel for a   
+	 * given class inside of the project-ontology 
+	 * @param classReference2Search
+	 * @return DefaultTableModel
+	 */
+	public DefaultTableModel getSlots4Class(String classReference2Search) {
+		OntologyClassTreeObject userObject = this.getClassTreeObject(classReference2Search);
+		if (userObject== null) {
+			return null;
+		} else {
+			return userObject.getTableModel4Slot();			
+		}
 	}
 
 	// --- Start SubClass -------------------------------------------
