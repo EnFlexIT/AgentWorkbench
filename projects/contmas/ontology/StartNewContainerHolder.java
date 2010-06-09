@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: StartNewContainerHolder
 * @author ontology bean generator
-* @version 2010/06/8, 22:03:06
+* @version 2010/06/9, 14:40:33
 */
 public class StartNewContainerHolder implements AgentAction {
 
@@ -21,17 +21,6 @@ public class StartNewContainerHolder implements AgentAction {
    }
    public String getName() {
      return this.name;
-   }
-
-   /**
-* Protege name: randomize
-   */
-   private boolean randomize;
-   public void setRandomize(boolean value) { 
-    this.randomize=value;
-   }
-   public boolean getRandomize() {
-     return this.randomize;
    }
 
    /**
@@ -54,6 +43,17 @@ public class StartNewContainerHolder implements AgentAction {
    }
    public ContainerHolder getTo_be_added() {
      return this.to_be_added;
+   }
+
+   /**
+* Protege name: randomize
+   */
+   private boolean randomize;
+   public void setRandomize(boolean value) { 
+    this.randomize=value;
+   }
+   public boolean getRandomize() {
+     return this.randomize;
    }
 
 }

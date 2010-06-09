@@ -1,4 +1,4 @@
-; Tue Jun 08 22:03:55 NZST 2010
+; Wed Jun 09 14:40:29 NZST 2010
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -7211,12 +7211,12 @@
 	(customized_instance_widgets
 		[PAL_FORM_WIDGET]
 		[KB_713803_Instance_477]
-		[INSTANCE_ANNOTATION_FORM_WIDGET]
 		[KB_713803_Instance_780]
-		[KB_301165_Instance_856]
+		[INSTANCE_ANNOTATION_FORM_WIDGET]
 		[KB_713803_Instance_693]
-		[KB_691299_Instance_537]
+		[KB_301165_Instance_856]
 		[KB_713803_Instance_648]
+		[KB_691299_Instance_537]
 		[KB_691299_Instance_398]
 		[KB_303942_Instance_68]
 		[KB_938545_Instance_166]
@@ -7303,15 +7303,15 @@
 		":SYSTEM-CLASS"
 		"owl:oneOf"
 		"owl:DataRange"
-		"owl:DeprecatedProperty"
 		"rdf:Property"
+		"owl:DeprecatedProperty"
 		"owl:DeprecatedClass"
 		"rdf:Statement"
 		"rdf:type"
 		"rdf:subject"
 		"rdf:predicate"
-		"rdf:object"
 		":OWL-ANONYMOUS-ROOT"
+		"rdf:object"
 		"rdfs:Container"
 		"owl:AllDifferent"
 		"owl:distinctMembers"

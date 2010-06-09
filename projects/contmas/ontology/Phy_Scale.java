@@ -9,7 +9,7 @@ import jade.core.*;
    * Defining the scale used for displaying the environment
 * Protege name: phy:Scale
 * @author ontology bean generator
-* @version 2010/06/8, 22:03:06
+* @version 2010/06/9, 14:40:33
 */
 public class Phy_Scale implements Concept {
 
@@ -26,18 +26,6 @@ public class Phy_Scale implements Concept {
    }
 
    /**
-   * The number of real world untis represented by the number of pixels specified in pixels
-* Protege name: phy:value
-   */
-   private float phy_value;
-   public void setPhy_value(float value) { 
-    this.phy_value=value;
-   }
-   public float getPhy_value() {
-     return this.phy_value;
-   }
-
-   /**
    * Name of the used real world unit. Just for display, no automatic conversion at the moment
 * Protege name: phy:unit
    */
@@ -47,6 +35,18 @@ public class Phy_Scale implements Concept {
    }
    public String getPhy_unit() {
      return this.phy_unit;
+   }
+
+   /**
+   * The number of real world untis represented by the number of pixels specified in pixels
+* Protege name: phy:value
+   */
+   private float phy_value;
+   public void setPhy_value(float value) { 
+    this.phy_value=value;
+   }
+   public float getPhy_value() {
+     return this.phy_value;
    }
 
 }

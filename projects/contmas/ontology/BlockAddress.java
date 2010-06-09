@@ -8,20 +8,9 @@ import jade.core.*;
 /**
 * Protege name: BlockAddress
 * @author ontology bean generator
-* @version 2010/06/8, 22:03:06
+* @version 2010/06/9, 14:40:33
 */
 public class BlockAddress implements Concept {
-
-   /**
-* Protege name: locates
-   */
-   private Container locates;
-   public void setLocates(Container value) { 
-    this.locates=value;
-   }
-   public Container getLocates() {
-     return this.locates;
-   }
 
    /**
 * Protege name: y_dimension
@@ -54,6 +43,17 @@ public class BlockAddress implements Concept {
    }
    public int getZ_dimension() {
      return this.z_dimension;
+   }
+
+   /**
+* Protege name: locates
+   */
+   private Container locates;
+   public void setLocates(Container value) { 
+    this.locates=value;
+   }
+   public Container getLocates() {
+     return this.locates;
    }
 
 }

@@ -9,7 +9,7 @@ import jade.core.*;
    * A project's environment definition
 * Protege name: phy:Environment
 * @author ontology bean generator
-* @version 2010/06/8, 22:03:06
+* @version 2010/06/9, 14:40:33
 */
 public class Phy_Environment implements Concept {
 
@@ -26,15 +26,14 @@ public class Phy_Environment implements Concept {
    }
 
    /**
-   * The project's name
-* Protege name: phy:projectName
+* Protege name: phy:scale
    */
-   private String phy_projectName;
-   public void setPhy_projectName(String value) { 
-    this.phy_projectName=value;
+   private Phy_Scale phy_scale;
+   public void setPhy_scale(Phy_Scale value) { 
+    this.phy_scale=value;
    }
-   public String getPhy_projectName() {
-     return this.phy_projectName;
+   public Phy_Scale getPhy_scale() {
+     return this.phy_scale;
    }
 
    /**
@@ -47,6 +46,18 @@ public class Phy_Environment implements Concept {
    }
    public Object getPhy_svgDoc() {
      return this.phy_svgDoc;
+   }
+
+   /**
+   * The project's name
+* Protege name: phy:projectName
+   */
+   private String phy_projectName;
+   public void setPhy_projectName(String value) { 
+    this.phy_projectName=value;
+   }
+   public String getPhy_projectName() {
+     return this.phy_projectName;
    }
 
    /**
@@ -70,16 +81,5 @@ public class Phy_Environment implements Concept {
    public Iterator getAllPhy_objects() {return phy_objects.iterator(); }
    public List getPhy_objects() {return phy_objects; }
    public void setPhy_objects(List l) {phy_objects = l; }
-
-   /**
-* Protege name: phy:scale
-   */
-   private Phy_Scale phy_scale;
-   public void setPhy_scale(Phy_Scale value) { 
-    this.phy_scale=value;
-   }
-   public Phy_Scale getPhy_scale() {
-     return this.phy_scale;
-   }
 
 }

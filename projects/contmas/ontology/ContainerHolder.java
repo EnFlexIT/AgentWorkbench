@@ -7,9 +7,20 @@ import jade.core.*;
 /**
 * Protege name: ContainerHolder
 * @author ontology bean generator
-* @version 2010/06/8, 22:03:06
+* @version 2010/06/9, 14:40:33
 */
 public class ContainerHolder extends AID{ 
+
+   /**
+* Protege name: lives_in
+   */
+   private Domain lives_in;
+   public void setLives_in(Domain value) { 
+    this.lives_in=value;
+   }
+   public Domain getLives_in() {
+     return this.lives_in;
+   }
 
    /**
 * Protege name: container_states
@@ -95,17 +106,6 @@ public class ContainerHolder extends AID{
    }
    public Phy_Position getIs_in_position2() {
      return this.is_in_position2;
-   }
-
-   /**
-* Protege name: lives_in
-   */
-   private Domain lives_in;
-   public void setLives_in(Domain value) { 
-    this.lives_in=value;
-   }
-   public Domain getLives_in() {
-     return this.lives_in;
    }
 
    /**
