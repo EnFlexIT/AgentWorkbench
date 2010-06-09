@@ -1,9 +1,11 @@
 package contmas.de.unidue.stud.sehawagn.contmas.measurement;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import jade.core.AID;
+import jade.core.Agent;
 import jade.core.ServiceException;
 import jade.core.messaging.TopicManagementHelper;
 import jade.gui.GuiAgent;
@@ -24,7 +26,6 @@ public class DashboardAgent extends GuiAgent implements DFSubscriber,Measurer{
 
 	private static final long serialVersionUID= -2081699287513185474L;
 
-	public static final String MEASURE_TOPIC_NAME="container-harbour-measuring";
 
 	public static final Integer SHUT_DOWN_EVENT= -1;
 	public static final Integer EXAMPLEBUTTON_EVENT=0;
@@ -35,25 +36,24 @@ public class DashboardAgent extends GuiAgent implements DFSubscriber,Measurer{
 
 	private DashboardGUI myGui;
 
-	private AID measureTopic;
-
 	public DashboardAgent(JDesktopPane canvas){
 		super();
 		this.canvas=canvas;
-
 	}
 
 	@Override
 	public AID getMeasureTopic(){
-		if(measureTopic == null){
+		AID measureTopic=Helper.getMeasureTopic(this);
+		if(measureTopic!=null){
 			try{
-				TopicManagementHelper tmh=(TopicManagementHelper) getHelper(TopicManagementHelper.SERVICE_NAME);
-				this.measureTopic=tmh.createTopic(MEASURE_TOPIC_NAME);
+				TopicManagementHelper tmh = (TopicManagementHelper) this.getHelper(TopicManagementHelper.SERVICE_NAME);
+				tmh.register(measureTopic);
 			}catch(ServiceException e1){
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
+
 		return measureTopic;
 	}
 
@@ -125,8 +125,14 @@ public class DashboardAgent extends GuiAgent implements DFSubscriber,Measurer{
 	 * @see contmas.de.unidue.stud.sehawagn.contmas.measurement.Measurer#processStatusUpdate(java.lang.String)
 	 */
 	@Override
-	public void processStatusUpdate(AID sender,Long eventTime,String content){
-		String formattedDate=DateFormat.getInstance().format(new Date(eventTime));
-		echo(sender.getLocalName() + " changed status at "+formattedDate+" to: " + content);
+	public void processStatusUpdate(AID sender,Long eventTime,String content, String bic){
+		SimpleDateFormat smDaFo=new SimpleDateFormat();
+		smDaFo.applyPattern(smDaFo.toLocalizedPattern()+" s.S");
+//		echo("Pattern is "+smDaFo.toLocalizedPattern());
+//		DateFormat.getInstance().get
+		String formattedDate=smDaFo.format(new Date(eventTime));
+
+//		String formattedDate=DateFormat.getInstance().format(new Date(eventTime));
+		echo(sender.getLocalName() + " changed status of "+bic+" at "+formattedDate+" to: " + content);
 	}
 }

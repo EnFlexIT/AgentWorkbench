@@ -62,7 +62,8 @@ public class listenForStatusUpdate extends CyclicBehaviour{
 			AnnounceLoadStatus statusUpdate=(AnnounceLoadStatus) ContainerAgent.extractAction((Agent) myAgent,updMsg);
 			String status=statusUpdate.getLoad_status();
 			Long eventTime=Long.valueOf(statusUpdate.getHappend_at());
-			myAgent.processStatusUpdate(updMsg.getSender(),eventTime,status);
+			String bic=statusUpdate.getCorresponds_to().getTransports().getBic_code();
+			myAgent.processStatusUpdate(updMsg.getSender(),eventTime,status,bic);
 		}else{
 			this.block();
 		}

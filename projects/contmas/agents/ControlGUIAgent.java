@@ -47,65 +47,87 @@ import contmas.ontology.*;
 
 public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubscriber,HarbourLayoutRequester,Logger{
 
-	private Domain harbourMap;
-	
-	@Override
-	public void processLogMsg(String logMsg){
-		writeLogMsg(logMsg);
-	}
+	private static final long serialVersionUID= -7176620366025244274L;
 
 	private String workingDir="";
 
-	public String getWorkingDir(){
-		return workingDir;
-	}
-
-	public void setWorkingDir(String workingDir){
-		this.workingDir=workingDir;
-	}
-
-	@Override
-	public void processOntologyRepresentation(ContainerHolder ontRep,AID agent){
-		if((ontRep == null) || (ontRep.getContains() == null)){
-			return;
-		}
-		XMLCodec xmlCodec=new XMLCodec();
-		String s;
-		try{
-			s=xmlCodec.encodeObject(ContainerTerminalOntology.getInstance(),ontRep,true);
-			this.myGui.printOntRep(s);
-		}catch(CodecException e){
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}catch(OntologyException e){
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		this.myGui.setOntRepAgent(agent.getLocalName());
-		DefaultListModel containerList=new DefaultListModel();
-		Iterator allContStates=ontRep.getAllContainer_states();
-		while(allContStates.hasNext()){
-			TOCHasState contState=(TOCHasState) allContStates.next();
-			String administeredContBic=contState.getSubjected_toc().getTransports().getBic_code();
-			String dispString=administeredContBic;
-			dispString+=" - " + contState.getState().getClass().getSimpleName();
-			if(contState.getState() instanceof Holding){
-				BlockAddress curCont=((Holding)contState.getState()).getAt_address();
-				dispString+=" ("+EnvironmentHelper.blockAddressToString(curCont)+")";
-			} else{
-				dispString+=" [NotHeld]";
-			}
-			containerList.addElement(dispString);
-		}
-		this.myGui.setContainerList(containerList);
-	}
-
-	private static final long serialVersionUID= -7176620366025244274L;
 	private JDesktopPane canvas=null;
+
 	public ControlGUI myGui=null;
+
+	private Domain harbourMap;
+	
 	private AID harbourMaster=null;
 
 	private AID sniffer=null;
+
+	@Override
+		protected void setup(){
+			// Instanciate the gui
+	
+			this.myGui=new ControlGUI(this);
+	
+			AgentDesktop ad=new AgentDesktop("ContMAS");
+			this.canvas=ad.getDesktopPane();
+			this.myGui.displayOn(this.canvas);
+			this.myGui.setVisible(true);
+			if(ad.getStandaloneMode() == AgentDesktop.AGENTDESKTOP_STANDALONE){
+				this.myGui.getCanvas().getParent().getParent().getParent().getParent().setSize(this.myGui.getWidth() + 10,this.myGui.getHeight() + 30);
+			}else{
+				this.setWorkingDir("projects\\contmas\\");
+			}
+	
+			this.addBehaviour(new listenForLogMessage(this));
+	
+			this.addBehaviour(new subscribeToDF(this,"involved-in-container-port"));
+	
+			AgentContainer c=this.getContainerController();
+	
+			AgentController a;
+			try{
+				a=c.createNewAgent("Sniffer","jade.tools.sniffer.Sniffer",null);//new Object[] {"Yard;StraddleCarrier;Apron;Crane-#2;Crane-#1"});
+				a.start();
+				this.sniffer=new AID();
+				this.sniffer.setName(a.getName());
+				
+				String[] args=new String[1]; //Because of different working directories 
+				args[0]=getWorkingDir();
+				
+				a=c.createNewAgent("RandomGenerator","contmas.agents.RandomGeneratorAgent",null);
+				a.start();
+				
+				a=c.createNewAgent("HarborMaster","contmas.agents.HarborMasterAgent",args);
+				a.start();
+				
+				this.harbourMaster=new AID();
+				this.harbourMaster.setName(a.getName());
+	
+				a=c.createNewAgent("Optimizer","contmas.agents.BayMapOptimisationAgent",null);
+				a.start();
+				
+	//			a=c.createNewAgent("VisualisationProxy","contmas.agents.AgentGUIVisualisationProxyAgent",null);
+	//			a.start();
+				
+	//			a=c.createNewAgent("SimulationController","contmas.agents.SimulationControlAgent",null);
+	//			a.start();
+				
+	//			a=c.createNewAgent("Visualiser","contmas.agents.VisualisationAgent",null);
+	//			a.start();
+				
+				a=c.acceptNewAgent("Dashboard",new DashboardAgent(canvas));
+				a.start();
+				
+				a=c.acceptNewAgent("Monitor",new MonitorAgent(canvas));
+				a.start();
+	
+			}catch(StaleProxyException e){
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	
+			this.addBehaviour(new requestHarbourSetup(this,this.harbourMaster));
+	
+		}
 
 	@Override
 	protected void onGuiEvent(GuiEvent ev){
@@ -198,76 +220,52 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 	}
 
 	@Override
-	protected void setup(){
-		// Instanciate the gui
+	public void processLogMsg(String logMsg){
+		writeLogMsg(logMsg);
+	}
 
-		this.myGui=new ControlGUI(this);
+	public String getWorkingDir(){
+		return workingDir;
+	}
 
-		AgentDesktop ad=new AgentDesktop("ContMAS");
-		this.canvas=ad.getDesktopPane();
-		this.myGui.displayOn(this.canvas);
-		this.myGui.setVisible(true);
-		if(ad.getStandaloneMode() == AgentDesktop.AGENTDESKTOP_STANDALONE){
-			this.myGui.getCanvas().getParent().getParent().getParent().getParent().setSize(this.myGui.getWidth() + 10,this.myGui.getHeight() + 30);
-		}else{
-			this.setWorkingDir("projects\\contmas\\");
-		}
-
-		this.addBehaviour(new listenForLogMessage(this));
-
-		this.addBehaviour(new subscribeToDF(this,"involved-in-container-port"));
-
-		AgentContainer c=this.getContainerController();
-
-		AgentController a;
-		try{
-			a=c.createNewAgent("Sniffer","jade.tools.sniffer.Sniffer",null);//new Object[] {"Yard;StraddleCarrier;Apron;Crane-#2;Crane-#1"});
-			a.start();
-			this.sniffer=new AID();
-			this.sniffer.setName(a.getName());
-			
-			String[] args=new String[1]; //Because of different working directories 
-			args[0]=getWorkingDir();
-			
-			a=c.createNewAgent("RandomGenerator","contmas.agents.RandomGeneratorAgent",null);
-			a.start();
-			
-			a=c.createNewAgent("HarborMaster","contmas.agents.HarborMasterAgent",args);
-			a.start();
-			
-			this.harbourMaster=new AID();
-			this.harbourMaster.setName(a.getName());
-
-			a=c.createNewAgent("Optimizer","contmas.agents.BayMapOptimisationAgent",null);
-			a.start();
-			
-//			a=c.createNewAgent("VisualisationProxy","contmas.agents.AgentGUIVisualisationProxyAgent",null);
-//			a.start();
-			
-//			a=c.createNewAgent("SimulationController","contmas.agents.SimulationControlAgent",null);
-//			a.start();
-			
-//			a=c.createNewAgent("Visualiser","contmas.agents.VisualisationAgent",null);
-//			a.start();
-			
-			a=c.acceptNewAgent("Dashboard",new DashboardAgent(canvas));
-			a.start();
-			
-			a=c.acceptNewAgent("Monitor",new MonitorAgent(canvas));
-			a.start();
-
-		}catch(StaleProxyException e){
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		this.addBehaviour(new requestHarbourSetup(this,this.harbourMaster));
-
+	public void setWorkingDir(String workingDir){
+		this.workingDir=workingDir;
 	}
 
 	@Override
-	protected void takeDown(){
-		this.myGui.dispose();
+	public void processOntologyRepresentation(ContainerHolder ontRep,AID agent){
+		if((ontRep == null) || (ontRep.getContains() == null)){
+			return;
+		}
+		XMLCodec xmlCodec=new XMLCodec();
+		String s;
+		try{
+			s=xmlCodec.encodeObject(ContainerTerminalOntology.getInstance(),ontRep,true);
+			this.myGui.printOntRep(s);
+		}catch(CodecException e){
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}catch(OntologyException e){
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		this.myGui.setOntRepAgent(agent.getLocalName());
+		DefaultListModel containerList=new DefaultListModel();
+		Iterator allContStates=ontRep.getAllContainer_states();
+		while(allContStates.hasNext()){
+			TOCHasState contState=(TOCHasState) allContStates.next();
+			String administeredContBic=contState.getSubjected_toc().getTransports().getBic_code();
+			String dispString=administeredContBic;
+			dispString+=" - " + contState.getState().getClass().getSimpleName();
+			if(contState.getState() instanceof Holding){
+				BlockAddress curCont=((Holding)contState.getState()).getAt_address();
+				dispString+=" ("+EnvironmentHelper.blockAddressToString(curCont)+")";
+			} else{
+				dispString+=" [NotHeld]";
+			}
+			containerList.addElement(dispString);
+		}
+		this.myGui.setContainerList(containerList);
 	}
 
 	public void updateAgentTree(List newAgents,Boolean remove){
@@ -337,6 +335,11 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 	
 	public void alterAgentName(){
 		myGui.alterAgentName();
+	}
+
+	@Override
+	protected void takeDown(){
+		this.myGui.dispose();
 	}
 
 

@@ -28,7 +28,7 @@ import jade.lang.acl.MessageTemplate;
  *
  */
 public interface Measurer{
-	public void processStatusUpdate(AID sender, Long eventTime, String content);
+	public void processStatusUpdate(AID sender, Long eventTime, String content, String bic);
 
 	/**
 	 * @return

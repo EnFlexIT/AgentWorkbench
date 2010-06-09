@@ -121,6 +121,16 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		return true;
 	}
 
+	public Boolean dropContainer(TransportOrderChain load_offer){
+	//		echoStatus("removeContainerFromBayMap:",load_offer);
+	
+			touchTOCState(load_offer,null,true);
+	//		echoStatus("Container dropped successfully (Message, TOCState).",load_offer,ContainerAgent.LOGGING_INFORM);
+	//		wakeSleepingBehaviours(load_offer);
+			return true;
+	
+		}
+
 	public TransportOrder calculateEffort(TransportOrder call){
 		//call.setTakes_until(Math.abs((RandomGenerator.nextLong() + this.getBayUtilization()))+"");
 		call.setTakes_until((Math.abs(RandomGenerator.nextInt(10)) + this.getBayUtilization() + System.currentTimeMillis()) + "");
@@ -482,17 +492,7 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		this.addBehaviour(b);
 	}
 
-	public boolean dropContainer(TransportOrderChain load_offer){
-//		echoStatus("removeContainerFromBayMap:",load_offer);
-
-		touchTOCState(load_offer,null,true);
-//		echoStatus("Container dropped successfully (Message, TOCState).",load_offer,ContainerAgent.LOGGING_INFORM);
-//		wakeSleepingBehaviours(load_offer);
-		return true;
-
-	}
-
-	public boolean removeFromContractors(AID badContractor){
+	public Boolean removeFromContractors(AID badContractor){
 		Iterator contractorList=this.ontologyRepresentation.getAllContractors();
 		while(contractorList.hasNext()){
 			AID contractor=(AID) contractorList.next();
@@ -504,7 +504,7 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		return false;
 	}
 
-	public boolean removeFromContractors(List badContractors){
+	public Boolean removeFromContractors(List badContractors){
 		Iterator contractorList=badContractors.iterator();
 		Boolean someoneRemoved=false;
 		while(contractorList.hasNext()){

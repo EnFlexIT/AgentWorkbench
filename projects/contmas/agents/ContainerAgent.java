@@ -32,6 +32,8 @@ import jade.content.onto.UngroundedException;
 import jade.content.onto.basic.Action;
 import jade.core.AID;
 import jade.core.Agent;
+import jade.core.ServiceException;
+import jade.core.messaging.TopicManagementHelper;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
@@ -235,7 +237,17 @@ public class ContainerAgent extends Agent{
 		}
 	}
 
-
+	public static AID createTopic(Agent a, String topicName){
+		AID topic=null;
+		try{
+			TopicManagementHelper tmh=(TopicManagementHelper) a.getHelper(TopicManagementHelper.SERVICE_NAME);
+			topic = tmh.createTopic(topicName);
+		}catch(ServiceException e1){
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		return topic;
+	}
 
 	public AID getHarbourMaster(){
 		if(this.harbourMaster == null){

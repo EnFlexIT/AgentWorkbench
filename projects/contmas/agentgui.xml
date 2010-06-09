@@ -14,9 +14,12 @@ Die Abläufe lassen sich am besten im automatisch erzeugten Sniffer einsehen. Die
     <agentConfiguration/>
     <jadeConfiguration>
         <start4Sim>true</start4Sim>
-        <useAppDefaults>true</useAppDefaults>
-        <useLocalPort>0</useLocalPort>
-        <serviceList/>
+        <useAppDefaults>false</useAppDefaults>
+        <useLocalPort>1100</useLocalPort>
+        <serviceList>
+            <service>jade.core.messaging.TopicManagementService;</service>
+            <service>jade.core.event.NotificationService;</service>
+        </serviceList>
     </jadeConfiguration>
     <envFile>map_port_chalmers_highly_simplified.xml</envFile>
     <subFolderAgents>agents</subFolderAgents>

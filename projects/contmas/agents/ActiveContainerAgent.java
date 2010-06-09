@@ -28,6 +28,9 @@ import jade.util.leap.ArrayList;
 import jade.util.leap.Iterator;
 import jade.util.leap.List;
 import contmas.behaviours.MovementController;
+import contmas.de.unidue.stud.sehawagn.contmas.measurement.Helper;
+import contmas.de.unidue.stud.sehawagn.contmas.measurement.StatusUpdater;
+import contmas.de.unidue.stud.sehawagn.contmas.measurement.sendStatusUpdate;
 import contmas.interfaces.MoveableAgent;
 import contmas.interfaces.TacticalMemorizer;
 import contmas.main.AgentGUIHelper;
@@ -35,7 +38,7 @@ import contmas.main.AlreadyMovingException;
 import contmas.main.EnvironmentHelper;
 import contmas.ontology.*;
 
-public class ActiveContainerAgent extends ContainerHolderAgent implements MoveableAgent,DisplayableAgent,TacticalMemorizer{
+public class ActiveContainerAgent extends ContainerHolderAgent implements MoveableAgent,DisplayableAgent,TacticalMemorizer,StatusUpdater{
 
 	/**
 	 * 
@@ -351,6 +354,31 @@ public class ActiveContainerAgent extends ContainerHolderAgent implements Moveab
 	@Override
 	public MovementController getMovementController(){
 		return movementController;
+	}
+
+	@Override
+	public void sendStatusUpdate(String status, TransportOrderChain subject) {
+		addBehaviour(new sendStatusUpdate(this, status, subject , System.currentTimeMillis() ));
+	}
+	
+	@Override
+	public AID getStatusUpdateTopic(){
+		return Helper.getMeasureTopic(this);
+	}
+	
+	@Override
+	public Boolean aquireContainer(TransportOrderChain load_offer,BlockAddress destination){
+		Boolean result=super.aquireContainer(load_offer,destination);
+		sendStatusUpdate(Helper.STATUS_PICKED_UP,load_offer);
+		return result;
+	}
+	
+	
+	@Override
+	public Boolean dropContainer(TransportOrderChain load_offer){
+		Boolean result=super.dropContainer(load_offer);
+		sendStatusUpdate(Helper.STATUS_DROPPED,load_offer);
+		return result;
 	}
 
 	

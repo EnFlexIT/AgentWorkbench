@@ -18,7 +18,7 @@
  * along with ContMAS.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package contmas.interfaces;
+package contmas.main;
 
 /**
  * @author Hanno - Felix Wagner
