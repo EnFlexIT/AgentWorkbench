@@ -37,6 +37,16 @@ public class AgentConfiguration extends Hashtable<String, String> {
 			return null;
 		}
 	}
+	public TreeMap<Integer, String> getReferencesAsTreeMap( String agentReference) {
+		if ( agentReference != null ) {
+			refsString = this.get( agentReference );
+			refsObject = new References( refsString );
+			return refsObject.getReferencesTreeMap();
+		}
+		else {
+			return null;
+		}	
+	}
 	public void addReference( String agentReference, String ontoReference ) {
 		if ( agentReference != null && ontoReference != null ){
 			refsString = this.get( agentReference );
@@ -118,6 +128,9 @@ public class AgentConfiguration extends Hashtable<String, String> {
 					refTM.put(refArr[i], i+1);
 				}			
 			}
+		}
+		public TreeMap<Integer,String> getReferencesTreeMap() {
+			return refMT;
 		}
 		public Vector<String> getVectorNumbered() {
 			Vector<Integer> v = new Vector<Integer>( refMT.keySet() );

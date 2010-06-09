@@ -3,12 +3,12 @@
     <projectName>Monitormas</projectName>
     <subOntologies>
         <subOntology>contmas.ontology.ContainerTerminalOntology</subOntology>
-        <subOntology>mas.display.ontology.DisplayOntology</subOntology>
+        <subOntology>monitormas.ontology.MonitorMASOntology</subOntology>
     </subOntologies>
     <agentConfiguration>
         <entry>
             <key>monitormas.agents.ControlAgent</key>
-            <value>contmas.ontology.Phy_Position|contmas.ontology.Phy_Size</value>
+            <value>contmas.ontology.BlockAddress|monitormas.ontology.TimeDetector|contmas.ontology.Phy_Position</value>
         </entry>
     </agentConfiguration>
     <jadeConfiguration>

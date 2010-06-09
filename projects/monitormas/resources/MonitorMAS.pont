@@ -1,4 +1,4 @@
-; Sun May 16 22:24:05 CEST 2010
+; Wed Jun 09 10:16:19 CEST 2010
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -7,6 +7,40 @@
 (defclass %3ACLIPS_TOP_LEVEL_SLOT_CLASS "Fake class to save top-level slot information"
 	(is-a USER)
 	(role abstract)
+	(single-slot Test4
+		(type SYMBOL)
+;+		(allowed-parents TimeDetector)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot Test3
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot Test2
+;+		(type ANY)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot Test1
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot Test8
+		(type SYMBOL)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot Test7
+		(type INTEGER)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(multislot Test6
+		(type INSTANCE)
+;+		(allowed-classes TimeDetector)
+		(create-accessor read-write))
+	(single-slot Test5
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
 	(single-slot Time_Transmit_End
 		(type FLOAT)
 ;+		(cardinality 0 1)

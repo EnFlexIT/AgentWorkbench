@@ -19,6 +19,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import sim.setup.gui.DynForm;
+
 import mas.onto.Ontologies4Project;
 
 public class ProjectsLoaded {
@@ -196,6 +198,13 @@ public class ProjectsLoaded {
 		if (Application.JadePlatform.OntologyVector==null) {
 			Application.JadePlatform.jadeFindOntologyClasse();
 		}
+		
+		// --- Hier erfolgt gerade eine Testausgabe zu debugging - Zwecken. Wird bald wieder gelöscht ----
+		System.out.println( "");
+		System.out.println( "+++ Versuch ....  ohhjjjeeeee .... START +++");
+		@SuppressWarnings("unused")
+		DynForm df = new DynForm(NewPro, "monitormas.agents.ControlAgent");
+		System.out.println( "+++ Versuch ....  ohhjjjeeeee .... ENDE +++");
 		return NewPro;
 	}
 
