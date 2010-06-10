@@ -1,0 +1,107 @@
+<?xml version="1.0"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:protege="http://protege.stanford.edu/plugins/owl/protege#"
+    xmlns="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/contmas_ontology_import_filter_demo_individuals.owl#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:j.0="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/contmas_ontology.owl#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+  xml:base="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/contmas_ontology_import_filter_demo_individuals.owl">
+  <owl:Ontology rdf:about="">
+    <owl:imports rdf:resource="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/contmas_ontology.owl"/>
+  </owl:Ontology>
+  <j.0:Ship rdf:ID="Ship_1">
+    <j.0:contains>
+      <j.0:BayMap rdf:ID="BayMap_2">
+        <j.0:x_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >3</j.0:x_dimension>
+        <j.0:y_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >4</j.0:y_dimension>
+        <j.0:z_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >2</j.0:z_dimension>
+      </j.0:BayMap>
+    </j.0:contains>
+    <j.0:container_states>
+      <j.0:TOCHasState rdf:ID="TOCHasState_3">
+        <j.0:subjected_toc>
+          <j.0:TransportOrderChain rdf:ID="TransportOrderChain_7">
+            <j.0:is_linked_by>
+              <j.0:TransportOrder rdf:ID="TransportOrder_10">
+                <j.0:ends_at>
+                  <j.0:Designator rdf:ID="Designator_11">
+                    <j.0:at_address>
+                      <j.0:BlockAddress rdf:ID="BlockAddress_18">
+                        <j.0:locates>
+                          <j.0:Container rdf:ID="Container_6">
+                            <j.0:bic_code rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+                            >XYZ424711</j.0:bic_code>
+                          </j.0:Container>
+                        </j.0:locates>
+                        <j.0:x_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+                        >0</j.0:x_dimension>
+                        <j.0:z_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+                        >0</j.0:z_dimension>
+                        <j.0:y_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+                        >0</j.0:y_dimension>
+                      </j.0:BlockAddress>
+                    </j.0:at_address>
+                    <j.0:concrete_designation>
+                      <j.0:Yard rdf:ID="Yard_16"/>
+                    </j.0:concrete_designation>
+                    <j.0:abstract_designation>
+                      <j.0:YardArea rdf:ID="YardArea_17"/>
+                    </j.0:abstract_designation>
+                    <j.0:type rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+                    >concrete</j.0:type>
+                  </j.0:Designator>
+                </j.0:ends_at>
+                <j.0:starts_at>
+                  <j.0:Designator rdf:ID="Designator_12">
+                    <j.0:at_address>
+                      <j.0:BlockAddress rdf:ID="BlockAddress_13">
+                        <j.0:y_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+                        >0</j.0:y_dimension>
+                        <j.0:z_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+                        >0</j.0:z_dimension>
+                        <j.0:x_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+                        >0</j.0:x_dimension>
+                        <j.0:locates rdf:resource="#Container_6"/>
+                      </j.0:BlockAddress>
+                    </j.0:at_address>
+                    <j.0:type rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+                    >concrete</j.0:type>
+                    <j.0:concrete_designation rdf:resource="#Ship_1"/>
+                    <j.0:abstract_designation>
+                      <j.0:Berth rdf:ID="Berth_14"/>
+                    </j.0:abstract_designation>
+                  </j.0:Designator>
+                </j.0:starts_at>
+              </j.0:TransportOrder>
+            </j.0:is_linked_by>
+            <j.0:terminates_at rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+            >PortChalmers</j.0:terminates_at>
+            <j.0:transports rdf:resource="#Container_6"/>
+          </j.0:TransportOrderChain>
+        </j.0:subjected_toc>
+        <j.0:state>
+          <j.0:Administered rdf:ID="Administered_4">
+            <j.0:at_address>
+              <j.0:BlockAddress rdf:ID="BlockAddress_5">
+                <j.0:locates rdf:resource="#Container_6"/>
+                <j.0:y_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+                >0</j.0:y_dimension>
+                <j.0:z_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+                >0</j.0:z_dimension>
+                <j.0:x_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+                >0</j.0:x_dimension>
+              </j.0:BlockAddress>
+            </j.0:at_address>
+          </j.0:Administered>
+        </j.0:state>
+      </j.0:TOCHasState>
+    </j.0:container_states>
+  </j.0:Ship>
+</rdf:RDF>
+
+<!-- Created with Protege (with OWL Plugin 3.3.1, Build 430)  http://protege.stanford.edu -->

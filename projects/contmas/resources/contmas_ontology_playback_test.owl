@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:protege="http://protege.stanford.edu/plugins/owl/protege#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/contmas_ontology_playback_test.owl#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+  xml:base="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/contmas_ontology_playback_test.owl">
+  <owl:Ontology rdf:about="">
+    <owl:imports rdf:resource="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/contmas_ontology_individuals.owl"/>
+  </owl:Ontology>
+</rdf:RDF>
+
+<!-- Created with Protege (with OWL Plugin 3.3.1, Build 430)  http://protege.stanford.edu -->

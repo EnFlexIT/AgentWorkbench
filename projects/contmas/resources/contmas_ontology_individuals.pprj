@@ -1,4 +1,4 @@
-; Thu Jun 10 17:10:34 NZST 2010
+; Thu Jun 10 22:38:01 NZST 2010
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -6,11 +6,11 @@
 ([BROWSER_SLOT_NAMES] of  Property_List
 
 	(properties
-		[contmas_ontology_individuals_ProjectKB_Instance_215]
-		[contmas_ontology_individuals_ProjectKB_Instance_216]
-		[contmas_ontology_individuals_ProjectKB_Instance_217]
-		[contmas_ontology_individuals_ProjectKB_Instance_218]
-		[contmas_ontology_individuals_ProjectKB_Instance_219]))
+		[contmas_ontology_individuals_ProjectKB_Instance_52]
+		[contmas_ontology_individuals_ProjectKB_Instance_53]
+		[contmas_ontology_individuals_ProjectKB_Instance_54]
+		[contmas_ontology_individuals_ProjectKB_Instance_55]
+		[contmas_ontology_individuals_ProjectKB_Instance_56]))
 
 ([CLSES_TAB] of  Widget
 
@@ -88,36 +88,11 @@
 ([contmas_ontology_individuals_ProjectKB_Instance_21] of  Property_List
 )
 
-([contmas_ontology_individuals_ProjectKB_Instance_215] of  String
-
-	(name "owl:Thing")
-	(string_value "%3ANAME"))
-
-([contmas_ontology_individuals_ProjectKB_Instance_216] of  String
-
-	(name ":PAL-CONSTRAINT")
-	(string_value "%3APAL-NAME"))
-
-([contmas_ontology_individuals_ProjectKB_Instance_217] of  String
-
-	(name ":INSTANCE-ANNOTATION")
-	(string_value "%3AANNOTATION-TEXT"))
-
-([contmas_ontology_individuals_ProjectKB_Instance_218] of  String
-
-	(name ":META-CLASS")
-	(string_value "%3ANAME"))
-
-([contmas_ontology_individuals_ProjectKB_Instance_219] of  String
-
-	(name "owl:Class")
-	(string_value "%3ANAME"))
-
 ([contmas_ontology_individuals_ProjectKB_Instance_22] of  Widget
 
 	(is_hidden TRUE)
 	(property_list [contmas_ontology_individuals_ProjectKB_Instance_23])
-	(widget_class_name "org.algernon.kb.okbc.protege.plugins.AlgernonTab"))
+	(widget_class_name "TGViztab.TGVizTab"))
 
 ([contmas_ontology_individuals_ProjectKB_Instance_23] of  Property_List
 )
@@ -126,7 +101,7 @@
 
 	(is_hidden TRUE)
 	(property_list [contmas_ontology_individuals_ProjectKB_Instance_25])
-	(widget_class_name "TGViztab.TGVizTab"))
+	(widget_class_name "org.algernon.kb.okbc.protege.plugins.AlgernonTab"))
 
 ([contmas_ontology_individuals_ProjectKB_Instance_25] of  Property_List
 )
@@ -260,11 +235,36 @@
 ([contmas_ontology_individuals_ProjectKB_Instance_51] of  Property_List
 )
 
+([contmas_ontology_individuals_ProjectKB_Instance_52] of  String
+
+	(name "owl:Thing")
+	(string_value "%3ANAME"))
+
+([contmas_ontology_individuals_ProjectKB_Instance_53] of  String
+
+	(name ":PAL-CONSTRAINT")
+	(string_value "%3APAL-NAME"))
+
+([contmas_ontology_individuals_ProjectKB_Instance_54] of  String
+
+	(name ":INSTANCE-ANNOTATION")
+	(string_value "%3AANNOTATION-TEXT"))
+
+([contmas_ontology_individuals_ProjectKB_Instance_55] of  String
+
+	(name ":META-CLASS")
+	(string_value "%3ANAME"))
+
+([contmas_ontology_individuals_ProjectKB_Instance_56] of  String
+
+	(name "owl:Class")
+	(string_value "%3ANAME"))
+
 ([contmas_ontology_individuals_ProjectKB_Instance_6] of  Widget
 
 	(is_hidden TRUE)
 	(property_list [contmas_ontology_individuals_ProjectKB_Instance_7])
-	(widget_class_name "ca.uvic.csr.shrimp.jambalaya.JambalayaTab"))
+	(widget_class_name "edu.stanford.smi.protegex.server_changes.prompt.UsersTab"))
 
 ([contmas_ontology_individuals_ProjectKB_Instance_7] of  Property_List
 )
@@ -273,7 +273,7 @@
 
 	(is_hidden TRUE)
 	(property_list [contmas_ontology_individuals_ProjectKB_Instance_9])
-	(widget_class_name "edu.stanford.smi.protegex.server_changes.prompt.UsersTab"))
+	(widget_class_name "ca.uvic.csr.shrimp.jambalaya.JambalayaTab"))
 
 ([contmas_ontology_individuals_ProjectKB_Instance_9] of  Property_List
 )
@@ -7190,12 +7190,12 @@
 	(customized_instance_widgets
 		[PAL_FORM_WIDGET]
 		[KB_713803_Instance_477]
-		[INSTANCE_ANNOTATION_FORM_WIDGET]
 		[KB_713803_Instance_780]
-		[KB_301165_Instance_856]
+		[INSTANCE_ANNOTATION_FORM_WIDGET]
 		[KB_713803_Instance_693]
-		[KB_691299_Instance_537]
+		[KB_301165_Instance_856]
 		[KB_713803_Instance_648]
+		[KB_691299_Instance_537]
 		[KB_691299_Instance_398]
 		[KB_303942_Instance_68]
 		[KB_938545_Instance_166]
@@ -7282,15 +7282,15 @@
 		":SYSTEM-CLASS"
 		"owl:oneOf"
 		"owl:DataRange"
-		"owl:DeprecatedProperty"
 		"rdf:Property"
+		"owl:DeprecatedProperty"
 		"owl:DeprecatedClass"
 		"rdf:Statement"
 		"rdf:type"
 		"rdf:subject"
 		"rdf:predicate"
-		"rdf:object"
 		":OWL-ANONYMOUS-ROOT"
+		"rdf:object"
 		"rdfs:Container"
 		"owl:AllDifferent"
 		"owl:distinctMembers"

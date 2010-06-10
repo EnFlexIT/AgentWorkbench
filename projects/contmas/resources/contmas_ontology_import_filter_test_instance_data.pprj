@@ -1,4 +1,4 @@
-; Thu Jun 10 23:57:41 NZST 2010
+; Thu Jun 10 23:44:07 NZST 2010
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -6,11 +6,11 @@
 ([BROWSER_SLOT_NAMES] of  Property_List
 
 	(properties
-		[contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_359]
-		[contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_360]
-		[contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_361]
-		[contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_362]
-		[contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_363]))
+		[contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_341]
+		[contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_342]
+		[contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_343]
+		[contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_344]
+		[contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_345]))
 
 ([CLSES_TAB] of  Widget
 
@@ -19,263 +19,263 @@
 	(property_list [Instance_47])
 	(widget_class_name "edu.stanford.smi.protege.widget.ClsesTab"))
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_1] of  Widget
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_1] of  Widget
 
 	(is_hidden TRUE)
-	(property_list [contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_2])
+	(property_list [contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_2])
 	(widget_class_name "se.liu.ida.JessTab.JessTab"))
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_10] of  Property_List
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_10] of  Property_List
 )
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_11] of  Widget
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_11] of  Widget
 
 	(is_hidden TRUE)
-	(property_list [contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_12])
+	(property_list [contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_12])
 	(widget_class_name "edu.stanford.smi.protege.widget.instance_tree.InstanceTreeTab"))
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_12] of  Property_List
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_12] of  Property_List
 )
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_13] of  Widget
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_13] of  Widget
 
 	(is_hidden TRUE)
-	(property_list [contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_14])
+	(property_list [contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_14])
 	(widget_class_name "edu.stanford.smi.protegex.widget.pal.PalConstraintsTab"))
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_14] of  Property_List
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_14] of  Property_List
 )
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_15] of  Widget
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_15] of  Widget
 
 	(is_hidden TRUE)
-	(property_list [contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_16])
+	(property_list [contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_16])
 	(widget_class_name "edu.stanford.smi.RemoteKBTab.WordNetTab"))
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_16] of  Property_List
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_16] of  Property_List
 )
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_17] of  Widget
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_17] of  Widget
 
 	(is_hidden TRUE)
-	(property_list [contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_18])
+	(property_list [contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_18])
 	(widget_class_name "nl.uva.psy.swi.beangenerator.OntologyBeanGeneratorTab"))
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_18] of  Property_List
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_18] of  Property_List
 )
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_19] of  Widget
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_19] of  Widget
 
 	(is_hidden TRUE)
-	(property_list [contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_20])
+	(property_list [contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_20])
 	(widget_class_name "uk.ac.man.cs.mig.coode.owlviz.ui.OWLVizTab"))
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_2] of  Property_List
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_2] of  Property_List
 )
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_20] of  Property_List
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_20] of  Property_List
 )
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_21] of  Widget
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_21] of  Widget
 
 	(is_hidden TRUE)
-	(property_list [contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_22])
+	(property_list [contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_22])
 	(widget_class_name "edu.stanford.smi.RemoteKBTab.UMLSTab"))
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_22] of  Property_List
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_22] of  Property_List
 )
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_23] of  Widget
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_23] of  Widget
 
 	(is_hidden TRUE)
-	(property_list [contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_24])
+	(property_list [contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_24])
 	(widget_class_name "TGViztab.TGVizTab"))
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_24] of  Property_List
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_24] of  Property_List
 )
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_25] of  Widget
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_25] of  Widget
 
 	(is_hidden TRUE)
-	(property_list [contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_26])
+	(property_list [contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_26])
 	(widget_class_name "org.algernon.kb.okbc.protege.plugins.AlgernonTab"))
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_26] of  Property_List
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_26] of  Property_List
 )
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_27] of  Widget
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_27] of  Widget
 
 	(is_hidden TRUE)
-	(property_list [contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_28])
+	(property_list [contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_28])
 	(widget_class_name "edu.stanford.smi.protegex.changes.changesKBViewTab.ChangesKBViewTab"))
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_28] of  Property_List
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_28] of  Property_List
 )
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_29] of  Widget
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_29] of  Widget
 
 	(is_hidden TRUE)
-	(property_list [contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_30])
+	(property_list [contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_30])
 	(widget_class_name "edu.stanford.smi.protegex.xml.tab.XMLTab"))
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_3] of  Widget
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_3] of  Widget
 
 	(is_hidden TRUE)
-	(property_list [contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_4])
+	(property_list [contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_4])
 	(widget_class_name "edu.stanford.smi.protege.widget.ProtegePropertiesTab"))
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_30] of  Property_List
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_30] of  Property_List
 )
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_31] of  Widget
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_31] of  Widget
 
 	(is_hidden TRUE)
-	(property_list [contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_32])
+	(property_list [contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_32])
 	(widget_class_name "edu.stanford.smi.protegex.widget.pal.PalQueriesTab"))
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_32] of  Property_List
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_32] of  Property_List
 )
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_33] of  Widget
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_33] of  Widget
 
 	(is_hidden TRUE)
-	(property_list [contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_34])
+	(property_list [contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_34])
 	(widget_class_name "edu.stanford.smi.protegex.chatPlugin.ChatTab"))
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_34] of  Property_List
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_34] of  Property_List
 )
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_35] of  Widget
-
-	(is_hidden TRUE)
-	(property_list [contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_36])
-	(widget_class_name "edu.stanford.smi.protege.keywordsearch.StringSearch"))
-
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_359] of  String
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_341] of  String
 
 	(name "owl:Thing")
 	(string_value "%3ANAME"))
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_36] of  Property_List
-)
-
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_360] of  String
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_342] of  String
 
 	(name ":PAL-CONSTRAINT")
 	(string_value "%3APAL-NAME"))
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_361] of  String
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_343] of  String
 
 	(name ":INSTANCE-ANNOTATION")
 	(string_value "%3AANNOTATION-TEXT"))
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_362] of  String
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_344] of  String
 
 	(name ":META-CLASS")
 	(string_value "%3ANAME"))
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_363] of  String
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_345] of  String
 
 	(name "owl:Class")
 	(string_value "%3ANAME"))
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_37] of  Widget
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_35] of  Widget
 
 	(is_hidden TRUE)
-	(property_list [contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_38])
+	(property_list [contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_36])
+	(widget_class_name "edu.stanford.smi.protege.keywordsearch.StringSearch"))
+
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_36] of  Property_List
+)
+
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_37] of  Widget
+
+	(is_hidden TRUE)
+	(property_list [contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_38])
 	(widget_class_name "script.ProtegeScriptTab"))
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_38] of  Property_List
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_38] of  Property_List
 )
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_39] of  Widget
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_39] of  Widget
 
 	(is_hidden TRUE)
-	(property_list [contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_40])
+	(property_list [contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_40])
 	(widget_class_name "edu.stanford.smi.protegex.changes.ChangesTab"))
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_4] of  Property_List
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_4] of  Property_List
 )
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_40] of  Property_List
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_40] of  Property_List
 )
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_41] of  Widget
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_41] of  Widget
 
 	(is_hidden TRUE)
-	(property_list [contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_42])
+	(property_list [contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_42])
 	(widget_class_name "edu.stanford.smi.protegex.fctab.FacetConstraintsTab"))
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_42] of  Property_List
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_42] of  Property_List
 )
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_43] of  Widget
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_43] of  Widget
 
 	(is_hidden TRUE)
-	(property_list [contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_44])
+	(property_list [contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_44])
 	(widget_class_name "edu.stanford.smi.protege.widget.instance_tree.KnowledgeTreeTab"))
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_44] of  Property_List
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_44] of  Property_List
 )
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_45] of  Widget
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_45] of  Widget
 
 	(is_hidden TRUE)
-	(property_list [contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_46])
+	(property_list [contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_46])
 	(widget_class_name "edu.stanford.smi.protegex.datamaster.DataMasterTab"))
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_46] of  Property_List
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_46] of  Property_List
 )
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_47] of  Widget
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_47] of  Widget
 
 	(is_hidden TRUE)
-	(property_list [contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_48])
+	(property_list [contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_48])
 	(widget_class_name "dfki.protege.ontoviz_tab.OntovizTab"))
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_48] of  Property_List
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_48] of  Property_List
 )
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_49] of  Widget
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_49] of  Widget
 
 	(is_hidden TRUE)
-	(property_list [contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_50])
+	(property_list [contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_50])
 	(widget_class_name "edu.stanford.smi.protegex.changes.stats.ChangeStatisticsTab"))
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_5] of  Widget
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_5] of  Widget
 
 	(is_hidden TRUE)
-	(property_list [contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_6])
+	(property_list [contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_6])
 	(widget_class_name "ezpal.EZPalTab"))
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_50] of  Property_List
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_50] of  Property_List
 )
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_51] of  Widget
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_51] of  Widget
 
 	(is_hidden TRUE)
-	(property_list [contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_52])
+	(property_list [contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_52])
 	(widget_class_name "edu.stanford.smi.protegex.prompt.PromptTab"))
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_52] of  Property_List
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_52] of  Property_List
 )
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_6] of  Property_List
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_6] of  Property_List
 )
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_7] of  Widget
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_7] of  Widget
 
 	(is_hidden TRUE)
-	(property_list [contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_8])
+	(property_list [contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_8])
 	(widget_class_name "edu.stanford.smi.protegex.server_changes.prompt.UsersTab"))
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_8] of  Property_List
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_8] of  Property_List
 )
 
-([contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_9] of  Widget
+([contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_9] of  Widget
 
 	(is_hidden TRUE)
-	(property_list [contmas_ontology_import_filter_demo_individuals_ProjectKB_Instance_10])
+	(property_list [contmas_ontology_import_filter_test_instance_data_ProjectKB_Instance_10])
 	(widget_class_name "ca.uvic.csr.shrimp.jambalaya.JambalayaTab"))
 
 ([FORMS_TAB] of  Widget
@@ -3861,10 +3861,10 @@
 	(boolean_value FALSE)
 	(name "ButtonDisplayed-Delete Instance"))
 
-([KB_924109_Instance_0] of  String
+([KB_904396_Instance_0] of  String
 
 	(name "owl_file_name")
-	(string_value "contmas_ontology_import_filter_demo_individuals.owl"))
+	(string_value "contmas_ontology_import_filter_test_instance_data.owl"))
 
 ([KB_933314_Instance_0] of  Widget
 
@@ -7719,7 +7719,7 @@
 		[OWL_ProjectKB_Instance_3]
 		[KB_444675_Instance_0]
 		[KB_632156_Instance_0]
-		[KB_924109_Instance_0]))
+		[KB_904396_Instance_0]))
 
 ([STANDARD_CLASS_FORM_WIDGET] of  Widget
 

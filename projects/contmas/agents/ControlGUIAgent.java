@@ -177,6 +177,18 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 				
 				HarbourSetup.inflateCH(ontologyRepresentation,harbourMap);
 				
+				BayMap mapp=ontologyRepresentation.getContains();
+				processLogMsg("BayMap "+mapp.getX_dimension()+"x"+mapp.getY_dimension()+"x"+mapp.getZ_dimension()+"\n");
+				
+				Iterator states=ontologyRepresentation.getAllContainer_states();
+				while(states.hasNext()){
+
+					TOCHasState foo=(TOCHasState) states.next();
+					processLogMsg(foo+"\n");
+					processLogMsg(foo.getSubjected_toc().getTransports().getBic_code());
+
+				}
+				
 				StartNewContainerHolder act=new StartNewContainerHolder();
 				act.setName(name);
 				act.setTo_be_added(ontologyRepresentation);

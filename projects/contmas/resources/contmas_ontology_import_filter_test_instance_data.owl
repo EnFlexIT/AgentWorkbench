@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<rdf:RDF
+    xmlns="urn:tag:scranefield@infoscience.otago.ac.nz,2010:JadeImportTest:"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:p1="urn:tag:scranefield@infoscience.otago.ac.nz,2010:JadeImportTest#"
+    xmlns:ns5="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/contmas_ontology.owl#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+  xml:base="urn:tag:scranefield@infoscience.otago.ac.nz,2010:JadeImportTest">
+  <owl:Ontology rdf:about="urn:tag:scranefield@infoscience.otago.ac.nz,2010:JadeImportTest">
+    <owl:imports rdf:resource="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/contmas_ontology.owl"/>
+  </owl:Ontology>
+  <ns5:YardArea rdf:ID="YardArea1"/>
+  <ns5:Ship>
+    <ns5:container_states>
+      <ns5:TOCHasState>
+        <ns5:state>
+          <ns5:Administered>
+            <ns5:at_address>
+              <ns5:BlockAddress rdf:nodeID="A0">
+                <ns5:locates>
+                  <ns5:Container rdf:nodeID="A1">
+                    <ns5:bic_code rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+                    >ABC54321</ns5:bic_code>
+                  </ns5:Container>
+                </ns5:locates>
+                <ns5:y_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+                >0</ns5:y_dimension>
+                <ns5:x_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+                >0</ns5:x_dimension>
+                <ns5:z_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+                >0</ns5:z_dimension>
+              </ns5:BlockAddress>
+            </ns5:at_address>
+          </ns5:Administered>
+        </ns5:state>
+        <ns5:subjected_toc>
+          <ns5:TransportOrderChain>
+            <ns5:transports rdf:nodeID="A1"/>
+            <ns5:terminates_at rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+            >Port Chalmers</ns5:terminates_at>
+            <ns5:is_linked_by>
+              <ns5:TransportOrder>
+                <ns5:ends_at>
+                  <ns5:Designator>
+                    <ns5:at_address>
+                      <ns5:BlockAddress>
+                        <ns5:locates rdf:nodeID="A1"/>
+                        <ns5:x_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+                        >0</ns5:x_dimension>
+                        <ns5:z_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+                        >0</ns5:z_dimension>
+                        <ns5:y_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+                        >0</ns5:y_dimension>
+                      </ns5:BlockAddress>
+                    </ns5:at_address>
+                    <ns5:abstract_designation rdf:resource="urn:tag:scranefield@infoscience.otago.ac.nz,2010:JadeImportTest#YardArea1"/>
+                    <ns5:concrete_designation rdf:resource="urn:tag:scranefield@infoscience.otago.ac.nz,2010:JadeImportTest#Yard1"/>
+                    <ns5:type rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+                    >concrete</ns5:type>
+                  </ns5:Designator>
+                </ns5:ends_at>
+                <ns5:starts_at>
+                  <ns5:Designator>
+                    <ns5:type rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+                    >concrete</ns5:type>
+                    <ns5:at_address rdf:nodeID="A0"/>
+                    <ns5:abstract_designation>
+                      <ns5:Berth rdf:ID="Berth1"/>
+                    </ns5:abstract_designation>
+                  </ns5:Designator>
+                </ns5:starts_at>
+              </ns5:TransportOrder>
+            </ns5:is_linked_by>
+          </ns5:TransportOrderChain>
+        </ns5:subjected_toc>
+      </ns5:TOCHasState>
+    </ns5:container_states>
+    <ns5:contains>
+      <ns5:BayMap>
+        <ns5:y_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >3</ns5:y_dimension>
+        <ns5:x_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >4</ns5:x_dimension>
+        <ns5:z_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >2</ns5:z_dimension>
+      </ns5:BayMap>
+    </ns5:contains>
+  </ns5:Ship>
+  <ns5:Yard rdf:ID="Yard"/>
+</rdf:RDF>
+
+<!-- Created with Protege (with OWL Plugin 3.3.1, Build 430)  http://protege.stanford.edu -->
