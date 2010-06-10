@@ -127,7 +127,7 @@ public class DashboardAgent extends GuiAgent implements DFSubscriber,Measurer{
 	@Override
 	public void processStatusUpdate(AID sender,Long eventTime,String content, String bic){
 		SimpleDateFormat smDaFo=new SimpleDateFormat();
-		smDaFo.applyPattern(smDaFo.toLocalizedPattern()+" s.S");
+		smDaFo.applyPattern(smDaFo.toPattern()+" s.S");
 //		echo("Pattern is "+smDaFo.toLocalizedPattern());
 //		DateFormat.getInstance().get
 		String formattedDate=smDaFo.format(new Date(eventTime));

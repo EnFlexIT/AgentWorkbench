@@ -1,18 +1,16 @@
 package contmas.agents;
 
+import jade.util.leap.List;
+
 import java.util.Random;
 
 import contmas.behaviours.listenForBlockAddressRequests;
-import contmas.behaviours.listenForLogMessage;
-import contmas.behaviours.subscribeToDF;
-import contmas.interfaces.DFSubscriber;
-import contmas.interfaces.Logger;
-import contmas.ontology.*;
-import jade.core.AID;
-import jade.core.Agent;
-import jade.util.leap.ArrayList;
-import jade.util.leap.Iterator;
-import jade.util.leap.List;
+import contmas.main.BlockedBecausePlanningException;
+import contmas.ontology.BayMap;
+import contmas.ontology.BlockAddress;
+import contmas.ontology.Holding;
+import contmas.ontology.TransportOrderChain;
+import contmas.ontology.TransportOrderChainState;
 
 public class BayMapOptimisationAgent extends ContainerAgent{
 
@@ -37,7 +35,7 @@ public class BayMapOptimisationAgent extends ContainerAgent{
 			return emptyBA;
 		}
 
-		TransportOrderChainState[][][] bayMapArray=getBayMapArray(loadBay, allContainers);
+		TransportOrderChainState[][][] bayMapArray=ContainerHolderAgent.convertToBayMapArray(loadBay, allContainers);
 		
 		Integer x, y, z=0;
 		while(emptyBA==null){
@@ -95,43 +93,5 @@ public class BayMapOptimisationAgent extends ContainerAgent{
 			}
 		}
 		return upmostOcc;
-	}
-	
-	public BlockAddress getUpmostOccupiedBlockAddress(Integer x,Integer y,BayMap loadBay,List allContainers){
-		
-		BlockAddress upmostContainer=null;
-		Iterator allConts=allContainers.iterator();
-		while(allConts.hasNext()){ //check all containers
-			TransportOrderChainState curState=((TOCHasState) allConts.next()).getState();
-			if(curState instanceof Holding){
-				BlockAddress curContainer=(BlockAddress) curState.getAt_address();
-				if((curContainer.getX_dimension() == x) && (curContainer.getY_dimension() == y)){ //betrachteter Container steht im stapel auf momentaner koordinate
-					if((upmostContainer == null) || (upmostContainer.getZ_dimension() < curContainer.getZ_dimension())){
-						upmostContainer=curContainer;
-					}
-				}
-			} else {
-				echoStatus("Currently inspected TOC not hold, but only planned, skipping.",ContainerAgent.LOGGING_INFORM);
-				continue;
-			}
-		} //end while
-		return upmostContainer;
-	}
-	
-	public TransportOrderChainState[][][] getBayMapArray(BayMap loadBay,List allContainers){
-		TransportOrderChainState[][][] bayMapArray=new TransportOrderChainState[loadBay.getX_dimension()][loadBay.getY_dimension()][loadBay.getZ_dimension()];
-		
-		Iterator allConts=allContainers.iterator();
-		while(allConts.hasNext()){
-			TransportOrderChainState curState=((TOCHasState) allConts.next()).getState();
-			BlockAddress curContainer=(BlockAddress) curState.getAt_address();
-			bayMapArray[curContainer.getX_dimension()][curContainer.getY_dimension()][curContainer.getZ_dimension()]=curState;
-		}
-		
-		return bayMapArray;
-	}
-	
-	private class BlockedBecausePlanningException extends Exception{
-		
 	}
 }

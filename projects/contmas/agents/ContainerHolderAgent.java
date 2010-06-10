@@ -28,6 +28,7 @@ import contmas.interfaces.*;
 import contmas.main.EnvironmentHelper;
 import contmas.main.HarbourSetup;
 import contmas.main.NotYetReadyException;
+import contmas.main.BlockedBecausePlanningException;
 import contmas.ontology.*;
 
 public class ContainerHolderAgent extends ContainerAgent implements OntRepProvider,DFSubscriber,HarbourLayoutRequester{
@@ -50,13 +51,6 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		this.ontologyRepresentation=ontologyRepresentation;
 	}
 
-	public ContainerHolder getOntologyRepresentation(AID myAID){
-		if(myAID.equals(this.getAID())){
-			return this.ontologyRepresentation;
-		}
-		return null;
-	}
-
 	@Override
 	protected void setup(){
 		super.setup();
@@ -67,10 +61,17 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 			LoadBay.setZ_dimension(1);
 			this.ontologyRepresentation.setContains(LoadBay);
 		}
-
+	
 		this.determineContractors();
 		this.addBehaviour(new listenForOntRepReq(this));
 		this.addBehaviour(new requestHarbourSetup(this,this.getHarbourMaster()));
+	}
+
+	public ContainerHolder getOntologyRepresentation(AID myAID){
+		if(myAID.equals(this.getAID())){
+			return this.ontologyRepresentation;
+		}
+		return null;
 	}
 
 	public ContainerHolder getOntologyRepresentation(){
@@ -237,24 +238,6 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		return output;
 	}
 
-	public BlockAddress getUpmost(Integer x,Integer y){
-		BlockAddress upmostContainerPos=null;
-		List allHeldContainers=getAllHeldContainers();
-		Iterator allContainers=allHeldContainers.iterator();
-		while(allContainers.hasNext()){ //alle geladenen Container überprüfen 
-			TOCHasState curTOCState=(TOCHasState) allContainers.next();
-			Holding curState=(Holding) curTOCState.getState();
-			BlockAddress curContainerPos=curState.getAt_address();
-
-			if((curContainerPos.getX_dimension() == x) && (curContainerPos.getY_dimension() == y)){ //betrachteter Container steht im stapel auf momentaner koordinate
-				if((upmostContainerPos == null) || (upmostContainerPos.getZ_dimension() < curContainerPos.getZ_dimension())){
-					upmostContainerPos=curContainerPos;
-				}
-			}
-		} //end while
-		return upmostContainerPos;
-	}
-
 	public Integer countTOCInState(TransportOrderChainState TOCState){
 		Integer queueCount=0;
 		Iterator queue=this.ontologyRepresentation.getAllContainer_states();
@@ -286,60 +269,7 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		return this.ontologyRepresentation.getContractors();
 	}
 
-	public TransportOrder findMatchingOrder(TransportOrderChain haystack){
-		return this.findMatchingOrder(haystack,true);
-	}
-
-	public TransportOrder findMatchingOrder(TransportOrderChain haystack,boolean matchIncoming){
-		Iterator toc=haystack.getAllIs_linked_by();
-		TransportOrder matchingOrder=null;
-		Integer matchRating= -1;
-		Integer bestMatchRating= -1;
-		//echoStatus("findMatchingOrder - jede order in der kette durchlaufen");
-		while(toc.hasNext()){
-			//			echoStatus("Ausschreibung ausprobieren.");
-
-			TransportOrder curTO=(TransportOrder) toc.next();
-			/*
-			curTO.getStarts_at().setAbstract_designation(inflateDomain(curTO.getStarts_at().getAbstract_designation()));
-			curTO.getEnds_at().setAbstract_designation(inflateDomain(curTO.getEnds_at().getAbstract_designation()));
-			 */
-			if( !matchIncoming){
-				if(this.matchAID(curTO.getStarts_at())){//exactly from this agent
-					return curTO;
-				}else{
-					continue;
-				}
-			}
-
-			//	/*// why did i comment this out ?
-			if(matchIncoming && this.matchAID(curTO.getEnds_at())){ //exactly for this agent
-				return curTO;
-			}
-
-			if(matchIncoming){
-				matchRating=this.matchOrder(curTO);
-//				echoStatus("Order Ends_at "+ curTO.getEnds_at().getType()+" "+curTO.getEnds_at().getAbstract_designation()+" matcht="+matchRating,haystack,LOGGING_INFORM;
-				if((matchRating > -1)){
-					if((bestMatchRating == -1) || (bestMatchRating > matchRating)){
-						matchingOrder=curTO;
-						bestMatchRating=matchRating;
-						//	    			echoStatus("Ausschreibung passt zu mir! (besser?)");
-					}
-				}
-			}
-		}
-		return matchingOrder;
-	}
-
-	public Designator getAbstractTargetDesignator(){
-		Designator target=new Designator(); //TODO mögliche ziele herausfinden
-		target.setType("abstract");
-		target.setAbstract_designation(this.targetAbstractDomain);
-		return target;
-	}
-
-	public Integer getBaySize(){
+	public Integer getBayMapCapacity(){
 		BayMap loadBay=this.ontologyRepresentation.getContains();
 		Integer baySize=loadBay.getX_dimension() * loadBay.getY_dimension() * loadBay.getZ_dimension();
 		return baySize;
@@ -350,30 +280,97 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 	}
 
 	public BlockAddress getEmptyBlockAddress(TransportOrderChain subject){
-		BayMap LoadBay=this.getOntologyRepresentation().getContains();
-		Integer tries=0;
-		Integer maxTries=getBaySize();
-		Integer x, y, z;
-		while(tries < maxTries){
-			x=RandomGenerator.nextInt(LoadBay.getX_dimension());
-			y=RandomGenerator.nextInt(LoadBay.getY_dimension());
-			BlockAddress upmostContainer=this.getUpmost(x,y);
-			z=0;
-			if(upmostContainer != null){
-				if(upmostContainer.getZ_dimension() < LoadBay.getZ_dimension()){ //there is room on top
-					z=upmostContainer.getZ_dimension() + 1;
-				}else{
-					tries++;
-					continue;
-				}
-			}
-			BlockAddress emptyBA=new BlockAddress();
-			emptyBA.setX_dimension(x);
-			emptyBA.setY_dimension(y);
-			emptyBA.setZ_dimension(z);
+		BayMap loadBay=getOntologyRepresentation().getContains();
+		List allContainers=getAllHeldContainers(true);
+		BlockAddress emptyBA=null;
+		
+		if(allContainers.size()==getBayMapCapacity()){ //bay map is already full
 			return emptyBA;
 		}
-		return null;
+
+		TransportOrderChainState[][][] bayMapArray=ContainerHolderAgent.convertToBayMapArray(loadBay, allContainers);
+		
+		Integer x, y, z=0;
+		while(emptyBA==null){
+			x=RandomGenerator.nextInt(loadBay.getX_dimension());
+			y=RandomGenerator.nextInt(loadBay.getY_dimension());
+			BlockAddress upmostContainer;
+			try {
+				upmostContainer = this.getUpmostOccupiedBlockAddress(x,y);
+			} catch (BlockedBecausePlanningException e) {
+				echoStatus("Stack at current coordinate blocked because of pending plans, skipping.",ContainerAgent.LOGGING_INFORM); //leads to containers hanging in the air
+				continue;
+			}
+	
+			if(upmostContainer == null || (upmostContainer.getZ_dimension() < loadBay.getZ_dimension()-1)){ //there is room on top
+				if(upmostContainer != null){
+					z=upmostContainer.getZ_dimension() + 1;
+				}
+				
+				emptyBA=new BlockAddress();
+				emptyBA.setX_dimension(x);
+				emptyBA.setY_dimension(y);
+				emptyBA.setZ_dimension(z);
+//				emptyBA.setLocates(subject.getTransports());
+
+			}
+		}
+		return emptyBA;
+	}
+
+	public BlockAddress getUpmostOccupiedBlockAddress(Integer x,Integer y) throws BlockedBecausePlanningException{
+		TransportOrderChainState[][][] bayMapArray=ContainerHolderAgent.convertToBayMapArray(getOntologyRepresentation().getContains(), getAllHeldContainers(true));
+		BlockAddress upmostOcc=null;
+		TransportOrderChainState[] stack=bayMapArray[x][y];
+		
+		for (Integer i = 0; i < stack.length; i++) {
+			if(stack[i]!=null){ //there is a container at this position
+				if(stack[i] instanceof Holding){
+					upmostOcc=stack[i].getAt_address(); //memorize it
+				} else {
+					throw new BlockedBecausePlanningException();
+				}
+			} else { //no container at this position
+				if(upmostOcc!=null){ //already found some container, that one is the upmost
+					break;
+				}
+			}
+		}
+		return upmostOcc;
+	}
+
+	/**
+	 * @param subjectedToc
+	 * @return
+	 */
+	private Boolean isUpmostContainer(TransportOrderChain subjectedToc){
+		BayMap LoadBay=this.getOntologyRepresentation().getContains();
+	
+		for(int x=0;x < LoadBay.getX_dimension();x++){ //baymap zeilen-
+			for(int y=0;y < LoadBay.getY_dimension();y++){ //und spaltenweise durchlaufen
+				BlockAddress upmostContainer;
+				try {
+					upmostContainer = this.getUpmostOccupiedBlockAddress(x,y);
+				} catch (BlockedBecausePlanningException e) {
+					continue;
+				}
+				if(upmostContainer != null){ //an dieser Koordinate steht ein Container obenauf
+					if(upmostContainer.getLocates().getBic_code().equals(subjectedToc.getTransports().getBic_code())){
+						return true;
+					}
+				}
+			}
+		}
+	
+		return false;
+	}
+
+	public boolean hasBayMapRoom(){
+		return this.getBayMapCapacity() > this.getBayUtilization();
+	}
+
+	public Boolean isQueueNotFull(){
+		return this.countTOCInState(new ProposedFor()) < this.lengthOfProposeQueue;
 	}
 
 	public ProposeLoadOffer getLoadProposal(TransportOrderChain curTOC){
@@ -404,34 +401,58 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		return myself;
 	}
 
-	/**
-	 * @param subjectedToc
-	 * @return
-	 */
-	private Boolean isUpmostContainer(TransportOrderChain subjectedToc){
-		BayMap LoadBay=this.getOntologyRepresentation().getContains();
+	public Designator getAbstractTargetDesignator(){
+		Designator target=new Designator(); //TODO mögliche ziele herausfinden
+		target.setType("abstract");
+		target.setAbstract_designation(this.targetAbstractDomain);
+		return target;
+	}
 
-		for(int x=0;x < LoadBay.getX_dimension();x++){ //baymap zeilen-
-			for(int y=0;y < LoadBay.getY_dimension();y++){ //und spaltenweise durchlaufen
-				BlockAddress upmostContainer=this.getUpmost(x,y);
-				if(upmostContainer != null){ //an dieser Koordinate steht ein Container obenauf
-					if(upmostContainer.getLocates().getBic_code().equals(subjectedToc.getTransports().getBic_code())){
-						return true;
+	public TransportOrder findMatchingOrder(TransportOrderChain haystack){
+		return this.findMatchingOrder(haystack,true);
+	}
+
+	public TransportOrder findMatchingOrder(TransportOrderChain haystack,boolean matchIncoming){
+			Iterator toc=haystack.getAllIs_linked_by();
+			TransportOrder matchingOrder=null;
+			Integer matchRating= -1;
+			Integer bestMatchRating= -1;
+			//echoStatus("findMatchingOrder - jede order in der kette durchlaufen");
+			while(toc.hasNext()){
+				//			echoStatus("Ausschreibung ausprobieren.");
+	
+				TransportOrder curTO=(TransportOrder) toc.next();
+				/*
+				curTO.getStarts_at().setAbstract_designation(inflateDomain(curTO.getStarts_at().getAbstract_designation()));
+				curTO.getEnds_at().setAbstract_designation(inflateDomain(curTO.getEnds_at().getAbstract_designation()));
+				 */
+				if( !matchIncoming){
+					if(this.matchAID(curTO.getStarts_at())){//exactly from this agent
+						return curTO;
+					}else{
+						continue;
+					}
+				}
+	
+				//	/*// why did i comment this out ?
+				if(matchIncoming && this.matchAID(curTO.getEnds_at())){ //exactly for this agent
+					return curTO;
+				}
+	
+				if(matchIncoming){
+					matchRating=this.matchOrder(curTO);
+	//				echoStatus("Order Ends_at "+ curTO.getEnds_at().getType()+" "+curTO.getEnds_at().getAbstract_designation()+" matcht="+matchRating,haystack,LOGGING_INFORM;
+					if((matchRating > -1)){
+						if((bestMatchRating == -1) || (bestMatchRating > matchRating)){
+							matchingOrder=curTO;
+							bestMatchRating=matchRating;
+							//	    			echoStatus("Ausschreibung passt zu mir! (besser?)");
+						}
 					}
 				}
 			}
+			return matchingOrder;
 		}
-
-		return false;
-	}
-
-	public boolean hasBayMapRoom(){
-		return this.getBaySize() > this.getBayUtilization();
-	}
-
-	public Boolean isQueueNotFull(){
-		return this.countTOCInState(new ProposedFor()) < this.lengthOfProposeQueue;
-	}
 
 	public Boolean matchAID(Designator designation){
 		if(designation.getType().equals("concrete")){
@@ -624,5 +645,18 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		route.setNext_hop(inflateDomain(targetAbstractDomain));
 
 		this.getOntologyRepresentation().setReaches_eventually(routingTable);
+	}
+
+	public static TransportOrderChainState[][][] convertToBayMapArray(BayMap loadBay,List allContainers){
+		TransportOrderChainState[][][] bayMapArray=new TransportOrderChainState[loadBay.getX_dimension()][loadBay.getY_dimension()][loadBay.getZ_dimension()];
+		
+		Iterator allConts=allContainers.iterator();
+		while(allConts.hasNext()){
+			TransportOrderChainState curState=((TOCHasState) allConts.next()).getState();
+			BlockAddress curContainer=(BlockAddress) curState.getAt_address();
+			bayMapArray[curContainer.getX_dimension()][curContainer.getY_dimension()][curContainer.getZ_dimension()]=curState;
+		}
+		
+		return bayMapArray;
 	}
 }
