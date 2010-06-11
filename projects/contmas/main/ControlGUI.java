@@ -812,7 +812,6 @@ public class ControlGUI extends JInternalFrame implements ActionListener{
 			this.buttonLoadContainerHolder.setText("Load");
 			this.buttonLoadContainerHolder.addActionListener(new java.awt.event.ActionListener(){
 				public void actionPerformed(java.awt.event.ActionEvent e){
-					System.out.println("cwd="+myAgent.getWorkingDir());
 					ControlGUI.this.dialog.setWorkingDir(myAgent.getWorkingDir());
 					ControlGUI.this.dialog.setVisible(true);
 					ContainerHolder chosenContainerHolder=ControlGUI.this.dialog.getChosenContainerHolder();

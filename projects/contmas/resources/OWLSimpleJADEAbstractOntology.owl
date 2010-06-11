@@ -42,21 +42,23 @@ This version is to be used when generating beans from an OWL ontology.
     <rdfs:subClassOf rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
   </owl:Class>
   <owl:FunctionalProperty rdf:ID="JADE-UNNAMED-SLOT">
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
-    <rdfs:domain rdf:resource="#JADE-SLOT"/>
     <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+    <rdfs:domain rdf:resource="#JADE-SLOT"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="JADE-JAVA-BASE-CLASS">
+    <rdfs:domain rdf:resource="#JADE-CLASS"/>
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
     <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-    <rdfs:domain rdf:resource="#JADE-CLASS"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="JADE-IGNORE">
-    <rdfs:domain rdf:resource="#JADE-CLASS"/>
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+    <rdfs:domain rdf:resource="#JADE-CLASS"/>
     <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="JADE-NAME">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
     <rdfs:domain>
       <owl:Class>
         <owl:unionOf rdf:parseType="Collection">
@@ -65,8 +67,6 @@ This version is to be used when generating beans from an OWL ontology.
         </owl:unionOf>
       </owl:Class>
     </rdfs:domain>
-    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="JADE-JAVA-CODE">
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>

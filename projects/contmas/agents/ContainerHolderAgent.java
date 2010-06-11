@@ -20,6 +20,8 @@ import jade.util.leap.ArrayList;
 import jade.util.leap.Iterator;
 import jade.util.leap.List;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Random;
 
 import contmas.behaviours.*;
@@ -378,9 +380,21 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		TransportOrder matchingOrder=this.findMatchingOrder(curTOC);
 		if(matchingOrder != null){ //passende TransportOrder gefunden
 //			echoStatus("EndsAt-Designator vorher:"+matchingOrder.getEnds_at().getType()+" "+matchingOrder.getEnds_at().getAbstract_designation(),curTOC,LOGGING_INFORM);
+			
+			BlockAddress askedBA = matchingOrder.getEnds_at().getAt_address();
 			matchingOrder.setEnds_at(this.getMyselfDesignator());
+			
+			if(askedBA!=null){ //check, if BlockAddress that is beeing asked for is actually free
+				echoStatus("have been asked for slot at "+ EnvironmentHelper.blockAddressToString(askedBA),curTOC);
+				TransportOrderChainState[][][] bayMapArray = convertToBayMapArray(getOntologyRepresentation().getContains(), getAllHeldContainers(true));
+				if(bayMapArray[askedBA.getX_dimension()][askedBA.getY_dimension()][askedBA.getZ_dimension()] == null){
+					matchingOrder.getEnds_at().setAt_address(askedBA);
+					echoStatus("adopted it");
+				}
+			}
+			
 //			echoStatus("EndsAt-Designator nachher:"+matchingOrder.getEnds_at().getType()+" "+matchingOrder.getEnds_at().getAbstract_designation(),curTOC,LOGGING_INFORM);
-
+			
 			act=new ProposeLoadOffer();
 			this.calculateEffort(matchingOrder);
 			act.setLoad_offer(matchingOrder);
@@ -388,7 +402,7 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 			// put this TOC in the queue of TOC proposed for
 			this.touchTOCState(curTOC,new ProposedFor(),true);
 		}else{
-			this.echoStatus("keine TransportOrder passt zu mir.",curTOC,ContainerAgent.LOGGING_NOTICE);
+			this.echoStatus("No TransportOrder fits me.",curTOC,ContainerAgent.LOGGING_NOTICE);
 		}
 		return act;
 	}
@@ -412,7 +426,7 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		return this.findMatchingOrder(haystack,true);
 	}
 
-	public TransportOrder findMatchingOrder(TransportOrderChain haystack,boolean matchIncoming){
+	public TransportOrder findMatchingOrder(TransportOrderChain haystack,Boolean matchIncoming){
 			Iterator toc=haystack.getAllIs_linked_by();
 			TransportOrder matchingOrder=null;
 			Integer matchRating= -1;
@@ -427,6 +441,7 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 				curTO.getEnds_at().setAbstract_designation(inflateDomain(curTO.getEnds_at().getAbstract_designation()));
 				 */
 				if( !matchIncoming){
+//					echoStatus("matching outgoing",haystack);
 					if(this.matchAID(curTO.getStarts_at())){//exactly from this agent
 						return curTO;
 					}else{
@@ -455,7 +470,7 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		}
 
 	public Boolean matchAID(Designator designation){
-		if(designation.getType().equals("concrete")){
+		if(designation!=null && designation.getType().equals("concrete")){
 			if(designation.getConcrete_designation().equals(this.getAID())){ //genau für diesen Agenten bestimmt
 				return true;
 			}
@@ -479,7 +494,7 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		if(this.matchAID(end)){ //Genau für mich bestimmt
 //			echoStatus("Genau für mich bestimmt",LOGGING_INFORM);
 			return 0;
-		}else if(end.getType().equals("abstract")){
+		}else if(end!=null && end.getType().equals("abstract")){
 			return matchDomainsTransitive(this.ontologyRepresentation.getLives_in(),end.getAbstract_designation());
 		}else{
 			return -1;
@@ -503,12 +518,52 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		return -1; //passt gar nicht
 	}
 
+	public static String transportOrderToString(TransportOrder to){
+		if(to==null){
+			return "[NULL]";
+		}
+		Designator start = to.getStarts_at();
+		Designator end = to.getStarts_at();
+
+		String output="from ";
+		output+=start+" ";
+
+		output+="to ";
+		output+=end+" ";
+		
+		String formattedTime="UNKNOWN";
+		if(to.getTakes_until()!=null){
+			Long untilTime=Long.valueOf(to.getTakes_until());
+			
+			SimpleDateFormat smDaFo=new SimpleDateFormat();
+			smDaFo.applyPattern(smDaFo.toPattern()+" s.S");
+
+			formattedTime=smDaFo.format(new Date(untilTime));
+		}
+
+		
+		output+="until ";
+		output+=formattedTime+" ";
+
+		return output;
+	}
+	
 	public void releaseContainer(TransportOrderChain curTOC){
-		TransportOrder TO=new TransportOrder();
+		echoStatus("releasing container: ",curTOC);
+		TransportOrder TO=findMatchingOrder(curTOC, false);
+		if(TO!=null){
+			echoStatus("found outgoing transport order for release: "+transportOrderToString(TO),curTOC);
+		}
+		if(TO==null){ //no predefined outgoing transport order found, just create a new one
+			TO=new TransportOrder();
+		}
 
 		TO.setStarts_at(this.getMyselfDesignator());
-		TO.getStarts_at().setAt_address(((Holding) getTOCState(curTOC)).getAt_address()); // add current position of container to start designator 
-		TO.setEnds_at(this.getAbstractTargetDesignator());
+		TO.getStarts_at().setAt_address(((Holding) getTOCState(curTOC)).getAt_address()); // add current position of container to start designator
+		if(TO.getEnds_at()==null){
+			TO.setEnds_at(this.getAbstractTargetDesignator());
+			echoStatus("no predefined end designator, create new one "+transportOrderToString(TO),curTOC);
+		}
 		curTOC.addIs_linked_by(TO);
 		Behaviour b=new announceLoadOrders(this,curTOC);
 		this.addBehaviour(b);

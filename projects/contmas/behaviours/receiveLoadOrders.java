@@ -27,6 +27,7 @@ import jade.proto.ContractNetResponder;
 import contmas.agents.ContainerAgent;
 import contmas.agents.ContainerHolderAgent;
 import contmas.interfaces.TacticalMemorizer;
+import contmas.main.EnvironmentHelper;
 import contmas.main.MatchAgentAction;
 import contmas.ontology.*;
 
@@ -243,7 +244,10 @@ public class receiveLoadOrders extends ContractNetResponder{
 						returnState=CFP_NOT_SUITABLE;
 					}else{
 						myCAgent.echoStatus("Proposing for Announcement.",curTOC,ContainerAgent.LOGGING_INFORM);
+						
+						destinationAddress=loadOffer.getLoad_offer().getEnds_at().getAt_address();
 
+						myCAgent.echoStatus("destinationAddress= "+EnvironmentHelper.blockAddressToString(destinationAddress));
 						curTO=loadOffer.getLoad_offer(); //get transport order TO me
 						//curTO.getStarts_at().getAt_address(); //startaddress available here
 						

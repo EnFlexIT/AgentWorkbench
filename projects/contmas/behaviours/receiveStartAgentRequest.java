@@ -64,8 +64,8 @@ public class receiveStartAgentRequest extends AchieveREResponder{
 		this.parent.randomize=act.getRandomize();
 		this.parent.populate=act.getPopulate();
 		
-		this.parent.START_AGENT_REQUEST_KEY=request;
-		this.parent.START_AGENT_RESPONSE_KEY=reply;
+		this.parent.START_AGENT_REQUEST_MSG=request;
+		this.parent.START_AGENT_RESPONSE_MSG=reply;
 
 		this.parent.nextStep();
 		this.parent.removeSubBehaviour(this);

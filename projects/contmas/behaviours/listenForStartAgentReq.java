@@ -46,8 +46,8 @@ public class listenForStartAgentReq extends SequentialBehaviour implements OntRe
 	public ContainerHolder ontRep=null;
 	public Boolean populate=true;
 	public Boolean randomize=false;
-	public ACLMessage START_AGENT_REQUEST_KEY=null;
-	public ACLMessage START_AGENT_RESPONSE_KEY=null;
+	public ACLMessage START_AGENT_REQUEST_MSG=null;
+	public ACLMessage START_AGENT_RESPONSE_MSG=null;
 
 	/**
 	 * @param a
@@ -113,7 +113,7 @@ public class listenForStartAgentReq extends SequentialBehaviour implements OntRe
 		 */
 		@Override
 		public void action(){
-			ACLMessage request=listenForStartAgentReq.this.START_AGENT_REQUEST_KEY;
+			ACLMessage request=listenForStartAgentReq.this.START_AGENT_REQUEST_MSG;
 			StartNewContainerHolder act=(StartNewContainerHolder) ContainerAgent.extractAction(this.myAgent,request);
 			AgentContainer c=this.myAgent.getContainerController();
 			AgentController a=null;
@@ -150,13 +150,13 @@ public class listenForStartAgentReq extends SequentialBehaviour implements OntRe
 					a=c.acceptNewAgent(act.getName(),new YardAgent((Yard) ontRep));
 				}
 				a.start();
-				ACLMessage inform=listenForStartAgentReq.this.START_AGENT_RESPONSE_KEY;
+				ACLMessage inform=listenForStartAgentReq.this.START_AGENT_RESPONSE_MSG;
 				this.myAgent.send(inform);
 			}catch(StaleProxyException e){
 
 				if (e.getMessage().startsWith("Name-clash Agent")){
 					((ContainerAgent) myAgent).echoStatus(e.getMessage(),ContainerAgent.LOGGING_NOTICE);
-					ACLMessage response=listenForStartAgentReq.this.START_AGENT_RESPONSE_KEY;
+					ACLMessage response=listenForStartAgentReq.this.START_AGENT_RESPONSE_MSG;
 					response.setPerformative(ACLMessage.FAILURE);
 					response.setContent(e.getMessage());
 					this.myAgent.send(response);

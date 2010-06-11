@@ -157,14 +157,20 @@ public class RandomGeneratorAgent extends ContainerAgent{
 			Integer contNr=0;
 
 			while(allCont.hasNext()){
-				Holding curState=(Holding) ((TOCHasState) allCont.next()).getState();
-				BlockAddress curCont=curState.getAt_address();
+				TOCHasState curTOCState = (TOCHasState) allCont.next();
+				TransportOrderChain curTOC=curTOCState.getSubjected_toc();
+				Holding curState=(Holding) curTOCState.getState();
+				
+//				TransportOrderChain curTOC=new TransportOrderChain();
+//				BlockAddress curCont=curState.getAt_address();
+//				curTOC.setTransports(curCont.getLocates());
+				
+
 				if((contNr % CONT_AMOUNT_PER_LOADLIST) == 0){
 					curLoadList=new LoadList();
 				}
-				TransportOrderChain curTOC=new TransportOrderChain();
-				curTOC.setTransports(curCont.getLocates());
 				curLoadList.addConsists_of(curTOC);
+				
 				if((contNr % CONT_AMOUNT_PER_LOADLIST) == 0){
 
 					if(lastLoadList == null){ //this is the first run

@@ -28,10 +28,15 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JDesktopPane;
 import javax.swing.JInternalFrame;
+import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 
 import contmas.agents.MonitorAgent;
+import contmas.main.ControlGUI;
 import contmas.main.MonitorGUI;
 
 import java.awt.Dimension;
@@ -53,7 +58,7 @@ public class DashboardGUI extends JInternalFrame implements ActionListener{
 	private DashboardAgent myAgent;
 	private JPanel layoutPanel = null;
 	private JScrollPane exampleOutputScroll = null;
-	private JTextPane exampleOutput = null;
+	private JTextArea exampleOutput = null;
 	private JButton exampleButton = null;
 
 
@@ -142,6 +147,8 @@ public class DashboardGUI extends JInternalFrame implements ActionListener{
 		if(exampleOutputScroll == null){
 			exampleOutputScroll=new JScrollPane();
 			exampleOutputScroll.setViewportView(getExampleOutput());
+			exampleOutputScroll.setAutoscrolls(true);
+
 		}
 		return exampleOutputScroll;
 	}
@@ -151,9 +158,13 @@ public class DashboardGUI extends JInternalFrame implements ActionListener{
 	 * 	
 	 * @return javax.swing.JTextPane	
 	 */
-	private JTextPane getExampleOutput(){
+	private JTextArea getExampleOutput(){
 		if(exampleOutput == null){
-			exampleOutput=new JTextPane();
+			exampleOutput=new JTextArea();
+			exampleOutput.setText("");
+			exampleOutput.setSize(new Dimension(1000,112));
+			exampleOutput.setEditable(false);
+			exampleOutput.setAutoscrolls(true);
 		}
 		return exampleOutput;
 	}
@@ -180,8 +191,19 @@ public class DashboardGUI extends JInternalFrame implements ActionListener{
 	/**
 	 * @param text
 	 */
-	public void echoApp(String text){
-		getExampleOutput().setText(getExampleOutput().getText()+text+"\n");	
+	public void echoApp(final String text){
+		Runnable addIt=new Runnable(){
+			public void run(){
+				Document doc=getExampleOutput().getDocument();
+				try{
+					doc.insertString(doc.getLength(),text+"\n",null);
+				}catch(BadLocationException ex){
+					ex.printStackTrace();
+				}
+			}
+		};
+		SwingUtilities.invokeLater(addIt);
+
 	}
 
 }  //  @jve:decl-index=0:visual-constraint="10,10"

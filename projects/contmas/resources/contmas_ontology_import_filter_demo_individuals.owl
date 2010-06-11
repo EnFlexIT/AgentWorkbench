@@ -11,53 +11,194 @@
   <owl:Ontology rdf:about="">
     <owl:imports rdf:resource="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/contmas_ontology.owl"/>
   </owl:Ontology>
-  <j.0:Ship rdf:ID="Ship_1">
-    <j.0:contains>
-      <j.0:BayMap rdf:ID="BayMap_2">
-        <j.0:x_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
-        >3</j.0:x_dimension>
-        <j.0:y_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
-        >5</j.0:y_dimension>
-        <j.0:z_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
-        >2</j.0:z_dimension>
-      </j.0:BayMap>
-    </j.0:contains>
-    <j.0:container_states>
-      <j.0:TOCHasState rdf:ID="TOCHasState_3">
-        <j.0:subjected_toc>
-          <j.0:TransportOrderChain rdf:ID="TransportOrderChain_7">
-            <j.0:is_linked_by>
-              <j.0:TransportOrder rdf:ID="TransportOrder_10"/>
-            </j.0:is_linked_by>
-            <j.0:terminates_at rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-            >PortChalmers</j.0:terminates_at>
-            <j.0:transports>
-              <j.0:Container rdf:ID="Container_6">
-                <j.0:bic_code rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-                >XYZ424711</j.0:bic_code>
-              </j.0:Container>
-            </j.0:transports>
-          </j.0:TransportOrderChain>
-        </j.0:subjected_toc>
-        <j.0:state>
-          <j.0:Administered rdf:ID="Administered_4">
-            <j.0:at_address>
-              <j.0:BlockAddress rdf:ID="BlockAddress_5">
-                <j.0:locates rdf:resource="#Container_6"/>
+  <j.0:BlockAddress rdf:ID="ExampleENDBlockAddress">
+    <j.0:y_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+    >1</j.0:y_dimension>
+    <j.0:x_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+    >1</j.0:x_dimension>
+    <j.0:z_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+    >0</j.0:z_dimension>
+  </j.0:BlockAddress>
+  <j.0:TransportOrder rdf:ID="Ship_Crane">
+    <j.0:starts_at>
+      <j.0:Designator rdf:ID="ShipDesig">
+        <j.0:type rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >concrete</j.0:type>
+        <j.0:concrete_designation>
+          <j.0:Ship rdf:ID="MV_Ship">
+            <j.0:container_states>
+              <j.0:TOCHasState rdf:ID="SecondExampleTOCHasState">
+                <j.0:subjected_toc>
+                  <j.0:TransportOrderChain rdf:ID="SecondExampleTransportOrderChain">
+                    <j.0:is_linked_by>
+                      <j.0:TransportOrder rdf:ID="Ship_">
+                        <j.0:starts_at rdf:resource="#ShipDesig"/>
+                      </j.0:TransportOrder>
+                    </j.0:is_linked_by>
+                    <j.0:is_linked_by>
+                      <j.0:TransportOrder rdf:ID="_Yard">
+                        <j.0:ends_at>
+                          <j.0:Designator rdf:ID="YardDesignatorFree">
+                            <j.0:at_address>
+                              <j.0:BlockAddress rdf:ID="SecondExampleENDBlockAddress">
+                                <j.0:z_dimension rdf:datatype=
+                                "http://www.w3.org/2001/XMLSchema#int"
+                                >0</j.0:z_dimension>
+                                <j.0:y_dimension rdf:datatype=
+                                "http://www.w3.org/2001/XMLSchema#int"
+                                >3</j.0:y_dimension>
+                                <j.0:x_dimension rdf:datatype=
+                                "http://www.w3.org/2001/XMLSchema#int"
+                                >1</j.0:x_dimension>
+                              </j.0:BlockAddress>
+                            </j.0:at_address>
+                            <j.0:concrete_designation>
+                              <j.0:Yard rdf:ID="Yard">
+                                <j.0:localName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+                                >Yard</j.0:localName>
+                              </j.0:Yard>
+                            </j.0:concrete_designation>
+                            <j.0:type rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+                            >concrete</j.0:type>
+                          </j.0:Designator>
+                        </j.0:ends_at>
+                      </j.0:TransportOrder>
+                    </j.0:is_linked_by>
+                    <j.0:terminates_at rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+                    >PortChalmers</j.0:terminates_at>
+                    <j.0:transports>
+                      <j.0:Container rdf:ID="SecondExampleContainer">
+                        <j.0:bic_code rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+                        >LOL100110</j.0:bic_code>
+                      </j.0:Container>
+                    </j.0:transports>
+                  </j.0:TransportOrderChain>
+                </j.0:subjected_toc>
+                <j.0:state>
+                  <j.0:Administered rdf:ID="Administered_22">
+                    <j.0:at_address>
+                      <j.0:BlockAddress rdf:ID="SecondExampleSTARTBlockAddress">
+                        <j.0:z_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+                        >0</j.0:z_dimension>
+                        <j.0:x_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+                        >1</j.0:x_dimension>
+                        <j.0:locates rdf:resource="#SecondExampleContainer"/>
+                        <j.0:y_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+                        >0</j.0:y_dimension>
+                      </j.0:BlockAddress>
+                    </j.0:at_address>
+                  </j.0:Administered>
+                </j.0:state>
+              </j.0:TOCHasState>
+            </j.0:container_states>
+            <j.0:container_states>
+              <j.0:TOCHasState rdf:ID="ExampleTOCHasState">
+                <j.0:state>
+                  <j.0:Administered rdf:ID="Administered_4">
+                    <j.0:at_address>
+                      <j.0:BlockAddress rdf:ID="ExampleSTARTBlockAddress">
+                        <j.0:y_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+                        >0</j.0:y_dimension>
+                        <j.0:x_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+                        >0</j.0:x_dimension>
+                        <j.0:z_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+                        >0</j.0:z_dimension>
+                        <j.0:locates>
+                          <j.0:Container rdf:ID="ExampleContainer">
+                            <j.0:bic_code rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+                            >XYZ424711</j.0:bic_code>
+                          </j.0:Container>
+                        </j.0:locates>
+                      </j.0:BlockAddress>
+                    </j.0:at_address>
+                  </j.0:Administered>
+                </j.0:state>
+                <j.0:subjected_toc>
+                  <j.0:TransportOrderChain rdf:ID="ExampleTransportOrderChain">
+                    <j.0:terminates_at rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+                    >PortChalmers</j.0:terminates_at>
+                    <j.0:transports rdf:resource="#ExampleContainer"/>
+                    <j.0:is_linked_by>
+                      <j.0:TransportOrder rdf:ID="Crane_Apron">
+                        <j.0:ends_at>
+                          <j.0:Designator rdf:ID="ApronDesignator">
+                            <j.0:concrete_designation>
+                              <j.0:Apron rdf:ID="ApronOne">
+                                <j.0:localName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+                                >ApronOne</j.0:localName>
+                              </j.0:Apron>
+                            </j.0:concrete_designation>
+                            <j.0:type rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+                            >concrete</j.0:type>
+                          </j.0:Designator>
+                        </j.0:ends_at>
+                        <j.0:starts_at>
+                          <j.0:Designator rdf:ID="CraneDesig">
+                            <j.0:type rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+                            >concrete</j.0:type>
+                            <j.0:concrete_designation>
+                              <j.0:Crane rdf:ID="CraneOne">
+                                <j.0:localName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+                                >CraneOne</j.0:localName>
+                              </j.0:Crane>
+                            </j.0:concrete_designation>
+                          </j.0:Designator>
+                        </j.0:starts_at>
+                      </j.0:TransportOrder>
+                    </j.0:is_linked_by>
+                    <j.0:is_linked_by>
+                      <j.0:TransportOrder rdf:ID="StraddleCarrier_Yard">
+                        <j.0:starts_at>
+                          <j.0:Designator rdf:ID="StraddleCarrierDesignator">
+                            <j.0:type rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+                            >concrete</j.0:type>
+                            <j.0:concrete_designation>
+                              <j.0:StraddleCarrier rdf:ID="StraddleCarrier">
+                                <j.0:localName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+                                >StraddleCarrier</j.0:localName>
+                              </j.0:StraddleCarrier>
+                            </j.0:concrete_designation>
+                          </j.0:Designator>
+                        </j.0:starts_at>
+                        <j.0:ends_at>
+                          <j.0:Designator rdf:ID="YardDesignator">
+                            <j.0:concrete_designation rdf:resource="#Yard"/>
+                            <j.0:type rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+                            >concrete</j.0:type>
+                            <j.0:at_address rdf:resource="#ExampleENDBlockAddress"/>
+                          </j.0:Designator>
+                        </j.0:ends_at>
+                      </j.0:TransportOrder>
+                    </j.0:is_linked_by>
+                    <j.0:is_linked_by>
+                      <j.0:TransportOrder rdf:ID="Apron_StraddleCarrier">
+                        <j.0:starts_at rdf:resource="#ApronDesignator"/>
+                        <j.0:ends_at rdf:resource="#StraddleCarrierDesignator"/>
+                      </j.0:TransportOrder>
+                    </j.0:is_linked_by>
+                    <j.0:is_linked_by rdf:resource="#Ship_Crane"/>
+                  </j.0:TransportOrderChain>
+                </j.0:subjected_toc>
+              </j.0:TOCHasState>
+            </j.0:container_states>
+            <j.0:contains>
+              <j.0:BayMap rdf:ID="MV_Ship_BayMap">
                 <j.0:y_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
-                >0</j.0:y_dimension>
-                <j.0:z_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
-                >0</j.0:z_dimension>
+                >5</j.0:y_dimension>
                 <j.0:x_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
-                >0</j.0:x_dimension>
-              </j.0:BlockAddress>
-            </j.0:at_address>
-          </j.0:Administered>
-        </j.0:state>
-      </j.0:TOCHasState>
-    </j.0:container_states>
-  </j.0:Ship>
-  <j.0:Yard rdf:ID="Yard_16"/>
+                >3</j.0:x_dimension>
+                <j.0:z_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+                >2</j.0:z_dimension>
+              </j.0:BayMap>
+            </j.0:contains>
+            <j.0:localName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+            >MV Ship</j.0:localName>
+          </j.0:Ship>
+        </j.0:concrete_designation>
+      </j.0:Designator>
+    </j.0:starts_at>
+    <j.0:ends_at rdf:resource="#CraneDesig"/>
+  </j.0:TransportOrder>
 </rdf:RDF>
 
 <!-- Created with Protege (with OWL Plugin 3.3.1, Build 430)  http://protege.stanford.edu -->

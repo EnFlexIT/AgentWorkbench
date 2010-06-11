@@ -175,6 +175,8 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 					}
 				}
 				
+				cleanDesignatorsInTOCs(ontologyRepresentation.getContainer_states());
+				
 				HarbourSetup.inflateCH(ontologyRepresentation,harbourMap);
 				
 				BayMap mapp=ontologyRepresentation.getContains();
@@ -185,7 +187,7 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 
 					TOCHasState foo=(TOCHasState) states.next();
 					processLogMsg(foo+"\n");
-					processLogMsg(foo.getSubjected_toc().getTransports().getBic_code());
+					processLogMsg(foo.getSubjected_toc().getTransports().getBic_code()+"\n");
 
 				}
 				
@@ -219,6 +221,28 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 
 		}
 
+	}
+	
+	private static void cleanDesignatorsInTOCs(List allContainerStates){
+		Iterator states=allContainerStates.iterator();
+		while(states.hasNext()){
+			TOCHasState curState=(TOCHasState) states.next();
+			Iterator allTOs = curState.getSubjected_toc().getAllIs_linked_by();
+			while(allTOs.hasNext()){
+				TransportOrder curTO=(TransportOrder) allTOs.next();
+				cleanDesignator(curTO.getStarts_at());
+				cleanDesignator(curTO.getEnds_at());
+			}
+		}
+	}
+	
+	private static void cleanDesignator(Designator desig){
+		if(desig!=null){
+			AID orig = desig.getConcrete_designation();
+			AID cleaned=new AID();
+			cleaned.setLocalName(orig.getLocalName());
+			desig.setConcrete_designation(cleaned);
+		}
 	}
 	
 	protected void addToSniffer(AID agentToSniff){
