@@ -4,8 +4,8 @@ import jade.core.Agent;
 import jade.core.ServiceException;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
-import mas.time.AgentGUIService;
-import mas.time.AgentGUIServiceHelper;
+import mas.service.AgentGUIService;
+import mas.service.AgentGUIServiceHelper;
 /** 
 * <p>Title Hello JJADE</p> 
 * <p>Description: A very simple agent which replies ot any message with an INFORM message with content "Hello World"</p> 

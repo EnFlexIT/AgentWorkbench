@@ -1,4 +1,4 @@
-package mas.time;
+package mas.service;
 
 import java.util.Date;
 
