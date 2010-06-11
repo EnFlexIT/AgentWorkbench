@@ -1,8 +1,11 @@
 package mas.agents;
 
-import jade.core.Agent; 
-import jade.core.behaviours.CyclicBehaviour; 
-import jade.lang.acl.ACLMessage; 
+import jade.core.Agent;
+import jade.core.ServiceException;
+import jade.core.behaviours.CyclicBehaviour;
+import jade.lang.acl.ACLMessage;
+import mas.time.AgentGUIService;
+import mas.time.AgentGUIServiceHelper;
 /** 
 * <p>Title Hello JJADE</p> 
 * <p>Description: A very simple agent which replies ot any message with an INFORM message with content "Hello World"</p> 
@@ -19,6 +22,16 @@ public class HelloWorldAgent extends Agent {
 		System.out.println("Hallo, ich bin der erste Agent von Christian ...");
 		System.out.println("Local - Name:" + getAID().getLocalName() );
 		System.out.println("GUID - Name:" + getAID().getName() );
+		
+		AgentGUIServiceHelper agentGUIHelper = null;
+		
+		try {
+			agentGUIHelper = (AgentGUIServiceHelper) getHelper(AgentGUIService.NAME);
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
+		System.out.println( agentGUIHelper.getWorldTimeLocalAsDate().toString() ); 
+		
 	} 
 
 	class HelloBehaviour extends CyclicBehaviour { 

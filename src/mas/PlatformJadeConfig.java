@@ -132,6 +132,8 @@ public class PlatformJadeConfig implements Serializable {
 		while (it.hasNext()) {
 			serviceListString += it.next();
 		}
+		//TODO: bald mal wieder rausschmeissen ...
+		serviceListString +="mas.time.AgentGUIService;";
 		return serviceListString;
 	}
 	/**
