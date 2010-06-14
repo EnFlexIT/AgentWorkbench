@@ -178,7 +178,8 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 				cleanDesignatorsInTOCs(ontologyRepresentation.getContainer_states());
 				
 				HarbourSetup.inflateCH(ontologyRepresentation,harbourMap);
-				
+
+				/*
 				BayMap mapp=ontologyRepresentation.getContains();
 				processLogMsg("BayMap "+mapp.getX_dimension()+"x"+mapp.getY_dimension()+"x"+mapp.getZ_dimension()+"\n");
 				
@@ -190,6 +191,7 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 					processLogMsg(foo.getSubjected_toc().getTransports().getBic_code()+"\n");
 
 				}
+				*/
 				
 				StartNewContainerHolder act=new StartNewContainerHolder();
 				act.setName(name);
@@ -369,7 +371,13 @@ public class ControlGUIAgent extends GuiAgent implements OntRepRequester,DFSubsc
 				BlockAddress curCont=((Holding)contState.getState()).getAt_address();
 				dispString+=" ("+EnvironmentHelper.blockAddressToString(curCont)+")";
 			} else{
-				dispString+=" [NotHeld]";
+				if(contState.getState() instanceof Reserved){
+					BlockAddress curCont=((Reserved)contState.getState()).getAt_address();
+					dispString+=" ["+EnvironmentHelper.blockAddressToString(curCont)+"]";
+				} else {
+					dispString+=" [NotHeld]";
+
+				}
 			}
 			containerList.addElement(dispString);
 		}

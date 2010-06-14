@@ -210,8 +210,6 @@ public class receiveLoadOrders extends ContractNetResponder{
 				curTOC=call.getCorresponds_to();
 //				myCAgent.echoStatus("handleCFP - Prolog",curTOC);
 
-//					((ContainerAgent)myAgent).echoStatus("Ausschreibung erhalten.",curTOC);
-
 				if( !myCAgent.isQueueNotFull()){//schon auf genug Aufträge beworben
 					myCAgent.echoStatus("schon genug Aufträge, refusing",ContainerAgent.LOGGING_INFORM);
 					reply.setContent("schon genug Aufträge");
@@ -247,7 +245,7 @@ public class receiveLoadOrders extends ContractNetResponder{
 						
 						destinationAddress=loadOffer.getLoad_offer().getEnds_at().getAt_address();
 
-						myCAgent.echoStatus("destinationAddress= "+EnvironmentHelper.blockAddressToString(destinationAddress));
+						myCAgent.echoStatus("destinationAddress= "+EnvironmentHelper.blockAddressToString(destinationAddress),ContainerAgent.LOGGING_INFORM);
 						curTO=loadOffer.getLoad_offer(); //get transport order TO me
 						//curTO.getStarts_at().getAt_address(); //startaddress available here
 						
@@ -286,20 +284,23 @@ public class receiveLoadOrders extends ContractNetResponder{
 			public void action(){
 				isDone=true;
 				if(destinationAddress == null){
-					destinationAddress=myAgent.getEmptyBlockAddress(curTOC); //zieladresse besorgen
+					destinationAddress=myAgent.getEmptyBlockAddress(curTOC); //get destination address. only on first run if not predefined in announcement
 					isDone=false;
-				}else if(destinationAddress.getX_dimension() == -1 || destinationAddress.getY_dimension() == -1 || destinationAddress.getZ_dimension() == -1){
-
+				}else
+				if(destinationAddress.getX_dimension() == -1 || destinationAddress.getY_dimension() == -1 || destinationAddress.getZ_dimension() == -1){
 					isDone=false;
 					block(100);
 				}
-				curTO.getEnds_at().setAt_address(destinationAddress);
-				loadOffer.getLoad_offer().getEnds_at().setAt_address(destinationAddress);
+				if(destinationAddress != null){
 
-				TransportOrderChainState state=new Reserved();
-				state.setAt_address(destinationAddress);
-				state.setLoad_offer(curTO);
-				myCAgent.setTOCState(curTOC,state);
+					curTO.getEnds_at().setAt_address(destinationAddress);
+					loadOffer.getLoad_offer().getEnds_at().setAt_address(destinationAddress);
+	
+					TransportOrderChainState state=new Reserved();
+					state.setAt_address(destinationAddress);
+					state.setLoad_offer(curTO);
+					myCAgent.setTOCState(curTOC,state);
+				}
 			}
 
 			/* (non-Javadoc)

@@ -212,7 +212,7 @@ public class requestExecuteAppointment extends AchieveREInitiator{
 	}
 	@Override
 	public void handleFailure(ACLMessage msg){
-		myCAgent.echoStatus("received Failure");
+		myCAgent.echoStatus("requestExecuteAppointment.handleFailure: received Failure");
 	}
 	
 /*

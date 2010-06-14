@@ -239,7 +239,7 @@ public class listenForExecuteAppointmentReq extends AchieveREResponder{
 				rply.setPerformative(ACLMessage.FAILURE);
 				myCAgent.fillMessage(rply,loadStatus);
 				getDataStore().put(RESPONSE_KEY,rply);
-				myCAgent.echoStatus("sent failure");
+				myCAgent.echoStatus("listenForExecuteAppointmentReq.handleRequest.SendFailure: sent failure");
 
 			}
 		}

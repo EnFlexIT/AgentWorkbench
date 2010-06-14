@@ -44,7 +44,11 @@ public class announceLoadOrders extends ContractNetInitiator{
 	private final TransportOrderChain curTOC;
 	private TransportOrder curTO;
 	Domain endDomain;
+	
+//	private static final Long ANNOUNCEMENT_VALIDITY=50000L; //500000
+	private static final Long ANNOUNCEMENT_VALIDITY=0L; //500000
 
+	
 	private final ContainerHolderAgent myCAgent=(ContainerHolderAgent) this.myAgent;
 
 	public announceLoadOrders(Agent a,TransportOrderChain currentTOC){
@@ -80,7 +84,9 @@ public class announceLoadOrders extends ContractNetInitiator{
 			CallForProposalsOnLoadStage act=new CallForProposalsOnLoadStage();
 			act.setCorresponds_to(this.curTOC);
 			this.myCAgent.fillMessage(cfp,act);
-			cfp.setReplyByDate(new Date(System.currentTimeMillis() + 50000)); //500000
+			if(ANNOUNCEMENT_VALIDITY!=0){
+				cfp.setReplyByDate(new Date(System.currentTimeMillis() + ANNOUNCEMENT_VALIDITY));
+			}
 			messages.add(cfp);
 
 			//		((ContainerAgent)myAgent).echoStatus("Auftrag ausgeschrieben.",curTOC);

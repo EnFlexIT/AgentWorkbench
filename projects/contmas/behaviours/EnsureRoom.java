@@ -66,10 +66,12 @@ class EnsureRoom extends SimpleBehaviour{
 				if(someTOC == null){
 					someTOC=myCAgent.getSomeTOCOfState(new Administered());
 					if(someTOC != null){
-						myCAgent.echoStatus("BayMap voll, versuche Räumung für",curTOC,ContainerAgent.LOGGING_INFORM);
-						TransportOrderChainState state=new PendingForSubCFP();
-						state.setLoad_offer(curTO);
+						myCAgent.echoStatus("BayMap full, newly started trying to free for ",curTOC,ContainerAgent.LOGGING_DEBUG);
+						
+//						TransportOrderChainState state=new PendingForSubCFP();
+//						state.setLoad_offer(curTO);
 //						myCAgent.setTOCState(curTOC,state);
+						
 						myCAgent.releaseContainer(someTOC);
 //						myCAgent.registerForWakeUpCall(this);
 					}
@@ -78,7 +80,7 @@ class EnsureRoom extends SimpleBehaviour{
 				if(someTOC != null){ // TOC is in one of the above states, so all steps taken, just sit back and relax
 					myCAgent.registerForWakeUpCall(this);
 					isDone=false;
-					myCAgent.echoStatus("BayMap full, trying to free.",ContainerAgent.LOGGING_INFORM);
+					myCAgent.echoStatus("BayMap full, trying to free for ",curTOC,ContainerAgent.LOGGING_DEBUG);
 
 //					returnState=TRY_FREEING;
 				}else{ //keine administrierten TOCs da

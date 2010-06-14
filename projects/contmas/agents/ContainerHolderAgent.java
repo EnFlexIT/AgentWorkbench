@@ -549,10 +549,10 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 	}
 	
 	public void releaseContainer(TransportOrderChain curTOC){
-		echoStatus("releasing container: ",curTOC);
+		echoStatus("releasing container: ",curTOC, LOGGING_INFORM);
 		TransportOrder TO=findMatchingOrder(curTOC, false);
 		if(TO!=null){
-			echoStatus("found outgoing transport order for release: "+transportOrderToString(TO),curTOC);
+			echoStatus("found outgoing transport order for release: "+transportOrderToString(TO),curTOC, LOGGING_INFORM);
 		}
 		if(TO==null){ //no predefined outgoing transport order found, just create a new one
 			TO=new TransportOrder();
@@ -562,7 +562,7 @@ public class ContainerHolderAgent extends ContainerAgent implements OntRepProvid
 		TO.getStarts_at().setAt_address(((Holding) getTOCState(curTOC)).getAt_address()); // add current position of container to start designator
 		if(TO.getEnds_at()==null){
 			TO.setEnds_at(this.getAbstractTargetDesignator());
-			echoStatus("no predefined end designator, create new one "+transportOrderToString(TO),curTOC);
+			echoStatus("no predefined end designator, create new one "+transportOrderToString(TO),curTOC, LOGGING_INFORM);
 		}
 		curTOC.addIs_linked_by(TO);
 		Behaviour b=new announceLoadOrders(this,curTOC);

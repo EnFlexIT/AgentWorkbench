@@ -117,7 +117,7 @@ public class DashboardAgent extends GuiAgent implements DFSubscriber,Measurer{
 	}
 
 	private void echo(String text){
-		System.out.println(text);
+//		System.out.println(text);
 		myGui.echoApp(text);
 	}
 
