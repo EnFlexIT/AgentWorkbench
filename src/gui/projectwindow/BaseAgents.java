@@ -212,8 +212,6 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 			}
 			jAgentList = new JList(jAgentListModel);
 			jAgentList.setToolTipText("Agenten in diesem Projekt");
-			jAgentList.setVisibleRowCount(12);
-			jAgentList.setPreferredSize(new Dimension(500, 400));
 			jAgentList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			jAgentList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
 				public void valueChanged(javax.swing.event.ListSelectionEvent se) {

@@ -5,6 +5,9 @@ import gui.ProjectWindow;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.Writer;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Observable;
 import java.util.Vector;
 
@@ -24,6 +27,7 @@ import mas.display.ontology.Environment;
 import mas.environment.EnvironmentController;
 import mas.onto.Ontologies4Project;
 import rollout.TextFileRessourceRollOut;
+import sun.misc.ClassLoaderUtil;
 
 @XmlRootElement public class Project extends Observable {
 
@@ -48,6 +52,7 @@ import rollout.TextFileRessourceRollOut;
 	@XmlTransient public boolean ProjectUnsaved = false;
 	@XmlTransient private String ProjectFolder;
 	@XmlTransient private String ProjectFolderFullPath;
+	@XmlTransient private String MainPackage;
 	@XmlTransient private Vector<Class<?>> ProjectAgents;
 	@XmlTransient public Ontologies4Project ontologies4Project;
 
@@ -72,6 +77,7 @@ import rollout.TextFileRessourceRollOut;
 	
 	@XmlElement(name="jadeConfiguration")
 	public PlatformJadeConfig JadeConfiguration = new PlatformJadeConfig();
+	private String JarFileName;
 	
 	
 	/**
@@ -303,15 +309,72 @@ import rollout.TextFileRessourceRollOut;
 	public String getProjectFolderFullPath() {
 		return ProjectFolderFullPath;
 	}
+	/**
+	 * @return the MainPackage
+	 */
+	public String getMainPackage() {
+		return MainPackage;
+	}
+	/**
+	 * @param mainPackage the mainPackage to set
+	 */
+	public void setMainPackage(String mainPackage) {
+		MainPackage = mainPackage;
+		ProjectUnsaved = true;
+		setChanged();
+		notifyObservers( "MainPackage" );
+	}
+	
+	/**
+	 * @return the JarFileName
+	 */
+	public String getJarFileName() {
+		return JarFileName;
+	}
+	/**
+	 * @param mainPackage the mainPackage to set
+	 */
+	public void setJarFileName(String jarFileName) {
+		JarFileName = jarFileName;
+		ProjectUnsaved = true;
+		setChanged();
+		notifyObservers( "JarFileName" );
+	}
 	
 	/**
 	 * @param projectAgents the projectAgents to set
 	 */
 	public void filterProjectAgents() {
-		ProjectAgents = Application.JadePlatform.jadeGetAgentClasses( this.getProjectFolder() );
+		ProjectAgents = Application.JadePlatform.jadeGetAgentClasses( this.getMainPackage() );
 		setChanged();
 		notifyObservers("ProjectAgents");
 	}
+	
+	/**
+	 * 
+	 */
+	public void loadJarFile(){
+
+		String filePath=getProjectFolderFullPath()+getJarFileName();
+//		filePath = "jar:file://" + filePath + "!/";
+		System.out.println(filePath);
+
+		try{
+			URL url=new File(filePath).toURL();
+			URLClassLoader clazzLoader=new URLClassLoader(new URL[]{url});
+			
+			clazzLoader.loadClass("de.unidue.stud.sehawagn.contmas.agents.AGVAgent");
+
+		}catch(MalformedURLException e){
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}catch(ClassNotFoundException e){
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+	
 	/**
 	 * @return the projectAgents
 	 */
@@ -471,5 +534,7 @@ import rollout.TextFileRessourceRollOut;
 		setChanged();
 		notifyObservers("ProjectOntology");
 	}
+
+
 	
 }

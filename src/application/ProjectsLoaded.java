@@ -165,6 +165,9 @@ public class ProjectsLoaded {
 			NewPro.setProjectFolder( LocalTmpProjectFolder );			
 		}
 		
+		// --- Load classes in JAR file of this project ----
+		NewPro.loadJarFile();
+		
 		// --- Die Agenten zu diesem Projekt ermitteln ----
 		NewPro.filterProjectAgents();
 

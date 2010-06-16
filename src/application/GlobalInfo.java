@@ -72,7 +72,9 @@ public class GlobalInfo {
 				// ----------------------------------------------------------
 				// --- Dateinamen herausnehmen ------------------------------
 				CutAt = JCP_Files[i].lastIndexOf( localAppPathSeparatorString );
-				JCP_Folders[i] = JCP_Folders[i].substring(0, CutAt);
+				if(CutAt!=-1){ //only if seperator was actually found
+					JCP_Folders[i] = JCP_Folders[i].substring(0, CutAt);
+				}
 			}	
 			Folders.add(JCP_Folders[i]);						
 		}
