@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="create_run_jar" name="Create Runnable Jar for Project AgentGUI with libraries in sub-folder">
+    <!--this file was created by Eclipse Runnable JAR Export Wizard-->
+    <!--ANT 1.7 is required                                        -->
+    <target name="create_run_jar">
+        <jar destfile="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui.jar">
+            <manifest>
+                <attribute name="Main-Class" value="application.Application"/>
+                <attribute name="Class-Path" value=". agentgui_lib/batik-ext.jar agentgui_lib/batik-dom.jar agentgui_lib/batik-css.jar agentgui_lib/batik-svg-dom.jar agentgui_lib/batik-gvt.jar agentgui_lib/batik-parser.jar agentgui_lib/batik-script.jar agentgui_lib/batik-bridge.jar agentgui_lib/batik-anim.jar agentgui_lib/batik-transcoder.jar agentgui_lib/batik-awt-util.jar agentgui_lib/batik-codec.jar agentgui_lib/batik-util.jar agentgui_lib/batik-xml.jar agentgui_lib/xml-apis.jar agentgui_lib/xalan-2.6.0.jar agentgui_lib/xml-apis-ext.jar agentgui_lib/pdf-transcoder.jar agentgui_lib/js.jar agentgui_lib/batik-rasterizer.jar agentgui_lib/batik-swing.jar agentgui_lib/batik-gui-util.jar agentgui_lib/batik-slideshow.jar agentgui_lib/batik-squiggle.jar agentgui_lib/batik-svgpp.jar agentgui_lib/batik-svggen.jar agentgui_lib/batik-ttf2svg.jar agentgui_lib/batik.jar agentgui_lib/icu4j-3.4.4.jar agentgui_lib/iri-0.7.jar agentgui_lib/jena-2.6.2.jar agentgui_lib/log4j-1.2.13.jar agentgui_lib/slf4j-api-1.5.6.jar agentgui_lib/slf4j-log4j12-1.5.6.jar agentgui_lib/xercesImpl-2.7.1.jar agentgui_lib/commons-codec-1.3.jar agentgui_lib/jade.jar agentgui_lib/migration.jar agentgui_lib/XMLCodec.jar agentgui_lib/ContMAS.jar agentgui_lib/icu4j-3.4.4.jar agentgui_lib/iri-0.7.jar agentgui_lib/jena-2.6.2.jar agentgui_lib/log4j-1.2.13.jar agentgui_lib/slf4j-api-1.5.6.jar agentgui_lib/slf4j-log4j12-1.5.6.jar agentgui_lib/xercesImpl-2.7.1.jar agentgui_lib/jade.jar agentgui_lib/AgentGUIAPI.jar agentgui_lib/XMLCodec.jar"/>
+            </manifest>
+            <fileset dir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/AgentGUI/bin"/>
+            <fileset dir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/AgentGUI/lib/batik"/>
+            <fileset dir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/ContMAS/bin"/>
+        </jar>
+        <delete dir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <mkdir dir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/AgentGUI/lib/batik/lib/batik-ext.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/AgentGUI/lib/batik/lib/batik-dom.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/AgentGUI/lib/batik/lib/batik-css.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/AgentGUI/lib/batik/lib/batik-svg-dom.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/AgentGUI/lib/batik/lib/batik-gvt.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/AgentGUI/lib/batik/lib/batik-parser.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/AgentGUI/lib/batik/lib/batik-script.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/AgentGUI/lib/batik/lib/batik-bridge.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/AgentGUI/lib/batik/lib/batik-anim.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/AgentGUI/lib/batik/lib/batik-transcoder.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/AgentGUI/lib/batik/lib/batik-awt-util.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/AgentGUI/lib/batik/lib/batik-codec.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/AgentGUI/lib/batik/lib/batik-util.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/AgentGUI/lib/batik/lib/batik-xml.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/AgentGUI/lib/batik/lib/xml-apis.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/AgentGUI/lib/batik/lib/xalan-2.6.0.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/AgentGUI/lib/batik/lib/xml-apis-ext.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/AgentGUI/lib/batik/lib/pdf-transcoder.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/AgentGUI/lib/batik/lib/js.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/AgentGUI/lib/batik/batik-rasterizer.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/AgentGUI/lib/batik/lib/batik-swing.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/AgentGUI/lib/batik/lib/batik-gui-util.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/AgentGUI/lib/batik/batik-slideshow.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/AgentGUI/lib/batik/batik-squiggle.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/AgentGUI/lib/batik/batik-svgpp.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/AgentGUI/lib/batik/lib/batik-svggen.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/AgentGUI/lib/batik/batik-ttf2svg.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/AgentGUI/lib/batik/batik.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/AgentGUI/lib/jena/icu4j-3.4.4.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/AgentGUI/lib/jena/iri-0.7.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/AgentGUI/lib/jena/jena-2.6.2.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/AgentGUI/lib/jena/log4j-1.2.13.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/AgentGUI/lib/jena/slf4j-api-1.5.6.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/AgentGUI/lib/jena/slf4j-log4j12-1.5.6.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/AgentGUI/lib/jena/xercesImpl-2.7.1.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/AgentGUI/lib/jade/lib/commons-codec/commons-codec-1.3.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/AgentGUI/lib/jade/lib/jade.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/AgentGUI/lib/jade/lib/migration.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/AgentGUI/lib/jade/lib/XMLCodec.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/AgentGUI/projects/contmasstandalone/ContMAS.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/ContMAS/lib/jena/icu4j-3.4.4.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/ContMAS/lib/jena/iri-0.7.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/ContMAS/lib/jena/jena-2.6.2.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/ContMAS/lib/jena/log4j-1.2.13.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/ContMAS/lib/jena/slf4j-api-1.5.6.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/ContMAS/lib/jena/slf4j-log4j12-1.5.6.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/ContMAS/lib/jena/xercesImpl-2.7.1.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/ContMAS/lib/JADE/jade.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/ContMAS/lib/AgentGUI/AgentGUIAPI.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+        <copy file="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/eclipse-workspace/ContMAS/lib/JADE/XMLCodec.jar" todir="C:/Dokumente und Einstellungen/Hanno - Felix Wagner/Desktop/agentgui_lib"/>
+    </target>
+</project>

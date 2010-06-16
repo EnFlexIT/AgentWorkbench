@@ -129,7 +129,6 @@ public class AgentGUIProjectOntology extends Ontology {
 		} else {
 			// --- Here you can hard define the list of Ontologies to use ----- 
 			ontologyList = new Ontology[2];
-			ontologyList[0] = contmas.ontology.ContainerTerminalOntology.getInstance(); 
 			ontologyList[1] = mas.display.ontology.DisplayOntology.getInstance();
 		}
 		
