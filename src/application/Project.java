@@ -372,6 +372,10 @@ import sun.misc.ClassLoaderUtil;
 //		filePath = "jar:file://" + filePath + "!/";
 //		System.out.println(filePath);
 
+		
+		
+//		System.out.println("jade.util.ClassFinder is at "+ ClassLoader.getSystemClassLoader().getResource("jade.util.ClassFinder"));
+		
 		URLClassLoader clazzLoader=null;
 		try{
 			URL url=new File(filePath).toURL();

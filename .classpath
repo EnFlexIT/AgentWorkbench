@@ -29,7 +29,6 @@
 	<classpathentry kind="lib" path="lib/batik/lib/batik-dom.jar"/>
 	<classpathentry kind="lib" path="lib/batik/lib/batik-ext.jar"/>
 	<classpathentry kind="lib" path="lib/jade/lib/jade.jar"/>
-	<classpathentry kind="lib" path="projects/contmasstandalone/ContMAS.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

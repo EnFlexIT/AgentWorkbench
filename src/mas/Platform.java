@@ -2,7 +2,6 @@ package mas;
 
 import jade.core.Profile;
 import jade.core.Runtime;
-import jade.util.ClassFinder;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
 import jade.wrapper.ControllerException;
@@ -10,6 +9,8 @@ import jade.wrapper.StaleProxyException;
 import jade.wrapper.State;
 
 import java.awt.Cursor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Hashtable;
 import java.util.Map;
@@ -428,6 +429,7 @@ public class Platform extends Object {
 			AgeCont = jadeContainerCreate( ContainerName );
 		}		
 		try {
+//			AgentCont = AgeCont.acceptNewAgent(AgentName);
 			AgentCont = AgeCont.createNewAgent( AgentName, Clazz, AgentArgs );
 			AgentCont.start();
 		} 
@@ -500,7 +502,7 @@ public class Platform extends Object {
 		AgentsVector = Agents.getClassesFound();
 		int i_max = AgentsVector.size();
 		for ( int i = 0; i<i_max; i++ ) {			
-			CurrClass = (Class<?>) AgentsVector.get(i);
+			CurrClass = AgentsVector.get(i);
 			CurrClassName = CurrClass.getName();
 			if ( FilterFor == null || CurrClassName.startsWith( FilterFor ) == true ) {
 				FilteredVector.addElement( CurrClass );								
@@ -566,6 +568,7 @@ public class Platform extends Object {
 	public class jadeClasses implements Runnable {
 
 		private ClassFinder cf = null;
+		private Class<?> cfClass = null;
 		private Vector<Class<?>> classVector = new Vector<Class<?>>();
 		private String superClass = null;
 		private ClassLoader myClassLoader = null;
@@ -587,9 +590,15 @@ public class Platform extends Object {
 			
 			
 */
-			/*
+			System.out.println(superClass);
+/*
 			try {
-				cf=(ClassFinder) myClassLoader.loadClass("ClassFinder").newInstance();
+				cfClass=myClassLoader.loadClass("jade.util.ClassFinder");
+				cf= myClassLoader.loadClass("jade.util.ClassFinder").newInstance();
+				
+				myClassLoader.loadClass("de.unidue.stud.sehawagn.contmas.agents.AGVAgent").newInstance();
+//				cf.getClass().getClassLoader().loadClass("de.unidue.stud.sehawagn.contmas.agents.CraneAgent").newInstance();
+				
 				
 			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
@@ -604,6 +613,7 @@ public class Platform extends Object {
 			*/
 			
 			cf = new ClassFinder();
+			cf.setClassLoader(myClassLoader);
 			/*
 			Map locations = cf.getClasspathLocations();
 			Set foo = locations.keySet();
@@ -612,6 +622,29 @@ public class Platform extends Object {
 				System.out.println(url);
 			}
 			*/
+			/*
+			Method findMethod;
+			try{
+				findMethod=cfClass.getMethod("findSubclasses",String.class);
+				classVector =  (Vector<Class<?>>) findMethod.invoke(cf,SuperClass);
+			}catch(SecurityException e1){
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}catch(NoSuchMethodException e1){
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}catch(IllegalArgumentException e){
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}catch(IllegalAccessException e){
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}catch(InvocationTargetException e){
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			*/
+			
 			classVector = cf.findSubclasses(SuperClass);
 			//System.out.println( Language.translate( "Suche nach " + SuperClass + " beendet .. " ) );
 		}	
@@ -619,6 +652,30 @@ public class Platform extends Object {
 			return classVector;
 		}
 		public boolean isWorking() {
+			/*
+			boolean returnVal=false;
+			Method isWorkingMethod;
+			try{
+				isWorkingMethod=cfClass.getMethod("isWorking");
+				returnVal= (Boolean) isWorkingMethod.invoke(cf);
+			}catch(SecurityException e1){
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}catch(NoSuchMethodException e1){
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}catch(IllegalArgumentException e){
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}catch(IllegalAccessException e){
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}catch(InvocationTargetException e){
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return returnVal;
+			*/
 			return cf.isWorking();
 		}
 		public int getResultCount() {
