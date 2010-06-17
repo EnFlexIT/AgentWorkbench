@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry excluding="contmas/lib/jade/|contmas/lib/|contmas/resources/|contmas/envSetups/|sma/envSetups/|sma/resources/|monitormas/envSetups/|monitormas/resources/|contmas/de/unidue/stud/sehawagn/contmas/monitor/BayMapRenderer.java|contmas/|contmas2/envSetups/|contmas2/resources/|contmasstandalone/|contmas-standalone/src/|contmas-standalone/src/|contmasstandalone/src/|contmasstandalone/src/" kind="src" path="projects"/>
-	<classpathentry kind="src" path="projects/contmasstandalone/src"/>
+	<classpathentry excluding="monitormas/envSetups/|monitormas/resources/|sma/envSetups/|sma/resources/|contmasstandalone/" kind="src" path="projects"/>
 	<classpathentry kind="lib" path="lib/batik/batik-rasterizer.jar"/>
 	<classpathentry kind="lib" path="lib/batik/batik-slideshow.jar"/>
 	<classpathentry kind="lib" path="lib/batik/batik-squiggle.jar"/>
