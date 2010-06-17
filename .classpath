@@ -23,12 +23,12 @@
 	<classpathentry kind="lib" path="lib/batik/lib/batik-script.jar"/>
 	<classpathentry kind="lib" path="lib/jena/xercesImpl-2.7.1.jar"/>
 	<classpathentry kind="lib" path="lib/jade/lib/commons-codec/commons-codec-1.3.jar"/>
-	<classpathentry kind="lib" path="lib/jade/lib/jade.jar"/>
 	<classpathentry kind="lib" path="lib/jade/lib/migration.jar"/>
 	<classpathentry kind="lib" path="lib/jade/lib/XMLCodec.jar"/>
 	<classpathentry kind="lib" path="lib/batik/lib/batik-css.jar"/>
 	<classpathentry kind="lib" path="lib/batik/lib/batik-dom.jar"/>
 	<classpathentry kind="lib" path="lib/batik/lib/batik-ext.jar"/>
+	<classpathentry kind="lib" path="lib/jade/lib/jade.jar"/>
 	<classpathentry kind="lib" path="projects/contmasstandalone/ContMAS.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>

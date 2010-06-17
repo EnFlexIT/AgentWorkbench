@@ -10,7 +10,11 @@ import jade.wrapper.StaleProxyException;
 import jade.wrapper.State;
 
 import java.awt.Cursor;
+import java.net.URL;
 import java.util.Hashtable;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
@@ -37,7 +41,7 @@ public class Platform extends Object {
 	
 	public Platform() {
 		// --- Search for all Agent-Classes -------------
-		this.jadeFindAgentClasse(); // new Thread !! 
+//		this.jadeFindAgentClasse(); // new Thread !! 
 	}	
 	
 	/**
@@ -437,18 +441,24 @@ public class Platform extends Object {
 	 * Starts the search for Agents in the  
 	 * current environment in an own Thread
 	 */
-	public void jadeFindAgentClasse() {
-		Agents = new jadeClasses("jade.core.Agent");
+	public void jadeFindAgentClasse(ClassLoader classLoader) {
+		Agents = new jadeClasses("jade.core.Agent",classLoader);
 		Thread th = new Thread( Agents  );
 		th.setName("Search4Agents");
+//		th.setContextClassLoader(classLoader);
 		th.start();
-	}	
+	}
+	
+	public Vector<Class<?>> jadeGetAgentClasses( String FilterFor) {
+		return 	jadeGetAgentClasses(FilterFor, ClassLoader.getSystemClassLoader() );
+	}
+	
 	/**
 	 * 
 	 * @param FilterFor
 	 * @return
 	 */
-	public Vector<Class<?>> jadeGetAgentClasses( String FilterFor ) {
+	public Vector<Class<?>> jadeGetAgentClasses( String FilterFor, ClassLoader classLoader ) {
 		
 		boolean PrintMsg = true;
 		Class<?> CurrClass = null;
@@ -459,7 +469,7 @@ public class Platform extends Object {
 		// --- Falls noch keine Klassen gefunden wurden, warten ...  ---
 		// -------------------------------------------------------------
 		if (Agents==null) {
-			this.jadeFindAgentClasse();
+			this.jadeFindAgentClasse(classLoader);
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
@@ -503,7 +513,7 @@ public class Platform extends Object {
 	 * current environment in an own Thread
 	 */
 	public void jadeFindOntologyClasse() {
-		Ontologies = new jadeClasses("jade.content.onto.Ontology");
+		Ontologies = new jadeClasses("jade.content.onto.Ontology",ClassLoader.getSystemClassLoader());
 		Thread th = new Thread( Ontologies );
 		th.setName("Search4Ontologies");
 		th.start();
@@ -558,9 +568,11 @@ public class Platform extends Object {
 		private ClassFinder cf = null;
 		private Vector<Class<?>> classVector = new Vector<Class<?>>();
 		private String superClass = null;
+		private ClassLoader myClassLoader = null;
 		
-		public jadeClasses( String superClazz ) {
+		public jadeClasses( String superClazz , ClassLoader classloader) {
 			superClass = superClazz;			
+			myClassLoader=classloader;
 		}		
 		@Override
 		public void run() {
@@ -568,7 +580,38 @@ public class Platform extends Object {
 		}
 		@SuppressWarnings("unchecked")
 		public void FindClasse(String SuperClass)  {
+			/*
+			System.out.println("FindClasse("+SuperClass+")");
+			System.out.println(System.getProperty("java.class.path"));
+			
+			
+			
+*/
+			/*
+			try {
+				cf=(ClassFinder) myClassLoader.loadClass("ClassFinder").newInstance();
+				
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InstantiationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			*/
+			
 			cf = new ClassFinder();
+			/*
+			Map locations = cf.getClasspathLocations();
+			Set foo = locations.keySet();
+			for (Object object : foo) {
+				URL url=(URL) object;
+				System.out.println(url);
+			}
+			*/
 			classVector = cf.findSubclasses(SuperClass);
 			//System.out.println( Language.translate( "Suche nach " + SuperClass + " beendet .. " ) );
 		}	

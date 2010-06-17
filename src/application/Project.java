@@ -345,7 +345,7 @@ import sun.misc.ClassLoaderUtil;
 	 * @param projectAgents the projectAgents to set
 	 */
 	public void filterProjectAgents() {
-		ProjectAgents = Application.JadePlatform.jadeGetAgentClasses( this.getMainPackage() );
+		ProjectAgents = Application.JadePlatform.jadeGetAgentClasses( this.getMainPackage(),getProjectClassLoader() );
 		setChanged();
 		notifyObservers("ProjectAgents");
 	}
@@ -353,26 +353,35 @@ import sun.misc.ClassLoaderUtil;
 	/**
 	 * 
 	 */
-	public void loadJarFile(){
+	public ClassLoader getProjectClassLoader(){
 
 		String filePath=getProjectFolderFullPath()+getJarFileName();
-//		filePath = "jar:file://" + filePath + "!/";
-		System.out.println(filePath);
+		
+		String pathSep = System.getProperty("path.separator");
+		String classpath = System.getProperty("java.class.path");
+		
+//		System.out.println(System.getProperty("java.class.path"));
+		
+		String newClassPath=classpath+pathSep+filePath;
+		
+		System.setProperty("java.class.path",newClassPath);
+		
+//		System.out.println(System.getProperty("java.class.path"));
 
+		
+//		filePath = "jar:file://" + filePath + "!/";
+//		System.out.println(filePath);
+
+		URLClassLoader clazzLoader=null;
 		try{
 			URL url=new File(filePath).toURL();
-			URLClassLoader clazzLoader=new URLClassLoader(new URL[]{url});
+			clazzLoader=new URLClassLoader(new URL[]{url});
 			
-			clazzLoader.loadClass("de.unidue.stud.sehawagn.contmas.agents.AGVAgent");
-
 		}catch(MalformedURLException e){
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}catch(ClassNotFoundException e){
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
-
+		return clazzLoader;
 	}
 	
 	/**

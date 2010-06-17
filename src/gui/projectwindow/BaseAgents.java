@@ -617,7 +617,9 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 			// --- AgentList aktualisieren ----------------
 			Application.setStatusBar( Language.translate("Aktualisiere Agenten-Liste...") );
 			Application.MainWindow.setCursor( Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR) );	
-			Application.JadePlatform.jadeFindAgentClasse();
+			
+//			Application.JadePlatform.jadeFindAgentClasse();
+			
 			jTextAgent.setText(null);
 			jTextAgentStartAs.setText(null);
 			jListReferences.setListData(new Vector<String>());
