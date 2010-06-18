@@ -343,7 +343,11 @@ import rollout.TextFileRessourceRollOut;
 	 * @param projectAgents the projectAgents to set
 	 */
 	public void filterProjectAgents() {
-		ProjectAgents = Application.JadePlatform.jadeGetAgentClasses( this.getMainPackage(),getProjectFolderFullPath()+getJarFileName() );
+		String jarPathName=null;
+		if(getJarFileName()!=null && !getJarFileName().equals("")){
+			jarPathName=getProjectFolderFullPath()+getJarFileName();
+		}
+		ProjectAgents = Application.JadePlatform.jadeGetAgentClasses( this.getMainPackage(), jarPathName);
 		setChanged();
 		notifyObservers("ProjectAgents");
 	}
