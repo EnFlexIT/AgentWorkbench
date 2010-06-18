@@ -2,12 +2,11 @@ package application;
 
 import gui.ProjectWindow;
 
+import jade.core.Agent;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.Writer;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.Observable;
 import java.util.Vector;
 
@@ -27,7 +26,6 @@ import mas.display.ontology.Environment;
 import mas.environment.EnvironmentController;
 import mas.onto.Ontologies4Project;
 import rollout.TextFileRessourceRollOut;
-import sun.misc.ClassLoaderUtil;
 
 @XmlRootElement public class Project extends Observable {
 
@@ -53,7 +51,7 @@ import sun.misc.ClassLoaderUtil;
 	@XmlTransient private String ProjectFolder;
 	@XmlTransient private String ProjectFolderFullPath;
 	@XmlTransient private String MainPackage;
-	@XmlTransient private Vector<Class<?>> ProjectAgents;
+	@XmlTransient private Vector<Class<? extends Agent>> ProjectAgents;
 	@XmlTransient public Ontologies4Project ontologies4Project;
 
 	//	@XmlTransient private Environment environment;
@@ -345,53 +343,15 @@ import sun.misc.ClassLoaderUtil;
 	 * @param projectAgents the projectAgents to set
 	 */
 	public void filterProjectAgents() {
-		ProjectAgents = Application.JadePlatform.jadeGetAgentClasses( this.getMainPackage(),getProjectClassLoader() );
+		ProjectAgents = Application.JadePlatform.jadeGetAgentClasses( this.getMainPackage(),getProjectFolderFullPath()+getJarFileName() );
 		setChanged();
 		notifyObservers("ProjectAgents");
 	}
 	
 	/**
-	 * 
-	 */
-	public ClassLoader getProjectClassLoader(){
-
-		String filePath=getProjectFolderFullPath()+getJarFileName();
-		
-		String pathSep = System.getProperty("path.separator");
-		String classpath = System.getProperty("java.class.path");
-		
-//		System.out.println(System.getProperty("java.class.path"));
-		
-		String newClassPath=classpath+pathSep+filePath;
-		
-		System.setProperty("java.class.path",newClassPath);
-		
-//		System.out.println(System.getProperty("java.class.path"));
-
-		
-//		filePath = "jar:file://" + filePath + "!/";
-//		System.out.println(filePath);
-
-		
-		
-//		System.out.println("jade.util.ClassFinder is at "+ ClassLoader.getSystemClassLoader().getResource("jade.util.ClassFinder"));
-		
-		URLClassLoader clazzLoader=null;
-		try{
-			URL url=new File(filePath).toURL();
-			clazzLoader=new URLClassLoader(new URL[]{url});
-			
-		}catch(MalformedURLException e){
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return clazzLoader;
-	}
-	
-	/**
 	 * @return the projectAgents
 	 */
-	public Vector<Class<?>> getProjectAgents() {
+	public Vector<Class<? extends Agent>> getProjectAgents() {
 		return ProjectAgents;
 	}
 	/**

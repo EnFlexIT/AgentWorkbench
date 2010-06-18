@@ -1,5 +1,7 @@
 package gui.projectwindow;
 
+import jade.core.Agent;
+
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -197,6 +199,25 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 		}
 		return jAgentScroll;
 	}
+	
+	class AgentClassElement{
+
+		Class<? extends Agent> agentClass = null;
+		
+		public AgentClassElement(Class<? extends Agent> agentClass){
+			this.agentClass=agentClass;
+		}
+		
+		@Override
+		public String toString(){
+			return agentClass.getName();
+		}
+		
+		public Class<? extends Agent> getElementClass(){
+			return agentClass;
+		}
+		
+	}
 
 	/**
 	 * This method initializes jAgentList	
@@ -205,10 +226,11 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 	 */
 	private JList getJAgentList() {
 		if (jAgentList == null) {
-			Vector<Class<?>> AgentList = CurrProject.getProjectAgents();
+			Vector<Class<?  extends Agent>> AgentList = CurrProject.getProjectAgents();
 			DefaultListModel jAgentListModel = new DefaultListModel();
 			for (int i =0; i<AgentList.size();i++) {
-				jAgentListModel.addElement( AgentList.get(i).getName() );
+				Class<? extends Agent> curAgentClass=(Class<? extends Agent>) AgentList.get(i);
+				jAgentListModel.addElement( new AgentClassElement(curAgentClass) );
 			}
 			jAgentList = new JList(jAgentListModel);
 			jAgentList.setToolTipText("Agenten in diesem Projekt");
@@ -629,10 +651,12 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 		}
 		else if ( Trigger == jButtonStartAgent ) {
 			// --- Den ausgewählten Agenten starten -------
-			if ( jTextAgentStartAs.getText().length() != 0 && jAgentList.getSelectedValue() != null) {
+			Class<? extends Agent> selectedAgentClass=((AgentClassElement)jAgentList.getSelectedValue()).getElementClass();
+			if ( jTextAgentStartAs.getText().length() != 0 && selectedAgentClass != null) {
 				Application.JadePlatform.jadeAgentStart(
 						jTextAgentStartAs.getText(), 
-						jAgentList.getSelectedValue().toString(), 
+						selectedAgentClass,
+						null,
 						CurrProject.getProjectFolder());	
 				jTextAgent.setText(null);
 				jTextAgentStartAs.setText(null);

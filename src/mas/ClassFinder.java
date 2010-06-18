@@ -25,6 +25,9 @@ package mas;
 
 //#J2ME_EXCLUDE_FILE
 
+import jade.util.ClassFinderFilter;
+import jade.util.ClassFinderListener;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
@@ -146,7 +149,7 @@ public class ClassFinder {
 	 * Determine every URL location defined by the current classpath, and it's
 	 * associated package name.
 	 */
-	public final Map getClasspathLocations() {
+	public Map getClasspathLocations() {
 		Map map = new TreeMap(URL_COMPARATOR);
 		File file = null;
 
@@ -186,7 +189,7 @@ public class ClassFinder {
 		}
 	};
 
-	private final static Comparator URL_COMPARATOR = new Comparator() {
+	protected final static Comparator URL_COMPARATOR = new Comparator() {
 		public int compare(Object u1, Object u2) {
 			return String.valueOf(u1).compareTo(String.valueOf(u2));
 		}
@@ -198,7 +201,7 @@ public class ClassFinder {
 		}
 	};
 
-	private final void include(String name, File file, Map map) {
+	protected final void include(String name, File file, Map map) {
 		if (!file.exists())
 			return;
 		if (!file.isDirectory()) {
@@ -394,7 +397,7 @@ public class ClassFinder {
 		} // synch results
 	}
 
-	private Class callClassForName(String classname) throws ClassNotFoundException {
+	protected Class callClassForName(String classname) throws ClassNotFoundException {
 		return Class.forName(classname, false, getClass().getClassLoader());
 	}
 }

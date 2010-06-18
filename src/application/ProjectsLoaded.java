@@ -19,8 +19,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-import sim.setup.gui.DynForm;
-
 import mas.onto.Ontologies4Project;
 
 public class ProjectsLoaded {

@@ -1,5 +1,7 @@
 package mas;
 
+import jade.content.onto.Ontology;
+import jade.core.Agent;
 import jade.core.Profile;
 import jade.core.Runtime;
 import jade.wrapper.AgentContainer;
@@ -9,13 +11,7 @@ import jade.wrapper.StaleProxyException;
 import jade.wrapper.State;
 
 import java.awt.Cursor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.URL;
 import java.util.Hashtable;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
@@ -35,10 +31,10 @@ public class Platform extends Object {
 	public static Vector<AgentContainer> MAScontainer = new Vector<AgentContainer>();
 	public PlatformJadeConfig MASplatformConfig = null;
 	
-	private jadeClasses Agents; 
-	private jadeClasses Ontologies;
-	public Vector<Class<?>> AgentsVector   = null;
-	public Vector<Class<?>> OntologyVector = null;
+	private jadeClasses<Agent> Agents; 
+	private jadeClasses<Ontology> Ontologies;
+	public Vector<Class<? extends Agent>> AgentsVector   = null;
+	public Vector<Class<? extends Ontology>> OntologyVector = null;
 	
 	public Platform() {
 		// --- Search for all Agent-Classes -------------
@@ -407,7 +403,19 @@ public class Platform extends Object {
 	public void jadeAgentStart(String AgentName, String Clazz, String ContainerName ) {
 		jadeAgentStart(AgentName, Clazz, null, ContainerName) ;
 	}
-	public void jadeAgentStart(String AgentName, String Clazz, Object[] AgentArgs, String ContainerName ) {
+	
+	public void jadeAgentStart(String AgentName, String clazzName, Object[] AgentArgs, String ContainerName ) {
+		try {
+			@SuppressWarnings("unchecked")
+			Class<? extends Agent> clazz = (Class<? extends Agent>) Class.forName(clazzName);
+			jadeAgentStart(AgentName, clazz, AgentArgs, ContainerName );
+
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void jadeAgentStart(String AgentName, Class<? extends Agent> Clazz, Object[] AgentArgs, String ContainerName ) {
 		
 		int MsgAnswer;
 		String MsgHead, MsgText;
@@ -429,11 +437,18 @@ public class Platform extends Object {
 			AgeCont = jadeContainerCreate( ContainerName );
 		}		
 		try {
-//			AgentCont = AgeCont.acceptNewAgent(AgentName);
-			AgentCont = AgeCont.createNewAgent( AgentName, Clazz, AgentArgs );
+			Agent agent=(Agent) Clazz.newInstance();
+			agent.setArguments(AgentArgs);
+			AgentCont=AgeCont.acceptNewAgent(AgentName, agent);
+//			AgentCont = AgeCont.createNewAgent( AgentName, Clazz, AgentArgs );
+
 			AgentCont.start();
 		} 
 		catch (StaleProxyException e) {
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		}		
 
@@ -443,16 +458,16 @@ public class Platform extends Object {
 	 * Starts the search for Agents in the  
 	 * current environment in an own Thread
 	 */
-	public void jadeFindAgentClasse(ClassLoader classLoader) {
-		Agents = new jadeClasses("jade.core.Agent",classLoader);
+	public void jadeFindAgentClasse(String jarFilePath) {
+		Agents = new jadeClasses<Agent>("jade.core.Agent",jarFilePath);
 		Thread th = new Thread( Agents  );
 		th.setName("Search4Agents");
 //		th.setContextClassLoader(classLoader);
 		th.start();
 	}
 	
-	public Vector<Class<?>> jadeGetAgentClasses( String FilterFor) {
-		return 	jadeGetAgentClasses(FilterFor, ClassLoader.getSystemClassLoader() );
+	public Vector<Class<? extends Agent>> jadeGetAgentClasses( String FilterFor) {
+		return 	jadeGetAgentClasses(FilterFor, null );
 	}
 	
 	/**
@@ -460,18 +475,18 @@ public class Platform extends Object {
 	 * @param FilterFor
 	 * @return
 	 */
-	public Vector<Class<?>> jadeGetAgentClasses( String FilterFor, ClassLoader classLoader ) {
+	public Vector<Class<? extends Agent>> jadeGetAgentClasses( String FilterFor, String jarFilePath ) {
 		
 		boolean PrintMsg = true;
-		Class<?> CurrClass = null;
+		Class<? extends Agent> CurrClass = null;
 		String CurrClassName;
-		Vector<Class<?>> FilteredVector = new Vector<Class<?>>();
+		Vector<Class<? extends Agent>> FilteredVector = new Vector<Class<? extends Agent>>();
 		
 		// -------------------------------------------------------------
 		// --- Falls noch keine Klassen gefunden wurden, warten ...  ---
 		// -------------------------------------------------------------
 		if (Agents==null) {
-			this.jadeFindAgentClasse(classLoader);
+			this.jadeFindAgentClasse(jarFilePath);
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
@@ -505,7 +520,7 @@ public class Platform extends Object {
 			CurrClass = AgentsVector.get(i);
 			CurrClassName = CurrClass.getName();
 			if ( FilterFor == null || CurrClassName.startsWith( FilterFor ) == true ) {
-				FilteredVector.addElement( CurrClass );								
+				FilteredVector.addElement(  CurrClass );								
 			}			
 		}		
 		return FilteredVector;
@@ -515,7 +530,7 @@ public class Platform extends Object {
 	 * current environment in an own Thread
 	 */
 	public void jadeFindOntologyClasse() {
-		Ontologies = new jadeClasses("jade.content.onto.Ontology",ClassLoader.getSystemClassLoader());
+		Ontologies = new jadeClasses<Ontology>("jade.content.onto.Ontology",null);
 		Thread th = new Thread( Ontologies );
 		th.setName("Search4Ontologies");
 		th.start();
@@ -525,7 +540,7 @@ public class Platform extends Object {
 	 * from the current environment
 	 * @return
 	 */
-	public Vector<Class<?>> jadeGetOntologyClasse() {
+	public Vector<Class<? extends Ontology>> jadeGetOntologyClasse() {
 		
 		boolean PrintMsg = true;
 		// -------------------------------------------------------------
@@ -565,17 +580,16 @@ public class Platform extends Object {
 	 * Class for searching special classe, given
 	 * by an example (e. g. 'jade.core.Agent') 
 	 */
-	public class jadeClasses implements Runnable {
+	public class jadeClasses<classType> implements Runnable {
 
-		private ClassFinder cf = null;
-		private Class<?> cfClass = null;
-		private Vector<Class<?>> classVector = new Vector<Class<?>>();
+		private CustomClassFinder cf = null;
+		private Vector<Class<? extends classType>> classVector = new Vector<Class<? extends classType>>();
 		private String superClass = null;
-		private ClassLoader myClassLoader = null;
+		private String jarFilePath = null;
 		
-		public jadeClasses( String superClazz , ClassLoader classloader) {
-			superClass = superClazz;			
-			myClassLoader=classloader;
+		public jadeClasses( String superClazz , String jarFilePath) {
+			superClass = superClazz;
+			this.jarFilePath=jarFilePath;
 		}		
 		@Override
 		public void run() {
@@ -583,99 +597,16 @@ public class Platform extends Object {
 		}
 		@SuppressWarnings("unchecked")
 		public void FindClasse(String SuperClass)  {
-			/*
-			System.out.println("FindClasse("+SuperClass+")");
-			System.out.println(System.getProperty("java.class.path"));
-			
-			
-			
-*/
-			System.out.println(superClass);
-/*
-			try {
-				cfClass=myClassLoader.loadClass("jade.util.ClassFinder");
-				cf= myClassLoader.loadClass("jade.util.ClassFinder").newInstance();
-				
-				myClassLoader.loadClass("de.unidue.stud.sehawagn.contmas.agents.AGVAgent").newInstance();
-//				cf.getClass().getClassLoader().loadClass("de.unidue.stud.sehawagn.contmas.agents.CraneAgent").newInstance();
-				
-				
-			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InstantiationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			*/
-			
-			cf = new ClassFinder();
-			cf.setClassLoader(myClassLoader);
-			/*
-			Map locations = cf.getClasspathLocations();
-			Set foo = locations.keySet();
-			for (Object object : foo) {
-				URL url=(URL) object;
-				System.out.println(url);
-			}
-			*/
-			/*
-			Method findMethod;
-			try{
-				findMethod=cfClass.getMethod("findSubclasses",String.class);
-				classVector =  (Vector<Class<?>>) findMethod.invoke(cf,SuperClass);
-			}catch(SecurityException e1){
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}catch(NoSuchMethodException e1){
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}catch(IllegalArgumentException e){
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}catch(IllegalAccessException e){
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}catch(InvocationTargetException e){
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			*/
+		
+			cf = new CustomClassFinder(jarFilePath);
 			
 			classVector = cf.findSubclasses(SuperClass);
 			//System.out.println( Language.translate( "Suche nach " + SuperClass + " beendet .. " ) );
 		}	
-		public Vector<Class<?>> getClassesFound() {
+		public Vector<Class<? extends classType>> getClassesFound() {
 			return classVector;
 		}
 		public boolean isWorking() {
-			/*
-			boolean returnVal=false;
-			Method isWorkingMethod;
-			try{
-				isWorkingMethod=cfClass.getMethod("isWorking");
-				returnVal= (Boolean) isWorkingMethod.invoke(cf);
-			}catch(SecurityException e1){
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}catch(NoSuchMethodException e1){
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}catch(IllegalArgumentException e){
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}catch(IllegalAccessException e){
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}catch(InvocationTargetException e){
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			return returnVal;
-			*/
 			return cf.isWorking();
 		}
 		public int getResultCount() {

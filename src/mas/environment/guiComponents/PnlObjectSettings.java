@@ -1,5 +1,7 @@
 package mas.environment.guiComponents;
 
+import jade.core.Agent;
+
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import java.awt.Point;
@@ -280,7 +282,7 @@ public class PnlObjectSettings extends JPanel {
 			cbClass.setLocation(new Point(80, 78));
 			cbClass.setSize(new Dimension(100, 25));
 			cbClass.setEnabled(false);
-			Vector<Class<?>> classes = parent.getController().getCurrentProject().getProjectAgents();
+			Vector<Class<? extends Agent>> classes = parent.getController().getCurrentProject().getProjectAgents();
 			Vector<String> names = new Vector<String>();
 			
 			parent.setAgentClasses(new HashMap<String, String>());

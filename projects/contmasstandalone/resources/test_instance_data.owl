@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE rdf:RDF[
+     <!ENTITY dc 'http://purl.org/dc/elements/1.1/'>
+    <!ENTITY rdfs 'http://www.w3.org/2000/01/rdf-schema#'>
+    <!ENTITY owl 'http://www.w3.org/2002/07/owl#'>
+    <!ENTITY rdf 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'>
+    <!ENTITY ns5 'http://www-stud.uni-due.de/~sehawagn/contmas/ontology/contmas_ontology.owl#'>
+    <!ENTITY dcterms 'http://purl.org/dc/terms/'>
+ ]><rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:owl="http://www.w3.org/2002/07/owl#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:ns5="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/contmas_ontology.owl#" xmlns:dcterms="http://purl.org/dc/terms/">
+    <rdf:Description rdf:about="urn:tag:scranefield@infoscience.otago.ac.nz,2010:JadeImportTest">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Ontology"></rdf:type>
+    <owl:imports rdf:resource="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/contmas_ontology.owl"></owl:imports>
+</rdf:Description>
+<rdf:Description rdf:nodeID="bNode_0">
+    <ns5:localName rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MV Ship</ns5:localName>
+    <rdf:type rdf:resource="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/contmas_ontology.owl#Ship"></rdf:type>
+</rdf:Description>
+<rdf:Description rdf:nodeID="bNode_1">
+    <ns5:x_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int">6</ns5:x_dimension>
+    <ns5:y_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int">11</ns5:y_dimension>
+    <ns5:z_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int">42</ns5:z_dimension>
+    <rdf:type rdf:resource="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/contmas_ontology.owl#BayMap"></rdf:type>
+</rdf:Description>
+<rdf:Description rdf:nodeID="bNode_2">
+    <rdf:type rdf:resource="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/contmas_ontology.owl#TOCHasState"></rdf:type>
+</rdf:Description>
+<rdf:Description rdf:nodeID="bNode_3">
+    <rdf:type rdf:resource="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/contmas_ontology.owl#Administered"></rdf:type>
+</rdf:Description>
+<rdf:Description rdf:nodeID="bNode_4">
+    <ns5:terminates_at rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Port Chalmers</ns5:terminates_at>
+    <rdf:type rdf:resource="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/contmas_ontology.owl#TransportOrderChain"></rdf:type>
+</rdf:Description>
+<rdf:Description rdf:nodeID="bNode_5">
+    <ns5:x_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int">5</ns5:x_dimension>
+    <ns5:y_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int">6</ns5:y_dimension>
+    <ns5:z_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int">40</ns5:z_dimension>
+    <rdf:type rdf:resource="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/contmas_ontology.owl#BlockAddress"></rdf:type>
+</rdf:Description>
+<rdf:Description rdf:nodeID="bNode_6">
+    <ns5:bic_code rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MEDU8274696</ns5:bic_code>
+    <rdf:type rdf:resource="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/contmas_ontology.owl#Container"></rdf:type>
+</rdf:Description>
+<rdf:Description rdf:nodeID="bNode_7">
+    <rdf:type rdf:resource="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/contmas_ontology.owl#TransportOrder"></rdf:type>
+</rdf:Description>
+<rdf:Description rdf:nodeID="bNode_8">
+    <rdf:type rdf:resource="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/contmas_ontology.owl#TransportOrder"></rdf:type>
+</rdf:Description>
+<rdf:Description rdf:nodeID="bNode_9">
+    <ns5:type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">concrete</ns5:type>
+    <rdf:type rdf:resource="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/contmas_ontology.owl#Designator"></rdf:type>
+</rdf:Description>
+<rdf:Description rdf:nodeID="bNode_10">
+    <ns5:type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">concrete</ns5:type>
+    <rdf:type rdf:resource="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/contmas_ontology.owl#Designator"></rdf:type>
+</rdf:Description>
+<rdf:Description rdf:nodeID="bNode_11">
+    <rdf:type rdf:resource="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/contmas_ontology.owl#Berth"></rdf:type>
+</rdf:Description>
+<rdf:Description rdf:nodeID="bNode_12">
+    <ns5:id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">StorageYard</ns5:id>
+    <rdf:type rdf:resource="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/contmas_ontology.owl#YardArea"></rdf:type>
+</rdf:Description>
+<rdf:Description rdf:nodeID="bNode_13">
+    <ns5:localName rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Yard</ns5:localName>
+    <rdf:type rdf:resource="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/contmas_ontology.owl#Yard"></rdf:type>
+</rdf:Description>
+<rdf:Description rdf:nodeID="bNode_14">
+    <ns5:x_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int">32</ns5:x_dimension>
+    <ns5:y_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int">7</ns5:y_dimension>
+    <ns5:z_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int">0</ns5:z_dimension>
+    <rdf:type rdf:resource="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/contmas_ontology.owl#BlockAddress"></rdf:type>
+</rdf:Description>
+<rdf:Description rdf:nodeID="bNode_15">
+    <rdf:type rdf:resource="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/contmas_ontology.owl#TOCHasState"></rdf:type>
+</rdf:Description>
+<rdf:Description rdf:nodeID="bNode_16">
+    <rdf:type rdf:resource="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/contmas_ontology.owl#Administered"></rdf:type>
+</rdf:Description>
+<rdf:Description rdf:nodeID="bNode_17">
+    <ns5:terminates_at rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Port Chalmers</ns5:terminates_at>
+    <rdf:type rdf:resource="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/contmas_ontology.owl#TransportOrderChain"></rdf:type>
+</rdf:Description>
+<rdf:Description rdf:nodeID="bNode_18">
+    <ns5:x_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int">5</ns5:x_dimension>
+    <ns5:y_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int">10</ns5:y_dimension>
+    <ns5:z_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int">41</ns5:z_dimension>
+    <rdf:type rdf:resource="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/contmas_ontology.owl#BlockAddress"></rdf:type>
+</rdf:Description>
+<rdf:Description rdf:nodeID="bNode_19">
+    <ns5:bic_code rdf:datatype="http://www.w3.org/2001/XMLSchema#string">TTNU9381020</ns5:bic_code>
+    <rdf:type rdf:resource="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/contmas_ontology.owl#Container"></rdf:type>
+</rdf:Description>
+<rdf:Description rdf:nodeID="bNode_20">
+    <rdf:type rdf:resource="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/contmas_ontology.owl#TransportOrder"></rdf:type>
+</rdf:Description>
+<rdf:Description rdf:nodeID="bNode_21">
+    <rdf:type rdf:resource="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/contmas_ontology.owl#TransportOrder"></rdf:type>
+</rdf:Description>
+<rdf:Description rdf:nodeID="bNode_22">
+    <ns5:type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">concrete</ns5:type>
+    <rdf:type rdf:resource="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/contmas_ontology.owl#Designator"></rdf:type>
+</rdf:Description>
+<rdf:Description rdf:nodeID="bNode_23">
+    <ns5:type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">concrete</ns5:type>
+    <rdf:type rdf:resource="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/contmas_ontology.owl#Designator"></rdf:type>
+</rdf:Description>
+<rdf:Description rdf:nodeID="bNode_24">
+    <ns5:x_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int">32</ns5:x_dimension>
+    <ns5:y_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int">1</ns5:y_dimension>
+    <ns5:z_dimension rdf:datatype="http://www.w3.org/2001/XMLSchema#int">0</ns5:z_dimension>
+    <rdf:type rdf:resource="http://www-stud.uni-due.de/~sehawagn/contmas/ontology/contmas_ontology.owl#BlockAddress"></rdf:type>
+</rdf:Description>
+<rdf:Description rdf:nodeID="bNode_0">
+    <ns5:container_states rdf:nodeID="bNode_2"></ns5:container_states>
+    <ns5:container_states rdf:nodeID="bNode_15"></ns5:container_states>
+    <ns5:contains rdf:nodeID="bNode_1"></ns5:contains>
+</rdf:Description>
+<rdf:Description rdf:nodeID="bNode_2">
+    <ns5:state rdf:nodeID="bNode_3"></ns5:state>
+    <ns5:subjected_toc rdf:nodeID="bNode_4"></ns5:subjected_toc>
+</rdf:Description>
+<rdf:Description rdf:nodeID="bNode_3">
+    <ns5:at_address rdf:nodeID="bNode_5"></ns5:at_address>
+</rdf:Description>
+<rdf:Description rdf:nodeID="bNode_4">
+    <ns5:is_linked_by rdf:nodeID="bNode_7"></ns5:is_linked_by>
+    <ns5:is_linked_by rdf:nodeID="bNode_8"></ns5:is_linked_by>
+    <ns5:transports rdf:nodeID="bNode_6"></ns5:transports>
+</rdf:Description>
+<rdf:Description rdf:nodeID="bNode_5">
+    <ns5:locates rdf:nodeID="bNode_6"></ns5:locates>
+</rdf:Description>
+<rdf:Description rdf:nodeID="bNode_7">
+    <ns5:starts_at rdf:nodeID="bNode_9"></ns5:starts_at>
+</rdf:Description>
+<rdf:Description rdf:nodeID="bNode_8">
+    <ns5:ends_at rdf:nodeID="bNode_10"></ns5:ends_at>
+</rdf:Description>
+<rdf:Description rdf:nodeID="bNode_9">
+    <ns5:abstract_designation rdf:nodeID="bNode_11"></ns5:abstract_designation>
+    <ns5:at_address rdf:nodeID="bNode_5"></ns5:at_address>
+    <ns5:concrete_designation rdf:nodeID="bNode_0"></ns5:concrete_designation>
+</rdf:Description>
+<rdf:Description rdf:nodeID="bNode_10">
+    <ns5:abstract_designation rdf:nodeID="bNode_12"></ns5:abstract_designation>
+    <ns5:at_address rdf:nodeID="bNode_14"></ns5:at_address>
+    <ns5:concrete_designation rdf:nodeID="bNode_13"></ns5:concrete_designation>
+</rdf:Description>
+<rdf:Description rdf:nodeID="bNode_14">
+    <ns5:locates rdf:nodeID="bNode_6"></ns5:locates>
+</rdf:Description>
+<rdf:Description rdf:nodeID="bNode_15">
+    <ns5:state rdf:nodeID="bNode_16"></ns5:state>
+    <ns5:subjected_toc rdf:nodeID="bNode_17"></ns5:subjected_toc>
+</rdf:Description>
+<rdf:Description rdf:nodeID="bNode_16">
+    <ns5:at_address rdf:nodeID="bNode_18"></ns5:at_address>
+</rdf:Description>
+<rdf:Description rdf:nodeID="bNode_17">
+    <ns5:is_linked_by rdf:nodeID="bNode_20"></ns5:is_linked_by>
+    <ns5:is_linked_by rdf:nodeID="bNode_21"></ns5:is_linked_by>
+    <ns5:transports rdf:nodeID="bNode_19"></ns5:transports>
+</rdf:Description>
+<rdf:Description rdf:nodeID="bNode_18">
+    <ns5:locates rdf:nodeID="bNode_19"></ns5:locates>
+</rdf:Description>
+<rdf:Description rdf:nodeID="bNode_20">
+    <ns5:starts_at rdf:nodeID="bNode_22"></ns5:starts_at>
+</rdf:Description>
+<rdf:Description rdf:nodeID="bNode_21">
+    <ns5:ends_at rdf:nodeID="bNode_23"></ns5:ends_at>
+</rdf:Description>
+<rdf:Description rdf:nodeID="bNode_22">
+    <ns5:abstract_designation rdf:nodeID="bNode_11"></ns5:abstract_designation>
+    <ns5:at_address rdf:nodeID="bNode_18"></ns5:at_address>
+    <ns5:concrete_designation rdf:nodeID="bNode_0"></ns5:concrete_designation>
+</rdf:Description>
+<rdf:Description rdf:nodeID="bNode_23">
+    <ns5:abstract_designation rdf:nodeID="bNode_12"></ns5:abstract_designation>
+    <ns5:at_address rdf:nodeID="bNode_24"></ns5:at_address>
+    <ns5:concrete_designation rdf:nodeID="bNode_13"></ns5:concrete_designation>
+</rdf:Description>
+<rdf:Description rdf:nodeID="bNode_24">
+    <ns5:locates rdf:nodeID="bNode_19"></ns5:locates>
+</rdf:Description>
+</rdf:RDF>

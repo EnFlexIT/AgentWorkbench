@@ -15,7 +15,7 @@ Die Abläufe lassen sich am besten im automatisch erzeugten Sniffer einsehen. Die
     <jadeConfiguration>
         <start4Sim>true</start4Sim>
         <useAppDefaults>false</useAppDefaults>
-        <useLocalPort>1100</useLocalPort>
+        <useLocalPort>1101</useLocalPort>
         <serviceList>
             <service>jade.core.messaging.TopicManagementService;</service>
             <service>jade.core.event.NotificationService;</service>
