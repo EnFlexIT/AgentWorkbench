@@ -25,9 +25,6 @@ package mas;
 
 //#J2ME_EXCLUDE_FILE
 
-import jade.util.ClassFinderFilter;
-import jade.util.ClassFinderListener;
-
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
@@ -397,19 +394,7 @@ public class ClassFinder {
 		} // synch results
 	}
 
-	protected Class callClassForName(String classname) throws ClassNotFoundException {
-		return Class.forName(classname, false, getClassLoader());
+	private Class callClassForName(String classname) throws ClassNotFoundException {
+		return Class.forName(classname, false, getClass().getClassLoader());
 	}
-	
-	private ClassLoader cl;
-	public ClassLoader getClassLoader(){
-		if(cl==null){
-			cl=getClass().getClassLoader();
-		}
-		return cl;
-	}
-	public void setClassLoader(ClassLoader cl){
-		this.cl=cl;
-	}
-	
 }
