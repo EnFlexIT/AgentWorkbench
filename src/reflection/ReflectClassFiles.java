@@ -73,7 +73,9 @@ public class ReflectClassFiles extends ArrayList<String> {
 				ClazzList = getIDEClasses( SearchPath, SearchPath );
 			}
 		}
-		this.addAll( ClazzList );
+		if(ClazzList!=null){
+			this.addAll( ClazzList );
+		}
 	}
 
 	/**

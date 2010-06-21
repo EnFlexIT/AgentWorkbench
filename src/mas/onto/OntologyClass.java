@@ -100,22 +100,24 @@ public class OntologyClass extends Object implements Serializable{
 		
 		Ontology ontology = null;
 		// --- Try to get an instance of the current Ontology ---------
-		try {
-			Class<?> currOntoClass = Class.forName(currOntologyMainClass);
-			Method method = currOntoClass.getMethod("getInstance", new Class[0]);
-			ontology = (Ontology) method.invoke(currOntoClass, new Object[0]);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (SecurityException e) {
-			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+		if(currOntologyMainClass!=null){
+			try {
+				Class<?> currOntoClass = Class.forName(currOntologyMainClass);
+				Method method = currOntoClass.getMethod("getInstance", new Class[0]);
+				ontology = (Ontology) method.invoke(currOntoClass, new Object[0]);
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (SecurityException e) {
+				e.printStackTrace();
+			} catch (NoSuchMethodException e) {
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			}
 		}
 		return ontology;
 	}

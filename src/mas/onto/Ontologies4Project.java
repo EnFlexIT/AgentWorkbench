@@ -327,10 +327,16 @@ public class Ontologies4Project extends HashMap<String, OntologyClass> {
 			Collection<String> Keys = currProjectOntology.keySet();
 			for (Iterator<String> iterator = Keys.iterator(); iterator.hasNext();) {
 				String Key = iterator.next();
-				OntologyClass subOnto = currProjectOntology.get(Key);	
-				mergerConcepts.addAll(subOnto.ontologyConceptNames);	
-				mergerAgentActions.addAll(subOnto.ontologyAgentActionNames);
-				mergerPredicates.addAll(subOnto.ontologyPredicateNames);
+				OntologyClass subOnto = currProjectOntology.get(Key);
+				if(subOnto.ontologyConceptNames!=null){
+					mergerConcepts.addAll(subOnto.ontologyConceptNames);	
+				}
+				if(subOnto.ontologyAgentActionNames!=null){
+					mergerAgentActions.addAll(subOnto.ontologyAgentActionNames);
+				}
+				if(subOnto.ontologyPredicateNames!=null){
+					mergerPredicates.addAll(subOnto.ontologyPredicateNames);
+				}
 			}
 			
 			// --- Merge elements which can be classes in an Ontology ---------

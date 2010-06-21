@@ -2,7 +2,6 @@
 <project>
     <projectName>Monitormas</projectName>
     <subOntologies>
-        <subOntology>contmas.ontology.ContainerTerminalOntology</subOntology>
         <subOntology>monitormas.ontology.MonitorMASOntology</subOntology>
     </subOntologies>
     <agentConfiguration>
@@ -22,6 +21,7 @@
             <service>jade.core.mobility.AgentMobilityService;</service>
         </serviceList>
     </jadeConfiguration>
+    <mainPackage>monitormas</mainPackage>
     <subFolderAgents>agents</subFolderAgents>
     <subFolderEnvSetups>envSetups</subFolderEnvSetups>
     <subFolderOntology>ontology</subFolderOntology>
