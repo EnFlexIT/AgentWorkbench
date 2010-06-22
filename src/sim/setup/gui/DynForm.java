@@ -1,11 +1,14 @@
 package sim.setup.gui;
 
+import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -20,7 +23,9 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
@@ -44,27 +49,37 @@ public class DynForm extends JPanel{
 	public int einrueckungObersteEbene = 10;
 	public int einrueckungProUntereEbene = 10;
 	List<String> innerObjects = new ArrayList<String>();
-
+	JPanel superPanel = new JPanel();
+	JFrame testFrame = new JFrame();
 	
 	public DynForm(Project project, String agentReference) {
 		
 		currProject = project;
 		currAgentReference = agentReference;
 		
-		
-		JFrame testFrame = new JFrame();
-		testFrame.setSize(this.frameWidht,this.frameHeight);
-		testFrame.setVisible(true);
-		testFrame.add(this);
-		
-		
-		
-		testFrame.add(mainPanel);
 		//mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 		//mainPanel.setAlignmentX(LEFT_ALIGNMENT);
+		//superPanel.setBounds(0, 0, this.frameWidht, this.frameHeight);
+		superPanel.setPreferredSize(new Dimension(this.frameWidht, this.frameHeight));
+		superPanel.setLayout(new BorderLayout());
 		mainPanel.setLayout(null);
-		mainPanel.setBounds(new Rectangle(0,0, this.frameWidht, this.frameHeight));
+		mainPanel.setPreferredSize(new Dimension(this.frameWidht, this.frameHeight));
+		//mainPanel.setBounds(0,0,this.frameWidht, this.frameHeight);
+		//mainPanel.setBounds(new Rectangle(0,0, this.frameWidht, this.frameHeight));
 		
+		
+		
+		
+		testFrame.setSize(this.frameWidht,this.frameHeight);
+		testFrame.setVisible(true);
+		//testFrame.add(this);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setViewportView(superPanel);
+		
+		superPanel.add(mainPanel);
+		
+		testFrame.add(scrollPane);
 		
 		//this.createGui(agentReference, mainPanel);
 		//this.createGUI2(agentReference);
@@ -72,6 +87,7 @@ public class DynForm extends JPanel{
 		//this.testBla(agentReference);
 		this.start(agentReference);
 		//this.setRightHeight(mainPanel,0);
+		
 	}
 	
 	
@@ -129,9 +145,10 @@ public class DynForm extends JPanel{
 			
 			
 		
-			for(int i=0; i<tm.getRowCount() && tiefe <= 2; i++){
+			for(int i=0; i<tm.getRowCount() ; i++){
 				if(tm.getValueAt(i, 2) != null)
 				{
+					String dataItemCardinality = tm.getValueAt(i,1).toString();
 					//System.out.println("Name " + tm.getValueAt(i, 0) + "Values : "+tm.getValueAt(i, 2));
 					String dataItemName = tm.getValueAt(i, 0).toString();
 					String dataItemValue = tm.getValueAt(i, 2).toString();
@@ -141,21 +158,24 @@ public class DynForm extends JPanel{
 							String clazz = dataItemValue.substring(12);
 							//System.out.println("The class: "+clazz + " Package: " + this.startObjectPackage);
 							//System.out.println("+++++++++++++++ Start deep search +++++++++++++++++++++");
-							System.out.println("Here we have an instance of: "+clazz);
+							//System.out.println("Here we have an instance of: "+clazz);
 							if(objectAlreadyDisplayed(this.startObjectPackage+"."+clazz) == false)
 							{
 								innerObjects.add(this.startObjectPackage+"."+clazz);
-								this.createInnerElements(dataItemName, this.startObjectPackage+"."+clazz, tiefe+1, pan);
+								this.createInnerElements(dataItemName, dataItemCardinality,  this.startObjectPackage+"."+clazz, tiefe+1, pan);
 							}
 							else
 								System.out.println("Class " + this.startObjectPackage+"."+clazz + " already displayed!");
 						}
 					}
 					else{
-						this.createOuterElements(dataItemName, pan, tiefe);
+						this.createOuterElements(dataItemName, dataItemCardinality, pan, tiefe);
 					}
 				}
 			}
+		}
+		else{
+			System.out.println("Could not create DefaultTableModel ("+startObjectClassName+")");
 		}
 	}	
 
@@ -166,16 +186,16 @@ public class DynForm extends JPanel{
 			if(elem.equals(objectClass))
 				return true;
 		}
-		System.out.println(objects);
+		//System.out.println(objects);
 		return false;
 	}
 	
-public void createInnerElements(String dataItemName, String startObjectClassName, int tiefe, JPanel pan){
+public void createInnerElements(String dataItemName, String dataItemCardinality, String startObjectClassName, int tiefe, final JPanel pan){
 		
 		int lastDot = startObjectClassName.lastIndexOf(".");
 		String plainStartObjectClassName = startObjectClassName.substring(lastDot + 1);
 		
-		JPanel dataPanel = new JPanel();
+		final JPanel dataPanel = new JPanel();
 		dataPanel.setLayout(null);
 		int innerX  = 0;
 		if(tiefe > 1)
@@ -197,23 +217,34 @@ public void createInnerElements(String dataItemName, String startObjectClassName
 		Font boldFont=new Font(innerClassName.getFont().getName(),Font.BOLD,innerClassName.getFont().getSize());
 		innerClassName.setFont(boldFont);
 		
+		JButton multipleButton = new JButton("+");
+		multipleButton.setBounds(new Rectangle(280, 0, 30, 16));
+		multipleButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				//showPanelComponents(dataPanel);
+				addMultiple(dataPanel);
+			}
+		});
+		
 		System.out.println("Adding: "+dataItemName);
 		
 		dataPanel.add(valueFieldText, null);
 		dataPanel.add(innerClassName, null);
+		if(dataItemCardinality.equals("multiple"))
+			dataPanel.add(multipleButton, null);
 		
 		
-		
-		System.out.println("ref: " + startObjectClassName);
 		
 		DefaultTableModel tm = currProject.ontologies4Project.getSlots4Class(startObjectClassName);
 		this.createGUI(tm, startObjectClassName, dataPanel, tiefe);
+	
 		
 		Rectangle r = pan.getBounds();
 		if(dataPanel.getWidth() > r.width)
-			pan.setBounds(r.x, r.y, dataPanel.getWidth(), r.height + 20);
+			pan.setBounds(r.x, r.y, dataPanel.getWidth(), r.height + 25);
 		else
-			pan.setBounds(r.x, r.y, r.width, r.height + 20);
+			pan.setBounds(r.x, r.y, r.width, r.height + 25);
 		
 		
 		pan.add(dataPanel);
@@ -222,10 +253,102 @@ public void createInnerElements(String dataItemName, String startObjectClassName
 		
 		
 	}
+	
+	public void addMultiple(JPanel dataPanel){
+		
+		JPanel pan = (JPanel) dataPanel.getParent();
+		int dataPanelHeight = dataPanel.getHeight();
+		pan.setBounds(pan.getX(), pan.getY(), pan.getWidth(), pan.getHeight() + dataPanelHeight);
+		this.moveOtherPanels4Multiple(dataPanel);
+		if(mainPanel.getHeight() > superPanel.getSize().height)
+			superPanel.setPreferredSize(new Dimension(superPanel.getSize().width, mainPanel.getHeight()));
+		JPanel dataPanelCopy = new JPanel();
+		dataPanelCopy.setLayout(null);
+		dataPanelCopy.setBorder(dataPanel.getBorder());
+		this.createPanelCopy(dataPanelCopy,dataPanel);
+		dataPanelCopy.setBounds(dataPanel.getX(), dataPanel.getY() + dataPanelHeight, dataPanel.getWidth(), dataPanel.getHeight());
+		pan.add(dataPanelCopy);
+		testFrame.validate();
+	}
+	
+	private void createPanelCopy(JPanel newPanel, JPanel originalPanel) {
+		Component[] c = originalPanel.getComponents();
+		for (Component component : c) {
+			if(component instanceof JPanel)
+			{
+				JPanel pan = new JPanel();
+				pan.setLayout(null);
+				JPanel panOrig = (JPanel) component;
+				pan.setBounds(panOrig.getX(), panOrig.getY(), panOrig.getWidth(), panOrig.getHeight());
+				pan.setBorder(panOrig.getBorder());
+				newPanel.add(pan);
+				this.createPanelCopy(pan, (JPanel) component);
+			}
+			else if(component instanceof JLabel){
+				JLabel label = new JLabel();
+				JLabel origLabel = (JLabel) component;
+				label.setBounds(origLabel.getX(), origLabel.getY(), origLabel.getWidth(), origLabel.getHeight());
+				label.setText(origLabel.getText());
+				newPanel.add(label);
+			}
+			else if (component instanceof JTextField) {
+				JTextField text = new JTextField();
+				JTextField origText = (JTextField) component;
+				text.setBounds(origText.getX(), origText.getY(), origText.getWidth(), origText.getHeight());
+				newPanel.add(text);
+			}
+			else if (component instanceof JButton) {
+				JButton button = new JButton();
+				JButton buttonOrig = (JButton) component;
+				button.setBounds(buttonOrig.getX(), buttonOrig.getY(), buttonOrig.getWidth(), buttonOrig.getHeight());
+				button.setText(buttonOrig.getText());
+				ActionListener[] al = buttonOrig.getActionListeners();
+				for (ActionListener actionListener : al) {
+					button.addActionListener(actionListener);
+				}
+				newPanel.add(button);
+			}
+		}
+	}
 
+
+	public void moveOtherPanels4Multiple(JPanel dataPanel){
+		Component[] panChilds = ((JPanel) dataPanel.getParent()).getComponents();
+		boolean flag = false;
+		for (Component component : panChilds) {
+			if(component == dataPanel)
+				flag = true;
+			if(flag && component != dataPanel){
+				component.setBounds(component.getX(), component.getY() + dataPanel.getHeight(), component.getWidth(), component.getHeight());
+			}
+		}
+	}
+	
+	
+
+
+	public void showPanelComponents(JPanel pan){
+		Component [] c = pan.getComponents();
+		for (Component component : c) {
+			if(component instanceof JPanel)
+				showPanelComponents((JPanel)component);
+			else if(component instanceof JLabel)
+				System.out.println("JLabel: " + ((JLabel) component).getText());
+		}
+	}
+
+
+	public int getCorrectOuterHeight(JPanel pan){
+		int height = 0;
+		Component[] c = pan.getComponents();
+		for(int i = 0; i<c.length; i++){
+			height += c[i].getHeight();
+		}
+		return height;
+	}
 
 	
-	public void createOuterElements(String dataItemName, JPanel pan, int tiefe){
+	public void createOuterElements(String dataItemName, String dataItemCardinality, JPanel pan, int tiefe){
 		
 		Rectangle r2 = pan.getBounds();
 		//System.out.println("Panel x,y + width height" + r2.getX() + " " + r2.y + " " + r2.width+ " " + r2.height );
@@ -236,12 +359,13 @@ public void createInnerElements(String dataItemName, String startObjectClassName
 		if(tiefe == 0)
 		{
 			System.out.println("Flat object: " + dataItemName + " tiefe: " + tiefe + " actualY " + actualY);
-			dataPanel.setBounds(new Rectangle(10, actualY , 250, 35));
+			dataPanel.setBounds(new Rectangle(10, actualY , 250, 30));
 		}
 		else
 		{
 			innerX = actualX + (einrueckungProUntereEbene*tiefe);
-			dataPanel.setBounds(new Rectangle(innerX, r2.height + 10 , 250, 35));
+			//dataPanel.setBounds(new Rectangle(innerX, r2.height + 10 , 250, 30));
+			dataPanel.setBounds(new Rectangle(innerX, this.getCorrectOuterHeight(pan) - 10, 250, 30));
 		}
 		dataPanel.setBorder(BorderFactory.createLineBorder (Color.black, 1));
 		
@@ -262,8 +386,12 @@ public void createInnerElements(String dataItemName, String startObjectClassName
 		actualY += 35;
 		
 		Rectangle r = pan.getBounds();
-		pan.setBounds(r.x, r.y, r.width + innerX, r.height + 45);
+		pan.setBounds(r.x, r.y, r.width + innerX, this.getCorrectOuterHeight(pan) + 30);
 		pan.add(dataPanel);
+		
+		if(actualY > superPanel.getSize().height)
+			superPanel.setPreferredSize(new Dimension(superPanel.getSize().width, actualY));
+		
 	}
 	
 
