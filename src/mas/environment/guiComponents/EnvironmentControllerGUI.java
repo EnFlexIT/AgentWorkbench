@@ -503,8 +503,8 @@ public class EnvironmentControllerGUI extends JSplitPane implements ActionListen
 				break;
 					
 				case ELLIPSE:
-					selectedElement.setAttributeNS(null, "cx", ""+(x+width/2));
-					selectedElement.setAttributeNS(null, "cy", ""+(y+height/2));
+//					selectedElement.setAttributeNS(null, "cx", ""+(x+width/2));
+//					selectedElement.setAttributeNS(null, "cy", ""+(y+height/2));
 					selectedElement.setAttributeNS(null, "r1", ""+(width/2));
 					selectedElement.setAttributeNS(null, "r2", ""+(height/2));
 				break;				

@@ -333,21 +333,17 @@ public class PnlObjectSettings extends JPanel {
 					height = Float.parseFloat(parent.getSelectedElement().getAttributeNS(null, "height"));
 				break;
 				case CIRCLE:
-					xPos = Float.parseFloat(parent.getSelectedElement().getAttributeNS(null, "cx"));
-					yPos = Float.parseFloat(parent.getSelectedElement().getAttributeNS(null, "cy"));
 					width = height = Float.parseFloat(parent.getSelectedElement().getAttributeNS(null, "r"))*2;
+					xPos = Float.parseFloat(parent.getSelectedElement().getAttributeNS(null, "cx")) - width/2;
+					yPos = Float.parseFloat(parent.getSelectedElement().getAttributeNS(null, "cy")) - height/2;
 				break;
 				case ELLIPSE:
-					xPos = Float.parseFloat(parent.getSelectedElement().getAttributeNS(null, "cx"));
-					yPos = Float.parseFloat(parent.getSelectedElement().getAttributeNS(null, "cy"));
 					width = Float.parseFloat(parent.getSelectedElement().getAttributeNS(null, "r1"))*2;
 					height = Float.parseFloat(parent.getSelectedElement().getAttributeNS(null, "r2"))*2;
+					xPos = Float.parseFloat(parent.getSelectedElement().getAttributeNS(null, "cx")) - width/2;
+					yPos = Float.parseFloat(parent.getSelectedElement().getAttributeNS(null, "cy")) - height/2;
 				break;					
 			}
-//			xPos = OntoUtilities.calcRWU(xPos, parent.getController().getEnvironment().getScale());
-//			yPos = OntoUtilities.calcRWU(yPos, parent.getController().getEnvironment().getScale());
-//			width = OntoUtilities.calcRWU(width, parent.getController().getEnvironment().getScale());
-//			height = OntoUtilities.calcRWU(height, parent.getController().getEnvironment().getScale());
 			
 			xPos = parent.getController().getEnvironment().getScale().calcRwu(xPos);
 			yPos = parent.getController().getEnvironment().getScale().calcRwu(yPos);
