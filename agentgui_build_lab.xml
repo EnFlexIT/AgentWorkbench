@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="create_run_jar" name="Create Runnable Jar for Project AgentGUI with libraries in sub-folder">
+    <!--this file was created by Eclipse Runnable JAR Export Wizard-->
+    <!--ANT 1.7 is required                                        -->
+    <target name="create_run_jar">
+        <jar destfile="H:/eclipse-workspaces/ContMAS/lib/AgentGUI/AgentGUI.jar">
+            <manifest>
+                <attribute name="Main-Class" value="application.Application"/>
+                <attribute name="Class-Path" value=". AgentGUI_lib/batik-ext.jar AgentGUI_lib/batik-dom.jar AgentGUI_lib/batik-css.jar AgentGUI_lib/batik-svg-dom.jar AgentGUI_lib/batik-gvt.jar AgentGUI_lib/batik-parser.jar AgentGUI_lib/batik-script.jar AgentGUI_lib/batik-bridge.jar AgentGUI_lib/batik-anim.jar AgentGUI_lib/batik-transcoder.jar AgentGUI_lib/batik-awt-util.jar AgentGUI_lib/batik-codec.jar AgentGUI_lib/batik-util.jar AgentGUI_lib/batik-xml.jar AgentGUI_lib/xml-apis.jar AgentGUI_lib/xalan-2.6.0.jar AgentGUI_lib/xml-apis-ext.jar AgentGUI_lib/pdf-transcoder.jar AgentGUI_lib/js.jar AgentGUI_lib/batik-rasterizer.jar AgentGUI_lib/batik-swing.jar AgentGUI_lib/batik-gui-util.jar AgentGUI_lib/batik-slideshow.jar AgentGUI_lib/batik-squiggle.jar AgentGUI_lib/batik-svgpp.jar AgentGUI_lib/batik-svggen.jar AgentGUI_lib/batik-ttf2svg.jar AgentGUI_lib/batik.jar AgentGUI_lib/commons-codec-1.3.jar AgentGUI_lib/migration.jar AgentGUI_lib/jade.jar AgentGUI_lib/xercesImpl-2.7.1.jar"/>
+            </manifest>
+            <fileset dir="H:/eclipse-workspaces/AgentGUI/bin"/>
+            <fileset dir="H:/eclipse-workspaces/AgentGUI/lib/batik"/>
+        </jar>
+        <delete dir="H:/eclipse-workspaces/ContMAS/lib/AgentGUI/AgentGUI_lib"/>
+        <mkdir dir="H:/eclipse-workspaces/ContMAS/lib/AgentGUI/AgentGUI_lib"/>
+        <copy file="H:/eclipse-workspaces/AgentGUI/lib/batik/lib/batik-ext.jar" todir="H:/eclipse-workspaces/ContMAS/lib/AgentGUI/AgentGUI_lib"/>
+        <copy file="H:/eclipse-workspaces/AgentGUI/lib/batik/lib/batik-dom.jar" todir="H:/eclipse-workspaces/ContMAS/lib/AgentGUI/AgentGUI_lib"/>
+        <copy file="H:/eclipse-workspaces/AgentGUI/lib/batik/lib/batik-css.jar" todir="H:/eclipse-workspaces/ContMAS/lib/AgentGUI/AgentGUI_lib"/>
+        <copy file="H:/eclipse-workspaces/AgentGUI/lib/batik/lib/batik-svg-dom.jar" todir="H:/eclipse-workspaces/ContMAS/lib/AgentGUI/AgentGUI_lib"/>
+        <copy file="H:/eclipse-workspaces/AgentGUI/lib/batik/lib/batik-gvt.jar" todir="H:/eclipse-workspaces/ContMAS/lib/AgentGUI/AgentGUI_lib"/>
+        <copy file="H:/eclipse-workspaces/AgentGUI/lib/batik/lib/batik-parser.jar" todir="H:/eclipse-workspaces/ContMAS/lib/AgentGUI/AgentGUI_lib"/>
+        <copy file="H:/eclipse-workspaces/AgentGUI/lib/batik/lib/batik-script.jar" todir="H:/eclipse-workspaces/ContMAS/lib/AgentGUI/AgentGUI_lib"/>
+        <copy file="H:/eclipse-workspaces/AgentGUI/lib/batik/lib/batik-bridge.jar" todir="H:/eclipse-workspaces/ContMAS/lib/AgentGUI/AgentGUI_lib"/>
+        <copy file="H:/eclipse-workspaces/AgentGUI/lib/batik/lib/batik-anim.jar" todir="H:/eclipse-workspaces/ContMAS/lib/AgentGUI/AgentGUI_lib"/>
+        <copy file="H:/eclipse-workspaces/AgentGUI/lib/batik/lib/batik-transcoder.jar" todir="H:/eclipse-workspaces/ContMAS/lib/AgentGUI/AgentGUI_lib"/>
+        <copy file="H:/eclipse-workspaces/AgentGUI/lib/batik/lib/batik-awt-util.jar" todir="H:/eclipse-workspaces/ContMAS/lib/AgentGUI/AgentGUI_lib"/>
+        <copy file="H:/eclipse-workspaces/AgentGUI/lib/batik/lib/batik-codec.jar" todir="H:/eclipse-workspaces/ContMAS/lib/AgentGUI/AgentGUI_lib"/>
+        <copy file="H:/eclipse-workspaces/AgentGUI/lib/batik/lib/batik-util.jar" todir="H:/eclipse-workspaces/ContMAS/lib/AgentGUI/AgentGUI_lib"/>
+        <copy file="H:/eclipse-workspaces/AgentGUI/lib/batik/lib/batik-xml.jar" todir="H:/eclipse-workspaces/ContMAS/lib/AgentGUI/AgentGUI_lib"/>
+        <copy file="H:/eclipse-workspaces/AgentGUI/lib/batik/lib/xml-apis.jar" todir="H:/eclipse-workspaces/ContMAS/lib/AgentGUI/AgentGUI_lib"/>
+        <copy file="H:/eclipse-workspaces/AgentGUI/lib/batik/lib/xalan-2.6.0.jar" todir="H:/eclipse-workspaces/ContMAS/lib/AgentGUI/AgentGUI_lib"/>
+        <copy file="H:/eclipse-workspaces/AgentGUI/lib/batik/lib/xml-apis-ext.jar" todir="H:/eclipse-workspaces/ContMAS/lib/AgentGUI/AgentGUI_lib"/>
+        <copy file="H:/eclipse-workspaces/AgentGUI/lib/batik/lib/pdf-transcoder.jar" todir="H:/eclipse-workspaces/ContMAS/lib/AgentGUI/AgentGUI_lib"/>
+        <copy file="H:/eclipse-workspaces/AgentGUI/lib/batik/lib/js.jar" todir="H:/eclipse-workspaces/ContMAS/lib/AgentGUI/AgentGUI_lib"/>
+        <copy file="H:/eclipse-workspaces/AgentGUI/lib/batik/batik-rasterizer.jar" todir="H:/eclipse-workspaces/ContMAS/lib/AgentGUI/AgentGUI_lib"/>
+        <copy file="H:/eclipse-workspaces/AgentGUI/lib/batik/lib/batik-swing.jar" todir="H:/eclipse-workspaces/ContMAS/lib/AgentGUI/AgentGUI_lib"/>
+        <copy file="H:/eclipse-workspaces/AgentGUI/lib/batik/lib/batik-gui-util.jar" todir="H:/eclipse-workspaces/ContMAS/lib/AgentGUI/AgentGUI_lib"/>
+        <copy file="H:/eclipse-workspaces/AgentGUI/lib/batik/batik-slideshow.jar" todir="H:/eclipse-workspaces/ContMAS/lib/AgentGUI/AgentGUI_lib"/>
+        <copy file="H:/eclipse-workspaces/AgentGUI/lib/batik/batik-squiggle.jar" todir="H:/eclipse-workspaces/ContMAS/lib/AgentGUI/AgentGUI_lib"/>
+        <copy file="H:/eclipse-workspaces/AgentGUI/lib/batik/batik-svgpp.jar" todir="H:/eclipse-workspaces/ContMAS/lib/AgentGUI/AgentGUI_lib"/>
+        <copy file="H:/eclipse-workspaces/AgentGUI/lib/batik/lib/batik-svggen.jar" todir="H:/eclipse-workspaces/ContMAS/lib/AgentGUI/AgentGUI_lib"/>
+        <copy file="H:/eclipse-workspaces/AgentGUI/lib/batik/batik-ttf2svg.jar" todir="H:/eclipse-workspaces/ContMAS/lib/AgentGUI/AgentGUI_lib"/>
+        <copy file="H:/eclipse-workspaces/AgentGUI/lib/batik/batik.jar" todir="H:/eclipse-workspaces/ContMAS/lib/AgentGUI/AgentGUI_lib"/>
+        <copy file="H:/eclipse-workspaces/AgentGUI/lib/jade/lib/commons-codec/commons-codec-1.3.jar" todir="H:/eclipse-workspaces/ContMAS/lib/AgentGUI/AgentGUI_lib"/>
+        <copy file="H:/eclipse-workspaces/AgentGUI/lib/jade/lib/migration.jar" todir="H:/eclipse-workspaces/ContMAS/lib/AgentGUI/AgentGUI_lib"/>
+        <copy file="H:/eclipse-workspaces/AgentGUI/lib/jade/lib/jade.jar" todir="H:/eclipse-workspaces/ContMAS/lib/AgentGUI/AgentGUI_lib"/>
+        <copy file="H:/eclipse-workspaces/AgentGUI/lib/batik/lib/xercesImpl-2.7.1.jar" todir="H:/eclipse-workspaces/ContMAS/lib/AgentGUI/AgentGUI_lib"/>
+    </target>
+</project>

@@ -1,4 +1,4 @@
-; Thu Jun 17 18:34:17 NZST 2010
+; Wed Jun 23 21:58:08 NZST 2010
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -6,11 +6,11 @@
 ([BROWSER_SLOT_NAMES] of  Property_List
 
 	(properties
-		[contmas_ontology_individuals_ProjectKB_Instance_92]
-		[contmas_ontology_individuals_ProjectKB_Instance_93]
-		[contmas_ontology_individuals_ProjectKB_Instance_94]
-		[contmas_ontology_individuals_ProjectKB_Instance_95]
-		[contmas_ontology_individuals_ProjectKB_Instance_96]))
+		[contmas_ontology_individuals_ProjectKB_Instance_82]
+		[contmas_ontology_individuals_ProjectKB_Instance_83]
+		[contmas_ontology_individuals_ProjectKB_Instance_84]
+		[contmas_ontology_individuals_ProjectKB_Instance_85]
+		[contmas_ontology_individuals_ProjectKB_Instance_86]))
 
 ([CLSES_TAB] of  Widget
 
@@ -89,7 +89,7 @@
 
 	(is_hidden TRUE)
 	(property_list [contmas_ontology_individuals_ProjectKB_Instance_24])
-	(widget_class_name "org.algernon.kb.okbc.protege.plugins.AlgernonTab"))
+	(widget_class_name "TGViztab.TGVizTab"))
 
 ([contmas_ontology_individuals_ProjectKB_Instance_24] of  Property_List
 )
@@ -98,7 +98,7 @@
 
 	(is_hidden TRUE)
 	(property_list [contmas_ontology_individuals_ProjectKB_Instance_26])
-	(widget_class_name "TGViztab.TGVizTab"))
+	(widget_class_name "org.algernon.kb.okbc.protege.plugins.AlgernonTab"))
 
 ([contmas_ontology_individuals_ProjectKB_Instance_26] of  Property_List
 )
@@ -242,41 +242,41 @@
 
 	(is_hidden TRUE)
 	(property_list [contmas_ontology_individuals_ProjectKB_Instance_8])
-	(widget_class_name "ca.uvic.csr.shrimp.jambalaya.JambalayaTab"))
+	(widget_class_name "edu.stanford.smi.protegex.server_changes.prompt.UsersTab"))
 
 ([contmas_ontology_individuals_ProjectKB_Instance_8] of  Property_List
 )
+
+([contmas_ontology_individuals_ProjectKB_Instance_82] of  String
+
+	(name "owl:Thing")
+	(string_value "%3ANAME"))
+
+([contmas_ontology_individuals_ProjectKB_Instance_83] of  String
+
+	(name ":PAL-CONSTRAINT")
+	(string_value "%3APAL-NAME"))
+
+([contmas_ontology_individuals_ProjectKB_Instance_84] of  String
+
+	(name ":INSTANCE-ANNOTATION")
+	(string_value "%3AANNOTATION-TEXT"))
+
+([contmas_ontology_individuals_ProjectKB_Instance_85] of  String
+
+	(name ":META-CLASS")
+	(string_value "%3ANAME"))
+
+([contmas_ontology_individuals_ProjectKB_Instance_86] of  String
+
+	(name "owl:Class")
+	(string_value "%3ANAME"))
 
 ([contmas_ontology_individuals_ProjectKB_Instance_9] of  Widget
 
 	(is_hidden TRUE)
 	(property_list [contmas_ontology_individuals_ProjectKB_Instance_10])
-	(widget_class_name "edu.stanford.smi.protegex.server_changes.prompt.UsersTab"))
-
-([contmas_ontology_individuals_ProjectKB_Instance_92] of  String
-
-	(name "owl:Thing")
-	(string_value "%3ANAME"))
-
-([contmas_ontology_individuals_ProjectKB_Instance_93] of  String
-
-	(name ":PAL-CONSTRAINT")
-	(string_value "%3APAL-NAME"))
-
-([contmas_ontology_individuals_ProjectKB_Instance_94] of  String
-
-	(name ":INSTANCE-ANNOTATION")
-	(string_value "%3AANNOTATION-TEXT"))
-
-([contmas_ontology_individuals_ProjectKB_Instance_95] of  String
-
-	(name ":META-CLASS")
-	(string_value "%3ANAME"))
-
-([contmas_ontology_individuals_ProjectKB_Instance_96] of  String
-
-	(name "owl:Class")
-	(string_value "%3ANAME"))
+	(widget_class_name "ca.uvic.csr.shrimp.jambalaya.JambalayaTab"))
 
 ([FORMS_TAB] of  Widget
 
@@ -1200,11 +1200,6 @@
 ([KB_484936_Instance_3] of  Property_List
 )
 
-([KB_516507_Instance_0] of  String
-
-	(name "owl_file_name")
-	(string_value "contmas_ontology_individuals.owl"))
-
 ([KB_564539_Instance_0] of  Widget
 
 	(is_hidden TRUE)
@@ -1213,6 +1208,11 @@
 
 ([KB_564539_Instance_1] of  Property_List
 )
+
+([KB_575104_Instance_0] of  String
+
+	(name "owl_file_name")
+	(string_value "contmas_ontology_individuals.owl"))
 
 ([KB_575585_Instance_0] of  Widget
 
@@ -7719,7 +7719,7 @@
 		[OWL_ProjectKB_Instance_3]
 		[KB_444675_Instance_0]
 		[KB_632156_Instance_0]
-		[KB_516507_Instance_0]))
+		[KB_575104_Instance_0]))
 
 ([STANDARD_CLASS_FORM_WIDGET] of  Widget
 

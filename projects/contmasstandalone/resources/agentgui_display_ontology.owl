@@ -11,15 +11,6 @@
     <owl:imports rdf:resource="http://jade.cselt.it/beangenerator"/>
   </owl:Ontology>
   <owl:ObjectProperty rdf:ID="objects">
-    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >All objects existing in this environment</rdfs:comment>
-    <rdfs:range>
-      <j0:JADE-CLASS rdf:ID="AbstractObject">
-        <rdfs:subClassOf rdf:resource="http://jade.cselt.it/beangenerator#Concept"/>
-        <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-        ></rdfs:comment>
-      </j0:JADE-CLASS>
-    </rdfs:range>
     <rdfs:domain>
       <j0:JADE-CLASS rdf:ID="Environment">
         <rdfs:subClassOf rdf:resource="http://jade.cselt.it/beangenerator#Concept"/>
@@ -27,13 +18,22 @@
         >A project's environment definition</rdfs:comment>
       </j0:JADE-CLASS>
     </rdfs:domain>
+    <rdfs:range>
+      <j0:JADE-CLASS rdf:ID="AbstractObject">
+        <rdfs:subClassOf rdf:resource="http://jade.cselt.it/beangenerator#Concept"/>
+        <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        ></rdfs:comment>
+      </j0:JADE-CLASS>
+    </rdfs:range>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >All objects existing in this environment</rdfs:comment>
   </owl:ObjectProperty>
   <owl:ObjectProperty rdf:ID="Steps">
     <rdfs:range>
       <j0:JADE-CLASS rdf:ID="Position">
+        <rdfs:subClassOf rdf:resource="http://jade.cselt.it/beangenerator#Concept"/>
         <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
         >Represents an object's position in a 2D environment</rdfs:comment>
-        <rdfs:subClassOf rdf:resource="http://jade.cselt.it/beangenerator#Concept"/>
       </j0:JADE-CLASS>
     </rdfs:range>
     <rdfs:domain>
@@ -43,20 +43,18 @@
     </rdfs:domain>
   </owl:ObjectProperty>
   <owl:ObjectProperty rdf:ID="childObjects">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >List of EnvironmentObjects inside this PlaygroundObject</rdfs:comment>
     <rdfs:domain>
       <j0:JADE-CLASS rdf:ID="PlaygroundObject">
-        <rdfs:subClassOf rdf:resource="#AbstractObject"/>
         <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
         >Represents a 2D envoronment or subenvironment, can contain all kinds of EnvironmentObjects</rdfs:comment>
+        <rdfs:subClassOf rdf:resource="#AbstractObject"/>
       </j0:JADE-CLASS>
     </rdfs:domain>
     <rdfs:range rdf:resource="#AbstractObject"/>
-    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >List of EnvironmentObjects inside this PlaygroundObject</rdfs:comment>
   </owl:ObjectProperty>
   <owl:ObjectProperty rdf:ID="collisionPoints">
-    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >Points for collision checks</rdfs:comment>
     <rdfs:domain>
       <j0:JADE-CLASS rdf:ID="AgentObject">
         <rdfs:subClassOf rdf:resource="#AbstractObject"/>
@@ -64,11 +62,11 @@
         >Represents an agent that can move in the environment</rdfs:comment>
       </j0:JADE-CLASS>
     </rdfs:domain>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Points for collision checks</rdfs:comment>
   </owl:ObjectProperty>
   <owl:FunctionalProperty rdf:ID="pixel">
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
-    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >The number of pixel standing for the number of real world untis specified in value</rdfs:comment>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
     <rdfs:domain>
       <j0:JADE-CLASS rdf:ID="Scale">
         <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
@@ -76,23 +74,25 @@
         <rdfs:subClassOf rdf:resource="http://jade.cselt.it/beangenerator#Concept"/>
       </j0:JADE-CLASS>
     </rdfs:domain>
-    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >The number of pixel standing for the number of real world untis specified in value</rdfs:comment>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="scale">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
     <rdfs:range rdf:resource="#Scale"/>
     <rdfs:domain rdf:resource="#Environment"/>
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="unit">
-    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-    <rdfs:domain rdf:resource="#Scale"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
     <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Name of the used real world unit. Just for display, no automatic conversion at the moment</rdfs:comment>
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+    <rdfs:domain rdf:resource="#Scale"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="speed">
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
-    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >// The speed (currently px/step)</rdfs:comment>
     <rdfs:domain>
       <j0:JADE-CLASS rdf:ID="Speed">
         <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
@@ -100,125 +100,125 @@
         <rdfs:subClassOf rdf:resource="http://jade.cselt.it/beangenerator#Concept"/>
       </j0:JADE-CLASS>
     </rdfs:domain>
-    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >// The speed (currently px/step)</rdfs:comment>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="parent">
+    <rdfs:range rdf:resource="#PlaygroundObject"/>
+    <rdfs:domain rdf:resource="#AbstractObject"/>
     <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >The playground containing this EnvironmentObject</rdfs:comment>
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
-    <rdfs:range rdf:resource="#PlaygroundObject"/>
-    <rdfs:domain rdf:resource="#AbstractObject"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="id">
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
-    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-    <rdfs:domain rdf:resource="#AbstractObject"/>
     <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Unique id to identify this object</rdfs:comment>
+    <rdfs:domain rdf:resource="#AbstractObject"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="y">
     <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >The pont's y coordinate</rdfs:comment>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
     <rdfs:domain rdf:resource="#Position"/>
     <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="projectName">
+    <rdfs:domain rdf:resource="#Environment"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
     <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >The project's name</rdfs:comment>
-    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-    <rdfs:domain rdf:resource="#Environment"/>
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="svgDoc">
-    <rdfs:domain rdf:resource="#Environment"/>
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:domain rdf:resource="#Environment"/>
     <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >The SVG document object</rdfs:comment>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="agentClass">
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
     <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Name of the agent class (subclass of jade.core.agent) this agent is an instance of</rdfs:comment>
     <rdfs:domain rdf:resource="#AgentObject"/>
     <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="value">
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
     <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >The number of real world untis represented by the number of pixels specified in pixels</rdfs:comment>
     <rdfs:domain rdf:resource="#Scale"/>
     <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="rootPlayground">
-    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >Root of the project's environment representation, containing all it's EnvironmentObjects</rdfs:comment>
     <rdfs:domain rdf:resource="#Environment"/>
     <rdfs:range rdf:resource="#PlaygroundObject"/>
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Root of the project's environment representation, containing all it's EnvironmentObjects</rdfs:comment>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="size">
-    <rdfs:domain rdf:resource="#AbstractObject"/>
-    <rdfs:range>
-      <j0:JADE-CLASS rdf:ID="Size">
-        <rdfs:subClassOf rdf:resource="http://jade.cselt.it/beangenerator#Concept"/>
-        <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-        >Represents an object's size in a 2D environment</rdfs:comment>
-      </j0:JADE-CLASS>
-    </rdfs:range>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
     <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >This EnvironmentObject's size</rdfs:comment>
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:range>
+      <j0:JADE-CLASS rdf:ID="Size">
+        <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >Represents an object's size in a 2D environment</rdfs:comment>
+        <rdfs:subClassOf rdf:resource="http://jade.cselt.it/beangenerator#Concept"/>
+      </j0:JADE-CLASS>
+    </rdfs:range>
+    <rdfs:domain rdf:resource="#AbstractObject"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="aid">
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
-    <rdfs:domain rdf:resource="#AgentObject"/>
-    <rdfs:range rdf:resource="http://jade.cselt.it/beangenerator#AID"/>
     <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >This agent's AID</rdfs:comment>
+    <rdfs:domain rdf:resource="#AgentObject"/>
+    <rdfs:range rdf:resource="http://jade.cselt.it/beangenerator#AID"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="x">
+    <rdfs:domain rdf:resource="#Position"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
     <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >The point's x coordinate</rdfs:comment>
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
-    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
-    <rdfs:domain rdf:resource="#Position"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="position">
+    <rdfs:domain rdf:resource="#AbstractObject"/>
+    <rdfs:range rdf:resource="#Position"/>
     <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >This EnvironmentObject's center position</rdfs:comment>
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
-    <rdfs:domain rdf:resource="#AbstractObject"/>
-    <rdfs:range rdf:resource="#Position"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="width">
-    <rdfs:domain rdf:resource="#Size"/>
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
     <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    <rdfs:domain rdf:resource="#Size"/>
     <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >The object's width</rdfs:comment>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="environment">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
     <rdfs:domain>
       <j0:JADE-CLASS rdf:ID="EnvironmentUpdate">
         <rdfs:subClassOf rdf:resource="http://jade.cselt.it/beangenerator#AgentAction"/>
       </j0:JADE-CLASS>
     </rdfs:domain>
     <rdfs:range rdf:resource="#Environment"/>
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="currentSpeed">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
     <rdfs:range rdf:resource="#Speed"/>
     <rdfs:domain rdf:resource="#AgentObject"/>
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="height">
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
     <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >The object's height</rdfs:comment>
-    <rdfs:domain rdf:resource="#Size"/>
     <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    <rdfs:domain rdf:resource="#Size"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:ID="maxSpeed">
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
@@ -226,9 +226,9 @@
     <rdfs:range rdf:resource="#Speed"/>
   </owl:FunctionalProperty>
   <j0:JADE-CLASS rdf:ID="ObstacleObject">
+    <rdfs:subClassOf rdf:resource="#AbstractObject"/>
     <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Represents a static, non movable object in the environment</rdfs:comment>
-    <rdfs:subClassOf rdf:resource="#AbstractObject"/>
   </j0:JADE-CLASS>
 </rdf:RDF>
 
