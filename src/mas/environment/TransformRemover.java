@@ -11,7 +11,9 @@ public class TransformRemover {
 	/**
 	 * The elements with these ids will not be touched
 	 */
-	static String[] skipIds = {"layer 6", "layer13", "layer14", "layer18", "layer22", "layer23", "layer24", "layer27", "path14290", "path14270"};
+//	static String[] skipIds = {};
+
+	static String[] skipIds = {"layer4", "layer3", "layer22", "layer10", "layer24", "layer11", "layer23", "layer32", "layer18", "layer14", "layer13", "layer5", "layer21", "layer20", "layer1", "layer31", "layer15", "layer28", "g17583", "path14290", "path14270"};
 	
 	/**
 	 * Removing the transform attribute from a node
