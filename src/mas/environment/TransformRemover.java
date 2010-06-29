@@ -13,7 +13,7 @@ public class TransformRemover {
 	 */
 //	static String[] skipIds = {};
 
-	static String[] skipIds = {"layer4", "layer3", "layer22", "layer10", "layer24", "layer11", "layer23", "layer32", "layer18", "layer14", "layer13", "layer5", "layer21", "layer20", "layer1", "layer31", "layer15", "layer28", "g17583", "path14290", "path14270"};
+	static String[] skipIds = {"layer4", "layer3", "layer22", "layer10", "layer24", "layer11", "layer23", "layer32", "layer18", "layer14", "layer13", "layer5", "layer21", "layer20", "layer31", "layer15", "layer28", "layer17", "layer19", "layer29", "layer30", "layer16", "layer9", "layer8", "g17583", "g18285", "g18911", "g19195", "g19519", "path14290", "path14270", "path25268"};
 	
 	/**
 	 * Removing the transform attribute from a node
