@@ -29,6 +29,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
+import org.apache.fop.svg.ACIUtils;
+
 import application.Project;
 
 public class DynForm extends JPanel{
@@ -125,7 +127,54 @@ public class DynForm extends JPanel{
 			
 			this.createGUI(tm, startObjectClassName, mainPanel, 0);
 
-		}					
+		}
+		this.addSubmitButton();
+	}
+	
+	private void addSubmitButton() {
+		JButton submitButton = new JButton();
+		submitButton.setBounds(new Rectangle(0, actualY + 30, 70, 25));
+		submitButton.setText("Submit");
+		submitButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				generateInstances(mainPanel, 0);
+			}
+		});
+		mainPanel.add(submitButton);
+	}
+
+	private void generateInstances(JPanel pan, int tiefe){
+		Component[] components = pan.getComponents();
+		for (int i = 0; i < components.length; i++) {
+			if(tiefe == 0){
+				if(components[i] instanceof JLabel){
+					System.out.println("Here we have class: "+((JLabel)components[i]).getText());
+				}
+				else if(components[i] instanceof JPanel){
+					tiefe++;
+					generateInstances((JPanel)components[i], tiefe);
+				}
+			}
+			else{
+				if(components[i] instanceof JLabel && components[i+1] !=null && 
+						components[i+1] instanceof JLabel)
+					System.out.println("Here we have (innerclass) "+((JLabel)components[i+1]).getText());
+				else{
+					if(components[i] instanceof JPanel)
+					{
+						tiefe++;
+						generateInstances((JPanel)components[i], tiefe);
+					}
+					else if (components[i] instanceof JLabel && components[i+1] != null && 
+							components[i+1] instanceof JTextField) {
+						String variableName = ((JLabel)components[i]).getText();
+						String variableValue = ((JTextField)components[i+1]).getText();
+						System.out.println("Variable: "+ variableName + " Value: " + variableValue);
+					}
+				}
+			}
+		}
 	}
 	
 	public void createGUI(DefaultTableModel tm , String startObjectClassName, JPanel pan, int tiefe){
@@ -218,7 +267,7 @@ public void createInnerElements(String dataItemName, String dataItemCardinality,
 		innerClassName.setFont(boldFont);
 		
 		JButton multipleButton = new JButton("+");
-		multipleButton.setBounds(new Rectangle(280, 0, 30, 16));
+		multipleButton.setBounds(new Rectangle(250, 0, 35, 25));
 		multipleButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -259,7 +308,7 @@ public void createInnerElements(String dataItemName, String dataItemCardinality,
 		JPanel pan = (JPanel) dataPanel.getParent();
 		int dataPanelHeight = dataPanel.getHeight();
 		pan.setBounds(pan.getX(), pan.getY(), pan.getWidth(), pan.getHeight() + dataPanelHeight);
-		this.moveOtherPanels4Multiple(dataPanel);
+		this.moveOtherPanels4Multiple(dataPanel, true);
 		if(mainPanel.getHeight() > superPanel.getSize().height)
 			superPanel.setPreferredSize(new Dimension(superPanel.getSize().width, mainPanel.getHeight()));
 		JPanel dataPanelCopy = new JPanel();
@@ -271,7 +320,7 @@ public void createInnerElements(String dataItemName, String dataItemCardinality,
 		testFrame.validate();
 	}
 	
-	private void createPanelCopy(JPanel newPanel, JPanel originalPanel) {
+	private void createPanelCopy(final JPanel newPanel, JPanel originalPanel) {
 		Component[] c = originalPanel.getComponents();
 		for (Component component : c) {
 			if(component instanceof JPanel)
@@ -289,6 +338,7 @@ public void createInnerElements(String dataItemName, String dataItemCardinality,
 				JLabel origLabel = (JLabel) component;
 				label.setBounds(origLabel.getX(), origLabel.getY(), origLabel.getWidth(), origLabel.getHeight());
 				label.setText(origLabel.getText());
+				label.setFont(origLabel.getFont());
 				newPanel.add(label);
 			}
 			else if (component instanceof JTextField) {
@@ -302,26 +352,53 @@ public void createInnerElements(String dataItemName, String dataItemCardinality,
 				JButton buttonOrig = (JButton) component;
 				button.setBounds(buttonOrig.getX(), buttonOrig.getY(), buttonOrig.getWidth(), buttonOrig.getHeight());
 				button.setText(buttonOrig.getText());
-				ActionListener[] al = buttonOrig.getActionListeners();
-				for (ActionListener actionListener : al) {
-					button.addActionListener(actionListener);
-				}
+				button.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						addMultiple(newPanel);
+					}
+				});
+				
 				newPanel.add(button);
+				
+				JButton removeComponent = new JButton();
+				removeComponent.setBounds(button.getX() + button.getWidth(), button.getY(), button.getWidth(), button.getHeight());
+				removeComponent.setText("-");
+				removeComponent.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						JPanel parent = (JPanel) newPanel.getParent();
+						newPanel.setVisible(false);
+						//parent.setBounds(parent.getX(), parent.getY() - newPanel.getHeight(), parent.getWidth(), parent.getHeight());
+						moveOtherPanels4Multiple(newPanel, false);
+						parent.remove(newPanel);
+						parent.setBounds(parent.getX(), parent.getY(), parent.getWidth(), parent.getHeight() - newPanel.getHeight());
+						parent.validate();
+					}
+				});
+				newPanel.add(removeComponent);
 			}
 		}
 	}
 
 
-	public void moveOtherPanels4Multiple(JPanel dataPanel){
+	public void moveOtherPanels4Multiple(JPanel dataPanel, boolean add){
 		Component[] panChilds = ((JPanel) dataPanel.getParent()).getComponents();
 		boolean flag = false;
 		for (Component component : panChilds) {
 			if(component == dataPanel)
 				flag = true;
-			if(flag && component != dataPanel){
-				component.setBounds(component.getX(), component.getY() + dataPanel.getHeight(), component.getWidth(), component.getHeight());
+			if(add){
+				if(flag && component != dataPanel){
+					component.setBounds(component.getX(), component.getY() + dataPanel.getHeight(), component.getWidth(), component.getHeight());
+				}
 			}
-		}
+			else
+			{
+				if(component.getY() > dataPanel.getY())
+					component.setBounds(component.getX(), component.getY() - dataPanel.getHeight(), component.getWidth(), component.getHeight());
+				}
+			}
 	}
 	
 	
