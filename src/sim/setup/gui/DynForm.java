@@ -9,6 +9,8 @@ import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -148,25 +150,39 @@ public class DynForm extends JPanel{
 		Component[] components = pan.getComponents();
 		for (int i = 0; i < components.length; i++) {
 			if(tiefe == 0){
-				if(components[i] instanceof JLabel){
-					System.out.println("Here we have class: "+((JLabel)components[i]).getText());
-				}
-				else if(components[i] instanceof JPanel){
+				if(components[i] instanceof JPanel){
 					tiefe++;
 					generateInstances((JPanel)components[i], tiefe);
 				}
+				else if(components[i] instanceof JLabel){
+					String className = ((JLabel)components[i]).getText();
+					System.out.println("Here we have class: "+className);
+					try {
+						Class cl = Class.forName(this.startObjectPackage+"."+className);
+						for (Method m : cl.getMethods()) {
+							System.out.println(m.getReturnType().toString() + " - " + m.getName().toString());
+							for (Class paramClass: m.getParameterTypes()) {
+								System.out.print(" "+paramClass.getName());
+							}
+						}
+						
+					} catch (ClassNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
 			}
 			else{
-				if(components[i] instanceof JLabel && components[i+1] !=null && 
+				if(components[i] instanceof JPanel)
+				{
+					tiefe++;
+					generateInstances((JPanel)components[i], tiefe);
+				}
+				else if(components[i] instanceof JLabel && components[i+1] !=null && 
 						components[i+1] instanceof JLabel)
 					System.out.println("Here we have (innerclass) "+((JLabel)components[i+1]).getText());
 				else{
-					if(components[i] instanceof JPanel)
-					{
-						tiefe++;
-						generateInstances((JPanel)components[i], tiefe);
-					}
-					else if (components[i] instanceof JLabel && components[i+1] != null && 
+					if (components[i] instanceof JLabel && components[i+1] != null && 
 							components[i+1] instanceof JTextField) {
 						String variableName = ((JLabel)components[i]).getText();
 						String variableValue = ((JTextField)components[i+1]).getText();
