@@ -123,7 +123,7 @@ public class DynForm extends JPanel{
 			DefaultTableModel tm = currProject.ontologies4Project.getSlots4Class(startObjectClass);
 
 			// --------------------------------------------------------------------------
-			// --- Hier das neu Zeug als Objektstruktur und nicht als TableModel -------- 
+			// --- Hier das neue Zeug als Objektstruktur und nicht als TableModel ------- 
 			// --------------------------------------------------------------------------
 			OntologySingleClassDescription osc = currProject.ontologies4Project.getSlots4ClassAsObject(startObjectClass);
 			System.out.println( "---------------------------------------------------");
