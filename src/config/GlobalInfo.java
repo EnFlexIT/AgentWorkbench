@@ -1,4 +1,4 @@
-package application;
+package config;
 
 import jade.core.Profile;
 
@@ -8,12 +8,15 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Vector;
 
+import application.Application;
+
 import mas.PlatformJadeConfig;
 
 public class GlobalInfo {
 
 	// --- Konstanten ------------------------------------------------------- 
 	final private static String localAppTitel = "Agent.GUI";
+	final private static String localAppVersion = "0.5";
 	final private static boolean localAppUseInternalConsole = false;
 	
 	final private static String localAppPathSeparatorString = File.separator;
@@ -43,8 +46,21 @@ public class GlobalInfo {
 	
 	private static String localFileRunnableJar = "AgentGui.jar";
 	private static String localFileDictionary  = localPathProperty + "dictionary.csv";
+	private static String localFileProperties  = "agentgui.ini";
 	private static String localFileNameProject = "agentgui.xml";
 	private static String localFileNameProjectOntology = "AgentGUIProjectOntology";
+	
+	// --- File-Properties --------------------------------------------------
+	private boolean filePropRunAsServer = false;	
+	private boolean filePropServerAutoRun = false;
+	private String filePropServerMasterURL = null;
+	private Integer filePropServerMasterPort = this.localeJadeLocalPort;
+	private Integer filePropServerMasterPort4MTP = 7778;
+	
+	private String filePropServerMasterDBHost = null;
+	private String filePropServerMasterDBName = null;
+	private String filePropServerMasterDBUser = null;
+	private String filePropServerMasterDBPswd = null;
 	
 	// ----------------------------------------------------------------------
 	// --- Objekt-Initialisierung -------------------------------------------
@@ -110,6 +126,14 @@ public class GlobalInfo {
 	public String AppTitel() {
 		return localAppTitel;
 	};
+	/**
+	 * @return the localappversion
+	 */
+	public String AppVersion() {
+		return localAppVersion;
+	}
+
+
 	/**
 	 * Returns if the System-Output ('Out' or 'Err') goe's throw this application 
 	 */
@@ -228,6 +252,12 @@ public class GlobalInfo {
 		else {
 			return localPathProperty;	
 		}	
+	}
+	/**
+	 * Unterverzeichnis für die Properties-Datei
+	 */
+	public String getPathConfigFile() {
+		return PathProperty(false) + localFileProperties;
 	}
 	/**
 	 * Unterverzeichnis fuer Projekte
@@ -351,7 +381,6 @@ public class GlobalInfo {
 		jadeConfig.runNotificationService(true);
 		jadeConfig.runTopicManagementService(true);
 		jadeConfig.runAgentMobilityService(true);
-		jadeConfig.runInterPlatformMobilityService(true);
 		jadeConfig.setLocalPort(localeJadeLocalPort);
 		return jadeConfig;
 	}
@@ -378,5 +407,121 @@ public class GlobalInfo {
 	public Color ColorMenuHighLight () {
 		return localColorMenuHighLight;
 	}
+
+
+	// ---------------------------------------------------------
+	// --- File-Properties -------------------------------------
+	// ---------------------------------------------------------
+	/**
+	 * @param filePropRunAsServer the filePropRunAsServer to set
+	 */
+	public void setRunAsServer(boolean runAsServer) {
+		this.filePropRunAsServer = runAsServer;
+		Application.isServer = runAsServer;
+	}
+	/**
+	 * @return the filePropRunAsServer
+	 */
+	public boolean isRunAsServer() {
+		return this.filePropRunAsServer;
+	}
+	/**
+	 * @param filePropAutoRun the filePropAutoRun to set
+	 */
+	public void setServerAutoRun(boolean serverAutoRun) {
+		this.filePropServerAutoRun = serverAutoRun;
+	}
+	/**
+	 * @return the filePropAutoRun
+	 */
+	public boolean isServerAutoRun() {
+		return this.filePropServerAutoRun;
+	}
+	/**
+	 * @param filePropMasterURL the filePropMasterURL to set
+	 */
+	public void setServerMasterURL(String serverMasterURL) {
+		this.filePropServerMasterURL = serverMasterURL;
+	}
+	/**
+	 * @return the filePropMasterURL
+	 */
+	public String getServerMasterURL() {
+		return this.filePropServerMasterURL;
+	}
+	/**
+	 * @param filePropMasterPort the filePropMasterPort to set
+	 */
+	public void setServerMasterPort(Integer serverMasterPort) {
+		this.filePropServerMasterPort = serverMasterPort;
+	}
+	/**
+	 * @return the filePropMasterPort
+	 */
+	public Integer getServerMasterPort() {
+		return this.filePropServerMasterPort;
+	}
+	/**
+	 * @param filePropMasterPort the filePropMasterPort to set
+	 */
+	public void setServerMasterPort4MTP(Integer serverMasterPort) {
+		this.filePropServerMasterPort4MTP = serverMasterPort;
+	}
+	/**
+	 * @return the filePropMasterPort
+	 */
+	public Integer getServerMasterPort4MTP() {
+		return this.filePropServerMasterPort4MTP;
+	}
+
+	/**
+	 * @param filePropServerMasterDBHost the filePropServerMasterDBHost to set
+	 */
+	public void setServerMasterDBHost(String newDBHost) {
+		this.filePropServerMasterDBHost = newDBHost;
+	}
+	/**
+	 * @return the filePropServerMasterDBHost
+	 */
+	public String getServerMasterDBHost() {
+		return filePropServerMasterDBHost;
+	}
+	/**
+	 * @param filePropServerMasterDBName the filePropServerMasterDBName to set
+	 */
+	public void setServerMasterDBName(String newDBName) {
+		this.filePropServerMasterDBName = newDBName;
+	}
+	/**
+	 * @return the filePropServerMasterDBName
+	 */
+	public String getServerMasterDBName() {
+		return filePropServerMasterDBName;
+	}
+	/**
+	 * @param filePropServerMasterDBUser the filePropServerMasterDBUser to set
+	 */
+	public void setServerMasterDBUser(String newDBUser) {
+		this.filePropServerMasterDBUser = newDBUser;
+	}
+	/**
+	 * @return the filePropServerMasterDBUser
+	 */
+	public String getServerMasterDBUser() {
+		return filePropServerMasterDBUser;
+	}
+	/**
+	 * @param filePropServerMasterDBPswd the filePropServerMasterDBPswd to set
+	 */
+	public void setServerMasterDBPswd(String newDBPswd) {
+		this.filePropServerMasterDBPswd = newDBPswd;
+	}
+	/**
+	 * @return the filePropServerMasterDBPswd
+	 */
+	public String getServerMasterDBPswd() {
+		return filePropServerMasterDBPswd;
+	}
+
 	
 }

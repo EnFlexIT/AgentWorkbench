@@ -75,11 +75,6 @@ public class Language {
 		DefaultLanguage = null;
 		LoadDictionaryFile();		
 
-		// --- Anwendung neu starten -------------------------------------------		
-		Application.JadePlatform.jadeStop();
-		Application.Projects.removeAll();
-		Application.MainWindow.dispose();		
-		Application.startApplication();	
 	}
 	// -------------------------------------------------------------------------	
 		

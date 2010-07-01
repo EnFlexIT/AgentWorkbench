@@ -156,7 +156,7 @@ public class ReflectClass extends Object {
 							MethodList.put(methodName, theMethods[i]);
 						}
 					} else {
-						MethodList.put(methodName, theMethods[i]);	
+						MethodList.put(methodName, theMethods[i]);
 					}
 					// ---------------------------------------------------------
 				}

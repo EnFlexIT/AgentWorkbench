@@ -1,6 +1,6 @@
 package mas;
 /**
- * @author Chriostian Derksen
+ * @author Christian Derksen
  */
 import jade.core.Profile;
 import jade.core.ProfileImpl;
@@ -86,6 +86,7 @@ public class PlatformJadeConfig implements Serializable {
 		Profile prof = new ProfileImpl();
 		prof = this.setProfileLocalPort(prof);
 		prof = this.setProfileServices(prof);
+		//prof = this.setProfileRemoteContainer(prof);
 		return prof;
 	}
 	/**
@@ -121,9 +122,9 @@ public class PlatformJadeConfig implements Serializable {
 			profile.setParameter(Profile.SERVICES, serviceListString);	
 		}
 		return profile;
-	}
+	}	
 	/**
-	 * This method walks through the HashSet of configured Services and retuns them as on String 
+	 * This method walks through the HashSet of configured Services and retuns them as a String 
 	 * @return String
 	 */
 	private String getServiceListArgument() {
@@ -133,7 +134,7 @@ public class PlatformJadeConfig implements Serializable {
 			serviceListString += it.next();
 		}
 		//TODO: bald mal wieder rausschmeissen ...
-		serviceListString +="mas.time.AgentGUIService;";
+		//serviceListString +="mas.service.AgentGUIService;";
 		return serviceListString;
 	}
 	/**

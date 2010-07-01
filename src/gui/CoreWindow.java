@@ -6,7 +6,9 @@ import java.awt.Component;
 import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -39,7 +41,6 @@ import javax.swing.UIManager;
 import javax.swing.border.EtchedBorder;
 
 import mas.PlatformSysInfo;
-
 import application.Application;
 import application.Language;
 import application.Project;
@@ -54,13 +55,17 @@ public class CoreWindow extends JFrame implements ComponentListener{
 	private static final long serialVersionUID = 1L;
 
 	final static String PathImage = Application.RunInfo.PathImageIntern();
-	static ImageIcon iconGreen = new ImageIcon( CoreWindow.class.getResource( PathImage + "StatGreen.png") );
-	static ImageIcon iconRed = new ImageIcon( CoreWindow.class.getResource( PathImage + "StatRed.png") );
-	static ImageIcon iconClose = new ImageIcon( CoreWindow.class.getResource( PathImage + "MBclose.png") );
-	static ImageIcon iconCloseDummy = new ImageIcon( CoreWindow.class.getResource( PathImage + "MBdummy.png") );
 	
-	static JLabel StatusBar;	
-	static JLabel StatusJade;
+	private final ImageIcon iconAgentGUI = new ImageIcon( this.getClass().getResource( PathImage + "AgentGUI.png") );
+	private final Image imageAgentGUI = iconAgentGUI.getImage();
+	
+	private final  ImageIcon iconGreen = new ImageIcon( this.getClass().getResource( PathImage + "StatGreen.png") );
+	private final ImageIcon iconRed = new ImageIcon( this.getClass().getResource( PathImage + "StatRed.png") );
+	private final ImageIcon iconClose = new ImageIcon( this.getClass().getResource( PathImage + "MBclose.png") );
+	private final ImageIcon iconCloseDummy = new ImageIcon( this.getClass().getResource( PathImage + "MBdummy.png") );
+	
+	private static JLabel StatusBar;	
+	private JLabel StatusJade;
 	
 	public JSplitPane SplitProjectDesktop;
 	public JDesktopPane ProjectDesktop;	
@@ -90,14 +95,22 @@ public class CoreWindow extends JFrame implements ComponentListener{
 	// ------------------------------------------------------------
 	public CoreWindow() {
 		
+		// --- Set the IconImage ----------------------------------
+		this.setIconImage(imageAgentGUI);
+		
+		// --- Set the Look and Feel of the Application -----------
 		if ( Application.RunInfo.AppLnF() != null ) {
 			setLookAndFeel( Application.RunInfo.AppLnF() );
 		}
+		
+		// --- Create the Main-Elements of the Application --------
 		initComponents();
+		
 		this.setDefaultCloseOperation(CoreWindow.DO_NOTHING_ON_CLOSE);
 		this.getContentPane().setPreferredSize(this.getSize());
 		this.setLocationRelativeTo(null);
 		this.pack();		
+		
 		//this.setExtendedState(Frame.MAXIMIZED_BOTH);
 		this.setVisible(true);
 		setTitelAddition("");
@@ -256,7 +269,16 @@ public class CoreWindow extends JFrame implements ComponentListener{
 			Application.ProjectCurr.setMaximized();
 		}
 	}
-		
+	/**
+	 * This method sets back the focus to this JFrame 
+	 */
+	public void restoreFocus() {
+		if ( this.getExtendedState()==Frame.ICONIFIED || this.getExtendedState()==Frame.ICONIFIED+Frame.MAXIMIZED_BOTH) {
+			this.setState(Frame.NORMAL);
+		} 
+		this.setAlwaysOnTop(true);
+		this.setAlwaysOnTop(false);
+	}
 	// ------------------------------------------------------------
 	// --- Statusanzeigen etc. definieren - ENDE ------------------
 	// ------------------------------------------------------------
@@ -393,6 +415,9 @@ public class CoreWindow extends JFrame implements ComponentListener{
 			jMenuExtraLnF.setText("Look and Feel");
 			setjMenuExtraLnF();
 			jMenuExtra.add( jMenuExtraLnF );
+			
+			jMenuExtra.addSeparator();
+			jMenuExtra.add( new CWMenueItem( "ExtraOptions", Language.translate("Optionen"), null ));
 			}
 		return jMenuExtra;
 	}
@@ -431,8 +456,8 @@ public class CoreWindow extends JFrame implements ComponentListener{
 				this.setActionCommand( LangHeader );
 			}
 			public void actionPerformed(ActionEvent evt) {
-				String ActCMD = evt.getActionCommand();			
-				Language.changeLanguageTo( ActCMD );			
+				String ActCMD = evt.getActionCommand();	
+				Application.setLanguage(ActCMD);							
 			}
 		}
 		// ------------------------------------------------------------		
@@ -646,9 +671,12 @@ public class CoreWindow extends JFrame implements ComponentListener{
 				Application.JadePlatform.jadeSystemAgentOpen("log", null);
 			}
 			// --- Menü Extras => nicht hier !! ---------------
+			else if ( ActCMD.equalsIgnoreCase("ExtraOptions") ) {
+				Application.showOptionDialog();
+			}
 			// --- Menü Hilfe ---------------------------------
 			else if ( ActCMD.equalsIgnoreCase("HelpAbout") ) {
-				// --- Hier kann man mal ein paar Befehle testen ...
+				Application.showAboutDialog();
 			}
 			else {
 				System.err.println(Language.translate("Unbekannt: ") + "ActionCommand => " + ActCMD);

@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -51,6 +52,7 @@ public class CoreWindowConsole extends JEditorPane  {
 	private AttributeSet attribute;
 	
 	public CoreWindowConsole() {
+		
 		// --- Ausgabefarben definieren ---
 		black = new SimpleAttributeSet();
 	    StyleConstants.setForeground(black, Color.black);
@@ -62,24 +64,24 @@ public class CoreWindowConsole extends JEditorPane  {
 	    StyleConstants.setFontSize(red, 11);
 	    
 	    this.setContentType("text/html");
+	    this.setFont(new Font("Dialog", Font.PLAIN, 11));
 		this.setBackground(new Color(255, 255, 255));
 		this.setToolTipText( Language.translate("Konsole: kann ein- bzw. ausgeblendet werden") );
 		this.setEditable(false);
-				
+		
 		// ------------------------------------------------
-		// --- In Case, that the Global Variable   -------- 
-		// --- 'LocalAppUseInternalConsole'        --------
+		// --- In Case, that the Global Variable --------
+		// --- 'LocalAppUseInternalConsole' --------
 		// --- in Class GlobalInfo is set to FALSE --------
-		// ------------------------------------------------		
-		if ( Application.RunInfo.AppUseInternalConsole() == false ) {
-			String Msg = Language.translate( "Die Konsolenausgabe erfolgt nicht über die Anwendung") + " " + Application.RunInfo.AppTitel()  ;
-			this.appendText( Msg );
+		// ------------------------------------------------
+		if (Application.RunInfo.AppUseInternalConsole() == false) {
+			String Msg = Language.translate("Die Konsolenausgabe erfolgt nicht über die Anwendung") + " " + Application.RunInfo.AppTitel();
+			this.appendText(Msg);
 			return;
 		}
 		// ------------------------------------------------
-		
+
 		// --- Out-Ausgaben abfangen ----------------------
-		
 		System.setOut(new PrintStream(new TextAreaOutputStream(this,false)));
 		System.setErr(new PrintStream(new TextAreaOutputStream(this,true)));
 	}

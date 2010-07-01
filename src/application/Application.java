@@ -1,8 +1,14 @@
 package application;
 
+import gui.AboutDialog;
 import gui.CoreWindow;
 import gui.CoreWindowConsole;
+import gui.options.OptionDialog;
 import mas.Platform;
+import systemtray.AgentGUITrayIcon;
+import config.FileProperties;
+import config.GlobalInfo;
+import database.DBConnection;
 /**
  * @author: Christian Derksen  	
  */
@@ -10,37 +16,79 @@ public class Application {
 		
 	public static GlobalInfo RunInfo = null;
 	public static CoreWindowConsole Console = null;
-	public static CoreWindow MainWindow = null;
+	public static FileProperties properties = null;
+	public static Platform JadePlatform = null;
+	
+	public static AgentGUITrayIcon trayIconInstance = null;
+	public static boolean isServer = false;
 	
 	public static ProjectsLoaded Projects = null;
 	public static Project ProjectCurr = null;
-		
-	public static Platform JadePlatform = null;
+	public static CoreWindow MainWindow = null;
+	public static DBConnection DBconnection = null;
 	
+	private static AboutDialog about = null;
+	private static OptionDialog options = null;
+
 	/**
 	 * main-method for the start of the application 
 	 * @param args
 	 */
 	public static void main( String[] args ) {
-		// --- Start Application -----------------------
+		
+		// ----------------------------------------------------------
+		// --- Just starts the base-instances -----------------------
 		RunInfo = new GlobalInfo();
 		Console = new CoreWindowConsole();
-		Projects = new ProjectsLoaded();
-		JadePlatform = new Platform();
-		startApplication();
+		properties = new FileProperties();
+		startAgentGUI();
 
-		System.out.println( Language.translate("Programmstart..." ) );
-		MainWindow.setStatusBar( Language.translate("Fertig") );
-		Projects.setProjectMenuItems();
 	}	
 
+	private static void startAgentGUI() {
+		
+		// ----------------------------------------------------------		
+		// --- Start the Application as defined by 'isServer' -------
+		JadePlatform = new Platform();
+		trayIconInstance = new AgentGUITrayIcon();
+		if ( isServer == true ) {
+			// ------------------------------------------------------
+			// --- Start Server-Version of AgentGUI -----------------
+			System.out.println( Language.translate("Programmstart [Server] ..." ) );
+			startServer();
+			
+		} else {
+			// ------------------------------------------------------
+			// --- Start Application --------------------------------
+			System.out.println( Language.translate("Programmstart [Anwendung] ..." ) );
+			Projects = new ProjectsLoaded();
+
+			startApplication();
+			MainWindow.setStatusBar( Language.translate("Fertig") );
+			Projects.setProjectMenuItems();			
+		}
+	}
+	
 	/**
 	 * Opens the Main-Window (JFrame)
 	 */
 	public static void startApplication() {
- 		// --- open Main-Dialog ------------------------		
+ 		// --- open Main-Dialog -------------------------------------		
+		MainWindow = null;
 		MainWindow = new CoreWindow();		
 	}
+	
+	/**
+	 * Starts the Main-Procedure for the Server-Version of Agent.GUI
+	 */
+	public static void startServer() {
+		// --- Automatically Start JADE, if configured --------------
+		if ( RunInfo.isServerAutoRun()==true ) {
+			JadePlatform.jadeStart();
+			trayIconInstance.popUp.refreshView();
+		}
+	}
+	
 	/**
 	 * Quits the application
 	 */
@@ -51,11 +99,116 @@ public class Application {
 		// --- JADE beenden ------------------------
 		JadePlatform.jadeStop();
 		// --- Noch offene Projekte schließen ------
-		if ( Projects.closeAll() == false ) return;
+		if ( Projects != null ) {
+			if ( Projects.closeAll() == false ) return;	
+		}		
+		// --- FileProperties speichern ------------
+		properties.save();
+		
 		// --- Fertig ------------------------------
 		System.out.println( Language.translate("Programmende... ") );
 		Language.SaveDictionaryFile();
 		System.exit(0);		
+	}
+
+	/**
+	 * Opens the Configuration-Dialog for the 
+	 * AgentGUI-Application without a specific
+	 * Tab to show
+	 */
+	public static void showOptionDialog() {
+		showOptionDialog(null);
+	}
+	/**
+	 * Opens the Configuration-Dialog for the 
+	 * AgentGUI-Application with a specified TabName
+	 * @param showTab
+	 */
+	public static void showOptionDialog(String focusOnTab) {
+		
+		boolean okAction = false;
+		boolean enforceRestart = false;		
+		boolean isServerOld = isServer;
+		boolean isServerNew = isServer;
+		
+		if (options!=null) return;
+		
+		// ==================================================================
+		if (isServer==true) {
+			options = new OptionDialog(null);
+		} else {
+			options = new OptionDialog(MainWindow);
+		}
+		if (focusOnTab!=null) {
+			options.setFocusOnTab(focusOnTab);
+		}
+		options.setVisible(true);
+		// ==================================================================
+		// === Hier geht's weiter, wenn der Dialog wieder geschlossen ist ===
+		// ==================================================================
+		okAction = !options.isCanceled();
+		enforceRestart = options.isForceRestart();
+		isServerNew = isServer;
+		options.dispose();
+		options = null;		
+		// ==================================================================
+		
+		if ( (isServerOld==true && isServerNew==true && okAction==true) || enforceRestart==true) { 
+			// --- JADE beenden -------------------------------------
+			JadePlatform.jadeStop();			
+			// --- Anwendung neu starten ----------------------------
+			if (isServerOld == true) {
+				if (isServerNew==true) {
+					// --- Neustart 'Server'-------------------------
+					System.out.println(Language.translate("Neustart des Server-Dienstes"));
+				} else {
+					// --- Umschalten von 'Server' auf 'Application' ----
+					System.out.println(Language.translate("Umschalten von 'Server' auf 'Anwendung'"));
+				}				
+				// --- Tray-Icon entfernen / schliessen -------------
+				trayIconInstance.remove();
+				trayIconInstance = null;
+
+			} else {
+				// --- Umschalten von 'Application' auf 'Server' ----
+				System.out.println(Language.translate("Umschalten von 'Anwendung' auf 'Server'"));
+				// --- Noch offene Projekte schließen ---------------
+				if ( Projects != null ) {
+					if ( Projects.closeAll() == false ) return;	
+				}		
+				// --- Anwendungsfenster schliessen -----------------
+				MainWindow.dispose();
+				MainWindow = null;
+				// --- Tray-Icon schliessen -------------------------
+				trayIconInstance.remove();
+				trayIconInstance = null;
+			}
+			// --- Restart ------------------------------------------
+			startAgentGUI();
+		}
+		// ==================================================================
+	}
+
+	/**
+	 * Opens the Configuration-Dialog for the 
+	 * AgentGUI-Application with a specified TabName
+	 * @param showTab
+	 */
+	public static void showAboutDialog() {
+		
+		if (about!=null) return;
+		// ==================================================================
+		if (isServer==true) {
+			about = new AboutDialog(null);
+		} else {
+			about = new AboutDialog(MainWindow);
+		}
+		about.setVisible(true);
+		// ==================================================================
+		// === Hier geht's weiter, wenn der Dialog wieder geschlossen ist ===
+		// ==================================================================
+		about.dispose();
+		about = null;		
 	}
 
 	/**
@@ -65,6 +218,18 @@ public class Application {
 	public static void setTitelAddition( String Add2BasicTitel ) {
 		MainWindow.setTitelAddition(Add2BasicTitel);
 	}
+
+	/**
+	 * Sets the JADE Status- Visulazitation for the User 
+	 * @param runs  
+	 */
+	public static void setStatusJadeRunning(boolean runs) {
+		if (MainWindow!=null) {
+			MainWindow.setStatusJadeRunning(runs);	
+		}
+		trayIconInstance.popUp.refreshView();
+	}
+	
 	/**
 	 * Sets the text of the status bar
 	 * @param Message
@@ -81,14 +246,28 @@ public class Application {
 		MainWindow.setLookAndFeel(NewLnF);
 		Projects.setProjectMenuItems();
 	}	
+	
 	/**
 	 * Changing the application language to:
 	 * NewLang => "DE", "EN", "IT", "ES" or "FR" etc. is equal to the 
 	 * end phrase after the prefix "LANG_". E.g. "LANG_EN" needs "EN" as parameter
 	 */
 	public static void setLanguage( String NewLang ) {
-		Language.changeLanguageTo(NewLang);		
-	}	
 
+		// --- jade stoppen ---------------------		
+		JadePlatform.jadeStop();
+		// --- Projekte schliessen --------------
+		if ( Projects != null ) {
+			if ( Projects.closeAll() == false ) return;	
+		}
+		// --- Sprache umstellen ----------------
+		Language.changeLanguageTo(NewLang);
+		// --- Anwendungsfenster schliessen -----
+		MainWindow.dispose();
+		MainWindow = null;
+		// --- Anwendung neu öffnen -------------
+		startApplication();	
+	}	
+	
 } // --- End Class ---
 

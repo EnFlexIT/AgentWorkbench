@@ -13,6 +13,11 @@ import jade.lang.acl.MessageTemplate;
  */
 public class TopicMessageReceiverAgent extends Agent {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4235677725080045726L;
+
 	protected void setup() {
 		try {
 			// Register to messages about topic "JADE"
@@ -22,6 +27,11 @@ public class TopicMessageReceiverAgent extends Agent {
 			
 			// Add a behaviour collecting messages about topic "JADE"
 			addBehaviour(new CyclicBehaviour(this) {
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = -2928245436107424755L;
+
 				public void action() {
 					ACLMessage msg = myAgent.receive(MessageTemplate.MatchTopic(topic));
 					if (msg != null) {

@@ -1,7 +1,6 @@
 package sim.setup.gui;
 
 import java.awt.BorderLayout;
-import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -9,30 +8,27 @@ import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
-import org.apache.fop.svg.ACIUtils;
-
+import mas.onto.OntologySingleClassDescription;
+import mas.onto.OntologySingleClassSlotDescription;
 import application.Project;
 
 public class DynForm extends JPanel{
@@ -122,8 +118,44 @@ public class DynForm extends JPanel{
 			
 			//System.out.println("StartObjectClass " + startObjectClass);
 			
+			// --------------------------------------------------------------------------
 			// --- Get the Infos about the slots -------------------
 			DefaultTableModel tm = currProject.ontologies4Project.getSlots4Class(startObjectClass);
+
+			// --------------------------------------------------------------------------
+			// --- Hier das neu Zeug als Objektstruktur und nicht als TableModel -------- 
+			// --------------------------------------------------------------------------
+			OntologySingleClassDescription osc = currProject.ontologies4Project.getSlots4ClassAsObject(startObjectClass);
+			System.out.println( "---------------------------------------------------");
+			System.out.println( "---------------------------------------------------");
+			System.out.println( "Class<?>-Object: " + osc.getClazz() );
+			System.out.println( "Klassenreferenz: " + osc.getClassReference() );
+			System.out.println( "Package-Name   : " + osc.getPackageName() );
+			System.out.println( "Klassen-Name   : " + osc.getClassName() );
+			
+			Iterator<OntologySingleClassSlotDescription> iterator = osc.osdArr.iterator();
+			while (iterator.hasNext()) {
+				OntologySingleClassSlotDescription osd = iterator.next();
+				System.out.println( "---------------------------------------------------");
+				System.out.println( "Slot-Name   : " + osd.getSlotName() );
+				System.out.println( "Kardinalität: " + osd.getSlotCardinality() + " => CardinalityIsMultiple [bool] " + osd.isSlotCardinalityIsMultiple() );
+				System.out.println( "VarTyp      : " + osd.getSlotVarType() );
+				System.out.println( "Other Facts : " + osd.getSlotOtherFacts() );
+				
+				System.out.println( "Methoden    : " + osd.getSlotOtherFacts() );
+				Hashtable<String, Method> meth = osd.getSlotMethodList();
+				Iterator<String> methIT = meth.keySet().iterator();
+				while (methIT.hasNext()) {
+					String methodeName = methIT.next();
+					Method methodeHimSelf = meth.get(methodeName);
+					System.out.println( " - " + methodeName + " <=> " + methodeHimSelf);
+				}
+				
+			}
+			// --------------------------------------------------------------------------
+			// --------------------------------------------------------------------------
+			// --------------------------------------------------------------------------
+			
 			//System.out.println(tm.toString());
 			// --- Now, the GUI can be build ------------------------
 			

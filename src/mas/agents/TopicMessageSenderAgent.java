@@ -13,12 +13,22 @@ import jade.lang.acl.ACLMessage;
  */
 public class TopicMessageSenderAgent extends Agent {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7545138460716906198L;
+
 	protected void setup() {
 		try {
 			// Periodically send messages about topic "JADE"
 			TopicManagementHelper topicHelper = (TopicManagementHelper) getHelper(TopicManagementHelper.SERVICE_NAME);
 			final AID topic = topicHelper.createTopic("JADE");
 			addBehaviour(new TickerBehaviour(this, 10000) {
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = -2440081232985834547L;
+
 				public void onTick() {
 					System.out.println("Agent "+myAgent.getLocalName()+": Sending message about topic "+topic.getLocalName());
 					ACLMessage msg = new ACLMessage(ACLMessage.INFORM);

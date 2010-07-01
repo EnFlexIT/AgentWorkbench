@@ -168,6 +168,55 @@ public class OntologyClassTreeObject extends Object {
 		return tm4s;		
 	}
 	/**
+	 * This returns the a ArrayList of Slots for a single
+	 * class out of the ontology-classes 
+	 * @return
+	 */
+	public OntologySingleClassDescription getClassDescription() {
+		
+		OntologySingleClassDescription ocd = null;
+		OntologySingleClassSlotDescription osd = null;
+
+		if ( ontologySubClass == null ) {
+			return null;
+		}
+		
+		// --- Beschreibungsobjekt initialisieren -------------------
+		ocd = new OntologySingleClassDescription();
+		ocd.setClazz(ontologySubClass);
+		ocd.setClassReference(this.getClassReference()); // Package und Class werden hier automatisch gesetzt
+		
+		// --- Nach den entsprechenden Slots im Vokabular filtern ---
+		Hashtable<String, String> OntoSlotHash = ontologyClass.ontologieVocabulary.getSlots( ontologySubClass );
+		ReflectClass RefCla = new ReflectClass( ontologySubClass, OntoSlotHash );
+
+		Vector<String> v = new Vector<String>( OntoSlotHash.keySet() );
+	    Collections.sort(v);
+	    Iterator<String> it = v.iterator();
+	    while (it.hasNext()) {
+	    	
+	    	// --- Wort/Slot  der Ontologie ermitteln --------------- 
+	    	String Key = it.next();
+	    	String Word = OntoSlotHash.get(Key);
+	    	
+	    	// --- Slot untersuchen ... -----------------------------
+	    	Slot currSlot = RefCla.getSlot(Word);
+	    	
+	    	// --- Objekt v. Typ 'OntologySlotDescription' erzeugen -	    	
+	    	osd = new OntologySingleClassSlotDescription();
+	    	osd.setSlotName(Word);
+	    	osd.setSlotCardinality(currSlot.Cardinality);
+	    	osd.setSlotVarType(currSlot.VarType);
+	    	osd.setSlotOtherFacts(currSlot.OtherFacts);
+	    	osd.setSlotMethodList(currSlot.MethodList);
+	    	
+	    	// --- An Auflistung anfügen ----------------------------
+	    	ocd.osdArr.add(osd);
+	    }		
+		return ocd;
+	}
+	
+	/**
 	 * @param isAConcept the isAConcept to set
 	 */
 	public void setIsConcept(boolean isConcept) {

@@ -227,6 +227,21 @@ public class Ontologies4Project extends HashMap<String, OntologyClass> {
 		}
 	}
 
+	/**
+	 * This Method returns a ArrayList of Slot-Descriptions for a   
+	 * given class inside of the project-ontology 
+	 * @param classReference2Search
+	 * @return DefaultTableModel
+	 */
+	public OntologySingleClassDescription getSlots4ClassAsObject(String classReference2Search) {
+		OntologyClassTreeObject userObject = this.getClassTreeObject(classReference2Search);
+		if (userObject== null) {
+			return null;
+		} else {
+			return userObject.getClassDescription();			
+		}
+	}
+	
 	// --- Start SubClass -------------------------------------------
 	/**
 	 * Checks the configuration of the current project ontology.

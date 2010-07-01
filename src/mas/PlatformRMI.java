@@ -53,43 +53,38 @@ public class PlatformRMI implements Remote {
 	 *            where RMI is listening; leave null for default
 	 * @return String null if all went well, an error message if not
 	 */
-	public static String isJADERunning(String host, String port) {
-		int rmiPort = 1099;
+	public static String isJADERunning(String host, Integer port) {
+		
 		String rmiHost = "localhost";
 		String url = null;
-
-		// parse the port
-		try {
-			rmiPort = Integer.parseInt(port);
-		} catch (Exception e) {
-		}
+		int rmiPort = 1099;
 
 		// get the host
-		if (host != null)
-			rmiHost = host;
+		if (host != null) rmiHost = host;
+
+		// get the port
+		if (port != null) rmiPort = port;
 
 		// create the URL
 		url = "rmi://" + rmiHost + ":" + rmiPort + "/" + smName;
-
+		System.out.println( url );
 		// try to bind and unbind the object to the RMI
 		try {
 			ServiceManagerRMI obj = (ServiceManagerRMI) Naming.lookup(url);
 			String TestName = obj.getPlatformName();
-			System.out.println( "SmName: " + smName + " - PlattformName: " + TestName );			
+			System.out.println( "SmName: " + smName + " - PlattformName: " + TestName );
+			
+			obj.toString();
+			
 		} catch (NotBoundException e) {
-			// this means that the registry is running
-			return "JADE is not yet bound to the remote registry";
+			return "JADE is not yet bound to the remote registry";	// this means that the registry is running
 		} catch (MalformedURLException e) {
-			return "Not a properly formatted RMI URL (" + url
-					+ "). Check for invalid characters";
+			return "Not a properly formatted RMI URL (" + url + "). Check for invalid characters";
 		} catch (MarshalException e) {
 			// ignored, shows that RMI was found
 		} catch (RemoteException e) {
-			return "RMI does not exist on host " + rmiHost
-					+ " or is not listening on port " + rmiPort;
-		}
-
-		
+			return "RMI does not exist on host " + rmiHost + " or is not listening on port " + rmiPort;
+		}		
 		return null;
 	}
 }
