@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.TreeMap;
 import java.util.Vector;
 
@@ -26,6 +27,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
 
 import com.sun.xml.internal.bind.v2.TODO;
 
@@ -65,6 +69,7 @@ public class DynForm extends JPanel{
 	List<String> innerObjects = new ArrayList<String>();
 	JPanel superPanel = new JPanel();
 	JFrame testFrame = new JFrame();
+	DefaultTreeModel objectTree = new DefaultTreeModel(new DefaultMutableTreeNode("Root"));
 	
 	public DynForm(Project project, String agentReference) {
 		
@@ -93,6 +98,7 @@ public class DynForm extends JPanel{
 	
 		// --- Start building the GUI --- //
 		this.start(agentReference);
+		this.objectTreePrint();
 	}
 	
 	/**
@@ -125,7 +131,7 @@ public class DynForm extends JPanel{
 			System.out.println("Creating GUI");
 			
 			if(osc!=null)
-				this.createGUI(osc, startObjectClassName, mainPanel, 0);
+				this.createGUI(osc, startObjectClassName, mainPanel, 0, (DefaultMutableTreeNode) objectTree.getRoot());
 			else
 				System.out.println("Could not get OntologySingleClassDescription for "+startObjectClass);
 		}
@@ -160,20 +166,8 @@ public class DynForm extends JPanel{
 				}
 				else if(components[i] instanceof JLabel){
 					String className = ((JLabel)components[i]).getText();
-					System.out.println("Here we have class: "+className);
-					try {
-						Class cl = Class.forName(this.startObjectPackage+"."+className);
-						for (Method m : cl.getMethods()) {
-							System.out.println(m.getReturnType().toString() + " - " + m.getName().toString());
-							for (Class paramClass: m.getParameterTypes()) {
-								System.out.print(" "+paramClass.getName());
-							}
-						}
-						
-					} catch (ClassNotFoundException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					//System.out.println("Here we have class: "+className);
+					//addNewObjectClass(className, 0);				
 				}
 			}
 			else{
@@ -184,19 +178,112 @@ public class DynForm extends JPanel{
 				}
 				else if(components[i] instanceof JLabel && components[i+1] !=null && 
 						components[i+1] instanceof JLabel)
-					System.out.println("Here we have (innerclass) "+((JLabel)components[i+1]).getText());
+				{
+					//System.out.println("Here we have (innerclass) "+((JLabel)components[i+1]).getText());
+				}
 				else{
 					if (components[i] instanceof JLabel && components[i+1] != null && 
 							components[i+1] instanceof JTextField) {
 						String variableName = ((JLabel)components[i]).getText();
 						String variableValue = ((JTextField)components[i+1]).getText();
-						System.out.println("Variable: "+ variableName + " Value: " + variableValue);
+						//System.out.println("Variable: "+ variableName + " Value: " + variableValue);
 					}
 				}
 			}
 		}
 	}
 	
+	private void objectTreePrint(){
+		DefaultTreeModel dtm = objectTree;
+		if(objectTree != null)
+			objectTreePrintIt((DefaultMutableTreeNode) objectTree.getRoot());
+	}
+	
+	private void objectTreePrintIt(DefaultMutableTreeNode node){
+		
+		String spacer = "";
+		if(node != null){
+			for(int i=0; i<node.getLevel(); i++)
+				spacer += "*";
+			if(node.getUserObject() instanceof DynType){
+				DynType dynType = (DynType) node.getUserObject();
+				if(dynType.isRawType() )
+					System.out.println(spacer + " Field: " + dynType.getFieldName() + " Value: " + dynType.getFieldValue());
+				else if(dynType.isInnerClassType()){
+					System.out.println(spacer + " Field: " + dynType.getFieldName() + " Value(InnerClass): " + dynType.getFieldValue());
+				}
+				else
+					System.out.println(spacer+" "+ dynType.getClassName());
+			}
+			objectTreePrintIt(node.getNextNode());
+		}
+	}
+	
+	private void addNewObjectClass(String className, int tiefe) {
+		if(tiefe == 0)
+		{
+			DefaultMutableTreeNode root = (DefaultMutableTreeNode) objectTree.getRoot();
+			root.add(new DefaultMutableTreeNode(className));
+		}
+			
+	}
+
+	private void createAndFillObject(String className) {
+		OntologySingleClassDescription oscd = getOntoSingleClsDesc(className);
+		Class cl = oscd.getClazz();
+		Iterator<OntologySingleClassSlotDescription> iterator = oscd.osdArr.iterator();
+		while (iterator.hasNext()) {
+			OntologySingleClassSlotDescription osd = iterator.next();
+			Hashtable<String, Method> meth = osd.getSlotMethodList();
+			Iterator<String> methIT = meth.keySet().iterator();
+			while (methIT.hasNext()) {
+				String methodeName = methIT.next();
+				Method methodeHimSelf = meth.get(methodeName);
+			}
+			
+		}
+
+		
+	}
+
+	private OntologySingleClassDescription getOntoSingleClsDesc(String className){
+		return currProject.ontologies4Project.getSlots4ClassAsObject(this.startObjectPackage+"."+className);
+	}
+	
+	private void showClassInformation(String className) {
+		OntologySingleClassDescription osc = currProject.ontologies4Project.getSlots4ClassAsObject(this.startObjectPackage+"."+className);
+		if(osc!=null){
+			System.out.println( "---------------------------------------------------");
+			System.out.println( "---------------------------------------------------");
+			System.out.println( "Class<?>-Object: " + osc.getClazz() );
+			System.out.println( "Klassenreferenz: " + osc.getClassReference() );
+			System.out.println( "Package-Name   : " + osc.getPackageName() );
+			System.out.println( "Klassen-Name   : " + osc.getClassName() );
+			
+			Iterator<OntologySingleClassSlotDescription> iterator = osc.osdArr.iterator();
+			while (iterator.hasNext()) {
+				OntologySingleClassSlotDescription osd = iterator.next();
+				System.out.println( "---------------------------------------------------");
+				System.out.println( "Slot-Name   : " + osd.getSlotName() );
+				System.out.println( "Kardinalität: " + osd.getSlotCardinality() + " => CardinalityIsMultiple [bool] " + osd.isSlotCardinalityIsMultiple() );
+				System.out.println( "VarTyp      : " + osd.getSlotVarType() );
+				System.out.println( "Other Facts : " + osd.getSlotOtherFacts() );
+				
+				System.out.println( "Methoden    : " + osd.getSlotOtherFacts() );
+				Hashtable<String, Method> meth = osd.getSlotMethodList();
+				Iterator<String> methIT = meth.keySet().iterator();
+				while (methIT.hasNext()) {
+					String methodeName = methIT.next();
+					Method methodeHimSelf = meth.get(methodeName);
+					System.out.println( " - " + methodeName + " <=> " + methodeHimSelf);
+				}
+			}
+		}
+		else
+			System.out.println("[Error] OntologySingleClassDescription is null");
+		
+	}
+
 	public int getActualYValue(JPanel pan){
 		int value = 0;
 		Component[] components = pan.getComponents();
@@ -213,7 +300,7 @@ public class DynForm extends JPanel{
 	 * @param pan
 	 * @param tiefe
 	 */
-	public void createGUI(OntologySingleClassDescription osc , String startObjectClassName, JPanel pan, int tiefe){
+	public void createGUI(OntologySingleClassDescription osc , String startObjectClassName, JPanel pan, int tiefe, DefaultMutableTreeNode node){
 		if(osc != null){
 			// --- if we are on the main panel -> add the class name to it --- //
 			// --- TODO create a JPanel in which the class name (JLabel) and its innerclasses
@@ -236,7 +323,11 @@ public class DynForm extends JPanel{
 				// --- this is necessary in order to handle self calling infinite recursion
 				innerObjects.clear();
 				innerObjects.add(this.startObjectPackage+"."+startObjectClassName);
-				System.out.println("Level 0: "+startObjectClassName);
+				//System.out.println("Level 0: "+startObjectClassName);
+				DynType dynType = new DynType("class",this.startObjectPackage+"."+startObjectClassName);
+				DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(dynType);
+				node.add(newNode);
+				node = newNode;
 			}
 			
 			// --- go through each field / inner class ---
@@ -254,7 +345,11 @@ public class DynForm extends JPanel{
 						if(objectAlreadyDisplayed(this.startObjectPackage+"."+clazz) == false)
 						{
 							innerObjects.add(this.startObjectPackage+"."+clazz);
-							this.createInnerElements(dataItemName, dataItemCardinality,  this.startObjectPackage+"."+clazz, tiefe+1, pan);
+							//DynType dynType = new DynType("innerClass",this.startObjectPackage+"."+clazz);
+							//DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(dynType);
+							//node.add(newNode);
+							//node = newNode;
+							this.createInnerElements(dataItemName, dataItemCardinality,  this.startObjectPackage+"."+clazz, tiefe+1, pan, node);
 						}
 						else
 							System.out.println("Class " + this.startObjectPackage+"."+clazz + " already displayed!");
@@ -262,7 +357,7 @@ public class DynForm extends JPanel{
 				}
 				// --- here we have a field with a final type (String, int, ...)
 				else{
-					this.createOuterElements(dataItemName, dataItemCardinality, pan, tiefe);
+					this.createOuterElements(dataItemName, dataItemCardinality, pan, tiefe, node);
 				}
 			}
 		}
@@ -288,8 +383,13 @@ public class DynForm extends JPanel{
 	 * @param startObjectClassName
 	 * @param tiefe
 	 * @param pan
+	 * @param node 
 	 */
-	public void createInnerElements(String dataItemName, String dataItemCardinality, String startObjectClassName, int tiefe, final JPanel pan){
+	public void createInnerElements(String dataItemName, String dataItemCardinality, String startObjectClassName, int tiefe, final JPanel pan, DefaultMutableTreeNode node){
+		DynType dynType = new DynType("innerClassType",dataItemName, startObjectClassName);
+		DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(dynType);
+		node.add(newNode);
+		node = newNode;
 		
 		int lastDot = startObjectClassName.lastIndexOf(".");
 		String plainStartObjectClassName = startObjectClassName.substring(lastDot + 1);
@@ -331,16 +431,17 @@ public class DynForm extends JPanel{
 			}
 		});
 		
-		System.out.println("Adding: "+dataItemName);
+		//System.out.println("Adding: "+dataItemName);
 		
 		dataPanel.add(valueFieldText, null);
 		dataPanel.add(innerClassName, null);
 		if(dataItemCardinality.equals("multiple"))
 			dataPanel.add(multipleButton, null);
 		
+		
 		// --- create the inner fields of the current inner class
 		OntologySingleClassDescription osc = currProject.ontologies4Project.getSlots4ClassAsObject(startObjectClassName);
-		this.createGUI(osc, startObjectClassName, dataPanel, tiefe);
+		this.createGUI(osc, startObjectClassName, dataPanel, tiefe, node);
 	
 		// --- set the correct height of the parent of this inner class according to the
 		// --- inner class's height
@@ -508,8 +609,11 @@ public class DynForm extends JPanel{
 	 * @param dataItemCardinality
 	 * @param pan
 	 * @param tiefe
+	 * @param node 
 	 */
-	public void createOuterElements(String dataItemName, String dataItemCardinality, JPanel pan, int tiefe){
+	public void createOuterElements(String dataItemName, String dataItemCardinality, JPanel pan, int tiefe, DefaultMutableTreeNode node){
+		DynType dynType = new DynType("rawType",dataItemName);
+		node.add(new DefaultMutableTreeNode(dynType));
 		
 		JPanel dataPanel = new JPanel();
 		dataPanel.setLayout(null);
@@ -519,7 +623,7 @@ public class DynForm extends JPanel{
 		// --- so its added to the mainPanel
 		if(tiefe == 0)
 		{
-			System.out.println("Flat object: " + dataItemName + " tiefe: " + tiefe + " actualY " + actualY);
+			//System.out.println("Flat object: " + dataItemName + " tiefe: " + tiefe + " actualY " + actualY);
 			dataPanel.setBounds(new Rectangle(10, actualY  , 250, 30));
 		}
 		else
@@ -541,7 +645,7 @@ public class DynForm extends JPanel{
 		JTextField valueField = new JTextField();
 		valueField.setBounds(new Rectangle(140, 5, 100, 25));
 		
-		System.out.println("Adding: "+dataItemName);
+		//System.out.println("Adding: "+dataItemName);
 		
 		// --- add both GUI elements to the panel
 		dataPanel.add(valueFieldText, null);
