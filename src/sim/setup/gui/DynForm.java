@@ -149,44 +149,55 @@ public class DynForm extends JPanel{
 		submitButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				generateInstances(mainPanel, 0);
+				generateInstances(mainPanel, 0, ((DefaultMutableTreeNode)objectTree.getRoot()).getNextNode());
 			}
 		});
 		mainPanel.add(submitButton);
 	}
 
 	
-	private void generateInstances(JPanel pan, int tiefe){
+	private void generateInstances(JPanel pan, int tiefe, DefaultMutableTreeNode node){
 		Component[] components = pan.getComponents();
-		for (int i = 0; i < components.length; i++) {
-			if(tiefe == 0){
-				if(components[i] instanceof JPanel){
-					tiefe++;
-					generateInstances((JPanel)components[i], tiefe);
-				}
-				else if(components[i] instanceof JLabel){
-					String className = ((JLabel)components[i]).getText();
-					//System.out.println("Here we have class: "+className);
-					//addNewObjectClass(className, 0);				
-				}
-			}
-			else{
-				if(components[i] instanceof JPanel)
-				{
-					tiefe++;
-					generateInstances((JPanel)components[i], tiefe);
-				}
-				else if(components[i] instanceof JLabel && components[i+1] !=null && 
-						components[i+1] instanceof JLabel)
-				{
-					//System.out.println("Here we have (innerclass) "+((JLabel)components[i+1]).getText());
+		if(node!=null){
+			for (int i = 0; i < components.length; i++) {
+				if(tiefe == 0){
+					if(components[i] instanceof JPanel){
+						tiefe++;
+						System.out.println("- Going deeper - tiefe " + tiefe);
+						generateInstances((JPanel)components[i], tiefe, node);
+					}
+					else if(components[i] instanceof JLabel){
+						String className = ((JLabel)components[i]).getText();
+						System.out.println("Here we have class: "+className);
+						//addNewObjectClass(className, 0);	
+						System.out.println(((DynType) node.getUserObject()).getClassName());
+						node = node.getNextNode();
+					}
 				}
 				else{
-					if (components[i] instanceof JLabel && components[i+1] != null && 
-							components[i+1] instanceof JTextField) {
-						String variableName = ((JLabel)components[i]).getText();
-						String variableValue = ((JTextField)components[i+1]).getText();
-						//System.out.println("Variable: "+ variableName + " Value: " + variableValue);
+					if(components[i] instanceof JPanel)
+					{
+						tiefe++;
+						System.out.println("Going deeper - tiefe " + tiefe);
+						node = node.getNextNode();
+						generateInstances((JPanel)components[i], tiefe, node);
+					}
+					else if(components[i] instanceof JLabel && components[i+1] !=null && 
+							components[i+1] instanceof JLabel)
+					{
+						System.out.println("InnerClass: " + ((DynType) node.getUserObject()).getClassName());
+						System.out.println("Here we have (innerclass) "+((JLabel)components[i+1]).getText());
+						node = node.getNextNode();
+					}
+					else{
+						if (components[i] instanceof JLabel && components[i+1] != null && 
+								components[i+1] instanceof JTextField) {
+							String variableName = ((JLabel)components[i]).getText();
+							String variableValue = ((JTextField)components[i+1]).getText();
+							System.out.println("Node: " + ((DynType)node.getUserObject()).getFieldName() + " - " + variableName);
+							node = node.getNextNode();
+							System.out.println("Variable: "+ variableName + " Value: " + variableValue);
+						}
 					}
 				}
 			}
