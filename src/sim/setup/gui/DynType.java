@@ -1,10 +1,21 @@
 package sim.setup.gui;
 
+import javax.swing.JTextField;
+
 public class DynType {
 	String typeName = "";
 	String className = "";
 	String fieldName = "";
-	String fieldValue = "";
+	String innerClassType = "";
+	public String getInnerClassType() {
+		return innerClassType;
+	}
+
+	public void setInnerClassType(String innerClassType) {
+		this.innerClassType = innerClassType;
+	}
+
+	JTextField fieldValue;
 		
 	public DynType(String typeName, String fieldOrClassName){
 		this.typeName = typeName;
@@ -22,7 +33,7 @@ public class DynType {
 		this.className = className;
 	}
 
-	public DynType(String typeName, String fieldName, String fieldValue) {
+	public DynType(String typeName, String fieldName, JTextField fieldValue) {
 		this.typeName = typeName;
 		this.fieldName = fieldName;
 		this.fieldValue = fieldValue;
@@ -44,11 +55,11 @@ public class DynType {
 		this.fieldName = fieldName;
 	}
 
-	public String getFieldValue() {
+	public JTextField getFieldValue() {
 		return fieldValue;
 	}
 
-	public void setFieldValue(String fieldValue) {
+	public void setFieldValue(JTextField fieldValue) {
 		this.fieldValue = fieldValue;
 	}
 
