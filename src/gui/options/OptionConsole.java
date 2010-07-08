@@ -5,6 +5,7 @@ import java.awt.SystemColor;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import application.Application;
 
@@ -28,7 +29,7 @@ public class OptionConsole extends JPanel {
 		this.setSize(300, 200);
 		this.setLayout(new BorderLayout());
 		this.setBorder(BorderFactory.createLineBorder(SystemColor.controlDkShadow, 1));
-		this.add(Application.Console, BorderLayout.CENTER);
+		this.add(new JScrollPane(Application.Console), BorderLayout.CENTER);
 	}
 
 }

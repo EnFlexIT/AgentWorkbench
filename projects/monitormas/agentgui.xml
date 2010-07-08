@@ -3,11 +3,12 @@
     <projectName>Monitormas</projectName>
     <subOntologies>
         <subOntology>monitormas.ontology.MonitorMASOntology</subOntology>
+        <subOntology>distribution.ontology.AgentGUI_DistributionOntology</subOntology>
     </subOntologies>
     <agentConfiguration>
         <entry>
             <key>monitormas.agents.ControlAgent</key>
-            <value>contmas.ontology.BlockAddress|monitormas.ontology.TimeDetector|contmas.ontology.Phy_Position</value>
+            <value>monitormas.ontology.TimeDetector|distribution.ontology.PlatformAddress|distribution.ontology.PlatformTime</value>
         </entry>
     </agentConfiguration>
     <jadeConfiguration>
@@ -17,7 +18,6 @@
         <serviceList>
             <service>jade.core.messaging.TopicManagementService;</service>
             <service>jade.core.event.NotificationService;</service>
-            <service>jade.core.migration.InterPlatformMobilityService;</service>
             <service>jade.core.mobility.AgentMobilityService;</service>
         </serviceList>
     </jadeConfiguration>

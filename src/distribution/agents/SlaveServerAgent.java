@@ -70,7 +70,7 @@ public class SlaveServerAgent extends Agent {
 		// --- Add Main-Behaiviours -----------------------
 		parBehaiv = new ParallelBehaviour(this,ParallelBehaviour.WHEN_ALL);
 		parBehaiv.addSubBehaviour( new TriggerBehaiviour(this,1000*10) );
-		parBehaiv.addSubBehaviour( new ReceiveBehaiviour() );
+		parBehaiv.addSubBehaviour( new ReceiveBehaviour() );
 		// --- Add Parallel Behaiviour --------------------
 		this.addBehaviour(parBehaiv);
 		
@@ -144,7 +144,7 @@ public class SlaveServerAgent extends Agent {
 	// -----------------------------------------------------
 	// --- Message-Receive-Behaiviour --- S T A R T --------
 	// -----------------------------------------------------
-	private class ReceiveBehaiviour extends CyclicBehaviour {
+	private class ReceiveBehaviour extends CyclicBehaviour {
 
 		private static final long serialVersionUID = -1701739199514787426L;
 

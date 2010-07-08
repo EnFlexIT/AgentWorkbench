@@ -103,7 +103,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 	    tabTitle = Language.translate("Programmstart");
 	    this.addOptionTab(tabTitle, null, optionsStart, tabTitle);
 	    
-	    if (Application.RunInfo.AppUseInternalConsole()==true && Application.isServer==true) {
+	    if (Application.RunInfo.isAppUseInternalConsole()==true && Application.isServer==true) {
 	    	tabTitle = Language.translate("Konsole");
 	    	this.addOptionTab(tabTitle, null, new OptionConsole(), tabTitle);	
 	    }

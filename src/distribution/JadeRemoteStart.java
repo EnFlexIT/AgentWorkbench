@@ -16,7 +16,7 @@ public class JadeRemoteStart {
 	
 	private boolean jvmMemAllocUseDefaults = true;
 	private String jvmMemAllocInitial = this.jvmMemo0032MB;
-	private String jvmMemAllocMaximum = this.jvmMemo0128MB;
+	private String jvmMemAllocMaximum = this.jvmMemo0064MB;
 	
 	private boolean jadeIsRemoteContainer = true; 
 	private boolean jadeShowGUI = false; 

@@ -12,13 +12,15 @@ import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.ParallelBehaviour;
-import jade.domain.FIPAAgentManagement.ExceptionOntology;
-import jade.domain.FIPAAgentManagement.FIPAManagementOntology;
 import jade.lang.acl.ACLMessage;
 import network.JadeUrlChecker;
 import application.Application;
-import distribution.ontology.*;
-
+import distribution.ontology.AgentGUI_DistributionOntology;
+import distribution.ontology.ClientRegister;
+import distribution.ontology.ClientUnregister;
+import distribution.ontology.PlatformAddress;
+import distribution.ontology.PlatformTime;
+import distribution.ontology.SlaveRegister;
 
 public class ClientServerAgent extends Agent {
 
@@ -72,7 +74,7 @@ public class ClientServerAgent extends Agent {
 		
 		// --- Add Main-Behaiviours -----------------------
 		parBehaiv = new ParallelBehaviour(this,ParallelBehaviour.WHEN_ALL);
-		parBehaiv.addSubBehaviour( new ReceiveBehaiviour() );
+		parBehaiv.addSubBehaviour( new ReceiveBehaviour() );
 		// --- Add Parallel Behaiviour --------------------
 		this.addBehaviour(parBehaiv);
 		
@@ -125,7 +127,7 @@ public class ClientServerAgent extends Agent {
 	// -----------------------------------------------------
 	// --- Message-Receive-Behaiviour --- S T A R T --------
 	// -----------------------------------------------------
-	private class ReceiveBehaiviour extends CyclicBehaviour {
+	private class ReceiveBehaviour extends CyclicBehaviour {
 
 		private static final long serialVersionUID = -1701739199514787426L;
 

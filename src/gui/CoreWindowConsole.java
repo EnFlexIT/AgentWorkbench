@@ -74,7 +74,7 @@ public class CoreWindowConsole extends JEditorPane  {
 		// --- 'LocalAppUseInternalConsole' --------
 		// --- in Class GlobalInfo is set to FALSE --------
 		// ------------------------------------------------
-		if (Application.RunInfo.AppUseInternalConsole() == false) {
+		if (Application.RunInfo.isAppUseInternalConsole() == false) {
 			String Msg = Language.translate("Die Konsolenausgabe erfolgt nicht über die Anwendung") + " " + Application.RunInfo.AppTitel();
 			this.appendText(Msg);
 			return;

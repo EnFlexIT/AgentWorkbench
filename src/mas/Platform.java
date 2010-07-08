@@ -75,7 +75,7 @@ public class Platform extends Object {
 			// --- Running as Agent.GUI - Server --------------------
 			// ------------------------------------------------------
 			// --- Not yet known: Master- or Slave-Server? ----------
-			JadeUrlChecker thisAddress = new JadeUrlChecker(MASmc.getPlatformName());			
+			JadeUrlChecker thisAddress = new JadeUrlChecker(MASmc.getPlatformName());	
 			if ( thisAddress.getHostIP().equalsIgnoreCase(MASmasterAddress.getHostIP())  && 
 				 thisAddress.getPort().equals(MASmasterAddress.getPort()) ) {
 				// -------------------------------------------------

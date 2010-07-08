@@ -13,7 +13,6 @@ Einfaches Demo-Projekt fr die Visualisierung</projectDescription>
         <serviceList>
             <service>jade.core.messaging.TopicManagementService;</service>
             <service>jade.core.event.NotificationService;</service>
-            <service>jade.core.migration.InterPlatformMobilityService;</service>
             <service>jade.core.mobility.AgentMobilityService;</service>
         </serviceList>
     </jadeConfiguration>

@@ -17,12 +17,13 @@ public class GlobalInfo {
 	// --- Konstanten ------------------------------------------------------- 
 	final private static String localAppTitel = "Agent.GUI";
 	final private static String localAppVersion = "0.5";
-	final private static boolean localAppUseInternalConsole = false;
 	
 	final private static String localAppPathSeparatorString = File.separator;
 	final private static String localAppNewLineString = System.getProperty("line.separator");
 	final private static String localAppNewLineStringReplacer = "<br>";
 	final private static String localPathImageIntern = "/img/";
+
+	private boolean localAppUseInternalConsole = false;
 	
 	// --- JADE-Variablen ---------------------------------------------------
 	private Integer localeJadeLocalPort = 1099;
@@ -81,6 +82,8 @@ public class GlobalInfo {
 		for (int i=0; i<JCP_Files.length; i++) {
 			if ( JCP_Files[i].endsWith( localFileRunnableJar )  ) {
 				localAppExecutedOver = "Executable";
+				// --- Bei jar, imm interne Console verwenden ---------------
+				this.setAppUseInternalConsole(true);
 				CutAt = JCP_Files[i].lastIndexOf( localAppPathSeparatorString ) + 1;
 				localBaseDir = JCP_Folders[i].substring(0, CutAt);				 
 			};
@@ -132,12 +135,17 @@ public class GlobalInfo {
 	public String AppVersion() {
 		return localAppVersion;
 	}
-
-
+	/**
+	 * Here the use of the application internal console can be set
+	 * @param useInternalConsole 
+	 */
+	public void setAppUseInternalConsole(boolean useInternalConsole) {
+		this.localAppUseInternalConsole = useInternalConsole;
+	}
 	/**
 	 * Returns if the System-Output ('Out' or 'Err') goe's throw this application 
 	 */
-	public boolean AppUseInternalConsole() {
+	public boolean isAppUseInternalConsole() {
 		return localAppUseInternalConsole;
 	};
 	// -------------------------------

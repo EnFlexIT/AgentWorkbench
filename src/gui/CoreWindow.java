@@ -119,7 +119,7 @@ public class CoreWindow extends JFrame implements ComponentListener{
 		// --- Console einstellen --------------------------------- 
 		ConsoleHeight = SplitProjectDesktop.getHeight() / 4; 
 		SplitProjectDesktop.setDividerLocation( SplitProjectDesktop.getHeight() - ConsoleHeight );
-		if ( Application.RunInfo.AppUseInternalConsole() == false ) { 
+		if ( Application.RunInfo.isAppUseInternalConsole() == false ) { 
 			ConsoleSetVisible(false);
 		}
 	}

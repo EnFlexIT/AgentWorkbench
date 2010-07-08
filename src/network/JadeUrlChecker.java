@@ -32,11 +32,11 @@ public class JadeUrlChecker {
 	
 	private String filterPort(String url){
 		
-		String workURL = null;
+		String workURL = url;
 		String workPort = null;
 		String workPortNew = "";
 		
-		if (url==null) return null;
+		if (workURL==null) return null;
 		
 		// --- Remove Port-Information, if URL contains one ---------
 		if ( url.contains(":")) {

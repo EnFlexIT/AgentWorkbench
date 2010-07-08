@@ -48,7 +48,7 @@ public class MasterServerAgent extends Agent {
 
 		// --- Add Main-Behaiviours -----------------------
 		parBehaiv = new ParallelBehaviour(this,ParallelBehaviour.WHEN_ALL);
-		parBehaiv.addSubBehaviour( new ReceiveBehaiviour() );
+		parBehaiv.addSubBehaviour( new ReceiveBehaviour() );
 		// --- Add Parallel Behaiviour --------------------
 		this.addBehaviour(parBehaiv);
 	}
@@ -62,7 +62,7 @@ public class MasterServerAgent extends Agent {
 	// -----------------------------------------------------
 	// --- Message-Receive-Behaiviour --- S T A R T --------
 	// -----------------------------------------------------
-	private class ReceiveBehaiviour extends CyclicBehaviour {
+	private class ReceiveBehaviour extends CyclicBehaviour {
 
 		private static final long serialVersionUID = -1701739199514787426L;
 
