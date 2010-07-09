@@ -1,4 +1,4 @@
-package gui.projectwindow;
+package gui.projectwindow.simsetup;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -27,7 +27,7 @@ import javax.swing.border.EtchedBorder;
 
 import application.Project;
 
-public class SetupSimulationJADE_NewPort extends JDialog implements ActionListener {
+public class JadeSetupNewPort extends JDialog implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -49,7 +49,7 @@ public class SetupSimulationJADE_NewPort extends JDialog implements ActionListen
 	/**
 	 * This is the default constructor
 	 */
-	public SetupSimulationJADE_NewPort(Frame owner, String titel, boolean modal, Project project, Point position) {
+	public JadeSetupNewPort(Frame owner, String titel, boolean modal, Project project, Point position) {
 		super(owner, titel, modal);
 		currProject = project;
 		currPosition = position;

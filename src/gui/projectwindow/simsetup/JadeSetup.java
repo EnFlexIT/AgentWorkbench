@@ -1,4 +1,5 @@
-package gui.projectwindow;
+package gui.projectwindow.simsetup;
+
 
 import java.awt.Font;
 import java.awt.Rectangle;
@@ -16,7 +17,7 @@ import application.Application;
 import application.Language;
 import application.Project;
 
-public class SetupSimulationJADE extends JPanel implements ActionListener {
+public class JadeSetup extends JPanel implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -47,7 +48,7 @@ public class SetupSimulationJADE extends JPanel implements ActionListener {
 	/**
 	 * This is the default constructor
 	 */
-	public SetupSimulationJADE(Project project) {
+	public JadeSetup(Project project) {
 		super();
 		this.currProject = project;
 		initialize();
@@ -305,7 +306,7 @@ public class SetupSimulationJADE extends JPanel implements ActionListener {
 					// --- Focus auf den Default-Button -------------
 					jButtonSetPortDefault.requestFocusInWindow();
 					// --- Dialog zum einstellen des Ports öffnen ---
-					SetupSimulationJADE_NewPort newPort = new SetupSimulationJADE_NewPort( Application.MainWindow, currProject.getProjectName(), true, currProject, jTextFieldDefaultPort.getLocationOnScreen() );
+					JadeSetupNewPort newPort = new JadeSetupNewPort( Application.MainWindow, currProject.getProjectName(), true, currProject, jTextFieldDefaultPort.getLocationOnScreen() );
 					newPort.setVisible(true);
 					// === Hier geht's weiter, wenn der Dialog wieder geschlossen ist ===
 					if ( newPort.isCanceled() == false ) {

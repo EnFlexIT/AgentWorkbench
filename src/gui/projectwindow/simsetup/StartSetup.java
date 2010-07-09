@@ -1,4 +1,4 @@
-package gui.projectwindow;
+package gui.projectwindow.simsetup;
 
 import java.awt.Dimension;
 import java.awt.Font;
@@ -24,7 +24,7 @@ import javax.swing.JTextField;
  * @author: Christian Derksen
  *
  */
-public class SetupSimulationStart extends JPanel implements Observer, ActionListener {
+public class StartSetup extends JPanel implements Observer, ActionListener {
 
 	/**
 	 * 
@@ -45,7 +45,7 @@ public class SetupSimulationStart extends JPanel implements Observer, ActionList
 	/**
 	 * This is the default constructor
 	 */
-	public SetupSimulationStart( Project project ) {
+	public StartSetup( Project project ) {
 		super();
 		this.currProject = project;
 		this.currProject.addObserver(this);		

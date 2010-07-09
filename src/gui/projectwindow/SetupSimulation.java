@@ -1,6 +1,8 @@
 package gui.projectwindow;
 
 import gui.ProjectWindow;
+import gui.projectwindow.simsetup.JadeSetup;
+import gui.projectwindow.simsetup.StartSetup;
 
 import java.awt.Component;
 import java.awt.Font;
@@ -54,8 +56,8 @@ public class SetupSimulation extends JPanel  {
 		this.add(getJTabbedPaneSimSetup(), gridBagConstraints);
 		
 		// --- Die (optionalen) Karteikarten einblenden ----------
-		addProjectTab(Language.translate("Start-Konfiguration"), null, new SetupSimulationStart(currProject), Language.translate("Agenten-Konfiguration"));
-		addProjectTab(Language.translate("JADE-Konfiguration"), null, new SetupSimulationJADE(currProject), Language.translate("JADE-Konfiguration"));
+		addProjectTab(Language.translate("Start-Konfiguration"), null, new StartSetup(currProject), Language.translate("Agenten-Konfiguration"));
+		addProjectTab(Language.translate("JADE-Konfiguration"), null, new JadeSetup(currProject), Language.translate("JADE-Konfiguration"));
 		
 	}
 
