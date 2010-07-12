@@ -8,6 +8,7 @@ import mas.Platform;
 import systemtray.AgentGUITrayIcon;
 import config.FileProperties;
 import config.GlobalInfo;
+import config.LoadMeasureThread;
 import database.DBConnection;
 /**
  * @author: Christian Derksen  	
@@ -17,7 +18,8 @@ public class Application {
 	public static GlobalInfo RunInfo = null;
 	public static CoreWindowConsole Console = null;
 	public static FileProperties properties = null;
-	public static Platform JadePlatform = null;
+	public static LoadMeasureThread Load = null;
+	public static Platform JadePlatform = null;	
 	
 	public static AgentGUITrayIcon trayIconInstance = null;
 	public static boolean isServer = false;
@@ -41,6 +43,9 @@ public class Application {
 		RunInfo = new GlobalInfo();
 		Console = new CoreWindowConsole();
 		properties = new FileProperties();
+		Load = new LoadMeasureThread(500,5);   //measure load of System every 500ms
+		Thread thread = new Thread(Load);
+		thread.start();                        //start the measurement of system load
 		startAgentGUI();
 
 	}	

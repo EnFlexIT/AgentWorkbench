@@ -63,6 +63,12 @@ public class GlobalInfo {
 	private String filePropServerMasterDBUser = null;
 	private String filePropServerMasterDBPswd = null;
 	
+	// --- Load-Information --------------------------------------------------
+	private long loadCurCpuLoad=0;
+	private long loadCurMemLoad=0;
+	private long loadAvgCpuLoad=0;
+	private long loadAvgMemLoad=0;
+	
 	// ----------------------------------------------------------------------
 	// --- Objekt-Initialisierung -------------------------------------------
 	// ----------------------------------------------------------------------
