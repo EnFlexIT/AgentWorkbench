@@ -32,10 +32,12 @@ import rollout.TextFileRessourceRollOut;
 	// --- Konstanten ------------------------------------------
 	@XmlTransient private String defaultSubFolderAgents 	= "agents";
 	@XmlTransient private String defaultSubFolderOntology 	= "ontology";
+	@XmlTransient private String defaultSubFolderSetups 	= "setups";
 	@XmlTransient private String defaultSubFolderEnvSetups 	= "envSetups";
 	@XmlTransient private String defaultSubFolderResources 	= "resources";
 	@XmlTransient private String[] defaultSubFolders	= { defaultSubFolderAgents, 
 															defaultSubFolderOntology, 
+															defaultSubFolderSetups,
 															defaultSubFolderEnvSetups, 
 															defaultSubFolderResources
 															};
@@ -76,6 +78,7 @@ import rollout.TextFileRessourceRollOut;
 	@XmlElement(name="jadeConfiguration")
 	public PlatformJadeConfig JadeConfiguration = new PlatformJadeConfig();
 	private String JarFileName;
+	
 	
 	
 	/**

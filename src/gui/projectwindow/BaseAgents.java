@@ -34,6 +34,7 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import mas.agents.AgentClassElement;
 import mas.onto.OntologyClassTreeObject;
 import application.Application;
 import application.Language;
@@ -200,25 +201,6 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 		return jAgentScroll;
 	}
 	
-	class AgentClassElement{
-
-		Class<? extends Agent> agentClass = null;
-		
-		public AgentClassElement(Class<? extends Agent> agentClass){
-			this.agentClass=agentClass;
-		}
-		
-		@Override
-		public String toString(){
-			return agentClass.getName();
-		}
-		
-		public Class<? extends Agent> getElementClass(){
-			return agentClass;
-		}
-		
-	}
-
 	/**
 	 * This method initializes jAgentList	
 	 * 	

@@ -19,7 +19,7 @@ public class HelloWorldAgent extends Agent {
 	private static final long serialVersionUID = 1L;
 	
 	protected void setup() { 
-		System.out.println("Hallo, ich bin der erste Agent von Christian ...");
+
 		System.out.println("Local - Name:" + getAID().getLocalName() );
 		System.out.println("GUID - Name:" + getAID().getName() );
 		

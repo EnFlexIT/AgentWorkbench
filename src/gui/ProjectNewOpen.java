@@ -35,6 +35,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 import application.Application;
 import application.Language;
+import java.awt.Color;
 
 
 public class ProjectNewOpen extends JDialog implements ActionListener {
@@ -330,6 +331,7 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 			jButtonOK = new JButton();
 			jButtonOK.setBounds(new Rectangle(330, 135, 136, 29));
 			jButtonOK.setFont(new Font("Dialog", Font.BOLD, 12));
+			jButtonOK.setForeground(new Color(0, 153, 0));
 			jButtonOK.setActionCommand( "OK" );
 			jButtonOK.addActionListener(this);
 		}
@@ -347,6 +349,7 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 			jButtonCancel.setBounds(new Rectangle(330, 195, 136, 29));
 			jButtonCancel.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonCancel.setText( Language.translate("Abbruch") );
+			jButtonCancel.setForeground(new Color(153, 0, 0));
 			jButtonCancel.setActionCommand("Cancel");
 			jButtonCancel.addActionListener(this);
 		}
