@@ -1,0 +1,7 @@
+org.hyperic.sigar
+org.hyperic.sigar.cmd
+org.hyperic.sigar.ptql
+org.hyperic.sigar.shell
+org.hyperic.sigar.util
+org.hyperic.sigar.vmware
+org.hyperic.sigar.win32

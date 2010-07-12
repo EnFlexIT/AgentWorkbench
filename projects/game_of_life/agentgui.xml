@@ -13,6 +13,7 @@
             <service>jade.core.mobility.AgentMobilityService;</service>
         </serviceList>
     </jadeConfiguration>
+    <mainPackage>game_of_life</mainPackage>
     <subFolderAgents>agents</subFolderAgents>
     <subFolderEnvSetups>envSetups</subFolderEnvSetups>
     <subFolderOntology>ontology</subFolderOntology>
