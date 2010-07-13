@@ -86,6 +86,7 @@ public class GlobalInfo {
 		// ------------------------------------------------------------------
 		// --- Class-Path untersuchen ---------------------------------------
 		for (int i=0; i<JCP_Files.length; i++) {
+
 			if ( JCP_Files[i].endsWith( localFileRunnableJar )  ) {
 				localAppExecutedOver = "Executable";
 				// --- Bei jar, imm interne Console verwenden ---------------
@@ -103,12 +104,13 @@ public class GlobalInfo {
 			}	
 			Folders.add(JCP_Folders[i]);						
 		}
-		if ( localAppExecutedOver == "IDE"  ) {
+		
+		if ( localAppExecutedOver.equals("IDE")) {
 			// -------------------------------------------------------------
 			// --- Verzeichnis-Eintraege eindeutig (unique) machen -----------
 			JCP_Folders = (String[])Folders.toArray(new String[Folders.size()]);
 			for (int j = 0; j < JCP_Folders.length; j++) {				
-				if ( JCP_Folders[j].indexOf( localPathAgentGUI ) != -1 ) {
+				if ( JCP_Folders[j].endsWith( localPathAgentGUI ) ) {
 					// --- bin-Verzeichnis gefunden ---					
 					CutAt = JCP_Folders[j].lastIndexOf( localPathAgentGUI );
 					localBaseDir =  JCP_Folders[j].substring(0, CutAt);
