@@ -24,13 +24,14 @@ import org.hyperic.sigar.Sigar;
 import org.hyperic.sigar.SigarLoader;
 import org.hyperic.sigar.SigarException;
 import org.hyperic.sigar.Swap;
+import org.hyperic.sigar.cmd.CpuInfo;
 import org.hyperic.sigar.cmd.Shell;
 import org.hyperic.sigar.cmd.SigarCommandBase;
 
 /**
  * Display cpu information for each cpu found on the system.
  */
-public class memoryAndCpuInfo extends SigarCommandBase {
+public class LoadMeasure extends SigarCommandBase {
 	
 
 	// Instance variables for CPU
@@ -53,11 +54,12 @@ public class memoryAndCpuInfo extends SigarCommandBase {
 	// ////////////////////////////////
     public Mem mem;
     public CpuPerc cpuPerc;
-	
+    public org.hyperic.sigar.CpuInfo[] cpuInfo;
+    public org.hyperic.sigar.CpuInfo info;
 	
     public boolean displayTimes = true;
     
-    public memoryAndCpuInfo(Shell shell) {
+    public LoadMeasure(Shell shell) {
         super(shell);
         try {
 			mem = this.sigar.getMem();
@@ -68,11 +70,13 @@ public class memoryAndCpuInfo extends SigarCommandBase {
 		}
     }
 
-    public memoryAndCpuInfo() {
+    public LoadMeasure() {
         super();
         try {
 			mem = this.sigar.getMem();
 			cpuPerc = this.sigar.getCpuPerc();
+			info = cpuInfo[0];
+			
 		} catch (SigarException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -95,8 +99,12 @@ public class memoryAndCpuInfo extends SigarCommandBase {
     	   System.out.println("");
   	  Mem mem   = this.sigar.getMem();
 
+  	  //setting memory values
+  	  setFreeMemory(mem.getFree());
+  	  setTotalMemory(mem.getTotal());
+  	  setUseMemory(mem.getUsed());
   	  
-  	  //printing the Values of the memory
+  	//printing the Values of the memory
         Object[] header = new Object[] { "total", "used", "free" };
 
         Object[] memRow = new Object[] {
@@ -114,7 +122,7 @@ public class memoryAndCpuInfo extends SigarCommandBase {
 
         printf("Mem:    %10ld %10ld %10ld", memRow);
 
-        //e.g. linux
+        //e.g. linux system
         if ((mem.getUsed() != mem.getActualUsed()) ||
             (mem.getFree() != mem.getActualFree()))
         {
@@ -129,7 +137,13 @@ public class memoryAndCpuInfo extends SigarCommandBase {
 
     private void output(CpuPerc cpu) {
     	
-        
+        //set cpu load information
+    	setCpuUserTime(cpu.getUser());
+    	setCpuSystemTime(cpu.getSys());
+    	setCpuIdleTime(cpu.getIdle());
+    	setCpuWaitTime(cpu.getWait());
+    	setCombineTime(cpu.getCombined());
+
     	println("User Time....." + CpuPerc.format(cpu.getUser()));
         println("Sys Time......" + CpuPerc.format(cpu.getSys()));
         println("Idle Time....." + CpuPerc.format(cpu.getIdle()));                //0,00% => cpu is not being used by any program
@@ -158,6 +172,11 @@ public class memoryAndCpuInfo extends SigarCommandBase {
       //  CpuTimer cpuTimer[] = this.sigar.getCpuPercList();
         org.hyperic.sigar.CpuInfo info = infos[0];
         long cacheSize = info.getCacheSize();
+        setVendor(info.getVendor());
+        setModel(info.getModel());
+        setMhz(info.getMhz());
+        setTotalCpu(info.getTotalCores());
+        
         println("Vendor........." + info.getVendor());
         println("Model.........." + info.getModel());
         println("Mhz............" + info.getMhz());
@@ -194,16 +213,182 @@ public class memoryAndCpuInfo extends SigarCommandBase {
         System.out.println();
     }
 
-	  public void measureLoadOfSystem() throws Exception {
-	    		
-	    		outputMem();
-	    		outputCpu();
-	    }
-
 	@Override
 	public void output(String[] arg0) throws SigarException {
 		// TODO Auto-generated method stub
-		outputCpu();
-		outputMem();
 	}
+	
+	  public void measureLoadOfSystem() throws Exception {
+  		outputMem();
+  		outputCpu();
+  }
+
+	/**
+	 * @param vendor the vendor to set
+	 */
+	public void setVendor(String vendor) {
+		this.vendor = vendor;
+	}
+
+	/**
+	 * @return the vendor
+	 */
+	public String getVendor() {
+		return vendor;
+	}
+
+	/**
+	 * @param mhz the mhz to set
+	 */
+	public void setMhz(long mhz) {
+		Mhz = mhz;
+	}
+
+	/**
+	 * @return the mhz
+	 */
+	public long getMhz() {
+		return Mhz;
+	}
+
+	/**
+	 * @param model the model to set
+	 */
+	public void setModel(String model) {
+		this.model = model;
+	}
+
+	/**
+	 * @return the model
+	 */
+	public String getModel() {
+		return model;
+	}
+
+	/**
+	 * @param totalCpu the totalCpu to set
+	 */
+	public void setTotalCpu(int totalCpu) {
+		this.totalCpu = totalCpu;
+	}
+
+	/**
+	 * @return the totalCpu
+	 */
+	public int getTotalCpu() {
+		return totalCpu*100;
+	}
+
+	/**
+	 * @param cpuSystemTime the cpuSystemTime to set
+	 */
+	public void setCpuSystemTime(double cpuSystemTime) {
+		this.cpuSystemTime = cpuSystemTime;
+	}
+
+	/**
+	 * @return the cpuSystemTime
+	 */
+	public double getCpuSystemTime() {
+		return cpuSystemTime*100;
+	}
+
+	/**
+	 * @param cpuUserTime the cpuUserTime to set
+	 */
+	public void setCpuUserTime(double cpuUserTime) {
+		this.cpuUserTime = cpuUserTime;
+	}
+
+	/**
+	 * @return the cpuUserTime
+	 */
+	public double getCpuUserTime() {
+		return cpuUserTime*100;
+	}
+
+	/**
+	 * @param cpuWaitTime the cpuWaitTime to set
+	 */
+	public void setCpuWaitTime(double cpuWaitTime) {
+		this.cpuWaitTime = cpuWaitTime;
+	}
+
+	/**
+	 * @return the cpuWaitTime
+	 */
+	public double getCpuWaitTime() {
+		return cpuWaitTime*100;
+	}
+
+	/**
+	 * @param cpuIdleTime the cpuIdleTime to set
+	 */
+	public void setCpuIdleTime(double cpuIdleTime) {
+		this.cpuIdleTime = cpuIdleTime;
+	}
+
+	/**
+	 * @return the cpuIdleTime
+	 */
+	public double getCpuIdleTime() {
+		return cpuIdleTime*100;
+	}
+
+	/**
+	 * @param d the combineTime to set
+	 */
+	public void setCombineTime(double d) {
+		this.combineTime = (long) d;
+	}
+
+	/**
+	 * @return the combineTime
+	 */
+	public long getCombineTime() {
+		return combineTime*100;
+	}
+
+	/**
+	 * @param totalMemory the totalMemory to set
+	 */
+	public void setTotalMemory(long totalMemory) {
+		this.totalMemory = totalMemory;
+	}
+
+	/**
+	 * @return the totalMemory
+	 */
+	public long getTotalMemory() {
+		return totalMemory/1048576; //memory in MB
+	}
+
+	/**
+	 * @param freeMemory the freeMemory to set
+	 */
+	public void setFreeMemory(long freeMemory) {
+		this.freeMemory = freeMemory;
+	}
+
+	/**
+	 * @return the freeMemory
+	 */
+	public long getFreeMemory() {
+		return freeMemory/1048576; //memory in MB
+	}
+
+	/**
+	 * @param useMemory the useMemory to set
+	 */
+	public void setUseMemory(long useMemory) {
+		this.useMemory = useMemory;
+	}
+
+	/**
+	 * @return the useMemory
+	 */
+	public long getUseMemory() {
+		return useMemory/1048576; //memory in MB
+	}
+
 }

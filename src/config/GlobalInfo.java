@@ -10,6 +10,8 @@ import java.util.Vector;
 
 import application.Application;
 
+import load.LoadMeasure;
+import load.LoadMeasureAVG;
 import mas.PlatformJadeConfig;
 
 public class GlobalInfo {
@@ -64,10 +66,8 @@ public class GlobalInfo {
 	private String filePropServerMasterDBPswd = null;
 	
 	// --- Load-Information --------------------------------------------------
-	private long loadCurCpuLoad=0;
-	private long loadCurMemLoad=0;
-	private long loadAvgCpuLoad=0;
-	private long loadAvgMemLoad=0;
+	private LoadMeasure loadCurrent = null;
+	private LoadMeasureAVG loadCurrentAvg = null;
 	
 	// ----------------------------------------------------------------------
 	// --- Objekt-Initialisierung -------------------------------------------
@@ -535,6 +535,33 @@ public class GlobalInfo {
 	 */
 	public String getServerMasterDBPswd() {
 		return filePropServerMasterDBPswd;
+	}
+
+	/**
+	 * @param loadCurrent the loadCurrent to set
+	 */
+	public void setLoadCurrent(LoadMeasure loadCurrent) {
+		this.loadCurrent = loadCurrent;
+		this.loadCurrentAvg.put(loadCurrent);
+	}
+	/**
+	 * @return the loadCurrent
+	 */
+	public LoadMeasure getLoadCurrent() {
+		return loadCurrent;
+	}
+
+	/**
+	 * @param loadAvgMemLoad the loadAvgMemLoad to set
+	 */
+	public void setLoadCurrentAvg(LoadMeasureAVG loadAvgMemLoad) {
+		this.loadCurrentAvg = loadAvgMemLoad;
+	}
+	/**
+	 * @return the loadAvgMemLoad
+	 */
+	public LoadMeasureAVG getLoadCurrentAvg() {
+		return loadCurrentAvg;
 	}
 
 	
