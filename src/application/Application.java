@@ -18,7 +18,6 @@ public class Application {
 	public static GlobalInfo RunInfo = null;
 	public static CoreWindowConsole Console = null;
 	public static FileProperties properties = null;
-	public static LoadMeasureThread Load = null;
 	public static Platform JadePlatform = null;	
 	
 	public static AgentGUITrayIcon trayIconInstance = null;
