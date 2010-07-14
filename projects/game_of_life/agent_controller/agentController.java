@@ -23,7 +23,7 @@ import jade.util.leap.Iterator;
 public class agentController extends Agent {
 	
 	// Constants
-    //////////////////////////////////
+    ////////////////////////////////////
 
 
     // Static variables
