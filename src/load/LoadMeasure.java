@@ -55,7 +55,6 @@ public class LoadMeasure extends SigarCommandBase {
     public Mem mem;
     public CpuPerc cpuPerc;
     public org.hyperic.sigar.CpuInfo[] cpuInfo;
-    public org.hyperic.sigar.CpuInfo info;
 	
     public boolean displayTimes = true;
     
@@ -75,7 +74,6 @@ public class LoadMeasure extends SigarCommandBase {
         try {
 			mem = this.sigar.getMem();
 			cpuPerc = this.sigar.getCpuPerc();
-			info = cpuInfo[0];
 			
 		} catch (SigarException e) {
 			// TODO Auto-generated catch block
@@ -96,7 +94,6 @@ public class LoadMeasure extends SigarCommandBase {
     }
     
     private void outputMem() throws SigarException{
-    	   System.out.println("");
   	  Mem mem   = this.sigar.getMem();
 
   	  //setting memory values
@@ -104,35 +101,7 @@ public class LoadMeasure extends SigarCommandBase {
   	  setTotalMemory(mem.getTotal());
   	  setUseMemory(mem.getUsed());
   	  
-  	//printing the Values of the memory
-        Object[] header = new Object[] { "total", "used", "free" };
-
-        Object[] memRow = new Object[] {
-            format(mem.getTotal()),
-            format(mem.getUsed()),
-            format(mem.getFree())
-        };
-
-        Object[] actualRow = new Object[] {
-            format(mem.getActualUsed()),
-            format(mem.getActualFree())
-        };
-
-        printf("%18s %10s %10s", header);
-
-        printf("Mem:    %10ld %10ld %10ld", memRow);
-
-        //e.g. linux system
-        if ((mem.getUsed() != mem.getActualUsed()) ||
-            (mem.getFree() != mem.getActualFree()))
-        {
-            printf("-/+ buffers/cache: " + "%10ld %10d", actualRow);
-        }
-
-        printf("RAM:    %10ls", new Object[] { mem.getRam() + "MB" });
-        
-        System.out.println("===========================================================================");
-        System.out.println();
+  	
   }
 
     private void output(CpuPerc cpu) {
@@ -144,22 +113,6 @@ public class LoadMeasure extends SigarCommandBase {
     	setCpuWaitTime(cpu.getWait());
     	setCombineTime(cpu.getCombined());
 
-    	println("User Time....." + CpuPerc.format(cpu.getUser()));
-        println("Sys Time......" + CpuPerc.format(cpu.getSys()));
-        println("Idle Time....." + CpuPerc.format(cpu.getIdle()));                //0,00% => cpu is not being used by any program
-                                                                                  //or CPU is used by programs with very low priority
-                                                                                  //100% => CPU is complete occupied
-        println("Wait Time....." + CpuPerc.format(cpu.getWait()));
-        println("Nice Time....." + CpuPerc.format(cpu.getNice()));
-        println("Combined......" + CpuPerc.format(cpu.getCombined()));
-        println("Irq Time......" + CpuPerc.format(cpu.getIrq()));
-        
-        
-        if (SigarLoader.IS_LINUX) {
-            println("SoftIrq Time.." + CpuPerc.format(cpu.getSoftIrq()));
-            println("Stolen Time...." + CpuPerc.format(cpu.getStolen()));
-        }
-        println("");
     }
 
 	public void outputCpu() throws SigarException {
@@ -176,41 +129,7 @@ public class LoadMeasure extends SigarCommandBase {
         setModel(info.getModel());
         setMhz(info.getMhz());
         setTotalCpu(info.getTotalCores());
-        
-        println("Vendor........." + info.getVendor());
-        println("Model.........." + info.getModel());
-        println("Mhz............" + info.getMhz());
-        println("Total CPUs....." + info.getTotalCores());
-        if ((info.getTotalCores() != info.getTotalSockets()) ||
-            (info.getCoresPerSocket() > info.getTotalCores()))
-        {
-            println("Physical CPUs.." + info.getTotalSockets());
-            println("Cores per CPU.." + info.getCoresPerSocket());
-        }
-
-        if (cacheSize != Sigar.FIELD_NOTIMPL) {
-            println("Cache size...." + cacheSize);
-        }
-        println("");
-        
-        if (!this.displayTimes) {
-            return;
-        }
-        System.out.println("===========================================================================");
-        System.out.println();
-
-        for (int i=0; i<cpus.length; i++) {
-            println("CPU " + i + ".........");
-            output(cpus[i]);
-            System.out.println("===========================================================================");
-            System.out.println();
-        }
-
-        println("Totals........");
-        output(this.sigar.getCpuPerc());
-        System.out.println("===========================================================================");
-        System.out.println("===========================================================================");
-        System.out.println();
+     
     }
 
 	@Override
@@ -219,8 +138,8 @@ public class LoadMeasure extends SigarCommandBase {
 	}
 	
 	  public void measureLoadOfSystem() throws Exception {
-  		outputMem();
-  		outputCpu();
+  		outputMem(); //memory information
+  		outputCpu(); //cpu information
   }
 
 	/**
