@@ -527,7 +527,10 @@ public class Platform extends Object {
 	public void jadeAgentStart(String AgentName, String Clazz, String ContainerName ) {
 		jadeAgentStart(AgentName, Clazz, null, ContainerName) ;
 	}
-	
+	public void jadeAgentStart(String AgentName, String Clazz, Object[] AgentArgs ) {
+		String MainContainerName = MASmc.getName();
+		jadeAgentStart(AgentName, Clazz, AgentArgs, MainContainerName) ;
+	}
 	public void jadeAgentStart(String AgentName, String clazzName, Object[] AgentArgs, String ContainerName ) {
 		try {
 			@SuppressWarnings("unchecked")
