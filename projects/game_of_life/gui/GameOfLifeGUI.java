@@ -49,8 +49,9 @@ public class GameOfLifeGUI extends JInternalFrame implements ActionListener {
 	int deadlock;
 
 	// size in pixel of every label
-	static final int size = 15;
-	static final Dimension dim = new Dimension(size, size);
+	static final int objectHeigth = 30;
+	static final int objectWidth = 30;
+	static final Dimension dim = new Dimension(objectWidth, objectHeigth);
 
 	// the slider for the speed
 	JSlider slider = new JSlider(0, 5000); // 0 to 5000 milliseconds (5 seconds)
@@ -95,7 +96,7 @@ public class GameOfLifeGUI extends JInternalFrame implements ActionListener {
 
 		// panel in the center with the labels
 		// 1 & 1 are the gaps between the
-		panel = new JPanel(new GridLayout(nbRow, nbCol, 1, 1));
+		panel = new JPanel(new GridLayout(nbRow, nbCol, 2, 2));
 		panel.setBackground(Color.BLACK);
 		panel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
@@ -162,7 +163,7 @@ public class GameOfLifeGUI extends JInternalFrame implements ActionListener {
 		add(panel, BorderLayout.SOUTH);
 
 		// put the frame on
-		setLocation(20, 20);
+		setLocation(30, 30);
 
 		// Forcing window to fit to layout
 		pack();
