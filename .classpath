@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry excluding="monitormas/envSetups/|monitormas/resources/|sma/envSetups/|sma/resources/|contmasstandalone/" kind="src" path="projects"/>
+	<classpathentry excluding="contmasstandalone/|monitormas/envSetups/|monitormas/resources/|monitormas/setups/|sma/envSetups/|sma/resources/|sma/setups/" kind="src" path="projects"/>
 	<classpathentry kind="lib" path="lib/batik/batik-rasterizer.jar"/>
 	<classpathentry kind="lib" path="lib/batik/batik-slideshow.jar"/>
 	<classpathentry kind="lib" path="lib/batik/batik-squiggle.jar"/>
