@@ -11,10 +11,14 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Vector;
 
 import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -22,6 +26,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -32,6 +37,7 @@ import javax.swing.event.MouseInputAdapter;
 import mas.agents.AgentClassElement;
 import mas.agents.AgentClassElement4SimStart;
 import application.Application;
+import application.Language;
 import application.Project;
 
 /**
@@ -45,8 +51,13 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 	 */
 	private static final long serialVersionUID = -3929823093128900880L;
 	
+	private final Integer SETUP_add = 1;  //  @jve:decl-index=0:
+	private final Integer SETUP_rename = 2;  //  @jve:decl-index=0:
+	private final Integer SETUP_copy = 3;  //  @jve:decl-index=0:
+	
 	private Project currProject;
 	private DefaultListModel jListModelAgents2Start = new DefaultListModel();
+	private DefaultComboBoxModel jComboBoxModel4Setups = new DefaultComboBoxModel();
 	
 	private JScrollPane jScrollPaneStartList = null;
 	private JList jListStartList = null;
@@ -68,6 +79,10 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 	private JButton jButtonSetupNew = null;
 	private JButton jButtonSetupDelete = null;
 
+	private JButton jButtonSetupRename = null;
+
+	private JButton jButtonSetupCopy = null;
+
 	
 	/**
 	 * This is the default constructor
@@ -77,6 +92,21 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		this.currProject = project;
 		this.currProject.addObserver(this);		
 		initialize();	
+		
+		// --- Das aktuelle Setup laden -------------------
+		this.setupLoad();
+		
+		// --- Übersetzungen laden ------------------------
+		jButtonSetupCopy.setToolTipText(Language.translate("Setup kopieren"));
+		jButtonSetupRename.setToolTipText(Language.translate("Setup umbenennen"));
+		jButtonSetupNew.setToolTipText(Language.translate("Setup hinzufügen"));
+		jButtonSetupDelete.setToolTipText(Language.translate("Setup löschen"));
+
+		jButtonAgentAdd.setToolTipText(Language.translate("Agenten hinzufügen"));
+		jButtonAgentRemove.setToolTipText(Language.translate("Agenten entfernen"));
+		jButtonMoveUp.setToolTipText(Language.translate("Agent nach oben verschieben"));
+		jButtonMoveDown.setToolTipText(Language.translate("Agent nach unten verschieben"));
+		
 	}
 
 	/**
@@ -130,12 +160,20 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 	 */
 	private JPanel getJPanelTop() {
 		if (jPanelTop == null) {
+			GridBagConstraints gridBagConstraints17 = new GridBagConstraints();
+			gridBagConstraints17.gridx = 3;
+			gridBagConstraints17.insets = new Insets(0, 10, 0, 0);
+			gridBagConstraints17.gridy = 0;
+			GridBagConstraints gridBagConstraints16 = new GridBagConstraints();
+			gridBagConstraints16.gridx = 2;
+			gridBagConstraints16.insets = new Insets(0, 5, 0, 0);
+			gridBagConstraints16.gridy = 0;
 			GridBagConstraints gridBagConstraints15 = new GridBagConstraints();
-			gridBagConstraints15.gridx = 3;
+			gridBagConstraints15.gridx = 5;
 			gridBagConstraints15.insets = new Insets(0, 5, 0, 0);
 			gridBagConstraints15.gridy = 0;
 			GridBagConstraints gridBagConstraints14 = new GridBagConstraints();
-			gridBagConstraints14.gridx = 2;
+			gridBagConstraints14.gridx = 4;
 			gridBagConstraints14.insets = new Insets(0, 10, 0, 0);
 			gridBagConstraints14.gridy = 0;
 			GridBagConstraints gridBagConstraints13 = new GridBagConstraints();
@@ -144,7 +182,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 			gridBagConstraints13.anchor = GridBagConstraints.WEST;
 			gridBagConstraints13.gridy = 0;
 			jLabelSetupSelector = new JLabel();
-			jLabelSetupSelector.setText("Konfiguration:");
+			jLabelSetupSelector.setText("Setup:");
 			jLabelSetupSelector.setFont(new Font("Dialog", Font.BOLD, 12));
 			GridBagConstraints gridBagConstraints12 = new GridBagConstraints();
 			gridBagConstraints12.fill = GridBagConstraints.BOTH;
@@ -159,6 +197,8 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 			jPanelTop.add(jLabelSetupSelector, gridBagConstraints13);
 			jPanelTop.add(getJButtonSetupNew(), gridBagConstraints14);
 			jPanelTop.add(getJButtonSetupDelete(), gridBagConstraints15);
+			jPanelTop.add(getJButtonSetupRename(), gridBagConstraints16);
+			jPanelTop.add(getJButtonSetupCopy(), gridBagConstraints17);
 		}
 		return jPanelTop;
 	}
@@ -169,13 +209,49 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 	 */
 	private JComboBox getJComboBoxSetupSelector() {
 		if (jComboBoxSetupSelector == null) {
-			jComboBoxSetupSelector = new JComboBox();
+			jComboBoxSetupSelector = new JComboBox(jComboBoxModel4Setups);
 			jComboBoxSetupSelector.setPreferredSize(new Dimension(100, 26));
-			jComboBoxSetupSelector.setEditable(true);
+			jComboBoxSetupSelector.setActionCommand("SetupSelected");
+			jComboBoxSetupSelector.addActionListener(this);
 		}
 		return jComboBoxSetupSelector;
 	}
 
+	/**
+	 * This method initializes jButtonSetupRename	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getJButtonSetupRename() {
+		if (jButtonSetupRename == null) {
+			jButtonSetupRename = new JButton();
+			jButtonSetupRename.setPreferredSize(new Dimension(110, 26));
+			jButtonSetupRename.setText("Umbenennen");
+			jButtonSetupRename.setToolTipText("Setup umbenennen");
+			jButtonSetupRename.setFont(new Font("Dialog", Font.BOLD, 12));
+			jButtonSetupRename.setActionCommand("SetupRename");
+			jButtonSetupRename.addActionListener(this);
+
+		}
+		return jButtonSetupRename;
+	}
+	
+	/**
+	 * This method initializes jButtonSetupCopy	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getJButtonSetupCopy() {
+		if (jButtonSetupCopy == null) {
+			jButtonSetupCopy = new JButton();
+			jButtonSetupCopy.setPreferredSize(new Dimension(45, 26));
+			jButtonSetupCopy.setIcon(new ImageIcon(getClass().getResource("/img/Copy.png")));
+			jButtonSetupCopy.setToolTipText("Setup kopieren");
+			jButtonSetupCopy.setActionCommand("SetupCopy");
+			jButtonSetupCopy.addActionListener(this);
+
+		}
+		return jButtonSetupCopy;
+	}
+	
 	/**
 	 * This method initializes jButtonSetupNew	
 	 * @return javax.swing.JButton	
@@ -184,6 +260,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		if (jButtonSetupNew == null) {
 			jButtonSetupNew = new JButton();
 			jButtonSetupNew.setPreferredSize(new Dimension(45, 26));
+			jButtonSetupNew.setToolTipText("Setup hinzufügen");
 			jButtonSetupNew.setIcon(new ImageIcon(getClass().getResource("/img/ListPlus.png")));
 			jButtonSetupNew.setActionCommand("SetupNew");
 			jButtonSetupNew.addActionListener(this);
@@ -199,6 +276,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		if (jButtonSetupDelete == null) {
 			jButtonSetupDelete = new JButton();
 			jButtonSetupDelete.setPreferredSize(new Dimension(45, 26));
+			jButtonSetupDelete.setToolTipText("Setup löschen");
 			jButtonSetupDelete.setIcon(new ImageIcon(getClass().getResource("/img/ListMinus.png")));
 			jButtonSetupDelete.setActionCommand("SetupDelete");
 			jButtonSetupDelete.addActionListener(this);
@@ -263,7 +341,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 			jButtonAgentAdd = new JButton();
 			jButtonAgentAdd.setPreferredSize(new Dimension(45, 26));
 			jButtonAgentAdd.setIcon(new ImageIcon(getClass().getResource("/img/ListPlus.png")));
-			jButtonAgentAdd.setToolTipText("Add Start-Element");
+			jButtonAgentAdd.setToolTipText("Agenten hinzufügen");
 			jButtonAgentAdd.setActionCommand("AgentAdd");
 			jButtonAgentAdd.addActionListener(this);
 		}
@@ -279,7 +357,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 			jButtonAgentRemove = new JButton();
 			jButtonAgentRemove.setPreferredSize(new Dimension(45, 26));
 			jButtonAgentRemove.setIcon(new ImageIcon(getClass().getResource("/img/ListMinus.png")));
-			jButtonAgentRemove.setToolTipText("Remove Start-Element");
+			jButtonAgentRemove.setToolTipText("Agenten entfernen");
 			jButtonAgentRemove.setActionCommand("AgentRemove");
 			jButtonAgentRemove.addActionListener(this);
 		}
@@ -294,7 +372,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		if (jButtonMoveUp == null) {
 			jButtonMoveUp = new JButton();
 			jButtonMoveUp.setIcon(new ImageIcon(getClass().getResource("/img/ArrowUp.png")));
-			jButtonMoveUp.setToolTipText("Objekt nach oben");
+			jButtonMoveUp.setToolTipText("Agent nach oben verschieben");
 			jButtonMoveUp.setPreferredSize(new Dimension(45, 26));
 			jButtonMoveUp.setActionCommand("AgentUp");
 			jButtonMoveUp.addActionListener(this);		
@@ -311,7 +389,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		if (jButtonMoveDown == null) {
 			jButtonMoveDown = new JButton();
 			jButtonMoveDown.setPreferredSize(new Dimension(45, 26));
-			jButtonMoveDown.setToolTipText("Objekt nach unten");
+			jButtonMoveDown.setToolTipText("Agent nach unten verschieben");
 			jButtonMoveDown.setIcon(new ImageIcon(getClass().getResource("/img/ArrowDown.png")));
 			jButtonMoveDown.setActionCommand("AgentDown");
 			jButtonMoveDown.addActionListener(this);
@@ -447,7 +525,15 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		Object Trigger = ae.getSource();
 		
 		// --- Fallunterscheidung 'Auslöser' -----------------------------
-		if ( Trigger == jButtonSetupNew ) {
+		if ( Trigger == jComboBoxSetupSelector ) {
+			if (jComboBoxSetupSelector.getSelectedItem()!= null) {
+				currProject.simSetups.setupLoadAndFocus(jComboBoxSetupSelector.getSelectedItem().toString(), false);
+			}
+		} else if ( Trigger == jButtonSetupRename ) {
+			this.setupRename();
+		} else if ( Trigger == jButtonSetupCopy ) {
+			this.setupCopy();
+		} else if ( Trigger == jButtonSetupNew ) {
 			this.setupAdd();
 		} else if ( Trigger == jButtonSetupDelete ) {
 			this.setupRemove();
@@ -460,31 +546,172 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		} else if ( Trigger == jButtonMoveDown ) {
 			this.agentMovePosition(1);
 		} else {
-			
+			System.out.println(ae.toString());
 		};
 	}
 
 	/**
-	 * Listens to the Data-Model of this Project 
+	 * Listens to the Data-Model of this Project (MVC-Pattern)
 	 */
 	@Override
 	public void update(Observable arg0, Object arg1) {
-		// TODO Auto-generated method stub
+		
+		if ( arg1.toString().equalsIgnoreCase("SimSetups")) {
+			this.setupLoad();
+		} else {
+			//System.out.println( this.getClass().getName() + ": " + arg1.toString() );	
+		}
 		
 	}
 
+	
+	private void setupLoad() {
+	
+		// --- Aktuelles Setup ermitteln ------------------
+		String currSetup = currProject.simSetupCurrent;
+		String currSetupFile = currProject.simSetups.get(currSetup);
+		
+		// --- ComboBoxModel neu aufbauen -----------------
+		jComboBoxModel4Setups.removeAllElements();
+		
+		Vector<String> v = new Vector<String>(currProject.simSetups.keySet());
+		Collections.sort(v, String.CASE_INSENSITIVE_ORDER);
+		Iterator<String> it = v.iterator();
+		while (it.hasNext()) {
+			String setupName = it.next().trim();
+			if (jComboBoxModel4Setups.getIndexOf(setupName)!=-1) {
+				jComboBoxModel4Setups.removeElement(setupName);
+			}
+			jComboBoxModel4Setups.addElement(setupName);
+		}
+		
+		// --- Auf das aktuelle Setup setzen --------------
+		jComboBoxSetupSelector.setSelectedItem(currSetup);
+		jComboBoxSetupSelector.setToolTipText("Setup '" + currSetup + "' " + Language.translate("in Datei") + " '" + currSetupFile + "'");
+		
+	}
+
+	/**
+	 * Asks the user for a name of a setup
+	 * @param isAddNewSetup
+	 * @return
+	 */
+	private String setupAskUser4SetupName(Integer ReasonConstant, String suggestion) {
+		
+		String head = null;
+		String msg  = null;
+		String input = null;
+		String newFileName = null;
+		boolean inputIsOk = false;
+		
+		while (inputIsOk==false) {
+			
+			switch (ReasonConstant) {
+			case 1:
+				head = Language.translate("Neues Setup anlegen ...");
+				msg  = Language.translate("Bitte geben Sie den Namen für das neue Setup an!");
+				break;
+			case 2:
+				head = Language.translate("Setup umbenennen ...");
+				msg  = Language.translate("Bitte geben Sie den neuen Namen für das Setup an!");
+				break;
+			case 3:
+				head = Language.translate("Setup kopieren ...");
+				msg  = Language.translate("Bitte geben Sie den neuen Namen für das Setup an!");
+				break;
+
+			}
+			
+			if (suggestion== null) {
+				input = (String) JOptionPane.showInputDialog(Application.MainWindow, msg, head, JOptionPane.OK_CANCEL_OPTION);	
+			} else {
+				input = (String) JOptionPane.showInputDialog(Application.MainWindow, msg, head, JOptionPane.OK_CANCEL_OPTION, null, null, suggestion);	
+			}
+			
+			if (input==null) return null;
+			input = input.trim();
+			if (input.equalsIgnoreCase("")) return null;
+			
+			// --- Kann der Name in einen gültigen Dateinamen umbenannt werden? ----
+			newFileName = currProject.simSetups.getSuggestSetupFile(input);
+			if (newFileName.length() < 4) {
+				head = Language.translate("Setup-Name zu kurz!");
+				msg  = "Name: '" + input + "' " + Language.translate("zu Datei") + ": '" + newFileName + ".xml':";
+				msg += Language.translate("<br>Bitte geben Sie einen längeren Namen für das Setup an.");
+				JOptionPane.showMessageDialog(Application.MainWindow, msg, head, JOptionPane.NO_OPTION);
+			} else {
+				inputIsOk = true;
+			}
+
+			// --- Wird der Name bereits verwendet ---------------------------------
+			if (currProject.simSetups.containsKey(input)) {
+				head = Language.translate("Setup-Name wird bereits verwendet!");
+				msg  = Language.translate("Der Name") + " '" + input + "' " + Language.translate("wird bereits verwendet.");
+				msg += Language.translate("<br>Bitte geben Sie einen anderen Namen für das Setup an.");
+				JOptionPane.showMessageDialog(Application.MainWindow, msg, head, JOptionPane.NO_OPTION);
+				inputIsOk = false;
+			}
+			
+		}
+		return input;
+	}
+	
+	
 	/**
 	 * This method adds a new Simulation-Setup to this project
 	 */
 	private void setupAdd() {
 		
-	}
+		String nameNew = this.setupAskUser4SetupName(this.SETUP_add, null);
+		if (nameNew==null) return;
+		String fileNameNew = currProject.simSetups.getSuggestSetupFile(nameNew) + ".xml"; 
 
+		currProject.simSetups.setupAddNew(nameNew, fileNameNew);
+
+	}
+	
+	/**
+	 * This method renames the current Simulation-Setup 
+	 */
+	private void setupRename() {
+		
+		String nameOld = jComboBoxSetupSelector.getSelectedItem().toString();
+		String nameNew = this.setupAskUser4SetupName(this.SETUP_rename, null);
+		if (nameNew==null) return;
+		String fileNameNew = currProject.simSetups.getSuggestSetupFile(nameNew) + ".xml";
+
+		currProject.simSetups.setupRename(nameOld, nameNew, fileNameNew);
+		
+	}
+	
+	/**
+	 * This method copy the current Simulation-Setup 
+	 */
+	private void setupCopy(){
+
+		String nameOld = jComboBoxSetupSelector.getSelectedItem().toString();
+		String nameNew = this.setupAskUser4SetupName(this.SETUP_copy, "Copy of " + nameOld);
+		if (nameNew==null) return;
+		String fileNameNew = currProject.simSetups.getSuggestSetupFile(nameNew) + ".xml";
+
+		currProject.simSetups.setupCopy(nameOld, nameNew, fileNameNew);
+	}
+	
 	/**
 	 * This method removes the current Simulation-Setup from to this project
 	 */
 	private void setupRemove() {
 		
+		String head = null;
+		String msg  = null;
+		Integer input = null;
+		
+		head = jComboBoxSetupSelector.getSelectedItem().toString() + ": " + Language.translate("Setup löschen?");
+		msg  = Language.translate("Wollen Sie das aktuelle Setup wirklich löschen?");
+		input = JOptionPane.showConfirmDialog(Application.MainWindow, msg, head, JOptionPane.YES_NO_OPTION);
+		if (input == JOptionPane.YES_OPTION) {
+			currProject.simSetups.setupRemove(jComboBoxSetupSelector.getSelectedItem().toString());
+		}		
 	}
 	
 	/**

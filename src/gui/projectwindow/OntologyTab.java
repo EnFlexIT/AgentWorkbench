@@ -347,7 +347,7 @@ public class OntologyTab extends JPanel implements Observer, ActionListener {
 			this.OntoTree.setModel( CurrProject.ontologies4Project.getOntologyTree() );
 			this.OntoTreeExpand2Level(4, true);
 		} else {
-			System.out.println("Unbekannte Meldung vom Observer: " + ObjectName);
+			//System.out.println("Unbekannte Meldung vom Observer: " + ObjectName);
 		}
 		
 	}

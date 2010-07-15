@@ -1,7 +1,6 @@
 package application;
 
 import gui.ProjectWindow;
-
 import jade.core.Agent;
 
 import java.io.File;
@@ -26,6 +25,7 @@ import mas.display.ontology.Environment;
 import mas.environment.EnvironmentController;
 import mas.onto.Ontologies4Project;
 import rollout.TextFileRessourceRollOut;
+import sim.setup.SimulationSetups;
 
 @XmlRootElement public class Project extends Observable {
 
@@ -75,6 +75,11 @@ import rollout.TextFileRessourceRollOut;
 	@XmlElementWrapper(name = "agentConfiguration")
 	public AgentConfiguration AgentConfig = new AgentConfiguration(this);
 	
+	@XmlElement(name="simulationSetupCurrent")
+	public String simSetupCurrent = "default";
+	@XmlElementWrapper(name = "simulationSetups")
+	public SimulationSetups simSetups = new SimulationSetups(this, simSetupCurrent);
+	
 	@XmlElement(name="jadeConfiguration")
 	public PlatformJadeConfig JadeConfiguration = new PlatformJadeConfig();
 	private String JarFileName;
@@ -104,6 +109,13 @@ import rollout.TextFileRessourceRollOut;
 			Writer pw = new FileWriter( ProjectFolderFullPath + Application.RunInfo.getFileNameProject() );
 			pm.marshal( this, pw );
 			
+			// --- Speichern des aktuellen Sim-Setups -----
+			if (this.simSetups != null)
+				this.simSetups.setupSave();
+			
+			// --- Verzeichnis der Sim.-Setups aufräumen --
+			this.cleanUpSubFolderSimulationSetup();
+			
 			// --- Speichern von Umgebung und SVG ---------
 			if(this.svgFile != null){
 				this.environmentController.saveSVG();
@@ -115,7 +127,7 @@ import rollout.TextFileRessourceRollOut;
 			ProjectUnsaved = false;			
 		} 
 		catch (Exception e) {
-			System.out.println("XML - Fehler !");
+			System.out.println("XML-Error while saving Project-File!");
 			e.printStackTrace();
 		}
 //		this.saveEnvironment();
@@ -127,7 +139,8 @@ import rollout.TextFileRessourceRollOut;
 		// --- Projekt schließen ? -----------------------
 		String MsgHead = null;
 		String MsgText = null;
-
+		Integer MsgAnswer = 0;
+		
 		Application.MainWindow.setStatusBar(Language.translate("Projekt schließen") + " ...");
 		if ( ProjectUnsaved == true ) {
 			MsgHead = Language.translate("Projekt '@' speichern?");
@@ -137,16 +150,15 @@ import rollout.TextFileRessourceRollOut;
 						"Möchten Sie es nun speichern ?");
 			MsgText = MsgText.replace( "'@'", "'" + ProjectName + "'");
 			
-			Integer MsgAnswer = JOptionPane.showInternalConfirmDialog ( 
-					Application.MainWindow.getContentPane(), 
-					MsgText, MsgHead, JOptionPane.YES_NO_CANCEL_OPTION );
+			MsgAnswer = JOptionPane.showInternalConfirmDialog (Application.MainWindow.getContentPane(), MsgText, MsgHead, JOptionPane.YES_NO_CANCEL_OPTION );
 			if ( MsgAnswer == JOptionPane.CANCEL_OPTION ) {
 				return false;
-			}
-			else if ( MsgAnswer == JOptionPane.YES_OPTION ) {
-				if ( save()== false ) return false;
+			} else if ( MsgAnswer == JOptionPane.YES_OPTION ) {
+				if ( save()== false ) 
+					return false;
 			}
 		}
+		
 		// --- Projekt kann geschlossen werden ------------
 		int Index = Application.Projects.getIndexByName( ProjectName ); // --- Merker Index ---		
 		ProjectGUI.dispose();
@@ -213,6 +225,30 @@ import rollout.TextFileRessourceRollOut;
 			return true;	
 		}		
 	}
+	
+	/**
+	 * This Method scans the Folder of the Simulation-Setups and
+	 * deletes all file, which are not used in this project
+	 */
+	public void cleanUpSubFolderSimulationSetup() {
+		
+		String pathSimXML  = this.getProjectFolderFullPath() + this.getSubFolderSetups() + Application.RunInfo.AppPathSeparatorString();
+		File[] files = new File(pathSimXML).listFiles();
+		if (files != null) {
+			// --- Auflistung der Dateien durchlaufen -----
+			for (int i = 0; i < files.length; i++) {
+				// --- Nur xml-Dateien beachten -----------
+				if (files[i].getName().endsWith(".xml")) {
+					if (simSetups.containsValue(files[i].getName())==false) {
+						files[i].delete();
+					}
+				}
+			}
+			// --------------------------------------------
+		}
+		
+	}
+	
 	/**
 	 * Here the default project-Ontolgy will be created (copied)
 	 */
@@ -228,6 +264,12 @@ import rollout.TextFileRessourceRollOut;
 		fileContent = fileContent.replace("[DestinationPackage]", destPackageString);
 		txtRollOut.writeFile(fileContent);
 
+	}
+	
+	public void setChangedAndNotify(String reason) {
+		ProjectUnsaved = true;
+		setChanged();
+		notifyObservers(reason);		
 	}
 	
 	/**
@@ -467,6 +509,19 @@ import rollout.TextFileRessourceRollOut;
 	}
 
 	/**
+	 * @param defaultSubFolderSetups the defaultSubFolderOntology to set
+	 */
+	public void setSubFolderSetups(String newSubFolderSetups) {
+		defaultSubFolderSetups = newSubFolderSetups;
+	}
+	/**
+	 * @return the defaultSubFolderSetups
+	 */
+	public String getSubFolderSetups() {
+		return defaultSubFolderSetups;
+	}
+	
+	/**
 	 * @param defaultSubFolderEnvSetups the defaultSubFolderEnvSetups to set
 	 */
 	public void setSubFolderEnvSetups(String newSubFolderEnvSetups) {
@@ -515,6 +570,6 @@ import rollout.TextFileRessourceRollOut;
 		notifyObservers("ProjectOntology");
 	}
 
-
+	
 	
 }
