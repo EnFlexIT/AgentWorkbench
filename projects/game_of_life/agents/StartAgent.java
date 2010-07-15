@@ -9,6 +9,7 @@ import javax.swing.JInternalFrame;
 import application.Application;
 import jade.core.Agent;
 
+
 public class StartAgent extends Agent{
 
 	@Override

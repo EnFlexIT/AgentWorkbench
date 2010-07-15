@@ -26,7 +26,6 @@ import game_of_life.ontology.Platform;
 import game_of_life.ontology.PlatformInfo;
 import game_of_life.ontology.PlatformOntology;
 
-
 public class gameOfLifeAgent extends Agent {
 
 	// Constants
