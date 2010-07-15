@@ -9,7 +9,7 @@ import jade.core.CaseInsensitiveString;
 
 /** file: PlatformOntology.java
  * @author ontology bean generator
- * @version 2010/07/13, 12:36:14
+ * @version 2010/07/15, 11:53:49
  */
 public class PlatformOntology extends jade.content.onto.Ontology  {
   //NAME

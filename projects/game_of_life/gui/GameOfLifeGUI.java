@@ -49,7 +49,7 @@ public class GameOfLifeGUI extends JInternalFrame implements ActionListener {
 	int deadlock;
 
 	// size in pixel of every label
-	static final int objectHeigth = 30;
+	static final int objectHeigth = 25;
 	static final int objectWidth = 30;
 	static final Dimension dim = new Dimension(objectWidth, objectHeigth);
 

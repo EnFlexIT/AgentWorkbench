@@ -399,7 +399,7 @@ public class loadDistributorAgent extends Agent {
 						Object obj[] = setMyNeighbours(i, j, maximumAgents.length);
 						//create agent
 							Application.JadePlatform.jadeAgentStart(i+"&"+j,
-									"game_of_life.gameOfLifeAgent", obj);
+									"game_of_life.agents.gameOfLifeAgent", obj);
 							
 						countAgents++;
 						controlChanges++;
@@ -455,7 +455,7 @@ public class loadDistributorAgent extends Agent {
 						
 						//create agent
 						Application.JadePlatform.jadeAgentStart(i+"&"+j,
-									"game_of_life.gameOfLifeAgent",obj, "SubPlatformB");
+									"game_of_life.agents.gameOfLifeAgent",obj, "SubPlatformB");
 
 						if (countAgents == numberOfAgents) {
 							i = maximumAgents.length;
@@ -487,7 +487,7 @@ public class loadDistributorAgent extends Agent {
 						
 						//create agent
 						Application.JadePlatform.jadeAgentStart(i+"&"+j,
-									"game_of_life.gameOfLifeAgent", obj, "SubPlatformC");
+									"game_of_life.agents.gameOfLifeAgent", obj, "SubPlatformC");
 						countAgents++;
 						controlChanges++;
 						countAllAgents++;

@@ -214,7 +214,7 @@ public class agentController extends Agent {
 	}
 
 	// Sellect all agents on Jade Platform
-	protected void platformSearchAgents(SearchConstraints sc) {
+protected void platformSearchAgents(SearchConstraints sc) {
 
 		try {
 			if (sc != null) {
@@ -233,9 +233,8 @@ public class agentController extends Agent {
 			// AID agentID = allAgents[i].getName();
 			String AgentName = allAgents[i].getName().getLocalName();
 			if (!AgentName.equals("amm") && !AgentName.equals("ams")
-					&& !AgentName.equals("rma") && !AgentName.equals("df")
+					&& !AgentName.equals("rma") && !AgentName.equals("df")&&!AgentName.equals("server.client")
 					&& !AgentName.equals(getLocalName())) {
-				
 				System.out.println(" Agents on Platform  AgentName   = "
 						+ allAgents[i].getName().getLocalName());
 			}
@@ -366,7 +365,17 @@ public class agentController extends Agent {
 				//System.out.println(" Agent"   + i + " : " + agentID.getName());
 			}
 			
-			AMSSearch = allAgents;
+			
+			for (int i = 0; i < AMSSearchName.length; i++) {
+				// AID agentID = AMSSearch[i].getName();
+				String AgentName = AMSSearchName[i];
+				if (AgentName.equals("amm") || AgentName.equals("ams")
+						||AgentName.equals("rma") || AgentName.equals("df")||AgentName.equals("server.client")
+						|| AgentName.equals(getLocalName())) {
+					AMSSearchName[i] =null;
+				}
+				
+			}
 			
 			
 			finished = true;
@@ -395,12 +404,11 @@ public class agentController extends Agent {
 			
 			
 		       for (int i = 0; i < AMSSearchName.length; i++) {
-					
-				
+					if(AMSSearchName[i]!=null){
 						msg
 						.addReceiver(new AID( AMSSearchName[i],
 								AID.ISLOCALNAME));
-		       
+					}
 		     }
 		       try {
 
