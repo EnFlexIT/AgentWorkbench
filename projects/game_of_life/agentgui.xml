@@ -3,6 +3,13 @@
     <projectName>Game of Life</projectName>
     <subOntologies/>
     <agentConfiguration/>
+    <simulationSetupCurrent>default</simulationSetupCurrent>
+    <simulationSetups>
+        <entry>
+            <key>default</key>
+            <value>default.xml</value>
+        </entry>
+    </simulationSetups>
     <jadeConfiguration>
         <start4Sim>true</start4Sim>
         <useAppDefaults>true</useAppDefaults>
@@ -18,4 +25,5 @@
     <subFolderEnvSetups>envSetups</subFolderEnvSetups>
     <subFolderOntology>ontology</subFolderOntology>
     <subFolderResources>resources</subFolderResources>
+    <subFolderSetups>setups</subFolderSetups>
 </project>

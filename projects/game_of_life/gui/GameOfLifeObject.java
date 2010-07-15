@@ -1,6 +1,7 @@
 package game_of_life.gui;
 
-import game_of_life.gameOfLifeAgent;
+import game_of_life.agents.gameOfLifeAgent;
+
 import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;

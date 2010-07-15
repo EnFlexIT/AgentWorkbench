@@ -1,4 +1,4 @@
-package game_of_life;
+package game_of_life.agents;
 
 import java.lang.management.ManagementFactory;
 

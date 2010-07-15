@@ -1,4 +1,4 @@
-package game_of_life;
+package game_of_life.agents;
 
 import game_of_life.gui.GameOfLifeGUI;
 import game_of_life.gui.GameOfLifeObject;
