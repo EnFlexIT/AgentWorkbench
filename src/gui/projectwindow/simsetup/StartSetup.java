@@ -32,6 +32,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.event.MouseInputAdapter;
 
 import sim.setup.SimulationSetup;
@@ -59,6 +61,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 	
 	private Project currProject;
 	private SimulationSetup currSimSetup = null;  //  @jve:decl-index=0:
+	private AgentClassElement4SimStart startObj = null;
 	private DefaultListModel jListModelAgents2Start = new DefaultListModel();
 	private DefaultComboBoxModel jComboBoxModel4Setups = new DefaultComboBoxModel();
 	
@@ -326,7 +329,17 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 			
 			jListStartList = new JList(jListModelAgents2Start);
 			jListStartList.addMouseListener(mouseHandler);
-			jListStartList.addMouseMotionListener(mouseHandler);			
+			jListStartList.addMouseMotionListener(mouseHandler);
+			jListStartList.addListSelectionListener(new ListSelectionListener() {
+				@Override
+				public void valueChanged(ListSelectionEvent e) {
+					if (jListStartList.getSelectedValue() != null) {
+						startObj = (AgentClassElement4SimStart) jListStartList.getSelectedValue();
+						jTextFieldStartAs.setText( startObj.getStartAsName() );
+						jCheckBoxIsMobileAgent.setSelected( startObj.isMobileAgent() );
+					}
+				}
+			});				
 			
 		}
 		return jListStartList;
@@ -599,7 +612,11 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 			currSimSetup = currProject.simSetups.getCurrSimSetup();
 		}
 		this.currSimSetup.setAgentListModel(this.jListModelAgents2Start);
-		
+
+		// --- Formular-Elemente einstellen ---
+		jTextFieldStartAs.setText("");
+		jCheckBoxIsMobileAgent.setSelected(false);		
+				
 	}
 
 	/**
