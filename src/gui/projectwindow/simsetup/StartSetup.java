@@ -527,6 +527,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		// --- Fallunterscheidung 'Auslöser' -----------------------------
 		if ( Trigger == jComboBoxSetupSelector ) {
 			if (jComboBoxSetupSelector.getSelectedItem()!= null) {
+				currProject.simSetups.setupSave();
 				currProject.simSetups.setupLoadAndFocus(jComboBoxSetupSelector.getSelectedItem().toString(), false);
 			}
 		} else if ( Trigger == jButtonSetupRename ) {
