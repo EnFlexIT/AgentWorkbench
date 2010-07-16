@@ -8,6 +8,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
 
+import javax.swing.JOptionPane;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -15,6 +16,7 @@ import javax.xml.bind.Unmarshaller;
 import common.FileCopier;
 
 import application.Application;
+import application.Language;
 import application.Project;
 
 public class SimulationSetups extends Hashtable<String, String> {
@@ -23,8 +25,8 @@ public class SimulationSetups extends Hashtable<String, String> {
 	 * 
 	 */
 	private static final long serialVersionUID = -9078535303459653695L;
-	
-	private Project currProject = null;
+	public final String XML_FilePostfix = ".xml";
+	private Project currProject = Application.ProjectCurr;
 	
 	private String currSimSetupName = null;
 	private String currSimXMLFile = null;
@@ -35,34 +37,42 @@ public class SimulationSetups extends Hashtable<String, String> {
 	 * @param project
 	 */
 	public SimulationSetups(Project project, String simSetupCurrent) {
-		
 		currProject = project;
 		currSimSetupName = simSetupCurrent;
-		
-		if (this.size()==0) {
-			// --- Noch keine Setups gespeichert --------------------
-			String newFileName = getSuggestSetupFile(currSimSetupName) + ".xml";;
-			this.setupAddNew(currSimSetupName, newFileName);
-		} else {
-			// --- Es gibt Setups -----------------------------------
-			if (this.containsKey(currSimSetupName)) {
-				// --- Es gibt auch ein Setup mit diesem Namen ------
-				this.setupLoadAndFocus(currSimSetupName, false);
-			} else {
-				// --- Setup mit diesem Namen nicht gefunden --------
-				this.setupLoadAndFocus(this.getFirstSetup(), false);				
-			}
-		}
-		// --- Aktuelles SimulationSetup-Objekt instanziieren -------
-		currSimSetup = new SimulationSetup(currSimSetupName, this.get(currSimSetupName), currProject);
 	}
 
+	/**
+	 * This Method creates the 'default' - Simulation-Setup 
+	 */
+	public void setupCreateDefault() {
+		
+		String xmlFile = null;
+		String XMLPathName = null;
+						
+		this.currSimSetupName = "default";
+		xmlFile = currProject.simSetups.getSuggestSetupFile(currSimSetupName) + this.XML_FilePostfix;
+		
+		this.put(currSimSetupName, xmlFile);
+		currProject.simSetupCurrent = currSimSetupName;
+		
+		currSimSetup = new SimulationSetup(currProject); 
+		
+		XMLPathName = currProject.getSubFolderSetups(true) + xmlFile;		
+		currSimXMLFile = XMLPathName;
+
+		this.setupSave();
+		
+	}
+	
 	/**
 	 * Adds a new Setup to this Hashtable
 	 * @param name
 	 * @param newFileName
 	 */
 	public void setupAddNew(String name, String newFileName) {
+		
+		// --- Aktuelles Setup speichern ------------------
+		this.setupSave();
 		// --- Name und Dateiname hinzufügen --------------
 		this.put(name, newFileName);
 		// --- Fokus auf das aktuelle Setup ---------------
@@ -87,7 +97,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 			// --- add default - Setup --------------------
 			currSimSetupName = "default";
 			// --- Noch keine Setups gespeichert ----------
-			String newFileName = getSuggestSetupFile(currSimSetupName) + ".xml";
+			String newFileName = getSuggestSetupFile(currSimSetupName) + XML_FilePostfix;
 			this.setupAddNew(currSimSetupName, newFileName);
 
 		} else {
@@ -109,7 +119,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 		if (this.containsKey(nameOld)==false) return;
 
 		// --- Verzeichnis-Info zusammenbauen -------------
-		String pathSimXML  = currProject.getProjectFolderFullPath() + currProject.getSubFolderSetups() + Application.RunInfo.AppPathSeparatorString();
+		String pathSimXML  = currProject.getSubFolderSetups(true);
 		String fileNameXMLNew = pathSimXML + fileNameNew; 
 		// --- Datei umbenennen ---------------------------		
 		File fileOld = new File(currSimXMLFile);
@@ -133,7 +143,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 		if (this.containsKey(nameOld)==false) return;
 		
 		// --- Verzeichnis-Info zusammenbauen -------------
-		String pathSimXML  = currProject.getProjectFolderFullPath() + currProject.getSubFolderSetups() + Application.RunInfo.AppPathSeparatorString();
+		String pathSimXML  = currProject.getSubFolderSetups(true);
 		String fileNameXMLNew = pathSimXML + fileNameNew; 
 		// --- Datei kopieren -----------------------------
 		FileCopier fc = new FileCopier();
@@ -145,8 +155,6 @@ public class SimulationSetups extends Hashtable<String, String> {
 		// --- Projekt speichern --------------------------
 		currProject.save();
 	}
-		
-	
 	
 	/**
 	 * Set the current Setup-File to the one given by name
@@ -156,16 +164,14 @@ public class SimulationSetups extends Hashtable<String, String> {
 		
 		if (this.containsKey(name)==false) return;
 		
-		// --- aktuelles Setup speichern ------------------
-		this.setupSave();
-		
-		// --- Aktuelles Projekt auf Input 'name' ---------
+		// --- Aktuelles Setup auf Input 'name' -----------
 		currSimSetupName = name;
 		currProject.simSetupCurrent = name;
+		currSimXMLFile = currProject.getSubFolderSetups(true) + this.get(currSimSetupName);
 		
 		// --- 'SimulationSetup'-Objekt neu instanziieren -
-		currSimSetup = new SimulationSetup(currSimSetupName, this.get(currSimSetupName), currProject);
-		
+		currSimSetup = new SimulationSetup(currProject);
+				
 		// --- Datei lesen und currSimSetup setzen -------- 
 		if (isAddedNew==false) {
 			this.setupOpen();	
@@ -230,12 +236,11 @@ public class SimulationSetups extends Hashtable<String, String> {
 	 * This Method saves the current
 	 * @return Simulation-Setup
 	 */
-	public boolean setupSave() {
-		if (currSimSetup==null) {
-			return false;			
-		} else {
-			return currSimSetup.save();	
+	public void setupSave() {
+		if (currSimSetup!=null) {
+			currSimSetup.save();	
 		}
+		this.setupCleanUpSubFolder();
 	}
 	
 	/**
@@ -245,27 +250,58 @@ public class SimulationSetups extends Hashtable<String, String> {
 	 */
 	private void setupOpen() {
 		
-		String XMLFileName = null;
+		String head=null, msg =null;;
+		Integer answer = 0;
 		JAXBContext pc = null;
 		Unmarshaller um = null;
-		
-		XMLFileName  = currProject.getProjectFolderFullPath() + currProject.getSubFolderSetups();
-		XMLFileName += Application.RunInfo.AppPathSeparatorString();
-		XMLFileName += this.get(currSimSetupName);
-		currSimXMLFile = XMLFileName;
 		
 		try {
 			pc = JAXBContext.newInstance( currSimSetup.getClass() );
 			um = pc.createUnmarshaller();
-			currSimSetup = (SimulationSetup) um.unmarshal( new FileReader( XMLFileName ) );
+			// --- 'SimulationSetup'-Objekt neu "instanziieren" -
+			currSimSetup = (SimulationSetup) um.unmarshal( new FileReader( currSimXMLFile ) );
+			currSimSetup.setCurrProject(currProject);
+
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+
+			// --- Die Datei wurde nicht gefunden ---------
+			head = Language.translate("Setup-Datei nicht gefunden!");
+			msg  = Language.translate("Die Datei") + " '" + this.get(currSimSetupName) + "' " + Language.translate("für das Setup") + " '" + currSimSetupName + "' " + Language.translate("wurde nicht gefunden.");
+			msg += Language.translate("<br>Kann der Name aus der Liste der Setups entfernt werden?");
+			msg += Language.translate("<br>Falls nicht, wird eine neue Setup-Datei erzeugt.");
+			answer = JOptionPane.showConfirmDialog(Application.MainWindow, msg, head, JOptionPane.YES_NO_OPTION);
+			if ( answer == JOptionPane.YES_OPTION  ) {
+				this.setupRemove(currSimSetupName);
+			}			
+			
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		}
 		
 	}
 
+	/**
+	 * This Method scans the Folder of the Simulation-Setups and
+	 * deletes all file, which are not used in this project
+	 */
+	public void setupCleanUpSubFolder() {
+		
+		String pathSimXML  = currProject.getSubFolderSetups(true);
+		File[] files = new File(pathSimXML).listFiles();
+		if (files != null) {
+			// --- Auflistung der Dateien durchlaufen -----
+			for (int i = 0; i < files.length; i++) {
+				// --- Nur xml-Dateien beachten -----------
+				if (files[i].getName().endsWith(XML_FilePostfix)) {
+					if (this.containsValue(files[i].getName())==false) {
+						files[i].delete();
+					}
+				}
+			}
+			// --------------------------------------------
+		}
+	}
+	
 	/**
 	 * @return the currSimSetup
 	 */

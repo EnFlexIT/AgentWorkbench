@@ -43,6 +43,7 @@ import sim.setup.SimulationSetups;
 															};
 	
 	@XmlTransient private static final String NewLine = Application.RunInfo.AppNewLineString();	
+	@XmlTransient private static final String PathSep = Application.RunInfo.AppPathSeparatorString();
 	
 	// --- GUI der aktuellen Projekt-Instanz -------------------
 	@XmlTransient public ProjectWindow ProjectGUI = null;
@@ -76,7 +77,7 @@ import sim.setup.SimulationSetups;
 	public AgentConfiguration AgentConfig = new AgentConfiguration(this);
 	
 	@XmlElement(name="simulationSetupCurrent")
-	public String simSetupCurrent = "default";
+	public String simSetupCurrent = null;
 	@XmlElementWrapper(name = "simulationSetups")
 	public SimulationSetups simSetups = new SimulationSetups(this, simSetupCurrent);
 	
@@ -110,11 +111,7 @@ import sim.setup.SimulationSetups;
 			pm.marshal( this, pw );
 			
 			// --- Speichern des aktuellen Sim-Setups -----
-			if (this.simSetups != null)
-				this.simSetups.setupSave();
-			
-			// --- Verzeichnis der Sim.-Setups aufräumen --
-			this.cleanUpSubFolderSimulationSetup();
+			this.simSetups.setupSave();
 			
 			// --- Speichern von Umgebung und SVG ---------
 			if(this.svgFile != null){
@@ -196,7 +193,7 @@ import sim.setup.SimulationSetups;
 	 * Controls and/or Creates wether the Subfolder-Structure exists 
 	 * @return boolean true or false
 	 */	
-	private boolean checkCreateSubFolders() {
+	public boolean checkCreateSubFolders() {
 		
 		String NewDirName = null;
 		File f = null;
@@ -206,10 +203,7 @@ import sim.setup.SimulationSetups;
 			// --- ggf. Verzeichnis anlegen ---------------
 			NewDirName = this.ProjectFolderFullPath + defaultSubFolders[i];
 			f = new File(NewDirName);
-			if ( f.isDirectory() ) {
-				// => Do nothing (yet)
-			} 
-			else {
+			if ( f.isDirectory() == false) {
 				// --- Verzeichnis anlegen ----------------
 				if ( f.mkdir() == false ) {
 					Error = true;	
@@ -227,32 +221,9 @@ import sim.setup.SimulationSetups;
 	}
 	
 	/**
-	 * This Method scans the Folder of the Simulation-Setups and
-	 * deletes all file, which are not used in this project
-	 */
-	public void cleanUpSubFolderSimulationSetup() {
-		
-		String pathSimXML  = this.getProjectFolderFullPath() + this.getSubFolderSetups() + Application.RunInfo.AppPathSeparatorString();
-		File[] files = new File(pathSimXML).listFiles();
-		if (files != null) {
-			// --- Auflistung der Dateien durchlaufen -----
-			for (int i = 0; i < files.length; i++) {
-				// --- Nur xml-Dateien beachten -----------
-				if (files[i].getName().endsWith(".xml")) {
-					if (simSetups.containsValue(files[i].getName())==false) {
-						files[i].delete();
-					}
-				}
-			}
-			// --------------------------------------------
-		}
-		
-	}
-	
-	/**
 	 * Here the default project-Ontolgy will be created (copied)
 	 */
-	private void createDefaultProjectOntology() {
+	public void createDefaultProjectOntology() {
 			
 		String srcReference 	 = "mas/onto/" + Application.RunInfo.getFileNameProjectOntology() + ".txt"; 
 		String destPath 		 = this.ProjectFolderFullPath + defaultSubFolderOntology + "\\" + Application.RunInfo.getFileNameProjectOntology() + ".java";
@@ -517,8 +488,13 @@ import sim.setup.SimulationSetups;
 	/**
 	 * @return the defaultSubFolderSetups
 	 */
-	public String getSubFolderSetups() {
-		return defaultSubFolderSetups;
+	public String getSubFolderSetups(boolean fullPath) {
+		if (fullPath==true) {
+			return getProjectFolderFullPath() + defaultSubFolderSetups + PathSep;
+		} else {
+			return defaultSubFolderSetups;	
+		}
+		
 	}
 	
 	/**

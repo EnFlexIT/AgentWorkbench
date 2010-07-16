@@ -19,6 +19,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import sim.setup.SimulationSetups;
+
 import mas.onto.Ontologies4Project;
 
 public class ProjectsLoaded {
@@ -160,7 +162,10 @@ public class ProjectsLoaded {
 				e.printStackTrace();
 			}
 			// --- Folder auf aktuellen Projektordner einstellen ---
-			NewPro.setProjectFolder( LocalTmpProjectFolder );			
+			NewPro.setProjectFolder( LocalTmpProjectFolder );	
+			
+			// --- check/create default folders -------------------- 
+			NewPro.checkCreateSubFolders();
 		}
 		
 		// --- Die Agenten zu diesem Projekt ermitteln ----
@@ -172,6 +177,12 @@ public class ProjectsLoaded {
 		// --- ggf. AgentGUI - DefaultProfile übernehmen --
 		if( NewPro.JadeConfiguration.isUseDefaults()==true) {
 			NewPro.JadeConfiguration = Application.RunInfo.getJadeDefaultPlatformConfig();
+		}
+		
+		// --- Gibt es bereits ein Simulations-Setup? -----
+		if (NewPro.simSetups.size()==0) {
+			NewPro.simSetups = new SimulationSetups(NewPro, "default");
+			NewPro.simSetups .setupCreateDefault();			
 		}
 		
 		// --- Neues Projektfenster öffnen ----------------
@@ -190,7 +201,9 @@ public class ProjectsLoaded {
 		Application.setTitelAddition( NewPro.getProjectName() );
 		Application.setStatusBar( Language.translate("Fertig") );	
 		NewPro.setMaximized();
-		NewPro.save();   // --- Erstmalig speichern -------
+		if (addNew==true) {
+			NewPro.save();   // --- Erstmalig speichern ---	
+		}		
 		
 		// --- Ggf. noch nach Ontologien suchen -----------
 		if (Application.JadePlatform.OntologyVector==null) {

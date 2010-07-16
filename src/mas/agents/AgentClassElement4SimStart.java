@@ -1,25 +1,36 @@
 package mas.agents;
 
+import jade.core.Agent;
+
 import java.text.DecimalFormat;
 
-import jade.core.Agent;
+import javax.xml.bind.annotation.XmlTransient;
 
 public class AgentClassElement4SimStart {
 	
 	private Class<? extends Agent> agentClass = null;
+	private String agentClassReference = null;
 	private String startAsName = "";
 	
 	private Integer postionNo = 0;
-	private DecimalFormat df = new DecimalFormat("00000");
+	@XmlTransient private DecimalFormat df = new DecimalFormat("00000");
 	
 	private boolean mobileAgent = false;
 	
+	/**
+	 * Constructor without arguments (This is first of all 
+	 * for the JAXB-Context and should not be used by any
+	 * other context)
+	 */
+	public AgentClassElement4SimStart() {
+	}
 	/**
 	 * Constructor of this class by using the Class which extends Agent 
 	 * @param agentClass
 	 */
 	public AgentClassElement4SimStart(Class<? extends Agent> agentClass){
 		this.agentClass=agentClass;
+		this.agentClassReference = this.agentClass.getName();
 		this.setDefaultAgentName();
 	}
 	/**
@@ -28,6 +39,7 @@ public class AgentClassElement4SimStart {
 	 */
 	public AgentClassElement4SimStart(AgentClassElement agentClass){
 		this.agentClass=agentClass.getElementClass();
+		this.agentClassReference = this.agentClass.getName();
 		this.setDefaultAgentName();
 	}
 	
@@ -65,7 +77,7 @@ public class AgentClassElement4SimStart {
 			// --- Check, ob dieser Agent schon im Setup ist -------
 			//TODO: Check, ob der Agent schon
 			// -----------------------------------------------------
-			// --- Vorschlagsnamen einstellen ----------------------
+			// --- Vorschlagsnamen einstellen ----------------------	
 			startAsName = StartAs;
 		
 	}
@@ -73,13 +85,31 @@ public class AgentClassElement4SimStart {
 	/**
 	 * Retruns the String-Descriptoin of this Object
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public String toString(){
-		return df.format(postionNo) + ": " + startAsName + " [" + agentClass.getName() + "]";
+		
+		// --- Existiert die Agenten-Klasseninstanz ? -----
+		if (agentClass== null) {
+			try {
+				// --- Gibt es die Klasse überhaupt? ------
+				agentClass = (Class<? extends Agent>) Class.forName(agentClassReference);
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+		} 
+		
+		// --- Ausgabe zusammenstellen --------------------
+		if (agentClass==null) {
+			return "NotFound: " + df.format(postionNo) + ": " + startAsName + " [" + agentClassReference + "]";
+		} else {
+			return df.format(postionNo) + ": " + startAsName + " [" + agentClass.getName() + "]";	
+		}			
+		
 	}
 	
 	/**
-	 * Returns teh class of the Agent
+	 * Returns the class of the Agent
 	 * @return
 	 */
 	public Class<? extends Agent> getElementClass(){
@@ -111,6 +141,19 @@ public class AgentClassElement4SimStart {
 		this.startAsName = startAsName;
 	}
 
+	/**
+	 * @return the agentClassReference
+	 */
+	public String getAgentClassReference() {
+		return agentClassReference;
+	}
+	/**
+	 * @param agentClassReference the agentClassReference to set
+	 */
+	public void setAgentClassReference(String agentClassReference) {
+		this.agentClassReference = agentClassReference;
+	}
+	
 	/**
 	 * @return the mobileAgent
 	 */

@@ -2,22 +2,28 @@ package sim.setup;
 
 import java.io.FileWriter;
 import java.io.Writer;
+import java.util.ArrayList;
 
+import javax.swing.DefaultListModel;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import application.Application;
+import mas.agents.AgentClassElement4SimStart;
 import application.Project;
 
 
 @XmlRootElement public class SimulationSetup {
 
-	@XmlTransient private String currSetupName;
-	@XmlTransient private String currSetupFile;
-	@XmlTransient private Project currProject;	
-	@XmlTransient private boolean currSetupUnsaved = false;
+	@XmlTransient private Project currProject = null;	
+	@XmlTransient private DefaultListModel agentListModel = null;	
+	
+	@XmlElementWrapper(name = "agentSetup")
+	@XmlElement(name="agent")
+	private ArrayList<AgentClassElement4SimStart> agentList = new ArrayList<AgentClassElement4SimStart>();
 	
 	/**
 	 * Constructor without arguments (This is first of all 
@@ -27,14 +33,19 @@ import application.Project;
 	public SimulationSetup() {
 	}
 	/**
-	 * Default constructor !
+	 * @param currProject the currProject to set
 	 */
-	public SimulationSetup(String stpName, String stpFile, Project project) {
-		this.currSetupName = stpName;
-		this.currSetupFile = stpFile;
+	public void setCurrProject(Project currProject) {
+		this.currProject = currProject;
+	}
+	/**
+	 * Default Constructor of this class
+	 * @param project
+	 */
+	public SimulationSetup(Project project) {
 		this.currProject = project;
 	}
-	
+
 	/**
 	 * This method saves the current Simulation-Setup
 	 * @return
@@ -42,18 +53,12 @@ import application.Project;
 	public boolean save() {
 		
 		// ------------------------------------------------
-		// --- Folgendes passiert gerne -------------------
-		// --- beim Öffnen eines Projekts -----------------
-		if (currProject==null) return false;
+		// --- Daten vom GUI in das Modell schreiben ------
+		this.setAgentList(this.agentListModel);
 		
 		// ------------------------------------------------
 		// --- Speichern des aktuellen Setups -------------
 		try {			
-			String XMLFileName = currProject.getProjectFolderFullPath() + currProject.getSubFolderSetups();
-			XMLFileName += Application.RunInfo.AppPathSeparatorString();
-			XMLFileName += currSetupFile;
-			currProject.simSetups.setCurrSimXMLFile(XMLFileName);
-			
 			// --- Kontext und Marshaller vorbereiten -----
 			JAXBContext pc = JAXBContext.newInstance( this.getClass() ); 
 			Marshaller pm = pc.createMarshaller(); 
@@ -61,10 +66,9 @@ import application.Project;
 			pm.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE ); 
 
 			// --- Objektwerte in xml-Datei schreiben ----
-			Writer pw = new FileWriter( XMLFileName );
+			Writer pw = new FileWriter( currProject.simSetups.getCurrSimXMLFile() );
 			pm.marshal( this, pw );
 						
-			currSetupUnsaved = false;			
 		} 
 		catch (Exception e) {
 			System.out.println("XML-Error while saving Setup-File!");
@@ -73,5 +77,49 @@ import application.Project;
 		return true;		
 	}
 	
+	/**
+	 * @return the agentList
+	 */
+	@XmlTransient
+	public ArrayList<AgentClassElement4SimStart> getAgentList() {
+		return agentList;
+	}
+	/**
+	 * @param agentList the agentList to set
+	 */
+	public void setAgentList(ArrayList<AgentClassElement4SimStart> agentList) {
+		this.agentList = agentList;
+	}
+
+	/**
+	 * This Method transfers a DefaultListModel to 
+	 * the localArrayList 'agentList' which is a 
+	 * type of 'AgentClassElement4SimStart'
+	 * @param lm
+	 */
+	public void setAgentList(DefaultListModel lm) {
+		if (lm==null) return;
+		agentList = new ArrayList<AgentClassElement4SimStart>();
+		for (int i = 0; i < lm.size(); i++) {
+			agentList.add((AgentClassElement4SimStart) lm.get(i));
+		}		
+	}
+	
+	/**
+	 * @param agentListModel the agentListModel to set
+	 */
+	public void setAgentListModel(DefaultListModel agentListModel) {
+		this.agentListModel = agentListModel;
+		this.agentListModel.removeAllElements();
+		for (int i = 0; i < agentList.size(); i++) {
+			this.agentListModel.addElement(agentList.get(i));
+		}
+	}
+	/**
+	 * @return the agentListModel
+	 */
+	public DefaultListModel getAgentListModel() {
+		return agentListModel;
+	}
 	
 }

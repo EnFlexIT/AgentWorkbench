@@ -40,7 +40,10 @@
 					lib/jade/lib/migration.jar
 					lib/jade/lib/XMLCodec.jar
 					lib/jade/lib/commons-codec/commons-codec-1.3.jar
-					lib/jdbc/mysql-connector-java-3.0.17-ga-bin.jar " />
+					lib/jdbc/mysql-connector-java-3.0.17-ga-bin.jar
+					lib/hyperic-sigar/sigar-bin/lib/junit.jar 
+					lib/hyperic-sigar/sigar-bin/lib/log4j.jar 
+					lib/hyperic-sigar/sigar-bin/lib/sigar.jar  " />
 	
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
           target: cleanup => Aufräumen, bevor es wirklich los geht                      

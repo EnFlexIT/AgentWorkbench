@@ -34,6 +34,8 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.MouseInputAdapter;
 
+import sim.setup.SimulationSetup;
+
 import mas.agents.AgentClassElement;
 import mas.agents.AgentClassElement4SimStart;
 import application.Application;
@@ -56,6 +58,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 	private final Integer SETUP_copy = 3;  //  @jve:decl-index=0:
 	
 	private Project currProject;
+	private SimulationSetup currSimSetup = null;  //  @jve:decl-index=0:
 	private DefaultListModel jListModelAgents2Start = new DefaultListModel();
 	private DefaultComboBoxModel jComboBoxModel4Setups = new DefaultComboBoxModel();
 	
@@ -76,13 +79,10 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 	private JPanel jPanelTop = null;
 	private JComboBox jComboBoxSetupSelector = null;
 	private JLabel jLabelSetupSelector = null;
+	private JButton jButtonSetupRename = null;
+	private JButton jButtonSetupCopy = null;
 	private JButton jButtonSetupNew = null;
 	private JButton jButtonSetupDelete = null;
-
-	private JButton jButtonSetupRename = null;
-
-	private JButton jButtonSetupCopy = null;
-
 	
 	/**
 	 * This is the default constructor
@@ -572,6 +572,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		String currSetupFile = currProject.simSetups.get(currSetup);
 		
 		// --- ComboBoxModel neu aufbauen -----------------
+		jComboBoxSetupSelector.removeActionListener(this);
 		jComboBoxModel4Setups.removeAllElements();
 		
 		Vector<String> v = new Vector<String>(currProject.simSetups.keySet());
@@ -586,8 +587,17 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		}
 		
 		// --- Auf das aktuelle Setup setzen --------------
-		jComboBoxSetupSelector.setSelectedItem(currSetup);
 		jComboBoxSetupSelector.setToolTipText("Setup '" + currSetup + "' " + Language.translate("in Datei") + " '" + currSetupFile + "'");
+		jComboBoxSetupSelector.setSelectedItem(currSetup);
+		jComboBoxSetupSelector.addActionListener(this);
+		
+		// --- Das akuelle DefaultListModel laden ---------
+		currSimSetup = currProject.simSetups.getCurrSimSetup();
+		if ( currSimSetup==null ) {
+			currProject.simSetups.setupLoadAndFocus(currProject.simSetupCurrent, false);
+			currSimSetup = currProject.simSetups.getCurrSimSetup();
+		}
+		this.currSimSetup.setAgentListModel(this.jListModelAgents2Start);
 		
 	}
 
