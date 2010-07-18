@@ -255,7 +255,7 @@ public class GameOfLifeGUI extends JInternalFrame implements ActionListener {
 		if(finished){
 			
 			// broadcast current state of Agent to neighbours
-			agentController.broadCastCurrentState();
+			agentController.broadcastStartGameOfLife();
 		
 			//to ensure that all agents have finished operating
 			finished = false;
@@ -270,11 +270,8 @@ public class GameOfLifeGUI extends JInternalFrame implements ActionListener {
 			counterAgent =0;
 			deadlock=0;
 			
-			//total amount of messages received in this generation
-			totalMessagesReceived=0;
-			
 			// change from grey to blue depending on current status
-			agentController.ChangeStatus();
+			agentController.broadcastChangeStatus();
 			
 			finished=true;
 		}
@@ -287,11 +284,6 @@ public class GameOfLifeGUI extends JInternalFrame implements ActionListener {
 		}
 	}
 
-	public void startGOL(){
-		
-		agentController.broadCastCurrentState();
-		
-	}
 	
 	public void startRandom() {
 
