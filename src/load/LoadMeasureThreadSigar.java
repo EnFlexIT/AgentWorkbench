@@ -4,22 +4,22 @@ import config.GlobalInfo;
 import application.Application;
 
 
-public class LoadMeasureThread extends Thread {
+public class LoadMeasureThreadSigar extends Thread {
     
 	private GlobalInfo global = Application.RunInfo;
 	private int msInterval;
 	private int useN4AvgCount;
-	private LoadMeasure memCpuInfo;
-	private LoadMeasureAVG memCpuInfoAvg;
+	private LoadMeasureSigar memCpuInfo;
+	private LoadMeasureAvgSigar memCpuInfoAvg;
 	
-	public LoadMeasureThread(Integer msInterval, Integer useN4AvgCount) {
+	public LoadMeasureThreadSigar(Integer msInterval, Integer useN4AvgCount) {
 		
 		this.msInterval = msInterval;
 		this.useN4AvgCount = useN4AvgCount;
 		if (global.getLoadCurrentAvg() == null) {
-			global.setLoadCurrentAvg(new LoadMeasureAVG(useN4AvgCount));
+			global.setLoadCurrentAvg(new LoadMeasureAvgSigar(useN4AvgCount));
 		}
-		memCpuInfo = new LoadMeasure();
+		memCpuInfo = new LoadMeasureSigar();
 	}
 	
 	@Override

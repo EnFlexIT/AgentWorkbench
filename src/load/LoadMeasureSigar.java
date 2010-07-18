@@ -31,7 +31,7 @@ import org.hyperic.sigar.cmd.SigarCommandBase;
 /**
  * Display cpu information for each cpu found on the system.
  */
-public class LoadMeasure extends SigarCommandBase {
+public class LoadMeasureSigar extends SigarCommandBase {
 	
 
 	// Instance variables for CPU
@@ -58,7 +58,7 @@ public class LoadMeasure extends SigarCommandBase {
 	
     public boolean displayTimes = true;
     
-    public LoadMeasure(Shell shell) {
+    public LoadMeasureSigar(Shell shell) {
         super(shell);
         try {
 			mem = this.sigar.getMem();
@@ -69,7 +69,7 @@ public class LoadMeasure extends SigarCommandBase {
 		}
     }
 
-    public LoadMeasure() {
+    public LoadMeasureSigar() {
         super();
         try {
 			mem = this.sigar.getMem();

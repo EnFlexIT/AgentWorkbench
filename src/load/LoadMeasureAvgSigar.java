@@ -2,10 +2,10 @@ package load;
 
 import java.util.ArrayList;
 
-public class LoadMeasureAVG {
+public class LoadMeasureAvgSigar {
 
 	private Integer useAVGCounter = 0;//maximum length of List
-	private ArrayList<LoadMeasure> measureList = new ArrayList<LoadMeasure>();
+	private ArrayList<LoadMeasureSigar> measureList = new ArrayList<LoadMeasureSigar>();
 	
 	private String vendor=null;
 	private long Mhz;
@@ -21,11 +21,11 @@ public class LoadMeasureAVG {
 	private long freeMemory;
 	private long useMemory;
 		
-	public LoadMeasureAVG(Integer avgCounter) {
+	public LoadMeasureAvgSigar(Integer avgCounter) {
 		useAVGCounter = avgCounter;                     //maximum length of List
 	}
 
-	public void put(LoadMeasure currentLoadMeasure) {
+	public void put(LoadMeasureSigar currentLoadMeasure) {
         
 		if(vendor==null){
          //setting system information once
