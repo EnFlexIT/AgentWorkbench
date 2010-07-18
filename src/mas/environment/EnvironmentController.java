@@ -1,5 +1,10 @@
 package mas.environment;
 
+import jade.content.lang.Codec.CodecException;
+import jade.content.lang.xml.XMLCodec;
+import jade.content.onto.OntologyException;
+
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -15,9 +20,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.dom.svg.SVGOMImageElement;
@@ -27,15 +29,9 @@ import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.svg2svg.SVGTranscoder;
 import org.apache.batik.util.SVGConstants;
 import org.apache.batik.util.XMLResourceDescriptor;
-import org.apache.xerces.parsers.DOMParser;
-import org.apache.xml.serialize.OutputFormat;
-import org.apache.xml.serialize.XMLSerializer;
-import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 import application.Language;
 import application.Project;
@@ -44,6 +40,7 @@ import application.Project;
 import mas.display.SvgTypes;
 import mas.display.ontology.AbstractObject;
 import mas.display.ontology.AgentObject;
+import mas.display.ontology.DisplayOntology;
 import mas.display.ontology.Environment;
 import mas.display.ontology.GenericObject;
 import mas.display.ontology.ObstacleObject;
@@ -596,201 +593,77 @@ public class EnvironmentController{
 	 */
 	public void saveEnvironment(){
 		
-		try {
-			
-			// Create the XML Document
-			DOMImplementation impl = DocumentBuilderFactory.newInstance().newDocumentBuilder().getDOMImplementation();
-			Document envDoc = impl.createDocument(null, "environment", null);
-			Element envRoot = envDoc.getDocumentElement();
-			envRoot.setAttribute("project", currentProject.getProjectName());
-			envRoot.setAttribute("date", new java.util.Date().toString());
-			Scale scaleObject = environment.getScale();
-			if(scaleObject != null){
-				Element scaleElement = envDoc.createElement("scale");
-				scaleElement.setAttribute("value", ""+scaleObject.getValue());
-				scaleElement.setAttribute("unit", scaleObject.getUnit());
-				scaleElement.setAttribute("pixel", ""+scaleObject.getPixel());
-				envRoot.appendChild(scaleElement);
-			}
-			
-			// Save the root playground (including child objects 
-			envRoot.appendChild(saveObject(environment.getRootPlayground(), envDoc));
-			
-			File envFile = new File(currentProject.getEnvPath());
-			if(!envFile.exists()){
-				envFile.createNewFile();
-			}			
-			
-			System.out.println(Language.translate("Speichere Umgebung nach")+" "+envFile.getName());
-			
-			
-			// Format the document and save it 
-			OutputFormat format = new OutputFormat(envDoc);
-			FileOutputStream fos = new FileOutputStream(envFile);
-			format.setIndenting(true);
-			format.setIndent(2);
-			XMLSerializer serializer = new XMLSerializer(fos, format);
-		    serializer.serialize(envDoc);
-		    fos.close();
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-	}
-	
-	/**
-	 * Creating a XML element to save an environment object
-	 * @param object The AbstractObject subclass instance to be saved
-	 * @param document The XML document  the element will be part of
-	 * @return An XML element containing the objects data
-	 */
-	@SuppressWarnings("unchecked")
-	private Element saveObject(AbstractObject object, Document document){
-		
-		Element element = null;
-		
-		// Type specific parts
-		switch(ObjectTypes.getType(object)){
-			case AGENT:
-				element = document.createElement("agent");
-				element.setAttribute("class", ((AgentObject)object).getAgentClass());
-				if(((AgentObject)object).getCurrentSpeed() != null)
-					element.setAttribute("speed", ""+((AgentObject)object).getCurrentSpeed().getSpeed());
-			break;
-			
-			case OBSTACLE:
-				element = document.createElement("obstacle");
-			break;
-			
-			case GENERIC:
-				element = document.createElement("generic");
-			break;
-			
-			case PLAYGROUND:
-				element = document.createElement("playground");
-				
-				Iterator<AbstractObject> children = ((PlaygroundObject)object).getAllChildObjects();
-				while(children.hasNext()){
-					element.appendChild(saveObject(children.next(), document));
+		if(environment != null){
+			try {
+				XMLCodec codec = new XMLCodec();
+				this.environment.getRootPlayground().unsetParent();
+				String xmlRepresentation = codec.encodeObject(DisplayOntology.getInstance(), environment, true);
+				System.out.println(xmlRepresentation);
+				this.environment.getRootPlayground().setParent();
+				File envFile = new File(currentProject.getEnvPath());
+				if(!envFile.exists()){
+					envFile.createNewFile();
 				}
-			break;
-		}
-		
-		// Common parts
-		element.setAttribute("id", ""+object.getId());
-		element.setAttribute("xPos", ""+object.getPosition().getX());
-		element.setAttribute("yPos", ""+object.getPosition().getY());
-		element.setAttribute("width", ""+object.getSize().getWidth());
-		element.setAttribute("height", ""+object.getSize().getHeight());
-		
-		return element;
+				FileWriter fw = new FileWriter(envFile);
+				fw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+				fw.append(xmlRepresentation);
+				fw.close();
+				
+				
+				
+			} catch (CodecException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+			} catch (OntologyException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}		
 	}
 	
 	/**
 	 * Loading the environment from the passed file object
 	 * @param envFile The path of the file containing the environment
 	 */
-	public void loadEnvironment(File envFile){
-		
-		
-		
-		if(envFile.exists()){
-			try {
-				DOMParser parser = new DOMParser();
-				
-				FileReader reader = new FileReader(envFile);
-				InputSource source = new InputSource(reader);
-				parser.parse(source);
-				Document envDoc = parser.getDocument();
-				Element rootPg = (Element) envDoc.getElementsByTagName("playground").item(0);
-				if(rootPg != null){
-					System.out.println(Language.translate("Lade Umgebung aus")+" "+envFile.getName()+"...");
-					this.environment = new Environment();
-					this.environment.setProjectName(currentProject.getProjectName());
-					this.environment.setRootPlayground((PlaygroundObject) loadObject(rootPg));
-					Element scaleElement = (Element) envDoc.getElementsByTagName("scale").item(0);
-					if(scaleElement != null){
-						Scale scaleObject = new Scale();
-						scaleObject.setValue(Float.parseFloat(scaleElement.getAttribute("value")));
-						scaleObject.setUnit(scaleElement.getAttribute("unit"));
-						scaleObject.setPixel(Float.parseFloat(scaleElement.getAttribute("pixel")));
-						this.environment.setScale(scaleObject);
-						myGUI.setScale(scaleObject);
-						
-					}
-					
+	public void loadEnvironment(File envFile){		
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(envFile));
+			StringBuffer xmlRepresentation = new StringBuffer();
+			boolean keep = false;
+			String line;
+			while((line = br.readLine()) != null){
+				if(line.contains("<Environment")){
+					keep=true;
+				}
+				if(keep){
+					xmlRepresentation.append(line);
+				}
+				if(line.contains("</Environment")){
+					keep=false;
 				}				
-				
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (SAXException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
 			}
-		}else{
-			System.err.println(Language.translate("Umgebungsdatei")+" "+envFile.getAbsolutePath()+" "+Language.translate("nicht gefunden!"));
-		}		
-	}
-	
-	/**
-	 * Creates an environment object from the passed XML element
-	 * @param element The XML element containing the object data
-	 * @return The AbstractObject created
-	 */
-	private AbstractObject loadObject(Element element){
-		AbstractObject object = null;
-		
-		// Type specific parts
-		ObjectTypes type = ObjectTypes.getType(element.getTagName());
-		switch(type){
-			case OBSTACLE:
-				object = new ObstacleObject();
-			break;
+			br.close();			
 			
-			case GENERIC:
-				object = new GenericObject();
-			break;
+			XMLCodec codec = new XMLCodec();
+			this.environment = (Environment) codec.decodeObject(DisplayOntology.getInstance(), xmlRepresentation.toString());
+			this.environment.getRootPlayground().setParent();
 			
-			case AGENT:
-				object = new AgentObject();
-				((AgentObject)object).setAgentClass(element.getAttribute("class"));
-				String temp = element.getAttribute("speed");
-				if(temp != null && temp.length() >0){
-					Speed speed = new Speed();
-					speed.setSpeed(Float.parseFloat(element.getAttribute("speed")));
-					((AgentObject)object).setCurrentSpeed(speed);
-				}
-			break;
-			
-			case PLAYGROUND:
-				object = new PlaygroundObject();
-				if(element.hasChildNodes()){
-					NodeList children = element.getChildNodes();
-					for(int i=0; i<children.getLength(); i++){
-						if(children.item(i) instanceof Element){
-							AbstractObject child = loadObject((Element) children.item(i));
-							child.setParent((PlaygroundObject) object);
-							((PlaygroundObject)object).addChildObjects(child);
-						}
-					}
-				}
-			break;
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CodecException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (OntologyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		
-		// Common parts
-		object.setId(element.getAttribute("id"));
-		object.setPosition(new Position());
-		object.getPosition().setX(Float.parseFloat(element.getAttribute("xPos")));
-		object.getPosition().setY(Float.parseFloat(element.getAttribute("yPos")));
-		object.setSize(new Size());
-		object.getSize().setWidth(Float.parseFloat(element.getAttribute("width")));
-		object.getSize().setHeight(Float.parseFloat(element.getAttribute("height")));
-		
-		environment.addObjects(object);
-		return object;
 	}
 	
 	public void setScale(Scale scale){

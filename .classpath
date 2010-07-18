@@ -22,6 +22,7 @@
 	<classpathentry kind="lib" path="lib/batik/lib/batik-ext.jar"/>
 	<classpathentry kind="lib" path="lib/jade/lib/jade.jar"/>
 	<classpathentry kind="lib" path="lib/batik/lib/xercesImpl-2.7.1.jar"/>
+	<classpathentry kind="lib" path="lib/jade/lib/XMLCodec.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/jdbc/mysql-connector-java-3.0.17-ga-bin.jar"/>
 	<classpathentry kind="lib" path="lib/hyperic-sigar/sigar-bin/lib/junit.jar"/>
