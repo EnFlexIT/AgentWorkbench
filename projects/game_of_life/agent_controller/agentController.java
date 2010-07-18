@@ -1,8 +1,5 @@
 package game_of_life.agent_controller;
-
 import game_of_life.gui.GameOfLifeGUI;
-import game_of_life.ontology.Platform;
-import game_of_life.ontology.PlatformInfo;
 import game_of_life.ontology.PlatformOntology;
 import jade.content.ContentManager;
 import jade.content.lang.Codec;
@@ -11,6 +8,7 @@ import jade.content.onto.Ontology;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.*;
+import jade.core.messaging.TopicManagementHelper;
 import jade.domain.AMSService;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
@@ -21,14 +19,15 @@ import jade.util.leap.Iterator;
 
 
 public class agentController extends Agent {
-	
 	// Constants
-    ////////////////////////////////////
-
-
-    // Static variables
     //////////////////////////////////
 
+
+    // topic variables
+    //////////////////////////////////
+	private AID startGameOfLife;
+	private AID changeStatus;
+	private TopicManagementHelper topicHelper;
 
     // Instance variables
     //////////////////////////////////
@@ -87,7 +86,21 @@ public class agentController extends Agent {
         
 		AgentCounter =0;
 
-           
+		//register Topic for communication
+		////////////////////////////////////////////////////////
+		// Periodically send messages about topic "JADE"
+		try {
+			
+			// Periodically send messages about topic "JADE"
+			topicHelper = (TopicManagementHelper)getHelper(TopicManagementHelper.SERVICE_NAME);
+			startGameOfLife = topicHelper.createTopic("startGameOfLife");
+			changeStatus =  topicHelper.createTopic("changeStatus");
+			
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+			
+		
         // Constructors
         //////////////////////////////////
            
@@ -117,13 +130,27 @@ public class agentController extends Agent {
 	 // Internal implementation methods
     //////////////////////////////////
 	
-	public void test(){
-	
-		for (int i = 0; i < AMSSearchName.length; i++) {
-			
-			System.out.println("Agents on Platform AgentName: "+i+"  "+AMSSearchName[i]);
-		}
+	//braodcast start to all agents
+	public void broadcastStartGameOfLife(){
+		
+		//System.out.println("Agent "+getLocalName()+": Sending message about topic "+startGameOfLife.getLocalName());
+		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+		msg.addReceiver(startGameOfLife);
+		msg.setContent("Start game of life");
+		send(msg);
 	}
+
+	//broadcast change status to all agent
+	public void broadcastChangeStatus(){
+
+		//System.out.println("Agent "+getLocalName()+": Sending second message about topic "+changeStatus.getLocalName());
+		ACLMessage msg2 = new ACLMessage(ACLMessage.INFORM);
+		msg2.addReceiver(changeStatus);
+		msg2.setContent("Changing status of agent ");
+		send(msg2);
+		
+	}
+	
 	// Search for Agents on platform
 	protected void AMSSearchAgent(SearchConstraints sc) {
 
@@ -165,7 +192,7 @@ public class agentController extends Agent {
 			// Array for storing Agents with the length of result
 			object = new Object[results.length];
           
-			System.out.println(" Length of Object  "+object.length);
+			//System.out.println(" Length of Object  "+object.length);
 			if (results.length > 0) {
 				System.out.println("Agent " + getLocalName()
 						+ " found the following gameOfLive services:");
@@ -199,11 +226,6 @@ public class agentController extends Agent {
 		}
 	}
 
-	// change from grey to blue depending on current status
-	public void ChangeStatus() {
-		addBehaviour(new ChangeStatus(this));
-	}
-
 	// Register Agent in DF
 	protected void registerMyselfDF(DFAgentDescription dfd) {
 		try {
@@ -214,7 +236,7 @@ public class agentController extends Agent {
 	}
 
 	// Sellect all agents on Jade Platform
-protected void platformSearchAgents(SearchConstraints sc) {
+	protected void platformSearchAgents(SearchConstraints sc) {
 
 		try {
 			if (sc != null) {
@@ -233,8 +255,9 @@ protected void platformSearchAgents(SearchConstraints sc) {
 			// AID agentID = allAgents[i].getName();
 			String AgentName = allAgents[i].getName().getLocalName();
 			if (!AgentName.equals("amm") && !AgentName.equals("ams")
-					&& !AgentName.equals("rma") && !AgentName.equals("df")&&!AgentName.equals("server.client")
+					&& !AgentName.equals("rma") && !AgentName.equals("df")
 					&& !AgentName.equals(getLocalName())) {
+				
 				System.out.println(" Agents on Platform  AgentName   = "
 						+ allAgents[i].getName().getLocalName());
 			}
@@ -247,13 +270,6 @@ protected void platformSearchAgents(SearchConstraints sc) {
 		return allAgents;
 	}
 
-	// broadcast current state of Agent to neighbours
-	public void broadCastCurrentState() {
-
-		addBehaviour(new BroadcastCurrentState(this));
-		
-	}
-	
 	@Override
 	protected void takeDown() {
 		// TODO Auto-generated method stub
@@ -270,65 +286,6 @@ protected void platformSearchAgents(SearchConstraints sc) {
 	// Internal implementation behavours
     //////////////////////////////////
 	
-	class ChangeStatus extends Behaviour {
-
-		private boolean finished = false;
-		
-		public ChangeStatus(Agent a) {
-			super(a);
-		}
-
-		public void action() {
-			
-
-			ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-			// AID receiver = new AID("centerAgent", false);
-
-			try {
-
-				for (int i = 0; i < AMSSearchName.length; i++) {
-					
-					if(AMSSearchName[i]!=null){
-						msg
-						.addReceiver(new AID(AMSSearchName[i],
-								AID.ISLOCALNAME));
-					}
-				}
-
-				msg.setLanguage(codec.getName());
-				msg.setOntology(ontology.getName());
-
-				// Sample Messages to be sand
-
-				PlatformInfo platformInfo = new PlatformInfo();
-				platformInfo.setPlatformName(getAID().getName());
-				platformInfo.setPlatformUrl("URL");
-				platformInfo.setTypOfMessage("gameOfLife");
-				platformInfo.setWhatToDo("ChangeStatus");
-
-				Platform comm = new Platform();
-				comm.setPlatformInfo(platformInfo);
-
-				// Fill the content of the message
-				manager.fillContent(msg, comm);
-
-				// Send the message
-				send(msg);
-
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			
-			finished = true;
-		}
-
-		@Override
-		public boolean done() {
-			// TODO Auto-generated method stub
-			return finished;
-		}
-		
-	}
 	// Search all agents on the platform
 	class AMSSearchAgent extends Behaviour {
 
@@ -365,77 +322,7 @@ protected void platformSearchAgents(SearchConstraints sc) {
 				//System.out.println(" Agent"   + i + " : " + agentID.getName());
 			}
 			
-			
-			for (int i = 0; i < AMSSearchName.length; i++) {
-				// AID agentID = AMSSearch[i].getName();
-				String AgentName = AMSSearchName[i];
-				if (AgentName.equals("amm") || AgentName.equals("ams")
-						||AgentName.equals("rma") || AgentName.equals("df")||AgentName.equals("server.client")
-						|| AgentName.equals(getLocalName())) {
-					AMSSearchName[i] =null;
-				}
-				
-			}
-			
-			
-			finished = true;
-		}
-		 
-	
-		public boolean done() {
-			return finished;
-		  }
-		}
-	
-	// broadcast current state of Agent to neighbours
-	class BroadcastCurrentState extends Behaviour {
-
-		private boolean finished = false;
-		
-		public BroadcastCurrentState(Agent a) {
-			super(a);
-		}
-
-		public void action() {
-			
-			
-
-			ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-			
-			
-		       for (int i = 0; i < AMSSearchName.length; i++) {
-					if(AMSSearchName[i]!=null){
-						msg
-						.addReceiver(new AID( AMSSearchName[i],
-								AID.ISLOCALNAME));
-					}
-		     }
-		       try {
-
-					
-					
-					msg.setLanguage(codec.getName());
-					msg.setOntology(ontology.getName());
-
-					// Sample Messages to be sand
-
-					PlatformInfo platformInfo = new PlatformInfo();
-					platformInfo.setPlatformName(getAID().getName());
-					platformInfo.setPlatformUrl("URL");
-					platformInfo.setTypOfMessage("gameOfLife");
-					platformInfo.setWhatToDo("startGameOfLife");
-
-					Platform comm = new Platform();
-					comm.setPlatformInfo(platformInfo);
-
-					// Fill the content of the message
-					manager.fillContent(msg, comm);
-
-					send(msg);
-
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+			AMSSearch = allAgents;
 			
 			
 			finished = true;
