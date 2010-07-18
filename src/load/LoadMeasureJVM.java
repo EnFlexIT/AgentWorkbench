@@ -47,11 +47,11 @@ public class LoadMeasureJVM{
 		setCurrentHeapSizeJVM(heapInit/1048576);
 		setMaximumHeapSizeJVM(heapMax/1048576);
 		setCurrentHeapFreeJVM(heapFree/1048576);
-		
+		/*
 		System.out.println(" init "+heapInit/1048576);
 		System.out.println(" use "+heapUse/1048576);
 		System.out.println(" max "+heapMax/1048576);
-		System.out.println(" FreeHeap "+heapFree/1048576);
+		System.out.println(" FreeHeap "+heapFree/1048576);*/
 		
 	}
 
