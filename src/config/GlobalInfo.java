@@ -10,8 +10,10 @@ import java.util.Vector;
 
 import application.Application;
 
-import load.LoadMeasure;
-import load.LoadMeasureAVG;
+import load.LoadMeasureAvgJVM;
+import load.LoadMeasureJVM;
+import load.LoadMeasureSigar;
+import load.LoadMeasureAvgSigar;
 import mas.PlatformJadeConfig;
 
 public class GlobalInfo {
@@ -66,9 +68,10 @@ public class GlobalInfo {
 	private String filePropServerMasterDBPswd = null;
 	
 	// --- Load-Information --------------------------------------------------
-	private LoadMeasure loadCurrent = null;
-	private LoadMeasureAVG loadCurrentAvg = null;
-	
+	private LoadMeasureSigar loadCurrent = null;
+	private LoadMeasureAvgSigar loadCurrentAvg = null;
+	private LoadMeasureAvgJVM loadCurrentAvgJVM = null;
+	private LoadMeasureJVM loadCurrentJVM = null;
 	// ----------------------------------------------------------------------
 	// --- Objekt-Initialisierung -------------------------------------------
 	// ----------------------------------------------------------------------
@@ -542,28 +545,60 @@ public class GlobalInfo {
 	/**
 	 * @param loadCurrent the loadCurrent to set
 	 */
-	public void setLoadCurrent(LoadMeasure loadCurrent) {
+	public void setLoadCurrent(LoadMeasureSigar loadCurrent) {
 		this.loadCurrent = loadCurrent;
 		this.loadCurrentAvg.put(loadCurrent);
 	}
 	/**
 	 * @return the loadCurrent
 	 */
-	public LoadMeasure getLoadCurrent() {
+	public LoadMeasureSigar getLoadCurrent() {
 		return loadCurrent;
 	}
 
 	/**
 	 * @param loadAvgMemLoad the loadAvgMemLoad to set
 	 */
-	public void setLoadCurrentAvg(LoadMeasureAVG loadAvgMemLoad) {
+	public void setLoadCurrentAvg(LoadMeasureAvgSigar loadAvgMemLoad) {
 		this.loadCurrentAvg = loadAvgMemLoad;
 	}
 	/**
 	 * @return the loadAvgMemLoad
 	 */
-	public LoadMeasureAVG getLoadCurrentAvg() {
+	public LoadMeasureAvgSigar getLoadCurrentAvg() {
 		return loadCurrentAvg;
+	}
+
+
+	/**
+	 * @param loadCurrentAvgJVM the loadCurrentAvgJVM to set
+	 */
+	public void setLoadCurrentAvgJVM(LoadMeasureAvgJVM loadCurrentAvgJVM) {
+		this.loadCurrentAvgJVM = loadCurrentAvgJVM;
+	}
+
+
+	/**
+	 * @return the loadCurrentAvgJVM
+	 */
+	public LoadMeasureAvgJVM getLoadCurrentAvgJVM() {
+		return loadCurrentAvgJVM;
+	}
+
+
+	/**
+	 * @param loadCurrentJVM the loadCurrentJVM to set
+	 */
+	public void setLoadCurrentJVM(LoadMeasureJVM loadCurrentJVM) {
+		this.loadCurrentJVM = loadCurrentJVM;
+	}
+
+
+	/**
+	 * @return the loadCurrentJVM
+	 */
+	public LoadMeasureJVM getLoadCurrentJVM() {
+		return loadCurrentJVM;
 	}
 
 	
