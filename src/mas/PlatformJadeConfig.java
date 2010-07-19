@@ -85,8 +85,7 @@ public class PlatformJadeConfig implements Serializable {
 	public Profile getNewInstanceOfProfilImpl(){
 		Profile prof = new ProfileImpl();
 		prof = this.setProfileLocalPort(prof);
-		prof = this.setProfileServices(prof);
-		//prof = this.setProfileRemoteContainer(prof);
+		prof = this.setProfileServices(prof);		
 		return prof;
 	}
 	/**
@@ -119,12 +118,15 @@ public class PlatformJadeConfig implements Serializable {
 	private Profile setProfileServices(Profile profile){
 		String serviceListString = this.getServiceListArgument();
 		if (serviceListString.equalsIgnoreCase("")==false || serviceListString!=null) {
-			profile.setParameter(Profile.SERVICES, serviceListString);	
+			profile.setParameter(Profile.SERVICES, serviceListString);
 		}
+		//TODO: bald mal wieder rausschmeissen ...
+		// --- Test ----
+		profile.setParameter("jade_core_messaging_MessageManager_maxqueuesize", "20000000");
 		return profile;
 	}	
 	/**
-	 * This method walks through the HashSet of configured Services and retuns them as a String 
+	 * This method walks through the HashSet of configured Services and returns them as a String 
 	 * @return String
 	 */
 	private String getServiceListArgument() {
