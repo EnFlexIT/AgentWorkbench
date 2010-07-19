@@ -1,4 +1,7 @@
 package game_of_life.agent_distributor;
+import java.beans.PropertyVetoException;
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
 
 import javax.swing.JDesktopPane;
 import javax.swing.JInternalFrame;
@@ -28,6 +31,11 @@ public class loadDistributorAgent extends Agent {
 
 	// Constants
 	// ////////////////////////////////
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6033700954795345909L;
 
 	// Static variables
 	// ////////////////////////////////
@@ -59,10 +67,20 @@ public class loadDistributorAgent extends Agent {
 	private double cpuSystemTime;
 	private double cpuUserTime;
 	private long combineTime;
-
 	private long totalMemory;
 	private long freeMemory;
 	private long useMemory;
+	
+	// JVM Memory information
+	// ////////////////////////////////
+	private MemoryMXBean memXB = null;
+	private long totalMemoryUsageJVM;               
+    private long freeMemorryUsageJVM;            
+    private long currentInitJVM;  
+    private long maximumHeapSizeJVM;            
+    private long currentHeapSizeJVM; 
+    
+    
 
 	// Instance variables for CPU and memory for various Platforms
 	// ////////////////////////////////
@@ -103,8 +121,9 @@ public class loadDistributorAgent extends Agent {
 
 	// agents on platform
 
-	// External signature methods
+	// JInternalframe
 	// ////////////////////////////////
+	private JInternalFrame iF;
 
 	protected void setup() {
 		
@@ -184,6 +203,10 @@ public class loadDistributorAgent extends Agent {
 		// ////////////////////////////////
 		addBehaviour(new AMSSearchAgent(this)); // Search for Agents on platform
 		// addBehaviour(new randomSelectAgents(this));
+		
+		//JVM information
+		////////////////////////////
+		memXB = ManagementFactory.getMemoryMXBean();
 		
 	}
 
@@ -320,9 +343,11 @@ public class loadDistributorAgent extends Agent {
 	protected void takeDown() {
 		// TODO Auto-generated method stub
 		try {
-
-			DFService.deregister(this);
-
+			
+			iF.setClosed(true);	//close the JInternalFrame
+			
+			DFService.deregister(this); //deregister all services
+		
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
@@ -531,27 +556,109 @@ public class loadDistributorAgent extends Agent {
 		}
 	}
 	
-	//Start game of life when all agents have been started
-	public void startGameOfLife(final int pRow, final int pCol, final GameOfLifeObject controller [][]){
-		
-		         
-                SwingUtilities.invokeLater(
-				
-				new Runnable() {
-			
+	// Start game of life when all agents have been started
+	public void startGameOfLife(final int pRow, final int pCol,
+			final GameOfLifeObject controller[][]) {
+
+		SwingUtilities.invokeLater(
+
+		new Runnable() {
+
 			public void run() {
-				
-				//run game of life framework on top of central GUI
-				JInternalFrame iF = new GameOfLifeGUI(pRow, pCol, controller);
-				JDesktopPane dF  =  Application.ProjectCurr.ProjectDesktop;
-				dF.add(iF);
-				
+		try {
+			
+			// run game of life framework on top of central GUI
+			iF = new GameOfLifeGUI(pRow, pCol, controller);
+			iF.setClosable(true);
+			iF.setResizable(true);
+			iF.setMaximizable(true);
+
+			JDesktopPane dF = Application.ProjectCurr.ProjectDesktop;
+			dF.add(iF);
+			dF.getDesktopManager().maximizeFrame(iF);
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+			
+
 			}
 		}
-	   
-	  );	
+
+		);
 	}
 	
+	//JVM Memory information
+	/**
+	 * @param totalMemoryUsageJVM the totalMemoryUsageJVM to set
+	 */
+	public void setTotalMemoryUsageJVM(long totalMemoryUsageJVM) {
+		this.totalMemoryUsageJVM = totalMemoryUsageJVM;
+	}
+
+	/**
+	 * @return the totalMemoryUsageJVM
+	 */
+	public long getTotalMemoryUsageJVM() {
+		return totalMemoryUsageJVM;
+	}
+
+	/**
+	 * @param freeMemorryUsageJVM the freeMemorryUsageJVM to set
+	 */
+	public void setFreeMemorryUsageJVM(long freeMemorryUsageJVM) {
+		this.freeMemorryUsageJVM = freeMemorryUsageJVM;
+	}
+
+	/**
+	 * @return the freeMemorryUsageJVM
+	 */
+	public long getFreeMemorryUsageJVM() {
+		return freeMemorryUsageJVM;
+	}
+
+	/**
+	 * @param currentInitJVM the currentInitJVM to set
+	 */
+	public void setCurrentInitJVM(long currentInitJVM) {
+		this.currentInitJVM = currentInitJVM;
+	}
+
+	/**
+	 * @return the currentInitJVM
+	 */
+	public long getCurrentInitJVM() {
+		return currentInitJVM;
+	}
+
+	/**
+	 * @param maximumHeapSizeJVM the maximumHeapSizeJVM to set
+	 */
+	public void setMaximumHeapSizeJVM(long maximumHeapSizeJVM) {
+		this.maximumHeapSizeJVM = maximumHeapSizeJVM;
+	}
+
+	/**
+	 * @return the maximumHeapSizeJVM
+	 */
+	public long getMaximumHeapSizeJVM() {
+		return maximumHeapSizeJVM;
+	}
+
+	/**
+	 * @param currentHeapSizeJVM the currentHeapSizeJVM to set
+	 */
+	public void setCurrentHeapSizeJVM(long currentHeapSizeJVM) {
+		this.currentHeapSizeJVM = currentHeapSizeJVM;
+	}
+
+	/**
+	 * @return the currentHeapSizeJVM
+	 */
+	public long getCurrentHeapSizeJVM() {
+		return currentHeapSizeJVM;
+	}
+
 	// Do move Agent when platform load limit has been reached.
 	class DoMoveAgent extends Behaviour {
 

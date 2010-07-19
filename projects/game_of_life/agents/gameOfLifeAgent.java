@@ -74,7 +74,6 @@ public class gameOfLifeAgent extends Agent {
 	private AID registerTopics;
 	private AID createTopics[];
 	private Object[] neighbour; // array for storing neighbour
-
 	protected void setup() {
 
 		// extract my neighbours
@@ -357,6 +356,7 @@ public class gameOfLifeAgent extends Agent {
 		}
 
 		public void action() {
+			
 			//collect messages from the corresponding topics
 			ACLMessage msgA = myAgent.receive(MessageTemplate
 					.MatchTopic(startGame));
