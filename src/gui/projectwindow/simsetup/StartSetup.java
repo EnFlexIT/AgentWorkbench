@@ -3,6 +3,7 @@ package gui.projectwindow.simsetup;
 import gui.AgentSelector;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -30,16 +31,17 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.ListCellRenderer;
+import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.MouseInputAdapter;
 
-import sim.setup.SimulationSetup;
-
 import mas.agents.AgentClassElement;
 import mas.agents.AgentClassElement4SimStart;
+import sim.setup.SimulationSetup;
 import application.Application;
 import application.Language;
 import application.Project;
@@ -58,6 +60,11 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 	private final Integer SETUP_add = 1;  //  @jve:decl-index=0:
 	private final Integer SETUP_rename = 2;  //  @jve:decl-index=0:
 	private final Integer SETUP_copy = 3;  //  @jve:decl-index=0:
+	
+
+	private final String PathImage = Application.RunInfo.PathImageIntern();  //  @jve:decl-index=0:
+	private final ImageIcon iconGreen = new ImageIcon( this.getClass().getResource( PathImage + "StatGreen.png") );  //  @jve:decl-index=0:
+	private final ImageIcon iconRed = new ImageIcon( this.getClass().getResource( PathImage + "StatRed.png") );
 	
 	private Project currProject;
 	private SimulationSetup currSimSetup = null;  //  @jve:decl-index=0:
@@ -295,6 +302,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		if (jScrollPaneStartList == null) {
 			jScrollPaneStartList = new JScrollPane();
 			jScrollPaneStartList.setPreferredSize(new Dimension(330, 131));
+			jScrollPaneStartList.setBorder(null);
 			jScrollPaneStartList.setViewportView(getJListStartList());
 		}
 		return jScrollPaneStartList;
@@ -307,6 +315,9 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 	private JList getJListStartList() {
 		if (jListStartList == null) {
 			
+			// -----------------------------------------------------------------
+			// --- MouseInputAdapter erstellen, der Drag and Drop ermöglicht --- 
+			// -----------------------------------------------------------------
 			MouseInputAdapter mouseHandler = new MouseInputAdapter() {
 			
 				private Object draggedObject;
@@ -327,9 +338,59 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 			    }
 			};
 			
+			// -----------------------------------------------------------------
+			// --- ListCellRenderer zum Anzeigen von Icons erstellen -----------  
+			// -----------------------------------------------------------------
+			ListCellRenderer cellRenderer = new ListCellRenderer() {
+				
+				@Override
+				public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+
+					// --- Datenobjekt -----------------------------------------
+					AgentClassElement4SimStart agentInfo = (AgentClassElement4SimStart) value;
+					
+					// --- Layout - Werte --------------------------------------
+					Color  bgcolBlue = new Color(57, 105, 138);
+					Border lineBlueFocus = BorderFactory.createLineBorder(new Color(115, 164, 209), 1);
+					Border lineBlueNoFocus = BorderFactory.createLineBorder(bgcolBlue);
+					Border lineWhite = BorderFactory.createLineBorder(Color.white);
+										
+					JLabel jlab = new JLabel(); 
+					jlab.setFont(new Font("Dialog", Font.PLAIN, 13));
+					jlab.setText( agentInfo.toString() );
+					jlab.setToolTipText( agentInfo.getAgentClassReference() );
+					jlab.setOpaque(true);
+					if( agentInfo.isMobileAgent() ) {
+						jlab.setIcon(iconGreen);	
+					} else {
+						jlab.setIcon(iconRed);
+					}
+					
+					if (isSelected) {
+						jlab.setForeground(Color.white);
+						jlab.setBackground(bgcolBlue);
+						jlab.setBorder(lineBlueNoFocus);
+					} else {
+						jlab.setForeground(Color.black);
+						jlab.setBackground(Color.white);
+						jlab.setBorder(lineWhite);
+					}
+					
+					if (cellHasFocus) {
+						jlab.setBorder(lineBlueFocus);
+					}
+
+					return jlab; 
+				}
+			};
+			
+			// -----------------------------------------------------------------
+			// --- Hier nun endlich die JList erstellen ------------------------
+			// -----------------------------------------------------------------
 			jListStartList = new JList(jListModelAgents2Start);
 			jListStartList.addMouseListener(mouseHandler);
 			jListStartList.addMouseMotionListener(mouseHandler);
+			jListStartList.setCellRenderer(cellRenderer);
 			jListStartList.addListSelectionListener(new ListSelectionListener() {
 				@Override
 				public void valueChanged(ListSelectionEvent e) {
@@ -339,7 +400,8 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 						jCheckBoxIsMobileAgent.setSelected( startObj.isMobileAgent() );
 					}
 				}
-			});				
+			});	
+			
 			
 		}
 		return jListStartList;
@@ -662,7 +724,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 			
 			// --- Kann der Name in einen gültigen Dateinamen umbenannt werden? ----
 			newFileName = currProject.simSetups.getSuggestSetupFile(input);
-			if (newFileName.length() < 4) {
+			if (newFileName.length() < 8) {
 				head = Language.translate("Setup-Name zu kurz!");
 				msg  = "Name: '" + input + "' " + Language.translate("zu Datei") + ": '" + newFileName + ".xml':";
 				msg += Language.translate("<br>Bitte geben Sie einen längeren Namen für das Setup an.");
@@ -672,7 +734,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 			}
 
 			// --- Wird der Name bereits verwendet ---------------------------------
-			if (currProject.simSetups.containsKey(input)) {
+			if (currProject.simSetups.containsSetupName(input)) {
 				head = Language.translate("Setup-Name wird bereits verwendet!");
 				msg  = Language.translate("Der Name") + " '" + input + "' " + Language.translate("wird bereits verwendet.");
 				msg += Language.translate("<br>Bitte geben Sie einen anderen Namen für das Setup an.");
@@ -692,7 +754,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		
 		String nameNew = this.setupAskUser4SetupName(this.SETUP_add, null);
 		if (nameNew==null) return;
-		String fileNameNew = currProject.simSetups.getSuggestSetupFile(nameNew) + ".xml"; 
+		String fileNameNew = currProject.simSetups.getSuggestSetupFile(nameNew); 
 
 		currProject.simSetups.setupAddNew(nameNew, fileNameNew);
 
@@ -704,9 +766,10 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 	private void setupRename() {
 		
 		String nameOld = jComboBoxSetupSelector.getSelectedItem().toString();
-		String nameNew = this.setupAskUser4SetupName(this.SETUP_rename, null);
+		String nameNew = this.setupAskUser4SetupName(this.SETUP_rename, nameOld);
 		if (nameNew==null) return;
-		String fileNameNew = currProject.simSetups.getSuggestSetupFile(nameNew) + ".xml";
+		if (nameNew.equalsIgnoreCase(nameOld)) return;
+		String fileNameNew = currProject.simSetups.getSuggestSetupFile(nameNew);
 
 		currProject.simSetups.setupRename(nameOld, nameNew, fileNameNew);
 		
@@ -718,9 +781,9 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 	private void setupCopy(){
 
 		String nameOld = jComboBoxSetupSelector.getSelectedItem().toString();
-		String nameNew = this.setupAskUser4SetupName(this.SETUP_copy, "Copy of " + nameOld);
+		String nameNew = this.setupAskUser4SetupName(this.SETUP_copy, nameOld + " (Copy)");
 		if (nameNew==null) return;
-		String fileNameNew = currProject.simSetups.getSuggestSetupFile(nameNew) + ".xml";
+		String fileNameNew = currProject.simSetups.getSuggestSetupFile(nameNew);
 
 		currProject.simSetups.setupCopy(nameOld, nameNew, fileNameNew);
 	}

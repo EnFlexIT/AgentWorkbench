@@ -5,6 +5,8 @@ package mas.service;
 
 import java.util.Date;
 
+import mas.service.time.TimeModel;
+
 import jade.core.ServiceHelper;
 
 /**
@@ -12,6 +14,10 @@ import jade.core.ServiceHelper;
  */
 public interface AgentGUIServiceHelper extends ServiceHelper {
 
+	public void setTimeModel(TimeModel newTimeModel);
+	public TimeModel getTimeModel();		
+	public void stepTimeModel();
+	
 	public Date getWorldTimeLocalAsDate();
 	public Long getWorldTimeLocalAsLong();
 	

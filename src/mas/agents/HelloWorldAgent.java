@@ -1,48 +1,58 @@
 package mas.agents;
 
+import java.util.Date;
+
 import jade.core.Agent;
 import jade.core.ServiceException;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import mas.service.AgentGUIService;
 import mas.service.AgentGUIServiceHelper;
-/** 
-* <p>Title Hello JJADE</p> 
-* <p>Description: A very simple agent which replies ot any message with an INFORM message with content "Hello World"</p> 
-* <p>Copyright: Copyright (c) 2003</p> 
-* <p>Company: Ryerson University, Toronto, Canada</p> 
-* @author David Grimshaw 
-* @version 1.0 
-*/ 
+import mas.service.time.TimeModel;
+import mas.service.time.TimeModelDiscrete;
+import mas.service.time.TimeModelStroke;
+/**
+ * @version 1.0
+ */ 
 public class HelloWorldAgent extends Agent { 
 
 	private static final long serialVersionUID = 1L;
 	
+	private AgentGUIServiceHelper agentGUIHelper = null;
+	
 	protected void setup() { 
 
-		System.out.println("Local - Name:" + getAID().getLocalName() );
-		System.out.println("GUID - Name:" + getAID().getName() );
-		
-		AgentGUIServiceHelper agentGUIHelper = null;
-		
+		//System.out.println("Local - Name:" + getAID().getLocalName() );
+		//System.out.println("GUID - Name:" + getAID().getName() );
 		try {
 			agentGUIHelper = (AgentGUIServiceHelper) getHelper(AgentGUIService.NAME);
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
-		System.out.println( agentGUIHelper.getWorldTimeLocalAsDate().toString() ); 
+		
+		Long stepInTime = new Long(1000);
+		TimeModelDiscrete tmd = new TimeModelDiscrete(stepInTime);
+		agentGUIHelper.setTimeModel(tmd);
+		
+		// ---- Add Cyclic Behaviour -----------
+		this.addBehaviour(new HelloBehaviour());
 		
 	} 
 
 	class HelloBehaviour extends CyclicBehaviour { 
 
 		private static final long serialVersionUID = 1L;
-
+		private Integer loop = 0;
+		
 		public void action() { 
-			ACLMessage received = blockingReceive(); 
-			ACLMessage reply = received.createReply(); 
-			reply.setContent("Hello World!"); 
-			reply.setPerformative(ACLMessage.INFORM); 
+
+			loop++;
+			agentGUIHelper.stepTimeModel();
+			TimeModelDiscrete tmd = (TimeModelDiscrete) agentGUIHelper.getTimeModel();
+			Date date = new Date(tmd.getTime());
+			System.out.println( "Loop: " + loop + " " + date );
+			
+			
 		} 
 	} 
 

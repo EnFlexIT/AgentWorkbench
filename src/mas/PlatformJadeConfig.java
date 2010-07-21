@@ -120,9 +120,6 @@ public class PlatformJadeConfig implements Serializable {
 		if (serviceListString.equalsIgnoreCase("")==false || serviceListString!=null) {
 			profile.setParameter(Profile.SERVICES, serviceListString);
 		}
-		//TODO: bald mal wieder rausschmeissen ...
-		// --- Test ----
-		profile.setParameter("jade_core_messaging_MessageManager_maxqueuesize", "20000000");
 		return profile;
 	}	
 	/**
@@ -136,7 +133,7 @@ public class PlatformJadeConfig implements Serializable {
 			serviceListString += it.next();
 		}
 		//TODO: bald mal wieder rausschmeissen ...
-		//serviceListString +="mas.service.AgentGUIService;";
+		serviceListString +="mas.service.AgentGUIService;";
 		return serviceListString;
 	}
 	/**

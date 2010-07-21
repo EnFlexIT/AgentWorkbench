@@ -15,7 +15,7 @@ public class AgentClassElement4SimStart {
 	private Integer postionNo = 0;
 	@XmlTransient private DecimalFormat df = new DecimalFormat("00000");
 	
-	private boolean mobileAgent = false;
+	private boolean mobileAgent = true;
 	
 	/**
 	 * Constructor without arguments (This is first of all 

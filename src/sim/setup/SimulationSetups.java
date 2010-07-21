@@ -50,7 +50,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 		String XMLPathName = null;
 						
 		this.currSimSetupName = "default";
-		xmlFile = currProject.simSetups.getSuggestSetupFile(currSimSetupName) + this.XML_FilePostfix;
+		xmlFile = currProject.simSetups.getSuggestSetupFile(currSimSetupName);
 		
 		this.put(currSimSetupName, xmlFile);
 		currProject.simSetupCurrent = currSimSetupName;
@@ -97,7 +97,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 			// --- add default - Setup --------------------
 			currSimSetupName = "default";
 			// --- Noch keine Setups gespeichert ----------
-			String newFileName = getSuggestSetupFile(currSimSetupName) + XML_FilePostfix;
+			String newFileName = getSuggestSetupFile(currSimSetupName);
 			this.setupAddNew(currSimSetupName, newFileName);
 
 		} else {
@@ -121,13 +121,15 @@ public class SimulationSetups extends Hashtable<String, String> {
 		// --- Verzeichnis-Info zusammenbauen -------------
 		String pathSimXML  = currProject.getSubFolderSetups(true);
 		String fileNameXMLNew = pathSimXML + fileNameNew; 
-		// --- Datei umbenennen ---------------------------		
-		File fileOld = new File(currSimXMLFile);
-		File fileNew = new File(fileNameXMLNew);
-		fileOld.renameTo(fileNew);
-		// --- alten Eintrag raus, neuen rein -------------
+		// --- Datei kopieren -----------------------------
+		FileCopier fc = new FileCopier();
+		fc.copyFile(currSimXMLFile, fileNameXMLNew);
+		// --- Alte Datei und alten Eintrag raus ----------
+		new File(currSimXMLFile).delete();
 		this.remove(nameOld);
-		this.setupAddNew(nameNew, fileNameNew);
+		// --- Neuen Eintrag rein -------------------------
+		this.put(nameNew, fileNameNew);
+		this.setupLoadAndFocus(nameNew, false);
 		// --- Projekt speichern --------------------------
 		currProject.save();
 	}
@@ -229,7 +231,26 @@ public class SimulationSetups extends Hashtable<String, String> {
 	    }
 		suggest = suggestNew;
 		suggest = suggest.replaceAll("__", "_");
-		return suggest;
+		return suggest + XML_FilePostfix;
+	}
+	
+	/**
+	 * This Method checks if the incomming Setup-Name is already
+	 * used in the current List of Setups (Hashmap)
+	 * @param setupName2Test
+	 * @return
+	 */
+	public boolean containsSetupName(String setupName2Test) {
+		
+		String testSetupName = setupName2Test.toLowerCase();
+		Iterator<String> it = this.keySet().iterator();
+		while (it.hasNext()){
+			String setupName = it.next().toLowerCase();
+			if (setupName.equalsIgnoreCase(testSetupName)){
+				return true;
+			}
+		}
+		return false;		
 	}
 	
 	/**
