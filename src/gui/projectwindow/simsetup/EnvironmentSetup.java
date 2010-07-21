@@ -1,4 +1,4 @@
-package mas.environment.guiComponents;
+package gui.projectwindow.simsetup;
 
 import javax.swing.JSplitPane;
 
@@ -52,7 +52,7 @@ import mas.display.ontology.Size;
 import mas.environment.EnvironmentController;
 import mas.environment.ObjectTypes;
 
-public class EnvironmentControllerGUI extends JSplitPane implements ActionListener{
+public class EnvironmentSetup extends JSplitPane implements ActionListener{
 
 	/**
 	 * 
@@ -80,8 +80,8 @@ public class EnvironmentControllerGUI extends JSplitPane implements ActionListen
 	
 	private EnvironmentController controller = null;
 	
-	private PnlObjectSettings pnlObjectSettings = null;
-	private PnlEnvironmentSettings pnlEnvironmentSettings = null;
+	private EnvironmentSetupObjectSettings environmentSetupObjectSettings = null;
+	private EnvironmentSetupGlobalSettings environmentSetupGlobalSettings = null;
 	
 	// Initialization of global stuff
 	
@@ -89,7 +89,7 @@ public class EnvironmentControllerGUI extends JSplitPane implements ActionListen
 	 * This method initializes 
 	 * 
 	 */
-	public EnvironmentControllerGUI(Project project) {
+	public EnvironmentSetup(Project project) {
 		super();
 		initialize(project);
 	}
@@ -312,8 +312,8 @@ public class EnvironmentControllerGUI extends JSplitPane implements ActionListen
 			tpSettings = new JTabbedPane();
 			
 			tpSettings.addTab(Language.translate("Umgebung"), getEnvPanel());
-			this.pnlObjectSettings = new PnlObjectSettings(this);
-			tpSettings.addTab(Language.translate("Objekt"), this.pnlObjectSettings);
+			this.environmentSetupObjectSettings = new EnvironmentSetupObjectSettings(this);
+			tpSettings.addTab(Language.translate("Objekt"), this.environmentSetupObjectSettings);
 		}
 		return tpSettings;
 	}
@@ -322,11 +322,11 @@ public class EnvironmentControllerGUI extends JSplitPane implements ActionListen
 
 	
 	
-	private PnlEnvironmentSettings getEnvPanel(){
-		if(this.pnlEnvironmentSettings == null){
-			this.pnlEnvironmentSettings = new PnlEnvironmentSettings(this);
+	private EnvironmentSetupGlobalSettings getEnvPanel(){
+		if(this.environmentSetupGlobalSettings == null){
+			this.environmentSetupGlobalSettings = new EnvironmentSetupGlobalSettings(this);
 		}
-		return this.pnlEnvironmentSettings;
+		return this.environmentSetupGlobalSettings;
 	}
 
 	private JFileChooser getFcLoadSVG(){
@@ -452,7 +452,7 @@ public class EnvironmentControllerGUI extends JSplitPane implements ActionListen
 			
 			// Set selected element and input values
 			selectedElement = element;			
-			pnlObjectSettings.setObjectSettings();
+			environmentSetupObjectSettings.setObjectSettings();
 		}
 		
 	}
@@ -518,8 +518,8 @@ public class EnvironmentControllerGUI extends JSplitPane implements ActionListen
 		// Actions triggered by pnlEnvironmentSettings components
 		
 		// btnLoadSVG
-		if(arg0.getSource() == this.pnlEnvironmentSettings.getBtnLoadSVG()){
-			if(getFcLoadSVG().showOpenDialog(EnvironmentControllerGUI.this) == JFileChooser.APPROVE_OPTION){
+		if(arg0.getSource() == this.environmentSetupGlobalSettings.getBtnLoadSVG()){
+			if(getFcLoadSVG().showOpenDialog(EnvironmentSetup.this) == JFileChooser.APPROVE_OPTION){
 				controller.setSVGFile(fcLoadSVG.getSelectedFile());
 				
 				rebuildEnvironmentTree();
@@ -527,19 +527,19 @@ public class EnvironmentControllerGUI extends JSplitPane implements ActionListen
 		}
 		
 		// btnSetScale
-		else if(arg0.getSource() == this.pnlEnvironmentSettings.getBtnSetScale()){
+		else if(arg0.getSource() == this.environmentSetupGlobalSettings.getBtnSetScale()){
 			Scale scale = new Scale();
 			boolean error = false;
 			
 			try{
-				scale.setValue(Float.parseFloat(pnlEnvironmentSettings.getTfRwu().getText().replace(',', '.')));
+				scale.setValue(Float.parseFloat(environmentSetupGlobalSettings.getTfRwu().getText().replace(',', '.')));
 			}catch(NumberFormatException ex){
 				System.err.println(Language.translate("Ungültige Eingabe, ausschließlich zahlenwerte zulässig!"));
 				error=true;
 			}					
-			scale.setUnit(pnlEnvironmentSettings.getCbUnit().getSelectedItem().toString());
+			scale.setUnit(environmentSetupGlobalSettings.getCbUnit().getSelectedItem().toString());
 			try{
-				scale.setPixel(Float.parseFloat(pnlEnvironmentSettings.getTfPx().getText().replace(',', '.')));
+				scale.setPixel(Float.parseFloat(environmentSetupGlobalSettings.getTfPx().getText().replace(',', '.')));
 			}catch(NumberFormatException ex){
 				System.err.println(Language.translate("Ungültige Eingabe, ausschließlich zahlenwerte zulässig!"));
 				error=true;
@@ -553,18 +553,18 @@ public class EnvironmentControllerGUI extends JSplitPane implements ActionListen
 		// Actions triggered by pnlObjectSettings components
 		
 		// btnApply
-		else if(arg0.getSource() == pnlObjectSettings.getBtnApply()){
+		else if(arg0.getSource() == environmentSetupObjectSettings.getBtnApply()){
 			// Create an ontology object 
-			getController().createObject(getSelectedElement(), pnlObjectSettings.getObjectSettings());
+			getController().createObject(getSelectedElement(), environmentSetupObjectSettings.getObjectSettings());
 			
 			// Change position and size
 			Position pos = new Position();
-			pos.setX(Float.parseFloat(pnlObjectSettings.getTfPosX().getText()));
-			pos.setY(Float.parseFloat(pnlObjectSettings.getTfPosY().getText()));
+			pos.setX(Float.parseFloat(environmentSetupObjectSettings.getTfPosX().getText()));
+			pos.setY(Float.parseFloat(environmentSetupObjectSettings.getTfPosY().getText()));
 			
 			Size size = new Size();
-			size.setWidth(Float.parseFloat(pnlObjectSettings.getTfWidth().getText()));
-			size.setHeight(Float.parseFloat(pnlObjectSettings.getTfHeight().getText()));
+			size.setWidth(Float.parseFloat(environmentSetupObjectSettings.getTfWidth().getText()));
+			size.setHeight(Float.parseFloat(environmentSetupObjectSettings.getTfHeight().getText()));
 			UpdateManager um = getSvgGUI().getCanvas().getUpdateManager();
 			um.getUpdateRunnableQueue().invokeLater(new ElementChanger(pos, size));					
 			
@@ -574,25 +574,25 @@ public class EnvironmentControllerGUI extends JSplitPane implements ActionListen
 		}
 		
 		// btnRemove
-		else if(arg0.getSource() == pnlObjectSettings.getBtnRemove()){
+		else if(arg0.getSource() == environmentSetupObjectSettings.getBtnRemove()){
 			getController().deleteObject(getSelectedElement().getAttributeNS(null, "id"), false);
 			setSelectedElement(null);			
 		}
 		
 		// cbType
-		else if(arg0.getSource() == pnlObjectSettings.getCbType()){
-			if(ObjectTypes.getType(pnlObjectSettings.getCbType().getSelectedItem().toString()) != null){
-				pnlObjectSettings.getBtnApply().setEnabled(true);						
+		else if(arg0.getSource() == environmentSetupObjectSettings.getCbType()){
+			if(ObjectTypes.getType(environmentSetupObjectSettings.getCbType().getSelectedItem().toString()) != null){
+				environmentSetupObjectSettings.getBtnApply().setEnabled(true);						
 			}else{
-				pnlObjectSettings.getBtnApply().setEnabled(false);						
+				environmentSetupObjectSettings.getBtnApply().setEnabled(false);						
 			}
 			
-			if(pnlObjectSettings.getCbType().getSelectedItem().equals("AGENT")){
-				pnlObjectSettings.getCbClass().setEnabled(true);
-				pnlObjectSettings.getTfSpeed().setEditable(true);
+			if(environmentSetupObjectSettings.getCbType().getSelectedItem().equals("AGENT")){
+				environmentSetupObjectSettings.getCbClass().setEnabled(true);
+				environmentSetupObjectSettings.getTfSpeed().setEditable(true);
 			}else{
-				pnlObjectSettings.getCbClass().setEnabled(false);
-				pnlObjectSettings.getTfSpeed().setEditable(false);
+				environmentSetupObjectSettings.getCbClass().setEnabled(false);
+				environmentSetupObjectSettings.getTfSpeed().setEditable(false);
 			}
 		}
 		

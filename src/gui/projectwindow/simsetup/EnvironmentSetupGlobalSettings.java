@@ -1,4 +1,4 @@
-package mas.environment.guiComponents;
+package gui.projectwindow.simsetup;
 
 import java.awt.Point;
 
@@ -16,11 +16,11 @@ import mas.display.ontology.Scale;
 
 import application.Language;
 
-public class PnlEnvironmentSettings extends JPanel {
+public class EnvironmentSetupGlobalSettings extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	
-	private EnvironmentControllerGUI parent = null;
+	private EnvironmentSetup parent = null;
 
 	private JLabel lblScale = null;
 	private JTextField tfRwu = null;
@@ -33,7 +33,7 @@ public class PnlEnvironmentSettings extends JPanel {
 	/**
 	 * This is the default constructor
 	 */
-	public PnlEnvironmentSettings(EnvironmentControllerGUI parent) {
+	public EnvironmentSetupGlobalSettings(EnvironmentSetup parent) {
 		super();
 		this.parent = parent;
 		initialize();

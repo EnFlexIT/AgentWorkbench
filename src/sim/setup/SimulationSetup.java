@@ -25,6 +25,14 @@ import application.Project;
 	@XmlElement(name="agent")
 	private ArrayList<AgentClassElement4SimStart> agentList = new ArrayList<AgentClassElement4SimStart>();
 	
+	private String environmentFile = "";
+	
+	public String getEnvironmentFile() {
+		return environmentFile;
+	}
+	public void setEnvironmentFile(String environmentFile) {
+		this.environmentFile = environmentFile;
+	}
 	/**
 	 * Constructor without arguments (This is first of all 
 	 * for the JAXB-Context and should not be used by any

@@ -121,7 +121,7 @@ public abstract class MovingAgent extends Agent implements DisplayableAgent{
 			
 			
 			
-			System.out.println("Starting "+getLocalName()+" in playground "+this.playground.getId());
+//			System.out.println("Starting "+getLocalName()+" in playground "+this.playground.getId());
 		}
 	}
 

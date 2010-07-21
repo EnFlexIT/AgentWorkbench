@@ -1,4 +1,4 @@
-package mas.environment.guiComponents;
+package gui.projectwindow.simsetup;
 
 import jade.core.Agent;
 
@@ -22,7 +22,7 @@ import mas.display.ontology.AbstractObject;
 import mas.display.ontology.AgentObject;
 import mas.environment.ObjectTypes;
 
-public class PnlObjectSettings extends JPanel {
+public class EnvironmentSetupObjectSettings extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	private JLabel lblId = null;
@@ -47,11 +47,11 @@ public class PnlObjectSettings extends JPanel {
 	private JLabel lblUnit2 = null;
 	private JLabel lblUnit3 = null;
 	
-	private EnvironmentControllerGUI parent = null;
+	private EnvironmentSetup parent = null;
 	/**
 	 * This is the default constructor
 	 */
-	public PnlObjectSettings(EnvironmentControllerGUI parent) {
+	public EnvironmentSetupObjectSettings(EnvironmentSetup parent) {
 		super();
 		this.parent = parent;
 		initialize();

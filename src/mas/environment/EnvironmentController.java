@@ -1,5 +1,6 @@
 package mas.environment;
 
+import gui.projectwindow.simsetup.EnvironmentSetup;
 import jade.content.lang.Codec.CodecException;
 import jade.content.lang.xml.XMLCodec;
 import jade.content.onto.OntologyException;
@@ -49,7 +50,6 @@ import mas.display.ontology.Position;
 import mas.display.ontology.Scale;
 import mas.display.ontology.Size;
 import mas.display.ontology.Speed;
-import mas.environment.guiComponents.EnvironmentControllerGUI;
 
 /**
  * This class is responsible for managing the environment definition
@@ -68,7 +68,7 @@ public class EnvironmentController{
 	/**
 	 * The GUI for interacting with this environment controller
 	 */
-	private EnvironmentControllerGUI myGUI;
+	private EnvironmentSetup myGUI;
 	/**
 	 * HashMap for object access via id
 	 */
@@ -79,7 +79,7 @@ public class EnvironmentController{
 	 * @param project The project the environment belongs to
 	 * @param gui The GUI to interact with this EnvironmentController
 	 */
-	public EnvironmentController(Project project, EnvironmentControllerGUI gui){
+	public EnvironmentController(Project project, EnvironmentSetup gui){
 		
 		String svgPath, envPath;
 		
@@ -134,11 +134,11 @@ public class EnvironmentController{
 		this.environment.setSvgDoc(svg2String(svgDoc));
 	}
 
-	public EnvironmentControllerGUI getMyGUI() {
+	public EnvironmentSetup getMyGUI() {
 		return myGUI;
 	}
 
-	public void setMyGUI(EnvironmentControllerGUI myGUI) {
+	public void setMyGUI(EnvironmentSetup myGUI) {
 		this.myGUI = myGUI;
 	}
 	
@@ -262,7 +262,7 @@ public class EnvironmentController{
 		Document svgDoc = null;
 		
 		if(svgFile.exists()){
-			System.out.println(Language.translate("Lade SVG-Datei")+" "+svgFile.getName());
+//			System.out.println(Language.translate("Lade SVG-Datei")+" "+svgFile.getName());
 			SAXSVGDocumentFactory factory = new SAXSVGDocumentFactory(XMLResourceDescriptor.getXMLParserClassName());
 			
 			try {
@@ -317,7 +317,7 @@ public class EnvironmentController{
 	public void saveSVG(){
 		File svgFile = new File(currentProject.getSvgPath());
 		try {
-			System.out.println(Language.translate("Speichere SVG nach")+" "+svgFile.getName());
+//			System.out.println(Language.translate("Speichere SVG nach")+" "+svgFile.getName());
 			FileWriter fw = new FileWriter(svgFile);
 			PrintWriter writer = new PrintWriter(fw);
 			writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
@@ -598,7 +598,7 @@ public class EnvironmentController{
 				XMLCodec codec = new XMLCodec();
 				this.environment.getRootPlayground().unsetParent();
 				String xmlRepresentation = codec.encodeObject(DisplayOntology.getInstance(), environment, true);
-				System.out.println(xmlRepresentation);
+//				System.out.println(xmlRepresentation);
 				this.environment.getRootPlayground().setParent();
 				File envFile = new File(currentProject.getEnvPath());
 				if(!envFile.exists()){
