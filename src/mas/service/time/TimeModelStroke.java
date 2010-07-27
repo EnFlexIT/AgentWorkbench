@@ -1,11 +1,16 @@
 package mas.service.time;
 
-public class TimeModelStroke extends TimeModel {
+import jade.util.leap.Serializable;
+
+
+
+public class TimeModelStroke extends TimeModel implements Serializable {
+
+	private static final long serialVersionUID = -63223704339241994L;
 
 	private Integer counter = 0;
 	
 	public TimeModelStroke() {
-		this.typeOfTimeModel = TimeModel.STROKE;
 	}
 
 	/**
@@ -26,10 +31,4 @@ public class TimeModelStroke extends TimeModel {
 	public Integer getCounter() {
 		return counter;
 	}
-	
-	
-	
-	
-	
-	
-}
+} // --- End of Sub-Class -----

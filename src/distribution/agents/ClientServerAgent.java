@@ -1,6 +1,7 @@
 package distribution.agents;
 
 import jade.content.Concept;
+import jade.content.ContentElement;
 import jade.content.lang.Codec;
 import jade.content.lang.Codec.CodecException;
 import jade.content.lang.sl.SLCodec;
@@ -12,7 +13,17 @@ import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.ParallelBehaviour;
+import jade.domain.JADEAgentManagement.JADEManagementOntology;
+import jade.domain.introspection.AMSSubscriber;
+import jade.domain.introspection.AddedContainer;
+import jade.domain.introspection.Event;
+import jade.domain.introspection.IntrospectionVocabulary;
+import jade.domain.introspection.Occurred;
+import jade.domain.introspection.RemovedContainer;
 import jade.lang.acl.ACLMessage;
+
+import java.util.Map;
+
 import network.JadeUrlChecker;
 import application.Application;
 import distribution.ontology.AgentGUI_DistributionOntology;
@@ -30,13 +41,14 @@ public class ClientServerAgent extends Agent {
 	private static final long serialVersionUID = -3947798460986588734L;
 	
 	private Ontology ontology = AgentGUI_DistributionOntology.getInstance();
+	private Ontology ontologyJadeMgmt = JADEManagementOntology.getInstance();
 	private Codec codec = new SLCodec();
 	
 	private PlatformTime myPlatformTime = new PlatformTime();
 	private PlatformAddress myPlatform = new PlatformAddress();
 	private PlatformAddress mainPlatform = new PlatformAddress();
 	private AID mainPlatformAgent = null; 
-
+	
 	private ParallelBehaviour parBehaiv = null;
 
 	
@@ -46,6 +58,7 @@ public class ClientServerAgent extends Agent {
 		
 		getContentManager().registerLanguage(codec);
 		getContentManager().registerOntology(ontology);
+		getContentManager().registerOntology(ontologyJadeMgmt);
 		
 		// --- Define Platfornm-Info ----------------------
 		JadeUrlChecker myURL = new JadeUrlChecker( this.getContainerController().getPlatformName() );
@@ -74,6 +87,7 @@ public class ClientServerAgent extends Agent {
 		
 		// --- Add Main-Behaiviours -----------------------
 		parBehaiv = new ParallelBehaviour(this,ParallelBehaviour.WHEN_ALL);
+		parBehaiv.addSubBehaviour( new amsSubscriber() );
 		parBehaiv.addSubBehaviour( new ReceiveBehaviour() );
 		// --- Add Parallel Behaiviour --------------------
 		this.addBehaviour(parBehaiv);
@@ -89,7 +103,8 @@ public class ClientServerAgent extends Agent {
 		
 		// --- Send 'Unregister'-Information --------------
 		ClientUnregister unReg = new ClientUnregister();
-		sendMessage2MainServer(unReg);
+		this.sendMessage2MainServer(unReg);
+		
 	}
 
 	
@@ -135,6 +150,7 @@ public class ClientServerAgent extends Agent {
 		public void action() {
 			
 			Action act = null;
+			Occurred occ = null;
 			Concept agentAction = null; 
 			AID senderAID = null;
 
@@ -145,11 +161,20 @@ public class ClientServerAgent extends Agent {
 					// --- No Ontology-specific Message -------------
 					act = null;
 					System.out.println( "ACLMessage.FAILURE from " + msg.getSender().getName() + ": " + msg.getContent() );
-
 				} else {
 					// --- Ontology-specific Message ----------------
 					try {
-						act = (Action) getContentManager().extractContent(msg);
+						ContentElement con = getContentManager().extractContent(msg);	
+						if (con instanceof Action) {
+							act = (Action) con;	
+						} else if (con instanceof Occurred) {
+							occ = (Occurred) con;
+							// --- Messages in the context of Introspection ---
+							// --- Not from any further interest (yet) --------
+							// System.out.println( "++++++ Introspection: " + occ.toString() + "++++++" );
+						} else {
+							System.out.println( "=> " + myAgent.getName() + " - Unknown MessageType: " + con.toString() );
+						}						
 					} catch (UngroundedException e) {
 						e.printStackTrace();
 					} catch (CodecException e) {
@@ -193,6 +218,50 @@ public class ClientServerAgent extends Agent {
 	// -----------------------------------------------------
 	
 
+	// -----------------------------------------------------
+	// --- amsSubscriber-SubClass/Behaiviour --- S T A R T -
+	// -----------------------------------------------------
+	private class amsSubscriber extends AMSSubscriber {
+		
+		private static final long serialVersionUID = -4346695401399663561L;
+
+		@SuppressWarnings("unchecked")
+		@Override
+		protected void installHandlers(Map handlers) {
+			// ----------------------------------------------------------------
+			EventHandler containerAddedHandler = new EventHandler() {
+				private static final long serialVersionUID = -7426704911904579411L;
+				@Override
+				public void handle(Event event) {
+					AddedContainer aCon = (AddedContainer) event;
+					if (aCon.getContainer().getName().equalsIgnoreCase("Main-Container")==false) {
+						Application.JadePlatform.MASremoteContainer.add(aCon.getContainer());
+						//System.out.println( "Container hinzugefügt: " + aCon.getName() + " " + aCon.getContainer() + aCon );
+					}
+				}
+			};
+			handlers.put(IntrospectionVocabulary.ADDEDCONTAINER, containerAddedHandler);
+
+			// ----------------------------------------------------------------
+			EventHandler containerRemovedHandler = new EventHandler() {
+				private static final long serialVersionUID = 8614456287558634409L;
+				@Override
+				public void handle(Event event) {
+					RemovedContainer rCon = (RemovedContainer) event;
+					Application.JadePlatform.MASremoteContainer.remove(rCon.getContainer());
+					//System.out.println( "Container gelöscht: " + rCon.getName() + " " + rCon.getContainer()  );
+				}
+				
+			};
+			handlers.put(IntrospectionVocabulary.REMOVEDCONTAINER, containerRemovedHandler);
+			
+			// ----------------------------------------------------------------
+		}
+		
+	}
+	// -----------------------------------------------------
+	// --- amsSubscriber-SubClass/Behaiviour --- E N D -----
+	// -----------------------------------------------------
 
 	
 }

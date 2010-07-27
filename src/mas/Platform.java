@@ -2,6 +2,7 @@ package mas;
 
 import jade.content.onto.Ontology;
 import jade.core.Agent;
+import jade.core.ContainerID;
 import jade.core.Profile;
 import jade.core.Runtime;
 import jade.wrapper.AgentContainer;
@@ -31,8 +32,14 @@ public class Platform extends Object {
 	public static Runtime MASrt;
 	public static AgentContainer MASmc;
 	public static Vector<AgentContainer> MAScontainer = new Vector<AgentContainer>();
-	public PlatformJadeConfig MASplatformConfig = null;
-
+	public PlatformJadeConfig MASplatformConfig = null;	
+	
+	public final static int UTIL_CMD_OpenDF = 1;
+	public final static int UTIL_CMD_KillRemoteContainer = 2;
+	
+	public static final String MASapplicationAgentName = "server.client";
+	public Vector<ContainerID> MASremoteContainer = new Vector<ContainerID>();
+	
 	public JadeUrlChecker MASmasterAddress = null; 
 	public String MASrunningMode = "";
 	
@@ -149,9 +156,10 @@ public class Platform extends Object {
 			// ------------------------------------------------------
 			MASrunningMode = "Application";
 			// --- Starting 'Server.Client'-Agent -------------------				
-			jadeAgentStart("server.client", distribution.agents.ClientServerAgent.class.getName());
+			jadeAgentStart(MASapplicationAgentName, distribution.agents.ClientServerAgent.class.getName());
 			// --- Start RMA ('Remote Monitoring Agent') ------------ 
 			jadeSystemAgentOpen( "rma", null );	
+			//jadeAgentStart("Hello", "mas.agents.HelloWorldAgent");
 			
 		}
 		return true;
@@ -163,6 +171,7 @@ public class Platform extends Object {
 	public boolean jadeStart() {
 		
 		boolean startSucceed = false;		
+		
 		if ( jadeMainContainerIsRunning() == false ) {
 			try {
 				// --- Start Platform -------------------------------
@@ -175,7 +184,8 @@ public class Platform extends Object {
 					}
 				});
 				// --- Start MainContainer --------------------------				
-				MASmc = MASrt.createMainContainer( this.jadeGetContainerProfile() );	
+				MASmc = MASrt.createMainContainer( this.jadeGetContainerProfile() );
+				startSucceed = true;
 			}
 			catch ( Exception e ) {
 				e.printStackTrace();
@@ -186,11 +196,12 @@ public class Platform extends Object {
 			System.out.println( "JADE läuft bereits! => " + MASrt );			
 		}
 
-		//--- Start the Application Background-Agents ---------------
+		// --- Start the Application Background-Agents ---------------
 		if (this.jadeStartBackgroundAgents()==false) return false;
 		
 		Application.setStatusJadeRunning(true);
 		return startSucceed;
+		
 	}
 	
 	/**
@@ -229,14 +240,32 @@ public class Platform extends Object {
 	 */
 	public void jadeStop() {
 
-		AgentContainer AgeCont;
+		AgentContainer agentCont;
 		
-		// --- Stop all known platform-container ---------
+		// --- Kill all Remote-Container if needed --------
+		if ( jadeMainContainerIsRunning() && MASremoteContainer.size()!=0 ){
+			// --- Starting the Utillity-Agent ------------
+			this.jadeUtilityAgentStart(UTIL_CMD_KillRemoteContainer);
+			// --- Wait for the end of the Agent-Action
+			Long timeStop = System.currentTimeMillis() + (3 * 1000);
+			while (MASremoteContainer.size()!=0) {
+				try {
+					Thread.sleep(200);
+				} catch (InterruptedException e) {
+					// e.printStackTrace();
+				}
+				if (System.currentTimeMillis() >= timeStop) {
+					break;
+				}
+			}			
+		}
+		
+		// --- Stop all known platform-container ----------
 		for ( int i=0; i < MAScontainer.size(); i++ ) {
-			AgeCont = MAScontainer.get(i);
-			jadeContainerKill(AgeCont);	
+			agentCont = MAScontainer.get(i);
+			jadeContainerKill(agentCont);	
 		}	
-		// --- Stop the Main-Platform --------------------
+		// --- Stop the Main-Platform ---------------------
 		try {
 			if ( jadeMainContainerIsRunning() ){
 				MASmc.kill();
@@ -281,6 +310,16 @@ public class Platform extends Object {
 			MASrt = null;	
 		}
 		return JiR;
+	}
+	
+	
+	/**
+	 * Starts the Utility-Agent with a job defined in agentAction 
+	 */
+	public void jadeUtilityAgentStart(int utilityCMD) {
+		Object[] agentArgs = new Object[5];
+		agentArgs[0] = utilityCMD;
+		jadeAgentStart("utility", "mas.agents.UtilityAgent", agentArgs);
 	}
 	
 	/**
@@ -362,7 +401,9 @@ public class Platform extends Object {
 			try {
 				if ( AgentNameForStart.equalsIgnoreCase("df") ) {
 					// --- Show the DF-GUI -----------------------
-					AgeCon = MASmc.createNewAgent("DFOpener", AgentNameClass, new Object[0]);
+					this.jadeUtilityAgentStart(UTIL_CMD_OpenDF);
+					return;
+					//AgeCon = MASmc.createNewAgent("DFOpener", AgentNameClass, new Object[0]);
 				}
 				else {
 					// --- Show a standard jade ToolAgent --------
@@ -394,8 +435,8 @@ public class Platform extends Object {
 	 * Kills an Agent, if he is running
 	 */
 	public void jadeSystemAgentKill( String AgentName ) {
+
 		AgentController AgeCon = null;
-		
 		if ( jadeAgentIsRunning( AgentName ) ) {
 			// --- get Agent(Controller) -----
 			try {
@@ -413,6 +454,9 @@ public class Platform extends Object {
 			}
 		}
 	}	
+	
+	
+	
 	/** 
 	 * Checks, whether one Agent is running (or not) in the main-container. 
 	 * Returns true or false  
@@ -482,6 +526,7 @@ public class Platform extends Object {
 		if ( ContainerNameSearch == MASmc.getName() ) {
 			return MASmc;
 		}	
+		
 		// --- Den richtigen Container abgreifen -------------- 
 		for ( int i=0; i < MAScontainer.size(); i++ ) {
 			AgeCont = MAScontainer.get(i);
@@ -505,14 +550,14 @@ public class Platform extends Object {
 		AgeCont = jadeContainer(ContainerName);
 		jadeContainerKill( AgeCont );
 	}
-	public void jadeContainerKill( AgentContainer AgeCont ) {
+	public void jadeContainerKill( AgentContainer agentContainer ) {
 		
-		MAScontainer.remove( AgeCont );
+		MAScontainer.remove( agentContainer );
 		try {
-			AgeCont.kill();
+			agentContainer.kill();
 		} 
 		catch (StaleProxyException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 	}
 	
@@ -529,7 +574,7 @@ public class Platform extends Object {
 	}
 	public void jadeAgentStart(String AgentName, String Clazz, Object[] AgentArgs ) {
 		String MainContainerName = MASmc.getName();
-		jadeAgentStart(AgentName, Clazz, AgentArgs, MainContainerName) ;
+		jadeAgentStart(AgentName, Clazz, AgentArgs, MainContainerName);
 	}
 	public void jadeAgentStart(String AgentName, String clazzName, Object[] AgentArgs, String ContainerName ) {
 		try {
@@ -564,12 +609,12 @@ public class Platform extends Object {
 			AgeCont = jadeContainerCreate( ContainerName );
 		}		
 		try {
-			Agent agent=(Agent) Clazz.newInstance();
+			Agent agent = (Agent) Clazz.newInstance();
 			agent.setArguments(AgentArgs);
-			AgentCont=AgeCont.acceptNewAgent(AgentName, agent);
 //			AgentCont = AgeCont.createNewAgent( AgentName, Clazz, AgentArgs );
-
+			AgentCont = AgeCont.acceptNewAgent(AgentName, agent);
 			AgentCont.start();
+
 		} 
 		catch (StaleProxyException e) {
 			e.printStackTrace();
@@ -578,7 +623,6 @@ public class Platform extends Object {
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		}		
-
 	}
 	
 	/**

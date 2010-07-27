@@ -1,18 +1,21 @@
 package mas.service.time;
 
-public class TimeModelDiscrete extends TimeModel {
+import jade.util.leap.Serializable;
 
+
+public class TimeModelDiscrete extends TimeModel implements Serializable {
+
+	private static final long serialVersionUID = 3931340225354221294L;
+	
 	private Long time = new Long(0);
 	private Long step;
 	
 	public TimeModelDiscrete(Long stepInTime) {
-		this.typeOfTimeModel = TimeModel.DISCRETE_TIME;
 		this.step = stepInTime;
 	}
-	public TimeModelDiscrete(Long startTime, Long stepInTime) {
-		this.typeOfTimeModel = TimeModel.DISCRETE_TIME;
-		this.time = startTime;
+	public TimeModelDiscrete(Long stepInTime, Long startTime) {
 		this.step = stepInTime;
+		this.time = startTime;			
 	}
 	
 	/**
@@ -33,10 +36,4 @@ public class TimeModelDiscrete extends TimeModel {
 	public Long getTime() {
 		return time;
 	}
-	
-	
-	
-	
-	
-	
 }
