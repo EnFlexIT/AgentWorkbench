@@ -159,8 +159,7 @@ public class Platform extends Object {
 			jadeAgentStart(MASapplicationAgentName, distribution.agents.ClientServerAgent.class.getName());
 			// --- Start RMA ('Remote Monitoring Agent') ------------ 
 			jadeSystemAgentOpen( "rma", null );	
-			//jadeAgentStart("Hello", "mas.agents.HelloWorldAgent");
-			
+						
 		}
 		return true;
 	}

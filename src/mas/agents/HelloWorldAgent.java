@@ -1,17 +1,20 @@
 package mas.agents;
 
+import java.util.Observable;
+
 import jade.core.Agent;
 import jade.core.ServiceException;
 import jade.core.behaviours.TickerBehaviour;
 import mas.service.SimulationService;
 import mas.service.SimulationServiceHelper;
+import mas.service.sensoring.ServiceSensor;
 import mas.service.time.TimeModelDiscrete;
 import mas.service.time.TimeModelStroke;
 
 /**
  * @version 1.0
  */ 
-public class HelloWorldAgent extends Agent { 
+public class HelloWorldAgent extends Agent implements ServiceSensor { 
 
 	private static final long serialVersionUID = 1L;
 	
@@ -63,5 +66,11 @@ public class HelloWorldAgent extends Agent {
 			System.out.println( "Result: " + tmd.getCounter() );
 			
 		} 
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		
+		
 	}
 } 
