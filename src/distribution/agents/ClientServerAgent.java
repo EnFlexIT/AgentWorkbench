@@ -170,7 +170,7 @@ public class ClientServerAgent extends Agent {
 						} else if (con instanceof Occurred) {
 							occ = (Occurred) con;
 							// --- Messages in the context of Introspection ---
-							// --- Not from any further interest (yet) --------
+							// --- Not of any further interest (yet)-- --------
 							// System.out.println( "++++++ Introspection: " + occ.toString() + "++++++" );
 						} else {
 							System.out.println( "=> " + myAgent.getName() + " - Unknown MessageType: " + con.toString() );

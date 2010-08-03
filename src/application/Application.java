@@ -4,9 +4,8 @@ import gui.AboutDialog;
 import gui.CoreWindow;
 import gui.CoreWindowConsole;
 import gui.options.OptionDialog;
-import load.LoadMeasureThreadJVM;
-import load.LoadMeasureThreadSigar;
 import mas.Platform;
+import mas.service.load.LoadMeasureThread;
 import systemtray.AgentGUITrayIcon;
 import config.FileProperties;
 import config.GlobalInfo;
@@ -43,8 +42,7 @@ public class Application {
 		RunInfo = new GlobalInfo();
 		Console = new CoreWindowConsole();
 		properties = new FileProperties();
-		new LoadMeasureThreadSigar(500,5).start();   //measure load of System every 500ms
-		new LoadMeasureThreadJVM(500,5).start();   //measure load of System every 500ms
+		new LoadMeasureThread(500,5).start();   //measure load of System every 500ms
 		startAgentGUI();
 
 	}	

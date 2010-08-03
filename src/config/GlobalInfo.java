@@ -10,11 +10,11 @@ import java.util.Vector;
 
 import application.Application;
 
-import load.LoadMeasureAvgJVM;
-import load.LoadMeasureJVM;
-import load.LoadMeasureSigar;
-import load.LoadMeasureAvgSigar;
 import mas.PlatformJadeConfig;
+import mas.service.load.LoadMeasureAvgJVM;
+import mas.service.load.LoadMeasureAvgSigar;
+import mas.service.load.LoadMeasureJVM;
+import mas.service.load.LoadMeasureSigar;
 
 public class GlobalInfo {
 
@@ -70,8 +70,9 @@ public class GlobalInfo {
 	// --- Load-Information --------------------------------------------------
 	private LoadMeasureSigar loadCurrent = null;
 	private LoadMeasureAvgSigar loadCurrentAvg = null;
-	private LoadMeasureAvgJVM loadCurrentAvgJVM = null;
 	private LoadMeasureJVM loadCurrentJVM = null;
+	private LoadMeasureAvgJVM loadCurrentAvgJVM = null;
+	
 	// ----------------------------------------------------------------------
 	// --- Objekt-Initialisierung -------------------------------------------
 	// ----------------------------------------------------------------------
@@ -542,6 +543,9 @@ public class GlobalInfo {
 		return filePropServerMasterDBPswd;
 	}
 
+	// ---------------------------------------------------------
+	// --- Informations about the system-load ------------------
+	// ---------------------------------------------------------
 	/**
 	 * @param loadCurrent the loadCurrent to set
 	 */
@@ -568,16 +572,27 @@ public class GlobalInfo {
 	public LoadMeasureAvgSigar getLoadCurrentAvg() {
 		return loadCurrentAvg;
 	}
-
-
+	
+	/**
+	 * @param loadCurrentJVM the loadCurrentJVM to set
+	 */
+	public void setLoadCurrentJVM(LoadMeasureJVM loadCurrentJVM) {
+		this.loadCurrentJVM = loadCurrentJVM;
+		this.loadCurrentAvgJVM.put(loadCurrentJVM);
+	}
+	/**
+	 * @return the loadCurrentJVM
+	 */
+	public LoadMeasureJVM getLoadCurrentJVM() {
+		return loadCurrentJVM;
+	}
+	
 	/**
 	 * @param loadCurrentAvgJVM the loadCurrentAvgJVM to set
 	 */
 	public void setLoadCurrentAvgJVM(LoadMeasureAvgJVM loadCurrentAvgJVM) {
 		this.loadCurrentAvgJVM = loadCurrentAvgJVM;
 	}
-
-
 	/**
 	 * @return the loadCurrentAvgJVM
 	 */
@@ -585,21 +600,4 @@ public class GlobalInfo {
 		return loadCurrentAvgJVM;
 	}
 
-
-	/**
-	 * @param loadCurrentJVM the loadCurrentJVM to set
-	 */
-	public void setLoadCurrentJVM(LoadMeasureJVM loadCurrentJVM) {
-		this.loadCurrentJVM = loadCurrentJVM;
-	}
-
-
-	/**
-	 * @return the loadCurrentJVM
-	 */
-	public LoadMeasureJVM getLoadCurrentJVM() {
-		return loadCurrentJVM;
-	}
-
-	
 }

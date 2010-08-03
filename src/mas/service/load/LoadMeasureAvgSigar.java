@@ -1,4 +1,4 @@
-package load;
+package mas.service.load;
 
 import java.util.ArrayList;
 
@@ -12,14 +12,16 @@ public class LoadMeasureAvgSigar {
 	private String model;
 	private int totalCpu;
 	
+	private long totalMemory;	// KB
+	private long freeMemory;	// KB
+	private long useMemory;		// KB
+
 	private double cpuSystemTime;
 	private double cpuUserTime;
 	private double cpuIdleTime;
 	private double cpuWaitTime;
-	private long combineTime;
-	private long totalMemory;
-	private long freeMemory;
-	private long useMemory;
+	private double cpuCombinedTime;
+	
 		
 	public LoadMeasureAvgSigar(Integer avgCounter) {
 		useAVGCounter = avgCounter;                     //maximum length of List
@@ -27,20 +29,20 @@ public class LoadMeasureAvgSigar {
 
 	public void put(LoadMeasureSigar currentLoadMeasure) {
         
-		if(vendor==null){
-         //setting system information once
-         setVendor(currentLoadMeasure.getVendor());
-         setModel(currentLoadMeasure.getModel());
-         setMhz(currentLoadMeasure.getMhz());
-         setTotalCpu(currentLoadMeasure.getTotalCpu());
-        }	
-        
-		//inserting object in a list
-		// the objects contains information about cpu and memory. 
+		if (vendor == null) {
+			// setting system information once
+			setVendor(currentLoadMeasure.getVendor());
+			setModel(currentLoadMeasure.getModel());
+			setMhz(currentLoadMeasure.getMhz());
+			setTotalCpu(currentLoadMeasure.getTotalCpu());
+		}
+
+		// inserting object in a list
+		// the objects contains information about cpu and memory.
 		if (measureList.size() >= useAVGCounter) {
 			measureList.remove(0);
 		}
-		measureList.add(currentLoadMeasure); //add new object in the list
+		measureList.add(currentLoadMeasure); // add new object in the list
 		this.calculateLoadAverage();
 	}
 	
@@ -50,69 +52,64 @@ public class LoadMeasureAvgSigar {
 	private void calculateLoadAverage() {
       
 		int size = measureList.size();
+
+		long totalMemoryTemp = 0;
+		long freeMemoryTemp = 0;
+		long useMemoryTemp = 0;
 		
 		double cpuSystemTimeTemp = 0;
 		double cpuUserTimeTemp = 0;
 		double cpuIdleTimeTemp = 0;
 		double cpuWaitTimeTemp = 0;
-		long combineTimeTemp = 0;
-		long totalMemoryTemp = 0;
-		long freeMemoryTemp = 0;
-		long useMemoryTemp = 0;
+		double cpuCombinedTimeTemp = 0;
 
 		//calculating cpu and memory average value
 		for (int i = 0; i < size; i++) {
 
 			// average cpu user time
 			cpuSystemTimeTemp += measureList.get(i).getCpuSystemTime();
-
 			// average cpu system time
 			cpuUserTimeTemp += measureList.get(i).getCpuUserTime();
-
 			// average cpu idel time
 			cpuIdleTimeTemp += measureList.get(i).getCpuIdleTime();
-
 			// average cpu wait time
 			cpuWaitTimeTemp += measureList.get(i).getCpuWaitTime();
-
 			// average cpu combine time
-			combineTimeTemp += measureList.get(i).getCombineTime();
+			cpuCombinedTimeTemp += measureList.get(i).getCpuCombinedTime();
 
 			// average free memory time
 			freeMemoryTemp += measureList.get(i).getFreeMemory();
-
 			// average used memory time
 			useMemoryTemp += measureList.get(i).getUseMemory();
-
 			// average total memory time
 			totalMemoryTemp += measureList.get(i).getTotalMemory();
+			
 		}	
 		
 		//setting the values of memory and cpu
-		this.setCombineTime(combineTimeTemp/size);
 		this.setCpuIdleTime(cpuIdleTimeTemp/size);
 		this.setCpuSystemTime(cpuSystemTimeTemp/size);
 		this.setCpuWaitTime(cpuWaitTimeTemp/size);
+		this.setCpuUserTime(cpuUserTimeTemp/size);
+		this.setCpuCombinedTime(cpuCombinedTimeTemp/size);
+		
 		this.setFreeMemory(freeMemoryTemp/size);
 		this.setUseMemory(useMemoryTemp/size);
 		this.setTotalMemory(totalMemoryTemp/size);
 		
 	}
 
-	//Loadaverage information
-	//////////////////////////////////////////
 	/**
 	 * @param cpuSystemTime the cpuSystemTime to set
 	 */
 	public void setCpuSystemTime(double cpuSystemTime) {
 		this.cpuSystemTime = cpuSystemTime;
 	}
-
 	/**
 	 * @return the cpuSystemTime
 	 */
 	public double getCpuSystemTime() {
-		return cpuSystemTime*100;
+		return cpuSystemTime;
 	}
 
 	/**
@@ -121,12 +118,11 @@ public class LoadMeasureAvgSigar {
 	public void setCpuUserTime(double cpuUserTime) {
 		this.cpuUserTime = cpuUserTime;
 	}
-
 	/**
 	 * @return the cpuUserTime
 	 */
 	public double getCpuUserTime() {
-		return cpuUserTime*100;
+		return cpuUserTime;
 	}
 
 	/**
@@ -135,12 +131,11 @@ public class LoadMeasureAvgSigar {
 	public void setCpuWaitTime(double cpuWaitTime) {
 		this.cpuWaitTime = cpuWaitTime;
 	}
-
 	/**
 	 * @return the cpuWaitTime
 	 */
 	public double getCpuWaitTime() {
-		return cpuWaitTime*100;
+		return cpuWaitTime;
 	}
 
 	/**
@@ -149,26 +144,24 @@ public class LoadMeasureAvgSigar {
 	public void setCpuIdleTime(double cpuIdleTime) {
 		this.cpuIdleTime = cpuIdleTime;
 	}
-
 	/**
 	 * @return the cpuIdleTime
 	 */
 	public double getCpuIdleTime() {
-		return cpuIdleTime*100;
+		return cpuIdleTime;
 	}
 
 	/**
 	 * @param d the combineTime to set
 	 */
-	public void setCombineTime(double d) {
-		this.combineTime = (long) d;
+	public void setCpuCombinedTime(double d) {
+		this.cpuCombinedTime = d;
 	}
-
 	/**
 	 * @return the combineTime
 	 */
-	public long getCombineTime() {
-		return combineTime*100;
+	public double getCpuCombinedTime() {
+		return cpuCombinedTime;
 	}
 
 	/**
@@ -177,12 +170,11 @@ public class LoadMeasureAvgSigar {
 	public void setTotalMemory(long totalMemory) {
 		this.totalMemory = totalMemory;
 	}
-
 	/**
 	 * @return the totalMemory
 	 */
 	public long getTotalMemory() {
-		return totalMemory/1048576; //memory in MB
+		return totalMemory; 
 	}
 
 	/**
@@ -191,12 +183,11 @@ public class LoadMeasureAvgSigar {
 	public void setFreeMemory(long freeMemory) {
 		this.freeMemory = freeMemory;
 	}
-
 	/**
 	 * @return the freeMemory
 	 */
 	public long getFreeMemory() {
-		return freeMemory/1048576; //memory in MB
+		return freeMemory; 
 	}
 
 	/**
@@ -205,12 +196,11 @@ public class LoadMeasureAvgSigar {
 	public void setUseMemory(long useMemory) {
 		this.useMemory = useMemory;
 	}
-
 	/**
 	 * @return the useMemory
 	 */
 	public long getUseMemory() {
-		return useMemory/1048576; //memory in MB
+		return useMemory;
 	}
 	/**
 	 * @return the vendor
@@ -218,7 +208,6 @@ public class LoadMeasureAvgSigar {
 	public String getVendor() {
 		return vendor;
 	}
-
 	/**
 	 * @param vendor the vendor to set
 	 */
@@ -232,7 +221,6 @@ public class LoadMeasureAvgSigar {
 	public long getMhz() {
 		return Mhz;
 	}
-
 	/**
 	 * @param mhz the mhz to set
 	 */
@@ -246,7 +234,6 @@ public class LoadMeasureAvgSigar {
 	public String getModel() {
 		return model;
 	}
-
 	/**
 	 * @param model the model to set
 	 */
@@ -260,7 +247,6 @@ public class LoadMeasureAvgSigar {
 	public void setTotalCpu(int totalCpu) {
 		this.totalCpu = totalCpu;
 	}
-
 	/**
 	 * @return the totalCpu
 	 */

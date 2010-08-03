@@ -20,9 +20,6 @@ import distribution.ontology.*;
 
 public class SlaveServerAgent extends Agent {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -3947798460986588734L;
 	
 	private Ontology ontology = AgentGUI_DistributionOntology.getInstance();

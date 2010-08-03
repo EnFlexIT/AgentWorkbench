@@ -16,16 +16,12 @@
  * USA.
  */
 
-package load;
+package mas.service.load;
 
+import org.hyperic.sigar.CpuInfo;
 import org.hyperic.sigar.CpuPerc;
 import org.hyperic.sigar.Mem;
-import org.hyperic.sigar.Sigar;
-import org.hyperic.sigar.SigarLoader;
 import org.hyperic.sigar.SigarException;
-import org.hyperic.sigar.Swap;
-import org.hyperic.sigar.cmd.CpuInfo;
-import org.hyperic.sigar.cmd.Shell;
 import org.hyperic.sigar.cmd.SigarCommandBase;
 
 /**
@@ -33,122 +29,90 @@ import org.hyperic.sigar.cmd.SigarCommandBase;
  */
 public class LoadMeasureSigar extends SigarCommandBase {
 	
-
-	// Instance variables for CPU
-	// ////////////////////////////////
 	private String vendor;
-	private long Mhz;
 	private String model;
 	private int totalCpu;
+	private long Mhz;	
+	
+	private long totalMemory; 	// KB
+	private long freeMemory;	// KB
+	private long useMemory;		// KB
+	
 	private double cpuSystemTime;
 	private double cpuUserTime;
 	private double cpuIdleTime;
 	private double cpuWaitTime;
-	private long combineTime;
-	private long totalMemory;
-	private long freeMemory;
-	private long useMemory;
+	private double cpuCombinedTime;
 	
+	private int round2 = 4;
+	private double round2factor = Math.pow(10, round2);
 
-	// Object variables for CPU
-	// ////////////////////////////////
-    public Mem mem;
-    public CpuPerc cpuPerc;
-    public org.hyperic.sigar.CpuInfo[] cpuInfo;
-	
-    public boolean displayTimes = true;
+    private CpuInfo[] cpuInfos;
+    private Mem memory;
+    private CpuPerc cpuPerc;
     
-    public LoadMeasureSigar(Shell shell) {
-        super(shell);
-        try {
-			mem = this.sigar.getMem();
-			cpuPerc = this.sigar.getCpuPerc();
-		} catch (SigarException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    }
-
+    
     public LoadMeasureSigar() {
         super();
         try {
-			mem = this.sigar.getMem();
-			cpuPerc = this.sigar.getCpuPerc();
+     		// --- getting cpu information ----------------
+			this.outputCpu(); 
+			// --- get the first measurments --------------
+			this.measureLoadOfSystem();
 			
 		} catch (SigarException e) {
-			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
     }
     
-    
-	 // Internal implementation methods
-    //////////////////////////////////
-	
-    public String getUsageShort() {
-        return "Display cpu information";
-    }
-    
-    private static Long format(long value) {
-        return new Long(value / 1024);
-    }
-    
-    private void outputMem() throws SigarException{
-  	  Mem mem   = this.sigar.getMem();
-
-  	  //setting memory values
-  	  setFreeMemory(mem.getFree());
-  	  setTotalMemory(mem.getTotal());
-  	  setUseMemory(mem.getUsed());
-  	  
-  	
-  }
-
-    private void output(CpuPerc cpu) {
-    	
-        //set cpu load information
-    	setCpuUserTime(cpu.getUser());
-    	setCpuSystemTime(cpu.getSys());
-    	setCpuIdleTime(cpu.getIdle());
-    	setCpuWaitTime(cpu.getWait());
-    	setCombineTime(cpu.getCombined());
-
-    }
+	public void measureLoadOfSystem() throws Exception {
+		outputTimes(); 	// --- timing informations --------
+		outputMem();	// --- memory information ---------
+	}
 
 	public void outputCpu() throws SigarException {
-        org.hyperic.sigar.CpuInfo[] infos =
-            this.sigar.getCpuInfoList();
-
-        CpuPerc[] cpus =
-            this.sigar.getCpuPercList();
-
-      //  CpuTimer cpuTimer[] = this.sigar.getCpuPercList();
-        org.hyperic.sigar.CpuInfo info = infos[0];
-        long cacheSize = info.getCacheSize();
+        // --- setting cpu-Information --------------------
+		cpuInfos = this.sigar.getCpuInfoList();
+		CpuInfo info = cpuInfos[0];
         setVendor(info.getVendor());
         setModel(info.getModel());
         setMhz(info.getMhz());
         setTotalCpu(info.getTotalCores());
-     
     }
+
+    private void outputMem() throws SigarException{
+    	// --- setting memory values ----------------------
+    	memory = this.sigar.getMem();
+    	setFreeMemory(memory.getFree());
+    	setTotalMemory(memory.getTotal());
+    	setUseMemory(memory.getUsed());
+    }
+
+    private void outputTimes() throws SigarException {
+        // --- set cpu load information -------------------
+    	cpuPerc = this.sigar.getCpuPerc();
+    	this.setCpuUserTime(cpuPerc.getUser());
+    	this.setCpuSystemTime(cpuPerc.getSys());
+    	this.setCpuIdleTime(cpuPerc.getIdle());
+    	this.setCpuCombinedTime(cpuPerc.getCombined());
+    	this.setCpuWaitTime(cpuPerc.getWait());
+    }
+
+	
 
 	@Override
 	public void output(String[] arg0) throws SigarException {
-		// TODO Auto-generated method stub
+		
 	}
 	
-	  public void measureLoadOfSystem() throws Exception {
-  		outputMem(); //memory information
-  		outputCpu(); //cpu information
-  }
-
 	/**
 	 * @param vendor the vendor to set
 	 */
 	public void setVendor(String vendor) {
 		this.vendor = vendor;
 	}
-
 	/**
 	 * @return the vendor
 	 */
@@ -162,7 +126,6 @@ public class LoadMeasureSigar extends SigarCommandBase {
 	public void setMhz(long mhz) {
 		Mhz = mhz;
 	}
-
 	/**
 	 * @return the mhz
 	 */
@@ -176,7 +139,6 @@ public class LoadMeasureSigar extends SigarCommandBase {
 	public void setModel(String model) {
 		this.model = model;
 	}
-
 	/**
 	 * @return the model
 	 */
@@ -190,12 +152,11 @@ public class LoadMeasureSigar extends SigarCommandBase {
 	public void setTotalCpu(int totalCpu) {
 		this.totalCpu = totalCpu;
 	}
-
 	/**
 	 * @return the totalCpu
 	 */
 	public int getTotalCpu() {
-		return totalCpu*100;
+		return totalCpu;
 	}
 
 	/**
@@ -204,12 +165,14 @@ public class LoadMeasureSigar extends SigarCommandBase {
 	public void setCpuSystemTime(double cpuSystemTime) {
 		this.cpuSystemTime = cpuSystemTime;
 	}
-
 	/**
 	 * @return the cpuSystemTime
 	 */
 	public double getCpuSystemTime() {
-		return cpuSystemTime*100;
+		return cpuSystemTime;
+	}
+	public double getCpuSystemTimeRounded() {
+		return doubleRound(cpuSystemTime);
 	}
 
 	/**
@@ -218,12 +181,14 @@ public class LoadMeasureSigar extends SigarCommandBase {
 	public void setCpuUserTime(double cpuUserTime) {
 		this.cpuUserTime = cpuUserTime;
 	}
-
 	/**
 	 * @return the cpuUserTime
 	 */
 	public double getCpuUserTime() {
-		return cpuUserTime*100;
+		return cpuUserTime;
+	}
+	public double getCpuUserTimeRounded() {
+		return doubleRound(cpuUserTime);
 	}
 
 	/**
@@ -232,12 +197,14 @@ public class LoadMeasureSigar extends SigarCommandBase {
 	public void setCpuWaitTime(double cpuWaitTime) {
 		this.cpuWaitTime = cpuWaitTime;
 	}
-
 	/**
 	 * @return the cpuWaitTime
 	 */
 	public double getCpuWaitTime() {
-		return cpuWaitTime*100;
+		return cpuWaitTime;
+	}
+	public double getCpuWaitTimeRounded() {
+		return doubleRound(cpuWaitTime);
 	}
 
 	/**
@@ -246,26 +213,30 @@ public class LoadMeasureSigar extends SigarCommandBase {
 	public void setCpuIdleTime(double cpuIdleTime) {
 		this.cpuIdleTime = cpuIdleTime;
 	}
-
 	/**
 	 * @return the cpuIdleTime
 	 */
 	public double getCpuIdleTime() {
-		return cpuIdleTime*100;
+		return cpuIdleTime;
+	}
+	public double getCpuIdleTimeRounded() {
+		return doubleRound(cpuIdleTime);
 	}
 
 	/**
 	 * @param d the combineTime to set
 	 */
-	public void setCombineTime(double d) {
-		this.combineTime = (long) d;
+	public void setCpuCombinedTime(double d) {
+		this.cpuCombinedTime = d;
 	}
-
 	/**
 	 * @return the combineTime
 	 */
-	public long getCombineTime() {
-		return combineTime*100;
+	public double getCpuCombinedTime() {
+		return cpuCombinedTime;
+	}
+	public double getCpuCombineTimeRounded() {
+		return doubleRound(cpuCombinedTime);
 	}
 
 	/**
@@ -274,12 +245,11 @@ public class LoadMeasureSigar extends SigarCommandBase {
 	public void setTotalMemory(long totalMemory) {
 		this.totalMemory = totalMemory;
 	}
-
 	/**
 	 * @return the totalMemory
 	 */
 	public long getTotalMemory() {
-		return totalMemory/1048576; //memory in MB
+		return totalMemory; //memory in MB
 	}
 
 	/**
@@ -288,12 +258,11 @@ public class LoadMeasureSigar extends SigarCommandBase {
 	public void setFreeMemory(long freeMemory) {
 		this.freeMemory = freeMemory;
 	}
-
 	/**
 	 * @return the freeMemory
 	 */
 	public long getFreeMemory() {
-		return freeMemory/1048576; //memory in MB
+		return freeMemory; //memory in MB
 	}
 
 	/**
@@ -302,12 +271,21 @@ public class LoadMeasureSigar extends SigarCommandBase {
 	public void setUseMemory(long useMemory) {
 		this.useMemory = useMemory;
 	}
-
 	/**
 	 * @return the useMemory
 	 */
 	public long getUseMemory() {
-		return useMemory/1048576; //memory in MB
+		return useMemory; //memory in MB
 	}
 
+	/**
+	 * Rounds an incomming double value
+	 * @param input
+	 * @return
+	 */
+	private double doubleRound(double input) {
+		return Math.round(input * round2factor) / round2factor;
+	}
+	
+	
 }
