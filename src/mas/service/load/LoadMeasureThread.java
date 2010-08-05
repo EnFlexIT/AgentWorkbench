@@ -20,7 +20,9 @@ public class LoadMeasureThread extends Thread {
 		
 		localmsInterval = msInterval;
 		localuseN4AvgCount = useN4AvgCount;
-
+		
+		this.setName("Load Monitoring");
+		
 		global.setLoadCurrentAvg(new LoadMeasureAvgSigar(localuseN4AvgCount));
 		global.setLoadCurrentAvgJVM(new LoadMeasureAvgJVM(localuseN4AvgCount));
 

@@ -1,6 +1,7 @@
 package mas.service.load;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 public class LoadMeasureAvgJVM {
 
@@ -17,6 +18,10 @@ public class LoadMeasureAvgJVM {
     private long jvmHeapMax = 0;  			// KB
     private long jvmHeapInit = 0;  			// KB
 
+    private int jvmThreadCount = 0;
+    private Hashtable<String, Long> jvmThreadTimes = null;
+    
+    
 	public LoadMeasureAvgJVM(Integer avgCounter) {
 		useAVGCounter = avgCounter;                     //maximum length of List
 	}
@@ -44,10 +49,11 @@ public class LoadMeasureAvgJVM {
 	    long tmpJvmHeapUsed = 0;  	
 	    long tmpJvmHeapCommited = 0;  		            
 	    long tmpJvmHeapMax = 0;  			
-	    long tmpJvmHeapInit = 0;  			
-
+	    long tmpJvmHeapInit = 0; 
 	    
-		//calculating JVM memory average value
+	    int tmpJvmThreadCount = 0;
+	    
+		// --- calculating JVM memory average values ----------------
 		for (int i = 0; i < size; i++) {
 
 			tmpJvmMemoFree += measureList.get(i).getJvmMemoFree();
@@ -58,6 +64,8 @@ public class LoadMeasureAvgJVM {
 			tmpJvmHeapCommited += measureList.get(i).getJvmHeapCommited();
 			tmpJvmHeapMax += measureList.get(i).getJvmHeapMax();
 			tmpJvmHeapInit += measureList.get(i).getJvmHeapInit();
+			
+			tmpJvmThreadCount += measureList.get(i).getJvmThreadCount();
 			
 		}	
 	    
@@ -70,6 +78,7 @@ public class LoadMeasureAvgJVM {
 		jvmHeapMax = tmpJvmHeapMax / size;
 		jvmHeapInit = tmpJvmHeapInit / size;
 
+		jvmThreadCount = tmpJvmThreadCount / size;
 	}
 
 	/**
@@ -161,6 +170,33 @@ public class LoadMeasureAvgJVM {
 	 */
 	public void setJvmHeapInit(long jvmHeapInit) {
 		this.jvmHeapInit = jvmHeapInit;
+	}
+	
+
+	/**
+	 * @return the jvmThreadCount
+	 */
+	public int getJvmThreadCount() {
+		return jvmThreadCount;
+	}
+	/**
+	 * @param jvmThreadCount the jvmThreadCount to set
+	 */
+	public void setJvmThreadCount(int jvmThreadCount) {
+		this.jvmThreadCount = jvmThreadCount;
+	}
+
+	/**
+	 * @return the jvmThreadTimes
+	 */
+	public Hashtable<String, Long> getJvmThreadTimes() {
+		return jvmThreadTimes;
+	}
+	/**
+	 * @param jvmThreadTimes the jvmThreadTimes to set
+	 */
+	public void setJvmThreadTimes(Hashtable<String, Long> jvmThreadTimes) {
+		this.jvmThreadTimes = jvmThreadTimes;
 	}
 
 

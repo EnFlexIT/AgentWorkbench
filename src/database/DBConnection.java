@@ -49,8 +49,8 @@ public class DBConnection {
 				return;	
 			}
 		}
-		
 	}
+	
 	/**
 	 * Creates the required Database for the server.master-Agent
 	 * @return
@@ -89,6 +89,11 @@ public class DBConnection {
 				"url varchar(255) CHARACTER SET utf8," +
 				"jade_port int(11)," +
 				"http4mtp varchar(255) CHARACTER SET utf8," +
+				"cpu_vendor varchar(255)," +
+				"cpu_model varchar(255)," +
+				"cpu_n int(3)," +
+				"cpu_speed_mhz int(11)," +
+				"memory_total_mb int(11)," +
 				"online_since DATETIME," +
 				"last_contact_at DATETIME," +
 				"local_online_since DATETIME," +

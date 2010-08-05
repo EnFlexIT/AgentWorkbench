@@ -2,6 +2,9 @@ package mas.service.load;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
+import java.lang.management.ThreadInfo;
+import java.lang.management.ThreadMXBean;
+import java.util.Hashtable;
 
 public class LoadMeasureJVM{
 
@@ -17,8 +20,23 @@ public class LoadMeasureJVM{
     private long jvmHeapMax = 0;  			// Byte
     private long jvmHeapInit = 0;  			// Byte
 	
+    private ThreadMXBean threadXB = ManagementFactory.getThreadMXBean();
+    boolean threadMonitoringSupported = threadXB.isThreadContentionMonitoringSupported();
+    boolean threadCpuTimeSupported = threadXB.isThreadCpuTimeSupported(); 
+    private int jvmThreadCount = 0;
+    private Hashtable<String, Long> jvmThreadTimes = null;
+    
     public LoadMeasureJVM() {
-	}
+    	
+    	if (threadMonitoringSupported) {
+			threadXB.setThreadContentionMonitoringEnabled(true);
+			//System.out.println("ThreadContentionMonitoring: enabled");
+		}
+    	if (threadCpuTimeSupported) {
+    		threadXB.setThreadCpuTimeEnabled(true);
+    		//System.out.println("ThreadCpuTimeMonitoring: enabled");
+    	}
+    }
 	
 	public void measureLoadOfSystem() {
 
@@ -30,6 +48,20 @@ public class LoadMeasureJVM{
 		jvmHeapMax      = memXB.getHeapMemoryUsage().getMax();
 		jvmHeapUsed     = memXB.getHeapMemoryUsage().getUsed();
 		jvmHeapCommited = memXB.getHeapMemoryUsage().getCommitted();    
+		
+		if (threadXB.isObjectMonitorUsageSupported()) {
+			
+			jvmThreadCount = threadXB.getThreadCount();
+
+			long[] jvmThreadIDs = threadXB.getAllThreadIds();
+			ThreadInfo[] jvmThreadInfo = threadXB.getThreadInfo(jvmThreadIDs);
+			jvmThreadTimes = new Hashtable<String, Long>();
+			for (int i = 0; i < jvmThreadInfo.length; i++) {
+				String threadName = jvmThreadInfo[i].getThreadName();
+				long threadID = jvmThreadInfo[i].getThreadId();
+				jvmThreadTimes.put(threadName, threadXB.getThreadCpuTime(threadID));
+			}
+		}
 		
 	}
 
@@ -122,6 +154,32 @@ public class LoadMeasureJVM{
 	 */
 	public void setJvmHeapInit(long jvmHeapInit) {
 		this.jvmHeapInit = jvmHeapInit;
+	}
+
+	/**
+	 * @return the jvmThreadCount
+	 */
+	public int getJvmThreadCount() {
+		return jvmThreadCount;
+	}
+	/**
+	 * @param jvmThreadCount the jvmThreadCount to set
+	 */
+	public void setJvmThreadCount(int jvmThreadCount) {
+		this.jvmThreadCount = jvmThreadCount;
+	}
+
+	/**
+	 * @return the jvmThreadTimes
+	 */
+	public Hashtable<String, Long> getJvmThreadTimes() {
+		return jvmThreadTimes;
+	}
+	/**
+	 * @param jvmThreadTimes the jvmThreadTimes to set
+	 */
+	public void setJvmThreadTimes(Hashtable<String, Long> jvmThreadTimes) {
+		this.jvmThreadTimes = jvmThreadTimes;
 	}
 
 	

@@ -107,22 +107,24 @@ public class MasterServerAgent extends Agent {
 						SlaveRegister sr = (SlaveRegister) agentAction;						
 						PlatformAddress plAdd = sr.getSlaveAddress();
 						PlatformTime plTime = sr.getSlaveTime();
+						PlatformPerformance plPerf = sr.getSlavePerformance();
 						
 						Long timestamp = Long.parseLong(plTime.getTimeStampAsString() );
 						Date plDate = new Date(timestamp);						
 						
-						dbRegisterPlatform(senderAID, plAdd, plDate, true);
+						dbRegisterPlatform(senderAID, plAdd, plPerf, plDate, true);
 
 					} else if ( agentAction instanceof ClientRegister ) {
 						
 						ClientRegister cr = (ClientRegister) agentAction;						
 						PlatformAddress plAdd = cr.getClientAddress();
 						PlatformTime plTime = cr.getClientTime();
+						PlatformPerformance plPerf = cr.getClientPerformance();
 						
 						Long timestamp = Long.parseLong(plTime.getTimeStampAsString() );
 						Date plDate = new Date(timestamp);						
 						
-						dbRegisterPlatform(senderAID, plAdd, plDate, false);
+						dbRegisterPlatform(senderAID, plAdd, plPerf, plDate, false);
 						
 					} else if ( agentAction instanceof SlaveTrigger ) {
 						
@@ -167,7 +169,7 @@ public class MasterServerAgent extends Agent {
 	 * This method is used for Register Slave-Platforms
 	 * in the database - table
 	 */
-	private void dbRegisterPlatform(AID sender, PlatformAddress platform, Date time, boolean isServer) {
+	private void dbRegisterPlatform(AID sender, PlatformAddress platform, PlatformPerformance performance, Date time, boolean isServer) {
 		
 		String sqlStmt = "";
 		Timestamp sqlDate = new Timestamp(time.getTime());
@@ -181,15 +183,20 @@ public class MasterServerAgent extends Agent {
 				
 				res.last();
 				if ( res.getRow()==0 ) {
-					// --- Insert new Dataset -----------------
+					// --- Insert new dataset -----------------
 					sqlStmt = "INSERT INTO platforms SET " +
+								"contact_agent = '" + sender.getName() + "'," +
 								"platform_name = '" + platform.getIp() + ":" + platform.getPort() + "/JADE'," + 
 								"is_server = " + isServerBool + "," +
 								"ip = '" + platform.getIp() + "'," +
 								"url = '" + platform.getUrl() + "'," +
 								"jade_port = " + platform.getPort() + "," +
 								"http4mtp = '" + platform.getHttp4mtp() + "'," +
-								"contact_agent = '" + sender.getName() + "'," +
+								"cpu_vendor = '" + performance.getCpu_vendor() + "'," +
+								"cpu_model = '" + performance.getCpu_model() + "'," +
+								"cpu_n = " + performance.getCpu_numberOf() + "," +
+								"cpu_speed_mhz = " + performance.getCpu_speedMhz() + "," +
+								"memory_total_mb = " + performance.getMemory_totalMB() + "," +
 								"online_since = now()," + 
 								"last_contact_at = now()," +
 								"local_online_since = '" + sqlDate + "'," +
@@ -198,15 +205,20 @@ public class MasterServerAgent extends Agent {
 					dbConn.getSqlExecuteUpdate(sqlStmt);
 					
 				} else {
-					// --- Update Dataset ---------------------
+					// --- Update dataset ---------------------
 					sqlStmt = "UPDATE platforms SET " +
+								"contact_agent = '" + sender.getName() + "'," +
 								"platform_name = '" + platform.getIp() + ":" + platform.getPort() + "/JADE'," + 
 								"is_server = " + isServerBool + "," +
 								"ip = '" + platform.getIp() + "'," +
 								"url = '" + platform.getUrl() + "'," +
 								"jade_port = " + platform.getPort() + "," +
 								"http4mtp = '" + platform.getHttp4mtp() + "'," +
-								"contact_agent = '" + sender.getName() + "'," +
+								"cpu_vendor = '" + performance.getCpu_vendor() + "'," +
+								"cpu_model = '" + performance.getCpu_model() + "'," +
+								"cpu_n = " + performance.getCpu_numberOf() + "," +
+								"cpu_speed_mhz = " + performance.getCpu_speedMhz() + "," +
+								"memory_total_mb = " + performance.getMemory_totalMB() + "," +
 								"online_since = now()," + 
 								"last_contact_at = now()," +
 								"local_online_since = '" + sqlDate + "'," +
@@ -219,7 +231,7 @@ public class MasterServerAgent extends Agent {
 			} catch (SQLException e) {
 				e.printStackTrace();
 				dbConn.dbError.setErrNumber( e.getErrorCode() );
-				dbConn.dbError.setHead( "DB-Fehler beim Registrieren eines Slave-Servers!" );
+				dbConn.dbError.setHead( "DB-Error during registration of a Slave-Servers!" );
 				dbConn.dbError.setText( e.getLocalizedMessage() );
 				dbConn.dbError.setErr(true);
 				dbConn.dbError.show();

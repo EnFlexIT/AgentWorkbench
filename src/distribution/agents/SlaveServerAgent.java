@@ -14,9 +14,18 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.ParallelBehaviour;
 import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
+import mas.service.load.LoadMeasureSigar;
+import mas.service.load.LoadUnits;
 import network.JadeUrlChecker;
 import application.Application;
-import distribution.ontology.*;
+import distribution.ontology.AgentGUI_DistributionOntology;
+import distribution.ontology.PlatformAddress;
+import distribution.ontology.PlatformPerformance;
+import distribution.ontology.PlatformTime;
+import distribution.ontology.SlaveRegister;
+import distribution.ontology.SlaveTrigger;
+import distribution.ontology.SlaveUnregister;
+import distribution.ontology.StartRemoteContainer;
 
 public class SlaveServerAgent extends Agent {
 
@@ -28,6 +37,7 @@ public class SlaveServerAgent extends Agent {
 	private PlatformTime myPlatformTime = new PlatformTime();
 	private PlatformAddress myPlatform = new PlatformAddress();
 	private PlatformAddress mainPlatform = new PlatformAddress();
+	private PlatformPerformance myPerformance = new PlatformPerformance();
 	private AID mainPlatformAgent = null; 
 	
 	private ParallelBehaviour parBehaiv = null;
@@ -53,15 +63,24 @@ public class SlaveServerAgent extends Agent {
 		mainPlatform.setPort(myURL.getPort());
 		mainPlatform.setHttp4mtp(myURL.getJADEurl4MTP());
 		
+		// --- Set the Performance of machine -------------
+		LoadMeasureSigar sys = Application.RunInfo.getLoadCurrent();
+		myPerformance.setCpu_vendor(sys.getVendor());
+		myPerformance.setCpu_model(sys.getModel());
+		myPerformance.setCpu_numberOf(sys.getTotalCpu());
+		myPerformance.setCpu_speedMhz((int) sys.getMhz());
+		myPerformance.setMemory_totalMB( (int) LoadUnits.bytes2(sys.getTotalMemory(), LoadUnits.CONVERT2_MEGA_BYTE));
+		
 		// --- Define Receiver of local Status-Info -------
 		mainPlatformAgent = new AID("server.master" + "@" + myURL.getJADEurl(), AID.ISGUID );
 		mainPlatformAgent.addAddresses(mainPlatform.getHttp4mtp());
 		
 		// --- Send 'Register'-Information ----------------
 		SlaveRegister reg = new SlaveRegister();
-		reg.setSlaveAddress( myPlatform );
+		reg.setSlaveAddress(myPlatform);
 		myPlatformTime.setTimeStampAsString( Long.toString(System.currentTimeMillis()) ) ;
-		reg.setSlaveTime( myPlatformTime );
+		reg.setSlaveTime(myPlatformTime);
+		reg.setSlavePerformance(myPerformance);
 		this.sendMessage2MainServer(reg);
 
 		// --- Add Main-Behaiviours -----------------------

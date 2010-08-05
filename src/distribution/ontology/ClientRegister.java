@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: ClientRegister
 * @author ontology bean generator
-* @version 2010/06/30, 19:28:08
+* @version 2010/08/3, 22:33:26
 */
 public class ClientRegister implements AgentAction {
 
@@ -32,6 +32,17 @@ public class ClientRegister implements AgentAction {
    }
    public PlatformTime getClientTime() {
      return this.clientTime;
+   }
+
+   /**
+* Protege name: clientPerformance
+   */
+   private PlatformPerformance clientPerformance;
+   public void setClientPerformance(PlatformPerformance value) { 
+    this.clientPerformance=value;
+   }
+   public PlatformPerformance getClientPerformance() {
+     return this.clientPerformance;
    }
 
 }
