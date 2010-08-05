@@ -1,32 +1,18 @@
+
 package game_of_life.gui;
 
-/*
-The universe of the Game of Life is an infinite two-dimensional orthogonal grid of square cells, 
-each of which is in one of two possible states, live or dead. 
-Every cell interacts with its eight neighbors, which are the cells that are directly horizontally, 
-vertically, or diagonally adjacent. At each step in time, the following transitions occur:
+import game_of_life.agents.SimulationServiceControllerAgent;
 
-1.Any live cell with fewer than two live neighbours dies, as if caused by underpopulation.
-2.Any live cell with more than three live neighbours dies, as if by overcrowding.
-3.Any live cell with two or three live neighbours lives on to the next generation.
-4.Any dead cell with exactly three live neighbours becomes a live cell.
-The initial pattern constitutes the seed of the system. The first generation is created by applying the 
-above rules simultaneously to every cell in the seed—births and deaths happen simultaneously, 
-and the discrete moment at which this happens is sometimes called a tick 
-(in other words, each generation is a pure function of the one before). 
-The rules continue to be applied repeatedly to create further generations.
- */
-
-import game_of_life.agent_controller.agentController;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.lang.management.ManagementFactory;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.HashMap;
 import java.util.Hashtable;
-
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -36,312 +22,219 @@ import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
-import application.Application;
 
 public class GameOfLifeGUI extends JInternalFrame implements ActionListener {
-
-
-	public static int counterAgent;
-	public static int testCounter;
-	public static int totalMessagesReceived;
-	public int totalNumberOfAgent;
-	public boolean finished;
-	int deadlock;
-
-	// size in pixel of every label
-	static final int objectHeigth = 25;
-	static final int objectWidth = 30;
-	static final Dimension dim = new Dimension(objectWidth, objectHeigth);
-
-	// the slider for the speed
-	JSlider slider = new JSlider(0, 5000); // 0 to 5000 milliseconds (5 seconds)
-
-	// state of the game (running or pause)
-	public static boolean gameRunning = false;
 	
-	public static agentController agentController;
-
-	// the cells labels
-	public GameOfLifeObject[][] objectController;
+	private static final long serialVersionUID = -3527934254643712099L;
+	//--------- coordinates or number of agents -------------------------------------------
+	public int nbRow;
+	public int nbCol;
+	//--------- Simulation environment ----------------------------------------------------
+	private SimulationServiceControllerAgent controllerAgent = null;
 	
-	// timer that fires the next feneration
+	//public HashMap<String, Integer> localEnvModelInput = new HashMap<String, Integer>();
+	public HashMap<String, Integer> localEnvModelOutput = new HashMap<String, Integer>();
+	// ------- state of the game (running or pause)----------------------------------------
+	public boolean gameRunning = false;
+	public boolean gameReset = false;
+	
+	private final Color[] color = {Color.LIGHT_GRAY, Color.BLUE};
+	// ------- size in pixel of every label ------------------------------------------------
+	private final int size = 15;
+	private final Dimension dim = new Dimension(size, size);
+
+    // ------- the cells labels ------------------------------------------------------------
+	private LifeLabel[][] label;
+	// ------- timer that fires the next generation ----------------------------------------
 	private Timer timer;
-	public static JPanel panel;
-
-	// generation counter
-	private int generation = 0;
-	private JLabel generationLabel = new JLabel("Generation: 0");
-
-	// the 3 buttons
-	private JButton bReset= new JButton("reset"), bStart = new JButton("Start"),bStop = new JButton("Stop");
-
-	public int nbRow, nbCol;
-
-	public GameOfLifeGUI(int nbRow, int nbCol, GameOfLifeObject controllers[][]) {
-
-		/*
-		 * The extended constructor JFrame has been Overwrite The new name is
-		 * GameOfLife
-		 */
-		super("GameOfLife");
-
-		//Frame coordinates
-		this.nbCol = nbCol;
-		this.nbRow = nbRow;
-
-		this.objectController = controllers;
+	// ------- generation counter ----------------------------------------------------------
+	public JLabel generationLabel = new JLabel("Generation: 0");
+	// ------- buttons for controlling the simulation --------------------------------------
+	private JButton bClear = new JButton("Clear"), 
+	                bPause = new JButton("Pause"), 
+	                bStart = new JButton("Start");
+	// ------- the slider for the speed -----------------------------------------------------
+	public JSlider slider = new JSlider(0, 3000);	// 0 to 3000 milliseconds (5 seconds)
+	// ------- control the marking of the cell ----------------------------------------------
+	private boolean mouseDown = false;
+	
+	public GameOfLifeGUI(int nbRow, int nbCol, SimulationServiceControllerAgent contrAgent) {
 		
-		// What should be done when user initiates close on the frame
+		super("GameOfLife");
+		// ------ coordinates of number of agents -------------------------------------------
+		this.nbRow = nbRow;
+		this.nbCol = nbCol;
+		this.controllerAgent = contrAgent;
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-		// panel in the center with the labels
-		// 1 & 1 are the gaps between the
-		panel = new JPanel(new GridLayout(nbRow, nbCol, 2, 2));
+		// ---- create the lables on the frame ---------------------------------------------
+		label = new LifeLabel[nbRow][nbCol];
+		for(int r = 0; r < nbRow; r++) {
+			for(int c = 0; c < nbCol; c++) {
+				String name = (r+"&"+c);
+				label[r][c] = new LifeLabel(name);
+			}
+		}
+		// ---- centralize panel with the labels, 1 & 1 are the gaps between the lables ----  
+		JPanel panel = new JPanel(new GridLayout(nbRow, nbCol, 1, 1));
 		panel.setBackground(Color.BLACK);
 		panel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
-	
-		
-		
-		// add each label (not the one on the border) to the panel and 
-		//add to each of them its neighbours
+		// ---- add each label to the panel and add to each of them its neighbours ---------
 		for(int r = 0; r < nbRow; r++) {
 			for(int c = 0; c < nbCol; c++) {
-				
-				if(this.objectController[r][c]!=null){
-					
-				panel.add(this.objectController[r][c]);
-				
-				}
-				else {System.out.println(" Nullllll Object "+r+"&"+c);}
-				
+				panel.add(label[r][c]);
 			}
 		}
-		
-		// now the panel can be added
+		// ---- panel can now be added -----------------------------------------------------
 		add(panel, BorderLayout.CENTER);
-
-		// the bottom panel with the buttons the generation label and the slider
-		// this panel is formed grid panels
-		panel = new JPanel(new GridLayout(1, 3));
-
-		// another panel for the 3 buttons
-		JPanel buttonPanel = new JPanel(new GridLayout(1, 3));
-		bReset.addActionListener(this);
-		buttonPanel.add(bReset);
 		
+		// --- Create a new buffered JPanel with the specified layout manager --------------  
+		panel = new JPanel(new GridLayout(1,3));
+		
+		// ---- another panel for the 3 buttons --------------------------------------------
+		JPanel buttonPanel = new JPanel(new GridLayout(1,3));
+		bClear.addActionListener(this);
+		buttonPanel.add(bClear);
+		bPause.addActionListener(this);
+		bPause.setEnabled(false);			// game is pause the pause button is disabled
+		buttonPanel.add(bPause);
 		bStart.addActionListener(this);
 		buttonPanel.add(bStart);
-		
-		bStop.addActionListener(this);
-		buttonPanel.add(bStop);
-		
-		// add the 3 buttons to the panel
+		// ---- add the 3 buttons to the panel ---------------------------------------------
 		panel.add(buttonPanel);
-		// the generation label
+		// ---- the generation label -------------------------------------------------------
 		generationLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		panel.add(generationLabel);
-		// the slider
+		// ---- slider for regulating the time ---------------------------------------------
 		slider.setMajorTickSpacing(1000);
 		slider.setMinorTickSpacing(250);
 		slider.setPaintTicks(true);
-
-		// the labels for the Slider
+		
+		// ---- the labels for the Slider --------------------------------------------------
 		Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
-
-		for (int i = 0; i <= 5; i++) {
-
-			labelTable.put(new Integer(i * 1000), new JLabel("" + i));
-
-		}
 		
-		slider.setLabelTable(labelTable);
+		for(int i = 0; i <= 3; i++) {
+			labelTable.put( new Integer( i * 1000 ), new JLabel("" + i) );
+		}
+		slider.setLabelTable( labelTable );
 		slider.setPaintLabels(true);
-
 		panel.add(slider);
-		// in the JFrame
+		//------ add componets into the JFrame ----------------------------------------------
 		add(panel, BorderLayout.SOUTH);
-
-		// put the frame on
-		setLocation(30, 30);
-
-		// Forcing window to fit to layout
+		// ----- put the frame to the specified location ------------------------------------
+		setLocation(20, 20);
+		// ----- force window to pass to the specified size ---------------------------------
 		pack();
+		//
 		setVisible(true);
-
-		
-		//security variables
-		counterAgent = 0;
-		testCounter = 0;
-		totalNumberOfAgent =( nbRow * nbCol ); 
-        finished = true;
-        deadlock = 0;
-        totalMessagesReceived=0;
-        
-        
-		// start the thread that run the cycles of life
-		timer = new Timer(5000 - slider.getValue(), this);
-
+		// ---- timer for controlling simulation --------------------------------------------
+		timer = new Timer(3000 - slider.getValue(), this);
 	}
-
-	// called by the Timer and the JButtons
-	// this methode is constantly running
-	public synchronized void actionPerformed(ActionEvent e) {
-
-		// test the JButtons first
-		Object obj = e.getSource();
-
-		// the clear button
-		if (obj == bReset) {
-
-			timer.stop(); // stop timer
-			gameRunning = false; // flag gamme not running
-			bStart.setEnabled(true); // enable go button
-			bReset.setEnabled(true); // disable clear button
-			bReset.setEnabled(false);
-			// clear all cells
+	// ------- Invoked when an action occurs. ----------------------------------------------- 
+	public synchronized void actionPerformed(ActionEvent event) {
+		// ----- test the JButtons first ----------------------------------------------------
+		Object object = event.getSource();
+		
+		// ----- clear button all active bottons --------------------------------------------
+		if(object == bClear) {
+			timer.stop();					// stop timer
+			gameRunning = false;			// flag gamme not running
+			bPause.setEnabled(false);		// disable pause button
+			bStart.setEnabled(true);			// enable go button
+			controllerAgent.doSuspend();
 			
-			// reset generation number and its label
-			generation = 0;
+			// ------ clear all cells -------------------------------------------------------
+			for(int r = 0; r < nbRow; r++) {
+				for(int c = 0; c < nbCol; c++) {
+					label[r][c].clear();
+				}
+			}
+			// --- reset generation ---------------------------------------------------------
 			generationLabel.setText("Generation: 0");
-
 			return;
 		}
-
-		// the stop button
-		if (obj == bStop) {
-			//startGOL();
-			timer.stop(); // stop timer
-			//finished = false;//start the broadcasting process
-			gameRunning = false; // flag not running
-			bStart.setEnabled(true); // enable go button
-			bStop.setEnabled(true);
-
+		// ------ pause the simulation process -----------------------------------------------
+		if(object == bPause) {
+			timer.stop();					// stop timer
+			gameRunning = false;			// flag not running
+			bPause.setEnabled(false);		// disable myself
+			bStart.setEnabled(true);			// enable go button
+			controllerAgent.doSuspend();
 			return;
-
-		}	
-	
-		// the start button
-		if (obj == bStart) {
-			
-			bStart.setEnabled(false); // disable myself
-			bReset.setEnabled(true);
-			bStop.setEnabled(true);
-			
-			//finished = true;//start the broadcasting process
-			gameRunning = true; // flag game is running
-			
-			timer.setDelay(5000 - slider.getValue());
-			timer.start();
+		}
+		// ----- start the simulation process -------------------------------------------------
+		if(object == bStart) {
+			bPause.setEnabled(true);				// enable pause button
+			bStart.setEnabled(false);					// disable myself
+			gameRunning = true;						// flag game is running
+			controllerAgent.doActivate();
 			return;
-
 		}
-
-		// not a JButton so it is the timer
-		// set the delay for the next time
-		timer.setDelay(5000 - slider.getValue());
-
-		
-		// if the game is not running wait for next time
-		if (!gameRunning)
-			return;
-		
-
-		try {
-			
-		generationLabel.setText("Generation: " + generation);
-         
-		//to ensure that all agents have finished operating
-		if(finished){
-			
-			// broadcast current state of Agent to neighbours
-			agentController.broadcastStartGameOfLife();
-		
-			//to ensure that all agents have finished operating
-			finished = false;
-		}
-		
-	
-		
-		//blocking further broadcast to ensure that all agents have finished operating
-		if(totalNumberOfAgent <= (counterAgent+deadlock) ){
-		
-			++generation;
-			counterAgent =0;
-			deadlock=0;
-			
-			// change from grey to blue depending on current status
-			agentController.broadcastChangeStatus();
-			
-			finished=true;
-		}
-			
-		//variable to prevent deadlock: replacess lost messages
-		deadlock++;
-
-		} catch (Exception e2) {
-			System.out.println(" Problems");
-		}
+		// ---- the delay in milliseconds ----------------------------------------------------
+		timer.setDelay(3000 - slider.getValue());
 	}
-
-	
-	public void startRandom() {
-
-		for (int r = 0; r < nbRow; r++) {
-
-			for (int c = 0; c < nbCol; c++) {
-
-				// name of agent
-				String AgentName = r + "&" + c;
-
-				// verify if agent is active and deactivate agent
-				if (!Application.JadePlatform.jadeAgentIsRunning(AgentName)) {
-
-					if((int)(Math.random()*100)%2==0){
-					
-						//  Object [] obj = setMyNeighbours( r,  c);
-							
-						Application.JadePlatform.jadeAgentStart(r+"&"+c,
-									"game_of_life.gameOfLifeAgent", null,Application.JadePlatform.MASmc
-											.getName());
-							objectController[r][c].setBackground(1);
-							objectController[r][c].getAgentGOL().setMyCurrentState(1);
-					}
-					else {
-	
-						  //Object [] obj = setMyNeighbours( r,  c);
-							
-						Application.JadePlatform.jadeAgentStart(r+"&"+c,
-									"game_of_life.gameOfLifeAgent", null,Application.JadePlatform.MASmc
-											.getName());
-					
-					    objectController[r][c].setBackground(0);
-					    objectController[r][c].getAgentGOL().setMyCurrentState(0);
-					    
-					}
-
-				}
+	public void updateGUI(HashMap<String, Integer> localEnv){
+		for(int r = 0; r < nbRow; r++) {
+			for(int c = 0; c < nbCol; c++) {
+				int value = localEnv.get(r+"&"+c);
+				label[r][c].updateState(value);
 			}
 		}
+		this.repaint();
 	}
+	// ---- A class that extends JLabel and listens mouse events ------------------------------ 
+	class LifeLabel extends JLabel implements MouseListener {
+		private static final long serialVersionUID = -3057761904128267595L;
+		private int state;
+		private String name; 
+		LifeLabel(String name) {
+			state = 0;			// Dead
+			setOpaque(true);				// so color will be showed
+			setBackground(color[0]);
+			addMouseListener(this);			// to select new LIVE cells
+			this.setPreferredSize(dim);
+			this.name = name;
+		}
+		// ----- for changing state of lables -------------------------------------------------
+		void updateState(int state) {
+			this.state = state;
+				setBackground(color[state]);
+		}
 
-
-	public void resetAll() {
-
-		for (int r = 0; r < nbRow; r++) {
-			for (int c = 0; c < nbCol; c++) {
-
-					try {
-
-						objectController[r][c].getAgentGOL().resetAll();
-
-					} catch (Exception e) {
-
-						System.out
-								.println(" Error in the process of state of Agents: "
-										+ e.getMessage());
-					}
-				}
+		// ----- called when the game is reset/clear ------------------------------------------
+		void clear() {
+				this.state = 0;
+				setBackground(color[0]);
+				localEnvModelOutput.put(name, 0);
+		}
+		@Override
+		public void mouseClicked(MouseEvent arg0) {
+		}
+		// if the mouse enter a cell and it is down we make the cell alive
+		public void mouseEntered(MouseEvent arg0) {
+			if(mouseDown) {
+				state = 1;
+				setBackground(color[1]);	
+				localEnvModelOutput.put(name, 1);
 			}
+		}
+		@Override
+		public void mouseExited(MouseEvent arg0) {
+		}
+		// --- Invoked when a mouse button has been pressed on a component --------------------- 
+		public void mousePressed(MouseEvent arg0) {
+			mouseDown = true;
+			state = 1;
+			setBackground(color[1]);
+			localEnvModelOutput.put(name, 1);
+		}
+		// ---- voked when a mouse button has been released on a component ---------------------
+		public void mouseReleased(MouseEvent arg0) {
+			mouseDown = false;
+		}
+		
+		public int getState(){
+			return state;
+		}
 	}
 }

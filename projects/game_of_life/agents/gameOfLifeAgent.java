@@ -1,265 +1,116 @@
 package game_of_life.agents;
 
-import java.lang.management.ManagementFactory;
-
-import jade.content.ContentManager;
+import java.util.HashMap;
+import java.util.Observable;
+import mas.service.SimulationService;
+import mas.service.SimulationServiceHelper;
+import mas.service.sensoring.ServiceSensor;
 import jade.content.lang.Codec;
 import jade.content.lang.sl.SLCodec;
-import jade.content.onto.Ontology;
 import jade.core.AID;
 import jade.core.Agent;
-import jade.core.PlatformID;
-import jade.core.behaviours.Behaviour;
-import jade.core.behaviours.CyclicBehaviour;
-import jade.core.behaviours.SimpleBehaviour;
-import jade.core.behaviours.TickerBehaviour;
-import jade.core.messaging.TopicManagementHelper;
-import jade.domain.DFService;
-import jade.domain.FIPAException;
-import jade.domain.FIPAAgentManagement.DFAgentDescription;
-import jade.domain.FIPAAgentManagement.SearchConstraints;
-import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.core.ServiceException;
 import jade.lang.acl.ACLMessage;
-import jade.lang.acl.MessageTemplate;
-import game_of_life.agent_distributor.loadDistributorAgent;
-import game_of_life.gui.GameOfLifeObject;
-import game_of_life.gui.GameOfLifeGUI;
-import game_of_life.ontology.Platform;
-import game_of_life.ontology.PlatformInfo;
-import game_of_life.ontology.PlatformOntology;
 
-public class gameOfLifeAgent extends Agent {
+public class gameOfLifeAgent extends Agent implements ServiceSensor {
 
-	// Constants
-	// ////////////////////////////////
-
-	// Static variables
-	// ////////////////////////////////
-
-	private long threadId;
-
-	// Instance variables
-	// ////////////////////////////////
+	private static final long serialVersionUID = 5814102967088301805L;
+	// --------- create hash table -----------------------------------------
+	HashMap<String, Integer> localEnvModel;
+	// --------------- objects variables -----------------------------------
+	private Object coordinate[];
+	// ---------------- Instance variables ---------------------------------
 	private int myCurrentState;
 	private int myNextState;
-	private int pRow, pCol; // Agent's position
-	private int recievedMessages; // total number of messages received by agent
-	private int counterNeighbour; // total number of neighbours
-	private int neighbourAlive; // Total number of neighbours alive
-	// Constructors
-	// ////////////////////////////////
-	private GameOfLifeObject gol = null; // an object of Agents controler
+	private int cRow, cCol;
+	private int length;
+	// ---------------- coding and decoding -------------------------------
+	private Codec codec = new SLCodec();
+	private AID simulationManager = null;
+	SimulationServiceHelper simHelper = null;
 
-	// DF-Information
-	private DFAgentDescription templateDf;
-	private ServiceDescription templateSd;
-	private SearchConstraints sc;
-	private ContentManager manager; // We handle contents
-	private Codec codec; // This agent speaks the SL language
-	private Ontology ontology; // This agent complies with the People ontology
+	private String[] neighbours; // array for storing neighbour
 
-	private int portNumber;
-	private String typOfMessage;
-	private String whatToDo;
-	private String platformName;
-	private String platformUrl;
-	private int currentState;
-
-	// Topic Variables
-	// ////////////////////////////////
-	// Register to messages about topic "JADE"
-	private TopicManagementHelper topicHelper;
-	private AID startGame;
-	private AID changeStatus;
-	private AID registerTopics;
-	private AID createTopics[];
-	private Object[] neighbour; // array for storing neighbour
 	protected void setup() {
-
-		// extract my neighbours
-		neighbour = getArguments();
-
-		recievedMessages = 0;
-
-		neighbourAlive = 0;
+		// --------- ini hash table ---------------------------------------
+		localEnvModel = new HashMap<String, Integer>();
 		myCurrentState = 0;
 		myNextState = 0;
+		// ----- get the arguments of agents -------------------------------
+		coordinate = getArguments();
 
+		// ---- length of the game of length -----------------------------
+		length = (Integer) coordinate[2];
+
+		// ----- create coordinates of Agents ----------------------------
+		cRow = (Integer) coordinate[0];
+		cCol = (Integer) coordinate[1];
+
+		// ------- create my neighbours -----------------------------------
+		neighbours = createNeighbours(cRow, cCol, length);
+		setNeighbours(neighbours);
+
+		// ------- Set simulation values ----------------------------------
+		SimulationServiceHelper simHelper = null;
 		try {
-			// Register to messages about topic "JADE"
-			TopicManagementHelper topicHelper = (TopicManagementHelper) getHelper(TopicManagementHelper.SERVICE_NAME);
-			startGame = topicHelper.createTopic("startGameOfLife");
-			changeStatus = topicHelper.createTopic("changeStatus");
-			topicHelper.register(startGame);
-			topicHelper.register(changeStatus);
-
-			// messages b/w game of life agents
-			// create topic about my neighbours and wait for messages from them
-			createTopics = new AID[8];
-			for (int i = 0; i < 8; i++) {
-				if (neighbour[i] != null) {
-					createTopics[i] = topicHelper
-							.createTopic((String) neighbour[i]);
-					topicHelper.register(createTopics[i]);
-				}
-
-			}
-
-			// send message to my neiboughs under this topic name
-			registerTopics = topicHelper.createTopic(getLocalName());
-
-		} catch (Exception e) {
-			System.err.println("Agent " + getLocalName()
-					+ ": ERROR registering to topic \"JADE\"");
+			simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
+			simulationManager = simHelper.getManagerAgent();
+			simHelper.addSensor(this);
+		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
+	}
 
-		try {
-
-			// index of Agent's name at possition 0
-			pRow = (Integer) neighbour[8];
-
-			// index of Agent's name at possition 2
-			pCol = (Integer) neighbour[9];
-
-			Thread.sleep(500);
-
-		} catch (Exception e) {
-			System.out.println(" Problem " + e.getMessage());
+	// ---------- Internal implementation methods --------------------------
+	// ---------- Create Neighbours of Agents ------------------------------
+	protected String[] createNeighbours(int r, int c, int length) {
+		String obj[] = new String[8];
+		// --------- Add 8 Neighbours to every Agent -----------------------
+		if (r != 0)
+			obj[0] = (r - 1) + "&" + c; // North
+		if (c != 0)
+			obj[1] = r + "&" + (c - 1); // West
+		if (c != 0 && r != length - 1)
+			obj[2] = (r + 1) + "&" + (c - 1); // South West
+		if (r != 0 && c != 0)
+			obj[3] = (r - 1) + "&" + (c - 1); // North West
+		if (r != 0 && c != length - 1)
+			obj[4] = (r - 1) + "&" + (c + 1); // North East
+		if (r != length - 1)
+			obj[5] = (r + 1) + "&" + c; // South
+		if (c != length - 1)
+			obj[6] = r + "&" + (c + 1); // East
+		if (r != length - 1 && c != length - 1)
+			obj[7] = (r + 1) + "&" + (c + 1); // South East
+	/*	System.out.println("AgentName " + getLocalName() + " Neighbours ");
+		for (int i = 0; i < obj.length; i++) {
+			System.out.print(" " + obj[i]);
 		}
-
-		// System.out.println(" Coordinates row: "+pRow+" Col "+pCol);
-
-		gol = new GameOfLifeObject(this); // an object of Agents controler
-											// created
-		loadDistributorAgent.gameOfLifeObject[pRow][pCol] = gol; // store
-																	// created
-																	// object in
-																	// an array
-
-		// Constructors
-		// ////////////////////////////////
-		manager = (ContentManager) getContentManager(); // manager for handling
-														// content
-		codec = new SLCodec();
-		ontology = PlatformOntology.getInstance();
-		getContentManager().registerLanguage(codec);
-		getContentManager().registerOntology(ontology);
-
-		// start internal implementation methods
-		// ////////////////////////////////
-		counterNeighbour = setAmountOfNeighbours(); // store total number of
-													// neibours agent is having
-
-		// start behavours of agent
-		// ////////////////////////////////
-		addBehaviour(new messageListener(this)); // behavour for listening
-													// incoming messages
-
+		System.out.println(" ");*/
+		return obj;
 	}
 
-	// Internal implementation methods
-	// ////////////////////////////////
-
-	// set the total amount of neighbours an agent is having
-	public int setAmountOfNeighbours() {
-
-		int count = 0;
-
-		for (int i = 0; i < 8; i++) {
-			if (neighbour[i] != null) {
-
-				count++;
-			}
-		}
-		return count;
-
-	}
-
-	// reset all variables used during the game of life
-	public void resetAll() {
-
-		myCurrentState = 0;
-		myNextState = 0;
-		neighbourAlive = 0;
-		gol.setBackground(0);
-
-	}
-
-	// Register the game of life service
-	public void DFRegisterAgent(DFAgentDescription dfd) {
-
-		try {
-
-			DFService.register(this, dfd);
-		} catch (FIPAException fe) {
-			fe.printStackTrace();
-		}
-	}
-
-	@Override
-	protected void takeDown() {
-		// TODO Auto-generated method stub
-		try {
-
-			DFService.deregister(this);
-
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-	}
-
-	// update my state after controlling my neighbours
-	public void updateStateOfAgent() {
-
-		int nbAlive = getNeighbourAlive();
-
+	// ---- update stateof Agent after controlling my neighbours ------------
+	public void updateStateOfAgent(int stateOfNeibours) {
+		myNextState = myCurrentState;
 		if (myCurrentState == 1) { // if alive
-
-			if (nbAlive < 2) {// 1.Any live cell with fewer than two live
-				// neighbours dies
-				myNextState = 0;
+			if (stateOfNeibours < 2) { // 1.Any live cell with fewer than two
+				myNextState = 0; // live neighbours dies
 			}
-			if (nbAlive > 3) { // 2.Any live cell with more than three live
-				// neighbours dies
-				myNextState = 0;
+			if (stateOfNeibours > 3) { // 2.Any live cell with more than three
+				myNextState = 0; // live neighbours dies
 			}
-			if (nbAlive == 2) {
-				myNextState = 1;
-			}
-		}
-		// Agent not Alive
-		else {
-			if (nbAlive == 3) { // 4.Any dead cell with exactly three live
-				// neighbours becomes a live cell
-				myNextState = 1;
+		} else { // Agent is not Alive
+			if (stateOfNeibours == 3) { // 4.Any dead cell with exactly three
+										// live
+				myNextState = 1; // neighbours becomes a live cell
 			}
 		}
-	}
-
-	// final update the state of agent (e.g grey to blue)
-	void updateAgent() {
-
-		// do the test to avoid re-setting same color for nothing
-		if (myCurrentState != myNextState) {
-
-			myCurrentState = myNextState;
-			gol.setBackground(myCurrentState);
-			setMyCurrentState(myCurrentState);
-
-		} else {
-			gol.setBackground(myCurrentState);
-		}
-		// reset Variables
-		neighbourAlive = 0;
-		gol.setFinished(true);
-		recievedMessages = 0;
+		myCurrentState = myNextState;
 	}
 
 	public void setMyCurrentState(int myS) {
-
 		this.myCurrentState = myS;
-		// gol.setBackground(myCurrentState);
 	}
 
 	public int getMyCurrentState() {
@@ -267,198 +118,72 @@ public class gameOfLifeAgent extends Agent {
 	}
 
 	public void setMyNextState(int myNS) {
-
 		this.myNextState = myNS;
-		// gol.setBackground(myCurrentState);
 	}
 
 	public int getMyNextState() {
 		return myNextState;
 	}
 
-	// Control how many active Neighbours are around me
-	public void setNeighbourAlive(int y) {
-
-		this.neighbourAlive = this.neighbourAlive + y;
-
+	// ------ array with stored numer of neighbours -----------------------
+	public void setNeighbours(String[] neighbours) {
+		this.neighbours = neighbours;
 	}
 
-	// Control how many active Neighbours are around me
-	public int getNeighbourAlive() {
-
-		return neighbourAlive;
-
-	}
-
-	// broadcasting current state of Agent to neighbours
-	public void broadcastMyStateNN() {
-		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-		// AID receiver = new AID("centerAgent", false);
-
-		try {
-
-			for (int i = 0; i < 8; i++) {
-
-				if (neighbour[i] != null) {
-
-					msg.addReceiver(new AID((String) neighbour[i],
-							AID.ISLOCALNAME));
-
-				}
-			}
-
-			msg.setLanguage(codec.getName());
-			msg.setOntology(ontology.getName());
-
-			// Sample Messages to be sand
-
-			PlatformInfo platformInfo = new PlatformInfo();
-			platformInfo.setPlatformName(getAID().getName());
-			platformInfo.setPlatformUrl("URL");
-			platformInfo.setTypOfMessage("gameOfLife");
-			platformInfo.setWhatToDo("myCurrentState");
-			platformInfo.setCurrentState(myCurrentState);
-			platformInfo.setNextState(0);
-
-			Platform comm = new Platform();
-			comm.setPlatformInfo(platformInfo);
-
-			// Fill the content of the message
-			manager.fillContent(msg, comm);
-
-			// Send the message
-			send(msg);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	// verify if AgentName is one of my neighbours
-	protected boolean checkIfNeighbour(String AgentName) {
-
-		boolean foundIt = false;
-
+	// ------------ verify state of my neighbours -------------------------
+	protected int checkStateOfMyNeighbours() {
+		int counter = 0;
+		// ------------ Look for state of the neighbours ------------------
 		for (int i = 0; i < 8; i++) {
-
-			if (AgentName.equals(neighbour[i])) {
-
-				foundIt = true;
+			if (neighbours[i] != null) {
+				counter += localEnvModel.get(neighbours[i]);
 			}
 		}
-		return foundIt;
+		return counter;
 	}
 
-	class messageListener extends CyclicBehaviour {
-
-		public messageListener(Agent a) {
-			super(a);
-		}
-
-		public void action() {
-			
-			//collect messages from the corresponding topics
-			ACLMessage msgA = myAgent.receive(MessageTemplate
-					.MatchTopic(startGame));
-			ACLMessage msgB = myAgent.receive(MessageTemplate
-					.MatchTopic(changeStatus));
-
-			ACLMessage msg[] = new ACLMessage[8];
-
-			for (int i = 0; i < 8; i++) {
-				if (createTopics[i] != null)
-					msg[i] = myAgent.receive(MessageTemplate
-							.MatchTopic(createTopics[i]));
-
+	@SuppressWarnings("unchecked")
+	@Override
+	public void update(Observable o, Object arg) {
+		if (arg.equals(SimulationService.SERVICE_UPDATE_TIME_STEP)) {
+			// --- Simulationsimpuls erhalten -----------------------------
+			try {
+				// ------- get Environment-Object-Instance ----------------
+				SimulationServiceHelper simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
+				Object simInst = simHelper.getEnvironmentInstance();
+				localEnvModel = (HashMap<String, Integer>) simInst;
+				// -------- Refresh state of agent -----------------------
+				myCurrentState = localEnvModel.get(this.getLocalName());
+				// -------- Look at the neighbours ----------------------
+				// controle the state of my neighbours
+				int stateOfNeighbours = checkStateOfMyNeighbours();
+				// -------- Decide what to do ---------------------------
+				// -------- change my state depending on my neighbours --
+				updateStateOfAgent(stateOfNeighbours);
+				// --- Send a message to the main controler about your change of
+				this.sendMessage2ManagerAgent(myCurrentState);
+			} catch (ServiceException e) {
+				e.printStackTrace();
 			}
-
-			if (msgA != null) {
-				// ACL Message to start game of life from Agent controller
-				gol.setFinished(false);
-
-				GameOfLifeGUI.counterAgent++;
-
-				// all Agents broadcast their current state
-				addBehaviour(new BroadcastCurrentState(myAgent));
-
-				// System.out.println("AgentName: "+getLocalName()+", total amount of message from AC = "+PerformAction.counterAgent);
-			} else if (msgB != null) {
-				// /ACL Message to update game of life from Agent controller
-				updateAgent();
-
-			} else if (checkMessage(msg)) {
-				//not really needed
-			}
-
-			else {
-				block();
-			}
-		}
-
-		//Controle if the message is from my neighbours
-		private boolean checkMessage(ACLMessage[] msg) {
-
-			boolean foundIt = false;
-			for (int i = 0; i < msg.length; i++) {
-				if (msg[i] != null) {
-					try {
-
-						String AgentName = msg[i].getSender().getLocalName();
-
-						if (checkIfNeighbour(AgentName)) {
-							//get the content if the message. use it to 
-							//change the state of the Agent
-							if (msg[i].getContent().equals("true")) {
-								setNeighbourAlive(1);
-							} else {
-								setNeighbourAlive(0);
-							}
-							recievedMessages++;
-
-							if (recievedMessages == counterNeighbour) {
-								//updating state of agent after recieving
-								//messages from all it's neighbours
-								updateStateOfAgent();
-
-							}
-						}
-					} catch (Exception e) {
-						// TODO: handle exception
-					}
-
-				}
-			}
-
-			return false;
 		}
 	}
 
-	// broadcast current state of Agent to neighbours
-	class BroadcastCurrentState extends Behaviour {
-
-		boolean finished = false;
-
-		public BroadcastCurrentState(Agent a) {
-			super(a);
-		}
-
-		public void action() {
-
-			ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-			msg.addReceiver(registerTopics);
-			if (getMyCurrentState() == 1) {
-				msg.setContent("true");
-			} else {
-				msg.setContent("false");
-			}
-
-				send(msg);
-
-			finished = true;
-		}
-
-		public boolean done() {
-			return finished;
-		}
+	// ------- Agent behavious ------------------------------------------
+	private boolean sendMessage2ManagerAgent(Integer newValue) {
+		// ------- Definition einer neuen 'Action' ----------------------
+		// Action act = new Action();
+		// act.setActor(getAID());
+		// act.setAction(agentAction);
+		// ------- Nachricht zusammenbauen und ...-----------------------
+		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+		msg.setSender(getAID());
+		msg.addReceiver(simulationManager);
+		msg.setLanguage(codec.getName());
+		// msg.setOntology(ontology.getName());
+		msg.setContent(newValue.toString());
+		// --- ... versenden --------------------------------------------
+		// getContentManager().fillContent(msg, act);
+		send(msg);
+		return true;
 	}
 }
