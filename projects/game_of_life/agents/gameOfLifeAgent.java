@@ -24,6 +24,7 @@ public class gameOfLifeAgent extends Agent implements ServiceSensor {
 	private int myNextState;
 	private int cRow, cCol;
 	private int length;
+	private int width;
 	// ---------------- coding and decoding -------------------------------
 	private Codec codec = new SLCodec();
 	private AID simulationManager = null;
@@ -39,15 +40,16 @@ public class gameOfLifeAgent extends Agent implements ServiceSensor {
 		// ----- get the arguments of agents -------------------------------
 		coordinate = getArguments();
 
-		// ---- length of the game of length -----------------------------
-		length = (Integer) coordinate[2];
-
 		// ----- create coordinates of Agents ----------------------------
 		cRow = (Integer) coordinate[0];
 		cCol = (Integer) coordinate[1];
 
+		// ---- length of the game of length -----------------------------
+		length = (Integer) coordinate[2];
+		width = (Integer)coordinate[3];
+
 		// ------- create my neighbours -----------------------------------
-		neighbours = createNeighbours(cRow, cCol, length);
+		neighbours = createNeighbours(cRow, cCol, length, width);
 		setNeighbours(neighbours);
 
 		// ------- Set simulation values ----------------------------------
@@ -63,7 +65,7 @@ public class gameOfLifeAgent extends Agent implements ServiceSensor {
 
 	// ---------- Internal implementation methods --------------------------
 	// ---------- Create Neighbours of Agents ------------------------------
-	protected String[] createNeighbours(int r, int c, int length) {
+	protected String[] createNeighbours(int r, int c, int length, int width) {
 		String obj[] = new String[8];
 		// --------- Add 8 Neighbours to every Agent -----------------------
 		if (r != 0)
@@ -74,19 +76,21 @@ public class gameOfLifeAgent extends Agent implements ServiceSensor {
 			obj[2] = (r + 1) + "&" + (c - 1); // South West
 		if (r != 0 && c != 0)
 			obj[3] = (r - 1) + "&" + (c - 1); // North West
-		if (r != 0 && c != length - 1)
+		if (r != 0 && c != width - 1)
 			obj[4] = (r - 1) + "&" + (c + 1); // North East
 		if (r != length - 1)
 			obj[5] = (r + 1) + "&" + c; // South
-		if (c != length - 1)
+		if (c != width - 1)
 			obj[6] = r + "&" + (c + 1); // East
-		if (r != length - 1 && c != length - 1)
+		if (r != length - 1 && c != width - 1)
 			obj[7] = (r + 1) + "&" + (c + 1); // South East
+		
 	/*	System.out.println("AgentName " + getLocalName() + " Neighbours ");
 		for (int i = 0; i < obj.length; i++) {
 			System.out.print(" " + obj[i]);
 		}
 		System.out.println(" ");*/
+		
 		return obj;
 	}
 

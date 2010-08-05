@@ -31,7 +31,7 @@ public class SimulationServiceControllerAgent extends Agent {
 	private int cRow;
 	private int cCol;
 	private int length;
-	
+	private int width;
 	// --------------- objects variables -----------------------------------
 	private Object coordinate[];
 	
@@ -86,10 +86,11 @@ public class SimulationServiceControllerAgent extends Agent {
 		for (int i = 0; i < cRow; i++) {
 			for (int j = 0; j < cCOl; j++) {
 				//----------- arguments for objects to use --------------------------------
-				Object obj[] = new Object[3];
+				Object obj[] = new Object[4];
 				obj[0] = i;
 				obj[1] = j;
-				obj[2] = length;
+				obj[2] = cRow;
+				obj[3] = cCol;
 				String agentName = i+"&"+j;		
 				Application.JadePlatform.jadeAgentStart(agentName, gameOfLifeAgent.class.getName(), obj);
 				//----------- put newly created Agent into the hash table -----------------
