@@ -144,6 +144,11 @@ public class MasterServerAgent extends Agent {
 						
 						dbUnregisterPlatform(senderAID);
 						
+					} else if ( agentAction instanceof ClientRemoteContainerRequest ) {
+
+						ClientRemoteContainerRequest crcr = (ClientRemoteContainerRequest) agentAction;
+						handleContainerRequest(crcr); // --- !!!!! ---						
+						
 					} else {
 						// --- Unknown AgentAction ------------
 						System.out.println( "----------------------------------------------------" );
@@ -264,6 +269,63 @@ public class MasterServerAgent extends Agent {
 					"currently_available = "+ dbConn.dbBool2Integer(false) + " " +
 				   "WHERE contact_agent='" + sender.getName() + "'";
 		dbConn.getSqlExecuteUpdate(sqlStmt);
+	}
+	
+	
+	private boolean handleContainerRequest( ClientRemoteContainerRequest crcr ) {
+		
+		String sqlStmt = "";
+		String slaveAgent = null;
+		String slaveAgentAddress = null;
+		AID slavePlatformAgent = null; 
+		
+		// --- Just find a machine which is available => SQL -----
+		sqlStmt = "SELECT * FROM platforms WHERE is_server=-1 and currently_available=-1";
+		ResultSet res = dbConn.getSqlResult4ExecuteQuery(sqlStmt);
+		try {
+			if (res.wasNull()) {
+				System.out.println("server.master: No server.slave was found! - Cancle Action!");
+				return false;	
+			}
+			res.next(); 	
+			slaveAgent = res.getString("contact_agent");
+			slaveAgentAddress = res.getString("http4mtp");
+			res.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		// --- Set the ReceiverAgent ----------------------
+		slavePlatformAgent = new AID(slaveAgent, AID.ISGUID );
+		slavePlatformAgent.addAddresses(slaveAgentAddress);
+		System.out.println("Inform server.slave for Remote-Container: "  + slaveAgent + " | " + slaveAgentAddress);
+		
+		// --- Send a message to its Server.Slave - Agent -
+		Action act = new Action();
+		act.setActor(this.getAID());
+		act.setAction(crcr);
+
+		// --- Nachricht zusammenbauen und ... ------------
+		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+		msg.setSender(getAID());
+		msg.addReceiver(slavePlatformAgent);
+		msg.setLanguage(codec.getName());
+		msg.setOntology(ontology.getName());
+
+		// --- ... versenden ------------------------------
+		try {
+			this.getContentManager().fillContent(msg, act);
+			this.send(msg);
+		} catch (CodecException e) {
+			e.printStackTrace();
+			return false;
+		} catch (OntologyException e) {
+			e.printStackTrace();
+			return false;
+		}		
+		return true;		
+		
 	}
 	
 }

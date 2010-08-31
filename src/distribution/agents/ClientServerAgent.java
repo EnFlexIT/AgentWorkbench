@@ -25,16 +25,18 @@ import jade.lang.acl.ACLMessage;
 import java.util.Map;
 
 import mas.service.load.LoadMeasureSigar;
+import mas.service.load.LoadMeasureThread;
 import mas.service.load.LoadUnits;
 import network.JadeUrlChecker;
 import application.Application;
 import distribution.ontology.AgentGUI_DistributionOntology;
 import distribution.ontology.ClientRegister;
+import distribution.ontology.ClientRemoteContainerRequest;
 import distribution.ontology.ClientUnregister;
 import distribution.ontology.PlatformAddress;
 import distribution.ontology.PlatformPerformance;
 import distribution.ontology.PlatformTime;
-import distribution.ontology.SlaveRegister;
+import distribution.ontology.RemoteContainerConfig;
 
 public class ClientServerAgent extends Agent {
 
@@ -79,7 +81,7 @@ public class ClientServerAgent extends Agent {
 		mainPlatform.setHttp4mtp(myURL.getJADEurl4MTP());
 		
 		// --- Set the Performance of machine -------------
-		LoadMeasureSigar sys = Application.RunInfo.getLoadCurrent();
+		LoadMeasureSigar sys = LoadMeasureThread.getLoadCurrent();
 		myPerformance.setCpu_vendor(sys.getVendor());
 		myPerformance.setCpu_model(sys.getModel());
 		myPerformance.setCpu_numberOf(sys.getTotalCpu());
@@ -121,7 +123,7 @@ public class ClientServerAgent extends Agent {
 	}
 
 	
-	private boolean sendMessage2MainServer( Concept agentAction ) {
+	private boolean sendMessage2MainServer(Concept agentAction) {
 		
 		try {
 			// --- Definition einer neuen 'Action' --------
@@ -149,6 +151,32 @@ public class ClientServerAgent extends Agent {
 			e.printStackTrace();
 			return false;
 		}
+		
+	}
+	
+	private void forwardRemoteContainerRequest(Concept agentAction) {
+		
+		// --- Request to start a new Remote-Container -----
+		ClientRemoteContainerRequest req = (ClientRemoteContainerRequest) agentAction;
+		RemoteContainerConfig remConf = req.getRemoteConfig();
+		if (remConf==null) {
+			// --- Falls keine Konfiguration vorgenommen wurde, diese nun vornehmen ---
+			String myServices = Application.JadePlatform.MASplatformConfig.getServiceListArgument();
+			String myIP = myPlatform.getIp();
+			Integer myPort = myPlatform.getPort();
+			String newContainerName = Application.JadePlatform.jadeContainerGetNewName();
+			
+			remConf = new RemoteContainerConfig();
+			remConf.setJadeServices(myServices);
+			remConf.setJadeIsRemoteContainer(true);
+			remConf.setJadeHost(myIP);
+			remConf.setJadePort(myPort.toString());
+			remConf.setJadeContainerName(newContainerName);
+			remConf.setJadeShowGUI(true);
+			
+			req.setRemoteConfig(remConf);
+		}
+		this.sendMessage2MainServer(req);
 		
 	}
 	
@@ -206,8 +234,9 @@ public class ClientServerAgent extends Agent {
 					// ------------------------------------------------------------------
 					// --- Fallunterscheidung AgentAction --- S T A R T -----------------
 					// ------------------------------------------------------------------
-					if (agentAction instanceof SlaveRegister) {
-						
+					if (agentAction instanceof ClientRemoteContainerRequest) {
+						// --- Direkt an den Server.Master weiterleiten -------
+						forwardRemoteContainerRequest(agentAction);
 						
 					} else {
 						// --- Unknown AgentAction ------------
@@ -248,7 +277,7 @@ public class ClientServerAgent extends Agent {
 				public void handle(Event event) {
 					AddedContainer aCon = (AddedContainer) event;
 					if (aCon.getContainer().getName().equalsIgnoreCase("Main-Container")==false) {
-						Application.JadePlatform.MASremoteContainer.add(aCon.getContainer());
+						Application.JadePlatform.MAS_ContainerRemote.add(aCon.getContainer());
 						//System.out.println( "Container hinzugefügt: " + aCon.getName() + " " + aCon.getContainer() + aCon );
 					}
 				}
@@ -261,7 +290,7 @@ public class ClientServerAgent extends Agent {
 				@Override
 				public void handle(Event event) {
 					RemovedContainer rCon = (RemovedContainer) event;
-					Application.JadePlatform.MASremoteContainer.remove(rCon.getContainer());
+					Application.JadePlatform.MAS_ContainerRemote.remove(rCon.getContainer());
 					//System.out.println( "Container gelöscht: " + rCon.getName() + " " + rCon.getContainer()  );
 				}
 				

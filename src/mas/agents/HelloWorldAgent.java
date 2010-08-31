@@ -1,14 +1,14 @@
 package mas.agents;
 
-import java.util.Observable;
-
 import jade.core.Agent;
 import jade.core.ServiceException;
 import jade.core.behaviours.TickerBehaviour;
+
+import java.util.Observable;
+
 import mas.service.SimulationService;
 import mas.service.SimulationServiceHelper;
 import mas.service.sensoring.ServiceSensor;
-import mas.service.time.TimeModelDiscrete;
 import mas.service.time.TimeModelStroke;
 
 /**

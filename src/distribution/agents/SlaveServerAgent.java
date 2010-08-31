@@ -15,17 +15,20 @@ import jade.core.behaviours.ParallelBehaviour;
 import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
 import mas.service.load.LoadMeasureSigar;
+import mas.service.load.LoadMeasureThread;
 import mas.service.load.LoadUnits;
 import network.JadeUrlChecker;
 import application.Application;
+import distribution.JadeRemoteStart;
 import distribution.ontology.AgentGUI_DistributionOntology;
+import distribution.ontology.ClientRemoteContainerRequest;
 import distribution.ontology.PlatformAddress;
 import distribution.ontology.PlatformPerformance;
 import distribution.ontology.PlatformTime;
+import distribution.ontology.RemoteContainerConfig;
 import distribution.ontology.SlaveRegister;
 import distribution.ontology.SlaveTrigger;
 import distribution.ontology.SlaveUnregister;
-import distribution.ontology.StartRemoteContainer;
 
 public class SlaveServerAgent extends Agent {
 
@@ -64,7 +67,7 @@ public class SlaveServerAgent extends Agent {
 		mainPlatform.setHttp4mtp(myURL.getJADEurl4MTP());
 		
 		// --- Set the Performance of machine -------------
-		LoadMeasureSigar sys = Application.RunInfo.getLoadCurrent();
+		LoadMeasureSigar sys = LoadMeasureThread.getLoadCurrent();
 		myPerformance.setCpu_vendor(sys.getVendor());
 		myPerformance.setCpu_model(sys.getModel());
 		myPerformance.setCpu_numberOf(sys.getTotalCpu());
@@ -199,8 +202,10 @@ public class SlaveServerAgent extends Agent {
 					// ------------------------------------------------------------------
 					// --- Fallunterscheidung AgentAction --- S T A R T -----------------
 					// ------------------------------------------------------------------
-					if (agentAction instanceof StartRemoteContainer) {
-						System.out.println( "Got Message ...");
+					if (agentAction instanceof ClientRemoteContainerRequest) {
+						
+						ClientRemoteContainerRequest crcr = (ClientRemoteContainerRequest) agentAction;
+						startRemoteContainer(crcr.getRemoteConfig());
 						
 					}
 					// ------------------------------------------------------------------
@@ -218,5 +223,16 @@ public class SlaveServerAgent extends Agent {
 	// --- Message-Receive-Behaiviour --- E N D ------------
 	// -----------------------------------------------------
 
+	/**
+	 * Starts a Remote-Container for given RemoteContainerConfig-Instance
+	 */
+	private void startRemoteContainer(RemoteContainerConfig rcc) {
+		
+		System.out.println("Starte Remote-Container ... ");
+		JadeRemoteStart jarest = new JadeRemoteStart(rcc);
+		jarest.start();
+		
+	}
+	
 	
 }

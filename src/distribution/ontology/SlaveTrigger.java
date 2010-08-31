@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: SlaveTrigger
 * @author ontology bean generator
-* @version 2010/08/3, 22:33:26
+* @version 2010/08/5, 16:22:27
 */
 public class SlaveTrigger implements AgentAction {
 

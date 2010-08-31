@@ -126,7 +126,7 @@ public class PlatformJadeConfig implements Serializable {
 	 * This method walks through the HashSet of configured Services and returns them as a String 
 	 * @return String
 	 */
-	private String getServiceListArgument() {
+	public String getServiceListArgument() {
 		String serviceListString = "";
 		Iterator<String> it = useServiceList.iterator();
 		while (it.hasNext()) {

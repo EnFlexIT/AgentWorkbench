@@ -8,9 +8,20 @@ import jade.core.*;
 /**
 * Protege name: PlatformPerformance
 * @author ontology bean generator
-* @version 2010/08/3, 22:33:26
+* @version 2010/08/5, 16:22:27
 */
 public class PlatformPerformance implements Concept {
+
+   /**
+* Protege name: cpu_vendor
+   */
+   private String cpu_vendor;
+   public void setCpu_vendor(String value) { 
+    this.cpu_vendor=value;
+   }
+   public String getCpu_vendor() {
+     return this.cpu_vendor;
+   }
 
    /**
 * Protege name: cpu_speedMhz
@@ -54,17 +65,6 @@ public class PlatformPerformance implements Concept {
    }
    public int getCpu_numberOf() {
      return this.cpu_numberOf;
-   }
-
-   /**
-* Protege name: cpu_vendor
-   */
-   private String cpu_vendor;
-   public void setCpu_vendor(String value) { 
-    this.cpu_vendor=value;
-   }
-   public String getCpu_vendor() {
-     return this.cpu_vendor;
    }
 
 }

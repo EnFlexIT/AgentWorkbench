@@ -4,16 +4,12 @@ package game_of_life.LBC;
 import game_of_life.ontology.Platform;
 import game_of_life.ontology.PlatformInfo;
 import game_of_life.ontology.PlatformOntology;
-import application.Application;
-
-import mas.service.load.LoadThreshold;
-
-import config.GlobalInfo;
-
-import jade.content.*;
-import jade.content.lang.*;
-import jade.content.lang.sl.*;
-import jade.content.onto.*;
+import jade.content.Concept;
+import jade.content.ContentElement;
+import jade.content.ContentManager;
+import jade.content.lang.Codec;
+import jade.content.lang.sl.SLCodec;
+import jade.content.onto.Ontology;
 import jade.content.onto.basic.Action;
 import jade.core.AID;
 import jade.core.Agent;
@@ -25,6 +21,9 @@ import jade.domain.mobility.MobilityOntology;
 import jade.domain.mobility.MoveAction;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import mas.service.load.LoadMeasureThread;
+import application.Application;
+import config.GlobalInfo;
 
 public class DynamicLoadBalancingCoodinator extends Agent {
 
@@ -133,14 +132,18 @@ public class DynamicLoadBalancingCoodinator extends Agent {
 				
 			// ---- Threshold value. CPU & Memory available
 			// ------------------------------------
-			setCpuAndMemThresholdExceeded(global.getLoadThreshold()
-					.isCpuAndMemThresholdExceeded());
-			setCurrentCpuIdleTime(global.getLoadThreshold()
-					.getCurrentCpuIdleTime());
-			setCurrentJvmMemoFree(global.getLoadThreshold()
-					.getCurrentJvmMemoFree());
+//			setCpuAndMemThresholdExceeded(global.getLoadThreshold()
+//					.isCpuAndMemThresholdExceeded());
+//			setCurrentCpuIdleTime(global.getLoadThreshold()
+//					.getCurrentCpuIdleTime());
+//			setCurrentJvmMemoFree(global.getLoadThreshold()
+//					.getCurrentJvmMemoFree());
 
+			setCpuAndMemThresholdExceeded(LoadMeasureThread.isThresholdLevelesExceeded());
+			setCurrentCpuIdleTime(LoadMeasureThread.getLoadCurrentAvg().getCpuIdleTime());
+			setCurrentJvmMemoFree(LoadMeasureThread.getLoadCurrentAvgJVM().getJvmMemoFree());
 
+			
 			// ---- Sending message about current Load of Container
 			// -----------------------------
 			// sent currentJvmMemoryFree and currentCpuIdle ( Ontology need)

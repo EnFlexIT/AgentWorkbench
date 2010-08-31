@@ -8,14 +8,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Vector;
 
-import application.Application;
-
 import mas.PlatformJadeConfig;
-import mas.service.load.LoadMeasureAvgJVM;
-import mas.service.load.LoadMeasureAvgSigar;
-import mas.service.load.LoadMeasureJVM;
-import mas.service.load.LoadMeasureSigar;
-import mas.service.load.LoadThreshold;
+import application.Application;
 
 public class GlobalInfo {
 
@@ -67,13 +61,6 @@ public class GlobalInfo {
 	private String filePropServerMasterDBName = null;
 	private String filePropServerMasterDBUser = null;
 	private String filePropServerMasterDBPswd = null;
-	
-	// --- Load-Information --------------------------------------------------
-	private LoadMeasureSigar loadCurrent = null;
-	private LoadMeasureAvgSigar loadCurrentAvg = null;
-	private LoadMeasureJVM loadCurrentJVM = null;
-	private LoadMeasureAvgJVM loadCurrentAvgJVM = null;
-	private LoadThreshold loadThreshold = null;
 	
 	// ----------------------------------------------------------------------
 	// --- Objekt-Initialisierung -------------------------------------------
@@ -543,79 +530,6 @@ public class GlobalInfo {
 	 */
 	public String getServerMasterDBPswd() {
 		return filePropServerMasterDBPswd;
-	}
-
-	// ---------------------------------------------------------
-	// --- Informations about the system-load ------------------
-	// ---------------------------------------------------------
-	/**
-	 * @param loadCurrent the loadCurrent to set
-	 */
-	public void setLoadCurrent(LoadMeasureSigar loadCurrent) {
-		this.loadCurrent = loadCurrent;
-		this.loadCurrentAvg.put(loadCurrent);
-	}
-	/**
-	 * @return the loadCurrent
-	 */
-	public LoadMeasureSigar getLoadCurrent() {
-		return loadCurrent;
-	}
-
-	/**
-	 * @param loadAvgMemLoad the loadAvgMemLoad to set
-	 */
-	public void setLoadCurrentAvg(LoadMeasureAvgSigar loadAvgMemLoad) {
-		this.loadCurrentAvg = loadAvgMemLoad;
-	}
-	/**
-	 * @return the loadAvgMemLoad
-	 */
-	public LoadMeasureAvgSigar getLoadCurrentAvg() {
-		return loadCurrentAvg;
-	}
-	
-	/**
-	 * @param loadCurrentJVM the loadCurrentJVM to set
-	 */
-	public void setLoadCurrentJVM(LoadMeasureJVM loadCurrentJVM) {
-		this.loadCurrentJVM = loadCurrentJVM;
-		this.loadCurrentAvgJVM.put(loadCurrentJVM);
-	}
-	/**
-	 * @return the loadCurrentJVM
-	 */
-	public LoadMeasureJVM getLoadCurrentJVM() {
-		return loadCurrentJVM;
-	}
-	
-	/**
-	 * @param loadCurrentAvgJVM the loadCurrentAvgJVM to set
-	 */
-	public void setLoadCurrentAvgJVM(LoadMeasureAvgJVM loadCurrentAvgJVM) {
-		this.loadCurrentAvgJVM = loadCurrentAvgJVM;
-	}
-	/**
-	 * @return the loadCurrentAvgJVM
-	 */
-	public LoadMeasureAvgJVM getLoadCurrentAvgJVM() {
-		return loadCurrentAvgJVM;
-	}
-
-
-	/**
-	 * @param loadThreshold the loadThreshold to set
-	 */
-	public void setLoadThreshold(LoadThreshold loadThreshold) {
-		this.loadThreshold = loadThreshold;
-	}
-
-
-	/**
-	 * @return the loadThreshold
-	 */
-	public LoadThreshold getLoadThreshold() {
-		return loadThreshold;
 	}
 
 }

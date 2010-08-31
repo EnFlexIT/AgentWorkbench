@@ -13,6 +13,7 @@ import jade.wrapper.State;
 
 import java.awt.Cursor;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
@@ -31,17 +32,19 @@ public class Platform extends Object {
 	 */
 	public static Runtime MASrt;
 	public static AgentContainer MASmc;
-	public static Vector<AgentContainer> MAScontainer = new Vector<AgentContainer>();
+	public static Vector<AgentContainer> MAS_ContainerLocal = new Vector<AgentContainer>();
+	public static Vector<ContainerID> MAS_ContainerRemote = new Vector<ContainerID>();
+	
 	public PlatformJadeConfig MASplatformConfig = null;	
+	public String MASrunningMode = "";
 	
 	public final static int UTIL_CMD_OpenDF = 1;
 	public final static int UTIL_CMD_KillRemoteContainer = 2;
+	public final static int UTIL_CMD_ShutdownPlatform = 3;
 	
 	public static final String MASapplicationAgentName = "server.client";
-	public Vector<ContainerID> MASremoteContainer = new Vector<ContainerID>();
-	
 	public JadeUrlChecker MASmasterAddress = null; 
-	public String MASrunningMode = "";
+
 	
 	private jadeClasses<Agent> Agents; 
 	private jadeClasses<Ontology> Ontologies;
@@ -219,15 +222,18 @@ public class Platform extends Object {
 		// --- Configure the JADE-Profile to use --------------------
 		if (currProject==null) {
 			// --- Take the AgentGUI-Default-Profile ----------------
+			this.MASplatformConfig = Application.RunInfo.getJadeDefaultPlatformConfig();
 			MAScontainerProfile = Application.RunInfo.getJadeDefaultProfile();
 			System.out.println("JADE-Profile: Use AgentGUI-defaults");
 		} else {
 			// --- Take the Profile of the current Project ----------
 			if (currProject.JadeConfiguration.isUseDefaults()==true) {
+				this.MASplatformConfig = Application.RunInfo.getJadeDefaultPlatformConfig();
 				MAScontainerProfile = Application.RunInfo.getJadeDefaultProfile();
 				System.out.println("JADE-Profile: Use Agent.GUI-defaults");
 			} else {
-				MAScontainerProfile = currProject.JadeConfiguration.getNewInstanceOfProfilImpl();
+				this.MASplatformConfig = currProject.JadeConfiguration;
+				MAScontainerProfile = currProject.JadeConfiguration.getNewInstanceOfProfilImpl();				
 				System.out.println("JADE-Profile: Use " + currProject.getProjectName() + "-configuration" );
 			}
 		}		
@@ -239,15 +245,15 @@ public class Platform extends Object {
 	 */
 	public void jadeStop() {
 
-		AgentContainer agentCont;
-		
-		// --- Kill all Remote-Container if needed --------
-		if ( jadeMainContainerIsRunning() && MASremoteContainer.size()!=0 ){
-			// --- Starting the Utillity-Agent ------------
-			this.jadeUtilityAgentStart(UTIL_CMD_KillRemoteContainer);
-			// --- Wait for the end of the Agent-Action
-			Long timeStop = System.currentTimeMillis() + (3 * 1000);
-			while (MASremoteContainer.size()!=0) {
+		// ------------------------------------------------
+		// --- Starts the UtilityAgent which sends --------
+		// --- a 'ShutdownPlatform()' to the AMS   --------	
+		// ------------------------------------------------
+		if (jadeMainContainerIsRunning()) {
+			this.jadeUtilityAgentStart(UTIL_CMD_ShutdownPlatform);
+			// --- Wait for the end of Jade ---------------
+			Long timeStop = System.currentTimeMillis() + (10 * 1000);
+			while(jadeMainContainerIsRunning()) {
 				try {
 					Thread.sleep(200);
 				} catch (InterruptedException e) {
@@ -256,30 +262,59 @@ public class Platform extends Object {
 				if (System.currentTimeMillis() >= timeStop) {
 					break;
 				}
-			}			
-		}
-		
-		// --- Stop all known platform-container ----------
-		for ( int i=0; i < MAScontainer.size(); i++ ) {
-			agentCont = MAScontainer.get(i);
-			jadeContainerKill(agentCont);	
-		}	
-		// --- Stop the Main-Platform ---------------------
-		try {
-			if ( jadeMainContainerIsRunning() ){
-				MASmc.kill();
 			}
-			if ( MASrt != null ) {
-				MASrt.shutDown();
-				System.out.println("JADE wurde beendet!");
-			}			
+			System.out.println(Language.translate("Jade wurde beendet!"));
 		}
-		catch (Exception e) {
-			//e.printStackTrace();
-		}
+		// ------------------------------------------------
+		
+		// ------------------------------------------------
+		// --- Old - probably not longer needed -----------
+		// ------------------------------------------------		
+//		AgentContainer agentCont;
+//		
+//		// --- Kill all Remote-Container if needed --------
+//		if ( jadeMainContainerIsRunning() && MAS_ContainerRemote.size()!=0 ){
+//			// --- Starting the Utillity-Agent ------------
+//			this.jadeUtilityAgentStart(UTIL_CMD_KillRemoteContainer);
+//			// --- Wait for the end of the Agent-Action
+//			Long timeStop = System.currentTimeMillis() + (3 * 1000);
+//			while (MAS_ContainerRemote.size()!=0) {
+//				try {
+//					Thread.sleep(200);
+//				} catch (InterruptedException e) {
+//					// e.printStackTrace();
+//				}
+//				if (System.currentTimeMillis() >= timeStop) {
+//					break;
+//				}
+//			}			
+//		}
+//		
+//		// --- Stop all known platform-container ----------
+//		for ( int i=0; i < MAS_ContainerLocal.size(); i++ ) {
+//			agentCont = MAS_ContainerLocal.get(i);
+//			jadeContainerKill(agentCont);
+//			MAS_ContainerLocal.remove(i);
+//		}	
+//		// --- Stop the Main-Platform ---------------------
+//		try {
+//			if ( jadeMainContainerIsRunning() ){
+//				MASmc.kill();				
+//			}
+//			if ( MASrt != null ) {
+//				MASrt.shutDown();				
+//			}			
+//		}
+//		catch (Exception e) {
+//			//e.printStackTrace();
+//		}
+
+		// --- Reset runtime-variables -------------------- 
+		MAS_ContainerRemote.removeAllElements();
+		MAS_ContainerLocal.removeAllElements();
 		MASmc = null;
 		MASrt = null;
-		Application.setStatusJadeRunning(false);	
+		Application.setStatusJadeRunning(false);
 		
 	}
 
@@ -506,7 +541,7 @@ public class Platform extends Object {
 		Profile pSub = this.jadeGetContainerProfile();
 		pSub.setParameter( Profile.CONTAINER_NAME, ContainerName );
 		AgentContainer MAS_AgentContainer = MASrt.createAgentContainer( pSub );
-		MAScontainer.add( MAS_AgentContainer );
+		MAS_ContainerLocal.add( MAS_AgentContainer );
 		return MAS_AgentContainer;		
 	}	
 	/**
@@ -527,8 +562,8 @@ public class Platform extends Object {
 		}	
 		
 		// --- Den richtigen Container abgreifen -------------- 
-		for ( int i=0; i < MAScontainer.size(); i++ ) {
-			AgeCont = MAScontainer.get(i);
+		for ( int i=0; i < MAS_ContainerLocal.size(); i++ ) {
+			AgeCont = MAS_ContainerLocal.get(i);
 			try {
 				AgeContName = AgeCont.getContainerName();
 			} 
@@ -551,7 +586,7 @@ public class Platform extends Object {
 	}
 	public void jadeContainerKill( AgentContainer agentContainer ) {
 		
-		MAScontainer.remove( agentContainer );
+		MAS_ContainerLocal.remove( agentContainer );
 		try {
 			agentContainer.kill();
 		} 
@@ -559,7 +594,44 @@ public class Platform extends Object {
 			//e.printStackTrace();
 		}
 	}
+	public String jadeContainerGetNewName() {
+		
+		boolean newNameFound = false;
+		Integer newContainerNo = 0;
+		String newContainerPrefix = "remote";
+		String newContainerName = null;
+		
+		// --- Search as long as you find a new name ----------------  
+		while (newNameFound==false) {
+			
+			newContainerNo++;
+			newContainerName = newContainerPrefix + newContainerNo;
+			
+			// --- Search in the List of local Containers -----------
+			Iterator<AgentContainer> it = MAS_ContainerLocal.iterator();
+			while(it.hasNext()) {
+				AgentContainer ac = it.next();
+				String acName = ac.getName();			
+				if ( acName.equalsIgnoreCase(newContainerName) ) {
+					newNameFound = false;
+				} else {
+					newNameFound = true;
+					break;
+				}
+			}
 	
+			// --- Search in the List of remote Containers ----------
+			if ( MAS_ContainerRemote.contains(newContainerName) ) {
+				newNameFound = false;
+			} else {
+				newNameFound = true;
+			}
+			
+			if (newNameFound) break;
+			
+		}
+		return newContainerName;
+	}
 	
 	/**
 	 * Adding an Agent to a Container 

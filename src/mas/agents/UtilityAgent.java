@@ -3,6 +3,7 @@ package mas.agents;
 import jade.core.Agent;
 import mas.Platform;
 import mas.agents.behaviour.KillRemoteContainerBehaviour;
+import mas.agents.behaviour.PlatformShutdownBehaviour;
 import mas.agents.behaviour.ShowDFBehaviour;
 
 public class UtilityAgent extends Agent {
@@ -28,6 +29,10 @@ public class UtilityAgent extends Agent {
 			addBehaviour(new KillRemoteContainerBehaviour());
 			break;
 
+		case Platform.UTIL_CMD_ShutdownPlatform:
+			addBehaviour(new PlatformShutdownBehaviour());
+			break;
+			
 		default:
 			break;
 		}

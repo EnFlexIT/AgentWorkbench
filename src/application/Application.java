@@ -42,11 +42,9 @@ public class Application {
 		RunInfo = new GlobalInfo();
 		Console = new CoreWindowConsole();
 		properties = new FileProperties();
-		new LoadMeasureThread(500,5,20,false).start();   //measure load of System every 500ms
-														//5: average counter, 20: threshold
-														// true: start measurement
+		new LoadMeasureThread(500,5).start();   //measure load of System every 500ms
 		startAgentGUI();
-
+		
 	}	
 
 	private static void startAgentGUI() {

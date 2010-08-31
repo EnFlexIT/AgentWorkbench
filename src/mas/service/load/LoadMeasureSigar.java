@@ -34,9 +34,9 @@ public class LoadMeasureSigar extends SigarCommandBase {
 	private int totalCpu;
 	private long Mhz;	
 	
-	private long totalMemory; 	// KB
-	private long freeMemory;	// KB
-	private long useMemory;		// KB
+	private long totalMemory; 	// Bytes
+	private long freeMemory;	// Bytes
+	private long useMemory;		// Bytes
 	
 	private double cpuSystemTime;
 	private double cpuUserTime;

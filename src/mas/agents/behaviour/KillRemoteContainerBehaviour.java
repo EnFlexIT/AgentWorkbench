@@ -26,7 +26,7 @@ public class KillRemoteContainerBehaviour extends OneShotBehaviour {
 	public void action() {
 		// --- Get the list of currently added containers --------
 		// --- and remove them from the running Plattform --------
-		killRemoteContainer(Application.JadePlatform.MASremoteContainer);
+		killRemoteContainer(Application.JadePlatform.MAS_ContainerRemote);
 		// --- Fertig: Agenten schlafen legen --------------------
 		myAgent.doDelete();
 	}
