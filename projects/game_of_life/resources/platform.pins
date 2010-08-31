@@ -1,0 +1,22 @@
+; Tue Aug 31 16:02:05 CEST 2010
+; 
+;+ (version "3.3.1")
+;+ (build "Build 430")
+
+([platform] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([platform_Instance_2] of  platform platformInfo
+)
+
+([platformInfo] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([project+annotation] of  %3APROJECT-ANNOTATION
+
+	(%3ALOCATION "C:\\Protege\\examples")
+	(%3AONTOLOGYNAME "platform")
+	(%3APACKAGE "platform.ontology")
+	(%3ASUPPORT "j2se"))

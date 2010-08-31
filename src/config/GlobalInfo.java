@@ -15,6 +15,7 @@ import mas.service.load.LoadMeasureAvgJVM;
 import mas.service.load.LoadMeasureAvgSigar;
 import mas.service.load.LoadMeasureJVM;
 import mas.service.load.LoadMeasureSigar;
+import mas.service.load.LoadThreshold;
 
 public class GlobalInfo {
 
@@ -72,6 +73,7 @@ public class GlobalInfo {
 	private LoadMeasureAvgSigar loadCurrentAvg = null;
 	private LoadMeasureJVM loadCurrentJVM = null;
 	private LoadMeasureAvgJVM loadCurrentAvgJVM = null;
+	private LoadThreshold loadThreshold = null;
 	
 	// ----------------------------------------------------------------------
 	// --- Objekt-Initialisierung -------------------------------------------
@@ -598,6 +600,22 @@ public class GlobalInfo {
 	 */
 	public LoadMeasureAvgJVM getLoadCurrentAvgJVM() {
 		return loadCurrentAvgJVM;
+	}
+
+
+	/**
+	 * @param loadThreshold the loadThreshold to set
+	 */
+	public void setLoadThreshold(LoadThreshold loadThreshold) {
+		this.loadThreshold = loadThreshold;
+	}
+
+
+	/**
+	 * @return the loadThreshold
+	 */
+	public LoadThreshold getLoadThreshold() {
+		return loadThreshold;
 	}
 
 }

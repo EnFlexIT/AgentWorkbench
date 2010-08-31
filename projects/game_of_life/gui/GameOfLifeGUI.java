@@ -141,6 +141,11 @@ public class GameOfLifeGUI extends JInternalFrame implements ActionListener {
 			gameRunning = false;			// flag gamme not running
 			bPause.setEnabled(false);		// disable pause button
 			bStart.setEnabled(true);			// enable go button
+			controllerAgent.doActivate();
+			controllerAgent.totalCounterTime = 0;
+			controllerAgent.timeCounterStop = 0;
+			controllerAgent.timeCounterStart = 0;
+			controllerAgent.generation = 0;
 			controllerAgent.doSuspend();
 			
 			// ------ clear all cells -------------------------------------------------------
@@ -168,6 +173,7 @@ public class GameOfLifeGUI extends JInternalFrame implements ActionListener {
 			bStart.setEnabled(false);					// disable myself
 			gameRunning = true;						// flag game is running
 			controllerAgent.doActivate();
+			System.out.println(" slider Value : "+slider.getValue());
 			return;
 		}
 		// ---- the delay in milliseconds ----------------------------------------------------

@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: platform
 * @author ontology bean generator
-* @version 2010/07/15, 11:53:49
+* @version 2010/08/31, 16:02:20
 */
 public class Platform implements Predicate {
 

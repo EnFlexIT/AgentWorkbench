@@ -8,9 +8,42 @@ import jade.core.*;
 /**
 * Protege name: platformInfo
 * @author ontology bean generator
-* @version 2010/07/15, 11:53:49
+* @version 2010/08/31, 16:02:20
 */
 public class PlatformInfo implements Concept {
+
+   /**
+* Protege name: thresholdExceeded
+   */
+   private boolean thresholdExceeded;
+   public void setThresholdExceeded(boolean value) { 
+    this.thresholdExceeded=value;
+   }
+   public boolean getThresholdExceeded() {
+     return this.thresholdExceeded;
+   }
+
+   /**
+* Protege name: localContainerURL
+   */
+   private String localContainerURL;
+   public void setLocalContainerURL(String value) { 
+    this.localContainerURL=value;
+   }
+   public String getLocalContainerURL() {
+     return this.localContainerURL;
+   }
+
+   /**
+* Protege name: currentFreeMemory
+   */
+   private float currentFreeMemory;
+   public void setCurrentFreeMemory(float value) { 
+    this.currentFreeMemory=value;
+   }
+   public float getCurrentFreeMemory() {
+     return this.currentFreeMemory;
+   }
 
    /**
 * Protege name: numberOfAgents
@@ -24,113 +57,58 @@ public class PlatformInfo implements Concept {
    }
 
    /**
-* Protege name: currentState
+* Protege name: useMemory
    */
-   private int currentState;
-   public void setCurrentState(int value) { 
-    this.currentState=value;
+   private float useMemory;
+   public void setUseMemory(float value) { 
+    this.useMemory=value;
    }
-   public int getCurrentState() {
-     return this.currentState;
+   public float getUseMemory() {
+     return this.useMemory;
    }
 
    /**
-* Protege name: freeRAM
+* Protege name: totalMemory
    */
-   private float freeRAM;
-   public void setFreeRAM(float value) { 
-    this.freeRAM=value;
+   private float totalMemory;
+   public void setTotalMemory(float value) { 
+    this.totalMemory=value;
    }
-   public float getFreeRAM() {
-     return this.freeRAM;
+   public float getTotalMemory() {
+     return this.totalMemory;
    }
 
    /**
-* Protege name: useRAM
+* Protege name: currentCpuIdleTime
    */
-   private float useRAM;
-   public void setUseRAM(float value) { 
-    this.useRAM=value;
+   private float currentCpuIdleTime;
+   public void setCurrentCpuIdleTime(float value) { 
+    this.currentCpuIdleTime=value;
    }
-   public float getUseRAM() {
-     return this.useRAM;
+   public float getCurrentCpuIdleTime() {
+     return this.currentCpuIdleTime;
    }
 
    /**
-* Protege name: totalRAM
+* Protege name: remoteContainerURL
    */
-   private float totalRAM;
-   public void setTotalRAM(float value) { 
-    this.totalRAM=value;
+   private String remoteContainerURL;
+   public void setRemoteContainerURL(String value) { 
+    this.remoteContainerURL=value;
    }
-   public float getTotalRAM() {
-     return this.totalRAM;
+   public String getRemoteContainerURL() {
+     return this.remoteContainerURL;
    }
 
    /**
-* Protege name: typOfMessage
+* Protege name: remoteContainerName
    */
-   private String typOfMessage;
-   public void setTypOfMessage(String value) { 
-    this.typOfMessage=value;
+   private String remoteContainerName;
+   public void setRemoteContainerName(String value) { 
+    this.remoteContainerName=value;
    }
-   public String getTypOfMessage() {
-     return this.typOfMessage;
-   }
-
-   /**
-* Protege name: whatToDo
-   */
-   private String whatToDo;
-   public void setWhatToDo(String value) { 
-    this.whatToDo=value;
-   }
-   public String getWhatToDo() {
-     return this.whatToDo;
-   }
-
-   /**
-* Protege name: portNumber
-   */
-   private int portNumber;
-   public void setPortNumber(int value) { 
-    this.portNumber=value;
-   }
-   public int getPortNumber() {
-     return this.portNumber;
-   }
-
-   /**
-* Protege name: platformName
-   */
-   private String platformName;
-   public void setPlatformName(String value) { 
-    this.platformName=value;
-   }
-   public String getPlatformName() {
-     return this.platformName;
-   }
-
-   /**
-* Protege name: nextState
-   */
-   private int nextState;
-   public void setNextState(int value) { 
-    this.nextState=value;
-   }
-   public int getNextState() {
-     return this.nextState;
-   }
-
-   /**
-* Protege name: platformUrl
-   */
-   private String platformUrl;
-   public void setPlatformUrl(String value) { 
-    this.platformUrl=value;
-   }
-   public String getPlatformUrl() {
-     return this.platformUrl;
+   public String getRemoteContainerName() {
+     return this.remoteContainerName;
    }
 
 }

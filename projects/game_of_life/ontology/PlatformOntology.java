@@ -9,7 +9,7 @@ import jade.core.CaseInsensitiveString;
 
 /** file: PlatformOntology.java
  * @author ontology bean generator
- * @version 2010/07/15, 11:53:49
+ * @version 2010/08/31, 16:02:20
  */
 public class PlatformOntology extends jade.content.onto.Ontology  {
   //NAME
@@ -25,17 +25,15 @@ public class PlatformOntology extends jade.content.onto.Ontology  {
    // VOCABULARY
     public static final String PLATFORM_PLATFORMINFO="PlatformInfo";
     public static final String PLATFORM="Platform";
-    public static final String PLATFORMINFO_PLATFORMURL="platformUrl";
-    public static final String PLATFORMINFO_NEXTSTATE="nextState";
-    public static final String PLATFORMINFO_PLATFORMNAME="platformName";
-    public static final String PLATFORMINFO_PORTNUMBER="portNumber";
-    public static final String PLATFORMINFO_WHATTODO="whatToDo";
-    public static final String PLATFORMINFO_TYPOFMESSAGE="typOfMessage";
-    public static final String PLATFORMINFO_TOTALRAM="totalRAM";
-    public static final String PLATFORMINFO_USERAM="useRAM";
-    public static final String PLATFORMINFO_FREERAM="freeRAM";
-    public static final String PLATFORMINFO_CURRENTSTATE="currentState";
+    public static final String PLATFORMINFO_REMOTECONTAINERNAME="remoteContainerName";
+    public static final String PLATFORMINFO_REMOTECONTAINERURL="remoteContainerURL";
+    public static final String PLATFORMINFO_CURRENTCPUIDLETIME="currentCpuIdleTime";
+    public static final String PLATFORMINFO_TOTALMEMORY="totalMemory";
+    public static final String PLATFORMINFO_USEMEMORY="useMemory";
     public static final String PLATFORMINFO_NUMBEROFAGENTS="numberOfAgents";
+    public static final String PLATFORMINFO_CURRENTFREEMEMORY="currentFreeMemory";
+    public static final String PLATFORMINFO_LOCALCONTAINERURL="localContainerURL";
+    public static final String PLATFORMINFO_THRESHOLDEXCEEDED="thresholdExceeded";
     public static final String PLATFORMINFO="PlatformInfo";
 
   /**
@@ -59,17 +57,15 @@ public class PlatformOntology extends jade.content.onto.Ontology  {
 
 
     // adding fields
+    platformInfoSchema.add(PLATFORMINFO_THRESHOLDEXCEEDED, (TermSchema)getSchema(BasicOntology.BOOLEAN), ObjectSchema.OPTIONAL);
+    platformInfoSchema.add(PLATFORMINFO_LOCALCONTAINERURL, (TermSchema)getSchema(BasicOntology.STRING), ObjectSchema.OPTIONAL);
+    platformInfoSchema.add(PLATFORMINFO_CURRENTFREEMEMORY, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
     platformInfoSchema.add(PLATFORMINFO_NUMBEROFAGENTS, (TermSchema)getSchema(BasicOntology.INTEGER), ObjectSchema.OPTIONAL);
-    platformInfoSchema.add(PLATFORMINFO_CURRENTSTATE, (TermSchema)getSchema(BasicOntology.INTEGER), ObjectSchema.OPTIONAL);
-    platformInfoSchema.add(PLATFORMINFO_FREERAM, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
-    platformInfoSchema.add(PLATFORMINFO_USERAM, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
-    platformInfoSchema.add(PLATFORMINFO_TOTALRAM, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
-    platformInfoSchema.add(PLATFORMINFO_TYPOFMESSAGE, (TermSchema)getSchema(BasicOntology.STRING), ObjectSchema.OPTIONAL);
-    platformInfoSchema.add(PLATFORMINFO_WHATTODO, (TermSchema)getSchema(BasicOntology.STRING), ObjectSchema.OPTIONAL);
-    platformInfoSchema.add(PLATFORMINFO_PORTNUMBER, (TermSchema)getSchema(BasicOntology.INTEGER), ObjectSchema.OPTIONAL);
-    platformInfoSchema.add(PLATFORMINFO_PLATFORMNAME, (TermSchema)getSchema(BasicOntology.STRING), ObjectSchema.OPTIONAL);
-    platformInfoSchema.add(PLATFORMINFO_NEXTSTATE, (TermSchema)getSchema(BasicOntology.INTEGER), ObjectSchema.OPTIONAL);
-    platformInfoSchema.add(PLATFORMINFO_PLATFORMURL, (TermSchema)getSchema(BasicOntology.STRING), ObjectSchema.OPTIONAL);
+    platformInfoSchema.add(PLATFORMINFO_USEMEMORY, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
+    platformInfoSchema.add(PLATFORMINFO_TOTALMEMORY, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
+    platformInfoSchema.add(PLATFORMINFO_CURRENTCPUIDLETIME, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
+    platformInfoSchema.add(PLATFORMINFO_REMOTECONTAINERURL, (TermSchema)getSchema(BasicOntology.STRING), ObjectSchema.OPTIONAL);
+    platformInfoSchema.add(PLATFORMINFO_REMOTECONTAINERNAME, (TermSchema)getSchema(BasicOntology.STRING), ObjectSchema.OPTIONAL);
     platformSchema.add(PLATFORM_PLATFORMINFO, platformInfoSchema, ObjectSchema.OPTIONAL);
 
     // adding name mappings

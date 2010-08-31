@@ -1,4 +1,5 @@
 package game_of_life.agents;
+import game_of_life.LBC.CenterDynamicLoadBalancingCoodinator;
 import game_of_life.gui.GameOfLifeGUI;
 import jade.core.Agent;
 import jade.core.ServiceException;
@@ -24,31 +25,33 @@ public class SimulationServiceControllerAgent extends Agent {
 	public static HashMap<String, Integer> localEnvModel = new HashMap<String, Integer>();
 	public static HashMap<String, Integer> localEnvModelNew = new HashMap<String, Integer>();
 	private TimeModelStroke tmd = null;
+	
 	//------------ JInternalframe --------------------------------------------------------
 	private GameOfLifeGUI gui;
 	
 	//------------- set GUI co-ordinates --------------------------------------------------
 	private int cRow;
 	private int cCol;
-	private int length;
-	private int width;
-	// --------------- objects variables -----------------------------------
+	
+	// --------------- objects variables --------------------------------------------------
 	private Object coordinate[];
 	
-	//------------- generation of simulation ---------------------------------------------
-	public int loop;
+	//------------- generation of simulation ----------------------------------------------
+	public int generation;
+	public long timeCounterStart;
+	public long timeCounterStop;
+	public long totalCounterTime;
 	
 	private JInternalFrame internalFrame;
 	
 	protected void setup() {
 		
-		// ----- get the arguments of agents -------------------------------
+		// ----- get the arguments of agents ----------------------------------------------
 		coordinate = getArguments();
 		
-		// ----- create coordinates of Agents ----------------------------
+		// ----- create coordinates of Agents ---------------------------------------------
 		cRow = (Integer) coordinate[0];
 		cCol = (Integer) coordinate[1];
-		length = cRow;
 		
 		// --------- Setup the Simulation with the Simulation-Service ---------------------
 		tmd = new TimeModelStroke();
@@ -59,7 +62,7 @@ public class SimulationServiceControllerAgent extends Agent {
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
-		// ---------- startGUI and show GUI -----------------------------------------------
+		// ---------- startGUI and show GUI ------------------------------------------------
 		gui = new GameOfLifeGUI(cRow, cCol, this);
 		JInternalFrame internalFrame = gui;
 		internalFrame.setResizable(true);
@@ -68,8 +71,9 @@ public class SimulationServiceControllerAgent extends Agent {
 		dF.add(internalFrame);
 		dF.getDesktopManager().maximizeFrame(internalFrame);
 				
-		// ---------- Start the Agents which are in involved in this Experiment -----------
+		// --- Start the Agents which are in involved in this Experiment -------------------
 		createAgents(cRow, cCol);
+		
 		// --- Setup the Simulation with the Simulation-Service ----------------------------
 		try {
 			simHelper.setEnvironmentInstance(localEnvModel);
@@ -81,41 +85,46 @@ public class SimulationServiceControllerAgent extends Agent {
 			this.doSuspend();
 		}
 	} 
-	//----------- start agents for the game of life ---------------------------------------
+	
+	//----------- start agents for the game of life ----------------------------------------
 	private void createAgents(int cRow, int cCOl){
+		
+		Object obj[] = new Object[2];
+		obj[0] = cRow;
+		obj[1] = cCol;
+		
+		Application.JadePlatform.jadeAgentStart("CDLBC", CenterDynamicLoadBalancingCoodinator.class.getName(), obj);
+		
 		for (int i = 0; i < cRow; i++) {
 			for (int j = 0; j < cCOl; j++) {
-				//----------- arguments for objects to use --------------------------------
-				Object obj[] = new Object[4];
-				obj[0] = i;
-				obj[1] = j;
-				obj[2] = cRow;
-				obj[3] = cCol;
-				String agentName = i+"&"+j;		
-				Application.JadePlatform.jadeAgentStart(agentName, gameOfLifeAgent.class.getName(), obj);
-				//----------- put newly created Agent into the hash table -----------------
+				String agentName = i+"&"+j;	
 				localEnvModel.put(agentName, 0);
 			}
 		}
 	}
 	private class ReceiveAndStepBehaviour extends CyclicBehaviour {
 
+		private static final long serialVersionUID = 1L;
 		private boolean doStep = true;
 		private Integer msgBackSetPoint = localEnvModel.size();
 		private Long lastMessage = new Long(0);
 		
 		public ReceiveAndStepBehaviour(Agent agent) {
 			super(agent);
-			loop = 0;
+			generation = 0;
+			timeCounterStart = 0;
+			timeCounterStop = 0;
+			totalCounterTime = 0;
 		}
 		@Override
 		public void action() {
 			if (doStep==true) {
-				// --- Internal Counting --------------------------------------
-				loop++;  //considered as Generation increases
-				gui.generationLabel.setText("Generation: " + loop);
+				// --- Internal Counting -----------------------------------------------------
+				generation++;  //considered as Generation increases
+				timeCounterStart = System.currentTimeMillis();	//generation start time
+				gui.generationLabel.setText("Generation: " + generation);
 				try {
-					// --- ggf. Outgoing-Speicher lesen -----------
+					// --- ggf. Outgoing-Speicher lesen --------------------------------------
 					if (gui.localEnvModelOutput.size()!=0) {
 						//----- lese outgoing-Speicher des GUIs --- 
 						java.util.Iterator<String> it = gui.localEnvModelOutput.keySet().iterator();
@@ -130,38 +139,46 @@ public class SimulationServiceControllerAgent extends Agent {
 						gui.localEnvModelOutput.clear();
 						simHelper.setEnvironmentInstance(localEnvModel);
 					}
-					// --- Step the simulation one forward --------------------
-					// --- automatically informs all involved agents as well --
+					// --- Step the simulation one forward -----------------------------------
+					// --- automatically informs all involved agents as well -----------------
 					simHelper.stepTimeModel(); 
-
 				} catch (ServiceException e) {
 					e.printStackTrace();
 				}
 				doStep = false;
-				// ---- Now, wait for the response of all other agents --------
+				// ---- Now, wait for the response of all other agents ----------------------
 			} else {
-				// ------------------------------------------------------------
-				// --- Waiting for the reply of all Agents --------------------
+						// --- Waiting for the reply of all Agents --------------------------
 				ACLMessage msg = myAgent.receive();			
 				if (msg!=null) {
+					
+					//System.out.println(" Sender Name: "+msg.getSender().getLocalName());
+					
 					lastMessage = System.currentTimeMillis();
-					// --- Am Modell arbeiten ---------------------------------					
+					// --- Am Modell arbeiten -----------------------------------------------					
 					Integer newValueInteger = Integer.parseInt(msg.getContent());
 					String AgentName = msg.getSender().getLocalName();
 					if (localEnvModelNew.containsKey(AgentName)== false) {
 						localEnvModelNew.put(AgentName, newValueInteger);
 					}
-					// --- Wenn die Liste der zu erwartenden Elemente fertig ist: --- 
+					// --- Wenn die Liste der zu erwartenden Elemente fertig ist: ----------- 
 					if (localEnvModelNew.size()==msgBackSetPoint) {
 						try {
 							localEnvModel = localEnvModelNew;
 							gui.updateGUI(localEnvModel);
 							if (gui.slider.getValue()>0) {
-								block(gui.slider.getValue());	
+								block(gui.slider.getValue());
+								//block(0);
 							}
 							doStep = true;
 							localEnvModelNew = new HashMap<String, Integer>();
 							simHelper.setEnvironmentInstance(localEnvModel);
+							timeCounterStop = System.currentTimeMillis()-timeCounterStart;
+							totalCounterTime += timeCounterStop;
+							//System.out.println(" Generation : "+generation+" , time taken = "+timeCounterStop+" totalCounterTime = "+totalCounterTime);
+							//System.out.println(generation);
+							System.out.println(timeCounterStop);
+							//System.out.println(totalCounterTime);
 						} catch (ServiceException e) {
 							e.printStackTrace();
 						}
@@ -169,7 +186,7 @@ public class SimulationServiceControllerAgent extends Agent {
 				} else {
 					if (System.currentTimeMillis()-lastMessage >= 3 * (1000)) {
 						try {
-							// --- erneut Notifyen ... ---------------------
+							// --- erneut Notifyen ... --------------------------------------
 							simHelper.notifySensors(SimulationService.SERVICE_UPDATE_TIME_STEP);
 						} catch (ServiceException e) {
 							e.printStackTrace();

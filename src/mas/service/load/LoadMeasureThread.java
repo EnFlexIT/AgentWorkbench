@@ -5,26 +5,42 @@ import config.GlobalInfo;
 
 public class LoadMeasureThread extends Thread {
     
+	private int debugUnit = LoadUnits.CONVERT2_MEGA_BYTE;
+	
 	private boolean debugSigar = false;
 	private boolean debugJVM = false;
-	private int debugUnit = LoadUnits.CONVERT2_MEGA_BYTE;
+	private boolean debugThreshold =false;
+	
 	
 	private int localmsInterval;
 	private int localuseN4AvgCount;
+	private int threshold;
 	
 	private GlobalInfo global = Application.RunInfo;
 	private LoadMeasureSigar measuredMemCpuData = new LoadMeasureSigar();
 	private LoadMeasureJVM measuredJVMData = new LoadMeasureJVM();
+	private LoadThreshold loadThreshold = null;
 	
-	public LoadMeasureThread(Integer msInterval, Integer useN4AvgCount) {
+	private LoadMeasureAvgJVM loadMeasureAvgJVM= null;
+	private LoadMeasureAvgSigar loadMeasureAvgSigar = null;
+	
+	public LoadMeasureThread(Integer msInterval, Integer useN4AvgCount,int thresholdValue, boolean startMeasurement) {
 		
 		localmsInterval = msInterval;
 		localuseN4AvgCount = useN4AvgCount;
+		this.threshold = thresholdValue;
 		
 		this.setName("Load Monitoring");
 		
-		global.setLoadCurrentAvg(new LoadMeasureAvgSigar(localuseN4AvgCount));
-		global.setLoadCurrentAvgJVM(new LoadMeasureAvgJVM(localuseN4AvgCount));
+		loadMeasureAvgJVM = new LoadMeasureAvgJVM(localuseN4AvgCount);
+		loadMeasureAvgSigar = new LoadMeasureAvgSigar(localuseN4AvgCount);
+		loadThreshold = new LoadThreshold(loadMeasureAvgJVM, loadMeasureAvgSigar, threshold);
+		
+		global.setLoadCurrentAvg(loadMeasureAvgSigar);
+		global.setLoadCurrentAvgJVM(loadMeasureAvgJVM);
+		global.setLoadThreshold(loadThreshold);
+		
+		debugJVM = debugSigar = startMeasurement;
 
 	}
 	
@@ -34,10 +50,11 @@ public class LoadMeasureThread extends Thread {
 		while(true){
 		try {
 			// --- Measure here ---------------------------
-			measuredMemCpuData.measureLoadOfSystem();
-			measuredJVMData.measureLoadOfSystem();
-			global.setLoadCurrent(measuredMemCpuData);
-			global.setLoadCurrentJVM(measuredJVMData);
+			measuredMemCpuData.measureLoadOfSystem();	//SIGAR
+			measuredJVMData.measureLoadOfSystem();		//JVM
+			global.setLoadCurrent(measuredMemCpuData);	//SIGAR average load
+			global.setLoadCurrentJVM(measuredJVMData);	//JVM average load
+			loadThreshold.controlThreshold();
 			
 			if (debugSigar) {
 				String vendor = measuredMemCpuData.getVendor().trim();
@@ -74,6 +91,11 @@ public class LoadMeasureThread extends Thread {
 			    System.out.println( "JVM-Memo: (" + jvmMemoMax + " - " + jvmMemoTotal + " - " + jvmMemoFree + ") ");
 			    System.out.println( "JVM-Heap: (" + jvmHeapInit + " / " + jvmHeapMax + ") Commited: " + jvmHeapCommited + " - Used: " + jvmHeapUsed );
 				
+			}
+			
+			if (debugThreshold) {
+				
+				//threshold info
 			}
 			
 			sleep(localmsInterval);
