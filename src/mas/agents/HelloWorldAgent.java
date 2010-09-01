@@ -8,6 +8,10 @@ import java.util.Observable;
 
 import mas.service.SimulationService;
 import mas.service.SimulationServiceHelper;
+import mas.service.load.LoadMeasureAvgJVM;
+import mas.service.load.LoadMeasureAvgSigar;
+import mas.service.load.LoadMeasureThread;
+import mas.service.load.LoadThresholdLeveles;
 import mas.service.sensoring.ServiceSensor;
 import mas.service.time.TimeModelStroke;
 
@@ -40,30 +44,27 @@ public class HelloWorldAgent extends Agent implements ServiceSensor {
 	class HelloBehaviour extends TickerBehaviour { 
 
 		private static final long serialVersionUID = 1L;
-		private Integer loop = 0;
 
 		public HelloBehaviour(Agent a, long period) {
 			super(a, period);
 		}
 		
 		public void onTick() { 
-
-			loop++;
-			SimulationServiceHelper agentGUIHelper = null;
-			TimeModelStroke tmd = null;
-			try {
-				agentGUIHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
-				agentGUIHelper.stepTimeModel();
-				
-				tmd = (TimeModelStroke)agentGUIHelper.getTimeModel();
-				
-			} catch (ServiceException e) {
-				e.printStackTrace();
-			}
 			
-			//Date date = new Date(tmd.getTime());
-			System.out.println( "Loop: " + loop);
-			System.out.println( "Result: " + tmd.getCounter() );
+			LoadMeasureAvgSigar loadCurrentAvg = LoadMeasureThread.getLoadCurrentAvg();
+			LoadMeasureAvgJVM loadCurrentAvgJVM = LoadMeasureThread.getLoadCurrentAvgJVM();
+			LoadThresholdLeveles thresholdLeveles = LoadMeasureThread.getThresholdLeveles();
+			
+			// --- Current percentage "CPU used" --------------
+			double tempCPU  = (double)Math.round((1-loadCurrentAvg.getCpuIdleTime())*10000)/100;
+			// --- Current percentage "Memory used" -----------
+			double tempMemo = (double)Math.round(((double)loadCurrentAvgJVM.getJvmHeapUsed() / (double)loadCurrentAvgJVM.getJvmHeapMax()) * 10000)/100;
+			// --- Current number of running threads ----------
+			int tempNoThreads = loadCurrentAvgJVM.getJvmThreadCount();
+						
+			System.out.println( "[Agent] -> CPU used: " + tempCPU + "% (" + thresholdLeveles.getThCpuL() + "/" + thresholdLeveles.getThCpuH() + ")" );
+			System.out.println( "[Agent] -> Memory used: " + tempMemo + "% (" + thresholdLeveles.getThMemoL() + "/" + thresholdLeveles.getThMemoH() + ")" );
+			System.out.println( "[Agent] -> N-Threads: " + tempNoThreads + " (" + thresholdLeveles.getThNoThreadsL() + "/" + thresholdLeveles.getThNoThreadsH() + ")" );
 			
 		} 
 	}

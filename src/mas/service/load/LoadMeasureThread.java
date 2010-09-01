@@ -8,8 +8,11 @@ public class LoadMeasureThread extends Thread {
 	private boolean debugThreshold = false;
 	private int debugUnit = LoadUnits.CONVERT2_MEGA_BYTE;
 	
+	public static String threadName = "Agent.GUI - Load Monitoring";
 	private int localmsInterval;
 	private int localuseN4AvgCount;
+	
+	private static boolean thisThreadExecuted = false;
 	
 	// --- Load-Information for the current measurement -----------------------
 	private LoadMeasureSigar measuredMemCpuData = new LoadMeasureSigar();
@@ -33,8 +36,6 @@ public class LoadMeasureThread extends Thread {
 		localmsInterval = msInterval;
 		localuseN4AvgCount = useN4AvgCount;
 		
-		this.setName("Load Monitoring");
-		
 		loadCurrentAvg = new LoadMeasureAvgSigar(localuseN4AvgCount);
 		loadCurrentAvgJVM = new LoadMeasureAvgJVM(localuseN4AvgCount);
 
@@ -42,6 +43,16 @@ public class LoadMeasureThread extends Thread {
 	
 	@Override
 	public void run() {
+
+		// ------------------------------------------------------
+		// --- Is this class already executed on this Node ? ----
+		// ------------------------------------------------------		
+		if ( measuredJVMData.threadExists(LoadMeasureThread.threadName) ) {
+			return;
+		}		
+		System.out.println("Starting Load-Measurements");
+		this.setName(LoadMeasureThread.threadName);
+		// ------------------------------------------------------
 
 		while(true){
 		try {
@@ -157,6 +168,19 @@ public class LoadMeasureThread extends Thread {
 		
 	}
 	
+	/**
+	 * @param thisThreadExecuted the thisThreadExecuted to set
+	 */
+	public static void setThisThreadExecuted(boolean thisThreadExecuted) {
+		LoadMeasureThread.thisThreadExecuted = thisThreadExecuted;
+	}
+	/**
+	 * @return the thisThreadExecuted
+	 */
+	public static boolean isThisThreadExecuted() {
+		return thisThreadExecuted;
+	}
+
 	/**
 	 * @param loadCurrent the loadCurrent to set
 	 */

@@ -38,6 +38,9 @@ public class LoadMeasureJVM{
     	}
     }
 	
+    /**
+     * This method measures the current load of th system 
+     */
 	public void measureLoadOfSystem() {
 
 		jvmMemoFree  = Runtime.getRuntime().freeMemory();
@@ -65,6 +68,27 @@ public class LoadMeasureJVM{
 		
 	}
 
+	/**
+	 * This method return treu/false if a Thread, given by it's name exists or not
+	 * @param threadName2LookAt
+	 * @return boolean
+	 */
+	public boolean threadExists(String threadName2LookAt) {
+		
+		boolean exists = false;
+		
+		long[] jvmThreadIDs = threadXB.getAllThreadIds();
+		ThreadInfo[] jvmThreadInfo = threadXB.getThreadInfo(jvmThreadIDs);
+		for (int i = 0; i < jvmThreadInfo.length; i++) {
+			String threadName = jvmThreadInfo[i].getThreadName();
+			if (threadName.equalsIgnoreCase(threadName2LookAt)) {
+				exists = true;
+				break;
+			}
+		}
+		return exists;		
+	}
+	
 	/**
 	 * @return the jvmMemoFree
 	 */

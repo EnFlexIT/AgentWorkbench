@@ -23,6 +23,7 @@ import java.util.Hashtable;
 import java.util.Observer;
 
 import mas.service.environment.EnvironmentModel;
+import mas.service.load.LoadMeasureThread;
 import mas.service.sensoring.ServiceActuator;
 import mas.service.time.TimeModel;
 import mas.service.transaction.TransactionMap;
@@ -74,10 +75,10 @@ public class SimulationService extends BaseService {
 		super.init(ac, p);
 		myContainer = ac;
 		myMainContainer = ac.getMain();
-		// Create filters
+		// --- Create filters -----------------------------
 		outFilter = new CommandOutgoingFilter();
 		incFilter = new CommandIncomingFilter();
-		// Create local slice
+		// --- Create local slice -------------------------
 		localSlice = new ServiceComponent();
 		
 		if (myContainer!=null) {
@@ -90,7 +91,10 @@ public class SimulationService extends BaseService {
 				myLogger.log(Logger.FINE, "Main-Container: " + myMainContainer.toString());
 			}
 		}
-				
+		
+		// --- Start the Load-Measurments on this Node ----
+		new LoadMeasureThread(500,5).start();   
+		
 	}
 	public void boot(Profile p) throws ServiceException {
 		super.boot(p);

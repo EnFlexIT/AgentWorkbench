@@ -10,6 +10,7 @@ import systemtray.AgentGUITrayIcon;
 import config.FileProperties;
 import config.GlobalInfo;
 import database.DBConnection;
+
 /**
  * @author: Christian Derksen  	
  */
@@ -42,8 +43,15 @@ public class Application {
 		RunInfo = new GlobalInfo();
 		Console = new CoreWindowConsole();
 		properties = new FileProperties();
-		new LoadMeasureThread(500,5).start();   //measure load of System every 500ms
+		new LoadMeasureThread(500,5).start();   
 		startAgentGUI();
+
+		// -----------------------------
+		// --- Test --------------------
+//		JadePlatform.jadeStart();
+//		JadePlatform.jadeAgentStart("Hello", mas.agents.HelloWorldAgent.class.getName());
+//		new JadeRemoteStart().start();
+		// -----------------------------
 		
 	}	
 

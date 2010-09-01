@@ -127,7 +127,8 @@ public class JadeRemoteStart extends Thread {
 		// --- execute zusammenbauen ------------
 		String execute = java + " " + javaVMArgs + " " + classPath + " " + jade  + " " + jadeArgs;
 		execute = execute.replace("  ", " ");
-		System.out.println( execute);
+		//System.out.println( execute);
+		
 		// --------------------------------------
 		try {
 			
