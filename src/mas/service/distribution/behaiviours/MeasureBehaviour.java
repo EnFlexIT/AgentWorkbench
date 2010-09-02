@@ -1,4 +1,4 @@
-package distribution.behaiviours;
+package mas.service.distribution.behaiviours;
 
 import jade.core.Agent;
 import jade.core.behaviours.TickerBehaviour;

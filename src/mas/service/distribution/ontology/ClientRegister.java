@@ -1,4 +1,4 @@
-package distribution.ontology;
+package mas.service.distribution.ontology;
 
 
 import jade.content.*;
@@ -8,20 +8,9 @@ import jade.core.*;
 /**
 * Protege name: ClientRegister
 * @author ontology bean generator
-* @version 2010/08/5, 16:22:27
+* @version 2010/09/2, 16:06:42
 */
 public class ClientRegister implements AgentAction {
-
-   /**
-* Protege name: clientPerformance
-   */
-   private PlatformPerformance clientPerformance;
-   public void setClientPerformance(PlatformPerformance value) { 
-    this.clientPerformance=value;
-   }
-   public PlatformPerformance getClientPerformance() {
-     return this.clientPerformance;
-   }
 
    /**
 * Protege name: clientTime
@@ -43,6 +32,17 @@ public class ClientRegister implements AgentAction {
    }
    public PlatformAddress getClientAddress() {
      return this.clientAddress;
+   }
+
+   /**
+* Protege name: clientPerformance
+   */
+   private PlatformPerformance clientPerformance;
+   public void setClientPerformance(PlatformPerformance value) { 
+    this.clientPerformance=value;
+   }
+   public PlatformPerformance getClientPerformance() {
+     return this.clientPerformance;
    }
 
 }

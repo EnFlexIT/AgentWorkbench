@@ -46,13 +46,6 @@ public class Application {
 		new LoadMeasureThread(500,5).start();   
 		startAgentGUI();
 
-		// -----------------------------
-		// --- Test --------------------
-//		JadePlatform.jadeStart();
-//		JadePlatform.jadeAgentStart("Hello", mas.agents.HelloWorldAgent.class.getName());
-//		new JadeRemoteStart().start();
-		// -----------------------------
-		
 	}	
 
 	private static void startAgentGUI() {

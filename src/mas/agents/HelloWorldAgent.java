@@ -1,19 +1,31 @@
 package mas.agents;
 
+import jade.content.lang.Codec;
+import jade.content.lang.Codec.CodecException;
+import jade.content.lang.sl.SLCodec;
+import jade.content.onto.Ontology;
+import jade.content.onto.OntologyException;
+import jade.content.onto.basic.Action;
+import jade.core.AID;
 import jade.core.Agent;
 import jade.core.ServiceException;
+import jade.core.behaviours.OneShotBehaviour;
 import jade.core.behaviours.TickerBehaviour;
+import jade.lang.acl.ACLMessage;
 
 import java.util.Observable;
 
 import mas.service.SimulationService;
 import mas.service.SimulationServiceHelper;
+import mas.service.distribution.ontology.AgentGUI_DistributionOntology;
+import mas.service.distribution.ontology.ClientRemoteContainerRequest;
 import mas.service.load.LoadMeasureAvgJVM;
 import mas.service.load.LoadMeasureAvgSigar;
 import mas.service.load.LoadMeasureThread;
 import mas.service.load.LoadThresholdLeveles;
 import mas.service.sensoring.ServiceSensor;
 import mas.service.time.TimeModelStroke;
+import network.JadeUrlChecker;
 
 /**
  * @version 1.0
@@ -37,9 +49,52 @@ public class HelloWorldAgent extends Agent implements ServiceSensor {
 		}
 		
 		// ---- Add Cyclic Behaviour -----------
-		this.addBehaviour(new HelloBehaviour(this,3000));
+		//this.addBehaviour(new HelloBehaviour(this,3000));
+		this.addBehaviour(new OpenRemotContainer());
 		
 	} 
+	
+	class OpenRemotContainer extends OneShotBehaviour {
+
+		private static final long serialVersionUID = -601217778912358114L;
+
+		@Override
+		public void action() {
+
+			// --- Definition einer neuen 'Action' --------
+			Action act = new Action();
+			act.setActor(getAID());
+			act.setAction(new ClientRemoteContainerRequest());
+			
+			// --- Nachricht zusammenbauen und ... --------
+			Ontology ontology = AgentGUI_DistributionOntology.getInstance();
+			Codec codec = new SLCodec();
+
+			JadeUrlChecker myURL = new JadeUrlChecker( myAgent.getContainerController().getPlatformName());
+			AID localAgentGUIAgent = new AID("server.client" + "@" + myURL.getJADEurl(), AID.ISGUID );
+			
+			ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+			msg.setSender(getAID());
+			msg.addReceiver(localAgentGUIAgent);
+			msg.setLanguage(codec.getName());
+			msg.setOntology(ontology.getName());
+			// msg.setContent(trig);
+
+			// --- ... versenden --------------------------
+			try {
+				myAgent.getContentManager().registerLanguage(codec);
+				myAgent.getContentManager().registerOntology(ontology);
+				myAgent.getContentManager().fillContent(msg, act);
+			} catch (CodecException e) {
+				e.printStackTrace();
+			} catch (OntologyException e) {
+				e.printStackTrace();
+			}
+			myAgent.send(msg);			
+			
+		}
+		
+	}
 	
 	class HelloBehaviour extends TickerBehaviour { 
 
@@ -74,4 +129,5 @@ public class HelloWorldAgent extends Agent implements ServiceSensor {
 		
 		
 	}
+	
 } 

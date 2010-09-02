@@ -31,6 +31,11 @@ public class LoadMeasureThread extends Thread {
 	private static int thresholdLeveleExceededMemo = 0;
 	private static int thresholdLeveleExceededNoThreads = 0;
 	
+	// --- Current Values of Interest -----------------------------------------
+	private static float loadCPU = 0;
+	private static float loadMemory = 0;
+	private static Integer loadNoThreads = 0;
+	
 	public LoadMeasureThread(Integer msInterval, Integer useN4AvgCount) {
 		
 		localmsInterval = msInterval;
@@ -125,10 +130,13 @@ public class LoadMeasureThread extends Thread {
 		
 		// --- Current percentage "CPU used" --------------
 		double tempCPU  = (double)Math.round((1-loadCurrentAvg.getCpuIdleTime())*10000)/100;
+		loadCPU = (float) tempCPU;
 		// --- Current percentage "Memory used" -----------
 		double tempMemo = (double)Math.round(((double)loadCurrentAvgJVM.getJvmHeapUsed() / (double)loadCurrentAvgJVM.getJvmHeapMax()) * 10000)/100;
+		loadMemory = (float) tempMemo;
 		// --- Current number of running threads ----------
 		int tempNoThreads = loadCurrentAvgJVM.getJvmThreadCount();
+		loadNoThreads = tempNoThreads;
 		
 		if (debugThreshold) {
 			System.out.println( );
@@ -302,5 +310,44 @@ public class LoadMeasureThread extends Thread {
 	public static void setThresholdLeveleExceededNoThreads(
 			int thresholdLeveleExceededNoThreads) {
 		LoadMeasureThread.thresholdLeveleExceededNoThreads = thresholdLeveleExceededNoThreads;
+	}
+
+	/**
+	 * @return the loadCPU
+	 */
+	public static float getLoadCPU() {
+		return loadCPU;
+	}
+	/**
+	 * @param loadCPU the loadCPU to set
+	 */
+	public static void setLoadCPU(float loadCPU) {
+		LoadMeasureThread.loadCPU = loadCPU;
+	}
+
+	/**
+	 * @return the loadMemory
+	 */
+	public static float getLoadMemory() {
+		return loadMemory;
+	}
+	/**
+	 * @param loadMemory the loadMemory to set
+	 */
+	public static void setLoadMemory(float loadMemory) {
+		LoadMeasureThread.loadMemory = loadMemory;
+	}
+
+	/**
+	 * @return the loadNoThreads
+	 */
+	public static Integer getLoadNoThreads() {
+		return loadNoThreads;
+	}
+	/**
+	 * @param loadNoThreads the loadNoThreads to set
+	 */
+	public static void setLoadNoThreads(Integer loadNoThreads) {
+		LoadMeasureThread.loadNoThreads = loadNoThreads;
 	}
 }

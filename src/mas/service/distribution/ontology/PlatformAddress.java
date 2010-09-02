@@ -1,4 +1,4 @@
-package distribution.ontology;
+package mas.service.distribution.ontology;
 
 
 import jade.content.*;
@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: PlatformAddress
 * @author ontology bean generator
-* @version 2010/08/5, 16:22:27
+* @version 2010/09/2, 16:06:42
 */
 public class PlatformAddress implements Concept {
 

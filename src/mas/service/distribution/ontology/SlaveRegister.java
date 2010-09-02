@@ -1,4 +1,4 @@
-package distribution.ontology;
+package mas.service.distribution.ontology;
 
 
 import jade.content.*;
@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: SlaveRegister
 * @author ontology bean generator
-* @version 2010/08/5, 16:22:27
+* @version 2010/09/2, 16:06:42
 */
 public class SlaveRegister implements AgentAction {
 
@@ -24,17 +24,6 @@ public class SlaveRegister implements AgentAction {
    }
 
    /**
-* Protege name: slaveTime
-   */
-   private PlatformTime slaveTime;
-   public void setSlaveTime(PlatformTime value) { 
-    this.slaveTime=value;
-   }
-   public PlatformTime getSlaveTime() {
-     return this.slaveTime;
-   }
-
-   /**
 * Protege name: slaveAddress
    */
    private PlatformAddress slaveAddress;
@@ -43,6 +32,17 @@ public class SlaveRegister implements AgentAction {
    }
    public PlatformAddress getSlaveAddress() {
      return this.slaveAddress;
+   }
+
+   /**
+* Protege name: slaveTime
+   */
+   private PlatformTime slaveTime;
+   public void setSlaveTime(PlatformTime value) { 
+    this.slaveTime=value;
+   }
+   public PlatformTime getSlaveTime() {
+     return this.slaveTime;
    }
 
 }

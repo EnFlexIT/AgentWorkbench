@@ -1,4 +1,4 @@
-package distribution.agents;
+package mas.service.distribution.agents;
 
 import jade.content.Concept;
 import jade.content.lang.Codec;
@@ -18,12 +18,13 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
 
+import mas.service.distribution.ontology.*;
+
 import com.mysql.jdbc.ResultSet;
 
 import application.Application;
 
 import database.DBConnection;
-import distribution.ontology.*;
 
 public class MasterServerAgent extends Agent {
 

@@ -1,11 +1,12 @@
-package distribution;
+package mas.service.distribution;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
 
+import mas.service.distribution.ontology.RemoteContainerConfig;
+
 import application.Application;
-import distribution.ontology.RemoteContainerConfig;
 
 public class JadeRemoteStart extends Thread {
 

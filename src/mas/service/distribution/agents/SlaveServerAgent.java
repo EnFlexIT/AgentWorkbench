@@ -1,7 +1,6 @@
-package distribution.agents;
+package mas.service.distribution.agents;
 
 import jade.content.Concept;
-import jade.content.ContentElement;
 import jade.content.lang.Codec;
 import jade.content.lang.Codec.CodecException;
 import jade.content.lang.sl.SLCodec;
@@ -13,40 +12,29 @@ import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.ParallelBehaviour;
-import jade.domain.JADEAgentManagement.JADEManagementOntology;
-import jade.domain.introspection.AMSSubscriber;
-import jade.domain.introspection.AddedContainer;
-import jade.domain.introspection.Event;
-import jade.domain.introspection.IntrospectionVocabulary;
-import jade.domain.introspection.Occurred;
-import jade.domain.introspection.RemovedContainer;
+import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
-
-import java.util.Map;
-
+import mas.service.distribution.JadeRemoteStart;
+import mas.service.distribution.ontology.AgentGUI_DistributionOntology;
+import mas.service.distribution.ontology.ClientRemoteContainerRequest;
+import mas.service.distribution.ontology.PlatformAddress;
+import mas.service.distribution.ontology.PlatformPerformance;
+import mas.service.distribution.ontology.PlatformTime;
+import mas.service.distribution.ontology.RemoteContainerConfig;
+import mas.service.distribution.ontology.SlaveRegister;
+import mas.service.distribution.ontology.SlaveTrigger;
+import mas.service.distribution.ontology.SlaveUnregister;
 import mas.service.load.LoadMeasureSigar;
 import mas.service.load.LoadMeasureThread;
 import mas.service.load.LoadUnits;
 import network.JadeUrlChecker;
 import application.Application;
-import distribution.ontology.AgentGUI_DistributionOntology;
-import distribution.ontology.ClientRegister;
-import distribution.ontology.ClientRemoteContainerRequest;
-import distribution.ontology.ClientUnregister;
-import distribution.ontology.PlatformAddress;
-import distribution.ontology.PlatformPerformance;
-import distribution.ontology.PlatformTime;
-import distribution.ontology.RemoteContainerConfig;
 
-public class ClientServerAgent extends Agent {
+public class SlaveServerAgent extends Agent {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -3947798460986588734L;
 	
 	private Ontology ontology = AgentGUI_DistributionOntology.getInstance();
-	private Ontology ontologyJadeMgmt = JADEManagementOntology.getInstance();
 	private Codec codec = new SLCodec();
 	
 	private PlatformTime myPlatformTime = new PlatformTime();
@@ -56,16 +44,14 @@ public class ClientServerAgent extends Agent {
 	private AID mainPlatformAgent = null; 
 	
 	private ParallelBehaviour parBehaiv = null;
-
 	
 	@Override
 	protected void setup() {
 		super.setup();
-		
+		// --- Register Codec and Ontology ----------------
 		getContentManager().registerLanguage(codec);
 		getContentManager().registerOntology(ontology);
-		getContentManager().registerOntology(ontologyJadeMgmt);
-		
+
 		// --- Define Platfornm-Info ----------------------
 		JadeUrlChecker myURL = new JadeUrlChecker( this.getContainerController().getPlatformName() );
 		myPlatform.setIp(myURL.getHostIP());
@@ -86,23 +72,23 @@ public class ClientServerAgent extends Agent {
 		myPerformance.setCpu_model(sys.getModel());
 		myPerformance.setCpu_numberOf(sys.getTotalCpu());
 		myPerformance.setCpu_speedMhz((int) sys.getMhz());
-		myPerformance.setMemory_totalMB((int) LoadUnits.bytes2(sys.getTotalMemory(), LoadUnits.CONVERT2_MEGA_BYTE));
+		myPerformance.setMemory_totalMB( (int) LoadUnits.bytes2(sys.getTotalMemory(), LoadUnits.CONVERT2_MEGA_BYTE));
 		
 		// --- Define Receiver of local Status-Info -------
 		mainPlatformAgent = new AID("server.master" + "@" + myURL.getJADEurl(), AID.ISGUID );
 		mainPlatformAgent.addAddresses(mainPlatform.getHttp4mtp());
 		
 		// --- Send 'Register'-Information ----------------
-		ClientRegister reg = new ClientRegister();
-		reg.setClientAddress(myPlatform);
+		SlaveRegister reg = new SlaveRegister();
+		reg.setSlaveAddress(myPlatform);
 		myPlatformTime.setTimeStampAsString( Long.toString(System.currentTimeMillis()) ) ;
-		reg.setClientTime(myPlatformTime);
-		reg.setClientPerformance(myPerformance);
+		reg.setSlaveTime(myPlatformTime);
+		reg.setSlavePerformance(myPerformance);
 		this.sendMessage2MainServer(reg);
-		
+
 		// --- Add Main-Behaiviours -----------------------
 		parBehaiv = new ParallelBehaviour(this,ParallelBehaviour.WHEN_ALL);
-		parBehaiv.addSubBehaviour( new amsSubscriber() );
+		parBehaiv.addSubBehaviour( new TriggerBehaiviour(this,1000*10) );
 		parBehaiv.addSubBehaviour( new ReceiveBehaviour() );
 		// --- Add Parallel Behaiviour --------------------
 		this.addBehaviour(parBehaiv);
@@ -117,13 +103,13 @@ public class ClientServerAgent extends Agent {
 		this.removeBehaviour(parBehaiv);
 		
 		// --- Send 'Unregister'-Information --------------
-		ClientUnregister unReg = new ClientUnregister();
-		this.sendMessage2MainServer(unReg);
-		
-	}
+		SlaveUnregister unReg = new SlaveUnregister();
+		sendMessage2MainServer(unReg);
 
+				
+	}
 	
-	private boolean sendMessage2MainServer(Concept agentAction) {
+	private boolean sendMessage2MainServer( Concept agentAction ) {
 		
 		try {
 			// --- Definition einer neuen 'Action' --------
@@ -153,32 +139,26 @@ public class ClientServerAgent extends Agent {
 		}
 		
 	}
-	
-	private void forwardRemoteContainerRequest(Concept agentAction) {
-		
-		// --- Request to start a new Remote-Container -----
-		ClientRemoteContainerRequest req = (ClientRemoteContainerRequest) agentAction;
-		RemoteContainerConfig remConf = req.getRemoteConfig();
-		if (remConf==null) {
-			// --- Falls keine Konfiguration vorgenommen wurde, diese nun vornehmen ---
-			String myServices = Application.JadePlatform.MASplatformConfig.getServiceListArgument();
-			String myIP = myPlatform.getIp();
-			Integer myPort = myPlatform.getPort();
-			String newContainerName = Application.JadePlatform.jadeContainerGetNewName();
-			
-			remConf = new RemoteContainerConfig();
-			remConf.setJadeServices(myServices);
-			remConf.setJadeIsRemoteContainer(true);
-			remConf.setJadeHost(myIP);
-			remConf.setJadePort(myPort.toString());
-			remConf.setJadeContainerName(newContainerName);
-			remConf.setJadeShowGUI(true);
-			
-			req.setRemoteConfig(remConf);
+
+	private class TriggerBehaiviour extends TickerBehaviour {
+
+		private static final long serialVersionUID = -1701739199514787426L;
+
+		public TriggerBehaiviour(Agent a, long period) {
+			super(a, period);
 		}
-		this.sendMessage2MainServer(req);
-		
+		@Override
+		protected void onTick() {
+			// --- Auswahl der entsprechenden AgentAction -------
+			SlaveTrigger trig = new SlaveTrigger();
+			myPlatformTime.setTimeStampAsString( Long.toString(System.currentTimeMillis()) ) ;
+			trig.setTriggerTime( myPlatformTime );
+			// --- Send Message ---------------------------------
+			sendMessage2MainServer(trig);
+		}
 	}
+
+	
 	
 	// -----------------------------------------------------
 	// --- Message-Receive-Behaiviour --- S T A R T --------
@@ -191,7 +171,6 @@ public class ClientServerAgent extends Agent {
 		public void action() {
 			
 			Action act = null;
-			Occurred occ = null;
 			Concept agentAction = null; 
 			AID senderAID = null;
 
@@ -202,30 +181,19 @@ public class ClientServerAgent extends Agent {
 					// --- No Ontology-specific Message -------------
 					act = null;
 					System.out.println( "ACLMessage.FAILURE from " + msg.getSender().getName() + ": " + msg.getContent() );
+
 				} else {
 					// --- Ontology-specific Message ----------------
 					try {
-						ContentElement con = getContentManager().extractContent(msg);	
-						if (con instanceof Action) {
-							act = (Action) con;	
-						} else if (con instanceof Occurred) {
-							occ = (Occurred) con;
-							// --- Messages in the context of Introspection ---
-							// --- Not of any further interest (yet)-- --------
-							// System.out.println( "++++++ Introspection: " + occ.toString() + "++++++" );
-						} else {
-							System.out.println( "=> " + myAgent.getName() + " - Unknown MessageType: " + con.toString() );
-						}						
+						act = (Action) getContentManager().extractContent(msg);
 					} catch (UngroundedException e) {
 						e.printStackTrace();
 					} catch (CodecException e) {
 						e.printStackTrace();
 					} catch (OntologyException e) {
 						e.printStackTrace();
-					};
+					}
 				}
-				
-				// --- Work on the Content-Msg ----------------------
 				if (act!=null) {
 					
 					agentAction = act.getAction();
@@ -235,14 +203,10 @@ public class ClientServerAgent extends Agent {
 					// --- Fallunterscheidung AgentAction --- S T A R T -----------------
 					// ------------------------------------------------------------------
 					if (agentAction instanceof ClientRemoteContainerRequest) {
-						// --- Direkt an den Server.Master weiterleiten -------
-						forwardRemoteContainerRequest(agentAction);
 						
-					} else {
-						// --- Unknown AgentAction ------------
-						System.out.println( "----------------------------------------------------" );
-						System.out.println( myAgent.getLocalName() + ": Unknown Message-Type!" );
-						System.out.println( agentAction.toString() );
+						ClientRemoteContainerRequest crcr = (ClientRemoteContainerRequest) agentAction;
+						startRemoteContainer(crcr.getRemoteConfig());
+						
 					}
 					// ------------------------------------------------------------------
 					// --- Fallunterscheidung AgentAction --- E N D E -------------------
@@ -258,52 +222,16 @@ public class ClientServerAgent extends Agent {
 	// -----------------------------------------------------
 	// --- Message-Receive-Behaiviour --- E N D ------------
 	// -----------------------------------------------------
-	
 
-	// -----------------------------------------------------
-	// --- amsSubscriber-SubClass/Behaiviour --- S T A R T -
-	// -----------------------------------------------------
-	private class amsSubscriber extends AMSSubscriber {
+	/**
+	 * Starts a Remote-Container for given RemoteContainerConfig-Instance
+	 */
+	private void startRemoteContainer(RemoteContainerConfig rcc) {
 		
-		private static final long serialVersionUID = -4346695401399663561L;
-
-		@SuppressWarnings("unchecked")
-		@Override
-		protected void installHandlers(Map handlers) {
-			// ----------------------------------------------------------------
-			EventHandler containerAddedHandler = new EventHandler() {
-				private static final long serialVersionUID = -7426704911904579411L;
-				@Override
-				public void handle(Event event) {
-					AddedContainer aCon = (AddedContainer) event;
-					if (aCon.getContainer().getName().equalsIgnoreCase("Main-Container")==false) {
-						Application.JadePlatform.MAS_ContainerRemote.add(aCon.getContainer());
-						//System.out.println( "Container hinzugefügt: " + aCon.getName() + " " + aCon.getContainer() + aCon );
-					}
-				}
-			};
-			handlers.put(IntrospectionVocabulary.ADDEDCONTAINER, containerAddedHandler);
-
-			// ----------------------------------------------------------------
-			EventHandler containerRemovedHandler = new EventHandler() {
-				private static final long serialVersionUID = 8614456287558634409L;
-				@Override
-				public void handle(Event event) {
-					RemovedContainer rCon = (RemovedContainer) event;
-					Application.JadePlatform.MAS_ContainerRemote.remove(rCon.getContainer());
-					//System.out.println( "Container gelöscht: " + rCon.getName() + " " + rCon.getContainer()  );
-				}
-				
-			};
-			handlers.put(IntrospectionVocabulary.REMOVEDCONTAINER, containerRemovedHandler);
-			
-			// ----------------------------------------------------------------
-		}
+		System.out.println("Starte Remote-Container ... ");
+		new JadeRemoteStart(rcc).start();		
 		
 	}
-	// -----------------------------------------------------
-	// --- amsSubscriber-SubClass/Behaiviour --- E N D -----
-	// -----------------------------------------------------
-
+	
 	
 }
