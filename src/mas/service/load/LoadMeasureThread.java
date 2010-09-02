@@ -26,7 +26,7 @@ public class LoadMeasureThread extends Thread {
 	
 	// --- Threshold-Information ----------------------------------------------
 	private static LoadThresholdLeveles thresholdLeveles = new LoadThresholdLeveles(); 
-	private static boolean thresholdLevelesExceeded = false; 
+	private static int thresholdLevelesExceeded = 0; 	
 	private static int thresholdLeveleExceededCPU = 0;
 	private static int thresholdLeveleExceededMemo = 0;
 	private static int thresholdLeveleExceededNoThreads = 0;
@@ -101,7 +101,7 @@ public class LoadMeasureThread extends Thread {
 			}
 
 			// --- check values and Threshold-Levels ------
-			thresholdLevelesExceeded = this.isLevelExceeded();			
+			setThresholdLevelesExceeded(this.isLevelExceeded());			
 			
 			// --- Wait for the measure-interval ----------
 			sleep(localmsInterval);
@@ -116,9 +116,9 @@ public class LoadMeasureThread extends Thread {
 	/**
 	 * This method ckecks if one of the Threshold-Levels is exceeded
 	 */
-	public boolean isLevelExceeded(){
+	public int isLevelExceeded(){
 		
-		boolean levelExceeded = false;
+		int levelExceeded = 0;
 		thresholdLeveleExceededCPU = 0;
 		thresholdLeveleExceededMemo = 0;
 		thresholdLeveleExceededNoThreads = 0;
@@ -139,31 +139,33 @@ public class LoadMeasureThread extends Thread {
 		
 		// --- Check CPU-Usage ----------------------------
 		if ( tempCPU > thresholdLeveles.getThCpuH()) {
-			levelExceeded = true;
 			thresholdLeveleExceededCPU = 1;
 		} else if ( tempCPU < thresholdLeveles.getThCpuL()) {
-			levelExceeded = true;
 			thresholdLeveleExceededCPU = -1;
 		}
 		
 		// --- Check Memory-Usage -------------------------
 		if ( tempMemo > thresholdLeveles.getThMemoH()) {
-			levelExceeded = true;
 			thresholdLeveleExceededMemo = 1;
 		} else if ( tempMemo < thresholdLeveles.getThMemoL()) {
-			levelExceeded = true;
 			thresholdLeveleExceededMemo = -1;
 		}
 		
 		// --- Check Number of Threads --------------------
 		if ( tempNoThreads > thresholdLeveles.getThNoThreadsH()) {
-			levelExceeded = true;
 			thresholdLeveleExceededNoThreads = 1;
 		} else if ( tempNoThreads < thresholdLeveles.getThNoThreadsL()) {
-			levelExceeded = true;
 			thresholdLeveleExceededNoThreads = -1;
 		}		
 		
+		
+		// --- Set conclusion of Threshold Level Check ----
+		if (thresholdLeveleExceededCPU>0 || thresholdLeveleExceededMemo>0 || thresholdLeveleExceededNoThreads>0) {
+			levelExceeded=1;	// --- Hi-Alarm ---
+		}
+		if (thresholdLeveleExceededCPU<0 && thresholdLeveleExceededMemo<0 && thresholdLeveleExceededNoThreads ==0) {
+			levelExceeded=-1;	// --- Low-Alarm ---
+		}
 		return levelExceeded;
 		
 	}
@@ -251,13 +253,13 @@ public class LoadMeasureThread extends Thread {
 	/**
 	 * @param thresholdLevelesExceeded the thresholdLevelesExceeded to set
 	 */
-	public static void setThresholdLevelesExceeded(boolean thresholdLevelesExceeded) {
+	public static void setThresholdLevelesExceeded(int thresholdLevelesExceeded) {
 		LoadMeasureThread.thresholdLevelesExceeded = thresholdLevelesExceeded;
 	}
 	/**
 	 * @return the thresholdLevelesExceeded
 	 */
-	public static boolean isThresholdLevelesExceeded() {
+	public static int getThresholdLevelesExceeded() {
 		return thresholdLevelesExceeded;
 	}
 
@@ -301,6 +303,4 @@ public class LoadMeasureThread extends Thread {
 			int thresholdLeveleExceededNoThreads) {
 		LoadMeasureThread.thresholdLeveleExceededNoThreads = thresholdLeveleExceededNoThreads;
 	}
-	
-	
 }
