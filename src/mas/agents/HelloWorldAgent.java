@@ -8,18 +8,13 @@ import jade.content.onto.OntologyException;
 import jade.content.onto.basic.Action;
 import jade.core.AID;
 import jade.core.Agent;
-import jade.core.ContainerID;
 import jade.core.ServiceException;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
 
 import java.util.Observable;
-import java.util.Vector;
 
-import application.Application;
-
-import mas.Platform;
 import mas.service.SimulationService;
 import mas.service.SimulationServiceHelper;
 import mas.service.distribution.ontology.AgentGUI_DistributionOntology;
@@ -55,8 +50,8 @@ public class HelloWorldAgent extends Agent implements ServiceSensor {
 		
 		// ---- Add Cyclic Behaviour -----------
 		//this.addBehaviour(new HelloBehaviour(this,3000));
-		this.addBehaviour(new OpenRemotContainer());
-		
+		this.requestNewRemoteContainer();
+		this.addBehaviour(new HelloBehaviour(this, 1000));
 	} 
 	
 	class OpenRemotContainer extends OneShotBehaviour {
@@ -65,19 +60,8 @@ public class HelloWorldAgent extends Agent implements ServiceSensor {
 
 		@Override
 		public void action() {
-
-			int noOfContainer = Platform.MAS_ContainerRemote.size();
-			while (noOfContainer<5) {
-				requestNewRemoteContainer();
-				while (noOfContainer == Platform.MAS_ContainerRemote.size()) {
-					try {
-						Thread.sleep(200);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}		
-				noOfContainer = Platform.MAS_ContainerRemote.size() ;
-			}
+		
+			requestNewRemoteContainer();
 			
 		}
 		
