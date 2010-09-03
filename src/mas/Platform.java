@@ -594,42 +594,48 @@ public class Platform extends Object {
 			//e.printStackTrace();
 		}
 	}
-	public String jadeContainerGetNewName() {
+	public String jadeContainerGetNewRemoteName() {
 		
 		boolean newNameFound = false;
 		Integer newContainerNo = 0;
 		String newContainerPrefix = "remote";
 		String newContainerName = null;
+		Vector<String> containerList = new Vector<String>();
 		
+		// ----------------------------------------------------------
+		// --- Create a list of all containers ---------------------- 
+		// --- available local or remote       ----------------------
+		// ----------------------------------------------------------
+		Iterator<AgentContainer> itLC = MAS_ContainerLocal.iterator();
+		while(itLC.hasNext()) {
+			AgentContainer ac = itLC.next();
+			containerList.add(ac.getName());
+		}
+		Iterator<ContainerID> itRC = MAS_ContainerRemote.iterator();
+		while(itRC.hasNext()) {
+			ContainerID ac = itRC.next();
+			containerList.add(ac.getName());
+		}
+		// ----------------------------------------------------------
+		
+		// ----------------------------------------------------------
 		// --- Search as long as you find a new name ----------------  
+		// ----------------------------------------------------------
 		while (newNameFound==false) {
 			
 			newContainerNo++;
 			newContainerName = newContainerPrefix + newContainerNo;
 			
-			// --- Search in the List of local Containers -----------
-			Iterator<AgentContainer> it = MAS_ContainerLocal.iterator();
-			while(it.hasNext()) {
-				AgentContainer ac = it.next();
-				String acName = ac.getName();			
-				if ( acName.equalsIgnoreCase(newContainerName) ) {
-					newNameFound = false;
-				} else {
+			if (containerList.size()==0) {
+				newNameFound = true;
+			} else {
+				// --- Search in the List of all Containers ---------
+				if (containerList.contains(newContainerName)==false) {
 					newNameFound = true;
-					break;
 				}
 			}
-	
-			// --- Search in the List of remote Containers ----------
-			if ( MAS_ContainerRemote.contains(newContainerName) ) {
-				newNameFound = false;
-			} else {
-				newNameFound = true;
-			}
-			
-			if (newNameFound) break;
-			
 		}
+		// ----------------------------------------------------------
 		return newContainerName;
 	}
 	

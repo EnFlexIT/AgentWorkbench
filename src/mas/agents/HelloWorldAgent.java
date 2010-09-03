@@ -8,13 +8,18 @@ import jade.content.onto.OntologyException;
 import jade.content.onto.basic.Action;
 import jade.core.AID;
 import jade.core.Agent;
+import jade.core.ContainerID;
 import jade.core.ServiceException;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
 
 import java.util.Observable;
+import java.util.Vector;
 
+import application.Application;
+
+import mas.Platform;
 import mas.service.SimulationService;
 import mas.service.SimulationServiceHelper;
 import mas.service.distribution.ontology.AgentGUI_DistributionOntology;
@@ -61,38 +66,56 @@ public class HelloWorldAgent extends Agent implements ServiceSensor {
 		@Override
 		public void action() {
 
-			// --- Definition einer neuen 'Action' --------
-			Action act = new Action();
-			act.setActor(getAID());
-			act.setAction(new ClientRemoteContainerRequest());
-			
-			// --- Nachricht zusammenbauen und ... --------
-			Ontology ontology = AgentGUI_DistributionOntology.getInstance();
-			Codec codec = new SLCodec();
-
-			JadeUrlChecker myURL = new JadeUrlChecker( myAgent.getContainerController().getPlatformName());
-			AID localAgentGUIAgent = new AID("server.client" + "@" + myURL.getJADEurl(), AID.ISGUID );
-			
-			ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-			msg.setSender(getAID());
-			msg.addReceiver(localAgentGUIAgent);
-			msg.setLanguage(codec.getName());
-			msg.setOntology(ontology.getName());
-			// msg.setContent(trig);
-
-			// --- ... versenden --------------------------
-			try {
-				myAgent.getContentManager().registerLanguage(codec);
-				myAgent.getContentManager().registerOntology(ontology);
-				myAgent.getContentManager().fillContent(msg, act);
-			} catch (CodecException e) {
-				e.printStackTrace();
-			} catch (OntologyException e) {
-				e.printStackTrace();
+			int noOfContainer = Platform.MAS_ContainerRemote.size();
+			while (noOfContainer<5) {
+				requestNewRemoteContainer();
+				while (noOfContainer == Platform.MAS_ContainerRemote.size()) {
+					try {
+						Thread.sleep(200);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}		
+				noOfContainer = Platform.MAS_ContainerRemote.size() ;
 			}
-			myAgent.send(msg);			
 			
 		}
+		
+	}
+	
+	private void requestNewRemoteContainer() {
+		
+		// --- Nachricht zusammenbauen und ... --------
+		Ontology ontology = AgentGUI_DistributionOntology.getInstance();
+		Codec codec = new SLCodec();
+
+		// --- AID des lokalen Agent.GUI-Agenten ------
+		JadeUrlChecker myURL = new JadeUrlChecker( this.getContainerController().getPlatformName());
+		AID localAgentGUIAgent = new AID("server.client" + "@" + myURL.getJADEurl(), AID.ISGUID );
+		
+		// --- Nachricht aufbauen ---------------------
+		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+		msg.setSender(getAID());
+		msg.addReceiver(localAgentGUIAgent);
+		msg.setLanguage(codec.getName());
+		msg.setOntology(ontology.getName());
+
+		// --- Definition einer neuen 'Action' --------
+		Action act = new Action();
+		act.setActor(getAID());
+		act.setAction(new ClientRemoteContainerRequest());
+		
+		// --- ... versenden --------------------------
+		try {
+			this.getContentManager().registerLanguage(codec);
+			this.getContentManager().registerOntology(ontology);
+			this.getContentManager().fillContent(msg, act);
+		} catch (CodecException e) {
+			e.printStackTrace();
+		} catch (OntologyException e) {
+			e.printStackTrace();
+		}
+		this.send(msg);	
 		
 	}
 	

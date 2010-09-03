@@ -164,7 +164,7 @@ public class ClientServerAgent extends Agent {
 			String myServices = Application.JadePlatform.MASplatformConfig.getServiceListArgument();
 			String myIP = myPlatform.getIp();
 			Integer myPort = myPlatform.getPort();
-			String newContainerName = Application.JadePlatform.jadeContainerGetNewName();
+			String newContainerName = Application.JadePlatform.jadeContainerGetNewRemoteName();
 			
 			remConf = new RemoteContainerConfig();
 			remConf.setJadeServices(myServices);

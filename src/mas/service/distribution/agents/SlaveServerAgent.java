@@ -172,6 +172,7 @@ public class SlaveServerAgent extends Agent {
 			
 			Action act = null;
 			Concept agentAction = null; 
+			@SuppressWarnings("unused")
 			AID senderAID = null;
 
 			ACLMessage msg = myAgent.receive();			
