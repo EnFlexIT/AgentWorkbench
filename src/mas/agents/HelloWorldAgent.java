@@ -13,12 +13,18 @@ import jade.core.behaviours.OneShotBehaviour;
 import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
 
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.Observable;
+import java.util.Vector;
 
 import mas.service.SimulationService;
 import mas.service.SimulationServiceHelper;
 import mas.service.distribution.ontology.AgentGUI_DistributionOntology;
 import mas.service.distribution.ontology.ClientRemoteContainerRequest;
+import mas.service.distribution.ontology.PlatformLoad;
+import mas.service.load.LoadMeasureArray;
 import mas.service.load.LoadMeasureAvgJVM;
 import mas.service.load.LoadMeasureAvgSigar;
 import mas.service.load.LoadMeasureThread;
@@ -113,20 +119,39 @@ public class HelloWorldAgent extends Agent implements ServiceSensor {
 		
 		public void onTick() { 
 			
-			LoadMeasureAvgSigar loadCurrentAvg = LoadMeasureThread.getLoadCurrentAvg();
-			LoadMeasureAvgJVM loadCurrentAvgJVM = LoadMeasureThread.getLoadCurrentAvgJVM();
-			LoadThresholdLeveles thresholdLeveles = LoadMeasureThread.getThresholdLeveles();
+//			LoadMeasureAvgSigar loadCurrentAvg = LoadMeasureThread.getLoadCurrentAvg();
+//			LoadMeasureAvgJVM loadCurrentAvgJVM = LoadMeasureThread.getLoadCurrentAvgJVM();
+//			LoadThresholdLeveles thresholdLeveles = LoadMeasureThread.getThresholdLeveles();
+//			
+//			// --- Current percentage "CPU used" --------------
+//			double tempCPU  = (double)Math.round((1-loadCurrentAvg.getCpuIdleTime())*10000)/100;
+//			// --- Current percentage "Memory used" -----------
+//			double tempMemo = (double)Math.round(((double)loadCurrentAvgJVM.getJvmHeapUsed() / (double)loadCurrentAvgJVM.getJvmHeapMax()) * 10000)/100;
+//			// --- Current number of running threads ----------
+//			int tempNoThreads = loadCurrentAvgJVM.getJvmThreadCount();
+//						
+//			System.out.println( "[Agent] -> CPU used: " + tempCPU + "% (" + thresholdLeveles.getThCpuL() + "/" + thresholdLeveles.getThCpuH() + ")" );
+//			System.out.println( "[Agent] -> Memory used: " + tempMemo + "% (" + thresholdLeveles.getThMemoL() + "/" + thresholdLeveles.getThMemoH() + ")" );
+//			System.out.println( "[Agent] -> N-Threads: " + tempNoThreads + " (" + thresholdLeveles.getThNoThreadsL() + "/" + thresholdLeveles.getThNoThreadsH() + ")" );
+
 			
-			// --- Current percentage "CPU used" --------------
-			double tempCPU  = (double)Math.round((1-loadCurrentAvg.getCpuIdleTime())*10000)/100;
-			// --- Current percentage "Memory used" -----------
-			double tempMemo = (double)Math.round(((double)loadCurrentAvgJVM.getJvmHeapUsed() / (double)loadCurrentAvgJVM.getJvmHeapMax()) * 10000)/100;
-			// --- Current number of running threads ----------
-			int tempNoThreads = loadCurrentAvgJVM.getJvmThreadCount();
-						
-			System.out.println( "[Agent] -> CPU used: " + tempCPU + "% (" + thresholdLeveles.getThCpuL() + "/" + thresholdLeveles.getThCpuH() + ")" );
-			System.out.println( "[Agent] -> Memory used: " + tempMemo + "% (" + thresholdLeveles.getThMemoL() + "/" + thresholdLeveles.getThMemoH() + ")" );
-			System.out.println( "[Agent] -> N-Threads: " + tempNoThreads + " (" + thresholdLeveles.getThNoThreadsL() + "/" + thresholdLeveles.getThNoThreadsH() + ")" );
+			SimulationServiceHelper simHelper = null;
+			LoadMeasureArray lma = null;
+			try {
+				simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
+				lma = simHelper.getContainerLoads();
+
+			} catch (ServiceException e) {
+				e.printStackTrace();
+			}
+
+			Vector<String> v = new Vector<String>( lma.keySet() );
+		    Iterator<String> it = v.iterator();
+		    while (it.hasNext()) {
+		    	String container = it.next();
+		    	PlatformLoad pl = lma.get(container);
+		    	System.out.println( "Load on '" + container + "': CPU: " + pl.getLoadCPU() + " - Memory: " + pl.getLoadMemory() + " - NoThreads: " + pl.getLoadNoThreads() + " - Exceeded: " + pl.getLoadExceeded() + "" );
+		    }
 			
 		} 
 	}

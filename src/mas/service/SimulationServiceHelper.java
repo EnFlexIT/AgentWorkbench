@@ -10,6 +10,7 @@ import jade.core.ServiceHelper;
 
 import java.util.Date;
 
+import mas.service.load.LoadMeasureArray;
 import mas.service.time.TimeModel;
 
 /**
@@ -23,6 +24,9 @@ public interface SimulationServiceHelper extends ServiceHelper {
 	public static final String SERVICE_UPDATE_TIME_STEP = "service-update-time-step";
 	public static final String SERVICE_UPDATE_ENVIRONMENT = "service-update-environment";
 	public static final String SERVICE_UPDATE_SIMULATION = "service-update-simulation";
+	
+	
+	public LoadMeasureArray getContainerLoads() throws ServiceException;
 	
 	public void notifySensors(String event) throws ServiceException;
 	

@@ -6,6 +6,7 @@ import jade.core.IMTPException;
 import jade.core.Node;
 import jade.core.ServiceException;
 import jade.core.SliceProxy;
+import mas.service.distribution.ontology.PlatformLoad;
 import mas.service.time.TimeModel;
 
 public class SimulationServiceProxy extends SliceProxy implements SimulationServiceSlice {
@@ -222,6 +223,37 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 	}
 	// ----------------------------------------------------------
 	// --- Method for Notify Sensor --- E N D -------------------
+	// ----------------------------------------------------------
+
+	
+	// ----------------------------------------------------------
+	// --- Method to get the Load-Informations of all ----------- 
+	// --- containers ----------------------------- S T A R T ---
+	// ----------------------------------------------------------
+	public PlatformLoad measureLoad() throws IMTPException {
+
+		try {
+			GenericCommand cmd = new GenericCommand(SERVICE_MEASURE_LOAD, SimulationService.NAME, null);
+			Node n = getNode();
+			Object result = n.accept(cmd);
+			if((result != null) && (result instanceof Throwable)) {
+				if(result instanceof IMTPException) {
+					throw (IMTPException)result;
+				}
+				else {
+					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
+				}
+			}
+			return (PlatformLoad) result;
+		}
+		catch(ServiceException se) {
+			throw new IMTPException("Unable to access remote node", se);
+		}
+		
+	}
+	// ----------------------------------------------------------
+	// --- Method to get the Load-Informations of all ----------- 
+	// --- containers ----------------------------- E N D -------
 	// ----------------------------------------------------------
 
 	

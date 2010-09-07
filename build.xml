@@ -8,7 +8,7 @@
                    
      Christian Derksen                                                                
      ====================================================================== -->
-<project name="AgentGui" default="supply" basedir=".">
+<project name="AgentGui" default="execute" basedir=".">
 
 	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
           properties: Wichtige Verzeichniseinstellungen                      
@@ -40,6 +40,7 @@
 					lib/jade/lib/migration.jar
 					lib/jade/lib/XMLCodec.jar
 					lib/jade/lib/commons-codec/commons-codec-1.3.jar
+					lib/sciMark/scimark2lib.jar
 					lib/jdbc/mysql-connector-java-3.0.17-ga-bin.jar
 					lib/hyperic-sigar/sigar-bin/lib/junit.jar 
 					lib/hyperic-sigar/sigar-bin/lib/log4j.jar 
@@ -91,7 +92,7 @@
           target: supply => .jar-externe Dateien' verschieben
           				 => Erzeugung der ausführbaren Struktur              
          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-    <target name="supply" depends="cleanup,createdir,compile" description="Erstellung der Dateistruktur ... ">
+    <target name="supply" description="Erstellung der Dateistruktur ... ">
     	
     	<!-- Kopieren der Property-Files -->    	
     	<copy todir="${destinDirProperties}">
@@ -116,14 +117,13 @@
     		</fileset>    		
         </jar>
     	
-    	<!-- Die einzelnen Projekte kompilieren -->
-    	
-    	
-    	
-    	
-    	<!-- Die erzeugte jar ausführen -->
-    	<java jar="${destinJar}" fork="true" />
-    	
     </target>
 
+	<target name="execute" depends="cleanup,createdir,compile,supply" description="Executing jar-file ... ">
+	    	
+	    	<!-- Die erzeugte jar ausführen -->
+	    	<java jar="${destinJar}" fork="true" />
+	    	
+	    </target>
+	
 </project>

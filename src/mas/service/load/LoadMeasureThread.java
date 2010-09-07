@@ -9,8 +9,8 @@ public class LoadMeasureThread extends Thread {
 	private int debugUnit = LoadUnits.CONVERT2_MEGA_BYTE;
 	
 	public static String threadName = "Agent.GUI - Load Monitoring";
-	private int localmsInterval;
-	private int localuseN4AvgCount;
+	private int localmsInterval = 500;
+	private int localuseN4AvgCount = 10;
 	
 	private static boolean thisThreadExecuted = false;
 	
@@ -31,19 +31,31 @@ public class LoadMeasureThread extends Thread {
 	private static int thresholdLeveleExceededMemo = 0;
 	private static int thresholdLeveleExceededNoThreads = 0;
 	
+	// --- Resulting Benchmark-Value ------------------------------------------
+	private static float compositeBenchmarkValue = 0;
+	
 	// --- Current Values of Interest -----------------------------------------
 	private static float loadCPU = 0;
 	private static float loadMemory = 0;
 	private static Integer loadNoThreads = 0;
 	
-	public LoadMeasureThread(Integer msInterval, Integer useN4AvgCount) {
-		
-		localmsInterval = msInterval;
-		localuseN4AvgCount = useN4AvgCount;
-		
+	/**
+	 * Simple constuctor of this class
+	 */
+	public LoadMeasureThread() {
 		loadCurrentAvg = new LoadMeasureAvgSigar(localuseN4AvgCount);
 		loadCurrentAvgJVM = new LoadMeasureAvgJVM(localuseN4AvgCount);
+	}
 
+	/**
+	 * Constuctor of this class with values for measure-interval
+	 * and moving (sliding) average
+	 */
+	public LoadMeasureThread(Integer msInterval, Integer useN4AvgCount) {
+		localmsInterval = msInterval;
+		localuseN4AvgCount = useN4AvgCount;
+		loadCurrentAvg = new LoadMeasureAvgSigar(localuseN4AvgCount);
+		loadCurrentAvgJVM = new LoadMeasureAvgJVM(localuseN4AvgCount);
 	}
 	
 	@Override
@@ -310,6 +322,19 @@ public class LoadMeasureThread extends Thread {
 	public static void setThresholdLeveleExceededNoThreads(
 			int thresholdLeveleExceededNoThreads) {
 		LoadMeasureThread.thresholdLeveleExceededNoThreads = thresholdLeveleExceededNoThreads;
+	}
+
+	/**
+	 * @param compositeBenchmarkValue the compositeBenchmarkValue to set
+	 */
+	public static void setCompositeBenchmarkValue(float compositeBenchmarkValue) {
+		LoadMeasureThread.compositeBenchmarkValue = compositeBenchmarkValue;
+	}
+	/**
+	 * @return the compositeBenchmarkValue
+	 */
+	public static float getCompositeBenchmarkValue() {
+		return compositeBenchmarkValue;
 	}
 
 	/**

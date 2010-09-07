@@ -28,5 +28,6 @@
 	<classpathentry kind="lib" path="lib/hyperic-sigar/sigar-bin/lib/junit.jar"/>
 	<classpathentry kind="lib" path="lib/hyperic-sigar/sigar-bin/lib/log4j.jar"/>
 	<classpathentry kind="lib" path="lib/hyperic-sigar/sigar-bin/lib/sigar.jar"/>
+	<classpathentry kind="lib" path="lib/sciMark/scimark2lib.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

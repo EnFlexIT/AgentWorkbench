@@ -13,6 +13,7 @@ import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.ParallelBehaviour;
+import jade.core.behaviours.TickerBehaviour;
 import jade.domain.JADEAgentManagement.JADEManagementOntology;
 import jade.domain.introspection.AMSSubscriber;
 import jade.domain.introspection.AddedContainer;
@@ -24,11 +25,16 @@ import jade.lang.acl.ACLMessage;
 
 import java.util.Map;
 
+import mas.Platform;
 import mas.service.distribution.ontology.AgentGUI_DistributionOntology;
+import mas.service.distribution.ontology.BenchmarkResult;
 import mas.service.distribution.ontology.ClientRegister;
 import mas.service.distribution.ontology.ClientRemoteContainerRequest;
+import mas.service.distribution.ontology.ClientTrigger;
 import mas.service.distribution.ontology.ClientUnregister;
+import mas.service.distribution.ontology.OSInfo;
 import mas.service.distribution.ontology.PlatformAddress;
+import mas.service.distribution.ontology.PlatformLoad;
 import mas.service.distribution.ontology.PlatformPerformance;
 import mas.service.distribution.ontology.PlatformTime;
 import mas.service.distribution.ontology.RemoteContainerConfig;
@@ -53,10 +59,12 @@ public class ClientServerAgent extends Agent {
 	private PlatformAddress myPlatform = new PlatformAddress();
 	private PlatformAddress mainPlatform = new PlatformAddress();
 	private PlatformPerformance myPerformance = new PlatformPerformance();
+	private OSInfo myOS = new OSInfo();
+	private PlatformLoad myLoad = new PlatformLoad();
 	private AID mainPlatformAgent = null; 
 	
 	private ParallelBehaviour parBehaiv = null;
-
+	private long triggerTime = new Long(1000);
 	
 	@Override
 	protected void setup() {
@@ -88,6 +96,11 @@ public class ClientServerAgent extends Agent {
 		myPerformance.setCpu_speedMhz((int) sys.getMhz());
 		myPerformance.setMemory_totalMB((int) LoadUnits.bytes2(sys.getTotalMemory(), LoadUnits.CONVERT2_MEGA_BYTE));
 		
+		// --- Set OS-Informations ------------------------
+		myOS.setOs_name(System.getProperty("os.name"));
+		myOS.setOs_version(System.getProperty("os.version"));
+		myOS.setOs_arch(System.getProperty("os.arch"));
+		
 		// --- Define Receiver of local Status-Info -------
 		mainPlatformAgent = new AID("server.master" + "@" + myURL.getJADEurl(), AID.ISGUID );
 		mainPlatformAgent.addAddresses(mainPlatform.getHttp4mtp());
@@ -98,12 +111,14 @@ public class ClientServerAgent extends Agent {
 		myPlatformTime.setTimeStampAsString( Long.toString(System.currentTimeMillis()) ) ;
 		reg.setClientTime(myPlatformTime);
 		reg.setClientPerformance(myPerformance);
+		reg.setClientOS(myOS);
 		this.sendMessage2MainServer(reg);
 		
 		// --- Add Main-Behaiviours -----------------------
 		parBehaiv = new ParallelBehaviour(this,ParallelBehaviour.WHEN_ALL);
 		parBehaiv.addSubBehaviour( new amsSubscriber() );
 		parBehaiv.addSubBehaviour( new ReceiveBehaviour() );
+		parBehaiv.addSubBehaviour( new TriggerBehaiviour(this,triggerTime) );
 		// --- Add Parallel Behaiviour --------------------
 		this.addBehaviour(parBehaiv);
 		
@@ -191,8 +206,10 @@ public class ClientServerAgent extends Agent {
 		public void action() {
 			
 			Action act = null;
+			@SuppressWarnings("unused")
 			Occurred occ = null;
 			Concept agentAction = null; 
+			@SuppressWarnings("unused")
 			AID senderAID = null;
 
 			ACLMessage msg = myAgent.receive();			
@@ -261,6 +278,45 @@ public class ClientServerAgent extends Agent {
 	
 
 	// -----------------------------------------------------
+	// --- Trigger-Behaiviour --- S T A R T ----------------
+	// -----------------------------------------------------
+	private class TriggerBehaiviour extends TickerBehaviour {
+
+		private static final long serialVersionUID = -1701739199514787426L;
+
+		public TriggerBehaiviour(Agent a, long period) {
+			super(a, period);
+		}
+		@Override
+		protected void onTick() {
+			// --- Current Time ---------------------------------
+			ClientTrigger trig = new ClientTrigger();
+			myPlatformTime.setTimeStampAsString( Long.toString(System.currentTimeMillis()) ) ;
+			trig.setTriggerTime( myPlatformTime );
+			
+			// --- get current Load-Level -----------------------
+			myLoad.setLoadCPU(LoadMeasureThread.getLoadCPU());
+			myLoad.setLoadMemory(LoadMeasureThread.getLoadMemory());
+			myLoad.setLoadNoThreads(LoadMeasureThread.getLoadNoThreads());
+			myLoad.setLoadExceeded(LoadMeasureThread.getThresholdLevelesExceeded());
+			trig.setClientLoad(myLoad);
+			
+			// --- get Current Benchmark-Result -----------------
+			BenchmarkResult bmr = new BenchmarkResult(); 
+			bmr.setBenchmarkValue(LoadMeasureThread.getCompositeBenchmarkValue());
+			trig.setClientBenchmarkValue(bmr);
+			
+			// --- Send Message ---------------------------------
+			sendMessage2MainServer(trig);
+		}
+	}
+	// -----------------------------------------------------
+	// --- Trigger-Behaiviour --- S T A R T ----------------
+	// -----------------------------------------------------
+
+	
+
+	// -----------------------------------------------------
 	// --- amsSubscriber-SubClass/Behaiviour --- S T A R T -
 	// -----------------------------------------------------
 	private class amsSubscriber extends AMSSubscriber {
@@ -277,7 +333,7 @@ public class ClientServerAgent extends Agent {
 				public void handle(Event event) {
 					AddedContainer aCon = (AddedContainer) event;
 					if (aCon.getContainer().getName().equalsIgnoreCase("Main-Container")==false) {
-						Application.JadePlatform.MAS_ContainerRemote.add(aCon.getContainer());
+						Platform.MAS_ContainerRemote.add(aCon.getContainer());
 						//System.out.println( "Container hinzugefügt: " + aCon.getName() + " " + aCon.getContainer() + aCon );
 					}
 				}
@@ -290,7 +346,7 @@ public class ClientServerAgent extends Agent {
 				@Override
 				public void handle(Event event) {
 					RemovedContainer rCon = (RemovedContainer) event;
-					Application.JadePlatform.MAS_ContainerRemote.remove(rCon.getContainer());
+					Platform.MAS_ContainerRemote.remove(rCon.getContainer());
 					//System.out.println( "Container gelöscht: " + rCon.getName() + " " + rCon.getContainer()  );
 				}
 				

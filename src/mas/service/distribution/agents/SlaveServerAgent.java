@@ -16,8 +16,11 @@ import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
 import mas.service.distribution.JadeRemoteStart;
 import mas.service.distribution.ontology.AgentGUI_DistributionOntology;
+import mas.service.distribution.ontology.BenchmarkResult;
 import mas.service.distribution.ontology.ClientRemoteContainerRequest;
+import mas.service.distribution.ontology.OSInfo;
 import mas.service.distribution.ontology.PlatformAddress;
+import mas.service.distribution.ontology.PlatformLoad;
 import mas.service.distribution.ontology.PlatformPerformance;
 import mas.service.distribution.ontology.PlatformTime;
 import mas.service.distribution.ontology.RemoteContainerConfig;
@@ -41,9 +44,12 @@ public class SlaveServerAgent extends Agent {
 	private PlatformAddress myPlatform = new PlatformAddress();
 	private PlatformAddress mainPlatform = new PlatformAddress();
 	private PlatformPerformance myPerformance = new PlatformPerformance();
+	private OSInfo myOS = new OSInfo();
+	private PlatformLoad myLoad = new PlatformLoad();	
 	private AID mainPlatformAgent = null; 
 	
 	private ParallelBehaviour parBehaiv = null;
+	private long triggerTime = new Long(1000);
 	
 	@Override
 	protected void setup() {
@@ -74,6 +80,11 @@ public class SlaveServerAgent extends Agent {
 		myPerformance.setCpu_speedMhz((int) sys.getMhz());
 		myPerformance.setMemory_totalMB( (int) LoadUnits.bytes2(sys.getTotalMemory(), LoadUnits.CONVERT2_MEGA_BYTE));
 		
+		// --- Set OS-Informations ------------------------
+		myOS.setOs_name(System.getProperty("os.name"));
+		myOS.setOs_version(System.getProperty("os.version"));
+		myOS.setOs_arch(System.getProperty("os.arch"));
+		
 		// --- Define Receiver of local Status-Info -------
 		mainPlatformAgent = new AID("server.master" + "@" + myURL.getJADEurl(), AID.ISGUID );
 		mainPlatformAgent.addAddresses(mainPlatform.getHttp4mtp());
@@ -84,11 +95,12 @@ public class SlaveServerAgent extends Agent {
 		myPlatformTime.setTimeStampAsString( Long.toString(System.currentTimeMillis()) ) ;
 		reg.setSlaveTime(myPlatformTime);
 		reg.setSlavePerformance(myPerformance);
+		reg.setSlaveOS(myOS);
 		this.sendMessage2MainServer(reg);
 
 		// --- Add Main-Behaiviours -----------------------
 		parBehaiv = new ParallelBehaviour(this,ParallelBehaviour.WHEN_ALL);
-		parBehaiv.addSubBehaviour( new TriggerBehaiviour(this,1000*10) );
+		parBehaiv.addSubBehaviour( new TriggerBehaiviour(this,triggerTime) );
 		parBehaiv.addSubBehaviour( new ReceiveBehaviour() );
 		// --- Add Parallel Behaiviour --------------------
 		this.addBehaviour(parBehaiv);
@@ -149,10 +161,23 @@ public class SlaveServerAgent extends Agent {
 		}
 		@Override
 		protected void onTick() {
-			// --- Auswahl der entsprechenden AgentAction -------
+			// --- Current Time ---------------------------------
 			SlaveTrigger trig = new SlaveTrigger();
 			myPlatformTime.setTimeStampAsString( Long.toString(System.currentTimeMillis()) ) ;
 			trig.setTriggerTime( myPlatformTime );
+			
+			// --- get current Load-Level -----------------------
+			myLoad.setLoadCPU(LoadMeasureThread.getLoadCPU());
+			myLoad.setLoadMemory(LoadMeasureThread.getLoadMemory());
+			myLoad.setLoadNoThreads(LoadMeasureThread.getLoadNoThreads());
+			myLoad.setLoadExceeded(LoadMeasureThread.getThresholdLevelesExceeded());
+			trig.setSlaveLoad(myLoad);
+			
+			// --- get Current Benchmark-Result -----------------
+			BenchmarkResult bmr = new BenchmarkResult(); 
+			bmr.setBenchmarkValue(LoadMeasureThread.getCompositeBenchmarkValue());
+			trig.setSlaveBenchmarkValue(bmr);
+			
 			// --- Send Message ---------------------------------
 			sendMessage2MainServer(trig);
 		}

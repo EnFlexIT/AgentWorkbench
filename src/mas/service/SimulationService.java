@@ -22,7 +22,9 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.Observer;
 
+import mas.service.distribution.ontology.PlatformLoad;
 import mas.service.environment.EnvironmentModel;
+import mas.service.load.LoadMeasureArray;
 import mas.service.load.LoadMeasureThread;
 import mas.service.sensoring.ServiceActuator;
 import mas.service.time.TimeModel;
@@ -69,6 +71,9 @@ public class SimulationService extends BaseService {
 	// --- Agents about changes in the Simulation e.g. 'stepTimeModel' --------
 	private ServiceActuator localServiceActuator = new ServiceActuator();
 	
+	// --- The Load-Information Array of all slices ---------------------------
+	private LoadMeasureArray containerLoadArray = new LoadMeasureArray(); 
+	
 	
 	public void init(AgentContainer ac, Profile p) throws ProfileException {
 		
@@ -93,7 +98,7 @@ public class SimulationService extends BaseService {
 		}
 		
 		// --- Start the Load-Measurments on this Node ----
-		new LoadMeasureThread(500,5).start();   
+		new LoadMeasureThread().start();   
 		
 	}
 	public void boot(Profile p) throws ServiceException {
@@ -138,6 +143,14 @@ public class SimulationService extends BaseService {
 		public void init(Agent ag) {
 			// --- Store the Agent in the agentList -----------------
 			agentList.put(ag.getName(), ag.getAID());			
+		}
+		
+		// ----------------------------------------------------------
+		// --- Method to get the Load-Informations of all containers 
+		public LoadMeasureArray getContainerLoads() throws ServiceException {
+			Service.Slice[] slices = getAllSlices();
+			broadcastMeasureLoad(slices);
+			return containerLoadArray;
 		}
 		
 		// ----------------------------------------------------------
@@ -356,7 +369,37 @@ public class SimulationService extends BaseService {
 			}
 		}
 	}
+	
+	/**
+	 * 'Broadcast' (or receive) all Informations about the containers load
+	 * @param slices
+	 * @throws ServiceException
+	 */
+	private void broadcastMeasureLoad(Service.Slice[] slices) throws ServiceException {
 		
+		containerLoadArray = new LoadMeasureArray();
+		
+		if (myLogger.isLoggable(Logger.CONFIG)) {
+			myLogger.log(Logger.CONFIG, "Try to get Load-Information from the Containers !");
+		}
+		for (int i = 0; i < slices.length; i++) {
+			String sliceName = null;
+			try {
+				SimulationServiceSlice slice = (SimulationServiceSlice) slices[i];
+				sliceName = slice.getNode().getName();
+				if (myLogger.isLoggable(Logger.FINER)) {
+					myLogger.log(Logger.FINER, "Try to get Load-Information of " + sliceName);
+				}
+				PlatformLoad pl = slice.measureLoad();
+				containerLoadArray.put(sliceName, pl);
+			}
+			catch(Throwable t) {
+				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
+				myLogger.log(Logger.WARNING, "Error while executing 'MeasureLoad' on slice " + sliceName, t);
+			}
+		}		
+	}
+	
 	
 	// --------------------------------------------------------------	
 	// ---- Inner-Class 'ServiceComponent' ---- Start ---------------
@@ -435,7 +478,7 @@ public class SimulationService extends BaseService {
 				}
 				else if (cmdName.equals(SimulationServiceSlice.SIM_GET_ENVIRONMENT)) {
 					if (myLogger.isLoggable(Logger.FINE)) {
-						myLogger.log(Logger.FINE, "Answering Request for Environment-Instance");
+						myLogger.log(Logger.FINE, "Answering request for Environment-Instance");
 					}	
 					cmd.setReturnValue(getEnvironmentInstance());
 				}
@@ -449,6 +492,13 @@ public class SimulationService extends BaseService {
 						myLogger.log(Logger.FINE, "Received 'Notfy Sensor': " + cmdName);
 					}	
 					notifySensors(cmdName);
+				}
+				
+				else if (cmdName.equals(SimulationServiceSlice.SERVICE_MEASURE_LOAD)) {
+					if (myLogger.isLoggable(Logger.FINE)) {
+						myLogger.log(Logger.FINE, "Answering request for Container-Load");
+					}
+					cmd.setReturnValue(measureLoad());
 				}
 				
 			}
@@ -485,6 +535,14 @@ public class SimulationService extends BaseService {
 		
 		private void notifySensors(String topicWhichChanged) {
 			localServiceActuator.setChangedAndNotify(topicWhichChanged);
+		}
+		private PlatformLoad measureLoad() {
+			PlatformLoad pl = new PlatformLoad();
+			pl.setLoadCPU(LoadMeasureThread.getLoadCPU());
+			pl.setLoadMemory(LoadMeasureThread.getLoadMemory());
+			pl.setLoadNoThreads(LoadMeasureThread.getLoadNoThreads());
+			pl.setLoadExceeded(LoadMeasureThread.getThresholdLevelesExceeded());
+			return pl;
 		}
 		
 	} 

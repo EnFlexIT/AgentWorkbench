@@ -515,7 +515,7 @@ public class Platform extends Object {
 		}
 		// --- 1. try to find the agent in main-container -----------
 		try {
-			AgeCon = AgenCont.getAgent(AgentName);			
+			AgeCon = AgenCont.getAgent(AgentName);
 		} 
 		catch (ControllerException CE) {
 			return false; 	// CE.printStackTrace();			

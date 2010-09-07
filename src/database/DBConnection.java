@@ -81,6 +81,7 @@ public class DBConnection {
 		
 		// --- Create TB 'server' -----------------
 		sql  = "CREATE TABLE platforms (" +
+				
 				"id_platform int(11) NOT NULL AUTO_INCREMENT," +
 				"contact_agent varchar(255) CHARACTER SET utf8 NOT NULL," +
 				"platform_name varchar(255) CHARACTER SET utf8 NOT NULL," +
@@ -89,16 +90,31 @@ public class DBConnection {
 				"url varchar(255) CHARACTER SET utf8," +
 				"jade_port int(11)," +
 				"http4mtp varchar(255) CHARACTER SET utf8," +
+
+				"os_name varchar(50)," +
+				"os_version varchar(50)," +
+				"os_arch varchar(50)," +
+				
 				"cpu_vendor varchar(255)," +
 				"cpu_model varchar(255)," +
 				"cpu_n int(3)," +
 				"cpu_speed_mhz int(11)," +
+				
 				"memory_total_mb int(11)," +
+				
+				"benchmark_value float default 0," +
+				
 				"online_since DATETIME," +
 				"last_contact_at DATETIME," +
 				"local_online_since DATETIME," +
 				"local_last_contact_at DATETIME," +
+				
 				"currently_available tinyint(4)," +
+				"current_load_cpu float," +
+				"current_load_memory float," +
+				"current_load_no_threads int," +
+				"current_load_threshold_exceeded tinyint(4)," +
+				
 			   "PRIMARY KEY (id_platform)," +
 			   "UNIQUE KEY contact_agent (contact_agent) " +
 			   ") ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Agent.GUI available platforms'";

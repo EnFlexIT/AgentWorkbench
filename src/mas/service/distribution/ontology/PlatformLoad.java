@@ -8,9 +8,31 @@ import jade.core.*;
 /**
 * Protege name: PlatformLoad
 * @author ontology bean generator
-* @version 2010/09/2, 16:06:42
+* @version 2010/09/7, 14:14:03
 */
 public class PlatformLoad implements Concept {
+
+   /**
+* Protege name: loadExceeded
+   */
+   private int loadExceeded;
+   public void setLoadExceeded(int value) { 
+    this.loadExceeded=value;
+   }
+   public int getLoadExceeded() {
+     return this.loadExceeded;
+   }
+
+   /**
+* Protege name: loadCPU
+   */
+   private float loadCPU;
+   public void setLoadCPU(float value) { 
+    this.loadCPU=value;
+   }
+   public float getLoadCPU() {
+     return this.loadCPU;
+   }
 
    /**
 * Protege name: loadMemory
@@ -32,28 +54,6 @@ public class PlatformLoad implements Concept {
    }
    public int getLoadNoThreads() {
      return this.loadNoThreads;
-   }
-
-   /**
-* Protege name: loadCPU
-   */
-   private float loadCPU;
-   public void setLoadCPU(float value) { 
-    this.loadCPU=value;
-   }
-   public float getLoadCPU() {
-     return this.loadCPU;
-   }
-
-   /**
-* Protege name: loadExceeded
-   */
-   private int loadExceeded;
-   public void setLoadExceeded(int value) { 
-    this.loadExceeded=value;
-   }
-   public int getLoadExceeded() {
-     return this.loadExceeded;
    }
 
 }

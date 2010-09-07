@@ -109,11 +109,12 @@ public class MasterServerAgent extends Agent {
 						PlatformAddress plAdd = sr.getSlaveAddress();
 						PlatformTime plTime = sr.getSlaveTime();
 						PlatformPerformance plPerf = sr.getSlavePerformance();
+						OSInfo os = sr.getSlaveOS();
 						
 						Long timestamp = Long.parseLong(plTime.getTimeStampAsString() );
 						Date plDate = new Date(timestamp);						
 						
-						dbRegisterPlatform(senderAID, plAdd, plPerf, plDate, true);
+						dbRegisterPlatform(senderAID, os, plAdd, plPerf, plDate, true);
 
 					} else if ( agentAction instanceof ClientRegister ) {
 						
@@ -121,21 +122,36 @@ public class MasterServerAgent extends Agent {
 						PlatformAddress plAdd = cr.getClientAddress();
 						PlatformTime plTime = cr.getClientTime();
 						PlatformPerformance plPerf = cr.getClientPerformance();
+						OSInfo os = cr.getClientOS();
 						
 						Long timestamp = Long.parseLong(plTime.getTimeStampAsString() );
 						Date plDate = new Date(timestamp);						
 						
-						dbRegisterPlatform(senderAID, plAdd, plPerf, plDate, false);
+						dbRegisterPlatform(senderAID, os, plAdd, plPerf, plDate, false);
 						
 					} else if ( agentAction instanceof SlaveTrigger ) {
 						
 						SlaveTrigger st = (SlaveTrigger) agentAction;						
 						PlatformTime plTime = st.getTriggerTime();
+						PlatformLoad plLoad = st.getSlaveLoad();
+						BenchmarkResult bmr = st.getSlaveBenchmarkValue();
 						
 						Long timestamp = Long.parseLong(plTime.getTimeStampAsString() );
 						Date plDate = new Date(timestamp);
 
-						dbTriggerPlatform(senderAID, plDate);
+						dbTriggerPlatform(senderAID, plDate, plLoad, bmr);
+						
+					} else if ( agentAction instanceof ClientTrigger ) {
+						
+						ClientTrigger st = (ClientTrigger) agentAction;						
+						PlatformTime plTime = st.getTriggerTime();
+						PlatformLoad plLoad = st.getClientLoad();
+						BenchmarkResult bmr = st.getClientBenchmarkValue();
+						
+						Long timestamp = Long.parseLong(plTime.getTimeStampAsString() );
+						Date plDate = new Date(timestamp);
+
+						dbTriggerPlatform(senderAID, plDate, plLoad, bmr);
 						
 					} else if ( agentAction instanceof SlaveUnregister ) {
 
@@ -175,7 +191,7 @@ public class MasterServerAgent extends Agent {
 	 * This method is used for Register Slave-Platforms
 	 * in the database - table
 	 */
-	private void dbRegisterPlatform(AID sender, PlatformAddress platform, PlatformPerformance performance, Date time, boolean isServer) {
+	private void dbRegisterPlatform(AID sender, OSInfo os, PlatformAddress platform, PlatformPerformance performance, Date time, boolean isServer) {
 		
 		String sqlStmt = "";
 		Timestamp sqlDate = new Timestamp(time.getTime());
@@ -198,11 +214,15 @@ public class MasterServerAgent extends Agent {
 								"url = '" + platform.getUrl() + "'," +
 								"jade_port = " + platform.getPort() + "," +
 								"http4mtp = '" + platform.getHttp4mtp() + "'," +
+								"os_name = '" + os.getOs_name() + "'," +
+								"os_version = '" + os.getOs_version() + "'," +
+								"os_arch = '" + os.getOs_arch() + "'," +
 								"cpu_vendor = '" + performance.getCpu_vendor() + "'," +
 								"cpu_model = '" + performance.getCpu_model() + "'," +
 								"cpu_n = " + performance.getCpu_numberOf() + "," +
 								"cpu_speed_mhz = " + performance.getCpu_speedMhz() + "," +
 								"memory_total_mb = " + performance.getMemory_totalMB() + "," +
+								"benchmark_value = 0," +
 								"online_since = now()," + 
 								"last_contact_at = now()," +
 								"local_online_since = '" + sqlDate + "'," +
@@ -220,11 +240,15 @@ public class MasterServerAgent extends Agent {
 								"url = '" + platform.getUrl() + "'," +
 								"jade_port = " + platform.getPort() + "," +
 								"http4mtp = '" + platform.getHttp4mtp() + "'," +
+								"os_name = '" + os.getOs_name() + "'," +
+								"os_version = '" + os.getOs_version() + "'," +
+								"os_arch = '" + os.getOs_arch() + "'," +
 								"cpu_vendor = '" + performance.getCpu_vendor() + "'," +
 								"cpu_model = '" + performance.getCpu_model() + "'," +
 								"cpu_n = " + performance.getCpu_numberOf() + "," +
 								"cpu_speed_mhz = " + performance.getCpu_speedMhz() + "," +
 								"memory_total_mb = " + performance.getMemory_totalMB() + "," +
+								"benchmark_value = 0," +
 								"online_since = now()," + 
 								"last_contact_at = now()," +
 								"local_online_since = '" + sqlDate + "'," +
@@ -246,7 +270,7 @@ public class MasterServerAgent extends Agent {
 		
 	}
 	
-	private void dbTriggerPlatform(AID sender, Date time) {
+	private void dbTriggerPlatform(AID sender, Date time, PlatformLoad plLoad, BenchmarkResult bmr) {
 		
 		String sqlStmt = "";
 		Timestamp sqlDate = new Timestamp(time.getTime());
@@ -255,7 +279,12 @@ public class MasterServerAgent extends Agent {
 		sqlStmt = "UPDATE platforms SET " +
 					"last_contact_at = now()," +
 					"local_last_contact_at = '" + sqlDate + "'," +
-					"currently_available = -1 " +
+					"benchmark_value = " + bmr.getBenchmarkValue() + "," +
+					"currently_available = -1, " +
+					"current_load_cpu = " + plLoad.getLoadCPU() + "," +
+					"current_load_memory = " + plLoad.getLoadMemory() + "," +
+					"current_load_no_threads = " + plLoad.getLoadNoThreads() + "," +
+					"current_load_threshold_exceeded = " + plLoad.getLoadExceeded() + " " + 
 				   "WHERE contact_agent='" + sender.getName() + "'";
 		dbConn.getSqlExecuteUpdate(sqlStmt);
 	}
@@ -280,8 +309,17 @@ public class MasterServerAgent extends Agent {
 		String slaveAgentAddress = null;
 		AID slavePlatformAgent = null; 
 		
-		// --- Just find a machine which is available => SQL -----
-		sqlStmt = "SELECT * FROM platforms WHERE is_server=-1 and currently_available=-1";
+		// --------------------------------------------------------------------
+		// --- Select the machine with the highest potential of 		-------
+		// --- Mflops (Millions of floating point operations per second -------
+		// --- in relation to the current processor/CPU-load 			-------
+		// --------------------------------------------------------------------
+		sqlStmt = "SELECT (benchmark_value-(benchmark_value*current_load_cpu/100)) AS potential, platforms.* ";
+		sqlStmt+= "FROM platforms ";
+		sqlStmt+= "WHERE is_server=-1 AND currently_available=-1 ";
+		sqlStmt+= "ORDER BY (benchmark_value-(benchmark_value*current_load_cpu/100)) DESC";
+		// --------------------------------------------------------------------
+		
 		ResultSet res = dbConn.getSqlResult4ExecuteQuery(sqlStmt);
 		try {
 			if (res.wasNull()) {

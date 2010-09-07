@@ -8,52 +8,19 @@ import jade.core.*;
 /**
 * Protege name: RemoteContainerConfig
 * @author ontology bean generator
-* @version 2010/09/2, 16:06:42
+* @version 2010/09/7, 14:14:03
 */
 public class RemoteContainerConfig implements Concept {
 
    /**
-* Protege name: jvmMemAllocMaximum
+* Protege name: jadeContainerName
    */
-   private String jvmMemAllocMaximum;
-   public void setJvmMemAllocMaximum(String value) { 
-    this.jvmMemAllocMaximum=value;
+   private String jadeContainerName;
+   public void setJadeContainerName(String value) { 
+    this.jadeContainerName=value;
    }
-   public String getJvmMemAllocMaximum() {
-     return this.jvmMemAllocMaximum;
-   }
-
-   /**
-* Protege name: jvmMemAllocInitial
-   */
-   private String jvmMemAllocInitial;
-   public void setJvmMemAllocInitial(String value) { 
-    this.jvmMemAllocInitial=value;
-   }
-   public String getJvmMemAllocInitial() {
-     return this.jvmMemAllocInitial;
-   }
-
-   /**
-* Protege name: jadeShowGUI
-   */
-   private boolean jadeShowGUI;
-   public void setJadeShowGUI(boolean value) { 
-    this.jadeShowGUI=value;
-   }
-   public boolean getJadeShowGUI() {
-     return this.jadeShowGUI;
-   }
-
-   /**
-* Protege name: jadeIsRemoteContainer
-   */
-   private boolean jadeIsRemoteContainer;
-   public void setJadeIsRemoteContainer(boolean value) { 
-    this.jadeIsRemoteContainer=value;
-   }
-   public boolean getJadeIsRemoteContainer() {
-     return this.jadeIsRemoteContainer;
+   public String getJadeContainerName() {
+     return this.jadeContainerName;
    }
 
    /**
@@ -68,14 +35,25 @@ public class RemoteContainerConfig implements Concept {
    }
 
    /**
-* Protege name: jadeContainerName
+* Protege name: jvmMemAllocMaximum
    */
-   private String jadeContainerName;
-   public void setJadeContainerName(String value) { 
-    this.jadeContainerName=value;
+   private String jvmMemAllocMaximum;
+   public void setJvmMemAllocMaximum(String value) { 
+    this.jvmMemAllocMaximum=value;
    }
-   public String getJadeContainerName() {
-     return this.jadeContainerName;
+   public String getJvmMemAllocMaximum() {
+     return this.jvmMemAllocMaximum;
+   }
+
+   /**
+* Protege name: jadeShowGUI
+   */
+   private boolean jadeShowGUI;
+   public void setJadeShowGUI(boolean value) { 
+    this.jadeShowGUI=value;
+   }
+   public boolean getJadeShowGUI() {
+     return this.jadeShowGUI;
    }
 
    /**
@@ -87,6 +65,28 @@ public class RemoteContainerConfig implements Concept {
    }
    public String getJadePort() {
      return this.jadePort;
+   }
+
+   /**
+* Protege name: jadeIsRemoteContainer
+   */
+   private boolean jadeIsRemoteContainer;
+   public void setJadeIsRemoteContainer(boolean value) { 
+    this.jadeIsRemoteContainer=value;
+   }
+   public boolean getJadeIsRemoteContainer() {
+     return this.jadeIsRemoteContainer;
+   }
+
+   /**
+* Protege name: jvmMemAllocInitial
+   */
+   private String jvmMemAllocInitial;
+   public void setJvmMemAllocInitial(String value) { 
+    this.jvmMemAllocInitial=value;
+   }
+   public String getJvmMemAllocInitial() {
+     return this.jvmMemAllocInitial;
    }
 
    /**

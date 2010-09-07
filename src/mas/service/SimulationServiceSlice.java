@@ -3,6 +3,7 @@ package mas.service;
 import jade.core.AID;
 import jade.core.IMTPException;
 import jade.core.Service;
+import mas.service.distribution.ontology.PlatformLoad;
 import mas.service.time.TimeModel;
 
 public interface SimulationServiceSlice extends Service.Slice {
@@ -48,8 +49,11 @@ public interface SimulationServiceSlice extends Service.Slice {
 	public final String SERVICE_UPDATE_SIMULATION = "service-update-simulation";
 
 	public void notifySensors(String topicWhichChanged) throws IMTPException;
-
 	
+	// ----------------------------------------------------------
+	// --- Method to get the Load-Informations of all containers 
+	static final String SERVICE_MEASURE_LOAD = "measure-Load";
 	
+	public PlatformLoad measureLoad() throws IMTPException;
 	
 }

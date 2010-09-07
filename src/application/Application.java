@@ -43,9 +43,11 @@ public class Application {
 		RunInfo = new GlobalInfo();
 		Console = new CoreWindowConsole();
 		properties = new FileProperties();
-		new LoadMeasureThread(500,5).start();   
+		new LoadMeasureThread().start();  
 		startAgentGUI();
-
+		// --- Starting the performance/benchmark test --------------
+		new BenchmarkMeasurement().start();
+		
 	}	
 
 	private static void startAgentGUI() {

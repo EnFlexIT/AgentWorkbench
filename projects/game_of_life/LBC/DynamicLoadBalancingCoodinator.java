@@ -139,7 +139,7 @@ public class DynamicLoadBalancingCoodinator extends Agent {
 //			setCurrentJvmMemoFree(global.getLoadThreshold()
 //					.getCurrentJvmMemoFree());
 
-			setCpuAndMemThresholdExceeded(LoadMeasureThread.isThresholdLevelesExceeded());
+			//setCpuAndMemThresholdExceeded(LoadMeasureThread.isThresholdLevelesExceeded());
 			setCurrentCpuIdleTime(LoadMeasureThread.getLoadCurrentAvg().getCpuIdleTime());
 			setCurrentJvmMemoFree(LoadMeasureThread.getLoadCurrentAvgJVM().getJvmMemoFree());
 
