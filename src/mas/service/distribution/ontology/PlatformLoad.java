@@ -8,19 +8,19 @@ import jade.core.*;
 /**
 * Protege name: PlatformLoad
 * @author ontology bean generator
-* @version 2010/09/7, 14:14:03
+* @version 2010/09/8, 22:47:22
 */
 public class PlatformLoad implements Concept {
 
    /**
-* Protege name: loadExceeded
+* Protege name: loadMemoryJVM
    */
-   private int loadExceeded;
-   public void setLoadExceeded(int value) { 
-    this.loadExceeded=value;
+   private float loadMemoryJVM;
+   public void setLoadMemoryJVM(float value) { 
+    this.loadMemoryJVM=value;
    }
-   public int getLoadExceeded() {
-     return this.loadExceeded;
+   public float getLoadMemoryJVM() {
+     return this.loadMemoryJVM;
    }
 
    /**
@@ -35,14 +35,25 @@ public class PlatformLoad implements Concept {
    }
 
    /**
-* Protege name: loadMemory
+* Protege name: loadExceeded
    */
-   private float loadMemory;
-   public void setLoadMemory(float value) { 
-    this.loadMemory=value;
+   private int loadExceeded;
+   public void setLoadExceeded(int value) { 
+    this.loadExceeded=value;
    }
-   public float getLoadMemory() {
-     return this.loadMemory;
+   public int getLoadExceeded() {
+     return this.loadExceeded;
+   }
+
+   /**
+* Protege name: loadMemorySystem
+   */
+   private float loadMemorySystem;
+   public void setLoadMemorySystem(float value) { 
+    this.loadMemorySystem=value;
+   }
+   public float getLoadMemorySystem() {
+     return this.loadMemorySystem;
    }
 
    /**

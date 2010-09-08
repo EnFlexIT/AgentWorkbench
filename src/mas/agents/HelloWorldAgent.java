@@ -8,6 +8,7 @@ import jade.content.onto.OntologyException;
 import jade.content.onto.basic.Action;
 import jade.core.AID;
 import jade.core.Agent;
+import jade.core.Location;
 import jade.core.ServiceException;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.core.behaviours.TickerBehaviour;
@@ -15,6 +16,7 @@ import jade.lang.acl.ACLMessage;
 
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Observable;
 import java.util.Vector;
@@ -24,7 +26,7 @@ import mas.service.SimulationServiceHelper;
 import mas.service.distribution.ontology.AgentGUI_DistributionOntology;
 import mas.service.distribution.ontology.ClientRemoteContainerRequest;
 import mas.service.distribution.ontology.PlatformLoad;
-import mas.service.load.LoadMeasureArray;
+import mas.service.load.LoadInformation;
 import mas.service.load.LoadMeasureAvgJVM;
 import mas.service.load.LoadMeasureAvgSigar;
 import mas.service.load.LoadMeasureThread;
@@ -56,7 +58,7 @@ public class HelloWorldAgent extends Agent implements ServiceSensor {
 		
 		// ---- Add Cyclic Behaviour -----------
 		//this.addBehaviour(new HelloBehaviour(this,3000));
-		this.requestNewRemoteContainer();
+		//this.requestNewRemoteContainer();
 		this.addBehaviour(new HelloBehaviour(this, 1000));
 	} 
 	
@@ -136,22 +138,33 @@ public class HelloWorldAgent extends Agent implements ServiceSensor {
 
 			
 			SimulationServiceHelper simHelper = null;
-			LoadMeasureArray lma = null;
+			Hashtable<String, PlatformLoad> lma = null;
+			String newContainerName = null;
 			try {
 				simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
 				lma = simHelper.getContainerLoads();
-
+				newContainerName = simHelper.startNewRemoteContainer();
+				System.out.println("Neuer Container: " + newContainerName);
+				while (simHelper.getLocation(newContainerName)==null) {
+					doWait(1000);
+				}
+				Location loc = simHelper.getLocation(newContainerName);
+				System.out.println("Location: " + loc.getName() + " - " + loc.getID()+ " - " + loc.getAddress());
+				
 			} catch (ServiceException e) {
 				e.printStackTrace();
 			}
-
-			Vector<String> v = new Vector<String>( lma.keySet() );
-		    Iterator<String> it = v.iterator();
-		    while (it.hasNext()) {
-		    	String container = it.next();
-		    	PlatformLoad pl = lma.get(container);
-		    	System.out.println( "Load on '" + container + "': CPU: " + pl.getLoadCPU() + " - Memory: " + pl.getLoadMemory() + " - NoThreads: " + pl.getLoadNoThreads() + " - Exceeded: " + pl.getLoadExceeded() + "" );
-		    }
+			
+			myAgent.doSuspend();
+			
+			
+//			Vector<String> v = new Vector<String>( lma.keySet() );
+//		    Iterator<String> it = v.iterator();
+//		    while (it.hasNext()) {
+//		    	String container = it.next();
+//		    	PlatformLoad pl = lma.get(container);
+//		    	System.out.println( "Load on '" + container + "': CPU: " + pl.getLoadCPU() + " - Memory: " + pl.getLoadMemory() + " - NoThreads: " + pl.getLoadNoThreads() + " - Exceeded: " + pl.getLoadExceeded() + "" );
+//		    }
 			
 		} 
 	}

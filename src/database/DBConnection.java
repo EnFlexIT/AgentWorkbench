@@ -111,7 +111,8 @@ public class DBConnection {
 				
 				"currently_available tinyint(4)," +
 				"current_load_cpu float," +
-				"current_load_memory float," +
+				"current_load_memory_system float," +
+				"current_load_memory_jvm float," +
 				"current_load_no_threads int," +
 				"current_load_threshold_exceeded tinyint(4)," +
 				

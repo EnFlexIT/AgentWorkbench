@@ -168,7 +168,8 @@ public class SlaveServerAgent extends Agent {
 			
 			// --- get current Load-Level -----------------------
 			myLoad.setLoadCPU(LoadMeasureThread.getLoadCPU());
-			myLoad.setLoadMemory(LoadMeasureThread.getLoadMemory());
+			myLoad.setLoadMemorySystem(LoadMeasureThread.getLoadMemorySystem());
+			myLoad.setLoadMemoryJVM(LoadMeasureThread.getLoadMemoryJVM());
 			myLoad.setLoadNoThreads(LoadMeasureThread.getLoadNoThreads());
 			myLoad.setLoadExceeded(LoadMeasureThread.getThresholdLevelesExceeded());
 			trig.setSlaveLoad(myLoad);

@@ -3,10 +3,12 @@ package mas.service;
 import jade.core.AID;
 import jade.core.GenericCommand;
 import jade.core.IMTPException;
+import jade.core.Location;
 import jade.core.Node;
 import jade.core.ServiceException;
 import jade.core.SliceProxy;
 import mas.service.distribution.ontology.PlatformLoad;
+import mas.service.distribution.ontology.RemoteContainerConfig;
 import mas.service.time.TimeModel;
 
 public class SimulationServiceProxy extends SliceProxy implements SimulationServiceSlice {
@@ -37,7 +39,6 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 		catch(ServiceException se) {
 			throw new IMTPException("Unable to access remote node", se);
 		}
-		
 	}
 
 	@Override
@@ -60,7 +61,6 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 		catch(ServiceException se) {
 			throw new IMTPException("Unable to access remote node", se);
 		}
-
 	}
 	// ----------------------------------------------------------
 	// --- Methods on the Manager-Agent --- S T O P -------------
@@ -91,7 +91,6 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 		catch(ServiceException se) {
 			throw new IMTPException("Unable to access remote node", se);
 		}
-		
 	}
 
 	@Override
@@ -114,7 +113,6 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 		catch(ServiceException se) {
 			throw new IMTPException("Unable to access remote node", se);
 		}
-
 	}
 
 	@Override
@@ -136,7 +134,6 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 		catch(ServiceException se) {
 			throw new IMTPException("Unable to access remote node", se);
 		}
-		
 	}
 	// ----------------------------------------------------------
 	// --- Methods on the TimeModel --- E N D -------------------
@@ -167,7 +164,6 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 		catch(ServiceException se) {
 			throw new IMTPException("Unable to access remote node", se);
 		}
-		
 	}
 	
 	@Override
@@ -190,7 +186,6 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 		catch(ServiceException se) {
 			throw new IMTPException("Unable to access remote node", se);
 		}
-
 	}
 	// ----------------------------------------------------------
 	// --- Methods on the Environment --- E N D -----------------
@@ -219,7 +214,6 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 		catch(ServiceException se) {
 			throw new IMTPException("Unable to access remote node", se);
 		}
-		
 	}
 	// ----------------------------------------------------------
 	// --- Method for Notify Sensor --- E N D -------------------
@@ -234,6 +228,7 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 
 		try {
 			GenericCommand cmd = new GenericCommand(SERVICE_MEASURE_LOAD, SimulationService.NAME, null);
+			
 			Node n = getNode();
 			Object result = n.accept(cmd);
 			if((result != null) && (result instanceof Throwable)) {
@@ -249,12 +244,59 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 		catch(ServiceException se) {
 			throw new IMTPException("Unable to access remote node", se);
 		}
+	}
+
+	public String startNewRemoteContainer(RemoteContainerConfig remoteConfig) throws IMTPException {
 		
+		try {
+			GenericCommand cmd = new GenericCommand(SERVICE_START_NEW_REMOTE_CONTAINER, SimulationService.NAME, null);
+			cmd.addParam(remoteConfig);
+			
+			Node n = getNode();
+			Object result = n.accept(cmd);
+			if((result != null) && (result instanceof Throwable)) {
+				if(result instanceof IMTPException) {
+					throw (IMTPException)result;
+				}
+				else {
+					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
+				}
+			}
+			return (String) result;
+		}
+		catch(ServiceException se) {
+			throw new IMTPException("Unable to access remote node", se);
+		}
+	}
+
+	public Location getLocation() throws IMTPException {
+		
+		try {
+			GenericCommand cmd = new GenericCommand(SERVICE_GET_LOCATION, SimulationService.NAME, null);
+			
+			Node n = getNode();
+			Object result = n.accept(cmd);
+			if((result != null) && (result instanceof Throwable)) {
+				if(result instanceof IMTPException) {
+					throw (IMTPException)result;
+				}
+				else {
+					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
+				}
+			}
+			Location loc = (Location) result;
+			return loc;
+		}
+		catch(ServiceException se) {
+			throw new IMTPException("Unable to access remote node", se);
+		}
 	}
 	// ----------------------------------------------------------
 	// --- Method to get the Load-Informations of all ----------- 
 	// --- containers ----------------------------- E N D -------
 	// ----------------------------------------------------------
+
+	
 
 	
 }

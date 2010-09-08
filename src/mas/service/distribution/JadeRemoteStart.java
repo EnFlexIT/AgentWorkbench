@@ -54,7 +54,7 @@ public class JadeRemoteStart extends Thread {
 		this.jadeShowGUI = reCoCo.getJadeShowGUI();	
 		
 		if (reCoCo.getJadeServices()!=null) {
-			this.jadeServices = reCoCo.getJadeServices();	
+			this.jadeServices = reCoCo.getJadeServices();
 		}
 		if (reCoCo.getJadeHost()!=null) {
 			this.jadeHost = reCoCo.getJadeHost();	
@@ -128,7 +128,7 @@ public class JadeRemoteStart extends Thread {
 		// --- execute zusammenbauen ------------
 		String execute = java + " " + javaVMArgs + " " + classPath + " " + jade  + " " + jadeArgs;
 		execute = execute.replace("  ", " ");
-		//System.out.println( execute);
+		//System.out.println( "=> Remote Execute: " + execute);
 		
 		// --------------------------------------
 		try {

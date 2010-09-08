@@ -22,6 +22,7 @@ import jade.domain.introspection.IntrospectionVocabulary;
 import jade.domain.introspection.Occurred;
 import jade.domain.introspection.RemovedContainer;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.UnreadableException;
 
 import java.util.Map;
 
@@ -215,34 +216,55 @@ public class ClientServerAgent extends Agent {
 			ACLMessage msg = myAgent.receive();			
 			if (msg!=null) {
 				
-				if (msg.getPerformative()==ACLMessage.FAILURE) {
-					// --- No Ontology-specific Message -------------
-					act = null;
-					System.out.println( "ACLMessage.FAILURE from " + msg.getSender().getName() + ": " + msg.getContent() );
-				} else {
-					// --- Ontology-specific Message ----------------
-					try {
-						ContentElement con = getContentManager().extractContent(msg);	
-						if (con instanceof Action) {
-							act = (Action) con;	
-						} else if (con instanceof Occurred) {
-							occ = (Occurred) con;
-							// --- Messages in the context of Introspection ---
-							// --- Not of any further interest (yet)-- --------
-							// System.out.println( "++++++ Introspection: " + occ.toString() + "++++++" );
-						} else {
-							System.out.println( "=> " + myAgent.getName() + " - Unknown MessageType: " + con.toString() );
-						}						
-					} catch (UngroundedException e) {
-						e.printStackTrace();
-					} catch (CodecException e) {
-						e.printStackTrace();
-					} catch (OntologyException e) {
-						e.printStackTrace();
-					};
-				}
+				act = null; // --- default ---
 				
-				// --- Work on the Content-Msg ----------------------
+				// --------------------------------------------------
+				// --- Is the msg-content-object an AgentAction? ----
+				// --------------------------------------------------				
+				try {
+					Action actTest = (Action) msg.getContentObject();
+					act = actTest;
+				} catch (UnreadableException errAct) {
+					//errAct.printStackTrace();
+				}
+				// --------------------------------------------------
+				
+				if (act==null) {
+					// --------------------------------------------------
+					// --- Try to use the ContentManager for decoding ---
+					// --------------------------------------------------
+					if (msg.getPerformative()==ACLMessage.FAILURE) {
+						// --- No Ontology-specific Message -------------
+						System.out.println( "ACLMessage.FAILURE from " + msg.getSender().getName() + ": " + msg.getContent() );
+						
+					} else {
+						// --- Ontology-specific Message ----------------
+						try {
+							ContentElement con = getContentManager().extractContent(msg);	
+							if (con instanceof Action) {
+								act = (Action) con;	
+							} else if (con instanceof Occurred) {
+								occ = (Occurred) con;
+								// --- Messages in the context of Introspection ---
+								// --- Not of any further interest (yet)-- --------
+								// System.out.println( "++++++ Introspection: " + occ.toString() + "++++++" );
+							} else {
+								System.out.println( "=> " + myAgent.getName() + " - Unknown MessageType: " + con.toString() );
+							}						
+						} catch (UngroundedException e) {
+							e.printStackTrace();
+						} catch (CodecException e) {
+							e.printStackTrace();
+						} catch (OntologyException e) {
+							e.printStackTrace();
+						};
+					}
+					// --------------------------------------------------
+				}
+
+				// --------------------------------------------------
+				// --- Work on the AgentAction of the Message -------
+				// --------------------------------------------------
 				if (act!=null) {
 					
 					agentAction = act.getAction();
@@ -296,7 +318,8 @@ public class ClientServerAgent extends Agent {
 			
 			// --- get current Load-Level -----------------------
 			myLoad.setLoadCPU(LoadMeasureThread.getLoadCPU());
-			myLoad.setLoadMemory(LoadMeasureThread.getLoadMemory());
+			myLoad.setLoadMemorySystem(LoadMeasureThread.getLoadMemorySystem());
+			myLoad.setLoadMemoryJVM(LoadMeasureThread.getLoadMemoryJVM());
 			myLoad.setLoadNoThreads(LoadMeasureThread.getLoadNoThreads());
 			myLoad.setLoadExceeded(LoadMeasureThread.getThresholdLevelesExceeded());
 			trig.setClientLoad(myLoad);

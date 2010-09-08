@@ -8,20 +8,9 @@ import jade.core.*;
 /**
 * Protege name: PlatformPerformance
 * @author ontology bean generator
-* @version 2010/09/7, 14:14:03
+* @version 2010/09/8, 22:47:22
 */
 public class PlatformPerformance implements Concept {
-
-   /**
-* Protege name: cpu_speedMhz
-   */
-   private int cpu_speedMhz;
-   public void setCpu_speedMhz(int value) { 
-    this.cpu_speedMhz=value;
-   }
-   public int getCpu_speedMhz() {
-     return this.cpu_speedMhz;
-   }
 
    /**
 * Protege name: memory_totalMB
@@ -32,6 +21,17 @@ public class PlatformPerformance implements Concept {
    }
    public int getMemory_totalMB() {
      return this.memory_totalMB;
+   }
+
+   /**
+* Protege name: cpu_speedMhz
+   */
+   private int cpu_speedMhz;
+   public void setCpu_speedMhz(int value) { 
+    this.cpu_speedMhz=value;
+   }
+   public int getCpu_speedMhz() {
+     return this.cpu_speedMhz;
    }
 
    /**

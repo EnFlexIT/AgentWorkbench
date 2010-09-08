@@ -3,6 +3,7 @@ package mas.service.load;
 
 public class LoadMeasureThread extends Thread {
     
+	private boolean debugInterval = false;
 	private boolean debugSigar = false;
 	private boolean debugJVM = false;
 	private boolean debugThreshold = false;
@@ -28,7 +29,8 @@ public class LoadMeasureThread extends Thread {
 	private static LoadThresholdLeveles thresholdLeveles = new LoadThresholdLeveles(); 
 	private static int thresholdLevelesExceeded = 0; 	
 	private static int thresholdLeveleExceededCPU = 0;
-	private static int thresholdLeveleExceededMemo = 0;
+	private static int thresholdLeveleExceededMemoSystem = 0;
+	private static int thresholdLeveleExceededMemoJVM = 0;
 	private static int thresholdLeveleExceededNoThreads = 0;
 	
 	// --- Resulting Benchmark-Value ------------------------------------------
@@ -36,7 +38,8 @@ public class LoadMeasureThread extends Thread {
 	
 	// --- Current Values of Interest -----------------------------------------
 	private static float loadCPU = 0;
-	private static float loadMemory = 0;
+	private static float loadMemoryJVM = 0;
+	private static float loadMemorySystem = 0;
 	private static Integer loadNoThreads = 0;
 	
 	/**
@@ -70,10 +73,17 @@ public class LoadMeasureThread extends Thread {
 		System.out.println("Starting Load-Measurements");
 		this.setName(LoadMeasureThread.threadName);
 		// ------------------------------------------------------
-
+		
+		long timeStart = 0;
+		long timeEnd = 0;
+		long timeWork = 0;
+		
 		while(true){
 		try {
-			// --- Measure here ---------------------------
+			// --- Define the time for the next measurement -----
+			timeStart = System.currentTimeMillis();
+
+			// --- Measure here ---------------------------------
 			this.measuredMemCpuData.measureLoadOfSystem();
 			this.measuredJVMData.measureLoadOfSystem();
 			LoadMeasureThread.setLoadCurrent(measuredMemCpuData);
@@ -117,11 +127,19 @@ public class LoadMeasureThread extends Thread {
 			    System.out.println( "JVM-Number of Threads: " + jvmThreadCount );
 			}
 
-			// --- check values and Threshold-Levels ------
+			// --- check values and Threshold-Levels ------------
 			setThresholdLevelesExceeded(this.isLevelExceeded());			
 			
-			// --- Wait for the measure-interval ----------
-			sleep(localmsInterval);
+			// --- Wait for the end of the measure-interval -----
+			sleep(localmsInterval);	
+			if (debugInterval) {
+				timeEnd = System.currentTimeMillis();
+				timeWork = timeEnd - timeStart;
+				System.out.println("=> Start-Time: " + timeStart);
+				System.out.println("=> End-Time:   " + timeEnd);
+				System.out.println("=> RunTime:    " + timeWork + "ms");
+			}
+			
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -137,24 +155,29 @@ public class LoadMeasureThread extends Thread {
 		
 		int levelExceeded = 0;
 		thresholdLeveleExceededCPU = 0;
-		thresholdLeveleExceededMemo = 0;
+		thresholdLeveleExceededMemoSystem = 0;
+		thresholdLeveleExceededMemoJVM = 0;
 		thresholdLeveleExceededNoThreads = 0;
 		
 		// --- Current percentage "CPU used" --------------
 		double tempCPU  = (double)Math.round((1-loadCurrentAvg.getCpuIdleTime())*10000)/100;
 		loadCPU = (float) tempCPU;
-		// --- Current percentage "Memory used" -----------
-		double tempMemo = (double)Math.round(((double)loadCurrentAvgJVM.getJvmHeapUsed() / (double)loadCurrentAvgJVM.getJvmHeapMax()) * 10000)/100;
-		loadMemory = (float) tempMemo;
+		// --- Current percentage "Memory used in System" -
+		double tempMemoSystem = (double)Math.round(((double)loadCurrentAvg.getUseMemory()/ (double)loadCurrentAvg.getTotalMemory()) * 10000)/100;
+		loadMemorySystem = (float) tempMemoSystem;
+		// --- Current percentage "Memory used in the JVM" 
+		double tempMemoJVM = (double)Math.round(((double)loadCurrentAvgJVM.getJvmHeapUsed() / (double)loadCurrentAvgJVM.getJvmHeapMax()) * 10000)/100;
+		loadMemoryJVM = (float) tempMemoJVM;
 		// --- Current number of running threads ----------
 		int tempNoThreads = loadCurrentAvgJVM.getJvmThreadCount();
 		loadNoThreads = tempNoThreads;
 		
 		if (debugThreshold) {
 			System.out.println( );
-			System.out.println( "CPU used: " + tempCPU + "% (" + thresholdLeveles.getThCpuL() + "/" + thresholdLeveles.getThCpuH() + ")" );
-			System.out.println( "Memory used: " + tempMemo + "% (" + thresholdLeveles.getThMemoL() + "/" + thresholdLeveles.getThMemoH() + ")" );
-			System.out.println( "N-Threads: " + tempNoThreads + " (" + thresholdLeveles.getThNoThreadsL() + "/" + thresholdLeveles.getThNoThreadsH() + ")" );
+			System.out.println( "CPU used:        " + tempCPU + "% (" + thresholdLeveles.getThCpuL() + "/" + thresholdLeveles.getThCpuH() + ")" );
+			System.out.println( "Sys-Memory used: " + tempMemoSystem + "% (" + thresholdLeveles.getThMemoL() + "/" + thresholdLeveles.getThMemoH() + ")" );
+			System.out.println( "JVM-Memory used: " + tempMemoJVM + "% (" + thresholdLeveles.getThMemoL() + "/" + thresholdLeveles.getThMemoH() + ")" );
+			System.out.println( "N-Threads:       " + tempNoThreads + " (" + thresholdLeveles.getThNoThreadsL() + "/" + thresholdLeveles.getThNoThreadsH() + ")" );
 		}
 		
 		// --- Check CPU-Usage ----------------------------
@@ -164,11 +187,18 @@ public class LoadMeasureThread extends Thread {
 			thresholdLeveleExceededCPU = -1;
 		}
 		
-		// --- Check Memory-Usage -------------------------
-		if ( tempMemo > thresholdLeveles.getThMemoH()) {
-			thresholdLeveleExceededMemo = 1;
-		} else if ( tempMemo < thresholdLeveles.getThMemoL()) {
-			thresholdLeveleExceededMemo = -1;
+		// --- Check Memory-Usage SYSTEM ------------------
+		if ( tempMemoSystem > thresholdLeveles.getThMemoH()) {
+			thresholdLeveleExceededMemoSystem = 1;
+		} else if ( tempMemoSystem < thresholdLeveles.getThMemoL()) {
+			thresholdLeveleExceededMemoSystem = -1;
+		}
+		
+		// --- Check Memory-Usage JVM ---------------------
+		if ( tempMemoJVM > thresholdLeveles.getThMemoH()) {
+			thresholdLeveleExceededMemoJVM = 1;
+		} else if ( tempMemoJVM < thresholdLeveles.getThMemoL()) {
+			thresholdLeveleExceededMemoJVM = -1;
 		}
 		
 		// --- Check Number of Threads --------------------
@@ -180,29 +210,41 @@ public class LoadMeasureThread extends Thread {
 		
 		
 		// --- Set conclusion of Threshold Level Check ----
-		if (thresholdLeveleExceededCPU>0 || thresholdLeveleExceededMemo>0 || thresholdLeveleExceededNoThreads>0) {
-			levelExceeded=1;	// --- Hi-Alarm ---
+		if (thresholdLeveleExceededCPU > 0 || 
+			thresholdLeveleExceededMemoSystem > 0 || 
+			thresholdLeveleExceededMemoJVM > 0 ||
+			thresholdLeveleExceededNoThreads > 0) {
+			levelExceeded = 1;	// --- Hi-Alarm ---
 		}
-		if (thresholdLeveleExceededCPU<0 && thresholdLeveleExceededMemo<0 && thresholdLeveleExceededNoThreads ==0) {
-			levelExceeded=-1;	// --- Low-Alarm ---
+		if (thresholdLeveleExceededCPU < 0 && 
+			thresholdLeveleExceededMemoSystem < 0 && 
+			thresholdLeveleExceededMemoJVM < 0 &&
+			thresholdLeveleExceededNoThreads < 0) {
+			levelExceeded = -1;	// --- Low-Alarm ---
 		}
 		return levelExceeded;
 		
 	}
 	
 	/**
-	 * @param thisThreadExecuted the thisThreadExecuted to set
-	 */
-	public static void setThisThreadExecuted(boolean thisThreadExecuted) {
-		LoadMeasureThread.thisThreadExecuted = thisThreadExecuted;
-	}
-	/**
 	 * @return the thisThreadExecuted
 	 */
 	public static boolean isThisThreadExecuted() {
 		return thisThreadExecuted;
 	}
-
+	/**
+	 * @param thisThreadExecuted the thisThreadExecuted to set
+	 */
+	public static void setThisThreadExecuted(boolean thisThreadExecuted) {
+		LoadMeasureThread.thisThreadExecuted = thisThreadExecuted;
+	}
+	
+	/**
+	 * @return the loadCurrent
+	 */
+	public static LoadMeasureSigar getLoadCurrent() {
+		return loadCurrent;
+	}
 	/**
 	 * @param loadCurrent the loadCurrent to set
 	 */
@@ -210,26 +252,26 @@ public class LoadMeasureThread extends Thread {
 		loadCurrent = loadCurrent2Set;
 		loadCurrentAvg.put(loadCurrent);
 	}
-	/**
-	 * @return the loadCurrent
-	 */
-	public static LoadMeasureSigar getLoadCurrent() {
-		return loadCurrent;
-	}
 
-	/**
-	 * @param loadAvgMemLoad the loadAvgMemLoad to set
-	 */
-	public static void setLoadCurrentAvg(LoadMeasureAvgSigar loadCurrentAvg2Set) {
-		loadCurrentAvg = loadCurrentAvg2Set;
-	}
 	/**
 	 * @return the loadAvgMemLoad
 	 */
 	public static LoadMeasureAvgSigar getLoadCurrentAvg() {
 		return loadCurrentAvg;
 	}
+	/**
+	 * @param loadAvgMemLoad the loadAvgMemLoad to set
+	 */
+	public static void setLoadCurrentAvg(LoadMeasureAvgSigar loadCurrentAvg2Set) {
+		loadCurrentAvg = loadCurrentAvg2Set;
+	}
 	
+	/**
+	 * @return the loadCurrentJVM
+	 */
+	public static LoadMeasureJVM getLoadCurrentJVM() {
+		return loadCurrentJVM;
+	}
 	/**
 	 * @param loadCurrentJVM the loadCurrentJVM to set
 	 */
@@ -237,52 +279,46 @@ public class LoadMeasureThread extends Thread {
 		loadCurrentJVM = loadCurrentJVM2Set;
 		loadCurrentAvgJVM.put(loadCurrentJVM);
 	}
-	/**
-	 * @return the loadCurrentJVM
-	 */
-	public static LoadMeasureJVM getLoadCurrentJVM() {
-		return loadCurrentJVM;
-	}
 	
-	/**
-	 * @param loadCurrentAvgJVM the loadCurrentAvgJVM to set
-	 */
-	public static void setLoadCurrentAvgJVM(LoadMeasureAvgJVM loadCurrentAvgJVM2Set) {
-		loadCurrentAvgJVM = loadCurrentAvgJVM2Set;
-	}
 	/**
 	 * @return the loadCurrentAvgJVM
 	 */
 	public static LoadMeasureAvgJVM getLoadCurrentAvgJVM() {
 		return loadCurrentAvgJVM;
 	}
-
 	/**
-	 * @param thresholdLeveles the thresholdLeveles to set
+	 * @param loadCurrentAvgJVM the loadCurrentAvgJVM to set
 	 */
-	public static void setThresholdLeveles(LoadThresholdLeveles thresholdLeveles) {
-		LoadMeasureThread.thresholdLeveles = thresholdLeveles;
+	public static void setLoadCurrentAvgJVM(LoadMeasureAvgJVM loadCurrentAvgJVM2Set) {
+		loadCurrentAvgJVM = loadCurrentAvgJVM2Set;
 	}
+
 	/**
 	 * @return the thresholdLeveles
 	 */
 	public static LoadThresholdLeveles getThresholdLeveles() {
 		return thresholdLeveles;
 	}
-
 	/**
-	 * @param thresholdLevelesExceeded the thresholdLevelesExceeded to set
+	 * @param thresholdLeveles the thresholdLeveles to set
 	 */
-	public static void setThresholdLevelesExceeded(int thresholdLevelesExceeded) {
-		LoadMeasureThread.thresholdLevelesExceeded = thresholdLevelesExceeded;
+	public static void setThresholdLeveles(LoadThresholdLeveles thresholdLeveles) {
+		LoadMeasureThread.thresholdLeveles = thresholdLeveles;
 	}
+
 	/**
 	 * @return the thresholdLevelesExceeded
 	 */
 	public static int getThresholdLevelesExceeded() {
 		return thresholdLevelesExceeded;
 	}
-
+	/**
+	 * @param thresholdLevelesExceeded the thresholdLevelesExceeded to set
+	 */
+	public static void setThresholdLevelesExceeded(int thresholdLevelesExceeded) {
+		LoadMeasureThread.thresholdLevelesExceeded = thresholdLevelesExceeded;
+	}
+	
 	/**
 	 * @return the thresholdLeveleExceededCPU
 	 */
@@ -297,19 +333,33 @@ public class LoadMeasureThread extends Thread {
 	}
 
 	/**
-	 * @return the thresholdLeveleExceededMemo
+	 * @return the thresholdLeveleExceededMemoSystem
 	 */
-	public static int getThresholdLeveleExceededMemo() {
-		return thresholdLeveleExceededMemo;
+	public static int getThresholdLeveleExceededMemoSystem() {
+		return thresholdLeveleExceededMemoSystem;
 	}
 	/**
-	 * @param thresholdLeveleExceededMemo the thresholdLeveleExceededMemo to set
+	 * @param thresholdLeveleExceededMemoSystem the thresholdLeveleExceededMemoSystem to set
 	 */
-	public static void setThresholdLeveleExceededMemo(
-			int thresholdLeveleExceededMemo) {
-		LoadMeasureThread.thresholdLeveleExceededMemo = thresholdLeveleExceededMemo;
+	public static void setThresholdLeveleExceededMemoSystem(
+			int thresholdLeveleExceededMemoSystem) {
+		LoadMeasureThread.thresholdLeveleExceededMemoSystem = thresholdLeveleExceededMemoSystem;
 	}
 
+	/**
+	 * @return the thresholdLeveleExceededMemoJVM
+	 */
+	public static int getThresholdLeveleExceededMemoJVM() {
+		return thresholdLeveleExceededMemoJVM;
+	}
+	/**
+	 * @param thresholdLeveleExceededMemoJVM the thresholdLeveleExceededMemoJVM to set
+	 */
+	public static void setThresholdLeveleExceededMemoJVM(
+			int thresholdLeveleExceededMemoJVM) {
+		LoadMeasureThread.thresholdLeveleExceededMemoJVM = thresholdLeveleExceededMemoJVM;
+	}
+	
 	/**
 	 * @return the thresholdLeveleExceededNoThreads
 	 */
@@ -319,8 +369,7 @@ public class LoadMeasureThread extends Thread {
 	/**
 	 * @param thresholdLeveleExceededNoThreads the thresholdLeveleExceededNoThreads to set
 	 */
-	public static void setThresholdLeveleExceededNoThreads(
-			int thresholdLeveleExceededNoThreads) {
+	public static void setThresholdLeveleExceededNoThreads(int thresholdLeveleExceededNoThreads) {
 		LoadMeasureThread.thresholdLeveleExceededNoThreads = thresholdLeveleExceededNoThreads;
 	}
 
@@ -353,14 +402,27 @@ public class LoadMeasureThread extends Thread {
 	/**
 	 * @return the loadMemory
 	 */
-	public static float getLoadMemory() {
-		return loadMemory;
+	public static float getLoadMemoryJVM() {
+		return loadMemoryJVM;
 	}
 	/**
 	 * @param loadMemory the loadMemory to set
 	 */
-	public static void setLoadMemory(float loadMemory) {
-		LoadMeasureThread.loadMemory = loadMemory;
+	public static void setLoadMemoryJVM(float loadMemoryJVM) {
+		LoadMeasureThread.loadMemoryJVM = loadMemoryJVM;
+	}
+
+	/**
+	 * @param loadMemorySystem the loadMemorySystem to set
+	 */
+	public static void setLoadMemorySystem(float loadMemorySystem) {
+		LoadMeasureThread.loadMemorySystem = loadMemorySystem;
+	}
+	/**
+	 * @return the loadMemorySystem
+	 */
+	public static float getLoadMemorySystem() {
+		return loadMemorySystem;
 	}
 
 	/**

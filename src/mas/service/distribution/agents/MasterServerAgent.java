@@ -12,6 +12,7 @@ import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.ParallelBehaviour;
+import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
 
 import java.sql.SQLException;
@@ -28,9 +29,6 @@ import database.DBConnection;
 
 public class MasterServerAgent extends Agent {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -3947798460986588734L;
 	
 	private Ontology ontology = AgentGUI_DistributionOntology.getInstance();
@@ -50,6 +48,7 @@ public class MasterServerAgent extends Agent {
 		// --- Add Main-Behaiviours -----------------------
 		parBehaiv = new ParallelBehaviour(this,ParallelBehaviour.WHEN_ALL);
 		parBehaiv.addSubBehaviour( new ReceiveBehaviour() );
+		parBehaiv.addSubBehaviour( new CleanUpBehaviour(this, 1000*60) );
 		// --- Add Parallel Behaiviour --------------------
 		this.addBehaviour(parBehaiv);
 	}
@@ -60,6 +59,33 @@ public class MasterServerAgent extends Agent {
 		
 	}
 
+	// -----------------------------------------------------
+	// --- ClenUp-Behaiviour --- S T A R T -----------------
+	// -----------------------------------------------------
+	private class CleanUpBehaviour extends TickerBehaviour {
+
+		private static final long serialVersionUID = -2401912961869254054L;
+		public CleanUpBehaviour(Agent a, long period) {
+			super(a, period);
+		}
+
+		protected void onTick() {
+			
+			String sqlStmt = null;
+
+			// --- Delete DB-Entries, older than 1 hour ---
+			sqlStmt = "DELETE FROM platforms " +
+					  "WHERE currently_available=0 " +
+					  "  AND DATE_ADD(last_contact_at, INTERVAL 1 HOUR) < now()";
+			dbConn.getSqlExecuteUpdate(sqlStmt);
+			
+		}
+	}
+	// -----------------------------------------------------
+	// --- ClenUp-Behaiviour --- E N D E -------------------
+	// -----------------------------------------------------
+
+	
 	// -----------------------------------------------------
 	// --- Message-Receive-Behaiviour --- S T A R T --------
 	// -----------------------------------------------------
@@ -282,7 +308,8 @@ public class MasterServerAgent extends Agent {
 					"benchmark_value = " + bmr.getBenchmarkValue() + "," +
 					"currently_available = -1, " +
 					"current_load_cpu = " + plLoad.getLoadCPU() + "," +
-					"current_load_memory = " + plLoad.getLoadMemory() + "," +
+					"current_load_memory_system = " + plLoad.getLoadMemorySystem() + "," +
+					"current_load_memory_jvm = " + plLoad.getLoadMemoryJVM() + "," +
 					"current_load_no_threads = " + plLoad.getLoadNoThreads() + "," +
 					"current_load_threshold_exceeded = " + plLoad.getLoadExceeded() + " " + 
 				   "WHERE contact_agent='" + sender.getName() + "'";
@@ -296,7 +323,12 @@ public class MasterServerAgent extends Agent {
 		sqlStmt = "UPDATE platforms SET " +
 					"online_since = null," + 
 					"local_online_since = null," +
-					"currently_available = "+ dbConn.dbBool2Integer(false) + " " +
+					"currently_available = "+ dbConn.dbBool2Integer(false) + "," +
+					"current_load_cpu = null," +
+					"current_load_memory_system = null," +
+					"current_load_memory_jvm = null," +
+					"current_load_no_threads = null," +
+					"current_load_threshold_exceeded = null " + 
 				   "WHERE contact_agent='" + sender.getName() + "'";
 		dbConn.getSqlExecuteUpdate(sqlStmt);
 	}

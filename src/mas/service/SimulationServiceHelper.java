@@ -5,12 +5,15 @@ package mas.service;
 
 import jade.core.AID;
 import jade.core.Agent;
+import jade.core.Location;
 import jade.core.ServiceException;
 import jade.core.ServiceHelper;
 
 import java.util.Date;
+import java.util.Hashtable;
 
-import mas.service.load.LoadMeasureArray;
+import mas.service.distribution.ontology.PlatformLoad;
+import mas.service.distribution.ontology.RemoteContainerConfig;
 import mas.service.time.TimeModel;
 
 /**
@@ -26,7 +29,13 @@ public interface SimulationServiceHelper extends ServiceHelper {
 	public static final String SERVICE_UPDATE_SIMULATION = "service-update-simulation";
 	
 	
-	public LoadMeasureArray getContainerLoads() throws ServiceException;
+	public Hashtable<String, PlatformLoad> getContainerLoads() throws ServiceException;
+	public String startNewRemoteContainer() throws ServiceException;
+	public String startNewRemoteContainer(RemoteContainerConfig remoteConfig) throws ServiceException;
+	
+	public Hashtable<String, Location> getLocations() throws ServiceException;
+	public Location getLocation(String containerName) throws ServiceException;
+	
 	
 	public void notifySensors(String event) throws ServiceException;
 	

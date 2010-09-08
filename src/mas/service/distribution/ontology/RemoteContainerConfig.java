@@ -8,20 +8,9 @@ import jade.core.*;
 /**
 * Protege name: RemoteContainerConfig
 * @author ontology bean generator
-* @version 2010/09/7, 14:14:03
+* @version 2010/09/8, 22:47:22
 */
 public class RemoteContainerConfig implements Concept {
-
-   /**
-* Protege name: jadeContainerName
-   */
-   private String jadeContainerName;
-   public void setJadeContainerName(String value) { 
-    this.jadeContainerName=value;
-   }
-   public String getJadeContainerName() {
-     return this.jadeContainerName;
-   }
 
    /**
 * Protege name: jadeServices
@@ -32,17 +21,6 @@ public class RemoteContainerConfig implements Concept {
    }
    public String getJadeServices() {
      return this.jadeServices;
-   }
-
-   /**
-* Protege name: jvmMemAllocMaximum
-   */
-   private String jvmMemAllocMaximum;
-   public void setJvmMemAllocMaximum(String value) { 
-    this.jvmMemAllocMaximum=value;
-   }
-   public String getJvmMemAllocMaximum() {
-     return this.jvmMemAllocMaximum;
    }
 
    /**
@@ -57,14 +35,25 @@ public class RemoteContainerConfig implements Concept {
    }
 
    /**
-* Protege name: jadePort
+* Protege name: jvmMemAllocMaximum
    */
-   private String jadePort;
-   public void setJadePort(String value) { 
-    this.jadePort=value;
+   private String jvmMemAllocMaximum;
+   public void setJvmMemAllocMaximum(String value) { 
+    this.jvmMemAllocMaximum=value;
    }
-   public String getJadePort() {
-     return this.jadePort;
+   public String getJvmMemAllocMaximum() {
+     return this.jvmMemAllocMaximum;
+   }
+
+   /**
+* Protege name: jadeHost
+   */
+   private String jadeHost;
+   public void setJadeHost(String value) { 
+    this.jadeHost=value;
+   }
+   public String getJadeHost() {
+     return this.jadeHost;
    }
 
    /**
@@ -79,6 +68,28 @@ public class RemoteContainerConfig implements Concept {
    }
 
    /**
+* Protege name: jadePort
+   */
+   private String jadePort;
+   public void setJadePort(String value) { 
+    this.jadePort=value;
+   }
+   public String getJadePort() {
+     return this.jadePort;
+   }
+
+   /**
+* Protege name: jadeContainerName
+   */
+   private String jadeContainerName;
+   public void setJadeContainerName(String value) { 
+    this.jadeContainerName=value;
+   }
+   public String getJadeContainerName() {
+     return this.jadeContainerName;
+   }
+
+   /**
 * Protege name: jvmMemAllocInitial
    */
    private String jvmMemAllocInitial;
@@ -87,17 +98,6 @@ public class RemoteContainerConfig implements Concept {
    }
    public String getJvmMemAllocInitial() {
      return this.jvmMemAllocInitial;
-   }
-
-   /**
-* Protege name: jadeHost
-   */
-   private String jadeHost;
-   public void setJadeHost(String value) { 
-    this.jadeHost=value;
-   }
-   public String getJadeHost() {
-     return this.jadeHost;
    }
 
 }
