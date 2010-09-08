@@ -76,7 +76,7 @@ public class MasterServerAgent extends Agent {
 			// --- Delete DB-Entries, older than 1 hour ---
 			sqlStmt = "DELETE FROM platforms " +
 					  "WHERE currently_available=0 " +
-					  "  AND DATE_ADD(last_contact_at, INTERVAL 1 HOUR) < now()";
+					  "AND DATE_ADD(last_contact_at, INTERVAL 1 HOUR) < now()";
 			dbConn.getSqlExecuteUpdate(sqlStmt);
 			
 		}
@@ -341,14 +341,25 @@ public class MasterServerAgent extends Agent {
 		String slaveAgentAddress = null;
 		AID slavePlatformAgent = null; 
 		
+		RemoteContainerConfig remConf = crcr.getRemoteConfig();
+		String allocMaxString = remConf.getJvmMemAllocMaximum();
+		Integer allocMax = 256; // --- The remaining Memory in MB, which should be available ---
+		if (allocMaxString!=null) {
+			allocMaxString = allocMaxString.replace("m", "");
+			allocMax = Integer.parseInt(allocMaxString);	
+		}
+		
 		// --------------------------------------------------------------------
-		// --- Select the machine with the highest potential of 		-------
-		// --- Mflops (Millions of floating point operations per second -------
-		// --- in relation to the current processor/CPU-load 			-------
+		// --- Select the machine with the highest potential of 		 ------
+		// --- Mflops (Millions of floating point operations per second) ------
+		// --- in relation to the current processor/CPU-load AND 		 ------
+		// --- 
 		// --------------------------------------------------------------------
-		sqlStmt = "SELECT (benchmark_value-(benchmark_value*current_load_cpu/100)) AS potential, platforms.* ";
+		sqlStmt = "SELECT (benchmark_value-(benchmark_value*current_load_cpu/100)) AS potential, ";
+		sqlStmt+= "platforms.* ";
 		sqlStmt+= "FROM platforms ";
 		sqlStmt+= "WHERE is_server=-1 AND currently_available=-1 ";
+		sqlStmt+= "AND (memory_total_mb*current_load_memory_system/100) > " + allocMax + " ";
 		sqlStmt+= "ORDER BY (benchmark_value-(benchmark_value*current_load_cpu/100)) DESC";
 		// --------------------------------------------------------------------
 		
