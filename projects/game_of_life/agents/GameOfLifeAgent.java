@@ -87,13 +87,13 @@ public class GameOfLifeAgent extends Agent implements ServiceSensor {
 	
 	protected void beforeMove() {
 		// -----------------------------
-		System.out.println("AgentName: "+getLocalName()+"  Moving now to location : " + destination.getName());
+		//System.out.println("AgentName: "+getLocalName()+"  Moving now From location : " + destination.getName());
 	}
 
 	protected void afterMove() {
 		// ----------------------------
 		init();
-		System.out.println("AgentName: "+getLocalName()+"  Arrived at location : " + destination.getName());
+		//System.out.println("AgentName: "+getLocalName()+"  Arrived at location : " + destination.getName());
 	}
 
 	

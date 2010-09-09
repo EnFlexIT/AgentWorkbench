@@ -1,4 +1,4 @@
-; Tue Aug 31 16:02:05 CEST 2010
+; Sun Aug 22 14:18:05 CEST 2010
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -7,40 +7,28 @@
 (defclass %3ACLIPS_TOP_LEVEL_SLOT_CLASS "Fake class to save top-level slot information"
 	(is-a USER)
 	(role abstract)
-	(single-slot thresholdExceeded
-		(type SYMBOL)
-		(allowed-values FALSE TRUE)
+	(single-slot PlatformInfo
+		(type INSTANCE)
+;+		(allowed-classes platformInfo)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot localContainerURL
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot currentFreeMemory
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot numberOfAgents
+	(single-slot currentState
 		(type INTEGER)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot useMemory
-		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot totalMemory
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot platformName
-		(type STRING)
+	(single-slot useMemory
+		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot portNumber
 		(type INTEGER)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot platformUrl
+	(single-slot platformName
 		(type STRING)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
@@ -48,16 +36,16 @@
 		(type INTEGER)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot currentCpuIdleTime
-		(type FLOAT)
+	(single-slot platformUrl
+		(type STRING)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot localContainerName
 		(type STRING)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot currentState
-		(type INTEGER)
+	(single-slot currentCpuIdleTime
+		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot remoteContainerURL
@@ -68,38 +56,57 @@
 		(type STRING)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot PlatformInfo
-		(type INSTANCE)
-;+		(allowed-classes platformInfo)
-;+		(cardinality 0 1)
-		(create-accessor read-write)))
-
-(defclass platformInfo
-	(is-a Concept)
-	(role concrete)
-	(single-slot thresholdExceeded
-		(type SYMBOL)
-		(allowed-values FALSE TRUE)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
 	(single-slot localContainerURL
 		(type STRING)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot currentFreeMemory
-		(type FLOAT)
+	(single-slot thresholdExceeded
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot numberOfAgents
 		(type INTEGER)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot useMemory
+	(single-slot currentFreeMemory
 		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write)))
+
+(defclass platformInfo
+	(is-a Concept)
+	(role concrete)
+	(single-slot currentState
+		(type INTEGER)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot totalMemory
 		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot useMemory
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot portNumber
+		(type INTEGER)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot platformName
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot nextState
+		(type INTEGER)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot platformUrl
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot localContainerName
+		(type STRING)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot currentCpuIdleTime
@@ -112,6 +119,23 @@
 		(create-accessor read-write))
 	(single-slot remoteContainerName
 		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot localContainerURL
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot thresholdExceeded
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot numberOfAgents
+		(type INTEGER)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot currentFreeMemory
+		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write)))
 

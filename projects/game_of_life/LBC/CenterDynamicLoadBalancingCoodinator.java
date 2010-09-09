@@ -1,40 +1,52 @@
 package game_of_life.LBC;
 
 import game_of_life.agents.GameOfLifeAgent;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import application.Application;
-import game_of_life.ontology.Platform;
-import game_of_life.ontology.PlatformInfo;
-import game_of_life.ontology.PlatformOntology;
-import jade.content.*;
-import jade.content.lang.*;
-import jade.content.lang.sl.*;
-import jade.content.onto.*;
+import jade.content.ContentElement;
+import jade.content.ContentManager;
+import jade.content.lang.Codec;
+import jade.content.lang.Codec.CodecException;
+import jade.content.lang.sl.SLCodec;
+import jade.content.onto.Ontology;
+import jade.content.onto.OntologyException;
 import jade.content.onto.basic.Action;
 import jade.content.onto.basic.Result;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.Location;
-import jade.core.behaviours.CyclicBehaviour;
+import jade.core.ServiceException;
+import jade.core.behaviours.OneShotBehaviour;
+import jade.core.behaviours.TickerBehaviour;
 import jade.domain.JADEAgentManagement.QueryPlatformLocationsAction;
+import jade.domain.mobility.MobileAgentDescription;
+import jade.domain.mobility.MobilityOntology;
+import jade.domain.mobility.MoveAction;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-import jade.domain.mobility.*;
+
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Vector;
+
+import mas.service.SimulationService;
+import mas.service.SimulationServiceHelper;
+import mas.service.distribution.ontology.AgentGUI_DistributionOntology;
+import mas.service.distribution.ontology.ClientRemoteContainerRequest;
+import mas.service.distribution.ontology.PlatformLoad;
+import network.JadeUrlChecker;
+import application.Application;
 
 public class CenterDynamicLoadBalancingCoodinator extends Agent {
 
 	private static final long serialVersionUID = 1L;
-	//	---- Arraylist of containers for storing agents ----------------------------
-	private ArrayList<String> MainContainer = new ArrayList<String>();
-	private ArrayList<String> Container1 = new ArrayList<String>();
-	private ArrayList<String> Container2 = new ArrayList<String>();
-	private ArrayList<String> Container3 = new ArrayList<String>();
-	
-	// ----- Hash table for storing Container location --------------------------------------
+	// ----- Hash table for storing Container location -----------------------------
 	private Map<String, Location>  locations = new HashMap<String, Location>();
+	private Map<String, String>  totalNumberOfAgents = new HashMap<String, String>();
+	// -------store valures --------------------------------------------------------
+	
+	// ---- variables for delay ----------------------------------------------------
+	String DLBC_Created = null;
 	
 	//------------- set GUI co-ordinates -------------------------------------------
 	private int cRow;
@@ -53,19 +65,17 @@ public class CenterDynamicLoadBalancingCoodinator extends Agent {
 	// ---- variables remote container CPU & Memory --------------------------------
 	private long maximumMemory;
 	private double maximumCPU;
-
-	// -------- CPU & JVM & Threshold ----------------------------------------------
-	private boolean cpuAndMemThresholdExceeded;
-	private double currentCpuIdleTime;
-	private long currentJvmMemoFree;
-
-	// --- remote container URL & name
-	// -----------------------------------------------------------------------------
-	private String remoteContainerName;
-
+	private int maxNumberOfThread;
+	
+	// --- remote container variables ----------------------------------------------
+	private Location remoteContainerName;
+	private int currentThresholdExceededLocal;
+	private int currentThresholdExceededRemote;
+	private int containerCounter;
 	@Override
 	protected void setup() {
 		
+		containerCounter =0;
 		
 		// ----- get the arguments of agents ---------------------------------------
 		coordinate = getArguments();
@@ -74,34 +84,62 @@ public class CenterDynamicLoadBalancingCoodinator extends Agent {
 		cRow = (Integer) coordinate[0];
 		cCol = (Integer) coordinate[1];
 		totalAgents = cRow*cCol;
+		System.out.println(" total Agents "+totalAgents);
 		
 		// ---- Ontology, coding and decoding language ------------------------------
 		manager = getContentManager();
 		managerMobile = getContentManager(); 
 		codec = new SLCodec();
-		ontology = PlatformOntology.getInstance();
+		ontology = AgentGUI_DistributionOntology.getInstance();
 		manager.registerLanguage(codec);
 		manager.registerOntology(ontology);
 		managerMobile.registerOntology(MobilityOntology.getInstance());
-		
-		 // ---- Get available locations with AMS -------------------------------------
-	     sendRequest(new Action(getAMS(), new QueryPlatformLocationsAction()));
-
-	     //Receive response from AMS
-	     receiveResponseFromAMS();
-
+	     
 	     setMaximumCPU(0);
 	     setMaximumMemory(0);
-
-	     //addBehaviour(new currentLoadOfAgent(this, 2000));
-	     addBehaviour(new receiverLoadOfContainer(this));
+	     setMaxNumberOfThread(0);
+	     setCurrentThresholdExceededLocal(0);
+	     setCurrentThresholdExceededRemote(0);
 	     
-	     
-		//---- Start remote dynamic load balancing coordinator ------------------------ 
-		 //createDynamicLoadBalancingCoordinators();
-	    //---- start and distribute game of life Agents -------------------------------
-	     createGameOfLifeAgents(cRow, cCol);
+	     //---- start and distribute game of life Agents ---------------------------
+	     addBehaviour(new createGameOfLifeAgents(cRow, cCol));
 
+	}
+	
+	private void requestNewRemoteContainer() {
+		
+		// --- Nachricht zusammenbauen und ... --------
+		Ontology ontology = AgentGUI_DistributionOntology.getInstance();
+		Codec codec = new SLCodec();
+
+		// --- AID des lokalen Agent.GUI-Agenten ------
+		JadeUrlChecker myURL = new JadeUrlChecker( this.getContainerController().getPlatformName());
+		AID localAgentGUIAgent = new AID("server.client" + "@" + myURL.getJADEurl(), AID.ISGUID );
+		
+		// --- Nachricht aufbauen ---------------------
+		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+		msg.setSender(getAID());
+		msg.addReceiver(localAgentGUIAgent);
+		msg.setLanguage(codec.getName());
+		msg.setOntology(ontology.getName());
+
+		// --- Definition einer neuen 'Action' --------
+		Action act = new Action();
+		act.setActor(getAID());
+		act.setAction(new ClientRemoteContainerRequest());
+		
+		// --- ... versenden --------------------------
+		try {
+			this.getContentManager().registerLanguage(codec);
+			this.getContentManager().registerOntology(ontology);
+			this.getContentManager().fillContent(msg, act);
+		} catch (CodecException e) {
+			e.printStackTrace();
+		} catch (OntologyException e) {
+			e.printStackTrace();
+		}
+		this.send(msg);	
+		
 	}
 
 
@@ -119,161 +157,174 @@ public class CenterDynamicLoadBalancingCoodinator extends Agent {
 			  catch (Exception ex) { ex.printStackTrace(); }
 		   }
 
-	private void receiveResponseFromAMS() {
 
-		try {
 
-			MessageTemplate mt = MessageTemplate.and(
-					MessageTemplate.MatchSender(getAMS()),
-					MessageTemplate.MatchPerformative(ACLMessage.INFORM));
-			ACLMessage resp = blockingReceive(mt);
-			ContentElement ce = getContentManager().extractContent(resp);
-			Result result = (Result) ce;
-			jade.util.leap.Iterator it = result.getItems().iterator();
+	//----------- start agents for the game of life -------------------------------------------
+	private class createGameOfLifeAgents extends OneShotBehaviour {
+		int cRow;
+		int cCol;
+		Location newDest = null; 
+		
+		public createGameOfLifeAgents(int cRow, int cCol) {
+			this.cRow = cRow;
+			this.cCol = cCol;
+		}
+		
+		public void action() {
+			int counter = 0;
+			int totalAgentsStarted = 0;
+			int tempTotalAgent = 0;
+			String agentContDestination = "Main-Container";
+			PlatformLoad pload = null;
 			
-			// ---- store location on a hash table ------------------------------------
-			while (it.hasNext()) {
-				Location loc = (Location) it.next();
-				locations.put(loc.getName(), loc);
-				System.out.println(loc.getName());
+			for (int i = 0; i < cRow; i++) {
+				for (int j = 0; j < cCol; j++) {
+					//----------- arguments for objects to use ------------------------------------
+					//--- renew load information --------------------------------------------------
+					
+					Object obj[] = new Object[5];
+					obj[0] = i;
+					obj[1] = j;
+					obj[2] = cRow;
+					obj[3] = cCol;
+					obj[4] = getAID();
+					String agentName = i+"&"+j;	
+					Integer levelsExceeded = 0;
+					
+					// --- Main-Container ------------------------------------------------------------- 
+					//System.out.println( "=> Create Agent "+agentName );
+					Application.JadePlatform.jadeAgentStart(agentName, GameOfLifeAgent.class.getName(), obj);
+					tempTotalAgent++;
+					totalAgentsStarted++;
+					
+					// ---  forcing the system to accept 1000 Agents ----------------------------------
+					if ( tempTotalAgent==0 || tempTotalAgent>=500) {
+						doWait(1000);
+						pload = currentLoadOfContainer(agentContDestination);	
+						levelsExceeded = pload.getLoadExceeded();
+						tempTotalAgent = 1;
+					} else {
+						pload = null;
+						levelsExceeded = 0;
+					}
+					
+					// --- If Levels exceeded, start new Container -----------------------------------
+					if ( levelsExceeded != 0) {
+						
+						//System.out.println( " Starting a remote Container " );						
+						// ----- create new containers -----------------------------------------------
+						
+						SimulationServiceHelper simHelper = null;
+						Hashtable<String, PlatformLoad> lma = null;
+						String newRemoteContainerName = null;
+						try {
+							simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
+							newRemoteContainerName= simHelper.startNewRemoteContainer();
+							containerCounter++;
+							while (simHelper.getLocation(newRemoteContainerName)==null) {
+								doWait(1000);
+							}
+							 newDest = simHelper.getLocation(newRemoteContainerName);
+							
+						} catch (ServiceException e) {
+							e.printStackTrace();
+						}
+						
+						agentContDestination = newDest.getName();
+						levelsExceeded = 0; // -- to prevent more remote containers to be created
+					}
+					
+					// --- Migrate the current Agent? ----------------------------------------------------
+					if (agentContDestination.equalsIgnoreCase("Main-Container") == false) {
+						//------ Migrate Agent to Remote ------------------------------------------------
+						AID aid = new AID(agentName, AID.ISLOCALNAME);
+				        MobileAgentDescription mad = new MobileAgentDescription();
+				        mad.setName(aid);
+				        mad.setDestination(newDest);
+				        MoveAction ma = new MoveAction();
+				        ma.setMobileAgentDescription(mad);
+				        sendRequest(new Action(aid, ma));
+					}
+					// --- put Agent into a hash table with the name of the container -------------------
+					totalNumberOfAgents.put(agentName,agentContDestination);
+				}
 			}
-
-		} catch (Exception e) {
-			// TODO: handle exception
+			
+			if(totalAgentsStarted == totalAgents){
+				System.out.println(" Finished "+tempTotalAgent);
+				// -- start Dynamic load balancing only when there are remote containers
+				doWait(2000);
+				if(containerCounter!=0){
+				addBehaviour(new startDynamicLoadBalancingCoordinator(myAgent, 1000));
+				}
+			}
+		}
+} 
+	
+	private void migrateAgents(Location migrateTo, String migrateFrom) {
+		
+		for (int i = 0; i < 5; i++) {
+		
+			// ---- migrate Agents to reduce workload on container ----------------
+			String AgentName = searchLocationOfAgent(migrateFrom);
+		
+	       //------ Migrate Agent to Remote ---------------------------------------------------
+			 AID aid = new AID(AgentName, AID.ISLOCALNAME);
+	         MobileAgentDescription mad = new MobileAgentDescription();
+	         mad.setName(aid);
+	         mad.setDestination(migrateTo);
+	         MoveAction ma = new MoveAction();
+	         ma.setMobileAgentDescription(mad);
+	         sendRequest(new Action(aid, ma));		
+	         
+	         totalNumberOfAgents.put(AgentName, migrateTo.getName());
 		}
 	}
-	// ----- create dynamic load balancing coordinator --------------------------------- 
-	private void createDynamicLoadBalancingCoordinators() {
-		
-		Object obj[] = new Object[0];
-		obj[0] = getLocalName();
-		// ---- mainContainer -----------------------------------------------------------
-		Application.JadePlatform.jadeAgentStart("DLBC-MainContainer", DynamicLoadBalancingCoodinator.class.getName(), obj);
-		
-		// ---- Remote Container-1 ------------------------------------------------------
-		Application.JadePlatform.jadeAgentStart("DLBC-Container1", DynamicLoadBalancingCoodinator.class.getName(), obj);
-				//------ Migrate DLBC-Container1 to Container-1 -------------------------
-		doWait(500);
-		//------ Migrate Agent to Container-2 -----------------------------------------------
-		 AID aid = new AID("DLBC-Container1", AID.ISLOCALNAME);
-		 String destName = "Container-1";
-         Location dest = (Location)locations.get(destName);
-         MobileAgentDescription mad = new MobileAgentDescription();
-         mad.setName(aid);
-         mad.setDestination(dest);
-         MoveAction ma = new MoveAction();
-         ma.setMobileAgentDescription(mad);
-         sendRequest(new Action(aid, ma));
-		
-		// ---- Remote Container-2 -----------------------------------------------------------
-		Application.JadePlatform.jadeAgentStart("DLBC-Container2", DynamicLoadBalancingCoodinator.class.getName(), obj);
-				//------ Migrate DLBC-Container1 to Container-2 ------------------------------
-		doWait(500);
-		//------ Migrate Agent to Container-2 ------------------------------------------------
-		 AID aid2 = new AID("DLBC-Container2", AID.ISLOCALNAME);
-		 String destName2 = "Container-2";
-         Location dest2 = (Location)locations.get(destName2);
-         MobileAgentDescription mad2 = new MobileAgentDescription();
-         mad2.setName(aid2);
-         mad.setDestination(dest2);
-         MoveAction ma2 = new MoveAction();
-         ma2.setMobileAgentDescription(mad2);
-         sendRequest(new Action(aid2, ma2));
-         
-     	// ---- Remote Container-3 -----------------------------------------------------------
- 		Application.JadePlatform.jadeAgentStart("DLBC-Container3", DynamicLoadBalancingCoodinator.class.getName(), obj);
- 				//------ Migrate DLBC-Container1 to Container-2 ------------------------------
- 		doWait(500);
- 		//------ Migrate Agent to Container-3 ------------------------------------------------
- 		 AID aid3 = new AID("DLBC-Container3", AID.ISLOCALNAME);
- 		 String destName3 = "Container-3";
-          Location dest3 = (Location)locations.get(destName2);
-          MobileAgentDescription mad3 = new MobileAgentDescription();
-          mad2.setName(aid3);
-          mad.setDestination(dest3);
-          MoveAction ma3 = new MoveAction();
-          ma3.setMobileAgentDescription(mad3);
-          sendRequest(new Action(aid3, ma3));
-         
-	}
 
-	//----------- start agents for the game of life ----------------------------------------
-	private void createGameOfLifeAgents(int cRow, int cCol){
-		
-		int counter =0;
+	private String searchLocationOfAgent(String migrateFrom) {
+	 
 		for (int i = 0; i < cRow; i++) {
 			for (int j = 0; j < cCol; j++) {
-				//----------- arguments for objects to use ---------------------------------
+				//----------- arguments for objects to use ------------------------------------
 				
-				Object obj[] = new Object[5];
-				obj[0] = i;
-				obj[1] = j;
-				obj[2] = cRow;
-				obj[3] = cCol;
-				obj[4] = getAID();
-				String agentName = i+"&"+j;	
-				
-				//mainContainer
-				if(totalAgents/4>counter){
-				Application.JadePlatform.jadeAgentStart(agentName, GameOfLifeAgent.class.getName(), obj);
-				
-				MainContainer.add(agentName);
+				String agentName = i+"&"+j;
+				String newLocation = totalNumberOfAgents.get(agentName);
+				if(newLocation.equals(migrateFrom)){
+					
+					totalNumberOfAgents.remove(agentName);
+					
+					return agentName;
 				}
-				// ---- Container-1: create new agent ---------------------------------------------
-				if(totalAgents/4<=counter &&totalAgents*1/2>counter){
-				Application.JadePlatform.jadeAgentStart(agentName, GameOfLifeAgent.class.getName(), obj);
-				Container1.add(agentName);
-				
-				doWait(50);
-				//------ Migrate Agent to Container-1 -----------------------------------------------
-				 AID aid = new AID(agentName, AID.ISLOCALNAME);
-				 String destName = "Container-1";
-		         Location dest = (Location)locations.get(destName);
-		         MobileAgentDescription mad = new MobileAgentDescription();
-		         mad.setName(aid);
-		         mad.setDestination(dest);
-		         MoveAction ma = new MoveAction();
-		         ma.setMobileAgentDescription(mad);
-		         sendRequest(new Action(aid, ma));
-		         
-				}
-				//Container-2
-				if(totalAgents*1/2<=counter &&totalAgents*3/4>counter){
-				Application.JadePlatform.jadeAgentStart(agentName, GameOfLifeAgent.class.getName(), obj);
-				Container2.add(agentName);
-				doWait(50);
-				//------ Migrate Agent to Container-2 -----------------------------------------------
-				 AID aid = new AID(agentName, AID.ISLOCALNAME);
-				 String destName = "Container-2";
-		         Location dest = (Location)locations.get(destName);
-		         MobileAgentDescription mad = new MobileAgentDescription();
-		         mad.setName(aid);
-		         mad.setDestination(dest);
-		         MoveAction ma = new MoveAction();
-		         ma.setMobileAgentDescription(mad);
-		         sendRequest(new Action(aid, ma));
-				}
-				
-				//Container-3
-				if(totalAgents*3/4<=counter){
-				Application.JadePlatform.jadeAgentStart(agentName, GameOfLifeAgent.class.getName(), obj);
-				Container2.add(agentName);
-				doWait(50);
-				//------ Migrate Agent to Container-3 -----------------------------------------------
-				 AID aid = new AID(agentName, AID.ISLOCALNAME);
-				 String destName = "Container-3";
-		         Location dest = (Location)locations.get(destName);
-		         MobileAgentDescription mad = new MobileAgentDescription();
-		         mad.setName(aid);
-		         mad.setDestination(dest);
-		         MoveAction ma = new MoveAction();
-		         ma.setMobileAgentDescription(mad);
-		         sendRequest(new Action(aid, ma));
-				}
-				counter++;
 			}
 		}
-		System.out.println(" Finished "+counter);
+		
+	 return null;
+	}
+	
+	public PlatformLoad currentLoadOfContainer(String containerName){
+			
+			SimulationServiceHelper simHelper = null;
+			Hashtable<String, PlatformLoad> lma = null;
+			try {
+				simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
+				lma = simHelper.getContainerLoads();
+			} catch (ServiceException e) {
+				e.printStackTrace();
+			}
+			// ---- Vector carrying all containers -------------------------------------- 
+			Vector<String> v = new Vector<String>( lma.keySet() );
+			
+		    Iterator<String> it = v.iterator();
+			// ---- chose one containers, run through and give its content out ---------- 
+		    while (it.hasNext()) {
+		    	String container = it.next();
+		    	if (container.equalsIgnoreCase(containerName)) {
+		    		PlatformLoad pl = lma.get(container);
+		    		//System.out.println( "Load on '" + container + "': CPU: " + pl.getLoadCPU() + " - Memory: " + pl.getLoadMemory() + " - NoThreads: " + pl.getLoadNoThreads() + " - Exceeded: " + pl.getLoadExceeded() + "" );
+		    		return pl;
+		    	}
+		    }
+		    return null;
 	}
 
 	/**
@@ -306,160 +357,169 @@ public class CenterDynamicLoadBalancingCoodinator extends Agent {
 	/**
 	 * @param remoteContainerName the remoteContainerName to set
 	 */
-	public void setRemoteContainerName(String remoteContainerName) {
+	public void setRemoteContainerName(Location remoteContainerName) {
 		this.remoteContainerName = remoteContainerName;
+	}
+	/**
+	 * @return the remoteContainerName
+	 */
+	public Location getRemoteContainerName() {
+		return remoteContainerName;
+	}
+	/**
+	 * @param maxNumberOfThread the maxNumberOfThread to set
+	 */
+	public void setMaxNumberOfThread(int maxNumberOfThread) {
+		this.maxNumberOfThread = maxNumberOfThread;
 	}
 
 
 	/**
-	 * @return the remoteContainerName
+	 * @return the maxNumberOfThread
 	 */
-	public String getRemoteContainerName() {
-		return remoteContainerName;
+	public int getMaxNumberOfThread() {
+		return maxNumberOfThread;
 	}
-	// --- behavour perminently receive information about container load from
-	// remote LBC ------------
-	class receiverLoadOfContainer extends CyclicBehaviour {
 
+	/**
+	 * @param currentThresholdExceededLocal the currentThresholdExceededLocal to set
+	 */
+	public void setCurrentThresholdExceededLocal(
+			int currentThresholdExceededLocal) {
+		this.currentThresholdExceededLocal = currentThresholdExceededLocal;
+	}
+
+	/**
+	 * @return the currentThresholdExceededLocal
+	 */
+	public int getCurrentThresholdExceededLocal() {
+		return currentThresholdExceededLocal;
+	}
+
+	/**
+	 * @param currentThresholdExceededRemote the currentThresholdExceededRemote to set
+	 */
+	public void setCurrentThresholdExceededRemote(
+			int currentThresholdExceededRemote) {
+		this.currentThresholdExceededRemote = currentThresholdExceededRemote;
+	}
+
+	/**
+	 * @return the currentThresholdExceededRemote
+	 */
+	public int getCurrentThresholdExceededRemote() {
+		return currentThresholdExceededRemote;
+	}
+	
+	// ----- Dynamic Load Balancing phase ( All Agents started) -------------
+	private class startDynamicLoadBalancingCoordinator extends TickerBehaviour {
+		
 		private static final long serialVersionUID = 1L;
-
-		public receiverLoadOfContainer(Agent agent) {
-
-			super(agent);
-		}
-
-	public void action() {
-
+		
+		SimulationServiceHelper simHelper = null;
+		Hashtable<String, PlatformLoad> lma = null;
+		Vector<String> vector =null;
+		Iterator<String> it = null;
+		int containerCount = 0;
+		Location loc = null;
+		
+		public startDynamicLoadBalancingCoordinator(Agent a, long period) {
+			super(a, period);
 			try {
-
-				// ------ Register to messages about topic
-				// "currentLoadOfContainer" ----------------
-
-				ACLMessage msg = myAgent.blockingReceive();
-
-				if (msg != null) {
-
-					String AgentName = msg.getSender().getLocalName();
-					
-						// Remote containers: compare free memory and migrate to remote
-						// -----  Decoding remote message ------------------------------------
-						Platform platform = (Platform) manager
-								.extractContent(msg);
-						PlatformInfo platformInfo = (PlatformInfo) platform
-								.getPlatformInfo();
-						
-
-						float tempMaximumMemory = platformInfo
-								.getCurrentFreeMemory();
-						double tempMaximumCPU = platformInfo
-								.getCurrentCpuIdleTime();
-						
-						// --- store remote container with enough space for new Agents --------
-						if (maximumMemory < tempMaximumMemory
-								&& maximumCPU < tempMaximumCPU) {
-							
-							setMaximumCPU((long) tempMaximumCPU);
-							setMaximumMemory((long) tempMaximumMemory);
-							setRemoteContainerName(platformInfo.getRemoteContainerName());
-						}
-
-						// ---- Threshold value. CPU & Memory available ---------------------------
-						boolean tempThresholdExceeded = platformInfo.getThresholdExceeded();
-
-						if (tempThresholdExceeded) {
-							// ---- migrate Agents to reduce workload on container ----------------
-							Location migrateTo = (Location) locations.get(getRemoteContainerName());
-							String migrateFrom = platformInfo.getRemoteContainerName();
-							
-							//migrateAgents(migrateTo, migrateFrom);
-							
-							// ---- reset list of the hash table ----------------------------------
-							
-						}
-						
-						System.out.println(" receiver: " + getLocalName()
-								+ " remoteContainerName: "
-								+ " RemoteContenerURL: "
-							    + " maxMemory: "
-								+ maximumMemory + " maxCPU: " + maximumCPU+" Content: "+msg.getContent());
-				}
-
-			} catch (Exception e) {
-
+				simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
+				lma = simHelper.getContainerLoads();
+				loc = simHelper.getLocation("Main-Container");
+			} catch (ServiceException e) {
+				e.printStackTrace();
 			}
+			vector = new Vector<String>( lma.keySet() );
+			it = vector.iterator();
+			System.out.println(" Starting DLBC");
+			
+		 	PlatformLoad pl = lma.get("Main-Container");
+			maximumMemory = (long) pl.getLoadMemoryJVM();
+			maximumCPU = pl.getLoadCPU();
+			setRemoteContainerName(loc);
 		}
 
-	private void migrateAgents(Location migrateTo, String migrateFrom) {
-		
-		if(migrateFrom.equals("MainContainer")){
-			 
-			 // ------ reset Arraylist of Agents ---------------------------------
-			 String AgentName = MainContainer.get(0);
-			 MainContainer.remove(0);
-			 String newLocationName = migrateTo.getName(); 
-			 resetListOfAgents(newLocationName, AgentName);
-			 
-			 AID aid = new AID(AgentName, AID.ISLOCALNAME);
-	         MobileAgentDescription mad = new MobileAgentDescription();
-	         mad.setName(aid);
-	         mad.setDestination(migrateTo);
-	         MoveAction ma = new MoveAction();
-	         ma.setMobileAgentDescription(mad);
-	         sendRequest(new Action(aid, ma));
+		@Override
+		protected void onTick() {
 			
-		}
-		else if(migrateFrom.equals("Container1")){
-			
-			 // ------ reset Arraylist of Agents ---------------------------------
-			 String AgentName = Container1.get(0);
-			 Container1.remove(0);
-			 String newLocationName = migrateTo.getName(); 
-			 resetListOfAgents(newLocationName, AgentName);
-			 
-			 AID aid = new AID(AgentName, AID.ISLOCALNAME);
-	         MobileAgentDescription mad = new MobileAgentDescription();
-	         mad.setName(aid);
-	         mad.setDestination(migrateTo);
-	         MoveAction ma = new MoveAction();
-	         ma.setMobileAgentDescription(mad);
-	         sendRequest(new Action(aid, ma));
-			
-		}
-		else if(migrateFrom.equals("Container2")){
-			
-			 // ------ reset Arraylist of Agents ---------------------------------
-			 String AgentName = Container2.get(0);
-			 Container2.remove(0);
-			 String newLocationName = migrateTo.getName(); 
-			 resetListOfAgents(newLocationName, AgentName);
-			 
-			 AID aid = new AID(AgentName, AID.ISLOCALNAME);
-	         MobileAgentDescription mad = new MobileAgentDescription();
-	         mad.setName(aid);
-	         mad.setDestination(migrateTo);
-	         MoveAction ma = new MoveAction();
-	         ma.setMobileAgentDescription(mad);
-	         sendRequest(new Action(aid, ma));
-			
-		}
-		
-	}
+			if(containerCount>=vector.size()){
+				try {
+					lma = simHelper.getContainerLoads();
+				} catch (ServiceException e) {
+					e.printStackTrace();
+				}
+				// ---- Vector carrying all containers -------------------------------------- 
+				vector = new Vector<String>( lma.keySet() );
+				it = vector.iterator();
+				containerCount =0;
+			}
 
-	private void resetListOfAgents(String newLocationName, String agentName) {
-		
-		if(newLocationName.equals("MainContainer")){
-			 
-			MainContainer.add(agentName);
+			// ---- chose one containers, run through and give its content out -------------- 
+		    if (it.hasNext()) {
+		    	
+		    	containerCount++;
+		    	String containerName = it.next();
+		    	//System.out.println(" ContainerName  "+ containerName);
+		    	PlatformLoad pl = lma.get(containerName);
+		    	//System.out.println( "Load on '" + containerName + "': CPU: " + pl.getLoadCPU() + " - Memory: " + pl.getLoadMemory() + " - NoThreads: " + pl.getLoadNoThreads() + " - Exceeded: " + pl.getLoadExceeded() + "" );
+		    	
+		    	if(!"game_of_life".equals(containerName)){
+		    			
+		    		float tempMaximumMemory = pl.getLoadMemoryJVM();
+					double tempMaximumCPU = pl.getLoadCPU();
+					//int tempMaxThread = pl.getLoadNoThreads();
+					//int tempThresholdExceeded = pl.getLoadExceeded();
+					
+		    		
+					// --- store remote container with maxi CPU & Memory ---------
+					if (maximumMemory > tempMaximumMemory
+							&& maximumCPU > tempMaximumCPU) {
+						
+						setMaximumCPU((long) tempMaximumCPU);
+						setMaximumMemory((long) tempMaximumMemory);
+						try {
+							lma = simHelper.getContainerLoads();
+							setRemoteContainerName(simHelper.getLocation(containerName));
+						} catch (ServiceException e) {
+							e.printStackTrace();
+						}
+						
+					}
+					// ---- distribute according to CPU & Memory values ---------------------------
+					if (getMaximumCPU()+(10)<tempMaximumCPU && !getRemoteContainerName().equals(containerName)) {
+						
+						// ---- migrate Agents from overloaded container to less overloaded container ---
+						String migrateFrom = containerName;
+						//System.out.println(" migrateFrom : "+containerName+" migrateTo: "+migrateTo);
+						migrateAgents(getRemoteContainerName(), migrateFrom);
+						
+					}
+					
+					/*
+					// ---- distribute according to Threshold value ---------------------------
+					if (tempThresholdExceeded!=0) {
+						
+						// ---- migrate Agents from overloaded container to less overloaded container ---
+							String migrateFrom = containerName;
+						    String migrateTo = getRemoteContainerName();
+						
+						migrateAgents(migrateTo, migrateFrom);
+						
+						// ---- reset list of the hash table ----------------------------------
+						if(tempThresholdExceeded==1){
+							// for threshold only 
+						}
+						else if(tempThresholdExceeded ==-1){
+							//Shut down remote container 
+						}
+					}
+					*/
+
+		      }
+		    }
 		}
-		else if(newLocationName.equals("Container1")){
-			
-			Container1.add(agentName);
-		}
-		else if(newLocationName.equals("Container2")){
-			
-			Container2.add(agentName);
-			
-		}
-	}
 	}
 }

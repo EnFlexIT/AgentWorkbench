@@ -1,5 +1,6 @@
 package game_of_life.agents;
 import game_of_life.LBC.CenterDynamicLoadBalancingCoodinator;
+import game_of_life.LBC.storeGeneration;
 import game_of_life.gui.GameOfLifeGUI;
 import jade.core.Agent;
 import jade.core.ServiceException;
@@ -19,6 +20,9 @@ public class SimulationServiceControllerAgent extends Agent {
 	
 	//------------ Static variables -----------------------------------------------------
 	private static final long serialVersionUID = 1L;
+	//------------ Store Generation-----------------------------------------------
+	long genreationValue [] = new long[100];
+	int counterGen =0;
 	
 	//------------ Environment for Agents -----------------------------------------------
 	private SimulationServiceHelper simHelper = null;
@@ -123,6 +127,7 @@ public class SimulationServiceControllerAgent extends Agent {
 				generation++;  //considered as Generation increases
 				timeCounterStart = System.currentTimeMillis();	//generation start time
 				gui.generationLabel.setText("Generation: " + generation);
+				counterGen = generation;
 				try {
 					// --- ggf. Outgoing-Speicher lesen --------------------------------------
 					if (gui.localEnvModelOutput.size()!=0) {
@@ -178,6 +183,13 @@ public class SimulationServiceControllerAgent extends Agent {
 							//System.out.println(" Generation : "+generation+" , time taken = "+timeCounterStop+" totalCounterTime = "+totalCounterTime);
 							//System.out.println(generation);
 							System.out.println(timeCounterStop);
+							if(counterGen<100){
+							  genreationValue[counterGen] = timeCounterStop;
+							}
+							if(counterGen==200){
+							counterGen=0;
+							new storeGeneration(genreationValue);
+							}
 							//System.out.println(totalCounterTime);
 						} catch (ServiceException e) {
 							e.printStackTrace();

@@ -11,8 +11,8 @@ public class StartAgent extends Agent{
 	protected void setup() {
 		
 		//number of Agents to be started
-		  int nbRow =100;
-		  int nbCol =100;
+		  int nbRow =40;
+		  int nbCol =40;
 		  
 		//stored in an object which will be transfered to loadDistributor agent
 		  Object [] obj = new Object[2];

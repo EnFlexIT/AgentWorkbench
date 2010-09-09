@@ -1,4 +1,4 @@
-; Tue Aug 31 16:02:05 CEST 2010
+; Sun Aug 22 14:18:05 CEST 2010
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -19,7 +19,7 @@
 
 ([BROWSER_SLOT_NAMES] of  Property_List
 
-	(properties [platform_ProjectKB_Instance_20151]))
+	(properties [platform_ProjectKB_Instance_10151]))
 
 ([CLSES_TAB] of  Widget
 
@@ -273,11 +273,49 @@
 ([platform_ProjectKB_Instance_10142] of  Property_List
 )
 
+([platform_ProjectKB_Instance_10143] of  Boolean
+
+	(boolean_value FALSE)
+	(name "ButtonDisplayed-View References to Value"))
+
+([platform_ProjectKB_Instance_10144] of  Boolean
+
+	(boolean_value FALSE)
+	(name "ButtonDisplayed-Delete Instance"))
+
+([platform_ProjectKB_Instance_10145] of  Property_List
+)
+
+([platform_ProjectKB_Instance_10146] of  Property_List
+)
+
+([platform_ProjectKB_Instance_10147] of  Property_List
+)
+
+([platform_ProjectKB_Instance_10151] of  String
+
+	(name ":INSTANCE-ANNOTATION")
+	(string_value "%3AANNOTATION-TEXT"))
+
+([platform_ProjectKB_Instance_10152] of  Map_Entry
+
+	(key "add_name_on_instance_form")
+	(key_class "java.lang.String")
+	(value "false")
+	(value_class "java.lang.String"))
+
+([platform_ProjectKB_Instance_10153] of  Map_Entry
+
+	(key "change_tracking_active")
+	(key_class "java.lang.String")
+	(value "false")
+	(value_class "java.lang.String"))
+
 ([platform_ProjectKB_Instance_10256] of  Map
 
 	(entries
-		[platform_ProjectKB_Instance_20152]
-		[platform_ProjectKB_Instance_20153]))
+		[platform_ProjectKB_Instance_10152]
+		[platform_ProjectKB_Instance_10153]))
 
 ([platform_ProjectKB_Instance_133] of  Widget
 
@@ -591,44 +629,6 @@
 	(property_list [platform_ProjectKB_Instance_202])
 	(widget_class_name "edu.stanford.smi.protegex.changes.stats.ChangeStatisticsTab"))
 
-([platform_ProjectKB_Instance_20143] of  Boolean
-
-	(boolean_value FALSE)
-	(name "ButtonDisplayed-View References to Value"))
-
-([platform_ProjectKB_Instance_20144] of  Boolean
-
-	(boolean_value FALSE)
-	(name "ButtonDisplayed-Delete Instance"))
-
-([platform_ProjectKB_Instance_20145] of  Property_List
-)
-
-([platform_ProjectKB_Instance_20146] of  Property_List
-)
-
-([platform_ProjectKB_Instance_20147] of  Property_List
-)
-
-([platform_ProjectKB_Instance_20151] of  String
-
-	(name ":INSTANCE-ANNOTATION")
-	(string_value "%3AANNOTATION-TEXT"))
-
-([platform_ProjectKB_Instance_20152] of  Map_Entry
-
-	(key "add_name_on_instance_form")
-	(key_class "java.lang.String")
-	(value "false")
-	(value_class "java.lang.String"))
-
-([platform_ProjectKB_Instance_20153] of  Map_Entry
-
-	(key "change_tracking_active")
-	(key_class "java.lang.String")
-	(value "false")
-	(value_class "java.lang.String"))
-
 ([platform_ProjectKB_Instance_202] of  Property_List
 )
 
@@ -658,7 +658,7 @@
 	(default_facet_metaclass ":STANDARD-FACET")
 	(default_instance_widget_class_name "edu.stanford.smi.protege.widget.FormWidget")
 	(default_slot_metaclass ":STANDARD-SLOT")
-	(included_projects "file:/C:/Protege/plugins/nl.uva.psy.swi.beangenerator/projects/SimpleJADEAbstractOntology.pprj")
+	(included_projects "plugins/nl.uva.psy.swi.beangenerator/projects/SimpleJADEAbstractOntology.pprj")
 	(journaling_enabled FALSE)
 	(next_frame_number 0)
 	(options [KB_461154_Instance_1])
