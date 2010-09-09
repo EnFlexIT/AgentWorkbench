@@ -60,9 +60,13 @@ public class LoadMeasureJVM{
 			ThreadInfo[] jvmThreadInfo = threadXB.getThreadInfo(jvmThreadIDs);
 			jvmThreadTimes = new Hashtable<String, Long>();
 			for (int i = 0; i < jvmThreadInfo.length; i++) {
-				String threadName = jvmThreadInfo[i].getThreadName();
-				long threadID = jvmThreadInfo[i].getThreadId();
-				jvmThreadTimes.put(threadName, threadXB.getThreadCpuTime(threadID));
+				if (jvmThreadInfo[i]!=null) {
+					if (jvmThreadInfo[i].getThreadName()!=null) {
+						String threadName = jvmThreadInfo[i].getThreadName();
+						long threadID = jvmThreadInfo[i].getThreadId();
+						jvmThreadTimes.put(threadName, threadXB.getThreadCpuTime(threadID));
+					}
+				}
 			}
 		}
 		
