@@ -158,13 +158,13 @@ public class HelloWorldAgent extends Agent implements ServiceSensor {
 			myAgent.doSuspend();
 			
 			
-//			Vector<String> v = new Vector<String>( lma.keySet() );
-//		    Iterator<String> it = v.iterator();
-//		    while (it.hasNext()) {
-//		    	String container = it.next();
-//		    	PlatformLoad pl = lma.get(container);
-//		    	System.out.println( "Load on '" + container + "': CPU: " + pl.getLoadCPU() + " - Memory: " + pl.getLoadMemory() + " - NoThreads: " + pl.getLoadNoThreads() + " - Exceeded: " + pl.getLoadExceeded() + "" );
-//		    }
+			Vector<String> v = new Vector<String>( lma.keySet() );
+		    Iterator<String> it = v.iterator();
+		    while (it.hasNext()) {
+		    	String container = it.next();
+		    	PlatformLoad pl = lma.get(container);
+		    	System.out.println( "Load on '" + container + "': CPU: " + pl.getLoadCPU() + " - MemorySystem: " + pl.getLoadMemorySystem() + " - MemorySystemJVM: " + pl.getLoadMemoryJVM() + " - NoThreads: " + pl.getLoadNoThreads() + " - Exceeded: " + pl.getLoadExceeded() + "" );
+		    }
 			
 		} 
 	}
