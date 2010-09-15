@@ -7,6 +7,7 @@ import jade.core.Location;
 import jade.core.Node;
 import jade.core.ServiceException;
 import jade.core.SliceProxy;
+import mas.service.distribution.ontology.ClientRemoteContainerReply;
 import mas.service.distribution.ontology.PlatformLoad;
 import mas.service.distribution.ontology.RemoteContainerConfig;
 import mas.service.time.TimeModel;
@@ -269,6 +270,28 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 		}
 	}
 
+	public RemoteContainerConfig getDefaultRemoteContainerConfig() throws IMTPException {
+
+		try {
+			GenericCommand cmd = new GenericCommand(SERVICE_GET_DEFAULT_REMOTE_CONTAINER_CONFIG, SimulationService.NAME, null);
+			
+			Node n = getNode();
+			Object result = n.accept(cmd);
+			if((result != null) && (result instanceof Throwable)) {
+				if(result instanceof IMTPException) {
+					throw (IMTPException)result;
+				}
+				else {
+					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
+				}
+			}
+			return (RemoteContainerConfig) result;
+		}
+		catch(ServiceException se) {
+			throw new IMTPException("Unable to access remote node", se);
+		}
+	}
+	
 	public Location getLocation() throws IMTPException {
 		
 		try {
@@ -296,7 +319,29 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 	// --- containers ----------------------------- E N D -------
 	// ----------------------------------------------------------
 
-	
+	@Override
+	public void putContainerDescription(ClientRemoteContainerReply crcReply) throws IMTPException {
+		
+		try {
+			GenericCommand cmd = new GenericCommand(SERVICE_PUT_CONTAINER_DESCRIPTION, SimulationService.NAME, null);
+			cmd.addParam(crcReply);
+			
+			Node n = getNode();
+			Object result = n.accept(cmd);
+			if((result != null) && (result instanceof Throwable)) {
+				if(result instanceof IMTPException) {
+					throw (IMTPException)result;
+				}
+				else {
+					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
+				}
+			}			
+		}
+		catch(ServiceException se) {
+			throw new IMTPException("Unable to access remote node", se);
+		}
+		
+	}
 
 	
 }

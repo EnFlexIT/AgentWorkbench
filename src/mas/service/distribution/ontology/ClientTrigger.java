@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: ClientTrigger
 * @author ontology bean generator
-* @version 2010/09/8, 22:47:22
+* @version 2010/09/14, 14:55:17
 */
 public class ClientTrigger implements AgentAction {
 
@@ -24,17 +24,6 @@ public class ClientTrigger implements AgentAction {
    }
 
    /**
-* Protege name: clientBenchmarkValue
-   */
-   private BenchmarkResult clientBenchmarkValue;
-   public void setClientBenchmarkValue(BenchmarkResult value) { 
-    this.clientBenchmarkValue=value;
-   }
-   public BenchmarkResult getClientBenchmarkValue() {
-     return this.clientBenchmarkValue;
-   }
-
-   /**
 * Protege name: clientLoad
    */
    private PlatformLoad clientLoad;
@@ -43,6 +32,17 @@ public class ClientTrigger implements AgentAction {
    }
    public PlatformLoad getClientLoad() {
      return this.clientLoad;
+   }
+
+   /**
+* Protege name: clientBenchmarkValue
+   */
+   private BenchmarkResult clientBenchmarkValue;
+   public void setClientBenchmarkValue(BenchmarkResult value) { 
+    this.clientBenchmarkValue=value;
+   }
+   public BenchmarkResult getClientBenchmarkValue() {
+     return this.clientBenchmarkValue;
    }
 
 }

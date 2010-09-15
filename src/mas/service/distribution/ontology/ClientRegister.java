@@ -8,30 +8,19 @@ import jade.core.*;
 /**
 * Protege name: ClientRegister
 * @author ontology bean generator
-* @version 2010/09/8, 22:47:22
+* @version 2010/09/14, 14:55:17
 */
 public class ClientRegister implements AgentAction {
 
    /**
-* Protege name: clientOS
+* Protege name: clientTime
    */
-   private OSInfo clientOS;
-   public void setClientOS(OSInfo value) { 
-    this.clientOS=value;
+   private PlatformTime clientTime;
+   public void setClientTime(PlatformTime value) { 
+    this.clientTime=value;
    }
-   public OSInfo getClientOS() {
-     return this.clientOS;
-   }
-
-   /**
-* Protege name: clientPerformance
-   */
-   private PlatformPerformance clientPerformance;
-   public void setClientPerformance(PlatformPerformance value) { 
-    this.clientPerformance=value;
-   }
-   public PlatformPerformance getClientPerformance() {
-     return this.clientPerformance;
+   public PlatformTime getClientTime() {
+     return this.clientTime;
    }
 
    /**
@@ -46,14 +35,25 @@ public class ClientRegister implements AgentAction {
    }
 
    /**
-* Protege name: clientTime
+* Protege name: clientPerformance
    */
-   private PlatformTime clientTime;
-   public void setClientTime(PlatformTime value) { 
-    this.clientTime=value;
+   private PlatformPerformance clientPerformance;
+   public void setClientPerformance(PlatformPerformance value) { 
+    this.clientPerformance=value;
    }
-   public PlatformTime getClientTime() {
-     return this.clientTime;
+   public PlatformPerformance getClientPerformance() {
+     return this.clientPerformance;
+   }
+
+   /**
+* Protege name: clientOS
+   */
+   private OSInfo clientOS;
+   public void setClientOS(OSInfo value) { 
+    this.clientOS=value;
+   }
+   public OSInfo getClientOS() {
+     return this.clientOS;
    }
 
 }

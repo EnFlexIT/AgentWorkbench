@@ -11,25 +11,20 @@ import jade.content.onto.UngroundedException;
 import jade.content.onto.basic.Action;
 import jade.core.AID;
 import jade.core.Agent;
+import jade.core.ServiceException;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.ParallelBehaviour;
 import jade.core.behaviours.TickerBehaviour;
 import jade.domain.JADEAgentManagement.JADEManagementOntology;
-import jade.domain.introspection.AMSSubscriber;
-import jade.domain.introspection.AddedContainer;
-import jade.domain.introspection.Event;
-import jade.domain.introspection.IntrospectionVocabulary;
 import jade.domain.introspection.Occurred;
-import jade.domain.introspection.RemovedContainer;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
-
-import java.util.Map;
-
-import mas.Platform;
+import mas.service.SimulationService;
+import mas.service.SimulationServiceHelper;
 import mas.service.distribution.ontology.AgentGUI_DistributionOntology;
 import mas.service.distribution.ontology.BenchmarkResult;
 import mas.service.distribution.ontology.ClientRegister;
+import mas.service.distribution.ontology.ClientRemoteContainerReply;
 import mas.service.distribution.ontology.ClientRemoteContainerRequest;
 import mas.service.distribution.ontology.ClientTrigger;
 import mas.service.distribution.ontology.ClientUnregister;
@@ -38,6 +33,7 @@ import mas.service.distribution.ontology.PlatformAddress;
 import mas.service.distribution.ontology.PlatformLoad;
 import mas.service.distribution.ontology.PlatformPerformance;
 import mas.service.distribution.ontology.PlatformTime;
+import mas.service.distribution.ontology.RegisterReceipt;
 import mas.service.distribution.ontology.RemoteContainerConfig;
 import mas.service.load.LoadMeasureSigar;
 import mas.service.load.LoadMeasureThread;
@@ -47,25 +43,28 @@ import application.Application;
 
 public class ClientServerAgent extends Agent {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -3947798460986588734L;
 	
 	private Ontology ontology = AgentGUI_DistributionOntology.getInstance();
 	private Ontology ontologyJadeMgmt = JADEManagementOntology.getInstance();
 	private Codec codec = new SLCodec();
 	
+	private PlatformAddress mainPlatform = new PlatformAddress();
+	private AID mainPlatformAgent = null;
+	private boolean mainPlatformReachable = true;
+	
 	private PlatformTime myPlatformTime = new PlatformTime();
 	private PlatformAddress myPlatform = new PlatformAddress();
-	private PlatformAddress mainPlatform = new PlatformAddress();
 	private PlatformPerformance myPerformance = new PlatformPerformance();
 	private OSInfo myOS = new OSInfo();
+	private ClientRegister myRegistration = new ClientRegister();
 	private PlatformLoad myLoad = new PlatformLoad();
-	private AID mainPlatformAgent = null; 
 	
 	private ParallelBehaviour parBehaiv = null;
-	private long triggerTime = new Long(1000);
+	private TriggerBehaiviour trigger = null;
+	
+	private long triggerTime = new Long(1000*1);
+	private long triggerTime4Reconnection = new Long(1000*20);
 	
 	@Override
 	protected void setup() {
@@ -75,7 +74,7 @@ public class ClientServerAgent extends Agent {
 		getContentManager().registerOntology(ontology);
 		getContentManager().registerOntology(ontologyJadeMgmt);
 		
-		// --- Define Platfornm-Info ----------------------
+		// --- Define Platform-Info -----------------------
 		JadeUrlChecker myURL = new JadeUrlChecker( this.getContainerController().getPlatformName() );
 		myPlatform.setIp(myURL.getHostIP());
 		myPlatform.setUrl(myURL.getHostName());
@@ -106,21 +105,23 @@ public class ClientServerAgent extends Agent {
 		mainPlatformAgent = new AID("server.master" + "@" + myURL.getJADEurl(), AID.ISGUID );
 		mainPlatformAgent.addAddresses(mainPlatform.getHttp4mtp());
 		
-		// --- Send 'Register'-Information ----------------
-		ClientRegister reg = new ClientRegister();
-		reg.setClientAddress(myPlatform);
+		// --- Set myTime ---------------------------------
 		myPlatformTime.setTimeStampAsString( Long.toString(System.currentTimeMillis()) ) ;
-		reg.setClientTime(myPlatformTime);
-		reg.setClientPerformance(myPerformance);
-		reg.setClientOS(myOS);
-		this.sendMessage2MainServer(reg);
 		
-		// --- Add Main-Behaiviours -----------------------
+		// --- Send 'Register'-Information ----------------
+		myRegistration.setClientAddress(myPlatform);
+		myRegistration.setClientTime(myPlatformTime);
+		myRegistration.setClientPerformance(myPerformance);
+		myRegistration.setClientOS(myOS);
+		this.sendMessage2MainServer(myRegistration);
+		
+		// --- Add Main-Behaviours ------------------------
 		parBehaiv = new ParallelBehaviour(this,ParallelBehaviour.WHEN_ALL);
-		parBehaiv.addSubBehaviour( new amsSubscriber() );
 		parBehaiv.addSubBehaviour( new ReceiveBehaviour() );
-		parBehaiv.addSubBehaviour( new TriggerBehaiviour(this,triggerTime) );
-		// --- Add Parallel Behaiviour --------------------
+		trigger = new TriggerBehaiviour(this,triggerTime);
+		parBehaiv.addSubBehaviour( trigger );
+		
+		// --- Add the parallel Behaviour from above ------
 		this.addBehaviour(parBehaiv);
 		
 	}
@@ -129,7 +130,7 @@ public class ClientServerAgent extends Agent {
 	protected void takeDown() {
 		super.takeDown();
 		
-		// --- Stop Parallel-Behaiviour -------------------
+		// --- Stop Parallel-Behaviour --------------------
 		this.removeBehaviour(parBehaiv);
 		
 		// --- Send 'Unregister'-Information --------------
@@ -141,25 +142,23 @@ public class ClientServerAgent extends Agent {
 	
 	private boolean sendMessage2MainServer(Concept agentAction) {
 		
+		// --- Define a new action ------------------------
+		Action act = new Action();
+		act.setActor(getAID());
+		act.setAction(agentAction);
+
+		// --- Build Messagr ... --------------------------
+		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+		msg.setSender(getAID());
+		msg.addReceiver(mainPlatformAgent);
+		msg.setLanguage(codec.getName());
+		msg.setOntology(ontology.getName());
+
 		try {
-			// --- Definition einer neuen 'Action' --------
-			Action act = new Action();
-			act.setActor(getAID());
-			act.setAction(agentAction);
-
-			// --- Nachricht zusammenbauen und ... --------
-			ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-			msg.setSender(getAID());
-			msg.addReceiver(mainPlatformAgent);
-			msg.setLanguage(codec.getName());
-			msg.setOntology(ontology.getName());
-			// msg.setContent(trig);
-
-			// --- ... versenden --------------------------
+			// --- ... send -------------------------------
 			getContentManager().fillContent(msg, act);
 			send(msg);			
 			return true;
-
 		} catch (CodecException e) {
 			e.printStackTrace();
 			return false;
@@ -176,28 +175,23 @@ public class ClientServerAgent extends Agent {
 		ClientRemoteContainerRequest req = (ClientRemoteContainerRequest) agentAction;
 		RemoteContainerConfig remConf = req.getRemoteConfig();
 		if (remConf==null) {
-			// --- Falls keine Konfiguration vorgenommen wurde, diese nun vornehmen ---
-			String myServices = Application.JadePlatform.MASplatformConfig.getServiceListArgument();
-			String myIP = myPlatform.getIp();
-			Integer myPort = myPlatform.getPort();
-			String newContainerName = Application.JadePlatform.jadeContainerGetNewRemoteName();
-			
-			remConf = new RemoteContainerConfig();
-			remConf.setJadeServices(myServices);
-			remConf.setJadeIsRemoteContainer(true);
-			remConf.setJadeHost(myIP);
-			remConf.setJadePort(myPort.toString());
-			remConf.setJadeContainerName(newContainerName);
-			remConf.setJadeShowGUI(true);
-			
+
+			SimulationServiceHelper simHelper = null;
+			try {
+				simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
+				remConf = simHelper.getDefaultRemoteContainerConfig();
+			} catch (ServiceException e) {
+				e.printStackTrace();
+			}
 			req.setRemoteConfig(remConf);
+			
 		}
 		this.sendMessage2MainServer(req);
 		
 	}
 	
 	// -----------------------------------------------------
-	// --- Message-Receive-Behaiviour --- S T A R T --------
+	// --- Message-Receive-Behaviour --- S T A R T ---------
 	// -----------------------------------------------------
 	private class ReceiveBehaviour extends CyclicBehaviour {
 
@@ -207,11 +201,7 @@ public class ClientServerAgent extends Agent {
 		public void action() {
 			
 			Action act = null;
-			@SuppressWarnings("unused")
-			Occurred occ = null;
 			Concept agentAction = null; 
-			@SuppressWarnings("unused")
-			AID senderAID = null;
 
 			ACLMessage msg = myAgent.receive();			
 			if (msg!=null) {
@@ -234,8 +224,15 @@ public class ClientServerAgent extends Agent {
 					// --- Try to use the ContentManager for decoding ---
 					// --------------------------------------------------
 					if (msg.getPerformative()==ACLMessage.FAILURE) {
-						// --- No Ontology-specific Message -------------
-						System.out.println( "ACLMessage.FAILURE from " + msg.getSender().getName() + ": " + msg.getContent() );
+						// --- Server.Master not reachable ? ------------
+						String msgContent = msg.getContent();
+						if (msgContent.contains("server.master")) {
+							System.out.println( "Server.Master not reachable! Try to reconnect in " + (triggerTime4Reconnection/1000) + " seconds ..." );
+							trigger.reset(triggerTime4Reconnection);
+							mainPlatformReachable = false;							
+						} else {
+							System.out.println( "ACLMessage.FAILURE from " + msg.getSender().getName() + ": " + msg.getContent() );	
+						}
 						
 					} else {
 						// --- Ontology-specific Message ----------------
@@ -244,7 +241,7 @@ public class ClientServerAgent extends Agent {
 							if (con instanceof Action) {
 								act = (Action) con;	
 							} else if (con instanceof Occurred) {
-								occ = (Occurred) con;
+								// Occurred occ = (Occurred) con;
 								// --- Messages in the context of Introspection ---
 								// --- Not of any further interest (yet)-- --------
 								// System.out.println( "++++++ Introspection: " + occ.toString() + "++++++" );
@@ -268,14 +265,28 @@ public class ClientServerAgent extends Agent {
 				if (act!=null) {
 					
 					agentAction = act.getAction();
-					senderAID = act.getActor();
 					
 					// ------------------------------------------------------------------
 					// --- Fallunterscheidung AgentAction --- S T A R T -----------------
 					// ------------------------------------------------------------------
-					if (agentAction instanceof ClientRemoteContainerRequest) {
+					if (agentAction instanceof RegisterReceipt) {
+						System.out.println( "Server.Master (re)connected!" );
+						mainPlatformReachable = true;
+						trigger.reset(triggerTime);
+					
+					} else if (agentAction instanceof ClientRemoteContainerRequest) {
 						// --- Direkt an den Server.Master weiterleiten -------
 						forwardRemoteContainerRequest(agentAction);
+					
+					} else if (agentAction instanceof ClientRemoteContainerReply) {
+						// --- Daten im 'SimulationService' speichern ---
+						SimulationServiceHelper simHelper = null;
+						try {
+							simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
+							simHelper.putContainerDescription((ClientRemoteContainerReply) agentAction);
+						} catch (ServiceException e) {
+							e.printStackTrace();
+						}
 						
 					} else {
 						// --- Unknown AgentAction ------------
@@ -295,12 +306,12 @@ public class ClientServerAgent extends Agent {
 		
 	}
 	// -----------------------------------------------------
-	// --- Message-Receive-Behaiviour --- E N D ------------
+	// --- Message-Receive-Behaviour --- E N D -------------
 	// -----------------------------------------------------
 	
 
 	// -----------------------------------------------------
-	// --- Trigger-Behaiviour --- S T A R T ----------------
+	// --- Trigger-Behaviour --- S T A R T -----------------
 	// -----------------------------------------------------
 	private class TriggerBehaiviour extends TickerBehaviour {
 
@@ -311,78 +322,50 @@ public class ClientServerAgent extends Agent {
 		}
 		@Override
 		protected void onTick() {
-			// --- Current Time ---------------------------------
-			ClientTrigger trig = new ClientTrigger();
+
 			myPlatformTime.setTimeStampAsString( Long.toString(System.currentTimeMillis()) ) ;
-			trig.setTriggerTime( myPlatformTime );
 			
-			// --- get current Load-Level -----------------------
-			myLoad.setLoadCPU(LoadMeasureThread.getLoadCPU());
-			myLoad.setLoadMemorySystem(LoadMeasureThread.getLoadMemorySystem());
-			myLoad.setLoadMemoryJVM(LoadMeasureThread.getLoadMemoryJVM());
-			myLoad.setLoadNoThreads(LoadMeasureThread.getLoadNoThreads());
-			myLoad.setLoadExceeded(LoadMeasureThread.getThresholdLevelesExceeded());
-			trig.setClientLoad(myLoad);
-			
-			// --- get Current Benchmark-Result -----------------
-			BenchmarkResult bmr = new BenchmarkResult(); 
-			bmr.setBenchmarkValue(LoadMeasureThread.getCompositeBenchmarkValue());
-			trig.setClientBenchmarkValue(bmr);
-			
-			// --- Send Message ---------------------------------
-			sendMessage2MainServer(trig);
-		}
-	}
-	// -----------------------------------------------------
-	// --- Trigger-Behaiviour --- S T A R T ----------------
-	// -----------------------------------------------------
-
-	
-
-	// -----------------------------------------------------
-	// --- amsSubscriber-SubClass/Behaiviour --- S T A R T -
-	// -----------------------------------------------------
-	private class amsSubscriber extends AMSSubscriber {
-		
-		private static final long serialVersionUID = -4346695401399663561L;
-
-		@SuppressWarnings("unchecked")
-		@Override
-		protected void installHandlers(Map handlers) {
-			// ----------------------------------------------------------------
-			EventHandler containerAddedHandler = new EventHandler() {
-				private static final long serialVersionUID = -7426704911904579411L;
-				@Override
-				public void handle(Event event) {
-					AddedContainer aCon = (AddedContainer) event;
-					if (aCon.getContainer().getName().equalsIgnoreCase("Main-Container")==false) {
-						Platform.MAS_ContainerRemote.add(aCon.getContainer());
-						//System.out.println( "Container hinzugefügt: " + aCon.getName() + " " + aCon.getContainer() + aCon );
-					}
-				}
-			};
-			handlers.put(IntrospectionVocabulary.ADDEDCONTAINER, containerAddedHandler);
-
-			// ----------------------------------------------------------------
-			EventHandler containerRemovedHandler = new EventHandler() {
-				private static final long serialVersionUID = 8614456287558634409L;
-				@Override
-				public void handle(Event event) {
-					RemovedContainer rCon = (RemovedContainer) event;
-					Platform.MAS_ContainerRemote.remove(rCon.getContainer());
-					//System.out.println( "Container gelöscht: " + rCon.getName() + " " + rCon.getContainer()  );
-				}
+			if (mainPlatformReachable==false)  {
+				// --------------------------------------------------
+				// --- Try to (re)register --------------------------
+				// --------------------------------------------------
 				
-			};
-			handlers.put(IntrospectionVocabulary.REMOVEDCONTAINER, containerRemovedHandler);
+				// --- Refresh registration time --------------------
+				myRegistration.setClientTime(myPlatformTime);
+
+				// --- Send Message ---------------------------------
+				sendMessage2MainServer(myRegistration);
+				
+			} else {
+				// --------------------------------------------------
+				// --- Just send a trigger --------------------------
+				// --------------------------------------------------
+				ClientTrigger trig = new ClientTrigger();
+				
+				// --- Current Time ---------------------------------
+				trig.setTriggerTime( myPlatformTime );
+				
+				// --- get current Load-Level -----------------------
+				myLoad.setLoadCPU(LoadMeasureThread.getLoadCPU());
+				myLoad.setLoadMemorySystem(LoadMeasureThread.getLoadMemorySystem());
+				myLoad.setLoadMemoryJVM(LoadMeasureThread.getLoadMemoryJVM());
+				myLoad.setLoadNoThreads(LoadMeasureThread.getLoadNoThreads());
+				myLoad.setLoadExceeded(LoadMeasureThread.getThresholdLevelesExceeded());
+				trig.setClientLoad(myLoad);
+				
+				// --- get Current Benchmark-Result -----------------
+				BenchmarkResult bmr = new BenchmarkResult(); 
+				bmr.setBenchmarkValue(LoadMeasureThread.getCompositeBenchmarkValue());
+				trig.setClientBenchmarkValue(bmr);
+				
+				// --- Send Message ---------------------------------
+				sendMessage2MainServer(trig);
+			}
 			
-			// ----------------------------------------------------------------
 		}
-		
 	}
 	// -----------------------------------------------------
-	// --- amsSubscriber-SubClass/Behaiviour --- E N D -----
+	// --- Trigger-Behaviour --- S T A R T -----------------
 	// -----------------------------------------------------
-
 	
 }

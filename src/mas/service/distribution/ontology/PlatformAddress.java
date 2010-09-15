@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: PlatformAddress
 * @author ontology bean generator
-* @version 2010/09/8, 22:47:22
+* @version 2010/09/14, 14:55:17
 */
 public class PlatformAddress implements Concept {
 
@@ -24,14 +24,14 @@ public class PlatformAddress implements Concept {
    }
 
    /**
-* Protege name: http4mtp
+* Protege name: url
    */
-   private String http4mtp;
-   public void setHttp4mtp(String value) { 
-    this.http4mtp=value;
+   private String url;
+   public void setUrl(String value) { 
+    this.url=value;
    }
-   public String getHttp4mtp() {
-     return this.http4mtp;
+   public String getUrl() {
+     return this.url;
    }
 
    /**
@@ -46,14 +46,14 @@ public class PlatformAddress implements Concept {
    }
 
    /**
-* Protege name: url
+* Protege name: http4mtp
    */
-   private String url;
-   public void setUrl(String value) { 
-    this.url=value;
+   private String http4mtp;
+   public void setHttp4mtp(String value) { 
+    this.http4mtp=value;
    }
-   public String getUrl() {
-     return this.url;
+   public String getHttp4mtp() {
+     return this.http4mtp;
    }
 
 }

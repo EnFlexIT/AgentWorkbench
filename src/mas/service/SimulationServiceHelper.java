@@ -12,8 +12,10 @@ import jade.core.ServiceHelper;
 import java.util.Date;
 import java.util.Hashtable;
 
+import mas.service.distribution.ontology.ClientRemoteContainerReply;
 import mas.service.distribution.ontology.PlatformLoad;
 import mas.service.distribution.ontology.RemoteContainerConfig;
+import mas.service.load.LoadInformation.NodeDescription;
 import mas.service.time.TimeModel;
 
 /**
@@ -29,14 +31,30 @@ public interface SimulationServiceHelper extends ServiceHelper {
 	public static final String SERVICE_UPDATE_SIMULATION = "service-update-simulation";
 	
 	
-	public Hashtable<String, PlatformLoad> getContainerLoads() throws ServiceException;
+	// --- Methods for the load balancing ---------------------------
 	public String startNewRemoteContainer() throws ServiceException;
 	public String startNewRemoteContainer(RemoteContainerConfig remoteConfig) throws ServiceException;
+	public RemoteContainerConfig getDefaultRemoteContainerConfig() throws ServiceException;
 	
-	public Hashtable<String, Location> getLocations() throws ServiceException;
-	public Location getLocation(String containerName) throws ServiceException;
+	public Hashtable<String, PlatformLoad> getContainerLoads() throws ServiceException;
+	public PlatformLoad getContainerLoad(String containerName) throws ServiceException;
+	
+	public Hashtable<String, Location> getContainerLocations() throws ServiceException;
+	public Location getContainerLocation(String containerName) throws ServiceException;
+	
+	public void putContainerDescription(ClientRemoteContainerReply crcReply) throws ServiceException;
+	public Hashtable<String, NodeDescription> getContainerDescriptions() throws ServiceException;
+	public NodeDescription getContainerDescription(String containerName) throws ServiceException;
 	
 	
+//	public Hashtable<String, AID> getAgents() throws ServiceException;
+//	public AID getAgent() throws ServiceException;
+//	
+//	public Hashtable<String, Integer> getNumberOfAgents() throws ServiceException;
+//	public Integer getNumberOfAgentsInContainer() throws ServiceException;
+
+	
+	// --- Methods for simulations ----------------------------------
 	public void notifySensors(String event) throws ServiceException;
 	
 	public void addSensor(Agent agentWithSensor) throws ServiceException;
@@ -54,8 +72,9 @@ public interface SimulationServiceHelper extends ServiceHelper {
 	public void setEnvironmentInstance(Object envObjectInstance) throws ServiceException;
 	public Object getEnvironmentInstance() throws ServiceException;
 	
+	
+	// --- Methods for the general time synchronisation -------------
 	public Date getTimeOfMainContainerAsDate();
 	public Long getTimeOfMainContainerAsLong();
-	
 	
 }

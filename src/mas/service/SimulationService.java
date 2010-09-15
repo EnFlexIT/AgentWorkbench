@@ -31,12 +31,14 @@ import java.util.List;
 import java.util.Observer;
 
 import mas.service.distribution.ontology.AgentGUI_DistributionOntology;
+import mas.service.distribution.ontology.ClientRemoteContainerReply;
 import mas.service.distribution.ontology.ClientRemoteContainerRequest;
 import mas.service.distribution.ontology.PlatformLoad;
 import mas.service.distribution.ontology.RemoteContainerConfig;
 import mas.service.environment.EnvironmentModel;
 import mas.service.load.LoadInformation;
 import mas.service.load.LoadMeasureThread;
+import mas.service.load.LoadInformation.NodeDescription;
 import mas.service.sensoring.ServiceActuator;
 import mas.service.time.TimeModel;
 import mas.service.transaction.TransactionMap;
@@ -108,8 +110,7 @@ public class SimulationService extends BaseService {
 				myLogger.log(Logger.FINE, "Main-Container: " + myMainContainer.toString());
 			}
 		}
-//		myContainer.here()
-
+		
 		// --- Start the Load-Measurments on this Node ----
 		new LoadMeasureThread().start();   
 		
@@ -159,14 +160,6 @@ public class SimulationService extends BaseService {
 		}
 		
 		// ----------------------------------------------------------
-		// --- Method to get the Load-Informations of all containers 
-		public  Hashtable<String, PlatformLoad> getContainerLoads() throws ServiceException {
-			Service.Slice[] slices = getAllSlices();
-			broadcastMeasureLoad(slices);
-			return loadInfo.containerLoads;
-		}
-		
-		// ----------------------------------------------------------
 		// --- Methods to start a new remote-container -------------- 
 		public String startNewRemoteContainer() throws ServiceException {
 			return this.startNewRemoteContainer(null);
@@ -176,22 +169,51 @@ public class SimulationService extends BaseService {
 			loadInfo.setLastNewContainer(broadcastStartNewRemoteContainer(remoteConfig, slices));
 			return loadInfo.getLastNewContainer();
 		}
+		public RemoteContainerConfig getDefaultRemoteContainerConfig() throws ServiceException {
+			Service.Slice[] slices = getAllSlices();
+			return broadcastGetDefaultRemoteContainerConfig(slices);
+		}
 
 		// ----------------------------------------------------------
 		// --- Method for getting Location-Objects ------------------ 
-		public Hashtable<String, Location> getLocations() throws ServiceException {
+		public Hashtable<String, Location> getContainerLocations() throws ServiceException {
 			Service.Slice[] slices = getAllSlices();
 			broadcastGetContainerLocation(slices);
 			return loadInfo.containerLocations;
 		}
-		public Location getLocation(String containerName) throws ServiceException {
-			this.getLocations();
+		public Location getContainerLocation(String containerName) throws ServiceException {
+			this.getContainerLocations();
 			return loadInfo.containerLocations.get(containerName);
 		}
-
 		
 		// ----------------------------------------------------------
-		// --- Method to notify all Semsors about changes -----------
+		// --- Methods for container infos about OS, benchmark etc. - 
+		public void putContainerDescription(ClientRemoteContainerReply crcReply) throws ServiceException {
+			Service.Slice[] slices = getAllSlices();
+			broadcastPutContainerDescription(slices, crcReply);
+		}
+		public Hashtable<String, NodeDescription> getContainerDescriptions() throws ServiceException {
+			return loadInfo.containerDescription;
+		}
+		public NodeDescription getContainerDescription(String containerName) throws ServiceException {
+			return loadInfo.containerDescription.get(containerName);
+		}
+		
+		// ----------------------------------------------------------
+		// --- Method to get the Load-Informations of all containers 
+		public Hashtable<String, PlatformLoad> getContainerLoads() throws ServiceException {
+			Service.Slice[] slices = getAllSlices();
+			broadcastMeasureLoad(slices);
+			return loadInfo.containerLoads;
+		}
+		public PlatformLoad getContainerLoad(String containerName) throws ServiceException {
+			Service.Slice[] slices = getAllSlices();
+			broadcastMeasureLoad(slices);
+			return loadInfo.containerLoads.get(containerName);
+		}
+		
+		// ----------------------------------------------------------
+		// --- Method to notify all Sensors about changes -----------
 		public void notifySensors(String event) throws ServiceException {
 			Service.Slice[] slices = getAllSlices();
 			broadcastNotifySensors(event, slices);
@@ -261,7 +283,6 @@ public class SimulationService extends BaseService {
 		public Long getTimeOfMainContainerAsLong() {
 			return System.currentTimeMillis();
 		}
-
 
 	}
 	// --------------------------------------------------------------	
@@ -469,6 +490,38 @@ public class SimulationService extends BaseService {
 		return null;
 	}
 	/**
+	 * This Methods
+	 * @param slices
+	 * @return
+	 * @throws ServiceException
+	 */
+	private RemoteContainerConfig broadcastGetDefaultRemoteContainerConfig(Service.Slice[] slices) throws ServiceException {
+		
+		if (myLogger.isLoggable(Logger.CONFIG)) {
+			myLogger.log(Logger.CONFIG, "Start request for the default remote container configuration!");
+		}
+		for (int i = 0; i < slices.length; i++) {
+			String sliceName = null;
+			try {
+				SimulationServiceSlice slice = (SimulationServiceSlice) slices[i];
+				sliceName = slice.getNode().getName();
+				if (myLogger.isLoggable(Logger.FINER)) {
+					myLogger.log(Logger.FINER, "Start request for the default remote container configuration at container (" + sliceName + ")");
+				}
+				RemoteContainerConfig remConf = slice.getDefaultRemoteContainerConfig();
+				if (remConf!=null) {
+					return remConf;
+				}
+			}
+			catch(Throwable t) {
+				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
+				myLogger.log(Logger.WARNING, "Error while trying to get the default remote container configuration from " + sliceName, t);
+			}
+		}
+		return null;
+	}
+	
+	/**
 	 * Broadcast to start a new remote-container for this platform 
 	 * @param slices
 	 * @throws ServiceException
@@ -497,6 +550,35 @@ public class SimulationService extends BaseService {
 			}
 		}	
 	}
+	
+	
+	/**
+	 * Broadcast informtions of the remote-container (OS etc.) to all remote-container of this platform 
+	 * @param slices
+	 * @throws ServiceException
+	 */
+	private void broadcastPutContainerDescription(Service.Slice[] slices, ClientRemoteContainerReply crcReply) throws ServiceException {
+		
+		if (myLogger.isLoggable(Logger.CONFIG)) {
+			myLogger.log(Logger.CONFIG, "Sending remote container Information!");
+		}
+		for (int i = 0; i < slices.length; i++) {
+			String sliceName = null;
+			try {
+				SimulationServiceSlice slice = (SimulationServiceSlice) slices[i];
+				sliceName = slice.getNode().getName();
+				if (myLogger.isLoggable(Logger.FINER)) {
+					myLogger.log(Logger.FINER, "Try sending remote container Information to " + sliceName );
+				}
+				slice.putContainerDescription(crcReply);
+			}
+			catch(Throwable t) {
+				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
+				myLogger.log(Logger.WARNING, "Error while try to send container information to " + sliceName, t);
+			}
+		}	
+	}
+	
 	
 	// --------------------------------------------------------------	
 	// ---- Inner-Class 'ServiceComponent' ---- Start ---------------
@@ -591,12 +673,6 @@ public class SimulationService extends BaseService {
 					notifySensors(cmdName);
 				}
 				
-				else if (cmdName.equals(SimulationServiceSlice.SERVICE_MEASURE_LOAD)) {
-					if (myLogger.isLoggable(Logger.FINE)) {
-						myLogger.log(Logger.FINE, "Answering request for Container-Load");
-					}
-					cmd.setReturnValue(measureLoad());
-				}
 				else if (cmdName.equals(SimulationServiceSlice.SERVICE_START_NEW_REMOTE_CONTAINER)) {
 					if (myMainContainer!=null) {
 						if (myLogger.isLoggable(Logger.FINE)) {
@@ -605,12 +681,41 @@ public class SimulationService extends BaseService {
 						RemoteContainerConfig remoteConfig = (RemoteContainerConfig) params[0];
 						cmd.setReturnValue(startRemoteContainer(remoteConfig));
 					} else {
+						if (myLogger.isLoggable(Logger.FINE)) {
+							myLogger.log(Logger.FINE, "Answering new remote-container request with null");
+						}
 						cmd.setReturnValue(null);
 					}
+				}
+				else if (cmdName.equals(SimulationServiceSlice.SERVICE_GET_DEFAULT_REMOTE_CONTAINER_CONFIG)) {
+					if (myMainContainer!=null) {
+						if (myLogger.isLoggable(Logger.FINE)) {
+							myLogger.log(Logger.FINE, "Answering to request for 'get_default_remote_container_config'");
+						}
+						cmd.setReturnValue(getDefaultRemoteContainerConfig());
+					} else {
+						if (myLogger.isLoggable(Logger.FINE)) {
+							myLogger.log(Logger.FINE, "Answering to request for 'get_default_remote_container_config' with null");
+						}
+						cmd.setReturnValue(null);
+					}
+				}
+				else if (cmdName.equals(SimulationServiceSlice.SERVICE_MEASURE_LOAD)) {
+					if (myLogger.isLoggable(Logger.FINE)) {
+						myLogger.log(Logger.FINE, "Answering request for Container-Load");
+					}
+					cmd.setReturnValue(measureLoad());
 				}
 				else if (cmdName.equals(SimulationServiceSlice.SERVICE_GET_LOCATION)) {
 					cmd.setReturnValue(myContainer.here());
 				}
+				else if (cmdName.equals(SimulationServiceSlice.SERVICE_PUT_CONTAINER_DESCRIPTION)) {
+					if (myLogger.isLoggable(Logger.FINE)) {
+						myLogger.log(Logger.FINE, "Putting in container description");
+					}
+					putContainerDescription((ClientRemoteContainerReply) params[0]);
+				}
+				
 
 			}
 			catch (Throwable t) {
@@ -648,6 +753,13 @@ public class SimulationService extends BaseService {
 			localServiceActuator.setChangedAndNotify(topicWhichChanged);
 		}
 		
+		private String startRemoteContainer(RemoteContainerConfig remoteConfig) {
+			return sendMsgRemoteContainerRequest(remoteConfig);
+		}
+		private RemoteContainerConfig getDefaultRemoteContainerConfig() {
+			return getRemoteContainerConfigDefault();
+		}
+		
 		private PlatformLoad measureLoad() {
 			PlatformLoad pl = new PlatformLoad();
 			pl.setLoadCPU(LoadMeasureThread.getLoadCPU());
@@ -657,9 +769,10 @@ public class SimulationService extends BaseService {
 			pl.setLoadExceeded(LoadMeasureThread.getThresholdLevelesExceeded());
 			return pl;
 		}
-		private String startRemoteContainer(RemoteContainerConfig remoteConfig) {
-			return sendMsgRemoteContainerRequest(remoteConfig);
+		private void putContainerDescription(ClientRemoteContainerReply crcReply) {
+			loadInfo.putContainerDescription(crcReply);
 		}
+		
 		
 	} 
 	// --------------------------------------------------------------	
@@ -764,78 +877,85 @@ public class SimulationService extends BaseService {
 		}
 	}
 	
-	
 	/**
-	 * This method configures and send a ACLMessage to start a new remote-Container
-	 * @param remConf, a RemoteContainerConfig-Object
+	 * This method returns a default configuration for a new remote container 
+	 * @return
 	 */
-	@SuppressWarnings("unchecked")
-	private String sendMsgRemoteContainerRequest(RemoteContainerConfig remConf) {
+	private RemoteContainerConfig getRemoteContainerConfigDefault() {
 		
 		// --- Variable for the new container name ------------------
 		String newContainerPrefix = "remote";
 		Integer newContainerNo = 0;
 		String newContainerName = null;
-
+		
 		// --- Get the local IP-Address -----------------------------
 		String myIP = myContainer.getNodeDescriptor().getContainer().getAddress();
 		// --- Get the local port of JADE ---------------------------
 		String myPort = myContainer.getNodeDescriptor().getContainer().getPort();
+	
+		// --- Get the List of services started here ---------------
+		String myServices = "";
+		List<?> services = myContainer.getServiceManager().getLocalServices();
+		Iterator<?> it = services.iterator();
+		while (it.hasNext()) {
+			ServiceDescriptor serviceDesc = (ServiceDescriptor) it.next();
+			String service = serviceDesc.getService().getClass().getName() + ";";
+			myServices += service;				
+		}			
+		
+		// --- Define the new container name --------------------
+		try {
+			Service.Slice[] slices = getAllSlices();
+			for (int i = 0; i < slices.length; i++) {
+				SimulationServiceSlice slice = (SimulationServiceSlice) slices[i];
+				String sliceName = slice.getNode().getName();
+				if (sliceName.startsWith(newContainerPrefix)) {
+					String endString = sliceName.replace(newContainerPrefix, "");
+					Integer endNumber = Integer.parseInt(endString);
+					if (endNumber>newContainerNo) {
+						newContainerNo = endNumber;
+					}
+				}
+			}	
+		} catch (ServiceException errSlices) {
+			errSlices.printStackTrace();
+		}
+		newContainerNo++;
+		newContainerName = newContainerPrefix + newContainerNo;
+		if (myLogger.isLoggable(Logger.FINE)) {
+			myLogger.log(Logger.FINE, "-- Infos to start the remote container ------------");
+			myLogger.log(Logger.FINE, "=> Services2Start:   " + myServices);
+			myLogger.log(Logger.FINE, "=> NewContainerName: " + newContainerName);
+			myLogger.log(Logger.FINE, "=> ThisAddresses:    " + myIP +  " - Port: " + myPort);
+		}
+
+		// --- Define the 'RemoteContainerConfig' - Object ------
+		RemoteContainerConfig remConf = new RemoteContainerConfig();
+		remConf.setJadeServices(myServices);
+		remConf.setJadeIsRemoteContainer(true);
+		remConf.setJadeHost(myIP);
+		remConf.setJadePort(myPort);
+		remConf.setJadeContainerName(newContainerName);
+		remConf.setJadeShowGUI(true);
+		return remConf;
+		
+	}
+	
+	/**
+	 * This method configures and send a ACLMessage to start a new remote-Container
+	 * @param remConf, a RemoteContainerConfig-Object
+	 */
+	private String sendMsgRemoteContainerRequest(RemoteContainerConfig remConf) {
+		
 		// --- Get the local Address of JADE ------------------------
 		String myPlatformAddress = myContainer.getPlatformID();
 		
-		// ----------------------------------------------------------
 		// --- If the remote-configuration is null configure it now -
-		// ----------------------------------------------------------
 		if (remConf==null) {
-			// --- Get the List of services started -----------------
-			String myServices = "";
-			List<ServiceDescriptor> services = myContainer.getServiceManager().getLocalServices();
-			Iterator<ServiceDescriptor> it = services.iterator();
-			while (it.hasNext()) {
-				ServiceDescriptor serviceDesc = it.next();
-				String service = serviceDesc.getService().getClass().getName() + ";";
-				myServices += service;				
-			}			
-			
-			// --- Define the new container name --------------------
-			try {
-				Service.Slice[] slices = getAllSlices();
-				for (int i = 0; i < slices.length; i++) {
-					SimulationServiceSlice slice = (SimulationServiceSlice) slices[i];
-					String sliceName = slice.getNode().getName();
-					if (sliceName.startsWith(newContainerPrefix)) {
-						String endString = sliceName.replace(newContainerPrefix, "");
-						Integer endNumber = Integer.parseInt(endString);
-						if (endNumber>newContainerNo) {
-							newContainerNo = endNumber;
-						}
-					}
-				}	
-			} catch (ServiceException errSlices) {
-				errSlices.printStackTrace();
-			}
-			newContainerNo++;
-			newContainerName = newContainerPrefix + newContainerNo;
-			if (myLogger.isLoggable(Logger.FINE)) {
-				myLogger.log(Logger.FINE, "-- Infos to start the remote container ------------");
-				myLogger.log(Logger.FINE, "=> Services2Start:   " + myServices);
-				myLogger.log(Logger.FINE, "=> NewContainerName: " + newContainerName);
-				myLogger.log(Logger.FINE, "=> ThisAddresses:    " + myIP +  " - Port: " + myPort);
-			}
-
-			// --- Define the 'RemoteContainerConfig' - Object ------
-			remConf = new RemoteContainerConfig();
-			remConf.setJadeServices(myServices);
-			remConf.setJadeIsRemoteContainer(true);
-			remConf.setJadeHost(myIP);
-			remConf.setJadePort(myPort);
-			remConf.setJadeContainerName(newContainerName);
-			remConf.setJadeShowGUI(true);
-		
-		} else {
-			newContainerName = remConf.getJadeContainerName();
+			remConf = this.getRemoteContainerConfigDefault();
 		}
+		
+		// --- Define the AgentAction -------------------------------
 		ClientRemoteContainerRequest req = new ClientRemoteContainerRequest();
 		req.setRemoteConfig(remConf);
 		
@@ -861,9 +981,9 @@ public class SimulationService extends BaseService {
 
 		// --- Send message -----------------------------------------
 		myContainer.postMessageToLocalAgent(msg, agentGUIAgent);
-
+		
 		// --- Return -----------------------------------------------
-		return newContainerName;
+		return remConf.getJadeContainerName();
 	}
 	
 

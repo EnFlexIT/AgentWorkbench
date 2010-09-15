@@ -13,7 +13,6 @@ import jade.wrapper.State;
 
 import java.awt.Cursor;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
@@ -39,8 +38,7 @@ public class Platform extends Object {
 	public String MASrunningMode = "";
 	
 	public final static int UTIL_CMD_OpenDF = 1;
-	public final static int UTIL_CMD_KillRemoteContainer = 2;
-	public final static int UTIL_CMD_ShutdownPlatform = 3;
+	public final static int UTIL_CMD_ShutdownPlatform = 2;
 	
 	public static final String MASapplicationAgentName = "server.client";
 	public JadeUrlChecker MASmasterAddress = null; 
@@ -159,7 +157,9 @@ public class Platform extends Object {
 			// ------------------------------------------------------
 			MASrunningMode = "Application";
 			// --- Starting 'Server.Client'-Agent -------------------				
-			jadeAgentStart(MASapplicationAgentName, mas.service.distribution.agents.ClientServerAgent.class.getName());
+			if (jadeAgentIsRunning(MASapplicationAgentName)==false) {
+				jadeAgentStart(MASapplicationAgentName, mas.service.distribution.agents.ClientServerAgent.class.getName());	
+			}			
 			// --- Start RMA ('Remote Monitoring Agent') ------------ 
 			jadeSystemAgentOpen( "rma", null );	
 						
@@ -266,48 +266,6 @@ public class Platform extends Object {
 			System.out.println(Language.translate("Jade wurde beendet!"));
 		}
 		// ------------------------------------------------
-		
-		// ------------------------------------------------
-		// --- Old - probably not longer needed -----------
-		// ------------------------------------------------		
-//		AgentContainer agentCont;
-//		
-//		// --- Kill all Remote-Container if needed --------
-//		if ( jadeMainContainerIsRunning() && MAS_ContainerRemote.size()!=0 ){
-//			// --- Starting the Utillity-Agent ------------
-//			this.jadeUtilityAgentStart(UTIL_CMD_KillRemoteContainer);
-//			// --- Wait for the end of the Agent-Action
-//			Long timeStop = System.currentTimeMillis() + (3 * 1000);
-//			while (MAS_ContainerRemote.size()!=0) {
-//				try {
-//					Thread.sleep(200);
-//				} catch (InterruptedException e) {
-//					// e.printStackTrace();
-//				}
-//				if (System.currentTimeMillis() >= timeStop) {
-//					break;
-//				}
-//			}			
-//		}
-//		
-//		// --- Stop all known platform-container ----------
-//		for ( int i=0; i < MAS_ContainerLocal.size(); i++ ) {
-//			agentCont = MAS_ContainerLocal.get(i);
-//			jadeContainerKill(agentCont);
-//			MAS_ContainerLocal.remove(i);
-//		}	
-//		// --- Stop the Main-Platform ---------------------
-//		try {
-//			if ( jadeMainContainerIsRunning() ){
-//				MASmc.kill();				
-//			}
-//			if ( MASrt != null ) {
-//				MASrt.shutDown();				
-//			}			
-//		}
-//		catch (Exception e) {
-//			//e.printStackTrace();
-//		}
 
 		// --- Reset runtime-variables -------------------- 
 		MAS_ContainerRemote.removeAllElements();
@@ -593,50 +551,6 @@ public class Platform extends Object {
 		catch (StaleProxyException e) {
 			//e.printStackTrace();
 		}
-	}
-	public String jadeContainerGetNewRemoteName() {
-		
-		boolean newNameFound = false;
-		Integer newContainerNo = 0;
-		String newContainerPrefix = "remote";
-		String newContainerName = null;
-		Vector<String> containerList = new Vector<String>();
-		
-		// ----------------------------------------------------------
-		// --- Create a list of all containers ---------------------- 
-		// --- available local or remote       ----------------------
-		// ----------------------------------------------------------
-		Iterator<AgentContainer> itLC = MAS_ContainerLocal.iterator();
-		while(itLC.hasNext()) {
-			AgentContainer ac = itLC.next();
-			containerList.add(ac.getName());
-		}
-		Iterator<ContainerID> itRC = MAS_ContainerRemote.iterator();
-		while(itRC.hasNext()) {
-			ContainerID ac = itRC.next();
-			containerList.add(ac.getName());
-		}
-		// ----------------------------------------------------------
-		
-		// ----------------------------------------------------------
-		// --- Search as long as you find a new name ----------------  
-		// ----------------------------------------------------------
-		while (newNameFound==false) {
-			
-			newContainerNo++;
-			newContainerName = newContainerPrefix + newContainerNo;
-			
-			if (containerList.size()==0) {
-				newNameFound = true;
-			} else {
-				// --- Search in the List of all Containers ---------
-				if (containerList.contains(newContainerName)==false) {
-					newNameFound = true;
-				}
-			}
-		}
-		// ----------------------------------------------------------
-		return newContainerName;
 	}
 	
 	/**

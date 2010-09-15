@@ -4,6 +4,7 @@ import jade.core.AID;
 import jade.core.IMTPException;
 import jade.core.Location;
 import jade.core.Service;
+import mas.service.distribution.ontology.ClientRemoteContainerReply;
 import mas.service.distribution.ontology.PlatformLoad;
 import mas.service.distribution.ontology.RemoteContainerConfig;
 import mas.service.time.TimeModel;
@@ -54,12 +55,20 @@ public interface SimulationServiceSlice extends Service.Slice {
 	
 	// ----------------------------------------------------------
 	// --- Method to get the Load-Informations of all containers 
-	static final String SERVICE_MEASURE_LOAD = "measure-Load";
 	static final String SERVICE_START_NEW_REMOTE_CONTAINER = "start-new-remote-container";
+	static final String SERVICE_GET_DEFAULT_REMOTE_CONTAINER_CONFIG = "get-default-remote-container-config";
 	static final String SERVICE_GET_LOCATION = "get-location";
+	static final String SERVICE_MEASURE_LOAD = "measure-Load";
 	
-	public PlatformLoad measureLoad() throws IMTPException;
 	public String startNewRemoteContainer(RemoteContainerConfig remoteConfig) throws IMTPException;
+	public RemoteContainerConfig getDefaultRemoteContainerConfig() throws IMTPException;
 	public Location getLocation() throws IMTPException;
+	public PlatformLoad measureLoad() throws IMTPException;
+	
+	// ----------------------------------------------------------
+	// --- Methods to deal with the container description ------- 
+	static final String SERVICE_PUT_CONTAINER_DESCRIPTION = "service-container-description-put";
+	
+	public void putContainerDescription(ClientRemoteContainerReply crcReply) throws IMTPException;
 	
 }

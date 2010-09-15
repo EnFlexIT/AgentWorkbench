@@ -221,10 +221,10 @@ public class CenterDynamicLoadBalancingCoodinator extends Agent {
 							simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
 							newRemoteContainerName= simHelper.startNewRemoteContainer();
 							containerCounter++;
-							while (simHelper.getLocation(newRemoteContainerName)==null) {
+							while (simHelper.getContainerLocation(newRemoteContainerName)==null) {
 								doWait(1000);
 							}
-							 newDest = simHelper.getLocation(newRemoteContainerName);
+							 newDest = simHelper.getContainerLocation(newRemoteContainerName);
 							
 						} catch (ServiceException e) {
 							e.printStackTrace();
@@ -428,7 +428,7 @@ public class CenterDynamicLoadBalancingCoodinator extends Agent {
 			try {
 				simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
 				lma = simHelper.getContainerLoads();
-				loc = simHelper.getLocation("Main-Container");
+				loc = simHelper.getContainerLocation("Main-Container");
 			} catch (ServiceException e) {
 				e.printStackTrace();
 			}
@@ -482,7 +482,7 @@ public class CenterDynamicLoadBalancingCoodinator extends Agent {
 						setMaximumMemory((long) tempMaximumMemory);
 						try {
 							lma = simHelper.getContainerLoads();
-							setRemoteContainerName(simHelper.getLocation(containerName));
+							setRemoteContainerName(simHelper.getContainerLocation(containerName));
 						} catch (ServiceException e) {
 							e.printStackTrace();
 						}

@@ -23,6 +23,7 @@ import mas.service.distribution.ontology.PlatformAddress;
 import mas.service.distribution.ontology.PlatformLoad;
 import mas.service.distribution.ontology.PlatformPerformance;
 import mas.service.distribution.ontology.PlatformTime;
+import mas.service.distribution.ontology.RegisterReceipt;
 import mas.service.distribution.ontology.RemoteContainerConfig;
 import mas.service.distribution.ontology.SlaveRegister;
 import mas.service.distribution.ontology.SlaveTrigger;
@@ -40,17 +41,23 @@ public class SlaveServerAgent extends Agent {
 	private Ontology ontology = AgentGUI_DistributionOntology.getInstance();
 	private Codec codec = new SLCodec();
 	
+	private PlatformAddress mainPlatform = new PlatformAddress();
+	private AID mainPlatformAgent = null;
+	private boolean mainPlatformReachable = true;
+	
 	private PlatformTime myPlatformTime = new PlatformTime();
 	private PlatformAddress myPlatform = new PlatformAddress();
-	private PlatformAddress mainPlatform = new PlatformAddress();
 	private PlatformPerformance myPerformance = new PlatformPerformance();
 	private OSInfo myOS = new OSInfo();
+	private SlaveRegister myRegistration = new SlaveRegister();
 	private PlatformLoad myLoad = new PlatformLoad();	
-	private AID mainPlatformAgent = null; 
 	
 	private ParallelBehaviour parBehaiv = null;
-	private long triggerTime = new Long(1000);
+	private TriggerBehaiviour trigger = null;
 	
+	private long triggerTime = new Long(1000*1);
+	private long triggerTime4Reconnection = new Long(1000*20);
+
 	@Override
 	protected void setup() {
 		super.setup();
@@ -89,19 +96,22 @@ public class SlaveServerAgent extends Agent {
 		mainPlatformAgent = new AID("server.master" + "@" + myURL.getJADEurl(), AID.ISGUID );
 		mainPlatformAgent.addAddresses(mainPlatform.getHttp4mtp());
 		
-		// --- Send 'Register'-Information ----------------
-		SlaveRegister reg = new SlaveRegister();
-		reg.setSlaveAddress(myPlatform);
+		// --- Set myTime ---------------------------------
 		myPlatformTime.setTimeStampAsString( Long.toString(System.currentTimeMillis()) ) ;
-		reg.setSlaveTime(myPlatformTime);
-		reg.setSlavePerformance(myPerformance);
-		reg.setSlaveOS(myOS);
-		this.sendMessage2MainServer(reg);
+		
+		// --- Send 'Register'-Information ----------------
+		myRegistration.setSlaveAddress(myPlatform);
+		myRegistration.setSlaveTime(myPlatformTime);
+		myRegistration.setSlavePerformance(myPerformance);
+		myRegistration.setSlaveOS(myOS);
+		this.sendMessage2MainServer(myRegistration);
 
 		// --- Add Main-Behaiviours -----------------------
 		parBehaiv = new ParallelBehaviour(this,ParallelBehaviour.WHEN_ALL);
-		parBehaiv.addSubBehaviour( new TriggerBehaiviour(this,triggerTime) );
 		parBehaiv.addSubBehaviour( new ReceiveBehaviour() );
+		trigger = new TriggerBehaiviour(this,triggerTime);
+		parBehaiv.addSubBehaviour( trigger );
+		
 		// --- Add Parallel Behaiviour --------------------
 		this.addBehaviour(parBehaiv);
 		
@@ -135,7 +145,6 @@ public class SlaveServerAgent extends Agent {
 			msg.addReceiver(mainPlatformAgent);
 			msg.setLanguage(codec.getName());
 			msg.setOntology(ontology.getName());
-			// msg.setContent(trig);
 
 			// --- ... versenden --------------------------
 			getContentManager().fillContent(msg, act);
@@ -162,25 +171,45 @@ public class SlaveServerAgent extends Agent {
 		@Override
 		protected void onTick() {
 			// --- Current Time ---------------------------------
-			SlaveTrigger trig = new SlaveTrigger();
 			myPlatformTime.setTimeStampAsString( Long.toString(System.currentTimeMillis()) ) ;
-			trig.setTriggerTime( myPlatformTime );
 			
-			// --- get current Load-Level -----------------------
-			myLoad.setLoadCPU(LoadMeasureThread.getLoadCPU());
-			myLoad.setLoadMemorySystem(LoadMeasureThread.getLoadMemorySystem());
-			myLoad.setLoadMemoryJVM(LoadMeasureThread.getLoadMemoryJVM());
-			myLoad.setLoadNoThreads(LoadMeasureThread.getLoadNoThreads());
-			myLoad.setLoadExceeded(LoadMeasureThread.getThresholdLevelesExceeded());
-			trig.setSlaveLoad(myLoad);
+			if (mainPlatformReachable==false)  {
+				// --------------------------------------------------
+				// --- Try to (re)register --------------------------
+				// --------------------------------------------------
+				
+				// --- Refresh registration time --------------------
+				myRegistration.setSlaveTime(myPlatformTime);
+
+				// --- Send Message ---------------------------------
+				sendMessage2MainServer(myRegistration);
+
+			} else {
+				// --------------------------------------------------
+				// --- Just send a trigger --------------------------
+				// --------------------------------------------------
+				SlaveTrigger trig = new SlaveTrigger();
+
+				// --- Current Time ---------------------------------
+				trig.setTriggerTime( myPlatformTime );
+				
+				// --- get current Load-Level -----------------------
+				myLoad.setLoadCPU(LoadMeasureThread.getLoadCPU());
+				myLoad.setLoadMemorySystem(LoadMeasureThread.getLoadMemorySystem());
+				myLoad.setLoadMemoryJVM(LoadMeasureThread.getLoadMemoryJVM());
+				myLoad.setLoadNoThreads(LoadMeasureThread.getLoadNoThreads());
+				myLoad.setLoadExceeded(LoadMeasureThread.getThresholdLevelesExceeded());
+				trig.setSlaveLoad(myLoad);
+				
+				// --- get Current Benchmark-Result -----------------
+				BenchmarkResult bmr = new BenchmarkResult(); 
+				bmr.setBenchmarkValue(LoadMeasureThread.getCompositeBenchmarkValue());
+				trig.setSlaveBenchmarkValue(bmr);
+				
+				// --- Send Message ---------------------------------
+				sendMessage2MainServer(trig);
+			}
 			
-			// --- get Current Benchmark-Result -----------------
-			BenchmarkResult bmr = new BenchmarkResult(); 
-			bmr.setBenchmarkValue(LoadMeasureThread.getCompositeBenchmarkValue());
-			trig.setSlaveBenchmarkValue(bmr);
-			
-			// --- Send Message ---------------------------------
-			sendMessage2MainServer(trig);
 		}
 	}
 
@@ -204,11 +233,19 @@ public class SlaveServerAgent extends Agent {
 			ACLMessage msg = myAgent.receive();			
 			if (msg!=null) {
 				
+				act = null; // --- default ---
+				
 				if (msg.getPerformative()==ACLMessage.FAILURE) {
-					// --- No Ontology-specific Message -------------
-					act = null;
-					System.out.println( "ACLMessage.FAILURE from " + msg.getSender().getName() + ": " + msg.getContent() );
-
+					// --- Server.Master not reachable ? ------------
+					String msgContent = msg.getContent();
+					if (msgContent.contains("server.master")) {
+						System.out.println( "Server.Master not reachable! Try to reconnect in " + (triggerTime4Reconnection/1000) + " seconds ..." );
+						trigger.reset(triggerTime4Reconnection);
+						mainPlatformReachable = false;							
+					} else {
+						System.out.println( "ACLMessage.FAILURE from " + msg.getSender().getName() + ": " + msg.getContent() );	
+					}
+					
 				} else {
 					// --- Ontology-specific Message ----------------
 					try {
@@ -233,6 +270,11 @@ public class SlaveServerAgent extends Agent {
 						
 						ClientRemoteContainerRequest crcr = (ClientRemoteContainerRequest) agentAction;
 						startRemoteContainer(crcr.getRemoteConfig());
+					
+					} else if (agentAction instanceof RegisterReceipt) {
+						System.out.println( "Server.Master (re)connected!" );
+						mainPlatformReachable = true;
+						trigger.reset(triggerTime);
 						
 					}
 					// ------------------------------------------------------------------
