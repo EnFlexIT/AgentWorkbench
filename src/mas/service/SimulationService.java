@@ -963,7 +963,7 @@ public class SimulationService extends BaseService {
 				// --- Is this the slice, we have waited for? ------------------------------
 				loadInfo.setNewContainerStarted(newSliceName);
 				// --- Synchronise the time ------------------------------------------------
-				this.synchTimeOfSlice(newSlice);
+				this.synchTimeOfSlice(newSlice, newSliceName);
 				
 			}
 			catch (Throwable t) {
@@ -976,39 +976,50 @@ public class SimulationService extends BaseService {
 	 * This method will synchronise the time between Main-Container and Remote-Container 
 	 * @param slice
 	 */
-	private void synchTimeOfSlice(SimulationServiceSlice slice) {
+	private void synchTimeOfSlice(SimulationServiceSlice slice, String sliceName) {
 		
 		int countMax = 100;
-		long locTime1 = 0;
-		long locTime2 = 0;
-		long measureTime = 0;
 		
-		long remTime = 0;
-		long remTimeCorrect = 0;
+		double locTime1Milli = 0;
+		long locTime1Nano = 0;
+		long locTime2Nano = 0;
 		
-		long timeDiff = 0;
-		long timeDiffAccumulate = 0;
-		long timeDifference = 0;
+		double remTimeMilli = 0;
+		double remTimeMilliCorrect = 0;
+		
+		long measureTimeNano = 0;
+		double measureTimeMilli = 0;
+		
+		double timeDiffMilli = 0;
+		double timeDiffAccumulate = 0;
+		double timeDifference = 0;
 		
 		try {
 	
 			for (int i = 0; i < countMax; i++) {
 			
 				// --- Measure local time and ask for the remote time ---
-				locTime1 = System.currentTimeMillis();
-				remTime = slice.getRemoteTime();
-				locTime2 = System.currentTimeMillis();
-				// --- Correct the measured Remote Time -----------------
-				measureTime = locTime2 - locTime1;
-				remTimeCorrect = remTime - (measureTime/2);
-				// --- Calculate the time Difference --------------------
-				timeDiff = locTime1 - remTimeCorrect;
-				timeDiffAccumulate += timeDiff;
-
+				locTime1Milli = System.currentTimeMillis();								// --- milli-seconds ---
+				locTime1Nano = System.nanoTime();										// --- nano-seconds ---
+				remTimeMilli = slice.getRemoteTime();									// --- milli-seconds ---
+				locTime2Nano = System.nanoTime();										// --- nano-seconds ---
+				
+				// --- Correct the measured remote time -----------------
+				measureTimeNano = locTime2Nano - locTime1Nano;							// --- nano-seconds ---
+				measureTimeMilli = measureTimeNano * Math.pow(10, -6);					// --- milli-seconds ---
+				remTimeMilliCorrect = remTimeMilli - (measureTimeMilli/2);				// --- milli-seconds ---
+				
+				// --- Calculate the time Difference between ------------
+				// --- this and the remote platform 		 ------------
+				timeDiffMilli = locTime1Milli - remTimeMilliCorrect;					// --- milli-seconds ---
+				timeDiffAccumulate += timeDiffMilli;
+				//System.out.println( "Messzeit: " + measureTimeNano + " ns (" + measureTimeMilli + " ms)- Zeitdifferenz zwischen den Platformen: " + timeDiffMilli + " ms)" );
 			}
 			
-			timeDifference = timeDiffAccumulate / countMax; 
-			slice.setRemoteTimeDiff(timeDifference);
+			timeDifference =  timeDiffAccumulate / countMax; 
+//			System.out.println( "Time difference to '" + sliceName + "': " + timeDifference + " ms" );
+//			System.out.println( "Time on '" + sliceName + "' = " +  new Date(System.currentTimeMillis()-Math.round(timeDifference)));
+			slice.setRemoteTimeDiff(Math.round(timeDifference));
 			
 		} catch (IMTPException e) {
 			e.printStackTrace();

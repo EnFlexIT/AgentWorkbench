@@ -11,7 +11,7 @@ public class LoadUnits {
 	
 	private static final int calcFactor = 1024;
 	
-	private static int round2 = 4;
+	private static int round2 = 2;
 	private static double round2factor = Math.pow(10, round2);
 	
 	

@@ -379,13 +379,7 @@ public class MasterServerAgent extends Agent {
 		ClientRemoteContainerReply replyContent = new ClientRemoteContainerReply();
 		
 		RemoteContainerConfig remConf = crcr.getRemoteConfig();
-		String allocMaxString = remConf.getJvmMemAllocMaximum();
 		String containerName = remConf.getJadeContainerName();
-		Integer allocMax = 256; // --- The remaining Memory in MB, which should be available ---
-		if (allocMaxString!=null) {
-			allocMaxString = allocMaxString.replace("m", "");
-			allocMax = Integer.parseInt(allocMaxString);	
-		}
 		
 		// --------------------------------------------------------------------
 		// --- Select the machine with the highest potential of 		 ------
@@ -396,8 +390,7 @@ public class MasterServerAgent extends Agent {
 		sqlStmt = "SELECT (benchmark_value-(benchmark_value*current_load_cpu/100)) AS potential, ";
 		sqlStmt+= "platforms.* ";
 		sqlStmt+= "FROM platforms ";
-		sqlStmt+= "WHERE is_server=-1 AND currently_available=-1 ";
-		sqlStmt+= "AND (memory_total_mb*current_load_memory_system/100) > " + allocMax + " ";
+		sqlStmt+= "WHERE is_server=-1 AND currently_available=-1 AND current_load_threshold_exceeded=0 ";
 		sqlStmt+= "ORDER BY (benchmark_value-(benchmark_value*current_load_cpu/100)) DESC";
 		// --------------------------------------------------------------------
 		ResultSet res = dbConn.getSqlResult4ExecuteQuery(sqlStmt);

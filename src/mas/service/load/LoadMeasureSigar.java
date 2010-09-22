@@ -22,6 +22,7 @@ import org.hyperic.sigar.CpuInfo;
 import org.hyperic.sigar.CpuPerc;
 import org.hyperic.sigar.Mem;
 import org.hyperic.sigar.SigarException;
+import org.hyperic.sigar.Swap;
 import org.hyperic.sigar.cmd.SigarCommandBase;
 
 /**
@@ -29,28 +30,33 @@ import org.hyperic.sigar.cmd.SigarCommandBase;
  */
 public class LoadMeasureSigar extends SigarCommandBase {
 	
+	private CpuInfo[] cpuInfos;
 	private String vendor;
 	private String model;
 	private int totalCpu;
 	private long Mhz;	
 	
-	private long totalMemory; 	// Bytes
-	private long freeMemory;	// Bytes
-	private long useMemory;		// Bytes
-	
+	private CpuPerc cpuPerc;
 	private double cpuSystemTime;
 	private double cpuUserTime;
 	private double cpuIdleTime;
 	private double cpuWaitTime;
 	private double cpuCombinedTime;
 	
+	private Mem memory;
+	private long totalMemory; 			// Bytes
+	private long freeMemory;			// Bytes
+	private long useMemory;				// Bytes
+	private double usedMemoryPercent;	// %
+	
+	private Swap swap;
+	private long totalMemorySwap; 		// Bytes
+	private long freeMemorySwap;		// Bytes
+	private long useMemorySwap;			// Bytes
+	
 	private int round2 = 4;
 	private double round2factor = Math.pow(10, round2);
 
-    private CpuInfo[] cpuInfos;
-    private Mem memory;
-    private CpuPerc cpuPerc;
-    
     
     public LoadMeasureSigar() {
         super();
@@ -85,9 +91,15 @@ public class LoadMeasureSigar extends SigarCommandBase {
     private void outputMem() throws SigarException{
     	// --- setting memory values ----------------------
     	memory = this.sigar.getMem();
-    	setFreeMemory(memory.getFree());
     	setTotalMemory(memory.getTotal());
+    	setFreeMemory(memory.getFree());
     	setUseMemory(memory.getUsed());
+    	setUsedMemoryPercent(memory.getUsedPercent());
+    	
+    	swap = this.sigar.getSwap();
+    	setTotalMemorySwap(swap.getTotal());
+    	setFreeMemorySwap(swap.getFree());
+    	setUseMemorySwap(swap.getUsed());
     }
 
     private void outputTimes() throws SigarException {
@@ -99,8 +111,6 @@ public class LoadMeasureSigar extends SigarCommandBase {
     	this.setCpuCombinedTime(cpuPerc.getCombined());
     	this.setCpuWaitTime(cpuPerc.getWait());
     }
-
-	
 
 	@Override
 	public void output(String[] arg0) throws SigarException {
@@ -276,6 +286,58 @@ public class LoadMeasureSigar extends SigarCommandBase {
 	 */
 	public long getUseMemory() {
 		return useMemory; //memory in MB
+	}
+
+	/**
+	 * @param usedMemoryPercent the usedMemoryPercent to set
+	 */
+	public void setUsedMemoryPercent(double usedMemoryPercent) {
+		this.usedMemoryPercent = usedMemoryPercent;
+	}
+	/**
+	 * @return the usedMemoryPercent
+	 */
+	public double getUsedMemoryPercent() {
+		return usedMemoryPercent;
+	}
+
+	/**
+	 * @return the totalMemorySwap
+	 */
+	public long getTotalMemorySwap() {
+		return totalMemorySwap;
+	}
+	/**
+	 * @param totalMemorySwap the totalMemorySwap to set
+	 */
+	public void setTotalMemorySwap(long totalMemorySwap) {
+		this.totalMemorySwap = totalMemorySwap;
+	}
+
+	/**
+	 * @return the freeMemorySwap
+	 */
+	public long getFreeMemorySwap() {
+		return freeMemorySwap;
+	}
+	/**
+	 * @param freeMemorySwap the freeMemorySwap to set
+	 */
+	public void setFreeMemorySwap(long freeMemorySwap) {
+		this.freeMemorySwap = freeMemorySwap;
+	}
+
+	/**
+	 * @return the useMemorySwap
+	 */
+	public long getUseMemorySwap() {
+		return useMemorySwap;
+	}
+	/**
+	 * @param useMemorySwap the useMemorySwap to set
+	 */
+	public void setUseMemorySwap(long useMemorySwap) {
+		this.useMemorySwap = useMemorySwap;
 	}
 
 	/**

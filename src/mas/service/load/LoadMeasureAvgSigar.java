@@ -12,17 +12,22 @@ public class LoadMeasureAvgSigar {
 	private String model;
 	private int totalCpu;
 	
-	private long totalMemory;	// Bytes
-	private long freeMemory;	// Bytes
-	private long useMemory;		// Bytes
-
 	private double cpuSystemTime;
 	private double cpuUserTime;
 	private double cpuIdleTime;
 	private double cpuWaitTime;
 	private double cpuCombinedTime;
 	
-		
+	private long totalMemory;			// Bytes
+	private long freeMemory;			// Bytes
+	private long useMemory;				// Bytes
+	private double usedMemoryPercent;	// %
+	
+	private long totalMemorySwap; 		// Bytes
+	private long freeMemorySwap;		// Bytes
+	private long useMemorySwap;			// Bytes
+	
+	
 	public LoadMeasureAvgSigar(Integer avgCounter) {
 		useAVGCounter = avgCounter;                     //maximum length of List
 	}
@@ -52,10 +57,6 @@ public class LoadMeasureAvgSigar {
 	private void calculateLoadAverage() {
       
 		int size = measureList.size();
-
-		long totalMemoryTemp = 0;
-		long freeMemoryTemp = 0;
-		long useMemoryTemp = 0;
 		
 		double cpuSystemTimeTemp = 0;
 		double cpuUserTimeTemp = 0;
@@ -63,26 +64,32 @@ public class LoadMeasureAvgSigar {
 		double cpuWaitTimeTemp = 0;
 		double cpuCombinedTimeTemp = 0;
 
+		long totalMemoryTemp = 0;
+		long freeMemoryTemp = 0;
+		long useMemoryTemp = 0;
+		double usedMemoryPercentTemp = 0;
+		
+		long totalMemorySwapTemp = 0;
+		long freeMemorySwapTemp = 0;
+		long useMemorySwapTemp = 0;
+		
 		//calculating cpu and memory average value
 		for (int i = 0; i < size; i++) {
 
-			// average cpu user time
 			cpuSystemTimeTemp += measureList.get(i).getCpuSystemTime();
-			// average cpu system time
 			cpuUserTimeTemp += measureList.get(i).getCpuUserTime();
-			// average cpu idel time
 			cpuIdleTimeTemp += measureList.get(i).getCpuIdleTime();
-			// average cpu wait time
 			cpuWaitTimeTemp += measureList.get(i).getCpuWaitTime();
-			// average cpu combine time
 			cpuCombinedTimeTemp += measureList.get(i).getCpuCombinedTime();
 
-			// average free memory time
-			freeMemoryTemp += measureList.get(i).getFreeMemory();
-			// average used memory time
-			useMemoryTemp += measureList.get(i).getUseMemory();
-			// average total memory time
 			totalMemoryTemp += measureList.get(i).getTotalMemory();
+			freeMemoryTemp += measureList.get(i).getFreeMemory();
+			useMemoryTemp += measureList.get(i).getUseMemory();
+			usedMemoryPercentTemp += measureList.get(i).getUsedMemoryPercent();
+
+			totalMemorySwapTemp += measureList.get(i).getTotalMemorySwap(); 
+			freeMemorySwapTemp += measureList.get(i).getFreeMemorySwap(); 
+			useMemorySwapTemp += measureList.get(i).getUseMemorySwap();
 			
 		}	
 		
@@ -93,10 +100,14 @@ public class LoadMeasureAvgSigar {
 		this.setCpuUserTime(cpuUserTimeTemp/size);
 		this.setCpuCombinedTime(cpuCombinedTimeTemp/size);
 		
+		this.setTotalMemory(totalMemoryTemp/size);
 		this.setFreeMemory(freeMemoryTemp/size);
 		this.setUseMemory(useMemoryTemp/size);
-		this.setTotalMemory(totalMemoryTemp/size);
+		this.setUsedMemoryPercent(usedMemoryPercentTemp/size);
 		
+		this.setTotalMemorySwap(totalMemorySwapTemp/size);
+		this.setFreeMemorySwap(freeMemorySwapTemp/size);
+		this.setUseMemorySwap(useMemorySwapTemp/size);
 	}
 
 	/**
@@ -202,6 +213,59 @@ public class LoadMeasureAvgSigar {
 	public long getUseMemory() {
 		return useMemory;
 	}
+	
+	/**
+	 * @return the usedMemoryPercent
+	 */
+	public double getUsedMemoryPercent() {
+		return usedMemoryPercent;
+	}
+	/**
+	 * @param usedMemoryPercent the usedMemoryPercent to set
+	 */
+	public void setUsedMemoryPercent(double usedMemoryPercent) {
+		this.usedMemoryPercent = usedMemoryPercent;
+	}
+
+	/**
+	 * @return the totalMemorySwap
+	 */
+	public long getTotalMemorySwap() {
+		return totalMemorySwap;
+	}
+	/**
+	 * @param totalMemorySwap the totalMemorySwap to set
+	 */
+	public void setTotalMemorySwap(long totalMemorySwap) {
+		this.totalMemorySwap = totalMemorySwap;
+	}
+
+	/**
+	 * @return the freeMemorySwap
+	 */
+	public long getFreeMemorySwap() {
+		return freeMemorySwap;
+	}
+	/**
+	 * @param freeMemorySwap the freeMemorySwap to set
+	 */
+	public void setFreeMemorySwap(long freeMemorySwap) {
+		this.freeMemorySwap = freeMemorySwap;
+	}
+
+	/**
+	 * @return the useMemorySwap
+	 */
+	public long getUseMemorySwap() {
+		return useMemorySwap;
+	}
+	/**
+	 * @param useMemorySwap the useMemorySwap to set
+	 */
+	public void setUseMemorySwap(long useMemorySwap) {
+		this.useMemorySwap = useMemorySwap;
+	}
+
 	/**
 	 * @return the vendor
 	 */

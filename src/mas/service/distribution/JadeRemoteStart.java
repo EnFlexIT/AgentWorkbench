@@ -82,11 +82,14 @@ public class JadeRemoteStart extends Thread {
 	 */
 	public void startJade(){
 		
+		String os = System.getProperty("os.name");
+		
 		String java = "";
 		String javaVMArgs = "";
 		String classPath = "";
 		String jade = "";
 		String jadeArgs = "";
+		
 		
 		// --------------------------------------
 		// --- Java-Config ----------------------
@@ -106,6 +109,15 @@ public class JadeRemoteStart extends Thread {
 		classPath += "./lib/hyperic-sigar/sigar-bin/lib/sigar.jar;";
 		classPath += "./lib/hyperic-sigar/sigar-bin/lib/log4j.jar;";
 		classPath += "./lib/hyperic-sigar/sigar-bin/lib/junit.jar;";
+
+		// ++++++++++++++++++++++++++++
+		// +++ Check operating system +
+		if (os.toLowerCase().contains("windows")==true) {
+			// --- nothing to do here ---
+		} else if (os.toLowerCase().contains("linux")==true) {
+			classPath = classPath.replaceAll(";", ":");
+		}
+
 		
 		// --------------------------------------
 		// --- Jade-Config ----------------------

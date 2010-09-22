@@ -102,12 +102,18 @@ public class LoadMeasureThread extends Thread {
 				double timeWait = measuredMemCpuData.getCpuWaitTimeRounded();
 
 				double tMemory = LoadUnits.bytes2(measuredMemCpuData.getTotalMemory(), debugUnit);
-				double fMemmory = LoadUnits.bytes2(measuredMemCpuData.getFreeMemory(), debugUnit);
-				double uMemmory = LoadUnits.bytes2(measuredMemCpuData.getUseMemory(), debugUnit);
+				double fMemory = LoadUnits.bytes2(measuredMemCpuData.getFreeMemory(), debugUnit);
+				double uMemory = LoadUnits.bytes2(measuredMemCpuData.getUseMemory(), debugUnit);
+				double uMemoryPerc = measuredMemCpuData.getUsedMemoryPercent();
 				
-				System.out.println("Prozessor-Info: " + vendor + " [" + model + "] " + nCPU + " " + cpuMHZ + " => " );
+				double tMemorySwap = LoadUnits.bytes2(measuredMemCpuData.getTotalMemorySwap(), debugUnit);
+				double fMemorySwap = LoadUnits.bytes2(measuredMemCpuData.getFreeMemorySwap(), debugUnit);
+				double uMemorySwap = LoadUnits.bytes2(measuredMemCpuData.getUseMemorySwap(), debugUnit);
+				
+				System.out.println("Prozessor-Info:  " + vendor + " [" + model + "] " + nCPU + " " + cpuMHZ + "MHz " );
 				System.out.println("Zeiteausnutzung: " + timeCombined + " " + timeIdle + " " + timeSystem + " " + timeUser + " " + timeWait );
-				System.out.println("Arbeitsspeicher: " + tMemory + " (" + fMemmory + "/" + uMemmory + ") ");
+				System.out.println("Arbeitsspeicher: " + tMemory + "MB (" + fMemory + "MB+" + uMemory + "MB) = (" + uMemoryPerc + " %)");
+				System.out.println("Swap-Speicher:   " + tMemorySwap + "MB (" + fMemorySwap + "MB+" + uMemorySwap + "MB) ");
 			}
 			
 			if (debugJVM) {
@@ -160,14 +166,20 @@ public class LoadMeasureThread extends Thread {
 		thresholdLeveleExceededNoThreads = 0;
 		
 		// --- Current percentage "CPU used" --------------
+//		double tempCPU  = loadCurrentAvg.getUsedMemoryPercent();
 		double tempCPU  = (double)Math.round((1-loadCurrentAvg.getCpuIdleTime())*10000)/100;
 		loadCPU = (float) tempCPU;
+
 		// --- Current percentage "Memory used in System" -
-		double tempMemoSystem = (double)Math.round(((double)loadCurrentAvg.getUseMemory()/ (double)loadCurrentAvg.getTotalMemory()) * 10000)/100;
+		long tempTotalMemoryCombined = loadCurrentAvg.getTotalMemory() + loadCurrentAvg.getTotalMemorySwap();
+		long tempUseMemoryCombined = loadCurrentAvg.getUseMemory() + loadCurrentAvg.getUseMemorySwap();
+		double tempMemoSystem = (double)Math.round(((double)tempUseMemoryCombined / tempTotalMemoryCombined) * 10000)/100;
 		loadMemorySystem = (float) tempMemoSystem;
+		
 		// --- Current percentage "Memory used in the JVM" 
 		double tempMemoJVM = (double)Math.round(((double)loadCurrentAvgJVM.getJvmHeapUsed() / (double)loadCurrentAvgJVM.getJvmHeapMax()) * 10000)/100;
 		loadMemoryJVM = (float) tempMemoJVM;
+		
 		// --- Current number of running threads ----------
 		int tempNoThreads = loadCurrentAvgJVM.getJvmThreadCount();
 		loadNoThreads = tempNoThreads;
