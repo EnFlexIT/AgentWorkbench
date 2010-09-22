@@ -20,7 +20,11 @@
 	<classpathentry kind="lib" path="lib/batik/lib/batik-css.jar"/>
 	<classpathentry kind="lib" path="lib/batik/lib/batik-dom.jar"/>
 	<classpathentry kind="lib" path="lib/batik/lib/batik-ext.jar"/>
-	<classpathentry kind="lib" path="lib/jade/lib/jade.jar"/>
+	<classpathentry kind="lib" path="lib/jade/lib/jade.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/D:/00 Tmp/10 Jade/Jade 4.0/JADE-doc-4.0/jade/doc/api/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="lib/batik/lib/xercesImpl-2.7.1.jar"/>
 	<classpathentry kind="lib" path="lib/jade/lib/XMLCodec.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>

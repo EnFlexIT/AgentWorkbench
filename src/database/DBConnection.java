@@ -50,7 +50,7 @@ public class DBConnection {
 			}
 		}
 	}
-	
+
 	/**
 	 * Creates the required Database for the server.master-Agent
 	 * @return
@@ -205,6 +205,23 @@ public class DBConnection {
 	}
 	
 	/**
+	 * This method returns the number of rows from a ResultSet-Object
+	 * @param rs
+	 * @return
+	 */
+	public int getRowCount(ResultSet rs){
+        int numResults = 0;
+        try{
+            rs.last();
+            numResults = rs.getRow();
+            rs.beforeFirst();
+        } catch(SQLException e){
+            e.printStackTrace();
+        }
+        return numResults;
+    }
+
+	/**
 	 * Returns a ResultSet - Object for a SQL-Statement
 	 * @param sqlStmt
 	 * @return com.mysql.jdbc.ResultSet
@@ -233,7 +250,7 @@ public class DBConnection {
 	}
 	
 	/**
-	 * This method returns a new Statement-Onject for a further
+	 * This method returns a new Statement-Object for a further
 	 * handling of SQL-Interaction (e. g. for an executeUpdate)
 	 * @return com.mysql.jdbc.Statement
 	 */

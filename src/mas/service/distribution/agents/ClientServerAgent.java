@@ -279,7 +279,7 @@ public class ClientServerAgent extends Agent {
 						forwardRemoteContainerRequest(agentAction);
 					
 					} else if (agentAction instanceof ClientRemoteContainerReply) {
-						// --- Daten im 'SimulationService' speichern ---
+						// --- Antwort auf 'RemoteContainerRequest' -----------
 						SimulationServiceHelper simHelper = null;
 						try {
 							simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);

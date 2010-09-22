@@ -38,6 +38,8 @@ import mas.service.distribution.ontology.RemoteContainerConfig;
 import mas.service.environment.EnvironmentModel;
 import mas.service.load.LoadInformation;
 import mas.service.load.LoadMeasureThread;
+import mas.service.load.LoadInformation.AgentMap;
+import mas.service.load.LoadInformation.Container2Wait4;
 import mas.service.load.LoadInformation.NodeDescription;
 import mas.service.sensoring.ServiceActuator;
 import mas.service.time.TimeModel;
@@ -63,9 +65,8 @@ public class SimulationService extends BaseService {
 	private Filter outFilter;
 	private ServiceComponent localSlice;
 	
-	// --- The List of Agents, which are registered to this service ----------- 
-	private Hashtable<String,AID> agentList = new Hashtable<String,AID>();
-	
+	// --- Difference of time (in milliseconds) to the Main-Container ---------
+	private long containerTimeDiff = 0;
 	// --- The Agent who is the Manager / Controller of the Simulation --------
 	private AID managerAgent = null;
 	// --- The current TimeModel ----------------------------------------------
@@ -73,6 +74,9 @@ public class SimulationService extends BaseService {
 	// --- The current EnvironmentObject Instance -----------------------------
 	private Object environmentInstance = null;
 	
+	// --- The List of Agents, which are registered to this service ----------- 
+	private Hashtable<String,AID> agentList = new Hashtable<String,AID>();
+
 	// --- The current EnvironmentModel ---------------------------------------
 	private EnvironmentModel environmentModel = null;
 	// --- The TransactionMap of the simulation -------------------------------
@@ -110,8 +114,7 @@ public class SimulationService extends BaseService {
 				myLogger.log(Logger.FINE, "Main-Container: " + myMainContainer.toString());
 			}
 		}
-		
-		// --- Start the Load-Measurments on this Node ----
+		// --- Start the Load-Measurements on this Node ----
 		new LoadMeasureThread().start();   
 		
 	}
@@ -160,20 +163,51 @@ public class SimulationService extends BaseService {
 		}
 		
 		// ----------------------------------------------------------
+		// --- Methods for the synchronized time --------------------
+		public Date getSynchTimeDate() {
+			return new Date(this.getSynchTimeMillis());
+		}
+		public Long getSynchTimeMillis() {
+			return System.currentTimeMillis() - containerTimeDiff;
+		}
+
+		// ----------------------------------------------------------
 		// --- Methods to start a new remote-container -------------- 
 		public String startNewRemoteContainer() throws ServiceException {
 			return this.startNewRemoteContainer(null);
 		}
 		public String startNewRemoteContainer(RemoteContainerConfig remoteConfig) throws ServiceException {
 			Service.Slice[] slices = getAllSlices();
-			loadInfo.setLastNewContainer(broadcastStartNewRemoteContainer(remoteConfig, slices));
-			return loadInfo.getLastNewContainer();
+			String newContainerName = broadcastStartNewRemoteContainer(remoteConfig, slices);
+			loadInfo.setNewContainer2Wait4(newContainerName);
+			return newContainerName;
 		}
 		public RemoteContainerConfig getDefaultRemoteContainerConfig() throws ServiceException {
 			Service.Slice[] slices = getAllSlices();
 			return broadcastGetDefaultRemoteContainerConfig(slices);
 		}
-
+		public Container2Wait4 startNewRemoteContainerStaus(String containerName) throws ServiceException {
+			return loadInfo.getNewContainer2Wait4Status(containerName);
+		}
+		
+		// ----------------------------------------------------------
+		// --- Methods for container info about OS, benchmark etc. -- 
+		public void putContainerDescription(ClientRemoteContainerReply crcReply) throws ServiceException {
+			if (crcReply.getRemoteOS()==null && crcReply.getRemotePerformance()==null && crcReply.getRemoteBenchmarkResult()==null) {
+				// --- RemoteContainerRequest WAS NOT successful ----
+				loadInfo.setNewContainerCanncelled(crcReply.getRemoteContainerName());
+			} else {
+				Service.Slice[] slices = getAllSlices();
+				broadcastPutContainerDescription(slices, crcReply);	
+			}
+		}
+		public Hashtable<String, NodeDescription> getContainerDescriptions() throws ServiceException {
+			return loadInfo.containerDescription;
+		}
+		public NodeDescription getContainerDescription(String containerName) throws ServiceException {
+			return loadInfo.containerDescription.get(containerName);
+		}
+		
 		// ----------------------------------------------------------
 		// --- Method for getting Location-Objects ------------------ 
 		public Hashtable<String, Location> getContainerLocations() throws ServiceException {
@@ -187,19 +221,6 @@ public class SimulationService extends BaseService {
 		}
 		
 		// ----------------------------------------------------------
-		// --- Methods for container infos about OS, benchmark etc. - 
-		public void putContainerDescription(ClientRemoteContainerReply crcReply) throws ServiceException {
-			Service.Slice[] slices = getAllSlices();
-			broadcastPutContainerDescription(slices, crcReply);
-		}
-		public Hashtable<String, NodeDescription> getContainerDescriptions() throws ServiceException {
-			return loadInfo.containerDescription;
-		}
-		public NodeDescription getContainerDescription(String containerName) throws ServiceException {
-			return loadInfo.containerDescription.get(containerName);
-		}
-		
-		// ----------------------------------------------------------
 		// --- Method to get the Load-Informations of all containers 
 		public Hashtable<String, PlatformLoad> getContainerLoads() throws ServiceException {
 			Service.Slice[] slices = getAllSlices();
@@ -210,6 +231,14 @@ public class SimulationService extends BaseService {
 			Service.Slice[] slices = getAllSlices();
 			broadcastMeasureLoad(slices);
 			return loadInfo.containerLoads.get(containerName);
+		}
+		
+		// ----------------------------------------------------------
+		// --- Method to get positions Agents at this platform ------ 
+		public AgentMap getAgentMap() throws ServiceException {
+			Service.Slice[] slices = getAllSlices();
+			broadcastGetAIDList(slices);
+			return loadInfo.agentLocations;
 		}
 		
 		// ----------------------------------------------------------
@@ -274,16 +303,6 @@ public class SimulationService extends BaseService {
 			return environmentInstance;
 		}
 		
-		// ----------------------------------------------------------
-		// --- Methods on the real Time of the Main-Container -------
-		public Date getTimeOfMainContainerAsDate() {
-			Date nowDate = new Date();
-			return nowDate;
-		}
-		public Long getTimeOfMainContainerAsLong() {
-			return System.currentTimeMillis();
-		}
-
 	}
 	// --------------------------------------------------------------	
 	// ---- Inner-Class 'AgentTimeImpl' ---- End --------------------
@@ -430,36 +449,6 @@ public class SimulationService extends BaseService {
 	}
 	
 	/**
-	 * 'Broadcast' (or receive) all Informations about the containers load
-	 * @param slices
-	 * @throws ServiceException
-	 */
-	private void broadcastMeasureLoad(Service.Slice[] slices) throws ServiceException {
-		
-		loadInfo.containerLoads.clear();
-		
-		if (myLogger.isLoggable(Logger.CONFIG)) {
-			myLogger.log(Logger.CONFIG, "Try to get Load-Information from the Containers !");
-		}
-		for (int i = 0; i < slices.length; i++) {
-			String sliceName = null;
-			try {
-				SimulationServiceSlice slice = (SimulationServiceSlice) slices[i];
-				sliceName = slice.getNode().getName();
-				if (myLogger.isLoggable(Logger.FINER)) {
-					myLogger.log(Logger.FINER, "Try to get Load-Information of " + sliceName);
-				}
-				PlatformLoad pl = slice.measureLoad();
-				loadInfo.containerLoads.put(sliceName, pl);
-			}
-			catch(Throwable t) {
-				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
-				myLogger.log(Logger.WARNING, "Error while executing 'MeasureLoad' on slice " + sliceName, t);
-			}
-		}		
-	}
-
-	/**
 	 * Broadcast to start a new remote-container for this platform 
 	 * @param slices
 	 * @throws ServiceException
@@ -579,6 +568,69 @@ public class SimulationService extends BaseService {
 		}	
 	}
 	
+	/**
+	 * 'Broadcast' (or receive) all Informations about the containers load
+	 * @param slices
+	 * @throws ServiceException
+	 */
+	private void broadcastMeasureLoad(Service.Slice[] slices) throws ServiceException {
+		
+		loadInfo.containerLoads.clear();
+		
+		if (myLogger.isLoggable(Logger.CONFIG)) {
+			myLogger.log(Logger.CONFIG, "Try to get Load-Information from all Containers !");
+		}
+		for (int i = 0; i < slices.length; i++) {
+			String sliceName = null;
+			try {
+				SimulationServiceSlice slice = (SimulationServiceSlice) slices[i];
+				sliceName = slice.getNode().getName();
+				if (myLogger.isLoggable(Logger.FINER)) {
+					myLogger.log(Logger.FINER, "Try to get Load-Information of " + sliceName);
+				}
+				PlatformLoad pl = slice.measureLoad();
+				loadInfo.containerLoads.put(sliceName, pl);
+			}
+			catch(Throwable t) {
+				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
+				myLogger.log(Logger.WARNING, "Error while executing 'MeasureLoad' on slice " + sliceName, t);
+			}
+		}		
+	}
+	
+	/**
+	 * 'Broadcast' (or receive) the list of all agents in a container
+	 * @param slices
+	 * @throws ServiceException
+	 */
+	private void broadcastGetAIDList(Service.Slice[] slices) throws ServiceException {
+		
+		loadInfo.resetAIDs4Container();
+		
+		if (myLogger.isLoggable(Logger.CONFIG)) {
+			myLogger.log(Logger.CONFIG, "Try to get AID from all Containers !");
+		}
+		for (int i = 0; i < slices.length; i++) {
+			String sliceName = null;
+			try {
+				SimulationServiceSlice slice = (SimulationServiceSlice) slices[i];
+				sliceName = slice.getNode().getName();
+				if (myLogger.isLoggable(Logger.FINER)) {
+					myLogger.log(Logger.FINER, "Try to get AID from " + sliceName);
+				}
+				AID[] aid = slice.getAIDList();
+				loadInfo.putAIDs4Container(sliceName, aid);
+			}
+			catch(Throwable t) {
+				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
+				myLogger.log(Logger.WARNING, "Error while trying to get AID from " + sliceName, t);
+			}
+		}
+		
+		loadInfo.countAIDs4Container();
+		
+	}
+	
 	
 	// --------------------------------------------------------------	
 	// ---- Inner-Class 'ServiceComponent' ---- Start ---------------
@@ -614,7 +666,21 @@ public class SimulationService extends BaseService {
 				Object[] params = cmd.getParams();
 				
 				//System.out.println( "=> ServiceComponent " + cmdName);
-				if (cmdName.equals(SimulationServiceSlice.SIM_SET_MANAGER_AGENT)) {
+				if (cmdName.equals(SimulationServiceSlice.SERVICE_SYNCH_GET_REMOTE_TIME)) {
+					if (myLogger.isLoggable(Logger.FINE)) {
+						myLogger.log(Logger.FINE, "Answering Remote-Time-Request");
+					}					
+					cmd.setReturnValue(getLocalTime());
+				}
+				else if (cmdName.equals(SimulationServiceSlice.SERVICE_SYNCH_SET_TIME_DIFF)) {
+					long timeDifference = (Long) params[0];
+					if (myLogger.isLoggable(Logger.FINE)) {
+						myLogger.log(Logger.FINE, "Setting Time-Difference to Main-Platform");
+					}					
+					setPlatformTimeDiff(timeDifference);
+				}
+
+				else if (cmdName.equals(SimulationServiceSlice.SIM_SET_MANAGER_AGENT)) {
 					AID managerAdress = (AID) params[0];
 					if (myLogger.isLoggable(Logger.FINE)) {
 						myLogger.log(Logger.FINE, "Received AID of the Agent-Manager");
@@ -700,15 +766,23 @@ public class SimulationService extends BaseService {
 						cmd.setReturnValue(null);
 					}
 				}
+				else if (cmdName.equals(SimulationServiceSlice.SERVICE_GET_LOCATION)) {
+					cmd.setReturnValue(myContainer.here());
+				}
+
 				else if (cmdName.equals(SimulationServiceSlice.SERVICE_MEASURE_LOAD)) {
 					if (myLogger.isLoggable(Logger.FINE)) {
 						myLogger.log(Logger.FINE, "Answering request for Container-Load");
 					}
 					cmd.setReturnValue(measureLoad());
 				}
-				else if (cmdName.equals(SimulationServiceSlice.SERVICE_GET_LOCATION)) {
-					cmd.setReturnValue(myContainer.here());
+				else if (cmdName.equals(SimulationServiceSlice.SERVICE_GET_AID_LIST)) {
+					if (myLogger.isLoggable(Logger.FINE)) {
+						myLogger.log(Logger.FINE, "Answering request for the Agents in this container");
+					}
+					cmd.setReturnValue(getListOfAgents());
 				}
+
 				else if (cmdName.equals(SimulationServiceSlice.SERVICE_PUT_CONTAINER_DESCRIPTION)) {
 					if (myLogger.isLoggable(Logger.FINE)) {
 						myLogger.log(Logger.FINE, "Putting in container description");
@@ -723,6 +797,16 @@ public class SimulationService extends BaseService {
 			}
 			return null;
 			
+		}
+		
+		// -----------------------------------------------------------------
+		// --- The real functions for the Service Component --- Start ------ 
+		// -----------------------------------------------------------------
+		private long getLocalTime() {
+			return System.currentTimeMillis();
+		}
+		private void setPlatformTimeDiff(long timeDifference) {
+			containerTimeDiff = timeDifference;	
 		}
 		
 		private void setManagerAgent(AID agentAddress) {
@@ -769,10 +853,16 @@ public class SimulationService extends BaseService {
 			pl.setLoadExceeded(LoadMeasureThread.getThresholdLevelesExceeded());
 			return pl;
 		}
+		private AID[] getListOfAgents() {
+			return myContainer.agentNames();
+		}
 		private void putContainerDescription(ClientRemoteContainerReply crcReply) {
 			loadInfo.putContainerDescription(crcReply);
 		}
-		
+		// -----------------------------------------------------------------
+		// --- The real functions for the Service Component --- Stop ------- 
+		// -----------------------------------------------------------------
+
 		
 	} 
 	// --------------------------------------------------------------	
@@ -866,15 +956,65 @@ public class SimulationService extends BaseService {
 			try {
 				// --- Be sure to get the new (fresh) slice --> Bypass the service cache ---
 				SimulationServiceSlice newSlice = (SimulationServiceSlice) getFreshSlice(newSliceName);
-				// --- set remote TimeModel ------------------------------------------------
+				// --- Set remote ManagerAgent, TimeModel,EnvironmentInstance --------------
 				newSlice.setManagerAgent(managerAgent);
 				newSlice.setTimeModel(timeModel);			
-				newSlice.setEnvironmentInstance(environmentInstance);			
+				newSlice.setEnvironmentInstance(environmentInstance);	
+				// --- Is this the slice, we have waited for? ------------------------------
+				loadInfo.setNewContainerStarted(newSliceName);
+				// --- Synchronise the time ------------------------------------------------
+				this.synchTimeOfSlice(newSlice);
+				
 			}
 			catch (Throwable t) {
 				myLogger.log(Logger.WARNING, "Error notifying new slice "+newSliceName+" about current SimulationService-State", t);
 			}
 		}
+	}
+	
+	/**
+	 * This method will synchronise the time between Main-Container and Remote-Container 
+	 * @param slice
+	 */
+	private void synchTimeOfSlice(SimulationServiceSlice slice) {
+		
+		int countMax = 100;
+		long locTime1 = 0;
+		long locTime2 = 0;
+		long measureTime = 0;
+		
+		long remTime = 0;
+		long remTimeCorrect = 0;
+		
+		long timeDiff = 0;
+		long timeDiffAccumulate = 0;
+		long timeDifference = 0;
+		
+		try {
+	
+			for (int i = 0; i < countMax; i++) {
+			
+				// --- Measure local time and ask for the remote time ---
+				locTime1 = System.currentTimeMillis();
+				remTime = slice.getRemoteTime();
+				locTime2 = System.currentTimeMillis();
+				// --- Correct the measured Remote Time -----------------
+				measureTime = locTime2 - locTime1;
+				remTimeCorrect = remTime - (measureTime/2);
+				// --- Calculate the time Difference --------------------
+				timeDiff = locTime1 - remTimeCorrect;
+				timeDiffAccumulate += timeDiff;
+
+			}
+			
+			timeDifference = timeDiffAccumulate / countMax; 
+			slice.setRemoteTimeDiff(timeDifference);
+			
+		} catch (IMTPException e) {
+			e.printStackTrace();
+		}
+		
+		
 	}
 	
 	/**

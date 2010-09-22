@@ -16,6 +16,56 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 
 	private static final long serialVersionUID = -7016240061703852319L;
 
+	// ----------------------------------------------------------
+	// --- Methods to synchronize the Time --- S T A R T --------
+	// ----------------------------------------------------------
+	@Override
+	public long getRemoteTime() throws IMTPException {
+		
+		try {
+			GenericCommand cmd = new GenericCommand(SERVICE_SYNCH_GET_REMOTE_TIME, SimulationService.NAME, null);
+			Node n = getNode();
+			Object result = n.accept(cmd);
+			if((result != null) && (result instanceof Throwable)) {
+				if(result instanceof IMTPException) {
+					throw (IMTPException)result;
+				}
+				else {
+					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
+				}
+			}
+			return (Long) result;
+		}
+		catch(ServiceException se) {
+			throw new IMTPException("Unable to access remote node", se);
+		}
+	}
+	@Override
+	public void setRemoteTimeDiff(long timeDifference) throws IMTPException {
+
+		try {
+			GenericCommand cmd = new GenericCommand(SERVICE_SYNCH_SET_TIME_DIFF, SimulationService.NAME, null);
+			cmd.addParam(timeDifference);
+			
+			Node n = getNode();
+			Object result = n.accept(cmd);
+			if((result != null) && (result instanceof Throwable)) {
+				if(result instanceof IMTPException) {
+					throw (IMTPException)result;
+				}
+				else {
+					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
+				}
+			}
+		}
+		catch(ServiceException se) {
+			throw new IMTPException("Unable to access remote node", se);
+		}		
+	}
+	// ----------------------------------------------------------
+	// --- Methods to synchronize the Time --- S T O P ----------
+	// ----------------------------------------------------------
+
 	
 	// ----------------------------------------------------------
 	// --- Methods on the Manager-Agent --- S T A R T -----------
@@ -41,7 +91,6 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 			throw new IMTPException("Unable to access remote node", se);
 		}
 	}
-
 	@Override
 	public AID getManagerAgent() throws IMTPException {
 		
@@ -93,7 +142,6 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 			throw new IMTPException("Unable to access remote node", se);
 		}
 	}
-
 	@Override
 	public TimeModel getTimeModel() throws IMTPException {
 		
@@ -115,7 +163,6 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 			throw new IMTPException("Unable to access remote node", se);
 		}
 	}
-
 	@Override
 	public void stepTimeModel() throws IMTPException {
 		
@@ -166,7 +213,6 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 			throw new IMTPException("Unable to access remote node", se);
 		}
 	}
-	
 	@Override
 	public Object getEnvironmentInstance() throws IMTPException {
 
@@ -225,28 +271,7 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 	// --- Method to get the Load-Informations of all ----------- 
 	// --- containers ----------------------------- S T A R T ---
 	// ----------------------------------------------------------
-	public PlatformLoad measureLoad() throws IMTPException {
-
-		try {
-			GenericCommand cmd = new GenericCommand(SERVICE_MEASURE_LOAD, SimulationService.NAME, null);
-			
-			Node n = getNode();
-			Object result = n.accept(cmd);
-			if((result != null) && (result instanceof Throwable)) {
-				if(result instanceof IMTPException) {
-					throw (IMTPException)result;
-				}
-				else {
-					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
-				}
-			}
-			return (PlatformLoad) result;
-		}
-		catch(ServiceException se) {
-			throw new IMTPException("Unable to access remote node", se);
-		}
-	}
-
+	@Override
 	public String startNewRemoteContainer(RemoteContainerConfig remoteConfig) throws IMTPException {
 		
 		try {
@@ -269,7 +294,7 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 			throw new IMTPException("Unable to access remote node", se);
 		}
 	}
-
+	@Override
 	public RemoteContainerConfig getDefaultRemoteContainerConfig() throws IMTPException {
 
 		try {
@@ -291,7 +316,7 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 			throw new IMTPException("Unable to access remote node", se);
 		}
 	}
-	
+	@Override
 	public Location getLocation() throws IMTPException {
 		
 		try {
@@ -314,6 +339,51 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 			throw new IMTPException("Unable to access remote node", se);
 		}
 	}
+	@Override
+	public PlatformLoad measureLoad() throws IMTPException {
+
+		try {
+			GenericCommand cmd = new GenericCommand(SERVICE_MEASURE_LOAD, SimulationService.NAME, null);
+			
+			Node n = getNode();
+			Object result = n.accept(cmd);
+			if((result != null) && (result instanceof Throwable)) {
+				if(result instanceof IMTPException) {
+					throw (IMTPException)result;
+				}
+				else {
+					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
+				}
+			}
+			return (PlatformLoad) result;
+		}
+		catch(ServiceException se) {
+			throw new IMTPException("Unable to access remote node", se);
+		}
+	}
+	@Override
+	public AID[] getAIDList() throws IMTPException {
+
+		try {
+			GenericCommand cmd = new GenericCommand(SERVICE_GET_AID_LIST, SimulationService.NAME, null);
+			
+			Node n = getNode();
+			Object result = n.accept(cmd);
+			if((result != null) && (result instanceof Throwable)) {
+				if(result instanceof IMTPException) {
+					throw (IMTPException)result;
+				}
+				else {
+					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
+				}
+			}
+			return (AID[]) result;
+		}
+		catch(ServiceException se) {
+			throw new IMTPException("Unable to access remote node", se);
+		}
+	}
+	
 	// ----------------------------------------------------------
 	// --- Method to get the Load-Informations of all ----------- 
 	// --- containers ----------------------------- E N D -------
@@ -343,5 +413,4 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 		
 	}
 
-	
 }

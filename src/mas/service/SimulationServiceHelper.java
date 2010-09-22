@@ -15,6 +15,8 @@ import java.util.Hashtable;
 import mas.service.distribution.ontology.ClientRemoteContainerReply;
 import mas.service.distribution.ontology.PlatformLoad;
 import mas.service.distribution.ontology.RemoteContainerConfig;
+import mas.service.load.LoadInformation.AgentMap;
+import mas.service.load.LoadInformation.Container2Wait4;
 import mas.service.load.LoadInformation.NodeDescription;
 import mas.service.time.TimeModel;
 
@@ -30,11 +32,16 @@ public interface SimulationServiceHelper extends ServiceHelper {
 	public static final String SERVICE_UPDATE_ENVIRONMENT = "service-update-environment";
 	public static final String SERVICE_UPDATE_SIMULATION = "service-update-simulation";
 	
+	// --- Methods for the synchronised time --------------------
+	public Long getSynchTimeMillis();
+	public Date getSynchTimeDate();
+	
 	
 	// --- Methods for the load balancing ---------------------------
 	public String startNewRemoteContainer() throws ServiceException;
 	public String startNewRemoteContainer(RemoteContainerConfig remoteConfig) throws ServiceException;
 	public RemoteContainerConfig getDefaultRemoteContainerConfig() throws ServiceException;
+	public Container2Wait4 startNewRemoteContainerStaus(String containerName) throws ServiceException;
 	
 	public Hashtable<String, PlatformLoad> getContainerLoads() throws ServiceException;
 	public PlatformLoad getContainerLoad(String containerName) throws ServiceException;
@@ -46,12 +53,7 @@ public interface SimulationServiceHelper extends ServiceHelper {
 	public Hashtable<String, NodeDescription> getContainerDescriptions() throws ServiceException;
 	public NodeDescription getContainerDescription(String containerName) throws ServiceException;
 	
-	
-//	public Hashtable<String, AID> getAgents() throws ServiceException;
-//	public AID getAgent() throws ServiceException;
-//	
-//	public Hashtable<String, Integer> getNumberOfAgents() throws ServiceException;
-//	public Integer getNumberOfAgentsInContainer() throws ServiceException;
+	public AgentMap getAgentMap() throws ServiceException;
 
 	
 	// --- Methods for simulations ----------------------------------
@@ -71,10 +73,5 @@ public interface SimulationServiceHelper extends ServiceHelper {
 	
 	public void setEnvironmentInstance(Object envObjectInstance) throws ServiceException;
 	public Object getEnvironmentInstance() throws ServiceException;
-	
-	
-	// --- Methods for the general time synchronisation -------------
-	public Date getTimeOfMainContainerAsDate();
-	public Long getTimeOfMainContainerAsLong();
 	
 }

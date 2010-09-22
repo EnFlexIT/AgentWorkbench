@@ -121,7 +121,7 @@ public class MasterServerAgent extends Agent {
 			Action act = null;
 			Concept agentAction = null; 
 			AID senderAID = null;
-
+			
 			ACLMessage msg = myAgent.receive();			
 			if (msg!=null) {
 				
@@ -222,7 +222,7 @@ public class MasterServerAgent extends Agent {
 					} else if ( agentAction instanceof ClientRemoteContainerRequest ) {
 
 						ClientRemoteContainerRequest crcr = (ClientRemoteContainerRequest) agentAction;
-						handleContainerRequest(msg, crcr); // --- !!!!! ---						
+						handleContainerRequest(msg, crcr); // --- !!!!! ---
 						
 					} else {
 						// --- Unknown AgentAction ------------
@@ -368,11 +368,14 @@ public class MasterServerAgent extends Agent {
 	
 	private boolean handleContainerRequest( ACLMessage request, ClientRemoteContainerRequest crcr ) {
 		
+		boolean exitRequest = false;
+		
 		String sqlStmt = "";
 		String slaveAgent = null;
 		String slaveAgentAddress = null;
 		AID slavePlatformAgent = null; 
 		
+		Action act = null;
 		ClientRemoteContainerReply replyContent = new ClientRemoteContainerReply();
 		
 		RemoteContainerConfig remConf = crcr.getRemoteConfig();
@@ -401,38 +404,52 @@ public class MasterServerAgent extends Agent {
 		// --------------------------------------------------------------------
 		
 		try {
-			if (res.wasNull()) {
-				System.out.println("server.master: No server.slave was found! - Cancle Action!");
-				return false;	
+			// --- Do we have a SQL-result ? ----------------------------------
+			if ( res.wasNull() )   
+				exitRequest = true;
+			if ( exitRequest == false && dbConn.getRowCount(res)==0 ) 
+				exitRequest = true;
+			
+			if ( exitRequest == true ) {
+				// --- No Server.Slave was found => EXIT ----------------------
+				System.out.println( this.getLocalName() + ": No Server.Slave was found! - Cancle action of remote-container-request!");
+				
+				replyContent.setRemoteContainerName(containerName);
+				replyContent.setRemoteOS(null);
+				replyContent.setRemotePerformance(null);
+				replyContent.setRemoteBenchmarkResult(null);
+					
+			} else {
+				// --- Server.Slave was found => request a remote-container ---
+				res.next(); 	
+				slaveAgent = res.getString("contact_agent");
+				slaveAgentAddress = res.getString("http4mtp");
+				
+				// ------------------------------------------------------------
+				// --- Collect all need information for the reply -------------
+				// ------------------------------------------------------------
+				OSInfo os = new OSInfo();
+				os.setOs_name(res.getString("os_name"));
+				os.setOs_version(res.getString("os_version"));
+				os.setOs_arch(res.getString("os_arch"));
+				
+				PlatformPerformance plPerf = new PlatformPerformance();
+				plPerf.setCpu_vendor(res.getString("cpu_vendor"));
+				plPerf.setCpu_model(res.getString("cpu_model"));
+				plPerf.setCpu_numberOf(res.getInt("cpu_n"));
+				plPerf.setCpu_speedMhz(res.getInt("cpu_speed_mhz"));
+				plPerf.setMemory_totalMB(res.getInt("memory_total_mb"));
+				
+				BenchmarkResult bench = new BenchmarkResult();
+				bench.setBenchmarkValue(res.getFloat("benchmark_value"));
+				
+				replyContent.setRemoteContainerName(containerName);
+				replyContent.setRemoteOS(os);
+				replyContent.setRemotePerformance(plPerf);
+				replyContent.setRemoteBenchmarkResult(bench);
+				// ------------------------------------------------------------
+
 			}
-			res.next(); 	
-			slaveAgent = res.getString("contact_agent");
-			slaveAgentAddress = res.getString("http4mtp");
-			
-			// --------------------------------------------------------
-			// --- Collect all need information for the reply ---------
-			// --------------------------------------------------------
-			OSInfo os = new OSInfo();
-			os.setOs_name(res.getString("os_name"));
-			os.setOs_version(res.getString("os_version"));
-			os.setOs_arch(res.getString("os_arch"));
-			
-			PlatformPerformance plPerf = new PlatformPerformance();
-			plPerf.setCpu_vendor(res.getString("cpu_vendor"));
-			plPerf.setCpu_model(res.getString("cpu_model"));
-			plPerf.setCpu_numberOf(res.getInt("cpu_n"));
-			plPerf.setCpu_speedMhz(res.getInt("cpu_speed_mhz"));
-			plPerf.setMemory_totalMB(res.getInt("memory_total_mb"));
-			
-			BenchmarkResult bench = new BenchmarkResult();
-			bench.setBenchmarkValue(res.getFloat("benchmark_value"));
-			
-			replyContent.setRemoteContainerName(containerName);
-			replyContent.setRemoteOS(os);
-			replyContent.setRemotePerformance(plPerf);
-			replyContent.setRemoteBenchmarkResult(bench);
-			// --------------------------------------------------------
-			
 			res.close();
 			
 		} catch (SQLException e) {
@@ -440,10 +457,10 @@ public class MasterServerAgent extends Agent {
 			return false;
 		}
 		
-		// -------------------------------------------------------- 
-		// --- Answer Request with 'ClientRemoteContainerReply' ---
-		// --------------------------------------------------------		
-		Action act = new Action();
+		// -------------------------------------------------------------------- 
+		// --- Answer Request with 'ClientRemoteContainerReply' ---------------
+		// --------------------------------------------------------------------		
+		act = new Action();
 		act.setActor(this.getAID());
 		act.setAction(replyContent);
 		
@@ -458,28 +475,34 @@ public class MasterServerAgent extends Agent {
 			e.printStackTrace();
 			return false;
 		}
+		
+		// --- If the SQL-statemant had no results, exit here -----------------
+		if (exitRequest==true) {
+			return true;
+		}
+			
+			
+		// -------------------------------------------------------------------- 
+		// --- Forward request to the chosen Server.Slave ---------------------
+		// --------------------------------------------------------------------		
 
-		// -------------------------------------------------------- 
-		// --- Forward request to the chosen Server.Slave ---------
-		// --------------------------------------------------------		
-
-		// --- Set the ReceiverAgent ----------------------
+		// --- Set the ReceiverAgent ------------------------------------------
 		slavePlatformAgent = new AID(slaveAgent, AID.ISGUID );
 		slavePlatformAgent.addAddresses(slaveAgentAddress);
 		
-		// --- Define Action ------------------------------
+		// --- Define Action --------------------------------------------------
 		act = new Action();
 		act.setActor(this.getAID());
 		act.setAction(crcr);
 
-		// --- Nachricht zusammenbauen und ... ------------
+		// --- Nachricht zusammenbauen und ... --------------------------------
 		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
 		msg.setSender(getAID());
 		msg.addReceiver(slavePlatformAgent);
 		msg.setLanguage(codec.getName());
 		msg.setOntology(ontology.getName());
 
-		// --- send ... -----------------------------------
+		// --- send ... -------------------------------------------------------
 		System.out.println("Inform server.slave for Remote-Container: "  + slaveAgent + " | " + slaveAgentAddress);
 		try {
 			this.getContentManager().fillContent(msg, act);

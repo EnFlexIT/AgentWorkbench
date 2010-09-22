@@ -16,6 +16,15 @@ public interface SimulationServiceSlice extends Service.Slice {
 	// ----------------------------------------------------------
 	
 	// ----------------------------------------------------------
+	// --- Methods to synchronize the time ----------------------
+	static final String SERVICE_SYNCH_GET_REMOTE_TIME = "service-synch-get-remote-time";
+	static final String SERVICE_SYNCH_SET_TIME_DIFF = "service-synch-set-time-diff";
+	
+	public long getRemoteTime() throws IMTPException;
+	public void setRemoteTimeDiff(long timeDifference) throws IMTPException;
+	
+	
+	// ----------------------------------------------------------
 	// --- Methods on the Manager-Agent -------------------------
 	static final String SIM_SET_MANAGER_AGENT = "set-manager";
 	static final String SIM_GET_MANAGER_AGENT = "get-manager";
@@ -59,16 +68,19 @@ public interface SimulationServiceSlice extends Service.Slice {
 	static final String SERVICE_GET_DEFAULT_REMOTE_CONTAINER_CONFIG = "get-default-remote-container-config";
 	static final String SERVICE_GET_LOCATION = "get-location";
 	static final String SERVICE_MEASURE_LOAD = "measure-Load";
+	static final String SERVICE_GET_AID_LIST = "get-aid-list";
 	
 	public String startNewRemoteContainer(RemoteContainerConfig remoteConfig) throws IMTPException;
 	public RemoteContainerConfig getDefaultRemoteContainerConfig() throws IMTPException;
 	public Location getLocation() throws IMTPException;
 	public PlatformLoad measureLoad() throws IMTPException;
+	public AID[] getAIDList() throws IMTPException;
 	
 	// ----------------------------------------------------------
 	// --- Methods to deal with the container description ------- 
 	static final String SERVICE_PUT_CONTAINER_DESCRIPTION = "service-container-description-put";
 	
 	public void putContainerDescription(ClientRemoteContainerReply crcReply) throws IMTPException;
+	
 	
 }
