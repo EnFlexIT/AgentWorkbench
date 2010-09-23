@@ -1,4 +1,4 @@
-package mas.agents;
+package mas.service.distribution.agents;
 
 import jade.content.lang.Codec;
 import jade.content.lang.sl.SLCodec;
@@ -17,7 +17,7 @@ import mas.service.sensoring.ServiceSensor;
 /**
  * @version 1.0
  */ 
-public class SimulationServiceWorkerAgent extends Agent implements ServiceSensor { 
+public class ASimulationServiceWorkerAgent extends Agent implements ServiceSensor { 
 
 	private static final long serialVersionUID = 1L;
 	

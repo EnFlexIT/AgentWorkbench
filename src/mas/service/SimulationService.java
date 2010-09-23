@@ -109,7 +109,7 @@ public class SimulationService extends BaseService {
 			}
 		}
 		if (myMainContainer!=null) {
-			// --- ist !=null, wenn der Service im Main-Container gestartet wird !!! ----
+			// --- Is !=null, if the Service will start at the Main-Container !!! ----
 			if (myLogger.isLoggable(Logger.FINE)) {
 				myLogger.log(Logger.FINE, "Main-Container: " + myMainContainer.toString());
 			}
@@ -163,16 +163,24 @@ public class SimulationService extends BaseService {
 		}
 		
 		// ----------------------------------------------------------
-		// --- Methods for the synchronized time --------------------
-		public Date getSynchTimeDate() {
+		// --- Methods for the synchronised time --------------------
+		public long getSynchTimeDifferenceMillis() throws ServiceException {
+			return containerTimeDiff;
+		}
+		public long getSynchTimeMillis() throws ServiceException {
+			return System.currentTimeMillis() + containerTimeDiff;
+		}
+		public Date getSynchTimeDate() throws ServiceException {
 			return new Date(this.getSynchTimeMillis());
 		}
-		public Long getSynchTimeMillis() {
-			return System.currentTimeMillis() - containerTimeDiff;
-		}
+		
 
 		// ----------------------------------------------------------
 		// --- Methods to start a new remote-container -------------- 
+		public RemoteContainerConfig getDefaultRemoteContainerConfig() throws ServiceException {
+			Service.Slice[] slices = getAllSlices();
+			return broadcastGetDefaultRemoteContainerConfig(slices);
+		}
 		public String startNewRemoteContainer() throws ServiceException {
 			return this.startNewRemoteContainer(null);
 		}
@@ -181,10 +189,6 @@ public class SimulationService extends BaseService {
 			String newContainerName = broadcastStartNewRemoteContainer(remoteConfig, slices);
 			loadInfo.setNewContainer2Wait4(newContainerName);
 			return newContainerName;
-		}
-		public RemoteContainerConfig getDefaultRemoteContainerConfig() throws ServiceException {
-			Service.Slice[] slices = getAllSlices();
-			return broadcastGetDefaultRemoteContainerConfig(slices);
 		}
 		public Container2Wait4 startNewRemoteContainerStaus(String containerName) throws ServiceException {
 			return loadInfo.getNewContainer2Wait4Status(containerName);
@@ -449,37 +453,7 @@ public class SimulationService extends BaseService {
 	}
 	
 	/**
-	 * Broadcast to start a new remote-container for this platform 
-	 * @param slices
-	 * @throws ServiceException
-	 */
-	private String broadcastStartNewRemoteContainer(RemoteContainerConfig remoteConfig, Service.Slice[] slices) throws ServiceException {
-		
-		if (myLogger.isLoggable(Logger.CONFIG)) {
-			myLogger.log(Logger.CONFIG, "Start a new remote container!");
-		}
-		for (int i = 0; i < slices.length; i++) {
-			String sliceName = null;
-			try {
-				SimulationServiceSlice slice = (SimulationServiceSlice) slices[i];
-				sliceName = slice.getNode().getName();
-				if (myLogger.isLoggable(Logger.FINER)) {
-					myLogger.log(Logger.FINER, "Try to start a new remote container (" + sliceName + ")");
-				}
-				String newContainerName = slice.startNewRemoteContainer(remoteConfig);
-				if (newContainerName!=null) {
-					return newContainerName;
-				}
-			}
-			catch(Throwable t) {
-				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
-				myLogger.log(Logger.WARNING, "Error while starting a new remote-container from " + sliceName, t);
-			}
-		}	
-		return null;
-	}
-	/**
-	 * This Methods
+	 * This Methods returns the default Remote-Container-Configuration, coming from the Main-Container
 	 * @param slices
 	 * @return
 	 * @throws ServiceException
@@ -509,6 +483,37 @@ public class SimulationService extends BaseService {
 		}
 		return null;
 	}
+	/**
+	 * Broadcast to start a new remote-container for this platform 
+	 * @param slices
+	 * @throws ServiceException
+	 */
+	private String broadcastStartNewRemoteContainer(RemoteContainerConfig remoteConfig, Service.Slice[] slices) throws ServiceException {
+		
+		if (myLogger.isLoggable(Logger.CONFIG)) {
+			myLogger.log(Logger.CONFIG, "Start a new remote container!");
+		}
+		for (int i = 0; i < slices.length; i++) {
+			String sliceName = null;
+			try {
+				SimulationServiceSlice slice = (SimulationServiceSlice) slices[i];
+				sliceName = slice.getNode().getName();
+				if (myLogger.isLoggable(Logger.FINER)) {
+					myLogger.log(Logger.FINER, "Try to start a new remote container (" + sliceName + ")");
+				}
+				String newContainerName = slice.startNewRemoteContainer(remoteConfig);
+				if (newContainerName!=null) {
+					return newContainerName;
+				}
+			}
+			catch(Throwable t) {
+				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
+				myLogger.log(Logger.WARNING, "Error while starting a new remote-container from " + sliceName, t);
+			}
+		}	
+		return null;
+	}
+	
 	
 	/**
 	 * Broadcast to start a new remote-container for this platform 

@@ -1,4 +1,4 @@
-package mas.agents;
+package mas.service.distribution.agents;
 
 import jade.core.Agent;
 import jade.core.ServiceException;
@@ -24,17 +24,19 @@ import mas.service.SimulationServiceHelper;
 /**
  * @version 1.0
  */ 
-public class HelloWorldAgent extends Agent { 
+public class ASynchTimeTestAgent extends Agent { 
 
 	private static final long serialVersionUID = 1L;
 	
-	private String myName = this.getLocalName();
+	private String myName = null;
 	private SynchTimeGUI gui = null;
 	private Date curSynchDate = null;
 	private long currSynchDiff = 0;
 	
 	protected void setup() { 
 
+		this.myName = this.getLocalName();
+		
 		// --- Start and show the GUI ---------------------
 		this.startGUI();
 		
@@ -72,7 +74,6 @@ public class HelloWorldAgent extends Agent {
 	private void stopGUI() {
 		if (gui!=null){
 			gui.setVisible(false);
-			gui.dispose();
 			gui = null;
 		}
 	}

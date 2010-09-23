@@ -1,4 +1,4 @@
-package mas.agents;
+package mas.service.distribution.agents;
 
 import jade.core.Agent;
 import jade.core.ServiceException;
@@ -15,7 +15,7 @@ import application.Application;
 /**
  * @version 1.0
  */ 
-public class SimulationServiceControllerAgent extends Agent { 
+public class ASimulationServiceControllerAgent extends Agent { 
 
 	private static final long serialVersionUID = 1L;
 	
@@ -37,7 +37,7 @@ public class SimulationServiceControllerAgent extends Agent {
 		
 		// --- Start the Agents which are in involved in this Experiment ---
 		String agentName = "1_1";
-		Application.JadePlatform.jadeAgentStart(agentName, SimulationServiceWorkerAgent.class.getName());
+		Application.JadePlatform.jadeAgentStart(agentName, ASimulationServiceWorkerAgent.class.getName());
 		localEnvModel.put(agentName, 0);
 							
 		// --- Setup the Simulation with the Simulation-Service ------------

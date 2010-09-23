@@ -33,9 +33,10 @@ public interface SimulationServiceHelper extends ServiceHelper {
 	public static final String SERVICE_UPDATE_SIMULATION = "service-update-simulation";
 	
 	// --- Methods for the synchronised time --------------------
-	public Long getSynchTimeMillis();
-	public Date getSynchTimeDate();
-	
+	public long getSynchTimeDifferenceMillis() throws ServiceException;
+	public long getSynchTimeMillis() throws ServiceException;
+	public Date getSynchTimeDate() throws ServiceException;
+
 	
 	// --- Methods for the load balancing ---------------------------
 	public String startNewRemoteContainer() throws ServiceException;

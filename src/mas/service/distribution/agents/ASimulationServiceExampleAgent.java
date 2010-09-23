@@ -1,4 +1,4 @@
-package mas.agents;
+package mas.service.distribution.agents;
 
 import jade.core.Agent;
 import jade.core.ServiceException;
@@ -21,7 +21,7 @@ import mas.service.time.TimeModelStroke;
 /**
  * @version 1.0
  */ 
-public class SimulationServiceExampleAgent extends Agent implements ServiceSensor { 
+public class ASimulationServiceExampleAgent extends Agent implements ServiceSensor { 
 
 	private static final long serialVersionUID = 1L;
 	
