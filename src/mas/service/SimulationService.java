@@ -65,8 +65,13 @@ public class SimulationService extends BaseService {
 	private Filter outFilter;
 	private ServiceComponent localSlice;
 	
-	// --- Difference of time (in milliseconds) to the Main-Container ---------
-	private long containerTimeDiff = 0;
+	// --- Variable for the Time-Synchronisation ------------------------------
+	private long timeMeasureNext = 0;				// --- When was the MainContainerTime last measured 
+	private long timeMeasureInterval = 1000*5; 		// --- measure every 5 seconds 
+	private int timeMeasureCountMax = 100;			// --- How often the time-difference should be measured to build an average value?
+	private long timeDiff2MainContainer = 0;		// --- Differnece between this and the MainContainer-Time
+	
+	
 	// --- The Agent who is the Manager / Controller of the Simulation --------
 	private AID managerAgent = null;
 	// --- The current TimeModel ----------------------------------------------
@@ -96,7 +101,7 @@ public class SimulationService extends BaseService {
 		
 		super.init(ac, p);
 		myContainer = ac;
-		myMainContainer = ac.getMain();
+		myMainContainer = ac.getMain();		
 		// --- Create filters -----------------------------
 		outFilter = new CommandOutgoingFilter();
 		incFilter = new CommandIncomingFilter();
@@ -116,7 +121,6 @@ public class SimulationService extends BaseService {
 		}
 		// --- Start the Load-Measurements on this Node ----
 		new LoadMeasureThread().start();   
-		
 	}
 	public void boot(Profile p) throws ServiceException {
 		super.boot(p);
@@ -165,15 +169,17 @@ public class SimulationService extends BaseService {
 		// ----------------------------------------------------------
 		// --- Methods for the synchronised time --------------------
 		public long getSynchTimeDifferenceMillis() throws ServiceException {
-			return containerTimeDiff;
+			return timeDiff2MainContainer;
 		}
 		public long getSynchTimeMillis() throws ServiceException {
-			return System.currentTimeMillis() + containerTimeDiff;
+			if (myMainContainer==null) {
+				requestMainContainerTime();	
+			}			
+			return System.currentTimeMillis() + timeDiff2MainContainer;
 		}
 		public Date getSynchTimeDate() throws ServiceException {
 			return new Date(this.getSynchTimeMillis());
 		}
-		
 
 		// ----------------------------------------------------------
 		// --- Methods to start a new remote-container -------------- 
@@ -811,7 +817,7 @@ public class SimulationService extends BaseService {
 			return System.currentTimeMillis();
 		}
 		private void setPlatformTimeDiff(long timeDifference) {
-			containerTimeDiff = timeDifference;	
+			timeDiff2MainContainer = timeDifference;	
 		}
 		
 		private void setManagerAgent(AID agentAddress) {
@@ -968,7 +974,7 @@ public class SimulationService extends BaseService {
 				// --- Is this the slice, we have waited for? ------------------------------
 				loadInfo.setNewContainerStarted(newSliceName);
 				// --- Synchronise the time ------------------------------------------------
-				this.synchTimeOfSlice(newSlice, newSliceName);
+				this.synchTimeOfSlice(newSlice);
 				
 			}
 			catch (Throwable t) {
@@ -981,60 +987,103 @@ public class SimulationService extends BaseService {
 	 * This method will synchronise the time between Main-Container and Remote-Container 
 	 * @param slice
 	 */
-	private void synchTimeOfSlice(SimulationServiceSlice slice, String sliceName) {
+	private void synchTimeOfSlice(SimulationServiceSlice slice) {
 		
-		int countMax = 100;
-		
-		double locTime1Milli = 0;
+		int countMax = timeMeasureCountMax;
+		long locTime1Milli = 0;
+		long remTimeMilli = 0;
+
 		long locTime1Nano = 0;
 		long locTime2Nano = 0;
 		
-		double remTimeMilli = 0;
-		double remTimeMilliCorrect = 0;
-		
-		long measureTimeNano = 0;
-		double measureTimeMilli = 0;
-		
-		double timeDiffMilli = 0;
 		double timeDiffAccumulate = 0;
-		double timeDifference = 0;
 		
 		try {
 	
-			for (int i = 0; i < countMax; i++) {
-			
+			for (int i=0; i<countMax; i++) {
 				// --- Measure local time and ask for the remote time ---
 				locTime1Milli = System.currentTimeMillis();								// --- milli-seconds ---
 				locTime1Nano = System.nanoTime();										// --- nano-seconds ---
 				remTimeMilli = slice.getRemoteTime();									// --- milli-seconds ---
 				locTime2Nano = System.nanoTime();										// --- nano-seconds ---
 				
-				// --- Correct the measured remote time -----------------
-				measureTimeNano = locTime2Nano - locTime1Nano;							// --- nano-seconds ---
-				measureTimeMilli = measureTimeNano * Math.pow(10, -6);					// --- milli-seconds ---
-				remTimeMilliCorrect = remTimeMilli - (measureTimeMilli/2);				// --- milli-seconds ---
-				
-				// --- Calculate the time Difference between ------------
-				// --- this and the remote platform 		 ------------
-				timeDiffMilli = locTime1Milli - remTimeMilliCorrect;					// --- milli-seconds ---
-				timeDiffAccumulate += timeDiffMilli;
-				//System.out.println( "Messzeit: " + measureTimeNano + " ns (" + measureTimeMilli + " ms)- Zeitdifferenz zwischen den Platformen: " + timeDiffMilli + " ms)" );
+				timeDiffAccumulate += getContainerTimeDifference(locTime1Milli, remTimeMilli, locTime1Nano, locTime2Nano);
+
 			}
-			
-			timeDifference =  timeDiffAccumulate / countMax; 
-//			System.out.println( "Time difference to '" + sliceName + "': " + timeDifference + " ms" );
-//			System.out.println( "Time on '" + sliceName + "' = " +  new Date(System.currentTimeMillis()-Math.round(timeDifference)));
-			slice.setRemoteTimeDiff(Math.round(timeDifference));
+			slice.setRemoteTimeDiff(Math.round(timeDiffAccumulate / countMax));	
 			
 		} catch (IMTPException e) {
 			e.printStackTrace();
 		}
 		
-		
 	}
 	
 	/**
-	 * This method returns a default configuration for a new remote container 
+	 * This Method returns the time difference between this and the remote node
+	 * by using the local-time and the time to get the remote-time
+	 * @param locTime1Milli
+	 * @param remTimeMilli
+	 * @param locTime1Nano
+	 * @param locTime2Nano
+	 * @return
+	 */
+	private double getContainerTimeDifference(long locTime1Milli, long remTimeMilli, long locTime1Nano, long locTime2Nano) {
+		
+		// --- Calculate the correction value of the remote time
+		long measureTimeNanoCorrect = (locTime2Nano - locTime1Nano)/2;
+		double measureTimeMilliCorrect = measureTimeNanoCorrect * Math.pow(10, -6);;
+		// --- Correct the measured remote time -----------------
+		double remTimeMilliCorrect = remTimeMilli - measureTimeMilliCorrect;
+		// --- Calculate the time Difference between ------------
+		// --- this and the remote platform 		 ------------
+		return locTime1Milli - remTimeMilliCorrect;
+		
+	}
+	/**
+	 * This method asks the MainContainer of his local time 
+	 * and stores all important informations in this class 
+	 * @return
+	 */
+	private void requestMainContainerTime() {
+		
+		int counter = timeMeasureCountMax;
+		long locTime1Milli = 0;
+		long remTimeMilli = 0;
+		
+		long locTime1Nano = 0;
+		long locTime2Nano = 0;
+	
+		double remTimeMilliDiffAccumulate = 0;
+		
+		if (System.currentTimeMillis() >= timeMeasureNext ) {
+			// --- Balance the Main-Container time-differnece ------------
+			timeMeasureNext =  System.currentTimeMillis() + timeMeasureInterval;
+			SimulationServiceSlice ssl;
+			try {
+				ssl = (SimulationServiceSlice) getSlice(MAIN_SLICE);
+				
+				for (int i=0; i<counter; i++) {
+					// --- Measure local time and ask for the remote time ---
+					locTime1Milli = System.currentTimeMillis();
+					locTime1Nano = System.nanoTime();										// --- nano-seconds ---
+					remTimeMilli = ssl.getRemoteTime(); 
+					locTime2Nano = System.nanoTime();										// --- nano-seconds ---
+					
+					remTimeMilliDiffAccumulate += getContainerTimeDifference(locTime1Milli, remTimeMilli, locTime1Nano, locTime2Nano);
+				}
+				timeDiff2MainContainer = Math.round(remTimeMilliDiffAccumulate/counter) * (-1);	
+
+			} catch (ServiceException e) {
+				e.printStackTrace();
+			} catch (IMTPException e) {
+				e.printStackTrace();
+			}
+		} 		
+
+	}
+	
+	/**
+	 * This method returns a default configuration for a new remote container
 	 * @return
 	 */
 	private RemoteContainerConfig getRemoteContainerConfigDefault() {

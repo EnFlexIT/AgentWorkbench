@@ -10,7 +10,6 @@ import java.util.HashMap;
 import mas.service.SimulationService;
 import mas.service.SimulationServiceHelper;
 import mas.service.time.TimeModelStroke;
-import application.Application;
 
 /**
  * @version 1.0
@@ -34,11 +33,6 @@ public class ASimulationServiceControllerAgent extends Agent {
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
-		
-		// --- Start the Agents which are in involved in this Experiment ---
-		String agentName = "1_1";
-		Application.JadePlatform.jadeAgentStart(agentName, ASimulationServiceWorkerAgent.class.getName());
-		localEnvModel.put(agentName, 0);
 							
 		// --- Setup the Simulation with the Simulation-Service ------------
 		try {

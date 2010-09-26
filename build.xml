@@ -22,6 +22,10 @@
 	<property name="binaryDirANT" value="build" />
 	<property name="binaryDirIMG" value="build\img" />
 	
+	<property name="simServiceSourceDir" value="${binaryDirANT}\mas\service\\" />
+	<property name="simServiceDestinDir" value="lib\jade\lib\\" />
+	<property name="simServiceDestinJar" value="${simServiceDestinDir}\simulation.jar" />
+	
 	<property name="destinDir" value="D:\00 Tmp\00 Jars\AgentGUI\\" />
 	<property name="destinJar" value="${destinDir}\AgentGui.jar" />		
 	<property name="destinDirLibraries" value="${destinDir}\lib\\" />
@@ -93,6 +97,18 @@
           				 => Erzeugung der ausführbaren Struktur              
          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
     <target name="supply" description="Erstellung der Dateistruktur ... ">
+    	
+    	<!-- Erzeugen der lokalen Datei simulation.jar -->
+    	<jar compress="true" destfile="${simServiceDestinJar}" >
+ 			<manifest>
+				<attribute name="Built-By" value="${user.name}"/>
+ 				<attribute name="Built-Lang" value="${user.language}"/>
+			</manifest>    		
+    		<fileset dir="${binaryDirANT}">
+    			<include name="**/mas/service/**"/>
+    		</fileset>    		
+        </jar>
+    	
     	
     	<!-- Kopieren der Property-Files -->    	
     	<copy todir="${destinDirProperties}">
