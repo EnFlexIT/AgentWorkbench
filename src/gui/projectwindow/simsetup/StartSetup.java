@@ -42,6 +42,7 @@ import javax.swing.event.MouseInputAdapter;
 import mas.agents.AgentClassElement;
 import mas.agents.AgentClassElement4SimStart;
 import sim.setup.SimulationSetup;
+import sim.setup.SimulationSetups;
 import application.Application;
 import application.Language;
 import application.Project;
@@ -603,7 +604,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		if ( Trigger == jComboBoxSetupSelector ) {
 			if (jComboBoxSetupSelector.getSelectedItem()!= null) {
 				currProject.simSetups.setupSave();
-				currProject.simSetups.setupLoadAndFocus(jComboBoxSetupSelector.getSelectedItem().toString(), false);
+				currProject.simSetups.setupLoadAndFocus(SimulationSetups.SIMULATION_SETUP_LOAD, jComboBoxSetupSelector.getSelectedItem().toString(), false);
 			}
 		} else if ( Trigger == jButtonSetupRename ) {
 			this.setupRename();
@@ -670,7 +671,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		// --- Das akuelle DefaultListModel laden ---------
 		currSimSetup = currProject.simSetups.getCurrSimSetup();
 		if ( currSimSetup==null ) {
-			currProject.simSetups.setupLoadAndFocus(currProject.simSetupCurrent, false);
+			currProject.simSetups.setupLoadAndFocus(SimulationSetups.SIMULATION_SETUP_LOAD, currProject.simSetupCurrent, false);
 			currSimSetup = currProject.simSetups.getCurrSimSetup();
 		}
 		this.currSimSetup.setAgentListModel(this.jListModelAgents2Start);

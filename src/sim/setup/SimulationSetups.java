@@ -21,10 +21,14 @@ import application.Project;
 
 public class SimulationSetups extends Hashtable<String, String> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -9078535303459653695L;
+
+	static public final int SIMULATION_SETUP_LOAD = 0;
+	static public final int SIMULATION_SETUP_ADD_NEW = 1;
+	static public final int SIMULATION_SETUP_COPY = 2;
+	static public final int SIMULATION_SETUP_REMOVE = 3;
+	static public final int SIMULATION_SETUP_RENAME = 4;
+	
 	public final String XML_FilePostfix = ".xml";
 	private Project currProject = Application.ProjectCurr;
 	
@@ -40,7 +44,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 		currProject = project;
 		currSimSetupName = simSetupCurrent;
 	}
-
+	
 	/**
 	 * This Method creates the 'default' - Simulation-Setup 
 	 */
@@ -76,7 +80,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 		// --- Name und Dateiname hinzufügen --------------
 		this.put(name, newFileName);
 		// --- Fokus auf das aktuelle Setup ---------------
-		this.setupLoadAndFocus(name, true);
+		this.setupLoadAndFocus(SIMULATION_SETUP_ADD_NEW,name, true);
 		// --- Projekt speichern --------------------------
 		currProject.save();
 	}
@@ -102,7 +106,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 
 		} else {
 			// --- Select first Setup ---------------------
-			this.setupLoadAndFocus(this.getFirstSetup(), false);
+			this.setupLoadAndFocus(SIMULATION_SETUP_REMOVE,this.getFirstSetup(), false);
 		}
 		// --- Projekt speichern --------------------------
 		currProject.save();
@@ -129,7 +133,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 		this.remove(nameOld);
 		// --- Neuen Eintrag rein -------------------------
 		this.put(nameNew, fileNameNew);
-		this.setupLoadAndFocus(nameNew, false);
+		this.setupLoadAndFocus(SIMULATION_SETUP_RENAME,nameNew, false);
 		// --- Projekt speichern --------------------------
 		currProject.save();
 	}
@@ -153,7 +157,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 		// --- Name und Dateiname hinzufügen --------------
 		this.put(nameNew, fileNameNew);
 		// --- Fokus auf das aktuelle Setup ---------------
-		this.setupLoadAndFocus(nameNew, false);
+		this.setupLoadAndFocus(SIMULATION_SETUP_COPY,nameNew, false);
 		// --- Projekt speichern --------------------------
 		currProject.save();
 	}
@@ -162,7 +166,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 	 * Set the current Setup-File to the one given by name
 	 * @param name
 	 */
-	public void setupLoadAndFocus(String name, boolean isAddedNew) {
+	public void setupLoadAndFocus(int action, String name, boolean isAddedNew) {
 		
 		if (this.containsKey(name)==false) return;
 		
@@ -180,7 +184,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 		}		
 		
 		// --- Interessenten informieren ------------------
-		currProject.setChangedAndNotify("SimSetups");
+		currProject.setChangedAndNotify(new SimulationSetupsChangeNotification(action));
 		
 	}
 	
@@ -348,5 +352,25 @@ public class SimulationSetups extends Hashtable<String, String> {
 	public String getCurrSimXMLFile() {
 		return currSimXMLFile;
 	}
+
+	
+	public class SimulationSetupsChangeNotification {
+		
+		private int updateReason;
+		public SimulationSetupsChangeNotification(int reason) {
+			updateReason = reason;
+		}
+		public void setUpdateReason(int updateReason) {
+			this.updateReason = updateReason;
+		}
+		public int getUpdateReason() {
+			return updateReason;
+		}
+		public String toString() {
+			return "SimSetups";
+		}
+		
+	}
+
 	
 }

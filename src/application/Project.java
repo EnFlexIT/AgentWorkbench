@@ -21,8 +21,8 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import mas.PlatformJadeConfig;
 import mas.agents.AgentConfiguration;
-import mas.display.ontology.Environment;
-import mas.environment.EnvironmentController;
+import mas.environment.EnvironmentController2;
+import mas.environment.ontology.Physical2DEnvironment;
 import mas.onto.Ontologies4Project;
 import rollout.TextFileRessourceRollOut;
 import sim.setup.SimulationSetups;
@@ -57,8 +57,8 @@ import sim.setup.SimulationSetups;
 	@XmlTransient private Vector<Class<? extends Agent>> ProjectAgents;
 	@XmlTransient public Ontologies4Project ontologies4Project;
 
-	//	@XmlTransient private Environment environment;
-	@XmlTransient private EnvironmentController environmentController;
+	//	@XmlTransient private Physical2DEnvironment environment;
+	@XmlTransient private EnvironmentController2 environmentController;
 	
 	// --- Speichervariablen der Projektdatei ------------------ 
 	@XmlElement(name="projectName")
@@ -66,9 +66,6 @@ import sim.setup.SimulationSetups;
 	@XmlElement(name="projectDescription")
 	private String ProjectDescription;
 	
-	private String svgFile;		// SVG-Datei
-	private String envFile;		// Umgebungsdatei
-
 	@XmlElementWrapper(name = "subOntologies")
 	@XmlElement(name="subOntology")
 	public Vector<String> subOntologies = new Vector<String>();
@@ -114,12 +111,7 @@ import sim.setup.SimulationSetups;
 			this.simSetups.setupSave();
 			
 			// --- Speichern von Umgebung und SVG ---------
-			if(this.svgFile != null){
-				this.environmentController.saveSVG();
-			}
-			if(this.envFile != null){
-				this.environmentController.saveEnvironment();
-			}
+			this.environmentController.save();
 			
 			ProjectUnsaved = false;			
 		} 
@@ -127,7 +119,6 @@ import sim.setup.SimulationSetups;
 			System.out.println("XML-Error while saving Project-File!");
 			e.printStackTrace();
 		}
-//		this.saveEnvironment();
 		Application.MainWindow.setStatusBar("");
 		return true;		
 	}
@@ -237,7 +228,7 @@ import sim.setup.SimulationSetups;
 
 	}
 	
-	public void setChangedAndNotify(String reason) {
+	public void setChangedAndNotify(Object reason) {
 		ProjectUnsaved = true;
 		setChanged();
 		notifyObservers(reason);		
@@ -383,54 +374,6 @@ import sim.setup.SimulationSetups;
 		notifyObservers("AgentReferences");
 	}
 	
-	public String getSvgFile(){
-		return svgFile;
-	}
-	
-	
-	/**
-	 * Gets the SVG file path
-	 * @return The SVG file path
-	 */
-	public String getSvgPath(){
-		if(this.svgFile != null){
-			return getEnvSetupPath()+File.separator+this.svgFile;
-		}else{
-			return null;
-		}
-	}
-
-	/**
-	 * Setter for svgFile 
-	 * @param fileName Name of the SVG file
-	 */
-	public void setSvgFile(String fileName){
-		this.svgFile = fileName;	
-		this.ProjectUnsaved = true;
-	}
-	public String getEnvFile(){
-		return envFile;
-	}
-	/**
-	 * Gets the environment file path
-	 * @return The environment file path
-	 */
-	public String getEnvPath(){
-		if(this.envFile != null){
-			return getEnvSetupPath()+File.separator+this.envFile;
-		}else{
-			return null;
-		}		
-	}
-	
-	/**
-	 * Setter für envFile
-	 * @param fileName Dateiname der Umgebungsdatei
-	 */
-	public void setEnvFile(String fileName){
-		this.envFile = fileName;
-		this.ProjectUnsaved = true;
-	}
 	/**
 	 * Gets the default environment setup folder
 	 * @return The default environment setup folder
@@ -442,16 +385,15 @@ import sim.setup.SimulationSetups;
 	 * @return the environment
 	 */
 	@XmlTransient
-	public Environment getEnvironment() {
+	public Physical2DEnvironment getEnvironment() {
 		return this.environmentController.getEnvironment();
 	}
 	/**
 	 * @param environment the environment to set
 	 */
-	public void setEnvironmentController(EnvironmentController ec) {
+	public void setEnvironmentController(EnvironmentController2 ec) {
 		this.environmentController = ec;
 	}
-
 	
 	/**
 	 * @param defaultSubFolderAgents the defaultSubFolderAgents to set
@@ -545,7 +487,4 @@ import sim.setup.SimulationSetups;
 		setChanged();
 		notifyObservers("ProjectOntology");
 	}
-
-	
-	
 }

@@ -24,14 +24,32 @@ import application.Project;
 	@XmlElementWrapper(name = "agentSetup")
 	@XmlElement(name="agent")
 	private ArrayList<AgentClassElement4SimStart> agentList = new ArrayList<AgentClassElement4SimStart>();
+	/**
+	 * The name of the environment file assigned to this SimulationSetup
+	 */
+	private String environmentFileName = null;
+	/**
+	 * The name of the svg file assigned to this SimulationSetup
+	 */
+	private String svgFileName = null;
 	
-	private String environmentFile = "";
-	
-	public String getEnvironmentFile() {
-		return environmentFile;
+	/**
+	 * @return the svgFileName
+	 */
+	public String getSvgFileName() {
+		return svgFileName;
 	}
-	public void setEnvironmentFile(String environmentFile) {
-		this.environmentFile = environmentFile;
+	/**
+	 * @param svgFileName the svgFileName to set
+	 */
+	public void setSvgFileName(String svgFileName) {
+		this.svgFileName = svgFileName;
+	}
+	public String getEnvironmentFileName() {
+		return environmentFileName;
+	}
+	public void setEnvironmentFileName(String environmentFile) {
+		this.environmentFileName = environmentFile;
 	}
 	/**
 	 * Constructor without arguments (This is first of all 
