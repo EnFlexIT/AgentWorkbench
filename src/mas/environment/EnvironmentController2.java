@@ -493,7 +493,7 @@ public class EnvironmentController2 extends Observable implements Observer{
 
 	@Override
 	public void update(Observable arg0, Object arg1) {
-		if(arg0 == project && arg1.equals("SimSetups")){
+		if(arg0 == project && arg1.toString().equals("SimSetups")){
 			System.out.println("Testausgabe: Ereignis SimSetups empfangen!");
 			handleSetupChange();
 		}
