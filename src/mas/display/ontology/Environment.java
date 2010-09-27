@@ -7,7 +7,7 @@ import jade.core.*;
 
 /**
    * A project's environment definition
-* Protege name: Environment
+* Protege name: Physical2DEnvironment
 * @author ontology bean generator
 * @version 2010/05/24, 17:28:23
 */

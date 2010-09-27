@@ -6,7 +6,7 @@ import jade.core.*;
 
 /**
    * Represents an agent that can move in the environment
-* Protege name: AgentObject
+* Protege name: ActiveObject
 * @author ontology bean generator
 * @version 2010/05/24, 17:28:23
 */

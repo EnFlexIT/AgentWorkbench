@@ -10,23 +10,23 @@
      version="1.1">
     <defs id="defs4"/>
     <g id="layer1" transform="">
-        <circle r="25.0" id="SoBo1" style="fill:red;stroke:black" cx="65.0"
+        <circle r="40.0" id="SoBo1" style="fill:red;stroke:black" cx="65.0"
                 cy="72.63782"/>
-        <rect x="6.5714283" width="169.0" id="Obst1" y="171.42859"
+        <rect x="6.5714264" width="169.0" id="Obst1" y="241.42859"
               height="23.142857" style="fill:gray;stroke:none"/>
-        <rect x="289.42856" width="28.57143" id="Obst4" y="15.571411"
+        <rect x="269.42856" width="28.57143" id="Obst4" y="5.571411"
               height="167.14285" style="fill:gray;stroke:none"/>
-        <rect x="288.57144" width="221.42856" id="Obst3" y="177.14282"
+        <rect x="358.5714" width="221.42856" id="Obst3" y="277.14285"
               height="28.57143" style="fill:gray;stroke:none"/>
-        <rect x="165.82712" width="25.488605" id="Obst2" y="274.39856"
+        <rect x="415.82715" width="25.488605" id="Obst2" y="14.398533"
               height="116.91718" style="fill:gray;stroke:none"/>
-        <rect x="31.42857" y="351.42856" transform="" width="25.714285"
+        <rect x="31.42857" y="351.4286" transform="" width="25.714285"
               style="fill:green;stroke:none" height="31.42857" id="Box1"/>
-        <rect x="398.57144" width="28.57143" id="Box4" y="33.857117"
+        <rect x="468.5714" width="28.57143" id="Box4" y="33.857117"
               height="31.42857" style="fill:green;stroke:none"/>
         <rect x="485.7143" y="337.14288" transform="" width="25.714285"
               style="fill:green;stroke:none" height="31.42857" id="Box3"/>
-        <rect x="222.85715" y="354.2857" transform="" width="28.57143"
+        <rect x="322.8572" y="34.28569" transform="" width="28.57143"
               style="fill:green;stroke:none" height="28.57143" id="Box2"/>
     </g>
     <rect fill="none" width="599" height="399" id="border" stroke-width="1"

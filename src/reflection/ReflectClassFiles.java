@@ -67,7 +67,7 @@ public class ReflectClassFiles extends ArrayList<String> {
 				//System.out.println("Jar-Result: " + SearchINReference + " => " + reference2JarFile);
 				ClazzList = getJARClasses( reference2JarFile );
 			} else {
-				// --- Points to the IDE-Environment ----------------
+				// --- Points to the IDE-Physical2DEnvironment ----------------
 				//System.out.println("IDE-Result: " + SearchINReference);
 				SearchPath = Application.RunInfo.PathBaseDirIDE_BIN();
 				ClazzList = getIDEClasses( SearchPath, SearchPath );

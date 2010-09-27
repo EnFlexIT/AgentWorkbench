@@ -37,7 +37,7 @@ public class DisplayOntology extends jade.content.onto.Ontology  {
     public static final String ENVIRONMENT_OBJECTS="objects";
     public static final String ENVIRONMENT_ROOTPLAYGROUND="rootPlayground";
     public static final String ENVIRONMENT_PROJECTNAME="projectName";
-    public static final String ENVIRONMENT="Environment";
+    public static final String ENVIRONMENT="Physical2DEnvironment";
     public static final String PLAYGROUNDOBJECT_CHILDOBJECTS="childObjects";
     public static final String PLAYGROUNDOBJECT="PlaygroundObject";
     public static final String GENERICOBJECT="GenericObject";
@@ -51,8 +51,8 @@ public class DisplayOntology extends jade.content.onto.Ontology  {
     public static final String AGENTOBJECT_COLLISIONPOINTS="collisionPoints";
     public static final String AGENTOBJECT_CURRENTSPEED="currentSpeed";
     public static final String AGENTOBJECT_MAXSPEED="maxSpeed";
-    public static final String AGENTOBJECT="AgentObject";
-    public static final String OBSTACLEOBJECT="ObstacleObject";
+    public static final String AGENTOBJECT="ActiveObject";
+    public static final String OBSTACLEOBJECT="StaticObject";
     public static final String POSITION_X="x";
     public static final String POSITION_Y="y";
     public static final String POSITION="Position";

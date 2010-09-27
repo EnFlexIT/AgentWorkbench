@@ -11,16 +11,16 @@ import javax.swing.JTextField;
 import java.awt.Dimension;
 import javax.swing.JLabel;
 
-import mas.display.ontology.Scale;
+import mas.environment.ontology.Scale;
 
 
 import application.Language;
 
-public class EnvironmentSetupGlobalSettings extends JPanel {
+public class EnvironmentSetupEnvironmentSettings2 extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	
-	private EnvironmentSetup parent = null;
+	private EnvironmentSetup2 parent = null;
 
 	private JLabel lblScale = null;
 	private JTextField tfRwu = null;
@@ -33,7 +33,7 @@ public class EnvironmentSetupGlobalSettings extends JPanel {
 	/**
 	 * This is the default constructor
 	 */
-	public EnvironmentSetupGlobalSettings(EnvironmentSetup parent) {
+	public EnvironmentSetupEnvironmentSettings2(EnvironmentSetup2 parent) {
 		super();
 		this.parent = parent;
 		initialize();
@@ -136,9 +136,11 @@ public class EnvironmentSetupGlobalSettings extends JPanel {
 	
 	// Sets the scale inputs after the scale has been changed from
 	public void setScale(Scale scale){
-		getTfRwu().setText(""+scale.getValue());
-		getCbUnit().setSelectedItem(scale.getUnit());
-		getTfPx().setText(""+scale.getPixel());
+		if(scale != null){
+			getTfRwu().setText(""+scale.getRealWorldUnitValue());
+			getCbUnit().setSelectedItem(scale.getRealWorldUntiName());
+			getTfPx().setText(""+scale.getPixelValue());	
+		}
 	}
 
 }

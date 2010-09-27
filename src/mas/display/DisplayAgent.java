@@ -85,7 +85,7 @@ public class DisplayAgent extends Agent {
 	
 	/**
 	 * Initializing the DisplayAgent. Arguments:
-	 * - args[0]: Environment instance containing the projects environment data. Required
+	 * - args[0]: Physical2DEnvironment instance containing the projects environment data. Required
 	 * - args[1]: DisplayAgentGUI instance the DisplayAgent should use. Optional, if not specified the agent will create a new one on a new JFrame
 	 */
 	public void setup(){
@@ -96,9 +96,9 @@ public class DisplayAgent extends Agent {
 		getContentManager().registerOntology(ontology);
 		
 		Object[] args = getArguments();
-//		// Environment
-//		if( args != null && args.length > 2 && args[2] instanceof Environment){
-//			this.environment = (Environment) args[2];
+//		// Physical2DEnvironment
+//		if( args != null && args.length > 2 && args[2] instanceof Physical2DEnvironment){
+//			this.environment = (Physical2DEnvironment) args[2];
 //		}
 				
 		// Project name
@@ -172,7 +172,7 @@ public class DisplayAgent extends Agent {
 				private static final long serialVersionUID = 1L;
 
 				protected void handleInform(ACLMessage inform){
-//					System.out.println("DA: Environment information received");
+//					System.out.println("DA: Physical2DEnvironment information received");
 					try {
 						Action act = (Action) getContentManager().extractContent(inform);
 						EnvironmentInfo envInf = (EnvironmentInfo) act.getAction();

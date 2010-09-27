@@ -353,7 +353,7 @@ public class FileProperties extends Properties {
 		
 		System.out.println();
 		System.out.println("------------------------------------");  
-		System.out.println("-------  System Environment: -------"); 
+		System.out.println("-------  System Physical2DEnvironment: -------"); 
 		System.out.println("------------------------------------");
 		Map<String, String> env = System.getenv();  
 		for (String str : env.keySet()) {  

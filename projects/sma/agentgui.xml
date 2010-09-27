@@ -9,25 +9,30 @@ Einfaches Demo-Projekt fr die Visualisierung</projectDescription>
     <simulationSetupCurrent>default</simulationSetupCurrent>
     <simulationSetups>
         <entry>
+            <key>TestSetup2</key>
+            <value>testsetup2.xml</value>
+        </entry>
+        <entry>
+            <key>TestSetup1</key>
+            <value>testsetup1.xml</value>
+        </entry>
+        <entry>
             <key>default</key>
             <value>default.xml</value>
         </entry>
     </simulationSetups>
     <jadeConfiguration>
         <start4Sim>true</start4Sim>
-        <useAppDefaults>true</useAppDefaults>
+        <useAppDefaults>false</useAppDefaults>
         <useLocalPort>1099</useLocalPort>
         <serviceList>
-            <service>jade.core.messaging.TopicManagementService;</service>
             <service>jade.core.event.NotificationService;</service>
-            <service>jade.core.mobility.AgentMobilityService;</service>
+            <service>mas.environment.provider.EnvironmentProviderService;</service>
         </serviceList>
     </jadeConfiguration>
-    <envFile>CollectBoxExample.xml</envFile>
     <mainPackage>sma</mainPackage>
     <subFolderAgents>agents</subFolderAgents>
     <subFolderEnvSetups>envSetups</subFolderEnvSetups>
     <subFolderOntology>ontology</subFolderOntology>
     <subFolderResources>resources</subFolderResources>
-    <svgFile>CollectBoxExample.svg</svgFile>
 </project>
