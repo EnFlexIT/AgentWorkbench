@@ -65,23 +65,24 @@ public class SimulationService extends BaseService {
 	private Filter outFilter;
 	private ServiceComponent localSlice;
 	
-	// --- Variable for the Time-Synchronisation ------------------------------
+	// --- Variables for the Time-Synchronisation -----------------------------
 	private long timeMeasureNext = 0;				// --- When was the MainContainerTime last measured 
 	private long timeMeasureInterval = 1000*5; 		// --- measure every 5 seconds 
 	private int timeMeasureCountMax = 100;			// --- How often the time-difference should be measured to build an average value?
 	private long timeDiff2MainContainer = 0;		// --- Differnece between this and the MainContainer-Time
 	
-	
 	// --- The Agent who is the Manager / Controller of the Simulation --------
 	private AID managerAgent = null;
-	// --- The current TimeModel ----------------------------------------------
-	private TimeModel timeModel = null;
-	// --- The current EnvironmentObject Instance -----------------------------
-	private Object environmentInstance = null;
-	
 	// --- The List of Agents, which are registered to this service ----------- 
 	private Hashtable<String,AID> agentList = new Hashtable<String,AID>();
 
+	// --- The current TimeModel ----------------------------------------------
+	private TimeModel timeModel = null;
+	// --- The current EnvironmentObject-Instance -----------------------------
+	private Object environmentInstance = null;
+	// --- The next EnvironmentObject-Instance in parts (answers of agents) ---
+	private Hashtable<AID, Object> environmentInstanceNextParts = new Hashtable<AID, Object>();
+	
 	// --- The current EnvironmentModel ---------------------------------------
 	private EnvironmentModel environmentModel = null;
 	// --- The TransactionMap of the simulation -------------------------------
@@ -252,21 +253,18 @@ public class SimulationService extends BaseService {
 		}
 		
 		// ----------------------------------------------------------
-		// --- Method to notify all Sensors about changes -----------
-		public void notifySensors(String event) throws ServiceException {
-			Service.Slice[] slices = getAllSlices();
-			broadcastNotifySensors(event, slices);
-		}
-		
-		// ----------------------------------------------------------
-		// --- Methods to register and unregister Agents-Sensors ----
+		// --- Register, unregister or notify Agents-Sensors --------
 		public void addSensor(Agent agentWithSensor) throws ServiceException {
 			localServiceActuator.addObserver((Observer) agentWithSensor);
 		}
 		public void deleteSensor(Agent agentWithSensor) throws ServiceException {
 			localServiceActuator.deleteObserver((Observer) agentWithSensor);	
 		}		
-		
+		public void notifySensors(String event) throws ServiceException {
+			Service.Slice[] slices = getAllSlices();
+			broadcastNotifySensors(event, slices);
+		}
+				
 		// ----------------------------------------------------------
 		// --- Methods for the Manager-Agent ------------------------
 		public void setManagerAgent(AID agentAddress) throws ServiceException {
@@ -311,6 +309,18 @@ public class SimulationService extends BaseService {
 		}
 		public Object getEnvironmentInstance() throws ServiceException {
 			return environmentInstance;
+		}
+
+		// ----------------------------------------------------------
+		// --- EnvironmentModel of the next simulation step ---------
+		public void setEnvironmentInstanceNextPart(AID fromAgent, Object nextPart) throws ServiceException {
+			mainSetEnvironmentInstanceNextPart(fromAgent, nextPart);
+		}
+		public Hashtable<AID, Object> getEnvironmentInstanceNextParts() throws ServiceException {
+			return mainGetEnvironmentInstanceNextParts();
+		}
+		public void resetEnvironmentInstanceNextParts() throws ServiceException {
+			mainResetEnvironmentInstanceNextParts();
 		}
 		
 	}
@@ -429,6 +439,79 @@ public class SimulationService extends BaseService {
 			}
 		}
 	}
+	/**
+	 * Sends one nextPart of the environment-model to the Main-Container 
+	 * @param fromAgent
+	 * @param nextPart
+	 * @throws ServiceException
+	 */
+	private void mainSetEnvironmentInstanceNextPart(AID fromAgent, Object nextPart) throws ServiceException {
+		
+		if (myLogger.isLoggable(Logger.CONFIG)) {
+			myLogger.log(Logger.CONFIG, "Sending agent-answer of environment-change to Main-Container!");
+		}
+		String sliceName = null;
+		try {
+			SimulationServiceSlice slice = (SimulationServiceSlice) getSlice(MAIN_SLICE);
+			sliceName = slice.getNode().getName();
+			if (myLogger.isLoggable(Logger.FINER)) {
+				myLogger.log(Logger.FINER, "Sending agent-answer of environment-change to " + sliceName);
+			}
+			slice.setEnvironmentInstanceNextPart(fromAgent, nextPart);
+		}
+		catch(Throwable t) {
+			// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
+			myLogger.log(Logger.WARNING, "Error while sending agent-answer of environment-change to slice  " + sliceName, t);
+		}
+	}	
+	/**
+	 * This returns the complete environment-model-changes from the Main-Container
+	 * @return
+	 * @throws ServiceException
+	 */
+	private Hashtable<AID, Object> mainGetEnvironmentInstanceNextParts() throws ServiceException {
+		
+		if (myLogger.isLoggable(Logger.CONFIG)) {
+			myLogger.log(Logger.CONFIG, "Try to get new environment-part from Main-Container!");
+		}
+		String sliceName = null;
+		try {
+			SimulationServiceSlice slice = (SimulationServiceSlice) getSlice(MAIN_SLICE);
+			sliceName = slice.getNode().getName();
+			if (myLogger.isLoggable(Logger.FINER)) {
+				myLogger.log(Logger.FINER, "Try to get new environment-parts from " + sliceName);
+			}
+			return slice.getEnvironmentInstanceNextParts();
+		}
+		catch(Throwable t) {
+			// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
+			myLogger.log(Logger.WARNING, "Error while trying to get new environment-parts from slice  " + sliceName, t);
+		}
+		return null;
+	}	
+	/**
+	 * This Method resets the hash with the single environment-model-changes
+	 * @throws ServiceException
+	 */
+	private void mainResetEnvironmentInstanceNextParts() throws ServiceException {
+		
+		if (myLogger.isLoggable(Logger.CONFIG)) {
+			myLogger.log(Logger.CONFIG, "Sending reset of environment-change-hash to Main-Container!");
+		}
+		String sliceName = null;
+		try {
+			SimulationServiceSlice slice = (SimulationServiceSlice) getSlice(MAIN_SLICE);
+			sliceName = slice.getNode().getName();
+			if (myLogger.isLoggable(Logger.FINER)) {
+				myLogger.log(Logger.FINER, "Sending reset of environment-change-hash to " + sliceName);
+			}
+			slice.resetEnvironmentInstanceNextParts();
+		}
+		catch(Throwable t) {
+			// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
+			myLogger.log(Logger.WARNING, "Error while sending reset of environment-change-hash to slice  " + sliceName, t);
+		}
+	}	
 	
 	/**
 	 * Broadcast that all agents have to informed about changes through his ServiceSensor
@@ -738,6 +821,26 @@ public class SimulationService extends BaseService {
 					}	
 					cmd.setReturnValue(getEnvironmentInstance());
 				}
+				else if (cmdName.equals(SimulationServiceSlice.SIM_SET_ENVIRONMENT_NEXT_PART)) {
+					AID fromAgent = (AID) params[0];
+					Object nextPart = params[1];
+					if (myLogger.isLoggable(Logger.FINE)) {
+						myLogger.log(Logger.FINE, "Getting part for the next environment model from " + fromAgent.getLocalName() );
+					}	
+					setEnvironmentInstanceNextPart(fromAgent, nextPart);					
+				} 
+				else if (cmdName.equals(SimulationServiceSlice.SIM_GET_ENVIRONMENT_NEXT_PARTS)) {
+					if (myLogger.isLoggable(Logger.FINE)) {
+						myLogger.log(Logger.FINE, "Answering request for the next parts of the environment-model" );
+					}	
+					cmd.setReturnValue(getEnvironmentInstanceNextParts());					
+				}
+				else if (cmdName.equals(SimulationServiceSlice.SIM_RESET_ENVIRONMENT_NEXT_PARTS)) {
+					if (myLogger.isLoggable(Logger.FINE)) {
+						myLogger.log(Logger.FINE, "Reseting next parts of the environment-model" );
+					}	
+					resetEnvironmentInstanceNextParts();					
+				}
 				
 				else if (cmdName.equals(SimulationServiceSlice.SERVICE_UPDATE_TIME_MODEL) || 
 						 cmdName.equals(SimulationServiceSlice.SERVICE_UPDATE_TIME_STEP) ||
@@ -800,14 +903,12 @@ public class SimulationService extends BaseService {
 					}
 					putContainerDescription((ClientRemoteContainerReply) params[0]);
 				}
-				
 
 			}
 			catch (Throwable t) {
 				cmd.setReturnValue(t);
 			}
 			return null;
-			
 		}
 		
 		// -----------------------------------------------------------------
@@ -842,6 +943,15 @@ public class SimulationService extends BaseService {
 		}
 		private Object getEnvironmentInstance() {
 			return environmentInstance;
+		}
+		private void setEnvironmentInstanceNextPart(AID fromAgent, Object nextPart) {
+			environmentInstanceNextParts.put(fromAgent, nextPart);
+		}
+		private Hashtable<AID, Object> getEnvironmentInstanceNextParts() {
+			return environmentInstanceNextParts;
+		}
+		private void resetEnvironmentInstanceNextParts() {
+			environmentInstanceNextParts = new Hashtable<AID, Object>();
 		}
 		
 		private void notifySensors(String topicWhichChanged) {
@@ -965,17 +1075,16 @@ public class SimulationService extends BaseService {
 			Object[] params = cmd.getParams();
 			String newSliceName = (String) params[0];
 			try {
+				// --- Is this the slice, we have waited for? ------------------------------
+				loadInfo.setNewContainerStarted(newSliceName);
 				// --- Be sure to get the new (fresh) slice --> Bypass the service cache ---
 				SimulationServiceSlice newSlice = (SimulationServiceSlice) getFreshSlice(newSliceName);
 				// --- Set remote ManagerAgent, TimeModel,EnvironmentInstance --------------
 				newSlice.setManagerAgent(managerAgent);
 				newSlice.setTimeModel(timeModel);			
 				newSlice.setEnvironmentInstance(environmentInstance);	
-				// --- Is this the slice, we have waited for? ------------------------------
-				loadInfo.setNewContainerStarted(newSliceName);
 				// --- Synchronise the time ------------------------------------------------
 				this.synchTimeOfSlice(newSlice);
-				
 			}
 			catch (Throwable t) {
 				myLogger.log(Logger.WARNING, "Error notifying new slice "+newSliceName+" about current SimulationService-State", t);
@@ -1015,7 +1124,6 @@ public class SimulationService extends BaseService {
 		} catch (IMTPException e) {
 			e.printStackTrace();
 		}
-		
 	}
 	
 	/**
@@ -1037,7 +1145,6 @@ public class SimulationService extends BaseService {
 		// --- Calculate the time Difference between ------------
 		// --- this and the remote platform 		 ------------
 		return locTime1Milli - remTimeMilliCorrect;
-		
 	}
 	/**
 	 * This method asks the MainContainer of his local time 
@@ -1079,7 +1186,6 @@ public class SimulationService extends BaseService {
 				e.printStackTrace();
 			}
 		} 		
-
 	}
 	
 	/**
@@ -1143,7 +1249,6 @@ public class SimulationService extends BaseService {
 		remConf.setJadeContainerName(newContainerName);
 		remConf.setJadeShowGUI(true);
 		return remConf;
-		
 	}
 	
 	/**

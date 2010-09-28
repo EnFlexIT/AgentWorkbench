@@ -102,11 +102,11 @@ public class Simulation extends JScrollPane implements Observer, ActionListener 
 		if ( Application.JadePlatform.jadeMainContainerIsRunning(true)){
 			
 			
-			String projectContainer = CurrProject.getProjectFolder();
-			
-			Object[] args = {CurrProject.getEnvironment()};
-			Application.JadePlatform.jadeAgentStart("SMAStart", sma.agents.SMAStarterAgent.class, args, Application.JadePlatform.MASmc.getName());
-			Application.JadePlatform.jadeContainerCreate(projectContainer);
+//			String projectContainer = CurrProject.getProjectFolder();
+//			
+//			Object[] args = {CurrProject.getEnvironment()};
+//			Application.JadePlatform.jadeAgentStart("SMAStart", sma.agents.SMAStarterAgent.class, args, Application.JadePlatform.MASmc.getName());
+//			Application.JadePlatform.jadeContainerCreate(projectContainer);
 //			Object[] args = {CurrProject.getEnvironment()};
 //			String ecaBaseName = "ECA_"+CurrProject.getProjectName();
 //			String ecaName = ecaBaseName;

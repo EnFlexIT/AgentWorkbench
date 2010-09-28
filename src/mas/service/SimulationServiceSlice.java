@@ -1,5 +1,7 @@
 package mas.service;
 
+import java.util.Hashtable;
+
 import jade.core.AID;
 import jade.core.IMTPException;
 import jade.core.Location;
@@ -48,11 +50,17 @@ public interface SimulationServiceSlice extends Service.Slice {
 	// --- Methods on the EnvironmentModel ----------------------
 	static final String SIM_SET_ENVIRONMENT = "set-environment";
 	static final String SIM_GET_ENVIRONMENT = "get-environment";
-
+	static final String SIM_SET_ENVIRONMENT_NEXT_PART = "set-environment-next-part";
+	static final String SIM_GET_ENVIRONMENT_NEXT_PARTS = "get-environment-next-parts";
+	static final String SIM_RESET_ENVIRONMENT_NEXT_PARTS = "reset-environment-next-parts";
+	
 	public void setEnvironmentInstance(Object envObjectInstance) throws IMTPException;
 	public Object getEnvironmentInstance() throws IMTPException;
 	
-
+	public void setEnvironmentInstanceNextPart(AID fromAgent, Object nextPart) throws IMTPException;
+	public Hashtable<AID, Object> getEnvironmentInstanceNextParts() throws IMTPException;
+	public void resetEnvironmentInstanceNextParts() throws IMTPException;
+	
 	// ----------------------------------------------------------
 	// --- Methods for 'Notify Sensor' --------------------------
 	public final String SERVICE_UPDATE_TIME_MODEL = "service-update-time-model";

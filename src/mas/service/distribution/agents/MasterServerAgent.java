@@ -45,11 +45,11 @@ public class MasterServerAgent extends Agent {
 		getContentManager().registerLanguage(codec);
 		getContentManager().registerOntology(ontology);
 
-		// --- Add Main-Behaiviours -----------------------
+		// --- Add Main-Behaviours ------------------------
 		parBehaiv = new ParallelBehaviour(this,ParallelBehaviour.WHEN_ALL);
 		parBehaiv.addSubBehaviour( new ReceiveBehaviour() );
 		parBehaiv.addSubBehaviour( new CleanUpBehaviour(this, 1000*60) );
-		// --- Add Parallel Behaiviour --------------------
+		// --- Add Parallel Behaviour ---------------------
 		this.addBehaviour(parBehaiv);
 	}
 	
@@ -82,34 +82,39 @@ public class MasterServerAgent extends Agent {
 	}
 	
 	// -----------------------------------------------------
-	// --- ClenUp-Behaiviour --- S T A R T -----------------
+	// --- ClenUp-Behaviour --- S T A R T ------------------
 	// -----------------------------------------------------
 	private class CleanUpBehaviour extends TickerBehaviour {
 
 		private static final long serialVersionUID = -2401912961869254054L;
+		private long tickingInterval_ms = 0;
+		private Long tickingInterval_s = new Long(0);
+		
 		public CleanUpBehaviour(Agent a, long period) {
 			super(a, period);
+			tickingInterval_ms = period;
+			tickingInterval_s = tickingInterval_ms / 1000;
+			// --- Execute the first 'Tick' right now ------
+			this.onTick();
 		}
 
 		protected void onTick() {
 			
 			String sqlStmt = null;
-
-			// --- Delete DB-Entries, older than 1 hour ---
+			// --- Delete DB-Entries, older than the interval-length of this behaviour ---
 			sqlStmt = "DELETE FROM platforms " +
-					  "WHERE currently_available=0 " +
-					  "AND DATE_ADD(last_contact_at, INTERVAL 1 HOUR) < now()";
+					  "WHERE  DATE_ADD(last_contact_at, INTERVAL " + tickingInterval_s.toString() + " SECOND) < now()";
 			dbConn.getSqlExecuteUpdate(sqlStmt);
 			
 		}
 	}
 	// -----------------------------------------------------
-	// --- ClenUp-Behaiviour --- E N D E -------------------
+	// --- ClenUp-Behaviour --- E N D E --------------------
 	// -----------------------------------------------------
 
 	
 	// -----------------------------------------------------
-	// --- Message-Receive-Behaiviour --- S T A R T --------
+	// --- Message-Receive-Behaviour --- S T A R T ---------
 	// -----------------------------------------------------
 	private class ReceiveBehaviour extends CyclicBehaviour {
 
@@ -242,7 +247,7 @@ public class MasterServerAgent extends Agent {
 		
 	}
 	// -----------------------------------------------------
-	// --- Message-Receive-Behaiviour --- E N D ------------
+	// --- Message-Receive-Behaviour --- E N D -------------
 	// -----------------------------------------------------
 
 	/**

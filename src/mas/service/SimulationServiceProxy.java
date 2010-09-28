@@ -1,5 +1,7 @@
 package mas.service;
 
+import java.util.Hashtable;
+
 import jade.core.AID;
 import jade.core.GenericCommand;
 import jade.core.IMTPException;
@@ -17,7 +19,7 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 	private static final long serialVersionUID = -7016240061703852319L;
 
 	// ----------------------------------------------------------
-	// --- Methods to synchronize the Time --- S T A R T --------
+	// --- Methods to synchronise the Time --- S T A R T --------
 	// ----------------------------------------------------------
 	@Override
 	public long getRemoteTime() throws IMTPException {
@@ -229,6 +231,71 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 				}
 			}
 			return (Object) result;
+		}
+		catch(ServiceException se) {
+			throw new IMTPException("Unable to access remote node", se);
+		}
+	}
+	@Override
+	public void setEnvironmentInstanceNextPart(AID fromAgent, Object nextPart) throws IMTPException {
+		
+		try {
+			GenericCommand cmd = new GenericCommand(SIM_SET_ENVIRONMENT_NEXT_PART, SimulationService.NAME, null);
+			cmd.addParam(fromAgent);
+			cmd.addParam(nextPart);
+			
+			Node n = getNode();
+			Object result = n.accept(cmd);
+			if((result != null) && (result instanceof Throwable)) {
+				if(result instanceof IMTPException) {
+					throw (IMTPException)result;
+				}
+				else {
+					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
+				}
+			}
+		}
+		catch(ServiceException se) {
+			throw new IMTPException("Unable to access remote node", se);
+		}
+	}
+	@SuppressWarnings("unchecked")
+	@Override
+	public Hashtable<AID, Object> getEnvironmentInstanceNextParts() throws IMTPException {
+		try {
+			GenericCommand cmd = new GenericCommand(SIM_GET_ENVIRONMENT_NEXT_PARTS, SimulationService.NAME, null);
+			Node n = getNode();
+			Object result = n.accept(cmd);
+			if((result != null) && (result instanceof Throwable)) {
+				if(result instanceof IMTPException) {
+					throw (IMTPException)result;
+				}
+				else {
+					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
+				}
+			}
+			Hashtable<AID, Object> nextParts = (Hashtable<AID, Object>) result;
+			return nextParts;
+		}
+		catch(ServiceException se) {
+			throw new IMTPException("Unable to access remote node", se);
+		}
+	}
+	@Override
+	public void resetEnvironmentInstanceNextParts() throws IMTPException {
+
+		try {
+			GenericCommand cmd = new GenericCommand(SIM_RESET_ENVIRONMENT_NEXT_PARTS, SimulationService.NAME, null);
+			Node n = getNode();
+			Object result = n.accept(cmd);
+			if((result != null) && (result instanceof Throwable)) {
+				if(result instanceof IMTPException) {
+					throw (IMTPException)result;
+				}
+				else {
+					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
+				}
+			}
 		}
 		catch(ServiceException se) {
 			throw new IMTPException("Unable to access remote node", se);

@@ -58,13 +58,12 @@ public interface SimulationServiceHelper extends ServiceHelper {
 
 	
 	// --- Methods for simulations ----------------------------------
-	public void notifySensors(String event) throws ServiceException;
+	public void setManagerAgent(AID agentAddress) throws ServiceException; 
+	public AID getManagerAgent() throws ServiceException;
 	
 	public void addSensor(Agent agentWithSensor) throws ServiceException;
 	public void deleteSensor(Agent agentWithSensor) throws ServiceException;
-	
-	public void setManagerAgent(AID agentAddress) throws ServiceException; 
-	public AID getManagerAgent() throws ServiceException;
+	public void notifySensors(String event) throws ServiceException;
 	
 	public void stepSimulation(Object envObjectInstance) throws ServiceException;
 	
@@ -74,5 +73,9 @@ public interface SimulationServiceHelper extends ServiceHelper {
 	
 	public void setEnvironmentInstance(Object envObjectInstance) throws ServiceException;
 	public Object getEnvironmentInstance() throws ServiceException;
+	
+	public void setEnvironmentInstanceNextPart(AID fromAgent, Object nextPart) throws ServiceException;
+	public void resetEnvironmentInstanceNextParts() throws ServiceException;
+	public Hashtable<AID, Object> getEnvironmentInstanceNextParts() throws ServiceException;
 	
 }
