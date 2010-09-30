@@ -12,19 +12,17 @@
     <g id="layer1" transform="">
         <circle r="25.0" id="SoBo1" style="fill:red;stroke:black" cx="65.0"
                 cy="72.63782"/>
-        <circle r="25.0" id="SoBo2" style="fill:blue;stroke:black" cx="365.0"
-                cy="72.63783"/>
-        <rect x="6.5714264" width="169.0" height="23.142857" y="171.42859"
+        <rect x="6.5714283" width="169.0" height="23.142857" y="171.42859"
               id="Obst1" style="fill:gray;stroke:none"/>
         <rect x="289.42856" width="28.57143" height="167.14285" y="15.571411"
               id="Obst4" style="fill:gray;stroke:none"/>
-        <rect x="288.5714" width="221.42856" height="28.57143" y="177.14282"
+        <rect x="288.57144" width="221.42856" height="28.57143" y="177.14282"
               id="Obst3" style="fill:gray;stroke:none"/>
-        <rect x="165.82713" width="25.488605" height="116.91718" y="274.39853"
+        <rect x="165.82712" width="25.488605" height="116.91718" y="274.39856"
               id="Obst2" style="fill:gray;stroke:none"/>
-        <rect x="31.42857" y="351.4286" transform="" width="25.714285"
+        <rect x="31.42857" y="351.42856" transform="" width="25.714285"
               style="fill:green;stroke:none" id="Box1" height="31.42857"/>
-        <rect x="538.5714" width="28.57143" height="31.42857" y="23.857115"
+        <rect x="398.57144" width="28.57143" height="31.42857" y="33.857117"
               id="Box4" style="fill:green;stroke:none"/>
         <rect x="485.7143" y="337.14288" transform="" width="25.714285"
               style="fill:green;stroke:none" id="Box3" height="31.42857"/>

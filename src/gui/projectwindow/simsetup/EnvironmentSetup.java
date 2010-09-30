@@ -27,7 +27,7 @@ import application.Project;
 
 import mas.display.BasicSVGGUI;
 import mas.display.SvgTypes;
-import mas.environment.EnvironmentController2;
+import mas.environment.EnvironmentController;
 import mas.environment.ontology.ActiveObject;
 import mas.environment.ontology.PassiveObject;
 import mas.environment.ontology.Physical2DObject;
@@ -41,14 +41,14 @@ import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
 
-public class EnvironmentSetup2 extends JSplitPane implements ActionListener, Observer{
+public class EnvironmentSetup extends JSplitPane implements ActionListener, Observer{
 
 	private static final long serialVersionUID = 1L;
 	private JSplitPane spControlls = null;
 	private JTree treeEnvironment = null;
 	private JTabbedPane tpSettings = null;
-	private EnvironmentSetupObjectSettings2 objectSettings = null;
-	private EnvironmentSetupEnvironmentSettings2 environmentSettings = null;
+	private EnvironmentSetupObjectSettings objectSettings = null;
+	private EnvironmentSetupEnvironmentSettings environmentSettings = null;
 	private JFileChooser loadSVGDialog = null;
 	
 	Project project = null;
@@ -68,11 +68,11 @@ public class EnvironmentSetup2 extends JSplitPane implements ActionListener, Obs
 	 */
 	private String originalStyle = null;
 	
-	EnvironmentController2 controller = null;
+	EnvironmentController controller = null;
 	/**
 	 * This is the default constructor
 	 */
-	public EnvironmentSetup2(Project project) {
+	public EnvironmentSetup(Project project) {
 		super();
 		this.project = project;
 		initialize();
@@ -90,7 +90,7 @@ public class EnvironmentSetup2 extends JSplitPane implements ActionListener, Obs
 		this.setLeftComponent(getSpControlls());
 		this.setRightComponent(getSvgGUI());
 		
-		this.controller = new EnvironmentController2(project);
+		this.controller = new EnvironmentController(project);
 		controller.addObserver(this);
 		if(controller.getSvgDoc() != null){
 			setSVGDocument(controller.getSvgDoc());
@@ -147,8 +147,13 @@ public class EnvironmentSetup2 extends JSplitPane implements ActionListener, Obs
 	 * Rebuilding treeEnvironment's tree model
 	 */
 	private void rebuildTree(){
-		DefaultMutableTreeNode rootNode = getPlayground(controller.getEnvironment().getRootPlayground());
-		getTreeEnvironment().setModel(new DefaultTreeModel(rootNode));
+		if(controller.getEnvironment() != null){
+			DefaultMutableTreeNode rootNode = getPlayground(controller.getEnvironment().getRootPlayground());
+			getTreeEnvironment().setModel(new DefaultTreeModel(rootNode));
+		}else{
+			DefaultMutableTreeNode dummyNode = new DefaultMutableTreeNode(Language.translate("Keine Umgebung definiert"));
+			getTreeEnvironment().setModel(new DefaultTreeModel(dummyNode));
+		}
 	}
 	/**
 	 * Creating a DefaultMutableTreeNoode representing a PlaygroundObject and it's child objects
@@ -215,8 +220,8 @@ public class EnvironmentSetup2 extends JSplitPane implements ActionListener, Obs
 	private JTabbedPane getTpSettings() {
 		if (tpSettings == null) {
 			tpSettings = new JTabbedPane();
-			this.environmentSettings = new EnvironmentSetupEnvironmentSettings2(this);
-			this.objectSettings = new EnvironmentSetupObjectSettings2(this);
+			this.environmentSettings = new EnvironmentSetupEnvironmentSettings(this);
+			this.objectSettings = new EnvironmentSetupObjectSettings(this);
 			tpSettings.addTab(Language.translate("Umgebung"), environmentSettings);
 			tpSettings.addTab(Language.translate("Objekt"), objectSettings);
 		}
@@ -240,8 +245,10 @@ public class EnvironmentSetup2 extends JSplitPane implements ActionListener, Obs
 	}
 	
 	private void setSVGDocument(Document doc){
-		Element svgRoot = doc.getDocumentElement();
-		addEventListeners(svgRoot);
+		if(doc != null){
+			Element svgRoot = doc.getDocumentElement();
+			addEventListeners(svgRoot);
+		}
 		svgGUI.setSVGDoc(doc);
 	}
 	/**
@@ -315,23 +322,26 @@ public class EnvironmentSetup2 extends JSplitPane implements ActionListener, Obs
 
 	@Override
 	public void update(Observable arg0, Object arg1) {
-		if(arg0 instanceof EnvironmentController2){
+		if(arg0 instanceof EnvironmentController){
 			int eventCode = ((Integer)arg1).intValue();
 			
-			if(eventCode == EnvironmentController2.ENVIRONMENT_CHANGED){
+			if(eventCode == EnvironmentController.ENVIRONMENT_CHANGED){
 				System.out.println("Testausgabe: Ereignis ENVIRONMENT_CHANGED empfangen");
+				
 				rebuildTree();
-				environmentSettings.setScale(controller.getEnvironment().getScale());
+				if(controller.getEnvironment() != null){
+					environmentSettings.setScale(controller.getEnvironment().getScale());
+				}
 			}
-			if(eventCode == EnvironmentController2.SCALE_CHANGED){
+			if(eventCode == EnvironmentController.SCALE_CHANGED){
 				System.out.println("Testausgabe: Ereignis SCALE_CHANGED empfangen");
 				environmentSettings.setScale(controller.getEnvironment().getScale());
 			}
-			if(eventCode == EnvironmentController2.OBJECTS_CHANGED){
+			if(eventCode == EnvironmentController.OBJECTS_CHANGED){
 				System.out.println("Testausgabe: Ereignis OBJECTS_CHANGED empfangen");
 				rebuildTree();
 			}
-			if(eventCode == EnvironmentController2.SVG_CHANGED){
+			if(eventCode == EnvironmentController.SVG_CHANGED){
 				System.out.println("Testausgabe: Ereignis SVG_CHANGED empfangen");
 				setSVGDocument(controller.getSvgDoc());
 			}

@@ -89,7 +89,7 @@ public class Simulation extends JScrollPane implements Observer, ActionListener 
 	/**
 	 * Starts a DisplayAgent and the project agents (later)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("static-access")
 	private void startSimulation(boolean agents){
 		
 		this.daGUI = new DisplayAgentGUI();
@@ -102,48 +102,11 @@ public class Simulation extends JScrollPane implements Observer, ActionListener 
 		if ( Application.JadePlatform.jadeMainContainerIsRunning(true)){
 			
 			
-//			String projectContainer = CurrProject.getProjectFolder();
-//			
-//			Object[] args = {CurrProject.getEnvironment()};
-//			Application.JadePlatform.jadeAgentStart("SMAStart", sma.agents.SMAStarterAgent.class, args, Application.JadePlatform.MASmc.getName());
-//			Application.JadePlatform.jadeContainerCreate(projectContainer);
-//			Object[] args = {CurrProject.getEnvironment()};
-//			String ecaBaseName = "ECA_"+CurrProject.getProjectName();
-//			String ecaName = ecaBaseName;
-//			int ecaSuffix = 0;
-//			while( Application.JadePlatform.jadeAgentIsRunning(ecaName)){
-//				ecaName = ecaBaseName + (++ecaSuffix);
-//			}
-//			
-//			Application.JadePlatform.jadeAgentStart(ecaName, "mas.environment.EnvironmentControllerAgent", args, projectContainer);
-//				
-//			// Start DisplayAgent
-//			// Find name
-//			String daNameBase = "DA";
-//			int daSuffix = 0;
-//			String daName = daNameBase+daSuffix;
-//			while( Application.JadePlatform.jadeAgentIsRunning(daName)){
-//				daName = daNameBase + (++daSuffix);
-//			}
-//			args = new Object[]{CurrProject.getProjectName(), this.daGUI, CurrProject.getEnvironment()};
-//			Application.JadePlatform.jadeAgentStart(daName, "mas.display.DisplayAgent", args, projectContainer );
-//			
-//			// Start project agents
-//			if(agents){
-//				
-//			
-////				Iterator<AbstractObject> objects = CurrProject.getEnvironment().getAllObjects();
-////				
-////				while(objects.hasNext()){
-////					AbstractObject object = objects.next();
-////					if(ObjectTypes.getType(object) == ObjectTypes.AGENT){
-////						daName = object.getId();
-////						String agentClass = ((AgentObject)object).getAgentClass();
-////						args = new Object[]{object};					
-////						Application.JadePlatform.jadeAgentStart(daName, agentClass, args, projectContainer );
-////					}
-////				}
-//			}
+			String projectContainer = CurrProject.getProjectFolder();
+			
+			Object[] args = {CurrProject.getEnvironment()};
+			Application.JadePlatform.jadeAgentStart("EPA_"+CurrProject.getProjectName(), mas.environment.provider.EnvironmentProviderAgent.class, args, Application.JadePlatform.MASmc.getName());
+			Application.JadePlatform.jadeContainerCreate(projectContainer);
 
 		}
 		

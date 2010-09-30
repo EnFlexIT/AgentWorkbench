@@ -16,11 +16,11 @@ import mas.environment.ontology.Scale;
 
 import application.Language;
 
-public class EnvironmentSetupEnvironmentSettings2 extends JPanel {
+public class EnvironmentSetupEnvironmentSettings extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	
-	private EnvironmentSetup2 parent = null;
+	private EnvironmentSetup parent = null;
 
 	private JLabel lblScale = null;
 	private JTextField tfRwu = null;
@@ -33,7 +33,7 @@ public class EnvironmentSetupEnvironmentSettings2 extends JPanel {
 	/**
 	 * This is the default constructor
 	 */
-	public EnvironmentSetupEnvironmentSettings2(EnvironmentSetup2 parent) {
+	public EnvironmentSetupEnvironmentSettings(EnvironmentSetup parent) {
 		super();
 		this.parent = parent;
 		initialize();

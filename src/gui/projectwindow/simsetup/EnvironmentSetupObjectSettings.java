@@ -33,7 +33,7 @@ import mas.environment.ontology.Position;
 import mas.environment.ontology.Size;
 import mas.environment.utils.SVGHelper;
 
-public class EnvironmentSetupObjectSettings2 extends JPanel{
+public class EnvironmentSetupObjectSettings extends JPanel{
 
 	private static final long serialVersionUID = 1L;
 	private JLabel lblId = null;
@@ -76,11 +76,11 @@ public class EnvironmentSetupObjectSettings2 extends JPanel{
 	 */
 	private HashMap<String, Class<?>> typeClass = null;
 	
-	private EnvironmentSetup2 parent = null;
+	private EnvironmentSetup parent = null;
 	/**
 	 * This is the default constructor
 	 */
-	public EnvironmentSetupObjectSettings2(EnvironmentSetup2 parent) {
+	public EnvironmentSetupObjectSettings(EnvironmentSetup parent) {
 		super();
 		this.parent = parent;
 		initialize();

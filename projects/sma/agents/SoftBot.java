@@ -1,44 +1,25 @@
 package sma.agents;
 
-import mas.environment.ontology.ActiveObject;
-import mas.environment.ontology.Position;
-import mas.environment.provider.EnvironmentProviderHelper;
-import mas.environment.provider.EnvironmentProviderService;
-import jade.core.Agent;
-import jade.core.ServiceException;
+import mas.environment.Physical2DAgent;
 
 /**
  * Dummy-Implementation for testing the DisplayAgent
  * @author Nils
  *
  */
-public class SoftBot extends Agent {
-
+public class SoftBot extends Physical2DAgent {
 	/**
-	 * 
+	 * serialVersionUID
 	 */
-	private static final long serialVersionUID = 1L;
-	
+	private static final long serialVersionUID = -1555521768821748185L;
+
 	public void setup(){
-		try {
-			EnvironmentProviderHelper helper = (EnvironmentProviderHelper) getHelper(EnvironmentProviderService.SERVICE_NAME);
-//			Position ownPos = null;
-//			
-//			if(helper.isEnvSet()){
-//				ownPos = helper.getObjectPosition(getLocalName());
-//			}
-			
-			if(helper != null){
-				helper.horizontalTest("Services sind doof");
-			}
-			
-//			if(ownPos != null){
-//				System.out.println(getLocalName()+": Positionsabruf erfolgreich: "+ownPos.getXPos()+":"+ownPos.getYPos());
-//			}else{
-//				System.err.println(getLocalName()+": Positionsabruf fehlgeschlagen!");
-//			}
-		} catch (ServiceException e) {
-			e.printStackTrace();
+		super.setup();
+		if(myEnvironmentObject != null){
+			System.out.println(getLocalName()+": Umgebungsobjekt gefunden:");
+			System.out.println("- Position: "+myEnvironmentObject.getPosition().getXPos()+":"+myEnvironmentObject.getPosition().getYPos());
+			System.out.println("- Groesse: "+myEnvironmentObject.getSize().getWidth()+"x"+myEnvironmentObject.getSize().getHeight());
 		}
-	}		
+	}
+	
 }

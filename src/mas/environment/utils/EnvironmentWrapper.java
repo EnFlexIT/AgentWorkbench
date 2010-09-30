@@ -54,13 +54,15 @@ public class EnvironmentWrapper {
 	 * Rebuilding HashMap and Vectors
 	 */
 	private void rebuildLists(){
+		
 		objectysById = new HashMap<String, Physical2DObject>();
 		agents = new Vector<ActiveObject>();
 		obstacles = new Vector<StaticObject>();
 		payloads = new Vector<PassiveObject>();
 		playgrounds = new Vector<PlaygroundObject>();
-		
-		scanObjectsByPlayground(this.environment.getRootPlayground());
+		if(this.environment != null){
+			scanObjectsByPlayground(this.environment.getRootPlayground());
+		}
 	}
 	
 	/**

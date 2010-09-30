@@ -1,7 +1,7 @@
 package mas.environment;
 
-import gui.projectwindow.simsetup.EnvironmentSetup2;
-import gui.projectwindow.simsetup.EnvironmentSetupObjectSettings2;
+import gui.projectwindow.simsetup.EnvironmentSetup;
+import gui.projectwindow.simsetup.EnvironmentSetupObjectSettings;
 
 import jade.content.lang.Codec;
 import jade.content.lang.Codec.CodecException;
@@ -33,6 +33,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import sim.setup.SimulationSetup;
+import sim.setup.SimulationSetups;
+import sim.setup.SimulationSetups.SimulationSetupsChangeNotification;
 
 import application.Language;
 import application.Project;
@@ -51,7 +53,7 @@ import mas.environment.utils.EnvironmentWrapper;
  * @author Nils
  *
  */
-public class EnvironmentController2 extends Observable implements Observer{
+public class EnvironmentController extends Observable implements Observer{
 	/**
 	 * Observable event code: New environment instance assigned
 	 */
@@ -77,7 +79,7 @@ public class EnvironmentController2 extends Observable implements Observer{
 	 */
 	private String defaultEnvironmentPath = null;
 	/**
-	 * The environment instance encapsulated by this EnvironmentController2
+	 * The environment instance encapsulated by this EnvironmentController
 	 */
 	private Physical2DEnvironment environment;
 	/**
@@ -100,11 +102,11 @@ public class EnvironmentController2 extends Observable implements Observer{
 	 * Constructor
 	 * @param project The Agent.GUI project
 	 */
-	public EnvironmentController2(Project project){
+	public EnvironmentController(Project project){
 		this.project = project;
 		this.project.setEnvironmentController(this);
 		this.project.addObserver(this);
-		this.setDefaultPaths();
+		this.rebuildDefaultPaths();
 		SimulationSetup currentSetup = project.simSetups.getCurrSimSetup(); 
 		// Load SVG file if specified
 		if(currentSetup.getSvgFileName() != null && currentSetup.getSvgFileName().length() >0){
@@ -313,10 +315,13 @@ public class EnvironmentController2 extends Observable implements Observer{
 	private void setSvgDoc(Document doc){
 		if(doc != null){
 			this.svgDoc = prepareSVG(doc);		
-			this.svgDoc = doc;
-			setChanged();
-			notifyObservers(new Integer(SVG_CHANGED));
+//			this.svgDoc = doc;
+//			setChanged();
+//			notifyObservers(new Integer(SVG_CHANGED));
 		}
+		this.svgDoc = doc;
+		setChanged();
+		notifyObservers(new Integer(SVG_CHANGED));
 	}
 	/**
 	 * Saves SVG and environment to the default paths
@@ -406,12 +411,10 @@ public class EnvironmentController2 extends Observable implements Observer{
 	 * @param env The environment
 	 */
 	private void setEnvironment(Physical2DEnvironment env){
-		if(env != null){
-			this.environment = env;
-			this.envWrap = new EnvironmentWrapper(env);
-			setChanged();
-			notifyObservers(new Integer(ENVIRONMENT_CHANGED));
-		}
+		this.environment = env;
+		this.envWrap = new EnvironmentWrapper(env);
+		setChanged();
+		notifyObservers(new Integer(ENVIRONMENT_CHANGED));
 	}
 	
 	public void createOrChange(HashMap<String, Object> settings){
@@ -423,13 +426,13 @@ public class EnvironmentController2 extends Observable implements Observer{
 			notifyObservers(new Integer(OBJECTS_CHANGED));
 		}else{
 			// Change mode
-			if(selectedObject.getClass().equals(settings.get(EnvironmentSetupObjectSettings2.SETTINGS_KEY_ONTO_CLASS))){
+			if(selectedObject.getClass().equals(settings.get(EnvironmentSetupObjectSettings.SETTINGS_KEY_ONTO_CLASS))){
 				// Same object type, just change attributes
-				selectedObject.setId((String) settings.get(EnvironmentSetupObjectSettings2.SETTINGS_KEY_ID));
-				selectedObject.setPosition((Position) settings.get(EnvironmentSetupObjectSettings2.SETTINGS_KEY_POSITION));
-				selectedObject.setSize((Size) settings.get(EnvironmentSetupObjectSettings2.SETTINGS_KEY_SIZE));
+				selectedObject.setId((String) settings.get(EnvironmentSetupObjectSettings.SETTINGS_KEY_ID));
+				selectedObject.setPosition((Position) settings.get(EnvironmentSetupObjectSettings.SETTINGS_KEY_POSITION));
+				selectedObject.setSize((Size) settings.get(EnvironmentSetupObjectSettings.SETTINGS_KEY_SIZE));
 				if(selectedObject instanceof ActiveObject){
-					((ActiveObject)selectedObject).setClassName((String) settings.get(EnvironmentSetupObjectSettings2.SETTINGS_KEY_AGENT_CLASSNAME));
+					((ActiveObject)selectedObject).setClassName((String) settings.get(EnvironmentSetupObjectSettings.SETTINGS_KEY_AGENT_CLASSNAME));
 				}
 			}else{
 				envWrap.removeObject(selectedObject);
@@ -450,13 +453,13 @@ public class EnvironmentController2 extends Observable implements Observer{
 		Physical2DObject newObject = null;
 		
 		try {
-			Class<?> ontologyClass = (Class<?>) settings.get(EnvironmentSetupObjectSettings2.SETTINGS_KEY_ONTO_CLASS);
+			Class<?> ontologyClass = (Class<?>) settings.get(EnvironmentSetupObjectSettings.SETTINGS_KEY_ONTO_CLASS);
 			newObject = (Physical2DObject) ontologyClass.newInstance();
-			newObject.setId(settings.get(EnvironmentSetupObjectSettings2.SETTINGS_KEY_ID).toString());
-			newObject.setPosition((Position) settings.get(EnvironmentSetupObjectSettings2.SETTINGS_KEY_POSITION));
-			newObject.setSize((Size) settings.get(EnvironmentSetupObjectSettings2.SETTINGS_KEY_SIZE));
+			newObject.setId(settings.get(EnvironmentSetupObjectSettings.SETTINGS_KEY_ID).toString());
+			newObject.setPosition((Position) settings.get(EnvironmentSetupObjectSettings.SETTINGS_KEY_POSITION));
+			newObject.setSize((Size) settings.get(EnvironmentSetupObjectSettings.SETTINGS_KEY_SIZE));
 			if(newObject instanceof ActiveObject){
-				((ActiveObject)newObject).setClassName(settings.get(EnvironmentSetupObjectSettings2.SETTINGS_KEY_AGENT_CLASSNAME).toString());
+				((ActiveObject)newObject).setClassName(settings.get(EnvironmentSetupObjectSettings.SETTINGS_KEY_AGENT_CLASSNAME).toString());
 			}
 		} catch (InstantiationException e) {
 			// TODO Auto-generated catch block
@@ -485,7 +488,7 @@ public class EnvironmentController2 extends Observable implements Observer{
 		return selectedObject;
 	}
 	
-	private void setDefaultPaths(){
+	private void rebuildDefaultPaths(){
 		this.defaultSVGPath = project.getProjectFolderFullPath()+project.getSubFolderEnvSetups()+File.separator+project.getProjectName()+"_"+project.simSetupCurrent+".svg";
 		this.defaultEnvironmentPath = project.getProjectFolderFullPath()+project.getSubFolderEnvSetups()+File.separator+project.getProjectName()+"_"+project.simSetupCurrent+".xml";
 	}
@@ -495,25 +498,85 @@ public class EnvironmentController2 extends Observable implements Observer{
 	public void update(Observable arg0, Object arg1) {
 		if(arg0 == project && arg1.toString().equals("SimSetups")){
 			System.out.println("Testausgabe: Ereignis SimSetups empfangen!");
-			handleSetupChange();
+			
+			handleSetupChange((SimulationSetupsChangeNotification) arg1);
 		}
 	}
 	
-	private void handleSetupChange(){
-		setDefaultPaths();
-		File svgFile = new File(defaultSVGPath);
-		if(svgFile.exists()){	// If a SVG file for this setup exists, load it
-			setSvgDoc(loadSVG(svgFile));
-		}else{	// If not, save a copy of the current SVG document to this setup's default SVG path
-			saveSVG(svgFile);
+	private void handleSetupChange(SimulationSetupsChangeNotification sscn){
+		
+		File svgFile = null;
+		File envFile = null;
+		
+		switch(sscn.getUpdateReason()){
+			case SimulationSetups.SIMULATION_SETUP_LOAD:
+				rebuildDefaultPaths();
+
+				svgFile = new File(defaultSVGPath);
+				setSvgDoc(loadSVG(svgFile));
+				
+				envFile = new File(defaultEnvironmentPath);
+				setEnvironment(loadEnvironment(envFile));
+			break;
+			
+			case SimulationSetups.SIMULATION_SETUP_COPY:
+				rebuildDefaultPaths();
+				svgFile = new File(defaultSVGPath);
+				saveSVG(svgFile);	// Save the current SVG under the new name
+				
+				envFile = new File(defaultEnvironmentPath);
+				saveEnvironment(envFile);
+			break;
+			
+			case SimulationSetups.SIMULATION_SETUP_ADD_NEW:
+				this.setSvgDoc(null);
+				this.setEnvironment(null);
+				rebuildDefaultPaths();
+			
+			case SimulationSetups.SIMULATION_SETUP_REMOVE:
+				svgFile = new File(defaultSVGPath);
+				if(svgFile.exists()){
+					svgFile.delete();
+				}
+				envFile = new File(defaultEnvironmentPath);
+				if(envFile.exists()){
+					envFile.delete();
+				}
+				rebuildDefaultPaths();
+			break;
+			
+			case SimulationSetups.SIMULATION_SETUP_RENAME:
+				svgFile = new File(defaultSVGPath);
+				envFile = new File(defaultEnvironmentPath);
+				
+				rebuildDefaultPaths();
+				File newSvgFile = new File(defaultSVGPath);
+				File newEnvFile = new File(defaultEnvironmentPath);
+				
+				svgFile.renameTo(newSvgFile);
+				envFile.renameTo(newEnvFile);
+			break;
+				
+				
+				
 		}
 		
-		File envFile = new File(defaultEnvironmentPath);
-		if(envFile.exists()){	// If an environment file for this setup exists, load it
-			setEnvironment(loadEnvironment(envFile));
-		}else{	// If not, save a copy of the current environment to this setup's default environment path
-			saveEnvironment(envFile);
-		}
+		
+		
+//		buildDefaultPaths();
+//		svgFile = new File(defaultSVGPath);
+//		if(svgFile.exists()){	// If a SVG file for this setup exists, load it
+//			setSvgDoc(loadSVG(svgFile));
+//		}else{	// If not, save a copy of the current SVG document to this setup's default SVG path
+//			saveSVG(svgFile);
+//		}
+//		
+//		envFile = new File(defaultEnvironmentPath);
+//		if(envFile.exists()){	// If an environment file for this setup exists, load it
+//			setEnvironment(loadEnvironment(envFile));
+//		}else{	// If not, save a copy of the current environment to this setup's default environment path
+//			saveEnvironment(envFile);
+//		}
 	}
 	
 	

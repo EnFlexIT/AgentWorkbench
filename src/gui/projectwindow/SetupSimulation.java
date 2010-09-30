@@ -1,7 +1,7 @@
 package gui.projectwindow;
 
 import gui.ProjectWindow;
-import gui.projectwindow.simsetup.EnvironmentSetup2;
+import gui.projectwindow.simsetup.EnvironmentSetup;
 import gui.projectwindow.simsetup.JadeSetup;
 import gui.projectwindow.simsetup.StartSetup;
 
@@ -60,7 +60,7 @@ public class SetupSimulation extends JPanel  {
 		// --- Die (optionalen) Karteikarten einblenden ----------
 		addProjectTab(Language.translate("Start-Konfiguration"), null, new StartSetup(currProject), Language.translate("Agenten-Konfiguration"));
 		addProjectTab(Language.translate("JADE-Konfiguration"), null, new JadeSetup(currProject), Language.translate("JADE-Konfiguration"));
-		addProjectTab(Language.translate("Umgebungskonfiguration"), null, new EnvironmentSetup2(currProject), Language.translate("Umgebungskonfiguration"));
+		addProjectTab(Language.translate("Umgebungskonfiguration"), null, new EnvironmentSetup(currProject), Language.translate("Umgebungskonfiguration"));
 		
 	}
 

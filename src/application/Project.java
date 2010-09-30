@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import mas.PlatformJadeConfig;
 import mas.agents.AgentConfiguration;
-import mas.environment.EnvironmentController2;
+import mas.environment.EnvironmentController;
 import mas.environment.ontology.Physical2DEnvironment;
 import mas.onto.Ontologies4Project;
 import rollout.TextFileRessourceRollOut;
@@ -58,7 +58,7 @@ import sim.setup.SimulationSetups;
 	@XmlTransient public Ontologies4Project ontologies4Project;
 
 	//	@XmlTransient private Physical2DEnvironment environment;
-	@XmlTransient private EnvironmentController2 environmentController;
+	@XmlTransient private EnvironmentController environmentController;
 	
 	// --- Speichervariablen der Projektdatei ------------------ 
 	@XmlElement(name="projectName")
@@ -391,7 +391,7 @@ import sim.setup.SimulationSetups;
 	/**
 	 * @param environment the environment to set
 	 */
-	public void setEnvironmentController(EnvironmentController2 ec) {
+	public void setEnvironmentController(EnvironmentController ec) {
 		this.environmentController = ec;
 	}
 	
