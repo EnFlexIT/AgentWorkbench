@@ -9,4 +9,6 @@ public class ServiceActuator extends Observable {
 		this.notifyObservers(topicWhichChanged);		
 	}
 	
+	
+	
 }

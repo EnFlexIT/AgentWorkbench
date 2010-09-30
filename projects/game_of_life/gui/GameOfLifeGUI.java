@@ -1,7 +1,7 @@
 
 package game_of_life.gui;
 
-import game_of_life.agents.SimulationServiceControllerAgent;
+import jade.core.Agent;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -11,8 +11,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Vector;
+
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -21,7 +25,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.SwingConstants;
-import javax.swing.Timer;
 
 public class GameOfLifeGUI extends JInternalFrame implements ActionListener {
 	
@@ -30,61 +33,58 @@ public class GameOfLifeGUI extends JInternalFrame implements ActionListener {
 	public int nbRow;
 	public int nbCol;
 	//--------- Simulation environment ----------------------------------------------------
-	private SimulationServiceControllerAgent controllerAgent = null;
+	private Agent controllerAgent = null;
 	
-	//public HashMap<String, Integer> localEnvModelInput = new HashMap<String, Integer>();
+    // ------- the cells labels ------------------------------------------------------------
+	private Hashtable<String, LifeLabel> cells = new Hashtable<String, LifeLabel>();
 	public HashMap<String, Integer> localEnvModelOutput = new HashMap<String, Integer>();
+
 	// ------- state of the game (running or pause)----------------------------------------
 	public boolean gameRunning = false;
 	public boolean gameReset = false;
+	private int generation = 0;
 	
 	private final Color[] color = {Color.LIGHT_GRAY, Color.BLUE};
 	// ------- size in pixel of every label ------------------------------------------------
 	private final int size = 15;
 	private final Dimension dim = new Dimension(size, size);
-
-    // ------- the cells labels ------------------------------------------------------------
-	private LifeLabel[][] label;
-	// ------- timer that fires the next generation ----------------------------------------
-	private Timer timer;
 	// ------- generation counter ----------------------------------------------------------
 	public JLabel generationLabel = new JLabel("Generation: 0");
 	// ------- buttons for controlling the simulation --------------------------------------
-	private JButton bClear = new JButton("Clear"), 
-	                bPause = new JButton("Pause"), 
-	                bStart = new JButton("Start");
+	public JButton bClear = new JButton("Clear"), 
+	               bPause = new JButton("Pause"), 
+	               bStart = new JButton("Start");
 	// ------- the slider for the speed -----------------------------------------------------
-	public JSlider slider = new JSlider(0, 3000);	// 0 to 3000 milliseconds (5 seconds)
+	public JSlider slider = new JSlider(0, 1000);	// 0 to 3000 milliseconds (5 seconds)
 	// ------- control the marking of the cell ----------------------------------------------
 	private boolean mouseDown = false;
 	
-	public GameOfLifeGUI(int nbRow, int nbCol, SimulationServiceControllerAgent contrAgent) {
+	public GameOfLifeGUI(int nbRow, int nbCol, Agent simulationManagerAgent) {
 		
 		super("GameOfLife");
+
 		// ------ coordinates of number of agents -------------------------------------------
 		this.nbRow = nbRow;
 		this.nbCol = nbCol;
-		this.controllerAgent = contrAgent;
+		this.controllerAgent = simulationManagerAgent;
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		// ---- create the lables on the frame ---------------------------------------------
-		label = new LifeLabel[nbRow][nbCol];
-		for(int r = 0; r < nbRow; r++) {
-			for(int c = 0; c < nbCol; c++) {
-				String name = (r+"&"+c);
-				label[r][c] = new LifeLabel(name);
-			}
-		}
-		// ---- centralize panel with the labels, 1 & 1 are the gaps between the lables ----  
+		
+		// ---- centralise panel with the labels, 1 & 1 are the gaps between the lables -----  
 		JPanel panel = new JPanel(new GridLayout(nbRow, nbCol, 1, 1));
 		panel.setBackground(Color.BLACK);
 		panel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-
-		// ---- add each label to the panel and add to each of them its neighbours ---------
+		
+		// ---- create the labels on the frame and add each label to the panel --------------
 		for(int r = 0; r < nbRow; r++) {
 			for(int c = 0; c < nbCol; c++) {
-				panel.add(label[r][c]);
+				String name = (r+"&"+c);
+				LifeLabel cell = new LifeLabel(name);
+				panel.add(cell);
+				cells.put(name, cell);
+				localEnvModelOutput.put(name, 0);				
 			}
 		}
+		
 		// ---- panel can now be added -----------------------------------------------------
 		add(panel, BorderLayout.CENTER);
 		
@@ -106,20 +106,13 @@ public class GameOfLifeGUI extends JInternalFrame implements ActionListener {
 		generationLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		panel.add(generationLabel);
 		// ---- slider for regulating the time ---------------------------------------------
-		slider.setMajorTickSpacing(1000);
-		slider.setMinorTickSpacing(250);
+		slider.setMajorTickSpacing(250);
+		slider.setMinorTickSpacing(25);
 		slider.setPaintTicks(true);
-		
-		// ---- the labels for the Slider --------------------------------------------------
-		Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
-		
-		for(int i = 0; i <= 3; i++) {
-			labelTable.put( new Integer( i * 1000 ), new JLabel("" + i) );
-		}
-		slider.setLabelTable( labelTable );
+		slider.createStandardLabels(250);
 		slider.setPaintLabels(true);
 		panel.add(slider);
-		//------ add componets into the JFrame ----------------------------------------------
+		//------ add components into the JFrame ---------------------------------------------
 		add(panel, BorderLayout.SOUTH);
 		// ----- put the frame to the specified location ------------------------------------
 		setLocation(20, 20);
@@ -127,8 +120,6 @@ public class GameOfLifeGUI extends JInternalFrame implements ActionListener {
 		pack();
 		//
 		setVisible(true);
-		// ---- timer for controlling simulation --------------------------------------------
-		timer = new Timer(3000 - slider.getValue(), this);
 	}
 	// ------- Invoked when an action occurs. ----------------------------------------------- 
 	public synchronized void actionPerformed(ActionEvent event) {
@@ -137,30 +128,25 @@ public class GameOfLifeGUI extends JInternalFrame implements ActionListener {
 		
 		// ----- clear button all active bottons --------------------------------------------
 		if(object == bClear) {
-			timer.stop();					// stop timer
 			gameRunning = false;			// flag gamme not running
 			bPause.setEnabled(false);		// disable pause button
 			bStart.setEnabled(true);			// enable go button
 			controllerAgent.doActivate();
-			controllerAgent.totalCounterTime = 0;
-			controllerAgent.timeCounterStop = 0;
-			controllerAgent.timeCounterStart = 0;
-			controllerAgent.generation = 0;
 			controllerAgent.doSuspend();
 			
 			// ------ clear all cells -------------------------------------------------------
-			for(int r = 0; r < nbRow; r++) {
-				for(int c = 0; c < nbCol; c++) {
-					label[r][c].clear();
-				}
+			Iterator<String> it = cells.keySet().iterator();
+			while (it.hasNext()) {
+				LifeLabel cell = cells.get(it.next());
+				cell.clear();				
 			}
 			// --- reset generation ---------------------------------------------------------
-			generationLabel.setText("Generation: 0");
+			generation = 0;
+			this.setGenerationLabel(generation);
 			return;
 		}
 		// ------ pause the simulation process -----------------------------------------------
 		if(object == bPause) {
-			timer.stop();					// stop timer
 			gameRunning = false;			// flag not running
 			bPause.setEnabled(false);		// disable myself
 			bStart.setEnabled(true);			// enable go button
@@ -170,30 +156,40 @@ public class GameOfLifeGUI extends JInternalFrame implements ActionListener {
 		// ----- start the simulation process -------------------------------------------------
 		if(object == bStart) {
 			bPause.setEnabled(true);				// enable pause button
-			bStart.setEnabled(false);					// disable myself
+			bStart.setEnabled(false);				// disable myself
 			gameRunning = true;						// flag game is running
 			controllerAgent.doActivate();
-			System.out.println(" slider Value : "+slider.getValue());
 			return;
 		}
-		// ---- the delay in milliseconds ----------------------------------------------------
-		timer.setDelay(3000 - slider.getValue());
 	}
-	public void updateGUI(HashMap<String, Integer> localEnv){
-		for(int r = 0; r < nbRow; r++) {
-			for(int c = 0; c < nbCol; c++) {
-				int value = localEnv.get(r+"&"+c);
-				label[r][c].updateState(value);
-			}
+	public void updateGUI(HashMap<String, Integer> updatedEnvironment){
+		
+		generation++;
+		this.setGenerationLabel(generation);
+		
+		Vector<String> cellKeys = new Vector<String>( updatedEnvironment.keySet() );
+		Collections.sort(cellKeys);
+		Iterator<String> it = cellKeys.iterator();
+		while (it.hasNext()) {
+			String cellName = it.next();
+			Integer updateValue = updatedEnvironment.get(cellName);
+			LifeLabel cell = cells.get(cellName);
+			cell.updateState(updateValue);	
 		}
 		this.repaint();
 	}
+	public void setGenerationLabel(int gen) {
+		generationLabel.setText("Generation: " + gen);
+	}
+	
+	
 	// ---- A class that extends JLabel and listens mouse events ------------------------------ 
 	class LifeLabel extends JLabel implements MouseListener {
 		private static final long serialVersionUID = -3057761904128267595L;
 		private int state;
 		private String name; 
-		LifeLabel(String name) {
+		
+		public LifeLabel(String name) {
 			state = 0;			// Dead
 			setOpaque(true);				// so color will be showed
 			setBackground(color[0]);
@@ -204,14 +200,14 @@ public class GameOfLifeGUI extends JInternalFrame implements ActionListener {
 		// ----- for changing state of lables -------------------------------------------------
 		void updateState(int state) {
 			this.state = state;
-				setBackground(color[state]);
+			this.setBackground(color[state]);
 		}
 
 		// ----- called when the game is reset/clear ------------------------------------------
 		void clear() {
-				this.state = 0;
-				setBackground(color[0]);
-				localEnvModelOutput.put(name, 0);
+			this.state = 0;
+			this.setBackground(color[0]);
+			localEnvModelOutput.put(name, 0);
 		}
 		@Override
 		public void mouseClicked(MouseEvent arg0) {
@@ -231,7 +227,7 @@ public class GameOfLifeGUI extends JInternalFrame implements ActionListener {
 		public void mousePressed(MouseEvent arg0) {
 			mouseDown = true;
 			state = 1;
-			setBackground(color[1]);
+			this.setBackground(color[1]);
 			localEnvModelOutput.put(name, 1);
 		}
 		// ---- voked when a mouse button has been released on a component ---------------------

@@ -66,7 +66,6 @@ public class CoreWindowConsole extends JEditorPane  {
 	    this.setContentType("text/html");
 	    this.setFont(new Font("Dialog", Font.PLAIN, 11));
 		this.setBackground(new Color(255, 255, 255));
-		this.setToolTipText( Language.translate("Konsole: kann ein- bzw. ausgeblendet werden") );
 		this.setEditable(false);
 		
 		// ------------------------------------------------

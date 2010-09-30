@@ -416,7 +416,11 @@ public class CoreWindow extends JFrame implements ComponentListener{
 			jMenuExtra.add( jMenuExtraLnF );
 			
 			jMenuExtra.addSeparator();
+			jMenuExtra.add( new CWMenueItem( "ExtraBenchmark", "SciMark 2.0 - Benchmark", null ));
+
+			jMenuExtra.addSeparator();
 			jMenuExtra.add( new CWMenueItem( "ExtraOptions", Language.translate("Optionen"), null ));
+			
 			}
 		return jMenuExtra;
 	}
@@ -670,6 +674,9 @@ public class CoreWindow extends JFrame implements ComponentListener{
 				Application.JadePlatform.jadeSystemAgentOpen("log", null);
 			}
 			// --- Menü Extras => nicht hier !! ---------------
+			else if ( ActCMD.equalsIgnoreCase("ExtraBenchmark") ) {
+				Application.doBenchmark(true);
+			}			
 			else if ( ActCMD.equalsIgnoreCase("ExtraOptions") ) {
 				Application.showOptionDialog();
 			}

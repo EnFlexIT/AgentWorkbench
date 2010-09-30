@@ -1,5 +1,6 @@
 package application;
 
+import benchmark.BenchmarkMeasurement;
 import gui.AboutDialog;
 import gui.CoreWindow;
 import gui.CoreWindowConsole;
@@ -32,6 +33,8 @@ public class Application {
 	private static AboutDialog about = null;
 	private static OptionDialog options = null;
 
+	public static boolean benchmarkIsRunning = false; 
+	
 	/**
 	 * main-method for the start of the application 
 	 * @param args
@@ -46,7 +49,7 @@ public class Application {
 		new LoadMeasureThread().start();  
 		startAgentGUI();
 		// --- Starting the performance/benchmark test --------------
-		new BenchmarkMeasurement().start();
+		doBenchmark(false);
 		
 	}	
 
@@ -273,6 +276,25 @@ public class Application {
 		// --- Anwendung neu öffnen -------------
 		startApplication();	
 	}	
+	
+	/**
+	 * Executes the Benchmark-Test of SciMark 2.0 to determine the abbility 
+	 * of this system to deal with numbers. The result will be available in 
+	 * Mflops (Millions of floating point operations per second)
+	 */
+	public static void doBenchmark(boolean forceBenchmark) {
+		// ------------------------------------------------
+		// --- Merker beachten, damit die Messung immer --- 
+		// --- nur einmal ausgeführt werden kann        ---
+		if (Application.benchmarkIsRunning==false) {
+			// --- Merker setzen --------------------------
+			Application.benchmarkIsRunning = true;
+			// --- Execute the Benchmark-Thread -----------
+			new BenchmarkMeasurement(forceBenchmark).start();
+		}
+		// ------------------------------------------------
+	}
+	
 	
 } // --- End Class ---
 

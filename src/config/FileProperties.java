@@ -26,6 +26,11 @@ public class FileProperties extends Properties {
 	private String configFileDefaultComment = "";
 	
 	public final String DEF_RUNAS = "01_RUNAS";
+	
+	public final String DEF_BENCH_VALUE = "02_BENCH_VALUE";
+	public final String DEF_BENCH_EXEC_ON = "03_BENCH_EXEC_ON";
+	public final String DEF_BENCH_SKIP_ALLWAYS = "04_BENCH_SKIP_ALLWAYS";
+	
 	public final String DEF_AUTOSTART = "10_AUTOSTART";
 	public final String DEF_MASTER_URL = "11_MASTER_URL";
 	public final String DEF_MASTER_PORT = "12_MASTER_PORT";
@@ -37,6 +42,9 @@ public class FileProperties extends Properties {
 	public final String DEF_MASTER_DB_PSWD = "23_MASTER_DB_PSWD";
 	
 	private String[] mandantoryProps = {this.DEF_RUNAS,
+										this.DEF_BENCH_VALUE,
+										this.DEF_BENCH_EXEC_ON,
+										this.DEF_BENCH_SKIP_ALLWAYS,
 										this.DEF_AUTOSTART,
 										this.DEF_MASTER_URL,
 										this.DEF_MASTER_PORT,
@@ -121,6 +129,28 @@ public class FileProperties extends Properties {
 			Application.RunInfo.setRunAsServer(false);
 		}
 		
+		// --- this.DEF_BENCH_VALUE ------------------
+		propValue = this.getProperty(this.DEF_BENCH_VALUE).trim();
+		if ( propValue.equalsIgnoreCase("") == true ) {
+			Application.RunInfo.setBenchValue(0);
+		} else {
+			Application.RunInfo.setBenchValue(Float.parseFloat(propValue));
+		}
+		// --- this.DEF_BENCH_EXEC_ON ----------------
+		propValue = this.getProperty(this.DEF_BENCH_EXEC_ON).trim();
+		if ( propValue.equalsIgnoreCase("") == true ) {
+			Application.RunInfo.setBenchExecOn(null);
+		} else {
+			Application.RunInfo.setBenchExecOn(propValue);
+		}
+		// --- this.DEF_BENCH_SKIP_ALLWAYS -----------
+		propValue = this.getProperty(this.DEF_BENCH_SKIP_ALLWAYS).trim();
+		if ( propValue.equalsIgnoreCase("true") == true ) {
+			Application.RunInfo.setBenchAllwaysSkip(true);
+		} else {
+			Application.RunInfo.setBenchAllwaysSkip(false);
+		}
+		
 		// --- this.DEF_AUTOSTART --------------------
 		propValue = this.getProperty(this.DEF_AUTOSTART).trim();
 		if ( propValue.equalsIgnoreCase("true") == true ) {
@@ -128,7 +158,6 @@ public class FileProperties extends Properties {
 		} else {
 			Application.RunInfo.setServerAutoRun(false);
 		}
-		
 		// --- this.DEF_MASTER_URL -------------------
 		propValue = this.getProperty(this.DEF_MASTER_URL).trim();
 		if ( propValue.equalsIgnoreCase("") == false ) {
@@ -136,7 +165,6 @@ public class FileProperties extends Properties {
 		} else {
 			Application.RunInfo.setServerMasterURL(null);
 		}
-
 		// --- this.DEF_MASTER_PORT ------------------
 		propValue = this.getProperty(this.DEF_MASTER_PORT).trim();
 		if ( propValue.equalsIgnoreCase("") == false ) {
@@ -145,7 +173,6 @@ public class FileProperties extends Properties {
 		} else {
 			Application.RunInfo.setServerMasterPort(0);
 		}
-
 		// --- this.DEF_MASTER_PORT4MTP --------------
 		propValue = this.getProperty(this.DEF_MASTER_PORT4MTP);
 		if ( propValue.equalsIgnoreCase("") == false ) {
@@ -199,13 +226,27 @@ public class FileProperties extends Properties {
 			this.setProperty(this.DEF_RUNAS, "Application");
 		}
 		
+		
+		// --- this.DEF_BENCH_VALUE ------------------
+		this.setProperty(this.DEF_BENCH_VALUE, Application.RunInfo.getBenchValue().toString());
+		// --- this.DEF_BENCH_EXEC_ON ----------------
+		if (Application.RunInfo.getBenchExecOn()!=null) {
+			this.setProperty(this.DEF_BENCH_EXEC_ON, Application.RunInfo.getBenchExecOn());	
+		}
+		// --- this.DEF_BENCH_SKIP_ALLWAYS -----------
+		if ( Application.RunInfo.isBenchAllwaysSkip() == true ) {
+			this.setProperty(this.DEF_BENCH_SKIP_ALLWAYS,"true");	
+		} else {
+			this.setProperty(this.DEF_BENCH_SKIP_ALLWAYS,"false");
+		}
+		
+		
 		// --- this.DEF_AUTOSTART --------------------
 		if ( Application.RunInfo.isServerAutoRun() == true ) {
 			this.setProperty(this.DEF_AUTOSTART, "true");
 		} else {
 			this.setProperty(this.DEF_AUTOSTART, "false");
 		}
-		
 		// --- this.DEF_MASTER_URL -------------------
 		if (Application.RunInfo.getServerMasterURL() == null) {
 			this.setProperty(this.DEF_MASTER_URL, "");

@@ -1,7 +1,7 @@
 package game_of_life.agents;
 
 import jade.core.Agent;
-import application.Application;
+import jade.wrapper.StaleProxyException;
 
 public class StartAgent extends Agent{
 
@@ -10,28 +10,29 @@ public class StartAgent extends Agent{
 	@Override
 	protected void setup() {
 		
-		//number of Agents to be started
-		  int nbRow =40;
-		  int nbCol =40;
-		  
-		//stored in an object which will be transfered to loadDistributor agent
-		  Object [] obj = new Object[2];
-		  obj[0] = nbRow;
-		  obj[1] = nbCol;
-		  
-		 try {
-			Thread.sleep(500);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
+		// --- Size of the Array for the Game of Life -----
+		// --- good: 144 / 576 / 1296 / 2304 / 3600 / 5184
+		int no_of_agents = 1296; // --- approx. depends on rounding ---
+		int stretch_factor = (int) Math.round( Math.sqrt(no_of_agents/144) );
+		
+		// --- Think about 16:9-ratio of the monitor ------
+		int nbCol = stretch_factor * 16;
+		int nbRow = stretch_factor * 9;
+				  
+		// --- Start-Arg. for the manager-agent ----------- 
+		Object [] arg = new Object[2];
+		arg[0] = nbRow;
+		arg[1] = nbCol;
+
+		// --- Start the 'simulationManagerAgent' --------- 
+		try {
+			this.getContainerController().createNewAgent("sim.manager", game_of_life.agents.SimulationManagerAgent.class.getName(), arg).start();
+		} catch (StaleProxyException e) {
 			e.printStackTrace();
 		}
-		//Start LoadDistributor Agent
-			Application.JadePlatform.jadeAgentStart("AgentControler",
-					"game_of_life.agents.SimulationServiceControllerAgent", obj);
-		}
-	
-	@Override
-	protected void takeDown() {
-		super.takeDown();
+		
+		// --- Ready! This Agent can die now --------------
+		this.doDelete();
 	}
+	
 }

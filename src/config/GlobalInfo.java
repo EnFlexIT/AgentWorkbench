@@ -51,7 +51,12 @@ public class GlobalInfo {
 	private static String localFileNameProjectOntology = "AgentGUIProjectOntology";
 	
 	// --- File-Properties --------------------------------------------------
-	private boolean filePropRunAsServer = false;	
+	private boolean filePropRunAsServer = false;
+	
+	private float filePropBenchValue = 0;
+	private String filePropBenchExecOn = null;
+	private boolean filePropBenchAllwaysSkip = false; 
+	
 	private boolean filePropServerAutoRun = false;
 	private String filePropServerMasterURL = null;
 	private Integer filePropServerMasterPort = this.localeJadeLocalPort;
@@ -434,6 +439,48 @@ public class GlobalInfo {
 	public boolean isRunAsServer() {
 		return this.filePropRunAsServer;
 	}
+
+	// ---- SciMark 2.0 Benchmark ----------------------------
+	/**
+	 * @return the filePropBenchValue
+	 */
+	public Float getBenchValue() {
+		return filePropBenchValue;
+	}
+	/**
+	 * @param filePropBenchValue the filePropBenchValue to set
+	 */
+	public void setBenchValue(float benchValue) {
+		this.filePropBenchValue = benchValue;
+	}
+
+	/**
+	 * @return the filePropBenchExecOn
+	 */
+	public String getBenchExecOn() {
+		return filePropBenchExecOn;
+	}
+	/**
+	 * @param filePropBenchExecOn the filePropBenchExecOn to set
+	 */
+	public void setBenchExecOn(String benchExecOn) {
+		this.filePropBenchExecOn = benchExecOn;
+	}
+
+	/**
+	 * @return the filePropBenchAllwaySkip
+	 */
+	public boolean isBenchAllwaysSkip() {
+		return filePropBenchAllwaysSkip;
+	}
+	/**
+	 * @param filePropBenchAllwaySkip the filePropBenchAllwaySkip to set
+	 */
+	public void setBenchAllwaysSkip(boolean benchAllwaySkip) {
+		this.filePropBenchAllwaysSkip = benchAllwaySkip;
+	}
+
+	// ---- Connection to the Master-Server ----------------------------
 	/**
 	 * @param filePropAutoRun the filePropAutoRun to set
 	 */
