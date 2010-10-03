@@ -52,7 +52,6 @@ public class SVGHelper {
 	public static Position getPosFromElement(Element elem, Scale scale){
 		float x=-1, y=-1;
 		if(elem.getTagName().equals("rect")){
-			Size size = getSizeFromElement(elem, scale);
 			x = (Float.parseFloat(elem.getAttributeNS(null, "x")) + Float.parseFloat(elem.getAttributeNS(null, "width"))/2);
 			y = (Float.parseFloat(elem.getAttributeNS(null, "y")) + Float.parseFloat(elem.getAttributeNS(null, "height"))/2);
 		}else if(elem.getTagName().equals("circle") || elem.getTagName().equals("ellipse")){

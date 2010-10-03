@@ -9,7 +9,7 @@ import jade.core.CaseInsensitiveString;
 
 /** file: EnvironmentOntology.java
  * @author ontology bean generator
- * @version 2010/09/21, 16:26:57
+ * @version 2010/10/3, 17:33:18
  */
 public class EnvironmentOntology extends jade.content.onto.Ontology  {
   //NAME
@@ -23,25 +23,9 @@ public class EnvironmentOntology extends jade.content.onto.Ontology  {
 
 
    // VOCABULARY
-    public static final String PLAYGROUNDOBJECT_CHILDOBJECTS="childObjects";
-    public static final String PLAYGROUNDOBJECT="PlaygroundObject";
-    public static final String SPEED_YPOSCHANGE="yPosChange";
-    public static final String SPEED_XPOSCHANGE="xPosChange";
-    public static final String SPEED="Speed";
-    public static final String ACTIVEOBJECT_PAYLOAD="payload";
-    public static final String ACTIVEOBJECT_MAXSPEED="maxSpeed";
-    public static final String ACTIVEOBJECT_CURRENTSPEED="currentSpeed";
-    public static final String ACTIVEOBJECT_CLASSNAME="className";
-    public static final String ACTIVEOBJECT="ActiveObject";
-    public static final String PHYSICAL2DOBJECT_PARENT="parent";
-    public static final String PHYSICAL2DOBJECT_SIZE="size";
-    public static final String PHYSICAL2DOBJECT_ID="id";
-    public static final String PHYSICAL2DOBJECT_POSITION="position";
-    public static final String PHYSICAL2DOBJECT="Physical2DObject";
-    public static final String SCALE_REALWORLDUNTINAME="realWorldUntiName";
-    public static final String SCALE_PIXELVALUE="pixelValue";
-    public static final String SCALE_REALWORLDUNITVALUE="realWorldUnitValue";
-    public static final String SCALE="Scale";
+    public static final String MOVEMENT_YPOSCHANGE="yPosChange";
+    public static final String MOVEMENT_XPOSCHANGE="xPosChange";
+    public static final String MOVEMENT="Movement";
     public static final String PASSIVEOBJECT_CONTROLLEDBY="controlledBy";
     public static final String PASSIVEOBJECT="PassiveObject";
     public static final String POSITION_XPOS="xPos";
@@ -50,10 +34,26 @@ public class EnvironmentOntology extends jade.content.onto.Ontology  {
     public static final String SIZE_WIDTH="width";
     public static final String SIZE_HEIGHT="height";
     public static final String SIZE="Size";
+    public static final String PHYSICAL2DOBJECT_PARENTPLAYGROUNDID="parentPlaygroundID";
+    public static final String PHYSICAL2DOBJECT_POSITION="position";
+    public static final String PHYSICAL2DOBJECT_SIZE="size";
+    public static final String PHYSICAL2DOBJECT_ID="id";
+    public static final String PHYSICAL2DOBJECT="Physical2DObject";
+    public static final String SCALE_REALWORLDUNITVALUE="realWorldUnitValue";
+    public static final String SCALE_REALWORLDUNTINAME="realWorldUntiName";
+    public static final String SCALE_PIXELVALUE="pixelValue";
+    public static final String SCALE="Scale";
+    public static final String PLAYGROUNDOBJECT_CHILDOBJECTS="childObjects";
+    public static final String PLAYGROUNDOBJECT="PlaygroundObject";
+    public static final String ACTIVEOBJECT_MAXSPEED="maxSpeed";
+    public static final String ACTIVEOBJECT_MOVEMENT="movement";
+    public static final String ACTIVEOBJECT_CLASSNAME="className";
+    public static final String ACTIVEOBJECT_PAYLOAD="payload";
+    public static final String ACTIVEOBJECT="ActiveObject";
+    public static final String STATICOBJECT="StaticObject";
     public static final String PHYSICAL2DENVIRONMENT_SCALE="scale";
     public static final String PHYSICAL2DENVIRONMENT_ROOTPLAYGROUND="rootPlayground";
     public static final String PHYSICAL2DENVIRONMENT="Physical2DEnvironment";
-    public static final String STATICOBJECT="StaticObject";
 
   /**
    * Constructor
@@ -63,26 +63,26 @@ public class EnvironmentOntology extends jade.content.onto.Ontology  {
     try { 
 
     // adding Concept(s)
-    ConceptSchema staticObjectSchema = new ConceptSchema(STATICOBJECT);
-    add(staticObjectSchema, mas.environment.ontology.StaticObject.class);
     ConceptSchema physical2DEnvironmentSchema = new ConceptSchema(PHYSICAL2DENVIRONMENT);
     add(physical2DEnvironmentSchema, mas.environment.ontology.Physical2DEnvironment.class);
+    ConceptSchema staticObjectSchema = new ConceptSchema(STATICOBJECT);
+    add(staticObjectSchema, mas.environment.ontology.StaticObject.class);
+    ConceptSchema activeObjectSchema = new ConceptSchema(ACTIVEOBJECT);
+    add(activeObjectSchema, mas.environment.ontology.ActiveObject.class);
+    ConceptSchema playgroundObjectSchema = new ConceptSchema(PLAYGROUNDOBJECT);
+    add(playgroundObjectSchema, mas.environment.ontology.PlaygroundObject.class);
+    ConceptSchema scaleSchema = new ConceptSchema(SCALE);
+    add(scaleSchema, mas.environment.ontology.Scale.class);
+    ConceptSchema physical2DObjectSchema = new ConceptSchema(PHYSICAL2DOBJECT);
+    add(physical2DObjectSchema, mas.environment.ontology.Physical2DObject.class);
     ConceptSchema sizeSchema = new ConceptSchema(SIZE);
     add(sizeSchema, mas.environment.ontology.Size.class);
     ConceptSchema positionSchema = new ConceptSchema(POSITION);
     add(positionSchema, mas.environment.ontology.Position.class);
     ConceptSchema passiveObjectSchema = new ConceptSchema(PASSIVEOBJECT);
     add(passiveObjectSchema, mas.environment.ontology.PassiveObject.class);
-    ConceptSchema scaleSchema = new ConceptSchema(SCALE);
-    add(scaleSchema, mas.environment.ontology.Scale.class);
-    ConceptSchema physical2DObjectSchema = new ConceptSchema(PHYSICAL2DOBJECT);
-    add(physical2DObjectSchema, mas.environment.ontology.Physical2DObject.class);
-    ConceptSchema activeObjectSchema = new ConceptSchema(ACTIVEOBJECT);
-    add(activeObjectSchema, mas.environment.ontology.ActiveObject.class);
-    ConceptSchema speedSchema = new ConceptSchema(SPEED);
-    add(speedSchema, mas.environment.ontology.Speed.class);
-    ConceptSchema playgroundObjectSchema = new ConceptSchema(PLAYGROUNDOBJECT);
-    add(playgroundObjectSchema, mas.environment.ontology.PlaygroundObject.class);
+    ConceptSchema movementSchema = new ConceptSchema(MOVEMENT);
+    add(movementSchema, mas.environment.ontology.Movement.class);
 
     // adding AgentAction(s)
 
@@ -94,33 +94,33 @@ public class EnvironmentOntology extends jade.content.onto.Ontology  {
     // adding fields
     physical2DEnvironmentSchema.add(PHYSICAL2DENVIRONMENT_ROOTPLAYGROUND, playgroundObjectSchema, ObjectSchema.MANDATORY);
     physical2DEnvironmentSchema.add(PHYSICAL2DENVIRONMENT_SCALE, scaleSchema, ObjectSchema.MANDATORY);
+    activeObjectSchema.add(ACTIVEOBJECT_PAYLOAD, passiveObjectSchema, 0, ObjectSchema.UNLIMITED);
+    activeObjectSchema.add(ACTIVEOBJECT_CLASSNAME, (TermSchema)getSchema(BasicOntology.STRING), ObjectSchema.MANDATORY);
+    activeObjectSchema.add(ACTIVEOBJECT_MOVEMENT, movementSchema, ObjectSchema.MANDATORY);
+    activeObjectSchema.add(ACTIVEOBJECT_MAXSPEED, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.MANDATORY);
+    playgroundObjectSchema.add(PLAYGROUNDOBJECT_CHILDOBJECTS, physical2DObjectSchema, 0, ObjectSchema.UNLIMITED);
+    scaleSchema.add(SCALE_PIXELVALUE, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.MANDATORY);
+    scaleSchema.add(SCALE_REALWORLDUNTINAME, (TermSchema)getSchema(BasicOntology.STRING), ObjectSchema.OPTIONAL);
+    scaleSchema.add(SCALE_REALWORLDUNITVALUE, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.MANDATORY);
+    physical2DObjectSchema.add(PHYSICAL2DOBJECT_ID, (TermSchema)getSchema(BasicOntology.STRING), ObjectSchema.MANDATORY);
+    physical2DObjectSchema.add(PHYSICAL2DOBJECT_SIZE, sizeSchema, ObjectSchema.MANDATORY);
+    physical2DObjectSchema.add(PHYSICAL2DOBJECT_POSITION, positionSchema, ObjectSchema.MANDATORY);
+    physical2DObjectSchema.add(PHYSICAL2DOBJECT_PARENTPLAYGROUNDID, (TermSchema)getSchema(BasicOntology.STRING), ObjectSchema.MANDATORY);
     sizeSchema.add(SIZE_HEIGHT, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.MANDATORY);
     sizeSchema.add(SIZE_WIDTH, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.MANDATORY);
     positionSchema.add(POSITION_YPOS, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.MANDATORY);
     positionSchema.add(POSITION_XPOS, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.MANDATORY);
     passiveObjectSchema.add(PASSIVEOBJECT_CONTROLLEDBY, activeObjectSchema, ObjectSchema.OPTIONAL);
-    scaleSchema.add(SCALE_REALWORLDUNITVALUE, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.MANDATORY);
-    scaleSchema.add(SCALE_PIXELVALUE, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.MANDATORY);
-    scaleSchema.add(SCALE_REALWORLDUNTINAME, (TermSchema)getSchema(BasicOntology.STRING), ObjectSchema.OPTIONAL);
-    physical2DObjectSchema.add(PHYSICAL2DOBJECT_POSITION, positionSchema, ObjectSchema.MANDATORY);
-    physical2DObjectSchema.add(PHYSICAL2DOBJECT_ID, (TermSchema)getSchema(BasicOntology.STRING), ObjectSchema.MANDATORY);
-    physical2DObjectSchema.add(PHYSICAL2DOBJECT_SIZE, sizeSchema, ObjectSchema.MANDATORY);
-    physical2DObjectSchema.add(PHYSICAL2DOBJECT_PARENT, playgroundObjectSchema, ObjectSchema.OPTIONAL);
-    activeObjectSchema.add(ACTIVEOBJECT_CLASSNAME, (TermSchema)getSchema(BasicOntology.STRING), ObjectSchema.MANDATORY);
-    activeObjectSchema.add(ACTIVEOBJECT_CURRENTSPEED, speedSchema, ObjectSchema.MANDATORY);
-    activeObjectSchema.add(ACTIVEOBJECT_MAXSPEED, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.MANDATORY);
-    activeObjectSchema.add(ACTIVEOBJECT_PAYLOAD, passiveObjectSchema, 0, ObjectSchema.UNLIMITED);
-    speedSchema.add(SPEED_XPOSCHANGE, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.MANDATORY);
-    speedSchema.add(SPEED_YPOSCHANGE, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.MANDATORY);
-    playgroundObjectSchema.add(PLAYGROUNDOBJECT_CHILDOBJECTS, physical2DObjectSchema, 0, ObjectSchema.UNLIMITED);
+    movementSchema.add(MOVEMENT_XPOSCHANGE, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.MANDATORY);
+    movementSchema.add(MOVEMENT_YPOSCHANGE, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.MANDATORY);
 
     // adding name mappings
 
     // adding inheritance
     staticObjectSchema.addSuperSchema(physical2DObjectSchema);
-    passiveObjectSchema.addSuperSchema(physical2DObjectSchema);
     activeObjectSchema.addSuperSchema(physical2DObjectSchema);
     playgroundObjectSchema.addSuperSchema(physical2DObjectSchema);
+    passiveObjectSchema.addSuperSchema(physical2DObjectSchema);
 
    }catch (java.lang.Exception e) {e.printStackTrace();}
   }

@@ -2,15 +2,18 @@ package gui.projectwindow.simsetup;
 
 import javax.swing.JSplitPane;
 
+import javax.swing.DropMode;
 import javax.swing.JFileChooser;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.JTabbedPane;
+import javax.swing.TransferHandler;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
 
 import org.apache.batik.bridge.UpdateManager;
 import org.apache.batik.swing.JSVGCanvas;
@@ -35,6 +38,10 @@ import mas.environment.ontology.PlaygroundObject;
 import mas.environment.ontology.StaticObject;
 import mas.environment.utils.SVGHelper;
 
+import java.awt.Point;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetAdapter;
+import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Iterator;
@@ -139,6 +146,49 @@ public class EnvironmentSetup extends JSplitPane implements ActionListener, Obse
 					}
 				}
 			});
+			
+			treeEnvironment.setDragEnabled(true);
+			treeEnvironment.setDropMode(DropMode.USE_SELECTION);
+			treeEnvironment.setDropTarget(new DropTarget(treeEnvironment, TransferHandler.MOVE, new DropTargetAdapter(){
+
+				@Override
+				public void drop(DropTargetDropEvent dtde) {
+					
+					DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) treeEnvironment.getSelectionPath().getLastPathComponent();
+					String selectedObjectID = selectedNode.toString();
+					Physical2DObject selectedObject = controller.getEnvWrap().getObjectById(selectedObjectID);
+					if(selectedObject != null){
+						// Get target TreePath 
+						Point dropLocation = dtde.getLocation();
+						TreePath targetPath = treeEnvironment.getClosestPathForLocation(dropLocation.x, dropLocation.y);
+						DefaultMutableTreeNode targetNode = (DefaultMutableTreeNode) targetPath.getLastPathComponent();
+						
+						// Find the playground the target node belongs to
+						boolean targetPgFound = false;
+						Physical2DObject targetObject = null;
+						while(targetNode != null && !targetPgFound){
+							targetObject = controller.getEnvWrap().getObjectById(targetNode.toString());
+							if(targetObject != null && targetObject instanceof PlaygroundObject){
+								targetPgFound = true;
+							}else{
+								targetNode = (DefaultMutableTreeNode) targetNode.getParent();
+							}
+						}
+						
+						if(targetPgFound){
+							dtde.dropComplete(controller.moveObjectToPlayground(selectedObjectID, targetObject.getId()));
+							setSelectedElement(null);
+						}else{
+							dtde.dropComplete(false);
+						}
+					}else{
+						dtde.dropComplete(false);
+					}
+					
+					
+				}
+					
+			}));
 		}
 		return treeEnvironment;
 	}

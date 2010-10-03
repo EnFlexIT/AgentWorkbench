@@ -1,5 +1,9 @@
 package mas.environment.provider;
 
+import java.util.HashSet;
+
+import mas.environment.ontology.ActiveObject;
+import mas.environment.ontology.Movement;
 import mas.environment.ontology.Physical2DEnvironment;
 import mas.environment.ontology.Physical2DObject;
 import jade.core.GenericCommand;
@@ -17,29 +21,26 @@ public class EnvironmentProviderProxy extends SliceProxy implements
 
 	@Override
 	public Physical2DEnvironment getEnvironment() throws IMTPException {
-		Physical2DEnvironment environment = null;
 		try {
 			GenericCommand cmd = new GenericCommand(H_GET_ENVIRONMENT, EnvironmentProviderService.SERVICE_NAME, null);
-			getNode().accept(cmd);
-//			if(result != null){
-//				if(result instanceof IMTPException){
-//					throw (IMTPException)result;
-//				}else if (result instanceof Throwable){
-//					throw new IMTPException("An undeclared exception was thrown", (Throwable) result);
-//				}else{
-//					environment = (Physical2DEnvironment) result;
-//				}
-//			}
+			Object result = getNode().accept(cmd);
+			if((result != null) && (result instanceof Throwable)){
+				if(result instanceof IMTPException) {
+					throw (IMTPException)result;
+				}
+				else {
+					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
+				}
+			}
+			return (Physical2DEnvironment) result;
 		} catch (ServiceException e) {
 			throw new IMTPException("Unable to access remote node", e);
 		}
-		return environment;
 	}
 
 	@Override
 	public Physical2DObject getObject(String id) throws IMTPException {
 		
-		Physical2DObject object = null;
 		try {
 			GenericCommand cmd = new GenericCommand(H_GET_OBJECT, EnvironmentProviderService.SERVICE_NAME, null);
 			cmd.addParam(id);
@@ -52,12 +53,53 @@ public class EnvironmentProviderProxy extends SliceProxy implements
 					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
 				}
 			}
-			object = (Physical2DObject) result;
+			return (Physical2DObject) result;
 		} catch (ServiceException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new IMTPException("Unable to access remote node", e);
 		}
-		return object;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public HashSet<ActiveObject> getCurrentlyMoving() throws IMTPException {
+		
+		try {
+			GenericCommand cmd = new GenericCommand(H_GET_CURRENTLY_MOVING, EnvironmentProviderService.SERVICE_NAME, null);
+			Object result = getNode().accept(cmd);
+			if((result != null) && (result instanceof Throwable)) {
+				if(result instanceof IMTPException) {
+					throw (IMTPException)result;
+				}
+				else {
+					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
+				}
+			}
+			return (HashSet<ActiveObject>) result;
+		} catch (ServiceException e) {
+			throw new IMTPException("Unable to access remote node", e);
+		}
+	}
+
+	@Override
+	public boolean setMovement(String agentID, Movement movement)
+			throws IMTPException {
+		try {
+			GenericCommand cmd = new GenericCommand(H_SET_MOVEMENT, EnvironmentProviderService.SERVICE_NAME, null);
+			cmd.addParam(agentID);
+			cmd.addParam(movement);
+			Object result = getNode().accept(cmd);
+			if((result != null) && (result instanceof Throwable)) {
+				if(result instanceof IMTPException) {
+					throw (IMTPException)result;
+				}
+				else {
+					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
+				}
+			}
+			return ((Boolean)result).booleanValue();
+		} catch (ServiceException e) {
+			throw new IMTPException("Unable to access remote node", e);
+		}
 	}
 
 	

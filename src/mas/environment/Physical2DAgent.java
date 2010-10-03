@@ -22,28 +22,19 @@ public abstract class Physical2DAgent extends Agent{
 	 * This agent's representation in the environment model
 	 */
 	protected ActiveObject myEnvironmentObject;
-	/**
-	 * The ID of this agent's environment object 
-	 * Default: The agent's localName. Subclasses can assign other IDs in their setup method 
-	 */
-	protected String myObjectID;
 	
 	public void setup(){
-		myObjectID = getLocalName();
 		try {
 			myEnvironmentObject = getMyEnvironmentOject();
 			if(myEnvironmentObject == null){
-				System.err.println(getLocalName()+": No matching environment object found, shutting down!");
+				System.err.println(getLocalName()+" - Error: No matching environment object found, shutting down!");
 				doDelete();
 			}
 		} catch (ServiceException e) {
-			System.err.println(getLocalName()+": Environment provider service not found, shutting down!");
+			System.err.println(getLocalName()+" - Error retrieving EnvironmentProviderHelper, shutting down!");
 			doDelete();
 		}
 	}
-	
-	
-	
 	
 	/**
 	 * This method gets the ActiveObject representing this agent from the environment model
@@ -52,7 +43,7 @@ public abstract class Physical2DAgent extends Agent{
 	 */
 	private ActiveObject getMyEnvironmentOject() throws ServiceException{
 			EnvironmentProviderHelper helper = (EnvironmentProviderHelper) getHelper(EnvironmentProviderService.SERVICE_NAME);
-			return (ActiveObject) helper.getObject(myObjectID);
+			return (ActiveObject) helper.getObject(getLocalName());
 	}
 	/**
 	 * Gets a Physical2DObject from the EnvironmentProviderService
@@ -62,7 +53,7 @@ public abstract class Physical2DAgent extends Agent{
 	 */
 	private Physical2DObject getEnvironmentObject(String id) throws ServiceException{
 		EnvironmentProviderHelper helper = (EnvironmentProviderHelper) getHelper(EnvironmentProviderService.SERVICE_NAME);
-		return helper.getObject(myObjectID);
+		return helper.getObject(getLocalName());
 	}
 
 }

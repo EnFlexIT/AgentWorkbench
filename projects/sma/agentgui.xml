@@ -9,14 +9,6 @@ Einfaches Demo-Projekt fr die Visualisierung</projectDescription>
     <simulationSetupCurrent>default</simulationSetupCurrent>
     <simulationSetups>
         <entry>
-            <key>TestSetup2</key>
-            <value>testsetup2.xml</value>
-        </entry>
-        <entry>
-            <key>TestSetup1</key>
-            <value>testsetup1.xml</value>
-        </entry>
-        <entry>
             <key>default</key>
             <value>default.xml</value>
         </entry>

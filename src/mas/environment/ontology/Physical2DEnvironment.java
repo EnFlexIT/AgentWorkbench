@@ -9,7 +9,7 @@ import jade.core.*;
    * This class represents a physical 2D environment
 * Protege name: Physical2DEnvironment
 * @author ontology bean generator
-* @version 2010/09/21, 16:26:57
+* @version 2010/10/3, 17:33:18
 */
 public class Physical2DEnvironment implements Concept {
 

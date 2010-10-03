@@ -1,5 +1,9 @@
 package mas.environment.provider;
 
+import java.util.HashSet;
+
+import mas.environment.ontology.ActiveObject;
+import mas.environment.ontology.Movement;
 import mas.environment.ontology.Physical2DEnvironment;
 import mas.environment.ontology.Physical2DObject;
 import mas.environment.utils.EnvironmentWrapper;
@@ -32,15 +36,23 @@ public class EnvironmentProviderService extends BaseService {
 	 * Wrapper object for easier handling of the Physical2DEnvironment object
 	 */
 	private EnvironmentWrapper envWrap = null;
-	
+	/**
+	 * The EnvironmentProviderHelper instance 
+	 */
 	private ServiceHelper helper = new EnvironmentProviderHelperImpl();
-	
+	/**
+	 * The local EnvironmentProviderSlice instance
+	 */
 	private Service.Slice localSlice = new EnvironmentProviderSliceImpl();
-	
+	/**
+	 * True if this node hosts the Physical2DEnvironment
+	 */
 	private boolean masterNode = false;
+	/**
+	 * Set of currently moving ActiveObjects
+	 */
+	private HashSet<ActiveObject> currentlyMoving;
 	
-	private EnvironmentProviderAgent epa;
-
 	@Override
 	public String getName() {
 		 return SERVICE_NAME;
@@ -50,8 +62,6 @@ public class EnvironmentProviderService extends BaseService {
 		try {
 			super.boot(p);
 			System.out.println(getLocalNode().getName());
-			System.out.println("Service-name: "+this.getName());
-			
 			getLocalNode().exportSlice(SERVICE_NAME, getLocalSlize());
 		} catch (ServiceException e) {
 			// TODO Auto-generated catch block
@@ -62,11 +72,24 @@ public class EnvironmentProviderService extends BaseService {
 		}
 		
 	}
-	
-	private void registerEPA(EnvironmentProviderAgent epa){
-		this.epa = epa;
-		this.masterNode = true;
+	/**
+	 * Initializes the service's environment
+	 * @param environment The environment
+	 */
+	private void setEnvironment(Physical2DEnvironment environment){
+		if(environment != null){
+			this.environment = environment;
+			this.envWrap = new EnvironmentWrapper(environment);
+			this.currentlyMoving = new HashSet<ActiveObject>();
+			this.masterNode = true;
+		}else{
+			this.environment = null;
+			this.envWrap = null;
+			this.currentlyMoving = null;
+			this.masterNode = false;
+		}
 	}
+	
 	/**
 	 * Gets the services environment Physical2DEnvironment object
 	 * @return The Physical2DEnvironment object
@@ -74,7 +97,7 @@ public class EnvironmentProviderService extends BaseService {
 	private Physical2DEnvironment getEnvironment(){
 		Physical2DEnvironment env = null;
 		if(masterNode){
-			env = epa.getEnvironment();
+			env = environment;
 		}else{
 			try {
 				EnvironmentProviderSlice mainSlice = (EnvironmentProviderSlice) getSlice(MAIN_SLICE);
@@ -99,23 +122,72 @@ public class EnvironmentProviderService extends BaseService {
 		Physical2DObject object = null;
 		
 		if(masterNode){
-			object = epa.getEnvWrap().getObjectById(id);
+			object = envWrap.getObjectById(id);
 		}else{
 		
 			try {
 				EnvironmentProviderSlice mainSlice = (EnvironmentProviderSlice) getSlice(MAIN_SLICE);
-				try {
-					object = mainSlice.getObject(id);
-				} catch (IMTPException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				object = mainSlice.getObject(id);
 			} catch (ServiceException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IMTPException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 		return object;
+	}
+	
+	private HashSet<ActiveObject> getCurrentlyMoving(){
+		HashSet<ActiveObject> cm = null;
+		if(masterNode){
+			cm = this.currentlyMoving;
+		}else{
+			try {
+				EnvironmentProviderSlice mainSlice = (EnvironmentProviderSlice) getSlice(MAIN_SLICE);
+				cm = mainSlice.getCurrentlyMoving();
+			} catch (ServiceException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IMTPException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return cm;
+	}
+	
+	private boolean setMovement(String agentID, Movement movement){
+		boolean result = false;
+		if(masterNode){
+			Physical2DObject object = getObject(agentID);
+			if(object != null && object instanceof ActiveObject){
+				ActiveObject agent = (ActiveObject) object;
+				float maxSpeed = agent.getMaxSpeed();
+				if(movement.getSpeed() <= maxSpeed+0.0005){		// Small tolerance required for inaccuracy in speed calculation  
+					agent.setMovement(movement);
+				}
+				if(agent.getMovement().getSpeed() > 0){
+					this.currentlyMoving.add(agent);
+				}else{
+					this.currentlyMoving.remove(agent);
+				}
+				result = true;
+			}
+		}else{
+			try {
+				EnvironmentProviderSlice mainSlice = (EnvironmentProviderSlice) getSlice(MAIN_SLICE);
+				result = mainSlice.setMovement(agentID, movement);
+			} catch (ServiceException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IMTPException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return result;
 	}
 	
 	public ServiceHelper getHelper(Agent a){
@@ -150,9 +222,18 @@ public class EnvironmentProviderService extends BaseService {
 		}
 
 		@Override
-		public void registerEnvironmentProviderAgent(
-				EnvironmentProviderAgent epa) {
-			EnvironmentProviderService.this.registerEPA(epa);
+		public void setEnvironment(Physical2DEnvironment environment) {
+			EnvironmentProviderService.this.setEnvironment(environment);
+		}
+
+		@Override
+		public HashSet<ActiveObject> getCurrentlyMoving() {
+			return EnvironmentProviderService.this.getCurrentlyMoving();
+		}
+
+		@Override
+		public boolean setMovement(String agentID, Movement movement) {
+			return EnvironmentProviderService.this.setMovement(agentID, movement);
 		}
 	}
 	
@@ -165,7 +246,6 @@ public class EnvironmentProviderService extends BaseService {
 
 		@Override
 		public Node getNode() throws ServiceException {
-			Node node = null;
 			try {
 				return EnvironmentProviderService.this.getLocalNode();
 			} catch (IMTPException e) {
@@ -193,6 +273,19 @@ public class EnvironmentProviderService extends BaseService {
 				String objectId = cmd.getParam(0).toString();
 				Physical2DObject object = EnvironmentProviderService.this.getObject(objectId);
 				cmd.setReturnValue(object);
+			}else if(cmd.getName().equals(EnvironmentProviderSlice.H_GET_CURRENTLY_MOVING)){
+				if(myLogger.isLoggable(Logger.FINE)){
+					myLogger.log(Logger.FINE, "Serving moving objects request.");
+				}
+				cmd.setReturnValue(EnvironmentProviderService.this.getCurrentlyMoving());				
+			}else if(cmd.getName().equals(EnvironmentProviderSlice.H_SET_MOVEMENT)){
+				if(myLogger.isLoggable(Logger.FINE)){
+					myLogger.log(Logger.FINE, "Serving set agent movement request.");
+				}
+				Object[] params = cmd.getParams();
+				String agentID = params[0].toString();
+				Movement movement = (Movement) params[1];
+				cmd.setReturnValue(new Boolean(EnvironmentProviderService.this.setMovement(agentID, movement)));
 			}
 			return null;
 		}

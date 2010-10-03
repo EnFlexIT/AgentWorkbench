@@ -154,6 +154,7 @@ public class OntoUtilities {
 	 * Setting the child object's parent property
 	 * @param root The playground containing the child objects
 	 */
+	@SuppressWarnings("unchecked")
 	public static void setParent(PlaygroundObject root){
 		Iterator<AbstractObject> objects = root.getAllChildObjects();
 		while(objects.hasNext()){

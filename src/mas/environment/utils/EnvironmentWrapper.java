@@ -60,6 +60,7 @@ public class EnvironmentWrapper {
 		obstacles = new Vector<StaticObject>();
 		payloads = new Vector<PassiveObject>();
 		playgrounds = new Vector<PlaygroundObject>();
+		this.objectysById.put(this.environment.getRootPlayground().getId(), this.environment.getRootPlayground());
 		if(this.environment != null){
 			scanObjectsByPlayground(this.environment.getRootPlayground());
 		}

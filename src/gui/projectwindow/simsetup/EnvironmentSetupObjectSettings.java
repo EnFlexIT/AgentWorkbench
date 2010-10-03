@@ -9,14 +9,12 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Vector;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
-import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.w3c.dom.Element;
 

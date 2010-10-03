@@ -6,13 +6,22 @@ import jade.util.leap.*;
 import jade.core.*;
 
 /**
-   * An object's current Speed
-* Protege name: Speed
+   * An object's current movement.
+* Protege name: Movement
 * @author ontology bean generator
-* @version 2010/09/21, 16:26:57
+* @version 2010/10/3, 17:33:18
 */
-public class Speed implements Concept {
+public class Movement implements Concept {
 
+//////////////////////////// User code
+/**
+    * This method calculates movement's speed
+    * This method calculates the speed from the movement's x and y components using the Pythagorean theorem
+    * @return The speed
+    */
+   public float getSpeed(){
+	   return (float) Math.sqrt(xPosChange*xPosChange + yPosChange*yPosChange);
+   }
    /**
    * The change of the objects x coordinate per second.
 * Protege name: xPosChange

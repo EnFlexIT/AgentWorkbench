@@ -1,13 +1,12 @@
 package mas.environment;
 
-import gui.projectwindow.simsetup.EnvironmentSetup;
 import gui.projectwindow.simsetup.EnvironmentSetupObjectSettings;
 
-import jade.content.lang.Codec;
 import jade.content.lang.Codec.CodecException;
 import jade.content.lang.xml.XMLCodec;
 import jade.content.onto.OntologyException;
 
+import java.awt.geom.Rectangle2D;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -17,7 +16,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -41,6 +39,7 @@ import application.Project;
 
 import mas.environment.ontology.ActiveObject;
 import mas.environment.ontology.EnvironmentOntology;
+import mas.environment.ontology.Movement;
 import mas.environment.ontology.Physical2DEnvironment;
 import mas.environment.ontology.Physical2DObject;
 import mas.environment.ontology.PlaygroundObject;
@@ -177,41 +176,6 @@ public class EnvironmentController extends Observable implements Observer{
 		}
 		return newEnv;
 	}
-	/**
-	 * Sets the parent attribute of all Physical2DObjects in the PlaygroundObject to null.
-	 * This is required to avoid redundancy problems when saving the environment. 
-	 * @param pg
-	 */
-	@SuppressWarnings("unchecked")
-	private void unsetParent(PlaygroundObject pg){
-		if(pg != null){
-			Iterator <Physical2DObject> objects = pg.getAllChildObjects();
-			while(objects.hasNext()){
-				Physical2DObject object = objects.next();
-				object.setParent(null);
-				if(object instanceof PlaygroundObject){
-					unsetParent((PlaygroundObject) object);
-				}
-			}
-		}
-	}
-	/**
-	 * Sets the parent attribute of all Physical2DObjects in the playground to this playground. 
-	 * @param pg
-	 */
-	@SuppressWarnings("unchecked")
-	private void setParent(PlaygroundObject pg){
-		if(pg != null){
-			Iterator <Physical2DObject> objects = pg.getAllChildObjects();
-			while(objects.hasNext()){
-				Physical2DObject object = objects.next();
-				object.setParent(pg);
-				if(object instanceof PlaygroundObject){
-					setParent((PlaygroundObject) object);
-				}
-			}
-		}
-	}
 	
 	/**
 	 * This method loads a SVG document from a SVG file
@@ -315,9 +279,6 @@ public class EnvironmentController extends Observable implements Observer{
 	private void setSvgDoc(Document doc){
 		if(doc != null){
 			this.svgDoc = prepareSVG(doc);		
-//			this.svgDoc = doc;
-//			setChanged();
-//			notifyObservers(new Integer(SVG_CHANGED));
 		}
 		this.svgDoc = doc;
 		setChanged();
@@ -343,9 +304,7 @@ public class EnvironmentController extends Observable implements Observer{
 					envFile.createNewFile();
 				}
 				XMLCodec codec = new XMLCodec();
-				unsetParent(environment.getRootPlayground());
 				String xmlRepresentation = codec.encodeObject(EnvironmentOntology.getInstance(), environment, true);
-				setParent(environment.getRootPlayground());
 				if(!envFile.exists()){
 					envFile.createNewFile();
 				}
@@ -458,8 +417,12 @@ public class EnvironmentController extends Observable implements Observer{
 			newObject.setId(settings.get(EnvironmentSetupObjectSettings.SETTINGS_KEY_ID).toString());
 			newObject.setPosition((Position) settings.get(EnvironmentSetupObjectSettings.SETTINGS_KEY_POSITION));
 			newObject.setSize((Size) settings.get(EnvironmentSetupObjectSettings.SETTINGS_KEY_SIZE));
+			newObject.setParentPlaygroundID(environment.getRootPlayground().getId());
 			if(newObject instanceof ActiveObject){
 				((ActiveObject)newObject).setClassName(settings.get(EnvironmentSetupObjectSettings.SETTINGS_KEY_AGENT_CLASSNAME).toString());
+				((ActiveObject)newObject).setMovement(new Movement());
+				((ActiveObject)newObject).setMaxSpeed(10);	// Provisorischer Workaround, später anders definieren!!! 
+				
 			}
 		} catch (InstantiationException e) {
 			// TODO Auto-generated catch block
@@ -488,6 +451,47 @@ public class EnvironmentController extends Observable implements Observer{
 		return selectedObject;
 	}
 	
+	/**
+	 * Adds the object with the given objectID to the playground with the given playgroundID
+	 * @param objectId
+	 * @param playgroundId
+	 * @return 
+	 */
+	public boolean moveObjectToPlayground(String objectId, String playgroundId){
+		Physical2DObject object = envWrap.getObjectById(objectId);
+		PlaygroundObject target = (PlaygroundObject) envWrap.getObjectById(playgroundId);
+		if(playgroundContainsObject(object, target)){
+			PlaygroundObject oldParent = (PlaygroundObject) envWrap.getObjectById(object.getParentPlaygroundID());
+			oldParent.removeChildObjects(object);
+			target.addChildObjects(object);
+			object.setParentPlaygroundID(target.getId());
+			setChanged();
+			notifyObservers(new Integer(OBJECTS_CHANGED));
+			return true;
+		}else{
+			return false;
+		}
+		
+	}
+	
+	/**
+	 * Checks if the given PlaygroundObject completely contains the given Physical2DObject
+	 * @param object The Physical2DObject
+	 * @param playground The PlaygroundObject
+	 * @return The result
+	 */
+	private boolean playgroundContainsObject(Physical2DObject object, PlaygroundObject playground){
+		float objTopLeftX = object.getPosition().getXPos() - object.getSize().getWidth()/2;
+		float objTopLeftY = object.getPosition().getYPos() - object.getSize().getHeight()/2;
+		Rectangle2D.Float objRect = new Rectangle2D.Float(objTopLeftX, objTopLeftY, object.getSize().getWidth(), object.getSize().getHeight());
+		
+		float pgTopLeftX = playground.getPosition().getXPos() - playground.getSize().getWidth()/2;
+		float pgTopLeftY = playground.getPosition().getYPos() - playground.getSize().getHeight()/2;
+		Rectangle2D.Float pgRect = new Rectangle2D.Float(pgTopLeftX, pgTopLeftY, playground.getSize().getWidth(), playground.getSize().getHeight());
+		
+		return pgRect.contains(objRect);
+	}
+	
 	private void rebuildDefaultPaths(){
 		this.defaultSVGPath = project.getProjectFolderFullPath()+project.getSubFolderEnvSetups()+File.separator+project.getProjectName()+"_"+project.simSetupCurrent+".svg";
 		this.defaultEnvironmentPath = project.getProjectFolderFullPath()+project.getSubFolderEnvSetups()+File.separator+project.getProjectName()+"_"+project.simSetupCurrent+".xml";
@@ -505,61 +509,58 @@ public class EnvironmentController extends Observable implements Observer{
 	
 	private void handleSetupChange(SimulationSetupsChangeNotification sscn){
 		
-		File svgFile = null;
-		File envFile = null;
-		
-		switch(sscn.getUpdateReason()){
-			case SimulationSetups.SIMULATION_SETUP_LOAD:
-				rebuildDefaultPaths();
-
-				svgFile = new File(defaultSVGPath);
-				setSvgDoc(loadSVG(svgFile));
-				
-				envFile = new File(defaultEnvironmentPath);
-				setEnvironment(loadEnvironment(envFile));
-			break;
-			
-			case SimulationSetups.SIMULATION_SETUP_COPY:
-				rebuildDefaultPaths();
-				svgFile = new File(defaultSVGPath);
-				saveSVG(svgFile);	// Save the current SVG under the new name
-				
-				envFile = new File(defaultEnvironmentPath);
-				saveEnvironment(envFile);
-			break;
-			
-			case SimulationSetups.SIMULATION_SETUP_ADD_NEW:
-				this.setSvgDoc(null);
-				this.setEnvironment(null);
-				rebuildDefaultPaths();
-			
-			case SimulationSetups.SIMULATION_SETUP_REMOVE:
-				svgFile = new File(defaultSVGPath);
-				if(svgFile.exists()){
-					svgFile.delete();
-				}
-				envFile = new File(defaultEnvironmentPath);
-				if(envFile.exists()){
-					envFile.delete();
-				}
-				rebuildDefaultPaths();
-			break;
-			
-			case SimulationSetups.SIMULATION_SETUP_RENAME:
-				svgFile = new File(defaultSVGPath);
-				envFile = new File(defaultEnvironmentPath);
-				
-				rebuildDefaultPaths();
-				File newSvgFile = new File(defaultSVGPath);
-				File newEnvFile = new File(defaultEnvironmentPath);
-				
-				svgFile.renameTo(newSvgFile);
-				envFile.renameTo(newEnvFile);
-			break;
-				
-				
-				
-		}
+//		File svgFile = null;
+//		File envFile = null;
+//		
+//		switch(sscn.getUpdateReason()){
+//			case SimulationSetups.SIMULATION_SETUP_LOAD:
+//				rebuildDefaultPaths();
+//
+//				svgFile = new File(defaultSVGPath);
+//				setSvgDoc(loadSVG(svgFile));
+//				
+//				envFile = new File(defaultEnvironmentPath);
+//				setEnvironment(loadEnvironment(envFile));
+//			break;
+//			
+//			case SimulationSetups.SIMULATION_SETUP_COPY:
+//				rebuildDefaultPaths();
+//				svgFile = new File(defaultSVGPath);
+//				saveSVG(svgFile);	// Save the current SVG under the new name
+//				
+//				envFile = new File(defaultEnvironmentPath);
+//				saveEnvironment(envFile);
+//			break;
+//			
+//			case SimulationSetups.SIMULATION_SETUP_ADD_NEW:
+//				this.setSvgDoc(null);
+//				this.setEnvironment(null);
+//				rebuildDefaultPaths();
+//			
+//			case SimulationSetups.SIMULATION_SETUP_REMOVE:
+//				svgFile = new File(defaultSVGPath);
+//				if(svgFile.exists()){
+//					svgFile.delete();
+//				}
+//				envFile = new File(defaultEnvironmentPath);
+//				if(envFile.exists()){
+//					envFile.delete();
+//				}
+//				rebuildDefaultPaths();
+//			break;
+//			
+//			case SimulationSetups.SIMULATION_SETUP_RENAME:
+//				svgFile = new File(defaultSVGPath);
+//				envFile = new File(defaultEnvironmentPath);
+//				
+//				rebuildDefaultPaths();
+//				File newSvgFile = new File(defaultSVGPath);
+//				File newEnvFile = new File(defaultEnvironmentPath);
+//				
+//				svgFile.renameTo(newSvgFile);
+//				envFile.renameTo(newEnvFile);
+//			break;
+//		}
 		
 		
 		
