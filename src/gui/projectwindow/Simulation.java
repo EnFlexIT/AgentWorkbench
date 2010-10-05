@@ -6,11 +6,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JScrollPane;
-
-
-import mas.display.DisplayAgentGUI;
 
 import application.Application;
 import application.Language;
@@ -27,10 +23,6 @@ public class Simulation extends JScrollPane implements Observer, ActionListener 
 	private Project CurrProject;
 	
 	private JButton btnStart = null;
-	
-	private JCheckBox cbStartAgents = null;
-	
-	private DisplayAgentGUI daGUI;
 	
 	/**
 	 * This is the default constructor
@@ -55,7 +47,6 @@ public class Simulation extends JScrollPane implements Observer, ActionListener 
 		this.setFocusable(true);
 		
 		this.add(getBtnStart());
-		this.add(getCbStartAgents());
 		
 		this.setVisible(true);		
 	}
@@ -76,35 +67,20 @@ public class Simulation extends JScrollPane implements Observer, ActionListener 
 		return btnStart;
 	}
 	
-	private JCheckBox getCbStartAgents(){
-		if(cbStartAgents == null){
-			cbStartAgents = new JCheckBox("Start Project Agents?", true);
-			cbStartAgents.setSize(cbStartAgents.getPreferredSize());
-			cbStartAgents.setLocation(getBtnStart().getLocation().x, getBtnStart().getLocation().y - 30 );
-		}
-		
-		return cbStartAgents;
-	}
-	
 	/**
 	 * Starts a DisplayAgent and the project agents (later)
 	 */
 	@SuppressWarnings("static-access")
-	private void startSimulation(boolean agents){
+	private void startSimulation(){
 		
-		this.daGUI = new DisplayAgentGUI();
-		this.daGUI.setSize(this.getWidth(), this.getHeight());
-		this.remove(btnStart);
-		this.remove(cbStartAgents);
-		this.add(this.daGUI);
-		this.daGUI.setVisible(true);
-		
+		this.btnStart.setEnabled(false);
+				
 		if ( Application.JadePlatform.jadeMainContainerIsRunning(true)){
 			
 			
 			String projectContainer = CurrProject.getProjectFolder();
 			
-			Object[] args = {CurrProject.getEnvironment()};
+			Object[] args = {CurrProject.getEnvironment(), CurrProject.getSVGDoc()};
 			Application.JadePlatform.jadeAgentStart("EPA_"+CurrProject.getProjectName(), mas.environment.provider.EnvironmentProviderAgent.class, args, Application.JadePlatform.MASmc.getName());
 			Application.JadePlatform.jadeContainerCreate(projectContainer);
 
@@ -137,7 +113,7 @@ public class Simulation extends JScrollPane implements Observer, ActionListener 
 		else if ( Trigger == "ProjectDescription" ) {
 			CurrProject.setProjectDescription( ae.getActionCommand() );
 		}else if( Trigger == btnStart){
-			startSimulation(getCbStartAgents().isSelected());
+			startSimulation();
 		}
 		else {
 			

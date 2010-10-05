@@ -5,5 +5,5 @@
         <size>0</size>
     </agentListModel>
     <environmentFileName>SMA_default.xml</environmentFileName>
-    <svgFileName>SMA_Test.svg</svgFileName>
+    <svgFileName>SMA_default.svg</svgFileName>
 </simulationSetup>

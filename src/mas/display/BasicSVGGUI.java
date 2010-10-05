@@ -1,6 +1,8 @@
 package mas.display;
 
 import javax.swing.JPanel;
+
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import javax.swing.JButton;
 
@@ -117,5 +119,9 @@ public class BasicSVGGUI extends JPanel {
 	
 	public void setSVGDoc(Document doc){
 		this.canvas.setDocument(doc);
+		float svgWidth = Float.parseFloat(doc.getDocumentElement().getAttributeNS(null, "width"));
+		float svgHeight = Float.parseFloat(doc.getDocumentElement().getAttributeNS(null, "height"));
+		
+		this.setPreferredSize(new Dimension((int)svgWidth, (int) (svgHeight+getPnlZoom().getPreferredSize().getHeight())));
 	}
 }

@@ -2,6 +2,8 @@ package mas.environment.provider;
 
 import java.util.HashSet;
 
+import org.w3c.dom.Document;
+
 import mas.environment.ontology.ActiveObject;
 import mas.environment.ontology.Movement;
 import mas.environment.ontology.Physical2DEnvironment;
@@ -14,9 +16,11 @@ public interface EnvironmentProviderSlice extends Slice {
 	public static final String H_GET_OBJECT = "getObject";
 	public static final String H_GET_CURRENTLY_MOVING = "getCurrentlyMoving";
 	public static final String H_SET_MOVEMENT = "setMovement";
+	public static final String H_GET_SVG_DOC = "getSVGDoc";
 	
 	public Physical2DEnvironment getEnvironment() throws IMTPException;
 	public Physical2DObject getObject(String id) throws IMTPException;
 	public HashSet<ActiveObject> getCurrentlyMoving() throws IMTPException;
 	public boolean setMovement(String agentID, Movement movement) throws IMTPException;
+	public Document getSVGDoc() throws IMTPException;
 }

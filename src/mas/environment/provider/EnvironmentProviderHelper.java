@@ -2,6 +2,8 @@ package mas.environment.provider;
 
 import java.util.HashSet;
 
+import org.w3c.dom.Document;
+
 import mas.environment.ontology.ActiveObject;
 import mas.environment.ontology.Movement;
 import mas.environment.ontology.Physical2DEnvironment;
@@ -14,4 +16,6 @@ public interface EnvironmentProviderHelper extends ServiceHelper {
 	public void setEnvironment(Physical2DEnvironment environment);
 	public HashSet<ActiveObject> getCurrentlyMoving();
 	public boolean setMovement(String agentID, Movement movement);
+	public Document getSVGDoc();
+	public void setSVGDoc(Document svgDoc);
 }

@@ -3,6 +3,8 @@ package mas.environment.provider;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import org.w3c.dom.Document;
+
 import mas.environment.ontology.ActiveObject;
 import mas.environment.ontology.Physical2DEnvironment;
 import jade.core.Agent;
@@ -24,9 +26,7 @@ public class EnvironmentProviderAgent extends Agent {
 	 */
 	private final int PERIOD = 100;
 	
-	/**
-	 * Wrapper object for easier handling of the Physical2DEnvironment
-	 */
+	private EnvironmentProviderHelper helper = null;
 	
 	
 	/**
@@ -35,10 +35,13 @@ public class EnvironmentProviderAgent extends Agent {
 	 */
 	public void setup(){
 		Object[] args = getArguments();
-		if(args != null && args[0] instanceof Physical2DEnvironment){
+		if(args != null && args[0] != null && args[0] instanceof Physical2DEnvironment){
 			try {
-				EnvironmentProviderHelper helper = (EnvironmentProviderHelper) getHelper(EnvironmentProviderService.SERVICE_NAME);
+				this.helper = (EnvironmentProviderHelper) getHelper(EnvironmentProviderService.SERVICE_NAME);
 				helper.setEnvironment((Physical2DEnvironment) args[0]);
+				if(args[1] != null && args[1] instanceof Document){
+					helper.setSVGDoc((Document) args[1]);
+				}
 				this.addBehaviour(new UpdatePositionsBehaviour(this, PERIOD));
 			} catch (ServiceException e) {
 				System.err.println(getLocalName()+" - Error: Environment provider service not found, shutting down!");
@@ -48,6 +51,7 @@ public class EnvironmentProviderAgent extends Agent {
 			System.err.println(getLocalName()+" - Error: No Physical2DEnvironment given, shutting down!");
 			doDelete();
 		}
+		
 	}
 	
 	private class UpdatePositionsBehaviour extends TickerBehaviour{

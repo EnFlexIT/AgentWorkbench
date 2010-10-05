@@ -2,6 +2,8 @@ package mas.environment.provider;
 
 import java.util.HashSet;
 
+import org.w3c.dom.Document;
+
 import mas.environment.ontology.ActiveObject;
 import mas.environment.ontology.Movement;
 import mas.environment.ontology.Physical2DEnvironment;
@@ -36,6 +38,10 @@ public class EnvironmentProviderService extends BaseService {
 	 * Wrapper object for easier handling of the Physical2DEnvironment object
 	 */
 	private EnvironmentWrapper envWrap = null;
+	/**
+	 * The SVG document visualizing the environment
+	 */
+	private Document svgDoc = null;
 	/**
 	 * The EnvironmentProviderHelper instance 
 	 */
@@ -190,6 +196,29 @@ public class EnvironmentProviderService extends BaseService {
 		return result;
 	}
 	
+	private Document getSVGDoc(){
+		Document doc = null;
+		if(masterNode){
+			doc = this.svgDoc;
+		}else{
+			try {
+				EnvironmentProviderSlice mainSlice = (EnvironmentProviderSlice) getSlice(MAIN_SLICE);
+				doc = mainSlice.getSVGDoc();
+			} catch (ServiceException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IMTPException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return doc;
+	}
+	
+	private void setSVGDoc(Document svgDoc){
+		this.svgDoc = svgDoc;
+	}
+	
 	public ServiceHelper getHelper(Agent a){
 		return helper;
 	}
@@ -234,6 +263,16 @@ public class EnvironmentProviderService extends BaseService {
 		@Override
 		public boolean setMovement(String agentID, Movement movement) {
 			return EnvironmentProviderService.this.setMovement(agentID, movement);
+		}
+
+		@Override
+		public Document getSVGDoc() {
+			return EnvironmentProviderService.this.getSVGDoc();
+		}
+
+		@Override
+		public void setSVGDoc(Document svgDoc) {
+			EnvironmentProviderService.this.setSVGDoc(svgDoc);
 		}
 	}
 	
@@ -286,6 +325,11 @@ public class EnvironmentProviderService extends BaseService {
 				String agentID = params[0].toString();
 				Movement movement = (Movement) params[1];
 				cmd.setReturnValue(new Boolean(EnvironmentProviderService.this.setMovement(agentID, movement)));
+			}else if(cmd.getName().equals(EnvironmentProviderSlice.H_GET_SVG_DOC)){
+				if(myLogger.isLoggable(Logger.FINE)){
+					myLogger.log(Logger.FINE, "Serving set agent movement request.");
+				}
+				cmd.setReturnValue(EnvironmentProviderService.this.getSVGDoc());
 			}
 			return null;
 		}

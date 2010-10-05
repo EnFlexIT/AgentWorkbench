@@ -301,6 +301,16 @@ public class EnvironmentSetup extends JSplitPane implements ActionListener, Obse
 		}
 		svgGUI.setSVGDoc(doc);
 	}
+	
+	private boolean checkElementType(Element elem){
+		if(elem.getTagName().equals("rect") 
+				|| elem.getTagName().equals("circle")
+				|| elem.getTagName().equals("ellipse")){
+			return true;
+		}else{
+			return false;
+		}
+	}
 	/**
 	 * This method adds OnClick-Listeners to a SVG-element and it's child elements 
 	 * @param root The element to add a Listener to

@@ -19,6 +19,8 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.w3c.dom.Document;
+
 import mas.PlatformJadeConfig;
 import mas.agents.AgentConfiguration;
 import mas.environment.EnvironmentController;
@@ -387,6 +389,14 @@ import sim.setup.SimulationSetups;
 	@XmlTransient
 	public Physical2DEnvironment getEnvironment() {
 		return this.environmentController.getEnvironment();
+	}
+	/**
+	 * 
+	 * @return The SVG document
+	 */
+	@XmlTransient
+	public Document getSVGDoc(){
+		return this.environmentController.getSvgDoc();
 	}
 	/**
 	 * @param environment the environment to set

@@ -1,181 +1,91 @@
 package mas.display;
 
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import mas.display.ontology.Movement;
-import mas.display.ontology.Position;
-import mas.display.ontology.Scale;
 
-import org.apache.batik.dom.svg.SVGDOMImplementation;
-import org.apache.batik.script.Window;
+import mas.environment.ontology.Physical2DEnvironment;
+import mas.environment.ontology.Physical2DObject;
+import mas.environment.ontology.PlaygroundObject;
+import mas.environment.ontology.Position;
+import mas.environment.ontology.Scale;
+
 import org.apache.batik.swing.JSVGCanvas;
-import org.apache.batik.swing.gvt.GVTTreeRendererAdapter;
-import org.apache.batik.swing.gvt.GVTTreeRendererEvent;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-
-import application.Project;
-
-/**
- * GUI for DisplayAgent
- * @author nils
- *
- */
 public class DisplayAgentGUI extends BasicSVGGUI {
 	
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
-	
-	
+	private static final long serialVersionUID = -6509863549022282766L;
 
-	// Current Agent-Project of AgentGUI
-	Project currentProject = null;
+	private final int PERIOD = 100;
 	
-	// SVG Namespace
-	public static final String svgNs=SVGDOMImplementation.SVG_NAMESPACE_URI;
-	/**
-	 * The DisplayAgent controlling this GUI
-	 */
-	private DisplayAgent myAgent = null;
-	/**
-	 * Movements to be processed
-	 */
-	private HashMap<String, Iterator<Position>> movements;
-	/**
-	 * The project environments scale
-	 */
 	private Scale scale;
-	/**
-	 * Preventing concurrency problems when accessing the movements HashMap 
-	 */
-	private final ReadWriteLock lock = new ReentrantReadWriteLock(true);
 	
-	/**
-	 * Constructor
-	 * @param scale The project environment's scale
-	 */
-	public DisplayAgentGUI(){
+	public DisplayAgentGUI(Document svgDoc, Physical2DEnvironment env){
 		super();
 		this.getCanvas().setDocumentState(JSVGCanvas.ALWAYS_DYNAMIC);
-		this.getCanvas().addGVTTreeRendererListener(new GVTTreeRendererAdapter(){
-			public void gvtRenderingCompleted(GVTTreeRendererEvent re){
-				
-				Window window = getCanvas().getUpdateManager().getScriptingEnvironment().createWindow();
-				window.setInterval(new Animation(), DisplayConstants.PERIOD);
-			}
-		});
-		this.movements = new HashMap<String, Iterator<Position>>();
-		
+//		this.getCanvas().addGVTTreeRendererListener(new GVTTreeRendererAdapter(){
+//			public void gvtRenderingCompleted(GVTTreeRendererEvent re){
+//				
+//				Window window = getCanvas().getUpdateManager().getScriptingEnvironment().createWindow();
+//				window.setInterval(new Animation(), PERIOD);
+//			}
+//		});
+		this.scale = env.getScale();
+		initPositions(svgDoc, env.getRootPlayground());
+		this.setSVGDoc(svgDoc);
 	}
 	
-	public void setAgent(DisplayAgent agent){
-		this.myAgent = agent;
+	void setSVGDocument(Document doc, PlaygroundObject rootPlayground){
+		initPositions(doc, rootPlayground);
+		this.getCanvas().setDocument(doc);
 	}
 	
-	void setScale(Scale scale){
-		this.scale = scale;
-	}
-	/**
-	 * Adds all steps of a new movement to this.movements
-	 * @param id The id of the moving agent
-	 * @param mv The Movement instance
-	 */
-	@SuppressWarnings("unchecked")
-	public void addMovement(String id, Movement mv){
-		lock.readLock().lock();
-		// If another movement for the same id is defined, remove it 
-		if(this.movements.get(id) != null){
-			this.movements.remove(id);
-			
-		}
-		this.movements.put(id, mv.getAllSteps());
-		lock.readLock().unlock();
-//		System.out.println(id+" movement started");
-	}
-	
-	/**
-	 * Removes the movement of the agent with the given id
-	 * @param id The id of the agent whose movement will be removed
-	 */
-	public void removeMovement(String id){
-		lock.readLock().lock();
-		if(this.movements.get(id) != null){
-			this.movements.remove(id);
-			System.out.println(id+" movement aborted.");
-		}
-		lock.readLock().unlock();
-	}
-	
-	/**
-	 * Responsible for updating the SVG element positions
-	 * @author Nils
-	 *
-	 */
-	private class Animation implements Runnable{
 
-		@Override
-		public void run() {
-			lock.writeLock().lock();
-						
-			Iterator<String> ids= movements.keySet().iterator();
-			while(ids.hasNext()){
-				String id = ids.next();
-				Iterator<Position> steps = movements.get(id);
-				if(steps.hasNext()){
-					changePos(id, steps.next());					
-				}else{
-					movements.remove(id);
-//					System.out.println(id+" movement finished");
-					ids = movements.keySet().iterator();
-				}
+	
+	@SuppressWarnings("unchecked")
+	private void initPositions(Document svgDoc, PlaygroundObject pg){
+		Iterator<Physical2DObject> objects = pg.getAllChildObjects();
+		while(objects.hasNext()){
+			Physical2DObject object = objects.next();
+			Element element = svgDoc.getElementById(object.getId());
+			if(element != null){
+				setElementPosition(element, object.getPosition());
 			}
-			lock.writeLock().unlock();
-		}
-		
-		private void changePos(String id, Position pos){
-			float posX, posY;
 			
-			// Convert from real world units to pixel
-//			posX = OntoUtilities.calcPixel(pos.getX(), scale);
-//			posY = OntoUtilities.calcPixel(pos.getY(), scale);
-			
-			posX = scale.calcPixel(pos.getX());
-			posY = scale.calcPixel(pos.getY());
-			
-//			System.out.println("Setting new pos: "+posX+":"+posY);
-			
-			Element element = DisplayAgentGUI.this.getCanvas().getSVGDocument().getElementById(id);
-			
-			switch(SvgTypes.getType(element)){
-				case CIRCLE:
-					float r = Float.parseFloat(element.getAttributeNS(null, "r"));
-					posX += r;
-					posY += r;
-					element.setAttributeNS(null, "cx", ""+posX);
-					element.setAttributeNS(null, "cy", ""+posY);
-				break;
-				case ELLIPSE:
-					float r1 = Float.parseFloat(element.getAttributeNS(null, "r1"));
-					float r2 = Float.parseFloat(element.getAttributeNS(null, "r2"));
-					posX += r1;
-					posY += r2;
-					element.setAttributeNS(null, "cx", ""+posX);
-					element.setAttributeNS(null, "cy", ""+posY);
-				break;
-				
-				case RECT:
-				case IMAGE:
-					element.setAttributeNS(null, "x", ""+posX);
-					element.setAttributeNS(null, "y", ""+posY);
-				break;
+			if(object instanceof PlaygroundObject){
+				initPositions(svgDoc, (PlaygroundObject) object);
 			}
 		}
-		
 	}
+	
+	/**
+	 * Sets the position of a SVG element according to a mas.environment.ontology.Position
+	 * @param elem The SVG element
+	 * @param pos The Position instance
+	 */
+	private void setElementPosition(Element elem, Position pos){
+		// Convert to pixel values
+		float xPos = pos.getXPos() / scale.getRealWorldUnitValue() * scale.getPixelValue();
+		float yPos = pos.getYPos() / scale.getRealWorldUnitValue() * scale.getPixelValue();
+		
+		String elementType = elem.getTagName();	// Determine element type
+		if(elementType.equals("rect")){
+			// Convert to top left coordinates
+			float width = Float.parseFloat(elem.getAttributeNS(null, "width"));
+			float height = Float.parseFloat(elem.getAttributeNS(null, "height"));
+			xPos -= width/2;
+			yPos -= height/2;
 			
+			elem.setAttributeNS(null, "x", ""+xPos);
+			elem.setAttributeNS(null, "y", ""+yPos);
+		}else if(elementType.equals("circle") || elementType.equals("ellipse")){
+			// No conversion necessary, circles and ellipses use center coordinates
+			elem.setAttributeNS(null, "cx", ""+xPos);
+			elem.setAttributeNS(null, "cy", ""+yPos);
+		}
+	}
 }

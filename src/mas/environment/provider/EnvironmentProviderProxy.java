@@ -2,6 +2,8 @@ package mas.environment.provider;
 
 import java.util.HashSet;
 
+import org.w3c.dom.Document;
+
 import mas.environment.ontology.ActiveObject;
 import mas.environment.ontology.Movement;
 import mas.environment.ontology.Physical2DEnvironment;
@@ -97,6 +99,25 @@ public class EnvironmentProviderProxy extends SliceProxy implements
 				}
 			}
 			return ((Boolean)result).booleanValue();
+		} catch (ServiceException e) {
+			throw new IMTPException("Unable to access remote node", e);
+		}
+	}
+
+	@Override
+	public Document getSVGDoc() throws IMTPException {
+		
+		try {
+			GenericCommand cmd = new GenericCommand(H_GET_SVG_DOC, EnvironmentProviderService.SERVICE_NAME, null);
+			Object result = getNode().accept(cmd);
+			if((result != null) && (result instanceof Throwable)){
+				if(result instanceof IMTPException){
+					throw (IMTPException)result;
+				}else{
+					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
+				}
+			}
+			return (Document) result;
 		} catch (ServiceException e) {
 			throw new IMTPException("Unable to access remote node", e);
 		}

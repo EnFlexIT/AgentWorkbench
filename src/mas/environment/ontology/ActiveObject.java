@@ -8,42 +8,9 @@ import jade.core.*;
    * This class represents active objects, i.e. agents, in a physical 2D environment. Active objects can move on their own.
 * Protege name: ActiveObject
 * @author ontology bean generator
-* @version 2010/10/3, 17:33:18
+* @version 2010/10/4, 16:36:15
 */
 public class ActiveObject extends Physical2DObject{ 
-
-   /**
-   * Passive objects currently controlled by this active object
-* Protege name: payload
-   */
-   private List payload = new ArrayList();
-   public void addPayload(PassiveObject elem) { 
-     List oldList = this.payload;
-     payload.add(elem);
-   }
-   public boolean removePayload(PassiveObject elem) {
-     List oldList = this.payload;
-     boolean result = payload.remove(elem);
-     return result;
-   }
-   public void clearAllPayload() {
-     List oldList = this.payload;
-     payload.clear();
-   }
-   public Iterator getAllPayload() {return payload.iterator(); }
-   public List getPayload() {return payload; }
-   public void setPayload(List l) {payload = l; }
-
-   /**
-* Protege name: className
-   */
-   private String className;
-   public void setClassName(String value) { 
-    this.className=value;
-   }
-   public String getClassName() {
-     return this.className;
-   }
 
    /**
    * The ActiveObject's current movement.
@@ -68,5 +35,38 @@ public class ActiveObject extends Physical2DObject{
    public float getMaxSpeed() {
      return this.maxSpeed;
    }
+
+   /**
+* Protege name: className
+   */
+   private String className;
+   public void setClassName(String value) { 
+    this.className=value;
+   }
+   public String getClassName() {
+     return this.className;
+   }
+
+   /**
+   * Passive objects currently controlled by this active object
+* Protege name: payload
+   */
+   private List payload = new ArrayList();
+   public void addPayload(PassiveObject elem) { 
+     List oldList = this.payload;
+     payload.add(elem);
+   }
+   public boolean removePayload(PassiveObject elem) {
+     List oldList = this.payload;
+     boolean result = payload.remove(elem);
+     return result;
+   }
+   public void clearAllPayload() {
+     List oldList = this.payload;
+     payload.clear();
+   }
+   public Iterator getAllPayload() {return payload.iterator(); }
+   public List getPayload() {return payload; }
+   public void setPayload(List l) {payload = l; }
 
 }

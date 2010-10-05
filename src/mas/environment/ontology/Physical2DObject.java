@@ -9,20 +9,20 @@ import jade.core.*;
    * Abstract superclass for objects in a physical 2D environment.
 * Protege name: Physical2DObject
 * @author ontology bean generator
-* @version 2010/10/3, 17:33:18
+* @version 2010/10/4, 16:36:15
 */
 public class Physical2DObject implements Concept {
 
    /**
-   * ID used to identify the object
-* Protege name: id
+   * The ID of the PlaygroundObject this Physical2DObject lives in.
+* Protege name: parentPlaygroundID
    */
-   private String id;
-   public void setId(String value) { 
-    this.id=value;
+   private String parentPlaygroundID;
+   public void setParentPlaygroundID(String value) { 
+    this.parentPlaygroundID=value;
    }
-   public String getId() {
-     return this.id;
+   public String getParentPlaygroundID() {
+     return this.parentPlaygroundID;
    }
 
    /**
@@ -38,6 +38,18 @@ public class Physical2DObject implements Concept {
    }
 
    /**
+   * ID used to identify the object
+* Protege name: id
+   */
+   private String id;
+   public void setId(String value) { 
+    this.id=value;
+   }
+   public String getId() {
+     return this.id;
+   }
+
+   /**
    * The object's position
 * Protege name: position
    */
@@ -47,18 +59,6 @@ public class Physical2DObject implements Concept {
    }
    public Position getPosition() {
      return this.position;
-   }
-
-   /**
-   * The ID of the PlaygroundObject this Physical2DObject lives in.
-* Protege name: parentPlaygroundID
-   */
-   private String parentPlaygroundID;
-   public void setParentPlaygroundID(String value) { 
-    this.parentPlaygroundID=value;
-   }
-   public String getParentPlaygroundID() {
-     return this.parentPlaygroundID;
    }
 
 }

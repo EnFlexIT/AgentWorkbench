@@ -9,21 +9,9 @@ import jade.core.*;
    * A 2D object's position
 * Protege name: Position
 * @author ontology bean generator
-* @version 2010/10/3, 17:33:18
+* @version 2010/10/4, 16:36:15
 */
 public class Position implements Concept {
-
-   /**
-   * The environments y coordinate
-* Protege name: yPos
-   */
-   private float yPos;
-   public void setYPos(float value) { 
-    this.yPos=value;
-   }
-   public float getYPos() {
-     return this.yPos;
-   }
 
    /**
    * The objects x coordinate
@@ -35,6 +23,18 @@ public class Position implements Concept {
    }
    public float getXPos() {
      return this.xPos;
+   }
+
+   /**
+   * The environments y coordinate
+* Protege name: yPos
+   */
+   private float yPos;
+   public void setYPos(float value) { 
+    this.yPos=value;
+   }
+   public float getYPos() {
+     return this.yPos;
    }
 
 }

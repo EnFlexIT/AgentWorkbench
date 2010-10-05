@@ -26,8 +26,8 @@ public class SoftBot extends Physical2DAgent {
 			System.out.println("- Groesse: "+myEnvironmentObject.getSize().getWidth()+"x"+myEnvironmentObject.getSize().getHeight());
 		}
 		Position destPos = new Position();
-		destPos.setXPos(30);
-		destPos.setYPos(50);
+		destPos.setXPos(50);
+		destPos.setYPos(30);
 		
 		try {
 			addBehaviour(new MoveToPointBehaviour( this, myEnvironmentObject.getPosition(), destPos, myEnvironmentObject.getMaxSpeed()));
