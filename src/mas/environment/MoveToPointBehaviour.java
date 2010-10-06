@@ -23,6 +23,8 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 	
 	private Movement movement;
 	
+	private boolean firstStep = true;
+	
 	private boolean lastStep = false;
 	
 	EnvironmentProviderHelper helper;
@@ -44,34 +46,33 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 		movement = new Movement();
 		movement.setXPosChange(xPosDiff / seconds);
 		movement.setYPosChange(yPosDiff / seconds);
-		System.out.println("Testausgabe: Bewegung");
-		System.out.println("- X: "+movement.getXPosChange()+", Y: "+movement.getYPosChange());
-		System.out.println("- Geschwindigkeit: "+movement.getSpeed());
-		
-		
-		helper.setMovement(myAgent.getLocalName(), movement);
 	}
 
 	@Override
 	protected void onTick() {
-		Position currPos = helper.getObject(myAgent.getLocalName()).getPosition();
-		System.out.println("Testausgabe: "+myAgent.getLocalName()+" - Position "+currPos.getXPos()+"x"+currPos.getYPos());
-		if(lastStep){
-			Movement stop = new Movement();
-			stop.setXPosChange(0);
-			stop.setYPosChange(0);
-			helper.setMovement(myAgent.getLocalName(), stop);
-			System.out.println("Testausgabe: "+myAgent.getLocalName()+" Zielposition erreicht.");
-			this.stop();
-		}else if(xPosDiff <= (movement.getXPosChange() / 1000 * PERIOD) && yPosDiff <= (movement.getYPosChange() / 1000 * PERIOD)){
-			Movement lastStep = new Movement();
-			lastStep.setXPosChange(xPosDiff);
-			lastStep.setYPosChange(yPosDiff);
-			helper.setMovement(myAgent.getLocalName(), lastStep);
-			this.lastStep = true;
+		
+		if(firstStep){
+			helper.setMovement(myAgent.getLocalName(), movement);
+			firstStep = false;
 		}else{
-			xPosDiff = destPos.getXPos() - currPos.getXPos();
-			yPosDiff = destPos.getYPos() - currPos.getYPos();
+			Position currPos = helper.getObject(myAgent.getLocalName()).getPosition();
+			if(lastStep){
+				Movement stop = new Movement();
+				stop.setXPosChange(0);
+				stop.setYPosChange(0);
+				helper.setMovement(myAgent.getLocalName(), stop);
+				System.out.println("Testausgabe: "+myAgent.getLocalName()+" Zielposition "+ destPos.getXPos()+":"+destPos.getYPos()+" erreicht.");
+				this.stop();
+			}else if(Math.abs(xPosDiff) <= (Math.abs(movement.getXPosChange()) / 1000 * PERIOD) + 0.5 && Math.abs(yPosDiff) <= (Math.abs(movement.getYPosChange()) / 1000 * PERIOD) + 0.5){
+				Movement lastStep = new Movement();
+				lastStep.setXPosChange(xPosDiff);
+				lastStep.setYPosChange(yPosDiff);
+				helper.setMovement(myAgent.getLocalName(), lastStep);
+				this.lastStep = true;
+			}else{
+				xPosDiff = destPos.getXPos() - currPos.getXPos();
+				yPosDiff = destPos.getYPos() - currPos.getYPos();
+			}
 		}
 	}
 	

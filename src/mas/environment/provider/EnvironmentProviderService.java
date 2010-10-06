@@ -1,13 +1,17 @@
 package mas.environment.provider;
 
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 
 import org.w3c.dom.Document;
 
 import mas.environment.ontology.ActiveObject;
 import mas.environment.ontology.Movement;
+import mas.environment.ontology.PassiveObject;
 import mas.environment.ontology.Physical2DEnvironment;
 import mas.environment.ontology.Physical2DObject;
+import mas.environment.ontology.PlaygroundObject;
 import mas.environment.utils.EnvironmentWrapper;
 import jade.core.Agent;
 import jade.core.BaseService;
@@ -55,9 +59,13 @@ public class EnvironmentProviderService extends BaseService {
 	 */
 	private boolean masterNode = false;
 	/**
-	 * Set of currently moving ActiveObjects
+	 * Set of currently moving agents
 	 */
-	private HashSet<ActiveObject> currentlyMoving;
+	private HashSet<ActiveObject> currentlyMovingAgents;
+	/**
+	 * Set of currently moving environment objects
+	 */
+	private HashSet<Physical2DObject> currentlyMovingObjects;
 	
 	@Override
 	public String getName() {
@@ -67,7 +75,6 @@ public class EnvironmentProviderService extends BaseService {
 	public void boot(Profile p){
 		try {
 			super.boot(p);
-			System.out.println(getLocalNode().getName());
 			getLocalNode().exportSlice(SERVICE_NAME, getLocalSlize());
 		} catch (ServiceException e) {
 			// TODO Auto-generated catch block
@@ -86,12 +93,14 @@ public class EnvironmentProviderService extends BaseService {
 		if(environment != null){
 			this.environment = environment;
 			this.envWrap = new EnvironmentWrapper(environment);
-			this.currentlyMoving = new HashSet<ActiveObject>();
+			this.currentlyMovingAgents = new HashSet<ActiveObject>();
+			this.currentlyMovingObjects = new HashSet<Physical2DObject>();
 			this.masterNode = true;
 		}else{
 			this.environment = null;
 			this.envWrap = null;
-			this.currentlyMoving = null;
+			this.currentlyMovingAgents = null;
+			this.currentlyMovingObjects = null;
 			this.masterNode = false;
 		}
 	}
@@ -145,14 +154,19 @@ public class EnvironmentProviderService extends BaseService {
 		return object;
 	}
 	
-	private HashSet<ActiveObject> getCurrentlyMoving(){
-		HashSet<ActiveObject> cm = null;
+	private HashSet<ActiveObject> getCurrentlyMovingAgents(){
+		return this.currentlyMovingAgents;
+	}
+	
+	private HashSet<Physical2DObject> getCurrentlyMovingObjects(){
+		HashSet<Physical2DObject> objects = null;
+		
 		if(masterNode){
-			cm = this.currentlyMoving;
+			objects = this.currentlyMovingObjects;
 		}else{
 			try {
 				EnvironmentProviderSlice mainSlice = (EnvironmentProviderSlice) getSlice(MAIN_SLICE);
-				cm = mainSlice.getCurrentlyMoving();
+				objects = mainSlice.getCurrentlyMovingObjects();
 			} catch (ServiceException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -160,10 +174,13 @@ public class EnvironmentProviderService extends BaseService {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
 		}
-		return cm;
+		
+		return objects;
 	}
 	
+	@SuppressWarnings("unchecked")
 	private boolean setMovement(String agentID, Movement movement){
 		boolean result = false;
 		if(masterNode){
@@ -175,9 +192,19 @@ public class EnvironmentProviderService extends BaseService {
 					agent.setMovement(movement);
 				}
 				if(agent.getMovement().getSpeed() > 0){
-					this.currentlyMoving.add(agent);
+					this.currentlyMovingAgents.add(agent);
+					this.currentlyMovingObjects.add(agent);
+					Iterator<PassiveObject> controlledObjects = agent.getAllPayload();
+					while(controlledObjects.hasNext()){
+						this.currentlyMovingObjects.add(controlledObjects.next());
+					}
 				}else{
-					this.currentlyMoving.remove(agent);
+					this.currentlyMovingAgents.remove(agent);
+					this.currentlyMovingObjects.remove(agent);
+					Iterator<PassiveObject> controlledObjects = agent.getAllPayload();
+					while(controlledObjects.hasNext()){
+						this.currentlyMovingObjects.remove(controlledObjects.next());
+					}
 				}
 				result = true;
 			}
@@ -213,6 +240,82 @@ public class EnvironmentProviderService extends BaseService {
 			}
 		}
 		return doc;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<Physical2DObject> getPlaygroundObjects(String playgroundID){
+		List<Physical2DObject> objects = null;
+		if(masterNode){
+			PlaygroundObject pg = (PlaygroundObject) envWrap.getObjectById(playgroundID);
+			objects = (List<Physical2DObject>) pg.getChildObjects();
+		}else{
+			try {
+				EnvironmentProviderSlice mainSlice = (EnvironmentProviderSlice) getSlice(MAIN_SLICE);
+				objects = mainSlice.getPlaygroundObjects(playgroundID);
+			} catch (ServiceException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IMTPException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return objects;
+	}
+	
+	private boolean takeObject(String objectID, String agentID){
+		boolean success = false;
+		if(masterNode){
+			Physical2DObject agentObject = envWrap.getObjectById(agentID);
+			if(agentObject != null && agentObject instanceof ActiveObject){
+				ActiveObject agent = (ActiveObject) agentObject;
+				Physical2DObject payloadObject = envWrap.getObjectById(objectID);
+				if(payloadObject != null && payloadObject instanceof PassiveObject){
+					PassiveObject payload = (PassiveObject) payloadObject;
+					if(payload.getControlledBy() == null){
+						payload.setControlledBy(agent);
+						agent.addPayload(payload);
+						success = true;
+					}
+				}
+			}
+			
+		}else{
+			try {
+				EnvironmentProviderSlice mainSlice = (EnvironmentProviderSlice) getSlice(MAIN_SLICE);
+				success = mainSlice.takeObject(objectID, agentID);
+			} catch (ServiceException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IMTPException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return success;
+	}
+	
+	private void putObject(String objectID){
+		if(masterNode){
+			Physical2DObject payloadObject =envWrap.getObjectById(objectID);
+			if(payloadObject != null && payloadObject instanceof PassiveObject){
+				PassiveObject object = (PassiveObject) payloadObject;
+				ActiveObject agent = object.getControlledBy();
+				agent.removePayload(object);
+				object.setControlledBy(null);
+			}
+		}else{
+			try {
+				EnvironmentProviderSlice mainSlice = (EnvironmentProviderSlice) getSlice(MAIN_SLICE);
+				mainSlice.putObject(objectID);
+			} catch (ServiceException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IMTPException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	private void setSVGDoc(Document svgDoc){
@@ -256,8 +359,8 @@ public class EnvironmentProviderService extends BaseService {
 		}
 
 		@Override
-		public HashSet<ActiveObject> getCurrentlyMoving() {
-			return EnvironmentProviderService.this.getCurrentlyMoving();
+		public HashSet<ActiveObject> getCurrentlyMovingAgents() {
+			return EnvironmentProviderService.this.getCurrentlyMovingAgents();
 		}
 
 		@Override
@@ -273,6 +376,26 @@ public class EnvironmentProviderService extends BaseService {
 		@Override
 		public void setSVGDoc(Document svgDoc) {
 			EnvironmentProviderService.this.setSVGDoc(svgDoc);
+		}
+
+		@Override
+		public HashSet<Physical2DObject> getCurrentlyMovingObjects() {
+			return EnvironmentProviderService.this.getCurrentlyMovingObjects();
+		}
+
+		@Override
+		public List<Physical2DObject> getPlaygroundObjects(String playgroundID) {
+			return EnvironmentProviderService.this.getPlaygroundObjects(playgroundID);
+		}
+
+		@Override
+		public void putObject(String objectID) {
+			EnvironmentProviderService.this.putObject(objectID);
+		}
+
+		@Override
+		public boolean takeObject(String objectID, String agentID) {
+			return EnvironmentProviderService.this.takeObject(objectID, agentID);
 		}
 	}
 	
@@ -312,24 +435,42 @@ public class EnvironmentProviderService extends BaseService {
 				String objectId = cmd.getParam(0).toString();
 				Physical2DObject object = EnvironmentProviderService.this.getObject(objectId);
 				cmd.setReturnValue(object);
-			}else if(cmd.getName().equals(EnvironmentProviderSlice.H_GET_CURRENTLY_MOVING)){
+			}else if(cmd.getName().equals(EnvironmentProviderSlice.H_GET_CURRENTLY_MOVING_OBJECTS)){
 				if(myLogger.isLoggable(Logger.FINE)){
 					myLogger.log(Logger.FINE, "Serving moving objects request.");
 				}
-				cmd.setReturnValue(EnvironmentProviderService.this.getCurrentlyMoving());				
+				cmd.setReturnValue(EnvironmentProviderService.this.getCurrentlyMovingObjects());				
 			}else if(cmd.getName().equals(EnvironmentProviderSlice.H_SET_MOVEMENT)){
 				if(myLogger.isLoggable(Logger.FINE)){
 					myLogger.log(Logger.FINE, "Serving set agent movement request.");
 				}
-				Object[] params = cmd.getParams();
-				String agentID = params[0].toString();
-				Movement movement = (Movement) params[1];
+				String agentID = (String) cmd.getParam(0);
+				Movement movement = (Movement) cmd.getParam(1);
 				cmd.setReturnValue(new Boolean(EnvironmentProviderService.this.setMovement(agentID, movement)));
 			}else if(cmd.getName().equals(EnvironmentProviderSlice.H_GET_SVG_DOC)){
 				if(myLogger.isLoggable(Logger.FINE)){
 					myLogger.log(Logger.FINE, "Serving set agent movement request.");
 				}
 				cmd.setReturnValue(EnvironmentProviderService.this.getSVGDoc());
+			}else if(cmd.getName().equals(EnvironmentProviderSlice.H_GET_PLAYGROUND_OBJECTS)){
+				if(myLogger.isLoggable(Logger.FINE)){
+					myLogger.log(Logger.FINE, "Serving playground objects request.");
+				}
+				String pgID = (String) cmd.getParam(0);
+				cmd.setReturnValue(EnvironmentProviderService.this.getPlaygroundObjects(pgID));
+			}else if(cmd.getName().equals(EnvironmentProviderSlice.H_TAKE_OBJECT)){
+				if(myLogger.isLoggable(Logger.FINE)){
+					myLogger.log(Logger.FINE, "Serving take object request.");
+				}
+				String objectID = (String) cmd.getParam(0);
+				String agentID = (String) cmd.getParam(1);
+				cmd.setReturnValue(new Boolean(EnvironmentProviderService.this.takeObject(objectID, agentID)));
+			}else if(cmd.getName().equals(EnvironmentProviderSlice.H_PUT_OBJECT)){
+				if(myLogger.isLoggable(Logger.FINE)){
+					myLogger.log(Logger.FINE, "Serving put object request.");
+				}
+				String objectID = (String) cmd.getParam(0);
+				EnvironmentProviderService.this.putObject(objectID);
 			}
 			return null;
 		}

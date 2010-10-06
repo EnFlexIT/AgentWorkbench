@@ -41,7 +41,7 @@ public abstract class Physical2DAgent extends Agent{
 	 * @return The ActiceObject representing this agent. Null if no object with myObjectID was found 
 	 * @throws ServiceException EnvironmentProviderHelper could not be retrieved
 	 */
-	private ActiveObject getMyEnvironmentOject() throws ServiceException{
+	protected ActiveObject getMyEnvironmentOject() throws ServiceException{
 			EnvironmentProviderHelper helper = (EnvironmentProviderHelper) getHelper(EnvironmentProviderService.SERVICE_NAME);
 			return (ActiveObject) helper.getObject(getLocalName());
 	}
@@ -51,9 +51,9 @@ public abstract class Physical2DAgent extends Agent{
 	 * @return The Physical2DObject with the given ID. Null if no matching object was found.
 	 * @throws ServiceException
 	 */
-	private Physical2DObject getEnvironmentObject(String id) throws ServiceException{
+	protected Physical2DObject getEnvironmentObject(String id) throws ServiceException{
 		EnvironmentProviderHelper helper = (EnvironmentProviderHelper) getHelper(EnvironmentProviderService.SERVICE_NAME);
-		return helper.getObject(getLocalName());
+		return helper.getObject(id);
 	}
 
 }

@@ -1,5 +1,6 @@
 package mas.display;
 
+import java.util.HashSet;
 import java.util.Iterator;
 
 
@@ -9,6 +10,7 @@ import mas.environment.ontology.PlaygroundObject;
 import mas.environment.ontology.Position;
 import mas.environment.ontology.Scale;
 
+import org.apache.batik.bridge.UpdateManager;
 import org.apache.batik.swing.JSVGCanvas;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -19,33 +21,28 @@ public class DisplayAgentGUI extends BasicSVGGUI {
 	 * 
 	 */
 	private static final long serialVersionUID = -6509863549022282766L;
-
-	private final int PERIOD = 100;
-	
+	/**
+	 * The scale of the SVG document
+	 */
 	private Scale scale;
-	
+	/**
+	 * Constructor
+	 * @param svgDoc The SVG document to display
+	 * @param env The Physical2DEnvironment represented by the SVG
+	 */
 	public DisplayAgentGUI(Document svgDoc, Physical2DEnvironment env){
 		super();
 		this.getCanvas().setDocumentState(JSVGCanvas.ALWAYS_DYNAMIC);
-//		this.getCanvas().addGVTTreeRendererListener(new GVTTreeRendererAdapter(){
-//			public void gvtRenderingCompleted(GVTTreeRendererEvent re){
-//				
-//				Window window = getCanvas().getUpdateManager().getScriptingEnvironment().createWindow();
-//				window.setInterval(new Animation(), PERIOD);
-//			}
-//		});
 		this.scale = env.getScale();
 		initPositions(svgDoc, env.getRootPlayground());
 		this.setSVGDoc(svgDoc);
 	}
 	
-	void setSVGDocument(Document doc, PlaygroundObject rootPlayground){
-		initPositions(doc, rootPlayground);
-		this.getCanvas().setDocument(doc);
-	}
-	
-
-	
+	/**
+	 * This method synchronizes the SVG document with the environment model before displaying it 
+	 * @param svgDoc The SVG document
+	 * @param pg The environment model's root playground
+	 */
 	@SuppressWarnings("unchecked")
 	private void initPositions(Document svgDoc, PlaygroundObject pg){
 		Iterator<Physical2DObject> objects = pg.getAllChildObjects();
@@ -87,5 +84,41 @@ public class DisplayAgentGUI extends BasicSVGGUI {
 			elem.setAttributeNS(null, "cx", ""+xPos);
 			elem.setAttributeNS(null, "cy", ""+yPos);
 		}
+	}
+	
+	/**
+	 * This method starts the posUpdater updating the SVG element's positions
+	 * @param movingObjects
+	 */
+	void updatePositions(HashSet<Physical2DObject> movingObjects){
+		UpdateManager um = getCanvas().getUpdateManager();
+		um.getUpdateRunnableQueue().invokeLater(new posUpdater(movingObjects));
+	}
+	
+	/**
+	 * This class updates the positions of the SVG elements representing moving objects
+	 * @author Nils
+	 *
+	 */
+	private class posUpdater implements Runnable{
+		
+		private HashSet<Physical2DObject> movingObjects;
+		
+		public posUpdater(HashSet<Physical2DObject> movingObjects){
+			this.movingObjects = movingObjects;
+		}
+
+		@Override
+		public void run() {
+			Iterator<Physical2DObject> objects = movingObjects.iterator();
+			while(objects.hasNext()){
+				Physical2DObject object = objects.next();
+				Element element = getSVGDoc().getElementById(object.getId());
+				if(element != null){
+					setElementPosition(element, object.getPosition());
+				}
+			}
+		}
+		
 	}
 }

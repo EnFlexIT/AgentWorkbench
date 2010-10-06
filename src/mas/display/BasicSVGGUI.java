@@ -124,4 +124,8 @@ public class BasicSVGGUI extends JPanel {
 		
 		this.setPreferredSize(new Dimension((int)svgWidth, (int) (svgHeight+getPnlZoom().getPreferredSize().getHeight())));
 	}
+	
+	public Document getSVGDoc(){
+		return canvas.getSVGDocument();
+	}
 }

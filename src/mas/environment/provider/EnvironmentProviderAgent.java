@@ -6,6 +6,7 @@ import java.util.Iterator;
 import org.w3c.dom.Document;
 
 import mas.environment.ontology.ActiveObject;
+import mas.environment.ontology.PassiveObject;
 import mas.environment.ontology.Physical2DEnvironment;
 import jade.core.Agent;
 import jade.core.ServiceException;
@@ -53,7 +54,11 @@ public class EnvironmentProviderAgent extends Agent {
 		}
 		
 	}
-	
+	/**
+	 * This behaviour updates the positions of all moving environment objects
+	 * @author Nils
+	 *
+	 */
 	private class UpdatePositionsBehaviour extends TickerBehaviour{
 		
 		/**
@@ -67,23 +72,33 @@ public class EnvironmentProviderAgent extends Agent {
 			helper = (EnvironmentProviderHelper) getHelper(EnvironmentProviderService.SERVICE_NAME);
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		protected void onTick() {
-			HashSet<ActiveObject> moving = helper.getCurrentlyMoving();
-			if(moving.size() > 0){
+			HashSet<ActiveObject> moving = helper.getCurrentlyMovingAgents();
+			if(moving.size() > 0){	// Any moving agents?
 				Iterator<ActiveObject> movingAgents = moving.iterator();
+				
 				while(movingAgents.hasNext()){
 					ActiveObject movingAgent = movingAgents.next();
-					movingAgent.getPosition().setXPos(
-							movingAgent.getPosition().getXPos() 
-							+ movingAgent.getMovement().getXPosChange()/1000*PERIOD
-					);
-					movingAgent.getPosition().setYPos(
-							movingAgent.getPosition().getYPos() 
-							+ movingAgent.getMovement().getYPosChange()/1000*PERIOD
-					);
+					
+					// Calculate position change per period
+					float xPosChange = movingAgent.getMovement().getXPosChange()/1000*PERIOD;
+					float yPosChange = movingAgent.getMovement().getYPosChange()/1000*PERIOD;
+					
+					// Update the agent's position
+					movingAgent.getPosition().setXPos(movingAgent.getPosition().getXPos() + xPosChange);
+					movingAgent.getPosition().setYPos(movingAgent.getPosition().getYPos() + yPosChange);
+					
+					// Update the positions of all PassiveObjects controlled by this agent, if any
+					Iterator<PassiveObject> controlledObjects = movingAgent.getAllPayload();
+					while(controlledObjects.hasNext()){
+						PassiveObject controlledObject = controlledObjects.next();
+						controlledObject.getPosition().setXPos(controlledObject.getPosition().getXPos() + xPosChange);
+						controlledObject.getPosition().setYPos(controlledObject.getPosition().getYPos() + yPosChange);
+					}
 				}
-			}
+			}			
 		}
 		
 	}

@@ -1,10 +1,10 @@
 package mas.environment.provider;
 
 import java.util.HashSet;
+import java.util.List;
 
 import org.w3c.dom.Document;
 
-import mas.environment.ontology.ActiveObject;
 import mas.environment.ontology.Movement;
 import mas.environment.ontology.Physical2DEnvironment;
 import mas.environment.ontology.Physical2DObject;
@@ -63,10 +63,10 @@ public class EnvironmentProviderProxy extends SliceProxy implements
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public HashSet<ActiveObject> getCurrentlyMoving() throws IMTPException {
+	public HashSet<Physical2DObject> getCurrentlyMovingObjects() throws IMTPException {
 		
 		try {
-			GenericCommand cmd = new GenericCommand(H_GET_CURRENTLY_MOVING, EnvironmentProviderService.SERVICE_NAME, null);
+			GenericCommand cmd = new GenericCommand(H_GET_CURRENTLY_MOVING_OBJECTS, EnvironmentProviderService.SERVICE_NAME, null);
 			Object result = getNode().accept(cmd);
 			if((result != null) && (result instanceof Throwable)) {
 				if(result instanceof IMTPException) {
@@ -76,7 +76,7 @@ public class EnvironmentProviderProxy extends SliceProxy implements
 					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
 				}
 			}
-			return (HashSet<ActiveObject>) result;
+			return (HashSet<Physical2DObject>) result;
 		} catch (ServiceException e) {
 			throw new IMTPException("Unable to access remote node", e);
 		}
@@ -118,6 +118,59 @@ public class EnvironmentProviderProxy extends SliceProxy implements
 				}
 			}
 			return (Document) result;
+		} catch (ServiceException e) {
+			throw new IMTPException("Unable to access remote node", e);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Physical2DObject> getPlaygroundObjects(String playgroundID)
+			throws IMTPException {
+		GenericCommand cmd = new GenericCommand(H_GET_PLAYGROUND_OBJECTS, EnvironmentProviderService.SERVICE_NAME, null);
+		cmd.addParam(playgroundID);
+		try {
+			Object result = getNode().accept(cmd);
+			if((result != null) && (result instanceof Throwable)){
+				if(result instanceof IMTPException){
+					throw (IMTPException)result;
+				}else{
+					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
+				}
+			}
+			return (List<Physical2DObject>) result;
+		} catch (ServiceException e) {
+			throw new IMTPException("Unable to access remote node", e);
+		}
+	}
+
+	@Override
+	public void putObject(String objectID) throws IMTPException {
+		GenericCommand cmd = new GenericCommand(H_PUT_OBJECT, EnvironmentProviderService.SERVICE_NAME, null);
+		cmd.addParam(objectID);
+		try {
+			getNode().accept(cmd);
+		} catch (ServiceException e) {
+			throw new IMTPException("Unable to access remote node", e);
+		}
+	}
+
+	@Override
+	public boolean takeObject(String objectID, String agentID) throws IMTPException {
+		
+		try {
+			GenericCommand cmd = new GenericCommand(H_TAKE_OBJECT, EnvironmentProviderService.SERVICE_NAME, null);
+			cmd.addParam(objectID);
+			cmd.addParam(agentID);
+			Object result = getNode().accept(cmd);
+			if((result != null) && (result instanceof Throwable)){
+				if(result instanceof IMTPException){
+					throw (IMTPException)result;
+				}else{
+					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
+				}
+			}
+			return ((Boolean)result).booleanValue();
 		} catch (ServiceException e) {
 			throw new IMTPException("Unable to access remote node", e);
 		}

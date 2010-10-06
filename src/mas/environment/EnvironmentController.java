@@ -31,7 +31,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import sim.setup.SimulationSetup;
-import sim.setup.SimulationSetups;
 import sim.setup.SimulationSetups.SimulationSetupsChangeNotification;
 
 import application.Language;
@@ -170,6 +169,7 @@ public class EnvironmentController extends Observable implements Observer{
 			newEnv = new Physical2DEnvironment();
 			newEnv.setRootPlayground(rootPg);
 			newEnv.setScale(defaultScale);
+			newEnv.setProjectName(project.getProjectName());
 			
 			String envFileName = project.getProjectName()+"_"+project.simSetupCurrent+".xml";
 			project.simSetups.getCurrSimSetup().setEnvironmentFileName(envFileName);
