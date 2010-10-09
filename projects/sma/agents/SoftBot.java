@@ -1,52 +1,55 @@
 package sma.agents;
 
+import jade.core.Agent;
 import jade.core.ServiceException;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.core.behaviours.SequentialBehaviour;
+import mas.environment.ontology.ActiveObject;
 import mas.environment.ontology.Physical2DObject;
 import mas.environment.ontology.Position;
 import mas.environment.provider.EnvironmentProviderHelper;
 import mas.environment.provider.EnvironmentProviderService;
 import mas.environment.MoveToPointBehaviour;
-import mas.environment.Physical2DAgent;
 
 /**
  * Dummy-Implementation for testing the DisplayAgent
  * @author Nils
  *
  */
-public class SoftBot extends Physical2DAgent {
+public class SoftBot extends Agent {
 	/**
 	 * serialVersionUID
 	 */
 	private static final long serialVersionUID = -1555521768821748185L;
 
 	public void setup(){
-		super.setup();
 				
 		try {
-			final Physical2DObject targetObject = getEnvironmentObject("Box2");
+			EnvironmentProviderHelper helper = (EnvironmentProviderHelper) getHelper(EnvironmentProviderService.SERVICE_NAME);
+			final Physical2DObject targetObject = helper.getObject("Box2");
 			
-			Position wp1 = new Position();
-			wp1.setXPos(5f);
-			wp1.setYPos(5f);
+			ActiveObject self = (ActiveObject) helper.getObject(getLocalName()); 
 			
-			Position wp2 = new Position();
-			wp2.setXPos(targetObject.getPosition().getXPos());
-			wp2.setYPos(wp1.getYPos());
+			Position destPos = new Position();
+			destPos.setXPos(5f);
+			destPos.setYPos(5f);
+						
+			Position waypoint = new Position();
+			waypoint.setXPos(targetObject.getPosition().getXPos());
+			waypoint.setYPos(5f);
 			
-			Position wp3 = new Position();
-			wp3.setXPos(wp2.getXPos());
-			wp3.setYPos(targetObject.getPosition().getYPos());
+			Position objectPos = new Position();
+			objectPos.setXPos(waypoint.getXPos());
+			objectPos.setYPos(targetObject.getPosition().getYPos());
 			
-			Position finalPos = new Position();
-			finalPos.setXPos(10f);
-			finalPos.setYPos(5f);
+			Position endPos = new Position();
+			endPos.setXPos(10f);
+			endPos.setYPos(5f);
 			
 			
 			SequentialBehaviour demoBehaviour = new SequentialBehaviour();
-			demoBehaviour.addSubBehaviour(new MoveToPointBehaviour(this, wp1, wp2, myEnvironmentObject.getMaxSpeed()));
-			demoBehaviour.addSubBehaviour(new MoveToPointBehaviour(this, wp2, wp3, myEnvironmentObject.getMaxSpeed()));
+			demoBehaviour.addSubBehaviour(new MoveToPointBehaviour(this, waypoint, self.getMaxSpeed()));
+			demoBehaviour.addSubBehaviour(new MoveToPointBehaviour(this, objectPos, self.getMaxSpeed()));
 			
 			demoBehaviour.addSubBehaviour(new OneShotBehaviour() {
 				
@@ -73,8 +76,8 @@ public class SoftBot extends Physical2DAgent {
 				}
 			});
 			
-			demoBehaviour.addSubBehaviour(new MoveToPointBehaviour(this, wp3, wp2, myEnvironmentObject.getMaxSpeed()));
-			demoBehaviour.addSubBehaviour(new MoveToPointBehaviour(this, wp2, wp1, myEnvironmentObject.getMaxSpeed()));
+			demoBehaviour.addSubBehaviour(new MoveToPointBehaviour(this, waypoint, self.getMaxSpeed()));
+			demoBehaviour.addSubBehaviour(new MoveToPointBehaviour(this, destPos, self.getMaxSpeed()));
 			
 			demoBehaviour.addSubBehaviour(new OneShotBehaviour() {
 				
@@ -96,9 +99,13 @@ public class SoftBot extends Physical2DAgent {
 				}
 			});
 			
-			demoBehaviour.addSubBehaviour(new MoveToPointBehaviour(this, wp1, finalPos, myEnvironmentObject.getMaxSpeed()));
+			demoBehaviour.addSubBehaviour(new MoveToPointBehaviour(this, endPos, self.getMaxSpeed()));
 			
 			addBehaviour(demoBehaviour);
+			
+//			destPos.setXPos(666f);
+//			destPos.setYPos(666f);
+//			addBehaviour(new MoveToPointBehaviour(this, destPos, self.getMaxSpeed()));
 			
 		} catch (ServiceException e) {
 			// TODO Auto-generated catch block

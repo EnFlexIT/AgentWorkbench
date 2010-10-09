@@ -8,7 +8,7 @@ import jade.core.*;
    * This class represents passive objects in a physical 2D environment. Passive objects can't move on their own, but can be moved by an agent.
 * Protege name: PassiveObject
 * @author ontology bean generator
-* @version 2010/10/4, 16:36:15
+* @version 2010/10/8, 20:12:51
 */
 public class PassiveObject extends Physical2DObject{ 
 

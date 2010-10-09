@@ -9,7 +9,7 @@ import jade.core.*;
    * An object's current movement.
 * Protege name: Movement
 * @author ontology bean generator
-* @version 2010/10/4, 16:36:15
+* @version 2010/10/8, 20:12:51
 */
 public class Movement implements Concept {
 
@@ -23,18 +23,6 @@ public class Movement implements Concept {
 	   return (float) Math.sqrt(xPosChange*xPosChange + yPosChange*yPosChange);
    }
    /**
-   * The change of the objects x coordinate per second.
-* Protege name: xPosChange
-   */
-   private float xPosChange;
-   public void setXPosChange(float value) { 
-    this.xPosChange=value;
-   }
-   public float getXPosChange() {
-     return this.xPosChange;
-   }
-
-   /**
    * The y coordinate change per second
 * Protege name: yPosChange
    */
@@ -44,6 +32,18 @@ public class Movement implements Concept {
    }
    public float getYPosChange() {
      return this.yPosChange;
+   }
+
+   /**
+   * The change of the objects x coordinate per second.
+* Protege name: xPosChange
+   */
+   private float xPosChange;
+   public void setXPosChange(float value) { 
+    this.xPosChange=value;
+   }
+   public float getXPosChange() {
+     return this.xPosChange;
    }
 
 }

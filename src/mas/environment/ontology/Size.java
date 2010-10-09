@@ -9,21 +9,9 @@ import jade.core.*;
    * A 2D object's size
 * Protege name: Size
 * @author ontology bean generator
-* @version 2010/10/4, 16:36:15
+* @version 2010/10/8, 20:12:51
 */
 public class Size implements Concept {
-
-   /**
-   * The object's width
-* Protege name: width
-   */
-   private float width;
-   public void setWidth(float value) { 
-    this.width=value;
-   }
-   public float getWidth() {
-     return this.width;
-   }
 
    /**
    * The object's height
@@ -35,6 +23,18 @@ public class Size implements Concept {
    }
    public float getHeight() {
      return this.height;
+   }
+
+   /**
+   * The object's width
+* Protege name: width
+   */
+   private float width;
+   public void setWidth(float value) { 
+    this.width=value;
+   }
+   public float getWidth() {
+     return this.width;
    }
 
 }
