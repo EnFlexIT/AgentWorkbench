@@ -70,10 +70,9 @@ public class Simulation extends JScrollPane implements Observer, ActionListener 
 	/**
 	 * Starts a DisplayAgent and the project agents (later)
 	 */
-	@SuppressWarnings("static-access")
 	private void startSimulation(){
 		
-		this.btnStart.setEnabled(false);
+//		this.btnStart.setEnabled(false);
 				
 		if ( Application.JadePlatform.jadeMainContainerIsRunning(true)){
 			
@@ -81,8 +80,8 @@ public class Simulation extends JScrollPane implements Observer, ActionListener 
 			String projectContainer = CurrProject.getProjectFolder();
 			
 			Object[] args = {CurrProject.getEnvironment(), CurrProject.getSVGDoc()};
-			Application.JadePlatform.jadeAgentStart("EPA_"+CurrProject.getProjectName(), mas.environment.provider.EnvironmentProviderAgent.class, args, Application.JadePlatform.MASmc.getName());
 			Application.JadePlatform.jadeContainerCreate(projectContainer);
+			Application.JadePlatform.jadeAgentStart("EPA_"+CurrProject.getProjectName(), mas.environment.provider.EnvironmentProviderAgent.class, args, projectContainer);
 
 		}
 		

@@ -176,6 +176,24 @@ public class EnvironmentProviderProxy extends SliceProxy implements
 		}
 	}
 
+	@Override
+	public boolean isMaster() throws IMTPException {
+		GenericCommand cmd = new GenericCommand(H_IS_MASTER, EnvironmentProviderService.SERVICE_NAME, null);
+		try {
+			Object result = getNode().accept(cmd);
+			if((result != null) && (result instanceof Throwable)){
+				if(result instanceof IMTPException){
+					throw (IMTPException)result;
+				}else{
+					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
+				}
+			}
+			return ((Boolean)result).booleanValue();
+		} catch (ServiceException e) {
+			throw new IMTPException("Unable to access remote node", e);
+		}
+	}
+
 	
 
 }

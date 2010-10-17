@@ -1,5 +1,7 @@
 package sma.agents;
 
+import java.awt.geom.Rectangle2D;
+
 import jade.core.Agent;
 import jade.core.ServiceException;
 import jade.core.behaviours.OneShotBehaviour;
@@ -26,9 +28,10 @@ public class SoftBot extends Agent {
 				
 		try {
 			EnvironmentProviderHelper helper = (EnvironmentProviderHelper) getHelper(EnvironmentProviderService.SERVICE_NAME);
+			
 			final Physical2DObject targetObject = helper.getObject("Box2");
 			
-			ActiveObject self = (ActiveObject) helper.getObject(getLocalName()); 
+			ActiveObject self = (ActiveObject) helper.getObject(getLocalName());
 			
 			Position destPos = new Position();
 			destPos.setXPos(5f);
@@ -90,7 +93,7 @@ public class SoftBot extends Agent {
 				public void action() {
 					try {
 						EnvironmentProviderHelper helper = (EnvironmentProviderHelper) getHelper(EnvironmentProviderService.SERVICE_NAME);
-						helper.putObject(targetObject.getId());
+						helper.releaseObject(targetObject.getId());
 						System.out.println("Testausgabe: "+getLocalName()+" setzt Objekt "+targetObject.getId()+" ab.");
 					} catch (ServiceException e) {
 						// TODO Auto-generated catch block
@@ -102,10 +105,6 @@ public class SoftBot extends Agent {
 			demoBehaviour.addSubBehaviour(new MoveToPointBehaviour(this, endPos, self.getMaxSpeed()));
 			
 			addBehaviour(demoBehaviour);
-			
-//			destPos.setXPos(666f);
-//			destPos.setYPos(666f);
-//			addBehaviour(new MoveToPointBehaviour(this, destPos, self.getMaxSpeed()));
 			
 		} catch (ServiceException e) {
 			// TODO Auto-generated catch block

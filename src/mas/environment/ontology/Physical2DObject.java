@@ -32,10 +32,33 @@ public class Physical2DObject implements Concept {
     * @return True or false
     */
    public boolean objectIntersects(Physical2DObject object){
-	   java.awt.geom.Rectangle2D.Float myRect = new java.awt.geom.Rectangle2D.Float(getPosition().getXPos(), getPosition().getYPos(), getSize().getWidth(), getSize().getHeight());
-	   java.awt.geom.Rectangle2D.Float objectRect = new java.awt.geom.Rectangle2D.Float(object.getPosition().getXPos(), object.getPosition().getYPos(), object.getSize().getWidth(), object.getSize().getHeight());
+//	   java.awt.geom.Rectangle2D.Float myRect = new java.awt.geom.Rectangle2D.Float(getPosition().getXPos(), getPosition().getYPos(), getSize().getWidth(), getSize().getHeight());
+//	   java.awt.geom.Rectangle2D.Float objectRect = new java.awt.geom.Rectangle2D.Float(object.getPosition().getXPos(), object.getPosition().getYPos(), object.getSize().getWidth(), object.getSize().getHeight());
+//	   
+//	   return myRect.intersects(objectRect);
 	   
-	   return myRect.intersects(objectRect);
+	   boolean result = false;
+	   
+	   float minX = position.getXPos()-size.getWidth()/2;
+	   float maxX = position.getXPos()+size.getWidth()/2;
+	   
+	   float minY = position.getYPos()-size.getHeight()/2;
+	   float maxY = position.getYPos()+size.getHeight()/2;
+	   
+	   float objMinX = object.getPosition().getXPos()-object.getSize().getWidth()/2;
+	   float objMaxX = object.getPosition().getXPos()+object.getSize().getWidth()/2;
+	   
+	   float objMinY = object.getPosition().getYPos()-object.getSize().getHeight()/2;
+	   float objMaxY = object.getPosition().getYPos()+object.getSize().getHeight()/2;
+	   
+	   result = (
+			   minX > objMinX && minX < objMaxX && minY > objMinY && minY < objMaxY
+			   || maxX > objMinX && maxX < objMaxX && minY > objMinY && minY < objMaxY
+			   || minX > objMinX && minX < objMaxX && maxY > objMinY && maxY < objMaxY
+			   || maxX > objMinX && maxX < objMaxX && maxY > objMinY && maxY < objMaxY
+	   ) ;
+	   
+	   return result;
    }
    /**
    * ID used to identify the object

@@ -83,5 +83,5 @@ public interface EnvironmentProviderHelper extends ServiceHelper {
 	 * Lets an agent release a controlled object
 	 * @param objectID The object's ID
 	 */
-	public void putObject(String objectID);
+	public void releaseObject(String objectID);
 }

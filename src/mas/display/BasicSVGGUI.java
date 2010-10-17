@@ -119,10 +119,11 @@ public class BasicSVGGUI extends JPanel {
 	
 	public void setSVGDoc(Document doc){
 		this.canvas.setDocument(doc);
-		float svgWidth = Float.parseFloat(doc.getDocumentElement().getAttributeNS(null, "width"));
-		float svgHeight = Float.parseFloat(doc.getDocumentElement().getAttributeNS(null, "height"));
-		
-		this.setPreferredSize(new Dimension((int)svgWidth, (int) (svgHeight+getPnlZoom().getPreferredSize().getHeight())));
+		if(doc != null){
+			float svgWidth = Float.parseFloat(doc.getDocumentElement().getAttributeNS(null, "width"));
+			float svgHeight = Float.parseFloat(doc.getDocumentElement().getAttributeNS(null, "height"));
+			this.setPreferredSize(new Dimension((int)svgWidth, (int) (svgHeight+getPnlZoom().getPreferredSize().getHeight())));
+		}
 	}
 	
 	public Document getSVGDoc(){

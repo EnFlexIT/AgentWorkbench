@@ -92,7 +92,10 @@ public class DisplayAgentGUI extends BasicSVGGUI {
 	 */
 	void updatePositions(HashSet<Physical2DObject> movingObjects){
 		UpdateManager um = getCanvas().getUpdateManager();
-		um.getUpdateRunnableQueue().invokeLater(new posUpdater(movingObjects));
+		if(um != null){
+			
+			um.getUpdateRunnableQueue().invokeLater(new posUpdater(movingObjects));
+		}
 	}
 	
 	/**

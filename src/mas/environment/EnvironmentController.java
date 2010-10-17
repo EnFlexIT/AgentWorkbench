@@ -31,6 +31,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import sim.setup.SimulationSetup;
+import sim.setup.SimulationSetups;
 import sim.setup.SimulationSetups.SimulationSetupsChangeNotification;
 
 import application.Language;
@@ -69,13 +70,17 @@ public class EnvironmentController extends Observable implements Observer{
 	 */
 	public static final int SVG_CHANGED = 3;
 	/**
+	 * The path where environment and SVG files are stored
+	 */
+	private String baseFilePath = null;
+	/**
 	 * Path for saving the SVG
 	 */
-	private String defaultSVGPath = null;
+	private String currentSVGPath = null;
 	/**
 	 * Path for saving the environment
 	 */
-	private String defaultEnvironmentPath = null;
+	private String currentEnvironmentPath = null;
 	/**
 	 * The environment instance encapsulated by this EnvironmentController
 	 */
@@ -104,7 +109,7 @@ public class EnvironmentController extends Observable implements Observer{
 		this.project = project;
 		this.project.setEnvironmentController(this);
 		this.project.addObserver(this);
-		this.rebuildDefaultPaths();
+		this.baseFilePath = this.project.getProjectFolderFullPath()+this.project.getSubFolderEnvSetups()+File.separator;
 		SimulationSetup currentSetup = project.simSetups.getCurrSimSetup(); 
 		// Load SVG file if specified
 		if(currentSetup.getSvgFileName() != null && currentSetup.getSvgFileName().length() >0){
@@ -186,6 +191,7 @@ public class EnvironmentController extends Observable implements Observer{
 		Document doc = null;
 		
 		if(svgFile.exists()){
+			doc = SVGDOMImplementation.getDOMImplementation().createDocument(SVGDOMImplementation.SVG_NAMESPACE_URI, "svg", null);
 			System.out.println(Language.translate("Lade SVG-Datei")+" "+svgFile.getName());
 			SAXSVGDocumentFactory factory = new SAXSVGDocumentFactory(XMLResourceDescriptor.getXMLParserClassName());
 			
@@ -206,7 +212,7 @@ public class EnvironmentController extends Observable implements Observer{
 	public void setSVGFile(File file){
 		setSvgDoc(loadSVG(file));
 		if(!file.getParentFile().getAbsolutePath().equals(project.getProjectFolderFullPath()+project.getSubFolderEnvSetups())){
-			file = new File(defaultSVGPath);
+			file = new File(currentSVGPath);
 			saveSVG(file);
 		}
 		project.simSetups.getCurrSimSetup().setSvgFileName(file.getName());
@@ -234,6 +240,7 @@ public class EnvironmentController extends Observable implements Observer{
 				SVGTranscoder t = new SVGTranscoder();
 				t.transcode(new TranscoderInput(svgDoc), new TranscoderOutput(writer));
 				writer.close();
+				
 			} catch (IOException e) {
 				System.err.println(Language.translate("Fehler beim Erzeugen der Datei")+" "+svgFile.getAbsolutePath());
 			} catch (TranscoderException e) {
@@ -288,8 +295,8 @@ public class EnvironmentController extends Observable implements Observer{
 	 * Saves SVG and environment to the default paths
 	 */
 	public void save(){
-		saveSVG(new File(defaultSVGPath));
-		saveEnvironment(new File(defaultEnvironmentPath));
+		saveSVG(new File(currentSVGPath));
+		saveEnvironment(new File(currentEnvironmentPath));
 	}
 	/**
 	 * Saves the current environment to a file
@@ -362,6 +369,8 @@ public class EnvironmentController extends Observable implements Observer{
 			} catch (OntologyException e) {
 				System.err.println("Fehler beim Parsen der Umgebungsdatei!");
 			}
+		}else{
+			System.err.println(Language.translate("Umgebungsdatei")+" "+envFile.getPath()+" "+Language.translate("nicht gefunden"));
 		}
 		return env;
 	}
@@ -371,7 +380,11 @@ public class EnvironmentController extends Observable implements Observer{
 	 */
 	private void setEnvironment(Physical2DEnvironment env){
 		this.environment = env;
-		this.envWrap = new EnvironmentWrapper(env);
+		if(env != null){
+			this.envWrap = new EnvironmentWrapper(env);
+		}else{
+			this.envWrap = null;
+		}
 		setChanged();
 		notifyObservers(new Integer(ENVIRONMENT_CHANGED));
 	}
@@ -492,93 +505,79 @@ public class EnvironmentController extends Observable implements Observer{
 		return pgRect.contains(objRect);
 	}
 	
-	private void rebuildDefaultPaths(){
-		this.defaultSVGPath = project.getProjectFolderFullPath()+project.getSubFolderEnvSetups()+File.separator+project.getProjectName()+"_"+project.simSetupCurrent+".svg";
-		this.defaultEnvironmentPath = project.getProjectFolderFullPath()+project.getSubFolderEnvSetups()+File.separator+project.getProjectName()+"_"+project.simSetupCurrent+".xml";
-	}
-
-
 	@Override
 	public void update(Observable arg0, Object arg1) {
 		if(arg0 == project && arg1.toString().equals("SimSetups")){
-			System.out.println("Testausgabe: Ereignis SimSetups empfangen!");
-			
 			handleSetupChange((SimulationSetupsChangeNotification) arg1);
 		}
 	}
 	
 	private void handleSetupChange(SimulationSetupsChangeNotification sscn){
 		
-//		File svgFile = null;
-//		File envFile = null;
-//		
-//		switch(sscn.getUpdateReason()){
-//			case SimulationSetups.SIMULATION_SETUP_LOAD:
-//				rebuildDefaultPaths();
-//
-//				svgFile = new File(defaultSVGPath);
-//				setSvgDoc(loadSVG(svgFile));
-//				
-//				envFile = new File(defaultEnvironmentPath);
-//				setEnvironment(loadEnvironment(envFile));
-//			break;
-//			
-//			case SimulationSetups.SIMULATION_SETUP_COPY:
-//				rebuildDefaultPaths();
-//				svgFile = new File(defaultSVGPath);
-//				saveSVG(svgFile);	// Save the current SVG under the new name
-//				
-//				envFile = new File(defaultEnvironmentPath);
-//				saveEnvironment(envFile);
-//			break;
-//			
-//			case SimulationSetups.SIMULATION_SETUP_ADD_NEW:
-//				this.setSvgDoc(null);
-//				this.setEnvironment(null);
-//				rebuildDefaultPaths();
-//			
-//			case SimulationSetups.SIMULATION_SETUP_REMOVE:
-//				svgFile = new File(defaultSVGPath);
-//				if(svgFile.exists()){
-//					svgFile.delete();
-//				}
-//				envFile = new File(defaultEnvironmentPath);
-//				if(envFile.exists()){
-//					envFile.delete();
-//				}
-//				rebuildDefaultPaths();
-//			break;
-//			
-//			case SimulationSetups.SIMULATION_SETUP_RENAME:
-//				svgFile = new File(defaultSVGPath);
-//				envFile = new File(defaultEnvironmentPath);
-//				
-//				rebuildDefaultPaths();
-//				File newSvgFile = new File(defaultSVGPath);
-//				File newEnvFile = new File(defaultEnvironmentPath);
-//				
-//				svgFile.renameTo(newSvgFile);
-//				envFile.renameTo(newEnvFile);
-//			break;
-//		}
+		switch(sscn.getUpdateReason()){
+			
+			case SimulationSetups.SIMULATION_SETUP_COPY:
+				setDefaultFileNames();
+				this.currentEnvironmentPath = this.baseFilePath + project.simSetups.getCurrSimSetup().getEnvironmentFileName();
+				this.currentSVGPath = this.baseFilePath + project.simSetups.getCurrSimSetup().getSvgFileName();
+				saveEnvironment(new File(this.currentEnvironmentPath));
+				saveSVG(new File(this.currentSVGPath));
+			break;
+			
+			case SimulationSetups.SIMULATION_SETUP_ADD_NEW:
+				setDefaultFileNames();
+				this.currentEnvironmentPath = this.baseFilePath + project.simSetups.getCurrSimSetup().getEnvironmentFileName();
+				this.currentSVGPath = this.baseFilePath + project.simSetups.getCurrSimSetup().getSvgFileName();
+				setEnvironment(null);
+				setSvgDoc(null);
+			break;
+			
+			case SimulationSetups.SIMULATION_SETUP_REMOVE:
+				File envFile = new File(this.currentEnvironmentPath);
+				File svgFile = new File(this.currentSVGPath);
+				
+				if(envFile.exists()){
+					envFile.delete();
+				}
+				if(svgFile.exists()){
+					svgFile.delete();
+				}
+			// No, there's no break missing here. After deleting a setup another one is loaded.
+			
+			case SimulationSetups.SIMULATION_SETUP_LOAD:
+				this.currentEnvironmentPath = this.baseFilePath + project.simSetups.getCurrSimSetup().getEnvironmentFileName();
+				this.currentSVGPath = this.baseFilePath + project.simSetups.getCurrSimSetup().getSvgFileName();
+				setEnvironment(loadEnvironment(new File(this.currentEnvironmentPath)));
+				setSvgDoc(loadSVG(new File(this.currentSVGPath)));
+			break;
+			
+			case SimulationSetups.SIMULATION_SETUP_RENAME:
+				File oldEnvFile = new File(this.currentEnvironmentPath);
+				File oldSVGFile = new File(this.currentSVGPath);
+				
+				setDefaultFileNames();
+				if(oldEnvFile.exists()){
+					File newEnvFile = new File(this.baseFilePath+project.simSetups.getCurrSimSetup().getEnvironmentFileName());
+					oldEnvFile.renameTo(newEnvFile);
+				}
+				
+				if(oldSVGFile.exists()){
+					File newSvgFile = new File(this.baseFilePath+project.simSetups.getCurrSimSetup().getSvgFileName());
+					oldSVGFile.renameTo(newSvgFile);
+				}
+				
+				this.currentEnvironmentPath = this.baseFilePath + project.simSetups.getCurrSimSetup().getEnvironmentFileName();
+				this.currentSVGPath = this.baseFilePath + project.simSetups.getCurrSimSetup().getSvgFileName();
+			break;
+		}
 		
-		
-		
-//		buildDefaultPaths();
-//		svgFile = new File(defaultSVGPath);
-//		if(svgFile.exists()){	// If a SVG file for this setup exists, load it
-//			setSvgDoc(loadSVG(svgFile));
-//		}else{	// If not, save a copy of the current SVG document to this setup's default SVG path
-//			saveSVG(svgFile);
-//		}
-//		
-//		envFile = new File(defaultEnvironmentPath);
-//		if(envFile.exists()){	// If an environment file for this setup exists, load it
-//			setEnvironment(loadEnvironment(envFile));
-//		}else{	// If not, save a copy of the current environment to this setup's default environment path
-//			saveEnvironment(envFile);
-//		}
 	}
 	
+	private void setDefaultFileNames(){
+		String baseFileName = project.getProjectName()+"_"+project.simSetupCurrent;
+		project.simSetups.getCurrSimSetup().setEnvironmentFileName(baseFileName+".xml");
+		project.simSetups.getCurrSimSetup().setSvgFileName(baseFileName+".svg");
+		
+	}
 	
 }

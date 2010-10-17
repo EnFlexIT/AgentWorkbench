@@ -1,8 +1,13 @@
 package mas.display;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.HashSet;
 
 import javax.swing.JFrame;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.apache.batik.transcoder.TranscoderException;
 
 import mas.environment.ontology.Physical2DObject;
 import mas.environment.provider.EnvironmentProviderHelper;
@@ -33,14 +38,18 @@ public class DisplayAgent extends Agent {
 	public void setup(){
 		try {
 			EnvironmentProviderHelper helper = (EnvironmentProviderHelper) getHelper(EnvironmentProviderService.SERVICE_NAME);
-			helper.getEnvironment();
-			helper.getSVGDoc();
 			this.myGUI = new DisplayAgentGUI(helper.getSVGDoc(), helper.getEnvironment());
 			
 			frame = new JFrame();
 			frame.setTitle("DisplayAgent "+getLocalName()+" - GUI");
 			frame.setContentPane(myGUI);
 			frame.pack();
+			frame.addWindowListener(new WindowAdapter(){
+				public void windowClosing(WindowEvent we){
+					DisplayAgent.this.doDelete();
+				}
+			});
+			
 			frame.setVisible(true);
 
 			addBehaviour(new UpdateSVGBehaviour());

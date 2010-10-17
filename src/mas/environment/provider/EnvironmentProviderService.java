@@ -59,6 +59,10 @@ public class EnvironmentProviderService extends BaseService {
 	 */
 	private boolean masterNode = false;
 	/**
+	 * The name of the container hosting the environment model
+	 */
+	private String masterSlice = null;
+	/**
 	 * Set of currently moving agents
 	 */
 	private HashSet<ActiveObject> currentlyMovingAgents;
@@ -105,6 +109,30 @@ public class EnvironmentProviderService extends BaseService {
 		}
 	}
 	
+	private String getMasterSlice() throws ServiceException{
+		if(masterSlice == null){
+			try {
+				Slice[] epsSlices = getAllSlices();
+				for(int i=0; i<epsSlices.length && masterSlice == null; i++){
+					EnvironmentProviderSlice slice = (EnvironmentProviderSlice) epsSlices[i];
+					if(slice.isMaster()){
+						masterSlice = slice.getNode().getName();
+					}
+				}
+				
+			} catch (ServiceException e) {
+				throw new ServiceException("Error retrieving EnvironmentProviderService slices", e);
+			} catch (IMTPException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return masterSlice;
+	}
+	
+	private boolean isMaster(){
+		return masterNode;
+	}
 	/**
 	 * Gets the services environment Physical2DEnvironment object
 	 * @return The Physical2DEnvironment object
@@ -115,7 +143,7 @@ public class EnvironmentProviderService extends BaseService {
 			env = environment;
 		}else{
 			try {
-				EnvironmentProviderSlice mainSlice = (EnvironmentProviderSlice) getSlice(MAIN_SLICE);
+				EnvironmentProviderSlice mainSlice = (EnvironmentProviderSlice) getSlice(getMasterSlice());
 				env = mainSlice.getEnvironment();
 			} catch (ServiceException e) {
 				// TODO Auto-generated catch block
@@ -141,7 +169,7 @@ public class EnvironmentProviderService extends BaseService {
 		}else{
 		
 			try {
-				EnvironmentProviderSlice mainSlice = (EnvironmentProviderSlice) getSlice(MAIN_SLICE);
+				EnvironmentProviderSlice mainSlice = (EnvironmentProviderSlice) getSlice(getMasterSlice());
 				object = mainSlice.getObject(id);
 			} catch (ServiceException e) {
 				// TODO Auto-generated catch block
@@ -165,7 +193,7 @@ public class EnvironmentProviderService extends BaseService {
 			objects = this.currentlyMovingObjects;
 		}else{
 			try {
-				EnvironmentProviderSlice mainSlice = (EnvironmentProviderSlice) getSlice(MAIN_SLICE);
+				EnvironmentProviderSlice mainSlice = (EnvironmentProviderSlice) getSlice(getMasterSlice());
 				objects = mainSlice.getCurrentlyMovingObjects();
 			} catch (ServiceException e) {
 				// TODO Auto-generated catch block
@@ -210,7 +238,7 @@ public class EnvironmentProviderService extends BaseService {
 			}
 		}else{
 			try {
-				EnvironmentProviderSlice mainSlice = (EnvironmentProviderSlice) getSlice(MAIN_SLICE);
+				EnvironmentProviderSlice mainSlice = (EnvironmentProviderSlice) getSlice(getMasterSlice());
 				result = mainSlice.setMovement(agentID, movement);
 			} catch (ServiceException e) {
 				// TODO Auto-generated catch block
@@ -229,7 +257,7 @@ public class EnvironmentProviderService extends BaseService {
 			doc = this.svgDoc;
 		}else{
 			try {
-				EnvironmentProviderSlice mainSlice = (EnvironmentProviderSlice) getSlice(MAIN_SLICE);
+				EnvironmentProviderSlice mainSlice = (EnvironmentProviderSlice) getSlice(getMasterSlice());
 				doc = mainSlice.getSVGDoc();
 			} catch (ServiceException e) {
 				// TODO Auto-generated catch block
@@ -239,7 +267,7 @@ public class EnvironmentProviderService extends BaseService {
 				e.printStackTrace();
 			}
 		}
-		return doc;
+		return (Document) doc.cloneNode(true);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -250,7 +278,7 @@ public class EnvironmentProviderService extends BaseService {
 			objects = (List<Physical2DObject>) pg.getChildObjects();
 		}else{
 			try {
-				EnvironmentProviderSlice mainSlice = (EnvironmentProviderSlice) getSlice(MAIN_SLICE);
+				EnvironmentProviderSlice mainSlice = (EnvironmentProviderSlice) getSlice(getMasterSlice());
 				objects = mainSlice.getPlaygroundObjects(playgroundID);
 			} catch (ServiceException e) {
 				// TODO Auto-generated catch block
@@ -282,7 +310,7 @@ public class EnvironmentProviderService extends BaseService {
 			
 		}else{
 			try {
-				EnvironmentProviderSlice mainSlice = (EnvironmentProviderSlice) getSlice(MAIN_SLICE);
+				EnvironmentProviderSlice mainSlice = (EnvironmentProviderSlice) getSlice(getMasterSlice());
 				success = mainSlice.takeObject(objectID, agentID);
 			} catch (ServiceException e) {
 				// TODO Auto-generated catch block
@@ -306,7 +334,7 @@ public class EnvironmentProviderService extends BaseService {
 			}
 		}else{
 			try {
-				EnvironmentProviderSlice mainSlice = (EnvironmentProviderSlice) getSlice(MAIN_SLICE);
+				EnvironmentProviderSlice mainSlice = (EnvironmentProviderSlice) getSlice(getMasterSlice());
 				mainSlice.putObject(objectID);
 			} catch (ServiceException e) {
 				// TODO Auto-generated catch block
@@ -343,8 +371,8 @@ public class EnvironmentProviderService extends BaseService {
 		}
 
 		@Override
-		public Physical2DObject getObject(String id) {
-			return EnvironmentProviderService.this.getObject(id);
+		public Physical2DObject getObject(String objectID) {
+			return EnvironmentProviderService.this.getObject(objectID);
 		}
 
 		@Override
@@ -389,7 +417,7 @@ public class EnvironmentProviderService extends BaseService {
 		}
 
 		@Override
-		public void putObject(String objectID) {
+		public void releaseObject(String objectID) {
 			EnvironmentProviderService.this.putObject(objectID);
 		}
 
@@ -471,6 +499,11 @@ public class EnvironmentProviderService extends BaseService {
 				}
 				String objectID = (String) cmd.getParam(0);
 				EnvironmentProviderService.this.putObject(objectID);
+			}else if(cmd.getName().equals(EnvironmentProviderSlice.H_IS_MASTER)){
+				if(myLogger.isLoggable(Logger.FINE)){
+					myLogger.log(Logger.FINE, "Serving is master request.");
+				}
+				cmd.setReturnValue(new Boolean(EnvironmentProviderService.this.isMaster()));
 			}
 			return null;
 		}

@@ -2,10 +2,13 @@ package mas.environment;
 
 //import java.util.Iterator;
 
+import java.util.Iterator;
+
 import application.Language;
 import mas.environment.ontology.ActiveObject;
 import mas.environment.ontology.Movement;
 import mas.environment.ontology.Physical2DObject;
+import mas.environment.ontology.PlaygroundObject;
 //import mas.environment.ontology.PlaygroundObject;
 import mas.environment.ontology.Position;
 import mas.environment.provider.EnvironmentProviderHelper;
@@ -36,6 +39,8 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 	private boolean lastStep = false;
 	
 	EnvironmentProviderHelper helper;
+	
+	ActiveObject self = null;
 
 	public MoveToPointBehaviour(Agent a, Position destPos, float speed) throws ServiceException{
 		super(a, PERIOD);
@@ -61,7 +66,7 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 	protected void onTick() {
 		
 		if(firstStep){
-			ActiveObject self = (ActiveObject) helper.getObject(myAgent.getLocalName());
+			self = (ActiveObject) helper.getObject(myAgent.getLocalName());
 			System.out.println("Testausgabe: "+myAgent.getLocalName()+" bewegt sich von "
 					+self.getPosition().getXPos()+":"+self.getPosition().getYPos()+
 					" nach "+destPos.getXPos()+":"+destPos.getYPos());
@@ -77,7 +82,8 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 			helper.setMovement(myAgent.getLocalName(), movement);
 			firstStep = false;
 		}else{
-			Position currPos = helper.getObject(myAgent.getLocalName()).getPosition();
+			Position currPos = self.getPosition();
+			checkCollisions();
 			if(lastStep){
 				Movement stop = new Movement();
 				stop.setXPosChange(0);
@@ -121,21 +127,28 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 		return playground.objectContains(selfAtDestPos);
 	}
 	
-//	/**
-//	 * Checks if the agent collides with another object
-//	 * @return
-//	 */
-//	@SuppressWarnings("unchecked")
-//	private boolean checkCollisions(){
-//		Physical2DObject self = helper.getObject(myAgent.getLocalName());
-//		PlaygroundObject parentPG = (PlaygroundObject) helper.getObject(self.getParentPlaygroundID());
-//		Iterator<Physical2DObject> pgObjects = parentPG.getAllChildObjects();
-//		while(pgObjects.hasNext()){
-//			if(self.objectIntersects(pgObjects.next())){
-//				return true;
-//			}
-//		}
-//		return false;
-//	}
+	/**
+	 * Checks if the agent collides with another object
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	private boolean checkCollisions(){
+		Physical2DObject self = helper.getObject(myAgent.getLocalName());
+		PlaygroundObject parentPG = (PlaygroundObject) helper.getObject(self.getParentPlaygroundID());
+		Iterator<Physical2DObject> pgObjects = parentPG.getAllChildObjects();
+		
+		Physical2DObject object;
+		
+		while(pgObjects.hasNext()){
+			object = pgObjects.next();
+			if( (!object.getId().equals(self.getId())) && (self.objectIntersects(object))){
+				System.out.println("Testausgabe: Kollision mit "+object.getId());
+				System.out.println("Self:   "+self.getPosition().getXPos()+":"+self.getPosition().getYPos()+", "+self.getSize().getWidth()+"x"+self.getSize().getHeight());
+				System.out.println("Object: "+object.getPosition().getXPos()+":"+object.getPosition().getYPos()+", "+object.getSize().getWidth()+"x"+object.getSize().getHeight());
+				return true;
+			}
+		}
+		return false;
+	}
 
 }

@@ -20,6 +20,7 @@ public interface EnvironmentProviderSlice extends Slice {
 	public static final String H_GET_PLAYGROUND_OBJECTS = "getPlaygroundObjects";
 	public static final String H_TAKE_OBJECT = "takeObject";
 	public static final String H_PUT_OBJECT = "putObject";
+	public static final String H_IS_MASTER = "isMaster";
 	
 	public Physical2DEnvironment getEnvironment() throws IMTPException;
 	public Physical2DObject getObject(String id) throws IMTPException;
@@ -29,4 +30,5 @@ public interface EnvironmentProviderSlice extends Slice {
 	public List<Physical2DObject> getPlaygroundObjects(String playgroundID) throws IMTPException;
 	public boolean takeObject(String objectID, String agentID) throws IMTPException;
 	public void putObject(String objectID) throws IMTPException;
+	public boolean isMaster() throws IMTPException;
 }

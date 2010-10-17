@@ -98,9 +98,7 @@ public class EnvironmentProviderAgent extends Agent {
 						controlledObject.getPosition().setYPos(controlledObject.getPosition().getYPos() + yPosChange);
 					}
 				}
-			}			
+			}
 		}
-		
 	}
-	
 }
