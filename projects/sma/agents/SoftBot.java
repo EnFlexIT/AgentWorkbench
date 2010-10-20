@@ -1,7 +1,5 @@
 package sma.agents;
 
-import java.awt.geom.Rectangle2D;
-
 import jade.core.Agent;
 import jade.core.ServiceException;
 import jade.core.behaviours.OneShotBehaviour;
@@ -11,7 +9,6 @@ import mas.environment.ontology.Physical2DObject;
 import mas.environment.ontology.Position;
 import mas.environment.provider.EnvironmentProviderHelper;
 import mas.environment.provider.EnvironmentProviderService;
-import mas.environment.MoveToPointBehaviour;
 
 /**
  * Dummy-Implementation for testing the DisplayAgent
@@ -65,7 +62,7 @@ public class SoftBot extends Agent {
 				public void action() {
 					try {
 						EnvironmentProviderHelper helper = (EnvironmentProviderHelper) getHelper(EnvironmentProviderService.SERVICE_NAME);
-						boolean success = helper.takeObject(targetObject.getId(), getLocalName());
+						boolean success = helper.assignPassiveObject(targetObject.getId(), getLocalName());
 						if(success){
 							System.out.println("Testausgabe: "+getLocalName()+" nimmt Objekt "+targetObject.getId()+" auf.");
 						}else{
@@ -93,7 +90,7 @@ public class SoftBot extends Agent {
 				public void action() {
 					try {
 						EnvironmentProviderHelper helper = (EnvironmentProviderHelper) getHelper(EnvironmentProviderService.SERVICE_NAME);
-						helper.releaseObject(targetObject.getId());
+						helper.releasePassiveObject(targetObject.getId());
 						System.out.println("Testausgabe: "+getLocalName()+" setzt Objekt "+targetObject.getId()+" ab.");
 					} catch (ServiceException e) {
 						// TODO Auto-generated catch block

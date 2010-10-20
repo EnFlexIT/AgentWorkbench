@@ -8,7 +8,7 @@ import jade.core.*;
    * This class represents an area inside a physical 2D (sub)environment that can contain all kinds of physical 2D objects, i.e. instances of subclasses of Physical2DObject.
 * Protege name: PlaygroundObject
 * @author ontology bean generator
-* @version 2010/10/8, 20:12:51
+* @version 2010/10/20, 12:21:21
 */
 public class PlaygroundObject extends Physical2DObject{ 
 

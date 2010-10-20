@@ -73,15 +73,19 @@ public interface EnvironmentProviderHelper extends ServiceHelper {
 	 */
 	public List<Physical2DObject> getPlaygroundObjects(String playgroundID);
 	/**
-	 * Lets an agent take control of an environment object 
-	 * @param objectID The object's ID
-	 * @param agentID The agent's ID
-	 * @return True if successful, false if not (Can the object be controlled? Is another agent controlling it already?)
+	 * Assigns a PassiveObject to an ActiveObject 
+	 * @param passiveObjectID The object's ID
+	 * @param activeObjectID The agent's ID
+	 * @return Successful?
 	 */
-	public boolean takeObject(String objectID, String agentID);
+	public boolean assignPassiveObject(String passiveObjectID, String activeObjectID);
 	/**
-	 * Lets an agent release a controlled object
-	 * @param objectID The object's ID
+	 * Releases a PassiveObject from an ActiveObject controlling it
+	 * @param passiveObjectID The PassiveObject's ID
 	 */
-	public void releaseObject(String objectID);
+	public void releasePassiveObject(String passiveObjectID);
+	/**
+	 * @return The name of the project the Physical2DEnvironment belongs to.
+	 */
+	public String getProjectName();
 }

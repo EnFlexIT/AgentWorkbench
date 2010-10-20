@@ -5,9 +5,6 @@ import java.awt.event.WindowEvent;
 import java.util.HashSet;
 
 import javax.swing.JFrame;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.apache.batik.transcoder.TranscoderException;
 
 import mas.environment.ontology.Physical2DObject;
 import mas.environment.provider.EnvironmentProviderHelper;

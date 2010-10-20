@@ -43,7 +43,7 @@ public class EnvironmentProviderService extends BaseService {
 	 */
 	private EnvironmentWrapper envWrap = null;
 	/**
-	 * The SVG document visualizing the environment
+	 * The SVG document visualizing the Physical2DEnvironment
 	 */
 	private Document svgDoc = null;
 	/**
@@ -55,19 +55,19 @@ public class EnvironmentProviderService extends BaseService {
 	 */
 	private Service.Slice localSlice = new EnvironmentProviderSliceImpl();
 	/**
-	 * True if this node hosts the Physical2DEnvironment
+	 * Is the local node hosting the Physical2DEnvironment
 	 */
 	private boolean masterNode = false;
 	/**
-	 * The name of the container hosting the environment model
+	 * The name of the node hosting the Physical2DEnvironment
 	 */
 	private String masterSlice = null;
 	/**
-	 * Set of currently moving agents
+	 * Set of currently moving ActiveObjects
 	 */
 	private HashSet<ActiveObject> currentlyMovingAgents;
 	/**
-	 * Set of currently moving environment objects
+	 * Set of currently moving Physical2DObjects
 	 */
 	private HashSet<Physical2DObject> currentlyMovingObjects;
 	
@@ -90,7 +90,7 @@ public class EnvironmentProviderService extends BaseService {
 		
 	}
 	/**
-	 * Initializes the service's environment
+	 * Initializes the Physical2DEnvironment
 	 * @param environment The environment
 	 */
 	private void setEnvironment(Physical2DEnvironment environment){
@@ -109,6 +109,11 @@ public class EnvironmentProviderService extends BaseService {
 		}
 	}
 	
+	/**
+	 * Finds the master node, i.e. the EnvironmentProviderService instance hosting the Physical2DEnvironment
+	 * @return The container name
+	 * @throws ServiceException Error accessing the EnvironmentProviderService
+	 */
 	private String getMasterSlice() throws ServiceException{
 		if(masterSlice == null){
 			try {
@@ -130,11 +135,13 @@ public class EnvironmentProviderService extends BaseService {
 		return masterSlice;
 	}
 	
+	/**
+	 * @return Result Is the local node the master node?
+	 */
 	private boolean isMaster(){
 		return masterNode;
 	}
 	/**
-	 * Gets the services environment Physical2DEnvironment object
 	 * @return The Physical2DEnvironment object
 	 */
 	private Physical2DEnvironment getEnvironment(){
@@ -157,9 +164,30 @@ public class EnvironmentProviderService extends BaseService {
 		return env;
 	}
 	/**
-	 * Gets the Physical2DObject instance with the specified id from the environment
-	 * @param id The object id to look for
-	 * @return The Physical2DObject instance, or null if not found
+	 * @return The name of the project the Physical2DEnvironment belongs to 
+	 */
+	private String getProjectName(){
+		if(masterNode){
+			return environment.getProjectName();
+		}else{
+			String projectName = "";
+			try {
+				EnvironmentProviderSlice mainSlice = (EnvironmentProviderSlice) getSlice(getMasterSlice());
+				projectName = mainSlice.getProjectName();
+			} catch (ServiceException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IMTPException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return projectName;
+		}
+	}
+	/**
+	 * Gets the Physical2DObject with the specified ID from the Physical2DEnvironment
+	 * @param id The Physical2DObject's ID
+	 * @return The Physical2DObject
 	 */
 	private Physical2DObject getObject(String id){
 		Physical2DObject object = null;
@@ -182,10 +210,15 @@ public class EnvironmentProviderService extends BaseService {
 		return object;
 	}
 	
+	/**
+	 * @return List of all currently moving ActiveObjects within the Physical2DEnvironment 
+	 */
 	private HashSet<ActiveObject> getCurrentlyMovingAgents(){
 		return this.currentlyMovingAgents;
 	}
-	
+	/**
+	 * @return List of all currently moving Physical2DObjects within the environment
+	 */
 	private HashSet<Physical2DObject> getCurrentlyMovingObjects(){
 		HashSet<Physical2DObject> objects = null;
 		
@@ -208,11 +241,17 @@ public class EnvironmentProviderService extends BaseService {
 		return objects;
 	}
 	
+	/**
+	 * Setting an ActiveObjects movement
+	 * @param objectID The ActiveObject's ID
+	 * @param movement The Movement instance
+	 * @return Successful?
+	 */
 	@SuppressWarnings("unchecked")
-	private boolean setMovement(String agentID, Movement movement){
+	private boolean setMovement(String objectID, Movement movement){
 		boolean result = false;
 		if(masterNode){
-			Physical2DObject object = getObject(agentID);
+			Physical2DObject object = getObject(objectID);
 			if(object != null && object instanceof ActiveObject){
 				ActiveObject agent = (ActiveObject) object;
 				float maxSpeed = agent.getMaxSpeed();
@@ -239,7 +278,7 @@ public class EnvironmentProviderService extends BaseService {
 		}else{
 			try {
 				EnvironmentProviderSlice mainSlice = (EnvironmentProviderSlice) getSlice(getMasterSlice());
-				result = mainSlice.setMovement(agentID, movement);
+				result = mainSlice.setMovement(objectID, movement);
 			} catch (ServiceException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -251,6 +290,9 @@ public class EnvironmentProviderService extends BaseService {
 		return result;
 	}
 	
+	/**
+	 * @return The SVG document visualizing the Physical2DEnvironment
+	 */
 	private Document getSVGDoc(){
 		Document doc = null;
 		if(masterNode){
@@ -270,6 +312,11 @@ public class EnvironmentProviderService extends BaseService {
 		return (Document) doc.cloneNode(true);
 	}
 	
+	/**
+	 * Gets all Physical2DObjects within a specified PlaygroundObject
+	 * @param playgroundID The PlaygroundObject's ID
+	 * @return List of Physical2DObjects
+	 */
 	@SuppressWarnings("unchecked")
 	private List<Physical2DObject> getPlaygroundObjects(String playgroundID){
 		List<Physical2DObject> objects = null;
@@ -291,17 +338,27 @@ public class EnvironmentProviderService extends BaseService {
 		return objects;
 	}
 	
-	private boolean takeObject(String objectID, String agentID){
+	/**
+	 * Assigns a PassiveObject to an ActiveObject
+	 * @param passiveObjectID The PassiveObject's ID 
+	 * @param activeObjectID The ActiveObject's ID
+	 * @return Successful?
+	 */
+	private boolean assignPassiveObject(String passiveObjectID, String activeObjectID){
 		boolean success = false;
 		if(masterNode){
-			Physical2DObject agentObject = envWrap.getObjectById(agentID);
+			// Get the ActiveObject
+			Physical2DObject agentObject = envWrap.getObjectById(activeObjectID);
 			if(agentObject != null && agentObject instanceof ActiveObject){
 				ActiveObject agent = (ActiveObject) agentObject;
-				Physical2DObject payloadObject = envWrap.getObjectById(objectID);
+				// Get the PassiveObject
+				Physical2DObject payloadObject = envWrap.getObjectById(passiveObjectID);
+				// Found and correct class?
 				if(payloadObject != null && payloadObject instanceof PassiveObject){
 					PassiveObject payload = (PassiveObject) payloadObject;
-					if(payload.getControlledBy() == null){
-						payload.setControlledBy(agent);
+					// Assignment only possible if the PassiveObject is not assigned to another Active Object
+					if(payload.getControllingObjectID() == null){
+						payload.setControllingObjectID(agent.getId());
 						agent.addPayload(payload);
 						success = true;
 					}
@@ -311,7 +368,7 @@ public class EnvironmentProviderService extends BaseService {
 		}else{
 			try {
 				EnvironmentProviderSlice mainSlice = (EnvironmentProviderSlice) getSlice(getMasterSlice());
-				success = mainSlice.takeObject(objectID, agentID);
+				success = mainSlice.assignPassiveObject(passiveObjectID, activeObjectID);
 			} catch (ServiceException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -323,19 +380,25 @@ public class EnvironmentProviderService extends BaseService {
 		return success;
 	}
 	
-	private void putObject(String objectID){
+	/**
+	 * Releases a PassiveObject from an ActiveObject controlling it
+	 * @param passiveObjectID The PassiveObject's ID
+	 */
+	private void releasePassiveObject(String passiveObjectID){
 		if(masterNode){
-			Physical2DObject payloadObject =envWrap.getObjectById(objectID);
+			// Get the PassiveObject
+			Physical2DObject payloadObject =envWrap.getObjectById(passiveObjectID);
+			// If found and correct class, release it
 			if(payloadObject != null && payloadObject instanceof PassiveObject){
 				PassiveObject object = (PassiveObject) payloadObject;
-				ActiveObject agent = object.getControlledBy();
+				ActiveObject agent = (ActiveObject) envWrap.getObjectById(object.getControllingObjectID());
 				agent.removePayload(object);
-				object.setControlledBy(null);
+				object.setControllingObjectID(null);
 			}
 		}else{
 			try {
 				EnvironmentProviderSlice mainSlice = (EnvironmentProviderSlice) getSlice(getMasterSlice());
-				mainSlice.putObject(objectID);
+				mainSlice.releasePassiveObject(passiveObjectID);
 			} catch (ServiceException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -346,6 +409,10 @@ public class EnvironmentProviderService extends BaseService {
 		}
 	}
 	
+	/**
+	 * Sets the SVG document
+	 * @param svgDoc the SVG document
+	 */
 	private void setSVGDoc(Document svgDoc){
 		this.svgDoc = svgDoc;
 	}
@@ -363,6 +430,13 @@ public class EnvironmentProviderService extends BaseService {
 		return localSlice;
 	}
 	
+	
+	
+	/**
+	 * This class implements the EnvironmentProviderHelper interface. It provides access to the services methods for agents 
+	 * @author Nils
+	 *
+	 */
 	public class EnvironmentProviderHelperImpl implements EnvironmentProviderHelper{
 
 		@Override
@@ -417,16 +491,26 @@ public class EnvironmentProviderService extends BaseService {
 		}
 
 		@Override
-		public void releaseObject(String objectID) {
-			EnvironmentProviderService.this.putObject(objectID);
+		public void releasePassiveObject(String objectID) {
+			EnvironmentProviderService.this.releasePassiveObject(objectID);
 		}
 
 		@Override
-		public boolean takeObject(String objectID, String agentID) {
-			return EnvironmentProviderService.this.takeObject(objectID, agentID);
+		public boolean assignPassiveObject(String objectID, String agentID) {
+			return EnvironmentProviderService.this.assignPassiveObject(objectID, agentID);
+		}
+
+		@Override
+		public String getProjectName() {
+			return EnvironmentProviderService.this.getProjectName();
 		}
 	}
 	
+	/**
+	 * This class implements the Service.Slice interface. It processes horizontal commands received from other nodes  
+	 * @author Nils
+	 *
+	 */
 	private class EnvironmentProviderSliceImpl implements Service.Slice{
 
 		/**
@@ -479,6 +563,7 @@ public class EnvironmentProviderService extends BaseService {
 				if(myLogger.isLoggable(Logger.FINE)){
 					myLogger.log(Logger.FINE, "Serving set agent movement request.");
 				}
+//				cmd.setReturnValue(SVGUtils.svgToString(EnvironmentProviderService.this.getSVGDoc()));
 				cmd.setReturnValue(EnvironmentProviderService.this.getSVGDoc());
 			}else if(cmd.getName().equals(EnvironmentProviderSlice.H_GET_PLAYGROUND_OBJECTS)){
 				if(myLogger.isLoggable(Logger.FINE)){
@@ -486,24 +571,29 @@ public class EnvironmentProviderService extends BaseService {
 				}
 				String pgID = (String) cmd.getParam(0);
 				cmd.setReturnValue(EnvironmentProviderService.this.getPlaygroundObjects(pgID));
-			}else if(cmd.getName().equals(EnvironmentProviderSlice.H_TAKE_OBJECT)){
+			}else if(cmd.getName().equals(EnvironmentProviderSlice.H_ASIGN_OBJECT)){
 				if(myLogger.isLoggable(Logger.FINE)){
 					myLogger.log(Logger.FINE, "Serving take object request.");
 				}
 				String objectID = (String) cmd.getParam(0);
 				String agentID = (String) cmd.getParam(1);
-				cmd.setReturnValue(new Boolean(EnvironmentProviderService.this.takeObject(objectID, agentID)));
-			}else if(cmd.getName().equals(EnvironmentProviderSlice.H_PUT_OBJECT)){
+				cmd.setReturnValue(new Boolean(EnvironmentProviderService.this.assignPassiveObject(objectID, agentID)));
+			}else if(cmd.getName().equals(EnvironmentProviderSlice.H_RELEASE_OBJECT)){
 				if(myLogger.isLoggable(Logger.FINE)){
 					myLogger.log(Logger.FINE, "Serving put object request.");
 				}
 				String objectID = (String) cmd.getParam(0);
-				EnvironmentProviderService.this.putObject(objectID);
+				EnvironmentProviderService.this.releasePassiveObject(objectID);
 			}else if(cmd.getName().equals(EnvironmentProviderSlice.H_IS_MASTER)){
 				if(myLogger.isLoggable(Logger.FINE)){
 					myLogger.log(Logger.FINE, "Serving is master request.");
 				}
 				cmd.setReturnValue(new Boolean(EnvironmentProviderService.this.isMaster()));
+			}else if(cmd.getName().equals(EnvironmentProviderSlice.H_GET_PROJECT_NAME)){
+				if(myLogger.isLoggable(Logger.FINE)){
+					myLogger.log(Logger.FINE, "Serving project name request.");
+				}
+				cmd.setReturnValue(EnvironmentProviderService.this.getProjectName());
 			}
 			return null;
 		}

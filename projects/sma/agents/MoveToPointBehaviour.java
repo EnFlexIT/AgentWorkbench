@@ -1,6 +1,4 @@
-package mas.environment;
-
-//import java.util.Iterator;
+package sma.agents;
 
 import java.util.Iterator;
 
@@ -9,7 +7,6 @@ import mas.environment.ontology.ActiveObject;
 import mas.environment.ontology.Movement;
 import mas.environment.ontology.Physical2DObject;
 import mas.environment.ontology.PlaygroundObject;
-//import mas.environment.ontology.PlaygroundObject;
 import mas.environment.ontology.Position;
 import mas.environment.provider.EnvironmentProviderHelper;
 import mas.environment.provider.EnvironmentProviderService;
@@ -17,31 +14,53 @@ import jade.core.Agent;
 import jade.core.ServiceException;
 import jade.core.behaviours.TickerBehaviour;
 
+/**
+ * This behaviour implements an agent's movement to a destination point in a straight line 
+ * @author Nils
+ *
+ */
 public class MoveToPointBehaviour extends TickerBehaviour {
-	
+	/**
+	 * Time between to position checks. Should be synchronized with the EnvironmentProviderAgent's period 
+	 */
 	private static int PERIOD = 100;
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -918169252452095480L;
-	
+	/**
+	 * The destination point
+	 */
 	private Position destPos;
-	
+	/**
+	 * The agent's speed
+	 */
 	private float speed;
-	
+	/**
+	 * The distance to the destinatio point in x and y direction
+	 */
 	private float xPosDiff, yPosDiff;
-	
-	private Movement movement;
-	
+	/**
+	 * Is the current step the first one?
+	 */
 	private boolean firstStep = true;
-	
+	/**
+	 * Is the current step the last one?
+	 */
 	private boolean lastStep = false;
+	/**
+	 * An EnvironmentProviderHelper instance
+	 */
+	private EnvironmentProviderHelper helper;
 	
-	EnvironmentProviderHelper helper;
-	
-	ActiveObject self = null;
-
+	/**
+	 * Constructor
+	 * @param a The agent executing the MoveToPointBehaviour
+	 * @param destPos The destination position
+	 * @param speed The agent's speed
+	 * @throws ServiceException Error accessing the EnvironmentProviderService
+	 */
 	public MoveToPointBehaviour(Agent a, Position destPos, float speed) throws ServiceException{
 		super(a, PERIOD);
 		
@@ -50,6 +69,7 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 			this.speed = speed;
 			this.helper = (EnvironmentProviderHelper) myAgent.getHelper(EnvironmentProviderService.SERVICE_NAME);
 			
+			// Check if the destination position in inside the agent's parent playground
 			if(!checkPlayground()){
 				System.err.println(myAgent.getLocalName()+": "+Language.translate("Fehler: Zielposition auﬂerhalb des Parent Playground!"));
 				this.stop();
@@ -58,15 +78,14 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 		} catch (ServiceException e) {
 			throw e;
 		}
-		
-		
 	}
-
+	
 	@Override
 	protected void onTick() {
 		
+		ActiveObject self = (ActiveObject) helper.getObject(myAgent.getLocalName());
+		
 		if(firstStep){
-			self = (ActiveObject) helper.getObject(myAgent.getLocalName());
 			System.out.println("Testausgabe: "+myAgent.getLocalName()+" bewegt sich von "
 					+self.getPosition().getXPos()+":"+self.getPosition().getYPos()+
 					" nach "+destPos.getXPos()+":"+destPos.getYPos());
@@ -75,7 +94,7 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 			float dist = (float) Math.sqrt(xPosDiff*xPosDiff + yPosDiff*yPosDiff);
 			float seconds = dist / speed;
 			
-			movement = new Movement();
+			Movement movement = new Movement();
 			movement.setXPosChange(xPosDiff / seconds);
 			movement.setYPosChange(yPosDiff / seconds);
 			
@@ -90,10 +109,10 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 				stop.setYPosChange(0);
 				helper.setMovement(myAgent.getLocalName(), stop);
 				System.out.println("Testausgabe: "+myAgent.getLocalName()+" Zielposition "+ destPos.getXPos()+":"+destPos.getYPos()+" erreicht.");
-				Physical2DObject self = helper.getObject(myAgent.getLocalName());
+				self = (ActiveObject) helper.getObject(myAgent.getLocalName());
 				System.out.println("- aktuelle Position des Agenten: "+self.getPosition().getXPos()+":"+self.getPosition().getYPos());
 				this.stop();
-			}else if(Math.abs(xPosDiff) <= (Math.abs(movement.getXPosChange()) / 1000 * PERIOD) + 0.5 && Math.abs(yPosDiff) <= (Math.abs(movement.getYPosChange()) / 1000 * PERIOD) + 0.5){
+			}else if(Math.abs(xPosDiff) <= (Math.abs(self.getMovement().getXPosChange()) / 1000 * PERIOD) + 0.5 && Math.abs(yPosDiff) <= (Math.abs(self.getMovement().getYPosChange()) / 1000 * PERIOD) + 0.5){
 				Movement lastStep = new Movement();
 				lastStep.setXPosChange(xPosDiff);
 				lastStep.setYPosChange(yPosDiff);
@@ -108,7 +127,7 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 	}
 	
 	/**
-	 * Checks if the destination position is in the same playground
+	 * Checks if the destination position is inside the agents parent playground
 	 * @return True or false
 	 */
 	private boolean checkPlayground(){
@@ -128,8 +147,7 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 	}
 	
 	/**
-	 * Checks if the agent collides with another object
-	 * @return
+	 * @return Collision with other Physical2DObjects?
 	 */
 	@SuppressWarnings("unchecked")
 	private boolean checkCollisions(){
@@ -142,9 +160,6 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 		while(pgObjects.hasNext()){
 			object = pgObjects.next();
 			if( (!object.getId().equals(self.getId())) && (self.objectIntersects(object))){
-				System.out.println("Testausgabe: Kollision mit "+object.getId());
-				System.out.println("Self:   "+self.getPosition().getXPos()+":"+self.getPosition().getYPos()+", "+self.getSize().getWidth()+"x"+self.getSize().getHeight());
-				System.out.println("Object: "+object.getPosition().getXPos()+":"+object.getPosition().getYPos()+", "+object.getSize().getWidth()+"x"+object.getSize().getHeight());
 				return true;
 			}
 		}

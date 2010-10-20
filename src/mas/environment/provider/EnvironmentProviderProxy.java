@@ -117,6 +117,7 @@ public class EnvironmentProviderProxy extends SliceProxy implements
 					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
 				}
 			}
+//			return SVGUtils.stringToSVG((String) result);
 			return (Document) result;
 		} catch (ServiceException e) {
 			throw new IMTPException("Unable to access remote node", e);
@@ -145,8 +146,8 @@ public class EnvironmentProviderProxy extends SliceProxy implements
 	}
 
 	@Override
-	public void putObject(String objectID) throws IMTPException {
-		GenericCommand cmd = new GenericCommand(H_PUT_OBJECT, EnvironmentProviderService.SERVICE_NAME, null);
+	public void releasePassiveObject(String objectID) throws IMTPException {
+		GenericCommand cmd = new GenericCommand(H_RELEASE_OBJECT, EnvironmentProviderService.SERVICE_NAME, null);
 		cmd.addParam(objectID);
 		try {
 			getNode().accept(cmd);
@@ -156,10 +157,10 @@ public class EnvironmentProviderProxy extends SliceProxy implements
 	}
 
 	@Override
-	public boolean takeObject(String objectID, String agentID) throws IMTPException {
+	public boolean assignPassiveObject(String objectID, String agentID) throws IMTPException {
 		
 		try {
-			GenericCommand cmd = new GenericCommand(H_TAKE_OBJECT, EnvironmentProviderService.SERVICE_NAME, null);
+			GenericCommand cmd = new GenericCommand(H_ASIGN_OBJECT, EnvironmentProviderService.SERVICE_NAME, null);
 			cmd.addParam(objectID);
 			cmd.addParam(agentID);
 			Object result = getNode().accept(cmd);
@@ -194,6 +195,22 @@ public class EnvironmentProviderProxy extends SliceProxy implements
 		}
 	}
 
-	
 
+	@Override
+	public String getProjectName() throws IMTPException {
+		GenericCommand cmd = new GenericCommand(H_GET_PROJECT_NAME, EnvironmentProviderService.SERVICE_NAME, null);
+		try{
+			Object result = getNode().accept(cmd);
+			if((result != null) && (result instanceof Throwable)){
+				if(result instanceof IMTPException){
+					throw (IMTPException)result;
+				}else{
+					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
+				}
+			}
+			return (String) result;
+		}catch (ServiceException e){
+			throw new IMTPException("Unable to access remote node", e);
+		}
+	}
 }
