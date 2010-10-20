@@ -35,7 +35,7 @@ public class EnvironmentSetupObjectSettings extends JPanel{
 
 	private static final long serialVersionUID = 1L;
 	private JLabel lblId = null;
-	private JLabel lblClass = null;
+	private JLabel lblMaxSpeed = null;
 	private JLabel lblType = null;
 	private JLabel lblPosition = null;
 	private JLabel lblSize = null;
@@ -46,16 +46,17 @@ public class EnvironmentSetupObjectSettings extends JPanel{
 	private JLabel lblSizeSeparator = null;
 	private JTextField tfXPos = null;
 	private JTextField tfYPos = null;
+	private JTextField tfMaxSpeed = null;
 	private JLabel lblPosSeparator = null;
 	private JTextField tfId = null;
 	private JComboBox cbType = null;
-	private JComboBox cbClass = null;
+//	private JComboBox cbClass = null;
 	private JLabel lblUnit1 = null;
 	private JLabel lblUnit2 = null;
 	
 	public static final String SETTINGS_KEY_ID = "id";
 	public static final String SETTINGS_KEY_ONTO_CLASS = "ontologyClass";
-	public static final String SETTINGS_KEY_AGENT_CLASSNAME = "agentClassName";
+	public static final String SETTINGS_KEY_AGENT_MAX_SPEED = "agentMaxSpeed";
 	public static final String SETTINGS_KEY_POSITION = "position";
 	public static final String SETTINGS_KEY_SIZE = "size";
 	
@@ -92,43 +93,43 @@ public class EnvironmentSetupObjectSettings extends JPanel{
 	private void initialize() {
 		lblUnit2 = new JLabel();
 		lblUnit2.setText("m");
-		lblUnit2.setLocation(new Point(150, 162));
+		lblUnit2.setLocation(new Point(150, 197));
 		lblUnit2.setSize(lblUnit2.getPreferredSize());
 		lblUnit1 = new JLabel();
 		lblUnit1.setText("m");
-		lblUnit1.setLocation(new Point(145, 122));
+		lblUnit1.setLocation(new Point(145, 157));
 		lblUnit1.setSize(lblUnit1.getPreferredSize());
 		lblPosSeparator = new JLabel();
 		lblPosSeparator.setText(":");
-		lblPosSeparator.setLocation(new Point(70, 122));
+		lblPosSeparator.setLocation(new Point(70, 157));
 		lblPosSeparator.setSize(lblPosSeparator.getPreferredSize());
 		lblSizeSeparator = new JLabel();
 		lblSizeSeparator.setText("x");
-		lblSizeSeparator.setLocation(new Point(70, 162));
+		lblSizeSeparator.setLocation(new Point(70, 197));
 		lblSizeSeparator.setSize(lblSizeSeparator.getPreferredSize());
 		lblSize = new JLabel();
 		lblSize.setText(Language.translate("Größe"));
-		lblSize.setLocation(new Point(15, 145));
+		lblSize.setLocation(new Point(15, 180));
 		lblSize.setSize(lblSize.getPreferredSize());		
 		lblPosition = new JLabel();
 		lblPosition.setText(Language.translate("Position"));
-		lblPosition.setLocation(new Point(16, 105));
+		lblPosition.setLocation(new Point(16, 140));
 		lblPosition.setSize(lblPosition.getPreferredSize());
 		lblType = new JLabel();
 		lblType.setText(Language.translate("Typ"));
 		lblType.setLocation(new Point(10, 50));
 		lblType.setSize(lblType.getPreferredSize());
-		lblClass = new JLabel();
-		lblClass.setText(Language.translate("Klasse"));
-		lblClass.setLocation(new Point(10, 80));
-		lblClass.setSize(lblClass.getPreferredSize());
+		lblMaxSpeed = new JLabel();
+		lblMaxSpeed.setText(Language.translate("Maximale Geschwindigkeit"));
+		lblMaxSpeed.setLocation(new Point(10, 80));
+		lblMaxSpeed.setSize(lblMaxSpeed.getPreferredSize());
 		lblId = new JLabel();
 		lblId.setText("ID");
 		lblId.setLocation(new Point(10, 15));
 		lblId.setSize(lblId.getPreferredSize());
 		this.setLayout(null);
 		this.add(lblId, null);
-		this.add(lblClass, null);
+		this.add(lblMaxSpeed, null);
 		this.add(lblType, null);
 		this.add(lblPosition, null);
 		this.add(lblSize, null);
@@ -142,7 +143,7 @@ public class EnvironmentSetupObjectSettings extends JPanel{
 		this.add(lblPosSeparator, null);
 		this.add(getTfId(), null);
 		this.add(getCbType(), null);
-		this.add(getCbClass(), null);
+		this.add(getTfMaxSpeed(), null);
 		this.add(lblUnit1, null);
 		this.add(lblUnit2, null);
 	}
@@ -157,7 +158,7 @@ public class EnvironmentSetupObjectSettings extends JPanel{
 			btnApply = new JButton();
 			btnApply.setText(Language.translate("Anwenden"));
 			btnApply.setSize(new Dimension(150, 26));
-			btnApply.setLocation(new Point(25, 210));
+			btnApply.setLocation(new Point(25, 245));
 			btnApply.addActionListener(parent);
 			btnApply.setEnabled(false);
 		}
@@ -174,7 +175,7 @@ public class EnvironmentSetupObjectSettings extends JPanel{
 			btnRemove = new JButton();
 			btnRemove.setText(Language.translate("Objekt Entfernen"));
 			btnRemove.setSize(new Dimension(150, 26));
-			btnRemove.setLocation(new Point(25, 240));
+			btnRemove.setLocation(new Point(25, 275));
 			btnRemove.setEnabled(false);
 			btnRemove.setSize(new Dimension(150, 26));
 			btnRemove.addActionListener(parent);		
@@ -191,7 +192,7 @@ public class EnvironmentSetupObjectSettings extends JPanel{
 		if (tfWidth == null) {
 			tfWidth = new JTextField();
 			tfWidth.setSize(new Dimension(50, 25));
-			tfWidth.setLocation(new Point(16, 160));
+			tfWidth.setLocation(new Point(16, 195));
 			tfWidth.setEnabled(false);
 		}
 		return tfWidth;
@@ -206,7 +207,7 @@ public class EnvironmentSetupObjectSettings extends JPanel{
 		if (tfHeight == null) {
 			tfHeight = new JTextField();
 			tfHeight.setSize(new Dimension(50, 25));
-			tfHeight.setLocation(new Point(80, 160));
+			tfHeight.setLocation(new Point(80, 195));
 			tfHeight.setEnabled(false);
 		}
 		return tfHeight;
@@ -220,7 +221,7 @@ public class EnvironmentSetupObjectSettings extends JPanel{
 	JTextField getTfXPos() {
 		if (tfXPos == null) {
 			tfXPos = new JTextField();
-			tfXPos.setLocation(new Point(16, 120));
+			tfXPos.setLocation(new Point(16, 155));
 			tfXPos.setSize(new Dimension(50, 25));
 			tfXPos.setEnabled(false);
 		}
@@ -235,7 +236,7 @@ public class EnvironmentSetupObjectSettings extends JPanel{
 	JTextField getTfYPos() {
 		if (tfYPos == null) {
 			tfYPos = new JTextField();
-			tfYPos.setLocation(new Point(80, 120));
+			tfYPos.setLocation(new Point(80, 155));
 			tfYPos.setSize(new Dimension(50, 25));
 			tfYPos.setEnabled(false);
 		}
@@ -283,9 +284,9 @@ public class EnvironmentSetupObjectSettings extends JPanel{
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
 					if(cbType.getSelectedItem().equals(Language.translate(ACTIVE_OBJECT_TYPE_STRING))){
-						getCbClass().setEnabled(true);
+						getTfMaxSpeed().setEnabled(true);
 					}else{
-						getCbClass().setEnabled(false);
+						getTfMaxSpeed().setEnabled(false);
 					}
 					if(cbType.getSelectedItem().equals(Language.translate(NO_OBJECT_TYPE_STRING))){
 						getBtnApply().setEnabled(false);
@@ -299,32 +300,42 @@ public class EnvironmentSetupObjectSettings extends JPanel{
 		}
 		return cbType;
 	}
-
-	/**
-	 * This method initializes cbClass	
-	 * 	
-	 * @return javax.swing.JComboBox	
-	 */
-	JComboBox getCbClass() {
-		if (cbClass == null) {
-			cbClass = new JComboBox();
-			cbClass.setLocation(new Point(80, 78));
-			cbClass.setSize(new Dimension(100, 25));
-			cbClass.setEnabled(false);
-			Vector<Class<? extends Agent>> classes = parent.project.getProjectAgents();
-			Vector<String> names = new Vector<String>();
-			
-			agentClassNames = new HashMap<String, String>();
-			
-			for(int i=0; i<classes.size(); i++){
-				names.add(classes.get(i).getSimpleName());
-				agentClassNames.put(classes.get(i).getSimpleName(), classes.get(i).getName());
-				
-			}
-			cbClass.setModel(new DefaultComboBoxModel(names));
+	
+	JTextField getTfMaxSpeed(){
+		if(tfMaxSpeed == null){
+			tfMaxSpeed = new JTextField();
+			tfMaxSpeed.setLocation(new Point(16, 103));
+			tfMaxSpeed.setSize(new Dimension(100, 25));
+			tfMaxSpeed.setEnabled(false);
 		}
-		return cbClass;
+		return tfMaxSpeed;
 	}
+
+//	/**
+//	 * This method initializes cbClass	
+//	 * 	
+//	 * @return javax.swing.JComboBox	
+//	 */
+//	JComboBox getCbClass() {
+//		if (cbClass == null) {
+//			cbClass = new JComboBox();
+//			cbClass.setLocation(new Point(80, 78));
+//			cbClass.setSize(new Dimension(100, 25));
+//			cbClass.setEnabled(false);
+//			Vector<Class<? extends Agent>> classes = parent.project.getProjectAgents();
+//			Vector<String> names = new Vector<String>();
+//			
+//			agentClassNames = new HashMap<String, String>();
+//			
+//			for(int i=0; i<classes.size(); i++){
+//				names.add(classes.get(i).getSimpleName());
+//				agentClassNames.put(classes.get(i).getSimpleName(), classes.get(i).getName());
+//				
+//			}
+//			cbClass.setModel(new DefaultComboBoxModel(names));
+//		}
+//		return cbClass;
+//	}
 	
 	/**
 	 * Sets the values of the input components according to the given SVG element
@@ -355,6 +366,7 @@ public class EnvironmentSetupObjectSettings extends JPanel{
 			getTfWidth().setText("");
 			getTfHeight().setText("");
 			getCbType().setSelectedItem(Language.translate(NO_OBJECT_TYPE_STRING));
+			getTfMaxSpeed().setText("");
 		}
 	}
 	
@@ -364,6 +376,7 @@ public class EnvironmentSetupObjectSettings extends JPanel{
 		}
 		else if(object instanceof ActiveObject){
 			getCbType().setSelectedItem(Language.translate(ACTIVE_OBJECT_TYPE_STRING));
+			getTfMaxSpeed().setText(""+((ActiveObject)object).getMaxSpeed());
 		}else if(object instanceof PassiveObject){
 			getCbType().setSelectedItem(Language.translate(PASSIVE_OBJECT_TYPE_STRING));
 		}else if(object instanceof StaticObject){
@@ -383,7 +396,7 @@ public class EnvironmentSetupObjectSettings extends JPanel{
 		settings.put(SETTINGS_KEY_ID, tfId.getText());
 		settings.put(SETTINGS_KEY_ONTO_CLASS, typeClass.get(cbType.getSelectedItem()));
 		if(cbType.getSelectedItem().equals(Language.translate(ACTIVE_OBJECT_TYPE_STRING))){
-			settings.put(SETTINGS_KEY_AGENT_CLASSNAME, cbClass.getSelectedItem());
+			settings.put(SETTINGS_KEY_AGENT_MAX_SPEED, tfMaxSpeed.getText());
 		}
 
 		Position pos = new Position();

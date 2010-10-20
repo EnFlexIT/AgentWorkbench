@@ -9,7 +9,7 @@ import jade.core.*;
    * An object's current movement.
 * Protege name: Movement
 * @author ontology bean generator
-* @version 2010/10/20, 12:21:21
+* @version 2010/10/20, 18:27:57
 */
 public class Movement implements Concept {
 

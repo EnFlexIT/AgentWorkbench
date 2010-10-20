@@ -113,11 +113,13 @@ public class EnvironmentController extends Observable implements Observer{
 		SimulationSetup currentSetup = project.simSetups.getCurrSimSetup(); 
 		// Load SVG file if specified
 		if(currentSetup.getSvgFileName() != null && currentSetup.getSvgFileName().length() >0){
-			setSvgDoc(loadSVG(new File(project.getProjectFolderFullPath()+project.getSubFolderEnvSetups()+File.separator+currentSetup.getSvgFileName())));
+			currentSVGPath = project.getProjectFolderFullPath()+project.getSubFolderEnvSetups()+File.separator+currentSetup.getSvgFileName();
+			setSvgDoc(loadSVG(new File(currentSVGPath)));
 		}
 		// Load environment file if specified
 		if(currentSetup.getEnvironmentFileName() != null && currentSetup.getEnvironmentFileName().length() >0){
-			setEnvironment(loadEnvironment(new File(project.getProjectFolderFullPath()+project.getSubFolderEnvSetups()+File.separator+currentSetup.getEnvironmentFileName())));
+			currentEnvironmentPath = project.getProjectFolderFullPath()+project.getSubFolderEnvSetups()+File.separator+currentSetup.getEnvironmentFileName();
+			setEnvironment(loadEnvironment(new File(currentEnvironmentPath)));
 		}
 		// If SVG present and environment not, create a new blank environment 
 		if(this.svgDoc != null && this.environment == null){
@@ -404,7 +406,7 @@ public class EnvironmentController extends Observable implements Observer{
 				selectedObject.setPosition((Position) settings.get(EnvironmentSetupObjectSettings.SETTINGS_KEY_POSITION));
 				selectedObject.setSize((Size) settings.get(EnvironmentSetupObjectSettings.SETTINGS_KEY_SIZE));
 				if(selectedObject instanceof ActiveObject){
-					((ActiveObject)selectedObject).setClassName((String) settings.get(EnvironmentSetupObjectSettings.SETTINGS_KEY_AGENT_CLASSNAME));
+					((ActiveObject)selectedObject).setMaxSpeed(Float.parseFloat((String) settings.get(EnvironmentSetupObjectSettings.SETTINGS_KEY_AGENT_MAX_SPEED)));
 				}
 			}else{
 				envWrap.removeObject(selectedObject);
@@ -432,9 +434,9 @@ public class EnvironmentController extends Observable implements Observer{
 			newObject.setSize((Size) settings.get(EnvironmentSetupObjectSettings.SETTINGS_KEY_SIZE));
 			newObject.setParentPlaygroundID(environment.getRootPlayground().getId());
 			if(newObject instanceof ActiveObject){
-				((ActiveObject)newObject).setClassName(settings.get(EnvironmentSetupObjectSettings.SETTINGS_KEY_AGENT_CLASSNAME).toString());
+//				((ActiveObject)newObject).setClassName(settings.get(EnvironmentSetupObjectSettings.SETTINGS_KEY_AGENT_CLASSNAME).toString());
 				((ActiveObject)newObject).setMovement(new Movement());
-				((ActiveObject)newObject).setMaxSpeed(10);	// Provisorischer Workaround, später anders definieren!!! 
+				((ActiveObject)newObject).setMaxSpeed(Float.parseFloat((String) settings.get(EnvironmentSetupObjectSettings.SETTINGS_KEY_AGENT_MAX_SPEED)));	 
 				
 			}
 		} catch (InstantiationException e) {

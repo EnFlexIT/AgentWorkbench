@@ -16,7 +16,7 @@ Einfaches Demo-Projekt fr die Visualisierung</projectDescription>
     <jadeConfiguration>
         <start4Sim>true</start4Sim>
         <useAppDefaults>false</useAppDefaults>
-        <useLocalPort>1099</useLocalPort>
+        <useLocalPort>1100</useLocalPort>
         <serviceList>
             <service>jade.core.event.NotificationService;</service>
             <service>mas.environment.provider.EnvironmentProviderService;</service>
