@@ -1,35 +1,31 @@
 package gui.projectwindow.simsetup;
 
-import jade.core.Agent;
-
-import javax.swing.JPanel;
-import javax.swing.JLabel;
-import java.awt.Point;
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
-import java.util.Vector;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
-import javax.swing.JTextField;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+import mas.environment.ontology.ActiveObject;
+import mas.environment.ontology.PassiveObject;
+import mas.environment.ontology.Physical2DObject;
+import mas.environment.ontology.PlaygroundObject;
+import mas.environment.ontology.Position;
+import mas.environment.ontology.Scale;
+import mas.environment.ontology.Size;
+import mas.environment.ontology.StaticObject;
+import mas.environment.utils.SVGHelper;
 
 import org.w3c.dom.Element;
 
-
 import application.Language;
-
-import mas.environment.ontology.ActiveObject;
-import mas.environment.ontology.Physical2DObject;
-import mas.environment.ontology.Scale;
-import mas.environment.ontology.StaticObject;
-import mas.environment.ontology.PassiveObject;
-import mas.environment.ontology.PlaygroundObject;
-import mas.environment.ontology.Position;
-import mas.environment.ontology.Size;
-import mas.environment.utils.SVGHelper;
 
 public class EnvironmentSetupObjectSettings extends JPanel{
 
