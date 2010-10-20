@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: ClientRemoteContainerRequest
 * @author ontology bean generator
-* @version 2010/09/14, 14:55:17
+* @version 2010/10/20, 17:02:20
 */
 public class ClientRemoteContainerRequest implements AgentAction {
 

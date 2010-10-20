@@ -15,13 +15,19 @@ public class TransactionMap extends HashMap<Long, EnvironmentModel> {
 	private HashMap<Long, Long> time2Counter = new HashMap<Long, Long>();
 	
 	@Override
-	public EnvironmentModel put(Long key, EnvironmentModel value) {
-		super.put(key, value);
-		TimeModel timeModelInstance = value.getTimeModel();
+	public EnvironmentModel put(Long key, EnvironmentModel envModel) {
+		EnvironmentModel returnValue = super.put(key, envModel);
+
+		// ------------------------------------------------
+		// --- In case that we are dealing with time  -----
+		// --- in our TimeModel: For a faster Mapping! ----
+		TimeModel timeModelInstance = envModel.getTimeModel();
 		if (timeModelInstance instanceof TimeModelDiscrete) {
 			time2Counter.put(((TimeModelDiscrete) timeModelInstance).getTime(), key);
 		}		
-		return value;
+		// ------------------------------------------------
+		
+		return returnValue;
 	}
 	
 	

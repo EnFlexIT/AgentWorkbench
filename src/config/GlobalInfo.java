@@ -15,7 +15,7 @@ public class GlobalInfo {
 
 	// --- Konstanten ------------------------------------------------------- 
 	final private static String localAppTitel = "Agent.GUI";
-	final private static String localAppVersion = "0.5";
+	final private static String localAppVersion = "0.6";
 	
 	final private static String localAppPathSeparatorString = File.separator;
 	final private static String localAppNewLineString = System.getProperty("line.separator");
@@ -161,7 +161,14 @@ public class GlobalInfo {
 	 * Aktuelle Look and Feel - Einstellung 
 	 */
 	public String AppLnF() {
-		return localAppLnF;
+		try {
+			@SuppressWarnings("unused")
+			Class<?> currOntoClass = Class.forName(localAppLnF);
+			return localAppLnF;
+		} catch (ClassNotFoundException e) {
+			//e.printStackTrace();
+		}
+		return null;
 	};
 	/**
 	 * Look and Feel - Einstellung  aendern

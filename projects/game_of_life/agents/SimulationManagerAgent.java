@@ -14,7 +14,7 @@ import javax.swing.JDesktopPane;
 
 import mas.service.SimulationService;
 import mas.service.SimulationServiceHelper;
-import mas.service.time.TimeModelStroke;
+import mas.service.environment.EnvironmentModel;
 import application.Application;
 
 public class SimulationManagerAgent extends Agent { 
@@ -31,9 +31,10 @@ public class SimulationManagerAgent extends Agent {
 
 	//------------ Environment for Agents -----------------------------------------------
 	private SimulationServiceHelper simHelper = null;
-	private TimeModelStroke tmd = null;
 	public static HashMap<String, Integer> localEnvModel = new HashMap<String, Integer>();
 	public static HashMap<String, Integer> localEnvModelNew = new HashMap<String, Integer>();
+	
+	private EnvironmentModel globalEnvModel = new EnvironmentModel();
 	
 	protected void setup() {
 		
@@ -55,12 +56,12 @@ public class SimulationManagerAgent extends Agent {
 		desptop.getDesktopManager().maximizeFrame(gui);
 				
 		// --------- Setup the Simulation with the Simulation-Service -------------------
-		tmd = new TimeModelStroke();
 		localEnvModel.putAll(gui.localEnvModelOutput);
+		globalEnvModel.setEnvironmentInstance(localEnvModel);
+		
 		try {
 			simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
-			simHelper.setManagerAgent(this.getAID());
-			simHelper.setTimeModel(tmd);
+			simHelper.setManagerAgent(this.getAID());			
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
@@ -113,10 +114,10 @@ public class SimulationManagerAgent extends Agent {
 			
 			// --- Simulationsschritt vorbereiten und durchführen -----------------------
 			try {
-				simHelper.setEnvironmentInstance(localEnvModel);
 				timeStepStart = System.nanoTime();	
-				simHelper.stepTimeModel();
-				
+				simHelper.resetEnvironmentInstanceNextParts();
+				simHelper.stepSimulation(globalEnvModel);
+
 				// --- Now wait for all answers -----------------------------------
 				while (simHelper.getEnvironmentInstanceNextParts().size() != localEnvModel.size() ) {
 					doWait(5);					
@@ -138,6 +139,7 @@ public class SimulationManagerAgent extends Agent {
 				
 				gui.updateGUI(localEnvModelNew);
 				localEnvModel = localEnvModelNew;
+				globalEnvModel.setEnvironmentInstance(localEnvModel);
 				
 			} catch (ServiceException e) {
 				e.printStackTrace();

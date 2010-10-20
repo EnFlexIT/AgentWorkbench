@@ -58,7 +58,7 @@ public class CoreWindow extends JFrame implements ComponentListener{
 	private final ImageIcon iconAgentGUI = new ImageIcon( this.getClass().getResource( PathImage + "AgentGUI.png") );
 	private final Image imageAgentGUI = iconAgentGUI.getImage();
 	
-	private final  ImageIcon iconGreen = new ImageIcon( this.getClass().getResource( PathImage + "StatGreen.png") );
+	private final ImageIcon iconGreen = new ImageIcon( this.getClass().getResource( PathImage + "StatGreen.png") );
 	private final ImageIcon iconRed = new ImageIcon( this.getClass().getResource( PathImage + "StatRed.png") );
 	private final ImageIcon iconClose = new ImageIcon( this.getClass().getResource( PathImage + "MBclose.png") );
 	private final ImageIcon iconCloseDummy = new ImageIcon( this.getClass().getResource( PathImage + "MBdummy.png") );
@@ -212,10 +212,11 @@ public class CoreWindow extends JFrame implements ComponentListener{
 		Application.RunInfo.setAppLnf( NewLnF );
 		try {
 			String lnfClassname = Application.RunInfo.AppLnF();
-			if (lnfClassname == null)
+			if (lnfClassname == null) {
 				lnfClassname = UIManager.getCrossPlatformLookAndFeelClassName();
-				UIManager.setLookAndFeel(lnfClassname);
-				SwingUtilities.updateComponentTreeUI(this);				
+			}
+			UIManager.setLookAndFeel(lnfClassname);
+			SwingUtilities.updateComponentTreeUI(this);				
 		} 
 		catch (Exception e) {
 				System.err.println("Cannot install " + Application.RunInfo.AppLnF()
@@ -735,6 +736,9 @@ public class CoreWindow extends JFrame implements ComponentListener{
 			jToolBarApp.add( JadeTools );
 			jToolBarApp.addSeparator();
 			
+			jToolBarApp.add(new JToolBarButton( "ContainerMonitoring", Language.translate("Load Monitor öffnen"), null, "MBLoadMonitor.png" ));
+			jToolBarApp.addSeparator();		
+			
 		};		
 		return jToolBarApp;
 	}	
@@ -746,7 +750,7 @@ public class CoreWindow extends JFrame implements ComponentListener{
 	// ------------------------------------------------------------
 	// --- Unterklasse für die Symbolleisten-Buttons --------------
 	// ------------------------------------------------------------	
-	private class JToolBarButton extends JButton implements ActionListener {
+	public class JToolBarButton extends JButton implements ActionListener {
 
 		private static final long serialVersionUID = 1L;
  
@@ -806,7 +810,8 @@ public class CoreWindow extends JFrame implements ComponentListener{
 			else if ( ActCMD.equalsIgnoreCase("JadeTools") ) { 
 				JadeToolsPopUp.show( JadeTools, 0, JadeTools.getHeight() );
 			}
-			else if ( ActCMD.equalsIgnoreCase("") ) { 
+			else if ( ActCMD.equalsIgnoreCase("ContainerMonitoring") ) { 
+				Application.JadePlatform.jadeSystemAgentOpen("loadMonitor", null);
 			}
 			// ------------------------------------------------
 			else { 

@@ -2,7 +2,9 @@ package mas.service.distribution.agents;
 
 import jade.core.Agent;
 import jade.core.ServiceException;
+import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.TickerBehaviour;
+import jade.lang.acl.ACLMessage;
 
 import java.awt.Dimension;
 import java.awt.Font;
@@ -12,32 +14,30 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Observable;
 
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import mas.service.SimulationAgent;
 import mas.service.SimulationService;
 import mas.service.SimulationServiceHelper;
 import mas.service.sensoring.ServiceSensor;
-import mas.service.time.TimeModelStroke;
 
 /**
  * @version 1.0
  */ 
-public class ASynchTimeTestAgent extends Agent implements ServiceSensor { 
+public class ASynchTimeTestAgent extends SimulationAgent { 
 
 	private static final long serialVersionUID = 1L;
 	
 	private String myName = null;
+	private ServiceSensor mySensor = null;
 	private SynchTimeGUI gui = null;
 	private Date curSynchDate = null;
 	private long currSynchDiff = 0;
 
-	private TimeModelStroke tmd = new TimeModelStroke();
-	
 	protected void setup() { 
 
 		this.myName = this.getLocalName();
@@ -48,13 +48,14 @@ public class ASynchTimeTestAgent extends Agent implements ServiceSensor {
 			simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
 			if (simHelper.getManagerAgent()==null) {
 				simHelper.setManagerAgent(this.getAID());
-				simHelper.setTimeModel(tmd);
 				// --- Start a Ticker -----------------------------
 				this.addBehaviour(new ShowTimeBehaviour(this,1000));
 
 			} else {
 				// --- Wait for the Service-Trigger ---------------
-				simHelper.addSensor(this);	
+				mySensor = new ServiceSensor(this);
+				simHelper.sensorPlugIn(mySensor);	
+				this.addBehaviour(new ReceiveSimulationCalls());
 			}
 		} catch (ServiceException e) {
 			e.printStackTrace();
@@ -75,7 +76,7 @@ public class ASynchTimeTestAgent extends Agent implements ServiceSensor {
 		SimulationServiceHelper simHelper = null;
 		try {
 			simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
-			simHelper.deleteSensor(this);	
+			simHelper.sensorPlugOut(mySensor);			
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
@@ -90,13 +91,12 @@ public class ASynchTimeTestAgent extends Agent implements ServiceSensor {
 			simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
 			if (simHelper.getManagerAgent()==null) {
 				simHelper.setManagerAgent(this.getAID());
-				simHelper.setTimeModel(tmd);
 				// --- Start a Ticker -----------------------------
 				this.addBehaviour(new ShowTimeBehaviour(this,1000));
 
 			} else {
 				// --- Wait for the Service-Trigger ---------------
-				simHelper.addSensor(this);	
+				simHelper.sensorPlugIn(mySensor);	
 			}
 		} catch (ServiceException e) {
 			e.printStackTrace();
@@ -139,7 +139,7 @@ public class ASynchTimeTestAgent extends Agent implements ServiceSensor {
 				simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
 				curSynchDate = simHelper.getSynchTimeDate();
 				currSynchDiff = simHelper.getSynchTimeDifferenceMillis();
-				simHelper.stepTimeModel();				
+				simHelper.stepSimulation(null, true);				
 				if (gui!=null) {
 					gui.setTime(curSynchDate, currSynchDiff);	
 				}
@@ -151,25 +151,38 @@ public class ASynchTimeTestAgent extends Agent implements ServiceSensor {
 
 	}
 
-	@Override
-	public void update(Observable o, Object arg) {
+	class ReceiveSimulationCalls extends CyclicBehaviour {
 
-		if (arg.equals(SimulationService.SERVICE_UPDATE_TIME_STEP)) {
+		private static final long serialVersionUID = -8157443195390156247L;
+
+		@Override
+		public void action() {
 			
-			SimulationServiceHelper simHelper = null;
-			try {
-				simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
-				curSynchDate = simHelper.getSynchTimeDate();
-				currSynchDiff = simHelper.getSynchTimeDifferenceMillis();
-				if (gui!=null) {
-					gui.setTime(curSynchDate, currSynchDiff);	
+			ACLMessage msg = myAgent.receive();			
+			if (msg!=null) {
+				
+				SimulationServiceHelper simHelper = null;
+				try {
+					simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
+					curSynchDate = simHelper.getSynchTimeDate();
+					currSynchDiff = simHelper.getSynchTimeDifferenceMillis();
+					if (gui!=null) {
+						gui.setTime(curSynchDate, currSynchDiff);	
+					}
+					
+				} catch (ServiceException e) {
+					e.printStackTrace();
 				}
 				
-			} catch (ServiceException e) {
-				e.printStackTrace();
+			} else {
+				block();
 			}
+			
 		}
-	} 
+		
+	}
+
+	
 	
 
 	public class SynchTimeGUI extends JDialog {

@@ -4,6 +4,7 @@ import jade.core.Agent;
 import mas.Platform;
 import mas.agents.behaviour.PlatformShutdownBehaviour;
 import mas.agents.behaviour.ShowDFBehaviour;
+import mas.agents.behaviour.ShowLoadMonitorBehaviour;
 
 public class UtilityAgent extends Agent {
 
@@ -21,15 +22,19 @@ public class UtilityAgent extends Agent {
 		Integer start4 = (Integer) args[0];
 		switch (start4) {
 		case Platform.UTIL_CMD_OpenDF:
-			addBehaviour(new ShowDFBehaviour());
+			this.addBehaviour(new ShowDFBehaviour());
 			break;
 
 		case Platform.UTIL_CMD_ShutdownPlatform:
-			addBehaviour(new PlatformShutdownBehaviour());
+			this.addBehaviour(new PlatformShutdownBehaviour());
+			break;
+			
+		case Platform.UTIL_CMD_OpenLoadMonitor:
+			this.addBehaviour(new ShowLoadMonitorBehaviour());
 			break;
 			
 		default:
-			break;
+			this.doDelete();
 		}
 		
 	}

@@ -1,30 +1,17 @@
 package mas.service.environment;
 
+import java.io.Serializable;
+
 import mas.service.time.TimeModel;
 
-public class EnvironmentModel {
+public class EnvironmentModel implements Serializable {
 
-	private Long eventQueuePosition = null;
+	private static final long serialVersionUID = -2845036237763599630L;
+	
 	private TimeModel timeModel = null;
-	private Object environmentObject = null;
+	private Object environmentInstance = null;
 	
 	
-	
-	
-	
-	
-	/**
-	 * @return the eventQueuePosition
-	 */
-	public Long getEventQueuePosition() {
-		return eventQueuePosition;
-	}
-	/**
-	 * @param eventQueuePosition the eventQueuePosition to set
-	 */
-	public void setEventQueuePosition(Long eventQueuePosition) {
-		this.eventQueuePosition = eventQueuePosition;
-	}
 	/**
 	 * @return the timeModel
 	 */
@@ -40,14 +27,14 @@ public class EnvironmentModel {
 	/**
 	 * @return the environmentObject
 	 */
-	public Object getEnvironmentObject() {
-		return environmentObject;
+	public Object getEnvironmentInstance() {
+		return environmentInstance;
 	}
 	/**
 	 * @param environmentObject the environmentObject to set
 	 */
-	public void setEnvironmentObject(Object environmentObject) {
-		this.environmentObject = environmentObject;
+	public void setEnvironmentInstance(Object currEnvironmentInstance) {
+		this.environmentInstance = currEnvironmentInstance;
 	}
 	
 }

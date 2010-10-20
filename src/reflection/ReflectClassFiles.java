@@ -16,11 +16,8 @@ import application.Application;
 
 public class ReflectClassFiles extends ArrayList<String> {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	
+	private static final long serialVersionUID = -256361698681180954L;
+
 	private String SearchINReference = null;
 	private String[] SearchINPathParts = null;
 

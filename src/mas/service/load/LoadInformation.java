@@ -5,11 +5,13 @@ import jade.core.Location;
 
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Vector;
 
 
 import mas.service.distribution.ontology.BenchmarkResult;
 import mas.service.distribution.ontology.ClientRemoteContainerReply;
 import mas.service.distribution.ontology.OSInfo;
+import mas.service.distribution.ontology.PlatformAddress;
 import mas.service.distribution.ontology.PlatformLoad;
 import mas.service.distribution.ontology.PlatformPerformance;
 
@@ -23,6 +25,7 @@ public class LoadInformation  {
 
 	private static final long serialVersionUID = -8535049489754734307L;
 	
+	public Vector<String> containerQueue = new Vector<String>();
 	public Hashtable<String, NodeDescription> containerDescription = new Hashtable<String, NodeDescription>();
 	public Hashtable<String, PlatformLoad> containerLoads = new Hashtable<String, PlatformLoad>(); 
 	public Hashtable<String, Location> containerLocations = new Hashtable<String, Location>();
@@ -45,6 +48,9 @@ public class LoadInformation  {
 	public void putContainerDescription(ClientRemoteContainerReply crcReply) {
 		NodeDescription node = new NodeDescription(crcReply);
 		this.containerDescription.put(node.getContainerName(), node);
+		if (containerQueue.contains(node.getContainerName())==false) {
+			containerQueue.addElement(node.getContainerName());	
+		}
 	}
 	/**
 	 * @param lastNewContainer the lastNewContainer to set
@@ -77,7 +83,7 @@ public class LoadInformation  {
 	 * was NOT successfully
 	 * @param containerName
 	 */
-	public void setNewContainerCanncelled(String containerName) {
+	public void setNewContainerCancelled(String containerName) {
 		Container2Wait4 cont = newContainers2Wait4.get(containerName);
 		if (cont!=null ) {
 			cont.setCancelled(true);
@@ -256,6 +262,8 @@ public class LoadInformation  {
 	public class NodeDescription {
 		
 		private String containerName = null;
+		private String jvmPID = null;
+		private PlatformAddress plAddress = null;
 		private OSInfo osInfo = null;
 		private PlatformPerformance plPerformace = null;
 		private BenchmarkResult benchmarkValue = null;
@@ -267,12 +275,14 @@ public class LoadInformation  {
 		
 		}
 		/**
-		 * Constuructor of this Sub-Class, using the 
+		 * Constructor of this Sub-Class, using the 
 		 * ClientRemoteContainerReply from the Server.Master
 		 * @param crcReply
 		 */
 		public NodeDescription(ClientRemoteContainerReply crcReply) {
 			containerName = crcReply.getRemoteContainerName();
+			jvmPID = crcReply.getRemotePID();
+			setPlAddress(crcReply.getRemoteAddress());
 			osInfo = crcReply.getRemoteOS();
 			plPerformace = crcReply.getRemotePerformance();
 			benchmarkValue = crcReply.getRemoteBenchmarkResult();
@@ -289,6 +299,32 @@ public class LoadInformation  {
 		 */
 		public String getContainerName() {
 			return containerName;
+		}
+		
+		/**
+		 * @param jvmPID the jvmPID to set
+		 */
+		public void setJvmPID(String jvmPID) {
+			this.jvmPID = jvmPID;
+		}
+		/**
+		 * @return the jvmPID
+		 */
+		public String getJvmPID() {
+			return jvmPID;
+		}
+		
+		/**
+		 * @param plAddress the plAddress to set
+		 */
+		public void setPlAddress(PlatformAddress plAddress) {
+			this.plAddress = plAddress;
+		}
+		/**
+		 * @return the plAddress
+		 */
+		public PlatformAddress getPlAddress() {
+			return plAddress;
 		}
 		
 		/**

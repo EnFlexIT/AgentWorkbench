@@ -413,6 +413,7 @@ public class MasterServerAgent extends Agent {
 				System.out.println( this.getLocalName() + ": No Server.Slave was found! - Cancle action of remote-container-request!");
 				
 				replyContent.setRemoteContainerName(containerName);
+				replyContent.setRemoteAddress(null);
 				replyContent.setRemoteOS(null);
 				replyContent.setRemotePerformance(null);
 				replyContent.setRemoteBenchmarkResult(null);
@@ -431,6 +432,12 @@ public class MasterServerAgent extends Agent {
 				os.setOs_version(res.getString("os_version"));
 				os.setOs_arch(res.getString("os_arch"));
 				
+				PlatformAddress plAdd = new PlatformAddress();
+				plAdd.setIp(res.getString("ip"));
+				plAdd.setUrl(res.getString("url"));
+				plAdd.setPort(res.getInt("jade_port"));
+				plAdd.setHttp4mtp(res.getString("http4mtp"));
+				
 				PlatformPerformance plPerf = new PlatformPerformance();
 				plPerf.setCpu_vendor(res.getString("cpu_vendor"));
 				plPerf.setCpu_model(res.getString("cpu_model"));
@@ -442,6 +449,7 @@ public class MasterServerAgent extends Agent {
 				bench.setBenchmarkValue(res.getFloat("benchmark_value"));
 				
 				replyContent.setRemoteContainerName(containerName);
+				replyContent.setRemoteAddress(plAdd);
 				replyContent.setRemoteOS(os);
 				replyContent.setRemotePerformance(plPerf);
 				replyContent.setRemoteBenchmarkResult(bench);

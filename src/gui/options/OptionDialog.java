@@ -157,10 +157,11 @@ public class OptionDialog extends JDialog implements ActionListener {
 		Application.RunInfo.setAppLnf( NewLnF );
 		try {
 			String lnfClassname = Application.RunInfo.AppLnF();
-			if (lnfClassname == null)
+			if (lnfClassname == null) {
 				lnfClassname = UIManager.getCrossPlatformLookAndFeelClassName();
-				UIManager.setLookAndFeel(lnfClassname);
-				SwingUtilities.updateComponentTreeUI(this);				
+			}
+			UIManager.setLookAndFeel(lnfClassname);
+			SwingUtilities.updateComponentTreeUI(this);				
 		} 
 		catch (Exception e) {
 				System.err.println("Cannot install " + Application.RunInfo.AppLnF()

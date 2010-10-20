@@ -15,9 +15,6 @@ import application.Application;
 
 public class FileProperties extends Properties {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 7953205356494195952L;
 	
 	private GlobalInfo Global = Application.RunInfo;
@@ -56,6 +53,8 @@ public class FileProperties extends Properties {
 	 */
 	public FileProperties() {
 		this.initialize();
+//		println4SysProps();
+//		println4EnvProps();
 	}
 	/**
 	 * Constructor of this class, for an alternatively config-file
@@ -394,7 +393,7 @@ public class FileProperties extends Properties {
 		
 		System.out.println();
 		System.out.println("------------------------------------");  
-		System.out.println("-------  System Physical2DEnvironment: -------"); 
+		System.out.println("-------  System Environment: -------"); 
 		System.out.println("------------------------------------");
 		Map<String, String> env = System.getenv();  
 		for (String str : env.keySet()) {  

@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: RemoteContainerConfig
 * @author ontology bean generator
-* @version 2010/09/14, 14:55:17
+* @version 2010/10/20, 17:02:20
 */
 public class RemoteContainerConfig implements Concept {
 
@@ -24,25 +24,25 @@ public class RemoteContainerConfig implements Concept {
    }
 
    /**
-* Protege name: jadeIsRemoteContainer
+* Protege name: jadeShowGUI
    */
-   private boolean jadeIsRemoteContainer;
-   public void setJadeIsRemoteContainer(boolean value) { 
-    this.jadeIsRemoteContainer=value;
+   private boolean jadeShowGUI;
+   public void setJadeShowGUI(boolean value) { 
+    this.jadeShowGUI=value;
    }
-   public boolean getJadeIsRemoteContainer() {
-     return this.jadeIsRemoteContainer;
+   public boolean getJadeShowGUI() {
+     return this.jadeShowGUI;
    }
 
    /**
-* Protege name: jadePort
+* Protege name: jadeServices
    */
-   private String jadePort;
-   public void setJadePort(String value) { 
-    this.jadePort=value;
+   private String jadeServices;
+   public void setJadeServices(String value) { 
+    this.jadeServices=value;
    }
-   public String getJadePort() {
-     return this.jadePort;
+   public String getJadeServices() {
+     return this.jadeServices;
    }
 
    /**
@@ -57,6 +57,17 @@ public class RemoteContainerConfig implements Concept {
    }
 
    /**
+* Protege name: jadeIsRemoteContainer
+   */
+   private boolean jadeIsRemoteContainer;
+   public void setJadeIsRemoteContainer(boolean value) { 
+    this.jadeIsRemoteContainer=value;
+   }
+   public boolean getJadeIsRemoteContainer() {
+     return this.jadeIsRemoteContainer;
+   }
+
+   /**
 * Protege name: jadeContainerName
    */
    private String jadeContainerName;
@@ -65,17 +76,6 @@ public class RemoteContainerConfig implements Concept {
    }
    public String getJadeContainerName() {
      return this.jadeContainerName;
-   }
-
-   /**
-* Protege name: jadeShowGUI
-   */
-   private boolean jadeShowGUI;
-   public void setJadeShowGUI(boolean value) { 
-    this.jadeShowGUI=value;
-   }
-   public boolean getJadeShowGUI() {
-     return this.jadeShowGUI;
    }
 
    /**
@@ -90,14 +90,14 @@ public class RemoteContainerConfig implements Concept {
    }
 
    /**
-* Protege name: jadeServices
+* Protege name: jadePort
    */
-   private String jadeServices;
-   public void setJadeServices(String value) { 
-    this.jadeServices=value;
+   private String jadePort;
+   public void setJadePort(String value) { 
+    this.jadePort=value;
    }
-   public String getJadeServices() {
-     return this.jadeServices;
+   public String getJadePort() {
+     return this.jadePort;
    }
 
 }

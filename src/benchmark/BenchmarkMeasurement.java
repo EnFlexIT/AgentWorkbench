@@ -53,11 +53,12 @@ public class BenchmarkMeasurement extends Thread {
 		}  
 		
 		// --- Benchmark-Monitor initialisieren -----------
-		if (Application.isServer) {
+		if (Application.MainWindow==null) {
 			benchGUI = new BenchmarkMonitor(null);	
 		} else {
 			benchGUI = new BenchmarkMonitor(Application.MainWindow);	
 		}		
+		
 		// --- Eingriffsmöglichkeit für den Nutzer --------
 		if ( benchValueOld>0 && nowExecOn.equalsIgnoreCase(benchExecOn)) {
 			benchGUI.jButtonSkip.setEnabled(true);

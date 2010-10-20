@@ -9,6 +9,8 @@ public class LoadMeasureAvgJVM {
 	private Integer useAVGCounter = 0;//maximum length of List
 	private ArrayList<LoadMeasureJVM> measureList = new ArrayList<LoadMeasureJVM>();
 	
+	private String jvmPID = null;
+	
 	private long jvmMemoFree = 0;			// KB 
 	private long jvmMemoTotal = 0;			// KB
 	private long jvmMemoMax = 0;			// KB
@@ -28,6 +30,8 @@ public class LoadMeasureAvgJVM {
 
 	public void put(LoadMeasureJVM currentLoadMeasure) {
 
+		this.jvmPID = currentLoadMeasure.getJvmPID();
+		
 		if (measureList.size() >= useAVGCounter) {
 			measureList.remove(0);
 		}
@@ -79,6 +83,19 @@ public class LoadMeasureAvgJVM {
 		jvmHeapInit = tmpJvmHeapInit / size;
 
 		jvmThreadCount = tmpJvmThreadCount / size;
+	}
+
+	/**
+	 * @param jvmPID the jvmPID to set
+	 */
+	public void setJvmPID(String jvmPID) {
+		this.jvmPID = jvmPID;
+	}
+	/**
+	 * @return the jvmPID
+	 */
+	public String getJvmPID() {
+		return jvmPID;
 	}
 
 	/**

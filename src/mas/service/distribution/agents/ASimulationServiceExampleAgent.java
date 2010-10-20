@@ -7,7 +7,6 @@ import jade.core.behaviours.TickerBehaviour;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.Observable;
 import java.util.Vector;
 
 import mas.service.SimulationService;
@@ -15,28 +14,16 @@ import mas.service.SimulationServiceHelper;
 import mas.service.distribution.ontology.PlatformLoad;
 import mas.service.load.LoadInformation.AgentMap;
 import mas.service.load.LoadInformation.Container2Wait4;
-import mas.service.sensoring.ServiceSensor;
-import mas.service.time.TimeModelStroke;
 
 /**
  * @version 1.0
  */ 
-public class ASimulationServiceExampleAgent extends Agent implements ServiceSensor { 
+public class ASimulationServiceExampleAgent extends Agent { 
 
 	private static final long serialVersionUID = 1L;
 	
 	protected void setup() { 
 
-		SimulationServiceHelper simHelper = null;
-		try {
-			simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
-			TimeModelStroke tmd = new TimeModelStroke();
-			simHelper.setTimeModel(tmd);
-
-		} catch (ServiceException e) {
-			e.printStackTrace();
-		}
-		
 		// ---- Add Cyclic Behaviour -----------
 		//this.addBehaviour(new HelloBehaviour(this,3000));
 		//this.requestNewRemoteContainer();
@@ -169,10 +156,5 @@ public class ASimulationServiceExampleAgent extends Agent implements ServiceSens
 		} 
 	}
 
-	@Override
-	public void update(Observable o, Object arg) {
-		
-		
-	}
 	
 } 

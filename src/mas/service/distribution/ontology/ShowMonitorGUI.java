@@ -6,10 +6,10 @@ import jade.util.leap.*;
 import jade.core.*;
 
 /**
-* Protege name: RegisterReceipt
+* Protege name: ShowMonitorGUI
 * @author ontology bean generator
 * @version 2010/10/20, 17:02:20
 */
-public class RegisterReceipt implements AgentAction {
+public class ShowMonitorGUI implements AgentAction {
 
 }

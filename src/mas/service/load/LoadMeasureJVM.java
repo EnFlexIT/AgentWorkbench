@@ -10,6 +10,8 @@ public class LoadMeasureJVM{
 
 	private static final long serialVersionUID = -5202880756096638141L;
 	
+	private String jvmPID = null; 
+	
 	private long jvmMemoFree = 0;			// Byte 
 	private long jvmMemoTotal = 0;			// Byte
 	private long jvmMemoMax = 0;			// Byte
@@ -27,6 +29,8 @@ public class LoadMeasureJVM{
     private Hashtable<String, Long> jvmThreadTimes = null;
     
     public LoadMeasureJVM() {
+    	
+    	this.jvmPID = ManagementFactory.getRuntimeMXBean().getName();
     	
     	if (threadMonitoringSupported) {
 			threadXB.setThreadContentionMonitoringEnabled(true);
@@ -93,6 +97,19 @@ public class LoadMeasureJVM{
 		return exists;		
 	}
 	
+	/**
+	 * @param jvmPID the jvmPID to set
+	 */
+	public void setJvmPID(String jvmPID) {
+		this.jvmPID = jvmPID;
+	}
+	/**
+	 * @return the jvmPID
+	 */
+	public String getJvmPID() {
+		return jvmPID;
+	}
+
 	/**
 	 * @return the jvmMemoFree
 	 */

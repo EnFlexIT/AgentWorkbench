@@ -1,6 +1,6 @@
 package mas.service.load;
 
-public class LoadThresholdLeveles {
+public class LoadThresholdLevels {
 
 	private Integer thCpuL = 5;
 	private Integer thCpuH = 80;

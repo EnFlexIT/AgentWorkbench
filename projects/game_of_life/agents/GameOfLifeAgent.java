@@ -1,70 +1,60 @@
 package game_of_life.agents;
 
-import jade.content.lang.sl.SLCodec;
-import jade.core.Agent;
 import jade.core.ServiceException;
-import jade.domain.mobility.MobilityOntology;
+import jade.core.behaviours.CyclicBehaviour;
+import jade.lang.acl.ACLMessage;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Observable;
 import java.util.Vector;
 
+import mas.service.SimulationAgent;
 import mas.service.SimulationService;
 import mas.service.SimulationServiceHelper;
-import mas.service.sensoring.ServiceSensor;
 
 /**
  * @version 1.0
  */ 
-public class GameOfLifeAgent extends Agent implements ServiceSensor { 
+public class GameOfLifeAgent extends SimulationAgent { 
 
 	private static final long serialVersionUID = 1L;
 	
-	// ---- objects variables ---------------------------------------------
 	private Object startArgs[];
 	
-	// ---- Instance variables ------------------------------------------
 	private Vector<String> myNeighbours = new Vector<String>();
+	
 	private Integer myCurrentState;
 	private Integer myNextState;
-		
+	
 	@SuppressWarnings("unchecked")
 	protected void setup() { 
-
+		super.setup();
+		
 		// ----- get the arguments of agents -------------------------------
 		startArgs = getArguments();
 		myNeighbours = (Vector<String>) startArgs[0];
-		
-		// --- Register Codec and Ontology --------------------------------
-		init();
 
-		SimulationServiceHelper simHelper = null;
-		try {
-			simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
-			simHelper.addSensor(this);	
-		} catch (ServiceException e) {
-			e.printStackTrace();
-		}
 	} 
 	
-	public void init() {
-		// ---- Register language and ontology ------------------------------
-		getContentManager().registerLanguage(new SLCodec());
-		getContentManager().registerOntology(MobilityOntology.getInstance());
-	}
-	protected void beforeMove() {
-		// -----------------------------
-		//System.out.println("AgentName: "+getLocalName()+"  Moving now From location : " + destination.getName());
-	}
-	protected void afterMove() {
-		// ----------------------------
-		init();
-		//System.out.println("AgentName: "+getLocalName()+"  Arrived at location : " + destination.getName());
-	}
+	@SuppressWarnings("unchecked")
+	public void onEnvironmentStimulus() {
 
+		if (myEnvironmentModel!=null) {
+
+			HashMap<String, Integer> localEnvModel = (HashMap<String, Integer>) myEnvironmentModel.getEnvironmentInstance();
+			this.updateStateOfAgent(localEnvModel);
+			
+			try {
+				SimulationServiceHelper simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
+				simHelper.setEnvironmentInstanceNextPart(getAID(), myNextState);
+			} catch (ServiceException e) {
+				e.printStackTrace();
+			}
+		}
 	
-	// ---- update stateof Agent after controlling my neighbours ------------
+	}
+	
+	// ---- update state of Agent after controlling my neighbours -----------
 	public Integer updateStateOfAgent(HashMap<String, Integer> localEnvModel) {
 		
 		int stateOfNeibours = 0;
@@ -94,36 +84,37 @@ public class GameOfLifeAgent extends Agent implements ServiceSensor {
 		return myNextState;
 	}
 
+	
+	
+	class ReceiveSimulationCalls extends CyclicBehaviour {
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public void update(Observable o, Object arg) {
+		private static final long serialVersionUID = 5473235698882127521L;
+
+		@Override
+		public void action() {
 		
-		if (arg.equals( SimulationService.SERVICE_UPDATE_TIME_STEP )) {
-			// --- Simulationsimpuls erhalten --------------------------------
-			try {
-				// --- get Environment-Object-Instance -----------------------
-				SimulationServiceHelper simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
-				Object simEnvInst = simHelper.getEnvironmentInstance();
-				//System.out.println( "SSW => " + simInst.toString() );
+			ACLMessage msg = myAgent.receive();			
+			if (msg!=null) {
+				
+				// --- Simulationsimpuls erhalten --------------
+				try {
+					// --- get Environment-Object-Instance ------------
+					SimulationServiceHelper simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
+					Object simInst = simHelper.getEnvironmentModel();
+					System.out.println( "=> " + simInst.toString() );
 
-				// --- Cast it to the right Type -----------------------------
-				HashMap<String, Integer> localEnvModel = (HashMap<String, Integer>) simEnvInst;
-
-				// -------- Look at the neighbours ---------------------------
-				myCurrentState = updateStateOfAgent(localEnvModel);
 				
-				// --- Send a message to the main controler ------------------
-				simHelper.setEnvironmentInstanceNextPart(this.getAID(), myCurrentState);
+				} catch (ServiceException e) {
+					e.printStackTrace();
+				}
 				
 				
-			} catch (ServiceException e) {
-				e.printStackTrace();
+			} else {
+				block();
 			}
+			
 		}
 		
 	}
-	
 
-	
 } 

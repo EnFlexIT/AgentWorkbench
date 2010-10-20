@@ -47,10 +47,7 @@ public class Application {
 		Console = new CoreWindowConsole();
 		properties = new FileProperties();
 		new LoadMeasureThread().start();  
-		startAgentGUI();
-		// --- Starting the performance/benchmark test --------------
-		doBenchmark(false);
-		
+		startAgentGUI();		
 	}	
 
 	private static void startAgentGUI() {
@@ -63,6 +60,8 @@ public class Application {
 			// ------------------------------------------------------
 			// --- Start Server-Version of AgentGUI -----------------
 			System.out.println( Language.translate("Programmstart [Server] ..." ) );
+			// --- In the Server-Case, start the benchmark now ! ----
+			doBenchmark(false);
 			startServer();
 			
 		} else {
@@ -73,7 +72,8 @@ public class Application {
 
 			startApplication();
 			MainWindow.setStatusBar( Language.translate("Fertig") );
-			Projects.setProjectMenuItems();			
+			Projects.setProjectMenuItems();
+			doBenchmark(false);
 		}
 	}
 	
@@ -92,6 +92,14 @@ public class Application {
 	public static void startServer() {
 		// --- Automatically Start JADE, if configured --------------
 		if ( RunInfo.isServerAutoRun()==true ) {
+			// --- Wait until the benchmark result is available -----
+			while (LoadMeasureThread.getCompositeBenchmarkValue()==0) {
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}			
 			JadePlatform.jadeStart();
 			trayIconInstance.popUp.refreshView();
 		}

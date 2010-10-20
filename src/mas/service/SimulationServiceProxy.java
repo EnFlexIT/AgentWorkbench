@@ -1,7 +1,5 @@
 package mas.service;
 
-import java.util.Hashtable;
-
 import jade.core.AID;
 import jade.core.GenericCommand;
 import jade.core.IMTPException;
@@ -9,10 +7,13 @@ import jade.core.Location;
 import jade.core.Node;
 import jade.core.ServiceException;
 import jade.core.SliceProxy;
+
+import java.util.Hashtable;
+
 import mas.service.distribution.ontology.ClientRemoteContainerReply;
 import mas.service.distribution.ontology.PlatformLoad;
 import mas.service.distribution.ontology.RemoteContainerConfig;
-import mas.service.time.TimeModel;
+import mas.service.environment.EnvironmentModel;
 
 public class SimulationServiceProxy extends SliceProxy implements SimulationServiceSlice {
 
@@ -65,7 +66,7 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 		}		
 	}
 	// ----------------------------------------------------------
-	// --- Methods to synchronize the Time --- S T O P ----------
+	// --- Methods to synchronise the Time --- S T O P ----------
 	// ----------------------------------------------------------
 
 	
@@ -117,17 +118,12 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 	// ----------------------------------------------------------
 	// --- Methods on the Manager-Agent --- S T O P -------------
 	// ----------------------------------------------------------
-
-	
-	// ----------------------------------------------------------
-	// --- Methods on the TimeModel --- S T A R T ---------------
-	// ----------------------------------------------------------
 	@Override
-	public void setTimeModel(TimeModel newTimeModel) throws IMTPException {
-		
+	public void setEnvironmentModel(EnvironmentModel envModel) throws IMTPException {
+
 		try {
-			GenericCommand cmd = new GenericCommand(SIM_SET_TIMEMODEL, SimulationService.NAME, null);
-			cmd.addParam(newTimeModel);
+			GenericCommand cmd = new GenericCommand(SIM_SET_ENVIRONMENT_MODEL, SimulationService.NAME, null);
+			cmd.addParam(envModel);
 			
 			Node n = getNode();
 			Object result = n.accept(cmd);
@@ -142,63 +138,15 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 		}
 		catch(ServiceException se) {
 			throw new IMTPException("Unable to access remote node", se);
-		}
+		}			
 	}
 	@Override
-	public TimeModel getTimeModel() throws IMTPException {
-		
-		try {
-			GenericCommand cmd = new GenericCommand(SIM_GET_TIMEMODEL, SimulationService.NAME, null);
-			Node n = getNode();
-			Object result = n.accept(cmd);
-			if((result != null) && (result instanceof Throwable)) {
-				if(result instanceof IMTPException) {
-					throw (IMTPException)result;
-				}
-				else {
-					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
-				}
-			}
-			return (TimeModel) result;
-		}
-		catch(ServiceException se) {
-			throw new IMTPException("Unable to access remote node", se);
-		}
-	}
-	@Override
-	public void stepTimeModel() throws IMTPException {
-		
-		try {
-			GenericCommand cmd = new GenericCommand(SIM_STEP_TIMEMODEL, SimulationService.NAME, null);
-			Node n = getNode();
-			Object result = n.accept(cmd);
-			if((result != null) && (result instanceof Throwable)) {
-				if(result instanceof IMTPException) {
-					throw (IMTPException)result;
-				}
-				else {
-					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
-				}
-			}
-		}
-		catch(ServiceException se) {
-			throw new IMTPException("Unable to access remote node", se);
-		}
-	}
-	// ----------------------------------------------------------
-	// --- Methods on the TimeModel --- E N D -------------------
-	// ----------------------------------------------------------
-
-	
-	// ----------------------------------------------------------
-	// --- Methods on the Environment --- S T A R T -------------
-	// ----------------------------------------------------------
-	@Override
-	public void setEnvironmentInstance(Object envObjectInstance) throws IMTPException {
+	public void stepSimulation(EnvironmentModel envModel, boolean aSynchron) throws IMTPException {
 
 		try {
-			GenericCommand cmd = new GenericCommand(SIM_SET_ENVIRONMENT, SimulationService.NAME, null);
-			cmd.addParam(envObjectInstance);
+			GenericCommand cmd = new GenericCommand(SIM_STEP_SIMULATION, SimulationService.NAME, null);
+			cmd.addParam(envModel);
+			cmd.addParam(aSynchron);
 			
 			Node n = getNode();
 			Object result = n.accept(cmd);
@@ -213,28 +161,7 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 		}
 		catch(ServiceException se) {
 			throw new IMTPException("Unable to access remote node", se);
-		}
-	}
-	@Override
-	public Object getEnvironmentInstance() throws IMTPException {
-
-		try {
-			GenericCommand cmd = new GenericCommand(SIM_GET_ENVIRONMENT, SimulationService.NAME, null);
-			Node n = getNode();
-			Object result = n.accept(cmd);
-			if((result != null) && (result instanceof Throwable)) {
-				if(result instanceof IMTPException) {
-					throw (IMTPException)result;
-				}
-				else {
-					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
-				}
-			}
-			return (Object) result;
-		}
-		catch(ServiceException se) {
-			throw new IMTPException("Unable to access remote node", se);
-		}
+		}		
 	}
 	@Override
 	public void setEnvironmentInstanceNextPart(AID fromAgent, Object nextPart) throws IMTPException {
@@ -303,34 +230,6 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 	}
 	// ----------------------------------------------------------
 	// --- Methods on the Environment --- E N D -----------------
-	// ----------------------------------------------------------
-
-	
-	// ----------------------------------------------------------
-	// --- Method for Notify Sensor --- S T A R T ---------------
-	// ----------------------------------------------------------
-	@Override
-	public void notifySensors(String topicWhichChanged) throws IMTPException {
-		
-		try {
-			GenericCommand cmd = new GenericCommand(topicWhichChanged, SimulationService.NAME, null);
-			Node n = getNode();
-			Object result = n.accept(cmd);
-			if((result != null) && (result instanceof Throwable)) {
-				if(result instanceof IMTPException) {
-					throw (IMTPException)result;
-				}
-				else {
-					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
-				}
-			}			
-		}
-		catch(ServiceException se) {
-			throw new IMTPException("Unable to access remote node", se);
-		}
-	}
-	// ----------------------------------------------------------
-	// --- Method for Notify Sensor --- E N D -------------------
 	// ----------------------------------------------------------
 
 	
@@ -478,6 +377,29 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 			throw new IMTPException("Unable to access remote node", se);
 		}
 		
+	}
+	
+	@Override
+	public ClientRemoteContainerReply getCRCReply() throws IMTPException {
+	
+		try {
+			GenericCommand cmd = new GenericCommand(SERVICE_GET_CONTAINER_DESCRIPTION, SimulationService.NAME, null);
+			
+			Node n = getNode();
+			Object result = n.accept(cmd);
+			if((result != null) && (result instanceof Throwable)) {
+				if(result instanceof IMTPException) {
+					throw (IMTPException)result;
+				}
+				else {
+					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
+				}
+			}
+			return (ClientRemoteContainerReply) result;
+		}
+		catch(ServiceException se) {
+			throw new IMTPException("Unable to access remote node", se);
+		}
 	}
 
 }

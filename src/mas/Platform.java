@@ -39,6 +39,7 @@ public class Platform extends Object {
 	
 	public final static int UTIL_CMD_OpenDF = 1;
 	public final static int UTIL_CMD_ShutdownPlatform = 2;
+	public final static int UTIL_CMD_OpenLoadMonitor = 3;
 	
 	public static final String MASapplicationAgentName = "server.client";
 	public JadeUrlChecker MASmasterAddress = null; 
@@ -311,7 +312,7 @@ public class Platform extends Object {
 	public void jadeUtilityAgentStart(int utilityCMD) {
 		Object[] agentArgs = new Object[5];
 		agentArgs[0] = utilityCMD;
-		jadeAgentStart("utility", "mas.agents.UtilityAgent", agentArgs);
+		jadeAgentStart("utility", mas.agents.UtilityAgent.class.getName(), agentArgs);
 	}
 	
 	/**
@@ -324,6 +325,7 @@ public class Platform extends Object {
 		JadeSystemTools.put( "sniffer", "jade.tools.sniffer.Sniffer" );
 		JadeSystemTools.put( "dummy", "jade.tools.DummyAgent.DummyAgent" );
 		JadeSystemTools.put( "df", "mas.agents.DFOpener" );
+		JadeSystemTools.put( "loadmonitor", mas.service.distribution.agents.LoadAgent.class.getName());
 		JadeSystemTools.put( "introspector", "jade.tools.introspector.Introspector" );
 		JadeSystemTools.put( "log", "jade.tools.logging.LogManagerAgent" );
 		
@@ -394,10 +396,11 @@ public class Platform extends Object {
 				if ( AgentNameForStart.equalsIgnoreCase("df") ) {
 					// --- Show the DF-GUI -----------------------
 					this.jadeUtilityAgentStart(UTIL_CMD_OpenDF);
-					return;
-					//AgeCon = MASmc.createNewAgent("DFOpener", AgentNameClass, new Object[0]);
-				}
-				else {
+					return;					
+				} else if (AgentNameForStart.equalsIgnoreCase("loadMonitor") ) {
+					this.jadeUtilityAgentStart(UTIL_CMD_OpenLoadMonitor);
+					return;					
+				} else {
 					// --- Show a standard jade ToolAgent --------
 					AgeCon = MASmc.createNewAgent(AgentNameForStart, AgentNameClass, new Object[0]);
 				}
@@ -595,7 +598,7 @@ public class Platform extends Object {
 			jadeStart();			
 		}
 		
-		AgeCont = jadeContainer( ContainerName );
+		AgeCont = this.jadeContainer( ContainerName );
 		if ( AgeCont == null ) {
 			AgeCont = jadeContainerCreate( ContainerName );
 		}		

@@ -19,6 +19,7 @@ import jade.domain.JADEAgentManagement.JADEManagementOntology;
 import jade.domain.introspection.Occurred;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
+import jade.wrapper.StaleProxyException;
 import mas.service.SimulationService;
 import mas.service.SimulationServiceHelper;
 import mas.service.distribution.ontology.AgentGUI_DistributionOntology;
@@ -35,9 +36,7 @@ import mas.service.distribution.ontology.PlatformPerformance;
 import mas.service.distribution.ontology.PlatformTime;
 import mas.service.distribution.ontology.RegisterReceipt;
 import mas.service.distribution.ontology.RemoteContainerConfig;
-import mas.service.load.LoadMeasureSigar;
 import mas.service.load.LoadMeasureThread;
-import mas.service.load.LoadUnits;
 import network.JadeUrlChecker;
 import application.Application;
 
@@ -53,15 +52,18 @@ public class ClientServerAgent extends Agent {
 	private AID mainPlatformAgent = null;
 	private boolean mainPlatformReachable = true;
 	
+	private ClientRemoteContainerReply myCRCreply = null;
+	private PlatformAddress myPlatform = null;
+	private PlatformPerformance myPerformance = null;
+	private OSInfo myOS = null;
+	
 	private PlatformTime myPlatformTime = new PlatformTime();
-	private PlatformAddress myPlatform = new PlatformAddress();
-	private PlatformPerformance myPerformance = new PlatformPerformance();
-	private OSInfo myOS = new OSInfo();
 	private ClientRegister myRegistration = new ClientRegister();
 	private PlatformLoad myLoad = new PlatformLoad();
 	
 	private ParallelBehaviour parBehaiv = null;
 	private TriggerBehaiviour trigger = null;
+	private SaveNodeDescriptionBehaviour sndBehaiv = null;
 	
 	private long triggerTime = new Long(1000*1);
 	private long triggerTime4Reconnection = new Long(1000*20);
@@ -74,32 +76,29 @@ public class ClientServerAgent extends Agent {
 		getContentManager().registerOntology(ontology);
 		getContentManager().registerOntology(ontologyJadeMgmt);
 		
-		// --- Define Platform-Info -----------------------
-		JadeUrlChecker myURL = new JadeUrlChecker( this.getContainerController().getPlatformName() );
-		myPlatform.setIp(myURL.getHostIP());
-		myPlatform.setUrl(myURL.getHostName());
-		myPlatform.setPort(myURL.getPort());
-		myPlatform.setHttp4mtp( getAMS().getAddressesArray()[0] );
+		SimulationServiceHelper simHelper = null;
+		try {
+			simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
+			// --- get the local systems-informations ---------
+			myCRCreply = simHelper.getLocalCRCReply();
+
+			// --- Define Platform-Info -----------------------
+			myPlatform = myCRCreply.getRemoteAddress();
+			// --- Set the Performance of machine -------------
+			myPerformance = myCRCreply.getRemotePerformance();
+			// --- Set OS-Informations ------------------------
+			myOS = myCRCreply.getRemoteOS();
+			
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
 		
 		// --- Define Main-Platform-Info ------------------
-		myURL = Application.JadePlatform.MASmasterAddress;
+		JadeUrlChecker myURL = Application.JadePlatform.MASmasterAddress;
 		mainPlatform.setIp(myURL.getHostIP());
 		mainPlatform.setUrl(myURL.getHostName());
 		mainPlatform.setPort(myURL.getPort());
 		mainPlatform.setHttp4mtp(myURL.getJADEurl4MTP());
-		
-		// --- Set the Performance of machine -------------
-		LoadMeasureSigar sys = LoadMeasureThread.getLoadCurrent();
-		myPerformance.setCpu_vendor(sys.getVendor());
-		myPerformance.setCpu_model(sys.getModel());
-		myPerformance.setCpu_numberOf(sys.getTotalCpu());
-		myPerformance.setCpu_speedMhz((int) sys.getMhz());
-		myPerformance.setMemory_totalMB((int) LoadUnits.bytes2(sys.getTotalMemory(), LoadUnits.CONVERT2_MEGA_BYTE));
-		
-		// --- Set OS-Informations ------------------------
-		myOS.setOs_name(System.getProperty("os.name"));
-		myOS.setOs_version(System.getProperty("os.version"));
-		myOS.setOs_arch(System.getProperty("os.arch"));
 		
 		// --- Define Receiver of local Status-Info -------
 		mainPlatformAgent = new AID("server.master" + "@" + myURL.getJADEurl(), AID.ISGUID );
@@ -120,9 +119,18 @@ public class ClientServerAgent extends Agent {
 		parBehaiv.addSubBehaviour( new ReceiveBehaviour() );
 		trigger = new TriggerBehaiviour(this,triggerTime);
 		parBehaiv.addSubBehaviour( trigger );
+		sndBehaiv = new SaveNodeDescriptionBehaviour(this,500);
+		parBehaiv.addSubBehaviour( sndBehaiv );
 		
 		// --- Add the parallel Behaviour from above ------
 		this.addBehaviour(parBehaiv);
+		
+		// --- Finally start the LoadAgent ----------------
+		try {
+			this.getContainerController().createNewAgent("server.load", mas.service.distribution.agents.LoadAgent.class.getName(), null).start();
+		} catch (StaleProxyException agentErr) {
+			agentErr.printStackTrace();
+		}
 		
 	}
 	
@@ -367,5 +375,44 @@ public class ClientServerAgent extends Agent {
 	// -----------------------------------------------------
 	// --- Trigger-Behaviour --- S T A R T -----------------
 	// -----------------------------------------------------
+	
+
+	// -----------------------------------------------------
+	// --- Save Node Description Behaviour --- S T A R T ---
+	// -----------------------------------------------------
+	private class SaveNodeDescriptionBehaviour extends TickerBehaviour {
+
+		private static final long serialVersionUID = 5704581376150290621L;
+		
+		public SaveNodeDescriptionBehaviour(Agent a, long period) {
+			super(a, period);
+		}
+		protected void onTick() {
+			
+			if (LoadMeasureThread.getCompositeBenchmarkValue()!=0) {
+				// --- Put the local NodeDescription into the -----
+				// --- SimulationService 					  -----
+				try {
+
+					BenchmarkResult bench = new BenchmarkResult();
+					bench.setBenchmarkValue(LoadMeasureThread.getCompositeBenchmarkValue());
+					myCRCreply.setRemoteBenchmarkResult(bench);
+				
+					SimulationServiceHelper simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
+					simHelper.putContainerDescription(myCRCreply);
+					simHelper.setAndSaveCRCReplyLocal(myCRCreply);
+
+				} catch (ServiceException servEx) {
+					servEx.printStackTrace();
+				}
+				this.stop();
+			}
+		}
+		
+	}
+	// -----------------------------------------------------
+	// --- Save Node Description Behaviour --- E N D -------
+	// -----------------------------------------------------
+
 	
 }

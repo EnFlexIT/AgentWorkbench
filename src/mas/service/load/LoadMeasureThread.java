@@ -26,7 +26,7 @@ public class LoadMeasureThread extends Thread {
 	private static LoadMeasureAvgJVM loadCurrentAvgJVM = null;
 	
 	// --- Threshold-Information ----------------------------------------------
-	private static LoadThresholdLeveles thresholdLeveles = new LoadThresholdLeveles(); 
+	private static LoadThresholdLevels thresholdLeveles = new LoadThresholdLevels(); 
 	private static int thresholdLevelesExceeded = 0; 	
 	private static int thresholdLeveleExceededCPU = 0;
 	private static int thresholdLeveleExceededMemoSystem = 0;
@@ -43,7 +43,7 @@ public class LoadMeasureThread extends Thread {
 	private static Integer loadNoThreads = 0;
 	
 	/**
-	 * Simple constuctor of this class
+	 * Simple constructor of this class
 	 */
 	public LoadMeasureThread() {
 		loadCurrentAvg = new LoadMeasureAvgSigar(localuseN4AvgCount);
@@ -51,7 +51,7 @@ public class LoadMeasureThread extends Thread {
 	}
 
 	/**
-	 * Constuctor of this class with values for measure-interval
+	 * Constructor of this class with values for measure-interval
 	 * and moving (sliding) average
 	 */
 	public LoadMeasureThread(Integer msInterval, Integer useN4AvgCount) {
@@ -117,6 +117,9 @@ public class LoadMeasureThread extends Thread {
 			}
 			
 			if (debugJVM) {
+				
+				String jvmProcessID = measuredJVMData.getJvmPID();
+				
 				double jvmMemoFree = LoadUnits.bytes2(measuredJVMData.getJvmMemoFree(), debugUnit); 
 				double jvmMemoTotal = LoadUnits.bytes2(measuredJVMData.getJvmMemoTotal(), debugUnit);
 				double jvmMemoMax = LoadUnits.bytes2(measuredJVMData.getJvmMemoMax(), debugUnit);
@@ -128,6 +131,7 @@ public class LoadMeasureThread extends Thread {
 			    
 				double jvmThreadCount = measuredJVMData.getJvmThreadCount();
 				
+				System.out.println( "JVM-PID [ProcessID]: " + jvmProcessID);
 			    System.out.println( "JVM-Memo: (" + jvmMemoMax + " - " + jvmMemoTotal + " - " + jvmMemoFree + ") ");
 			    System.out.println( "JVM-Heap: (" + jvmHeapInit + " / " + jvmHeapMax + ") Commited: " + jvmHeapCommited + " - Used: " + jvmHeapUsed );
 			    System.out.println( "JVM-Number of Threads: " + jvmThreadCount );
@@ -155,7 +159,7 @@ public class LoadMeasureThread extends Thread {
 	}
 	
 	/**
-	 * This method ckecks if one of the Threshold-Levels is exceeded
+	 * This method checks if one of the Threshold-Levels is exceeded
 	 */
 	public int isLevelExceeded(){
 		
@@ -308,13 +312,13 @@ public class LoadMeasureThread extends Thread {
 	/**
 	 * @return the thresholdLeveles
 	 */
-	public static LoadThresholdLeveles getThresholdLeveles() {
+	public static LoadThresholdLevels getThresholdLeveles() {
 		return thresholdLeveles;
 	}
 	/**
 	 * @param thresholdLeveles the thresholdLeveles to set
 	 */
-	public static void setThresholdLeveles(LoadThresholdLeveles thresholdLeveles) {
+	public static void setThresholdLeveles(LoadThresholdLevels thresholdLeveles) {
 		LoadMeasureThread.thresholdLeveles = thresholdLeveles;
 	}
 

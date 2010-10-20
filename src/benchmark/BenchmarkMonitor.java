@@ -62,7 +62,7 @@ public class BenchmarkMonitor extends JDialog implements ActionListener {
 	 */
 	private void initialize() {
 		
-		this.setSize(485, 185);
+		this.setSize(506, 185);
 		this.setContentPane(getJContentPane());
 		
 		this.setTitle(Application.RunInfo.AppTitel() + ": SciMark 2.0 - Benchmark");
@@ -76,7 +76,7 @@ public class BenchmarkMonitor extends JDialog implements ActionListener {
 		this.setAlwaysOnTop(true);
 		
 		// --- Übersetzungen festelgen ----
-		jLabelBenchmark.setText(Language.translate("Bitte warten! Benchmark wird durchgeführt ..."));
+		jLabelBenchmark.setText(Language.translate("Bitte warten! Der Benchmark wird durchgeführt ..."));
 		jLabelBenchmarkOldCaption.setText(Language.translate("Alter Wert: "));
 		jButtonSkip.setText(Language.translate("Überspringen"));
 		jButtonSkipAllways.setText(Language.translate("Immer Überspringen"));
@@ -85,16 +85,16 @@ public class BenchmarkMonitor extends JDialog implements ActionListener {
 
 	private void setLookAndFeel() {
 		
+		String lnfClassname = Application.RunInfo.AppLnF();
 		try {
-			String lnfClassname = Application.RunInfo.AppLnF();
-			if (lnfClassname == null)
+			if (lnfClassname == null) {
 				lnfClassname = UIManager.getCrossPlatformLookAndFeelClassName();
-				UIManager.setLookAndFeel(lnfClassname);
-				SwingUtilities.updateComponentTreeUI(this);				
+			}	
+			UIManager.setLookAndFeel(lnfClassname);
+			SwingUtilities.updateComponentTreeUI(this);				
 		} 
 		catch (Exception e) {
-				System.err.println("Cannot install " + Application.RunInfo.AppLnF()
-					+ " on this platform:" + e.getMessage());
+				System.err.println("Cannot install " + lnfClassname + " on this platform:" + e.getMessage());
 		}		
 	}
 	
@@ -172,7 +172,7 @@ public class BenchmarkMonitor extends JDialog implements ActionListener {
 			gridBagConstraints3.insets = new Insets(0, 5, 0, 0);
 			gridBagConstraints3.gridy = 0;
 			jLabelBenchmarkOldValue = new JLabel();
-			jLabelBenchmarkOldValue.setText(".... Mflops");
+			jLabelBenchmarkOldValue.setText(".......... Mflops");
 			jLabelBenchmarkOldCaption = new JLabel();
 			jLabelBenchmarkOldCaption.setText("Alter Wert: ");
 			jLabelBenchmarkOldCaption.setFont(new Font("Dialog", Font.BOLD, 12));
