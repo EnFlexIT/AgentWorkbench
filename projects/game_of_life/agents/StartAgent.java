@@ -12,7 +12,7 @@ public class StartAgent extends Agent{
 		
 		// --- Size of the Array for the Game of Life -----
 		// --- good: 144 / 576 / 1296 / 2304 / 3600 / 5184
-		int no_of_agents = 576; // --- approx. depends on rounding ---
+		int no_of_agents = 3600; // --- approx. depends on rounding ---
 		int stretch_factor = (int) Math.round( Math.sqrt(no_of_agents/144) );
 		
 		// --- Think about 16:9-ratio of the monitor ------

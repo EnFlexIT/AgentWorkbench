@@ -17,6 +17,8 @@ import database.DBConnection;
  */
 public class Application {
 		
+	private static Application thisApp = new Application(); 
+	
 	public static GlobalInfo RunInfo = null;
 	public static CoreWindowConsole Console = null;
 	public static FileProperties properties = null;
@@ -35,6 +37,14 @@ public class Application {
 
 	public static boolean benchmarkIsRunning = false; 
 	
+	
+	// --- Singelton-Construct ---
+	private Application() {
+	}	
+	public static Application getInstance() {
+		return thisApp;
+	}
+	
 	/**
 	 * main-method for the start of the application 
 	 * @param args
@@ -50,6 +60,7 @@ public class Application {
 		startAgentGUI();		
 	}	
 
+	
 	private static void startAgentGUI() {
 		
 		// ----------------------------------------------------------		
