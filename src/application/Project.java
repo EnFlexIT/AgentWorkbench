@@ -67,6 +67,10 @@ import sim.setup.SimulationSetups;
 	private String ProjectName;
 	@XmlElement(name="projectDescription")
 	private String ProjectDescription;
+
+	@XmlElementWrapper(name = "projectResources")
+	@XmlElement(name="projectResource")
+	public Vector<String> projectResources = new Vector<String>();
 	
 	@XmlElementWrapper(name = "subOntologies")
 	@XmlElement(name="subOntology")

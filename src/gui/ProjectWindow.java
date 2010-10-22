@@ -68,6 +68,7 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 		
 		// --- Anzeige der Basisinformationen immer einblenden ---
 		this.addProjectTab(Language.translate("Projekt-Info"), null, new gui.projectwindow.ProjectInfo( CurrProject ), Language.translate("Projekt-Info"));
+		this.addProjectTab(Language.translate("Projekt-Ressourcen"), null, new gui.projectwindow.ProjectResources( CurrProject ), Language.translate("Projekt-Ressourcen"));
 
 		// --- Die (optionalen) Karteikarten einblenden ----------
 		this.addProjectTab(Language.translate("Ontologie"), null, new gui.projectwindow.OntologyTab(CurrProject), Language.translate("Kommunikation"));

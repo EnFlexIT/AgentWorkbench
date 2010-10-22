@@ -88,7 +88,7 @@ public class GlobalInfo {
 			if ( JCP_Files[i].endsWith( localFileRunnableJar )  ) {
 				localAppExecutedOver = "Executable";
 				// --- Bei jar, immer interne Console verwenden -------------
-				this.setAppUseInternalConsole(true);
+				this.setAppUseInternalConsole(false);
 				CutAt = JCP_Files[i].lastIndexOf( localAppPathSeparatorString ) + 1;
 				localBaseDir = JCP_Folders[i].substring(0, CutAt);				 
 			};
@@ -283,7 +283,8 @@ public class GlobalInfo {
 	/**
 	 * Unterverzeichnis fuer Projekte
 	 */
-	public String PathProjects( Boolean Absolute, boolean UseImportSpecification ){
+	public String PathProjects( boolean Absolute, boolean UseImportSpecification ){
+
 		if ( UseImportSpecification == true ) {
 			String ImportPath = localPathProjects;
 			ImportPath = ImportPath.replace( localAppPathSeparatorString, "." );
@@ -304,7 +305,6 @@ public class GlobalInfo {
 	public String[] getIDEProjects( ){		
 		// --- Projektverzeichnis nach Unterverzeichnissen durchsuchen --
 		localProjects = null;
-		
 		File maindir = new File( PathProjects( true, false ) ) ;
 		File files[] = maindir.listFiles();
 		for (int i = 0; i < files.length; i++) {

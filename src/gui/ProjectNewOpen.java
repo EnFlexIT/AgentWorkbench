@@ -281,9 +281,11 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 			ProTree.getSelectionModel().setSelectionMode( TreeSelectionModel.SINGLE_TREE_SELECTION );
 			// --- Node-Objekte einfügen ------------------
 			String[] IDEProjects = Application.RunInfo.getIDEProjects();
-			for ( String Pro : IDEProjects ) {
-				CurrentNode = new DefaultMutableTreeNode( Pro );
-				RootNode.add( CurrentNode );
+			if (IDEProjects!=null) {
+				for ( String Pro : IDEProjects ) {
+					CurrentNode = new DefaultMutableTreeNode( Pro );
+					RootNode.add( CurrentNode );
+				}
 			}
 			TreePath TreePathRoot = new TreePath(RootNode);
 			ProTree.expandPath( TreePathRoot );	
@@ -461,12 +463,14 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 			// --- Gibt es das gewünschte Verzeichnis bereits? ----
 			if ( ProError==false ) {
 				String[] IDEProjects = Application.RunInfo.getIDEProjects();
-				for ( String Pro : IDEProjects ) {
-					if ( Pro.equalsIgnoreCase(ProFolder) ) {
-						ProErrorSrc = "ProFolderDouble";
-						ProError = true;	
-						break;
-					}			
+				if (IDEProjects!=null) {
+					for ( String Pro : IDEProjects ) {
+						if ( Pro.equalsIgnoreCase(ProFolder) ) {
+							ProErrorSrc = "ProFolderDouble";
+							ProError = true;	
+							break;
+						}			
+					}
 				}
 			}
 			// ----------------------------------------------------
