@@ -32,11 +32,11 @@ import sim.setup.SimulationSetups;
 @XmlRootElement public class Project extends Observable {
 
 	// --- Konstanten ------------------------------------------
-	@XmlTransient private String defaultSubFolderSetups 	= "setups";
-	@XmlTransient private String defaultSubFolderEnvSetups 	= "svgEnvSetups";
-	@XmlTransient private String[] defaultSubFolders	= { defaultSubFolderSetups,
-															defaultSubFolderEnvSetups, 
-															};
+	@XmlTransient private String defaultSubFolderSetups    = "setups";
+	@XmlTransient private String defaultSubFolderEnvSetups = "svgEnvSetups";
+	@XmlTransient private String[] defaultSubFolders	   = { defaultSubFolderSetups,
+															   defaultSubFolderEnvSetups, 
+															  };
 	
 	@XmlTransient private static final String NewLine = Application.RunInfo.AppNewLineString();	
 	@XmlTransient private static final String PathSep = Application.RunInfo.AppPathSeparatorString();

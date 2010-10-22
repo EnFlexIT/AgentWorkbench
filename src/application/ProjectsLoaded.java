@@ -21,7 +21,7 @@ import sim.setup.SimulationSetups;
 
 public class ProjectsLoaded {
 
-	// --- Listing of the open projects -------------------------------
+	// --- Listing of the open projects -------------------
 	private ArrayList<Project> ProjectsOpen = new ArrayList<Project>();
 	
 	/**
@@ -43,10 +43,9 @@ public class ProjectsLoaded {
 		
 		// ------------------------------------------------
 		// --- Startbedingenen für "New" oder "Open" ------
-		// ------------------------------------------------
 		if ( addNew == true ){
-			// ------------------------------------------------
-			// --- Anlegen eines neuen Projekts ---------------
+			// --------------------------------------------
+			// --- Anlegen eines neuen Projekts -----------
 			ActionTitel = Language.translate("Neues Projekt anlegen");
 			
 			// --- Neuen, allgemeinen Projektnamen finden -----		
@@ -62,50 +61,40 @@ public class ProjectsLoaded {
 			ProjectFolderTest = ProjectNameTest.toLowerCase().replace(" ", "_");
 		}
 		else {
-			// ------------------------------------------------
-			// --- Öffnen eine vorhandenen Projekts -----------
+			// --------------------------------------------
+			// --- Öffnen eine vorhandenen Projekts -------
 			ActionTitel = Language.translate("Projekt öffnen");			
 		}
 		Application.MainWindow.setStatusBar(ActionTitel + " ...");
 		
 		// ------------------------------------------------
 		// --- Benutzer-Dialog öffnen ---------------------
+		ProjectNewOpen NewProDia = new ProjectNewOpen( Application.MainWindow, Application.RunInfo.AppTitel() + ": " + ActionTitel, true, addNew );
+		NewProDia.setVarProjectName( ProjectNameTest );
+		NewProDia.setVarProjectFolder( ProjectFolderTest );
+		NewProDia.setVisible(true);
+		// === Hier geht's weiter, wenn der Dialog wieder geschlossen ist ===
+		if ( NewProDia.isCanceled() == true ) {
+			Application.setStatusBar( Language.translate("Fertig") );
+			return null;
+		} else {
+			LocalTmpProjectName = NewProDia.getVarProjectName();
+			LocalTmpProjectFolder = NewProDia.getVarProjectFolder(); 
+		}
+		NewProDia.dispose();
+		NewProDia = null;	
+
 		// ------------------------------------------------
-		
-			// -----------------------------------------------
-			// --- IDE-Dialog für "Neues Projekt" öffnen -----
-			ProjectNewOpen NewProDia = new ProjectNewOpen( Application.MainWindow,
-														   Application.RunInfo.AppTitel() + ": " + ActionTitel,
-														   true,
-														   addNew
-														   );
-			NewProDia.setVarProjectName( ProjectNameTest );
-			NewProDia.setVarProjectFolder( ProjectFolderTest );
-			NewProDia.setVisible(true);
-			// === Hier geht's weiter, wenn der Dialog wieder geschlossen ist ===
-			if ( NewProDia.isCanceled() == true ) {
-				Application.setStatusBar( Language.translate("Fertig") );
-				return null;
-			}
-			else {
-				LocalTmpProjectName = NewProDia.getVarProjectName();
-				LocalTmpProjectFolder = NewProDia.getVarProjectFolder(); 
-			}
-			NewProDia.dispose();
-			NewProDia = null;	
-			// -----------------------------------------------
-				
-		
-		// --- Projektvariablen setzen -----------------------
+		// --- Projektvariablen setzen --------------------
 		NewPro.setProjectName( LocalTmpProjectName );
 		NewPro.setProjectFolder( LocalTmpProjectFolder );
 
 		if ( addNew == true ) {			
-			// --- Standardstruktur anlegen -------------------
+			// --- Standardstruktur anlegen ---------------
 			NewPro.createDefaultProjectStructure();
 		}
 		else {
-			// --- XML-Datei einlesen -------------------------
+			// --- XML-Datei einlesen ---------------------
 			JAXBContext pc;
 			Unmarshaller um = null;
 			String XMLFileName = NewPro.getProjectFolderFullPath() + Application.RunInfo.getFileNameProject();			

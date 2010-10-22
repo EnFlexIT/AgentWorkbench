@@ -88,7 +88,7 @@ public class GlobalInfo {
 			if ( JCP_Files[i].endsWith( localFileRunnableJar )  ) {
 				localAppExecutedOver = "Executable";
 				// --- Bei jar, immer interne Console verwenden -------------
-				this.setAppUseInternalConsole(false);
+				this.setAppUseInternalConsole(true);
 				CutAt = JCP_Files[i].lastIndexOf( localAppPathSeparatorString ) + 1;
 				localBaseDir = JCP_Folders[i].substring(0, CutAt);				 
 			};
