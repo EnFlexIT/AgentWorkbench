@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.0//EN' 'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'>
+
+
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg contentScriptType="text/ecmascript" width="600"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     xmlns:svg="http://www.w3.org/2000/svg" zoomAndPan="magnify"
+     contentStyleType="text/css" id="svg2" height="400"
+     preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"
+     version="1.1">
+    <defs id="defs4"/>
+    <g id="layer1" transform="">
+        <circle r="25.0" id="SoBo1" style="fill:red;stroke:black" cx="65.0"
+                cy="72.63782"/>
+        <rect x="6.5714264" width="169.0" id="Obst1" y="171.42859"
+              height="23.142857" style="fill:gray;stroke:none"/>
+        <rect x="289.42856" width="28.57143" id="Obst4" y="15.571411"
+              height="167.14285" style="fill:gray;stroke:none"/>
+        <rect x="288.5714" width="221.42856" id="Obst3" y="177.14282"
+              height="28.57143" style="fill:gray;stroke:none"/>
+        <rect x="165.82713" width="25.488605" id="Obst2" y="274.39853"
+              height="116.91718" style="fill:gray;stroke:none"/>
+        <rect x="31.42857" y="351.4286" transform="" width="25.714285"
+              style="fill:green;stroke:none" height="31.42857" id="Box1"/>
+        <rect x="398.5714" width="28.57143" id="Box4" y="33.857117"
+              height="31.42857" style="fill:green;stroke:none"/>
+        <rect x="485.7143" y="337.14288" transform="" width="25.714285"
+              style="fill:green;stroke:none" height="31.42857" id="Box3"/>
+        <rect x="222.85715" y="354.2857" transform="" width="28.57143"
+              style="fill:green;stroke:none" height="28.57143" id="Box2"/>
+    </g>
+    <rect fill="none" width="599" height="399" id="border" stroke-width="1"
+          stroke="black"/>
+</svg>
