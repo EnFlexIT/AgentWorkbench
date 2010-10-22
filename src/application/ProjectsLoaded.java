@@ -6,22 +6,18 @@ import gui.ProjectWindow;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
 
-import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-import sim.setup.SimulationSetups;
-
 import mas.onto.Ontologies4Project;
+import sim.setup.SimulationSetups;
 
 public class ProjectsLoaded {
 

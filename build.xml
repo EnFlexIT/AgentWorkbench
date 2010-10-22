@@ -17,10 +17,12 @@
 	<property name="sourceDirLibraries" value="lib" />
 	<property name="sourceDirProperties" value="properties" />
 	<property name="sourceDirImages" value="src\img" />
+	<property name="sourceFileProjectOntology" value="src\mas\onto\AgentGUIProjectOntology.txt" />
 	
 	<property name="binaryDir" value="bin" />
 	<property name="binaryDirANT" value="build" />
 	<property name="binaryDirIMG" value="build\img" />
+	<property name="binaryFileProjectOntology" value="build\mas\onto\AgentGUIProjectOntology.txt" />
 	
 	<property name="simServiceSourceDir" value="${binaryDirANT}\mas\service\\" />
 	<property name="simServiceDestinDir" value="lib\jade\lib\\" />
@@ -86,10 +88,12 @@
     		<src path="${sourceDir}" />
     		<classpath refid="class.path" />
     	</javac>
+
     	<copy todir="${binaryDirIMG}">
     		<fileset dir="${sourceDirImages}" />
     	</copy>  
-    	
+    	<copy tofile="${binaryFileProjectOntology}" file="${sourceFileProjectOntology}" />
+    		
     </target>
 	
 	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 

@@ -24,7 +24,7 @@ Einfaches Demo-Projekt fr die Visualisierung</projectDescription>
     </jadeConfiguration>
     <mainPackage>sma</mainPackage>
     <subFolderAgents>agents</subFolderAgents>
-    <subFolderEnvSetups>envSetups</subFolderEnvSetups>
+    <subFolderEnvSetups>svgEnvSetups</subFolderEnvSetups>
     <subFolderOntology>ontology</subFolderOntology>
     <subFolderResources>resources</subFolderResources>
 </project>

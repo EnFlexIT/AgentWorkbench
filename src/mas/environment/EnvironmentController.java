@@ -297,8 +297,12 @@ public class EnvironmentController extends Observable implements Observer{
 	 * Saves SVG and environment to the default paths
 	 */
 	public void save(){
-		saveSVG(new File(currentSVGPath));
-		saveEnvironment(new File(currentEnvironmentPath));
+		if (currentSVGPath!=null){
+			saveSVG(new File(currentSVGPath));	
+		}
+		if (currentEnvironmentPath!=null) {
+			saveEnvironment(new File(currentEnvironmentPath));	
+		}		
 	}
 	/**
 	 * Saves the current environment to a file

@@ -19,29 +19,23 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.w3c.dom.Document;
-
 import mas.PlatformJadeConfig;
 import mas.agents.AgentConfiguration;
 import mas.environment.EnvironmentController;
 import mas.environment.ontology.Physical2DEnvironment;
 import mas.onto.Ontologies4Project;
-import rollout.TextFileRessourceRollOut;
+
+import org.w3c.dom.Document;
+
 import sim.setup.SimulationSetups;
 
 @XmlRootElement public class Project extends Observable {
 
 	// --- Konstanten ------------------------------------------
-	@XmlTransient private String defaultSubFolderAgents 	= "agents";
-	@XmlTransient private String defaultSubFolderOntology 	= "ontology";
 	@XmlTransient private String defaultSubFolderSetups 	= "setups";
-	@XmlTransient private String defaultSubFolderEnvSetups 	= "envSetups";
-	@XmlTransient private String defaultSubFolderResources 	= "resources";
-	@XmlTransient private String[] defaultSubFolders	= { defaultSubFolderAgents, 
-															defaultSubFolderOntology, 
-															defaultSubFolderSetups,
+	@XmlTransient private String defaultSubFolderEnvSetups 	= "svgEnvSetups";
+	@XmlTransient private String[] defaultSubFolders	= { defaultSubFolderSetups,
 															defaultSubFolderEnvSetups, 
-															defaultSubFolderResources
 															};
 	
 	@XmlTransient private static final String NewLine = Application.RunInfo.AppNewLineString();	
@@ -183,8 +177,6 @@ import sim.setup.SimulationSetups;
 	public void createDefaultProjectStructure() {
 		// --- create default folders --------------------- 
 		this.checkCreateSubFolders();
-		// --- create Project-Ontolgy ---------------------
-		this.createDefaultProjectOntology();
 	}
 	/**
 	 * Controls and/or Creates wether the Subfolder-Structure exists 
@@ -218,22 +210,9 @@ import sim.setup.SimulationSetups;
 	}
 	
 	/**
-	 * Here the default project-Ontolgy will be created (copied)
+	 * To prevent to close the project without saving
+	 * @param reason
 	 */
-	public void createDefaultProjectOntology() {
-			
-		String srcReference 	 = "mas/onto/" + Application.RunInfo.getFileNameProjectOntology() + ".txt"; 
-		String destPath 		 = this.ProjectFolderFullPath + defaultSubFolderOntology + "\\" + Application.RunInfo.getFileNameProjectOntology() + ".java";
-		String destPackageString = "package " + this.ProjectFolder + "." + defaultSubFolderOntology;
-		String fileContent		 = null;
-		
-		TextFileRessourceRollOut txtRollOut = new TextFileRessourceRollOut(srcReference, destPath, false);
-		fileContent = txtRollOut.getFileString();
-		fileContent = fileContent.replace("[DestinationPackage]", destPackageString);
-		txtRollOut.writeFile(fileContent);
-
-	}
-	
 	public void setChangedAndNotify(Object reason) {
 		ProjectUnsaved = true;
 		setChanged();
@@ -300,11 +279,7 @@ import sim.setup.SimulationSetups;
 	@XmlTransient
 	public void setProjectFolder(String projectFolder) {
 		ProjectFolder = projectFolder;
-		if ( Application.RunInfo.AppExecutedOver() == "IDE" ) {
-			ProjectFolderFullPath = Application.RunInfo.PathProjects(true, false) + ProjectFolder + Application.RunInfo.AppPathSeparatorString();
-		} else {
-			ProjectFolderFullPath = ProjectFolder;
-		}
+		ProjectFolderFullPath = Application.RunInfo.PathProjects(true, false) + ProjectFolder + Application.RunInfo.AppPathSeparatorString();
 		setChanged();
 		notifyObservers( "ProjectFolder" );
 	}
@@ -410,32 +385,6 @@ import sim.setup.SimulationSetups;
 	}
 	
 	/**
-	 * @param defaultSubFolderAgents the defaultSubFolderAgents to set
-	 */
-	public void setSubFolderAgents(String newSubFolderAgents) {
-		defaultSubFolderAgents = newSubFolderAgents;
-	}
-	/**
-	 * @return the defaultSubFolderAgents
-	 */
-	public String getSubFolderAgents() {
-		return defaultSubFolderAgents;
-	}
-
-	/**
-	 * @param defaultSubFolderOntology the defaultSubFolderOntology to set
-	 */
-	public void setSubFolderOntology(String newSubFolderOntology) {
-		defaultSubFolderOntology = newSubFolderOntology;
-	}
-	/**
-	 * @return the defaultSubFolderOntology
-	 */
-	public String getSubFolderOntology() {
-		return defaultSubFolderOntology;
-	}
-
-	/**
 	 * @param defaultSubFolderSetups the defaultSubFolderOntology to set
 	 */
 	public void setSubFolderSetups(String newSubFolderSetups) {
@@ -464,19 +413,6 @@ import sim.setup.SimulationSetups;
 	 */
 	public String getSubFolderEnvSetups() {
 		return defaultSubFolderEnvSetups;
-	}
-
-	/**
-	 * @param defaultSubFolderResources the defaultSubFolderResources to set
-	 */
-	public void setSubFolderResources(String newSubFolderResources) {
-		defaultSubFolderResources = newSubFolderResources;
-	}
-	/**
-	 * @return the defaultSubFolderResources
-	 */
-	public String getSubFolderResources() {
-		return defaultSubFolderResources;
 	}
 
 	/**

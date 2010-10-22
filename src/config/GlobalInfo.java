@@ -104,8 +104,8 @@ public class GlobalInfo {
 		}
 		
 		if ( localAppExecutedOver.equals("IDE")) {
-			// -------------------------------------------------------------
-			// --- Verzeichnis-Eintraege eindeutig (unique) machen -----------
+			// --------------------------------------------------------------
+			// --- Verzeichnis-Eintraege eindeutig (unique) machen ----------
 			JCP_Folders = (String[])Folders.toArray(new String[Folders.size()]);
 			for (int j = 0; j < JCP_Folders.length; j++) {				
 				if ( JCP_Folders[j].endsWith( localPathAgentGUI ) ) {
@@ -117,7 +117,7 @@ public class GlobalInfo {
 			} // -- End 'for' --
 
 			// --------------------------------------------------------------
-			// --- Bei Ausfuehrung IDE, einige Variablen umstellen -----------			
+			// --- Bei Ausfuehrung IDE, einige Variablen umstellen ----------			
 			localFileRunnableJar = null;
 			localPathProjects =  localPathProjectsIDE;
 			
