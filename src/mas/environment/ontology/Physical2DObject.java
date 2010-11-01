@@ -6,10 +6,10 @@ import jade.util.leap.*;
 import jade.core.*;
 
 /**
-   * Abstract superclass for objects in a physical 2D environment.
+   * Abstract super class for physical objects that are part of the environment model.
 * Protege name: Physical2DObject
 * @author ontology bean generator
-* @version 2010/10/20, 18:27:57
+* @version 2010/10/22, 21:15:52
 */
 public class Physical2DObject implements Concept {
 
@@ -38,6 +38,30 @@ public class Physical2DObject implements Concept {
 	   return myRect.intersects(objectRect);
    }
    /**
+   * The object's size
+* Protege name: size
+   */
+   private Size size;
+   public void setSize(Size value) { 
+    this.size=value;
+   }
+   public Size getSize() {
+     return this.size;
+   }
+
+   /**
+   * The ID of the PlaygroundObject this Physical2DObject lives in.
+* Protege name: parentPlaygroundID
+   */
+   private String parentPlaygroundID;
+   public void setParentPlaygroundID(String value) { 
+    this.parentPlaygroundID=value;
+   }
+   public String getParentPlaygroundID() {
+     return this.parentPlaygroundID;
+   }
+
+   /**
    * ID used to identify the object
 * Protege name: id
    */
@@ -59,30 +83,6 @@ public class Physical2DObject implements Concept {
    }
    public Position getPosition() {
      return this.position;
-   }
-
-   /**
-   * The ID of the PlaygroundObject this Physical2DObject lives in.
-* Protege name: parentPlaygroundID
-   */
-   private String parentPlaygroundID;
-   public void setParentPlaygroundID(String value) { 
-    this.parentPlaygroundID=value;
-   }
-   public String getParentPlaygroundID() {
-     return this.parentPlaygroundID;
-   }
-
-   /**
-   * The object's size
-* Protege name: size
-   */
-   private Size size;
-   public void setSize(Size value) { 
-    this.size=value;
-   }
-   public Size getSize() {
-     return this.size;
    }
 
 }

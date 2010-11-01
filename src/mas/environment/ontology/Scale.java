@@ -6,12 +6,24 @@ import jade.util.leap.*;
 import jade.core.*;
 
 /**
-   * A 2D environment's scale, mapping a number of real world units to a number of pixels.
+   * The scale used for displaying the environment model, mapping a number of real world units to a number of pixels.
 * Protege name: Scale
 * @author ontology bean generator
-* @version 2010/10/20, 18:27:58
+* @version 2010/10/22, 21:15:52
 */
 public class Scale implements Concept {
+
+   /**
+   * The number of pixels. Default 10.
+* Protege name: pixelValue
+   */
+   private float pixelValue;
+   public void setPixelValue(float value) { 
+    this.pixelValue=value;
+   }
+   public float getPixelValue() {
+     return this.pixelValue;
+   }
 
    /**
    * The number of real world units. Default 1.
@@ -35,18 +47,6 @@ public class Scale implements Concept {
    }
    public String getRealWorldUntiName() {
      return this.realWorldUntiName;
-   }
-
-   /**
-   * The number of pixels. Default 10.
-* Protege name: pixelValue
-   */
-   private float pixelValue;
-   public void setPixelValue(float value) { 
-    this.pixelValue=value;
-   }
-   public float getPixelValue() {
-     return this.pixelValue;
    }
 
 }

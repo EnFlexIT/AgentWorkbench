@@ -5,10 +5,10 @@ import jade.util.leap.*;
 import jade.core.*;
 
 /**
-   * This class represents an area inside a physical 2D (sub)environment that can contain all kinds of physical 2D objects, i.e. instances of subclasses of Physical2DObject.
+   * This class represents a (sub)environment that is part of the environment model. It is a container for other environment objects, i.e. instances of subclasses of Physical2DObject. As it is a subclass of Physical2DObject itself, a PlaygroundObject may contain other PlaygroundObjects.
 * Protege name: PlaygroundObject
 * @author ontology bean generator
-* @version 2010/10/20, 18:27:58
+* @version 2010/10/22, 21:15:52
 */
 public class PlaygroundObject extends Physical2DObject{ 
 

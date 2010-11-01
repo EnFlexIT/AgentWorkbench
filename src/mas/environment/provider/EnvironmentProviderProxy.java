@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.w3c.dom.Document;
 
+import mas.display.SVGUtils;
 import mas.environment.ontology.Movement;
 import mas.environment.ontology.Physical2DEnvironment;
 import mas.environment.ontology.Physical2DObject;

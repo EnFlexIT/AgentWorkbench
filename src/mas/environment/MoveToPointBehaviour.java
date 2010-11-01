@@ -1,4 +1,4 @@
-package sma.agents;
+package mas.environment;
 
 import java.util.Iterator;
 
@@ -21,24 +21,24 @@ import jade.core.behaviours.TickerBehaviour;
  */
 public class MoveToPointBehaviour extends TickerBehaviour {
 	/**
-	 * Time between to position checks. Should be synchronized with the EnvironmentProviderAgent's period 
+	 * Time between to position checks. Should match the EnvironmentProviderAgent's period 
 	 */
 	private static int PERIOD = 100;
 
 	/**
-	 * 
+	 * Automatically generated serialVersionUID
 	 */
 	private static final long serialVersionUID = -918169252452095480L;
 	/**
-	 * The destination point
+	 * The destination position
 	 */
 	private Position destPos;
 	/**
-	 * The agent's speed
+	 * The speed
 	 */
 	private float speed;
 	/**
-	 * The distance to the destinatio point in x and y direction
+	 * The distance to the destination position in x and y direction
 	 */
 	private float xPosDiff, yPosDiff;
 	/**
@@ -58,7 +58,7 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 	 * Constructor
 	 * @param a The agent executing the MoveToPointBehaviour
 	 * @param destPos The destination position
-	 * @param speed The agent's speed
+	 * @param speed The speed to move with
 	 * @throws ServiceException Error accessing the EnvironmentProviderService
 	 */
 	public MoveToPointBehaviour(Agent a, Position destPos, float speed) throws ServiceException{
@@ -67,6 +67,8 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 		try {
 			this.destPos = destPos;
 			this.speed = speed;
+			
+			// Get the EnvironmentProviderHelper 
 			this.helper = (EnvironmentProviderHelper) myAgent.getHelper(EnvironmentProviderService.SERVICE_NAME);
 			
 			// Check if the destination position in inside the agent's parent playground
@@ -80,45 +82,61 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 		}
 	}
 	
+	/**
+	 * This method is executed every PERIOD milliseconds
+	 */
 	@Override
 	protected void onTick() {
-		
+		/**
+		 * Get the agent's ActiveObject from the 
+		 */
 		ActiveObject self = (ActiveObject) helper.getObject(myAgent.getLocalName());
 		
+		// The first step
 		if(firstStep){
-			System.out.println("Testausgabe: "+myAgent.getLocalName()+" bewegt sich von "
-					+self.getPosition().getXPos()+":"+self.getPosition().getYPos()+
-					" nach "+destPos.getXPos()+":"+destPos.getYPos());
+			// Initialize distances in x and y direction 
 			xPosDiff = destPos.getXPos() - self.getPosition().getXPos();
 			yPosDiff = destPos.getYPos() - self.getPosition().getYPos();
+
+			// Calculate distance between start and destination Position 
 			float dist = (float) Math.sqrt(xPosDiff*xPosDiff + yPosDiff*yPosDiff);
+			// Calculate required time
 			float seconds = dist / speed;
 			
+			// Create Movement instance
 			Movement movement = new Movement();
 			movement.setXPosChange(xPosDiff / seconds);
 			movement.setYPosChange(yPosDiff / seconds);
 			
+			// Start moving
 			helper.setMovement(myAgent.getLocalName(), movement);
 			firstStep = false;
 		}else{
-			Position currPos = self.getPosition();
-			checkCollisions();
+			Position currPos = self.getPosition();	// Get the agent's current 
+			if(checkCollisions()){		// Check for collisions
+				Movement stop = new Movement();
+				stop.setXPosChange(0);
+				stop.setYPosChange(0);
+				helper.setMovement(myAgent.getLocalName(), stop);	// Stop moving
+				this.stop();		// Stop the MoveToPointBehaviour
+			}
+			
 			if(lastStep){
 				Movement stop = new Movement();
 				stop.setXPosChange(0);
 				stop.setYPosChange(0);
-				helper.setMovement(myAgent.getLocalName(), stop);
-				System.out.println("Testausgabe: "+myAgent.getLocalName()+" Zielposition "+ destPos.getXPos()+":"+destPos.getYPos()+" erreicht.");
-				self = (ActiveObject) helper.getObject(myAgent.getLocalName());
-				System.out.println("- aktuelle Position des Agenten: "+self.getPosition().getXPos()+":"+self.getPosition().getYPos());
-				this.stop();
+				helper.setMovement(myAgent.getLocalName(), stop);	// Stop moving
+				this.stop();		// Stop the MoveToPointBehaviour
+				
+				// If distance <= speed, -> destination position will be reached in the next step
 			}else if(Math.abs(xPosDiff) <= (Math.abs(self.getMovement().getXPosChange()) / 1000 * PERIOD) + 0.5 && Math.abs(yPosDiff) <= (Math.abs(self.getMovement().getYPosChange()) / 1000 * PERIOD) + 0.5){
 				Movement lastStep = new Movement();
 				lastStep.setXPosChange(xPosDiff);
 				lastStep.setYPosChange(yPosDiff);
-				helper.setMovement(myAgent.getLocalName(), lastStep);
-				this.lastStep = true;
+				helper.setMovement(myAgent.getLocalName(), lastStep);		// Slow down if necessary
+				this.lastStep = true;		// Stop in the next step
 			}else{
+				// Refresh distances
 				xPosDiff = destPos.getXPos() - currPos.getXPos();
 				yPosDiff = destPos.getYPos() - currPos.getYPos();
 			}
@@ -131,7 +149,7 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 	 * @return True or false
 	 */
 	private boolean checkPlayground(){
-		// Get the Physical2DObject representing the agent 
+		// Get the agent's Physical2DObject 
 		Physical2DObject self = helper.getObject(myAgent.getLocalName());
 		
 		// Create a new Physical2DObject with the agent's size at the destination position
@@ -151,14 +169,15 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 	 */
 	@SuppressWarnings("unchecked")
 	private boolean checkCollisions(){
+		// Get the agent's Physical2DObject
 		Physical2DObject self = helper.getObject(myAgent.getLocalName());
+		// Get the agent's parent playground
 		PlaygroundObject parentPG = (PlaygroundObject) helper.getObject(self.getParentPlaygroundID());
+		
+		// Check for collisions with every Physical2DObject inside the playground		
 		Iterator<Physical2DObject> pgObjects = parentPG.getAllChildObjects();
-		
-		Physical2DObject object;
-		
 		while(pgObjects.hasNext()){
-			object = pgObjects.next();
+			Physical2DObject object = pgObjects.next();
 			if( (!object.getId().equals(self.getId())) && (self.objectIntersects(object))){
 				return true;
 			}

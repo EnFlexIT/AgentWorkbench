@@ -53,7 +53,7 @@ public class EnvironmentWrapper {
 	/**
 	 * Rebuilding HashMap and Vectors
 	 */
-	private void rebuildLists(){
+	public void rebuildLists(){
 		
 		objectysById = new HashMap<String, Physical2DObject>();
 		agents = new Vector<ActiveObject>();

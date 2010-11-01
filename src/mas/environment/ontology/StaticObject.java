@@ -5,10 +5,10 @@ import jade.util.leap.*;
 import jade.core.*;
 
 /**
-   * This class represents static objects, i.e. obstacles, in a physical 2D environment. Static objects can neither move nor be moved.
+   * This class represents static environment objects. StaticObjects can neither move nor be moved.
 * Protege name: StaticObject
 * @author ontology bean generator
-* @version 2010/10/20, 18:27:57
+* @version 2010/10/22, 21:15:52
 */
 public class StaticObject extends Physical2DObject{ 
 

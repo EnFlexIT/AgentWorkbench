@@ -4,8 +4,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.w3c.dom.Document;
 
+import mas.display.SVGUtils;
 import mas.environment.ontology.ActiveObject;
 import mas.environment.ontology.Movement;
 import mas.environment.ontology.PassiveObject;
@@ -309,7 +311,11 @@ public class EnvironmentProviderService extends BaseService {
 				e.printStackTrace();
 			}
 		}
-		return (Document) doc.cloneNode(true);
+		if(doc != null){
+			return (Document) doc.cloneNode(true);
+		}else{
+			return null;
+		}
 	}
 	
 	/**

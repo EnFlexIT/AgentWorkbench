@@ -4,6 +4,7 @@ import jade.core.Agent;
 import jade.core.ServiceException;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.core.behaviours.SequentialBehaviour;
+import mas.environment.MoveToPointBehaviour;
 import mas.environment.ontology.ActiveObject;
 import mas.environment.ontology.Physical2DObject;
 import mas.environment.ontology.Position;

@@ -6,23 +6,22 @@ import jade.util.leap.*;
 import jade.core.*;
 
 /**
-   * This class represents a physical 2D environment
+   * This class represents the whole environment model.
 * Protege name: Physical2DEnvironment
 * @author ontology bean generator
-* @version 2010/10/20, 18:27:58
+* @version 2010/10/22, 21:15:52
 */
 public class Physical2DEnvironment implements Concept {
 
    /**
-   * The physical 2D environment's scale
-* Protege name: scale
+* Protege name: projectName
    */
-   private Scale scale;
-   public void setScale(Scale value) { 
-    this.scale=value;
+   private String projectName;
+   public void setProjectName(String value) { 
+    this.projectName=value;
    }
-   public Scale getScale() {
-     return this.scale;
+   public String getProjectName() {
+     return this.projectName;
    }
 
    /**
@@ -38,14 +37,15 @@ public class Physical2DEnvironment implements Concept {
    }
 
    /**
-* Protege name: projectName
+   * The physical 2D environment's scale
+* Protege name: scale
    */
-   private String projectName;
-   public void setProjectName(String value) { 
-    this.projectName=value;
+   private Scale scale;
+   public void setScale(Scale value) { 
+    this.scale=value;
    }
-   public String getProjectName() {
-     return this.projectName;
+   public Scale getScale() {
+     return this.scale;
    }
 
 }

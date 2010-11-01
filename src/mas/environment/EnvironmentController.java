@@ -1,6 +1,6 @@
 package mas.environment;
 
-import gui.projectwindow.simsetup.EnvironmentSetupObjectSettings;
+import gui.projectwindow.simsetup.EnvironmentSetup;
 
 import jade.content.lang.Codec.CodecException;
 import jade.content.lang.xml.XMLCodec;
@@ -37,6 +37,7 @@ import sim.setup.SimulationSetups.SimulationSetupsChangeNotification;
 import application.Language;
 import application.Project;
 
+import mas.display.SVGUtils;
 import mas.environment.ontology.ActiveObject;
 import mas.environment.ontology.EnvironmentOntology;
 import mas.environment.ontology.Movement;
@@ -260,6 +261,7 @@ public class EnvironmentController extends Observable implements Observer{
 	 */
 	private Document prepareSVG(Document doc){
 		Element svgRoot = doc.getDocumentElement();
+		SVGUtils.removeTransform(svgRoot, 0, 0);
 		if(doc.getElementById("border") == null){
 			Element border = doc.createElementNS(SVGDOMImplementation.SVG_NAMESPACE_URI, "rect");
 			float width = Float.parseFloat(svgRoot.getAttributeNS(null, "width"))-1;
@@ -395,30 +397,48 @@ public class EnvironmentController extends Observable implements Observer{
 		notifyObservers(new Integer(ENVIRONMENT_CHANGED));
 	}
 	
-	public void createOrChange(HashMap<String, Object> settings){
+	public boolean createOrChange(HashMap<String, Object> settings){
+		
+		boolean success = false;
+		
 		if(selectedObject == null){
 			// Create mode
 			Physical2DObject newObject = createObject(settings);
 			envWrap.addObject(newObject);
-			setChanged();
-			notifyObservers(new Integer(OBJECTS_CHANGED));
+			success = (newObject != null);
 		}else{
 			// Change mode
-			if(selectedObject.getClass().equals(settings.get(EnvironmentSetupObjectSettings.SETTINGS_KEY_ONTO_CLASS))){
-				// Same object type, just change attributes
-				selectedObject.setId((String) settings.get(EnvironmentSetupObjectSettings.SETTINGS_KEY_ID));
-				selectedObject.setPosition((Position) settings.get(EnvironmentSetupObjectSettings.SETTINGS_KEY_POSITION));
-				selectedObject.setSize((Size) settings.get(EnvironmentSetupObjectSettings.SETTINGS_KEY_SIZE));
-				if(selectedObject instanceof ActiveObject){
-					((ActiveObject)selectedObject).setMaxSpeed(Float.parseFloat((String) settings.get(EnvironmentSetupObjectSettings.SETTINGS_KEY_AGENT_MAX_SPEED)));
+			
+			String id = settings.get(EnvironmentSetup.SETTINGS_KEY_ID).toString();
+			// The ID is not changed or the new ID is available 
+			if(id.equals(selectedObject.getId()) || checkID(id)){
+			 
+				if(selectedObject.getClass().equals(settings.get(EnvironmentSetup.SETTINGS_KEY_ONTO_CLASS))){
+					// Same object type, just change attributes
+					selectedObject.setId((String) settings.get(EnvironmentSetup.SETTINGS_KEY_ID));
+					selectedObject.setPosition((Position) settings.get(EnvironmentSetup.SETTINGS_KEY_POSITION));
+					selectedObject.setSize((Size) settings.get(EnvironmentSetup.SETTINGS_KEY_SIZE));
+					if(selectedObject instanceof ActiveObject){
+						((ActiveObject)selectedObject).setMaxSpeed(Float.parseFloat((String) settings.get(EnvironmentSetup.SETTINGS_KEY_AGENT_MAX_SPEED)));
+					}
+					envWrap.rebuildLists();
+					success = true;
+				}else{
+					envWrap.removeObject(selectedObject);
+					envWrap.addObject(createObject(settings));
 				}
-			}else{
-				envWrap.removeObject(selectedObject);
-				envWrap.addObject(createObject(settings));
+			}else{		// The new ID is not available
+				System.err.println(Language.translate("Fehler: Die gewählte ID ist bereits vergeben!"));
 			}
 		}
-		setChanged();
-		notifyObservers(new Integer(OBJECTS_CHANGED));
+		if(success){
+			setChanged();
+			notifyObservers(new Integer(OBJECTS_CHANGED));
+			
+			project.ProjectUnsaved = true;
+		}
+		
+		return success;
 		
 	}
 	/**
@@ -430,28 +450,42 @@ public class EnvironmentController extends Observable implements Observer{
 	public Physical2DObject createObject(HashMap<String, Object> settings){
 		Physical2DObject newObject = null;
 		
-		try {
-			Class<?> ontologyClass = (Class<?>) settings.get(EnvironmentSetupObjectSettings.SETTINGS_KEY_ONTO_CLASS);
-			newObject = (Physical2DObject) ontologyClass.newInstance();
-			newObject.setId(settings.get(EnvironmentSetupObjectSettings.SETTINGS_KEY_ID).toString());
-			newObject.setPosition((Position) settings.get(EnvironmentSetupObjectSettings.SETTINGS_KEY_POSITION));
-			newObject.setSize((Size) settings.get(EnvironmentSetupObjectSettings.SETTINGS_KEY_SIZE));
-			newObject.setParentPlaygroundID(environment.getRootPlayground().getId());
-			if(newObject instanceof ActiveObject){
-//				((ActiveObject)newObject).setClassName(settings.get(EnvironmentSetupObjectSettings.SETTINGS_KEY_AGENT_CLASSNAME).toString());
-				((ActiveObject)newObject).setMovement(new Movement());
-				((ActiveObject)newObject).setMaxSpeed(Float.parseFloat((String) settings.get(EnvironmentSetupObjectSettings.SETTINGS_KEY_AGENT_MAX_SPEED)));	 
-				
+		// Check if the specified ID is available
+		if(checkID((String) settings.get(EnvironmentSetup.SETTINGS_KEY_ID))){
+		
+			try {
+				Class<?> ontologyClass = (Class<?>) settings.get(EnvironmentSetup.SETTINGS_KEY_ONTO_CLASS);
+				newObject = (Physical2DObject) ontologyClass.newInstance();
+				newObject.setId(settings.get(EnvironmentSetup.SETTINGS_KEY_ID).toString());
+				newObject.setPosition((Position) settings.get(EnvironmentSetup.SETTINGS_KEY_POSITION));
+				newObject.setSize((Size) settings.get(EnvironmentSetup.SETTINGS_KEY_SIZE));
+				newObject.setParentPlaygroundID(environment.getRootPlayground().getId());
+				if(newObject instanceof ActiveObject){
+					((ActiveObject)newObject).setMovement(new Movement());
+					((ActiveObject)newObject).setMaxSpeed(Float.parseFloat((String) settings.get(EnvironmentSetup.SETTINGS_KEY_AGENT_MAX_SPEED)));	 
+					
+				}
+			} catch (InstantiationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		}else{	// ID already in use -> don't create the object 
+			System.err.println(Language.translate("Fehler: Die gewählte ID ist bereits vergeben!"));
 		}
 		
 		return newObject;
+	}
+	
+	/**
+	 * Checks if the given ID is available
+	 * @param id The ID to check
+	 * @return True if available, false if already in use
+	 */
+	private boolean checkID(String id){
+		return (envWrap.getObjectById(id) == null);
 	}
 	
 	

@@ -51,6 +51,18 @@ import java.util.Observer;
 public class EnvironmentSetup extends JSplitPane implements ActionListener, Observer{
 
 	private static final long serialVersionUID = 1L;
+	public static final String SETTINGS_KEY_ID = "id";
+	public static final String SETTINGS_KEY_ONTO_CLASS = "ontologyClass";
+	public static final String SETTINGS_KEY_AGENT_MAX_SPEED = "agentMaxSpeed";
+	public static final String SETTINGS_KEY_POSITION = "position";
+	public static final String SETTINGS_KEY_SIZE = "size";
+	
+	public static final String TYPE_STRING_ACTIVE_OBJECT = "Agent";
+	public static final String TYPE_STRING_PASSIVE_OBJECT = "Passives Objekt";
+	public static final String TYPE_STRING_STATIC_OBJECT = "Hindernis";
+	public static final String TYPE_STRING_PLAYGROUND_OBJECT = "Teil-Umgebung";
+	public static final String TYPE_STRING_NO_TYPE = "Nicht definiert";
+	
 	private JSplitPane spControlls = null;
 	private JTree treeEnvironment = null;
 	private JTabbedPane tpSettings = null;
@@ -198,7 +210,7 @@ public class EnvironmentSetup extends JSplitPane implements ActionListener, Obse
 	 */
 	private void rebuildTree(){
 		if(controller.getEnvironment() != null){
-			DefaultMutableTreeNode rootNode = getPlayground(controller.getEnvironment().getRootPlayground());
+			DefaultMutableTreeNode rootNode = getPlaygroundNode(controller.getEnvironment().getRootPlayground());
 			getTreeEnvironment().setModel(new DefaultTreeModel(rootNode));
 		}else{
 			DefaultMutableTreeNode dummyNode = new DefaultMutableTreeNode(Language.translate("Keine Umgebung definiert"));
@@ -211,7 +223,7 @@ public class EnvironmentSetup extends JSplitPane implements ActionListener, Obse
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	private DefaultMutableTreeNode getPlayground(PlaygroundObject pg){
+	private DefaultMutableTreeNode getPlaygroundNode(PlaygroundObject pg){
 		DefaultMutableTreeNode pgNode = null;
 		DefaultMutableTreeNode agents = null;
 		DefaultMutableTreeNode payloads = null;
@@ -225,24 +237,24 @@ public class EnvironmentSetup extends JSplitPane implements ActionListener, Obse
 				Physical2DObject child = children.next();
 				if(child instanceof ActiveObject){
 					if(agents == null){
-						agents = new DefaultMutableTreeNode(Language.translate("Agenten"));
+						agents = new DefaultMutableTreeNode(Language.translate(TYPE_STRING_ACTIVE_OBJECT));
 					}
 					agents.add(new DefaultMutableTreeNode(child.getId()));
 				}else if(child instanceof PassiveObject){
 					if(payloads == null){
-						payloads = new DefaultMutableTreeNode(Language.translate("Nutzlasten"));
+						payloads = new DefaultMutableTreeNode(Language.translate(TYPE_STRING_PASSIVE_OBJECT));
 					}
 					payloads.add(new DefaultMutableTreeNode(child.getId()));
 				}else if(child instanceof StaticObject){
 					if(obstacles == null){
-						obstacles = new DefaultMutableTreeNode(Language.translate("Hindernisse"));
+						obstacles = new DefaultMutableTreeNode(Language.translate(TYPE_STRING_STATIC_OBJECT));
 					}
 					obstacles.add(new DefaultMutableTreeNode(child.getId()));
 				}else if(child instanceof PlaygroundObject){
 					if(playgrounds == null){
-						playgrounds = new DefaultMutableTreeNode(Language.translate("Spielfelder"));
+						playgrounds = new DefaultMutableTreeNode(Language.translate(TYPE_STRING_PLAYGROUND_OBJECT));
 					}
-					playgrounds.add(getPlayground((PlaygroundObject) child));
+					playgrounds.add(getPlaygroundNode((PlaygroundObject) child));
 				}
 			}
 			pgNode = new DefaultMutableTreeNode(pg.getId());
@@ -335,13 +347,15 @@ public class EnvironmentSetup extends JSplitPane implements ActionListener, Obse
 				controller.setSVGFile(loadSVGDialog.getSelectedFile());
 			}
 		}else if(arg0.getSource() == objectSettings.getBtnApply()){
-			controller.createOrChange(objectSettings.getObjectProperties());
-			changePosAndSize(selectedElement, 
-					objectSettings.getTfXPos().getText(), 
-					objectSettings.getTfYPos().getText(), 
-					objectSettings.getTfWidth().getText(), 
-					objectSettings.getTfHeight().getText()
-			);
+			if(controller.createOrChange(objectSettings.getObjectProperties())){
+				changePosAndSize(selectedElement,
+						objectSettings.getTfId().getText(),
+						objectSettings.getTfXPos().getText(), 
+						objectSettings.getTfYPos().getText(), 
+						objectSettings.getTfWidth().getText(), 
+						objectSettings.getTfHeight().getText()
+				);
+			}
 			setSelectedElement(null);
 		}else if(arg0.getSource() == objectSettings.getBtnRemove()){
 			controller.removeObject();
@@ -366,9 +380,9 @@ public class EnvironmentSetup extends JSplitPane implements ActionListener, Obse
 		um.getUpdateRunnableQueue().invokeLater(new ElementSelector(elem));
 	}
 	
-	private void changePosAndSize(Element elem, String xPos, String yPos, String width, String height){
+	private void changePosAndSize(Element elem, String id, String xPos, String yPos, String width, String height){
 		UpdateManager um = this.svgGUI.getCanvas().getUpdateManager();
-		um.getUpdateRunnableQueue().invokeLater(new SizeAndPosChanger(selectedElement, xPos, yPos, width, height));
+		um.getUpdateRunnableQueue().invokeLater(new ElementChanger(elem, id, xPos, yPos, width, height));
 	}
 
 	@Override
@@ -377,23 +391,18 @@ public class EnvironmentSetup extends JSplitPane implements ActionListener, Obse
 			int eventCode = ((Integer)arg1).intValue();
 			
 			if(eventCode == EnvironmentController.ENVIRONMENT_CHANGED){
-				System.out.println("Testausgabe: Ereignis ENVIRONMENT_CHANGED empfangen");
-				
 				rebuildTree();
 				if(controller.getEnvironment() != null){
 					environmentSettings.setScale(controller.getEnvironment().getScale());
 				}
 			}
 			if(eventCode == EnvironmentController.SCALE_CHANGED){
-				System.out.println("Testausgabe: Ereignis SCALE_CHANGED empfangen");
 				environmentSettings.setScale(controller.getEnvironment().getScale());
 			}
 			if(eventCode == EnvironmentController.OBJECTS_CHANGED){
-				System.out.println("Testausgabe: Ereignis OBJECTS_CHANGED empfangen");
 				rebuildTree();
 			}
 			if(eventCode == EnvironmentController.SVG_CHANGED){
-				System.out.println("Testausgabe: Ereignis SVG_CHANGED empfangen");
 				setSVGDocument(controller.getSvgDoc());
 			}
 			if(eventCode < 0 || eventCode > 3){
@@ -459,16 +468,18 @@ public class EnvironmentSetup extends JSplitPane implements ActionListener, Obse
 	 * @author Nils
 	 *
 	 */
-	class SizeAndPosChanger implements Runnable{
+	class ElementChanger implements Runnable{
 		
 		private Element elem;
+		private String id;
 		private String xPos;
 		private String yPos;
 		private String width;
 		private String height;
 		
-		public SizeAndPosChanger(Element elem, String xPos, String yPos, String width, String height){
+		public ElementChanger(Element elem, String id, String xPos, String yPos, String width, String height){
 			this.elem = elem;
+			this.id = id;
 			this.xPos = xPos;
 			this.yPos = yPos;
 			this.width = width;
@@ -477,6 +488,7 @@ public class EnvironmentSetup extends JSplitPane implements ActionListener, Obse
 
 		@Override
 		public void run() {
+			elem.setAttributeNS(null, "id", id);
 			SVGHelper.setSizeFromStrings(elem, controller.getEnvironment().getScale(), width, height);
 			SVGHelper.setPosFromStrings(elem, controller.getEnvironment().getScale(), xPos, yPos, width, height);
 		}

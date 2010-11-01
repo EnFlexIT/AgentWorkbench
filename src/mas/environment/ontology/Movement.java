@@ -6,10 +6,10 @@ import jade.util.leap.*;
 import jade.core.*;
 
 /**
-   * An object's current movement.
+   * This class models an ActiveObject's movement by defining the change of its x and y coordinate per second.
 * Protege name: Movement
 * @author ontology bean generator
-* @version 2010/10/20, 18:27:57
+* @version 2010/10/22, 21:15:52
 */
 public class Movement implements Concept {
 
