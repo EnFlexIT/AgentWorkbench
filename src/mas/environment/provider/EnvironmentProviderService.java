@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.w3c.dom.Document;
 
 import mas.display.SVGUtils;
@@ -569,8 +568,7 @@ public class EnvironmentProviderService extends BaseService {
 				if(myLogger.isLoggable(Logger.FINE)){
 					myLogger.log(Logger.FINE, "Serving set agent movement request.");
 				}
-//				cmd.setReturnValue(SVGUtils.svgToString(EnvironmentProviderService.this.getSVGDoc()));
-				cmd.setReturnValue(EnvironmentProviderService.this.getSVGDoc());
+				cmd.setReturnValue(SVGUtils.svgToString(EnvironmentProviderService.this.getSVGDoc()));
 			}else if(cmd.getName().equals(EnvironmentProviderSlice.H_GET_PLAYGROUND_OBJECTS)){
 				if(myLogger.isLoggable(Logger.FINE)){
 					myLogger.log(Logger.FINE, "Serving playground objects request.");

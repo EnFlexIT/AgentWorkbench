@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Physical2DEnvironment projectName="SMA">
+	<rootPlayground>
+		<PlaygroundObject id="RootPlayground">
+			<size>
+				<Size height="400.0F" width="600.0F"/>
+			</size>
+			<position>
+				<Position yPos="0.0F" xPos="0.0F"/>
+			</position>
+		</PlaygroundObject>
+	</rootPlayground>
+	<scale>
+		<Scale pixelValue="10.0F" realWorldUnitValue="1.0F" realWorldUntiName="m"/>
+	</scale>
+</Physical2DEnvironment>

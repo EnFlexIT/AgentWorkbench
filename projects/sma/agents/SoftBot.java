@@ -23,7 +23,10 @@ public class SoftBot extends Agent {
 	private static final long serialVersionUID = -1555521768821748185L;
 
 	public void setup(){
-				
+		startBoxExampleBehaviours(this);		
+	}
+	
+	private void startBoxExampleBehaviours(Agent a){
 		try {
 			EnvironmentProviderHelper helper = (EnvironmentProviderHelper) getHelper(EnvironmentProviderService.SERVICE_NAME);
 			

@@ -7,15 +7,19 @@ Einfaches Demo-Projekt fr die Visualisierung</projectDescription>
     <projectResources/>
     <subOntologies/>
     <agentConfiguration/>
-    <simulationSetupCurrent>TestSetup</simulationSetupCurrent>
+    <simulationSetupCurrent>BoxExample</simulationSetupCurrent>
     <simulationSetups>
         <entry>
-            <key>TestSetup</key>
-            <value>testsetup.xml</value>
+            <key>HarborExample</key>
+            <value>harborexample.xml</value>
         </entry>
         <entry>
-            <key>default</key>
-            <value>default.xml</value>
+            <key>ManyExample</key>
+            <value>manyexample.xml</value>
+        </entry>
+        <entry>
+            <key>BoxExample</key>
+            <value>boxexample.xml</value>
         </entry>
     </simulationSetups>
     <jadeConfiguration>

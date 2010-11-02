@@ -6,21 +6,16 @@ import java.io.StringWriter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.apache.batik.dom.svg.SVGDOMImplementation;
+import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.svg2svg.SVGTranscoder;
+import org.apache.batik.util.XMLResourceDescriptor;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 public class SVGUtils {
 	public static String svgToString(Document svgDoc){
@@ -34,13 +29,13 @@ public class SVGUtils {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		return sw.getBuffer().toString();
+		String begin = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.0//EN' 'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'>\n";
+		return begin+sw.getBuffer().toString();
 	}
 	
 	public static Document stringToSVG(String svgString){
 		
-		Document doc = SVGDOMImplementation.getDOMImplementation().createDocument(SVGDOMImplementation.SVG_NAMESPACE_URI, "svg", null);
+		Document doc = null;
 //		try {
 //			DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 //			doc = db.parse(new InputSource(new StringReader(svgString)));
@@ -55,21 +50,31 @@ public class SVGUtils {
 //			e.printStackTrace();
 //		}
 		
-		StringReader sr = new StringReader(svgString);
-		SVGTranscoder trans = new SVGTranscoder();
-		TranscoderInput ti = new TranscoderInput(sr);
-		TranscoderOutput to = new TranscoderOutput(new StringWriter());
-		to.setDocument(doc);
+//		StringReader sr = new StringReader(svgString);
+//		SVGTranscoder trans = new SVGTranscoder();
+//		TranscoderInput ti = new TranscoderInput(sr);
+//		TranscoderOutput to = new TranscoderOutput(new StringWriter());
+//		to.setDocument(doc);
+//		try {
+//			trans.transcode(ti, to);
+//		} catch (TranscoderException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
+//		return to.getDocument();
+		
+		StringReader reader = new StringReader(svgString);
+		SAXSVGDocumentFactory factory = new SAXSVGDocumentFactory(XMLResourceDescriptor.getXMLParserClassName());
+		
 		try {
-			trans.transcode(ti, to);
-		} catch (TranscoderException e) {
+			doc = factory.createDocument(null, reader);
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		
-		
-		return to.getDocument();
+		return doc;
 	}
 	
 	/**

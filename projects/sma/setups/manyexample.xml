@@ -4,6 +4,6 @@
     <agentListModel>
         <size>0</size>
     </agentListModel>
-    <environmentFileName>SMA_default.xml</environmentFileName>
-    <svgFileName>SMA_default.svg</svgFileName>
+    <environmentFileName>SMA_ManyExample.xml</environmentFileName>
+    <svgFileName>SMA_ManyExample.svg</svgFileName>
 </simulationSetup>

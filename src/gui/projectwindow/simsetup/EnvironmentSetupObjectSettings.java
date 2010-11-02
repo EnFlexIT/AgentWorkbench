@@ -283,6 +283,7 @@ public class EnvironmentSetupObjectSettings extends JPanel{
 	JTextField getTfMaxSpeed(){
 		if(tfMaxSpeed == null){
 			tfMaxSpeed = new JTextField();
+			tfMaxSpeed.setText("10.0");
 			tfMaxSpeed.setLocation(new Point(16, 103));
 			tfMaxSpeed.setSize(new Dimension(100, 25));
 			tfMaxSpeed.setEnabled(false);
@@ -373,7 +374,12 @@ public class EnvironmentSetupObjectSettings extends JPanel{
 		getTfXPos().setEnabled(enabled);
 		getTfYPos().setEnabled(enabled);
 		getTfWidth().setEnabled(enabled);
-		getTfHeight().setEnabled(enabled);
+		// For circles, the width is used to specify the radius 
+		if(enabled && parent.selectedElement.getTagName().equals("circle")){
+			getTfHeight().setEnabled(false);
+		}else{
+			getTfHeight().setEnabled(enabled);
+		}
 		getCbType().setEnabled(enabled);
 	}
 	

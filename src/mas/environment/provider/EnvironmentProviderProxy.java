@@ -118,8 +118,7 @@ public class EnvironmentProviderProxy extends SliceProxy implements
 					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
 				}
 			}
-//			return SVGUtils.stringToSVG((String) result);
-			return (Document) result;
+			return SVGUtils.stringToSVG((String) result);
 		} catch (ServiceException e) {
 			throw new IMTPException("Unable to access remote node", e);
 		}

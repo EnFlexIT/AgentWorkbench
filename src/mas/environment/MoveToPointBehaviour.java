@@ -113,13 +113,13 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 			firstStep = false;
 		}else{
 			Position currPos = self.getPosition();	// Get the agent's current 
-			if(checkCollisions()){		// Check for collisions
-				Movement stop = new Movement();
-				stop.setXPosChange(0);
-				stop.setYPosChange(0);
-				helper.setMovement(myAgent.getLocalName(), stop);	// Stop moving
-				this.stop();		// Stop the MoveToPointBehaviour
-			}
+//			if(checkCollisions()){		// Check for collisions
+//				Movement stop = new Movement();
+//				stop.setXPosChange(0);
+//				stop.setYPosChange(0);
+//				helper.setMovement(myAgent.getLocalName(), stop);	// Stop moving
+//				this.stop();		// Stop the MoveToPointBehaviour
+//			}
 			
 			if(lastStep){
 				Movement stop = new Movement();

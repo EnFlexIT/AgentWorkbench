@@ -462,7 +462,9 @@ public class EnvironmentController extends Observable implements Observer{
 				newObject.setParentPlaygroundID(environment.getRootPlayground().getId());
 				if(newObject instanceof ActiveObject){
 					((ActiveObject)newObject).setMovement(new Movement());
-					((ActiveObject)newObject).setMaxSpeed(Float.parseFloat((String) settings.get(EnvironmentSetup.SETTINGS_KEY_AGENT_MAX_SPEED)));	 
+					if(! settings.get(EnvironmentSetup.SETTINGS_KEY_AGENT_MAX_SPEED).toString().isEmpty()){
+						((ActiveObject)newObject).setMaxSpeed(Float.parseFloat((String) settings.get(EnvironmentSetup.SETTINGS_KEY_AGENT_MAX_SPEED)));
+					}
 					
 				}
 			} catch (InstantiationException e) {

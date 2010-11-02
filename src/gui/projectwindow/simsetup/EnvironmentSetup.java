@@ -76,7 +76,7 @@ public class EnvironmentSetup extends JSplitPane implements ActionListener, Obse
 	/**
 	 * The currently selected SVG element
 	 */
-	private Element selectedElement = null;
+	Element selectedElement = null;
 	
 	/**
 	 * Style properties used for highlighting the selected element
@@ -446,8 +446,8 @@ public class EnvironmentSetup extends JSplitPane implements ActionListener, Obse
 				// Highlight selected element
 				String newStyle=fill+";"+selectionStyle;
 				element.setAttributeNS(null, "style", newStyle);
-				objectSettings.enableControlls(true);
 				controller.setSelectedObject(element.getAttributeNS(null, "id"));
+				
 				if(controller.getSelectedObject() != null){
 					objectSettings.getBtnRemove().setEnabled(true);
 				}else{
@@ -460,6 +460,7 @@ public class EnvironmentSetup extends JSplitPane implements ActionListener, Obse
 			
 			// Set selected element and input values
 			selectedElement = element;
+			objectSettings.enableControlls(element != null);
 			objectSettings.setInputValues(element);
 		}
 	}
