@@ -59,8 +59,8 @@ public class SetupSimulation extends JPanel  {
 		
 		// --- Die (optionalen) Karteikarten einblenden ----------
 		addProjectTab(Language.translate("Start-Konfiguration"), null, new StartSetup(currProject), Language.translate("Agenten-Konfiguration"));
-		addProjectTab(Language.translate("JADE-Konfiguration"), null, new JadeSetup(currProject), Language.translate("JADE-Konfiguration"));
 		addProjectTab(Language.translate("Umgebungskonfiguration"), null, new EnvironmentSetup(currProject), Language.translate("Umgebungskonfiguration"));
+		addProjectTab(Language.translate("JADE-Konfiguration"), null, new JadeSetup(currProject), Language.translate("JADE-Konfiguration"));
 		
 	}
 

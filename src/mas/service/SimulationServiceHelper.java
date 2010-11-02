@@ -16,7 +16,8 @@ import mas.service.distribution.ontology.ClientRemoteContainerReply;
 import mas.service.distribution.ontology.PlatformLoad;
 import mas.service.distribution.ontology.RemoteContainerConfig;
 import mas.service.environment.EnvironmentModel;
-import mas.service.load.LoadInformation.AgentMap;
+import mas.service.load.LoadAgentMap;
+import mas.service.load.LoadAgentMap.AID_Container;
 import mas.service.load.LoadInformation.Container2Wait4;
 import mas.service.load.LoadInformation.NodeDescription;
 import mas.service.sensoring.ServiceSensor;
@@ -57,8 +58,9 @@ public interface SimulationServiceHelper extends ServiceHelper {
 	public Hashtable<String, NodeDescription> getContainerDescriptions() throws ServiceException;
 	public NodeDescription getContainerDescription(String containerName) throws ServiceException;
 	
-	public AgentMap getAgentMap() throws ServiceException;
+	public LoadAgentMap getAgentMap() throws ServiceException;
 
+	public void setAgentMigration(Vector<AID_Container> transferAgents) throws ServiceException;
 	
 	// --- Methods for simulations ----------------------------------
 	public void setManagerAgent(AID agentAddress) throws ServiceException; 

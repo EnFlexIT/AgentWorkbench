@@ -8,9 +8,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
 
-import mas.service.SimulationAgent;
 import mas.service.SimulationService;
 import mas.service.SimulationServiceHelper;
+import mas.service.agents.SimulationAgent;
 
 /**
  * @version 1.0
@@ -51,7 +51,10 @@ public class GameOfLifeAgent extends SimulationAgent {
 				e.printStackTrace();
 			}
 		}
-	
+		// --- Maybe migrate, after you did your job --------
+		if (myNewLocation!=null) {
+			doMove(myNewLocation);
+		}
 	}
 	
 	// ---- update state of Agent after controlling my neighbours -----------

@@ -116,7 +116,7 @@ public class Platform extends Object {
 					
 				}
 				// --- Starting 'Server.Master'-Agent --------------				
-				jadeAgentStart("server.master", mas.service.distribution.agents.MasterServerAgent.class.getName());
+				jadeAgentStart("server.master", mas.service.agents.MasterServerAgent.class.getName());
 				
 			} else {
 				// -------------------------------------------------
@@ -149,7 +149,7 @@ public class Platform extends Object {
 					
 				} 
 				// --- Starting 'Server.Slave'-Agent ---------------
-				jadeAgentStart("server.slave", mas.service.distribution.agents.SlaveServerAgent.class.getName());
+				jadeAgentStart("server.slave", mas.service.agents.SlaveServerAgent.class.getName());
 					
 			}
 		} else {
@@ -159,7 +159,7 @@ public class Platform extends Object {
 			MASrunningMode = "Application";
 			// --- Starting 'Server.Client'-Agent -------------------				
 			if (jadeAgentIsRunning(MASapplicationAgentName)==false) {
-				jadeAgentStart(MASapplicationAgentName, mas.service.distribution.agents.ClientServerAgent.class.getName());	
+				jadeAgentStart(MASapplicationAgentName, mas.service.agents.ClientServerAgent.class.getName());	
 			}			
 			// --- Start RMA ('Remote Monitoring Agent') ------------ 
 			jadeSystemAgentOpen( "rma", null );	
@@ -325,7 +325,7 @@ public class Platform extends Object {
 		JadeSystemTools.put( "sniffer", "jade.tools.sniffer.Sniffer" );
 		JadeSystemTools.put( "dummy", "jade.tools.DummyAgent.DummyAgent" );
 		JadeSystemTools.put( "df", "mas.agents.DFOpener" );
-		JadeSystemTools.put( "loadmonitor", mas.service.distribution.agents.LoadAgent.class.getName());
+		JadeSystemTools.put( "loadmonitor", mas.service.agents.LoadAgent.class.getName());
 		JadeSystemTools.put( "introspector", "jade.tools.introspector.Introspector" );
 		JadeSystemTools.put( "log", "jade.tools.logging.LogManagerAgent" );
 		

@@ -6,11 +6,13 @@ import jade.core.Location;
 import jade.core.Service;
 
 import java.util.Hashtable;
+import java.util.Vector;
 
 import mas.service.distribution.ontology.ClientRemoteContainerReply;
 import mas.service.distribution.ontology.PlatformLoad;
 import mas.service.distribution.ontology.RemoteContainerConfig;
 import mas.service.environment.EnvironmentModel;
+import mas.service.load.LoadAgentMap.AID_Container;
 
 public interface SimulationServiceSlice extends Service.Slice {
 
@@ -47,7 +49,7 @@ public interface SimulationServiceSlice extends Service.Slice {
 	public void setEnvironmentModel(EnvironmentModel envModel) throws IMTPException;
 	public void stepSimulation(EnvironmentModel envModel, boolean aSynchron) throws IMTPException;
 	
-	public void setEnvironmentInstanceNextPart(AID fromAgent, Object nextPart) throws IMTPException;
+	public void setEnvironmentInstanceNextPart(Hashtable<AID, Object> nextPartsLocal) throws IMTPException;
 	public Hashtable<AID, Object> getEnvironmentInstanceNextParts() throws IMTPException;
 	public void resetEnvironmentInstanceNextParts() throws IMTPException;
 	
@@ -58,12 +60,16 @@ public interface SimulationServiceSlice extends Service.Slice {
 	static final String SERVICE_GET_LOCATION = "get-location";
 	static final String SERVICE_MEASURE_LOAD = "measure-Load";
 	static final String SERVICE_GET_AID_LIST = "get-aid-list";
+	static final String SERVICE_GET_AID_LIST_SENSOR = "get-aid-list-sensor";
+	static final String SERVICE_SET_AGENT_MIGRATION = "set-agent-migration";
 	
 	public String startNewRemoteContainer(RemoteContainerConfig remoteConfig) throws IMTPException;
 	public RemoteContainerConfig getDefaultRemoteContainerConfig() throws IMTPException;
 	public Location getLocation() throws IMTPException;
 	public PlatformLoad measureLoad() throws IMTPException;
 	public AID[] getAIDList() throws IMTPException;
+	public AID[] getAIDListSensorAgents() throws IMTPException;
+	public void setAgentMigration(Vector<AID_Container> transferAgents) throws IMTPException;
 	
 	// ----------------------------------------------------------
 	// --- Methods to deal with the container description ------- 

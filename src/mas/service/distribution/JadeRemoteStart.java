@@ -20,7 +20,7 @@ public class JadeRemoteStart extends Thread {
 	
 	private boolean jvmMemAllocUseDefaults = true;
 	private String jvmMemAllocInitial = this.jvmMemo0032MB;
-	private String jvmMemAllocMaximum = this.jvmMemo0256MB;
+	private String jvmMemAllocMaximum = this.jvmMemo0128MB;
 	
 	private boolean jadeIsRemoteContainer = true; 
 	private boolean jadeShowGUI = true; 

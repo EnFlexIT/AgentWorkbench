@@ -4,11 +4,19 @@
     <projectResources/>
     <subOntologies/>
     <agentConfiguration/>
-    <simulationSetupCurrent>default</simulationSetupCurrent>
+    <simulationSetupCurrent>Test-Setup 2028</simulationSetupCurrent>
     <simulationSetups>
         <entry>
-            <key>default</key>
-            <value>default.xml</value>
+            <key>Hallo Nr. 1</key>
+            <value>hallo_nr_1.xml</value>
+        </entry>
+        <entry>
+            <key>Test-Setup 1024</key>
+            <value>test_setup_1024.xml</value>
+        </entry>
+        <entry>
+            <key>Test-Setup 2028</key>
+            <value>test_setup_2028.xml</value>
         </entry>
     </simulationSetups>
     <jadeConfiguration>
@@ -22,8 +30,5 @@
         </serviceList>
     </jadeConfiguration>
     <mainPackage>game_of_life</mainPackage>
-    <subFolderAgents>agents</subFolderAgents>
     <subFolderEnvSetups>envSetups</subFolderEnvSetups>
-    <subFolderOntology>ontology</subFolderOntology>
-    <subFolderResources>resources</subFolderResources>
 </project>

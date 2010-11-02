@@ -9,11 +9,13 @@ import jade.core.ServiceException;
 import jade.core.SliceProxy;
 
 import java.util.Hashtable;
+import java.util.Vector;
 
 import mas.service.distribution.ontology.ClientRemoteContainerReply;
 import mas.service.distribution.ontology.PlatformLoad;
 import mas.service.distribution.ontology.RemoteContainerConfig;
 import mas.service.environment.EnvironmentModel;
+import mas.service.load.LoadAgentMap.AID_Container;
 
 public class SimulationServiceProxy extends SliceProxy implements SimulationServiceSlice {
 
@@ -32,8 +34,7 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 			if((result != null) && (result instanceof Throwable)) {
 				if(result instanceof IMTPException) {
 					throw (IMTPException)result;
-				}
-				else {
+				} else {
 					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
 				}
 			}
@@ -55,8 +56,7 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 			if((result != null) && (result instanceof Throwable)) {
 				if(result instanceof IMTPException) {
 					throw (IMTPException)result;
-				}
-				else {
+				} else {
 					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
 				}
 			}
@@ -84,8 +84,7 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 			if((result != null) && (result instanceof Throwable)) {
 				if(result instanceof IMTPException) {
 					throw (IMTPException)result;
-				}
-				else {
+				} else {
 					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
 				}
 			}
@@ -104,8 +103,7 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 			if((result != null) && (result instanceof Throwable)) {
 				if(result instanceof IMTPException) {
 					throw (IMTPException)result;
-				}
-				else {
+				} else {
 					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
 				}
 			}
@@ -130,8 +128,7 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 			if((result != null) && (result instanceof Throwable)) {
 				if(result instanceof IMTPException) {
 					throw (IMTPException)result;
-				}
-				else {
+				} else {
 					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
 				}
 			}
@@ -153,8 +150,7 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 			if((result != null) && (result instanceof Throwable)) {
 				if(result instanceof IMTPException) {
 					throw (IMTPException)result;
-				}
-				else {
+				} else {
 					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
 				}
 			}
@@ -164,20 +160,18 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 		}		
 	}
 	@Override
-	public void setEnvironmentInstanceNextPart(AID fromAgent, Object nextPart) throws IMTPException {
+	public void setEnvironmentInstanceNextPart(Hashtable<AID, Object> nextPartsLocal) throws IMTPException {
 		
 		try {
 			GenericCommand cmd = new GenericCommand(SIM_SET_ENVIRONMENT_NEXT_PART, SimulationService.NAME, null);
-			cmd.addParam(fromAgent);
-			cmd.addParam(nextPart);
+			cmd.addParam(nextPartsLocal);
 			
 			Node n = getNode();
 			Object result = n.accept(cmd);
 			if((result != null) && (result instanceof Throwable)) {
 				if(result instanceof IMTPException) {
 					throw (IMTPException)result;
-				}
-				else {
+				} else {
 					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
 				}
 			}
@@ -196,8 +190,7 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 			if((result != null) && (result instanceof Throwable)) {
 				if(result instanceof IMTPException) {
 					throw (IMTPException)result;
-				}
-				else {
+				} else {
 					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
 				}
 			}
@@ -218,8 +211,7 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 			if((result != null) && (result instanceof Throwable)) {
 				if(result instanceof IMTPException) {
 					throw (IMTPException)result;
-				}
-				else {
+				} else {
 					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
 				}
 			}
@@ -249,8 +241,7 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 			if((result != null) && (result instanceof Throwable)) {
 				if(result instanceof IMTPException) {
 					throw (IMTPException)result;
-				}
-				else {
+				} else {
 					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
 				}
 			}
@@ -271,8 +262,7 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 			if((result != null) && (result instanceof Throwable)) {
 				if(result instanceof IMTPException) {
 					throw (IMTPException)result;
-				}
-				else {
+				} else {
 					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
 				}
 			}
@@ -293,8 +283,7 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 			if((result != null) && (result instanceof Throwable)) {
 				if(result instanceof IMTPException) {
 					throw (IMTPException)result;
-				}
-				else {
+				} else {
 					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
 				}
 			}
@@ -316,8 +305,7 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 			if((result != null) && (result instanceof Throwable)) {
 				if(result instanceof IMTPException) {
 					throw (IMTPException)result;
-				}
-				else {
+				} else {
 					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
 				}
 			}
@@ -338,8 +326,7 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 			if((result != null) && (result instanceof Throwable)) {
 				if(result instanceof IMTPException) {
 					throw (IMTPException)result;
-				}
-				else {
+				} else {
 					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
 				}
 			}
@@ -349,7 +336,47 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 			throw new IMTPException("Unable to access remote node", se);
 		}
 	}
-	
+	@Override
+	public AID[] getAIDListSensorAgents() throws IMTPException {
+
+		try {
+			GenericCommand cmd = new GenericCommand(SERVICE_GET_AID_LIST_SENSOR, SimulationService.NAME, null);
+			
+			Node n = getNode();
+			Object result = n.accept(cmd);
+			if((result != null) && (result instanceof Throwable)) {
+				if(result instanceof IMTPException) {
+					throw (IMTPException)result;
+				} else {
+					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
+				}
+			}
+			return (AID[]) result;
+		}
+		catch(ServiceException se) {
+			throw new IMTPException("Unable to access remote node", se);
+		}
+	}
+	@Override
+	public void setAgentMigration(Vector<AID_Container> transferAgents) throws IMTPException {
+		try {
+			GenericCommand cmd = new GenericCommand(SERVICE_SET_AGENT_MIGRATION, SimulationService.NAME, null);
+			cmd.addParam(transferAgents);
+			
+			Node n = getNode();
+			Object result = n.accept(cmd);
+			if((result != null) && (result instanceof Throwable)) {
+				if(result instanceof IMTPException) {
+					throw (IMTPException)result;
+				} else {
+					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
+				}
+			}
+		}
+		catch(ServiceException se) {
+			throw new IMTPException("Unable to access remote node", se);
+		}			
+	}
 	// ----------------------------------------------------------
 	// --- Method to get the Load-Informations of all ----------- 
 	// --- containers ----------------------------- E N D -------
@@ -367,8 +394,7 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 			if((result != null) && (result instanceof Throwable)) {
 				if(result instanceof IMTPException) {
 					throw (IMTPException)result;
-				}
-				else {
+				} else {
 					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
 				}
 			}			
@@ -390,8 +416,7 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 			if((result != null) && (result instanceof Throwable)) {
 				if(result instanceof IMTPException) {
 					throw (IMTPException)result;
-				}
-				else {
+				} else {
 					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
 				}
 			}

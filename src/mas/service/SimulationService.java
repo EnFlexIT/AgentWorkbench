@@ -22,6 +22,7 @@ import jade.core.ServiceHelper;
 import jade.core.VerticalCommand;
 import jade.core.management.AgentManagementSlice;
 import jade.core.messaging.MessagingSlice;
+import jade.core.mobility.AgentMobilityHelper;
 import jade.lang.acl.ACLMessage;
 import jade.util.Logger;
 
@@ -34,6 +35,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -50,11 +52,12 @@ import mas.service.distribution.ontology.PlatformLoad;
 import mas.service.distribution.ontology.PlatformPerformance;
 import mas.service.distribution.ontology.RemoteContainerConfig;
 import mas.service.environment.EnvironmentModel;
+import mas.service.load.LoadAgentMap;
 import mas.service.load.LoadInformation;
 import mas.service.load.LoadMeasureSigar;
 import mas.service.load.LoadMeasureThread;
 import mas.service.load.LoadUnits;
-import mas.service.load.LoadInformation.AgentMap;
+import mas.service.load.LoadAgentMap.AID_Container;
 import mas.service.load.LoadInformation.Container2Wait4;
 import mas.service.load.LoadInformation.NodeDescription;
 import mas.service.sensoring.ServiceActuator;
@@ -105,7 +108,8 @@ public class SimulationService extends BaseService {
 	private boolean stepSimulationAsynchronous = true;
 	// --- The next EnvironmentObject-Instance in parts (answers of agents) ---
 	private Hashtable<AID, Object> environmentInstanceNextParts = new Hashtable<AID, Object>();
-
+	private Hashtable<AID, Object> environmentInstanceNextPartsLocal = new Hashtable<AID, Object>();
+	
 	// --- The Load-Information Array of all slices ---------------------------
 	private LoadInformation loadInfo = new LoadInformation(); 
 	
@@ -276,10 +280,18 @@ public class SimulationService extends BaseService {
 		
 		// ----------------------------------------------------------
 		// --- Method to get positions Agents at this platform ------ 
-		public AgentMap getAgentMap() throws ServiceException {
+		public LoadAgentMap getAgentMap() throws ServiceException {
 			Service.Slice[] slices = getAllSlices();
+			broadcastGetAIDListSensorAgents(slices);
 			broadcastGetAIDList(slices);
 			return loadInfo.agentLocations;
+		}
+		
+		// ----------------------------------------------------------
+		// --- Method to set the agent migration --------------------
+		public void setAgentMigration(Vector<AID_Container> transferAgents) throws ServiceException {
+			Service.Slice[] slices = getAllSlices();
+			broadcastAgentMigration(transferAgents, slices);
 		}
 		
 		// ----------------------------------------------------------
@@ -329,7 +341,18 @@ public class SimulationService extends BaseService {
 		// ----------------------------------------------------------
 		// --- EnvironmentModel of the next simulation step ---------
 		public void setEnvironmentInstanceNextPart(AID fromAgent, Object nextPart) throws ServiceException {
-			mainSetEnvironmentInstanceNextPart(fromAgent, nextPart);
+
+			// --- Put single changes into the local store until ---- 
+			// --- the expected number of answers is not reached ----
+			environmentInstanceNextPartsLocal.put(fromAgent, nextPart);
+			
+			// --- If the expected number of answers came back to ---
+			// --- the service, broadcast it to every other node ----
+			if (environmentInstanceNextPartsLocal.size() >= localServiceActuator.getNoOfSimulationAnswersExpected()) {
+				mainSetEnvironmentInstanceNextPart(environmentInstanceNextPartsLocal);	
+				environmentInstanceNextPartsLocal = new Hashtable<AID, Object>();
+			}
+			
 		}
 		public Hashtable<AID, Object> getEnvironmentInstanceNextParts() throws ServiceException {
 			return mainGetEnvironmentInstanceNextParts();
@@ -373,12 +396,12 @@ public class SimulationService extends BaseService {
 	}
 	
 	/**
-	 * Sends one nextPart of the environment-model to the Main-Container 
+	 * Sends the local next parts of the environment-model to the Main-Container 
 	 * @param fromAgent
 	 * @param nextPart
 	 * @throws ServiceException
 	 */
-	private void mainSetEnvironmentInstanceNextPart(AID fromAgent, Object nextPart) throws ServiceException {
+	private void mainSetEnvironmentInstanceNextPart(Hashtable<AID, Object> nextPartsLocal) throws ServiceException {
 		
 		if (myLogger.isLoggable(Logger.CONFIG)) {
 			myLogger.log(Logger.CONFIG, "Sending agent-answer of environment-change to Main-Container!");
@@ -390,7 +413,7 @@ public class SimulationService extends BaseService {
 			if (myLogger.isLoggable(Logger.FINER)) {
 				myLogger.log(Logger.FINER, "Sending agent-answer of environment-change to " + sliceName);
 			}
-			slice.setEnvironmentInstanceNextPart(fromAgent, nextPart);
+			slice.setEnvironmentInstanceNextPart(environmentInstanceNextPartsLocal);
 		}
 		catch(Throwable t) {
 			// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
@@ -477,6 +500,7 @@ public class SimulationService extends BaseService {
 	/**
 	 * Broadcast that all agents have to informed about changes in the EnvironmentModel through his ServiceSensor
 	 * @param envModel 
+	 * @param aSynchron
 	 * @param slices
 	 * @throws ServiceException
 	 */
@@ -501,7 +525,34 @@ public class SimulationService extends BaseService {
 			}
 		}
 	}
-	
+	/**
+	 * Broadcast the new locations to the agents
+	 * @param transferAgents 
+	 * @param aSynchron
+	 * @param slices
+	 * @throws ServiceException
+	 */
+	private void broadcastAgentMigration(Vector<AID_Container> transferAgents, Service.Slice[] slices) throws ServiceException {
+		
+		if (myLogger.isLoggable(Logger.CONFIG)) {
+			myLogger.log(Logger.CONFIG, "Sending migration notification to agents!");
+		}
+		for (int i = 0; i < slices.length; i++) {
+			String sliceName = null;
+			try {
+				SimulationServiceSlice slice = (SimulationServiceSlice) slices[i];
+				sliceName = slice.getNode().getName();
+				if (myLogger.isLoggable(Logger.FINER)) {
+					myLogger.log(Logger.FINER, "Sending migration notification to agents at " + sliceName);
+				}
+				slice.setAgentMigration(transferAgents);
+			}
+			catch(Throwable t) {
+				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
+				myLogger.log(Logger.WARNING, "Error while sending migration notification to agents at slice " + sliceName, t);
+			}
+		}
+	}
 	/**
 	 * This Methods returns the default Remote-Container-Configuration, coming from the Main-Container
 	 * @param slices
@@ -663,7 +714,7 @@ public class SimulationService extends BaseService {
 		loadInfo.resetAIDs4Container();
 		
 		if (myLogger.isLoggable(Logger.CONFIG)) {
-			myLogger.log(Logger.CONFIG, "Try to get AID from all Containers !");
+			myLogger.log(Logger.CONFIG, "Try to get AID's from all Containers !");
 		}
 		for (int i = 0; i < slices.length; i++) {
 			String sliceName = null;
@@ -671,14 +722,14 @@ public class SimulationService extends BaseService {
 				SimulationServiceSlice slice = (SimulationServiceSlice) slices[i];
 				sliceName = slice.getNode().getName();
 				if (myLogger.isLoggable(Logger.FINER)) {
-					myLogger.log(Logger.FINER, "Try to get AID from " + sliceName);
+					myLogger.log(Logger.FINER, "Try to get AID's from " + sliceName);
 				}
 				AID[] aid = slice.getAIDList();
 				loadInfo.putAIDs4Container(sliceName, aid);
 			}
 			catch(Throwable t) {
 				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
-				myLogger.log(Logger.WARNING, "Error while trying to get AID from " + sliceName, t);
+				myLogger.log(Logger.WARNING, "Error while trying to get AID's from " + sliceName, t);
 			}
 		}
 		
@@ -686,6 +737,35 @@ public class SimulationService extends BaseService {
 		
 	}
 	
+	/**
+	 * 'Broadcast' (or receive) the list of all agents in a container with a registered sensor
+	 * @param slices
+	 * @throws ServiceException
+	 */
+	private void broadcastGetAIDListSensorAgents(Service.Slice[] slices) throws ServiceException {
+		
+		loadInfo.sensorAgents = new Vector<AID>();
+		
+		if (myLogger.isLoggable(Logger.CONFIG)) {
+			myLogger.log(Logger.CONFIG, "Try to get Sensor-AID's from all Containers !");
+		}
+		for (int i = 0; i < slices.length; i++) {
+			String sliceName = null;
+			try {
+				SimulationServiceSlice slice = (SimulationServiceSlice) slices[i];
+				sliceName = slice.getNode().getName();
+				if (myLogger.isLoggable(Logger.FINER)) {
+					myLogger.log(Logger.FINER, "Try to get Sensor-AID's from " + sliceName);
+				}
+				AID[] aidList = slice.getAIDListSensorAgents();
+				loadInfo.sensorAgents.addAll( new Vector<AID>(Arrays.asList(aidList)) );
+			}
+			catch(Throwable t) {
+				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
+				myLogger.log(Logger.WARNING, "Error while trying to get Sensor-AID's from " + sliceName, t);
+			}
+		}
+	}
 	
 	// --------------------------------------------------------------	
 	// ---- Inner-Class 'ServiceComponent' ---- Start ---------------
@@ -765,12 +845,11 @@ public class SimulationService extends BaseService {
 					stepSimulation(envModel, aSynchron);
 				}
 				else if (cmdName.equals(SimulationServiceSlice.SIM_SET_ENVIRONMENT_NEXT_PART)) {
-					AID fromAgent = (AID) params[0];
-					Object nextPart = params[1];
+					Hashtable<AID, Object> nextPartsLocal = (Hashtable<AID, Object>) params[0];
 					if (myLogger.isLoggable(Logger.FINE)) {
-						myLogger.log(Logger.FINE, "Getting part for the next environment model from " + fromAgent.getLocalName() );
+						myLogger.log(Logger.FINE, "Getting parts for the next environment model");
 					}	
-					setEnvironmentInstanceNextPart(fromAgent, nextPart);					
+					setEnvironmentInstanceNextPart(nextPartsLocal);					
 				} 
 				else if (cmdName.equals(SimulationServiceSlice.SIM_GET_ENVIRONMENT_NEXT_PARTS)) {
 					if (myLogger.isLoggable(Logger.FINE)) {
@@ -828,7 +907,21 @@ public class SimulationService extends BaseService {
 					}
 					cmd.setReturnValue(getListOfAgents());
 				}
+				else if (cmdName.equals(SimulationServiceSlice.SERVICE_GET_AID_LIST_SENSOR)) {
+					if (myLogger.isLoggable(Logger.FINE)) {
+						myLogger.log(Logger.FINE, "Answering request for the Agents with sensors in this container");
+					}
+					cmd.setReturnValue(getListOfAgentsWithSensors());
+				}
 
+				else if (cmdName.equals(SimulationServiceSlice.SERVICE_SET_AGENT_MIGRATION)) {
+					Vector<AID_Container> transferAgents = (Vector<AID_Container>) params[0];
+					if (myLogger.isLoggable(Logger.FINE)) {
+						myLogger.log(Logger.FINE, "Getting info about agent migration");
+					}
+					setAgentMigration(transferAgents);
+				}
+				
 				else if (cmdName.equals(SimulationServiceSlice.SERVICE_PUT_CONTAINER_DESCRIPTION)) {
 					if (myLogger.isLoggable(Logger.FINE)) {
 						myLogger.log(Logger.FINE, "Putting in container description");
@@ -873,14 +966,15 @@ public class SimulationService extends BaseService {
 			localServiceActuator.notifySensors(newEnvironmentModel, aSynchron);
 		}
 
-		private void setEnvironmentInstanceNextPart(AID fromAgent, Object nextPart) {
-			environmentInstanceNextParts.put(fromAgent, nextPart);
+		private void setEnvironmentInstanceNextPart(Hashtable<AID, Object> nextPartsLocal) {
+			environmentInstanceNextParts.putAll(nextPartsLocal);
 		}
 		private Hashtable<AID, Object> getEnvironmentInstanceNextParts() {
 			return environmentInstanceNextParts;
 		}
 		private void resetEnvironmentInstanceNextParts() {
 			environmentInstanceNextParts = new Hashtable<AID, Object>();
+			environmentInstanceNextPartsLocal = new Hashtable<AID, Object>();
 		}
 		
 		private String startRemoteContainer(RemoteContainerConfig remoteConfig) {
@@ -902,6 +996,13 @@ public class SimulationService extends BaseService {
 		private AID[] getListOfAgents() {
 			return myContainer.agentNames();
 		}
+		private AID[] getListOfAgentsWithSensors() {
+			return localServiceActuator.getSensorAgents();
+		}
+		private void setAgentMigration(Vector<AID_Container> transferAgents) {
+			localServiceActuator.setMigration(transferAgents);
+		}
+		
 		private void putContainerDescription(ClientRemoteContainerReply crcReply) {
 			loadInfo.putContainerDescription(crcReply);
 		}
@@ -936,7 +1037,8 @@ public class SimulationService extends BaseService {
 			if (cmd==null) return true;
 
 			String cmdName = cmd.getName();
-//			System.out.println( "=> out " + cmdName + " - " + cmd.getService() + " - " + cmd.getService().getClass() );
+			//System.out.println( "=> out " + cmdName + " - " + cmd.getService() + " - " + cmd.getService().getClass() );	
+			
 			if (cmdName.equals(MessagingSlice.SET_PLATFORM_ADDRESSES) && myContainerMTPurl==null ) {
 				// --- Handle that the MTP-Address was created ------
 				Object[] params = cmd.getParams();
@@ -954,6 +1056,11 @@ public class SimulationService extends BaseService {
 				String containerName = id.getName();
 				loadInfo.containerLoads.remove(containerName);
 				loadInfo.containerLocations.remove(containerName);
+			} else if (cmdName.equals(AgentMobilityHelper.INFORM_MOVED)) {
+				Object[] params = cmd.getParams();
+				AID aid = (AID) params[0];
+//				ContainerID id = (ContainerID) params[1];
+//				localServiceActuator.setAgentMigrated(aid);
 			}
 			// Never veto other commands
 			return true;
@@ -977,6 +1084,7 @@ public class SimulationService extends BaseService {
 			if (cmd==null) return true;
 			String cmdName = cmd.getName();
 			//System.out.println( "=> in " + cmdName + " - " + cmd.getService());
+			
 			if (myMainContainer != null) {
 				if (cmdName.equals(AgentManagementSlice.INFORM_KILLED)) {
 					// If the dead agent was registered to some topic, deregister it

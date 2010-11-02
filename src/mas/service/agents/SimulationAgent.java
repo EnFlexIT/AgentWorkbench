@@ -1,8 +1,11 @@
-package mas.service;
+package mas.service.agents;
 
 import jade.core.Agent;
+import jade.core.Location;
 import jade.core.ServiceException;
 import jade.core.behaviours.OneShotBehaviour;
+import mas.service.SimulationService;
+import mas.service.SimulationServiceHelper;
 import mas.service.environment.EnvironmentModel;
 import mas.service.sensoring.ServiceSensor;
 
@@ -12,6 +15,7 @@ public class SimulationAgent extends Agent {
 
 	protected ServiceSensor mySensor;
 	protected EnvironmentModel myEnvironmentModel;
+	protected Location myNewLocation;
 
 	@Override
 	protected void setup() {
@@ -25,7 +29,8 @@ public class SimulationAgent extends Agent {
 	}
 	@Override
 	protected void afterMove() {
-		super.afterMove();
+		myNewLocation = null;
+		super.afterMove();		
 		this.sensorPlugIn();
 		this.checkAndActOnEnvironmentChanges();
 	}
@@ -49,7 +54,7 @@ public class SimulationAgent extends Agent {
 	/**
 	 * This Method plugs IN the service sensor
 	 */
-	public void sensorPlugIn() {
+	protected void sensorPlugIn() {
 		// --- Start the ServiceSensor ------------------------------
 		mySensor = new ServiceSensor(this);
 		// --- Register the sensor to the SimulationService ---------
@@ -63,7 +68,7 @@ public class SimulationAgent extends Agent {
 	/**
 	 * This Method plugs OUT the service sensor
 	 */
-	public void sensorPlugOut() {
+	protected void sensorPlugOut() {
 		// --- plug-out the Sensor ----------------------------------
 		try {
 			SimulationServiceHelper simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
@@ -77,17 +82,28 @@ public class SimulationAgent extends Agent {
 	 * This Method checks if the environment changed in the meantime.
 	 * If so, the method 'onEnvironmentStimulus' will be fired
 	 */
-	public void checkAndActOnEnvironmentChanges() {
+	protected void checkAndActOnEnvironmentChanges() {
 		// --- Has the EnvironmentModel changed? ----------------
 		try {
 			SimulationServiceHelper simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
 			EnvironmentModel tmpEnvMode =  simHelper.getEnvironmentModel();
-			if (tmpEnvMode.equals(myEnvironmentModel)==false) {
-				this.onEnvironmentStimulus();
-			}			
+			if (tmpEnvMode!=null) {
+				if (tmpEnvMode.equals(myEnvironmentModel)==false) {
+					this.onEnvironmentStimulus();	
+				}				
+			}
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * This method will be used by the ServiceActuator (class) to inform
+	 * this agent about its new migration location. 
+	 * @param newLocation
+	 */
+	public void setMigration(Location newLocation) {
+		myNewLocation = newLocation;
 	}
 	
 	/**
