@@ -27,6 +27,8 @@ import mas.onto.Ontologies4Project;
 
 import org.w3c.dom.Document;
 
+import common.ClassLoaderUtil;
+
 import sim.setup.SimulationSetups;
 
 @XmlRootElement public class Project extends Observable {
@@ -166,6 +168,23 @@ import sim.setup.SimulationSetups;
 			Application.setTitelAddition( "" );
 		}
 		Application.setStatusBar( "" );
+		// Clear CLASSBATH
+		for(String jarFile : projectResources)
+		{
+			try
+			{
+				jarFile=ClassLoaderUtil.adjustPathForLoadin(jarFile, getProjectFolder(), getProjectFolderFullPath());	
+			ClassLoaderUtil.removeFile(jarFile);
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+				return false;
+			}
+		}
+		
+		
+		
 		return true;
 	}
 	
