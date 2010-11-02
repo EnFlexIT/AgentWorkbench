@@ -51,15 +51,15 @@ public class SetupSimulation extends JPanel  {
 		gridBagConstraints.ipady = 0;
 		gridBagConstraints.weightx = 1.0;
 		gridBagConstraints.weighty = 1.0;
-		gridBagConstraints.insets = new Insets(10, 0, 0, 0);
+		gridBagConstraints.insets = new Insets(5, 0, 0, 0);
 		gridBagConstraints.gridx = 0;
 		this.setLayout(new GridBagLayout());
 		this.setSize(421, 239);
 		this.add(getJTabbedPaneSimSetup(), gridBagConstraints);
 		
 		// --- Die (optionalen) Karteikarten einblenden ----------
-		addProjectTab(Language.translate("Start-Konfiguration"), null, new StartSetup(currProject), Language.translate("Agenten-Konfiguration"));
-		addProjectTab(Language.translate("Umgebungskonfiguration"), null, new EnvironmentSetup(currProject), Language.translate("Umgebungskonfiguration"));
+		addProjectTab(Language.translate("Agenten-Start"), null, new StartSetup(currProject), Language.translate("Agenten-Konfiguration"));
+		addProjectTab(Language.translate("Simulationsumgebung"), null, new EnvironmentSetup(currProject), Language.translate("Umgebungskonfiguration"));
 		addProjectTab(Language.translate("JADE-Konfiguration"), null, new JadeSetup(currProject), Language.translate("JADE-Konfiguration"));
 		
 	}

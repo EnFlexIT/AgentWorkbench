@@ -4,6 +4,7 @@ import javax.swing.JSplitPane;
 
 import javax.swing.DropMode;
 import javax.swing.JFileChooser;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.JTabbedPane;
@@ -38,6 +39,9 @@ import mas.environment.ontology.PlaygroundObject;
 import mas.environment.ontology.StaticObject;
 import mas.environment.utils.SVGHelper;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.Point;
 import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetAdapter;
@@ -48,7 +52,7 @@ import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
 
-public class EnvironmentSetup extends JSplitPane implements ActionListener, Observer{
+public class EnvironmentSetup extends JPanel implements ActionListener, Observer{
 
 	private static final long serialVersionUID = 1L;
 	public static final String SETTINGS_KEY_ID = "id";
@@ -60,9 +64,11 @@ public class EnvironmentSetup extends JSplitPane implements ActionListener, Obse
 	public static final String TYPE_STRING_ACTIVE_OBJECT = "Agent";
 	public static final String TYPE_STRING_PASSIVE_OBJECT = "Passives Objekt";
 	public static final String TYPE_STRING_STATIC_OBJECT = "Hindernis";
-	public static final String TYPE_STRING_PLAYGROUND_OBJECT = "Teil-Umgebung";
+	public static final String TYPE_STRING_PLAYGROUND_OBJECT = "Teil-Umgebung";  //  @jve:decl-index=0:
 	public static final String TYPE_STRING_NO_TYPE = "Nicht definiert";
 	
+	private StartSetupSelector jPanelTopNew = null;
+	private JSplitPane jSplitPaneSetup = null;
 	private JSplitPane spControlls = null;
 	private JTree treeEnvironment = null;
 	private JTabbedPane tpSettings = null;
@@ -87,7 +93,7 @@ public class EnvironmentSetup extends JSplitPane implements ActionListener, Obse
 	 */
 	private String originalStyle = null;
 	
-	EnvironmentController controller = null;
+	EnvironmentController controller = null;  //  @jve:decl-index=0:
 	/**
 	 * This is the default constructor
 	 */
@@ -103,11 +109,27 @@ public class EnvironmentSetup extends JSplitPane implements ActionListener, Obse
 	 * @return void
 	 */
 	private void initialize() {
+		GridBagConstraints gridBagConstraints = new GridBagConstraints();
+		gridBagConstraints.fill = GridBagConstraints.BOTH;
+		gridBagConstraints.gridx = 0;
+		gridBagConstraints.gridy = 1;
+		gridBagConstraints.ipadx = 0;
+		gridBagConstraints.ipady = 0;
+		gridBagConstraints.weightx = 1.0;
+		gridBagConstraints.weighty = 1.0;
+		gridBagConstraints.insets = new Insets(0, 10, 5, 10);
+		
+		GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
+		gridBagConstraints1.gridx = 0;
+		gridBagConstraints1.fill = GridBagConstraints.HORIZONTAL;
+		gridBagConstraints1.gridy = 0;
+		
 		this.setSize(600, 400);
-		this.setDividerLocation(200);
-
-		this.setLeftComponent(getSpControlls());
-		this.setRightComponent(getSvgGUI());
+		this.setLayout(new GridBagLayout());
+		this.add(getJSplitPaneSetup(), gridBagConstraints);
+		
+		this.add(getJPanelTopNew(), gridBagConstraints1);
+		
 		
 		this.controller = new EnvironmentController(project);
 		controller.addObserver(this);
@@ -121,8 +143,29 @@ public class EnvironmentSetup extends JSplitPane implements ActionListener, Obse
 	}
 
 	/**
+	 * This method initializes jPanelTopNew	
+	 * @return javax.swing.JPanel	
+	 */
+	private JPanel getJPanelTopNew() {
+		if (jPanelTopNew == null) {
+			jPanelTopNew = new StartSetupSelector(this.project);
+		}
+		return jPanelTopNew;
+	}
+	
+	private JSplitPane getJSplitPaneSetup() {
+		if (jSplitPaneSetup == null) {
+			jSplitPaneSetup = new JSplitPane();	
+			jSplitPaneSetup.setSize(600, 400);
+			jSplitPaneSetup.setDividerLocation(200);
+			jSplitPaneSetup.setLeftComponent(getSpControlls());
+			jSplitPaneSetup.setRightComponent(getSvgGUI());
+		}
+		return jSplitPaneSetup;
+	}
+	
+	/**
 	 * This method initializes spControlls	
-	 * 	
 	 * @return javax.swing.JSplitPane	
 	 */
 	private JSplitPane getSpControlls() {

@@ -71,9 +71,8 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 		this.addProjectTab(Language.translate("Projekt-Ressourcen"), null, new gui.projectwindow.ProjectResources( CurrProject ), Language.translate("Projekt-Ressourcen"));
 
 		// --- Die (optionalen) Karteikarten einblenden ----------
-		this.addProjectTab(Language.translate("Ontologie"), null, new gui.projectwindow.OntologyTab(CurrProject), Language.translate("Kommunikation"));
-		this.addProjectTab(Language.translate("Basis-Agenten"), null, new gui.projectwindow.BaseAgents(CurrProject), Language.translate("Basis-Agenten"));
-//		this.addProjectTab(Language.translate("Umgebungs-Setup"), null, new mas.environment.guiComponents.EnvironmentControllerGUI(CurrProject), Language.translate("Umgebungs-Setup"));
+		this.addProjectTab(Language.translate("Projekt-Ontologie"), null, new gui.projectwindow.OntologyTab(CurrProject), Language.translate("Kommunikation"));
+		this.addProjectTab(Language.translate("Projekt-Agenten"), null, new gui.projectwindow.BaseAgents(CurrProject), Language.translate("Basis-Agenten"));
 		this.addProjectTab(Language.translate("Simulations-Setup"), null, new gui.projectwindow.SetupSimulation(CurrProject, this), Language.translate("Simulations-Setup"));
 		this.addProjectTab(Language.translate("Simulation"), null, new gui.projectwindow.Simulation(this.CurrProject), Language.translate("Simulation"));
 		this.addProjectTab(Language.translate("Simulationsmeldungen"), null, new gui.projectwindow.SimulationMessages(CurrProject), Language.translate("Simulationsmeldungen"));

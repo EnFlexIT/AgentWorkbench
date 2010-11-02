@@ -82,7 +82,6 @@ import sim.setup.SimulationSetups;
 	
 	@XmlElement(name="jadeConfiguration")
 	public PlatformJadeConfig JadeConfiguration = new PlatformJadeConfig();
-	private String JarFileName;
 	
 	
 	
@@ -331,29 +330,10 @@ import sim.setup.SimulationSetups;
 	}
 	
 	/**
-	 * @return the JarFileName
-	 */
-	public String getJarFileName() {
-		return JarFileName;
-	}
-	/**
-	 * @param mainPackage the mainPackage to set
-	 */
-	public void setJarFileName(String jarFileName) {
-		JarFileName = jarFileName;
-		ProjectUnsaved = true;
-		setChanged();
-		notifyObservers( "JarFileName" );
-	}
-	
-	/**
 	 * @param projectAgents the projectAgents to set
 	 */
 	public void filterProjectAgents() {
 		String jarPathName=null;
-		if(getJarFileName()!=null && !getJarFileName().equals("")){
-			jarPathName=getProjectFolderFullPath()+getJarFileName();
-		}
 		ProjectAgents = Application.JadePlatform.jadeGetAgentClasses( this.getMainPackage(), jarPathName);
 		setChanged();
 		notifyObservers("ProjectAgents");

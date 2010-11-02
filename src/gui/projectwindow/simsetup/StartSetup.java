@@ -121,7 +121,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		gridBagConstraints.gridy = 2;
 		gridBagConstraints.weightx = 0.0;
 		gridBagConstraints.weighty = 1.0;
-		gridBagConstraints.insets = new Insets(10, 10, 0, 10);
+		gridBagConstraints.insets = new Insets(10, 10, 5, 10);
 		gridBagConstraints.fill = GridBagConstraints.BOTH;
 		gridBagConstraints.gridx = 0;
 		this.setLayout(new GridBagLayout());
@@ -135,6 +135,17 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		this.add(getJPanelButtons(), gridBagConstraints6);
 		this.add(getJPanelTopNew(), gridBagConstraints18);
 		
+	}
+	
+	/**
+	 * This method initializes jPanelTopNew	
+	 * @return javax.swing.JPanel	
+	 */
+	private JPanel getJPanelTopNew() {
+		if (jPanelTopNew == null) {
+			jPanelTopNew = new StartSetupSelector(currProject);
+		}
+		return jPanelTopNew;
 	}
 	
 	/**
@@ -578,16 +589,4 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 
 	}
 
-	/**
-	 * This method initializes jPanelTopNew	
-	 * 	
-	 * @return javax.swing.JPanel	
-	 */
-	private JPanel getJPanelTopNew() {
-		if (jPanelTopNew == null) {
-			jPanelTopNew = new StartSetupSelector(currProject);
-		}
-		return jPanelTopNew;
-	}
-	
 }  //  @jve:decl-index=0:visual-constraint="20,8"
