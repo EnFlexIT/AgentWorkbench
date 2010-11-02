@@ -98,6 +98,66 @@ public class ClassLoaderUtil {
         ucp.set(ClassLoader.getSystemClassLoader(),  sun_misc_URLClassPath);
       
 }
+    
+    
+    public static void removeFile(String jarFile) throws RuntimeException, NoSuchFieldException, IllegalAccessException
+    {
+    URLClassLoader sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+    Field [] fields=null;
+    Class sysclass = URLClassLoader.class;
+    fields=sysclass.getDeclaredFields();
+    java.lang.reflect.Field ucp = sysclass.getDeclaredField("ucp");
+    ucp.setAccessible(true);
+    Object sun_misc_URLClassPath = ucp.get(sysLoader);
+    Class c=  sun_misc_URLClassPath.getClass();
+    fields=c.getDeclaredFields();
+    Field path=c.getDeclaredField("path");
+    path.setAccessible(true);
+          
+    Field urlsField=c.getDeclaredField("urls");
+    Object tmpObject=new Object();
+    urlsField.setAccessible(true);
+    tmpObject=path.get(sun_misc_URLClassPath);
+    Object stack=urlsField.get(sun_misc_URLClassPath);
+    Stack myStack= (Stack) stack;
+    ArrayList list= (ArrayList) tmpObject;
+    //System.out.println("Size:"+list.size());
+    ArrayList<URL> urls=new ArrayList<URL>();
+    for(int i=0;i<list.size();i++)
+    {
+       	
+    	URL url=(URL) list.get(i); 
+     	     		
+     		jarFile=jarFile.replace("\\", "/");
+     		jarFile="/"+jarFile;
+     		if(url.getPath().equals(jarFile))
+     		{
+     			
+     			urls.add(url);
+     		
+     		}
+     	
+    }
+     	
+    for(URL url: urls)
+    {
+      list.remove(url);
+      myStack.remove(url);
+    }
+
+     	
+    for(int i=0;i<list.size();i++)
+    {
+         URL url=(URL) list.get(i); 
+     	
+    }
+        
+        path.set(sun_misc_URLClassPath, list);
+        ucp.set(ClassLoader.getSystemClassLoader(),  sun_misc_URLClassPath);
+      
+}
+        
+    
         
     
 
