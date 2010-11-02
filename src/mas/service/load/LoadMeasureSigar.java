@@ -28,7 +28,7 @@ import org.hyperic.sigar.cmd.SigarCommandBase;
 /**
  * Display cpu information for each cpu found on the system.
  */
-public class LoadMeasureSigar extends SigarCommandBase {
+public class LoadMeasureSigar extends SigarCommandBase implements Cloneable {
 	
 	private CpuInfo[] cpuInfos;
 	private String vendor;
@@ -71,6 +71,19 @@ public class LoadMeasureSigar extends SigarCommandBase {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+    }
+    
+    /**
+     * returns a copy of the current object
+     */
+    @Override
+    protected LoadMeasureSigar clone() {
+    	try {
+			return (LoadMeasureSigar) super.clone();
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+		}
+		return null;
     }
     
 	public void measureLoadOfSystem() throws Exception {

@@ -47,7 +47,7 @@ public class LoadMeasureAvgSigar {
 		if (measureList.size() >= useAVGCounter) {
 			measureList.remove(0);
 		}
-		measureList.add(currentLoadMeasure); // add new object in the list
+		measureList.add(currentLoadMeasure.clone()); // add new object in the list
 		this.calculateLoadAverage();
 	}
 	

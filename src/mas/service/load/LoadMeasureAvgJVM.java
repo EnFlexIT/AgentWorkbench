@@ -5,7 +5,6 @@ import java.util.Hashtable;
 
 public class LoadMeasureAvgJVM {
 
-
 	private Integer useAVGCounter = 0;//maximum length of List
 	private ArrayList<LoadMeasureJVM> measureList = new ArrayList<LoadMeasureJVM>();
 	
@@ -35,7 +34,7 @@ public class LoadMeasureAvgJVM {
 		if (measureList.size() >= useAVGCounter) {
 			measureList.remove(0);
 		}
-		measureList.add(currentLoadMeasure); //add new object in the list
+		measureList.add(currentLoadMeasure.clone()); //add new object in the list
 		this.calculateLoadAverage();
 	}
 	

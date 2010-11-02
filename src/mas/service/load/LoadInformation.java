@@ -4,9 +4,7 @@ import jade.core.AID;
 import jade.core.Location;
 
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.Vector;
-
 
 import mas.service.distribution.ontology.BenchmarkResult;
 import mas.service.distribution.ontology.ClientRemoteContainerReply;
@@ -29,7 +27,8 @@ public class LoadInformation  {
 	public Hashtable<String, NodeDescription> containerDescription = new Hashtable<String, NodeDescription>();
 	public Hashtable<String, PlatformLoad> containerLoads = new Hashtable<String, PlatformLoad>(); 
 	public Hashtable<String, Location> containerLocations = new Hashtable<String, Location>();
-	public AgentMap agentLocations = new AgentMap();
+	public LoadAgentMap agentLocations = new LoadAgentMap();
+	public Vector<AID> sensorAgents = null;
 	
 	private Hashtable<String, Container2Wait4> newContainers2Wait4 = new Hashtable<String, Container2Wait4>();
 	
@@ -95,7 +94,7 @@ public class LoadInformation  {
 	 * the agent in relation to it's locations etc.
 	 */
 	public void resetAIDs4Container() {
-		agentLocations = new AgentMap();		
+		agentLocations = new LoadAgentMap();		
 	}
 	/**
 	 * Method to put the Agent-AIDs which are coming from the 
@@ -103,11 +102,20 @@ public class LoadInformation  {
 	 * @param aid
 	 */
 	public void putAIDs4Container(String containerName, AID[] aid) {
+		
+		boolean hasSensor = false;
+		
 		if (aid.length==0) {
-			agentLocations.put(containerName, null);
+			agentLocations.put(containerName, null, false);
 		} else {
 			for (int i = 0; i < aid.length; i++) {
-				agentLocations.put(containerName, aid[i]);			
+				// --- ServiceSensor available? -----
+				if (sensorAgents.contains(aid[i])==true) {
+					hasSensor = true;
+				} else {
+					hasSensor = false;
+				}
+				agentLocations.put(containerName, aid[i], hasSensor);			
 			}
 		}
 	}
@@ -118,137 +126,6 @@ public class LoadInformation  {
 	public void countAIDs4Container() {
 		agentLocations.doCountings();
 	}
-	
-	// --------------------------------------------------------------
-	// --- Sub-Class AgentMap --- S T A R T -------------------------
-	// --------------------------------------------------------------
-	public class AgentMap {
-	
-		private Hashtable<String, AID_Container> agentsAtPlatform = new Hashtable<String, AID_Container>();
-		private Hashtable<String, AID_Container_List> agentsAtContainer = new Hashtable<String, AID_Container_List>();
-		
-		public Integer noAgentsAtPlatform = null;
-		public Hashtable<String, Integer> noAgentsAtContainer = null;
-		
-		/**
-		 * Constructor(s) of this class
-		 */
-		public AgentMap() {
-		}
-		
-		/**
-		 * This method counts all of the agents at the platform and 
-		 * the agents, which are located at one specific container  
-		 */
-		public void doCountings() {
-			
-			noAgentsAtPlatform = agentsAtPlatform.size();
-			noAgentsAtContainer = new Hashtable<String, Integer>();
-			
-			Iterator<String> it = agentsAtContainer.keySet().iterator();
-			while (it.hasNext()) {
-				String containerName = it.next();
-				AID_Container_List aidList = agentsAtContainer.get(containerName);
-				if (aidList==null) {
-					noAgentsAtContainer.put(containerName,0);	
-				} else {
-					noAgentsAtContainer.put(containerName,aidList.size());
-				}
-			} // --- end while ---
-		}
-		
-		/**
-		 * Which Agents are available at the platform
-		 * @param aid
-		 */
-		public void put(String containerName, AID aid) {
-			if (aid==null) {
-				this.put2AgentsAtContainer(containerName, null);
-			} else {
-				AID_Container cAID = new AID_Container(aid);
-				cAID.setContainerName(containerName);
-				// --- Put into the list of the Platform ------
-				this.agentsAtPlatform.put(aid.getLocalName(), cAID);
-				// --- Put also into the List for Containers --
-				this.put2AgentsAtContainer(containerName, cAID);
-			}
-		}
-		/**
-		 * Which Agents are in which container
-		 * @param containeName
-		 * @param aid
-		 */
-		private void put2AgentsAtContainer(String containerName, AID_Container cAID) {
-			AID_Container_List agentList = agentsAtContainer.get(containerName);
-			if (agentList==null) {
-				agentList = new AID_Container_List(); 
-			}
-			if (cAID!=null) {
-				agentList.put(cAID.getAID().getLocalName(), cAID);	
-			}
-			agentsAtContainer.put(containerName, agentList);
-		}
-		
-		// ----------------------------------------------------------
-		// --- Sub-Class AID_Container_List --- S T A R T -----------
-		// ----------------------------------------------------------
-		private class AID_Container_List extends Hashtable<String, AID_Container> {
-			private static final long serialVersionUID = -575499631355769830L;
-			public AID_Container_List() {
-				super();
-			}
-		}
-		// ----------------------------------------------------------
-		// --- Sub-Class AID_Container_List --- E N D ---------------
-		// ----------------------------------------------------------
-		
-		// ----------------------------------------------------------
-		// --- Sub-Class AID_Container --- S T A R T ----------------
-		// ----------------------------------------------------------
-		public class AID_Container {
-			
-			private static final long serialVersionUID = 3077331688501516668L;
-			private AID agentAID = null;
-			private String containerName = null;
-				
-			public AID_Container(AID aid) {
-				setAID(aid);
-			}
-			/**
-			 * @param agentAID the agentAID to set
-			 */
-			public void setAID(AID agentAID) {
-				this.agentAID = agentAID;
-			}
-			/**
-			 * @return the agentAID
-			 */
-			public AID getAID() {
-				return this.agentAID;
-			}
-			/**
-			 * @param containerName the containerName to set
-			 */
-			public void setContainerName(String containerName) {
-				this.containerName = containerName;
-			}
-			/**
-			 * @return the containerName
-			 */
-			public String getContainerName() {
-				return this.containerName;
-			}
-			
-		}
-		// ----------------------------------------------------------
-		// --- Sub-Class AID_Container --- E N D E ------------------
-		// ----------------------------------------------------------
-		
-	}
-	// --------------------------------------------------------------
-	// --- Sub-Class AgentMap --- E N D -----------------------------
-	// --------------------------------------------------------------
-	
 	
 	// --------------------------------------------------------------
 	// --- Sub-Class NodeDescription --- S T A R T ------------------

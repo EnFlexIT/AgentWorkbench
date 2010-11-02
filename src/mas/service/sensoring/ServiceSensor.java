@@ -1,11 +1,12 @@
 package mas.service.sensoring;
 
-import mas.service.SimulationAgent;
+import jade.core.Location;
+import mas.service.agents.SimulationAgent;
 import mas.service.environment.EnvironmentModel;
 
 public class ServiceSensor {
 
-	private SimulationAgent myAgent;
+	protected SimulationAgent myAgent;
 	
 	public ServiceSensor(SimulationAgent agent) {
 		myAgent = agent;		
@@ -15,5 +16,8 @@ public class ServiceSensor {
 		myAgent.setEnvironmentModel(environmentModel, aSynchron);
 	}
 	
+	public void putMigrationInfo(Location newLocation) {
+		myAgent.setMigration(newLocation);
+	}
 	
 }

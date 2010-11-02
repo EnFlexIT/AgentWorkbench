@@ -11,7 +11,7 @@ public class LoadMeasureThread extends Thread {
 	
 	public static String threadName = "Agent.GUI - Load Monitoring";
 	private int localmsInterval = 500;
-	private int localuseN4AvgCount = 10;
+	private int localuseN4AvgCount = 5;
 	
 	private static boolean thisThreadExecuted = false;
 	

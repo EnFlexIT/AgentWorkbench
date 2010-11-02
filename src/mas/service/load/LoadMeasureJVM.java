@@ -6,7 +6,7 @@ import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
 import java.util.Hashtable;
 
-public class LoadMeasureJVM{
+public class LoadMeasureJVM implements Cloneable {
 
 	private static final long serialVersionUID = -5202880756096638141L;
 	
@@ -42,6 +42,19 @@ public class LoadMeasureJVM{
     	}
     }
 	
+    /**
+     * returns a copy of the current object
+     */
+    @Override
+    protected LoadMeasureJVM clone() {
+    	try {
+			return (LoadMeasureJVM) super.clone();
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+		}
+		return null;
+    }
+    
     /**
      * This method measures the current load of th system 
      */

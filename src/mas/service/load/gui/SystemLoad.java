@@ -19,7 +19,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 
-import mas.service.distribution.agents.LoadAgent;
+import mas.service.agents.LoadAgent;
 import application.Application;
 import application.Language;
 
