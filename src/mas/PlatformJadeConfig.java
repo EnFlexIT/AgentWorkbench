@@ -55,6 +55,10 @@ public class PlatformJadeConfig implements Serializable {
 	private final String SERVICE_UDPNodeMonitoringServ = "jade.core.nodeMonitoring.UDPNodeMonitoringService;";
 	private final String SERVICE_BEManagementService = "jade.imtp.leap.nio.BEManagementService;";
 	
+	// --- Agent.GUI-Services -------------------------------------------------
+	private final String SERVICE_SimulationService = "mas.service.SimulationService;";
+	private final String SERVICE_EnvironmentProviderService = "mas.environment.provider.EnvironmentProviderService;";
+	
 	// --- Add-On-Services ----------------------------------------------------
 	private final String SERVICE_InterPlatformMobilityService = "jade.core.migration.InterPlatformMobilityService;";
 	
@@ -132,8 +136,6 @@ public class PlatformJadeConfig implements Serializable {
 		while (it.hasNext()) {
 			serviceListString += it.next();
 		}
-		//TODO: bald mal wieder rausschmeissen ...
-		serviceListString +="mas.service.SimulationService;";
 		return serviceListString;
 	}
 	/**
@@ -264,6 +266,24 @@ public class PlatformJadeConfig implements Serializable {
 			this.useServiceList.remove(SERVICE_BEManagementService);
 		}
 	}
+
+	// --- Agent.GUI-Services --------------------------------------------------
+	public void runSimulationService(boolean runService) {
+		if (runService==true) {
+			this.useServiceList.add(SERVICE_SimulationService);	
+		}else {
+			this.useServiceList.remove(SERVICE_SimulationService);
+		}
+	}
+	public void runEnvironmentProviderService(boolean runService) {
+		if (runService==true) {
+			this.useServiceList.add(SERVICE_EnvironmentProviderService);	
+		}else {
+			this.useServiceList.remove(SERVICE_EnvironmentProviderService);
+		}
+	}
+
+	
 	// --- Add-On-Services ----------------------------------------------------
 	public void runInterPlatformMobilityService(boolean runService) {
 		if (runService==true) {
@@ -301,6 +321,13 @@ public class PlatformJadeConfig implements Serializable {
 	}
 	public boolean isBEManagementService() {
 		return this.useServiceList.contains(SERVICE_BEManagementService);	
+	}
+	// --- Agent.GUI-Services -------------------------------------------------
+	public boolean isSimulationService() {
+		return this.useServiceList.contains(SERVICE_SimulationService);	
+	}
+	public boolean isEnvironmentProviderService() {
+		return this.useServiceList.contains(SERVICE_EnvironmentProviderService);
 	}
 	// --- Add-On-Services ----------------------------------------------------
 	public boolean isInterPlatformMobilityService() {

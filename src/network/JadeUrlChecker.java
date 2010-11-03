@@ -3,6 +3,8 @@ package network;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import application.Application;
+
 public class JadeUrlChecker {
 
 	private InetAddress currAddress = null;
@@ -24,8 +26,10 @@ public class JadeUrlChecker {
 			if (currAddress.equals(addressLocalAlt)) {
 				currAddress = addressLocal;
 			}
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
+		} catch (UnknownHostException err) {
+			//err.printStackTrace();
+			System.err.println( "[" + Application.RunInfo.AppTitel() + "] Error while try to resolve the address '" + err.getLocalizedMessage() + "'. Please check your Agent.GUI - start options." );
+			currURL = null;
 		}
 		
 	}
@@ -69,25 +73,33 @@ public class JadeUrlChecker {
 	}
 	
 	public String getJADEurl(){
-		if ( currPort.equals(-1)==false) {
+		if ( currAddress!=null && currPort.equals(-1)==false) {
 			return currAddress.getHostAddress() + ":" + currPort + "/JADE";	
 		} else {
 			return null;
 		}
 	}
 	public String getJADEurl4MTP() {
-		if ( currPort4MTP.equals(-1)==false) {
+		if ( currAddress!=null && currPort4MTP.equals(-1)==false) {
 			return "http://" + currAddress.getHostAddress() + ":" + currPort4MTP + "/acc";	
 		} else {
 			return null;
 		}
 	}
 	public String getHostIP() {
-		return currAddress.getHostAddress();
+		if (currAddress==null) {
+			return null;
+		} else {
+			return currAddress.getHostAddress();
+		}
 	}
 
 	public String getHostName() {
-		return currAddress.getHostName();
+		if (currAddress==null) {
+			return null;
+		} else {
+			return currAddress.getHostName();	
+		}		
 	}
 	
 	public Integer getPort() {

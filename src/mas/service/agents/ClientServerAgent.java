@@ -90,7 +90,13 @@ public class ClientServerAgent extends Agent {
 			myOS = myCRCreply.getRemoteOS();
 			
 		} catch (ServiceException e) {
-			e.printStackTrace();
+			// --- problems to get the SimulationsService ! ---
+			if (simHelper==null) {
+				this.doDelete();
+				return;
+			} else {
+				e.printStackTrace();	
+			}
 		}
 		
 		// --- Define Main-Platform-Info ------------------
@@ -101,8 +107,11 @@ public class ClientServerAgent extends Agent {
 		mainPlatform.setHttp4mtp(myURL.getJADEurl4MTP());
 		
 		// --- Define Receiver of local Status-Info -------
-		mainPlatformAgent = new AID("server.master" + "@" + myURL.getJADEurl(), AID.ISGUID );
-		mainPlatformAgent.addAddresses(mainPlatform.getHttp4mtp());
+		String jadeURL = myURL.getJADEurl();
+		if (jadeURL!=null) {
+			mainPlatformAgent = new AID("server.master" + "@" + myURL.getJADEurl(), AID.ISGUID );
+			mainPlatformAgent.addAddresses(mainPlatform.getHttp4mtp());	
+		}		
 		
 		// --- Set myTime ---------------------------------
 		myPlatformTime.setTimeStampAsString( Long.toString(System.currentTimeMillis()) ) ;
@@ -139,7 +148,9 @@ public class ClientServerAgent extends Agent {
 		super.takeDown();
 		
 		// --- Stop Parallel-Behaviour --------------------
-		this.removeBehaviour(parBehaiv);
+		if (parBehaiv!=null) {
+			this.removeBehaviour(parBehaiv);
+		}
 		
 		// --- Send 'Unregister'-Information --------------
 		ClientUnregister unReg = new ClientUnregister();
@@ -149,6 +160,11 @@ public class ClientServerAgent extends Agent {
 
 	
 	private boolean sendMessage2MainServer(Concept agentAction) {
+		
+		// --- In case that we have no address ------------
+		if (mainPlatformAgent==null) {
+			return false;
+		}
 		
 		// --- Define a new action ------------------------
 		Action act = new Action();

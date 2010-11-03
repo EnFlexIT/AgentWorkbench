@@ -25,10 +25,12 @@ Einfaches Demo-Projekt fr die Visualisierung</projectDescription>
     <jadeConfiguration>
         <start4Sim>true</start4Sim>
         <useAppDefaults>false</useAppDefaults>
-        <useLocalPort>1101</useLocalPort>
+        <useLocalPort>1099</useLocalPort>
         <serviceList>
             <service>jade.core.event.NotificationService;</service>
             <service>mas.environment.provider.EnvironmentProviderService;</service>
+            <service>jade.core.mobility.AgentMobilityService;</service>
+            <service>mas.service.SimulationService;</service>
         </serviceList>
     </jadeConfiguration>
     <mainPackage>sma</mainPackage>

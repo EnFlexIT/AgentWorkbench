@@ -397,12 +397,17 @@ public class GlobalInfo {
 	 * @return instance of class 'PlatformJadeConfig'
 	 */
 	public PlatformJadeConfig getJadeDefaultPlatformConfig() {
-		// --- Here the default-values can be configured -------------
+		
+		// --- Here the default-values can be configured ------------
 		PlatformJadeConfig jadeConfig = new PlatformJadeConfig();
 		jadeConfig.runNotificationService(true);
-		jadeConfig.runTopicManagementService(true);
-		jadeConfig.runAgentMobilityService(true);
 		jadeConfig.setLocalPort(localeJadeLocalPort);
+		
+		if (Application.isServer==false) {
+			// --- Running as application ---------------------------
+			jadeConfig.runAgentMobilityService(true);
+			jadeConfig.runSimulationService(true);
+		}
 		return jadeConfig;
 	}
 	/**
