@@ -4,6 +4,8 @@ import common.ClassLoaderUtil;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
 
+import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -18,10 +20,12 @@ import java.util.Properties;
 import java.util.Vector;
 
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.ListModel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import application.Application;
@@ -42,6 +46,8 @@ public class ProjectResources extends JPanel implements ActionListener, Observer
 	 DefaultListModel myModel=null;
 
 	private JButton jButton = null;
+
+	private JPanel jPanel = null;
 	
 	/**
 	 * This is the default constructor
@@ -52,6 +58,14 @@ public class ProjectResources extends JPanel implements ActionListener, Observer
 		initialize();
 		myModel=new DefaultListModel();
 		jListResources.setModel(myModel);
+		
+		
+
+		
+		jPanel.add(this.jButtonAdd);
+		jPanel.add(this.jButtonRemove);
+		jPanel.add(this.jButton);
+		
 	;
 	}
 	private String adjustString(String path)
@@ -128,8 +142,11 @@ public class ProjectResources extends JPanel implements ActionListener, Observer
 	 * @return void
 	 */
 	private void initialize() {
+		GridBagConstraints gridBagConstraints12 = new GridBagConstraints();
+		gridBagConstraints12.gridx = 3;
+		gridBagConstraints12.gridy = 0;
 		GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
-		gridBagConstraints11.gridx = 3;
+		gridBagConstraints11.gridx = 4;
 		gridBagConstraints11.gridy = 0;
 		GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
 		gridBagConstraints2.gridx = 2;
@@ -150,6 +167,7 @@ public class ProjectResources extends JPanel implements ActionListener, Observer
 		this.add(getJButtonAdd(), gridBagConstraints1);
 		this.add(getJButtonRemove(), gridBagConstraints2);
 		this.add(getJButton(), gridBagConstraints11);
+		this.add(getJPanel(), gridBagConstraints12);
 	}
 
 	private Vector<String> handleDirectories(File dir)
@@ -221,7 +239,9 @@ public class ProjectResources extends JPanel implements ActionListener, Observer
 	private JButton getJButtonAdd() {
 		if (jButtonAdd == null) {
 			jButtonAdd = new JButton();
-			jButtonAdd.setText("Add");
+			jButtonAdd.setPreferredSize(new Dimension(45, 26));
+			jButtonAdd.setIcon(new ImageIcon(getClass().getResource("/img/ListPlus.png")));
+			jButtonAdd.setToolTipText("Add");
 			jButtonAdd.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 				
@@ -239,10 +259,23 @@ public class ProjectResources extends JPanel implements ActionListener, Observer
 					for(String name: names)
 					{
 					myModel.addElement(name);
+				
+					name=ClassLoaderUtil.adjustPathForLoadin(name, currProjet.getProjectFolder(), currProjet.getProjectFolderFullPath());
+					
+					try
+					{
+					ClassLoaderUtil.addFile(name);
+					}
+					catch(Exception ex)
+					{
+						ex.printStackTrace();
+					
+					}
 					}
 					// myModel.addElement(names);
 					
 					 jListResources.updateUI();
+					
 					 currProjet.setChangedAndNotify("projectResources");
 					
 					
@@ -260,16 +293,23 @@ public class ProjectResources extends JPanel implements ActionListener, Observer
 	private JButton getJButtonRemove() {
 		if (jButtonRemove == null) {
 			jButtonRemove = new JButton();
-			jButtonRemove.setText("Remove");
+			
+			jButtonRemove.setIcon(new ImageIcon(getClass().getResource("/img/ListMinus.png")));
+			jButtonRemove.setPreferredSize(new Dimension(45, 26));
+			jButtonRemove.setToolTipText("Remove");
+
 			jButtonRemove.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-				System.out.println( jListResources.getSelectedValue());
-				Object [] values= jListResources.getSelectedValues();
+				//System.out.println( jListResources.getSelectedValue());
+				
+				
 				//Remove from the classpath
-				if(values!=null)
+				Object [] values= jListResources.getSelectedValues();
+				for(Object file : values)
 				{
-					for(Object file: values)
-					{
+					
+					
+
 						myModel.removeElement(file);
 						currProjet.projectResources.remove(file);
 						String jarFile=(String) file;
@@ -289,19 +329,142 @@ public class ProjectResources extends JPanel implements ActionListener, Observer
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
-						
-						
-					}
-					 currProjet.setChangedAndNotify("projectResources");
 				}
+			}
 				
 				
-				}
+				
+				
 			});
 		}
 		return jButtonRemove;
 	}
 	
+	
+	
+	public void remove()
+	{
+		
+		
+	    int size=currProjet.projectResources.size();
+	    System.out.println("Size:"+size);
+		for(int i=0;i<myModel.size();i++)
+		{
+			
+			Object file=myModel.get(i);
+
+				//myModel.removeElement(file);
+				//currProjet.projectResources.remove(file);
+				String jarFile=(String) file;
+				
+				jarFile=ClassLoaderUtil.adjustPathForLoadin(jarFile, currProjet.getProjectFolder(), currProjet.getProjectFolderFullPath());
+				
+				
+				try {
+					ClassLoaderUtil.removeFile(jarFile);
+				} catch (RuntimeException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (NoSuchFieldException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IllegalAccessException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
+				
+			}
+			 currProjet.setChangedAndNotify("projectResources");
+		}
+		
+		
+		
+	
+	
+	
+	
+	public void load()
+	{
+		
+		try {
+			
+			
+		    int size=myModel.size();
+		
+			String [] res=new String[size];
+			
+			for(int index=0;index<size;index++)
+			{
+				res[index]= myModel.getElementAt(index).toString();
+				System.out.println("File:"+res[index]);
+				
+			}
+			
+		
+			Vector<String> allClasses=new Vector<String>();
+		
+		    
+			ClassLoaderUtil.addFile(Application.RunInfo.PathJade(true));
+			for(String selectedJar: res)
+			{
+			
+			File file = null;
+		
+			selectedJar=ClassLoaderUtil.adjustPathForLoadin(selectedJar, currProjet.getProjectFolder(), currProjet.getProjectFolderFullPath());
+			file=new File(selectedJar);	
+			URL url=file.toURI().toURL();
+			if(url.getPath().contains(".jar"))
+			{
+				System.out.println(file.getAbsoluteFile());
+				ClassLoaderUtil.addFile(file.getAbsoluteFile());
+			
+			Vector<String> classNames=ClassLoaderUtil.getClassNamesFromJar(url);
+			allClasses.addAll(classNames);
+			}
+			}
+			
+		
+		
+			
+			
+			  Application.JadePlatform.jadeStart();
+		   AgentContainer container=Application.JadePlatform.MASmc;
+	
+		   //Application.JadePlatform.jadeAgentStart(className, className);
+			//Application.JadePlatform.jadeAgentStart(className, c, null, container.getContainerName());
+		
+		   Vector<AgentController> controller=ClassLoaderUtil.loadAgentsIntoContainer(allClasses, container);
+	      System.out.println("Load Agend Into Container");
+	
+		
+		
+		  // System.out.println("ClassPath:"+Application.RunInfo.getClassPathEntries());
+		   //Application.RunInfo.getJadeDefaultPlatformConfig().
+		   
+		   for(AgentController control: controller)
+		   {
+			  
+			   if(control.getName().contains("StartAgent"))
+			   { 
+				 
+				  // control.start();
+			   }
+		   }
+				
+			
+		
+	
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			  System.out.println("Fehler:"+e1.getMessage());
+			  e1.printStackTrace();
+		} catch (Throwable e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}		
+		
+	}
 	
 		
 	/**
@@ -313,91 +476,20 @@ public class ProjectResources extends JPanel implements ActionListener, Observer
 	private JButton getJButton() {
 		if (jButton == null) {
 			jButton = new JButton();
-			jButton.setText("Load");
+			
+			jButton.setIcon(new ImageIcon(getClass().getResource("/img/Refresh.png")));
+			jButton.setPreferredSize(new Dimension(39, 26));
+			jButton.setToolTipText("Refresh");
+			
+			
 			jButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					String [] res=new String[jListResources.getSelectedValues().length];
-					
-					for(Object obj:jListResources.getSelectedValues())
-					{
-						int index=0;
-						String test=obj.toString();
-						res[index]=test;
-						index++;
-					}
-					
+					Application.MainWindow.setCursor( Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR) );
+					remove();				
+				   load();					
+					Application.MainWindow.setCursor( Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 				
 				
-					
-
-				
-					
-					try {
-						//D:\\JadeAgent\\AgentGUI\\projects\\bla\\
-						
-					
-						
-					
-						Vector<String> allClasses=new Vector<String>();
-					
-					    
-						ClassLoaderUtil.addFile(Application.RunInfo.PathJade(true));
-						for(String selectedJar: res)
-						{
-						
-						File file = null;
-					
-						selectedJar=ClassLoaderUtil.adjustPathForLoadin(selectedJar, currProjet.getProjectFolder(), currProjet.getProjectFolderFullPath());
-						file=new File(selectedJar);	
-						URL url=file.toURI().toURL();
-						if(url.getPath().contains(".jar"))
-						{
-						ClassLoaderUtil.addFile(file.getAbsoluteFile());
-						
-						Vector<String> classNames=ClassLoaderUtil.getClassNamesFromJar(url);
-						allClasses.addAll(classNames);
-						}
-						}
-						
-						Application.JadePlatform.jadeStart();
-					
-						
-						
-						
-					   AgentContainer container=Application.JadePlatform.MASmc;
-				
-					   //Application.JadePlatform.jadeAgentStart(className, className);
-						//Application.JadePlatform.jadeAgentStart(className, c, null, container.getContainerName());
-					
-					   Vector<AgentController> controller=ClassLoaderUtil.loadAgentsIntoContainer(allClasses, container);
-				     
-					  
-					
-					
-					  // System.out.println("ClassPath:"+Application.RunInfo.getClassPathEntries());
-					   //Application.RunInfo.getJadeDefaultPlatformConfig().
-					   
-					   for(AgentController control: controller)
-					   {
-						  
-						   if(control.getName().contains("StartAgent"))
-						   { 
-							 
-							  // control.start();
-						   }
-					   }
-							
-						
-					
-				
-					} catch (Exception e1) {
-						// TODO Auto-generated catch block
-						  System.out.println("Fehler:"+e1.getMessage());
-						  e1.printStackTrace();
-					} catch (Throwable e2) {
-						// TODO Auto-generated catch block
-						e2.printStackTrace();
-					}	
 					
 				
 					
@@ -405,6 +497,18 @@ public class ProjectResources extends JPanel implements ActionListener, Observer
 			});
 		}
 		return jButton;
+	}
+	/**
+	 * This method initializes jPanel	
+	 * 	
+	 * @return javax.swing.JPanel	
+	 */
+	private JPanel getJPanel() {
+		if (jPanel == null) {
+			jPanel = new JPanel();
+			jPanel.setLayout(new GridBagLayout());
+		}
+		return jPanel;
 	}
 	
 
