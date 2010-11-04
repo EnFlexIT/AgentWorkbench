@@ -8,11 +8,11 @@ import jade.core.Service;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import agentgui.simulationService.distribution.ontology.ClientRemoteContainerReply;
-import agentgui.simulationService.distribution.ontology.PlatformLoad;
-import agentgui.simulationService.distribution.ontology.RemoteContainerConfig;
 import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.load.LoadAgentMap.AID_Container;
+import agentgui.simulationService.ontology.ClientRemoteContainerReply;
+import agentgui.simulationService.ontology.PlatformLoad;
+import agentgui.simulationService.ontology.RemoteContainerConfig;
 
 
 public interface SimulationServiceSlice extends Service.Slice {

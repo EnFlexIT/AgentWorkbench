@@ -2,7 +2,7 @@ package agentgui.simulationService.load;
 
 import java.util.Vector;
 
-import agentgui.simulationService.distribution.ontology.PlatformLoad;
+import agentgui.simulationService.ontology.PlatformLoad;
 
 
 public class LoadMerger {

@@ -1,6 +1,6 @@
 package agentgui.core.agents.behaviour;
 
-import agentgui.simulationService.distribution.ontology.ShowMonitorGUI;
+import agentgui.simulationService.ontology.ShowMonitorGUI;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.basic.Action;
 import jade.core.AID;

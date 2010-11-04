@@ -1,4 +1,4 @@
-package agentgui.simulationService.distribution.ontology;
+package agentgui.simulationService.ontology;
 
 
 import jade.content.*;
@@ -8,20 +8,9 @@ import jade.core.*;
 /**
 * Protege name: PlatformPerformance
 * @author ontology bean generator
-* @version 2010/10/20, 17:02:20
+* @version 2010/11/4, 20:38:59
 */
 public class PlatformPerformance implements Concept {
-
-   /**
-* Protege name: cpu_numberOf
-   */
-   private int cpu_numberOf;
-   public void setCpu_numberOf(int value) { 
-    this.cpu_numberOf=value;
-   }
-   public int getCpu_numberOf() {
-     return this.cpu_numberOf;
-   }
 
    /**
 * Protege name: memory_totalMB
@@ -46,6 +35,17 @@ public class PlatformPerformance implements Concept {
    }
 
    /**
+* Protege name: cpu_speedMhz
+   */
+   private int cpu_speedMhz;
+   public void setCpu_speedMhz(int value) { 
+    this.cpu_speedMhz=value;
+   }
+   public int getCpu_speedMhz() {
+     return this.cpu_speedMhz;
+   }
+
+   /**
 * Protege name: cpu_vendor
    */
    private String cpu_vendor;
@@ -57,14 +57,14 @@ public class PlatformPerformance implements Concept {
    }
 
    /**
-* Protege name: cpu_speedMhz
+* Protege name: cpu_numberOf
    */
-   private int cpu_speedMhz;
-   public void setCpu_speedMhz(int value) { 
-    this.cpu_speedMhz=value;
+   private int cpu_numberOf;
+   public void setCpu_numberOf(int value) { 
+    this.cpu_numberOf=value;
    }
-   public int getCpu_speedMhz() {
-     return this.cpu_speedMhz;
+   public int getCpu_numberOf() {
+     return this.cpu_numberOf;
    }
 
 }

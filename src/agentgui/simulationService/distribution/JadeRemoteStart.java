@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 
 import agentgui.core.application.Application;
-import agentgui.simulationService.distribution.ontology.RemoteContainerConfig;
+import agentgui.simulationService.ontology.RemoteContainerConfig;
 
 public class JadeRemoteStart extends Thread {
 

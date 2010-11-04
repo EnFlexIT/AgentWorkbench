@@ -1,4 +1,4 @@
-package agentgui.simulationService.distribution.ontology;
+package agentgui.simulationService.ontology;
 
 
 import jade.content.*;
@@ -8,9 +8,20 @@ import jade.core.*;
 /**
 * Protege name: ClientRemoteContainerReply
 * @author ontology bean generator
-* @version 2010/10/20, 17:02:20
+* @version 2010/11/4, 20:38:59
 */
 public class ClientRemoteContainerReply implements AgentAction {
+
+   /**
+* Protege name: remoteAddress
+   */
+   private PlatformAddress remoteAddress;
+   public void setRemoteAddress(PlatformAddress value) { 
+    this.remoteAddress=value;
+   }
+   public PlatformAddress getRemoteAddress() {
+     return this.remoteAddress;
+   }
 
    /**
 * Protege name: remoteContainerName
@@ -35,6 +46,17 @@ public class ClientRemoteContainerReply implements AgentAction {
    }
 
    /**
+* Protege name: remotePerformance
+   */
+   private PlatformPerformance remotePerformance;
+   public void setRemotePerformance(PlatformPerformance value) { 
+    this.remotePerformance=value;
+   }
+   public PlatformPerformance getRemotePerformance() {
+     return this.remotePerformance;
+   }
+
+   /**
 * Protege name: remoteBenchmarkResult
    */
    private BenchmarkResult remoteBenchmarkResult;
@@ -54,28 +76,6 @@ public class ClientRemoteContainerReply implements AgentAction {
    }
    public OSInfo getRemoteOS() {
      return this.remoteOS;
-   }
-
-   /**
-* Protege name: remotePerformance
-   */
-   private PlatformPerformance remotePerformance;
-   public void setRemotePerformance(PlatformPerformance value) { 
-    this.remotePerformance=value;
-   }
-   public PlatformPerformance getRemotePerformance() {
-     return this.remotePerformance;
-   }
-
-   /**
-* Protege name: remoteAddress
-   */
-   private PlatformAddress remoteAddress;
-   public void setRemoteAddress(PlatformAddress value) { 
-    this.remoteAddress=value;
-   }
-   public PlatformAddress getRemoteAddress() {
-     return this.remoteAddress;
    }
 
 }

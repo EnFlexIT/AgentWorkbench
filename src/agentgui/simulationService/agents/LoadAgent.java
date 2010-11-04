@@ -33,10 +33,6 @@ import java.util.Vector;
 
 import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.SimulationServiceHelper;
-import agentgui.simulationService.distribution.ontology.OSInfo;
-import agentgui.simulationService.distribution.ontology.PlatformLoad;
-import agentgui.simulationService.distribution.ontology.PlatformPerformance;
-import agentgui.simulationService.distribution.ontology.ShowMonitorGUI;
 import agentgui.simulationService.load.LoadAgentMap;
 import agentgui.simulationService.load.LoadMeasureThread;
 import agentgui.simulationService.load.LoadMerger;
@@ -46,6 +42,10 @@ import agentgui.simulationService.load.gui.SystemLoad;
 import agentgui.simulationService.load.gui.SystemLoadDialog;
 import agentgui.simulationService.load.gui.SystemLoadSingle;
 import agentgui.simulationService.load.gui.SystemLoad.TimeSelection;
+import agentgui.simulationService.ontology.OSInfo;
+import agentgui.simulationService.ontology.PlatformLoad;
+import agentgui.simulationService.ontology.PlatformPerformance;
+import agentgui.simulationService.ontology.ShowMonitorGUI;
 
 
 public class LoadAgent extends Agent {

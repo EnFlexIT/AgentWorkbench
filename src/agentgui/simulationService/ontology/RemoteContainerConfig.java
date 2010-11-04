@@ -1,4 +1,4 @@
-package agentgui.simulationService.distribution.ontology;
+package agentgui.simulationService.ontology;
 
 
 import jade.content.*;
@@ -8,19 +8,19 @@ import jade.core.*;
 /**
 * Protege name: RemoteContainerConfig
 * @author ontology bean generator
-* @version 2010/10/20, 17:02:20
+* @version 2010/11/4, 20:38:59
 */
 public class RemoteContainerConfig implements Concept {
 
    /**
-* Protege name: jadeHost
+* Protege name: jadeServices
    */
-   private String jadeHost;
-   public void setJadeHost(String value) { 
-    this.jadeHost=value;
+   private String jadeServices;
+   public void setJadeServices(String value) { 
+    this.jadeServices=value;
    }
-   public String getJadeHost() {
-     return this.jadeHost;
+   public String getJadeServices() {
+     return this.jadeServices;
    }
 
    /**
@@ -35,25 +35,25 @@ public class RemoteContainerConfig implements Concept {
    }
 
    /**
-* Protege name: jadeServices
+* Protege name: jvmMemAllocMaximum
    */
-   private String jadeServices;
-   public void setJadeServices(String value) { 
-    this.jadeServices=value;
+   private String jvmMemAllocMaximum;
+   public void setJvmMemAllocMaximum(String value) { 
+    this.jvmMemAllocMaximum=value;
    }
-   public String getJadeServices() {
-     return this.jadeServices;
+   public String getJvmMemAllocMaximum() {
+     return this.jvmMemAllocMaximum;
    }
 
    /**
-* Protege name: jvmMemAllocInitial
+* Protege name: jadePort
    */
-   private String jvmMemAllocInitial;
-   public void setJvmMemAllocInitial(String value) { 
-    this.jvmMemAllocInitial=value;
+   private String jadePort;
+   public void setJadePort(String value) { 
+    this.jadePort=value;
    }
-   public String getJvmMemAllocInitial() {
-     return this.jvmMemAllocInitial;
+   public String getJadePort() {
+     return this.jadePort;
    }
 
    /**
@@ -79,25 +79,25 @@ public class RemoteContainerConfig implements Concept {
    }
 
    /**
-* Protege name: jvmMemAllocMaximum
+* Protege name: jadeHost
    */
-   private String jvmMemAllocMaximum;
-   public void setJvmMemAllocMaximum(String value) { 
-    this.jvmMemAllocMaximum=value;
+   private String jadeHost;
+   public void setJadeHost(String value) { 
+    this.jadeHost=value;
    }
-   public String getJvmMemAllocMaximum() {
-     return this.jvmMemAllocMaximum;
+   public String getJadeHost() {
+     return this.jadeHost;
    }
 
    /**
-* Protege name: jadePort
+* Protege name: jvmMemAllocInitial
    */
-   private String jadePort;
-   public void setJadePort(String value) { 
-    this.jadePort=value;
+   private String jvmMemAllocInitial;
+   public void setJvmMemAllocInitial(String value) { 
+    this.jvmMemAllocInitial=value;
    }
-   public String getJadePort() {
-     return this.jadePort;
+   public String getJvmMemAllocInitial() {
+     return this.jvmMemAllocInitial;
    }
 
 }

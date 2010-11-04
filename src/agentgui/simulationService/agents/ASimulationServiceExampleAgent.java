@@ -11,9 +11,9 @@ import java.util.Vector;
 
 import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.SimulationServiceHelper;
-import agentgui.simulationService.distribution.ontology.PlatformLoad;
 import agentgui.simulationService.load.LoadAgentMap;
 import agentgui.simulationService.load.LoadInformation.Container2Wait4;
+import agentgui.simulationService.ontology.PlatformLoad;
 
 
 /**

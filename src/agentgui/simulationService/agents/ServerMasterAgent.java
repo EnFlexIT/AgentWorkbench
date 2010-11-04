@@ -24,7 +24,7 @@ import com.mysql.jdbc.ResultSet;
 
 import agentgui.core.application.Application;
 import agentgui.core.database.DBConnection;
-import agentgui.simulationService.distribution.ontology.*;
+import agentgui.simulationService.ontology.*;
 
 
 public class ServerMasterAgent extends Agent {

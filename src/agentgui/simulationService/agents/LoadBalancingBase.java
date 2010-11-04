@@ -9,13 +9,13 @@ import java.util.Vector;
 
 import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.SimulationServiceHelper;
-import agentgui.simulationService.distribution.ontology.PlatformLoad;
 import agentgui.simulationService.load.LoadAgentMap;
 import agentgui.simulationService.load.LoadMerger;
 import agentgui.simulationService.load.LoadThresholdLevels;
 import agentgui.simulationService.load.LoadAgentMap.AID_Container;
 import agentgui.simulationService.load.LoadInformation.Container2Wait4;
 import agentgui.simulationService.load.LoadInformation.NodeDescription;
+import agentgui.simulationService.ontology.PlatformLoad;
 
 
 public class LoadBalancingBase extends OneShotBehaviour{

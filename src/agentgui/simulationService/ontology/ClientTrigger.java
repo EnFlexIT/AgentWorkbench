@@ -1,4 +1,4 @@
-package agentgui.simulationService.distribution.ontology;
+package agentgui.simulationService.ontology;
 
 
 import jade.content.*;
@@ -8,20 +8,9 @@ import jade.core.*;
 /**
 * Protege name: ClientTrigger
 * @author ontology bean generator
-* @version 2010/10/20, 17:02:20
+* @version 2010/11/4, 20:38:59
 */
 public class ClientTrigger implements AgentAction {
-
-   /**
-* Protege name: clientBenchmarkValue
-   */
-   private BenchmarkResult clientBenchmarkValue;
-   public void setClientBenchmarkValue(BenchmarkResult value) { 
-    this.clientBenchmarkValue=value;
-   }
-   public BenchmarkResult getClientBenchmarkValue() {
-     return this.clientBenchmarkValue;
-   }
 
    /**
 * Protege name: triggerTime
@@ -43,6 +32,17 @@ public class ClientTrigger implements AgentAction {
    }
    public PlatformLoad getClientLoad() {
      return this.clientLoad;
+   }
+
+   /**
+* Protege name: clientBenchmarkValue
+   */
+   private BenchmarkResult clientBenchmarkValue;
+   public void setClientBenchmarkValue(BenchmarkResult value) { 
+    this.clientBenchmarkValue=value;
+   }
+   public BenchmarkResult getClientBenchmarkValue() {
+     return this.clientBenchmarkValue;
    }
 
 }

@@ -24,21 +24,21 @@ import agentgui.core.application.Application;
 import agentgui.core.network.JadeUrlChecker;
 import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.SimulationServiceHelper;
-import agentgui.simulationService.distribution.ontology.AgentGUI_DistributionOntology;
-import agentgui.simulationService.distribution.ontology.BenchmarkResult;
-import agentgui.simulationService.distribution.ontology.ClientRegister;
-import agentgui.simulationService.distribution.ontology.ClientRemoteContainerReply;
-import agentgui.simulationService.distribution.ontology.ClientRemoteContainerRequest;
-import agentgui.simulationService.distribution.ontology.ClientTrigger;
-import agentgui.simulationService.distribution.ontology.ClientUnregister;
-import agentgui.simulationService.distribution.ontology.OSInfo;
-import agentgui.simulationService.distribution.ontology.PlatformAddress;
-import agentgui.simulationService.distribution.ontology.PlatformLoad;
-import agentgui.simulationService.distribution.ontology.PlatformPerformance;
-import agentgui.simulationService.distribution.ontology.PlatformTime;
-import agentgui.simulationService.distribution.ontology.RegisterReceipt;
-import agentgui.simulationService.distribution.ontology.RemoteContainerConfig;
 import agentgui.simulationService.load.LoadMeasureThread;
+import agentgui.simulationService.ontology.AgentGUI_DistributionOntology;
+import agentgui.simulationService.ontology.BenchmarkResult;
+import agentgui.simulationService.ontology.ClientRegister;
+import agentgui.simulationService.ontology.ClientRemoteContainerReply;
+import agentgui.simulationService.ontology.ClientRemoteContainerRequest;
+import agentgui.simulationService.ontology.ClientTrigger;
+import agentgui.simulationService.ontology.ClientUnregister;
+import agentgui.simulationService.ontology.OSInfo;
+import agentgui.simulationService.ontology.PlatformAddress;
+import agentgui.simulationService.ontology.PlatformLoad;
+import agentgui.simulationService.ontology.PlatformPerformance;
+import agentgui.simulationService.ontology.PlatformTime;
+import agentgui.simulationService.ontology.RegisterReceipt;
+import agentgui.simulationService.ontology.RemoteContainerConfig;
 
 public class ServerClientAgent extends Agent {
 

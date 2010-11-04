@@ -17,10 +17,6 @@ import agentgui.core.application.Language;
 
 public class AgentGUITrayDialogue extends JDialog implements MouseListener {
 
-	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -663073173834257611L;
 	
 	private PopupMenu popUp = null;  //  @jve:decl-index=0:

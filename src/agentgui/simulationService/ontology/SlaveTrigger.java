@@ -1,4 +1,4 @@
-package agentgui.simulationService.distribution.ontology;
+package agentgui.simulationService.ontology;
 
 
 import jade.content.*;
@@ -8,20 +8,9 @@ import jade.core.*;
 /**
 * Protege name: SlaveTrigger
 * @author ontology bean generator
-* @version 2010/10/20, 17:02:20
+* @version 2010/11/4, 20:38:59
 */
 public class SlaveTrigger implements AgentAction {
-
-   /**
-* Protege name: slaveBenchmarkValue
-   */
-   private BenchmarkResult slaveBenchmarkValue;
-   public void setSlaveBenchmarkValue(BenchmarkResult value) { 
-    this.slaveBenchmarkValue=value;
-   }
-   public BenchmarkResult getSlaveBenchmarkValue() {
-     return this.slaveBenchmarkValue;
-   }
 
    /**
 * Protege name: triggerTime
@@ -43,6 +32,17 @@ public class SlaveTrigger implements AgentAction {
    }
    public PlatformLoad getSlaveLoad() {
      return this.slaveLoad;
+   }
+
+   /**
+* Protege name: slaveBenchmarkValue
+   */
+   private BenchmarkResult slaveBenchmarkValue;
+   public void setSlaveBenchmarkValue(BenchmarkResult value) { 
+    this.slaveBenchmarkValue=value;
+   }
+   public BenchmarkResult getSlaveBenchmarkValue() {
+     return this.slaveBenchmarkValue;
    }
 
 }

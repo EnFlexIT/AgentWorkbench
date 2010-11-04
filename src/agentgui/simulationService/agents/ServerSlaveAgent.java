@@ -20,21 +20,21 @@ import agentgui.core.network.JadeUrlChecker;
 import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.SimulationServiceHelper;
 import agentgui.simulationService.distribution.JadeRemoteStart;
-import agentgui.simulationService.distribution.ontology.AgentGUI_DistributionOntology;
-import agentgui.simulationService.distribution.ontology.BenchmarkResult;
-import agentgui.simulationService.distribution.ontology.ClientRemoteContainerReply;
-import agentgui.simulationService.distribution.ontology.ClientRemoteContainerRequest;
-import agentgui.simulationService.distribution.ontology.OSInfo;
-import agentgui.simulationService.distribution.ontology.PlatformAddress;
-import agentgui.simulationService.distribution.ontology.PlatformLoad;
-import agentgui.simulationService.distribution.ontology.PlatformPerformance;
-import agentgui.simulationService.distribution.ontology.PlatformTime;
-import agentgui.simulationService.distribution.ontology.RegisterReceipt;
-import agentgui.simulationService.distribution.ontology.RemoteContainerConfig;
-import agentgui.simulationService.distribution.ontology.SlaveRegister;
-import agentgui.simulationService.distribution.ontology.SlaveTrigger;
-import agentgui.simulationService.distribution.ontology.SlaveUnregister;
 import agentgui.simulationService.load.LoadMeasureThread;
+import agentgui.simulationService.ontology.AgentGUI_DistributionOntology;
+import agentgui.simulationService.ontology.BenchmarkResult;
+import agentgui.simulationService.ontology.ClientRemoteContainerReply;
+import agentgui.simulationService.ontology.ClientRemoteContainerRequest;
+import agentgui.simulationService.ontology.OSInfo;
+import agentgui.simulationService.ontology.PlatformAddress;
+import agentgui.simulationService.ontology.PlatformLoad;
+import agentgui.simulationService.ontology.PlatformPerformance;
+import agentgui.simulationService.ontology.PlatformTime;
+import agentgui.simulationService.ontology.RegisterReceipt;
+import agentgui.simulationService.ontology.RemoteContainerConfig;
+import agentgui.simulationService.ontology.SlaveRegister;
+import agentgui.simulationService.ontology.SlaveTrigger;
+import agentgui.simulationService.ontology.SlaveUnregister;
 
 public class ServerSlaveAgent extends Agent {
 

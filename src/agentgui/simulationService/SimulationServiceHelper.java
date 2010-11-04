@@ -12,14 +12,14 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import agentgui.simulationService.distribution.ontology.ClientRemoteContainerReply;
-import agentgui.simulationService.distribution.ontology.PlatformLoad;
-import agentgui.simulationService.distribution.ontology.RemoteContainerConfig;
 import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.load.LoadAgentMap;
 import agentgui.simulationService.load.LoadAgentMap.AID_Container;
 import agentgui.simulationService.load.LoadInformation.Container2Wait4;
 import agentgui.simulationService.load.LoadInformation.NodeDescription;
+import agentgui.simulationService.ontology.ClientRemoteContainerReply;
+import agentgui.simulationService.ontology.PlatformLoad;
+import agentgui.simulationService.ontology.RemoteContainerConfig;
 import agentgui.simulationService.sensoring.ServiceSensor;
 
 

@@ -1,4 +1,4 @@
-package agentgui.simulationService.distribution.ontology;
+package agentgui.simulationService.ontology;
 
 
 import jade.content.*;
@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: ClientRemoteContainerRequest
 * @author ontology bean generator
-* @version 2010/10/20, 17:02:20
+* @version 2010/11/4, 20:38:59
 */
 public class ClientRemoteContainerRequest implements AgentAction {
 

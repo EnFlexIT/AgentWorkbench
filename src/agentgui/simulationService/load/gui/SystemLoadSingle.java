@@ -11,10 +11,11 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 
 import agentgui.core.application.Application;
-import agentgui.simulationService.distribution.ontology.OSInfo;
-import agentgui.simulationService.distribution.ontology.PlatformLoad;
-import agentgui.simulationService.distribution.ontology.PlatformPerformance;
 import agentgui.simulationService.load.LoadInformation.NodeDescription;
+import agentgui.simulationService.ontology.OSInfo;
+import agentgui.simulationService.ontology.PlatformLoad;
+import agentgui.simulationService.ontology.PlatformPerformance;
+
 import java.awt.Font;
 
 public class SystemLoadSingle extends JPanel {

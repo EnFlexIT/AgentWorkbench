@@ -1,4 +1,4 @@
-package agentgui.simulationService.distribution.ontology;
+package agentgui.simulationService.ontology;
 
 
 import jade.content.*;
@@ -8,20 +8,9 @@ import jade.core.*;
 /**
 * Protege name: ClientRegister
 * @author ontology bean generator
-* @version 2010/10/20, 17:02:20
+* @version 2010/11/4, 20:38:59
 */
 public class ClientRegister implements AgentAction {
-
-   /**
-* Protege name: clientAddress
-   */
-   private PlatformAddress clientAddress;
-   public void setClientAddress(PlatformAddress value) { 
-    this.clientAddress=value;
-   }
-   public PlatformAddress getClientAddress() {
-     return this.clientAddress;
-   }
 
    /**
 * Protege name: clientTime
@@ -32,6 +21,17 @@ public class ClientRegister implements AgentAction {
    }
    public PlatformTime getClientTime() {
      return this.clientTime;
+   }
+
+   /**
+* Protege name: clientOS
+   */
+   private OSInfo clientOS;
+   public void setClientOS(OSInfo value) { 
+    this.clientOS=value;
+   }
+   public OSInfo getClientOS() {
+     return this.clientOS;
    }
 
    /**
@@ -46,14 +46,14 @@ public class ClientRegister implements AgentAction {
    }
 
    /**
-* Protege name: clientOS
+* Protege name: clientAddress
    */
-   private OSInfo clientOS;
-   public void setClientOS(OSInfo value) { 
-    this.clientOS=value;
+   private PlatformAddress clientAddress;
+   public void setClientAddress(PlatformAddress value) { 
+    this.clientAddress=value;
    }
-   public OSInfo getClientOS() {
-     return this.clientOS;
+   public PlatformAddress getClientAddress() {
+     return this.clientAddress;
    }
 
 }

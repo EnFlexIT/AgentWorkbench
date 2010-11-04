@@ -6,12 +6,12 @@ import jade.core.Location;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import agentgui.simulationService.distribution.ontology.BenchmarkResult;
-import agentgui.simulationService.distribution.ontology.ClientRemoteContainerReply;
-import agentgui.simulationService.distribution.ontology.OSInfo;
-import agentgui.simulationService.distribution.ontology.PlatformAddress;
-import agentgui.simulationService.distribution.ontology.PlatformLoad;
-import agentgui.simulationService.distribution.ontology.PlatformPerformance;
+import agentgui.simulationService.ontology.BenchmarkResult;
+import agentgui.simulationService.ontology.ClientRemoteContainerReply;
+import agentgui.simulationService.ontology.OSInfo;
+import agentgui.simulationService.ontology.PlatformAddress;
+import agentgui.simulationService.ontology.PlatformLoad;
+import agentgui.simulationService.ontology.PlatformPerformance;
 
 
 /**
