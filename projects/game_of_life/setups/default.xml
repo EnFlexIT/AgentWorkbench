@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<simulationSetup>
+    <agentSetup/>
+    <agentListModel>
+        <size>0</size>
+    </agentListModel>
+    <environmentFileName>Game of Life_default.xml</environmentFileName>
+    <svgFileName>Game of Life_default.svg</svgFileName>
+</simulationSetup>

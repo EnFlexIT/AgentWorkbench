@@ -4,19 +4,11 @@
     <projectResources/>
     <subOntologies/>
     <agentConfiguration/>
-    <simulationSetupCurrent>Hallo Nr. 1</simulationSetupCurrent>
+    <simulationSetupCurrent>default</simulationSetupCurrent>
     <simulationSetups>
         <entry>
-            <key>Hallo Nr. 1</key>
-            <value>hallo_nr_1.xml</value>
-        </entry>
-        <entry>
-            <key>Test-Setup 1024</key>
-            <value>test_setup_1024.xml</value>
-        </entry>
-        <entry>
-            <key>Test-Setup 2028</key>
-            <value>test_setup_2028.xml</value>
+            <key>default</key>
+            <value>default.xml</value>
         </entry>
     </simulationSetups>
     <jadeConfiguration>

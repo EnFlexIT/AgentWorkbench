@@ -12,10 +12,10 @@ import java.util.Iterator;
 
 import javax.swing.JDesktopPane;
 
-import mas.service.SimulationService;
-import mas.service.SimulationServiceHelper;
-import mas.service.environment.EnvironmentModel;
-import application.Application;
+import agentgui.core.application.Application;
+import agentgui.simulationService.SimulationService;
+import agentgui.simulationService.SimulationServiceHelper;
+import agentgui.simulationService.environment.EnvironmentModel;
 
 public class SimulationManagerAgent extends Agent { 
 	

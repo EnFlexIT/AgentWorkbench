@@ -1,15 +1,15 @@
 package sma.agents;
 
+import agentgui.physical2Denvironment.MoveToPointBehaviour;
+import agentgui.physical2Denvironment.ontology.ActiveObject;
+import agentgui.physical2Denvironment.ontology.Physical2DObject;
+import agentgui.physical2Denvironment.ontology.Position;
+import agentgui.physical2Denvironment.provider.EnvironmentProviderHelper;
+import agentgui.physical2Denvironment.provider.EnvironmentProviderService;
 import jade.core.Agent;
 import jade.core.ServiceException;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.core.behaviours.SequentialBehaviour;
-import mas.environment.MoveToPointBehaviour;
-import mas.environment.ontology.ActiveObject;
-import mas.environment.ontology.Physical2DObject;
-import mas.environment.ontology.Position;
-import mas.environment.provider.EnvironmentProviderHelper;
-import mas.environment.provider.EnvironmentProviderService;
 
 /**
  * Dummy-Implementation for testing the DisplayAgent

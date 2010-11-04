@@ -8,9 +8,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
 
-import mas.service.SimulationService;
-import mas.service.SimulationServiceHelper;
-import mas.service.agents.SimulationAgent;
+import agentgui.simulationService.SimulationService;
+import agentgui.simulationService.SimulationServiceHelper;
+import agentgui.simulationService.agents.SimulationAgent;
+
 
 /**
  * @version 1.0
