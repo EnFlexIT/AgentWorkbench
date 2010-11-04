@@ -9,7 +9,7 @@ import jade.core.*;
    * An object's position.
 * Protege name: Position
 * @author ontology bean generator
-* @version 2010/10/22, 21:15:52
+* @version 2010/11/4, 22:28:26
 */
 public class Position implements Concept {
 

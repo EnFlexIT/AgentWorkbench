@@ -67,11 +67,6 @@ public class SoftBot extends Agent {
 					try {
 						EnvironmentProviderHelper helper = (EnvironmentProviderHelper) getHelper(EnvironmentProviderService.SERVICE_NAME);
 						boolean success = helper.assignPassiveObject(targetObject.getId(), getLocalName());
-						if(success){
-							System.out.println("Testausgabe: "+getLocalName()+" nimmt Objekt "+targetObject.getId()+" auf.");
-						}else{
-							System.err.println("Testausgabe: "+getLocalName()+" Fehler beim Aufnehmen von Objekt "+targetObject.getId());
-						}
 					} catch (ServiceException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -95,7 +90,6 @@ public class SoftBot extends Agent {
 					try {
 						EnvironmentProviderHelper helper = (EnvironmentProviderHelper) getHelper(EnvironmentProviderService.SERVICE_NAME);
 						helper.releasePassiveObject(targetObject.getId());
-						System.out.println("Testausgabe: "+getLocalName()+" setzt Objekt "+targetObject.getId()+" ab.");
 					} catch (ServiceException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

@@ -9,7 +9,7 @@ import jade.core.*;
    * The scale used for displaying the environment model, mapping a number of real world units to a number of pixels.
 * Protege name: Scale
 * @author ontology bean generator
-* @version 2010/10/22, 21:15:52
+* @version 2010/11/4, 22:28:26
 */
 public class Scale implements Concept {
 

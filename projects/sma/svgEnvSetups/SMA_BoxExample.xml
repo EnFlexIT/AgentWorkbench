@@ -2,87 +2,87 @@
 <Physical2DEnvironment projectName="SMA">
 	<rootPlayground>
 		<PlaygroundObject id="RootPlayground">
-			<size>
-				<Size height="400.0F" width="600.0F"/>
-			</size>
 			<position>
 				<Position yPos="0.0F" xPos="0.0F"/>
 			</position>
+			<size>
+				<Size height="400.0F" width="600.0F"/>
+			</size>
 			<childObjects>
-				<ActiveObject parentPlaygroundID="RootPlayground" id="SoBo1" maxSpeed="10.0F">
-					<size>
-						<Size height="5.0F" width="5.0F"/>
-					</size>
+				<ActiveObject id="SoBo1" parentPlaygroundID="RootPlayground" agentClassName="sma.agents.SoftBot" maxSpeed="10.0F">
 					<position>
 						<Position yPos="7.2637815F" xPos="6.5F"/>
 					</position>
+					<size>
+						<Size height="5.0F" width="5.0F"/>
+					</size>
 					<movement>
-						<Movement xPosChange="0.0F" yPosChange="0.0F"/>
+						<Movement yPosChange="0.0F" xPosChange="0.0F"/>
 					</movement>
 				</ActiveObject>
-				<StaticObject parentPlaygroundID="RootPlayground" id="Obst1">
-					<size>
-						<Size height="2.3142858F" width="16.9F"/>
-					</size>
-					<position>
-						<Position yPos="18.300001F" xPos="9.107142F"/>
-					</position>
-				</StaticObject>
-				<StaticObject parentPlaygroundID="RootPlayground" id="Obst4">
-					<size>
-						<Size height="16.714285F" width="2.857143F"/>
-					</size>
-					<position>
-						<Position yPos="9.914284F" xPos="30.371426F"/>
-					</position>
-				</StaticObject>
-				<StaticObject parentPlaygroundID="RootPlayground" id="Obst3">
-					<size>
-						<Size height="2.857143F" width="22.142857F"/>
-					</size>
-					<position>
-						<Position yPos="19.142855F" xPos="39.92857F"/>
-					</position>
-				</StaticObject>
-				<StaticObject parentPlaygroundID="RootPlayground" id="Obst2">
-					<size>
-						<Size height="11.691718F" width="2.5488605F"/>
-					</size>
-					<position>
-						<Position yPos="33.285713F" xPos="17.857143F"/>
-					</position>
-				</StaticObject>
-				<PassiveObject parentPlaygroundID="RootPlayground" id="Box1">
-					<size>
-						<Size height="3.142857F" width="2.5714285F"/>
-					</size>
+				<PassiveObject id="Box1" parentPlaygroundID="RootPlayground">
 					<position>
 						<Position yPos="36.714287F" xPos="4.428571F"/>
 					</position>
-				</PassiveObject>
-				<PassiveObject parentPlaygroundID="RootPlayground" id="Box2">
-					<size>
-						<Size height="2.857143F" width="2.857143F"/>
-					</size>
-					<position>
-						<Position yPos="36.85714F" xPos="23.714287F"/>
-					</position>
-				</PassiveObject>
-				<PassiveObject parentPlaygroundID="RootPlayground" id="Box3">
 					<size>
 						<Size height="3.142857F" width="2.5714285F"/>
 					</size>
+				</PassiveObject>
+				<PassiveObject id="Box2" parentPlaygroundID="RootPlayground">
+					<position>
+						<Position yPos="36.85714F" xPos="23.714287F"/>
+					</position>
+					<size>
+						<Size height="2.857143F" width="2.857143F"/>
+					</size>
+				</PassiveObject>
+				<PassiveObject id="Box3" parentPlaygroundID="RootPlayground">
 					<position>
 						<Position yPos="35.285717F" xPos="49.857143F"/>
 					</position>
-				</PassiveObject>
-				<PassiveObject parentPlaygroundID="RootPlayground" id="Box4">
 					<size>
-						<Size height="3.142857F" width="2.857143F"/>
+						<Size height="3.142857F" width="2.5714285F"/>
 					</size>
+				</PassiveObject>
+				<StaticObject id="Obst1" parentPlaygroundID="RootPlayground">
+					<position>
+						<Position yPos="18.300001F" xPos="9.107142F"/>
+					</position>
+					<size>
+						<Size height="2.3142858F" width="16.9F"/>
+					</size>
+				</StaticObject>
+				<StaticObject id="Obst2" parentPlaygroundID="RootPlayground">
+					<position>
+						<Position yPos="33.285713F" xPos="17.857143F"/>
+					</position>
+					<size>
+						<Size height="11.691718F" width="2.5488605F"/>
+					</size>
+				</StaticObject>
+				<StaticObject id="Obst3" parentPlaygroundID="RootPlayground">
+					<position>
+						<Position yPos="19.142855F" xPos="39.92857F"/>
+					</position>
+					<size>
+						<Size height="2.857143F" width="22.142857F"/>
+					</size>
+				</StaticObject>
+				<StaticObject id="Obst4" parentPlaygroundID="RootPlayground">
+					<position>
+						<Position yPos="9.914284F" xPos="30.371426F"/>
+					</position>
+					<size>
+						<Size height="16.714285F" width="2.857143F"/>
+					</size>
+				</StaticObject>
+				<PassiveObject id="Box4" parentPlaygroundID="RootPlayground">
 					<position>
 						<Position yPos="4.9571404F" xPos="41.285713F"/>
 					</position>
+					<size>
+						<Size height="3.142857F" width="2.857143F"/>
+					</size>
 				</PassiveObject>
 			</childObjects>
 		</PlaygroundObject>

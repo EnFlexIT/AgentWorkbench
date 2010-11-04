@@ -1,10 +1,13 @@
 package agentgui.core.gui.projectwindow.simsetup;
 
+import jade.core.Agent;
+
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
+import java.util.Vector;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -33,6 +36,7 @@ public class EnvironmentSetupObjectSettings extends JPanel{
 	private JLabel lblId = null;
 	private JLabel lblMaxSpeed = null;
 	private JLabel lblType = null;
+	private JLabel lblClass = null;
 	private JLabel lblPosition = null;
 	private JLabel lblSize = null;
 	private JButton btnApply = null;
@@ -45,15 +49,22 @@ public class EnvironmentSetupObjectSettings extends JPanel{
 	private JTextField tfMaxSpeed = null;
 	private JLabel lblPosSeparator = null;
 	private JTextField tfId = null;
-	private JComboBox cbType = null;
+	private JComboBox cbOntologyClass = null;
+	private JComboBox cbAgentClass = null;
 	private JLabel lblUnit1 = null;
 	private JLabel lblUnit2 = null;
-	
+	private JLabel lblSpeedUnit = null;
 	/**
-	 * Defines which object type is linked to which environment ontology class
+	 * This project's agent classes. Key = class name, value = full name with package 
+	 */
+	private HashMap<String, String> agentClasses = null;
+	/**
+	 * Assigns ontology classes to object types. 
 	 */
 	private HashMap<String, Class<?>> typeClass = null;
-	
+	/**
+	 * The EnvironmentSetup instance containing this EnvironmentSetupObjectSettings instance
+	 */
 	private EnvironmentSetup parent = null;
 	/**
 	 * This is the default constructor
@@ -72,35 +83,43 @@ public class EnvironmentSetupObjectSettings extends JPanel{
 	private void initialize() {
 		lblUnit2 = new JLabel();
 		lblUnit2.setText("m");
-		lblUnit2.setLocation(new Point(145, 197));
+		lblUnit2.setLocation(new Point(145, 230));
 		lblUnit2.setSize(lblUnit2.getPreferredSize());
 		lblUnit1 = new JLabel();
 		lblUnit1.setText("m");
-		lblUnit1.setLocation(new Point(145, 157));
+		lblUnit1.setLocation(new Point(145, 190));
 		lblUnit1.setSize(lblUnit1.getPreferredSize());
+		lblSpeedUnit = new JLabel();
+		lblSpeedUnit.setText("m/s");
+		lblSpeedUnit.setLocation(new Point(135,135));
+		lblSpeedUnit.setSize(lblSpeedUnit.getPreferredSize());
 		lblPosSeparator = new JLabel();
 		lblPosSeparator.setText(":");
-		lblPosSeparator.setLocation(new Point(70, 157));
+		lblPosSeparator.setLocation(new Point(70, 188));
 		lblPosSeparator.setSize(lblPosSeparator.getPreferredSize());
 		lblSizeSeparator = new JLabel();
 		lblSizeSeparator.setText("x");
-		lblSizeSeparator.setLocation(new Point(70, 197));
+		lblSizeSeparator.setLocation(new Point(70, 228));
 		lblSizeSeparator.setSize(lblSizeSeparator.getPreferredSize());
 		lblSize = new JLabel();
 		lblSize.setText(Language.translate("Größe"));
-		lblSize.setLocation(new Point(15, 180));
+		lblSize.setLocation(new Point(15, 211));
 		lblSize.setSize(lblSize.getPreferredSize());		
 		lblPosition = new JLabel();
 		lblPosition.setText(Language.translate("Position"));
-		lblPosition.setLocation(new Point(16, 140));
+		lblPosition.setLocation(new Point(16, 171));
 		lblPosition.setSize(lblPosition.getPreferredSize());
 		lblType = new JLabel();
 		lblType.setText(Language.translate("Typ"));
 		lblType.setLocation(new Point(10, 50));
 		lblType.setSize(lblType.getPreferredSize());
+		lblClass = new JLabel();
+		lblClass.setText(Language.translate("Klasse"));
+		lblClass.setLocation(new Point(10, 80));
+		lblClass.setSize(lblClass.getPreferredSize());
 		lblMaxSpeed = new JLabel();
 		lblMaxSpeed.setText(Language.translate("Maximale Geschwindigkeit"));
-		lblMaxSpeed.setLocation(new Point(10, 80));
+		lblMaxSpeed.setLocation(new Point(10, 111));
 		lblMaxSpeed.setSize(lblMaxSpeed.getPreferredSize());
 		lblId = new JLabel();
 		lblId.setText("ID");
@@ -108,10 +127,12 @@ public class EnvironmentSetupObjectSettings extends JPanel{
 		lblId.setSize(lblId.getPreferredSize());
 		this.setLayout(null);
 		this.add(lblId, null);
-		this.add(lblMaxSpeed, null);
+		this.add(lblSpeedUnit, null);
+		this.add(lblClass, null);
 		this.add(lblType, null);
 		this.add(lblPosition, null);
 		this.add(lblSize, null);
+		this.add(lblMaxSpeed, null);
 		this.add(getBtnApply(), null);
 		this.add(getBtnRemove(), null);
 		this.add(getTfWidth(), null);
@@ -121,7 +142,8 @@ public class EnvironmentSetupObjectSettings extends JPanel{
 		this.add(getTfYPos(), null);
 		this.add(lblPosSeparator, null);
 		this.add(getTfId(), null);
-		this.add(getCbType(), null);
+		this.add(getOntologyClass(), null);
+		this.add(getCbAgentClass());
 		this.add(getTfMaxSpeed(), null);
 		this.add(lblUnit1, null);
 		this.add(lblUnit2, null);
@@ -137,7 +159,7 @@ public class EnvironmentSetupObjectSettings extends JPanel{
 			btnApply = new JButton();
 			btnApply.setText(Language.translate("Anwenden"));
 			btnApply.setSize(new Dimension(150, 26));
-			btnApply.setLocation(new Point(25, 245));
+			btnApply.setLocation(new Point(25, 265));
 			btnApply.addActionListener(parent);
 			btnApply.setEnabled(false);
 		}
@@ -154,7 +176,7 @@ public class EnvironmentSetupObjectSettings extends JPanel{
 			btnRemove = new JButton();
 			btnRemove.setText(Language.translate("Objekt Entfernen"));
 			btnRemove.setSize(new Dimension(150, 26));
-			btnRemove.setLocation(new Point(25, 275));
+			btnRemove.setLocation(new Point(25, 295));
 			btnRemove.setEnabled(false);
 			btnRemove.setSize(new Dimension(150, 26));
 			btnRemove.addActionListener(parent);		
@@ -171,7 +193,7 @@ public class EnvironmentSetupObjectSettings extends JPanel{
 		if (tfWidth == null) {
 			tfWidth = new JTextField();
 			tfWidth.setSize(new Dimension(50, 25));
-			tfWidth.setLocation(new Point(16, 195));
+			tfWidth.setLocation(new Point(16, 226));
 			tfWidth.setEnabled(false);
 		}
 		return tfWidth;
@@ -186,7 +208,7 @@ public class EnvironmentSetupObjectSettings extends JPanel{
 		if (tfHeight == null) {
 			tfHeight = new JTextField();
 			tfHeight.setSize(new Dimension(50, 25));
-			tfHeight.setLocation(new Point(80, 195));
+			tfHeight.setLocation(new Point(80, 226));
 			tfHeight.setEnabled(false);
 		}
 		return tfHeight;
@@ -200,7 +222,7 @@ public class EnvironmentSetupObjectSettings extends JPanel{
 	JTextField getTfXPos() {
 		if (tfXPos == null) {
 			tfXPos = new JTextField();
-			tfXPos.setLocation(new Point(16, 155));
+			tfXPos.setLocation(new Point(16, 186));
 			tfXPos.setSize(new Dimension(50, 25));
 			tfXPos.setEnabled(false);
 		}
@@ -215,7 +237,7 @@ public class EnvironmentSetupObjectSettings extends JPanel{
 	JTextField getTfYPos() {
 		if (tfYPos == null) {
 			tfYPos = new JTextField();
-			tfYPos.setLocation(new Point(80, 155));
+			tfYPos.setLocation(new Point(80, 186));
 			tfYPos.setSize(new Dimension(50, 25));
 			tfYPos.setEnabled(false);
 		}
@@ -242,13 +264,13 @@ public class EnvironmentSetupObjectSettings extends JPanel{
 	 * 	
 	 * @return javax.swing.JComboBox	
 	 */
-	JComboBox getCbType() {
-		if (cbType == null) {
+	JComboBox getOntologyClass() {
+		if (cbOntologyClass == null) {
 			
-			cbType = new JComboBox();
-			cbType.setLocation(new Point(50, 47));
-			cbType.setSize(new Dimension(120, 25));
-			cbType.setEnabled(false);
+			cbOntologyClass = new JComboBox();
+			cbOntologyClass.setLocation(new Point(50, 47));
+			cbOntologyClass.setSize(new Dimension(120, 25));
+			cbOntologyClass.setEnabled(false);
 			
 			typeClass = new HashMap<String, Class<?>>();
 			typeClass.put(Language.translate(EnvironmentSetup.TYPE_STRING_NO_TYPE), null);
@@ -257,17 +279,19 @@ public class EnvironmentSetupObjectSettings extends JPanel{
 			typeClass.put(Language.translate(EnvironmentSetup.TYPE_STRING_PASSIVE_OBJECT), PassiveObject.class);
 			typeClass.put(Language.translate(EnvironmentSetup.TYPE_STRING_PLAYGROUND_OBJECT), PlaygroundObject.class);
 			
-			cbType.setModel(new DefaultComboBoxModel(typeClass.keySet().toArray()));
-			cbType.addActionListener(new ActionListener(){
+			cbOntologyClass.setModel(new DefaultComboBoxModel(typeClass.keySet().toArray()));
+			cbOntologyClass.addActionListener(new ActionListener(){
 
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
-					if(cbType.getSelectedItem().equals(Language.translate(EnvironmentSetup.TYPE_STRING_ACTIVE_OBJECT))){
+					if(cbOntologyClass.getSelectedItem().equals(Language.translate(EnvironmentSetup.TYPE_STRING_ACTIVE_OBJECT))){
 						getTfMaxSpeed().setEnabled(true);
+						getCbAgentClass().setEnabled(true);
 					}else{
 						getTfMaxSpeed().setEnabled(false);
+						getCbAgentClass().setEnabled(false);
 					}
-					if(cbType.getSelectedItem().equals(Language.translate(EnvironmentSetup.TYPE_STRING_NO_TYPE))){
+					if(cbOntologyClass.getSelectedItem().equals(Language.translate(EnvironmentSetup.TYPE_STRING_NO_TYPE))){
 						getBtnApply().setEnabled(false);
 					}else{
 						getBtnApply().setEnabled(true);
@@ -277,14 +301,40 @@ public class EnvironmentSetupObjectSettings extends JPanel{
 				
 			});			
 		}
-		return cbType;
+		return cbOntologyClass;
+	}
+	
+	/**
+	 * This method initializes cbClass	
+	 * 	
+	 * @return javax.swing.JComboBox	
+	 */
+	JComboBox getCbAgentClass() {
+		if (cbAgentClass == null) {
+			cbAgentClass = new JComboBox();
+			cbAgentClass.setLocation(new Point(70, 78));
+			cbAgentClass.setSize(new Dimension(100, 25));
+			cbAgentClass.setEnabled(false);
+			Vector<Class<? extends Agent>> classes = parent.project.getProjectAgents();
+			Vector<String> names = new Vector<String>();
+			
+			agentClasses = new HashMap<String, String>();
+			
+			for(int i=0; i<classes.size(); i++){
+				names.add(classes.get(i).getSimpleName());
+				agentClasses.put(classes.get(i).getSimpleName(), classes.get(i).getName());
+				
+			}
+			cbAgentClass.setModel(new DefaultComboBoxModel(names));
+		}
+		return cbAgentClass;
 	}
 	
 	JTextField getTfMaxSpeed(){
 		if(tfMaxSpeed == null){
 			tfMaxSpeed = new JTextField();
 			tfMaxSpeed.setText("10.0");
-			tfMaxSpeed.setLocation(new Point(16, 103));
+			tfMaxSpeed.setLocation(new Point(16, 134));
 			tfMaxSpeed.setSize(new Dimension(100, 25));
 			tfMaxSpeed.setEnabled(false);
 		}
@@ -311,7 +361,13 @@ public class EnvironmentSetupObjectSettings extends JPanel{
 			getTfXPos().setText(""+pos.getXPos());
 			getTfYPos().setText(""+pos.getYPos());
 			
-			setObjectType(parent.controller.getEnvWrap().getObjectById(elem.getAttributeNS(null, "id")));
+			Physical2DObject object = parent.controller.getEnvWrap().getObjectById(elem.getAttributeNS(null, "id"));
+			setObjectType(object);
+			
+			if(object instanceof ActiveObject){
+				String agentClass = ((ActiveObject)object).getAgentClassName();
+				getCbAgentClass().setSelectedItem(agentClass.substring(agentClass.lastIndexOf('.')+1));
+			}
 			
 		}else{
 			getTfId().setText("");
@@ -319,24 +375,24 @@ public class EnvironmentSetupObjectSettings extends JPanel{
 			getTfYPos().setText("");
 			getTfWidth().setText("");
 			getTfHeight().setText("");
-			getCbType().setSelectedItem(Language.translate(EnvironmentSetup.TYPE_STRING_NO_TYPE));
+			getOntologyClass().setSelectedItem(Language.translate(EnvironmentSetup.TYPE_STRING_NO_TYPE));
 			getTfMaxSpeed().setText("");
 		}
 	}
 	
 	private void setObjectType(Physical2DObject object){
 		if(object == null){
-			getCbType().setSelectedItem(Language.translate(EnvironmentSetup.TYPE_STRING_NO_TYPE));
+			getOntologyClass().setSelectedItem(Language.translate(EnvironmentSetup.TYPE_STRING_NO_TYPE));
 		}
 		else if(object instanceof ActiveObject){
-			getCbType().setSelectedItem(Language.translate(EnvironmentSetup.TYPE_STRING_ACTIVE_OBJECT));
+			getOntologyClass().setSelectedItem(Language.translate(EnvironmentSetup.TYPE_STRING_ACTIVE_OBJECT));
 			getTfMaxSpeed().setText(""+((ActiveObject)object).getMaxSpeed());
 		}else if(object instanceof PassiveObject){
-			getCbType().setSelectedItem(Language.translate(EnvironmentSetup.TYPE_STRING_PASSIVE_OBJECT));
+			getOntologyClass().setSelectedItem(Language.translate(EnvironmentSetup.TYPE_STRING_PASSIVE_OBJECT));
 		}else if(object instanceof StaticObject){
-			getCbType().setSelectedItem(Language.translate(EnvironmentSetup.TYPE_STRING_STATIC_OBJECT));
+			getOntologyClass().setSelectedItem(Language.translate(EnvironmentSetup.TYPE_STRING_STATIC_OBJECT));
 		}else if(object instanceof PlaygroundObject){
-			getCbType().setSelectedItem(Language.translate(EnvironmentSetup.TYPE_STRING_PLAYGROUND_OBJECT));
+			getOntologyClass().setSelectedItem(Language.translate(EnvironmentSetup.TYPE_STRING_PLAYGROUND_OBJECT));
 		}
 	}
 	
@@ -348,9 +404,10 @@ public class EnvironmentSetupObjectSettings extends JPanel{
 		HashMap<String, Object> settings = new HashMap<String, Object>();
 		
 		settings.put(EnvironmentSetup.SETTINGS_KEY_ID, tfId.getText());
-		settings.put(EnvironmentSetup.SETTINGS_KEY_ONTO_CLASS, typeClass.get(cbType.getSelectedItem()));
-		if(cbType.getSelectedItem().equals(Language.translate(EnvironmentSetup.TYPE_STRING_ACTIVE_OBJECT))){
+		settings.put(EnvironmentSetup.SETTINGS_KEY_ONTO_CLASS, typeClass.get(cbOntologyClass.getSelectedItem()));
+		if(cbOntologyClass.getSelectedItem().equals(Language.translate(EnvironmentSetup.TYPE_STRING_ACTIVE_OBJECT))){
 			settings.put(EnvironmentSetup.SETTINGS_KEY_AGENT_MAX_SPEED, tfMaxSpeed.getText());
+			settings.put(EnvironmentSetup.SETTINGS_KEY_AGENT_CLASSNAME, agentClasses.get(getCbAgentClass().getSelectedItem().toString()));
 		}
 
 		Position pos = new Position();
@@ -380,7 +437,19 @@ public class EnvironmentSetupObjectSettings extends JPanel{
 		}else{
 			getTfHeight().setEnabled(enabled);
 		}
-		getCbType().setEnabled(enabled);
+		getOntologyClass().setEnabled(enabled);
+	}
+	/**
+	 * Sets the unit in 
+	 * @param unit
+	 */
+	protected void setUnit(String unit){
+		lblUnit1.setText(unit);
+		lblUnit1.setSize(lblUnit1.getPreferredSize());
+		lblUnit2.setText(unit);
+		lblUnit2.setSize(lblUnit2.getPreferredSize());
+		lblSpeedUnit.setText(unit+"/s");
+		lblSpeedUnit.setSize(lblSpeedUnit.getPreferredSize());
 	}
 	
 }

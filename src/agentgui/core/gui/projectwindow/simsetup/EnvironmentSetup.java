@@ -35,6 +35,7 @@ import agentgui.physical2Denvironment.ontology.ActiveObject;
 import agentgui.physical2Denvironment.ontology.PassiveObject;
 import agentgui.physical2Denvironment.ontology.Physical2DObject;
 import agentgui.physical2Denvironment.ontology.PlaygroundObject;
+import agentgui.physical2Denvironment.ontology.Scale;
 import agentgui.physical2Denvironment.ontology.StaticObject;
 import agentgui.physical2Denvironment.utils.SVGHelper;
 
@@ -58,6 +59,7 @@ public class EnvironmentSetup extends JPanel implements ActionListener, Observer
 	public static final String SETTINGS_KEY_ID = "id";
 	public static final String SETTINGS_KEY_ONTO_CLASS = "ontologyClass";
 	public static final String SETTINGS_KEY_AGENT_MAX_SPEED = "agentMaxSpeed";
+	public static final String SETTINGS_KEY_AGENT_CLASSNAME = "agentClassName";
 	public static final String SETTINGS_KEY_POSITION = "position";
 	public static final String SETTINGS_KEY_SIZE = "size";
 	
@@ -389,6 +391,12 @@ public class EnvironmentSetup extends JPanel implements ActionListener, Observer
 			if(getLoadSVGDialog().showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
 				controller.setSVGFile(loadSVGDialog.getSelectedFile());
 			}
+		}else if(arg0.getSource() == environmentSettings.getBtnSetScale()){
+			Scale scale = new Scale();
+			scale.setRealWorldUnitValue(Float.parseFloat(environmentSettings.getTfRwu().getText()));
+			scale.setRealWorldUntiName(environmentSettings.getCbUnit().getSelectedItem().toString());
+			scale.setPixelValue(Float.parseFloat(environmentSettings.getTfPx().getText()));
+			controller.setScale(scale);
 		}else if(arg0.getSource() == objectSettings.getBtnApply()){
 			if(controller.createOrChange(objectSettings.getObjectProperties())){
 				changePosAndSize(selectedElement,
@@ -441,6 +449,7 @@ public class EnvironmentSetup extends JPanel implements ActionListener, Observer
 			}
 			if(eventCode == EnvironmentController.SCALE_CHANGED){
 				environmentSettings.setScale(controller.getEnvironment().getScale());
+				objectSettings.setUnit(controller.getEnvironment().getScale().getRealWorldUntiName());
 			}
 			if(eventCode == EnvironmentController.OBJECTS_CHANGED){
 				rebuildTree();

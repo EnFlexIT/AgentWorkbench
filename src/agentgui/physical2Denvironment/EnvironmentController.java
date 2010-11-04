@@ -396,40 +396,22 @@ public class EnvironmentController extends Observable implements Observer{
 		setChanged();
 		notifyObservers(new Integer(ENVIRONMENT_CHANGED));
 	}
-	
+	/**
+	 * This method is called by the EnvironmentSetup to create or change Physical2DObjects 
+	 * @param settings
+	 */
 	public boolean createOrChange(HashMap<String, Object> settings){
 		
 		boolean success = false;
-		
 		if(selectedObject == null){
 			// Create mode
 			Physical2DObject newObject = createObject(settings);
 			envWrap.addObject(newObject);
 			success = (newObject != null);
 		}else{
-			// Change mode
-			
-			String id = settings.get(EnvironmentSetup.SETTINGS_KEY_ID).toString();
-			// The ID is not changed or the new ID is available 
-			if(id.equals(selectedObject.getId()) || checkID(id)){
-			 
-				if(selectedObject.getClass().equals(settings.get(EnvironmentSetup.SETTINGS_KEY_ONTO_CLASS))){
-					// Same object type, just change attributes
-					selectedObject.setId((String) settings.get(EnvironmentSetup.SETTINGS_KEY_ID));
-					selectedObject.setPosition((Position) settings.get(EnvironmentSetup.SETTINGS_KEY_POSITION));
-					selectedObject.setSize((Size) settings.get(EnvironmentSetup.SETTINGS_KEY_SIZE));
-					if(selectedObject instanceof ActiveObject){
-						((ActiveObject)selectedObject).setMaxSpeed(Float.parseFloat((String) settings.get(EnvironmentSetup.SETTINGS_KEY_AGENT_MAX_SPEED)));
-					}
-					envWrap.rebuildLists();
-					success = true;
-				}else{
-					envWrap.removeObject(selectedObject);
-					envWrap.addObject(createObject(settings));
-				}
-			}else{		// The new ID is not available
-				System.err.println(Language.translate("Fehler: Die gewählte ID ist bereits vergeben!"));
-			}
+			changeObject(selectedObject, settings);
+			envWrap.rebuildLists();
+			success = true;
 		}
 		if(success){
 			setChanged();
@@ -439,7 +421,6 @@ public class EnvironmentController extends Observable implements Observer{
 		}
 		
 		return success;
-		
 	}
 	/**
 	 * This method creates a new Physical2DObject according to the given settings
@@ -463,7 +444,8 @@ public class EnvironmentController extends Observable implements Observer{
 				if(newObject instanceof ActiveObject){
 					((ActiveObject)newObject).setMovement(new Movement());
 					if(! settings.get(EnvironmentSetup.SETTINGS_KEY_AGENT_MAX_SPEED).toString().isEmpty()){
-						((ActiveObject)newObject).setMaxSpeed(Float.parseFloat((String) settings.get(EnvironmentSetup.SETTINGS_KEY_AGENT_MAX_SPEED)));
+						((ActiveObject)newObject).setMaxSpeed(Float.parseFloat(settings.get(EnvironmentSetup.SETTINGS_KEY_AGENT_MAX_SPEED).toString()));
+						((ActiveObject)newObject).setAgentClassName(settings.get(EnvironmentSetup.SETTINGS_KEY_AGENT_CLASSNAME).toString());
 					}
 					
 				}
@@ -479,6 +461,36 @@ public class EnvironmentController extends Observable implements Observer{
 		}
 		
 		return newObject;
+	}
+	/**
+	 * This method changes an existing Physical2DObject according to the given settings.
+	 * @param object The Physical2DObject
+	 * @param settings The settings
+	 */
+	private void changeObject(Physical2DObject object, HashMap<String, Object> settings){
+		// Change mode
+		
+		String id = settings.get(EnvironmentSetup.SETTINGS_KEY_ID).toString();
+		// The ID is not changed or the new ID is available 
+		if(id.equals(selectedObject.getId()) || checkID(id)){
+		 
+			if(selectedObject.getClass().equals(settings.get(EnvironmentSetup.SETTINGS_KEY_ONTO_CLASS))){
+				// Same object type, just change attributes
+				selectedObject.setId((String) settings.get(EnvironmentSetup.SETTINGS_KEY_ID));
+				selectedObject.setPosition((Position) settings.get(EnvironmentSetup.SETTINGS_KEY_POSITION));
+				selectedObject.setSize((Size) settings.get(EnvironmentSetup.SETTINGS_KEY_SIZE));
+				if(selectedObject instanceof ActiveObject){
+					((ActiveObject)selectedObject).setMaxSpeed(Float.parseFloat((String) settings.get(EnvironmentSetup.SETTINGS_KEY_AGENT_MAX_SPEED)));
+					((ActiveObject)selectedObject).setAgentClassName(settings.get(EnvironmentSetup.SETTINGS_KEY_AGENT_CLASSNAME).toString());
+				}
+				envWrap.rebuildLists();
+			}else{
+				envWrap.removeObject(selectedObject);
+				envWrap.addObject(createObject(settings));
+			}
+		}else{		// The new ID is not available
+			System.err.println(Language.translate("Fehler: Die gewählte ID ist bereits vergeben!"));
+		}
 	}
 	
 	/**
@@ -620,6 +632,13 @@ public class EnvironmentController extends Observable implements Observer{
 		project.simSetups.getCurrSimSetup().setEnvironmentFileName(baseFileName+".xml");
 		project.simSetups.getCurrSimSetup().setSvgFileName(baseFileName+".svg");
 		
+	}
+	
+	public void setScale(Scale scale){
+		this.environment.setScale(scale);
+		setChanged();
+		notifyObservers(new Integer(SCALE_CHANGED));
+		project.ProjectUnsaved = true;
 	}
 	
 }
