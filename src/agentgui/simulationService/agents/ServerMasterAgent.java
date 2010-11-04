@@ -27,7 +27,7 @@ import agentgui.core.database.DBConnection;
 import agentgui.simulationService.distribution.ontology.*;
 
 
-public class MasterServerAgent extends Agent {
+public class ServerMasterAgent extends Agent {
 
 	private static final long serialVersionUID = -3947798460986588734L;
 	

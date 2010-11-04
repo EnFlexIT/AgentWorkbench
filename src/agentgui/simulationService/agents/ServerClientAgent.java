@@ -40,7 +40,7 @@ import agentgui.simulationService.distribution.ontology.RegisterReceipt;
 import agentgui.simulationService.distribution.ontology.RemoteContainerConfig;
 import agentgui.simulationService.load.LoadMeasureThread;
 
-public class ClientServerAgent extends Agent {
+public class ServerClientAgent extends Agent {
 
 	private static final long serialVersionUID = -3947798460986588734L;
 	

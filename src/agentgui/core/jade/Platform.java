@@ -116,7 +116,7 @@ public class Platform extends Object {
 					
 				}
 				// --- Starting 'Server.Master'-Agent --------------				
-				jadeAgentStart("server.master", agentgui.simulationService.agents.MasterServerAgent.class.getName());
+				jadeAgentStart("server.master", agentgui.simulationService.agents.ServerMasterAgent.class.getName());
 				
 			} else {
 				// -------------------------------------------------
@@ -149,7 +149,7 @@ public class Platform extends Object {
 					
 				} 
 				// --- Starting 'Server.Slave'-Agent ---------------
-				jadeAgentStart("server.slave", agentgui.simulationService.agents.SlaveServerAgent.class.getName());
+				jadeAgentStart("server.slave", agentgui.simulationService.agents.ServerSlaveAgent.class.getName());
 					
 			}
 		} else {
@@ -159,7 +159,7 @@ public class Platform extends Object {
 			MASrunningMode = "Application";
 			// --- Starting 'Server.Client'-Agent -------------------				
 			if (jadeAgentIsRunning(MASapplicationAgentName)==false) {
-				jadeAgentStart(MASapplicationAgentName, agentgui.simulationService.agents.ClientServerAgent.class.getName());	
+				jadeAgentStart(MASapplicationAgentName, agentgui.simulationService.agents.ServerClientAgent.class.getName());	
 			}			
 			// --- Start RMA ('Remote Monitoring Agent') ------------ 
 			jadeSystemAgentOpen( "rma", null );	

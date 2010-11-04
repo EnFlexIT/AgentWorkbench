@@ -16,15 +16,15 @@
 	<property name="sourceDir" value="src" />
 	<property name="sourceDirLibraries" value="lib" />
 	<property name="sourceDirProperties" value="properties" />
-	<property name="sourceDirImages" value="src\img" />
-	<property name="sourceFileProjectOntology" value="src\mas\onto\AgentGUIProjectOntology.txt" />
+	<property name="sourceDirImages" value="src\agentgui\core\gui\img" />
+	<property name="sourceFileProjectOntology" value="src\agentgui\core\ontologies\AgentGUIProjectOntology.txt" />
 	
 	<property name="binaryDir" value="bin" />
 	<property name="binaryDirANT" value="build" />
-	<property name="binaryDirIMG" value="build\img" />
-	<property name="binaryFileProjectOntology" value="build\mas\onto\AgentGUIProjectOntology.txt" />
+	<property name="binaryDirIMG" value="build\agentgui\core\gui\img" />
+	<property name="binaryFileProjectOntology" value="build\agentgui\core\ontologies\AgentGUIProjectOntology.txt" />
 	
-	<property name="simServiceSourceDir" value="${binaryDirANT}\mas\service\\" />
+	<property name="simServiceSourceDir" value="${binaryDirANT}\agentgui\simulationService\\" />
 	<property name="simServiceDestinDir" value="lib\jade\lib\\" />
 	<property name="simServiceDestinJar" value="${simServiceDestinDir}\simulation.jar" />
 	
@@ -129,7 +129,7 @@
  			<manifest>
 				<attribute name="Built-By" value="${user.name}"/>
  				<attribute name="Built-Lang" value="${user.language}"/>
-    		    <attribute name="Main-Class" value="application.Application"/>
+    		    <attribute name="Main-Class" value="agentgui.core.application.Application"/>
  				<attribute name="Class-Path" value="${destinClassPath}"/> 				
 			</manifest>    		
     		<fileset dir="${binaryDirANT}">

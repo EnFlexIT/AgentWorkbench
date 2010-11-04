@@ -36,7 +36,7 @@ import agentgui.simulationService.distribution.ontology.SlaveTrigger;
 import agentgui.simulationService.distribution.ontology.SlaveUnregister;
 import agentgui.simulationService.load.LoadMeasureThread;
 
-public class SlaveServerAgent extends Agent {
+public class ServerSlaveAgent extends Agent {
 
 	private static final long serialVersionUID = -3947798460986588734L;
 	

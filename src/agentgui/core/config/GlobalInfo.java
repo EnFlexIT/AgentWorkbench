@@ -401,12 +401,12 @@ public class GlobalInfo {
 		// --- Here the default-values can be configured ------------
 		PlatformJadeConfig jadeConfig = new PlatformJadeConfig();
 		jadeConfig.runNotificationService(true);
+		jadeConfig.runSimulationService(true);
 		jadeConfig.setLocalPort(localeJadeLocalPort);
 		
 		if (Application.isServer==false) {
 			// --- Running as application ---------------------------
 			jadeConfig.runAgentMobilityService(true);
-			jadeConfig.runSimulationService(true);
 		}
 		return jadeConfig;
 	}
