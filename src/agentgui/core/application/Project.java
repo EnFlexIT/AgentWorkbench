@@ -173,7 +173,8 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 		{
 			try
 			{
-				jarFile=ClassLoaderUtil.adjustPathForLoadin(jarFile, getProjectFolder(), getProjectFolderFullPath());	
+			jarFile=ClassLoaderUtil.adjustPathForLoadin(jarFile, getProjectFolder(), getProjectFolderFullPath());	
+			ClassLoaderUtil.removeJarFromClassPath(jarFile);			
 			ClassLoaderUtil.removeFile(jarFile);
 			}
 			catch(Exception e)

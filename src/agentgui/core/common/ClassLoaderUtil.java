@@ -39,7 +39,26 @@ public class ClassLoaderUtil {
         File f = new File(s);
         addFile(f);
     }
-    
+    public static void addJarToClassPath(String name)
+    {
+    	System.setProperty("java.class.path", System.getProperty("java.class.path") + System.getProperty("path.separator") + name);
+    }
+    public static void removeJarFromClassPath(String jarFile)
+    {
+    	String path=System.getProperty("java.class.path");
+		 if((path.indexOf(jarFile)+jarFile.length())<path.length())
+		 {
+		
+				path=path.replace(jarFile+System.getProperty("path.separator"), System.getProperty("path.separator"));
+				
+		 }
+		 else
+		 {
+			
+				path=path.replace(jarFile, "");
+				path=path.trim();
+		 }
+    }
     public static void removeFile(String [] files) throws RuntimeException, NoSuchFieldException, IllegalAccessException
     {
     URLClassLoader sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
@@ -244,11 +263,10 @@ public class ClassLoaderUtil {
     public static  Vector<AgentController> loadAgentsIntoContainer  ( Vector<String> allClasses ,  AgentContainer container) throws ClassNotFoundException, StaleProxyException
     {
     	  Vector<AgentController> controller=new Vector<AgentController>();
-		     
-		
+		  
 		   for(String names:allClasses)
 			{
-			 // System.out.println("Name:"+names);
+			  System.out.println("Name:"+names);
 			
 			   if(names.contains(".agents"))
 			   {
@@ -261,6 +279,7 @@ public class ClassLoaderUtil {
 				     {
 				    	
 				    	 controller.add(container.createNewAgent(names, names, null));
+				    	
 				     }
 				   
 				   }	
@@ -309,5 +328,3 @@ public class ClassLoaderUtil {
     
 
 }
-
-
