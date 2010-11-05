@@ -28,7 +28,7 @@ public class ClassLoaderUtil {
    
 
     // Parameters
-    private static final Class<? extends Object>[] parameters = new Class[]{URL.class};
+    private static final Class<? extends Object>[] parameters = new Class  []{URL.class};
 
     /**
      * Add file to CLASSPATH
@@ -39,9 +39,15 @@ public class ClassLoaderUtil {
         File f = new File(s);
         addFile(f);
     }
+    public static void printClassPath()
+    {
+    	System.out.println(System.getProperty("java.class.path"));
+    }
     public static void addJarToClassPath(String name)
     {
-    	System.setProperty("java.class.path", System.getProperty("java.class.path") + System.getProperty("path.separator") + name);
+    	String path=System.getProperty("java.class.path") + System.getProperty("path.separator") + name;
+   	 path=path.replace(";;", ";");
+    	System.setProperty("java.class.path", path);
     }
     public static void removeJarFromClassPath(String jarFile)
     {
@@ -58,6 +64,8 @@ public class ClassLoaderUtil {
 				path=path.replace(jarFile, "");
 				path=path.trim();
 		 }
+		 path=path.replace(";;", ";");
+		System.setProperty("java.class.path", path);
     }
     public static void removeFile(String [] files) throws RuntimeException, NoSuchFieldException, IllegalAccessException
     {
@@ -107,11 +115,7 @@ public class ClassLoaderUtil {
     }
 
      	
-    for(int i=0;i<list.size();i++)
-    {
-         URL url=(URL) list.get(i); 
-     	
-    }
+   
         
         path.set(sun_misc_URLClassPath, list);
         ucp.set(ClassLoader.getSystemClassLoader(),  sun_misc_URLClassPath);
@@ -164,12 +168,7 @@ public class ClassLoaderUtil {
       myStack.remove(url);
     }
 
-     	
-    for(int i=0;i<list.size();i++)
-    {
-         URL url=(URL) list.get(i); 
-     	
-    }
+    
         
         path.set(sun_misc_URLClassPath, list);
         ucp.set(ClassLoader.getSystemClassLoader(),  sun_misc_URLClassPath);
@@ -251,8 +250,7 @@ public class ClassLoaderUtil {
 		{
 			int index=selectedJar.indexOf("\\");
 			int index2=selectedJar.indexOf("\\", index+1);
-			System.out.println("Index:"+index);
-			System.out.println("Index2:"+index2);
+		
 			selectedJar=fullProjectFolderPath+selectedJar.substring(index2+1);
 		}
 		return selectedJar;
@@ -266,7 +264,7 @@ public class ClassLoaderUtil {
 		  
 		   for(String names:allClasses)
 			{
-			  System.out.println("Name:"+names);
+			 
 			
 			   if(names.contains(".agents"))
 			   {

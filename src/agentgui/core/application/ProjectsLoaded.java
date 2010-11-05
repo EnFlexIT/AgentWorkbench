@@ -14,6 +14,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import agentgui.core.common.ClassLoaderUtil;
 import agentgui.core.gui.ProjectNewOpen;
 import agentgui.core.gui.ProjectWindow;
 import agentgui.core.ontologies.Ontologies4Project;
@@ -31,6 +32,28 @@ public class ProjectsLoaded {
 	 * @return Project
 	 */
 	public Project add ( boolean addNew ) {
+		try
+		{
+			if(ProjectsOpen.size()!=0)
+			{
+	
+				for(String jarFile:Application.ProjectCurr.projectResources)
+				{
+			
+			 	jarFile=ClassLoaderUtil.adjustPathForLoadin(jarFile, Application.ProjectCurr.getProjectFolder(), Application.ProjectCurr.getProjectFolderFullPath());
+			
+			 	ClassLoaderUtil.removeFile(jarFile);
+			 	ClassLoaderUtil.removeJarFromClassPath(jarFile);
+			
+				}
+			}
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+		
 		
 		String ActionTitel = null;
 		String ProjectNameTest = null;
@@ -108,6 +131,11 @@ public class ProjectsLoaded {
 			} catch (JAXBException e) {
 				e.printStackTrace();
 			}
+			
+			
+			
+			
+			
 			// --- Folder auf aktuellen Projektordner einstellen ---
 			NewPro.setProjectFolder( LocalTmpProjectFolder );	
 			
@@ -150,7 +178,25 @@ public class ProjectsLoaded {
 		NewPro.setMaximized();
 		if (addNew==true) {
 			NewPro.save();   // --- Erstmalig speichern ---	
-		}		
+		}	
+		
+		try
+		{
+			
+		
+			for(String jarFile : NewPro.projectResources)
+			{
+			 	jarFile=ClassLoaderUtil.adjustPathForLoadin(jarFile, NewPro.getProjectFolder(), NewPro.getProjectFolderFullPath());
+			
+			 	ClassLoaderUtil.addFile(jarFile);
+			 	ClassLoaderUtil.addJarToClassPath(jarFile);
+			}
+		}
+		catch(Exception e)
+		{
+				e.printStackTrace();
+		}
+		
 		
 		// --- Ggf. noch nach Ontologien suchen -----------
 		if (Application.JadePlatform.OntologyVector==null) {
@@ -310,8 +356,41 @@ public class ProjectsLoaded {
 			}
 			this.addActionListener( new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					Application.Projects.setFocus( WinIdx );							
+					//ClassLoaderUtil.printClassPath();
+					try
+					{
+					for(String jarFile:Application.ProjectCurr.projectResources)
+					{
+					
+					 	jarFile=ClassLoaderUtil.adjustPathForLoadin(jarFile, Application.ProjectCurr.getProjectFolder(), Application.ProjectCurr.getProjectFolderFullPath());
+				
+					 	ClassLoaderUtil.removeFile(jarFile);
+					 	ClassLoaderUtil.removeJarFromClassPath(jarFile);
+					
+					}
+					Application.Projects.setFocus( WinIdx );
+					
+					for(String jarFile:Application.ProjectCurr.projectResources)
+					{
+					
+					 	jarFile=ClassLoaderUtil.adjustPathForLoadin(jarFile, Application.ProjectCurr.getProjectFolder(), Application.ProjectCurr.getProjectFolderFullPath());
+				
+					 	ClassLoaderUtil.addFile(jarFile);
+					 	ClassLoaderUtil.addJarToClassPath(jarFile);
+					
+					}
+					//ClassLoaderUtil.printClassPath();
+					}
+					catch(Exception e)
+					{
+							e.printStackTrace();
+					}
 				}
+					
+					
+					
+					
+				
 			});		
 		}
 	}

@@ -627,6 +627,7 @@ public class CoreWindow extends JFrame implements ComponentListener{
 
 		public void actionPerformed(ActionEvent ae) {
 			String ActCMD = ae.getActionCommand();	
+	
 			// --- Menü Projekt -------------------------------
 			if ( ActCMD.equalsIgnoreCase("ProjectNew") ) {
 				Application.Projects.add( true );
