@@ -12,6 +12,7 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.JarURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -30,6 +31,49 @@ public class ClassLoaderUtil {
     // Parameters
     private static final Class<? extends Object>[] parameters = new Class  []{URL.class};
 
+    
+    
+    public static Vector<String> getPackageNames(Vector<String> ressources , String relativProjectPath,String completePath) throws Exception
+    {
+    	Vector<String> result=new Vector<String> ();
+    	boolean first=false;
+    	for(String ressource : ressources)
+    	{
+    	ressource=ClassLoaderUtil.adjustPathForLoadin(ressource, relativProjectPath,completePath);	
+    
+    	File file=new File(ressource);	
+        if(!file.isDirectory())	
+        {
+    	URL jar=file.toURI().toURL();
+    	System.out.println("jar:" + jar.toExternalForm() + "!/");
+    	jar = new URL("jar:" + jar.toExternalForm() + "!/");
+		JarURLConnection conn = (JarURLConnection) jar.openConnection();
+		JarFile jarFile= conn.getJarFile();
+		Enumeration<JarEntry> e = jarFile.entries();
+		System.out.println("Ressource");
+		while (e.hasMoreElements()&&!first) {
+			System.out.println("While");
+			JarEntry entry=e.nextElement();
+			String entryName=entry.getName();
+				if(!entryName.contains("META-INF"))
+				{
+					int index=entryName.indexOf("/");
+					String packpageName=entryName.substring(0,index);
+				result.add(packpageName);
+				first=true;
+				}
+			}
+		jarFile.close();
+		first=false;
+		}
+		
+    	}
+    	return result;
+		
+    	
+    	
+    	
+    }
     /**
      * Add file to CLASSPATH
      * @param s File name
