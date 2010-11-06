@@ -1,7 +1,5 @@
 package agentgui.core.gui.projectwindow.simsetup;
 
-import jade.core.Agent;
-
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -16,9 +14,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-
 import org.w3c.dom.Element;
 
+import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.physical2Denvironment.ontology.ActiveObject;
 import agentgui.physical2Denvironment.ontology.PassiveObject;
@@ -315,7 +313,7 @@ public class EnvironmentSetupObjectSettings extends JPanel{
 			cbAgentClass.setLocation(new Point(70, 78));
 			cbAgentClass.setSize(new Dimension(100, 25));
 			cbAgentClass.setEnabled(false);
-			Vector<Class<? extends Agent>> classes = parent.project.getProjectAgents();
+			Vector<Class<?>> classes = Application.classDetector.getAgentClasse();
 			Vector<String> names = new Vector<String>();
 			
 			agentClasses = new HashMap<String, String>();

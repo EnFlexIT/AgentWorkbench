@@ -9,6 +9,7 @@ import agentgui.core.gui.AboutDialog;
 import agentgui.core.gui.CoreWindow;
 import agentgui.core.gui.CoreWindowConsole;
 import agentgui.core.gui.options.OptionDialog;
+import agentgui.core.jade.ClassSearcher;
 import agentgui.core.jade.Platform;
 import agentgui.core.systemtray.AgentGUITrayIcon;
 import agentgui.simulationService.load.LoadMeasureThread;
@@ -24,6 +25,7 @@ public class Application {
 	public static CoreWindowConsole Console = null;
 	public static FileProperties properties = null;
 	public static Platform JadePlatform = null;	
+	public static ClassSearcher classDetector = null;
 	
 	public static AgentGUITrayIcon trayIconInstance = null;
 	public static boolean isServer = false;
@@ -59,6 +61,7 @@ public class Application {
 		properties = new FileProperties();
 		new LoadMeasureThread().start();  
 		startAgentGUI();
+		// FIXME: Why do we do this?
 		try
 		{
 		ClassLoaderUtil.addFile(Application.RunInfo.PathJade(true));
@@ -69,6 +72,7 @@ public class Application {
 		}
 		
 	}	
+
 	
 	private static void startAgentGUI() {
 		

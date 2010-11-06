@@ -823,12 +823,13 @@ public class CoreWindow extends JFrame implements ComponentListener{
 	};
 		
 	@Override
+	public void componentShown(ComponentEvent e) {
+	}
+	@Override
 	public void componentHidden(ComponentEvent e) {
-		// TODO Auto-generated method stub				
 	}
 	@Override
 	public void componentMoved(ComponentEvent e) {
-		// TODO Auto-generated method stub		
 	}
 	@Override
 	public void componentResized(ComponentEvent e) {
@@ -842,11 +843,6 @@ public class CoreWindow extends JFrame implements ComponentListener{
 		else {
 			setCloseButtonPosition( false );
 		}
-		
-	}
-	@Override
-	public void componentShown(ComponentEvent e) {
-		// TODO Auto-generated method stub
 	}
 	
 	// ------------------------------------------------------------

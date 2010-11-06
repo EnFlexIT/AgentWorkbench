@@ -4,6 +4,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 import agentgui.core.application.Application;
+import agentgui.core.jade.ClassSearcher;
 import agentgui.simulationService.load.LoadMeasureThread;
 import jnt.scimark2.Constants;
 import jnt.scimark2.Random;
@@ -48,7 +49,11 @@ public class BenchmarkMeasurement extends Thread {
 
 		// --- Kriterium für einen vorzeitigen Ausstieg ---
 		if ( benchValueOld>0 && nowExecOn.equalsIgnoreCase(benchExecOn) && benchAllwaysSkip==true && forceBench==false) {
+			// --- Nach Agent-, Ontology- und BaseService - Classes suchen ----
 			Application.benchmarkIsRunning = false;
+			if (Application.classDetector == null) {
+				Application.classDetector = new ClassSearcher();
+			}			
 			return;
 		}  
 		
@@ -115,6 +120,7 @@ public class BenchmarkMeasurement extends Thread {
 		Application.RunInfo.setBenchValue(result);
 		Application.RunInfo.setBenchExecOn(nowExecOn);
 		Application.RunInfo.setBenchAllwaysSkip(benchAllwaysSkip);
+		Application.properties.save();
 		
 		// --- Anzeige für den Fortschritt --- OFF --------
 		benchGUI.setBenchmarkValue(result);
@@ -126,6 +132,10 @@ public class BenchmarkMeasurement extends Thread {
 		this.closeGUI();
 		Application.benchmarkIsRunning = false;
 		
+		// --- Nach Agent-, Ontology- und BaseService - Classes suchen ----
+		if (Application.classDetector == null) {
+			Application.classDetector = new ClassSearcher();
+		}
 	}
 	
 	/**

@@ -38,6 +38,7 @@ import agentgui.core.application.Project;
 import agentgui.core.gui.AgentSelector;
 import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.core.sim.setup.SimulationSetups;
+import javax.swing.border.EtchedBorder;
 
 /**
  * @author: Christian Derksen
@@ -121,7 +122,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		gridBagConstraints.gridy = 2;
 		gridBagConstraints.weightx = 0.0;
 		gridBagConstraints.weighty = 1.0;
-		gridBagConstraints.insets = new Insets(10, 10, 5, 10);
+		gridBagConstraints.insets = new Insets(10, 10, 2, 10);
 		gridBagConstraints.fill = GridBagConstraints.BOTH;
 		gridBagConstraints.gridx = 0;
 		this.setLayout(new GridBagLayout());
@@ -156,7 +157,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		if (jScrollPaneStartList == null) {
 			jScrollPaneStartList = new JScrollPane();
 			jScrollPaneStartList.setPreferredSize(new Dimension(330, 131));
-			jScrollPaneStartList.setBorder(null);
+			jScrollPaneStartList.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 			jScrollPaneStartList.setViewportView(getJListStartList());
 		}
 		return jScrollPaneStartList;
@@ -506,7 +507,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		Integer startCounter = jListModelAgents2Start.size() + 1;
 
 		// ==================================================================
-		AgentSelector agentSelector = new AgentSelector(Application.MainWindow);
+		AgentSelector agentSelector = new AgentSelector(Application.MainWindow, currProject);
 		agentSelector.setVisible(true);
 		// ==================================================================
 		

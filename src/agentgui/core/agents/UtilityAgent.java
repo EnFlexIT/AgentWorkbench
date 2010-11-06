@@ -17,6 +17,7 @@ public class UtilityAgent extends Agent {
 		Object[] args = getArguments();
 		if (args==null || args.length==0) {
 			this.doDelete();
+			return;
 		}
 		
 		Integer start4 = (Integer) args[0];

@@ -1,6 +1,5 @@
 package agentgui.core.jade;
 
-import jade.content.onto.Ontology;
 import jade.core.Agent;
 import jade.core.ContainerID;
 import jade.core.Profile;
@@ -11,7 +10,6 @@ import jade.wrapper.ControllerException;
 import jade.wrapper.StaleProxyException;
 import jade.wrapper.State;
 
-import java.awt.Cursor;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -44,18 +42,10 @@ public class Platform extends Object {
 	public static final String MASapplicationAgentName = "server.client";
 	public JadeUrlChecker MASmasterAddress = null; 
 
-	
-	private jadeClasses<Agent> Agents; 
-	private jadeClasses<Ontology> Ontologies;
-	public Vector<Class<? extends Agent>> AgentsVector   = null;
-	public Vector<Class<? extends Ontology>> OntologyVector = null;
-	
 	private String newLine = Application.RunInfo.AppNewLineString();
 	
 	public Platform() {
-		// --- Search for all Agent-Classes -------------
-//		this.jadeFindAgentClasse(); // new Thread !! 
-		
+
 		if (Application.isServer==true) {
 			MASrunningMode = "Server";
 		} else { 
@@ -618,167 +608,6 @@ public class Platform extends Object {
 			e.printStackTrace();
 		}		
 	}
-	
-	/**
-	 * Starts the search for Agents in the  
-	 * current environment in an own Thread
-	 */
-	public void jadeFindAgentClasse(String jarFilePath) {
-		Agents = new jadeClasses<Agent>("jade.core.Agent",jarFilePath);
-		Thread th = new Thread( Agents  );
-		th.setName("Search4Agents");
-//		th.setContextClassLoader(classLoader);
-		th.start();
-	}
-	
-	public Vector<Class<? extends Agent>> jadeGetAgentClasses( String FilterFor) {
-		return 	jadeGetAgentClasses(FilterFor, null );
-	}
-	
-	/**
-	 * 
-	 * @param FilterFor
-	 * @return
-	 */
-	public Vector<Class<? extends Agent>> jadeGetAgentClasses( String FilterFor, String jarFilePath ) {
-		
-		boolean PrintMsg = true;
-		Class<? extends Agent> CurrClass = null;
-		String CurrClassName;
-		Vector<Class<? extends Agent>> FilteredVector = new Vector<Class<? extends Agent>>();
-		
-		// -------------------------------------------------------------
-		// --- Falls noch keine Klassen gefunden wurden, warten ...  ---
-		// -------------------------------------------------------------
-		if (Agents==null) {
-			this.jadeFindAgentClasse(jarFilePath);
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		while ( Agents.getResultCount()==0 ) {
-			try {
-				if ( PrintMsg == true ) {
-					Application.setStatusBar( Language.translate("Warte auf Agentenliste...") );
-					Application.MainWindow.setCursor( Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR) );															
-					Application.MainWindow.repaint();
-					PrintMsg = false;
-				}				
-				Thread.sleep(1000);
-			} 
-			catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}		
-		Application.setStatusBar( Language.translate("Fertig") );
-		Application.MainWindow.setCursor( Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR) );
-		Application.MainWindow.repaint();
-		
-		// -------------------------------------------------------------
-		// --- Agentenliste auslesen und ggf. filtern ------------------
-		// -------------------------------------------------------------
-		AgentsVector = Agents.getClassesFound();
-		int i_max = AgentsVector.size();
-		for ( int i = 0; i<i_max; i++ ) {			
-			CurrClass = AgentsVector.get(i);
-			CurrClassName = CurrClass.getName();
-			if ( FilterFor == null || CurrClassName.startsWith( FilterFor ) == true ) {
-				FilteredVector.addElement(  CurrClass );								
-			}			
-		}		
-		return FilteredVector;
-	}
-	/**
-	 * Starts the search for Ontologies in the  
-	 * current environment in an own Thread
-	 */
-	public void jadeFindOntologyClasse() {
-		Ontologies = new jadeClasses<Ontology>("jade.content.onto.Ontology",null);
-		Thread th = new Thread( Ontologies );
-		th.setName("Search4Ontologies");
-		th.start();
-	}
-	/**
-	 * This method returns all known Ontologies  
-	 * from the current environment
-	 * @return
-	 */
-	public Vector<Class<? extends Ontology>> jadeGetOntologyClasse() {
-		
-		boolean PrintMsg = true;
-		// -------------------------------------------------------------
-		// --- Falls noch keine Klassen gefunden wurden, warten ...  ---
-		// -------------------------------------------------------------
-		if (Ontologies==null) {
-			this.jadeFindOntologyClasse();
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		while ( Ontologies.getResultCount()==0 ) {
-			try {
-				if ( PrintMsg == true ) {
-					Application.setStatusBar( Language.translate("Warte auf Ontologie-Liste...") );
-					Application.MainWindow.setCursor( Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR) );	
-					Application.MainWindow.repaint();
-					PrintMsg = false;
-				}				
-				Thread.sleep(1000);
-			} 
-			catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}		
-		Application.setStatusBar( Language.translate("Fertig") );
-		Application.MainWindow.setCursor( Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR) );
-		Application.MainWindow.repaint();
-		
-		OntologyVector = Ontologies.getClassesFound();
-		return OntologyVector;
-	}	
-	
-	/**
-	 * Class for searching special classe, given
-	 * by an example (e. g. 'jade.core.Agent') 
-	 */
-	public class jadeClasses<classType> implements Runnable {
-
-		private CustomClassFinder cf = null;
-		private Vector<Class<? extends classType>> classVector = new Vector<Class<? extends classType>>();
-		private String superClass = null;
-		private String jarFilePath = null;
-		
-		public jadeClasses( String superClazz , String jarFilePath) {
-			superClass = superClazz;
-			this.jarFilePath=jarFilePath;
-		}		
-		@Override
-		public void run() {
-			this.FindClasse(superClass);
-		}
-		@SuppressWarnings("unchecked")
-		public void FindClasse(String SuperClass)  {
-		
-			cf = new CustomClassFinder(jarFilePath);
-			
-			classVector = cf.findSubclasses(SuperClass);
-			//System.out.println( Language.translate( "Suche nach " + SuperClass + " beendet .. " ) );
-		}	
-		public Vector<Class<? extends classType>> getClassesFound() {
-			return classVector;
-		}
-		public boolean isWorking() {
-			return cf.isWorking();
-		}
-		public int getResultCount() {
-			return classVector.size();
-		}
-
-	} // -- End Sub-Class ---
 	
 	
 }// -- End Class ---

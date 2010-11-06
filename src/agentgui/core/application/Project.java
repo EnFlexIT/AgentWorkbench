@@ -1,7 +1,5 @@
 package agentgui.core.application;
 
-import jade.core.Agent;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.Writer;
@@ -17,7 +15,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-
 
 import org.w3c.dom.Document;
 
@@ -52,8 +49,6 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	@XmlTransient public boolean ProjectUnsaved = false;
 	@XmlTransient private String ProjectFolder;
 	@XmlTransient private String ProjectFolderFullPath;
-	@XmlTransient private String MainPackage;
-	@XmlTransient private Vector<Class<? extends Agent>> ProjectAgents;
 	@XmlTransient public Ontologies4Project ontologies4Project;
 
 	//	@XmlTransient private Physical2DEnvironment environment;
@@ -183,9 +178,6 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 				return false;
 			}
 		}
-		
-		
-		
 		return true;
 	}
 	
@@ -229,6 +221,14 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 		}		
 	}
 	
+	/**
+	 * To prevent to close the project without saving
+	 * @param reason
+	 */
+	public void setNotChangedButNotify(Object reason) {
+		setChanged();
+		notifyObservers(reason);		
+	}
 	/**
 	 * To prevent to close the project without saving
 	 * @param reason
@@ -315,38 +315,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	public String getProjectFolderFullPath() {
 		return ProjectFolderFullPath;
 	}
-	/**
-	 * @return the MainPackage
-	 */
-	public String getMainPackage() {
-		return MainPackage;
-	}
-	/**
-	 * @param mainPackage the mainPackage to set
-	 */
-	public void setMainPackage(String mainPackage) {
-		MainPackage = mainPackage;
-		ProjectUnsaved = true;
-		setChanged();
-		notifyObservers( "MainPackage" );
-	}
 	
-	/**
-	 * @param projectAgents the projectAgents to set
-	 */
-	public void filterProjectAgents() {
-		String jarPathName=null;
-		ProjectAgents = Application.JadePlatform.jadeGetAgentClasses( this.getMainPackage(), jarPathName);
-		setChanged();
-		notifyObservers("ProjectAgents");
-	}
-	
-	/**
-	 * @return the projectAgents
-	 */
-	public Vector<Class<? extends Agent>> getProjectAgents() {
-		return ProjectAgents;
-	}
 	/**
 	 * Informs about changes at the AgentConfiguration 'AgentConfig'
 	 */

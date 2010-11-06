@@ -1,7 +1,5 @@
 package agentgui.core.ontologies;
 
-import jade.content.onto.Ontology;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -167,7 +165,7 @@ public class Ontologies4Project extends HashMap<String, OntologyClass> {
 	 */
 	public Vector<String> getAllNoneUsedOntologies() {
 		
-		Vector<Class<? extends Ontology>> allOntos = Application.JadePlatform.jadeGetOntologyClasse();
+		Vector<Class<?>> allOntos = Application.classDetector.getOntologieClasse();
 		Vector<String> filteredOntos = new Vector<String>();
 		for (int i =0; i<allOntos.size(); i++) {
 			if ( this.get(allOntos.get(i).getName())==null && 

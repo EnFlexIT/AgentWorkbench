@@ -3,7 +3,6 @@ package agentgui.core.gui.projectwindow;
 import jade.core.Agent;
 
 import java.awt.BorderLayout;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -38,6 +37,9 @@ import agentgui.core.agents.AgentClassElement;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
+import agentgui.core.jade.ClassSearcher;
+import agentgui.core.jade.ClassSearcherSingle;
+import agentgui.core.jade.ClassSearcherSingle.ClassSearcherUpdate;
 import agentgui.core.ontologies.OntologyClassTreeObject;
 
 public class BaseAgents extends JPanel implements Observer, ActionListener {
@@ -59,6 +61,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 	private JButton jButtonAgentListRefresh = null;
 	private JScrollPane jAgentScroll = null;
 	private JList jAgentList = null;
+	private DefaultListModel jAgentListModel = new DefaultListModel();
 	private JPanel jPanelReferences = null;
 	private JScrollPane jScrollReferences = null;
 	private JList jListReferences = null;
@@ -204,17 +207,10 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 	
 	/**
 	 * This method initializes jAgentList	
-	 * 	
 	 * @return javax.swing.JList	
 	 */
 	private JList getJAgentList() {
 		if (jAgentList == null) {
-			Vector<Class<?  extends Agent>> AgentList = CurrProject.getProjectAgents();
-			DefaultListModel jAgentListModel = new DefaultListModel();
-			for (int i =0; i<AgentList.size();i++) {
-				Class<? extends Agent> curAgentClass=(Class<? extends Agent>) AgentList.get(i);
-				jAgentListModel.addElement( new AgentClassElement(curAgentClass) );
-			}
 			jAgentList = new JList(jAgentListModel);
 			jAgentList.setToolTipText("Agenten in diesem Projekt");
 			jAgentList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -279,12 +275,40 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 				}
 			});
 		}
+		this.refreshAgentList();
 		return jAgentList;
 	}
-
+	
+	/**
+	 * This methods will refresh the List of available agents
+	 */
+	@SuppressWarnings("unchecked")
+	private void refreshAgentList() {
+		
+		Vector<Class<?>> AgentList = Application.classDetector.getAgentClasse();
+		for (int i =0; i<AgentList.size();i++) {
+			
+			Class<? extends Agent> curAgentClass=(Class<? extends Agent>) AgentList.get(i);
+			
+			boolean curAgentClassFound = false;
+			// --- Ist diese Klasse schon im Model? ---
+			for (int j = 0; j < jAgentListModel.size(); j++) {
+				AgentClassElement ace = (AgentClassElement) jAgentListModel.getElementAt(j);
+				Class<?> clazz = ace.getElementClass();
+				if (clazz.equals(curAgentClass)==true) {
+					curAgentClassFound = true;
+					break;
+				}
+			}
+			if (curAgentClassFound==false) {
+				jAgentListModel.addElement(new AgentClassElement(curAgentClass));
+			}
+		}
+	}
+	
+	
 	/**
 	 * This method initializes jPanelReferences	
-	 * 	
 	 * @return javax.swing.JPanel	
 	 */
 	private JPanel getJPanelReferences() {
@@ -360,7 +384,6 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 
 	/**
 	 * This method initializes jListReferences	
-	 * 	
 	 * @return javax.swing.JList	
 	 */
 	private JList getJListReferences() {
@@ -612,72 +635,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 		return jPanelOntoSlots;
 	}
 	
-	@Override
-	public void actionPerformed(ActionEvent ae) {
-		// --- Das ActionCommand und den Auslöser des Events ermitteln ---
-		String ActCMD = ae.getActionCommand();
-		Object Trigger = ae.getSource();
-
-		if ( Trigger == jButtonAgentListRefresh ) {
-			// --- AgentList aktualisieren ----------------
-			Application.setStatusBar( Language.translate("Aktualisiere Agenten-Liste...") );
-			Application.MainWindow.setCursor( Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR) );	
-			
-//			Application.JadePlatform.jadeFindAgentClasse();
-			
-			jTextAgent.setText(null);
-			jTextAgentStartAs.setText(null);
-			jListReferences.setListData(new Vector<String>());
-			CurrProject.filterProjectAgents();
-			this.setCurrAgentConfig();
-			this.setTmpAgentConfig();
-		}
-		else if ( Trigger == jButtonStartAgent ) {
-			// --- Den ausgewählten Agenten starten -------
-			Class<? extends Agent> selectedAgentClass=((AgentClassElement)jAgentList.getSelectedValue()).getElementClass();
-			if ( jTextAgentStartAs.getText().length() != 0 && selectedAgentClass != null) {
-				Application.JadePlatform.jadeAgentStart(
-						jTextAgentStartAs.getText(), 
-						selectedAgentClass,
-						null,
-						CurrProject.getProjectFolder());	
-				jTextAgent.setText(null);
-				jTextAgentStartAs.setText(null);
-				jAgentList.clearSelection();
-			}
-		} else if (Trigger == jButtonMoveUp ) {
-			// --- Agenten-Referenz eins höher ------------
-			setTmpAgentConfig();
-			setCurrAgentConfig();
-			if (CurrProject.AgentConfig.movePosition(agentReference, agentConfig, agentConfigPos, -1) ){
-				jListReferences.setSelectedIndex(agentConfigPos-2);
-			}
-		} else if (Trigger == jButtonMoveDown ) {
-			// --- Agenten-Referenz eins runter -----------
-			setTmpAgentConfig();
-			setCurrAgentConfig();
-			if (CurrProject.AgentConfig.movePosition(agentReference, agentConfig, agentConfigPos, 1) ){
-				jListReferences.setSelectedIndex(agentConfigPos);
-			}
-		} else if (Trigger == jButtonRemoveAll) {
-			// --- Agenten-Referenzen komplett entfernen --
-			setTmpAgentConfig();
-			CurrProject.AgentConfig.removeReferencesComplete(agentReference);
-		} else if (Trigger == jButtonReferencesAdd ) {
-			// --- Agenten-Referenzen hinzufügen ----------
-			setTmpAgentConfig();
-			CurrProject.AgentConfig.addReference(agentReference, ontoReference);
-		} else if (Trigger == jButtonReferencesRemove ) {
-			// --- Agenten-Referenzen entfernen -----------
-			setTmpAgentConfig();
-			setCurrAgentConfig();
-			CurrProject.AgentConfig.removeReference(agentReference, agentConfig);
-		}
-		else {
-			System.err.println(Language.translate("Unbekannt: ") + "ActionCommand => " + ActCMD);	
-		};
-		this.repaint();
-	}
+	
 	/**
 	 * updates the List of the AgetnReferences
 	 */
@@ -697,6 +655,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 			agentConfig = agentConfigArr[1].trim();
 		}
 	}
+	
 	private void setTmpAgentConfig() {
 		// -- configure Var. agentReference -------------------------
 		if ( jAgentList.getSelectedValue() == null ) {
@@ -716,25 +675,8 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 		}
 	}
 	
-	@Override
-	public void update(Observable arg0, Object OName) {
-		
-		String ObjectName = OName.toString();
-		if ( ObjectName.equalsIgnoreCase( "AgentReferences" ) ) {
-			// --- Liste der Agenten-Referenzen aktualisieren ---
-			updateView4AgentConfig();			
-		} else if ( ObjectName.equalsIgnoreCase( "ProjectOntology" ) ) {
-			// --- Ansicht auf die projekt-Ontologie aktualisieren --
-			this.jTreeOntology.setModel( CurrProject.ontologies4Project.getOntologyTree() );
-			this.OntoTreeExpand2Level(3, true);
-		} else {
-			//System.out.println("Unbekannte Meldung vom Observer: " + ObjectName);
-		}
-	}
-
 	/**
 	 * This method initializes jPanelWest	
-	 * 	
 	 * @return javax.swing.JPanel	
 	 */
 	private JPanel getJPanelWest() {
@@ -769,7 +711,6 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 
 	/**
 	 * This method initializes jPanelEast	
-	 * 	
 	 * @return javax.swing.JPanel	
 	 */
 	private JPanel getJPanelEast() {
@@ -827,6 +768,95 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 			jPanelEastTop.add(getJButtonAgentListRefresh(), gridBagConstraints4);
 		}
 		return jPanelEastTop;
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent ae) {
+		// --- Das ActionCommand und den Auslöser des Events ermitteln ---
+		String ActCMD = ae.getActionCommand();
+		Object Trigger = ae.getSource();
+
+		if ( Trigger == jButtonAgentListRefresh ) {
+			// --- AgentList aktualisieren ----------------
+			Application.setStatusBar( Language.translate("Aktualisiere Agenten-Liste...") );
+			
+			jAgentListModel.removeAllElements();
+			Application.classDetector.reStartSearch(CurrProject, ClassSearcher.RESTART_AGENT_SEARCH);
+			
+			jTextAgent.setText(null);
+			jTextAgentStartAs.setText(null);
+			jListReferences.setListData(new Vector<String>());
+			this.setCurrAgentConfig();
+			this.setTmpAgentConfig();
+		}
+		else if ( Trigger == jButtonStartAgent ) {
+			// --- Den ausgewählten Agenten starten -------
+			Class<? extends Agent> selectedAgentClass=((AgentClassElement)jAgentList.getSelectedValue()).getElementClass();
+			if ( jTextAgentStartAs.getText().length() != 0 && selectedAgentClass != null) {
+				Application.JadePlatform.jadeAgentStart(
+						jTextAgentStartAs.getText(), 
+						selectedAgentClass,
+						null,
+						CurrProject.getProjectFolder());	
+				jTextAgent.setText(null);
+				jTextAgentStartAs.setText(null);
+				jAgentList.clearSelection();
+			}
+		} else if (Trigger == jButtonMoveUp ) {
+			// --- Agenten-Referenz eins höher ------------
+			setTmpAgentConfig();
+			setCurrAgentConfig();
+			if (CurrProject.AgentConfig.movePosition(agentReference, agentConfig, agentConfigPos, -1) ){
+				jListReferences.setSelectedIndex(agentConfigPos-2);
+			}
+		} else if (Trigger == jButtonMoveDown ) {
+			// --- Agenten-Referenz eins runter -----------
+			setTmpAgentConfig();
+			setCurrAgentConfig();
+			if (CurrProject.AgentConfig.movePosition(agentReference, agentConfig, agentConfigPos, 1) ){
+				jListReferences.setSelectedIndex(agentConfigPos);
+			}
+		} else if (Trigger == jButtonRemoveAll) {
+			// --- Agenten-Referenzen komplett entfernen --
+			setTmpAgentConfig();
+			CurrProject.AgentConfig.removeReferencesComplete(agentReference);
+		} else if (Trigger == jButtonReferencesAdd ) {
+			// --- Agenten-Referenzen hinzufügen ----------
+			setTmpAgentConfig();
+			CurrProject.AgentConfig.addReference(agentReference, ontoReference);
+		} else if (Trigger == jButtonReferencesRemove ) {
+			// --- Agenten-Referenzen entfernen -----------
+			setTmpAgentConfig();
+			setCurrAgentConfig();
+			CurrProject.AgentConfig.removeReference(agentReference, agentConfig);
+		}
+		else {
+			System.err.println(Language.translate("Unbekannt: ") + "ActionCommand => " + ActCMD);	
+		};
+		this.repaint();
+	}
+	
+	@Override
+	public void update(Observable arg0, Object notifyObject) {
+		
+		String ObjectName = notifyObject.toString();
+		if ( ObjectName.equalsIgnoreCase( "AgentReferences" ) ) {
+			// --- Liste der Agenten-Referenzen aktualisieren ---
+			updateView4AgentConfig();
+			
+		} else if ( ObjectName.equalsIgnoreCase( "ProjectOntology" ) ) {
+			// --- Ansicht auf die projekt-Ontologie aktualisieren --
+			this.jTreeOntology.setModel( CurrProject.ontologies4Project.getOntologyTree() );
+			this.OntoTreeExpand2Level(3, true);
+			
+		} else if ( ObjectName.equals(ClassSearcherSingle.classSearcherNotify) ) {
+			ClassSearcherUpdate csu = (ClassSearcherUpdate) notifyObject;
+			if (csu.getClass2SearchFor().equals(Agent.class)) {
+				this.refreshAgentList();
+			}
+		} else {
+			//System.out.println("Unbekannte Meldung vom Observer: " + ObjectName);
+		}
 	}
 	
 }  //  @jve:decl-index=0:visual-constraint="10,10"

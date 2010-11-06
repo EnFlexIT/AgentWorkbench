@@ -1,5 +1,7 @@
 package agentgui.core.gui;
 
+import jade.content.onto.Ontology;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -15,6 +17,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -34,8 +38,10 @@ import javax.swing.border.TitledBorder;
 
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
+import agentgui.core.jade.ClassSearcherSingle;
+import agentgui.core.jade.ClassSearcherSingle.ClassSearcherUpdate;
 
-public class OntologieSelector extends JDialog implements ActionListener{
+public class OntologieSelector extends JDialog implements Observer, ActionListener{
 
 	private static final long serialVersionUID = 1L;
 	private Boolean canceled = false;  //  @jve:decl-index=0:
@@ -60,7 +66,8 @@ public class OntologieSelector extends JDialog implements ActionListener{
 	public OntologieSelector(Frame owner, String titel, boolean modal, Project project) {
 		super(owner, titel, modal);
 		currProject = project;
-
+		currProject.addObserver(this);
+		
 		// --- Dialog aufbauen ---------------------------- 
 		initialize();
 		// --- Fill List with the found Ontologies --------
@@ -347,6 +354,20 @@ public class OntologieSelector extends JDialog implements ActionListener{
 		} else {
 			System.out.println( "Unknown ActionCommand: " + ActCMD );
 		};
+	}
+
+	@Override
+	public void update(Observable o, Object notifyObject) {
+		
+		String ObjectName = notifyObject.toString();
+		if ( ObjectName.equals(ClassSearcherSingle.classSearcherNotify) ) {
+			ClassSearcherUpdate csu = (ClassSearcherUpdate) notifyObject;
+			if (csu.getClass2SearchFor().equals(Ontology.class)) {
+				// --- Liste der Ontologien aktualisieren -----
+				this.showOntologyListModel();				
+			}
+		}
+		
 	}
 	
 }  //  @jve:decl-index=0:visual-constraint="10,10"
