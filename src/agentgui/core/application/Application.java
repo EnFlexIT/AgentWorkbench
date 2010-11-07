@@ -61,13 +61,11 @@ public class Application {
 		properties = new FileProperties();
 		new LoadMeasureThread().start();  
 		startAgentGUI();
+
 		// FIXME: Why do we do this?
-		try
-		{
-		ClassLoaderUtil.addFile(Application.RunInfo.PathJade(true));
-		}
-		catch(Exception e)
-		{
+		try {
+			ClassLoaderUtil.addFile(Application.RunInfo.PathJade(true));
+		} catch(Exception e) {
 			e.printStackTrace();
 		}
 		

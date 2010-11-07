@@ -2,6 +2,7 @@ package agentgui.core.application;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.Writer;
 import java.util.Observable;
 import java.util.Vector;
@@ -21,6 +22,7 @@ import org.w3c.dom.Document;
 import agentgui.core.agents.AgentConfiguration;
 import agentgui.core.common.ClassLoaderUtil;
 import agentgui.core.gui.ProjectWindow;
+import agentgui.core.jade.ClassSearcher;
 import agentgui.core.jade.PlatformJadeConfig;
 import agentgui.core.ontologies.Ontologies4Project;
 import agentgui.core.sim.setup.SimulationSetups;
@@ -143,8 +145,18 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 					return false;
 			}
 		}
-		
+		// --- ggf. noch Jade beenden ---------------------
+		if (Application.JadePlatform.jadeStopAskUserBefore()==false) {
+			return false;
+		}
+
+		// ------------------------------------------------		
 		// --- Projekt kann geschlossen werden ------------
+		// ------------------------------------------------
+		// --- Clear CLASSPATH ----------------------------
+		this.resourcesRemove();
+		
+		// --- Close Project ------------------------------
 		int Index = Application.Projects.getIndexByName( ProjectName ); // --- Merker Index ---		
 		ProjectGUI.dispose();
 		Application.Projects.remove(this);
@@ -155,29 +167,13 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 			Application.ProjectCurr = Application.Projects.get(Index);
 			Application.ProjectCurr.setFocus();
 			Application.setTitelAddition( Application.ProjectCurr.ProjectName );
-		}
-		else {
+		} else {
 			Application.ProjectCurr = null;
 			Application.Projects.setProjectMenuItems();
 			Application.MainWindow.setCloseButtonPosition( false );
 			Application.setTitelAddition( "" );
 		}
 		Application.setStatusBar( "" );
-		// Clear CLASSBATH
-		for(String jarFile : projectResources)
-		{
-			try
-			{
-			jarFile=ClassLoaderUtil.adjustPathForLoadin(jarFile, getProjectFolder(), getProjectFolderFullPath());	
-			ClassLoaderUtil.removeJarFromClassPath(jarFile);			
-			ClassLoaderUtil.removeFile(jarFile);
-			}
-			catch(Exception e)
-			{
-				e.printStackTrace();
-				return false;
-			}
-		}
 		return true;
 	}
 	
@@ -407,4 +403,61 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 		setChanged();
 		notifyObservers("ProjectOntology");
 	}
+	
+	/**
+	 * This method removes adds external project resources (jars) to the CLATHPATH  
+	 */
+	public void resourcesLoad() {
+
+		for(String jarFile : projectResources) {
+			
+			try {
+				jarFile = ClassLoaderUtil.adjustPathForLoadin(jarFile, this.getProjectFolder(), this.getProjectFolderFullPath());
+				File file = new File(jarFile);
+				ClassLoaderUtil.addFile(file.getAbsoluteFile());
+				ClassLoaderUtil.addJarToClassPath(jarFile);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		// --- Nach Agent-, Ontology- und BaseService - Classes suchen ----
+		if (Application.classDetector == null) {
+			Application.classDetector = new ClassSearcher(this);
+		} else {
+			Application.classDetector.reStartSearch(this, null);
+		}
+		
+		this.setChangedAndNotify("projectResources");
+	}
+	/**
+	 * This Method reloads the project resources in the CLASSPATH
+	 */
+	public void resourcesReLoad() {
+		this.resourcesRemove();
+		this.resourcesLoad();
+	}
+	
+	/**
+	 * This method removes all external project resources (jars) from the CLATHPATH  
+	 */
+	public void resourcesRemove() {
+		
+		for(String jarFile : projectResources) {
+			
+			try {
+				jarFile = ClassLoaderUtil.adjustPathForLoadin(jarFile, this.getProjectFolder(), this.getProjectFolderFullPath());
+				ClassLoaderUtil.removeFile(jarFile);
+				ClassLoaderUtil.removeJarFromClassPath(jarFile);
+			} catch (RuntimeException e1) {
+				e1.printStackTrace();
+			} catch (NoSuchFieldException e1) {
+				e1.printStackTrace();
+			} catch (IllegalAccessException e1) {
+				e1.printStackTrace();
+			}
+		}
+		this.setChangedAndNotify("projectResources");
+	}
+	
 }

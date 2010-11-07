@@ -1,6 +1,5 @@
 package agentgui.core.jade;
 
-import jade.util.ClassFinder;
 import jade.util.ClassFinderFilter;
 import jade.util.ClassFinderListener;
 
@@ -9,7 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import agentgui.core.application.Application;
 import agentgui.core.application.Project;
+import agentgui.core.common.ClassLoaderUtil;
 
 public class ClassSearcherSingle {
 
@@ -41,6 +42,11 @@ public class ClassSearcherSingle {
 		new Thread(cu).start();
 	}
 	
+	public void stopSearch() {
+		synchronized (cu) {
+			cu.stopSearch();
+		}
+	}
 	/**
 	 * @return the classesLoaded
 	 */
@@ -50,8 +56,51 @@ public class ClassSearcherSingle {
 	/**
 	 * @return the classesFound
 	 */
-	public Vector<Class<?>> getClassesFound() {
-		return classesFound;
+	public Vector<Class<?>> getClassesFound(boolean filtered) {
+		
+		if (filtered==true) {
+			// -------------------------------------------------
+			// --- Filter packages from the current project ----
+			Vector<String> packagesInProject = new Vector<String>();
+			
+			if (Application.RunInfo.AppExecutedOver().equalsIgnoreCase("IDE")) {
+				// ---------------------------------------------
+				// --- We are using our IDE in the moment ------
+				packagesInProject.addElement(currProject.getProjectFolder());
+			} 
+
+			// -------------------------------------------------
+			// --- In case that we have external resources -----
+			if (currProject.projectResources!=null && currProject.projectResources.size()>0) {
+				Vector<String> extResources = currProject.projectResources;
+				String relProPath = currProject.getProjectFolder();
+				String absProPath = currProject.getProjectFolderFullPath();
+				
+				try {
+					packagesInProject.addAll(ClassLoaderUtil.getPackageNames(extResources, relProPath, absProPath)) ;
+				} catch (Exception exc) {
+					exc.printStackTrace();
+				}
+			}
+			
+			// -------------------------------------------------
+			// --- Define the (start) result-Vector ------------
+			Vector<Class<?>> resultVec = new Vector<Class<?>>();
+			for (int i = 0; i < classesFound.size(); i++) {
+				Class<?> clazz = classesFound.get(i);
+				String clazzName = clazz.getName();
+				
+				for (String projectPackage : packagesInProject) {
+					if (clazzName.startsWith(projectPackage)) {
+						resultVec.addElement(clazz);
+					}
+				}
+			}
+			return resultVec;
+			
+		} else {
+			return classesFound;
+		}
 	}
 	
 	/**
@@ -64,9 +113,10 @@ public class ClassSearcherSingle {
 			if (stillSearching) {
 				classesFound.addAll(list);
 			}
-		}
-		if (currProject!=null) {
-			currProject.setNotChangedButNotify(new ClassSearcherUpdate(this.clazz));
+			// --- notify project-window ------------------
+			if (currProject!=null) {
+				currProject.setNotChangedButNotify(new ClassSearcherUpdate(this.clazz));
+			}
 		}
 	}
 	
@@ -119,6 +169,12 @@ public class ClassSearcherSingle {
 			this.classfilter = classfilter;
 		}
 
+		public void stopSearch() {
+			if (cf!=null) {
+				cf.setStopSearch(true);
+			}
+		}
+		
 		@SuppressWarnings("unchecked")
 		public void add(Class clazz, URL location) {
 			numberOfClasses++;

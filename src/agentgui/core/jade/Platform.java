@@ -266,7 +266,22 @@ public class Platform extends Object {
 		Application.setStatusJadeRunning(false);
 		
 	}
-
+	/**
+	 * Asks the user to shutdown Jade
+	 */
+	public boolean jadeStopAskUserBefore() {
+		
+		if(this.jadeMainContainerIsRunning()==true) {
+			String MsgHead = Language.translate("JADE wird zur Zeit ausgeführt!");
+			String MsgText = Language.translate("Möchten Sie JADE nun beenden und fortfahren?");
+			Integer MsgAnswer =  JOptionPane.showInternalConfirmDialog( Application.MainWindow.getContentPane(), MsgText, MsgHead, JOptionPane.YES_NO_OPTION);
+			if ( MsgAnswer == 1 ) return false; // --- NO,just exit 
+			// --- Stop the JADE-Platform -------------------
+			this.jadeStop();
+		}
+		return true;
+	}
+	
 	/** 
 	 * Checks, whether the main-container (Jade himself) is running or not 
 	 */

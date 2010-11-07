@@ -35,12 +35,21 @@ public class ClassSearcher {
 			// ------------------------------------------------
 			
 			// --- Start search for Agent ---------------------
+			if (csAgents!=null) {
+				csAgents.stopSearch();
+			}
 			csAgents = new ClassSearcherSingle(jade.core.Agent.class, currProject);
 			
 			// --- Start search for Ontology ------------------
+			if (csOntologies!=null) {
+				csOntologies.stopSearch();
+			}
 			csOntologies = new ClassSearcherSingle(jade.content.onto.Ontology.class, currProject);
 			
 			// --- Start search for Agent BaseService ---------
+			if (csBaseService!=null) {
+				csBaseService.stopSearch();
+			}
 			csBaseService = new ClassSearcherSingle(jade.core.BaseService.class, currProject);
 
 		} else {
@@ -51,14 +60,24 @@ public class ClassSearcher {
 			switch (search) {
 			case RESTART_AGENT_SEARCH:
 				// --- Start search for Agent ---------------------
+				if (csAgents!=null) {
+					csAgents.stopSearch();
+				}
 				csAgents = new ClassSearcherSingle(jade.core.Agent.class, currProject);
+				
 				break;
 			case RESTART_ONTOLOGY_SEARCH:
 				// --- Start search for Ontology ------------------
+				if (csOntologies!=null) {
+					csOntologies.stopSearch();
+				}
 				csOntologies = new ClassSearcherSingle(jade.content.onto.Ontology.class, currProject);
 				break;
 			case RESTART_BASESERVICE_SEARCH:
 				// --- Start search for BaseService ---------------
+				if (csBaseService!=null) {
+					csBaseService.stopSearch();
+				}
 				csBaseService = new ClassSearcherSingle(jade.core.BaseService.class, currProject);
 				break;
 			}
@@ -66,14 +85,14 @@ public class ClassSearcher {
 		
 	}
 	
-	public Vector<Class<?>> getAgentClasse() {
-		return csAgents.getClassesFound();
+	public Vector<Class<?>> getAgentClasse(boolean filtered) {
+		return csAgents.getClassesFound(filtered);
 	}
-	public Vector<Class<?>> getOntologieClasse() {
-		return csOntologies.getClassesFound();
+	public Vector<Class<?>> getOntologieClasse(boolean filtered) {
+		return csOntologies.getClassesFound(filtered);
 	}
-	public Vector<Class<?>> getBaseServiceClasse() {
-		return csBaseService.getClassesFound();
+	public Vector<Class<?>> getBaseServiceClasse(boolean filtered) {
+		return csBaseService.getClassesFound(filtered);
 	}
 	
 }

@@ -165,7 +165,7 @@ public class Ontologies4Project extends HashMap<String, OntologyClass> {
 	 */
 	public Vector<String> getAllNoneUsedOntologies() {
 		
-		Vector<Class<?>> allOntos = Application.classDetector.getOntologieClasse();
+		Vector<Class<?>> allOntos = Application.classDetector.getOntologieClasse(false);
 		Vector<String> filteredOntos = new Vector<String>();
 		for (int i =0; i<allOntos.size(); i++) {
 			if ( this.get(allOntos.get(i).getName())==null && 
