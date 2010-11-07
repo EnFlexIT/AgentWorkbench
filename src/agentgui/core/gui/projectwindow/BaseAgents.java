@@ -285,7 +285,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 	@SuppressWarnings("unchecked")
 	private void refreshAgentList() {
 		
-		Vector<Class<?>> AgentList = Application.classDetector.getAgentClasse();
+		Vector<Class<?>> AgentList = Application.classDetector.getAgentClasse(true);
 		for (int i =0; i<AgentList.size();i++) {
 			
 			Class<? extends Agent> curAgentClass=(Class<? extends Agent>) AgentList.get(i);

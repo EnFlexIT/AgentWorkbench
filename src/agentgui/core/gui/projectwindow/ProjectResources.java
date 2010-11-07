@@ -1,17 +1,12 @@
 package agentgui.core.gui.projectwindow;
 
 
-
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.Vector;
 
 import javax.swing.DefaultListModel;
@@ -19,36 +14,26 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
 import agentgui.core.application.Project;
-import agentgui.core.common.ClassLoaderUtil;
 
-public class ProjectResources extends JPanel implements ActionListener, Observer {
+public class ProjectResources extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
-	private Project currProjet = null;
-
-	private JList jListResources = null;
-
-	private JButton jButtonAdd = null;
-
-	private JButton jButtonRemove = null;
-	
-	 DefaultListModel myModel=null;
-
-	private JButton jButtonRefresh = null;
-
-	private JPanel jPanelRight = null;
-	
 	final static String PathImage = Application.RunInfo.PathImageIntern();
-
+	private Project currProjet = null;
+	
+	private JList jListResources = null;
+	private JButton jButtonAdd = null;
+	private JButton jButtonRemove = null;
+	private DefaultListModel myModel = null;
+	private JButton jButtonRefresh = null;
+	private JPanel jPanelRight = null;
 	private JScrollPane jScrollPane = null;
 
 	/**
@@ -61,31 +46,21 @@ public class ProjectResources extends JPanel implements ActionListener, Observer
 		myModel=new DefaultListModel();
 		jListResources.setModel(myModel);
 		
-	
-		for(String file : currProjet.projectResources )
-		{
+		for(String file : currProjet.projectResources ) {
 			myModel.addElement(file);
 		}
-	
 		
 	}
-	private String adjustString(String path)
-	{
+	private String adjustString(String path) {
 		final String projectFolder=currProjet.getProjectFolder();
-		if(path.contains(projectFolder))
-		{
+		if(path.contains(projectFolder)) {
 			int find=path.indexOf(projectFolder);
 			return path.substring(find-1);
-		
 		}	
 		return path;
-		
-	
 	}
 	
-	private boolean alreay_there(String path)
-	{
-		
+	private boolean alreay_there(String path) {
 		return currProjet.projectResources.contains(path);
 	}
 	
@@ -200,27 +175,8 @@ public class ProjectResources extends JPanel implements ActionListener, Observer
 			return result;
 		}
 		
-	
-	
-	
-	
-	
-	
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void update(Observable o, Object arg) {
-		// TODO Auto-generated method stub
-
-	}
-
 	/**
 	 * This method initializes jListResources	
-	 * 	
 	 * @return javax.swing.JList	
 	 */
 	private JList getJListResources() {
@@ -239,247 +195,83 @@ public class ProjectResources extends JPanel implements ActionListener, Observer
 		if (jButtonAdd == null) {
 			jButtonAdd = new JButton();
 			jButtonAdd.setPreferredSize(new Dimension(45, 26));
-			jButtonAdd.setIcon(new ImageIcon(getClass().getResource( PathImage +"ListPlus.png")));
+			jButtonAdd.setIcon(new ImageIcon(getClass().getResource(PathImage +"ListPlus.png")));
 			jButtonAdd.setToolTipText("Add");
 			jButtonAdd.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 				
-					JFileChooser chooser=new JFileChooser();
-					
-					chooser.setCurrentDirectory(new File(currProjet.getProjectFolderFullPath()));
-					FileNameExtensionFilter filter = new FileNameExtensionFilter("jar","JAR");
-				    chooser.setFileFilter(filter);
-					chooser.setMultiSelectionEnabled(true); 
-					chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-					chooser.setAcceptAllFileFilterUsed(false);
-					chooser.showDialog(jButtonAdd, "Load Files");
-					Vector<String > names=adjustPaths(chooser.getSelectedFiles());
-					currProjet.projectResources.addAll(names);
-									
-					for(String name: names)
-					{
-					myModel.addElement(name);
-					
-					//name=ClassLoaderUtil.adjustPathForLoadin(name, currProjet.getProjectFolder(), currProjet.getProjectFolderFullPath());
-					
-				
-					
-					
-					try
-					{
-			
-					
-						remove();
-					
-						load();
-					
+					if (Application.JadePlatform.jadeStopAskUserBefore()) {
+						JFileChooser chooser=new JFileChooser();
+						chooser.setCurrentDirectory(new File(currProjet.getProjectFolderFullPath()));
+						FileNameExtensionFilter filter = new FileNameExtensionFilter("jar","JAR");
+					    chooser.setFileFilter(filter);
+						chooser.setMultiSelectionEnabled(true); 
+						chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+						chooser.setAcceptAllFileFilterUsed(false);
+						chooser.showDialog(jButtonAdd, "Load Files");
 						
-					
-						
+						Vector<String > names = adjustPaths(chooser.getSelectedFiles());
+						currProjet.projectResources.addAll(names);
+										
+						for(String name: names) {
+							myModel.addElement(name);
+							//name=ClassLoaderUtil.adjustPathForLoadin(name, currProjet.getProjectFolder(), currProjet.getProjectFolderFullPath());
+						}
+						currProjet.resourcesReLoad();
+						jListResources.updateUI();
 					}
-					catch(Exception ex)
-					{
-						ex.printStackTrace();
-					
-					}
-					}
-				
-					
-					 jListResources.updateUI();
-					
-					 currProjet.setChangedAndNotify("projectResources");
-					
-					
-				}
-			});
+				} // end actionPerformed
+			}); // end addActionListener
 		}
 		return jButtonAdd;
 	}
 
 	/**
 	 * This method initializes jButtonRemove	
-	 * 	
 	 * @return javax.swing.JButton	
 	 */
 	private JButton getJButtonRemove() {
 		if (jButtonRemove == null) {
 			jButtonRemove = new JButton();
-			
 			jButtonRemove.setIcon(new ImageIcon(getClass().getResource( PathImage+"ListMinus.png")));
 			jButtonRemove.setPreferredSize(new Dimension(45, 26));
 			jButtonRemove.setToolTipText("Remove");
-
 			jButtonRemove.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 			
-				
-					checkJadeState();
-				//Remove from the classpath
-				Object [] values= jListResources.getSelectedValues();
-				for(Object file : values)
-				{
-					
-					
-
-						myModel.removeElement(file);
-						currProjet.projectResources.remove(file);
+					if (Application.JadePlatform.jadeStopAskUserBefore()) {
+						//Remove from the classpath
+						Object [] values= jListResources.getSelectedValues();
+						for(Object file : values) {
+							myModel.removeElement(file);
+							currProjet.projectResources.remove(file);
+						}
+						currProjet.resourcesReLoad();
+					}
 				}
-				
-				try 
-				{
-					remove();
-					load();
-				}
-				catch(Exception e1)
-				{
-							e1.printStackTrace();
-				}
-				
-		}
-				
-				
-				
-				
 			});
 		}
 		return jButtonRemove;
 	}
 	
-	boolean checkJadeState()
-	{
-		if(Application.JadePlatform.jadeMainContainerIsRunning())
-		{
-			String MsgHead = Language.translate("JADE wird zur Zeit ausgeführt!");
-			String MsgText = Language.translate("Möchten Sie JADE nun beenden und fortfahren?");
-			Integer MsgAnswer =  JOptionPane.showInternalConfirmDialog( Application.MainWindow.getContentPane(), MsgText, MsgHead, JOptionPane.YES_NO_OPTION);
-			if ( MsgAnswer == 1 ) return false; // --- NO,just exit 
-			// --- Stop the JADE-Platform -------------------
-			Application.JadePlatform.jadeStop();
-			return true;
-		}
-		return false;
-	}
-	
-	
-	public void remove()
-	{
-		this.checkJadeState();
-		for(int i=0;i<myModel.size();i++)
-		{
-			
-			Object file=myModel.get(i);
-
-				
-				String jarFile=(String) file;
-				
-				jarFile=ClassLoaderUtil.adjustPathForLoadin(jarFile, currProjet.getProjectFolder(), currProjet.getProjectFolderFullPath());
-				
-				
-				try {
-					ClassLoaderUtil.removeFile(jarFile);
-					ClassLoaderUtil.removeJarFromClassPath(jarFile);
-				} catch (RuntimeException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (NoSuchFieldException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (IllegalAccessException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				
-				
-			}
-			 currProjet.setChangedAndNotify("projectResources");
-		}
-		
-		
-		
-	
-	
-	
-	
-	public void load()
-	{
-		
-		try {
-			
-			
-		    int size=myModel.size();
-		
-			String [] res=new String[size];
-			
-			for(int index=0;index<size;index++)
-			{
-				res[index]= myModel.getElementAt(index).toString();
-				
-				
-			}
-			
-		
-	
-		
-		    
-		
-			for(String selectedJar: res)
-			{
-			
-			File file = null;
-		
-			selectedJar=ClassLoaderUtil.adjustPathForLoadin(selectedJar, currProjet.getProjectFolder(), currProjet.getProjectFolderFullPath());
-			file=new File(selectedJar);	
-			//URL url=file.toURI().toURL();
-			//if(url.getPath().contains(".jar"))
-			//{
-				
-				ClassLoaderUtil.addFile(file.getAbsoluteFile());
-				ClassLoaderUtil.addJarToClassPath(selectedJar);
-			
-			
-			//}
-			}
-					
-		
-	
-		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			  System.out.println("Fehler:"+e1.getMessage());
-			  e1.printStackTrace();
-		} catch (Throwable e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
-		}		
-		
-	}
-	
-		
 	/**
 	 * This method initializes jButtonRefresh	
-	 * 	
 	 * @return javax.swing.JButton	
 	 */
-	
 	private JButton getJButtonRefresh() {
 		if (jButtonRefresh == null) {
 			jButtonRefresh = new JButton();
-			
 			jButtonRefresh.setIcon(new ImageIcon(getClass().getResource( PathImage+"Refresh.png")));
 			jButtonRefresh.setPreferredSize(new Dimension(45, 26));
 			jButtonRefresh.setToolTipText("Refresh");
-			
-			
 			jButtonRefresh.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					Application.MainWindow.setCursor( Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR) );
-					remove();				
-				   load();					
-					Application.MainWindow.setCursor( Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-				
-				
-					
-				
-					
+					if (Application.JadePlatform.jadeStopAskUserBefore()) {
+						Application.MainWindow.setCursor( Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR) );
+						currProjet.resourcesReLoad();					
+						Application.classDetector.reStartSearch(currProjet, null);
+						Application.MainWindow.setCursor( Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+					}
 				}
 			});
 		}
@@ -487,7 +279,6 @@ public class ProjectResources extends JPanel implements ActionListener, Observer
 	}
 	/**
 	 * This method initializes jPanelRight	
-	 * 	
 	 * @return javax.swing.JPanel	
 	 */
 	private JPanel getJPanelRight() {

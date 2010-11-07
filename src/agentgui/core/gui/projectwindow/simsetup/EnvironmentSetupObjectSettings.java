@@ -313,7 +313,7 @@ public class EnvironmentSetupObjectSettings extends JPanel{
 			cbAgentClass.setLocation(new Point(70, 78));
 			cbAgentClass.setSize(new Dimension(100, 25));
 			cbAgentClass.setEnabled(false);
-			Vector<Class<?>> classes = Application.classDetector.getAgentClasse();
+			Vector<Class<?>> classes = Application.classDetector.getAgentClasse(true);
 			Vector<String> names = new Vector<String>();
 			
 			agentClasses = new HashMap<String, String>();

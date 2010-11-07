@@ -194,7 +194,7 @@ public class AgentSelector extends JDialog implements ActionListener, Observer {
 	@SuppressWarnings("unchecked")
 	private void refreshAgentList() {
 		
-		Vector<Class<?>> AgentList = Application.classDetector.getAgentClasse();
+		Vector<Class<?>> AgentList = Application.classDetector.getAgentClasse(false);
 		for (int i =0; i<AgentList.size();i++) {
 			
 			Class<? extends Agent> curAgentClass=(Class<? extends Agent>) AgentList.get(i);
@@ -225,7 +225,7 @@ public class AgentSelector extends JDialog implements ActionListener, Observer {
 		
 		jAgentListModel.removeAllElements();
 		
-		Vector<Class<?>> AgentList = Application.classDetector.getAgentClasse();
+		Vector<Class<?>> AgentList = Application.classDetector.getAgentClasse(false);
 		for (int i =0; i<AgentList.size();i++) {
 			Class<? extends Agent> curAgentClass=(Class<? extends Agent>) AgentList.get(i);
 			if ( curAgentClass.getName().toLowerCase().contains(filter4.toLowerCase()) ) {

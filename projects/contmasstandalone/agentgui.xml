@@ -7,8 +7,18 @@
     Es stehen nur Agenten für Ship, Crane, Apron, StraddleCarrier und Yard zur Verfügung. Ein erzeugtes Ship versucht, alle geladenen Container an die Cranes abzugeben, diese geben sie an Apron, StraddleCarrier und Yard weiter. Fehlerbehandlung findet nur rudimentär statt.
     Zum Start muss ein ControlGUIAgent gestartet werden, der einen Simulationsaufbau vornimmt, indem er seinerseits 2 Cranes, 1 Apron, 1 StraddleCarrier und 1 Yard sowie HarbourMaster und RandomGenerator startet. In der sodann angezeigten Oberfläche ControlGUI kann ein Ship mit bestimmten Abmessungen des Laderaums gestartet werden. Die Größe kann wahlweise auch zufällig vom RandomGenerator bestimmt werden oder es kann eine vorgefertigte BayMap geladen werden (als .owl-Datei). Wenn die entsprechende Option gewählt ist, wird der Laderaum dann vom RandomGenerator mit zufällig erzeugten Containern gefüllt. Das Schiff schreibt diese Container zur Entladung aus.
 	Die Abläufe lassen sich am besten im automatisch erzeugten Sniffer einsehen. Die ControlGUI bietet noch einige weitere Möglichkeiten.</projectDescription>
+    <projectResources>
+        <projectResource>\contmasstandalone\ContMAS.jar</projectResource>
+    </projectResources>
     <subOntologies/>
     <agentConfiguration/>
+    <simulationSetupCurrent>default</simulationSetupCurrent>
+    <simulationSetups>
+        <entry>
+            <key>default</key>
+            <value>default.xml</value>
+        </entry>
+    </simulationSetups>
     <jadeConfiguration>
         <start4Sim>true</start4Sim>
         <useAppDefaults>false</useAppDefaults>
@@ -18,12 +28,5 @@
             <service>jade.core.event.NotificationService;</service>
         </serviceList>
     </jadeConfiguration>
-    <envFile>map_port_chalmers_agentgui_slim.xml</envFile>
-    <jarFileName>ContMAS.jar</jarFileName>
-    <mainPackage>de.unidue.stud.sehawagn.contmas</mainPackage>
-    <subFolderAgents>agents</subFolderAgents>
     <subFolderEnvSetups>envSetups</subFolderEnvSetups>
-    <subFolderOntology>ontology</subFolderOntology>
-    <subFolderResources>resources</subFolderResources>
-    <svgFile>map_port_chalmers_agentgui_slim.svg</svgFile>
 </project>
