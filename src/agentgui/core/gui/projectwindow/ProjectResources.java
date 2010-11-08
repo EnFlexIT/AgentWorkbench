@@ -1,6 +1,5 @@
 package agentgui.core.gui.projectwindow;
 
-
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -24,10 +23,8 @@ import agentgui.core.application.Project;
 public class ProjectResources extends JPanel {
 
 	private static final long serialVersionUID = 1L;
-
 	final static String PathImage = Application.RunInfo.PathImageIntern();
 	private Project currProjet = null;
-	
 	private JList jListResources = null;
 	private JButton jButtonAdd = null;
 	private JButton jButtonRemove = null;
@@ -43,74 +40,59 @@ public class ProjectResources extends JPanel {
 		super();
 		currProjet = cp;
 		initialize();
-		myModel=new DefaultListModel();
+		myModel = new DefaultListModel();
 		jListResources.setModel(myModel);
-		
-		for(String file : currProjet.projectResources ) {
+		for (String file : currProjet.projectResources) {
 			myModel.addElement(file);
 		}
-		
+
 	}
+
 	private String adjustString(String path) {
-		final String projectFolder=currProjet.getProjectFolder();
-		if(path.contains(projectFolder)) {
-			int find=path.indexOf(projectFolder);
-			return path.substring(find-1);
-		}	
+		final String projectFolder = currProjet.getProjectFolder();
+		if (path.contains(projectFolder)) {
+			int find = path.indexOf(projectFolder);
+			return path.substring(find - 1);
+		}
 		return path;
 	}
-	
+
 	private boolean alreay_there(String path) {
 		return currProjet.projectResources.contains(path);
 	}
-	
-	
-	private Vector<String> adjustPaths(File[] files)
-	{
-	
-		Vector<String> result=new Vector<String>();
-	
-		
-		if(files!=null)
-		{
-			
-			for(File file : files)
-			{
-				String path=file.getAbsolutePath();
-				if(!path.contains(".jar"))
-				{
-					
-					Vector<String> directoryFiles=handleDirectories(file);
-					 for(String foreignJar : directoryFiles)
-					 {
-						if(!alreay_there(foreignJar))
-						{
-						 result.add(this.adjustString(foreignJar)); // Use relative paths within projects
-						}
-					
-						}
-					 
-				}
-				else
+
+	private Vector<String> adjustPaths(File[] files) {
+		Vector<String> result = new Vector<String>();
+
+		if (files != null) {
+
+			for (File file : files) {
 				
-				{
-				if(!alreay_there(path))
-				{
-				result.add(this.adjustString(path)); // Use absolut within projects
+				String path = file.getAbsolutePath();
+				
+				if (!path.contains(".jar")) {
+
+					Vector<String> directoryFiles = handleDirectories(file);
+					
+					for (String foreignJar : directoryFiles) {
+						
+						if (!alreay_there(foreignJar)) {
+							result.add(this.adjustString(foreignJar)); // Use relative paths within projects
+						}
+
+					}
+
+				} else	{
+					if (!alreay_there(path)) {
+						result.add(this.adjustString(path)); // Use absolut within projects
+					}
+
 				}
-			
-				}
-			
-								
-			
-			 }
+			}
 		}
-		
-		 return result;
-		}
-		
-	
-	
+
+		return result;
+	}
 
 	/**
 	 * This method initializes this
@@ -144,37 +126,17 @@ public class ProjectResources extends JPanel {
 		this.add(getJScrollPane(), gridBagConstraints11);
 	}
 
-	private Vector<String> handleDirectories(File dir)
-	{
-		Vector<String> result=new Vector<String>();
-		try 
-		{
+	private Vector<String> handleDirectories(File dir) {
+		Vector<String> result = new Vector<String>();
+		try {
 			result.add(dir.getAbsolutePath());
-		
-			File[] possibleJars = dir.listFiles(); 	// Find all Files
-	
-			    for(File possibleJar : possibleJars)
-			    {
-			    	
-			    	
-			    	if(possibleJar.getAbsolutePath().contains(".jar"))
-			    	{
-			    		
-			    		//result.add(possibleJar.getAbsolutePath());
-			    		//ClassLoaderUtil.addFile(possibleJar);
-			    		
-			    		
-			    	}
-			    }
-		}
-		catch(Exception e)
-		{
+			
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-			
-			return result;
-		}
-		
+		return result;
+	}
+
 	/**
 	 * This method initializes jListResources	
 	 * @return javax.swing.JList	
@@ -195,27 +157,27 @@ public class ProjectResources extends JPanel {
 		if (jButtonAdd == null) {
 			jButtonAdd = new JButton();
 			jButtonAdd.setPreferredSize(new Dimension(45, 26));
-			jButtonAdd.setIcon(new ImageIcon(getClass().getResource(PathImage +"ListPlus.png")));
+			jButtonAdd.setIcon(new ImageIcon(getClass().getResource(PathImage + "ListPlus.png")));
 			jButtonAdd.setToolTipText("Add");
 			jButtonAdd.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-				
+
 					if (Application.JadePlatform.jadeStopAskUserBefore()) {
-						JFileChooser chooser=new JFileChooser();
+						
+						JFileChooser chooser = new JFileChooser();
 						chooser.setCurrentDirectory(new File(currProjet.getProjectFolderFullPath()));
-						FileNameExtensionFilter filter = new FileNameExtensionFilter("jar","JAR");
-					    chooser.setFileFilter(filter);
-						chooser.setMultiSelectionEnabled(true); 
+						FileNameExtensionFilter filter = new FileNameExtensionFilter("jar", "JAR");
+						chooser.setFileFilter(filter);
+						chooser.setMultiSelectionEnabled(true);
 						chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 						chooser.setAcceptAllFileFilterUsed(false);
 						chooser.showDialog(jButtonAdd, "Load Files");
-						
-						Vector<String > names = adjustPaths(chooser.getSelectedFiles());
+						Vector<String> names = adjustPaths(chooser.getSelectedFiles());
 						currProjet.projectResources.addAll(names);
-										
-						for(String name: names) {
+
+						for (String name : names) {
 							myModel.addElement(name);
-							//name=ClassLoaderUtil.adjustPathForLoadin(name, currProjet.getProjectFolder(), currProjet.getProjectFolderFullPath());
+						
 						}
 						currProjet.resourcesReLoad();
 						jListResources.updateUI();
@@ -233,27 +195,28 @@ public class ProjectResources extends JPanel {
 	private JButton getJButtonRemove() {
 		if (jButtonRemove == null) {
 			jButtonRemove = new JButton();
-			jButtonRemove.setIcon(new ImageIcon(getClass().getResource( PathImage+"ListMinus.png")));
+			jButtonRemove.setIcon(new ImageIcon(getClass().getResource(PathImage + "ListMinus.png")));
 			jButtonRemove.setPreferredSize(new Dimension(45, 26));
 			jButtonRemove.setToolTipText("Remove");
 			jButtonRemove.addActionListener(new java.awt.event.ActionListener() {
-				public void actionPerformed(java.awt.event.ActionEvent e) {
-			
-					if (Application.JadePlatform.jadeStopAskUserBefore()) {
-						//Remove from the classpath
-						Object [] values= jListResources.getSelectedValues();
-						for(Object file : values) {
-							myModel.removeElement(file);
-							currProjet.projectResources.remove(file);
+						public void actionPerformed(java.awt.event.ActionEvent e) {
+
+							if (Application.JadePlatform.jadeStopAskUserBefore()) {
+								//Remove from the classpath
+								Object[] values = jListResources.getSelectedValues();
+								
+								for (Object file : values) {
+									myModel.removeElement(file);
+									currProjet.projectResources.remove(file);
+								}
+								currProjet.resourcesReLoad();
+							}
 						}
-						currProjet.resourcesReLoad();
-					}
-				}
-			});
+					});
 		}
 		return jButtonRemove;
 	}
-	
+
 	/**
 	 * This method initializes jButtonRefresh	
 	 * @return javax.swing.JButton	
@@ -261,22 +224,25 @@ public class ProjectResources extends JPanel {
 	private JButton getJButtonRefresh() {
 		if (jButtonRefresh == null) {
 			jButtonRefresh = new JButton();
-			jButtonRefresh.setIcon(new ImageIcon(getClass().getResource( PathImage+"Refresh.png")));
+			jButtonRefresh.setIcon(new ImageIcon(getClass().getResource(
+					PathImage + "Refresh.png")));
 			jButtonRefresh.setPreferredSize(new Dimension(45, 26));
 			jButtonRefresh.setToolTipText("Refresh");
 			jButtonRefresh.addActionListener(new java.awt.event.ActionListener() {
-				public void actionPerformed(java.awt.event.ActionEvent e) {
-					if (Application.JadePlatform.jadeStopAskUserBefore()) {
-						Application.MainWindow.setCursor( Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR) );
-						currProjet.resourcesReLoad();					
-						Application.classDetector.reStartSearch(currProjet, null);
-						Application.MainWindow.setCursor( Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-					}
-				}
-			});
+						public void actionPerformed(java.awt.event.ActionEvent e) {
+							
+							if (Application.JadePlatform.jadeStopAskUserBefore()) {
+								Application.MainWindow.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+								currProjet.resourcesReLoad();
+								Application.classDetector.reStartSearch(currProjet, null);
+								Application.MainWindow.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+							}
+						}
+					});
 		}
 		return jButtonRefresh;
 	}
+
 	/**
 	 * This method initializes jPanelRight	
 	 * @return javax.swing.JPanel	
@@ -302,6 +268,7 @@ public class ProjectResources extends JPanel {
 		}
 		return jPanelRight;
 	}
+
 	/**
 	 * This method initializes jScrollPane	
 	 * 	
@@ -314,6 +281,5 @@ public class ProjectResources extends JPanel {
 		}
 		return jScrollPane;
 	}
-	
 
-}  //  @jve:decl-index=0:visual-constraint="-105,-76"
+} //  @jve:decl-index=0:visual-constraint="-105,-76"
