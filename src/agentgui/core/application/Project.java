@@ -165,7 +165,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 		if ( NProjects > 0 ) {
 			if ( Index+1 > NProjects ) Index = NProjects-1;  
 			Application.ProjectCurr = Application.Projects.get(Index);
-			Application.ProjectCurr.setFocus();
+			Application.ProjectCurr.setFocus(true);
 			Application.setTitelAddition( Application.ProjectCurr.ProjectName );
 		} else {
 			Application.ProjectCurr = null;
@@ -238,18 +238,22 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	/**
 	 * Moves the requested Project-Window to the front
 	 */
-	public void setFocus() {
-		// --- CLASSPATH entladen  --------------
-		Application.ProjectCurr.resourcesRemove();
+	public void setFocus(boolean forceClassPathReload) {
+		if (forceClassPathReload) {
+			// --- CLASSPATH entladen  --------------
+			Application.ProjectCurr.resourcesRemove();
+		}
 		
 		ProjectGUI.moveToFront();
 		Application.setTitelAddition( ProjectName );
 		Application.ProjectCurr = this;
 		Application.Projects.setProjectMenuItems();
 		setMaximized();
-
-		// --- CLASSPATH laden ------------------
-		Application.ProjectCurr.resourcesLoad();		
+		
+		if (forceClassPathReload) {
+			// --- CLASSPATH laden ------------------
+			Application.ProjectCurr.resourcesLoad();	
+		}
 	}
 	/**
 	 * Maximze the Project-Window within the AgenGUI-Application

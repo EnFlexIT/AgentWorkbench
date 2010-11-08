@@ -51,7 +51,7 @@ public class SimulationMessages extends JDesktopPane implements Observer, Action
 	 * Set's the focus to the current project-message
 	 */
 	public void setFocus () {
-		CurrProject.setFocus();
+		CurrProject.setFocus(false);
 		CurrProject.ProjectGUI.setFocusOnProjectTab("Simulationsmeldungen");
 	}
 

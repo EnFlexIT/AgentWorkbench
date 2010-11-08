@@ -317,7 +317,7 @@ public class ProjectsLoaded {
 		}
 	}
 	private void setFocus( int Index ) {
-		this.get(Index).setFocus();		
+		this.get(Index).setFocus(true);		
 	}
 
 
