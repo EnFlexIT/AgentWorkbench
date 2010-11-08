@@ -14,7 +14,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-import agentgui.core.common.ClassLoaderUtil;
 import agentgui.core.gui.ProjectNewOpen;
 import agentgui.core.gui.ProjectWindow;
 import agentgui.core.ontologies.Ontologies4Project;
@@ -87,17 +86,9 @@ public class ProjectsLoaded {
 		NewProDia = null;	
 
 		// ------------------------------------------------
-		// --- ClassLoader anpassen -----------------------
-		try {
-			if(ProjectsOpen.size()!=0) {
-				for(String jarFile:Application.ProjectCurr.projectResources) {
-				 	jarFile=ClassLoaderUtil.adjustPathForLoadin(jarFile, Application.ProjectCurr.getProjectFolder(), Application.ProjectCurr.getProjectFolderFullPath());
-				 	ClassLoaderUtil.removeFile(jarFile);
-				 	ClassLoaderUtil.removeJarFromClassPath(jarFile);
-				}
-			}
-		} catch(Exception e) {
-			e.printStackTrace();
+		// --- ClassLoader entladen -----------------------
+		if(ProjectsOpen.size()!=0) {
+			Application.ProjectCurr.resourcesRemove();
 		}
 		
 		// ------------------------------------------------
@@ -108,7 +99,7 @@ public class ProjectsLoaded {
 		if ( addNew == true ) {			
 			// --- Standardstruktur anlegen ---------------
 			NewPro.createDefaultProjectStructure();
-		}
+		} 
 		else {
 			// --- XML-Datei einlesen ---------------------
 			JAXBContext pc;
@@ -130,7 +121,7 @@ public class ProjectsLoaded {
 			NewPro.checkCreateSubFolders();
 		}
 		
-		// --- CLASSPATH anpassen -----------------------------------------
+		// --- ClassLoader/CLASSPATH laden ----------------
 		NewPro.resourcesLoad();
 		
 		// --- Das Ontologie-Objekt beladen --------------- 

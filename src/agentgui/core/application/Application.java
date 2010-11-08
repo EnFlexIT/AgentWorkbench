@@ -1,7 +1,6 @@
 package agentgui.core.application;
 
 import agentgui.core.benchmark.BenchmarkMeasurement;
-import agentgui.core.common.ClassLoaderUtil;
 import agentgui.core.config.FileProperties;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.database.DBConnection;
@@ -62,13 +61,6 @@ public class Application {
 		new LoadMeasureThread().start();  
 		startAgentGUI();
 
-		// FIXME: Why do we do this?
-		try {
-			ClassLoaderUtil.addFile(Application.RunInfo.PathJade(true));
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-		
 	}	
 
 	

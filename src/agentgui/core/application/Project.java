@@ -239,11 +239,17 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	 * Moves the requested Project-Window to the front
 	 */
 	public void setFocus() {
+		// --- CLASSPATH entladen  --------------
+		Application.ProjectCurr.resourcesRemove();
+		
 		ProjectGUI.moveToFront();
 		Application.setTitelAddition( ProjectName );
 		Application.ProjectCurr = this;
 		Application.Projects.setProjectMenuItems();
 		setMaximized();
+
+		// --- CLASSPATH laden ------------------
+		Application.ProjectCurr.resourcesLoad();		
 	}
 	/**
 	 * Maximze the Project-Window within the AgenGUI-Application
