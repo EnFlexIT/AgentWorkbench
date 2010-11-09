@@ -12,7 +12,7 @@ import agentgui.physical2Denvironment.ontology.Size;
  * @author Nils
  *
  */
-public class SVGHelper {
+public class EnvironmentHelper {
 	/**
 	 * This method calculates the size of a SVG element, considering the defined scale
 	 * @param elem The element

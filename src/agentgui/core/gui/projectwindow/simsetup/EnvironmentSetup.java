@@ -4,6 +4,7 @@ import javax.swing.JSplitPane;
 
 import javax.swing.DropMode;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
@@ -37,7 +38,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DObject;
 import agentgui.physical2Denvironment.ontology.PlaygroundObject;
 import agentgui.physical2Denvironment.ontology.Scale;
 import agentgui.physical2Denvironment.ontology.StaticObject;
-import agentgui.physical2Denvironment.utils.SVGHelper;
+import agentgui.physical2Denvironment.utils.EnvironmentHelper;
 
 
 import java.awt.GridBagConstraints;
@@ -457,7 +458,11 @@ public class EnvironmentSetup extends JPanel implements ActionListener, Observer
 			if(eventCode == EnvironmentController.SVG_CHANGED){
 				setSVGDocument(controller.getSvgDoc());
 			}
-			if(eventCode < 0 || eventCode > 3){
+			if(eventCode == EnvironmentController.EC_ERROR){
+				String errorMsg = controller.getLastErrorMessage();
+				JOptionPane.showMessageDialog(this, errorMsg, Language.translate("Fehler"), JOptionPane.ERROR_MESSAGE);
+			}
+			if(eventCode < 0 || eventCode > 4){
 				System.err.println(Language.translate("Unbekanntes Ereignis")+" "+eventCode);
 			}
 		}
@@ -542,8 +547,8 @@ public class EnvironmentSetup extends JPanel implements ActionListener, Observer
 		@Override
 		public void run() {
 			elem.setAttributeNS(null, "id", id);
-			SVGHelper.setSizeFromStrings(elem, controller.getEnvironment().getScale(), width, height);
-			SVGHelper.setPosFromStrings(elem, controller.getEnvironment().getScale(), xPos, yPos, width, height);
+			EnvironmentHelper.setSizeFromStrings(elem, controller.getEnvironment().getScale(), width, height);
+			EnvironmentHelper.setPosFromStrings(elem, controller.getEnvironment().getScale(), xPos, yPos, width, height);
 		}
 		
 	}

@@ -4,6 +4,7 @@ package agentgui.physical2Denvironment;
 import jade.content.lang.Codec.CodecException;
 import jade.content.lang.xml.XMLCodec;
 import jade.content.onto.OntologyException;
+import java.util.Iterator;
 
 import java.awt.geom.Rectangle2D;
 import java.io.BufferedReader;
@@ -46,6 +47,7 @@ import agentgui.physical2Denvironment.ontology.PlaygroundObject;
 import agentgui.physical2Denvironment.ontology.Position;
 import agentgui.physical2Denvironment.ontology.Scale;
 import agentgui.physical2Denvironment.ontology.Size;
+import agentgui.physical2Denvironment.utils.EnvironmentHelper;
 import agentgui.physical2Denvironment.utils.EnvironmentWrapper;
 
 /**
@@ -70,6 +72,25 @@ public class EnvironmentController extends Observable implements Observer{
 	 * Observable event code: SVG document changed
 	 */
 	public static final int SVG_CHANGED = 3;
+	/**
+	 * An error occured  
+	 */
+	public static final int EC_ERROR = 4;
+	/**
+	 * @return the lastErrorMessage
+	 */
+	public String getLastErrorMessage() {
+		return lastErrorMessage;
+	}
+
+
+	/**
+	 * @param lastErrorMessage the lastErrorMessage to set
+	 */
+	private void setLastErrorMessage(String lastErrorMessage) {
+		this.lastErrorMessage = lastErrorMessage;
+	}
+
 	/**
 	 * The path where environment and SVG files are stored
 	 */
@@ -102,6 +123,8 @@ public class EnvironmentController extends Observable implements Observer{
 	 * The Physical2DObject currently selected for editing
 	 */
 	private Physical2DObject selectedObject = null;
+	
+	private String lastErrorMessage;
 	/**
 	 * Constructor
 	 * @param project The Agent.GUI project
@@ -201,12 +224,21 @@ public class EnvironmentController extends Observable implements Observer{
 			try {
 				doc = factory.createDocument(svgFile.toURI().toURL().toString());
 			} catch (MalformedURLException e) {
-				System.err.println(Language.translate("Fehler beim Laden der SVG-Datei"));
+//				System.err.println(Language.translate("Fehler beim Laden der SVG-Datei"));
+				this.setLastErrorMessage(Language.translate("Fehler beim Laden der SVG-Datei")+" "+svgFile.getPath());
+				setChanged();
+				notifyObservers(new Integer(EC_ERROR));
 			} catch (IOException e) {
-				System.err.println(Language.translate("Fehler beim Laden der SVG-Datei"));
+//				System.err.println(Language.translate("Fehler beim Laden der SVG-Datei"));
+				this.setLastErrorMessage(Language.translate("Fehler beim Laden der SVG-Datei")+" "+svgFile.getPath());
+				setChanged();
+				notifyObservers(new Integer(EC_ERROR));
 			}			
 		}else{
-			System.err.println(Language.translate("SVG-Datei")+" "+svgFile.getPath()+" "+Language.translate("nicht gefunden"));
+//			System.err.println(Language.translate("SVG-Datei")+" "+svgFile.getPath()+" "+Language.translate("nicht gefunden"));
+			this.setLastErrorMessage(Language.translate("SVG-Datei")+" "+svgFile.getPath()+" "+Language.translate("nicht gefunden"));
+			setChanged();
+			notifyObservers(new Integer(EC_ERROR));
 		}
 		
 		return doc;
@@ -245,9 +277,16 @@ public class EnvironmentController extends Observable implements Observer{
 				writer.close();
 				
 			} catch (IOException e) {
-				System.err.println(Language.translate("Fehler beim Erzeugen der Datei")+" "+svgFile.getAbsolutePath());
+//				System.err.println(Language.translate("Fehler beim Erzeugen der Datei")+" "+svgFile.getAbsolutePath());
+				this.setLastErrorMessage(Language.translate("Fehler beim Erzeugen der Datei")+" "+svgFile.getAbsolutePath());
+				setChanged();
+				notifyObservers(new Integer(EC_ERROR));
+				
 			} catch (TranscoderException e) {
-				System.err.println(Language.translate("Fehler beim speichern des SVG-Dokuments"));
+//				System.err.println(Language.translate("Fehler beim speichern des SVG-Dokuments"));
+				this.setLastErrorMessage(Language.translate("Fehler beim speichern des SVG-Dokuments"));
+				setChanged();
+				notifyObservers(new Integer(EC_ERROR));
 			}
 		}
 		
@@ -369,16 +408,31 @@ public class EnvironmentController extends Observable implements Observer{
 				XMLCodec codec = new XMLCodec();
 				env = (Physical2DEnvironment) codec.decodeObject(EnvironmentOntology.getInstance(), xmlString.toString());
 			} catch (FileNotFoundException e) {
-				System.err.println(Language.translate("Umgebungsdatei")+" "+envFile.getName()+" "+Language.translate("nicht gefunden"));
+//				System.err.println(Language.translate("Umgebungsdatei")+" "+envFile.getName()+" "+Language.translate("nicht gefunden"));
+				this.setLastErrorMessage(Language.translate("Umgebungsdatei")+" "+envFile.getName()+" "+Language.translate("nicht gefunden"));
+				setChanged();
+				notifyObservers(new Integer(EC_ERROR));
 			} catch (IOException e) {
-				System.err.println(Language.translate("Fehler beim Lesen der Umgebungsdatei")+" "+envFile.getName());
+//				System.err.println(Language.translate("Fehler beim Lesen der Umgebungsdatei")+" "+envFile.getName());
+				this.setLastErrorMessage(Language.translate("Fehler beim Lesen der Umgebungsdatei")+" "+envFile.getName());
+				setChanged();
+				notifyObservers(new Integer(EC_ERROR));
 			} catch (CodecException e) {
-				System.err.println("Fehler beim Parsen der Umgebungsdatei!");
+//				System.err.println("Fehler beim Parsen der Umgebungsdatei!");
+				this.setLastErrorMessage(Language.translate("Fehler beim Parsen der Umgebungsdatei!"));
+				setChanged();
+				notifyObservers(new Integer(EC_ERROR));
 			} catch (OntologyException e) {
-				System.err.println("Fehler beim Parsen der Umgebungsdatei!");
+//				System.err.println("Fehler beim Parsen der Umgebungsdatei!");
+				this.setLastErrorMessage(Language.translate("Fehler beim Parsen der Umgebungsdatei!"));
+				setChanged();
+				notifyObservers(new Integer(EC_ERROR));
 			}
 		}else{
-			System.err.println(Language.translate("Umgebungsdatei")+" "+envFile.getPath()+" "+Language.translate("nicht gefunden"));
+//			System.err.println(Language.translate("Umgebungsdatei")+" "+envFile.getPath()+" "+Language.translate("nicht gefunden"));
+			this.setLastErrorMessage(Language.translate("Umgebungsdatei")+" "+envFile.getName()+" "+Language.translate("nicht gefunden"));
+			setChanged();
+			notifyObservers(new Integer(EC_ERROR));
 		}
 		return env;
 	}
@@ -457,7 +511,10 @@ public class EnvironmentController extends Observable implements Observer{
 				e.printStackTrace();
 			}
 		}else{	// ID already in use -> don't create the object 
-			System.err.println(Language.translate("Fehler: Die gewählte ID ist bereits vergeben!"));
+//			System.err.println(Language.translate("Fehler: Die gewählte ID ist bereits vergeben!"));
+			this.setLastErrorMessage(Language.translate("Fehler: Die gewählte ID ist bereits vergeben!"));
+			setChanged();
+			notifyObservers(new Integer(EC_ERROR));
 		}
 		
 		return newObject;
@@ -489,7 +546,10 @@ public class EnvironmentController extends Observable implements Observer{
 				envWrap.addObject(createObject(settings));
 			}
 		}else{		// The new ID is not available
-			System.err.println(Language.translate("Fehler: Die gewählte ID ist bereits vergeben!"));
+//			System.err.println(Language.translate("Fehler: Die gewählte ID ist bereits vergeben!"));
+			this.setLastErrorMessage(Language.translate("Fehler: Die gewählte ID ist bereits vergeben!"));
+			setChanged();
+			notifyObservers(new Integer(EC_ERROR));
 		}
 	}
 	
@@ -536,6 +596,9 @@ public class EnvironmentController extends Observable implements Observer{
 			notifyObservers(new Integer(OBJECTS_CHANGED));
 			return true;
 		}else{
+			this.setLastErrorMessage(Language.translate("Fehler: Objekt")+" "+objectId+" "+Language.translate("liegt nicht im Bereich der Teilumgebung")+" "+playgroundId+".");
+			setChanged();
+			notifyObservers(new Integer(EC_ERROR));
 			return false;
 		}
 		
@@ -636,9 +699,23 @@ public class EnvironmentController extends Observable implements Observer{
 	
 	public void setScale(Scale scale){
 		this.environment.setScale(scale);
+		Iterator<Physical2DObject> allObjects = envWrap.getObjectysById().values().iterator();
+		while(allObjects.hasNext()){
+			Physical2DObject object = allObjects.next();
+			Element elem;
+			if(object.getId().equals("RootPlayground")){
+				elem = svgDoc.getDocumentElement();
+			}else{
+				elem = svgDoc.getElementById(object.getId());
+			}
+			object.setPosition(EnvironmentHelper.getPosFromElement(elem, scale));
+			object.setSize(EnvironmentHelper.getSizeFromElement(elem, scale));
+		}
 		setChanged();
 		notifyObservers(new Integer(SCALE_CHANGED));
 		project.ProjectUnsaved = true;
 	}
+	
+	
 	
 }

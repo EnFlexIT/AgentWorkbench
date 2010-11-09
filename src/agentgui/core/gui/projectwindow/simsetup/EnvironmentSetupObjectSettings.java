@@ -26,7 +26,7 @@ import agentgui.physical2Denvironment.ontology.Position;
 import agentgui.physical2Denvironment.ontology.Scale;
 import agentgui.physical2Denvironment.ontology.Size;
 import agentgui.physical2Denvironment.ontology.StaticObject;
-import agentgui.physical2Denvironment.utils.SVGHelper;
+import agentgui.physical2Denvironment.utils.EnvironmentHelper;
 
 public class EnvironmentSetupObjectSettings extends JPanel{
 
@@ -351,11 +351,11 @@ public class EnvironmentSetupObjectSettings extends JPanel{
 			
 			getTfId().setText(elem.getAttributeNS(null, "id"));
 			
-			Size size = SVGHelper.getSizeFromElement(elem, scale);
+			Size size = EnvironmentHelper.getSizeFromElement(elem, scale);
 			getTfWidth().setText(""+size.getWidth());
 			getTfHeight().setText(""+size.getHeight());
 			
-			Position pos = SVGHelper.getPosFromElement(elem, scale);
+			Position pos = EnvironmentHelper.getPosFromElement(elem, scale);
 			getTfXPos().setText(""+pos.getXPos());
 			getTfYPos().setText(""+pos.getYPos());
 			
