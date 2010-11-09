@@ -24,33 +24,11 @@ import agentgui.core.application.Project;
 	@XmlElementWrapper(name = "agentSetup")
 	@XmlElement(name="agent")
 	private ArrayList<AgentClassElement4SimStart> agentList = new ArrayList<AgentClassElement4SimStart>();
-	/**
-	 * The name of the environment file assigned to this SimulationSetup
-	 */
-	private String environmentFileName = null;
-	/**
-	 * The name of the svg file assigned to this SimulationSetup
-	 */
-	private String svgFileName = null;
 	
-	/**
-	 * @return the svgFileName
-	 */
-	public String getSvgFileName() {
-		return svgFileName;
-	}
-	/**
-	 * @param svgFileName the svgFileName to set
-	 */
-	public void setSvgFileName(String svgFileName) {
-		this.svgFileName = svgFileName;
-	}
-	public String getEnvironmentFileName() {
-		return environmentFileName;
-	}
-	public void setEnvironmentFileName(String environmentFile) {
-		this.environmentFileName = environmentFile;
-	}
+	@XmlElement(name="distribution")
+	public DistributionSetup distributionSetup = new DistributionSetup();
+	
+	
 	/**
 	 * Constructor without arguments (This is first of all 
 	 * for the JAXB-Context and should not be used by any
@@ -116,7 +94,6 @@ import agentgui.core.application.Project;
 	public void setAgentList(ArrayList<AgentClassElement4SimStart> agentList) {
 		this.agentList = agentList;
 	}
-
 	/**
 	 * This Method transfers a DefaultListModel to 
 	 * the localArrayList 'agentList' which is a 
@@ -147,5 +124,50 @@ import agentgui.core.application.Project;
 	public DefaultListModel getAgentListModel() {
 		return agentListModel;
 	}
+	
+
+	/**
+	 * The name of the environment file assigned to this SimulationSetup
+	 */
+	private String environmentFileName = null;
+	/**
+	 * The name of the svg file assigned to this SimulationSetup
+	 */
+	private String svgFileName = null;
+	
+	/**
+	 * @return the svgFileName
+	 */
+	public String getSvgFileName() {
+		return svgFileName;
+	}
+	/**
+	 * @param svgFileName the svgFileName to set
+	 */
+	public void setSvgFileName(String svgFileName) {
+		this.svgFileName = svgFileName;
+	}
+	public String getEnvironmentFileName() {
+		return environmentFileName;
+	}
+	public void setEnvironmentFileName(String environmentFile) {
+		this.environmentFileName = environmentFile;
+	}
+	
+	
+	/**
+	 * @return the distributionSetup
+	 */
+	@XmlTransient
+	public DistributionSetup getDistributionSetup() {
+		return distributionSetup;
+	}
+	/**
+	 * @param distributionSetup the distributionSetup to set
+	 */
+	public void setDistributionSetup(DistributionSetup distributionSetup) {
+		this.distributionSetup = distributionSetup;
+	}
+	
 	
 }

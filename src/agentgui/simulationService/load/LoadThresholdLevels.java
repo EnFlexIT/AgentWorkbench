@@ -1,7 +1,11 @@
 package agentgui.simulationService.load;
 
-public class LoadThresholdLevels {
+import java.io.Serializable;
 
+public class LoadThresholdLevels implements Serializable {
+
+	private static final long serialVersionUID = 1795189499689460795L;
+	
 	private Integer thCpuL = 5;
 	private Integer thCpuH = 80;
 	

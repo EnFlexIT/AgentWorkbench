@@ -43,10 +43,10 @@ import javax.swing.border.EtchedBorder;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
+import agentgui.core.sim.start.SimStartAgent;
 
 /**
  * Main User-Interface der Anwendung
- * 
  * @author Christin Derksen
  */
 public class CoreWindow extends JFrame implements ComponentListener{
@@ -75,6 +75,7 @@ public class CoreWindow extends JFrame implements ComponentListener{
 	private JMenu jMenuMainProject;
 	private JMenu jMenuMainView;
 	private JMenu jMenuMainJade;
+	private JMenu jMenuMainSimulation;
 	private JMenu jMenuExtra;
 		private JMenu jMenuExtraLang;
 		private JMenu jMenuExtraLnF;
@@ -339,6 +340,7 @@ public class CoreWindow extends JFrame implements ComponentListener{
 			jMenuBarMain.add( getjMenuMainProject() );
 			jMenuBarMain.add( getjMenuMainView() );
 			jMenuBarMain.add( getjMenuMainJade() );
+			jMenuBarMain.add( getjMenuMainSimulation() );
 			jMenuBarMain.add( getjMenuMainExtra() );
 			jMenuBarMain.add( getjMenuMainWindow() );
 			jMenuBarMain.add( getjMenuMainHelp() );	
@@ -366,7 +368,7 @@ public class CoreWindow extends JFrame implements ComponentListener{
 		return jMenuMainProject;
 	}
 	// ------------------------------------------------------------
-	// --- Menü "JADE" --------------------------------------------
+	// --- Menü "View" --------------------------------------------
 	// ------------------------------------------------------------
 	private JMenu getjMenuMainView() {
 		if (jMenuMainView == null) {
@@ -392,9 +394,25 @@ public class CoreWindow extends JFrame implements ComponentListener{
 			jMenuMainJade.add( new CWMenueItem( "PopDF", Language.translate("DF anzeigen"), "MBJadeDF.gif" )) ;
 			jMenuMainJade.add( new CWMenueItem( "PopIntrospec", Language.translate("Introspector-Agent starten"), "MBJadeIntrospector.gif" )) ;
 			jMenuMainJade.add( new CWMenueItem( "PopLog", Language.translate("Log-Manager starten"), "MBJadeLogger.gif" )) ;
+			jMenuMainJade.addSeparator();
+			jMenuMainJade.add( new CWMenueItem( "ContainerMonitoring", Language.translate("Auslastungs-Monitor öffnen"), "MBLoadMonitor.png" ));
 		}
 		return jMenuMainJade;
 	}
+	// ------------------------------------------------------------
+	// --- Menü Simulation ----------------------------------------
+	// ------------------------------------------------------------
+	private JMenu getjMenuMainSimulation() {
+		if (jMenuMainSimulation == null) {
+			jMenuMainSimulation = new JMenu();
+			jMenuMainSimulation.setText(Language.translate("MAS"));			
+			jMenuMainSimulation.add( new CWMenueItem( "SimulationStart", Language.translate("Start"), "MBLoadPlay.png" )) ;
+			jMenuMainSimulation.add( new CWMenueItem( "SimulationPause", Language.translate("Pause"), "MBLoadPause.png" )) ;
+			jMenuMainSimulation.add( new CWMenueItem( "SimulationStop", Language.translate("Stop"), "MBLoadStopRecord.png" )) ;
+		}
+		return jMenuMainSimulation;
+	}
+	
 	
 	// ------------------------------------------------------------
 	// --- Menü Extras ---------------------------------------------
@@ -675,6 +693,25 @@ public class CoreWindow extends JFrame implements ComponentListener{
 			else if ( ActCMD.equalsIgnoreCase("PopLog") ) {
 				Application.JadePlatform.jadeSystemAgentOpen("log", null);
 			}
+			// --- Menü Simulation ----------------------------
+			else if ( ActCMD.equalsIgnoreCase("SimulationStart") ) {
+				Object[] startWith = new Object[1];
+				startWith[0] = SimStartAgent.BASE_ACTION_Start;
+				Application.JadePlatform.jadeSystemAgentOpen("simstarter", null, startWith);
+			}
+			else if ( ActCMD.equalsIgnoreCase("SimulationPause") ) {
+				Object[] startWith = new Object[1];
+				startWith[0] = SimStartAgent.BASE_ACTION_Pause;
+				Application.JadePlatform.jadeSystemAgentOpen("simstarter", null, startWith);
+			}
+			else if ( ActCMD.equalsIgnoreCase("SimulationStop") ) {
+				Object[] startWith = new Object[1];
+				startWith[0] = SimStartAgent.BASE_ACTION_Stop;
+				Application.JadePlatform.jadeSystemAgentOpen("simstarter", null, startWith);
+			}
+			else if ( ActCMD.equalsIgnoreCase("ContainerMonitoring") ) { 
+				Application.JadePlatform.jadeSystemAgentOpen("loadMonitor", null);
+			}
 			// --- Menü Extras => nicht hier !! ---------------
 			else if ( ActCMD.equalsIgnoreCase("ExtraBenchmark") ) {
 				Application.doBenchmark(true);
@@ -703,9 +740,7 @@ public class CoreWindow extends JFrame implements ComponentListener{
 	// --- Symbolleiste erstellen - START -------------------------
 	// ------------------------------------------------------------
 	private JToolBar getJToolBarApp() {
-		/**
-		 * 
-		 */
+
 		if ( jToolBarApp == null) {
 			
 			// --- PopUp-Menü zum Button 'JadeTools' definieren (s. u.) ---
@@ -736,9 +771,12 @@ public class CoreWindow extends JFrame implements ComponentListener{
 			JadeTools = new JToolBarButton( "JadeTools", Language.translate("JADE-Tools..."), null, "MBJadeTools.png" );
 			jToolBarApp.add( JadeTools );
 			jToolBarApp.addSeparator();
-			
-			jToolBarApp.add(new JToolBarButton( "ContainerMonitoring", Language.translate("Load Monitor öffnen"), null, "MBLoadMonitor.png" ));
-			jToolBarApp.addSeparator();		
+			jToolBarApp.add(new JToolBarButton( "ContainerMonitoring", Language.translate("Auslastungs-Monitor öffnen"), null, "MBLoadMonitor.png" ));
+			jToolBarApp.addSeparator();
+			jToolBarApp.add(new JToolBarButton( "SimulationStart", Language.translate("MAS-Start"), null, "MBLoadPlay.png" )) ;
+			jToolBarApp.add(new JToolBarButton( "SimulationPause", Language.translate("MAS-Pause"), null, "MBLoadPause.png" )) ;
+			jToolBarApp.add(new JToolBarButton( "SimulationStop", Language.translate("MAS-Stop"), null, "MBLoadStopRecord.png" )) ;
+			jToolBarApp.addSeparator();
 			
 		};		
 		return jToolBarApp;
@@ -813,6 +851,22 @@ public class CoreWindow extends JFrame implements ComponentListener{
 			}
 			else if ( ActCMD.equalsIgnoreCase("ContainerMonitoring") ) { 
 				Application.JadePlatform.jadeSystemAgentOpen("loadMonitor", null);
+			}
+			// ------------------------------------------------
+			else if ( ActCMD.equalsIgnoreCase("SimulationStart") ) {
+				Object[] startWith = new Object[1];
+				startWith[0] = SimStartAgent.BASE_ACTION_Start;
+				Application.JadePlatform.jadeSystemAgentOpen("simstarter", null, startWith);
+			}
+			else if ( ActCMD.equalsIgnoreCase("SimulationPause") ) {
+				Object[] startWith = new Object[1];
+				startWith[0] = SimStartAgent.BASE_ACTION_Pause;
+				Application.JadePlatform.jadeSystemAgentOpen("simstarter", null, startWith);
+			}
+			else if ( ActCMD.equalsIgnoreCase("SimulationStop") ) {
+				Object[] startWith = new Object[1];
+				startWith[0] = SimStartAgent.BASE_ACTION_Stop;
+				Application.JadePlatform.jadeSystemAgentOpen("simstarter", null, startWith);
 			}
 			// ------------------------------------------------
 			else { 

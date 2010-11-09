@@ -57,7 +57,12 @@ public class AboutDialog extends JDialog implements ActionListener{
 	public AboutDialog(Frame owner) {
 		super(owner);
 		
-		teamMember = "<HTML><BODY>Christian Derksen<br>Hanno-Felix Wagner<br>Nils Loose<br>Christopher Nde<br>Marvin Steinberg</HTML></BODY>";
+		teamMember = "<HTML><BODY>Christian Derksen<br>" +
+						"Hanno-Felix Wagner<br>" +
+						"Nils Loose<br>" +
+						"Christopher Nde<br>" +
+						"Marvin Steinberg<br>" +
+						"Tim Lewen</HTML></BODY>";
 		
 		// --- Set the Look and Feel of the Dialog ------------------
 		if (Application.isServer==true) {
@@ -115,7 +120,7 @@ public class AboutDialog extends JDialog implements ActionListener{
 			gridBagConstraints6.fill = GridBagConstraints.HORIZONTAL;
 			gridBagConstraints6.gridy = 7;
 			jLabelMembership = new JLabel();
-			jLabelMembership.setPreferredSize(new Dimension(260, 85));
+			jLabelMembership.setPreferredSize(new Dimension(260, 100));
 			jLabelMembership.setText(teamMember);
 			GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
 			gridBagConstraints5.gridx = 2;

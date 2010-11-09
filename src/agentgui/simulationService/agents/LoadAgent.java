@@ -151,6 +151,12 @@ public class LoadAgent extends Agent {
 	}
 	
 	/**
+	 * This Method shows the GUI of this LoadAgent
+	 */
+	public void showGUI() {
+		loadDialog.setVisible(true);
+	}
+	/**
 	 * @return the monitorBehaviourTickingPeriod
 	 */
 	public long getMonitorBehaviourTickingPeriod() {

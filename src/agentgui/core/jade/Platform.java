@@ -324,15 +324,22 @@ public class Platform extends Object {
 	 * Starts an Agent, if the main-container exists 
 	 */
 	public void jadeSystemAgentOpen( String RootAgentName, Integer OptionalPostfixNo ) {
+		this.jadeSystemAgentOpen(RootAgentName, OptionalPostfixNo, null);
+	}
+	
+	public void jadeSystemAgentOpen( String RootAgentName, Integer OptionalPostfixNo, Object[] openArgs  ) {
 		// --- Table of the known Jade System-Agents -----
 		Hashtable<String, String> JadeSystemTools = new Hashtable<String, String>();
 		JadeSystemTools.put( "rma", "jade.tools.rma.rma" );
 		JadeSystemTools.put( "sniffer", "jade.tools.sniffer.Sniffer" );
 		JadeSystemTools.put( "dummy", "jade.tools.DummyAgent.DummyAgent" );
 		JadeSystemTools.put( "df", "mas.agents.DFOpener" );
-		JadeSystemTools.put( "loadmonitor", agentgui.simulationService.agents.LoadAgent.class.getName());
 		JadeSystemTools.put( "introspector", "jade.tools.introspector.Introspector" );
 		JadeSystemTools.put( "log", "jade.tools.logging.LogManagerAgent" );
+
+		// --- AgentGUI - Agents --------------------------
+		JadeSystemTools.put( "loadmonitor", agentgui.simulationService.agents.LoadAgent.class.getName());
+		JadeSystemTools.put( "simstarter", agentgui.core.sim.start.SimStartAgent.class.getName());
 		
 		AgentController AgeCon = null;
 		String AgentNameSearch  = RootAgentName.toLowerCase();
@@ -386,7 +393,7 @@ public class Platform extends Object {
 			}
 			if ( MsgAnswer == 0 ) {
 				// --- YES - Start another agent of this kind ---------
-				jadeSystemAgentOpen( RootAgentName, NewPostfixNo(RootAgentName) );
+				jadeSystemAgentOpen( RootAgentName, NewPostfixNo(RootAgentName), openArgs );
 			}
 			else {
 				// --- NO - Set Focus to already running component ----
@@ -407,9 +414,9 @@ public class Platform extends Object {
 					return;					
 				} else {
 					// --- Show a standard jade ToolAgent --------
-					AgeCon = MASmc.createNewAgent(AgentNameForStart, AgentNameClass, new Object[0]);
+					AgeCon = MASmc.createNewAgent(AgentNameForStart, AgentNameClass, openArgs);
+					AgeCon.start();
 				}
-				AgeCon.start();
 			} 
 			catch (StaleProxyException e) {
 				e.printStackTrace();

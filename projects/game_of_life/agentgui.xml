@@ -18,9 +18,8 @@
         <serviceList>
             <service>jade.core.event.NotificationService;</service>
             <service>jade.core.mobility.AgentMobilityService;</service>
-            <service>mas.service.SimulationService;</service>
+            <service>agentgui.simulationService.SimulationService;</service>
         </serviceList>
     </jadeConfiguration>
-    <mainPackage>game_of_life</mainPackage>
     <subFolderEnvSetups>envSetups</subFolderEnvSetups>
 </project>

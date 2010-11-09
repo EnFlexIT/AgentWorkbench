@@ -15,6 +15,7 @@ import javax.swing.JTabbedPane;
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
 import agentgui.core.gui.ProjectWindow;
+import agentgui.core.gui.projectwindow.simsetup.Distribution;
 import agentgui.core.gui.projectwindow.simsetup.EnvironmentSetup;
 import agentgui.core.gui.projectwindow.simsetup.JadeSetup;
 import agentgui.core.gui.projectwindow.simsetup.StartSetup;
@@ -60,8 +61,8 @@ public class SetupSimulation extends JPanel  {
 		// --- Die (optionalen) Karteikarten einblenden ----------
 		addProjectTab(Language.translate("Agenten-Start"), null, new StartSetup(currProject), Language.translate("Agenten-Konfiguration"));
 		addProjectTab(Language.translate("Simulationsumgebung"), null, new EnvironmentSetup(currProject), Language.translate("Umgebungskonfiguration"));
+		addProjectTab(Language.translate("Verteilung + Grenzwerte"), null, new Distribution(currProject), Language.translate("Verteilung + Grenzwerte"));
 		addProjectTab(Language.translate("JADE-Konfiguration"), null, new JadeSetup(currProject), Language.translate("JADE-Konfiguration"));
-		
 	}
 
 	/**
