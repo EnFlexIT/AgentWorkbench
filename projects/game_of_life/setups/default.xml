@@ -3,7 +3,7 @@
     <agentSetup/>
     <distribution>
         <doDynamicLoadBalalncing>false</doDynamicLoadBalalncing>
-        <doStaticLoadBalalncing>false</doStaticLoadBalalncing>
+        <doStaticLoadBalalncing>true</doStaticLoadBalalncing>
         <dynamicLoadBalancingClass>agentgui.simulationService.agents.LoadBalancing</dynamicLoadBalancingClass>
         <numberOfAgents>0</numberOfAgents>
         <numberOfContainer>0</numberOfContainer>

@@ -72,10 +72,18 @@ public class ClassLoaderUtil {
 		if (testDepthArray.length > 3) {
 			return null;
 		} else {
-			int index = packpageName.lastIndexOf("/");
-			packpageName = packpageName.substring(0, index);
-			packpageName = packpageName.replaceAll("/", ".");
-			return packpageName;
+			if (packpageName.endsWith(".class")==false) {
+				System.out.println("" + packpageName);
+				int index = packpageName.lastIndexOf("/");
+				if (index==-1) {
+					return null;
+				}
+				packpageName = packpageName.substring(0, index);
+				packpageName = packpageName.replaceAll("/", ".");
+				return packpageName;	
+			} else {
+				return null;
+			}
 		}
 	}
 

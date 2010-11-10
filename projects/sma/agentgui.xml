@@ -28,12 +28,10 @@ Einfaches Demo-Projekt fr die Visualisierung</projectDescription>
         <useLocalPort>1104</useLocalPort>
         <serviceList>
             <service>jade.core.event.NotificationService;</service>
-            <service>mas.environment.provider.EnvironmentProviderService;</service>
             <service>jade.core.mobility.AgentMobilityService;</service>
-            <service>mas.service.SimulationService;</service>
+            <service>agentgui.simulationService.SimulationService;</service>
             <service>agentgui.physical2Denvironment.provider.EnvironmentProviderService;</service>
         </serviceList>
     </jadeConfiguration>
-    <mainPackage>sma</mainPackage>
     <subFolderEnvSetups>svgEnvSetups</subFolderEnvSetups>
 </project>
