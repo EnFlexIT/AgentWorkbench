@@ -482,7 +482,7 @@ public class EnvironmentController extends Observable implements Observer{
 	 * @param settings The object properties
 	 * @return The created Physical2DObject
 	 */
-	public Physical2DObject createObject(HashMap<String, Object> settings){
+	private Physical2DObject createObject(HashMap<String, Object> settings){
 		Physical2DObject newObject = null;
 		
 		// Check if the specified ID is available
@@ -499,7 +499,8 @@ public class EnvironmentController extends Observable implements Observer{
 					((ActiveObject)newObject).setMovement(new Movement());
 					if(! settings.get(EnvironmentSetup.SETTINGS_KEY_AGENT_MAX_SPEED).toString().isEmpty()){
 						((ActiveObject)newObject).setMaxSpeed(Float.parseFloat(settings.get(EnvironmentSetup.SETTINGS_KEY_AGENT_MAX_SPEED).toString()));
-						((ActiveObject)newObject).setAgentClassName(settings.get(EnvironmentSetup.SETTINGS_KEY_AGENT_CLASSNAME).toString());
+						String agentClassName = settings.get(EnvironmentSetup.SETTINGS_KEY_AGENT_CLASSNAME).toString();
+						((ActiveObject)newObject).setAgentClassName(agentClassName);
 					}
 					
 				}

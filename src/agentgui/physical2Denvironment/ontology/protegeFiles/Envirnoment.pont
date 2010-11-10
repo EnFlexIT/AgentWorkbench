@@ -1,0 +1,306 @@
+; Thu Nov 04 22:38:57 CET 2010
+; 
+;+ (version "3.3.1")
+;+ (build "Build 430")
+
+
+(defclass %3ACLIPS_TOP_LEVEL_SLOT_CLASS "Fake class to save top-level slot information"
+	(is-a USER)
+	(role abstract)
+	(multislot payload
+;+		(comment "Passive objects currently controlled by this active object")
+		(type INSTANCE)
+;+		(allowed-classes PassiveObject)
+		(create-accessor read-write))
+	(single-slot pixelValue
+;+		(comment "The number of pixels. Default 10.")
+		(type FLOAT)
+		(range 0.0 %3FVARIABLE)
+		(default 10.0)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot yPos
+;+		(comment "The environments y coordinate")
+		(type FLOAT)
+		(range 0.0 %3FVARIABLE)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot realWorldUntiName
+;+		(comment "The real world unit's name. Default \"m\" (meters).")
+		(type STRING)
+		(default "m")
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot height
+;+		(comment "The object's height")
+		(type FLOAT)
+		(range 0.0 %3FVARIABLE)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot movement
+;+		(comment "The ActiveObject's current movement.")
+		(type INSTANCE)
+;+		(allowed-classes Movement)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot scale
+;+		(comment "The physical 2D environment's scale")
+		(type INSTANCE)
+;+		(allowed-classes Scale)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot size
+;+		(comment "The object's size")
+		(type INSTANCE)
+;+		(allowed-classes Size)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(multislot childObjects
+;+		(comment "The physical 2D objects existing in this (sub)environment")
+		(type INSTANCE)
+;+		(allowed-classes Physical2DObject)
+		(create-accessor read-write))
+	(multislot environmentObjects
+;+		(comment "List of all objects in this environment, i.e. all playgrounds and their sub objects")
+		(type INSTANCE)
+;+		(allowed-classes Physical2DObject)
+		(create-accessor read-write))
+	(single-slot realWorldUnitValue
+;+		(comment "The number of real world units. Default 1.")
+		(type FLOAT)
+		(range 0.0 %3FVARIABLE)
+		(default 1.0)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot yPosChange
+;+		(comment "The y coordinate change per second")
+		(type FLOAT)
+		(default 0.0)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot xPosChange
+;+		(comment "The change of the objects x coordinate per second.")
+		(type FLOAT)
+		(default 0.0)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot agentClassName
+		(type STRING)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot id
+;+		(comment "ID used to identify the object")
+		(type STRING)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot rootPlayground
+;+		(comment "The main area of the physical 2D environment, containing all sub-environments and objects")
+		(type INSTANCE)
+;+		(allowed-classes PlaygroundObject)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot width
+;+		(comment "The object's width")
+		(type FLOAT)
+		(range 0.0 %3FVARIABLE)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot position
+;+		(comment "The object's position")
+		(type INSTANCE)
+;+		(allowed-classes Position)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot xPos
+;+		(comment "The objects x coordinate")
+		(type FLOAT)
+		(range 0.0 %3FVARIABLE)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot maxSpeed
+;+		(comment "The active object's maximum speed")
+		(type FLOAT)
+		(range 0.0 %3FVARIABLE)
+		(default 0.0)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot controllingObjectID
+;+		(comment "The ID of the ActiveObject controlling this object.")
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot projectName
+		(type STRING)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot parentPlaygroundID
+;+		(comment "The ID of the PlaygroundObject this Physical2DObject lives in.")
+		(type STRING)
+;+		(cardinality 1 1)
+		(create-accessor read-write)))
+
+(defclass Position "An object's position."
+	(is-a Concept)
+	(role concrete)
+	(single-slot yPos
+;+		(comment "The environments y coordinate")
+		(type FLOAT)
+		(range 0.0 %3FVARIABLE)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot xPos
+;+		(comment "The objects x coordinate")
+		(type FLOAT)
+		(range 0.0 %3FVARIABLE)
+;+		(cardinality 1 1)
+		(create-accessor read-write)))
+
+(defclass Size "An object's size."
+	(is-a Concept)
+	(role concrete)
+	(single-slot height
+;+		(comment "The object's height")
+		(type FLOAT)
+		(range 0.0 %3FVARIABLE)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot width
+;+		(comment "The object's width")
+		(type FLOAT)
+		(range 0.0 %3FVARIABLE)
+;+		(cardinality 1 1)
+		(create-accessor read-write)))
+
+(defclass Movement "This class models an ActiveObject's movement by defining the change of its x and y coordinate per second."
+	(is-a Concept)
+	(role concrete)
+	(single-slot yPosChange
+;+		(comment "The y coordinate change per second")
+		(type FLOAT)
+		(default 0.0)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot xPosChange
+;+		(comment "The change of the objects x coordinate per second.")
+		(type FLOAT)
+		(default 0.0)
+;+		(cardinality 1 1)
+		(create-accessor read-write)))
+
+(defclass Physical2DObject "Abstract super class for physical objects that are part of the environment model."
+	(is-a Concept)
+	(role abstract)
+	(single-slot id
+;+		(comment "ID used to identify the object")
+		(type STRING)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot position
+;+		(comment "The object's position")
+		(type INSTANCE)
+;+		(allowed-classes Position)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot size
+;+		(comment "The object's size")
+		(type INSTANCE)
+;+		(allowed-classes Size)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot parentPlaygroundID
+;+		(comment "The ID of the PlaygroundObject this Physical2DObject lives in.")
+		(type STRING)
+;+		(cardinality 1 1)
+		(create-accessor read-write)))
+
+(defclass ActiveObject "This class represents active objects, i.e. environment objects modeling agents. ActiveObjects can move on their own."
+	(is-a Physical2DObject)
+	(role concrete)
+	(multislot payload
+;+		(comment "Passive objects currently controlled by this active object")
+		(type INSTANCE)
+;+		(allowed-classes PassiveObject)
+		(create-accessor read-write))
+	(single-slot agentClassName
+		(type STRING)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot movement
+;+		(comment "The ActiveObject's current movement.")
+		(type INSTANCE)
+;+		(allowed-classes Movement)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot maxSpeed
+;+		(comment "The active object's maximum speed")
+		(type FLOAT)
+		(range 0.0 %3FVARIABLE)
+		(default 0.0)
+;+		(cardinality 1 1)
+		(create-accessor read-write)))
+
+(defclass StaticObject "This class represents static environment objects. StaticObjects can neither move nor be moved."
+	(is-a Physical2DObject)
+	(role concrete))
+
+(defclass PassiveObject "This class represents passive environment objects. PassiveObjects can't move on their own, but they can be moved by an ActiveObject."
+	(is-a Physical2DObject)
+	(role concrete)
+	(single-slot controllingObjectID
+;+		(comment "The ID of the ActiveObject controlling this object.")
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write)))
+
+(defclass PlaygroundObject "This class represents a (sub)environment that is part of the environment model. It is a container for other environment objects, i.e. instances of subclasses of Physical2DObject. As it is a subclass of Physical2DObject itself, a PlaygroundObject may contain other PlaygroundObjects."
+	(is-a Physical2DObject)
+	(role concrete)
+	(multislot childObjects
+;+		(comment "The physical 2D objects existing in this (sub)environment")
+		(type INSTANCE)
+;+		(allowed-classes Physical2DObject)
+		(create-accessor read-write)))
+
+(defclass Physical2DEnvironment "This class represents the whole environment model."
+	(is-a Concept)
+	(role concrete)
+	(single-slot rootPlayground
+;+		(comment "The main area of the physical 2D environment, containing all sub-environments and objects")
+		(type INSTANCE)
+;+		(allowed-classes PlaygroundObject)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot scale
+;+		(comment "The physical 2D environment's scale")
+		(type INSTANCE)
+;+		(allowed-classes Scale)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot projectName
+		(type STRING)
+;+		(cardinality 1 1)
+		(create-accessor read-write)))
+
+(defclass Scale "The scale used for displaying the environment model, mapping a number of real world units to a number of pixels."
+	(is-a Concept)
+	(role concrete)
+	(single-slot realWorldUnitValue
+;+		(comment "The number of real world units. Default 1.")
+		(type FLOAT)
+		(range 0.0 %3FVARIABLE)
+		(default 1.0)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot pixelValue
+;+		(comment "The number of pixels. Default 10.")
+		(type FLOAT)
+		(range 0.0 %3FVARIABLE)
+		(default 10.0)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot realWorldUntiName
+;+		(comment "The real world unit's name. Default \"m\" (meters).")
+		(type STRING)
+		(default "m")
+;+		(cardinality 0 1)
+		(create-accessor read-write)))

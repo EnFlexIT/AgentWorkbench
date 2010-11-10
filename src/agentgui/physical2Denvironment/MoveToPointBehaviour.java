@@ -1,12 +1,10 @@
 package agentgui.physical2Denvironment;
 
-import java.util.Iterator;
 
 import agentgui.core.application.Language;
 import agentgui.physical2Denvironment.ontology.ActiveObject;
 import agentgui.physical2Denvironment.ontology.Movement;
 import agentgui.physical2Denvironment.ontology.Physical2DObject;
-import agentgui.physical2Denvironment.ontology.PlaygroundObject;
 import agentgui.physical2Denvironment.ontology.Position;
 import agentgui.physical2Denvironment.provider.EnvironmentProviderHelper;
 import agentgui.physical2Denvironment.provider.EnvironmentProviderService;
@@ -162,27 +160,6 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 		
 		// Check if the playground contains the object at the destination position
 		return playground.objectContains(selfAtDestPos);
-	}
-	
-	/**
-	 * @return Collision with other Physical2DObjects?
-	 */
-	@SuppressWarnings("unchecked")
-	private boolean checkCollisions(){
-		// Get the agent's Physical2DObject
-		Physical2DObject self = helper.getObject(myAgent.getLocalName());
-		// Get the agent's parent playground
-		PlaygroundObject parentPG = (PlaygroundObject) helper.getObject(self.getParentPlaygroundID());
-		
-		// Check for collisions with every Physical2DObject inside the playground		
-		Iterator<Physical2DObject> pgObjects = parentPG.getAllChildObjects();
-		while(pgObjects.hasNext()){
-			Physical2DObject object = pgObjects.next();
-			if( (!object.getId().equals(self.getId())) && (self.objectIntersects(object))){
-				return true;
-			}
-		}
-		return false;
 	}
 
 }

@@ -60,14 +60,6 @@
 						<Size height="16.714285F" width="2.857143F"/>
 					</size>
 				</StaticObject>
-				<PassiveObject id="Box4" parentPlaygroundID="RootPlayground">
-					<position>
-						<Position yPos="4.9571404F" xPos="41.285713F"/>
-					</position>
-					<size>
-						<Size height="3.142857F" width="2.857143F"/>
-					</size>
-				</PassiveObject>
 				<PassiveObject id="Box1" parentPlaygroundID="RootPlayground">
 					<position>
 						<Position yPos="36.714287F" xPos="4.428571F"/>
@@ -82,6 +74,14 @@
 					</position>
 					<size>
 						<Size height="2.857143F" width="2.857143F"/>
+					</size>
+				</PassiveObject>
+				<PassiveObject id="Box4" parentPlaygroundID="RootPlayground">
+					<position>
+						<Position yPos="4.9571404F" xPos="41.285713F"/>
+					</position>
+					<size>
+						<Size height="3.142857F" width="2.857143F"/>
 					</size>
 				</PassiveObject>
 			</childObjects>
