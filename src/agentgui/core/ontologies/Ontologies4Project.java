@@ -52,7 +52,7 @@ public class Ontologies4Project extends HashMap<String, OntologyClass> {
 			// --- Get reference of current Sub-Ontology --------
 			String subOntologyReference = it.next();	
 			// --- Build OntologyClass-Object for Ontology ------
-			OntologyClass onCla = new OntologyClass(subOntologyReference);
+			OntologyClass onCla = new OntologyClass(currProject, subOntologyReference);
 			// --- Remember this class localy -------------------
 			this.put(onCla.getOntologyMainClass(), onCla);
 			subOntologiesCorrected.add(onCla.getOntologyMainClass());
@@ -140,7 +140,7 @@ public class Ontologies4Project extends HashMap<String, OntologyClass> {
 	 * @param ontoRef
 	 */
 	public void addSubOntology (String newSubOntology) {
-		OntologyClass onCla = new OntologyClass(newSubOntology);
+		OntologyClass onCla = new OntologyClass(currProject, newSubOntology);
 		if ( currProject.subOntologies.contains(onCla.getOntologyMainClass())==false) {
 			currProject.subOntologies.add(onCla.getOntologyMainClass());	
 		}		

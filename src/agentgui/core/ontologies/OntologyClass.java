@@ -9,13 +9,14 @@ import java.util.List;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import agentgui.core.application.Project;
+
 public class OntologyClass extends Object implements Serializable{
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
+	private Project currProject = null;
+	
 	private String currOntologySrcPackage = null;
 	private String currOntologyMainClass  = null;
 	private String currOntologyName 	  = null;
@@ -34,8 +35,10 @@ public class OntologyClass extends Object implements Serializable{
 	 * b) the source-package of an ontology e. g. 'myproject.ontology'
 	 * @param ontologyReference
 	 */
-	public OntologyClass(String ontologyReference) {
+	public OntologyClass(Project project, String ontologyReference) {
 
+		this.currProject = project;
+		
 		// --------------------------------------------------------------------
 		// --- Is this the Reference to the Main-class of the ontology? -------
 		if ( referenceIsClass(ontologyReference)==true ) {
@@ -77,7 +80,7 @@ public class OntologyClass extends Object implements Serializable{
 	private void setOntologyTree() {
 		OntologyClassTreeObject octo = new OntologyClassTreeObject(this, "Root");
 		DefaultMutableTreeNode RootNode = new DefaultMutableTreeNode( octo );
-		ProjectOntologieTree = new OntologyClassTree( RootNode, this, currOntologySrcPackage );			
+		ProjectOntologieTree = new OntologyClassTree( currProject, RootNode, this, currOntologySrcPackage );			
 	}
 	/**
 	 * this Method set the public fields 'ontologyConceptNames', 'ontologyActionNames'

@@ -1,8 +1,8 @@
 package agentgui.core.reflection;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -10,24 +10,34 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
 import java.util.jar.JarEntry;
-import java.util.jar.JarInputStream;
+import java.util.jar.JarFile;
 
 import agentgui.core.application.Application;
+import agentgui.core.application.Project;
 
 public class ReflectClassFiles extends ArrayList<String> {
 
 	private static final long serialVersionUID = -256361698681180954L;
 
+	private Project currProject = null;
+	
 	private String SearchINReference = null;
 	private String[] SearchINPathParts = null;
 
-	private Vector<String> classPathExternalJars = Application.RunInfo.getClassPathExternalJars();
+	private Vector<String> classPathExternalJars = null;
 	
 	/**
 	 * Constructor of this class
 	 * @param SearchReference
 	 */
-	public ReflectClassFiles( String SearchReference ) {
+	public ReflectClassFiles(Project project, String SearchReference) {
+
+		this.currProject = project;
+		
+		// --- Die aktuellen externen Ressourcen zusammenstellen -
+		this.classPathExternalJars = Application.RunInfo.getClassPathExternalJars();
+		this.classPathExternalJars.addAll(currProject.projectResources);
+		
 		// --- Verzeichnis, in dem die Ontologie liegt auslesen ---
 		SearchINReference = SearchReference;
 		if ( !(SearchINReference == null) ) {
@@ -62,6 +72,8 @@ public class ReflectClassFiles extends ArrayList<String> {
 			if ( PathOfFile.startsWith("file:") && reference2JarFile!=null ) {
 				// --- Path points to a jar-file --------------------
 				//System.out.println("Jar-Result: " + SearchINReference + " => " + reference2JarFile);
+				reference2JarFile = PathOfFile.substring(0, PathOfFile.lastIndexOf(reference2JarFile)) + reference2JarFile;
+				reference2JarFile = reference2JarFile.replace("file:\\", "");
 				ClazzList = getJARClasses( reference2JarFile );
 			} else {
 				// --- Points to the IDE-Physical2DEnvironment ----------------
@@ -122,26 +134,31 @@ public class ReflectClassFiles extends ArrayList<String> {
 	private ArrayList<String> getJARClasses(String jarName) {
 		
 		String CurrClass   = "";
-		String packageName = "";
 		ArrayList<String> classes = new ArrayList<String>();
 		
-		packageName = packageName.replaceAll("\\.", "/");
 		try {
-			JarInputStream jarFile = new JarInputStream( new FileInputStream(jarName) );
-			JarEntry jarEntry;
-			while (true) {
-				jarEntry = jarFile.getNextJarEntry();
-				if (jarEntry == null) {
-					break;
-				}
-				if ((jarEntry.getName().startsWith(packageName)) && (jarEntry.getName().endsWith(".class"))) {
+			
+			File file = new File(jarName);
+			URL jar = file.toURI().toURL();
+			jar = new URL("jar:" + jar.toExternalForm() + "!/");
+			
+			JarURLConnection conn = (JarURLConnection) jar.openConnection();
+			conn.setUseCaches(false);
+			
+			JarFile jarFile = conn.getJarFile();
+			Enumeration<JarEntry> enu = jarFile.entries();
+			while (enu.hasMoreElements()) {
+
+				JarEntry jarEntry = enu.nextElement();
+
+				if ((jarEntry.getName().endsWith(".class"))) {
 					CurrClass = jarEntry.getName().replaceAll("/", "\\.");
 					CurrClass = CurrClass.substring(0, CurrClass.length() - (".class").length());
 					// --- Klasse in die Auflistung aufnehmen ? ---
-					if ( SearchINReference == null ) {
+					if (SearchINReference == null) {
 						classes.add( CurrClass );	
 					} else {
-						if (CurrClass.startsWith( SearchINReference ) ) {
+						if (CurrClass.startsWith(SearchINReference) ) {
 							classes.add( CurrClass );
 						}		
 					}
@@ -177,7 +194,7 @@ public class ReflectClassFiles extends ArrayList<String> {
 				// --------------------------------------------------------------------
 				if ( files[i].isDirectory() ) {
 					// ----------------------------------------------------------------
-					// --- System.out.print(" (Unteriordner)\n");
+					// --- System.out.print(" (Unterordner)\n");
 					if ( SearchINReference == null ) {
 						// ------------------------------------------------------------
 						// --- Falls nach nichts konkretem gesucht wird, dann --------- 

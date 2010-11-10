@@ -17,7 +17,9 @@
         <projectResource>\contmasstandalone\ContMAS_lib\slf4j-log4j12-1.5.6.jar</projectResource>
         <projectResource>\contmasstandalone\ContMAS_lib\xercesImpl-2.7.1.jar</projectResource>
     </projectResources>
-    <subOntologies/>
+    <subOntologies>
+        <subOntology>de.unidue.stud.sehawagn.contmas.ontology.ContainerTerminalOntology</subOntology>
+    </subOntologies>
     <agentConfiguration/>
     <simulationSetupCurrent>default</simulationSetupCurrent>
     <simulationSetups>

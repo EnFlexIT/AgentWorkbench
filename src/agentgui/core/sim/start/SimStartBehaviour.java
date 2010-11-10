@@ -4,9 +4,6 @@ import jade.core.behaviours.OneShotBehaviour;
 
 public class SimStartBehaviour extends OneShotBehaviour {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -6884445863598676300L;
 
 	@Override

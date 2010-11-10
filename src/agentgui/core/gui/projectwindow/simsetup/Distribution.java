@@ -211,9 +211,9 @@ public class Distribution extends JPanel implements ActionListener, Observer, Ke
 		if (jPanelStatic == null) {
 			GridBagConstraints gridBagConstraints27 = new GridBagConstraints();
 			gridBagConstraints27.gridx = 4;
-			gridBagConstraints27.anchor = GridBagConstraints.WEST;
+			gridBagConstraints27.anchor = GridBagConstraints.CENTER;
 			gridBagConstraints27.insets = new Insets(5, 5, 0, 0);
-			gridBagConstraints27.fill = GridBagConstraints.HORIZONTAL;
+			gridBagConstraints27.fill = GridBagConstraints.NONE;
 			gridBagConstraints27.gridy = 2;
 			jLabelCalculation = new JLabel();
 			jLabelCalculation.setText("");

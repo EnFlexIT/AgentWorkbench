@@ -51,7 +51,7 @@ public class ClassLoaderUtil {
 						//if (entry.isDirectory()) {
 						// --- package found ---    						
 						String packpageName = ClassLoaderUtil.getPackageName(entryName);
-						if (packpageName != null && packpageName.length() != 0&& result.contains(packpageName) == false) {
+						if (packpageName != null && packpageName.length() != 0 && result.contains(packpageName) == false) {
 							//System.out.println( "=> " + packpageName );
 							result.add(packpageName);
 							//    						}
@@ -72,17 +72,16 @@ public class ClassLoaderUtil {
 		if (testDepthArray.length > 3) {
 			return null;
 		} else {
-			if (packpageName.endsWith(".class")==false) {
-				System.out.println("" + packpageName);
-				int index = packpageName.lastIndexOf("/");
-				if (index==-1) {
-					return null;
-				}
+			if (packpageName.endsWith(".class")) {
+				return null;
+			}
+			int index = packpageName.lastIndexOf("/");
+			if (index == -1) {
+				return null;
+			} else {
 				packpageName = packpageName.substring(0, index);
 				packpageName = packpageName.replaceAll("/", ".");
-				return packpageName;	
-			} else {
-				return null;
+				return packpageName;
 			}
 		}
 	}

@@ -239,8 +239,13 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	 * Moves the requested Project-Window to the front
 	 */
 	public void setFocus(boolean forceClassPathReload) {
+		
 		if (forceClassPathReload) {
-			// --- CLASSPATH entladen  --------------
+			// --- ggf. Jade beenden ----------------------
+			if (Application.JadePlatform.jadeStopAskUserBefore()==false) {
+				return;
+			}
+			// --- CLASSPATH entladen  --------------------
 			Application.ProjectCurr.resourcesRemove();
 		}
 		
@@ -251,7 +256,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 		setMaximized();
 		
 		if (forceClassPathReload) {
-			// --- CLASSPATH laden ------------------
+			// --- CLASSPATH laden ------------------------
 			Application.ProjectCurr.resourcesLoad();	
 		}
 	}

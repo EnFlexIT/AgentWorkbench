@@ -10,6 +10,7 @@ import javax.swing.tree.DefaultTreeModel;
 
 
 import agentgui.core.application.Application;
+import agentgui.core.application.Project;
 import agentgui.core.reflection.ReflectClassFiles;
 
 public class OntologyClassTree extends DefaultTreeModel implements Serializable {
@@ -20,7 +21,9 @@ public class OntologyClassTree extends DefaultTreeModel implements Serializable 
 	 */
 	private static final long serialVersionUID = 1L;
 
+	private Project currProject;
 	private OntologyClass currOntoClass;
+
 	private DefaultMutableTreeNode CurrentNode;
 	private DefaultMutableTreeNode ParentNode;
 	private DefaultMutableTreeNode RootNode;
@@ -44,9 +47,10 @@ public class OntologyClassTree extends DefaultTreeModel implements Serializable 
 	private final static String BaseClassObject = "java.lang.Object";
 	// --------------------------------------------------------------------------
 	
-	public OntologyClassTree(DefaultMutableTreeNode root, OntologyClass ontoClass, String ontologieSourcePackage) {
+	public OntologyClassTree(Project project, DefaultMutableTreeNode root, OntologyClass ontoClass, String ontologieSourcePackage) {
 		super(root);
-		currOntoClass = ontoClass;
+		this.currProject = project;
+		this.currOntoClass = ontoClass;
 		
 		String logMsgOnto = "";
 		String logMsgTitleOnto = "Ontology - Error !";
@@ -81,9 +85,9 @@ public class OntologyClassTree extends DefaultTreeModel implements Serializable 
 		PredicateNode = new DefaultMutableTreeNode( new OntologyClassTreeObject(currOntoClass, "Predicate") );
 		RootNode.add( PredicateNode );
 		
-		
+
 		// --- Auslesen der class-Files ------------------------
-		ArrayList<String> ProOnto = new ReflectClassFiles(SearchIN);
+		ArrayList<String> ProOnto = new ReflectClassFiles(currProject, SearchIN);
 
 		// --- Klassen untersuchen -----------------------------
 		Class<?> Cla = null;
