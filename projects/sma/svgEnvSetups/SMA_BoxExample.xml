@@ -20,22 +20,6 @@
 						<Movement yPosChange="0.0F" xPosChange="0.0F"/>
 					</movement>
 				</ActiveObject>
-				<PassiveObject id="Box1" parentPlaygroundID="RootPlayground">
-					<position>
-						<Position yPos="36.714287F" xPos="4.428571F"/>
-					</position>
-					<size>
-						<Size height="3.142857F" width="2.5714285F"/>
-					</size>
-				</PassiveObject>
-				<PassiveObject id="Box2" parentPlaygroundID="RootPlayground">
-					<position>
-						<Position yPos="36.85714F" xPos="23.714287F"/>
-					</position>
-					<size>
-						<Size height="2.857143F" width="2.857143F"/>
-					</size>
-				</PassiveObject>
 				<PassiveObject id="Box3" parentPlaygroundID="RootPlayground">
 					<position>
 						<Position yPos="35.285717F" xPos="49.857143F"/>
@@ -82,6 +66,22 @@
 					</position>
 					<size>
 						<Size height="3.142857F" width="2.857143F"/>
+					</size>
+				</PassiveObject>
+				<PassiveObject id="Box1" parentPlaygroundID="RootPlayground">
+					<position>
+						<Position yPos="36.714287F" xPos="4.428571F"/>
+					</position>
+					<size>
+						<Size height="3.142857F" width="2.5714285F"/>
+					</size>
+				</PassiveObject>
+				<PassiveObject id="Box2" parentPlaygroundID="RootPlayground">
+					<position>
+						<Position yPos="36.85714F" xPos="23.714287F"/>
+					</position>
+					<size>
+						<Size height="2.857143F" width="2.857143F"/>
 					</size>
 				</PassiveObject>
 			</childObjects>

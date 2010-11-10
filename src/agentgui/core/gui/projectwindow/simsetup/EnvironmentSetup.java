@@ -27,8 +27,11 @@ import org.w3c.dom.events.Event;
 import org.w3c.dom.events.EventListener;
 import org.w3c.dom.events.EventTarget;
 
+import agentgui.core.agents.AgentClassElement;
+import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
+import agentgui.core.gui.AgentSelector;
 import agentgui.physical2Denvironment.EnvironmentController;
 import agentgui.physical2Denvironment.display.BasicSVGGUI;
 import agentgui.physical2Denvironment.display.SvgTypes;
@@ -72,7 +75,7 @@ public class EnvironmentSetup extends JPanel implements ActionListener, Observer
 	
 	private StartSetupSelector jPanelTopNew = null;
 	private JSplitPane jSplitPaneSetup = null;
-	private JSplitPane spControlls = null;
+	private JSplitPane jSplitPaneControlls = null;
 	private JTree treeEnvironment = null;
 	private JTabbedPane tpSettings = null;
 	private EnvironmentSetupObjectSettings objectSettings = null;
@@ -161,7 +164,7 @@ public class EnvironmentSetup extends JPanel implements ActionListener, Observer
 			jSplitPaneSetup = new JSplitPane();	
 			jSplitPaneSetup.setSize(600, 400);
 			jSplitPaneSetup.setDividerLocation(200);
-			jSplitPaneSetup.setLeftComponent(getSpControlls());
+			jSplitPaneSetup.setLeftComponent(getJSplitPaneControlls());
 			jSplitPaneSetup.setRightComponent(getSvgGUI());
 		}
 		return jSplitPaneSetup;
@@ -171,17 +174,17 @@ public class EnvironmentSetup extends JPanel implements ActionListener, Observer
 	 * This method initializes spControlls	
 	 * @return javax.swing.JSplitPane	
 	 */
-	private JSplitPane getSpControlls() {
-		if (spControlls == null) {
-			spControlls = new JSplitPane();
-			spControlls.setOrientation(JSplitPane.VERTICAL_SPLIT);
+	private JSplitPane getJSplitPaneControlls() {
+		if (jSplitPaneControlls == null) {
+			jSplitPaneControlls = new JSplitPane();
+			jSplitPaneControlls.setOrientation(JSplitPane.VERTICAL_SPLIT);
 			JScrollPane scpTree = new JScrollPane();
 			scpTree.setViewportView(getTreeEnvironment());
-			spControlls.setTopComponent(scpTree);
-			spControlls.setBottomComponent(getTpSettings());
-			spControlls.setDividerLocation(200);
+			jSplitPaneControlls.setTopComponent(scpTree);
+			jSplitPaneControlls.setBottomComponent(getTpSettings());
+			jSplitPaneControlls.setDividerLocation(100);
 		}
-		return spControlls;
+		return jSplitPaneControlls;
 	}
 
 	/**
@@ -412,6 +415,14 @@ public class EnvironmentSetup extends JPanel implements ActionListener, Observer
 		}else if(arg0.getSource() == objectSettings.getBtnRemove()){
 			controller.removeObject();
 			setSelectedElement(null);
+		}else if(arg0.getSource() == objectSettings.getBtnSetAgentClass()){
+			AgentSelector agentSelector = new AgentSelector(Application.MainWindow, project);
+			agentSelector.setVisible(true);
+			Object[] selected = agentSelector.getSelectedAgentClasses();
+			if(selected != null && selected.length > 0){
+				AgentClassElement agentClass = (AgentClassElement) selected[0];
+				objectSettings.getTfAgentClass().setText(agentClass.getElementClass().getName());
+			}
 		}
 	}
 	/**
