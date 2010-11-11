@@ -17,6 +17,7 @@ import org.w3c.dom.Document;
 
 import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.application.Application;
+import agentgui.core.application.Language;
 import agentgui.core.application.Project;
 import agentgui.core.sim.setup.DistributionSetup;
 import agentgui.core.sim.setup.SimulationSetup;
@@ -39,6 +40,8 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 	protected SimulationSetup currSimSetup = null;
 	protected DistributionSetup currDisSetup = null;
 	protected ArrayList<AgentClassElement4SimStart> currAgentList = null;
+	protected ArrayList<AgentClassElement4SimStart> currAgentListVisual = null;
+
 	protected LoadThresholdLevels currThresholdLevels = null; 
 	
 	protected Hashtable<String, Float> loadContainerBenchmarkResults = null;
@@ -117,11 +120,21 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 			// --- get agents, defined in the physical-/svg-setup ---
 			Vector<ActiveObject> activeObjects = currProject.getEnvironmentController().getEnvWrap().getAgents();
 			for (Iterator<ActiveObject> iterator = activeObjects.iterator(); iterator.hasNext();) {
-				ActiveObject activeObject = iterator.next();
-				String agentClass = activeObject.getAgentClassName();
 				
+				ActiveObject activeObject = iterator.next();
+				String agentClassName = activeObject.getAgentClassName();
+				String agentName = activeObject.getId();
+				
+				if (currAgentListVisual==null) {
+					currAgentListVisual= new ArrayList<AgentClassElement4SimStart>();
+				}
+				AgentClassElement4SimStart ace4s = new AgentClassElement4SimStart();
+				ace4s.setAgentClassReference(agentClassName);
+				ace4s.setStartAsName(agentName);
+				currAgentListVisual.add(ace4s);
 			}
-			
+			// --- set focus on 
+			currProject.ProjectGUI.setFocusOnProjectTab(Language.translate("Simulations-Visualisierung"));
 		}
 		
 	}

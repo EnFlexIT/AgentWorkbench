@@ -25,6 +25,15 @@ import agentgui.core.application.Project;
 	@XmlElement(name="agent")
 	private ArrayList<AgentClassElement4SimStart> agentList = new ArrayList<AgentClassElement4SimStart>();
 	
+	/**
+	 * The name of the environment file assigned to this SimulationSetup
+	 */
+	private String environmentFileName = null;
+	/**
+	 * The name of the svg file assigned to this SimulationSetup
+	 */
+	private String svgFileName = null;
+	
 	@XmlElement(name="distribution")
 	public DistributionSetup distributionSetup = new DistributionSetup();
 	
@@ -125,15 +134,6 @@ import agentgui.core.application.Project;
 		return agentListModel;
 	}
 	
-
-	/**
-	 * The name of the environment file assigned to this SimulationSetup
-	 */
-	private String environmentFileName = null;
-	/**
-	 * The name of the svg file assigned to this SimulationSetup
-	 */
-	private String svgFileName = null;
 	
 	/**
 	 * @return the svgFileName

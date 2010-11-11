@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.util.Observable;
 import java.util.Observer;
 
+import agentgui.core.application.Language;
 import agentgui.core.application.Project;
 
 import javax.swing.JDesktopPane;
@@ -52,7 +53,7 @@ public class SimulationMessages extends JDesktopPane implements Observer, Action
 	 */
 	public void setFocus () {
 		CurrProject.setFocus(false);
-		CurrProject.ProjectGUI.setFocusOnProjectTab("Simulationsmeldungen");
+		CurrProject.ProjectGUI.setFocusOnProjectTab(Language.translate("Simulations-Meldungen"));
 	}
 
 

@@ -59,8 +59,8 @@ public class SetupSimulation extends JPanel  {
 		this.add(getJTabbedPaneSimSetup(), gridBagConstraints);
 		
 		// --- Die (optionalen) Karteikarten einblenden ----------
-		addProjectTab(Language.translate("Agenten-Start"), null, new StartSetup(currProject), Language.translate("Agenten-Konfiguration"));
-		addProjectTab(Language.translate("Simulationsumgebung"), null, new EnvironmentSetup(currProject), Language.translate("Umgebungskonfiguration"));
+		addProjectTab(Language.translate("Agenten-Start"), null, new StartSetup(currProject), Language.translate("Agenten-Start"));
+		addProjectTab(Language.translate("Simulationsumgebung"), null, new EnvironmentSetup(currProject), Language.translate("Simulationsumgebung"));
 		addProjectTab(Language.translate("Verteilung + Grenzwerte"), null, new Distribution(currProject), Language.translate("Verteilung + Grenzwerte"));
 		addProjectTab(Language.translate("JADE-Konfiguration"), null, new JadeSetup(currProject), Language.translate("JADE-Konfiguration"));
 	}
@@ -90,7 +90,7 @@ public class SetupSimulation extends JPanel  {
 		component.setName( title ); 								// --- Component benennen ----
 		jTabbedPaneSimSetup.addTab( title, icon, component, tip);	// --- Component anhängen ----
 		// --- Neuen Unterknoten in Projektbaum einfügen -------------------------
-		pareComp.addProjectTabNode("Simulations-Setup", title);
+		pareComp.addProjectTabNode(Language.translate("Simulations-Setup"), title);
 	}
 	
 }  //  @jve:decl-index=0:visual-constraint="10,21"

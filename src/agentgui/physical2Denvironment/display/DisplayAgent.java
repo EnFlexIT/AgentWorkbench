@@ -89,6 +89,9 @@ public class DisplayAgent extends Agent {
 		if(useFrame != null){
 			useFrame.dispose();
 		}
+		if (usePanel!=null) {
+			usePanel.remove(myGUI);
+		}
 	}
 	
 	private JFrame getIndependentFrame() {

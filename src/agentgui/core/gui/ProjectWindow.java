@@ -68,18 +68,18 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 		this.initialize();		
 		
 		// --- Anzeige der Basisinformationen immer einblenden ---
-		this.addProjectTab(Language.translate("Info"), null, new agentgui.core.gui.projectwindow.ProjectInfo( CurrProject ), Language.translate("Projekt-Info"));
-		this.addProjectTab(Language.translate("Ressourcen"), null, new agentgui.core.gui.projectwindow.ProjectResources( CurrProject ), Language.translate("Projekt-Ressourcen"));
+		this.addProjectTab(Language.translate("Info"), null, new agentgui.core.gui.projectwindow.ProjectInfo( CurrProject ), Language.translate("Info"));
+		this.addProjectTab(Language.translate("Ressourcen"), null, new agentgui.core.gui.projectwindow.ProjectResources( CurrProject ), Language.translate("Ressourcen"));
 
 		// --- Die (optionalen) Karteikarten einblenden ----------
-		this.addProjectTab(Language.translate("Ontologien"), null, new agentgui.core.gui.projectwindow.OntologyTab(CurrProject), Language.translate("Kommunikation"));
-		this.addProjectTab(Language.translate("Agenten"), null, new agentgui.core.gui.projectwindow.BaseAgents(CurrProject), Language.translate("Basis-Agenten"));
+		this.addProjectTab(Language.translate("Ontologien"), null, new agentgui.core.gui.projectwindow.OntologyTab(CurrProject), Language.translate("Ontologien"));
+		this.addProjectTab(Language.translate("Agenten"), null, new agentgui.core.gui.projectwindow.BaseAgents(CurrProject), Language.translate("Agenten"));
 		this.addProjectTab(Language.translate("Simulations-Setup"), null, new agentgui.core.gui.projectwindow.SetupSimulation(CurrProject, this), Language.translate("Simulations-Setup"));
 		
 		Visualization visualization = new Visualization(this.CurrProject);
 		CurrProject.ProjectVisualizationPanel = visualization.getJPanel4Visualization();
-		this.addProjectTab(Language.translate("Simulations-Visualisierung"), null, CurrProject.ProjectVisualizationPanel , Language.translate("Simulation"));
-		this.addProjectTab(Language.translate("Simulations-Meldungen"), null, new agentgui.core.gui.projectwindow.SimulationMessages(CurrProject), Language.translate("Simulationsmeldungen"));
+		this.addProjectTab(Language.translate("Simulations-Visualisierung"), null, CurrProject.ProjectVisualizationPanel , Language.translate("Simulations-Visualisierung"));
+		this.addProjectTab(Language.translate("Simulations-Meldungen"), null, new agentgui.core.gui.projectwindow.SimulationMessages(CurrProject), Language.translate("Simulations-Meldungen"));
 		
 		// --- Ggf. noch fehlende Nodes hinzufügen ---------------
 		if (additionalNodes.size()!=0) {
