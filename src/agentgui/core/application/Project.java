@@ -368,6 +368,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	/**
 	 * @return the current EnvironmentController
 	 */
+	@XmlTransient
 	public EnvironmentController getEnvironmentController() {
 		return this.environmentController;
 	}
