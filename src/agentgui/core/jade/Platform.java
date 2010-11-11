@@ -59,7 +59,7 @@ public class Platform extends Object {
 	 * It starts directly after starting the JADE-Platform
 	 * @return
 	 */
-	private boolean jadeStartBackgroundAgents() {
+	private boolean jadeStartBackgroundAgents(boolean showRMA) {
 		
 		// --- Define the Address of the Main-Platform --------------
 		MASmasterAddress = new JadeUrlChecker(Application.RunInfo.getServerMasterURL());
@@ -152,16 +152,21 @@ public class Platform extends Object {
 				jadeAgentStart(MASapplicationAgentName, agentgui.simulationService.agents.ServerClientAgent.class.getName());	
 			}			
 			// --- Start RMA ('Remote Monitoring Agent') ------------ 
-			jadeSystemAgentOpen( "rma", null );	
+			if (showRMA==true) {
+				jadeSystemAgentOpen( "rma", null );	
+			}
 						
 		}
 		return true;
 	}
 	
 	/**
-	 * Starting the jade-platform  
+	 * Starting JADE controled by this application  
 	 */		
 	public boolean jadeStart() {
+		return jadeStart(true);
+	}	
+	public boolean jadeStart(boolean showRMA) {
 		
 		boolean startSucceed = false;		
 		
@@ -190,11 +195,10 @@ public class Platform extends Object {
 		}
 
 		// --- Start the Application Background-Agents ---------------
-		if (this.jadeStartBackgroundAgents()==false) return false;
+		if (this.jadeStartBackgroundAgents(showRMA)==false) return false;
 		
 		Application.setStatusJadeRunning(true);
 		return startSucceed;
-		
 	}
 	
 	/**
@@ -341,6 +345,8 @@ public class Platform extends Object {
 		JadeSystemTools.put( "loadmonitor", agentgui.simulationService.agents.LoadAgent.class.getName());
 		JadeSystemTools.put( "simstarter", agentgui.simulationService.balancing.SimStartAgent.class.getName());
 		
+		boolean showRMA = true;
+		
 		AgentController AgeCon = null;
 		String AgentNameSearch  = RootAgentName.toLowerCase();
 		String AgentNameClass = null;
@@ -351,11 +357,14 @@ public class Platform extends Object {
 		Integer MsgAnswer = null;
 		
 		// --- For 'simstarter': is there a project? --------- 
-		if (AgentNameForStart.equalsIgnoreCase("simstarter") && Application.ProjectCurr==null) {
-			MsgHead = Language.translate("Abbruch: Kein Projekt geöffnet!");
-			MsgText = Language.translate("Zur Zeit ist kein Agenten-Projekt geöffnet.");
-			JOptionPane.showMessageDialog( Application.MainWindow.getContentPane(), MsgText, MsgHead, JOptionPane.OK_OPTION);
-			return;
+		if (AgentNameForStart.equalsIgnoreCase("simstarter")) {
+			showRMA = false;
+			if (Application.ProjectCurr==null) {
+				MsgHead = Language.translate("Abbruch: Kein Projekt geöffnet!");
+				MsgText = Language.translate("Zur Zeit ist kein Agenten-Projekt geöffnet.");
+				JOptionPane.showMessageDialog( Application.MainWindow.getContentPane(), MsgText, MsgHead, JOptionPane.OK_OPTION);
+				return;	
+			}
 		}
 		// --- Setting the real name of the agent to start --- 
 		if ( OptionalPostfixNo != null ) 
@@ -365,10 +374,10 @@ public class Platform extends Object {
 		if ( jadeMainContainerIsRunning() == false ) {
 			MsgHead = Language.translate("JADE wurde noch nicht gestartet!");
 			MsgText = Language.translate("Möchten Sie JADE nun starten und fortfahren?");
-			MsgAnswer =  JOptionPane.showInternalConfirmDialog( Application.MainWindow.getContentPane(), MsgText, MsgHead, JOptionPane.YES_NO_OPTION);
+			MsgAnswer = JOptionPane.showInternalConfirmDialog( Application.MainWindow.getContentPane(), MsgText, MsgHead, JOptionPane.YES_NO_OPTION);
 			if ( MsgAnswer == 1 ) return; // --- NO,just exit 
 			// --- Start the JADE-Platform -------------------
-			jadeStart();
+			jadeStart(showRMA);
 			if ( AgentNameForStart.equalsIgnoreCase("rma") ) {
 				try {
 					AgeCon = MASmc.getAgent("rma");
@@ -388,7 +397,7 @@ public class Platform extends Object {
 		}
 		
 		// --- Does an agent (see name) already exists? ------
-		if ( jadeAgentIsRunning( AgentNameForStart ) == true && AgentNameForStart.equalsIgnoreCase("df")==false ) {
+		if ( jadeAgentIsRunning(AgentNameForStart) == true && AgentNameForStart.equalsIgnoreCase("df")==false ) {
 			// --- Agent already EXISTS !! -------------------
 			MsgHead = Language.translate("Der Agent '") + RootAgentName +  Language.translate("' ist bereits geöffnet!");
 			MsgText = Language.translate("Möchten Sie einen weiteren Agenten dieser Art starten?");

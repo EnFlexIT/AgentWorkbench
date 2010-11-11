@@ -133,7 +133,7 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 				ace4s.setStartAsName(agentName);
 				currAgentListVisual.add(ace4s);
 			}
-			// --- set focus on 
+			// --- set focus on Visualization-Tab -------------------
 			currProject.ProjectGUI.setFocusOnProjectTab(Language.translate("Simulations-Visualisierung"));
 		}
 		
