@@ -9,6 +9,7 @@ import java.util.Vector;
 
 import javax.swing.JDesktopPane;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
@@ -45,6 +46,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	
 	// --- GUI der aktuellen Projekt-Instanz -------------------
 	@XmlTransient public ProjectWindow ProjectGUI = null;
+	@XmlTransient public JPanel ProjectVisualizationPanel = null;
 	@XmlTransient public JDesktopPane ProjectDesktop = null;
 	
 	// --- Objekt- / Projektvariablen --------------------------
@@ -80,7 +82,6 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	
 	@XmlElement(name="jadeConfiguration")
 	public PlatformJadeConfig JadeConfiguration = new PlatformJadeConfig();
-	
 	
 	
 	/**
@@ -364,7 +365,12 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	public void setEnvironmentController(EnvironmentController ec) {
 		this.environmentController = ec;
 	}
-	
+	/**
+	 * @return the current EnvironmentController
+	 */
+	public EnvironmentController getEnvironmentController() {
+		return this.environmentController;
+	}
 	/**
 	 * @param defaultSubFolderSetups the defaultSubFolderOntology to set
 	 */

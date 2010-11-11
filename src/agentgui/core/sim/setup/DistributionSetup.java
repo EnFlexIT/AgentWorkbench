@@ -7,17 +7,19 @@ import agentgui.simulationService.load.LoadThresholdLevels;
 public class DistributionSetup implements Serializable {
 	
 	private static final long serialVersionUID = -3727386932566490036L;
-
+	public final static String DEFAULT_StaticLoadBalancingClass = agentgui.simulationService.balancing.StaticLoadBalancing.class.getName();
+	public final static String DEFAULT_DynamicLoadBalancingClass = agentgui.simulationService.balancing.DynamicLoadBalancing.class.getName();
+	
 	private boolean doStaticLoadBalalncing = false;
+	private String staticLoadBalancingClass = DEFAULT_StaticLoadBalancingClass;
 	private int numberOfAgents = 0;
 	private int numberOfContainer = 0;
 	
 	private boolean doDynamicLoadBalalncing = false;
-	private String dynamicLoadBalancingClass = agentgui.simulationService.agents.LoadBalancing.class.getName();
+	private String dynamicLoadBalancingClass = DEFAULT_DynamicLoadBalancingClass;
 	
 	private boolean useUserThresholds = false;
 	private LoadThresholdLevels UserThresholds = new LoadThresholdLevels();
-	
 
 	/**
 	 * @return the doStaticLoadBalalncing
@@ -54,6 +56,18 @@ public class DistributionSetup implements Serializable {
 	 */
 	public void setNumberOfContainer(int numberOfContainer) {
 		this.numberOfContainer = numberOfContainer;
+	}
+	/**
+	 * @param staticLoadBalancingClass the staticLoadBalancingClass to set
+	 */
+	public void setStaticLoadBalancingClass(String staticLoadBalancingClass) {
+		this.staticLoadBalancingClass = staticLoadBalancingClass;
+	}
+	/**
+	 * @return the staticLoadBalancingClass
+	 */
+	public String getStaticLoadBalancingClass() {
+		return staticLoadBalancingClass;
 	}
 	/**
 	 * @return the doDynamicLoadBalalncing

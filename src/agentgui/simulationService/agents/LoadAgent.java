@@ -33,6 +33,8 @@ import java.util.Vector;
 
 import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.SimulationServiceHelper;
+import agentgui.simulationService.balancing.DynamicLoadBalancing;
+import agentgui.simulationService.balancing.DynamicLoadBalancingBase;
 import agentgui.simulationService.load.LoadAgentMap;
 import agentgui.simulationService.load.LoadMeasureThread;
 import agentgui.simulationService.load.LoadMerger;
@@ -69,7 +71,7 @@ public class LoadAgent extends Agent {
 	// --------------------------------------------------------------
 	// --- The balancing algorithm of this agent --------------------
 	private ThreadedBehaviourFactory loadBalancingThread = null;
-	private LoadBalancingBase loadBalancing = null;
+	private DynamicLoadBalancingBase loadBalancing = null;
 	public boolean loadBalancingActivated = false;
 	// --------------------------------------------------------------
 	
@@ -130,7 +132,7 @@ public class LoadAgent extends Agent {
 		loadDialog.setContentPane(loadPanel);
 		//loadDialog.setVisible(true);
 		
-		loadBalancing = new LoadBalancing(this);
+		loadBalancing = new DynamicLoadBalancing(this);
 		
 		monitorBehaviourTickingPeriod = ((TimeSelection) loadPanel.jComboBoxInterval.getSelectedItem()).getTimeInMill();
 		monitorBehaviour = new MonitorBehaviour(this, monitorBehaviourTickingPeriod);
@@ -172,13 +174,13 @@ public class LoadAgent extends Agent {
 	/**
 	 * @param loadBalancingBase the loadBalancing to set
 	 */
-	public void setLoadBalancing(LoadBalancingBase loadBalancing) {
+	public void setLoadBalancing(DynamicLoadBalancingBase loadBalancing) {
 		this.loadBalancing = loadBalancing;
 	}
 	/**
 	 * @return the loadBalancing
 	 */
-	public LoadBalancingBase getLoadBalancing() {
+	public DynamicLoadBalancingBase getLoadBalancing() {
 		return loadBalancing;
 	}
 
@@ -210,7 +212,7 @@ public class LoadAgent extends Agent {
 				
 				// --- Display number of agents -----------------------------------------
 				loadPanel.setNumberOfAgents(loadContainerAgentMap.noAgentsAtPlatform);
-				loadThresholdLevels = LoadMeasureThread.getThresholdLeveles();
+				loadThresholdLevels = LoadMeasureThread.getThresholdLevels();
 				
 				// Initialise variables JVM-balancing -----------------------------------
 				loadThresholdExceededOverAll = 0;
@@ -310,7 +312,7 @@ public class LoadAgent extends Agent {
 				loadBalancingThread = new ThreadedBehaviourFactory();	
 			}			
 			if (loadBalancing==null) {
-				loadBalancing = new LoadBalancing((LoadAgent) myAgent);
+				loadBalancing = new DynamicLoadBalancing((LoadAgent) myAgent);
 			}
 			if (loadBalancingActivated==false) {
 				loadBalancingActivated = true;

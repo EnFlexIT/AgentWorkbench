@@ -1,4 +1,4 @@
-package agentgui.simulationService.agents;
+package agentgui.simulationService.balancing;
 
 import jade.core.Location;
 import jade.core.ServiceException;
@@ -9,6 +9,7 @@ import java.util.Vector;
 
 import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.SimulationServiceHelper;
+import agentgui.simulationService.agents.LoadAgent;
 import agentgui.simulationService.load.LoadAgentMap;
 import agentgui.simulationService.load.LoadMerger;
 import agentgui.simulationService.load.LoadThresholdLevels;
@@ -18,7 +19,7 @@ import agentgui.simulationService.load.LoadInformation.NodeDescription;
 import agentgui.simulationService.ontology.PlatformLoad;
 
 
-public class LoadBalancingBase extends OneShotBehaviour{
+public class DynamicLoadBalancingBase extends OneShotBehaviour{
 
 	private static final long serialVersionUID = -7614035278070031234L;
 
@@ -47,7 +48,7 @@ public class LoadBalancingBase extends OneShotBehaviour{
 	 * Default constructor of this class  
 	 * @param loadAgent
 	 */
-	public LoadBalancingBase(LoadAgent loadAgent) {
+	public DynamicLoadBalancingBase(LoadAgent loadAgent) {
 		super(loadAgent);
 		myLoadAgent = loadAgent;
 	}

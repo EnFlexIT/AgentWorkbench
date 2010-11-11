@@ -31,6 +31,7 @@ import javax.swing.tree.TreeSelectionModel;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
+import agentgui.core.gui.projectwindow.Visualization;
 
 /**
  * @author: Christian Derksen
@@ -74,8 +75,11 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 		this.addProjectTab(Language.translate("Ontologien"), null, new agentgui.core.gui.projectwindow.OntologyTab(CurrProject), Language.translate("Kommunikation"));
 		this.addProjectTab(Language.translate("Agenten"), null, new agentgui.core.gui.projectwindow.BaseAgents(CurrProject), Language.translate("Basis-Agenten"));
 		this.addProjectTab(Language.translate("Simulations-Setup"), null, new agentgui.core.gui.projectwindow.SetupSimulation(CurrProject, this), Language.translate("Simulations-Setup"));
-		this.addProjectTab(Language.translate("Simulation"), null, new agentgui.core.gui.projectwindow.Simulation(this.CurrProject), Language.translate("Simulation"));
-		this.addProjectTab(Language.translate("Simulationsmeldungen"), null, new agentgui.core.gui.projectwindow.SimulationMessages(CurrProject), Language.translate("Simulationsmeldungen"));
+		
+		Visualization visualization = new Visualization(this.CurrProject);
+		CurrProject.ProjectVisualizationPanel = visualization.getJPanel4Visualization();
+		this.addProjectTab(Language.translate("Simulations-Visualisierung"), null, CurrProject.ProjectVisualizationPanel , Language.translate("Simulation"));
+		this.addProjectTab(Language.translate("Simulations-Meldungen"), null, new agentgui.core.gui.projectwindow.SimulationMessages(CurrProject), Language.translate("Simulationsmeldungen"));
 		
 		// --- Ggf. noch fehlende Nodes hinzufügen ---------------
 		if (additionalNodes.size()!=0) {

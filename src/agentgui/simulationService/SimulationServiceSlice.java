@@ -9,6 +9,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import agentgui.simulationService.environment.EnvironmentModel;
+import agentgui.simulationService.load.LoadThresholdLevels;
 import agentgui.simulationService.load.LoadAgentMap.AID_Container;
 import agentgui.simulationService.ontology.ClientRemoteContainerReply;
 import agentgui.simulationService.ontology.PlatformLoad;
@@ -59,6 +60,7 @@ public interface SimulationServiceSlice extends Service.Slice {
 	static final String SERVICE_START_NEW_REMOTE_CONTAINER = "start-new-remote-container";
 	static final String SERVICE_GET_DEFAULT_REMOTE_CONTAINER_CONFIG = "get-default-remote-container-config";
 	static final String SERVICE_GET_LOCATION = "get-location";
+	static final String SERVICE_SET_THRESHOLD_LEVEL = "set-threshold-level";
 	static final String SERVICE_MEASURE_LOAD = "measure-Load";
 	static final String SERVICE_GET_AID_LIST = "get-aid-list";
 	static final String SERVICE_GET_AID_LIST_SENSOR = "get-aid-list-sensor";
@@ -67,6 +69,7 @@ public interface SimulationServiceSlice extends Service.Slice {
 	public String startNewRemoteContainer(RemoteContainerConfig remoteConfig) throws IMTPException;
 	public RemoteContainerConfig getDefaultRemoteContainerConfig() throws IMTPException;
 	public Location getLocation() throws IMTPException;
+	public void setThresholdLevels(LoadThresholdLevels thresholdLevels) throws IMTPException;
 	public PlatformLoad measureLoad() throws IMTPException;
 	public AID[] getAIDList() throws IMTPException;
 	public AID[] getAIDListSensorAgents() throws IMTPException;
@@ -79,6 +82,5 @@ public interface SimulationServiceSlice extends Service.Slice {
 	
 	public void putContainerDescription(ClientRemoteContainerReply crcReply) throws IMTPException;
 	public ClientRemoteContainerReply getCRCReply() throws IMTPException;
-	
 	
 }

@@ -31,7 +31,7 @@ public class DisplayAgentGUI extends BasicSVGGUI {
 	 * @param svgDoc The SVG document to display
 	 * @param env The Physical2DEnvironment represented by the SVG
 	 */
-	public DisplayAgentGUI(Document svgDoc, Physical2DEnvironment env){
+	public DisplayAgentGUI(Document svgDoc, Physical2DEnvironment env) {
 		super();
 		this.getCanvas().setDocumentState(JSVGCanvas.ALWAYS_DYNAMIC);
 		this.scale = env.getScale();

@@ -273,7 +273,7 @@ public class Platform extends Object {
 		
 		if(this.jadeMainContainerIsRunning()==true) {
 			String MsgHead = Language.translate("JADE wird zur Zeit ausgeführt!");
-			String MsgText = Language.translate("Möchten Sie JADE nun beenden und fortfahren?");
+			String MsgText = Language.translate("Möchten Sie JADE nun beenden?");
 			Integer MsgAnswer =  JOptionPane.showInternalConfirmDialog( Application.MainWindow.getContentPane(), MsgText, MsgHead, JOptionPane.YES_NO_OPTION);
 			if ( MsgAnswer == 1 ) return false; // --- NO,just exit 
 			// --- Stop the JADE-Platform -------------------
@@ -339,7 +339,7 @@ public class Platform extends Object {
 
 		// --- AgentGUI - Agents --------------------------
 		JadeSystemTools.put( "loadmonitor", agentgui.simulationService.agents.LoadAgent.class.getName());
-		JadeSystemTools.put( "simstarter", agentgui.core.sim.start.SimStartAgent.class.getName());
+		JadeSystemTools.put( "simstarter", agentgui.simulationService.balancing.SimStartAgent.class.getName());
 		
 		AgentController AgeCon = null;
 		String AgentNameSearch  = RootAgentName.toLowerCase();
@@ -350,7 +350,13 @@ public class Platform extends Object {
 		String MsgText = null;
 		Integer MsgAnswer = null;
 		
-		
+		// --- For 'simstarter': is there a project? --------- 
+		if (AgentNameForStart.equalsIgnoreCase("simstarter") && Application.ProjectCurr==null) {
+			MsgHead = Language.translate("Abbruch: Kein Projekt geöffnet!");
+			MsgText = Language.translate("Zur Zeit ist kein Agenten-Projekt geöffnet.");
+			JOptionPane.showMessageDialog( Application.MainWindow.getContentPane(), MsgText, MsgHead, JOptionPane.OK_OPTION);
+			return;
+		}
 		// --- Setting the real name of the agent to start --- 
 		if ( OptionalPostfixNo != null ) 
 			AgentNameForStart = RootAgentName + OptionalPostfixNo.toString(); 
@@ -411,7 +417,10 @@ public class Platform extends Object {
 					return;					
 				} else if (AgentNameForStart.equalsIgnoreCase("loadMonitor") ) {
 					this.jadeUtilityAgentStart(UTIL_CMD_OpenLoadMonitor);
-					return;					
+					return;
+				} else if (AgentNameForStart.equalsIgnoreCase("simstarter")) {
+					String containerName = Application.ProjectCurr.getProjectFolder();
+					jadeAgentStart(AgentNameForStart, AgentNameClass, openArgs, containerName);
 				} else {
 					// --- Show a standard jade ToolAgent --------
 					AgeCon = MASmc.createNewAgent(AgentNameForStart, AgentNameClass, openArgs);

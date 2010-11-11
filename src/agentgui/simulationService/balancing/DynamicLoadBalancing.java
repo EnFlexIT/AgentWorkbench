@@ -1,4 +1,4 @@
-package agentgui.simulationService.agents;
+package agentgui.simulationService.balancing;
 
 import jade.core.Location;
 
@@ -6,18 +6,19 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
 
+import agentgui.simulationService.agents.LoadAgent;
 import agentgui.simulationService.load.LoadMerger;
 import agentgui.simulationService.load.LoadAgentMap.AID_Container;
 import agentgui.simulationService.load.LoadAgentMap.AID_Container_List;
 
 
-public class LoadBalancing extends LoadBalancingBase implements LoadBalancingInterface {
+public class DynamicLoadBalancing extends DynamicLoadBalancingBase implements DynamicLoadBalancingInterface {
 
 	private static final long serialVersionUID = -4721675611537786965L;
 
 	private Location lastNewLocation = null;
 	
-	public LoadBalancing(LoadAgent loadAgent) {
+	public DynamicLoadBalancing(LoadAgent loadAgent) {
 		super(loadAgent);
 	}
 

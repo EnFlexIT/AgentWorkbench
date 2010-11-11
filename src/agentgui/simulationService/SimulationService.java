@@ -47,6 +47,7 @@ import agentgui.simulationService.load.LoadAgentMap;
 import agentgui.simulationService.load.LoadInformation;
 import agentgui.simulationService.load.LoadMeasureSigar;
 import agentgui.simulationService.load.LoadMeasureThread;
+import agentgui.simulationService.load.LoadThresholdLevels;
 import agentgui.simulationService.load.LoadUnits;
 import agentgui.simulationService.load.LoadAgentMap.AID_Container;
 import agentgui.simulationService.load.LoadInformation.Container2Wait4;
@@ -264,6 +265,10 @@ public class SimulationService extends BaseService {
 		
 		// ----------------------------------------------------------
 		// --- Method to get the Load-Informations of all containers 
+		public void setThresholdLevels(LoadThresholdLevels thresholdLevels) throws ServiceException {
+			Service.Slice[] slices = getAllSlices();
+			broadcastThresholdLevels(slices, thresholdLevels);
+		}
 		public Hashtable<String, PlatformLoad> getContainerLoads() throws ServiceException {
 			Service.Slice[] slices = getAllSlices();
 			broadcastMeasureLoad(slices);
@@ -676,6 +681,34 @@ public class SimulationService extends BaseService {
 	}
 	
 	/**
+	 * Broadcast the set of threshold levels to all cntainer
+	 * @param slices
+	 * @throws ServiceException
+	 */
+	private void broadcastThresholdLevels(Service.Slice[] slices, LoadThresholdLevels thresholdLevels) throws ServiceException {
+		
+		loadInfo.containerLoads.clear();
+		
+		if (myLogger.isLoggable(Logger.CONFIG)) {
+			myLogger.log(Logger.CONFIG, "Try to set threshold level to all Containers !");
+		}
+		for (int i = 0; i < slices.length; i++) {
+			String sliceName = null;
+			try {
+				SimulationServiceSlice slice = (SimulationServiceSlice) slices[i];
+				sliceName = slice.getNode().getName();
+				if (myLogger.isLoggable(Logger.FINER)) {
+					myLogger.log(Logger.FINER, "Try to set threshold level to " + sliceName);
+				}
+				slice.setThresholdLevels(thresholdLevels);
+			}
+			catch(Throwable t) {
+				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
+				myLogger.log(Logger.WARNING, "Error while try to set threshold level to slice " + sliceName, t);
+			}
+		}		
+	}
+	/**
 	 * 'Broadcast' (or receive) all Informations about the containers load
 	 * @param slices
 	 * @throws ServiceException
@@ -896,6 +929,13 @@ public class SimulationService extends BaseService {
 					cmd.setReturnValue(myContainer.here());
 				}
 
+				else if (cmdName.equals(SimulationServiceSlice.SERVICE_SET_THRESHOLD_LEVEL)) {
+					LoadThresholdLevels thresholdLevels = (LoadThresholdLevels) params[0];
+					if (myLogger.isLoggable(Logger.FINE)) {
+						myLogger.log(Logger.FINE, "Getting new threshold levels for load");
+					}
+					setThresholdLevels(thresholdLevels);
+				}
 				else if (cmdName.equals(SimulationServiceSlice.SERVICE_MEASURE_LOAD)) {
 					if (myLogger.isLoggable(Logger.FINE)) {
 						myLogger.log(Logger.FINE, "Answering request for Container-Load");
@@ -985,6 +1025,9 @@ public class SimulationService extends BaseService {
 			return getRemoteContainerConfigDefault();
 		}
 		
+		private void setThresholdLevels(LoadThresholdLevels thresholdLevels) {
+			LoadMeasureThread.setThresholdLevels(thresholdLevels);
+		}
 		private PlatformLoad measureLoad() {
 			PlatformLoad pl = new PlatformLoad();
 			pl.setLoadCPU(LoadMeasureThread.getLoadCPU());
@@ -1126,6 +1169,7 @@ public class SimulationService extends BaseService {
 				// --- Be sure to get the new (fresh) slice --> Bypass the service cache ---
 				SimulationServiceSlice newSlice = (SimulationServiceSlice) getFreshSlice(newSliceName);
 				// --- Set remote ManagerAgent, TimeModel,EnvironmentInstance --------------
+				newSlice.setThresholdLevels(LoadMeasureThread.getThresholdLevels());
 				newSlice.setManagerAgent(managerAgent);
 				newSlice.setEnvironmentModel(environmentModel);	
 				// --- Synchronise the time ------------------------------------------------

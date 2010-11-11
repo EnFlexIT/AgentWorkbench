@@ -182,7 +182,7 @@ public class EnvironmentSetup extends JPanel implements ActionListener, Observer
 			scpTree.setViewportView(getTreeEnvironment());
 			jSplitPaneControlls.setTopComponent(scpTree);
 			jSplitPaneControlls.setBottomComponent(getTpSettings());
-			jSplitPaneControlls.setDividerLocation(100);
+			jSplitPaneControlls.setDividerLocation(150);
 		}
 		return jSplitPaneControlls;
 	}

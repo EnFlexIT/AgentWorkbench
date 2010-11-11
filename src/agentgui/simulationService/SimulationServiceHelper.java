@@ -14,6 +14,7 @@ import java.util.Vector;
 
 import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.load.LoadAgentMap;
+import agentgui.simulationService.load.LoadThresholdLevels;
 import agentgui.simulationService.load.LoadAgentMap.AID_Container;
 import agentgui.simulationService.load.LoadInformation.Container2Wait4;
 import agentgui.simulationService.load.LoadInformation.NodeDescription;
@@ -45,6 +46,8 @@ public interface SimulationServiceHelper extends ServiceHelper {
 	public Container2Wait4 startNewRemoteContainerStaus(String containerName) throws ServiceException;
 	
 	public Vector<String> getContainerQueue() throws ServiceException;
+	
+	public void setThresholdLevels(LoadThresholdLevels currThresholdLevels) throws ServiceException;
 	
 	public Hashtable<String, PlatformLoad> getContainerLoads() throws ServiceException;
 	public PlatformLoad getContainerLoad(String containerName) throws ServiceException;

@@ -479,7 +479,6 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		} else {
 			//System.out.println( this.getClass().getName() + ": " + arg1.toString() );	
 		}
-		
 	}
 
 	private void setupLoad() {
@@ -495,7 +494,6 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		// --- Formular-Elemente einstellen ---
 		jTextFieldStartAs.setText("");
 		jCheckBoxIsMobileAgent.setSelected(false);		
-				
 	}
 	
 	/**
@@ -519,14 +517,13 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 				AgentClassElement4SimStart ac4s = new AgentClassElement4SimStart((AgentClassElement) agentsSelected[i]); 
 				ac4s.setPostionNo(startCounter);
 				startCounter++;
-				
 				jListModelAgents2Start.addElement(ac4s);
 			}
 		}
 		agentSelector.dispose();
 		agentSelector = null;		
+		currSimSetup.save();
 		// ==================================================================
-		
 	}
 	
 	/**
@@ -546,6 +543,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 			jListModelAgents2Start.removeElement(ac4s);
 		}
 		this.agentRenumberList();
+		currSimSetup.save();
 	}
 	
 	/**
@@ -571,6 +569,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 	            jListStartList.setSelectedIndex(positionNew);
 			}
 		}
+		currSimSetup.save();
 	}
 	
 	/**
