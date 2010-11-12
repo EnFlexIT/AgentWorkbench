@@ -44,7 +44,7 @@ public class DisplayAgent extends Agent {
 		
 		int use4Visualization = 0;
 		Object[] startArgs = getArguments();
-		if (startArgs==null) {
+		if (startArgs==null || startArgs.length==0) {
 			// --- started in a normal way ----------------  
 			use4Visualization = 1;
 			useFrame = getIndependentFrame();
@@ -72,6 +72,7 @@ public class DisplayAgent extends Agent {
 		switch (use4Visualization) {
 		case 1:
 			useFrame.setContentPane(myGUI);
+			useFrame.setSize(800,600);
 			useFrame.setVisible(true);
 			useFrame.pack();				
 			break;
@@ -90,7 +91,9 @@ public class DisplayAgent extends Agent {
 			useFrame.dispose();
 		}
 		if (usePanel!=null) {
-			usePanel.remove(myGUI);
+			myGUI = null;
+			usePanel.removeAll();
+			usePanel.repaint();
 		}
 	}
 	
@@ -116,7 +119,6 @@ public class DisplayAgent extends Agent {
 			try {
 				helper = (EnvironmentProviderHelper) getHelper(EnvironmentProviderService.SERVICE_NAME);
 			} catch (ServiceException e) {
-				// TODO Auto-generated catch block
 				System.err.println(getLocalName()+" - EnvironmentProviderHelper not found, shutting down");
 				doDelete();
 			}

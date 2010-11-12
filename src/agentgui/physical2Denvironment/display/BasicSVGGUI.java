@@ -112,7 +112,7 @@ public class BasicSVGGUI extends JPanel {
 			btnZoomOut.setPreferredSize(new Dimension(45, 26));
 			btnZoomOut.setIcon(new ImageIcon(getClass().getResource(PathImage + "ListMinus.png")));
 			btnZoomOut.setToolTipText("Zoom out");
-			btnZoomOut.addActionListener(canvas.new ZoomAction(0.8));
+			btnZoomOut.addActionListener(canvas.new ZoomAction(0.8333333333));
 		}
 		return btnZoomOut;
 	}
@@ -149,7 +149,7 @@ public class BasicSVGGUI extends JPanel {
 			float svgWidth = Float.parseFloat(doc.getDocumentElement().getAttributeNS(null, "width"));
 			float svgHeight = Float.parseFloat(doc.getDocumentElement().getAttributeNS(null, "height"));
 			this.setPreferredSize(new Dimension((int)svgWidth, (int) (svgHeight+getPnlZoom().getPreferredSize().getHeight())));
-		}
+		}		
 	}
 	
 	public Document getSVGDoc(){
