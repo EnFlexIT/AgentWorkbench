@@ -79,7 +79,7 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 	@Override
 	public void onStart() {
 		super.onStart();
-		this.startVisualizationAgents();
+		this.startSVGVisualizationAgents();
 	}
 	
 	@Override
@@ -100,7 +100,7 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 	 * Depending on the current project configuration, the 
 	 * svg - visualization will be started here
 	 */
-	protected void startVisualizationAgents() {
+	protected void startSVGVisualizationAgents() {
 		
 		Physical2DEnvironment environment = currProject.getEnvironment();
 		Document svgDocument = currProject.getSVGDoc();
@@ -212,15 +212,37 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 	 * This method will start the number of agents 
 	 * @param numberOfContainer
 	 */
-	protected void startRemoteContainer(int numberOfContainer) {
+	protected Hashtable<String, Location> startRemoteContainer(int numberOfContainer) {
 		
+		// --- Start the required number of container -------------------- 
+		int startMistakes = 0;
+		int startMistakesMax = 3;
 		Vector<String> containerList = new Vector<String>();
-		for (int i = 0; i < numberOfContainer; i++) {
+		while (containerList.size()< numberOfContainer) {
+		
 			String newContainer = this.startRemoteContainer();
 			if (newContainer!=null) {
 				containerList.add(newContainer);	
+			} else {
+				startMistakes++;
+			}
+			if (startMistakes>=startMistakesMax) {
+				break;
 			}
 		}
+		
+		// --- Start a new remote container ------------------------------
+		SimulationServiceHelper simHelper;
+		try {
+			simHelper = (SimulationServiceHelper) myAgent.getHelper(SimulationService.NAME);
+			Hashtable<String, Location> newContainerLocations = simHelper.getContainerLocations();
+			return newContainerLocations;
+			
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
+
+		return null;
 	}
 	
 	/**

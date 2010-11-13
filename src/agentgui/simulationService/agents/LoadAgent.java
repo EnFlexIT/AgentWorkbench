@@ -24,6 +24,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -31,6 +32,10 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
 
+import agentgui.core.application.Application;
+import agentgui.core.application.Project;
+import agentgui.core.sim.setup.DistributionSetup;
+import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.SimulationServiceHelper;
 import agentgui.simulationService.balancing.DynamicLoadBalancing;
@@ -55,6 +60,12 @@ public class LoadAgent extends Agent {
 	private static final long serialVersionUID = 3035508112883482740L;
 	
 	// --------------------------------------------------------------
+	// --- To which Project are we running in the moment ------------ 
+	protected Project currProject = null;
+	protected SimulationSetup currSimSetup = null;
+	protected DistributionSetup currDisSetup = null;
+	
+	// --------------------------------------------------------------
 	// --- Display-elements of the Monitoring system ---------------- 
 	private SystemLoadDialog loadDialog = null; 
 	private SystemLoad loadPanel = null;
@@ -70,7 +81,6 @@ public class LoadAgent extends Agent {
 
 	// --------------------------------------------------------------
 	// --- The balancing algorithm of this agent --------------------
-	private ThreadedBehaviourFactory loadBalancingThread = null;
 	private DynamicLoadBalancingBase loadBalancing = null;
 	public boolean loadBalancingActivated = false;
 	// --------------------------------------------------------------
@@ -308,19 +318,74 @@ public class LoadAgent extends Agent {
 			// --------------------------------------------------------------------------
 			// --- Now, activate the load balancing algorithm in a dedicated thread -----
 			// --------------------------------------------------------------------------
-			if (loadBalancingThread==null) {
-				loadBalancingThread = new ThreadedBehaviourFactory();	
-			}			
-			if (loadBalancing==null) {
-				loadBalancing = new DynamicLoadBalancing((LoadAgent) myAgent);
-			}
-			if (loadBalancingActivated==false) {
-				loadBalancingActivated = true;
-				myAgent.addBehaviour(loadBalancingThread.wrap(loadBalancing));	
-			}
+			this.doCheckDynamicLoadBalancing();
 			// --------------------------------------------------------------------------
 		}
 
+		/**
+		 * This method check if the dynamic load balancing is activate 
+		 * in the currently executed project and which class should be 
+		 * used for it.
+		 */
+		public void doCheckDynamicLoadBalancing() {
+			
+			// --- if the dynamic load balancing is still running, executed --- 
+			// --- the last time, exit here to prevent side effects  		---
+			if (loadBalancingActivated == true) {
+				return;
+			}
+			loadBalancingActivated = true;
+			
+			// --- Which project is currently used?  --------------------------
+			currProject = Application.ProjectCurr;		
+			if ( currProject == null ) {
+				currSimSetup = null;
+				currDisSetup = null;
+				return;
+			} 
+			// --- Get the current simulation setup ---------------------------
+			currSimSetup = currProject.simSetups.getCurrSimSetup();
+			// --- Get the current distribution setup -------------------------
+			currDisSetup = currSimSetup.getDistributionSetup();
+			
+			// --- If the dynamic load balancing is activated: ----------------
+			if (currDisSetup!=null && currDisSetup.isDoDynamicLoadBalalncing()==true) {
+			
+				LoadAgent thisLoadAgent = (LoadAgent) myAgent;
+				try {
+					@SuppressWarnings("unchecked")
+					Class<? extends DynamicLoadBalancingBase> dynLoBaClass = (Class<? extends DynamicLoadBalancingBase>) Class.forName(currDisSetup.getDynamicLoadBalancingClass());
+					loadBalancing = dynLoBaClass.getDeclaredConstructor( new Class[] { thisLoadAgent.getClass() }).newInstance( new Object[] { thisLoadAgent });
+					
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				} catch (InstantiationException e) {
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				} catch (IllegalArgumentException e) {
+					e.printStackTrace();
+				} catch (SecurityException e) {
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					e.printStackTrace();
+				} catch (NoSuchMethodException e) {
+					e.printStackTrace();
+				}	
+				// --- If loading of the class was not successful ----
+				// --- start the default class for balancing	  ----
+				if (loadBalancing==null) {
+					loadBalancing = new DynamicLoadBalancing(thisLoadAgent);
+				}
+				// --- get the instance of the ThreadedBehaviour --------------
+				ThreadedBehaviourFactory loadBalancingThread = new ThreadedBehaviourFactory();
+				// --- execute the dynamic load balancing ---------------------
+				myAgent.addBehaviour(loadBalancingThread.wrap(loadBalancing));
+						
+			}
+			
+		}// --- end dynamic LoadBalancing
+		
 	} // --- End of MonitorBehaviour (class) ----
 	
 	

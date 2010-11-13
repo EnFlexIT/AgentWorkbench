@@ -14,12 +14,14 @@ import java.awt.event.KeyListener;
 import java.util.Observable;
 import java.util.Observer;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
 import agentgui.core.sim.setup.DistributionSetup;
@@ -30,10 +32,13 @@ import agentgui.simulationService.load.LoadThresholdLevels;
 public class Distribution extends JPanel implements ActionListener, Observer, KeyListener {
 
 	private static final long serialVersionUID = 1L;
+	
 	private final static int DEFAULT_VALUES_4_BalancingClassStatic = 1;
 	private final static int DEFAULT_VALUES_4_BalancingClassDynamic = 2;
 	private final static int DEFAULT_VALUES_4_ThresholdLevel = 3;
 
+	private final String PathImage = Application.RunInfo.PathImageIntern();  //  @jve:decl-index=0:
+	
 	private Project currProject = null;
 	private SimulationSetup currSimSetup = null;  //  @jve:decl-index=0:
 	private DistributionSetup currDistributionSetup = null; 
@@ -81,6 +86,8 @@ public class Distribution extends JPanel implements ActionListener, Observer, Ke
 	private JLabel jLabelStaticLoadClass = null;
 	private JTextField jTextFieldStaticLoadClass = null;
 	private JButton jButtonDefaultClassStatic = null;
+	private JButton jButtonDefaultClassStaticCheck = null;
+	private JButton jButtonDefaultClassDynamicCheck = null;
 	/**
 	 * This is the default constructor
 	 */
@@ -91,12 +98,14 @@ public class Distribution extends JPanel implements ActionListener, Observer, Ke
 		initialize();
 		
 		this.setupLoad();
+		this.isValidClass(jTextFieldStaticLoadClass, jButtonDefaultClassStaticCheck);
+		this.isValidClass(jTextFieldDynamicLoadClass, jButtonDefaultClassDynamicCheck);
 		
 		jCheckBoxDoLoadStatic.setText(Language.translate("Statische Lastverteilung aktivieren"));
 		jCheckBoxDoLoadDynamic.setText(Language.translate("Dynamische Lastverteilung aktivieren"));
 		jCheckBoxThresholdDefinition.setText(Language.translate("Eigene Auslastungsgrenzwerte verwenden"));
 		
-		jLabelStaticLoadClass.setText(Language.translate("Java-Klasse für die statische Lastverteilung"));
+		jLabelStaticLoadClass.setText(Language.translate("Java-Klasse für den Start und die statische Lastverteilung"));
 		jLabelDynamicLoadClass.setText(Language.translate("Java-Klasse für die dynamische Lastverteilung"));
 		jLabelAgentsExpected.setText(Language.translate("Anzahl Agenten (erwartet)"));
 		jLabelContainerExpected.setText(Language.translate("Anzahl Container"));
@@ -107,6 +116,10 @@ public class Distribution extends JPanel implements ActionListener, Observer, Ke
 		
 		jButtonCalcContainer.setText(Language.translate("Anzahl Container berechnen"));
 		
+		jButtonDefaultClassStatic.setToolTipText(Language.translate("Agent.GUI - Standard verwenden"));	
+		jButtonDefaultClassDynamic.setToolTipText(Language.translate("Agent.GUI - Standard verwenden"));
+		jButtonDefaultClassStaticCheck.setToolTipText(Language.translate("Klassenangabe überprüfen"));
+		jButtonDefaultClassDynamicCheck.setToolTipText(Language.translate("Klassenangabe überprüfen"));
 	}
 
 	/**
@@ -260,6 +273,7 @@ public class Distribution extends JPanel implements ActionListener, Observer, Ke
 			gridBagConstraints6.weightx = 1.0;
 			jPanelStatic = new JPanel();
 			jPanelStatic.setLayout(new GridBagLayout());
+			jPanelStatic.setPreferredSize(new Dimension(500, 57));
 			jPanelStatic.add(getJTextFieldAgentsExpected(), gridBagConstraints6);
 			jPanelStatic.add(jLabelAgentsExpected, gridBagConstraints7);
 			jPanelStatic.add(getJTextFieldContainerExpected(), gridBagConstraints8);
@@ -276,11 +290,15 @@ public class Distribution extends JPanel implements ActionListener, Observer, Ke
 	 */
 	private JPanel getJPanelStaticClass() {
 		if (jPanelStaticClass == null) {
+			GridBagConstraints gridBagConstraints28 = new GridBagConstraints();
+			gridBagConstraints28.gridx = 1;
+			gridBagConstraints28.insets = new Insets(5, 5, 0, 0);
+			gridBagConstraints28.gridy = 1;
 			GridBagConstraints gridBagConstraints52 = new GridBagConstraints();
 			gridBagConstraints52.fill = GridBagConstraints.NONE;
-			gridBagConstraints52.gridx = 1;
+			gridBagConstraints52.gridx = 2;
 			gridBagConstraints52.gridy = 1;
-			gridBagConstraints52.insets = new Insets(5, 0, 0, 0);
+			gridBagConstraints52.insets = new Insets(5, 5, 0, 0);
 			GridBagConstraints gridBagConstraints31 = new GridBagConstraints();
 			gridBagConstraints31.anchor = GridBagConstraints.WEST;
 			gridBagConstraints31.insets = new Insets(5, 0, 0, 0);
@@ -293,12 +311,13 @@ public class Distribution extends JPanel implements ActionListener, Observer, Ke
 			gridBagConstraints42.gridy = 0;
 			gridBagConstraints42.gridx = 0;
 			jLabelStaticLoadClass = new JLabel();
-			jLabelStaticLoadClass.setText("Java-Klasse für die statische Lastverteilung");
+			jLabelStaticLoadClass.setText("Java-Klasse für den Start und die statische Lastverteilung");
 			jPanelStaticClass = new JPanel();
 			jPanelStaticClass.setLayout(new GridBagLayout());
 			jPanelStaticClass.add(jLabelStaticLoadClass, gridBagConstraints42);
 			jPanelStaticClass.add(getJTextFieldStaticLoadClass(), gridBagConstraints31);
 			jPanelStaticClass.add(getJButtonDefaultClassStatic(), gridBagConstraints52);
+			jPanelStaticClass.add(getJButtonDefaultClassStaticCheck(), gridBagConstraints28);
 		}
 		return jPanelStaticClass;
 	}
@@ -316,6 +335,7 @@ public class Distribution extends JPanel implements ActionListener, Observer, Ke
 					super.keyReleased(kR);
 					currDistributionSetup.setStaticLoadBalancingClass(jTextFieldStaticLoadClass.getText().trim());
 					currSimSetup.save();
+					isValidClass(jTextFieldStaticLoadClass, jButtonDefaultClassStaticCheck);
 				}
 			});
 		}
@@ -328,12 +348,30 @@ public class Distribution extends JPanel implements ActionListener, Observer, Ke
 	private JButton getJButtonDefaultClassStatic() {
 		if (jButtonDefaultClassStatic == null) {
 			jButtonDefaultClassStatic = new JButton();
+			jButtonDefaultClassStatic.setToolTipText("Agent.GUI - Standard verwenden");			
 			jButtonDefaultClassStatic.setBounds(new Rectangle(120, 121, 80, 26));
-			jButtonDefaultClassStatic.setText("Default");
+			jButtonDefaultClassStatic.setPreferredSize(new Dimension(45, 26));
+			jButtonDefaultClassStatic.setIcon(new ImageIcon(getClass().getResource(PathImage + "MBreset.png")));
 			jButtonDefaultClassStatic.setActionCommand("StatLoadBalancingDefault");
 			jButtonDefaultClassStatic.addActionListener(this);
 		}
 		return jButtonDefaultClassStatic;
+	}
+	
+	/**
+	 * This method initializes jButtonDefaultClassStaticCheck	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getJButtonDefaultClassStaticCheck() {
+		if (jButtonDefaultClassStaticCheck == null) {
+			jButtonDefaultClassStaticCheck = new JButton();
+			jButtonDefaultClassStaticCheck.setToolTipText("Klassenangabe überprüfen");
+			jButtonDefaultClassStaticCheck.setPreferredSize(new Dimension(45, 26));
+			jButtonDefaultClassStaticCheck.setIcon(new ImageIcon(getClass().getResource(PathImage + "MBcheckGreen.png")));
+			jButtonDefaultClassStaticCheck.setActionCommand("StatLoadBalancingCheck");
+			jButtonDefaultClassStaticCheck.addActionListener(this);
+		}
+		return jButtonDefaultClassStaticCheck;
 	}
 	
 	/**
@@ -342,10 +380,14 @@ public class Distribution extends JPanel implements ActionListener, Observer, Ke
 	 */
 	private JPanel getJPanelDynamic() {
 		if (jPanelDynamic == null) {
+			GridBagConstraints gridBagConstraints29 = new GridBagConstraints();
+			gridBagConstraints29.gridx = 1;
+			gridBagConstraints29.insets = new Insets(5, 5, 0, 0);
+			gridBagConstraints29.gridy = 1;
 			GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
-			gridBagConstraints5.gridx = 1;
+			gridBagConstraints5.gridx = 2;
 			gridBagConstraints5.fill = GridBagConstraints.NONE;
-			gridBagConstraints5.insets = new Insets(5, 0, 0, 0);
+			gridBagConstraints5.insets = new Insets(5, 5, 0, 0);
 			gridBagConstraints5.gridy = 1;
 			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
 			gridBagConstraints3.fill = GridBagConstraints.VERTICAL;
@@ -365,6 +407,7 @@ public class Distribution extends JPanel implements ActionListener, Observer, Ke
 			jPanelDynamic.add(jLabelDynamicLoadClass, gridBagConstraints4);
 			jPanelDynamic.add(getJTextFieldDynamicLoadClass(), gridBagConstraints3);
 			jPanelDynamic.add(getJButtonDefaultClassDynamic(), gridBagConstraints5);
+			jPanelDynamic.add(getJButtonDefaultClassDynamicCheck(), gridBagConstraints29);
 		}
 		return jPanelDynamic;
 	}
@@ -383,6 +426,7 @@ public class Distribution extends JPanel implements ActionListener, Observer, Ke
 					super.keyReleased(kR);
 					currDistributionSetup.setDynamicLoadBalancingClass(jTextFieldDynamicLoadClass.getText().trim());
 					currSimSetup.save();
+					isValidClass(jTextFieldDynamicLoadClass, jButtonDefaultClassDynamicCheck);
 				}
 			});
 		}
@@ -396,14 +440,31 @@ public class Distribution extends JPanel implements ActionListener, Observer, Ke
 	private JButton getJButtonDefaultClassDynamic() {
 		if (jButtonDefaultClassDynamic == null) {
 			jButtonDefaultClassDynamic = new JButton();
+			jButtonDefaultClassDynamic.setToolTipText("Agent.GUI - Standard verwenden");
 			jButtonDefaultClassDynamic.setBounds(new Rectangle(120, 121, 80, 26));
-			jButtonDefaultClassDynamic.setText("Default");
+			jButtonDefaultClassDynamic.setPreferredSize(new Dimension(45, 26));
+			jButtonDefaultClassDynamic.setIcon(new ImageIcon(getClass().getResource(PathImage + "MBreset.png")));
 			jButtonDefaultClassDynamic.setActionCommand("DynLoadBalancingDefault");
 			jButtonDefaultClassDynamic.addActionListener(this);
 		}
 		return jButtonDefaultClassDynamic;
 	}
-
+	/**
+	 * This method initializes jButtonDefaultClassDynamicCheck	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getJButtonDefaultClassDynamicCheck() {
+		if (jButtonDefaultClassDynamicCheck == null) {
+			jButtonDefaultClassDynamicCheck = new JButton();
+			jButtonDefaultClassDynamicCheck.setToolTipText("Klassenangabe überprüfen");
+			jButtonDefaultClassDynamicCheck.setPreferredSize(new Dimension(45, 26));
+			jButtonDefaultClassDynamicCheck.setIcon(new ImageIcon(getClass().getResource(PathImage + "MBcheckGreen.png")));
+			jButtonDefaultClassDynamicCheck.setActionCommand("DynLoadBalancingCheck");
+			jButtonDefaultClassDynamicCheck.addActionListener(this);
+		}
+		return jButtonDefaultClassDynamicCheck;
+	}
+	
 	/**
 	 * This method initializes jTextFieldAgentsExpected	
 	 * @return javax.swing.JTextField	
@@ -438,6 +499,7 @@ public class Distribution extends JPanel implements ActionListener, Observer, Ke
 		if (jButtonCalcContainer == null) {
 			jButtonCalcContainer = new JButton();
 			jButtonCalcContainer.setActionCommand("CalcNumberOfContainer");
+			jButtonCalcContainer.setPreferredSize(new Dimension(200, 26));
 			jButtonCalcContainer.setText("Anzahl Container berechnen");
 			jButtonCalcContainer.addActionListener(this);
 		}
@@ -734,6 +796,25 @@ public class Distribution extends JPanel implements ActionListener, Observer, Ke
 	}
 	
 	/**
+	 * This method checks if a given classs reference is valid
+	 * @param className: reference to the class  
+	 * @param classType: static(0) or dynamic(1)
+	 */
+	private void isValidClass(JTextField jTextField, JButton jButton) {
+		
+		String className = jTextField.getText().trim();
+		try {
+			@SuppressWarnings("unused")
+			Class<?> clazz = Class.forName(className);
+			jButton.setIcon(new ImageIcon(getClass().getResource(PathImage + "MBcheckGreen.png")));
+			
+		} catch (ClassNotFoundException e) {
+			//e.printStackTrace();
+			jButton.setIcon(new ImageIcon(getClass().getResource(PathImage + "MBcheckRed.png")));
+		}
+	}
+	
+	/**
 	 * Loads the current DistributionSetup from the current project
 	 */
 	private void setupLoad() {
@@ -784,10 +865,17 @@ public class Distribution extends JPanel implements ActionListener, Observer, Ke
 						
 		} else if (trigger==jButtonDefaultClassStatic) {
 			this.setDefaults(DEFAULT_VALUES_4_BalancingClassStatic);
+			this.isValidClass(jTextFieldStaticLoadClass, jButtonDefaultClassStaticCheck);
 		} else if (trigger==jButtonDefaultClassDynamic) { 
 			this.setDefaults(DEFAULT_VALUES_4_BalancingClassDynamic);
+			this.isValidClass(jTextFieldDynamicLoadClass, jButtonDefaultClassDynamicCheck);
 		} else if (trigger==jButtonDefaultThreshold) {
 			this.setDefaults(DEFAULT_VALUES_4_ThresholdLevel);
+			
+		} else if (trigger==jButtonDefaultClassStaticCheck) {
+			this.isValidClass(jTextFieldStaticLoadClass, jButtonDefaultClassStaticCheck);
+		} else if (trigger==jButtonDefaultClassDynamicCheck) {
+			this.isValidClass(jTextFieldDynamicLoadClass, jButtonDefaultClassDynamicCheck);
 			
 		} else if (trigger==jCheckBoxDoLoadStatic) {
 			currDistributionSetup.setDoStaticLoadBalalncing(jCheckBoxDoLoadStatic.isSelected());
@@ -862,6 +950,8 @@ public class Distribution extends JPanel implements ActionListener, Observer, Ke
 		}
 		this.currSimSetup.save();
 	}
+
+
 
 
 }  //  @jve:decl-index=0:visual-constraint="10,10"
