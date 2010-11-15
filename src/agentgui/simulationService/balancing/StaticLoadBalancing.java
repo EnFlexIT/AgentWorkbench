@@ -4,6 +4,7 @@ import jade.core.Location;
 
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Vector;
 
 import agentgui.core.agents.AgentClassElement4SimStart;
 
@@ -24,41 +25,75 @@ public class StaticLoadBalancing extends StaticLoadBalancingBase {
 	@Override
 	public void action() {
 		
-		// ---------------------------------------------------------------
-		// --- If we use the static load balancing, get the parameter ----
-		// --- and start the indicated number of container			  ----
-		// ---------------------------------------------------------------
-		int numberOfAgents = currDisSetup.getNumberOfAgents();
-		int numberOfContainer = currDisSetup.getNumberOfContainer();
-		
-		// --- Just in case, that we don't have enough information -------
-		if (numberOfContainer==0) {
-			if (numberOfAgents!=0) {
-				int noAgentsMax = currThresholdLevels.getThNoThreadsH();
-				numberOfContainer = (int) Math.ceil(((float)numberOfAgents / (float)noAgentsMax)) + 1;
+		if (currDisSetup.isDoStaticLoadBalalncing()==false) {
+			// -----------------------------------------------------------
+			// --- This is the very default case -------------------------
+			// --- => Just start all defined agents ----------------------
+			// -----------------------------------------------------------
+			this.startAgentsFromCurrAgentList();
+			this.startAgentsFromCurrAgentListVisual();
+			
+		} else {
+			// -----------------------------------------------------------
+			// --- The case if no specific distribution is required: -----
+			// --- => Start the required number of remote container  -----
+			// --- and distribute the agents, defined in 			 -----
+			// --- 'this.currAgentList' to these container			 -----
+			// --- => The Agents defined in the visualization-setup  -----
+			// --- will be deistributed as well 					 -----
+			// -----------------------------------------------------------
+			int numberOfAgents = currDisSetup.getNumberOfAgents();
+			int numberOfContainer = currDisSetup.getNumberOfContainer();
+
+			// --- Just in case, that we don't have enough information ---
+			if (numberOfContainer==0) {
+				if (numberOfAgents!=0) {
+					int noAgentsMax = currThresholdLevels.getThNoThreadsH();
+					numberOfContainer = (int) Math.ceil(((float)numberOfAgents / (float)noAgentsMax)) + 1;
+				}
+			}	
+
+			if (numberOfContainer<=1) {
+				// --- Just start all defined agents ---------------------
+				this.startAgentsFromCurrAgentList();
+				this.startAgentsFromCurrAgentListVisual();
+				return;
 			}
-		}
-		// --- If we know how many container are needed, start them ------
-		if (numberOfContainer!=0) {
-			// --- Start getting the desired number of container ---------
-			Hashtable<String, Location> newContainerLocations = this.startRemoteContainer(numberOfContainer - 1);
-		}
-		
-		// --- Start the agents coming from the agent-configuration ------  
-		for (Iterator<AgentClassElement4SimStart> iterator = currAgentList.iterator(); iterator.hasNext();) {
-			AgentClassElement4SimStart agent2Start = iterator.next();
-			this.startAgent(agent2Start.getStartAsName(), agent2Start.getAgentClassReference(), null);
-		} 
-		
-		// --- Start the agents coming from the visual-agent-configuration ------  
-		if (currAgentListVisual!=null) {
-			for (Iterator<AgentClassElement4SimStart> iterator = currAgentListVisual.iterator(); iterator.hasNext();) {
+			
+			// --- If we know how many container are needed, start them --
+			Hashtable<String, Location> newContainerLocations = this.startRemoteContainer(numberOfContainer - 1, true);
+			Vector<String> locationNames = new Vector<String>(newContainerLocations.keySet());
+			int cont4DisMax = newContainerLocations.size(); 
+			int cont4DisI = 0;
+			
+			// --- merge all agents, which have to be started ------------
+			Vector<AgentClassElement4SimStart> currAgentListMerged = new Vector<AgentClassElement4SimStart>();
+			if (currAgentList!=null) {
+				currAgentListMerged.addAll(currAgentList);	
+			}			
+			if (currAgentListVisual!=null) {
+				currAgentListMerged.addAll(currAgentListVisual);	
+			}
+			
+			// --- start the distribution of the agents to the locations -
+			for (Iterator<AgentClassElement4SimStart> iterator = currAgentListMerged.iterator(); iterator.hasNext();) {
+				// --- Get the agent, which has to be started ------------
 				AgentClassElement4SimStart agent2Start = iterator.next();
-				this.startAgent(agent2Start.getStartAsName(), agent2Start.getAgentClassReference(), null);
-			} 
-		}
+				
+				// --- Set the location for the agent --------------------
+				String containerName = locationNames.get(cont4DisI);
+				Location location = newContainerLocations.get(containerName);
+				cont4DisI++;
+				if (cont4DisI>=cont4DisMax) {
+					cont4DisI=0;
+				}
+				// --- finally start the agent ---------------------------				
+				this.startAgent(agent2Start.getStartAsName(), agent2Start.getAgentClassReference(), null, location);
+			} // --- end for
+		} // --- end if
 		
-	}
+	} // --- end action()
+	
 
 	
 }

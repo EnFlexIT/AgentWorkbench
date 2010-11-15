@@ -105,7 +105,7 @@ public class Distribution extends JPanel implements ActionListener, Observer, Ke
 		jCheckBoxDoLoadDynamic.setText(Language.translate("Dynamische Lastverteilung aktivieren"));
 		jCheckBoxThresholdDefinition.setText(Language.translate("Eigene Auslastungsgrenzwerte verwenden"));
 		
-		jLabelStaticLoadClass.setText(Language.translate("Java-Klasse für den Start und die statische Lastverteilung"));
+		jLabelStaticLoadClass.setText(Language.translate("Java-Klasse für den Start der Simulations-Agenten und die statische Lastverteilung"));
 		jLabelDynamicLoadClass.setText(Language.translate("Java-Klasse für die dynamische Lastverteilung"));
 		jLabelAgentsExpected.setText(Language.translate("Anzahl Agenten (erwartet)"));
 		jLabelContainerExpected.setText(Language.translate("Anzahl Container"));
@@ -309,9 +309,10 @@ public class Distribution extends JPanel implements ActionListener, Observer, Ke
 			GridBagConstraints gridBagConstraints42 = new GridBagConstraints();
 			gridBagConstraints42.anchor = GridBagConstraints.WEST;
 			gridBagConstraints42.gridy = 0;
+			gridBagConstraints42.gridwidth = 3;
 			gridBagConstraints42.gridx = 0;
 			jLabelStaticLoadClass = new JLabel();
-			jLabelStaticLoadClass.setText("Java-Klasse für den Start und die statische Lastverteilung");
+			jLabelStaticLoadClass.setText("Java-Klasse für den Start der Simulations-Agenten und die statische Lastverteilung");
 			jPanelStaticClass = new JPanel();
 			jPanelStaticClass.setLayout(new GridBagLayout());
 			jPanelStaticClass.add(jLabelStaticLoadClass, gridBagConstraints42);

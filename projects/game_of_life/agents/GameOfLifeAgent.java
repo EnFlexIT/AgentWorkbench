@@ -20,7 +20,7 @@ public class GameOfLifeAgent extends SimulationAgent {
 
 	private static final long serialVersionUID = 1L;
 	
-	private Object startArgs[];
+	private Object[] startArgs;
 	
 	private Vector<String> myNeighbours = new Vector<String>();
 	
@@ -33,8 +33,9 @@ public class GameOfLifeAgent extends SimulationAgent {
 		
 		// ----- get the arguments of agents -------------------------------
 		startArgs = getArguments();
-		myNeighbours = (Vector<String>) startArgs[0];
-
+		if (startArgs!=null && startArgs.length>0) {
+			myNeighbours = (Vector<String>) startArgs[0];	
+		}
 	} 
 	
 	@SuppressWarnings("unchecked")

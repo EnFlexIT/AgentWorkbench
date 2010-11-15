@@ -21,11 +21,19 @@
         <subOntology>de.unidue.stud.sehawagn.contmas.ontology.ContainerTerminalOntology</subOntology>
     </subOntologies>
     <agentConfiguration/>
-    <simulationSetupCurrent>default</simulationSetupCurrent>
+    <simulationSetupCurrent>map_port_chalmers_agentgui</simulationSetupCurrent>
     <simulationSetups>
         <entry>
-            <key>default</key>
-            <value>default.xml</value>
+            <key>map_port_chalmers_agentgui_slim</key>
+            <value>map_port_chalmers_agentgui_slim.xml</value>
+        </entry>
+        <entry>
+            <key>map_port_chalmers_agentgui</key>
+            <value>map_port_chalmers_agentgui.xml</value>
+        </entry>
+        <entry>
+            <key>map_port_chalmers_highly_simplified</key>
+            <value>map_port_chalmers_highly_simplified.xml</value>
         </entry>
     </simulationSetups>
     <jadeConfiguration>
@@ -35,7 +43,8 @@
         <serviceList>
             <service>jade.core.messaging.TopicManagementService;</service>
             <service>jade.core.event.NotificationService;</service>
+            <service>agentgui.physical2Denvironment.provider.EnvironmentProviderService;</service>
         </serviceList>
     </jadeConfiguration>
-    <subFolderEnvSetups>envSetups</subFolderEnvSetups>
+    <subFolderEnvSetups>svgEnvSetups</subFolderEnvSetups>
 </project>

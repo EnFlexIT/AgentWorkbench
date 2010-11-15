@@ -202,7 +202,7 @@ public class EnvironmentController extends Observable implements Observer{
 			newEnv.setScale(defaultScale);
 			newEnv.setProjectName(project.getProjectName());
 			
-			String envFileName = project.getProjectName()+"_"+project.simSetupCurrent+".xml";
+			String envFileName = project.simSetupCurrent+".xml";
 			project.simSetups.getCurrSimSetup().setEnvironmentFileName(envFileName);
 		}
 		return newEnv;
@@ -692,7 +692,7 @@ public class EnvironmentController extends Observable implements Observer{
 	}
 	
 	private void setDefaultFileNames(){
-		String baseFileName = project.getProjectName()+"_"+project.simSetupCurrent;
+		String baseFileName = project.simSetupCurrent;
 		project.simSetups.getCurrSimSetup().setEnvironmentFileName(baseFileName+".xml");
 		project.simSetups.getCurrSimSetup().setSvgFileName(baseFileName+".svg");
 		

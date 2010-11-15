@@ -6,6 +6,7 @@ import jade.core.ServiceException;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
+import jade.wrapper.ControllerException;
 import jade.wrapper.StaleProxyException;
 
 import java.util.ArrayList;
@@ -84,7 +85,7 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 	
 	@Override
 	public void action() {
-
+		
 	}
 	/**
 	 * This Method will be call right after the end of the  
@@ -96,6 +97,32 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 		return super.onEnd();
 	}
 
+
+	/**
+	 * This method will start all agents defined in the agent list
+	 * of 'Agent-Start' from the 'Simulation-Setup'
+	 */
+	protected void startAgentsFromCurrAgentList() {
+		
+		for (Iterator<AgentClassElement4SimStart> iterator = currAgentList.iterator(); iterator.hasNext();) {
+			AgentClassElement4SimStart agent2Start = iterator.next();
+			this.startAgent(agent2Start.getStartAsName(), agent2Start.getAgentClassReference(), null);
+		} 
+	}
+
+	/**
+	 * Start the agents coming from the visual-agent-configuration
+	 */
+	protected void startAgentsFromCurrAgentListVisual() {
+	
+		if (currAgentListVisual!=null) {
+			for (Iterator<AgentClassElement4SimStart> iterator = currAgentListVisual.iterator(); iterator.hasNext();) {
+				AgentClassElement4SimStart agent2Start = iterator.next();
+				this.startAgent(agent2Start.getStartAsName(), agent2Start.getAgentClassReference(), null);
+			} 
+		}
+	}
+	
 	/**
 	 * Depending on the current project configuration, the 
 	 * svg - visualization will be started here
@@ -196,7 +223,9 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 			// --- if other locations are there and -----------------
 			// --- should be used, use them now		-----------------
 			if (toLocation!=null) {
-				ac.move(toLocation);
+				if (cc.getContainerName().equalsIgnoreCase(toLocation.getName())==false) {
+					ac.move(toLocation);	
+				}				
 			}			
 			
 		} catch (StaleProxyException e) {
@@ -205,6 +234,8 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
+		} catch (ControllerException e) {
+			e.printStackTrace();
 		}	
 	}
 	
@@ -212,11 +243,13 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 	 * This method will start the number of agents 
 	 * @param numberOfContainer
 	 */
-	protected Hashtable<String, Location> startRemoteContainer(int numberOfContainer) {
+	protected Hashtable<String, Location> startRemoteContainer(int numberOfContainer, boolean filterMainContainer) {
+		
+		Hashtable<String, Location> newContainerLocations = null;
 		
 		// --- Start the required number of container -------------------- 
 		int startMistakes = 0;
-		int startMistakesMax = 3;
+		int startMistakesMax = 1;
 		Vector<String> containerList = new Vector<String>();
 		while (containerList.size()< numberOfContainer) {
 		
@@ -235,14 +268,21 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 		SimulationServiceHelper simHelper;
 		try {
 			simHelper = (SimulationServiceHelper) myAgent.getHelper(SimulationService.NAME);
-			Hashtable<String, Location> newContainerLocations = simHelper.getContainerLocations();
-			return newContainerLocations;
+			newContainerLocations = simHelper.getContainerLocations();
 			
 		} catch (ServiceException e) {
 			e.printStackTrace();
+			return null;
 		}
 
-		return null;
+		// --- If wanted, filter the Main-Container out ------------------
+		if (filterMainContainer == true) {
+			newContainerLocations.remove("Main-Container");
+			if (newContainerLocations.size()==0) {
+				newContainerLocations = null;
+			}
+		}
+		return newContainerLocations;
 	}
 	
 	/**
