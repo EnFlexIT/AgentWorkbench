@@ -17,6 +17,7 @@ public class DownloadServer implements HttpConstants, Runnable {
     
     private ServerSocket currSocket = null; 
     private boolean stopServer = false;
+    
     /**
      * Constructor of this class 
      */
@@ -92,6 +93,24 @@ public class DownloadServer implements HttpConstants, Runnable {
 		}
     	
 	}
+    
+    /**
+     * Returns the Webserver-Address including the currently used port 
+     * @return
+     */
+    public String getHTTPAddress() {
+    	
+    	String httpAddress = null;
+    	try {
+			InetAddress addressLocal = InetAddress.getLocalHost();
+			httpAddress = addressLocal.getCanonicalHostName();
+			httpAddress = "http://" + httpAddress + ":" + port;
+			
+    	} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
+    	return httpAddress;
+    }
     
 	/**
 	 * @return the threads

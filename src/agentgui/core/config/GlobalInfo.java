@@ -40,7 +40,7 @@ public class GlobalInfo {
 	private static String localPathBatik	= "lib" + localAppPathSeparatorString + "batik";	
 	private static String localPathProperty = "properties" + localAppPathSeparatorString;
 	private static String localPathProjects =  "projects" + localAppPathSeparatorString;
-	private static String localPathDownloads =  "downloads" + localAppPathSeparatorString;
+	private static String localPathDownloads =  "download" + localAppPathSeparatorString;
 	
 	private static String localPathProjectsIDE =  localPathProjects;
 	private static String[] localProjects = null;

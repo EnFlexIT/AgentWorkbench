@@ -319,7 +319,10 @@ public class Application {
 		// ------------------------------------------------
 	}
 	
-	
+	/**
+	 * Starts the Web-Server, so that remote server.slaves are
+	 * able to download additional jar-resources
+	 */
 	public static void startDownloadServer() {
 		
 		if (webServer==null) {
@@ -329,6 +332,10 @@ public class Application {
 		}
 	}
 
+	/**
+	 * Stops the Web-Server for the resources download of 
+	 * external server.clients
+	 */
 	public static void stopDownloadServer() {
 
 		if (webServer!=null) {
