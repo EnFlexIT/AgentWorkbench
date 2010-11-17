@@ -2,6 +2,7 @@ package agentgui.physical2Denvironment.display;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 
 
@@ -108,15 +109,22 @@ public class DisplayAgentGUI extends BasicSVGGUI {
 		
 		private HashSet<Physical2DObject> movingObjects;
 		
+		private ReentrantReadWriteLock rrwl;
+		
 		public posUpdater(HashSet<Physical2DObject> movingObjects){
+			rrwl = new ReentrantReadWriteLock();
+			rrwl.writeLock().lock();
 			this.movingObjects = movingObjects;
+			rrwl.writeLock().unlock();
 		}
 
 		@Override
 		public void run() {
 			Iterator<Physical2DObject> objects = movingObjects.iterator();
 			while(objects.hasNext()){
+				rrwl.readLock().lock();
 				Physical2DObject object = objects.next();
+				rrwl.readLock().unlock();
 				Element element = getSVGDoc().getElementById(object.getId());
 				if(element != null){
 					setElementPosition(element, object.getPosition());

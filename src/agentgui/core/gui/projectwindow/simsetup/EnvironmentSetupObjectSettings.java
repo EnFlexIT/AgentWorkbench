@@ -209,6 +209,7 @@ public class EnvironmentSetupObjectSettings extends JPanel{
 			tfAgentClass.setLocation(new Point(16, 100));
 			tfAgentClass.setText(Language.translate("Keine"));
 			tfAgentClass.setSize(new Dimension(120, 25));
+//			tfAgentClass.setEditable(false);
 			tfAgentClass.setEnabled(false);
 		}
 		return tfAgentClass;

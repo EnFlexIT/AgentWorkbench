@@ -2,12 +2,234 @@
 <Physical2DEnvironment projectName="SMA">
 	<rootPlayground>
 		<PlaygroundObject id="RootPlayground">
-			<size>
-				<Size height="400.0F" width="600.0F"/>
-			</size>
 			<position>
 				<Position yPos="0.0F" xPos="0.0F"/>
 			</position>
+			<size>
+				<Size height="400.0F" width="600.0F"/>
+			</size>
+			<childObjects>
+				<ActiveObject id="rect2816" parentPlaygroundID="RootPlayground" agentClassName="sma.agents.ManyAgent" maxSpeed="10.0F">
+					<position>
+						<Position yPos="3.1015022F" xPos="3.3759398F"/>
+					</position>
+					<size>
+						<Size height="2.857143F" width="2.5714285F"/>
+					</size>
+					<movement>
+						<Movement yPosChange="0.0F" xPosChange="0.0F"/>
+					</movement>
+				</ActiveObject>
+				<ActiveObject id="rect2816-1" parentPlaygroundID="RootPlayground" agentClassName="sma.agents.ManyAgent" maxSpeed="10.0F">
+					<position>
+						<Position yPos="6.9736886F" xPos="3.1578948F"/>
+					</position>
+					<size>
+						<Size height="2.857143F" width="2.5714285F"/>
+					</size>
+					<movement>
+						<Movement yPosChange="0.0F" xPosChange="0.0F"/>
+					</movement>
+				</ActiveObject>
+				<ActiveObject id="rect2816-4" parentPlaygroundID="RootPlayground" agentClassName="sma.agents.ManyAgent" maxSpeed="10.0F">
+					<position>
+						<Position yPos="10.789478F" xPos="2.8947368F"/>
+					</position>
+					<size>
+						<Size height="2.857143F" width="2.5714285F"/>
+					</size>
+					<movement>
+						<Movement yPosChange="0.0F" xPosChange="0.0F"/>
+					</movement>
+				</ActiveObject>
+				<ActiveObject id="rect2816-8" parentPlaygroundID="RootPlayground" agentClassName="sma.agents.ManyAgent" maxSpeed="10.0F">
+					<position>
+						<Position yPos="18.157894F" xPos="2.5F"/>
+					</position>
+					<size>
+						<Size height="2.857143F" width="2.5714285F"/>
+					</size>
+					<movement>
+						<Movement yPosChange="0.0F" xPosChange="0.0F"/>
+					</movement>
+				</ActiveObject>
+				<ActiveObject id="rect2816-2" parentPlaygroundID="RootPlayground" agentClassName="sma.agents.ManyAgent" maxSpeed="10.0F">
+					<position>
+						<Position yPos="21.973682F" xPos="2.1052632F"/>
+					</position>
+					<size>
+						<Size height="2.857143F" width="2.5714285F"/>
+					</size>
+					<movement>
+						<Movement yPosChange="0.0F" xPosChange="0.0F"/>
+					</movement>
+				</ActiveObject>
+				<ActiveObject id="rect2816-9" parentPlaygroundID="RootPlayground" agentClassName="sma.agents.ManyAgent" maxSpeed="10.0F">
+					<position>
+						<Position yPos="14.605263F" xPos="2.631579F"/>
+					</position>
+					<size>
+						<Size height="2.857143F" width="2.5714285F"/>
+					</size>
+					<movement>
+						<Movement yPosChange="0.0F" xPosChange="0.0F"/>
+					</movement>
+				</ActiveObject>
+				<ActiveObject id="rect2816-5" parentPlaygroundID="RootPlayground" agentClassName="sma.agents.ManyAgent" maxSpeed="10.0F">
+					<position>
+						<Position yPos="25.78947F" xPos="2.368421F"/>
+					</position>
+					<size>
+						<Size height="2.857143F" width="2.5714285F"/>
+					</size>
+					<movement>
+						<Movement yPosChange="0.0F" xPosChange="0.0F"/>
+					</movement>
+				</ActiveObject>
+				<ActiveObject id="rect2816-7" parentPlaygroundID="RootPlayground" agentClassName="sma.agents.ManyAgent" maxSpeed="10.0F">
+					<position>
+						<Position yPos="29.736841F" xPos="2.5F"/>
+					</position>
+					<size>
+						<Size height="2.857143F" width="2.5714285F"/>
+					</size>
+					<movement>
+						<Movement yPosChange="0.0F" xPosChange="0.0F"/>
+					</movement>
+				</ActiveObject>
+				<ActiveObject id="rect2816-52" parentPlaygroundID="RootPlayground" agentClassName="sma.agents.ManyAgent" maxSpeed="10.0F">
+					<position>
+						<Position yPos="33.28947F" xPos="2.236842F"/>
+					</position>
+					<size>
+						<Size height="2.857143F" width="2.5714285F"/>
+					</size>
+					<movement>
+						<Movement yPosChange="0.0F" xPosChange="0.0F"/>
+					</movement>
+				</ActiveObject>
+				<ActiveObject id="rect2816-14" parentPlaygroundID="RootPlayground" agentClassName="sma.agents.ManyAgent" maxSpeed="10.0F">
+					<position>
+						<Position yPos="36.842113F" xPos="2.2368422F"/>
+					</position>
+					<size>
+						<Size height="2.857143F" width="2.5714285F"/>
+					</size>
+					<movement>
+						<Movement yPosChange="0.0F" xPosChange="0.0F"/>
+					</movement>
+				</ActiveObject>
+				<ActiveObject id="rect2816-14-1" parentPlaygroundID="RootPlayground" agentClassName="sma.agents.ManyAgent" maxSpeed="10.0F">
+					<position>
+						<Position yPos="36.93609F" xPos="9.56203F"/>
+					</position>
+					<size>
+						<Size height="2.857143F" width="2.5714285F"/>
+					</size>
+					<movement>
+						<Movement yPosChange="0.0F" xPosChange="0.0F"/>
+					</movement>
+				</ActiveObject>
+				<ActiveObject id="rect2816-52-6" parentPlaygroundID="RootPlayground" agentClassName="sma.agents.ManyAgent" maxSpeed="10.0F">
+					<position>
+						<Position yPos="32.98871F" xPos="9.562029F"/>
+					</position>
+					<size>
+						<Size height="2.857143F" width="2.5714285F"/>
+					</size>
+					<movement>
+						<Movement yPosChange="0.0F" xPosChange="0.0F"/>
+					</movement>
+				</ActiveObject>
+				<ActiveObject id="rect2816-7-7" parentPlaygroundID="RootPlayground" agentClassName="sma.agents.ManyAgent" maxSpeed="10.0F">
+					<position>
+						<Position yPos="29.04134F" xPos="9.825188F"/>
+					</position>
+					<size>
+						<Size height="2.857143F" width="2.5714285F"/>
+					</size>
+					<movement>
+						<Movement yPosChange="0.0F" xPosChange="0.0F"/>
+					</movement>
+				</ActiveObject>
+				<ActiveObject id="rect2816-5-5" parentPlaygroundID="RootPlayground" agentClassName="sma.agents.ManyAgent" maxSpeed="10.0F">
+					<position>
+						<Position yPos="25.093977F" xPos="9.825188F"/>
+					</position>
+					<size>
+						<Size height="2.857143F" width="2.5714285F"/>
+					</size>
+					<movement>
+						<Movement yPosChange="0.0F" xPosChange="0.0F"/>
+					</movement>
+				</ActiveObject>
+				<ActiveObject id="rect2816-2-8" parentPlaygroundID="RootPlayground" agentClassName="sma.agents.ManyAgent" maxSpeed="10.0F">
+					<position>
+						<Position yPos="21.146608F" xPos="9.825187F"/>
+					</position>
+					<size>
+						<Size height="2.857143F" width="2.5714285F"/>
+					</size>
+					<movement>
+						<Movement yPosChange="0.0F" xPosChange="0.0F"/>
+					</movement>
+				</ActiveObject>
+				<ActiveObject id="rect2816-8-6" parentPlaygroundID="RootPlayground" agentClassName="sma.agents.ManyAgent" maxSpeed="10.0F">
+					<position>
+						<Position yPos="17.593977F" xPos="9.956766F"/>
+					</position>
+					<size>
+						<Size height="2.857143F" width="2.5714285F"/>
+					</size>
+					<movement>
+						<Movement yPosChange="0.0F" xPosChange="0.0F"/>
+					</movement>
+				</ActiveObject>
+				<ActiveObject id="rect2816-9-1" parentPlaygroundID="RootPlayground" agentClassName="sma.agents.ManyAgent" maxSpeed="10.0F">
+					<position>
+						<Position yPos="13.909767F" xPos="9.956768F"/>
+					</position>
+					<size>
+						<Size height="2.857143F" width="2.5714285F"/>
+					</size>
+					<movement>
+						<Movement yPosChange="0.0F" xPosChange="0.0F"/>
+					</movement>
+				</ActiveObject>
+				<ActiveObject id="rect2816-4-2" parentPlaygroundID="RootPlayground" agentClassName="sma.agents.ManyAgent" maxSpeed="10.0F">
+					<position>
+						<Position yPos="9.962397F" xPos="10.088346F"/>
+					</position>
+					<size>
+						<Size height="2.857143F" width="2.5714285F"/>
+					</size>
+					<movement>
+						<Movement yPosChange="0.0F" xPosChange="0.0F"/>
+					</movement>
+				</ActiveObject>
+				<ActiveObject id="rect2816-1-2" parentPlaygroundID="RootPlayground" agentClassName="sma.agents.ManyAgent" maxSpeed="10.0F">
+					<position>
+						<Position yPos="6.409766F" xPos="10.0883465F"/>
+					</position>
+					<size>
+						<Size height="2.857143F" width="2.5714285F"/>
+					</size>
+					<movement>
+						<Movement yPosChange="0.0F" xPosChange="0.0F"/>
+					</movement>
+				</ActiveObject>
+				<ActiveObject id="rect2816-23" parentPlaygroundID="RootPlayground" agentClassName="sma.agents.ManyAgent" maxSpeed="10.0F">
+					<position>
+						<Position yPos="2.932319F" xPos="10.306391F"/>
+					</position>
+					<size>
+						<Size height="2.857143F" width="2.5714285F"/>
+					</size>
+					<movement>
+						<Movement yPosChange="0.0F" xPosChange="0.0F"/>
+					</movement>
+				</ActiveObject>
+			</childObjects>
 		</PlaygroundObject>
 	</rootPlayground>
 	<scale>

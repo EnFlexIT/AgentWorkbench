@@ -3,6 +3,7 @@ package agentgui.physical2Denvironment.display;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -84,9 +85,11 @@ public class SVGUtils {
 	 * @param yDiff The y coordinate difference from the parent elements transform=translate attributes
 	 */
 	public static void removeTransform(Node node, float xDiff, float yDiff){
+		String[] skipIds = {"layer4", "layer3", "layer22", "layer10", "layer24", "layer11", "layer23", "layer32", "layer18", "layer14", "layer13", "layer5", "layer21", "layer20", "layer1", "layer31", "layer15", "layer28", "g17583", "path14290", "path14270"};
 		String regex = "-?\\d+\\.?\\d*,-?\\d+\\.?\\d*";
 		String transform = ((Element) node).getAttributeNS(null, "transform");
-		if(transform != null && transform.length()>0 && transform.contains("translate")){
+		String elementID = ((Element)node).getAttributeNS(null, "id");
+		if(transform != null && transform.length()>0 && transform.contains("translate") && ! Arrays.asList(skipIds).contains(elementID) ){
 			Matcher m = Pattern.compile(regex).matcher(transform);
 			if(m.find()){
 				String posChange = m.group();

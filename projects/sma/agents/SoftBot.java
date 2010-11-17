@@ -50,11 +50,12 @@ public class SoftBot extends Agent {
 			endPos.setXPos(10f);
 			endPos.setYPos(5f);
 			
-			
+			// Gesamt-Behaviour
 			SequentialBehaviour demoBehaviour = new SequentialBehaviour();
-			demoBehaviour.addSubBehaviour(new MoveToPointBehaviour(this, waypoint, self.getMaxSpeed()));
-			demoBehaviour.addSubBehaviour(new MoveToPointBehaviour(this, objectPos, self.getMaxSpeed()));
+			demoBehaviour.addSubBehaviour(new MoveToPointBehaviour(this, waypoint, self.getMaxSpeed()));	// Wegpunkt 1
+			demoBehaviour.addSubBehaviour(new MoveToPointBehaviour(this, objectPos, self.getMaxSpeed()));   // Wegpunkt 2
 			
+			// Kiste Aufnehmen
 			demoBehaviour.addSubBehaviour(new OneShotBehaviour() {
 				
 				/**
@@ -75,9 +76,10 @@ public class SoftBot extends Agent {
 				}
 			});
 			
-			demoBehaviour.addSubBehaviour(new MoveToPointBehaviour(this, waypoint, self.getMaxSpeed()));
-			demoBehaviour.addSubBehaviour(new MoveToPointBehaviour(this, destPos, self.getMaxSpeed()));
+			demoBehaviour.addSubBehaviour(new MoveToPointBehaviour(this, waypoint, self.getMaxSpeed()));	// Wegpunkt 3
+			demoBehaviour.addSubBehaviour(new MoveToPointBehaviour(this, destPos, self.getMaxSpeed()));		// Wegpunkt 4
 			
+			// Kiste Absetzen
 			demoBehaviour.addSubBehaviour(new OneShotBehaviour() {
 				
 				/**
@@ -97,7 +99,7 @@ public class SoftBot extends Agent {
 				}
 			});
 			
-			demoBehaviour.addSubBehaviour(new MoveToPointBehaviour(this, endPos, self.getMaxSpeed()));
+			demoBehaviour.addSubBehaviour(new MoveToPointBehaviour(this, endPos, self.getMaxSpeed()));		// Wegpunkt 5 = Zielposition
 			
 			addBehaviour(demoBehaviour);
 			
