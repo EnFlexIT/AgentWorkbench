@@ -171,7 +171,8 @@ outerloop:
     boolean printHeaders(File targ, PrintStream ps) throws IOException {
         
     	boolean ret = false;
-        int rCode = 0;
+        @SuppressWarnings("unused")
+		int rCode = 0;
         
         if (!targ.exists()) {
             rCode = HTTP_NOT_FOUND;
