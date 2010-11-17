@@ -1,6 +1,8 @@
 package sma.agents;
 
-import agentgui.physical2Denvironment.MoveToPointBehaviour;
+import agentgui.physical2Denvironment.behaviours.MoveToPointBehaviour;
+import agentgui.physical2Denvironment.behaviours.ReleasePassiveObjectBehaviour;
+import agentgui.physical2Denvironment.behaviours.TakePassiveObjectBehaviour;
 import agentgui.physical2Denvironment.ontology.ActiveObject;
 import agentgui.physical2Denvironment.ontology.Physical2DObject;
 import agentgui.physical2Denvironment.ontology.Position;
@@ -8,7 +10,6 @@ import agentgui.physical2Denvironment.provider.EnvironmentProviderHelper;
 import agentgui.physical2Denvironment.provider.EnvironmentProviderService;
 import jade.core.Agent;
 import jade.core.ServiceException;
-import jade.core.behaviours.OneShotBehaviour;
 import jade.core.behaviours.SequentialBehaviour;
 
 /**
@@ -23,10 +24,7 @@ public class SoftBot extends Agent {
 	private static final long serialVersionUID = -1555521768821748185L;
 
 	public void setup(){
-		startBoxExampleBehaviours(this);		
-	}
 	
-	private void startBoxExampleBehaviours(Agent a){
 		try {
 			EnvironmentProviderHelper helper = (EnvironmentProviderHelper) getHelper(EnvironmentProviderService.SERVICE_NAME);
 			
@@ -50,57 +48,27 @@ public class SoftBot extends Agent {
 			endPos.setXPos(10f);
 			endPos.setYPos(5f);
 			
-			// Gesamt-Behaviour
+			// Container behaviour
 			SequentialBehaviour demoBehaviour = new SequentialBehaviour();
-			demoBehaviour.addSubBehaviour(new MoveToPointBehaviour(this, waypoint, self.getMaxSpeed()));	// Wegpunkt 1
-			demoBehaviour.addSubBehaviour(new MoveToPointBehaviour(this, objectPos, self.getMaxSpeed()));   // Wegpunkt 2
 			
-			// Kiste Aufnehmen
-			demoBehaviour.addSubBehaviour(new OneShotBehaviour() {
-				
-				/**
-				 * 
-				 */
-				private static final long serialVersionUID = -8054903564662038080L;
-
-				@Override
-				public void action() {
-					try {
-						EnvironmentProviderHelper helper = (EnvironmentProviderHelper) getHelper(EnvironmentProviderService.SERVICE_NAME);
-						boolean success = helper.assignPassiveObject(targetObject.getId(), getLocalName());
-					} catch (ServiceException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					
-				}
-			});
+			// Movement
+			demoBehaviour.addSubBehaviour(new MoveToPointBehaviour(this, waypoint, self.getMaxSpeed()));	// Waypoint 1
+			demoBehaviour.addSubBehaviour(new MoveToPointBehaviour(this, objectPos, self.getMaxSpeed()));   // Waypoint 2
 			
-			demoBehaviour.addSubBehaviour(new MoveToPointBehaviour(this, waypoint, self.getMaxSpeed()));	// Wegpunkt 3
-			demoBehaviour.addSubBehaviour(new MoveToPointBehaviour(this, destPos, self.getMaxSpeed()));		// Wegpunkt 4
+			// Take box
+			demoBehaviour.addSubBehaviour(new TakePassiveObjectBehaviour("Box2"));
 			
-			// Kiste Absetzen
-			demoBehaviour.addSubBehaviour(new OneShotBehaviour() {
-				
-				/**
-				 * 
-				 */
-				private static final long serialVersionUID = 1L;
-
-				@Override
-				public void action() {
-					try {
-						EnvironmentProviderHelper helper = (EnvironmentProviderHelper) getHelper(EnvironmentProviderService.SERVICE_NAME);
-						helper.releasePassiveObject(targetObject.getId());
-					} catch (ServiceException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			});
+			// Movement
+			demoBehaviour.addSubBehaviour(new MoveToPointBehaviour(this, waypoint, self.getMaxSpeed()));	// Waypoint 3
+			demoBehaviour.addSubBehaviour(new MoveToPointBehaviour(this, destPos, self.getMaxSpeed()));		// Waypoint 4
 			
-			demoBehaviour.addSubBehaviour(new MoveToPointBehaviour(this, endPos, self.getMaxSpeed()));		// Wegpunkt 5 = Zielposition
+			// Release box
+			demoBehaviour.addSubBehaviour(new ReleasePassiveObjectBehaviour("Box2"));
 			
+			// Movement
+			demoBehaviour.addSubBehaviour(new MoveToPointBehaviour(this, endPos, self.getMaxSpeed()));		// Waypoint 5
+			
+			// Start behaviour
 			addBehaviour(demoBehaviour);
 			
 		} catch (ServiceException e) {

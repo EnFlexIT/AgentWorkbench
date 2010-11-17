@@ -1,6 +1,6 @@
 package sma.agents;
 
-import agentgui.physical2Denvironment.MoveToPointBehaviour;
+import agentgui.physical2Denvironment.behaviours.MoveToPointBehaviour;
 import agentgui.physical2Denvironment.ontology.Position;
 import jade.core.Agent;
 import jade.core.ServiceException;

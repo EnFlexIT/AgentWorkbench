@@ -1,4 +1,4 @@
-package agentgui.physical2Denvironment;
+package agentgui.physical2Denvironment.behaviours;
 
 
 import agentgui.core.application.Language;

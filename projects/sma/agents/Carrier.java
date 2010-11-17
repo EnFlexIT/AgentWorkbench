@@ -2,11 +2,23 @@ package sma.agents;
 
 import java.util.Vector;
 
+import agentgui.physical2Denvironment.behaviours.MoveToPointBehaviour;
+import agentgui.physical2Denvironment.ontology.ActiveObject;
 import agentgui.physical2Denvironment.ontology.Position;
+import agentgui.physical2Denvironment.provider.EnvironmentProviderHelper;
+import agentgui.physical2Denvironment.provider.EnvironmentProviderService;
 import jade.core.Agent;
+import jade.core.ServiceException;
+import jade.core.behaviours.OneShotBehaviour;
+import jade.core.behaviours.SequentialBehaviour;
 
 public class Carrier extends Agent {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7126181085399437483L;
+
 	private Vector<String> containerNames;
 	
 	private Vector<Position> storagePositions;
@@ -72,6 +84,27 @@ public class Carrier extends Agent {
 		
 		wp2.setXPos(39);
 		wp2.setYPos(17);
+		
+		class MoveContainerBehaviour extends SequentialBehaviour{
+			public MoveContainerBehaviour(String containerID, Position storagePos){
+				
+				EnvironmentProviderHelper helper;
+				try {
+					helper = (EnvironmentProviderHelper) myAgent.getHelper(EnvironmentProviderService.SERVICE_NAME);
+					Position contPos = helper.getObject(containerID).getPosition();
+					float speed = ((ActiveObject)helper.getObject(myAgent.getLocalName())).getMaxSpeed();
+					
+					this.addSubBehaviour(new MoveToPointBehaviour(myAgent, contPos, speed));
+				} catch (ServiceException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				
+			}
+		}
+		
+		
 	}
 
 }
