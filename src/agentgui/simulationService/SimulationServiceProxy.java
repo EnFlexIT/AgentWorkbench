@@ -14,6 +14,7 @@ import java.util.Vector;
 import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.load.LoadThresholdLevels;
 import agentgui.simulationService.load.LoadAgentMap.AID_Container;
+import agentgui.simulationService.load.LoadInformation.Container2Wait4;
 import agentgui.simulationService.ontology.ClientRemoteContainerReply;
 import agentgui.simulationService.ontology.PlatformLoad;
 import agentgui.simulationService.ontology.RemoteContainerConfig;
@@ -269,6 +270,28 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 				}
 			}
 			return (RemoteContainerConfig) result;
+		}
+		catch(ServiceException se) {
+			throw new IMTPException("Unable to access remote node", se);
+		}
+	}
+	@Override
+	public Container2Wait4 getNewContainer2Wait4Status(String containerName2Wait4) throws IMTPException {
+		
+		try {
+			GenericCommand cmd = new GenericCommand(SERVICE_GET_NEW_CONTAINER_2_WAIT_4_STATUS, SimulationService.NAME, null);
+			cmd.addParam(containerName2Wait4);
+			
+			Node n = getNode();
+			Object result = n.accept(cmd);
+			if((result != null) && (result instanceof Throwable)) {
+				if(result instanceof IMTPException) {
+					throw (IMTPException)result;
+				} else {
+					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
+				}
+			}
+			return (Container2Wait4) result;
 		}
 		catch(ServiceException se) {
 			throw new IMTPException("Unable to access remote node", se);

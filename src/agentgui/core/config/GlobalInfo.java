@@ -15,7 +15,7 @@ public class GlobalInfo {
 
 	// --- Konstanten ------------------------------------------------------- 
 	final private static String localAppTitel = "Agent.GUI";
-	final private static String localAppVersion = "0.6";
+	final private static String localAppVersion = "0.7";
 	
 	final private static String localAppPathSeparatorString = File.separator;
 	final private static String localAppNewLineString = System.getProperty("line.separator");
@@ -40,7 +40,8 @@ public class GlobalInfo {
 	private static String localPathBatik	= "lib" + localAppPathSeparatorString + "batik";	
 	private static String localPathProperty = "properties" + localAppPathSeparatorString;
 	private static String localPathProjects =  "projects" + localAppPathSeparatorString;
-
+	private static String localPathDownloads =  "downloads" + localAppPathSeparatorString;
+	
 	private static String localPathProjectsIDE =  localPathProjects;
 	private static String[] localProjects = null;
 	
@@ -331,11 +332,32 @@ public class GlobalInfo {
 		return localPathImageIntern;
 	}
 	
+	/**
+	 * Verzeichnis zum Download von Projekt-Ressourcen
+	 * @return
+	 */
+	public String PathDownloads(boolean absolute) {
+		
+		String returnPath = null;
+		if (absolute==true) { 
+			returnPath = FilePath2Absolute(localPathDownloads);
+		}
+		else {
+			returnPath = localPathDownloads;	
+		}
+		
+		File dir = new File(returnPath);
+		if (dir.exists()==false) {
+			dir.mkdir();
+		}
+		return returnPath;
+	}
+	
 	// --- Allgemeine Dateiangaben ---------------------
 	/**
 	 * Standardname *.jar-Bezeichner dieses Projekts (Default: 'AgentGui.jar') 
 	 */
-	public String AppFileRunnableJar( Boolean Absolute ){
+	public String AppFileRunnableJar( boolean Absolute ){
 		if ( Absolute == true && localFileRunnableJar != null ) { 
 			return FilePath2Absolute( localFileRunnableJar );
 		}

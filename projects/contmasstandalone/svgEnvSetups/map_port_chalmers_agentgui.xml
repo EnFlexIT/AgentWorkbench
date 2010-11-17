@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<environment date="Mon Jun 28 16:43:30 NZST 2010" project="ContMAS">
-  <scale pixel="1.0" unit="m" value="1.0"/>
-  <playground height="33.0" id="rootPlayground" width="73.0" xPos="0.0" yPos="0.0"/>
-</environment>
+<Physical2DEnvironment projectName="ContMAS">
+	<rootPlayground>
+		<PlaygroundObject id="RootPlayground">
+			<position>
+				<Position yPos="0.0F" xPos="0.0F"/>
+			</position>
+			<size>
+				<Size height="373.00906F" width="783.9283F"/>
+			</size>
+		</PlaygroundObject>
+	</rootPlayground>
+	<scale>
+		<Scale pixelValue="10.0F" realWorldUnitValue="1.0F" realWorldUntiName="m"/>
+	</scale>
+</Physical2DEnvironment>

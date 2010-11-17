@@ -42,18 +42,16 @@ public class StaticLoadBalancing extends StaticLoadBalancingBase {
 			// --- => The Agents defined in the visualization-setup  -----
 			// --- will be deistributed as well 					 -----
 			// -----------------------------------------------------------
-			int numberOfAgents = currDisSetup.getNumberOfAgents();
-			int numberOfContainer = currDisSetup.getNumberOfContainer();
 
 			// --- Just in case, that we don't have enough information ---
-			if (numberOfContainer==0) {
-				if (numberOfAgents!=0) {
+			if (currNumberOfContainer==0) {
+				if (currNumberOfAgents!=0) {
 					int noAgentsMax = currThresholdLevels.getThNoThreadsH();
-					numberOfContainer = (int) Math.ceil(((float)numberOfAgents / (float)noAgentsMax)) + 1;
+					currNumberOfContainer = (int) Math.ceil(((float)currNumberOfAgents / (float)noAgentsMax)) + 1;
 				}
 			}	
 
-			if (numberOfContainer<=1) {
+			if (currNumberOfContainer<=1) {
 				// --- Just start all defined agents ---------------------
 				this.startAgentsFromCurrAgentList();
 				this.startAgentsFromCurrAgentListVisual();
@@ -61,7 +59,7 @@ public class StaticLoadBalancing extends StaticLoadBalancingBase {
 			}
 			
 			// --- If we know how many container are needed, start them --
-			Hashtable<String, Location> newContainerLocations = this.startRemoteContainer(numberOfContainer - 1, true);
+			Hashtable<String, Location> newContainerLocations = this.startRemoteContainer(currNumberOfContainer - 1, true);
 			Vector<String> locationNames = new Vector<String>(newContainerLocations.keySet());
 			int cont4DisMax = newContainerLocations.size(); 
 			int cont4DisI = 0;

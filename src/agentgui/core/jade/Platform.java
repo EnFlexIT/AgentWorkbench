@@ -147,6 +147,8 @@ public class Platform extends Object {
 			// --- Running as Agent.GUI - Application ---------------
 			// ------------------------------------------------------
 			MASrunningMode = "Application";
+			// --- Start Download-Server for project-ressources -----
+			Application.startDownloadServer();			
 			// --- Starting 'Server.Client'-Agent -------------------				
 			if (jadeAgentIsRunning(MASapplicationAgentName)==false) {
 				jadeAgentStart(MASapplicationAgentName, agentgui.simulationService.agents.ServerClientAgent.class.getName());	
@@ -262,6 +264,9 @@ public class Platform extends Object {
 		}
 		// ------------------------------------------------
 
+		// --- Stop Download-Server -----------------------
+		Application.stopDownloadServer();
+		
 		// --- Reset runtime-variables -------------------- 
 		MAS_ContainerRemote.removeAllElements();
 		MAS_ContainerLocal.removeAllElements();

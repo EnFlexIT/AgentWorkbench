@@ -86,7 +86,7 @@ public class SimulationService extends BaseService {
 	// --- this slice, which are needed by AgentGUI					-----------
 	private String myContainerMTPurl = null;
 	private ClientRemoteContainerReply myCRCReply = null; 
-	private static boolean currentlyWritingFile = false;  
+	public static boolean currentlyWritingFile = false;  
 	
 	// --- Variables for the Time-Synchronisation -----------------------------
 	private long timeMeasureNext = 0;				// --- When was the MainContainerTime last measured 
@@ -206,20 +206,16 @@ public class SimulationService extends BaseService {
 		// ----------------------------------------------------------
 		// --- Methods to start a new remote-container -------------- 
 		public RemoteContainerConfig getDefaultRemoteContainerConfig() throws ServiceException {
-			Service.Slice[] slices = getAllSlices();
-			return broadcastGetDefaultRemoteContainerConfig(slices);
+			return broadcastGetDefaultRemoteContainerConfig();
 		}
 		public String startNewRemoteContainer() throws ServiceException {
 			return this.startNewRemoteContainer(null);
 		}
 		public String startNewRemoteContainer(RemoteContainerConfig remoteConfig) throws ServiceException {
-			Service.Slice[] slices = getAllSlices();
-			String newContainerName = broadcastStartNewRemoteContainer(remoteConfig, slices);
-			loadInfo.setNewContainer2Wait4(newContainerName);
-			return newContainerName;
+			return broadcastStartNewRemoteContainer(remoteConfig);
 		}
 		public Container2Wait4 startNewRemoteContainerStaus(String containerName) throws ServiceException {
-			return loadInfo.getNewContainer2Wait4Status(containerName);
+			return broadcastGetNewContainer2Wait4Status(containerName);
 		}
 		
 		// ----------------------------------------------------------
@@ -565,62 +561,84 @@ public class SimulationService extends BaseService {
 	 * @return
 	 * @throws ServiceException
 	 */
-	private RemoteContainerConfig broadcastGetDefaultRemoteContainerConfig(Service.Slice[] slices) throws ServiceException {
+	private RemoteContainerConfig broadcastGetDefaultRemoteContainerConfig() throws ServiceException {
 		
 		if (myLogger.isLoggable(Logger.CONFIG)) {
 			myLogger.log(Logger.CONFIG, "Start request for the default remote container configuration!");
 		}
-		for (int i = 0; i < slices.length; i++) {
-			String sliceName = null;
-			try {
-				SimulationServiceSlice slice = (SimulationServiceSlice) slices[i];
-				sliceName = slice.getNode().getName();
-				if (myLogger.isLoggable(Logger.FINER)) {
-					myLogger.log(Logger.FINER, "Start request for the default remote container configuration at container (" + sliceName + ")");
-				}
-				RemoteContainerConfig remConf = slice.getDefaultRemoteContainerConfig();
-				if (remConf!=null) {
-					return remConf;
-				}
+		String sliceName = null;
+		try {
+			SimulationServiceSlice slice = (SimulationServiceSlice) getSlice(MAIN_SLICE);
+			sliceName = slice.getNode().getName();
+			if (myLogger.isLoggable(Logger.FINER)) {
+				myLogger.log(Logger.FINER, "Start request for the default remote container configuration at container (" + sliceName + ")");
 			}
-			catch(Throwable t) {
-				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
-				myLogger.log(Logger.WARNING, "Error while trying to get the default remote container configuration from " + sliceName, t);
+			RemoteContainerConfig remConf = slice.getDefaultRemoteContainerConfig();
+			if (remConf!=null) {
+				return remConf;
 			}
+		}
+		catch(Throwable t) {
+			// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
+			myLogger.log(Logger.WARNING, "Error while trying to get the default remote container configuration from " + sliceName, t);
 		}
 		return null;
 	}
+	/**
+	 * Broadcast to start a new remote-container for this platform to the Main-Container 
+	 * @param slices
+	 * @throws ServiceException
+	 */
+	private String broadcastStartNewRemoteContainer(RemoteContainerConfig remoteConfig) throws ServiceException {
+		
+		if (myLogger.isLoggable(Logger.CONFIG)) {
+			myLogger.log(Logger.CONFIG, "Start a new remote container!");
+		}
+		String sliceName = null;
+		try {
+			SimulationServiceSlice slice = (SimulationServiceSlice) getSlice(MAIN_SLICE);
+			sliceName = slice.getNode().getName();
+			if (myLogger.isLoggable(Logger.FINER)) {
+				myLogger.log(Logger.FINER, "Try to start a new remote container (" + sliceName + ")");
+			}
+			String newContainerName = slice.startNewRemoteContainer(remoteConfig);
+			if (newContainerName!=null) {
+				return newContainerName;
+			}
+		}
+		catch(Throwable t) {
+			// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
+			myLogger.log(Logger.WARNING, "Error while starting a new remote-container from " + sliceName, t);
+		}
+		return null;
+	}
+	
 	/**
 	 * Broadcast to start a new remote-container for this platform 
 	 * @param slices
 	 * @throws ServiceException
 	 */
-	private String broadcastStartNewRemoteContainer(RemoteContainerConfig remoteConfig, Service.Slice[] slices) throws ServiceException {
+	private Container2Wait4 broadcastGetNewContainer2Wait4Status(String containerName2Wait4) throws ServiceException {
 		
 		if (myLogger.isLoggable(Logger.CONFIG)) {
 			myLogger.log(Logger.CONFIG, "Start a new remote container!");
 		}
-		for (int i = 0; i < slices.length; i++) {
 			String sliceName = null;
 			try {
-				SimulationServiceSlice slice = (SimulationServiceSlice) slices[i];
+				SimulationServiceSlice slice = (SimulationServiceSlice) getSlice(MAIN_SLICE);
 				sliceName = slice.getNode().getName();
 				if (myLogger.isLoggable(Logger.FINER)) {
 					myLogger.log(Logger.FINER, "Try to start a new remote container (" + sliceName + ")");
 				}
-				String newContainerName = slice.startNewRemoteContainer(remoteConfig);
-				if (newContainerName!=null) {
-					return newContainerName;
-				}
+				return slice.getNewContainer2Wait4Status(containerName2Wait4);
 			}
 			catch(Throwable t) {
 				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
 				myLogger.log(Logger.WARNING, "Error while starting a new remote-container from " + sliceName, t);
 			}
-		}	
+	
 		return null;
 	}
-	
 	
 	/**
 	 * Broadcast to start a new remote-container for this platform 
@@ -766,9 +784,7 @@ public class SimulationService extends BaseService {
 				myLogger.log(Logger.WARNING, "Error while trying to get AID's from " + sliceName, t);
 			}
 		}
-		
 		loadInfo.countAIDs4Container();
-		
 	}
 	
 	/**
@@ -879,6 +895,7 @@ public class SimulationService extends BaseService {
 					stepSimulation(envModel, aSynchron);
 				}
 				else if (cmdName.equals(SimulationServiceSlice.SIM_SET_ENVIRONMENT_NEXT_PART)) {
+					@SuppressWarnings("unchecked")
 					Hashtable<AID, Object> nextPartsLocal = (Hashtable<AID, Object>) params[0];
 					if (myLogger.isLoggable(Logger.FINE)) {
 						myLogger.log(Logger.FINE, "Getting parts for the next environment model");
@@ -899,32 +916,26 @@ public class SimulationService extends BaseService {
 				}
 				
 				else if (cmdName.equals(SimulationServiceSlice.SERVICE_START_NEW_REMOTE_CONTAINER)) {
-					if (myMainContainer!=null) {
-						if (myLogger.isLoggable(Logger.FINE)) {
-							myLogger.log(Logger.FINE, "Starting a new remote-container for this platform");
-						}
-						RemoteContainerConfig remoteConfig = (RemoteContainerConfig) params[0];
-						cmd.setReturnValue(startRemoteContainer(remoteConfig));
-					} else {
-						if (myLogger.isLoggable(Logger.FINE)) {
-							myLogger.log(Logger.FINE, "Answering new remote-container request with null");
-						}
-						cmd.setReturnValue(null);
+					if (myLogger.isLoggable(Logger.FINE)) {
+						myLogger.log(Logger.FINE, "Starting a new remote-container for this platform");
 					}
+					RemoteContainerConfig remoteConfig = (RemoteContainerConfig) params[0];
+					cmd.setReturnValue(startRemoteContainer(remoteConfig));
 				}
 				else if (cmdName.equals(SimulationServiceSlice.SERVICE_GET_DEFAULT_REMOTE_CONTAINER_CONFIG)) {
-					if (myMainContainer!=null) {
-						if (myLogger.isLoggable(Logger.FINE)) {
-							myLogger.log(Logger.FINE, "Answering to request for 'get_default_remote_container_config'");
-						}
-						cmd.setReturnValue(getDefaultRemoteContainerConfig());
-					} else {
-						if (myLogger.isLoggable(Logger.FINE)) {
-							myLogger.log(Logger.FINE, "Answering to request for 'get_default_remote_container_config' with null");
-						}
-						cmd.setReturnValue(null);
+					if (myLogger.isLoggable(Logger.FINE)) {
+						myLogger.log(Logger.FINE, "Answering to request for 'get_default_remote_container_config'");
 					}
+					cmd.setReturnValue(getDefaultRemoteContainerConfig());
 				}
+				else if (cmdName.equals(SimulationServiceSlice.SERVICE_GET_NEW_CONTAINER_2_WAIT_4_STATUS)) {
+					String container2Wait4 = (String) params[0];
+					if (myLogger.isLoggable(Logger.FINE)) {
+						myLogger.log(Logger.FINE, "Answering request for new container status of container '" + container2Wait4 + "'");
+					}
+					cmd.setReturnValue(getNewContainer2Wait4Status(container2Wait4));
+				}
+				
 				else if (cmdName.equals(SimulationServiceSlice.SERVICE_GET_LOCATION)) {
 					cmd.setReturnValue(myContainer.here());
 				}
@@ -956,6 +967,7 @@ public class SimulationService extends BaseService {
 				}
 
 				else if (cmdName.equals(SimulationServiceSlice.SERVICE_SET_AGENT_MIGRATION)) {
+					@SuppressWarnings("unchecked")
 					Vector<AID_Container> transferAgents = (Vector<AID_Container>) params[0];
 					if (myLogger.isLoggable(Logger.FINE)) {
 						myLogger.log(Logger.FINE, "Getting info about agent migration");
@@ -1023,6 +1035,9 @@ public class SimulationService extends BaseService {
 		}
 		private RemoteContainerConfig getDefaultRemoteContainerConfig() {
 			return getRemoteContainerConfigDefault();
+		}
+		private Container2Wait4 getNewContainer2Wait4Status(String container2Wait4) {
+			return loadInfo.getNewContainer2Wait4Status(container2Wait4);
 		}
 		
 		private void setThresholdLevels(LoadThresholdLevels thresholdLevels) {
@@ -1102,6 +1117,7 @@ public class SimulationService extends BaseService {
 				loadInfo.containerLocations.remove(containerName);
 			} else if (cmdName.equals(AgentMobilityHelper.INFORM_MOVED)) {
 				Object[] params = cmd.getParams();
+				@SuppressWarnings("unused")
 				AID aid = (AID) params[0];
 //				ContainerID id = (ContainerID) params[1];
 //				localServiceActuator.setAgentMigrated(aid);
@@ -1130,21 +1146,15 @@ public class SimulationService extends BaseService {
 			//System.out.println( "=> in " + cmdName + " - " + cmd.getService());
 			
 			if (myMainContainer != null) {
-				if (cmdName.equals(AgentManagementSlice.INFORM_KILLED)) {
-					// If the dead agent was registered to some topic, deregister it
-					//handleInformKilled(cmd);
-				} else if (cmdName.equals(Service.DEAD_SLICE)) {
-					// --- If the slice is a SimulationServiceSlice, do something ---
-					
-				} else if (cmdName.equals(Service.NEW_SLICE)) {
+				if (cmdName.equals(Service.NEW_SLICE)) {
 					// --- If the new slice is a SimulationServiceSlice, notify it about the current state ---
 					handleNewSlice(cmd);
 				}
-			}
-			else {
+				
+			} else {
 				if (cmdName.equals(Service.REATTACHED)) {
 					// The Main lost all information related to this container --> Notify it again
-					//handleReattached(cmd);
+					
 				}
 			}
 			// Never veto a Command
@@ -1161,6 +1171,7 @@ public class SimulationService extends BaseService {
 	private void handleNewSlice(VerticalCommand cmd) {
 		
 		if (cmd.getService().equals(NAME)) {
+			// --- We ARE in the Main-Container !!! ----------------------------------------
 			Object[] params = cmd.getParams();
 			String newSliceName = (String) params[0];
 			try {
@@ -1381,6 +1392,9 @@ public class SimulationService extends BaseService {
 
 		// --- Send message -----------------------------------------
 		myContainer.postMessageToLocalAgent(msg, agentGUIAgent);
+		
+		// --- Remind, that we're waiting for this container --------
+		loadInfo.setNewContainer2Wait4(remConf.getJadeContainerName());
 		
 		// --- Return -----------------------------------------------
 		return remConf.getJadeContainerName();

@@ -1,20 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <simulationSetup>
-    <agentSetup>
-        <agent>
-            <agentClassReference>game_of_life.agents.StartAgent</agentClassReference>
-            <mobileAgent>true</mobileAgent>
-            <postionNo>1</postionNo>
-            <startAsName>StAg</startAsName>
-        </agent>
-    </agentSetup>
+    <agentSetup/>
     <distribution>
         <doDynamicLoadBalalncing>false</doDynamicLoadBalalncing>
         <doStaticLoadBalalncing>true</doStaticLoadBalalncing>
         <dynamicLoadBalancingClass>agentgui.simulationService.balancing.DynamicLoadBalancing</dynamicLoadBalancingClass>
-        <numberOfAgents>1300</numberOfAgents>
+        <numberOfAgents>1024</numberOfAgents>
         <numberOfContainer>1</numberOfContainer>
-        <staticLoadBalancingClass>agentgui.simulationService.balancing.StaticLoadBalancing</staticLoadBalancingClass>
+        <staticLoadBalancingClass>game_of_life.balancing.StartAndBalancing</staticLoadBalancingClass>
         <useUserThresholds>false</useUserThresholds>
         <userThresholds>
             <thCpuH>80</thCpuH>
@@ -26,7 +19,7 @@
         </userThresholds>
     </distribution>
     <agentListModel>
-        <size>1</size>
+        <size>0</size>
     </agentListModel>
     <environmentFileName>Game of Life_default.xml</environmentFileName>
     <svgFileName>Game of Life_default.svg</svgFileName>

@@ -42,10 +42,12 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 	protected DistributionSetup currDisSetup = null;
 	protected ArrayList<AgentClassElement4SimStart> currAgentList = null;
 	protected ArrayList<AgentClassElement4SimStart> currAgentListVisual = null;
+	
+	protected int currNumberOfAgents = 0;
+	protected int currNumberOfContainer = 0;
 
 	protected LoadThresholdLevels currThresholdLevels = null; 
-	
-	protected Hashtable<String, Float> loadContainerBenchmarkResults = null;
+	protected Hashtable<String, Float> loadContainerBenchmarkResults = new Hashtable<String, Float>();
 	
 	public StaticLoadBalancingBase() {
 		super();
@@ -57,6 +59,9 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 		currDisSetup = currSimSetup.getDistributionSetup();
 		// --- Which agents are to start ----------------------------
 		currAgentList = currSimSetup.getAgentList();	
+		currNumberOfAgents = currDisSetup.getNumberOfAgents();
+		currNumberOfContainer = currDisSetup.getNumberOfContainer();
+
 		
 		// --- If the user wants to use his own Threshold, ----------
 		// --- load them to the SimulationsService		   ----------
@@ -215,24 +220,27 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 		AgentController ac = null;
 			
 		try {
-			Agent agent = (Agent) agentClass.newInstance();
-			agent.setArguments(args);
-			ac = cc.acceptNewAgent(nickName, agent);
+			//Agent agent = (Agent) agentClass.newInstance();
+			//agent.setArguments(args);
+			//ac = cc.acceptNewAgent(nickName, agent);
+			ac = cc.createNewAgent(nickName, agentClass.getName(), args);
 			ac.start();
 			
 			// --- if other locations are there and -----------------
 			// --- should be used, use them now		-----------------
 			if (toLocation!=null) {
 				if (cc.getContainerName().equalsIgnoreCase(toLocation.getName())==false) {
-					ac.move(toLocation);	
+					AgentController stAc = cc.getAgent(nickName);
+					while(stAc==null){
+						block(100);
+						stAc = cc.getAgent(nickName);
+						System.out.println("block");
+					}					
+					ac.move(toLocation);
 				}				
 			}			
 			
 		} catch (StaleProxyException e) {
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		} catch (ControllerException e) {
 			e.printStackTrace();

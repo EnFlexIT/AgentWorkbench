@@ -11,6 +11,7 @@ import agentgui.core.gui.options.OptionDialog;
 import agentgui.core.jade.ClassSearcher;
 import agentgui.core.jade.Platform;
 import agentgui.core.systemtray.AgentGUITrayIcon;
+import agentgui.core.webserver.DownloadServer;
 import agentgui.simulationService.load.LoadMeasureThread;
 
 /**
@@ -24,6 +25,7 @@ public class Application {
 	public static CoreWindowConsole Console = null;
 	public static FileProperties properties = null;
 	public static Platform JadePlatform = null;	
+	public static DownloadServer webServer = null;
 	public static ClassSearcher classDetector = null;
 	
 	public static AgentGUITrayIcon trayIconInstance = null;
@@ -318,5 +320,24 @@ public class Application {
 	}
 	
 	
+	public static void startDownloadServer() {
+		
+		if (webServer==null) {
+			webServer = new DownloadServer();
+			webServer.setRoot(RunInfo.PathDownloads(false));
+			new Thread(webServer).start();
+		}
+	}
+
+	public static void stopDownloadServer() {
+
+		if (webServer!=null) {
+			synchronized (webServer) {
+				webServer.stop();	
+			}			
+			webServer = null;
+		}
+	}
+
 } // --- End Class ---
 

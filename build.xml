@@ -102,6 +102,8 @@
          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
     <target name="supply" description="Erstellung der Dateistruktur ... ">
     	
+    	<!-- Alte simulation.jar löschen -->
+    	<delete failonerror="false" file="${simServiceDestinJar}" />    	
     	<!-- Erzeugen der lokalen Datei simulation.jar -->
     	<jar compress="true" destfile="${simServiceDestinJar}" >
  			<manifest>
@@ -109,7 +111,7 @@
  				<attribute name="Built-Lang" value="${user.language}"/>
 			</manifest>    		
     		<fileset dir="${binaryDirANT}">
-    			<include name="**/mas/service/**"/>
+    			<include name="**/agentgui/simulationService/**"/>
     		</fileset>    		
         </jar>
     	
