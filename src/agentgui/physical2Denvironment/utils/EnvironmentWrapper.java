@@ -172,7 +172,8 @@ public class EnvironmentWrapper {
 	 * @param Object
 	 */
 	public void removeObject(Physical2DObject Object){
-		environment.getRootPlayground().removeChildObjects(Object);
+		PlaygroundObject parent = (PlaygroundObject) getObjectById(Object.getParentPlaygroundID());
+		parent.removeChildObjects(Object);
 		rebuildLists();
 	}
 }

@@ -75,7 +75,7 @@ public class EnvironmentProviderAgent extends Agent {
 
 		@SuppressWarnings("unchecked")
 		@Override
-		protected void onTick() {
+		protected synchronized void onTick() {
 			HashSet<ActiveObject> moving = helper.getCurrentlyMovingAgents();
 			if(moving.size() > 0){	// Any moving agents?
 				Iterator<ActiveObject> movingAgents = moving.iterator();

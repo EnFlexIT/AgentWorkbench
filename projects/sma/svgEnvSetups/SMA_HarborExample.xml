@@ -1,162 +1,162 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Physical2DEnvironment projectName="SMA">
+	<scale>
+		<Scale realWorldUnitValue="1.0F" pixelValue="10.0F" realWorldUntiName="m"/>
+	</scale>
 	<rootPlayground>
 		<PlaygroundObject id="RootPlayground">
-			<position>
-				<Position yPos="0.0F" xPos="0.0F"/>
-			</position>
 			<size>
 				<Size height="400.0F" width="600.0F"/>
 			</size>
+			<position>
+				<Position xPos="0.0F" yPos="0.0F"/>
+			</position>
 			<childObjects>
-				<PlaygroundObject id="water" parentPlaygroundID="RootPlayground">
-					<position>
-						<Position yPos="20.0F" xPos="6.85F"/>
-					</position>
+				<PlaygroundObject parentPlaygroundID="RootPlayground" id="water">
 					<size>
 						<Size height="40.0F" width="13.7F"/>
 					</size>
-				</PlaygroundObject>
-				<PlaygroundObject id="land" parentPlaygroundID="RootPlayground">
 					<position>
-						<Position yPos="20.0F" xPos="36.85F"/>
+						<Position xPos="6.85F" yPos="20.0F"/>
 					</position>
+				</PlaygroundObject>
+				<PlaygroundObject parentPlaygroundID="RootPlayground" id="land">
 					<size>
 						<Size height="40.0F" width="46.3F"/>
 					</size>
+					<position>
+						<Position xPos="36.85F" yPos="20.0F"/>
+					</position>
 					<childObjects>
-						<ActiveObject id="carrier1" parentPlaygroundID="land" agentClassName="sma.agents.Carrier" maxSpeed="10.0F">
-							<position>
-								<Position yPos="3.4F" xPos="33.45F"/>
-							</position>
+						<ActiveObject parentPlaygroundID="land" id="carrier1" maxSpeed="10.0F" agentClassName="sma.agents.Carrier">
 							<size>
 								<Size height="3.6F" width="1.9F"/>
 							</size>
+							<position>
+								<Position xPos="33.45F" yPos="3.4F"/>
+							</position>
 							<movement>
-								<Movement yPosChange="0.0F" xPosChange="0.0F"/>
+								<Movement xPosChange="0.0F" yPosChange="0.0F"/>
 							</movement>
 						</ActiveObject>
-						<ActiveObject id="carrier2" parentPlaygroundID="land" agentClassName="sma.agents.Carrier" maxSpeed="10.0F">
-							<position>
-								<Position yPos="34.0F" xPos="33.45F"/>
-							</position>
+						<ActiveObject parentPlaygroundID="land" id="carrier2" maxSpeed="10.0F" agentClassName="sma.agents.Carrier">
 							<size>
 								<Size height="3.6F" width="1.6F"/>
 							</size>
+							<position>
+								<Position xPos="33.45F" yPos="34.0F"/>
+							</position>
 							<movement>
-								<Movement yPosChange="0.0F" xPosChange="0.0F"/>
+								<Movement xPosChange="0.0F" yPosChange="0.0F"/>
 							</movement>
 						</ActiveObject>
-						<PassiveObject id="container1" parentPlaygroundID="land">
-							<position>
-								<Position yPos="14.0F" xPos="15.0F"/>
-							</position>
+						<PassiveObject parentPlaygroundID="land" id="container1">
 							<size>
 								<Size height="2.2F" width="1.0F"/>
 							</size>
-						</PassiveObject>
-						<PassiveObject id="container2" parentPlaygroundID="land">
 							<position>
-								<Position yPos="17.0F" xPos="15.0F"/>
+								<Position xPos="15.0F" yPos="14.0F"/>
 							</position>
+						</PassiveObject>
+						<PassiveObject parentPlaygroundID="land" id="container2">
 							<size>
 								<Size height="2.2F" width="1.0F"/>
 							</size>
-						</PassiveObject>
-						<PassiveObject id="container3" parentPlaygroundID="land">
 							<position>
-								<Position yPos="20.0F" xPos="15.0F"/>
+								<Position xPos="15.0F" yPos="17.0F"/>
 							</position>
+						</PassiveObject>
+						<PassiveObject parentPlaygroundID="land" id="container3">
 							<size>
 								<Size height="2.2F" width="1.0F"/>
 							</size>
-						</PassiveObject>
-						<PassiveObject id="container4" parentPlaygroundID="land">
 							<position>
-								<Position yPos="23.0F" xPos="15.0F"/>
+								<Position xPos="15.0F" yPos="20.0F"/>
 							</position>
+						</PassiveObject>
+						<PassiveObject parentPlaygroundID="land" id="container4">
 							<size>
 								<Size height="2.2F" width="1.0F"/>
 							</size>
-						</PassiveObject>
-						<PassiveObject id="container5" parentPlaygroundID="land">
 							<position>
-								<Position yPos="14.0F" xPos="17.0F"/>
+								<Position xPos="15.0F" yPos="23.0F"/>
 							</position>
+						</PassiveObject>
+						<PassiveObject parentPlaygroundID="land" id="container5">
 							<size>
 								<Size height="2.2F" width="1.0F"/>
 							</size>
-						</PassiveObject>
-						<PassiveObject id="container6" parentPlaygroundID="land">
 							<position>
-								<Position yPos="17.0F" xPos="17.0F"/>
+								<Position xPos="17.0F" yPos="14.0F"/>
 							</position>
+						</PassiveObject>
+						<PassiveObject parentPlaygroundID="land" id="container6">
 							<size>
 								<Size height="2.2F" width="1.0F"/>
 							</size>
-						</PassiveObject>
-						<PassiveObject id="container7" parentPlaygroundID="land">
 							<position>
-								<Position yPos="20.0F" xPos="17.0F"/>
+								<Position xPos="17.0F" yPos="17.0F"/>
 							</position>
+						</PassiveObject>
+						<PassiveObject parentPlaygroundID="land" id="container7">
 							<size>
 								<Size height="2.2F" width="1.0F"/>
 							</size>
-						</PassiveObject>
-						<PassiveObject id="container8" parentPlaygroundID="land">
 							<position>
-								<Position yPos="23.0F" xPos="17.0F"/>
+								<Position xPos="17.0F" yPos="20.0F"/>
 							</position>
+						</PassiveObject>
+						<PassiveObject parentPlaygroundID="land" id="container8">
 							<size>
 								<Size height="2.2F" width="1.0F"/>
 							</size>
-						</PassiveObject>
-						<StaticObject id="wall1" parentPlaygroundID="land">
 							<position>
-								<Position yPos="7.75F" xPos="44.463554F"/>
+								<Position xPos="17.0F" yPos="23.0F"/>
 							</position>
+						</PassiveObject>
+						<StaticObject parentPlaygroundID="land" id="wall1">
 							<size>
 								<Size height="1.5F" width="15.656038F"/>
 							</size>
-						</StaticObject>
-						<StaticObject id="wall2" parentPlaygroundID="land">
 							<position>
-								<Position yPos="16.748142F" xPos="52.78823F"/>
+								<Position xPos="44.463554F" yPos="7.75F"/>
 							</position>
+						</StaticObject>
+						<StaticObject parentPlaygroundID="land" id="wall2">
 							<size>
 								<Size height="19.48191F" width="1.5F"/>
 							</size>
-						</StaticObject>
-						<StaticObject id="wall3" parentPlaygroundID="land">
 							<position>
-								<Position yPos="25.75F" xPos="44.463554F"/>
+								<Position xPos="52.78823F" yPos="16.748142F"/>
 							</position>
+						</StaticObject>
+						<StaticObject parentPlaygroundID="land" id="wall3">
 							<size>
 								<Size height="1.5F" width="15.656038F"/>
 							</size>
-						</StaticObject>
-						<StaticObject id="wall4" parentPlaygroundID="land">
 							<position>
-								<Position yPos="23.015882F" xPos="36.25F"/>
+								<Position xPos="44.463554F" yPos="25.75F"/>
 							</position>
+						</StaticObject>
+						<StaticObject parentPlaygroundID="land" id="wall4">
 							<size>
 								<Size height="7.0F" width="1.5F"/>
 							</size>
-						</StaticObject>
-						<StaticObject id="wall5" parentPlaygroundID="land">
 							<position>
-								<Position yPos="10.477126F" xPos="36.25F"/>
+								<Position xPos="36.25F" yPos="23.015882F"/>
 							</position>
+						</StaticObject>
+						<StaticObject parentPlaygroundID="land" id="wall5">
 							<size>
 								<Size height="7.0F" width="1.5F"/>
 							</size>
+							<position>
+								<Position xPos="36.25F" yPos="10.477126F"/>
+							</position>
 						</StaticObject>
 					</childObjects>
 				</PlaygroundObject>
 			</childObjects>
 		</PlaygroundObject>
 	</rootPlayground>
-	<scale>
-		<Scale pixelValue="10.0F" realWorldUnitValue="1.0F" realWorldUntiName="m"/>
-	</scale>
 </Physical2DEnvironment>

@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.geom.Dimension2D;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -148,7 +149,9 @@ public class BasicSVGGUI extends JPanel {
 		if(doc != null){
 			float svgWidth = Float.parseFloat(doc.getDocumentElement().getAttributeNS(null, "width"));
 			float svgHeight = Float.parseFloat(doc.getDocumentElement().getAttributeNS(null, "height"));
-			this.setPreferredSize(new Dimension((int)svgWidth, (int) (svgHeight+getPnlZoom().getPreferredSize().getHeight())));
+			Dimension prefSize = new Dimension();
+			prefSize.setSize(svgWidth+getPnlZoom().getPreferredSize().getWidth(), svgHeight);
+			this.setPreferredSize(prefSize);
 		}		
 	}
 	

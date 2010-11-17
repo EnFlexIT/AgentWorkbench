@@ -8,9 +8,21 @@ import jade.core.*;
    * This class represents active objects, i.e. environment objects modeling agents. ActiveObjects can move on their own.
 * Protege name: ActiveObject
 * @author ontology bean generator
-* @version 2010/11/4, 22:28:26
+* @version 2010/11/17, 20:10:06
 */
 public class ActiveObject extends Physical2DObject{ 
+
+   /**
+   * The active object's maximum speed
+* Protege name: maxSpeed
+   */
+   private float maxSpeed;
+   public void setMaxSpeed(float value) { 
+    this.maxSpeed=value;
+   }
+   public float getMaxSpeed() {
+     return this.maxSpeed;
+   }
 
    /**
    * Passive objects currently controlled by this active object
@@ -55,18 +67,6 @@ public class ActiveObject extends Physical2DObject{
    }
    public Movement getMovement() {
      return this.movement;
-   }
-
-   /**
-   * The active object's maximum speed
-* Protege name: maxSpeed
-   */
-   private float maxSpeed;
-   public void setMaxSpeed(float value) { 
-    this.maxSpeed=value;
-   }
-   public float getMaxSpeed() {
-     return this.maxSpeed;
    }
 
 }

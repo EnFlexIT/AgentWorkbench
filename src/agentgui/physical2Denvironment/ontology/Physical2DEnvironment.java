@@ -9,21 +9,9 @@ import jade.core.*;
    * This class represents the whole environment model.
 * Protege name: Physical2DEnvironment
 * @author ontology bean generator
-* @version 2010/11/4, 22:28:26
+* @version 2010/11/17, 20:10:06
 */
 public class Physical2DEnvironment implements Concept {
-
-   /**
-   * The main area of the physical 2D environment, containing all sub-environments and objects
-* Protege name: rootPlayground
-   */
-   private PlaygroundObject rootPlayground;
-   public void setRootPlayground(PlaygroundObject value) { 
-    this.rootPlayground=value;
-   }
-   public PlaygroundObject getRootPlayground() {
-     return this.rootPlayground;
-   }
 
    /**
    * The physical 2D environment's scale
@@ -46,6 +34,18 @@ public class Physical2DEnvironment implements Concept {
    }
    public String getProjectName() {
      return this.projectName;
+   }
+
+   /**
+   * The main area of the physical 2D environment, containing all sub-environments and objects
+* Protege name: rootPlayground
+   */
+   private PlaygroundObject rootPlayground;
+   public void setRootPlayground(PlaygroundObject value) { 
+    this.rootPlayground=value;
+   }
+   public PlaygroundObject getRootPlayground() {
+     return this.rootPlayground;
    }
 
 }

@@ -557,7 +557,7 @@ public class EnvironmentProviderService extends BaseService {
 				if(myLogger.isLoggable(Logger.FINE)){
 					myLogger.log(Logger.FINE, "Serving moving objects request.");
 				}
-				cmd.setReturnValue(EnvironmentProviderService.this.getCurrentlyMovingObjects().clone());				
+				cmd.setReturnValue(EnvironmentProviderService.this.getCurrentlyMovingObjects());				
 			}else if(cmd.getName().equals(EnvironmentProviderSlice.H_SET_MOVEMENT)){
 				if(myLogger.isLoggable(Logger.FINE)){
 					myLogger.log(Logger.FINE, "Serving set agent movement request.");

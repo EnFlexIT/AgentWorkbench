@@ -55,7 +55,7 @@ public class SoftBot extends Agent {
 			demoBehaviour.addSubBehaviour(new MoveToPointBehaviour(this, waypoint, self.getMaxSpeed()));	// Waypoint 1
 			demoBehaviour.addSubBehaviour(new MoveToPointBehaviour(this, objectPos, self.getMaxSpeed()));   // Waypoint 2
 			
-			// Take box
+			// Pick up box
 			demoBehaviour.addSubBehaviour(new TakePassiveObjectBehaviour("Box2"));
 			
 			// Movement

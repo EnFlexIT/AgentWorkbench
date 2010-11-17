@@ -7,7 +7,7 @@ Einfaches Demo-Projekt fr die Visualisierung</projectDescription>
     <projectResources/>
     <subOntologies/>
     <agentConfiguration/>
-    <simulationSetupCurrent>BoxExample</simulationSetupCurrent>
+    <simulationSetupCurrent>HarborExample</simulationSetupCurrent>
     <simulationSetups>
         <entry>
             <key>HarborExample</key>

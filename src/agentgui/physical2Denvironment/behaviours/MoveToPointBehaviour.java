@@ -1,10 +1,14 @@
 package agentgui.physical2Denvironment.behaviours;
 
 
+import java.util.Iterator;
+
 import agentgui.core.application.Language;
 import agentgui.physical2Denvironment.ontology.ActiveObject;
 import agentgui.physical2Denvironment.ontology.Movement;
+import agentgui.physical2Denvironment.ontology.PassiveObject;
 import agentgui.physical2Denvironment.ontology.Physical2DObject;
+import agentgui.physical2Denvironment.ontology.PlaygroundObject;
 import agentgui.physical2Denvironment.ontology.Position;
 import agentgui.physical2Denvironment.provider.EnvironmentProviderHelper;
 import agentgui.physical2Denvironment.provider.EnvironmentProviderService;
@@ -161,5 +165,31 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 		// Check if the playground contains the object at the destination position
 		return playground.objectContains(selfAtDestPos);
 	}
+	
+	/**
+	 * @return Collision with other Physical2DObjects?
+	 */
+	@SuppressWarnings("unchecked")
+	private boolean checkCollisions(){
+		// Get the agent's Physical2DObject
+		Physical2DObject self = helper.getObject(myAgent.getLocalName());
+		// Get the agent's parent playground
+		PlaygroundObject parentPG = (PlaygroundObject) helper.getObject(self.getParentPlaygroundID());
+			
+		// Check for collisions with every Physical2DObject inside the playground
+		Iterator<Physical2DObject> pgObjects = parentPG.getAllChildObjects();
+		while(pgObjects.hasNext()){
+			Physical2DObject object = pgObjects.next();
+			if( (!object.getId().equals(self.getId()))			// Object can't collide with itself 
+					&& ! (object instanceof PassiveObject) 		// Collisions with PassiveObjects disabled
+					&& self.objectIntersects(object)			// Check for collision
+			){
+				System.err.println(Language.translate("Kollision mit Objekt "+object.getId()));
+				return true;
+			}
+		}
+		return false;
+	}
+
 
 }
