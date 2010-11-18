@@ -67,6 +67,8 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	@XmlElementWrapper(name = "projectResources")
 	@XmlElement(name="projectResource")
 	public Vector<String> projectResources = new Vector<String>();
+	@XmlTransient 
+	public Vector<String> downloadResources = new Vector<String>();
 	
 	@XmlElementWrapper(name = "subOntologies")
 	@XmlElement(name="subOntology")

@@ -43,24 +43,24 @@ public class PlatformJadeConfig implements Serializable {
 	
 	private static final long serialVersionUID = -9062155032902746361L;
 	// --- Services "Active by default" ---------------------------------------
-	private final String SERVICE_AgentMobilityService = "jade.core.mobility.AgentMobilityService;";
-	private final String SERVICE_NotificationService = "jade.core.event.NotificationService;"; 
+	public static final String SERVICE_AgentMobilityService = "jade.core.mobility.AgentMobilityService;";
+	public static final String SERVICE_NotificationService = "jade.core.event.NotificationService;"; 
 	
 	// --- Services "Inactive by default" -------------------------------------
-	private final String SERVICE_MainReplicationService = "jade.core.replication.MainReplicationService;";
-	private final String SERVICE_FaultRecoveryService = "jade.core.faultRecovery.FaultRecoveryService;";
-	private final String SERVICE_AddressNotificationService = "jade.core.replication.AddressNotificationService;";
-	private final String SERVICE_TopicManagementService = "jade.core.messaging.TopicManagementService;";
-	private final String SERVICE_PersistentDeliveryService = "jade.core.messaging.PersistentDeliveryService;";
-	private final String SERVICE_UDPNodeMonitoringServ = "jade.core.nodeMonitoring.UDPNodeMonitoringService;";
-	private final String SERVICE_BEManagementService = "jade.imtp.leap.nio.BEManagementService;";
+	public static final String SERVICE_MainReplicationService = "jade.core.replication.MainReplicationService;";
+	public static final String SERVICE_FaultRecoveryService = "jade.core.faultRecovery.FaultRecoveryService;";
+	public static final String SERVICE_AddressNotificationService = "jade.core.replication.AddressNotificationService;";
+	public static final String SERVICE_TopicManagementService = "jade.core.messaging.TopicManagementService;";
+	public static final String SERVICE_PersistentDeliveryService = "jade.core.messaging.PersistentDeliveryService;";
+	public static final String SERVICE_UDPNodeMonitoringServ = "jade.core.nodeMonitoring.UDPNodeMonitoringService;";
+	public static final String SERVICE_BEManagementService = "jade.imtp.leap.nio.BEManagementService;";
 	
 	// --- Agent.GUI-Services -------------------------------------------------
-	private final String SERVICE_SimulationService = "agentgui.simulationService.SimulationService;";
-	private final String SERVICE_EnvironmentProviderService = "agentgui.physical2Denvironment.provider.EnvironmentProviderService;";
+	public static final String SERVICE_SimulationService = "agentgui.simulationService.SimulationService;";
+	public static final String SERVICE_EnvironmentProviderService = "agentgui.physical2Denvironment.provider.EnvironmentProviderService;";
 	
 	// --- Add-On-Services ----------------------------------------------------
-	private final String SERVICE_InterPlatformMobilityService = "jade.core.migration.InterPlatformMobilityService;";
+	public static final String SERVICE_InterPlatformMobilityService = "jade.core.migration.InterPlatformMobilityService;";
 	
 	// --- Weitere Vars. ------------------------------------------------------ 
 	@XmlElement(name="start4Sim")		

@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: PlatformTime
 * @author ontology bean generator
-* @version 2010/11/4, 20:38:59
+* @version 2010/11/17, 22:51:09
 */
 public class PlatformTime implements Concept {
 

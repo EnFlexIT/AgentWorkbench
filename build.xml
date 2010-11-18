@@ -28,6 +28,10 @@
 	<property name="simServiceDestinDir" value="lib\jade\lib\\" />
 	<property name="simServiceDestinJar" value="${simServiceDestinDir}\simulation.jar" />
 	
+	<property name="visServiceSourceDir" value="${binaryDirANT}\agentgui\physical2Denvironment\\" />
+	<property name="visServiceDestinDir" value="lib\jade\lib\\" />
+	<property name="visServiceDestinJar" value="${simServiceDestinDir}\visualization.jar" />
+
 	<property name="destinDir" value="D:\00 Tmp\00 Jars\AgentGUI\\" />
 	<property name="destinJar" value="${destinDir}\AgentGui.jar" />		
 	<property name="destinDirLibraries" value="${destinDir}\lib\\" />
@@ -115,7 +119,19 @@
     		</fileset>    		
         </jar>
     	
-    	
+    	<!-- Alte visualization.jar löschen -->
+    	<delete failonerror="false" file="${visServiceDestinJar}" />    	
+    	<!-- Erzeugen der lokalen Datei visualization.jar -->
+    	<jar compress="true" destfile="${visServiceDestinJar}" >
+ 			<manifest>
+				<attribute name="Built-By" value="${user.name}"/>
+ 				<attribute name="Built-Lang" value="${user.language}"/>
+			</manifest>    		
+    		<fileset dir="${binaryDirANT}">
+    			<include name="**/agentgui/physical2Denvironment/**"/>
+    		</fileset>    		
+        </jar>
+    			
     	<!-- Kopieren der Property-Files -->    	
     	<copy todir="${destinDirProperties}">
     		<fileset dir="${sourceDirProperties}" />

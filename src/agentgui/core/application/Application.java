@@ -323,13 +323,14 @@ public class Application {
 	 * Starts the Web-Server, so that remote server.slaves are
 	 * able to download additional jar-resources
 	 */
-	public static void startDownloadServer() {
+	public static DownloadServer startDownloadServer() {
 		
 		if (webServer==null) {
 			webServer = new DownloadServer();
-			webServer.setRoot(RunInfo.PathDownloads(false));
+			webServer.setRoot(RunInfo.PathServer(false));
 			new Thread(webServer).start();
 		}
+		return webServer;
 	}
 
 	/**

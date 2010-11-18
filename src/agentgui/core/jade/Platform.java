@@ -20,6 +20,7 @@ import agentgui.core.application.Language;
 import agentgui.core.application.Project;
 import agentgui.core.database.DBConnection;
 import agentgui.core.network.JadeUrlChecker;
+import agentgui.core.webserver.DownloadServer;
 
 public class Platform extends Object {
 
@@ -27,6 +28,15 @@ public class Platform extends Object {
 	 * This class manages the jade-platform 
 	 * for this local application 
 	 */
+	public final static int UTIL_CMD_OpenDF = 1;
+	public final static int UTIL_CMD_ShutdownPlatform = 2;
+	public final static int UTIL_CMD_OpenLoadMonitor = 3;
+	
+	public static final String MASapplicationAgentName = "server.client";
+	public static final String MASserverMasterAgentName = "server.master";
+	public static final String MASserverSlaveAgentName = "server.slave";
+
+	
 	public static Runtime MASrt;
 	public static AgentContainer MASmc;
 	public static Vector<AgentContainer> MAS_ContainerLocal = new Vector<AgentContainer>();
@@ -35,13 +45,7 @@ public class Platform extends Object {
 	public PlatformJadeConfig MASplatformConfig = null;	
 	public String MASrunningMode = "";
 	
-	public final static int UTIL_CMD_OpenDF = 1;
-	public final static int UTIL_CMD_ShutdownPlatform = 2;
-	public final static int UTIL_CMD_OpenLoadMonitor = 3;
-	
-	public static final String MASapplicationAgentName = "server.client";
 	public JadeUrlChecker MASmasterAddress = null; 
-
 	private String newLine = Application.RunInfo.AppNewLineString();
 	
 	public Platform() {
@@ -106,7 +110,7 @@ public class Platform extends Object {
 					
 				}
 				// --- Starting 'Server.Master'-Agent --------------				
-				jadeAgentStart("server.master", agentgui.simulationService.agents.ServerMasterAgent.class.getName());
+				jadeAgentStart(MASserverMasterAgentName, agentgui.simulationService.agents.ServerMasterAgent.class.getName());
 				
 			} else {
 				// -------------------------------------------------
@@ -139,7 +143,7 @@ public class Platform extends Object {
 					
 				} 
 				// --- Starting 'Server.Slave'-Agent ---------------
-				jadeAgentStart("server.slave", agentgui.simulationService.agents.ServerSlaveAgent.class.getName());
+				jadeAgentStart(MASserverSlaveAgentName, agentgui.simulationService.agents.ServerSlaveAgent.class.getName());
 					
 			}
 		} else {
@@ -147,8 +151,6 @@ public class Platform extends Object {
 			// --- Running as Agent.GUI - Application ---------------
 			// ------------------------------------------------------
 			MASrunningMode = "Application";
-			// --- Start Download-Server for project-ressources -----
-			Application.startDownloadServer();			
 			// --- Starting 'Server.Client'-Agent -------------------				
 			if (jadeAgentIsRunning(MASapplicationAgentName)==false) {
 				jadeAgentStart(MASapplicationAgentName, agentgui.simulationService.agents.ServerClientAgent.class.getName());	
@@ -233,6 +235,16 @@ public class Platform extends Object {
 				MAScontainerProfile = currProject.JadeConfiguration.getNewInstanceOfProfilImpl();				
 				System.out.println("JADE-Profile: Use " + currProject.getProjectName() + "-configuration" );
 			}
+			
+			// --- Start Download-Server for project-ressources -----
+			DownloadServer webServer = Application.startDownloadServer();			
+			
+			// --- If the current project has external resources ---- 
+			boolean ideExecuted = Application.RunInfo.AppExecutedOver().equalsIgnoreCase("IDE");
+			if (currProject.projectResources.size()>0 || ideExecuted==true) {
+				webServer.setProjectDownloadResources(currProject);
+			}
+			
 		}		
 		return MAScontainerProfile;
 	}

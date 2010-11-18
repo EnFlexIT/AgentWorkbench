@@ -25,6 +25,7 @@ import jade.core.messaging.MessagingSlice;
 import jade.core.mobility.AgentMobilityHelper;
 import jade.lang.acl.ACLMessage;
 import jade.util.Logger;
+import jade.util.leap.ArrayList;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -42,6 +43,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
+import agentgui.core.application.Application;
 import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.load.LoadAgentMap;
 import agentgui.simulationService.load.LoadInformation;
@@ -573,10 +575,7 @@ public class SimulationService extends BaseService {
 			if (myLogger.isLoggable(Logger.FINER)) {
 				myLogger.log(Logger.FINER, "Start request for the default remote container configuration at container (" + sliceName + ")");
 			}
-			RemoteContainerConfig remConf = slice.getDefaultRemoteContainerConfig();
-			if (remConf!=null) {
-				return remConf;
-			}
+			return slice.getDefaultRemoteContainerConfig();
 		}
 		catch(Throwable t) {
 			// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
@@ -601,10 +600,7 @@ public class SimulationService extends BaseService {
 			if (myLogger.isLoggable(Logger.FINER)) {
 				myLogger.log(Logger.FINER, "Try to start a new remote container (" + sliceName + ")");
 			}
-			String newContainerName = slice.startNewRemoteContainer(remoteConfig);
-			if (newContainerName!=null) {
-				return newContainerName;
-			}
+			return slice.startNewRemoteContainer(remoteConfig);
 		}
 		catch(Throwable t) {
 			// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
@@ -1068,7 +1064,6 @@ public class SimulationService extends BaseService {
 		private ClientRemoteContainerReply getContainerDescription() {
 			return myCRCReply;
 		}
-		
 		// -----------------------------------------------------------------
 		// --- The real functions for the Service Component --- Stop ------- 
 		// -----------------------------------------------------------------
@@ -1305,7 +1300,7 @@ public class SimulationService extends BaseService {
 		// --- Get the local port of JADE ---------------------------
 		String myPort = myContainer.getNodeDescriptor().getContainer().getPort();
 	
-		// --- Get the List of services started here ---------------
+		// --- Get the List of services started here ----------------
 		String myServices = "";
 		List<?> services = myContainer.getServiceManager().getLocalServices();
 		Iterator<?> it = services.iterator();
@@ -1315,7 +1310,7 @@ public class SimulationService extends BaseService {
 			myServices += service;				
 		}			
 		
-		// --- Define the new container name --------------------
+		// --- Define the new container name ------------------------
 		try {
 			Service.Slice[] slices = getAllSlices();
 			for (int i = 0; i < slices.length; i++) {
@@ -1334,14 +1329,39 @@ public class SimulationService extends BaseService {
 		}
 		newContainerNo++;
 		newContainerName = newContainerPrefix + newContainerNo;
+		
+		// --- If defined, find external jar-Files for ClassPath ----
+		jade.util.leap.List extJars = null;
+		if (Application.ProjectCurr!=null) {
+			for (String link : Application.ProjectCurr.downloadResources) {
+				if (extJars == null) {
+					extJars = new ArrayList();
+				}
+				extJars.add(link);
+			}
+		}
+		
+		// --- Find machines, which should be excluded for a remote start -----
+		jade.util.leap.List hostExcludeIP = null;
+		for (String containerName : loadInfo.containerDescription.keySet()) {
+			
+			NodeDescription nodeDesc = loadInfo.containerDescription.get(containerName);
+			String ip = nodeDesc.getPlAddress().getIp();
+			if (hostExcludeIP == null) {
+				hostExcludeIP = new ArrayList();
+			}
+			hostExcludeIP.add(ip);
+		}
+		
+		// --- For the Jade-Logger with love ;-) --------------------
 		if (myLogger.isLoggable(Logger.FINE)) {
 			myLogger.log(Logger.FINE, "-- Infos to start the remote container ------------");
 			myLogger.log(Logger.FINE, "=> Services2Start:   " + myServices);
 			myLogger.log(Logger.FINE, "=> NewContainerName: " + newContainerName);
 			myLogger.log(Logger.FINE, "=> ThisAddresses:    " + myIP +  " - Port: " + myPort);
 		}
-
-		// --- Define the 'RemoteContainerConfig' - Object ------
+		
+		// --- Define the 'RemoteContainerConfig' - Object ----------
 		RemoteContainerConfig remConf = new RemoteContainerConfig();
 		remConf.setJadeServices(myServices);
 		remConf.setJadeIsRemoteContainer(true);
@@ -1349,6 +1369,8 @@ public class SimulationService extends BaseService {
 		remConf.setJadePort(myPort);
 		remConf.setJadeContainerName(newContainerName);
 		remConf.setJadeShowGUI(true);
+		remConf.setJadeJarIncludeList(extJars);
+		//TODO remConf.setHostExcludeIP(hostExcludeIP);		
 		return remConf;
 	}
 	

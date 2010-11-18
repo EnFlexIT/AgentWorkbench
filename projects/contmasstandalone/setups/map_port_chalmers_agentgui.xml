@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <simulationSetup>
-    <agentSetup>
-        <agent>
-            <agentClassReference>de.unidue.stud.sehawagn.contmas.agents.ActiveContainerAgent</agentClassReference>
-            <mobileAgent>true</mobileAgent>
-            <postionNo>1</postionNo>
-            <startAsName>AcCoAg</startAsName>
-        </agent>
-    </agentSetup>
+    <agentSetup/>
     <distribution>
         <doDynamicLoadBalalncing>false</doDynamicLoadBalalncing>
         <doStaticLoadBalalncing>false</doStaticLoadBalalncing>
@@ -26,7 +19,7 @@
         </userThresholds>
     </distribution>
     <agentListModel>
-        <size>1</size>
+        <size>0</size>
     </agentListModel>
     <environmentFileName>map_port_chalmers_agentgui.xml</environmentFileName>
     <svgFileName>map_port_chalmers_agentgui.svg</svgFileName>

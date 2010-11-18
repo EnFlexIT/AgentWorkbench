@@ -8,31 +8,9 @@ import jade.core.*;
 /**
 * Protege name: ClientRemoteContainerReply
 * @author ontology bean generator
-* @version 2010/11/4, 20:38:59
+* @version 2010/11/17, 22:51:09
 */
 public class ClientRemoteContainerReply implements AgentAction {
-
-   /**
-* Protege name: remoteAddress
-   */
-   private PlatformAddress remoteAddress;
-   public void setRemoteAddress(PlatformAddress value) { 
-    this.remoteAddress=value;
-   }
-   public PlatformAddress getRemoteAddress() {
-     return this.remoteAddress;
-   }
-
-   /**
-* Protege name: remoteContainerName
-   */
-   private String remoteContainerName;
-   public void setRemoteContainerName(String value) { 
-    this.remoteContainerName=value;
-   }
-   public String getRemoteContainerName() {
-     return this.remoteContainerName;
-   }
 
    /**
 * Protege name: remotePID
@@ -57,14 +35,25 @@ public class ClientRemoteContainerReply implements AgentAction {
    }
 
    /**
-* Protege name: remoteBenchmarkResult
+* Protege name: remoteContainerName
    */
-   private BenchmarkResult remoteBenchmarkResult;
-   public void setRemoteBenchmarkResult(BenchmarkResult value) { 
-    this.remoteBenchmarkResult=value;
+   private String remoteContainerName;
+   public void setRemoteContainerName(String value) { 
+    this.remoteContainerName=value;
    }
-   public BenchmarkResult getRemoteBenchmarkResult() {
-     return this.remoteBenchmarkResult;
+   public String getRemoteContainerName() {
+     return this.remoteContainerName;
+   }
+
+   /**
+* Protege name: remoteAddress
+   */
+   private PlatformAddress remoteAddress;
+   public void setRemoteAddress(PlatformAddress value) { 
+    this.remoteAddress=value;
+   }
+   public PlatformAddress getRemoteAddress() {
+     return this.remoteAddress;
    }
 
    /**
@@ -76,6 +65,17 @@ public class ClientRemoteContainerReply implements AgentAction {
    }
    public OSInfo getRemoteOS() {
      return this.remoteOS;
+   }
+
+   /**
+* Protege name: remoteBenchmarkResult
+   */
+   private BenchmarkResult remoteBenchmarkResult;
+   public void setRemoteBenchmarkResult(BenchmarkResult value) { 
+    this.remoteBenchmarkResult=value;
+   }
+   public BenchmarkResult getRemoteBenchmarkResult() {
+     return this.remoteBenchmarkResult;
    }
 
 }

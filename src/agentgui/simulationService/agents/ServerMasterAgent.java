@@ -14,17 +14,34 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.ParallelBehaviour;
 import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
+import jade.util.leap.ArrayList;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
-
-
-import com.mysql.jdbc.ResultSet;
+import java.util.Iterator;
 
 import agentgui.core.application.Application;
 import agentgui.core.database.DBConnection;
-import agentgui.simulationService.ontology.*;
+import agentgui.simulationService.ontology.AgentGUI_DistributionOntology;
+import agentgui.simulationService.ontology.BenchmarkResult;
+import agentgui.simulationService.ontology.ClientRegister;
+import agentgui.simulationService.ontology.ClientRemoteContainerReply;
+import agentgui.simulationService.ontology.ClientRemoteContainerRequest;
+import agentgui.simulationService.ontology.ClientTrigger;
+import agentgui.simulationService.ontology.ClientUnregister;
+import agentgui.simulationService.ontology.OSInfo;
+import agentgui.simulationService.ontology.PlatformAddress;
+import agentgui.simulationService.ontology.PlatformLoad;
+import agentgui.simulationService.ontology.PlatformPerformance;
+import agentgui.simulationService.ontology.PlatformTime;
+import agentgui.simulationService.ontology.RegisterReceipt;
+import agentgui.simulationService.ontology.RemoteContainerConfig;
+import agentgui.simulationService.ontology.SlaveRegister;
+import agentgui.simulationService.ontology.SlaveTrigger;
+import agentgui.simulationService.ontology.SlaveUnregister;
+
+import com.mysql.jdbc.ResultSet;
 
 
 public class ServerMasterAgent extends Agent {
@@ -386,6 +403,23 @@ public class ServerMasterAgent extends Agent {
 		RemoteContainerConfig remConf = crcr.getRemoteConfig();
 		String containerName = remConf.getJadeContainerName();
 		
+		// --- Build exclude part of the sql-statement ------------------------
+		String excludeIPsql = "";
+		ArrayList excludeIPs = (ArrayList) remConf.getHostExcludeIP();
+
+		@SuppressWarnings("unchecked")
+		Iterator<String> excludeIPsIterator = excludeIPs.iterator();
+		for (Iterator<String> it = excludeIPsIterator; it.hasNext();) {
+			String ip = it.next();
+			if (excludeIPsql.equals("")==false) {
+				excludeIPsql += ", ";
+			}
+			excludeIPsql += "'" + ip + "'"; 
+		}
+		if (excludeIPsql.equals("")==false) {
+			excludeIPsql = "AND ip NOT IN (" + excludeIPsql + ") ";
+		}
+		
 		// --------------------------------------------------------------------
 		// --- Select the machine with the highest potential of 		 ------
 		// --- Mflops (Millions of floating point operations per second) ------
@@ -396,6 +430,7 @@ public class ServerMasterAgent extends Agent {
 		sqlStmt+= "platforms.* ";
 		sqlStmt+= "FROM platforms ";
 		sqlStmt+= "WHERE is_server=-1 AND currently_available=-1 AND current_load_threshold_exceeded=0 ";
+		sqlStmt+= excludeIPsql;
 		sqlStmt+= "ORDER BY (benchmark_value-(benchmark_value*current_load_cpu/100)) DESC";
 		// --------------------------------------------------------------------
 		ResultSet res = dbConn.getSqlResult4ExecuteQuery(sqlStmt);

@@ -1,11 +1,13 @@
 package agentgui.simulationService.distribution;
 
+import jade.util.leap.ArrayList;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
 
-
 import agentgui.core.application.Application;
+import agentgui.core.jade.PlatformJadeConfig;
 import agentgui.simulationService.ontology.RemoteContainerConfig;
 
 public class JadeRemoteStart extends Thread {
@@ -29,6 +31,10 @@ public class JadeRemoteStart extends Thread {
 	private String jadeHost = "localhost";
 	private String jadePort = Application.RunInfo.getJadeLocalPort().toString();
 	private String jadeContainerName = "remote";
+	
+	private ArrayList jadeJarInclude = null;
+	private ArrayList jadeJarIncludeClassPath = new ArrayList();
+	private File extJarFolder = null; 
 	
 	private final String pathBaseDir = Application.RunInfo.PathBaseDir();
 	
@@ -65,9 +71,84 @@ public class JadeRemoteStart extends Thread {
 		if (reCoCo.getJadeContainerName()!=null) {
 			this.jadeContainerName = reCoCo.getJadeContainerName();	
 		}
-		
+		if (reCoCo.getJadeJarIncludeList()!=null) {
+			this.jadeJarInclude = (ArrayList) reCoCo.getJadeJarIncludeList();	
+			this.handelExternalJars();
+		}
 	}	
 	
+	/**
+	 * If the request of a remote container contains external jars, download
+	 * them and include them in the current CLASSPATH
+	 */
+	private void handelExternalJars() {
+		
+		String pathSep = Application.RunInfo.AppPathSeparatorString();
+		String destinPath = Application.RunInfo.PathDownloads(false);
+		String projectSubFolder = null;
+		String downloadProtocol = "";
+		
+		for (int i = 0; i < jadeJarInclude.size(); i++) {
+			
+			String httpJarFile = (String) jadeJarInclude.get(i);
+			if (projectSubFolder==null) {
+				// --- Find sub-folder -------------------------
+				projectSubFolder = httpJarFile.replace("http://", "");
+				int cut = projectSubFolder.indexOf("/")+1;
+				projectSubFolder = projectSubFolder.substring(cut, projectSubFolder.length());
+				cut = projectSubFolder.indexOf("/");
+				projectSubFolder = projectSubFolder.substring(0, cut);
+				projectSubFolder+= pathSep;
+				
+				// --- Correct the Path for the download -------
+				destinPath = destinPath + projectSubFolder;
+				
+				// --- Check if this Folder exists -------------
+				extJarFolder = new File(destinPath);
+				if (extJarFolder.exists()) {
+					deleteFolder(extJarFolder);
+					extJarFolder.delete();
+				}
+				extJarFolder.mkdir();
+			}
+			
+			// --- Define Destination-File ---------------------
+			File remoteFile = new File(httpJarFile);
+			String destinFile = destinPath + remoteFile.getAbsoluteFile().getName();
+			
+			// --- Start the download --------------------------
+			new Download(httpJarFile, destinFile);
+
+			// --- Reminder für den ClassPath setzen -----------
+			String ClassPathEntry = "./" + destinFile.replace(pathSep, "/") + ";";
+			jadeJarIncludeClassPath.add(ClassPathEntry);
+			
+			// --- Download-Protocoll --------------------------
+			if (downloadProtocol.equals("")==false) {
+				downloadProtocol += "|";
+			}
+			downloadProtocol += remoteFile.getAbsoluteFile().getName();
+			
+		} // --- end for
+		if (downloadProtocol.equals("")==false) {
+			downloadProtocol = "Download to '" + destinPath + "': " + downloadProtocol + "";
+			System.out.println(downloadProtocol);
+		}
+	}
+	 /**
+     * Deletes a folder and all subelements
+     * @param directory
+     */
+    private void deleteFolder(File directory) {
+    	
+    	for (File file : directory.listFiles()) {
+    		if (file.isDirectory()) {
+	    		deleteFolder(file);
+	    	}
+	    	file.delete();
+		}
+    }
+    
 	/**
 	 * Action for the Thread-Start. Starts a new JVM with a new Jade-Instance
 	 */
@@ -90,7 +171,6 @@ public class JadeRemoteStart extends Thread {
 		String jade = "";
 		String jadeArgs = "";
 		
-		
 		// --------------------------------------
 		// --- Java-Config ----------------------
 		java = "java";
@@ -98,27 +178,16 @@ public class JadeRemoteStart extends Thread {
 			javaVMArgs = "-Xms" + jvmMemAllocInitial + " -Xmx" + jvmMemAllocMaximum;
 		} 
 		
+		// --------------------------------------
 		// --- Class-Path configuration ---------
-		classPath += "-classpath ";
-		classPath += ".;";
-		// --- Jade  himself ----------
-		classPath += "./lib/jade/lib/jade.jar;";
-		// --- SimulationService ------
-		classPath += "./lib/jade/lib/simulation.jar;";
-		// --- Hyperic-Sigar ----------
-		classPath += "./lib/hyperic-sigar/sigar-bin/lib/sigar.jar;";
-		classPath += "./lib/hyperic-sigar/sigar-bin/lib/log4j.jar;";
-		classPath += "./lib/hyperic-sigar/sigar-bin/lib/junit.jar;";
-
-		// ++++++++++++++++++++++++++++
-		// +++ Check operating system +
+		classPath = getClassPath(jadeServices);
+		// +++ Check for operating system +++
 		if (os.toLowerCase().contains("windows")==true) {
 			// --- nothing to do here ---
 		} else if (os.toLowerCase().contains("linux")==true) {
 			classPath = classPath.replaceAll(";", ":");
 		}
 
-		
 		// --------------------------------------
 		// --- Jade-Config ----------------------
 		jade += "jade.Boot";
@@ -167,12 +236,84 @@ public class JadeRemoteStart extends Thread {
 			}
 			System.out.println("Killed Container [" + jadeContainerName + "]");
 		    
+			// --- Remove external jars from the download-folder ----
+			if (extJarFolder!=null ) {
+        		if (extJarFolder.exists()==true) {
+        			deleteFolder(extJarFolder);
+            		extJarFolder.delete();	
+        		}
+        	}
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 	}
 
+	/**
+	 * This method configures the CLASSPATH for the remote-container  
+	 * @param ServiceList
+	 * @return
+	 */
+	private String getClassPath(String ServiceList) {
+		
+		String classPath = "";
+		
+		// -----------------------------------------------------
+		// --- Basic - Configuration ---------------------------
+		classPath += "-classpath ";
+		classPath += ".;";
+		// --- Jade  himself ----------
+		classPath += "./lib/jade/lib/jade.jar;";
+		classPath += "./lib/jade/lib/XMLCodec.jar;"; 							// xml-codec
+		classPath += "./lib/jade/lib/commons-codec/commons-codec-1.3.jar;"; 	// commons-codec
+		// --- Hyperic-Sigar ----------
+		classPath += "./lib/hyperic-sigar/sigar-bin/lib/sigar.jar;";
+		classPath += "./lib/hyperic-sigar/sigar-bin/lib/log4j.jar;";
+		classPath += "./lib/hyperic-sigar/sigar-bin/lib/junit.jar;";
+
+		// -----------------------------------------------------
+		// --- Configuration in relation to the JADE-Services -- 
+		if (ServiceList.contains(PlatformJadeConfig.SERVICE_SimulationService)) {
+			classPath += "./lib/jade/lib/simulation.jar;";	
+		}
+		if (ServiceList.contains(PlatformJadeConfig.SERVICE_EnvironmentProviderService)) {
+			classPath += "./lib/jade/lib/visualization.jar;";
+			// --- Batik einbinden ------------------------
+			classPath += "./lib/batik/batik-rasterizer.jar;";
+			classPath += "./lib/batik/batik-slideshow.jar;";
+			classPath += "./lib/batik/batik-squiggle.jar;";
+			classPath += "./lib/batik/batik-svgpp.jar;";
+			classPath += "./lib/batik/batik-ttf2svg.jar;";
+			classPath += "./lib/batik/batik.jar;";
+			classPath += "./lib/batik/lib/xml-apis-ext.jar;";
+			classPath += "./lib/batik/lib/batik-swing.jar;";
+			classPath += "./lib/batik/lib/batik-util.jar;";
+			classPath += "./lib/batik/lib/batik-svg-dom.jar;";
+			classPath += "./lib/batik/lib/batik-transcoder.jar;";
+			classPath += "./lib/batik/lib/batik-bridge.jar;";
+			classPath += "./lib/batik/lib/batik-script.jar;";
+			classPath += "./lib/batik/lib/batik-css.jar;";
+			classPath += "./lib/batik/lib/batik-dom.jar;";
+			classPath += "./lib/batik/lib/batik-ext.jar;";
+			classPath += "./lib/batik/lib/xercesImpl-2.7.1.jar;";
+		}
+		if (ServiceList.contains(PlatformJadeConfig.SERVICE_InterPlatformMobilityService)) {
+			classPath += "./lib/jade/lib/migration.jar;";	
+		}
+		
+		// -----------------------------------------------------
+		// --- Configure external jar-files -------------------- 
+		if (jadeJarIncludeClassPath.size()>0) {
+			for (int i=0; jadeJarIncludeClassPath.size()>i; i++) {
+				String jar = (String) jadeJarIncludeClassPath.get(i);
+				classPath += jar;
+			}
+		}
+		System.out.println("Configured CLASSPATH-entry: " + classPath);
+		return classPath;
+	}
+	
 	/**
 	 * @return the jvmMemAllocUseDefaults
 	 */

@@ -8,19 +8,19 @@ import jade.core.*;
 /**
 * Protege name: ClientRegister
 * @author ontology bean generator
-* @version 2010/11/4, 20:38:59
+* @version 2010/11/17, 22:51:09
 */
 public class ClientRegister implements AgentAction {
 
    /**
-* Protege name: clientTime
+* Protege name: clientPerformance
    */
-   private PlatformTime clientTime;
-   public void setClientTime(PlatformTime value) { 
-    this.clientTime=value;
+   private PlatformPerformance clientPerformance;
+   public void setClientPerformance(PlatformPerformance value) { 
+    this.clientPerformance=value;
    }
-   public PlatformTime getClientTime() {
-     return this.clientTime;
+   public PlatformPerformance getClientPerformance() {
+     return this.clientPerformance;
    }
 
    /**
@@ -35,14 +35,14 @@ public class ClientRegister implements AgentAction {
    }
 
    /**
-* Protege name: clientPerformance
+* Protege name: clientTime
    */
-   private PlatformPerformance clientPerformance;
-   public void setClientPerformance(PlatformPerformance value) { 
-    this.clientPerformance=value;
+   private PlatformTime clientTime;
+   public void setClientTime(PlatformTime value) { 
+    this.clientTime=value;
    }
-   public PlatformPerformance getClientPerformance() {
-     return this.clientPerformance;
+   public PlatformTime getClientTime() {
+     return this.clientTime;
    }
 
    /**

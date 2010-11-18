@@ -8,9 +8,31 @@ import jade.core.*;
 /**
 * Protege name: RemoteContainerConfig
 * @author ontology bean generator
-* @version 2010/11/4, 20:38:59
+* @version 2010/11/17, 22:51:09
 */
 public class RemoteContainerConfig implements Concept {
+
+   /**
+* Protege name: jvmMemAllocInitial
+   */
+   private String jvmMemAllocInitial;
+   public void setJvmMemAllocInitial(String value) { 
+    this.jvmMemAllocInitial=value;
+   }
+   public String getJvmMemAllocInitial() {
+     return this.jvmMemAllocInitial;
+   }
+
+   /**
+* Protege name: jadeShowGUI
+   */
+   private boolean jadeShowGUI;
+   public void setJadeShowGUI(boolean value) { 
+    this.jadeShowGUI=value;
+   }
+   public boolean getJadeShowGUI() {
+     return this.jadeShowGUI;
+   }
 
    /**
 * Protege name: jadeServices
@@ -24,14 +46,67 @@ public class RemoteContainerConfig implements Concept {
    }
 
    /**
-* Protege name: jadeShowGUI
+* Protege name: jadeJarIncludeList
    */
-   private boolean jadeShowGUI;
-   public void setJadeShowGUI(boolean value) { 
-    this.jadeShowGUI=value;
+   private List jadeJarIncludeList = new ArrayList();
+   public void addJadeJarIncludeList(String elem) { 
+     List oldList = this.jadeJarIncludeList;
+     jadeJarIncludeList.add(elem);
    }
-   public boolean getJadeShowGUI() {
-     return this.jadeShowGUI;
+   public boolean removeJadeJarIncludeList(String elem) {
+     List oldList = this.jadeJarIncludeList;
+     boolean result = jadeJarIncludeList.remove(elem);
+     return result;
+   }
+   public void clearAllJadeJarIncludeList() {
+     List oldList = this.jadeJarIncludeList;
+     jadeJarIncludeList.clear();
+   }
+   public Iterator getAllJadeJarIncludeList() {return jadeJarIncludeList.iterator(); }
+   public List getJadeJarIncludeList() {return jadeJarIncludeList; }
+   public void setJadeJarIncludeList(List l) {jadeJarIncludeList = l; }
+
+   /**
+* Protege name: hostExcludeIP
+   */
+   private List hostExcludeIP = new ArrayList();
+   public void addHostExcludeIP(String elem) { 
+     List oldList = this.hostExcludeIP;
+     hostExcludeIP.add(elem);
+   }
+   public boolean removeHostExcludeIP(String elem) {
+     List oldList = this.hostExcludeIP;
+     boolean result = hostExcludeIP.remove(elem);
+     return result;
+   }
+   public void clearAllHostExcludeIP() {
+     List oldList = this.hostExcludeIP;
+     hostExcludeIP.clear();
+   }
+   public Iterator getAllHostExcludeIP() {return hostExcludeIP.iterator(); }
+   public List getHostExcludeIP() {return hostExcludeIP; }
+   public void setHostExcludeIP(List l) {hostExcludeIP = l; }
+
+   /**
+* Protege name: jadeIsRemoteContainer
+   */
+   private boolean jadeIsRemoteContainer;
+   public void setJadeIsRemoteContainer(boolean value) { 
+    this.jadeIsRemoteContainer=value;
+   }
+   public boolean getJadeIsRemoteContainer() {
+     return this.jadeIsRemoteContainer;
+   }
+
+   /**
+* Protege name: jadeContainerName
+   */
+   private String jadeContainerName;
+   public void setJadeContainerName(String value) { 
+    this.jadeContainerName=value;
+   }
+   public String getJadeContainerName() {
+     return this.jadeContainerName;
    }
 
    /**
@@ -57,28 +132,6 @@ public class RemoteContainerConfig implements Concept {
    }
 
    /**
-* Protege name: jadeIsRemoteContainer
-   */
-   private boolean jadeIsRemoteContainer;
-   public void setJadeIsRemoteContainer(boolean value) { 
-    this.jadeIsRemoteContainer=value;
-   }
-   public boolean getJadeIsRemoteContainer() {
-     return this.jadeIsRemoteContainer;
-   }
-
-   /**
-* Protege name: jadeContainerName
-   */
-   private String jadeContainerName;
-   public void setJadeContainerName(String value) { 
-    this.jadeContainerName=value;
-   }
-   public String getJadeContainerName() {
-     return this.jadeContainerName;
-   }
-
-   /**
 * Protege name: jadeHost
    */
    private String jadeHost;
@@ -87,17 +140,6 @@ public class RemoteContainerConfig implements Concept {
    }
    public String getJadeHost() {
      return this.jadeHost;
-   }
-
-   /**
-* Protege name: jvmMemAllocInitial
-   */
-   private String jvmMemAllocInitial;
-   public void setJvmMemAllocInitial(String value) { 
-    this.jvmMemAllocInitial=value;
-   }
-   public String getJvmMemAllocInitial() {
-     return this.jvmMemAllocInitial;
    }
 
 }

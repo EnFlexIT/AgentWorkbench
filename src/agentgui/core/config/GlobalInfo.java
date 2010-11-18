@@ -39,8 +39,9 @@ public class GlobalInfo {
 	private static String localPathJade		= "lib" + localAppPathSeparatorString + "jade" +  localAppPathSeparatorString + "lib";
 	private static String localPathBatik	= "lib" + localAppPathSeparatorString + "batik";	
 	private static String localPathProperty = "properties" + localAppPathSeparatorString;
-	private static String localPathProjects =  "projects" + localAppPathSeparatorString;
-	private static String localPathDownloads =  "download" + localAppPathSeparatorString;
+	private static String localPathProjects = "projects" + localAppPathSeparatorString;
+	private static String localPathServer   = "server" + localAppPathSeparatorString;
+	private static String localPathDownloads= "download" + localAppPathSeparatorString;
 	
 	private static String localPathProjectsIDE =  localPathProjects;
 	private static String[] localProjects = null;
@@ -330,6 +331,28 @@ public class GlobalInfo {
 	 */
 	public String PathImageIntern( ){
 		return localPathImageIntern;
+	}
+	
+
+	/**
+	 * Das Server-Root Verzeichnis 
+	 * @return
+	 */
+	public String PathServer(boolean absolute) {
+		
+		String returnPath = null;
+		if (absolute==true) { 
+			returnPath = FilePath2Absolute(localPathServer);
+		}
+		else {
+			returnPath = localPathServer;	
+		}
+		
+		File dir = new File(returnPath);
+		if (dir.exists()==false) {
+			dir.mkdir();
+		}
+		return returnPath;
 	}
 	
 	/**
