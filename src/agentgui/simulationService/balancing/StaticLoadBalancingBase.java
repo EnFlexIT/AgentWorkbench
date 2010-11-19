@@ -20,6 +20,7 @@ import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
+import agentgui.core.jade.Platform;
 import agentgui.core.sim.setup.DistributionSetup;
 import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.physical2Denvironment.ontology.ActiveObject;
@@ -312,6 +313,13 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 	}
 	
 	/**
+	 * This method will start the Load-Monitor-Agent 
+	 */
+	protected void openLoadMonitor() {
+		 Application.JadePlatform.jadeUtilityAgentStart( Platform.UTIL_CMD_OpenLoadMonitor);
+	}
+	
+	/**
 	 * Checks if an agent can be found locally
 	 * @param cc
 	 * @param nickName
@@ -346,7 +354,7 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 	 * This method will start the number of agents 
 	 * @param numberOfContainer
 	 */
-	protected Hashtable<String, Location> startRemoteContainer(int numberOfContainer, boolean filterMainContainer) {
+	protected Hashtable<String, Location> startRemoteContainer(int numberOfContainer, boolean preventUsageOfAlreadyUsedComputers, boolean filterMainContainer) {
 		
 		Hashtable<String, Location> newContainerLocations = null;
 		
@@ -362,7 +370,7 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 		Vector<String> containerList = new Vector<String>();
 		while (containerList.size()< numberOfContainer) {
 		
-			String newContainer = this.startRemoteContainer();
+			String newContainer = this.startRemoteContainer(preventUsageOfAlreadyUsedComputers);
 			if (newContainer!=null) {
 				containerList.add(newContainer);	
 			} else {
@@ -398,14 +406,14 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 	 * This Method can be invoked, if a new remote container is required. The Method 
 	 * returns, if informations about the new container are available.
 	 */
-	protected String startRemoteContainer() {
+	protected String startRemoteContainer(boolean preventUsageOfAlreadyUsedComputers) {
 		
 		boolean newContainerStarted = false;
 		String newContainerName = null;
 		try {
 			// --- Start a new remote container -----------------
 			SimulationServiceHelper simHelper = (SimulationServiceHelper) myAgent.getHelper(SimulationService.NAME);
-			newContainerName = simHelper.startNewRemoteContainer();
+			newContainerName = simHelper.startNewRemoteContainer(preventUsageOfAlreadyUsedComputers);
 			while (true) {
 				Container2Wait4 waitCont = simHelper.startNewRemoteContainerStaus(newContainerName);	
 				if (waitCont.isStarted()) {

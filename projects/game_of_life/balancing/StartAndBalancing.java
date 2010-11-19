@@ -45,11 +45,15 @@ public class StartAndBalancing extends StaticLoadBalancingBase {
 		}
 		
 		// -----------------------------------------------------
+		// --- Display the system load -------------------------
+		this.openLoadMonitor();
+		
+		// -----------------------------------------------------
 		// --- start the needed remote-container ---------------
 		Vector<String> locationNames = null;
 		int cont4DisMax = 0;
 		int cont4DisI = 0;
-		Hashtable<String, Location> newContainerLocations = this.startRemoteContainer(currNumberOfContainer - 1, true);
+		Hashtable<String, Location> newContainerLocations = this.startRemoteContainer(currNumberOfContainer - 1, false, true);
 		if (newContainerLocations!=null) {
 			locationNames = new Vector<String>(newContainerLocations.keySet());
 			cont4DisMax = newContainerLocations.size();
@@ -114,6 +118,11 @@ public class StartAndBalancing extends StaticLoadBalancingBase {
 		// -----------------------------------------------------
 		// --- Start the GUI and the simulation-manager --------
 		// -----------------------------------------------------		
+		Object [] arg = new Object[3];
+		arg[0] = nbRow;
+		arg[1] = nbCol;
+		arg[2] = environmentModel;
+		this.startAgent("sim.manager", game_of_life.agents.SimulationManagerAgent.class.getName(), arg);
 		
 	}
 	

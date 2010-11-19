@@ -46,6 +46,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+import java.util.logging.Level;
 
 import agentgui.core.application.Application;
 import agentgui.simulationService.environment.EnvironmentModel;
@@ -114,6 +115,8 @@ public class SimulationService extends BaseService {
 	private ServiceActuator localServiceActuator = new ServiceActuator();
 	// --- How should an Agent be notified about Environment-Changes? ---------
 	private boolean stepSimulationAsynchronous = true;
+	// --- Default value for starting remote-container ------------------------
+	private boolean DEFAULT_preventUsageOfAlreadyUsedComputers = true;
 	// --- The next EnvironmentObject-Instance in parts (answers of agents) ---
 	private Hashtable<AID, Object> environmentInstanceNextParts = new Hashtable<AID, Object>();
 	private Hashtable<AID, Object> environmentInstanceNextPartsLocal = new Hashtable<AID, Object>();
@@ -145,7 +148,11 @@ public class SimulationService extends BaseService {
 			}
 		}
 		// --- Start the Load-Measurements on this Node ---
-		new LoadMeasureThread().start();   
+		new LoadMeasureThread().start();  
+		
+		// --- Reduce the logging level for Messaging -----
+		Logger.getMyLogger("jade.core.messaging.Messaging").setLevel(Level.WARNING);
+		
 	}
 	public void boot(Profile p) throws ServiceException {
 		super.boot(p);
@@ -209,22 +216,33 @@ public class SimulationService extends BaseService {
 			return new Date(this.getSynchTimeMillis());
 		}
 
-		@Override
 		public boolean startAgent(String nickName, String agentClassName, Object[] args, String containerName) throws ServiceException {
 			return broadcastStartAgent(nickName, agentClassName, args, containerName);
+		}
+		public void stopSimulationAgents() throws ServiceException {
+			Service.Slice[] slices = getAllSlices();
+			broadcastStopSimulationAgents(slices);
 		}
 		
 		// ----------------------------------------------------------
 		// --- Methods to start a new remote-container -------------- 
 		public RemoteContainerConfig getDefaultRemoteContainerConfig() throws ServiceException {
-			return broadcastGetDefaultRemoteContainerConfig();
+			return this.getDefaultRemoteContainerConfig(DEFAULT_preventUsageOfAlreadyUsedComputers);
 		}
+		public RemoteContainerConfig getDefaultRemoteContainerConfig(boolean preventUsageOfAlreadyUsedComputers) throws ServiceException {
+			return broadcastGetDefaultRemoteContainerConfig(preventUsageOfAlreadyUsedComputers);
+		}
+		
 		public String startNewRemoteContainer() throws ServiceException {
-			return this.startNewRemoteContainer(null);
+			return this.startNewRemoteContainer(null, DEFAULT_preventUsageOfAlreadyUsedComputers);
 		}
-		public String startNewRemoteContainer(RemoteContainerConfig remoteConfig) throws ServiceException {
-			return broadcastStartNewRemoteContainer(remoteConfig);
+		public String startNewRemoteContainer(boolean preventUsageOfAlreadyUsedComputers) throws ServiceException {
+			return this.startNewRemoteContainer(null, preventUsageOfAlreadyUsedComputers);
 		}
+		public String startNewRemoteContainer(RemoteContainerConfig remoteConfig, boolean preventUsageOfAlreadyUsedComputers) throws ServiceException {
+			return broadcastStartNewRemoteContainer(remoteConfig, preventUsageOfAlreadyUsedComputers);
+		}
+		
 		public Container2Wait4 startNewRemoteContainerStaus(String containerName) throws ServiceException {
 			return broadcastGetNewContainer2Wait4Status(containerName);
 		}
@@ -597,13 +615,35 @@ public class SimulationService extends BaseService {
 		return false;
 	}
 	
+	private void broadcastStopSimulationAgents(Service.Slice[] slices) throws ServiceException {
+		
+		if (myLogger.isLoggable(Logger.CONFIG)) {
+			myLogger.log(Logger.CONFIG, "Try to stop simulation-agents!");
+		}
+		for (int i = 0; i < slices.length; i++) {
+			String sliceName = null;
+			try {
+				SimulationServiceSlice slice = (SimulationServiceSlice) slices[i];
+				sliceName = slice.getNode().getName();
+				if (myLogger.isLoggable(Logger.FINER)) {
+					myLogger.log(Logger.FINER, "Try to stop simulation-agents on " + sliceName );
+				}
+				slice.stopSimulationAgents();
+			}
+			catch(Throwable t) {
+				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
+				myLogger.log(Logger.WARNING, "Error while try to get Location-Object from " + sliceName, t);
+			}
+		}	
+	}
+	
 	/**
 	 * This Methods returns the default Remote-Container-Configuration, coming from the Main-Container
 	 * @param slices
 	 * @return
 	 * @throws ServiceException
 	 */
-	private RemoteContainerConfig broadcastGetDefaultRemoteContainerConfig() throws ServiceException {
+	private RemoteContainerConfig broadcastGetDefaultRemoteContainerConfig(boolean preventUsageOfAlreadyUsedComputers) throws ServiceException {
 		
 		if (myLogger.isLoggable(Logger.CONFIG)) {
 			myLogger.log(Logger.CONFIG, "Start request for the default remote container configuration!");
@@ -615,7 +655,7 @@ public class SimulationService extends BaseService {
 			if (myLogger.isLoggable(Logger.FINER)) {
 				myLogger.log(Logger.FINER, "Start request for the default remote container configuration at container (" + sliceName + ")");
 			}
-			return slice.getDefaultRemoteContainerConfig();
+			return slice.getDefaultRemoteContainerConfig(preventUsageOfAlreadyUsedComputers);
 		}
 		catch(Throwable t) {
 			// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
@@ -628,7 +668,7 @@ public class SimulationService extends BaseService {
 	 * @param slices
 	 * @throws ServiceException
 	 */
-	private String broadcastStartNewRemoteContainer(RemoteContainerConfig remoteConfig) throws ServiceException {
+	private String broadcastStartNewRemoteContainer(RemoteContainerConfig remoteConfig, boolean preventUsageOfAlreadyUsedComputers) throws ServiceException {
 		
 		if (myLogger.isLoggable(Logger.CONFIG)) {
 			myLogger.log(Logger.CONFIG, "Start a new remote container!");
@@ -640,7 +680,7 @@ public class SimulationService extends BaseService {
 			if (myLogger.isLoggable(Logger.FINER)) {
 				myLogger.log(Logger.FINER, "Try to start a new remote container (" + sliceName + ")");
 			}
-			return slice.startNewRemoteContainer(remoteConfig);
+			return slice.startNewRemoteContainer(remoteConfig, preventUsageOfAlreadyUsedComputers);
 		}
 		catch(Throwable t) {
 			// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
@@ -659,20 +699,19 @@ public class SimulationService extends BaseService {
 		if (myLogger.isLoggable(Logger.CONFIG)) {
 			myLogger.log(Logger.CONFIG, "Start a new remote container!");
 		}
-			String sliceName = null;
-			try {
-				SimulationServiceSlice slice = (SimulationServiceSlice) getSlice(MAIN_SLICE);
-				sliceName = slice.getNode().getName();
-				if (myLogger.isLoggable(Logger.FINER)) {
-					myLogger.log(Logger.FINER, "Try to start a new remote container (" + sliceName + ")");
-				}
-				return slice.getNewContainer2Wait4Status(containerName2Wait4);
+		String sliceName = null;
+		try {
+			SimulationServiceSlice slice = (SimulationServiceSlice) getSlice(MAIN_SLICE);
+			sliceName = slice.getNode().getName();
+			if (myLogger.isLoggable(Logger.FINER)) {
+				myLogger.log(Logger.FINER, "Try to start a new remote container (" + sliceName + ")");
 			}
-			catch(Throwable t) {
-				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
-				myLogger.log(Logger.WARNING, "Error while starting a new remote-container from " + sliceName, t);
-			}
-	
+			return slice.getNewContainer2Wait4Status(containerName2Wait4);
+		}
+		catch(Throwable t) {
+			// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
+			myLogger.log(Logger.WARNING, "Error while starting a new remote-container from " + sliceName, t);
+		}
 		return null;
 	}
 	
@@ -961,18 +1000,26 @@ public class SimulationService extends BaseService {
 					Object[] args = (Object[]) params[2];
 					cmd.setReturnValue( startAgent(nickName, agentClassName, args) );
 				}
+				else if (cmdName.equals(SimulationServiceSlice.SERVICE_STOP_SIMULATION_AGENTS)) {
+					if (myLogger.isLoggable(Logger.FINE)) {
+						myLogger.log(Logger.FINE, "Stoping simulation agents in this container");
+					}
+					stopSimulationAgents();
+				}
 				else if (cmdName.equals(SimulationServiceSlice.SERVICE_START_NEW_REMOTE_CONTAINER)) {
 					if (myLogger.isLoggable(Logger.FINE)) {
 						myLogger.log(Logger.FINE, "Starting a new remote-container for this platform");
 					}
 					RemoteContainerConfig remoteConfig = (RemoteContainerConfig) params[0];
-					cmd.setReturnValue(startRemoteContainer(remoteConfig));
+					boolean preventUsageOfAlreadyUsedComputers = (Boolean) params[1];
+					cmd.setReturnValue(startRemoteContainer(remoteConfig, preventUsageOfAlreadyUsedComputers));
 				}
 				else if (cmdName.equals(SimulationServiceSlice.SERVICE_GET_DEFAULT_REMOTE_CONTAINER_CONFIG)) {
 					if (myLogger.isLoggable(Logger.FINE)) {
 						myLogger.log(Logger.FINE, "Answering to request for 'get_default_remote_container_config'");
 					}
-					cmd.setReturnValue(getDefaultRemoteContainerConfig());
+					boolean preventUsageOfAlreadyUsedComputers = (Boolean) params[0];
+					cmd.setReturnValue(getDefaultRemoteContainerConfig(preventUsageOfAlreadyUsedComputers));
 				}
 				else if (cmdName.equals(SimulationServiceSlice.SERVICE_GET_NEW_CONTAINER_2_WAIT_4_STATUS)) {
 					String container2Wait4 = (String) params[0];
@@ -1107,11 +1154,14 @@ public class SimulationService extends BaseService {
 			}
 			return true;
 		}
-		private String startRemoteContainer(RemoteContainerConfig remoteConfig) {
-			return sendMsgRemoteContainerRequest(remoteConfig);
+		private void stopSimulationAgents() {
+			localServiceActuator.notifySensorAgentsDoDelete();
 		}
-		private RemoteContainerConfig getDefaultRemoteContainerConfig() {
-			return getRemoteContainerConfigDefault();
+		private String startRemoteContainer(RemoteContainerConfig remoteConfig, boolean preventUsageOfAlreadyUsedComputers) {
+			return sendMsgRemoteContainerRequest(remoteConfig, preventUsageOfAlreadyUsedComputers);
+		}
+		private RemoteContainerConfig getDefaultRemoteContainerConfig(boolean preventUsageOfAlreadyUsedComputers) {
+			return getRemoteContainerConfigDefault(preventUsageOfAlreadyUsedComputers);
 		}
 		private Container2Wait4 getNewContainer2Wait4Status(String container2Wait4) {
 			return loadInfo.getNewContainer2Wait4Status(container2Wait4);
@@ -1369,7 +1419,7 @@ public class SimulationService extends BaseService {
 	 * This method returns a default configuration for a new remote container
 	 * @return
 	 */
-	private RemoteContainerConfig getRemoteContainerConfigDefault() {
+	private RemoteContainerConfig getRemoteContainerConfigDefault(boolean preventUsageOfAlreadyUsedComputers) {
 		
 		// --- Variable for the new container name ------------------
 		String newContainerPrefix = "remote";
@@ -1451,7 +1501,9 @@ public class SimulationService extends BaseService {
 		remConf.setJadeContainerName(newContainerName);
 		remConf.setJadeShowGUI(true);
 		remConf.setJadeJarIncludeList(extJars);
-		//TODO remConf.setHostExcludeIP(hostExcludeIP);		
+		if (preventUsageOfAlreadyUsedComputers) {
+			remConf.setHostExcludeIP(hostExcludeIP);	
+		}			
 		return remConf;
 	}
 	
@@ -1459,14 +1511,14 @@ public class SimulationService extends BaseService {
 	 * This method configures and send a ACLMessage to start a new remote-Container
 	 * @param remConf, a RemoteContainerConfig-Object
 	 */
-	private String sendMsgRemoteContainerRequest(RemoteContainerConfig remConf) {
+	private String sendMsgRemoteContainerRequest(RemoteContainerConfig remConf, boolean preventUsageOfAlreadyUsedComputers) {
 		
 		// --- Get the local Address of JADE ------------------------
 		String myPlatformAddress = myContainer.getPlatformID();
 		
 		// --- If the remote-configuration is null configure it now -
 		if (remConf==null) {
-			remConf = this.getRemoteContainerConfigDefault();
+			remConf = this.getRemoteContainerConfigDefault(preventUsageOfAlreadyUsedComputers);
 		}
 		
 		// --- Define the AgentAction -------------------------------

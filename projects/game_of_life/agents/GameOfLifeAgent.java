@@ -1,11 +1,8 @@
 package game_of_life.agents;
 
 import jade.core.ServiceException;
-import jade.core.behaviours.CyclicBehaviour;
-import jade.lang.acl.ACLMessage;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Vector;
 
 import agentgui.simulationService.SimulationService;
@@ -21,9 +18,7 @@ public class GameOfLifeAgent extends SimulationAgent {
 	private static final long serialVersionUID = 1L;
 	
 	private Object[] startArgs;
-	
 	private Vector<String> myNeighbours = new Vector<String>();
-	
 	private Integer myCurrentState;
 	private Integer myNextState;
 	
@@ -36,7 +31,6 @@ public class GameOfLifeAgent extends SimulationAgent {
 		if (startArgs!=null && startArgs.length>0) {
 			myNeighbours = (Vector<String>) startArgs[0];	
 		}
-		
 	} 
 	
 	@SuppressWarnings("unchecked")
@@ -66,10 +60,8 @@ public class GameOfLifeAgent extends SimulationAgent {
 		int stateOfNeibours = 0;
 
 		// --- Look for state of the neighbours -----------------------------
-		Iterator<String> it = myNeighbours.iterator();
-		while (it.hasNext()) {
-			String neighbour = it.next();
-			stateOfNeibours += localEnvModel.get(neighbour);
+		for (int i = 0; i < myNeighbours.size(); i++) {
+			stateOfNeibours += localEnvModel.get(myNeighbours.get(i));
 		}
 		
 		// -------- Refresh state of agent ---------------------------
@@ -88,39 +80,6 @@ public class GameOfLifeAgent extends SimulationAgent {
 			}
 		}
 		return myNextState;
-	}
-
-	
-	
-	class ReceiveSimulationCalls extends CyclicBehaviour {
-
-		private static final long serialVersionUID = 5473235698882127521L;
-
-		@Override
-		public void action() {
-		
-			ACLMessage msg = myAgent.receive();			
-			if (msg!=null) {
-				
-				// --- Simulationsimpuls erhalten --------------
-				try {
-					// --- get Environment-Object-Instance ------------
-					SimulationServiceHelper simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
-					Object simInst = simHelper.getEnvironmentModel();
-					System.out.println( "=> " + simInst.toString() );
-
-				
-				} catch (ServiceException e) {
-					e.printStackTrace();
-				}
-				
-				
-			} else {
-				block();
-			}
-			
-		}
-		
 	}
 
 } 

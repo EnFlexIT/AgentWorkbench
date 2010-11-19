@@ -21,20 +21,6 @@ public class ServiceActuator {
 	
 	
 	/**
-	 * returns all agents registered to this actuator by a sensor 
-	 * @return
-	 */
-	public AID[] getSensorAgents() {
-		AID[] sensorAgents = new AID[serviceSensors.size()];
-		Object[] arrLocal = serviceSensors.toArray();
-		for (int i = arrLocal.length-1; i>=0; i--) {
-			AID aid = ((ServiceSensor)arrLocal[i]).myAgent.getAID();
-			sensorAgents[i] = aid;
-		}
-		return sensorAgents;
-	}
-	
-	/**
 	 * Opportunity for the agents to plugIn to this service
 	 * @param currSensor
 	 */
@@ -50,6 +36,19 @@ public class ServiceActuator {
 	}
 	
 	/**
+	 * returns all agents registered to this actuator by a sensor 
+	 * @return
+	 */
+	public AID[] getSensorAgents() {
+		AID[] sensorAgents = new AID[serviceSensors.size()];
+		Object[] arrLocal = serviceSensors.toArray();
+		for (int i = arrLocal.length-1; i>=0; i--) {
+			AID aid = ((ServiceSensor)arrLocal[i]).myAgent.getAID();
+			sensorAgents[i] = aid;
+		}
+		return sensorAgents;
+	}
+	/**
 	 * This method informs all Sensors about the new environment model.
 	 * It can be either used to do this asynchron or synchron, but it. 
 	 * is highly recommended to do this asynchron, so that the agencie 
@@ -57,18 +56,44 @@ public class ServiceActuator {
 	 * @param currEnvironmentModel
 	 * @param aSynchron
 	 */
-	public void notifySensors(EnvironmentModel currEnvironmentModel, boolean aSynchron) {
-		Object[] arrLocal = serviceSensors.toArray();
-		this.noOfSimulationAnswersExpected = arrLocal.length;
-		for (int i = this.noOfSimulationAnswersExpected-1; i>=0; i--) {
-			((ServiceSensor)arrLocal[i]).putEnvironmentModel(currEnvironmentModel, aSynchron);
-		}
+	public void notifySensors(final EnvironmentModel currEnvironmentModel, final boolean aSynchron) {
+		
+		Runnable notifier = new Runnable() {
+			@Override
+			public void run() {
+				Object[] arrLocal = serviceSensors.toArray();
+				noOfSimulationAnswersExpected = arrLocal.length;
+				for (int i = noOfSimulationAnswersExpected-1; i>=0; i--) {
+					((ServiceSensor)arrLocal[i]).putEnvironmentModel(currEnvironmentModel, aSynchron);
+				}
+			}
+		};
+		notifier.run();		
 	}
+
+	/**
+	 * This method will kill all registered Simulations-Agents
+	 * to provide a (hopefully) faster shut-down of the system
+	 */
+	public void notifySensorAgentsDoDelete() {
+		
+		Runnable notifier = new Runnable() {
+			@Override
+			public void run() {
+				Object[] arrLocal = serviceSensors.toArray();
+				noOfSimulationAnswersExpected = arrLocal.length;
+				for (int i = noOfSimulationAnswersExpected-1; i>=0; i--) {
+					((ServiceSensor)arrLocal[i]).doDelete();
+				}
+			}
+		};
+		notifier.run();		
+	}
+	
 	/**
 	 * @param noOfSimulationAnswersExpected the noOfSimulationAnswersExpected to set
 	 */
-	public void setNoOfSimulationAnswersExpected(
-			int noOfSimulationAnswersExpected) {
+	public void setNoOfSimulationAnswersExpected(int noOfSimulationAnswersExpected) {
 		this.noOfSimulationAnswersExpected = noOfSimulationAnswersExpected;
 	}
 	/**

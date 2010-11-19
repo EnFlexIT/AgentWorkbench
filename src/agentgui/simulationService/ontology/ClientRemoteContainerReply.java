@@ -8,30 +8,19 @@ import jade.core.*;
 /**
 * Protege name: ClientRemoteContainerReply
 * @author ontology bean generator
-* @version 2010/11/17, 22:51:09
+* @version 2010/11/19, 15:30:25
 */
 public class ClientRemoteContainerReply implements AgentAction {
 
    /**
-* Protege name: remotePID
+* Protege name: remoteAddress
    */
-   private String remotePID;
-   public void setRemotePID(String value) { 
-    this.remotePID=value;
+   private PlatformAddress remoteAddress;
+   public void setRemoteAddress(PlatformAddress value) { 
+    this.remoteAddress=value;
    }
-   public String getRemotePID() {
-     return this.remotePID;
-   }
-
-   /**
-* Protege name: remotePerformance
-   */
-   private PlatformPerformance remotePerformance;
-   public void setRemotePerformance(PlatformPerformance value) { 
-    this.remotePerformance=value;
-   }
-   public PlatformPerformance getRemotePerformance() {
-     return this.remotePerformance;
+   public PlatformAddress getRemoteAddress() {
+     return this.remoteAddress;
    }
 
    /**
@@ -46,14 +35,14 @@ public class ClientRemoteContainerReply implements AgentAction {
    }
 
    /**
-* Protege name: remoteAddress
+* Protege name: remoteBenchmarkResult
    */
-   private PlatformAddress remoteAddress;
-   public void setRemoteAddress(PlatformAddress value) { 
-    this.remoteAddress=value;
+   private BenchmarkResult remoteBenchmarkResult;
+   public void setRemoteBenchmarkResult(BenchmarkResult value) { 
+    this.remoteBenchmarkResult=value;
    }
-   public PlatformAddress getRemoteAddress() {
-     return this.remoteAddress;
+   public BenchmarkResult getRemoteBenchmarkResult() {
+     return this.remoteBenchmarkResult;
    }
 
    /**
@@ -68,14 +57,25 @@ public class ClientRemoteContainerReply implements AgentAction {
    }
 
    /**
-* Protege name: remoteBenchmarkResult
+* Protege name: remotePerformance
    */
-   private BenchmarkResult remoteBenchmarkResult;
-   public void setRemoteBenchmarkResult(BenchmarkResult value) { 
-    this.remoteBenchmarkResult=value;
+   private PlatformPerformance remotePerformance;
+   public void setRemotePerformance(PlatformPerformance value) { 
+    this.remotePerformance=value;
    }
-   public BenchmarkResult getRemoteBenchmarkResult() {
-     return this.remoteBenchmarkResult;
+   public PlatformPerformance getRemotePerformance() {
+     return this.remotePerformance;
+   }
+
+   /**
+* Protege name: remotePID
+   */
+   private String remotePID;
+   public void setRemotePID(String value) { 
+    this.remotePID=value;
+   }
+   public String getRemotePID() {
+     return this.remotePID;
    }
 
 }

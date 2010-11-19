@@ -145,5 +145,4 @@ public class SimulationAgent extends Agent {
 	}
 	
 	
-	
 }

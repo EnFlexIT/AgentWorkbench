@@ -8,7 +8,6 @@ import jade.core.behaviours.CyclicBehaviour;
 
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.Iterator;
 
 import javax.swing.JDesktopPane;
 
@@ -42,7 +41,8 @@ public class SimulationManagerAgent extends Agent {
 		agentArgs = this.getArguments();
 		cRow = (Integer) agentArgs[0];
 		cCol = (Integer) agentArgs[1];
-
+		localEnvModel =  (HashMap<String, Integer>) agentArgs[2];
+		
 		// ---------- start and show GUI ------------------------------------------------
 		gui = new GameOfLifeGUI(cRow, cCol, this);
 		gui.bClear.setEnabled(false);
@@ -56,7 +56,6 @@ public class SimulationManagerAgent extends Agent {
 		desptop.getDesktopManager().maximizeFrame(gui);
 				
 		// --------- Setup the Simulation with the Simulation-Service -------------------
-		localEnvModel.putAll(gui.localEnvModelOutput);
 		globalEnvModel.setEnvironmentInstance(localEnvModel);
 		
 		try {
@@ -65,12 +64,7 @@ public class SimulationManagerAgent extends Agent {
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
-		// --- Start all Agents which are in involved in this Experiment ----------------
-		SimulationManagerAgentStartBehaviour startBehav = new SimulationManagerAgentStartBehaviour(localEnvModel);
-		this.addBehaviour(startBehav);
-		startBehav.action();
-		this.removeBehaviour(startBehav);
-		
+				
 		// --- Start cyclic behaviour for this Manager Agent ---------------------------- 
 		this.addBehaviour(new ReceiveAndStepBehaviour(this));
 		gui.bClear.setEnabled(true);
@@ -103,11 +97,12 @@ public class SimulationManagerAgent extends Agent {
 			
 			// --- Ggf. den Outgoing-Speicher der GUI lesen -----------------------------
 			if (gui.localEnvModelOutput.size()!=0) {
-				Iterator<String> it = gui.localEnvModelOutput.keySet().iterator();
-				while (it.hasNext()) {
-					String key = it.next();
+				String[] fieldArray = new String[gui.localEnvModelOutput.size()];
+				fieldArray = gui.localEnvModelOutput.keySet().toArray(fieldArray);
+				for (int i = 0; i < fieldArray.length; i++) {
+					String key = fieldArray[i];
 					Integer value = gui.localEnvModelOutput.get(key);
-					localEnvModel.put(key, value);
+					localEnvModel.put(key, value);					
 				}
 				gui.localEnvModelOutput.clear();
 			}
@@ -116,7 +111,7 @@ public class SimulationManagerAgent extends Agent {
 			try {
 				timeStepStart = System.nanoTime();	
 				simHelper.resetEnvironmentInstanceNextParts();
-				simHelper.stepSimulation(globalEnvModel);
+				simHelper.stepSimulation(globalEnvModel,true);
 
 				// --- Now wait for all answers -----------------------------------
 				while (simHelper.getEnvironmentInstanceNextParts().size() != localEnvModel.size() ) {
@@ -130,13 +125,13 @@ public class SimulationManagerAgent extends Agent {
 				// --- Neues Umgebungsmodell definieren ---------------------------
 				localEnvModelNew = new HashMap<String, Integer>();
 				agentAnswers = simHelper.getEnvironmentInstanceNextParts();
-				Iterator<AID> it = agentAnswers.keySet().iterator();
-				while (it.hasNext()) {
-					AID agent = it.next();
-					Integer value = (Integer) agentAnswers.get(agent);  
-					localEnvModelNew.put(agent.getLocalName(), value);	
-				}
 				
+				AID[] agentArray = new AID[agentAnswers.size()];
+				agentArray = agentAnswers.keySet().toArray(agentArray);
+				for (int i = 0; i < agentArray.length; i++) {
+					Integer value = (Integer) agentAnswers.get(agentArray[i]);  
+					localEnvModelNew.put(agentArray[i].getLocalName(), value);
+				}
 				gui.updateGUI(localEnvModelNew);
 				localEnvModel = localEnvModelNew;
 				globalEnvModel.setEnvironmentInstance(localEnvModel);
@@ -150,7 +145,6 @@ public class SimulationManagerAgent extends Agent {
 			}
 					
 		}
-		
 	 }
 
 	@Override

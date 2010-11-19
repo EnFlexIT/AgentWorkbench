@@ -19,7 +19,11 @@ import jade.domain.JADEAgentManagement.JADEManagementOntology;
 import jade.domain.introspection.Occurred;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
+import jade.util.Logger;
 import jade.wrapper.StaleProxyException;
+
+import java.util.logging.Level;
+
 import agentgui.core.application.Application;
 import agentgui.core.network.JadeUrlChecker;
 import agentgui.simulationService.SimulationService;

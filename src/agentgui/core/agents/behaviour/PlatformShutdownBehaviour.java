@@ -1,7 +1,10 @@
 package agentgui.core.agents.behaviour;
 
+import agentgui.simulationService.SimulationService;
+import agentgui.simulationService.SimulationServiceHelper;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.basic.Action;
+import jade.core.ServiceException;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.domain.FIPANames;
 import jade.domain.JADEAgentManagement.JADEManagementOntology;
@@ -18,6 +21,16 @@ public class PlatformShutdownBehaviour extends OneShotBehaviour {
 	@Override
 	public void action() {
 
+		if (simulationServiceIsRunning()) {
+			// --- Stop all simulation-agents via Simulation Service ----------
+			try {
+				SimulationServiceHelper simHelper = (SimulationServiceHelper) myAgent.getHelper(SimulationService.NAME);
+				simHelper.stopSimulationAgents();
+			} catch (ServiceException e) {
+				e.printStackTrace();
+			}
+		}
+		
 		myAgent.getContentManager().registerLanguage(new SLCodec(), FIPANames.ContentLanguage.FIPA_SL0);
 		myAgent.getContentManager().registerOntology(JADEManagementOntology.getInstance());
 
@@ -38,4 +51,21 @@ public class PlatformShutdownBehaviour extends OneShotBehaviour {
 		myAgent.doDelete();
 	}
 
+	
+	/**
+	 * Checks if the simulations service is running or not 
+	 * @return
+	 */
+	private boolean simulationServiceIsRunning() {
+		
+		try {
+			@SuppressWarnings("unused")
+			SimulationServiceHelper simHelper = (SimulationServiceHelper) myAgent.getHelper(SimulationService.NAME);
+			return true;
+		} catch (ServiceException e) {
+			//e.printStackTrace();
+			return false;
+		}
+	}
+	
 }

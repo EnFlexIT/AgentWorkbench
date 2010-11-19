@@ -16,6 +16,10 @@ public class ServiceSensor {
 		myAgent.setEnvironmentModel(environmentModel, aSynchron);
 	}
 	
+	public void doDelete() {
+		myAgent.doDelete();
+	}
+	
 	public void putMigrationInfo(Location newLocation) {
 		myAgent.setMigration(newLocation);
 	}

@@ -11,7 +11,8 @@ public class SimStartAgent extends Agent {
 
 	public final static int BASE_ACTION_Start = 0; 
 	public final static int BASE_ACTION_Pause = 1;
-	public final static int BASE_ACTION_Stop = 2;
+	public final static int BASE_ACTION_Restart = 2;
+	public final static int BASE_ACTION_Stop = 3;
 	
 	@Override
 	protected void setup() {
@@ -32,6 +33,9 @@ public class SimStartAgent extends Agent {
 
 		case BASE_ACTION_Pause:
 			System.out.println("Pausiere die Simulation .....");
+			break;
+		case BASE_ACTION_Restart:
+			System.out.println("Nachstarten der Simulation .....");
 			break;
 		case BASE_ACTION_Stop:
 			System.out.println("Stop die Simulation .....");

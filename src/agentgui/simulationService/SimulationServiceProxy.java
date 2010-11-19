@@ -257,11 +257,32 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 		}
 	}
 	@Override
-	public String startNewRemoteContainer(RemoteContainerConfig remoteConfig) throws IMTPException {
+	public void stopSimulationAgents() throws IMTPException {
+		
+		try {
+			GenericCommand cmd = new GenericCommand(SERVICE_STOP_SIMULATION_AGENTS, SimulationService.NAME, null);
+			
+			Node n = getNode();
+			Object result = n.accept(cmd);
+			if((result != null) && (result instanceof Throwable)) {
+				if(result instanceof IMTPException) {
+					throw (IMTPException)result;
+				} else {
+					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
+				}
+			}
+		}
+		catch(ServiceException se) {
+			throw new IMTPException("Unable to access remote node", se);
+		}
+	}
+	@Override
+	public String startNewRemoteContainer(RemoteContainerConfig remoteConfig, boolean preventUsageOfAlreadyUsedComputers ) throws IMTPException {
 		
 		try {
 			GenericCommand cmd = new GenericCommand(SERVICE_START_NEW_REMOTE_CONTAINER, SimulationService.NAME, null);
 			cmd.addParam(remoteConfig);
+			cmd.addParam(preventUsageOfAlreadyUsedComputers);
 			
 			Node n = getNode();
 			Object result = n.accept(cmd);
@@ -279,10 +300,11 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 		}
 	}
 	@Override
-	public RemoteContainerConfig getDefaultRemoteContainerConfig() throws IMTPException {
+	public RemoteContainerConfig getDefaultRemoteContainerConfig(boolean preventUsageOfAlreadyUsedComputers) throws IMTPException {
 
 		try {
 			GenericCommand cmd = new GenericCommand(SERVICE_GET_DEFAULT_REMOTE_CONTAINER_CONFIG, SimulationService.NAME, null);
+			cmd.addParam(preventUsageOfAlreadyUsedComputers);
 			
 			Node n = getNode();
 			Object result = n.accept(cmd);

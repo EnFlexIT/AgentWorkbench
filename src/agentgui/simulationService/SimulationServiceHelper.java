@@ -40,10 +40,13 @@ public interface SimulationServiceHelper extends ServiceHelper {
 	
 	// --- Methods for agent and container handling -----------------
 	public boolean startAgent(String nickName, String agentClassName, Object[] args, String containerName) throws ServiceException;
-	
+	public void stopSimulationAgents() throws ServiceException; 
+
 	public String startNewRemoteContainer() throws ServiceException;
-	public String startNewRemoteContainer(RemoteContainerConfig remoteConfig) throws ServiceException;
+	public String startNewRemoteContainer(boolean preventUsageOfAlreadyUsedComputers) throws ServiceException;
+	public String startNewRemoteContainer(RemoteContainerConfig remoteConfig, boolean preventUsageOfAlreadyUsedComputers) throws ServiceException;
 	public RemoteContainerConfig getDefaultRemoteContainerConfig() throws ServiceException;
+	public RemoteContainerConfig getDefaultRemoteContainerConfig(boolean preventUsageOfAlreadyUsedComputers) throws ServiceException;
 	public Container2Wait4 startNewRemoteContainerStaus(String containerName) throws ServiceException;
 	
 	// --- Methods for the load balancing ---------------------------

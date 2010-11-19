@@ -59,13 +59,16 @@ public interface SimulationServiceSlice extends Service.Slice {
 	// ----------------------------------------------------------
 	// --- Methods to handle new remote container --------------- 
 	static final String SERVICE_START_AGENT = "start-agent";
+	static final String SERVICE_STOP_SIMULATION_AGENTS = "stop-simulation-agents";
 	static final String SERVICE_START_NEW_REMOTE_CONTAINER = "start-new-remote-container";
 	static final String SERVICE_GET_DEFAULT_REMOTE_CONTAINER_CONFIG = "get-default-remote-container-config";
 	static final String SERVICE_GET_NEW_CONTAINER_2_WAIT_4_STATUS = "get-new-container-2-wait-4-status";
 	
 	public boolean startAgent(String nickName, String agentClassName, Object[] args) throws IMTPException;
-	public String startNewRemoteContainer(RemoteContainerConfig remoteConfig) throws IMTPException;
-	public RemoteContainerConfig getDefaultRemoteContainerConfig() throws IMTPException;
+	public void stopSimulationAgents() throws IMTPException;
+	
+	public String startNewRemoteContainer(RemoteContainerConfig remoteConfig, boolean preventUsageOfAlreadyUsedComputers) throws IMTPException;
+	public RemoteContainerConfig getDefaultRemoteContainerConfig(boolean preventUsageOfAlreadyUsedComputers) throws IMTPException;
 	public Container2Wait4 getNewContainer2Wait4Status(String containerName2Wait4) throws IMTPException;
 	
 	// ----------------------------------------------------------

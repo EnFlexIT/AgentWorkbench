@@ -11,11 +11,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -81,7 +79,7 @@ public class GameOfLifeGUI extends JInternalFrame implements ActionListener {
 				LifeLabel cell = new LifeLabel(name);
 				panel.add(cell);
 				cells.put(name, cell);
-				localEnvModelOutput.put(name, 0);				
+				//localEnvModelOutput.put(name, 0);				
 			}
 		}
 		
@@ -111,6 +109,7 @@ public class GameOfLifeGUI extends JInternalFrame implements ActionListener {
 		slider.setPaintTicks(true);
 		slider.createStandardLabels(250);
 		slider.setPaintLabels(true);
+		slider.setValue(0);
 		panel.add(slider);
 		//------ add components into the JFrame ---------------------------------------------
 		add(panel, BorderLayout.SOUTH);
@@ -167,13 +166,11 @@ public class GameOfLifeGUI extends JInternalFrame implements ActionListener {
 		generation++;
 		this.setGenerationLabel(generation);
 		
-		Vector<String> cellKeys = new Vector<String>( updatedEnvironment.keySet() );
-		Collections.sort(cellKeys);
-		Iterator<String> it = cellKeys.iterator();
-		while (it.hasNext()) {
-			String cellName = it.next();
-			Integer updateValue = updatedEnvironment.get(cellName);
-			LifeLabel cell = cells.get(cellName);
+		String[] cellKeyArray = new String[updatedEnvironment.size()];
+		cellKeyArray = updatedEnvironment.keySet().toArray(cellKeyArray);
+		for (int i = 0; i < cellKeyArray.length; i++) {
+			LifeLabel cell = cells.get(cellKeyArray[i]);
+			Integer updateValue = updatedEnvironment.get(cellKeyArray[i]);
 			cell.updateState(updateValue);	
 		}
 		this.repaint();
