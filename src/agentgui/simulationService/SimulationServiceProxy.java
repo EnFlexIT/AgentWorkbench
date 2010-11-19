@@ -233,6 +233,30 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 	// --- containers ----------------------------- S T A R T ---
 	// ----------------------------------------------------------
 	@Override
+	public boolean startAgent(String nickName, String agentClassName, Object[] args) throws IMTPException {
+
+		try {
+			GenericCommand cmd = new GenericCommand(SERVICE_START_AGENT, SimulationService.NAME, null);
+			cmd.addParam(nickName);
+			cmd.addParam(agentClassName);
+			cmd.addParam(args);
+			
+			Node n = getNode();
+			Object result = n.accept(cmd);
+			if((result != null) && (result instanceof Throwable)) {
+				if(result instanceof IMTPException) {
+					throw (IMTPException)result;
+				} else {
+					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
+				}
+			}
+			return (Boolean) result;
+		}
+		catch(ServiceException se) {
+			throw new IMTPException("Unable to access remote node", se);
+		}
+	}
+	@Override
 	public String startNewRemoteContainer(RemoteContainerConfig remoteConfig) throws IMTPException {
 		
 		try {
@@ -472,5 +496,5 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 			throw new IMTPException("Unable to access remote node", se);
 		}
 	}
-
+	
 }

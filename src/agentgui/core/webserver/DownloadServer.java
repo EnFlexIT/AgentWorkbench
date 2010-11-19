@@ -181,15 +181,38 @@ public class DownloadServer implements HttpConstants, Runnable {
 			File singelSourceFile = new File(singelSource); 
 			if (singelSourceFile.exists()) {
 				
-				String singleFile   = singelSourceFile.getAbsoluteFile().getName();
-				String singleDestin = destinDirName + pathSep + singleFile;
-				// --- Execute copy process for the file ---------------------------
-				FileCopier fc = new FileCopier();
-	    		fc.copyFile(singelSource, singleDestin);
-	    		
-	    		// --- Remind this file as a link to the Download-Server -----------
-	    		String singleLink = link2Server + "/" + project.getProjectFolder() + "/" + singleFile;
-	    		downloadLinks.addElement(singleLink);
+				if (singelSourceFile.isDirectory()) {
+					// ----------------------------------------------------------------
+					// --- Here we have a directory entry -----------------------------
+					// ----------------------------------------------------------------
+					// --- Pack a jar of all class-files of the current project -------
+					String pathBin = singelSourceFile.getAbsolutePath();
+					String pathBinHash = ((Integer)pathBin.hashCode()).toString();
+					JarFileCreater jarCreator = new JarFileCreater(pathBin, null);
+					
+					String jarArchiveName = "BIN_DUMP_IDE_" + pathBinHash + ".jar";
+					String jarArchivePath = destinDirName + pathSep + jarArchiveName;
+					File jarArchiveFile = new File(jarArchivePath);
+					jarCreator.createJarArchive(jarArchiveFile);
+					
+					// --- Remind this file as a link to the Download-Server -----------
+		    		String singleLink = link2Server + "/" + project.getProjectFolder() + "/" + jarArchiveName;
+		    		downloadLinks.addElement(singleLink);
+					
+				} else {
+					// ----------------------------------------------------------------
+					// --- Here we have a explicitly defined jar-file ----------------- 
+					// ----------------------------------------------------------------
+					String singleFile   = singelSourceFile.getAbsoluteFile().getName();
+					String singleDestin = destinDirName + pathSep + singleFile;
+					// --- Execute copy process for the file ---------------------------
+					FileCopier fc = new FileCopier();
+		    		fc.copyFile(singelSource, singleDestin);
+		    		
+		    		// --- Remind this file as a link to the Download-Server -----------
+		    		String singleLink = link2Server + "/" + project.getProjectFolder() + "/" + singleFile;
+		    		downloadLinks.addElement(singleLink);
+				}
 			}
 
     	} // --- end for

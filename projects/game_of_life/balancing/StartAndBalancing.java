@@ -46,10 +46,14 @@ public class StartAndBalancing extends StaticLoadBalancingBase {
 		
 		// -----------------------------------------------------
 		// --- start the needed remote-container ---------------
-		Hashtable<String, Location> newContainerLocations = this.startRemoteContainer(currNumberOfContainer - 1, true);
-		Vector<String> locationNames = new Vector<String>(newContainerLocations.keySet());
-		int cont4DisMax = newContainerLocations.size(); 
+		Vector<String> locationNames = null;
+		int cont4DisMax = 0;
 		int cont4DisI = 0;
+		Hashtable<String, Location> newContainerLocations = this.startRemoteContainer(currNumberOfContainer - 1, true);
+		if (newContainerLocations!=null) {
+			locationNames = new Vector<String>(newContainerLocations.keySet());
+			cont4DisMax = newContainerLocations.size();
+		}
 		
 		// -----------------------------------------------------
 		// --- calculate number of rows and columns ------------
@@ -93,13 +97,11 @@ public class StartAndBalancing extends StaticLoadBalancingBase {
 
 			// --- Startargument zusammenbauen ------------
 			// --- Die Nachbarn, die interessant sind -----
-			Object startArg[] = new Object[2];
+			Object startArg[] = new Object[1];
 			startArg[0] = getNeighbourVector(agentName);
-			// --- Der Ort, an den der Agent migriern soll - 
-			startArg[1] = location;
 
 			// --- Agenten starten ------------------------ 
-			this.startAgent(agentName, agentGameOfLifeClass, startArg);
+			this.startAgent(agentName, agentGameOfLifeClass, startArg, location);
 			
 			// --- Count the number of agents started -----
 			agentsStarted++;

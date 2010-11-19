@@ -12,7 +12,9 @@ import jade.core.HorizontalCommand;
 import jade.core.IMTPException;
 import jade.core.Location;
 import jade.core.MainContainer;
+import jade.core.NameClashException;
 import jade.core.Node;
+import jade.core.NotFoundException;
 import jade.core.Profile;
 import jade.core.ProfileException;
 import jade.core.Service;
@@ -24,7 +26,9 @@ import jade.core.management.AgentManagementSlice;
 import jade.core.messaging.MessagingSlice;
 import jade.core.mobility.AgentMobilityHelper;
 import jade.lang.acl.ACLMessage;
+import jade.security.JADESecurityException;
 import jade.util.Logger;
+import jade.util.ObjectManager;
 import jade.util.leap.ArrayList;
 
 import java.io.File;
@@ -205,6 +209,11 @@ public class SimulationService extends BaseService {
 			return new Date(this.getSynchTimeMillis());
 		}
 
+		@Override
+		public boolean startAgent(String nickName, String agentClassName, Object[] args, String containerName) throws ServiceException {
+			return broadcastStartAgent(nickName, agentClassName, args, containerName);
+		}
+		
 		// ----------------------------------------------------------
 		// --- Methods to start a new remote-container -------------- 
 		public RemoteContainerConfig getDefaultRemoteContainerConfig() throws ServiceException {
@@ -557,6 +566,37 @@ public class SimulationService extends BaseService {
 			}
 		}
 	}
+
+	/**
+	 * This mehtods starts an agent on an designate (remote) container
+	 * @param nickName
+	 * @param agentClass
+	 * @param args
+	 * @param containerName
+	 * @return
+	 * @throws ServiceException
+	 */
+	private boolean broadcastStartAgent (String nickName, String agentClassName, Object[] args, String containerName) throws ServiceException {
+			
+		if (myLogger.isLoggable(Logger.CONFIG)) {
+			myLogger.log(Logger.CONFIG, "Try to start agent '" + nickName + "' on container " + containerName + "!");
+		}
+		String sliceName = null;
+		try {
+			SimulationServiceSlice slice = (SimulationServiceSlice) getSlice(containerName);
+			sliceName = slice.getNode().getName();
+			if (myLogger.isLoggable(Logger.FINER)) {
+				myLogger.log(Logger.FINER, "Start agent '" + nickName + "' on container " + sliceName + "");
+			}
+			return slice.startAgent(nickName, agentClassName, args);
+		}
+		catch(Throwable t) {
+			// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
+			myLogger.log(Logger.WARNING, "Error while trying to get the default remote container configuration from " + sliceName, t);
+		}
+		return false;
+	}
+	
 	/**
 	 * This Methods returns the default Remote-Container-Configuration, coming from the Main-Container
 	 * @param slices
@@ -911,6 +951,16 @@ public class SimulationService extends BaseService {
 					resetEnvironmentInstanceNextParts();					
 				}
 				
+				
+				else if (cmdName.equals(SimulationServiceSlice.SERVICE_START_AGENT)) {
+					if (myLogger.isLoggable(Logger.FINE)) {
+						myLogger.log(Logger.FINE, "Starting a new agent on this platform");
+					}
+					String nickName = (String) params[0];
+					String agentClassName = (String) params[1];
+					Object[] args = (Object[]) params[2];
+					cmd.setReturnValue( startAgent(nickName, agentClassName, args) );
+				}
 				else if (cmdName.equals(SimulationServiceSlice.SERVICE_START_NEW_REMOTE_CONTAINER)) {
 					if (myLogger.isLoggable(Logger.FINE)) {
 						myLogger.log(Logger.FINE, "Starting a new remote-container for this platform");
@@ -1026,6 +1076,37 @@ public class SimulationService extends BaseService {
 			environmentInstanceNextPartsLocal = new Hashtable<AID, Object>();
 		}
 		
+		private boolean startAgent(String nickName, String agentClassName, Object[] args) {
+			
+			AID agentID = new AID();
+			agentID.setLocalName(nickName);
+			
+			try {
+				Agent agent = (Agent) ObjectManager.load(agentClassName, ObjectManager.AGENT_TYPE);
+				if (agent == null) {
+					agent = (Agent)Class.forName(agentClassName).newInstance();
+				}
+				agent.setArguments(args);
+				myContainer.initAgent(agentID, agent, null, null);
+				myContainer.powerUpLocalAgent(agentID);
+				
+			} catch (IMTPException e) {
+				e.printStackTrace();
+			} catch (NameClashException e) {
+				e.printStackTrace();
+			} catch (NotFoundException e) {
+				e.printStackTrace();
+			} catch (JADESecurityException e) {
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			} catch (InstantiationException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
+			return true;
+		}
 		private String startRemoteContainer(RemoteContainerConfig remoteConfig) {
 			return sendMsgRemoteContainerRequest(remoteConfig);
 		}

@@ -59,10 +59,14 @@ public class StaticLoadBalancing extends StaticLoadBalancingBase {
 			}
 			
 			// --- If we know how many container are needed, start them --
-			Hashtable<String, Location> newContainerLocations = this.startRemoteContainer(currNumberOfContainer - 1, true);
-			Vector<String> locationNames = new Vector<String>(newContainerLocations.keySet());
-			int cont4DisMax = newContainerLocations.size(); 
+			Vector<String> locationNames = null;
+			int cont4DisMax = 0;
 			int cont4DisI = 0;
+			Hashtable<String, Location> newContainerLocations = this.startRemoteContainer(currNumberOfContainer - 1, true);
+			if (newContainerLocations!=null) {
+				locationNames = new Vector<String>(newContainerLocations.keySet());
+				cont4DisMax = newContainerLocations.size();
+			}			
 			
 			// --- merge all agents, which have to be started ------------
 			Vector<AgentClassElement4SimStart> currAgentListMerged = new Vector<AgentClassElement4SimStart>();
@@ -78,15 +82,22 @@ public class StaticLoadBalancing extends StaticLoadBalancingBase {
 				// --- Get the agent, which has to be started ------------
 				AgentClassElement4SimStart agent2Start = iterator.next();
 				
-				// --- Set the location for the agent --------------------
-				String containerName = locationNames.get(cont4DisI);
-				Location location = newContainerLocations.get(containerName);
-				cont4DisI++;
-				if (cont4DisI>=cont4DisMax) {
-					cont4DisI=0;
+				if (locationNames==null) {
+					// --- Just start the agent locally ------------------
+					this.startAgent(agent2Start.getStartAsName(), agent2Start.getAgentClassReference(),null , null);
+
+				} else {
+					// --- Set the location for the agent ----------------
+					String containerName = locationNames.get(cont4DisI);
+					Location location = newContainerLocations.get(containerName);
+					cont4DisI++;
+					if (cont4DisI>=cont4DisMax) {
+						cont4DisI=0;
+					}
+					// --- finally start the agent -----------------------				
+					this.startAgent(agent2Start.getStartAsName(), agent2Start.getAgentClassReference(), null, location);
+				
 				}
-				// --- finally start the agent ---------------------------				
-				this.startAgent(agent2Start.getStartAsName(), agent2Start.getAgentClassReference(), null, location);
 			} // --- end for
 		} // --- end if
 		

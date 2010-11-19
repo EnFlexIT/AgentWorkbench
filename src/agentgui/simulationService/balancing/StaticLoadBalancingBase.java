@@ -168,7 +168,6 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 			// --- set focus on Visualization-Tab -------------------
 			currProject.ProjectGUI.setFocusOnProjectTab(Language.translate("Simulations-Visualisierung"));
 		}
-		
 	}
 	
 	/**
@@ -215,36 +214,132 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 	 */
 	protected void startAgent(String nickName, Class<? extends Agent> agentClass, Object[] args, Location toLocation ) {
 		
-		// --- Start the given agents -------------------------------
+		boolean startLocally = false;
 		ContainerController cc = myAgent.getContainerController();
 		AgentController ac = null;
-			
+		
 		try {
-			//Agent agent = (Agent) agentClass.newInstance();
-			//agent.setArguments(args);
-			//ac = cc.acceptNewAgent(nickName, agent);
-			ac = cc.createNewAgent(nickName, agentClass.getName(), args);
-			ac.start();
+			// ----------------------------------------------------------
+			// --- Start here or on a remote container? -----------------
+			// ----------------------------------------------------------
+			if (toLocation==null) {
+				startLocally = true;
+			} else {
+				if (cc.getContainerName().equalsIgnoreCase(toLocation.getName())) {
+					startLocally = true;
+				} else {
+					startLocally = false;
+				}
+			}
+			// ----------------------------------------------------------
 			
-			// --- if other locations are there and -----------------
-			// --- should be used, use them now		-----------------
-			if (toLocation!=null) {
-				if (cc.getContainerName().equalsIgnoreCase(toLocation.getName())==false) {
-					AgentController stAc = cc.getAgent(nickName);
-					while(stAc==null){
+			
+			// ----------------------------------------------------------
+			// --- Start the agent now ! --------------------------------
+			// ----------------------------------------------------------
+			if (startLocally==true) {
+				// --------------------------------------------------
+				// --- Start on this local container ----------------				
+				Agent agent = (Agent) agentClass.newInstance();
+				agent.setArguments(args);
+				ac = cc.acceptNewAgent(nickName, agent);
+				ac.start();
+				// --------------------------------------------------
+				
+			} else {
+				// --------------------------------------------------
+				// --- Is the SimulationServioce running? -----------
+				if (simulationServiceIsRunning()==true) {
+					// ----------------------------------------------
+					// --- START: Start direct on remote-container --
+					// ----------------------------------------------
+					String containerName = toLocation.getName();
+					String agentClassName = agentClass.getName();
+					try {
+						SimulationServiceHelper simHelper = (SimulationServiceHelper) myAgent.getHelper(SimulationService.NAME);
+						simHelper.startAgent(nickName, agentClassName, args, containerName);
+					} catch (ServiceException e) {
+						e.printStackTrace();
+					}
+					// ----------------------------------------------
+					// --- END: Start direct on remote-container ----					
+					// ----------------------------------------------
+				} else {
+					// ----------------------------------------------
+					// --- START: 'Start and migrate' - procedure ---
+					// ----------------------------------------------
+					Agent agent = (Agent) agentClass.newInstance();
+					agent.setArguments(args);
+					ac = cc.acceptNewAgent(nickName, agent);
+					ac.start();
+					// --------------------------------
+					int retryCounter = 0;
+					while(agentFound(cc,nickName)==false){
 						block(100);
-						stAc = cc.getAgent(nickName);
-						System.out.println("block");
+						if (retryCounter>=5) {
+							break;
+						}
 					}					
-					ac.move(toLocation);
-				}				
-			}			
+					// --------------------------------
+					retryCounter = 0;
+					while(agentFound(cc,nickName)==true){
+						// --- Move the agent ---------
+						if (retryCounter==0) {
+							agent.doMove(toLocation);	
+						}
+						block(100);
+						retryCounter++;
+						if (retryCounter>=5) {
+							retryCounter = 0;
+						}
+					} // --- end while
+					// ----------------------------------------------
+					// --- END: 'Start and migrate' - procedure -----	
+					// ----------------------------------------------					
+				}
+				// --------------------------------------------------
+			}
 			
 		} catch (StaleProxyException e) {
 			e.printStackTrace();
 		} catch (ControllerException e) {
 			e.printStackTrace();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
 		}	
+	}
+	
+	/**
+	 * Checks if an agent can be found locally
+	 * @param cc
+	 * @param nickName
+	 * @return
+	 */
+	private boolean agentFound(ContainerController cc, String nickName) {
+		try {
+			cc.getAgent(nickName);
+			return true;
+		} catch (ControllerException e) {
+			//e.printStackTrace();
+			return false;
+		}
+	}
+	/**
+	 * Checks if the simulations service is running or not 
+	 * @return
+	 */
+	private boolean simulationServiceIsRunning() {
+		
+		try {
+			@SuppressWarnings("unused")
+			SimulationServiceHelper simHelper = (SimulationServiceHelper) myAgent.getHelper(SimulationService.NAME);
+			return true;
+		} catch (ServiceException e) {
+			//e.printStackTrace();
+			return false;
+		}
 	}
 	
 	/**
@@ -254,6 +349,12 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 	protected Hashtable<String, Location> startRemoteContainer(int numberOfContainer, boolean filterMainContainer) {
 		
 		Hashtable<String, Location> newContainerLocations = null;
+		
+		// --- Is the simulation service running ? -----------------------
+		if (simulationServiceIsRunning()==false) {
+			System.out.println("Can not start remote container - SimulationService is not running!");
+			return null;
+		}
 		
 		// --- Start the required number of container -------------------- 
 		int startMistakes = 0;

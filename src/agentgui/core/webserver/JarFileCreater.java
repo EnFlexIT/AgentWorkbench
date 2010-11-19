@@ -20,7 +20,11 @@ public class JarFileCreater {
 	public JarFileCreater(String binDirBase, String binSubDirProject) {
 		
 		baseDir = binDirBase;
-		baseDir4Search = binDirBase + binSubDirProject;
+		if (binSubDirProject==null || binSubDirProject.equals("")) {
+			baseDir4Search = binDirBase;
+		} else {
+			baseDir4Search = binDirBase + binSubDirProject;	
+		}
 		
 		// --- Search Files -------------------------------
 		File searchIn = new File(baseDir4Search);
@@ -65,14 +69,14 @@ public class JarFileCreater {
 			
 			byte buffer[] = new byte[BUFFER_SIZE];
 			
-			// Open archive file
+			// --- Open archive file ----------------------
 			FileOutputStream stream = new FileOutputStream(archiveFile);
 			JarOutputStream out = new JarOutputStream(stream, new Manifest());
 
 			for (int i = 0; i < tobeJared.length; i++) {
 				
 				if (tobeJared[i] == null || !tobeJared[i].exists() || tobeJared[i].isDirectory()) {
-					continue; // Just in case...
+					continue; // --- Just in case...
 				}
 					
 				String subfolder = "";
@@ -85,13 +89,13 @@ public class JarFileCreater {
 					}					
 				}
 				
-				// Add archive entry
+				// --- Add archive entry ------------------
 				String jarEntryName = subfolder + tobeJared[i].getName();
 				JarEntry jarAdd = new JarEntry(jarEntryName);
 				jarAdd.setTime(tobeJared[i].lastModified());
 				out.putNextEntry(jarAdd);
 
-				// Write file to archive
+				// --- Write file to archive --------------
 				FileInputStream in = new FileInputStream(tobeJared[i]);
 				while (true) {
 					int nRead = in.read(buffer, 0, buffer.length);

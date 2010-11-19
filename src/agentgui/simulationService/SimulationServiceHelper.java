@@ -33,18 +33,20 @@ public interface SimulationServiceHelper extends ServiceHelper {
 	
 	public static final String SERVICE_NODE_DESCRIPTION_FILE = "AgentGUINode.bin";
 	
-	// --- Methods for the synchronised time --------------------
+	// --- Methods for the synchronised time ------------------------
 	public long getSynchTimeDifferenceMillis() throws ServiceException;
 	public long getSynchTimeMillis() throws ServiceException;
 	public Date getSynchTimeDate() throws ServiceException;
-
 	
-	// --- Methods for the load balancing ---------------------------
+	// --- Methods for agent and container handling -----------------
+	public boolean startAgent(String nickName, String agentClassName, Object[] args, String containerName) throws ServiceException;
+	
 	public String startNewRemoteContainer() throws ServiceException;
 	public String startNewRemoteContainer(RemoteContainerConfig remoteConfig) throws ServiceException;
 	public RemoteContainerConfig getDefaultRemoteContainerConfig() throws ServiceException;
 	public Container2Wait4 startNewRemoteContainerStaus(String containerName) throws ServiceException;
 	
+	// --- Methods for the load balancing ---------------------------
 	public Vector<String> getContainerQueue() throws ServiceException;
 	
 	public void setThresholdLevels(LoadThresholdLevels currThresholdLevels) throws ServiceException;

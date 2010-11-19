@@ -1,6 +1,5 @@
 package game_of_life.agents;
 
-import jade.core.Location;
 import jade.core.ServiceException;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
@@ -36,10 +35,6 @@ public class GameOfLifeAgent extends SimulationAgent {
 		startArgs = getArguments();
 		if (startArgs!=null && startArgs.length>0) {
 			myNeighbours = (Vector<String>) startArgs[0];	
-			Location move2destination = (Location) startArgs[1];
-			if (move2destination!=null && move2destination.equals(this.here())==false) {
-				this.doMove(move2destination);
-			}
 		}
 		
 	} 
