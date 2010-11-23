@@ -152,6 +152,7 @@ public class SimulationService extends BaseService {
 		
 		// --- Reduce the logging level for Messaging -----
 		Logger.getMyLogger("jade.core.messaging.Messaging").setLevel(Level.WARNING);
+		Logger.getMyLogger("jade.core.messaging.MessageManager").setLevel(Level.WARNING);
 		
 	}
 	public void boot(Profile p) throws ServiceException {

@@ -33,8 +33,12 @@ public class ClassLoaderUtil {
 			ressource = ClassLoaderUtil.adjustPathForLoadin(ressource,relativProjectPath, completePath);
 			File file = new File(ressource);
 			
-			if (!file.isDirectory()) {
-
+			if (file.isDirectory()) {
+				// --- Verzeichnis durchsuchen ------------ 
+				result.addAll(ClassLoaderUtil.getFolderStructure(file, file));
+				
+			} else {
+				// --- jar durchsuchen --------------------
 				URL jar = file.toURI().toURL();
 				jar = new URL("jar:" + jar.toExternalForm() + "!/");
 				JarURLConnection conn = (JarURLConnection) jar.openConnection();
@@ -86,6 +90,27 @@ public class ClassLoaderUtil {
 		}
 	}
 
+	private static Vector<String> getFolderStructure(File searchIn, File startSearchAt) {
+		
+		Vector<String> result = new Vector<String>();
+		
+		if (searchIn.getAbsolutePath().equals(startSearchAt.getAbsolutePath())==false) {
+			// --- Single result found, add to list -------
+			String startSearchAtPath = startSearchAt.getAbsolutePath();
+			String singlePath = searchIn.getAbsolutePath().substring(startSearchAtPath.length()+1);
+			singlePath = singlePath.replace(File.separator, ".");
+			result.add(singlePath);
+		}
+		
+		for (File file : searchIn.listFiles()) {
+    		if (file.isDirectory()) {
+    			// --- Deep search ------------------------
+    			result.addAll(ClassLoaderUtil.getFolderStructure(file, startSearchAt));
+	    	}
+		}
+		return result;
+	}
+	
 	/**
 	 * Add file to CLASSPATH
 	 * @param s File name

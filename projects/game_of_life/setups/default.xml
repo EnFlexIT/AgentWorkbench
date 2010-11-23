@@ -5,8 +5,8 @@
         <doDynamicLoadBalalncing>false</doDynamicLoadBalalncing>
         <doStaticLoadBalalncing>true</doStaticLoadBalalncing>
         <dynamicLoadBalancingClass>agentgui.simulationService.balancing.DynamicLoadBalancing</dynamicLoadBalancingClass>
-        <numberOfAgents>1400</numberOfAgents>
-        <numberOfContainer>4</numberOfContainer>
+        <numberOfAgents>12000</numberOfAgents>
+        <numberOfContainer>12</numberOfContainer>
         <staticLoadBalancingClass>game_of_life.balancing.StartAndBalancing</staticLoadBalancingClass>
         <useUserThresholds>false</useUserThresholds>
         <userThresholds>
@@ -14,7 +14,7 @@
             <thCpuL>5</thCpuL>
             <thMemoH>80</thMemoH>
             <thMemoL>5</thMemoL>
-            <thNoThreadsH>1500</thNoThreadsH>
+            <thNoThreadsH>1000</thNoThreadsH>
             <thNoThreadsL>50</thNoThreadsL>
         </userThresholds>
     </distribution>
