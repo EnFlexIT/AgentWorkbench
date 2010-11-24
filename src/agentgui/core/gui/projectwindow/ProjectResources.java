@@ -49,7 +49,7 @@ public class ProjectResources extends JPanel {
 	}
 
 	private String adjustString(String path) {
-		final String projectFolder = currProjet.getProjectFolder();
+		final String projectFolder = currProjet.getProjectFolderFullPath();
 		if (path.contains(projectFolder)) {
 			int find = path.indexOf(projectFolder);
 			return path.substring(find - 1);
