@@ -35,7 +35,7 @@ public class LoadInformation  {
 	
 	private long cycleTimeStart = 0; 
 	private Vector<Long> cycleTimeVector = new Vector<Long>();
-	private long cycleTimeVectorMaxSize = 5000;
+	private long cycleTimeVectorMaxSize = 500;
 
 	/**
 	 * Constructor of this class
