@@ -135,7 +135,7 @@ public class DownloadServer implements HttpConstants, Runnable {
     public void setProjectDownloadResources(Project project) {
     	 
     	String pathSep = Application.RunInfo.AppPathSeparatorString();
-    	String sourceDirName = Application.RunInfo.PathProjects(true, false);
+    	String sourceDirName = project.getProjectFolderFullPath();
     	String destinDirName = Application.RunInfo.PathServer(true) + project.getProjectFolder();    	
     	
     	File destinDir = null;

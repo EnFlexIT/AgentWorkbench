@@ -33,12 +33,50 @@ public class LoadInformation  {
 	
 	private Hashtable<String, Container2Wait4> newContainers2Wait4 = new Hashtable<String, Container2Wait4>();
 	
+	private long cycleTimeStart = 0; 
+	private Vector<Long> cycleTimeVector = new Vector<Long>();
+	private long cycleTimeVectorMaxSize = 5000;
+
 	/**
 	 * Constructor of this class
 	 */
 	public LoadInformation() {
 		
 	}
+	
+	/**
+	 * Method to calculate the cycle-frequency
+	 */
+	public void setCycleStartTimeStamp() {
+		
+		long cycleTimeNow = System.currentTimeMillis();
+		if (this.cycleTimeStart != 0) {
+			long cycleTime = cycleTimeNow - this.cycleTimeStart;
+			this.cycleTimeVector.addElement(cycleTime);
+			if (this.cycleTimeVector.size() > this.cycleTimeVectorMaxSize) {
+				this.cycleTimeVector.removeElementAt(0);	
+			}
+		}
+		this.cycleTimeStart = cycleTimeNow;
+	}
+	/**
+	 * Method to get the current cycle-frequency
+	 */
+	public double getAvgCycleTime() {
+		
+		if (this.cycleTimeVector.size()==0) {
+			return 0;
+		}
+		
+		long cycleTimeSum = 0;
+		Long[] currentCycleTimeArray = new Long[cycleTimeVector.size()];
+		currentCycleTimeArray = cycleTimeVector.toArray(currentCycleTimeArray);
+		for (int i = 0; i < currentCycleTimeArray.length; i++) {
+			cycleTimeSum += currentCycleTimeArray[i];
+		}		
+		return (double)cycleTimeSum/(double)currentCycleTimeArray.length;
+	}
+	
 	
 	/**
 	 * Method to put the answer of the Server.Master directly 
@@ -323,6 +361,6 @@ public class LoadInformation  {
 	// --------------------------------------------------------------
 	// --- Sub-Class NewContainer2Wait4 --- E N D -------------------
 	// --------------------------------------------------------------
-	
-	
+
+
 }

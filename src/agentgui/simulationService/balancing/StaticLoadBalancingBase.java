@@ -62,21 +62,6 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 		currAgentList = currSimSetup.getAgentList();	
 		currNumberOfAgents = currDisSetup.getNumberOfAgents();
 		currNumberOfContainer = currDisSetup.getNumberOfContainer();
-
-		
-		// --- If the user wants to use his own Threshold, ----------
-		// --- load them to the SimulationsService		   ----------
-		if (currDisSetup.isUseUserThresholds()) {
-			currThresholdLevels = currDisSetup.getUserThresholds();
-			try {
-				simHelper = (SimulationServiceHelper) myAgent.getHelper(SimulationService.NAME);
-				simHelper.setThresholdLevels(currThresholdLevels);
-			} catch (ServiceException e) {
-				e.printStackTrace();
-			}	
-		} else {
-			currThresholdLevels = LoadMeasureThread.getThresholdLevels();
-		}
 	}
 	
 	/**
@@ -86,6 +71,7 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 	@Override
 	public void onStart() {
 		super.onStart();
+		this.setSimHelperAndThresholds();
 		this.startSVGVisualizationAgents();
 	}
 	
@@ -103,7 +89,33 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 		return super.onEnd();
 	}
 
-
+	/**
+	 * This method initializes the simHelper - Instance and sets the user
+	 * threshold to the currently running system 
+	 */
+	private void setSimHelperAndThresholds() {
+		
+		// --- Set the simHelper-Instance ---------------------------
+		try {
+			simHelper = (SimulationServiceHelper) myAgent.getHelper(SimulationService.NAME);
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}	
+		
+		// --- If the user wants to use his own Threshold, ----------
+		// --- load them to the SimulationsService		   ----------
+		if (currDisSetup.isUseUserThresholds()) {
+			currThresholdLevels = currDisSetup.getUserThresholds();
+			try {
+				simHelper.setThresholdLevels(currThresholdLevels);
+			} catch (ServiceException e) {
+				e.printStackTrace();
+			}	
+		} else {
+			currThresholdLevels = LoadMeasureThread.getThresholdLevels();
+		}
+	}
+	
 	/**
 	 * This method will start all agents defined in the agent list
 	 * of 'Agent-Start' from the 'Simulation-Setup'

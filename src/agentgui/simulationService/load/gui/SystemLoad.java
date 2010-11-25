@@ -22,6 +22,7 @@ import javax.swing.JToolBar;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.simulationService.agents.LoadAgent;
+import javax.swing.JTextField;
 
 public class SystemLoad extends JPanel {
 
@@ -43,8 +44,12 @@ public class SystemLoad extends JPanel {
 		private JButton jButtonMeasureRecord = null;
 		private JButton jButtonMeasureRecordStop = null;
 		public JLabel jLabelRecord = null;
-
+		public JLabel jLabelSpeed = null;
+		
 		private JLabel jLabelAgentCount = null;
+		private JLabel jLabelContainerCount = null;
+		
+		private JTextField jTextFieldCyclesPerSecond = null;
 	
 	/**
 	 * This is the default constructor
@@ -85,6 +90,32 @@ public class SystemLoad extends JPanel {
 		jLabelAgentCount.setText(displaText);
 	}
 	
+	public void setNumberOfContainer(Integer noContainer) {
+		
+		NumberFormat nf = NumberFormat.getInstance(); 
+		nf.setMinimumIntegerDigits(3);  
+		nf.setMaximumIntegerDigits(3); 
+		nf.setGroupingUsed(false);
+		String displaText = " " + nf.format(noContainer) + " " + Language.translate("Container") + " ";
+		jLabelContainerCount.setText(displaText);
+	}
+
+	public void setCycleTime(double cycleTime) {
+		
+		if (cycleTime==0) {
+			jTextFieldCyclesPerSecond.setText("0");
+			return;
+		}
+
+		// --- Calculate the frequency [1/s] ----
+		double cycleTimeDbl = cycleTime / 1000; 		// to seconds
+		double frequency = 1 / cycleTimeDbl;			// to frequency 
+		frequency = (double) Math.round(frequency * 100) / 100;	// round
+		
+		String cycleTimeString = ((Double) frequency).toString();
+		jTextFieldCyclesPerSecond.setText(cycleTimeString);
+	}
+	
 	/**
 	 * This method initializes jJToolBarLoad	
 	 * @return javax.swing.JToolBar	
@@ -96,6 +127,7 @@ public class SystemLoad extends JPanel {
 			jJToolBarLoad.setFloatable(false);
 			jJToolBarLoad.setRollover(true);
 			
+			// --- The Pause/Start Buttons of the Load-Agent --------
 			jButtonMeasureStart = new JToolBarButton( "StartMeasurement", Language.translate("Mess-Agenten starten"), null, "MBLoadPlay.png" );
 			jJToolBarLoad.add(jButtonMeasureStart);
 			
@@ -103,15 +135,11 @@ public class SystemLoad extends JPanel {
 			jJToolBarLoad.add(jButtonMeasureSuspend);
 			jJToolBarLoad.addSeparator();
 			
+			// --- The measure interval -----------------------------
 			jJToolBarLoad.add(getJComboBoxInterval());
 			jJToolBarLoad.addSeparator();
 			
-			jLabelAgentCount = new JLabel();
-			jLabelAgentCount.setText(" 00000 " +  Language.translate("Agenten") + " ");
-			jLabelAgentCount.setFont(new Font("Dialog", Font.BOLD, 12));
-			jJToolBarLoad.add(jLabelAgentCount);
-			jJToolBarLoad.addSeparator();
-						
+			// --- The Record Start/Stop Buttons --------------------
 			jButtonMeasureRecord = new JToolBarButton( "RecordMeasurement", Language.translate("Messung aufzeichnen"), null, "MBLoadRecord.png" );
 			jJToolBarLoad.add(jButtonMeasureRecord);
 			
@@ -124,6 +152,35 @@ public class SystemLoad extends JPanel {
 			jLabelRecord.setForeground(Color.gray);
 			jLabelRecord.setPreferredSize(new Dimension(50, 16));
 			jJToolBarLoad.add(jLabelRecord);
+			jJToolBarLoad.addSeparator();
+			
+			// --- Counter for the number of agents -----------------
+			jLabelAgentCount = new JLabel();
+			jLabelAgentCount.setText(" 00000 " +  Language.translate("Agenten") + " ");
+			jLabelAgentCount.setFont(new Font("Dialog", Font.BOLD, 12));
+			jJToolBarLoad.add(jLabelAgentCount);
+			jJToolBarLoad.addSeparator();
+			
+			// --- Counter for the number of container --------------
+			jLabelContainerCount = new JLabel();
+			jLabelContainerCount.setText(" 000 " +  Language.translate("Container") + " ");
+			jLabelContainerCount.setFont(new Font("Dialog", Font.BOLD, 12));
+			jJToolBarLoad.add(jLabelContainerCount);
+			jJToolBarLoad.addSeparator();
+			
+			// --- Field for th number of cycles/second -------------
+			jTextFieldCyclesPerSecond = new JTextField();
+			jTextFieldCyclesPerSecond.setPreferredSize(new Dimension(70, 25));
+			jTextFieldCyclesPerSecond.setEditable(false);
+			jTextFieldCyclesPerSecond.setToolTipText("Cycles / second");
+			jJToolBarLoad.add(jTextFieldCyclesPerSecond);
+
+			jLabelSpeed = new JLabel();
+			jLabelSpeed.setFont(new Font("Dialog", Font.BOLD, 12));
+			jLabelSpeed.setText(" 1 / s");
+			jLabelSpeed.setPreferredSize(new Dimension(30, 16));
+			jJToolBarLoad.add(jLabelSpeed);
+			
 		}
 		return jJToolBarLoad;
 	}
@@ -317,6 +374,7 @@ public class SystemLoad extends JPanel {
 	// ------------------------------------------------------------
 	// --- Unterklasse für das ComboBoxModel --- START ------------
 	// ------------------------------------------------------------	
+	
 
 	
 }  //  @jve:decl-index=0:visual-constraint="10,10"

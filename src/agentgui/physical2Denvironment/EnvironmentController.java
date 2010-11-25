@@ -235,10 +235,10 @@ public class EnvironmentController extends Observable implements Observer{
 				notifyObservers(new Integer(EC_ERROR));
 			}			
 		}else{
-//			System.err.println(Language.translate("SVG-Datei")+" "+svgFile.getPath()+" "+Language.translate("nicht gefunden"));
-			this.setLastErrorMessage(Language.translate("SVG-Datei")+" "+svgFile.getPath()+" "+Language.translate("nicht gefunden"));
-			setChanged();
-			notifyObservers(new Integer(EC_ERROR));
+			System.out.println(Language.translate("SVG-Datei")+" "+svgFile.getPath()+" "+Language.translate("nicht gefunden"));
+//			this.setLastErrorMessage(Language.translate("SVG-Datei")+" "+svgFile.getPath()+" "+Language.translate("nicht gefunden"));
+//			setChanged();
+//			notifyObservers(new Integer(EC_ERROR));
 		}
 		
 		return doc;
@@ -429,10 +429,10 @@ public class EnvironmentController extends Observable implements Observer{
 				notifyObservers(new Integer(EC_ERROR));
 			}
 		}else{
-//			System.err.println(Language.translate("Umgebungsdatei")+" "+envFile.getPath()+" "+Language.translate("nicht gefunden"));
-			this.setLastErrorMessage(Language.translate("Umgebungsdatei")+" "+envFile.getName()+" "+Language.translate("nicht gefunden"));
-			setChanged();
-			notifyObservers(new Integer(EC_ERROR));
+			System.out.println(Language.translate("Umgebungsdatei")+" "+envFile.getPath()+" "+Language.translate("nicht gefunden"));
+//			this.setLastErrorMessage(Language.translate("Umgebungsdatei")+" "+envFile.getName()+" "+Language.translate("nicht gefunden"));
+//			setChanged();
+//			notifyObservers(new Integer(EC_ERROR));
 		}
 		return env;
 	}

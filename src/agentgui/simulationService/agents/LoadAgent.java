@@ -89,6 +89,7 @@ public class LoadAgent extends Agent {
 	// --- Over all and current threshold level ---------------------
 	public Integer loadThresholdExceededOverAll = 0;
 	public LoadThresholdLevels loadThresholdLevels = null;
+	public double loadCycleTime = 0;
 	
 	// --- Used (dead or alive) Nodes of the system, ordered --------
 	public Vector<String> loadContainer2Display = null;
@@ -216,12 +217,15 @@ public class LoadAgent extends Agent {
 				
 				// --- Get the PlatformLoad and the Agents at their locations -----------
 				monitorTimeStamp = System.currentTimeMillis();
+				loadCycleTime = simHelper.getAvgCycleTime();
 				loadContainer = simHelper.getContainerLoads();
 				loadContainerAgentMap = simHelper.getAgentMap();
 				loadContainerLoactions = simHelper.getContainerLocations();
 				
 				// --- Display number of agents -----------------------------------------
 				loadPanel.setNumberOfAgents(loadContainerAgentMap.noAgentsAtPlatform);
+				loadPanel.setNumberOfContainer(loadContainer.size());
+				loadPanel.setCycleTime(loadCycleTime);
 				loadThresholdLevels = LoadMeasureThread.getThresholdLevels();
 				
 				// Initialise variables JVM-balancing -----------------------------------

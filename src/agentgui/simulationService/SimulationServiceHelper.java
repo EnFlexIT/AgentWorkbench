@@ -51,6 +51,8 @@ public interface SimulationServiceHelper extends ServiceHelper {
 	
 	// --- Methods for the load balancing ---------------------------
 	public Vector<String> getContainerQueue() throws ServiceException;
+	public double getAvgCycleTime() throws ServiceException;
+	public void setCycleStartTimeStamp() throws ServiceException;
 	
 	public void setThresholdLevels(LoadThresholdLevels currThresholdLevels) throws ServiceException;
 	

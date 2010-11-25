@@ -73,11 +73,9 @@ public class ClassSearcherSingle {
 			// --- In case that we have external resources -----
 			if (currProject.projectResources!=null && currProject.projectResources.size()>0) {
 				Vector<String> extResources = currProject.projectResources;
-				String relProPath = currProject.getProjectFolder();
 				String absProPath = currProject.getProjectFolderFullPath();
-				
 				try {
-					packagesInProject.addAll(ClassLoaderUtil.getPackageNames(extResources, relProPath, absProPath)) ;
+					packagesInProject.addAll(ClassLoaderUtil.getPackageNames(extResources, absProPath)) ;
 				} catch (Exception exc) {
 					exc.printStackTrace();
 				}

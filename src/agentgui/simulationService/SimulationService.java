@@ -310,8 +310,14 @@ public class SimulationService extends BaseService {
 			return loadInfo.containerQueue;
 		}
 		
+		public void setCycleStartTimeStamp() throws ServiceException {
+			loadInfo.setCycleStartTimeStamp();
+		}
+		public double getAvgCycleTime() throws ServiceException{
+			return loadInfo.getAvgCycleTime();
+		}
 		// ----------------------------------------------------------
-		// --- Method to get positions Agents at this platform ------ 
+		// --- Method to get positions of Agents at this platform --- 
 		public LoadAgentMap getAgentMap() throws ServiceException {
 			Service.Slice[] slices = getAllSlices();
 			broadcastGetAIDListSensorAgents(slices);
@@ -1109,6 +1115,7 @@ public class SimulationService extends BaseService {
 			environmentModel = newEnvironmentModel;
 		}
 		private void stepSimulation(EnvironmentModel newEnvironmentModel, boolean aSynchron) {
+			loadInfo.setCycleStartTimeStamp();
 			environmentModel = newEnvironmentModel;
 			localServiceActuator.notifySensors(newEnvironmentModel, aSynchron);
 		}

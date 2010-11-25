@@ -436,7 +436,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 		for(String jarFile : projectResources) {
 			
 			try {
-				jarFile = ClassLoaderUtil.adjustPathForLoadin(jarFile, this.getProjectFolder(), this.getProjectFolderFullPath());
+				jarFile = ClassLoaderUtil.adjustPathForLoadin(jarFile, this.getProjectFolderFullPath());
 				File file = new File(jarFile);
 				ClassLoaderUtil.addFile(file.getAbsoluteFile());
 				ClassLoaderUtil.addJarToClassPath(jarFile);
@@ -470,7 +470,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 		for(String jarFile : projectResources) {
 			
 			try {
-				jarFile = ClassLoaderUtil.adjustPathForLoadin(jarFile, this.getProjectFolder(), this.getProjectFolderFullPath());
+				jarFile = ClassLoaderUtil.adjustPathForLoadin(jarFile, this.getProjectFolderFullPath());
 				ClassLoaderUtil.removeFile(jarFile);
 				ClassLoaderUtil.removeJarFromClassPath(jarFile);
 			} catch (RuntimeException e1) {

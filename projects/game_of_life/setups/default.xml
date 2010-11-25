@@ -5,16 +5,16 @@
         <doDynamicLoadBalalncing>false</doDynamicLoadBalalncing>
         <doStaticLoadBalalncing>true</doStaticLoadBalalncing>
         <dynamicLoadBalancingClass>agentgui.simulationService.balancing.DynamicLoadBalancing</dynamicLoadBalancingClass>
-        <numberOfAgents>12000</numberOfAgents>
-        <numberOfContainer>12</numberOfContainer>
-        <staticLoadBalancingClass>game_of_life.balancing.StartAndBalancing</staticLoadBalancingClass>
+        <numberOfAgents>18</numberOfAgents>
+        <numberOfContainer>1</numberOfContainer>
+        <staticLoadBalancingClass>gol.acl.balancing.StartAndBalancing</staticLoadBalancingClass>
         <useUserThresholds>false</useUserThresholds>
         <userThresholds>
             <thCpuH>80</thCpuH>
             <thCpuL>5</thCpuL>
             <thMemoH>80</thMemoH>
             <thMemoL>5</thMemoL>
-            <thNoThreadsH>1000</thNoThreadsH>
+            <thNoThreadsH>1500</thNoThreadsH>
             <thNoThreadsL>50</thNoThreadsL>
         </userThresholds>
     </distribution>

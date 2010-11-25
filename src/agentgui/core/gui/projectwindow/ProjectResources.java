@@ -24,7 +24,7 @@ public class ProjectResources extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	final static String PathImage = Application.RunInfo.PathImageIntern();
-	private Project currProjet = null;
+	private Project currProject = null;
 	private JList jListResources = null;
 	private JButton jButtonAdd = null;
 	private JButton jButtonRemove = null;
@@ -38,27 +38,28 @@ public class ProjectResources extends JPanel {
 	 */
 	public ProjectResources(Project cp) {
 		super();
-		currProjet = cp;
+		currProject = cp;
 		initialize();
 		myModel = new DefaultListModel();
 		jListResources.setModel(myModel);
-		for (String file : currProjet.projectResources) {
+		for (String file : currProject.projectResources) {
 			myModel.addElement(file);
 		}
 
 	}
 
 	private String adjustString(String path) {
-		final String projectFolder = currProjet.getProjectFolderFullPath();
-		if (path.contains(projectFolder)) {
-			int find = path.indexOf(projectFolder);
-			return path.substring(find - 1);
+		final String projectFolder = currProject.getProjectFolderFullPath();
+		if (path.startsWith(projectFolder)) {
+			int cut = projectFolder.length();
+			String returnPath = path.substring(cut - 1); 
+			return returnPath;
 		}
 		return path;
 	}
 
 	private boolean alreay_there(String path) {
-		return currProjet.projectResources.contains(path);
+		return currProject.projectResources.contains(path);
 	}
 
 	private Vector<String> adjustPaths(File[] files) {
@@ -165,7 +166,7 @@ public class ProjectResources extends JPanel {
 					if (Application.JadePlatform.jadeStopAskUserBefore()) {
 						
 						JFileChooser chooser = new JFileChooser();
-						chooser.setCurrentDirectory(new File(currProjet.getProjectFolderFullPath()));
+						chooser.setCurrentDirectory(new File(currProject.getProjectFolderFullPath()));
 						FileNameExtensionFilter filter = new FileNameExtensionFilter("jar", "JAR");
 						chooser.setFileFilter(filter);
 						chooser.setMultiSelectionEnabled(true);
@@ -173,13 +174,13 @@ public class ProjectResources extends JPanel {
 						chooser.setAcceptAllFileFilterUsed(false);
 						chooser.showDialog(jButtonAdd, "Load Files");
 						Vector<String> names = adjustPaths(chooser.getSelectedFiles());
-						currProjet.projectResources.addAll(names);
+						currProject.projectResources.addAll(names);
 
 						for (String name : names) {
 							myModel.addElement(name);
 						
 						}
-						currProjet.resourcesReLoad();
+						currProject.resourcesReLoad();
 						jListResources.updateUI();
 					}
 				} // end actionPerformed
@@ -207,9 +208,9 @@ public class ProjectResources extends JPanel {
 								
 								for (Object file : values) {
 									myModel.removeElement(file);
-									currProjet.projectResources.remove(file);
+									currProject.projectResources.remove(file);
 								}
-								currProjet.resourcesReLoad();
+								currProject.resourcesReLoad();
 							}
 						}
 					});
@@ -233,8 +234,8 @@ public class ProjectResources extends JPanel {
 							
 							if (Application.JadePlatform.jadeStopAskUserBefore()) {
 								Application.MainWindow.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-								currProjet.resourcesReLoad();
-								Application.classDetector.reStartSearch(currProjet, null);
+								currProject.resourcesReLoad();
+								Application.classDetector.reStartSearch(currProject, null);
 								Application.MainWindow.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 							}
 						}

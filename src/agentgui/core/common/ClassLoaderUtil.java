@@ -25,12 +25,12 @@ public class ClassLoaderUtil {
 	// Parameters
 	private static final Class<? extends Object>[] parameters = new Class<?>[] { URL.class };
 
-	public static Vector<String> getPackageNames(Vector<String> ressources,	String relativProjectPath, String completePath) throws Exception {
+	public static Vector<String> getPackageNames(Vector<String> ressources,	String fullProjectFolderPath) throws Exception {
 
 		Vector<String> result = new Vector<String>();		
 		for (String ressource : ressources) {
 			
-			ressource = ClassLoaderUtil.adjustPathForLoadin(ressource,relativProjectPath, completePath);
+			ressource = ClassLoaderUtil.adjustPathForLoadin(ressource, fullProjectFolderPath);
 			File file = new File(ressource);
 			
 			if (file.isDirectory()) {
@@ -263,14 +263,18 @@ public class ClassLoaderUtil {
 	}
 	
 
-	public static String adjustPathForLoadin(String selectedJar,String projectFolder, String fullProjectFolderPath) {
-		if (selectedJar.contains(projectFolder)) {
-			int index = selectedJar.indexOf("\\");
-			int index2 = selectedJar.indexOf("\\", index + 1);
-			selectedJar = fullProjectFolderPath	+ selectedJar.substring(index2 + 1);
+	public static String adjustPathForLoadin(String selectedJar, String fullProjectFolderPath) {
+		
+		File checkFile = new File(selectedJar);
+		if (checkFile.exists()) {
+			// --- absolute Pfadangabe ---
+			return selectedJar;
+		} else {
+			// --- relative Pfadangabe ---
+			selectedJar = fullProjectFolderPath	+ selectedJar;
+			selectedJar = selectedJar.replace((File.separator + File.separator), File.separator);
+			return selectedJar;
 		}
-		return selectedJar;
-
 	}
 
 	public static Vector<AgentController> loadAgentsIntoContainer(Vector<String> allClasses, AgentContainer container) throws ClassNotFoundException, StaleProxyException {
