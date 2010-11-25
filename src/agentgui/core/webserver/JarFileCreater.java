@@ -83,7 +83,10 @@ public class JarFileCreater {
 				if (baseDir!=null) {
 					String elementFolder = tobeJared[i].getParent();
 					subfolder = elementFolder.substring(baseDir.length(), elementFolder.length());
-					subfolder = subfolder.replace("\\", "/");
+					subfolder = subfolder.replace(File.separator, "/");
+					if (subfolder.startsWith("/")) {
+						subfolder = subfolder.substring(1);
+					}
 					if (subfolder.endsWith("/")==false) {
 						subfolder += "/";
 					}					
