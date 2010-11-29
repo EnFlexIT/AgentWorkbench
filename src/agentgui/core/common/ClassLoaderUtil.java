@@ -25,13 +25,14 @@ public class ClassLoaderUtil {
 	// Parameters
 	private static final Class<? extends Object>[] parameters = new Class<?>[] { URL.class };
 
-	public static Vector<String> getPackageNames(Vector<String> ressources,	String fullProjectFolderPath) throws Exception {
+	public static Vector<String> getPackageNames(Vector<String> resourcesAlreadyThere,	String fullProjectFolderPath) throws Exception {
 
 		Vector<String> result = new Vector<String>();		
-		for (String ressource : ressources) {
+		Vector<String> resources = new Vector<String>(resourcesAlreadyThere); // make a copy of this instance
+		for (String resource : resources) {
 			
-			ressource = ClassLoaderUtil.adjustPathForLoadin(ressource, fullProjectFolderPath);
-			File file = new File(ressource);
+			resource = ClassLoaderUtil.adjustPathForLoadin(resource, fullProjectFolderPath);
+			File file = new File(resource);
 			
 			if (file.isDirectory()) {
 				// --- Verzeichnis durchsuchen ------------ 

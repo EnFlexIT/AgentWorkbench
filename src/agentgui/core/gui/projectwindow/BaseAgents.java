@@ -849,6 +849,9 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 			this.jTreeOntology.setModel( CurrProject.ontologies4Project.getOntologyTree() );
 			this.OntoTreeExpand2Level(3, true);
 			
+		} else if ( ObjectName.equalsIgnoreCase("projectResources") ) {
+			jAgentListModel.removeAllElements();
+			
 		} else if ( ObjectName.equals(ClassSearcherSingle.classSearcherNotify) ) {
 			ClassSearcherUpdate csu = (ClassSearcherUpdate) notifyObject;
 			if (csu.getClass2SearchFor().equals(Agent.class)) {

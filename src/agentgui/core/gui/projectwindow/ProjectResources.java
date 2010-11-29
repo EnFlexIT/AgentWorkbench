@@ -70,28 +70,26 @@ public class ProjectResources extends JPanel {
 			for (File file : files) {
 				
 				String path = file.getAbsolutePath();
-				
 				if (!path.contains(".jar")) {
-
+					// --- If this is a folder ------------					
 					Vector<String> directoryFiles = handleDirectories(file);
-					
 					for (String foreignJar : directoryFiles) {
-						
-						if (!alreay_there(foreignJar)) {
+						String resourcCheck = this.adjustString(foreignJar);
+						if (!alreay_there(resourcCheck)) {
 							result.add(this.adjustString(foreignJar)); // Use relative paths within projects
 						}
-
 					}
 
 				} else	{
-					if (!alreay_there(path)) {
+					// --- If this is a jar-file ----------
+					String resourcCheck = this.adjustString(path);
+					if (!alreay_there(resourcCheck)) {
 						result.add(this.adjustString(path)); // Use absolut within projects
 					}
-
 				}
+
 			}
 		}
-
 		return result;
 	}
 
