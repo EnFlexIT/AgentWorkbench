@@ -210,12 +210,17 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 	 */
 	protected void startAgent(String nickName, String agentClassName, Object[] args, Location toLocation ) {
 		
-		try {
-			@SuppressWarnings("unchecked")
-			Class<? extends Agent> agentClass = (Class<? extends Agent>) Class.forName(agentClassName);
-			this.startAgent(nickName, agentClass, args, toLocation);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+		if (agentClassName==null | agentClassName.equalsIgnoreCase("") | agentClassName.equalsIgnoreCase(Language.translate("Keine")) ) {
+			System.err.println(Language.translate("Agent '" + nickName + "': Keine Klasse definiert."));
+		} else {
+			// --- Initialize the agent-class -------------
+			try {
+				@SuppressWarnings("unchecked")
+				Class<? extends Agent> agentClass = (Class<? extends Agent>) Class.forName(agentClassName);
+				this.startAgent(nickName, agentClass, args, toLocation);
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	/**
