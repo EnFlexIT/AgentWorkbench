@@ -184,8 +184,8 @@ public class EnvironmentController extends Observable implements Observer{
 			rootPgSize.setHeight(height);
 			
 			Position rootPgPos = new Position();
-			rootPgPos.setXPos(0);
-			rootPgPos.setYPos(0);
+			rootPgPos.setXPos(rootPgSize.getWidth()/2);
+			rootPgPos.setYPos(rootPgSize.getHeight()/2);
 			
 			PlaygroundObject rootPg = new PlaygroundObject();
 			rootPg.setPosition(rootPgPos);
@@ -692,7 +692,7 @@ public class EnvironmentController extends Observable implements Observer{
 	}
 	
 	private void setDefaultFileNames(){
-		String baseFileName = project.simSetupCurrent;
+		String baseFileName = project.getProjectName()+"_"+project.simSetupCurrent;
 		project.simSetups.getCurrSimSetup().setEnvironmentFileName(baseFileName+".xml");
 		project.simSetups.getCurrSimSetup().setSvgFileName(baseFileName+".svg");
 		
