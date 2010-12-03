@@ -51,8 +51,8 @@ public class BenchmarkMeasurement extends Thread {
 		if ( benchValueOld>0 && nowExecOn.equalsIgnoreCase(benchExecOn) && benchAllwaysSkip==true && forceBench==false) {
 			// --- Nach Agent-, Ontology- und BaseService - Classes suchen ----
 			Application.benchmarkIsRunning = false;
-			if (Application.classDetector == null) {
-				Application.classDetector = new ClassSearcher();
+			if (Application.ClassDetector == null) {
+				Application.ClassDetector = new ClassSearcher();
 			}			
 			return;
 		}  
@@ -133,8 +133,8 @@ public class BenchmarkMeasurement extends Thread {
 		Application.benchmarkIsRunning = false;
 		
 		// --- Nach Agent-, Ontology- und BaseService - Classes suchen ----
-		if (Application.classDetector == null) {
-			Application.classDetector = new ClassSearcher();
+		if (Application.ClassDetector == null) {
+			Application.ClassDetector = new ClassSearcher();
 		}
 	}
 	

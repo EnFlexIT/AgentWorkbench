@@ -1,9 +1,8 @@
 package agentgui.core.gui;
 
-import jade.core.Agent;
-
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -12,34 +11,25 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.Observable;
-import java.util.Observer;
-import java.util.Vector;
 
-import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JList;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 
-
-import agentgui.core.agents.AgentClassElement;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.core.application.Project;
-import agentgui.core.jade.ClassSearcherSingle;
-import agentgui.core.jade.ClassSearcherSingle.ClassSearcherUpdate;
+import agentgui.core.gui.components.JListClassSearcher;
+import agentgui.core.jade.ClassSearcher;
 
-import java.awt.Font;
-import javax.swing.JTextField;
-import javax.swing.JLabel;
-
-public class AgentSelector extends JDialog implements ActionListener, Observer {
+public class AgentSelector extends JDialog implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -47,15 +37,11 @@ public class AgentSelector extends JDialog implements ActionListener, Observer {
 	private ImageIcon imageIcon = new ImageIcon( this.getClass().getResource( PathImage + "AgentGUI.png") );
 	private Image image = imageIcon.getImage();
 	
-	private Project currProject = null;
-	
-	private DefaultListModel jAgentListModel = new DefaultListModel();
 	private Object[] selectedAgentClasses = null; 
 	private boolean canceled = false;
 	
 	private JPanel jContentPane = null;
-	private JScrollPane jScrollPane = null;
-	private JList jListAgents = null;
+	private JListClassSearcher jListAgents = null;
 	private JButton jButtonOk = null;
 	private JButton jButtonCancel = null;
 	private JPanel jPanelBottom = null;
@@ -63,13 +49,6 @@ public class AgentSelector extends JDialog implements ActionListener, Observer {
 	private JLabel jLabelSearchCaption = null;
 	private JTextField jTextFieldSearch = null;
 
-	
-	public AgentSelector(Frame owner, Project project) {
-		super(owner);
-		this.currProject = project;
-		this.currProject.addObserver(this);
-		initialize();
-	}
 	public AgentSelector(Frame owner) {
 		super(owner);
 		initialize();
@@ -100,7 +79,7 @@ public class AgentSelector extends JDialog implements ActionListener, Observer {
 	    // --- Übersetzungen einstellen -----------------------------
 		this.setTitle(Language.translate("Auswahl - Agenten"));
 		jLabelSearchCaption.setText(Language.translate("Suche"));
-		jButtonOk.setText(Language.translate("Übernehmen"));
+		jButtonOk.setText(Language.translate("Hinzufügen"));
 		jButtonCancel.setText(Language.translate("Abbrechen"));
 	}
 
@@ -115,20 +94,20 @@ public class AgentSelector extends JDialog implements ActionListener, Observer {
 			gridBagConstraints21.insets = new Insets(20, 20, 0, 0);
 			gridBagConstraints21.anchor = GridBagConstraints.WEST;
 			gridBagConstraints21.gridy = 0;
-			jLabelSearchCaption = new JLabel();
-			jLabelSearchCaption.setText("Suche");
-			jLabelSearchCaption.setFont(new Font("Dialog", Font.BOLD, 12));
+			
 			GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
 			gridBagConstraints11.fill = GridBagConstraints.BOTH;
 			gridBagConstraints11.gridy = 1;
 			gridBagConstraints11.weightx = 1.0;
 			gridBagConstraints11.insets = new Insets(5, 20, 0, 20);
 			gridBagConstraints11.gridx = 0;
+			
 			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
 			gridBagConstraints3.gridx = 0;
 			gridBagConstraints3.fill = GridBagConstraints.HORIZONTAL;
 			gridBagConstraints3.insets = new Insets(10, 20, 25, 20);
 			gridBagConstraints3.gridy = 3;
+			
 			GridBagConstraints gridBagConstraints = new GridBagConstraints();
 			gridBagConstraints.fill = GridBagConstraints.BOTH;
 			gridBagConstraints.gridy = 2;
@@ -137,12 +116,17 @@ public class AgentSelector extends JDialog implements ActionListener, Observer {
 			gridBagConstraints.insets = new Insets(20, 20, 10, 20);
 			gridBagConstraints.gridwidth = 1;
 			gridBagConstraints.gridx = 0;
+			
+			jLabelSearchCaption = new JLabel();
+			jLabelSearchCaption.setText("Suche");
+			jLabelSearchCaption.setFont(new Font("Dialog", Font.BOLD, 12));
+			
 			jContentPane = new JPanel();
 			jContentPane.setLayout(new GridBagLayout());
-			jContentPane.add(getJScrollPane(), gridBagConstraints);
-			jContentPane.add(getJPanelBottom(), gridBagConstraints3);
-			jContentPane.add(getJTextFieldSearch(), gridBagConstraints11);
 			jContentPane.add(jLabelSearchCaption, gridBagConstraints21);
+			jContentPane.add(getJTextFieldSearch(), gridBagConstraints11);
+			jContentPane.add(getJListAgents(), gridBagConstraints);
+			jContentPane.add(getJPanelBottom(), gridBagConstraints3);
 		}
 		return jContentPane;
 	}
@@ -165,54 +149,21 @@ public class AgentSelector extends JDialog implements ActionListener, Observer {
 	}
 	
 	/**
-	 * This method initializes jScrollPane	
-	 * @return javax.swing.JScrollPane	
-	 */
-	private JScrollPane getJScrollPane() {
-		if (jScrollPane == null) {
-			jScrollPane = new JScrollPane();
-			jScrollPane.setViewportView(getJListAgents());
-		}
-		return jScrollPane;
-	}
-
-	/**
 	 * This method initializes jListAgents	
 	 * @return javax.swing.JList	
 	 */
-	private JList getJListAgents() {
+	private JListClassSearcher getJListAgents() {
 		if (jListAgents == null) {
-			jListAgents = new JList(jAgentListModel);
-			this.refreshAgentList();
+			jListAgents = new JListClassSearcher(ClassSearcher.CLASSES_AGENTS);
+			jListAgents.jListLoading.addMouseListener( new MouseAdapter() {
+				public void mouseClicked(MouseEvent me) {
+					if (me.getClickCount() == 2 ) {
+						jButtonOk.doClick();	
+					}
+				}
+			});
 		}
 		return jListAgents;
-	}
-	
-	/**
-	 * This methods will refresh the list of available agents
-	 */
-	@SuppressWarnings("unchecked")
-	private void refreshAgentList() {
-		
-		Vector<Class<?>> AgentList = Application.classDetector.getAgentClasse(false);
-		for (int i =0; i<AgentList.size();i++) {
-			
-			Class<? extends Agent> curAgentClass=(Class<? extends Agent>) AgentList.get(i);
-			
-			boolean curAgentClassFound = false;
-			// --- Ist diese Klasse schon im Model? ---
-			for (int j = 0; j < jAgentListModel.size(); j++) {
-				AgentClassElement ace = (AgentClassElement) jAgentListModel.getElementAt(j);
-				Class<?> clazz = ace.getElementClass();
-				if (clazz.equals(curAgentClass)==true) {
-					curAgentClassFound = true;
-					break;
-				}
-			}
-			if (curAgentClassFound==false) {
-				jAgentListModel.addElement(new AgentClassElement(curAgentClass));
-			}
-		}
 	}
 	
 	/**
@@ -220,18 +171,8 @@ public class AgentSelector extends JDialog implements ActionListener, Observer {
 	 * the content of the Input-Parameter 
 	 * @param filter4
 	 */
-	@SuppressWarnings("unchecked")
 	private void filterAgentList(String filter4) {
-		
-		jAgentListModel.removeAllElements();
-		
-		Vector<Class<?>> AgentList = Application.classDetector.getAgentClasse(false);
-		for (int i =0; i<AgentList.size();i++) {
-			Class<? extends Agent> curAgentClass=(Class<? extends Agent>) AgentList.get(i);
-			if ( curAgentClass.getName().toLowerCase().contains(filter4.toLowerCase()) ) {
-				jAgentListModel.addElement( new AgentClassElement(curAgentClass) );
-			}		
-		}
+		jListAgents.setModelFiltered(filter4);
 	}
 	
 	/**
@@ -244,7 +185,7 @@ public class AgentSelector extends JDialog implements ActionListener, Observer {
 			jButtonOk.setPreferredSize(new Dimension(120, 26));
 			jButtonOk.setForeground(new Color(0, 102, 0));
 			jButtonOk.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonOk.setText("Übernehmen");
+			jButtonOk.setText("Hinzufügen");
 			jButtonOk.setActionCommand("Ok");
 			jButtonOk.addActionListener(this);
 		}
@@ -341,20 +282,6 @@ public class AgentSelector extends JDialog implements ActionListener, Observer {
 		} else {
 			
 		};
-	}
-
-	@Override
-	public void update(Observable o, Object notifyObject) {
-
-		String ObjectName = notifyObject.toString();
-		if ( ObjectName.equals(ClassSearcherSingle.classSearcherNotify) ) {
-			ClassSearcherUpdate csu = (ClassSearcherUpdate) notifyObject;
-			if (csu.getClass2SearchFor().equals(Agent.class)) {
-				this.refreshAgentList();
-			}
-		} else {
-			//System.out.println("Unbekannte Meldung vom Observer: " + ObjectName);
-		}
 	}
 
 }  //  @jve:decl-index=0:visual-constraint="10,10"

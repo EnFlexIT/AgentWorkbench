@@ -15,7 +15,6 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Vector;
 
-import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -37,17 +36,18 @@ import agentgui.core.agents.AgentClassElement;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
+import agentgui.core.gui.components.JListClassSearcher;
 import agentgui.core.jade.ClassSearcher;
-import agentgui.core.jade.ClassSearcherSingle;
-import agentgui.core.jade.ClassSearcherSingle.ClassSearcherUpdate;
 import agentgui.core.ontologies.OntologyClassTreeObject;
 
 public class BaseAgents extends JPanel implements Observer, ActionListener {
 
 	private static final long serialVersionUID = 1L;
-	private Project CurrProject;
 	final static String PathImage = Application.RunInfo.PathImageIntern();
+	
+	private Project CurrProject;
 	private OntologyClassTreeObject CurrOntoObject = null;
+	
 	private String agentConfig = null;  //  @jve:decl-index=0:
 	private Integer agentConfigPos = null;  //  @jve:decl-index=0:
 	private String agentReference = null;  //  @jve:decl-index=0:
@@ -59,9 +59,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 	private JTextField jTextAgentStartAs = null;
 	private JButton jButtonStartAgent = null;
 	private JButton jButtonAgentListRefresh = null;
-	private JScrollPane jAgentScroll = null;
-	private JList jAgentList = null;
-	private DefaultListModel jAgentListModel = new DefaultListModel();
+	private JListClassSearcher jAgentList = null;
 	private JPanel jPanelReferences = null;
 	private JScrollPane jScrollReferences = null;
 	private JList jListReferences = null;
@@ -112,7 +110,6 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 
 	/**
 	 * This method initializes this
-	 * 
 	 * @return void
 	 */
 	private void initialize() {
@@ -192,27 +189,14 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 	}
 
 	/**
-	 * This method initializes jAgentScroll	
-	 * 	
-	 * @return javax.swing.JScrollPane	
-	 */
-	private JScrollPane getJAgentScroll() {
-		if (jAgentScroll == null) {
-			jAgentScroll = new JScrollPane();
-			jAgentScroll.setPreferredSize(new Dimension(333, 300));
-			jAgentScroll.setViewportView(getJAgentList());
-		}
-		return jAgentScroll;
-	}
-	
-	/**
 	 * This method initializes jAgentList	
 	 * @return javax.swing.JList	
 	 */
-	private JList getJAgentList() {
+	private JListClassSearcher getJAgentList() {
 		if (jAgentList == null) {
-			jAgentList = new JList(jAgentListModel);
-			jAgentList.setToolTipText("Agenten in diesem Projekt");
+			jAgentList = new JListClassSearcher(ClassSearcher.CLASSES_AGENTS, CurrProject);
+			jAgentList.setToolTipText(Language.translate("Agenten in diesem Projekt"));
+			jAgentList.setPreferredSize(new Dimension(333, 300));
 			jAgentList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			jAgentList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
 				public void valueChanged(javax.swing.event.ListSelectionEvent se) {
@@ -275,37 +259,8 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 				}
 			});
 		}
-		this.refreshAgentList();
 		return jAgentList;
 	}
-	
-	/**
-	 * This methods will refresh the List of available agents
-	 */
-	@SuppressWarnings("unchecked")
-	private void refreshAgentList() {
-		
-		Vector<Class<?>> AgentList = Application.classDetector.getAgentClasse(true);
-		for (int i =0; i<AgentList.size();i++) {
-			
-			Class<? extends Agent> curAgentClass=(Class<? extends Agent>) AgentList.get(i);
-			
-			boolean curAgentClassFound = false;
-			// --- Ist diese Klasse schon im Model? ---
-			for (int j = 0; j < jAgentListModel.size(); j++) {
-				AgentClassElement ace = (AgentClassElement) jAgentListModel.getElementAt(j);
-				Class<?> clazz = ace.getElementClass();
-				if (clazz.equals(curAgentClass)==true) {
-					curAgentClassFound = true;
-					break;
-				}
-			}
-			if (curAgentClassFound==false) {
-				jAgentListModel.addElement(new AgentClassElement(curAgentClass));
-			}
-		}
-	}
-	
 	
 	/**
 	 * This method initializes jPanelReferences	
@@ -371,7 +326,6 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 
 	/**
 	 * This method initializes jScrollReferences	
-	 * 	
 	 * @return javax.swing.JScrollPane	
 	 */
 	private JScrollPane getJScrollReferences() {
@@ -395,7 +349,6 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 
 	/**
 	 * This method initializes jButtonMoveUp	
-	 * 	
 	 * @return javax.swing.JButton	
 	 */
 	private JButton getJButtonMoveUp() {
@@ -412,7 +365,6 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 
 	/**
 	 * This method initializes jButtonMoveDown	
-	 * 	
 	 * @return javax.swing.JButton	
 	 */
 	private JButton getJButtonMoveDown() {
@@ -429,7 +381,6 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 
 	/**
 	 * This method initializes jButtonRemoveAll	
-	 * 	
 	 * @return javax.swing.JButton	
 	 */
 	private JButton getJButtonRemoveAll() {
@@ -446,7 +397,6 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 
 	/**
 	 * This method initializes jButtonReferencesAdd	
-	 * 	
 	 * @return javax.swing.JButton	
 	 */
 	private JButton getJButtonReferencesAdd() {
@@ -463,7 +413,6 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 
 	/**
 	 * This method initializes jButtonReferencesRemove	
-	 * 	
 	 * @return javax.swing.JButton	
 	 */
 	private JButton getJButtonReferencesRemove() {
@@ -480,7 +429,6 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 
 	/**
 	 * This method initializes jSplitEast	
-	 * 	
 	 * @return javax.swing.JSplitPane	
 	 */
 	private JSplitPane getJSplitEast() {
@@ -498,7 +446,6 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 
 	/**
 	 * This method initializes jScrollOntology	
-	 * 	
 	 * @return javax.swing.JScrollPane	
 	 */
 	private JScrollPane getJScrollOntology() {
@@ -511,7 +458,6 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 
 	/**
 	 * This method initializes jTreeOntology	
-	 * 	
 	 * @return javax.swing.JTree	
 	 */
 	private JTree getJTreeOntology() {
@@ -578,7 +524,6 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
     
 	/**
 	 * This method initializes jPanelOntology	
-	 * 	
 	 * @return javax.swing.JPanel	
 	 */
 	private JPanel getJPanelOntology() {
@@ -606,7 +551,6 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 	}
 	/**
 	 * This method initializes jSplitOntologie	
-	 * 	
 	 * @return javax.swing.JSplitPane	
 	 */
 	private JSplitPane getJSplitOntologie() {
@@ -624,7 +568,6 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 
 	/**
 	 * This method initializes jPanelOntoSlots	
-	 * 	
 	 * @return javax.swing.JPanel	
 	 */
 	private JPanel getJPanelOntoSlots() {
@@ -689,6 +632,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 			gridBagConstraints18.gridwidth = 2;
 			gridBagConstraints18.insets = new Insets(0, 10, 0, 0);
 			gridBagConstraints18.gridx = 0;
+			
 			GridBagConstraints gridBagConstraints = new GridBagConstraints();
 			gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
 			gridBagConstraints.gridwidth = 1;
@@ -696,13 +640,15 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 			gridBagConstraints.gridy = 1;
 			gridBagConstraints.weightx = 0.0;
 			gridBagConstraints.insets = new Insets(10, 1, 10, 0);
+			
 			GridBagConstraints gridBagConstraints9 = new GridBagConstraints();
 			gridBagConstraints9.insets = new Insets(10, 10, 10, 5);
 			gridBagConstraints9.gridy = 1;
 			gridBagConstraints9.gridx = 0;
+			
 			jPanelWest = new JPanel();
 			jPanelWest.setLayout(new GridBagLayout());
-			jPanelWest.add(getJAgentScroll(), gridBagConstraints18);
+			jPanelWest.add(getJAgentList(), gridBagConstraints18);
 			jPanelWest.add(jLabelAgent, gridBagConstraints9);
 			jPanelWest.add(getJTextAgent(), gridBagConstraints);
 		}
@@ -735,7 +681,6 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 
 	/**
 	 * This method initializes jPanelEastTop	
-	 * 	
 	 * @return javax.swing.JPanel	
 	 */
 	private JPanel getJPanelEastTop() {
@@ -778,10 +723,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 
 		if ( Trigger == jButtonAgentListRefresh ) {
 			// --- AgentList aktualisieren ----------------
-			Application.setStatusBar( Language.translate("Aktualisiere Agenten-Liste...") );
-			
-			jAgentListModel.removeAllElements();
-			Application.classDetector.reStartSearch(CurrProject, ClassSearcher.RESTART_AGENT_SEARCH);
+			Application.ClassDetector.reStartSearch(CurrProject, ClassSearcher.RESTART_AGENT_SEARCH);
 			
 			jTextAgent.setText(null);
 			jTextAgentStartAs.setText(null);
@@ -849,14 +791,6 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 			this.jTreeOntology.setModel( CurrProject.ontologies4Project.getOntologyTree() );
 			this.OntoTreeExpand2Level(3, true);
 			
-		} else if ( ObjectName.equalsIgnoreCase("projectResources") ) {
-			jAgentListModel.removeAllElements();
-			
-		} else if ( ObjectName.equals(ClassSearcherSingle.classSearcherNotify) ) {
-			ClassSearcherUpdate csu = (ClassSearcherUpdate) notifyObject;
-			if (csu.getClass2SearchFor().equals(Agent.class)) {
-				this.refreshAgentList();
-			}
 		} else {
 			//System.out.println("Unbekannte Meldung vom Observer: " + ObjectName);
 		}

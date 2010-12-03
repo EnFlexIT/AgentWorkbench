@@ -505,7 +505,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		Integer startCounter = jListModelAgents2Start.size() + 1;
 
 		// ==================================================================
-		AgentSelector agentSelector = new AgentSelector(Application.MainWindow, currProject);
+		AgentSelector agentSelector = new AgentSelector(Application.MainWindow);
 		agentSelector.setVisible(true);
 		// ==================================================================
 		

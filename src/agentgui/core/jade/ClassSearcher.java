@@ -1,5 +1,9 @@
 package agentgui.core.jade;
 
+import jade.content.onto.Ontology;
+import jade.core.Agent;
+import jade.core.BaseService;
+
 import java.util.Vector;
 
 import agentgui.core.application.Project;
@@ -11,19 +15,22 @@ public class ClassSearcher {
 	public static final int RESTART_ONTOLOGY_SEARCH = 2;
 	public static final int RESTART_BASESERVICE_SEARCH = 3;
 
+	public static final Class<Agent> CLASSES_AGENTS = jade.core.Agent.class;
+	public static final Class<Ontology> CLASSES_ONTOLOGIES = jade.content.onto.Ontology.class;
+	public static final Class<BaseService> CLASSES_BASESERVICE = jade.core.BaseService.class;
+	
 	private Project currProject = null;
 	
-	private ClassSearcherSingle csAgents = null;
-	private ClassSearcherSingle csOntologies = null;
-	private ClassSearcherSingle csBaseService = null;
+	public ClassSearcherSingle csAgents =  new ClassSearcherSingle(CLASSES_AGENTS);
+	public ClassSearcherSingle csOntologies = new ClassSearcherSingle(CLASSES_ONTOLOGIES);
+	public ClassSearcherSingle csBaseService = new ClassSearcherSingle(CLASSES_BASESERVICE);
 
 	
 	public ClassSearcher() {
 		this.reStartSearch(null, null);
 	}
 	public ClassSearcher(Project project) {
-		this.currProject = project;
-		this.reStartSearch(this.currProject, null);
+		this.reStartSearch(project, null);
 	}
 	public void reStartSearch(Project project, Integer searchFor) {
 		
@@ -31,54 +38,49 @@ public class ClassSearcher {
 		
 		if (searchFor==null) {
 			// ------------------------------------------------
-			// --- Alle Suchen erneut starten -----------------
+			// --- Restart all searches -----------------------
 			// ------------------------------------------------
 			
 			// --- Start search for Agent ---------------------
-			if (csAgents!=null) {
-				csAgents.stopSearch();
-			}
-			csAgents = new ClassSearcherSingle(jade.core.Agent.class, currProject);
+			csAgents.stopSearch();
+			csAgents.setProject(this.currProject);
+			csAgents.startSearch();
 			
 			// --- Start search for Ontology ------------------
-			if (csOntologies!=null) {
-				csOntologies.stopSearch();
-			}
-			csOntologies = new ClassSearcherSingle(jade.content.onto.Ontology.class, currProject);
+			csOntologies.stopSearch();
+			csOntologies.setProject(this.currProject);
+			csOntologies.startSearch();
 			
 			// --- Start search for Agent BaseService ---------
-			if (csBaseService!=null) {
-				csBaseService.stopSearch();
-			}
-			csBaseService = new ClassSearcherSingle(jade.core.BaseService.class, currProject);
+			csBaseService.stopSearch();
+			csBaseService.setProject(this.currProject);
+			csBaseService.startSearch();
 
 		} else {
 			// ------------------------------------------------
-			// --- Nur ausgewählte Suchen starten -------------
+			// --- Start selected searches --------------------
 			// ------------------------------------------------
 			int search = searchFor;
 			switch (search) {
 			case RESTART_AGENT_SEARCH:
 				// --- Start search for Agent ---------------------
-				if (csAgents!=null) {
-					csAgents.stopSearch();
-				}
-				csAgents = new ClassSearcherSingle(jade.core.Agent.class, currProject);
-				
+				csAgents.stopSearch();
+				csAgents.setProject(this.currProject);
+				csAgents.startSearch();				
 				break;
+				
 			case RESTART_ONTOLOGY_SEARCH:
 				// --- Start search for Ontology ------------------
-				if (csOntologies!=null) {
-					csOntologies.stopSearch();
-				}
-				csOntologies = new ClassSearcherSingle(jade.content.onto.Ontology.class, currProject);
+				csOntologies.stopSearch();
+				csOntologies.setProject(this.currProject);
+				csOntologies.startSearch();
 				break;
+				
 			case RESTART_BASESERVICE_SEARCH:
 				// --- Start search for BaseService ---------------
-				if (csBaseService!=null) {
-					csBaseService.stopSearch();
-				}
-				csBaseService = new ClassSearcherSingle(jade.core.BaseService.class, currProject);
+				csBaseService.stopSearch();
+				csBaseService.setProject(this.currProject);
+				csBaseService.startSearch();
 				break;
 			}
 		}

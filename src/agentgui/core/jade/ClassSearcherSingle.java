@@ -1,5 +1,6 @@
 package agentgui.core.jade;
 
+import jade.core.Agent;
 import jade.util.ClassFinderFilter;
 import jade.util.ClassFinderListener;
 
@@ -8,69 +9,96 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import javax.swing.DefaultListModel;
+
+import agentgui.core.agents.AgentClassElement;
 import agentgui.core.application.Application;
 import agentgui.core.application.Project;
 import agentgui.core.common.ClassLoaderUtil;
+import agentgui.core.gui.components.ClassElement2Display;
+import agentgui.core.gui.components.JListClassSearcher;
 
 public class ClassSearcherSingle {
 
 	public static final int ACC_INTERFACE = 0x0200;
 	public static final int ACC_ABSTRACT = 0x0400;
 	
-	public static final String classSearcherNotify = "ClassSearcherUpdate";
-
 	private Project currProject = null;
+	private Vector<String> packagesInProject = new Vector<String>();
 	
 	private ClassUpdater cu = null;
 	private Class<?> clazz;
 	private String classname;
 	private ClassFinderFilter classfilter;
 	
+	private boolean busy = false;
 	private boolean classesLoaded = false;
 	private Vector<Class<?>> classesFound = new Vector<Class<?>>();
+	
+	private DefaultListModel jListModelClassesFound = new DefaultListModel();
+	private DefaultListModel jListModelClassesFoundProject = new DefaultListModel();
+	private Vector<JListClassSearcher> jListProgress = new Vector<JListClassSearcher>();
 	
 	/**
 	 * Constructor of this class. Executes the search for the class
 	 * @param search4Class
 	 */
-	public ClassSearcherSingle(Class<?> clazz2Search4, Project project) {
+	public ClassSearcherSingle(Class<?> clazz2Search4) {
 		this.clazz =  clazz2Search4;
 		this.classname = clazz2Search4.getName();
-		this.currProject = project;
-		
-		cu = new ClassUpdater(classname, classfilter == null ? new ClassFilter() : classfilter);
-		new Thread(cu).start();
 	}
 	
+	public void startSearch() {
+		
+		classesFound.removeAllElements();
+		jListModelClassesFound.removeAllElements();
+		jListModelClassesFoundProject.removeAllElements();
+
+		this.setBusy(true);
+		
+		// --- Start the search of classes ----------------
+		cu = new ClassUpdater(classname, classfilter == null ? new ClassFilter() : classfilter);
+		new Thread(cu).start();		
+	}
+	public void reStartSearch() {
+		this.stopSearch();
+		this.startSearch();
+	}
 	public void stopSearch() {
-		synchronized (cu) {
-			cu.stopSearch();
+		if (cu!=null) {
+			synchronized (cu) {
+				cu.stopSearch();
+			}
 		}
 	}
-	/**
-	 * @return the classesLoaded
-	 */
-	public boolean isClassesLoaded() {
-		return classesLoaded;
+	public void registerJListWithProgress(JListClassSearcher jListClassSearcher) {
+		jListProgress.addElement(jListClassSearcher);	
+		jListClassSearcher.setBusy(this.busy);
 	}
+	private void setBusy(boolean isBusy) {
+		this.busy = isBusy;
+		for (JListClassSearcher jListWP : jListProgress) {
+			jListWP.setBusy(this.busy);
+		}
+	}
+
 	/**
-	 * @return the classesFound
+	 * Thi will set the current project and evaluate the package-names in the project
+	 * @param project
 	 */
-	public Vector<Class<?>> getClassesFound(boolean filtered) {
+	public void setProject(Project project) {
 		
-		if (filtered==true) {
-			// -------------------------------------------------
-			// --- Filter packages from the current project ----
-			Vector<String> packagesInProject = new Vector<String>();
-			
+		this.currProject = project;
+		this.packagesInProject.removeAllElements();
+		
+		// ------------------------------------------------
+		// --- Search for packages in project -------------
+		if (this.currProject!=null) {
+			// --- We are using our IDE in the moment -----			
 			if (Application.RunInfo.AppExecutedOver().equalsIgnoreCase("IDE")) {
-				// ---------------------------------------------
-				// --- We are using our IDE in the moment ------
 				packagesInProject.addElement(currProject.getProjectFolder());
 			} 
-
-			// -------------------------------------------------
-			// --- In case that we have external resources -----
+			// --- If we have external resources ----------
 			if (currProject.projectResources!=null && currProject.projectResources.size()>0) {
 				Vector<String> extResources = currProject.projectResources;
 				String absProPath = currProject.getProjectFolderFullPath();
@@ -80,9 +108,26 @@ public class ClassSearcherSingle {
 					exc.printStackTrace();
 				}
 			}
-			
+		}
+		// ------------------------------------------------
+	}
+	
+	/**
+	 * @return the classesLoaded
+	 */
+	public boolean isClassesLoaded() {
+		return classesLoaded;
+	}
+	/**
+	 * @return the classesFound
+	 */
+	public Vector<Class<?>> getClassesFound(boolean classesFromProjectOnly) {
+		
+		if (classesFromProjectOnly==true) {
 			// -------------------------------------------------
-			// --- Define the (start) result-Vector ------------
+			// --- Filter packages from the current project ----
+			// --- and define the result-Vector 			----
+			// -------------------------------------------------
 			Vector<Class<?>> resultVec = new Vector<Class<?>>();
 			for (int i = 0; i < classesFound.size(); i++) {
 				Class<?> clazz = classesFound.get(i);
@@ -107,41 +152,77 @@ public class ClassSearcherSingle {
 	 */
 	private void appendToList(List<Class<?>> list) {
 		synchronized (classesFound) {
-			boolean stillSearching = list.size() > 0;
-			if (stillSearching) {
+			
+			if (list.size() > 0) {
+				
+				this.setBusy(true);
 				classesFound.addAll(list);
+				
+				// ----------------------------------------
+				// --- add results to the display-lists ---
+				for (int i = 0; i < list.size(); i++) {
+					Class<?> clazz = list.get(i);
+					String clazzName = clazz.getName();
+					
+					// add to jListModelClassesFound ------
+					this.add2ListModel(jListModelClassesFound, clazz);
+
+					// add to jListModelClassesFoundProject
+					if (this.currProject!=null) {
+						for (String projectPackage : packagesInProject) {
+							if (clazzName.startsWith(projectPackage)) {
+								this.add2ListModel(jListModelClassesFoundProject, clazz);
+								break;
+							}
+						}
+					}
+				}// end for
+				
+				// --- notify JListClassSearcher ---------- 
+				for (JListClassSearcher jListWP : jListProgress) {
+					jListWP.refreshModel();
+				}
+				// ----------------------------------------
 			}
-			// --- notify project-window ------------------
-			if (currProject!=null) {
-				currProject.setNotChangedButNotify(new ClassSearcherUpdate(this.clazz));
-			}
+		}//end synchronized
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void add2ListModel(DefaultListModel listModel, Class<?> clazz) {
+	
+		if (this.clazz == ClassSearcher.CLASSES_AGENTS) {
+			Class<? extends Agent> agentClass = (Class<? extends Agent>) clazz;
+			listModel.addElement(new AgentClassElement(agentClass));
+			
+		} else if (this.clazz == ClassSearcher.CLASSES_ONTOLOGIES) {
+			listModel.addElement(new ClassElement2Display(clazz));
+			
+		} else if (this.clazz == ClassSearcher.CLASSES_BASESERVICE) {
+			listModel.addElement(new ClassElement2Display(clazz));
+			
 		}
 	}
 	
-	
-	// ------------------------------------------------------------------------
-	// --- Sub-Class - 'ClassSearcherUpdate' --- S T A R T --------------------
-	// ------------------------------------------------------------------------
 	/**
-	 * This will be used to notify the currProject about changes
-	 * in the result vector of the search 
-	 * @author derksen
+	 * @return the jListModelClassesFound
 	 */
-	public class ClassSearcherUpdate {
-		private Class<?> clazz2SearchFor;
-		public ClassSearcherUpdate(Class<?> clazz2SearchFor) {
-			this.clazz2SearchFor = clazz2SearchFor;
-		}
-		public String toString() {
-			return classSearcherNotify;
-		}
-		public Class<?> getClass2SearchFor() {
-			return this.clazz2SearchFor;
+	public DefaultListModel getjListModelClassesFound() {
+		if (this.jListModelClassesFound==null) {
+			return new DefaultListModel();
+		} else {
+			return jListModelClassesFound;	
 		}
 	}
-	// ------------------------------------------------------------------------
-	// --- Sub-Class - 'ClassSearcherUpdate' --- S T O P ----------------------
-	// ------------------------------------------------------------------------
+	/**
+	 * @return the jListModelClassesFoundProject
+	 */
+	public DefaultListModel getjListModelClassesFoundProject() {
+		if (this.jListModelClassesFoundProject==null) {
+			return new DefaultListModel();
+		} else {
+			return jListModelClassesFoundProject;	
+		}
+	}
 
 	
 	// ------------------------------------------------------------------------
@@ -198,6 +279,7 @@ public class ClassSearcherSingle {
 			appendToList(classNamesCache);
 			classNamesCache = null;
 			classesLoaded = true;
+			setBusy(false);
 		}
 		
 	}

@@ -163,15 +163,15 @@ public class Ontologies4Project extends HashMap<String, OntologyClass> {
 	 * returns the remaining classes as Vector<String> 
 	 * @return
 	 */
-	public Vector<String> getAllNoneUsedOntologies() {
+	public Vector<Class<?>> getAllNoneUsedOntologies() {
 		
-		Vector<Class<?>> allOntos = Application.classDetector.getOntologieClasse(false);
-		Vector<String> filteredOntos = new Vector<String>();
+		Vector<Class<?>> allOntos = Application.ClassDetector.getOntologieClasse(false);
+		Vector<Class<?>> filteredOntos = new Vector<Class<?>>();
 		for (int i =0; i<allOntos.size(); i++) {
-			if ( this.get(allOntos.get(i).getName())==null && 
-				 allOntos.get(i).getName().toLowerCase().endsWith(Application.RunInfo.getFileNameProjectOntology().toLowerCase())==false
-				) {
-				filteredOntos.add( allOntos.get(i).getName() );
+			Class<?> currClass = allOntos.get(i);
+			String currClassName = currClass.getName();
+			if ( this.get(currClassName)==null && currClassName.endsWith(Application.RunInfo.getFileNameProjectOntology())==false ) {
+				filteredOntos.add(currClass);
 			}
 		}
 		return filteredOntos;

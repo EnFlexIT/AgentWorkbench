@@ -8,18 +8,16 @@
     Zum Start muss ein ControlGUIAgent gestartet werden, der einen Simulationsaufbau vornimmt, indem er seinerseits 2 Cranes, 1 Apron, 1 StraddleCarrier und 1 Yard sowie HarbourMaster und RandomGenerator startet. In der sodann angezeigten Oberfläche ControlGUI kann ein Ship mit bestimmten Abmessungen des Laderaums gestartet werden. Die Größe kann wahlweise auch zufällig vom RandomGenerator bestimmt werden oder es kann eine vorgefertigte BayMap geladen werden (als .owl-Datei). Wenn die entsprechende Option gewählt ist, wird der Laderaum dann vom RandomGenerator mit zufällig erzeugten Containern gefüllt. Das Schiff schreibt diese Container zur Entladung aus.
 	Die Abläufe lassen sich am besten im automatisch erzeugten Sniffer einsehen. Die ControlGUI bietet noch einige weitere Möglichkeiten.</projectDescription>
     <projectResources>
-        <projectResource>\contmasstandalone\ContMAS.jar</projectResource>
-        <projectResource>\contmasstandalone\ContMAS_lib\icu4j-3.4.4.jar</projectResource>
-        <projectResource>\contmasstandalone\ContMAS_lib\iri-0.7.jar</projectResource>
-        <projectResource>\contmasstandalone\ContMAS_lib\jena-2.6.2.jar</projectResource>
-        <projectResource>\contmasstandalone\ContMAS_lib\log4j-1.2.13.jar</projectResource>
-        <projectResource>\contmasstandalone\ContMAS_lib\slf4j-api-1.5.6.jar</projectResource>
-        <projectResource>\contmasstandalone\ContMAS_lib\slf4j-log4j12-1.5.6.jar</projectResource>
-        <projectResource>\contmasstandalone\ContMAS_lib\xercesImpl-2.7.1.jar</projectResource>
+        <projectResource>\ContMAS.jar</projectResource>
+        <projectResource>\ContMAS_lib\icu4j-3.4.4.jar</projectResource>
+        <projectResource>\ContMAS_lib\iri-0.7.jar</projectResource>
+        <projectResource>\ContMAS_lib\jena-2.6.2.jar</projectResource>
+        <projectResource>\ContMAS_lib\log4j-1.2.13.jar</projectResource>
+        <projectResource>\ContMAS_lib\slf4j-api-1.5.6.jar</projectResource>
+        <projectResource>\ContMAS_lib\slf4j-log4j12-1.5.6.jar</projectResource>
+        <projectResource>\ContMAS_lib\xercesImpl-2.7.1.jar</projectResource>
     </projectResources>
-    <subOntologies>
-        <subOntology>de.unidue.stud.sehawagn.contmas.ontology.ContainerTerminalOntology</subOntology>
-    </subOntologies>
+    <subOntologies/>
     <agentConfiguration/>
     <simulationSetupCurrent>map_port_chalmers_agentgui</simulationSetupCurrent>
     <simulationSetups>

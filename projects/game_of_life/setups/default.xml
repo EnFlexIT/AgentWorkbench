@@ -7,7 +7,7 @@
         <dynamicLoadBalancingClass>agentgui.simulationService.balancing.DynamicLoadBalancing</dynamicLoadBalancingClass>
         <numberOfAgents>500</numberOfAgents>
         <numberOfContainer>1</numberOfContainer>
-        <staticLoadBalancingClass>gol.acl.balancing.StartAndBalancing</staticLoadBalancingClass>
+        <staticLoadBalancingClass>gol.SimService.balancing.StartAndBalancing</staticLoadBalancingClass>
         <useUserThresholds>false</useUserThresholds>
         <userThresholds>
             <thCpuH>80</thCpuH>

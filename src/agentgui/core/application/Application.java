@@ -26,7 +26,7 @@ public class Application {
 	public static FileProperties properties = null;
 	public static Platform JadePlatform = null;	
 	public static DownloadServer webServer = null;
-	public static ClassSearcher classDetector = null;
+	public static ClassSearcher ClassDetector = null;
 	
 	public static AgentGUITrayIcon trayIconInstance = null;
 	public static boolean isServer = false;

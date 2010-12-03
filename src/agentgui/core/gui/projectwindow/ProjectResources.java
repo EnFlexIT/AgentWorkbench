@@ -233,7 +233,7 @@ public class ProjectResources extends JPanel {
 							if (Application.JadePlatform.jadeStopAskUserBefore()) {
 								Application.MainWindow.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 								currProject.resourcesReLoad();
-								Application.classDetector.reStartSearch(currProject, null);
+								Application.ClassDetector.reStartSearch(currProject, null);
 								Application.MainWindow.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 							}
 						}

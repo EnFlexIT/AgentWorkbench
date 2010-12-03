@@ -446,10 +446,10 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 		}
 		
 		// --- Nach Agent-, Ontology- und BaseService - Classes suchen ----
-		if (Application.classDetector == null) {
-			Application.classDetector = new ClassSearcher(this);
+		if (Application.ClassDetector == null) {
+			Application.ClassDetector = new ClassSearcher(this);
 		} else {
-			Application.classDetector.reStartSearch(this, null);
+			Application.ClassDetector.reStartSearch(this, null);
 		}
 		
 		this.setChangedAndNotify("projectResources");

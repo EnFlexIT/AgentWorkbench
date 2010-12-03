@@ -416,7 +416,7 @@ public class EnvironmentSetup extends JPanel implements ActionListener, Observer
 			controller.removeObject();
 			setSelectedElement(null);
 		}else if(arg0.getSource() == objectSettings.getBtnSetAgentClass()){
-			AgentSelector agentSelector = new AgentSelector(Application.MainWindow, project);
+			AgentSelector agentSelector = new AgentSelector(Application.MainWindow);
 			agentSelector.setVisible(true);
 			Object[] selected = agentSelector.getSelectedAgentClasses();
 			if(selected != null && selected.length > 0){

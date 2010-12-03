@@ -293,14 +293,10 @@ public class OntologyTab extends JPanel implements Observer, ActionListener {
 		//System.out.println( "ActCMD/Wert => " + ActCMD );
 		//System.out.println( "Auslöser => " + Trigger );
 
-		if ( ActCMD == "OntologieAdd" ) {
+		if ( ActCMD.equals("OntologieAdd") ) {
 			// --- Ontologie hinzufgen ------------------------------
 			String ActionTitel = Language.translate("Ontologie hinzufügen"); 
-			OntologieSelector onSel = new OntologieSelector( Application.MainWindow,
-															CurrProject.getProjectName() + ": " + ActionTitel,
-															true,
-															CurrProject
-															);			
+			OntologieSelector onSel = new OntologieSelector( Application.MainWindow, CurrProject.getProjectName() + ": " + ActionTitel,true );			
 			onSel.setVisible(true);
 			// === Hier geht's weiter, wenn der Dialog wieder geschlossen ist ===
 			if ( onSel.isCanceled() == true ) {
@@ -313,7 +309,7 @@ public class OntologyTab extends JPanel implements Observer, ActionListener {
 			// --- Neu gewählte Ontologie hinzufügen ---------------- 
 			CurrProject.subOntologyAdd(newOntologie);
 		}
-		else if ( ActCMD == "OntologieRemove" ) {
+		else if ( ActCMD.equals("OntologieRemove") ) {
 			// --- Ontologie entfernen ------------------------------
 			if ( OntoTree.isSelectionEmpty() ) {
 				MsgHead = Language.translate("Fehlende Auswahl !");
