@@ -90,6 +90,10 @@ public class EnvironmentController extends Observable implements Observer{
 	private void setLastErrorMessage(String lastErrorMessage) {
 		this.lastErrorMessage = lastErrorMessage;
 	}
+	/**
+	 * This EnvironmentController's GUI
+	 */
+	private EnvironmentSetup myGUI = null;
 
 	/**
 	 * The path where environment and SVG files are stored
@@ -150,6 +154,14 @@ public class EnvironmentController extends Observable implements Observer{
 			setEnvironment(initEnvironment());
 		}
 		
+	}
+	
+	/**
+	 * Sets this EnvironmentController's GUI
+	 * @param gui
+	 */
+	public void setGUI(EnvironmentSetup gui){
+		myGUI = gui;
 	}
 	
 	
@@ -259,6 +271,9 @@ public class EnvironmentController extends Observable implements Observer{
 	 */
 	private void saveSVG(File svgFile){
 		if(svgDoc != null){
+			if(myGUI != null){
+				myGUI.setSelectedElement(null);
+			}
 			try {
 				System.out.println(Language.translate("Speichere SVG nach ")+" "+svgFile.getName());
 				if(!svgFile.exists()){
@@ -692,7 +707,7 @@ public class EnvironmentController extends Observable implements Observer{
 	}
 	
 	private void setDefaultFileNames(){
-		String baseFileName = project.getProjectName()+"_"+project.simSetupCurrent;
+		String baseFileName = project.simSetupCurrent;
 		project.simSetups.getCurrSimSetup().setEnvironmentFileName(baseFileName+".xml");
 		project.simSetups.getCurrSimSetup().setSvgFileName(baseFileName+".svg");
 		

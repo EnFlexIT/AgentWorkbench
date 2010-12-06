@@ -139,6 +139,7 @@ public class EnvironmentSetup extends JPanel implements ActionListener, Observer
 		
 		this.controller = new EnvironmentController(project);
 		controller.addObserver(this);
+		controller.setGUI(this);
 		if(controller.getSvgDoc() != null){
 			setSVGDocument(controller.getSvgDoc());
 		}
@@ -436,7 +437,7 @@ public class EnvironmentSetup extends JPanel implements ActionListener, Observer
 	 * This method invokes an instance of ElementSelector, which changes the selected Element using the JSVGCanvas' update manager 
 	 * @param elem
 	 */
-	private void setSelectedElement(Element elem){
+	public void setSelectedElement(Element elem){
 		tpSettings.setSelectedIndex(1);
 		UpdateManager um = this.svgGUI.getCanvas().getUpdateManager();
 		
