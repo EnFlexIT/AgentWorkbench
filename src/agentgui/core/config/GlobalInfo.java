@@ -4,11 +4,13 @@ import jade.core.Profile;
 
 import java.awt.Color;
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Vector;
 
 import agentgui.core.application.Application;
+import agentgui.core.common.ClassLoaderUtil;
 import agentgui.core.jade.PlatformJadeConfig;
 
 public class GlobalInfo {
@@ -52,6 +54,9 @@ public class GlobalInfo {
 	private static String localFileNameProject = "agentgui.xml";
 	private static String localFileNameProjectOntology = "AgentGUIProjectOntology";
 	
+	private static String localFileJade = "jade.jar";
+	
+	
 	// --- File-Properties --------------------------------------------------
 	private boolean filePropRunAsServer = false;
 	
@@ -92,7 +97,12 @@ public class GlobalInfo {
 				// --- Bei jar, immer interne Console verwenden -------------
 				this.setAppUseInternalConsole(true);
 				CutAt = JCP_Files[i].lastIndexOf( localAppPathSeparatorString ) + 1;
-				localBaseDir = JCP_Folders[i].substring(0, CutAt);				 
+				localBaseDir = JCP_Folders[i].substring(0, CutAt);	
+
+				// --- jade.jar in die ClassLoaderUtility einbinden ----------
+				String jadeJar = this.PathJade(true) + File.separator + localFileJade;
+				ClassLoaderUtil.addJarToClassPath(jadeJar);
+				
 			};
 			if ( JCP_Files[i].endsWith(".jar")  ) {
 				// ----------------------------------------------------------
