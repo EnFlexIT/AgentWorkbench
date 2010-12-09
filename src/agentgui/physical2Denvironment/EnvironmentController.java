@@ -19,6 +19,12 @@ import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.dom.DOMSource;
+
 import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.transcoder.TranscoderException;
@@ -55,7 +61,7 @@ import agentgui.physical2Denvironment.utils.EnvironmentWrapper;
  * @author Nils
  *
  */
-public class EnvironmentController extends Observable implements Observer{
+public class EnvironmentController extends Observable implements Observer {
 	/**
 	 * Observable event code: New environment instance assigned
 	 */
@@ -336,6 +342,26 @@ public class EnvironmentController extends Observable implements Observer{
 	 */
 	public Document getSvgDoc() {
 		return svgDoc;
+	}
+	
+	public Document getSvgDocCopy() {
+		
+		TransformerFactory tfactory = null; 
+		Transformer tx   = null; 
+		DOMSource source = null; 
+		DOMResult result = null; 
+
+		try {
+			tfactory = TransformerFactory.newInstance(); 
+			tx   = tfactory.newTransformer(); 
+			source = new DOMSource(svgDoc); 
+			result = new DOMResult(); 
+			tx.transform(source,result);
+			
+		} catch (TransformerException e) {
+			e.printStackTrace();
+		} 
+		return (Document)result.getNode(); 
 	}
 	/**
 	 * Prepares the SVG document and assigns it to the current environment
