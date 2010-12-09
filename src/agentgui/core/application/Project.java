@@ -361,6 +361,9 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	public Document getSVGDoc(){
 		return this.environmentController.getSvgDoc();
 	}
+	public Document getSVGDocCopy(){
+		return this.environmentController.getSvgDocCopy();
+	}	
 	/**
 	 * @param environment the environment to set
 	 */

@@ -7,7 +7,7 @@ Einfaches Demo-Projekt fr die Visualisierung</projectDescription>
     <projectResources/>
     <subOntologies/>
     <agentConfiguration/>
-    <simulationSetupCurrent>HarborExample</simulationSetupCurrent>
+    <simulationSetupCurrent>BoxExample</simulationSetupCurrent>
     <simulationSetups>
         <entry>
             <key>HarborExample</key>
@@ -25,7 +25,7 @@ Einfaches Demo-Projekt fr die Visualisierung</projectDescription>
     <jadeConfiguration>
         <start4Sim>true</start4Sim>
         <useAppDefaults>false</useAppDefaults>
-        <useLocalPort>1104</useLocalPort>
+        <useLocalPort>1106</useLocalPort>
         <serviceList>
             <service>jade.core.event.NotificationService;</service>
             <service>jade.core.mobility.AgentMobilityService;</service>
