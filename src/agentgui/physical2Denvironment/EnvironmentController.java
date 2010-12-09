@@ -4,7 +4,6 @@ package agentgui.physical2Denvironment;
 import jade.content.lang.Codec.CodecException;
 import jade.content.lang.xml.XMLCodec;
 import jade.content.onto.OntologyException;
-import java.util.Iterator;
 
 import java.awt.geom.Rectangle2D;
 import java.io.BufferedReader;
@@ -16,14 +15,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
-
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMResult;
-import javax.xml.transform.dom.DOMSource;
 
 import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
@@ -36,9 +30,9 @@ import org.apache.batik.util.XMLResourceDescriptor;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
+import agentgui.core.common.FileCopier;
 import agentgui.core.gui.projectwindow.simsetup.EnvironmentSetup;
 import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.core.sim.setup.SimulationSetups;
@@ -184,12 +178,28 @@ public class EnvironmentController extends Observable implements Observer {
 	public Physical2DEnvironment getEnvironment() {
 		return environment;
 	}
+	public Physical2DEnvironment getEnvironmentCopy() {
+		// --- Datei kopieren ---
+		String pathSetup = project.getProjectFolderFullPath() + project.getSubFolderEnvSetups() + File.separator;
+		String fileSrc   = pathSetup + project.simSetups.getCurrSimSetup().getEnvironmentFileName();
+		String fileDest  = fileSrc.substring(0, fileSrc.length()-4) + "_tmp.xml";
+		
+		FileCopier fc = new FileCopier();
+		fc.copyFile(fileSrc, fileDest);
+
+		// --- Load Env. --------
+		Physical2DEnvironment p2de = this.loadEnvironment(new File(fileDest));
+		
+		// --- Rückgabe ---------
+		return p2de;
+	}
 	/**
 	 * @return EnvironmentWrapped containing the current project's environment 
 	 */
 	public EnvironmentWrapper getEnvWrap() {
 		return envWrap;
 	}
+	
 	private Physical2DEnvironment initEnvironment(){
 		Physical2DEnvironment newEnv = null;
 		if(svgDoc != null){
@@ -345,23 +355,8 @@ public class EnvironmentController extends Observable implements Observer {
 	}
 	
 	public Document getSvgDocCopy() {
-		
-		TransformerFactory tfactory = null; 
-		Transformer tx   = null; 
-		DOMSource source = null; 
-		DOMResult result = null; 
-
-		try {
-			tfactory = TransformerFactory.newInstance(); 
-			tx   = tfactory.newTransformer(); 
-			source = new DOMSource(svgDoc); 
-			result = new DOMResult(); 
-			tx.transform(source,result);
-			
-		} catch (TransformerException e) {
-			e.printStackTrace();
-		} 
-		return (Document)result.getNode(); 
+		Document svgDocCopy = (Document) svgDoc.cloneNode(true);
+		return svgDocCopy;
 	}
 	/**
 	 * Prepares the SVG document and assigns it to the current environment

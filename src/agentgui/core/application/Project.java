@@ -353,6 +353,9 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	public Physical2DEnvironment getEnvironment() {
 		return this.environmentController.getEnvironment();
 	}
+	public Physical2DEnvironment getEnvironmentCopy() {
+		return this.environmentController.getEnvironmentCopy();
+	}
 	/**
 	 * 
 	 * @return The SVG document

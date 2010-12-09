@@ -147,7 +147,7 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 	 */
 	protected void startSVGVisualizationAgents() {
 		
-		Physical2DEnvironment environment = currProject.getEnvironment();
+		Physical2DEnvironment environment = currProject.getEnvironmentCopy();
 		Document svgDocument = currProject.getSVGDocCopy();
 		
 		if (environment!=null && svgDocument!=null) {

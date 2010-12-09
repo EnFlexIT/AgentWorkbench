@@ -113,15 +113,20 @@ public class DisplayAgentGUI extends BasicSVGGUI {
 
 		@Override
 		public void run() {
-			Iterator<Physical2DObject> objects = movingObjects.iterator();
+			// --- CD: Bug wg. concurrent Exception behogen ----
+			HashSet<Physical2DObject> movingObjectsCopy = null;
+			synchronized (movingObjects) {
+				movingObjectsCopy = new HashSet<Physical2DObject>(movingObjects);
+			}
+			Iterator<Physical2DObject> objects = movingObjectsCopy.iterator();
 			while(objects.hasNext()){
 				Physical2DObject object = objects.next();
 				Element element = getSVGDoc().getElementById(object.getId());
 				if(element != null){
 					setElementPosition(element, object.getPosition());
 				}
-			}
-		}
+			}				
+		} // --- end run() ---
 		
 	}
 }

@@ -76,10 +76,11 @@ public class EnvironmentProviderAgent extends Agent {
 		@SuppressWarnings("unchecked")
 		@Override
 		protected synchronized void onTick() {
-			HashSet<ActiveObject> moving = helper.getCurrentlyMovingAgents();
+			// --- CD: Bug wg. concurrent Exception behogen ----
+			HashSet<ActiveObject> moving = new HashSet<ActiveObject>( helper.getCurrentlyMovingAgents() );
 			if(moving.size() > 0){	// Any moving agents?
-				Iterator<ActiveObject> movingAgents = moving.iterator();
 				
+				Iterator<ActiveObject> movingAgents = moving.iterator();
 				while(movingAgents.hasNext()){
 					ActiveObject movingAgent = movingAgents.next();
 					
