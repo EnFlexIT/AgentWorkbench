@@ -257,9 +257,9 @@ public class EnvironmentProviderService extends BaseService {
 			if(object != null && object instanceof ActiveObject){
 				ActiveObject agent = (ActiveObject) object;
 				float maxSpeed = agent.getMaxSpeed();
-				if(agent.getMovement().getSpeed() <= maxSpeed+0.0005){		// Small tolerance required for inaccuracy in speed calculation  
+//				if(movement.getSpeed() <= maxSpeed+0.0005){		// Small tolerance required for inaccuracy in speed calculation  
 					agent.setMovement(movement);
-				}
+//				}
 				if(agent.getMovement().getSpeed() > 0){
 					this.currentlyMovingAgents.add(agent);
 					this.currentlyMovingObjects.add(agent);
