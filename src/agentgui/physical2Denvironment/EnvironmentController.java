@@ -138,6 +138,7 @@ public class EnvironmentController extends Observable implements Observer {
 		this.project.setEnvironmentController(this);
 		this.project.addObserver(this);
 		this.baseFilePath = this.project.getProjectFolderFullPath()+this.project.getSubFolderEnvSetups()+File.separator;
+		this.setDefaultFileNames();
 		SimulationSetup currentSetup = project.simSetups.getCurrSimSetup(); 
 		// Load SVG file if specified
 		if(currentSetup.getSvgFileName() != null && currentSetup.getSvgFileName().length() >0){
@@ -731,7 +732,6 @@ public class EnvironmentController extends Observable implements Observer {
 		String baseFileName = project.simSetupCurrent;
 		project.simSetups.getCurrSimSetup().setEnvironmentFileName(baseFileName+".xml");
 		project.simSetups.getCurrSimSetup().setSvgFileName(baseFileName+".svg");
-		
 	}
 	
 	public void setScale(Scale scale){

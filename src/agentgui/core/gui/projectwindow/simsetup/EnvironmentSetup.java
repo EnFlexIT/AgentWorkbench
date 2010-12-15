@@ -440,8 +440,9 @@ public class EnvironmentSetup extends JPanel implements ActionListener, Observer
 	public void setSelectedElement(Element elem){
 		tpSettings.setSelectedIndex(1);
 		UpdateManager um = this.svgGUI.getCanvas().getUpdateManager();
-		
-		um.getUpdateRunnableQueue().invokeLater(new ElementSelector(elem));
+		if(um != null){
+			um.getUpdateRunnableQueue().invokeLater(new ElementSelector(elem));
+		}
 	}
 	
 	private void changePosAndSize(Element elem, String id, String xPos, String yPos, String width, String height){
