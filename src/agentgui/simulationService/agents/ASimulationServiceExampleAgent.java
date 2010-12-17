@@ -64,7 +64,7 @@ public class ASimulationServiceExampleAgent extends Agent {
 				simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
 				
 				// --- Start a new remote container -----------------
-				newContainerName = simHelper.startNewRemoteContainer();
+				newContainerName = simHelper.startNewRemoteContainer(false);
 				boolean newContainerStarted = false;
 				while (true) {
 					Container2Wait4 waitCont = simHelper.startNewRemoteContainerStaus(newContainerName);	

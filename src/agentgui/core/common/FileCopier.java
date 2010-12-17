@@ -1,5 +1,6 @@
 package agentgui.core.common;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -27,8 +28,14 @@ public class FileCopier {
 	 */
 	public void copyFile(String src, String dest) {
 		
+		File checkFile = null;
 		FileInputStream fis = null;
 		FileOutputStream fos = null;
+		
+		checkFile = new File(src);
+		if (checkFile.exists()==false) {
+			return;
+		}
 		
 		try {
 			fis = new FileInputStream(src);

@@ -1,5 +1,7 @@
 package agentgui.simulationService.load;
 
+import agentgui.core.application.Language;
+
 
 public class LoadMeasureThread extends Thread {
     
@@ -70,7 +72,7 @@ public class LoadMeasureThread extends Thread {
 		if ( measuredJVMData.threadExists(LoadMeasureThread.threadName) ) {
 			return;
 		}		
-		System.out.println("Starting Load-Measurements");
+		System.out.println(Language.translate("Starte Messung der Systemauslastung"));
 		this.setName(LoadMeasureThread.threadName);
 		// ------------------------------------------------------
 		

@@ -49,7 +49,7 @@ import agentgui.simulationService.balancing.SimStartAgent;
  * Main User-Interface der Anwendung
  * @author Christin Derksen
  */
-public class CoreWindow extends JFrame implements ComponentListener{
+public class CoreWindow extends JFrame implements ComponentListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -451,6 +451,7 @@ public class CoreWindow extends JFrame implements ComponentListener{
 		// ------------------------------------------------------------
 		private void setjMenuExtraLang() {
 			
+			// --- Anzeige der Sprachen -------------------
 			String[] DictLineValues = Language.getLanguages(); 
 			boolean setBold = false;
 			for(int i=0; i<DictLineValues.length; i++) {
@@ -460,6 +461,11 @@ public class CoreWindow extends JFrame implements ComponentListener{
 					setBold = false;					
 				jMenuExtraLang.add( new JMenuItemLang(DictLineValues[i], setBold) );
 			};
+
+			// --- Menüpunkt Übersetzung --------------
+			jMenuExtraLang.addSeparator();
+			jMenuExtraLang.add(new CWMenueItem("ExtraTranslation", Language.translate("Übersetzen ..."), null));
+		
 		}
 		// --- Unterklasse für die verfügbaren Sprachen  --------------
 		private class JMenuItemLang extends JMenuItem implements ActionListener {
@@ -467,7 +473,7 @@ public class CoreWindow extends JFrame implements ComponentListener{
 			private static final long serialVersionUID = 1L;
 			
 			private JMenuItemLang( String LangHeader, boolean setBold ) {
-				this.setText( Language.getLanguagesHeaderInGerman( LangHeader.toUpperCase() ) );			
+				this.setText( Language.getLanguageName( LangHeader.toUpperCase() ) );			
 				if ( setBold ) {
 					Font cfont = this.getFont();
 					if ( cfont.isBold() ) {
@@ -716,6 +722,12 @@ public class CoreWindow extends JFrame implements ComponentListener{
 				Application.JadePlatform.jadeSystemAgentOpen("loadMonitor", null);
 			}
 			// --- Menü Extras => nicht hier !! ---------------
+			else if ( ActCMD.equalsIgnoreCase("ExtraTranslation") ) {
+				Translation trans = new Translation(Application.MainWindow);
+				trans.setVisible(true);
+				//-- TODO --- was passiert, wenn das Wörterbuch geschlossen wird
+				
+			}
 			else if ( ActCMD.equalsIgnoreCase("ExtraBenchmark") ) {
 				Application.doBenchmark(true);
 			}			

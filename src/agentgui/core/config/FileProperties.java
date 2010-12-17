@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
@@ -27,6 +28,8 @@ public class FileProperties extends Properties {
 	public final String DEF_BENCH_VALUE = "02_BENCH_VALUE";
 	public final String DEF_BENCH_EXEC_ON = "03_BENCH_EXEC_ON";
 	public final String DEF_BENCH_SKIP_ALLWAYS = "04_BENCH_SKIP_ALLWAYS";
+
+	public final String DEF_LANGUAGE = "05_LANGUAGE";
 	
 	public final String DEF_AUTOSTART = "10_AUTOSTART";
 	public final String DEF_MASTER_URL = "11_MASTER_URL";
@@ -42,6 +45,7 @@ public class FileProperties extends Properties {
 										this.DEF_BENCH_VALUE,
 										this.DEF_BENCH_EXEC_ON,
 										this.DEF_BENCH_SKIP_ALLWAYS,
+										this.DEF_LANGUAGE,
 										this.DEF_AUTOSTART,
 										this.DEF_MASTER_URL,
 										this.DEF_MASTER_PORT,
@@ -99,17 +103,21 @@ public class FileProperties extends Properties {
 	}
 	
 	/**
-	 * Overrides, called by the store method.
+	 * Overrides the super-method to sort the entries, called by the store method
 	 */
-	@SuppressWarnings("unchecked")
-	public synchronized Enumeration keys() {
-		Enumeration keysEnum = super.keys();
-		Vector keyList = new Vector();
+	public synchronized Enumeration<Object> keys() {
+		Enumeration<Object> keysEnum = super.keys();
+		Vector<Object> keySorted = new Vector<Object>();
+		Vector<String> keyList = new Vector<String>();
 		while (keysEnum.hasMoreElements()) {
-			keyList.add(keysEnum.nextElement());
+			keyList.add((String) keysEnum.nextElement());
 		}
 		Collections.sort(keyList);
-		return keyList.elements();
+		for (Iterator<String> iterator = keyList.iterator(); iterator.hasNext();) {
+			String singelEntry = iterator.next();
+			keySorted.add(singelEntry);
+		}
+		return keySorted.elements();
 	}
 	
 	/**
@@ -148,6 +156,14 @@ public class FileProperties extends Properties {
 			Application.RunInfo.setBenchAllwaysSkip(true);
 		} else {
 			Application.RunInfo.setBenchAllwaysSkip(false);
+		}
+		
+		// --- this.DEF_LANGUAGE ---------------------
+		propValue = this.getProperty(this.DEF_LANGUAGE).trim();
+		if ( propValue!=null ) {
+			Application.RunInfo.setLanguage(propValue);
+		} else {
+			Application.RunInfo.setLanguage("en");
 		}
 		
 		// --- this.DEF_AUTOSTART --------------------
@@ -239,6 +255,13 @@ public class FileProperties extends Properties {
 			this.setProperty(this.DEF_BENCH_SKIP_ALLWAYS,"false");
 		}
 		
+		// --- this.DEF_LANGUAGE ---------------------
+		if (Application.RunInfo.getLanguage()==null) {
+			this.setProperty(this.DEF_LANGUAGE, "en");			
+		} else {
+			this.setProperty(this.DEF_LANGUAGE, Application.RunInfo.getLanguage());
+		}
+
 		
 		// --- this.DEF_AUTOSTART --------------------
 		if ( Application.RunInfo.isServerAutoRun() == true ) {
@@ -317,24 +340,21 @@ public class FileProperties extends Properties {
 		// --- Search all mandantory property-values ------
 		for (int i = 0; i < mandantoryProps.length; i++) {
 			if ( this.containsKey(mandantoryProps[i])  == false ) {
-				this.setProperty( mandantoryProps[i], "" );
+				
 				// ----------------------------------------
 				// --- Here are some Mandantory Values ---- 
-				/*
-				if ( mandantoryProps[i].equalsIgnoreCase(this.DEF_DEBUG) ) {
-					this.setProperty(this.DEF_DEBUG, "Off");
-				} else if (mandantoryProps[i].equalsIgnoreCase(this.DEF_LANG)) {
-					this.setProperty(this.DEF_LANG, "de");
-				} else if (mandantoryProps[i].equalsIgnoreCase(this.DEF_UPDATE)) {
-					this.setProperty(this.DEF_UPDATE, Global.UPDATE_OPTION_AUTO_UPDATE_DISABLED);
+				if ( mandantoryProps[i].equals(this.DEF_LANGUAGE) ) {
+					this.setProperty( this.DEF_LANGUAGE, "en" );
+				} else {
+					this.setProperty( mandantoryProps[i], "" );	
 				}
-				*/
 				// ----------------------------------------
 				somethingMissed = true;
 			}			
 		}
 		// --- If something was not there, save the file --
 		if ( somethingMissed == true ) {
+			this.setConfig2Global();
 			this.save();
 		}
 	}

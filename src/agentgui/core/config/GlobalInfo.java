@@ -4,7 +4,6 @@ import jade.core.Profile;
 
 import java.awt.Color;
 import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Vector;
@@ -17,7 +16,7 @@ public class GlobalInfo {
 
 	// --- Konstanten ------------------------------------------------------- 
 	final private static String localAppTitel = "Agent.GUI";
-	final private static String localAppVersion = "0.7";
+	final private static String localAppVersion = "0.8";
 	
 	final private static String localAppPathSeparatorString = File.separator;
 	final private static String localAppNewLineString = System.getProperty("line.separator");
@@ -49,7 +48,7 @@ public class GlobalInfo {
 	private static String[] localProjects = null;
 	
 	private static String localFileRunnableJar = "AgentGui.jar";
-	private static String localFileDictionary  = localPathProperty + "dictionary.csv";
+	private static String localFileDictionary  = localPathProperty + "dictionary";
 	private static String localFileProperties  = "agentgui.ini";
 	private static String localFileNameProject = "agentgui.xml";
 	private static String localFileNameProjectOntology = "AgentGUIProjectOntology";
@@ -63,6 +62,8 @@ public class GlobalInfo {
 	private float filePropBenchValue = 0;
 	private String filePropBenchExecOn = null;
 	private boolean filePropBenchAllwaysSkip = false; 
+	
+	private String filePropLanguage = null;
 	
 	private boolean filePropServerAutoRun = false;
 	private String filePropServerMasterURL = null;
@@ -399,14 +400,23 @@ public class GlobalInfo {
 		}	
 	}
 	/**
-	 * Verweis auf die Dictionary-Datei zur Sprachuebersetzung
+	 * Link to the dictionary-file for translation
 	 */
-	public String FileDictionary( Boolean Absolute ){
-		if ( Absolute== true ) { 
-			return FilePath2Absolute( localFileDictionary );
+	public String FileDictionary(boolean base64, boolean absolute ){
+		
+		// --- TXT-Version or Base64-encoded dictionary ---
+		String fileName = null;
+		if (base64==true) {
+			fileName = localFileDictionary + ".bin";
+		} else {
+			fileName = localFileDictionary + ".csv";
+		}
+		// --- Absolute Path of the dictionary file? ------
+		if ( absolute== true ) { 
+			return FilePath2Absolute(fileName);
 		}
 		else {
-			return localFileDictionary;	
+			return fileName;	
 		}
 	}
 	public String getFileNameProject() {
@@ -545,6 +555,20 @@ public class GlobalInfo {
 	 */
 	public void setBenchAllwaysSkip(boolean benchAllwaySkip) {
 		this.filePropBenchAllwaysSkip = benchAllwaySkip;
+	}
+
+	// ---- Currently used language ------------------------------------
+	/**
+	 * @param filePropLanguage the filePropLanguage to set
+	 */
+	public void setLanguage(String currentLanguage) {
+		this.filePropLanguage = currentLanguage;
+	}
+	/**
+	 * @return the filePropLanguage
+	 */
+	public String getLanguage() {
+		return filePropLanguage;
 	}
 
 	// ---- Connection to the Master-Server ----------------------------

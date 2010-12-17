@@ -1,5 +1,7 @@
 package agentgui.core.application;
 
+import javax.swing.JOptionPane;
+
 import agentgui.core.benchmark.BenchmarkMeasurement;
 import agentgui.core.config.FileProperties;
 import agentgui.core.config.GlobalInfo;
@@ -58,9 +60,9 @@ public class Application {
 		// ----------------------------------------------------------
 		// --- Just starts the base-instances -----------------------
 		RunInfo = new GlobalInfo();
-		Console = new CoreWindowConsole();
 		properties = new FileProperties();
 		new LoadMeasureThread().start();  
+		Console = new CoreWindowConsole();
 		startAgentGUI();
 
 	}	
@@ -139,7 +141,7 @@ public class Application {
 		
 		// --- Fertig ------------------------------
 		System.out.println( Language.translate("Programmende... ") );
-		Language.SaveDictionaryFile();
+		Language.saveDictionaryFile();
 		System.exit(0);		
 	}
 
@@ -284,21 +286,37 @@ public class Application {
 	 * NewLang => "DE", "EN", "IT", "ES" or "FR" etc. is equal to the 
 	 * end phrase after the prefix "LANG_". E.g. "LANG_EN" needs "EN" as parameter
 	 */
-	public static void setLanguage( String NewLang ) {
+	public static void setLanguage( String newLang ) {
 
-		// --- jade stoppen ---------------------		
+		String newLine = RunInfo.AppNewLineString();
+		
+		// --- Sind die neue und die alte Anzeigesprach gleich ? ----
+		Integer newLangIndex = Language.getIndexOfLanguage(newLang);
+		if ( newLangIndex == Language.DefaultLanguage ) return; 
+		
+		// --- User fragen, ob die Sprache umgestellt werden soll ---
+		String MsgHead = Language.translate("Anzeigesprache wechseln?");
+		String MsgText = Language.translate(
+						 "Möchten Sie die Anzeigesprache wirklich umstellen?" + newLine + 
+						 "Die Anwendung muss hierzu neu gestartet und Projekte" + newLine +
+						 "von Ihnen neu geöffnet werden.");
+		Integer MsgAnswer = JOptionPane.showInternalConfirmDialog( Application.MainWindow.getContentPane(), MsgText, MsgHead, JOptionPane.YES_NO_OPTION);
+		if (MsgAnswer==1) return;
+		
+		// --- JADE stoppen -----------------------------------------		
 		JadePlatform.jadeStop();
-		// --- Projekte schliessen --------------
+		// --- Projekte schliessen ----------------------------------
 		if ( Projects != null ) {
 			if ( Projects.closeAll() == false ) return;	
 		}
-		// --- Sprache umstellen ----------------
-		Language.changeLanguageTo(NewLang);
-		// --- Anwendungsfenster schliessen -----
+		// --- Sprache umstellen ------------------------------------
+		Language.changeLanguageTo(newLang);
+		// --- Anwendungsfenster schliessen -------------------------
 		MainWindow.dispose();
 		MainWindow = null;
-		// --- Anwendung neu öffnen -------------
+		// --- Anwendung neu öffnen ---------------------------------
 		startApplication();	
+
 	}	
 	
 	/**

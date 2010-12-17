@@ -115,7 +115,6 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 
 	/**
 	 * This method initializes ProjectViewSplit	
-	 * 	
 	 * @return javax.swing.JSplitPane	
 	 */
 	private JSplitPane getProjectViewSplit() {
@@ -132,7 +131,6 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	
 	/**
 	 * This method initializes jScrollPane	
-	 * 	
 	 * @return javax.swing.JScrollPane	
 	 */
 	private JScrollPane getJScrollPane() {
@@ -144,7 +142,6 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	}
 	/**
 	 * This method initializes ProjectTree	
-	 * 	
 	 * @return javax.swing.JTree	
 	 */
 	private JTree getProjectTree() {
@@ -250,7 +247,6 @@ public class ProjectWindow extends JInternalFrame implements Observer {
     }
 	
 	
-	@Override
 	/**
 	 * Get the notification of the ObjectModel
 	 */
@@ -272,7 +268,6 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 		
 	/**
 	 * This method initializes ProjectViewRight	
-	 * 	
 	 * @return javax.swing.JTabbedPane	
 	 */
 	private JTabbedPane getProjectViewRightTabs() {

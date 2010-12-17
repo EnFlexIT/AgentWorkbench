@@ -356,8 +356,12 @@ public class EnvironmentController extends Observable implements Observer {
 	}
 	
 	public Document getSvgDocCopy() {
-		Document svgDocCopy = (Document) svgDoc.cloneNode(true);
-		return svgDocCopy;
+		if (svgDoc==null) {
+			return null;
+		} else {
+			Document svgDocCopy = (Document) svgDoc.cloneNode(true);
+			return svgDocCopy;	
+		}		
 	}
 	/**
 	 * Prepares the SVG document and assigns it to the current environment
