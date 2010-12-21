@@ -180,6 +180,7 @@ public class Translation extends JDialog implements ActionListener {
 		jLabelSelectDestinationLang.setText(Language.translate("Sprache:"));
 		jLabelSource.setText(Language.translate("Text zur Übersetzung"));
 		jLabelDestination.setText(Language.translate("Übersetzter Text "));
+		jLabelGoogleHeader.setText(Language.translate("Google - Übersetzung"));
 		
 		jButtonPreviousDS.setToolTipText(Language.translate("Voriger Datensatz (STRG+UP)"));
 		jButtonNextDS.setToolTipText(Language.translate("Nächster Datensatz (STRG+DOWN)"));

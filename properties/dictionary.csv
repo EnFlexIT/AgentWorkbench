@@ -1,4 +1,4 @@
- ist bereits geöffnet!;is already opened!;;;
+ ist bereits geöffnet!;is already open!;;;
 ' ist bereits geöffnet!;' is already open!;;;
 (Falls bereits verwendet, wird versucht den nächst höheren Port zu nutzen);(If already used, it will be tried to use the next higher port);;;
 <br>Bitte geben Sie einen anderen Namen für das Setup an.;<br> Please enter a different name for the setup.;;;
@@ -111,6 +111,7 @@ Folgende Agent.GUI-Dienste starten:;Start the following Agent.GUI services:;;;
 Folgende Jade-Dienste starten:;Start the following JADE-services:;;;
 Folgende Plattform-Dienste starten:;Start the following platform-services:;;;
 Französisch;French;;;
+Google - Übersetzung;Google - Translation;;;
 Google-Übersetzung übernehmen (STRG+G);Apply Google translation (CTRL + G);;;
 Grenzwerte;Thresholds;;;
 Größe;Size;;;
