@@ -36,23 +36,20 @@ public class JadeSetup extends JPanel implements ActionListener {
 	private JCheckBox jCheckBoxFaultRecoveryService = null;
 	private JCheckBox jCheckBoxBEManagementService = null;
 	private JCheckBox jCheckBoxInterPlatformMobilityService = null;
+	private JCheckBox jCheckBoxAgentMobilityService = null;
+	private JCheckBox jCheckBoxNotificationService = null;
+	private JCheckBox jCheckBoxSimulationService = null;
+	private JCheckBox jCheckBoxEnvironmentProviderService = null;
+	
 	private JTextField jTextFieldDefaultPort = null;
+	
 	private JLabel jLabelServiceTitle = null;
 	private JLabel jLabelServiceTitleAddOn = null;
 	private JLabel jLabelPort = null;
 	private JLabel jLabelPortExplain = null;
-
-	private JCheckBox jCheckBoxAgentMobilityService = null;
-
-	private JCheckBox jCheckBoxNotificationService = null;
-
-	private JButton jButtonSetPortDefault = null;
-
 	private JLabel jLabelServiceAgentGuiTitel = null;
-
-	private JCheckBox jCheckBoxSimulationService = null;
-
-	private JCheckBox jCheckBoxEnvironmentProviderService = null;
+	
+	private JButton jButtonSetPortDefault = null;
 
 	/**
 	 * This is the default constructor
@@ -72,6 +69,7 @@ public class JadeSetup extends JPanel implements ActionListener {
 		jLabelPortExplain.setText(Language.translate("(Falls bereits verwendet, wird versucht den nächst höheren Port zu nutzen)"));
 		jLabelServiceTitle.setText(Language.translate("Folgende Jade-Dienste starten:"));
 		jLabelServiceTitleAddOn.setText(Language.translate("Folgende Add-On-Dienste starten:"));
+		jLabelServiceAgentGuiTitel.setText(Language.translate("Folgende Agent.GUI-Dienste starten:"));
 		
 	}
 

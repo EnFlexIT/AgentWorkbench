@@ -21,6 +21,6 @@
     <agentListModel>
         <size>0</size>
     </agentListModel>
-    <environmentFileName>Game of Life_default.xml</environmentFileName>
-    <svgFileName>Game of Life_default.svg</svgFileName>
+    <environmentFileName>default.xml</environmentFileName>
+    <svgFileName>default.svg</svgFileName>
 </simulationSetup>

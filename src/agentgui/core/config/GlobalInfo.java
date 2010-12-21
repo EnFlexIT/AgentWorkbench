@@ -16,7 +16,7 @@ public class GlobalInfo {
 
 	// --- Konstanten ------------------------------------------------------- 
 	final private static String localAppTitel = "Agent.GUI";
-	final private static String localAppVersion = "0.8";
+	final private static String localAppVersion = "0.85";
 	
 	final private static String localAppPathSeparatorString = File.separator;
 	final private static String localAppNewLineString = System.getProperty("line.separator");

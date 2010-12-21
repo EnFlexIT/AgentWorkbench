@@ -8,8 +8,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Vector;
 
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
@@ -28,6 +30,10 @@ public class Language {
 	
 	private static List<String> DictLineList64 = new ArrayList<String>();
 	private static Hashtable<String, Integer> DictHash64 = new Hashtable<String, Integer>(); 
+	
+	public static int numberOfLanguages = getLanguages().length;
+	private static String emptyLine = stringRepeat(Seperator, numberOfLanguages-1);
+
 	// -------------------------------------------------------------------------
 	
 	/**
@@ -218,22 +224,32 @@ public class Language {
 		
 		BufferedWriter OutWri = null;
 		BufferedWriter OutWri64 = null;
+		
+		List<String> DictSorted = new Vector<String>(DictLineList64); 
+		Collections.sort(DictSorted);
+		
 		try { 
 			// --- UTF8-File for the dictionary -------------------------------- 
 			OutWri = new BufferedWriter( new OutputStreamWriter( new FileOutputStream(DictFileLocation), "UTF8" ) );
 			OutWri64 = new BufferedWriter( new OutputStreamWriter( new FileOutputStream(DictFileLocation64), "UTF8" ) );
 		    
-			for ( final String line : DictLineList64 ) {
-				// --- TXT-Version of the dictionary ----------------
-				OutWri.write( line );
-		    	OutWri.newLine();
-		    	// --- Base64-encode version of the dictionary ------
-		    	String encodedLine = new BASE64Encoder().encode(line.getBytes("UTF-8"));
-		    	if (encodedLine.contains(NewLine)) {
-		    		encodedLine = encodedLine.replaceAll(NewLine, "");	
-		    	}		    	
-		    	OutWri64.write( encodedLine );
-		    	OutWri64.newLine();
+			for ( final String line : DictSorted ) {
+				
+				if (line.trim().equals(emptyLine)) {
+					// --- just ignore this line --------------------
+				} else {
+					// --- TXT-Version of the dictionary ------------
+					OutWri.write( line );
+			    	OutWri.newLine();
+			    	
+			    	// --- Base64-encode version of the dictionary --
+			    	String encodedLine = new BASE64Encoder().encode(line.getBytes("UTF-8"));
+			    	if (encodedLine.contains(NewLine)) {
+			    		encodedLine = encodedLine.replaceAll(NewLine, "");	
+			    	}		    	
+			    	OutWri64.write( encodedLine );
+			    	OutWri64.newLine();
+				}
 		    	
 		    }
 		    OutWri.close();
@@ -269,11 +285,30 @@ public class Language {
 		return DictLineList64;
 	}
 
+	/**
+	 * Update this line of the dictionary
+	 * @param deExp
+	 * @param dictRow
+	 */
 	public static void update(String deExp, String dictRow) {
 
 		Integer line = DictHash64.get(deExp);	
 		if (line!=null) {
 			DictLineList64.set(line, dictRow);
+		}
+	}
+
+	/**
+	 * Remove this line from the dictionary
+	 * (put an empty line)
+	 * @param deExp
+	 */
+	public static void delete(String deExp) {
+		
+		Integer lineNo = DictHash64.get(deExp);	
+		if (lineNo!=null) {
+			DictLineList64.set(lineNo, emptyLine);
+			DictHash64.remove(deExp);	
 		}
 	}
 	
