@@ -89,10 +89,15 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	private JToolBar jToolBarApp;
 		private JButton JadeTools;	
 		private JPopupMenu JadeToolsPopUp;
-		public JButton jButtonSimStart;
-		public JButton jButtonSimPause;
+		
+		private JButton jButtonSimStart;
+		private JButton jButtonSimPause;
 		public JButton jButtonSimStop;
+		private JMenuItem jMenuItemSimStart;
+		private JMenuItem jMenuItemSimPause;
+		private JMenuItem jMenuItemSimStop;
 
+		
 	// ------------------------------------------------------------		
 	// --- Start -------------------------------------------------- 
 	// ------------------------------------------------------------
@@ -148,6 +153,9 @@ public class CoreWindow extends JFrame implements ComponentListener {
 			}
 		});
 		this.addComponentListener(this);
+		
+		// --- Schaltflächen für die Simulationskontrolle einstellen --
+		this.setSimulationReady2Start();
 	}	
 	// ------------------------------------------------------------
 	// --- Initialisierung des Fensters - ENDE --------------------
@@ -409,9 +417,13 @@ public class CoreWindow extends JFrame implements ComponentListener {
 		if (jMenuMainSimulation == null) {
 			jMenuMainSimulation = new JMenu();
 			jMenuMainSimulation.setText(Language.translate("MAS"));			
-			jMenuMainSimulation.add( new CWMenueItem( "SimulationStart", Language.translate("Start"), "MBLoadPlay.png" )) ;
-			jMenuMainSimulation.add( new CWMenueItem( "SimulationPause", Language.translate("Pause"), "MBLoadPause.png" )) ;
-			jMenuMainSimulation.add( new CWMenueItem( "SimulationStop", Language.translate("Stop"), "MBLoadStopRecord.png" )) ;
+			
+			jMenuItemSimStart = new CWMenueItem( "SimulationStart", Language.translate("Start"), "MBLoadPlay.png");
+			jMenuMainSimulation.add(jMenuItemSimStart);
+			jMenuItemSimPause = new CWMenueItem( "SimulationPause", Language.translate("Pause"), "MBLoadPause.png");
+			jMenuMainSimulation.add(jMenuItemSimPause);
+			jMenuItemSimStop = new CWMenueItem( "SimulationStop", Language.translate("Stop"), "MBLoadStopRecord.png");
+			jMenuMainSimulation.add(jMenuItemSimStop);
 		}
 		return jMenuMainSimulation;
 	}
@@ -714,9 +726,10 @@ public class CoreWindow extends JFrame implements ComponentListener {
 				Application.JadePlatform.jadeSystemAgentOpen("simstarter", null, startWith);
 			}
 			else if ( ActCMD.equalsIgnoreCase("SimulationStop") ) {
-				Object[] startWith = new Object[1];
-				startWith[0] = SimStartAgent.BASE_ACTION_Stop;
-				Application.JadePlatform.jadeSystemAgentOpen("simstarter", null, startWith);
+				Application.JadePlatform.jadeStop();
+//				Object[] startWith = new Object[1];
+//				startWith[0] = SimStartAgent.BASE_ACTION_Stop;
+//				Application.JadePlatform.jadeSystemAgentOpen("simstarter", null, startWith);
 			}
 			else if ( ActCMD.equalsIgnoreCase("ContainerMonitoring") ) { 
 				Application.JadePlatform.jadeSystemAgentOpen("loadMonitor", null);
@@ -791,18 +804,16 @@ public class CoreWindow extends JFrame implements ComponentListener {
 
 			// --- Simulation Buttons -----------
 			jButtonSimStart = new JToolBarButton( "SimulationStart", Language.translate("MAS-Start"), null, "MBLoadPlay.png" );
-			jButtonSimStart.setEnabled(true);
 			jToolBarApp.add(jButtonSimStart);
 			
 			jButtonSimPause = new JToolBarButton( "SimulationPause", Language.translate("MAS-Pause"), null, "MBLoadPause.png" );
-			jButtonSimPause.setEnabled(false);
 			jToolBarApp.add(jButtonSimPause);
 			
 			jButtonSimStop = new JToolBarButton( "SimulationStop", Language.translate("MAS-Stop"), null, "MBLoadStopRecord.png" );
-			jButtonSimStop.setEnabled(false);
 			jToolBarApp.add(jButtonSimStop) ;
 			
 			jToolBarApp.addSeparator();
+			
 			
 		};		
 		return jToolBarApp;
@@ -890,9 +901,10 @@ public class CoreWindow extends JFrame implements ComponentListener {
 				Application.JadePlatform.jadeSystemAgentOpen("simstarter", null, startWith);
 			}
 			else if ( ActCMD.equalsIgnoreCase("SimulationStop") ) {
-				Object[] startWith = new Object[1];
-				startWith[0] = SimStartAgent.BASE_ACTION_Stop;
-				Application.JadePlatform.jadeSystemAgentOpen("simstarter", null, startWith);
+				Application.JadePlatform.jadeStop();
+//				Object[] startWith = new Object[1];
+//				startWith[0] = SimStartAgent.BASE_ACTION_Stop;
+//				Application.JadePlatform.jadeSystemAgentOpen("simstarter", null, startWith);
 			}
 			// ------------------------------------------------
 			else { 
@@ -902,6 +914,30 @@ public class CoreWindow extends JFrame implements ComponentListener {
 		};
 	};
 		
+	// -------------------------------------------------------------------
+	// --- Methods to control the Buttons for the simulation control ----- 
+	// -------------------------------------------------------------------
+	public void setEnableSimStart(boolean enable) {
+		jButtonSimStart.setEnabled(enable);
+		jMenuItemSimStart.setEnabled(enable);	
+	}
+	public void setEnableSimPause(boolean enable) {
+		jButtonSimPause.setEnabled(enable);
+		jMenuItemSimPause.setEnabled(enable);
+	}
+	public void setEnableSimStop(boolean enable) {
+		jButtonSimStop.setEnabled(enable);
+		jMenuItemSimStop.setEnabled(enable);
+	}
+	public void setSimulationReady2Start() {
+		this.setEnableSimStart(true);
+		this.setEnableSimPause(false);
+		this.setEnableSimStop(false);
+	}	
+	// -------------------------------------------------------------------
+	// -------------------------------------------------------------------
+	
+	
 	@Override
 	public void componentShown(ComponentEvent e) {
 	}

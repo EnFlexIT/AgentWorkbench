@@ -37,9 +37,9 @@ public class SimStartAgent extends Agent {
 			StaticLoadBalancingBase staticBalancing = this.getStartAndStaticLoadBalancingClass();
 			if (staticBalancing!=null) {
 				this.addBehaviour(staticBalancing);	
-				mainWindow.jButtonSimStart.setEnabled(false);
-				mainWindow.jButtonSimPause.setEnabled(true);
-				mainWindow.jButtonSimStop.setEnabled(true);
+				mainWindow.setEnableSimStart(false);
+				mainWindow.setEnableSimPause(true);
+				mainWindow.setEnableSimStop(true);
 			} else {
 				this.doDelete();
 			}
@@ -47,23 +47,23 @@ public class SimStartAgent extends Agent {
 
 		case BASE_ACTION_Pause:
 			System.out.println("Pausiere die Simulation .....");
-			mainWindow.jButtonSimStart.setEnabled(true);
-			mainWindow.jButtonSimPause.setEnabled(false);
-			mainWindow.jButtonSimStop.setEnabled(true);
+			mainWindow.setEnableSimStart(true);
+			mainWindow.setEnableSimPause(false);
+			mainWindow.setEnableSimStop(true);
 			this.doDelete();
 			break;
 		case BASE_ACTION_Restart:
 			System.out.println("Nachstarten der Simulation .....");
-			mainWindow.jButtonSimStart.setEnabled(false);
-			mainWindow.jButtonSimPause.setEnabled(true);
-			mainWindow.jButtonSimStop.setEnabled(true);
+			mainWindow.setEnableSimStart(false);
+			mainWindow.setEnableSimPause(true);
+			mainWindow.setEnableSimStop(true);
 			this.doDelete();
 			break;
 		case BASE_ACTION_Stop:
-			System.out.println("Stop die Simulation .....");
-			mainWindow.jButtonSimStart.setEnabled(true);
-			mainWindow.jButtonSimPause.setEnabled(false);
-			mainWindow.jButtonSimStop.setEnabled(false);
+			Application.JadePlatform.jadeStop();
+			mainWindow.setEnableSimStart(true);
+			mainWindow.setEnableSimPause(false);
+			mainWindow.setEnableSimStop(false);
 			this.doDelete();
 			break;
 		}
