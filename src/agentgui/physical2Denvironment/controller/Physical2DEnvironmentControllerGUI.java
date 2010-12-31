@@ -1,4 +1,4 @@
-package agentgui.core.gui.projectwindow.simsetup;
+package agentgui.physical2Denvironment.controller;
 
 import javax.swing.JSplitPane;
 
@@ -32,7 +32,7 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
 import agentgui.core.gui.AgentSelector;
-import agentgui.physical2Denvironment.EnvironmentController;
+import agentgui.core.gui.projectwindow.simsetup.StartSetupSelector;
 import agentgui.physical2Denvironment.display.BasicSVGGUI;
 import agentgui.physical2Denvironment.display.SvgTypes;
 import agentgui.physical2Denvironment.ontology.ActiveObject;
@@ -44,6 +44,8 @@ import agentgui.physical2Denvironment.ontology.StaticObject;
 import agentgui.physical2Denvironment.utils.EnvironmentHelper;
 
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -57,7 +59,7 @@ import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
 
-public class EnvironmentSetup extends JPanel implements ActionListener, Observer{
+public class Physical2DEnvironmentControllerGUI extends JPanel implements ActionListener, Observer{
 
 	private static final long serialVersionUID = 1L;
 	public static final String SETTINGS_KEY_ID = "id";
@@ -78,8 +80,8 @@ public class EnvironmentSetup extends JPanel implements ActionListener, Observer
 	private JSplitPane jSplitPaneControlls = null;
 	private JTree treeEnvironment = null;
 	private JTabbedPane tpSettings = null;
-	private EnvironmentSetupObjectSettings objectSettings = null;
-	private EnvironmentSetupEnvironmentSettings environmentSettings = null;
+	private Physical2DObjectSettingsPanel objectSettings = null;
+	private Physical2DEnvironmentSettingsPanel environmentSettings = null;
 	private JFileChooser loadSVGDialog = null;
 	
 	Project project = null;
@@ -99,11 +101,11 @@ public class EnvironmentSetup extends JPanel implements ActionListener, Observer
 	 */
 	private String originalStyle = null;
 	
-	EnvironmentController controller = null;  //  @jve:decl-index=0:
+	Physical2DEnvironmentController controller = null;  //  @jve:decl-index=0:
 	/**
 	 * This is the default constructor
 	 */
-	public EnvironmentSetup(Project project) {
+	public Physical2DEnvironmentControllerGUI(Project project) {
 		super();
 		this.project = project;
 		initialize();
@@ -137,7 +139,7 @@ public class EnvironmentSetup extends JPanel implements ActionListener, Observer
 		this.add(getJPanelTopNew(), gridBagConstraints1);
 		
 		
-		this.controller = new EnvironmentController(project);
+		this.controller = new Physical2DEnvironmentController(project);
 		controller.addObserver(this);
 		controller.setGUI(this);
 		if(controller.getSvgDoc() != null){
@@ -148,7 +150,7 @@ public class EnvironmentSetup extends JPanel implements ActionListener, Observer
 			environmentSettings.setScale(controller.getEnvironment().getScale());
 		}
 	}
-
+	
 	/**
 	 * This method initializes jPanelTopNew	
 	 * @return javax.swing.JPanel	
@@ -187,7 +189,7 @@ public class EnvironmentSetup extends JPanel implements ActionListener, Observer
 		}
 		return jSplitPaneControlls;
 	}
-
+	
 	/**
 	 * This method initializes treeEnvironment	
 	 * 	
@@ -332,8 +334,8 @@ public class EnvironmentSetup extends JPanel implements ActionListener, Observer
 	private JTabbedPane getTpSettings() {
 		if (tpSettings == null) {
 			tpSettings = new JTabbedPane();
-			this.environmentSettings = new EnvironmentSetupEnvironmentSettings(this);
-			this.objectSettings = new EnvironmentSetupObjectSettings(this);
+			this.environmentSettings = new Physical2DEnvironmentSettingsPanel(this);
+			this.objectSettings = new Physical2DObjectSettingsPanel(this);
 			tpSettings.addTab(Language.translate("Umgebung"), environmentSettings);
 			tpSettings.addTab(Language.translate("Objekt"), objectSettings);
 		}
@@ -452,26 +454,26 @@ public class EnvironmentSetup extends JPanel implements ActionListener, Observer
 
 	@Override
 	public void update(Observable arg0, Object arg1) {
-		if(arg0 instanceof EnvironmentController){
+		if(arg0 instanceof Physical2DEnvironmentController){
 			int eventCode = ((Integer)arg1).intValue();
 			
-			if(eventCode == EnvironmentController.ENVIRONMENT_CHANGED){
+			if(eventCode == Physical2DEnvironmentController.ENVIRONMENT_CHANGED){
 				rebuildTree();
 				if(controller.getEnvironment() != null){
 					environmentSettings.setScale(controller.getEnvironment().getScale());
 				}
 			}
-			if(eventCode == EnvironmentController.SCALE_CHANGED){
+			if(eventCode == Physical2DEnvironmentController.SCALE_CHANGED){
 				environmentSettings.setScale(controller.getEnvironment().getScale());
 				objectSettings.setUnit(controller.getEnvironment().getScale().getRealWorldUntiName());
 			}
-			if(eventCode == EnvironmentController.OBJECTS_CHANGED){
+			if(eventCode == Physical2DEnvironmentController.OBJECTS_CHANGED){
 				rebuildTree();
 			}
-			if(eventCode == EnvironmentController.SVG_CHANGED){
+			if(eventCode == Physical2DEnvironmentController.SVG_CHANGED){
 				setSVGDocument(controller.getSvgDoc());
 			}
-			if(eventCode == EnvironmentController.EC_ERROR){
+			if(eventCode == Physical2DEnvironmentController.EC_ERROR){
 				String errorMsg = controller.getLastErrorMessage();
 				JOptionPane.showMessageDialog(this, errorMsg, Language.translate("Fehler"), JOptionPane.ERROR_MESSAGE);
 			}

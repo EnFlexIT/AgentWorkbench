@@ -25,6 +25,23 @@ import agentgui.core.application.Project;
 	@XmlElement(name="agent")
 	private ArrayList<AgentClassElement4SimStart> agentList = new ArrayList<AgentClassElement4SimStart>();
 	
+	public static final String ENVMODE_PHYSICAL2D = "physical2DEnvironment";
+	public static final String ENVMODE_GRID = "gridEnvironment";
+	
+	
+	private String environmentMode = ENVMODE_PHYSICAL2D;
+	/**
+	 * @return the environmentMode
+	 */
+	public String getEnvironmentMode() {
+		return environmentMode;
+	}
+	/**
+	 * @param environmentMode the environmentMode to set
+	 */
+	public void setEnvironmentMode(String environmentMode) {
+		this.environmentMode = environmentMode;
+	}
 	/**
 	 * The name of the environment file assigned to this SimulationSetup
 	 */

@@ -1,4 +1,4 @@
-package agentgui.core.gui.projectwindow.simsetup;
+package agentgui.physical2Denvironment.controller;
 
 import java.awt.Dimension;
 import java.awt.Point;
@@ -28,7 +28,7 @@ import agentgui.physical2Denvironment.ontology.Size;
 import agentgui.physical2Denvironment.ontology.StaticObject;
 import agentgui.physical2Denvironment.utils.EnvironmentHelper;
 
-public class EnvironmentSetupObjectSettings extends JPanel{
+public class Physical2DObjectSettingsPanel extends JPanel{
 
 	private static final long serialVersionUID = 1L;
 	private JLabel lblId = null;
@@ -58,13 +58,13 @@ public class EnvironmentSetupObjectSettings extends JPanel{
 	/**
 	 * The EnvironmentSetup instance containing this EnvironmentSetupObjectSettings instance
 	 */
-	private EnvironmentSetup parent = null;
+	private Physical2DEnvironmentControllerGUI parent = null;
 	private JTextField tfAgentClass = null;
 	private JButton btnSetAgentClass = null;
 	/**
 	 * This is the default constructor
 	 */
-	public EnvironmentSetupObjectSettings(EnvironmentSetup parent) {
+	public Physical2DObjectSettingsPanel(Physical2DEnvironmentControllerGUI parent) {
 		super();
 		this.parent = parent;
 		initialize();
@@ -304,18 +304,18 @@ public class EnvironmentSetupObjectSettings extends JPanel{
 			cbOntologyClass.setEnabled(false);
 			
 			typeClass = new HashMap<String, Class<?>>();
-			typeClass.put(Language.translate(EnvironmentSetup.TYPE_STRING_NO_TYPE), null);
-			typeClass.put(Language.translate(EnvironmentSetup.TYPE_STRING_ACTIVE_OBJECT), ActiveObject.class);
-			typeClass.put(Language.translate(EnvironmentSetup.TYPE_STRING_STATIC_OBJECT), StaticObject.class);
-			typeClass.put(Language.translate(EnvironmentSetup.TYPE_STRING_PASSIVE_OBJECT), PassiveObject.class);
-			typeClass.put(Language.translate(EnvironmentSetup.TYPE_STRING_PLAYGROUND_OBJECT), PlaygroundObject.class);
+			typeClass.put(Language.translate(Physical2DEnvironmentControllerGUI.TYPE_STRING_NO_TYPE), null);
+			typeClass.put(Language.translate(Physical2DEnvironmentControllerGUI.TYPE_STRING_ACTIVE_OBJECT), ActiveObject.class);
+			typeClass.put(Language.translate(Physical2DEnvironmentControllerGUI.TYPE_STRING_STATIC_OBJECT), StaticObject.class);
+			typeClass.put(Language.translate(Physical2DEnvironmentControllerGUI.TYPE_STRING_PASSIVE_OBJECT), PassiveObject.class);
+			typeClass.put(Language.translate(Physical2DEnvironmentControllerGUI.TYPE_STRING_PLAYGROUND_OBJECT), PlaygroundObject.class);
 			
 			cbOntologyClass.setModel(new DefaultComboBoxModel(typeClass.keySet().toArray()));
 			cbOntologyClass.addActionListener(new ActionListener(){
 
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
-					if(cbOntologyClass.getSelectedItem().equals(Language.translate(EnvironmentSetup.TYPE_STRING_ACTIVE_OBJECT))){
+					if(cbOntologyClass.getSelectedItem().equals(Language.translate(Physical2DEnvironmentControllerGUI.TYPE_STRING_ACTIVE_OBJECT))){
 						getTfMaxSpeed().setEnabled(true);
 						getTfAgentClass().setEnabled(true);
 						getBtnSetAgentClass().setEnabled(true);
@@ -324,7 +324,7 @@ public class EnvironmentSetupObjectSettings extends JPanel{
 						getTfAgentClass().setEnabled(false);
 						getBtnSetAgentClass().setEnabled(false);
 					}
-					if(cbOntologyClass.getSelectedItem().equals(Language.translate(EnvironmentSetup.TYPE_STRING_NO_TYPE))){
+					if(cbOntologyClass.getSelectedItem().equals(Language.translate(Physical2DEnvironmentControllerGUI.TYPE_STRING_NO_TYPE))){
 						getBtnApply().setEnabled(false);
 					}else{
 						getBtnApply().setEnabled(true);
@@ -385,24 +385,24 @@ public class EnvironmentSetupObjectSettings extends JPanel{
 			getTfYPos().setText("");
 			getTfWidth().setText("");
 			getTfHeight().setText("");
-			getOntologyClass().setSelectedItem(Language.translate(EnvironmentSetup.TYPE_STRING_NO_TYPE));
+			getOntologyClass().setSelectedItem(Language.translate(Physical2DEnvironmentControllerGUI.TYPE_STRING_NO_TYPE));
 			getTfMaxSpeed().setText("");
 		}
 	}
 	
 	private void setObjectType(Physical2DObject object){
 		if(object == null){
-			getOntologyClass().setSelectedItem(Language.translate(EnvironmentSetup.TYPE_STRING_NO_TYPE));
+			getOntologyClass().setSelectedItem(Language.translate(Physical2DEnvironmentControllerGUI.TYPE_STRING_NO_TYPE));
 		}
 		else if(object instanceof ActiveObject){
-			getOntologyClass().setSelectedItem(Language.translate(EnvironmentSetup.TYPE_STRING_ACTIVE_OBJECT));
+			getOntologyClass().setSelectedItem(Language.translate(Physical2DEnvironmentControllerGUI.TYPE_STRING_ACTIVE_OBJECT));
 			getTfMaxSpeed().setText(""+((ActiveObject)object).getMaxSpeed());
 		}else if(object instanceof PassiveObject){
-			getOntologyClass().setSelectedItem(Language.translate(EnvironmentSetup.TYPE_STRING_PASSIVE_OBJECT));
+			getOntologyClass().setSelectedItem(Language.translate(Physical2DEnvironmentControllerGUI.TYPE_STRING_PASSIVE_OBJECT));
 		}else if(object instanceof StaticObject){
-			getOntologyClass().setSelectedItem(Language.translate(EnvironmentSetup.TYPE_STRING_STATIC_OBJECT));
+			getOntologyClass().setSelectedItem(Language.translate(Physical2DEnvironmentControllerGUI.TYPE_STRING_STATIC_OBJECT));
 		}else if(object instanceof PlaygroundObject){
-			getOntologyClass().setSelectedItem(Language.translate(EnvironmentSetup.TYPE_STRING_PLAYGROUND_OBJECT));
+			getOntologyClass().setSelectedItem(Language.translate(Physical2DEnvironmentControllerGUI.TYPE_STRING_PLAYGROUND_OBJECT));
 		}
 	}
 	
@@ -413,22 +413,22 @@ public class EnvironmentSetupObjectSettings extends JPanel{
 	HashMap<String, Object> getObjectProperties(){
 		HashMap<String, Object> settings = new HashMap<String, Object>();
 		
-		settings.put(EnvironmentSetup.SETTINGS_KEY_ID, tfId.getText());
-		settings.put(EnvironmentSetup.SETTINGS_KEY_ONTO_CLASS, typeClass.get(cbOntologyClass.getSelectedItem()));
-		if(cbOntologyClass.getSelectedItem().equals(Language.translate(EnvironmentSetup.TYPE_STRING_ACTIVE_OBJECT))){
-			settings.put(EnvironmentSetup.SETTINGS_KEY_AGENT_MAX_SPEED, tfMaxSpeed.getText());
-			settings.put(EnvironmentSetup.SETTINGS_KEY_AGENT_CLASSNAME, getTfAgentClass().getText());
+		settings.put(Physical2DEnvironmentControllerGUI.SETTINGS_KEY_ID, tfId.getText());
+		settings.put(Physical2DEnvironmentControllerGUI.SETTINGS_KEY_ONTO_CLASS, typeClass.get(cbOntologyClass.getSelectedItem()));
+		if(cbOntologyClass.getSelectedItem().equals(Language.translate(Physical2DEnvironmentControllerGUI.TYPE_STRING_ACTIVE_OBJECT))){
+			settings.put(Physical2DEnvironmentControllerGUI.SETTINGS_KEY_AGENT_MAX_SPEED, tfMaxSpeed.getText());
+			settings.put(Physical2DEnvironmentControllerGUI.SETTINGS_KEY_AGENT_CLASSNAME, getTfAgentClass().getText());
 		}
 
 		Position pos = new Position();
 		pos.setXPos(Float.parseFloat(getTfXPos().getText()));
 		pos.setYPos(Float.parseFloat(getTfYPos().getText()));
-		settings.put(EnvironmentSetup.SETTINGS_KEY_POSITION, pos);
+		settings.put(Physical2DEnvironmentControllerGUI.SETTINGS_KEY_POSITION, pos);
 		
 		Size size = new Size();
 		size.setWidth(Float.parseFloat(getTfWidth().getText()));
 		size.setHeight(Float.parseFloat(getTfHeight().getText()));
-		settings.put(EnvironmentSetup.SETTINGS_KEY_SIZE, size);
+		settings.put(Physical2DEnvironmentControllerGUI.SETTINGS_KEY_SIZE, size);
 		
 		return settings;
 	}

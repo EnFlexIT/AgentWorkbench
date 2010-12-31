@@ -1,4 +1,4 @@
-package agentgui.physical2Denvironment;
+package agentgui.physical2Denvironment.controller;
 
 
 import jade.content.lang.Codec.CodecException;
@@ -33,7 +33,6 @@ import org.w3c.dom.Element;
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
 import agentgui.core.common.FileCopier;
-import agentgui.core.gui.projectwindow.simsetup.EnvironmentSetup;
 import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.core.sim.setup.SimulationSetups;
 import agentgui.core.sim.setup.SimulationSetups.SimulationSetupsChangeNotification;
@@ -55,7 +54,7 @@ import agentgui.physical2Denvironment.utils.EnvironmentWrapper;
  * @author Nils
  *
  */
-public class EnvironmentController extends Observable implements Observer {
+public class Physical2DEnvironmentController extends Observable implements Observer {
 	/**
 	 * Observable event code: New environment instance assigned
 	 */
@@ -93,7 +92,7 @@ public class EnvironmentController extends Observable implements Observer {
 	/**
 	 * This EnvironmentController's GUI
 	 */
-	private EnvironmentSetup myGUI = null;
+	private Physical2DEnvironmentControllerGUI myGUI = null;
 
 	/**
 	 * The path where environment and SVG files are stored
@@ -133,7 +132,7 @@ public class EnvironmentController extends Observable implements Observer {
 	 * Constructor
 	 * @param project The Agent.GUI project
 	 */
-	public EnvironmentController(Project project){
+	public Physical2DEnvironmentController(Project project){
 		this.project = project;
 		this.project.setEnvironmentController(this);
 		this.project.addObserver(this);
@@ -161,7 +160,7 @@ public class EnvironmentController extends Observable implements Observer {
 	 * Sets this EnvironmentController's GUI
 	 * @param gui
 	 */
-	public void setGUI(EnvironmentSetup gui){
+	public void setGUI(Physical2DEnvironmentControllerGUI gui){
 		myGUI = gui;
 	}
 	
@@ -527,20 +526,20 @@ public class EnvironmentController extends Observable implements Observer {
 		Physical2DObject newObject = null;
 		
 		// Check if the specified ID is available
-		if(checkID((String) settings.get(EnvironmentSetup.SETTINGS_KEY_ID))){
+		if(checkID((String) settings.get(Physical2DEnvironmentControllerGUI.SETTINGS_KEY_ID))){
 		
 			try {
-				Class<?> ontologyClass = (Class<?>) settings.get(EnvironmentSetup.SETTINGS_KEY_ONTO_CLASS);
+				Class<?> ontologyClass = (Class<?>) settings.get(Physical2DEnvironmentControllerGUI.SETTINGS_KEY_ONTO_CLASS);
 				newObject = (Physical2DObject) ontologyClass.newInstance();
-				newObject.setId(settings.get(EnvironmentSetup.SETTINGS_KEY_ID).toString());
-				newObject.setPosition((Position) settings.get(EnvironmentSetup.SETTINGS_KEY_POSITION));
-				newObject.setSize((Size) settings.get(EnvironmentSetup.SETTINGS_KEY_SIZE));
+				newObject.setId(settings.get(Physical2DEnvironmentControllerGUI.SETTINGS_KEY_ID).toString());
+				newObject.setPosition((Position) settings.get(Physical2DEnvironmentControllerGUI.SETTINGS_KEY_POSITION));
+				newObject.setSize((Size) settings.get(Physical2DEnvironmentControllerGUI.SETTINGS_KEY_SIZE));
 				newObject.setParentPlaygroundID(environment.getRootPlayground().getId());
 				if(newObject instanceof ActiveObject){
 					((ActiveObject)newObject).setMovement(new Movement());
-					if(! settings.get(EnvironmentSetup.SETTINGS_KEY_AGENT_MAX_SPEED).toString().isEmpty()){
-						((ActiveObject)newObject).setMaxSpeed(Float.parseFloat(settings.get(EnvironmentSetup.SETTINGS_KEY_AGENT_MAX_SPEED).toString()));
-						String agentClassName = settings.get(EnvironmentSetup.SETTINGS_KEY_AGENT_CLASSNAME).toString();
+					if(! settings.get(Physical2DEnvironmentControllerGUI.SETTINGS_KEY_AGENT_MAX_SPEED).toString().isEmpty()){
+						((ActiveObject)newObject).setMaxSpeed(Float.parseFloat(settings.get(Physical2DEnvironmentControllerGUI.SETTINGS_KEY_AGENT_MAX_SPEED).toString()));
+						String agentClassName = settings.get(Physical2DEnvironmentControllerGUI.SETTINGS_KEY_AGENT_CLASSNAME).toString();
 						((ActiveObject)newObject).setAgentClassName(agentClassName);
 					}
 					
@@ -569,18 +568,18 @@ public class EnvironmentController extends Observable implements Observer {
 	private void changeObject(Physical2DObject object, HashMap<String, Object> settings){
 		// Change mode
 		
-		String id = settings.get(EnvironmentSetup.SETTINGS_KEY_ID).toString();
+		String id = settings.get(Physical2DEnvironmentControllerGUI.SETTINGS_KEY_ID).toString();
 		// The ID is not changed or the new ID is available 
 		if(id.equals(selectedObject.getId()) || checkID(id)){
 		 
-			if(selectedObject.getClass().equals(settings.get(EnvironmentSetup.SETTINGS_KEY_ONTO_CLASS))){
+			if(selectedObject.getClass().equals(settings.get(Physical2DEnvironmentControllerGUI.SETTINGS_KEY_ONTO_CLASS))){
 				// Same object type, just change attributes
-				selectedObject.setId((String) settings.get(EnvironmentSetup.SETTINGS_KEY_ID));
-				selectedObject.setPosition((Position) settings.get(EnvironmentSetup.SETTINGS_KEY_POSITION));
-				selectedObject.setSize((Size) settings.get(EnvironmentSetup.SETTINGS_KEY_SIZE));
+				selectedObject.setId((String) settings.get(Physical2DEnvironmentControllerGUI.SETTINGS_KEY_ID));
+				selectedObject.setPosition((Position) settings.get(Physical2DEnvironmentControllerGUI.SETTINGS_KEY_POSITION));
+				selectedObject.setSize((Size) settings.get(Physical2DEnvironmentControllerGUI.SETTINGS_KEY_SIZE));
 				if(selectedObject instanceof ActiveObject){
-					((ActiveObject)selectedObject).setMaxSpeed(Float.parseFloat((String) settings.get(EnvironmentSetup.SETTINGS_KEY_AGENT_MAX_SPEED)));
-					((ActiveObject)selectedObject).setAgentClassName(settings.get(EnvironmentSetup.SETTINGS_KEY_AGENT_CLASSNAME).toString());
+					((ActiveObject)selectedObject).setMaxSpeed(Float.parseFloat((String) settings.get(Physical2DEnvironmentControllerGUI.SETTINGS_KEY_AGENT_MAX_SPEED)));
+					((ActiveObject)selectedObject).setAgentClassName(settings.get(Physical2DEnvironmentControllerGUI.SETTINGS_KEY_AGENT_CLASSNAME).toString());
 				}
 				envWrap.rebuildLists();
 			}else{

@@ -1,0 +1,39 @@
+; Thu Dec 30 20:49:32 CET 2010
+; 
+;+ (version "3.3.1")
+;+ (build "Build 430")
+
+([Branch] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([Compressor] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([Pipe] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([project+annotation] of  %3APROJECT-ANNOTATION
+
+	(%3ALOCATION "D:\\Anwendungsdaten\\Eclipse Workspace\\AgentGUI\\src")
+	(%3AONTOLOGYNAME "Gasgrid")
+	(%3APACKAGE "agentgui.gasgridEnvironment.ontology")
+	(%3ASUPPORT "j2se"))
+
+([Sink] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([Source] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([Storage] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([Valve] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))

@@ -3,10 +3,10 @@
     <agentSetup/>
     <distribution>
         <doDynamicLoadBalalncing>false</doDynamicLoadBalalncing>
-        <doStaticLoadBalalncing>true</doStaticLoadBalalncing>
-        <dynamicLoadBalancingClass>agentgui.simulationService.agents.LoadBalancing</dynamicLoadBalancingClass>
+        <doStaticLoadBalalncing>false</doStaticLoadBalalncing>
+        <dynamicLoadBalancingClass>agentgui.simulationService.balancing.DynamicLoadBalancing</dynamicLoadBalancingClass>
         <numberOfAgents>0</numberOfAgents>
-        <numberOfContainer>1</numberOfContainer>
+        <numberOfContainer>0</numberOfContainer>
         <staticLoadBalancingClass>agentgui.simulationService.balancing.StaticLoadBalancing</staticLoadBalancingClass>
         <useUserThresholds>false</useUserThresholds>
         <userThresholds>
@@ -21,7 +21,7 @@
     <agentListModel>
         <size>0</size>
     </agentListModel>
-    <environmentFileName>BoxExample.xml</environmentFileName>
-    <environmentMode>physical2DEnvironment</environmentMode>
-    <svgFileName>BoxExample.svg</svgFileName>
+    <environmentFileName>default.xml</environmentFileName>
+    <environmentMode>gridEnvironment</environmentMode>
+    <svgFileName>default.svg</svgFileName>
 </simulationSetup>

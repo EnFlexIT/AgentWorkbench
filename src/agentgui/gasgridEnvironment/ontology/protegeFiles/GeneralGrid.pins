@@ -1,0 +1,12 @@
+; Thu Dec 30 20:51:52 CET 2010
+; 
+;+ (version "3.3.1")
+;+ (build "Build 430")
+
+([GridComponent] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([GridLink] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))

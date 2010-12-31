@@ -21,6 +21,7 @@
     <agentListModel>
         <size>0</size>
     </agentListModel>
-    <environmentFileName>SMA_ManyExample.xml</environmentFileName>
-    <svgFileName>SMA_ManyExample.svg</svgFileName>
+    <environmentFileName>ManyExample.xml</environmentFileName>
+    <environmentMode>physical2DEnvironment</environmentMode>
+    <svgFileName>ManyExample.svg</svgFileName>
 </simulationSetup>

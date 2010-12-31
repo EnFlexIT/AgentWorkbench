@@ -27,7 +27,7 @@ import agentgui.core.jade.ClassSearcher;
 import agentgui.core.jade.PlatformJadeConfig;
 import agentgui.core.ontologies.Ontologies4Project;
 import agentgui.core.sim.setup.SimulationSetups;
-import agentgui.physical2Denvironment.EnvironmentController;
+import agentgui.physical2Denvironment.controller.Physical2DEnvironmentController;
 import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 
 
@@ -56,7 +56,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	@XmlTransient public Ontologies4Project ontologies4Project;
 
 	//	@XmlTransient private Physical2DEnvironment environment;
-	@XmlTransient private EnvironmentController environmentController;
+	@XmlTransient private Physical2DEnvironmentController physical2DEnvironmentController;
 	
 	// --- Speichervariablen der Projektdatei ------------------ 
 	@XmlElement(name="projectName")
@@ -113,7 +113,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 			this.simSetups.setupSave();
 			
 			// --- Speichern von Umgebung und SVG ---------
-			this.environmentController.save();
+			this.physical2DEnvironmentController.save();
 			
 			ProjectUnsaved = false;			
 		} 
@@ -351,10 +351,10 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	 */
 	@XmlTransient
 	public Physical2DEnvironment getEnvironment() {
-		return this.environmentController.getEnvironment();
+		return this.physical2DEnvironmentController.getEnvironment();
 	}
 	public Physical2DEnvironment getEnvironmentCopy() {
-		return this.environmentController.getEnvironmentCopy();
+		return this.physical2DEnvironmentController.getEnvironmentCopy();
 	}
 	/**
 	 * 
@@ -362,23 +362,23 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	 */
 	@XmlTransient
 	public Document getSVGDoc(){
-		return this.environmentController.getSvgDoc();
+		return this.physical2DEnvironmentController.getSvgDoc();
 	}
 	public Document getSVGDocCopy(){
-		return this.environmentController.getSvgDocCopy();
+		return this.physical2DEnvironmentController.getSvgDocCopy();
 	}	
 	/**
 	 * @param environment the environment to set
 	 */
-	public void setEnvironmentController(EnvironmentController ec) {
-		this.environmentController = ec;
+	public void setEnvironmentController(Physical2DEnvironmentController ec) {
+		this.physical2DEnvironmentController = ec;
 	}
 	/**
 	 * @return the current EnvironmentController
 	 */
 	@XmlTransient
-	public EnvironmentController getEnvironmentController() {
-		return this.environmentController;
+	public Physical2DEnvironmentController getEnvironmentController() {
+		return this.physical2DEnvironmentController;
 	}
 	/**
 	 * @param defaultSubFolderSetups the defaultSubFolderOntology to set
