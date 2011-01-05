@@ -49,6 +49,11 @@ public class AgentSelector extends JDialog implements ActionListener {
 	private JLabel jLabelSearchCaption = null;
 	private JTextField jTextFieldSearch = null;
 
+	public AgentSelector() {
+		super(Application.MainWindow);
+		initialize();
+	}
+	
 	public AgentSelector(Frame owner) {
 		super(owner);
 		initialize();

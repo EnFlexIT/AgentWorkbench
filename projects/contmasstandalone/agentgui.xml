@@ -20,7 +20,16 @@
     <subOntologies>
         <subOntology>de.unidue.stud.sehawagn.contmas.ontology.ContainerTerminalOntology</subOntology>
     </subOntologies>
-    <agentConfiguration/>
+    <agentConfiguration>
+        <entry>
+            <key>de.unidue.stud.sehawagn.contmas.agents.RandomGeneratorAgent</key>
+            <value>de.unidue.stud.sehawagn.contmas.ontology.Phy_Size|de.unidue.stud.sehawagn.contmas.ontology.Phy_Speed</value>
+        </entry>
+        <entry>
+            <key>de.unidue.stud.sehawagn.contmas.agents.HarborMasterAgent</key>
+            <value>de.unidue.stud.sehawagn.contmas.ontology.Phy_Movement|de.unidue.stud.sehawagn.contmas.ontology.ProvideScMove|de.unidue.stud.sehawagn.contmas.ontology.BayMap|de.unidue.stud.sehawagn.contmas.ontology.BlockAddress</value>
+        </entry>
+    </agentConfiguration>
     <simulationSetupCurrent>map_port_chalmers_agentgui</simulationSetupCurrent>
     <simulationSetups>
         <entry>

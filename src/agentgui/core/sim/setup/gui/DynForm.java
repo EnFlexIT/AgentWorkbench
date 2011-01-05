@@ -1,6 +1,5 @@
 package agentgui.core.sim.setup.gui;
 
-import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -18,20 +17,19 @@ import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.border.EtchedBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
+import agentgui.core.application.Language;
 import agentgui.core.application.Project;
 import agentgui.core.ontologies.OntologySingleClassDescription;
 import agentgui.core.ontologies.OntologySingleClassSlotDescription;
 
-public class DynForm extends JPanel{
+public class DynForm extends JPanel {
 
 	// === Frame + Panel Description === //
 	/*
@@ -49,49 +47,39 @@ public class DynForm extends JPanel{
 	
 	private static final long serialVersionUID = 7942028680794127910L;
 
+	private boolean debug = false;
+	
 	private Project currProject = null;
 	private String currAgentReference = null;
-	JPanel mainPanel = new JPanel();
-	int frameHeight = 600;
-	int frameWidht = 600;
-	String startObjectPackage = "";
-	public int actualX = 0;
-	public int actualY = 0;
-	public int einrueckungObersteEbene = 10;
-	public int einrueckungProUntereEbene = 10;
-	List<String> innerObjects = new ArrayList<String>();
-	JPanel superPanel = new JPanel();
-	JFrame testFrame = new JFrame();
-	DefaultTreeModel objectTree = new DefaultTreeModel(new DefaultMutableTreeNode("Root"));
 	
+	private String startObjectPackage = "";
+
+	private JButton submitButton = null;
+	private int einrueckungProUntereEbene = 5;
+	private List<String> innerObjects = new ArrayList<String>();
+
+	private DefaultTreeModel objectTree = new DefaultTreeModel(new DefaultMutableTreeNode("Root"));
+	
+	/**
+	 * Constructor of this class
+	 * @param project
+	 * @param agentReference
+	 */
 	public DynForm(Project project, String agentReference) {
 		
+		super();
 		currProject = project;
 		currAgentReference = agentReference;
 	
-		// --- Set the preferences for the Super Panel --- //
-		superPanel.setPreferredSize(new Dimension(this.frameWidht, this.frameHeight));
-		superPanel.setLayout(new BorderLayout());
-	
 		// --- Set the preferences for the Main Panel -- //
-		mainPanel.setLayout(null);
-		mainPanel.setPreferredSize(new Dimension(this.frameWidht, this.frameHeight));
+		this.setLayout(null);
 		
-		// --- Set the preferences for the testFrame -- //
-		testFrame.setSize(this.frameWidht,this.frameHeight);
-		testFrame.setVisible(true);
-		
-		// --- Set the preferences for the scrollPane -- //
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setViewportView(superPanel);
-		
-		// --- Add Items --- //
-		superPanel.add(mainPanel);
-		testFrame.add(scrollPane);
-	
 		// --- Start building the GUI --- //
 		this.start(agentReference);
-		this.objectTreePrint();
+		if (debug==true) {
+			this.objectTreePrint();	
+		}
+
 	}
 	
 	/**
@@ -101,7 +89,6 @@ public class DynForm extends JPanel{
 	public void start(String agentReference){
 		// --- Find Agent in AgentConfig --- //
 		if ( currProject.AgentConfig.containsKey(currAgentReference)== false) {
-			// TODO: Hier ein leeres JPanle zurückgeben ---!!!
 			return;
 		}
 		
@@ -113,6 +100,7 @@ public class DynForm extends JPanel{
 		// --- Iterate over the available Start-Objects --- //
 		Iterator<Integer> it = v.iterator();
 		while (it.hasNext()) {
+			
 			Integer startPosition = it.next();
 			String startObjectClass = startObjectList.get(startPosition);
 			startObjectPackage = startObjectClass.substring(0, startObjectClass.lastIndexOf("."));
@@ -120,26 +108,32 @@ public class DynForm extends JPanel{
 			
 			// --- Get the Infos about the slots -------------------
 			OntologySingleClassDescription osc = currProject.ontologies4Project.getSlots4ClassAsObject(startObjectClass);
+			if (debug==true) {
+				System.out.println("Creating GUI");	
+			}	
 			
-			System.out.println("Creating GUI");
-			
-			if(osc!=null)
-				this.createGUI(osc, startObjectClassName, mainPanel, 0, (DefaultMutableTreeNode) objectTree.getRoot());
-			else
+			if(osc!=null) {
+				this.createGUI(osc, startObjectClassName, this, 0, (DefaultMutableTreeNode) objectTree.getRoot());
+			} else {
 				System.out.println("Could not get OntologySingleClassDescription for "+startObjectClass);
+			}
+				
 		}
-		// --- Add the Submit Button in order to create the corresponding start object instances --- ///
+		// --- Add the Submit Button in order to create the corresponding start object instances ---
 		this.addSubmitButton();
+		// --- Justify the Preferred Size of this Panle ---
+		this.setPreferredSize(new Dimension(this.getBounds().width + 10, this.getBounds().height + 10));
 	}
 		
 	/**
-	 * This method adds the Submit Button to the end of the mainPanel
+	 * This method adds the Submit Button to the end of this Panel
 	 */
 	private void addSubmitButton() {
 		
-		JButton submitButton = new JButton();
-		submitButton.setBounds(new Rectangle(10, actualY + 30, 70, 25));
-		submitButton.setText("Submit");
+		submitButton = new JButton();
+		submitButton.setBounds(new Rectangle(5, this.getHeight() + 10, 100, 25));
+		submitButton.setText(Language.translate("Speichern"));
+		submitButton.setFont(new Font(submitButton.getFont().getName(),Font.BOLD,submitButton.getFont().getSize()));
 		submitButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -147,9 +141,19 @@ public class DynForm extends JPanel{
 				//generateInstances(mainPanel, 0, ((DefaultMutableTreeNode)objectTree.getRoot()).getNextNode());
 			}
 		});
-		mainPanel.add(submitButton);
+		this.add(submitButton);
+		this.setPanelBounds(this);
 	}
 
+	/**
+	 * This Method sets the PreferredSize of this Panel according 
+	 * to the Position of the 'submitButton'
+	 */
+	private void setPreferredSize() {
+		int newHeight = submitButton.getBounds().y + submitButton.getBounds().height + 10; 
+		this.setPreferredSize(new Dimension(this.getBounds().width, newHeight));
+	}
+	
 	
 	private void generateInstances(JPanel pan, int tiefe, DefaultMutableTreeNode node){
 		Component[] components = pan.getComponents();
@@ -217,16 +221,19 @@ public class DynForm extends JPanel{
 		}
 	}
 	
+	/**
+	 * Call-method to print the content of the 'objectTree'
+	 */
 	private void objectTreePrint(){
-		DefaultTreeModel dtm = objectTree;
-		if(objectTree != null)
-		{
+		if(objectTree != null)		{
 			objectTreePrintIt((DefaultMutableTreeNode) objectTree.getRoot());
-			
 		}
 	}
 	
-	
+	/**
+	 * Method to print the content of a node (including sub-nodes)
+	 * @param node
+	 */
 	private void objectTreePrintIt(DefaultMutableTreeNode node){
 		
 		String spacer = "";
@@ -248,8 +255,7 @@ public class DynForm extends JPanel{
 	}
 	
 	private void addNewObjectClass(String className, int tiefe) {
-		if(tiefe == 0)
-		{
+		if(tiefe == 0) {
 			DefaultMutableTreeNode root = (DefaultMutableTreeNode) objectTree.getRoot();
 			root.add(new DefaultMutableTreeNode(className));
 		}
@@ -258,7 +264,7 @@ public class DynForm extends JPanel{
 
 	private void createAndFillObject(String className) {
 		OntologySingleClassDescription oscd = getOntoSingleClsDesc(className);
-		Class cl = oscd.getClazz();
+		Class<?> cl = oscd.getClazz();
 		Iterator<OntologySingleClassSlotDescription> iterator = oscd.osdArr.iterator();
 		while (iterator.hasNext()) {
 			OntologySingleClassSlotDescription osd = iterator.next();
@@ -312,12 +318,25 @@ public class DynForm extends JPanel{
 		
 	}
 
-	public int getActualYValue(JPanel pan){
-		int value = 0;
+	public void setPanelBounds(JPanel pan){
+		
+		int maxX = 0;
+		int maxY = 0;
+		
 		Component[] components = pan.getComponents();
-		if(components.length>0)
-			value = ((Component)components[components.length-1]).getY();
-		return value;
+		for (int i = 0; i < components.length; i++) {
+			
+			int currXMax = components[i].getX() + components[i].getWidth();
+			int currYMax = components[i].getY() + components[i].getHeight();
+
+			if (currXMax > maxX) maxX = currXMax;
+			if (currYMax > maxY) maxY = currYMax;
+		}
+		
+		maxX += 10;
+		maxY += 2;
+		pan.setBounds(new Rectangle(maxX, maxY));
+
 	}
 	
 	/**
@@ -328,49 +347,42 @@ public class DynForm extends JPanel{
 	 * @param pan
 	 * @param tiefe
 	 */
-	public void createGUI(OntologySingleClassDescription osc , String startObjectClassName, JPanel pan, int tiefe, DefaultMutableTreeNode node){
-		if(osc != null){
-			// --- if we are on the main panel -> add the class name to it --- //
-			// --- TODO create a JPanel in which the class name (JLabel) and its innerclasses
+	public void createGUI(OntologySingleClassDescription osc, String startObjectClassName, JPanel pan, int tiefe, DefaultMutableTreeNode node){
+		
+		JLabel objectLabelName = new JLabel();
+		
+		if (osc != null) {
+			// --- if we are on the main panel -> add the class name to it !
+			// --- Create a JPanel in which the class name (JLabel) and its innerclasses
 			// --- and/or fields are added instead of mainPanel - class name - innerclasses/fields
+			
 			if(tiefe == 0){
 				// --- Set the label for the class --- //
-				actualY += 5;
-				JLabel objectLabelName = new JLabel();
-				objectLabelName.setBounds(new Rectangle(einrueckungObersteEbene, actualY , 150, 16));
+				objectLabelName.setBounds(new Rectangle(10, pan.getHeight()+5 , 200, 16));
 				objectLabelName.setText(startObjectClassName);
-				Font boldFont=new Font(objectLabelName.getFont().getName(),Font.BOLD,objectLabelName.getFont().getSize());
-				objectLabelName.setFont(boldFont);
-				
-				// --- add the name of the class to the mainPanel
-				mainPanel.add(objectLabelName);
-				
-				// --- increment the y-Value by the height of the inserted JLabel
-				actualY += 20;
+				objectLabelName.setFont(new Font(objectLabelName.getFont().getName(),Font.BOLD,objectLabelName.getFont().getSize()));
 				
 				// --- reset the innerObjects and add the actual (outer) class to it
 				// --- this is necessary in order to handle self calling infinite recursion
 				innerObjects.clear();
 				innerObjects.add(this.startObjectPackage+"."+startObjectClassName);
-				//System.out.println("Level 0: "+startObjectClassName);
+				
 				DynType dynType = new DynType("class",this.startObjectPackage+"."+startObjectClassName);
 				DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(dynType);
 				node.add(newNode);
 				node = newNode;
-			}
-			else{
-				actualY += 10;
-				JLabel objectLabelName = new JLabel();
-				objectLabelName.setBounds(new Rectangle(10, 28 , 150, 16));
-				String clsName = startObjectClassName.substring(startObjectClassName.lastIndexOf(".")+1);
-				objectLabelName.setText(clsName);
-				Font boldFont=new Font(objectLabelName.getFont().getName(),Font.BOLD,objectLabelName.getFont().getSize());
-				objectLabelName.setFont(boldFont);
-				pan.add(objectLabelName);
 				
-				// --- increment the y-Value by the height of the inserted JLabel
-				//actualY += 25;
+			} else {
+				// --- Set the label for the class --- //
+				objectLabelName.setBounds(new Rectangle(10, 23 , 200, 16));
+				objectLabelName.setText(startObjectClassName.substring(startObjectClassName.lastIndexOf(".")+1));
+				objectLabelName.setFont(new Font(objectLabelName.getFont().getName(),Font.BOLD,objectLabelName.getFont().getSize()));
+				
 			}
+
+			// --- add the name to the mainPanel
+			pan.add(objectLabelName);
+			this.setPanelBounds(pan);
 			
 			// --- go through each field / inner class ---
 			Iterator<OntologySingleClassSlotDescription> iterator = osc.osdArr.iterator();
@@ -378,34 +390,39 @@ public class DynForm extends JPanel{
 				OntologySingleClassSlotDescription osd = iterator.next();
 				String dataItemCardinality = osd.getSlotCardinality();
 				String dataItemName = osd.getSlotName();
-				String dataItemValue = osd.getSlotVarType();
+				String dataItemVarType = osd.getSlotVarType();
 				
 				// --- if we have a field to which an object is assigned --> inner class
-				if(isSpecialType(dataItemValue)){
-					if(dataItemValue.matches("Instance of (.)*")){
-						String clazz = dataItemValue.substring(12);
-						if(objectAlreadyDisplayed(this.startObjectPackage+"."+clazz) == false)
-						{
+				if(isSpecialType(dataItemVarType)){
+					
+					if(dataItemVarType.matches("Instance of (.)*")){
+						String clazz = dataItemVarType.substring(12);
+						if(objectAlreadyDisplayed(this.startObjectPackage+"."+clazz) == false) {
+							
 							innerObjects.add(this.startObjectPackage+"."+clazz);
 							//DynType dynType = new DynType("innerClass",this.startObjectPackage+"."+clazz);
 							//DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(dynType);
 							//node.add(newNode);
 							//node = newNode;
-							this.createInnerElements(dataItemName, dataItemValue , dataItemCardinality,  this.startObjectPackage+"."+clazz, tiefe+1, pan, node);
+							this.createInnerElements(dataItemName, dataItemVarType, dataItemCardinality,  this.startObjectPackage+"."+clazz, tiefe+1, pan, node);
+							
+						} else {
+							if (debug==true) {
+								System.out.println("Class " + this.startObjectPackage+"."+clazz + " already displayed!");	
+							}							
 						}
-						else
-							System.out.println("Class " + this.startObjectPackage+"."+clazz + " already displayed!");
 					}
-				}
-				// --- here we have a field with a final type (String, int, ...)
-				else{
-					this.createOuterElements(dataItemName, dataItemValue , dataItemCardinality, pan, tiefe, node);
+					
+				} else {
+					// --- here we have a field with a final type (String, int, ...)
+					this.createOuterElements(dataItemName, dataItemVarType, dataItemCardinality, pan, tiefe, node);
 				}
 			}
-		}
-		else{
+		
+		} else {
 			System.out.println("Could not create DefaultTableModel ("+startObjectClassName+")");
 		}
+		
 	}	
 
 	public boolean objectAlreadyDisplayed(String objectClass){
@@ -427,15 +444,13 @@ public class DynForm extends JPanel{
 	 * @param pan
 	 * @param node 
 	 */
-	public void createInnerElements(String dataItemName,String dataItemValue ,String dataItemCardinality, String startObjectClassName, int tiefe, final JPanel pan, DefaultMutableTreeNode node){
+	public void createInnerElements(String dataItemName, String dataItemVarType, String dataItemCardinality, String startObjectClassName, int tiefe, final JPanel pan, DefaultMutableTreeNode node){
+		
 		DynType dynType = new DynType("innerClassType",dataItemName);
-		dynType.setInnerClassType(dataItemValue);
+		dynType.setInnerClassType(dataItemVarType);
 		DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(dynType);
 		node.add(newNode);
 		node = newNode;
-		
-		int lastDot = startObjectClassName.lastIndexOf(".");
-		String plainStartObjectClassName = startObjectClassName.substring(lastDot + 1);
 		
 		// --- create a JPanel which will contain further inner classes and fields
 		final JPanel dataPanel = new JPanel();
@@ -444,63 +459,51 @@ public class DynForm extends JPanel{
 
 		// set the value of how much the panel shall be shifted (Einrückung)
 		if(tiefe > 1)
-			innerX= actualX + (einrueckungProUntereEbene*(tiefe-1));
+			innerX = (einrueckungProUntereEbene*(tiefe-1));
 		else
-			innerX= actualX + (einrueckungProUntereEbene*(tiefe));
-		dataPanel.setBounds(new Rectangle(innerX  , actualY , 270, 20));
+			innerX = (einrueckungProUntereEbene*(tiefe));
+		dataPanel.setBounds(new Rectangle(innerX, 0 , 270, 20));
 		dataPanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 		dataPanel.setToolTipText(startObjectClassName + " Inner Panel");
 		
 		// --- create two JLabels: first displays the field name
 		// --- the second displays the inner class name
 		JLabel valueFieldText = new JLabel();
-		valueFieldText.setText(dataItemName + " ["+dataItemValue+"]");
-		valueFieldText.setBounds(new Rectangle(10, 5, 250, 16));
-		
-		
-		
-//		JLabel innerClassName = new JLabel();
-//		innerClassName.setText(plainStartObjectClassName);
-//		innerClassName.setBounds(new Rectangle(140, 0, 150, 16));
-//		Font boldFont=new Font(innerClassName.getFont().getName(),Font.BOLD,innerClassName.getFont().getSize());
-//		innerClassName.setFont(boldFont);
-		
-		// --- if the inner class has got a multi cardinality create an add-button
-		JButton multipleButton = new JButton("+");
-		multipleButton.setBounds(new Rectangle(250, 2, 35, 25));
-		multipleButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				//showPanelComponents(dataPanel);
-				addMultiple(dataPanel);
-			}
-		});
-		
-		//System.out.println("Adding: "+dataItemName);
+		valueFieldText.setText(dataItemName + " ["+dataItemVarType+"]");
+		valueFieldText.setBounds(new Rectangle(10, 5, 300, 16));
 		
 		dataPanel.add(valueFieldText, null);
-//		dataPanel.add(innerClassName, null);
-		if(dataItemCardinality.equals("multiple"))
+		this.setPanelBounds(dataPanel);
+
+		// --- if the inner class has got a multi cardinality create an add-button		
+		if(dataItemCardinality.equals("multiple")) {
+
+			JButton multipleButton = new JButton("+");
+			multipleButton.setBounds(new Rectangle(310, 2, 35, 25));
+			multipleButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					//showPanelComponents(dataPanel);
+					addMultiple(dataPanel);
+				}
+			});	
 			dataPanel.add(multipleButton, null);
-		
+			this.setPanelBounds(dataPanel);
+		}
 		
 		// --- create the inner fields of the current inner class
 		OntologySingleClassDescription osc = currProject.ontologies4Project.getSlots4ClassAsObject(startObjectClassName);
 		this.createGUI(osc, startObjectClassName, dataPanel, tiefe, node);
-	
+		
 		// --- set the correct height of the parent of this inner class according to the
 		// --- inner class's height
-		Rectangle r = pan.getBounds();
-		if(dataPanel.getWidth() > r.width)
-			pan.setBounds(r.x, r.y, dataPanel.getWidth(), r.height + 25);
-		else
-			pan.setBounds(r.x, r.y, r.width, r.height + 25);
+		Rectangle r = dataPanel.getBounds();
+		dataPanel.setBounds(10, pan.getHeight(), r.width, r.height);
 		
 		// --- finally add the inner class to its parent panel
 		pan.add(dataPanel);
+		this.setPanelBounds(pan);
 		
-		// --- increment the actual Y value for further panels
-		actualY += 45;		
 	}
 	
 	/**
@@ -508,6 +511,7 @@ public class DynForm extends JPanel{
 	 * @param dataPanel
 	 */
 	public void addMultiple(JPanel dataPanel){
+		
 		JPanel pan = (JPanel) dataPanel.getParent();
 		int dataPanelHeight = dataPanel.getHeight();
 		pan.setBounds(pan.getX(), pan.getY(), pan.getWidth(), pan.getHeight() + dataPanelHeight);
@@ -515,8 +519,7 @@ public class DynForm extends JPanel{
 		// --- move surrounding panels into the y-direction by the the height of the
 		// --- JPanel copy
 		this.moveOtherPanels4Multiple(dataPanel, true);
-		if(mainPanel.getHeight() > superPanel.getSize().height)
-			superPanel.setPreferredSize(new Dimension(superPanel.getSize().width, mainPanel.getHeight()));
+		this.setPreferredSize();
 		
 		JPanel dataPanelCopy = new JPanel();
 		dataPanelCopy.setLayout(null);
@@ -530,7 +533,24 @@ public class DynForm extends JPanel{
 		pan.add(dataPanelCopy);
 		
 		// --- refresh the GUI
-		testFrame.validate();
+		this.validate();
+	}
+	
+	/**
+	 * This method removes the passed JPanel 
+	 * @param dataPanel
+	 */
+	public void removeMultiple(JPanel dataPanel){
+		
+		JPanel parent = (JPanel) dataPanel.getParent();
+		dataPanel.setVisible(false);
+		moveOtherPanels4Multiple(dataPanel, false);
+		parent.remove(dataPanel);
+		parent.setBounds(parent.getX(), parent.getY(), parent.getWidth(), parent.getHeight() - dataPanel.getHeight());
+		parent.validate();
+
+		this.setPreferredSize();
+		
 	}
 	
 	/**
@@ -539,10 +559,10 @@ public class DynForm extends JPanel{
 	 * @param originalPanel
 	 */
 	private void createPanelCopy(final JPanel newPanel, JPanel originalPanel) {
+		
 		Component[] c = originalPanel.getComponents();
 		for (Component component : c) {
-			if(component instanceof JPanel)
-			{
+			if(component instanceof JPanel) {
 				JPanel pan = new JPanel();
 				pan.setLayout(null);
 				JPanel panOrig = (JPanel) component;
@@ -550,50 +570,34 @@ public class DynForm extends JPanel{
 				pan.setBorder(panOrig.getBorder());
 				newPanel.add(pan);
 				this.createPanelCopy(pan, (JPanel) component);
-			}
-			else if(component instanceof JLabel){
+				
+			} else if(component instanceof JLabel) {
 				JLabel label = new JLabel();
 				JLabel origLabel = (JLabel) component;
 				label.setBounds(origLabel.getX(), origLabel.getY(), origLabel.getWidth(), origLabel.getHeight());
 				label.setText(origLabel.getText());
 				label.setFont(origLabel.getFont());
 				newPanel.add(label);
-			}
-			else if (component instanceof JTextField) {
+				
+			} else if (component instanceof JTextField) {
 				JTextField text = new JTextField();
 				JTextField origText = (JTextField) component;
 				text.setBounds(origText.getX(), origText.getY(), origText.getWidth(), origText.getHeight());
 				newPanel.add(text);
-			}
-			else if (component instanceof JButton) {
-//				JButton button = new JButton();
-				JButton buttonOrig = (JButton) component;
-//				button.setBounds(buttonOrig.getX(), buttonOrig.getY(), buttonOrig.getWidth(), buttonOrig.getHeight());
-//				button.setText(buttonOrig.getText());
-//				button.addActionListener(new ActionListener() {
-//					@Override
-//					public void actionPerformed(ActionEvent e) {
-//						addMultiple(newPanel);
-//					}
-//				});
-//				
-//				newPanel.add(button);
 				
+			} else if (component instanceof JButton) {
+				JButton buttonOrig = (JButton) component;
 				JButton removeComponent = new JButton();
 				removeComponent.setBounds(buttonOrig.getX(), buttonOrig.getY(), buttonOrig.getWidth(), buttonOrig.getHeight());
 				removeComponent.setText("-");
 				removeComponent.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						JPanel parent = (JPanel) newPanel.getParent();
-						newPanel.setVisible(false);
-						moveOtherPanels4Multiple(newPanel, false);
-						parent.remove(newPanel);
-						parent.setBounds(parent.getX(), parent.getY(), parent.getWidth(), parent.getHeight() - newPanel.getHeight());
-						parent.validate();
+						removeMultiple(newPanel);
 					}
 				});
 				newPanel.add(removeComponent);
+				
 			}
 		}
 	}
@@ -605,29 +609,34 @@ public class DynForm extends JPanel{
 	 * @param add
 	 */
 	public void moveOtherPanels4Multiple(JPanel dataPanel, boolean add){
-		if(dataPanel != null && dataPanel.getParent() instanceof JPanel){
+		
+		if (dataPanel!=null && dataPanel.getParent() instanceof JPanel) {
 			Component[] panChilds = ((JPanel) dataPanel.getParent()).getComponents();
 			boolean flag = false;
 			// --- go through the surrounding panels of the datapanel and move it
 			// --- either to + Y-Dir (the panel is added) or to the - Y-Dir (the panel) 
 			// --- shall be removed
 			for (Component component : panChilds) {
-				if(component == dataPanel)
+				if(component == dataPanel) {
 					flag = true;
+				}
 				if(add){
 					if(flag && component != dataPanel){
 						component.setBounds(component.getX(), component.getY() + dataPanel.getHeight(), component.getWidth(), component.getHeight());
 					}
-				}
-				else
-				{
-					if(component.getY() > dataPanel.getY())
+					
+				} else {
+					if(component.getY() > dataPanel.getY()) {
 						component.setBounds(component.getX(), component.getY() - dataPanel.getHeight(), component.getWidth(), component.getHeight());
+					}
+					
 				}
 			}
+			
 			if(dataPanel.getParent() instanceof JPanel)
 				moveOtherPanels4Multiple((JPanel)dataPanel.getParent(), add);
-		}		
+		}	
+		
 	}
 	
 	
@@ -659,62 +668,42 @@ public class DynForm extends JPanel{
 	 * @param tiefe
 	 * @param node 
 	 */
-	public void createOuterElements(String dataItemName, String dataItemValue,  String dataItemCardinality, JPanel pan, int tiefe, DefaultMutableTreeNode node){
-		
-		
-		JPanel dataPanel = new JPanel();
-		dataPanel.setLayout(null);
-		int innerX = 0;
+	public void createOuterElements(String dataItemName, String dataItemVarType, String dataItemCardinality, JPanel pan, int tiefe, DefaultMutableTreeNode node){
 		
 		// --- this outer element has no parents which are inner classes
 		// --- so its added to the mainPanel
-		if(tiefe == 0)
-		{
-			//System.out.println("Flat object: " + dataItemName + " tiefe: " + tiefe + " actualY " + actualY);
-			dataPanel.setBounds(new Rectangle(10, actualY  , 250, 30));
-		}
-		else
-		{
-			innerX = actualX + (einrueckungProUntereEbene*tiefe);
-			dataPanel.setBounds(new Rectangle(innerX, this.getCorrectOuterHeight(pan) - 10, 250, 30));
-		}
-		//dataPanel.setBorder(BorderFactory.createLineBorder (Color.black, 1));	
-		dataPanel.setToolTipText(dataItemName + "Panel");
+		JPanel dataPanel = new JPanel();
+		dataPanel.setLayout(null);
+		dataPanel.setToolTipText(dataItemName + "-Panel");
 		
 		// --- add a JLabel to display the field's name
 		JLabel valueFieldText = new JLabel();
-		valueFieldText.setText(dataItemName + " ["+dataItemValue+"]");
-		valueFieldText.setBounds(new Rectangle(0, 5, 130, 16));
+		valueFieldText.setText(dataItemName + " ["+dataItemVarType+"]");
+		valueFieldText.setBounds(new Rectangle(0, 4, 130, 16));
 		
 		// --- add a JTextField for the value being entered
 		// --- TODO check the type of the field and generate the right 
 		// --- valueFields (Textfield, Checkbox (for boolean) , ... )
 		JTextField valueField = new JTextField();
-		valueField.setBounds(new Rectangle(140, 2, 100, 25));
-		
-		//System.out.println("Adding: "+dataItemName);
+		valueField.setBounds(new Rectangle(140, 0, 100, 25));
 		
 		// --- add both GUI elements to the panel
 		dataPanel.add(valueFieldText, null);
 		dataPanel.add(valueField);
+		this.setPanelBounds(dataPanel);
 		
-		
-		DynType dynType = new DynType("rawType",dataItemName, valueField);
+		DynType dynType = new DynType("rawType", dataItemName, valueField);
 		node.add(new DefaultMutableTreeNode(dynType));
 		
-		
-		// --- increment the actual y position according to the height of the
-		// --- label / textfield
-		actualY += 30;
-		
-		// --- set the new height (increment the height) for the parent panel of the 
+		// --- set the new position (increment the height) for the parent panel of the 
 		// --- newly created panel
-		Rectangle r = pan.getBounds();
-		pan.setBounds(r.x, r.y, r.width + innerX, this.getCorrectOuterHeight(pan) + 25);
+		Rectangle pos = dataPanel.getBounds();
+		pos.x = 10;//tiefe * einrueckungProUntereEbene;
+		pos.y = pan.getHeight();
+		dataPanel.setBounds(pos);
+
 		pan.add(dataPanel);
-		
-		if(actualY > superPanel.getSize().height)
-			superPanel.setPreferredSize(new Dimension(superPanel.getSize().width, actualY));
+		this.setPanelBounds(pan);
 		
 	}
 	
@@ -728,11 +717,11 @@ public class DynForm extends JPanel{
 		boolean flag = true;
 		if(valueType.equals("String")){
 			flag = false;
-		}
-		else if(valueType.equals("float")){
+		} else if(valueType.equals("float")){
 			flag = false;
-		}
-		else if(valueType.equals("int")){
+		} else if(valueType.equals("int")){
+			flag = false;
+		} else if(valueType.equals("boolean")){
 			flag = false;
 		}
 		return flag;
