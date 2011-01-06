@@ -19,9 +19,9 @@ import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -50,13 +50,14 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 
 	private static final long serialVersionUID = -3929823093128900880L;
 	
+	private String newLine = Application.RunInfo.AppNewLineString();  //  @jve:decl-index=0:
 	private final String PathImage = Application.RunInfo.PathImageIntern();  //  @jve:decl-index=0:
 	private final ImageIcon iconGreen = new ImageIcon( this.getClass().getResource( PathImage + "StatGreen.png") );  //  @jve:decl-index=0:
 	private final ImageIcon iconRed = new ImageIcon( this.getClass().getResource( PathImage + "StatRed.png") );
 	
 	private Project currProject;
 	private SimulationSetup currSimSetup = null;  //  @jve:decl-index=0:
-	private AgentClassElement4SimStart startObj = null;
+	private AgentClassElement4SimStart startObj = null;  //  @jve:decl-index=0:
 	private AgentClassElement4SimStart startObjLast = null;
 	
 	private DefaultListModel jListModelAgents2Start = new DefaultListModel();
@@ -82,10 +83,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 	
 	private JTextField jTextFieldStartAs = null;
 	private JButton jButtonStartOK = null;
-	private JCheckBox jCheckBoxIsMobileAgent = null;
-
 	private JLabel jLabelHeader = null;
-	private JLabel jLabelIsMobileAgent = null;
 	private JLabel jLabelStartArgs = null;
 
 	/**
@@ -106,7 +104,6 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		jButtonMoveUp.setToolTipText(Language.translate("Agent nach oben verschieben"));
 		jButtonMoveDown.setToolTipText(Language.translate("Agent nach unten verschieben"));
 		
-		jLabelIsMobileAgent.setText(Language.translate("Mobiler Agent") + ":");
 		jLabelHeader.setText(Language.translate("Starten als") + ":");
 		jLabelStartArgs.setText(Language.translate("Start-Argumente für den ausgewählten Agenten") + ":");
 		
@@ -325,8 +322,8 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 
 						startObj = (AgentClassElement4SimStart) jListStartList.getSelectedValue();
 						if (startObj.equals(startObjLast)==false) {
+							// --- NEW SELECTION IN THE LIST ------------------
 							jTextFieldStartAs.setText(startObj.getStartAsName());
-							jCheckBoxIsMobileAgent.setSelected(startObj.isMobileAgent());
 
 							// --- Show DynForm for this agent ----------------
 							DynForm df = new DynForm(currProject, startObj.getAgentClassReference());
@@ -431,17 +428,6 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 			GridBagConstraints gridBagConstraints10 = new GridBagConstraints();
 			gridBagConstraints10.anchor = GridBagConstraints.WEST;
 			
-			GridBagConstraints gridBagConstraints9 = new GridBagConstraints();
-			gridBagConstraints9.gridx = 0;
-			gridBagConstraints9.gridy = 1;
-			gridBagConstraints9.insets = new Insets(5, 0, 0, 0);
-			gridBagConstraints9.anchor = GridBagConstraints.WEST;
-
-			GridBagConstraints gridBagConstraints8 = new GridBagConstraints();
-			gridBagConstraints8.gridx = 1;
-			gridBagConstraints8.gridy = 1;
-			gridBagConstraints8.anchor = GridBagConstraints.WEST;
-			gridBagConstraints8.insets = new Insets(5, 5, 0, 0);
 			
 			GridBagConstraints gridBagConstraints7 = new GridBagConstraints();
 			gridBagConstraints7.gridx = 2;
@@ -468,10 +454,6 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 			gridBagConstraints2.insets = new Insets(5, 0, 0, 0);
 			
 			
-			jLabelIsMobileAgent = new JLabel();
-			jLabelIsMobileAgent.setText("Mobiler Agent:");
-			jLabelIsMobileAgent.setFont(new Font("Dialog", Font.BOLD, 12));
-
 			jLabelHeader = new JLabel();
 			jLabelHeader.setText("Starten als:");
 			jLabelHeader.setFont(new Font("Dialog", Font.BOLD, 12));
@@ -481,8 +463,6 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 			jPanelRight.add(jLabelHeader, gridBagConstraints10);
 			jPanelRight.add(getJTextFieldStartAs(), gridBagConstraints5);
 			jPanelRight.add(getJButtonStartOK(), gridBagConstraints7);
-			jPanelRight.add(getJCheckBoxIsMobileAgent(), gridBagConstraints8);
-			jPanelRight.add(jLabelIsMobileAgent, gridBagConstraints9);
 			jPanelRight.add(getJPanelDynForm(), gridBagConstraints2);
 			jPanelRight.add(jLabelStartArgs, gridBagConstraints12);
 		}
@@ -529,6 +509,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		if (jTextFieldStartAs == null) {
 			jTextFieldStartAs = new JTextField();
 			jTextFieldStartAs.setPreferredSize(new Dimension(4, 26));
+			jTextFieldStartAs.addActionListener(this);
 		}
 		return jTextFieldStartAs;
 	}
@@ -549,18 +530,6 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		return jButtonStartOK;
 	}
 
-	/**
-	 * This method initializes jCheckBoxIsMobileAgent	
-	 * @return javax.swing.JCheckBox	
-	 */
-	private JCheckBox getJCheckBoxIsMobileAgent() {
-		if (jCheckBoxIsMobileAgent == null) {
-			jCheckBoxIsMobileAgent = new JCheckBox();
-			jCheckBoxIsMobileAgent.setText("");
-		}
-		return jCheckBoxIsMobileAgent;
-	}
-	
 	/**
 	 * This method initializes jPanelDynForm	
 	 * @return javax.swing.JPanel	
@@ -587,28 +556,6 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		return jScrollPaneDynForm;
 	}
 	
-	/**
-	 * This Method handles all ActionEvents from this part of the User-View
-	 */
-	@Override
-	public void actionPerformed(ActionEvent ae) {
-		// --- Das ActionCommand und den Auslöser des Events ermitteln ---
-		Object Trigger = ae.getSource();
-		
-		// --- Fallunterscheidung 'Auslöser' -----------------------------
-		if ( Trigger == jButtonAgentAdd ) {
-			this.agentAdd();			
-		} else if ( Trigger == jButtonAgentRemove ) {
-			this.agentRemove();
-		} else if ( Trigger == jButtonMoveUp ) {
-			this.agentMovePosition(-1);
-		} else if ( Trigger == jButtonMoveDown ) {
-			this.agentMovePosition(1);
-		} else {
-			System.out.println(ae.toString());
-		};
-	}
-
 	/**
 	 * Listens to the Data-Model of this Project (MVC-Pattern)
 	 */
@@ -656,14 +603,97 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 			for (int i = 0; i < agentsSelected.length; i++) {
 				
 				AgentClassElement4SimStart ac4s = new AgentClassElement4SimStart((AgentClassElement) agentsSelected[i]); 
+				// --- Set the order number -------------------------
 				ac4s.setPostionNo(startCounter);
 				startCounter++;
+				// --- Check the name to prevent name clashes -------
+				String nameSuggestion = ac4s.getStartAsName();
+				if (this.agentNameExists(nameSuggestion)==true) {
+					ac4s.setStartAsName(this.agentFindNewName(nameSuggestion));
+				}								
+				// --- Add to start-list ----------------------------
 				jListModelAgents2Start.addElement(ac4s);
 			}
 		}
 		agentSelector.dispose();
 		currSimSetup.save();
 		// ==================================================================
+	}
+	
+	/**
+	 * This method checks if a given 'Start as'-Name of an agent already exists or not
+	 * @param nameSuggestion
+	 * @return
+	 */
+	private boolean agentNameExists(String nameSuggestion) {
+		
+		boolean exists = false;
+		
+		// --- check if this name is allready be used by an other agent -------
+		for (int i=0; i<jListModelAgents2Start.size(); i++) {
+			
+			AgentClassElement4SimStart currStartObj = (AgentClassElement4SimStart) jListModelAgents2Start.get(i);
+			String nameCurr = currStartObj.getStartAsName();
+			if (nameCurr.equalsIgnoreCase(nameSuggestion)) {
+				exists = true;
+				break;
+			}
+		}
+		return exists;
+	}
+	
+	/**
+	 * This Method trys to find a new unique name for an agent 
+	 * by starting with the given/current agent name  
+	 * @param currAgentName
+	 * @return
+	 */
+	private String agentFindNewName(String currAgentName) {
+		
+		int incrementNo = 1;
+		String newAgentName = currAgentName;
+		
+		// --- find a new name -------------
+		while (agentNameExists(newAgentName)==true) {
+			newAgentName = currAgentName + "_" + incrementNo;
+			incrementNo++;
+		}
+		return newAgentName;
+	}
+	
+	/**
+	 * This method sets the given new name for the currently selected agent
+	 * @param newAgentName
+	 */
+	private void agentNameSet(String newAgentName) {
+		
+		String msgHead = "";
+		String msgText = "";
+		
+		if (newAgentName==null || newAgentName.equals("")) {
+			msgHead += Language.translate("Name ungültig!");
+			msgText += Language.translate("Bitte wählen Sie einen Namen für den Agenten!");
+			JOptionPane.showMessageDialog(null, msgText, msgHead, JOptionPane.OK_OPTION);
+			return;
+		}
+		
+		// --- new name == old name ? --------------------------------
+		if (startObj.getStartAsName().equalsIgnoreCase(newAgentName)==false) {
+			// --- new name entered ----------------------------------
+			if (agentNameExists(newAgentName)==false) {
+				startObj.setStartAsName(newAgentName);
+				jListStartList.repaint();
+			} else {
+				
+				msgHead += Language.translate("Name bereits vorhanden!");
+				msgText += "Der Name '@' wird in der Startliste bereits verwendet !" + newLine +
+						   "Bitte wählen Sie einen anderen Namen für den Agenten.";
+				msgText = Language.translate(msgText);
+				msgText = msgText.replace("@", newAgentName);
+				
+				JOptionPane.showMessageDialog(null, msgText, msgHead, JOptionPane.OK_OPTION);
+			}
+		}
 	}
 	
 	/**
@@ -684,6 +714,14 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		}
 		this.agentRenumberList();
 		currSimSetup.save();
+		
+		startObj = null;
+		startObjLast = null;
+
+		jTextFieldStartAs.setText(null);
+		DynForm df = new DynForm(currProject, null);
+		jScrollPaneDynForm.setViewportView(df);
+		
 	}
 	
 	/**
@@ -729,4 +767,31 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 
 	}
 
+	/**
+	 * This Method handles all ActionEvents from this part of the User-View
+	 */
+	@Override
+	public void actionPerformed(ActionEvent ae) {
+		// --- Das ActionCommand und den Auslöser des Events ermitteln ---
+		Object Trigger = ae.getSource();
+		
+		// --- Fallunterscheidung 'Auslöser' -----------------------------
+		if ( Trigger == jButtonAgentAdd ) {
+			this.agentAdd();			
+		} else if ( Trigger == jButtonAgentRemove ) {
+			this.agentRemove();
+		} else if ( Trigger == jButtonMoveUp ) {
+			this.agentMovePosition(-1);
+		} else if ( Trigger == jButtonMoveDown ) {
+			this.agentMovePosition(1);
+		} else if ( Trigger == jTextFieldStartAs ) {
+			jButtonStartOK.requestFocus();
+			this.agentNameSet(jTextFieldStartAs.getText());
+		} else if ( Trigger == jButtonStartOK ) {
+			this.agentNameSet(jTextFieldStartAs.getText());
+		} else {
+			System.out.println(ae.toString());
+		};
+	}
+	
 }  //  @jve:decl-index=0:visual-constraint="20,8"

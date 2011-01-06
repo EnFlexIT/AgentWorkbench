@@ -13,8 +13,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
+import org.apache.commons.codec.binary.Base64;
 
 public class Language {
 
@@ -163,8 +162,7 @@ public class Language {
 			}
 			in64 = new BufferedReader( new InputStreamReader( new FileInputStream(DictFileLocation64) , "UTF8" ) );
 			while ((line = in64.readLine()) != null) {
-				byte[] byte64 = new BASE64Decoder().decodeBuffer(line);
-				String decodedLine = new String(byte64, "UTF-8");
+				String decodedLine = new String(Base64.decodeBase64(line.getBytes()), "UTF8");
 				DictLineList64.add(decodedLine);
 			}			
 		} 
@@ -242,12 +240,8 @@ public class Language {
 					OutWri.write( line );
 			    	OutWri.newLine();
 			    	
-			    	// --- Base64-encode version of the dictionary --
-			    	String encodedLine = new BASE64Encoder().encode(line.getBytes("UTF-8"));
-			    	if (encodedLine.contains(NewLine)) {
-			    		encodedLine = encodedLine.replaceAll(NewLine, "");	
-			    	}		    	
-			    	OutWri64.write( encodedLine );
+			    	String encodedLine = new String(Base64.encodeBase64(line.getBytes("UTF8")));
+			    	OutWri64.write(encodedLine);
 			    	OutWri64.newLine();
 				}
 		    	

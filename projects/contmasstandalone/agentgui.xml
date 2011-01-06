@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <project>
     <projectName>ContMAS</projectName>
-    <projectDescription>
-    Container-Multiagentensystem - Multiagentensytem zur Emulation eines Containerhafens.
-    Dieses Projekt beinhaltet Agenten, die die verschiedenen Akteure innerhalb eines Container-Hafens darstellen.
-    Es stehen nur Agenten fÃ¼r Ship, Crane, Apron, StraddleCarrier und Yard zur VerfÃ¼gung. Ein erzeugtes Ship versucht, alle geladenen Container an die Cranes abzugeben, diese geben sie an Apron, StraddleCarrier und Yard weiter. Fehlerbehandlung findet nur rudimentÃ¤r statt.
-    Zum Start muss ein ControlGUIAgent gestartet werden, der einen Simulationsaufbau vornimmt, indem er seinerseits 2 Cranes, 1 Apron, 1 StraddleCarrier und 1 Yard sowie HarbourMaster und RandomGenerator startet. In der sodann angezeigten OberflÃ¤che ControlGUI kann ein Ship mit bestimmten Abmessungen des Laderaums gestartet werden. Die GrÃ¶ÃŸe kann wahlweise auch zufÃ¤llig vom RandomGenerator bestimmt werden oder es kann eine vorgefertigte BayMap geladen werden (als .owl-Datei). Wenn die entsprechende Option gewÃ¤hlt ist, wird der Laderaum dann vom RandomGenerator mit zufÃ¤llig erzeugten Containern gefÃ¼llt. Das Schiff schreibt diese Container zur Entladung aus.
-	Die AblÃ¤ufe lassen sich am besten im automatisch erzeugten Sniffer einsehen. Die ControlGUI bietet noch einige weitere MÃ¶glichkeiten.</projectDescription>
+    <projectDescription>Container-Multiagentensystem - Multiagentensytem zur Emulation eines Containerhafens.
+
+Dieses Projekt beinhaltet Agenten, die die verschiedenen Akteure innerhalb eines Container-Hafens darstellen.
+Es stehen nur Agenten für Ship, Crane, Apron, StraddleCarrier und Yard zur Verfügung. Ein erzeugtes Ship versucht, alle geladenen Container an die Cranes abzugeben, diese geben sie an Apron, StraddleCarrier und Yard weiter. Fehlerbehandlung findet nur rudimentär statt.
+
+Zum Start muss ein ControlGUIAgent gestartet werden, der einen Simulationsaufbau vornimmt, indem er seinerseits 2 Cranes, 1 Apron, 1 StraddleCarrier und 1 Yard sowie HarbourMaster und RandomGenerator startet. In der sodann angezeigten Oberfläche ControlGUI kann ein Ship mit bestimmten Abmessungen des Laderaums gestartet werden. Die Größe kann wahlweise auch zufällig vom RandomGenerator bestimmt werden oder es kann eine vorgefertigte BayMap geladen werden (als .owl-Datei). Wenn die entsprechende Option gewählt ist, wird der Laderaum dann vom RandomGenerator mit zufällig erzeugten Containern gefällt. Das Schiff schreibt diese Container zur Entladung aus.
+
+Die Abläufe lassen sich am besten im automatisch erzeugten Sniffer einsehen. Die ControlGUI bietet noch einige weitere Möglichkeiten.</projectDescription>
     <projectResources>
         <projectResource>\ContMAS.jar</projectResource>
         <projectResource>\ContMAS_lib\icu4j-3.4.4.jar</projectResource>

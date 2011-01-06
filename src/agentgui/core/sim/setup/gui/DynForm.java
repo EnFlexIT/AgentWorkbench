@@ -71,13 +71,19 @@ public class DynForm extends JPanel {
 		currProject = project;
 		currAgentReference = agentReference;
 	
-		// --- Set the preferences for the Main Panel -- //
+		// --- Set the preferences for the Main Panel ---------------
 		this.setLayout(null);
 		
-		// --- Start building the GUI --- //
-		this.start(agentReference);
-		if (debug==true) {
-			this.objectTreePrint();	
+		// --- Prevent errors through empty agent references --------
+		if (currAgentReference!=null) {
+			// --- Find Agent in AgentConfig ------------------------
+			if (currProject.AgentConfig.containsKey(currAgentReference)==true) {
+				// --- Start building the GUI -----------------------
+				this.buildGUI();
+				// --- If wanted show some debug informations -------
+				if (debug==true) 
+					this.objectTreePrint();	
+			}
 		}
 
 	}
@@ -86,11 +92,7 @@ public class DynForm extends JPanel {
 	 * This class starts building the GUI
 	 * @param agentReference
 	 */
-	public void start(String agentReference){
-		// --- Find Agent in AgentConfig --- //
-		if ( currProject.AgentConfig.containsKey(currAgentReference)== false) {
-			return;
-		}
+	public void buildGUI(){
 		
 		// --- Which Start-Objects are configured for the Agent? ---- 
 		TreeMap<Integer,String> startObjectList = currProject.AgentConfig.getReferencesAsTreeMap(currAgentReference);
