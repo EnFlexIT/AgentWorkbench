@@ -143,6 +143,19 @@ public class SimulationAgent extends Agent {
 	protected void onEnvironmentStimulus() {
 	}
 	
+	/**
+	 * This method sets the answer respectively the change of a single simulation agent
+	 * back to the central simulation manager
+	 * @param answer
+	 */
+	protected void setMyStimulusAnswer(Object myNextState) {
+		try {
+			SimulationServiceHelper simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
+			simHelper.setEnvironmentInstanceNextPart(getAID(), myNextState);
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
+	}
 	
 	
 }
