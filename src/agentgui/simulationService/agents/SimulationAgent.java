@@ -1,5 +1,4 @@
 package agentgui.simulationService.agents;
-
 import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.SimulationServiceHelper;
 import agentgui.simulationService.environment.EnvironmentModel;
@@ -143,6 +142,7 @@ public class SimulationAgent extends Agent {
 	 */
 	protected void onEnvironmentStimulus() {
 	}
+	
 	
 	
 }
