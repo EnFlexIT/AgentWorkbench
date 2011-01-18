@@ -70,7 +70,7 @@ public class ProjectsLoaded {
 		
 		// ------------------------------------------------
 		// --- Benutzer-Dialog öffnen ---------------------
-		ProjectNewOpen NewProDia = new ProjectNewOpen( Application.MainWindow, Application.RunInfo.AppTitel() + ": " + ActionTitel, true, addNew );
+		ProjectNewOpen NewProDia = new ProjectNewOpen( Application.MainWindow, Application.RunInfo.getApplicationTitle() + ": " + ActionTitel, true, addNew );
 		NewProDia.setVarProjectName( ProjectNameTest );
 		NewProDia.setVarProjectFolder( ProjectFolderTest );
 		NewProDia.setVisible(true);

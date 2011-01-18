@@ -233,7 +233,7 @@ public class OntologyClassTree extends DefaultTreeModel implements Serializable 
 	    
 		if ( logMsgShow == true ) {
 			// --- If an error occures, show the message ----------------------	
-			String MsgHead = Application.RunInfo.AppTitel() + ": " +  logMsgTitleOnto;
+			String MsgHead = Application.RunInfo.getApplicationTitle() + ": " +  logMsgTitleOnto;
 			String MsgText = ontologieSourcePackage + ":\n" + logMsgOnto;			
 
 			// --- Send Message to user of AgentGUI --------------------------- 

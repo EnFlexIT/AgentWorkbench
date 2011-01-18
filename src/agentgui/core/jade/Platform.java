@@ -94,7 +94,7 @@ public class Platform extends Object {
 					String msgHead = "";
 					String msgText = "";
 					
-					msgHead += Language.translate("Konfiguration des") + " " + Application.RunInfo.AppTitel() + "-" +  MASrunningMode;
+					msgHead += Language.translate("Konfiguration des") + " " + Application.RunInfo.getApplicationTitle() + "-" +  MASrunningMode;
 					msgText += "Die Systemkonfiguration enthält keine gültigen Angaben über den" + newLine +
 							   "Datenbankserver. Der Start von JADE wird deshalb unterbrochen." + newLine +
 							   "Bitte konfigurieren Sie einen MySQL-Datenbank-Server und" + newLine +
@@ -127,7 +127,7 @@ public class Platform extends Object {
 					String msgHead = "";
 					String msgText = "";
 					
-					msgHead += Language.translate("Konfiguration des") + " " + Application.RunInfo.AppTitel() + "-" +  MASrunningMode;
+					msgHead += Language.translate("Konfiguration des") + " " + Application.RunInfo.getApplicationTitle() + "-" +  MASrunningMode;
 					msgText += "Die Systemkonfiguration enthält keine gültigen Angaben über den" + newLine +
 							   "Hauptserver. Der Start von JADE wird deshalb unterbrochen." + newLine +
 							   "Bitte konfigurieren Sie eine gültige Server-URL oder IP (inkl. Port)" + newLine +

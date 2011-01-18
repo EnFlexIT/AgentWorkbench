@@ -37,7 +37,7 @@ public class SystemLoadDialog extends JFrame {
 	private void initialize() {
 		this.setSize(620, 120);
 		this.setIconImage(imageAgentGUI);
-	    this.setTitle( Application.RunInfo.AppTitel() + ": " + Language.translate("Load Monitor") );
+	    this.setTitle( Application.RunInfo.getApplicationTitle() + ": " + Language.translate("Load Monitor") );
 		this.setDefaultCloseOperation(CoreWindow.DO_NOTHING_ON_CLOSE);
 
 		// --- Set the Look and Feel of the Dialog ------------------

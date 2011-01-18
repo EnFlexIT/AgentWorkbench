@@ -65,7 +65,7 @@ public class BenchmarkMonitor extends JDialog implements ActionListener {
 		this.setSize(506, 185);
 		this.setContentPane(getJContentPane());
 		
-		this.setTitle(Application.RunInfo.AppTitel() + ": SciMark 2.0 - Benchmark");
+		this.setTitle(Application.RunInfo.getApplicationTitle() + ": SciMark 2.0 - Benchmark");
 		this.setIconImage(imageAgentGUI);
 		
 		this.setLookAndFeel();

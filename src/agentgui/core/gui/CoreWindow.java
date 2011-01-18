@@ -202,10 +202,10 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	}
 	public void setTitelAddition( String Add2BasicTitel ) {
 		if ( Add2BasicTitel != "" ) {
-			this.setTitle( Application.RunInfo.AppTitel() + ": " + Add2BasicTitel );	
+			this.setTitle( Application.RunInfo.getApplicationTitle() + ": " + Add2BasicTitel );	
 		}
 		else {
-			this.setTitle( Application.RunInfo.AppTitel() );
+			this.setTitle( Application.RunInfo.getApplicationTitle() );
 		}
 	}
 	public void setStatusJadeRunning(boolean runs) {

@@ -91,7 +91,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 		this.initialize();
 
 		// --- Übersetzungen konfigurieren --------------------------
-	    this.setTitle( Application.RunInfo.AppTitel() + ": " + Language.translate("Optionen") );
+	    this.setTitle( Application.RunInfo.getApplicationTitle() + ": " + Language.translate("Optionen") );
 	    this.jButtonCancel.setText(Language.translate("Abbrechen"));
 	    
 	    // ----------------------------------------------------------

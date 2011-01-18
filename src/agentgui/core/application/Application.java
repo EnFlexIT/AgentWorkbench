@@ -17,7 +17,7 @@ import agentgui.core.webserver.DownloadServer;
 import agentgui.simulationService.load.LoadMeasureThread;
 
 /**
- * @author: Christian Derksen  	
+ * @author derksen
  */
 public class Application {
 		
@@ -364,6 +364,19 @@ public class Application {
 			webServer = null;
 		}
 	}
-
+	
+	/**
+	 * @param newApplicationTitle sets a new Application Title/Name 
+	 */
+	public static void setApplicationTitle(String newApplicationTitle) {
+		RunInfo.setApplicationTitle(newApplicationTitle);
+	}
+	/**
+	 * @return the Application Title/Name
+	 */
+	public String getApplicationTitle() {
+		return RunInfo.getApplicationTitle();
+	}
+	
 } // --- End Class ---
 

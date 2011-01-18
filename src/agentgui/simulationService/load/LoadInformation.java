@@ -294,7 +294,7 @@ public class LoadInformation  {
 	public class Container2Wait4 {
 		
 		private String containerName = null;
-		private long timeOut = (1000 * 10); // --- 10 Seconds ---
+		private long timeOut = (1000 * 20); // --- 10 Seconds ---
 		private long time4TimeOut = 0;
 		private boolean started = false;
 		private boolean cancelled = false;

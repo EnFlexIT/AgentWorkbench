@@ -366,7 +366,7 @@ public class FileProperties extends Properties {
 	private void setDefaultComment() {
 
 		String defaultComment = "";		
-		defaultComment = defaultComment + " Configuration of " + Global.AppTitel() + " (Version: " + Global.AppVersion() + ")\n"; 
+		defaultComment = defaultComment + " Configuration of " + Global.getApplicationTitle() + " (Version: " + Global.AppVersion() + ")\n"; 
 		defaultComment = defaultComment + " by Christian Derksen - DAWIS - University Duisburg-Essen\n";
 		defaultComment = defaultComment + " Email: christian.derksen@icb.uni-due.de\n";
 		configFileDefaultComment = defaultComment;

@@ -53,7 +53,7 @@ public class AgentGUITrayDialogue extends JDialog implements MouseListener {
 		int newY = (int) (screen.getHeight()- 1.5*this.getHeight());
 		this.setLocation( newX, newY );
 		
-		String viewTitle = Application.RunInfo.AppTitel();
+		String viewTitle = Application.RunInfo.getApplicationTitle();
 		jContentPane.setToolTipText(viewTitle);
 		jLabelInfo.setToolTipText(viewTitle);
 		

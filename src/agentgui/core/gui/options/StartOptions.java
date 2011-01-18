@@ -73,7 +73,7 @@ public class StartOptions extends JPanel implements ActionListener {
 		jRadioButtonRunAsServer.setText(Language.translate("Server-Dienst (Master / Slave)"));
 		jLabelServerHeader.setText(Language.translate("Server-Konfiguration"));
 		jCheckBoxAutoStart.setText(" " + Language.translate("Server-Dienst beim Programmstart automatisch initialisieren"));
-		jLabelJadeConfig.setText( Application.RunInfo.AppTitel() + " " + Language.translate("Hauptserver (Server.Master)") );
+		jLabelJadeConfig.setText( Application.RunInfo.getApplicationTitle() + " " + Language.translate("Hauptserver (Server.Master)") );
 		jLabelDBtitle.setText(Language.translate("Datenbank für das Hauptserver-Modul"));
 		
 	}

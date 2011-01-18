@@ -28,7 +28,7 @@ public class JadeUrlChecker {
 			}
 		} catch (UnknownHostException err) {
 			//err.printStackTrace();
-			System.err.println( "[" + Application.RunInfo.AppTitel() + "] Error while try to resolve the address '" + err.getLocalizedMessage() + "'. Please check your Agent.GUI - start options." );
+			System.err.println( "[" + Application.RunInfo.getApplicationTitle() + "] Error while try to resolve the address '" + err.getLocalizedMessage() + "'. Please check your Agent.GUI - start options." );
 			currURL = null;
 		}
 		

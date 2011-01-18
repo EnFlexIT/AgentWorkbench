@@ -15,7 +15,7 @@ import agentgui.core.jade.PlatformJadeConfig;
 public class GlobalInfo {
 
 	// --- Konstanten ------------------------------------------------------- 
-	final private static String localAppTitel = "Agent.GUI";
+	private static String localAppTitle = "Agent.GUI";
 	final private static String localAppVersion = "0.85";
 	
 	final private static String localAppPathSeparatorString = File.separator;
@@ -143,11 +143,18 @@ public class GlobalInfo {
 	// ----------------------------------------------------------------------
 	// ----------------------------------------------------------------------
 	/**
-	 * Returns the titel of the application 
+	 * Returns the title/name of the application 
 	 */
-	public String AppTitel() {
-		return localAppTitel;
+	public String getApplicationTitle() {
+		return localAppTitle;
 	};
+	/**
+	 * @param newApplicationTitle the Application Title to set
+	 */
+	public void setApplicationTitle(String newApplicationTitle) {
+		GlobalInfo.localAppTitle = newApplicationTitle;
+	}
+	
 	/**
 	 * @return the localappversion
 	 */

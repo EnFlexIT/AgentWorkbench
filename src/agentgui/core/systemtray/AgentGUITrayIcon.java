@@ -44,7 +44,7 @@ public class AgentGUITrayIcon implements ActionListener {
 		
 		if (SystemTray.isSupported()) {
 			// --- System-Tray is supported -------------------------
-			trayIcon = new TrayIcon(image, Application.RunInfo.AppTitel(), popUp);
+			trayIcon = new TrayIcon(image, Application.RunInfo.getApplicationTitle(), popUp);
 			trayIcon.setImageAutoSize(true);
 			trayIcon.addActionListener(this);
 			try {

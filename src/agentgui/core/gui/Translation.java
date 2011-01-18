@@ -56,7 +56,7 @@ public class Translation extends JDialog implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 	
-	private final String appName = Application.RunInfo.AppTitel();  //  @jve:decl-index=0:
+	private final String appName = Application.RunInfo.getApplicationTitle();  //  @jve:decl-index=0:
 	private final String PathImage = Application.RunInfo.PathImageIntern();  //  @jve:decl-index=0:
 	private ImageIcon imageIcon = new ImageIcon( this.getClass().getResource( PathImage + "AgentGUI.png") );
 	private Image image = imageIcon.getImage();

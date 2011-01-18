@@ -54,7 +54,7 @@ Beenden;Quit;;;
 Beschreibung;Description;;;
 Bitte geben Sie den Namen für das neue Setup an!;Please enter a name for the new setup!;;;
 Bitte geben Sie den neuen Namen für das Setup an!;Please specify the new name for the setup!;;;
-Bitte warten! Der Benchmark wird durchgeführt ...;Please wait! The benchmark is done ...;;;
+Bitte warten! Der Benchmark wird durchgeführt ...;Please wait! The benchmark is running ...;;;
 Bitte wiederholen Sie den Vorgang bei Bedarf und bestätigen Sie dann mit 'Ja'.;Please repeat the process if required and then confirm with 'Yes'.;;;
 Bitte wählen Sie das gewünschte Projekt aus!;Please select the desired project!;;;
 Bitte wählen Sie die Ontologie aus, die Ihrem Projekt hinzugefügt werden soll !;Please select the ontology, which has to be added to your project!;;;

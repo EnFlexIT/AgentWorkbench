@@ -109,7 +109,7 @@ public class AgentGUITrayPopUp extends PopupMenu implements ActionListener {
 				agentGUItray.trayDialog.jLabelIcon.setIcon((Icon) agentGUItray.imageIcon);
 			}
 		}
-		agentGUItray.trayIcon.setToolTip(Application.RunInfo.AppTitel() + " - " + Application.JadePlatform.MASrunningMode);
+		agentGUItray.trayIcon.setToolTip(Application.RunInfo.getApplicationTitle() + " - " + Application.JadePlatform.MASrunningMode);
 	}
 	
 	@Override
