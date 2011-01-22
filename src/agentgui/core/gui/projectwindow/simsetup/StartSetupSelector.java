@@ -195,6 +195,7 @@ public class StartSetupSelector extends JPanel implements Observer, ActionListen
 				}else if(envMode.equals(SimulationSetup.ENVMODE_GRAPH)){
 					jComboBoxEnvironmentModeSelector.setSelectedItem(Language.translate("Netz"));
 				}
+				currProject.setNotChangedButNotify(SETUP_ENVMODE_CHANGE);
 			}
 		}
 		return jComboBoxEnvironmentModeSelector;
@@ -320,13 +321,14 @@ public class StartSetupSelector extends JPanel implements Observer, ActionListen
 		if ( arg1.toString().equalsIgnoreCase("SimSetups")) {
 			this.setupLoad();
 		}else if(arg1.equals(SETUP_ENVMODE_CHANGE)){
-			System.out.println("StartSetupSelector - Empfange EnvModeChange");
 			String envMode = currProject.simSetups.getCurrSimSetup().getEnvironmentMode();
+			getJComboBoxEnvironmentModeSelector().removeActionListener(this);
 			if(envMode.equals(SimulationSetup.ENVMODE_PHYSICAL2D)){
 				getJComboBoxEnvironmentModeSelector().setSelectedItem(Language.translate("physikalisch"));
 			}else if(envMode.equals(SimulationSetup.ENVMODE_GRAPH)){
 				getJComboBoxEnvironmentModeSelector().setSelectedItem(Language.translate("Netz"));
 			}
+			getJComboBoxEnvironmentModeSelector().addActionListener(this);
 		}
 		
 	}
