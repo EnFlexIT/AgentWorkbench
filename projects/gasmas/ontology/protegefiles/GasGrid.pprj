@@ -1,4 +1,4 @@
-; Thu Dec 30 20:49:32 CET 2010
+; Fri Jan 21 21:34:39 CET 2011
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -72,44 +72,25 @@
 ([GasGrid_ProjectKB_Instance_10211] of  Property_List
 )
 
-([GasGrid_ProjectKB_Instance_202] of  Widget
-
-	(is_hidden TRUE)
-	(property_list [GasGrid_ProjectKB_Instance_203])
-	(widget_class_name "se.liu.ida.JessTab.JessTab"))
-
-([GasGrid_ProjectKB_Instance_20212] of  Boolean
-
-	(boolean_value FALSE)
-	(name "ButtonDisplayed-View References to Value"))
-
-([GasGrid_ProjectKB_Instance_20213] of  Boolean
-
-	(boolean_value FALSE)
-	(name "ButtonDisplayed-Delete Instance"))
-
-([GasGrid_ProjectKB_Instance_20214] of  Property_List
-)
-
-([GasGrid_ProjectKB_Instance_20215] of  Property_List
-)
-
-([GasGrid_ProjectKB_Instance_20216] of  Property_List
-)
-
-([GasGrid_ProjectKB_Instance_20217] of  Map_Entry
+([GasGrid_ProjectKB_Instance_10212] of  Map_Entry
 
 	(key "add_name_on_instance_form")
 	(key_class "java.lang.String")
 	(value "false")
 	(value_class "java.lang.String"))
 
-([GasGrid_ProjectKB_Instance_20218] of  Map_Entry
+([GasGrid_ProjectKB_Instance_10213] of  Map_Entry
 
 	(key "change_tracking_active")
 	(key_class "java.lang.String")
 	(value "false")
 	(value_class "java.lang.String"))
+
+([GasGrid_ProjectKB_Instance_202] of  Widget
+
+	(is_hidden TRUE)
+	(property_list [GasGrid_ProjectKB_Instance_203])
+	(widget_class_name "se.liu.ida.JessTab.JessTab"))
 
 ([GasGrid_ProjectKB_Instance_203] of  Property_List
 )
@@ -432,8 +413,8 @@
 ([GasGrid_ProjectKB_Instance_289] of  Map
 
 	(entries
-		[GasGrid_ProjectKB_Instance_20217]
-		[GasGrid_ProjectKB_Instance_20218]))
+		[GasGrid_ProjectKB_Instance_10212]
+		[GasGrid_ProjectKB_Instance_10213]))
 
 ([GasGrid_ProjectKB_Instance_98] of  String
 

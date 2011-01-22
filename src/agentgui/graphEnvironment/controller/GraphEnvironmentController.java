@@ -1,4 +1,4 @@
-package agentgui.gasgridEnvironment.controller;
+package agentgui.graphEnvironment.controller;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,26 +12,51 @@ import org.apache.batik.util.XMLResourceDescriptor;
 import org.w3c.dom.Document;
 
 import edu.uci.ics.jung.graph.Graph;
+import gasmas.ontology.GridComponent;
+import gasmas.ontology.GridLink;
 
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
 import agentgui.core.common.FileCopier;
-import agentgui.gasgridEnvironment.ontology.GridComponent;
-import agentgui.gasgridEnvironment.ontology.GridLink;
 
-public class GridEnvironmentController extends Observable implements
+public class GraphEnvironmentController extends Observable implements
 		Observer {
 	
-	public static final String SVG_LOADED = "svg loaded";
+	/**
+	 * @param svgDoc the svgDoc to set
+	 */
+	public void setSvgDoc(Document svgDoc) {
+		this.svgDoc = svgDoc;
+	}
+
+	/**
+	 * @param graph the graph to set
+	 */
+	public void setGridModel(Graph<GridComponent, GridLink> graph) {
+		
+		this.gridModel = graph;
+		this.setChanged();
+		notifyObservers(EVENT_GRAPH_LOADED);
+	}
+	
+	
+	public static final String EVENT_SVG_LOADED = "svg loaded";
+	
+	public static final String EVENT_GRAPH_LOADED = "graph loaded";
 	
 	private Project project = null;
 	
 	private Document svgDoc = null;
 	
-	private Graph<GridComponent, GridLink> graph = null;
+	private Graph<GridComponent, GridLink> gridModel = null;
 	
-	public GridEnvironmentController(Project project){
+	public GraphEnvironmentController(Project project){
 		this.project = project;
+		this.loadFiles();
+	}
+	
+	Project getProject(){
+		return this.project;
 	}
 
 	/**
@@ -42,7 +67,7 @@ public class GridEnvironmentController extends Observable implements
 	 * set.  
 	 * @param graphMLFile The GraphML file defining the new graph.
 	 */
-	public void loadNewGrap(File graphMLFile){
+	public void loadGridModel(File graphMLFile){
 		String graphMLSourcePath = graphMLFile.getAbsolutePath();
 		String graphMLTargetPath = project.getEnvSetupPath()+File.separator+project.simSetupCurrent+".graphml";
 		
@@ -60,12 +85,12 @@ public class GridEnvironmentController extends Observable implements
 			System.err.println("Keine SVG-Datei gefunden!");
 		}
 		
-		this.graph = loadGraphFile(new File(graphMLTargetPath));
+		this.gridModel = loadGraphFile(new File(graphMLTargetPath));
 		if(svgFound){
 			this.svgDoc = loadSVGFile(new File(svgTargetPath));
 			if(this.svgDoc != null){
 				setChanged();
-				notifyObservers(SVG_LOADED);
+				notifyObservers(EVENT_SVG_LOADED);
 			}
 		}
 	}
@@ -73,10 +98,10 @@ public class GridEnvironmentController extends Observable implements
 	/**
 	 * This method loads the graph and SVG specified in the current SimSetup 
 	 */
-	public void loadSimSetupFiles(){
+	public void loadFiles(){
 		String graphFileName = project.simSetups.getCurrSimSetup().getEnvironmentFileName();
 		if(graphFileName != null && graphFileName != ""){
-			this.graph = loadGraphFile(new File(project.getEnvSetupPath()+File.separator+graphFileName));
+			setGridModel(loadGraphFile(new File(project.getEnvSetupPath()+File.separator+graphFileName)));
 		}else{
 			System.out.println("Keine Graph-Datei definiert!");
 		}
@@ -84,10 +109,10 @@ public class GridEnvironmentController extends Observable implements
 		String svgFileName = project.simSetups.getCurrSimSetup().getSvgFileName();
 		if(svgFileName != null && svgFileName != ""){
 			this.svgDoc = loadSVGFile(new File(project.getEnvSetupPath()+File.separator+svgFileName));
-			if(this.svgDoc != null){
-				setChanged();
-				notifyObservers(SVG_LOADED);
-			}
+//			if(this.svgDoc != null){
+//				setChanged();
+//				notifyObservers(EVENT_SVG_LOADED);
+//			}
 		}
 	}
 	
@@ -129,12 +154,11 @@ public class GridEnvironmentController extends Observable implements
 		return doc;
 	}
 	
-	
 	/**
 	 * @return the graph
 	 */
-	public Graph<GridComponent, GridLink> getGraph() {
-		return graph;
+	public Graph<GridComponent, GridLink> getGridModel() {
+		return gridModel;
 	}
 
 	/**

@@ -16,11 +16,10 @@
   <key for="edge" id="d10" yfiles.type="edgegraphics"/>
   <graph edgedefault="directed" id="G">
     <node id="n0">
-      <data key="d4"/>
-      <data key="d5"><![CDATA[source]]></data>
+      <data key="d5"><![CDATA[entry]]></data>
       <data key="d6">
         <y:SVGNode>
-          <y:Geometry height="31.399999618530273" width="46.5" x="374.24392097264433" y="62.31215824544614"/>
+          <y:Geometry height="31.399999618530273" width="46.5" x="361.25" y="-77.69999980926514"/>
           <y:Fill color="#CCCCFF" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" hasText="false" height="4.0" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="4.0" x="21.25" y="35.39999961853027"/>
@@ -31,14 +30,13 @@
       </data>
     </node>
     <node id="n1">
-      <data key="d4"/>
-      <data key="d5"><![CDATA[pipe]]></data>
+      <data key="d5"><![CDATA[compressor]]></data>
       <data key="d6">
         <y:SVGNode>
-          <y:Geometry height="31.399999618530273" width="46.5" x="374.2439209726442" y="141.96869319985342"/>
+          <y:Geometry height="39.419444724781556" width="46.5" x="361.25" y="68.29027763760922"/>
           <y:Fill color="#CCCCFF" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" hasText="false" height="4.0" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="4.0" x="21.25" y="35.39999961853027"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" hasText="false" height="4.0" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="4.0" x="21.25" y="43.419444724781556"/>
           <y:SVGModel svgBoundsPolicy="0">
             <y:SVGContent refid="2"/>
           </y:SVGModel>
@@ -46,14 +44,13 @@
       </data>
     </node>
     <node id="n2">
-      <data key="d4"/>
-      <data key="d5"><![CDATA[compressor]]></data>
+      <data key="d5"><![CDATA[pipe]]></data>
       <data key="d6">
         <y:SVGNode>
-          <y:Geometry height="39.419444724781556" width="46.5" x="374.2439209726442" y="221.6252281542607"/>
+          <y:Geometry height="31.399999618530273" width="46.5" x="361.25" y="-4.704861085827929"/>
           <y:Fill color="#CCCCFF" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" hasText="false" height="4.0" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="4.0" x="21.25" y="43.419444724781556"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" hasText="false" height="4.0" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="4.0" x="21.25" y="35.39999961853027"/>
           <y:SVGModel svgBoundsPolicy="0">
             <y:SVGContent refid="3"/>
           </y:SVGModel>
@@ -61,25 +58,25 @@
       </data>
     </node>
     <node id="n3">
-      <data key="d4"/>
       <data key="d5"><![CDATA[pipe]]></data>
       <data key="d6">
         <y:SVGNode>
-          <y:Geometry height="31.399999618530273" width="46.5" x="374.2439209726442" y="309.3012082149193"/>
+          <y:Geometry height="31.399999618530273" width="46.5" x="361.25" y="149.30486146729766"/>
           <y:Fill color="#CCCCFF" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" hasText="false" height="4.0" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="4.0" x="21.25" y="35.39999961853027"/>
           <y:SVGModel svgBoundsPolicy="0">
-            <y:SVGContent refid="2"/>
+            <y:SVGContent refid="3"/>
           </y:SVGModel>
         </y:SVGNode>
       </data>
     </node>
     <node id="n4">
+      <data key="d4"/>
       <data key="d5"><![CDATA[branch]]></data>
       <data key="d6">
         <y:SVGNode>
-          <y:Geometry height="42.77500057220459" width="62.72499847412098" x="366.13142173558373" y="394.8768170713293"/>
+          <y:Geometry height="42.77500057220459" width="62.72499847412098" x="353.1375007629395" y="222.30000019073486"/>
           <y:Fill color="#CCCCFF" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" hasText="false" height="4.0" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="4.0" x="29.36249923706049" y="46.77500057220459"/>
@@ -90,92 +87,118 @@
       </data>
     </node>
     <node id="n5">
-      <data key="d4"/>
       <data key="d5"><![CDATA[pipe]]></data>
       <data key="d6">
         <y:SVGNode>
-          <y:Geometry height="31.399999618530273" width="46.5" x="281.518922498523" y="400.56431754816646"/>
+          <y:Geometry height="31.399999618530273" width="46.5" x="463.25" y="227.98750066757202"/>
           <y:Fill color="#CCCCFF" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" hasText="false" height="4.0" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="4.0" x="21.25" y="35.39999961853027"/>
           <y:SVGModel svgBoundsPolicy="0">
-            <y:SVGContent refid="2"/>
+            <y:SVGContent refid="3"/>
           </y:SVGModel>
         </y:SVGNode>
       </data>
     </node>
     <node id="n6">
-      <data key="d4"/>
-      <data key="d5"><![CDATA[pipe]]></data>
+      <data key="d5"><![CDATA[valve]]></data>
       <data key="d6">
         <y:SVGNode>
-          <y:Geometry height="31.399999618530273" width="46.5" x="466.9689194467654" y="400.56431754816646"/>
+          <y:Geometry height="39.419444724781556" width="46.5" x="463.25" y="296.2902776376092"/>
           <y:Fill color="#CCCCFF" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" hasText="false" height="4.0" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="4.0" x="21.25" y="35.39999961853027"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" hasText="false" height="4.0" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="4.0" x="21.25" y="43.419444724781556"/>
           <y:SVGModel svgBoundsPolicy="0">
-            <y:SVGContent refid="2"/>
+            <y:SVGContent refid="5"/>
           </y:SVGModel>
         </y:SVGNode>
       </data>
     </node>
     <node id="n7">
-      <data key="d5"><![CDATA[valve]]></data>
+      <data key="d5"><![CDATA[pipe]]></data>
       <data key="d6">
         <y:SVGNode>
-          <y:Geometry height="31.399999618530273" width="46.5" x="466.9689194467654" y="456.2768166898595"/>
+          <y:Geometry height="31.399999618530273" width="46.5" x="463.25" y="372.6124997138977"/>
           <y:Fill color="#CCCCFF" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" hasText="false" height="4.0" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="4.0" x="21.25" y="35.39999961853027"/>
           <y:SVGModel svgBoundsPolicy="0">
-            <y:SVGContent refid="5"/>
+            <y:SVGContent refid="3"/>
           </y:SVGModel>
         </y:SVGNode>
       </data>
     </node>
     <node id="n8">
-      <data key="d5"><![CDATA[valve]]></data>
+      <data key="d5"><![CDATA[exit]]></data>
       <data key="d6">
         <y:SVGNode>
-          <y:Geometry height="31.399999618530273" width="46.5" x="281.518922498523" y="456.2768166898595"/>
+          <y:Geometry height="31.399999618530273" width="46.5" x="463.25" y="440.91527668393496"/>
           <y:Fill color="#CCCCFF" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" hasText="false" height="4.0" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="4.0" x="21.25" y="35.39999961853027"/>
-          <y:SVGModel svgBoundsPolicy="0">
-            <y:SVGContent refid="5"/>
-          </y:SVGModel>
-        </y:SVGNode>
-      </data>
-    </node>
-    <node id="n9">
-      <data key="d5"><![CDATA[storage]]></data>
-      <data key="d6">
-        <y:SVGNode>
-          <y:Geometry height="57.69291305541992" width="29.25" x="290.143922498523" y="519.4482720731602"/>
-          <y:Fill color="#CCCCFF" transparent="false"/>
-          <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" hasText="false" height="4.0" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="4.0" x="12.625" y="61.69291305541992"/>
           <y:SVGModel svgBoundsPolicy="0">
             <y:SVGContent refid="6"/>
           </y:SVGModel>
         </y:SVGNode>
       </data>
     </node>
-    <node id="n10">
-      <data key="d5"><![CDATA[sink]]></data>
+    <node id="n9">
+      <data key="d5"><![CDATA[pipe]]></data>
       <data key="d6">
         <y:SVGNode>
-          <y:Geometry height="31.399999618530273" width="46.5" x="466.9689194467654" y="519.4482720731602"/>
+          <y:Geometry height="31.399999618530273" width="46.5" x="259.25" y="227.98750066757202"/>
           <y:Fill color="#CCCCFF" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" hasText="false" height="4.0" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="4.0" x="21.25" y="35.39999961853027"/>
+          <y:SVGModel svgBoundsPolicy="0">
+            <y:SVGContent refid="3"/>
+          </y:SVGModel>
+        </y:SVGNode>
+      </data>
+    </node>
+    <node id="n10">
+      <data key="d5"><![CDATA[valve]]></data>
+      <data key="d6">
+        <y:SVGNode>
+          <y:Geometry height="39.419444724781556" width="46.5" x="259.25" y="296.2902776376092"/>
+          <y:Fill color="#CCCCFF" transparent="false"/>
+          <y:BorderStyle color="#000000" type="line" width="1.0"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" hasText="false" height="4.0" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="4.0" x="21.25" y="43.419444724781556"/>
+          <y:SVGModel svgBoundsPolicy="0">
+            <y:SVGContent refid="5"/>
+          </y:SVGModel>
+        </y:SVGNode>
+      </data>
+    </node>
+    <node id="n11">
+      <data key="d5"><![CDATA[pipe]]></data>
+      <data key="d6">
+        <y:SVGNode>
+          <y:Geometry height="31.399999618530273" width="46.5" x="259.25" y="372.6124997138977"/>
+          <y:Fill color="#CCCCFF" transparent="false"/>
+          <y:BorderStyle color="#000000" type="line" width="1.0"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" hasText="false" height="4.0" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="4.0" x="21.25" y="35.39999961853027"/>
+          <y:SVGModel svgBoundsPolicy="0">
+            <y:SVGContent refid="3"/>
+          </y:SVGModel>
+        </y:SVGNode>
+      </data>
+    </node>
+    <node id="n12">
+      <data key="d5"><![CDATA[storage]]></data>
+      <data key="d6">
+        <y:SVGNode>
+          <y:Geometry height="57.69291305541992" width="29.25" x="267.875" y="440.91527668393496"/>
+          <y:Fill color="#CCCCFF" transparent="false"/>
+          <y:BorderStyle color="#000000" type="line" width="1.0"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" hasText="false" height="4.0" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="4.0" x="12.625" y="61.69291305541992"/>
           <y:SVGModel svgBoundsPolicy="0">
             <y:SVGContent refid="7"/>
           </y:SVGModel>
         </y:SVGNode>
       </data>
     </node>
-    <edge id="e0" source="n0" target="n1">
+    <edge id="e0" source="n0" target="n2">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -185,7 +208,7 @@
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e1" source="n1" target="n2">
+    <edge id="e1" source="n2" target="n1">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -195,7 +218,7 @@
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e2" source="n2" target="n3">
+    <edge id="e2" source="n1" target="n3">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -225,7 +248,7 @@
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e5" source="n5" target="n8">
+    <edge id="e5" source="n5" target="n6">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -235,7 +258,7 @@
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e6" source="n8" target="n9">
+    <edge id="e6" source="n6" target="n7">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -245,7 +268,7 @@
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e7" source="n6" target="n7">
+    <edge id="e7" source="n7" target="n8">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -255,7 +278,8 @@
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e8" source="n7" target="n10">
+    <edge id="e8" source="n4" target="n9">
+      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -265,7 +289,30 @@
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e9" source="n4" target="n6">
+    <edge id="e9" source="n9" target="n10">
+      <data key="d9"/>
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
+          <y:LineStyle color="#000000" type="line" width="1.0"/>
+          <y:Arrows source="none" target="none"/>
+          <y:BendStyle smoothed="false"/>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="e10" source="n10" target="n11">
+      <data key="d9"/>
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
+          <y:LineStyle color="#000000" type="line" width="1.0"/>
+          <y:Arrows source="none" target="none"/>
+          <y:BendStyle smoothed="false"/>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="e11" source="n11" target="n12">
+      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -282,63 +329,80 @@
 &lt;!-- Created with Inkscape (http://www.inkscape.org/) --&gt;
 
 &lt;svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    version="1.1"
    width="46.5"
    height="31.4"
-   id="svg2"&gt;
+   id="svg2"
+   inkscape:version="0.47 r22583"
+   sodipodi:docname="entry.svg"&gt;
+  &lt;metadata
+     id="metadata9"&gt;
+    &lt;rdf:RDF&gt;
+      &lt;cc:Work
+         rdf:about=""&gt;
+        &lt;dc:format&gt;image/svg+xml&lt;/dc:format&gt;
+        &lt;dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" /&gt;
+      &lt;/cc:Work&gt;
+    &lt;/rdf:RDF&gt;
+  &lt;/metadata&gt;
+  &lt;sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="640"
+     inkscape:window-height="481"
+     id="namedview7"
+     showgrid="false"
+     inkscape:zoom="7.5159237"
+     inkscape:cx="23.25"
+     inkscape:cy="15.7"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg2" /&gt;
   &lt;defs
-     id="defs4" /&gt;
+     id="defs4"&gt;
+    &lt;inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 15.7 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="46.5 : 15.7 : 1"
+       inkscape:persp3d-origin="23.25 : 10.466667 : 1"
+       id="perspective11" /&gt;
+  &lt;/defs&gt;
   &lt;rect
      width="45.442955"
      height="30.342953"
      x="0.5285235"
      y="0.52852267"
-     id="rect2816"
-     style="fill:none;stroke:#000000;stroke-width:1.05704701;stroke-miterlimit:4;stroke-dasharray:none" /&gt;
+     id="NodeBackground"
+     style="fill:white;stroke:#000000;stroke-width:1.05704701000000000;stroke-miterlimit:4;stroke-dasharray:none"
+     inkscape:label="#rect2816" /&gt;
   &lt;text
-     x="7.3107805"
+     x="4.3103752"
      y="19.089314"
      id="text2822"
      xml:space="preserve"
-     style="font-size:16px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"&gt;&lt;tspan
-       x="7.3107805"
+     style="font-size:16px;font-style:normal;font-weight:normal;fill:black;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"&gt;&lt;tspan
+       x="4.3103752"
        y="19.089314"
-       id="tspan2824"&gt;Src.&lt;/tspan&gt;&lt;/text&gt;
+       id="tspan2824"&gt;Entry&lt;/tspan&gt;&lt;/text&gt;
 &lt;/svg&gt;
 </y:Resource>
       <y:Resource id="2">&lt;?xml version="1.0" encoding="UTF-8" standalone="no"?&gt;
-&lt;!-- Created with Inkscape (http://www.inkscape.org/) --&gt;
-
-&lt;svg
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   version="1.1"
-   width="46.5"
-   height="31.4"
-   id="svg2"&gt;
-  &lt;defs
-     id="defs4" /&gt;
-  &lt;rect
-     width="45.442955"
-     height="30.342953"
-     x="0.5285235"
-     y="0.52852267"
-     id="rect2816"
-     style="fill:none;stroke:#000000;stroke-width:1.05704701;stroke-miterlimit:4;stroke-dasharray:none" /&gt;
-  &lt;text
-     x="7.3107805"
-     y="19.089283"
-     id="text2822"
-     xml:space="preserve"
-     style="font-size:16px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"&gt;&lt;tspan
-       x="7.3107805"
-       y="19.089283"
-       id="tspan2824"&gt;Pipe&lt;/tspan&gt;&lt;/text&gt;
-&lt;/svg&gt;
-</y:Resource>
-      <y:Resource id="3">&lt;?xml version="1.0" encoding="UTF-8" standalone="no"?&gt;
 &lt;!-- Created with Inkscape (http://www.inkscape.org/) --&gt;
 
 &lt;svg
@@ -355,7 +419,7 @@
    width="16mm"
    height="14mm"
    version="1.0"
-   sodipodi:docname="Symbol_Compressor.svg"&gt;
+   sodipodi:docname="compressor.svg"&gt;
   &lt;metadata
      id="metadata7"&gt;
     &lt;rdf:RDF&gt;
@@ -412,6 +476,14 @@
        empopacity="0.4"
        empspacing="10" /&gt;
   &lt;/sodipodi:namedview&gt;
+  &lt;rect
+     style="fill:white;stroke:#000000;stroke-width:0.59999999999999998;stroke-miterlimit:4;stroke-dasharray:none"
+     id="NodeBackground"
+     width="57.375"
+     height="49.7313"
+     x="0.125"
+     y="1.1414055e-06"
+     inkscape:label="#rect2817" /&gt;
   &lt;path
      sodipodi:type="arc"
      style="fill: none; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.999213; stroke-linecap: butt; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1;"
@@ -444,27 +516,151 @@
      d="M 31.889764,35.433069 L 53.149606,35.433069"
      id="path5711"
      sodipodi:nodetypes="cc" /&gt;
+&lt;/svg&gt;
+</y:Resource>
+      <y:Resource id="3">&lt;?xml version="1.0" encoding="UTF-8" standalone="no"?&gt;
+&lt;!-- Created with Inkscape (http://www.inkscape.org/) --&gt;
+
+&lt;svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   width="46.5"
+   height="31.4"
+   id="svg2"
+   inkscape:version="0.47 r22583"
+   sodipodi:docname="pipe.svg"&gt;
+  &lt;metadata
+     id="metadata9"&gt;
+    &lt;rdf:RDF&gt;
+      &lt;cc:Work
+         rdf:about=""&gt;
+        &lt;dc:format&gt;image/svg+xml&lt;/dc:format&gt;
+        &lt;dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" /&gt;
+      &lt;/cc:Work&gt;
+    &lt;/rdf:RDF&gt;
+  &lt;/metadata&gt;
+  &lt;sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="640"
+     inkscape:window-height="481"
+     id="namedview7"
+     showgrid="false"
+     inkscape:zoom="7.5159237"
+     inkscape:cx="23.25"
+     inkscape:cy="15.7"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg2" /&gt;
+  &lt;defs
+     id="defs4"&gt;
+    &lt;inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 15.7 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="46.5 : 15.7 : 1"
+       inkscape:persp3d-origin="23.25 : 10.466667 : 1"
+       id="perspective11" /&gt;
+  &lt;/defs&gt;
   &lt;rect
-     style="fill:none;stroke:#000000;stroke-width:0.6;stroke-miterlimit:4;stroke-dasharray:none"
-     id="rect2817"
-     width="57.375"
-     height="49.7313"
-     x="0.125"
-     y="1.1414055e-06" /&gt;
+     width="45.442955"
+     height="30.342953"
+     x="0.5285235"
+     y="0.52852267"
+     id="NodeBackground"
+     style="fill:white;stroke:#000000;stroke-width:1.05704701000000000;stroke-miterlimit:4;stroke-dasharray:none"
+     inkscape:label="#rect2816" /&gt;
+  &lt;text
+     x="7.3107805"
+     y="19.089283"
+     id="text2822"
+     xml:space="preserve"
+     style="font-size:16px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"&gt;&lt;tspan
+       x="7.3107805"
+       y="19.089283"
+       id="tspan2824"&gt;Pipe&lt;/tspan&gt;&lt;/text&gt;
 &lt;/svg&gt;
 </y:Resource>
       <y:Resource id="4">&lt;?xml version="1.0" encoding="UTF-8" standalone="no"?&gt;
 &lt;!-- Created with Inkscape (http://www.inkscape.org/) --&gt;
 
 &lt;svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    version="1.0"
    width="22mm"
    height="15mm"
-   id="svg2"&gt;
+   id="svg2"
+   inkscape:version="0.47 r22583"
+   sodipodi:docname="branch.svg"&gt;
+  &lt;metadata
+     id="metadata12"&gt;
+    &lt;rdf:RDF&gt;
+      &lt;cc:Work
+         rdf:about=""&gt;
+        &lt;dc:format&gt;image/svg+xml&lt;/dc:format&gt;
+        &lt;dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" /&gt;
+      &lt;/cc:Work&gt;
+    &lt;/rdf:RDF&gt;
+  &lt;/metadata&gt;
+  &lt;sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="640"
+     inkscape:window-height="481"
+     id="namedview10"
+     showgrid="false"
+     inkscape:zoom="4.4402964"
+     inkscape:cx="38.976379"
+     inkscape:cy="26.574802"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg2" /&gt;
   &lt;defs
-     id="defs5" /&gt;
+     id="defs5"&gt;
+    &lt;inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 26.574802 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="77.952759 : 26.574802 : 1"
+       inkscape:persp3d-origin="38.976379 : 17.716535 : 1"
+       id="perspective14" /&gt;
+  &lt;/defs&gt;
+  &lt;rect
+     width="77.949997"
+     height="53.150002"
+     x="0"
+     y="-0.1003952"
+     id="NodeBackground"
+     style="fill:white;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none"
+     inkscape:label="#rect2817" /&gt;
   &lt;path
      d="M 38.976378,3.5433056 21.259843,21.259841 38.976378,38.976377 56.692914,21.259841 38.976378,3.5433056 z"
      id="path1307"
@@ -485,27 +681,65 @@
      d="M 38.976378,38.976376 38.976378,49.606298"
      id="path1339"
      style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" /&gt;
-  &lt;rect
-     width="77.949997"
-     height="53.150002"
-     x="0"
-     y="-0.1003952"
-     id="rect2817"
-     style="fill:none;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none" /&gt;
 &lt;/svg&gt;
 </y:Resource>
       <y:Resource id="5">&lt;?xml version="1.0" encoding="UTF-8" standalone="no"?&gt;
 &lt;!-- Created with Inkscape (http://www.inkscape.org/) --&gt;
 
 &lt;svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    version="1.0"
    width="30mm"
    height="18mm"
-   id="svg2"&gt;
+   id="svg2"
+   inkscape:version="0.47 r22583"
+   sodipodi:docname="valve.svg"&gt;
+  &lt;metadata
+     id="metadata22"&gt;
+    &lt;rdf:RDF&gt;
+      &lt;cc:Work
+         rdf:about=""&gt;
+        &lt;dc:format&gt;image/svg+xml&lt;/dc:format&gt;
+        &lt;dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" /&gt;
+      &lt;/cc:Work&gt;
+    &lt;/rdf:RDF&gt;
+  &lt;/metadata&gt;
+  &lt;sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="640"
+     inkscape:window-height="481"
+     id="namedview20"
+     showgrid="false"
+     inkscape:zoom="1"
+     inkscape:cx="53.149605"
+     inkscape:cy="31.889763"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg2" /&gt;
   &lt;defs
      id="defs5"&gt;
+    &lt;inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 31.889763 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="106.29921 : 31.889763 : 1"
+       inkscape:persp3d-origin="53.149605 : 21.259842 : 1"
+       id="perspective24" /&gt;
     &lt;marker
        refX="0"
        refY="0"
@@ -567,6 +801,14 @@
          style="font-size:12px;fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round" /&gt;
     &lt;/marker&gt;
   &lt;/defs&gt;
+  &lt;rect
+     width="106.75"
+     height="64.029526"
+     x="0"
+     y="-1.8022192e-06"
+     id="NodeBackground"
+     style="fill:white;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none"
+     inkscape:label="#rect2827" /&gt;
   &lt;path
      d="M 20.759839,42.318896 3.0433061,42.318898"
      id="path16554"
@@ -587,27 +829,151 @@
      d="M 21.259839,24.602361 21.259839,60.035429 21.31791,60.236219 53.149603,42.318896 21.259839,24.602361 z"
      id="path18391"
      style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" /&gt;
-  &lt;rect
-     width="106.75"
-     height="64.029526"
-     x="0"
-     y="-1.8022192e-06"
-     id="rect2827"
-     style="fill:none;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none" /&gt;
 &lt;/svg&gt;
 </y:Resource>
       <y:Resource id="6">&lt;?xml version="1.0" encoding="UTF-8" standalone="no"?&gt;
 &lt;!-- Created with Inkscape (http://www.inkscape.org/) --&gt;
 
 &lt;svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   width="46.5"
+   height="31.4"
+   id="svg2"
+   inkscape:version="0.47 r22583"
+   sodipodi:docname="exit.svg"&gt;
+  &lt;metadata
+     id="metadata9"&gt;
+    &lt;rdf:RDF&gt;
+      &lt;cc:Work
+         rdf:about=""&gt;
+        &lt;dc:format&gt;image/svg+xml&lt;/dc:format&gt;
+        &lt;dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" /&gt;
+      &lt;/cc:Work&gt;
+    &lt;/rdf:RDF&gt;
+  &lt;/metadata&gt;
+  &lt;sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="829"
+     inkscape:window-height="515"
+     id="namedview7"
+     showgrid="false"
+     inkscape:zoom="7.5159237"
+     inkscape:cx="23.25"
+     inkscape:cy="15.7"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg2" /&gt;
+  &lt;defs
+     id="defs4"&gt;
+    &lt;inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 15.7 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="46.5 : 15.7 : 1"
+       inkscape:persp3d-origin="23.25 : 10.466667 : 1"
+       id="perspective11" /&gt;
+  &lt;/defs&gt;
+  &lt;rect
+     width="45.442955"
+     height="30.342953"
+     x="0.5285235"
+     y="0.52852267"
+     id="NodeBackground"
+     style="fill:white;stroke:#000000;stroke-width:1.05704701000000000;stroke-miterlimit:4;stroke-dasharray:none"
+     inkscape:label="#rect2816" /&gt;
+  &lt;text
+     x="7.3107805"
+     y="19.089314"
+     id="text2822"
+     xml:space="preserve"
+     style="font-size:16px;font-style:normal;font-weight:normal;fill:black;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"&gt;&lt;tspan
+       x="7.3107805"
+       y="19.089314"
+       id="tspan2824"&gt;Exit&lt;/tspan&gt;&lt;/text&gt;
+&lt;/svg&gt;
+</y:Resource>
+      <y:Resource id="7">&lt;?xml version="1.0" encoding="UTF-8" standalone="no"?&gt;
+&lt;!-- Created with Inkscape (http://www.inkscape.org/) --&gt;
+
+&lt;svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    version="1.0"
    width="8mm"
    height="16mm"
-   id="svg2"&gt;
+   id="svg2"
+   inkscape:version="0.47 r22583"
+   sodipodi:docname="storage.svg"&gt;
+  &lt;metadata
+     id="metadata9"&gt;
+    &lt;rdf:RDF&gt;
+      &lt;cc:Work
+         rdf:about=""&gt;
+        &lt;dc:format&gt;image/svg+xml&lt;/dc:format&gt;
+        &lt;dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" /&gt;
+      &lt;/cc:Work&gt;
+    &lt;/rdf:RDF&gt;
+  &lt;/metadata&gt;
+  &lt;sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="640"
+     inkscape:window-height="481"
+     id="namedview7"
+     showgrid="false"
+     inkscape:zoom="1"
+     inkscape:cx="14.173228"
+     inkscape:cy="28.346457"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg2" /&gt;
   &lt;defs
-     id="defs5" /&gt;
+     id="defs5"&gt;
+    &lt;inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 28.346457 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="28.346457 : 28.346457 : 1"
+       inkscape:persp3d-origin="14.173228 : 18.897638 : 1"
+       id="perspective11" /&gt;
+  &lt;/defs&gt;
+  &lt;rect
+     width="28.25"
+     height="56.692913"
+     x="0"
+     y="-3.3040686e-07"
+     id="NodeBackground"
+     style="fill:white;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none"
+     inkscape:label="#rect2816" /&gt;
   &lt;path
      d="M 3.5433066,28.346455 3.5433066,14.173227 C 3.5433066,3.5433053 14.173229,3.5433053 14.173229,3.5433053 24.80315,3.5433053 24.80315,14.173227 24.80315,14.173227 L 24.80315,28.346455 C 24.80315,38.976376 14.173229,38.976376 14.173229,38.976376 3.5433066,38.976376 3.3700786,28.529526 3.5433066,28.346455 z"
      id="path7467"
@@ -616,43 +982,6 @@
      d="M 14.173228,38.976376 14.173228,53.149604"
      id="path7469"
      style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" /&gt;
-  &lt;rect
-     width="28.25"
-     height="56.692913"
-     x="0"
-     y="-3.3040686e-07"
-     id="rect2816"
-     style="fill:none;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none" /&gt;
-&lt;/svg&gt;
-</y:Resource>
-      <y:Resource id="7">&lt;?xml version="1.0" encoding="UTF-8" standalone="no"?&gt;
-&lt;!-- Created with Inkscape (http://www.inkscape.org/) --&gt;
-
-&lt;svg
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   version="1.1"
-   width="46.5"
-   height="31.4"
-   id="svg2"&gt;
-  &lt;defs
-     id="defs4" /&gt;
-  &lt;rect
-     width="45.442955"
-     height="30.342953"
-     x="0.5285235"
-     y="0.52852267"
-     id="rect2816"
-     style="fill:none;stroke:#000000;stroke-width:1.05704701;stroke-miterlimit:4;stroke-dasharray:none" /&gt;
-  &lt;text
-     x="7.3107805"
-     y="19.089314"
-     id="text2822"
-     xml:space="preserve"
-     style="font-size:16px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"&gt;&lt;tspan
-       x="7.3107805"
-       y="19.089314"
-       id="tspan2824"&gt;Sink&lt;/tspan&gt;&lt;/text&gt;
 &lt;/svg&gt;
 </y:Resource>
     </y:Resources>

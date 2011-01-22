@@ -32,7 +32,6 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
 import agentgui.core.gui.AgentSelector;
-import agentgui.core.gui.projectwindow.simsetup.StartSetupSelector;
 import agentgui.physical2Denvironment.display.BasicSVGGUI;
 import agentgui.physical2Denvironment.display.SvgTypes;
 import agentgui.physical2Denvironment.ontology.ActiveObject;
@@ -43,9 +42,6 @@ import agentgui.physical2Denvironment.ontology.Scale;
 import agentgui.physical2Denvironment.ontology.StaticObject;
 import agentgui.physical2Denvironment.utils.EnvironmentHelper;
 
-
-import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -75,7 +71,6 @@ public class Physical2DEnvironmentControllerGUI extends JPanel implements Action
 	public static final String TYPE_STRING_PLAYGROUND_OBJECT = "Teil-Umgebung";  //  @jve:decl-index=0:
 	public static final String TYPE_STRING_NO_TYPE = "Nicht definiert";
 	
-	private StartSetupSelector jPanelTopNew = null;
 	private JSplitPane jSplitPaneSetup = null;
 	private JSplitPane jSplitPaneControlls = null;
 	private JTree treeEnvironment = null;
@@ -136,7 +131,7 @@ public class Physical2DEnvironmentControllerGUI extends JPanel implements Action
 		this.setLayout(new GridBagLayout());
 		this.add(getJSplitPaneSetup(), gridBagConstraints);
 		
-		this.add(getJPanelTopNew(), gridBagConstraints1);
+//		this.add(getJPanelTopNew(), gridBagConstraints1);
 		
 		
 		this.controller = new Physical2DEnvironmentController(project);
@@ -149,17 +144,6 @@ public class Physical2DEnvironmentControllerGUI extends JPanel implements Action
 			rebuildTree();
 			environmentSettings.setScale(controller.getEnvironment().getScale());
 		}
-	}
-	
-	/**
-	 * This method initializes jPanelTopNew	
-	 * @return javax.swing.JPanel	
-	 */
-	private JPanel getJPanelTopNew() {
-		if (jPanelTopNew == null) {
-			jPanelTopNew = new StartSetupSelector(this.project);
-		}
-		return jPanelTopNew;
 	}
 	
 	private JSplitPane getJSplitPaneSetup() {

@@ -1,0 +1,109 @@
+; Fri Jan 21 13:03:44 CET 2011
+; 
+;+ (version "3.3.1")
+;+ (build "Build 430")
+
+
+(defclass %3ACLIPS_TOP_LEVEL_SLOT_CLASS "Fake class to save top-level slot information"
+	(is-a USER)
+	(role abstract)
+	(single-slot atParentLengthPos
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot geoZ
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot diameter
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot position1
+		(type INSTANCE)
+;+		(allowed-classes PropagationPoint)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot geoX
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot geoY
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot GeneralGrid_Slot_0
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot targetID
+;+		(comment "The ID of this edge's target component.")
+		(type STRING)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot sourceID
+;+		(comment "The ID of this edge's source component.")
+		(type STRING)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot id
+;+		(comment "The GridComponent's uinique ID")
+		(type STRING)
+;+		(cardinality 1 1)
+		(create-accessor read-write)))
+
+(defclass GridLink "This class defines links between two grid component. The link itself is not part of the modelled grid."
+	(is-a Concept)
+	(role concrete)
+	(single-slot targetID
+;+		(comment "The ID of this edge's target component.")
+		(type STRING)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot sourceID
+;+		(comment "The ID of this edge's source component.")
+		(type STRING)
+;+		(cardinality 1 1)
+		(create-accessor read-write)))
+
+(defclass GridComponent "This is the abstract superclass for any kind of grid component."
+	(is-a Concept)
+	(role abstract)
+	(single-slot position1
+		(type INSTANCE)
+;+		(allowed-classes PropagationPoint)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot id
+;+		(comment "The GridComponent's uinique ID")
+		(type STRING)
+;+		(cardinality 1 1)
+		(create-accessor read-write)))
+
+(defclass PhysicalParameters
+	(is-a Concept)
+	(role concrete))
+
+(defclass PropagationPoint
+	(is-a PhysicalParameters)
+	(role concrete)
+	(single-slot atParentLengthPos
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot geoZ
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot diameter
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot geoX
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot geoY
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write)))

@@ -3,8 +3,16 @@
     <projectName>GasMAS</projectName>
     <projectDescription>MAS zur Simulation eines Gasnetzes (nur technische Ebene).</projectDescription>
     <projectResources/>
-    <subOntologies/>
-    <agentConfiguration/>
+    <subOntologies>
+        <subOntology>gasmas.ontology.GasgridOntology</subOntology>
+        <subOntology>agentgui.simulationService.ontology.AgentGUI_DistributionOntology</subOntology>
+    </subOntologies>
+    <agentConfiguration>
+        <entry>
+            <key>gasmas.agents.CompressorAgent</key>
+            <value>gasmas.ontology.Compressor|agentgui.simulationService.ontology.OSInfo</value>
+        </entry>
+    </agentConfiguration>
     <simulationSetupCurrent>default</simulationSetupCurrent>
     <simulationSetups>
         <entry>

@@ -16,11 +16,9 @@ import agentgui.core.application.Language;
 import agentgui.core.application.Project;
 import agentgui.core.gui.ProjectWindow;
 import agentgui.core.gui.projectwindow.simsetup.Distribution;
+import agentgui.core.gui.projectwindow.simsetup.SimulationEnvironment;
 import agentgui.core.gui.projectwindow.simsetup.JadeSetup;
 import agentgui.core.gui.projectwindow.simsetup.StartSetup;
-import agentgui.core.sim.setup.SimulationSetup;
-import agentgui.gasgridEnvironment.controller.GridEnvironmentControllerGUI;
-import agentgui.physical2Denvironment.controller.Physical2DEnvironmentControllerGUI;
 
 public class SetupSimulation extends JPanel  {
 
@@ -62,16 +60,11 @@ public class SetupSimulation extends JPanel  {
 		
 		// --- Die (optionalen) Karteikarten einblenden ----------
 		addProjectTab(Language.translate("Agenten-Start"), null, new StartSetup(currProject), Language.translate("Agenten-Start"));
+		addProjectTab(Language.translate("Simulationsumgebung"), null, new SimulationEnvironment(currProject), Language.translate("Simulationsumgebung"));
 		addProjectTab(Language.translate("Verteilung + Grenzwerte"), null, new Distribution(currProject), Language.translate("Verteilung + Grenzwerte"));
 		addProjectTab(Language.translate("JADE-Konfiguration"), null, new JadeSetup(currProject), Language.translate("JADE-Konfiguration"));
 		
-		Component environmentSetupGUI = null;
-		if(currProject.simSetups.getCurrSimSetup().getEnvironmentMode().equals(SimulationSetup.ENVMODE_GRID)){
-			environmentSetupGUI = new GridEnvironmentControllerGUI(currProject);
-		}else{
-			environmentSetupGUI = new Physical2DEnvironmentControllerGUI(currProject);
-		}
-		addProjectTab(Language.translate("Simulationsumgebung"), null, environmentSetupGUI, Language.translate("Simulationsumgebung"));
+		
 	}
 
 	/**

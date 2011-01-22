@@ -178,6 +178,10 @@ public class Physical2DEnvironmentController extends Observable implements Obser
 	public Physical2DEnvironment getEnvironment() {
 		return environment;
 	}
+	
+	Project getProject(){
+		return this.project;
+	}
 	public Physical2DEnvironment getEnvironmentCopy() {
 		// --- Datei kopieren ---
 		String pathSetup = project.getProjectFolderFullPath() + project.getSubFolderEnvSetups() + File.separator;

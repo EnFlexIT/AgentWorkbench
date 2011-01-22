@@ -26,7 +26,7 @@ import agentgui.core.application.Project;
 	private ArrayList<AgentClassElement4SimStart> agentList = new ArrayList<AgentClassElement4SimStart>();
 	
 	public static final String ENVMODE_PHYSICAL2D = "physical2DEnvironment";
-	public static final String ENVMODE_GRID = "gridEnvironment";
+	public static final String ENVMODE_GRAPH = "gridEnvironment";
 	
 	
 	private String environmentMode = ENVMODE_PHYSICAL2D;

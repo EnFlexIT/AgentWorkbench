@@ -1,7 +1,7 @@
-package agentgui.gasgridEnvironment.controller;
+package agentgui.graphEnvironment.controller;
 
 public enum GasGridElements {
-	BRANCH, COMPRESSOR, PIPE, SINK, SOURCE, STORAGE, VALVE, UNKNOWN;
+	BRANCH, COMPRESSOR, PIPE, ENTRY, EXIT, STORAGE, VALVE, UNKNOWN;
 	
 	public static GasGridElements getElement(String type){
 		if(type.equals("branch")){
@@ -10,10 +10,10 @@ public enum GasGridElements {
 			return COMPRESSOR;
 		}else if(type.equals("pipe")){
 			return PIPE;
-		}else if(type.equals("sink")){
-			return SINK;
-		}else if(type.equals("source")){
-			return SOURCE;
+		}else if(type.equals("exit")){
+			return EXIT;
+		}else if(type.equals("entry")){
+			return ENTRY;
 		}else if(type.equals("storage")){
 			return STORAGE;
 		}else if(type.equals("valve")){

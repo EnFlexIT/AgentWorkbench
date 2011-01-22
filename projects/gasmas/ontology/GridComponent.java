@@ -1,4 +1,4 @@
-package agentgui.gasgridEnvironment.ontology;
+package gasmas.ontology;
 
 
 import jade.content.*;
@@ -9,7 +9,7 @@ import jade.core.*;
    * This is the abstract superclass for any kind of grid component.
 * Protege name: GridComponent
 * @author ontology bean generator
-* @version 2010/12/30, 20:54:11
+* @version 2011/01/21, 21:34:17
 */
 public class GridComponent implements Concept {
 
@@ -23,6 +23,17 @@ public class GridComponent implements Concept {
    }
    public String getId() {
      return this.id;
+   }
+
+   /**
+* Protege name: position1
+   */
+   private PropagationPoint position1;
+   public void setPosition1(PropagationPoint value) { 
+    this.position1=value;
+   }
+   public PropagationPoint getPosition1() {
+     return this.position1;
    }
 
 }

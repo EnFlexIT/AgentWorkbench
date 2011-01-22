@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <simulationSetup>
-    <agentSetup/>
+    <agentSetup>
+        <agent>
+            <agentClassReference>gasmas.agents.CompressorAgent</agentClassReference>
+            <mobileAgent>true</mobileAgent>
+            <postionNo>1</postionNo>
+            <startAsName>CoAg</startAsName>
+        </agent>
+        <agent>
+            <agentClassReference>gasmas.agents.CompressorAgent</agentClassReference>
+            <mobileAgent>true</mobileAgent>
+            <postionNo>2</postionNo>
+            <startAsName>CoAg_1</startAsName>
+        </agent>
+    </agentSetup>
     <distribution>
         <doDynamicLoadBalalncing>false</doDynamicLoadBalalncing>
         <doStaticLoadBalalncing>false</doStaticLoadBalalncing>
@@ -19,9 +32,9 @@
         </userThresholds>
     </distribution>
     <agentListModel>
-        <size>0</size>
+        <size>2</size>
     </agentListModel>
-    <environmentFileName>default.xml</environmentFileName>
+    <environmentFileName>default.graphml</environmentFileName>
     <environmentMode>gridEnvironment</environmentMode>
     <svgFileName>default.svg</svgFileName>
 </simulationSetup>

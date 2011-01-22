@@ -29,8 +29,6 @@ public class Physical2DEnvironmentSettingsPanel extends JPanel {
 	private JLabel lblPx = null;
 	private JButton btnSetScale = null;
 	private JButton btnLoadSVG = null;
-	private JComboBox cbEnvMode = null;
-	private JLabel lblMode = null;
 
 	/**
 	 * This is the default constructor
@@ -47,18 +45,14 @@ public class Physical2DEnvironmentSettingsPanel extends JPanel {
 	 * @return void
 	 */
 	private void initialize() {
-		lblMode = new JLabel();
-		lblMode.setText("Umgebungstyp");
-		lblMode.setSize(new Dimension(85, 16));
-		lblMode.setLocation(new Point(10, 10));
 		lblPx = new JLabel();
-		lblPx.setLocation(new Point(70,130));
+		lblPx.setLocation(new Point(70,80));
 		lblPx.setText("Pixel");
 		lblPx.setSize(lblPx.getPreferredSize());		
 		lblScale = new JLabel();
 		lblScale.setText(Language.translate("Maﬂstab"));
 		lblScale.setSize(lblScale.getPreferredSize());
-		lblScale.setLocation(new Point(10, 70));
+		lblScale.setLocation(new Point(10, 20));
 		setLayout(null);
 		add(lblScale, null);
 		add(getTfRwu(), null);
@@ -67,27 +61,6 @@ public class Physical2DEnvironmentSettingsPanel extends JPanel {
 		add(lblPx, null);
 		add(getBtnSetScale(), null);
 		add(getBtnLoadSVG(), null);
-		add(lblMode, null);
-		add(getCbEnvMode(), null);
-	}
-	
-	/**
-	 * This method initializes cbEnvMode	
-	 * 	
-	 * @return javax.swing.JComboBox	
-	 */
-	JComboBox getCbEnvMode() {
-		if (cbEnvMode == null) {
-			cbEnvMode = new JComboBox();
-			cbEnvMode.setSize(new Dimension(120, 25));
-			cbEnvMode.setLocation(new Point(10, 30));
-			
-			String[] modes = {Language.translate("physikalisch"), Language.translate("Netz")};
-			cbEnvMode.setModel(new DefaultComboBoxModel(modes));
-			cbEnvMode.addActionListener(parent);
-			cbEnvMode.setEnabled(false);
-		}
-		return cbEnvMode;
 	}
 	
 	/**
@@ -98,7 +71,7 @@ public class Physical2DEnvironmentSettingsPanel extends JPanel {
 	JTextField getTfRwu() {
 		if (tfRwu == null) {
 			tfRwu = new JTextField();
-			tfRwu.setLocation(new Point(10, 90));
+			tfRwu.setLocation(new Point(10, 40));
 			tfRwu.setSize(new Dimension(50, 25));			
 		}
 		return tfRwu;
@@ -113,7 +86,7 @@ public class Physical2DEnvironmentSettingsPanel extends JPanel {
 		if (cbUnit == null) {
 			cbUnit = new JComboBox();
 			cbUnit.setSize(90, 30);
-			cbUnit.setLocation(new Point(70,90));
+			cbUnit.setLocation(new Point(70,40));
 			String[] units = {"m", "cm", "mm", "inch", "feet"};
 			cbUnit.setModel(new DefaultComboBoxModel(units));			
 		}
@@ -128,7 +101,7 @@ public class Physical2DEnvironmentSettingsPanel extends JPanel {
 	JTextField getTfPx() {
 		if (tfPx == null) {
 			tfPx = new JTextField();
-			tfPx.setLocation(new Point(10, 125));
+			tfPx.setLocation(new Point(10, 75));
 			tfPx.setSize(new Dimension(50, 25));			
 		}
 		return tfPx;
@@ -139,7 +112,7 @@ public class Physical2DEnvironmentSettingsPanel extends JPanel {
 			btnSetScale = new JButton();
 			btnSetScale.setText(Language.translate("Maﬂstab festlegen"));
 			btnSetScale.setSize(new Dimension(150, 26));
-			btnSetScale.setLocation(new Point(10,165));
+			btnSetScale.setLocation(new Point(10,115));
 			btnSetScale.addActionListener(parent);
 		}
 		return btnSetScale;
@@ -155,7 +128,7 @@ public class Physical2DEnvironmentSettingsPanel extends JPanel {
 			btnLoadSVG = new JButton();
 			btnLoadSVG.setText(Language.translate("SVG zuweisen"));
 			btnLoadSVG.setSize(new Dimension(150, 26));
-			btnLoadSVG.setLocation(new Point(10, 200));
+			btnLoadSVG.setLocation(new Point(10, 150));
 			btnLoadSVG.addActionListener(parent);
 		}
 		return btnLoadSVG;

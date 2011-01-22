@@ -56,7 +56,7 @@ public class SimulationManagerAgent extends Agent {
 		desptop.getDesktopManager().maximizeFrame(gui);
 				
 		// --------- Setup the Simulation with the Simulation-Service -------------------
-		globalEnvModel.setEnvironmentInstance(localEnvModel);
+		globalEnvModel.setAbstractEnvironment(localEnvModel);
 		
 		try {
 			simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
@@ -134,7 +134,7 @@ public class SimulationManagerAgent extends Agent {
 				}
 				gui.updateGUI(localEnvModelNew);
 				localEnvModel = localEnvModelNew;
-				globalEnvModel.setEnvironmentInstance(localEnvModel);
+				globalEnvModel.setAbstractEnvironment(localEnvModel);
 				
 			} catch (ServiceException e) {
 				e.printStackTrace();

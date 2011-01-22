@@ -1,4 +1,4 @@
-; Thu Dec 30 20:51:52 CET 2010
+; Fri Jan 21 13:03:45 CET 2011
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -8,5 +8,13 @@
 	(%3AJADE-IGNORE FALSE))
 
 ([GridLink] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([PhysicalParameters] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([PropagationPoint] of  %3AJADE-CLASS
 
 	(%3AJADE-IGNORE FALSE))

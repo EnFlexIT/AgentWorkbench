@@ -1,4 +1,4 @@
-; Thu Dec 30 20:51:52 CET 2010
+; Fri Jan 21 13:03:45 CET 2011
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -19,7 +19,7 @@
 
 ([BROWSER_SLOT_NAMES] of  Property_List
 
-	(properties [GeneralGrid_ProjectKB_Instance_220]))
+	(properties [GeneralGrid_ProjectKB_Instance_215]))
 
 ([CLSES_TAB] of  Widget
 
@@ -395,26 +395,7 @@
 ([GeneralGrid_ProjectKB_Instance_214] of  Property_List
 )
 
-([GeneralGrid_ProjectKB_Instance_215] of  Boolean
-
-	(boolean_value FALSE)
-	(name "ButtonDisplayed-View References to Value"))
-
-([GeneralGrid_ProjectKB_Instance_216] of  Boolean
-
-	(boolean_value FALSE)
-	(name "ButtonDisplayed-Delete Instance"))
-
-([GeneralGrid_ProjectKB_Instance_217] of  Property_List
-)
-
-([GeneralGrid_ProjectKB_Instance_218] of  Property_List
-)
-
-([GeneralGrid_ProjectKB_Instance_219] of  Property_List
-)
-
-([GeneralGrid_ProjectKB_Instance_220] of  String
+([GeneralGrid_ProjectKB_Instance_215] of  String
 
 	(name ":INSTANCE-ANNOTATION")
 	(string_value "%3AANNOTATION-TEXT"))

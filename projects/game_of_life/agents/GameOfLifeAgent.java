@@ -38,7 +38,7 @@ public class GameOfLifeAgent extends SimulationAgent {
 
 		if (myEnvironmentModel!=null) {
 
-			HashMap<String, Integer> localEnvModel = (HashMap<String, Integer>) myEnvironmentModel.getEnvironmentInstance();
+			HashMap<String, Integer> localEnvModel = (HashMap<String, Integer>) myEnvironmentModel.getDisplayEnvironment();
 			this.updateStateOfAgent(localEnvModel);
 			
 			try {

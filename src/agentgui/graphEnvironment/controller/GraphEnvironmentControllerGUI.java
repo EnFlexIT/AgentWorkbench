@@ -1,55 +1,57 @@
-package agentgui.gasgridEnvironment.controller;
+package agentgui.graphEnvironment.controller;
 
 import java.util.Observable;
 import java.util.Observer;
 
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFileChooser;
 import javax.swing.JSplitPane;
 import javax.swing.JPanel;
 import javax.swing.JButton;
+
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
-import javax.swing.JComboBox;
-
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
 import agentgui.physical2Denvironment.display.BasicSVGGUI;
 
-import javax.swing.JLabel;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.events.Event;
+import org.w3c.dom.events.EventListener;
+import org.w3c.dom.events.EventTarget;
 
 /**
  * GUI class for EnvironmentController controlling grid simulation projects
  * @author Nils
  *
  */
-public class GridEnvironmentControllerGUI extends JSplitPane implements Observer, ActionListener {
+public class GraphEnvironmentControllerGUI extends JSplitPane implements Observer, ActionListener {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel pnlControlls = null;
 	private JButton btnLoadGraph = null;
-	private JComboBox cbEnvMode = null;
-	private JLabel lblMode = null;
 	
 	private BasicSVGGUI svgGUI = null;
-	private GridEnvironmentController controller = null;
+	private GraphEnvironmentController controller = null;
 
 	@Override
 	public void update(Observable o, Object arg) {
-		if(o.equals(controller) && arg.equals(GridEnvironmentController.SVG_LOADED)){
-			this.svgGUI.setSVGDoc(controller.getSvgDoc());
+		if(o.equals(controller) && arg.equals(GraphEnvironmentController.EVENT_SVG_LOADED)){
+			this.setSVGDoc(controller.getSvgDoc());
 		}
 	}
 
 	/**
 	 * This is the default constructor
 	 */
-	public GridEnvironmentControllerGUI(Project project) {
+	public GraphEnvironmentControllerGUI(Project project) {
 		super();
 		initialize(project);
 	}
@@ -66,9 +68,11 @@ public class GridEnvironmentControllerGUI extends JSplitPane implements Observer
 		this.setLeftComponent(getPnlControlls());
 		this.setRightComponent(getSVGGUI());
 		
-		this.controller = new GridEnvironmentController(project);
+		this.controller = new GraphEnvironmentController(project);
 		this.controller.addObserver(this);
-		this.controller.loadSimSetupFiles();
+		if(this.controller.getSvgDoc() != null){
+			this.setSVGDoc(controller.getSvgDoc());
+		}
 	}
 	
 	private BasicSVGGUI getSVGGUI(){
@@ -85,15 +89,9 @@ public class GridEnvironmentControllerGUI extends JSplitPane implements Observer
 	 */
 	private JPanel getPnlControlls() {
 		if (pnlControlls == null) {
-			lblMode = new JLabel();
-			lblMode.setText("Umgebungstyp");
-			lblMode.setSize(new Dimension(85, 16));
-			lblMode.setLocation(new Point(10, 10));
 			pnlControlls = new JPanel();
 			pnlControlls.setLayout(null);
 			pnlControlls.add(getBtnLoadGraph(), null);
-			pnlControlls.add(getCbEnvMode(), null);
-			pnlControlls.add(lblMode, null);
 		}
 		return pnlControlls;
 	}
@@ -107,32 +105,11 @@ public class GridEnvironmentControllerGUI extends JSplitPane implements Observer
 		if (btnLoadGraph == null) {
 			btnLoadGraph = new JButton();
 			btnLoadGraph.setText(Language.translate("Graph Laden"));
-			btnLoadGraph.setLocation(new Point(10, 60));
+			btnLoadGraph.setLocation(new Point(10, 10));
 			btnLoadGraph.setSize(new Dimension(120, 26));
 			btnLoadGraph.addActionListener(this);
 		}
 		return btnLoadGraph;
-	}
-
-	/**
-	 * This method initializes cbEnvMode	
-	 * 	
-	 * @return javax.swing.JComboBox	
-	 */
-	private JComboBox getCbEnvMode() {
-		if (cbEnvMode == null) {
-			cbEnvMode = new JComboBox();
-			cbEnvMode.setSize(new Dimension(120, 25));
-			cbEnvMode.setLocation(new Point(10, 30));
-			
-			String[] modes = {Language.translate("physikalisch"), Language.translate("Netz")};
-			cbEnvMode.setModel(new DefaultComboBoxModel(modes));
-			cbEnvMode.addActionListener(this);
-			cbEnvMode.setSelectedItem(Language.translate("Netz"));
-
-			cbEnvMode.setEnabled(false);
-		}
-		return cbEnvMode;
 	}
 
 	@Override
@@ -142,9 +119,47 @@ public class GridEnvironmentControllerGUI extends JSplitPane implements Observer
 			graphFC.setFileFilter(new FileNameExtensionFilter(Language.translate("GraphML-Dateien"), "graphml"));
 			if(graphFC.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
 				File graphMLFile = graphFC.getSelectedFile();
-				this.controller.loadNewGrap(graphMLFile);
+				this.controller.loadGridModel(graphMLFile);
 			}
 		}
 	}
+	
+	/**
+	 *  This method sets the GUIs SVG document.
+	 * @param doc The SVG document 
+	 */
+	public void setSVGDoc(Document doc){
+		addOnclickHandler(doc.getDocumentElement());
+		this.svgGUI.setSVGDoc(doc);
+	}
+	
+	/**
+	 * This method adds onClick handler to a SVG element if it represents a graph node.
+	 * An element represents a graph node if it is of type g and has an ID like "y.node.{number}"
+	 * @param node A XML node 
+	 */
+	public void addOnclickHandler(Node node){
+		String regex = "^y\\.node\\.\\d+$";
+		if(node instanceof Element 
+				&& ((Element)node).getTagName().equals("g")
+				&& ((Element)node).getAttributeNS(null, "id").matches(regex)
+		){
+			((EventTarget)node).addEventListener("click", new EventListener() {
+				
+				@Override
+				public void handleEvent(Event evt) {
+					System.out.println("SVG-Element "+((Element)evt.getTarget()).getAttributeNS(null, "id"));
+					
+				}
+			}, true);
+		}
+		if(node.hasChildNodes()){
+			for(int i=0;i<node.getChildNodes().getLength();i++){
+				addOnclickHandler(node.getChildNodes().item(i));
+			}
+		}
+	}
+	
+	
 
 }

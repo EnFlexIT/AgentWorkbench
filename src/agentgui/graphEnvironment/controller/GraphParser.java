@@ -1,4 +1,4 @@
-package agentgui.gasgridEnvironment.controller;
+package agentgui.graphEnvironment.controller;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -7,15 +7,6 @@ import java.io.FileReader;
 import org.apache.commons.collections15.Transformer;
 
 import agentgui.core.application.Language;
-import agentgui.gasgridEnvironment.ontology.Branch;
-import agentgui.gasgridEnvironment.ontology.Compressor;
-import agentgui.gasgridEnvironment.ontology.GridComponent;
-import agentgui.gasgridEnvironment.ontology.GridLink;
-import agentgui.gasgridEnvironment.ontology.Pipe;
-import agentgui.gasgridEnvironment.ontology.Sink;
-import agentgui.gasgridEnvironment.ontology.Source;
-import agentgui.gasgridEnvironment.ontology.Storage;
-import agentgui.gasgridEnvironment.ontology.Valve;
 
 import edu.uci.ics.jung.graph.SparseGraph;
 import edu.uci.ics.jung.io.GraphIOException;
@@ -24,6 +15,15 @@ import edu.uci.ics.jung.io.graphml.GraphMLReader2;
 import edu.uci.ics.jung.io.graphml.GraphMetadata;
 import edu.uci.ics.jung.io.graphml.HyperEdgeMetadata;
 import edu.uci.ics.jung.io.graphml.NodeMetadata;
+import gasmas.ontology.Branch;
+import gasmas.ontology.Compressor;
+import gasmas.ontology.Entry;
+import gasmas.ontology.Exit;
+import gasmas.ontology.GridComponent;
+import gasmas.ontology.GridLink;
+import gasmas.ontology.Pipe;
+import gasmas.ontology.Storage;
+import gasmas.ontology.Valve;
 
 public class GraphParser {
 	// Transformer object generating the graph
@@ -42,6 +42,7 @@ public class GraphParser {
 		public GridComponent transform(NodeMetadata nmd) {
 			GridComponent newNode = null;
 			String type = nmd.getProperty("d5");	// The data field from yED
+//			System.out.println("Processing node "+nmd.getId()+" of type "+type);
 			switch(GasGridElements.getElement(type)){
 				case BRANCH:
 					newNode = new Branch();
@@ -55,12 +56,12 @@ public class GraphParser {
 					newNode = new Pipe();
 				break;
 				
-				case SINK:
-					newNode = new Sink();
+				case EXIT:
+					newNode = new Exit();
 				break;
 				
-				case SOURCE:
-					newNode = new Source();
+				case ENTRY:
+					newNode = new Entry();
 				break;
 				
 				case STORAGE:
@@ -84,10 +85,11 @@ public class GraphParser {
 
 		@Override
 		public GridLink transform(EdgeMetadata emd) {
-			emd.setDirected(false);
+//			emd.setDirected(false);
 			GridLink newEdge = new GridLink();
 			newEdge.setSourceID(emd.getSource());
 			newEdge.setTargetID(emd.getTarget());
+//			System.out.println("Processing link from node "+emd.getSource()+" to node "+emd.getTarget());
 			return newEdge;
 		}
 	};
