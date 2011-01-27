@@ -19,7 +19,7 @@ public class SetToPointBehaviour  extends OneShotBehaviour{
 	   super(a);
 	   this.pos=newPosition;
 	   this.old=oldPosition;
-	   System.out.println("Old Pos");
+	  
 		try {
 			this.helper = (EnvironmentProviderHelper) myAgent.getHelper(EnvironmentProviderService.SERVICE_NAME);
 		} catch (ServiceException e) {
@@ -36,7 +36,7 @@ public class SetToPointBehaviour  extends OneShotBehaviour{
 		movement.setXPosChange(Math.abs(this.old.getXPos()-this.pos.getXPos()));
 		movement.setYPosChange(Math.abs(this.old.getYPos()-this.pos.getYPos()));
 		this.helper.setMovement(myAgent.getLocalName(), movement);
-		System.out.println("Position gesetzt");
+		
 		
 		
 		
