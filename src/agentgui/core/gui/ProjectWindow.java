@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Vector;
@@ -37,12 +38,15 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	
 	private Project currProject;
 	
+	private Vector<ProjectWindowTab> tabVector = new Vector<ProjectWindowTab>();  //  @jve:decl-index=0:
+	
 	private DefaultTreeModel projectTreeModel;
 	private DefaultMutableTreeNode rootNode;
 	private int oldNumberOfNodes = 0;
 	
 	private JTabbedPane projectViewRightTabs = null;
 	private ChangeListener tabSelectionListener = null;  //  @jve:decl-index=0:
+	private boolean pauseListener = false;
 	private JTree projectTree = null;
 		
 	private JSplitPane ProjectViewSplit = null;
@@ -132,6 +136,9 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 			projectTree.addTreeSelectionListener( new TreeSelectionListener() {
 				@Override
 				public void valueChanged(TreeSelectionEvent ts) {
+					
+					if (pauseListener) return;
+					
 					// ----------------------------------------------------------
 					// --- Tree-Selection abfangen --- S T A R T ----------------
 					// ----------------------------------------------------------
@@ -210,6 +217,8 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 			@Override
 			public void stateChanged(ChangeEvent evt) {
 				
+				if (pauseListener) return;
+				
 				// --- To prevent, that an add-action came in ----
 				int newNumberOfNodes = getNumberOfNodes();
 				if (newNumberOfNodes==oldNumberOfNodes) {
@@ -249,24 +258,31 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 		};
 		this.repaint();
 	}
-	
-	/**
-	 * Adds a Project-Tab and a new node (child of root!) 
-	 * to the ProjectWindow
-	 */
-	public void addProjectTab(ProjectWindowTab tab) {
-		 this.addProjectTab(tab, null);
-	}
+
 	/**
 	 * Adds a Project-Tab and a new node (child of a specified parent) to 
 	 * the ProjectWindow
 	 */
-	public void addProjectTab(ProjectWindowTab tab, String parentName) {
+	public void addProjectTab(ProjectWindowTab tab) {
+		
+		// --- add to reminder vector -----------
+		this.tabVector.add(tab);
+		// --- use the private function ---------
+		this.addProjectTabInternal(tab);
+	}
+	
+	/**
+	 * Adds a Project-Tab and a new node (child of a specified parent) to 
+	 * the ProjectWindow
+	 */
+	private void addProjectTabInternal(ProjectWindowTab tab) {
 		
 		// --- create Node ----------------------
 		DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(tab);
 		DefaultMutableTreeNode parNode = null;
 		JTabbedPane newViewCatcher = null; 
+		
+		String parentName = tab.getParentName();
 		
 		// --- add to the TreeModel -------------
 		if (parentName!=null) {
@@ -284,6 +300,7 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 		// --- add to the tabs ------------------
 		parNode.add(newNode);
 		newViewCatcher.addTab( tab.getTitle(), tab.getIcon(), tab.getComponent(), tab.getTipText());
+
 	}
 
 	/**
@@ -379,6 +396,48 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 			Component displayElement = pwt.getComponent();
 			((JTabbedPane) displayElement.getParent()).setSelectedComponent(displayElement);
 		}
+	}
+	
+	/**
+	 * Rebuilds the ProjectWindow depending on the selected view.
+	 * View can be, up to now, the developer view or the end user view 
+	 * @param viewToSet
+	 */
+	public void setView(int viewToSet) {
+		
+		this.pauseListener = true;
+		projectTree.setSelectionPath(null);
+		rootNode.removeAllChildren();
+		projectViewRightTabs.removeAll();
+		
+		Vector<ProjectWindowTab> pwtVector = new Vector<ProjectWindowTab>(this.tabVector); 
+		for (Iterator<ProjectWindowTab> it = pwtVector.iterator(); it.hasNext();) {
+			ProjectWindowTab pwt = (ProjectWindowTab) it.next();
+			
+			if (viewToSet == ProjectWindowTab.DISPLAY_4_DEVELOPER) {
+				this.addProjectTabInternal(pwt);
+				
+			} else if (viewToSet == ProjectWindowTab.DISPLAY_4_END_USER) {
+				if (pwt.getDisplayType()==ProjectWindowTab.DISPLAY_4_END_USER) {
+					this.addProjectTabInternal(pwt);		
+				}
+			}
+		}
+		
+		// --- update view of the tree ----------
+		projectTreeModel.reload();
+		projectTree.revalidate();
+		projectTree.repaint();
+		this.projectTreeExpand2Level(3, true);
+		
+		// --- update view of the tabs ----------
+		this.revalidate();
+		this.updateUI();		
+		this.repaint();		
+		currProject.setMaximized();
+		
+		this.pauseListener = false;
+		
 	}
 	
 }  //  @jve:decl-index=0:visual-constraint="10,10"

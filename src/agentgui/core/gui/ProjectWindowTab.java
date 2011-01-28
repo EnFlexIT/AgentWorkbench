@@ -50,7 +50,11 @@ public class ProjectWindowTab {
 		this.tipText = aTipText;
 		this.icon = ico;
 		
-		this.parentName = pareName;
+		if (pareName==null || pareName.equals("")) {
+			this.parentName = null;
+		} else {
+			this.parentName = pareName;	
+		}		
 		this.comp = component;
 		this.compForChildComp = jTabbedPane4ChildComponents;
 		
@@ -60,11 +64,7 @@ public class ProjectWindowTab {
 	 * Adds the current Tab-Object to the ProjectWindow 
 	 */
 	public void add() {
-		if (parentName==null || parentName.equals("")) {
-			this.project.projectWindow.addProjectTab(this);	
-		} else {
-			this.project.projectWindow.addProjectTab(this, this.parentName);
-		}
+		this.project.projectWindow.addProjectTab(this);	
 	}
 	
 	/**
@@ -165,23 +165,6 @@ public class ProjectWindowTab {
 	public JTabbedPane getCompForChildComp() {
 		return compForChildComp;
 	}
-
-	
-	
-	/**
-	 * @param b to set this component visible or not
-	 */
-	public void setVisible(boolean b) {
-		comp.setVisible(b);
-	}
-	/**
-	 * @return if the component is visible or not
-	 */
-	public boolean isVisible() {
-		return comp.isVisible();
-	}
-
-	
 	
 }
 

@@ -515,7 +515,7 @@ public class Physical2DEnvironmentController extends Observable implements Obser
 			setChanged();
 			notifyObservers(new Integer(OBJECTS_CHANGED));
 			
-			project.ProjectUnsaved = true;
+			project.isUnsaved = true;
 		}
 		
 		return success;
@@ -757,7 +757,7 @@ public class Physical2DEnvironmentController extends Observable implements Obser
 		}
 		setChanged();
 		notifyObservers(new Integer(SCALE_CHANGED));
-		project.ProjectUnsaved = true;
+		project.isUnsaved = true;
 	}
 	
 	

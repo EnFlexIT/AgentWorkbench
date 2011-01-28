@@ -206,7 +206,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 						//System.out.println("Agent: " + ToDisplay);
 						// -----------------------------------------------------
 						// --- Definierte Start-Referenzen anzeigen ------------ 
-						jListReferences.setListData( CurrProject.AgentConfig.getListData(ToDisplay) );
+						jListReferences.setListData( CurrProject.agentConfig.getListData(ToDisplay) );
 						// -----------------------------------------------------
 						// --- Eintrag für den aktuellen Agenten vornehmen -----
 						int maxLenght = 30;
@@ -583,7 +583,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 	 * updates the List of the AgetnReferences
 	 */
 	private void updateView4AgentConfig() {
-		jListReferences.setListData( CurrProject.AgentConfig.getListData(agentReference) );
+		jListReferences.setListData( CurrProject.agentConfig.getListData(agentReference) );
 	}
 	/**
 	 * reads the currently selected AgentReference to var. agentConfig
@@ -748,29 +748,29 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 			// --- Agenten-Referenz eins höher ------------
 			setTmpAgentConfig();
 			setCurrAgentConfig();
-			if (CurrProject.AgentConfig.movePosition(agentReference, agentConfig, agentConfigPos, -1) ){
+			if (CurrProject.agentConfig.movePosition(agentReference, agentConfig, agentConfigPos, -1) ){
 				jListReferences.setSelectedIndex(agentConfigPos-2);
 			}
 		} else if (Trigger == jButtonMoveDown ) {
 			// --- Agenten-Referenz eins runter -----------
 			setTmpAgentConfig();
 			setCurrAgentConfig();
-			if (CurrProject.AgentConfig.movePosition(agentReference, agentConfig, agentConfigPos, 1) ){
+			if (CurrProject.agentConfig.movePosition(agentReference, agentConfig, agentConfigPos, 1) ){
 				jListReferences.setSelectedIndex(agentConfigPos);
 			}
 		} else if (Trigger == jButtonRemoveAll) {
 			// --- Agenten-Referenzen komplett entfernen --
 			setTmpAgentConfig();
-			CurrProject.AgentConfig.removeReferencesComplete(agentReference);
+			CurrProject.agentConfig.removeReferencesComplete(agentReference);
 		} else if (Trigger == jButtonReferencesAdd ) {
 			// --- Agenten-Referenzen hinzufügen ----------
 			setTmpAgentConfig();
-			CurrProject.AgentConfig.addReference(agentReference, ontoReference);
+			CurrProject.agentConfig.addReference(agentReference, ontoReference);
 		} else if (Trigger == jButtonReferencesRemove ) {
 			// --- Agenten-Referenzen entfernen -----------
 			setTmpAgentConfig();
 			setCurrAgentConfig();
-			CurrProject.AgentConfig.removeReference(agentReference, agentConfig);
+			CurrProject.agentConfig.removeReference(agentReference, agentConfig);
 		}
 		else {
 			System.err.println(Language.translate("Unbekannt: ") + "ActionCommand => " + ActCMD);	

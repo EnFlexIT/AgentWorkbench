@@ -62,9 +62,9 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	@XmlTransient public JDesktopPane projectDesktop = null;
 	
 	// --- Objekt- / Projektvariablen --------------------------
-	@XmlTransient public boolean ProjectUnsaved = false;
-	@XmlTransient private String ProjectFolder;
-	@XmlTransient private String ProjectFolderFullPath;
+	@XmlTransient public boolean isUnsaved = false;
+	@XmlTransient private String projectFolder;
+	@XmlTransient private String projectFolderFullPath;
 	@XmlTransient public Ontologies4Project ontologies4Project;
 
 	//	@XmlTransient private Physical2DEnvironment environment;
@@ -72,10 +72,12 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	
 	// --- Speichervariablen der Projektdatei ------------------ 
 	@XmlElement(name="projectName")
-	private String ProjectName;
+	private String projectName;
 	@XmlElement(name="projectDescription")
-	private String ProjectDescription;
-
+	private String projectDescription;
+	@XmlElement(name="projectView")
+	private String projectView;
+	
 	@XmlElementWrapper(name = "projectResources")
 	@XmlElement(name="projectResource")
 	public Vector<String> projectResources = new Vector<String>();
@@ -87,7 +89,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	public Vector<String> subOntologies = new Vector<String>();
 	
 	@XmlElementWrapper(name = "agentConfiguration")
-	public AgentConfiguration AgentConfig = new AgentConfiguration(this);
+	public AgentConfiguration agentConfig = new AgentConfiguration(this);
 	
 	@XmlElement(name="simulationSetupCurrent")
 	public String simSetupCurrent = null;
@@ -102,6 +104,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	 * Default-Constructor
 	 */
 	public Project() {
+		// ---
 	};
 	
 	/**
@@ -183,7 +186,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	 */
 	public boolean save() {
 		// --- Speichern des aktuellen Projekts ------------
-		Application.MainWindow.setStatusBar( ProjectName + ": " + Language.translate("speichern") + " ... ");
+		Application.MainWindow.setStatusBar( projectName + ": " + Language.translate("speichern") + " ... ");
 		try {			
 			// --- Kontext und Marshaller vorbereiten ------
 			JAXBContext pc = JAXBContext.newInstance( this.getClass() ); 
@@ -192,7 +195,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 			pm.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE ); 
 			//pm.marshal( this, System.out );
 			// --- Objektwerte in xml-Datei schreiben -----
-			Writer pw = new FileWriter( ProjectFolderFullPath + Application.RunInfo.getFileNameProject() );
+			Writer pw = new FileWriter( projectFolderFullPath + Application.RunInfo.getFileNameProject() );
 			pm.marshal( this, pw );
 			
 			// --- Speichern des aktuellen Sim-Setups -----
@@ -201,7 +204,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 			// --- Speichern von Umgebung und SVG ---------
 			this.physical2DEnvironmentController.save();
 			
-			ProjectUnsaved = false;			
+			isUnsaved = false;			
 		} 
 		catch (Exception e) {
 			System.out.println("XML-Error while saving Project-File!");
@@ -218,13 +221,13 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 		Integer MsgAnswer = 0;
 		
 		Application.MainWindow.setStatusBar(Language.translate("Projekt schließen") + " ...");
-		if ( ProjectUnsaved == true ) {
+		if ( isUnsaved == true ) {
 			MsgHead = Language.translate("Projekt '@' speichern?");
-			MsgHead = MsgHead.replace( "'@'", "'" + ProjectName + "'");			
+			MsgHead = MsgHead.replace( "'@'", "'" + projectName + "'");			
 			MsgText = Language.translate(
 						"Das aktuelle Projekt '@' ist noch nicht gespeichert!" + NewLine + 
 						"Möchten Sie es nun speichern ?");
-			MsgText = MsgText.replace( "'@'", "'" + ProjectName + "'");
+			MsgText = MsgText.replace( "'@'", "'" + projectName + "'");
 			
 			MsgAnswer = JOptionPane.showInternalConfirmDialog (Application.MainWindow.getContentPane(), MsgText, MsgHead, JOptionPane.YES_NO_CANCEL_OPTION );
 			if ( MsgAnswer == JOptionPane.CANCEL_OPTION ) {
@@ -246,7 +249,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 		this.resourcesRemove();
 		
 		// --- Close Project ------------------------------
-		int Index = Application.Projects.getIndexByName( ProjectName ); // --- Merker Index ---		
+		int Index = Application.Projects.getIndexByName( projectName ); // --- Merker Index ---		
 		projectWindow.dispose();
 		Application.Projects.remove(this);
 		
@@ -255,10 +258,9 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 			if ( Index+1 > NProjects ) Index = NProjects-1;  
 			Application.ProjectCurr = Application.Projects.get(Index);
 			Application.ProjectCurr.setFocus(true);
-			Application.setTitelAddition( Application.ProjectCurr.ProjectName );
+			Application.setTitelAddition( Application.ProjectCurr.projectName );
 		} else {
 			Application.ProjectCurr = null;
-			Application.Projects.setProjectMenuItems();
 			Application.MainWindow.setCloseButtonPosition( false );
 			Application.setTitelAddition( "" );
 		}
@@ -287,7 +289,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 		
 		for (int i=0; i< defaultSubFolders.length; i++  ) {
 			// --- ggf. Verzeichnis anlegen ---------------
-			NewDirName = this.ProjectFolderFullPath + defaultSubFolders[i];
+			NewDirName = this.projectFolderFullPath + defaultSubFolders[i];
 			f = new File(NewDirName);
 			if ( f.isDirectory() == false) {
 				// --- Verzeichnis anlegen ----------------
@@ -319,7 +321,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	 * @param reason
 	 */
 	public void setChangedAndNotify(Object reason) {
-		ProjectUnsaved = true;
+		isUnsaved = true;
 		setChanged();
 		notifyObservers(reason);		
 	}
@@ -339,9 +341,9 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 		}
 		
 		projectWindow.moveToFront();
-		Application.setTitelAddition( ProjectName );
+		Application.setTitelAddition( projectName );
 		Application.ProjectCurr = this;
-		Application.Projects.setProjectMenuItems();
+		Application.Projects.setProjectView();
 		setMaximized();
 		
 		if (forceClassPathReload) {
@@ -361,9 +363,9 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	/**
 	 * @param projectFolder the projectName to set
 	 */
-	public void setProjectName(String projectName) {
-		ProjectName = projectName;
-		ProjectUnsaved = true;
+	public void setProjectName(String newProjectName) {
+		projectName = newProjectName;
+		isUnsaved = true;
 		setChanged();
 		notifyObservers( "ProjectName" );
 	}
@@ -372,16 +374,16 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	 */
 	@XmlTransient
 	public String getProjectName() {
-		return ProjectName;
+		return projectName;
 	}
 	
 	/**
 	 * @param projectDescription the projectDescription to set
 	 */
 	
-	public void setProjectDescription(String projectDescription) {
-		ProjectDescription = projectDescription;
-		ProjectUnsaved = true;
+	public void setProjectDescription(String newProjectDescription) {
+		projectDescription = newProjectDescription;
+		isUnsaved = true;
 		setChanged();
 		notifyObservers( "ProjectDescription" );
 	}
@@ -390,37 +392,59 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	 */
 	@XmlTransient
 	public String getProjectDescription() {
-		return ProjectDescription;
+		return projectDescription;
 	}
 	
 	/**
-	 * @param projectFolder the projectFolder to set
+	 * @param projectView the projectView to set
 	 */
 	@XmlTransient
-	public void setProjectFolder(String projectFolder) {
-		ProjectFolder = projectFolder;
-		ProjectFolderFullPath = Application.RunInfo.PathProjects(true, false) + ProjectFolder + Application.RunInfo.AppPathSeparatorString();
+	public void setProjectView(String projectView) {
+		this.projectView = projectView;
+		isUnsaved = true;
 		setChanged();
-		notifyObservers( "ProjectFolder" );
+		notifyObservers("ProjectView");
+	}
+
+	/**
+	 * @return the projectView
+	 */
+	public String getProjectView() {
+		if (this.projectView==null) {
+			return "";
+		} else {
+			return this.projectView;	
+		}		
+	}
+
+	/**
+	 * @param newProjectFolder the projectFolder to set
+	 */
+	@XmlTransient
+	public void setProjectFolder(String newProjectFolder) {
+		projectFolder = newProjectFolder;
+		projectFolderFullPath = Application.RunInfo.PathProjects(true, false) + projectFolder + Application.RunInfo.AppPathSeparatorString();
+		setChanged();
+		notifyObservers("ProjectFolder");
 	}
 	/**
 	 * @return the projectFolder
 	 */
 	public String getProjectFolder() {
-		return ProjectFolder;
+		return projectFolder;
 	}
 	/**
 	 * @return the ProjectFolderFullPath
 	 */
 	public String getProjectFolderFullPath() {
-		return ProjectFolderFullPath;
+		return projectFolderFullPath;
 	}
 	
 	/**
 	 * Informs about changes at the AgentConfiguration 'AgentConfig'
 	 */
 	public void updateAgentReferences() {
-		ProjectUnsaved = true;
+		isUnsaved = true;
 		setChanged();
 		notifyObservers("AgentReferences");
 	}
@@ -430,7 +454,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	 * @return The default environment setup folder
 	 */
 	public String getEnvSetupPath(){
-		return ProjectFolderFullPath+defaultSubFolderEnvSetups;
+		return projectFolderFullPath+defaultSubFolderEnvSetups;
 	}
 	/**
 	 * @return the environment
@@ -504,7 +528,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	public void subOntologyAdd(String newSubOntology) {
 		if (this.subOntologies.contains(newSubOntology)==false) {
 			this.ontologies4Project.addSubOntology(newSubOntology);
-			ProjectUnsaved = true;
+			isUnsaved = true;
 			setChanged();
 			notifyObservers("ProjectOntology");
 		} 
@@ -515,7 +539,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	 */
 	public void subOntologyRemove(String removableSubOntology) {
 		this.ontologies4Project.removeSubOntology(removableSubOntology);
-		ProjectUnsaved = true;
+		isUnsaved = true;
 		setChanged();
 		notifyObservers("ProjectOntology");
 	}

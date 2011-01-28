@@ -77,7 +77,7 @@ public class DynForm extends JPanel {
 		// --- Prevent errors through empty agent references --------
 		if (currAgentReference!=null) {
 			// --- Find Agent in AgentConfig ------------------------
-			if (currProject.AgentConfig.containsKey(currAgentReference)==true) {
+			if (currProject.agentConfig.containsKey(currAgentReference)==true) {
 				// --- Start building the GUI -----------------------
 				this.buildGUI();
 				// --- If wanted show some debug informations -------
@@ -95,7 +95,7 @@ public class DynForm extends JPanel {
 	public void buildGUI(){
 		
 		// --- Which Start-Objects are configured for the Agent? ---- 
-		TreeMap<Integer,String> startObjectList = currProject.AgentConfig.getReferencesAsTreeMap(currAgentReference);
+		TreeMap<Integer,String> startObjectList = currProject.agentConfig.getReferencesAsTreeMap(currAgentReference);
 		Vector<Integer> v = new Vector<Integer>(startObjectList.keySet()); 
 		Collections.sort(v);
 		

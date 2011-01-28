@@ -10,12 +10,14 @@ import java.util.ArrayList;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JRadioButtonMenuItem;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import agentgui.core.gui.ProjectNewOpen;
 import agentgui.core.gui.ProjectWindow;
+import agentgui.core.gui.ProjectWindowTab;
 import agentgui.core.ontologies.Ontologies4Project;
 import agentgui.core.sim.setup.SimulationSetups;
 
@@ -23,20 +25,20 @@ import agentgui.core.sim.setup.SimulationSetups;
 public class ProjectsLoaded {
 
 	// --- Listing of the open projects -------------------
-	private ArrayList<Project> ProjectsOpen = new ArrayList<Project>();
+	private ArrayList<Project> projectsOpen = new ArrayList<Project>();
 	
 	/**
 	 * Adding (Creating or Opening) a new Project to the Application
 	 * @param addNew
 	 * @return Project
 	 */
-	public Project add ( boolean addNew ) {
+	public Project add (boolean addNew) {
 
-		String ActionTitel = null;
-		String ProjectNameTest = null;
-		String ProjectFolderTest = null;
-		String LocalTmpProjectName = null;
-		String LocalTmpProjectFolder = null;
+		String actionTitel = null;
+		String projectNameTest = null;
+		String projectFolderTest = null;
+		String localTmpProjectName = null;
+		String localTmpProjectFolder = null;
 		
 		// ------------------------------------------------
 		// --- Define a new Project-Instance -------------- 
@@ -47,54 +49,54 @@ public class ProjectsLoaded {
 		if ( addNew == true ){
 			// --------------------------------------------
 			// --- Anlegen eines neuen Projekts -----------
-			ActionTitel = Language.translate("Neues Projekt anlegen");
+			actionTitel = Language.translate("Neues Projekt anlegen");
 			
 			// --- Neuen, allgemeinen Projektnamen finden -----		
 			String ProjectNamePrefix = Language.translate("Neues Projekt");
-			ProjectNameTest = ProjectNamePrefix;
-			int Index = Application.Projects.getIndexByName(ProjectNameTest);
+			projectNameTest = ProjectNamePrefix;
+			int Index = Application.Projects.getIndexByName(projectNameTest);
 			int i = 2;
 			while ( Index != -1 ) {
-				ProjectNameTest = ProjectNamePrefix + " " + i;
-				Index = Application.Projects.getIndexByName( ProjectNameTest );
+				projectNameTest = ProjectNamePrefix + " " + i;
+				Index = Application.Projects.getIndexByName( projectNameTest );
 				i++;
 			}
-			ProjectFolderTest = ProjectNameTest.toLowerCase().replace(" ", "_");
+			projectFolderTest = projectNameTest.toLowerCase().replace(" ", "_");
 		}
 		else {
 			// --------------------------------------------
 			// --- Öffnen eine vorhandenen Projekts -------
-			ActionTitel = Language.translate("Projekt öffnen");			
+			actionTitel = Language.translate("Projekt öffnen");			
 		}
-		Application.MainWindow.setStatusBar(ActionTitel + " ...");
+		Application.MainWindow.setStatusBar(actionTitel + " ...");
 		
 		// ------------------------------------------------
 		// --- Benutzer-Dialog öffnen ---------------------
-		ProjectNewOpen NewProDia = new ProjectNewOpen( Application.MainWindow, Application.RunInfo.getApplicationTitle() + ": " + ActionTitel, true, addNew );
-		NewProDia.setVarProjectName( ProjectNameTest );
-		NewProDia.setVarProjectFolder( ProjectFolderTest );
+		ProjectNewOpen NewProDia = new ProjectNewOpen( Application.MainWindow, Application.RunInfo.getApplicationTitle() + ": " + actionTitel, true, addNew );
+		NewProDia.setVarProjectName( projectNameTest );
+		NewProDia.setVarProjectFolder( projectFolderTest );
 		NewProDia.setVisible(true);
 		// === Hier geht's weiter, wenn der Dialog wieder geschlossen ist ===
 		if ( NewProDia.isCanceled() == true ) {
 			Application.setStatusBar( Language.translate("Fertig") );
 			return null;
 		} else {
-			LocalTmpProjectName = NewProDia.getVarProjectName();
-			LocalTmpProjectFolder = NewProDia.getVarProjectFolder(); 
+			localTmpProjectName = NewProDia.getVarProjectName();
+			localTmpProjectFolder = NewProDia.getVarProjectFolder(); 
 		}
 		NewProDia.dispose();
 		NewProDia = null;	
 
 		// ------------------------------------------------
 		// --- ClassLoader entladen -----------------------
-		if(ProjectsOpen.size()!=0) {
+		if(projectsOpen.size()!=0) {
 			Application.ProjectCurr.resourcesRemove();
 		}
 		
 		// ------------------------------------------------
 		// --- Projektvariablen setzen --------------------
-		newProject.setProjectName( LocalTmpProjectName );
-		newProject.setProjectFolder( LocalTmpProjectFolder );
+		newProject.setProjectName( localTmpProjectName );
+		newProject.setProjectFolder( localTmpProjectFolder );
 
 		if ( addNew == true ) {			
 			// --- Standardstruktur anlegen ---------------
@@ -115,7 +117,7 @@ public class ProjectsLoaded {
 				e.printStackTrace();
 			}
 			// --- Folder auf aktuellen Projektordner einstellen ---
-			newProject.setProjectFolder( LocalTmpProjectFolder );	
+			newProject.setProjectFolder( localTmpProjectFolder );	
 			
 			// --- check/create default folders -------------------- 
 			newProject.checkCreateSubFolders();
@@ -143,14 +145,14 @@ public class ProjectsLoaded {
 		newProject.addDefaultTabs();
 		
 		// --- Projekt als aktuelle markieren ------------- 
-		newProject.ProjectUnsaved = false;
+		newProject.isUnsaved = false;
 				
 		// --- Objekt an die Projektauflistung hängen -----
-		ProjectsOpen.add(newProject);
+		projectsOpen.add(newProject);
 		Application.ProjectCurr = newProject;
 
 		// --- Anzeige anpassen ---------------------------
-		Application.Projects.setProjectMenuItems();		
+		Application.Projects.setProjectView();		
 		Application.MainWindow.setCloseButtonPosition( true );
 		Application.setTitelAddition( newProject.getProjectName() );
 		Application.setStatusBar( Language.translate("Fertig") );	
@@ -193,7 +195,7 @@ public class ProjectsLoaded {
 	 * @return
 	 */
 	public Project get( int Index ) {
-		return ProjectsOpen.get(Index);
+		return projectsOpen.get(Index);
 	}
 
 	/**
@@ -201,15 +203,16 @@ public class ProjectsLoaded {
 	 * @param String Project2Remove
 	 */
 	public void remove( Project Project2Remove ) {
-		ProjectsOpen.remove(Project2Remove);		
+		projectsOpen.remove(Project2Remove);
+		this.setProjectView();
 	}
 	/**
 	 * Removes all Projects from the (Array) ProjectList
 	 */
 	public void removeAll( ) {
-		ProjectsOpen.clear();
+		projectsOpen.clear();
 		Application.ProjectCurr = null;
-		Application.Projects.setProjectMenuItems();		
+		Application.Projects.setProjectView();		
 	}
 
 	/**
@@ -220,7 +223,7 @@ public class ProjectsLoaded {
 	public int getIndexByName ( String ProjectName ) {
 		int Index = -1;
 		for(int i=0; i<this.count(); i++) {
-			if( ProjectsOpen.get(i).getProjectName().equalsIgnoreCase(ProjectName) ) {
+			if( projectsOpen.get(i).getProjectName().equalsIgnoreCase(ProjectName) ) {
 				Index = i;
 				break;
 			}	
@@ -235,7 +238,7 @@ public class ProjectsLoaded {
 	public int getIndexByFolderName ( String ProjectName ) {
 		int Index = -1;
 		for(int i=0; i<this.count(); i++) {
-			if( ProjectsOpen.get(i).getProjectFolder().toLowerCase().equalsIgnoreCase( ProjectName.toLowerCase() ) ) {
+			if( projectsOpen.get(i).getProjectFolder().toLowerCase().equalsIgnoreCase( ProjectName.toLowerCase() ) ) {
 				Index = i;
 				break;
 			}	
@@ -246,29 +249,75 @@ public class ProjectsLoaded {
 	 * Counts the actual open projects
 	 */
 	public int count() {
-		return ProjectsOpen.size();		
+		return projectsOpen.size();		
 	}
 
 	/**
+	 * Configures the apeareance of the application, depending on the project
+	 */
+	public void setProjectView() {
+		
+		// --- 1. Rebuild the view to the Items in MenuBar 'Window' -----------
+		this.setProjectMenuItems();
+		
+		// --- 2. Set the right value to the MenueBar 'View' ------------------
+		this.setProjectView4DevOrUser();
+		
+	}
+	
+	/**
+	 * Configures the View for menue 'view' -> 'Developer' or 'End user' 
+	 */
+	private void setProjectView4DevOrUser() {
+		
+		JRadioButtonMenuItem viewDeveloper = Application.MainWindow.viewDeveloper; 
+		JRadioButtonMenuItem viewEndUser = Application.MainWindow.viewEndUser; 
+		
+		if (this.count()==0) {
+			// --- Disable both MenuItems -----------------
+			viewDeveloper.setEnabled(false);
+			viewEndUser.setEnabled(false);
+		} else {
+			// --- Enable both MenuItems ------------------
+			viewDeveloper.setEnabled(true);
+			viewEndUser.setEnabled(true);
+			
+			// --- select the right item in relation ------  
+			// --- to the project 					 ------
+			String viewConfigured = Application.ProjectCurr.getProjectView();
+			if (viewConfigured.equalsIgnoreCase("user")) {
+				viewDeveloper.setSelected(false);
+				viewEndUser.setSelected(true);
+				Application.ProjectCurr.projectWindow.setView(ProjectWindowTab.DISPLAY_4_END_USER);
+			} else {
+				viewEndUser.setSelected(false);
+				viewDeveloper.setSelected(true);
+				Application.ProjectCurr.projectWindow.setView(ProjectWindowTab.DISPLAY_4_DEVELOPER);
+			}
+		}
+	}
+	
+	
+	/**
 	 * Create's the Window=>MenuItems depending on the open projects 
 	 */
-	public void setProjectMenuItems() {
+	private void setProjectMenuItems() {
 		
-		boolean SetFontBold = true;
+		boolean setFontBold = true;
 		
 		JMenu WindowMenu = Application.MainWindow.jMenuMainWindow;
 		WindowMenu.removeAll();
-		if (this.count() == 0 ){
-			WindowMenu.add( new JMenuItmen_Window( Language.translate("Kein Projekt geöffnet !"), -1, SetFontBold ) );
+		if (this.count()==0 ){
+			WindowMenu.add( new JMenuItmen_Window( Language.translate("Kein Projekt geöffnet !"), -1, setFontBold ) );
 		}
 		else {
 			for(int i=0; i<this.count(); i++) {
-				String ProjectName = ProjectsOpen.get(i).getProjectName();
+				String ProjectName = projectsOpen.get(i).getProjectName();
 				if ( ProjectName.equalsIgnoreCase( Application.ProjectCurr.getProjectName() ) ) 
-					SetFontBold = true;
+					setFontBold = true;
 				else 
-					SetFontBold = false;
-				WindowMenu.add( new JMenuItmen_Window( ProjectName, i, SetFontBold) );
+					setFontBold = false;
+				WindowMenu.add( new JMenuItmen_Window( ProjectName, i, setFontBold) );
 			}		
 		}
 	}	

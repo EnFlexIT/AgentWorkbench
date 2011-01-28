@@ -90,7 +90,6 @@ public class Application {
 
 			startApplication();
 			MainWindow.setStatusBar( Language.translate("Fertig") );
-			Projects.setProjectMenuItems();
 			doBenchmark(false);
 		}
 	}
@@ -102,6 +101,7 @@ public class Application {
  		// --- open Main-Dialog -------------------------------------		
 		MainWindow = null;
 		MainWindow = new CoreWindow();		
+		Projects.setProjectView();
 	}
 	
 	/**
@@ -278,7 +278,7 @@ public class Application {
 	 */
 	public static void setLookAndFeel( String NewLnF ) {
 		MainWindow.setLookAndFeel(NewLnF);
-		Projects.setProjectMenuItems();
+		Projects.setProjectView();
 	}	
 	
 	/**

@@ -371,7 +371,7 @@ public class JadeSetup extends JPanel implements ActionListener {
 								jCheckBoxUseDefaults.setSelected(false);
 							}
 							currProject.JadeConfiguration.setUseDefaults(jCheckBoxUseDefaults.isSelected());
-							currProject.ProjectUnsaved = true;
+							currProject.isUnsaved = true;
 						}
 					}
 					newPort.dispose();
@@ -465,7 +465,7 @@ public class JadeSetup extends JPanel implements ActionListener {
 		currProject.JadeConfiguration.setUseDefaults(jCheckBoxUseDefaults.isSelected());
 		
 		// --- Set currProject unsaved ------------------------------
-		currProject.ProjectUnsaved = true;
+		currProject.isUnsaved = true;
 	}
 
 	private void refreshDataView() {

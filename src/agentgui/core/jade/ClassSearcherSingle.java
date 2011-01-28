@@ -77,7 +77,8 @@ public class ClassSearcherSingle {
 	}
 	private void setBusy(boolean isBusy) {
 		this.busy = isBusy;
-		for (JListClassSearcher jListWP : jListProgress) {
+		Vector<JListClassSearcher> jList2Display = new Vector<JListClassSearcher>(jListProgress);
+		for (JListClassSearcher jListWP : jList2Display) {
 			jListWP.setBusy(this.busy);
 		}
 	}

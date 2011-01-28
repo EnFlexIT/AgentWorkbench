@@ -20,6 +20,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -32,6 +33,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
@@ -74,6 +76,9 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	private JMenuBar jMenuBarMain;
 	private JMenu jMenuMainProject;
 	private JMenu jMenuMainView;
+		private ButtonGroup viewGroup;
+		public JRadioButtonMenuItem viewDeveloper; 
+		public JRadioButtonMenuItem viewEndUser; 
 	private JMenu jMenuMainJade;
 	private JMenu jMenuMainSimulation;
 	private JMenu jMenuExtra;
@@ -385,6 +390,45 @@ public class CoreWindow extends JFrame implements ComponentListener {
 		if (jMenuMainView == null) {
 			jMenuMainView = new JMenu();
 			jMenuMainView.setText(Language.translate("Ansicht"));
+			
+			// --------------------------------------------
+			// --- View for Developer or End user ---------
+			// --------------------------------------------
+			ActionListener viewListener = new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent evt) {
+					JRadioButtonMenuItem actuator = (JRadioButtonMenuItem) evt.getSource();
+					if (actuator==viewDeveloper) {
+						if (Application.ProjectCurr.getProjectView().equalsIgnoreCase("Developer")==false) {
+							Application.ProjectCurr.setProjectView("Developer");
+							Application.ProjectCurr.projectWindow.setView(ProjectWindowTab.DISPLAY_4_DEVELOPER);
+						}
+						
+					} else if (actuator==viewEndUser) {
+						if (Application.ProjectCurr.getProjectView().equalsIgnoreCase("User")==false) {
+							Application.ProjectCurr.setProjectView("User");
+							Application.ProjectCurr.projectWindow.setView(ProjectWindowTab.DISPLAY_4_END_USER);
+						}
+
+					}
+				}
+			};
+			
+			viewDeveloper = new JRadioButtonMenuItem(Language.translate("Entwickler-Ansicht"));
+			viewDeveloper.setSelected(true);
+			viewDeveloper.addActionListener(viewListener);
+			jMenuMainView.add(viewDeveloper);
+			
+			viewEndUser = new JRadioButtonMenuItem(Language.translate("Endanwender-Ansicht"));
+			viewEndUser.addActionListener(viewListener);
+			jMenuMainView.add(viewEndUser);
+			
+			viewGroup = new ButtonGroup();
+			viewGroup.add(viewDeveloper);
+			viewGroup.add(viewEndUser);
+			// --------------------------------------------
+			
+			jMenuMainView.addSeparator();
 			jMenuMainView.add( new CWMenueItem( "ViewConsole", Language.translate("Konsole ein- oder ausblenden"), "MBConsole.png" )) ;			
 		}
 		return jMenuMainView;
@@ -738,8 +782,6 @@ public class CoreWindow extends JFrame implements ComponentListener {
 			else if ( ActCMD.equalsIgnoreCase("ExtraTranslation") ) {
 				Translation trans = new Translation(Application.MainWindow);
 				trans.setVisible(true);
-				//-- TODO --- was passiert, wenn das Wörterbuch geschlossen wird
-				
 			}
 			else if ( ActCMD.equalsIgnoreCase("ExtraBenchmark") ) {
 				Application.doBenchmark(true);
