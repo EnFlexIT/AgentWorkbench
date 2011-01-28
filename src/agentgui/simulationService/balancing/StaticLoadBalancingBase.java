@@ -158,7 +158,7 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 			
 			// --- Start the DisplayAgent inside of Agent.GUI -------
 			Object[] startArg = new Object[3];
-			startArg[0] = currProject.ProjectVisualizationPanel;
+			startArg[0] = currProject.projectVisualizationPanel;
 			startArg[1] = svgDocument;
 			startArg[2] = environment;
 			this.startAgent("EvVis", agentgui.physical2Denvironment.display.DisplayAgent.class, startArg);
@@ -180,7 +180,7 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 				currAgentListVisual.add(ace4s);
 			}
 			// --- set focus on Visualization-Tab -------------------
-			currProject.ProjectGUI.setFocusOnProjectTab(Language.translate("Simulations-Visualisierung"));
+			currProject.projectWindow.setFocus2Tab(Language.translate("Simulations-Visualisierung"));
 		}
 	}
 	

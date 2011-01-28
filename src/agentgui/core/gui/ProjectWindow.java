@@ -3,22 +3,19 @@ package agentgui.core.gui;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.util.Collections;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.TreeMap;
 import java.util.Vector;
 
-import javax.swing.Icon;
 import javax.swing.JInternalFrame;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTree;
 import javax.swing.WindowConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
@@ -29,66 +26,47 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
 import agentgui.core.application.Project;
-import agentgui.core.gui.projectwindow.Visualization;
 
 /**
  * @author: Christian Derksen
- *
  */
 public class ProjectWindow extends JInternalFrame implements Observer {
 
 	private static final long serialVersionUID = 1L;
 	
-	private Project CurrProject;
-	private DefaultTreeModel ProjectTreeModel;
-	private DefaultMutableTreeNode RootNode;
-	private DefaultMutableTreeNode CurrentNode;  //  @jve:decl-index=0:
-	private TreeMap<Integer, String[]> additionalNodes = new TreeMap<Integer, String[]>();  //  @jve:decl-index=0:
+	private Project currProject;
 	
-	private JTabbedPane ProjectViewRightTabs = null;
+	private DefaultTreeModel projectTreeModel;
+	private DefaultMutableTreeNode rootNode;
+	private int oldNumberOfNodes = 0;
+	
+	private JTabbedPane projectViewRightTabs = null;
+	private ChangeListener tabSelectionListener = null;  //  @jve:decl-index=0:
+	private JTree projectTree = null;
+		
 	private JSplitPane ProjectViewSplit = null;
 	private JScrollPane jScrollPane = null;
-	private JTree ProjectTree = null;
+	
 
 	/**
 	 * This is the default constructor
 	 */
-	public ProjectWindow( Project CP ) {
+	public ProjectWindow(Project cp) {
+		
 		super();
-		this.CurrProject = CP;		
-		this.CurrProject.addObserver(this);		
+		this.currProject = cp;		
+		this.currProject.addObserver(this);		
 		
 		// --- TreeModel initialisieren --------------------------
-		RootNode = new DefaultMutableTreeNode( CurrProject.getProjectName() );
-		ProjectTreeModel = new DefaultTreeModel( RootNode );	
+		rootNode = new DefaultMutableTreeNode( currProject.getProjectName() );
+		projectTreeModel = new DefaultTreeModel( rootNode );	
 		
+		// --- Instanciate Listerner for Tab-Changes -------------
+		this.setTabSelectionListener();
 		// --- Projektfenster zusammenbauen ----------------------
 		this.initialize();		
-		
-		// --- Anzeige der Basisinformationen immer einblenden ---
-		this.addProjectTab(Language.translate("Info"), null, new agentgui.core.gui.projectwindow.ProjectInfo( CurrProject ), Language.translate("Info"));
-		this.addProjectTab(Language.translate("Ressourcen"), null, new agentgui.core.gui.projectwindow.ProjectResources( CurrProject ), Language.translate("Ressourcen"));
 
-		// --- Die (optionalen) Karteikarten einblenden ----------
-		this.addProjectTab(Language.translate("Ontologien"), null, new agentgui.core.gui.projectwindow.OntologyTab(CurrProject), Language.translate("Ontologien"));
-		this.addProjectTab(Language.translate("Agenten"), null, new agentgui.core.gui.projectwindow.BaseAgents(CurrProject), Language.translate("Agenten"));
-		this.addProjectTab(Language.translate("Simulations-Setup"), null, new agentgui.core.gui.projectwindow.SetupSimulation(CurrProject, this), Language.translate("Simulations-Setup"));
-		
-		Visualization visualization = new Visualization(this.CurrProject);
-		CurrProject.ProjectVisualizationPanel = visualization.getJPanel4Visualization();
-		this.addProjectTab(Language.translate("Simulations-Visualisierung"), null, CurrProject.ProjectVisualizationPanel , Language.translate("Simulations-Visualisierung"));
-		this.addProjectTab(Language.translate("Simulations-Meldungen"), null, new agentgui.core.gui.projectwindow.SimulationMessages(CurrProject), Language.translate("Simulations-Meldungen"));
-		
-		// --- Ggf. noch fehlende Nodes hinzufügen ---------------
-		if (additionalNodes.size()!=0) {
-			this.addAdditionalNodes();
-		}
-		
-		// --- Basis-Verzeichnisse im ProjectTree anzeigen -------
-		this.ProjectTreeExpand2Level(3, true);
-		
 	}
 
 	/**
@@ -145,64 +123,25 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	 * @return javax.swing.JTree	
 	 */
 	private JTree getProjectTree() {
-		if (ProjectTree == null) {
-			ProjectTree = new JTree( ProjectTreeModel );
-			ProjectTree.setName("ProjectTree");
-			ProjectTree.setShowsRootHandles(false);
-			ProjectTree.setRootVisible(true);
-			ProjectTree.getSelectionModel().setSelectionMode( TreeSelectionModel.SINGLE_TREE_SELECTION );
-			ProjectTree.addTreeSelectionListener( new TreeSelectionListener() {
+		if (projectTree == null) {
+			projectTree = new JTree( projectTreeModel );
+			projectTree.setName("ProjectTree");
+			projectTree.setShowsRootHandles(false);
+			projectTree.setRootVisible(true);
+			projectTree.getSelectionModel().setSelectionMode( TreeSelectionModel.SINGLE_TREE_SELECTION );
+			projectTree.addTreeSelectionListener( new TreeSelectionListener() {
 				@Override
 				public void valueChanged(TreeSelectionEvent ts) {
 					// ----------------------------------------------------------
 					// --- Tree-Selection abfangen --- S T A R T ----------------
 					// ----------------------------------------------------------
-					TreePath PathSelected = ts.getPath();
-					Integer PathLevel = PathSelected.getPathCount();
-
-					// ----------------------------------------------------------
-					if ( PathLevel >= 2 ) {
+					TreePath pathSelected = ts.getPath();
+					if ( pathSelected.getPathCount() >= 2 ) {
 						// ------------------------------------------------------
 						// --- Fokus auf die entsprechende Karteikarte setzen ---
 						// ------------------------------------------------------
-						Component currComp = null;
-						JPanel subJPanel = null;
-						JTabbedPane subJTabs = null;
-						String FocusNodeName = PathSelected.getPathComponent(1).toString();
-						
-						// --- Nach entsprechender Karteikarte suchen -----------
-						for (int i=0; i<ProjectViewRightTabs.getComponentCount();  i++ ) {
-							currComp = ProjectViewRightTabs.getComponent(i);
-							if ( currComp.getName() == FocusNodeName ) {
-								ProjectViewRightTabs.setSelectedIndex(i);
-								if ( currComp instanceof JPanel ) {
-									subJPanel = (JPanel) ProjectViewRightTabs.getComponent(i);	
-								}
-							}							
-						}	
-						// ------------------------------------------------------
-						// --- Falls ein Aufruf aus einer tieferen Ebene kam ----
-						// ------------------------------------------------------
-						if (PathLevel>2 && subJPanel!=null) {
-							// --- Suche nach einer JTabbedPane -----------------
-							for (int i=0; i<subJPanel.getComponentCount();  i++ ) {
-								currComp = subJPanel.getComponent(i);
-								if ( currComp instanceof JTabbedPane ) {
-									subJTabs = (JTabbedPane) currComp;
-									break;									
-								}							
-							}	
-							FocusNodeName = PathSelected.getPathComponent(2).toString();
-							if (subJTabs!=null) {
-								// --- Fokus auf Karteikarte setzen -------------
-								for (int i=0; i<subJTabs.getComponentCount();  i++ ) {
-									if ( subJTabs.getComponent(i).getName() == FocusNodeName ) {
-										subJTabs.setSelectedIndex(i);
-									}							
-								}	
-							}
-						}
-						// ------------------------------------------------------
+						DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) projectTree.getLastSelectedPathComponent();
+						setFocus2Tab(selectedNode);
 					} 
 					// ----------------------------------------------------------
 					// --- Tree-Selection abfangen --- S T O P ------------------
@@ -211,18 +150,18 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 			});
 
 		}
-		return ProjectTree;
+		return projectTree;
 	}
 	
 	// If expand is true, expands all nodes in the tree.
     // Otherwise, collapses all nodes in the tree.
-    public void ProjectTreeExpand2Level(Integer Up2TreeLevel, boolean expand ) {
+    public void projectTreeExpand2Level(Integer Up2TreeLevel, boolean expand ) {
     	
     	Integer CurrNodeLevel = 1;
     	if ( Up2TreeLevel == null ) 
     		Up2TreeLevel = 1000;
 
-    	ProjectTreeExpand( new TreePath(RootNode), expand, CurrNodeLevel, Up2TreeLevel);
+    	ProjectTreeExpand( new TreePath(rootNode), expand, CurrNodeLevel, Up2TreeLevel);
     }
     @SuppressWarnings("unchecked")
 	private void ProjectTreeExpand( TreePath parent, boolean expand, Integer CurrNodeLevel, Integer Up2TreeLevel) {
@@ -240,12 +179,58 @@ public class ProjectWindow extends JInternalFrame implements Observer {
         }    
         // Expansion or collapse must be done bottom-up
         if (expand) {
-            ProjectTree.expandPath(parent);
+            projectTree.expandPath(parent);
         } else {
-        	ProjectTree.collapsePath(parent);
+        	projectTree.collapsePath(parent);
         }
     }
 	
+    /**
+	 * This method initializes ProjectViewRight	
+	 * @return javax.swing.JTabbedPane	
+	 */
+	private JTabbedPane getProjectViewRightTabs() {
+		if (projectViewRightTabs == null) {
+			projectViewRightTabs = new JTabbedPane();
+			projectViewRightTabs.setName("ProjectTabs");
+			projectViewRightTabs.setTabPlacement(JTabbedPane.TOP);
+			projectViewRightTabs.setPreferredSize(new Dimension(126, 72));
+			projectViewRightTabs.setFont(new Font("Dialog", Font.BOLD, 12));
+			projectViewRightTabs.addChangeListener(tabSelectionListener);
+		}
+		return projectViewRightTabs;
+	}	
+	
+	/**
+	 * This method instanciates the ChangeListener for Tab-Selections
+	 */
+	private void setTabSelectionListener() {
+		
+		tabSelectionListener = new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent evt) {
+				
+				// --- To prevent, that an add-action came in ----
+				int newNumberOfNodes = getNumberOfNodes();
+				if (newNumberOfNodes==oldNumberOfNodes) {
+					
+					JTabbedPane pane = (JTabbedPane)evt.getSource();
+			        int selIndex = pane.getSelectedIndex();
+			        String title = pane.getTitleAt(selIndex);
+			        DefaultMutableTreeNode selectedNode = getTreeNode(title);
+
+			        DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) projectTree.getLastSelectedPathComponent();
+			        if (selectedNode!=currentNode) {
+			        	projectTree.setSelectionPath(new TreePath(selectedNode.getPath()));
+			        }
+			        
+				} else {
+					oldNumberOfNodes = newNumberOfNodes; 
+				}
+			}
+		};
+		
+	}
 	
 	/**
 	 * Get the notification of the ObjectModel
@@ -254,132 +239,146 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 		
 		String ObjectName = OName.toString();
 		if ( ObjectName.equalsIgnoreCase( "ProjectName" ) ) {
-			CurrentNode = (DefaultMutableTreeNode) ProjectTree.getModel().getRoot();
-			CurrentNode.setUserObject( CurrProject.getProjectName() );
-			ProjectTreeModel.nodeChanged(CurrentNode);
-			ProjectTree.repaint();
-			Application.setTitelAddition( CurrProject.getProjectName() );
+			rootNode.setUserObject( currProject.getProjectName() );
+			projectTreeModel.nodeChanged(rootNode);
+			projectTree.repaint();
+			Application.setTitelAddition( currProject.getProjectName() );
 		}			
 		else {
 			//System.out.println("Unbekannter Updatebefehl vom Observerable ...");
 		};
 		this.repaint();
 	}
+	
+	/**
+	 * Adds a Project-Tab and a new node (child of root!) 
+	 * to the ProjectWindow
+	 */
+	public void addProjectTab(ProjectWindowTab tab) {
+		 this.addProjectTab(tab, null);
+	}
+	/**
+	 * Adds a Project-Tab and a new node (child of a specified parent) to 
+	 * the ProjectWindow
+	 */
+	public void addProjectTab(ProjectWindowTab tab, String parentName) {
 		
-	/**
-	 * This method initializes ProjectViewRight	
-	 * @return javax.swing.JTabbedPane	
-	 */
-	private JTabbedPane getProjectViewRightTabs() {
-		if (ProjectViewRightTabs == null) {
-			ProjectViewRightTabs = new JTabbedPane();
-			ProjectViewRightTabs.setName("ProjectTabs");
-			ProjectViewRightTabs.setTabPlacement(JTabbedPane.TOP);
-			ProjectViewRightTabs.setPreferredSize(new Dimension(126, 72));
-			ProjectViewRightTabs.setFont(new Font("Dialog", Font.BOLD, 12));
-		}
-		return ProjectViewRightTabs;
-	}	
+		// --- create Node ----------------------
+		DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(tab);
+		DefaultMutableTreeNode parNode = null;
+		JTabbedPane newViewCatcher = null; 
+		
+		// --- add to the TreeModel -------------
+		if (parentName!=null) {
+			parNode = getTreeNode(parentName);
+			ProjectWindowTab pwt = (ProjectWindowTab) parNode.getUserObject();
+			newViewCatcher = pwt.getCompForChildComp();
+			// --- add ChangeListener -----------
+			this.addChangeListener(newViewCatcher);
 
-	/**
-	 * Adds a Project-Tab and a new Base Folder 
-	 * (child of root!) to the ProjectWindow
-	 * 
-	 * @param title
-	 * @param icon
-	 * @param component
-	 * @param tip
-	 */	
-	public void addProjectTab( String title, Icon icon, Component component, String tip ) {
-		// --- GUI-Komponente in das TabbedPane-Objekt einfï¿½gen -------------
-		component.setName( title ); 								// --- Component benennen ----
-		ProjectViewRightTabs.addTab( title, icon, component, tip);	// --- Component anhängen ----
-		// --- Neuen Basisknoten einfügen ------------------
-		addProjectTabNode(title);
-	}
-
-	/**
-	 * Adds a new node to the left Project-Tree
-	 * @param newNode
-	 */
-	public void addProjectTabNode( String newNode ) {
-		RootNode.add( new DefaultMutableTreeNode( newNode ) );
-	}
-	/**
-	 * Adds a child-node to a given parent node of the left Project-Tree.
-	 * If the node can not be found, the methode adds the textual node-definition
-	 * to the local TreeMap 'additionalNodes', for a later addition to the Tree
-	 * @param parentNode
-	 * @param newNode
-	 */
-	public void addProjectTabNode( String parentNodeName, String newNodeName ) {
-		DefaultMutableTreeNode currentNode = new DefaultMutableTreeNode( newNodeName );
-		DefaultMutableTreeNode parentNode  = getTreeNode(parentNodeName); 
-		if (parentNode!=null) {
-			parentNode.add( currentNode );			
 		} else {
-			String[] newNodeDef = new String[2];
-			newNodeDef[0] = parentNodeName;
-			newNodeDef[1] = newNodeName;
-			additionalNodes.put(additionalNodes.size()+1, newNodeDef);
+			parNode = rootNode;
+			newViewCatcher = projectViewRightTabs;
 		}
+
+		// --- add to the tabs ------------------
+		parNode.add(newNode);
+		newViewCatcher.addTab( tab.getTitle(), tab.getIcon(), tab.getComponent(), tab.getTipText());
 	}
+
 	/**
-	 * Adds some further nodes to the left Project-Tree if recommended
-	 * through the TreeMap 'additionalNodes' at the end of the 
-	 * constructor-method
+	 * Adds the local ChangeListener named 'tabSelectionListener'
+	 * to a JTabbedPane if not already there
 	 */
-	private void addAdditionalNodes() {
+	private void addChangeListener(JTabbedPane pane) {
 		
-		Vector<Integer> nodeKeys = new Vector<Integer>( additionalNodes.keySet() );
-		Collections.sort(nodeKeys);
-		Iterator<Integer> it = nodeKeys.iterator();
-	    while (it.hasNext()) {
-	    	Integer key = it.next();
-	    	String[] newNodeDef = additionalNodes.get(key);
-	    	this.addProjectTabNode(newNodeDef[0], newNodeDef[1]);
-	    	additionalNodes.remove(key);
-	    }
-		if (additionalNodes.size()==0) {
-			additionalNodes = null;
+		boolean listenerFound = false;
+		ChangeListener[] listener = pane.getChangeListeners();
+		for (int i = 0; i < listener.length; i++) {
+			ChangeListener cl = listener[i];
+			if (cl==tabSelectionListener) {
+				listenerFound = true;
+			}
+		} 
+		
+		if (listenerFound==false) {
+			pane.addChangeListener(tabSelectionListener);
 		}
-	    
 	}
+	
 	/**
 	 * Returns the Tree-Node requested by the Reference 
 	 * @param Reference
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public DefaultMutableTreeNode getTreeNode( String Reference ) {
+	private DefaultMutableTreeNode getTreeNode(String searchFor) {
 		
-		DefaultMutableTreeNode NodeFound = null;
-		DefaultMutableTreeNode CurrNode = null;
-		String CurrNodeText;
+		DefaultMutableTreeNode nodeFound = null;
+		DefaultMutableTreeNode currNode = null;
+		String currNodeText;
 		
-		for (Enumeration<DefaultMutableTreeNode> e = RootNode.breadthFirstEnumeration(); e.hasMoreElements();) {
-			CurrNode = e.nextElement();
-			CurrNodeText = CurrNode.getUserObject().toString(); 
-			if ( CurrNodeText.equals(Reference) ) {				
-				NodeFound = CurrNode;
+		for (Enumeration<DefaultMutableTreeNode> e = rootNode.breadthFirstEnumeration(); e.hasMoreElements();) {
+			currNode = e.nextElement();
+			currNodeText = currNode.getUserObject().toString(); 
+			if ( currNodeText.equals(searchFor) ) {				
+				nodeFound = currNode;
 				break;
 			} 
 		}
-		return NodeFound;
+		return nodeFound;
 	}
 	
 	/**
-	 * Setzt den Fokus auf eine bestimmte Karteikarte
-	 * @param title
+	 * @return the number of nodes in the tree
 	 */
-	public void setFocusOnProjectTab ( String title ) {
-		for (int i=0; i<ProjectViewRightTabs.getComponentCount();  i++ ) {
-			Component Comp = ProjectViewRightTabs.getComponent(i);
-			if ( Comp.getName().equalsIgnoreCase( Language.translate(title) ) ) {
-				ProjectViewRightTabs.setSelectedIndex(i);		
-			}
-		}	
+	@SuppressWarnings("unchecked")
+	private int getNumberOfNodes() {
+		
+		int counter = 0;
+		for (Enumeration<DefaultMutableTreeNode> e = rootNode.breadthFirstEnumeration(); e.hasMoreElements();) {
+			counter++;
+			e.nextElement();
+		}
+		return counter;
 	}
 	
+	/**
+	 * Sets the focus to a specified Tab of the project Window
+	 */
+	public void setFocus2Tab(String searchFor) {
+		DefaultMutableTreeNode currNode = getTreeNode(searchFor);
+		this.setFocus2Tab(currNode);
+	}
+	/**
+	 * Sets the focus to a specified Tab of the project Window
+	 */
+	public void setFocus2Tab(ProjectWindowTab pwt) {
+		String tabCaption = pwt.getTitle();
+		setFocus2Tab(tabCaption);
+	}
+	/**
+	 * Sets the focus to a specified Tab of the project Window
+	 */
+	public void setFocus2Tab(DefaultMutableTreeNode nodeSelected) {
+
+		DefaultMutableTreeNode currNode = nodeSelected;
+		
+		Vector<DefaultMutableTreeNode> nodeArray = new Vector<DefaultMutableTreeNode>();
+		nodeArray.add(currNode);
+		
+		while (currNode.getParent()!= null) {
+			currNode = (DefaultMutableTreeNode) currNode.getParent();
+			if (currNode!=rootNode) {
+				nodeArray.add(currNode);	
+			}
+		}
+		for (int i = nodeArray.size(); i > 0; i--) {
+			currNode = nodeArray.get(i-1);
+			ProjectWindowTab pwt = (ProjectWindowTab) currNode.getUserObject();
+			Component displayElement = pwt.getComponent();
+			((JTabbedPane) displayElement.getParent()).setSelectedComponent(displayElement);
+		}
+	}
 	
 }  //  @jve:decl-index=0:visual-constraint="10,10"

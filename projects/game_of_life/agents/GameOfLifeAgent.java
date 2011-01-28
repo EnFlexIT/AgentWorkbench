@@ -1,12 +1,8 @@
 package game_of_life.agents;
 
-import jade.core.ServiceException;
-
 import java.util.HashMap;
 import java.util.Vector;
 
-import agentgui.simulationService.SimulationService;
-import agentgui.simulationService.SimulationServiceHelper;
 import agentgui.simulationService.agents.SimulationAgent;
 
 
@@ -37,16 +33,9 @@ public class GameOfLifeAgent extends SimulationAgent {
 	public void onEnvironmentStimulus() {
 
 		if (myEnvironmentModel!=null) {
-
-			HashMap<String, Integer> localEnvModel = (HashMap<String, Integer>) myEnvironmentModel.getDisplayEnvironment();
+			HashMap<String, Integer> localEnvModel = (HashMap<String, Integer>) myEnvironmentModel.getAbstractEnvironment();
 			this.updateStateOfAgent(localEnvModel);
-			
-			try {
-				SimulationServiceHelper simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
-				simHelper.setEnvironmentInstanceNextPart(getAID(), myNextState);
-			} catch (ServiceException e) {
-				e.printStackTrace();
-			}
+			this.setMyStimulusAnswer(myNextState);
 		}
 		// --- Maybe migrate, after you did your job --------
 		if (myNewLocation!=null) {

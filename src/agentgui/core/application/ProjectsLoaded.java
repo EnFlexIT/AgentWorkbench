@@ -40,7 +40,7 @@ public class ProjectsLoaded {
 		
 		// ------------------------------------------------
 		// --- Define a new Project-Instance -------------- 
-		Project NewPro = new Project();
+		Project newProject = new Project();
 		
 		// ------------------------------------------------
 		// --- Startbedingenen für "New" oder "Open" ------
@@ -93,71 +93,72 @@ public class ProjectsLoaded {
 		
 		// ------------------------------------------------
 		// --- Projektvariablen setzen --------------------
-		NewPro.setProjectName( LocalTmpProjectName );
-		NewPro.setProjectFolder( LocalTmpProjectFolder );
+		newProject.setProjectName( LocalTmpProjectName );
+		newProject.setProjectFolder( LocalTmpProjectFolder );
 
 		if ( addNew == true ) {			
 			// --- Standardstruktur anlegen ---------------
-			NewPro.createDefaultProjectStructure();
+			newProject.createDefaultProjectStructure();
 		} 
 		else {
 			// --- XML-Datei einlesen ---------------------
 			JAXBContext pc;
 			Unmarshaller um = null;
-			String XMLFileName = NewPro.getProjectFolderFullPath() + Application.RunInfo.getFileNameProject();			
+			String XMLFileName = newProject.getProjectFolderFullPath() + Application.RunInfo.getFileNameProject();			
 			try {
-				pc = JAXBContext.newInstance( NewPro.getClass() );
+				pc = JAXBContext.newInstance( newProject.getClass() );
 				um = pc.createUnmarshaller();
-				NewPro = (Project) um.unmarshal( new FileReader( XMLFileName ) );
+				newProject = (Project) um.unmarshal( new FileReader( XMLFileName ) );
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch (JAXBException e) {
 				e.printStackTrace();
 			}
 			// --- Folder auf aktuellen Projektordner einstellen ---
-			NewPro.setProjectFolder( LocalTmpProjectFolder );	
+			newProject.setProjectFolder( LocalTmpProjectFolder );	
 			
 			// --- check/create default folders -------------------- 
-			NewPro.checkCreateSubFolders();
+			newProject.checkCreateSubFolders();
 		}
 		
 		// --- ClassLoader/CLASSPATH laden ----------------
-		NewPro.resourcesLoad();
+		newProject.resourcesLoad();
 		
 		// --- Das Ontologie-Objekt beladen --------------- 
-		NewPro.ontologies4Project = new Ontologies4Project(NewPro);
+		newProject.ontologies4Project = new Ontologies4Project(newProject);
 
 		// --- ggf. AgentGUI - DefaultProfile übernehmen --
-		if( NewPro.JadeConfiguration.isUseDefaults()==true) {
-			NewPro.JadeConfiguration = Application.RunInfo.getJadeDefaultPlatformConfig();
+		if( newProject.JadeConfiguration.isUseDefaults()==true) {
+			newProject.JadeConfiguration = Application.RunInfo.getJadeDefaultPlatformConfig();
 		}
 		
 		// --- Gibt es bereits ein Simulations-Setup? -----
-		if (NewPro.simSetups.size()==0) {
-			NewPro.simSetups = new SimulationSetups(NewPro, "default");
-			NewPro.simSetups .setupCreateDefault();			
+		if (newProject.simSetups.size()==0) {
+			newProject.simSetups = new SimulationSetups(newProject, "default");
+			newProject.simSetups .setupCreateDefault();			
 		}
 		
-		// --- Neues Projektfenster öffnen ----------------
-		NewPro.ProjectGUI = new ProjectWindow( NewPro );
+		// --- Projektfenster und Standard-Tabs anhängen --
+		newProject.projectWindow = new ProjectWindow( newProject );
+		newProject.addDefaultTabs();
 		
 		// --- Projekt als aktuelle markieren ------------- 
-		NewPro.ProjectUnsaved = false;
+		newProject.ProjectUnsaved = false;
 				
 		// --- Objekt an die Projektauflistung hängen -----
-		ProjectsOpen.add( NewPro );
-		Application.ProjectCurr = NewPro;
+		ProjectsOpen.add(newProject);
+		Application.ProjectCurr = newProject;
 
 		// --- Anzeige anpassen ---------------------------
 		Application.Projects.setProjectMenuItems();		
 		Application.MainWindow.setCloseButtonPosition( true );
-		Application.setTitelAddition( NewPro.getProjectName() );
+		Application.setTitelAddition( newProject.getProjectName() );
 		Application.setStatusBar( Language.translate("Fertig") );	
-		NewPro.setMaximized();
+		newProject.setMaximized();
 		if (addNew==true) {
-			NewPro.save();   // --- Erstmalig speichern ---	
+			newProject.save();   // --- Erstmalig speichern ---	
 		}		
-		return NewPro;
+		return newProject;
 	}
 
 	/**

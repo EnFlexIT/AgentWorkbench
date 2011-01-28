@@ -23,6 +23,18 @@ import org.w3c.dom.Document;
 import agentgui.core.agents.AgentConfiguration;
 import agentgui.core.common.ClassLoaderUtil;
 import agentgui.core.gui.ProjectWindow;
+import agentgui.core.gui.ProjectWindowTab;
+import agentgui.core.gui.components.TabForSubPanes;
+import agentgui.core.gui.projectwindow.BaseAgents;
+import agentgui.core.gui.projectwindow.JadeSetup;
+import agentgui.core.gui.projectwindow.OntologyTab;
+import agentgui.core.gui.projectwindow.ProjectDesktop;
+import agentgui.core.gui.projectwindow.ProjectInfo;
+import agentgui.core.gui.projectwindow.ProjectResources;
+import agentgui.core.gui.projectwindow.Visualization;
+import agentgui.core.gui.projectwindow.simsetup.Distribution;
+import agentgui.core.gui.projectwindow.simsetup.SimulationEnvironment;
+import agentgui.core.gui.projectwindow.simsetup.StartSetup;
 import agentgui.core.jade.ClassSearcher;
 import agentgui.core.jade.PlatformJadeConfig;
 import agentgui.core.ontologies.Ontologies4Project;
@@ -45,9 +57,9 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	@XmlTransient private static final String PathSep = Application.RunInfo.AppPathSeparatorString();
 	
 	// --- GUI der aktuellen Projekt-Instanz -------------------
-	@XmlTransient public ProjectWindow ProjectGUI = null;
-	@XmlTransient public JPanel ProjectVisualizationPanel = null;
-	@XmlTransient public JDesktopPane ProjectDesktop = null;
+	@XmlTransient public ProjectWindow projectWindow = null;
+	@XmlTransient public JPanel projectVisualizationPanel = null;
+	@XmlTransient public JDesktopPane projectDesktop = null;
 	
 	// --- Objekt- / Projektvariablen --------------------------
 	@XmlTransient public boolean ProjectUnsaved = false;
@@ -91,6 +103,80 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	 */
 	public Project() {
 	};
+	
+	/**
+	 * This methods adds all default Agent.GUI Tabs to the ProjectWindow of the project
+	 */
+	public void addDefaultTabs() {
+		
+		ProjectWindowTab pwt = null;
+		// --- General Informations -----------------------
+		pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, 
+								   Language.translate("Info"), null, null, 
+								   new ProjectInfo(this), null, null);
+		pwt.add();
+		// --- External Resources -------------------------
+		pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, 
+				   Language.translate("Ressourcen"), null, null, 
+				   new ProjectResources(this), null, null);
+		pwt.add();
+		// --- Used Ontologies ----------------------------
+		pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, 
+				   Language.translate("Ontologien"), null, null, 
+				   new OntologyTab(this), null, null);
+		pwt.add();
+		// --- Project Agents -----------------------------
+		pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, 
+				   Language.translate("Agenten"), null, null, 
+				   new BaseAgents(this), null, null);
+		pwt.add();
+		// --- JADE-Configuration -------------------------
+		pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, 
+				   Language.translate("JADE-Konfiguration"), null, null, 
+				   new JadeSetup(this), null, null);
+		pwt.add();
+		
+		// --- Simulations-Setup --------------------------
+		TabForSubPanes subPanes = new TabForSubPanes(); 
+		pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, 
+				   Language.translate("Simulations-Setup"), null, null, 
+				   subPanes, null, subPanes.jTabbedPaneIntern);
+		pwt.add();
+
+			// --- start configuration for agents ---------
+			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, 
+					   Language.translate("Agenten-Start"), null, null, 
+					   new StartSetup(this), Language.translate("Simulations-Setup"), subPanes.jTabbedPaneIntern);
+			pwt.add();
+			// --- simulation environment -----------------
+			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, 
+					   Language.translate("Simulationsumgebung"), null, null, 
+					   new SimulationEnvironment(this), Language.translate("Simulations-Setup"), subPanes.jTabbedPaneIntern);
+			pwt.add();
+			// --- distribution + thresholds --------------
+			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, 
+					   Language.translate("Verteilung + Grenzwerte"), null, null, 
+					   new Distribution(this), Language.translate("Simulations-Setup"), subPanes.jTabbedPaneIntern);
+			pwt.add();
+			
+
+		// --- SVG-visualisation --------------------------
+		Visualization visualization = new Visualization(this);
+		this.projectVisualizationPanel = visualization.getJPanel4Visualization();
+		pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, 
+				   Language.translate("Simulations-Visualisierung"), null, null, 
+				   this.projectVisualizationPanel, null, null);
+		pwt.add();
+		// --- Project Desktop ----------------------------
+		pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, 
+				   Language.translate("Projekt-Desktop"), null, null, 
+				   new ProjectDesktop(this), null, null);
+		pwt.add();
+		
+		// --- Expand the tree view -----------------------
+		this.projectWindow.projectTreeExpand2Level(3, true);
+		
+	}
 	
 	/**
 	 * Save the current MAS-Project
@@ -161,7 +247,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 		
 		// --- Close Project ------------------------------
 		int Index = Application.Projects.getIndexByName( ProjectName ); // --- Merker Index ---		
-		ProjectGUI.dispose();
+		projectWindow.dispose();
 		Application.Projects.remove(this);
 		
 		int NProjects = Application.Projects.count();
@@ -252,7 +338,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 			Application.ProjectCurr.resourcesRemove();
 		}
 		
-		ProjectGUI.moveToFront();
+		projectWindow.moveToFront();
 		Application.setTitelAddition( ProjectName );
 		Application.ProjectCurr = this;
 		Application.Projects.setProjectMenuItems();
@@ -268,8 +354,8 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	 */
 	public void setMaximized() {
 		Application.MainWindow.validate();
-		((BasicInternalFrameUI) Application.ProjectCurr.ProjectGUI.getUI()).setNorthPane(null);
-		Application.MainWindow.ProjectDesktop.getDesktopManager().maximizeFrame( ProjectGUI );				
+		((BasicInternalFrameUI) Application.ProjectCurr.projectWindow.getUI()).setNorthPane(null);
+		Application.MainWindow.ProjectDesktop.getDesktopManager().maximizeFrame( projectWindow );				
 	}
 	
 	/**

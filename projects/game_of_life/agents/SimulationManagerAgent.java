@@ -51,7 +51,7 @@ public class SimulationManagerAgent extends Agent {
 		gui.setResizable(true);
 		gui.setMaximizable(true);
 		
-		JDesktopPane desptop = Application.ProjectCurr.ProjectDesktop;
+		JDesktopPane desptop = Application.ProjectCurr.projectDesktop;
 		desptop.add(gui);
 		desptop.getDesktopManager().maximizeFrame(gui);
 				

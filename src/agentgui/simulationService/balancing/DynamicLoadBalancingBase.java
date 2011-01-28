@@ -19,7 +19,7 @@ import agentgui.simulationService.load.LoadInformation.NodeDescription;
 import agentgui.simulationService.ontology.PlatformLoad;
 
 
-public class DynamicLoadBalancingBase extends OneShotBehaviour{
+public class DynamicLoadBalancingBase extends OneShotBehaviour {
 
 	private static final long serialVersionUID = -7614035278070031234L;
 

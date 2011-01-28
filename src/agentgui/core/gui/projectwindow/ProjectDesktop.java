@@ -5,30 +5,28 @@ import java.awt.event.ActionListener;
 import java.util.Observable;
 import java.util.Observer;
 
-import agentgui.core.application.Language;
 import agentgui.core.application.Project;
 
 import javax.swing.JDesktopPane;
+import javax.swing.JTabbedPane;
 
 /**
  * @author: Christian Derksen
- *
  */
-public class SimulationMessages extends JDesktopPane implements Observer, ActionListener {
+public class ProjectDesktop extends JDesktopPane implements Observer, ActionListener {
 
-	private Project CurrProject;
-	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -9219224867898326652L;
+	private Project currProject;
 
 	/**
 	 * This is the default constructor
 	 */
-	public SimulationMessages( Project CP ) {
+	public ProjectDesktop( Project cp ) {
 		super();
-		this.CurrProject = CP;
-		this.CurrProject.addObserver(this);		
+		this.currProject = cp;
+		this.currProject.addObserver(this);		
 		initialize();	
-		this.CurrProject.ProjectDesktop = this;
+		this.currProject.projectDesktop = this;
 	}
 
 	/**
@@ -49,11 +47,10 @@ public class SimulationMessages extends JDesktopPane implements Observer, Action
 	}
 
 	/**
-	 * Set's the focus to the current project-message
+	 * Set's the focus to the project-desktop
 	 */
 	public void setFocus () {
-		CurrProject.setFocus(false);
-		CurrProject.ProjectGUI.setFocusOnProjectTab(Language.translate("Simulations-Meldungen"));
+		((JTabbedPane) this.getParent()).setSelectedComponent(this);
 	}
 
 
@@ -67,13 +64,13 @@ public class SimulationMessages extends JDesktopPane implements Observer, Action
 
 		// --- Fallunterscheidung 'Auslöser' -----------------------------
 		if ( Trigger == "ProjectName" ) {
-			CurrProject.setProjectName( ae.getActionCommand() );
+			currProject.setProjectName( ae.getActionCommand() );
 		}
 		else if ( Trigger == "ProjectFolder" ) {
-			CurrProject.setProjectFolder( ae.getActionCommand() );
+			currProject.setProjectFolder( ae.getActionCommand() );
 		}
 		else if ( Trigger == "ProjectDescription" ) {
-			CurrProject.setProjectDescription( ae.getActionCommand() );
+			currProject.setProjectDescription( ae.getActionCommand() );
 		}
 		else {
 			

@@ -15,7 +15,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.application.Project;
 
-
 @XmlRootElement public class SimulationSetup {
 
 	@XmlTransient private Project currProject = null;	
@@ -24,36 +23,16 @@ import agentgui.core.application.Project;
 	@XmlElementWrapper(name = "agentSetup")
 	@XmlElement(name="agent")
 	private ArrayList<AgentClassElement4SimStart> agentList = new ArrayList<AgentClassElement4SimStart>();
+
+	@XmlElement(name="distribution")
+	public DistributionSetup distributionSetup = new DistributionSetup();
 	
 	public static final String ENVMODE_PHYSICAL2D = "physical2DEnvironment";
 	public static final String ENVMODE_GRAPH = "gridEnvironment";
 	
-	
 	private String environmentMode = ENVMODE_PHYSICAL2D;
-	/**
-	 * @return the environmentMode
-	 */
-	public String getEnvironmentMode() {
-		return environmentMode;
-	}
-	/**
-	 * @param environmentMode the environmentMode to set
-	 */
-	public void setEnvironmentMode(String environmentMode) {
-		this.environmentMode = environmentMode;
-	}
-	/**
-	 * The name of the environment file assigned to this SimulationSetup
-	 */
 	private String environmentFileName = null;
-	/**
-	 * The name of the svg file assigned to this SimulationSetup
-	 */
 	private String svgFileName = null;
-	
-	@XmlElement(name="distribution")
-	public DistributionSetup distributionSetup = new DistributionSetup();
-	
 	
 	/**
 	 * Constructor without arguments (This is first of all 
@@ -63,19 +42,19 @@ import agentgui.core.application.Project;
 	public SimulationSetup() {
 	}
 	/**
-	 * @param currProject the currProject to set
-	 */
-	public void setCurrProject(Project currProject) {
-		this.currProject = currProject;
-	}
-	/**
 	 * Default Constructor of this class
 	 * @param project
 	 */
 	public SimulationSetup(Project project) {
 		this.currProject = project;
 	}
-
+	/**
+	 * @param currProject the currProject to set
+	 */
+	public void setCurrProject(Project currProject) {
+		this.currProject = currProject;
+	}
+	
 	/**
 	 * This method saves the current Simulation-Setup
 	 * @return
@@ -185,6 +164,19 @@ import agentgui.core.application.Project;
 	public void setDistributionSetup(DistributionSetup distributionSetup) {
 		this.distributionSetup = distributionSetup;
 	}
+
 	
+	/**
+	 * @return the environmentMode
+	 */
+	public String getEnvironmentMode() {
+		return environmentMode;
+	}
+	/**
+	 * @param environmentMode the environmentMode to set
+	 */
+	public void setEnvironmentMode(String environmentMode) {
+		this.environmentMode = environmentMode;
+	}
 	
 }

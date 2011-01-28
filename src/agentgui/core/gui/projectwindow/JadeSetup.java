@@ -1,4 +1,4 @@
-package agentgui.core.gui.projectwindow.simsetup;
+package agentgui.core.gui.projectwindow;
 
 
 import java.awt.Font;
@@ -16,6 +16,7 @@ import javax.swing.JTextField;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
+import agentgui.core.gui.projectwindow.simsetup.JadeSetupNewPort;
 
 import java.awt.Dimension;
 import java.awt.Point;
