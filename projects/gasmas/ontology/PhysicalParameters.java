@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: PhysicalParameters
 * @author ontology bean generator
-* @version 2011/01/21, 21:34:17
+* @version 2011/01/27, 22:34:19
 */
 public class PhysicalParameters implements Concept {
 

@@ -8,52 +8,30 @@ import jade.core.*;
 /**
 * Protege name: FlowParameters
 * @author ontology bean generator
-* @version 2011/01/21, 21:34:17
+* @version 2011/01/27, 22:34:19
 */
 public class FlowParameters implements Concept {
 
    /**
-* Protege name: fluidVewlocity
+* Protege name: fluidVelocity
    */
-   private float fluidVewlocity;
-   public void setFluidVewlocity(float value) { 
-    this.fluidVewlocity=value;
+   private float fluidVelocity;
+   public void setFluidVelocity(float value) { 
+    this.fluidVelocity=value;
    }
-   public float getFluidVewlocity() {
-     return this.fluidVewlocity;
+   public float getFluidVelocity() {
+     return this.fluidVelocity;
    }
 
    /**
-* Protege name: reynoldsNumber
+* Protege name: flow
    */
-   private int reynoldsNumber;
-   public void setReynoldsNumber(int value) { 
-    this.reynoldsNumber=value;
+   private float flow;
+   public void setFlow(float value) { 
+    this.flow=value;
    }
-   public int getReynoldsNumber() {
-     return this.reynoldsNumber;
-   }
-
-   /**
-* Protege name: temperature
-   */
-   private float temperature;
-   public void setTemperature(float value) { 
-    this.temperature=value;
-   }
-   public float getTemperature() {
-     return this.temperature;
-   }
-
-   /**
-* Protege name: pressure
-   */
-   private float pressure;
-   public void setPressure(float value) { 
-    this.pressure=value;
-   }
-   public float getPressure() {
-     return this.pressure;
+   public float getFlow() {
+     return this.flow;
    }
 
    /**
@@ -68,14 +46,36 @@ public class FlowParameters implements Concept {
    }
 
    /**
-* Protege name: flow
+* Protege name: pressure
    */
-   private float flow;
-   public void setFlow(float value) { 
-    this.flow=value;
+   private float pressure;
+   public void setPressure(float value) { 
+    this.pressure=value;
    }
-   public float getFlow() {
-     return this.flow;
+   public float getPressure() {
+     return this.pressure;
+   }
+
+   /**
+* Protege name: temperature
+   */
+   private float temperature;
+   public void setTemperature(float value) { 
+    this.temperature=value;
+   }
+   public float getTemperature() {
+     return this.temperature;
+   }
+
+   /**
+* Protege name: reynoldsNumber
+   */
+   private int reynoldsNumber;
+   public void setReynoldsNumber(int value) { 
+    this.reynoldsNumber=value;
+   }
+   public int getReynoldsNumber() {
+     return this.reynoldsNumber;
    }
 
 }

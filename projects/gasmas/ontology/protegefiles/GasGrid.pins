@@ -1,4 +1,4 @@
-; Fri Jan 21 21:34:39 CET 2011
+; Thu Jan 27 22:42:10 CET 2011
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -49,7 +49,7 @@
 
 ([project+annotation] of  %3APROJECT-ANNOTATION
 
-	(%3ALOCATION "D:\\Anwendungsdaten\\Eclipse Workspace\\AgentGUI\\projects")
+	(%3ALOCATION "D:\\Eclipse Workspace\\AgentGUI\\projects")
 	(%3AONTOLOGYNAME "Gasgrid")
 	(%3APACKAGE "gasmas.ontology")
 	(%3ASUPPORT "j2se"))

@@ -1,4 +1,4 @@
-; Fri Jan 21 21:34:39 CET 2011
+; Thu Jan 27 22:42:10 CET 2011
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -7,7 +7,32 @@
 (defclass %3ACLIPS_TOP_LEVEL_SLOT_CLASS "Fake class to save top-level slot information"
 	(is-a USER)
 	(role abstract)
-	(single-slot position2
+	(single-slot thermalConductivity
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot fluidVelocity
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot mainEntry
+		(type INSTANCE)
+;+		(allowed-classes)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(multislot exitList
+		(type INSTANCE)
+;+		(allowed-classes PropagationPoint)
+		(create-accessor read-write))
+	(single-slot GasGrid_Slot_13
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(multislot entryList
+		(type INSTANCE)
+;+		(allowed-classes PropagationPoint)
+		(create-accessor read-write))
+	(single-slot mainExit
 		(type INSTANCE)
 ;+		(allowed-classes PropagationPoint)
 ;+		(cardinality 0 1)
@@ -21,61 +46,12 @@
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(multislot entryList
-		(type INSTANCE)
-;+		(allowed-classes PropagationPoint)
-		(create-accessor read-write))
-	(single-slot mainExit
+	(single-slot position2
 		(type INSTANCE)
 ;+		(allowed-classes PropagationPoint)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(multislot exitList
-		(type INSTANCE)
-;+		(allowed-classes PropagationPoint)
-		(create-accessor read-write))
-	(single-slot GasGrid_Slot_13
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot mainEntry
-		(type INSTANCE)
-;+		(allowed-classes)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot thermalConductivity
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot fluidVewlocity
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot dynamicViscosity
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot reynoldsNumber
-		(type INTEGER)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot temperature
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot pipeFriction
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot kinematicViscosity
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot density
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot pressure
+	(single-slot flow
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
@@ -83,7 +59,31 @@
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot flow
+	(single-slot pressure
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot density
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot kinematicViscosity
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot pipeFriction
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot temperature
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot reynoldsNumber
+		(type INTEGER)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot dynamicViscosity
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write)))
@@ -161,7 +161,7 @@
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot dynamicViscosity
+	(single-slot density
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
@@ -169,7 +169,7 @@
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot density
+	(single-slot dynamicViscosity
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write)))
@@ -177,19 +177,11 @@
 (defclass FlowParameters
 	(is-a Concept)
 	(role concrete)
-	(single-slot fluidVewlocity
+	(single-slot fluidVelocity
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot reynoldsNumber
-		(type INTEGER)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot temperature
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot pressure
+	(single-slot flow
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
@@ -197,8 +189,16 @@
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot flow
+	(single-slot pressure
 		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot temperature
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot reynoldsNumber
+		(type INTEGER)
 ;+		(cardinality 0 1)
 		(create-accessor read-write)))
 

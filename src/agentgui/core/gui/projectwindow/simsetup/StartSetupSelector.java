@@ -55,6 +55,7 @@ public class StartSetupSelector extends JPanel implements Observer, ActionListen
 	private JComboBox jComboBoxSetupSelector = null;
 	private JComboBox jComboBoxEnvironmentModeSelector = null;
 	private JLabel jLabelSetupSelector = null;
+	private JLabel jLabelEnvironmentType = null;
 	private JButton jButtonSetupRename = null;
 	private JButton jButtonSetupCopy = null;
 	private JButton jButtonSetupNew = null;
@@ -113,20 +114,20 @@ public class StartSetupSelector extends JPanel implements Observer, ActionListen
 	private JPanel getJPanelTop() {
 		if (jPanelTop == null) {
 			GridBagConstraints gridBagConstraints17 = new GridBagConstraints();
-			gridBagConstraints17.gridx = 4;
+			gridBagConstraints17.gridx = 5;
 			gridBagConstraints17.insets = new Insets(0, 10, 0, 0);
 			gridBagConstraints17.gridy = 0;
 			GridBagConstraints gridBagConstraints16 = new GridBagConstraints();
-			gridBagConstraints16.gridx = 3;
+			gridBagConstraints16.gridx = 4;
 			gridBagConstraints16.insets = new Insets(0, 5, 0, 0);
 			gridBagConstraints16.gridy = 0;
 			GridBagConstraints gridBagConstraints15 = new GridBagConstraints();
-			gridBagConstraints15.gridx = 6;
+			gridBagConstraints15.gridx = 7;
 			gridBagConstraints15.insets = new Insets(0, 5, 0, 0);
 			gridBagConstraints15.fill = GridBagConstraints.NONE;
 			gridBagConstraints15.gridy = 0;
 			GridBagConstraints gridBagConstraints14 = new GridBagConstraints();
-			gridBagConstraints14.gridx = 5;
+			gridBagConstraints14.gridx = 6;
 			gridBagConstraints14.insets = new Insets(0, 10, 0, 0);
 			gridBagConstraints14.gridy = 0;
 			GridBagConstraints gridBagConstraints13 = new GridBagConstraints();
@@ -146,18 +147,29 @@ public class StartSetupSelector extends JPanel implements Observer, ActionListen
 			
 			GridBagConstraints gridBagConstraints18 = new GridBagConstraints();
 			gridBagConstraints18.fill = GridBagConstraints.BOTH;
-			gridBagConstraints18.gridx = 2;
+			gridBagConstraints18.gridx = 3;
 			gridBagConstraints18.anchor = GridBagConstraints.WEST;
 			gridBagConstraints18.insets = new Insets(0, 0, 0, 0);
 			gridBagConstraints18.weightx = 1.0;
+			
+			GridBagConstraints gridBagConstraints19 = new GridBagConstraints();
+			gridBagConstraints19.gridx = 2;
+			gridBagConstraints19.insets = new Insets(0, 5, 0, 5);
+			gridBagConstraints19.anchor = GridBagConstraints.WEST;
+			gridBagConstraints19.gridy = 0;
+			
+			jLabelEnvironmentType = new JLabel();
+			jLabelEnvironmentType.setText(Language.translate("Umgebungstyp")+":");
+			jLabelEnvironmentType.setFont(new Font("Dialog", Font.BOLD, 12));
 			
 			jPanelTop = new JPanel();
 			jPanelTop.setLayout(new GridBagLayout());
 			jPanelTop.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), new Color(51, 51, 51)));
 			jPanelTop.setPreferredSize(new Dimension(500, 38));
 			jPanelTop.add(getJComboBoxSetupSelector(), gridBagConstraints12);
-			jPanelTop.add(getJComboBoxEnvironmentModeSelector(), gridBagConstraints18);
 			jPanelTop.add(jLabelSetupSelector, gridBagConstraints13);
+			jPanelTop.add(jLabelEnvironmentType, gridBagConstraints19);
+			jPanelTop.add(getJComboBoxEnvironmentModeSelector(), gridBagConstraints18);
 			jPanelTop.add(getJButtonSetupNew(), gridBagConstraints14);
 			jPanelTop.add(getJButtonSetupDelete(), gridBagConstraints15);
 			jPanelTop.add(getJButtonSetupRename(), gridBagConstraints16);
