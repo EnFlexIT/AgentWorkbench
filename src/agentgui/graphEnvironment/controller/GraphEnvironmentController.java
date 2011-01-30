@@ -34,7 +34,7 @@ public class GraphEnvironmentController extends Observable implements
 	 */
 	public void setGridModel(Graph<GridComponent, GridLink> graph) {
 		
-		this.gridModel = graph;
+		this.gridModel = new GridModel(graph);
 		this.setChanged();
 		notifyObservers(EVENT_GRAPH_LOADED);
 	}
@@ -48,7 +48,7 @@ public class GraphEnvironmentController extends Observable implements
 	
 	private Document svgDoc = null;
 	
-	private Graph<GridComponent, GridLink> gridModel = null;
+	private GridModel gridModel = null;
 	
 	public GraphEnvironmentController(Project project){
 		this.project = project;
@@ -85,7 +85,7 @@ public class GraphEnvironmentController extends Observable implements
 			System.err.println("Keine SVG-Datei gefunden!");
 		}
 		
-		this.gridModel = loadGraphFile(new File(graphMLTargetPath));
+		this.gridModel = new GridModel(loadGraphFile(new File(graphMLTargetPath)));
 		if(svgFound){
 			this.svgDoc = loadSVGFile(new File(svgTargetPath));
 			if(this.svgDoc != null){
@@ -157,7 +157,7 @@ public class GraphEnvironmentController extends Observable implements
 	/**
 	 * @return the graph
 	 */
-	public Graph<GridComponent, GridLink> getGridModel() {
+	public GridModel getGridModel() {
 		return gridModel;
 	}
 
