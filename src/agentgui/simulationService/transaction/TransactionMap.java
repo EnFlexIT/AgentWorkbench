@@ -3,8 +3,8 @@ package agentgui.simulationService.transaction;
 import java.util.HashMap;
 
 import agentgui.simulationService.environment.EnvironmentModel;
-import agentgui.simulationService.time.TimeModel;
 import agentgui.simulationService.time.TimeModelDiscrete;
+import agentgui.simulationService.time.TimeModelStroke;
 
 
 public class TransactionMap extends HashMap<Long, EnvironmentModel> {
@@ -14,20 +14,34 @@ public class TransactionMap extends HashMap<Long, EnvironmentModel> {
 	// --- In case that we are dealing with time  -----
 	// --- in our TimeModel: For a faster Mapping! ----
 	private HashMap<Long, Long> time2Counter = new HashMap<Long, Long>();
+	private long internalCounter = 0;
 	
-	@Override
-	public EnvironmentModel put(Long key, EnvironmentModel envModel) {
-		EnvironmentModel returnValue = super.put(key, envModel);
-
-		// ------------------------------------------------
-		// --- In case that we are dealing with time  -----
-		// --- in our TimeModel: For a faster Mapping! ----
-		TimeModel timeModelInstance = envModel.getTimeModel();
-		if (timeModelInstance instanceof TimeModelDiscrete) {
-			time2Counter.put(((TimeModelDiscrete) timeModelInstance).getTime(), key);
-		}		
-		// ------------------------------------------------
+	public EnvironmentModel put(EnvironmentModel envModel) {
 		
+		long hashKey = 0;
+		
+		// --- Fallunterscheidung TimeModel -----------------------
+		if (envModel.getTimeModel()==null) {
+			hashKey = internalCounter;
+			internalCounter++;
+			
+		} else if (envModel.getTimeModel() instanceof TimeModelStroke) {
+			TimeModelStroke tm = (TimeModelStroke) envModel.getTimeModel();
+			hashKey = tm.getCounter();
+			
+		} else if ( envModel.getTimeModel() instanceof TimeModelDiscrete ) {
+			TimeModelDiscrete tm = (TimeModelDiscrete) envModel.getTimeModel();
+			hashKey = tm.getTime();
+			
+			// ------------------------------------------------
+			// --- In case that we are dealing with time  -----
+			// --- in our TimeModel: For a faster Mapping! ----
+			time2Counter.put(tm.getTime(), internalCounter);
+			internalCounter++;
+			// ------------------------------------------------
+			
+		}
+		EnvironmentModel returnValue = super.put(hashKey, envModel);
 		return returnValue;
 	}
 	

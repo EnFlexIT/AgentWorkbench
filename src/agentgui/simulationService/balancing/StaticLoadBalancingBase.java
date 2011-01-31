@@ -154,6 +154,7 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 			
 			// --- Start the agent visualisation --------------------
 			Object[] args = {environment, svgDocument};
+			//TODO agentgui.physical2Denvironment.provider.EnvironmentProviderAgentNew
 			this.startAgent("EvPrAg_"+ currProject.getProjectFolder(), agentgui.physical2Denvironment.provider.EnvironmentProviderAgent.class, args);
 			
 			// --- Start the DisplayAgent inside of Agent.GUI -------

@@ -18,7 +18,7 @@ public class SetToPointBehaviour  extends OneShotBehaviour{
 	{
 	   super(a);
 	   this.pos=newPosition;
-	   this.old=oldPosition;
+	   this.old=oldPosition; // Only needed because of Movement's calulate speed method
 	  
 		try {
 			this.helper = (EnvironmentProviderHelper) myAgent.getHelper(EnvironmentProviderService.SERVICE_NAME);

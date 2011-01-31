@@ -128,6 +128,7 @@ public class DisplayAgent extends Agent {
 		@Override
 		protected void onTick() {
 			HashSet<Physical2DObject> movingObjects = helper.getCurrentlyMovingObjects();
+			
 			myGUI.updatePositions(movingObjects);
 		}
 		

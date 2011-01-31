@@ -3,6 +3,10 @@ package agentgui.simulationService.time;
 import jade.util.leap.Serializable;
 
 
+/**
+ * @author Tim
+ *
+ */
 public class TimeModelDiscrete extends TimeModel implements Serializable {
 
 	private static final long serialVersionUID = 3931340225354221294L;
@@ -36,4 +40,20 @@ public class TimeModelDiscrete extends TimeModel implements Serializable {
 	public Long getTime() {
 		return time;
 	}
+	
+	/**
+	 * @return the step
+	 */
+	public Long getStep() {
+		return step;
+	}
+	/**
+	 * @param step
+	 */
+	public void setStep(Long step) {
+		this.step = step;
+	}
+	
+	
+	
 }
