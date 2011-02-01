@@ -1,19 +1,16 @@
 package agentgui.simulationService.agents;
 
-import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.apache.batik.apps.svgbrowser.JSVGViewerFrame.PlayAction;
 
-import com.sun.org.apache.bcel.internal.generic.INSTANCEOF;
 
 import agentgui.physical2Denvironment.ontology.Physical2DObject;
 import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
-import agentgui.physical2Denvironment.ontology.PlaygroundObject;
 import agentgui.physical2Denvironment.ontology.PositionUpdate;
 import agentgui.physical2Denvironment.provider.EnvironmentProviderHelper;
 import agentgui.physical2Denvironment.provider.EnvironmentProviderService;
@@ -29,11 +26,16 @@ import jade.core.behaviours.CyclicBehaviour;
 public abstract class SimulationsManager extends Agent {
 	
 	private EnvironmentModel env = null;
-	private TimeModel timeModel = null;
 	private boolean running=false;
 	private SimulationServiceHelper simHelper = null;
 	private AID aid= null;
 	private EnvironmentProviderHelper envHelper = null; 
+	protected Hashtable<AID, Object> agentAnswers = null;
+	protected int numberOfAgents=0;
+	
+	
+	
+	
 	  protected void setup() 
 	  {
 		  try
@@ -64,20 +66,28 @@ public abstract class SimulationsManager extends Agent {
 
 
 
-	public EnvironmentModel getEnv() {
+	public EnvironmentModel getEnvironmentModel() {
 		return env;
 	}
 
-	public void setEnv(EnvironmentModel env) {
+	public void setEnvironmentModel(EnvironmentModel env) {
 		this.env = env;
+		try
+		{
+		simHelper.setEnvironmentModel(env);
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	public TimeModel getTimeModel() {
-		return timeModel;
+		return this.env.getTimeModel();
 	}
 
 	public void setTimeModel(TimeModel timeModel) {
-		this.timeModel = timeModel;
+		this.env.setTimeModel(timeModel);
 	}
 	
 	public void stepSimulation() throws Exception
@@ -107,6 +117,7 @@ public abstract class SimulationsManager extends Agent {
 		while (simHelper.getEnvironmentInstanceNextParts().size()!=numberOfAgents)
 		{
 		  doWait(100);
+		  
 		}
 		
 		
@@ -116,9 +127,9 @@ public abstract class SimulationsManager extends Agent {
 	
 	
 	
-	abstract void initSimulation();
-	abstract void simulationLogic();
-	public void createNewEnviroment(HashMap<AID,Object> agentAnswer) throws Exception // If its not a physical Eviroment you have to overwrite the method
+	public abstract void initSimulation();
+	public abstract void simulationLogic();
+	public void createNewEnvironment(Hashtable<AID,Object> agentAnswer) throws Exception // If its not a physical Environment you have to overwrite the method
 	{
 	
 		Object obj=env.getDisplayEnvironment();
@@ -141,7 +152,7 @@ public abstract class SimulationsManager extends Agent {
 				}
 				else
 				{
-				 throw new Exception("Please overwrite createNewEvironment because the value of the Hashmap can't be casted to PositionUpdate");
+				 throw new Exception("Please overwrite createNewEnvironment because the value of the Hashmap can't be casted to PositionUpdate");
 				
 				}
 			
@@ -149,19 +160,21 @@ public abstract class SimulationsManager extends Agent {
 		}
 		else
 		{
-			 throw new Exception("Please overwrite createNewEvironment because the enviroment can't be casted to Physical2DEnviroment");	
+			 throw new Exception("Please overwrite createNewEnvironment because the environment can't be casted to Physical2DEnvironment");	
 		}
 		
 	
 	}
 	
+
+	
 	private Physical2DObject getPhysical2DObject(Physical2DEnvironment world,String id)
 	{
-	
-		   Iterator<PlaygroundObject> it=world.getRootPlayground().getAllChildObjects();
+	   
+		   Iterator<Physical2DObject> it=world.getRootPlayground().getAllChildObjects();
 		   while(it.hasNext())
 		   {
-		   PlaygroundObject playGround = it.next();
+			   Physical2DObject playGround = it.next();
 		   
 		   		if(playGround.getId().equals(id))
 		   		{
@@ -172,7 +185,20 @@ public abstract class SimulationsManager extends Agent {
 	}
 		   
 		   
-	
+	public HashMap<AID,PositionUpdate>  convertToPositionUpdateHashmap(Hashtable<AID, Object> answer)
+	{
+		Enumeration<AID> keys = answer.keys(); // Let's get the AID
+		HashMap<AID, PositionUpdate> result= new HashMap<AID, PositionUpdate> ();
+		while (keys.hasMoreElements())
+		{
+			AID aid = keys.nextElement();
+			
+			Object obj = agentAnswers.get(aid); // Get Answer
+		    PositionUpdate posUpdate= (PositionUpdate) obj;
+		    result.put(aid, posUpdate);
+		}
+		return result;
+	}
 	
 	
 	
