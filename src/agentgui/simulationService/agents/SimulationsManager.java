@@ -7,6 +7,8 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Set;
 
+import edu.uci.ics.jung.algorithms.util.DiscreteDistribution;
+
 
 
 import agentgui.physical2Denvironment.ontology.Physical2DObject;
@@ -18,6 +20,8 @@ import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.SimulationServiceHelper;
 import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.time.TimeModel;
+import agentgui.simulationService.time.TimeModelDiscrete;
+import agentgui.simulationService.time.TimeModelStroke;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.ServiceException;
@@ -27,9 +31,9 @@ public abstract class SimulationsManager extends Agent {
 	
 	private EnvironmentModel env = null;
 	private boolean running=false;
-	private SimulationServiceHelper simHelper = null;
+	protected SimulationServiceHelper simHelper = null;
 	private AID aid= null;
-	private EnvironmentProviderHelper envHelper = null; 
+	protected EnvironmentProviderHelper envHelper = null; 
 	protected Hashtable<AID, Object> agentAnswers = null;
 	protected int numberOfAgents=0;
 	
@@ -133,6 +137,11 @@ public abstract class SimulationsManager extends Agent {
 	{
 	
 		Object obj=env.getDisplayEnvironment();
+		if(obj==null)
+		{
+			
+			System.out.println("Display Enviroment ist null!");
+		}
 		if(obj instanceof Physical2DEnvironment)
 		{
 			Physical2DEnvironment world=(Physical2DEnvironment) obj;
@@ -157,6 +166,22 @@ public abstract class SimulationsManager extends Agent {
 				}
 			
 			}
+			
+				if(this.env.getTimeModel() instanceof TimeModelDiscrete)
+				{
+				
+					TimeModelDiscrete tm=(TimeModelDiscrete) this.env.getTimeModel(); 
+					tm.step();
+					this.env.setTimeModel(tm);
+				
+				}
+				else
+				{
+					TimeModelStroke ts= (TimeModelStroke) this.env.getTimeModel(); 
+					ts.step();
+					this.env.setTimeModel(ts);
+			   }
+			 
 		}
 		else
 		{
