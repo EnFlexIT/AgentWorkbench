@@ -2,17 +2,22 @@ package agentgui.core.gui.projectwindow.simsetup;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.JPanel;
+
+import org.apache.batik.gvt.event.SelectionEvent;
+import org.apache.batik.gvt.event.SelectionListener;
 
 import agentgui.core.application.Project;
 import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.graphEnvironment.controller.GraphEnvironmentControllerGUI;
 import agentgui.physical2Denvironment.controller.Physical2DEnvironmentControllerGUI;
 
-public class SimulationEnvironment extends JPanel implements Observer{
+public class SimulationEnvironment extends JPanel implements Observer, ActionListener, SelectionListener{
 
 	/**
 	 * 
@@ -82,6 +87,36 @@ public class SimulationEnvironment extends JPanel implements Observer{
 		if(o.equals(project) && arg.equals(StartSetupSelector.SETUP_ENVMODE_CHANGE)){
 			switchEnvironmentMode(project.simSetups.getCurrSimSetup().getEnvironmentMode());
 		}
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void selectionChanged(SelectionEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void selectionCleared(SelectionEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void selectionDone(SelectionEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void selectionStarted(SelectionEvent arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

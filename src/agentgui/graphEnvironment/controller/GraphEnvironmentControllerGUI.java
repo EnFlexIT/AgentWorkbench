@@ -2,26 +2,25 @@ package agentgui.graphEnvironment.controller;
 
 import gasmas.ontology.GridComponent;
 
+import javax.swing.JFileChooser;
+import javax.swing.JSplitPane;
+import javax.swing.JPanel;
+
+import java.awt.GridBagLayout;
+import javax.swing.JScrollPane;
+import java.awt.GridBagConstraints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Vector;
 
-import javax.swing.JFileChooser;
-import javax.swing.JSplitPane;
-import javax.swing.JPanel;
+import javax.swing.JTable;
 import javax.swing.JButton;
-
-import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-
-import agentgui.core.application.Language;
-import agentgui.core.application.Project;
-import agentgui.physical2Denvironment.display.BasicSVGGUI;
-
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.w3c.dom.Document;
@@ -31,12 +30,20 @@ import org.w3c.dom.events.Event;
 import org.w3c.dom.events.EventListener;
 import org.w3c.dom.events.EventTarget;
 
-/**
- * GUI class for EnvironmentController controlling grid simulation projects
- * @author Nils
- *
- */
-public class GraphEnvironmentControllerGUI extends JSplitPane implements Observer, ActionListener {
+import agentgui.core.application.Language;
+import agentgui.core.application.Project;
+import agentgui.physical2Denvironment.display.BasicSVGGUI;
+
+public class GraphEnvironmentControllerGUI extends JSplitPane implements Observer, ActionListener, ListSelectionListener{
+
+	private static final long serialVersionUID = 1L;
+	private JPanel pnlControlls = null;
+	private JScrollPane scpComponentTable = null;
+	private JTable tblComponents = null;
+	private JButton btnLoadGraph = null;
+	private JButton btnSetClasses = null;
+	private BasicSVGGUI svgGUI = null;
+	private GraphEnvironmentController controller = null;
 	/**
 	 * The currently selected SVG element
 	 */
@@ -49,22 +56,7 @@ public class GraphEnvironmentControllerGUI extends JSplitPane implements Observe
 	 * The style attribute used for highlighting selected elements
 	 */
 	private String selectionStyle = "fill:white;stroke:orange;stroke-width:3;stroke-miterlimit:4;stroke-dasharray:none";
-
-	private static final long serialVersionUID = 1L;
-	private JPanel pnlControlls = null;
-	private JButton btnLoadGraph = null;
-	private JButton btnComponentTypes = null;
-	/**
-	 * The component type selection dialog
-	 */
-	private ComponentTypeDialog compTypeDialog = null;
 	
-	private BasicSVGGUI svgGUI = null;
-	/**
-	 * The GraphEnvironmentController this GUI interacts with
-	 */
-	private GraphEnvironmentController controller = null;
-
 	/**
 	 * This is the default constructor
 	 */
@@ -79,24 +71,16 @@ public class GraphEnvironmentControllerGUI extends JSplitPane implements Observe
 	 * @return void
 	 */
 	private void initialize(Project project) {
-		this.setSize(300, 200);
-
-		this.setDividerLocation(150);
+		controller = new GraphEnvironmentController(project);
+		controller.addObserver(this);
+		
+		this.setDividerLocation(200);
 		this.setLeftComponent(getPnlControlls());
 		this.setRightComponent(getSVGGUI());
 		
-		this.controller = new GraphEnvironmentController(project);
-		this.controller.addObserver(this);
-		if(this.controller.getSvgDoc() != null){
+		if(controller.getSvgDoc() != null){
 			this.setSVGDoc(controller.getSvgDoc());
 		}
-	}
-	
-	private BasicSVGGUI getSVGGUI(){
-		if(svgGUI == null){
-			svgGUI = new BasicSVGGUI();
-		}
-		return svgGUI;
 	}
 
 	/**
@@ -106,48 +90,47 @@ public class GraphEnvironmentControllerGUI extends JSplitPane implements Observe
 	 */
 	private JPanel getPnlControlls() {
 		if (pnlControlls == null) {
+			GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
+			gridBagConstraints1.gridheight = 2;
+			gridBagConstraints1.gridwidth = 0;
+			GridBagConstraints gridBagConstraints = new GridBagConstraints();
+			gridBagConstraints.fill = GridBagConstraints.BOTH;
+			gridBagConstraints.gridy = 0;
+			gridBagConstraints.weightx = 1.0;
+			gridBagConstraints.weighty = 1.0;
+			gridBagConstraints.gridheight = 1;
+			gridBagConstraints.gridwidth = 0;
+			gridBagConstraints.gridx = 0;
 			pnlControlls = new JPanel();
-			pnlControlls.setLayout(null);
-			pnlControlls.add(getBtnLoadGraph(), null);
-			pnlControlls.add(getBtnComponentTypes(), null);
+			pnlControlls.setLayout(new GridBagLayout());
+			pnlControlls.add(getScpComponentTable(), gridBagConstraints);
+			pnlControlls.add(getBtnLoadGraph(), gridBagConstraints1);
+			pnlControlls.add(getBtnSetClasses(), new GridBagConstraints());
 		}
 		return pnlControlls;
 	}
 
 	/**
-	 * This method initializes btnLoadGraph	
+	 * This method initializes scpComponentTable	
 	 * 	
-	 * @return javax.swing.JButton	
+	 * @return javax.swing.JScrollPane	
 	 */
-	private JButton getBtnLoadGraph() {
-		if (btnLoadGraph == null) {
-			btnLoadGraph = new JButton();
-			btnLoadGraph.setText(Language.translate("Graph Laden"));
-			btnLoadGraph.setLocation(new Point(10, 10));
-			btnLoadGraph.setSize(new Dimension(120, 26));
-			btnLoadGraph.addActionListener(this);
+	private JScrollPane getScpComponentTable() {
+		if (scpComponentTable == null) {
+			scpComponentTable = new JScrollPane();
+			scpComponentTable.setViewportView(getTblComponents());
 		}
-		return btnLoadGraph;
-	}
-	
-	private JButton getBtnComponentTypes(){
-		if(btnComponentTypes == null){
-			btnComponentTypes = new JButton();
-			btnComponentTypes.setText(Language.translate("Komponenten"));
-			btnComponentTypes.setLocation(new Point(10, 40));
-			btnComponentTypes.setSize(new Dimension(120, 26));
-			btnComponentTypes.addActionListener(this);
-		}
-		return btnComponentTypes;
+		return scpComponentTable;
 	}
 
 	/**
-	 * This method initiates the compTypeDialog
-	 * @return
+	 * This method initializes tblComponents	
+	 * 	
+	 * @return javax.swing.JTable	
 	 */
 	@SuppressWarnings("unchecked")
-	private ComponentTypeDialog getCompTypeDialog(){
-		if(compTypeDialog == null){
+	private JTable getTblComponents() {
+		if (tblComponents == null) {
 			Iterator<GridComponent> components = controller.getGridModel().getComponents().iterator();
 			Vector<Vector<String>> rows = new Vector<Vector<String>>();
 			
@@ -161,19 +144,53 @@ public class GraphEnvironmentControllerGUI extends JSplitPane implements Observe
 				rows.add(compData);
 				
 			}
-			
-			compTypeDialog = new ComponentTypeDialog(rows, this);
+			Vector<String> titles = new Vector<String>();
+			titles.add(Language.translate("Komponente"));
+			titles.add(Language.translate("Typ"));
+			tblComponents = new JTable(rows, titles);
+			tblComponents.getSelectionModel().addListSelectionListener(this);
 		}
-		return compTypeDialog;
+		return tblComponents;
 	}
 
 	/**
-	 *  This method sets the GUIs SVG document.
-	 * @param doc The SVG document 
+	 * This method initializes btnLoadGraph	
+	 * 	
+	 * @return javax.swing.JButton	
 	 */
-	public void setSVGDoc(Document doc){
-		addOnclickHandler(doc.getDocumentElement());
-		this.svgGUI.setSVGDoc(doc);
+	private JButton getBtnLoadGraph() {
+		if (btnLoadGraph == null) {
+			btnLoadGraph = new JButton();
+			btnLoadGraph.setText(Language.translate("Graph Laden"));
+			btnLoadGraph.addActionListener(this);
+		}
+		return btnLoadGraph;
+	}
+
+	/**
+	 * This method initializes btnSetClasses	
+	 * 	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getBtnSetClasses() {
+		if (btnSetClasses == null) {
+			btnSetClasses = new JButton();
+			btnSetClasses.setText(Language.translate("Klassen bestimmen"));
+		}
+		return btnSetClasses;
+	}
+	
+	private BasicSVGGUI getSVGGUI(){
+		if(svgGUI == null){
+			svgGUI = new BasicSVGGUI();
+		}
+		return svgGUI;
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	/**
@@ -181,7 +198,7 @@ public class GraphEnvironmentControllerGUI extends JSplitPane implements Observe
 	 * An element represents a graph node if it is of type g and has an ID like "y.node.{number}"
 	 * @param node A XML node 
 	 */
-	public void addOnclickHandler(Node node){
+	private void addOnclickHandler(Node node){
 		String regex = "^y\\.node\\.\\d+$";		// Matches y.node.<nr>
 		if(node instanceof Element 
 				&& ((Element)node).getTagName().equals("g")
@@ -207,69 +224,72 @@ public class GraphEnvironmentControllerGUI extends JSplitPane implements Observe
 	}
 	
 	/**
-	 * Sets the currently selected SVG element
-	 * @param element The SVG element
+	 *  This method sets the GUIs SVG document.
+	 * @param doc The SVG document 
 	 */
-	private void setSelectedElement(Element element){
-		if(selectedElement != null){
-			svgGUI.getCanvas().getUpdateManager().getUpdateRunnableQueue().invokeLater(new Runnable() {
-				
-				@Override
-				public void run() {
-					selectedElement.setAttributeNS(null, "style", originalStyle);
-					
-				}
-			});
-		}
-		if(element != null){
-			originalStyle = element.getAttributeNS(null, "style");
-			this.selectedElement = element;
-			svgGUI.getCanvas().getUpdateManager().getUpdateRunnableQueue().invokeLater(new Runnable() {
-				
-				@Override
-				public void run() {
-					selectedElement.setAttributeNS(null, "style", selectionStyle);
-				}
-			});
-		}
-	}
-	
-	/**
-	 * This method finds the SVG element corresponding to the graph element with the given ID and selects it
-	 * @param componentID The graph element's ID
-	 */
-	void setSelectedElementByComponentID(String componentID){
-		int number = Integer.parseInt(componentID.substring(1));
-		String svgElementID = "svg"+(number+1)+".NodeBackground";
-		Element svgElement = svgGUI.getSVGDoc().getElementById(svgElementID);
-		setSelectedElement(svgElement);
+	private void setSVGDoc(Document doc){
+		addOnclickHandler(doc.getDocumentElement());
+		this.svgGUI.setSVGDoc(doc);
 	}
 
 	@Override
-	public void update(Observable o, Object arg) {
-		if(o.equals(controller) && arg.equals(GraphEnvironmentController.EVENT_SVG_LOADED)){
-			this.setSVGDoc(controller.getSvgDoc());
-		}
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		// Loading a new graph
-		if(e.getSource().equals(getBtnLoadGraph())){
+	public void actionPerformed(ActionEvent event) {
+		if(event.getSource().equals(getBtnLoadGraph())){
 			JFileChooser graphFC = new JFileChooser();
 			graphFC.setFileFilter(new FileNameExtensionFilter(Language.translate("GraphML-Dateien"), "graphml"));
 			if(graphFC.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
 				File graphMLFile = graphFC.getSelectedFile();
 				this.controller.loadGridModel(graphMLFile);
 			}
-		// Show the compTypeDialog
-		}else if(e.getSource().equals(getBtnComponentTypes())){
-			getCompTypeDialog().setVisible(true);
-		// Handle type changes
-		}else if(e.getSource().equals(getCompTypeDialog().getCbTypeEditor())){
-			System.out.println("Die Änderung des Komponententyps ist noch nicht implementiert");
 		}
+		
+	}
+
+	@Override
+	public void valueChanged(ListSelectionEvent e) {
+		String compID = (String) tblComponents.getModel().getValueAt(e.getFirstIndex(), 0);
+		setSelectedElementByComponentID(compID);
 	}
 	
+	/**
+	 * Sets the currently selected SVG element
+	 * @param element The SVG element
+	 */
+	private void setSelectedElement(Element element){
+		svgGUI.getCanvas().getUpdateManager().getUpdateRunnableQueue().invokeLater(new ElementSelector(element));
+	}
+
+	/**
+	 * This method finds the SVG element corresponding to the graph element with the given ID and selects it
+	 * @param componentID The graph element's ID
+	 */
+	private void setSelectedElementByComponentID(String componentID){
+		int number = Integer.parseInt(componentID.substring(1));
+		String svgElementID = "svg"+(number+1)+".NodeBackground";
+		Element svgElement = svgGUI.getSVGDoc().getElementById(svgElementID);
+		setSelectedElement(svgElement);
+	}
+	
+	private class ElementSelector implements Runnable{
+		
+		private Element element;
+		
+		public ElementSelector(Element element){
+			this.element = element;
+		}
+
+		@Override
+		public void run() {
+			if(selectedElement != null){
+				selectedElement.setAttributeNS(null, "style", originalStyle);
+			}
+			if(element != null){
+				originalStyle = element.getAttributeNS(null, "style");
+				element.setAttributeNS(null, "style", selectionStyle);
+				selectedElement = element;
+			}
+		}
+		
+	}
 
 }
