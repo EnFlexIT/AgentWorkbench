@@ -42,6 +42,8 @@ public class GraphEnvironmentControllerGUI extends JSplitPane implements Observe
 	private JTable tblComponents = null;
 	private JButton btnLoadGraph = null;
 	private JButton btnSetClasses = null;
+	
+	private ComponentSettingsDialog csDialog = null;
 	private BasicSVGGUI svgGUI = null;
 	private GraphEnvironmentController controller = null;
 	/**
@@ -180,6 +182,14 @@ public class GraphEnvironmentControllerGUI extends JSplitPane implements Observe
 		return btnSetClasses;
 	}
 	
+	private ComponentSettingsDialog getCsDialog(){
+		if(csDialog == null){
+			csDialog = new ComponentSettingsDialog();
+			csDialog.setOntologyTreeModel(controller.getProject().ontologies4Project.getOntologyTree());
+		}
+		return csDialog;
+	}
+	
 	private BasicSVGGUI getSVGGUI(){
 		if(svgGUI == null){
 			svgGUI = new BasicSVGGUI();
@@ -249,6 +259,8 @@ public class GraphEnvironmentControllerGUI extends JSplitPane implements Observe
 	public void valueChanged(ListSelectionEvent e) {
 		String compID = (String) tblComponents.getModel().getValueAt(e.getFirstIndex(), 0);
 		setSelectedElementByComponentID(compID);
+		getCsDialog().setVisible(true);
+		getCsDialog().setSelectedComponent(controller.getGridModel().getComponent(compID));
 	}
 	
 	/**
