@@ -177,14 +177,14 @@ public class GraphEnvironmentControllerGUI extends JSplitPane implements Observe
 	private JButton getBtnSetClasses() {
 		if (btnSetClasses == null) {
 			btnSetClasses = new JButton();
-			btnSetClasses.setText(Language.translate("Klassen bestimmen"));
+			btnSetClasses.setText(Language.translate("Agenten-Klassen"));
 		}
 		return btnSetClasses;
 	}
 	
 	private ComponentSettingsDialog getCsDialog(){
 		if(csDialog == null){
-			csDialog = new ComponentSettingsDialog();
+			csDialog = new ComponentSettingsDialog(this);
 			csDialog.setOntologyTreeModel(controller.getProject().ontologies4Project.getOntologyTree());
 		}
 		return csDialog;
@@ -221,7 +221,8 @@ public class GraphEnvironmentControllerGUI extends JSplitPane implements Observe
 					String svgID = ((Element)evt.getCurrentTarget()).getAttributeNS(null, "id");
 					String componentID = "n"+svgID.substring(svgID.lastIndexOf('.')+1);
 					GridComponent selectedComponent = controller.getGridModel().getComponent(componentID);
-					System.out.println(selectedComponent.getClass().getSimpleName());
+					getCsDialog().setVisible(true);
+					getCsDialog().setSelectedComponent(selectedComponent);
 					setSelectedElement((Element)evt.getTarget());
 				}
 			}, false);
@@ -263,11 +264,16 @@ public class GraphEnvironmentControllerGUI extends JSplitPane implements Observe
 		getCsDialog().setSelectedComponent(controller.getGridModel().getComponent(compID));
 	}
 	
+	void setComponentType(){
+		System.out.println("Die Knotentyp-Änderung ist noch nicht Implementiert.");
+		setSelectedElement(null);
+	}
+	
 	/**
 	 * Sets the currently selected SVG element
 	 * @param element The SVG element
 	 */
-	private void setSelectedElement(Element element){
+	void setSelectedElement(Element element){
 		svgGUI.getCanvas().getUpdateManager().getUpdateRunnableQueue().invokeLater(new ElementSelector(element));
 	}
 

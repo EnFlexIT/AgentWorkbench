@@ -12,6 +12,8 @@ import java.awt.GridBagConstraints;
 import javax.swing.JSplitPane;
 import javax.swing.JButton;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.HashMap;
 
 import javax.swing.JTree;
@@ -25,7 +27,7 @@ import javax.swing.tree.TreeSelectionModel;
 import agentgui.core.application.Language;
 import agentgui.core.gui.projectwindow.OntologyTabClassView;
 
-public class ComponentSettingsDialog extends JFrame {
+public class ComponentSettingsDialog extends JFrame implements ActionListener{
 
 	private static final long serialVersionUID = 1L;
 	private JPanel jContentPane = null;
@@ -37,11 +39,14 @@ public class ComponentSettingsDialog extends JFrame {
 	
 	private HashMap<String, TreePath> selectionPathDictionary = null;
 	
+	private GraphEnvironmentControllerGUI parent = null;
+	
 	/**
 	 * This is the default constructor
 	 */
-	public ComponentSettingsDialog() {
+	public ComponentSettingsDialog(GraphEnvironmentControllerGUI parent) {
 		super();
+		this.parent = parent;
 		initialize();
 	}
 
@@ -122,6 +127,7 @@ public class ComponentSettingsDialog extends JFrame {
 		if (jButtonConfirm == null) {
 			jButtonConfirm = new JButton();
 			jButtonConfirm.setText(Language.translate("Übernehmen"));
+			jButtonConfirm.addActionListener(this);
 		}
 		return jButtonConfirm;
 	}
@@ -135,6 +141,7 @@ public class ComponentSettingsDialog extends JFrame {
 		if (jButtonCancel == null) {
 			jButtonCancel = new JButton();
 			jButtonCancel.setText(Language.translate("Abbrechen"));
+			jButtonCancel.addActionListener(this);
 		}
 		return jButtonCancel;
 	}
@@ -182,6 +189,17 @@ public class ComponentSettingsDialog extends JFrame {
 		}
 		
 	}
-	
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if(e.getSource().equals(getJButtonConfirm())){
+			parent.setComponentType();
+			this.setVisible(false);
+		}else if(e.getSource().equals(getJButtonCancel())){
+			parent.setSelectedElement(null);
+			this.setVisible(false);
+		}
+		
+	}
 
 }
