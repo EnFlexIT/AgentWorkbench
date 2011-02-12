@@ -20,13 +20,13 @@ public class OntologySingleClassDescription {
 	}
 	
 	/**
-	 * @param clazz the clazz to set
+	 * @param clazz the class to set
 	 */
 	public void setClazz(Class<?> clazz) {
 		this.clazz = clazz;
 	}
 	/**
-	 * @return the clazz
+	 * @return the class
 	 */
 	public Class<?> getClazz() {
 		return clazz;

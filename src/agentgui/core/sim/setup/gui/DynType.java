@@ -3,26 +3,31 @@ package agentgui.core.sim.setup.gui;
 import javax.swing.JTextField;
 
 public class DynType {
+	
+	public static final String typeClass = "class";
+	public static final String typeInnerClass = "innerClass";
+	public static final String typeInnerClassType = "innerClassType";
+	public static final String typeRawType = "rawType";
+	
 	String typeName = "";
 	String className = "";
 	String fieldName = "";
 	String innerClassType = "";
-	public String getInnerClassType() {
-		return innerClassType;
-	}
-
-	public void setInnerClassType(String innerClassType) {
-		this.innerClassType = innerClassType;
-	}
 
 	JTextField fieldValue;
 		
 	public DynType(String typeName, String fieldOrClassName){
 		this.typeName = typeName;
-		if(typeName.equalsIgnoreCase("rawType") || typeName.equalsIgnoreCase("innerClassType"))
+		if(typeName.equalsIgnoreCase(typeRawType) || typeName.equalsIgnoreCase(typeInnerClassType))
 			this.fieldName = fieldOrClassName;
 		else
 			this.className = fieldOrClassName;
+	}
+	
+	public DynType(String typeName, String fieldName, JTextField fieldValue) {
+		this.typeName = typeName;
+		this.fieldName = fieldName;
+		this.fieldValue = fieldValue;
 	}
 	
 	public String getClassName() {
@@ -33,10 +38,12 @@ public class DynType {
 		this.className = className;
 	}
 
-	public DynType(String typeName, String fieldName, JTextField fieldValue) {
-		this.typeName = typeName;
-		this.fieldName = fieldName;
-		this.fieldValue = fieldValue;
+	public String getInnerClassType() {
+		return innerClassType;
+	}
+
+	public void setInnerClassType(String innerClassType) {
+		this.innerClassType = innerClassType;
 	}
 	
 	public String getTypeName() {
@@ -64,18 +71,18 @@ public class DynType {
 	}
 
 	public boolean isClass(){
-		return typeName.equalsIgnoreCase("class");
+		return typeName.equalsIgnoreCase(typeClass);
 	}
 	
 	public boolean isInnerClass(){
-		return typeName.equalsIgnoreCase("innerClass");
+		return typeName.equalsIgnoreCase(typeInnerClass);
 	}
 	
 	public boolean isInnerClassType(){
-		return typeName.equalsIgnoreCase("innerClassType");
+		return typeName.equalsIgnoreCase(typeInnerClassType);
 	}
 	
 	public boolean isRawType(){
-		return typeName.equalsIgnoreCase("rawType");
+		return typeName.equalsIgnoreCase(typeRawType);
 	}
 }

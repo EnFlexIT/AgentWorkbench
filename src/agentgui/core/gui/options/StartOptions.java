@@ -73,7 +73,7 @@ public class StartOptions extends JPanel implements ActionListener {
 		jRadioButtonRunAsServer.setText(Language.translate("Server-Dienst (Master / Slave)"));
 		jLabelServerHeader.setText(Language.translate("Server-Konfiguration"));
 		jCheckBoxAutoStart.setText(" " + Language.translate("Server-Dienst beim Programmstart automatisch initialisieren"));
-		jLabelJadeConfig.setText( Application.RunInfo.getApplicationTitle() + " " + Language.translate("Hauptserver (Server.Master)") );
+		jLabelJadeConfig.setText( Application.RunInfo.getApplicationTitle() + " " + Language.translate("Hauptserver (server.master)") );
 		jLabelDBtitle.setText(Language.translate("Datenbank für das Hauptserver-Modul"));
 		
 	}
@@ -250,7 +250,7 @@ public class StartOptions extends JPanel implements ActionListener {
 			gridBagConstraints1.gridwidth = 2;
 			gridBagConstraints1.gridy = 3;
 			jLabelJadeConfig = new JLabel();
-			jLabelJadeConfig.setText("Agent.GUI Hauptserver (Server.Master)");
+			jLabelJadeConfig.setText("Agent.GUI Hauptserver (server.master)");
 			jLabelJadeConfig.setFont(new Font("Dialog", Font.BOLD, 12));
 			GridBagConstraints gridBagConstraints = new GridBagConstraints();
 			gridBagConstraints.gridx = 0;

@@ -3,11 +3,11 @@
     <agentSetup/>
     <distribution>
         <doDynamicLoadBalalncing>false</doDynamicLoadBalalncing>
-        <doStaticLoadBalalncing>false</doStaticLoadBalalncing>
+        <doStaticLoadBalalncing>true</doStaticLoadBalalncing>
         <dynamicLoadBalancingClass>agentgui.simulationService.balancing.DynamicLoadBalancing</dynamicLoadBalancingClass>
-        <numberOfAgents>0</numberOfAgents>
-        <numberOfContainer>0</numberOfContainer>
-        <staticLoadBalancingClass>agentgui.simulationService.balancing.StaticLoadBalancing</staticLoadBalancingClass>
+        <numberOfAgents>1000</numberOfAgents>
+        <numberOfContainer>1</numberOfContainer>
+        <staticLoadBalancingClass>gol.SimService.balancing.StartAndBalancing</staticLoadBalancingClass>
         <useUserThresholds>false</useUserThresholds>
         <userThresholds>
             <thCpuH>80</thCpuH>

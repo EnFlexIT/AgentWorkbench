@@ -11,7 +11,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import agentgui.core.application.Project;
 
-public class OntologyClass extends Object implements Serializable{
+public class OntologyClass extends Object implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 

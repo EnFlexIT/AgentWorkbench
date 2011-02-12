@@ -248,7 +248,7 @@ public class Ontologies4Project extends HashMap<String, OntologyClass> {
 	 * 
 	 * @author Christian Derksen - DAWIS - ICB - University Duisburg-Essen
 	 */
-	private class ErrorCheck{
+	private class ErrorCheck {
 
 		private Ontologies4Project currProjectOntology;
 		

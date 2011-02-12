@@ -47,7 +47,7 @@ public class DynForm extends JPanel {
 	
 	private static final long serialVersionUID = 7942028680794127910L;
 
-	private boolean debug = false;
+	private boolean debug = true;
 	
 	private Project currProject = null;
 	private String currAgentReference = null;
@@ -56,9 +56,11 @@ public class DynForm extends JPanel {
 
 	private JButton submitButton = null;
 	private int einrueckungProUntereEbene = 5;
-	private List<String> innerObjects = new ArrayList<String>();
-
-	private DefaultTreeModel objectTree = new DefaultTreeModel(new DefaultMutableTreeNode("Root"));
+//	private List<String> innerObjects = new ArrayList<String>();
+//	private List<String> outerObjects = new ArrayList<String>();
+	
+	private DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("Root");
+	private DefaultTreeModel objectTree = new DefaultTreeModel(rootNode);
 	
 	/**
 	 * Constructor of this class
@@ -99,23 +101,24 @@ public class DynForm extends JPanel {
 		Vector<Integer> v = new Vector<Integer>(startObjectList.keySet()); 
 		Collections.sort(v);
 		
-		// --- Iterate over the available Start-Objects --- //
+		// --- Maybe a debug print to the console ---------
+		if (debug==true && v.size()!=0) {
+			System.out.println("Creating GUI");	
+		}	
+		
+		// --- Iterate over the available Start-Objects ---
 		Iterator<Integer> it = v.iterator();
 		while (it.hasNext()) {
 			
 			Integer startPosition = it.next();
 			String startObjectClass = startObjectList.get(startPosition);
-			startObjectPackage = startObjectClass.substring(0, startObjectClass.lastIndexOf("."));
+			this.startObjectPackage = startObjectClass.substring(0, startObjectClass.lastIndexOf("."));
 			String startObjectClassName = startObjectClass.substring(startObjectClass.lastIndexOf(".") + 1, startObjectClass.length());
 			
-			// --- Get the Infos about the slots -------------------
+			// --- Get the info about the slots --------------------
 			OntologySingleClassDescription osc = currProject.ontologies4Project.getSlots4ClassAsObject(startObjectClass);
-			if (debug==true) {
-				System.out.println("Creating GUI");	
-			}	
-			
 			if(osc!=null) {
-				this.createGUI(osc, startObjectClassName, this, 0, (DefaultMutableTreeNode) objectTree.getRoot());
+				this.createGUI(osc, startObjectClassName, this, 0, (DefaultMutableTreeNode) rootNode);
 			} else {
 				System.out.println("Could not get OntologySingleClassDescription for "+startObjectClass);
 			}
@@ -366,10 +369,11 @@ public class DynForm extends JPanel {
 				
 				// --- reset the innerObjects and add the actual (outer) class to it
 				// --- this is necessary in order to handle self calling infinite recursion
-				innerObjects.clear();
-				innerObjects.add(this.startObjectPackage+"."+startObjectClassName);
+//				innerObjects.clear();
+//				innerObjects.add(this.startObjectPackage+"."+startObjectClassName);
 				
-				DynType dynType = new DynType("class",this.startObjectPackage+"."+startObjectClassName);
+				// --- Define a node for current class ------------------
+				DynType dynType = new DynType(DynType.typeClass, this.startObjectPackage+"."+startObjectClassName);
 				DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(dynType);
 				node.add(newNode);
 				node = newNode;
@@ -401,7 +405,7 @@ public class DynForm extends JPanel {
 						String clazz = dataItemVarType.substring(12);
 						if(objectAlreadyDisplayed(this.startObjectPackage+"."+clazz) == false) {
 							
-							innerObjects.add(this.startObjectPackage+"."+clazz);
+//							innerObjects.add(this.startObjectPackage+"."+clazz);
 							//DynType dynType = new DynType("innerClass",this.startObjectPackage+"."+clazz);
 							//DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(dynType);
 							//node.add(newNode);
@@ -429,11 +433,11 @@ public class DynForm extends JPanel {
 
 	public boolean objectAlreadyDisplayed(String objectClass){
 		String objects = "";
-		for (String elem : innerObjects) {
-			objects +=  " | " + elem;
-			if(elem.equals(objectClass))
-				return true;
-		}
+//		for (String elem : innerObjects) {
+//			objects +=  " | " + elem;
+//			if(elem.equals(objectClass))
+//				return true;
+//		}
 		return false;
 	}
 

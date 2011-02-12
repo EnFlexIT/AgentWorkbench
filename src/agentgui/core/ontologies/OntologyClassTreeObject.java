@@ -7,10 +7,9 @@ import java.util.Vector;
 
 import javax.swing.table.DefaultTableModel;
 
+import agentgui.core.common.Sorter;
 import agentgui.core.reflection.ReflectClass;
 import agentgui.core.reflection.ReflectClass.Slot;
-
-
 
 
 public class OntologyClassTreeObject extends Object {
@@ -26,6 +25,8 @@ public class OntologyClassTreeObject extends Object {
 	private boolean isAAgentAction = false;
 	private boolean isAPredicate = false;
 	
+	private OntologyClassTreeObject parentOntologyClassTreeObject = null;
+		
 	/**
 	 * Defines the Class belonging to the represented node
 	 * @param Clazz
@@ -84,7 +85,7 @@ public class OntologyClassTreeObject extends Object {
 		return Reference.substring( Reference.lastIndexOf(".")+1 );
 	}
 	/**
-	 * Refurns the full class-reference of the current ontology-sub-class
+	 * Returns the full class-reference of the current ontology-sub-class
 	 * @return
 	 */
 	public String getClassReference() {
@@ -101,7 +102,7 @@ public class OntologyClassTreeObject extends Object {
 	/**
 	 * This method returns the instance of the OntologyClass which
 	 * belongs to the current Tree-Object. 
-	 * Here, the basic informaions about the Ontology are available!
+	 * Here, the basic informations about the Ontology are available!
 	 * @return
 	 */
 	public OntologyClass getOntologyClass() {
@@ -165,8 +166,22 @@ public class OntologyClassTreeObject extends Object {
 	    	rowData.add( CurrSlot.VarType );
 	    	rowData.add( CurrSlot.OtherFacts );
 	    	tm4s.addRow(rowData);
-	    }		
-		return tm4s;		
+	    }	
+	    
+	    // ----------------------------------------------------------
+	    // --- Are there slots from the parent Node? ----------------
+	    // ----------------------------------------------------------
+	    if (parentOntologyClassTreeObject!=null) {
+	    	DefaultTableModel subTBmodel = parentOntologyClassTreeObject.getTableModel4Slot();
+	    	Vector<?> subDataVector = subTBmodel.getDataVector();
+	    	for (int i = 0; i < subDataVector.size(); i++) {
+	    		Vector<?> rowVector = (Vector<?>) subDataVector.get(i);
+	    		tm4s.addRow(rowVector);
+			}
+	    	Sorter.sortTableModel(tm4s, 0);
+	    }
+	    // ----------------------------------------------------------
+	    return tm4s;		
 	}
 	/**
 	 * This returns the a ArrayList of Slots for a single
@@ -214,6 +229,16 @@ public class OntologyClassTreeObject extends Object {
 	    	// --- An Auflistung anfügen ----------------------------
 	    	ocd.osdArr.add(osd);
 	    }		
+	    
+	    // ----------------------------------------------------------
+	    // --- Are there slots from the parent Node? ----------------
+	    // ----------------------------------------------------------
+	    if (parentOntologyClassTreeObject!=null) {
+	    	OntologySingleClassDescription subOCD = parentOntologyClassTreeObject.getClassDescription();
+	    	ocd.osdArr.addAll(subOCD.osdArr);
+	    	Sorter.sortSlotDescriptionArray(ocd.osdArr);
+	    }
+	    // ----------------------------------------------------------
 		return ocd;
 	}
 	
@@ -253,4 +278,18 @@ public class OntologyClassTreeObject extends Object {
 	public boolean isPredicate() {
 		return isAPredicate;
 	}
+	
+	/**
+	 * @param parentOntologyClassTreeObject the parentOntologyClassTreeObject to set
+	 */
+	public void setParentOntologyClassTreeObject(OntologyClassTreeObject parentOntologyClassTreeObject) {
+		this.parentOntologyClassTreeObject = parentOntologyClassTreeObject;
+	}
+	/**
+	 * @return the parentOntologyClassTreeObject
+	 */
+	public OntologyClassTreeObject getParentOntologyClassTreeObject() {
+		return parentOntologyClassTreeObject;
+	}
+	
 }

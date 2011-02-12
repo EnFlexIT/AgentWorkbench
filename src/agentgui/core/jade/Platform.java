@@ -284,8 +284,11 @@ public class Platform extends Object {
 		MAS_ContainerLocal.removeAllElements();
 		MASmc = null;
 		MASrt = null;
+		
 		Application.setStatusJadeRunning(false);
-		Application.MainWindow.setSimulationReady2Start();
+		if (Application.MainWindow!=null) {
+			Application.MainWindow.setSimulationReady2Start();
+		}
 		
 	}
 	/**

@@ -19,8 +19,8 @@ public class OntologyClassVocabulary extends Hashtable<String, String> implement
 
 	
 	/**
-	 * Initialize the class, which holds the complete vocabulary
-	 * of the current Ontolog inside of a Hashtable
+	 * Initialise the class, which holds the complete vocabulary
+	 * of the current Ontology inside of a Hashtable
 	 * @param Clazz
 	 */
 	public OntologyClassVocabulary (Class<?> Clazz) {
@@ -91,7 +91,7 @@ public class OntologyClassVocabulary extends Hashtable<String, String> implement
 	 * @param Node
 	 * @return
 	 */
-	public Hashtable<String, String> getSlots( Class<?> OntoClass  ) {
+	public Hashtable<String, String> getSlots(Class<?> OntoClass) {
 		String Reference = OntoClass.getName();
 		String FilterFor = Reference.substring( Reference.lastIndexOf(".")+1 );
 		return getSlots(FilterFor);

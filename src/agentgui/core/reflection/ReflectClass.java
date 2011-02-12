@@ -64,14 +64,14 @@ public class ReflectClass extends Object {
 		public String OtherFacts = null;
 		
 		/**
-		 * Initilize this Sub-Class
+		 * Initialise this Sub-Class
 		 */
 		public Slot(String CurrSlot) {
 			SlotName = CurrSlot;
 			this.initialize();			
 		}
 		/**
-		 * retruns the name of the current slot
+		 * returns the name of the current slot
 		 */
 		public String toString(){
 			return SlotName;
