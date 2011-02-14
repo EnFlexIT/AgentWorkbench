@@ -9,9 +9,9 @@ import jade.core.*;
    * This is the abstract superclass for any kind of grid component.
 * Protege name: GridComponent
 * @author ontology bean generator
-* @version 2011/01/27, 22:34:19
+* @version 2011/02/13, 20:28:19
 */
-public class GridComponent implements Concept {
+public abstract class GridComponent implements Concept {
 
    /**
 * Protege name: position1

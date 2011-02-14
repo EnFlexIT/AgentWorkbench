@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Observable;
 import java.util.Vector;
+import java.util.HashMap;
 
 import javax.swing.JDesktopPane;
 import javax.swing.JOptionPane;
@@ -99,6 +100,11 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	@XmlElement(name="jadeConfiguration")
 	public PlatformJadeConfig JadeConfiguration = new PlatformJadeConfig();
 	
+	private Object userObject = null;
+	
+	private HashMap<String, String> ontoClassHash = null;
+	
+	private HashMap<String, String> agentClassHash = null;
 	
 	/**
 	 * Default-Constructor
@@ -202,7 +208,9 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 			this.simSetups.setupSave();
 			
 			// --- Speichern von Umgebung und SVG ---------
-			this.physical2DEnvironmentController.save();
+			if(physical2DEnvironmentController != null){
+				this.physical2DEnvironmentController.save();
+			}
 			
 			isUnsaved = false;			
 		} 
@@ -598,6 +606,47 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 			}
 		}
 		this.setChangedAndNotify("projectResources");
+	}
+
+	/**
+	 * @return the userObject
+	 */
+	public Object getUserObject() {
+		return userObject;
+	}
+
+	/**
+	 * @param userObject the userObject to set
+	 */
+	public void setUserObject(Object userObject) {
+		this.userObject = userObject;
+	}
+
+	/**
+	 * @param ontoClassHash the userObject to set
+	 */
+	public void setOntoClassHash(HashMap<String, String> ontoClassHash) {
+		this.ontoClassHash = ontoClassHash;
+	}
+	/**
+	 * @return the userObject
+	 */
+	public HashMap<String, String> getOntoClassHash() {
+		return ontoClassHash;
+	}
+
+	/**
+	 * @param agentClassHash the agentClassHash to set
+	 */
+	public void setAgentClassHash(HashMap<String, String> agentClassHash) {
+		this.agentClassHash = agentClassHash;
+	}
+
+	/**
+	 * @return the agentClassHash
+	 */
+	public HashMap<String, String> getAgentClassHash() {
+		return agentClassHash;
 	}
 	
 }

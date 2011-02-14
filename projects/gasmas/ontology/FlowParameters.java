@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: FlowParameters
 * @author ontology bean generator
-* @version 2011/01/27, 22:34:19
+* @version 2011/02/13, 20:28:19
 */
 public class FlowParameters implements Concept {
 
@@ -24,36 +24,14 @@ public class FlowParameters implements Concept {
    }
 
    /**
-* Protege name: flow
+* Protege name: reynoldsNumber
    */
-   private float flow;
-   public void setFlow(float value) { 
-    this.flow=value;
+   private int reynoldsNumber;
+   public void setReynoldsNumber(int value) { 
+    this.reynoldsNumber=value;
    }
-   public float getFlow() {
-     return this.flow;
-   }
-
-   /**
-* Protege name: massFlow
-   */
-   private float massFlow;
-   public void setMassFlow(float value) { 
-    this.massFlow=value;
-   }
-   public float getMassFlow() {
-     return this.massFlow;
-   }
-
-   /**
-* Protege name: pressure
-   */
-   private float pressure;
-   public void setPressure(float value) { 
-    this.pressure=value;
-   }
-   public float getPressure() {
-     return this.pressure;
+   public int getReynoldsNumber() {
+     return this.reynoldsNumber;
    }
 
    /**
@@ -68,14 +46,36 @@ public class FlowParameters implements Concept {
    }
 
    /**
-* Protege name: reynoldsNumber
+* Protege name: pressure
    */
-   private int reynoldsNumber;
-   public void setReynoldsNumber(int value) { 
-    this.reynoldsNumber=value;
+   private float pressure;
+   public void setPressure(float value) { 
+    this.pressure=value;
    }
-   public int getReynoldsNumber() {
-     return this.reynoldsNumber;
+   public float getPressure() {
+     return this.pressure;
+   }
+
+   /**
+* Protege name: massFlow
+   */
+   private float massFlow;
+   public void setMassFlow(float value) { 
+    this.massFlow=value;
+   }
+   public float getMassFlow() {
+     return this.massFlow;
+   }
+
+   /**
+* Protege name: flow
+   */
+   private float flow;
+   public void setFlow(float value) { 
+    this.flow=value;
+   }
+   public float getFlow() {
+     return this.flow;
    }
 
 }

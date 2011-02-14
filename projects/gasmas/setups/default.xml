@@ -34,7 +34,7 @@
     <agentListModel>
         <size>2</size>
     </agentListModel>
-    <environmentFileName>default.graphml</environmentFileName>
+    <environmentFileName>\default.graphml</environmentFileName>
     <environmentMode>gridEnvironment</environmentMode>
-    <svgFileName>default.svg</svgFileName>
+    <svgFileName>\default.svg</svgFileName>
 </simulationSetup>

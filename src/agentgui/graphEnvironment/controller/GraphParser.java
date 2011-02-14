@@ -3,6 +3,7 @@ package agentgui.graphEnvironment.controller;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.HashMap;
 
 import org.apache.commons.collections15.Transformer;
 
@@ -15,17 +16,13 @@ import edu.uci.ics.jung.io.graphml.GraphMLReader2;
 import edu.uci.ics.jung.io.graphml.GraphMetadata;
 import edu.uci.ics.jung.io.graphml.HyperEdgeMetadata;
 import edu.uci.ics.jung.io.graphml.NodeMetadata;
-import gasmas.ontology.Branch;
-import gasmas.ontology.Compressor;
-import gasmas.ontology.Entry;
-import gasmas.ontology.Exit;
 import gasmas.ontology.GridComponent;
 import gasmas.ontology.GridLink;
-import gasmas.ontology.Pipe;
-import gasmas.ontology.Storage;
-import gasmas.ontology.Valve;
 
 public class GraphParser {
+	
+	private HashMap<String, String> ontoClasses = null;
+	
 	// Transformer object generating the graph
 	Transformer<GraphMetadata, SparseGraph<GridComponent, GridLink>> graphTransformer = new Transformer<GraphMetadata, SparseGraph<GridComponent, GridLink>>() {
 
@@ -42,36 +39,21 @@ public class GraphParser {
 		public GridComponent transform(NodeMetadata nmd) {
 			GridComponent newNode = null;
 			String type = nmd.getProperty("d5");	// The data field from yED
-//			System.out.println("Processing node "+nmd.getId()+" of type "+type);
-			switch(GasGridElements.getElement(type)){
-				case BRANCH:
-					newNode = new Branch();
-				break;
-				
-				case COMPRESSOR:
-					newNode = new Compressor();
-				break;
-				
-				case PIPE:
-					newNode = new Pipe();
-				break;
-				
-				case EXIT:
-					newNode = new Exit();
-				break;
-				
-				case ENTRY:
-					newNode = new Entry();
-				break;
-				
-				case STORAGE:
-					newNode = new Storage();
-				break;
-				
-				case VALVE:
-					newNode = new Valve();
-				break;
-				
+			String className = ontoClasses.get(type);
+			if(className != null){
+				try {
+					Class<?> ontoClass = Class.forName(className);
+					newNode = (GridComponent) ontoClass.newInstance();
+				} catch (ClassNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InstantiationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 			if(newNode != null){
 				newNode.setId(nmd.getId());
@@ -102,6 +84,10 @@ public class GraphParser {
 			return null;
 		}
 	};
+	
+	public GraphParser(HashMap<String, String> ontoClasses){
+		this.ontoClasses = ontoClasses;
+	}
 	
 	SparseGraph<GridComponent, GridLink> getGraph(File graphMLFile){
 		

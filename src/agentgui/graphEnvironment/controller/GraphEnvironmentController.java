@@ -3,6 +3,7 @@ package agentgui.graphEnvironment.controller;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -40,10 +41,37 @@ public class GraphEnvironmentController extends Observable implements
 	}
 	
 	
-	public static final String EVENT_SVG_LOADED = "svg loaded";
+	public static final Integer EVENT_SVG_LOADED = 0;
 	
-	public static final String EVENT_GRAPH_LOADED = "graph loaded";
+	public static final Integer EVENT_GRAPH_LOADED = 1;
 	
+	public static final Integer EVENT_ONTOLOGY_CLASSES_SET = 2;
+	
+	public static final Integer EVENT_AGENT_CLASSES_SET = 3;
+	
+	public HashMap<String, String> getOntologyClasses() {
+		return project.getOntoClassHash();
+	}
+
+	public void setOntologyClasses(HashMap<String, String> ontologyClasses) {
+		project.setOntoClassHash(ontologyClasses);
+		project.isUnsaved=true;
+		setChanged();
+		notifyObservers(EVENT_ONTOLOGY_CLASSES_SET);
+	}
+
+	public HashMap<String, String> getAgentClasses() {
+		return project.getAgentClassHash();
+	}
+
+	public void setAgentClasses(HashMap<String, String> agentClasses) {
+		project.setAgentClassHash(agentClasses);
+		project.isUnsaved=true;
+		setChanged();
+		notifyObservers(EVENT_AGENT_CLASSES_SET);
+	}
+
+
 	private Project project = null;
 	
 	private Document svgDoc = null;
@@ -86,6 +114,8 @@ public class GraphEnvironmentController extends Observable implements
 		}
 		
 		this.gridModel = new GridModel(loadGraphFile(new File(graphMLTargetPath)));
+		setChanged();
+		notifyObservers(EVENT_GRAPH_LOADED);
 		if(svgFound){
 			this.svgDoc = loadSVGFile(new File(svgTargetPath));
 			if(this.svgDoc != null){
@@ -93,6 +123,7 @@ public class GraphEnvironmentController extends Observable implements
 				notifyObservers(EVENT_SVG_LOADED);
 			}
 		}
+		project.isUnsaved = true;
 	}
 	
 	/**
@@ -101,18 +132,26 @@ public class GraphEnvironmentController extends Observable implements
 	public void loadFiles(){
 		String graphFileName = project.simSetups.getCurrSimSetup().getEnvironmentFileName();
 		if(graphFileName != null && graphFileName != ""){
-			setGridModel(loadGraphFile(new File(project.getEnvSetupPath()+File.separator+graphFileName)));
+			File graphFile = new File(project.getEnvSetupPath()+File.separator+graphFileName);
+			if(graphFile.exists()){
+				setGridModel(loadGraphFile(graphFile));
+			}else{
+				System.err.println(Language.translate("Graph-Datei")+" "+graphFile.getName()+" "+Language.translate(" nicht gefunden!"));
+			}
 		}else{
-			System.out.println("Keine Graph-Datei definiert!");
+			System.out.println(Language.translate("Keine Graph-Datei definiert!"));
 		}
 		
 		String svgFileName = project.simSetups.getCurrSimSetup().getSvgFileName();
 		if(svgFileName != null && svgFileName != ""){
-			this.svgDoc = loadSVGFile(new File(project.getEnvSetupPath()+File.separator+svgFileName));
-//			if(this.svgDoc != null){
-//				setChanged();
-//				notifyObservers(EVENT_SVG_LOADED);
-//			}
+			File svgFile = new File(project.getEnvSetupPath()+File.separator+svgFileName);
+			if(svgFile.exists()){
+				this.svgDoc = loadSVGFile(svgFile);
+			}else{
+				System.err.println(Language.translate("SVG-Datei")+" "+svgFile.getName()+" "+Language.translate(" nicht gefunden!"));
+			}
+		}else{
+			System.out.println(Language.translate("Keine SVG-Datei definiert!"));
 		}
 	}
 	
@@ -123,7 +162,7 @@ public class GraphEnvironmentController extends Observable implements
 	 */
 	private Graph<GridComponent, GridLink> loadGraphFile(File graphMLFile){
 		Graph<GridComponent, GridLink> graph = null;
-		GraphParser gp = new GraphParser();
+		GraphParser gp = new GraphParser(project.getOntoClassHash());
 		graph = gp.getGraph(graphMLFile);
 		System.out.println("Lade Graph-Datei "+graphMLFile.getName());
 		return graph;
