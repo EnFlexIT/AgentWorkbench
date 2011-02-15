@@ -1,7 +1,5 @@
 package agentgui.graphEnvironment.controller;
 
-import gasmas.ontology.GridComponent;
-
 import javax.swing.JPanel;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
@@ -175,7 +173,7 @@ public class ComponentSettingsDialog extends JFrame implements ActionListener{
 		buildSelectionPathDictionary((DefaultMutableTreeNode) ontoTree.getRoot());
 	}
 	
-	public void setSelectedComponent(GridComponent comp){
+	public void setSelectedComponent(GraphNode comp){
 		jLabelComponentID.setText("Komponente "+comp.getId());
 		TreePath selectionPath = selectionPathDictionary.get(comp.getClass().getSimpleName());
 		getJTreeOntologyClasses().setSelectionPath(selectionPath);

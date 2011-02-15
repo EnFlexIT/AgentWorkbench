@@ -1,7 +1,5 @@
 package agentgui.graphEnvironment.controller;
 
-import gasmas.ontology.GridComponent;
-
 import javax.swing.JFileChooser;
 import javax.swing.JSplitPane;
 import javax.swing.JPanel;
@@ -184,15 +182,15 @@ public class GraphEnvironmentControllerGUI extends JSplitPane implements Observe
 			
 			// Get the components from the controllers GridModel
 			@SuppressWarnings("unchecked")
-			Iterator<GridComponent> components = controller.getGridModel().getComponents().iterator();
+			Iterator<GraphNode> components = controller.getGridModel().getComponents().iterator();
 			
 			// Add component ID and class name to the data vector
 			while(components.hasNext()){
-				GridComponent comp = components.next();
+				GraphNode comp = components.next();
 				
 				Vector<String> compData = new Vector<String>();
 				compData.add(comp.getId());
-				compData.add(comp.getClass().getSimpleName());
+				compData.add(comp.getOntologyObject().getClass().getSimpleName());
 				compData.add("Test");
 				componentVector.add(compData);
 			}
@@ -284,7 +282,7 @@ public class GraphEnvironmentControllerGUI extends JSplitPane implements Observe
 				public void handleEvent(Event evt) {
 					String svgID = ((Element)evt.getCurrentTarget()).getAttributeNS(null, "id");
 					String componentID = "n"+svgID.substring(svgID.lastIndexOf('.')+1);
-					GridComponent selectedComponent = controller.getGridModel().getComponent(componentID);
+					GraphNode selectedComponent = controller.getGridModel().getComponent(componentID);
 					getComponentSettingsDialog().setVisible(true);
 					getComponentSettingsDialog().setSelectedComponent(selectedComponent);
 					setSelectedElement((Element)evt.getTarget());

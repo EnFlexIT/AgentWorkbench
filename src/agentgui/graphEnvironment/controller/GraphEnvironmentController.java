@@ -13,8 +13,6 @@ import org.apache.batik.util.XMLResourceDescriptor;
 import org.w3c.dom.Document;
 
 import edu.uci.ics.jung.graph.Graph;
-import gasmas.ontology.GridComponent;
-import gasmas.ontology.GridLink;
 
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
@@ -33,7 +31,7 @@ public class GraphEnvironmentController extends Observable implements
 	/**
 	 * @param graph the graph to set
 	 */
-	public void setGridModel(Graph<GridComponent, GridLink> graph) {
+	public void setGridModel(Graph<GraphNode, GraphEdge> graph) {
 		
 		this.gridModel = new GridModel(graph);
 		this.setChanged();
@@ -160,8 +158,8 @@ public class GraphEnvironmentController extends Observable implements
 	 * @param graphMLFile The GraphML file defining the new graph.
 	 * @return The corresponding JUNG graph
 	 */
-	private Graph<GridComponent, GridLink> loadGraphFile(File graphMLFile){
-		Graph<GridComponent, GridLink> graph = null;
+	private Graph<GraphNode, GraphEdge> loadGraphFile(File graphMLFile){
+		Graph<GraphNode, GraphEdge> graph = null;
 		GraphParser gp = new GraphParser(project.getOntoClassHash());
 		graph = gp.getGraph(graphMLFile);
 		System.out.println("Lade Graph-Datei "+graphMLFile.getName());

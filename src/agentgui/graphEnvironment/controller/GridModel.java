@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import edu.uci.ics.jung.graph.Graph;
-import gasmas.ontology.GridComponent;
-import gasmas.ontology.GridLink;
 
 /**
  * Wrapper class encapsulating the JUNG graph and adding features
@@ -17,17 +15,17 @@ public class GridModel {
 	/**
 	 * The graph representing the grid
 	 */
-	private Graph<GridComponent, GridLink> grid;
+	private Graph<GraphNode, GraphEdge> grid;
 	/**
 	 * HashMap providing component access by ID
 	 */
-	private HashMap<String, GridComponent> components;
+	private HashMap<String, GraphNode> components;
 	
 	/**
 	 * Constructor
 	 * @param grid The graph that will be wrapped
 	 */
-	public GridModel(Graph<GridComponent, GridLink> grid){
+	public GridModel(Graph<GraphNode, GraphEdge> grid){
 		this.grid = grid;
 		this.buildHashmap();
 	}
@@ -36,10 +34,10 @@ public class GridModel {
 	 * This method builds the HashMap
 	 */
 	private void buildHashmap(){
-		components = new HashMap<String, GridComponent>();
-		Iterator<GridComponent> iter = (Iterator<GridComponent>) this.grid.getVertices().iterator();
+		components = new HashMap<String, GraphNode>();
+		Iterator<GraphNode> iter = (Iterator<GraphNode>) this.grid.getVertices().iterator();
 		while(iter.hasNext()){
-			GridComponent comp = iter.next();
+			GraphNode comp = iter.next();
 			components.put(comp.getId(), comp);
 		}
 	}
@@ -49,10 +47,11 @@ public class GridModel {
 	 * @param id The ID of the component
 	 * @return The component
 	 */
-	public GridComponent getComponent(String id){
+	public GraphNode getComponent(String id){
 		return components.get(id);
 	}
 	
+	@SuppressWarnings("rawtypes")
 	public Collection getComponents(){
 		return grid.getVertices();
 	}
