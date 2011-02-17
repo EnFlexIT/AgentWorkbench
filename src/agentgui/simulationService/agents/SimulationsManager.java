@@ -166,21 +166,8 @@ public abstract class SimulationsManager extends Agent {
 				}
 			
 			}
-			
-				if(this.env.getTimeModel() instanceof TimeModelDiscrete)
-				{
-				
-					TimeModelDiscrete tm=(TimeModelDiscrete) this.env.getTimeModel(); 
-					tm.step();
-					this.env.setTimeModel(tm);
-				
-				}
-				else
-				{
-					TimeModelStroke ts= (TimeModelStroke) this.env.getTimeModel(); 
-					ts.step();
-					this.env.setTimeModel(ts);
-			   }
+			this.env.getTimeModel().step(this.getTimeModel());
+		
 			 
 		}
 		else
