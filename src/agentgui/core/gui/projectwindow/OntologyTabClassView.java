@@ -21,6 +21,7 @@ import java.awt.Font;
 public class OntologyTabClassView extends JPanel {
 
 	private static final long serialVersionUID = 1L;
+	
 	private JLabel ClassNameCaption = null;
 	private JTextField ClassName = null;
 	private JTable ClassSlots = null;

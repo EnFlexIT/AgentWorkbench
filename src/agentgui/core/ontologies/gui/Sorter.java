@@ -1,4 +1,4 @@
-package agentgui.core.common;
+package agentgui.core.ontologies.gui;
 
 import java.util.ArrayList;
 import java.util.Collections;

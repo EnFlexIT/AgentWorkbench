@@ -7,7 +7,7 @@ import java.util.Vector;
 
 import javax.swing.table.DefaultTableModel;
 
-import agentgui.core.common.Sorter;
+import agentgui.core.ontologies.gui.Sorter;
 import agentgui.core.reflection.ReflectClass;
 import agentgui.core.reflection.ReflectClass.Slot;
 

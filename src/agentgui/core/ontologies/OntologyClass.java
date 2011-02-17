@@ -99,7 +99,7 @@ public class OntologyClass extends Object implements Serializable {
 	 * This Method returns the instance of the current Ontology-Class
 	 * @return 
 	 */
-	private Ontology getOntologyInstance() {
+	public Ontology getOntologyInstance() {
 		
 		Ontology ontology = null;
 		// --- Try to get an instance of the current Ontology ---------

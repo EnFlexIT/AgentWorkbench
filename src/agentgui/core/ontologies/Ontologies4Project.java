@@ -187,27 +187,43 @@ public class Ontologies4Project extends HashMap<String, OntologyClass> {
 		
 		OntologyClass onCla = null;
 		String searchSrcPackage = classReference2Search.substring(0, classReference2Search.lastIndexOf("."));
+		String searchSrcClass = classReference2Search;
 		
-		Iterator<String> it = currProject.subOntologies.iterator();
-		while (it.hasNext()) {
-			String subOntoMainClas = it.next();	
+		if (classReference2Search.equals(OntologyClassTree.BaseClassAID)) {
+			// --- Just get the first ontology we can get ----------------
+			String subOntoMainClas = currProject.subOntologies.get(0);
 			onCla = this.get(subOntoMainClas);
-			String subOntoSrcPack = onCla.getOntologySourcePackage();
-			if ( subOntoSrcPack.equalsIgnoreCase(searchSrcPackage) ) {
-				break;
-			} else {
-				onCla = null;
+			searchSrcClass = "AID";
+			
+		} else {
+			// --- Get the designated Ontologieclass ---------------------
+			Iterator<String> it = currProject.subOntologies.iterator();
+			while (it.hasNext()) {
+				String subOntoMainClas = it.next();	
+				onCla = this.get(subOntoMainClas);
+				String subOntoSrcPack = onCla.getOntologySourcePackage();
+				if ( subOntoSrcPack.equalsIgnoreCase(searchSrcPackage) ) {
+					break;
+				} else {
+					onCla = null;
+				}
 			}
+			// --- Nothing found? By, by... ------------------------------
+			if ( onCla == null ) {
+				return null;
+			}	
 		}
-		// --- Nothing found? By, by... -----------------------------
-		if ( onCla == null ) {
-			return null;
-		}
+		
 		// --- Something found! Get DefaultTableModel for Slots -----
 		OntologyClassTree onClaTree = onCla.getOntologyTree();
-		DefaultMutableTreeNode tn = onClaTree.getTreeNode(classReference2Search);
-		OntologyClassTreeObject userObject = (OntologyClassTreeObject) tn.getUserObject();
-		return userObject;
+		DefaultMutableTreeNode tn = onClaTree.getTreeNode(searchSrcClass);
+		if (tn==null) {
+			return null;
+		} else {
+			OntologyClassTreeObject userObject = (OntologyClassTreeObject) tn.getUserObject();
+			return userObject;	
+		}
+		
 	}
 	
 	/**

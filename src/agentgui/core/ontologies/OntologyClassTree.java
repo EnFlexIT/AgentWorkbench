@@ -39,12 +39,13 @@ public class OntologyClassTree extends DefaultTreeModel implements Serializable 
 	// --- "jade.content.Concept"		- 1. mögliches Interface einer Klasse ---
 	// --- "jade.content.AgentAction"	- 2. mögliches Interface einer Klasse ---
 	// --------------------------------------------------------------------------
+	private final static String BaseClassObject = "java.lang.Object";
+	
 	private final static String BaseClassOnto = "jade.content.onto.Ontology";
 	private final static String BaseClassConcept = "jade.content.Concept";
-	private final static String BaseClassAID = "jade.core.AID";
 	private final static String BaseClassPredicate = "jade.content.Predicate";
 	private final static String BaseClassAAction = "jade.content.AgentAction";
-	private final static String BaseClassObject = "java.lang.Object";
+	public final static String BaseClassAID = "jade.core.AID";
 	// --------------------------------------------------------------------------
 	
 	public OntologyClassTree(Project project, DefaultMutableTreeNode root, OntologyClass ontoClass, String ontologieSourcePackage) {
@@ -194,29 +195,34 @@ public class OntologyClassTree extends DefaultTreeModel implements Serializable 
 		        		aActionNode.add( currentNode );
 		        		projectOntologyClassList.remove(ClaRef);
 		        	} else if ( ClaIsAID == true ){
-		        		aidNode.add( currentNode );
+		        		// --- Remind the parent Node ---------------
+	        			OntologyClassTreeObject parentOntologyClassTreeObject = (OntologyClassTreeObject) aidNode.getUserObject();
+	        			userObject.setParentOntologyClassTreeObject(parentOntologyClassTreeObject);
+	        			currentNode.setUserObject(userObject);
+	        			// --- Add to the parent node ---------------
+	        			aidNode.add( currentNode );
 		        		projectOntologyClassList.remove(ClaRef);
 		        	} else if ( ClaIsPredicate == true ){
 		        		predicateNode.add( currentNode );
 		        		projectOntologyClassList.remove(ClaRef);
 		        	} else {
-		        		// ---------------------------------------------
-				    	// --- get parent node Object ------------------
+		        		// -------------------------------------------
+				    	// --- get parent node Object ----------------
 				    	parentNode = getTreeNode( ClaPareName );
-		        		// --- Add to the appropriated node --------------       		
+		        		// --- Add to the appropriated node ----------       		
 		        		if ( !(parentNode == null) ) {
-		        			// --- Remind the parent Node ----------------
+		        			// --- Remind the parent Node ------------
 		        			OntologyClassTreeObject parentOntologyClassTreeObject = (OntologyClassTreeObject) parentNode.getUserObject();
 		        			userObject.setParentOntologyClassTreeObject(parentOntologyClassTreeObject);
 		        			currentNode.setUserObject(userObject);
-		        			// --- Add to the parent node ----------------
+		        			// --- Add to the parent node ------------
 		        			parentNode.add( currentNode );
 		        			projectOntologyClassList.remove(ClaRef);
 		        		} else {
-		        			// -------------------------------------------
-		        			// --- if no node was found, it has maybe to
-		        			// --- be created => queue at the end 
-		        			// -------------------------------------------
+		        			// --------------------------------------
+		        			// --- if no node was found, it has maybe 
+		        			// --- to be created => queue at the end 
+		        			// --------------------------------------
 		        			projectOntologyClassList.remove( ClaRef );
 		        			projectOntologyClassList.add( ClaRef );	        	
 		        			
@@ -229,7 +235,7 @@ public class OntologyClassTree extends DefaultTreeModel implements Serializable 
 		        				LastClLiIndexResetAtSize = projectOntologyClassList.size();
 		        			}
 		        		}
-		        		// -----------------------------------------
+		        		// ------------------------------------------
 		        	}   	        		
 	        	}
 	        	// ------------------------------------------------------------

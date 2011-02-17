@@ -38,9 +38,9 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
 import agentgui.core.gui.AgentSelector;
+import agentgui.core.ontologies.gui.OntologyInstanceViewer;
 import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.core.sim.setup.SimulationSetups;
-import agentgui.core.sim.setup.gui.DynForm;
 import javax.swing.JSplitPane;
 
 /**
@@ -70,10 +70,10 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 	
 	private JPanel jPanelButtons = null;
 	private JPanel jPanelRight = null;
-	private JPanel jPanelDynForm = null;
+	private JPanel jPanelOntoloInstView = null;
+	private OntologyInstanceViewer currOntoInstViewer = null;
 	
 	private JScrollPane jScrollPaneStartList = null;
-	private JScrollPane jScrollPaneDynForm = null;
 	
 	private JList jListStartList = null;
 	private JButton jButtonAgentAdd = null;
@@ -84,8 +84,8 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 	private JTextField jTextFieldStartAs = null;
 	private JButton jButtonStartOK = null;
 	private JLabel jLabelHeader = null;
-	private JLabel jLabelStartArgs = null;
-
+	
+	
 	/**
 	 * This is the default constructor
 	 */
@@ -105,7 +105,6 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		jButtonMoveDown.setToolTipText(Language.translate("Agent nach unten verschieben"));
 		
 		jLabelHeader.setText(Language.translate("Starten als") + ":");
-		jLabelStartArgs.setText(Language.translate("Start-Argumente für den ausgewählten Agenten") + ":");
 		
 	}
 
@@ -178,7 +177,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		if (jPanelRightSplit == null) {
 			GridBagConstraints gridBagConstraints6 = new GridBagConstraints();
 			gridBagConstraints6.anchor = GridBagConstraints.NORTH;
-			gridBagConstraints6.insets = new Insets(5, 10, 2, 10);
+			gridBagConstraints6.insets = new Insets(5, 10, 0, 10);
 			gridBagConstraints6.gridx = -1;
 			gridBagConstraints6.gridy = -1;
 			gridBagConstraints6.weightx = 0.5;
@@ -325,9 +324,9 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 							// --- NEW SELECTION IN THE LIST ------------------
 							jTextFieldStartAs.setText(startObj.getStartAsName());
 
-							// --- Show DynForm for this agent ----------------
-							DynForm df = new DynForm(currProject, startObj.getAgentClassReference());
-							jScrollPaneDynForm.setViewportView(df);
+							// --- Show OntologyInstanceViewer for this agent -
+							OntologyInstanceViewer oiv = new OntologyInstanceViewer(currProject, startObj.getAgentClassReference());
+							setOntologyInstView(oiv);
 							
 							// --- Set reminder for the last selected object --
 							startObjLast = startObj;
@@ -414,17 +413,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 	private JPanel getJPanelRight() {
 		if (jPanelRight == null) {
 			
-			jLabelStartArgs = new JLabel();
-			jLabelStartArgs.setText("Start-Argumente für den ausgewählten Agenten:");
-			jLabelStartArgs.setFont(new Font("Dialog", Font.BOLD, 12));
 			
-			GridBagConstraints gridBagConstraints12 = new GridBagConstraints();
-			gridBagConstraints12.gridx = 0;
-			gridBagConstraints12.anchor = GridBagConstraints.WEST;
-			gridBagConstraints12.insets = new Insets(10, 0, 0, 0);
-			gridBagConstraints12.gridwidth = 3;
-			gridBagConstraints12.gridy = 2;
-
 			GridBagConstraints gridBagConstraints10 = new GridBagConstraints();
 			gridBagConstraints10.anchor = GridBagConstraints.WEST;
 			
@@ -463,8 +452,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 			jPanelRight.add(jLabelHeader, gridBagConstraints10);
 			jPanelRight.add(getJTextFieldStartAs(), gridBagConstraints5);
 			jPanelRight.add(getJButtonStartOK(), gridBagConstraints7);
-			jPanelRight.add(getJPanelDynForm(), gridBagConstraints2);
-			jPanelRight.add(jLabelStartArgs, gridBagConstraints12);
+			jPanelRight.add(getJPanelOntoloInstView(), gridBagConstraints2);
 		}
 		return jPanelRight;
 	}
@@ -531,29 +519,31 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 	}
 
 	/**
-	 * This method initializes jPanelDynForm	
-	 * @return javax.swing.JPanel	
-	 */
-	private JPanel getJPanelDynForm() {
-		if (jPanelDynForm == null) {
-			jPanelDynForm = new JPanel();
-			jPanelDynForm.setLayout(new BorderLayout());
-			jPanelDynForm.setPreferredSize(new Dimension(100, 100));
-			jPanelDynForm.add(getJScrollPaneDynForm(),BorderLayout.CENTER);
-		}
-		return jPanelDynForm;
-	}
-
-	/**
 	 * This method initializes jScrollPaneDynForm	
 	 * @return javax.swing.JScrollPane	
 	 */
-	private JScrollPane getJScrollPaneDynForm() {
-		if (jScrollPaneDynForm == null) {
-			jScrollPaneDynForm = new JScrollPane();
-			jScrollPaneDynForm.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+	private JPanel getJPanelOntoloInstView() {
+		if (jPanelOntoloInstView == null) {
+			jPanelOntoloInstView = new JPanel();
+			jPanelOntoloInstView.setPreferredSize(new Dimension(100, 100));
+			jPanelOntoloInstView.setLayout(new BorderLayout());
 		}
-		return jScrollPaneDynForm;
+		return jPanelOntoloInstView;
+	}
+	/**
+	 * This method sets the view to the current OntologyInstanceViewer, depending
+	 * on the selected agent on the left
+	 * @param ontoInstView
+	 */
+	private void setOntologyInstView(OntologyInstanceViewer ontoInstView) {
+		
+		// --- Remind the current Viewer ------------------
+		this.currOntoInstViewer = ontoInstView;
+		// --- Set the view to the current Viewer ---------
+		this.jPanelOntoloInstView.removeAll();
+		this.jPanelOntoloInstView.add(ontoInstView);
+		this.jPanelOntoloInstView.validate();
+		this.jPanelOntoloInstView.repaint();
 	}
 	
 	/**
@@ -616,7 +606,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 			}
 		}
 		agentSelector.dispose();
-		currSimSetup.save();
+		this.save();
 		// ==================================================================
 	}
 	
@@ -713,14 +703,14 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 			jListModelAgents2Start.removeElement(ac4s);
 		}
 		this.agentRenumberList();
-		currSimSetup.save();
+		this.save();
 		
 		startObj = null;
 		startObjLast = null;
 
 		jTextFieldStartAs.setText(null);
-		DynForm df = new DynForm(currProject, null);
-		jScrollPaneDynForm.setViewportView(df);
+		OntologyInstanceViewer oiv = new OntologyInstanceViewer(currProject, null);
+		this.setOntologyInstView(oiv);
 		
 	}
 	
@@ -747,7 +737,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 	            jListStartList.setSelectedIndex(positionNew);
 			}
 		}
-		currSimSetup.save();
+		this.save();
 	}
 	
 	/**
@@ -767,6 +757,18 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 
 	}
 
+	/**
+	 * Saves the current configuration to the Simulations-Setup 
+	 */
+	private void save() {
+		
+		if (this.currOntoInstViewer!=null) {
+			this.currOntoInstViewer.save();
+		}
+		this.currSimSetup.save();
+		
+	}
+	
 	/**
 	 * This Method handles all ActionEvents from this part of the User-View
 	 */
