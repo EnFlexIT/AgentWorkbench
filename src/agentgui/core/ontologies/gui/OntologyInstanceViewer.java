@@ -1,10 +1,11 @@
 package agentgui.core.ontologies.gui;
 
-import jade.content.onto.Ontology;
-
+import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.Toolkit;
 
 import javax.swing.BorderFactory;
@@ -20,9 +21,7 @@ import javax.swing.border.EtchedBorder;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
-import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
+import java.awt.Font;
 
 public class OntologyInstanceViewer extends JTabbedPane {
 
@@ -33,17 +32,21 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	
 	private Project project = null;
 	private String agentReference = null;
-	private Ontology ontology = null;
-	private String ontologyClassReference = null;
-
+	private String[] ontologyClassReference = null;
 	private boolean use4Agents =  false;
+
+	private String [] configurationXML = null;
+	private Object [] configurationInstances = null;
 	
 	private JScrollPane jScrollPaneDynForm = null;
 	private JScrollPane jScrollPaneTextVersion = null;
 	
 	private DynForm dynForm = null;
 	private JTextArea jTextArea = null;
-
+	
+	private final String newLine = Application.RunInfo.AppNewLineString();
+	private final String separatorLine = "------------------------------------------";  //  @jve:decl-index=0:
+	
 	private JPanel jPanelEnlarege = null;
 	private JLabel jLabelTitleEnlarge = null;  //  @jve:decl-index=0:visual-constraint="12,220"
 
@@ -52,19 +55,27 @@ public class OntologyInstanceViewer extends JTabbedPane {
 
 
 	/**
-	 * This is the default constructor
+	 * These are the default constructors
 	 */
+	public OntologyInstanceViewer(Project currProject) {
+		this.project = currProject;
+		this.agentReference = null;
+		this.ontologyClassReference = null;
+		this.use4Agents = true;
+		initialize();
+	}
 	public OntologyInstanceViewer(Project currProject, String currAgentReference) {
 		super();
 		this.project = currProject;
 		this.agentReference = currAgentReference;
+		this.ontologyClassReference = null;
 		this.use4Agents = true;
 		initialize();
 	}
-
-	public OntologyInstanceViewer(Ontology currOntology, String currOntologyClassReference) {
+	public OntologyInstanceViewer(Project currProject, String[] currOntologyClassReference) {
 		super();
-		this.ontology = currOntology;
+		this.project = currProject;
+		this.agentReference = null;
 		this.ontologyClassReference = currOntologyClassReference;
 		this.use4Agents = false;
 		initialize();
@@ -91,21 +102,65 @@ public class OntologyInstanceViewer extends JTabbedPane {
 
 		// --- Configure Translations ---------------------
 		this.setTitleAt(0, "  " + Language.translate("Formular") + "  ");
-		this.setTitleAt(1, "  " + Language.translate("XML") + "  ");
+		this.setTitleAt(1, "    " + Language.translate("XML") + "    ");
 		
 	}
 	
 	/**
-	 * This methd overrides the 'setSelectedIndex' method
-	 * in order to catch the selction of the 'Enlarge view - Tab' 
+	 * This method overrides the 'setSelectedIndex' method
+	 * in order to catch the selection of the 'Enlarge view - Tab' 
 	 */
 	@Override
 	public void setSelectedIndex(int index) {
 	
 		if (index==2) {
 			this.setEnlargedView();
+			
 		} else {
-			super.setSelectedIndex(index);	
+
+			// --------------------------------------------
+			// --- Save the current configuration ---------
+			// --------------------------------------------
+			this.save();
+			
+			// --------------------------------------------
+			// --- Refresh the view to the data -----------
+			// --------------------------------------------
+			if (this.getSelectedIndex()==0) {
+				// -----------------------------------
+				// --- Refresh XML-View --------------
+				// -----------------------------------
+				String newText = "";
+				String argumentLine = "";
+				int seperatorLength = separatorLine.length();
+				
+				for (int i = 0; i < configurationXML.length; i++) {
+					
+					argumentLine = "--- Argument " + (i+1) + " ";
+					argumentLine+= separatorLine.substring(0, seperatorLength-argumentLine.length());
+					
+					String config = ""; 
+					config += separatorLine + newLine;
+					config += argumentLine;
+					config += newLine + separatorLine + newLine;
+					config += configurationXML[i] + newLine;					
+					newText += config;
+				}
+				this.jTextArea.setText(newText);
+				this.jTextArea.setCaretPosition(0);
+				
+			} else if (this.getSelectedIndex()==1) {
+				// -----------------------------------
+				// --- Refresh Form-View -------------
+				// -----------------------------------
+				
+				
+			}
+			
+			// --------------------------------------------
+			// --- Now do the focus change ----------------
+			// --------------------------------------------
+			super.setSelectedIndex(index);
 		}		
 	}
 	
@@ -117,7 +172,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 		
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		
-		JDialog dialog = new JDialog();
+		JDialog dialog = new JDialog(Application.MainWindow);
 		dialog.setPreferredSize(new Dimension(100, 200));
 		dialog.setName("Ontology-Instance-Viewer");
 		dialog.setTitle(Application.RunInfo.getApplicationTitle() +  ": Ontology-Instance-Viewer");
@@ -127,7 +182,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 		
 		
 		// --- Size and Center the dialog -----------------
-		int diaWidth = (int) (screenSize.width*0.6);
+		int diaWidth = (int) (screenSize.width*0.8);
 		int diaHeight = (int) (screenSize.height * 0.9);
 
 		int left = (screenSize.width - diaWidth) / 2;
@@ -159,7 +214,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	}
 	
 	/**
-	 * This method initializes jContentPane	
+	 * This method initialises jContentPane	
 	 * @return javax.swing.JPanel	
 	 */
 	private JPanel getJContentPane() {
@@ -177,7 +232,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 		return jContentPane;
 	}
 	/**
-	 * This method initializes jPanel4TouchDown	
+	 * This method initialises jPanel4TouchDown	
 	 * @return javax.swing.JPanel	
 	 */
 	private JPanel getJPanel4TouchDown() {
@@ -188,7 +243,6 @@ public class OntologyInstanceViewer extends JTabbedPane {
 		}
 		return jPanel4TouchDown;
 	}
-	
 	
 	/**
 	 * This method adds the Enlarge-View-Tab to THIS TabbedPane
@@ -206,7 +260,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	}
 	
 	/**
-	 * This method initializes dynForm
+	 * This method initialises dynForm
 	 * @return
 	 */
 	private DynForm getDynForm() {
@@ -214,7 +268,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 			if (use4Agents==true) {
 				dynForm = new DynForm(project, agentReference);
 			} else {
-				dynForm = new DynForm(ontology, ontologyClassReference);
+				dynForm = new DynForm(project, ontologyClassReference);
 			}
 		}
 		return dynForm;
@@ -246,18 +300,19 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	}
 
 	/**
-	 * This method initializes jTextArea	
+	 * This method initialises jTextArea	
 	 * @return javax.swing.JTextArea	
 	 */
 	private JTextArea getJTextArea() {
 		if (jTextArea == null) {
 			jTextArea = new JTextArea();
+			jTextArea.setFont(new Font("Courier New", Font.PLAIN, 12));
 		}
 		return jTextArea;
 	}
 	
 	/**
-	 * This method initializes jPanelEnlarege	
+	 * This method initialises jPanelEnlarege	
 	 * @return javax.swing.JPanel	
 	 */
 	private JPanel getJPanelEnlarege() {
@@ -269,8 +324,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	}
 
 	/**
-	 * This method initializes jLabelTitleEnlarge	
-	 * 	
+	 * This method initialises jLabelTitleEnlarge	
 	 * @return javax.swing.JLabel	
 	 */
 	private JLabel getJLabelTitleEnlarge() {
@@ -282,12 +336,53 @@ public class OntologyInstanceViewer extends JTabbedPane {
 		return jLabelTitleEnlarge;
 	}
 
+	
 	/**
 	 * This method saves the current configuration 
 	 */
 	public void save() {
-		// TODO Auto-generated method stub
-		System.out.println("Save Agent-Configuration");
+		
+		// --- Save configuration depending on the current view -----
+		if (this.getSelectedIndex()==0) {
+			// --- Form view ------------------------------
+			this.dynForm.save(true);
+		} else if (this.getSelectedIndex()==1) {
+			// --- XML view -------------------------------
+			this.dynForm.save(false);
+		}
+		
+		// --- Store the current configuration locally --------------
+		this.configurationXML = this.dynForm.getOntoArgsXML();
+		this.configurationInstances = this.dynForm.getOntoArgsInstance();
+		
+	}
+	
+	/**
+	 * @param configurationXML the configurationXML to set
+	 */
+	public void setConfigurationXML(String [] configurationXML) {
+		this.configurationXML = configurationXML;
+		this.dynForm.setOntoArgsXML(configurationXML);
+	}
+	/**
+	 * @return the configurationXML
+	 */
+	public String [] getConfigurationXML() {
+		return configurationXML;
+	}
+	
+	/**
+	 * @param configurationInstances the configurationInstances to set
+	 */
+	public void setConfigurationInstances(Object [] configurationInstances) {
+		this.configurationInstances = configurationInstances;
+		this.dynForm.setOntoArgsInstance(configurationInstances);
+	}
+	/**
+	 * @return the configurationInstances
+	 */
+	public Object [] getConfigurationInstances() {
+		return configurationInstances;
 	}
 
 }

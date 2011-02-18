@@ -14,7 +14,6 @@ import java.awt.event.ActionListener;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.TreeMap;
 import java.util.Vector;
@@ -30,7 +29,10 @@ import javax.swing.tree.DefaultTreeModel;
 
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
-import agentgui.core.ontologies.*;
+import agentgui.core.ontologies.OntologyClassTree;
+import agentgui.core.ontologies.OntologyClassTreeObject;
+import agentgui.core.ontologies.OntologySingleClassDescription;
+import agentgui.core.ontologies.OntologySingleClassSlotDescription;
 
 public class DynForm extends JPanel {
 
@@ -50,18 +52,24 @@ public class DynForm extends JPanel {
 	
 	private static final long serialVersionUID = 7942028680794127910L;
 
-	private boolean debug = true;
+	private boolean debug = false;
+
+	// --- Based on this vector the display will be created ---------
+	private Vector<String> currOnotologyClassReferenceList = new Vector<String>();
 	
+	// --- parameters which are comming from the constructor -------- 
 	private Project currProject = null;
 	private String currAgentReference = null;
-	
-	private String startObjectPackage = "";
 
-	private JButton submitButton = null;
+	// --- Runtime parameters of this  
+	private JLabel lastComponent = null;
 	private int einrueckungProUntereEbene = 5;
 	
 	private DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("Root");
 	private DefaultTreeModel objectTree = new DefaultTreeModel(rootNode);
+	
+	private Object[] ontoArgsInstance = null; 
+	private String[] ontoArgsXML = null; 
 	
 	/**
 	 * Constructor of this class by uising a project and an agent reference
@@ -71,8 +79,8 @@ public class DynForm extends JPanel {
 	public DynForm(Project project, String agentReference) {
 		
 		super();
-		currProject = project;
-		currAgentReference = agentReference;
+		this.currProject = project;
+		this.currAgentReference = agentReference;
 	
 		// --- Set the preferences for the Main Panel ---------------
 		this.setLayout(null);
@@ -81,6 +89,20 @@ public class DynForm extends JPanel {
 		if (currAgentReference!=null) {
 			// --- Find Agent in AgentConfig ------------------------
 			if (currProject.agentConfig.containsKey(currAgentReference)==true) {
+				
+				// --- Which classes are configured for the Agent? -- 
+				TreeMap<Integer,String> startObjectList = currProject.agentConfig.getReferencesAsTreeMap(currAgentReference);
+				Vector<Integer> v = new Vector<Integer>(startObjectList.keySet()); 
+				Collections.sort(v);
+				
+				// --- Take them to the local Vector ----------------
+				Iterator<Integer> it = v.iterator();
+				while (it.hasNext()) {
+					Integer startPosition = it.next();
+					String startObjectClass = startObjectList.get(startPosition);
+					currOnotologyClassReferenceList.add(startObjectClass);
+				}
+				
 				// --- Start building the GUI -----------------------
 				this.buildGUI();
 				// --- If wanted show some debug informations -------
@@ -98,10 +120,30 @@ public class DynForm extends JPanel {
 	 * @param ontology
 	 * @param ontologyClassReference
 	 */
-	public DynForm(Ontology ontology, String ontologyClassReference) {
-		// TODO Auto-generated constructor stub
+	public DynForm(Project project, String[] ontologyClassReferences) {
+
+		super();
+		this.currProject = project;
+
+		// --- Set the preferences for the Main Panel ---------------
+		this.setLayout(null);
 		
-		
+		// --- Was something set? -----------------------------------
+		if (ontologyClassReferences!= null && ontologyClassReferences.length>0) {
+			// --- Take that to the local Vector --------------------
+			for (int i = 0; i < ontologyClassReferences.length; i++) {
+				this.currOnotologyClassReferenceList.add(ontologyClassReferences[i]);
+			}
+
+			// --- Start building the GUI -----------------------
+			this.buildGUI();
+			// --- If wanted show some debug informations -------
+			if (debug==true) {
+				this.objectTreePrint();
+				this.objectTreeShow();
+			}
+			
+		}
 	}
 	
 	/**
@@ -110,77 +152,77 @@ public class DynForm extends JPanel {
 	 */
 	public void buildGUI(){
 		
-		// --- Which Start-Objects are configured for the Agent? ---- 
-		TreeMap<Integer,String> startObjectList = currProject.agentConfig.getReferencesAsTreeMap(currAgentReference);
-		Vector<Integer> v = new Vector<Integer>(startObjectList.keySet()); 
-		Collections.sort(v);
-		
 		// --- Maybe a debug print to the console ---------
-		if (debug==true && v.size()!=0) {
+		if (debug==true && currOnotologyClassReferenceList.size()!=0) {
 			System.out.println("Creating GUI");	
 		}	
 		
 		// --- Iterate over the available Start-Objects ---
-		Iterator<Integer> it = v.iterator();
-		while (it.hasNext()) {
+		for (int i = 0; i < currOnotologyClassReferenceList.size(); i++) {
 			
-			Integer startPosition = it.next();
-			String startObjectClass = startObjectList.get(startPosition);
-			
-			this.startObjectPackage = startObjectClass.substring(0, startObjectClass.lastIndexOf("."));
-			String startObjectClassName = startObjectClass.substring(startObjectClass.lastIndexOf(".") + 1, startObjectClass.length());
+			String startObjectClass = currOnotologyClassReferenceList.get(i);
 			
 			// --- Get the info about the slots --------------------
 			OntologySingleClassDescription osc = currProject.ontologies4Project.getSlots4ClassAsObject(startObjectClass);
 			if(osc!=null) {
-				this.createGUI(osc, startObjectClassName, this, 0, (DefaultMutableTreeNode) rootNode);
+				this.createGUI(osc, startObjectClass, this, 0, (DefaultMutableTreeNode) rootNode);
 			} else {
 				System.out.println("Could not get OntologySingleClassDescription for "+startObjectClass);
 			}
 		}
-
-		// --- Add the Submit Button in order to create the corresponding start object instances ---
-		this.addSubmitButton();
+		// --- Add a last invisible component -------------
+		this.addLastComponent();
 		// --- Justify the Preferred Size of this Panle ---
 		this.setPreferredSize(new Dimension(this.getBounds().width + 10, this.getBounds().height + 10));
 	}
-		
+	
 	/**
-	 * This method adds the Submit Button to the end of this Panel
+	 * This method adds a last component in order to scale the prefered size later on
 	 */
-	private void addSubmitButton() {
-		
-		submitButton = new JButton();
-		submitButton.setBounds(new Rectangle(5, this.getHeight() + 10, 100, 25));
-		submitButton.setText(Language.translate("Speichern"));
-		submitButton.setFont(new Font(submitButton.getFont().getName(),Font.BOLD,submitButton.getFont().getSize()));
-		submitButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				generateInstances();
-			}
-		});
-		this.add(submitButton);
+	private void addLastComponent() {
+		lastComponent = new JLabel();
+		lastComponent.setBounds(new Rectangle(5, this.getHeight() + 10, 100, 25));
+		this.add(lastComponent);
 		this.setPanelBounds(this);
 	}
-
 	/**
 	 * This Method sets the PreferredSize of this Panel according 
 	 * to the Position of the 'submitButton'
 	 */
 	private void setPreferredSize() {
-		int newHeight = submitButton.getBounds().y + submitButton.getBounds().height + 10; 
+		int newHeight = lastComponent.getBounds().y + lastComponent.getBounds().height + 10; 
 		this.setPreferredSize(new Dimension(this.getBounds().width, newHeight));
+	}
+	
+	/**
+	 * This method can be invoked to generate the instance of the current configuration  
+	 * @return
+	 */
+	public void save(boolean fromForm) {
+		
+		if (fromForm==true) {
+			this.setInstancesFromForm();	
+		} else {
+			this.setInstancesFromXML();
+		}
 	}
 	
 	/**
 	 * 
 	 */
-	private void generateInstances() {
+	private void setInstancesFromXML() {
+		
+		
+	}
+	
+	/**
+	 * 
+	 */
+	private void setInstancesFromForm() {
 		
 		int numOfChilds = rootNode.getChildCount();
-		Object[] agentArgs = new Object[numOfChilds];
-		String[] agentArgsXML = new String[numOfChilds];
+		this.ontoArgsInstance = new Object[numOfChilds];
+		this.ontoArgsXML = new String[numOfChilds];
 		
 		// ----------------------------------------------------------
 		// --- Walk through the objectTree, which was generated ----- 
@@ -204,13 +246,21 @@ public class DynForm extends JPanel {
 			this.setObjectState(obj, currNode);
 			
 			// --- Remind object state as instance and XML ---------- 
-			agentArgs[i] = obj;
-			agentArgsXML[i] = getXMLofInstance(obj, onto);
+			ontoArgsInstance[i] = obj;
+			ontoArgsXML[i] = getXMLofInstance(obj, onto);
 			
 		}
 		
 	}
 	
+	/**
+	 * This method translates an object instance to a String by the
+	 * given instance of the current ontology. The object must be a 
+	 * part of this ontology. 
+	 * @param obj
+	 * @param onto
+	 * @return
+	 */
 	private String getXMLofInstance(Object obj, Ontology onto) {
 		
 		XMLCodec codec = new XMLCodec();
@@ -228,7 +278,11 @@ public class DynForm extends JPanel {
 		return xmlRepresentation;
 	}
 	
-	
+	/**
+	 * This method sets an object-instance to the state as configured in the form 
+	 * @param object
+	 * @param node
+	 */
 	private void setObjectState(Object object, DefaultMutableTreeNode node) {
 		
 		Method methodFound = null;
@@ -269,6 +323,7 @@ public class DynForm extends JPanel {
 				// --- Invoke the found method to the current object ----- 
 				try {
 					methodFound.setAccessible(true);
+					@SuppressWarnings("unused")
 					Object result = methodFound.invoke(object, subObjectOrValue);
 					
 				} catch (IllegalArgumentException e) {
@@ -285,6 +340,12 @@ public class DynForm extends JPanel {
 		
 	}
 	
+	/**
+	 * This method reads the value given through the DynType and  
+	 * the inherent reference to the Swing component
+	 * @param dt
+	 * @return
+	 */
 	private Object getSingleValue(DynType dt) {
 		
 		Object returnValue = null;
@@ -298,13 +359,21 @@ public class DynForm extends JPanel {
 			JTextField jt = dt.fieldValue;
 			String stringValue = jt.getText();
 			stringValue = stringValue.replace(",", ".");
-			returnValue = new Float(stringValue);
+			if (stringValue==null | stringValue.equals("")) {
+				returnValue = 0;
+			} else {
+				returnValue = new Float(stringValue);	
+			}
 			
 		} else if(valueType.equals("int")){
 			JTextField jt = dt.fieldValue;
 			String stringValue = jt.getText();
 			stringValue = stringValue.replace(",", ".");
-			returnValue = new Integer(stringValue);
+			if (stringValue==null | stringValue.equals("")) {
+				returnValue = 0;
+			} else {
+				returnValue = new Integer(stringValue);	
+			}
 			
 		} else if(valueType.equals("boolean")){
 			JTextField jt = dt.fieldValue;
@@ -314,6 +383,12 @@ public class DynForm extends JPanel {
 		return returnValue;
 	}
 	
+	/**
+	 * This method selects the method of the slot, which has to be 
+	 * used to set this single slot value
+	 * @param currOSCSD
+	 * @return
+	 */
 	private Method getSingleSetMethod(OntologySingleClassSlotDescription currOSCSD) {
 		
 		String slotName = currOSCSD.getSlotName();
@@ -348,7 +423,11 @@ public class DynForm extends JPanel {
 		return methodFound;		
 	}
 	
-	
+	/**
+	 * This method returns a new instance of a given class given by its full classname
+	 * @param className
+	 * @return
+	 */
 	private Object getNewClassInstance(String className) {
 		
 		Class<?> clazz = null;
@@ -407,71 +486,12 @@ public class DynForm extends JPanel {
 			objectTreePrintIt(node.getNextNode());
 		}
 	}
-	
-	private void addNewObjectClass(String className, int tiefe) {
-		if(tiefe == 0) {
-			DefaultMutableTreeNode root = (DefaultMutableTreeNode) objectTree.getRoot();
-			root.add(new DefaultMutableTreeNode(className));
-		}
-			
-	}
 
-	private void createAndFillObject(String className) {
-		OntologySingleClassDescription oscd = getOntoSingleClsDesc(className);
-		Class<?> cl = oscd.getClazz();
-		Iterator<OntologySingleClassSlotDescription> iterator = oscd.osdArr.iterator();
-		while (iterator.hasNext()) {
-			OntologySingleClassSlotDescription osd = iterator.next();
-			Hashtable<String, Method> meth = osd.getSlotMethodList();
-			Iterator<String> methIT = meth.keySet().iterator();
-			while (methIT.hasNext()) {
-				String methodeName = methIT.next();
-				Method methodeHimSelf = meth.get(methodeName);
-			}
-			
-		}
 
-		
-	}
-
-	private OntologySingleClassDescription getOntoSingleClsDesc(String className){
-		return currProject.ontologies4Project.getSlots4ClassAsObject(this.startObjectPackage+"."+className);
-	}
-	
-	private void showClassInformation(String className) {
-		OntologySingleClassDescription osc = currProject.ontologies4Project.getSlots4ClassAsObject(this.startObjectPackage+"."+className);
-		if(osc!=null){
-			System.out.println( "---------------------------------------------------");
-			System.out.println( "---------------------------------------------------");
-			System.out.println( "Class<?>-Object: " + osc.getClazz() );
-			System.out.println( "Klassenreferenz: " + osc.getClassReference() );
-			System.out.println( "Package-Name   : " + osc.getPackageName() );
-			System.out.println( "Klassen-Name   : " + osc.getClassName() );
-			
-			Iterator<OntologySingleClassSlotDescription> iterator = osc.osdArr.iterator();
-			while (iterator.hasNext()) {
-				OntologySingleClassSlotDescription osd = iterator.next();
-				System.out.println( "---------------------------------------------------");
-				System.out.println( "Slot-Name   : " + osd.getSlotName() );
-				System.out.println( "Kardinalität: " + osd.getSlotCardinality() + " => CardinalityIsMultiple [bool] " + osd.isSlotCardinalityIsMultiple() );
-				System.out.println( "VarTyp      : " + osd.getSlotVarType() );
-				System.out.println( "Other Facts : " + osd.getSlotOtherFacts() );
-				
-				System.out.println( "Methoden    : " + osd.getSlotOtherFacts() );
-				Hashtable<String, Method> meth = osd.getSlotMethodList();
-				Iterator<String> methIT = meth.keySet().iterator();
-				while (methIT.hasNext()) {
-					String methodeName = methIT.next();
-					Method methodeHimSelf = meth.get(methodeName);
-					System.out.println( " - " + methodeName + " <=> " + methodeHimSelf);
-				}
-			}
-		}
-		else
-			System.out.println("[Error] OntologySingleClassDescription is null");
-		
-	}
-
+	/**
+	 * 
+	 * @param pan
+	 */
 	public void setPanelBounds(JPanel pan){
 		
 		int maxX = 0;
@@ -501,10 +521,12 @@ public class DynForm extends JPanel {
 	 * @param pan
 	 * @param tiefe
 	 */
-	public void createGUI(OntologySingleClassDescription osc, String startObjectClassName, JPanel pan, int tiefe, DefaultMutableTreeNode node){
+	public void createGUI(OntologySingleClassDescription osc, String startObjectClass, JPanel pan, int tiefe, DefaultMutableTreeNode node){
 		
-		JLabel objectLabelName = new JLabel();
-		
+		String startObjectClassName = startObjectClass.substring(startObjectClass.lastIndexOf(".") + 1, startObjectClass.length());
+		String startObjectPackage = startObjectClass.substring(0, startObjectClass.lastIndexOf("."));
+
+		JLabel objectLabelName = new JLabel();		
 		if (osc != null) {
 			// --- if we are on the main panel -> add the class name to it !
 			// --- Create a JPanel in which the class name (JLabel) and its innerclasses
@@ -517,7 +539,7 @@ public class DynForm extends JPanel {
 				objectLabelName.setFont(new Font(objectLabelName.getFont().getName(),Font.BOLD,objectLabelName.getFont().getSize()));
 				
 				// --- Define a node for current class ------------------
-				DynType dynType = new DynType(null, DynType.typeClass, this.startObjectPackage+"."+startObjectClassName, startObjectClassName);
+				DynType dynType = new DynType(null, DynType.typeClass, startObjectClass, startObjectClassName);
 				DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(dynType);
 				node.add(newNode);
 				node = newNode;
@@ -530,11 +552,11 @@ public class DynForm extends JPanel {
 				
 			}
 
-			// --- add the name to the mainPanel
+			// --- add the name to the mainPanel ----------
 			pan.add(objectLabelName);
 			this.setPanelBounds(pan);
 			
-			// --- go through each field / inner class ---
+			// --- go through each field / inner class ----
 			Iterator<OntologySingleClassSlotDescription> iterator = osc.osdArr.iterator();
 			while (iterator.hasNext()) {
 				
@@ -553,9 +575,15 @@ public class DynForm extends JPanel {
 				// --------------------------------------------------------------------------------
 				if(isSpecialType(clazz)){
 					// --- Was this classs already displayed in the current tree path? --
-					if(objectAlreadyInPath(this.startObjectPackage+"."+clazz, node) == false) {
+					String clazzCheck = null;
+					if (clazz.equals("AID")) {
+						clazzCheck = OntologyClassTree.BaseClassAID;
+					} else {
+						clazzCheck = startObjectPackage+"."+clazz;	
+					}					
+					if(objectAlreadyInPath(clazzCheck, node) == false) {
 						// --- Create Sub-Panel for the according class -----------------
-						this.createInnerElements(oscsd, dataItemName, dataItemVarType, dataItemCardinality, this.startObjectPackage+"."+clazz, tiefe+1, pan, node);
+						this.createInnerElements(oscsd, dataItemName, dataItemVarType, dataItemCardinality, clazzCheck, tiefe+1, pan, node);
 					} else {
 						// --- Create Sub-Panel that shows the cylic reference ----------
 						this.createOuterDeadEnd(oscsd, dataItemName, dataItemVarType, dataItemCardinality, clazz, pan, tiefe, node);
@@ -891,27 +919,6 @@ public class DynForm extends JPanel {
 		
 	}
 	
-	
-	public void showPanelComponents(JPanel pan){
-		Component [] c = pan.getComponents();
-		for (Component component : c) {
-			if(component instanceof JPanel)
-				showPanelComponents((JPanel)component);
-			else if(component instanceof JLabel)
-				System.out.println("JLabel: " + ((JLabel) component).getText());
-		}
-	}
-
-
-	public int getCorrectOuterHeight(JPanel pan){
-		int height = 0;
-		Component[] c = pan.getComponents();
-		for(int i = 0; i<c.length; i++){
-			height += c[i].getHeight();
-		}
-		return height;
-	}
-
 	/**
 	 * This method checks if the type of the field is a raw type
 	 * (String, int, float, ...)
@@ -931,47 +938,31 @@ public class DynForm extends JPanel {
 		}
 		return flag;
 	}
-	
-	
-	private void setDataValueField(String valueType, JPanel dataItemPanel) {
-		if(valueType.equals("String")){
-			JTextField dataValueField = new JTextField();
-			dataValueField.setMaximumSize(new Dimension(100, 30));
-			dataValueField.setAlignmentX(RIGHT_ALIGNMENT);
-			dataItemPanel.add(dataValueField);
-		}
-		else if(valueType.equals("float")){
-			JTextField dataValueField = new JTextField();
-			dataValueField.setMaximumSize(new Dimension(100, 30));
-			dataValueField.setAlignmentX(RIGHT_ALIGNMENT);
-			dataItemPanel.add(dataValueField);
-		}
-		else if(valueType.equals("int")){
-			JTextField dataValueField = new JTextField();
-			dataValueField.setMaximumSize(new Dimension(100, 30));
-			dataValueField.setAlignmentX(RIGHT_ALIGNMENT);
-			dataItemPanel.add(dataValueField);
-		}
-		else{
-			JLabel dataValueField = new JLabel();
-			dataValueField.setText("Unknown Type");
-			dataValueField.setMaximumSize(new Dimension(100, 30));
-			dataValueField.setAlignmentX(RIGHT_ALIGNMENT);
-			System.out.println("Unknown: "+valueType);
-			if(valueType.matches("Instance of (.)*")){
-				
-				String clazz = valueType.substring(12);
-				System.out.println("The class: "+clazz + " Package: " + this.startObjectPackage);
-				System.out.println("+++++++++++++++ Start deep search +++++++++++++++++++++");
-			}
-			else
-			{
-				dataItemPanel.add(dataValueField);
-			}
-		}
-		
 
-		System.out.println("Type: "+valueType);
-		
-	}	
+	/**
+	 * @return the agentArgsInstance
+	 */
+	public Object[] getOntoArgsInstance() {
+		return ontoArgsInstance;
+	}
+	/**
+	 * @param agentArgsInstance the agentArgsInstance to set
+	 */
+	public void setOntoArgsInstance(Object[] ontoArgsInstance) {
+		this.ontoArgsInstance = ontoArgsInstance;
+	}
+
+	/**
+	 * @return the agentArgsXML
+	 */
+	public String[] getOntoArgsXML() {
+		return ontoArgsXML;
+	}
+	/**
+	 * @param agentArgsXML the agentArgsXML to set
+	 */
+	public void setOntoArgsXML(String[] ontoArgsXML) {
+		this.ontoArgsXML = ontoArgsXML;
+	}
+	
 }

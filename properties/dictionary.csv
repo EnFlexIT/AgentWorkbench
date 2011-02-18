@@ -153,6 +153,8 @@ Java-Klasse für den Start der Simulations-Agenten und die statische Lastverteil
 Java-Klasse für die dynamische Lastverteilung;Java class for dynamic load balancing;;;
 Kein Projekt geöffnet !;No open project!;;;
 Kein SVG zugewiesen;No SVG assigned;;;
+Keine Graph-Datei definiert!;;;;
+Keine SVG-Datei definiert!;;;;
 Keine SVG-Datei definiert;No SVG file defined;;;
 Keine SVG-Datei zugewiesen;No SVG file assigned;;;
 Keine Umgebung definiert;No environment defined;;;

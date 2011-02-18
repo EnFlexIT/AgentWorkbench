@@ -54,11 +54,12 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 	private final String PathImage = Application.RunInfo.PathImageIntern();  //  @jve:decl-index=0:
 	private final ImageIcon iconGreen = new ImageIcon( this.getClass().getResource( PathImage + "StatGreen.png") );  //  @jve:decl-index=0:
 	private final ImageIcon iconRed = new ImageIcon( this.getClass().getResource( PathImage + "StatRed.png") );
+	private final ImageIcon imageSave =  new ImageIcon(getClass().getResource(PathImage + "MBsave.png"));  //  @jve:decl-index=0:
 	
 	private Project currProject;
 	private SimulationSetup currSimSetup = null;  //  @jve:decl-index=0:
-	private AgentClassElement4SimStart startObj = null;  //  @jve:decl-index=0:
-	private AgentClassElement4SimStart startObjLast = null;
+	private AgentClassElement4SimStart agentSelected = null;  //  @jve:decl-index=0:
+	private AgentClassElement4SimStart agentSelectedLast = null;  //  @jve:decl-index=0:
 	
 	private DefaultListModel jListModelAgents2Start = new DefaultListModel();
 	
@@ -319,17 +320,18 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 				public void valueChanged(ListSelectionEvent e) {
 					if (jListStartList.getSelectedValue()!= null) {
 
-						startObj = (AgentClassElement4SimStart) jListStartList.getSelectedValue();
-						if (startObj.equals(startObjLast)==false) {
+						agentSelected = (AgentClassElement4SimStart) jListStartList.getSelectedValue();
+						if (agentSelected.equals(agentSelectedLast)==false) {
 							// --- NEW SELECTION IN THE LIST ------------------
-							jTextFieldStartAs.setText(startObj.getStartAsName());
+							jTextFieldStartAs.setText(agentSelected.getStartAsName());
 
 							// --- Show OntologyInstanceViewer for this agent -
-							OntologyInstanceViewer oiv = new OntologyInstanceViewer(currProject, startObj.getAgentClassReference());
+							OntologyInstanceViewer oiv = new OntologyInstanceViewer(currProject, agentSelected.getAgentClassReference());
+							oiv.setConfigurationXML(agentSelected.getStartArguments());
 							setOntologyInstView(oiv);
-							
+
 							// --- Set reminder for the last selected object --
-							startObjLast = startObj;
+							agentSelectedLast = agentSelected;
 						}
 					
 					}
@@ -503,15 +505,17 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 	}
 
 	/**
-	 * This method initializes jButtonStartOK	
+	 * This method initialises jButtonStartOK	
 	 * @return javax.swing.JButton	
 	 */
 	private JButton getJButtonStartOK() {
 		if (jButtonStartOK == null) {
 			jButtonStartOK = new JButton();
-			jButtonStartOK.setPreferredSize(new Dimension(50, 20));
+			jButtonStartOK.setPreferredSize(new Dimension(45, 26));
 			jButtonStartOK.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonStartOK.setText("OK");
+//			jButtonStartOK.setText("Speichern");
+			jButtonStartOK.setToolTipText(Language.translate("Speichern"));
+			jButtonStartOK.setIcon(imageSave);			
 			jButtonStartOK.setActionCommand("Save");
 			jButtonStartOK.addActionListener(this);
 		}
@@ -668,10 +672,10 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		}
 		
 		// --- new name == old name ? --------------------------------
-		if (startObj.getStartAsName().equalsIgnoreCase(newAgentName)==false) {
+		if (agentSelected.getStartAsName().equalsIgnoreCase(newAgentName)==false) {
 			// --- new name entered ----------------------------------
 			if (agentNameExists(newAgentName)==false) {
-				startObj.setStartAsName(newAgentName);
+				agentSelected.setStartAsName(newAgentName);
 				jListStartList.repaint();
 			} else {
 				
@@ -684,6 +688,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 				JOptionPane.showMessageDialog(null, msgText, msgHead, JOptionPane.OK_OPTION);
 			}
 		}
+		this.save();
 	}
 	
 	/**
@@ -705,11 +710,11 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		this.agentRenumberList();
 		this.save();
 		
-		startObj = null;
-		startObjLast = null;
+		agentSelected = null;
+		agentSelectedLast = null;
 
 		jTextFieldStartAs.setText(null);
-		OntologyInstanceViewer oiv = new OntologyInstanceViewer(currProject, null);
+		OntologyInstanceViewer oiv = new OntologyInstanceViewer(currProject);
 		this.setOntologyInstView(oiv);
 		
 	}
@@ -763,7 +768,10 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 	private void save() {
 		
 		if (this.currOntoInstViewer!=null) {
+			// --- Save the current configuration -----------------------------
 			this.currOntoInstViewer.save();
+			// --- Set the current configuration to the simulation setup ------
+			this.agentSelectedLast.setStartArguments(currOntoInstViewer.getConfigurationXML());
 		}
 		this.currSimSetup.save();
 		

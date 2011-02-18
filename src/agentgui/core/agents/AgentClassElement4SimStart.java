@@ -2,20 +2,36 @@ package agentgui.core.agents;
 
 import jade.core.Agent;
 
+import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlTransient;
+
+import org.apache.commons.codec.binary.Base64;
 
 public class AgentClassElement4SimStart {
 	
-	private Class<? extends Agent> agentClass = null;
-	private String agentClassReference = null;
-	private String startAsName = "";
-	
-	private Integer postionNo = 0;
 	@XmlTransient private DecimalFormat df = new DecimalFormat("00000");
+
+	private Class<? extends Agent> agentClass = null;
 	
+	@XmlElement(name="postionNo")
+	private Integer postionNo = 0;
+	@XmlElement(name="agentClassReference")
+	private String agentClassReference = null;
+	@XmlElement(name="startAsName")
+	private String startAsName = "";
+	@XmlElement(name="mobileAgent")
 	private boolean mobileAgent = true;
+	
+	@XmlElementWrapper(name = "startArguments")
+	@XmlElement(name="argument")
+	private String[] startArguments = null;
+	
+	
+	
 	
 	/**
 	 * Constructor without arguments (This is first of all 
@@ -74,9 +90,6 @@ public class AgentClassElement4SimStart {
 				StartAs = StartAsNew;
 			}
 			// -----------------------------------------------------
-			// --- Check, ob dieser Agent schon im Setup ist -------
-			//TODO: Check, ob der Agent schon
-			// -----------------------------------------------------
 			// --- Vorschlagsnamen einstellen ----------------------	
 			startAsName = StartAs;
 		
@@ -117,20 +130,22 @@ public class AgentClassElement4SimStart {
 	}
 	
 	/**
+	 * @return the postionNo
+	 */
+	@XmlTransient
+	public Integer getPostionNo() {
+		return postionNo;
+	}
+	/**
 	 * @param postionNo the postionNo to set
 	 */
 	public void setPostionNo(Integer postionNo) {
 		this.postionNo = postionNo;
 	}
 	/**
-	 * @return the postionNo
-	 */
-	public Integer getPostionNo() {
-		return postionNo;
-	}
-	/**
 	 * @return the startAsName
 	 */
+	@XmlTransient
 	public String getStartAsName() {
 		return startAsName;
 	}
@@ -144,6 +159,7 @@ public class AgentClassElement4SimStart {
 	/**
 	 * @return the agentClassReference
 	 */
+	@XmlTransient
 	public String getAgentClassReference() {
 		return agentClassReference;
 	}
@@ -157,6 +173,7 @@ public class AgentClassElement4SimStart {
 	/**
 	 * @return the mobileAgent
 	 */
+	@XmlTransient
 	public boolean isMobileAgent() {
 		return mobileAgent;
 	}
@@ -167,6 +184,49 @@ public class AgentClassElement4SimStart {
 		this.mobileAgent = mobileAgent;
 	}
 	
+	/**
+	 * @return the startInstances
+	 */
+	@XmlTransient
+	public String[] getStartArguments() {
+		
+		if (this.startArguments==null) return null;
+		
+		String[] startArgumentsDecoded = new String[this.startArguments.length];
+		String decodedArgument = null;
+		try {
+			for (int i = 0; i < startArguments.length; i++) {
+				decodedArgument = new String(Base64.decodeBase64(startArguments[i].getBytes()), "UTF8");
+				startArgumentsDecoded[i] = decodedArgument;
+			}
+			
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		return startArgumentsDecoded;
+	}
+	/**
+	 * @param startInstances the startInstances to set
+	 */
+	public void setStartArguments(String[] startArgs) {
+		
+		if (startArgs.length==0) {
+			this.startArguments = null;
+			return;
+		}
+		String[] startArgumentsEncoded = new String[startArgs.length];
+		String encodedArgument = null;
+		try {
+			for (int i = 0; i < startArgs.length; i++) {
+				encodedArgument = new String(Base64.encodeBase64(startArgs[i].getBytes("UTF8")));
+				startArgumentsEncoded[i] = encodedArgument;
+			}
+			
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		this.startArguments = startArgumentsEncoded;
+	}
 	
 	
 }
