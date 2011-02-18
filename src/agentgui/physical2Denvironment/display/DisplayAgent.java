@@ -18,6 +18,8 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 import agentgui.physical2Denvironment.ontology.Physical2DObject;
 import agentgui.physical2Denvironment.provider.EnvironmentProviderHelper;
 import agentgui.physical2Denvironment.provider.EnvironmentProviderService;
+import agentgui.simulationService.SimulationService;
+import agentgui.simulationService.SimulationServiceHelper;
 /**
  * This type of agent controls a visualization of a Physical2DEnvironment 
  * @author Nils
@@ -38,10 +40,10 @@ public class DisplayAgent extends Agent {
 	private JPanel usePanel = null;
 	private Document svgDoc = null;
 	private Physical2DEnvironment environment = null;
-	
+	private SimulationServiceHelper simHelper = null;
 	
 	public void setup(){
-		
+	
 		int use4Visualization = 0;
 		Object[] startArgs = getArguments();
 		if (startArgs==null || startArgs.length==0) {
@@ -52,6 +54,8 @@ public class DisplayAgent extends Agent {
 				EnvironmentProviderHelper helper = (EnvironmentProviderHelper) getHelper(EnvironmentProviderService.SERVICE_NAME);
 				svgDoc = helper.getSVGDoc();
 				environment = helper.getEnvironment();
+				
+				
 			} catch (ServiceException e) {
 				System.err.println(getLocalName()+" - Error: Could not retrieve EnvironmentProviderHelper, shutting down!");
 				doDelete();
@@ -82,6 +86,30 @@ public class DisplayAgent extends Agent {
 			usePanel.repaint();
 			break;
 		}
+		
+		myGUI.jSliderTime.addChangeListener(new javax.swing.event.ChangeListener() {
+			public void stateChanged(javax.swing.event.ChangeEvent e) {
+				// Call simu service and tell him that something is changed!
+				System.out.println("Change:"+myGUI.jSliderTime.getValue());
+				try
+				{
+					if(simHelper!=null)
+					{
+						
+				  simHelper.setCurrentPos(myGUI.jSliderTime.getValue());
+					}
+					else
+					{
+						simHelper=(SimulationServiceHelper) getHelper(SimulationService.NAME);
+					}
+				}
+				catch(Exception ex)
+				{
+					ex.printStackTrace();
+				}
+			}
+		});
+		
 		
 		addBehaviour(new UpdateSVGBehaviour());
 	}
@@ -116,8 +144,11 @@ public class DisplayAgent extends Agent {
 
 		public UpdateSVGBehaviour() {
 			super(DisplayAgent.this, PERIOD);
+		
 			try {
 				helper = (EnvironmentProviderHelper) getHelper(EnvironmentProviderService.SERVICE_NAME);
+			
+				
 			} catch (ServiceException e) {
 				System.err.println(getLocalName()+" - EnvironmentProviderHelper not found, shutting down");
 				doDelete();
@@ -128,8 +159,26 @@ public class DisplayAgent extends Agent {
 		@Override
 		protected void onTick() {
 			HashSet<Physical2DObject> movingObjects = helper.getCurrentlyMovingObjects();
-			
 			myGUI.updatePositions(movingObjects);
+			try
+			{
+				if(simHelper!=null)
+				{
+			
+				myGUI.setMaximum(simHelper.getTransactionSize());
+				myGUI.setCurrentTimePos(simHelper.getCurrentPos());
+				}
+				else
+				{
+				simHelper=(SimulationServiceHelper) getHelper(SimulationService.NAME);	
+				}
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+			
+			
 		}
 		
 	}

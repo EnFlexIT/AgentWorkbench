@@ -13,6 +13,8 @@ import agentgui.physical2Denvironment.ontology.Physical2DObject;
 import agentgui.physical2Denvironment.ontology.PlaygroundObject;
 import agentgui.physical2Denvironment.ontology.Position;
 import agentgui.physical2Denvironment.ontology.Scale;
+import agentgui.simulationService.SimulationService;
+import agentgui.simulationService.SimulationServiceHelper;
 
 public class DisplayAgentGUI extends BasicSVGGUI {
 	
@@ -24,6 +26,8 @@ public class DisplayAgentGUI extends BasicSVGGUI {
 	 * The scale of the SVG document
 	 */
 	private Scale scale;
+
+
 	/**
 	 * Constructor
 	 * @param svgDoc The SVG document to display
@@ -35,6 +39,8 @@ public class DisplayAgentGUI extends BasicSVGGUI {
 		this.scale = env.getScale();
 		initPositions(svgDoc, env.getRootPlayground());
 		this.setSVGDoc(svgDoc);
+		
+				
 	}
 	
 	/**
@@ -95,7 +101,10 @@ public class DisplayAgentGUI extends BasicSVGGUI {
 			
 			um.getUpdateRunnableQueue().invokeLater(new posUpdater(movingObjects));
 		}
+		
 	}
+	
+	
 	
 	/**
 	 * This class updates the positions of the SVG elements representing moving objects
@@ -113,6 +122,11 @@ public class DisplayAgentGUI extends BasicSVGGUI {
 
 		@Override
 		public void run() {
+			
+			
+		
+			
+			
 			// --- CD: Bug wg. concurrent Exception behogen ----
 			HashSet<Physical2DObject> movingObjectsCopy = null;
 			synchronized (movingObjects) {
