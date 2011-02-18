@@ -93,4 +93,13 @@ public interface SimulationServiceHelper extends ServiceHelper {
 	public void resetEnvironmentInstanceNextParts() throws ServiceException;
 	public Hashtable<AID, Object> getEnvironmentInstanceNextParts() throws ServiceException;
 	
+	
+	public boolean simulationIsComplete() throws ServiceException;
+	public void setSimulationComplete(boolean ready);
+	
+	public int getTransactionSize();
+	public void setCurrentPos(int pos);
+	public int getCurrentPos();
+	
+
 }

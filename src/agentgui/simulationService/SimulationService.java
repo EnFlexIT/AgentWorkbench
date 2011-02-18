@@ -82,6 +82,9 @@ public class SimulationService extends BaseService {
 	public static final String NAME = SimulationServiceHelper.SERVICE_NAME;
 	public static final String SERVICE_NODE_DESCRIPTION_FILE = SimulationServiceHelper.SERVICE_NODE_DESCRIPTION_FILE;
 	
+	private boolean simulationComplete=false;
+	int step=0;
+	
 	private AgentContainer myContainer;
 	private MainContainer myMainContainer;
 
@@ -402,6 +405,34 @@ public class SimulationService extends BaseService {
 		}
 		public void resetEnvironmentInstanceNextParts() throws ServiceException {
 			mainResetEnvironmentInstanceNextParts();
+		}
+
+		@Override
+		public void setSimulationComplete(boolean ready) {
+			simulationComplete=ready;
+			
+		}
+
+		@Override
+		public boolean simulationIsComplete() throws ServiceException {
+			return simulationComplete;
+		}
+
+		@Override
+		public int getTransactionSize() {
+			return transactionMap.size();
+		}
+
+		@Override
+		public void setCurrentPos(int pos) {
+			step=pos;
+			
+		}
+
+		@Override
+		public int getCurrentPos() {
+		
+			return step;
 		}
 
 	}
@@ -1732,5 +1763,8 @@ public class SimulationService extends BaseService {
 		}
 
 	}
+	
+
+	
 	
 }
