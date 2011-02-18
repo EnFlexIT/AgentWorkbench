@@ -1,8 +1,11 @@
 package agentgui.physical2Denvironment.provider;
 
 import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Set;
 
 import org.w3c.dom.Document;
 
@@ -14,8 +17,9 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 import agentgui.physical2Denvironment.ontology.Physical2DObject;
 import agentgui.physical2Denvironment.ontology.PlaygroundObject;
 import agentgui.physical2Denvironment.utils.EnvironmentWrapper;
-
+import agentgui.physical2Denvironment.ontology.PositionUpdate;
 import jade.core.Agent;
+import jade.core.AID;
 import jade.core.BaseService;
 import jade.core.HorizontalCommand;
 import jade.core.IMTPException;
@@ -72,6 +76,9 @@ public class EnvironmentProviderService extends BaseService {
 	 * Set of currently moving Physical2DObjects
 	 */
 	private HashSet<Physical2DObject> currentlyMovingObjects;
+	
+	
+	private HashMap <AID,ArrayList<PositionUpdate>> transaction=new HashMap<AID,ArrayList<PositionUpdate>>();
 	
 	@Override
 	public String getName() {
@@ -516,6 +523,45 @@ public class EnvironmentProviderService extends BaseService {
 		public String getProjectName() {
 			return EnvironmentProviderService.this.getProjectName();
 		}
+		
+		@Override
+		public void stepModel(AID key, PositionUpdate updatedPosition)
+		{
+			ArrayList<PositionUpdate> list=transaction.get(key);
+			if(list==null)
+			{
+				list=new ArrayList<PositionUpdate>();
+			}
+			list.add(updatedPosition);
+			System.out.println("List Size for:" + key.getLocalName() +":"+list.size());
+			transaction.put(key, list);
+			
+		}
+
+		@Override
+		public HashMap<AID, PositionUpdate> getModel(int pos) {
+			HashMap<AID,PositionUpdate> result=new HashMap<AID,PositionUpdate>();
+			Set<AID> keys=transaction.keySet();
+			for(AID key : keys)
+			{
+				PositionUpdate update=null;
+				int size=transaction.get(key).size();
+				if(pos<size)
+				{
+				 update=transaction.get(key).get(pos);
+				}
+				else
+				{
+				 update=transaction.get(key).get(size-1);
+				}
+				result.put(key, update);
+			}
+			
+			return result;
+			
+		}
+
+		
 	}
 	
 	/**

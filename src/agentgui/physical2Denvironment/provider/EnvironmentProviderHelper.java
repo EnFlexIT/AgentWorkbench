@@ -1,5 +1,6 @@
  package agentgui.physical2Denvironment.provider;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -9,7 +10,9 @@ import agentgui.physical2Denvironment.ontology.ActiveObject;
 import agentgui.physical2Denvironment.ontology.Movement;
 import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 import agentgui.physical2Denvironment.ontology.Physical2DObject;
+import agentgui.physical2Denvironment.ontology.PositionUpdate;
 
+import jade.core.AID;
 import jade.core.ServiceHelper;
 /**
  * This interfaces provides access to the EnvironmentProviderService for agents
@@ -89,4 +92,6 @@ public interface EnvironmentProviderHelper extends ServiceHelper {
 	 * @return The name of the project the Physical2DEnvironment belongs to.
 	 */
 	public String getProjectName();
+	public void stepModel(AID key, PositionUpdate updatedPosition);
+	public HashMap<AID,PositionUpdate> getModel(int pos);
 }
