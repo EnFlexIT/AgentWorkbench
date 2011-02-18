@@ -4,6 +4,8 @@ import jade.content.lang.Codec.CodecException;
 import jade.content.lang.xml.XMLCodec;
 import jade.content.onto.Ontology;
 import jade.content.onto.OntologyException;
+import jade.util.leap.ArrayList;
+import jade.util.leap.List;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -36,20 +38,6 @@ import agentgui.core.ontologies.OntologySingleClassSlotDescription;
 
 public class DynForm extends JPanel {
 
-	// === Frame + Panel Description === //
-	/*
-	 * 				testFrame (Frame)
-	 * 				  |
-	 * 		scrollPane(JScrollPane)	[ superPanel (JPanel + BorderLayout) ]
-	 * 				  |
-	 * 				mainPanel (JPanel)
-	 * 				  |
-	 * 		Class A (JLabel) - Fields of Class A (JPanel) -  Class B (JLabel) - Fields of Class B (JPanel) - ...
-	 * 								    |													...
-	 * 							 Class X / Field A (JTextField) - Field B - (JTextField) ...
-	 */
-	// === Frame + Panel Description === //
-	
 	private static final long serialVersionUID = 7942028680794127910L;
 
 	private boolean debug = false;
@@ -107,7 +95,6 @@ public class DynForm extends JPanel {
 				this.buildGUI();
 				// --- If wanted show some debug informations -------
 				if (debug==true) {
-					this.objectTreePrint();
 					this.objectTreeShow();
 				}
 			}
@@ -139,7 +126,6 @@ public class DynForm extends JPanel {
 			this.buildGUI();
 			// --- If wanted show some debug informations -------
 			if (debug==true) {
-				this.objectTreePrint();
 				this.objectTreeShow();
 			}
 			
@@ -210,14 +196,6 @@ public class DynForm extends JPanel {
 	/**
 	 * 
 	 */
-	private void setInstancesFromXML() {
-		
-		
-	}
-	
-	/**
-	 * 
-	 */
 	private void setInstancesFromForm() {
 		
 		int numOfChilds = rootNode.getChildCount();
@@ -247,10 +225,49 @@ public class DynForm extends JPanel {
 			
 			// --- Remind object state as instance and XML ---------- 
 			ontoArgsInstance[i] = obj;
-			ontoArgsXML[i] = getXMLofInstance(obj, onto);
+			ontoArgsXML[i] = getXMLOfInstance(obj, onto);
 			
 		}
+	}
+	
+	/**
+	 * 
+	 */
+	private void setInstancesFromXML() {
 		
+		if (this.ontoArgsXML==null) return;
+		
+		int numOfXMLArgs = ontoArgsXML.length;
+		this.ontoArgsInstance = new Object[numOfXMLArgs];
+		
+		// ----------------------------------------------------------
+		// --- Walk through the objectTree, which was generated ----- 
+		// --- during the creation of the DynForm - object 		-----
+		// ----------------------------------------------------------
+		int numOfChilds = rootNode.getChildCount();
+		for (int i = 0; i < numOfChilds; i++) {
+			
+			// --- Get DynType (userObject) of this node ------------
+			DefaultMutableTreeNode currNode =  (DefaultMutableTreeNode) rootNode.getChildAt(i);
+			DynType dt = (DynType) currNode.getUserObject();
+			String className = dt.getClassName();
+			
+			// --- Get the corresponding Ontology-Instance ----------			
+			OntologyClassTreeObject octo = this.currProject.ontologies4Project.getClassTreeObject(className);
+			Ontology onto = octo.getOntologyClass().getOntologyInstance();
+			
+			// --- Generate instance for this argument --------------
+			if ((i+1)<=numOfXMLArgs) {
+				Object obj = getInstanceOfXML(ontoArgsXML[i], onto);
+				if (obj!=null) {
+					// --- Set the current instance to the form -----
+					this.setFormState(obj, currNode);
+					// --- Remind object state as instance ----------
+					ontoArgsInstance[i] = obj;
+				}
+			}
+
+		} // --- end for ---
 	}
 	
 	/**
@@ -261,7 +278,7 @@ public class DynForm extends JPanel {
 	 * @param onto
 	 * @return
 	 */
-	private String getXMLofInstance(Object obj, Ontology onto) {
+	private String getXMLOfInstance(Object obj, Ontology onto) {
 		
 		XMLCodec codec = new XMLCodec();
 		String xmlRepresentation = null;
@@ -276,6 +293,28 @@ public class DynForm extends JPanel {
 			System.out.println(xmlRepresentation);
 		}
 		return xmlRepresentation;
+	}
+	/**
+	 * This method translates an XML String to an object instance by the
+	 * given instance of the current ontology. The translated object must 
+	 * be a part of this ontology. 
+	 * @param xmlString
+	 * @param onto
+	 * @return
+	 */
+	private Object getInstanceOfXML(String xmlString, Ontology onto) {
+		
+		XMLCodec codec = new XMLCodec();
+		Object objectInstance = null;
+		
+		try {
+			objectInstance = codec.decodeObject(onto, xmlString);
+		} catch (CodecException e) {
+			e.printStackTrace();
+		} catch (OntologyException e) {
+			e.printStackTrace();
+		}		
+		return objectInstance;
 	}
 	
 	/**
@@ -297,6 +336,9 @@ public class DynForm extends JPanel {
 			String className = dt.getClassName();
 			OntologySingleClassSlotDescription oscsd = dt.getOSCD();
 			
+			methodFound = null;
+			subObjectOrValue[0] = null;
+			                 
 			if (typeName.equals(DynType.typeClass) || typeName.equals(DynType.typeInnerClassType)) {
 				// --- Generate Instance of this class --------------
 				subObjectOrValue[0] = this.getNewClassInstance(className);
@@ -341,6 +383,113 @@ public class DynForm extends JPanel {
 	}
 	
 	/**
+	 * This method sets the object state to the form
+	 */
+	private void setFormState(Object object, DefaultMutableTreeNode node) {
+		
+		int numOfChilds = node.getChildCount();
+		for (int i = 0; i < numOfChilds; i++) {
+			
+			DefaultMutableTreeNode currNode =  (DefaultMutableTreeNode) node.getChildAt(i);
+			DynType dt = (DynType) currNode.getUserObject();
+			String typeName = dt.getTypeName();
+			OntologySingleClassSlotDescription oscsd = dt.getOSCD();
+			
+			// -----------------------------------------------------------
+			// --- Invoke the method to get the object/value -------------
+			// -----------------------------------------------------------
+			Object slotValue = null;
+			Method methodFound = this.getGetMethod(oscsd, object);
+			if (methodFound!=null & this.hasObjectMethod(object, methodFound)) {
+				
+				// --- Invoke the found method to the current object ----- 
+				try {
+					methodFound.setAccessible(true);
+					slotValue = methodFound.invoke(object, new Object[0]);
+					
+				} catch (IllegalArgumentException e) {
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					e.printStackTrace();
+				}
+			}
+
+			// --- work on the slot value -------------------------------
+			if (slotValue!=null) {
+				// ------------------------------------------------------
+				// --- If we have a ArrayList instance here -------------
+				// ------------------------------------------------------
+				if (slotValue instanceof String[]) {
+					ArrayList newList = new ArrayList();
+					String[] tmp = (String[]) slotValue;
+					for (int j = 0; j < tmp.length; j++) {
+						newList.add(tmp[j]);
+					}
+					slotValue = newList;
+				}
+				// ------------------------------------------------------
+				// --- If we have a list instance here ------------------
+				// ------------------------------------------------------
+				boolean multipleValues = false;
+				if (slotValue instanceof List) {
+					if (((List) slotValue).size()==1) {
+						slotValue = ((List) slotValue).get(0);
+						multipleValues = false;
+					} else {
+						multipleValues = true;
+					}
+				} else {
+					multipleValues = false;
+				}
+				// ------------------------------------------------------
+				// --- Now, set the value to the form -------------------
+				// ------------------------------------------------------
+				if (typeName.equals(DynType.typeClass) || typeName.equals(DynType.typeInnerClassType)) {
+					// --- Set their values -----------------------------
+					if (multipleValues==true) {
+						System.out.println("TODO: Real multiple Instances");	
+					} else {
+						this.setFormState(slotValue, currNode);	
+					}
+					
+				} else if (typeName.equals(DynType.typeRawType)) {
+					// --- Get the value of the underlying field --------
+					if (multipleValues==true) {
+						System.out.println("TODO: Real multiple Instances");
+					} else {
+						this.setSingleValue(dt, slotValue);	
+					}
+					
+				} else if (typeName.equals(DynType.typeCyclic)) {
+					// --- Nothing to do here ---------------------------
+				}	
+			}
+			
+		} // --- end for ---
+	}
+	
+	/**
+	 * This Method checks if an instance of an object has a asked method
+	 * @param obj
+	 * @param methode2check
+	 * @return
+	 */
+	private boolean hasObjectMethod(Object obj, Method methode2check) {
+		
+		Method[] meths = obj.getClass().getMethods();
+		for (int i = 0; i < meths.length; i++) {
+			Method meth = meths[i];
+			if (meth.equals(methode2check)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	
+	/**
 	 * This method reads the value given through the DynType and  
 	 * the inherent reference to the Swing component
 	 * @param dt
@@ -372,7 +521,12 @@ public class DynForm extends JPanel {
 			if (stringValue==null | stringValue.equals("")) {
 				returnValue = 0;
 			} else {
-				returnValue = new Integer(stringValue);	
+				if (stringValue.contains(".")) {
+					returnValue = Math.round(new Double(stringValue));
+					jt.setText(returnValue.toString());
+				} else {
+					returnValue = new Integer(stringValue);	
+				}
 			}
 			
 		} else if(valueType.equals("boolean")){
@@ -381,6 +535,34 @@ public class DynForm extends JPanel {
 
 		}
 		return returnValue;
+	}
+	
+	/**
+	 * This method sets the value given through the DynType and  
+	 * the inherent reference to the Swing component
+	 * @param dt
+	 * @return
+	 */
+	private void setSingleValue(DynType dt, Object obj) {
+		
+		String valueType = dt.className;
+		if(valueType.equals("String")){
+			JTextField jt = dt.fieldValue;
+			jt.setText(obj.toString());
+			
+		} else if(valueType.equals("float")){
+			JTextField jt = dt.fieldValue;
+			jt.setText(obj.toString());
+			
+		} else if(valueType.equals("int")){
+			JTextField jt = dt.fieldValue;
+			jt.setText(obj.toString());
+			
+		} else if(valueType.equals("boolean")){
+			JTextField jt = dt.fieldValue;
+			jt.setText(obj.toString());
+
+		}
 	}
 	
 	/**
@@ -424,6 +606,60 @@ public class DynForm extends JPanel {
 	}
 	
 	/**
+	 * This method selects the method of the slot, which has to be 
+	 * used to Get the current values of the current object instance
+	 * @param currOSCSD
+	 * @return
+	 */
+	private Method getGetMethod(OntologySingleClassSlotDescription currOSCSD, Object object) {
+		
+		String slotName = currOSCSD.getSlotName();
+		String methodSearcher = null;
+		Method methodFound = null; 
+		
+		// -----------------------------------------------------
+		// --- Special case AID --------------------------------
+		if (object instanceof jade.core.AID) {
+			Method[] meths = jade.core.AID.class.getMethods();
+			for (int i = 0; i < meths.length; i++) {
+				Method meth = meths[i];
+				if (slotName.equals("addresses")) {
+					if (meth.getName().equals("getAddressesArray")) {
+						return meth;
+					}
+				}
+			}
+		}
+		
+		// --- define what we look for --------------------------
+		if (currOSCSD.getSlotCardinality().equals("multiple")) {
+			// --- multiple instances possible for this slot ----
+			// --- => "add" needed 
+			methodSearcher = "get" + slotName;
+		} else {
+			// --- single instances possible for this slot ------
+			// --- => "set" needed
+			methodSearcher = "get" + slotName;
+		}
+		methodSearcher = methodSearcher.toLowerCase();
+
+		// --- run through the list of all known methods -------- 
+		Vector<String> keyVec = new Vector<String>(currOSCSD.getSlotMethodList().keySet());
+		for (Iterator<String> iterator = keyVec.iterator(); iterator.hasNext();) {
+			
+			String methKey = iterator.next(); 
+			Method meth = currOSCSD.getSlotMethodList().get(methKey);
+			String methName = meth.getName();
+			
+			if (methName.toLowerCase().equals(methodSearcher)) {
+				methodFound = meth;
+				break;
+			}
+		}
+		return methodFound;		
+	}
+
+	/**
 	 * This method returns a new instance of a given class given by its full classname
 	 * @param className
 	 * @return
@@ -455,38 +691,6 @@ public class DynForm extends JPanel {
 		DynTreeViewer dtv = new DynTreeViewer(objectTree);
 		dtv.setVisible(true);
 	}
-	/**
-	 * Call-method to print the content of the 'objectTree'
-	 */
-	private void objectTreePrint(){
-		if(objectTree != null)		{
-			objectTreePrintIt((DefaultMutableTreeNode) objectTree.getRoot());
-		}
-	}
-	/**
-	 * Method to print the content of a node (including sub-nodes)
-	 * @param node
-	 */
-	private void objectTreePrintIt(DefaultMutableTreeNode node){
-		
-		String spacer = "";
-		if(node != null){
-			for(int i=0; i<node.getLevel(); i++)
-				spacer += "*";
-			if(node.getUserObject() instanceof DynType){
-				DynType dynType = (DynType) node.getUserObject();
-				if(dynType.isRawType() )
-					System.out.println(spacer + " Field: " + dynType.getFieldName() + " Value: " + dynType.getFieldValue().getText());
-				else if(dynType.isInnerClassType()){
-					System.out.println(spacer + " Field: " + dynType.getFieldName() + " Value(InnerClass): " + dynType.getClass());
-				}
-				else
-					System.out.println(spacer+" "+ dynType.getClassName());
-			}
-			objectTreePrintIt(node.getNextNode());
-		}
-	}
-
 
 	/**
 	 * 
@@ -962,7 +1166,12 @@ public class DynForm extends JPanel {
 	 * @param agentArgsXML the agentArgsXML to set
 	 */
 	public void setOntoArgsXML(String[] ontoArgsXML) {
-		this.ontoArgsXML = ontoArgsXML;
+//		int numOntoArgsXMLInput = ontoArgsXML.length;
+//		int numOntoArgsXMLHere = this.ontoArgsXML.length;
+//		if (numOntoArgsXMLInput == numOntoArgsXMLHere) {
+			this.ontoArgsXML = ontoArgsXML;
+			this.setInstancesFromXML();
+//		}
 	}
 	
 }
