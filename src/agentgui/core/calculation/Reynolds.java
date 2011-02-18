@@ -14,7 +14,7 @@ public class Reynolds implements CalcExpression {
 	CalcExpression fluidVelocity;
 
 	@Override
-	public double getValue() throws ParameterNotSetException {
+	public double getValue() throws CalculationException {
 		if(diameter == null || kinematicViscosity == null || fluidVelocity == null){
 			throw new ParameterNotSetException();
 		}

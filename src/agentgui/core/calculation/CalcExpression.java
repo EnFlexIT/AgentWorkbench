@@ -11,5 +11,5 @@ public interface CalcExpression {
 	 * Gets the constant's value.
 	 * @return the value
 	 */
-	public double getValue() throws ParameterNotSetException;
+	public double getValue() throws CalculationException;
 }

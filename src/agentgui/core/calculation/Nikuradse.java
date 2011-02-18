@@ -17,7 +17,7 @@ public class Nikuradse implements CalcExpression {
 	CalcExpression reynolds;
 	
 	@Override
-	public double getValue() throws ParameterNotSetException {
+	public double getValue() throws CalculationException {
 		if(reynolds == null){
 			throw new ParameterNotSetException();
 		}

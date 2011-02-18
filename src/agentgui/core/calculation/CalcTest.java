@@ -3,7 +3,6 @@ package agentgui.core.calculation;
 /**
  * Temporary class for the first CalcExpression tests.
  * @author Nils
- *
  */
 public class CalcTest {
 
@@ -23,9 +22,15 @@ public class CalcTest {
 		Nikuradse ni = new Nikuradse();
 		ni.setReynolds(re);
 		
+		Formula test = new Formula();
+		test.setFormula("a+b/c");
+		test.addParameter("a", new ConstantValue(5));
+		test.addParameter("b", new ConstantValue(0.666));
+		test.addParameter("c", ni);
+		
 		try {
-			System.out.println(ni.getValue());
-		} catch (ParameterNotSetException e) {
+			System.out.println(test.getValue());
+		} catch (CalculationException e) {
 			e.printStackTrace();
 		}
 
