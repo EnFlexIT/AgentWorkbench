@@ -16,6 +16,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.application.Project;
 import agentgui.core.ontologies.OntologyClassTreeObject;
 
 import java.awt.Insets;
@@ -277,7 +278,8 @@ public class ClassSelectorDialog extends JFrame implements ActionListener{
 		availableOntologyClasses = new HashMap<String, Class<?>>();
 		availableOntologyClasses.put(Language.translate("Nicht definiert"), null);
 		
-		DefaultMutableTreeNode gcNode = parent.getController().getProject().ontologies4Project.get("gasmas.ontology.GasgridOntology").getOntologyTree().getTreeNode("GridComponent");
+		Project currProject = parent.getController().getProject();
+		DefaultMutableTreeNode gcNode = currProject.ontologies4Project.getClassTreeNode("gasmas.ontology.GridComponent");
 		findOntologyClasses(gcNode, ontologyClassNames);
 		
 		return ontologyClassNames;
