@@ -41,7 +41,8 @@ public class DisplayAgent extends Agent {
 	private Document svgDoc = null;
 	private Physical2DEnvironment environment = null;
 	private SimulationServiceHelper simHelper = null;
-	
+	private int lastMaximumValue=-2;
+	private int lastCurrentValue=-1;
 	public void setup(){
 	
 		int use4Visualization = 0;
@@ -158,20 +159,31 @@ public class DisplayAgent extends Agent {
 
 		@Override
 		protected void onTick() {
-			HashSet<Physical2DObject> movingObjects = helper.getCurrentlyMovingObjects();
-			myGUI.updatePositions(movingObjects);
 			try
 			{
+			HashSet<Physical2DObject> movingObjects = helper.getCurrentlyMovingObjects();
+			synchronized (movingObjects) {
+			myGUI.updatePositions(movingObjects);
+			}
+			
 				if(simHelper!=null)
 				{
+					if(lastCurrentValue!=simHelper.getCurrentPos())
+					{
+						myGUI.setCurrentTimePos(simHelper.getCurrentPos());
+					}
+					if(lastMaximumValue!=simHelper.getTransactionSize())
+					{
+						myGUI.setMaximum(simHelper.getTransactionSize());
+					}
 			
-				myGUI.setMaximum(simHelper.getTransactionSize());
-				myGUI.setCurrentTimePos(simHelper.getCurrentPos());
 				}
 				else
 				{
 				simHelper=(SimulationServiceHelper) getHelper(SimulationService.NAME);	
 				}
+				lastCurrentValue=simHelper.getCurrentPos();
+				lastMaximumValue=simHelper.getTransactionSize();
 			}
 			catch(Exception e)
 			{

@@ -66,6 +66,7 @@ public class BasicSVGGUI extends JPanel {
 	
 	public void setCurrentTimePos(int pos)
 	{
+	
 		this.jSliderTime.setValue(pos);
 	}
 	

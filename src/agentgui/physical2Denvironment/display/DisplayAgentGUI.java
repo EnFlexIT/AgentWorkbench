@@ -113,7 +113,7 @@ public class DisplayAgentGUI extends BasicSVGGUI {
 	 */
 	private class posUpdater implements Runnable{
 		
-		private HashSet<Physical2DObject> movingObjects;
+		private HashSet <Physical2DObject> movingObjects;
 		
 		
 		public posUpdater(HashSet<Physical2DObject> movingObjects){
@@ -124,8 +124,8 @@ public class DisplayAgentGUI extends BasicSVGGUI {
 		public void run() {
 			
 			
-		
-			
+		try
+		{	
 			
 			// --- CD: Bug wg. concurrent Exception behogen ----
 			HashSet<Physical2DObject> movingObjectsCopy = null;
@@ -139,7 +139,12 @@ public class DisplayAgentGUI extends BasicSVGGUI {
 				if(element != null){
 					setElementPosition(element, object.getPosition());
 				}
-			}				
+			}	
+		}
+		catch(Exception e)
+		{
+			
+		}
 		} // --- end run() ---
 		
 	}
