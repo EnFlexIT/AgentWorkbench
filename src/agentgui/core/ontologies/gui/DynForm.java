@@ -13,6 +13,8 @@ import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
@@ -22,6 +24,8 @@ import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -45,7 +49,7 @@ public class DynForm extends JPanel {
 	// --- Based on this vector the display will be created ---------
 	private Vector<String> currOnotologyClassReferenceList = new Vector<String>();
 	
-	// --- parameters which are comming from the constructor -------- 
+	// --- parameters which are coming from the constructor --------- 
 	private Project currProject = null;
 	private String currAgentReference = null;
 
@@ -58,6 +62,9 @@ public class DynForm extends JPanel {
 	
 	private Object[] ontoArgsInstance = null; 
 	private String[] ontoArgsXML = null; 
+	
+	private NumberWatcher numWatcherFloat = new NumberWatcher(true);
+	private NumberWatcher numWatcherInteger = new NumberWatcher(false);
 	
 	/**
 	 * Constructor of this class by uising a project and an agent reference
@@ -185,7 +192,6 @@ public class DynForm extends JPanel {
 	 * @return
 	 */
 	public void save(boolean fromForm) {
-		
 		if (fromForm==true) {
 			this.setInstancesFromForm();	
 		} else {
@@ -194,7 +200,8 @@ public class DynForm extends JPanel {
 	}
 	
 	/**
-	 * 
+	 * This methods reads the current form configuration and creats 
+	 * the instances and the xml form of that configuration 
 	 */
 	private void setInstancesFromForm() {
 		
@@ -231,7 +238,8 @@ public class DynForm extends JPanel {
 	}
 	
 	/**
-	 * 
+	 * This method reads the current xml configuration of the 
+	 * arguments, fills the form and creates the instances  
 	 */
 	private void setInstancesFromXML() {
 		
@@ -369,6 +377,7 @@ public class DynForm extends JPanel {
 					Object result = methodFound.invoke(object, subObjectOrValue);
 					
 				} catch (IllegalArgumentException e) {
+					System.err.println("Error: " + className + " - " + object.getClass().getName() + " - " + methodFound.getName());
 					e.printStackTrace();
 				} catch (IllegalAccessException e) {
 					e.printStackTrace();
@@ -499,13 +508,13 @@ public class DynForm extends JPanel {
 		
 		Object returnValue = null;
 		
-		String valueType = dt.className;
+		String valueType = dt.getClassName();
 		if(valueType.equals("String")){
-			JTextField jt = dt.fieldValue;
+			JTextField jt = (JTextField) dt.getFieldDisplay();
 			returnValue = jt.getText();
 			
 		} else if(valueType.equals("float")){
-			JTextField jt = dt.fieldValue;
+			JTextField jt = (JTextField) dt.getFieldDisplay();
 			String stringValue = jt.getText();
 			stringValue = stringValue.replace(",", ".");
 			if (stringValue==null | stringValue.equals("")) {
@@ -515,7 +524,7 @@ public class DynForm extends JPanel {
 			}
 			
 		} else if(valueType.equals("int")){
-			JTextField jt = dt.fieldValue;
+			JTextField jt = (JTextField) dt.getFieldDisplay();
 			String stringValue = jt.getText();
 			stringValue = stringValue.replace(",", ".");
 			if (stringValue==null | stringValue.equals("")) {
@@ -530,8 +539,8 @@ public class DynForm extends JPanel {
 			}
 			
 		} else if(valueType.equals("boolean")){
-			JTextField jt = dt.fieldValue;
-			returnValue = jt.getText();
+			JCheckBox jt = (JCheckBox) dt.getFieldDisplay();
+			returnValue = jt.isSelected();
 
 		}
 		return returnValue;
@@ -545,22 +554,22 @@ public class DynForm extends JPanel {
 	 */
 	private void setSingleValue(DynType dt, Object obj) {
 		
-		String valueType = dt.className;
+		String valueType = dt.getClassName();
 		if(valueType.equals("String")){
-			JTextField jt = dt.fieldValue;
+			JTextField jt = (JTextField) dt.getFieldDisplay();
 			jt.setText(obj.toString());
 			
 		} else if(valueType.equals("float")){
-			JTextField jt = dt.fieldValue;
+			JTextField jt = (JTextField) dt.getFieldDisplay();;
 			jt.setText(obj.toString());
 			
 		} else if(valueType.equals("int")){
-			JTextField jt = dt.fieldValue;
+			JTextField jt = (JTextField) dt.getFieldDisplay();;
 			jt.setText(obj.toString());
 			
 		} else if(valueType.equals("boolean")){
-			JTextField jt = dt.fieldValue;
-			jt.setText(obj.toString());
+			JCheckBox jt = (JCheckBox) dt.getFieldDisplay();;
+			jt.setSelected((Boolean) obj);
 
 		}
 	}
@@ -711,7 +720,7 @@ public class DynForm extends JPanel {
 			if (currYMax > maxY) maxY = currYMax;
 		}
 		
-		maxX += 10;
+		maxX += 5;
 		maxY += 2;
 		pan.setBounds(new Rectangle(maxX, maxY));
 
@@ -738,7 +747,7 @@ public class DynForm extends JPanel {
 			
 			if(tiefe == 0){
 				// --- Set the label for the class --- //
-				objectLabelName.setBounds(new Rectangle(10, pan.getHeight()+5 , 200, 16));
+				objectLabelName.setBounds(new Rectangle(10, pan.getHeight()+5 , 350, 16));
 				objectLabelName.setText(startObjectClassName);
 				objectLabelName.setFont(new Font(objectLabelName.getFont().getName(),Font.BOLD,objectLabelName.getFont().getSize()));
 				
@@ -750,7 +759,7 @@ public class DynForm extends JPanel {
 				
 			} else {
 				// --- Set the label for the class --- //
-				objectLabelName.setBounds(new Rectangle(10, 23 , 200, 16));
+				objectLabelName.setBounds(new Rectangle(10, 23 , 350, 16));
 				objectLabelName.setText(startObjectClassName.substring(startObjectClassName.lastIndexOf(".")+1));
 				objectLabelName.setFont(new Font(objectLabelName.getFont().getName(),Font.BOLD,objectLabelName.getFont().getSize()));
 				
@@ -851,7 +860,7 @@ public class DynForm extends JPanel {
 			innerX = (einrueckungProUntereEbene*(tiefe-1));
 		else
 			innerX = (einrueckungProUntereEbene*(tiefe));
-		dataPanel.setBounds(new Rectangle(innerX, 0 , 270, 20));
+		dataPanel.setBounds(new Rectangle(innerX, 0 , 350, 20));
 		dataPanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 		dataPanel.setToolTipText(startObjectClassName + " Inner Panel");
 		
@@ -868,7 +877,7 @@ public class DynForm extends JPanel {
 		if(dataItemCardinality.equals("multiple")) {
 
 			JButton multipleButton = new JButton("+");
-			multipleButton.setBounds(new Rectangle(310, 2, 35, 25));
+			multipleButton.setBounds(new Rectangle(315, 2, 35, 25));
 			multipleButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -910,28 +919,26 @@ public class DynForm extends JPanel {
 		final JPanel dataPanel = new JPanel();
 		dataPanel.setLayout(null);
 		dataPanel.setToolTipText(dataItemName + "-Panel");
+		dataPanel.setBounds(new Rectangle(0, 0 , 350, 10));
 		
 		// --- add a JLabel to display the field's name
 		JLabel valueFieldText = new JLabel();
 		valueFieldText.setText(dataItemName + " ["+dataItemVarType+"]");
 		valueFieldText.setBounds(new Rectangle(0, 4, 130, 16));
 		
-		// --- add a JTextField for the value being entered
-		// --- TODO check the type of the field and generate the right 
 		// --- valueFields (Textfield, Checkbox (for boolean) , ... )
-		JTextField valueField = new JTextField();
-		valueField.setBounds(new Rectangle(140, 0, 100, 25));
+		JComponent valueDisplay = this.getVisualComponent(dataItemVarType);
 		
 		// --- add both GUI elements to the panel
 		dataPanel.add(valueFieldText, null);
-		dataPanel.add(valueField);
+		dataPanel.add(valueDisplay);
 		this.setPanelBounds(dataPanel);
 		
 		// --- if the inner class has got a multi cardinality create an add-button
 		if(dataItemCardinality.equals("multiple")) {
 
 			JButton multipleButton = new JButton("+");
-			multipleButton.setBounds(new Rectangle(260, 0, 35, 25));
+			multipleButton.setBounds(new Rectangle(315, 0, 35, 25));
 			multipleButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -943,7 +950,7 @@ public class DynForm extends JPanel {
 			this.setPanelBounds(dataPanel);
 		}
 		
-		DynType dynType = new DynType(oscsd, DynType.typeRawType, className, dataItemName, valueField);
+		DynType dynType = new DynType(oscsd, DynType.typeRawType, className, dataItemName, valueDisplay);
 		node.add(new DefaultMutableTreeNode(dynType));
 		
 		// --- set the new position (increment the height) for the parent panel of the 
@@ -969,7 +976,7 @@ public class DynForm extends JPanel {
 		// --- add a JLabel to display the field's name
 		JLabel valueFieldText = new JLabel();
 		valueFieldText.setText("<html>" + dataItemName + " ["+dataItemVarType+"] - <b>" + Language.translate("Zyklisch !") + "</b></html>");
-		valueFieldText.setBounds(new Rectangle(0, 4, 240, 16));
+		valueFieldText.setBounds(new Rectangle(0, 4, 330, 16));
 		
 		// --- add both GUI elements to the panel
 		dataPanel.add(valueFieldText, null);
@@ -989,6 +996,36 @@ public class DynForm extends JPanel {
 		this.setPanelBounds(pan);
 		
 	}
+	
+	/**
+	 * 
+	 * @param valueType
+	 * @return
+	 */
+	private JComponent getVisualComponent(String valueType) {
+	
+		JComponent valueField = null;
+		if(valueType.equals("String")){
+			valueField = new JTextField();
+			valueField.setBounds(new Rectangle(140, 0, 170, 27));
+			
+		} else if(valueType.equals("float")){
+			valueField = new JTextField("0.0");
+			valueField.setBounds(new Rectangle(140, 0, 100, 26));
+			valueField.addKeyListener(this.numWatcherFloat);
+			
+		} else if(valueType.equals("int")){
+			valueField = new JTextField(0);
+			valueField.setBounds(new Rectangle(140, 0, 100, 26));
+			valueField.addKeyListener(this.numWatcherInteger);
+			
+		} else if(valueType.equals("boolean")){
+			valueField = new JCheckBox();
+			valueField.setBounds(new Rectangle(140, 0, 25, 25));
+		}
+		return valueField;
+	}
+	
 	
 	/**
 	 * This method creates a copy of the passed JPanel and adds it
@@ -1166,12 +1203,63 @@ public class DynForm extends JPanel {
 	 * @param agentArgsXML the agentArgsXML to set
 	 */
 	public void setOntoArgsXML(String[] ontoArgsXML) {
-//		int numOntoArgsXMLInput = ontoArgsXML.length;
-//		int numOntoArgsXMLHere = this.ontoArgsXML.length;
-//		if (numOntoArgsXMLInput == numOntoArgsXMLHere) {
-			this.ontoArgsXML = ontoArgsXML;
-			this.setInstancesFromXML();
-//		}
+		this.ontoArgsXML = ontoArgsXML;
+		this.setInstancesFromXML();
 	}
+
+	/**
+	 * This class controls the input fields for number formats.
+	 * For integer values just numbers are allowed. For floats
+	 * numbers and just one separator character "," or "." is
+	 * allowed.
+	 * The class can be used by adding this as a KeyListener
+	 * 
+	 * @author Christian Derksen
+	 */
+	private class NumberWatcher extends KeyAdapter {
+		
+		private boolean isFloatValue = false;
+		
+		public NumberWatcher (boolean floatValue) {
+			this.isFloatValue = floatValue;
+		}
+
+		public void keyTyped(KeyEvent kT) {
+			
+			char charackter = kT.getKeyChar();
+			String singleChar = Character.toString(charackter);
+			JTextField displayField = (JTextField) kT.getComponent();
+			
+			if (this.isFloatValue==true) {
+				// ----------------------------------------
+				// --- float values allowed ---------------
+				// ----------------------------------------
+				// --- Just one separator is allowed --
+				if (singleChar.equals(".") || singleChar.equals(",")) {
+					String currValue = displayField.getText();
+					if (currValue!=null) {
+						if ( currValue.contains(".") || currValue.contains("," )) {
+							kT.consume();	
+							return;
+						}
+					}
+				} else  if ( singleChar.matches( "[0-9]" ) == false) {
+					kT.consume();	
+					return;
+				}
+				
+			} else {
+				// ----------------------------------------
+				// --- int numbers only !!! ---------------
+				// ----------------------------------------
+				if ( singleChar.matches( "[0-9]" ) == false ) {
+					kT.consume();	
+					return;
+				}
+				
+			} // --- end if -------------------------------
+			
+		 }				 
+	} // --- end sub class ----
 	
 }

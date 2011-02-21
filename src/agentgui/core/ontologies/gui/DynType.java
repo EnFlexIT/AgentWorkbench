@@ -1,6 +1,6 @@
 package agentgui.core.ontologies.gui;
 
-import javax.swing.JTextField;
+import javax.swing.JComponent;
 
 import agentgui.core.ontologies.OntologySingleClassSlotDescription;
 
@@ -13,11 +13,11 @@ public class DynType {
 	
 	OntologySingleClassSlotDescription oscsd = null;
 	
-	String typeName = "";
-	String className = "";
+	private String typeName = "";
+	private String className = "";
 
-	String fieldName = "";
-	JTextField fieldValue;
+	private String fieldName = "";
+	private JComponent fieldDisplay;
 		
 	public DynType(OntologySingleClassSlotDescription curOSCSD, String typeName, String className, String fieldOrClassName){
 		this.oscsd = curOSCSD;
@@ -28,12 +28,12 @@ public class DynType {
 		}			
 	}
 	
-	public DynType(OntologySingleClassSlotDescription curOSCSD, String typeName, String className, String fieldName, JTextField fieldValue) {
+	public DynType(OntologySingleClassSlotDescription curOSCSD, String typeName, String className, String fieldName, JComponent fieldValue) {
 		this.oscsd = curOSCSD;
 		this.typeName = typeName;
 		this.className = className;
 		this.fieldName = fieldName;
-		this.fieldValue = fieldValue;
+		this.fieldDisplay = fieldValue;
 	}
 	
 	public String toString() {
@@ -69,11 +69,11 @@ public class DynType {
 		this.fieldName = fieldName;
 	}
 
-	public JTextField getFieldValue() {
-		return fieldValue;
+	public JComponent getFieldDisplay() {
+		return fieldDisplay;
 	}
-	public void setFieldValue(JTextField fieldValue) {
-		this.fieldValue = fieldValue;
+	public void setFieldDisplay(JComponent fieldValue) {
+		this.fieldDisplay = fieldValue;
 	}
 
 	public boolean isClass(){

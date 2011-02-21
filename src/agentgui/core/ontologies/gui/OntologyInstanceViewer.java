@@ -35,9 +35,6 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	private String[] ontologyClassReference = null;
 	private boolean use4Agents =  false;
 
-	private String [] configurationXML = null;
-	private Object [] configurationInstances = null;
-	
 	private JScrollPane jScrollPaneDynForm = null;
 	private JScrollPane jScrollPaneTextVersion = null;
 	
@@ -130,11 +127,12 @@ public class OntologyInstanceViewer extends JTabbedPane {
 				// -----------------------------------
 				// --- Refresh XML-View --------------
 				// -----------------------------------
+				String [] xmlConfig = this.dynForm.getOntoArgsXML(); 
 				String newText = "";
 				String argumentLine = "";
 				int seperatorLength = separatorLine.length();
 				
-				for (int i = 0; i < configurationXML.length; i++) {
+				for (int i = 0; i < xmlConfig.length; i++) {
 					
 					argumentLine = "--- Argument " + (i+1) + " ";
 					argumentLine+= separatorLine.substring(0, seperatorLength-argumentLine.length());
@@ -143,7 +141,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 					config += separatorLine + newLine;
 					config += argumentLine;
 					config += newLine + separatorLine + newLine;
-					config += configurationXML[i] + newLine;					
+					config += xmlConfig[i] + newLine;					
 					newText += config;
 				}
 				this.jTextArea.setText(newText);
@@ -153,7 +151,8 @@ public class OntologyInstanceViewer extends JTabbedPane {
 				// -----------------------------------
 				// --- Refresh Form-View -------------
 				// -----------------------------------
-				
+				String [] currConfig = this.getXMLParts(jTextArea.getText());
+				this.setConfigurationXML(currConfig);
 				
 			}
 			
@@ -181,7 +180,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 		dialog.setContentPane(getJContentPane());
 		
 		
-		// --- Size and Center the dialog -----------------
+		// --- Size and center the dialog -----------------
 		int diaWidth = (int) (screenSize.width*0.8);
 		int diaHeight = (int) (screenSize.height * 0.9);
 
@@ -202,7 +201,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	    jPanel4TouchDown.add(this, BorderLayout.CENTER);
 	    dialog.setVisible(true);
 		// - - - - - - - - - - - - - - - - - - - - - - - -  
-	    // - - Benutzereigabe / User-Interaction - - - - - 
+	    // - - User-Interaction  - - - - - - - - - - - - - 
 		// - - - - - - - - - - - - - - - - - - - - - - - -
 	    this.addEnlargeTab();
 		
@@ -211,6 +210,59 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	    parentContainer.validate();
 	    parentContainer.repaint();
 	    
+	}
+	
+	/**
+	 * This method will separate the 
+	 * @param currText
+	 * @return
+	 */	
+	private String [] getXMLParts(String currText) {
+		
+		String workText = currText.trim();
+		String xmlPart = null;
+		String [] xmlParts = new String [this.dynForm.getOntoArgsXML().length];
+		int xmlPartsCounter = 0;
+		
+		while (workText.equals("")==false) {
+
+			int cut1 = workText.indexOf("<");
+			int cut2 = workText.indexOf(">")+1;
+			String tag1 = workText.substring(cut1, cut2);
+			
+			if (tag1.endsWith("/>")) {
+				// --------------------------------------------------------------------------
+				// --- e. g. <Phy_Size phy_height="1.3F" phy_width="123.4567F"/> ------------
+				// --------------------------------------------------------------------------
+				xmlPart = workText.substring(cut1, cut2);				
+				
+			} else {
+				// --------------------------------------------------------------------------
+				// --- e. g. separate start and end tags like: ------------------------------ 
+				// --- <agent-identifier name="Hallo"> ...</agent-identifier> ---------------
+				// --------------------------------------------------------------------------
+				int space = tag1.indexOf(" ");
+				String tagIdentifier = null;
+				if (space==-1) {
+					tagIdentifier = tag1.substring(1, tag1.length()-1);
+					
+				} else {
+					tagIdentifier = tag1.substring(1,space);	
+					
+				}
+				cut2 = workText.indexOf(tagIdentifier, cut2);
+				cut2 = workText.indexOf(">", cut2)+1;
+				
+				xmlPart = workText.substring(cut1, cut2);
+				
+			}
+			//System.out.println(xmlPart);
+			xmlParts[xmlPartsCounter] = xmlPart;
+			xmlPartsCounter++;
+			workText = workText.substring(cut2).trim();
+			
+		}
+		return xmlParts;
 	}
 	
 	/**
@@ -351,38 +403,32 @@ public class OntologyInstanceViewer extends JTabbedPane {
 			this.dynForm.save(false);
 		}
 		
-		// --- Store the current configuration locally --------------
-		this.configurationXML = this.dynForm.getOntoArgsXML();
-		this.configurationInstances = this.dynForm.getOntoArgsInstance();
-		
 	}
 	
 	/**
 	 * @param configurationXML the configurationXML to set
 	 */
 	public void setConfigurationXML(String [] configurationXML) {
-		this.configurationXML = configurationXML;
 		this.dynForm.setOntoArgsXML(configurationXML);
 	}
 	/**
 	 * @return the configurationXML
 	 */
 	public String [] getConfigurationXML() {
-		return configurationXML;
+		return this.dynForm.getOntoArgsXML();
 	}
 	
 	/**
 	 * @param configurationInstances the configurationInstances to set
 	 */
 	public void setConfigurationInstances(Object [] configurationInstances) {
-		this.configurationInstances = configurationInstances;
 		this.dynForm.setOntoArgsInstance(configurationInstances);
 	}
 	/**
 	 * @return the configurationInstances
 	 */
 	public Object [] getConfigurationInstances() {
-		return configurationInstances;
+		return this.dynForm.getOntoArgsInstance();
 	}
 
 }
