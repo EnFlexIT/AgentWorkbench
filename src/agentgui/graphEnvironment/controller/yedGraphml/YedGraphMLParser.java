@@ -1,4 +1,4 @@
-package agentgui.graphEnvironment.controller;
+package agentgui.graphEnvironment.controller.yedGraphml;
 
 import jade.content.Concept;
 
@@ -10,6 +10,8 @@ import java.util.HashMap;
 import org.apache.commons.collections15.Transformer;
 
 import agentgui.core.application.Language;
+import agentgui.graphEnvironment.controller.GraphEdge;
+import agentgui.graphEnvironment.controller.GraphNode;
 
 import edu.uci.ics.jung.graph.SparseGraph;
 import edu.uci.ics.jung.io.GraphIOException;
@@ -19,7 +21,7 @@ import edu.uci.ics.jung.io.graphml.GraphMetadata;
 import edu.uci.ics.jung.io.graphml.HyperEdgeMetadata;
 import edu.uci.ics.jung.io.graphml.NodeMetadata;
 
-public class GraphParser {
+public class YedGraphMLParser {
 	
 	private HashMap<String, String> ontoClasses = null;
 	
@@ -81,7 +83,7 @@ public class GraphParser {
 		}
 	};
 	
-	public GraphParser(HashMap<String, String> ontoClasses){
+	public YedGraphMLParser(HashMap<String, String> ontoClasses){
 		this.ontoClasses = ontoClasses;
 	}
 	

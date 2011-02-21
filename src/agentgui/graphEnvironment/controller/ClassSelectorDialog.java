@@ -2,10 +2,12 @@ package agentgui.graphEnvironment.controller;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JPanel;
-import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+
+import java.awt.Dialog;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import javax.swing.JButton;
@@ -27,8 +29,9 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
+import javax.swing.ImageIcon;
 
-public class ClassSelectorDialog extends JFrame implements ActionListener{
+public class ClassSelectorDialog extends JDialog implements ActionListener{
 
 	private static final long serialVersionUID = 1L;
 	private JPanel jContentPane = null;
@@ -47,11 +50,12 @@ public class ClassSelectorDialog extends JFrame implements ActionListener{
 	private HashMap<String, String> assignedAgentClasses = null;
 
 	private GraphEnvironmentControllerGUI parent = null;
+	private JButton jButtonRemoveRow = null;
 	/**
 	 * This is the default constructor
 	 */
 	public ClassSelectorDialog(GraphEnvironmentControllerGUI parent, HashMap<String, String> ontoClasses, HashMap<String, String> agentClasses) {
-		super();
+		super(Application.MainWindow, Dialog.ModalityType.APPLICATION_MODAL);
 		this.parent = parent;
 		this.assignedOntologyClasses = ontoClasses;
 		this.assignedAgentClasses = agentClasses;
@@ -76,26 +80,30 @@ public class ClassSelectorDialog extends JFrame implements ActionListener{
 	 */
 	private JPanel getJContentPane() {
 		if (jContentPane == null) {
+			GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
+			gridBagConstraints11.gridx = 1;
+			gridBagConstraints11.insets = new Insets(5, 5, 5, 5);
+			gridBagConstraints11.gridy = 3;
 			GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
 			gridBagConstraints1.gridx = 0;
-			gridBagConstraints1.gridy = 2;
+			gridBagConstraints1.gridy = 3;
 			GridBagConstraints gridBagConstraints10 = new GridBagConstraints();
 			gridBagConstraints10.fill = GridBagConstraints.BOTH;
 			gridBagConstraints10.gridy = 1;
 			gridBagConstraints10.weightx = 1.0;
 			gridBagConstraints10.weighty = 1.0;
-			gridBagConstraints10.gridwidth = 3;
+			gridBagConstraints10.gridwidth = 4;
 			gridBagConstraints10.gridx = 0;
 			GridBagConstraints gridBagConstraints9 = new GridBagConstraints();
-			gridBagConstraints9.gridx = 2;
+			gridBagConstraints9.gridx = 3;
 			gridBagConstraints9.insets = new Insets(5, 5, 5, 5);
-			gridBagConstraints9.gridy = 2;
+			gridBagConstraints9.gridy = 3;
 			GridBagConstraints gridBagConstraints8 = new GridBagConstraints();
-			gridBagConstraints8.gridx = 1;
+			gridBagConstraints8.gridx = 2;
 			gridBagConstraints8.weightx = 1.0D;
 			gridBagConstraints8.anchor = GridBagConstraints.EAST;
 			gridBagConstraints8.insets = new Insets(5, 5, 5, 5);
-			gridBagConstraints8.gridy = 2;
+			gridBagConstraints8.gridy = 3;
 			GridBagConstraints gridBagConstraints = new GridBagConstraints();
 			gridBagConstraints.fill = GridBagConstraints.BOTH;
 			gridBagConstraints.gridy = 0;
@@ -108,6 +116,7 @@ public class ClassSelectorDialog extends JFrame implements ActionListener{
 			jContentPane.add(getJButtonCancel(), gridBagConstraints9);
 			jContentPane.add(getJScrollPaneClassTable(), gridBagConstraints10);
 			jContentPane.add(getJButtonAddRow(), gridBagConstraints1);
+			jContentPane.add(getJButtonRemoveRow(), gridBagConstraints11);
 		}
 		return jContentPane;
 	}
@@ -238,6 +247,10 @@ public class ClassSelectorDialog extends JFrame implements ActionListener{
 		getJTableClasses().changeSelection(getJTableClasses().getRowCount()-1, 0, false, false);
 		getJTableClasses().editCellAt(getJTableClasses().getRowCount()-1, 0);
 	}
+	
+	private void removeRow(int rowNum){
+		((DefaultTableModel)getJTableClasses().getModel()).removeRow(rowNum);
+	}
 
 	/**
 	 * This method initializes jButtonAddRow	
@@ -247,7 +260,7 @@ public class ClassSelectorDialog extends JFrame implements ActionListener{
 	private JButton getJButtonAddRow() {
 		if (jButtonAddRow == null) {
 			jButtonAddRow = new JButton();
-			jButtonAddRow.setText(Language.translate("Neuer Eintrag"));
+			jButtonAddRow.setIcon(new ImageIcon(getClass().getResource("/agentgui/core/gui/img/ListPlus.png")));
 			jButtonAddRow.addActionListener(this);
 		}
 		return jButtonAddRow;
@@ -332,6 +345,10 @@ public class ClassSelectorDialog extends JFrame implements ActionListener{
 	public void actionPerformed(ActionEvent event) {
 		if(event.getSource().equals(getJButtonAddRow())){
 			addRow();
+		}else if(event.getSource().equals(getJButtonRemoveRow())){
+			if(getJTableClasses().getSelectedRow() > -1){
+				removeRow(getJTableClasses().getSelectedRow());
+			}
 		}else if(event.getSource().equals(getJButtonConfirm())){
 			HashMap<String, String> ontologyClasses = new HashMap<String, String>();
 			HashMap<String, String> agentClasses = new HashMap<String, String>();
@@ -354,6 +371,20 @@ public class ClassSelectorDialog extends JFrame implements ActionListener{
 			this.setVisible(false);
 		}
 		
+	}
+
+	/**
+	 * This method initializes jButtonRemoveRow	
+	 * 	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getJButtonRemoveRow() {
+		if (jButtonRemoveRow == null) {
+			jButtonRemoveRow = new JButton();
+			jButtonRemoveRow.setIcon(new ImageIcon(getClass().getResource("/agentgui/core/gui/img/ListMinus.png")));
+			jButtonRemoveRow.addActionListener(this);
+		}
+		return jButtonRemoveRow;
 	}
 
 }

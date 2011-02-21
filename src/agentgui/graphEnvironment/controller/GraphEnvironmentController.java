@@ -17,6 +17,7 @@ import edu.uci.ics.jung.graph.Graph;
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
 import agentgui.core.common.FileCopier;
+import agentgui.graphEnvironment.controller.yedGraphml.YedGraphMLFileLoader;
 
 public class GraphEnvironmentController extends Observable implements
 		Observer {
@@ -68,7 +69,8 @@ public class GraphEnvironmentController extends Observable implements
 		setChanged();
 		notifyObservers(EVENT_AGENT_CLASSES_SET);
 	}
-
+	
+	private GraphFileLoader fileLoader = null;
 
 	private Project project = null;
 	
@@ -159,9 +161,9 @@ public class GraphEnvironmentController extends Observable implements
 	 * @return The corresponding JUNG graph
 	 */
 	private Graph<GraphNode, GraphEdge> loadGraphFile(File graphMLFile){
+		fileLoader = new YedGraphMLFileLoader(project);
 		Graph<GraphNode, GraphEdge> graph = null;
-		GraphParser gp = new GraphParser(project.getOntoClassHash());
-		graph = gp.getGraph(graphMLFile);
+		graph = fileLoader.loadGraphFromFile(graphMLFile);
 		System.out.println("Lade Graph-Datei "+graphMLFile.getName());
 		return graph;
 	}
