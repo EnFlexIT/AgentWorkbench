@@ -206,7 +206,11 @@ public class GraphEnvironmentController extends Observable implements
 	public Document getSvgDoc() {
 		return svgDoc;
 	}
-
+	
+	GraphFileLoader getFileLoader(){
+		return fileLoader;
+	}
+	
 	@Override
 	public void update(Observable o, Object arg) {
 		// TODO Auto-generated method stub

@@ -14,7 +14,7 @@ public class YedGraphMLFileLoader implements GraphFileLoader {
 	
 	private String fileExtension = ".graphml";
 	
-	private String typeString = "yEd GraphML";
+	private String typeString = "yEd GraphML Datei";
 	
 	private HashMap<String, String> ontoClasses = null;
 	

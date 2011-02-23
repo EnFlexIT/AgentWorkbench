@@ -30,27 +30,57 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
 import javax.swing.ImageIcon;
-
+/**
+ * GUI dialog for assigning ontology and agent classes
+ * @author Nils
+ *
+ */
 public class ClassSelectorDialog extends JDialog implements ActionListener{
-
+	/**
+	 * Generated serialVersionUID
+	 */
 	private static final long serialVersionUID = 1L;
+	/**
+	 * The parent class of all ontology classes that represent grid components.
+	 * Should be set dynamically later.
+	 */
+	private static final String ONTOLOGY_PARENT_CLASS = "gasmas.ontology.GridComponent";
 	private JPanel jContentPane = null;
 	private JButton jButtonConfirm = null;
 	private JButton jButtonCancel = null;
 	private JScrollPane jScrollPaneClassTable = null;
 	private JTable jTableClasses = null;
 	private JButton jButtonAddRow = null;
-	private JComboBox cellEditorAgentClass = null;
-	private JComboBox cellEditorOntologyClass = null;
-	
-	private HashMap<String, Class<?>> availableOntologyClasses = null;
-	private HashMap<String, Class<?>> availableAgentClasses = null;
-	
-	private HashMap<String, String> assignedOntologyClasses = null;
-	private HashMap<String, String> assignedAgentClasses = null;
-
-	private GraphEnvironmentControllerGUI parent = null;
 	private JButton jButtonRemoveRow = null;
+	/**
+	 * JComboBox used as cell editor for the agent classes column
+	 */
+	private JComboBox cellEditorAgentClass = null;
+	/**
+	 * JComboBox used as cell editor for the ontology classes column
+	 */
+	private JComboBox cellEditorOntologyClass = null;
+	/**
+	 * All available ontology classes, accessible by simple class name
+	 */
+	private HashMap<String, Class<?>> availableOntologyClasses = null;
+	/**
+	 * All available agent classes, accessible by simple class name
+	 */
+	private HashMap<String, Class<?>> availableAgentClasses = null;
+	/**
+	 * Assigned ontology classes. Key = user specified String, value = simple class name 
+	 */
+	private HashMap<String, String> assignedOntologyClasses = null;
+	/**
+	 * Assigned agent classes. Key = user specified String, value = simple class name
+	 */
+	private HashMap<String, String> assignedAgentClasses = null;
+	/**
+	 * The GraphEnvironmentControllerGUI that started this dialog
+	 */
+	private GraphEnvironmentControllerGUI parent = null;
+	
 	/**
 	 * This is the default constructor
 	 */
@@ -248,6 +278,10 @@ public class ClassSelectorDialog extends JDialog implements ActionListener{
 		getJTableClasses().editCellAt(getJTableClasses().getRowCount()-1, 0);
 	}
 	
+	/**
+	 * This method removes a row from the jTableClasses' TableModel
+	 * @param rowNum
+	 */
 	private void removeRow(int rowNum){
 		((DefaultTableModel)getJTableClasses().getModel()).removeRow(rowNum);
 	}
@@ -265,7 +299,11 @@ public class ClassSelectorDialog extends JDialog implements ActionListener{
 		}
 		return jButtonAddRow;
 	}
-	
+	/**
+	 * This method initializes cellEditorOntologyClass
+	 * 
+	 * @return javax.swing.JComboBox
+	 */
 	private JComboBox getCellEditorOntologyClass(){
 		if(cellEditorOntologyClass == null){
 			cellEditorOntologyClass = new JComboBox(getOntologyComboBoxModel());
@@ -273,6 +311,11 @@ public class ClassSelectorDialog extends JDialog implements ActionListener{
 		return cellEditorOntologyClass;
 	}
 	
+	/**
+	 * This method initializes cellEditorAgentClass
+	 * 
+	 * @return @return javax.swing.JComboBox
+	 */
 	private JComboBox getCellEditorAgentClass(){
 		if(cellEditorAgentClass == null){
 			cellEditorAgentClass = new JComboBox(getAgentComboBoxModel());
@@ -292,7 +335,7 @@ public class ClassSelectorDialog extends JDialog implements ActionListener{
 		availableOntologyClasses.put(Language.translate("Nicht definiert"), null);
 		
 		Project currProject = parent.getController().getProject();
-		DefaultMutableTreeNode gcNode = currProject.ontologies4Project.getClassTreeNode("gasmas.ontology.GridComponent");
+		DefaultMutableTreeNode gcNode = currProject.ontologies4Project.getClassTreeNode(ONTOLOGY_PARENT_CLASS);
 		findOntologyClasses(gcNode, ontologyClassNames);
 		
 		return ontologyClassNames;

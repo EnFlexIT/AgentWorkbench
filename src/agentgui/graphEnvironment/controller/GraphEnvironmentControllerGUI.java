@@ -43,7 +43,6 @@ public class GraphEnvironmentControllerGUI extends JSplitPane implements Observe
 	private JButton btnLoadGraph = null;
 	private JButton btnSetClasses = null;
 	
-	private ComponentSettingsDialog componentSettingsDialog = null;
 	private ClassSelectorDialog classSelectorDialog = null;
 	private BasicSVGGUI svgGUI = null;
 	private GraphEnvironmentController controller = null;
@@ -230,14 +229,6 @@ public class GraphEnvironmentControllerGUI extends JSplitPane implements Observe
 		return btnSetClasses;
 	}
 	
-	private ComponentSettingsDialog getComponentSettingsDialog(){
-		if(componentSettingsDialog == null){
-			componentSettingsDialog = new ComponentSettingsDialog(this);
-			componentSettingsDialog.setOntologyTreeModel(controller.getProject().ontologies4Project.getOntologyTree());
-		}
-		return componentSettingsDialog;
-	}
-	
 	private ClassSelectorDialog getClassSelectorDialog(){
 		if(classSelectorDialog == null){
 			classSelectorDialog = new ClassSelectorDialog(this, controller.getOntologyClasses(), controller.getAgentClasses());
@@ -283,8 +274,7 @@ public class GraphEnvironmentControllerGUI extends JSplitPane implements Observe
 					String svgID = ((Element)evt.getCurrentTarget()).getAttributeNS(null, "id");
 					String componentID = "n"+svgID.substring(svgID.lastIndexOf('.')+1);
 					GraphNode selectedComponent = controller.getGridModel().getComponent(componentID);
-					getComponentSettingsDialog().setVisible(true);
-					getComponentSettingsDialog().setSelectedComponent(selectedComponent);
+					new ComponentSettingsDialog(controller.getProject(), selectedComponent).setVisible(true);
 					setSelectedElement((Element)evt.getTarget());
 				}
 			}, false);
@@ -309,7 +299,7 @@ public class GraphEnvironmentControllerGUI extends JSplitPane implements Observe
 	public void actionPerformed(ActionEvent event) {
 		if(event.getSource().equals(getBtnLoadGraph())){
 			JFileChooser graphFC = new JFileChooser();
-			graphFC.setFileFilter(new FileNameExtensionFilter(Language.translate("GraphML-Dateien"), "graphml"));
+			graphFC.setFileFilter(new FileNameExtensionFilter(Language.translate(controller.getFileLoader().getTypeString()), controller.getFileLoader().getGraphFileExtension()));
 			if(graphFC.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
 				File graphMLFile = graphFC.getSelectedFile();
 				this.controller.loadGridModel(graphMLFile);
@@ -322,10 +312,10 @@ public class GraphEnvironmentControllerGUI extends JSplitPane implements Observe
 
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
-		String compID = (String) tblComponents.getModel().getValueAt(e.getFirstIndex(), 0);
-		setSelectedElementByComponentID(compID);
-		getComponentSettingsDialog().setVisible(true);
-		getComponentSettingsDialog().setSelectedComponent(controller.getGridModel().getComponent(compID));
+		String componentID = (String) tblComponents.getModel().getValueAt(e.getFirstIndex(), 0);
+		GraphNode selectedComponent = controller.getGridModel().getComponent(componentID);
+		new ComponentSettingsDialog(controller.getProject(), selectedComponent).setVisible(true);
+		setSelectedElementByComponentID(componentID);
 	}
 	
 	void setComponentType(){
