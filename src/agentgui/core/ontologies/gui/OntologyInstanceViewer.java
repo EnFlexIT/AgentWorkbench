@@ -114,48 +114,21 @@ public class OntologyInstanceViewer extends JTabbedPane {
 			this.setEnlargedView();
 			
 		} else {
-			// --------------------------------------------
 			// --- Refresh the view to the data -----------
-			// --------------------------------------------
 			if (this.getSelectedIndex()==0) {
-				// -----------------------------------
 				// --- Refresh XML-View --------------
-				// -----------------------------------
 				this.save();
-				
-				String [] xmlConfig = this.dynForm.getOntoArgsXML(); 
-				String newText = "";
-				String argumentLine = "";
-				int seperatorLength = separatorLine.length();
-				
-				for (int i = 0; i < xmlConfig.length; i++) {
-					
-					argumentLine = "--- Argument " + (i+1) + " ";
-					argumentLine+= separatorLine.substring(0, seperatorLength-argumentLine.length());
-					
-					String config = ""; 
-					config += separatorLine + newLine;
-					config += argumentLine;
-					config += newLine + separatorLine + newLine;
-					config += xmlConfig[i] + newLine;					
-					newText += config;
-				}
-				this.jTextArea.setText(newText);
-				this.jTextArea.setCaretPosition(0);
+				this.setXMLText();
 				
 			} else if (this.getSelectedIndex()==1) {
-				// -----------------------------------
 				// --- Refresh Form-View -------------
-				// -----------------------------------
 				String currConfigText = jTextArea.getText();
 				String [] currConfig = this.getXMLParts(currConfigText);
 				this.setConfigurationXML(currConfig);
 				
 			}
 			
-			// --------------------------------------------
 			// --- Now do the focus change ----------------
-			// --------------------------------------------
 			super.setSelectedIndex(index);
 		}		
 	}
@@ -175,7 +148,6 @@ public class OntologyInstanceViewer extends JTabbedPane {
 		dialog.setModal(true);
 		dialog.setResizable(true);
 		dialog.setContentPane(getJContentPane());
-		
 		
 		// --- Size and center the dialog -----------------
 		int diaWidth = (int) (screenSize.width*0.8);
@@ -207,6 +179,34 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	    parentContainer.validate();
 	    parentContainer.repaint();
 	    
+	}
+	
+	/**
+	 * This Method create the full XML-Text, which can be displayed 
+	 * in the local 'jTextArea' for the XML-Representation
+	 * @return
+	 */
+	private void setXMLText() {
+		
+		String [] xmlConfig = this.dynForm.getOntoArgsXML(); 
+		String newText = "";
+		String argumentLine = "";
+		int seperatorLength = separatorLine.length();
+		
+		for (int i = 0; i < xmlConfig.length; i++) {
+			
+			argumentLine = "--- Argument " + (i+1) + " ";
+			argumentLine+= separatorLine.substring(0, seperatorLength-argumentLine.length());
+			
+			String config = ""; 
+			config += separatorLine + newLine;
+			config += argumentLine;
+			config += newLine + separatorLine + newLine;
+			config += xmlConfig[i] + newLine;					
+			newText += config;
+		}
+		this.jTextArea.setText(newText);
+		this.jTextArea.setCaretPosition(0);
 	}
 	
 	/**
@@ -412,6 +412,9 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	 */
 	public void setConfigurationXML(String [] configurationXML) {
 		this.dynForm.setOntoArgsXML(configurationXML);
+		if (this.getSelectedIndex()==1) {
+			this.setXMLText();
+		}
 	}
 	/**
 	 * @return the configurationXML
@@ -425,6 +428,9 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	 */
 	public void setConfigurationInstances(Object [] configurationInstances) {
 		this.dynForm.setOntoArgsInstance(configurationInstances);
+		if (this.getSelectedIndex()==1) {
+			this.setXMLText();
+		}
 	}
 	/**
 	 * @return the configurationInstances
