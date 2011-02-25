@@ -45,7 +45,8 @@ public class DynForm extends JPanel {
 	private static final long serialVersionUID = 7942028680794127910L;
 
 	private boolean debug = false;
-
+	private DynTreeViewer dtv = null;
+	
 	// --- Based on this vector the display will be created ---------
 	private Vector<String> currOnotologyClassReferenceList = new Vector<String>();
 	
@@ -54,7 +55,6 @@ public class DynForm extends JPanel {
 	private String currAgentReference = null;
 
 	// --- Runtime parameters of this  
-	private JLabel lastComponent = null;
 	private int einrueckungProUntereEbene = 5;
 	
 	private DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("Root");
@@ -145,6 +145,8 @@ public class DynForm extends JPanel {
 	 */
 	public void buildGUI(){
 		
+		int yPos = 0;
+		
 		// --- Maybe a debug print to the console ---------
 		if (debug==true && currOnotologyClassReferenceList.size()!=0) {
 			System.out.println("Creating GUI");	
@@ -154,54 +156,64 @@ public class DynForm extends JPanel {
 		for (int i = 0; i < currOnotologyClassReferenceList.size(); i++) {
 			
 			String startObjectClass = currOnotologyClassReferenceList.get(i);
+			JPanel startObjectPanel = new JPanel(null);
+//			startObjectPanel.setLayout(null);
 			
 			// --- Get the info about the slots --------------------
 			OntologySingleClassDescription osc = currProject.ontologies4Project.getSlots4ClassAsObject(startObjectClass);
 			if(osc!=null) {
-				this.createGUI(osc, startObjectClass, this, 0, (DefaultMutableTreeNode) rootNode);
+				this.createGUI(osc, startObjectClass, startObjectPanel, 0, (DefaultMutableTreeNode) rootNode);
 			} else {
 				System.out.println("Could not get OntologySingleClassDescription for "+startObjectClass);
 			}
+
+			// --- 
+			this.setPanelBounds(startObjectPanel);
+			startObjectPanel.setLocation(0, yPos);
+			this.add(startObjectPanel);
+			
+			// --- Configure the next position for a panel ----------
+			yPos = yPos + ((int)startObjectPanel.getBounds().getHeight()) + 2;
+			
 		}
-		// --- Add a last invisible component -------------
-		this.addLastComponent();
-		// --- Justify the Preferred Size of this Panle ---
-		this.setPreferredSize(new Dimension(this.getBounds().width + 10, this.getBounds().height + 10));
+		// --- Justify the Preferred Size of this Panel ---
+		this.setPreferredSize(this);
 	}
 	
 	/**
-	 * This method adds a last component in order to scale the prefered size later on
+	 * This method creates the XML form from the instances 
 	 */
-	private void addLastComponent() {
-		lastComponent = new JLabel();
-		lastComponent.setBounds(new Rectangle(5, this.getHeight() + 10, 100, 25));
-		this.add(lastComponent);
-		this.setPanelBounds(this);
-	}
-	/**
-	 * This Method sets the PreferredSize of this Panel according 
-	 * to the Position of the 'submitButton'
-	 */
-	private void setPreferredSize() {
-		int newHeight = lastComponent.getBounds().y + lastComponent.getBounds().height + 10; 
-		this.setPreferredSize(new Dimension(this.getBounds().width, newHeight));
-	}
+	private void setXMLFromInstances(){
 	
-	/**
-	 * This method can be invoked to generate the instance of the current configuration  
-	 * @return
-	 */
-	public void save(boolean fromForm) {
-		if (fromForm==true) {
-			this.setInstancesFromForm();	
-		} else {
-			this.setInstancesFromXML();
+		int numOfChilds = rootNode.getChildCount();
+		this.ontoArgsInstance = new Object[numOfChilds];
+		this.ontoArgsXML = new String[numOfChilds];
+		
+		// ----------------------------------------------------------
+		// --- Walk through the objectTree, which was generated ----- 
+		// --- during the creation of the DynForm - object 		-----
+		// ----------------------------------------------------------
+		for (int i = 0; i < numOfChilds; i++) {
+			
+			// --- Get DynType (userObject) of this node ------------
+			DefaultMutableTreeNode currNode =  (DefaultMutableTreeNode) rootNode.getChildAt(i);
+			DynType dt = (DynType) currNode.getUserObject();
+			String className = dt.getClassName();
+			
+			// --- Get the corresponding Ontology-Instance ----------			
+			OntologyClassTreeObject octo = this.currProject.ontologies4Project.getClassTreeObject(className);
+			Ontology onto = octo.getOntologyClass().getOntologyInstance();
+						
+			// --- Generate XML of this object ----------------------
+			ontoArgsXML[i] = this.getXMLOfInstance(this.ontoArgsInstance[i], onto);
+			
 		}
+		
 	}
 	
 	/**
-	 * This methods reads the current form configuration and creats 
-	 * the instances and the xml form of that configuration 
+	 * This methods reads the current form configuration and creates 
+	 * the instances and the XML form of that configuration 
 	 */
 	private void setInstancesFromForm() {
 		
@@ -342,7 +354,7 @@ public class DynForm extends JPanel {
 			DynType dt = (DynType) currNode.getUserObject();
 			String typeName = dt.getTypeName();
 			String className = dt.getClassName();
-			OntologySingleClassSlotDescription oscsd = dt.getOSCD();
+			OntologySingleClassSlotDescription oscsd = dt.getOSCSD();
 			
 			methodFound = null;
 			subObjectOrValue[0] = null;
@@ -396,87 +408,213 @@ public class DynForm extends JPanel {
 	 */
 	private void setFormState(Object object, DefaultMutableTreeNode node) {
 		
+		int skipChilds = 0;
 		int numOfChilds = node.getChildCount();
 		for (int i = 0; i < numOfChilds; i++) {
 			
 			DefaultMutableTreeNode currNode =  (DefaultMutableTreeNode) node.getChildAt(i);
 			DynType dt = (DynType) currNode.getUserObject();
 			String typeName = dt.getTypeName();
-			OntologySingleClassSlotDescription oscsd = dt.getOSCD();
+			OntologySingleClassSlotDescription oscsd = dt.getOSCSD();
+			String cardinality = oscsd.getSlotCardinality();
 			
-			// -----------------------------------------------------------
-			// --- Invoke the method to get the object/value -------------
-			// -----------------------------------------------------------
-			Object slotValue = null;
-			Method methodFound = this.getGetMethod(oscsd, object);
-			if (methodFound!=null & this.hasObjectMethod(object, methodFound)) {
-				
-				// --- Invoke the found method to the current object ----- 
-				try {
-					methodFound.setAccessible(true);
-					slotValue = methodFound.invoke(object, new Object[0]);
+			if (skipChilds>0) {
+				// --- Skip child's because of a multiple similar slots -- 
+				skipChilds--;
+			} else {
+				// -----------------------------------------------------------
+				// --- Invoke the method to get the object/value --- Start ---
+				// -----------------------------------------------------------
+				Object slotValue = null;
+				Method methodFound = this.getGetMethod(oscsd, object);
+				if (methodFound!=null & this.hasObjectMethod(object, methodFound)) {
 					
-				} catch (IllegalArgumentException e) {
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
-					e.printStackTrace();
-				} catch (InvocationTargetException e) {
-					e.printStackTrace();
+					// --- Invoke the found method to the current object ---- 
+					try {
+						methodFound.setAccessible(true);
+						slotValue = methodFound.invoke(object, new Object[0]);
+						
+					} catch (IllegalArgumentException e) {
+						e.printStackTrace();
+					} catch (IllegalAccessException e) {
+						e.printStackTrace();
+					} catch (InvocationTargetException e) {
+						e.printStackTrace();
+					}
 				}
-			}
 
-			// --- work on the slot value -------------------------------
-			if (slotValue!=null) {
-				// ------------------------------------------------------
-				// --- If we have a ArrayList instance here -------------
-				// ------------------------------------------------------
-				if (slotValue instanceof String[]) {
-					ArrayList newList = new ArrayList();
-					String[] tmp = (String[]) slotValue;
-					for (int j = 0; j < tmp.length; j++) {
-						newList.add(tmp[j]);
+				// --- work on the slot value --- Start ---------------------
+				if (slotValue!=null) {
+					// ------------------------------------------------------
+					// --- If we have a ArrayList instance here -------------
+					// ------------------------------------------------------
+					if (slotValue instanceof String[]) {
+						ArrayList newList = new ArrayList();
+						String[] tmp = (String[]) slotValue;
+						for (int j = 0; j < tmp.length; j++) {
+							newList.add(tmp[j]);
+						}
+						slotValue = newList;
 					}
-					slotValue = newList;
-				}
-				// ------------------------------------------------------
-				// --- If we have a list instance here ------------------
-				// ------------------------------------------------------
-				boolean multipleValues = false;
-				if (slotValue instanceof List) {
-					if (((List) slotValue).size()==1) {
-						slotValue = ((List) slotValue).get(0);
+					
+					// ------------------------------------------------------
+					// --- If we have a list instance here ------------------
+					// ------------------------------------------------------
+					boolean multipleValues = false;
+					int numberOfSlotValues = 1;
+					if (slotValue instanceof List) {
+						numberOfSlotValues = ((List) slotValue).size();
+						if (numberOfSlotValues==0) {
+							slotValue = null;
+							multipleValues = false;
+						}else if (numberOfSlotValues==1) {
+							slotValue = ((List) slotValue).get(0);
+							multipleValues = false;
+						} else {
+							multipleValues = true;
+						}
+					} else {
 						multipleValues = false;
-					} else {
-						multipleValues = true;
 					}
-				} else {
-					multipleValues = false;
+					
+					// ------------------------------------------------------
+					// --- check the defined cardinality of the slot --------
+					// ------------------------------------------------------
+					Vector<DefaultMutableTreeNode> nodeVector = null; 
+					if (cardinality.equals("single")) {
+						if (multipleValues==true) {
+							// --- just take the first value ----------------
+							numberOfSlotValues = 1;
+							multipleValues=false;
+							slotValue = ((List) slotValue).get(0);
+						}
+						
+					} else if (cardinality.equals("multiple") ) {
+						// --- Configure the number of needed nodes ---------
+						nodeVector = this.getMultipleNodesAsNeeded(currNode, numberOfSlotValues);
+						numOfChilds = node.getChildCount();
+					}					
+					
+					// ------------------------------------------------------
+					// --- Now, set the value to the form -------------------
+					// ------------------------------------------------------
+					if (typeName.equals(DynType.typeClass) || typeName.equals(DynType.typeInnerClassType)) {
+						// --- Set their values -----------------------------
+						if (multipleValues==true) {
+							// --- Work on the node vector ------------------
+							for (int j = 0; j < nodeVector.size(); j++) {
+								DefaultMutableTreeNode nodeVectorSingle = nodeVector.get(j);
+								dt = (DynType) nodeVectorSingle.getUserObject();
+								Object singleValue = ((List) slotValue).get(j);
+								this.setFormState(singleValue, currNode);	
+							}
+							skipChilds = numberOfSlotValues-1; 
+							
+						} else {
+							this.setFormState(slotValue, currNode);	
+						}
+						
+					} else if (typeName.equals(DynType.typeRawType)) {
+						// --- Get the value of the underlying field --------
+						if (multipleValues==true) {
+							// --- Work on the node vector ------------------
+							for (int j = 0; j < nodeVector.size(); j++) {
+								DefaultMutableTreeNode nodeVectorSingle = nodeVector.get(j);
+								dt = (DynType) nodeVectorSingle.getUserObject();
+								Object singleValue = ((List) slotValue).get(j);
+								this.setSingleValue(dt, singleValue);
+							}
+							skipChilds = numberOfSlotValues-1; 
+							
+						} else {
+							this.setSingleValue(dt, slotValue);	
+						}
+						
+					} else if (typeName.equals(DynType.typeCyclic)) {
+						// --- Nothing to do here ---------------------------
+					}	
 				}
-				// ------------------------------------------------------
-				// --- Now, set the value to the form -------------------
-				// ------------------------------------------------------
-				if (typeName.equals(DynType.typeClass) || typeName.equals(DynType.typeInnerClassType)) {
-					// --- Set their values -----------------------------
-					if (multipleValues==true) {
-						System.out.println("TODO: Real multiple Instances");	
-					} else {
-						this.setFormState(slotValue, currNode);	
-					}
-					
-				} else if (typeName.equals(DynType.typeRawType)) {
-					// --- Get the value of the underlying field --------
-					if (multipleValues==true) {
-						System.out.println("TODO: Real multiple Instances");
-					} else {
-						this.setSingleValue(dt, slotValue);	
-					}
-					
-				} else if (typeName.equals(DynType.typeCyclic)) {
-					// --- Nothing to do here ---------------------------
-				}	
-			}
-			
+				// --- work on the slot value --- End -----------------------
+				// -----------------------------------------------------------
+				// --- Invoke the method to get the object/value --- End -----
+				// -----------------------------------------------------------
+			} // --- end skipChilds ---
 		} // --- end for ---
+	}
+	
+	
+	private Vector<DefaultMutableTreeNode> getMultipleNodesAvailable(DefaultMutableTreeNode currNode) {
+		
+		// --- The result vector of all needed nodes ------------------------------------ 
+		Vector<DefaultMutableTreeNode> nodesFound = new Vector<DefaultMutableTreeNode>();
+		// --- Can we find the number of similar nodes to the current one? -------------- 
+		DynType currDT = (DynType) currNode.getUserObject();
+		
+		// --- The current parentNode and the position of the current node --------------
+		DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) currNode.getParent();
+		int currNodePosition = parentNode.getIndex(currNode);
+
+		// --- Search for all similar nodes --------------------------------------------- 
+		int searchPostion = 0;
+		int similarNodeCounter = 0;
+		boolean similarNode = true;
+		while (similarNode) {
+			
+			DefaultMutableTreeNode checkNode = (DefaultMutableTreeNode) parentNode.getChildAt(searchPostion);
+			DynType checkDT = (DynType) checkNode.getUserObject();
+			if (checkDT.equals(currDT)) {
+				nodesFound.add(checkNode);
+				similarNodeCounter++;	
+			} else {
+				if (searchPostion<currNodePosition==false) {
+					similarNode=false;	
+				}
+			}
+			searchPostion++;
+		}
+		return nodesFound;
+		
+	}
+	
+	private Vector<DefaultMutableTreeNode> getMultipleNodesAsNeeded(DefaultMutableTreeNode currNode, int nodesNeeded) {
+		
+		// --- Get the Vector of all currently available nodes of this kind -------------
+		Vector<DefaultMutableTreeNode> nodesAvailableVector = this.getMultipleNodesAvailable(currNode);
+		int nodesAvailableCounter = nodesAvailableVector.size();
+		
+		// --- Get the kind of the DynTyp-object ----------------------------------------
+		DynType dt = (DynType) currNode.getUserObject();
+		String typeName = dt.getTypeName();
+		boolean isInnerClass = false;
+		
+		if (typeName.equals(DynType.typeClass) || typeName.equals(DynType.typeInnerClassType)) {
+			isInnerClass = true;
+		} else if (typeName.equals(DynType.typeRawType)) {
+			isInnerClass = false;
+		} else if (typeName.equals(DynType.typeCyclic)) {
+			return nodesAvailableVector;
+		}
+		
+		// --- If the number of nodes is different to the 'numberOfSlotsNeeded' ---------  
+		if (nodesAvailableCounter<nodesNeeded) {
+			// --- Consider the number of nodes found is smaller than needed -------
+			Vector<DefaultMutableTreeNode> nodesNew = new Vector<DefaultMutableTreeNode>();
+			while (nodesAvailableVector.size()+nodesNew.size()<nodesNeeded) {
+				DefaultMutableTreeNode newNode = this.addMultiple(currNode, isInnerClass);
+				nodesNew.add(newNode);
+			}
+			Collections.reverse(nodesNew);
+			nodesAvailableVector.addAll(nodesNew);
+			
+		} else if (nodesAvailableCounter>nodesNeeded) {
+			// --- Consider the number of nodes found is greater than needed -------
+			while (nodesAvailableVector.size()>nodesNeeded && nodesAvailableVector.size()>1) {
+				DefaultMutableTreeNode delNode = nodesAvailableVector.get(nodesAvailableVector.size()-1);
+				this.removeMultiple(delNode);
+				nodesAvailableVector.remove(nodesAvailableVector.size()-1);
+			}
+		}
+		return nodesAvailableVector;
 	}
 	
 	/**
@@ -496,7 +634,6 @@ public class DynForm extends JPanel {
 		}
 		return false;
 	}
-	
 	
 	/**
 	 * This method reads the value given through the DynType and  
@@ -557,19 +694,35 @@ public class DynForm extends JPanel {
 		String valueType = dt.getClassName();
 		if(valueType.equals("String")){
 			JTextField jt = (JTextField) dt.getFieldDisplay();
-			jt.setText(obj.toString());
+			if (obj==null) {
+				jt.setText("");
+			} else {
+				jt.setText(obj.toString());	
+			}
 			
 		} else if(valueType.equals("float")){
 			JTextField jt = (JTextField) dt.getFieldDisplay();;
-			jt.setText(obj.toString());
+			if (obj==null) {
+				jt.setText("0.0");
+			} else {
+				jt.setText(obj.toString());	
+			}
 			
 		} else if(valueType.equals("int")){
 			JTextField jt = (JTextField) dt.getFieldDisplay();;
-			jt.setText(obj.toString());
+			if (obj==null) {
+				jt.setText("0");
+			} else {
+				jt.setText(obj.toString());	
+			}
 			
 		} else if(valueType.equals("boolean")){
 			JCheckBox jt = (JCheckBox) dt.getFieldDisplay();;
-			jt.setSelected((Boolean) obj);
+			if (obj==null) {
+				jt.setSelected(false);
+			} else {
+				jt.setSelected((Boolean) obj);	
+			}			
 
 		}
 	}
@@ -697,8 +850,8 @@ public class DynForm extends JPanel {
 	 * Shows the object tree in a visual way in  a dialog
 	 */
 	private void objectTreeShow() {
-		DynTreeViewer dtv = new DynTreeViewer(objectTree);
-		dtv.setVisible(true);
+		this.dtv = new DynTreeViewer(objectTree);
+		this.dtv.setVisible(true);
 	}
 
 	/**
@@ -707,22 +860,22 @@ public class DynForm extends JPanel {
 	 */
 	public void setPanelBounds(JPanel pan){
 		
+		int xPos = pan.getX();
+		int yPos = pan.getY();
 		int maxX = 0;
 		int maxY = 0;
 		
 		Component[] components = pan.getComponents();
 		for (int i = 0; i < components.length; i++) {
-			
 			int currXMax = components[i].getX() + components[i].getWidth();
 			int currYMax = components[i].getY() + components[i].getHeight();
-
 			if (currXMax > maxX) maxX = currXMax;
 			if (currYMax > maxY) maxY = currYMax;
 		}
 		
 		maxX += 5;
 		maxY += 2;
-		pan.setBounds(new Rectangle(maxX, maxY));
+		pan.setBounds(xPos, yPos, maxX, maxY);
 
 	}
 	
@@ -734,7 +887,7 @@ public class DynForm extends JPanel {
 	 * @param pan
 	 * @param tiefe
 	 */
-	public void createGUI(OntologySingleClassDescription osc, String startObjectClass, JPanel pan, int tiefe, DefaultMutableTreeNode node){
+	public void createGUI(OntologySingleClassDescription osc, String startObjectClass, JPanel parentPanel, int tiefe, DefaultMutableTreeNode parentNode){
 		
 		String startObjectClassName = startObjectClass.substring(startObjectClass.lastIndexOf(".") + 1, startObjectClass.length());
 		String startObjectPackage = startObjectClass.substring(0, startObjectClass.lastIndexOf("."));
@@ -747,15 +900,15 @@ public class DynForm extends JPanel {
 			
 			if(tiefe == 0){
 				// --- Set the label for the class --- //
-				objectLabelName.setBounds(new Rectangle(10, pan.getHeight()+5 , 350, 16));
+				objectLabelName.setBounds(new Rectangle(10, parentPanel.getHeight()+5 , 350, 16));
 				objectLabelName.setText(startObjectClassName);
 				objectLabelName.setFont(new Font(objectLabelName.getFont().getName(),Font.BOLD,objectLabelName.getFont().getSize()));
 				
 				// --- Define a node for current class ------------------
-				DynType dynType = new DynType(null, DynType.typeClass, startObjectClass, startObjectClassName);
+				DynType dynType = new DynType(null, DynType.typeClass, startObjectClass, parentPanel, startObjectClassName);
 				DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(dynType);
-				node.add(newNode);
-				node = newNode;
+				parentNode.add(newNode);
+				parentNode = newNode;
 				
 			} else {
 				// --- Set the label for the class --- //
@@ -766,8 +919,8 @@ public class DynForm extends JPanel {
 			}
 
 			// --- add the name to the mainPanel ----------
-			pan.add(objectLabelName);
-			this.setPanelBounds(pan);
+			parentPanel.add(objectLabelName);
+			this.setPanelBounds(parentPanel);
 			
 			// --- go through each field / inner class ----
 			Iterator<OntologySingleClassSlotDescription> iterator = osc.osdArr.iterator();
@@ -794,17 +947,17 @@ public class DynForm extends JPanel {
 					} else {
 						clazzCheck = startObjectPackage+"."+clazz;	
 					}					
-					if(objectAlreadyInPath(clazzCheck, node) == false) {
+					if(objectAlreadyInPath(clazzCheck, parentNode) == false) {
 						// --- Create Sub-Panel for the according class -----------------
-						this.createInnerElements(oscsd, dataItemName, dataItemVarType, dataItemCardinality, clazzCheck, tiefe+1, pan, node);
+						this.createInnerElements(oscsd, dataItemName, dataItemVarType, dataItemCardinality, clazzCheck, tiefe+1, parentPanel, parentNode, false);
 					} else {
 						// --- Create Sub-Panel that shows the cylic reference ----------
-						this.createOuterDeadEnd(oscsd, dataItemName, dataItemVarType, dataItemCardinality, clazz, pan, tiefe, node);
+						this.createOuterDeadEnd(oscsd, dataItemName, dataItemVarType, dataItemCardinality, clazz, parentPanel, tiefe, parentNode);
 					}
 					
 				} else {
 					// --- Here we have a field with a final type (String, int, ...) ----
-					this.createOuterElements(oscsd, dataItemName, dataItemVarType, dataItemCardinality, clazz, pan, tiefe, node);
+					this.createOuterElements(oscsd, dataItemName, dataItemVarType, dataItemCardinality, clazz, tiefe, parentPanel, parentNode, false);
 				}
 				// --------------------------------------------------------------------------------
 			}
@@ -816,7 +969,8 @@ public class DynForm extends JPanel {
 	}	
 
 	/**
-	 * 
+	 * This method search's for a similar node in the path (directed to the  
+	 * root node) to prevent a cyclic creation of form elements.   
 	 * @param objectClass
 	 * @param currNode
 	 * @return
@@ -843,12 +997,7 @@ public class DynForm extends JPanel {
 	 * @param pan
 	 * @param node 
 	 */
-	public void createInnerElements(OntologySingleClassSlotDescription oscsd, String dataItemName, String dataItemVarType, String dataItemCardinality, String startObjectClassName, int tiefe, final JPanel pan, DefaultMutableTreeNode node){
-		
-		DynType dynType = new DynType(oscsd, DynType.typeInnerClassType, startObjectClassName, dataItemName);
-		DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(dynType);
-		node.add(newNode);
-		node = newNode;
+	public DefaultMutableTreeNode createInnerElements(OntologySingleClassSlotDescription oscsd, String dataItemName, String dataItemVarType, String dataItemCardinality, String startObjectClassName, int tiefe, final JPanel parentPanel, DefaultMutableTreeNode parentNode, boolean addMultiple){
 		
 		// --- create a JPanel which will contain further inner classes and fields
 		final JPanel dataPanel = new JPanel();
@@ -873,34 +1022,59 @@ public class DynForm extends JPanel {
 		dataPanel.add(valueFieldText, null);
 		this.setPanelBounds(dataPanel);
 
+		// --- Create node for this element/panel ----------------------------- 
+		DynType dynType = new DynType(oscsd, DynType.typeInnerClassType, startObjectClassName, dataPanel, dataItemName);
+		final DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(dynType);
+		parentNode.add(newNode);
+		//parentNode = newNode;
+		
 		// --- if the inner class has got a multi cardinality create an add-button		
 		if(dataItemCardinality.equals("multiple")) {
 
-			JButton multipleButton = new JButton("+");
-			multipleButton.setBounds(new Rectangle(315, 2, 35, 25));
-			multipleButton.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					//showPanelComponents(dataPanel);
-					addMultiple(dataPanel);
-				}
-			});	
-			dataPanel.add(multipleButton, null);
-			this.setPanelBounds(dataPanel);
+			if (addMultiple==false) {
+				// --- Add an add Button to the panel ---------------
+				JButton multipleButton = new JButton("+");
+				multipleButton.setBounds(new Rectangle(315, 2, 35, 25));
+				multipleButton.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						addMultiple(newNode, true);
+					}
+				});	
+				dataPanel.add(multipleButton, null);
+				this.setPanelBounds(dataPanel);
+				
+			} else {
+				// --- Add an remove Button to the panel ------------
+				JButton multipleButton = new JButton("-");
+				multipleButton.setBounds(new Rectangle(315, 2, 35, 25));
+				multipleButton.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						removeMultiple(newNode);				
+					}
+				});	
+				dataPanel.add(multipleButton, null);
+				this.setPanelBounds(dataPanel);
+				
+			}
+			
 		}
 		
 		// --- create the inner fields of the current inner class
 		OntologySingleClassDescription osc = currProject.ontologies4Project.getSlots4ClassAsObject(startObjectClassName);
-		this.createGUI(osc, startObjectClassName, dataPanel, tiefe, node);
+		this.createGUI(osc, startObjectClassName, dataPanel, tiefe, newNode);
 		
 		// --- set the correct height of the parent of this inner class according to the
 		// --- inner class's height
 		Rectangle r = dataPanel.getBounds();
-		dataPanel.setBounds(10, pan.getHeight(), r.width, r.height);
+		dataPanel.setBounds(10, parentPanel.getHeight(), r.width, r.height);
 		
 		// --- finally add the inner class to its parent panel
-		pan.add(dataPanel);
-		this.setPanelBounds(pan);
+		parentPanel.add(dataPanel);
+		this.setPanelBounds(parentPanel);
+		
+		return newNode;
 		
 	}
 
@@ -912,7 +1086,7 @@ public class DynForm extends JPanel {
 	 * @param tiefe
 	 * @param node 
 	 */
-	public void createOuterElements(OntologySingleClassSlotDescription oscsd, String dataItemName, String dataItemVarType, String dataItemCardinality, String className, JPanel pan, int tiefe, DefaultMutableTreeNode node){
+	public DefaultMutableTreeNode createOuterElements(OntologySingleClassSlotDescription oscsd, String dataItemName, String dataItemVarType, String dataItemCardinality, String className, int tiefe, JPanel parentPanel, DefaultMutableTreeNode parentNode, boolean addMultiple){
 		
 		// --- this outer element has no parents which are inner classes
 		// --- so its added to the mainPanel
@@ -933,38 +1107,72 @@ public class DynForm extends JPanel {
 		dataPanel.add(valueFieldText, null);
 		dataPanel.add(valueDisplay);
 		this.setPanelBounds(dataPanel);
-		
-		// --- if the inner class has got a multi cardinality create an add-button
-		if(dataItemCardinality.equals("multiple")) {
 
-			JButton multipleButton = new JButton("+");
-			multipleButton.setBounds(new Rectangle(315, 0, 35, 25));
-			multipleButton.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					//showPanelComponents(dataPanel);
-					addMultiple(dataPanel);
-				}
-			});	
-			dataPanel.add(multipleButton, null);
-			this.setPanelBounds(dataPanel);
+		// --- add node to parent -------------------------
+		DynType dynType = new DynType(oscsd, DynType.typeRawType, className, dataPanel, dataItemName, valueDisplay);
+		final DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(dynType); 
+		parentNode.add(newNode);
+
+		// --- if the inner class has got a multiple cardinality create an add-button
+		if(dataItemCardinality.equals("multiple")) {
+			
+			if (addMultiple==false) {
+				// --- Add an add Button to the panel ---------------
+				JButton multipleButton = new JButton("+");
+				multipleButton.setBounds(new Rectangle(315, 0, 35, 25));
+				multipleButton.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						addMultiple(newNode, false);
+					}
+				});	
+				dataPanel.add(multipleButton, null);
+				this.setPanelBounds(dataPanel);
+
+			} else {
+				// --- Add an remove Button to the panel ------------
+				JButton multipleButton = new JButton("-");
+				multipleButton.setBounds(new Rectangle(315, 0, 35, 25));
+				multipleButton.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						removeMultiple(newNode);
+					}
+				});	
+				dataPanel.add(multipleButton, null);
+				this.setPanelBounds(dataPanel);
+				
+			}
 		}
-		
-		DynType dynType = new DynType(oscsd, DynType.typeRawType, className, dataItemName, valueDisplay);
-		node.add(new DefaultMutableTreeNode(dynType));
 		
 		// --- set the new position (increment the height) for the parent panel of the 
 		// --- newly created panel
 		Rectangle pos = dataPanel.getBounds();
 		pos.x = 10;//tiefe * einrueckungProUntereEbene;
-		pos.y = pan.getHeight();
+		pos.y = parentPanel.getHeight();
 		dataPanel.setBounds(pos);
 
-		pan.add(dataPanel);
-		this.setPanelBounds(pan);
+		parentPanel.add(dataPanel);
+		this.setPanelBounds(parentPanel);
 		
+		return newNode;
 	}
 	
+	/**
+	 * This method creates a so called dead end. This means that orgininally a class 
+	 * should be displayed which was already displayed on a higher level in direction
+	 * to the root node. This was realized to prevent the form generation to be run
+	 * in an endless loop.  
+	 *  
+	 * @param oscsd
+	 * @param dataItemName
+	 * @param dataItemVarType
+	 * @param dataItemCardinality
+	 * @param className
+	 * @param pan
+	 * @param tiefe
+	 * @param node
+	 */
 	public void createOuterDeadEnd(OntologySingleClassSlotDescription oscsd, String dataItemName, String dataItemVarType, String dataItemCardinality, String className, JPanel pan, int tiefe, DefaultMutableTreeNode node){
 		
 		// --- this outer element has no parents which are inner classes
@@ -982,7 +1190,7 @@ public class DynForm extends JPanel {
 		dataPanel.add(valueFieldText, null);
 		this.setPanelBounds(dataPanel);
 		
-		DynType dynType = new DynType(oscsd, DynType.typeCyclic, className, dataItemName, null);
+		DynType dynType = new DynType(oscsd, DynType.typeCyclic, className, dataPanel, dataItemName, null);
 		node.add(new DefaultMutableTreeNode(dynType));
 		
 		// --- set the new position (increment the height) for the parent panel of the 
@@ -998,7 +1206,8 @@ public class DynForm extends JPanel {
 	}
 	
 	/**
-	 * 
+	 * This method creates the JComponent, which will be 
+	 * displayed for an ontology slot
 	 * @param valueType
 	 * @return
 	 */
@@ -1026,138 +1235,150 @@ public class DynForm extends JPanel {
 		return valueField;
 	}
 	
-	
 	/**
 	 * This method creates a copy of the passed JPanel and adds it
 	 * @param dataPanel
 	 */
-	public void addMultiple(JPanel dataPanel){
+	public DefaultMutableTreeNode addMultiple(DefaultMutableTreeNode node, boolean isInnerClass){
 		
-		JPanel pan = (JPanel) dataPanel.getParent();
-		int dataPanelHeight = dataPanel.getHeight();
-		pan.setBounds(pan.getX(), pan.getY(), pan.getWidth(), pan.getHeight() + dataPanelHeight);
+		// --- Get all needed information about the node, which has to be copied --------
+		DynType dt = (DynType) node.getUserObject();
+		String clazz = dt.getClassName();
 		
-		// --- move surrounding panels into the y-direction by the the height of the
-		// --- JPanel copy
-		this.moveOtherPanels4Multiple(dataPanel, true);
-		this.setPreferredSize();
+		OntologySingleClassSlotDescription oscsd = dt.getOSCSD();
+		String dataItemName = oscsd.getSlotName();
+		String dataItemVarType = oscsd.getSlotVarType();
+		String dataItemCardinality = oscsd.getSlotCardinality();
 		
-		JPanel dataPanelCopy = new JPanel();
-		dataPanelCopy.setLayout(null);
-		dataPanelCopy.setBorder(dataPanel.getBorder());
+		JPanel oldPanel = dt.getPanel();
+		JPanel parentPanel = (JPanel) oldPanel.getParent();
+
+		// --- Get parent node ----------------------------------------------------------
+		DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) node.getParent(); 
+		int depth2WorkOn = parentNode.getLevel()-1;
 		
-		// --- now create the copy
-		this.createPanelCopy(dataPanelCopy,dataPanel);
-		dataPanelCopy.setBounds(dataPanel.getX(), dataPanel.getY() + dataPanelHeight, dataPanel.getWidth(), dataPanel.getHeight());
+		// --- Create the panel/node as needed as a copy of the current node ------------
+		JPanel blindPanel = new JPanel();
+		blindPanel.setLayout(null);
+		DefaultMutableTreeNode newNode = null;
+		if (isInnerClass==true) {
+			newNode = this.createInnerElements(oscsd, dataItemName, dataItemVarType, dataItemCardinality, clazz, depth2WorkOn+1, blindPanel, parentNode, true);
+		} else {
+			newNode = this.createOuterElements(oscsd, dataItemName, dataItemVarType, dataItemCardinality, clazz, depth2WorkOn, blindPanel, parentNode, true);
+		}
 		
-		// --- add the created copy
-		pan.add(dataPanelCopy);
+		// --- Place the node at the right position in the tree -------------------------
+		newNode.removeFromParent();
+		int nodeIndexPos = parentNode.getIndex(node)+1;
+		objectTree.insertNodeInto(newNode, parentNode, nodeIndexPos);
 		
-		// --- refresh the GUI
+		// --- Set the size of the new Panel --------------------------------------------
+		DynType dtNew = (DynType) newNode.getUserObject();
+		JPanel newPanel = dtNew.getPanel();
+		this.setPanelBounds(newPanel);
+		newPanel.setPreferredSize(newPanel.getSize());
+		
+		// --- Now place the new sub panel on the right super panel ---------------------
+		int movement = oldPanel.getHeight() + 2;
+		int xPos = oldPanel.getX();
+		int yPos = oldPanel.getY() + movement;
+		newPanel.setBounds(xPos, yPos, newPanel.getWidth(), newPanel.getHeight());
+		parentPanel.add(newPanel);
+		
+		// --- Now move the rest of the elements on the form ----------------------------
+		this.moveAfterAddOrRemove(movement, newNode);
+		
+		// --- refresh the GUI ----------------------------------------------------------
+		this.setPreferredSize(this);
 		this.validate();
+		
+		return newNode;
 	}
 	
 	/**
 	 * This method removes the passed JPanel 
 	 * @param dataPanel
 	 */
-	public void removeMultiple(JPanel dataPanel){
+	public void removeMultiple(DefaultMutableTreeNode node){
 		
-		JPanel parent = (JPanel) dataPanel.getParent();
-		dataPanel.setVisible(false);
-		moveOtherPanels4Multiple(dataPanel, false);
-		parent.remove(dataPanel);
-		parent.setBounds(parent.getX(), parent.getY(), parent.getWidth(), parent.getHeight() - dataPanel.getHeight());
-		parent.validate();
+		// --- Remind all needed informations -------------------------------------------
+		DefaultMutableTreeNode previousNode = node.getPreviousNode();
+		DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) node.getParent();
+		
+		DynType dt = (DynType) node.getUserObject();
+		JPanel deletePanel = dt.getPanel();
+		JPanel parentPanel = (JPanel) deletePanel.getParent();
+		
+		int movement = (deletePanel.getHeight() + 2) * (-1);
+		
+		// --- Remove node from the parent node and panel -------------------------------
+		parentPanel.remove(deletePanel);
+		node.setUserObject(null);
+		parentNode.remove(node);
+		
+		// --- Now move the rest of the elements on the form ----------------------------
+		this.moveAfterAddOrRemove(movement, previousNode);
 
-		this.setPreferredSize();
+		// --- refresh the GUI ----------------------------------------------------------
+		this.setPreferredSize(this);
+		this.validate();
+		
+	}
+
+	/**
+	 * Move all elements which are available after the node given by the parameter node
+	 * @param movement
+	 * @param node
+	 */
+	private void moveAfterAddOrRemove(int movement, DefaultMutableTreeNode node) {
+		
+		if (node==rootNode) {
+			return;
+		}
+		
+		DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) node.getParent();
+		
+		int numOfChilds = parentNode.getChildCount();
+		int indexOfNextNode = parentNode.getIndex(node) + 1;
+		for (int i = indexOfNextNode; i < numOfChilds; i++) {
+			
+			DefaultMutableTreeNode currNode = (DefaultMutableTreeNode) parentNode.getChildAt(i);
+
+			DynType dt = (DynType) currNode.getUserObject();
+			JPanel movePanel = dt.getPanel();
+			movePanel.setBounds(movePanel.getX(), movePanel.getY()+movement, movePanel.getWidth(), movePanel.getHeight());
+			
+			JComponent parentComp = (JComponent) movePanel.getParent();
+			if (parentComp instanceof JPanel) {
+				this.setPanelBounds((JPanel) parentComp);	
+			}
+			
+		}
+
+		// --- do the same at the parent node -----------------------
+		this.moveAfterAddOrRemove(movement, parentNode);
 		
 	}
 	
 	/**
-	 * This method tries to create a copy of the original Panel
-	 * @param newPanel
-	 * @param originalPanel
+	 * This Method sets the PreferredSize of this Panel according 
+	 * to the Position of the 'submitButton'
 	 */
-	private void createPanelCopy(final JPanel newPanel, JPanel originalPanel) {
-		
-		Component[] c = originalPanel.getComponents();
-		for (Component component : c) {
-			if(component instanceof JPanel) {
-				JPanel pan = new JPanel();
-				pan.setLayout(null);
-				JPanel panOrig = (JPanel) component;
-				pan.setBounds(panOrig.getX(), panOrig.getY(), panOrig.getWidth(), panOrig.getHeight());
-				pan.setBorder(panOrig.getBorder());
-				newPanel.add(pan);
-				this.createPanelCopy(pan, (JPanel) component);
-				
-			} else if(component instanceof JLabel) {
-				JLabel label = new JLabel();
-				JLabel origLabel = (JLabel) component;
-				label.setBounds(origLabel.getX(), origLabel.getY(), origLabel.getWidth(), origLabel.getHeight());
-				label.setText(origLabel.getText());
-				label.setFont(origLabel.getFont());
-				newPanel.add(label);
-				
-			} else if (component instanceof JTextField) {
-				JTextField text = new JTextField();
-				JTextField origText = (JTextField) component;
-				text.setBounds(origText.getX(), origText.getY(), origText.getWidth(), origText.getHeight());
-				newPanel.add(text);
-				
-			} else if (component instanceof JButton) {
-				JButton buttonOrig = (JButton) component;
-				JButton removeComponent = new JButton();
-				removeComponent.setBounds(buttonOrig.getX(), buttonOrig.getY(), buttonOrig.getWidth(), buttonOrig.getHeight());
-				removeComponent.setText("-");
-				removeComponent.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						removeMultiple(newPanel);
-					}
-				});
-				newPanel.add(removeComponent);
-				
-			}
-		}
+	private void setPreferredSize(JPanel panel) {
+		this.setPanelBounds(panel);
+		this.setPreferredSize(new Dimension(panel.getWidth(), panel.getHeight() + 20));
 	}
-
+	
 	/**
-	 * This method moves the surrounding panels into the + Y-Direction or into 
-	 * the - Y-Direction
-	 * @param dataPanel
-	 * @param add
+	 * This method can be invoked to generate the instance of the current configuration  
+	 * @return
 	 */
-	public void moveOtherPanels4Multiple(JPanel dataPanel, boolean add){
-		
-		if (dataPanel!=null && dataPanel.getParent() instanceof JPanel) {
-			Component[] panChilds = ((JPanel) dataPanel.getParent()).getComponents();
-			boolean flag = false;
-			// --- go through the surrounding panels of the datapanel and move it
-			// --- either to + Y-Dir (the panel is added) or to the - Y-Dir (the panel) 
-			// --- shall be removed
-			for (Component component : panChilds) {
-				if(component == dataPanel) {
-					flag = true;
-				}
-				if(add){
-					if(flag && component != dataPanel){
-						component.setBounds(component.getX(), component.getY() + dataPanel.getHeight(), component.getWidth(), component.getHeight());
-					}
-					
-				} else {
-					if(component.getY() > dataPanel.getY()) {
-						component.setBounds(component.getX(), component.getY() - dataPanel.getHeight(), component.getWidth(), component.getHeight());
-					}
-					
-				}
-			}
-			
-			if(dataPanel.getParent() instanceof JPanel)
-				moveOtherPanels4Multiple((JPanel)dataPanel.getParent(), add);
-		}	
-		
+	public void save(boolean fromForm) {
+		if (fromForm==true) {
+			this.setInstancesFromForm();	
+		} else {
+			this.setInstancesFromXML();
+		}
 	}
 	
 	/**
@@ -1191,6 +1412,8 @@ public class DynForm extends JPanel {
 	 */
 	public void setOntoArgsInstance(Object[] ontoArgsInstance) {
 		this.ontoArgsInstance = ontoArgsInstance;
+		this.setXMLFromInstances();
+		this.setInstancesFromXML();
 	}
 
 	/**

@@ -41,6 +41,29 @@ public class OntologySingleClassSlotDescription {
 	}
 
 	
+	@Override
+	public boolean equals(Object object) {
+
+		if (object instanceof OntologySingleClassSlotDescription) {
+			OntologySingleClassSlotDescription compare = (OntologySingleClassSlotDescription) object;
+			if (this.slotName.equals(compare.slotName)==false) {
+				return false;
+			}
+			if (this.slotCardinality.equals(compare.slotCardinality)==false) {
+				return false;
+			}
+			if (this.slotVarType.equals(compare.slotVarType)==false) {
+				return false;
+			}
+			if (this.methodList.equals(compare.methodList)==false) {
+				return false;
+			}
+			return true;
+		} else {
+			return false;	
+		}
+	}
+	
 	/**
 	 * @return the slotName
 	 */

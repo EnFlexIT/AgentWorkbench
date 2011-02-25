@@ -114,12 +114,6 @@ public class OntologyInstanceViewer extends JTabbedPane {
 			this.setEnlargedView();
 			
 		} else {
-
-			// --------------------------------------------
-			// --- Save the current configuration ---------
-			// --------------------------------------------
-			this.save();
-			
 			// --------------------------------------------
 			// --- Refresh the view to the data -----------
 			// --------------------------------------------
@@ -127,6 +121,8 @@ public class OntologyInstanceViewer extends JTabbedPane {
 				// -----------------------------------
 				// --- Refresh XML-View --------------
 				// -----------------------------------
+				this.save();
+				
 				String [] xmlConfig = this.dynForm.getOntoArgsXML(); 
 				String newText = "";
 				String argumentLine = "";
@@ -151,7 +147,8 @@ public class OntologyInstanceViewer extends JTabbedPane {
 				// -----------------------------------
 				// --- Refresh Form-View -------------
 				// -----------------------------------
-				String [] currConfig = this.getXMLParts(jTextArea.getText());
+				String currConfigText = jTextArea.getText();
+				String [] currConfig = this.getXMLParts(currConfigText);
 				this.setConfigurationXML(currConfig);
 				
 			}
@@ -398,8 +395,13 @@ public class OntologyInstanceViewer extends JTabbedPane {
 		if (this.getSelectedIndex()==0) {
 			// --- Form view ------------------------------
 			this.dynForm.save(true);
+			
 		} else if (this.getSelectedIndex()==1) {
 			// --- XML view -------------------------------
+			String currConfigText = jTextArea.getText();
+			String [] currConfig = this.getXMLParts(currConfigText);
+			this.setConfigurationXML(currConfig);
+
 			this.dynForm.save(false);
 		}
 		
