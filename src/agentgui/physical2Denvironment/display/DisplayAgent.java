@@ -9,17 +9,27 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.HashSet;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
 
+import org.omg.CORBA.Environment;
 import org.w3c.dom.Document;
 
+import agentgui.core.application.Application;
+import agentgui.core.application.Language;
 import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 import agentgui.physical2Denvironment.ontology.Physical2DObject;
 import agentgui.physical2Denvironment.provider.EnvironmentProviderHelper;
 import agentgui.physical2Denvironment.provider.EnvironmentProviderService;
+import agentgui.physical2Denvironment.utils.EnvironmentHelper;
 import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.SimulationServiceHelper;
+import agentgui.simulationService.environment.EnvironmentModel;
+import agentgui.simulationService.time.TimeModel;
+import agentgui.simulationService.time.TimeModelDiscrete;
 /**
  * This type of agent controls a visualization of a Physical2DEnvironment 
  * @author Nils
@@ -40,9 +50,12 @@ public class DisplayAgent extends Agent {
 	private JPanel usePanel = null;
 	private Document svgDoc = null;
 	private Physical2DEnvironment environment = null;
-	private SimulationServiceHelper simHelper = null;
+	private EnvironmentProviderHelper envHelper = null;
 	private int lastMaximumValue=-2;
 	private int lastCurrentValue=-1;
+	private long initialTimeStep=0;
+	private boolean play=true;
+
 	public void setup(){
 	
 		int use4Visualization = 0;
@@ -87,21 +100,81 @@ public class DisplayAgent extends Agent {
 			usePanel.repaint();
 			break;
 		}
+		try
+		{
+			myGUI.jPanelSimuInfos.setVisible(true);
+			SimulationServiceHelper simHelper=(SimulationServiceHelper) getHelper(SimulationServiceHelper.SERVICE_NAME);
+			
+			EnvironmentModel envModel= simHelper.getEnvironmentModel();
 		
+			while(envModel==null)
+			{
+				Thread.sleep(10);
+				envModel= simHelper.getEnvironmentModel();
+			}
+			TimeModelDiscrete model=(TimeModelDiscrete) envModel.getTimeModel();
+			initialTimeStep=model.getStep();	
+			String unit= Language.translate("Sekunden");
+			myGUI.jLabelSpeedFactor.setText( (initialTimeStep/1000.0)+" " + unit);
+			System.out.println("Sollte eigentlich darstelle");
+	
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+
+		
+		myGUI.jButtonPlay.addMouseListener(new java.awt.event.MouseAdapter() {
+			
+			public void mouseClicked(java.awt.event.MouseEvent e) {
+				play=!play;
+				envHelper.setRunning(play);
+				String pathImage=Application.RunInfo.PathImageIntern();
+				Icon icon=null;
+				if(play)
+				{
+					 icon=new ImageIcon(getClass().getResource(pathImage + "MBLoadPlay.png"));
+				}
+				else
+				{
+					 icon=new ImageIcon(getClass().getResource(pathImage + "MBLoadPause.png"));		
+				}
+				myGUI.jButtonPlay.setIcon(icon);
+			
+			}
+		});
+		
+		
+		
+		
+				
+		// the user change the status of the simulation
 		myGUI.jSliderTime.addChangeListener(new javax.swing.event.ChangeListener() {
+	
 			public void stateChanged(javax.swing.event.ChangeEvent e) {
 				// Call simu service and tell him that something is changed!
-				System.out.println("Change:"+myGUI.jSliderTime.getValue());
+;
 				try
 				{
-					if(simHelper!=null)
+					if(	envHelper!=null)
 					{
 						
-				  simHelper.setCurrentPos(myGUI.jSliderTime.getValue());
+						envHelper.setCurrentPos(myGUI.jSliderTime.getValue());
+						if(initialTimeStep==0)
+						{
+							SimulationServiceHelper simHelper=(SimulationServiceHelper) getHelper(SimulationServiceHelper.SERVICE_NAME);
+							TimeModelDiscrete model=(TimeModelDiscrete) simHelper.getEnvironmentModel().getTimeModel();
+							initialTimeStep=model.getStep();	
+							
+						}
+					
+						String unit= Language.translate("Sekunden");
+						myGUI.jLabelTimeDisplay.setText((initialTimeStep*myGUI.jSliderTime.getValue())/1000.0 +" "+unit);
 					}
 					else
 					{
-						simHelper=(SimulationServiceHelper) getHelper(SimulationService.NAME);
+						envHelper=(EnvironmentProviderHelper) getHelper(EnvironmentProviderService.SERVICE_NAME);
 					}
 				}
 				catch(Exception ex)
@@ -110,6 +183,39 @@ public class DisplayAgent extends Agent {
 				}
 			}
 		});
+		
+		// User adjusted the simulation time steps
+		myGUI.jSliderVisualation.addChangeListener(new javax.swing.event.ChangeListener() {
+			SimulationServiceHelper simHelper=null;
+			
+			public void stateChanged(javax.swing.event.ChangeEvent e) {
+				// Call simu service and tell him that something is changed!
+			
+				try
+				{
+				
+				if(simHelper==null)
+				{
+						simHelper=(SimulationServiceHelper) getHelper(SimulationServiceHelper.SERVICE_NAME);
+						TimeModelDiscrete model=(TimeModelDiscrete) simHelper.getEnvironmentModel().getTimeModel();
+						initialTimeStep=model.getStep();
+				}
+				String unit= Language.translate("Sekunden");
+				myGUI.jLabelSpeedFactor.setText( (((myGUI.jSliderVisualation.getValue()*initialTimeStep))/1000.0) +" "+unit);
+				TimeModelDiscrete model=(TimeModelDiscrete) simHelper.getEnvironmentModel().getTimeModel();
+				model.setStep(initialTimeStep*myGUI.jSliderVisualation.getValue());
+				}
+				catch(Exception ex)
+				{
+					ex.printStackTrace();
+				}
+			}
+		});
+		
+		
+		
+		
+		
 		
 		
 		addBehaviour(new UpdateSVGBehaviour());
@@ -161,29 +267,31 @@ public class DisplayAgent extends Agent {
 		protected void onTick() {
 			try
 			{
-			HashSet<Physical2DObject> movingObjects = helper.getCurrentlyMovingObjects();
-			synchronized (movingObjects) {
-			myGUI.updatePositions(movingObjects);
-			}
-			
-				if(simHelper!=null)
-				{
-					if(lastCurrentValue!=simHelper.getCurrentPos())
-					{
-						myGUI.setCurrentTimePos(simHelper.getCurrentPos());
+						
+					HashSet<Physical2DObject> movingObjects = helper.getCurrentlyMovingObjects();
+					synchronized (movingObjects) {
+						myGUI.updatePositions(movingObjects);
 					}
-					if(lastMaximumValue!=simHelper.getTransactionSize())
+			
+				if(envHelper!=null)
+				{
+					if(lastCurrentValue!=envHelper.getCurrentPos()) // only change if necessary
 					{
-						myGUI.setMaximum(simHelper.getTransactionSize());
+						myGUI.setCurrentTimePos(envHelper.getCurrentPos());
+					}
+					if(lastMaximumValue!=envHelper.getTransactionSize())
+					{
+						myGUI.setMaximum(envHelper.getTransactionSize()); // Set the maximum sliding position
 					}
 			
 				}
 				else
 				{
-				simHelper=(SimulationServiceHelper) getHelper(SimulationService.NAME);	
+				envHelper=(EnvironmentProviderHelper) getHelper(EnvironmentProviderService.SERVICE_NAME);	
 				}
-				lastCurrentValue=simHelper.getCurrentPos();
-				lastMaximumValue=simHelper.getTransactionSize();
+				lastCurrentValue=envHelper.getCurrentPos(); // Use for comparing
+				lastMaximumValue=envHelper.getTransactionSize(); // use for comparing
+				
 			}
 			catch(Exception e)
 			{
@@ -191,8 +299,8 @@ public class DisplayAgent extends Agent {
 			}
 			
 			
-		}
+		
 		
 	}
-
+}
 }

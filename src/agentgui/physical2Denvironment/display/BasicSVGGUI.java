@@ -45,8 +45,10 @@ public class BasicSVGGUI extends JPanel {
 	protected JSlider jSliderVisualation = null;
 	private JLabel jLabelTime = null;
 	protected JSlider jSliderTime = null;
-	private JPanel jPanelSimuInfos = null;
-	
+	protected JPanel jPanelSimuInfos = null;
+	protected JLabel jLabelTimeDisplay = null;
+	protected JLabel jLabelSpeedFactor = null;
+	protected JButton jButtonPlay = null;
 	/**
 	 * This is the default constructor
 	 */
@@ -54,7 +56,7 @@ public class BasicSVGGUI extends JPanel {
 		super();
 		this.canvas = new JSVGCanvas();
 		initialize();
-		
+		jPanelSimuInfos.setVisible(false);
 		
 		
 	}
@@ -216,7 +218,7 @@ public class BasicSVGGUI extends JPanel {
 	private JLabel getJLabelSpeed() {
 		if (jLabelSpeed == null) {
 			jLabelSpeed = new JLabel();
-			jLabelSpeed.setText("Speed");
+			jLabelSpeed.setText("Vis.-Geschwindigkeit");
 		}
 		return jLabelSpeed;
 	}
@@ -229,8 +231,15 @@ public class BasicSVGGUI extends JPanel {
 	private JSlider getJSliderVisualation() {
 		if (jSliderVisualation == null) {
 			jSliderVisualation = new JSlider();
-			jSliderVisualation.setValue(0);
-			jSliderVisualation.setMaximum(1);
+			jSliderVisualation.setMinimum(1);
+			jSliderVisualation.setValue(1);
+			jSliderVisualation.setMaximum(10);
+//			jSliderVisualation.setMajorTickSpacing(10);
+			jSliderVisualation.setMinorTickSpacing(1);
+			jSliderVisualation.setPaintTicks(true);
+//			jSliderVisualation.createStandardLabels(250);
+			jSliderVisualation.setPaintLabels(false);
+			jSliderVisualation.setSnapToTicks(true);
 		}
 		return jSliderVisualation;
 	}
@@ -243,7 +252,7 @@ public class BasicSVGGUI extends JPanel {
 	private JLabel getJLabelTime() {
 		if (jLabelTime == null) {
 			jLabelTime = new JLabel();
-			jLabelTime.setText("Time");
+			jLabelTime.setText("Simulationszeit");
 			jLabelTime.setDisplayedMnemonic(KeyEvent.VK_UNDEFINED);
 		}
 		return jLabelTime;
@@ -259,6 +268,9 @@ public class BasicSVGGUI extends JPanel {
 			jSliderTime = new JSlider();
 			jSliderTime.setMaximum(1);
 			jSliderTime.setValue(0);
+			jSliderTime.setSnapToTicks(true);
+			jSliderTime.setMinorTickSpacing(1);
+			jSliderTime.setPaintTicks(true);
 			
 			
 		}
@@ -272,28 +284,50 @@ public class BasicSVGGUI extends JPanel {
 	 */
 	private JPanel getJPanelSimuInfos() {
 		if (jPanelSimuInfos == null) {
+			GridBagConstraints gridBagConstraints13 = new GridBagConstraints();
+			gridBagConstraints13.gridx = 4;
+			gridBagConstraints13.gridheight = 3;
+			gridBagConstraints13.anchor = GridBagConstraints.CENTER;
+			gridBagConstraints13.insets = new Insets(0, 10, 0, 0);
+			gridBagConstraints13.fill = GridBagConstraints.NONE;
+			gridBagConstraints13.gridwidth = 1;
+			gridBagConstraints13.gridy = 0;
+			GridBagConstraints gridBagConstraints12 = new GridBagConstraints();
+			gridBagConstraints12.gridx = 3;
+			gridBagConstraints12.insets = new Insets(5, 5, 5, 5);
+			gridBagConstraints12.anchor = GridBagConstraints.WEST;
+			gridBagConstraints12.gridy = 2;
+			jLabelSpeedFactor = new JLabel();
+			jLabelSpeedFactor.setText("");
+			GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
+			gridBagConstraints11.gridx = 3;
+			gridBagConstraints11.insets = new Insets(5, 5, 5, 1);
+			gridBagConstraints11.anchor = GridBagConstraints.WEST;
+			gridBagConstraints11.gridy = 0;
+			jLabelTimeDisplay = new JLabel();
+			jLabelTimeDisplay.setText("0 Sekunden");
 			GridBagConstraints gridBagConstraints10 = new GridBagConstraints();
 			gridBagConstraints10.anchor = GridBagConstraints.WEST;
-			gridBagConstraints10.insets = new Insets(5, 60, 0, 5);
+			gridBagConstraints10.insets = new Insets(5, 5, 0, 5);
 			GridBagConstraints gridBagConstraints9 = new GridBagConstraints();
-			gridBagConstraints9.fill = GridBagConstraints.VERTICAL;
+			gridBagConstraints9.fill = GridBagConstraints.BOTH;
 			gridBagConstraints9.gridy = 0;
 			gridBagConstraints9.weightx = 1.0;
 			gridBagConstraints9.anchor = GridBagConstraints.WEST;
 			gridBagConstraints9.insets = new Insets(5, 0, 0, 0);
-			gridBagConstraints9.gridx = 1;
+			gridBagConstraints9.gridx = 2;
 			GridBagConstraints gridBagConstraints8 = new GridBagConstraints();
-			gridBagConstraints8.fill = GridBagConstraints.VERTICAL;
-			gridBagConstraints8.gridy = 1;
+			gridBagConstraints8.fill = GridBagConstraints.BOTH;
+			gridBagConstraints8.gridy = 2;
 			gridBagConstraints8.weightx = 1.0;
 			gridBagConstraints8.anchor = GridBagConstraints.WEST;
 			gridBagConstraints8.insets = new Insets(5, 0, 5, 0);
-			gridBagConstraints8.gridx = 1;
+			gridBagConstraints8.gridx = 2;
 			GridBagConstraints gridBagConstraints7 = new GridBagConstraints();
 			gridBagConstraints7.gridx = 0;
 			gridBagConstraints7.anchor = GridBagConstraints.WEST;
-			gridBagConstraints7.insets = new Insets(5, 60, 5, 5);
-			gridBagConstraints7.gridy = 1;
+			gridBagConstraints7.insets = new Insets(5, 5, 4, 5);
+			gridBagConstraints7.gridy = 2;
 			GridBagConstraints gridBagConstraints6 = new GridBagConstraints();
 			gridBagConstraints6.fill = GridBagConstraints.VERTICAL;
 			gridBagConstraints6.gridy = 0;
@@ -308,7 +342,25 @@ public class BasicSVGGUI extends JPanel {
 			jPanelSimuInfos.add(getJLabelTime(), gridBagConstraints10);
 			jPanelSimuInfos.add(getJSliderVisualation(), gridBagConstraints8);
 			jPanelSimuInfos.add(getJSliderTime(), gridBagConstraints9);
+			jPanelSimuInfos.add(jLabelTimeDisplay, gridBagConstraints11);
+			jPanelSimuInfos.add(jLabelSpeedFactor, gridBagConstraints12);
+			jPanelSimuInfos.add(getJButtonPlay(), gridBagConstraints13);
 		}
 		return jPanelSimuInfos;
+	}
+
+	/**
+	 * This method initializes jButtonPlay	
+	 * 	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getJButtonPlay() {
+		if (jButtonPlay == null) {
+			jButtonPlay = new JButton();
+			jButtonPlay.setPreferredSize(new Dimension(45, 26));
+			jButtonPlay.setIcon(new ImageIcon(getClass().getResource("/agentgui/core/gui/img/MBLoadPlay.png")));
+			
+		}
+		return jButtonPlay;
 	}
 }  //  @jve:decl-index=0:visual-constraint="10,10"
