@@ -94,4 +94,29 @@ public interface EnvironmentProviderHelper extends ServiceHelper {
 	public String getProjectName();
 	public void stepModel(AID key, PositionUpdate updatedPosition);
 	public HashMap<AID,PositionUpdate> getModel(int pos);
+	
+	/**
+	 * @return The number of Transactions
+	 */
+	public int getTransactionSize();
+	/** Set the current position of the simulation
+	 * @param pos
+	 */
+	public void setCurrentPos(int pos);
+	/** Returns the current position of the simulation
+	 * @return The current Position of the simulation
+	 */
+	public int getCurrentPos();
+	
+	/**
+	 * @return If the simulation pauses or is running
+	 */
+	public boolean is_running();
+	
+	/**
+	 * @param running
+	 */
+	public void setRunning(boolean running);
+	
+	
 }

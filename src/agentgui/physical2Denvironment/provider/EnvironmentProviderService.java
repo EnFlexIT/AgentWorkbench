@@ -77,7 +77,9 @@ public class EnvironmentProviderService extends BaseService {
 	 */
 	private HashSet<Physical2DObject> currentlyMovingObjects;
 	
-	
+	private int step;
+	private int transactionSize=-1;
+	private boolean is_running=true;
 	private HashMap <AID,ArrayList<PositionUpdate>> transaction=new HashMap<AID,ArrayList<PositionUpdate>>();
 	
 	@Override
@@ -473,6 +475,22 @@ public class EnvironmentProviderService extends BaseService {
 			// TODO Auto-generated method stub
 			
 		}
+		@Override
+		public int getTransactionSize() {
+			return transactionSize;
+		}
+
+		@Override
+		public void setCurrentPos(int pos) {
+			step=pos;
+			
+		}
+
+		@Override
+		public int getCurrentPos() {
+		
+			return step;
+		}
 
 		@Override
 		public void setEnvironment(Physical2DEnvironment environment) {
@@ -527,13 +545,18 @@ public class EnvironmentProviderService extends BaseService {
 		@Override
 		public void stepModel(AID key, PositionUpdate updatedPosition)
 		{
+			
 			ArrayList<PositionUpdate> list=transaction.get(key);
 			if(list==null)
 			{
 				list=new ArrayList<PositionUpdate>();
 			}
 			list.add(updatedPosition);
-			System.out.println("List Size for:" + key.getLocalName() +":"+list.size());
+			if(transactionSize<list.size())
+			{
+				transactionSize=list.size();
+			}
+			//System.out.println("List Size for:" + key.getLocalName() +":"+list.size());
 			transaction.put(key, list);
 			
 		}
@@ -558,6 +581,17 @@ public class EnvironmentProviderService extends BaseService {
 			}
 			
 			return result;
+			
+		}
+
+		@Override
+		public boolean is_running() {
+			return is_running;
+		}
+
+		@Override
+		public void setRunning(boolean running) {
+			is_running=running;
 			
 		}
 
