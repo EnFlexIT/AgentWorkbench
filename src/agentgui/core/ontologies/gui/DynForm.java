@@ -442,7 +442,7 @@ public class DynForm extends JPanel {
 						e.printStackTrace();
 					}
 				}
-
+				
 				// --- work on the slot value --- Start ---------------------
 				if (slotValue!=null) {
 					// ------------------------------------------------------
@@ -495,6 +495,11 @@ public class DynForm extends JPanel {
 						numOfChilds = node.getChildCount();
 					}					
 					
+					// --- Debugging ...  -----------------------------------
+					if (debug==true) {
+						System.out.println("=> " + i + "/" + numOfChilds + " setze: " + currNode.toString() + " zu " + slotValue);
+					}
+
 					// ------------------------------------------------------
 					// --- Now, set the value to the form -------------------
 					// ------------------------------------------------------
@@ -506,7 +511,7 @@ public class DynForm extends JPanel {
 								DefaultMutableTreeNode nodeVectorSingle = nodeVector.get(j);
 								dt = (DynType) nodeVectorSingle.getUserObject();
 								Object singleValue = ((List) slotValue).get(j);
-								this.setFormState(singleValue, currNode);	
+								this.setFormState(singleValue, nodeVectorSingle);	
 							}
 							skipChilds = numberOfSlotValues-1; 
 							
@@ -705,7 +710,7 @@ public class DynForm extends JPanel {
 			if (obj==null) {
 				jt.setText("0.0");
 			} else {
-				jt.setText(obj.toString());	
+				jt.setText(obj.toString());
 			}
 			
 		} else if(valueType.equals("int")){
