@@ -180,16 +180,15 @@ public class GraphEnvironmentControllerGUI extends JSplitPane implements Observe
 		if(controller.getGridModel() != null){
 			
 			// Get the components from the controllers GridModel
-			@SuppressWarnings("unchecked")
-			Iterator<GraphNode> components = controller.getGridModel().getComponents().iterator();
+			Iterator<GridComponent> components = controller.getGridModel().getComponents().iterator();
 			
 			// Add component ID and class name to the data vector
 			while(components.hasNext()){
-				GraphNode comp = components.next();
+				GridComponent comp = components.next();
 				
 				Vector<String> compData = new Vector<String>();
-				compData.add(comp.getId());
-				compData.add(comp.getOntologyObject().getClass().getSimpleName());
+				compData.add(comp.getAgentID());
+				compData.add(comp.getType());
 				compData.add("Test");
 				componentVector.add(compData);
 			}
@@ -208,9 +207,9 @@ public class GraphEnvironmentControllerGUI extends JSplitPane implements Observe
 			btnLoadGraph = new JButton();
 			btnLoadGraph.setText(Language.translate("Graph Laden"));
 			btnLoadGraph.addActionListener(this);
-			if(controller.getProject().getOntoClassHash() == null){
-				btnLoadGraph.setEnabled(false);
-			}
+//			if(controller.getProject().getOntoClassHash() == null){
+//				btnLoadGraph.setEnabled(false);
+//			}
 		}
 		return btnLoadGraph;
 	}
@@ -231,7 +230,7 @@ public class GraphEnvironmentControllerGUI extends JSplitPane implements Observe
 	
 	private ClassSelectorDialog getClassSelectorDialog(){
 		if(classSelectorDialog == null){
-			classSelectorDialog = new ClassSelectorDialog(this, controller.getOntologyClasses(), controller.getAgentClasses());
+//			classSelectorDialog = new ClassSelectorDialog(this, controller.getOntologyClasses(), controller.getAgentClasses());
 		}
 		return classSelectorDialog;
 	}
@@ -250,9 +249,9 @@ public class GraphEnvironmentControllerGUI extends JSplitPane implements Observe
 		}else if(o.equals(controller) && arg.equals(GraphEnvironmentController.EVENT_GRAPH_LOADED)){
 			rebuildTblComponents();
 		}else if(o.equals(controller) && arg == GraphEnvironmentController.EVENT_ONTOLOGY_CLASSES_SET){
-			if(controller.getOntologyClasses() != null){
-				getBtnLoadGraph().setEnabled(true);
-			}
+//			if(controller.getOntologyClasses() != null){
+//				getBtnLoadGraph().setEnabled(true);
+//			}
 		}
 	}
 	
@@ -273,9 +272,10 @@ public class GraphEnvironmentControllerGUI extends JSplitPane implements Observe
 				public void handleEvent(Event evt) {
 					String svgID = ((Element)evt.getCurrentTarget()).getAttributeNS(null, "id");
 					String componentID = "n"+svgID.substring(svgID.lastIndexOf('.')+1);
-					GraphNode selectedComponent = controller.getGridModel().getComponent(componentID);
-					new ComponentSettingsDialog(controller.getProject(), selectedComponent).setVisible(true);
 					setSelectedElement((Element)evt.getTarget());
+//					GridComponent selectedComponent = controller.getGridModel().getComponent(componentID);
+//					new ComponentSettingsDialog(controller.getProject(), selectedComponent).setVisible(true);
+					
 				}
 			}, false);
 		}
@@ -303,6 +303,7 @@ public class GraphEnvironmentControllerGUI extends JSplitPane implements Observe
 			if(graphFC.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
 				File graphMLFile = graphFC.getSelectedFile();
 				this.controller.loadGridModel(graphMLFile);
+//				this.controller.getGridModel().showJungVisualization();
 			}
 		}else if(event.getSource().equals(getBtnSetClasses())){
 			getClassSelectorDialog().setVisible(true);
@@ -313,9 +314,10 @@ public class GraphEnvironmentControllerGUI extends JSplitPane implements Observe
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
 		String componentID = (String) tblComponents.getModel().getValueAt(e.getFirstIndex(), 0);
-		GraphNode selectedComponent = controller.getGridModel().getComponent(componentID);
-		new ComponentSettingsDialog(controller.getProject(), selectedComponent).setVisible(true);
 		setSelectedElementByComponentID(componentID);
+		GridComponent selectedComponent = controller.getGridModel().getComponent(componentID);
+//		new ComponentSettingsDialog(controller.getProject(), selectedComponent).setVisible(true);
+		
 	}
 	
 	void setComponentType(){

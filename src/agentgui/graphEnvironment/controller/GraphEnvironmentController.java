@@ -12,12 +12,10 @@ import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.util.XMLResourceDescriptor;
 import org.w3c.dom.Document;
 
-import edu.uci.ics.jung.graph.Graph;
-
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
 import agentgui.core.common.FileCopier;
-import agentgui.graphEnvironment.controller.yedGraphml.YedGraphMLFileLoader;
+import agentgui.graphEnvironment.controller.yedGraphml.YedGraphMLFileLoader2;
 
 public class GraphEnvironmentController extends Observable implements
 		Observer {
@@ -32,9 +30,9 @@ public class GraphEnvironmentController extends Observable implements
 	/**
 	 * @param graph the graph to set
 	 */
-	public void setGridModel(Graph<GraphNode, GraphEdge> graph) {
+	public void setGridModel(GridModel2 gridModel) {
 		
-		this.gridModel = new GridModel(graph);
+		this.gridModel = gridModel;
 		this.setChanged();
 		notifyObservers(EVENT_GRAPH_LOADED);
 	}
@@ -48,16 +46,16 @@ public class GraphEnvironmentController extends Observable implements
 	
 	public static final Integer EVENT_AGENT_CLASSES_SET = 3;
 	
-	public HashMap<String, String> getOntologyClasses() {
-		return project.getOntoClassHash();
-	}
+//	public HashMap<String, String> getOntologyClasses() {
+//		return project.getOntoClassHash();
+//	}
 
-	public void setOntologyClasses(HashMap<String, String> ontologyClasses) {
-		project.setOntoClassHash(ontologyClasses);
-		project.isUnsaved=true;
-		setChanged();
-		notifyObservers(EVENT_ONTOLOGY_CLASSES_SET);
-	}
+//	public void setOntologyClasses(HashMap<String, String> ontologyClasses) {
+//		project.setOntoClassHash(ontologyClasses);
+//		project.isUnsaved=true;
+//		setChanged();
+//		notifyObservers(EVENT_ONTOLOGY_CLASSES_SET);
+//	}
 
 	public HashMap<String, String> getAgentClasses() {
 		return project.getAgentClassHash();
@@ -70,13 +68,13 @@ public class GraphEnvironmentController extends Observable implements
 		notifyObservers(EVENT_AGENT_CLASSES_SET);
 	}
 	
-	private GraphFileLoader fileLoader = null;
+	private GraphFileLoader2 fileLoader = null;
 
 	private Project project = null;
 	
 	private Document svgDoc = null;
 	
-	private GridModel gridModel = null;
+	private GridModel2 gridModel = null;
 	
 	public GraphEnvironmentController(Project project){
 		this.project = project;
@@ -113,7 +111,7 @@ public class GraphEnvironmentController extends Observable implements
 			System.err.println("Keine SVG-Datei gefunden!");
 		}
 		
-		this.gridModel = new GridModel(loadGraphFile(new File(graphMLTargetPath)));
+		this.gridModel = loadGraphFile(new File(graphMLTargetPath));
 		setChanged();
 		notifyObservers(EVENT_GRAPH_LOADED);
 		if(svgFound){
@@ -160,12 +158,10 @@ public class GraphEnvironmentController extends Observable implements
 	 * @param graphMLFile The GraphML file defining the new graph.
 	 * @return The corresponding JUNG graph
 	 */
-	private Graph<GraphNode, GraphEdge> loadGraphFile(File graphMLFile){
-		fileLoader = new YedGraphMLFileLoader(project);
-		Graph<GraphNode, GraphEdge> graph = null;
-		graph = fileLoader.loadGraphFromFile(graphMLFile);
+	private GridModel2 loadGraphFile(File graphMLFile){
+		fileLoader = new YedGraphMLFileLoader2();
 		System.out.println("Lade Graph-Datei "+graphMLFile.getName());
-		return graph;
+		return fileLoader.loadGraphFromFile(graphMLFile);
 	}
 	
 	/**
@@ -196,7 +192,7 @@ public class GraphEnvironmentController extends Observable implements
 	/**
 	 * @return the graph
 	 */
-	public GridModel getGridModel() {
+	public GridModel2 getGridModel() {
 		return gridModel;
 	}
 
@@ -207,7 +203,7 @@ public class GraphEnvironmentController extends Observable implements
 		return svgDoc;
 	}
 	
-	GraphFileLoader getFileLoader(){
+	GraphFileLoader2 getFileLoader(){
 		return fileLoader;
 	}
 	

@@ -205,7 +205,8 @@ public class ClassSelectorDialog extends JDialog implements ActionListener{
 			jTableClasses.setModel(getClassesTableModel());
 			TableColumn ontologyClassColumn = jTableClasses.getColumnModel().getColumn(1);
 			ontologyClassColumn.setCellEditor(new DefaultCellEditor(getCellEditorOntologyClass()));
-			TableColumn agentClassColumn = jTableClasses.getColumnModel().getColumn(2);
+//			TableColumn agentClassColumn = jTableClasses.getColumnModel().getColumn(2);
+			TableColumn agentClassColumn = jTableClasses.getColumnModel().getColumn(1);
 			agentClassColumn.setCellEditor(new DefaultCellEditor(getCellEditorAgentClass()));
 		}
 		return jTableClasses;
@@ -224,7 +225,7 @@ public class ClassSelectorDialog extends JDialog implements ActionListener{
 		// Headlines
 		Vector<String> titles = new Vector<String>();
 		titles.add(Language.translate("Datenfeld"));
-		titles.add(Language.translate("Ontologieklasse"));
+//		titles.add(Language.translate("Ontologieklasse"));
 		titles.add(Language.translate("Agentenklasse"));
 		Vector<Vector<String>> dataRows = new Vector<Vector<String>>();
 		
@@ -238,15 +239,15 @@ public class ClassSelectorDialog extends JDialog implements ActionListener{
 				Vector<String> newRow = new Vector<String>();
 				newRow.add(dataEntry);
 				
-				// Ontology class assigned to this GraphML data field entry
-				String ontoClassName = assignedOntologyClasses.get(dataEntry);
-				if(ontoClassName != null){
-					// Class name without package
-					String ontoClassSimpleName = ontoClassName.substring(ontoClassName.lastIndexOf('.')+1);
-					newRow.add(ontoClassSimpleName);
-				}else{
-					newRow.add(Language.translate("Nicht definiert"));
-				}
+//				// Ontology class assigned to this GraphML data field entry
+//				String ontoClassName = assignedOntologyClasses.get(dataEntry);
+//				if(ontoClassName != null){
+//					// Class name without package
+//					String ontoClassSimpleName = ontoClassName.substring(ontoClassName.lastIndexOf('.')+1);
+//					newRow.add(ontoClassSimpleName);
+//				}else{
+//					newRow.add(Language.translate("Nicht definiert"));
+//				}
 				
 				// Agent class assigned to this GraphML data field entry
 				String agentClassName = assignedAgentClasses.get(dataEntry);
@@ -271,7 +272,7 @@ public class ClassSelectorDialog extends JDialog implements ActionListener{
 	private void addRow(){
 		Vector<String> rowData = new Vector<String>();
 		rowData.add(Language.translate("Nicht definiert"));
-		rowData.add(Language.translate("Nicht definiert"));
+//		rowData.add(Language.translate("Nicht definiert"));
 		rowData.add(Language.translate("Nicht definiert"));
 		((DefaultTableModel)getJTableClasses().getModel()).addRow(rowData);
 		getJTableClasses().changeSelection(getJTableClasses().getRowCount()-1, 0, false, false);
@@ -393,7 +394,7 @@ public class ClassSelectorDialog extends JDialog implements ActionListener{
 				removeRow(getJTableClasses().getSelectedRow());
 			}
 		}else if(event.getSource().equals(getJButtonConfirm())){
-			HashMap<String, String> ontologyClasses = new HashMap<String, String>();
+//			HashMap<String, String> ontologyClasses = new HashMap<String, String>();
 			HashMap<String, String> agentClasses = new HashMap<String, String>();
 			
 			JTable jtc = getJTableClasses();
@@ -401,11 +402,11 @@ public class ClassSelectorDialog extends JDialog implements ActionListener{
 			int rowNum = jtc.getRowCount();
 			for(int i=0; i<rowNum; i++){
 				
-				ontologyClasses.put((String) jtc.getValueAt(i, 0), this.availableOntologyClasses.get(jtc.getValueAt(i, 1)).getName());
-				agentClasses.put((String) jtc.getValueAt(i, 0), this.availableAgentClasses.get(jtc.getValueAt(i, 2)).getName());
+//				ontologyClasses.put((String) jtc.getValueAt(i, 0), this.availableOntologyClasses.get(jtc.getValueAt(i, 1)).getName());
+				agentClasses.put((String) jtc.getValueAt(i, 0), this.availableAgentClasses.get(jtc.getValueAt(i, 1)).getName());
 			}
 			
-			parent.getController().setOntologyClasses(ontologyClasses);
+//			parent.getController().setOntologyClasses(ontologyClasses);
 			parent.getController().setAgentClasses(agentClasses);
 			
 			this.setVisible(false);
