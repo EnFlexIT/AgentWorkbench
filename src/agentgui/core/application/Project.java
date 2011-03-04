@@ -23,6 +23,7 @@ import org.w3c.dom.Document;
 
 import agentgui.core.agents.AgentConfiguration;
 import agentgui.core.common.ClassLoaderUtil;
+import agentgui.core.environment.EnvironmentType;
 import agentgui.core.gui.ProjectWindow;
 import agentgui.core.gui.ProjectWindowTab;
 import agentgui.core.gui.components.TabForSubPanes;
@@ -43,11 +44,19 @@ import agentgui.core.sim.setup.SimulationSetups;
 import agentgui.physical2Denvironment.controller.Physical2DEnvironmentController;
 import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 
-
-
 @XmlRootElement public class Project extends Observable {
 
-	// --- Konstanten ------------------------------------------
+	// --- public statics --------------------------------------
+	@XmlTransient public static final String CHANGED_ProjectName = "ProjectName";
+	@XmlTransient public static final String CHANGED_ProjectDescription = "ProjectDescription";
+	@XmlTransient public static final String CHANGED_ProjectFolder= "ProjectFolder";
+	@XmlTransient public static final String CHANGED_ProjectView = "ProjectView";
+	@XmlTransient public static final String CHANGED_EnvironmentModel= "EnvironmentModel";
+	@XmlTransient public static final String CHANGED_AgentReferences = "AgentReferences";
+	@XmlTransient public static final String CHANGED_ProjectOntology = "ProjectOntology";
+	@XmlTransient public static final String CHANGED_ProjectResources = "ProjectResources";
+	
+	// --- Constants -------------------------------------------
 	@XmlTransient private String defaultSubFolderSetups    = "setups";
 	@XmlTransient private String defaultSubFolderEnvSetups = "svgEnvSetups";
 	@XmlTransient private String[] defaultSubFolders	   = { defaultSubFolderSetups,
@@ -71,13 +80,16 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	//	@XmlTransient private Physical2DEnvironment environment;
 	@XmlTransient private Physical2DEnvironmentController physical2DEnvironmentController;
 	
-	// --- Speichervariablen der Projektdatei ------------------ 
+	// --- Speichervariablen der Projektdatei -------------------------
 	@XmlElement(name="projectName")
 	private String projectName;
 	@XmlElement(name="projectDescription")
 	private String projectDescription;
 	@XmlElement(name="projectView")
-	private String projectView;
+	private String projectView;			// --- Developer / End-User ---
+	
+	@XmlElement(name="environmentModel")
+	private String environmentModel;	
 	
 	@XmlElementWrapper(name = "projectResources")
 	@XmlElement(name="projectResource")
@@ -100,8 +112,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	@XmlElement(name="jadeConfiguration")
 	public PlatformJadeConfig JadeConfiguration = new PlatformJadeConfig();
 	
-	private Object userObject = null;
-	
+
 	private HashMap<String, String> ontoClassHash = null;
 	
 	private HashMap<String, String> agentClassHash = null;
@@ -222,6 +233,10 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 		return true;		
 	}
 	
+	/**
+	 * This method closes the current project and returns true if this was successful 
+	 * @return
+	 */
 	public boolean close() {
 		// --- Projekt schlieﬂen ? -----------------------
 		String MsgHead = null;
@@ -278,7 +293,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	
 	/**
 	 * This Procedure creates the default Project-Structure  for a new project. It creates the 
-	 * deault folders ('agents' 'ontology' 'envSetups' 'resources') and creates default fils
+	 * default folders ('agents' 'ontology' 'envSetups' 'resources') and creates default files
 	 * like the project ontology main class 'AgentGUIProjectOntology'
 	 */
 	public void createDefaultProjectStructure() {
@@ -360,7 +375,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 		}
 	}
 	/**
-	 * Maximze the Project-Window within the AgenGUI-Application
+	 * Maximise the Project-Window within the AgenGUI-Application
 	 */
 	public void setMaximized() {
 		Application.MainWindow.validate();
@@ -375,7 +390,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 		projectName = newProjectName;
 		isUnsaved = true;
 		setChanged();
-		notifyObservers( "ProjectName" );
+		notifyObservers(CHANGED_ProjectName);
 	}
 	/**
 	 * @return the projectName
@@ -393,7 +408,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 		projectDescription = newProjectDescription;
 		isUnsaved = true;
 		setChanged();
-		notifyObservers( "ProjectDescription" );
+		notifyObservers(CHANGED_ProjectDescription);
 	}
 	/**
 	 * @return the projectDescription
@@ -411,7 +426,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 		this.projectView = projectView;
 		isUnsaved = true;
 		setChanged();
-		notifyObservers("ProjectView");
+		notifyObservers(CHANGED_ProjectView);
 	}
 
 	/**
@@ -426,6 +441,29 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	}
 
 	/**
+	 * @param environmentModel the environmentModel to set
+	 */
+	@XmlTransient
+	public void setEnvironmentModel(String environmentModel) {
+		this.environmentModel = environmentModel;
+		this.isUnsaved = true;
+		setChanged();
+		notifyObservers(CHANGED_EnvironmentModel);
+	}
+	/**
+	 * @return the environmentModel
+	 */
+	public String getEnvironmentModel() {
+		return environmentModel;
+	}
+	/**
+	 * @return the 'EnvironmentType' of the current EnvironmentModel
+	 */
+	public EnvironmentType getEnvironmentModelType() {
+		return Application.RunInfo.getKnowEnvironmentTypes().getEnvironmentTypeByKey(this.environmentModel);
+	}
+	
+	/**
 	 * @param newProjectFolder the projectFolder to set
 	 */
 	@XmlTransient
@@ -433,7 +471,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 		projectFolder = newProjectFolder;
 		projectFolderFullPath = Application.RunInfo.PathProjects(true, false) + projectFolder + Application.RunInfo.AppPathSeparatorString();
 		setChanged();
-		notifyObservers("ProjectFolder");
+		notifyObservers(CHANGED_ProjectFolder);
 	}
 	/**
 	 * @return the projectFolder
@@ -454,7 +492,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	public void updateAgentReferences() {
 		isUnsaved = true;
 		setChanged();
-		notifyObservers("AgentReferences");
+		notifyObservers(CHANGED_AgentReferences);
 	}
 	
 	/**
@@ -538,7 +576,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 			this.ontologies4Project.addSubOntology(newSubOntology);
 			isUnsaved = true;
 			setChanged();
-			notifyObservers("ProjectOntology");
+			notifyObservers(CHANGED_ProjectOntology);
 		} 
 	}
 	/**
@@ -549,7 +587,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 		this.ontologies4Project.removeSubOntology(removableSubOntology);
 		isUnsaved = true;
 		setChanged();
-		notifyObservers("ProjectOntology");
+		notifyObservers(CHANGED_ProjectOntology);
 	}
 	
 	/**
@@ -576,7 +614,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 			Application.ClassDetector.reStartSearch(this, null);
 		}
 		
-		this.setChangedAndNotify("projectResources");
+		this.setChangedAndNotify(CHANGED_ProjectResources);
 	}
 	/**
 	 * This Method reloads the project resources in the CLASSPATH
@@ -605,21 +643,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 				e1.printStackTrace();
 			}
 		}
-		this.setChangedAndNotify("projectResources");
-	}
-
-	/**
-	 * @return the userObject
-	 */
-	public Object getUserObject() {
-		return userObject;
-	}
-
-	/**
-	 * @param userObject the userObject to set
-	 */
-	public void setUserObject(Object userObject) {
-		this.userObject = userObject;
+		this.setChangedAndNotify(CHANGED_ProjectResources);
 	}
 
 	/**

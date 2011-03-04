@@ -16,7 +16,6 @@ import javax.swing.JTextField;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
-import agentgui.core.gui.projectwindow.simsetup.JadeSetupNewPort;
 
 import java.awt.Dimension;
 import java.awt.Point;

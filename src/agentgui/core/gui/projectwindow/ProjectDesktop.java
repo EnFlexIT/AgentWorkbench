@@ -1,19 +1,14 @@
 package agentgui.core.gui.projectwindow;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Observable;
-import java.util.Observer;
-
-import agentgui.core.application.Project;
-
 import javax.swing.JDesktopPane;
 import javax.swing.JTabbedPane;
+
+import agentgui.core.application.Project;
 
 /**
  * @author: Christian Derksen
  */
-public class ProjectDesktop extends JDesktopPane implements Observer, ActionListener {
+public class ProjectDesktop extends JDesktopPane {
 
 	private static final long serialVersionUID = -9219224867898326652L;
 	private Project currProject;
@@ -21,10 +16,9 @@ public class ProjectDesktop extends JDesktopPane implements Observer, ActionList
 	/**
 	 * This is the default constructor
 	 */
-	public ProjectDesktop( Project cp ) {
+	public ProjectDesktop( Project project ) {
 		super();
-		this.currProject = cp;
-		this.currProject.addObserver(this);		
+		this.currProject = project;
 		initialize();	
 		this.currProject.projectDesktop = this;
 	}
@@ -51,35 +45,6 @@ public class ProjectDesktop extends JDesktopPane implements Observer, ActionList
 	 */
 	public void setFocus () {
 		((JTabbedPane) this.getParent()).setSelectedComponent(this);
-	}
-
-
-	@Override
-	public void actionPerformed(ActionEvent ae) {
-		// --- Das ActionCommand und den Auslöser des Events ermitteln ---
-		String ActCMD = ae.getActionCommand();
-		Object Trigger = ae.getSource();
-		System.out.println( "ActCMD/Wert => " + ActCMD );
-		System.out.println( "Auslöser => " + Trigger );
-
-		// --- Fallunterscheidung 'Auslöser' -----------------------------
-		if ( Trigger == "ProjectName" ) {
-			currProject.setProjectName( ae.getActionCommand() );
-		}
-		else if ( Trigger == "ProjectFolder" ) {
-			currProject.setProjectFolder( ae.getActionCommand() );
-		}
-		else if ( Trigger == "ProjectDescription" ) {
-			currProject.setProjectDescription( ae.getActionCommand() );
-		}
-		else {
-			
-		};
-	}
-	@Override
-	public void update(Observable arg0, Object arg1) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	

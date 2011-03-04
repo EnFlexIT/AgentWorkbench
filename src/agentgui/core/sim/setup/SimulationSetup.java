@@ -27,10 +27,6 @@ import agentgui.core.application.Project;
 	@XmlElement(name="distribution")
 	public DistributionSetup distributionSetup = new DistributionSetup();
 	
-	public static final String ENVMODE_PHYSICAL2D = "physical2DEnvironment";
-	public static final String ENVMODE_GRAPH = "gridEnvironment";
-	
-	private String environmentMode = ENVMODE_PHYSICAL2D;
 	private String environmentFileName = null;
 	private String svgFileName = null;
 	
@@ -164,19 +160,6 @@ import agentgui.core.application.Project;
 	public void setDistributionSetup(DistributionSetup distributionSetup) {
 		this.distributionSetup = distributionSetup;
 	}
-
 	
-	/**
-	 * @return the environmentMode
-	 */
-	public String getEnvironmentMode() {
-		return environmentMode;
-	}
-	/**
-	 * @param environmentMode the environmentMode to set
-	 */
-	public void setEnvironmentMode(String environmentMode) {
-		this.environmentMode = environmentMode;
-	}
 	
 }

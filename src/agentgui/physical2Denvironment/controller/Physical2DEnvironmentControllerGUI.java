@@ -1,14 +1,25 @@
 package agentgui.physical2Denvironment.controller;
 
-import javax.swing.JSplitPane;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetAdapter;
+import java.awt.dnd.DropTargetDropEvent;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Iterator;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.swing.DropMode;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTree;
+import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTree;
 import javax.swing.TransferHandler;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -31,6 +42,7 @@ import agentgui.core.agents.AgentClassElement;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
+import agentgui.core.environment.EnvironmentPanel;
 import agentgui.core.gui.AgentSelector;
 import agentgui.physical2Denvironment.display.BasicSVGGUI;
 import agentgui.physical2Denvironment.display.SvgTypes;
@@ -42,20 +54,7 @@ import agentgui.physical2Denvironment.ontology.Scale;
 import agentgui.physical2Denvironment.ontology.StaticObject;
 import agentgui.physical2Denvironment.utils.EnvironmentHelper;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.dnd.DropTarget;
-import java.awt.dnd.DropTargetAdapter;
-import java.awt.dnd.DropTargetDropEvent;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Iterator;
-import java.util.Observable;
-import java.util.Observer;
-
-public class Physical2DEnvironmentControllerGUI extends JPanel implements ActionListener, Observer{
+public class Physical2DEnvironmentControllerGUI extends EnvironmentPanel implements ActionListener, Observer{
 
 	private static final long serialVersionUID = 1L;
 	public static final String SETTINGS_KEY_ID = "id";
@@ -79,8 +78,6 @@ public class Physical2DEnvironmentControllerGUI extends JPanel implements Action
 	private Physical2DEnvironmentSettingsPanel environmentSettings = null;
 	private JFileChooser loadSVGDialog = null;
 	
-	Project project = null;
-	
 	private BasicSVGGUI svgGUI = null;
 	/**
 	 * The currently selected SVG element
@@ -101,8 +98,7 @@ public class Physical2DEnvironmentControllerGUI extends JPanel implements Action
 	 * This is the default constructor
 	 */
 	public Physical2DEnvironmentControllerGUI(Project project) {
-		super();
-		this.project = project;
+		super(project);
 		initialize();
 	}
 
@@ -134,7 +130,7 @@ public class Physical2DEnvironmentControllerGUI extends JPanel implements Action
 //		this.add(getJPanelTopNew(), gridBagConstraints1);
 		
 		
-		this.controller = new Physical2DEnvironmentController(project);
+		this.controller = new Physical2DEnvironmentController(currProject);
 		controller.addObserver(this);
 		controller.setGUI(this);
 		if(controller.getSvgDoc() != null){

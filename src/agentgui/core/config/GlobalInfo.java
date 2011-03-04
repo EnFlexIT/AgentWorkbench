@@ -10,13 +10,18 @@ import java.util.Vector;
 
 import agentgui.core.application.Application;
 import agentgui.core.common.ClassLoaderUtil;
+import agentgui.core.environment.EnvironmentPanel;
+import agentgui.core.environment.EnvironmentType;
+import agentgui.core.environment.EnvironmentTypes;
 import agentgui.core.jade.PlatformJadeConfig;
+import agentgui.graphEnvironment.controller.GraphEnvironmentControllerGUI;
+import agentgui.physical2Denvironment.controller.Physical2DEnvironmentControllerGUI;
 
 public class GlobalInfo {
 
 	// --- Konstanten ------------------------------------------------------- 
 	private static String localAppTitle = "Agent.GUI";
-	final private static String localAppVersion = "0.85";
+	final private static String localAppVersion = "0.95";
 	
 	final private static String localAppPathSeparatorString = File.separator;
 	final private static String localAppNewLineString = System.getProperty("line.separator");
@@ -55,6 +60,8 @@ public class GlobalInfo {
 	
 	private static String localFileJade = "jade.jar";
 	
+	// --- Known EnvironmentTypes of Agent.GUI ------------------------------
+	private EnvironmentTypes knowEnvironmentTypes =  new EnvironmentTypes();
 	
 	// --- File-Properties --------------------------------------------------
 	private boolean filePropRunAsServer = false;
@@ -136,6 +143,35 @@ public class GlobalInfo {
 			
 		}
 		// ------------------------------------------------------------------
+		
+		// ------------------------------------------------------------------
+		// --- Define the known EnvironmentTypes of Agent.GUI ---------------
+		String envKey = null;
+		String envDisplayName = null;
+		Class<? extends EnvironmentPanel> envPanelClass = null;
+		EnvironmentType envType = null;
+		
+		// --- No environment -----------------------------------------------
+		envKey = "none";
+		envDisplayName = "Kein vordefiniertes Umgebungsmodell verwenden";
+		envPanelClass = null;
+		envType = new EnvironmentType(envKey, envDisplayName, envPanelClass);
+		this.knowEnvironmentTypes.add(envType);
+		
+		// --- Continuous 2D environment ------------------------------------
+		envKey = "continous2Denvironment";
+		envDisplayName = "Kontinuierliches 2D-Umgebungsmodell";
+		envPanelClass = Physical2DEnvironmentControllerGUI.class;
+		envType = new EnvironmentType(envKey, envDisplayName, envPanelClass);
+		this.knowEnvironmentTypes.add(envType);
+		
+		// --- Grid Environment ---------------------------------------------
+		envKey = "gridEnvironment";
+		envDisplayName = "Graph bzw. Netzwerk";
+		envPanelClass = GraphEnvironmentControllerGUI.class;
+		envType = new EnvironmentType(envKey, envDisplayName, envPanelClass);
+		this.knowEnvironmentTypes.add(envType);
+		
 	}
 	// ----------------------------------------------------------------------
 	
@@ -577,6 +613,21 @@ public class GlobalInfo {
 	public String getLanguage() {
 		return filePropLanguage;
 	}
+
+
+	/**
+	 * @param knowEnvironmentTypes the knowEnvironmentTypes to set
+	 */
+	public void setKnowEnvironmentTypes(EnvironmentTypes knowEnvironmentTypes) {
+		this.knowEnvironmentTypes = knowEnvironmentTypes;
+	}
+	/**
+	 * @return the knowEnvironmentTypes
+	 */
+	public EnvironmentTypes getKnowEnvironmentTypes() {
+		return knowEnvironmentTypes;
+	}
+
 
 	// ---- Connection to the Master-Server ----------------------------
 	/**

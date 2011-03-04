@@ -4,6 +4,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JSplitPane;
 import javax.swing.JPanel;
 
+import java.awt.BorderLayout;
 import java.awt.GridBagLayout;
 import javax.swing.JScrollPane;
 import java.awt.GridBagConstraints;
@@ -31,10 +32,11 @@ import org.w3c.dom.events.EventTarget;
 
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
+import agentgui.core.environment.EnvironmentPanel;
 import agentgui.physical2Denvironment.display.BasicSVGGUI;
 import javax.swing.JLabel;
 
-public class GraphEnvironmentControllerGUI extends JSplitPane implements Observer, ActionListener, ListSelectionListener{
+public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements Observer, ActionListener, ListSelectionListener{
 
 	private static final long serialVersionUID = 1L;
 	private JPanel pnlControlls = null;
@@ -43,7 +45,7 @@ public class GraphEnvironmentControllerGUI extends JSplitPane implements Observe
 	private JButton btnLoadGraph = null;
 	private JButton btnSetClasses = null;
 	
-	private ClassSelectorDialog classSelectorDialog = null;
+	private ClassSelectorDialog classSelectorDialog = null;  //  @jve:decl-index=0:visual-constraint="333,23"
 	private BasicSVGGUI svgGUI = null;
 	private GraphEnvironmentController controller = null;
 	/**
@@ -59,36 +61,36 @@ public class GraphEnvironmentControllerGUI extends JSplitPane implements Observe
 	 */
 	private String selectionStyle = "fill:white;stroke:orange;stroke-width:3;stroke-miterlimit:4;stroke-dasharray:none";
 	private JLabel lblTable = null;
+	private JSplitPane jSplitPaneRoot = null;
 	
 	/**
 	 * This is the default constructor
 	 */
 	public GraphEnvironmentControllerGUI(Project project) {
-		super();
-		initialize(project);
+		super(project);
+		initialize();
 	}
 
 	/**
 	 * This method initializes this
-	 * 
 	 * @return void
 	 */
-	private void initialize(Project project) {
-		controller = new GraphEnvironmentController(project);
+	private void initialize() {
+
+		controller = new GraphEnvironmentController(this.currProject);
 		controller.addObserver(this);
 		
-		this.setDividerLocation(200);
-		this.setLeftComponent(getPnlControlls());
-		this.setRightComponent(getSVGGUI());
+		this.setLayout(new BorderLayout());
+		this.add(getJSplitPaneRoot(), null);
 		
 		if(controller.getSvgDoc() != null){
 			this.setSVGDoc(controller.getSvgDoc());
 		}
+		
 	}
 
 	/**
 	 * This method initializes pnlControlls	
-	 * 	
 	 * @return javax.swing.JPanel	
 	 */
 	private JPanel getPnlControlls() {
@@ -127,7 +129,6 @@ public class GraphEnvironmentControllerGUI extends JSplitPane implements Observe
 
 	/**
 	 * This method initializes scpComponentTable	
-	 * 	
 	 * @return javax.swing.JScrollPane	
 	 */
 	private JScrollPane getScpComponentTable() {
@@ -140,7 +141,6 @@ public class GraphEnvironmentControllerGUI extends JSplitPane implements Observe
 
 	/**
 	 * This method initializes tblComponents	
-	 * 	
 	 * @return javax.swing.JTable	
 	 */
 	private JTable getTblComponents() {
@@ -180,15 +180,16 @@ public class GraphEnvironmentControllerGUI extends JSplitPane implements Observe
 		if(controller.getGridModel() != null){
 			
 			// Get the components from the controllers GridModel
-			Iterator<GridComponent> components = controller.getGridModel().getComponents().iterator();
+			@SuppressWarnings("unchecked")
+			Iterator<GraphNode> components = controller.getGridModel().getComponents().iterator();
 			
 			// Add component ID and class name to the data vector
 			while(components.hasNext()){
-				GridComponent comp = components.next();
+				GraphNode comp = components.next();
 				
 				Vector<String> compData = new Vector<String>();
-				compData.add(comp.getAgentID());
-				compData.add(comp.getType());
+				compData.add(comp.getId());
+				compData.add(comp.getOntologyObject().getClass().getSimpleName());
 				compData.add("Test");
 				componentVector.add(compData);
 			}
@@ -207,9 +208,9 @@ public class GraphEnvironmentControllerGUI extends JSplitPane implements Observe
 			btnLoadGraph = new JButton();
 			btnLoadGraph.setText(Language.translate("Graph Laden"));
 			btnLoadGraph.addActionListener(this);
-//			if(controller.getProject().getOntoClassHash() == null){
-//				btnLoadGraph.setEnabled(false);
-//			}
+			if(controller.getProject().getOntoClassHash() == null){
+				btnLoadGraph.setEnabled(false);
+			}
 		}
 		return btnLoadGraph;
 	}
@@ -230,7 +231,7 @@ public class GraphEnvironmentControllerGUI extends JSplitPane implements Observe
 	
 	private ClassSelectorDialog getClassSelectorDialog(){
 		if(classSelectorDialog == null){
-//			classSelectorDialog = new ClassSelectorDialog(this, controller.getOntologyClasses(), controller.getAgentClasses());
+			classSelectorDialog = new ClassSelectorDialog(this, controller.getOntologyClasses(), controller.getAgentClasses());
 		}
 		return classSelectorDialog;
 	}
@@ -249,9 +250,9 @@ public class GraphEnvironmentControllerGUI extends JSplitPane implements Observe
 		}else if(o.equals(controller) && arg.equals(GraphEnvironmentController.EVENT_GRAPH_LOADED)){
 			rebuildTblComponents();
 		}else if(o.equals(controller) && arg == GraphEnvironmentController.EVENT_ONTOLOGY_CLASSES_SET){
-//			if(controller.getOntologyClasses() != null){
-//				getBtnLoadGraph().setEnabled(true);
-//			}
+			if(controller.getOntologyClasses() != null){
+				getBtnLoadGraph().setEnabled(true);
+			}
 		}
 	}
 	
@@ -272,10 +273,9 @@ public class GraphEnvironmentControllerGUI extends JSplitPane implements Observe
 				public void handleEvent(Event evt) {
 					String svgID = ((Element)evt.getCurrentTarget()).getAttributeNS(null, "id");
 					String componentID = "n"+svgID.substring(svgID.lastIndexOf('.')+1);
+					GraphNode selectedComponent = controller.getGridModel().getComponent(componentID);
+					new ComponentSettingsDialog(controller.getProject(), selectedComponent).setVisible(true);
 					setSelectedElement((Element)evt.getTarget());
-//					GridComponent selectedComponent = controller.getGridModel().getComponent(componentID);
-//					new ComponentSettingsDialog(controller.getProject(), selectedComponent).setVisible(true);
-					
 				}
 			}, false);
 		}
@@ -303,7 +303,6 @@ public class GraphEnvironmentControllerGUI extends JSplitPane implements Observe
 			if(graphFC.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
 				File graphMLFile = graphFC.getSelectedFile();
 				this.controller.loadGridModel(graphMLFile);
-//				this.controller.getGridModel().showJungVisualization();
 			}
 		}else if(event.getSource().equals(getBtnSetClasses())){
 			getClassSelectorDialog().setVisible(true);
@@ -314,10 +313,9 @@ public class GraphEnvironmentControllerGUI extends JSplitPane implements Observe
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
 		String componentID = (String) tblComponents.getModel().getValueAt(e.getFirstIndex(), 0);
+		GraphNode selectedComponent = controller.getGridModel().getComponent(componentID);
+		new ComponentSettingsDialog(controller.getProject(), selectedComponent).setVisible(true);
 		setSelectedElementByComponentID(componentID);
-		GridComponent selectedComponent = controller.getGridModel().getComponent(componentID);
-//		new ComponentSettingsDialog(controller.getProject(), selectedComponent).setVisible(true);
-		
 	}
 	
 	void setComponentType(){
@@ -370,4 +368,18 @@ public class GraphEnvironmentControllerGUI extends JSplitPane implements Observe
 		
 	}
 
-}
+	/**
+	 * This method initializes jSplitPaneRoot	
+	 * @return javax.swing.JSplitPane	
+	 */
+	private JSplitPane getJSplitPaneRoot() {
+		if (jSplitPaneRoot == null) {
+			jSplitPaneRoot = new JSplitPane();
+			jSplitPaneRoot.setLeftComponent(getPnlControlls());
+			jSplitPaneRoot.setRightComponent(getSVGGUI());
+			jSplitPaneRoot.setDividerLocation(200);
+		}
+		return jSplitPaneRoot;
+	}
+
+}  //  @jve:decl-index=0:visual-constraint="33,19"

@@ -45,17 +45,13 @@ public class StartSetupSelector extends JPanel implements Observer, ActionListen
 	private final Integer SETUP_rename = 2;  //  @jve:decl-index=0:
 	private final Integer SETUP_copy = 3;  //  @jve:decl-index=0:
 	
-	public final static Integer SETUP_ENVMODE_CHANGE = 666;
-	
 	private Project currProject;
 	private SimulationSetup currSimSetup = null;  //  @jve:decl-index=0:
 	private DefaultComboBoxModel jComboBoxModel4Setups = new DefaultComboBoxModel();  //  @jve:decl-index=0:visual-constraint="566,21"
 	
 	private JPanel jPanelTop = null;
 	private JComboBox jComboBoxSetupSelector = null;
-	private JComboBox jComboBoxEnvironmentModeSelector = null;
 	private JLabel jLabelSetupSelector = null;
-	private JLabel jLabelEnvironmentType = null;
 	private JButton jButtonSetupRename = null;
 	private JButton jButtonSetupCopy = null;
 	private JButton jButtonSetupNew = null;
@@ -113,31 +109,13 @@ public class StartSetupSelector extends JPanel implements Observer, ActionListen
 	 */
 	private JPanel getJPanelTop() {
 		if (jPanelTop == null) {
-			GridBagConstraints gridBagConstraints17 = new GridBagConstraints();
-			gridBagConstraints17.gridx = 5;
-			gridBagConstraints17.insets = new Insets(0, 10, 0, 0);
-			gridBagConstraints17.gridy = 0;
-			GridBagConstraints gridBagConstraints16 = new GridBagConstraints();
-			gridBagConstraints16.gridx = 4;
-			gridBagConstraints16.insets = new Insets(0, 5, 0, 0);
-			gridBagConstraints16.gridy = 0;
-			GridBagConstraints gridBagConstraints15 = new GridBagConstraints();
-			gridBagConstraints15.gridx = 7;
-			gridBagConstraints15.insets = new Insets(0, 5, 0, 0);
-			gridBagConstraints15.fill = GridBagConstraints.NONE;
-			gridBagConstraints15.gridy = 0;
-			GridBagConstraints gridBagConstraints14 = new GridBagConstraints();
-			gridBagConstraints14.gridx = 6;
-			gridBagConstraints14.insets = new Insets(0, 10, 0, 0);
-			gridBagConstraints14.gridy = 0;
+			
 			GridBagConstraints gridBagConstraints13 = new GridBagConstraints();
 			gridBagConstraints13.gridx = 0;
+			gridBagConstraints13.gridy = 0;
 			gridBagConstraints13.insets = new Insets(0, 5, 0, 5);
 			gridBagConstraints13.anchor = GridBagConstraints.WEST;
-			gridBagConstraints13.gridy = 0;
-			jLabelSetupSelector = new JLabel();
-			jLabelSetupSelector.setText("Setup:");
-			jLabelSetupSelector.setFont(new Font("Dialog", Font.BOLD, 12));
+			
 			GridBagConstraints gridBagConstraints12 = new GridBagConstraints();
 			gridBagConstraints12.fill = GridBagConstraints.BOTH;
 			gridBagConstraints12.gridx = 1;
@@ -145,22 +123,30 @@ public class StartSetupSelector extends JPanel implements Observer, ActionListen
 			gridBagConstraints12.insets = new Insets(0, 0, 0, 0);
 			gridBagConstraints12.weightx = 1.0;
 			
-			GridBagConstraints gridBagConstraints18 = new GridBagConstraints();
-			gridBagConstraints18.fill = GridBagConstraints.BOTH;
-			gridBagConstraints18.gridx = 3;
-			gridBagConstraints18.anchor = GridBagConstraints.WEST;
-			gridBagConstraints18.insets = new Insets(0, 0, 0, 0);
-			gridBagConstraints18.weightx = 1.0;
+			GridBagConstraints gridBagConstraints16 = new GridBagConstraints();
+			gridBagConstraints16.gridx = 2;
+			gridBagConstraints16.gridy = 0;
+			gridBagConstraints16.insets = new Insets(0, 5, 0, 0);
 			
-			GridBagConstraints gridBagConstraints19 = new GridBagConstraints();
-			gridBagConstraints19.gridx = 2;
-			gridBagConstraints19.insets = new Insets(0, 5, 0, 5);
-			gridBagConstraints19.anchor = GridBagConstraints.WEST;
-			gridBagConstraints19.gridy = 0;
+			GridBagConstraints gridBagConstraints17 = new GridBagConstraints();
+			gridBagConstraints17.gridx = 3;
+			gridBagConstraints17.gridy = 0;
+			gridBagConstraints17.insets = new Insets(0, 10, 0, 0);
 			
-			jLabelEnvironmentType = new JLabel();
-			jLabelEnvironmentType.setText(Language.translate("Umgebungstyp")+":");
-			jLabelEnvironmentType.setFont(new Font("Dialog", Font.BOLD, 12));
+			GridBagConstraints gridBagConstraints14 = new GridBagConstraints();
+			gridBagConstraints14.gridx = 4;
+			gridBagConstraints14.gridy = 0;
+			gridBagConstraints14.insets = new Insets(0, 10, 0, 0);
+			
+			GridBagConstraints gridBagConstraints15 = new GridBagConstraints();
+			gridBagConstraints15.gridx = 5;
+			gridBagConstraints15.gridy = 0;
+			gridBagConstraints15.insets = new Insets(0, 5, 0, 0);
+			gridBagConstraints15.fill = GridBagConstraints.NONE;
+			
+			jLabelSetupSelector = new JLabel();
+			jLabelSetupSelector.setText("Setup:");
+			jLabelSetupSelector.setFont(new Font("Dialog", Font.BOLD, 12));
 			
 			jPanelTop = new JPanel();
 			jPanelTop.setLayout(new GridBagLayout());
@@ -168,12 +154,11 @@ public class StartSetupSelector extends JPanel implements Observer, ActionListen
 			jPanelTop.setPreferredSize(new Dimension(500, 38));
 			jPanelTop.add(getJComboBoxSetupSelector(), gridBagConstraints12);
 			jPanelTop.add(jLabelSetupSelector, gridBagConstraints13);
-			jPanelTop.add(jLabelEnvironmentType, gridBagConstraints19);
-			jPanelTop.add(getJComboBoxEnvironmentModeSelector(), gridBagConstraints18);
 			jPanelTop.add(getJButtonSetupNew(), gridBagConstraints14);
 			jPanelTop.add(getJButtonSetupDelete(), gridBagConstraints15);
 			jPanelTop.add(getJButtonSetupRename(), gridBagConstraints16);
 			jPanelTop.add(getJButtonSetupCopy(), gridBagConstraints17);
+			
 		}
 		return jPanelTop;
 	}
@@ -192,27 +177,6 @@ public class StartSetupSelector extends JPanel implements Observer, ActionListen
 		return jComboBoxSetupSelector;
 	}
 	
-	private JComboBox getJComboBoxEnvironmentModeSelector(){
-		if(jComboBoxEnvironmentModeSelector == null){
-			jComboBoxEnvironmentModeSelector = new JComboBox();
-			
-			String[] modes = {Language.translate("physikalisch"), Language.translate("Netz")};
-			jComboBoxEnvironmentModeSelector.setModel(new DefaultComboBoxModel(modes));
-			jComboBoxEnvironmentModeSelector.addActionListener(this);
-			
-			if(currProject.simSetups.getCurrSimSetup() != null){
-				String envMode = currProject.simSetups.getCurrSimSetup().getEnvironmentMode();
-				if(envMode.equals(SimulationSetup.ENVMODE_PHYSICAL2D)){
-					jComboBoxEnvironmentModeSelector.setSelectedItem(Language.translate("physikalisch"));
-				}else if(envMode.equals(SimulationSetup.ENVMODE_GRAPH)){
-					jComboBoxEnvironmentModeSelector.setSelectedItem(Language.translate("Netz"));
-				}
-				currProject.setNotChangedButNotify(SETUP_ENVMODE_CHANGE);
-			}
-		}
-		return jComboBoxEnvironmentModeSelector;
-	}
-
 	/**
 	 * This method initialises jButtonSetupRename	
 	 * @return javax.swing.JButton	
@@ -295,23 +259,7 @@ public class StartSetupSelector extends JPanel implements Observer, ActionListen
 				currProject.simSetups.setupLoadAndFocus(SimulationSetups.SIMULATION_SETUP_LOAD, jComboBoxSetupSelector.getSelectedItem().toString(), false);
 			}
 			
-		} else if ( Trigger == jComboBoxEnvironmentModeSelector){
-			String newEnvMode = (String) getJComboBoxEnvironmentModeSelector().getSelectedItem();
-			String oldEnvMode = currProject.simSetups.getCurrSimSetup().getEnvironmentMode();
-			if(newEnvMode.equals(Language.translate("physikalisch")) 
-					&& !(oldEnvMode.equals(SimulationSetup.ENVMODE_PHYSICAL2D))){
-				currProject.simSetups.getCurrSimSetup().setEnvironmentMode(SimulationSetup.ENVMODE_PHYSICAL2D);
-				currProject.setChangedAndNotify(SETUP_ENVMODE_CHANGE);
-			}else if(newEnvMode.equals(Language.translate("Netz")) 
-					&& !(oldEnvMode.equals(SimulationSetup.ENVMODE_GRAPH))){
-				currProject.simSetups.getCurrSimSetup().setEnvironmentMode(SimulationSetup.ENVMODE_GRAPH);
-				currProject.setChangedAndNotify(SETUP_ENVMODE_CHANGE);
-			}
-			
-		}
-		
-		
-		else if ( Trigger == jButtonSetupRename ) {
+		} else if ( Trigger == jButtonSetupRename ) {
 			this.setupRename();
 		} else if ( Trigger == jButtonSetupCopy ) {
 			this.setupCopy();
@@ -329,18 +277,9 @@ public class StartSetupSelector extends JPanel implements Observer, ActionListen
 	 */
 	@Override
 	public void update(Observable arg0, Object arg1) {
-		
+
 		if ( arg1.toString().equalsIgnoreCase("SimSetups")) {
 			this.setupLoad();
-		}else if(arg1.equals(SETUP_ENVMODE_CHANGE)){
-			String envMode = currProject.simSetups.getCurrSimSetup().getEnvironmentMode();
-			getJComboBoxEnvironmentModeSelector().removeActionListener(this);
-			if(envMode.equals(SimulationSetup.ENVMODE_PHYSICAL2D)){
-				getJComboBoxEnvironmentModeSelector().setSelectedItem(Language.translate("physikalisch"));
-			}else if(envMode.equals(SimulationSetup.ENVMODE_GRAPH)){
-				getJComboBoxEnvironmentModeSelector().setSelectedItem(Language.translate("Netz"));
-			}
-			getJComboBoxEnvironmentModeSelector().addActionListener(this);
 		}
 		
 	}

@@ -1,4 +1,4 @@
-package agentgui.core.gui.projectwindow.simsetup;
+package agentgui.core.gui.projectwindow;
 
 import java.awt.Color;
 import java.awt.Dimension;

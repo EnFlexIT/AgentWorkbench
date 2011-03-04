@@ -208,14 +208,15 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 	public void update(Observable arg0, Object OName) {
 		
 		String ObjectName = OName.toString();
-		if ( ObjectName.equalsIgnoreCase( "ProjectName" ) ) {
+		if ( ObjectName.equalsIgnoreCase( Project.CHANGED_ProjectName ) ) {
 			if ( ProjectName.isFocusOwner() == false ) {
 				ProjectName.setText( CurrProject.getProjectName() );				
 			}								
 		}			
-		else if ( ObjectName.equalsIgnoreCase( "ProjectDescription" ) ) {
-			if ( ProjectDescription.isFocusOwner() == false ) 
+		else if ( ObjectName.equalsIgnoreCase( Project.CHANGED_ProjectDescription ) ) {
+			if ( ProjectDescription.isFocusOwner() == false ) {
 				ProjectDescription.setText( CurrProject.getProjectDescription() );
+			}
 		}			
 		else {
 			//System.out.println("Unbekannter Updatebefehl vom Observerable ...");

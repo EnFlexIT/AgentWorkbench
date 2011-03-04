@@ -4,6 +4,7 @@
     <projectDescription>Simple Moving Agent
 
 Einfaches Demo-Projekt fr die Visualisierung</projectDescription>
+    <environmentModel>continous2Denvironment</environmentModel>
     <projectResources/>
     <subOntologies/>
     <agentConfiguration/>

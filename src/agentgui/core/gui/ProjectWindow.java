@@ -247,7 +247,7 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	public void update(Observable arg0, Object OName) {
 		
 		String ObjectName = OName.toString();
-		if ( ObjectName.equalsIgnoreCase( "ProjectName" ) ) {
+		if ( ObjectName.equalsIgnoreCase( Project.CHANGED_ProjectName ) ) {
 			rootNode.setUserObject( currProject.getProjectName() );
 			projectTreeModel.nodeChanged(rootNode);
 			projectTree.repaint();

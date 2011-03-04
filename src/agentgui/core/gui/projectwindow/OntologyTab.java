@@ -335,7 +335,7 @@ public class OntologyTab extends JPanel implements Observer, ActionListener {
 	public void update(Observable arg0, Object OName) {
 		
 		String ObjectName = OName.toString();
-		if ( ObjectName.equalsIgnoreCase( "ProjectOntology" ) ) {
+		if ( ObjectName.equalsIgnoreCase( Project.CHANGED_ProjectOntology ) ) {
 			// --- Ansicht auf die projekt-Ontologie aktualisieren --
 			this.OntoTree.setModel( CurrProject.ontologies4Project.getOntologyTree() );
 			this.OntoTreeExpand2Level(4, true);
