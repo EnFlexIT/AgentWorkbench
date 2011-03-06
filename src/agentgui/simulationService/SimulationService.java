@@ -362,8 +362,6 @@ public class SimulationService extends BaseService {
 		}
 
 		public void stepSimulation(EnvironmentModel envModel) throws ServiceException {
-			
-		
 			this.stepSimulation(envModel, stepSimulationAsynchronous);
 		}
 		public void stepSimulation(EnvironmentModel envModel, boolean aSynchron) throws ServiceException {

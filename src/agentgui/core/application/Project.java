@@ -510,10 +510,19 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	 */
 	@XmlTransient
 	public Physical2DEnvironment getEnvironment() {
-		return this.physical2DEnvironmentController.getEnvironment();
+		if (this.physical2DEnvironmentController==null) {
+			return null;
+		} else {
+			return this.physical2DEnvironmentController.getEnvironment();	
+		}
 	}
 	public Physical2DEnvironment getEnvironmentCopy() {
-		return this.physical2DEnvironmentController.getEnvironmentCopy();
+		if (this.physical2DEnvironmentController==null) {
+			return null;
+		} else {
+			return this.physical2DEnvironmentController.getEnvironmentCopy();	
+		}
+		
 	}
 	/**
 	 * 
@@ -521,10 +530,18 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	 */
 	@XmlTransient
 	public Document getSVGDoc(){
-		return this.physical2DEnvironmentController.getSvgDoc();
+		if (this.physical2DEnvironmentController==null) {
+			return null;
+		} else {
+			return this.physical2DEnvironmentController.getSvgDoc();	
+		}
 	}
 	public Document getSVGDocCopy(){
-		return this.physical2DEnvironmentController.getSvgDocCopy();
+		if (this.physical2DEnvironmentController==null) {
+			return null;
+		} else {
+			return this.physical2DEnvironmentController.getSvgDocCopy();	
+		}
 	}	
 	/**
 	 * @param environment the environment to set
