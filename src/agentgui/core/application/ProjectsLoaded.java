@@ -17,7 +17,6 @@ import javax.xml.bind.Unmarshaller;
 
 import agentgui.core.gui.ProjectNewOpen;
 import agentgui.core.gui.ProjectWindow;
-import agentgui.core.gui.ProjectWindowTab;
 import agentgui.core.ontologies.Ontologies4Project;
 import agentgui.core.sim.setup.SimulationSetups;
 
@@ -285,15 +284,14 @@ public class ProjectsLoaded {
 			// --- select the right item in relation ------  
 			// --- to the project 					 ------
 			String viewConfigured = Application.ProjectCurr.getProjectView();
-			if (viewConfigured.equalsIgnoreCase("user")) {
+			if (viewConfigured.equalsIgnoreCase(Project.VIEW_User)) {
 				viewDeveloper.setSelected(false);
 				viewEndUser.setSelected(true);
-				Application.ProjectCurr.projectWindow.setView(ProjectWindowTab.DISPLAY_4_END_USER);
 			} else {
 				viewEndUser.setSelected(false);
 				viewDeveloper.setSelected(true);
-				Application.ProjectCurr.projectWindow.setView(ProjectWindowTab.DISPLAY_4_DEVELOPER);
 			}
+			Application.ProjectCurr.projectWindow.setView();
 		}
 	}
 	

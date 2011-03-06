@@ -14,7 +14,8 @@ import agentgui.core.application.Project;
 public class ProjectWindowTab {
 	
 	public final static int DISPLAY_4_END_USER = 0;
-	public final static int DISPLAY_4_DEVELOPER = 1;
+	public final static int DISPLAY_4_END_USER_VISUALIZATION = 1;
+	public final static int DISPLAY_4_DEVELOPER = 10;
 	private int displayType = 0;
 
 	private Project project;

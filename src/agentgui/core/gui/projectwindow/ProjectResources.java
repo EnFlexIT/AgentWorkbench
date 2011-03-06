@@ -33,8 +33,7 @@ import agentgui.core.application.Project;
 import agentgui.core.environment.EnvironmentType;
 
 /**
- * @author derksen
- *
+ * @author Christian Derksen, Tim Lewen
  */
 public class ProjectResources extends JPanel {
 

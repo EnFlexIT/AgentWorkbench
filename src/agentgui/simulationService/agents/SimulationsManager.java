@@ -29,6 +29,8 @@ import jade.core.behaviours.CyclicBehaviour;
 
 public abstract class SimulationsManager extends Agent {
 	
+	private static final long serialVersionUID = -7398714332312572026L;
+
 	private EnvironmentModel env = null;
 	private boolean running=false;
 	protected SimulationServiceHelper simHelper = null;
@@ -38,24 +40,18 @@ public abstract class SimulationsManager extends Agent {
 	protected int numberOfAgents=0;
 	
 	
-	
-	
-	  protected void setup() 
-	  {
-		  try
-		  {
+	protected void setup() {
+		  
+		try {
 		  envHelper=(EnvironmentProviderHelper) getHelper(EnvironmentProviderService.SERVICE_NAME);
 		  simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
-		  }
-		  catch(ServiceException e)
-		  {
+		  
+		} catch(ServiceException e) {
 			  e.printStackTrace();
-		  }
-		  initSimulation();
-		  addBehaviour(new SimulationBehavior());
-	  }
-	
-	
+		}
+		initSimulation();
+		addBehaviour(new SimulationBehavior());
+	}
 
 	public AID getAid() {
 		return aid;

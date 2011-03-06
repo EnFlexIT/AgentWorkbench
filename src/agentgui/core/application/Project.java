@@ -56,6 +56,9 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	@XmlTransient public static final String CHANGED_ProjectOntology = "ProjectOntology";
 	@XmlTransient public static final String CHANGED_ProjectResources = "ProjectResources";
 	
+	@XmlTransient public static final String VIEW_Developer = "Developer";
+	@XmlTransient public static final String VIEW_User = "User";
+	
 	// --- Constants -------------------------------------------
 	@XmlTransient private String defaultSubFolderSetups    = "setups";
 	@XmlTransient private String defaultSubFolderEnvSetups = "svgEnvSetups";
@@ -169,7 +172,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 					   new StartSetup(this), Language.translate("Simulations-Setup"), subPanes.jTabbedPaneIntern);
 			pwt.add();
 			// --- simulation environment -----------------
-			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, 
+			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER_VISUALIZATION, 
 					   Language.translate("Simulationsumgebung"), null, null, 
 					   new SimulationEnvironment(this), Language.translate("Simulations-Setup"), subPanes.jTabbedPaneIntern);
 			pwt.add();
@@ -183,7 +186,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 		// --- SVG-visualisation --------------------------
 		Visualization visualization = new Visualization(this);
 		this.projectVisualizationPanel = visualization.getJPanel4Visualization();
-		pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, 
+		pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER_VISUALIZATION, 
 				   Language.translate("Simulations-Visualisierung"), null, null, 
 				   this.projectVisualizationPanel, null, null);
 		pwt.add();

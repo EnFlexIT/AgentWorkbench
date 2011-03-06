@@ -22,6 +22,5 @@
         <size>0</size>
     </agentListModel>
     <environmentFileName>default.xml</environmentFileName>
-    <environmentMode>physical2DEnvironment</environmentMode>
     <svgFileName>default.svg</svgFileName>
 </simulationSetup>

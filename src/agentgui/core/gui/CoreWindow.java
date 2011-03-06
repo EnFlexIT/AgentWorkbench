@@ -400,14 +400,12 @@ public class CoreWindow extends JFrame implements ComponentListener {
 					JRadioButtonMenuItem actuator = (JRadioButtonMenuItem) evt.getSource();
 					if (actuator==viewDeveloper) {
 						if (Application.ProjectCurr.getProjectView().equalsIgnoreCase("Developer")==false) {
-							Application.ProjectCurr.setProjectView("Developer");
-							Application.ProjectCurr.projectWindow.setView(ProjectWindowTab.DISPLAY_4_DEVELOPER);
+							Application.ProjectCurr.setProjectView(Project.VIEW_Developer);
 						}
 						
 					} else if (actuator==viewEndUser) {
 						if (Application.ProjectCurr.getProjectView().equalsIgnoreCase("User")==false) {
-							Application.ProjectCurr.setProjectView("User");
-							Application.ProjectCurr.projectWindow.setView(ProjectWindowTab.DISPLAY_4_END_USER);
+							Application.ProjectCurr.setProjectView(Project.VIEW_User);
 						}
 
 					}

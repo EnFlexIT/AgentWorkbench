@@ -28,6 +28,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Project;
+import agentgui.core.environment.EnvironmentPanel;
 
 /**
  * @author: Christian Derksen
@@ -46,7 +47,7 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	
 	private JTabbedPane projectViewRightTabs = null;
 	private ChangeListener tabSelectionListener = null;  //  @jve:decl-index=0:
-	private boolean pauseListener = false;
+	private boolean pauseTreeSelectionListener = false;
 	private JTree projectTree = null;
 		
 	private JSplitPane ProjectViewSplit = null;
@@ -137,7 +138,7 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 				@Override
 				public void valueChanged(TreeSelectionEvent ts) {
 					
-					if (pauseListener) return;
+					if (pauseTreeSelectionListener) return;
 					
 					// ----------------------------------------------------------
 					// --- Tree-Selection abfangen --- S T A R T ----------------
@@ -217,7 +218,7 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 			@Override
 			public void stateChanged(ChangeEvent evt) {
 				
-				if (pauseListener) return;
+				if (pauseTreeSelectionListener) return;
 				
 				// --- To prevent, that an add-action came in ----
 				int newNumberOfNodes = getNumberOfNodes();
@@ -252,8 +253,14 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 			projectTreeModel.nodeChanged(rootNode);
 			projectTree.repaint();
 			Application.setTitelAddition( currProject.getProjectName() );
-		}			
-		else {
+			
+		} else if (ObjectName.equals(Project.CHANGED_ProjectView)) {
+			this.setView();			
+			
+		} else if (ObjectName.equals(Project.CHANGED_EnvironmentModel)) {
+			this.setView();			
+			
+		} else {
 			//System.out.println("Unbekannter Updatebefehl vom Observerable ...");
 		};
 		this.repaint();
@@ -270,12 +277,11 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 		// --- use the private function ---------
 		this.addProjectTabInternal(tab);
 	}
-	
 	/**
 	 * Adds a Project-Tab and a new node (child of a specified parent) to 
 	 * the ProjectWindow
 	 */
-	private void addProjectTabInternal(ProjectWindowTab tab) {
+	private DefaultMutableTreeNode addProjectTabInternal(ProjectWindowTab tab) {
 		
 		// --- create Node ----------------------
 		DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(tab);
@@ -301,6 +307,7 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 		parNode.add(newNode);
 		newViewCatcher.addTab( tab.getTitle(), tab.getIcon(), tab.getComponent(), tab.getTipText());
 
+		return newNode;
 	}
 
 	/**
@@ -377,9 +384,9 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	/**
 	 * Sets the focus to a specified Tab of the project Window
 	 */
-	public void setFocus2Tab(DefaultMutableTreeNode nodeSelected) {
+	public void setFocus2Tab(DefaultMutableTreeNode currNode) {
 
-		DefaultMutableTreeNode currNode = nodeSelected;
+		if (currNode== null) return;
 		
 		Vector<DefaultMutableTreeNode> nodeArray = new Vector<DefaultMutableTreeNode>();
 		nodeArray.add(currNode);
@@ -403,41 +410,114 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	 * View can be, up to now, the developer view or the end user view 
 	 * @param viewToSet
 	 */
-	public void setView(int viewToSet) {
+	public void setView() {
 		
-		this.pauseListener = true;
-		projectTree.setSelectionPath(null);
-		rootNode.removeAllChildren();
-		projectViewRightTabs.removeAll();
+		// --- Which view should be displayed ? ---------------------
+		int viewToSet = 0;
+		if (this.currProject.getProjectView().equals(Project.VIEW_User)) {
+			viewToSet = ProjectWindowTab.DISPLAY_4_END_USER;
+		} else {
+			viewToSet = ProjectWindowTab.DISPLAY_4_DEVELOPER;
+		}
+		
+		// --- Exists a Panle for the current environment model? ---- 
+		Class<? extends EnvironmentPanel> displayPanel = this.currProject.getEnvironmentModelType().getDisplayPanel();
+		
+		// --- Remind the current selection -------------------------
+		DefaultMutableTreeNode lastSelectedNode = null;
+		String lastSelectedTabTitle = this.projectViewRightTabs.getTitleAt(this.projectViewRightTabs.getSelectedIndex());
+		
+		// --- Pause the TreeSelectionListener ----------------------
+		this.pauseTreeSelectionListener = true;
+		
+		// --- Rebuild the display out of the tabVector -------------
+		this.projectTree.setSelectionPath(null);
+		this.removeAllProjectWindowTabs();
 		
 		Vector<ProjectWindowTab> pwtVector = new Vector<ProjectWindowTab>(this.tabVector); 
 		for (Iterator<ProjectWindowTab> it = pwtVector.iterator(); it.hasNext();) {
-			ProjectWindowTab pwt = (ProjectWindowTab) it.next();
 			
+			ProjectWindowTab pwt = (ProjectWindowTab) it.next();
+			int displayType = pwt.getDisplayType();
+			String displayTitle = pwt.getTitle();
+			
+			DefaultMutableTreeNode currCreatedNode = null;
+			
+			// --- Which view to the project is needed ? ------------ 
 			if (viewToSet == ProjectWindowTab.DISPLAY_4_DEVELOPER) {
-				this.addProjectTabInternal(pwt);
+				// --- show everything ------------------------------
+				currCreatedNode = this.setViewFilterVisualization(pwt, displayPanel);
 				
 			} else if (viewToSet == ProjectWindowTab.DISPLAY_4_END_USER) {
-				if (pwt.getDisplayType()==ProjectWindowTab.DISPLAY_4_END_USER) {
-					this.addProjectTabInternal(pwt);		
+				// --- show only the end user displays --------------
+				if (displayType < ProjectWindowTab.DISPLAY_4_DEVELOPER) {
+					currCreatedNode = this.setViewFilterVisualization(pwt, displayPanel);							
 				}
+			}
+			// --- Remind this as last selected node ----------------
+			if (currCreatedNode!=null && displayTitle.equals(lastSelectedTabTitle)) {
+				lastSelectedNode = currCreatedNode;
 			}
 		}
 		
-		// --- update view of the tree ----------
-		projectTreeModel.reload();
-		projectTree.revalidate();
-		projectTree.repaint();
+		// --- update view of the tree ------------------------------
+		this.projectTreeModel.reload();
+		this.projectTree.revalidate();
+		this.projectTree.repaint();
 		this.projectTreeExpand2Level(3, true);
 		
-		// --- update view of the tabs ----------
+		// --- update view of the tabs ------------------------------
 		this.revalidate();
 		this.updateUI();		
 		this.repaint();		
-		currProject.setMaximized();
+		this.currProject.setMaximized();
 		
-		this.pauseListener = false;
+		// --- Set the focus to the last selected Tab ---------------
+		if (lastSelectedNode!=null) {
+			this.setFocus2Tab(lastSelectedNode);	
+		}
 		
+		// --- Reactivate the TreeSelectionListener -----------------
+		this.pauseTreeSelectionListener = false;
+		
+	}
+	
+	/**
+	 * This methode removes all ProjectWindowTabs from the current display
+	 */
+	private void removeAllProjectWindowTabs() {
+		
+		Vector<ProjectWindowTab> pwtVector = new Vector<ProjectWindowTab>(this.tabVector); 
+		for (Iterator<ProjectWindowTab> it = pwtVector.iterator(); it.hasNext();) {
+			
+			ProjectWindowTab pwt = (ProjectWindowTab) it.next();
+			if (pwt.getCompForChildComp()!=null) {
+				pwt.getCompForChildComp().removeAll();
+			}
+		}
+		this.rootNode.removeAllChildren();
+		this.projectViewRightTabs.removeAll();
+	}
+	
+	/**
+	 * This method adds a ProjectWindowTab to the window, considering if a
+	 * projects has a predefined visualization or not
+	 * @param pwt
+	 * @param displayPanel
+	 */
+	private DefaultMutableTreeNode setViewFilterVisualization(ProjectWindowTab pwt, Class<? extends EnvironmentPanel> displayPanel) {
+		
+		DefaultMutableTreeNode newNode = null;
+		if (pwt.getDisplayType() == ProjectWindowTab.DISPLAY_4_END_USER_VISUALIZATION) {
+			// --- Show Visualization-Tab only in case of  ----------
+			// --- an available defined Visualization-Panel ---------
+			if (displayPanel!=null) {
+				newNode = this.addProjectTabInternal(pwt);
+			}
+		} else {
+			newNode = this.addProjectTabInternal(pwt);	
+		}
+		return newNode;
 	}
 	
 }  //  @jve:decl-index=0:visual-constraint="10,10"
