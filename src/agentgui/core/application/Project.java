@@ -115,9 +115,6 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	@XmlElement(name="jadeConfiguration")
 	public PlatformJadeConfig JadeConfiguration = new PlatformJadeConfig();
 	
-
-	private HashMap<String, String> ontoClassHash = null;
-	
 	private HashMap<String, String> agentClassHash = null;
 	
 	/**
@@ -664,19 +661,6 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 			}
 		}
 		this.setChangedAndNotify(CHANGED_ProjectResources);
-	}
-
-	/**
-	 * @param ontoClassHash the userObject to set
-	 */
-	public void setOntoClassHash(HashMap<String, String> ontoClassHash) {
-		this.ontoClassHash = ontoClassHash;
-	}
-	/**
-	 * @return the userObject
-	 */
-	public HashMap<String, String> getOntoClassHash() {
-		return ontoClassHash;
 	}
 
 	/**

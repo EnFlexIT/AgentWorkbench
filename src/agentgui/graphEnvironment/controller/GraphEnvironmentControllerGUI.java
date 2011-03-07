@@ -208,9 +208,6 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 			btnLoadGraph = new JButton();
 			btnLoadGraph.setText(Language.translate("Graph Laden"));
 			btnLoadGraph.addActionListener(this);
-			if(controller.getProject().getOntoClassHash() == null){
-				btnLoadGraph.setEnabled(false);
-			}
 		}
 		return btnLoadGraph;
 	}
@@ -231,7 +228,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	
 	private ClassSelectorDialog getClassSelectorDialog(){
 		if(classSelectorDialog == null){
-			classSelectorDialog = new ClassSelectorDialog(this, controller.getOntologyClasses(), controller.getAgentClasses());
+			classSelectorDialog = new ClassSelectorDialog(this, controller.getAgentClasses());
 		}
 		return classSelectorDialog;
 	}
@@ -249,10 +246,6 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 			this.setSVGDoc(controller.getSvgDoc());
 		}else if(o.equals(controller) && arg.equals(GraphEnvironmentController.EVENT_GRAPH_LOADED)){
 			rebuildTblComponents();
-		}else if(o.equals(controller) && arg == GraphEnvironmentController.EVENT_ONTOLOGY_CLASSES_SET){
-			if(controller.getOntologyClasses() != null){
-				getBtnLoadGraph().setEnabled(true);
-			}
 		}
 	}
 	

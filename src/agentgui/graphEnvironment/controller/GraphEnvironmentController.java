@@ -15,7 +15,7 @@ import org.w3c.dom.Document;
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
 import agentgui.core.common.FileCopier;
-import agentgui.graphEnvironment.controller.yedGraphml.YedGraphMLFileLoader2;
+import agentgui.graphEnvironment.controller.yedGraphml.YedGraphMLFileLoader;
 
 public class GraphEnvironmentController extends Observable implements Observer {
 	
@@ -29,7 +29,7 @@ public class GraphEnvironmentController extends Observable implements Observer {
 	/**
 	 * @param graph the graph to set
 	 */
-	public void setGridModel(GridModel2 gridModel) {
+	public void setGridModel(GridModel gridModel) {
 		
 		this.gridModel = gridModel;
 		this.setChanged();
@@ -41,21 +41,8 @@ public class GraphEnvironmentController extends Observable implements Observer {
 	
 	public static final Integer EVENT_GRAPH_LOADED = 1;
 	
-	public static final Integer EVENT_ONTOLOGY_CLASSES_SET = 2;
-	
 	public static final Integer EVENT_AGENT_CLASSES_SET = 3;
 	
-	public HashMap<String, String> getOntologyClasses() {
-		return project.getOntoClassHash();
-	}
-
-	public void setOntologyClasses(HashMap<String, String> ontologyClasses) {
-		project.setOntoClassHash(ontologyClasses);
-		project.isUnsaved=true;
-		setChanged();
-		notifyObservers(EVENT_ONTOLOGY_CLASSES_SET);
-	}
-
 	public HashMap<String, String> getAgentClasses() {
 		return project.getAgentClassHash();
 	}
@@ -67,13 +54,13 @@ public class GraphEnvironmentController extends Observable implements Observer {
 		notifyObservers(EVENT_AGENT_CLASSES_SET);
 	}
 	
-	private YedGraphMLFileLoader2 fileLoader = null;
+	private YedGraphMLFileLoader fileLoader = null;
 
 	private Project project = null;
 	
 	private Document svgDoc = null;
 	
-	private GridModel2 gridModel = null;
+	private GridModel gridModel = null;
 	
 	public GraphEnvironmentController(Project project){
 		this.project = project;
@@ -157,8 +144,8 @@ public class GraphEnvironmentController extends Observable implements Observer {
 	 * @param graphMLFile The GraphML file defining the new graph.
 	 * @return The corresponding JUNG graph
 	 */
-	private GridModel2 loadGraphFile(File graphMLFile){
-		fileLoader = new YedGraphMLFileLoader2();
+	private GridModel loadGraphFile(File graphMLFile){
+		fileLoader = new YedGraphMLFileLoader();
 		System.out.println("Lade Graph-Datei "+graphMLFile.getName());
 		return fileLoader.loadGraphFromFile(graphMLFile);
 	}
@@ -191,7 +178,7 @@ public class GraphEnvironmentController extends Observable implements Observer {
 	/**
 	 * @return the graph
 	 */
-	public GridModel2 getGridModel() {
+	public GridModel getGridModel() {
 		return gridModel;
 	}
 
@@ -202,7 +189,7 @@ public class GraphEnvironmentController extends Observable implements Observer {
 		return svgDoc;
 	}
 	
-	GraphFileLoader2 getFileLoader(){
+	GraphFileLoader getFileLoader(){
 		return fileLoader;
 	}
 	

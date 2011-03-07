@@ -1,18 +1,14 @@
 package agentgui.graphEnvironment.controller.yedGraphml;
 
-import jade.content.Concept;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.util.HashMap;
 
 import org.apache.commons.collections15.Transformer;
 
 import agentgui.core.application.Language;
-import agentgui.graphEnvironment.controller.GraphEdge;
-import agentgui.graphEnvironment.controller.GraphNode;
 
+import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseGraph;
 import edu.uci.ics.jung.io.GraphIOException;
 import edu.uci.ics.jung.io.graphml.EdgeMetadata;
@@ -23,88 +19,56 @@ import edu.uci.ics.jung.io.graphml.NodeMetadata;
 
 public class YedGraphMLParser {
 	
-	private HashMap<String, String> ontoClasses = null;
-	
-	// Transformer object generating the graph
-	Transformer<GraphMetadata, SparseGraph<GraphNode, GraphEdge>> graphTransformer = new Transformer<GraphMetadata, SparseGraph<GraphNode, GraphEdge>>() {
+	int edgeCount = 0;
+
+	Transformer<GraphMetadata, SparseGraph<TempNode, Object>> graphTransformer = new Transformer<GraphMetadata, SparseGraph<TempNode,Object>>() {
 
 		@Override
-		public SparseGraph<GraphNode, GraphEdge> transform(GraphMetadata gmd) {
-			return new SparseGraph<GraphNode, GraphEdge>();
+		public SparseGraph<TempNode, Object> transform(GraphMetadata gmd) {
+			return new SparseGraph<TempNode, Object>();
 		}
 	};
 	
-	// Transformer object generating nodes
-	Transformer<NodeMetadata, GraphNode> nodeTransformer = new Transformer<NodeMetadata, GraphNode>() {
+	Transformer<NodeMetadata, TempNode> nodeTransformer = new Transformer<NodeMetadata, TempNode>() {
 
 		@Override
-		public GraphNode transform(NodeMetadata nmd) {
-			Concept newNode = null;
-			String type = nmd.getProperty("d5");	// The data field from yED
-			String className = ontoClasses.get(type);
-			if(className != null){
-				try {
-					Class<?> ontoClass = Class.forName(className);
-					newNode = (Concept) ontoClass.newInstance();
-				} catch (ClassNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (InstantiationException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			
-			return new GraphNode(nmd.getId(), newNode);
+		public TempNode transform(NodeMetadata nmd) {
+			String id = nmd.getId();
+			String type = nmd.getProperty("d5");	// yEd Properties data field
+			return new TempNode(id, type);
 		}
 	};
 	
-	// Transformer object generating edges
-	Transformer<EdgeMetadata, GraphEdge> edgeTransformer = new Transformer<EdgeMetadata, GraphEdge>() {
+	Transformer<EdgeMetadata, Object> edgeTransformer = new Transformer<EdgeMetadata, Object>() {
 
 		@Override
-		public GraphEdge transform(EdgeMetadata emd) {
-//			emd.setDirected(false);
-			GraphEdge newEdge = new GraphEdge();
-//			System.out.println("Processing link from node "+emd.getSource()+" to node "+emd.getTarget());
-			return newEdge;
+		public Object transform(EdgeMetadata emd) {
+			emd.setDirected(true);
+			return new Integer(edgeCount++);
 		}
 	};
 	
-	// Needed to satisfy GraphMLReader2 constructor requirements, doing nothing
-	Transformer<HyperEdgeMetadata, GraphEdge> hyperEdgeTransformer = new Transformer<HyperEdgeMetadata, GraphEdge>() {
+	Transformer<HyperEdgeMetadata, Object> hyperedgeTransformer = new Transformer<HyperEdgeMetadata, Object>() {
 
 		@Override
-		public GraphEdge transform(HyperEdgeMetadata hmd) {
+		public Object transform(HyperEdgeMetadata arg0) {
 			return null;
 		}
 	};
 	
-	public YedGraphMLParser(HashMap<String, String> ontoClasses){
-		this.ontoClasses = ontoClasses;
-	}
-	
-	SparseGraph<GraphNode, GraphEdge> getGraph(File graphMLFile){
-		
-		SparseGraph<GraphNode, GraphEdge> graph = null;
-		if(graphMLFile.exists()){
+	Graph<TempNode, Object> getGraph(File graphFile){
+		Graph<TempNode, Object> graph = null;
+		if(graphFile.exists()){
 			try {
-				FileReader fr = new FileReader(graphMLFile);
-				GraphMLReader2<SparseGraph<GraphNode, GraphEdge>, GraphNode, GraphEdge> graphReader = new GraphMLReader2<SparseGraph<GraphNode,GraphEdge>, GraphNode, GraphEdge>(fr, graphTransformer, nodeTransformer, edgeTransformer, hyperEdgeTransformer);
+				FileReader fr = new FileReader(graphFile);
+				GraphMLReader2<SparseGraph<TempNode, Object>, TempNode, Object> graphReader = new GraphMLReader2<SparseGraph<TempNode,Object>, TempNode, Object>(fr, graphTransformer, nodeTransformer, edgeTransformer, hyperedgeTransformer);
 				graph = graphReader.readGraph();
 			} catch (FileNotFoundException e) {
-				System.err.println(Language.translate("GraphML-Datei "+graphMLFile.getName()+"nicht gefunden!"));
+				System.err.println(Language.translate("GraphML-Datei "+graphFile.getName()+"nicht gefunden!"));
 			} catch (GraphIOException e) {
 				System.err.println(Language.translate("Fehler beim Lesen des Graphen"));
 			}
 		}
-		
 		return graph;
 	}
-	
-	
-
 }

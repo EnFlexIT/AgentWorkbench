@@ -14,18 +14,13 @@ import javax.swing.JButton;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
-import javax.swing.tree.DefaultMutableTreeNode;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.core.application.Project;
-import agentgui.core.ontologies.OntologyClassTreeObject;
 
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.lang.reflect.Modifier;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
@@ -40,11 +35,6 @@ public class ClassSelectorDialog extends JDialog implements ActionListener{
 	 * Generated serialVersionUID
 	 */
 	private static final long serialVersionUID = 1L;
-	/**
-	 * The parent class of all ontology classes that represent grid components.
-	 * Should be set dynamically later.
-	 */
-	private static final String ONTOLOGY_PARENT_CLASS = "gasmas.ontology.GridComponent";
 	private JPanel jContentPane = null;
 	private JButton jButtonConfirm = null;
 	private JButton jButtonCancel = null;
@@ -57,21 +47,9 @@ public class ClassSelectorDialog extends JDialog implements ActionListener{
 	 */
 	private JComboBox cellEditorAgentClass = null;
 	/**
-	 * JComboBox used as cell editor for the ontology classes column
-	 */
-	private JComboBox cellEditorOntologyClass = null;
-	/**
-	 * All available ontology classes, accessible by simple class name
-	 */
-	private HashMap<String, Class<?>> availableOntologyClasses = null;
-	/**
 	 * All available agent classes, accessible by simple class name
 	 */
 	private HashMap<String, Class<?>> availableAgentClasses = null;
-	/**
-	 * Assigned ontology classes. Key = user specified String, value = simple class name 
-	 */
-	private HashMap<String, String> assignedOntologyClasses = null;
 	/**
 	 * Assigned agent classes. Key = user specified String, value = simple class name
 	 */
@@ -84,10 +62,9 @@ public class ClassSelectorDialog extends JDialog implements ActionListener{
 	/**
 	 * This is the default constructor
 	 */
-	public ClassSelectorDialog(GraphEnvironmentControllerGUI parent, HashMap<String, String> ontoClasses, HashMap<String, String> agentClasses) {
+	public ClassSelectorDialog(GraphEnvironmentControllerGUI parent, HashMap<String, String> agentClasses) {
 		super(Application.MainWindow, Dialog.ModalityType.APPLICATION_MODAL);
 		this.parent = parent;
-		this.assignedOntologyClasses = ontoClasses;
 		this.assignedAgentClasses = agentClasses;
 		initialize();
 	}
@@ -203,9 +180,6 @@ public class ClassSelectorDialog extends JDialog implements ActionListener{
 			jTableClasses.setFillsViewportHeight(true);
 			jTableClasses.setShowGrid(true);
 			jTableClasses.setModel(getClassesTableModel());
-			TableColumn ontologyClassColumn = jTableClasses.getColumnModel().getColumn(1);
-			ontologyClassColumn.setCellEditor(new DefaultCellEditor(getCellEditorOntologyClass()));
-//			TableColumn agentClassColumn = jTableClasses.getColumnModel().getColumn(2);
 			TableColumn agentClassColumn = jTableClasses.getColumnModel().getColumn(1);
 			agentClassColumn.setCellEditor(new DefaultCellEditor(getCellEditorAgentClass()));
 		}
@@ -219,7 +193,6 @@ public class ClassSelectorDialog extends JDialog implements ActionListener{
 	private TableModel getClassesTableModel(){
 		
 		// The ComboBoxModels must be initiated before adding rows 
-		getCellEditorOntologyClass();
 		getCellEditorAgentClass();
 		
 		// Headlines
@@ -230,24 +203,14 @@ public class ClassSelectorDialog extends JDialog implements ActionListener{
 		Vector<Vector<String>> dataRows = new Vector<Vector<String>>();
 		
 		// Set table entries for defined assignments, if any
-		if(assignedOntologyClasses != null && assignedAgentClasses != null){
-			Iterator<String> dataFieldEntries = assignedOntologyClasses.keySet().iterator();
+		if(assignedAgentClasses != null){
+			Iterator<String> dataFieldEntries = assignedAgentClasses.keySet().iterator();
 			
 			while(dataFieldEntries.hasNext()){
 				// GraphML data field entry
 				String dataEntry = dataFieldEntries.next();
 				Vector<String> newRow = new Vector<String>();
 				newRow.add(dataEntry);
-				
-//				// Ontology class assigned to this GraphML data field entry
-//				String ontoClassName = assignedOntologyClasses.get(dataEntry);
-//				if(ontoClassName != null){
-//					// Class name without package
-//					String ontoClassSimpleName = ontoClassName.substring(ontoClassName.lastIndexOf('.')+1);
-//					newRow.add(ontoClassSimpleName);
-//				}else{
-//					newRow.add(Language.translate("Nicht definiert"));
-//				}
 				
 				// Agent class assigned to this GraphML data field entry
 				String agentClassName = assignedAgentClasses.get(dataEntry);
@@ -300,17 +263,6 @@ public class ClassSelectorDialog extends JDialog implements ActionListener{
 		}
 		return jButtonAddRow;
 	}
-	/**
-	 * This method initializes cellEditorOntologyClass
-	 * 
-	 * @return javax.swing.JComboBox
-	 */
-	private JComboBox getCellEditorOntologyClass(){
-		if(cellEditorOntologyClass == null){
-			cellEditorOntologyClass = new JComboBox(getOntologyComboBoxModel());
-		}
-		return cellEditorOntologyClass;
-	}
 	
 	/**
 	 * This method initializes cellEditorAgentClass
@@ -322,47 +274,6 @@ public class ClassSelectorDialog extends JDialog implements ActionListener{
 			cellEditorAgentClass = new JComboBox(getAgentComboBoxModel());
 		}
 		return cellEditorAgentClass;
-	}
-	
-	/**
-	 * This method builds a vector for initiating the cellEditorOntologyClass' ComobBox model, and initiates the ontologyClasses HashMap.
-	 * @return Vector containing the simple names of all non-abstract subclasses of GridComponent.
-	 */
-	private Vector<String> getOntologyComboBoxModel(){
-		Vector<String> ontologyClassNames = new Vector<String>();
-		ontologyClassNames.add(Language.translate("Nicht definiert"));
-		
-		availableOntologyClasses = new HashMap<String, Class<?>>();
-		availableOntologyClasses.put(Language.translate("Nicht definiert"), null);
-		
-		Project currProject = parent.getController().getProject();
-		DefaultMutableTreeNode gcNode = currProject.ontologies4Project.getClassTreeNode(ONTOLOGY_PARENT_CLASS);
-		findOntologyClasses(gcNode, ontologyClassNames);
-		
-		return ontologyClassNames;
-	}
-	
-	/**
-	 * This method adds the class represented by the node to the ontologyClasses HashMap if it is not abstract.
-	 * Additionally the class' simple name is added to a vector used to initiate the cellEditorOntologyClass' ComboBox model later.
-	 * The method is called recursively for child nodes of node. 
-	 * @param node The tree node representing the class 
-	 * @param classNamesVector Vector containing the class names for the cellEditorOntologyClass' ComboBox model. 
-	 */
-	private void findOntologyClasses(DefaultMutableTreeNode node, Vector<String> classNamesVector){
-		OntologyClassTreeObject userObject = (OntologyClassTreeObject) node.getUserObject();
-		Class<?> ontoClass = userObject.getOntologySubClass();
-		if(! Modifier.isAbstract(ontoClass.getModifiers())){
-			classNamesVector.add(ontoClass.getSimpleName());
-			availableOntologyClasses.put(ontoClass.getSimpleName(), ontoClass);
-		}
-		if(node.getChildCount() > 0){
-			@SuppressWarnings({ "unchecked" })
-			Enumeration<DefaultMutableTreeNode> children = node.children();
-			while(children.hasMoreElements()){
-				findOntologyClasses(children.nextElement(), classNamesVector);
-			}
-		}
 	}
 	
 	/**
@@ -401,12 +312,9 @@ public class ClassSelectorDialog extends JDialog implements ActionListener{
 			
 			int rowNum = jtc.getRowCount();
 			for(int i=0; i<rowNum; i++){
-				
-//				ontologyClasses.put((String) jtc.getValueAt(i, 0), this.availableOntologyClasses.get(jtc.getValueAt(i, 1)).getName());
 				agentClasses.put((String) jtc.getValueAt(i, 0), this.availableAgentClasses.get(jtc.getValueAt(i, 1)).getName());
 			}
 			
-//			parent.getController().setOntologyClasses(ontologyClasses);
 			parent.getController().setAgentClasses(agentClasses);
 			
 			this.setVisible(false);

@@ -2,7 +2,6 @@ package agentgui.graphEnvironment.controller;
 
 import java.io.File;
 
-import edu.uci.ics.jung.graph.Graph;
 /**
  * Classes that should work as import components for the GraphEnvironmentController must implement this interface. 
  * @author Nils
@@ -14,7 +13,7 @@ public interface GraphFileLoader {
 	 * @param graphFile The file containing the graph definition.
 	 * @return The JUNG graph.
 	 */
-	public Graph<GraphNode, GraphEdge> loadGraphFromFile(File graphFile);
+	public GridModel loadGraphFromFile(File graphFile);
 	/**
 	 * Returns the extension of the file type the GraphFileLoader can handle
 	 * @return The file extension
