@@ -64,7 +64,6 @@ public class Formula implements CalcExpression {
 		JEP parser = new JEP();
 		parser.addStandardConstants();
 		parser.addStandardFunctions();
-		
 		// Initiate parameters
 		Iterator<String> params = parameters.keySet().iterator();
 		while(params.hasNext()){

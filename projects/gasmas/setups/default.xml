@@ -2,16 +2,20 @@
 <simulationSetup>
     <agentSetup>
         <agent>
-            <agentClassReference>gasmas.agents.CompressorAgent</agentClassReference>
-            <mobileAgent>true</mobileAgent>
             <postionNo>1</postionNo>
+            <agentClassReference>gasmas.agents.CompressorAgent</agentClassReference>
             <startAsName>CoAg</startAsName>
+            <mobileAgent>true</mobileAgent>
+            <startArguments>
+                <argument>PENvbXByZXNzb3IgaWQ9InVnamtoZ3VoemciPgoJPHBvc2l0aW9uMT4KCQk8UHJvcGFnYXRpb25Qb2ludCBnZW9aPSIwLjBGIiBkaWFtZXRlcj0iMC4wRiIgYXRQYXJlbnRMZW5ndGhQb3M9IjAuMEYiIGdlb1g9IjAuMEYiIGdlb1k9IjAuMEYiLz4KCTwvcG9zaXRpb24xPgoJPHBvc2l0aW9uMj4KCQk8UHJvcGFnYXRpb25Qb2ludCBnZW9aPSIwLjBGIiBkaWFtZXRlcj0iMC4wRiIgYXRQYXJlbnRMZW5ndGhQb3M9IjAuMEYiIGdlb1g9IjAuMEYiIGdlb1k9IjAuMEYiLz4KCTwvcG9zaXRpb24yPgo8L0NvbXByZXNzb3I+Cg==</argument>
+                <argument>PE9TSW5mbyBvc192ZXJzaW9uPSIiIG9zX25hbWU9IiIgb3NfYXJjaD0iIi8+Cg==</argument>
+            </startArguments>
         </agent>
         <agent>
-            <agentClassReference>gasmas.agents.CompressorAgent</agentClassReference>
-            <mobileAgent>true</mobileAgent>
             <postionNo>2</postionNo>
+            <agentClassReference>gasmas.agents.CompressorAgent</agentClassReference>
             <startAsName>CoAg_1</startAsName>
+            <mobileAgent>true</mobileAgent>
         </agent>
     </agentSetup>
     <distribution>
@@ -35,6 +39,5 @@
         <size>2</size>
     </agentListModel>
     <environmentFileName>\default.graphml</environmentFileName>
-    <environmentMode>gridEnvironment</environmentMode>
     <svgFileName>\default.svg</svgFileName>
 </simulationSetup>

@@ -2,6 +2,7 @@
 <project>
     <projectName>GasMAS</projectName>
     <projectDescription>MAS zur Simulation eines Gasnetzes (nur technische Ebene).</projectDescription>
+    <environmentModel>gridEnvironment</environmentModel>
     <projectResources/>
     <subOntologies>
         <subOntology>gasmas.ontology.GasgridOntology</subOntology>
@@ -9,8 +10,24 @@
     </subOntologies>
     <agentConfiguration>
         <entry>
+            <key>gasmas.agents.EntryAgent</key>
+            <value>gasmas.ontology.Entry</value>
+        </entry>
+        <entry>
+            <key>gasmas.agents.BranchAgent</key>
+            <value>gasmas.ontology.Branch</value>
+        </entry>
+        <entry>
+            <key>gasmas.agents.ExitAgent</key>
+            <value>gasmas.ontology.Exit</value>
+        </entry>
+        <entry>
+            <key>gasmas.agents.PipeAgent</key>
+            <value>gasmas.ontology.Pipe</value>
+        </entry>
+        <entry>
             <key>gasmas.agents.CompressorAgent</key>
-            <value>gasmas.ontology.Compressor|agentgui.simulationService.ontology.OSInfo</value>
+            <value>gasmas.ontology.Compressor</value>
         </entry>
     </agentConfiguration>
     <simulationSetupCurrent>default</simulationSetupCurrent>
