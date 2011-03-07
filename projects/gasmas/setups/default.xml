@@ -35,6 +35,36 @@
             <thNoThreadsL>50</thNoThreadsL>
         </userThresholds>
     </distribution>
+    <agentClassesHash>
+        <entry>
+            <key>valve</key>
+            <value>gasmas.agents.ValveAgent</value>
+        </entry>
+        <entry>
+            <key>entry</key>
+            <value>gasmas.agents.EntryAgent</value>
+        </entry>
+        <entry>
+            <key>branch</key>
+            <value>gasmas.agents.BranchAgent</value>
+        </entry>
+        <entry>
+            <key>compressor</key>
+            <value>gasmas.agents.CompressorAgent</value>
+        </entry>
+        <entry>
+            <key>pipe</key>
+            <value>gasmas.agents.PipeAgent</value>
+        </entry>
+        <entry>
+            <key>exit</key>
+            <value>gasmas.agents.ExitAgent</value>
+        </entry>
+        <entry>
+            <key>storage</key>
+            <value>gasmas.agents.StorageAgent</value>
+        </entry>
+    </agentClassesHash>
     <agentListModel>
         <size>2</size>
     </agentListModel>

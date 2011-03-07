@@ -37,13 +37,13 @@ public class ComponentSettingsDialog extends JDialog implements ActionListener{
 	/**
 	 * The graph node containing the ontology object
 	 */
-	private GraphNode component = null;
+	private GridComponent component = null;
 	/**
 	 * Constructor
 	 * @param project The simulation project
 	 * @param component The graph node containing the ontology object
 	 */
-	public ComponentSettingsDialog(Project project, GraphNode component){
+	public ComponentSettingsDialog(Project project, GridComponent component){
 		super(Application.MainWindow, Dialog.ModalityType.APPLICATION_MODAL);
 		this.project = project;
 		this.component = component;
@@ -56,7 +56,7 @@ public class ComponentSettingsDialog extends JDialog implements ActionListener{
 	 */
 	private void initialize() {
         this.setContentPane(getJPanelContent());
-        this.setTitle(Language.translate("Netzkomponente")+" "+component.getId());
+        this.setTitle(Language.translate("Netzkomponente")+" "+component.getAgentID());
         this.setSize(new Dimension(450, 450));
 	}
 
@@ -98,11 +98,9 @@ public class ComponentSettingsDialog extends JDialog implements ActionListener{
 			jPanelContent.add(getJButtonApply(), gridBagConstraints);
 			jPanelContent.add(getJButtonAbort(), gridBagConstraints1);
 			
-			// Retrieve the ontology class name
-			String[] ontoClassRef = new String[1];
-			ontoClassRef[0] = component.getOntologyObject().getClass().getName();
-			// Add an OntologyInstanceViewer showing the ontology object to the dialog 
-			jPanelContent.add(new OntologyInstanceViewer(project, ontoClassRef), gridBagConstraints11);
+			String agentClassName = project.simSetups.getCurrSimSetup().getAgentClassesHash().get(component.getType());
+			jPanelContent.add(new OntologyInstanceViewer(project, agentClassName), gridBagConstraints11);
+			
 		}
 		return jPanelContent;
 	}

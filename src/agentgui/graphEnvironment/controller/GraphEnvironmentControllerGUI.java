@@ -180,7 +180,6 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		if(controller.getGridModel() != null){
 			
 			// Get the components from the controllers GridModel
-			@SuppressWarnings("unchecked")
 			Iterator<GridComponent> components = controller.getGridModel().getComponents().iterator();
 			
 			// Add component ID and class name to the data vector
@@ -264,11 +263,11 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 				
 				@Override
 				public void handleEvent(Event evt) {
-//					String svgID = ((Element)evt.getCurrentTarget()).getAttributeNS(null, "id");
-//					String componentID = "n"+svgID.substring(svgID.lastIndexOf('.')+1);
-//					GridComponent selectedComponent = controller.getGridModel().getComponent(componentID);
-//					new ComponentSettingsDialog(controller.getProject(), selectedComponent).setVisible(true);
-//					setSelectedElement((Element)evt.getTarget());
+					String svgID = ((Element)evt.getCurrentTarget()).getAttributeNS(null, "id");
+					String componentID = "n"+svgID.substring(svgID.lastIndexOf('.')+1);
+					GridComponent selectedComponent = controller.getGridModel().getComponent(componentID);
+					new ComponentSettingsDialog(controller.getProject(), selectedComponent).setVisible(true);
+					setSelectedElement((Element)evt.getTarget());
 				}
 			}, false);
 		}
@@ -308,10 +307,10 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
-//		String componentID = (String) tblComponents.getModel().getValueAt(e.getFirstIndex(), 0);
-//		GridComponent selectedComponent = controller.getGridModel().getComponent(componentID);
-//		new ComponentSettingsDialog(controller.getProject(), selectedComponent).setVisible(true);
-//		setSelectedElementByComponentID(componentID);
+		String componentID = (String) tblComponents.getModel().getValueAt(e.getFirstIndex(), 0);
+		GridComponent selectedComponent = controller.getGridModel().getComponent(componentID);
+		new ComponentSettingsDialog(controller.getProject(), selectedComponent).setVisible(true);
+		setSelectedElementByComponentID(componentID);
 	}
 	
 	void setComponentType(){

@@ -54,7 +54,6 @@ public class GridModel {
 		graph.addVertex(pp2);
 		graph.addEdge(component, pp1, pp2, EdgeType.DIRECTED);
 		components.put(component.getAgentID(), component);
-		System.out.println("Adding "+component.getType()+" "+component.getAgentID());
 	}
 	/**
 	 * This method adds a simple grid component (i.e. one represented by only one edge) to the grid. It will be placed before the component specified by the given ID.
@@ -69,8 +68,6 @@ public class GridModel {
 			graph.addVertex(pp1);
 			graph.addEdge(component, pp1, pp2, EdgeType.DIRECTED);
 			components.put(component.getAgentID(), component);
-			System.out.println("Adding "+component.getType()+" "+component.getAgentID()+
-					" before "+components.get(successorID).getType()+" "+successorID);
 		}else{
 			System.err.println(Language.translate("Nachfolger-Knoten")+" "+successorID+" "+Language.translate("nicht gefunden!"));
 		}
@@ -87,8 +84,6 @@ public class GridModel {
 			graph.addVertex(pp2);
 			graph.addEdge(component, pp1, pp2, EdgeType.DIRECTED);
 			components.put(component.getAgentID(), component);
-			System.out.println("Adding "+component.getType()+" "+component.getAgentID()+
-					" after "+components.get(predecessorID).getType()+" "+predecessorID);
 		}else{
 			System.err.println(Language.translate("Vorgänger-Knoten")+" "+predecessorID+" "+Language.translate("nicht gefunden!"));
 		}
@@ -103,20 +98,7 @@ public class GridModel {
 		PropagationPoint pp1 = graph.getDest(components.get(predecessorID));
 		PropagationPoint pp2 = graph.getSource(components.get(successorID));
 		if(pp1 != null && pp2 != null){
-//			if(cp1 == cp2){		!!! Fallunterscheidung vermutlich überflüssig !!!
-//				// Predecessor and successor are direct neighbors. Additional CheckPoit required. 
-//				GridComponent successor = components.get(successorID);
-//				graph.removeEdge(successor);
-//				CheckPoint cp3 = new CheckPoint(cpCounter++);
-//				graph.addVertex(cp3);
-//				graph.addEdge(component, cp1, cp3, EdgeType.DIRECTED);
-//				graph.addEdge(successor, cp3, cp2, EdgeType.DIRECTED);
-//			}else{
-				// Predecessor and successor are not neighbors. The component can be added without additional CheckPoints.
 				graph.addEdge(component, pp1, pp2, EdgeType.DIRECTED);
-				System.out.println("Adding "+component.getType()+" "+component.getAgentID()+
-						" between "+components.get(predecessorID).getType()+" "+predecessorID+
-						" and "+components.get(successorID).getType()+" "+successorID);
 //			}
 		}else{
 			if(pp1 == null){

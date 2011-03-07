@@ -44,11 +44,11 @@ public class GraphEnvironmentController extends Observable implements Observer {
 	public static final Integer EVENT_AGENT_CLASSES_SET = 3;
 	
 	public HashMap<String, String> getAgentClasses() {
-		return project.getAgentClassHash();
+		return project.simSetups.getCurrSimSetup().getAgentClassesHash();
 	}
 
 	public void setAgentClasses(HashMap<String, String> agentClasses) {
-		project.setAgentClassHash(agentClasses);
+		project.simSetups.getCurrSimSetup().setAgentClassesHash(agentClasses);
 		project.isUnsaved=true;
 		setChanged();
 		notifyObservers(EVENT_AGENT_CLASSES_SET);

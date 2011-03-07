@@ -3,6 +3,7 @@ package agentgui.core.sim.setup;
 import java.io.FileWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.DefaultListModel;
 import javax.xml.bind.JAXBContext;
@@ -30,6 +31,14 @@ import agentgui.core.application.Project;
 	private String environmentFileName = null;
 	private String svgFileName = null;
 	
+	private HashMap<String, String> agentClassesHash;
+	
+	public HashMap<String, String> getAgentClassesHash() {
+		return agentClassesHash;
+	}
+	public void setAgentClassesHash(HashMap<String, String> agentClassesHash) {
+		this.agentClassesHash = agentClassesHash;
+	}
 	/**
 	 * Constructor without arguments (This is first of all 
 	 * for the JAXB-Context and should not be used by any

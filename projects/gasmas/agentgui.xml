@@ -10,12 +10,16 @@
     </subOntologies>
     <agentConfiguration>
         <entry>
+            <key>gasmas.agents.BranchAgent</key>
+            <value>gasmas.ontology.Branch</value>
+        </entry>
+        <entry>
             <key>gasmas.agents.EntryAgent</key>
             <value>gasmas.ontology.Entry</value>
         </entry>
         <entry>
-            <key>gasmas.agents.BranchAgent</key>
-            <value>gasmas.ontology.Branch</value>
+            <key>gasmas.agents.ValveAgent</key>
+            <value>gasmas.ontology.Valve</value>
         </entry>
         <entry>
             <key>gasmas.agents.ExitAgent</key>
@@ -28,6 +32,10 @@
         <entry>
             <key>gasmas.agents.CompressorAgent</key>
             <value>gasmas.ontology.Compressor</value>
+        </entry>
+        <entry>
+            <key>gasmas.agents.StorageAgent</key>
+            <value>gasmas.ontology.Storage</value>
         </entry>
     </agentConfiguration>
     <simulationSetupCurrent>default</simulationSetupCurrent>
@@ -47,65 +55,5 @@
             <service>agentgui.simulationService.SimulationService;</service>
         </serviceList>
     </jadeConfiguration>
-    <agentClassHash>
-        <entry>
-            <key>valve</key>
-            <value>gasmas.agents.ValveAgent</value>
-        </entry>
-        <entry>
-            <key>entry</key>
-            <value>gasmas.agents.EntryAgent</value>
-        </entry>
-        <entry>
-            <key>branch</key>
-            <value>gasmas.agents.BranchAgent</value>
-        </entry>
-        <entry>
-            <key>compressor</key>
-            <value>gasmas.agents.CompressorAgent</value>
-        </entry>
-        <entry>
-            <key>exit</key>
-            <value>gasmas.agents.ExitAgent</value>
-        </entry>
-        <entry>
-            <key>pipe</key>
-            <value>gasmas.agents.PipeAgent</value>
-        </entry>
-        <entry>
-            <key>storage</key>
-            <value>gasmas.agents.StorageAgent</value>
-        </entry>
-    </agentClassHash>
-    <ontoClassHash>
-        <entry>
-            <key>valve</key>
-            <value>gasmas.ontology.Valve</value>
-        </entry>
-        <entry>
-            <key>entry</key>
-            <value>gasmas.ontology.Entry</value>
-        </entry>
-        <entry>
-            <key>branch</key>
-            <value>gasmas.ontology.Branch</value>
-        </entry>
-        <entry>
-            <key>compressor</key>
-            <value>gasmas.ontology.Compressor</value>
-        </entry>
-        <entry>
-            <key>exit</key>
-            <value>gasmas.ontology.Exit</value>
-        </entry>
-        <entry>
-            <key>pipe</key>
-            <value>gasmas.ontology.Pipe</value>
-        </entry>
-        <entry>
-            <key>storage</key>
-            <value>gasmas.ontology.Storage</value>
-        </entry>
-    </ontoClassHash>
     <subFolderEnvSetups>svgEnvSetups</subFolderEnvSetups>
 </project>

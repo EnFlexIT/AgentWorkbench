@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Observable;
 import java.util.Vector;
-import java.util.HashMap;
 
 import javax.swing.JDesktopPane;
 import javax.swing.JOptionPane;
@@ -114,8 +113,6 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	
 	@XmlElement(name="jadeConfiguration")
 	public PlatformJadeConfig JadeConfiguration = new PlatformJadeConfig();
-	
-	private HashMap<String, String> agentClassHash = null;
 	
 	/**
 	 * Default-Constructor
@@ -663,18 +660,4 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 		this.setChangedAndNotify(CHANGED_ProjectResources);
 	}
 
-	/**
-	 * @param agentClassHash the agentClassHash to set
-	 */
-	public void setAgentClassHash(HashMap<String, String> agentClassHash) {
-		this.agentClassHash = agentClassHash;
-	}
-
-	/**
-	 * @return the agentClassHash
-	 */
-	public HashMap<String, String> getAgentClassHash() {
-		return agentClassHash;
-	}
-	
 }
