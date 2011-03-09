@@ -20,6 +20,11 @@ public class TransactionMap extends HashMap<Long, EnvironmentModel> {
 		
 		long hashKey = 0;
 		
+		// --- If the environment model is null -------------------
+		if (envModel==null) {
+			return null;
+		}
+		
 		// --- Fallunterscheidung TimeModel -----------------------
 		if (envModel.getTimeModel()==null) {
 			hashKey = internalCounter;
