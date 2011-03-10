@@ -1,5 +1,6 @@
 package agentgui.physical2Denvironment.display;
 
+import jade.core.AID;
 import jade.core.Agent;
 import jade.core.ServiceException;
 import jade.core.behaviours.TickerBehaviour;
@@ -7,7 +8,10 @@ import jade.core.behaviours.TickerBehaviour;
 import java.awt.BorderLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -22,6 +26,7 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 import agentgui.physical2Denvironment.ontology.Physical2DObject;
+import agentgui.physical2Denvironment.ontology.PositionUpdate;
 import agentgui.physical2Denvironment.provider.EnvironmentProviderHelper;
 import agentgui.physical2Denvironment.provider.EnvironmentProviderService;
 import agentgui.physical2Denvironment.utils.EnvironmentHelper;
@@ -53,6 +58,8 @@ public class DisplayAgent extends Agent {
 	private EnvironmentProviderHelper envHelper = null;
 	private int lastMaximumValue=-2;
 	private int lastCurrentValue=-1;
+	private int counter=0;
+	private int addValue=1;
 	private long initialTimeStep=0;
 	private boolean play=true;
 
@@ -153,14 +160,19 @@ public class DisplayAgent extends Agent {
 		myGUI.jSliderTime.addChangeListener(new javax.swing.event.ChangeListener() {
 	
 			public void stateChanged(javax.swing.event.ChangeEvent e) {
-				// Call simu service and tell him that something is changed!
-;
+				 
+				counter=myGUI.jSliderTime.getValue();
+				
+			
+				if(counter==-1)
+				{
+					counter=0;
+				}
 				try
 				{
 					if(	envHelper!=null)
 					{
 						
-						envHelper.setCurrentPos(myGUI.jSliderTime.getValue());
 						if(initialTimeStep==0)
 						{
 							SimulationServiceHelper simHelper=(SimulationServiceHelper) getHelper(SimulationServiceHelper.SERVICE_NAME);
@@ -202,8 +214,9 @@ public class DisplayAgent extends Agent {
 				}
 				String unit= Language.translate("Sekunden");
 				myGUI.jLabelSpeedFactor.setText( (((myGUI.jSliderVisualation.getValue()*initialTimeStep))/1000.0) +" "+unit);
-				TimeModelDiscrete model=(TimeModelDiscrete) simHelper.getEnvironmentModel().getTimeModel();
-				model.setStep(initialTimeStep*myGUI.jSliderVisualation.getValue());
+				//TimeModelDiscrete model=(TimeModelDiscrete) simHelper.getEnvironmentModel().getTimeModel();
+				//model.setStep(initialTimeStep*myGUI.jSliderVisualation.getValue());
+				addValue=myGUI.jSliderVisualation.getValue();
 				}
 				catch(Exception ex)
 				{
@@ -262,42 +275,74 @@ public class DisplayAgent extends Agent {
 			}
 			
 		}
-
+		
+		public HashSet<Physical2DObject> fordwardToVisualation(HashMap<AID,PositionUpdate> pos)	{
+		    
+			HashSet<Physical2DObject> movingObjects=envHelper.getCurrentlyMovingObjects();
+		    // Clear map
+			movingObjects.clear();
+			Set<AID> keys=pos.keySet();
+			Iterator<AID> it= keys.iterator();
+			while(it.hasNext())
+			{
+				AID aid=it.next();
+				Physical2DObject obj=envHelper.getObject(aid.getLocalName());
+				obj.setPosition(pos.get(aid).getNewPosition());
+				movingObjects.add(obj);
+			}
+			return movingObjects;
+		}
 		@Override
 		protected void onTick() {
 			try
 			{
-						
-					HashSet<Physical2DObject> movingObjects = helper.getCurrentlyMovingObjects();
-					synchronized (movingObjects) {
-						myGUI.updatePositions(movingObjects);
-					}
-			
-				if(envHelper!=null)
-				{
-					if(lastCurrentValue!=envHelper.getCurrentPos()) // only change if necessary
-					{
-						myGUI.setCurrentTimePos(envHelper.getCurrentPos());
-					}
-					if(lastMaximumValue!=envHelper.getTransactionSize())
-					{
-						myGUI.setMaximum(envHelper.getTransactionSize()); // Set the maximum sliding position
-					}
-			
-				}
-				else
-				{
-				envHelper=(EnvironmentProviderHelper) getHelper(EnvironmentProviderService.SERVICE_NAME);	
-				}
-				lastCurrentValue=envHelper.getCurrentPos(); // Use for comparing
-				lastMaximumValue=envHelper.getTransactionSize(); // use for comparing
+				 int size=helper.getTransactionSize();
+				 
+				 if(lastMaximumValue!=size)
+				 {
+					 
+				 myGUI.setMaximum(size);
+				 }
 				
+				    if(size>1)
+				    {
+				    	
+				        
+				    	
+				    	//System.out.println("LastCurrentValue:"+lastCurrentValue);
+				    	//System.out.println("Counter:"+counter);
+				    	
+				    		HashSet<Physical2DObject> movingObjects = this.fordwardToVisualation(helper.getModel(counter));
+				    		lastCurrentValue=counter;
+							synchronized (movingObjects) {
+								myGUI.updatePositions(movingObjects);
+							}
+							
+							 myGUI.setCurrentTimePos(counter);
+						
+							
+							 if(play)
+							 {
+								 
+								 //System.out.println("Play");
+								  if(counter+addValue<size)
+								  {
+									//  System.out.println("New Counter Value:"+counter);
+								 counter=counter+addValue;
+								  }
+								  //System.out.println("Eigentlich sollte hier davor was stehen");
+							 }
+							 
+							 lastMaximumValue=size;
+						}
+				    
+					
+			
 			}
 			catch(Exception e)
 			{
 				e.printStackTrace();
 			}
-			
 			
 		
 		
