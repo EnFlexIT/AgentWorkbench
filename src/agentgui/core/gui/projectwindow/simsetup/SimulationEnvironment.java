@@ -10,14 +10,11 @@ import java.util.Observer;
 
 import javax.swing.JPanel;
 
-import org.apache.batik.gvt.event.SelectionEvent;
-import org.apache.batik.gvt.event.SelectionListener;
-
 import agentgui.core.application.Project;
 import agentgui.core.environment.EnvironmentPanel;
 import agentgui.core.environment.EnvironmentType;
 
-public class SimulationEnvironment extends JPanel implements Observer, ActionListener, SelectionListener {
+public class SimulationEnvironment extends JPanel implements Observer, ActionListener {
 
 	private static final long serialVersionUID = 3230313372954316520L;
 	
@@ -115,30 +112,6 @@ public class SimulationEnvironment extends JPanel implements Observer, ActionLis
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void selectionChanged(SelectionEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void selectionCleared(SelectionEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void selectionDone(SelectionEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void selectionStarted(SelectionEvent arg0) {
 		// TODO Auto-generated method stub
 		
 	}

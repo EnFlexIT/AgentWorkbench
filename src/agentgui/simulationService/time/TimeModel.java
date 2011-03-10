@@ -3,12 +3,12 @@ package agentgui.simulationService.time;
 import jade.util.leap.Serializable;
 
 
-
+/**
+ * 
+ * @author Christian Derksen
+ */
 public class TimeModel implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 4597561080133786915L;
 	
 	public static final int STROKE = 1;
