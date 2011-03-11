@@ -278,7 +278,7 @@ public class StartSetupSelector extends JPanel implements Observer, ActionListen
 	@Override
 	public void update(Observable arg0, Object arg1) {
 
-		if ( arg1.toString().equalsIgnoreCase("SimSetups")) {
+		if ( arg1.toString().equalsIgnoreCase(SimulationSetups.CHANGED)) {
 			this.setupLoad();
 		}
 		

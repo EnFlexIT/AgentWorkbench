@@ -23,11 +23,12 @@ public class SimulationSetups extends Hashtable<String, String> {
 
 	private static final long serialVersionUID = -9078535303459653695L;
 
-	static public final int SIMULATION_SETUP_LOAD = 0;
-	static public final int SIMULATION_SETUP_ADD_NEW = 1;
-	static public final int SIMULATION_SETUP_COPY = 2;
-	static public final int SIMULATION_SETUP_REMOVE = 3;
-	static public final int SIMULATION_SETUP_RENAME = 4;
+	public static final String CHANGED = "SimSetups";
+	public static final int SIMULATION_SETUP_LOAD = 0;
+	public static final int SIMULATION_SETUP_ADD_NEW = 1;
+	public static final int SIMULATION_SETUP_COPY = 2;
+	public static final int SIMULATION_SETUP_REMOVE = 3;
+	public static final int SIMULATION_SETUP_RENAME = 4;
 	
 	public final String XML_FilePostfix = ".xml";
 	private Project currProject = Application.ProjectCurr;
@@ -367,7 +368,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 			return updateReason;
 		}
 		public String toString() {
-			return "SimSetups";
+			return CHANGED;
 		}
 		
 	}

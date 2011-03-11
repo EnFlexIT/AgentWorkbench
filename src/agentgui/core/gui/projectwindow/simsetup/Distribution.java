@@ -893,7 +893,7 @@ public class Distribution extends JPanel implements ActionListener, Observer, Ke
 	@Override
 	public void update(Observable o, Object notifyObject) {
 		
-		if ( notifyObject.toString().equalsIgnoreCase("SimSetups")) {
+		if ( notifyObject.toString().equalsIgnoreCase(SimulationSetups.CHANGED)) {
 			this.setupLoad();
 		} else {
 			//System.out.println( this.getClass().getName() + ": " + arg1.toString() );	
