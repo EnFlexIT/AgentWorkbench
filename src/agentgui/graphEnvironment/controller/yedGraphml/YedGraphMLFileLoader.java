@@ -12,35 +12,40 @@ import agentgui.graphEnvironment.controller.GridModel;
 public class YedGraphMLFileLoader implements GraphFileLoader {
 	
 	private String fileTypeExtension = "graphml";
-	
 	private String fileTypeDescription = "yEd GraphML";
 	
 	private Graph<TempNode, Object> tempGraph;
-	
 	private GridModel gridModel;
 	
 	@Override
 	public GridModel loadGraphFromFile(File graphFile) {
 		
 		YedGraphMLParser parser = new YedGraphMLParser();
+		Vector<TempNode> startNodesList = null;
+		
 		tempGraph = parser.getGraph(graphFile);
-		Iterator<TempNode> nodes = tempGraph.getVertices().iterator();
-		Vector<TempNode> startNodesList = new Vector<TempNode>();
-		while(nodes.hasNext()){
-			TempNode node = nodes.next();
-			if(tempGraph.inDegree(node) == 0){
-				startNodesList.add(node);
+		if (tempGraph==null) {
+			return null;
+		} else {
+			Iterator<TempNode> nodes = tempGraph.getVertices().iterator();
+			startNodesList = new Vector<TempNode>();
+			while(nodes.hasNext()){
+				TempNode node = nodes.next();
+				if(tempGraph.inDegree(node) == 0){
+					startNodesList.add(node);
+				}
+			}	
+		}
+		
+		if (startNodesList!=null) {
+			Iterator<TempNode> startNodes = startNodesList.iterator();
+			gridModel = new GridModel();
+			while(startNodes.hasNext()){
+				TempNode startNode = startNodes.next();
+				addNode(startNode, null);
 			}
-		}
-		
-		
-		Iterator<TempNode> startNodes = startNodesList.iterator();
-		gridModel = new GridModel();
-		while(startNodes.hasNext()){
-			TempNode startNode = startNodes.next();
-			addNode(startNode, null);
-		}
-		gridModel.fixDirections();
+			gridModel.fixDirections();	
+		}		
 		return gridModel;
 	}
 	

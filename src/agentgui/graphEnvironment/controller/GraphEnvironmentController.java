@@ -80,6 +80,7 @@ public class GraphEnvironmentController extends Observable implements Observer {
 	 * @param graphMLFile The GraphML file defining the new graph.
 	 */
 	public void loadGridModel(File graphMLFile){
+		
 		String graphMLSourcePath = graphMLFile.getAbsolutePath();
 		String graphMLTargetPath = project.getEnvSetupPath()+File.separator+project.simSetupCurrent+".graphml";
 		
@@ -118,7 +119,7 @@ public class GraphEnvironmentController extends Observable implements Observer {
 		if(graphFileName != null && graphFileName != ""){
 			File graphFile = new File(project.getEnvSetupPath()+File.separator+graphFileName);
 			if(graphFile.exists()){
-				setGridModel(loadGraphFile(graphFile));
+				this.setGridModel(loadGraphFile(graphFile));
 			}else{
 				System.err.println(Language.translate("Graph-Datei")+" "+graphFile.getName()+" "+Language.translate(" nicht gefunden!"));
 			}
@@ -164,13 +165,12 @@ public class GraphEnvironmentController extends Observable implements Observer {
 			try {
 				doc = factory.createDocument(svgFile.toURI().toURL().toString());
 			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				doc = null;
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				doc = null;
 			}
-			
 		}
 		return doc;
 	}
