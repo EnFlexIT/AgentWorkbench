@@ -115,6 +115,10 @@ public class GraphEnvironmentController extends Observable implements Observer {
 	 * This method loads the graph and SVG specified in the current SimSetup 
 	 */
 	public void loadFiles(){
+		if(fileLoader == null){
+			fileLoader = new YedGraphMLFileLoader();	// Projektspezifisch => hartkodiert nicht gut, später anders lösen
+		}
+		fileLoader = new YedGraphMLFileLoader();
 		String graphFileName = project.simSetups.getCurrSimSetup().getEnvironmentFileName();
 		if(graphFileName != null && graphFileName != ""){
 			File graphFile = new File(project.getEnvSetupPath()+File.separator+graphFileName);
@@ -146,7 +150,6 @@ public class GraphEnvironmentController extends Observable implements Observer {
 	 * @return The corresponding JUNG graph
 	 */
 	private GridModel loadGraphFile(File graphMLFile){
-		fileLoader = new YedGraphMLFileLoader();
 		System.out.println("Lade Graph-Datei "+graphMLFile.getName());
 		return fileLoader.loadGraphFromFile(graphMLFile);
 	}
