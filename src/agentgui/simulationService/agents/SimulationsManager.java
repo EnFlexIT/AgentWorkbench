@@ -1,3 +1,7 @@
+/**
+ * This class provides the basic functionality for implemented simulation
+ * 
+ */
 package agentgui.simulationService.agents;
 
 import jade.core.AID;
@@ -5,11 +9,9 @@ import jade.core.Agent;
 import jade.core.ServiceException;
 import jade.core.behaviours.CyclicBehaviour;
 
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
@@ -26,18 +28,23 @@ public abstract class SimulationsManager extends Agent {
 	
 	private static final long serialVersionUID = -7398714332312572026L;
 
+	/**
+	 *  The enviromentmodel which contains an abstract and an displayable enviroment and a time model 
+	 */
 	private EnvironmentModel envModel = new EnvironmentModel();
 	private boolean running=false;
 	protected SimulationServiceHelper simHelper = null;
 	protected EnvironmentProviderHelper envHelper = null; 
 	protected Hashtable<AID, Object> agentAnswers = null;
+	/**
+	 * The expected numbers of answer
+	 */
 	protected int numberOfAgents=0;
 	
 	/**
-	 * 
+	 *  Entry Point
 	 */
-	protected void setup() {
-		  
+	protected void setup() {		  
 		try {
 		  envHelper = (EnvironmentProviderHelper) getHelper(EnvironmentProviderService.SERVICE_NAME);
 		  simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
@@ -45,43 +52,42 @@ public abstract class SimulationsManager extends Agent {
 		  
 		} catch(ServiceException e) {
 			  e.printStackTrace();
-		}
-		
+		}		
 		this.initSimulation();
 		this.addBehaviour(new SimulationBehavior());
 	}
 
 	/**
-	 * 
+	 *  This method is used for initialising the  simulation, which means that the enviromentmodel would be set there.
 	 */
 	public abstract void initSimulation();
 	
 	/**
-	 * 
+	 *  The logic of the simulation is implemented here. It's highly recommended to use the provided methods for implementing the logic.
 	 */
 	public abstract void simulationLogic();
 	/**
-	 * 
-	 * @param agentAnswer
+	 * This method have to create the new state of the environment based on the agent's answer.
+	 * @param agentAnswer It's the Hashmap which is returned from the simulation service when waitForAgents is called
 	 */
 	public abstract void createNewEnvironment(Hashtable<AID,Object> agentAnswer);
 
 	/**
-	 * 
-	 * @return
+	 *  Returns the environment model
+	 * @return Enviromentsmodel
 	 */
 	public EnvironmentModel getEnvironmentModel() {
 		return envModel;
 	}
 	/**
-	 * Where?
+	 * Sets the  environment only locally.  
 	 * @param envModel
 	 */
 	public void setEnvironmentModelPrivate(EnvironmentModel environmentModel) {
 		this.envModel = environmentModel;
 	}
 	/**
-	 * Where?
+	 *  Sets the  environment and the model is propagated to all nodes.
 	 * @param envModel
 	 */
 	public void setEnvironmentModelDistributed(EnvironmentModel environmentModel) {
@@ -94,23 +100,23 @@ public abstract class SimulationsManager extends Agent {
 	}
 
 	/**
-	 * 
-	 * @return
+	 *  Returns the current time model
+	 * @return the current time model
 	 */
 	public TimeModel getTimeModel() {
 		return this.envModel.getTimeModel();
 	}
 
 	/**
-	 * 
-	 * @param timeModel
+	 *  Sets the time model locally
+	 * @param timeModel The current time modell
 	 */
 	public void setTimeModelPrivate(TimeModel timeModel) {
 		this.envModel.setTimeModel(timeModel);
 	}
 	/**
-	 * 
-	 * @param timeModel
+	 *  Sets the current time model and the time model is propagated to all nodes
+	 * @param timeModel The current time model
 	 */
 	public void setTimeModelDistributed(TimeModel timeModel) {
 		this.envModel.setTimeModel(timeModel);
@@ -122,7 +128,7 @@ public abstract class SimulationsManager extends Agent {
 	}
 	
 	/**
-	 * 
+	 * Steps the simulation. As a side effect a transition of current environment is written into the transaction list
 	 * @throws Exception
 	 */
 	public void stepSimulation() throws Exception {
@@ -142,13 +148,13 @@ public abstract class SimulationsManager extends Agent {
 	}
 	
 	/**
-	 * 
+	 *  Pauses the simulation
 	 */
 	public void pauseSimulation() {
 		running = false;
 	}
 	/**
-	 * 
+	 *  Continous the simulation
 	 */
 	public void continueSimulation() {
 		running = true;
@@ -156,9 +162,9 @@ public abstract class SimulationsManager extends Agent {
 	
 	/**
 	 * 
-	 * @param numberOfAgents
-	 * @return
-	 * @throws ServiceException
+	 * @param numberOfAgents - If the value us 1 the method waits exactly for one agent
+	 * @return The answers of the agent. The key of the hashmap is the AID
+	 * @throws ServiceException- Through the distribution it's possible that one service is not available
 	 */
 	public Hashtable<AID, Object> waitForAgentAnswer(int numberOfAgents) throws ServiceException {
 		while (simHelper.getEnvironmentInstanceNextParts().size()!=numberOfAgents) {
@@ -178,17 +184,15 @@ public abstract class SimulationsManager extends Agent {
 	
 		Object obj = envModel.getDisplayEnvironment();
 		if(obj==null) {
-			System.out.println("Display Enviroment is null!");
-		}
-		
+			return null;
+		}		
 		if (obj instanceof Physical2DEnvironment) {
-			
 			Physical2DEnvironment world=(Physical2DEnvironment) obj;
 			Set<AID> keys = agentAnswer.keySet();
-			Iterator<AID> it = keys.iterator();
-			while(it.hasNext()) {
-				
-				AID aid=it.next();
+			AID [] newKeys= (AID[]) keys.toArray();
+			for(int i=0;i<newKeys.length;i++)
+			{
+				AID aid=newKeys[i];
 				Physical2DObject physicalObj = this.getPhysical2DObject(world, aid.getLocalName());
 				Object tmpObj = agentAnswer.get(aid);
 				PositionUpdate posUpdate = null;
@@ -211,17 +215,17 @@ public abstract class SimulationsManager extends Agent {
 	
 
 	/**
-	 * 
-	 * @param world
-	 * @param id
+	 * Returns the Physical2DObject of a specific id
+	 * @param world The displayable representation of the word 
+	 * @param id  the ID which is looked for
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	private Physical2DObject getPhysical2DObject(Physical2DEnvironment world,String id)	{
-	
-		Iterator<Physical2DObject> it = world.getRootPlayground().getAllChildObjects();
-		while(it.hasNext()) {
-			Physical2DObject playGround = it.next();
+	private Physical2DObject getPhysical2DObject(Physical2DEnvironment world,String id)	
+	{
+		List<Physical2DObject> list= (List<Physical2DObject>) world.getRootPlayground().getChildObjects();
+		for(int i=0;i<list.size();i++) {
+			Physical2DObject playGround = list.get(i);
 			if(playGround.getId().equals(id)) {
 				return playGround;
 			}
@@ -229,15 +233,20 @@ public abstract class SimulationsManager extends Agent {
 		return null;
 	}
 		   
-		   
+	   
+	/**
+	 * Converts the Hashmap to the specific answer type
+	 * @param answer - One single Hashmap with exact one answer of all agents
+	 * @return A converted Hashmap 
+	 */
 	public HashMap<AID,PositionUpdate> convertToPositionUpdateHashmap(Hashtable<AID, Object> answer) {
-		
-		Enumeration<AID> keys = answer.keys(); // Let's get the AID
+	
+		Set<AID> keys = answer.keySet(); // Let's get the AID
+		AID [] newKeys = (AID[]) keys.toArray();
 		HashMap<AID, PositionUpdate> result= new HashMap<AID, PositionUpdate> ();
-		while (keys.hasMoreElements()) {
+		for(int i=0;i<newKeys.length;i++) {
 			
-			AID aid = keys.nextElement();
-			
+			AID aid = newKeys[i];			
 			Object obj = agentAnswers.get(aid); // Get Answer
 		    PositionUpdate posUpdate= (PositionUpdate) obj;
 		    result.put(aid, posUpdate);
@@ -247,26 +256,26 @@ public abstract class SimulationsManager extends Agent {
 	
 	
 	
+	/**
+	 *  Write the answer into the transaction list of the enviroment service
+	 * @param A converted Hashmap of the Agent answers
+	 */
 	public void fordwardToVisualation(HashMap<AID,PositionUpdate> pos)	{
 	    
-		HashSet<Physical2DObject> movingObjects=envHelper.getCurrentlyMovingObjects();
-	    // Clear map
-		movingObjects.clear();
-		Set<AID> keys=pos.keySet();
-		Iterator<AID> it= keys.iterator();
-		while(it.hasNext())
+		Set<AID> keys=pos.keySet();		
+		AID [] newKeys=(AID[]) keys.toArray();
+		for(int i=0;i<newKeys.length;i++)
 		{
-			AID aid=it.next();
-			Physical2DObject obj=envHelper.getObject(aid.getLocalName());
-			obj.setPosition(pos.get(aid).getNewPosition());
-			movingObjects.add(obj);
-		}
-		
+			AID key=newKeys[i];
+			envHelper.stepModel(key, pos.get(key));
+			
+		}		
 	}	
 		
 	/**
 	 *  
 	 * @author Tim Lewen
+	 *  The simulation logic is running in a cylicBehaviour
 	 */
 	private class SimulationBehavior extends CyclicBehaviour {
 
@@ -279,6 +288,5 @@ public abstract class SimulationsManager extends Agent {
 			}
 		}
 	}
-
 	
 }
