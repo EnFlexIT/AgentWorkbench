@@ -1,41 +1,32 @@
 package agentgui.graphEnvironment.controller;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.net.MalformedURLException;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 
-import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
-import org.apache.batik.dom.svg.SVGDOMImplementation;
-import org.apache.batik.util.XMLResourceDescriptor;
-import org.w3c.dom.Document;
+import org.apache.commons.collections15.Transformer;
 
-import agentgui.core.application.Language;
+import edu.uci.ics.jung.graph.Graph;
+import edu.uci.ics.jung.graph.SparseGraph;
+import edu.uci.ics.jung.io.GraphIOException;
+import edu.uci.ics.jung.io.GraphMLWriter;
+import edu.uci.ics.jung.io.graphml.EdgeMetadata;
+import edu.uci.ics.jung.io.graphml.GraphMLReader2;
+import edu.uci.ics.jung.io.graphml.GraphMetadata;
+import edu.uci.ics.jung.io.graphml.HyperEdgeMetadata;
+import edu.uci.ics.jung.io.graphml.NodeMetadata;
+
 import agentgui.core.application.Project;
-import agentgui.core.common.FileCopier;
-import agentgui.graphEnvironment.controller.yedGraphml.YedGraphMLFileLoader;
+import agentgui.core.sim.setup.SimulationSetup;
+import agentgui.graphEnvironment.controller.yedGraphml.YedGraphMLFileImporter;
 
 public class GraphEnvironmentController extends Observable implements Observer {
-	
-	/**
-	 * @param svgDoc the svgDoc to set
-	 */
-	public void setSvgDoc(Document svgDoc) {
-		this.svgDoc = svgDoc;
-	}
-
-	/**
-	 * @param graph the graph to set
-	 */
-	public void setGridModel(GridModel gridModel) {
-		
-		this.gridModel = gridModel;
-		this.setChanged();
-		notifyObservers(EVENT_GRAPH_LOADED);
-	}
-	
 	
 	public static final Integer EVENT_SVG_LOADED = 0;
 	
@@ -54,17 +45,17 @@ public class GraphEnvironmentController extends Observable implements Observer {
 		notifyObservers(EVENT_AGENT_CLASSES_SET);
 	}
 	
-	private YedGraphMLFileLoader fileLoader = null;
-
 	private Project project = null;
-	
-	private Document svgDoc = null;
 	
 	private GridModel gridModel = null;
 	
+	private GraphFileImporter graphFileImporter = null;
+	
+	private GraphMLWriter<PropagationPoint, GridComponent> graphMLWriter = null;
+	
 	public GraphEnvironmentController(Project project){
 		this.project = project;
-		this.loadFiles();
+		loadProjectGridModel();
 	}
 	
 	Project getProject(){
@@ -79,103 +70,13 @@ public class GraphEnvironmentController extends Observable implements Observer {
 	 * set.  
 	 * @param graphMLFile The GraphML file defining the new graph.
 	 */
-	public void loadGridModel(File graphMLFile){
-		
-		String graphMLSourcePath = graphMLFile.getAbsolutePath();
-		String graphMLTargetPath = project.getEnvSetupPath()+File.separator+project.simSetupCurrent+".graphml";
-		
-		String svgSourcePath = graphMLFile.getAbsolutePath().substring(0, graphMLFile.getAbsolutePath().lastIndexOf('.'))+".svg";
-		String svgTargetPath = project.getEnvSetupPath()+File.separator+project.simSetupCurrent+".svg";
-		boolean svgFound = new File(svgSourcePath).exists();
-		
-		FileCopier fc = new FileCopier();
-		fc.copyFile(graphMLSourcePath, graphMLTargetPath);
-		project.simSetups.getCurrSimSetup().setEnvironmentFileName(graphMLTargetPath.substring(graphMLTargetPath.lastIndexOf(File.separator)));
-		if(svgFound){
-			fc.copyFile(svgSourcePath, svgTargetPath);
-			project.simSetups.getCurrSimSetup().setSvgFileName(svgTargetPath.substring(svgTargetPath.lastIndexOf(File.separator)));
-		}else{
-			System.err.println("Keine SVG-Datei gefunden!");
-		}
-		
-		this.gridModel = loadGraphFile(new File(graphMLTargetPath));
-		setChanged();
-		notifyObservers(EVENT_GRAPH_LOADED);
-		if(svgFound){
-			this.svgDoc = loadSVGFile(new File(svgTargetPath));
-			if(this.svgDoc != null){
-				setChanged();
-				notifyObservers(EVENT_SVG_LOADED);
-			}
+	public void importGridModel(File graphMLFile){
+		gridModel = getGraphFileImporter().loadGraphFromFile(graphMLFile);
+		if(gridModel != null){
+			this.setChanged();
+			notifyObservers(EVENT_GRAPH_LOADED);
 		}
 		project.isUnsaved = true;
-	}
-	
-	/**
-	 * This method loads the graph and SVG specified in the current SimSetup 
-	 */
-	public void loadFiles(){
-		if(fileLoader == null){
-			fileLoader = new YedGraphMLFileLoader();	// Projektspezifisch => hartkodiert nicht gut, später anders lösen
-		}
-		fileLoader = new YedGraphMLFileLoader();
-		String graphFileName = project.simSetups.getCurrSimSetup().getEnvironmentFileName();
-		if(graphFileName != null && graphFileName != ""){
-			File graphFile = new File(project.getEnvSetupPath()+File.separator+graphFileName);
-			if(graphFile.exists()){
-				this.setGridModel(loadGraphFile(graphFile));
-			}else{
-				System.err.println(Language.translate("Graph-Datei")+" "+graphFile.getName()+" "+Language.translate(" nicht gefunden!"));
-			}
-		}else{
-			System.out.println(Language.translate("Keine Graph-Datei definiert!"));
-		}
-		
-		String svgFileName = project.simSetups.getCurrSimSetup().getSvgFileName();
-		if(svgFileName != null && svgFileName != ""){
-			File svgFile = new File(project.getEnvSetupPath()+File.separator+svgFileName);
-			if(svgFile.exists()){
-				this.svgDoc = loadSVGFile(svgFile);
-			}else{
-				System.err.println(Language.translate("SVG-Datei")+" "+svgFile.getName()+" "+Language.translate(" nicht gefunden!"));
-			}
-		}else{
-			System.out.println(Language.translate("Keine SVG-Datei definiert!"));
-		}
-	}
-	
-	/**
-	 * This method loads a graph definition from a GraphMLFile and creates a corresponding JUNG graph
-	 * @param graphMLFile The GraphML file defining the new graph.
-	 * @return The corresponding JUNG graph
-	 */
-	private GridModel loadGraphFile(File graphMLFile){
-		System.out.println("Lade Graph-Datei "+graphMLFile.getName());
-		return fileLoader.loadGraphFromFile(graphMLFile);
-	}
-	
-	/**
-	 * This method loads a SVG document from a SVG file.
-	 * @param svgFile The SVG file.
-	 * @return The SVG document
-	 */
-	private Document loadSVGFile(File svgFile){
-		Document doc = null;
-		if(svgFile.exists()){
-			doc = SVGDOMImplementation.getDOMImplementation().createDocument(SVGDOMImplementation.SVG_NAMESPACE_URI, "svg", null);
-			System.out.println(Language.translate("Lade SVG-Datei")+" "+svgFile.getName());
-			SAXSVGDocumentFactory factory = new SAXSVGDocumentFactory(XMLResourceDescriptor.getXMLParserClassName());
-			try {
-				doc = factory.createDocument(svgFile.toURI().toURL().toString());
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
-				doc = null;
-			} catch (IOException e) {
-				e.printStackTrace();
-				doc = null;
-			}
-		}
-		return doc;
 	}
 	
 	/**
@@ -185,21 +86,128 @@ public class GraphEnvironmentController extends Observable implements Observer {
 		return gridModel;
 	}
 
-	/**
-	 * @return the svgDoc
-	 */
-	public Document getSvgDoc() {
-		return svgDoc;
-	}
-	
-	GraphFileLoader getFileLoader(){
-		return fileLoader;
-	}
-	
 	@Override
 	public void update(Observable o, Object arg) {
 		// TODO Auto-generated method stub
 
 	}
+	
+	GraphFileImporter getGraphFileImporter(){
+		if(graphFileImporter == null){
+			graphFileImporter = new YedGraphMLFileImporter();
+		}
+		return graphFileImporter;
+	}
+	
+	private GraphMLWriter<PropagationPoint, GridComponent> getGraphMLWriter(){
+		if(graphMLWriter == null){
+			graphMLWriter = new GraphMLWriter<PropagationPoint, GridComponent>();
+			graphMLWriter.setEdgeIDs(new Transformer<GridComponent, String>() {
 
+				@Override
+				public String transform(GridComponent arg0) {
+					return arg0.getAgentID();
+				}
+			});
+			graphMLWriter.setEdgeDescriptions(new Transformer<GridComponent, String>() {
+
+				@Override
+				public String transform(GridComponent arg0) {
+					return arg0.getType();
+				}
+			});
+			graphMLWriter.setVertexIDs(new Transformer<PropagationPoint, String>() {
+
+				@Override
+				public String transform(PropagationPoint arg0) {
+					return ""+arg0.getIndex();
+				}
+			});
+		}
+		return graphMLWriter;
+	}
+	
+	public void saveGridModel(){
+		try {
+			String folderPath = this.project.getProjectFolderFullPath()+this.project.getSubFolderEnvSetups(); 
+			SimulationSetup simSetup = project.simSetups.getCurrSimSetup();
+			if(simSetup.getEnvironmentFileName() == null){
+				simSetup.setEnvironmentFileName(project.simSetupCurrent+".graphml");
+			}
+			File file = new File(folderPath+File.separator+simSetup.getEnvironmentFileName());
+			if(!file.exists()){
+				file.createNewFile();
+			}
+			PrintWriter pw = new PrintWriter(new FileWriter(file));
+			getGraphMLWriter().save(gridModel.getGraph(), pw);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private GraphMLReader2<Graph<PropagationPoint, GridComponent>, PropagationPoint, GridComponent> getGraphMLReader(File file) throws FileNotFoundException{
+		Transformer<GraphMetadata, Graph<PropagationPoint, GridComponent>> graphTransformer = new Transformer<GraphMetadata, Graph<PropagationPoint,GridComponent>>() {
+
+			@Override
+			public SparseGraph<PropagationPoint, GridComponent> transform(
+					GraphMetadata gmd) {
+				return new SparseGraph<PropagationPoint, GridComponent>();
+			}
+		};
+		
+		Transformer<NodeMetadata, PropagationPoint> nodeTransformer = new Transformer<NodeMetadata, PropagationPoint>() {
+
+			@Override
+			public PropagationPoint transform(NodeMetadata nmd) {
+				return new PropagationPoint(Integer.parseInt(nmd.getId()));
+			}
+		};
+		
+		Transformer<EdgeMetadata, GridComponent> edgeTransformer = new Transformer<EdgeMetadata, GridComponent>() {
+
+			@Override
+			public GridComponent transform(EdgeMetadata emd) {
+				return new GridComponent(emd.getId(), emd.getDescription());
+			}
+		};
+		
+		Transformer<HyperEdgeMetadata, GridComponent> hyperEdgeTransformer = new Transformer<HyperEdgeMetadata, GridComponent>() {
+
+			@Override
+			public GridComponent transform(HyperEdgeMetadata arg0) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+		};
+		
+		FileReader fileReader = new FileReader(file);
+		
+		return new GraphMLReader2<Graph<PropagationPoint,GridComponent>, PropagationPoint, GridComponent>(fileReader, graphTransformer, nodeTransformer, edgeTransformer, hyperEdgeTransformer);
+		
+	}
+	
+	private void loadProjectGridModel(){
+		
+		String fileName = project.simSetups.getCurrSimSetup().getEnvironmentFileName();
+		
+		if(fileName != null){
+			
+			String folderPath = this.project.getProjectFolderFullPath()+this.project.getSubFolderEnvSetups();
+			File envFile = new File(folderPath+File.separator+fileName);
+			if(envFile.exists()){
+				try {
+					gridModel = new GridModel();
+					gridModel.setGraph(getGraphMLReader(envFile).readGraph());
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (GraphIOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		
+	}
 }

@@ -1,5 +1,10 @@
 package agentgui.graphEnvironment.controller.yedGraphml;
 
+/**
+ * This class is only needed to temporary represent yEd GraphML Nodes during the import process
+ * @author Nils
+ *
+ */
 public class TempNode {
 	private String id;
 	private String type;

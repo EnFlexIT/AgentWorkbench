@@ -5,11 +5,11 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import edu.uci.ics.jung.graph.Graph;
-import agentgui.graphEnvironment.controller.GraphFileLoader;
+import agentgui.graphEnvironment.controller.GraphFileImporter;
 import agentgui.graphEnvironment.controller.GridComponent;
 import agentgui.graphEnvironment.controller.GridModel;
 
-public class YedGraphMLFileLoader implements GraphFileLoader {
+public class YedGraphMLFileImporter implements GraphFileImporter {
 	
 	private String fileTypeExtension = "graphml";
 	private String fileTypeDescription = "yEd GraphML";

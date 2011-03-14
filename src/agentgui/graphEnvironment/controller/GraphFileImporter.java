@@ -7,7 +7,7 @@ import java.io.File;
  * @author Nils
  *
  */
-public interface GraphFileLoader {
+public interface GraphFileImporter {
 	/**
 	 * This method loads the graph graph from the file and translates it into a JUNG graph. 
 	 * @param graphFile The file containing the graph definition.

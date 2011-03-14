@@ -53,12 +53,12 @@
             <value>gasmas.agents.CompressorAgent</value>
         </entry>
         <entry>
-            <key>pipe</key>
-            <value>gasmas.agents.PipeAgent</value>
-        </entry>
-        <entry>
             <key>exit</key>
             <value>gasmas.agents.ExitAgent</value>
+        </entry>
+        <entry>
+            <key>pipe</key>
+            <value>gasmas.agents.PipeAgent</value>
         </entry>
         <entry>
             <key>storage</key>
@@ -68,6 +68,5 @@
     <agentListModel>
         <size>2</size>
     </agentListModel>
-    <environmentFileName>\default.graphml</environmentFileName>
-    <svgFileName>\default.svg</svgFileName>
+    <environmentFileName>default.graphml</environmentFileName>
 </simulationSetup>

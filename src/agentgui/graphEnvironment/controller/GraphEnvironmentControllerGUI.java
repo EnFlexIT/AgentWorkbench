@@ -5,6 +5,8 @@ import javax.swing.JSplitPane;
 import javax.swing.JPanel;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import javax.swing.JScrollPane;
 import java.awt.GridBagConstraints;
@@ -23,17 +25,16 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.events.Event;
-import org.w3c.dom.events.EventListener;
-import org.w3c.dom.events.EventTarget;
+import org.apache.commons.collections15.Transformer;
+
+import edu.uci.ics.jung.algorithms.layout.FRLayout;
+import edu.uci.ics.jung.algorithms.layout.Layout;
+import edu.uci.ics.jung.graph.Graph;
+import edu.uci.ics.jung.visualization.BasicVisualizationServer;
 
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
 import agentgui.core.environment.EnvironmentPanel;
-import agentgui.physical2Denvironment.display.BasicSVGGUI;
 import javax.swing.JLabel;
 
 public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements Observer, ActionListener, ListSelectionListener{
@@ -46,22 +47,11 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	private JButton btnSetClasses = null;
 	
 	private ClassSelectorDialog classSelectorDialog = null;  //  @jve:decl-index=0:visual-constraint="333,23"
-	private BasicSVGGUI svgGUI = null;
 	private GraphEnvironmentController controller = null;
-	/**
-	 * The currently selected SVG element
-	 */
-	private Element selectedElement = null;
-	/**
-	 * The selectedElement's style attribute before it was selected
-	 */
-	private String originalStyle;
-	/**
-	 * The style attribute used for highlighting selected elements
-	 */
-	private String selectionStyle = "fill:white;stroke:orange;stroke-width:3;stroke-miterlimit:4;stroke-dasharray:none";
+	
 	private JLabel lblTable = null;
 	private JSplitPane jSplitPaneRoot = null;
+	private JButton btnSaveGrid = null;
 	
 	/**
 	 * This is the default constructor
@@ -83,10 +73,6 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		this.setLayout(new BorderLayout());
 		this.add(getJSplitPaneRoot(), null);
 		
-		if(controller.getSvgDoc() != null){
-			this.setSVGDoc(controller.getSvgDoc());
-		}
-		
 	}
 
 	/**
@@ -95,13 +81,16 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	 */
 	private JPanel getPnlControlls() {
 		if (pnlControlls == null) {
+			GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
+			gridBagConstraints11.gridx = 0;
+			gridBagConstraints11.gridy = 2;
 			GridBagConstraints gridBagConstraints7 = new GridBagConstraints();
 			gridBagConstraints7.gridx = 0;
 			gridBagConstraints7.gridy = 0;
 			GridBagConstraints gridBagConstraints6 = new GridBagConstraints();
 			gridBagConstraints6.gridx = 0;
 			gridBagConstraints6.anchor = GridBagConstraints.WEST;
-			gridBagConstraints6.gridy = 2;
+			gridBagConstraints6.gridy = 3;
 			lblTable = new JLabel();
 			lblTable.setText(Language.translate("Netz-Komponenten"));
 			GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
@@ -111,7 +100,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 			gridBagConstraints1.gridwidth = 1;
 			GridBagConstraints gridBagConstraints = new GridBagConstraints();
 			gridBagConstraints.fill = GridBagConstraints.BOTH;
-			gridBagConstraints.gridy = 3;
+			gridBagConstraints.gridy = 4;
 			gridBagConstraints.weightx = 1.0;
 			gridBagConstraints.weighty = 1.0;
 			gridBagConstraints.gridheight = 1;
@@ -120,9 +109,10 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 			pnlControlls = new JPanel();
 			pnlControlls.setLayout(new GridBagLayout());
 			pnlControlls.add(getScpComponentTable(), gridBagConstraints);
-			pnlControlls.add(getBtnLoadGraph(), gridBagConstraints1);
+			pnlControlls.add(getBtnImportGraph(), gridBagConstraints1);
 			pnlControlls.add(getBtnSetClasses(), gridBagConstraints7);
 			pnlControlls.add(lblTable, gridBagConstraints6);
+			pnlControlls.add(getBtnSaveGrid(), gridBagConstraints11);
 		}
 		return pnlControlls;
 	}
@@ -202,10 +192,10 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	 * 	
 	 * @return javax.swing.JButton	
 	 */
-	private JButton getBtnLoadGraph() {
+	private JButton getBtnImportGraph() {
 		if (btnLoadGraph == null) {
 			btnLoadGraph = new JButton();
-			btnLoadGraph.setText(Language.translate("Graph Laden"));
+			btnLoadGraph.setText(Language.translate("Graph Importieren"));
 			btnLoadGraph.addActionListener(this);
 		}
 		return btnLoadGraph;
@@ -232,75 +222,27 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		return classSelectorDialog;
 	}
 	
-	private BasicSVGGUI getSVGGUI(){
-		if(svgGUI == null){
-			svgGUI = new BasicSVGGUI();
-		}
-		return svgGUI;
-	}
-
 	@Override
 	public void update(Observable o, Object arg) {
-		if(o.equals(controller) && arg.equals(GraphEnvironmentController.EVENT_SVG_LOADED)){
-			this.setSVGDoc(controller.getSvgDoc());
-		}else if(o.equals(controller) && arg.equals(GraphEnvironmentController.EVENT_GRAPH_LOADED)){
+		if(o.equals(controller) && arg.equals(GraphEnvironmentController.EVENT_GRAPH_LOADED)){
+			getJSplitPaneRoot().setRightComponent(new JScrollPane(getRightComponent()));
 			rebuildTblComponents();
 		}
 	}
 	
-	/**
-	 * This method adds onClick handler to a SVG element if it represents a graph node.
-	 * An element represents a graph node if it is of type g and has an ID like "y.node.{number}"
-	 * @param node A XML node 
-	 */
-	private void addOnclickHandler(Node node){
-		String regex = "^y\\.node\\.\\d+$";		// Matches y.node.<nr>
-		if(node instanceof Element 
-				&& ((Element)node).getTagName().equals("g")
-				&& ((Element)node).getAttributeNS(null, "id").matches(regex)
-		){
-			((EventTarget)node).addEventListener("click", new EventListener() {
-				
-				@Override
-				public void handleEvent(Event evt) {
-					String svgID = ((Element)evt.getCurrentTarget()).getAttributeNS(null, "id");
-					String componentID = "n"+svgID.substring(svgID.lastIndexOf('.')+1);
-					GridComponent selectedComponent = controller.getGridModel().getComponent(componentID);
-					new ComponentSettingsDialog(controller.getProject(), selectedComponent).setVisible(true);
-					setSelectedElement((Element)evt.getTarget());
-				}
-			}, false);
-		}
-		if(node.hasChildNodes()){
-			for(int i=0;i<node.getChildNodes().getLength();i++){
-				addOnclickHandler(node.getChildNodes().item(i));
-			}
-		}
-	}
-	
-	/**
-	 *  This method sets the GUIs SVG document.
-	 * @param doc The SVG document 
-	 */
-	private void setSVGDoc(Document doc){
-		addOnclickHandler(doc.getDocumentElement());
-		this.svgGUI.setSVGDoc(doc);
-	}
-
 	@Override
 	public void actionPerformed(ActionEvent event) {
-		if(event.getSource().equals(getBtnLoadGraph())){
+		if(event.getSource().equals(getBtnImportGraph())){
 			JFileChooser graphFC = new JFileChooser();
-			graphFC.setFileFilter(new FileNameExtensionFilter(Language.translate(controller.getFileLoader().getTypeString()), controller.getFileLoader().getGraphFileExtension()));
+			graphFC.setFileFilter(new FileNameExtensionFilter(Language.translate(controller.getGraphFileImporter().getTypeString()), controller.getGraphFileImporter().getGraphFileExtension()));
 			if(graphFC.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
 				File graphMLFile = graphFC.getSelectedFile();
-				this.controller.loadGridModel(graphMLFile);
-
-				this.controller.getGridModel().showJungVisualization();
-
+				this.controller.importGridModel(graphMLFile);
 			}
 		}else if(event.getSource().equals(getBtnSetClasses())){
 			getClassSelectorDialog().setVisible(true);
+		}else if(event.getSource().equals(getBtnSaveGrid())){
+			controller.saveGridModel();
 		}
 		
 	}
@@ -310,59 +252,12 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		String componentID = (String) tblComponents.getModel().getValueAt(e.getFirstIndex(), 0);
 		GridComponent selectedComponent = controller.getGridModel().getComponent(componentID);
 		new ComponentSettingsDialog(controller.getProject(), selectedComponent).setVisible(true);
-		setSelectedElementByComponentID(componentID);
-	}
-	
-	void setComponentType(){
-		System.out.println("Die Knotentyp-Änderung ist noch nicht Implementiert.");
-		setSelectedElement(null);
 	}
 	
 	GraphEnvironmentController getController(){
 		return controller;
 	}
 	
-	/**
-	 * Sets the currently selected SVG element
-	 * @param element The SVG element
-	 */
-	void setSelectedElement(Element element){
-		svgGUI.getCanvas().getUpdateManager().getUpdateRunnableQueue().invokeLater(new ElementSelector(element));
-	}
-
-	/**
-	 * This method finds the SVG element corresponding to the graph element with the given ID and selects it
-	 * @param componentID The graph element's ID
-	 */
-	private void setSelectedElementByComponentID(String componentID){
-		int number = Integer.parseInt(componentID.substring(1));
-		String svgElementID = "svg"+(number+1)+".NodeBackground";
-		Element svgElement = svgGUI.getSVGDoc().getElementById(svgElementID);
-		setSelectedElement(svgElement);
-	}
-	
-	private class ElementSelector implements Runnable{
-		
-		private Element element;
-		
-		public ElementSelector(Element element){
-			this.element = element;
-		}
-
-		@Override
-		public void run() {
-			if(selectedElement != null){
-				selectedElement.setAttributeNS(null, "style", originalStyle);
-			}
-			if(element != null){
-				originalStyle = element.getAttributeNS(null, "style");
-				element.setAttributeNS(null, "style", selectionStyle);
-				selectedElement = element;
-			}
-		}
-		
-	}
-
 	/**
 	 * This method initializes jSplitPaneRoot	
 	 * @return javax.swing.JSplitPane	
@@ -371,10 +266,64 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		if (jSplitPaneRoot == null) {
 			jSplitPaneRoot = new JSplitPane();
 			jSplitPaneRoot.setLeftComponent(getPnlControlls());
-			jSplitPaneRoot.setRightComponent(getSVGGUI());
+//			jSplitPaneRoot.setRightComponent(getRightComponent());
+			jSplitPaneRoot.setRightComponent(new JScrollPane(getRightComponent()));
 			jSplitPaneRoot.setDividerLocation(200);
 		}
 		return jSplitPaneRoot;
+	}
+	
+	private Component getRightComponent(){
+		
+		Component rightComponent = null;
+		
+		if(controller.getGridModel() != null && controller.getGridModel().getGraph() != null){
+			rightComponent = getVisualization();
+		}else{
+			rightComponent = new JPanel();
+		}
+		return rightComponent;
+		
+	}
+
+	/**
+	 * This method initializes btnSaveGrid	
+	 * 	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getBtnSaveGrid() {
+		if (btnSaveGrid == null) {
+			btnSaveGrid = new JButton();
+			btnSaveGrid.setText(Language.translate("Graph speichern"));
+			btnSaveGrid.addActionListener(this);
+		}
+		return btnSaveGrid;
+	}
+	
+	private BasicVisualizationServer<PropagationPoint, GridComponent> getVisualization(){
+			Layout<PropagationPoint, GridComponent> layout = new FRLayout<PropagationPoint, GridComponent>(controller.getGridModel().getGraph());
+			layout.setSize(new Dimension(500, 400));
+			BasicVisualizationServer<PropagationPoint, GridComponent> visServ = new BasicVisualizationServer<PropagationPoint, GridComponent>(layout);
+			visServ.setPreferredSize(new Dimension(550, 450));
+			// Node labels
+			visServ.getRenderContext().setVertexLabelTransformer(new Transformer<PropagationPoint, String>() {
+				
+				@Override
+				public String transform(PropagationPoint arg0) {
+					return "PP"+arg0.getIndex();
+				}
+			});
+			
+			// Edge labels
+			visServ.getRenderContext().setEdgeLabelTransformer(new Transformer<GridComponent, String>() {
+	
+				@Override
+				public String transform(GridComponent arg0) {
+					return arg0.getType()+" "+arg0.getAgentID();
+				}
+			});
+		
+		return visServ;
 	}
 
 }  //  @jve:decl-index=0:visual-constraint="33,19"

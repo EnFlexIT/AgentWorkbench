@@ -1,22 +1,14 @@
 package agentgui.graphEnvironment.controller;
 
-import java.awt.Dimension;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import javax.swing.JFrame;
-
-import org.apache.commons.collections15.Transformer;
-
 import agentgui.core.application.Language;
 
-import edu.uci.ics.jung.algorithms.layout.FRLayout;
-import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseGraph;
 import edu.uci.ics.jung.graph.util.EdgeType;
-import edu.uci.ics.jung.visualization.BasicVisualizationServer;
 
 /**
  * This class encapsulates a JUNG graph representing a grid, with edges representing the grid components.
@@ -136,38 +128,10 @@ public class GridModel {
 	public Collection<GridComponent> getComponents() {
 		return graph.getEdges();
 	}
-	/**
-	 * This method shows a JUNG visualization of the graph representing the grid.
-	 */
-	public void showJungVisualization(){
-		Layout<PropagationPoint, GridComponent> layout = new FRLayout<PropagationPoint, GridComponent>(graph);
-		layout.setSize(new Dimension(700, 600));
-		BasicVisualizationServer<PropagationPoint, GridComponent> visServ = new BasicVisualizationServer<PropagationPoint, GridComponent>(layout);
-		visServ.setPreferredSize(new Dimension(750, 650));
-		
-		// Node labels
-		visServ.getRenderContext().setVertexLabelTransformer(new Transformer<PropagationPoint, String>() {
-			
-			@Override
-			public String transform(PropagationPoint arg0) {
-				return "PP"+arg0.getIndex();
-			}
-		});
-		
-		// Edge labels
-		visServ.getRenderContext().setEdgeLabelTransformer(new Transformer<GridComponent, String>() {
-
-			@Override
-			public String transform(GridComponent arg0) {
-				return arg0.getType()+" "+arg0.getAgentID();
-			}
-		});
-		
-		JFrame frame = new JFrame("Debug Graph View");
-		frame.getContentPane().add(visServ);
-		frame.pack();
-		frame.setVisible(true);
-		
-		
+	Graph<PropagationPoint, GridComponent> getGraph() {
+		return graph;
+	}
+	void setGraph(Graph<PropagationPoint, GridComponent> graph) {
+		this.graph = graph;
 	}
 }
