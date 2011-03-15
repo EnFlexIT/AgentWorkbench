@@ -671,6 +671,8 @@ public class Physical2DEnvironmentController extends Observable implements Obser
 	public void update(Observable arg0, Object arg1) {
 		if(arg0 == project && arg1.toString().equals(SimulationSetups.CHANGED)){
 			handleSetupChange((SimulationSetupsChangeNotification) arg1);
+		}else if(arg1.equals(Project.SAVED)){
+			this.save();
 		}
 	}
 	

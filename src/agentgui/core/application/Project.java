@@ -217,11 +217,6 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 			// --- Save the current SimulationSetup -------
 			this.simSetups.setupSave();
 			
-			// --- Speichern von Umgebung und SVG ---------
-			if(physical2DEnvironmentController != null){
-				this.physical2DEnvironmentController.save();
-			}
-			
 			this.isUnsaved = false;			
 
 			// --- Notification ---------------------------

@@ -29,7 +29,6 @@ import org.apache.commons.collections15.Transformer;
 
 import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
-import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.visualization.BasicVisualizationServer;
 
 import agentgui.core.application.Language;
@@ -51,7 +50,6 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	
 	private JLabel lblTable = null;
 	private JSplitPane jSplitPaneRoot = null;
-	private JButton btnSaveGrid = null;
 	
 	/**
 	 * This is the default constructor
@@ -81,16 +79,13 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	 */
 	private JPanel getPnlControlls() {
 		if (pnlControlls == null) {
-			GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
-			gridBagConstraints11.gridx = 0;
-			gridBagConstraints11.gridy = 2;
 			GridBagConstraints gridBagConstraints7 = new GridBagConstraints();
 			gridBagConstraints7.gridx = 0;
 			gridBagConstraints7.gridy = 0;
 			GridBagConstraints gridBagConstraints6 = new GridBagConstraints();
 			gridBagConstraints6.gridx = 0;
 			gridBagConstraints6.anchor = GridBagConstraints.WEST;
-			gridBagConstraints6.gridy = 3;
+			gridBagConstraints6.gridy = 2;
 			lblTable = new JLabel();
 			lblTable.setText(Language.translate("Netz-Komponenten"));
 			GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
@@ -100,7 +95,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 			gridBagConstraints1.gridwidth = 1;
 			GridBagConstraints gridBagConstraints = new GridBagConstraints();
 			gridBagConstraints.fill = GridBagConstraints.BOTH;
-			gridBagConstraints.gridy = 4;
+			gridBagConstraints.gridy = 3;
 			gridBagConstraints.weightx = 1.0;
 			gridBagConstraints.weighty = 1.0;
 			gridBagConstraints.gridheight = 1;
@@ -112,7 +107,6 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 			pnlControlls.add(getBtnImportGraph(), gridBagConstraints1);
 			pnlControlls.add(getBtnSetClasses(), gridBagConstraints7);
 			pnlControlls.add(lblTable, gridBagConstraints6);
-			pnlControlls.add(getBtnSaveGrid(), gridBagConstraints11);
 		}
 		return pnlControlls;
 	}
@@ -241,8 +235,6 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 			}
 		}else if(event.getSource().equals(getBtnSetClasses())){
 			getClassSelectorDialog().setVisible(true);
-		}else if(event.getSource().equals(getBtnSaveGrid())){
-			controller.saveGridModel();
 		}
 		
 	}
@@ -286,20 +278,6 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		
 	}
 
-	/**
-	 * This method initializes btnSaveGrid	
-	 * 	
-	 * @return javax.swing.JButton	
-	 */
-	private JButton getBtnSaveGrid() {
-		if (btnSaveGrid == null) {
-			btnSaveGrid = new JButton();
-			btnSaveGrid.setText(Language.translate("Graph speichern"));
-			btnSaveGrid.addActionListener(this);
-		}
-		return btnSaveGrid;
-	}
-	
 	private BasicVisualizationServer<PropagationPoint, GridComponent> getVisualization(){
 			Layout<PropagationPoint, GridComponent> layout = new FRLayout<PropagationPoint, GridComponent>(controller.getGridModel().getGraph());
 			layout.setSize(new Dimension(500, 400));

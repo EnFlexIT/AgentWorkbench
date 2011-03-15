@@ -9,8 +9,8 @@
      id="svg2" sodipodi:docname="SMA_HarborExample_2.svg" version="1.1"
      width="600"
      xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-     xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
      xmlns:dc="http://purl.org/dc/elements/1.1/"
+     xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
      xmlns:cc="http://creativecommons.org/ns#"
      preserveAspectRatio="xMidYMid meet" inkscape:version="0.47 r22583"
      height="400" xmlns="http://www.w3.org/2000/svg">
@@ -32,58 +32,57 @@
                         inkscape:cy="200" inkscape:window-x="0"
                         inkscape:cx="300" showgrid="false" guidetolerance="10"
                         inkscape:pageopacity="0" inkscape:pageshadow="2"
-                        inkscape:window-width="1215"
-                        inkscape:window-maximized="0" borderopacity="1"
-                        pagecolor="#ffffff"/>
+                        inkscape:window-width="1215" pagecolor="#ffffff"
+                        borderopacity="1" inkscape:window-maximized="0"/>
     <defs id="defs4">
         <inkscape:perspective inkscape:vp_x="0 : 200 : 1" id="perspective23"
                               sodipodi:type="inkscape:persp3d"
                               inkscape:vp_z="600 : 200 : 1"
-                              inkscape:persp3d-origin="300 : 133.33333 : 1"
-                              inkscape:vp_y="0 : 1000 : 0"/>
+                              inkscape:vp_y="0 : 1000 : 0"
+                              inkscape:persp3d-origin="300 : 133.33333 : 1"/>
         <inkscape:perspective inkscape:vp_x="0 : 0.5 : 1" id="perspective2837"
                               sodipodi:type="inkscape:persp3d"
                               inkscape:vp_z="1 : 0.5 : 1"
-                              inkscape:vp_y="0 : 1000 : 0"
-                              inkscape:persp3d-origin="0.5 : 0.33333333 : 1"/>
+                              inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+                              inkscape:vp_y="0 : 1000 : 0"/>
     </defs>
-    <rect x="0.0" width="137.0" id="water" y="0.0" height="400.0"
+    <rect x="0.0" width="137.0" height="400.0" y="0.0" id="water"
           style="fill:blue;stroke:none"/>
-    <rect x="137.0" width="463.0" id="land" y="0.0" height="400.0"
+    <rect x="137.0" width="463.0" height="400.0" y="0.0" id="land"
           style="fill:#b3b3b3;stroke:none"/>
-    <rect x="145.0" width="10.0" id="container4" y="219.0" height="22.0"
+    <rect x="145.0" width="10.0" height="22.0" y="219.0" id="container4"
           style="fill:red;stroke:none"/>
-    <rect x="145.0" width="10.0" id="container1" y="129.0" height="22.0"
+    <rect x="145.0" width="10.0" height="22.0" y="129.0" id="container1"
           style="fill:red;stroke:none"/>
-    <rect x="145.0" width="10.0" id="container2" y="159.0" height="22.0"
+    <rect x="145.0" width="10.0" height="22.0" y="159.0" id="container2"
           style="fill:red;stroke:none"/>
-    <rect x="145.0" width="10.0" id="container3" y="189.0" height="22.0"
+    <rect x="145.0" width="10.0" height="22.0" y="189.0" id="container3"
           style="fill:red;stroke:none"/>
-    <rect x="325.0" width="19.0" id="carrier1" y="16.0" height="36.0"
+    <rect x="325.0" width="19.0" height="36.0" y="16.0" id="carrier1"
           style="fill:yellow;stroke:none"/>
-    <rect x="326.5" width="16.0" id="carrier2" y="322.0" height="36.0"
+    <rect x="326.5" width="16.0" height="36.0" y="322.0" id="carrier2"
           style="fill:yellow;stroke:none"/>
     <path style="fill:green;stroke:green;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-          id="path2830"
-          d="M 43.285036,275.91623 L 43.285036,115.28066 L 87.531961,71.033729 L 130.81699,114.31877 L 130.81699,275.91623 L 43.285036,275.91623 z"/>
-    <rect x="366.35538" width="156.56038" id="wall1" y="70.0" height="15.0"
+          d="M 43.285036,275.91623 L 43.285036,115.28066 L 87.531961,71.033729 L 130.81699,114.31877 L 130.81699,275.91623 L 43.285036,275.91623 z"
+          id="path2830"/>
+    <rect x="366.35538" width="156.56038" height="15.0" y="70.0" id="wall1"
           style="fill:#4d4d4d;stroke:none"/>
-    <rect x="366.35538" width="156.56038" id="wall3" y="250.0" height="15.0"
+    <rect x="366.35538" width="156.56038" height="15.0" y="250.0" id="wall3"
           style="fill:#4d4d4d;stroke:none"/>
-    <rect x="520.3823" width="15.0" id="wall2" y="70.07186" height="194.8191"
+    <rect x="520.3823" width="15.0" height="194.8191" y="70.07186" id="wall2"
           style="fill:#4d4d4d;stroke:none"/>
-    <rect x="355.0" width="15.0" id="wall5" y="69.77126" height="70.0"
+    <rect x="355.0" width="15.0" height="70.0" y="69.77126" id="wall5"
           style="fill:#4d4d4d;stroke:none"/>
-    <rect x="355.0" width="15.0" id="wall4" y="195.15883" height="70.0"
+    <rect x="355.0" width="15.0" height="70.0" y="195.15883" id="wall4"
           style="fill:#4d4d4d;stroke:none"/>
-    <rect x="165.0" width="10.0" id="container8" y="219.0" height="22.0"
+    <rect x="165.0" width="10.0" height="22.0" y="219.0" id="container8"
           style="fill:#ff0000;stroke:none"/>
-    <rect x="165.0" width="10.0" id="container5" y="129.0" height="22.0"
+    <rect x="165.0" width="10.0" height="22.0" y="129.0" id="container5"
           style="fill:#ff0000;stroke:none"/>
-    <rect x="165.0" width="10.0" id="container6" y="159.0" height="22.0"
+    <rect x="165.0" width="10.0" height="22.0" y="159.0" id="container6"
           style="fill:#ff0000;stroke:none"/>
-    <rect x="165.0" width="10.0" id="container7" y="189.0" height="22.0"
+    <rect x="165.0" width="10.0" height="22.0" y="189.0" id="container7"
           style="fill:#ff0000;stroke:none"/>
-    <rect fill="none" width="599" stroke-width="1" id="border" height="399"
+    <rect fill="none" width="599" height="399" id="border" stroke-width="1"
           stroke="black"/>
 </svg>

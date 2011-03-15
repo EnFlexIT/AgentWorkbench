@@ -28,11 +28,9 @@ import agentgui.graphEnvironment.controller.yedGraphml.YedGraphMLFileImporter;
 
 public class GraphEnvironmentController extends Observable implements Observer {
 	
-	public static final Integer EVENT_SVG_LOADED = 0;
+	public static final Integer EVENT_GRAPH_LOADED = 0;
 	
-	public static final Integer EVENT_GRAPH_LOADED = 1;
-	
-	public static final Integer EVENT_AGENT_CLASSES_SET = 3;
+	public static final Integer EVENT_AGENT_CLASSES_SET = 1;
 	
 	public HashMap<String, String> getAgentClasses() {
 		return project.simSetups.getCurrSimSetup().getAgentClassesHash();
@@ -55,6 +53,7 @@ public class GraphEnvironmentController extends Observable implements Observer {
 	
 	public GraphEnvironmentController(Project project){
 		this.project = project;
+		this.project.addObserver(this);
 		loadProjectGridModel();
 	}
 	
@@ -88,8 +87,9 @@ public class GraphEnvironmentController extends Observable implements Observer {
 
 	@Override
 	public void update(Observable o, Object arg) {
-		// TODO Auto-generated method stub
-
+		if(arg == Project.SAVED){
+			saveGridModel();
+		}
 	}
 	
 	GraphFileImporter getGraphFileImporter(){

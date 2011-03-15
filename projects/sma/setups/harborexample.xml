@@ -22,6 +22,5 @@
         <size>0</size>
     </agentListModel>
     <environmentFileName>HarborExample.xml</environmentFileName>
-    <environmentMode>physical2DEnvironment</environmentMode>
     <svgFileName>HarborExample.svg</svgFileName>
 </simulationSetup>
