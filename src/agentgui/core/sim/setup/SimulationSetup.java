@@ -67,13 +67,13 @@ import agentgui.core.application.Project;
 	public boolean save() {
 		
 		// ------------------------------------------------
-		// --- Daten vom GUI in das Modell schreiben ------
+		// --- Write Data from GUI to the Model -----------
 		this.setAgentList(this.agentListModel);
 		
 		// ------------------------------------------------
-		// --- Speichern des aktuellen Setups -------------
+		// --- Save the current simulation setup ----------
 		try {			
-			// --- Kontext und Marshaller vorbereiten -----
+			// --- prepare context and Marshaller ---------
 			JAXBContext pc = JAXBContext.newInstance( this.getClass() ); 
 			Marshaller pm = pc.createMarshaller(); 
 			pm.setProperty( Marshaller.JAXB_ENCODING, "UTF-8" );
@@ -83,6 +83,7 @@ import agentgui.core.application.Project;
 			Writer pw = new FileWriter( currProject.simSetups.getCurrSimXMLFile() );
 			pm.marshal( this, pw );
 						
+			currProject.setNotChangedButNotify(new SimulationSetupsChangeNotification(SimulationSetups.SIMULATION_SETUP_SAVED));
 		} 
 		catch (Exception e) {
 			System.out.println("XML-Error while saving Setup-File!");

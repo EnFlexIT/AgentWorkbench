@@ -35,7 +35,7 @@ import agentgui.core.application.Project;
 import agentgui.core.common.FileCopier;
 import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.core.sim.setup.SimulationSetups;
-import agentgui.core.sim.setup.SimulationSetups.SimulationSetupsChangeNotification;
+import agentgui.core.sim.setup.SimulationSetupsChangeNotification;
 import agentgui.physical2Denvironment.display.SVGUtils;
 import agentgui.physical2Denvironment.ontology.ActiveObject;
 import agentgui.physical2Denvironment.ontology.EnvironmentOntology;

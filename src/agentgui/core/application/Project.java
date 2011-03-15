@@ -46,6 +46,8 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 @XmlRootElement public class Project extends Observable {
 
 	// --- public statics --------------------------------------
+	@XmlTransient public static final String SAVED = "ProjectSaved";
+	
 	@XmlTransient public static final String CHANGED_ProjectName = "ProjectName";
 	@XmlTransient public static final String CHANGED_ProjectDescription = "ProjectDescription";
 	@XmlTransient public static final String CHANGED_ProjectFolder= "ProjectFolder";
@@ -199,20 +201,20 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	 * Save the current MAS-Project
 	 */
 	public boolean save() {
-		// --- Speichern des aktuellen Projekts ------------
+		// --- Save the current project -------------------
 		Application.MainWindow.setStatusBar( projectName + ": " + Language.translate("speichern") + " ... ");
 		try {			
-			// --- Kontext und Marshaller vorbereiten ------
+			// --- prepare Context and Marshaller ---------
 			JAXBContext pc = JAXBContext.newInstance( this.getClass() ); 
 			Marshaller pm = pc.createMarshaller(); 
 			pm.setProperty( Marshaller.JAXB_ENCODING, "UTF-8" );
 			pm.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE ); 
 			//pm.marshal( this, System.out );
-			// --- Objektwerte in xml-Datei schreiben -----
+			// --- Write values to xml-File ---------------
 			Writer pw = new FileWriter( projectFolderFullPath + Application.RunInfo.getFileNameProject() );
 			pm.marshal( this, pw );
 			
-			// --- Speichern des aktuellen Sim-Setups -----
+			// --- Save the current SimulationSetup -------
 			this.simSetups.setupSave();
 			
 			// --- Speichern von Umgebung und SVG ---------
@@ -220,7 +222,11 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 				this.physical2DEnvironmentController.save();
 			}
 			
-			isUnsaved = false;			
+			this.isUnsaved = false;			
+
+			// --- Notification ---------------------------
+			this.setNotChangedButNotify(Project.SAVED);
+
 		} 
 		catch (Exception e) {
 			System.out.println("XML-Error while saving Project-File!");
@@ -235,7 +241,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	 * @return
 	 */
 	public boolean close() {
-		// --- Projekt schlieﬂen ? -----------------------
+		// --- Close project? -----------------------------
 		String MsgHead = null;
 		String MsgText = null;
 		Integer MsgAnswer = 0;

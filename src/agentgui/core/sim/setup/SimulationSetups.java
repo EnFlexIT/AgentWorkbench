@@ -29,6 +29,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 	public static final int SIMULATION_SETUP_COPY = 2;
 	public static final int SIMULATION_SETUP_REMOVE = 3;
 	public static final int SIMULATION_SETUP_RENAME = 4;
+	public static final int SIMULATION_SETUP_SAVED = 5;
 	
 	public final String XML_FilePostfix = ".xml";
 	private Project currProject = Application.ProjectCurr;
@@ -264,7 +265,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 	 */
 	public void setupSave() {
 		if (currSimSetup!=null) {
-			currSimSetup.save();	
+			currSimSetup.save();
 		}
 		this.setupCleanUpSubFolder();
 	}
@@ -352,25 +353,6 @@ public class SimulationSetups extends Hashtable<String, String> {
 	 */
 	public String getCurrSimXMLFile() {
 		return currSimXMLFile;
-	}
-
-	
-	public class SimulationSetupsChangeNotification {
-		
-		private int updateReason;
-		public SimulationSetupsChangeNotification(int reason) {
-			updateReason = reason;
-		}
-		public void setUpdateReason(int updateReason) {
-			this.updateReason = updateReason;
-		}
-		public int getUpdateReason() {
-			return updateReason;
-		}
-		public String toString() {
-			return CHANGED;
-		}
-		
 	}
 
 	
