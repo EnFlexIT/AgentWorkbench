@@ -48,8 +48,8 @@ import agentgui.core.application.Project;
 import agentgui.simulationService.balancing.SimStartAgent;
 
 /**
- * Main User-Interface der Anwendung
- * @author Christin Derksen
+ * Main User-Interface of the application
+ * @author Christian Derksen
  */
 public class CoreWindow extends JFrame implements ComponentListener {
 
@@ -126,10 +126,10 @@ public class CoreWindow extends JFrame implements ComponentListener {
 		
 		//this.setExtendedState(Frame.MAXIMIZED_BOTH);
 		this.setVisible(true);
-		setTitelAddition("");
-		setCloseButtonPosition( false );
+		this.setTitelAddition("");
+		this.setCloseButtonPosition(false);
 		
-		// --- Console einstellen --------------------------------- 
+		// --- configure console ---------------------------------- 
 		ConsoleHeight = SplitProjectDesktop.getHeight() / 4; 
 		SplitProjectDesktop.setDividerLocation( SplitProjectDesktop.getHeight() - ConsoleHeight );
 		if ( Application.RunInfo.isAppUseInternalConsole() == false ) { 

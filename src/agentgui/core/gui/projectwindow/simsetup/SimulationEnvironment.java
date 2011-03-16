@@ -38,6 +38,11 @@ public class SimulationEnvironment extends JPanel implements Observer, ActionLis
 		
 	}
 	
+	/**
+	 * Depending on the currently configured (predefined) environment/visulasition model, this
+	 * method returns the EnvironmentPanel, which has to be displayed here on this JPanel
+	 * @return the currently configured Environment-Display
+	 */
 	private EnvironmentPanel getEnvironmentControllerGUI(){
 		
 		environmentControllerGUI = new EnvironmentPanel(this.project);

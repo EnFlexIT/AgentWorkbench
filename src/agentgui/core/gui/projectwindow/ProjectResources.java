@@ -6,11 +6,8 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.Vector;
 
@@ -24,7 +21,6 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 import javax.swing.border.EtchedBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -50,17 +46,20 @@ public class ProjectResources extends JPanel {
 	private JButton jButtonRemove = null;
 	private JButton jButtonRefresh = null;
 
-	private JPanel jPanelCustomize = null;
-	private JLabel jLabelCustomize = null;
-	private JTextField jTextFieldCustomizeClass = null;
-	private JButton jButtonDefaultClass = null;
-	private JButton jButtonDefaultClassCustomize = null;
 	private JPanel jPanelSimulationEnvironment = null;
 	
 	private JComboBox jComboBoxEnvironmentModelSelector = null;
 	private JLabel jLabelEnvTyp = null;
 	private JLabel jLabelResources = null;
 	private JLabel jLabelSeperator = null;
+	private JLabel jLabelPlugIns = null;
+	
+	private JScrollPane jScrollPanePlugIns = null;
+	private JPanel jPanelRightPlugIns = null;
+	private JButton jButtonAddPlugIns = null;
+	private JButton jButtonRemovePlugIns = null;
+	private JButton jButtonRefreshPlugIns = null;
+	private JList jListPlugIns = null;
 
 	
 	/**
@@ -129,6 +128,27 @@ public class ProjectResources extends JPanel {
 	 * @return void
 	 */
 	private void initialize() {
+		GridBagConstraints gridBagConstraints31 = new GridBagConstraints();
+		gridBagConstraints31.gridx = 1;
+		gridBagConstraints31.anchor = GridBagConstraints.NORTH;
+		gridBagConstraints31.insets = new Insets(5, 5, 5, 10);
+		gridBagConstraints31.gridy = 6;
+		GridBagConstraints gridBagConstraints22 = new GridBagConstraints();
+		gridBagConstraints22.fill = GridBagConstraints.BOTH;
+		gridBagConstraints22.gridy = 6;
+		gridBagConstraints22.weightx = 1.0;
+		gridBagConstraints22.weighty = 0.5;
+		gridBagConstraints22.insets = new Insets(5, 10, 0, 5);
+		gridBagConstraints22.anchor = GridBagConstraints.NORTH;
+		gridBagConstraints22.gridx = 0;
+		GridBagConstraints gridBagConstraints13 = new GridBagConstraints();
+		gridBagConstraints13.gridx = 0;
+		gridBagConstraints13.insets = new Insets(10, 10, 0, 0);
+		gridBagConstraints13.anchor = GridBagConstraints.WEST;
+		gridBagConstraints13.gridy = 5;
+		jLabelPlugIns = new JLabel();
+		jLabelPlugIns.setFont(new Font("Dialog", Font.BOLD, 12));
+		jLabelPlugIns.setText("PlugIns");
 		GridBagConstraints gridBagConstraints41 = new GridBagConstraints();
 		gridBagConstraints41.fill = GridBagConstraints.HORIZONTAL;
 		gridBagConstraints41.gridx = 0;
@@ -148,18 +168,13 @@ public class ProjectResources extends JPanel {
 		gridBagConstraints21.insets = new Insets(10, 10, 0, 5);
 		gridBagConstraints21.fill = GridBagConstraints.HORIZONTAL;
 		gridBagConstraints21.gridy = 1;
-		GridBagConstraints gridBagConstraints13 = new GridBagConstraints();
-		gridBagConstraints13.gridx = 0;
-		gridBagConstraints13.fill = GridBagConstraints.HORIZONTAL;
-		gridBagConstraints13.insets = new Insets(10, 10, 15, 5);
-		gridBagConstraints13.anchor = GridBagConstraints.WEST;
-		gridBagConstraints13.gridy = 5;
 		GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
 		gridBagConstraints11.fill = GridBagConstraints.BOTH;
-		gridBagConstraints11.weighty = 1.0;
+		gridBagConstraints11.weighty = 0.5;
 		gridBagConstraints11.gridx = 0;
 		gridBagConstraints11.gridy = 4;
 		gridBagConstraints11.insets = new Insets(5, 10, 0, 5);
+		gridBagConstraints11.anchor = GridBagConstraints.NORTH;
 		gridBagConstraints11.weightx = 1.0;
 		GridBagConstraints gridBagConstraints12 = new GridBagConstraints();
 		gridBagConstraints12.gridx = 1;
@@ -174,14 +189,16 @@ public class ProjectResources extends JPanel {
 		gridBagConstraints.weighty = 1.0;
 		gridBagConstraints.insets = new Insets(10, 10, 5, 10);
 		gridBagConstraints.gridx = 0;
-		this.setSize(727, 327);
+		this.setSize(727, 381);
 		this.setLayout(new GridBagLayout());
 		this.add(getJPanelRight(), gridBagConstraints12);
 		this.add(getJScrollPane(), gridBagConstraints11);
-		this.add(getJPanelCustomize(), gridBagConstraints13);
 		this.add(getJPanelSimulationEnvironment(), gridBagConstraints21);
 		this.add(jLabelResources, gridBagConstraints32);
 		this.add(jLabelSeperator, gridBagConstraints41);
+		this.add(jLabelPlugIns, gridBagConstraints13);
+		this.add(getJScrollPanePlugIns(), gridBagConstraints22);
+		this.add(getJPanelRightPlugIns(), gridBagConstraints31);
 	}
 
 	private Vector<String> handleDirectories(File dir) {
@@ -208,7 +225,6 @@ public class ProjectResources extends JPanel {
 
 	/**
 	 * This method initializes jButtonAdd	
-	 * 	
 	 * @return javax.swing.JButton	
 	 */
 	private JButton getJButtonAdd() {
@@ -334,131 +350,10 @@ public class ProjectResources extends JPanel {
 	private JScrollPane getJScrollPane() {
 		if (jScrollPane == null) {
 			jScrollPane = new JScrollPane();
+			jScrollPane.setPreferredSize(new Dimension(260, 120));
 			jScrollPane.setViewportView(getJListResources());
 		}
 		return jScrollPane;
-	}
-
-
-	/**
-	 * This method initializes jPanelCustomize	
-	 * @return javax.swing.JPanel	
-	 */
-	private JPanel getJPanelCustomize() {
-		if (jPanelCustomize == null) {
-			GridBagConstraints gridBagConstraints28 = new GridBagConstraints();
-			gridBagConstraints28.gridx = 1;
-			gridBagConstraints28.insets = new Insets(5, 5, 0, 0);
-			gridBagConstraints28.gridy = 1;
-			GridBagConstraints gridBagConstraints52 = new GridBagConstraints();
-			gridBagConstraints52.fill = GridBagConstraints.NONE;
-			gridBagConstraints52.gridx = 2;
-			gridBagConstraints52.gridy = 1;
-			gridBagConstraints52.insets = new Insets(5, 5, 0, 0);
-			GridBagConstraints gridBagConstraints31 = new GridBagConstraints();
-			gridBagConstraints31.anchor = GridBagConstraints.WEST;
-			gridBagConstraints31.insets = new Insets(5, 0, 0, 0);
-			gridBagConstraints31.gridx = 0;
-			gridBagConstraints31.gridy = 1;
-			gridBagConstraints31.weightx = 1.0;
-			gridBagConstraints31.fill = GridBagConstraints.BOTH;
-			GridBagConstraints gridBagConstraints42 = new GridBagConstraints();
-			gridBagConstraints42.anchor = GridBagConstraints.WEST;
-			gridBagConstraints42.gridy = 0;
-			gridBagConstraints42.gridwidth = 3;
-			gridBagConstraints42.gridx = 0;
-			jLabelCustomize = new JLabel();
-			jLabelCustomize.setText("Java-Klasse für individuelle Agent.GUI-Erweiterung");
-			jLabelCustomize.setFont(new Font("Dialog", Font.BOLD, 12));
-			jPanelCustomize = new JPanel();
-			jPanelCustomize.setLayout(new GridBagLayout());
-			jPanelCustomize.add(jLabelCustomize, gridBagConstraints42);
-			jPanelCustomize.add(getJTextFieldCustomizeClass(), gridBagConstraints31);
-			jPanelCustomize.add(getJButtonDefaultClass(), gridBagConstraints52);
-			jPanelCustomize.add(getJButtonDefaultClassCustomize(), gridBagConstraints28);
-		}
-		return jPanelCustomize;
-	}
-	/**
-	 * This method initializes jTextFieldCustomizeClass	
-	 * @return javax.swing.JTextField	
-	 */
-	private JTextField getJTextFieldCustomizeClass() {
-		if (jTextFieldCustomizeClass == null) {
-			jTextFieldCustomizeClass = new JTextField();
-			jTextFieldCustomizeClass.setPreferredSize(new Dimension(400, 26));
-			jTextFieldCustomizeClass.addKeyListener(new KeyAdapter() {
-				@Override
-				public void keyReleased(KeyEvent kR) {
-					super.keyReleased(kR);
-					isValidClass(jTextFieldCustomizeClass, jButtonDefaultClassCustomize);
-				}
-			});
-		}
-		return jTextFieldCustomizeClass;
-	}
-	/**
-	 * This method initializes jButtonDefaultClass	
-	 * @return javax.swing.JButton	
-	 */
-	private JButton getJButtonDefaultClass() {
-		if (jButtonDefaultClass == null) {
-			jButtonDefaultClass = new JButton();
-			jButtonDefaultClass.setToolTipText("Agent.GUI - Standard verwenden");			
-			jButtonDefaultClass.setBounds(new Rectangle(120, 121, 80, 26));
-			jButtonDefaultClass.setPreferredSize(new Dimension(45, 26));
-			jButtonDefaultClass.setIcon(new ImageIcon(getClass().getResource(PathImage + "MBreset.png")));
-			jButtonDefaultClass.setActionCommand("StatLoadBalancingDefault");
-			jButtonDefaultClass.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					// TODO Auto-generated method stub
-					
-				}
-			});
-		}
-		return jButtonDefaultClass;
-	}
-	
-	/**
-	 * This method initializes jButtonDefaultClassCustomize	
-	 * @return javax.swing.JButton	
-	 */
-	private JButton getJButtonDefaultClassCustomize() {
-		if (jButtonDefaultClassCustomize == null) {
-			jButtonDefaultClassCustomize = new JButton();
-			jButtonDefaultClassCustomize.setToolTipText("Klassenangabe überprüfen");
-			jButtonDefaultClassCustomize.setPreferredSize(new Dimension(45, 26));
-			jButtonDefaultClassCustomize.setIcon(new ImageIcon(getClass().getResource(PathImage + "MBcheckGreen.png")));
-			jButtonDefaultClassCustomize.setActionCommand("StatLoadBalancingCheck");
-			jButtonDefaultClassCustomize.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					// TODO Auto-generated method stub
-					
-				}
-			});
-		}
-		return jButtonDefaultClassCustomize;
-	}
-	
-	/**
-	 * This method checks if a given classs reference is valid
-	 * @param className: reference to the class  
-	 * @param classType: static(0) or dynamic(1)
-	 */
-	private void isValidClass(JTextField jTextField, JButton jButton) {
-		
-		String className = jTextField.getText().trim();
-		try {
-			@SuppressWarnings("unused")
-			Class<?> clazz = Class.forName(className);
-			jButton.setIcon(new ImageIcon(getClass().getResource(PathImage + "MBcheckGreen.png")));
-			
-		} catch (ClassNotFoundException e) {
-			//e.printStackTrace();
-			jButton.setIcon(new ImageIcon(getClass().getResource(PathImage + "MBcheckRed.png")));
-		}
 	}
 
 	/**
@@ -491,7 +386,6 @@ public class ProjectResources extends JPanel {
 		}
 		return jPanelSimulationEnvironment;
 	}
-
 	
 	/**
 	 * This method initializes jComboBoxEnvironmentModelSelector
@@ -521,6 +415,118 @@ public class ProjectResources extends JPanel {
 			});
 		}
 		return jComboBoxEnvironmentModelSelector;
+	}
+
+	/**
+	 * This method initializes jScrollPanePlugIns	
+	 * @return javax.swing.JScrollPane	
+	 */
+	private JScrollPane getJScrollPanePlugIns() {
+		if (jScrollPanePlugIns == null) {
+			jScrollPanePlugIns = new JScrollPane();
+			jScrollPanePlugIns.setPreferredSize(new Dimension(260, 120));
+			jScrollPanePlugIns.setViewportView(getJListPlugIns());
+		}
+		return jScrollPanePlugIns;
+	}
+	
+	
+	/**
+	 * This method initializes jButtonAdd	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getJButtonAddPlugIns() {
+		if (jButtonAddPlugIns == null) {
+			jButtonAddPlugIns = new JButton();
+			jButtonAddPlugIns.setPreferredSize(new Dimension(45, 26));
+			jButtonAddPlugIns.setIcon(new ImageIcon(getClass().getResource(PathImage + "ListPlus.png")));
+			jButtonAddPlugIns.setToolTipText("Add");
+			jButtonAddPlugIns.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					System.out.println("Add PlugIn");
+				}
+			});					
+		}
+		return jButtonAddPlugIns;
+	}
+
+	/**
+	 * This method initializes jButtonRemove	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getJButtonRemovePlugIns() {
+		if (jButtonRemovePlugIns == null) {
+			jButtonRemovePlugIns = new JButton();
+			jButtonRemovePlugIns.setIcon(new ImageIcon(getClass().getResource(PathImage + "ListMinus.png")));
+			jButtonRemovePlugIns.setPreferredSize(new Dimension(45, 26));
+			jButtonRemovePlugIns.setToolTipText("Remove");
+			jButtonRemovePlugIns.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					System.out.println("Remove PlugIn");
+				}
+			}); 
+
+		}
+		return jButtonRemovePlugIns;
+	}
+
+	/**
+	 * This method initializes jButtonRefresh	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getJButtonRefreshPlugIns() {
+		if (jButtonRefreshPlugIns == null) {
+			jButtonRefreshPlugIns = new JButton();
+			jButtonRefreshPlugIns.setIcon(new ImageIcon(getClass().getResource(PathImage + "Refresh.png")));
+			jButtonRefreshPlugIns.setPreferredSize(new Dimension(45, 26));
+			jButtonRefreshPlugIns.setToolTipText("Refresh");
+			jButtonRefreshPlugIns.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					System.out.println("Refresh PlugIns");
+				}
+			});
+		}
+		return jButtonRefreshPlugIns;
+	}
+	
+	/**
+	 * This method initializes jPanelRight	
+	 * @return javax.swing.JPanel	
+	 */
+	private JPanel getJPanelRightPlugIns() {
+		if (jPanelRightPlugIns == null) {
+			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
+			gridBagConstraints3.gridx = 0;
+			gridBagConstraints3.insets = new Insets(20, 0, 0, 0);
+			gridBagConstraints3.gridy = 2;
+			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
+			gridBagConstraints2.gridx = 0;
+			gridBagConstraints2.gridy = 1;
+			GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
+			gridBagConstraints1.gridx = -1;
+			gridBagConstraints1.insets = new Insets(0, 0, 5, 0);
+			gridBagConstraints1.gridy = -1;
+			jPanelRightPlugIns = new JPanel();
+			jPanelRightPlugIns.setLayout(new GridBagLayout());
+			jPanelRightPlugIns.add(getJButtonAddPlugIns(), gridBagConstraints1);
+			jPanelRightPlugIns.add(getJButtonRemovePlugIns(), gridBagConstraints2);
+			jPanelRightPlugIns.add(getJButtonRefreshPlugIns(), gridBagConstraints3);
+		}
+		return jPanelRightPlugIns;
+	}
+
+	/**
+	 * This method initializes jListPlugIns	
+	 * @return javax.swing.JList	
+	 */
+	private JList getJListPlugIns() {
+		if (jListPlugIns == null) {
+			jListPlugIns = new JList();
+		}
+		return jListPlugIns;
 	}
 	
 } //  @jve:decl-index=0:visual-constraint="-105,-76"

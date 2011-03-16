@@ -86,20 +86,20 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 
 	    // --- Fallunterscheidung "Neues Projekt?" ------------------
 	    if ( NewProject==true ) {
-	    	jButtonOK.setText( Language.translate("OK") );
+	    	jButtonOK.setText("OK");
 	    	ProjectName.setEnabled(true);
 	    	ProjectFolder.setEnabled(true);
 	    }
 	    else {
-	    	jButtonOK.setText( Language.translate("Öffnen") );
+	    	jButtonOK.setText("Öffnen");
 	    	ProjectName.setEnabled(false);
 	    	ProjectFolder.setEnabled(false);	    	
-	    };	    
+	    };	
+	    jButtonOK.setText( Language.translate(jButtonOK.getText()));
 	}
 
 	/**
 	 * This method initializes this
-	 * 
 	 * @return void
 	 */
 	private void initialize() {
@@ -117,7 +117,6 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 
 	/**
 	 * This method initializes jContentPane
-	 * 
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJContentPane() {
@@ -126,17 +125,20 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 			jLabel = new JLabel();
 			jLabel.setBounds(new Rectangle(15, 15, 100, 19));
 			jLabel.setFont(new Font("Dialog", Font.BOLD, 12));
-			jLabel.setText( Language.translate("Projekttitel") );
+			jLabel.setText("Projekttitel");
+			jLabel.setText( Language.translate(jLabel.getText()) );
 			
 			jLabel1 = new JLabel();
 			jLabel1.setBounds(new Rectangle(15, 51, 100, 19));
 			jLabel1.setFont(new Font("Dialog", Font.BOLD, 12));
-			jLabel1.setText( Language.translate("Verzeichnis") );
+			jLabel1.setText("Verzeichnis" );
+			jLabel1.setText(Language.translate(jLabel1.getText()));
 			
 			jLabel2 = new JLabel();
 			jLabel2.setBounds(new Rectangle(15, 110, 260, 19));
 			jLabel2.setFont(new Font("Dialog", Font.BOLD, 12));
-			jLabel2.setText( Language.translate("Vorhandene Projektverzeichnisse") );
+			jLabel2.setText("Vorhandene Projektverzeichnisse" );
+			jLabel2.setText(Language.translate(jLabel2.getText()));
 			
 			jLabelLine = new JLabel();
 			jLabelLine.setBounds(new Rectangle(15, 92, 470, 2));
@@ -255,7 +257,6 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 
 	/**
 	 * This method initializes jScrollTree	
-	 * 	
 	 * @return javax.swing.JScrollPane	
 	 */
 	private JScrollPane getJScrollTree() {
@@ -326,7 +327,6 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 
 	/**
 	 * This method initializes jButtonOK	
-	 * 	
 	 * @return javax.swing.JButton	
 	 */
 	private JButton getJButtonOK() {
@@ -343,7 +343,6 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 
 	/**
 	 * This method initializes jButtonCancel	
-	 * 	
 	 * @return javax.swing.JButton	
 	 */
 	private JButton getJButtonCancel() {
@@ -351,7 +350,8 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 			jButtonCancel = new JButton();
 			jButtonCancel.setBounds(new Rectangle(330, 195, 136, 29));
 			jButtonCancel.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonCancel.setText( Language.translate("Abbruch") );
+			jButtonCancel.setText("Abbruch");
+			jButtonCancel.setText(Language.translate(jButtonCancel.getText()));
 			jButtonCancel.setForeground(new Color(153, 0, 0));
 			jButtonCancel.setActionCommand("Cancel");
 			jButtonCancel.addActionListener(this);
