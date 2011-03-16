@@ -14,37 +14,51 @@ import agentgui.core.application.Project;
  *   
  * @author Christian Derksen
  */
-public class ProjectPlugin implements Observer {
+public abstract class PlugIn implements Observer {
 
-	private Project project = null;
 	
+	public static final String CHANGED = "PlugIns";
+	public static final int ADDED = 1;
+	public static final int REMOVED = 2;
+	
+	private Project project = null;
+
 	/**
 	 * Default constructor for this class
 	 * @param currProject
 	 */
-	public ProjectPlugin(Project currProject) {
+	public PlugIn(Project currProject) {
 		this.project = currProject;
-		this.project.addObserver(this);
+		this.project.addObserver(this);		
 	}
 	
+	/**
+	 * @return the pluginName
+	 */
+	public abstract String getName();
+
 	/**
 	 * This method be called if the plugin is loaded into the project.
 	 * This happens immediately after the project was opened. 
 	 */
 	public void onPlugIn() {
+		System.out.println( "+ PlugIn loaded [" + this.getName() + "]" );
 	}
 	/**
 	 * This method will be called if the plugin will be removed from the 
 	 * project, means immediately before the project will be closed.
 	 */
 	public void onPlugOut() {
+		this.project.deleteObserver(this);
+		System.out.println( "- PlugIn unloaded/removed [" + this.getName() + "]" );
 	}
-
+	
 	/**
 	 * AgentGUI uses the observer pattern to inform about changes 
 	 * within the project. They can consist on the following kinds
 	 * of notifications  
 	 * 
+	 * - String Project.SAVED
 	 * - String Project.CHANGED_ProjectName
 	 * - String Project.CHANGED_ProjectDescription 
 	 * - String Project.CHANGED_ProjectFolder
@@ -54,7 +68,6 @@ public class ProjectPlugin implements Observer {
 	 * - String Project.CHANGED_ProjectOntology 
 	 * - String Project.CHANGED_ProjectResources
 	 * 
-	 * 
 	 * - String SimulationSetups.CHANGED
 	 * 	 Here in Detail, while using the 
 	 *   'SimulationSetupsChangeNotification.getUpdateReason' - method:
@@ -63,11 +76,23 @@ public class ProjectPlugin implements Observer {
 	 * 	 => int SimulationSetups.SIMULATION_SETUP_COPY
 	 * 	 => int SimulationSetups.SIMULATION_SETUP_REMOVE
 	 * 	 => int SimulationSetups.SIMULATION_SETUP_RENAME
-	 * 	 
+	 *   => int SimulationSetups.SIMULATION_SETUP_SAVED
+	 * 
+	 * - String PlugIn.CHANGED
+	 * 	 Here in Detail, while using the 
+	 *   'PlugInNotification.getUpdateReason' - method:
+	 *   => int PlugIn.ADDED
+	 *   => int PlugIn.REMOVED
+	 *   Furthermore the instance of the PlugIn can be get
+	 *   by using 'PlugInNotification.getPlugIn()'
+	 *   	 
 	 */
 	@Override
-	public void update(Observable o, Object arg) {
-
+	public void update(Observable observable, Object arg) {
+		
+		
+		
+		
 	}
 
 	

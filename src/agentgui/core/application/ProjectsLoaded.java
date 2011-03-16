@@ -1,6 +1,5 @@
 package agentgui.core.application;
 
-
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,7 +19,10 @@ import agentgui.core.gui.ProjectWindow;
 import agentgui.core.ontologies.Ontologies4Project;
 import agentgui.core.sim.setup.SimulationSetups;
 
-
+/**
+ * 
+ * @author Christian Derksen
+ */
 public class ProjectsLoaded {
 
 	// --- Listing of the open projects -------------------
@@ -143,7 +145,10 @@ public class ProjectsLoaded {
 		newProject.projectWindow = new ProjectWindow( newProject );
 		newProject.addDefaultTabs();
 		
-		// --- Projekt als aktuelle markieren ------------- 
+		// --- Konfigurierte PlugIns laden ----------------
+		newProject.loadPlugInVector();
+		
+		// --- Projekt als aktuell markieren -------------- 
 		newProject.isUnsaved = false;
 				
 		// --- Objekt an die Projektauflistung hängen -----
@@ -152,7 +157,7 @@ public class ProjectsLoaded {
 
 		// --- Anzeige anpassen ---------------------------
 		Application.Projects.setProjectView();		
-		Application.MainWindow.setCloseButtonPosition( true );
+		Application.MainWindow.setCloseButtonPosition(true);
 		Application.setTitelAddition( newProject.getProjectName() );
 		Application.setStatusBar( Language.translate("Fertig") );	
 		newProject.setMaximized();

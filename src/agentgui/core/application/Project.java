@@ -39,6 +39,10 @@ import agentgui.core.gui.projectwindow.simsetup.StartSetup;
 import agentgui.core.jade.ClassSearcher;
 import agentgui.core.jade.PlatformJadeConfig;
 import agentgui.core.ontologies.Ontologies4Project;
+import agentgui.core.plugin.PlugIn;
+import agentgui.core.plugin.PlugInLoadException;
+import agentgui.core.plugin.PlugInNotification;
+import agentgui.core.plugin.PlugInsLoaded;
 import agentgui.core.sim.setup.SimulationSetups;
 import agentgui.physical2Denvironment.controller.Physical2DEnvironmentController;
 import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
@@ -98,6 +102,13 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	@XmlElementWrapper(name = "projectResources")
 	@XmlElement(name="projectResource")
 	public Vector<String> projectResources = new Vector<String>();
+
+	@XmlElementWrapper(name="plugins")
+	@XmlElement(name="className")
+	public Vector<String> plugIns_Classes = new Vector<String>();
+	@XmlTransient public PlugInsLoaded plugIns_Loaded = new PlugInsLoaded();
+	@XmlTransient private boolean plugInVectorLoaded = false;
+	
 	@XmlTransient 
 	public Vector<String> downloadResources = new Vector<String>();
 	
@@ -266,6 +277,8 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 		// ------------------------------------------------		
 		// --- Projekt kann geschlossen werden ------------
 		// ------------------------------------------------
+		// --- Clear PlugIns ------------------------------
+		this.removePlugInVector();
 		// --- Clear CLASSPATH ----------------------------
 		this.resourcesRemove();
 		
@@ -288,6 +301,70 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 		Application.setStatusBar( "" );
 		return true;
 	}
+
+	// ----------------------------------------------------------------------------------
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	
+	// --- Here we come with methods for (un-) load ProjectPlugins --- Start ------------ 
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	// ----------------------------------------------------------------------------------	
+	/**
+	 * This method will load the ProjectPlugIns, which are configured for the
+	 * current project (plugins_Classes). It will be executed only one time during 
+	 * the 'ProjectsLoaded.add()' execution. After this no further functionallity 
+	 * can be expected. 
+	 */
+	public void loadPlugInVector() {
+		if (plugInVectorLoaded==false) {
+			// --- load all plugins configured in 'plugIns_Classes' -----------
+			for (int i = 0; i < plugIns_Classes.size(); i++) {
+				if (this.loadPlugIn(plugIns_Classes.get(i))== false ) {
+					return;
+				}
+			}
+			plugInVectorLoaded = true;
+		}
+	}
+	/**
+	 * This method will remove/unload the plugins in 
+	 * descending order of the Vector 'plugins_Loaded'.  
+	 */
+	private void removePlugInVector() {
+		// --- unload/remove all plugins configured in 'plugIns_Loaded' -----------
+		for (int i = plugIns_Loaded.size(); i>0; i--) {
+			this.removePlugIn(plugIns_Loaded.get(i-1));
+		}
+		this.plugInVectorLoaded = false;
+	}
+	
+	/**
+	 * This method loads a single plugin given by its class reference
+	 * @param pluginReference
+	 */
+	public boolean loadPlugIn(String pluginReference) {
+		try {
+			PlugIn ppi = plugIns_Loaded.loadPlugin(this, pluginReference);
+			this.plugIns_Classes.add(pluginReference);
+			this.setNotChangedButNotify(new PlugInNotification(PlugIn.ADDED, ppi));
+			
+		} catch (PlugInLoadException err) {
+			err.printStackTrace();
+			return false;
+		}		
+		return true;
+	}
+	/**
+	 * This method will unload and remove a single PlugIn 
+	 * @param pluginReference
+	 */
+	public void removePlugIn(PlugIn plugIn) {
+		plugIns_Loaded.removePlugIn(plugIn);
+		this.setNotChangedButNotify(new PlugInNotification(PlugIn.REMOVED, plugIn));
+	}
+	// ----------------------------------------------------------------------------------
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	// --- Here we come with methods for (un-) load ProjectPlugins --- End --------------
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	// ----------------------------------------------------------------------------------
 	
 	/**
 	 * This Procedure creates the default Project-Structure  for a new project. It creates the 
