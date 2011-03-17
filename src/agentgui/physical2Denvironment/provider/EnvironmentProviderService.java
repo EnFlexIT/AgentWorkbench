@@ -18,6 +18,8 @@ import agentgui.physical2Denvironment.ontology.Physical2DObject;
 import agentgui.physical2Denvironment.ontology.PlaygroundObject;
 import agentgui.physical2Denvironment.utils.EnvironmentWrapper;
 import agentgui.physical2Denvironment.ontology.PositionUpdate;
+import agentgui.simulationService.SimulationServiceSlice;
+import agentgui.simulationService.environment.EnvironmentModel;
 import jade.core.Agent;
 import jade.core.AID;
 import jade.core.BaseService;
@@ -442,6 +444,107 @@ public class EnvironmentProviderService extends BaseService {
 		return helper;
 	}
 	
+	
+
+
+	private HashMap<AID, PositionUpdate> getModel(int pos) {
+		if(masterNode)
+		{
+		HashMap<AID,PositionUpdate> result=new HashMap<AID,PositionUpdate>();
+		Set<AID> keys=transaction.keySet();
+		for(AID key : keys)
+		{
+			PositionUpdate update=null;
+			int size=transaction.get(key).size();
+			if(pos<size)
+			{
+			 update=transaction.get(key).get(pos);
+			}
+			else
+			{
+			 update=transaction.get(key).get(size-1);
+			}
+			result.put(key, update);
+		}
+		
+		return result;
+		}
+		else
+		{
+			try
+			{
+				EnvironmentProviderSlice mainSlice = (EnvironmentProviderSlice) getSlice(getMasterSlice());
+				return mainSlice.getModel(pos);
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+			
+		}
+		return null;
+	}
+	
+
+	private void stepModel(AID key, PositionUpdate updatedPosition)
+	{
+		if(masterNode)
+		{
+		ArrayList<PositionUpdate> list=transaction.get(key);
+		if(list==null)
+		{
+			list=new ArrayList<PositionUpdate>();
+		}
+		list.add(updatedPosition);
+		if(transactionSize<list.size())
+		{
+			transactionSize=list.size();
+		}
+		//System.out.println("List Size for:" + key.getLocalName() +":"+list.size());
+		transaction.put(key, list);
+		}
+		else
+		{
+			try
+			{
+			 EnvironmentProviderSlice mainSlice = (EnvironmentProviderSlice) getSlice(getMasterSlice());
+			 mainSlice.stepModel(key, updatedPosition);
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+	
+		}
+		
+	}
+
+	
+	private int getTransactionSize() {
+		int result=0;  
+		try
+		{
+			
+		   if(masterNode)
+		   {
+			 
+			   result=this.transactionSize;
+		   }
+		   else
+		   {
+			   EnvironmentProviderSlice mainSlice = (EnvironmentProviderSlice) getSlice(getMasterSlice());
+			   result=mainSlice.getTransactionSize();
+		
+		   }
+		}
+		catch(Exception e)
+		{
+		  e.printStackTrace();	
+		}
+		
+		return result;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public Class getHorizontalInterface(){
 		return EnvironmentProviderSlice.class;
@@ -450,6 +553,10 @@ public class EnvironmentProviderService extends BaseService {
 	public Service.Slice getLocalSlize(){
 		return localSlice;
 	}
+	
+	
+	
+	
 	
 	
 	
@@ -475,10 +582,7 @@ public class EnvironmentProviderService extends BaseService {
 			// TODO Auto-generated method stub
 			
 		}
-		@Override
-		public int getTransactionSize() {
-			return transactionSize;
-		}
+		
 
 		@Override
 		public void setCurrentPos(int pos) {
@@ -542,47 +646,11 @@ public class EnvironmentProviderService extends BaseService {
 			return EnvironmentProviderService.this.getProjectName();
 		}
 		
-		@Override
-		public void stepModel(AID key, PositionUpdate updatedPosition)
-		{
-			
-			ArrayList<PositionUpdate> list=transaction.get(key);
-			if(list==null)
-			{
-				list=new ArrayList<PositionUpdate>();
-			}
-			list.add(updatedPosition);
-			if(transactionSize<list.size())
-			{
-				transactionSize=list.size();
-			}
-			//System.out.println("List Size for:" + key.getLocalName() +":"+list.size());
-			transaction.put(key, list);
-			
-		}
+	
+	
+		
+		
 
-		@Override
-		public HashMap<AID, PositionUpdate> getModel(int pos) {
-			HashMap<AID,PositionUpdate> result=new HashMap<AID,PositionUpdate>();
-			Set<AID> keys=transaction.keySet();
-			for(AID key : keys)
-			{
-				PositionUpdate update=null;
-				int size=transaction.get(key).size();
-				if(pos<size)
-				{
-				 update=transaction.get(key).get(pos);
-				}
-				else
-				{
-				 update=transaction.get(key).get(size-1);
-				}
-				result.put(key, update);
-			}
-			
-			return result;
-			
-		}
 
 		@Override
 		public boolean is_running() {
@@ -592,6 +660,22 @@ public class EnvironmentProviderService extends BaseService {
 		@Override
 		public void setRunning(boolean running) {
 			is_running=running;
+			
+		}
+
+		@Override
+		public HashMap<AID, PositionUpdate> getModel(int pos) {
+			return  EnvironmentProviderService.this.getModel(pos);
+		}
+
+		@Override
+		public int getTransactionSize() {
+			return  EnvironmentProviderService.this.getTransactionSize();
+		}
+
+		@Override
+		public void stepModel(AID key, PositionUpdate updatedPosition) {
+			EnvironmentProviderService.this.stepModel(key, updatedPosition);
 			
 		}
 
@@ -627,6 +711,7 @@ public class EnvironmentProviderService extends BaseService {
 
 		@Override
 		public VerticalCommand serve(HorizontalCommand cmd) {
+			System.out.println("CMD:"+cmd.getName());
 			if(cmd.getName().equals(EnvironmentProviderSlice.H_GET_ENVIRONMENT)){
 				if(myLogger.isLoggable(Logger.FINE)){
 					myLogger.log(Logger.FINE, "Serving environment request.");
@@ -686,6 +771,27 @@ public class EnvironmentProviderService extends BaseService {
 				}
 				cmd.setReturnValue(EnvironmentProviderService.this.getProjectName());
 			}
+			else if(cmd.getName().equals(EnvironmentProviderSlice.H_STEP))
+			{
+			    AID aid=(AID) cmd.getParam(0);
+			    PositionUpdate pos=(PositionUpdate) cmd.getParam(1);
+			    EnvironmentProviderService.this.stepModel(aid, pos);
+				cmd.setReturnValue(null);
+			}
+			else if(cmd.getName().equals(EnvironmentProviderSlice.H_TRANSACTION_SIZE))
+			{
+							
+				cmd.setReturnValue(EnvironmentProviderService.this.getTransactionSize());
+			}
+			
+			else if(cmd.getName().equals(EnvironmentProviderSlice.H_GET_MODEL))
+			{
+			
+				int pos=((Integer) cmd.getParam(0)).intValue();
+				cmd.setReturnValue(EnvironmentProviderService.this.getModel(pos));
+			}
+		
+			
 			return null;
 		}
 		

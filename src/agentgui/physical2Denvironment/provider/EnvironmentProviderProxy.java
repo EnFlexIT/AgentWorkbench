@@ -1,5 +1,6 @@
 package agentgui.physical2Denvironment.provider;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -9,7 +10,9 @@ import agentgui.physical2Denvironment.display.SVGUtils;
 import agentgui.physical2Denvironment.ontology.Movement;
 import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 import agentgui.physical2Denvironment.ontology.Physical2DObject;
+import agentgui.physical2Denvironment.ontology.PositionUpdate;
 
+import jade.core.AID;
 import jade.core.GenericCommand;
 import jade.core.IMTPException;
 import jade.core.ServiceException;
@@ -214,4 +217,68 @@ public class EnvironmentProviderProxy extends SliceProxy implements
 			throw new IMTPException("Unable to access remote node", e);
 		}
 	}
-}
+
+	@Override
+	public void stepModel(AID key, PositionUpdate updatedPosition)
+			throws IMTPException {
+		GenericCommand cmd = new GenericCommand(H_STEP, EnvironmentProviderService.SERVICE_NAME, null);
+		cmd.addParam(key);
+		cmd.addParam(updatedPosition);
+		try {
+			getNode().accept(cmd);
+		} catch (ServiceException e) {
+			throw new IMTPException("Unable to access remote node", e);
+		}
+	}
+
+	@Override
+	public HashMap<AID, PositionUpdate> getModel(int pos) throws IMTPException {
+
+		GenericCommand cmd = new GenericCommand(H_GET_MODEL, EnvironmentProviderService.SERVICE_NAME, null);
+		cmd.addParam(pos);
+		try{
+			Object result = getNode().accept(cmd);
+			if((result != null) && (result instanceof Throwable)){
+				if(result instanceof IMTPException){
+					throw (IMTPException)result;
+				}else{
+					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
+				}
+			}
+			return (HashMap<AID, PositionUpdate>) result;
+		}catch (ServiceException e){
+			throw new IMTPException("Unable to access remote node", e);
+		}
+		
+	}
+
+	@Override
+	public int getTransactionSize() throws IMTPException {
+		
+		
+		GenericCommand cmd = new GenericCommand(H_TRANSACTION_SIZE, EnvironmentProviderService.SERVICE_NAME, null);
+		try{
+			Object result = getNode().accept(cmd);
+			if((result != null) && (result instanceof Throwable)){
+				if(result instanceof IMTPException){
+					throw (IMTPException)result;
+				}else{
+					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
+				}
+			}
+			if(result==null)
+			{
+				System.out.println("Result ist null!");
+			}
+			return ((Integer) result).intValue();
+		}catch (ServiceException e){
+			throw new IMTPException("Unable to access remote node", e);
+		}
+	
+	}	
+		
+}		
+	
+
+
+
