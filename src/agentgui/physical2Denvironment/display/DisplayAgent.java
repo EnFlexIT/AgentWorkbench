@@ -58,6 +58,8 @@ public class DisplayAgent extends Agent {
 	private EnvironmentProviderHelper envHelper = null;
 	private int lastMaximumValue=-2;
 	private int lastCurrentValue=-1;
+	private int sameTransactionSizeCounter=0;
+	private int sameVisualisationCounter=0;
 	private int counter=0;
 	private int addValue=1;
 	private long initialTimeStep=0;
@@ -75,6 +77,8 @@ public class DisplayAgent extends Agent {
 				EnvironmentProviderHelper helper = (EnvironmentProviderHelper) getHelper(EnvironmentProviderService.SERVICE_NAME);
 				svgDoc = helper.getSVGDoc();
 				environment = helper.getEnvironment();
+				System.out.println("Display");
+				System.out.println("Transaction:"+helper.getTransactionSize());
 				
 				
 			} catch (ServiceException e) {
@@ -296,22 +300,39 @@ public class DisplayAgent extends Agent {
 		protected void onTick() {
 			try
 			{
-				 int size=helper.getTransactionSize();
+				 int size=-1;
+				if(sameTransactionSizeCounter==20)
+				{
+				  size=lastMaximumValue;
 				 
-				 if(lastMaximumValue!=size)
-				 {
-					 
-				 myGUI.setMaximum(size);
-				 }
+				}
+				else
+				{
+					size=helper.getTransactionSize();
+					 if(lastMaximumValue!=size)
+					 {
+					sameTransactionSizeCounter=0;
+					 myGUI.setMaximum(size);
+					 }
+					 else
+					 {
+						 sameTransactionSizeCounter++;
+					 }
+						
+				}
 				
 				    if(size>1)
-				    {
-				    	
-				        
-				    	
-				    	//System.out.println("LastCurrentValue:"+lastCurrentValue);
-				    	//System.out.println("Counter:"+counter);
-				    	
+				    {				    				        		    	
+				    		if(lastCurrentValue==counter)
+				    		{
+				    			sameVisualisationCounter++;
+				    		}
+				    		else
+				    		{
+				    			sameVisualisationCounter=0;
+				    		}
+				    	if(sameVisualisationCounter<20)
+				    	{	
 				    		HashSet<Physical2DObject> movingObjects = this.fordwardToVisualation(helper.getModel(counter));
 				    		lastCurrentValue=counter;
 							synchronized (movingObjects) {
@@ -327,16 +348,20 @@ public class DisplayAgent extends Agent {
 								 //System.out.println("Play");
 								  if(counter+addValue<size)
 								  {
-									//  System.out.println("New Counter Value:"+counter);
+								
 								 counter=counter+addValue;
 								  }
-								  //System.out.println("Eigentlich sollte hier davor was stehen");
+							
 							 }
 							 
 							 lastMaximumValue=size;
 						}
+				    	else
+				    	{
+				    		System.out.println("Verhindere Neu Zeichnen");
+				    	}
 				    
-					
+				    }
 			
 			}
 			catch(Exception e)
