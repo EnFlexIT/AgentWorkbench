@@ -6,6 +6,8 @@ import jade.core.ServiceException;
 import jade.core.behaviours.TickerBehaviour;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.HashMap;
@@ -77,9 +79,7 @@ public class DisplayAgent extends Agent {
 				EnvironmentProviderHelper helper = (EnvironmentProviderHelper) getHelper(EnvironmentProviderService.SERVICE_NAME);
 				svgDoc = helper.getSVGDoc();
 				environment = helper.getEnvironment();
-				System.out.println("Display");
-				System.out.println("Transaction:"+helper.getTransactionSize());
-				
+							
 				
 			} catch (ServiceException e) {
 				System.err.println(getLocalName()+" - Error: Could not retrieve EnvironmentProviderHelper, shutting down!");
@@ -127,7 +127,7 @@ public class DisplayAgent extends Agent {
 			initialTimeStep=model.getStep();	
 			String unit= Language.translate("Sekunden");
 			myGUI.jLabelSpeedFactor.setText( (initialTimeStep/1000.0)+" " + unit);
-			System.out.println("Sollte eigentlich darstelle");
+		
 	
 		}
 		catch(Exception e)
@@ -136,9 +136,12 @@ public class DisplayAgent extends Agent {
 		}
 
 		
-		myGUI.jButtonPlay.addMouseListener(new java.awt.event.MouseAdapter() {
+		myGUI.jButtonPlay.addActionListener(new ActionListener()
+		{
 			
-			public void mouseClicked(java.awt.event.MouseEvent e) {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
 				play=!play;
 				envHelper.setRunning(play);
 				String pathImage=Application.RunInfo.PathImageIntern();
@@ -152,10 +155,12 @@ public class DisplayAgent extends Agent {
 					 icon=new ImageIcon(getClass().getResource(pathImage + "MBLoadPause.png"));		
 				}
 				myGUI.jButtonPlay.setIcon(icon);
-			
+				
 			}
-		});
-		
+		}		
+	   );	
+			
+	
 		
 		
 		
@@ -166,6 +171,7 @@ public class DisplayAgent extends Agent {
 			public void stateChanged(javax.swing.event.ChangeEvent e) {
 				 
 				counter=myGUI.jSliderTime.getValue();
+				sameVisualisationCounter=0;
 				
 			
 				if(counter==-1)
@@ -333,8 +339,9 @@ public class DisplayAgent extends Agent {
 				    		}
 				    	if(sameVisualisationCounter<20)
 				    	{	
+				    		
 				    		HashSet<Physical2DObject> movingObjects = this.fordwardToVisualation(helper.getModel(counter));
-				    		lastCurrentValue=counter;
+				    	
 							synchronized (movingObjects) {
 								myGUI.updatePositions(movingObjects);
 							}
@@ -345,7 +352,6 @@ public class DisplayAgent extends Agent {
 							 if(play)
 							 {
 								 
-								 //System.out.println("Play");
 								  if(counter+addValue<size)
 								  {
 								
@@ -355,11 +361,9 @@ public class DisplayAgent extends Agent {
 							 }
 							 
 							 lastMaximumValue=size;
+							lastCurrentValue=counter;
 						}
-				    	else
-				    	{
-				    		System.out.println("Verhindere Neu Zeichnen");
-				    	}
+				    	
 				    
 				    }
 			

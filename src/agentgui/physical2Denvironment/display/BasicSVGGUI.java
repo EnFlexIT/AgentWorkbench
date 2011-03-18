@@ -234,10 +234,10 @@ public class BasicSVGGUI extends JPanel {
 			jSliderVisualation.setMinimum(1);
 			jSliderVisualation.setValue(1);
 			jSliderVisualation.setMaximum(10);
-//			jSliderVisualation.setMajorTickSpacing(10);
+//	
 			jSliderVisualation.setMinorTickSpacing(1);
 			jSliderVisualation.setPaintTicks(true);
-//			jSliderVisualation.createStandardLabels(250);
+//		
 			jSliderVisualation.setPaintLabels(false);
 			jSliderVisualation.setSnapToTicks(true);
 		}
@@ -267,7 +267,9 @@ public class BasicSVGGUI extends JPanel {
 		if (jSliderTime == null) {
 			jSliderTime = new JSlider();
 			jSliderTime.setMaximum(1);
+			jSliderTime.setMinimum(0);
 			jSliderTime.setValue(0);
+			jSliderTime.setPaintLabels(false);
 			jSliderTime.setSnapToTicks(true);
 			jSliderTime.setMinorTickSpacing(1);
 			jSliderTime.setPaintTicks(true);

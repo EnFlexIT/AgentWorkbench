@@ -20,7 +20,7 @@ public class EnvironmentProviderAgent extends Agent  {
 	
 	
 		public void setup(){
-			System.out.println("Provider Agent New");
+		
 			Object[] args = getArguments();
 			if(args != null && args[0] != null && args[0] instanceof Physical2DEnvironment){
 				try {
@@ -64,7 +64,6 @@ public class EnvironmentProviderAgent extends Agent  {
 			@Override
 			public void action() {
 				HashSet<ActiveObject> moving = new HashSet<ActiveObject>( helper.getCurrentlyMovingAgents() );
-				System.out.println("MovingSize in Provider:"+moving.size());
 				if(moving.size() > 0){	// Any moving agents?
 					
 					Iterator<ActiveObject> movingAgents = moving.iterator();

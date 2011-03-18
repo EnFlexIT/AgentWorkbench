@@ -1,27 +1,7 @@
 package agentgui.physical2Denvironment.provider;
 
-import java.util.HashSet;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Set;
-
-import org.w3c.dom.Document;
-
-import agentgui.physical2Denvironment.display.SVGUtils;
-import agentgui.physical2Denvironment.ontology.ActiveObject;
-import agentgui.physical2Denvironment.ontology.Movement;
-import agentgui.physical2Denvironment.ontology.PassiveObject;
-import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
-import agentgui.physical2Denvironment.ontology.Physical2DObject;
-import agentgui.physical2Denvironment.ontology.PlaygroundObject;
-import agentgui.physical2Denvironment.utils.EnvironmentWrapper;
-import agentgui.physical2Denvironment.ontology.PositionUpdate;
-import agentgui.simulationService.SimulationServiceSlice;
-import agentgui.simulationService.environment.EnvironmentModel;
-import jade.core.Agent;
 import jade.core.AID;
+import jade.core.Agent;
 import jade.core.BaseService;
 import jade.core.HorizontalCommand;
 import jade.core.IMTPException;
@@ -32,6 +12,31 @@ import jade.core.ServiceException;
 import jade.core.ServiceHelper;
 import jade.core.VerticalCommand;
 import jade.util.Logger;
+import jade.util.SynchList;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.SynchronousQueue;
+
+import org.w3c.dom.Document;
+
+import agentgui.physical2Denvironment.display.SVGUtils;
+import agentgui.physical2Denvironment.ontology.ActiveObject;
+import agentgui.physical2Denvironment.ontology.Movement;
+import agentgui.physical2Denvironment.ontology.PassiveObject;
+import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
+import agentgui.physical2Denvironment.ontology.Physical2DObject;
+import agentgui.physical2Denvironment.ontology.PlaygroundObject;
+import agentgui.physical2Denvironment.ontology.Position;
+import agentgui.physical2Denvironment.ontology.PositionUpdate;
+import agentgui.physical2Denvironment.utils.EnvironmentWrapper;
 /**
  * This service provides and manages a Physical2DEnvironment for a distributed simulation 
  * @author Nils
@@ -276,7 +281,7 @@ public class EnvironmentProviderService extends BaseService {
 					agent.setMovement(movement);
 //				}
 				if(agent.getMovement().getSpeed() > 0.0){
-					System.out.println("Agent hinzugefügt");
+					
 					this.currentlyMovingAgents.add(agent);
 					this.currentlyMovingObjects.add(agent);
 					Iterator<PassiveObject> controlledObjects = agent.getAllPayload();
@@ -286,7 +291,7 @@ public class EnvironmentProviderService extends BaseService {
 				}else{
 					this.currentlyMovingAgents.remove(agent);
 					this.currentlyMovingObjects.remove(agent);
-					System.out.println("Agent gelöscht");
+					
 					Iterator<PassiveObject> controlledObjects = agent.getAllPayload();
 					while(controlledObjects.hasNext()){
 						this.currentlyMovingObjects.remove(controlledObjects.next());
@@ -493,16 +498,26 @@ public class EnvironmentProviderService extends BaseService {
 		ArrayList<PositionUpdate> list=transaction.get(key);
 		if(list==null)
 		{
+			
 			list=new ArrayList<PositionUpdate>();
+			transaction.put(key, list);
 		}
-		list.add(updatedPosition);
+	
+	
+		PositionUpdate newPosition=new PositionUpdate();
+		Position p=new Position();
+		p.setXPos(updatedPosition.getNewPosition().getXPos());
+		p.setYPos(updatedPosition.getNewPosition().getYPos());
+		newPosition.setNewPosition(p);
+		newPosition.setCustomizedParameter(updatedPosition.getCustomizedParameter());
+		list.add(newPosition);
 		if(transactionSize<list.size())
 		{
 			transactionSize=list.size();
 		}
-		//System.out.println("List Size for:" + key.getLocalName() +":"+list.size());
-		transaction.put(key, list);
-		}
+		
+	
+	}
 		else
 		{
 			try
@@ -711,7 +726,7 @@ public class EnvironmentProviderService extends BaseService {
 
 		@Override
 		public VerticalCommand serve(HorizontalCommand cmd) {
-			System.out.println("CMD:"+cmd.getName());
+			
 			if(cmd.getName().equals(EnvironmentProviderSlice.H_GET_ENVIRONMENT)){
 				if(myLogger.isLoggable(Logger.FINE)){
 					myLogger.log(Logger.FINE, "Serving environment request.");

@@ -37,7 +37,7 @@ public class TransactionMap extends HashMap<Long, EnvironmentModel> {
 		} else if ( envModel.getTimeModel() instanceof TimeModelDiscrete ) {
 			TimeModelDiscrete tm = (TimeModelDiscrete) envModel.getTimeModel();
 			hashKey = tm.getTime();
-			
+		
 			// ------------------------------------------------
 			// --- In case that we are dealing with time  -----
 			// --- in our TimeModel: For a faster Mapping! ----
@@ -47,6 +47,7 @@ public class TransactionMap extends HashMap<Long, EnvironmentModel> {
 			
 		}
 		EnvironmentModel returnValue = super.put(hashKey, envModel);
+
 		return returnValue;
 	}
 	
