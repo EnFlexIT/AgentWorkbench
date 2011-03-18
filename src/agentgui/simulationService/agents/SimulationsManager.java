@@ -243,11 +243,11 @@ public abstract class SimulationsManager extends Agent {
 	public HashMap<AID,PositionUpdate> convertToPositionUpdateHashmap(Hashtable<AID, Object> answer) {
 	
 		Set<AID> keys = answer.keySet(); // Let's get the AID
-		AID [] newKeys = (AID[]) keys.toArray();
+		Object [] newKeys = keys.toArray();
 		HashMap<AID, PositionUpdate> result= new HashMap<AID, PositionUpdate> ();
 		for(int i=0;i<newKeys.length;i++) {
 			
-			AID aid = newKeys[i];			
+			AID aid = (AID) newKeys[i];			
 			Object obj = agentAnswers.get(aid); // Get Answer
 		    PositionUpdate posUpdate= (PositionUpdate) obj;
 		    result.put(aid, posUpdate);
