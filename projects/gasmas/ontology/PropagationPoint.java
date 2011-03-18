@@ -7,19 +7,19 @@ import jade.core.*;
 /**
 * Protege name: PropagationPoint
 * @author ontology bean generator
-* @version 2011/02/13, 20:28:19
+* @version 2011/03/18, 20:48:41
 */
 public class PropagationPoint extends PhysicalParameters{ 
 
    /**
-* Protege name: geoZ
+* Protege name: atParentLengthPos
    */
-   private float geoZ;
-   public void setGeoZ(float value) { 
-    this.geoZ=value;
+   private float atParentLengthPos;
+   public void setAtParentLengthPos(float value) { 
+    this.atParentLengthPos=value;
    }
-   public float getGeoZ() {
-     return this.geoZ;
+   public float getAtParentLengthPos() {
+     return this.atParentLengthPos;
    }
 
    /**
@@ -31,17 +31,6 @@ public class PropagationPoint extends PhysicalParameters{
    }
    public float getDiameter() {
      return this.diameter;
-   }
-
-   /**
-* Protege name: atParentLengthPos
-   */
-   private float atParentLengthPos;
-   public void setAtParentLengthPos(float value) { 
-    this.atParentLengthPos=value;
-   }
-   public float getAtParentLengthPos() {
-     return this.atParentLengthPos;
    }
 
    /**
@@ -64,6 +53,17 @@ public class PropagationPoint extends PhysicalParameters{
    }
    public float getGeoY() {
      return this.geoY;
+   }
+
+   /**
+* Protege name: geoZ
+   */
+   private float geoZ;
+   public void setGeoZ(float value) { 
+    this.geoZ=value;
+   }
+   public float getGeoZ() {
+     return this.geoZ;
    }
 
 }

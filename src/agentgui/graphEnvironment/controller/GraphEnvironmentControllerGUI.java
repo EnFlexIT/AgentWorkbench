@@ -5,8 +5,6 @@ import javax.swing.JSplitPane;
 import javax.swing.JPanel;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import javax.swing.JScrollPane;
 import java.awt.GridBagConstraints;
@@ -24,12 +22,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
-
-import org.apache.commons.collections15.Transformer;
-
-import edu.uci.ics.jung.algorithms.layout.FRLayout;
-import edu.uci.ics.jung.algorithms.layout.Layout;
-import edu.uci.ics.jung.visualization.BasicVisualizationServer;
 
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
@@ -51,6 +43,8 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	private JLabel lblTable = null;
 	private JSplitPane jSplitPaneRoot = null;
 	
+	private BasicGraphGUI graphGUI = null;
+	
 	/**
 	 * This is the default constructor
 	 */
@@ -70,7 +64,6 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		
 		this.setLayout(new BorderLayout());
 		this.add(getJSplitPaneRoot(), null);
-		
 	}
 
 	/**
@@ -177,7 +170,6 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 				componentVector.add(compData);
 			}
 		}
-		
 		return componentVector;
 	}
 
@@ -216,10 +208,20 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		return classSelectorDialog;
 	}
 	
+	private BasicGraphGUI getGraphGUI(){
+		if(graphGUI == null){
+			graphGUI = new BasicGraphGUI();
+			if(controller.getGridModel() != null && controller.getGridModel().getGraph() != null){
+				graphGUI.setGraph(controller.getGridModel().getGraph());
+			}
+		}
+		return graphGUI;
+	}
+	
 	@Override
 	public void update(Observable o, Object arg) {
 		if(o.equals(controller) && arg.equals(GraphEnvironmentController.EVENT_GRAPH_LOADED)){
-			getJSplitPaneRoot().setRightComponent(new JScrollPane(getRightComponent()));
+			graphGUI.setGraph(controller.getGridModel().getGraph());
 			rebuildTblComponents();
 		}
 	}
@@ -236,7 +238,6 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		}else if(event.getSource().equals(getBtnSetClasses())){
 			getClassSelectorDialog().setVisible(true);
 		}
-		
 	}
 
 	@Override
@@ -258,50 +259,11 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		if (jSplitPaneRoot == null) {
 			jSplitPaneRoot = new JSplitPane();
 			jSplitPaneRoot.setLeftComponent(getPnlControlls());
-//			jSplitPaneRoot.setRightComponent(getRightComponent());
-			jSplitPaneRoot.setRightComponent(new JScrollPane(getRightComponent()));
+			jSplitPaneRoot.setRightComponent(getGraphGUI());
 			jSplitPaneRoot.setDividerLocation(200);
 		}
 		return jSplitPaneRoot;
 	}
 	
-	private Component getRightComponent(){
-		
-		Component rightComponent = null;
-		
-		if(controller.getGridModel() != null && controller.getGridModel().getGraph() != null){
-			rightComponent = getVisualization();
-		}else{
-			rightComponent = new JPanel();
-		}
-		return rightComponent;
-		
-	}
-
-	private BasicVisualizationServer<PropagationPoint, GridComponent> getVisualization(){
-			Layout<PropagationPoint, GridComponent> layout = new FRLayout<PropagationPoint, GridComponent>(controller.getGridModel().getGraph());
-			layout.setSize(new Dimension(500, 400));
-			BasicVisualizationServer<PropagationPoint, GridComponent> visServ = new BasicVisualizationServer<PropagationPoint, GridComponent>(layout);
-			visServ.setPreferredSize(new Dimension(550, 450));
-			// Node labels
-			visServ.getRenderContext().setVertexLabelTransformer(new Transformer<PropagationPoint, String>() {
-				
-				@Override
-				public String transform(PropagationPoint arg0) {
-					return "PP"+arg0.getIndex();
-				}
-			});
-			
-			// Edge labels
-			visServ.getRenderContext().setEdgeLabelTransformer(new Transformer<GridComponent, String>() {
-	
-				@Override
-				public String transform(GridComponent arg0) {
-					return arg0.getType()+" "+arg0.getAgentID();
-				}
-			});
-		
-		return visServ;
-	}
 
 }  //  @jve:decl-index=0:visual-constraint="33,19"

@@ -7,9 +7,9 @@ import jade.core.*;
 /**
 * Protege name: MultipleEnded
 * @author ontology bean generator
-* @version 2011/02/13, 20:28:19
+* @version 2011/03/18, 20:48:41
 */
-public abstract class MultipleEnded extends GridComponent{ 
+public class MultipleEnded extends GridComponent{ 
 
    /**
 * Protege name: position2

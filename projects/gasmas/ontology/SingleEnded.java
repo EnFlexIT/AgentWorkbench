@@ -7,8 +7,8 @@ import jade.core.*;
 /**
 * Protege name: SingleEnded
 * @author ontology bean generator
-* @version 2011/02/13, 20:28:19
+* @version 2011/03/18, 20:48:41
 */
-public abstract class SingleEnded extends GridComponent{ 
+public class SingleEnded extends GridComponent{ 
 
 }

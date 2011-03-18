@@ -8,31 +8,9 @@ import jade.core.*;
 /**
 * Protege name: FluidParameters
 * @author ontology bean generator
-* @version 2011/02/13, 20:28:19
+* @version 2011/03/18, 20:48:41
 */
 public class FluidParameters implements Concept {
-
-   /**
-* Protege name: dynamicViscosity
-   */
-   private float dynamicViscosity;
-   public void setDynamicViscosity(float value) { 
-    this.dynamicViscosity=value;
-   }
-   public float getDynamicViscosity() {
-     return this.dynamicViscosity;
-   }
-
-   /**
-* Protege name: thermalConductivity
-   */
-   private float thermalConductivity;
-   public void setThermalConductivity(float value) { 
-    this.thermalConductivity=value;
-   }
-   public float getThermalConductivity() {
-     return this.thermalConductivity;
-   }
 
    /**
 * Protege name: kinematicViscosity
@@ -54,6 +32,28 @@ public class FluidParameters implements Concept {
    }
    public float getDensity() {
      return this.density;
+   }
+
+   /**
+* Protege name: thermalConductivity
+   */
+   private float thermalConductivity;
+   public void setThermalConductivity(float value) { 
+    this.thermalConductivity=value;
+   }
+   public float getThermalConductivity() {
+     return this.thermalConductivity;
+   }
+
+   /**
+* Protege name: dynamicViscosity
+   */
+   private float dynamicViscosity;
+   public void setDynamicViscosity(float value) { 
+    this.dynamicViscosity=value;
+   }
+   public float getDynamicViscosity() {
+     return this.dynamicViscosity;
    }
 
 }

@@ -7,8 +7,8 @@ import jade.core.*;
 /**
 * Protege name: DoubleEnded
 * @author ontology bean generator
-* @version 2011/02/13, 20:28:19
+* @version 2011/03/18, 20:48:41
 */
-public abstract class DoubleEnded extends MultipleEnded{ 
+public class DoubleEnded extends MultipleEnded{ 
 
 }

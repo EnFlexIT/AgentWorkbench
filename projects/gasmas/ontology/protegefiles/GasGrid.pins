@@ -1,4 +1,4 @@
-; Sun Feb 13 20:28:31 CET 2011
+; Fri Mar 18 20:48:47 CET 2011
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -31,7 +31,15 @@
 
 	(%3AJADE-IGNORE FALSE))
 
+([GridComponent] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
 ([MultipleEnded] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([PhysicalParameters] of  %3AJADE-CLASS
 
 	(%3AJADE-IGNORE FALSE))
 
@@ -53,6 +61,10 @@
 	(%3AONTOLOGYNAME "Gasgrid")
 	(%3APACKAGE "gasmas.ontology")
 	(%3ASUPPORT "j2se"))
+
+([PropagationPoint] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
 
 ([ResistanceParameters] of  %3AJADE-CLASS
 

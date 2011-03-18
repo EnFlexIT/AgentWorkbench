@@ -8,19 +8,41 @@ import jade.core.*;
 /**
 * Protege name: FlowParameters
 * @author ontology bean generator
-* @version 2011/02/13, 20:28:19
+* @version 2011/03/18, 20:48:41
 */
 public class FlowParameters implements Concept {
 
    /**
-* Protege name: fluidVelocity
+* Protege name: massFlow
    */
-   private float fluidVelocity;
-   public void setFluidVelocity(float value) { 
-    this.fluidVelocity=value;
+   private float massFlow;
+   public void setMassFlow(float value) { 
+    this.massFlow=value;
    }
-   public float getFluidVelocity() {
-     return this.fluidVelocity;
+   public float getMassFlow() {
+     return this.massFlow;
+   }
+
+   /**
+* Protege name: flow
+   */
+   private float flow;
+   public void setFlow(float value) { 
+    this.flow=value;
+   }
+   public float getFlow() {
+     return this.flow;
+   }
+
+   /**
+* Protege name: pressure
+   */
+   private float pressure;
+   public void setPressure(float value) { 
+    this.pressure=value;
+   }
+   public float getPressure() {
+     return this.pressure;
    }
 
    /**
@@ -46,36 +68,14 @@ public class FlowParameters implements Concept {
    }
 
    /**
-* Protege name: pressure
+* Protege name: fluidVelocity
    */
-   private float pressure;
-   public void setPressure(float value) { 
-    this.pressure=value;
+   private float fluidVelocity;
+   public void setFluidVelocity(float value) { 
+    this.fluidVelocity=value;
    }
-   public float getPressure() {
-     return this.pressure;
-   }
-
-   /**
-* Protege name: massFlow
-   */
-   private float massFlow;
-   public void setMassFlow(float value) { 
-    this.massFlow=value;
-   }
-   public float getMassFlow() {
-     return this.massFlow;
-   }
-
-   /**
-* Protege name: flow
-   */
-   private float flow;
-   public void setFlow(float value) { 
-    this.flow=value;
-   }
-   public float getFlow() {
-     return this.flow;
+   public float getFluidVelocity() {
+     return this.fluidVelocity;
    }
 
 }

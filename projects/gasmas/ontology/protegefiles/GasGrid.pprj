@@ -1,4 +1,4 @@
-; Sun Feb 13 20:28:31 CET 2011
+; Fri Mar 18 20:48:47 CET 2011
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -38,78 +38,78 @@
 	(is_hidden FALSE)
 	(widget_class_name "edu.stanford.smi.protege.widget.FormsTab"))
 
-([GasGrid_ProjectKB_Instance_10202] of  Property_List
+([GasGrid_ProjectKB_Instance_133] of  Property_List
 )
 
-([GasGrid_ProjectKB_Instance_10203] of  Property_List
+([GasGrid_ProjectKB_Instance_134] of  Property_List
 )
 
-([GasGrid_ProjectKB_Instance_10204] of  Property_List
+([GasGrid_ProjectKB_Instance_135] of  Property_List
 )
 
-([GasGrid_ProjectKB_Instance_10205] of  Property_List
+([GasGrid_ProjectKB_Instance_136] of  Property_List
 )
 
-([GasGrid_ProjectKB_Instance_10206] of  Boolean
+([GasGrid_ProjectKB_Instance_137] of  Boolean
 
 	(boolean_value FALSE)
 	(name "ButtonDisplayed-View References to Value"))
 
-([GasGrid_ProjectKB_Instance_10207] of  Boolean
+([GasGrid_ProjectKB_Instance_138] of  Boolean
 
 	(boolean_value FALSE)
 	(name "ButtonDisplayed-Delete Instance"))
 
-([GasGrid_ProjectKB_Instance_10208] of  Property_List
+([GasGrid_ProjectKB_Instance_139] of  Property_List
 )
 
-([GasGrid_ProjectKB_Instance_10209] of  Property_List
+([GasGrid_ProjectKB_Instance_140] of  Property_List
 )
 
-([GasGrid_ProjectKB_Instance_10210] of  Property_List
+([GasGrid_ProjectKB_Instance_141] of  Property_List
 )
 
-([GasGrid_ProjectKB_Instance_10211] of  Property_List
+([GasGrid_ProjectKB_Instance_142] of  Property_List
 )
 
-([GasGrid_ProjectKB_Instance_202] of  Widget
-
-	(is_hidden TRUE)
-	(property_list [GasGrid_ProjectKB_Instance_203])
-	(widget_class_name "se.liu.ida.JessTab.JessTab"))
-
-([GasGrid_ProjectKB_Instance_20212] of  Boolean
+([GasGrid_ProjectKB_Instance_143] of  Boolean
 
 	(boolean_value FALSE)
 	(name "ButtonDisplayed-View References to Value"))
 
-([GasGrid_ProjectKB_Instance_20213] of  Boolean
+([GasGrid_ProjectKB_Instance_144] of  Boolean
 
 	(boolean_value FALSE)
 	(name "ButtonDisplayed-Delete Instance"))
 
-([GasGrid_ProjectKB_Instance_20214] of  Property_List
+([GasGrid_ProjectKB_Instance_145] of  Property_List
 )
 
-([GasGrid_ProjectKB_Instance_20215] of  Property_List
+([GasGrid_ProjectKB_Instance_146] of  Property_List
 )
 
-([GasGrid_ProjectKB_Instance_20216] of  Property_List
+([GasGrid_ProjectKB_Instance_147] of  Property_List
 )
 
-([GasGrid_ProjectKB_Instance_20219] of  Map_Entry
+([GasGrid_ProjectKB_Instance_150] of  Map_Entry
 
 	(key "add_name_on_instance_form")
 	(key_class "java.lang.String")
 	(value "false")
 	(value_class "java.lang.String"))
 
-([GasGrid_ProjectKB_Instance_20220] of  Map_Entry
+([GasGrid_ProjectKB_Instance_151] of  Map_Entry
 
 	(key "change_tracking_active")
 	(key_class "java.lang.String")
 	(value "false")
 	(value_class "java.lang.String"))
+
+([GasGrid_ProjectKB_Instance_202] of  Widget
+
+	(is_hidden TRUE)
+	(property_list [GasGrid_ProjectKB_Instance_203])
+	(widget_class_name "se.liu.ida.JessTab.JessTab"))
 
 ([GasGrid_ProjectKB_Instance_203] of  Property_List
 )
@@ -432,8 +432,8 @@
 ([GasGrid_ProjectKB_Instance_289] of  Map
 
 	(entries
-		[GasGrid_ProjectKB_Instance_20219]
-		[GasGrid_ProjectKB_Instance_20220]))
+		[GasGrid_ProjectKB_Instance_150]
+		[GasGrid_ProjectKB_Instance_151]))
 
 ([GasGrid_ProjectKB_Instance_98] of  String
 
@@ -652,7 +652,7 @@
 	(default_facet_metaclass ":STANDARD-FACET")
 	(default_instance_widget_class_name "edu.stanford.smi.protege.widget.FormWidget")
 	(default_slot_metaclass ":STANDARD-SLOT")
-	(included_projects "GeneralGrid.pprj")
+	(included_projects "file:/C:/Program%20Files/Protege_3.3.1/plugins/nl.uva.psy.swi.beangenerator/projects/SimpleJADEAbstractOntology.pprj")
 	(journaling_enabled FALSE)
 	(next_frame_number 0)
 	(options [KB_679883_Instance_1])
