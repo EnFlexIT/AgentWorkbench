@@ -8,6 +8,7 @@ import jade.core.AID;
 import jade.core.Agent;
 import jade.core.ServiceException;
 import jade.core.behaviours.CyclicBehaviour;
+import jade.util.leap.ArrayList;
 
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -189,10 +190,10 @@ public abstract class SimulationsManager extends Agent {
 		if (obj instanceof Physical2DEnvironment) {
 			Physical2DEnvironment world=(Physical2DEnvironment) obj;
 			Set<AID> keys = agentAnswer.keySet();
-			AID [] newKeys= (AID[]) keys.toArray();
+			Object [] newKeys= keys.toArray();
 			for(int i=0;i<newKeys.length;i++)
 			{
-				AID aid=newKeys[i];
+				AID aid=(AID) newKeys[i];
 				Physical2DObject physicalObj = this.getPhysical2DObject(world, aid.getLocalName());
 				Object tmpObj = agentAnswer.get(aid);
 				PositionUpdate posUpdate = null;
@@ -223,9 +224,9 @@ public abstract class SimulationsManager extends Agent {
 	@SuppressWarnings("unchecked")
 	private Physical2DObject getPhysical2DObject(Physical2DEnvironment world,String id)	
 	{
-		List<Physical2DObject> list= (List<Physical2DObject>) world.getRootPlayground().getChildObjects();
+		ArrayList list=(ArrayList) world.getRootPlayground().getChildObjects();
 		for(int i=0;i<list.size();i++) {
-			Physical2DObject playGround = list.get(i);
+			Physical2DObject playGround =(Physical2DObject) list.get(i);
 			if(playGround.getId().equals(id)) {
 				return playGround;
 			}
@@ -262,11 +263,12 @@ public abstract class SimulationsManager extends Agent {
 	 */
 	public void fordwardToVisualation(HashMap<AID,PositionUpdate> pos)	{
 	    
-		Set<AID> keys=pos.keySet();		
-		AID [] newKeys=(AID[]) keys.toArray();
+		Set<AID> keys=pos.keySet();
+		Object [] newKeys= keys.toArray();
+		
 		for(int i=0;i<newKeys.length;i++)
 		{
-			AID key=newKeys[i];
+			AID key=(AID) newKeys[i];
 			envHelper.stepModel(key, pos.get(key));
 			
 		}		
