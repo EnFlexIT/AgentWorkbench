@@ -155,6 +155,7 @@ public class DisplayAgent extends Agent {
 					 icon=new ImageIcon(getClass().getResource(pathImage + "MBLoadPause.png"));		
 				}
 				myGUI.jButtonPlay.setIcon(icon);
+				sameVisualisationCounter=0;
 				
 			}
 		}		
