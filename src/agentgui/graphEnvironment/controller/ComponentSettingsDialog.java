@@ -38,6 +38,8 @@ public class ComponentSettingsDialog extends JDialog implements ActionListener{
 	 * The graph node containing the ontology object
 	 */
 	private GridComponent component = null;
+	
+	private PropagationPoint propPoint = null;
 	/**
 	 * Constructor
 	 * @param project The simulation project
@@ -49,14 +51,25 @@ public class ComponentSettingsDialog extends JDialog implements ActionListener{
 		this.component = component;
 		initialize();
 	}
-
+	
+	public ComponentSettingsDialog(Project project, PropagationPoint propPoint){
+		super(Application.MainWindow, Dialog.ModalityType.APPLICATION_MODAL);
+		this.project = project;
+		this.propPoint = propPoint;
+		initialize();
+	}
+	
 	/**
 	 * This method initializes this
 	 * 
 	 */
 	private void initialize() {
         this.setContentPane(getJPanelContent());
-        this.setTitle(Language.translate("Netzkomponente")+" "+component.getAgentID());
+        if(this.component != null){
+        	this.setTitle("GridComponent "+component.getAgentID());
+        }else if(this.propPoint != null){
+        	this.setTitle("PropagationPoint PP"+propPoint.getIndex());
+        }
         this.setSize(new Dimension(450, 450));
 	}
 
@@ -98,8 +111,21 @@ public class ComponentSettingsDialog extends JDialog implements ActionListener{
 			jPanelContent.add(getJButtonApply(), gridBagConstraints);
 			jPanelContent.add(getJButtonAbort(), gridBagConstraints1);
 			
-			String agentClassName = project.simSetups.getCurrSimSetup().getAgentClassesHash().get(component.getType());
-			jPanelContent.add(new OntologyInstanceViewer(project, agentClassName), gridBagConstraints11);
+			if(component != null){
+				String agentClassName = project.simSetups.getCurrSimSetup().getAgentClassesHash().get(component.getType());
+				jPanelContent.add(new OntologyInstanceViewer(project, agentClassName), gridBagConstraints11);
+			}else if(propPoint != null){
+//				Object[] objectAsArray = new Object[1];
+//				objectAsArray[0] = propPoint.getOntoObject();
+//				OntologyInstanceViewer oiv = new OntologyInstanceViewer(project);
+//				oiv.setConfigurationInstances(objectAsArray);
+				
+				String[] classNameAsArray = new String[1];
+				classNameAsArray[0] = "gasmas.ontology.PropagationPoint";
+				OntologyInstanceViewer oiv = new OntologyInstanceViewer(project, classNameAsArray);
+				
+				jPanelContent.add(oiv, gridBagConstraints11);
+			}
 			
 		}
 		return jPanelContent;

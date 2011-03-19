@@ -210,7 +210,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	
 	private BasicGraphGUI getGraphGUI(){
 		if(graphGUI == null){
-			graphGUI = new BasicGraphGUI();
+			graphGUI = new BasicGraphGUI(this);
 			if(controller.getGridModel() != null && controller.getGridModel().getGraph() != null){
 				graphGUI.setGraph(controller.getGridModel().getGraph());
 			}
@@ -263,6 +263,15 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 			jSplitPaneRoot.setDividerLocation(200);
 		}
 		return jSplitPaneRoot;
+	}
+	
+	public void showComponentSettingsDialog(Object component){
+		if(component instanceof PropagationPoint){
+			new ComponentSettingsDialog(currProject, (PropagationPoint)component).setVisible(true);
+		}else if(component instanceof GridComponent){
+			new ComponentSettingsDialog(currProject, (GridComponent)component).setVisible(true);
+			
+		}
 	}
 	
 

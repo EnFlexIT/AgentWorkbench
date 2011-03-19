@@ -16,8 +16,7 @@ import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
 import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
-import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
-import edu.uci.ics.jung.visualization.control.ModalGraphMouse;
+import edu.uci.ics.jung.visualization.control.PluggableGraphMouse;
 import edu.uci.ics.jung.visualization.control.ScalingControl;
 
 import agentgui.core.application.Application;
@@ -39,12 +38,15 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 	private GraphZoomScrollPane gzsp = null;
 	private VisualizationViewer<PropagationPoint, GridComponent> visView = null;
 	private ScalingControl scalingControl = null;
+	
+	private GraphEnvironmentControllerGUI parentGUI = null;
 
 	/**
 	 * This is the default constructor
 	 */
-	public BasicGraphGUI() {
+	public BasicGraphGUI(GraphEnvironmentControllerGUI parentGUI) {
 		super();
+		this.parentGUI = parentGUI;
 		scalingControl = new CrossoverScalingControl();
 		initialize();
 	}
@@ -141,6 +143,10 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 		return btnZoomReset;
 	}
 	
+	VisualizationViewer<PropagationPoint, GridComponent> getVisView(){
+		return visView;
+	}
+	
 	public void setGraph(Graph<PropagationPoint, GridComponent> graph){
 		Layout<PropagationPoint, GridComponent> layout = new FRLayout<PropagationPoint, GridComponent>(graph);
 		layout.setSize(new Dimension(400, 400));
@@ -163,9 +169,9 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 			}
 		});
 		
-		DefaultModalGraphMouse<PropagationPoint, GridComponent> gm = new DefaultModalGraphMouse<PropagationPoint, GridComponent>();
-		gm.setMode(ModalGraphMouse.Mode.TRANSFORMING);
-		visView.setGraphMouse(gm);
+		PluggableGraphMouse pgm = new PluggableGraphMouse();
+		pgm.add(new GraphEnvironmentMousePlugin(this));
+		visView.setGraphMouse(pgm);
 		
 		gzsp = new GraphZoomScrollPane(visView);
 		this.add(gzsp, BorderLayout.CENTER);
@@ -188,6 +194,12 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 			visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).setToIdentity();
 		}
 		
+	}
+	
+	void handleObjectSelection(Object pickedObject){
+		if(pickedObject != null){
+			parentGUI.showComponentSettingsDialog(pickedObject);
+		}
 	}
 	
 }

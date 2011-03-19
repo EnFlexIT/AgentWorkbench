@@ -133,5 +133,13 @@ public class GridModel {
 	}
 	void setGraph(Graph<PropagationPoint, GridComponent> graph) {
 		this.graph = graph;
+		
+		// Create HashMap of components
+		this.components = new HashMap<String, GridComponent>();
+		Iterator<GridComponent> componentIterator = graph.getEdges().iterator();
+		while(componentIterator.hasNext()){
+			GridComponent component = componentIterator.next();
+			components.put(component.getAgentID(), component);
+		}
 	}
 }
