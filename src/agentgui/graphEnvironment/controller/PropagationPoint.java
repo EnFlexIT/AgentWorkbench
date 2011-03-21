@@ -10,7 +10,7 @@ public class PropagationPoint {
 	public PropagationPoint(int index) {
 		super();
 		this.index = index;
-		this.ontoObject = new gasmas.ontology.PropagationPoint();
+		//this.ontoObject = new gasmas.ontology.PropagationPoint();
 	}
 
 	public int getIndex() {

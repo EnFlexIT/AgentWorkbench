@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <project>
     <projectName>Game of Life</projectName>
-    <projectView>User</projectView>
+    <projectView>Developer</projectView>
     <environmentModel>none</environmentModel>
     <projectResources>
         <projectResource>D:\10 Java Projects\Game of Life\bin</projectResource>
     </projectResources>
+    <plugins/>
     <subOntologies/>
     <agentConfiguration/>
     <simulationSetupCurrent>default</simulationSetupCurrent>
@@ -13,6 +14,10 @@
         <entry>
             <key>default</key>
             <value>default.xml</value>
+        </entry>
+        <entry>
+            <key>Test</key>
+            <value>test.xml</value>
         </entry>
     </simulationSetups>
     <jadeConfiguration>

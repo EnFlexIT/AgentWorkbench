@@ -30,6 +30,7 @@ import agentgui.core.application.Language;
 import agentgui.core.application.Project;
 import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.core.sim.setup.SimulationSetups;
+import agentgui.core.sim.setup.SimulationSetupsChangeNotification;
 
 /**
  * @author: Christian Derksen
@@ -279,7 +280,15 @@ public class StartSetupSelector extends JPanel implements Observer, ActionListen
 	public void update(Observable arg0, Object arg1) {
 
 		if ( arg1.toString().equalsIgnoreCase(SimulationSetups.CHANGED)) {
-			this.setupLoad();
+			// --- Change inside the simulation setup ---------------
+			SimulationSetupsChangeNotification scn = (SimulationSetupsChangeNotification) arg1;
+			switch (scn.getUpdateReason()) {
+			case SimulationSetups.SIMULATION_SETUP_SAVED:
+				break;
+			default:
+				this.setupLoad();	
+				break;
+			}			
 		}
 		
 	}

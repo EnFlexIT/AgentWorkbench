@@ -27,6 +27,7 @@ import agentgui.core.application.Project;
 import agentgui.core.sim.setup.DistributionSetup;
 import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.core.sim.setup.SimulationSetups;
+import agentgui.core.sim.setup.SimulationSetupsChangeNotification;
 import agentgui.simulationService.load.LoadThresholdLevels;
 
 public class Distribution extends JPanel implements ActionListener, Observer, KeyListener {
@@ -894,7 +895,16 @@ public class Distribution extends JPanel implements ActionListener, Observer, Ke
 	public void update(Observable o, Object notifyObject) {
 		
 		if ( notifyObject.toString().equalsIgnoreCase(SimulationSetups.CHANGED)) {
-			this.setupLoad();
+			// --- Change inside the simulation setup ---------------
+			SimulationSetupsChangeNotification scn = (SimulationSetupsChangeNotification) notifyObject;
+			switch (scn.getUpdateReason()) {
+			case SimulationSetups.SIMULATION_SETUP_SAVED:
+				break;
+			default:
+				this.setupLoad();	
+				break;
+			}
+			
 		} else {
 			//System.out.println( this.getClass().getName() + ": " + arg1.toString() );	
 		}

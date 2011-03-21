@@ -165,7 +165,7 @@ public class AboutDialog extends JDialog implements ActionListener{
 			gridBagConstraints3.insets = new Insets(10, 0, 0, 0);
 			gridBagConstraints3.gridy = 2;
 			jLabelCopyright1 = new JLabel();
-			jLabelCopyright1.setText("Copyright \u00A9 2009-2010 by Christian Derksen");
+			jLabelCopyright1.setText("Copyright \u00A9 2009-2011 by Christian Derksen");
 			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
 			gridBagConstraints2.gridx = 2;
 			gridBagConstraints2.anchor = GridBagConstraints.WEST;

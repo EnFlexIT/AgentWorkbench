@@ -41,6 +41,7 @@ import agentgui.core.gui.AgentSelector;
 import agentgui.core.ontologies.gui.OntologyInstanceViewer;
 import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.core.sim.setup.SimulationSetups;
+import agentgui.core.sim.setup.SimulationSetupsChangeNotification;
 
 import javax.swing.JSplitPane;
 
@@ -558,7 +559,16 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 	public void update(Observable arg0, Object arg1) {
 		
 		if ( arg1.toString().equalsIgnoreCase(SimulationSetups.CHANGED)) {
-			this.setupLoad();
+			// --- Change inside the simulation setup ---------------
+			SimulationSetupsChangeNotification scn = (SimulationSetupsChangeNotification) arg1;
+			switch (scn.getUpdateReason()) {
+			case SimulationSetups.SIMULATION_SETUP_SAVED:
+				break;
+			default:
+				this.setupLoad();	
+				break;
+			}
+			
 		} else {
 			//System.out.println( this.getClass().getName() + ": " + arg1.toString() );	
 		}

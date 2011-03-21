@@ -233,8 +233,8 @@ public class ProjectResources extends JPanel {
 			jButtonAdd.setPreferredSize(new Dimension(45, 26));
 			jButtonAdd.setIcon(new ImageIcon(getClass().getResource(PathImage + "ListPlus.png")));
 			jButtonAdd.setToolTipText("Add");
-			jButtonAdd.addActionListener(new java.awt.event.ActionListener() {
-				public void actionPerformed(java.awt.event.ActionEvent e) {
+			jButtonAdd.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
 
 					if (Application.JadePlatform.jadeStopAskUserBefore()) {
 						
@@ -272,8 +272,8 @@ public class ProjectResources extends JPanel {
 			jButtonRemove.setIcon(new ImageIcon(getClass().getResource(PathImage + "ListMinus.png")));
 			jButtonRemove.setPreferredSize(new Dimension(45, 26));
 			jButtonRemove.setToolTipText("Remove");
-			jButtonRemove.addActionListener(new java.awt.event.ActionListener() {
-						public void actionPerformed(java.awt.event.ActionEvent e) {
+			jButtonRemove.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
 
 							if (Application.JadePlatform.jadeStopAskUserBefore()) {
 								//Remove from the classpath
@@ -302,8 +302,8 @@ public class ProjectResources extends JPanel {
 					PathImage + "Refresh.png")));
 			jButtonRefresh.setPreferredSize(new Dimension(45, 26));
 			jButtonRefresh.setToolTipText("Refresh");
-			jButtonRefresh.addActionListener(new java.awt.event.ActionListener() {
-						public void actionPerformed(java.awt.event.ActionEvent e) {
+			jButtonRefresh.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
 							
 							if (Application.JadePlatform.jadeStopAskUserBefore()) {
 								Application.MainWindow.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
