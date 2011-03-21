@@ -5,24 +5,20 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.geom.Dimension2D;
+import java.awt.event.KeyEvent;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
 
 import org.apache.batik.swing.JSVGCanvas;
 import org.apache.batik.swing.JSVGScrollPane;
 import org.w3c.dom.Document;
 
 import agentgui.core.application.Application;
-import agentgui.simulationService.SimulationService;
-import agentgui.simulationService.SimulationServiceHelper;
-
-import javax.swing.JSlider;
-import javax.swing.JTextField;
-import javax.swing.JLabel;
-import java.awt.event.KeyEvent;
+import agentgui.core.application.Language;
 
 /**
  * Basic GUI for displaying SVG graphics
@@ -219,6 +215,7 @@ public class BasicSVGGUI extends JPanel {
 		if (jLabelSpeed == null) {
 			jLabelSpeed = new JLabel();
 			jLabelSpeed.setText("Vis.-Geschwindigkeit");
+			jLabelSpeed.setText(Language.translate(jLabelSpeed.getText()));
 		}
 		return jLabelSpeed;
 	}
@@ -253,6 +250,7 @@ public class BasicSVGGUI extends JPanel {
 		if (jLabelTime == null) {
 			jLabelTime = new JLabel();
 			jLabelTime.setText("Simulationszeit");
+			jLabelTime.setText(Language.translate(jLabelTime.getText()));
 			jLabelTime.setDisplayedMnemonic(KeyEvent.VK_UNDEFINED);
 		}
 		return jLabelTime;
@@ -290,7 +288,7 @@ public class BasicSVGGUI extends JPanel {
 			gridBagConstraints13.gridx = 4;
 			gridBagConstraints13.gridheight = 3;
 			gridBagConstraints13.anchor = GridBagConstraints.CENTER;
-			gridBagConstraints13.insets = new Insets(0, 10, 0, 0);
+			gridBagConstraints13.insets = new Insets(0, 10, 0, 10);
 			gridBagConstraints13.fill = GridBagConstraints.NONE;
 			gridBagConstraints13.gridwidth = 1;
 			gridBagConstraints13.gridy = 0;
@@ -308,6 +306,7 @@ public class BasicSVGGUI extends JPanel {
 			gridBagConstraints11.gridy = 0;
 			jLabelTimeDisplay = new JLabel();
 			jLabelTimeDisplay.setText("0 Sekunden");
+			jLabelTimeDisplay.setText(Language.translate(jLabelTimeDisplay.getText()));
 			GridBagConstraints gridBagConstraints10 = new GridBagConstraints();
 			gridBagConstraints10.anchor = GridBagConstraints.WEST;
 			gridBagConstraints10.insets = new Insets(5, 5, 0, 5);

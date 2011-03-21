@@ -213,7 +213,7 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 	protected void startAgent(String nickName, String agentClassName, Object[] args, Location toLocation ) {
 		
 		if (agentClassName==null | agentClassName.equalsIgnoreCase("") | agentClassName.equalsIgnoreCase(Language.translate("Keine")) ) {
-			System.err.println(Language.translate("Agent '" + nickName + "': Keine Klasse definiert."));
+			System.err.println(Language.translate("Agent '" + nickName + "': " + Language.translate("Keine Klasse definiert") + "!"));
 		} else {
 			// --- Initialize the agent-class -------------
 			try {

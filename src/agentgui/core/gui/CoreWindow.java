@@ -132,9 +132,8 @@ public class CoreWindow extends JFrame implements ComponentListener {
 		// --- configure console ---------------------------------- 
 		ConsoleHeight = SplitProjectDesktop.getHeight() / 4; 
 		SplitProjectDesktop.setDividerLocation( SplitProjectDesktop.getHeight() - ConsoleHeight );
-		if ( Application.RunInfo.isAppUseInternalConsole() == false ) { 
-			ConsoleSetVisible(false);
-		}
+		this.setConsoleVisible(false);
+		
 	}
 	// ------------------------------------------------------------	
 
@@ -262,12 +261,12 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	public void ConsoleSwitch() {
 		// --- Umschalten der Consolen-Ansicht --------------------
 		if ( ConsoleText.isVisible() == true ) {
-			this.ConsoleSetVisible(false);
+			this.setConsoleVisible(false);
 		} else {
-			this.ConsoleSetVisible(true);
+			this.setConsoleVisible(true);
 		}
 	}
-	private void ConsoleSetVisible(boolean show) {
+	private void setConsoleVisible(boolean show) {
 		// --- Ein- und ausblenden der Console --------------------
 		if (show == true) {
 			// --- System.out.println("Console einblenden ...");
