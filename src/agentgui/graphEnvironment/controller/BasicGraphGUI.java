@@ -22,6 +22,7 @@ import edu.uci.ics.jung.visualization.control.ScalingControl;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
@@ -35,9 +36,9 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 	private JButton btnZoomIn = null;
 	private JButton btnZoomOut = null;
 	private JButton btnZoomReset = null;
-	private GraphZoomScrollPane gzsp = null;
 	private VisualizationViewer<PropagationPoint, GridComponent> visView = null;
 	private ScalingControl scalingControl = null;
+	private Component rightComponent = null;
 	
 	private GraphEnvironmentControllerGUI parentGUI = null;
 
@@ -148,37 +149,46 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 	}
 	
 	public void setGraph(Graph<PropagationPoint, GridComponent> graph){
-		Layout<PropagationPoint, GridComponent> layout = new FRLayout<PropagationPoint, GridComponent>(graph);
-		layout.setSize(new Dimension(400, 400));
-		visView = new VisualizationViewer<PropagationPoint, GridComponent>(layout);
-		// Node labels
-		visView.getRenderContext().setVertexLabelTransformer(new Transformer<PropagationPoint, String>() {
+		if(graph != null){
+			Layout<PropagationPoint, GridComponent> layout = new FRLayout<PropagationPoint, GridComponent>(graph);
+			layout.setSize(new Dimension(400, 400));
+			visView = new VisualizationViewer<PropagationPoint, GridComponent>(layout);
+			// Node labels
+			visView.getRenderContext().setVertexLabelTransformer(new Transformer<PropagationPoint, String>() {
+				
+				@Override
+				public String transform(PropagationPoint arg0) {
+					return "PP"+arg0.getIndex();
+				}
+			});
 			
-			@Override
-			public String transform(PropagationPoint arg0) {
-				return "PP"+arg0.getIndex();
-			}
-		});
+			// Edge labels
+			visView.getRenderContext().setEdgeLabelTransformer(new Transformer<GridComponent, String>() {
+	
+				@Override
+				public String transform(GridComponent arg0) {
+					return arg0.getType()+" "+arg0.getAgentID();
+				}
+			});
+			
+			PluggableGraphMouse pgm = new PluggableGraphMouse();
+			pgm.add(new GraphEnvironmentMousePlugin(this));
+			visView.setGraphMouse(pgm);
+			
+			rightComponent = new GraphZoomScrollPane(visView);
+			
+			getBtnZoomIn().setEnabled(true);
+			getBtnZoomOut().setEnabled(true);
+			getBtnZoomReset().setEnabled(true);
+		}else{
+//			rightComponent = new JPanel();
+//			
+//			getBtnZoomIn().setEnabled(false);
+//			getBtnZoomOut().setEnabled(false);
+//			getBtnZoomReset().setEnabled(false);
+		}
 		
-		// Edge labels
-		visView.getRenderContext().setEdgeLabelTransformer(new Transformer<GridComponent, String>() {
-
-			@Override
-			public String transform(GridComponent arg0) {
-				return arg0.getType()+" "+arg0.getAgentID();
-			}
-		});
-		
-		PluggableGraphMouse pgm = new PluggableGraphMouse();
-		pgm.add(new GraphEnvironmentMousePlugin(this));
-		visView.setGraphMouse(pgm);
-		
-		gzsp = new GraphZoomScrollPane(visView);
-		this.add(gzsp, BorderLayout.CENTER);
-		
-		getBtnZoomIn().setEnabled(true);
-		getBtnZoomOut().setEnabled(true);
-		getBtnZoomReset().setEnabled(true);
+		this.add(rightComponent, BorderLayout.CENTER);
 		
 		
 	}
@@ -200,6 +210,11 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 		if(pickedObject != null){
 			parentGUI.showComponentSettingsDialog(pickedObject);
 		}
+	}
+	
+	void clearPickedObjects(){
+		visView.getPickedVertexState().clear();
+		visView.getPickedEdgeState().clear();
 	}
 	
 }

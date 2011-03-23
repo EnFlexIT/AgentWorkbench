@@ -220,7 +220,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	
 	@Override
 	public void update(Observable o, Object arg) {
-		if(o.equals(controller) && arg.equals(GraphEnvironmentController.EVENT_GRAPH_LOADED)){
+		if(o.equals(controller) && arg.equals(GraphEnvironmentController.EVENT_GRIDMODEL_CHANGED)){
 			graphGUI.setGraph(controller.getGridModel().getGraph());
 			rebuildTblComponents();
 		}
@@ -244,7 +244,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	public void valueChanged(ListSelectionEvent e) {
 		String componentID = (String) tblComponents.getModel().getValueAt(e.getFirstIndex(), 0);
 		GridComponent selectedComponent = controller.getGridModel().getComponent(componentID);
-		new ComponentSettingsDialog(controller.getProject(), selectedComponent).setVisible(true);
+		new ComponentSettingsDialog(controller.getProject(), this, selectedComponent).setVisible(true);
 	}
 	
 	GraphEnvironmentController getController(){
@@ -267,12 +267,18 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	
 	public void showComponentSettingsDialog(Object component){
 		if(component instanceof PropagationPoint){
-			new ComponentSettingsDialog(currProject, (PropagationPoint)component).setVisible(true);
+			new ComponentSettingsDialog(currProject, this, (PropagationPoint)component).setVisible(true);
 		}else if(component instanceof GridComponent){
-			new ComponentSettingsDialog(currProject, (GridComponent)component).setVisible(true);
+			new ComponentSettingsDialog(currProject, this, (GridComponent)component).setVisible(true);
 			
 		}
 	}
 	
-
+	void componentSettingsChanged(){
+		graphGUI.clearPickedObjects();
+	}
+	
+	void componentSettingsChangeAborted(){
+		graphGUI.clearPickedObjects();
+	}
 }  //  @jve:decl-index=0:visual-constraint="33,19"

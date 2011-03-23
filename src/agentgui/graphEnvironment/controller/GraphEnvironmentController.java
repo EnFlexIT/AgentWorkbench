@@ -23,14 +23,21 @@ import edu.uci.ics.jung.io.graphml.HyperEdgeMetadata;
 import edu.uci.ics.jung.io.graphml.NodeMetadata;
 
 import agentgui.core.application.Project;
+import agentgui.core.common.FileCopier;
 import agentgui.core.sim.setup.SimulationSetup;
+import agentgui.core.sim.setup.SimulationSetups;
+import agentgui.core.sim.setup.SimulationSetupsChangeNotification;
 import agentgui.graphEnvironment.controller.yedGraphml.YedGraphMLFileImporter;
 
 public class GraphEnvironmentController extends Observable implements Observer {
 	
-	public static final Integer EVENT_GRAPH_LOADED = 0;
+	public static final Integer EVENT_GRIDMODEL_CHANGED = 0;
 	
 	public static final Integer EVENT_AGENT_CLASSES_SET = 1;
+	
+	private String graphFilePath = null;
+	
+	private String currGraphFileName = null;
 	
 	public HashMap<String, String> getAgentClasses() {
 		return project.simSetups.getCurrSimSetup().getAgentClassesHash();
@@ -54,7 +61,8 @@ public class GraphEnvironmentController extends Observable implements Observer {
 	public GraphEnvironmentController(Project project){
 		this.project = project;
 		this.project.addObserver(this);
-		loadProjectGridModel();
+		graphFilePath = this.project.getProjectFolderFullPath()+this.project.getSubFolderEnvSetups();
+		loadGridModel();
 	}
 	
 	Project getProject(){
@@ -73,7 +81,7 @@ public class GraphEnvironmentController extends Observable implements Observer {
 		gridModel = getGraphFileImporter().loadGraphFromFile(graphMLFile);
 		if(gridModel != null){
 			this.setChanged();
-			notifyObservers(EVENT_GRAPH_LOADED);
+			notifyObservers(EVENT_GRIDMODEL_CHANGED);
 		}
 		project.isUnsaved = true;
 	}
@@ -87,8 +95,31 @@ public class GraphEnvironmentController extends Observable implements Observer {
 
 	@Override
 	public void update(Observable o, Object arg) {
-		if(arg == Project.SAVED){
+		if(o.equals(project) && arg == Project.SAVED){
 			saveGridModel();
+		}else if(o.equals(project) && arg instanceof SimulationSetupsChangeNotification){
+			SimulationSetupsChangeNotification sscn = (SimulationSetupsChangeNotification) arg;
+			switch(sscn.getUpdateReason()){
+				case SimulationSetups.SIMULATION_SETUP_ADD_NEW:
+					createNewSetup();
+				break;
+				case SimulationSetups.SIMULATION_SETUP_COPY:
+					copySetup();
+				break;
+				case SimulationSetups.SIMULATION_SETUP_LOAD:
+					loadSetup();
+				break;
+				case SimulationSetups.SIMULATION_SETUP_REMOVE:
+					deleteSetup();
+				break;
+				case SimulationSetups.SIMULATION_SETUP_RENAME:
+					renameSetup();
+				break;
+				case SimulationSetups.SIMULATION_SETUP_SAVED:
+					saveSetup();
+				break;
+				
+			}
 		}
 	}
 	
@@ -125,25 +156,6 @@ public class GraphEnvironmentController extends Observable implements Observer {
 			});
 		}
 		return graphMLWriter;
-	}
-	
-	public void saveGridModel(){
-		try {
-			String folderPath = this.project.getProjectFolderFullPath()+this.project.getSubFolderEnvSetups(); 
-			SimulationSetup simSetup = project.simSetups.getCurrSimSetup();
-			if(simSetup.getEnvironmentFileName() == null){
-				simSetup.setEnvironmentFileName(project.simSetupCurrent+".graphml");
-			}
-			File file = new File(folderPath+File.separator+simSetup.getEnvironmentFileName());
-			if(!file.exists()){
-				file.createNewFile();
-			}
-			PrintWriter pw = new PrintWriter(new FileWriter(file));
-			getGraphMLWriter().save(gridModel.getGraph(), pw);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 	
 	private GraphMLReader2<Graph<PropagationPoint, GridComponent>, PropagationPoint, GridComponent> getGraphMLReader(File file) throws FileNotFoundException{
@@ -187,17 +199,106 @@ public class GraphEnvironmentController extends Observable implements Observer {
 		
 	}
 	
-	private void loadProjectGridModel(){
+	private void loadSetup(){
+		
+		System.out.println("Testausgabe: Lade Setup");
+		
+//		loadGridModel();
+		
+	}
+	
+	private void copySetup(){
+		System.out.println("Testausgabe: kopiere Setup");
+		
+//		String sourcePath = graphFilePath+File.separator+currGraphFileName;
+//		
+//		String newFileName = project.simSetupCurrent+".graphml";
+//		String destPath = graphFilePath+File.separator+newFileName;
+//		
+//		FileCopier fc = new FileCopier();
+//		fc.copyFile(sourcePath, destPath);
+//		
+//		currGraphFileName = newFileName;
+		
+	}
+	
+	private void renameSetup(){
+		System.out.println("Testausgabe: Benenne Setup um");
+		
+//		File oldFile = new File(graphFilePath+File.separator+currGraphFileName);
+//		
+//		String newFileName = project.simSetupCurrent+".graphml";
+//		File newFile = new File(graphFilePath+File.separator+newFileName);
+//		
+//		if(oldFile.exists()){
+//			oldFile.renameTo(newFile);
+//		}
+		
+//		currGraphFileName = newFileName;
+		
+		
+	}
+	
+	private void createNewSetup(){
+		System.out.println("Testausgabe: Erzeuge Setup");
+		
+//		gridModel = new GridModel();
+//		setChanged();
+//		notifyObservers(new Integer(EVENT_GRIDMODEL_CHANGED));
+//		
+//		currGraphFileName = project.simSetupCurrent+".graphml";
+	}
+	
+	private void deleteSetup(){
+		System.out.println("Testausgabe: Lösche Setup");
+		
+//		File oldFile = new File(graphFilePath+File.separator+currGraphFileName);
+//		
+//		if(oldFile.exists()){
+//			oldFile.delete();
+//		}
+//		
+//		currGraphFileName = project.simSetups.getCurrSimSetup().getEnvironmentFileName();
+//		
+//		loadSetup();
+		
+	}
+	
+	private void saveSetup(){
+		System.out.println("Testausgabe: Speichere Setup");
+//		saveGridModel();
+	}
+	
+	private void saveGridModel(){
+		if(gridModel != null && gridModel.getGraph() != null){
+			try {
+				SimulationSetup simSetup = project.simSetups.getCurrSimSetup();
+				simSetup.setEnvironmentFileName(project.simSetupCurrent+".graphml");
+				File file = new File(graphFilePath+File.separator+simSetup.getEnvironmentFileName());
+				if(!file.exists()){
+					file.createNewFile();
+				}
+				PrintWriter pw = new PrintWriter(new FileWriter(file));
+				getGraphMLWriter().save(gridModel.getGraph(), pw);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	private void loadGridModel(){
+		
+		gridModel = new GridModel();
 		
 		String fileName = project.simSetups.getCurrSimSetup().getEnvironmentFileName();
-		
 		if(fileName != null){
 			
 			String folderPath = this.project.getProjectFolderFullPath()+this.project.getSubFolderEnvSetups();
 			File envFile = new File(folderPath+File.separator+fileName);
 			if(envFile.exists()){
+				currGraphFileName = fileName;
 				try {
-					gridModel = new GridModel();
 					gridModel.setGraph(getGraphMLReader(envFile).readGraph());
 				} catch (FileNotFoundException e) {
 					// TODO Auto-generated catch block
@@ -209,5 +310,7 @@ public class GraphEnvironmentController extends Observable implements Observer {
 			}
 		}
 		
+		setChanged();
+		notifyObservers(new Integer(EVENT_GRIDMODEL_CHANGED));
 	}
 }

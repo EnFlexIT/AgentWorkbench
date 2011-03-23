@@ -23,7 +23,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<Propaga
 	 */
 	public GraphEnvironmentMousePlugin(BasicGraphGUI parentGUI) {
 		super();
-		this.locked = true;
+//		this.locked = true;
 		this.myGUI = parentGUI;
 	}
 
@@ -51,6 +51,8 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<Propaga
 				pickedObject = pickedGC;
 			}
 		}
+		
+		
 		
 		myGUI.handleObjectSelection(pickedObject);
 	}

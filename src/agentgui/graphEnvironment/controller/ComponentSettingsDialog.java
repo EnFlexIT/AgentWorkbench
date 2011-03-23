@@ -40,21 +40,25 @@ public class ComponentSettingsDialog extends JDialog implements ActionListener{
 	private GridComponent component = null;
 	
 	private PropagationPoint propPoint = null;
+	
+	private GraphEnvironmentControllerGUI parentGUI = null;
 	/**
 	 * Constructor
 	 * @param project The simulation project
 	 * @param component The graph node containing the ontology object
 	 */
-	public ComponentSettingsDialog(Project project, GridComponent component){
+	public ComponentSettingsDialog(Project project, GraphEnvironmentControllerGUI parentGUI, GridComponent component){
 		super(Application.MainWindow, Dialog.ModalityType.APPLICATION_MODAL);
 		this.project = project;
+		this.parentGUI = parentGUI;
 		this.component = component;
 		initialize();
 	}
 	
-	public ComponentSettingsDialog(Project project, PropagationPoint propPoint){
+	public ComponentSettingsDialog(Project project, GraphEnvironmentControllerGUI parentGUI, PropagationPoint propPoint){
 		super(Application.MainWindow, Dialog.ModalityType.APPLICATION_MODAL);
 		this.project = project;
+		this.parentGUI = parentGUI;
 		this.propPoint = propPoint;
 		initialize();
 	}
@@ -76,8 +80,10 @@ public class ComponentSettingsDialog extends JDialog implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource().equals(getJButtonApply())){
+			parentGUI.componentSettingsChanged();
 			this.dispose();
 		}else if(e.getSource().equals(getJButtonAbort())){
+			parentGUI.componentSettingsChangeAborted();
 			this.dispose();
 		}
 	}
