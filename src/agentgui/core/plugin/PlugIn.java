@@ -16,13 +16,13 @@ import agentgui.core.application.Project;
  */
 public abstract class PlugIn implements Observer {
 
-	
 	public static final String CHANGED = "PlugIns";
 	public static final int ADDED = 1;
 	public static final int REMOVED = 2;
 	
 	private Project project = null;
-
+	private String classReference = null;
+	
 	/**
 	 * Default constructor for this class
 	 * @param currProject
@@ -32,6 +32,19 @@ public abstract class PlugIn implements Observer {
 		this.project.addObserver(this);		
 	}
 	
+	/**
+	 * @param classReference the classReference to set
+	 */
+	public void setClassReference(String classReference) {
+		this.classReference = classReference;
+	}
+	/**
+	 * @return the classReference
+	 */
+	public String getClassReference() {
+		return classReference;
+	}
+
 	/**
 	 * @return the pluginName
 	 */
@@ -50,7 +63,7 @@ public abstract class PlugIn implements Observer {
 	 */
 	public void onPlugOut() {
 		this.project.deleteObserver(this);
-		System.out.println( "- PlugIn unloaded/removed [" + this.getName() + "]" );
+		System.out.println( "- PlugIn removed [" + this.getName() + "]" );
 	}
 	
 	/**

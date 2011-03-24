@@ -22,6 +22,14 @@ public class JListClassSearcher extends JListWithProgressBar {
 	private DefaultListModel tmpListModel = null;
 	
 	/**
+	 * This constructor was only build to enable the use of the Visual Editor  
+	 */
+	@Deprecated
+	public JListClassSearcher() {
+		super();
+	}
+	
+	/**
 	 * Constructor for this class in case that we DON'T NEED project-specific
 	 * Classes. Needs constants from the class 'ClassSearcher'
 	 * @param searchFor

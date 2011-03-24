@@ -9,6 +9,8 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -27,11 +29,15 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import agentgui.core.application.Application;
 import agentgui.core.application.Project;
 import agentgui.core.environment.EnvironmentType;
+import agentgui.core.gui.ClassSelector;
+import agentgui.core.plugin.PlugIn;
+import agentgui.core.plugin.PlugInListElement;
+import agentgui.core.plugin.PlugInNotification;
 
 /**
  * @author Christian Derksen, Tim Lewen
  */
-public class ProjectResources extends JPanel {
+public class ProjectResources extends JPanel implements Observer {
 
 	private static final long serialVersionUID = 1L;
 	final static String PathImage = Application.RunInfo.PathImageIntern();
@@ -39,7 +45,7 @@ public class ProjectResources extends JPanel {
 	
 	private JPanel jPanelRight = null;
 	private JScrollPane jScrollPane = null;
-	private DefaultListModel myModel = null;
+	private DefaultListModel resourcesListModel = null;
 	
 	private JList jListResources = null;
 	private JButton jButtonAdd = null;
@@ -60,6 +66,8 @@ public class ProjectResources extends JPanel {
 	private JButton jButtonRemovePlugIns = null;
 	private JButton jButtonRefreshPlugIns = null;
 	private JList jListPlugIns = null;
+	
+	private DefaultListModel plugInsListModel = new DefaultListModel();
 
 	
 	/**
@@ -67,12 +75,14 @@ public class ProjectResources extends JPanel {
 	 */
 	public ProjectResources(Project cp) {
 		super();
-		currProject = cp;
+		this.currProject = cp;
+		this.currProject.addObserver(this);
+		
 		initialize();
-		myModel = new DefaultListModel();
-		jListResources.setModel(myModel);
+		resourcesListModel = new DefaultListModel();
+		jListResources.setModel(resourcesListModel);
 		for (String file : currProject.projectResources) {
-			myModel.addElement(file);
+			resourcesListModel.addElement(file);
 		}
 
 	}
@@ -250,7 +260,7 @@ public class ProjectResources extends JPanel {
 						currProject.projectResources.addAll(names);
 
 						for (String name : names) {
-							myModel.addElement(name);
+							resourcesListModel.addElement(name);
 						
 						}
 						currProject.resourcesReLoad();
@@ -280,7 +290,7 @@ public class ProjectResources extends JPanel {
 								Object[] values = jListResources.getSelectedValues();
 								
 								for (Object file : values) {
-									myModel.removeElement(file);
+									resourcesListModel.removeElement(file);
 									currProject.projectResources.remove(file);
 								}
 								currProject.resourcesReLoad();
@@ -358,6 +368,7 @@ public class ProjectResources extends JPanel {
 
 	/**
 	 * This method initializes jPanelSimulationEnvironment	
+	 * 
 	 * @return javax.swing.JPanel	
 	 */
 	private JPanel getJPanelSimulationEnvironment() {
@@ -388,7 +399,7 @@ public class ProjectResources extends JPanel {
 	}
 	
 	/**
-	 * This method initializes jComboBoxEnvironmentModelSelector
+	 * This method initialises jComboBoxEnvironmentModelSelector
 	 * @return javax.swing.JComboBox	
 	 */
 	private JComboBox getJComboBoxEnvironmentModelSelector(){
@@ -430,7 +441,6 @@ public class ProjectResources extends JPanel {
 		return jScrollPanePlugIns;
 	}
 	
-	
 	/**
 	 * This method initializes jButtonAdd	
 	 * @return javax.swing.JButton	
@@ -444,7 +454,22 @@ public class ProjectResources extends JPanel {
 			jButtonAddPlugIns.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					System.out.println("Add PlugIn");
+					
+					ClassSelector cs = new ClassSelector(Application.MainWindow);
+					cs.setVisible(true);
+					if (cs.isCanceled()==true) return;
+					
+					// ----------------------------------------------
+					// --- Class was selected. Proceed it -----------
+					String classSelected = cs.getClassSelected();
+					cs.dispose();
+					cs = null;
+					// ----------------------------------------------
+					
+					// --- add the class to the project PlugIns -----
+					currProject.plugInLoad(classSelected, true);
+					currProject.isUnsaved=true;
+					
 				}
 			});					
 		}
@@ -464,7 +489,17 @@ public class ProjectResources extends JPanel {
 			jButtonRemovePlugIns.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					System.out.println("Remove PlugIn");
+					
+					PlugInListElement pile = (PlugInListElement) jListPlugIns.getSelectedValue();
+					if (pile==null) return;
+					
+					// --- Get the PlugIn -----------------
+					PlugIn pi = currProject.plugIns_Loaded.getPlugIn(pile.getPlugInName());
+
+					// --- Remove the PlugIn --------------
+					currProject.plugInRemove(pi, true);
+					currProject.isUnsaved=true;
+					
 				}
 			}); 
 
@@ -485,7 +520,7 @@ public class ProjectResources extends JPanel {
 			jButtonRefreshPlugIns.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					System.out.println("Refresh PlugIns");
+					currProject.plugInVectorReload();
 				}
 			});
 		}
@@ -493,7 +528,7 @@ public class ProjectResources extends JPanel {
 	}
 	
 	/**
-	 * This method initializes jPanelRight	
+	 * This method initializes jPanelRightPlugIns
 	 * @return javax.swing.JPanel	
 	 */
 	private JPanel getJPanelRightPlugIns() {
@@ -525,8 +560,52 @@ public class ProjectResources extends JPanel {
 	private JList getJListPlugIns() {
 		if (jListPlugIns == null) {
 			jListPlugIns = new JList();
+			jListPlugIns.setModel(plugInsListModel);
 		}
 		return jListPlugIns;
 	}
+	
+	/**
+	 * This methods adds a Plugin to the plugInListModel, so that it is displayed 
+	 * @param plugIn
+	 */
+	private void addPlugInElement2List(PlugIn plugIn) {
+		PlugInListElement pile = new PlugInListElement(plugIn.getName(), plugIn.getClassReference());
+		this.plugInsListModel.addElement(pile);
+	}
+	/**
+	 * This methods removes a Plugin from the plugInListModel 
+	 * @param plugIn
+	 */
+	private void removePlugInElement2List(PlugIn plugIn) {
+		String plugInRef = plugIn.getClassReference();
+		for (int i = 0; i < plugInsListModel.size(); i++) {
+			PlugInListElement pile =  (PlugInListElement) plugInsListModel.get(i);
+			if (pile.getPlugInClassReference().equals(plugInRef)) {
+				plugInsListModel.remove(i);
+				return;
+			}
+		}
+	}
+
+	@Override
+	public void update(Observable o, Object updated) {
+		
+		if (updated.toString().equals(PlugIn.CHANGED)) {
+			// --- Something happend with a plugIn --------
+			PlugInNotification pin = (PlugInNotification) updated;
+			int updateReason = pin.getUpdateReason();
+			if (updateReason==PlugIn.ADDED) {
+				this.addPlugInElement2List(pin.getPlugIn());
+			} else if (updateReason==PlugIn.REMOVED) {
+				this.removePlugInElement2List(pin.getPlugIn());
+			}
+			
+		} else {
+			// ----
+		}
+		
+	}
+
 	
 } //  @jve:decl-index=0:visual-constraint="-105,-76"

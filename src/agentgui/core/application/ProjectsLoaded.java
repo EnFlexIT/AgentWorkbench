@@ -138,15 +138,15 @@ public class ProjectsLoaded {
 		// --- Gibt es bereits ein Simulations-Setup? -----
 		if (newProject.simSetups.size()==0) {
 			newProject.simSetups = new SimulationSetups(newProject, "default");
-			newProject.simSetups .setupCreateDefault();			
+			newProject.simSetups.setupCreateDefault();			
 		}
 		
 		// --- Projektfenster und Standard-Tabs anhängen --
-		newProject.projectWindow = new ProjectWindow( newProject );
+		newProject.projectWindow = new ProjectWindow(newProject);
 		newProject.addDefaultTabs();
 		
 		// --- Konfigurierte PlugIns laden ----------------
-		newProject.loadPlugInVector();
+		newProject.plugInVectorLoad();
 		
 		// --- Projekt als aktuell markieren -------------- 
 		newProject.isUnsaved = false;

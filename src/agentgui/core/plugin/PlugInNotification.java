@@ -7,7 +7,7 @@ public class PlugInNotification {
 	private int updateReason = 0; 
 	
 	public PlugInNotification(int reason, PlugIn ppi) {
-		this.updateReason = reason;
+		this.setUpdateReason(reason);
 		this.setPlugIn(ppi);
 	}
 	public void setUpdateReason(int updateReason) {

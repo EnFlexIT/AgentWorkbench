@@ -10,8 +10,14 @@ public class TestPlugIn extends PlugIn {
 
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
+		return "Test-PlugIn";
 	}
 
+	@Override
+	public void onPlugIn() {
+		super.onPlugIn();
+		
+	}
+	
+	
 }

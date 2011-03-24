@@ -278,7 +278,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 		// --- Projekt kann geschlossen werden ------------
 		// ------------------------------------------------
 		// --- Clear PlugIns ------------------------------
-		this.removePlugInVector();
+		this.plugInVectorRemove();
 		// --- Clear CLASSPATH ----------------------------
 		this.resourcesRemove();
 		
@@ -304,7 +304,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 
 	// ----------------------------------------------------------------------------------
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	
-	// --- Here we come with methods for (un-) load ProjectPlugins --- Start ------------ 
+	// --- Here we come with methods for (un-) load ProjectPlugIns --- Start ------------ 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// ----------------------------------------------------------------------------------	
 	/**
@@ -313,38 +313,67 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	 * the 'ProjectsLoaded.add()' execution. After this no further functionallity 
 	 * can be expected. 
 	 */
-	public void loadPlugInVector() {
-		if (plugInVectorLoaded==false) {
+	public void plugInVectorLoad() {
+		if (this.plugInVectorLoaded==false) {
 			// --- load all plugins configured in 'plugIns_Classes' -----------
-			for (int i = 0; i < plugIns_Classes.size(); i++) {
-				if (this.loadPlugIn(plugIns_Classes.get(i))== false ) {
+			for (int i = 0; i < this.plugIns_Classes.size(); i++) {
+				if (this.plugInLoad(this.plugIns_Classes.get(i), false)== false ) {
 					return;
 				}
 			}
-			plugInVectorLoaded = true;
+			this.plugInVectorLoaded = true;
 		}
 	}
 	/**
 	 * This method will remove/unload the plugins in 
 	 * descending order of the Vector 'plugins_Loaded'.  
 	 */
-	private void removePlugInVector() {
+	private void plugInVectorRemove() {
 		// --- unload/remove all plugins configured in 'plugIns_Loaded' -----------
-		for (int i = plugIns_Loaded.size(); i>0; i--) {
-			this.removePlugIn(plugIns_Loaded.get(i-1));
+		for (int i = this.plugIns_Loaded.size(); i>0; i--) {
+			this.plugInRemove(this.plugIns_Loaded.get(i-1), false);
 		}
 		this.plugInVectorLoaded = false;
 	}
-	
+	/**
+	 * This method will reload the configured PlugIns
+	 */
+	public void plugInVectorReload() {
+		// --- remove all loaded PlugIns ------------------
+		this.plugInVectorRemove();
+		// --- re-initialize the 'PlugInsLoaded'-Vector ---
+		plugIns_Loaded = new PlugInsLoaded();
+		// --- load all configured PlugIns to the project -
+		this.plugInVectorLoad();
+		
+	}
 	/**
 	 * This method loads a single plugin given by its class reference
 	 * @param pluginReference
 	 */
-	public boolean loadPlugIn(String pluginReference) {
+	public boolean plugInLoad(String pluginReference, boolean add2ProjectReferenceVector) {
+		
+		String MsgHead = "";
+		String MsgText = "";
+			
 		try {
-			PlugIn ppi = plugIns_Loaded.loadPlugin(this, pluginReference);
-			this.plugIns_Classes.add(pluginReference);
-			this.setNotChangedButNotify(new PlugInNotification(PlugIn.ADDED, ppi));
+			if (plugIns_Loaded.isLoaded(pluginReference)==true) {
+				// --- PlugIn can't be loaded because it's already there ------
+				PlugIn ppi = plugIns_Loaded.getPlugIn(pluginReference);
+				
+				MsgHead = Language.translate("Fehler - PlugIn: ") + ppi.getName() + " !" ;
+				MsgText = Language.translate("Das PlugIn wurde bereits in das Projekt integriert " +
+						"und kann deshalb nicht erneut hinzugefügt werden!");
+				JOptionPane.showInternalMessageDialog( this.projectWindow, MsgText, MsgHead, JOptionPane.ERROR_MESSAGE);
+				
+			} else {
+				// --- PlugIn can be loaded -----------------------------------
+				PlugIn ppi = plugIns_Loaded.loadPlugin(this, pluginReference);
+				this.setNotChangedButNotify(new PlugInNotification(PlugIn.ADDED, ppi));
+				if (add2ProjectReferenceVector) {
+					this.plugIns_Classes.add(pluginReference);	
+				}
+			}
 			
 		} catch (PlugInLoadException err) {
 			err.printStackTrace();
@@ -356,13 +385,16 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	 * This method will unload and remove a single PlugIn 
 	 * @param pluginReference
 	 */
-	public void removePlugIn(PlugIn plugIn) {
-		plugIns_Loaded.removePlugIn(plugIn);
+	public void plugInRemove(PlugIn plugIn, boolean removeFromProjectReferenceVector) {
+		this.plugIns_Loaded.removePlugIn(plugIn);
 		this.setNotChangedButNotify(new PlugInNotification(PlugIn.REMOVED, plugIn));
+		if (removeFromProjectReferenceVector) {
+			this.plugIns_Classes.remove(plugIn.getClassReference());
+		}
 	}
 	// ----------------------------------------------------------------------------------
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-	// --- Here we come with methods for (un-) load ProjectPlugins --- End --------------
+	// --- Here we come with methods for (un-) load ProjectPlugIns --- End --------------
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// ----------------------------------------------------------------------------------
 	

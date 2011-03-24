@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<project>
+    <projectName>Path Finding</projectName>
+    <environmentModel>continous2Denvironment</environmentModel>
+    <projectResources>
+        <projectResource>D:\10 Java Projects\PathFinding\bin</projectResource>
+    </projectResources>
+    <plugins/>
+    <subOntologies/>
+    <agentConfiguration/>
+    <simulationSetupCurrent>default</simulationSetupCurrent>
+    <simulationSetups>
+        <entry>
+            <key>default</key>
+            <value>default.xml</value>
+        </entry>
+    </simulationSetups>
+    <jadeConfiguration>
+        <start4Sim>true</start4Sim>
+        <useAppDefaults>false</useAppDefaults>
+        <useLocalPort>1103</useLocalPort>
+        <serviceList>
+            <service>jade.core.event.NotificationService;</service>
+            <service>jade.core.mobility.AgentMobilityService;</service>
+            <service>agentgui.simulationService.SimulationService;</service>
+            <service>agentgui.physical2Denvironment.provider.EnvironmentProviderService;</service>
+        </serviceList>
+    </jadeConfiguration>
+    <subFolderEnvSetups>svgEnvSetups</subFolderEnvSetups>
+</project>

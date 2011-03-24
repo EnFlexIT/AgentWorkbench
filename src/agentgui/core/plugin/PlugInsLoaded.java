@@ -74,6 +74,8 @@ public class PlugInsLoaded extends Vector<PlugIn> {
 			throw new PlugInLoadException(Language.translate("Es wurde kein Name für das PlugIn konfiguriert"));
 		}
 		
+		// --- Remind the classReference in the PlugIn --------------
+		plugIn.setClassReference(plugInReference);
 		// --- Call the onPlugIn() method ---------------------------
 		plugIn.onPlugIn();
 		// --- add the PlugIn to the local Vector -------------------
@@ -86,13 +88,32 @@ public class PlugInsLoaded extends Vector<PlugIn> {
 	 * @param plugIn
 	 */
 	public void removePlugIn(PlugIn plugIn) {
-
 		// --- Call the onPlugOut()method ---------------------------
 		plugIn.onPlugOut();
-		
 		// --- remove the PlugIn from the local Vector --------------
 		this.remove(plugIn);
-		
+	}
+	
+	
+	/**
+	 * This method returns a single PlugIn Instance  
+	 * given by its name or its class reference 
+	 * 
+	 * @param plugInName_or_plugInReference
+	 * @return
+	 */
+	public PlugIn getPlugIn(String plugInName_or_plugInReference) {
+
+		String search = plugInName_or_plugInReference;
+		for (int i = 0; i < this.size(); i++) {
+			PlugIn pi = this.get(i);
+			if (pi.getName().equals(search)) {
+				return pi;
+			} else if (pi.getClassReference().equals(search)) {
+				return pi;
+			}
+		}
+		return null;
 	}
 	
 	/**
@@ -100,16 +121,18 @@ public class PlugInsLoaded extends Vector<PlugIn> {
 	 * @param PlugInNameOrReference
 	 * @return
 	 */
-	public boolean isLoaded(String plugInNameOrReference ) {
-		
+	public boolean isLoaded(String plugInName_or_plugInReference) {
+
+		String search = plugInName_or_plugInReference;
 		for (int i = 0; i < this.size(); i++) {
-			// --- 
-			
+			PlugIn pi = this.get(i);
+			if (pi.getName().equals(search)) {
+				return true;
+			} else if (pi.getClassReference().equals(search)) {
+				return true;
+			}
 		}
 		return false;
 	}
-
-
-
 
 }
