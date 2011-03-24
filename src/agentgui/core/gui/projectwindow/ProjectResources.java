@@ -27,6 +27,7 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import agentgui.core.application.Application;
+import agentgui.core.application.Language;
 import agentgui.core.application.Project;
 import agentgui.core.environment.EnvironmentType;
 import agentgui.core.gui.ClassSelector;
@@ -455,8 +456,14 @@ public class ProjectResources extends JPanel implements Observer {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					
-					ClassSelector cs = new ClassSelector(Application.MainWindow);
+					Class<?> search4Class = PlugIn.class;
+					String 	 search4CurrentValue = null;
+					String 	 search4DefaultValue = null;
+					String   search4Description = Language.translate("PlugIn für Agent.GUI");
+					
+					ClassSelector cs = new ClassSelector(Application.MainWindow, search4Class, search4CurrentValue, search4DefaultValue, search4Description);
 					cs.setVisible(true);
+					// --- act in the dialog ... --------------------
 					if (cs.isCanceled()==true) return;
 					
 					// ----------------------------------------------
@@ -466,9 +473,11 @@ public class ProjectResources extends JPanel implements Observer {
 					cs = null;
 					// ----------------------------------------------
 					
-					// --- add the class to the project PlugIns -----
-					currProject.plugInLoad(classSelected, true);
-					currProject.isUnsaved=true;
+					if (classSelected.equals("")==false) {
+						// --- add the class to the project PlugIns -
+						currProject.plugInLoad(classSelected, true);
+						currProject.isUnsaved=true;
+					}
 					
 				}
 			});					

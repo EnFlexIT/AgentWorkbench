@@ -8,7 +8,6 @@ import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Observable;
@@ -24,19 +23,24 @@ import javax.swing.JTextField;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
+import agentgui.core.gui.ClassSelector;
 import agentgui.core.sim.setup.DistributionSetup;
 import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.core.sim.setup.SimulationSetups;
 import agentgui.core.sim.setup.SimulationSetupsChangeNotification;
+import agentgui.simulationService.balancing.DynamicLoadBalancing;
+import agentgui.simulationService.balancing.DynamicLoadBalancingBase;
+import agentgui.simulationService.balancing.StaticLoadBalancing;
+import agentgui.simulationService.balancing.StaticLoadBalancingBase;
 import agentgui.simulationService.load.LoadThresholdLevels;
 
 public class Distribution extends JPanel implements ActionListener, Observer, KeyListener {
 
 	private static final long serialVersionUID = 1L;
 	
-	private final static int DEFAULT_VALUES_4_BalancingClassStatic = 1;
-	private final static int DEFAULT_VALUES_4_BalancingClassDynamic = 2;
-	private final static int DEFAULT_VALUES_4_ThresholdLevel = 3;
+	private final static int STATIC_BALANCING_CLASS = 1;
+	private final static int DYNAMIC_BALANCING_CLASS = 2;
+	private final static int THRESHOLD_LEVEL = 3;
 
 	private final String PathImage = Application.RunInfo.PathImageIntern();  //  @jve:decl-index=0:
 	
@@ -48,6 +52,7 @@ public class Distribution extends JPanel implements ActionListener, Observer, Ke
 	private StartSetupSelector jPanelSetupSelection = null;
 	
 	private JPanel jPanelStatic = null;
+	private JPanel jPanelStaticClass = null;
 	private JPanel jPanelDynamic = null;
 	private JPanel jPanelThreshold = null;
 	private JPanel jPanelDummy = null;
@@ -58,6 +63,7 @@ public class Distribution extends JPanel implements ActionListener, Observer, Ke
 	
 	private JTextField jTextFieldAgentsExpected = null;
 	private JTextField jTextFieldContainerExpected = null;
+	private JTextField jTextFieldStaticLoadClass = null;
 	private JTextField jTextFieldDynamicLoadClass = null;
 	private JTextField jTextFieldCpuLow = null;
 	private JTextField jTextFieldCpuHigh = null;
@@ -66,7 +72,9 @@ public class Distribution extends JPanel implements ActionListener, Observer, Ke
 	private JTextField jTextFieldThreadsHigh = null;
 	private JTextField jTextFieldThreadsLow = null;
 	
+	private JLabel jLabelStaticLoadClass = null;
 	private JLabel jLabelDynamicLoadClass = null;
+	private JLabel jLabelCalculation = null;
 	private JLabel jLabelAgentsExpected = null;
 	private JLabel jLabelContainerExpected = null;
 	
@@ -79,16 +87,16 @@ public class Distribution extends JPanel implements ActionListener, Observer, Ke
 	private JLabel jLabelHigh = null;
 	private JLabel jLabelLow = null;
 	
-	private JButton jButtonDefaultClassDynamic = null;
 	private JButton jButtonCalcContainer = null;
-	private JButton jButtonDefaultThreshold = null;
-	private JLabel jLabelCalculation = null;
-	private JPanel jPanelStaticClass = null;
-	private JLabel jLabelStaticLoadClass = null;
-	private JTextField jTextFieldStaticLoadClass = null;
+	
 	private JButton jButtonDefaultClassStatic = null;
-	private JButton jButtonDefaultClassStaticCheck = null;
-	private JButton jButtonDefaultClassDynamicCheck = null;
+	private JButton jButtonDefaultClassDynamic = null;
+	private JButton jButtonDefaultThreshold = null;
+	
+	private JButton jButtonSelectStaticClass = null;
+	private JButton jButtonSelectDynamicClass = null;
+	
+	
 	/**
 	 * This is the default constructor
 	 */
@@ -99,8 +107,6 @@ public class Distribution extends JPanel implements ActionListener, Observer, Ke
 		initialize();
 		
 		this.setupLoad();
-		this.isValidClass(jTextFieldStaticLoadClass, jButtonDefaultClassStaticCheck);
-		this.isValidClass(jTextFieldDynamicLoadClass, jButtonDefaultClassDynamicCheck);
 		
 		jCheckBoxDoLoadStatic.setText(Language.translate("Statische Lastverteilung aktivieren"));
 		jCheckBoxDoLoadDynamic.setText(Language.translate("Dynamische Lastverteilung aktivieren"));
@@ -119,8 +125,8 @@ public class Distribution extends JPanel implements ActionListener, Observer, Ke
 		
 		jButtonDefaultClassStatic.setToolTipText(Language.translate("Agent.GUI - Standard verwenden"));	
 		jButtonDefaultClassDynamic.setToolTipText(Language.translate("Agent.GUI - Standard verwenden"));
-		jButtonDefaultClassStaticCheck.setToolTipText(Language.translate("Klassenangabe überprüfen"));
-		jButtonDefaultClassDynamicCheck.setToolTipText(Language.translate("Klassenangabe überprüfen"));
+		jButtonSelectStaticClass.setToolTipText(Language.translate("Klasse auswählen"));
+		jButtonSelectDynamicClass.setToolTipText(Language.translate("Klasse auswählen"));
 	}
 
 	/**
@@ -331,15 +337,7 @@ public class Distribution extends JPanel implements ActionListener, Observer, Ke
 		if (jTextFieldStaticLoadClass == null) {
 			jTextFieldStaticLoadClass = new JTextField();
 			jTextFieldStaticLoadClass.setPreferredSize(new Dimension(400, 26));
-			jTextFieldStaticLoadClass.addKeyListener(new KeyAdapter() {
-				@Override
-				public void keyReleased(KeyEvent kR) {
-					super.keyReleased(kR);
-					currDistributionSetup.setStaticLoadBalancingClass(jTextFieldStaticLoadClass.getText().trim());
-					currSimSetup.save();
-					isValidClass(jTextFieldStaticLoadClass, jButtonDefaultClassStaticCheck);
-				}
-			});
+			jTextFieldStaticLoadClass.setEditable(false);
 		}
 		return jTextFieldStaticLoadClass;
 	}
@@ -365,15 +363,15 @@ public class Distribution extends JPanel implements ActionListener, Observer, Ke
 	 * @return javax.swing.JButton	
 	 */
 	private JButton getJButtonDefaultClassStaticCheck() {
-		if (jButtonDefaultClassStaticCheck == null) {
-			jButtonDefaultClassStaticCheck = new JButton();
-			jButtonDefaultClassStaticCheck.setToolTipText("Klassenangabe überprüfen");
-			jButtonDefaultClassStaticCheck.setPreferredSize(new Dimension(45, 26));
-			jButtonDefaultClassStaticCheck.setIcon(new ImageIcon(getClass().getResource(PathImage + "MBcheckGreen.png")));
-			jButtonDefaultClassStaticCheck.setActionCommand("StatLoadBalancingCheck");
-			jButtonDefaultClassStaticCheck.addActionListener(this);
+		if (jButtonSelectStaticClass == null) {
+			jButtonSelectStaticClass = new JButton();
+			jButtonSelectStaticClass.setToolTipText("Klasse auswählen");
+			jButtonSelectStaticClass.setPreferredSize(new Dimension(45, 26));
+			jButtonSelectStaticClass.setIcon(new ImageIcon(getClass().getResource(PathImage + "Search.png")));
+			jButtonSelectStaticClass.setActionCommand("StatLoadBalancingCheck");
+			jButtonSelectStaticClass.addActionListener(this);
 		}
-		return jButtonDefaultClassStaticCheck;
+		return jButtonSelectStaticClass;
 	}
 	
 	/**
@@ -422,15 +420,7 @@ public class Distribution extends JPanel implements ActionListener, Observer, Ke
 		if (jTextFieldDynamicLoadClass == null) {
 			jTextFieldDynamicLoadClass = new JTextField();
 			jTextFieldDynamicLoadClass.setPreferredSize(new Dimension(400, 26));
-			jTextFieldDynamicLoadClass.addKeyListener(new KeyAdapter() {
-				@Override
-				public void keyReleased(KeyEvent kR) {
-					super.keyReleased(kR);
-					currDistributionSetup.setDynamicLoadBalancingClass(jTextFieldDynamicLoadClass.getText().trim());
-					currSimSetup.save();
-					isValidClass(jTextFieldDynamicLoadClass, jButtonDefaultClassDynamicCheck);
-				}
-			});
+			jTextFieldDynamicLoadClass.setEditable(false);
 		}
 		return jTextFieldDynamicLoadClass;
 	}
@@ -456,15 +446,15 @@ public class Distribution extends JPanel implements ActionListener, Observer, Ke
 	 * @return javax.swing.JButton	
 	 */
 	private JButton getJButtonDefaultClassDynamicCheck() {
-		if (jButtonDefaultClassDynamicCheck == null) {
-			jButtonDefaultClassDynamicCheck = new JButton();
-			jButtonDefaultClassDynamicCheck.setToolTipText("Klassenangabe überprüfen");
-			jButtonDefaultClassDynamicCheck.setPreferredSize(new Dimension(45, 26));
-			jButtonDefaultClassDynamicCheck.setIcon(new ImageIcon(getClass().getResource(PathImage + "MBcheckGreen.png")));
-			jButtonDefaultClassDynamicCheck.setActionCommand("DynLoadBalancingCheck");
-			jButtonDefaultClassDynamicCheck.addActionListener(this);
+		if (jButtonSelectDynamicClass == null) {
+			jButtonSelectDynamicClass = new JButton();
+			jButtonSelectDynamicClass.setToolTipText("Klasse auswählen");
+			jButtonSelectDynamicClass.setPreferredSize(new Dimension(45, 26));
+			jButtonSelectDynamicClass.setIcon(new ImageIcon(getClass().getResource(PathImage + "Search.png")));
+			jButtonSelectDynamicClass.setActionCommand("DynLoadBalancingCheck");
+			jButtonSelectDynamicClass.addActionListener(this);
 		}
-		return jButtonDefaultClassDynamicCheck;
+		return jButtonSelectDynamicClass;
 	}
 	
 	/**
@@ -765,17 +755,17 @@ public class Distribution extends JPanel implements ActionListener, Observer, Ke
 	private void setDefaults(int values2Set) {
 		
 		switch (values2Set) {
-		case DEFAULT_VALUES_4_BalancingClassStatic:
+		case STATIC_BALANCING_CLASS:
 			this.jTextFieldStaticLoadClass.setText(DistributionSetup.DEFAULT_StaticLoadBalancingClass);
 			this.currDistributionSetup.setStaticLoadBalancingClass(this.jTextFieldStaticLoadClass.getText());
 			break;
 			
-		case DEFAULT_VALUES_4_BalancingClassDynamic:
+		case DYNAMIC_BALANCING_CLASS:
 			this.jTextFieldDynamicLoadClass.setText(DistributionSetup.DEFAULT_DynamicLoadBalancingClass);
 			this.currDistributionSetup.setDynamicLoadBalancingClass(this.jTextFieldDynamicLoadClass.getText());
 			break;
 
-		case DEFAULT_VALUES_4_ThresholdLevel:
+		case THRESHOLD_LEVEL:
 			this.jCheckBoxThresholdDefinition.setSelected(false);
 			this.currDistributionSetup.setUseUserThresholds(false);
 			
@@ -795,25 +785,6 @@ public class Distribution extends JPanel implements ActionListener, Observer, Ke
 			this.currUserThresholds.setThNoThreadsH(1500);
 		}
 		this.currSimSetup.save();
-	}
-	
-	/**
-	 * This method checks if a given classs reference is valid
-	 * @param className: reference to the class  
-	 * @param classType: static(0) or dynamic(1)
-	 */
-	private void isValidClass(JTextField jTextField, JButton jButton) {
-		
-		String className = jTextField.getText().trim();
-		try {
-			@SuppressWarnings("unused")
-			Class<?> clazz = Class.forName(className);
-			jButton.setIcon(new ImageIcon(getClass().getResource(PathImage + "MBcheckGreen.png")));
-			
-		} catch (ClassNotFoundException e) {
-			//e.printStackTrace();
-			jButton.setIcon(new ImageIcon(getClass().getResource(PathImage + "MBcheckRed.png")));
-		}
 	}
 	
 	/**
@@ -849,6 +820,62 @@ public class Distribution extends JPanel implements ActionListener, Observer, Ke
 		this.jLabelCalculation.setText("");
 	}
 	
+	/**
+	 * This method can be used to open the class-selector in order to
+	 * select a customized static or dynamic load balancing class
+	 * @param values2Set
+	 */
+	private void setBalancingClass(int balancingType) {
+		
+		Class<?> search4Class = null;
+		String 	 search4CurrentValue = null;
+		String 	 search4DefaultValue = null;
+		String   search4Description = null;
+		
+		switch (balancingType) {
+		case STATIC_BALANCING_CLASS:
+			search4Class = StaticLoadBalancingBase.class;
+			search4CurrentValue = currDistributionSetup.getStaticLoadBalancingClass();
+			search4DefaultValue = StaticLoadBalancing.class.getName();
+			search4Description = jLabelStaticLoadClass.getText();
+			break;
+			
+		case DYNAMIC_BALANCING_CLASS:
+			search4Class = DynamicLoadBalancingBase.class;
+			search4CurrentValue = currDistributionSetup.getDynamicLoadBalancingClass();
+			search4DefaultValue = DynamicLoadBalancing.class.getName();
+			search4Description = jLabelDynamicLoadClass.getText();
+			break;
+		}
+		
+		ClassSelector cs = new ClassSelector(Application.MainWindow, search4Class, search4CurrentValue, search4DefaultValue, search4Description);
+		cs.setVisible(true);
+		// --- act in the dialog ... --------------------
+		if (cs.isCanceled()==true) return;
+		
+		// ----------------------------------------------
+		// --- Class was selected. Proceed it -----------
+		String classSelected = cs.getClassSelected();
+		cs.dispose();
+		cs = null;
+		// ----------------------------------------------
+		
+		if (classSelected.equals("")==false) {
+			switch (balancingType) {
+			case STATIC_BALANCING_CLASS:
+				currDistributionSetup.setStaticLoadBalancingClass(classSelected);
+				jTextFieldStaticLoadClass.setText(classSelected);
+				break;
+				
+			case DYNAMIC_BALANCING_CLASS:
+				currDistributionSetup.setDynamicLoadBalancingClass(classSelected);
+				jTextFieldDynamicLoadClass.setText(classSelected);
+				break;
+			}
+		}
+
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 	
@@ -866,18 +893,16 @@ public class Distribution extends JPanel implements ActionListener, Observer, Ke
 			currDistributionSetup.setNumberOfContainer(noContainer);
 						
 		} else if (trigger==jButtonDefaultClassStatic) {
-			this.setDefaults(DEFAULT_VALUES_4_BalancingClassStatic);
-			this.isValidClass(jTextFieldStaticLoadClass, jButtonDefaultClassStaticCheck);
+			this.setDefaults(STATIC_BALANCING_CLASS);
 		} else if (trigger==jButtonDefaultClassDynamic) { 
-			this.setDefaults(DEFAULT_VALUES_4_BalancingClassDynamic);
-			this.isValidClass(jTextFieldDynamicLoadClass, jButtonDefaultClassDynamicCheck);
+			this.setDefaults(DYNAMIC_BALANCING_CLASS);
 		} else if (trigger==jButtonDefaultThreshold) {
-			this.setDefaults(DEFAULT_VALUES_4_ThresholdLevel);
+			this.setDefaults(THRESHOLD_LEVEL);
 			
-		} else if (trigger==jButtonDefaultClassStaticCheck) {
-			this.isValidClass(jTextFieldStaticLoadClass, jButtonDefaultClassStaticCheck);
-		} else if (trigger==jButtonDefaultClassDynamicCheck) {
-			this.isValidClass(jTextFieldDynamicLoadClass, jButtonDefaultClassDynamicCheck);
+		} else if (trigger==jButtonSelectStaticClass) {
+			this.setBalancingClass(STATIC_BALANCING_CLASS);			
+		} else if (trigger==jButtonSelectDynamicClass) {
+			this.setBalancingClass(DYNAMIC_BALANCING_CLASS);
 			
 		} else if (trigger==jCheckBoxDoLoadStatic) {
 			currDistributionSetup.setDoStaticLoadBalalncing(jCheckBoxDoLoadStatic.isSelected());

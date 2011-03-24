@@ -190,7 +190,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 
 	/**
 	 * This method initializes jAgentList	
-	 * @return javax.swing.JList	
+	 * @return javax.swing.JListClassSearcher
 	 */
 	private JListClassSearcher getJAgentList() {
 		if (jAgentList == null) {

@@ -41,6 +41,18 @@ public class JListClassSearcher extends JListWithProgressBar {
 	}
 
 	/**
+	 * Constructor for this class in case that we DON'T NEED project-specific
+	 * Classes. Needs a specific ClassSearcherSingle, which looks for a specific class
+	 * @param searchFor
+	 */
+	public JListClassSearcher(Class<?> searchFor, ClassSearcherSingle css) {
+		super();
+		this.currSearchFor = searchFor;
+		this.currClassSearcherSingle = css;
+		this.setListModel();
+	}
+	
+	/**
 	 * Constructor for this class in case that we NEED project-specific
 	 * Classes. Needs constants from the class 'ClassSearcher'
 	 * @param searchFor
@@ -64,7 +76,7 @@ public class JListClassSearcher extends JListWithProgressBar {
 			this.currClassSearcherSingle = Application.ClassDetector.csOntologies;
 		} else if (this.currSearchFor == ClassSearcher.CLASSES_BASESERVICE) {
 			this.currClassSearcherSingle = Application.ClassDetector.csBaseService;
-		}	
+		} 
 		
 		// --- Get the needed ListModel -------------------
 		if (this.currProject==null) {
@@ -113,6 +125,10 @@ public class JListClassSearcher extends JListWithProgressBar {
 				currClass = ce2d.getElementClass();
 				currClassName = currClass.getName();
 			} else if (currSearchFor == ClassSearcher.CLASSES_BASESERVICE) {
+				ClassElement2Display ce2d = (ClassElement2Display) currObject;
+				currClass = ce2d.getElementClass();
+				currClassName = currClass.getName();
+			} else {
 				ClassElement2Display ce2d = (ClassElement2Display) currObject;
 				currClass = ce2d.getElementClass();
 				currClassName = currClass.getName();

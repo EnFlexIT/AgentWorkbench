@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Vector;
 
 import javax.swing.DefaultListModel;
+import javax.swing.SwingUtilities;
 
 import agentgui.core.agents.AgentClassElement;
 import agentgui.core.application.Application;
@@ -27,7 +28,7 @@ public class ClassSearcherSingle {
 	private Vector<String> packagesInProject = new Vector<String>();
 	
 	private ClassUpdater cu = null;
-	private Class<?> clazz;
+	private Class<?> class2Search4;
 	private String classname;
 	private ClassFinderFilter classfilter;
 	
@@ -44,7 +45,7 @@ public class ClassSearcherSingle {
 	 * @param search4Class
 	 */
 	public ClassSearcherSingle(Class<?> clazz2Search4) {
-		this.clazz =  clazz2Search4;
+		this.class2Search4 =  clazz2Search4;
 		this.classname = clazz2Search4.getName();
 	}
 	
@@ -53,11 +54,14 @@ public class ClassSearcherSingle {
 		classesFound.removeAllElements();
 		jListModelClassesFound.removeAllElements();
 		jListModelClassesFoundProject.removeAllElements();
-
+		
 		this.setBusy(true);
 		
 		// --- Start the search of classes ----------------
 		cu = new ClassUpdater(classname, classfilter == null ? new ClassFilter() : classfilter);
+		if (classname.equals(Object.class.getName())) {
+			cu.setUpdateEvery(10);	
+		}
 		new Thread(cu).start();		
 	}
 	public void reStartSearch() {
@@ -189,18 +193,32 @@ public class ClassSearcherSingle {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void add2ListModel(DefaultListModel listModel, Class<?> clazz) {
+	public void add2ListModel(final DefaultListModel listModel, final Class<?> clazz) {
 	
-		if (this.clazz == ClassSearcher.CLASSES_AGENTS) {
-			Class<? extends Agent> agentClass = (Class<? extends Agent>) clazz;
-			listModel.addElement(new AgentClassElement(agentClass));
-			
-		} else if (this.clazz == ClassSearcher.CLASSES_ONTOLOGIES) {
-			listModel.addElement(new ClassElement2Display(clazz));
-			
-		} else if (this.clazz == ClassSearcher.CLASSES_BASESERVICE) {
-			listModel.addElement(new ClassElement2Display(clazz));
-			
+		if (clazz.getName().contains("$")==false) {
+			// ------------------------------------------------------
+			// --- Swing is not Thread Safe ... ---------------------
+			// ------------------------------------------------------
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+
+					if (class2Search4 == ClassSearcher.CLASSES_AGENTS) {
+						Class<? extends Agent> agentClass = (Class<? extends Agent>) clazz;
+						listModel.addElement(new AgentClassElement(agentClass));
+						
+					} else if (class2Search4 == ClassSearcher.CLASSES_ONTOLOGIES) {
+						listModel.addElement(new ClassElement2Display(clazz));
+						
+					} else if (class2Search4 == ClassSearcher.CLASSES_BASESERVICE) {
+						listModel.addElement(new ClassElement2Display(clazz));
+						
+					} else {
+						listModel.addElement(new ClassElement2Display(clazz));
+					}
+				
+			}});
+			// ------------------------------------------------------
 		}
 	}
 	
@@ -235,9 +253,9 @@ public class ClassSearcherSingle {
 	 */
 	private class ClassUpdater extends Thread implements ClassFinderListener {
 
-		private final static int UPDATE_EVERY = 1;
-		
+		private int updateEvery = 1;
 		private int numberOfClasses;
+
 		private List<Class<?>> classNamesCache;
 		private String classname;
 		private ClassFinder cf;
@@ -247,6 +265,10 @@ public class ClassSearcherSingle {
 		public ClassUpdater(String classname, ClassFinderFilter classfilter) {
 			this.classname = classname;
 			this.classfilter = classfilter;
+		}
+
+		public void setUpdateEvery(int updateEvery) {
+			this.updateEvery = updateEvery;
 		}
 
 		public void stopSearch() {
@@ -259,7 +281,7 @@ public class ClassSearcherSingle {
 		public void add(Class clazz, URL location) {
 			numberOfClasses++;
 			classNamesCache.add(clazz);
-			if ((numberOfClasses % UPDATE_EVERY) == 0) {
+			if ((numberOfClasses % this.updateEvery) == 0) {
 				appendToList(classNamesCache);
 				classNamesCache.clear();
 			}
@@ -267,8 +289,8 @@ public class ClassSearcherSingle {
 
 		public void run() {
 			
-			Thread.currentThread().setName("ClassSearch-" + clazz.getSimpleName());
-			classNamesCache = new ArrayList<Class<?>>(UPDATE_EVERY);
+			Thread.currentThread().setName("ClassSearch-" + class2Search4.getSimpleName());
+			classNamesCache = new ArrayList<Class<?>>(updateEvery);
 			numberOfClasses = 0;
 			cf = new ClassFinder();
 			cf.findSubclasses(classname, this, classfilter);
