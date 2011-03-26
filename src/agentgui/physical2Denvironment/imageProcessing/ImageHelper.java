@@ -463,7 +463,7 @@ public class ImageHelper {
 			{
 			
 				SVGSafe sg=new SVGSafe();
-				sg.write("WayPath"+counter+".svg", doc);
+				//sg.write("WayPath"+counter+".svg", doc);
 			  return current;
 			}
 			
@@ -979,12 +979,15 @@ public class ImageHelper {
 	    	    	style.setValue(oldVal);
 	    	}
 		 }
-		SVGImage img=new SVGImage( (SVGDocument)doc);
-		this.evn=(BufferedImage) img.createBufferedImage();
+		//SVGImage img=new SVGImage( (SVGDocument)doc);
+		//this.evn=(BufferedImage) img.createBufferedImage();
 		SVGSafe save=new SVGSafe();
 		save.write("myWorld.svg", doc);
 		save.writeJPG("myworld.svg");
+		if(!READ_WORLD)
+		{
 		this.evn=ImageIO.read(new File("myWorld.jpg"));
+		}
 		READ_WORLD=true;
 		return evn;
 	   }
