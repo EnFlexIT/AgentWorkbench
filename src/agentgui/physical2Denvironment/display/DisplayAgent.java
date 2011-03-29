@@ -78,14 +78,11 @@ public class DisplayAgent extends Agent {
 			try {
 				EnvironmentProviderHelper helper = (EnvironmentProviderHelper) getHelper(EnvironmentProviderService.SERVICE_NAME);
 				svgDoc = helper.getSVGDoc();
-				environment = helper.getEnvironment();
-							
-				
+				environment = helper.getEnvironment();				
 			} catch (ServiceException e) {
 				System.err.println(getLocalName()+" - Error: Could not retrieve EnvironmentProviderHelper, shutting down!");
 				doDelete();
-			}
-			
+			}			
 		} else {
 			// --- started from Agent.GUI -----------------
 			use4Visualization = 2;
@@ -115,9 +112,7 @@ public class DisplayAgent extends Agent {
 		{
 			myGUI.jPanelSimuInfos.setVisible(true);
 			SimulationServiceHelper simHelper=(SimulationServiceHelper) getHelper(SimulationServiceHelper.SERVICE_NAME);
-			
 			EnvironmentModel envModel= simHelper.getEnvironmentModel();
-		
 			while(envModel==null)
 			{
 				Thread.sleep(10);
@@ -127,19 +122,15 @@ public class DisplayAgent extends Agent {
 			initialTimeStep=model.getStep();	
 			String unit= Language.translate("Sekunden");
 			myGUI.jLabelSpeedFactor.setText( (initialTimeStep/1000.0)+" " + unit);
-		
-	
+			
 		}
 		catch(Exception e)
 		{
 			e.printStackTrace();
 		}
-
 		
 		myGUI.jButtonPlay.addActionListener(new ActionListener()
 		{
-			
-
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				play=!play;
@@ -159,22 +150,13 @@ public class DisplayAgent extends Agent {
 				
 			}
 		}		
-	   );	
-			
-	
-		
-		
-		
-				
+	   );					
 		// the user change the status of the simulation
 		myGUI.jSliderTime.addChangeListener(new javax.swing.event.ChangeListener() {
 	
 			public void stateChanged(javax.swing.event.ChangeEvent e) {
-				 
 				counter=myGUI.jSliderTime.getValue();
 				sameVisualisationCounter=0;
-				
-			
 				if(counter==-1)
 				{
 					counter=0;
@@ -183,7 +165,6 @@ public class DisplayAgent extends Agent {
 				{
 					if(	envHelper!=null)
 					{
-						
 						if(initialTimeStep==0)
 						{
 							SimulationServiceHelper simHelper=(SimulationServiceHelper) getHelper(SimulationServiceHelper.SERVICE_NAME);
@@ -205,24 +186,21 @@ public class DisplayAgent extends Agent {
 					ex.printStackTrace();
 				}
 			}
-		});
-		
+		});		
 		// User adjusted the simulation time steps
 		myGUI.jSliderVisualation.addChangeListener(new javax.swing.event.ChangeListener() {
 			SimulationServiceHelper simHelper=null;
 			
 			public void stateChanged(javax.swing.event.ChangeEvent e) {
 				// Call simu service and tell him that something is changed!
-			
 				try
 				{
-				
-				if(simHelper==null)
-				{
-						simHelper=(SimulationServiceHelper) getHelper(SimulationServiceHelper.SERVICE_NAME);
-						TimeModelDiscrete model=(TimeModelDiscrete) simHelper.getEnvironmentModel().getTimeModel();
-						initialTimeStep=model.getStep();
-				}
+					if(simHelper==null)
+					{
+					  simHelper=(SimulationServiceHelper) getHelper(SimulationServiceHelper.SERVICE_NAME);
+					  TimeModelDiscrete model=(TimeModelDiscrete) simHelper.getEnvironmentModel().getTimeModel();
+					  initialTimeStep=model.getStep();
+					}
 				String unit= Language.translate("Sekunden");
 				myGUI.jLabelSpeedFactor.setText( (((myGUI.jSliderVisualation.getValue()*initialTimeStep))/1000.0) +" "+unit);
 				//TimeModelDiscrete model=(TimeModelDiscrete) simHelper.getEnvironmentModel().getTimeModel();
@@ -235,17 +213,10 @@ public class DisplayAgent extends Agent {
 				}
 			}
 		});
-		
-		
-		
-		
-		
-		
-		
+				
 		addBehaviour(new UpdateSVGBehaviour());
 	}
-	
-	public void takeDown(){
+		public void takeDown(){
 		if(useFrame != null){
 			useFrame.dispose();
 		}
@@ -278,13 +249,10 @@ public class DisplayAgent extends Agent {
 		
 			try {
 				helper = (EnvironmentProviderHelper) getHelper(EnvironmentProviderService.SERVICE_NAME);
-			
-				
-			} catch (ServiceException e) {
+				} catch (ServiceException e) {
 				System.err.println(getLocalName()+" - EnvironmentProviderHelper not found, shutting down");
 				doDelete();
-			}
-			
+			}			
 		}
 		
 		public HashSet<Physical2DObject> fordwardToVisualation(HashMap<AID,PositionUpdate> pos)	{
@@ -326,8 +294,7 @@ public class DisplayAgent extends Agent {
 						 sameTransactionSizeCounter++;
 					 }
 						
-				}
-				
+				}				
 				    if(size>1)
 				    {				    				        		    	
 				    		if(lastCurrentValue==counter)
@@ -339,43 +306,30 @@ public class DisplayAgent extends Agent {
 				    			sameVisualisationCounter=0;
 				    		}
 				    	if(sameVisualisationCounter<20)
-				    	{	
-				    		
+				    	{					    		
 				    		HashSet<Physical2DObject> movingObjects = this.fordwardToVisualation(helper.getModel(counter));
-				    	
-							synchronized (movingObjects) {
+				    			synchronized (movingObjects) {
 								myGUI.updatePositions(movingObjects);
-							}
-							
+							}							
 							 myGUI.setCurrentTimePos(counter);
-						
-							
 							 if(play)
-							 {
-								 
+							 {				 
 								  if(counter+addValue<size)
 								  {
 								
 								 counter=counter+addValue;
 								  }
 							
-							 }
-							 
-							 lastMaximumValue=size;
+							 }							 
+					        lastMaximumValue=size;
 							lastCurrentValue=counter;
-						}
-				    	
-				    
-				    }
-			
+						}    	
+				       }			
 			}
 			catch(Exception e)
 			{
 				e.printStackTrace();
 			}
-			
-		
-		
+		}
 	}
-}
 }
