@@ -22,6 +22,7 @@ import edu.uci.ics.jung.visualization.control.ScalingControl;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -36,6 +37,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 	private JButton btnZoomIn = null;
 	private JButton btnZoomOut = null;
 	private JButton btnZoomReset = null;
+	private Graph<PropagationPoint, GridComponent> graph = null;
 	private VisualizationViewer<PropagationPoint, GridComponent> visView = null;
 	private ScalingControl scalingControl = null;
 	private Component rightComponent = null;
@@ -149,6 +151,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 	}
 	
 	public void setGraph(Graph<PropagationPoint, GridComponent> graph){
+		this.graph = graph;
 		if(graph != null){
 			Layout<PropagationPoint, GridComponent> layout = new FRLayout<PropagationPoint, GridComponent>(graph);
 			layout.setSize(new Dimension(400, 400));
@@ -161,6 +164,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 					return "PP"+arg0.getIndex();
 				}
 			});
+//			visView.getRenderer().getVertexLabelRenderer().setPosition(Position.CNTR);
 			
 			// Edge labels
 			visView.getRenderContext().setEdgeLabelTransformer(new Transformer<GridComponent, String>() {
@@ -174,18 +178,19 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 			PluggableGraphMouse pgm = new PluggableGraphMouse();
 			pgm.add(new GraphEnvironmentMousePlugin(this));
 			visView.setGraphMouse(pgm);
+			visView.setBackground(Color.WHITE);
 			
-			rightComponent = new GraphZoomScrollPane(visView);
+			rightComponent = new GraphZoomScrollPane(visView);;
 			
 			getBtnZoomIn().setEnabled(true);
 			getBtnZoomOut().setEnabled(true);
 			getBtnZoomReset().setEnabled(true);
 		}else{
-//			rightComponent = new JPanel();
-//			
-//			getBtnZoomIn().setEnabled(false);
-//			getBtnZoomOut().setEnabled(false);
-//			getBtnZoomReset().setEnabled(false);
+			rightComponent = new JPanel();
+			
+			getBtnZoomIn().setEnabled(false);
+			getBtnZoomOut().setEnabled(false);
+			getBtnZoomReset().setEnabled(false);
 		}
 		
 		this.add(rightComponent, BorderLayout.CENTER);
@@ -208,6 +213,10 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 	
 	void handleObjectSelection(Object pickedObject){
 		if(pickedObject != null){
+			if(pickedObject instanceof GridComponent){
+				visView.getPickedVertexState().pick(graph.getEndpoints((GridComponent) pickedObject).getFirst(), true);
+				visView.getPickedVertexState().pick(graph.getEndpoints((GridComponent) pickedObject).getSecond(), true);
+			}
 			parentGUI.showComponentSettingsDialog(pickedObject);
 		}
 	}
@@ -215,6 +224,14 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 	void clearPickedObjects(){
 		visView.getPickedVertexState().clear();
 		visView.getPickedEdgeState().clear();
+	}
+	
+	void setPickedObject(Object object){
+		if(object instanceof GridComponent){
+			visView.getPickedEdgeState().pick((GridComponent) object, true);
+		}else if(object instanceof PropagationPoint){
+			visView.getPickedVertexState().pick((PropagationPoint) object, true);
+		}
 	}
 	
 }

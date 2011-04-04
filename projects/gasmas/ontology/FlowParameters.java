@@ -8,41 +8,19 @@ import jade.core.*;
 /**
 * Protege name: FlowParameters
 * @author ontology bean generator
-* @version 2011/03/18, 20:48:41
+* @version 2011/04/4, 19:21:09
 */
 public class FlowParameters implements Concept {
 
    /**
-* Protege name: massFlow
+* Protege name: temperature
    */
-   private float massFlow;
-   public void setMassFlow(float value) { 
-    this.massFlow=value;
+   private float temperature;
+   public void setTemperature(float value) { 
+    this.temperature=value;
    }
-   public float getMassFlow() {
-     return this.massFlow;
-   }
-
-   /**
-* Protege name: flow
-   */
-   private float flow;
-   public void setFlow(float value) { 
-    this.flow=value;
-   }
-   public float getFlow() {
-     return this.flow;
-   }
-
-   /**
-* Protege name: pressure
-   */
-   private float pressure;
-   public void setPressure(float value) { 
-    this.pressure=value;
-   }
-   public float getPressure() {
-     return this.pressure;
+   public float getTemperature() {
+     return this.temperature;
    }
 
    /**
@@ -57,14 +35,14 @@ public class FlowParameters implements Concept {
    }
 
    /**
-* Protege name: temperature
+* Protege name: massFlow
    */
-   private float temperature;
-   public void setTemperature(float value) { 
-    this.temperature=value;
+   private float massFlow;
+   public void setMassFlow(float value) { 
+    this.massFlow=value;
    }
-   public float getTemperature() {
-     return this.temperature;
+   public float getMassFlow() {
+     return this.massFlow;
    }
 
    /**
@@ -76,6 +54,28 @@ public class FlowParameters implements Concept {
    }
    public float getFluidVelocity() {
      return this.fluidVelocity;
+   }
+
+   /**
+* Protege name: pressure
+   */
+   private float pressure;
+   public void setPressure(float value) { 
+    this.pressure=value;
+   }
+   public float getPressure() {
+     return this.pressure;
+   }
+
+   /**
+* Protege name: flow
+   */
+   private float flow;
+   public void setFlow(float value) { 
+    this.flow=value;
+   }
+   public float getFlow() {
+     return this.flow;
    }
 
 }

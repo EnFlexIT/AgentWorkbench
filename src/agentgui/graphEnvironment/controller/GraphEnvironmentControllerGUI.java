@@ -3,6 +3,7 @@ package agentgui.graphEnvironment.controller;
 import javax.swing.JFileChooser;
 import javax.swing.JSplitPane;
 import javax.swing.JPanel;
+import javax.swing.ListSelectionModel;
 
 import java.awt.BorderLayout;
 import java.awt.GridBagLayout;
@@ -129,6 +130,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 			
 			tblComponents = new JTable(getComponentTableContents(), titles);
 			tblComponents.getSelectionModel().addListSelectionListener(this);
+			tblComponents.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			tblComponents.setShowGrid(true);
 			tblComponents.setFillsViewportHeight(true);
 		}
@@ -242,9 +244,12 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
-		String componentID = (String) tblComponents.getModel().getValueAt(e.getFirstIndex(), 0);
-		GridComponent selectedComponent = controller.getGridModel().getComponent(componentID);
-		new ComponentSettingsDialog(controller.getProject(), this, selectedComponent).setVisible(true);
+		if(getTblComponents().getSelectedRowCount() > 0){
+			String componentID = (String) tblComponents.getModel().getValueAt(e.getFirstIndex(), 0);
+			GridComponent selectedComponent = controller.getGridModel().getComponent(componentID);
+//			graphGUI.setPickedObject(selectedComponent);
+			new ComponentSettingsDialog(controller.getProject(), this, selectedComponent).setVisible(true);
+		}
 	}
 	
 	GraphEnvironmentController getController(){
@@ -274,11 +279,18 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		}
 	}
 	
+	void selectComponent(Object component){
+		if(getTblComponents().getSelectedRow() == -1){
+		}
+	}
+	
 	void componentSettingsChanged(){
 		graphGUI.clearPickedObjects();
+		getTblComponents().getSelectionModel().clearSelection();
 	}
 	
 	void componentSettingsChangeAborted(){
 		graphGUI.clearPickedObjects();
+		getTblComponents().getSelectionModel().clearSelection();
 	}
 }  //  @jve:decl-index=0:visual-constraint="33,19"

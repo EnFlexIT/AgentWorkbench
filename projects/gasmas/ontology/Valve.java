@@ -7,8 +7,8 @@ import jade.core.*;
 /**
 * Protege name: Valve
 * @author ontology bean generator
-* @version 2011/03/18, 20:48:41
+* @version 2011/04/4, 19:21:09
 */
-public class Valve extends SingleEnded{ 
+public class Valve extends DoubleEnded{ 
 
 }

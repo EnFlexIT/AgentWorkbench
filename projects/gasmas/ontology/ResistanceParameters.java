@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: ResistanceParameters
 * @author ontology bean generator
-* @version 2011/03/18, 20:48:41
+* @version 2011/04/4, 19:21:09
 */
 public class ResistanceParameters implements Concept {
 

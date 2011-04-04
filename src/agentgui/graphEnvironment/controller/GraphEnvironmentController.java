@@ -23,8 +23,6 @@ import edu.uci.ics.jung.io.graphml.HyperEdgeMetadata;
 import edu.uci.ics.jung.io.graphml.NodeMetadata;
 
 import agentgui.core.application.Project;
-import agentgui.core.common.FileCopier;
-import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.core.sim.setup.SimulationSetups;
 import agentgui.core.sim.setup.SimulationSetupsChangeNotification;
 import agentgui.graphEnvironment.controller.yedGraphml.YedGraphMLFileImporter;
@@ -38,17 +36,6 @@ public class GraphEnvironmentController extends Observable implements Observer {
 	private String graphFilePath = null;
 	
 	private String currGraphFileName = null;
-	
-	public HashMap<String, String> getAgentClasses() {
-		return project.simSetups.getCurrSimSetup().getAgentClassesHash();
-	}
-
-	public void setAgentClasses(HashMap<String, String> agentClasses) {
-		project.simSetups.getCurrSimSetup().setAgentClassesHash(agentClasses);
-		project.isUnsaved=true;
-		setChanged();
-		notifyObservers(EVENT_AGENT_CLASSES_SET);
-	}
 	
 	private Project project = null;
 	
@@ -67,6 +54,17 @@ public class GraphEnvironmentController extends Observable implements Observer {
 	
 	Project getProject(){
 		return this.project;
+	}
+
+	public HashMap<String, String> getAgentClasses() {
+		return project.simSetups.getCurrSimSetup().getAgentClassesHash();
+	}
+
+	public void setAgentClasses(HashMap<String, String> agentClasses) {
+		project.simSetups.getCurrSimSetup().setAgentClassesHash(agentClasses);
+		project.isUnsaved=true;
+		setChanged();
+		notifyObservers(EVENT_AGENT_CLASSES_SET);
 	}
 
 	/**
@@ -98,28 +96,7 @@ public class GraphEnvironmentController extends Observable implements Observer {
 		if(o.equals(project) && arg == Project.SAVED){
 			saveGridModel();
 		}else if(o.equals(project) && arg instanceof SimulationSetupsChangeNotification){
-			SimulationSetupsChangeNotification sscn = (SimulationSetupsChangeNotification) arg;
-			switch(sscn.getUpdateReason()){
-				case SimulationSetups.SIMULATION_SETUP_ADD_NEW:
-					createNewSetup();
-				break;
-				case SimulationSetups.SIMULATION_SETUP_COPY:
-					copySetup();
-				break;
-				case SimulationSetups.SIMULATION_SETUP_LOAD:
-					loadSetup();
-				break;
-				case SimulationSetups.SIMULATION_SETUP_REMOVE:
-					deleteSetup();
-				break;
-				case SimulationSetups.SIMULATION_SETUP_RENAME:
-					renameSetup();
-				break;
-				case SimulationSetups.SIMULATION_SETUP_SAVED:
-					saveSetup();
-				break;
-				
-			}
+			handleSetupChange((SimulationSetupsChangeNotification) arg);
 		}
 	}
 	
@@ -199,82 +176,66 @@ public class GraphEnvironmentController extends Observable implements Observer {
 		
 	}
 	
-	private void loadSetup(){
+	
+private void handleSetupChange(SimulationSetupsChangeNotification sscn){
 		
-		System.out.println("Testausgabe: Lade Setup");
+		switch(sscn.getUpdateReason()){
+			
+			case SimulationSetups.SIMULATION_SETUP_COPY:
+				System.out.println("Testausgabe: kopiere Setup");
+				updateGraphFileName();
+				saveGridModel();
+			break;
+			
+			case SimulationSetups.SIMULATION_SETUP_ADD_NEW:
+				System.out.println("Testausgabe: Erzeuge Setup");
+				updateGraphFileName();
+				gridModel = new GridModel();
+			break;
+			
+			case SimulationSetups.SIMULATION_SETUP_REMOVE:
+				System.out.println("Testausgabe: Lösche Setup");
+				File graphFile = new File(graphFilePath+File.separator+currGraphFileName);
+				if(graphFile.exists()){
+					graphFile.delete();
+				}
+			// No, there's no break missing here. After deleting a setup another one is loaded.
+			
+			case SimulationSetups.SIMULATION_SETUP_LOAD:
+				System.out.println("Testausgabe: Lade Setup");
+				updateGraphFileName();
+				loadGridModel();
+			break;
+			
+			case SimulationSetups.SIMULATION_SETUP_RENAME:
+				System.out.println("Testausgabe: Benenne Setup um");
+				File oldGraphFile = new File(graphFilePath+File.separator+currGraphFileName);
+				updateGraphFileName();
+				if(oldGraphFile.exists()){
+					File newGraphFile = new File(graphFilePath+File.separator+currGraphFileName);
+					oldGraphFile.renameTo(newGraphFile);
+				}
+			break;
+			
+			case SimulationSetups.SIMULATION_SETUP_SAVED:
+				System.out.println("Testausgabe: Speichere Setup");
+			break;
+		}
 		
-//		loadGridModel();
+		setChanged();
+		notifyObservers(EVENT_GRIDMODEL_CHANGED);
 		
 	}
-	
-	private void copySetup(){
-		System.out.println("Testausgabe: kopiere Setup");
-		
-//		String sourcePath = graphFilePath+File.separator+currGraphFileName;
-//		
-//		String newFileName = project.simSetupCurrent+".graphml";
-//		String destPath = graphFilePath+File.separator+newFileName;
-//		
-//		FileCopier fc = new FileCopier();
-//		fc.copyFile(sourcePath, destPath);
-//		
-//		currGraphFileName = newFileName;
-		
-	}
-	
-	private void renameSetup(){
-		System.out.println("Testausgabe: Benenne Setup um");
-		
-//		File oldFile = new File(graphFilePath+File.separator+currGraphFileName);
-//		
-//		String newFileName = project.simSetupCurrent+".graphml";
-//		File newFile = new File(graphFilePath+File.separator+newFileName);
-//		
-//		if(oldFile.exists()){
-//			oldFile.renameTo(newFile);
-//		}
-		
-//		currGraphFileName = newFileName;
-		
-		
-	}
-	
-	private void createNewSetup(){
-		System.out.println("Testausgabe: Erzeuge Setup");
-		
-//		gridModel = new GridModel();
-//		setChanged();
-//		notifyObservers(new Integer(EVENT_GRIDMODEL_CHANGED));
-//		
-//		currGraphFileName = project.simSetupCurrent+".graphml";
-	}
-	
-	private void deleteSetup(){
-		System.out.println("Testausgabe: Lösche Setup");
-		
-//		File oldFile = new File(graphFilePath+File.separator+currGraphFileName);
-//		
-//		if(oldFile.exists()){
-//			oldFile.delete();
-//		}
-//		
-//		currGraphFileName = project.simSetups.getCurrSimSetup().getEnvironmentFileName();
-//		
-//		loadSetup();
-		
-	}
-	
-	private void saveSetup(){
-		System.out.println("Testausgabe: Speichere Setup");
-//		saveGridModel();
+
+	private void updateGraphFileName(){
+		currGraphFileName = project.simSetupCurrent+".graphml";
+		project.simSetups.getCurrSimSetup().setEnvironmentFileName(currGraphFileName);
 	}
 	
 	private void saveGridModel(){
 		if(gridModel != null && gridModel.getGraph() != null){
 			try {
-				SimulationSetup simSetup = project.simSetups.getCurrSimSetup();
-				simSetup.setEnvironmentFileName(project.simSetupCurrent+".graphml");
-				File file = new File(graphFilePath+File.separator+simSetup.getEnvironmentFileName());
+				File file = new File(graphFilePath+File.separator+currGraphFileName);
 				if(!file.exists()){
 					file.createNewFile();
 				}
