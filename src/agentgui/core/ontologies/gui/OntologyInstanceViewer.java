@@ -182,6 +182,20 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	}
 	
 	/**
+	 * This methode can be called to either allow or disallow the enlargement
+	 * of View to the OntologyInstanceViewer 
+	 * @param allowEnlargement
+	 */
+	public void setAllowViewEnlargement(boolean allowEnlargement) {
+		if (this.getTabCount()==3 && allowEnlargement==false) {
+			this.removeEnlargeTab();
+		}
+		if (this.getTabCount()<3 && allowEnlargement==true) {
+			this.addEnlargeTab();
+		}
+	}
+	
+	/**
 	 * This Method create the full XML-Text, which can be displayed 
 	 * in the local 'jTextArea' for the XML-Representation
 	 * @return
@@ -410,7 +424,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	/**
 	 * @param configurationXML the configurationXML to set
 	 */
-	public void setConfigurationXML(String [] configurationXML) {
+	public void setConfigurationXML(String[] configurationXML) {
 		this.dynForm.setOntoArgsXML(configurationXML);
 		if (this.getSelectedIndex()==1) {
 			this.setXMLText();
@@ -419,14 +433,14 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	/**
 	 * @return the configurationXML
 	 */
-	public String [] getConfigurationXML() {
+	public String[] getConfigurationXML() {
 		return this.dynForm.getOntoArgsXML();
 	}
 	
 	/**
 	 * @param configurationInstances the configurationInstances to set
 	 */
-	public void setConfigurationInstances(Object [] configurationInstances) {
+	public void setConfigurationInstances(Object[] configurationInstances) {
 		this.dynForm.setOntoArgsInstance(configurationInstances);
 		if (this.getSelectedIndex()==1) {
 			this.setXMLText();
@@ -435,7 +449,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	/**
 	 * @return the configurationInstances
 	 */
-	public Object [] getConfigurationInstances() {
+	public Object[] getConfigurationInstances() {
 		return this.dynForm.getOntoArgsInstance();
 	}
 
