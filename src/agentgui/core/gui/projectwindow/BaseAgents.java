@@ -782,9 +782,9 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 	public void update(Observable arg0, Object notifyObject) {
 		
 		String ObjectName = notifyObject.toString();
-		if ( ObjectName.equalsIgnoreCase( Project.CHANGED_AgentReferences ) ) {
+		if ( ObjectName.equalsIgnoreCase( Project.CHANGED_AgentStartConfiguration ) ) {
 			// --- Liste der Agenten-Referenzen aktualisieren ---
-			updateView4AgentConfig();
+			this.updateView4AgentConfig();
 			
 		} else if ( ObjectName.equalsIgnoreCase( Project.CHANGED_ProjectOntology ) ) {
 			// --- Ansicht auf die projekt-Ontologie aktualisieren --

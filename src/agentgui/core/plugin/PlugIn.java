@@ -4,6 +4,9 @@ import java.util.Observable;
 import java.util.Observer;
 
 import agentgui.core.application.Project;
+import agentgui.core.sim.setup.SimulationSetup;
+import agentgui.core.sim.setup.SimulationSetups;
+import agentgui.core.sim.setup.SimulationSetupsChangeNotification;
 
 /**
  * This class is the root for a customised plugin, which can
@@ -99,15 +102,140 @@ public abstract class PlugIn implements Observer {
 	 *   Furthermore the instance of the PlugIn can be get
 	 *   by using 'PlugInNotification.getPlugIn()'
 	 *   	 
+	 * 
+	 * Do NOT override this methode directly. Use the updateFromObserver()-method
+	 * instead, in order to get your individual Observer-Changes.  
+	 * 
 	 */
 	@Override
-	public void update(Observable observable, Object arg) {
+	public void update(Observable observable, Object updateObject) {
 		
+		// ----------------------------------------------------------
+		this.updateFromObserver(observable, updateObject);
+		// ----------------------------------------------------------
 		
+		// ----------------------------------------------------------
+		// --- Changes in the Project-Configuration -----------------
+		// ----------------------------------------------------------
+		if (updateObject==null) {
+			return;			
+		} else if (updateObject.equals(Project.SAVED)) {
+			this.onProjectSaved();
+		} else if (updateObject.equals(Project.CHANGED_ProjectName)) {
+			this.onProjectChangedProjectName();
+		} else if (updateObject.equals(Project.CHANGED_ProjectDescription)) {
+			this.onProjectChangedProjectDescription();
+		} else if (updateObject.equals(Project.CHANGED_ProjectFolder)) {
+			// --- Do Nothing here !!! ----------
+			// this.onProjectChangedProjectFolder();
+		} else if (updateObject.equals(Project.CHANGED_ProjectView)) {
+			this.onProjectChangedProjectView();
+		} else if (updateObject.equals(Project.CHANGED_EnvironmentModel)) {
+			this.onProjectChangedEnvironmentModel();
+		} else if (updateObject.equals(Project.CHANGED_AgentStartConfiguration)) {
+			this.onProjectChangedAgentStartConfiguration();
+		} else if (updateObject.equals(Project.CHANGED_ProjectOntology)) {
+			this.onProjectChangedProjectOntology();
+		} else if (updateObject.equals(Project.CHANGED_ProjectResources)) {
+			this.onProjectChangedProjectResources();
+		
+		// ----------------------------------------------------------
+		// --- Changes with the SimulationSetups --------------------			
+		// ----------------------------------------------------------
+		} else if (updateObject.equals(SimulationSetups.CHANGED)) {
+			
+			SimulationSetupsChangeNotification sscn = (SimulationSetupsChangeNotification) updateObject;
+			int sscnUpdate = sscn.getUpdateReason();
+			SimulationSetup simSetup = project.simSetups.getCurrSimSetup();
+			if (sscnUpdate==SimulationSetups.SIMULATION_SETUP_ADD_NEW) {
+				this.onSimSetupChangedAddNew(simSetup);
+			} else if (sscnUpdate==SimulationSetups.SIMULATION_SETUP_COPY) {
+				this.onSimSetupChangedCopy(simSetup);
+			} else if (sscnUpdate==SimulationSetups.SIMULATION_SETUP_LOAD) {
+				this.onSimSetupChangedLoad(simSetup);
+			} else if (sscnUpdate==SimulationSetups.SIMULATION_SETUP_REMOVE) {
+				this.onSimSetupChangedRemove(simSetup);
+			} else if (sscnUpdate==SimulationSetups.SIMULATION_SETUP_RENAME) {
+				this.onSimSetupChangedRename(simSetup);
+			} else if (sscnUpdate==SimulationSetups.SIMULATION_SETUP_SAVED) {
+				this.onSimSetupChangedSaved(simSetup);				
+			}
+		
+		// ----------------------------------------------------------
+		// --- Changes with the Project-PlugIns ---------------------			
+		// ----------------------------------------------------------
+		} else if (updateObject.equals(PlugIn.CHANGED)) {
+
+			PlugInNotification pin = (PlugInNotification) updateObject;
+			int pinUpdate = pin.getUpdateReason();
+			PlugIn plugIn = pin.getPlugIn();
+			if (pinUpdate == PlugIn.ADDED) {
+				this.onPlugInAdded(plugIn);
+			} else if (pinUpdate == PlugIn.REMOVED) {
+				this.onPlugInRemoved(plugIn);
+			}			
+			
+		} else {
+			//System.out.println("Unknown Notification from Observer " + observable.toString() + ": " + updateObject.toString() );
+		}
 		
 		
 	}
 
+	/**
+	 * In order to perceive individual informations from the project Observer
+	 * (observer pattern), this mehtod should be used in the extended class.
+	 * !!! Do NOT override the update methode directly !! 
+	 * @param observable
+	 * @param updateObject
+	 */
+	protected void updateFromObserver(Observable observable, Object updateObject) {
+	}
+
+	// ------------------------------------------------------------------------
+	// --- Protected methods for the PlugIn-development --- START ------------- 
+	// ------------------------------------------------------------------------
 	
+	// --- Changes in the project configuration --------------------------
+	protected void onProjectSaved() {
+	}
+	protected void onProjectChangedProjectName() {
+	}
+	protected void onProjectChangedProjectDescription() {
+	}
+	protected void onProjectChangedEnvironmentModel() {
+	}
+	protected void onProjectChangedAgentStartConfiguration() {
+	}
+	protected void onProjectChangedProjectResources() {
+	}
+	protected void onProjectChangedProjectOntology() {
+	}
+	protected void onProjectChangedProjectView() {
+	}
+	
+	// --- Changes in the SimulationSetup --------------------------------
+	private void onSimSetupChangedAddNew(SimulationSetup currSimSetup) {
+	}
+	private void onSimSetupChangedCopy(SimulationSetup currSimSetup) {
+	}
+	private void onSimSetupChangedLoad(SimulationSetup currSimSetup) {
+	}
+	private void onSimSetupChangedRemove(SimulationSetup currSimSetup) {
+	}
+	private void onSimSetupChangedRename(SimulationSetup currSimSetup) {
+	}
+	private void onSimSetupChangedSaved(SimulationSetup currSimSetup) {
+	}
+
+	// --- Changes with the PlugIns --------------------------------------
+	private void onPlugInRemoved(PlugIn plugIn) {
+	}
+	private void onPlugInAdded(PlugIn plugIn) {
+	}
+
+	// ------------------------------------------------------------------------
+	// --- Protected methods for the PlugIn-development --- END --------------- 
+	// ------------------------------------------------------------------------
 	
 }

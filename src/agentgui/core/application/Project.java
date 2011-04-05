@@ -57,7 +57,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	@XmlTransient public static final String CHANGED_ProjectFolder= "ProjectFolder";
 	@XmlTransient public static final String CHANGED_ProjectView = "ProjectView";
 	@XmlTransient public static final String CHANGED_EnvironmentModel= "EnvironmentModel";
-	@XmlTransient public static final String CHANGED_AgentReferences = "AgentReferences";
+	@XmlTransient public static final String CHANGED_AgentStartConfiguration = "AgentConfiguration4StartArguments";
 	@XmlTransient public static final String CHANGED_ProjectOntology = "ProjectOntology";
 	@XmlTransient public static final String CHANGED_ProjectResources = "ProjectResources";
 	
@@ -599,7 +599,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	public void updateAgentReferences() {
 		isUnsaved = true;
 		setChanged();
-		notifyObservers(CHANGED_AgentReferences);
+		notifyObservers(CHANGED_AgentStartConfiguration);
 	}
 	
 	/**
