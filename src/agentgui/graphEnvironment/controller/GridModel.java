@@ -19,11 +19,11 @@ public class GridModel {
 	/**
 	 * The JUNG graph.
 	 */
-	private Graph<PropagationPoint, GridComponent> graph;
+	private Graph<GraphNode, GraphEdge> graph;
 	/**
 	 * HashMap providing access to the grid components based on the component's agentID
 	 */
-	private HashMap<String, GridComponent> components;
+	private HashMap<String, GraphEdge> components;
 	/**
 	 * Internal counter, used for generating sequential CheckPoint indexes 
 	 */
@@ -32,34 +32,38 @@ public class GridModel {
 	 * Default constructor
 	 */
 	public GridModel(){
-		this.graph = new SparseGraph<PropagationPoint, GridComponent>();
-		this.components = new HashMap<String, GridComponent>();
+		this.graph = new SparseGraph<GraphNode, GraphEdge>();
+		this.components = new HashMap<String, GraphEdge>();
 	}
 	/**
 	 * This method adds a simple grid component (i.e. one represented by only one edge) to the grid, without any connection to other components.
 	 * @param component The simple component to add
 	 */
-	public void addSimpleComponent(GridComponent component){
-		PropagationPoint pp1 = new PropagationPoint(ppCounter++);
-		PropagationPoint pp2 = new PropagationPoint(ppCounter++);
+	public void addSimpleComponent(GraphEdge component){
+		GraphNode pp1 = new GraphNode();
+		pp1.setId("PP"+(ppCounter++));
+		
+		GraphNode pp2 = new GraphNode();
+		pp2.setId("PP"+(ppCounter++));
 		graph.addVertex(pp1);
 		graph.addVertex(pp2);
 		graph.addEdge(component, pp1, pp2, EdgeType.DIRECTED);
-		components.put(component.getAgentID(), component);
+		components.put(component.id(), component);
 	}
 	/**
 	 * This method adds a simple grid component (i.e. one represented by only one edge) to the grid. It will be placed before the component specified by the given ID.
 	 * @param component The simple component to add
 	 * @param successorID The ID of the successor component
 	 */
-	public void addSimpleComponentBefore(GridComponent component, String successorID){
+	public void addSimpleComponentBefore(GraphEdge component, String successorID){
 		
-		PropagationPoint pp2 = graph.getSource(components.get(successorID));
+		GraphNode pp2 = graph.getSource(components.get(successorID));
 		if(pp2 != null){
-			PropagationPoint pp1 = new PropagationPoint(ppCounter++);
+			GraphNode pp1 = new GraphNode();
+			pp1.setId("PP"+(ppCounter++));
 			graph.addVertex(pp1);
 			graph.addEdge(component, pp1, pp2, EdgeType.DIRECTED);
-			components.put(component.getAgentID(), component);
+			components.put(component.id(), component);
 		}else{
 			System.err.println(Language.translate("Nachfolger-Knoten")+" "+successorID+" "+Language.translate("nicht gefunden!"));
 		}
@@ -69,13 +73,14 @@ public class GridModel {
 	 * @param component The simple component to add
 	 * @param predecessorID The ID of the predecessor component
 	 */
-	public void addSimpleComponentAfter(GridComponent component, String predecessorID){
-		PropagationPoint pp1 = graph.getDest(components.get(predecessorID));
+	public void addSimpleComponentAfter(GraphEdge component, String predecessorID){
+		GraphNode pp1 = graph.getDest(components.get(predecessorID));
 		if(pp1 != null){
-			PropagationPoint pp2 = new PropagationPoint(ppCounter++);
+			GraphNode pp2 = new GraphNode();
+			pp2.setId("PP"+(ppCounter++));
 			graph.addVertex(pp2);
 			graph.addEdge(component, pp1, pp2, EdgeType.DIRECTED);
-			components.put(component.getAgentID(), component);
+			components.put(component.id(), component);
 		}else{
 			System.err.println(Language.translate("Vorgänger-Knoten")+" "+predecessorID+" "+Language.translate("nicht gefunden!"));
 		}
@@ -86,9 +91,9 @@ public class GridModel {
 	 * @param predecessorID The ID of the predecessor component
 	 * @param successorID The ID of the successor component
 	 */
-	public void addSimpleComponentBetween(GridComponent component, String predecessorID, String successorID){
-		PropagationPoint pp1 = graph.getDest(components.get(predecessorID));
-		PropagationPoint pp2 = graph.getSource(components.get(successorID));
+	public void addSimpleComponentBetween(GraphEdge component, String predecessorID, String successorID){
+		GraphNode pp1 = graph.getDest(components.get(predecessorID));
+		GraphNode pp2 = graph.getSource(components.get(successorID));
 		if(pp1 != null && pp2 != null){
 				graph.addEdge(component, pp1, pp2, EdgeType.DIRECTED);
 //			}
@@ -102,12 +107,12 @@ public class GridModel {
 		}
 	}
 	public void fixDirections(){
-		Iterator<GridComponent> components = graph.getEdges().iterator();
+		Iterator<GraphEdge> components = graph.getEdges().iterator();
 		while(components.hasNext()){
-			GridComponent component = components.next();
+			GraphEdge component = components.next();
 			if(!component.getType().equals("compressor")){
-				PropagationPoint pp1 = graph.getSource(component);
-				PropagationPoint pp2 = graph.getDest(component);
+				GraphNode pp1 = graph.getSource(component);
+				GraphNode pp2 = graph.getDest(component);
 				graph.removeEdge(component);
 				graph.addEdge(component, pp1, pp2, EdgeType.UNDIRECTED);
 			}
@@ -118,28 +123,28 @@ public class GridModel {
 	 * @param id The ID to look for
 	 * @return The GridComponent
 	 */
-	public GridComponent getComponent(String id){
+	public GraphEdge getComponent(String id){
 		return components.get(id);
 	}
 	/**
 	 * Returns a list of all GridComponents
 	 * @return The list
 	 */
-	public Collection<GridComponent> getComponents() {
+	public Collection<GraphEdge> getComponents() {
 		return graph.getEdges();
 	}
-	Graph<PropagationPoint, GridComponent> getGraph() {
+	Graph<GraphNode, GraphEdge> getGraph() {
 		return graph;
 	}
-	void setGraph(Graph<PropagationPoint, GridComponent> graph) {
+	void setGraph(Graph<GraphNode, GraphEdge> graph) {
 		this.graph = graph;
 		
 		// Create HashMap of components
-		this.components = new HashMap<String, GridComponent>();
-		Iterator<GridComponent> componentIterator = graph.getEdges().iterator();
+		this.components = new HashMap<String, GraphEdge>();
+		Iterator<GraphEdge> componentIterator = graph.getEdges().iterator();
 		while(componentIterator.hasNext()){
-			GridComponent component = componentIterator.next();
-			components.put(component.getAgentID(), component);
+			GraphEdge component = componentIterator.next();
+			components.put(component.id(), component);
 		}
 	}
 }

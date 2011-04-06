@@ -11,7 +11,7 @@ import edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin;
  * @author Nils
  *
  */
-public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<PropagationPoint, GridComponent> {
+public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNode, GraphEdge> {
 	/**
 	 * The parent BasicGraphGUI
 	 */
@@ -33,10 +33,10 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<Propaga
 		Object pickedObject = null;
 		
 		Point point = e.getPoint();
-		GraphElementAccessor<PropagationPoint, GridComponent>ps = myGUI.getVisView().getPickSupport();
+		GraphElementAccessor<GraphNode, GraphEdge>ps = myGUI.getVisView().getPickSupport();
 		
 		// Get the graph node / PropagationPoint at the clicked coordinates
-		PropagationPoint pickedPP = ps.getVertex(myGUI.getVisView().getGraphLayout(), point.getX(), point.getY());
+		GraphNode pickedPP = ps.getVertex(myGUI.getVisView().getGraphLayout(), point.getX(), point.getY());
 		
 		if(pickedPP != null){		// A node / PropagationPoint was clicked
 //			System.out.println("PropagationPoint PP"+pickedPP.getIndex());
@@ -44,7 +44,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<Propaga
 		}else{			// No node / PropagationPoint was clicked
 			
 			// Get the graph edge / GridComponent at the clicked coordinates
-			GridComponent pickedGC = ps.getEdge(myGUI.getVisView().getGraphLayout(), point.getX(), point.getY());
+			GraphEdge pickedGC = ps.getEdge(myGUI.getVisView().getGraphLayout(), point.getX(), point.getY());
 			
 			if(pickedGC != null){	// An edge / GridComponent was clicked
 //				System.out.println("GridComponent "+pickedGC.getAgentID()+" of type "+pickedGC.getType());

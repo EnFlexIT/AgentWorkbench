@@ -6,7 +6,7 @@ import java.util.Vector;
 
 import edu.uci.ics.jung.graph.Graph;
 import agentgui.graphEnvironment.controller.GraphFileImporter;
-import agentgui.graphEnvironment.controller.GridComponent;
+import agentgui.graphEnvironment.controller.GraphEdge;
 import agentgui.graphEnvironment.controller.GridModel;
 
 public class YedGraphMLFileImporter implements GraphFileImporter {
@@ -51,7 +51,7 @@ public class YedGraphMLFileImporter implements GraphFileImporter {
 	
 	private void addNode(TempNode node, String predecessorID){
 		// Check if one of the nodes successors already exists in the GridModel
-		GridComponent existingSuccessor = null;
+		GraphEdge existingSuccessor = null;
 		Iterator<TempNode> successors = tempGraph.getSuccessors(node).iterator();
 		while(successors.hasNext()){
 			TempNode successor = successors.next();
@@ -59,7 +59,7 @@ public class YedGraphMLFileImporter implements GraphFileImporter {
 		}
 		
 		// Generate new Component
-		GridComponent newComponent = new GridComponent(node.getId(), node.getType());
+		GraphEdge newComponent = new GraphEdge(node.getId(), node.getType());
 		
 		// No predecessor, no existing successor
 		if(predecessorID == null && existingSuccessor == null){
@@ -69,10 +69,10 @@ public class YedGraphMLFileImporter implements GraphFileImporter {
 			gridModel.addSimpleComponentAfter(newComponent, predecessorID);
 		// No predecessor, existing successor -> add before successor
 		}else if(predecessorID == null && existingSuccessor != null){
-			gridModel.addSimpleComponentBefore(newComponent, existingSuccessor.getAgentID());
+			gridModel.addSimpleComponentBefore(newComponent, existingSuccessor.id());
 		// Predecessor, existing successor -> add between both
 		}else{
-			gridModel.addSimpleComponentBetween(newComponent, predecessorID, existingSuccessor.getAgentID());
+			gridModel.addSimpleComponentBetween(newComponent, predecessorID, existingSuccessor.id());
 		}
 		
 		// Call recursively for successor nodes

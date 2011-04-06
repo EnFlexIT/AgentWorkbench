@@ -159,14 +159,14 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		if(controller.getGridModel() != null){
 			
 			// Get the components from the controllers GridModel
-			Iterator<GridComponent> components = controller.getGridModel().getComponents().iterator();
+			Iterator<GraphEdge> components = controller.getGridModel().getComponents().iterator();
 			
 			// Add component ID and class name to the data vector
 			while(components.hasNext()){
-				GridComponent comp = components.next();
+				GraphEdge comp = components.next();
 				
 				Vector<String> compData = new Vector<String>();
-				compData.add(comp.getAgentID());
+				compData.add(comp.id());
 				compData.add(comp.getType());
 				compData.add("Test");
 				componentVector.add(compData);
@@ -246,7 +246,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	public void valueChanged(ListSelectionEvent e) {
 		if(getTblComponents().getSelectedRowCount() > 0){
 			String componentID = (String) tblComponents.getModel().getValueAt(e.getFirstIndex(), 0);
-			GridComponent selectedComponent = controller.getGridModel().getComponent(componentID);
+			GraphEdge selectedComponent = controller.getGridModel().getComponent(componentID);
 //			graphGUI.setPickedObject(selectedComponent);
 			new ComponentSettingsDialog(controller.getProject(), this, selectedComponent).setVisible(true);
 		}
@@ -271,10 +271,10 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	}
 	
 	public void showComponentSettingsDialog(Object component){
-		if(component instanceof PropagationPoint){
-			new ComponentSettingsDialog(currProject, this, (PropagationPoint)component).setVisible(true);
-		}else if(component instanceof GridComponent){
-			new ComponentSettingsDialog(currProject, this, (GridComponent)component).setVisible(true);
+		if(component instanceof GraphNode){
+			new ComponentSettingsDialog(currProject, this, (GraphNode)component).setVisible(true);
+		}else if(component instanceof GraphEdge){
+			new ComponentSettingsDialog(currProject, this, (GraphEdge)component).setVisible(true);
 			
 		}
 	}

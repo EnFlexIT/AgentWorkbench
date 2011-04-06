@@ -1,5 +1,7 @@
 package agentgui.graphEnvironment.controller;
 
+import jade.content.Concept;
+
 import javax.swing.JDialog;
 
 import agentgui.core.application.Application;
@@ -37,29 +39,22 @@ public class ComponentSettingsDialog extends JDialog implements ActionListener{
 	/**
 	 * The graph node containing the ontology object
 	 */
-	private GridComponent component = null;
-	
-	private PropagationPoint propPoint = null;
+	private GraphElement element = null;
 	
 	private GraphEnvironmentControllerGUI parentGUI = null;
+	
+	private OntologyInstanceViewer oiv = null;
 	/**
 	 * Constructor
 	 * @param project The simulation project
-	 * @param component The graph node containing the ontology object
+	 * @param parentGUI The GraphEnvironmentControllerGUI that opened the dialog
+	 * @param element The GraphElement containing the ontology object
 	 */
-	public ComponentSettingsDialog(Project project, GraphEnvironmentControllerGUI parentGUI, GridComponent component){
+	public ComponentSettingsDialog(Project project, GraphEnvironmentControllerGUI parentGUI, GraphElement element){
 		super(Application.MainWindow, Dialog.ModalityType.APPLICATION_MODAL);
 		this.project = project;
 		this.parentGUI = parentGUI;
-		this.component = component;
-		initialize();
-	}
-	
-	public ComponentSettingsDialog(Project project, GraphEnvironmentControllerGUI parentGUI, PropagationPoint propPoint){
-		super(Application.MainWindow, Dialog.ModalityType.APPLICATION_MODAL);
-		this.project = project;
-		this.parentGUI = parentGUI;
-		this.propPoint = propPoint;
+		this.element = element;
 		initialize();
 	}
 	
@@ -69,10 +64,10 @@ public class ComponentSettingsDialog extends JDialog implements ActionListener{
 	 */
 	private void initialize() {
         this.setContentPane(getJPanelContent());
-        if(this.component != null){
-        	this.setTitle("GridComponent "+component.getAgentID());
-        }else if(this.propPoint != null){
-        	this.setTitle("PropagationPoint PP"+propPoint.getIndex());
+        if(element instanceof GraphEdge){
+        	this.setTitle("GridComponent "+element.getId());
+        }else if(element instanceof GraphNode){
+        	this.setTitle("PropagationPoint PP"+element.getId());
         }
         this.setSize(new Dimension(450, 450));
 	}
@@ -80,6 +75,7 @@ public class ComponentSettingsDialog extends JDialog implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource().equals(getJButtonApply())){
+			element.setOntologyRepresentation((Concept) oiv.getConfigurationInstances()[0]);
 			parentGUI.componentSettingsChanged();
 			this.dispose();
 		}else if(e.getSource().equals(getJButtonAbort())){
@@ -117,21 +113,23 @@ public class ComponentSettingsDialog extends JDialog implements ActionListener{
 			jPanelContent.add(getJButtonApply(), gridBagConstraints);
 			jPanelContent.add(getJButtonAbort(), gridBagConstraints1);
 			
-			if(component != null){
-				String agentClassName = project.simSetups.getCurrSimSetup().getAgentClassesHash().get(component.getType());
-				jPanelContent.add(new OntologyInstanceViewer(project, agentClassName), gridBagConstraints11);
-			}else if(propPoint != null){
-//				Object[] objectAsArray = new Object[1];
-//				objectAsArray[0] = propPoint.getOntoObject();
-//				OntologyInstanceViewer oiv = new OntologyInstanceViewer(project);
-//				oiv.setConfigurationInstances(objectAsArray);
-				
-				String[] classNameAsArray = new String[1];
-				classNameAsArray[0] = "gasmas.ontology.PropagationPoint";
-				OntologyInstanceViewer oiv = new OntologyInstanceViewer(project, classNameAsArray);
-				
-				jPanelContent.add(oiv, gridBagConstraints11);
+			if(element.getOntologyRepresentation() != null){
+				Object[] ontoObject = new Object[1];
+				ontoObject[0] = element.getOntologyRepresentation();
+				oiv = new OntologyInstanceViewer(project);
+				oiv.setConfigurationInstances(ontoObject);
+			}else{
+				if(element instanceof GraphEdge){
+					oiv = new OntologyInstanceViewer(project, project.simSetups.getCurrSimSetup().getAgentClassesHash().get(((GraphEdge) element).getType()));
+				}else if(element instanceof GraphNode){
+					String[] ontoClassName = new String[1];
+					ontoClassName[0] = GraphNode.ONTOLOGY_CLASS_NAME;
+					oiv = new OntologyInstanceViewer(project, ontoClassName);
+				}
 			}
+			
+			oiv.setAllowViewEnlargement(false);
+			jPanelContent.add(oiv, gridBagConstraints11);
 			
 		}
 		return jPanelContent;

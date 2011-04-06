@@ -18,6 +18,7 @@ import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
 import edu.uci.ics.jung.visualization.control.PluggableGraphMouse;
 import edu.uci.ics.jung.visualization.control.ScalingControl;
+import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
@@ -37,8 +38,8 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 	private JButton btnZoomIn = null;
 	private JButton btnZoomOut = null;
 	private JButton btnZoomReset = null;
-	private Graph<PropagationPoint, GridComponent> graph = null;
-	private VisualizationViewer<PropagationPoint, GridComponent> visView = null;
+	private Graph<GraphNode, GraphEdge> graph = null;
+	private VisualizationViewer<GraphNode, GraphEdge> visView = null;
 	private ScalingControl scalingControl = null;
 	private Component rightComponent = null;
 	
@@ -146,34 +147,36 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 		return btnZoomReset;
 	}
 	
-	VisualizationViewer<PropagationPoint, GridComponent> getVisView(){
+	VisualizationViewer<GraphNode, GraphEdge> getVisView(){
 		return visView;
 	}
 	
-	public void setGraph(Graph<PropagationPoint, GridComponent> graph){
+	public void setGraph(Graph<GraphNode, GraphEdge> graph){
 		this.graph = graph;
 		if(graph != null){
-			Layout<PropagationPoint, GridComponent> layout = new FRLayout<PropagationPoint, GridComponent>(graph);
+			Layout<GraphNode, GraphEdge> layout = new FRLayout<GraphNode, GraphEdge>(graph);
 			layout.setSize(new Dimension(400, 400));
-			visView = new VisualizationViewer<PropagationPoint, GridComponent>(layout);
+			visView = new VisualizationViewer<GraphNode, GraphEdge>(layout);
 			// Node labels
-			visView.getRenderContext().setVertexLabelTransformer(new Transformer<PropagationPoint, String>() {
+			visView.getRenderContext().setVertexLabelTransformer(new Transformer<GraphNode, String>() {
 				
 				@Override
-				public String transform(PropagationPoint arg0) {
-					return "PP"+arg0.getIndex();
+				public String transform(GraphNode arg0) {
+					return arg0.getId();
 				}
 			});
 //			visView.getRenderer().getVertexLabelRenderer().setPosition(Position.CNTR);
 			
 			// Edge labels
-			visView.getRenderContext().setEdgeLabelTransformer(new Transformer<GridComponent, String>() {
+			visView.getRenderContext().setEdgeLabelTransformer(new Transformer<GraphEdge, String>() {
 	
 				@Override
-				public String transform(GridComponent arg0) {
-					return arg0.getType()+" "+arg0.getAgentID();
+				public String transform(GraphEdge arg0) {
+					return arg0.getType()+" "+arg0.id();
 				}
 			});
+			
+			visView.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line<GraphNode, GraphEdge>());
 			
 			PluggableGraphMouse pgm = new PluggableGraphMouse();
 			pgm.add(new GraphEnvironmentMousePlugin(this));
@@ -213,9 +216,9 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 	
 	void handleObjectSelection(Object pickedObject){
 		if(pickedObject != null){
-			if(pickedObject instanceof GridComponent){
-				visView.getPickedVertexState().pick(graph.getEndpoints((GridComponent) pickedObject).getFirst(), true);
-				visView.getPickedVertexState().pick(graph.getEndpoints((GridComponent) pickedObject).getSecond(), true);
+			if(pickedObject instanceof GraphEdge){
+				visView.getPickedVertexState().pick(graph.getEndpoints((GraphEdge) pickedObject).getFirst(), true);
+				visView.getPickedVertexState().pick(graph.getEndpoints((GraphEdge) pickedObject).getSecond(), true);
 			}
 			parentGUI.showComponentSettingsDialog(pickedObject);
 		}
@@ -227,10 +230,10 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 	}
 	
 	void setPickedObject(Object object){
-		if(object instanceof GridComponent){
-			visView.getPickedEdgeState().pick((GridComponent) object, true);
-		}else if(object instanceof PropagationPoint){
-			visView.getPickedVertexState().pick((PropagationPoint) object, true);
+		if(object instanceof GraphEdge){
+			visView.getPickedEdgeState().pick((GraphEdge) object, true);
+		}else if(object instanceof GraphNode){
+			visView.getPickedVertexState().pick((GraphNode) object, true);
 		}
 	}
 	

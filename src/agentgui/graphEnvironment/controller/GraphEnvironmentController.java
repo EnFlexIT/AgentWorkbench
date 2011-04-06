@@ -43,7 +43,7 @@ public class GraphEnvironmentController extends Observable implements Observer {
 	
 	private GraphFileImporter graphFileImporter = null;
 	
-	private GraphMLWriter<PropagationPoint, GridComponent> graphMLWriter = null;
+	private GraphMLWriter<GraphNode, GraphEdge> graphMLWriter = null;
 	
 	public GraphEnvironmentController(Project project){
 		this.project = project;
@@ -107,64 +107,66 @@ public class GraphEnvironmentController extends Observable implements Observer {
 		return graphFileImporter;
 	}
 	
-	private GraphMLWriter<PropagationPoint, GridComponent> getGraphMLWriter(){
+	private GraphMLWriter<GraphNode, GraphEdge> getGraphMLWriter(){
 		if(graphMLWriter == null){
-			graphMLWriter = new GraphMLWriter<PropagationPoint, GridComponent>();
-			graphMLWriter.setEdgeIDs(new Transformer<GridComponent, String>() {
+			graphMLWriter = new GraphMLWriter<GraphNode, GraphEdge>();
+			graphMLWriter.setEdgeIDs(new Transformer<GraphEdge, String>() {
 
 				@Override
-				public String transform(GridComponent arg0) {
-					return arg0.getAgentID();
+				public String transform(GraphEdge arg0) {
+					return arg0.id();
 				}
 			});
-			graphMLWriter.setEdgeDescriptions(new Transformer<GridComponent, String>() {
+			graphMLWriter.setEdgeDescriptions(new Transformer<GraphEdge, String>() {
 
 				@Override
-				public String transform(GridComponent arg0) {
+				public String transform(GraphEdge arg0) {
 					return arg0.getType();
 				}
 			});
-			graphMLWriter.setVertexIDs(new Transformer<PropagationPoint, String>() {
+			graphMLWriter.setVertexIDs(new Transformer<GraphNode, String>() {
 
 				@Override
-				public String transform(PropagationPoint arg0) {
-					return ""+arg0.getIndex();
+				public String transform(GraphNode arg0) {
+					return arg0.getId();
 				}
 			});
 		}
 		return graphMLWriter;
 	}
 	
-	private GraphMLReader2<Graph<PropagationPoint, GridComponent>, PropagationPoint, GridComponent> getGraphMLReader(File file) throws FileNotFoundException{
-		Transformer<GraphMetadata, Graph<PropagationPoint, GridComponent>> graphTransformer = new Transformer<GraphMetadata, Graph<PropagationPoint,GridComponent>>() {
+	private GraphMLReader2<Graph<GraphNode, GraphEdge>, GraphNode, GraphEdge> getGraphMLReader(File file) throws FileNotFoundException{
+		Transformer<GraphMetadata, Graph<GraphNode, GraphEdge>> graphTransformer = new Transformer<GraphMetadata, Graph<GraphNode,GraphEdge>>() {
 
 			@Override
-			public SparseGraph<PropagationPoint, GridComponent> transform(
+			public SparseGraph<GraphNode, GraphEdge> transform(
 					GraphMetadata gmd) {
-				return new SparseGraph<PropagationPoint, GridComponent>();
+				return new SparseGraph<GraphNode, GraphEdge>();
 			}
 		};
 		
-		Transformer<NodeMetadata, PropagationPoint> nodeTransformer = new Transformer<NodeMetadata, PropagationPoint>() {
+		Transformer<NodeMetadata, GraphNode> nodeTransformer = new Transformer<NodeMetadata, GraphNode>() {
 
 			@Override
-			public PropagationPoint transform(NodeMetadata nmd) {
-				return new PropagationPoint(Integer.parseInt(nmd.getId()));
+			public GraphNode transform(NodeMetadata nmd) {
+				GraphNode gn = new GraphNode();
+				gn.setId(nmd.getId());
+				return gn;
 			}
 		};
 		
-		Transformer<EdgeMetadata, GridComponent> edgeTransformer = new Transformer<EdgeMetadata, GridComponent>() {
+		Transformer<EdgeMetadata, GraphEdge> edgeTransformer = new Transformer<EdgeMetadata, GraphEdge>() {
 
 			@Override
-			public GridComponent transform(EdgeMetadata emd) {
-				return new GridComponent(emd.getId(), emd.getDescription());
+			public GraphEdge transform(EdgeMetadata emd) {
+				return new GraphEdge(emd.getId(), emd.getDescription());
 			}
 		};
 		
-		Transformer<HyperEdgeMetadata, GridComponent> hyperEdgeTransformer = new Transformer<HyperEdgeMetadata, GridComponent>() {
+		Transformer<HyperEdgeMetadata, GraphEdge> hyperEdgeTransformer = new Transformer<HyperEdgeMetadata, GraphEdge>() {
 
 			@Override
-			public GridComponent transform(HyperEdgeMetadata arg0) {
+			public GraphEdge transform(HyperEdgeMetadata arg0) {
 				// TODO Auto-generated method stub
 				return null;
 			}
@@ -172,7 +174,7 @@ public class GraphEnvironmentController extends Observable implements Observer {
 		
 		FileReader fileReader = new FileReader(file);
 		
-		return new GraphMLReader2<Graph<PropagationPoint,GridComponent>, PropagationPoint, GridComponent>(fileReader, graphTransformer, nodeTransformer, edgeTransformer, hyperEdgeTransformer);
+		return new GraphMLReader2<Graph<GraphNode,GraphEdge>, GraphNode, GraphEdge>(fileReader, graphTransformer, nodeTransformer, edgeTransformer, hyperEdgeTransformer);
 		
 	}
 	
