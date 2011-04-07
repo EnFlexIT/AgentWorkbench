@@ -186,7 +186,7 @@ public class DynForm extends JPanel {
 	private void setXMLFromInstances(){
 	
 		int numOfChilds = rootNode.getChildCount();
-		this.ontoArgsInstance = new Object[numOfChilds];
+		//this.ontoArgsInstance = new Object[numOfChilds];
 		this.ontoArgsXML = new String[numOfChilds];
 		
 		// ----------------------------------------------------------

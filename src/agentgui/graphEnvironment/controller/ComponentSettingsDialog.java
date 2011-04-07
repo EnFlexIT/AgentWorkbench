@@ -75,6 +75,7 @@ public class ComponentSettingsDialog extends JDialog implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource().equals(getJButtonApply())){
+			oiv.save();
 			element.setOntologyRepresentation((Concept) oiv.getConfigurationInstances()[0]);
 			parentGUI.componentSettingsChanged();
 			this.dispose();
@@ -113,20 +114,26 @@ public class ComponentSettingsDialog extends JDialog implements ActionListener{
 			jPanelContent.add(getJButtonApply(), gridBagConstraints);
 			jPanelContent.add(getJButtonAbort(), gridBagConstraints1);
 			
-			if(element.getOntologyRepresentation() != null){
-				Object[] ontoObject = new Object[1];
-				ontoObject[0] = element.getOntologyRepresentation();
-				oiv = new OntologyInstanceViewer(project);
-				oiv.setConfigurationInstances(ontoObject);
-			}else{
-				if(element instanceof GraphEdge){
-					oiv = new OntologyInstanceViewer(project, project.simSetups.getCurrSimSetup().getAgentClassesHash().get(((GraphEdge) element).getType()));
-				}else if(element instanceof GraphNode){
-					String[] ontoClassName = new String[1];
-					ontoClassName[0] = GraphNode.ONTOLOGY_CLASS_NAME;
-					oiv = new OntologyInstanceViewer(project, ontoClassName);
+		
+			if(element instanceof GraphEdge){
+				oiv = new OntologyInstanceViewer(project, project.simSetups.getCurrSimSetup().getAgentClassesHash().get(((GraphEdge) element).getType()));
+				
+			}else if(element instanceof GraphNode){
+				String[] ontoClassName = new String[1];
+				ontoClassName[0] = GraphNode.ONTOLOGY_CLASS_NAME;
+				oiv = new OntologyInstanceViewer(project, ontoClassName);
+
+				if(element.getOntologyRepresentation() != null){
+					Object[] ontoObject = new Object[1];
+					ontoObject[0] = element.getOntologyRepresentation();
+					oiv.setConfigurationInstances(ontoObject);
 				}
+				
 			}
+			
+			
+			
+			
 			
 			oiv.setAllowViewEnlargement(false);
 			jPanelContent.add(oiv, gridBagConstraints11);

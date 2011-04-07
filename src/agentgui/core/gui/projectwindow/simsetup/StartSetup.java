@@ -515,7 +515,6 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 			jButtonStartOK = new JButton();
 			jButtonStartOK.setPreferredSize(new Dimension(45, 26));
 			jButtonStartOK.setFont(new Font("Dialog", Font.BOLD, 12));
-//			jButtonStartOK.setText("Speichern");
 			jButtonStartOK.setToolTipText(Language.translate("Speichern"));
 			jButtonStartOK.setIcon(imageSave);			
 			jButtonStartOK.setActionCommand("Save");
