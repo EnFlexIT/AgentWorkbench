@@ -1,4 +1,4 @@
-; Mon Apr 04 19:21:23 CEST 2011
+; Tue Apr 05 12:00:15 CEST 2011
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -39,10 +39,6 @@
 
 	(%3AJADE-IGNORE FALSE))
 
-([PhysicalParameters] of  %3AJADE-CLASS
-
-	(%3AJADE-IGNORE FALSE))
-
 ([Pipe] of  %3AJADE-CLASS
 
 	(%3AJADE-IGNORE FALSE))
@@ -75,6 +71,10 @@
 	(%3AJADE-IGNORE FALSE))
 
 ([Storage] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([StructuralParameters] of  %3AJADE-CLASS
 
 	(%3AJADE-IGNORE FALSE))
 

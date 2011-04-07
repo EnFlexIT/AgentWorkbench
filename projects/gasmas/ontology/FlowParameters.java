@@ -8,9 +8,20 @@ import jade.core.*;
 /**
 * Protege name: FlowParameters
 * @author ontology bean generator
-* @version 2011/04/4, 19:21:09
+* @version 2011/04/5, 11:14:58
 */
 public class FlowParameters implements Concept {
+
+   /**
+* Protege name: pressure
+   */
+   private float pressure;
+   public void setPressure(float value) { 
+    this.pressure=value;
+   }
+   public float getPressure() {
+     return this.pressure;
+   }
 
    /**
 * Protege name: temperature
@@ -24,14 +35,14 @@ public class FlowParameters implements Concept {
    }
 
    /**
-* Protege name: reynoldsNumber
+* Protege name: flow
    */
-   private int reynoldsNumber;
-   public void setReynoldsNumber(int value) { 
-    this.reynoldsNumber=value;
+   private float flow;
+   public void setFlow(float value) { 
+    this.flow=value;
    }
-   public int getReynoldsNumber() {
-     return this.reynoldsNumber;
+   public float getFlow() {
+     return this.flow;
    }
 
    /**
@@ -57,25 +68,14 @@ public class FlowParameters implements Concept {
    }
 
    /**
-* Protege name: pressure
+* Protege name: reynoldsNumber
    */
-   private float pressure;
-   public void setPressure(float value) { 
-    this.pressure=value;
+   private int reynoldsNumber;
+   public void setReynoldsNumber(int value) { 
+    this.reynoldsNumber=value;
    }
-   public float getPressure() {
-     return this.pressure;
-   }
-
-   /**
-* Protege name: flow
-   */
-   private float flow;
-   public void setFlow(float value) { 
-    this.flow=value;
-   }
-   public float getFlow() {
-     return this.flow;
+   public int getReynoldsNumber() {
+     return this.reynoldsNumber;
    }
 
 }

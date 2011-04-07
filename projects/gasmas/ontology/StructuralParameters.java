@@ -1,15 +1,16 @@
 package gasmas.ontology;
 
+
 import jade.content.*;
 import jade.util.leap.*;
 import jade.core.*;
 
 /**
-* Protege name: SubSystemBoundary
+* Protege name: StructuralParameters
 * @author ontology bean generator
-* @version 2011/01/14, 10:18:03
+* @version 2011/04/5, 11:14:58
 */
-public class SubSystemBoundary extends StructuralParemeters{ 
+public class StructuralParameters implements Concept {
 
    /**
 * Protege name: geoY
@@ -20,6 +21,17 @@ public class SubSystemBoundary extends StructuralParemeters{
    }
    public float getGeoY() {
      return this.geoY;
+   }
+
+   /**
+* Protege name: geoZ
+   */
+   private float geoZ;
+   public void setGeoZ(float value) { 
+    this.geoZ=value;
+   }
+   public float getGeoZ() {
+     return this.geoZ;
    }
 
    /**
@@ -45,14 +57,14 @@ public class SubSystemBoundary extends StructuralParemeters{
    }
 
    /**
-* Protege name: geoZ
+* Protege name: atParentLengthPos
    */
-   private float geoZ;
-   public void setGeoZ(float value) { 
-    this.geoZ=value;
+   private float atParentLengthPos;
+   public void setAtParentLengthPos(float value) { 
+    this.atParentLengthPos=value;
    }
-   public float getGeoZ() {
-     return this.geoZ;
+   public float getAtParentLengthPos() {
+     return this.atParentLengthPos;
    }
 
 }
