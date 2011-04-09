@@ -400,7 +400,7 @@ public class ClassSelector extends JDialog {
 	 * This method initializes jButtonOK	
 	 * @return javax.swing.JButton	
 	 */
-	private JButton getJButtonOK() {
+	JButton getJButtonOK() {
 		if (jButtonOK == null) {
 			jButtonOK = new JButton();
 			jButtonOK.setPreferredSize(new Dimension(120, 26));
@@ -411,24 +411,39 @@ public class ClassSelector extends JDialog {
 			jButtonOK.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					if (isValidClass(jTextFieldCustomizeClass, jButtonCheckClass)) {
-						setClassSelected(jTextFieldCustomizeClass.getText().trim());
-						setCanceled(false);
-						setVisible(false);
-					} else {
-						System.out.println(Language.translate("Class not found:") + " '" + jTextFieldCustomizeClass.getText() + "'");						
-					}					
+//					System.out.println("ClassSelector Listener");
+//					if (isValidClass(jTextFieldCustomizeClass, jButtonCheckClass)) {
+//						setClassSelected(jTextFieldCustomizeClass.getText().trim());
+//						setCanceled(false);
+//						setVisible(false);
+//					} else {
+//						System.out.println(Language.translate("Class not found:") + " '" + jTextFieldCustomizeClass.getText() + "'");						
+//					}
+					handleOkClick();
 				}
 			});
 		}
 		return jButtonOK;
+	}
+	
+	/**
+	 * This method is called by the jButtonOK's ActionListener
+	 */
+	void handleOkClick(){
+		if (isValidClass(jTextFieldCustomizeClass, jButtonCheckClass)) {
+			setClassSelected(jTextFieldCustomizeClass.getText().trim());
+			setCanceled(false);
+			setVisible(false);
+		} else {
+			System.out.println(Language.translate("Class not found:") + " '" + jTextFieldCustomizeClass.getText() + "'");						
+		}
 	}
 
 	/**
 	 * This method initializes jButtonCancel	
 	 * @return javax.swing.JButton	
 	 */
-	private JButton getJButtonCancel() {
+	JButton getJButtonCancel() {
 		if (jButtonCancel == null) {
 			jButtonCancel = new JButton();
 			jButtonCancel.setPreferredSize(new Dimension(120, 26));

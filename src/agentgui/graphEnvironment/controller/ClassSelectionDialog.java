@@ -1,5 +1,7 @@
 package agentgui.graphEnvironment.controller;
 
+import jade.content.Concept;
+
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -17,6 +19,9 @@ import javax.swing.table.TableModel;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.gui.ClassSelector;
+import agentgui.core.gui.ClassSelectorTableCellEditor;
+import agentgui.graphEnvironment.prototypes.GraphElementPrototype;
 
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -25,12 +30,15 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
 import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+
 /**
  * GUI dialog for assigning ontology and agent classes
  * @author Nils
  *
  */
-public class ClassSelectorDialog extends JDialog implements ActionListener{
+public class ClassSelectionDialog extends JDialog implements ActionListener{
 	/**
 	 * Generated serialVersionUID
 	 */
@@ -42,10 +50,15 @@ public class ClassSelectorDialog extends JDialog implements ActionListener{
 	private JTable jTableClasses = null;
 	private JButton jButtonAddRow = null;
 	private JButton jButtonRemoveRow = null;
+	private ClassSelector nodeClassSelector = null;
 	/**
 	 * JComboBox used as cell editor for the agent classes column
 	 */
-	private JComboBox cellEditorAgentClass = null;
+	private JComboBox jComboBoxAgentClasses = null;
+	/**
+	 * Cell editor for the prototype classes column
+	 */
+	private ClassSelectorTableCellEditor prototypeClassesCellEditor = null;
 	/**
 	 * All available agent classes, accessible by simple class name
 	 */
@@ -58,11 +71,13 @@ public class ClassSelectorDialog extends JDialog implements ActionListener{
 	 * The GraphEnvironmentControllerGUI that started this dialog
 	 */
 	private GraphEnvironmentControllerGUI parent = null;
-	
+	private JLabel jLabelNodeClass = null;
+	private JTextField jTextFieldNodeClass = null;
+	private JButton jButtonSelectNodeClass = null;
 	/**
 	 * This is the default constructor
 	 */
-	public ClassSelectorDialog(GraphEnvironmentControllerGUI parent, HashMap<String, String> agentClasses) {
+	public ClassSelectionDialog(GraphEnvironmentControllerGUI parent, HashMap<String, String> agentClasses) {
 		super(Application.MainWindow, Dialog.ModalityType.APPLICATION_MODAL);
 		this.parent = parent;
 		this.assignedAgentClasses = agentClasses;
@@ -87,12 +102,28 @@ public class ClassSelectorDialog extends JDialog implements ActionListener{
 	 */
 	private JPanel getJContentPane() {
 		if (jContentPane == null) {
+			GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
+			gridBagConstraints4.gridx = 3;
+			gridBagConstraints4.anchor = GridBagConstraints.WEST;
+			gridBagConstraints4.gridy = 2;
+			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
+			gridBagConstraints3.fill = GridBagConstraints.BOTH;
+			gridBagConstraints3.gridy = 2;
+			gridBagConstraints3.weightx = 1.0;
+			gridBagConstraints3.gridx = 2;
+			GridBagConstraints gridBagConstraints12 = new GridBagConstraints();
+			gridBagConstraints12.gridx = 0;
+			gridBagConstraints12.gridwidth = 2;
+			gridBagConstraints12.gridy = 2;
+			jLabelNodeClass = new JLabel();
+			jLabelNodeClass.setText("Übergabepunkte");
 			GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
 			gridBagConstraints11.gridx = 1;
 			gridBagConstraints11.insets = new Insets(5, 5, 5, 5);
 			gridBagConstraints11.gridy = 3;
 			GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
 			gridBagConstraints1.gridx = 0;
+			gridBagConstraints1.insets = new Insets(5, 5, 5, 5);
 			gridBagConstraints1.gridy = 3;
 			GridBagConstraints gridBagConstraints10 = new GridBagConstraints();
 			gridBagConstraints10.fill = GridBagConstraints.BOTH;
@@ -124,8 +155,22 @@ public class ClassSelectorDialog extends JDialog implements ActionListener{
 			jContentPane.add(getJScrollPaneClassTable(), gridBagConstraints10);
 			jContentPane.add(getJButtonAddRow(), gridBagConstraints1);
 			jContentPane.add(getJButtonRemoveRow(), gridBagConstraints11);
+			jContentPane.add(jLabelNodeClass, gridBagConstraints12);
+			jContentPane.add(getJTextFieldNodeClass(), gridBagConstraints3);
+			jContentPane.add(getJButtonSelectNodeClass(), gridBagConstraints4);
 		}
 		return jContentPane;
+	}
+	
+	private ClassSelector getNodeClassSelector(){
+		if(nodeClassSelector == null){
+			Class<?> superClass = Concept.class;
+			String currValue = null;
+			String defaultValue = null;
+			String description = Language.translate("Ontologie-Klasse für Übergabepunkte");
+			nodeClassSelector = new ClassSelector(Application.MainWindow, superClass, currValue, defaultValue, description);
+		}
+		return nodeClassSelector;
 	}
 
 	/**
@@ -181,7 +226,9 @@ public class ClassSelectorDialog extends JDialog implements ActionListener{
 			jTableClasses.setShowGrid(true);
 			jTableClasses.setModel(getClassesTableModel());
 			TableColumn agentClassColumn = jTableClasses.getColumnModel().getColumn(1);
-			agentClassColumn.setCellEditor(new DefaultCellEditor(getCellEditorAgentClass()));
+			agentClassColumn.setCellEditor(new DefaultCellEditor(getJComboBoxAgentClasses()));
+			TableColumn prototypeClassColumn = jTableClasses.getColumnModel().getColumn(2);
+			prototypeClassColumn.setCellEditor(getPrototypeClassesCellEditor());
 		}
 		return jTableClasses;
 	}
@@ -193,13 +240,14 @@ public class ClassSelectorDialog extends JDialog implements ActionListener{
 	private TableModel getClassesTableModel(){
 		
 		// The ComboBoxModels must be initiated before adding rows 
-		getCellEditorAgentClass();
+		getJComboBoxAgentClasses();
 		
 		// Headlines
 		Vector<String> titles = new Vector<String>();
-		titles.add(Language.translate("Datenfeld"));
+		titles.add(Language.translate("Element"));
 //		titles.add(Language.translate("Ontologieklasse"));
 		titles.add(Language.translate("Agentenklasse"));
+		titles.add(Language.translate("Graph-Prototyp"));
 		Vector<Vector<String>> dataRows = new Vector<Vector<String>>();
 		
 		// Set table entries for defined assignments, if any
@@ -269,11 +317,18 @@ public class ClassSelectorDialog extends JDialog implements ActionListener{
 	 * 
 	 * @return @return javax.swing.JComboBox
 	 */
-	private JComboBox getCellEditorAgentClass(){
-		if(cellEditorAgentClass == null){
-			cellEditorAgentClass = new JComboBox(getAgentComboBoxModel());
+	private JComboBox getJComboBoxAgentClasses(){
+		if(jComboBoxAgentClasses == null){
+			jComboBoxAgentClasses = new JComboBox(getAgentComboBoxModel());
 		}
-		return cellEditorAgentClass;
+		return jComboBoxAgentClasses;
+	}
+	
+	private ClassSelectorTableCellEditor getPrototypeClassesCellEditor(){
+		if(prototypeClassesCellEditor == null){
+			prototypeClassesCellEditor = new ClassSelectorTableCellEditor(Application.MainWindow, GraphElementPrototype.class, "", "", Language.translate("Graph-Prototypen"));
+		}
+		return prototypeClassesCellEditor;
 	}
 	
 	/**
@@ -337,6 +392,41 @@ public class ClassSelectorDialog extends JDialog implements ActionListener{
 			jButtonRemoveRow.addActionListener(this);
 		}
 		return jButtonRemoveRow;
+	}
+
+	/**
+	 * This method initializes jTextField	
+	 * 	
+	 * @return javax.swing.JTextField	
+	 */
+	private JTextField getJTextFieldNodeClass() {
+		if (jTextFieldNodeClass == null) {
+			jTextFieldNodeClass = new JTextField();
+		}
+		return jTextFieldNodeClass;
+	}
+
+	/**
+	 * This method initializes jButtonNodeClassSelector	
+	 * 	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getJButtonSelectNodeClass() {
+		if (jButtonSelectNodeClass == null) {
+			jButtonSelectNodeClass = new JButton();
+			jButtonSelectNodeClass.setText("...");
+			jButtonSelectNodeClass.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					getNodeClassSelector().setVisible(true);
+					if(! getNodeClassSelector().isCanceled()){
+						getJTextFieldNodeClass().setText(getNodeClassSelector().getClassSelected());
+					}
+				}
+			});
+		}
+		return jButtonSelectNodeClass;
 	}
 
 }

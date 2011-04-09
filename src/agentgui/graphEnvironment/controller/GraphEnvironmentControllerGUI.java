@@ -38,7 +38,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	private JButton btnLoadGraph = null;
 	private JButton btnSetClasses = null;
 	
-	private ClassSelectorDialog classSelectorDialog = null;  //  @jve:decl-index=0:visual-constraint="333,23"
+	private ClassSelectionDialog classSelectorDialog = null;  //  @jve:decl-index=0:visual-constraint="333,23"
 	private GraphEnvironmentController controller = null;
 	
 	private JLabel lblTable = null;
@@ -203,9 +203,9 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		return btnSetClasses;
 	}
 	
-	private ClassSelectorDialog getClassSelectorDialog(){
+	private ClassSelectionDialog getClassSelectorDialog(){
 		if(classSelectorDialog == null){
-			classSelectorDialog = new ClassSelectorDialog(this, controller.getAgentClasses());
+			classSelectorDialog = new ClassSelectionDialog(this, controller.getAgentClasses());
 		}
 		return classSelectorDialog;
 	}
