@@ -205,7 +205,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	
 	private ClassSelectionDialog getClassSelectorDialog(){
 		if(classSelectorDialog == null){
-			classSelectorDialog = new ClassSelectionDialog(this, controller.getAgentClasses());
+			classSelectorDialog = new ClassSelectionDialog(this);
 		}
 		return classSelectorDialog;
 	}

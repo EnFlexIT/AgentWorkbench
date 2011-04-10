@@ -6,9 +6,10 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Vector;
 
 import org.apache.commons.collections15.Transformer;
 
@@ -31,7 +32,7 @@ public class GraphEnvironmentController extends Observable implements Observer {
 	
 	public static final Integer EVENT_GRIDMODEL_CHANGED = 0;
 	
-	public static final Integer EVENT_AGENT_CLASSES_SET = 1;
+	public static final Integer EVENT_ELEMENT_TYPES_SETTINGS_CHANGED = 1;
 	
 	private String graphFilePath = null;
 	
@@ -40,6 +41,8 @@ public class GraphEnvironmentController extends Observable implements Observer {
 	private Project project = null;
 	
 	private GridModel gridModel = null;
+	
+	private Vector<ElementTypeSettings> currentEts = null;
 	
 	private GraphFileImporter graphFileImporter = null;
 	
@@ -50,21 +53,34 @@ public class GraphEnvironmentController extends Observable implements Observer {
 		this.project.addObserver(this);
 		graphFilePath = this.project.getProjectFolderFullPath()+this.project.getSubFolderEnvSetups();
 		loadGridModel();
+		setElementTypeSettings(project.simSetups.getCurrSimSetup().getElementTypeSettings());
 	}
 	
 	Project getProject(){
 		return this.project;
 	}
 
-	public HashMap<String, String> getAgentClasses() {
-		return project.simSetups.getCurrSimSetup().getAgentClassesHash();
-	}
-
-	public void setAgentClasses(HashMap<String, String> agentClasses) {
-		project.simSetups.getCurrSimSetup().setAgentClassesHash(agentClasses);
+	public void setElementTypeSettings(Vector<ElementTypeSettings> etsVector){
+		currentEts = etsVector;
+		project.simSetups.getCurrSimSetup().setElementTypeSettings(etsVector);
 		project.isUnsaved=true;
 		setChanged();
-		notifyObservers(EVENT_AGENT_CLASSES_SET);
+		notifyObservers(EVENT_ELEMENT_TYPES_SETTINGS_CHANGED);
+	}
+	
+	public Vector<ElementTypeSettings> getElementTypeSettings(){
+		return this.currentEts;
+	}
+	
+	public ElementTypeSettings getElementTypeSettingsByType(String type){
+		Iterator<ElementTypeSettings> etsIter = currentEts.iterator();
+		while(etsIter.hasNext()){
+			ElementTypeSettings ets = etsIter.next();
+			if(ets.getName().equals(type)){
+				return ets;
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -193,6 +209,7 @@ private void handleSetupChange(SimulationSetupsChangeNotification sscn){
 				System.out.println("Testausgabe: Erzeuge Setup");
 				updateGraphFileName();
 				gridModel = new GridModel();
+				currentEts = null;
 			break;
 			
 			case SimulationSetups.SIMULATION_SETUP_REMOVE:
@@ -207,6 +224,7 @@ private void handleSetupChange(SimulationSetupsChangeNotification sscn){
 				System.out.println("Testausgabe: Lade Setup");
 				updateGraphFileName();
 				loadGridModel();
+				setElementTypeSettings(project.simSetups.getCurrSimSetup().getElementTypeSettings());
 			break;
 			
 			case SimulationSetups.SIMULATION_SETUP_RENAME:

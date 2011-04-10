@@ -4,6 +4,7 @@ import java.io.FileWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Vector;
 
 import javax.swing.DefaultListModel;
 import javax.xml.bind.JAXBContext;
@@ -15,6 +16,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.application.Project;
+import agentgui.graphEnvironment.controller.ElementTypeSettings;
 
 @XmlRootElement public class SimulationSetup {
 
@@ -31,13 +33,20 @@ import agentgui.core.application.Project;
 	private String environmentFileName = null;
 	private String svgFileName = null;
 	
-	private HashMap<String, String> agentClassesHash;
+	private Vector<ElementTypeSettings> elementTypeSettings;
 	
-	public HashMap<String, String> getAgentClassesHash() {
-		return agentClassesHash;
+	/**
+	 * @return the elementTypeSettings
+	 */
+	public Vector<ElementTypeSettings> getElementTypeSettings() {
+		return elementTypeSettings;
 	}
-	public void setAgentClassesHash(HashMap<String, String> agentClassesHash) {
-		this.agentClassesHash = agentClassesHash;
+	/**
+	 * @param elementTypeSettings the elementTypeSettings to set
+	 */
+	public void setElementTypeSettings(
+			Vector<ElementTypeSettings> elementTypeSettings) {
+		this.elementTypeSettings = elementTypeSettings;
 	}
 	/**
 	 * Constructor without arguments (This is first of all 

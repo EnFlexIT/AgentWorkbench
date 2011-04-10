@@ -6,6 +6,6 @@ package agentgui.graphEnvironment.prototypes;
  * @author Nils
  *
  */
-public class TriangeGraphElementPrototype extends GraphElementPrototype {
+public class TriangeGraphElement extends GraphElementPrototype {
 
 }

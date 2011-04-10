@@ -5,6 +5,6 @@ package agentgui.graphEnvironment.prototypes;
  * @author Nils
  *
  */
-public class DefaultGraphElementPrototype extends GraphElementPrototype {
+public class SimpleGraphElement extends GraphElementPrototype {
 
 }

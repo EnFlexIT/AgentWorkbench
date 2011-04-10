@@ -116,8 +116,7 @@ public class ComponentSettingsDialog extends JDialog implements ActionListener{
 			
 		
 			if(element instanceof GraphEdge){
-				oiv = new OntologyInstanceViewer(project, project.simSetups.getCurrSimSetup().getAgentClassesHash().get(((GraphEdge) element).getType()));
-				
+				oiv = new OntologyInstanceViewer(project, parentGUI.getController().getElementTypeSettingsByType(((GraphEdge) element).getType()).getAgentClass());
 			}else if(element instanceof GraphNode){
 				String[] ontoClassName = new String[1];
 				ontoClassName[0] = GraphNode.ONTOLOGY_CLASS_NAME;
