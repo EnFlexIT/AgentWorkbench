@@ -16,6 +16,10 @@ public class ServiceSensor {
 		myAgent.setEnvironmentModel(environmentModel, aSynchron);
 	}
 	
+	public void notifyAgent(Object notification, boolean aSynchron) {
+		myAgent.setNotification(notification, aSynchron);
+	}
+
 	public void doDelete() {
 		myAgent.doDelete();
 	}
@@ -23,5 +27,6 @@ public class ServiceSensor {
 	public void putMigrationInfo(Location newLocation) {
 		myAgent.setMigration(newLocation);
 	}
+
 	
 }

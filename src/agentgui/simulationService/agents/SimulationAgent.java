@@ -116,13 +116,12 @@ public class SimulationAgent extends Agent {
 	 */
 	public void setEnvironmentModel(EnvironmentModel envModel, boolean aSynchron) {
 		myEnvironmentModel = envModel;
-		if (aSynchron == true) {
+		if (aSynchron==true) {
 			this.addBehaviour(new ServiceStimulus());	
 		} else {
 			this.onEnvironmentStimulus();	
 		}		
 	}
-	
 	/**
 	 * This Behaviour is used to stimulate the agent from the outside 
 	 * in a asynchronous way.
@@ -135,13 +134,36 @@ public class SimulationAgent extends Agent {
 			onEnvironmentStimulus();
 		}
 	}
-
 	/**
 	 * This method is called if a stimulus from the outside reached this agent.
 	 * It can be overwritten in the child class to act on environment changes. 
 	 */
 	protected void onEnvironmentStimulus() {
 	}
+	
+	
+
+	public void setNotification(Object notification, boolean aSynchron) {
+		if (aSynchron==true) {
+			this.addBehaviour(new ServiceNotification(notification));	
+		} else {
+			this.onNotification(notification);	
+		}	
+	}
+	private class ServiceNotification extends OneShotBehaviour {
+		private static final long serialVersionUID = 4638681927192305608L;
+		private Object notification=null;
+		public ServiceNotification(Object notification) {
+			this.notification = notification;
+		}
+		@Override
+		public void action() {
+			onNotification(this.notification);
+		}
+	}
+	protected void onNotification(Object notification) {
+	}
+	
 	
 	/**
 	 * This method sets the answer respectively the change of a single simulation agent
@@ -156,6 +178,5 @@ public class SimulationAgent extends Agent {
 			e.printStackTrace();
 		}
 	}
-	
 	
 }

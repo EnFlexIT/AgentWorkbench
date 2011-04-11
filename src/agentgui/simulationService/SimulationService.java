@@ -72,7 +72,6 @@ import agentgui.simulationService.sensoring.ServiceActuator;
 import agentgui.simulationService.sensoring.ServiceSensor;
 import agentgui.simulationService.transaction.TransactionMap;
 
-
 /**
  * 
  * 
@@ -124,7 +123,6 @@ public class SimulationService extends BaseService {
 	
 	// --- The Load-Information Array of all slices ---------------------------
 	private LoadInformation loadInfo = new LoadInformation(); 
-	
 	
 	public void init(AgentContainer ac, Profile p) throws ProfileException {
 		
@@ -265,7 +263,7 @@ public class SimulationService extends BaseService {
 		public void putContainerDescription(ClientRemoteContainerReply crcReply) throws ServiceException {
 			if (crcReply.getRemoteAddress()==null && crcReply.getRemoteOS()==null && crcReply.getRemotePerformance()==null && crcReply.getRemoteBenchmarkResult()==null) {
 				// --- RemoteContainerRequest WAS NOT successful ----
-				loadInfo.setNewContainerCancelled(crcReply.getRemoteContainerName());
+				loadInfo.setNewContainerCanceled(crcReply.getRemoteContainerName());
 			} else {
 				Service.Slice[] slices = getAllSlices();
 				broadcastPutContainerDescription(slices, crcReply);	
@@ -372,6 +370,14 @@ public class SimulationService extends BaseService {
 			broadcastStepSimulation(envModel, aSynchron, slices);
 		}
 
+		public boolean notifySensorAgent(AID agentAID, Object notification) throws ServiceException {
+			return notifySensorAgent(agentAID, notification, stepSimulationAsynchronous);
+		}
+		public boolean notifySensorAgent(AID agentAID, Object notification, boolean aSynchron) throws ServiceException {
+			Service.Slice[] slices = getAllSlices();
+			return broadcastNotifyAgent(agentAID, notification, aSynchron, slices);
+		}
+		
 		public EnvironmentModel getEnvironmentModel() throws ServiceException {
 			return environmentModel;
 		}
@@ -568,6 +574,38 @@ public class SimulationService extends BaseService {
 		}
 	}
 	/**
+	 * Broadcast a single notification object to a specific agent by using its ServiceSensor
+	 * @param agentAID
+	 * @param notification
+	 * @param aSynchron
+	 * @param slices
+	 * @throws ServiceException
+	 */
+	private boolean broadcastNotifyAgent(AID agentAID, Object notification, boolean aSynchron, Service.Slice[] slices) throws ServiceException {
+		
+		if (myLogger.isLoggable(Logger.CONFIG)) {
+			myLogger.log(Logger.CONFIG, "Sending notfication to agent '" + agentAID.getLocalName() + "'!");
+		}
+		for (int i = 0; i < slices.length; i++) {
+			String sliceName = null;
+			try {
+				SimulationServiceSlice slice = (SimulationServiceSlice) slices[i];
+				sliceName = slice.getNode().getName();
+				if (myLogger.isLoggable(Logger.FINER)) {
+					myLogger.log(Logger.FINER, "Try sending notfication to agent '" + agentAID.getLocalName() + "' at " + sliceName + "!");
+				}
+				if (slice.notifyAgent(agentAID, notification, aSynchron)==true){
+					return true;
+				}
+			}
+			catch(Throwable t) {
+				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
+				myLogger.log(Logger.WARNING, "Error while sending a notification to agent '" + agentAID.getLocalName() + "' at slice " + sliceName, t);
+			}
+		}
+		return false;
+	}
+	/**
 	 * Broadcast the new locations to the agents
 	 * @param transferAgents 
 	 * @param aSynchron
@@ -758,7 +796,7 @@ public class SimulationService extends BaseService {
 	
 	
 	/**
-	 * <Broadcast informtions of the remote-container (OS etc.) to all remote-container of this platform 
+	 * Broadcast informtion's of the remote-container (OS etc.) to all remote-container of this platform 
 	 * @param slices
 	 * @throws ServiceException
 	 */
@@ -785,7 +823,7 @@ public class SimulationService extends BaseService {
 	}
 	
 	/**
-	 * Broadcast the set of threshold levels to all cntainer
+	 * Broadcast the set of threshold levels to all container
 	 * @param slices
 	 * @throws ServiceException
 	 */
@@ -980,6 +1018,15 @@ public class SimulationService extends BaseService {
 					}	
 					stepSimulation(envModel, aSynchron);
 				}
+				else if (cmdName.equals(SimulationServiceSlice.SIM_NOTIFY_AGENT)) {
+					AID agentAID = (AID) params[0];
+					Object notification = params[1];
+					boolean aSynchron = (Boolean) params[2];
+					if (myLogger.isLoggable(Logger.FINE)) {
+						myLogger.log(Logger.FINE, "Received 'Notify Agent for '" + agentAID.getLocalName() + "'");
+					}	
+					cmd.setReturnValue(notifySensorAgent(agentAID, notification, aSynchron));
+				}
 				else if (cmdName.equals(SimulationServiceSlice.SIM_SET_ENVIRONMENT_NEXT_PART)) {
 					@SuppressWarnings("unchecked")
 					Hashtable<AID, Object> nextPartsLocal = (Hashtable<AID, Object>) params[0];
@@ -1122,6 +1169,9 @@ public class SimulationService extends BaseService {
 			loadInfo.setCycleStartTimeStamp();
 			environmentModel = newEnvironmentModel;
 			localServiceActuator.notifySensors(newEnvironmentModel, aSynchron);
+		}
+		private boolean notifySensorAgent(AID agentAID, Object notification, boolean aSynchron){
+			return localServiceActuator.notifySensorAgent(agentAID, notification, aSynchron);
 		}
 
 		private void setEnvironmentInstanceNextPart(Hashtable<AID, Object> nextPartsLocal) {

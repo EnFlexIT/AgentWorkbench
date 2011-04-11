@@ -121,7 +121,7 @@ public class LoadInformation  {
 	 * was NOT successfully
 	 * @param containerName
 	 */
-	public void setNewContainerCancelled(String containerName) {
+	public void setNewContainerCanceled(String containerName) {
 		Container2Wait4 cont = newContainers2Wait4.get(containerName);
 		if (cont!=null ) {
 			cont.setCancelled(true);

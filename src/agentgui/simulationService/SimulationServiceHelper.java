@@ -83,6 +83,9 @@ public interface SimulationServiceHelper extends ServiceHelper {
 	public void stepSimulation(EnvironmentModel envModel) throws ServiceException;
 	public void stepSimulation(EnvironmentModel envModel, boolean aSynchron) throws ServiceException;
 
+	public boolean notifySensorAgent(AID agentAID, Object notification) throws ServiceException;
+	public boolean notifySensorAgent(AID agentAID, Object notification, boolean aSynchron) throws ServiceException;
+	
 	public void setEnvironmentModel(EnvironmentModel envModel) throws ServiceException;
 	public EnvironmentModel getEnvironmentModel() throws ServiceException;
 	

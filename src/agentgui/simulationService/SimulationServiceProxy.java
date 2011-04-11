@@ -163,6 +163,31 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 		}		
 	}
 	@Override
+	public boolean notifyAgent(AID agentAID, Object notification, boolean aSynchron) throws IMTPException {
+		
+		try {
+			GenericCommand cmd = new GenericCommand(SIM_NOTIFY_AGENT, SimulationService.NAME, null);
+			cmd.addParam(agentAID);
+			cmd.addParam(notification);
+			cmd.addParam(aSynchron);
+			Node n = getNode();
+			Object result = n.accept(cmd);
+			if((result != null) && (result instanceof Throwable)) {
+				if(result instanceof IMTPException) {
+					throw (IMTPException)result;
+				} else {
+					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
+				}
+			}
+			return (Boolean) result;
+		}
+		catch(ServiceException se) {
+			throw new IMTPException("Unable to access remote node", se);
+		}
+		
+		
+	}
+	@Override
 	public void setEnvironmentInstanceNextPart(Hashtable<AID, Object> nextPartsLocal) throws IMTPException {
 		
 		try {

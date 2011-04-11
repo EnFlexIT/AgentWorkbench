@@ -20,7 +20,7 @@ public class LoadAgentMap implements Serializable {
 	public Hashtable<String, Integer> noAgentsAtContainer = null;
 	
 	/**
-	 * Constructor(s) of this class
+	 * Constructor of this class
 	 */
 	public LoadAgentMap() {
 	}
@@ -48,7 +48,7 @@ public class LoadAgentMap implements Serializable {
 	}
 	
 	/**
-	 * Which Agents are available at the platform
+	 * Which agents are available at the platform
 	 * @param aid
 	 */
 	public void put(String containerName, AID aid, boolean hasServiceSensor) {
@@ -93,6 +93,27 @@ public class LoadAgentMap implements Serializable {
 		return agentsAtContainer;
 	}
 
+	/**
+	 * Search's for the stored agent information. With this, the current 
+	 * location of the agent can be found for example 
+	 * @param agentAddress
+	 * @return
+	 */
+	public AID_Container getcAID(AID agentAddress) {
+				
+		String[] aidArr = new String[this.agentsAtPlatform.keySet().size()];  
+		aidArr = (String[]) this.agentsAtPlatform.keySet().toArray();
+		
+		for (int i = 0; i < aidArr.length; i++) {
+			String key = aidArr[i];
+			AID_Container cAID = this.agentsAtPlatform.get(key);
+			if (cAID.getAID().equals(agentAddress) ) {
+				return cAID;
+			}
+		}
+		return null;
+	}
+	
 
 	// ----------------------------------------------------------
 	// --- Sub-Class AID_Container_List --- S T A R T -----------

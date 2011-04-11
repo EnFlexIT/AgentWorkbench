@@ -48,11 +48,12 @@ public class ServiceActuator {
 		}
 		return sensorAgents;
 	}
+	
 	/**
 	 * This method informs all Sensors about the new environment model.
 	 * It can be either used to do this asynchron or synchron, but it. 
 	 * is highly recommended to do this asynchron, so that the agencie 
-	 * can act parallel and not sequently. 
+	 * can act parallel and not sequential. 
 	 * @param currEnvironmentModel
 	 * @param aSynchron
 	 */
@@ -69,6 +70,26 @@ public class ServiceActuator {
 			}
 		};
 		notifier.run();		
+	}
+
+	/**
+	 * 
+	 * @param agentAID
+	 * @param notification
+	 * @param aSynchron
+	 * @return
+	 */
+	public boolean notifySensorAgent(AID aid, Object notification, boolean aSynchron) {
+		
+		ServiceSensor sensor = getSensor(aid);
+		if (sensor==null) {
+			// --- Agent/Sensor was NOT found ---
+			return false;
+		} else {
+			// --- Agent/Sensor was found -------
+			sensor.notifyAgent(notification, aSynchron);
+			return true;
+		}		
 	}
 
 	/**
@@ -112,7 +133,7 @@ public class ServiceActuator {
 		
 		Object[] arrLocal = serviceSensors.toArray();
 		for (int i = arrLocal.length-1; i>=0; i--) {
-			ServiceSensor sensor = ((ServiceSensor)arrLocal[i]);
+			ServiceSensor sensor = (ServiceSensor)arrLocal[i];
 			AID sensorAgentAID = sensor.myAgent.getAID();
 			if (sensorAgentAID.equals(aid)) {
 				return sensor;				
@@ -237,5 +258,5 @@ public class ServiceActuator {
 			return sensorAgentsNewLocation;
 		}
 	}
-	
+
 }
