@@ -62,6 +62,7 @@ public class ClassSelectorTableCellEditor extends AbstractCellEditor implements 
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				classSelector.setClassSelected(currentClass);
 				classSelector.setVisible(true);
 				
 			}

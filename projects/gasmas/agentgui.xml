@@ -7,16 +7,15 @@
     <plugins/>
     <subOntologies>
         <subOntology>gasmas.ontology.GasgridOntology</subOntology>
-        <subOntology>agentgui.simulationService.ontology.AgentGUI_DistributionOntology</subOntology>
     </subOntologies>
     <agentConfiguration>
         <entry>
-            <key>gasmas.agents.BranchAgent</key>
-            <value>gasmas.ontology.Branch</value>
-        </entry>
-        <entry>
             <key>gasmas.agents.EntryAgent</key>
             <value>gasmas.ontology.Entry</value>
+        </entry>
+        <entry>
+            <key>gasmas.agents.BranchAgent</key>
+            <value>gasmas.ontology.Branch</value>
         </entry>
         <entry>
             <key>gasmas.agents.ValveAgent</key>

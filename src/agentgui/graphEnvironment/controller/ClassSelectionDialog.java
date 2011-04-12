@@ -21,6 +21,8 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.gui.ClassSelector;
 import agentgui.core.gui.ClassSelectorTableCellEditor;
+import agentgui.core.gui.components.ClassNameListCellRenderer;
+import agentgui.core.gui.components.ClassNameTableCellRenderer;
 import agentgui.core.jade.ClassSearcherSingle;
 import agentgui.graphEnvironment.prototypes.GraphElementPrototype;
 
@@ -260,11 +262,11 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 		Vector<Vector<String>> dataRows = new Vector<Vector<String>>();
 		
 		// Set table entries for defined assignments, if any
-		Vector<ElementTypeSettings> etsVector = parent.getController().getElementTypeSettings();
+		Vector<GraphElementSettings> etsVector = parent.getController().getElementTypeSettings();
 		if(etsVector != null){
-			Iterator<ElementTypeSettings> etsIter = etsVector.iterator();
+			Iterator<GraphElementSettings> etsIter = etsVector.iterator();
 			while(etsIter.hasNext()){
-				ElementTypeSettings ets = etsIter.next();
+				GraphElementSettings ets = etsIter.next();
 				Vector<String> newRow = new Vector<String>();
 				newRow.add(ets.getName());
 				newRow.add(ets.getAgentClass());
@@ -280,11 +282,7 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 	 * This method adds a new row to the jTableClasses' TableModel
 	 */
 	private void addRow(){
-		Vector<String> rowData = new Vector<String>();
-		rowData.add(Language.translate("Nicht definiert"));
-//		rowData.add(Language.translate("Nicht definiert"));
-		rowData.add(Language.translate("Nicht definiert"));
-		((DefaultTableModel)getJTableClasses().getModel()).addRow(rowData);
+		((DefaultTableModel)getJTableClasses().getModel()).addRow(new Vector<String>());
 		getJTableClasses().changeSelection(getJTableClasses().getRowCount()-1, 0, false, false);
 		getJTableClasses().editCellAt(getJTableClasses().getRowCount()-1, 0);
 	}
@@ -378,22 +376,20 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 				removeRow(getJTableClasses().getSelectedRow());
 			}
 		}else if(event.getSource().equals(getJButtonConfirm())){
-			HashMap<String, String> agentClasses = new HashMap<String, String>();
 			
 			JTable jtc = getJTableClasses();
 			
 			int rowNum = jtc.getRowCount();
-			Vector<ElementTypeSettings> etsVector = new Vector<ElementTypeSettings>();
+			Vector<GraphElementSettings> etsVector = new Vector<GraphElementSettings>();
 			for(int row=0; row<rowNum; row++){
-				ElementTypeSettings ets = new ElementTypeSettings(
-						jtc.getValueAt(row, 0).toString(), 
-						jtc.getValueAt(row, 1).toString(), 
-						jtc.getValueAt(row, 2).toString());
+				
+				GraphElementSettings ets = new GraphElementSettings(
+						(String)jtc.getValueAt(row, 0), 
+						(String)jtc.getValueAt(row, 1), 
+						(String)jtc.getValueAt(row, 2));
 				etsVector.add(ets);
-				agentClasses.put((String) jtc.getValueAt(row, 0), this.availableAgentClasses.get(jtc.getValueAt(row, 1)).getName());
 			}
 			parent.getController().setElementTypeSettings(etsVector);
-//			parent.getController().setAgentClasses(agentClasses);
 			
 			this.setVisible(false);
 		}else if(event.getSource().equals(getJButtonCancel())){

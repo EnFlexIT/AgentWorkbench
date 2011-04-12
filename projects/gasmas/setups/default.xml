@@ -38,40 +38,41 @@
     <agentListModel>
         <size>2</size>
     </agentListModel>
-    <elementTypeSettings>
-        <agentClass>gasmas.agents.ValveAgent</agentClass>
-        <graphPrototype>agentgui.graphEnvironment.prototypes.SimpleGraphElement</graphPrototype>
-        <name>valve</name>
-    </elementTypeSettings>
-    <elementTypeSettings>
-        <agentClass>gasmas.agents.EntryAgent</agentClass>
-        <graphPrototype>agentgui.graphEnvironment.prototypes.SimpleGraphElement</graphPrototype>
-        <name>entry</name>
-    </elementTypeSettings>
-    <elementTypeSettings>
+    <environmentFileName>default.graphml</environmentFileName>
+    <graphElementSettings>
         <agentClass>gasmas.agents.BranchAgent</agentClass>
         <graphPrototype>agentgui.graphEnvironment.prototypes.TriangeGraphElement</graphPrototype>
         <name>branch</name>
-    </elementTypeSettings>
-    <elementTypeSettings>
+    </graphElementSettings>
+    <graphElementSettings>
         <agentClass>gasmas.agents.CompressorAgent</agentClass>
-        <graphPrototype>agentgui.graphEnvironment.prototypes.SimpleGraphElement</graphPrototype>
+        <graphPrototype>agentgui.graphEnvironment.prototypes.DirectedSimpleGraphElement</graphPrototype>
         <name>compressor</name>
-    </elementTypeSettings>
-    <elementTypeSettings>
-        <agentClass>gasmas.agents.PipeAgent</agentClass>
+    </graphElementSettings>
+    <graphElementSettings>
+        <agentClass>gasmas.agents.EntryAgent</agentClass>
         <graphPrototype>agentgui.graphEnvironment.prototypes.SimpleGraphElement</graphPrototype>
-        <name>pipe</name>
-    </elementTypeSettings>
-    <elementTypeSettings>
+        <name>entry</name>
+    </graphElementSettings>
+    <graphElementSettings>
         <agentClass>gasmas.agents.ExitAgent</agentClass>
         <graphPrototype>agentgui.graphEnvironment.prototypes.SimpleGraphElement</graphPrototype>
         <name>exit</name>
-    </elementTypeSettings>
-    <elementTypeSettings>
+    </graphElementSettings>
+    <graphElementSettings>
+        <agentClass>gasmas.agents.PipeAgent</agentClass>
+        <graphPrototype>agentgui.graphEnvironment.prototypes.SimpleGraphElement</graphPrototype>
+        <name>pipe</name>
+    </graphElementSettings>
+    <graphElementSettings>
         <agentClass>gasmas.agents.StorageAgent</agentClass>
         <graphPrototype>agentgui.graphEnvironment.prototypes.SimpleGraphElement</graphPrototype>
         <name>storage</name>
-    </elementTypeSettings>
-    <environmentFileName>default.graphml</environmentFileName>
+    </graphElementSettings>
+    <graphElementSettings>
+        <agentClass>gasmas.agents.ValveAgent</agentClass>
+        <graphPrototype>agentgui.graphEnvironment.prototypes.SimpleGraphElement</graphPrototype>
+        <name>valve</name>
+    </graphElementSettings>
+    <graphElementSettings/>
 </simulationSetup>

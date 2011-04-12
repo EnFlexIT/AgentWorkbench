@@ -42,7 +42,7 @@ public class GraphEnvironmentController extends Observable implements Observer {
 	
 	private GridModel gridModel = null;
 	
-	private Vector<ElementTypeSettings> currentEts = null;
+	private Vector<GraphElementSettings> currentEts = null;
 	
 	private GraphFileImporter graphFileImporter = null;
 	
@@ -53,29 +53,29 @@ public class GraphEnvironmentController extends Observable implements Observer {
 		this.project.addObserver(this);
 		graphFilePath = this.project.getProjectFolderFullPath()+this.project.getSubFolderEnvSetups();
 		loadGridModel();
-		setElementTypeSettings(project.simSetups.getCurrSimSetup().getElementTypeSettings());
+		setElementTypeSettings(project.simSetups.getCurrSimSetup().getGraphElementSettings());
 	}
 	
 	Project getProject(){
 		return this.project;
 	}
 
-	public void setElementTypeSettings(Vector<ElementTypeSettings> etsVector){
+	public void setElementTypeSettings(Vector<GraphElementSettings> etsVector){
 		currentEts = etsVector;
-		project.simSetups.getCurrSimSetup().setElementTypeSettings(etsVector);
+		project.simSetups.getCurrSimSetup().setGraphElementSettings(etsVector);
 		project.isUnsaved=true;
 		setChanged();
 		notifyObservers(EVENT_ELEMENT_TYPES_SETTINGS_CHANGED);
 	}
 	
-	public Vector<ElementTypeSettings> getElementTypeSettings(){
+	public Vector<GraphElementSettings> getElementTypeSettings(){
 		return this.currentEts;
 	}
 	
-	public ElementTypeSettings getElementTypeSettingsByType(String type){
-		Iterator<ElementTypeSettings> etsIter = currentEts.iterator();
+	public GraphElementSettings getElementTypeSettingsByType(String type){
+		Iterator<GraphElementSettings> etsIter = currentEts.iterator();
 		while(etsIter.hasNext()){
-			ElementTypeSettings ets = etsIter.next();
+			GraphElementSettings ets = etsIter.next();
 			if(ets.getName().equals(type)){
 				return ets;
 			}
@@ -224,7 +224,7 @@ private void handleSetupChange(SimulationSetupsChangeNotification sscn){
 				System.out.println("Testausgabe: Lade Setup");
 				updateGraphFileName();
 				loadGridModel();
-				setElementTypeSettings(project.simSetups.getCurrSimSetup().getElementTypeSettings());
+				setElementTypeSettings(project.simSetups.getCurrSimSetup().getGraphElementSettings());
 			break;
 			
 			case SimulationSetups.SIMULATION_SETUP_RENAME:

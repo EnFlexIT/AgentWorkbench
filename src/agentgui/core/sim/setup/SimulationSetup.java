@@ -3,7 +3,6 @@ package agentgui.core.sim.setup;
 import java.io.FileWriter;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Vector;
 
 import javax.swing.DefaultListModel;
@@ -16,7 +15,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.application.Project;
-import agentgui.graphEnvironment.controller.ElementTypeSettings;
+import agentgui.graphEnvironment.controller.GraphElementSettings;
 
 @XmlRootElement public class SimulationSetup {
 
@@ -33,20 +32,19 @@ import agentgui.graphEnvironment.controller.ElementTypeSettings;
 	private String environmentFileName = null;
 	private String svgFileName = null;
 	
-	private Vector<ElementTypeSettings> elementTypeSettings;
+	private Vector<GraphElementSettings> graphElementSettings;
 	
 	/**
 	 * @return the elementTypeSettings
 	 */
-	public Vector<ElementTypeSettings> getElementTypeSettings() {
-		return elementTypeSettings;
+	public Vector<GraphElementSettings> getGraphElementSettings() {
+		return graphElementSettings;
 	}
 	/**
-	 * @param elementTypeSettings the elementTypeSettings to set
+	 * @param graphElementSettings the elementTypeSettings to set
 	 */
-	public void setElementTypeSettings(
-			Vector<ElementTypeSettings> elementTypeSettings) {
-		this.elementTypeSettings = elementTypeSettings;
+	public void setGraphElementSettings(Vector<GraphElementSettings> graphElementSettings) {
+		this.graphElementSettings = graphElementSettings;
 	}
 	/**
 	 * Constructor without arguments (This is first of all 

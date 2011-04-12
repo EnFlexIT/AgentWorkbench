@@ -1,14 +1,14 @@
 package agentgui.graphEnvironment.controller;
 
-public class ElementTypeSettings {
+public class GraphElementSettings {
 	private String name;
 	private String agentClass;
 	private String graphPrototype;
 	
-	public ElementTypeSettings(){
+	public GraphElementSettings(){
 		super();
 	}
-	public ElementTypeSettings(String name, String agentClass,
+	public GraphElementSettings(String name, String agentClass,
 			String graphPrototype) {
 		super();
 		this.name = name;
