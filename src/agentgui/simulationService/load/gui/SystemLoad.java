@@ -82,12 +82,19 @@ public class SystemLoad extends JPanel {
 
 	public void setNumberOfAgents(Integer noAgents) {
 		
+		String displayText = null;
+		
 		NumberFormat nf = NumberFormat.getInstance(); 
 		nf.setMinimumIntegerDigits(5);  
 		nf.setMaximumIntegerDigits(5); 
 		nf.setGroupingUsed(false);
-		String displaText = " " + nf.format(noAgents) + " " + Language.translate("Agenten") + " ";
-		jLabelAgentCount.setText(displaText);
+		
+		if (noAgents==null) {
+			displayText = " " + nf.format(0) + " " + Language.translate("Agenten") + " ";
+		} else {
+			displayText = " " + nf.format(noAgents) + " " + Language.translate("Agenten") + " ";
+		}
+		jLabelAgentCount.setText(displayText);
 	}
 	
 	public void setNumberOfContainer(Integer noContainer) {

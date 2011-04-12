@@ -38,7 +38,7 @@ public interface SimulationServiceHelper extends ServiceHelper {
 	// --- Methods for agent and container handling -----------------
 	public boolean startAgent(String nickName, String agentClassName, Object[] args, String containerName) throws ServiceException;
 	public void stopSimulationAgents() throws ServiceException; 
-
+	
 	public String startNewRemoteContainer() throws ServiceException;
 	public String startNewRemoteContainer(boolean preventUsageOfAlreadyUsedComputers) throws ServiceException;
 	public String startNewRemoteContainer(RemoteContainerConfig remoteConfig, boolean preventUsageOfAlreadyUsedComputers) throws ServiceException;
@@ -85,6 +85,8 @@ public interface SimulationServiceHelper extends ServiceHelper {
 
 	public boolean notifySensorAgent(AID agentAID, Object notification) throws ServiceException;
 	public boolean notifySensorAgent(AID agentAID, Object notification, boolean aSynchron) throws ServiceException;
+	
+	public void setPauseSimulation(boolean pauseSimulation) throws ServiceException;
 	
 	public void setEnvironmentModel(EnvironmentModel envModel) throws ServiceException;
 	public EnvironmentModel getEnvironmentModel() throws ServiceException;

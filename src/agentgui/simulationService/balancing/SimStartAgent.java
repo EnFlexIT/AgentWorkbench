@@ -1,10 +1,13 @@
 package agentgui.simulationService.balancing;
 
 import jade.core.Agent;
+import jade.core.ServiceException;
 import agentgui.core.application.Application;
 import agentgui.core.gui.CoreWindow;
 import agentgui.core.sim.setup.DistributionSetup;
 import agentgui.core.sim.setup.SimulationSetup;
+import agentgui.simulationService.SimulationService;
+import agentgui.simulationService.SimulationServiceHelper;
 
 public class SimStartAgent extends Agent {
 
@@ -46,21 +49,21 @@ public class SimStartAgent extends Agent {
 			break;
 
 		case BASE_ACTION_Pause:
-			System.out.println("Pausiere die Simulation .....");
+			this.setPauseSimulation(true);
 			mainWindow.setEnableSimStart(true);
 			mainWindow.setEnableSimPause(false);
 			mainWindow.setEnableSimStop(true);
 			this.doDelete();
 			break;
 		case BASE_ACTION_Restart:
-			System.out.println("Nachstarten der Simulation .....");
+			this.setPauseSimulation(false);
 			mainWindow.setEnableSimStart(false);
 			mainWindow.setEnableSimPause(true);
 			mainWindow.setEnableSimStop(true);
 			this.doDelete();
 			break;
 		case BASE_ACTION_Stop:
-			Application.JadePlatform.jadeStop();
+			//Application.JadePlatform.jadeStop();
 			mainWindow.setEnableSimStart(true);
 			mainWindow.setEnableSimPause(false);
 			mainWindow.setEnableSimStop(false);
@@ -68,6 +71,21 @@ public class SimStartAgent extends Agent {
 			break;
 		}
 		
+	}
+	
+	/**
+	 * This method will pause or restart the current simulation
+	 * @param pause
+	 */
+	private void setPauseSimulation(boolean pause) {
+		
+		SimulationServiceHelper simHelper = null;
+		try {
+			simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
+			simHelper.setPauseSimulation(pause);
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}		
 	}
 	
 	

@@ -768,10 +768,8 @@ public class CoreWindow extends JFrame implements ComponentListener {
 			}
 			else if ( ActCMD.equalsIgnoreCase("SimulationStop") ) {
 				Application.JadePlatform.jadeStop();
-//				Object[] startWith = new Object[1];
-//				startWith[0] = SimStartAgent.BASE_ACTION_Stop;
-//				Application.JadePlatform.jadeSystemAgentOpen("simstarter", null, startWith);
 			}
+
 			else if ( ActCMD.equalsIgnoreCase("ContainerMonitoring") ) { 
 				Application.JadePlatform.jadeSystemAgentOpen("loadMonitor", null);
 			}

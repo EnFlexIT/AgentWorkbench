@@ -46,6 +46,7 @@ public interface SimulationServiceSlice extends Service.Slice {
 	static final String SIM_SET_ENVIRONMENT_MODEL = "sim-set-environment-model";
 	static final String SIM_STEP_SIMULATION = "sim-step-simulation";
 	static final String SIM_NOTIFY_AGENT = "sim-notify-agent";
+	static final String SIM_PAUSE_SIMULATION = "sim-pause";
 	static final String SIM_SET_ENVIRONMENT_NEXT_PART = "set-environment-next-part";
 	static final String SIM_GET_ENVIRONMENT_NEXT_PARTS = "get-environment-next-parts";
 	static final String SIM_RESET_ENVIRONMENT_NEXT_PARTS = "reset-environment-next-parts";
@@ -53,6 +54,7 @@ public interface SimulationServiceSlice extends Service.Slice {
 	public void setEnvironmentModel(EnvironmentModel envModel) throws IMTPException;
 	public void stepSimulation(EnvironmentModel envModel, boolean aSynchron) throws IMTPException;
 	public boolean notifyAgent(AID agentAID, Object notification, boolean aSynchron) throws IMTPException;
+	public void setPauseSimulation(boolean pauseSimulation) throws IMTPException;
 	
 	public void setEnvironmentInstanceNextPart(Hashtable<AID, Object> nextPartsLocal) throws IMTPException;
 	public Hashtable<AID, Object> getEnvironmentInstanceNextParts() throws IMTPException;

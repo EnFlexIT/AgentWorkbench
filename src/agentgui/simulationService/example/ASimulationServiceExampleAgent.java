@@ -1,4 +1,4 @@
-package agentgui.simulationService.agents;
+package agentgui.simulationService.example;
 
 import jade.core.Agent;
 import jade.core.ServiceException;

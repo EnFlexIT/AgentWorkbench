@@ -1,4 +1,4 @@
-package agentgui.simulationService.agents;
+package agentgui.simulationService.example;
 
 import jade.core.Agent;
 import jade.core.ServiceException;
@@ -20,6 +20,7 @@ import javax.swing.SwingConstants;
 
 import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.SimulationServiceHelper;
+import agentgui.simulationService.agents.SimulationAgent;
 
 
 /**
