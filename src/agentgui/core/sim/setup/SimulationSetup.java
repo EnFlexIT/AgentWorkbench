@@ -3,7 +3,7 @@ package agentgui.core.sim.setup;
 import java.io.FileWriter;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Vector;
+import java.util.HashMap;
 
 import javax.swing.DefaultListModel;
 import javax.xml.bind.JAXBContext;
@@ -32,18 +32,18 @@ import agentgui.graphEnvironment.controller.GraphElementSettings;
 	private String environmentFileName = null;
 	private String svgFileName = null;
 	
-	private Vector<GraphElementSettings> graphElementSettings;
+	private HashMap<String, GraphElementSettings> graphElementSettings;
 	
 	/**
 	 * @return the elementTypeSettings
 	 */
-	public Vector<GraphElementSettings> getGraphElementSettings() {
+	public HashMap<String, GraphElementSettings> getGraphElementSettings() {
 		return graphElementSettings;
 	}
 	/**
 	 * @param graphElementSettings the elementTypeSettings to set
 	 */
-	public void setGraphElementSettings(Vector<GraphElementSettings> graphElementSettings) {
+	public void setGraphElementSettings(HashMap<String, GraphElementSettings> graphElementSettings) {
 		this.graphElementSettings = graphElementSettings;
 	}
 	/**

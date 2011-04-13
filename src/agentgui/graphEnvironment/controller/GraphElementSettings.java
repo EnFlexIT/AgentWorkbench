@@ -1,31 +1,16 @@
 package agentgui.graphEnvironment.controller;
 
 public class GraphElementSettings {
-	private String name;
 	private String agentClass;
 	private String graphPrototype;
 	
 	public GraphElementSettings(){
 		super();
 	}
-	public GraphElementSettings(String name, String agentClass,
-			String graphPrototype) {
+	public GraphElementSettings(String agentClass, String graphPrototype) {
 		super();
-		this.name = name;
 		this.agentClass = agentClass;
 		this.graphPrototype = graphPrototype;
-	}
-	/**
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
-	}
-	/**
-	 * @param name the name to set
-	 */
-	public void setName(String name) {
-		this.name = name;
 	}
 	/**
 	 * @return the agentClass

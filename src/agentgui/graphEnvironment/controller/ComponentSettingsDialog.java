@@ -116,10 +116,10 @@ public class ComponentSettingsDialog extends JDialog implements ActionListener{
 			
 		
 			if(element instanceof GraphEdge){
-				oiv = new OntologyInstanceViewer(project, parentGUI.getController().getElementTypeSettingsByType(((GraphEdge) element).getType()).getAgentClass());
+				oiv = new OntologyInstanceViewer(project, parentGUI.getController().getGraphElementSettings().get(((GraphEdge) element).getType()).getAgentClass());
 			}else if(element instanceof GraphNode){
 				String[] ontoClassName = new String[1];
-				ontoClassName[0] = GraphNode.ONTOLOGY_CLASS_NAME;
+				ontoClassName[0] = parentGUI.getController().getGraphElementSettings().get("node").getAgentClass();
 				oiv = new OntologyInstanceViewer(project, ontoClassName);
 
 				if(element.getOntologyRepresentation() != null){
@@ -129,10 +129,6 @@ public class ComponentSettingsDialog extends JDialog implements ActionListener{
 				}
 				
 			}
-			
-			
-			
-			
 			
 			oiv.setAllowViewEnlargement(false);
 			jPanelContent.add(oiv, gridBagConstraints11);

@@ -6,10 +6,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Vector;
 
 import org.apache.commons.collections15.Transformer;
 
@@ -42,7 +41,7 @@ public class GraphEnvironmentController extends Observable implements Observer {
 	
 	private GridModel gridModel = null;
 	
-	private Vector<GraphElementSettings> currentEts = null;
+	private HashMap<String, GraphElementSettings> currentGts = null;
 	
 	private GraphFileImporter graphFileImporter = null;
 	
@@ -53,36 +52,29 @@ public class GraphEnvironmentController extends Observable implements Observer {
 		this.project.addObserver(this);
 		graphFilePath = this.project.getProjectFolderFullPath()+this.project.getSubFolderEnvSetups();
 		loadGridModel();
-		setElementTypeSettings(project.simSetups.getCurrSimSetup().getGraphElementSettings());
+		setGraphElementSettings(project.simSetups.getCurrSimSetup().getGraphElementSettings());
+		// If no ETS are specified in the setup, assign an empty HashMap to avoid null pointers
+		if(currentGts == null){
+			currentGts = new HashMap<String, GraphElementSettings>();
+		}
 	}
 	
 	Project getProject(){
 		return this.project;
 	}
 
-	public void setElementTypeSettings(Vector<GraphElementSettings> etsVector){
-		currentEts = etsVector;
+	public void setGraphElementSettings(HashMap<String, GraphElementSettings> etsVector){
+		currentGts = etsVector;
 		project.simSetups.getCurrSimSetup().setGraphElementSettings(etsVector);
 		project.isUnsaved=true;
 		setChanged();
 		notifyObservers(EVENT_ELEMENT_TYPES_SETTINGS_CHANGED);
 	}
 	
-	public Vector<GraphElementSettings> getElementTypeSettings(){
-		return this.currentEts;
+	public HashMap<String, GraphElementSettings> getGraphElementSettings(){
+		return this.currentGts;
 	}
 	
-	public GraphElementSettings getElementTypeSettingsByType(String type){
-		Iterator<GraphElementSettings> etsIter = currentEts.iterator();
-		while(etsIter.hasNext()){
-			GraphElementSettings ets = etsIter.next();
-			if(ets.getName().equals(type)){
-				return ets;
-			}
-		}
-		return null;
-	}
-
 	/**
 	 * This method loads a new graph definition from graphMLFile
 	 * The praphMLFile and, if existing, an equal named SVG file in the same 
@@ -209,7 +201,7 @@ private void handleSetupChange(SimulationSetupsChangeNotification sscn){
 				System.out.println("Testausgabe: Erzeuge Setup");
 				updateGraphFileName();
 				gridModel = new GridModel();
-				currentEts = null;
+				currentGts = null;
 			break;
 			
 			case SimulationSetups.SIMULATION_SETUP_REMOVE:
@@ -224,7 +216,7 @@ private void handleSetupChange(SimulationSetupsChangeNotification sscn){
 				System.out.println("Testausgabe: Lade Setup");
 				updateGraphFileName();
 				loadGridModel();
-				setElementTypeSettings(project.simSetups.getCurrSimSetup().getGraphElementSettings());
+				setGraphElementSettings(project.simSetups.getCurrSimSetup().getGraphElementSettings());
 			break;
 			
 			case SimulationSetups.SIMULATION_SETUP_RENAME:

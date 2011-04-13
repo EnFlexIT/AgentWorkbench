@@ -262,15 +262,15 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 		Vector<Vector<String>> dataRows = new Vector<Vector<String>>();
 		
 		// Set table entries for defined assignments, if any
-		Vector<GraphElementSettings> etsVector = parent.getController().getElementTypeSettings();
-		if(etsVector != null){
-			Iterator<GraphElementSettings> etsIter = etsVector.iterator();
+		HashMap<String, GraphElementSettings> etsHash = parent.getController().getGraphElementSettings();
+		if(etsHash != null){
+			Iterator<String> etsIter = etsHash.keySet().iterator();
 			while(etsIter.hasNext()){
-				GraphElementSettings ets = etsIter.next();
+				String etName = etsIter.next();
 				Vector<String> newRow = new Vector<String>();
-				newRow.add(ets.getName());
-				newRow.add(ets.getAgentClass());
-				newRow.add(ets.getGraphPrototype());
+				newRow.add(etName);
+				newRow.add(etsHash.get(etName).getAgentClass());
+				newRow.add(etsHash.get(etName).getGraphPrototype());
 				dataRows.add(newRow);
 			}
 		}
@@ -380,16 +380,17 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 			JTable jtc = getJTableClasses();
 			
 			int rowNum = jtc.getRowCount();
-			Vector<GraphElementSettings> etsVector = new Vector<GraphElementSettings>();
+			HashMap<String, GraphElementSettings> etsVector = new HashMap<String, GraphElementSettings>();
 			for(int row=0; row<rowNum; row++){
 				
 				GraphElementSettings ets = new GraphElementSettings(
-						(String)jtc.getValueAt(row, 0), 
 						(String)jtc.getValueAt(row, 1), 
 						(String)jtc.getValueAt(row, 2));
-				etsVector.add(ets);
+				// Use name as key
+				etsVector.put((String) jtc.getValueAt(row, 0), ets);
 			}
-			parent.getController().setElementTypeSettings(etsVector);
+			etsVector.put("node", new GraphElementSettings(getJTextFieldNodeClass().getText(), null));
+			parent.getController().setGraphElementSettings(etsVector);
 			
 			this.setVisible(false);
 		}else if(event.getSource().equals(getJButtonCancel())){
@@ -421,6 +422,10 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 	private JTextField getJTextFieldNodeClass() {
 		if (jTextFieldNodeClass == null) {
 			jTextFieldNodeClass = new JTextField();
+			GraphElementSettings nodeSettings = parent.getController().getGraphElementSettings().get("node");
+			if(nodeSettings != null){
+				jTextFieldNodeClass.setText(nodeSettings.getAgentClass());
+			}
 		}
 		return jTextFieldNodeClass;
 	}
