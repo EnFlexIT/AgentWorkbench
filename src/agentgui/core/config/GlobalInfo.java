@@ -509,6 +509,7 @@ public class GlobalInfo {
 		// --- Here the default-values can be configured ------------
 		PlatformJadeConfig jadeConfig = new PlatformJadeConfig();
 		jadeConfig.runNotificationService(true);
+		jadeConfig.runLoadService(true);
 		jadeConfig.runSimulationService(true);
 		jadeConfig.setLocalPort(localeJadeLocalPort);
 		

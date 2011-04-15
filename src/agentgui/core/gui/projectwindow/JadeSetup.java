@@ -26,7 +26,6 @@ public class JadeSetup extends JPanel implements ActionListener {
 	
 	private Project currProject = null;
 	
-	private JCheckBox jCheckBoxStartJade = null;
 	private JCheckBox jCheckBoxUseDefaults = null;
 	private JCheckBox jCheckBoxTopicManagementService = null;
 	private JCheckBox jCheckBoxPersistentDeliveryService = null;
@@ -38,6 +37,7 @@ public class JadeSetup extends JPanel implements ActionListener {
 	private JCheckBox jCheckBoxInterPlatformMobilityService = null;
 	private JCheckBox jCheckBoxAgentMobilityService = null;
 	private JCheckBox jCheckBoxNotificationService = null;
+	private JCheckBox jCheckBoxLoadService = null;
 	private JCheckBox jCheckBoxSimulationService = null;
 	private JCheckBox jCheckBoxEnvironmentProviderService = null;
 	
@@ -51,6 +51,7 @@ public class JadeSetup extends JPanel implements ActionListener {
 	
 	private JButton jButtonSetPortDefault = null;
 
+
 	/**
 	 * This is the default constructor
 	 */
@@ -63,7 +64,6 @@ public class JadeSetup extends JPanel implements ActionListener {
 		this.refreshDataView();
 		
 		// --- Übersetzung konfigurieren ------
-		jCheckBoxStartJade.setText(Language.translate("JADE zu Simulationsbeginn starten"));
 		jCheckBoxUseDefaults.setText(Language.translate("AgentGUI - Standardeinstellungen verwenden"));
 		jLabelPort.setText(Language.translate("Starte JADE über Port-Nr.:"));
 		jLabelPortExplain.setText(Language.translate("(Falls bereits verwendet, wird versucht den nächst höheren Port zu nutzen)"));
@@ -81,28 +81,27 @@ public class JadeSetup extends JPanel implements ActionListener {
 		jLabelServiceAgentGuiTitel = new JLabel();
 		jLabelServiceAgentGuiTitel.setText("Folgende Agent.GUI-Dienste starten:");
 		jLabelServiceAgentGuiTitel.setSize(new Dimension(240, 16));
-		jLabelServiceAgentGuiTitel.setLocation(new Point(320, 160));
+		jLabelServiceAgentGuiTitel.setLocation(new Point(318, 138));
 		jLabelServiceAgentGuiTitel.setFont(new Font("Dialog", Font.BOLD, 12));
 		jLabelPortExplain = new JLabel();
 		jLabelPortExplain.setText("(Falls bereits verwendet, wird versucht den nächst höheren Port zu nutzen)");
-		jLabelPortExplain.setBounds(new Rectangle(40, 104, 445, 16));
+		jLabelPortExplain.setBounds(new Rectangle(38, 82, 445, 16));
 		jLabelPortExplain.setFont(new Font("Dialog", Font.PLAIN, 12));
 		jLabelPort = new JLabel();
 		jLabelPort.setFont(new Font("Dialog", Font.BOLD, 12));
-		jLabelPort.setBounds(new Rectangle(40, 88, 445, 16));
+		jLabelPort.setBounds(new Rectangle(38, 66, 445, 16));
 		jLabelPort.setText("Starte JADE über Port-Nr.:");
 		jLabelServiceTitleAddOn = new JLabel();
 		jLabelServiceTitleAddOn.setFont(new Font("Dialog", Font.BOLD, 12));
-		jLabelServiceTitleAddOn.setBounds(new Rectangle(40, 410, 445, 16));
+		jLabelServiceTitleAddOn.setBounds(new Rectangle(38, 388, 445, 16));
 		jLabelServiceTitleAddOn.setText("Folgende Add-On-Dienste starten:");
 		jLabelServiceTitle = new JLabel();
 		jLabelServiceTitle.setText("Folgende Jade-Dienste starten:");
-		jLabelServiceTitle.setLocation(new Point(40, 160));
+		jLabelServiceTitle.setLocation(new Point(38, 138));
 		jLabelServiceTitle.setSize(new Dimension(250, 16));
 		jLabelServiceTitle.setFont(new Font("Dialog", Font.BOLD, 12));
 		this.setSize(591, 485);
 		this.setLayout(null);
-		this.add(getJCheckBoxStartJade(), null);
 		this.add(getJCheckBoxUseDefaults(), null);
 		this.add(jLabelServiceTitle, null);
 		this.add(getJCheckBoxTopicManagementService(), null);
@@ -123,21 +122,7 @@ public class JadeSetup extends JPanel implements ActionListener {
 		this.add(jLabelServiceAgentGuiTitel, null);
 		this.add(getJCheckBoxSimulationService(), null);
 		this.add(getJCheckBoxEnvironmentProviderService(), null);
-	}
-	/**
-	 * This method initializes jCheckBoxStartJade	
-	 * @return javax.swing.JCheckBox	
-	 */
-	private JCheckBox getJCheckBoxStartJade() {
-		if (jCheckBoxStartJade == null) {
-			jCheckBoxStartJade = new JCheckBox();
-			jCheckBoxStartJade.setText("JADE zu Simulationsbeginn starten");
-			jCheckBoxStartJade.setFont(new Font("Dialog", Font.BOLD, 14));
-			jCheckBoxStartJade.setBounds(new Rectangle(20, 20, 423, 27));
-			jCheckBoxStartJade.setActionCommand("StartJade");
-			jCheckBoxStartJade.addActionListener(this);
-		}
-		return jCheckBoxStartJade;
+		this.add(getJCheckBoxLoadService(), null);
 	}
 	/**
 	 * This method initializes jCheckBoxUseDefaults	
@@ -148,7 +133,7 @@ public class JadeSetup extends JPanel implements ActionListener {
 			jCheckBoxUseDefaults = new JCheckBox();
 			jCheckBoxUseDefaults.setText("AgentGUI - Standardeinstellungen verwenden");
 			jCheckBoxUseDefaults.setFont(new Font("Dialog", Font.BOLD, 14));
-			jCheckBoxUseDefaults.setBounds(new Rectangle(20, 47, 423, 27));
+			jCheckBoxUseDefaults.setBounds(new Rectangle(18, 25, 423, 27));
 			jCheckBoxUseDefaults.setActionCommand("UseDefaults");
 			jCheckBoxUseDefaults.addActionListener(this);
 		}
@@ -163,7 +148,7 @@ public class JadeSetup extends JPanel implements ActionListener {
 			jCheckBoxTopicManagementService = new JCheckBox();
 			jCheckBoxTopicManagementService.setText("TopicManagementService");
 			jCheckBoxTopicManagementService.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jCheckBoxTopicManagementService.setBounds(new Rectangle(40, 202, 167, 24));
+			jCheckBoxTopicManagementService.setBounds(new Rectangle(38, 180, 167, 24));
 			jCheckBoxTopicManagementService.setActionCommand("TopicManagementService");
 			jCheckBoxTopicManagementService.addActionListener(this);
 		}
@@ -178,7 +163,7 @@ public class JadeSetup extends JPanel implements ActionListener {
 			jCheckBoxPersistentDeliveryService = new JCheckBox();
 			jCheckBoxPersistentDeliveryService.setText("PersistentDeliveryService");
 			jCheckBoxPersistentDeliveryService.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jCheckBoxPersistentDeliveryService.setBounds(new Rectangle(40, 298, 164, 24));
+			jCheckBoxPersistentDeliveryService.setBounds(new Rectangle(38, 276, 164, 24));
 			jCheckBoxPersistentDeliveryService.setActionCommand("PersistentDeliveryService");
 			jCheckBoxPersistentDeliveryService.addActionListener(this);
 		}
@@ -193,7 +178,7 @@ public class JadeSetup extends JPanel implements ActionListener {
 			jCheckBoxMainReplicationService = new JCheckBox();
 			jCheckBoxMainReplicationService.setText("MainReplicationService");
 			jCheckBoxMainReplicationService.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jCheckBoxMainReplicationService.setBounds(new Rectangle(40, 226, 153, 24));
+			jCheckBoxMainReplicationService.setBounds(new Rectangle(38, 204, 153, 24));
 			jCheckBoxMainReplicationService.setActionCommand("MainReplicationService");
 			jCheckBoxMainReplicationService.addActionListener(this);			
 		}
@@ -208,7 +193,7 @@ public class JadeSetup extends JPanel implements ActionListener {
 			jCheckBoxAddressNotificationService = new JCheckBox();
 			jCheckBoxAddressNotificationService.setText("AddressNotificationService");
 			jCheckBoxAddressNotificationService.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jCheckBoxAddressNotificationService.setBounds(new Rectangle(40, 274, 172, 24));
+			jCheckBoxAddressNotificationService.setBounds(new Rectangle(38, 252, 172, 24));
 			jCheckBoxAddressNotificationService.setActionCommand("AddressNotificationService");
 			jCheckBoxAddressNotificationService.addActionListener(this);
 		}
@@ -223,7 +208,7 @@ public class JadeSetup extends JPanel implements ActionListener {
 			jCheckBoxUDPNodeMonitoringServ = new JCheckBox();
 			jCheckBoxUDPNodeMonitoringServ.setText("UDPNodeMonitoringService");
 			jCheckBoxUDPNodeMonitoringServ.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jCheckBoxUDPNodeMonitoringServ.setBounds(new Rectangle(40, 322, 178, 24));
+			jCheckBoxUDPNodeMonitoringServ.setBounds(new Rectangle(38, 300, 178, 24));
 			jCheckBoxUDPNodeMonitoringServ.setActionCommand("UDPNodeMonitoringServ");
 			jCheckBoxUDPNodeMonitoringServ.addActionListener(this);
 		}
@@ -238,7 +223,7 @@ public class JadeSetup extends JPanel implements ActionListener {
 			jCheckBoxFaultRecoveryService = new JCheckBox();
 			jCheckBoxFaultRecoveryService.setText("FaultRecoveryService");
 			jCheckBoxFaultRecoveryService.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jCheckBoxFaultRecoveryService.setBounds(new Rectangle(40, 250, 142, 24));
+			jCheckBoxFaultRecoveryService.setBounds(new Rectangle(38, 228, 142, 24));
 			jCheckBoxFaultRecoveryService.setActionCommand("FaultRecoveryService");
 			jCheckBoxFaultRecoveryService.addActionListener(this);
 		}
@@ -253,7 +238,7 @@ public class JadeSetup extends JPanel implements ActionListener {
 			jCheckBoxBEManagementService = new JCheckBox();
 			jCheckBoxBEManagementService.setText("BEManagementService");
 			jCheckBoxBEManagementService.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jCheckBoxBEManagementService.setBounds(new Rectangle(40, 346, 153, 24));
+			jCheckBoxBEManagementService.setBounds(new Rectangle(38, 324, 153, 24));
 			jCheckBoxBEManagementService.setActionCommand("BEManagementService");
 			jCheckBoxBEManagementService.addActionListener(this);
 		}
@@ -268,7 +253,7 @@ public class JadeSetup extends JPanel implements ActionListener {
 			jCheckBoxAgentMobilityService = new JCheckBox();
 			jCheckBoxAgentMobilityService.setText("AgentMobilityService");
 			jCheckBoxAgentMobilityService.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jCheckBoxAgentMobilityService.setBounds(new Rectangle(40, 370, 136, 24));
+			jCheckBoxAgentMobilityService.setBounds(new Rectangle(38, 348, 136, 24));
 			jCheckBoxAgentMobilityService.setActionCommand("AgentMobilityService.");
 			jCheckBoxAgentMobilityService.addActionListener(this);
 		}
@@ -283,12 +268,29 @@ public class JadeSetup extends JPanel implements ActionListener {
 			jCheckBoxNotificationService = new JCheckBox();
 			jCheckBoxNotificationService.setText("NotificationService");
 			jCheckBoxNotificationService.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jCheckBoxNotificationService.setBounds(new Rectangle(40, 178, 126, 24));
+			jCheckBoxNotificationService.setBounds(new Rectangle(38, 156, 126, 24));
 			jCheckBoxNotificationService.setActionCommand("NotificationService");
 			jCheckBoxNotificationService.addActionListener(this);
 
 		}
 		return jCheckBoxNotificationService;
+	}
+	
+	/**
+	 * This method initializes jCheckBoxLoadService	
+	 * 	
+	 * @return javax.swing.JCheckBox	
+	 */
+	private JCheckBox getJCheckBoxLoadService() {
+		if (jCheckBoxLoadService == null) {
+			jCheckBoxLoadService = new JCheckBox();
+			jCheckBoxLoadService.setBounds(new Rectangle(318, 156, 124, 24));
+			jCheckBoxLoadService.setText("LoadService");
+			jCheckBoxLoadService.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jCheckBoxLoadService.setActionCommand("LoadService");
+			jCheckBoxLoadService.addActionListener(this);
+		}
+		return jCheckBoxLoadService;
 	}
 	
 	/**
@@ -298,7 +300,7 @@ public class JadeSetup extends JPanel implements ActionListener {
 	private JCheckBox getJCheckBoxSimulationService() {
 		if (jCheckBoxSimulationService == null) {
 			jCheckBoxSimulationService = new JCheckBox();
-			jCheckBoxSimulationService.setBounds(new Rectangle(320, 178, 126, 24));
+			jCheckBoxSimulationService.setBounds(new Rectangle(318, 180, 126, 24));
 			jCheckBoxSimulationService.setText("SimulationService");
 			jCheckBoxSimulationService.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jCheckBoxSimulationService.setActionCommand("SimulationService");
@@ -313,7 +315,7 @@ public class JadeSetup extends JPanel implements ActionListener {
 	private JCheckBox getJCheckBoxEnvironmentProviderService() {
 		if (jCheckBoxEnvironmentProviderService == null) {
 			jCheckBoxEnvironmentProviderService = new JCheckBox();
-			jCheckBoxEnvironmentProviderService.setBounds(new Rectangle(320, 202, 183, 24));
+			jCheckBoxEnvironmentProviderService.setBounds(new Rectangle(318, 204, 183, 24));
 			jCheckBoxEnvironmentProviderService.setText("EnvironmentProviderService");
 			jCheckBoxEnvironmentProviderService.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jCheckBoxEnvironmentProviderService.setActionCommand("EnvironmentProviderService");
@@ -331,7 +333,7 @@ public class JadeSetup extends JPanel implements ActionListener {
 			jCheckBoxInterPlatformMobilityService = new JCheckBox();
 			jCheckBoxInterPlatformMobilityService.setText("InterPlatformMobilityService");
 			jCheckBoxInterPlatformMobilityService.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jCheckBoxInterPlatformMobilityService.setBounds(new Rectangle(40, 426, 175, 24));
+			jCheckBoxInterPlatformMobilityService.setBounds(new Rectangle(38, 404, 175, 24));
 			jCheckBoxInterPlatformMobilityService.setActionCommand("InterPlatformMobilityService");
 			jCheckBoxInterPlatformMobilityService.addActionListener(this);
 		}
@@ -347,7 +349,7 @@ public class JadeSetup extends JPanel implements ActionListener {
 		if (jTextFieldDefaultPort == null) {
 			jTextFieldDefaultPort = new JTextField();
 			jTextFieldDefaultPort.setFont(new Font("Dialog", Font.BOLD, 12));
-			jTextFieldDefaultPort.setBounds(new Rectangle(40, 121, 71, 26));
+			jTextFieldDefaultPort.setBounds(new Rectangle(38, 99, 71, 26));
 			jTextFieldDefaultPort.setEditable(false);
 			jTextFieldDefaultPort.addFocusListener(new java.awt.event.FocusAdapter() {
 				public void focusGained(java.awt.event.FocusEvent e) {
@@ -383,13 +385,12 @@ public class JadeSetup extends JPanel implements ActionListener {
 
 	/**
 	 * This method initializes jButtonSetPortDefault	
-	 * 	
 	 * @return javax.swing.JButton	
 	 */
 	private JButton getJButtonSetPortDefault() {
 		if (jButtonSetPortDefault == null) {
 			jButtonSetPortDefault = new JButton();
-			jButtonSetPortDefault.setBounds(new Rectangle(120, 121, 80, 26));
+			jButtonSetPortDefault.setBounds(new Rectangle(118, 99, 80, 26));
 			jButtonSetPortDefault.setText("Default");
 			jButtonSetPortDefault.setActionCommand("SetPortDefault");
 			jButtonSetPortDefault.addActionListener(this);
@@ -403,9 +404,7 @@ public class JadeSetup extends JPanel implements ActionListener {
 		String ActCMD = ae.getActionCommand();
 		Object Trigger = ae.getSource();
 		
-		if (Trigger==jCheckBoxStartJade) {
-			currProject.JadeConfiguration.setStart4Simulation(jCheckBoxStartJade.isSelected());			
-		} else if (Trigger==jCheckBoxUseDefaults) {
+		if (Trigger==jCheckBoxUseDefaults) {
 			// --- Default-Configuration ? --- START ----------------
 			if ( jCheckBoxUseDefaults.isSelected() == true ) {
 				// --- take and show the default-configuration ------
@@ -439,6 +438,8 @@ public class JadeSetup extends JPanel implements ActionListener {
 			currProject.JadeConfiguration.runAgentMobilityService(jCheckBoxAgentMobilityService.isSelected());
 
 		// --- AgentGUI-Services ----------------
+		} else if (Trigger==jCheckBoxLoadService) {
+			currProject.JadeConfiguration.runLoadService(jCheckBoxLoadService.isSelected());
 		} else if (Trigger==jCheckBoxSimulationService) {
 			currProject.JadeConfiguration.runSimulationService(jCheckBoxSimulationService.isSelected());			
 		} else if (Trigger==jCheckBoxEnvironmentProviderService) {
@@ -469,9 +470,7 @@ public class JadeSetup extends JPanel implements ActionListener {
 
 	private void refreshDataView() {
 		
-		jCheckBoxStartJade.setSelected(currProject.JadeConfiguration.isStart4Simulation());
 		jCheckBoxUseDefaults.setSelected(currProject.JadeConfiguration.isUseDefaults());
-		
 		jTextFieldDefaultPort.setText(currProject.JadeConfiguration.getLocalPort().toString());
 		
 		jCheckBoxNotificationService.setSelected(currProject.JadeConfiguration.isNotificationService());
@@ -484,11 +483,13 @@ public class JadeSetup extends JPanel implements ActionListener {
 		jCheckBoxBEManagementService.setSelected(currProject.JadeConfiguration.isBEManagementService());
 		jCheckBoxAgentMobilityService.setSelected(currProject.JadeConfiguration.isAgentMobilityService());
 		
+		jCheckBoxLoadService.setSelected(currProject.JadeConfiguration.isLoadService());
 		jCheckBoxSimulationService.setSelected(currProject.JadeConfiguration.isSimulationService());
 		jCheckBoxEnvironmentProviderService.setSelected(currProject.JadeConfiguration.isEnvironmentProviderService());
 		
 		jCheckBoxInterPlatformMobilityService.setSelected(currProject.JadeConfiguration.isInterPlatformMobilityService());
 		
 	}
+
 
 }  //  @jve:decl-index=0:visual-constraint="19,15"

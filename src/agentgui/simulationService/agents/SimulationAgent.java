@@ -107,7 +107,7 @@ public class SimulationAgent extends Agent {
 	
 	/**
 	 * This method will be used by the ServiceActuator (class) to inform
-	 * this agent about changes in the environmet. It can be either used
+	 * this agent about changes in the environment. It can be either used
 	 * to do this asynchron or synchron. It is highly recommended to do
 	 * this asynchron, so that the agencie can act parallel and not
 	 * sequently. 
@@ -141,8 +141,21 @@ public class SimulationAgent extends Agent {
 	protected void onEnvironmentStimulus() {
 	}
 	
-	
+	/**
+	 * This method sets the answer respectively the change of a single simulation agent
+	 * back to the central simulation manager
+	 * @param answer
+	 */
+	protected void setMyStimulusAnswer(Object myNextState) {
+		try {
+			SimulationServiceHelper simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
+			simHelper.setEnvironmentInstanceNextPart(getAID(), myNextState);
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
+	}
 
+	
 	public void setNotification(Object notification, boolean aSynchron) {
 		if (aSynchron==true) {
 			this.addBehaviour(new ServiceNotification(notification));	
@@ -164,19 +177,5 @@ public class SimulationAgent extends Agent {
 	protected void onNotification(Object notification) {
 	}
 	
-	
-	/**
-	 * This method sets the answer respectively the change of a single simulation agent
-	 * back to the central simulation manager
-	 * @param answer
-	 */
-	protected void setMyStimulusAnswer(Object myNextState) {
-		try {
-			SimulationServiceHelper simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
-			simHelper.setEnvironmentInstanceNextPart(getAID(), myNextState);
-		} catch (ServiceException e) {
-			e.printStackTrace();
-		}
-	}
 	
 }

@@ -25,8 +25,8 @@ import agentgui.core.sim.setup.DistributionSetup;
 import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.physical2Denvironment.ontology.ActiveObject;
 import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
-import agentgui.simulationService.SimulationService;
-import agentgui.simulationService.SimulationServiceHelper;
+import agentgui.simulationService.LoadService;
+import agentgui.simulationService.LoadServiceHelper;
 import agentgui.simulationService.load.LoadMeasureThread;
 import agentgui.simulationService.load.LoadThresholdLevels;
 import agentgui.simulationService.load.LoadInformation.Container2Wait4;
@@ -36,7 +36,7 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 
 	private static final long serialVersionUID = 8876791160586073658L;
 
-	protected SimulationServiceHelper simHelper = null;
+	protected LoadServiceHelper loadHelper = null;
 	
 	protected Project currProject = null;
 	protected SimulationSetup currSimSetup = null;
@@ -97,7 +97,7 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 		
 		// --- Set the simHelper-Instance ---------------------------
 		try {
-			simHelper = (SimulationServiceHelper) myAgent.getHelper(SimulationService.NAME);
+			loadHelper = (LoadServiceHelper) myAgent.getHelper(LoadService.NAME);
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}	
@@ -107,7 +107,7 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 		if (currDisSetup.isUseUserThresholds()) {
 			currThresholdLevels = currDisSetup.getUserThresholds();
 			try {
-				simHelper.setThresholdLevels(currThresholdLevels);
+				loadHelper.setThresholdLevels(currThresholdLevels);
 			} catch (ServiceException e) {
 				e.printStackTrace();
 			}	
@@ -269,15 +269,15 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 			} else {
 				// --------------------------------------------------
 				// --- Is the SimulationServioce running? -----------
-				if (simulationServiceIsRunning()==true) {
+				if (loadServiceIsRunning()==true) {
 					// ----------------------------------------------
 					// --- START: Start direct on remote-container --
 					// ----------------------------------------------
 					String containerName = toLocation.getName();
 					String agentClassName = agentClass.getName();
 					try {
-						SimulationServiceHelper simHelper = (SimulationServiceHelper) myAgent.getHelper(SimulationService.NAME);
-						simHelper.startAgent(nickName, agentClassName, args, containerName);
+						LoadServiceHelper loadHelper = (LoadServiceHelper) myAgent.getHelper(LoadService.NAME);
+						loadHelper.startAgent(nickName, agentClassName, args, containerName);
 					} catch (ServiceException e) {
 						e.printStackTrace();
 					}
@@ -354,14 +354,14 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 		}
 	}
 	/**
-	 * Checks if the simulations service is running or not 
+	 * Checks if the load service is running or not 
 	 * @return
 	 */
-	private boolean simulationServiceIsRunning() {
+	private boolean loadServiceIsRunning() {
 		
 		try {
 			@SuppressWarnings("unused")
-			SimulationServiceHelper simHelper = (SimulationServiceHelper) myAgent.getHelper(SimulationService.NAME);
+			LoadServiceHelper loadHelper = (LoadServiceHelper) myAgent.getHelper(LoadService.NAME);
 			return true;
 		} catch (ServiceException e) {
 			//e.printStackTrace();
@@ -378,8 +378,8 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 		Hashtable<String, Location> newContainerLocations = null;
 		
 		// --- Is the simulation service running ? -----------------------
-		if (simulationServiceIsRunning()==false) {
-			System.out.println("Can not start remote container - SimulationService is not running!");
+		if (loadServiceIsRunning()==false) {
+			System.out.println("Can not start remote container - LoadService is not running!");
 			return null;
 		}
 		
@@ -401,10 +401,10 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 		}
 		
 		// --- Start a new remote container ------------------------------
-		SimulationServiceHelper simHelper;
+		LoadServiceHelper loadHelper;
 		try {
-			simHelper = (SimulationServiceHelper) myAgent.getHelper(SimulationService.NAME);
-			newContainerLocations = simHelper.getContainerLocations();
+			loadHelper = (LoadServiceHelper) myAgent.getHelper(LoadService.NAME);
+			newContainerLocations = loadHelper.getContainerLocations();
 			
 		} catch (ServiceException e) {
 			e.printStackTrace();
@@ -431,10 +431,10 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 		String newContainerName = null;
 		try {
 			// --- Start a new remote container -----------------
-			SimulationServiceHelper simHelper = (SimulationServiceHelper) myAgent.getHelper(SimulationService.NAME);
-			newContainerName = simHelper.startNewRemoteContainer(preventUsageOfAlreadyUsedComputers);
+			LoadServiceHelper loadHelper = (LoadServiceHelper) myAgent.getHelper(LoadService.NAME);
+			newContainerName = loadHelper.startNewRemoteContainer(preventUsageOfAlreadyUsedComputers);
 			while (true) {
-				Container2Wait4 waitCont = simHelper.startNewRemoteContainerStaus(newContainerName);	
+				Container2Wait4 waitCont = loadHelper.startNewRemoteContainerStaus(newContainerName);	
 				if (waitCont.isStarted()) {
 					System.out.println("Remote Container '" + newContainerName + "' was started!");
 					newContainerStarted = true;
@@ -455,15 +455,15 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 			
 			if (newContainerStarted==true) {
 
-				while (simHelper.getContainerDescription(newContainerName).getJvmPID()==null) {
+				while (loadHelper.getContainerDescription(newContainerName).getJvmPID()==null) {
 					this.block(100);
 				}
-				while (simHelper.getContainerLoads().get(newContainerName)==null) {
+				while (loadHelper.getContainerLoads().get(newContainerName)==null) {
 					this.block(100);
 				}
 
 				// --- Get the benchmark-result for this node/container -------------
-				NodeDescription containerDesc = simHelper.getContainerDescription(newContainerName);
+				NodeDescription containerDesc = loadHelper.getContainerDescription(newContainerName);
 				Float benchmarkValue = containerDesc.getBenchmarkValue().getBenchmarkValue();
 				loadContainerBenchmarkResults.put(newContainerName, benchmarkValue);				
 				return newContainerName;

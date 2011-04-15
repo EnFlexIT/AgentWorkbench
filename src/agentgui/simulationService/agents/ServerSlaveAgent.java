@@ -17,8 +17,8 @@ import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
 import agentgui.core.application.Application;
 import agentgui.core.network.JadeUrlChecker;
-import agentgui.simulationService.SimulationService;
-import agentgui.simulationService.SimulationServiceHelper;
+import agentgui.simulationService.LoadService;
+import agentgui.simulationService.LoadServiceHelper;
 import agentgui.simulationService.distribution.JadeRemoteStart;
 import agentgui.simulationService.load.LoadMeasureThread;
 import agentgui.simulationService.ontology.AgentGUI_DistributionOntology;
@@ -70,9 +70,9 @@ public class ServerSlaveAgent extends Agent {
 		getContentManager().registerLanguage(codec);
 		getContentManager().registerOntology(ontology);
 
-		SimulationServiceHelper simHelper = null;
+		LoadServiceHelper simHelper = null;
 		try {
-			simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
+			simHelper = (LoadServiceHelper) getHelper(LoadService.NAME);
 			// --- get the local systems-informations ---------
 			myCRCreply = simHelper.getLocalCRCReply();
 
@@ -325,7 +325,7 @@ public class ServerSlaveAgent extends Agent {
 					bench.setBenchmarkValue(LoadMeasureThread.getCompositeBenchmarkValue());
 					myCRCreply.setRemoteBenchmarkResult(bench);
 					
-					SimulationServiceHelper simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
+					LoadServiceHelper simHelper = (LoadServiceHelper) getHelper(LoadService.NAME);
 					simHelper.putContainerDescription(myCRCreply);
 					simHelper.setAndSaveCRCReplyLocal(myCRCreply);
 

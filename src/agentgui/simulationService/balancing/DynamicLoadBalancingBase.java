@@ -7,6 +7,8 @@ import jade.core.behaviours.OneShotBehaviour;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import agentgui.simulationService.LoadService;
+import agentgui.simulationService.LoadServiceHelper;
 import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.SimulationServiceHelper;
 import agentgui.simulationService.agents.LoadAgent;
@@ -115,10 +117,10 @@ public class DynamicLoadBalancingBase extends OneShotBehaviour {
 		String newContainerName = null;
 		try {
 			// --- Start a new remote container -----------------
-			SimulationServiceHelper simHelper = (SimulationServiceHelper) myLoadAgent.getHelper(SimulationService.NAME);
-			newContainerName = simHelper.startNewRemoteContainer();
+			LoadServiceHelper loadHelper = (LoadServiceHelper) myLoadAgent.getHelper(LoadService.NAME);
+			newContainerName = loadHelper.startNewRemoteContainer();
 			while (true) {
-				Container2Wait4 waitCont = simHelper.startNewRemoteContainerStaus(newContainerName);	
+				Container2Wait4 waitCont = loadHelper.startNewRemoteContainerStaus(newContainerName);	
 				if (waitCont.isStarted()) {
 					System.out.println("Remote Container '" + newContainerName + "' was started!");
 					newContainerStarted = true;
@@ -139,22 +141,22 @@ public class DynamicLoadBalancingBase extends OneShotBehaviour {
 			
 			if (newContainerStarted==true) {
 
-				while (simHelper.getContainerDescription(newContainerName).getJvmPID()==null) {
+				while (loadHelper.getContainerDescription(newContainerName).getJvmPID()==null) {
 					this.block(100);
 				}
-				while (simHelper.getContainerLoads().get(newContainerName)==null) {
+				while (loadHelper.getContainerLoads().get(newContainerName)==null) {
 					this.block(100);
 				}
-				loadContainerLoactions = simHelper.getContainerLocations();
+				loadContainerLoactions = loadHelper.getContainerLocations();
 				
 				// --- Get the benchmark-result for this node/container -------------
-				NodeDescription containerDesc = simHelper.getContainerDescription(newContainerName);
+				NodeDescription containerDesc = loadHelper.getContainerDescription(newContainerName);
 				Float benchmarkValue = containerDesc.getBenchmarkValue().getBenchmarkValue();
 				String jvmPID = containerDesc.getJvmPID(); 
 				String machineURL = containerDesc.getPlAddress().getUrl();
 				
 				// --- Get all needed load informations -----------------------------
-				PlatformLoad containerLoad = simHelper.getContainerLoads().get(newContainerName);
+				PlatformLoad containerLoad = loadHelper.getContainerLoads().get(newContainerName);
 				Integer containerNoAgents = 0;
 				loadContainerBenchmarkResults.put(newContainerName, benchmarkValue);	
 				

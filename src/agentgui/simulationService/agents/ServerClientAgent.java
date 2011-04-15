@@ -22,8 +22,9 @@ import jade.lang.acl.UnreadableException;
 import jade.wrapper.StaleProxyException;
 import agentgui.core.application.Application;
 import agentgui.core.network.JadeUrlChecker;
-import agentgui.simulationService.SimulationService;
-import agentgui.simulationService.SimulationServiceHelper;
+import agentgui.simulationService.LoadService;
+import agentgui.simulationService.LoadServiceHelper;
+
 import agentgui.simulationService.load.LoadMeasureThread;
 import agentgui.simulationService.ontology.AgentGUI_DistributionOntology;
 import agentgui.simulationService.ontology.BenchmarkResult;
@@ -76,11 +77,11 @@ public class ServerClientAgent extends Agent {
 		getContentManager().registerOntology(ontology);
 		getContentManager().registerOntology(ontologyJadeMgmt);
 		
-		SimulationServiceHelper simHelper = null;
+		LoadServiceHelper loadHelper = null;
 		try {
-			simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
+			loadHelper = (LoadServiceHelper) getHelper(LoadService.NAME);
 			// --- get the local systems-informations ---------
-			myCRCreply = simHelper.getLocalCRCReply();
+			myCRCreply = loadHelper.getLocalCRCReply();
 
 			// --- Define Platform-Info -----------------------
 			myPlatform = myCRCreply.getRemoteAddress();
@@ -91,7 +92,7 @@ public class ServerClientAgent extends Agent {
 			
 		} catch (ServiceException e) {
 			// --- problems to get the SimulationsService ! ---
-			if (simHelper==null) {
+			if (loadHelper==null) {
 				this.doDelete();
 				return;
 			} else {
@@ -200,10 +201,10 @@ public class ServerClientAgent extends Agent {
 		RemoteContainerConfig remConf = req.getRemoteConfig();
 		if (remConf==null) {
 
-			SimulationServiceHelper simHelper = null;
+			LoadServiceHelper loadHelper = null;
 			try {
-				simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
-				remConf = simHelper.getDefaultRemoteContainerConfig();
+				loadHelper = (LoadServiceHelper) getHelper(LoadService.NAME);
+				remConf = loadHelper.getDefaultRemoteContainerConfig();
 			} catch (ServiceException e) {
 				e.printStackTrace();
 			}
@@ -304,10 +305,10 @@ public class ServerClientAgent extends Agent {
 					
 					} else if (agentAction instanceof ClientRemoteContainerReply) {
 						// --- Antwort auf 'RemoteContainerRequest' -----------
-						SimulationServiceHelper simHelper = null;
+						LoadServiceHelper loadHelper = null;
 						try {
-							simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
-							simHelper.putContainerDescription((ClientRemoteContainerReply) agentAction);
+							loadHelper = (LoadServiceHelper) getHelper(LoadService.NAME);
+							loadHelper.putContainerDescription((ClientRemoteContainerReply) agentAction);
 						} catch (ServiceException e) {
 							e.printStackTrace();
 						}
@@ -414,9 +415,9 @@ public class ServerClientAgent extends Agent {
 					bench.setBenchmarkValue(LoadMeasureThread.getCompositeBenchmarkValue());
 					myCRCreply.setRemoteBenchmarkResult(bench);
 				
-					SimulationServiceHelper simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
-					simHelper.putContainerDescription(myCRCreply);
-					simHelper.setAndSaveCRCReplyLocal(myCRCreply);
+					LoadServiceHelper loadHelper = (LoadServiceHelper) getHelper(LoadService.NAME);
+					loadHelper.putContainerDescription(myCRCreply);
+					loadHelper.setAndSaveCRCReplyLocal(myCRCreply);
 
 				} catch (ServiceException servEx) {
 					servEx.printStackTrace();

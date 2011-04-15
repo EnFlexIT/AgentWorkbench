@@ -13,10 +13,10 @@
         </entry>
     </simulationSetups>
     <jadeConfiguration>
-        <start4Sim>true</start4Sim>
         <useAppDefaults>true</useAppDefaults>
         <useLocalPort>1099</useLocalPort>
         <serviceList>
+            <service>agentgui.simulationService.LoadService;</service>
             <service>jade.core.event.NotificationService;</service>
             <service>jade.core.mobility.AgentMobilityService;</service>
             <service>agentgui.simulationService.SimulationService;</service>

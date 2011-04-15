@@ -1,77 +1,40 @@
 package agentgui.simulationService;
 
-import jade.content.lang.sl.SLCodec;
-import jade.content.onto.basic.Action;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.AgentContainer;
-import jade.core.ContainerID;
+import jade.core.BaseService;
 import jade.core.Filter;
 import jade.core.HorizontalCommand;
 import jade.core.IMTPException;
-import jade.core.Location;
 import jade.core.MainContainer;
-import jade.core.NameClashException;
 import jade.core.Node;
-import jade.core.NotFoundException;
 import jade.core.Profile;
 import jade.core.ProfileException;
 import jade.core.Service;
-import jade.core.ServiceDescriptor;
 import jade.core.ServiceException;
 import jade.core.ServiceHelper;
 import jade.core.VerticalCommand;
-import jade.core.management.AgentManagementSlice;
-import jade.core.messaging.MessagingSlice;
 import jade.core.mobility.AgentMobilityHelper;
-import jade.lang.acl.ACLMessage;
-import jade.security.JADESecurityException;
 import jade.util.Logger;
-import jade.util.ObjectManager;
-import jade.util.leap.ArrayList;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
 
-import agentgui.core.application.Application;
 import agentgui.simulationService.environment.EnvironmentModel;
-import agentgui.simulationService.load.LoadAgentMap;
-import agentgui.simulationService.load.LoadMeasureSigar;
 import agentgui.simulationService.load.LoadMeasureThread;
-import agentgui.simulationService.load.LoadThresholdLevels;
-import agentgui.simulationService.load.LoadUnits;
 import agentgui.simulationService.load.LoadAgentMap.AID_Container;
-import agentgui.simulationService.load.LoadInformation.Container2Wait4;
-import agentgui.simulationService.load.LoadInformation.NodeDescription;
-import agentgui.simulationService.ontology.AgentGUI_DistributionOntology;
-import agentgui.simulationService.ontology.BenchmarkResult;
-import agentgui.simulationService.ontology.ClientRemoteContainerReply;
-import agentgui.simulationService.ontology.ClientRemoteContainerRequest;
-import agentgui.simulationService.ontology.OSInfo;
-import agentgui.simulationService.ontology.PlatformAddress;
-import agentgui.simulationService.ontology.PlatformLoad;
-import agentgui.simulationService.ontology.PlatformPerformance;
-import agentgui.simulationService.ontology.RemoteContainerConfig;
+import agentgui.simulationService.sensoring.ServiceActuator;
 import agentgui.simulationService.sensoring.ServiceSensor;
+import agentgui.simulationService.transaction.TransactionMap;
 
 /**
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg / Essen
  */
-public class SimulationService extends SimulationServiceBase {
+public class SimulationService extends BaseService {
 
 	public static final String NAME = SimulationServiceHelper.SERVICE_NAME;
 	public static final String SERVICE_NODE_DESCRIPTION_FILE = SimulationServiceHelper.SERVICE_NODE_DESCRIPTION_FILE;
@@ -82,6 +45,33 @@ public class SimulationService extends SimulationServiceBase {
 	private Filter incFilter;
 	private Filter outFilter;
 	private ServiceComponent localSlice;
+	
+	// --- Variables for the Time-Synchronisation -----------------------------
+	private long timeMeasureNext = 0;				// --- When was the MainContainerTime last measured 
+	private long timeMeasureInterval = 1000*5; 	// --- measure every 5 seconds 
+	private int timeMeasureCountMax = 100;		// --- How often the time-difference should be measured to build an average value?
+	private long timeDiff2MainContainer = 0;		// --- Difference between this and the MainContainer-Time
+	
+	// --- The Agent who is the Manager / Controller of the Simulation --------
+	private AID managerAgent = null;
+	// --- The List of Agents, which are registered to this service ----------- 
+	private Hashtable<String,AID> agentList = new Hashtable<String,AID>();
+	
+	// --- Pause the current simulation ---------------------------------------
+	private boolean pauseSimulation = false; 
+	
+	// --- The TransactionMap of the simulation -------------------------------
+	private TransactionMap transactionMap = new TransactionMap();
+	// --- The current EnvironmentModel ---------------------------------------
+	private EnvironmentModel environmentModel = null;
+	// --- The Actuator for this Service, which can inform registered --------- 
+	// --- Agents about changes in the Simulation e.g. 'stepTimeModel' --------
+	private ServiceActuator localServiceActuator = new ServiceActuator();
+	// --- How should an Agent be notified about Environment-Changes? ---------
+	private boolean stepSimulationAsynchronous = true;
+	// --- The next EnvironmentObject-Instance in parts (answers of agents) ---
+	private Hashtable<AID, Object> environmentInstanceNextParts = new Hashtable<AID, Object>();
+	private Hashtable<AID, Object> environmentInstanceNextPartsLocal = new Hashtable<AID, Object>();
 	
 		
 	public void init(AgentContainer ac, Profile p) throws ProfileException {
@@ -115,10 +105,6 @@ public class SimulationService extends SimulationServiceBase {
 		
 	}
 	public void boot(Profile p) throws ServiceException {
-		super.boot(p);
-		if (myMainContainer==null) {
-			setLocalCRCReply(true);
-		}
 	}
 	public String getName() {
 		return NAME;
@@ -176,119 +162,16 @@ public class SimulationService extends SimulationServiceBase {
 			return new Date(this.getSynchTimeMillis());
 		}
 		
-		public boolean startAgent(String nickName, String agentClassName, Object[] args, String containerName) throws ServiceException {
-			return broadcastStartAgent(nickName, agentClassName, args, containerName);
-		}
-		public void stopSimulationAgents() throws ServiceException {
-			Service.Slice[] slices = getAllSlices();
-			broadcastStopSimulationAgents(slices);
-		}
-		
-		// ----------------------------------------------------------
-		// --- Methods to start a new remote-container -------------- 
-		public RemoteContainerConfig getDefaultRemoteContainerConfig() throws ServiceException {
-			return this.getDefaultRemoteContainerConfig(DEFAULT_preventUsageOfAlreadyUsedComputers);
-		}
-		public RemoteContainerConfig getDefaultRemoteContainerConfig(boolean preventUsageOfAlreadyUsedComputers) throws ServiceException {
-			return broadcastGetDefaultRemoteContainerConfig(preventUsageOfAlreadyUsedComputers);
-		}
-		
-		public String startNewRemoteContainer() throws ServiceException {
-			return this.startNewRemoteContainer(null, DEFAULT_preventUsageOfAlreadyUsedComputers);
-		}
-		public String startNewRemoteContainer(boolean preventUsageOfAlreadyUsedComputers) throws ServiceException {
-			return this.startNewRemoteContainer(null, preventUsageOfAlreadyUsedComputers);
-		}
-		public String startNewRemoteContainer(RemoteContainerConfig remoteConfig, boolean preventUsageOfAlreadyUsedComputers) throws ServiceException {
-			return broadcastStartNewRemoteContainer(remoteConfig, preventUsageOfAlreadyUsedComputers);
-		}
-		
-		public Container2Wait4 startNewRemoteContainerStaus(String containerName) throws ServiceException {
-			return broadcastGetNewContainer2Wait4Status(containerName);
-		}
-		
-		// ----------------------------------------------------------
-		// --- Methods to set the local description of this node ----
-		// --- which is stored in the file 'AgentGUINode.bin'    ----
-		public ClientRemoteContainerReply getLocalCRCReply() throws ServiceException {
-			return myCRCReply;
-		}
-		public void setAndSaveCRCReplyLocal(ClientRemoteContainerReply crcReply) throws ServiceException {
-			myCRCReply = crcReply;
-			saveCRCReply(myCRCReply);
-		}
 
-		// ----------------------------------------------------------
-		// --- Methods for container info about OS, benchmark etc. -- 
-		public void putContainerDescription(ClientRemoteContainerReply crcReply) throws ServiceException {
-			if (crcReply.getRemoteAddress()==null && crcReply.getRemoteOS()==null && crcReply.getRemotePerformance()==null && crcReply.getRemoteBenchmarkResult()==null) {
-				// --- RemoteContainerRequest WAS NOT successful ----
-				loadInfo.setNewContainerCanceled(crcReply.getRemoteContainerName());
-			} else {
-				Service.Slice[] slices = getAllSlices();
-				broadcastPutContainerDescription(slices, crcReply);	
-			}
-		}
-		public Hashtable<String, NodeDescription> getContainerDescriptions() throws ServiceException {
-			return loadInfo.containerDescription;
-		}
-		public NodeDescription getContainerDescription(String containerName) throws ServiceException {
-			return loadInfo.containerDescription.get(containerName);
-		}
-		
-		// ----------------------------------------------------------
-		// --- Method for getting Location-Objects ------------------ 
-		public Hashtable<String, Location> getContainerLocations() throws ServiceException {
-			Service.Slice[] slices = getAllSlices();
-			broadcastGetContainerLocation(slices);
-			return loadInfo.containerLocations;
-		}
-		public Location getContainerLocation(String containerName) throws ServiceException {
-			this.getContainerLocations();
-			return loadInfo.containerLocations.get(containerName);
-		}
-		
-		// ----------------------------------------------------------
-		// --- Method to get the Load-Informations of all containers 
-		public void setThresholdLevels(LoadThresholdLevels thresholdLevels) throws ServiceException {
-			Service.Slice[] slices = getAllSlices();
-			broadcastThresholdLevels(slices, thresholdLevels);
-		}
-		public Hashtable<String, PlatformLoad> getContainerLoads() throws ServiceException {
-			Service.Slice[] slices = getAllSlices();
-			broadcastMeasureLoad(slices);
-			return loadInfo.containerLoads;
-		}
-		public PlatformLoad getContainerLoad(String containerName) throws ServiceException {
-			Service.Slice[] slices = getAllSlices();
-			broadcastMeasureLoad(slices);
-			return loadInfo.containerLoads.get(containerName);
-		}
-		
-		public Vector<String> getContainerQueue() throws ServiceException {
-			return loadInfo.containerQueue;
-		}
-		
-		public void setCycleStartTimeStamp() throws ServiceException {
-			loadInfo.setCycleStartTimeStamp();
-		}
-		public double getAvgCycleTime() throws ServiceException{
-			return loadInfo.getAvgCycleTime();
-		}
-		// ----------------------------------------------------------
-		// --- Method to get positions of Agents at this platform --- 
-		public LoadAgentMap getAgentMap() throws ServiceException {
-			Service.Slice[] slices = getAllSlices();
-			broadcastGetAIDListSensorAgents(slices);
-			broadcastGetAIDList(slices);
-			return loadInfo.agentLocations;
-		}
-		
 		// ----------------------------------------------------------
 		// --- Method to set the agent migration --------------------
 		public void setAgentMigration(Vector<AID_Container> transferAgents) throws ServiceException {
 			Service.Slice[] slices = getAllSlices();
 			broadcastAgentMigration(transferAgents, slices);
+		}
+		public void stopSimulationAgents() throws ServiceException {
+			Service.Slice[] slices = getAllSlices();
+			broadcastStopSimulationAgents(slices);
 		}
 		
 		// ----------------------------------------------------------
@@ -388,6 +271,287 @@ public class SimulationService extends SimulationServiceBase {
 	// --------------------------------------------------------------	
 	// ---- Inner-Class 'AgentTimeImpl' ---- End --------------------
 	// --------------------------------------------------------------
+
+	
+	
+	/**
+	 * Broadcast the AID of the Simulation-Manager Agent to all Slices
+	 * @param timeModel 
+	 * @param slices
+	 * @throws ServiceException
+	 */
+	private void broadcastManagerAgent(AID agentAddress, Service.Slice[] slices) throws ServiceException {
+		
+		if (myLogger.isLoggable(Logger.CONFIG)) {
+			myLogger.log(Logger.CONFIG, "Sending current TimeModel!");
+		}
+		for (int i = 0; i < slices.length; i++) {
+			String sliceName = null;
+			try {
+				SimulationServiceSlice slice = (SimulationServiceSlice) slices[i];
+				sliceName = slice.getNode().getName();
+				if (myLogger.isLoggable(Logger.FINER)) {
+					myLogger.log(Logger.FINER, "Sending current TimeModel to " + sliceName);
+				}
+				slice.setManagerAgent(agentAddress);
+			}
+			catch(Throwable t) {
+				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
+				myLogger.log(Logger.WARNING, "Error propagating current TimeModel to slice  " + sliceName, t);
+			}
+		}
+	}
+	
+	/**
+	 * Sends the local next parts of the environment-model to the Main-Container 
+	 * @param fromAgent
+	 * @param nextPart
+	 * @throws ServiceException
+	 */
+	private void mainSetEnvironmentInstanceNextPart(Hashtable<AID, Object> nextPartsLocal) throws ServiceException {
+		
+		if (myLogger.isLoggable(Logger.CONFIG)) {
+			myLogger.log(Logger.CONFIG, "Sending agent-answer of environment-change to Main-Container!");
+		}
+		String sliceName = null;
+		try {
+			SimulationServiceSlice slice = (SimulationServiceSlice) getSlice(MAIN_SLICE);
+			sliceName = slice.getNode().getName();
+			if (myLogger.isLoggable(Logger.FINER)) {
+				myLogger.log(Logger.FINER, "Sending agent-answer of environment-change to " + sliceName);
+			}
+			slice.setEnvironmentInstanceNextPart(environmentInstanceNextPartsLocal);
+		}
+		catch(Throwable t) {
+			// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
+			myLogger.log(Logger.WARNING, "Error while sending agent-answer of environment-change to slice  " + sliceName, t);
+		}
+	}	
+	
+	/**
+	 * This returns the complete environment-model-changes from the Main-Container
+	 * @return
+	 * @throws ServiceException
+	 */
+	private Hashtable<AID, Object> mainGetEnvironmentInstanceNextParts() throws ServiceException {
+		
+		if (myLogger.isLoggable(Logger.CONFIG)) {
+			myLogger.log(Logger.CONFIG, "Try to get new environment-part from Main-Container!");
+		}
+		String sliceName = null;
+		try {
+			SimulationServiceSlice slice = (SimulationServiceSlice) getSlice(MAIN_SLICE);
+			sliceName = slice.getNode().getName();
+			if (myLogger.isLoggable(Logger.FINER)) {
+				myLogger.log(Logger.FINER, "Try to get new environment-parts from " + sliceName);
+			}
+			return slice.getEnvironmentInstanceNextParts();
+		}
+		catch(Throwable t) {
+			// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
+			myLogger.log(Logger.WARNING, "Error while trying to get new environment-parts from slice  " + sliceName, t);
+		}
+		return null;
+	}	
+	
+	/**
+	 * This Method resets the hash with the single environment-model-changes
+	 * @throws ServiceException
+	 */
+	private void mainResetEnvironmentInstanceNextParts() throws ServiceException {
+		
+		if (myLogger.isLoggable(Logger.CONFIG)) {
+			myLogger.log(Logger.CONFIG, "Sending reset of environment-change-hash to Main-Container!");
+		}
+		String sliceName = null;
+		try {
+			SimulationServiceSlice slice = (SimulationServiceSlice) getSlice(MAIN_SLICE);
+			sliceName = slice.getNode().getName();
+			if (myLogger.isLoggable(Logger.FINER)) {
+				myLogger.log(Logger.FINER, "Sending reset of environment-change-hash to " + sliceName);
+			}
+			slice.resetEnvironmentInstanceNextParts();
+		}
+		catch(Throwable t) {
+			// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
+			myLogger.log(Logger.WARNING, "Error while sending reset of environment-change-hash to slice  " + sliceName, t);
+		}
+	}	
+	
+	/**
+	 * Broadcasts the current EnvironmentModel to all slices
+	 * @param envModel 
+	 * @param slices
+	 * @throws ServiceException
+	 */
+	private void broadcastSetEnvironmentModel(EnvironmentModel envModel, Service.Slice[] slices) throws ServiceException {
+		
+		if (myLogger.isLoggable(Logger.CONFIG)) {
+			myLogger.log(Logger.CONFIG, "Sending new EnvironmentModel !");
+		}
+		for (int i = 0; i < slices.length; i++) {
+			String sliceName = null;
+			try {
+				SimulationServiceSlice slice = (SimulationServiceSlice) slices[i];
+				sliceName = slice.getNode().getName();
+				if (myLogger.isLoggable(Logger.FINER)) {
+					myLogger.log(Logger.FINER, "Sending new EnvironmentModel to " + sliceName);
+				}
+				slice.setEnvironmentModel(envModel);
+			}
+			catch(Throwable t) {
+				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
+				myLogger.log(Logger.WARNING, "Error while sending the new EnvironmentModel to slice " + sliceName, t);
+			}
+		}
+	}
+
+	/**
+	 * Broadcast that all agents have to informed about changes in the EnvironmentModel through his ServiceSensor
+	 * @param envModel 
+	 * @param aSynchron
+	 * @param slices
+	 * @throws ServiceException
+	 */
+	private void broadcastStepSimulation(EnvironmentModel envModel, boolean aSynchron, Service.Slice[] slices) throws ServiceException {
+		
+		if (myLogger.isLoggable(Logger.CONFIG)) {
+			myLogger.log(Logger.CONFIG, "Sending new EnvironmentModel + step simulation!");
+		}
+		for (int i = 0; i < slices.length; i++) {
+			String sliceName = null;
+			try {
+				SimulationServiceSlice slice = (SimulationServiceSlice) slices[i];
+				sliceName = slice.getNode().getName();
+				if (myLogger.isLoggable(Logger.FINER)) {
+					myLogger.log(Logger.FINER, "Sending new EnvironmentModel + step simulation to " + sliceName);
+				}
+				slice.stepSimulation(envModel, aSynchron);
+			}
+			catch(Throwable t) {
+				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
+				myLogger.log(Logger.WARNING, "Error while sending the new EnvironmentModel + step simulation to slice " + sliceName, t);
+			}
+		}
+	}
+	
+	/**
+	 * Broadcast a single notification object to a specific agent by using its ServiceSensor
+	 * @param agentAID
+	 * @param notification
+	 * @param aSynchron
+	 * @param slices
+	 * @throws ServiceException
+	 */
+	private boolean broadcastNotifyAgent(AID agentAID, Object notification, boolean aSynchron, Service.Slice[] slices) throws ServiceException {
+		
+		if (myLogger.isLoggable(Logger.CONFIG)) {
+			myLogger.log(Logger.CONFIG, "Sending notfication to agent '" + agentAID.getLocalName() + "'!");
+		}
+		for (int i = 0; i < slices.length; i++) {
+			String sliceName = null;
+			try {
+				SimulationServiceSlice slice = (SimulationServiceSlice) slices[i];
+				sliceName = slice.getNode().getName();
+				if (myLogger.isLoggable(Logger.FINER)) {
+					myLogger.log(Logger.FINER, "Try sending notfication to agent '" + agentAID.getLocalName() + "' at " + sliceName + "!");
+				}
+				return slice.notifyAgent(agentAID, notification, aSynchron);
+			}
+			catch(Throwable t) {
+				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
+				myLogger.log(Logger.WARNING, "Error while sending a notification to agent '" + agentAID.getLocalName() + "' at slice " + sliceName, t);
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * This method will broadcast that the current simulation should pause or not
+	 * @param pauseSimulation
+	 * @param slices
+	 * @return
+	 * @throws ServiceException
+	 */
+	private void broadcastPauseSimulation(boolean pauseSimulation, Service.Slice[] slices) throws ServiceException {
+		
+		if (myLogger.isLoggable(Logger.CONFIG)) {
+			myLogger.log(Logger.CONFIG, "Broadcasting 'pause simulation'-message!");
+		}
+		for (int i = 0; i < slices.length; i++) {
+			String sliceName = null;
+			try {
+				SimulationServiceSlice slice = (SimulationServiceSlice) slices[i];
+				sliceName = slice.getNode().getName();
+				if (myLogger.isLoggable(Logger.FINER)) {
+					myLogger.log(Logger.FINER, "Try sending 'pause simulation'-message to " + sliceName + "!");
+				}
+				slice.setPauseSimulation(pauseSimulation);
+			}
+			catch(Throwable t) {
+				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
+				myLogger.log(Logger.WARNING, "Error while sending 'pause simulation'-message to slice " + sliceName, t);
+			}
+		}
+	}
+	
+	/**
+	 * Broadcast the new locations to the agents
+	 * @param transferAgents 
+	 * @param aSynchron
+	 * @param slices
+	 * @throws ServiceException
+	 */
+	private void broadcastAgentMigration(Vector<AID_Container> transferAgents, Service.Slice[] slices) throws ServiceException {
+		
+		if (myLogger.isLoggable(Logger.CONFIG)) {
+			myLogger.log(Logger.CONFIG, "Sending migration notification to agents!");
+		}
+		for (int i = 0; i < slices.length; i++) {
+			String sliceName = null;
+			try {
+				SimulationServiceSlice slice = (SimulationServiceSlice) slices[i];
+				sliceName = slice.getNode().getName();
+				if (myLogger.isLoggable(Logger.FINER)) {
+					myLogger.log(Logger.FINER, "Sending migration notification to agents at " + sliceName);
+				}
+				slice.setAgentMigration(transferAgents);
+			}
+			catch(Throwable t) {
+				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
+				myLogger.log(Logger.WARNING, "Error while sending migration notification to agents at slice " + sliceName, t);
+			}
+		}
+	}
+
+	/**
+	 * Stops the simulation by invoking the doDelete method at all agents which are 
+	 * extending the class 'agentgui.simulationService.agents.SimulationAgent' and 
+	 * which are 'connected to a service actuator  
+	 * @param slices
+	 * @throws ServiceException
+	 */
+	private void broadcastStopSimulationAgents(Service.Slice[] slices) throws ServiceException {
+		
+		if (myLogger.isLoggable(Logger.CONFIG)) {
+			myLogger.log(Logger.CONFIG, "Try to stop simulation-agents!");
+		}
+		for (int i = 0; i < slices.length; i++) {
+			String sliceName = null;
+			try {
+				SimulationServiceSlice slice = (SimulationServiceSlice) slices[i];
+				sliceName = slice.getNode().getName();
+				if (myLogger.isLoggable(Logger.FINER)) {
+					myLogger.log(Logger.FINER, "Try to stop simulation-agents on " + sliceName );
+				}
+				slice.stopSimulationAgents();
+			}
+			catch(Throwable t) {
+				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
+				myLogger.log(Logger.WARNING, "Error while try to get Location-Object from " + sliceName, t);
+			}
+		}	
+	}
 	
 	
 	// --------------------------------------------------------------	
@@ -504,75 +668,12 @@ public class SimulationService extends SimulationServiceBase {
 					resetEnvironmentInstanceNextParts();					
 				}
 				
-				
-				else if (cmdName.equals(SimulationServiceSlice.SERVICE_START_AGENT)) {
-					if (myLogger.isLoggable(Logger.FINE)) {
-						myLogger.log(Logger.FINE, "Starting a new agent on this platform");
-					}
-					String nickName = (String) params[0];
-					String agentClassName = (String) params[1];
-					Object[] args = (Object[]) params[2];
-					cmd.setReturnValue( startAgent(nickName, agentClassName, args) );
-				}
 				else if (cmdName.equals(SimulationServiceSlice.SERVICE_STOP_SIMULATION_AGENTS)) {
 					if (myLogger.isLoggable(Logger.FINE)) {
 						myLogger.log(Logger.FINE, "Stoping simulation agents in this container");
 					}
 					stopSimulationAgents();
 				}
-				else if (cmdName.equals(SimulationServiceSlice.SERVICE_START_NEW_REMOTE_CONTAINER)) {
-					if (myLogger.isLoggable(Logger.FINE)) {
-						myLogger.log(Logger.FINE, "Starting a new remote-container for this platform");
-					}
-					RemoteContainerConfig remoteConfig = (RemoteContainerConfig) params[0];
-					boolean preventUsageOfAlreadyUsedComputers = (Boolean) params[1];
-					cmd.setReturnValue(startRemoteContainer(remoteConfig, preventUsageOfAlreadyUsedComputers));
-				}
-				else if (cmdName.equals(SimulationServiceSlice.SERVICE_GET_DEFAULT_REMOTE_CONTAINER_CONFIG)) {
-					if (myLogger.isLoggable(Logger.FINE)) {
-						myLogger.log(Logger.FINE, "Answering to request for 'get_default_remote_container_config'");
-					}
-					boolean preventUsageOfAlreadyUsedComputers = (Boolean) params[0];
-					cmd.setReturnValue(getDefaultRemoteContainerConfig(preventUsageOfAlreadyUsedComputers));
-				}
-				else if (cmdName.equals(SimulationServiceSlice.SERVICE_GET_NEW_CONTAINER_2_WAIT_4_STATUS)) {
-					String container2Wait4 = (String) params[0];
-					if (myLogger.isLoggable(Logger.FINE)) {
-						myLogger.log(Logger.FINE, "Answering request for new container status of container '" + container2Wait4 + "'");
-					}
-					cmd.setReturnValue(getNewContainer2Wait4Status(container2Wait4));
-				}
-				
-				else if (cmdName.equals(SimulationServiceSlice.SERVICE_GET_LOCATION)) {
-					cmd.setReturnValue(myContainer.here());
-				}
-
-				else if (cmdName.equals(SimulationServiceSlice.SERVICE_SET_THRESHOLD_LEVEL)) {
-					LoadThresholdLevels thresholdLevels = (LoadThresholdLevels) params[0];
-					if (myLogger.isLoggable(Logger.FINE)) {
-						myLogger.log(Logger.FINE, "Getting new threshold levels for load");
-					}
-					setThresholdLevels(thresholdLevels);
-				}
-				else if (cmdName.equals(SimulationServiceSlice.SERVICE_MEASURE_LOAD)) {
-					if (myLogger.isLoggable(Logger.FINE)) {
-						myLogger.log(Logger.FINE, "Answering request for Container-Load");
-					}
-					cmd.setReturnValue(measureLoad());
-				}
-				else if (cmdName.equals(SimulationServiceSlice.SERVICE_GET_AID_LIST)) {
-					if (myLogger.isLoggable(Logger.FINE)) {
-						myLogger.log(Logger.FINE, "Answering request for the Agents in this container");
-					}
-					cmd.setReturnValue(getListOfAgents());
-				}
-				else if (cmdName.equals(SimulationServiceSlice.SERVICE_GET_AID_LIST_SENSOR)) {
-					if (myLogger.isLoggable(Logger.FINE)) {
-						myLogger.log(Logger.FINE, "Answering request for the Agents with sensors in this container");
-					}
-					cmd.setReturnValue(getListOfAgentsWithSensors());
-				}
-
 				else if (cmdName.equals(SimulationServiceSlice.SERVICE_SET_AGENT_MIGRATION)) {
 					@SuppressWarnings("unchecked")
 					Vector<AID_Container> transferAgents = (Vector<AID_Container>) params[0];
@@ -581,19 +682,19 @@ public class SimulationService extends SimulationServiceBase {
 					}
 					setAgentMigration(transferAgents);
 				}
-				
-				else if (cmdName.equals(SimulationServiceSlice.SERVICE_PUT_CONTAINER_DESCRIPTION)) {
+				else if (cmdName.equals(LoadServiceSlice.SERVICE_GET_AID_LIST)) {
 					if (myLogger.isLoggable(Logger.FINE)) {
-						myLogger.log(Logger.FINE, "Putting in container description");
+						myLogger.log(Logger.FINE, "Answering request for the Agents in this container");
 					}
-					putContainerDescription((ClientRemoteContainerReply) params[0]);
+					cmd.setReturnValue(getListOfAgents());
 				}
-				else if (cmdName.equals(SimulationServiceSlice.SERVICE_GET_CONTAINER_DESCRIPTION)) {
+				else if (cmdName.equals(LoadServiceSlice.SERVICE_GET_AID_LIST_SENSOR)) {
 					if (myLogger.isLoggable(Logger.FINE)) {
-						myLogger.log(Logger.FINE, "Answering request for container description");
+						myLogger.log(Logger.FINE, "Answering request for the Agents with sensors in this container");
 					}
-					cmd.setReturnValue(getContainerDescription());
+					cmd.setReturnValue(getListOfAgentsWithSensors());
 				}
+
 			}
 			catch (Throwable t) {
 				cmd.setReturnValue(t);
@@ -620,9 +721,9 @@ public class SimulationService extends SimulationServiceBase {
 		
 		private void setEnvironmentModel(EnvironmentModel newEnvironmentModel) {
 			environmentModel = newEnvironmentModel;
+			localServiceActuator.notifySensors(newEnvironmentModel, stepSimulationAsynchronous );
 		}
 		private void stepSimulation(EnvironmentModel newEnvironmentModel, boolean aSynchron) {
-			loadInfo.setCycleStartTimeStamp();
 			environmentModel = newEnvironmentModel;
 			localServiceActuator.notifySensors(newEnvironmentModel, aSynchron);
 		}
@@ -644,61 +745,11 @@ public class SimulationService extends SimulationServiceBase {
 			environmentInstanceNextPartsLocal = new Hashtable<AID, Object>();
 		}
 		
-		private boolean startAgent(String nickName, String agentClassName, Object[] args) {
-			
-			AID agentID = new AID();
-			agentID.setLocalName(nickName);
-			
-			try {
-				Agent agent = (Agent) ObjectManager.load(agentClassName, ObjectManager.AGENT_TYPE);
-				if (agent == null) {
-					agent = (Agent)Class.forName(agentClassName).newInstance();
-				}
-				agent.setArguments(args);
-				myContainer.initAgent(agentID, agent, null, null);
-				myContainer.powerUpLocalAgent(agentID);
-				
-			} catch (IMTPException e) {
-				e.printStackTrace();
-			} catch (NameClashException e) {
-				e.printStackTrace();
-			} catch (NotFoundException e) {
-				e.printStackTrace();
-			} catch (JADESecurityException e) {
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			} catch (InstantiationException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			}
-			return true;
-		}
 		private void stopSimulationAgents() {
 			localServiceActuator.notifySensorAgentsDoDelete();
 		}
-		private String startRemoteContainer(RemoteContainerConfig remoteConfig, boolean preventUsageOfAlreadyUsedComputers) {
-			return sendMsgRemoteContainerRequest(remoteConfig, preventUsageOfAlreadyUsedComputers);
-		}
-		private RemoteContainerConfig getDefaultRemoteContainerConfig(boolean preventUsageOfAlreadyUsedComputers) {
-			return getRemoteContainerConfigDefault(preventUsageOfAlreadyUsedComputers);
-		}
-		private Container2Wait4 getNewContainer2Wait4Status(String container2Wait4) {
-			return loadInfo.getNewContainer2Wait4Status(container2Wait4);
-		}
-		
-		private void setThresholdLevels(LoadThresholdLevels thresholdLevels) {
-			LoadMeasureThread.setThresholdLevels(thresholdLevels);
-		}
-		private PlatformLoad measureLoad() {
-			PlatformLoad pl = new PlatformLoad();
-			pl.setLoadCPU(LoadMeasureThread.getLoadCPU());
-			pl.setLoadMemorySystem(LoadMeasureThread.getLoadMemorySystem());
-			pl.setLoadMemoryJVM(LoadMeasureThread.getLoadMemoryJVM());
-			pl.setLoadNoThreads(LoadMeasureThread.getLoadNoThreads());
-			pl.setLoadExceeded(LoadMeasureThread.getThresholdLevelesExceeded());
-			return pl;
+		private void setAgentMigration(Vector<AID_Container> transferAgents) {
+			localServiceActuator.setMigration(transferAgents);
 		}
 		private AID[] getListOfAgents() {
 			return myContainer.agentNames();
@@ -706,16 +757,7 @@ public class SimulationService extends SimulationServiceBase {
 		private AID[] getListOfAgentsWithSensors() {
 			return localServiceActuator.getSensorAgents();
 		}
-		private void setAgentMigration(Vector<AID_Container> transferAgents) {
-			localServiceActuator.setMigration(transferAgents);
-		}
 		
-		private void putContainerDescription(ClientRemoteContainerReply crcReply) {
-			loadInfo.putContainerDescription(crcReply);
-		}
-		private ClientRemoteContainerReply getContainerDescription() {
-			return myCRCReply;
-		}
 		// -----------------------------------------------------------------
 		// --- The real functions for the Service Component --- Stop ------- 
 		// -----------------------------------------------------------------
@@ -744,25 +786,8 @@ public class SimulationService extends SimulationServiceBase {
 
 			String cmdName = cmd.getName();
 			//System.out.println( "=> out " + cmdName + " - " + cmd.getService() + " - " + cmd.getService().getClass() );	
-			
-			if (cmdName.equals(MessagingSlice.SET_PLATFORM_ADDRESSES) && myContainerMTPurl==null ) {
-				// --- Handle that the MTP-Address was created ------
-				Object[] params = cmd.getParams();
-				AID aid = (AID)params[0];
-				String[] aidArr = aid.getAddressesArray();
-				if (aidArr.length!=0) {
-					myContainerMTPurl = aidArr[0];
-					setLocalCRCReply(false);
-				}
-				// Veto the original SEND_MESSAGE command, if needed
-				// return false;
-			} else if (cmdName.equals(AgentManagementSlice.KILL_CONTAINER)) {
-				Object[] params = cmd.getParams();
-				ContainerID id = (ContainerID) params[0];
-				String containerName = id.getName();
-				loadInfo.containerLoads.remove(containerName);
-				loadInfo.containerLocations.remove(containerName);
-			} else if (cmdName.equals(AgentMobilityHelper.INFORM_MOVED)) {
+
+			if (cmdName.equals(AgentMobilityHelper.INFORM_MOVED)) {
 				Object[] params = cmd.getParams();
 				@SuppressWarnings("unused")
 				AID aid = (AID) params[0];
@@ -822,12 +847,9 @@ public class SimulationService extends SimulationServiceBase {
 			Object[] params = cmd.getParams();
 			String newSliceName = (String) params[0];
 			try {
-				// --- Is this the slice, we have waited for? ------------------------------
-				loadInfo.setNewContainerStarted(newSliceName);
 				// --- Be sure to get the new (fresh) slice --> Bypass the service cache ---
 				SimulationServiceSlice newSlice = (SimulationServiceSlice) getFreshSlice(newSliceName);
 				// --- Set remote ManagerAgent, TimeModel,EnvironmentInstance --------------
-				newSlice.setThresholdLevels(LoadMeasureThread.getThresholdLevels());
 				newSlice.setManagerAgent(managerAgent);
 				newSlice.setEnvironmentModel(environmentModel);	
 				// --- Synchronise the time ------------------------------------------------
@@ -936,309 +958,5 @@ public class SimulationService extends SimulationServiceBase {
 		} 		
 	}
 	
-	/**
-	 * This method returns a default configuration for a new remote container
-	 * @return
-	 */
-	private RemoteContainerConfig getRemoteContainerConfigDefault(boolean preventUsageOfAlreadyUsedComputers) {
 		
-		// --- Variable for the new container name ------------------
-		String newContainerPrefix = "remote";
-		Integer newContainerNo = 0;
-		String newContainerName = null;
-		
-		// --- Get the local IP-Address -----------------------------
-		String myIP = myContainer.getNodeDescriptor().getContainer().getAddress();
-		// --- Get the local port of JADE ---------------------------
-		String myPort = myContainer.getNodeDescriptor().getContainer().getPort();
-	
-		// --- Get the List of services started here ----------------
-		String myServices = "";
-		List<?> services = myContainer.getServiceManager().getLocalServices();
-		Iterator<?> it = services.iterator();
-		while (it.hasNext()) {
-			ServiceDescriptor serviceDesc = (ServiceDescriptor) it.next();
-			String service = serviceDesc.getService().getClass().getName() + ";";
-			myServices += service;				
-		}			
-		
-		// --- Define the new container name ------------------------
-		try {
-			Service.Slice[] slices = getAllSlices();
-			for (int i = 0; i < slices.length; i++) {
-				SimulationServiceSlice slice = (SimulationServiceSlice) slices[i];
-				String sliceName = slice.getNode().getName();
-				if (sliceName.startsWith(newContainerPrefix)) {
-					String endString = sliceName.replace(newContainerPrefix, "");
-					Integer endNumber = Integer.parseInt(endString);
-					if (endNumber>newContainerNo) {
-						newContainerNo = endNumber;
-					}
-				}
-			}	
-		} catch (ServiceException errSlices) {
-			errSlices.printStackTrace();
-		}
-		newContainerNo++;
-		newContainerName = newContainerPrefix + newContainerNo;
-		
-		// --- If defined, find external jar-Files for ClassPath ----
-		jade.util.leap.List extJars = null;
-		if (Application.ProjectCurr!=null) {
-			for (String link : Application.ProjectCurr.downloadResources) {
-				if (extJars == null) {
-					extJars = new ArrayList();
-				}
-				extJars.add(link);
-			}
-		}
-		
-		// --- Find machines, which should be excluded for a remote start -----
-		jade.util.leap.List hostExcludeIP = null;
-		for (String containerName : loadInfo.containerDescription.keySet()) {
-			
-			NodeDescription nodeDesc = loadInfo.containerDescription.get(containerName);
-			String ip = nodeDesc.getPlAddress().getIp();
-			if (hostExcludeIP == null) {
-				hostExcludeIP = new ArrayList();
-			}
-			hostExcludeIP.add(ip);
-		}
-		
-		// --- For the Jade-Logger with love ;-) --------------------
-		if (myLogger.isLoggable(Logger.FINE)) {
-			myLogger.log(Logger.FINE, "-- Infos to start the remote container ------------");
-			myLogger.log(Logger.FINE, "=> Services2Start:   " + myServices);
-			myLogger.log(Logger.FINE, "=> NewContainerName: " + newContainerName);
-			myLogger.log(Logger.FINE, "=> ThisAddresses:    " + myIP +  " - Port: " + myPort);
-		}
-		
-		// --- Define the 'RemoteContainerConfig' - Object ----------
-		RemoteContainerConfig remConf = new RemoteContainerConfig();
-		remConf.setJadeServices(myServices);
-		remConf.setJadeIsRemoteContainer(true);
-		remConf.setJadeHost(myIP);
-		remConf.setJadePort(myPort);
-		remConf.setJadeContainerName(newContainerName);
-		remConf.setJadeShowGUI(true);
-		remConf.setJadeJarIncludeList(extJars);
-		if (preventUsageOfAlreadyUsedComputers) {
-			remConf.setHostExcludeIP(hostExcludeIP);	
-		}			
-		return remConf;
-	}
-	
-	/**
-	 * This method configures and send a ACLMessage to start a new remote-Container
-	 * @param remConf, a RemoteContainerConfig-Object
-	 */
-	private String sendMsgRemoteContainerRequest(RemoteContainerConfig remConf, boolean preventUsageOfAlreadyUsedComputers) {
-		
-		// --- Get the local Address of JADE ------------------------
-		String myPlatformAddress = myContainer.getPlatformID();
-		
-		// --- If the remote-configuration is null configure it now -
-		if (remConf==null) {
-			remConf = this.getRemoteContainerConfigDefault(preventUsageOfAlreadyUsedComputers);
-		}
-		
-		// --- Define the AgentAction -------------------------------
-		ClientRemoteContainerRequest req = new ClientRemoteContainerRequest();
-		req.setRemoteConfig(remConf);
-		
-		Action act = new Action();
-		act.setActor(myContainer.getAMS());
-		act.setAction(req);
-
-		// --- Define receiver of the Message ----------------------- 
-		AID agentGUIAgent = new AID("server.client" + "@" + myPlatformAddress, AID.ISGUID );
-		//mainPlatformAgent.addAddresses(mainPlatform.getHttp4mtp());
-		
-		// --- Build Message ----------------------------------------
-		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-		msg.setSender(myContainer.getAMS());
-		msg.addReceiver(agentGUIAgent);		
-		msg.setLanguage(new SLCodec().getName());
-		msg.setOntology(AgentGUI_DistributionOntology.getInstance().getName());
-		try {
-			msg.setContentObject(act);
-		} catch (IOException errCont) {
-			errCont.printStackTrace();
-		}
-
-		// --- Send message -----------------------------------------
-		myContainer.postMessageToLocalAgent(msg, agentGUIAgent);
-		
-		// --- Remind, that we're waiting for this container --------
-		loadInfo.setNewContainer2Wait4(remConf.getJadeContainerName());
-		
-		// --- Return -----------------------------------------------
-		return remConf.getJadeContainerName();
-	}
-	
-	/**
-	 * Here the local ContainerDescription will be stored on disk
-	 * @param crcReply
-	 */
-	private void saveCRCReply(ClientRemoteContainerReply crcReply) {
-		
-		SimulationService.currentlyWritingFile = true;
-		String mySavingPath = SimulationService.SERVICE_NODE_DESCRIPTION_FILE;
-		try {
-			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(mySavingPath));
-			out.writeObject(crcReply);
-			out.flush();
-			out.close();
-			
-		} catch (FileNotFoundException e1) {
-			e1.printStackTrace();
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-		SimulationService.currentlyWritingFile = false;
-	}
-	/**
-	 * This method reads the ContainerDescription from the file to
-	 * the local object 'myCRCReply'
-	 */
-	private ClientRemoteContainerReply loadCRCReply() {
-		
-		ClientRemoteContainerReply crcReply = null;
-		String mySavingPath = SimulationService.SERVICE_NODE_DESCRIPTION_FILE;
-
-		// --- Wait until the file-writing process is finished ------ 
-		while (SimulationService.currentlyWritingFile==true) {
-			try {
-				Thread.sleep(50);				
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		// --- If the file exists, parse it now ---------------------
-		if (new File(mySavingPath).exists()) {
-			
-			try {
-				ObjectInputStream in = new ObjectInputStream(new FileInputStream(mySavingPath));
-				crcReply = (ClientRemoteContainerReply) in.readObject();
-				in.close();
-				
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			}
-			
-			// --- Set informations, which have to be local one -----
-			crcReply.setRemoteContainerName(myContainer.getID().getName());
-			crcReply.setRemotePID(LoadMeasureThread.getLoadCurrentJVM().getJvmPID());
-		}
-		return crcReply;
-	}
-
-	/**
-	 * This method defines the local field 'myCRCReply' which is an instance
-	 * of 'ClientRemoteContainerReply' and holds the information about
-	 * Performance, BenchmarkResult, Network-Addresses of this container-node
-	 * @param loadFile
-	 */
-	private void setLocalCRCReply(boolean loadFile) {
-		
-		ClientRemoteContainerReply crcReply = null;
-		if (loadFile==true) {
-			// --- Load the Descriptions from the local file ----------------------------
-			crcReply = loadCRCReply();
-		}
-		
-		if (crcReply==null){
-			// --- Build the Descriptions from the running system -----------------------
-			
-			// --- Get infos about the network connection -----
-			InetAddress currAddress = null;
-			InetAddress addressLocal = null;
-			InetAddress addressLocalAlt = null;
-			String hostIP, hostName, port;
-			
-			try {
-				currAddress = InetAddress.getByName(myContainer.getID().getAddress());
-				addressLocal = InetAddress.getLocalHost();
-				addressLocalAlt = InetAddress.getByName("127.0.0.1");
-				if (currAddress.equals(addressLocalAlt)) {
-					currAddress = addressLocal;
-				}
-			} catch (UnknownHostException e) {
-				e.printStackTrace();
-			}
-			hostIP = currAddress.getHostAddress();
-			hostName = currAddress.getHostName();
-			port = myContainer.getID().getPort();
-			
-			// --- Define Platform-Info -----------------------
-			PlatformAddress myPlatform = new PlatformAddress();
-			myPlatform.setIp(hostIP);
-			myPlatform.setUrl(hostName);
-			myPlatform.setPort(Integer.parseInt(port));
-			myPlatform.setHttp4mtp(myContainerMTPurl);	
-					
-			// --- Set OS-Informations ------------------------
-			OSInfo myOS = new OSInfo();
-			myOS.setOs_name(System.getProperty("os.name"));
-			myOS.setOs_version(System.getProperty("os.version"));
-			myOS.setOs_arch(System.getProperty("os.arch"));
-			
-			// --- Set the Performance of machine -------------
-			LoadMeasureSigar sys = LoadMeasureThread.getLoadCurrent();
-			PlatformPerformance myPerformance = new PlatformPerformance();
-			myPerformance.setCpu_vendor(sys.getVendor());
-			myPerformance.setCpu_model(sys.getModel());
-			myPerformance.setCpu_numberOf(sys.getTotalCpu());
-			myPerformance.setCpu_speedMhz((int) sys.getMhz());
-			myPerformance.setMemory_totalMB((int) LoadUnits.bytes2(sys.getTotalMemory(), LoadUnits.CONVERT2_MEGA_BYTE));
-			
-			// --- Set the performance (Mflops) of the system -
-			float benchValue = 0;
-			BenchmarkResult bench = null;
-			if (LoadMeasureThread.getCompositeBenchmarkValue()==0) {
-				ClientRemoteContainerReply storedCRCreply = loadCRCReply();
-				if (storedCRCreply==null) {
-					benchValue = 0;
-				} else {
-					bench = storedCRCreply.getRemoteBenchmarkResult();
-					benchValue = bench.getBenchmarkValue();	
-				}				
-			} else {
-				benchValue = LoadMeasureThread.getCompositeBenchmarkValue();
-			}
-			bench = new BenchmarkResult();
-			bench.setBenchmarkValue(benchValue);
-			
-			// --- Get the PID of this JVM --------------------
-			String jvmPID = LoadMeasureThread.getLoadCurrentJVM().getJvmPID();
-			
-			// --- Finally define this local description ------
-			crcReply = new ClientRemoteContainerReply();
-			crcReply.setRemoteContainerName(myContainer.getID().getName());
-			crcReply.setRemotePID(jvmPID);
-			crcReply.setRemoteAddress(myPlatform);
-			crcReply.setRemoteOS(myOS);
-			crcReply.setRemotePerformance(myPerformance);
-			crcReply.setRemoteBenchmarkResult(bench);
-			
-		}
-
-		// --- Set the local value of the ClientRemoteContainerReply --------------------
-		myCRCReply = crcReply;
-		
-		// --- Broadcast the ClientRemoteContainerReply-Object to all other container ---
-		Service.Slice[] slices;
-		try {
-			slices = getAllSlices();
-			broadcastPutContainerDescription(slices, myCRCReply);
-		} catch (ServiceException e) {
-			e.printStackTrace();
-		}
-
-	}
-	
 }

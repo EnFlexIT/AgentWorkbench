@@ -36,8 +36,8 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Project;
 import agentgui.core.sim.setup.DistributionSetup;
 import agentgui.core.sim.setup.SimulationSetup;
-import agentgui.simulationService.SimulationService;
-import agentgui.simulationService.SimulationServiceHelper;
+import agentgui.simulationService.LoadService;
+import agentgui.simulationService.LoadServiceHelper;
 import agentgui.simulationService.balancing.DynamicLoadBalancing;
 import agentgui.simulationService.balancing.DynamicLoadBalancingBase;
 import agentgui.simulationService.load.LoadAgentMap;
@@ -213,14 +213,14 @@ public class LoadAgent extends Agent {
 			
 			int layoutNodesVisible = 0;
 			try {
-				SimulationServiceHelper simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
+				LoadServiceHelper loadHelper = (LoadServiceHelper) getHelper(LoadService.NAME);
 				
 				// --- Get the PlatformLoad and the Agents at their locations -----------
 				monitorTimeStamp = System.currentTimeMillis();
-				loadCycleTime = simHelper.getAvgCycleTime();
-				loadContainer = simHelper.getContainerLoads();
-				loadContainerAgentMap = simHelper.getAgentMap();
-				loadContainerLoactions = simHelper.getContainerLocations();
+				loadCycleTime = loadHelper.getAvgCycleTime();
+				loadContainer = loadHelper.getContainerLoads();
+				loadContainerAgentMap = loadHelper.getAgentMap();
+				loadContainerLoactions = loadHelper.getContainerLocations();
 				
 				// --- Display number of agents -----------------------------------------
 				loadPanel.setNumberOfAgents(loadContainerAgentMap.noAgentsAtPlatform);
@@ -234,14 +234,14 @@ public class LoadAgent extends Agent {
 				loadJVM4Balancing = new Hashtable<String, LoadMerger>();
 				
 				// --- Walk through the list of all containers --------------------------
-				loadContainer2Display = new Vector<String>(simHelper.getContainerQueue());
+				loadContainer2Display = new Vector<String>(loadHelper.getContainerQueue());
 				Iterator<String> it = loadContainer2Display.iterator();
 				while (it.hasNext()) {
 					
 					String containerName = it.next();
 					
 					// --- Get the benchmark-result for this node/container -------------
-					NodeDescription containerDesc = simHelper.getContainerDescription(containerName);
+					NodeDescription containerDesc = loadHelper.getContainerDescription(containerName);
 					Float benchmarkValue = containerDesc.getBenchmarkValue().getBenchmarkValue();
 					String jvmPID = containerDesc.getJvmPID(); 
 					String machineURL = containerDesc.getPlAddress().getUrl();

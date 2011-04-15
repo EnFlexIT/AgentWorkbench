@@ -56,6 +56,7 @@ public class PlatformJadeConfig implements Serializable {
 	public static final String SERVICE_BEManagementService = "jade.imtp.leap.nio.BEManagementService;";
 	
 	// --- Agent.GUI-Services -------------------------------------------------
+	public static final String SERVICE_LoadService = "agentgui.simulationService.LoadService;";
 	public static final String SERVICE_SimulationService = "agentgui.simulationService.SimulationService;";
 	public static final String SERVICE_EnvironmentProviderService = "agentgui.physical2Denvironment.provider.EnvironmentProviderService;";
 	
@@ -63,8 +64,6 @@ public class PlatformJadeConfig implements Serializable {
 	public static final String SERVICE_InterPlatformMobilityService = "jade.core.migration.InterPlatformMobilityService;";
 	
 	// --- Weitere Vars. ------------------------------------------------------ 
-	@XmlElement(name="start4Sim")		
-	private boolean start4Simulation = true;
 	@XmlElement(name="useAppDefaults")		
 	private boolean useDefaults = true;
 	@XmlElement(name="useLocalPort")	
@@ -174,19 +173,6 @@ public class PlatformJadeConfig implements Serializable {
 		return useLocalPort;
 	}
 	/**
-	 * @param start4Simulation the start4Simulation to set
-	 */
-	public void setStart4Simulation(boolean start4Simulation) {
-		this.start4Simulation = start4Simulation;
-	}
-	/**
-	 * @return the start4Simulation
-	 */
-	@XmlTransient
-	public boolean isStart4Simulation() {
-		return start4Simulation;
-	}
-	/**
 	 * @param useDefaults the useDefaults to set
 	 */
 	public void setUseDefaults(boolean useDefaults) {
@@ -268,6 +254,13 @@ public class PlatformJadeConfig implements Serializable {
 	}
 
 	// --- Agent.GUI-Services --------------------------------------------------
+	public void runLoadService(boolean runService) {
+		if (runService==true) {
+			this.useServiceList.add(SERVICE_LoadService);	
+		}else {
+			this.useServiceList.remove(SERVICE_LoadService);
+		}
+	}
 	public void runSimulationService(boolean runService) {
 		if (runService==true) {
 			this.useServiceList.add(SERVICE_SimulationService);	
@@ -323,6 +316,9 @@ public class PlatformJadeConfig implements Serializable {
 		return this.useServiceList.contains(SERVICE_BEManagementService);	
 	}
 	// --- Agent.GUI-Services -------------------------------------------------
+	public boolean isLoadService() {
+		return this.useServiceList.contains(SERVICE_LoadService);	
+	}
 	public boolean isSimulationService() {
 		return this.useServiceList.contains(SERVICE_SimulationService);	
 	}
@@ -370,7 +366,6 @@ public class PlatformJadeConfig implements Serializable {
 	public String toString() {
 		
 		String bugOut = ""; 
-		bugOut += "Start4Sim:" + start4Simulation + ";";
 		bugOut += "UseDefaults:" + useDefaults + ";";
 		bugOut += "LocalPort:" + useLocalPort + ";";
 		
