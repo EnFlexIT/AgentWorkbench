@@ -1,4 +1,5 @@
-package agentgui.graphEnvironment.controller;
+package agentgui.graphEnvironment.environmentModel;
+
 
 public class GraphNode extends GraphElement{
 	

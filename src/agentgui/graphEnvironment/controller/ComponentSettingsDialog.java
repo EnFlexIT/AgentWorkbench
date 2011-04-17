@@ -8,6 +8,9 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
 import agentgui.core.ontologies.gui.OntologyInstanceViewer;
+import agentgui.graphEnvironment.environmentModel.GraphEdge;
+import agentgui.graphEnvironment.environmentModel.GraphElement;
+import agentgui.graphEnvironment.environmentModel.GraphNode;
 
 import java.awt.Dialog;
 import java.awt.event.ActionEvent;

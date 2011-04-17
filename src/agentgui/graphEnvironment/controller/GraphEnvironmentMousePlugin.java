@@ -3,6 +3,9 @@ package agentgui.graphEnvironment.controller;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 
+import agentgui.graphEnvironment.environmentModel.GraphEdge;
+import agentgui.graphEnvironment.environmentModel.GraphNode;
+
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
 import edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin;
 

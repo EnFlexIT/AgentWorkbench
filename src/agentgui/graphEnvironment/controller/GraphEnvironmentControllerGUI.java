@@ -27,6 +27,9 @@ import javax.swing.table.DefaultTableModel;
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
 import agentgui.core.environment.EnvironmentPanel;
+import agentgui.graphEnvironment.environmentModel.GraphEdge;
+import agentgui.graphEnvironment.environmentModel.GraphNode;
+
 import javax.swing.JLabel;
 
 public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements Observer, ActionListener, ListSelectionListener{

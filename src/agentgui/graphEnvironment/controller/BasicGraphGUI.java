@@ -22,6 +22,8 @@ import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.graphEnvironment.environmentModel.GraphEdge;
+import agentgui.graphEnvironment.environmentModel.GraphNode;
 
 import java.awt.Color;
 import java.awt.Component;

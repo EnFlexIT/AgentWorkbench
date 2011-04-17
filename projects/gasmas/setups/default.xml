@@ -75,16 +75,16 @@
             </value>
         </entry>
         <entry>
-            <key>pipe</key>
+            <key>exit</key>
             <value>
-                <agentClass>gasmas.agents.PipeAgent</agentClass>
+                <agentClass>gasmas.agents.ExitAgent</agentClass>
                 <graphPrototype>agentgui.graphEnvironment.prototypes.SimpleGraphElement</graphPrototype>
             </value>
         </entry>
         <entry>
-            <key>exit</key>
+            <key>pipe</key>
             <value>
-                <agentClass>gasmas.agents.ExitAgent</agentClass>
+                <agentClass>gasmas.agents.PipeAgent</agentClass>
                 <graphPrototype>agentgui.graphEnvironment.prototypes.SimpleGraphElement</graphPrototype>
             </value>
         </entry>

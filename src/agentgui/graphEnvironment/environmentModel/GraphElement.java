@@ -1,4 +1,4 @@
-package agentgui.graphEnvironment.controller;
+package agentgui.graphEnvironment.environmentModel;
 
 import jade.content.Concept;
 
@@ -8,19 +8,19 @@ public abstract class GraphElement {
 	
 	private Concept ontologyRepresentation = null;
 
-	String getId() {
+	public String getId() {
 		return id;
 	}
 
-	void setId(String id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
-	Concept getOntologyRepresentation() {
+	public Concept getOntologyRepresentation() {
 		return ontologyRepresentation;
 	}
 
-	void setOntologyRepresentation(Concept ontologyRepresentation) {
+	public void setOntologyRepresentation(Concept ontologyRepresentation) {
 		this.ontologyRepresentation = ontologyRepresentation;
 	}
 

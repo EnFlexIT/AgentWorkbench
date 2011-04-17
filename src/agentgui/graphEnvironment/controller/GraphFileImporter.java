@@ -1,27 +1,38 @@
 package agentgui.graphEnvironment.controller;
 
 import java.io.File;
+import java.util.HashMap;
+
+import agentgui.graphEnvironment.environmentModel.GraphElementSettings;
+import agentgui.graphEnvironment.environmentModel.GridModel;
 
 /**
  * Classes that should work as import components for the GraphEnvironmentController must implement this interface. 
  * @author Nils
  *
  */
-public interface GraphFileImporter {
+public abstract class GraphFileImporter {
+	
+	protected HashMap<String, GraphElementSettings> elementSettings = null;
+	
+	public GraphFileImporter(HashMap<String, GraphElementSettings> elementSettings){
+		this.elementSettings = elementSettings;
+	}
+	
 	/**
 	 * This method loads the graph graph from the file and translates it into a JUNG graph. 
 	 * @param graphFile The file containing the graph definition.
 	 * @return The JUNG graph.
 	 */
-	public GridModel loadGraphFromFile(File graphFile);
+	public abstract GridModel loadGraphFromFile(File graphFile);
 	/**
 	 * Returns the extension of the file type the GraphFileLoader can handle
 	 * @return The file extension
 	 */
-	public String getGraphFileExtension();
+	public abstract String getGraphFileExtension();
 	/**
 	 * Returns a type string used for GraphFileLoader selection
 	 * @return The type String
 	 */
-	public String getTypeString();
+	public abstract String getTypeString();
 }

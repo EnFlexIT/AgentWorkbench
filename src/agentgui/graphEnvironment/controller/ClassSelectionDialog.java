@@ -24,6 +24,7 @@ import agentgui.core.gui.ClassSelectorTableCellEditor;
 import agentgui.core.gui.components.ClassNameListCellRenderer;
 import agentgui.core.gui.components.ClassNameTableCellRenderer;
 import agentgui.core.jade.ClassSearcherSingle;
+import agentgui.graphEnvironment.environmentModel.GraphElementSettings;
 import agentgui.graphEnvironment.prototypes.GraphElementPrototype;
 
 import java.awt.Insets;

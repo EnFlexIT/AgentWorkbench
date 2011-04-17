@@ -26,6 +26,10 @@ import agentgui.core.application.Project;
 import agentgui.core.sim.setup.SimulationSetups;
 import agentgui.core.sim.setup.SimulationSetupsChangeNotification;
 import agentgui.graphEnvironment.controller.yedGraphml.YedGraphMLFileImporter;
+import agentgui.graphEnvironment.environmentModel.GraphEdge;
+import agentgui.graphEnvironment.environmentModel.GraphElementSettings;
+import agentgui.graphEnvironment.environmentModel.GraphNode;
+import agentgui.graphEnvironment.environmentModel.GridModel;
 
 public class GraphEnvironmentController extends Observable implements Observer {
 	
@@ -110,7 +114,7 @@ public class GraphEnvironmentController extends Observable implements Observer {
 	
 	GraphFileImporter getGraphFileImporter(){
 		if(graphFileImporter == null){
-			graphFileImporter = new YedGraphMLFileImporter();
+			graphFileImporter = new YedGraphMLFileImporter(currentGts);
 		}
 		return graphFileImporter;
 	}
