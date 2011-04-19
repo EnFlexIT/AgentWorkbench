@@ -334,6 +334,7 @@ public class Physical2DEnvironmentControllerGUI extends EnvironmentPanel impleme
 		if(loadSVGDialog == null){
 			loadSVGDialog = new JFileChooser();
 			loadSVGDialog.setFileFilter(new FileNameExtensionFilter(Language.translate("SVG-Dateien"), "svg"));
+			loadSVGDialog.setCurrentDirectory(Application.RunInfo.getLastSelectedFolder());
 		}
 		return loadSVGDialog;
 	}
@@ -376,6 +377,7 @@ public class Physical2DEnvironmentControllerGUI extends EnvironmentPanel impleme
 	public void actionPerformed(ActionEvent arg0) {
 		if(arg0.getSource() == this.environmentSettings.getBtnLoadSVG()){
 			if(getLoadSVGDialog().showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
+				Application.RunInfo.setLastSelectedFolder(loadSVGDialog.getCurrentDirectory());
 				controller.setSVGFile(loadSVGDialog.getSelectedFile());
 			}
 		}else if(arg0.getSource() == environmentSettings.getBtnSetScale()){

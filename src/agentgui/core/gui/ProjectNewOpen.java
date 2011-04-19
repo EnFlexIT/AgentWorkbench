@@ -377,7 +377,11 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 	public String getVarProjectFolderFullPath() {
 		return ProjectFolder.getText();
 	}
-
+	public void setOkButtonText(String newText) {
+		jButtonOK.setText(newText);
+	}
+	
+	
 	@Override
 	public void actionPerformed(ActionEvent AC) {
 

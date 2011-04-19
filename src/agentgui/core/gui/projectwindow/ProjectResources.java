@@ -249,14 +249,19 @@ public class ProjectResources extends JPanel implements Observer {
 
 					if (Application.JadePlatform.jadeStopAskUserBefore()) {
 						
-						JFileChooser chooser = new JFileChooser();
-						chooser.setCurrentDirectory(new File(currProject.getProjectFolderFullPath()));
 						FileNameExtensionFilter filter = new FileNameExtensionFilter("jar", "JAR");
+						
+						JFileChooser chooser = new JFileChooser();
 						chooser.setFileFilter(filter);
+						chooser.setCurrentDirectory(Application.RunInfo.getLastSelectedFolder());
 						chooser.setMultiSelectionEnabled(true);
 						chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 						chooser.setAcceptAllFileFilterUsed(false);
-						chooser.showDialog(jButtonAdd, "Load Files");
+						
+						int answerChooser = chooser.showDialog(jButtonAdd, Language.translate("Dateien einbinden"));
+						if (answerChooser==JFileChooser.CANCEL_OPTION) return;
+						Application.RunInfo.setLastSelectedFolder(chooser.getCurrentDirectory());
+						
 						Vector<String> names = adjustPaths(chooser.getSelectedFiles());
 						currProject.projectResources.addAll(names);
 

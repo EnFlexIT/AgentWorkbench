@@ -24,6 +24,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 
+import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
 import agentgui.core.environment.EnvironmentPanel;
@@ -236,7 +237,9 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		if(event.getSource().equals(getBtnImportGraph())){
 			JFileChooser graphFC = new JFileChooser();
 			graphFC.setFileFilter(new FileNameExtensionFilter(Language.translate(controller.getGraphFileImporter().getTypeString()), controller.getGraphFileImporter().getGraphFileExtension()));
+			graphFC.setCurrentDirectory(Application.RunInfo.getLastSelectedFolder());
 			if(graphFC.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
+				Application.RunInfo.setLastSelectedFolder(graphFC.getCurrentDirectory());
 				File graphMLFile = graphFC.getSelectedFile();
 				this.controller.importGridModel(graphMLFile);
 			}

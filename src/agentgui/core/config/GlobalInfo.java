@@ -21,7 +21,7 @@ public class GlobalInfo {
 
 	// --- Konstanten ------------------------------------------------------- 
 	private static String localAppTitle = "Agent.GUI";
-	final private static String localAppVersion = "0.95";
+	final private static String localAppVersion = "0.96";
 	
 	final private static String localAppPathSeparatorString = File.separator;
 	final private static String localAppNewLineString = System.getProperty("line.separator");
@@ -56,6 +56,7 @@ public class GlobalInfo {
 	private static String localFileDictionary  = localPathProperty + "dictionary";
 	private static String localFileProperties  = "agentgui.ini";
 	private static String localFileNameProject = "agentgui.xml";
+	private static String localFileEndProjectZip = "agui";
 	private static String localFileNameProjectOntology = "AgentGUIProjectOntology";
 	
 	private static String localFileJade = "jade.jar";
@@ -81,6 +82,9 @@ public class GlobalInfo {
 	private String filePropServerMasterDBName = null;
 	private String filePropServerMasterDBUser = null;
 	private String filePropServerMasterDBPswd = null;
+	
+	// --- Runtime information ----------------------------------------------
+	private File lastSelectedFolder = null; 
 	
 	// ----------------------------------------------------------------------
 	// --- Objekt-Initialisierung -------------------------------------------
@@ -465,6 +469,9 @@ public class GlobalInfo {
 	public String getFileNameProject() {
 		return localFileNameProject;
 	};
+	public String getFileEndProjectZip(){
+		return localFileEndProjectZip;
+	}
 	/**
 	 * @return the localFileProjectOntology
 	 */
@@ -729,4 +736,30 @@ public class GlobalInfo {
 		return filePropServerMasterDBPswd;
 	}
 
+
+	/**
+	 * @param lastSelectedFolder the lastSelectedFolder to set
+	 */
+	public void setLastSelectedFolder(File lastSelectedFolder) {
+		this.lastSelectedFolder = lastSelectedFolder;
+	}
+	/**
+	 * @return the lastSelectedFolder
+	 */
+	public File getLastSelectedFolder() {
+		if (lastSelectedFolder==null) {
+			lastSelectedFolder = new File(this.PathBaseDir());
+		} 
+		return lastSelectedFolder;	
+	}
+	/**
+	 * @return the lastSelectedFolder as String
+	 */
+	public String getLastSelectedFolderAsString() {
+		String returnFolder = this.getLastSelectedFolder().getAbsolutePath();
+		if (returnFolder.endsWith(File.separator)==false) {
+			returnFolder+=File.separator;
+		}
+		return returnFolder;
+	}
 }

@@ -7,12 +7,6 @@
             <startAsName>SiMaAg</startAsName>
             <mobileAgent>true</mobileAgent>
         </agent>
-        <agent>
-            <postionNo>2</postionNo>
-            <agentClassReference>agents.MovingAgent</agentClassReference>
-            <startAsName>move2</startAsName>
-            <mobileAgent>true</mobileAgent>
-        </agent>
     </agentSetup>
     <distribution>
         <doDynamicLoadBalalncing>false</doDynamicLoadBalalncing>
@@ -32,8 +26,8 @@
         </userThresholds>
     </distribution>
     <agentListModel>
-        <size>2</size>
+        <size>1</size>
     </agentListModel>
-    <environmentFileName>default.xml</environmentFileName>
-    <svgFileName>default.svg</svgFileName>
+    <environmentFileName>test.xml</environmentFileName>
+    <svgFileName>test.svg</svgFileName>
 </simulationSetup>
