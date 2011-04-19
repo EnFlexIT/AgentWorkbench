@@ -275,10 +275,14 @@ public class EnvironmentProviderService extends BaseService {
 			if(object != null && object instanceof ActiveObject){
 				
 				ActiveObject agent = (ActiveObject) object;
-				System.out.println("Speed:"+agent.getMovement().getSpeed());
+		
+					
+		
 				float maxSpeed = agent.getMaxSpeed();
 //				if(movement.getSpeed() <= maxSpeed+0.0005){		// Small tolerance required for inaccuracy in speed calculation  
+					System.out.println("Set Movement:"+movement.getXPosChange());
 					agent.setMovement(movement);
+					
 //				}
 				if(agent.getMovement().getSpeed() > 0.0){
 					
@@ -291,7 +295,6 @@ public class EnvironmentProviderService extends BaseService {
 				}else{
 					this.currentlyMovingAgents.remove(agent);
 					this.currentlyMovingObjects.remove(agent);
-					
 					Iterator<PassiveObject> controlledObjects = agent.getAllPayload();
 					while(controlledObjects.hasNext()){
 						this.currentlyMovingObjects.remove(controlledObjects.next());

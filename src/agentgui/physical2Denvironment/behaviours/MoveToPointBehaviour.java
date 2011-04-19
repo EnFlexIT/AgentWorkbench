@@ -26,6 +26,8 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 	 * Time between to position checks. Should match the EnvironmentProviderAgent's period 
 	 */
 	private static int PERIOD = 100;
+	
+	public static boolean IS_USED=false;
 
 	/**
 	 * Automatically generated serialVersionUID
@@ -65,7 +67,8 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 	 */
 	public MoveToPointBehaviour(Agent a, Position destPos, float speed) throws ServiceException{
 		super(a, PERIOD);
-		
+		IS_USED=true;
+		System.out.println("Call Move to Point");
 		try {
 			this.destPos = destPos;
 			this.speed = speed;
@@ -96,25 +99,30 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 		
 		// The first step
 		if(firstStep){
+		
 			// Initialize distances in x and y direction 
 			xPosDiff = destPos.getXPos() - self.getPosition().getXPos();
 			yPosDiff = destPos.getYPos() - self.getPosition().getYPos();
-
+			
 			// Calculate distance between start and destination Position 
 			float dist = (float) Math.sqrt(xPosDiff*xPosDiff + yPosDiff*yPosDiff);
+		
+			
 			// Calculate required time
 			float seconds = dist / speed;
-			
+		
 			// Create Movement instance
 			Movement movement = new Movement();
 			movement.setXPosChange(xPosDiff / seconds);
 			movement.setYPosChange(yPosDiff / seconds);
-			
+		
 			// Start moving
 			helper.setMovement(myAgent.getLocalName(), movement);
 			firstStep = false;
 		}else{
+			
 			Position currPos = self.getPosition();	// Get the agent's current 
+			
 //			if(checkCollisions()){		// Check for collisions
 //				Movement stop = new Movement();
 //				stop.setXPosChange(0);
@@ -124,6 +132,7 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 //			}
 			
 			if(lastStep){
+				
 				Movement stop = new Movement();
 				stop.setXPosChange(0);
 				stop.setYPosChange(0);
@@ -135,12 +144,15 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 				Movement lastStep = new Movement();
 				lastStep.setXPosChange(xPosDiff);
 				lastStep.setYPosChange(yPosDiff);
+				System.out.println("Fast da!");
 				helper.setMovement(myAgent.getLocalName(), lastStep);		// Slow down if necessary
 				this.lastStep = true;		// Stop in the next step
 			}else{
 				// Refresh distances
+		
 				xPosDiff = destPos.getXPos() - currPos.getXPos();
 				yPosDiff = destPos.getYPos() - currPos.getYPos();
+			
 			}
 		}
 		
@@ -150,12 +162,17 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 	 * Checks if the destination position is inside the agents parent playground
 	 * @return True or false
 	 */
+	/**
+	 * @return
+	 */
 	private boolean checkPlayground(){
 		// Get the agent's Physical2DObject 
+		
 		Physical2DObject self = helper.getObject(myAgent.getLocalName());
 		
 		// Create a new Physical2DObject with the agent's size at the destination position
 		Physical2DObject selfAtDestPos = new Physical2DObject();
+		System.out.println("AgentName:"+myAgent.getLocalName());
 		selfAtDestPos.setSize(self.getSize());
 		selfAtDestPos.setPosition(destPos);
 		

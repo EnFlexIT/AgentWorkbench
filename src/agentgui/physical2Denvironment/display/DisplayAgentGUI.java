@@ -137,8 +137,10 @@ public class DisplayAgentGUI extends BasicSVGGUI {
 				Physical2DObject object = objects.next();
 				Element element = getSVGDoc().getElementById(object.getId());
 				if(element != null){
+				
 					setElementPosition(element, object.getPosition());
 				}
+				
 			}	
 		}
 		catch(Exception e)

@@ -26,6 +26,7 @@ import org.w3c.dom.Document;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.physical2Denvironment.behaviours.MoveToPointBehaviour;
 import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 import agentgui.physical2Denvironment.ontology.Physical2DObject;
 import agentgui.physical2Denvironment.ontology.PositionUpdate;
@@ -113,15 +114,18 @@ public class DisplayAgent extends Agent {
 			myGUI.jPanelSimuInfos.setVisible(true);
 			SimulationServiceHelper simHelper=(SimulationServiceHelper) getHelper(SimulationServiceHelper.SERVICE_NAME);
 			EnvironmentModel envModel= simHelper.getEnvironmentModel();
-			while(envModel==null)
+			while(envModel==null&&MoveToPointBehaviour.IS_USED==false)
 			{
-				Thread.sleep(10);
+				Thread.sleep(100);
 				envModel= simHelper.getEnvironmentModel();
 			}
+			if(!MoveToPointBehaviour.IS_USED)
+			{
 			TimeModelDiscrete model=(TimeModelDiscrete) envModel.getTimeModel();
 			initialTimeStep=model.getStep();	
 			String unit= Language.translate("Sekunden");
 			myGUI.jLabelSpeedFactor.setText( (initialTimeStep/1000.0)+" " + unit);
+			}
 			
 		}
 		catch(Exception e)
@@ -258,6 +262,11 @@ public class DisplayAgent extends Agent {
 		public HashSet<Physical2DObject> fordwardToVisualation(HashMap<AID,PositionUpdate> pos)	{
 		    
 			HashSet<Physical2DObject> movingObjects=envHelper.getCurrentlyMovingObjects();
+		
+			if(movingObjects.size()>0)
+			{
+			
+			}
 		    // Clear map
 			movingObjects.clear();
 			Set<AID> keys=pos.keySet();
@@ -273,9 +282,17 @@ public class DisplayAgent extends Agent {
 		}
 		@Override
 		protected void onTick() {
+		
 			try
 			{
-				 int size=-1;
+				if(MoveToPointBehaviour.IS_USED)
+				{
+					
+					myGUI.updatePositions(helper.getCurrentlyMovingObjects());
+					return;
+					
+				}	
+				int size=-1;
 				if(sameTransactionSizeCounter==20)
 				{
 				  size=lastMaximumValue;
@@ -283,6 +300,7 @@ public class DisplayAgent extends Agent {
 				}
 				else
 				{
+					
 					size=helper.getTransactionSize();
 					 if(lastMaximumValue!=size)
 					 {
@@ -294,9 +312,11 @@ public class DisplayAgent extends Agent {
 						 sameTransactionSizeCounter++;
 					 }
 						
-				}				
+				}	
+			
 				    if(size>1)
-				    {				    				        		    	
+				    {	
+				    
 				    		if(lastCurrentValue==counter)
 				    		{
 				    			sameVisualisationCounter++;
@@ -324,7 +344,11 @@ public class DisplayAgent extends Agent {
 					        lastMaximumValue=size;
 							lastCurrentValue=counter;
 						}    	
-				       }			
+				       }
+				    else
+				    {
+				    
+				    }
 			}
 			catch(Exception e)
 			{
