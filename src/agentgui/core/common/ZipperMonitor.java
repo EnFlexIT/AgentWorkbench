@@ -60,7 +60,7 @@ public class ZipperMonitor extends JDialog implements ActionListener {
 	 */
 	private void initialize() {
 		
-		this.setSize(542, 190);
+		this.setSize(542, 194);
 		this.setContentPane(getJContentPane());
 		
 		this.setTitle(Application.RunInfo.getApplicationTitle() + ": Zip-Monitor");
@@ -103,7 +103,7 @@ public class ZipperMonitor extends JDialog implements ActionListener {
 			gridBagConstraints4.gridx = 0;
 			gridBagConstraints4.fill = GridBagConstraints.VERTICAL;
 			gridBagConstraints4.weighty = 1.0;
-			gridBagConstraints4.gridy = 6;
+			gridBagConstraints4.gridy = 5;
 			jLabelDummy = new JLabel();
 			jLabelDummy.setText("");
 			jLabelDummy.setPreferredSize(new Dimension(100, 10));
@@ -112,13 +112,13 @@ public class ZipperMonitor extends JDialog implements ActionListener {
 			gridBagConstraints3.insets = new Insets(15, 20, 0, 20);
 			gridBagConstraints3.anchor = GridBagConstraints.WEST;
 			gridBagConstraints3.fill = GridBagConstraints.HORIZONTAL;
-			gridBagConstraints3.gridy = 1;
+			gridBagConstraints3.gridy = 2;
 			jLabelSingleFile = new JLabel();
 			jLabelSingleFile.setText("Datei:");
 			jLabelSingleFile.setFont(new Font("Dialog", Font.BOLD, 12));
 			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
 			gridBagConstraints2.insets = new Insets(15, 0, 0, 10);
-			gridBagConstraints2.gridy = 5;
+			gridBagConstraints2.gridy = 4;
 			gridBagConstraints2.weightx = 1.0;
 			gridBagConstraints2.gridx = 0;
 			GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
@@ -136,7 +136,7 @@ public class ZipperMonitor extends JDialog implements ActionListener {
 			gridBagConstraints.insets = new Insets(10, 20, 0, 20);
 			gridBagConstraints.gridwidth = 1;
 			gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
-			gridBagConstraints.gridy = 2;
+			gridBagConstraints.gridy = 1;
 			
 			jContentPane = new JPanel();
 			jContentPane.setLayout(new GridBagLayout());
@@ -199,7 +199,7 @@ public class ZipperMonitor extends JDialog implements ActionListener {
 		if (jButtonCancel == null) {
 			jButtonCancel = new JButton();
 			jButtonCancel.setText("Abbruch");
-			jButtonCancel.setPreferredSize(new Dimension(134, 24));
+			jButtonCancel.setPreferredSize(new Dimension(134, 28));
 			jButtonCancel.setForeground(new Color(204, 0, 0));
 			jButtonCancel.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonCancel.addActionListener(this);
