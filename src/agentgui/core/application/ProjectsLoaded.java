@@ -400,7 +400,6 @@ public class ProjectsLoaded {
 	private void setFocus(int Index) {
 		this.get(Index).setFocus(true);		
 	}
-
 	
 	/**
 	 * Imports a project, which is packed in Agent.GUI project file (*.agui)
@@ -426,7 +425,6 @@ public class ProjectsLoaded {
 		if (answerChooser==JFileChooser.CANCEL_OPTION) return;
 		Application.RunInfo.setLastSelectedFolder(chooser.getCurrentDirectory());
 		
-		
 		File projectFile = chooser.getSelectedFile();
 		if (projectFile!=null && projectFile.exists()) {
 
@@ -437,7 +435,7 @@ public class ProjectsLoaded {
 			Zipper zipper = new Zipper();
 			zipper.setUnzipZipFolder(zipFolder);
 			zipper.setUnzipDestinationFolder(destFolder);
-
+			
 			// --- Error-Handling -------------------------
 			String rootFolder2Extract = zipper.getRootFolder2Extract();
 			String testFolder = destFolder + rootFolder2Extract;
@@ -451,11 +449,10 @@ public class ProjectsLoaded {
 			}
 			
 			// --- Finally unzip --------------------------
-			zipper.unzipFolder();
+			zipper.doUnzipProject(rootFolder2Extract);
+			zipper = null;
 			
-			// --- Open the project -----------------------
-			this.add(rootFolder2Extract);
-		}
+		}		
 		
 	}
 
@@ -538,11 +535,13 @@ public class ProjectsLoaded {
 			
 			Zipper zipper = new Zipper();
 			zipper.setExcludePattern(".svn");
-			zipper.zipFolder(srcFolder, zipFolder);
+			zipper.setZipFolder(zipFolder);
+			zipper.setZipSourceFolder(srcFolder);
+			zipper.doZipFolder();
+			zipper = null;
 			
 		}
 		
 	}
 	
-		
 }
