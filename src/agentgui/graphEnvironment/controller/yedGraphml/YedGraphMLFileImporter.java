@@ -3,6 +3,7 @@ package agentgui.graphEnvironment.controller.yedGraphml;
 import java.awt.Dimension;
 import java.io.File;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -18,8 +19,10 @@ import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
 import edu.uci.ics.jung.visualization.control.ModalGraphMouse;
 import agentgui.core.application.Language;
 import agentgui.graphEnvironment.controller.GraphFileImporter;
+import agentgui.graphEnvironment.environmentModel.GraphElement;
 import agentgui.graphEnvironment.environmentModel.GraphElementSettings;
 import agentgui.graphEnvironment.environmentModel.GridModel;
+import agentgui.graphEnvironment.environmentModel.NetworkComponent;
 import agentgui.graphEnvironment.prototypes.GraphElementPrototype;
 /**
  * GraphFileImporter for GraphML files specified with yEd
@@ -88,10 +91,17 @@ public class YedGraphMLFileImporter extends GraphFileImporter {
 	}
 	
 	private void addElement(TempNode tempElement, GraphElementPrototype predecessor){
+		
+		NetworkComponent newComponent = new NetworkComponent();
+		newComponent.setId(tempElement.getId());
+		newComponent.setType(tempElement.getType());
+		newComponent.setPrototypeClassName(elementSettings.get(tempElement.getType()).getGraphPrototype());
+		
+		
 		GraphElementPrototype newElement = null;
 		
 		try {
-			newElement = (GraphElementPrototype) Class.forName(elementSettings.get(tempElement.getType()).getGraphPrototype()).newInstance();
+			newElement = (GraphElementPrototype) Class.forName(newComponent.getPrototypeClassName()).newInstance();
 		} catch (InstantiationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -104,6 +114,8 @@ public class YedGraphMLFileImporter extends GraphFileImporter {
 		}
 		
 		if(newElement != null){
+			newComponent.setDirected(newElement.isDirected());
+			
 			newElement.setId(tempElement.getId());
 			newElement.setType(tempElement.getType());
 			
@@ -115,16 +127,25 @@ public class YedGraphMLFileImporter extends GraphFileImporter {
 				TempNode succTempNode = successors.next();
 				successor = addedElements.get(succTempNode.getId());
 			}
-			
+			HashSet<GraphElement> graphElements = null;
 			if(predecessor == null && successor == null){
-				newElement.addToGraph(gridModel.getGraph());
+				graphElements = newElement.addToGraph(gridModel.getGraph());
 			}else if(predecessor != null && successor == null){
-				newElement.addAfter(gridModel.getGraph(), predecessor);
+				graphElements = newElement.addAfter(gridModel.getGraph(), predecessor);
 			}else if(predecessor == null && successor != null){
-				newElement.addBefore(gridModel.getGraph(), successor);
+				graphElements = newElement.addBefore(gridModel.getGraph(), successor);
 			}else if(predecessor != null && successor != null){
-				newElement.addBetween(gridModel.getGraph(), predecessor, successor);
+				graphElements = newElement.addBetween(gridModel.getGraph(), predecessor, successor);
 			}
+			
+			if(graphElements != null){
+				Iterator<GraphElement> geIter = graphElements.iterator();
+				while(geIter.hasNext()){
+					newComponent.getGraphElementIDs().add(geIter.next().getId());
+				}
+			}
+			
+			gridModel.addNetworkComponent(newComponent);
 			
 			// Call recursively for successor nodes
 			// New iterator 

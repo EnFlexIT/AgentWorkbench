@@ -1,6 +1,9 @@
 package agentgui.graphEnvironment.prototypes;
 
+import java.util.HashSet;
+
 import agentgui.graphEnvironment.environmentModel.GraphEdge;
+import agentgui.graphEnvironment.environmentModel.GraphElement;
 import agentgui.graphEnvironment.environmentModel.GraphNode;
 import edu.uci.ics.jung.graph.Graph;
 
@@ -35,31 +38,31 @@ public abstract class GraphElementPrototype {
 	/**
 	 * This method adds a GraphElementPrototype to a JUNG graph, with no connection to other graph elements.
 	 * @param graph The JUNG graph
-	 * @return True if the GraphElementPrototype was successfully added, false otherwise 
+	 * @return A HashSet containing the GraphElements representing this component, or null if adding failed  
 	 */
-	public abstract boolean addToGraph(Graph<GraphNode, GraphEdge> graph);
+	public abstract HashSet<GraphElement> addToGraph(Graph<GraphNode, GraphEdge> graph);
 	/**
 	 * This method adds a GraphElementPrototype to a JUNG graph after another element.
 	 * @param graph The JUNG graph
 	 * @param predecessor The GraphElementPrototype's predecessor
-	 * @return True if the GraphElementPrototype was successfully added, false otherwise
+	 * @return A HashSet containing the GraphElements representing this component, or null if adding failed
 	 */
-	public abstract boolean addAfter(Graph<GraphNode, GraphEdge> graph, GraphElementPrototype predecessor);
+	public abstract HashSet<GraphElement> addAfter(Graph<GraphNode, GraphEdge> graph, GraphElementPrototype predecessor);
 	/**
 	 * This method adds a GraphElementPrototype to a JUNG graph before another element.
 	 * @param graph The JUNG graph
 	 * @param successor The GraphElementPrototype's successor
-	 * @return True if the GraphElementPrototype was successfully added, false otherwise
+	 * @return A HashSet containing the GraphElements representing this component, or null if adding failed
 	 */
-	public abstract boolean addBefore(Graph<GraphNode, GraphEdge> graph, GraphElementPrototype successor);
+	public abstract HashSet<GraphElement> addBefore(Graph<GraphNode, GraphEdge> graph, GraphElementPrototype successor);
 	/**
 	 * This method adds a GraphElementPrototype to a JUNG graph between two other elements.
 	 * @param graph The JUNG graph
 	 * @param predecessor The GraphElementPrototype's predecessor
 	 * @param successor The GraphElementPrototype's successor
-	 * @return True if the GraphElementPrototype was successfully added, false otherwise
+	 * @return A HashSet containing the GraphElements representing this component, or null if adding failed
 	 */
-	public abstract boolean addBetween(Graph<GraphNode, GraphEdge> graph, GraphElementPrototype predecessor, GraphElementPrototype successor);
+	public abstract HashSet<GraphElement> addBetween(Graph<GraphNode, GraphEdge> graph, GraphElementPrototype predecessor, GraphElementPrototype successor);
 	
 	/**
 	 * @param id the id to set
@@ -95,4 +98,8 @@ public abstract class GraphElementPrototype {
 	 * @return The node
 	 */
 	public abstract GraphNode getFreeExit();
+	/**
+	 * @return True if directed, false if undirected
+	 */
+	public abstract boolean isDirected();
 }

@@ -4,7 +4,7 @@ import jade.content.Concept;
 
 public abstract class GraphElement {
 	
-	private String id = null;
+	protected String id = null;
 	
 	private Concept ontologyRepresentation = null;
 

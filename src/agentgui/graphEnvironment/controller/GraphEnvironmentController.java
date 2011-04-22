@@ -10,6 +10,11 @@ import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+
 import org.apache.commons.collections15.Transformer;
 
 import edu.uci.ics.jung.graph.Graph;
@@ -30,6 +35,7 @@ import agentgui.graphEnvironment.environmentModel.GraphEdge;
 import agentgui.graphEnvironment.environmentModel.GraphElementSettings;
 import agentgui.graphEnvironment.environmentModel.GraphNode;
 import agentgui.graphEnvironment.environmentModel.GridModel;
+import agentgui.graphEnvironment.environmentModel.NetworkComponentList;
 
 public class GraphEnvironmentController extends Observable implements Observer {
 	
@@ -37,9 +43,9 @@ public class GraphEnvironmentController extends Observable implements Observer {
 	
 	public static final Integer EVENT_ELEMENT_TYPES_SETTINGS_CHANGED = 1;
 	
-	private String graphFilePath = null;
+	private String envFilePath = null;
 	
-	private String currGraphFileName = null;
+	private String baseFileName = null;
 	
 	private Project project = null;
 	
@@ -54,7 +60,7 @@ public class GraphEnvironmentController extends Observable implements Observer {
 	public GraphEnvironmentController(Project project){
 		this.project = project;
 		this.project.addObserver(this);
-		graphFilePath = this.project.getProjectFolderFullPath()+this.project.getSubFolderEnvSetups();
+		envFilePath = this.project.getProjectFolderFullPath()+this.project.getSubFolderEnvSetups();
 		loadGridModel();
 		setGraphElementSettings(project.simSetups.getCurrSimSetup().getGraphElementSettings());
 		// If no ETS are specified in the setup, assign an empty HashMap to avoid null pointers
@@ -126,7 +132,7 @@ public class GraphEnvironmentController extends Observable implements Observer {
 
 				@Override
 				public String transform(GraphEdge arg0) {
-					return arg0.id();
+					return arg0.getId();
 				}
 			});
 			graphMLWriter.setEdgeDescriptions(new Transformer<GraphEdge, String>() {
@@ -210,7 +216,7 @@ private void handleSetupChange(SimulationSetupsChangeNotification sscn){
 			
 			case SimulationSetups.SIMULATION_SETUP_REMOVE:
 				System.out.println("Testausgabe: Lösche Setup");
-				File graphFile = new File(graphFilePath+File.separator+currGraphFileName);
+				File graphFile = new File(envFilePath+File.separator+baseFileName+".graphml");
 				if(graphFile.exists()){
 					graphFile.delete();
 				}
@@ -225,10 +231,10 @@ private void handleSetupChange(SimulationSetupsChangeNotification sscn){
 			
 			case SimulationSetups.SIMULATION_SETUP_RENAME:
 				System.out.println("Testausgabe: Benenne Setup um");
-				File oldGraphFile = new File(graphFilePath+File.separator+currGraphFileName);
+				File oldGraphFile = new File(envFilePath+File.separator+baseFileName+".graphml");
 				updateGraphFileName();
 				if(oldGraphFile.exists()){
-					File newGraphFile = new File(graphFilePath+File.separator+currGraphFileName);
+					File newGraphFile = new File(envFilePath+File.separator+baseFileName+".graphml");
 					oldGraphFile.renameTo(newGraphFile);
 				}
 			break;
@@ -244,20 +250,42 @@ private void handleSetupChange(SimulationSetupsChangeNotification sscn){
 	}
 
 	private void updateGraphFileName(){
-		currGraphFileName = project.simSetupCurrent+".graphml";
-		project.simSetups.getCurrSimSetup().setEnvironmentFileName(currGraphFileName);
+		baseFileName = project.simSetupCurrent;
+		System.out.println("Testausgabe: "+baseFileName);
+		project.simSetups.getCurrSimSetup().setEnvironmentFileName(baseFileName+".graphml");
 	}
 	
 	private void saveGridModel(){
 		if(gridModel != null && gridModel.getGraph() != null){
+			
 			try {
-				File file = new File(graphFilePath+File.separator+currGraphFileName);
+				// Save the graph topology 
+				String graphFileName = baseFileName+".graphml";
+				File file = new File(envFilePath+File.separator+graphFileName);
 				if(!file.exists()){
 					file.createNewFile();
 				}
 				PrintWriter pw = new PrintWriter(new FileWriter(file));
 				getGraphMLWriter().save(gridModel.getGraph(), pw);
+				
+				// Save the network component definitions
+				File componentFile = new File(envFilePath+File.separator+baseFileName+".xml");
+				if(!componentFile.exists()){
+					componentFile.createNewFile();
+				}
+				FileWriter componentFileWriter = new FileWriter(componentFile); 
+				
+				JAXBContext context = JAXBContext.newInstance(NetworkComponentList.class);
+				Marshaller marsh = context.createMarshaller();
+				marsh.setProperty( Marshaller.JAXB_ENCODING, "UTF-8" );
+				marsh.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE );
+
+				marsh.marshal(new NetworkComponentList(gridModel.getNetworkComponents()), componentFileWriter);
+				
 			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JAXBException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -272,11 +300,14 @@ private void handleSetupChange(SimulationSetupsChangeNotification sscn){
 		if(fileName != null){
 			
 			String folderPath = this.project.getProjectFolderFullPath()+this.project.getSubFolderEnvSetups();
-			File envFile = new File(folderPath+File.separator+fileName);
-			if(envFile.exists()){
-				currGraphFileName = fileName;
+			File graphFile = new File(folderPath+File.separator+fileName);
+			if(graphFile.exists()){
+				baseFileName = fileName.substring(0, fileName.lastIndexOf('.'));
 				try {
-					gridModel.setGraph(getGraphMLReader(envFile).readGraph());
+					// Load graph topology
+					gridModel.setGraph(getGraphMLReader(graphFile).readGraph());
+					
+					// Load network component definitions
 				} catch (FileNotFoundException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -284,6 +315,23 @@ private void handleSetupChange(SimulationSetupsChangeNotification sscn){
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+			}
+			
+			File componentFile = new File(envFilePath+File.separator+baseFileName+".xml");
+			if(componentFile.exists()){
+				try {
+					JAXBContext context = JAXBContext.newInstance(NetworkComponentList.class);
+					Unmarshaller unmarsh = context.createUnmarshaller();
+					NetworkComponentList compList = (NetworkComponentList) unmarsh.unmarshal(new FileReader(componentFile));
+					gridModel.setNetworkComponents(compList.getComponentList());
+				} catch (JAXBException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
 			}
 		}
 		

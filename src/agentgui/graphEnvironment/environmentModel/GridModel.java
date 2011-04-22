@@ -3,6 +3,7 @@ package agentgui.graphEnvironment.environmentModel;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Observable;
 
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseGraph;
@@ -12,7 +13,7 @@ import edu.uci.ics.jung.graph.SparseGraph;
  * @author Nils
  *
  */
-public class GridModel {
+public class GridModel extends Observable{
 	/**
 	 * The JUNG graph.
 	 */
@@ -20,20 +21,25 @@ public class GridModel {
 	/**
 	 * HashMap providing access to the grid components based on the component's agentID
 	 */
-	private HashMap<String, GraphEdge> components;
+	private HashMap<String, GraphElement> components;
+	/**
+	 * A list of all NetwirkComponents in the GridModel, accessible by ID
+	 */
+	private HashMap<String, NetworkComponent> networkComponents;
 	/**
 	 * Default constructor
 	 */
 	public GridModel(){
 		this.graph = new SparseGraph<GraphNode, GraphEdge>();
-		this.components = new HashMap<String, GraphEdge>();
+		this.components = new HashMap<String, GraphElement>();
+		this.networkComponents = new HashMap<String, NetworkComponent>();
 	}
 	/**
 	 * Returns the GridComponent with the given ID, or null if not found.
 	 * @param id The ID to look for
 	 * @return The GridComponent
 	 */
-	public GraphEdge getComponent(String id){
+	public GraphElement getComponent(String id){
 		return components.get(id);
 	}
 	/**
@@ -50,11 +56,44 @@ public class GridModel {
 		this.graph = graph;
 		
 		// Create HashMap of components
-		this.components = new HashMap<String, GraphEdge>();
-		Iterator<GraphEdge> componentIterator = graph.getEdges().iterator();
-		while(componentIterator.hasNext()){
-			GraphEdge component = componentIterator.next();
-			components.put(component.id(), component);
+		this.components = new HashMap<String, GraphElement>();
+		Iterator<GraphNode> nodeIterator = graph.getVertices().iterator();
+		while(nodeIterator.hasNext()){
+			GraphNode node = nodeIterator.next();
+			components.put(node.getId(), node);
 		}
+		Iterator<GraphEdge> edgeIterator = graph.getEdges().iterator();
+		while(edgeIterator.hasNext()){
+			GraphEdge edge = edgeIterator.next();
+			components.put(edge.getId(), edge);
+		}
+	}
+	/**
+	 * This method adds a NetworkComponent to the GridModel's networkComponents HashMap, using its' ID as key
+	 * @param component The NetworkComponent to add
+	 */
+	public void addNetworkComponent(NetworkComponent component){
+		networkComponents.put(component.getId(), component);
+	}
+	/**
+	 * This method gets the NetworkComponent with the given ID from the GridModel's networkComponents HashMap
+	 * @param id The ID
+	 * @return The NetworkComponent
+	 */
+	public NetworkComponent getNetworkComponent(String id){
+		return networkComponents.get(id);
+	}
+	/**
+	 * @return the networkComponents
+	 */
+	public HashMap<String, NetworkComponent> getNetworkComponents() {
+		return networkComponents;
+	}
+	/**
+	 * @param networkComponents the networkComponents to set
+	 */
+	public void setNetworkComponents(
+			HashMap<String, NetworkComponent> networkComponents) {
+		this.networkComponents = networkComponents;
 	}
 }

@@ -29,7 +29,9 @@ import agentgui.core.application.Language;
 import agentgui.core.application.Project;
 import agentgui.core.environment.EnvironmentPanel;
 import agentgui.graphEnvironment.environmentModel.GraphEdge;
+import agentgui.graphEnvironment.environmentModel.GraphElement;
 import agentgui.graphEnvironment.environmentModel.GraphNode;
+import agentgui.graphEnvironment.environmentModel.NetworkComponent;
 
 import javax.swing.JLabel;
 
@@ -163,16 +165,15 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		if(controller.getGridModel() != null){
 			
 			// Get the components from the controllers GridModel
-			Iterator<GraphEdge> components = controller.getGridModel().getComponents().iterator();
+			Iterator<NetworkComponent> components = controller.getGridModel().getNetworkComponents().values().iterator();
 			
 			// Add component ID and class name to the data vector
 			while(components.hasNext()){
-				GraphEdge comp = components.next();
+				NetworkComponent comp = components.next();
 				
 				Vector<String> compData = new Vector<String>();
-				compData.add(comp.id());
+				compData.add(comp.getId());
 				compData.add(comp.getType());
-				compData.add("Test");
 				componentVector.add(compData);
 			}
 		}
@@ -237,7 +238,8 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		if(event.getSource().equals(getBtnImportGraph())){
 			JFileChooser graphFC = new JFileChooser();
 			graphFC.setFileFilter(new FileNameExtensionFilter(Language.translate(controller.getGraphFileImporter().getTypeString()), controller.getGraphFileImporter().getGraphFileExtension()));
-			graphFC.setCurrentDirectory(Application.RunInfo.getLastSelectedFolder());
+//			graphFC.setCurrentDirectory(Application.RunInfo.getLastSelectedFolder());
+			graphFC.setCurrentDirectory(new File("D:\\Documents\\Studium\\Arbeiten\\Bachelor Dawis"));
 			if(graphFC.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
 				Application.RunInfo.setLastSelectedFolder(graphFC.getCurrentDirectory());
 				File graphMLFile = graphFC.getSelectedFile();
@@ -251,10 +253,9 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
 		if(getTblComponents().getSelectedRowCount() > 0){
-			String componentID = (String) tblComponents.getModel().getValueAt(e.getFirstIndex(), 0);
-			GraphEdge selectedComponent = controller.getGridModel().getComponent(componentID);
-//			graphGUI.setPickedObject(selectedComponent);
-			new ComponentSettingsDialog(controller.getProject(), this, selectedComponent).setVisible(true);
+			String componentID = (String) tblComponents.getModel().getValueAt(getTblComponents().getSelectedRow(), 0);
+			NetworkComponent component = controller.getGridModel().getNetworkComponent(componentID);
+			selectObject(component);
 		}
 	}
 	
@@ -276,15 +277,6 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		return jSplitPaneRoot;
 	}
 	
-	public void showComponentSettingsDialog(Object component){
-		if(component instanceof GraphNode){
-			new ComponentSettingsDialog(currProject, this, (GraphNode)component).setVisible(true);
-		}else if(component instanceof GraphEdge){
-			new ComponentSettingsDialog(currProject, this, (GraphEdge)component).setVisible(true);
-			
-		}
-	}
-	
 	void selectComponent(Object component){
 		if(getTblComponents().getSelectedRow() == -1){
 		}
@@ -298,5 +290,54 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	void componentSettingsChangeAborted(){
 		graphGUI.clearPickedObjects();
 		getTblComponents().getSelectionModel().clearSelection();
+	}
+	
+	/**
+	 * This method handles the selection of an object, i.e. highlights the related graph elements and shows a ComponentSettingsDialog
+	 * @param object The object to select
+	 */
+	void selectObject(Object object){
+		graphGUI.clearPickedObjects();
+		if(object instanceof GraphNode){
+			graphGUI.setPickedObject((GraphElement) object);
+			new ComponentSettingsDialog(currProject, this, object).setVisible(true);
+		}else if(object instanceof GraphEdge){
+			NetworkComponent netComp = getNetworkComponent(((GraphElement)object).getId());
+			graphGUI.setPickedObjects(getNetworkComponentElements(netComp));
+			new ComponentSettingsDialog(currProject, this, netComp).setVisible(true);
+		}else if(object instanceof NetworkComponent){
+			graphGUI.setPickedObjects(getNetworkComponentElements((NetworkComponent)object));
+			new ComponentSettingsDialog(currProject, this, (NetworkComponent)object).setVisible(true);
+		}
+	}
+	
+	/**
+	 * This method gets the NetworkComponent the GraphEdge eith the given ID belongs to
+	 * @param edgeID The GraphEdge's ID
+	 * @return The NetworkComponent
+	 */
+	private NetworkComponent getNetworkComponent(String edgeID){
+		String netCompID;
+		if(edgeID.indexOf('_')>=0){
+			netCompID = edgeID.substring(0, edgeID.indexOf('_'));
+		}else{
+			netCompID = edgeID;
+		}
+		return controller.getGridModel().getNetworkComponent(netCompID);
+	}
+	/**
+	 * This method gets the GraphElements that are part of the given NetworkComponent
+	 * @param netComp The NetworkComponent
+	 * @return The GraphElements
+	 */
+	private Vector<GraphElement> getNetworkComponentElements(NetworkComponent netComp){
+		Vector<GraphElement> elements = new Vector<GraphElement>();
+		
+		Iterator<String> elementIDs = netComp.getGraphElementIDs().iterator();
+		while(elementIDs.hasNext()){
+			elements.add(controller.getGridModel().getComponent(elementIDs.next()));
+		}
+		
+		return elements;
 	}
 }  //  @jve:decl-index=0:visual-constraint="33,19"

@@ -8,9 +8,8 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
 import agentgui.core.ontologies.gui.OntologyInstanceViewer;
-import agentgui.graphEnvironment.environmentModel.GraphEdge;
-import agentgui.graphEnvironment.environmentModel.GraphElement;
 import agentgui.graphEnvironment.environmentModel.GraphNode;
+import agentgui.graphEnvironment.environmentModel.NetworkComponent;
 
 import java.awt.Dialog;
 import java.awt.event.ActionEvent;
@@ -42,7 +41,7 @@ public class ComponentSettingsDialog extends JDialog implements ActionListener{
 	/**
 	 * The graph node containing the ontology object
 	 */
-	private GraphElement element = null;
+	private Object element = null;
 	
 	private GraphEnvironmentControllerGUI parentGUI = null;
 	
@@ -53,7 +52,7 @@ public class ComponentSettingsDialog extends JDialog implements ActionListener{
 	 * @param parentGUI The GraphEnvironmentControllerGUI that opened the dialog
 	 * @param element The GraphElement containing the ontology object
 	 */
-	public ComponentSettingsDialog(Project project, GraphEnvironmentControllerGUI parentGUI, GraphElement element){
+	public ComponentSettingsDialog(Project project, GraphEnvironmentControllerGUI parentGUI, Object element){
 		super(Application.MainWindow, Dialog.ModalityType.APPLICATION_MODAL);
 		this.project = project;
 		this.parentGUI = parentGUI;
@@ -67,10 +66,10 @@ public class ComponentSettingsDialog extends JDialog implements ActionListener{
 	 */
 	private void initialize() {
         this.setContentPane(getJPanelContent());
-        if(element instanceof GraphEdge){
-        	this.setTitle("GridComponent "+element.getId());
+        if(element instanceof NetworkComponent){
+        	this.setTitle("NetworkComponent "+((NetworkComponent)element).getId());
         }else if(element instanceof GraphNode){
-        	this.setTitle("PropagationPoint PP"+element.getId());
+        	this.setTitle("PropagationPoint "+((GraphNode)element).getId());
         }
         this.setSize(new Dimension(450, 450));
 	}
@@ -79,7 +78,11 @@ public class ComponentSettingsDialog extends JDialog implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource().equals(getJButtonApply())){
 			oiv.save();
-			element.setOntologyRepresentation((Concept) oiv.getConfigurationInstances()[0]);
+			if(element instanceof GraphNode){
+				((GraphNode)element).setOntologyRepresentation((Concept) oiv.getConfigurationInstances()[0]);
+			}else if(element instanceof NetworkComponent){
+//				((NetworkComponent)element).setOntologyRepresentation((Concept) oiv.getConfigurationInstances()[0]);
+			}
 			parentGUI.componentSettingsChanged();
 			this.dispose();
 		}else if(e.getSource().equals(getJButtonAbort())){
@@ -118,16 +121,16 @@ public class ComponentSettingsDialog extends JDialog implements ActionListener{
 			jPanelContent.add(getJButtonAbort(), gridBagConstraints1);
 			
 		
-			if(element instanceof GraphEdge){
-				oiv = new OntologyInstanceViewer(project, parentGUI.getController().getGraphElementSettings().get(((GraphEdge) element).getType()).getAgentClass());
+			if(element instanceof NetworkComponent){
+				oiv = new OntologyInstanceViewer(project, parentGUI.getController().getGraphElementSettings().get(((NetworkComponent) element).getType()).getAgentClass());
 			}else if(element instanceof GraphNode){
 				String[] ontoClassName = new String[1];
 				ontoClassName[0] = parentGUI.getController().getGraphElementSettings().get("node").getAgentClass();
 				oiv = new OntologyInstanceViewer(project, ontoClassName);
 
-				if(element.getOntologyRepresentation() != null){
+				if(((GraphNode)element).getOntologyRepresentation() != null){
 					Object[] ontoObject = new Object[1];
-					ontoObject[0] = element.getOntologyRepresentation();
+					ontoObject[0] = ((GraphNode)element).getOntologyRepresentation();
 					oiv.setConfigurationInstances(ontoObject);
 				}
 				

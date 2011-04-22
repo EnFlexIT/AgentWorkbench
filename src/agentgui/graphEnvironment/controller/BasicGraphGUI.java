@@ -23,6 +23,7 @@ import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.graphEnvironment.environmentModel.GraphEdge;
+import agentgui.graphEnvironment.environmentModel.GraphElement;
 import agentgui.graphEnvironment.environmentModel.GraphNode;
 
 import java.awt.Color;
@@ -32,6 +33,8 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Iterator;
+import java.util.Vector;
 
 public class BasicGraphGUI extends JPanel implements ActionListener{
 
@@ -40,7 +43,6 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 	private JButton btnZoomIn = null;
 	private JButton btnZoomOut = null;
 	private JButton btnZoomReset = null;
-	private Graph<GraphNode, GraphEdge> graph = null;
 	private VisualizationViewer<GraphNode, GraphEdge> visView = null;
 	private ScalingControl scalingControl = null;
 	private Component rightComponent = null;
@@ -154,7 +156,6 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 	}
 	
 	public void setGraph(Graph<GraphNode, GraphEdge> graph){
-		this.graph = graph;
 		if(graph != null){
 			Layout<GraphNode, GraphEdge> layout = new FRLayout<GraphNode, GraphEdge>(graph);
 			layout.setSize(new Dimension(400, 400));
@@ -174,7 +175,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 	
 				@Override
 				public String transform(GraphEdge arg0) {
-					return arg0.getType()+" "+arg0.id();
+					return arg0.getType()+" "+arg0.getId();
 				}
 			});
 			
@@ -217,25 +218,37 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 	}
 	
 	void handleObjectSelection(Object pickedObject){
-		if(pickedObject != null){
-			if(pickedObject instanceof GraphEdge){
-				visView.getPickedVertexState().pick(graph.getEndpoints((GraphEdge) pickedObject).getFirst(), true);
-				visView.getPickedVertexState().pick(graph.getEndpoints((GraphEdge) pickedObject).getSecond(), true);
-			}
-			parentGUI.showComponentSettingsDialog(pickedObject);
-		}
+		parentGUI.selectObject(pickedObject);
 	}
 	
+	/**
+	 * Clears the picked nodes and edges
+	 */
 	void clearPickedObjects(){
 		visView.getPickedVertexState().clear();
 		visView.getPickedEdgeState().clear();
 	}
 	
-	void setPickedObject(Object object){
+	/**
+	 * Sets a node or edge as picked
+	 * @param object The GraphNode or GraphEdge to pick
+	 */
+	void setPickedObject(GraphElement object){
 		if(object instanceof GraphEdge){
 			visView.getPickedEdgeState().pick((GraphEdge) object, true);
 		}else if(object instanceof GraphNode){
 			visView.getPickedVertexState().pick((GraphNode) object, true);
+		}
+	}
+	
+	/**
+	 * Marks a group of objects as picked
+	 * @param objects The objects
+	 */
+	void setPickedObjects(Vector<GraphElement> objects){
+		Iterator<GraphElement> objIter = objects.iterator();
+		while(objIter.hasNext()){
+			setPickedObject(objIter.next());
 		}
 	}
 	

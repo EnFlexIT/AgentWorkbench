@@ -2,13 +2,8 @@ package agentgui.graphEnvironment.environmentModel;
 
 
 public class GraphEdge extends GraphElement{
-	private String id;
 	private String type;
 
-	public String id() {
-		return id;
-	}
-	
 	public String getType(){
 		return this.type;
 	}
