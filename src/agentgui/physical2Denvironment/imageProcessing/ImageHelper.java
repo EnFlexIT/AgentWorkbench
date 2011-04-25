@@ -12,6 +12,7 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Stack;
 import java.util.Vector;
 
 import javax.imageio.ImageIO;
@@ -999,6 +1000,21 @@ public class ImageHelper {
 	}
 	return null;
  }
+	Stack<Position> orderAndMiddleCoordinates(StepNode way,float agentWidth,float agentHeight)
+	{
+		Stack<Position> pos=new Stack<Position>();
+		while(way.getParent()!=null) 
+		{
+			 	Position p=new Position();
+				float x=(way.getX()+agentWidth/2); // middle it
+				float y=(way.getY()+agentHeight/2); // middle it
+				p.setXPos(x/10.0f);
+				p.setYPos(y/10.0f);
+				pos.add(0,p);	
+				way=way.getParent();
+		}
+		return pos;
+	}
 	
 }
 	
