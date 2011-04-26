@@ -18,10 +18,13 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.border.EtchedBorder;
 
+import org.apache.commons.codec.binary.Base64;
+
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
 import java.awt.Font;
+import java.io.UnsupportedEncodingException;
 
 public class OntologyInstanceViewer extends JTabbedPane {
 
@@ -435,6 +438,44 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	 */
 	public String[] getConfigurationXML() {
 		return this.dynForm.getOntoArgsXML();
+	}
+	
+	/**
+	 * @param configurationXML the configurationXML to set as Base64 encoded String
+	 */
+	public void setConfigurationXML64(String[] configurationXML64) {
+		
+		String[] configXML = new String[configurationXML64.length];
+		for (int i = 0; i < configurationXML64.length; i++) {
+			try {
+				configXML[i] = new String(Base64.decodeBase64(configurationXML64[i].getBytes()), "UTF8");
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		this.dynForm.setOntoArgsXML(configXML);
+		if (this.getSelectedIndex()==1) {
+			this.setXMLText();
+		}
+	}
+	/**
+	 * @return the configurationXML as Base64-String
+	 */
+	public String[] getConfigurationXML64() {
+		
+		String[] configXML = this.dynForm.getOntoArgsXML();
+		String[] configXML64 = new String[configXML.length];
+		
+		for (int i = 0; i < configXML.length; i++) {
+			configXML64[i] = configXML[i];
+			try {
+				configXML64[i] = new String(Base64.encodeBase64(configXML[i].getBytes("UTF8")));
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+		}
+		return configXML64;
 	}
 	
 	/**
