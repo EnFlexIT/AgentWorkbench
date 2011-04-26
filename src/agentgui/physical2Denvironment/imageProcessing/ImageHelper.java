@@ -26,9 +26,11 @@ import org.w3c.dom.svg.SVGDocument;
 
 import agentgui.physical2Denvironment.ontology.ActiveObject;
 import agentgui.physical2Denvironment.ontology.Position;
+import agentgui.physical2Denvironment.ontology.PositionUpdate;
 import agentgui.physical2Denvironment.ontology.StaticObject;
 import agentgui.physical2Denvironment.provider.EnvironmentProviderHelper;
 import agentgui.physical2Denvironment.utils.EnvironmentWrapper;
+import agentgui.simulationService.time.TimeModelDiscrete;
 
 
 
@@ -1000,7 +1002,142 @@ public class ImageHelper {
 	}
 	return null;
  }
-	Stack<Position> orderAndMiddleCoordinates(StepNode way,float agentWidth,float agentHeight)
+
+	PositionUpdate calculateNextCoord(int lastIndex,Position selfPos, Position destPos, final double msInSeconds,float speed, Stack<Position> position)
+	  {
+	    Position newPos=new Position(); // Save the Position which is passed to the simulation Agent here
+	    Position lastPosition=null;
+	    Answer answer=new Answer();
+		boolean reached=false;
+		float total=0.0f;
+		double total_time=0.0d;
+		ArrayList<Position> partSolution=new ArrayList<Position>();
+		float xPosDiff=0.0f; // Difference
+		float yPosDiff=0.0f; // Difference
+		double total_seconds=0.0d;
+		 boolean multiStep=false; // Needed for calculation
+			while(total_seconds<=msInSeconds)
+			{
+				xPosDiff = destPos.getXPos() - selfPos.getXPos();
+				yPosDiff = destPos.getYPos() - selfPos.getYPos();
+				double dist = (Math.sqrt(xPosDiff*xPosDiff + yPosDiff*yPosDiff)/10.0d); 
+				double seconds = dist / speed; // seconds to get to the point. Important to calculate dist in meter because speed is also in meter!
+				total_seconds=total_seconds+seconds;
+				// It's possible to do more than one moment at one time so we add the seconds
+				if(total_seconds<=msInSeconds) // it's smaller so we can contioue walking
+				{
+				  reached=true;
+				  total+=dist;
+				  total_time+=seconds;
+				  multiStep=true;
+				  lastIndex++;	// Increase the Index 
+				  	if(lastIndex<position.size()) // Are we add the end?
+				   	{   // We're not and adjust the positions
+				   		selfPos.setXPos(destPos.getXPos());
+				   		selfPos.setYPos(destPos.getYPos());
+				   		destPos=position.get(lastIndex);
+				   		newPos.setXPos(selfPos.getXPos());
+				   		newPos.setYPos(selfPos.getYPos());
+				 	    partSolution.add(newPos);				 	
+				   }
+				   else
+				   {
+					  // we at the end
+					   selfPos=position.get(position.size()-1);
+					   newPos.setXPos(selfPos.getXPos());
+					   newPos.setYPos(selfPos.getYPos());
+					   partSolution.add(newPos);
+					   total_seconds=msInSeconds;
+				
+					   lastIndex++;
+					   partSolution.add(newPos);
+					   PositionUpdate posUpdate=new PositionUpdate();
+					   posUpdate.setNewPosition(newPos);
+					   answer.setSpeed(new Long((long)speed));
+					   answer.setWayToDestination(partSolution);			
+					   posUpdate.setCustomizedParameter(answer);							
+					 
+					   return posUpdate;
+				   }
+				}
+				else // The distance is too huge to do in one step
+				{
+					
+					boolean flag=false;
+					reached=false; // We haven't reached the full distance
+					double max=((speed)*(msInSeconds)); // Calculate the maximum distance we can walk. Result is in meter and seconds
+					if(multiStep) // We need to take the difference
+					{
+						double dif=Math.abs(msInSeconds-total_seconds+seconds);
+						total_time+=dif;
+						if(msInSeconds-total_seconds+seconds<0)
+						{
+							flag=true;
+						}
+						max=((speed)*(dif)); // Calculate the maximum distance we can walk is also in seconds
+					}
+					else
+					{
+					   total_time+=msInSeconds;	
+					   total_seconds=msInSeconds+1;
+					}
+					if(!flag)
+					{
+					total+=max;
+					max*=10; // calculate into pixel
+					multiStep=false;
+					double correctXDif=0.0d;
+					double correctYDif=0.0d;
+					if(xPosDiff>0) // We move to the right
+					{
+						correctXDif=max;
+					}
+					if(xPosDiff<0) // We move the left
+					{
+						correctXDif=max*-1;
+					}
+					if(yPosDiff>0) // We move forward
+					{
+						correctYDif=max;
+					}
+					if(yPosDiff<0) // We move backs
+					{
+						correctYDif=max*-1;
+					}
+					
+					double newXValue=selfPos.getXPos()+correctXDif;
+					double newYValue=selfPos.getYPos()+correctYDif;
+					newPos.setXPos( (float) newXValue);
+					newPos.setYPos( (float) newYValue);
+					lastPosition=new Position();
+					lastPosition.setXPos(destPos.getXPos());
+					lastPosition.setYPos(destPos.getYPos());
+					partSolution.add(newPos);
+					selfPos.setXPos(newPos.getXPos());					   
+				    selfPos.setYPos(newPos.getYPos());
+				  	}
+					else
+					{
+						lastPosition=new Position();
+						lastPosition.setXPos(destPos.getXPos());
+						lastPosition.setYPos(destPos.getYPos());
+						reached=false;
+					}				
+				}				
+			}
+			PositionUpdate posUpdate=new PositionUpdate();
+			posUpdate.setNewPosition(newPos);
+			answer.setSpeed(new Long((long)speed));
+		    answer.setWayToDestination(partSolution);			
+			posUpdate.setCustomizedParameter(answer);
+			return posUpdate; 
+		  
+		  
+		  
+		  
+	  }
+	
+	Stack<Position> orderAndMiddleCoordinates(StepNode way,float agentWidth,float agentHeight,float factor)
 	{
 		Stack<Position> pos=new Stack<Position>();
 		while(way.getParent()!=null) 
@@ -1008,8 +1145,8 @@ public class ImageHelper {
 			 	Position p=new Position();
 				float x=(way.getX()+agentWidth/2); // middle it
 				float y=(way.getY()+agentHeight/2); // middle it
-				p.setXPos(x/10.0f);
-				p.setYPos(y/10.0f);
+				p.setXPos(x/factor);
+				p.setYPos(y/factor);
 				pos.add(0,p);	
 				way=way.getParent();
 		}
