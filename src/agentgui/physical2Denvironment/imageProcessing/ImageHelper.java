@@ -1003,7 +1003,7 @@ public class ImageHelper {
 	return null;
  }
 
-	PositionUpdate calculateNextCoord(int lastIndex,Position selfPos, Position destPos, final double msInSeconds,float speed, Stack<Position> position)
+	public PositionUpdate calculateNextCoord(int lastIndex,Position selfPos, Position destPos, final double msInSeconds,float speed, Stack<Position> position)
 	  {
 	    Position newPos=new Position(); // Save the Position which is passed to the simulation Agent here
 	    Position lastPosition=null;
@@ -1128,7 +1128,9 @@ public class ImageHelper {
 			PositionUpdate posUpdate=new PositionUpdate();
 			posUpdate.setNewPosition(newPos);
 			answer.setSpeed(new Long((long)speed));
-		    answer.setWayToDestination(partSolution);			
+		    answer.setWayToDestination(partSolution);	
+		    answer.setIndex(lastIndex);
+		    answer.setNextPosition(lastPosition);
 			posUpdate.setCustomizedParameter(answer);
 			return posUpdate; 
 		  
@@ -1137,7 +1139,7 @@ public class ImageHelper {
 		  
 	  }
 	
-	Stack<Position> orderAndMiddleCoordinates(StepNode way,float agentWidth,float agentHeight,float factor)
+	public Stack<Position> orderAndMiddleCoordinates(StepNode way,float agentWidth,float agentHeight,float factor)
 	{
 		Stack<Position> pos=new Stack<Position>();
 		while(way.getParent()!=null) 
