@@ -6,35 +6,15 @@ import jade.util.leap.*;
 import jade.core.*;
 
 /**
+   * A set of parameters describing the physical properties of a PropagationPoint.
 * Protege name: StructuralParameters
 * @author ontology bean generator
-* @version 2011/04/5, 11:14:58
+* @version 2011/04/28, 16:09:11
 */
 public class StructuralParameters implements Concept {
 
    /**
-* Protege name: geoY
-   */
-   private float geoY;
-   public void setGeoY(float value) { 
-    this.geoY=value;
-   }
-   public float getGeoY() {
-     return this.geoY;
-   }
-
-   /**
-* Protege name: geoZ
-   */
-   private float geoZ;
-   public void setGeoZ(float value) { 
-    this.geoZ=value;
-   }
-   public float getGeoZ() {
-     return this.geoZ;
-   }
-
-   /**
+   * The geographical x coordinate of the propagation point.
 * Protege name: geoX
    */
    private float geoX;
@@ -46,17 +26,6 @@ public class StructuralParameters implements Concept {
    }
 
    /**
-* Protege name: diameter
-   */
-   private float diameter;
-   public void setDiameter(float value) { 
-    this.diameter=value;
-   }
-   public float getDiameter() {
-     return this.diameter;
-   }
-
-   /**
 * Protege name: atParentLengthPos
    */
    private float atParentLengthPos;
@@ -65,6 +34,42 @@ public class StructuralParameters implements Concept {
    }
    public float getAtParentLengthPos() {
      return this.atParentLengthPos;
+   }
+
+   /**
+   * The geographical y coordinate of the propagation point.
+* Protege name: geoY
+   */
+   private float geoY;
+   public void setGeoY(float value) { 
+    this.geoY=value;
+   }
+   public float getGeoY() {
+     return this.geoY;
+   }
+
+   /**
+   * The geographical z coordinate of the propagation point.
+* Protege name: geoZ
+   */
+   private float geoZ;
+   public void setGeoZ(float value) { 
+    this.geoZ=value;
+   }
+   public float getGeoZ() {
+     return this.geoZ;
+   }
+
+   /**
+   * The geographical y coordinate of the propagation point.
+* Protege name: diameter
+   */
+   private float diameter;
+   public void setDiameter(float value) { 
+    this.diameter=value;
+   }
+   public float getDiameter() {
+     return this.diameter;
    }
 
 }

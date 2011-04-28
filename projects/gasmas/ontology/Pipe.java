@@ -7,8 +7,8 @@ import jade.core.*;
 /**
 * Protege name: Pipe
 * @author ontology bean generator
-* @version 2011/04/5, 11:14:58
+* @version 2011/04/28, 16:09:11
 */
-public class Pipe extends DoubleEnded{ 
+public class Pipe extends GridComponent{ 
 
 }

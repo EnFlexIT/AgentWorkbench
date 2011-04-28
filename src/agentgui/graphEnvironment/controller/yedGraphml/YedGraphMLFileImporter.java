@@ -21,7 +21,7 @@ import agentgui.core.application.Language;
 import agentgui.graphEnvironment.controller.GraphFileImporter;
 import agentgui.graphEnvironment.environmentModel.GraphElement;
 import agentgui.graphEnvironment.environmentModel.GraphElementSettings;
-import agentgui.graphEnvironment.environmentModel.GridModel;
+import agentgui.graphEnvironment.environmentModel.NetworkModel;
 import agentgui.graphEnvironment.environmentModel.NetworkComponent;
 import agentgui.graphEnvironment.prototypes.GraphElementPrototype;
 /**
@@ -45,7 +45,7 @@ public class YedGraphMLFileImporter extends GraphFileImporter {
 	/**
 	 * The GridModel created from the imported yEd GraphML file
 	 */
-	private GridModel gridModel;
+	private NetworkModel gridModel;
 	
 	private HashMap<String, GraphElementPrototype> addedElements = null;
 	
@@ -55,7 +55,7 @@ public class YedGraphMLFileImporter extends GraphFileImporter {
 	}
 
 	@Override
-	public GridModel loadGraphFromFile(File graphFile) {
+	public NetworkModel loadGraphFromFile(File graphFile) {
 		// GraphML parser instance
 		YedGraphMLParser parser = new YedGraphMLParser();
 		// List of the graphs start nodes
@@ -81,7 +81,7 @@ public class YedGraphMLFileImporter extends GraphFileImporter {
 		// Build the final graph, starting from the start nodes
 		if (startNodesList!=null) {
 			Iterator<TempNode> startNodes = startNodesList.iterator();
-			gridModel = new GridModel();
+			gridModel = new NetworkModel();
 			while(startNodes.hasNext()){
 				TempNode startNode = startNodes.next();
 				addElement(startNode, null);

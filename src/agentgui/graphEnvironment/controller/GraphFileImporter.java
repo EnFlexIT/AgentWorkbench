@@ -2,9 +2,14 @@ package agentgui.graphEnvironment.controller;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.Iterator;
 
+import edu.uci.ics.jung.algorithms.layout.Layout;
+
+import agentgui.graphEnvironment.environmentModel.GraphEdge;
 import agentgui.graphEnvironment.environmentModel.GraphElementSettings;
-import agentgui.graphEnvironment.environmentModel.GridModel;
+import agentgui.graphEnvironment.environmentModel.GraphNode;
+import agentgui.graphEnvironment.environmentModel.NetworkModel;
 
 /**
  * Classes that should work as import components for the GraphEnvironmentController must implement this interface. 
@@ -19,12 +24,21 @@ public abstract class GraphFileImporter {
 		this.elementSettings = elementSettings;
 	}
 	
+	public void initPosition(NetworkModel network, Layout<GraphNode, GraphEdge> layout){
+		Iterator<GraphNode> nodes = network.getGraph().getVertices().iterator();
+		while(nodes.hasNext()){
+			GraphNode node = nodes.next();
+			node.setPosition(layout.transform(node));
+		}
+		
+	}
+	
 	/**
 	 * This method loads the graph graph from the file and translates it into a JUNG graph. 
 	 * @param graphFile The file containing the graph definition.
 	 * @return The JUNG graph.
 	 */
-	public abstract GridModel loadGraphFromFile(File graphFile);
+	public abstract NetworkModel loadGraphFromFile(File graphFile);
 	/**
 	 * Returns the extension of the file type the GraphFileLoader can handle
 	 * @return The file extension

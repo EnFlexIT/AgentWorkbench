@@ -81,7 +81,7 @@ public class ComponentSettingsDialog extends JDialog implements ActionListener{
 			if(element instanceof GraphNode){
 				((GraphNode)element).setOntologyRepresentation((Concept) oiv.getConfigurationInstances()[0]);
 			}else if(element instanceof NetworkComponent){
-//				((NetworkComponent)element).setOntologyRepresentation((Concept) oiv.getConfigurationInstances()[0]);
+				((NetworkComponent)element).setEncodedOntologyRepresentation(oiv.getConfigurationXML64()[0]);
 			}
 			parentGUI.componentSettingsChanged();
 			this.dispose();
@@ -122,7 +122,13 @@ public class ComponentSettingsDialog extends JDialog implements ActionListener{
 			
 		
 			if(element instanceof NetworkComponent){
+				NetworkComponent elemNetComp = (NetworkComponent)element;
 				oiv = new OntologyInstanceViewer(project, parentGUI.getController().getGraphElementSettings().get(((NetworkComponent) element).getType()).getAgentClass());
+				if(elemNetComp.getEncodedOntologyRepresentation()!=null){
+					String[] encodedOntoRepresentation = new String[1];
+					encodedOntoRepresentation[0]=elemNetComp.getEncodedOntologyRepresentation();
+					oiv.setConfigurationXML64(encodedOntoRepresentation);
+				}
 			}else if(element instanceof GraphNode){
 				String[] ontoClassName = new String[1];
 				ontoClassName[0] = parentGUI.getController().getGraphElementSettings().get("node").getAgentClass();

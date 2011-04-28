@@ -13,7 +13,7 @@ import edu.uci.ics.jung.graph.SparseGraph;
  * @author Nils
  *
  */
-public class GridModel extends Observable{
+public class NetworkModel extends Observable{
 	/**
 	 * The JUNG graph.
 	 */
@@ -29,7 +29,7 @@ public class GridModel extends Observable{
 	/**
 	 * Default constructor
 	 */
-	public GridModel(){
+	public NetworkModel(){
 		this.graph = new SparseGraph<GraphNode, GraphEdge>();
 		this.components = new HashMap<String, GraphElement>();
 		this.networkComponents = new HashMap<String, NetworkComponent>();

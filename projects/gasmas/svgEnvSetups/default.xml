@@ -18,8 +18,8 @@
             <value>
                 <directed>false</directed>
                 <graphElementIDs>n10</graphElementIDs>
-                <graphElementIDs>PP8</graphElementIDs>
-                <graphElementIDs>PP7</graphElementIDs>
+                <graphElementIDs>PP11</graphElementIDs>
+                <graphElementIDs>PP12</graphElementIDs>
                 <id>n10</id>
                 <prototypeClassName>agentgui.graphEnvironment.prototypes.SimpleGraphElement</prototypeClassName>
                 <type>valve</type>
@@ -42,8 +42,8 @@
             <value>
                 <directed>false</directed>
                 <graphElementIDs>n12</graphElementIDs>
-                <graphElementIDs>PP10</graphElementIDs>
-                <graphElementIDs>PP9</graphElementIDs>
+                <graphElementIDs>PP13</graphElementIDs>
+                <graphElementIDs>PP14</graphElementIDs>
                 <id>n12</id>
                 <prototypeClassName>agentgui.graphEnvironment.prototypes.SimpleGraphElement</prototypeClassName>
                 <type>storage</type>
@@ -54,8 +54,8 @@
             <value>
                 <directed>false</directed>
                 <graphElementIDs>n11</graphElementIDs>
-                <graphElementIDs>PP9</graphElementIDs>
-                <graphElementIDs>PP8</graphElementIDs>
+                <graphElementIDs>PP12</graphElementIDs>
+                <graphElementIDs>PP13</graphElementIDs>
                 <id>n11</id>
                 <prototypeClassName>agentgui.graphEnvironment.prototypes.SimpleGraphElement</prototypeClassName>
                 <type>pipe</type>
@@ -66,8 +66,8 @@
             <value>
                 <directed>false</directed>
                 <graphElementIDs>n5</graphElementIDs>
-                <graphElementIDs>PP11</graphElementIDs>
-                <graphElementIDs>PP6</graphElementIDs>
+                <graphElementIDs>PP5</graphElementIDs>
+                <graphElementIDs>PP7</graphElementIDs>
                 <id>n5</id>
                 <prototypeClassName>agentgui.graphEnvironment.prototypes.SimpleGraphElement</prototypeClassName>
                 <type>pipe</type>
@@ -116,9 +116,9 @@
             <key>n9</key>
             <value>
                 <directed>false</directed>
+                <graphElementIDs>PP11</graphElementIDs>
                 <graphElementIDs>n9</graphElementIDs>
-                <graphElementIDs>PP5</graphElementIDs>
-                <graphElementIDs>PP7</graphElementIDs>
+                <graphElementIDs>PP6</graphElementIDs>
                 <id>n9</id>
                 <prototypeClassName>agentgui.graphEnvironment.prototypes.SimpleGraphElement</prototypeClassName>
                 <type>pipe</type>
@@ -128,9 +128,9 @@
             <key>n8</key>
             <value>
                 <directed>false</directed>
+                <graphElementIDs>PP10</graphElementIDs>
+                <graphElementIDs>PP9</graphElementIDs>
                 <graphElementIDs>n8</graphElementIDs>
-                <graphElementIDs>PP13</graphElementIDs>
-                <graphElementIDs>PP14</graphElementIDs>
                 <id>n8</id>
                 <prototypeClassName>agentgui.graphEnvironment.prototypes.SimpleGraphElement</prototypeClassName>
                 <type>exit</type>
@@ -140,9 +140,9 @@
             <key>n7</key>
             <value>
                 <directed>false</directed>
-                <graphElementIDs>PP12</graphElementIDs>
+                <graphElementIDs>PP9</graphElementIDs>
+                <graphElementIDs>PP8</graphElementIDs>
                 <graphElementIDs>n7</graphElementIDs>
-                <graphElementIDs>PP13</graphElementIDs>
                 <id>n7</id>
                 <prototypeClassName>agentgui.graphEnvironment.prototypes.SimpleGraphElement</prototypeClassName>
                 <type>pipe</type>
@@ -152,8 +152,8 @@
             <key>n6</key>
             <value>
                 <directed>false</directed>
-                <graphElementIDs>PP11</graphElementIDs>
-                <graphElementIDs>PP12</graphElementIDs>
+                <graphElementIDs>PP8</graphElementIDs>
+                <graphElementIDs>PP7</graphElementIDs>
                 <graphElementIDs>n6</graphElementIDs>
                 <id>n6</id>
                 <prototypeClassName>agentgui.graphEnvironment.prototypes.SimpleGraphElement</prototypeClassName>

@@ -9,8 +9,8 @@ import javax.swing.JButton;
 
 import org.apache.commons.collections15.Transformer;
 
-import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
+import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
 import edu.uci.ics.jung.visualization.Layer;
@@ -33,6 +33,7 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.Point2D;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -157,8 +158,15 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 	
 	public void setGraph(Graph<GraphNode, GraphEdge> graph){
 		if(graph != null){
-			Layout<GraphNode, GraphEdge> layout = new FRLayout<GraphNode, GraphEdge>(graph);
+			Layout<GraphNode, GraphEdge> layout = new StaticLayout<GraphNode, GraphEdge>(graph);
 			layout.setSize(new Dimension(400, 400));
+			layout.setInitializer(new Transformer<GraphNode, Point2D>() {
+
+				@Override
+				public Point2D transform(GraphNode node) {
+					return node.getPosition();
+				}
+			});
 			visView = new VisualizationViewer<GraphNode, GraphEdge>(layout);
 			// Node labels
 			visView.getRenderContext().setVertexLabelTransformer(new Transformer<GraphNode, String>() {

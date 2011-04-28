@@ -243,7 +243,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 			if(graphFC.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
 				Application.RunInfo.setLastSelectedFolder(graphFC.getCurrentDirectory());
 				File graphMLFile = graphFC.getSelectedFile();
-				this.controller.importGridModel(graphMLFile);
+				this.controller.importNetworkModel(graphMLFile);
 			}
 		}else if(event.getSource().equals(getBtnSetClasses())){
 			getClassSelectorDialog().setVisible(true);

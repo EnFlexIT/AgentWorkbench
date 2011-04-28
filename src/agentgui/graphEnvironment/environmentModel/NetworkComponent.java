@@ -36,6 +36,13 @@ public class NetworkComponent {
 	 * The NetworkComponent's GraphElementPrototype class name
 	 */
 	private String prototypeClassName;
+	/**
+	 * The ontology object instance representing this component, serialized as a base64 encoded String for saving via JAXB
+	 */
+	private String encodedOntologyRepresentation;
+	/**
+	 * Default constructor
+	 */
 	public NetworkComponent(){
 		graphElementIDs = new HashSet<String>();
 	}
@@ -110,6 +117,19 @@ public class NetworkComponent {
 	 */
 	public void setPrototypeClassName(String prototypeClassName) {
 		this.prototypeClassName = prototypeClassName;
+	}
+	/**
+	 * @return the encodedOntologyRepresentation
+	 */
+	public String getEncodedOntologyRepresentation() {
+		return encodedOntologyRepresentation;
+	}
+	/**
+	 * @param encodedOntologyRepresentation the encodedOntologyRepresentation to set
+	 */
+	public void setEncodedOntologyRepresentation(
+			String encodedOntologyRepresentation) {
+		this.encodedOntologyRepresentation = encodedOntologyRepresentation;
 	}
 	
 }

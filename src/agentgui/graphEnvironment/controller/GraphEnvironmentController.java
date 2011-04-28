@@ -1,5 +1,7 @@
 package agentgui.graphEnvironment.controller;
 
+import java.awt.Dimension;
+import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -17,6 +19,8 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.collections15.Transformer;
 
+import edu.uci.ics.jung.algorithms.layout.FRLayout;
+import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseGraph;
 import edu.uci.ics.jung.io.GraphIOException;
@@ -34,7 +38,7 @@ import agentgui.graphEnvironment.controller.yedGraphml.YedGraphMLFileImporter;
 import agentgui.graphEnvironment.environmentModel.GraphEdge;
 import agentgui.graphEnvironment.environmentModel.GraphElementSettings;
 import agentgui.graphEnvironment.environmentModel.GraphNode;
-import agentgui.graphEnvironment.environmentModel.GridModel;
+import agentgui.graphEnvironment.environmentModel.NetworkModel;
 import agentgui.graphEnvironment.environmentModel.NetworkComponentList;
 
 public class GraphEnvironmentController extends Observable implements Observer {
@@ -49,7 +53,7 @@ public class GraphEnvironmentController extends Observable implements Observer {
 	
 	private Project project = null;
 	
-	private GridModel gridModel = null;
+	private NetworkModel networkModel = null;
 	
 	private HashMap<String, GraphElementSettings> currentGts = null;
 	
@@ -61,7 +65,7 @@ public class GraphEnvironmentController extends Observable implements Observer {
 		this.project = project;
 		this.project.addObserver(this);
 		envFilePath = this.project.getProjectFolderFullPath()+this.project.getSubFolderEnvSetups();
-		loadGridModel();
+		loadNetworkModel();
 		setGraphElementSettings(project.simSetups.getCurrSimSetup().getGraphElementSettings());
 		// If no ETS are specified in the setup, assign an empty HashMap to avoid null pointers
 		if(currentGts == null){
@@ -93,9 +97,12 @@ public class GraphEnvironmentController extends Observable implements Observer {
 	 * set.  
 	 * @param graphMLFile The GraphML file defining the new graph.
 	 */
-	public void importGridModel(File graphMLFile){
-		gridModel = getGraphFileImporter().loadGraphFromFile(graphMLFile);
-		if(gridModel != null){
+	public void importNetworkModel(File graphMLFile){
+		networkModel = getGraphFileImporter().loadGraphFromFile(graphMLFile);
+		if(networkModel != null){
+			Layout<GraphNode, GraphEdge> initLayout = new FRLayout<GraphNode, GraphEdge>(networkModel.getGraph(), new Dimension(400, 400));
+			
+			getGraphFileImporter().initPosition(networkModel, initLayout);
 			this.setChanged();
 			notifyObservers(EVENT_GRIDMODEL_CHANGED);
 		}
@@ -105,14 +112,14 @@ public class GraphEnvironmentController extends Observable implements Observer {
 	/**
 	 * @return the graph
 	 */
-	public GridModel getGridModel() {
-		return gridModel;
+	public NetworkModel getGridModel() {
+		return networkModel;
 	}
 
 	@Override
 	public void update(Observable o, Object arg) {
 		if(o.equals(project) && arg == Project.SAVED){
-			saveGridModel();
+			saveNetworkModel();
 		}else if(o.equals(project) && arg instanceof SimulationSetupsChangeNotification){
 			handleSetupChange((SimulationSetupsChangeNotification) arg);
 		}
@@ -149,6 +156,15 @@ public class GraphEnvironmentController extends Observable implements Observer {
 					return arg0.getId();
 				}
 			});
+			graphMLWriter.addVertexData("pos", "position", "", new Transformer<GraphNode, String>() {
+
+				@Override
+				public String transform(GraphNode node) {
+					String pos = node.getPosition().getX()+":"+node.getPosition().getY();
+					return pos;
+				}
+			});
+			
 		}
 		return graphMLWriter;
 	}
@@ -169,6 +185,23 @@ public class GraphEnvironmentController extends Observable implements Observer {
 			public GraphNode transform(NodeMetadata nmd) {
 				GraphNode gn = new GraphNode();
 				gn.setId(nmd.getId());
+				
+				Point2D pos = null;
+				String posString = nmd.getProperty("pos");
+				if(posString != null){
+					String[] coords = posString.split(":");
+					
+					if(coords.length == 2){
+						double xPos = Double.parseDouble(coords[0]);
+						double yPos = Double.parseDouble(coords[1]);
+						pos = new Point2D.Double(xPos, yPos);
+					}
+				}
+				if(pos == null){
+					System.err.println("Keine Position definiert für Knoten "+nmd.getId());
+					pos = new Point2D.Double(0,0);
+				}
+				gn.setPosition(pos);
 				return gn;
 			}
 		};
@@ -204,13 +237,13 @@ private void handleSetupChange(SimulationSetupsChangeNotification sscn){
 			case SimulationSetups.SIMULATION_SETUP_COPY:
 				System.out.println("Testausgabe: kopiere Setup");
 				updateGraphFileName();
-				saveGridModel();
+				saveNetworkModel();
 			break;
 			
 			case SimulationSetups.SIMULATION_SETUP_ADD_NEW:
 				System.out.println("Testausgabe: Erzeuge Setup");
 				updateGraphFileName();
-				gridModel = new GridModel();
+				networkModel = new NetworkModel();
 				currentGts = null;
 			break;
 			
@@ -225,7 +258,7 @@ private void handleSetupChange(SimulationSetupsChangeNotification sscn){
 			case SimulationSetups.SIMULATION_SETUP_LOAD:
 				System.out.println("Testausgabe: Lade Setup");
 				updateGraphFileName();
-				loadGridModel();
+				loadNetworkModel();
 				setGraphElementSettings(project.simSetups.getCurrSimSetup().getGraphElementSettings());
 			break;
 			
@@ -255,8 +288,8 @@ private void handleSetupChange(SimulationSetupsChangeNotification sscn){
 		project.simSetups.getCurrSimSetup().setEnvironmentFileName(baseFileName+".graphml");
 	}
 	
-	private void saveGridModel(){
-		if(gridModel != null && gridModel.getGraph() != null){
+	private void saveNetworkModel(){
+		if(networkModel != null && networkModel.getGraph() != null){
 			
 			try {
 				// Save the graph topology 
@@ -266,7 +299,7 @@ private void handleSetupChange(SimulationSetupsChangeNotification sscn){
 					file.createNewFile();
 				}
 				PrintWriter pw = new PrintWriter(new FileWriter(file));
-				getGraphMLWriter().save(gridModel.getGraph(), pw);
+				getGraphMLWriter().save(networkModel.getGraph(), pw);
 				
 				// Save the network component definitions
 				File componentFile = new File(envFilePath+File.separator+baseFileName+".xml");
@@ -280,7 +313,7 @@ private void handleSetupChange(SimulationSetupsChangeNotification sscn){
 				marsh.setProperty( Marshaller.JAXB_ENCODING, "UTF-8" );
 				marsh.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE );
 
-				marsh.marshal(new NetworkComponentList(gridModel.getNetworkComponents()), componentFileWriter);
+				marsh.marshal(new NetworkComponentList(networkModel.getNetworkComponents()), componentFileWriter);
 				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -292,9 +325,9 @@ private void handleSetupChange(SimulationSetupsChangeNotification sscn){
 		}
 	}
 	
-	private void loadGridModel(){
+	private void loadNetworkModel(){
 		
-		gridModel = new GridModel();
+		networkModel = new NetworkModel();
 		
 		String fileName = project.simSetups.getCurrSimSetup().getEnvironmentFileName();
 		if(fileName != null){
@@ -305,7 +338,7 @@ private void handleSetupChange(SimulationSetupsChangeNotification sscn){
 				baseFileName = fileName.substring(0, fileName.lastIndexOf('.'));
 				try {
 					// Load graph topology
-					gridModel.setGraph(getGraphMLReader(graphFile).readGraph());
+					networkModel.setGraph(getGraphMLReader(graphFile).readGraph());
 					
 					// Load network component definitions
 				} catch (FileNotFoundException e) {
@@ -323,7 +356,7 @@ private void handleSetupChange(SimulationSetupsChangeNotification sscn){
 					JAXBContext context = JAXBContext.newInstance(NetworkComponentList.class);
 					Unmarshaller unmarsh = context.createUnmarshaller();
 					NetworkComponentList compList = (NetworkComponentList) unmarsh.unmarshal(new FileReader(componentFile));
-					gridModel.setNetworkComponents(compList.getComponentList());
+					networkModel.setNetworkComponents(compList.getComponentList());
 				} catch (JAXBException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -338,4 +371,5 @@ private void handleSetupChange(SimulationSetupsChangeNotification sscn){
 		setChanged();
 		notifyObservers(new Integer(EVENT_GRIDMODEL_CHANGED));
 	}
+	
 }

@@ -6,22 +6,12 @@ import jade.util.leap.*;
 import jade.core.*;
 
 /**
+   * A set of parameters describing properties of a gas.
 * Protege name: FluidParameters
 * @author ontology bean generator
-* @version 2011/04/5, 11:14:58
+* @version 2011/04/28, 16:09:11
 */
 public class FluidParameters implements Concept {
-
-   /**
-* Protege name: density
-   */
-   private float density;
-   public void setDensity(float value) { 
-    this.density=value;
-   }
-   public float getDensity() {
-     return this.density;
-   }
 
    /**
 * Protege name: dynamicViscosity
@@ -35,17 +25,6 @@ public class FluidParameters implements Concept {
    }
 
    /**
-* Protege name: kinematicViscosity
-   */
-   private float kinematicViscosity;
-   public void setKinematicViscosity(float value) { 
-    this.kinematicViscosity=value;
-   }
-   public float getKinematicViscosity() {
-     return this.kinematicViscosity;
-   }
-
-   /**
 * Protege name: thermalConductivity
    */
    private float thermalConductivity;
@@ -54,6 +33,28 @@ public class FluidParameters implements Concept {
    }
    public float getThermalConductivity() {
      return this.thermalConductivity;
+   }
+
+   /**
+* Protege name: density
+   */
+   private float density;
+   public void setDensity(float value) { 
+    this.density=value;
+   }
+   public float getDensity() {
+     return this.density;
+   }
+
+   /**
+* Protege name: kinematicViscosity
+   */
+   private float kinematicViscosity;
+   public void setKinematicViscosity(float value) { 
+    this.kinematicViscosity=value;
+   }
+   public float getKinematicViscosity() {
+     return this.kinematicViscosity;
    }
 
 }
