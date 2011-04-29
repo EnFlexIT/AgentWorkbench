@@ -2,6 +2,7 @@ package agentgui.graphEnvironment.controller;
 
 import java.awt.Point;
 import java.awt.event.MouseEvent;
+import java.util.Iterator;
 
 import agentgui.graphEnvironment.environmentModel.GraphEdge;
 import agentgui.graphEnvironment.environmentModel.GraphNode;
@@ -33,6 +34,8 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	@Override
 	public void mouseClicked(MouseEvent e){
 		
+//		super.mouseClicked(e);
+		
 		Object pickedObject = null;
 		
 		Point point = e.getPoint();
@@ -55,8 +58,18 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 			}
 		}
 		
-		
-		
 		myGUI.handleObjectSelection(pickedObject);
+	}
+	
+	@Override
+	public void mouseDragged(MouseEvent e){
+		super.mouseDragged(e);
+		
+		// Update the GraphNode's position attribute 
+		Iterator<GraphNode> pickedNodes= myGUI.getVisView().getPickedVertexState().getPicked().iterator();
+		while(pickedNodes.hasNext()){
+			GraphNode pickedNode = pickedNodes.next();
+			pickedNode.setPosition(myGUI.getVisView().getGraphLayout().transform(pickedNode));
+		}
 	}
 }
