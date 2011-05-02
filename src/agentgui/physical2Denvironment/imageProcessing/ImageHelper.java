@@ -993,7 +993,7 @@ public class ImageHelper {
 		READ_WORLD=true;
 
 	   }
-			System.out.println("Welt gelesen!!");
+			
 		this.evn=ImageIO.read(new File("myWorld.jpg"));
 		return evn;
 	}
