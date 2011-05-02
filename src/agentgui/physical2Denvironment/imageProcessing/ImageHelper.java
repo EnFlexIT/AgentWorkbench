@@ -22,7 +22,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.svg.SVGDocument;
 
 import agentgui.physical2Denvironment.ontology.ActiveObject;
 import agentgui.physical2Denvironment.ontology.Position;
@@ -30,7 +29,6 @@ import agentgui.physical2Denvironment.ontology.PositionUpdate;
 import agentgui.physical2Denvironment.ontology.StaticObject;
 import agentgui.physical2Denvironment.provider.EnvironmentProviderHelper;
 import agentgui.physical2Denvironment.utils.EnvironmentWrapper;
-import agentgui.simulationService.time.TimeModelDiscrete;
 
 
 
@@ -984,23 +982,27 @@ public class ImageHelper {
 		 }
 		//SVGImage img=new SVGImage( (SVGDocument)doc);
 		//this.evn=(BufferedImage) img.createBufferedImage();
+			if(!READ_WORLD)
+			{	
 		SVGSafe save=new SVGSafe();
 		save.write("myWorld.svg", doc);
 		save.writeJPG("myworld.svg");
-		if(!READ_WORLD)
-		{
-		this.evn=ImageIO.read(new File("myWorld.jpg"));
-		}
+			}
+		
+		
 		READ_WORLD=true;
-		return evn;
+
 	   }
+			System.out.println("Welt gelesen!!");
+		this.evn=ImageIO.read(new File("myWorld.jpg"));
+		return evn;
 	}
 	catch(Exception e)
 	{
 		e.printStackTrace();
 		return null;
 	}
-	return null;
+	
  }
 
 	public PositionUpdate calculateNextCoord(int lastIndex,Position selfPos, Position destPos, final double msInSeconds,float speed, Stack<Position> position)
