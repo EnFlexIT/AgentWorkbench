@@ -1,7 +1,5 @@
 package agentgui.graphEnvironment.controller;
 
-import jade.content.Concept;
-
 import javax.swing.JDialog;
 
 import agentgui.core.application.Application;
@@ -42,9 +40,13 @@ public class ComponentSettingsDialog extends JDialog implements ActionListener{
 	 * The graph node containing the ontology object
 	 */
 	private Object element = null;
-	
+	/**
+	 * The parent GUI
+	 */
 	private GraphEnvironmentControllerGUI parentGUI = null;
-	
+	/**
+	 * The OntologyInstanceViewer instance used for editing ontology objects
+	 */
 	private OntologyInstanceViewer oiv = null;
 	/**
 	 * Constructor
@@ -79,7 +81,7 @@ public class ComponentSettingsDialog extends JDialog implements ActionListener{
 		if(e.getSource().equals(getJButtonApply())){
 			oiv.save();
 			if(element instanceof GraphNode){
-				((GraphNode)element).setOntologyRepresentation((Concept) oiv.getConfigurationInstances()[0]);
+				((GraphNode)element).setEncodedOntologyRepresentation(oiv.getConfigurationXML64()[0]);
 			}else if(element instanceof NetworkComponent){
 				((NetworkComponent)element).setEncodedOntologyRepresentation(oiv.getConfigurationXML64()[0]);
 			}
@@ -120,33 +122,44 @@ public class ComponentSettingsDialog extends JDialog implements ActionListener{
 			jPanelContent.add(getJButtonApply(), gridBagConstraints);
 			jPanelContent.add(getJButtonAbort(), gridBagConstraints1);
 			
-		
-			if(element instanceof NetworkComponent){
-				NetworkComponent elemNetComp = (NetworkComponent)element;
-				oiv = new OntologyInstanceViewer(project, parentGUI.getController().getGraphElementSettings().get(((NetworkComponent) element).getType()).getAgentClass());
-				if(elemNetComp.getEncodedOntologyRepresentation()!=null){
-					String[] encodedOntoRepresentation = new String[1];
-					encodedOntoRepresentation[0]=elemNetComp.getEncodedOntologyRepresentation();
-					oiv.setConfigurationXML64(encodedOntoRepresentation);
-				}
-			}else if(element instanceof GraphNode){
-				String[] ontoClassName = new String[1];
-				ontoClassName[0] = parentGUI.getController().getGraphElementSettings().get("node").getAgentClass();
-				oiv = new OntologyInstanceViewer(project, ontoClassName);
-
-				if(((GraphNode)element).getOntologyRepresentation() != null){
-					Object[] ontoObject = new Object[1];
-					ontoObject[0] = ((GraphNode)element).getOntologyRepresentation();
-					oiv.setConfigurationInstances(ontoObject);
-				}
-				
-			}
-			
-			oiv.setAllowViewEnlargement(false);
-			jPanelContent.add(oiv, gridBagConstraints11);
+			jPanelContent.add(getOIV(), gridBagConstraints11);
 			
 		}
 		return jPanelContent;
+	}
+	
+	/**
+	 * Creates a new OntologyInstancViewer instance and initiates it with the currently selected node / component
+	 * @return
+	 */
+	private OntologyInstanceViewer getOIV(){
+		if(element instanceof NetworkComponent){
+			NetworkComponent elemNetComp = (NetworkComponent)element;
+			// Initiate a new OIV using the NetworkComponents agent class
+			oiv = new OntologyInstanceViewer(project, parentGUI.getController().getGraphElementSettings().get(((NetworkComponent) element).getType()).getAgentClass());
+			// If an ontology instance is defined for this component, let the OIV decode and load it 
+			if(elemNetComp.getEncodedOntologyRepresentation()!=null){
+				String[] encodedOntoRepresentation = new String[1];
+				encodedOntoRepresentation[0]=elemNetComp.getEncodedOntologyRepresentation();
+				oiv.setConfigurationXML64(encodedOntoRepresentation);
+			}
+		}else if(element instanceof GraphNode){
+			// Obtain the ontology class name defined for nodes
+			String[] ontoClassName = new String[1];
+			ontoClassName[0] = parentGUI.getController().getGraphElementSettings().get("node").getAgentClass();
+			// Initiate a new OIV with the class name
+			oiv = new OntologyInstanceViewer(project, ontoClassName);
+			// If an ontology instance is defined for this node, let the OIV decode and load it
+			if(((GraphNode)element).getEncodedOntologyRepresentation() != null){
+				String[] encodedOntoRepresentation = new String[1];
+				encodedOntoRepresentation[0]=((GraphNode)element).getEncodedOntologyRepresentation();
+				oiv.setConfigurationXML64(encodedOntoRepresentation);
+			}
+		}
+		
+		oiv.setAllowViewEnlargement(false);
+		
+		return oiv;
 	}
 
 	/**

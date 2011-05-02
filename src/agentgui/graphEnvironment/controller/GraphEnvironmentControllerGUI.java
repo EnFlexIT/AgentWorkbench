@@ -227,7 +227,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	
 	@Override
 	public void update(Observable o, Object arg) {
-		if(o.equals(controller) && arg.equals(GraphEnvironmentController.EVENT_GRIDMODEL_CHANGED)){
+		if(o.equals(controller) && arg.equals(GraphEnvironmentController.EVENT_NETWORKMODEL_LOADED)){
 			graphGUI.setGraph(controller.getGridModel().getGraph());
 			rebuildTblComponents();
 		}

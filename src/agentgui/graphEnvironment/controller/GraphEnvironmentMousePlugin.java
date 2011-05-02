@@ -34,7 +34,6 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	@Override
 	public void mouseClicked(MouseEvent e){
 		
-//		super.mouseClicked(e);
 		
 		Object pickedObject = null;
 		
@@ -45,7 +44,6 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 		GraphNode pickedPP = ps.getVertex(myGUI.getVisView().getGraphLayout(), point.getX(), point.getY());
 		
 		if(pickedPP != null){		// A node / PropagationPoint was clicked
-//			System.out.println("PropagationPoint PP"+pickedPP.getIndex());
 			pickedObject = pickedPP;
 		}else{			// No node / PropagationPoint was clicked
 			
@@ -53,7 +51,6 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 			GraphEdge pickedGC = ps.getEdge(myGUI.getVisView().getGraphLayout(), point.getX(), point.getY());
 			
 			if(pickedGC != null){	// An edge / GridComponent was clicked
-//				System.out.println("GridComponent "+pickedGC.getAgentID()+" of type "+pickedGC.getType());
 				pickedObject = pickedGC;
 			}
 		}

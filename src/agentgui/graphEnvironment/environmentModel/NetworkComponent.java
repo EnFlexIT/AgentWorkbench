@@ -20,10 +20,6 @@ public class NetworkComponent {
 	 * The NetworkComponent's type
 	 */
 	private String type;
-//	/**
-//	 * The NetworkComponent's ontology representation
-//	 */
-//	private Concept ontologyRepresentation;
 	/**
 	 * The IDs of the nodes and edges that are part of this NetworkComponent
 	 */
@@ -70,18 +66,6 @@ public class NetworkComponent {
 	public void setType(String type) {
 		this.type = type;
 	}
-//	/**
-//	 * @return the ontologyRepresentation
-//	 */
-//	public Concept getOntologyRepresentation() {
-//		return ontologyRepresentation;
-//	}
-//	/**
-//	 * @param ontologyRepresentation the ontologyRepresentation to set
-//	 */
-//	public void setOntologyRepresentation(Concept ontologyRepresentation) {
-//		this.ontologyRepresentation = ontologyRepresentation;
-//	}
 	/**
 	 * @return the graphElements
 	 */

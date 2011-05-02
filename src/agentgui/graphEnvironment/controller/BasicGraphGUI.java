@@ -36,18 +36,40 @@ import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.util.Iterator;
 import java.util.Vector;
-
+/**
+ * This class implements a GUI component for displaying visualizations for JUNG graphs.
+ * 
+ * @author Nils
+ *
+ */
 public class BasicGraphGUI extends JPanel implements ActionListener{
 
 	private static final long serialVersionUID = 1L;
+	/**
+	 * Panel containing controll buttons.
+	 */
 	private JPanel pnlControlls = null;
+	/**
+	 * Zoom in button
+	 */
 	private JButton btnZoomIn = null;
+	/**
+	 * Zoom out button
+	 */
 	private JButton btnZoomOut = null;
+	/**
+	 * Reset zoom
+	 */
 	private JButton btnZoomReset = null;
+	/**
+	 * Graph visualization component
+	 */
 	private VisualizationViewer<GraphNode, GraphEdge> visView = null;
 	private ScalingControl scalingControl = null;
 	private Component rightComponent = null;
-	
+	/**
+	 * Parent GUI containing this BasicGRaphGUI
+	 */
 	private GraphEnvironmentControllerGUI parentGUI = null;
 
 	/**
@@ -155,20 +177,28 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 	VisualizationViewer<GraphNode, GraphEdge> getVisView(){
 		return visView;
 	}
-	
+	/**
+	 * This method assigns a graph to a new VisualizationViewer and adds it to the GUI
+	 * @param graph The graph
+	 */
 	public void setGraph(Graph<GraphNode, GraphEdge> graph){
-		if(graph != null){
+		
+		if(graph != null){	// A graph was passed
+			// Define graph layout
 			Layout<GraphNode, GraphEdge> layout = new StaticLayout<GraphNode, GraphEdge>(graph);
 			layout.setSize(new Dimension(400, 400));
 			layout.setInitializer(new Transformer<GraphNode, Point2D>() {
 
 				@Override
 				public Point2D transform(GraphNode node) {
+					// The position is specified in the GraphNode instance
 					return node.getPosition();
 				}
 			});
+			
+			// Create a new VisualizationViewer instance
 			visView = new VisualizationViewer<GraphNode, GraphEdge>(layout);
-			// Node labels
+			// Configure node labels
 			visView.getRenderContext().setVertexLabelTransformer(new Transformer<GraphNode, String>() {
 				
 				@Override
@@ -176,9 +206,8 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 					return arg0.getId();
 				}
 			});
-//			visView.getRenderer().getVertexLabelRenderer().setPosition(Position.CNTR);
 			
-			// Edge labels
+			// Configure edge labels
 			visView.getRenderContext().setEdgeLabelTransformer(new Transformer<GraphEdge, String>() {
 	
 				@Override
@@ -186,22 +215,27 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 					return arg0.getType()+" "+arg0.getId();
 				}
 			});
-			
+			// Use straight lines as edges
 			visView.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line<GraphNode, GraphEdge>());
 			
+			// Configure mouse interaction			
 			PluggableGraphMouse pgm = new PluggableGraphMouse();
 			pgm.add(new GraphEnvironmentMousePlugin(this));
 			visView.setGraphMouse(pgm);
+			
 			visView.setBackground(Color.WHITE);
 			
 			rightComponent = new GraphZoomScrollPane(visView);;
 			
+			// Enable buttons
 			getBtnZoomIn().setEnabled(true);
 			getBtnZoomOut().setEnabled(true);
 			getBtnZoomReset().setEnabled(true);
-		}else{
+		}else{	// No graph passed
+			// Use a JPanel as dummy component
 			rightComponent = new JPanel();
 			
+			// Disable buttons
 			getBtnZoomIn().setEnabled(false);
 			getBtnZoomOut().setEnabled(false);
 			getBtnZoomReset().setEnabled(false);
@@ -214,10 +248,13 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		// Zoom in
 		if(e.getSource() == getBtnZoomIn() && visView != null){
 			scalingControl.scale(visView, 1.1f, visView.getCenter());
+		// Zoom out
 		}else if(e.getSource() == getBtnZoomOut() && visView != null){
 			scalingControl.scale(visView, 1/1.1f, visView.getCenter());
+		// Reset zoom
 		}else if(e.getSource() == getBtnZoomReset() && visView != null){
 			visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).setToIdentity();
 			visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).setToIdentity();
@@ -225,6 +262,10 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 		
 	}
 	
+	/**
+	 * This method passes object selections to the parent GUI
+	 * @param pickedObject The selected object
+	 */
 	void handleObjectSelection(Object pickedObject){
 		parentGUI.selectObject(pickedObject);
 	}
