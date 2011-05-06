@@ -2,6 +2,7 @@ package agentgui.simulationService.sensoring;
 
 import agentgui.simulationService.agents.SimulationAgent;
 import agentgui.simulationService.environment.EnvironmentModel;
+import agentgui.simulationService.transaction.EnvironmentNotification;
 import jade.core.Location;
 
 public class ServiceSensor {
@@ -16,8 +17,8 @@ public class ServiceSensor {
 		myAgent.setEnvironmentModel(environmentModel, aSynchron);
 	}
 	
-	public void notifyAgent(Object notification, boolean aSynchron) {
-		myAgent.setNotification(notification, aSynchron);
+	public void notifyAgent(EnvironmentNotification notification) {
+		myAgent.setNotification(notification);
 	}
 
 	public void doDelete() {

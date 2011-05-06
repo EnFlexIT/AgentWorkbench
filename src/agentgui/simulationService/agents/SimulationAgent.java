@@ -1,11 +1,18 @@
 package agentgui.simulationService.agents;
+
+import java.util.Vector;
+
 import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.SimulationServiceHelper;
+
 import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.sensoring.ServiceSensor;
+import agentgui.simulationService.transaction.EnvironmentNotification;
+import jade.core.AID;
 import jade.core.Agent;
 import jade.core.Location;
 import jade.core.ServiceException;
+import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
 
 public class SimulationAgent extends Agent {
@@ -15,11 +22,15 @@ public class SimulationAgent extends Agent {
 	protected ServiceSensor mySensor;
 	protected EnvironmentModel myEnvironmentModel;
 	protected Location myNewLocation;
+	
+	private CyclicNotificationHandler notifyHandler = null;
+	private Vector<EnvironmentNotification> notifications = new Vector<EnvironmentNotification>();
 
 	@Override
 	protected void setup() {
 		super.setup();
 		this.sensorPlugIn();
+		this.addNotificationHandler();
 	}
 	@Override
 	protected void beforeMove() {
@@ -47,6 +58,7 @@ public class SimulationAgent extends Agent {
 	@Override
 	protected void takeDown() {
 		super.takeDown();
+		this.removeNotificationHandler();
 		this.sensorPlugOut();
 	}
 	
@@ -155,27 +167,102 @@ public class SimulationAgent extends Agent {
 		}
 	}
 
-	
-	public void setNotification(Object notification, boolean aSynchron) {
-		if (aSynchron==true) {
-			this.addBehaviour(new ServiceNotification(notification));	
-		} else {
-			this.onNotification(notification);	
-		}	
-	}
-	private class ServiceNotification extends OneShotBehaviour {
-		private static final long serialVersionUID = 4638681927192305608L;
-		private Object notification=null;
-		public ServiceNotification(Object notification) {
-			this.notification = notification;
+	/**
+	 * This method can be used to transfer any kind of information to the Manager of the current environment model  
+	 * @param notification
+	 * @return
+	 */
+	protected boolean sendManagerNotification(Object notification) {
+		boolean send = false;
+		EnvironmentNotification myNotification = new EnvironmentNotification(this.getAID(), false, notification);
+		try {
+			SimulationServiceHelper simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
+			send = simHelper.notifyManagerAgent(myNotification);	
+		} catch (ServiceException e) {
+			e.printStackTrace();
 		}
+		return send;
+	}
+	
+	/**
+	 * This method can be used to transfer any kind of information to one member of the current environment model  
+	 * @param notification
+	 * @return
+	 */
+	protected boolean sendAgentNotification(AID receiverAID, Object notification) {
+		boolean send = false;
+		EnvironmentNotification myNotification = new EnvironmentNotification(this.getAID(), false, notification);
+		try {
+			SimulationServiceHelper simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
+			send = simHelper.notifySensorAgent(receiverAID, myNotification);
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
+		return send;
+	}
+	
+	
+	/**
+	 * This method can be invoked from the simulation service, if 
+	 * a notification for the manager has to be delivered 
+	 * @param notification
+	 * @param aSynchron
+	 */
+	public void setNotification(EnvironmentNotification notification) {
+		// --- place the notification into the notification vector -------
+		synchronized (this.notifications) {
+			this.notifications.add(notification);	
+		}
+		// --- restart the CyclicNotificationHandler ---------------------
+		notifyHandler.restart();	
+			
+	}
+	/**
+	 * This method adds the CyclicNotificationHandler to this agent
+	 */
+	private void addNotificationHandler() {
+		if (this.notifyHandler==null) {
+			this.notifyHandler = new CyclicNotificationHandler();	
+		}		
+		this.addBehaviour(this.notifyHandler);
+	}
+	/**
+	 * This method removes the CyclicNotificationHandler from this agent
+	 */
+	private void removeNotificationHandler() {
+		this.removeBehaviour(this.notifyHandler);
+	}
+
+	private class CyclicNotificationHandler extends CyclicBehaviour {
+		private static final long serialVersionUID = 4638681927192305608L;
 		@Override
 		public void action() {
-			onNotification(this.notification);
+			
+			boolean removeFirstElement = false;
+			
+			// --- Get the first element and work on it ------------------
+			if (notifications.size()!=0) {
+				EnvironmentNotification notification = notifications.get(0);
+				onEnvironmentNotification(notification);
+				removeFirstElement = true;				
+			}
+			
+			// --- remove this element and control the notifications -----
+			synchronized (notifications) {
+				if (removeFirstElement==true) {
+					notifications.remove(0);
+				}
+				if (notifications.size()==0) {
+					block();
+				}
+			}
 		}
 	}
-	protected void onNotification(Object notification) {
-	}
+	/**
+	 * This mehtod will be executed if a ManagerNotification arrives this agent
+	 * @param notification
+	 */
+	protected void onEnvironmentNotification(EnvironmentNotification notification) {};
 	
 	
 }

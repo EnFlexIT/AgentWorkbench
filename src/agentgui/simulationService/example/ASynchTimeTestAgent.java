@@ -122,7 +122,7 @@ public class ASynchTimeTestAgent extends SimulationAgent {
 				simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
 				curSynchDate = simHelper.getSynchTimeDate();
 				currSynchDiff = simHelper.getSynchTimeDifferenceMillis();
-				simHelper.stepSimulation(null, true);				
+				simHelper.stepSimulation(null, 0, true);				
 				if (gui!=null) {
 					gui.setTime(curSynchDate, currSynchDiff);	
 				}

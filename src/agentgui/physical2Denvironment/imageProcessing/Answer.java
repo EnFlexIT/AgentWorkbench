@@ -4,15 +4,15 @@ import java.util.ArrayList;
 
 import agentgui.physical2Denvironment.ontology.Position;
 
-public class Answer implements java.io.Serializable
-{	
+public class Answer implements java.io.Serializable {	
+	
+	
+	private static final long serialVersionUID = -4472768003380715304L;
 	
 	private Object speed;
 	private ArrayList<Position> wayToDestination;
 	private Position nextPosition;
 	private int index;
-	
-	
 	
 	
 	public Position getNextPosition() {

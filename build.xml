@@ -32,7 +32,7 @@
 	<property name="visServiceDestinDir" value="lib\jade\lib\\" />
 	<property name="visServiceDestinJar" value="${simServiceDestinDir}\visualization.jar" />
 
-	<property name="destinDir" value="D:\00 Tmp\00 Jars\AgentGUI\\" />
+	<property name="destinDir" value="exec\AgentGUI\\" />
 	<property name="destinJar" value="${destinDir}\AgentGui.jar" />		
 	<property name="destinDirLibraries" value="${destinDir}\lib\\" />
 	<property name="destinDirProperties" value="${destinDir}\properties\\" />

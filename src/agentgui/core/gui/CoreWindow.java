@@ -45,7 +45,7 @@ import javax.swing.border.EtchedBorder;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
-import agentgui.simulationService.balancing.SimStartAgent;
+import agentgui.simulationService.agents.SimStartAgent;
 
 /**
  * Main User-Interface of the application

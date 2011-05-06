@@ -1,4 +1,4 @@
-package agentgui.simulationService.balancing;
+package agentgui.simulationService.agents;
 
 import jade.core.Agent;
 import jade.core.ServiceException;
@@ -8,6 +8,8 @@ import agentgui.core.sim.setup.DistributionSetup;
 import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.SimulationServiceHelper;
+import agentgui.simulationService.balancing.StaticLoadBalancing;
+import agentgui.simulationService.balancing.StaticLoadBalancingBase;
 
 public class SimStartAgent extends Agent {
 

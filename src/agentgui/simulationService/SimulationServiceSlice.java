@@ -9,6 +9,8 @@ import java.util.Vector;
 
 import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.load.LoadAgentMap.AID_Container;
+import agentgui.simulationService.transaction.EnvironmentManagerDescription;
+import agentgui.simulationService.transaction.EnvironmentNotification;
 
 
 public interface SimulationServiceSlice extends Service.Slice {
@@ -27,32 +29,39 @@ public interface SimulationServiceSlice extends Service.Slice {
 	
 	
 	// ----------------------------------------------------------
-	// --- Methods on the Manager-Agent -------------------------
+	// --- Method on the Manager-Agent --------------------------
 	static final String SIM_SET_MANAGER_AGENT = "set-manager";
-	static final String SIM_GET_MANAGER_AGENT = "get-manager";
-	
-	public void setManagerAgent(AID agentAddress) throws IMTPException;
-	public AID getManagerAgent() throws IMTPException;
-	
+	public void setManagerAgent(EnvironmentManagerDescription envManager) throws IMTPException;
 	
 	// ----------------------------------------------------------
 	// --- Methods on the EnvironmentModel ----------------------
 	static final String SIM_SET_ENVIRONMENT_MODEL = "sim-set-environment-model";
 	static final String SIM_STEP_SIMULATION = "sim-step-simulation";
-	static final String SIM_NOTIFY_AGENT = "sim-notify-agent";
+	static final String SIM_SET_ANSWERS_EXPECTED = "sim-set-number-expected";
 	static final String SIM_PAUSE_SIMULATION = "sim-pause";
+	
+	static final String SIM_NOTIFY_AGENT = "sim-notify-agent";
+	static final String SIM_NOTIFY_MANAGER = "notify-manager";
+	static final String SIM_NOTIFY_MANAGER_PUT_AGENT_ANSWERS = "notify-manager-put-agent-answers";
+	
 	static final String SIM_SET_ENVIRONMENT_NEXT_PART = "set-environment-next-part";
 	static final String SIM_GET_ENVIRONMENT_NEXT_PARTS = "get-environment-next-parts";
 	static final String SIM_RESET_ENVIRONMENT_NEXT_PARTS = "reset-environment-next-parts";
 	
+	
 	public void setEnvironmentModel(EnvironmentModel envModel) throws IMTPException;
 	public void stepSimulation(EnvironmentModel envModel, boolean aSynchron) throws IMTPException;
-	public boolean notifyAgent(AID agentAID, Object notification, boolean aSynchron) throws IMTPException;
+	public void setAnswersExpected(int answersExpected) throws IMTPException;
 	public void setPauseSimulation(boolean pauseSimulation) throws IMTPException;
+	
+	public boolean notifyAgent(AID agentAID, EnvironmentNotification notification) throws IMTPException;
+	public boolean notifyManager(EnvironmentNotification notification) throws IMTPException;
+	public void notifyManagerPutAgentAnswers(Hashtable<AID, Object> allAgentAnswers) throws IMTPException;
 	
 	public void setEnvironmentInstanceNextPart(Hashtable<AID, Object> nextPartsLocal) throws IMTPException;
 	public Hashtable<AID, Object> getEnvironmentInstanceNextParts() throws IMTPException;
 	public void resetEnvironmentInstanceNextParts() throws IMTPException;
+	
 	
 	// ----------------------------------------------------------
 	// --- Methods to handle new remote container --------------- 

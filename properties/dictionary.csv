@@ -10,6 +10,8 @@ Abbrechen;Cancel;;;
 Abbruch: Kein Projekt geöffnet!;Canceled: No project open!;;;
 Abbruch;Cancel;;;
 Abtastintervall;Sampling rate;;;
+Agent 'MovingAgent': Keine Klasse definiert!;;;;
+Agent 'mov2': Keine Klasse definiert!;;;;
 Agent nach oben verschieben;Move up agent;;;
 Agent nach unten verschieben;Move down agent;;;
 Agent starten...;Start agent...;;;

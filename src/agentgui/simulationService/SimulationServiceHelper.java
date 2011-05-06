@@ -11,6 +11,8 @@ import java.util.Vector;
 import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.load.LoadAgentMap.AID_Container;
 import agentgui.simulationService.sensoring.ServiceSensor;
+import agentgui.simulationService.sensoring.ServiceSensorManager;
+import agentgui.simulationService.transaction.EnvironmentNotification;
 
 
 /**
@@ -34,20 +36,23 @@ public interface SimulationServiceHelper extends ServiceHelper {
 	public void setAgentMigration(Vector<AID_Container> transferAgents) throws ServiceException;
 	
 	// --- Methods for simulations ----------------------------------
-	public void setManagerAgent(AID agentAddress) throws ServiceException; 
+	public void setManagerAgent(AID agentAddress) throws ServiceException;
 	public AID getManagerAgent() throws ServiceException;
-	
+		
 	public void sensorPlugIn(ServiceSensor sensor) throws ServiceException;
 	public void sensorPlugOut(ServiceSensor sensor) throws ServiceException;
+	
+	public void sensorPlugIn4Manager(ServiceSensorManager sensor) throws ServiceException;
+	public void sensorPlugOut4Manager(ServiceSensorManager sensor) throws ServiceException;
 	
 	public void setStepSimulationAsynchronous(boolean stepAsynchronous) throws ServiceException;
 	public boolean getStepSimulationAsynchronous() throws ServiceException;
 	
-	public void stepSimulation(EnvironmentModel envModel) throws ServiceException;
-	public void stepSimulation(EnvironmentModel envModel, boolean aSynchron) throws ServiceException;
+	public void stepSimulation(EnvironmentModel envModel, int answersExpected) throws ServiceException;
+	public void stepSimulation(EnvironmentModel envModel, int answersExpected, boolean aSynchron) throws ServiceException;
 
-	public boolean notifySensorAgent(AID agentAID, Object notification) throws ServiceException;
-	public boolean notifySensorAgent(AID agentAID, Object notification, boolean aSynchron) throws ServiceException;
+	public boolean notifySensorAgent(AID agentAID, EnvironmentNotification notification) throws ServiceException;
+	public boolean notifyManagerAgent(EnvironmentNotification notification) throws ServiceException;
 	
 	public void setPauseSimulation(boolean pauseSimulation) throws ServiceException;
 	

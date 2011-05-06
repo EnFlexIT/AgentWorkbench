@@ -27,12 +27,16 @@ import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.load.LoadMeasureThread;
 import agentgui.simulationService.load.LoadAgentMap.AID_Container;
 import agentgui.simulationService.sensoring.ServiceActuator;
+import agentgui.simulationService.sensoring.ServiceActuatorManager;
 import agentgui.simulationService.sensoring.ServiceSensor;
+import agentgui.simulationService.sensoring.ServiceSensorManager;
+import agentgui.simulationService.transaction.EnvironmentManagerDescription;
+import agentgui.simulationService.transaction.EnvironmentNotification;
 import agentgui.simulationService.transaction.TransactionMap;
 
 /**
  * 
- * @author Christian Derksen - DAWIS - ICB - University of Duisburg / Essen
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class SimulationService extends BaseService {
 
@@ -53,7 +57,9 @@ public class SimulationService extends BaseService {
 	private long timeDiff2MainContainer = 0;		// --- Difference between this and the MainContainer-Time
 	
 	// --- The Agent who is the Manager / Controller of the Simulation --------
-	private AID managerAgent = null;
+	private EnvironmentManagerDescription environmentManagerDescription = null;
+	//private AID managerAgent = null;
+	
 	// --- The List of Agents, which are registered to this service ----------- 
 	private Hashtable<String,AID> agentList = new Hashtable<String,AID>();
 	
@@ -67,9 +73,12 @@ public class SimulationService extends BaseService {
 	// --- The Actuator for this Service, which can inform registered --------- 
 	// --- Agents about changes in the Simulation e.g. 'stepTimeModel' --------
 	private ServiceActuator localServiceActuator = new ServiceActuator();
+	private ServiceActuatorManager localServiceActuator4Manager = new ServiceActuatorManager();
 	// --- How should an Agent be notified about Environment-Changes? ---------
 	private boolean stepSimulationAsynchronous = true;
+
 	// --- The next EnvironmentObject-Instance in parts (answers of agents) ---
+	private int environmentInstanceNextPartsExpected = 0;
 	private Hashtable<AID, Object> environmentInstanceNextParts = new Hashtable<AID, Object>();
 	private Hashtable<AID, Object> environmentInstanceNextPartsLocal = new Hashtable<AID, Object>();
 	
@@ -177,11 +186,13 @@ public class SimulationService extends BaseService {
 		// ----------------------------------------------------------
 		// --- Methods for the Manager-Agent ------------------------
 		public void setManagerAgent(AID agentAddress) throws ServiceException {
+			
+			EnvironmentManagerDescription envManager = new EnvironmentManagerDescription(agentAddress, myContainer.here());
 			Service.Slice[] slices = getAllSlices();
-			broadcastManagerAgent(agentAddress, slices);
+			broadcastManagerAgent(envManager, slices);
 		}		
 		public AID getManagerAgent() throws ServiceException {
-			return managerAgent;
+			return environmentManagerDescription.getAID();
 		}
 		
 		// ----------------------------------------------------------
@@ -194,6 +205,15 @@ public class SimulationService extends BaseService {
 		}		
 		
 		// ----------------------------------------------------------
+		// --- Register, unregister or notify Manager-Sensors -------
+		public void sensorPlugIn4Manager(ServiceSensorManager sensor) throws ServiceException {
+			localServiceActuator4Manager.plugIn(sensor);
+		}
+		public void sensorPlugOut4Manager(ServiceSensorManager sensor) throws ServiceException {
+			localServiceActuator4Manager.plugOut(sensor);	
+		}		
+
+		// ----------------------------------------------------------
 		// --- Methods for the Simulation ---------------------------
 		public boolean getStepSimulationAsynchronous() throws ServiceException {
 			return stepSimulationAsynchronous;
@@ -202,15 +222,18 @@ public class SimulationService extends BaseService {
 			stepSimulationAsynchronous = stepAsynchronous;
 		}
 
-		public void stepSimulation(EnvironmentModel envModel) throws ServiceException {
-			this.stepSimulation(envModel, stepSimulationAsynchronous);
+		public void stepSimulation(EnvironmentModel envModel, int answersExpected) throws ServiceException {
+			this.stepSimulation(envModel, answersExpected, stepSimulationAsynchronous);
 		}
-		public void stepSimulation(EnvironmentModel envModel, boolean aSynchron) throws ServiceException {
+		public void stepSimulation(EnvironmentModel envModel, int answersExpected, boolean aSynchron) throws ServiceException {
 			if (pauseSimulation==false) {
 				// --- step forward the transaction map -------
 				transactionMap.put(environmentModel);
 				// --- next step for the simulation -----------
 				Service.Slice[] slices = getAllSlices();
+				if (answersExpected!=environmentInstanceNextPartsExpected) {
+					broadcastAnswersExpected(answersExpected, slices);	
+				}
 				broadcastStepSimulation(envModel, aSynchron, slices);
 			}
 		}
@@ -219,20 +242,26 @@ public class SimulationService extends BaseService {
 			Service.Slice[] slices = getAllSlices();
 			broadcastPauseSimulation(pause, slices);
 			if (pause==false) {
+				// --- Reset next parts of the environement ---
+				this.resetEnvironmentInstanceNextParts();
 				// --- Restart simulation  --------------------
-				this.stepSimulation(environmentModel);
+				this.stepSimulation(environmentModel, environmentInstanceNextPartsExpected);
 			}
 		}
 			
-		public boolean notifySensorAgent(AID agentAID, Object notification) throws ServiceException {
-			return notifySensorAgent(agentAID, notification, stepSimulationAsynchronous);
-		}
-		public boolean notifySensorAgent(AID agentAID, Object notification, boolean aSynchron) throws ServiceException {
+		public boolean notifySensorAgent(AID agentAID, EnvironmentNotification notification) throws ServiceException {
 			if (pauseSimulation==true) {
 				return false;
 			} else {
 				Service.Slice[] slices = getAllSlices();
-				return broadcastNotifyAgent(agentAID, notification, aSynchron, slices);	
+				return broadcastNotifyAgent(agentAID, notification, slices);	
+			}
+		}
+		public boolean notifyManagerAgent(EnvironmentNotification notification) throws ServiceException {
+			if (pauseSimulation==true) {
+				return false;
+			} else {
+				return broadcastNotifyManager(notification);	
 			}
 		}
 		
@@ -248,15 +277,17 @@ public class SimulationService extends BaseService {
 		// --- EnvironmentModel of the next simulation step ---------
 		public void setEnvironmentInstanceNextPart(AID fromAgent, Object nextPart) throws ServiceException {
 
-			// --- Put single changes into the local store until ---- 
-			// --- the expected number of answers is not reached ----
-			environmentInstanceNextPartsLocal.put(fromAgent, nextPart);
-			
-			// --- If the expected number of answers came back to ---
-			// --- the service, broadcast it to every other node ----
-			if (environmentInstanceNextPartsLocal.size() >= localServiceActuator.getNoOfSimulationAnswersExpected()) {
-				mainSetEnvironmentInstanceNextPart(environmentInstanceNextPartsLocal);	
-				environmentInstanceNextPartsLocal = new Hashtable<AID, Object>();
+			synchronized(environmentInstanceNextPartsLocal) {
+				// --- Put single changes into the local store until ---- 
+				// --- the expected number of answers is not reached ----
+				environmentInstanceNextPartsLocal.put(fromAgent, nextPart);
+				
+				// --- If the expected number of answers came back to ---
+				// --- the service, broadcast it to every other node ----
+				if (environmentInstanceNextPartsLocal.size() >= localServiceActuator.getNoOfSimulationAnswersExpected()) {
+					mainSetEnvironmentInstanceNextPart(environmentInstanceNextPartsLocal);	
+					environmentInstanceNextPartsLocal = new Hashtable<AID, Object>();
+				}
 			}
 			
 		}
@@ -280,7 +311,7 @@ public class SimulationService extends BaseService {
 	 * @param slices
 	 * @throws ServiceException
 	 */
-	private void broadcastManagerAgent(AID agentAddress, Service.Slice[] slices) throws ServiceException {
+	private void broadcastManagerAgent(EnvironmentManagerDescription envManager, Service.Slice[] slices) throws ServiceException {
 		
 		if (myLogger.isLoggable(Logger.CONFIG)) {
 			myLogger.log(Logger.CONFIG, "Sending current TimeModel!");
@@ -293,7 +324,7 @@ public class SimulationService extends BaseService {
 				if (myLogger.isLoggable(Logger.FINER)) {
 					myLogger.log(Logger.FINER, "Sending current TimeModel to " + sliceName);
 				}
-				slice.setManagerAgent(agentAddress);
+				slice.setManagerAgent(envManager);
 			}
 			catch(Throwable t) {
 				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
@@ -434,6 +465,66 @@ public class SimulationService extends BaseService {
 			}
 		}
 	}
+	/**
+	 * Broadcast the number of agent answers that are expected for single simulation step
+	 * @param envModel 
+	 * @param aSynchron
+	 * @param slices
+	 * @throws ServiceException
+	 */
+	private void broadcastAnswersExpected(int answersExpected, Service.Slice[] slices) throws ServiceException {
+		
+		if (myLogger.isLoggable(Logger.CONFIG)) {
+			myLogger.log(Logger.CONFIG, "Sending number of expected agent answers!");
+		}
+		for (int i = 0; i < slices.length; i++) {
+			String sliceName = null;
+			try {
+				SimulationServiceSlice slice = (SimulationServiceSlice) slices[i];
+				sliceName = slice.getNode().getName();
+				if (myLogger.isLoggable(Logger.FINER)) {
+					myLogger.log(Logger.FINER, "Sending number of expected agent answers to " + sliceName);
+				}
+				slice.setAnswersExpected(answersExpected);
+			}
+			catch(Throwable t) {
+				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
+				myLogger.log(Logger.WARNING, "Error while sending number of expected agent answers to slice " + sliceName, t);
+			}
+		}
+	}
+
+	/**
+	 * Sends the current set of agent answers to the manager agent of the environment 
+	 * @param envModel 
+	 * @param aSynchron
+	 * @param slices
+	 * @throws ServiceException
+	 */
+	private void broadcastNotifyManagerPutAgentAnswers(final Hashtable<AID, Object> agentAnswers) throws ServiceException {
+		
+		Service.Slice[] slices = getAllSlices();		
+		if (myLogger.isLoggable(Logger.CONFIG)) {
+			myLogger.log(Logger.CONFIG, "Sending agent answers to manager!");
+		}
+		for (int i = 0; i < slices.length; i++) {
+			
+			SimulationServiceSlice slice = (SimulationServiceSlice) slices[i];
+			String sliceName = slice.getNode().getName();
+			if (sliceName.equals(environmentManagerDescription.getLocation().getName())==true) {
+				try {
+					if (myLogger.isLoggable(Logger.FINER)) {
+						myLogger.log(Logger.FINER, "Sending agent answers to manager at lice " + sliceName);
+					}
+					slice.notifyManagerPutAgentAnswers(agentAnswers);
+				}
+				catch(Throwable t) {
+					// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
+					myLogger.log(Logger.WARNING, "Error while sending agent answers to slice " + sliceName, t);
+				}
+			}
+		}
+	}
 	
 	/**
 	 * Broadcast a single notification object to a specific agent by using its ServiceSensor
@@ -443,7 +534,7 @@ public class SimulationService extends BaseService {
 	 * @param slices
 	 * @throws ServiceException
 	 */
-	private boolean broadcastNotifyAgent(AID agentAID, Object notification, boolean aSynchron, Service.Slice[] slices) throws ServiceException {
+	private boolean broadcastNotifyAgent(AID agentAID, EnvironmentNotification notification, Service.Slice[] slices) throws ServiceException {
 		
 		if (myLogger.isLoggable(Logger.CONFIG)) {
 			myLogger.log(Logger.CONFIG, "Sending notfication to agent '" + agentAID.getLocalName() + "'!");
@@ -456,11 +547,46 @@ public class SimulationService extends BaseService {
 				if (myLogger.isLoggable(Logger.FINER)) {
 					myLogger.log(Logger.FINER, "Try sending notfication to agent '" + agentAID.getLocalName() + "' at " + sliceName + "!");
 				}
-				return slice.notifyAgent(agentAID, notification, aSynchron);
+				boolean notified = slice.notifyAgent(agentAID, notification);
+				if (notified==true) {
+					return notified;	
+				}
 			}
 			catch(Throwable t) {
 				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
 				myLogger.log(Logger.WARNING, "Error while sending a notification to agent '" + agentAID.getLocalName() + "' at slice " + sliceName, t);
+			}
+		}
+		return false;
+	}
+	/**
+	 * Sends a notification to the manager agent of the environment 
+	 * @param envModel 
+	 * @param aSynchron
+	 * @param slices
+	 * @throws ServiceException
+	 */
+	private boolean broadcastNotifyManager(EnvironmentNotification notification) throws ServiceException {
+		
+		Service.Slice[] slices = getAllSlices();		
+		if (myLogger.isLoggable(Logger.CONFIG)) {
+			myLogger.log(Logger.CONFIG, "Sending notification to manager!");
+		}
+		for (int i = 0; i < slices.length; i++) {
+			
+			SimulationServiceSlice slice = (SimulationServiceSlice) slices[i];
+			String sliceName = slice.getNode().getName();
+			if (sliceName.equals(environmentManagerDescription.getLocation().getName())==true) {
+				try {
+					if (myLogger.isLoggable(Logger.FINER)) {
+						myLogger.log(Logger.FINER, "Sending notification to manager at lice " + sliceName);
+					}
+					return slice.notifyManager(notification);
+				}
+				catch(Throwable t) {
+					// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
+					myLogger.log(Logger.WARNING, "Error while sending notification to Manager at slice " + sliceName, t);
+				}
 			}
 		}
 		return false;
@@ -603,17 +729,11 @@ public class SimulationService extends BaseService {
 				}
 
 				else if (cmdName.equals(SimulationServiceSlice.SIM_SET_MANAGER_AGENT)) {
-					AID managerAdress = (AID) params[0];
+					EnvironmentManagerDescription envManager = (EnvironmentManagerDescription) params[0];
 					if (myLogger.isLoggable(Logger.FINE)) {
 						myLogger.log(Logger.FINE, "Received AID of the Agent-Manager");
 					}	
-					setManagerAgent(managerAdress);
-				}
-				else if (cmdName.equals(SimulationServiceSlice.SIM_GET_MANAGER_AGENT)) {
-					if (myLogger.isLoggable(Logger.FINE)) {
-						myLogger.log(Logger.FINE, "Answering Management-Agent-Request");
-					}					
-					cmd.setReturnValue(getManagerAgent());
+					setManagerAgent(envManager);
 				}
 				
 				else if (cmdName.equals(SimulationServiceSlice.SIM_SET_ENVIRONMENT_MODEL)) {
@@ -631,14 +751,12 @@ public class SimulationService extends BaseService {
 					}	
 					stepSimulation(envModel, aSynchron);
 				}
-				else if (cmdName.equals(SimulationServiceSlice.SIM_NOTIFY_AGENT)) {
-					AID agentAID = (AID) params[0];
-					Object notification = params[1];
-					boolean aSynchron = (Boolean) params[2];
+				else if (cmdName.equals(SimulationServiceSlice.SIM_SET_ANSWERS_EXPECTED)) {
+					int answersExpected = (Integer) params[0];
 					if (myLogger.isLoggable(Logger.FINE)) {
-						myLogger.log(Logger.FINE, "Received 'Notify Agent for '" + agentAID.getLocalName() + "'");
+						myLogger.log(Logger.FINE, "Received number of expected agent answers'");
 					}	
-					cmd.setReturnValue(notifySensorAgent(agentAID, notification, aSynchron));
+					setEnvironmentInstanceNextPartsExpected(answersExpected);
 				}
 				else if (cmdName.equals(SimulationServiceSlice.SIM_PAUSE_SIMULATION)) {
 					boolean pause = (Boolean) params[0];
@@ -647,6 +765,31 @@ public class SimulationService extends BaseService {
 					}	
 					setPauseSimulation(pause);					
 				} 
+				
+				else if (cmdName.equals(SimulationServiceSlice.SIM_NOTIFY_AGENT)) {
+					AID agentAID = (AID) params[0];
+					EnvironmentNotification notification = (EnvironmentNotification) params[1];
+					if (myLogger.isLoggable(Logger.FINE)) {
+						myLogger.log(Logger.FINE, "Received 'Notify Agent for '" + agentAID.getLocalName() + "'");
+					}	
+					cmd.setReturnValue(notifySensorAgent(agentAID, notification));
+				}
+				else if (cmdName.equals(SimulationServiceSlice.SIM_NOTIFY_MANAGER)) {
+					EnvironmentNotification notification = (EnvironmentNotification) params[0];
+					if (myLogger.isLoggable(Logger.FINE)) {
+						myLogger.log(Logger.FINE, "Getting parts for the next environment model");
+					}	
+					cmd.setReturnValue(notifyManagerAgent(notification));									
+				} 
+				else if (cmdName.equals(SimulationServiceSlice.SIM_NOTIFY_MANAGER_PUT_AGENT_ANSWERS)) {
+					@SuppressWarnings("unchecked")
+					Hashtable<AID, Object> allAgentAnswers = (Hashtable<AID, Object>) params[0];
+					if (myLogger.isLoggable(Logger.FINE)) {
+						myLogger.log(Logger.FINE, "Getting parts for the next environment model");
+					}	
+					notifyManagerAgentPutAgentAnswers(allAgentAnswers);									
+				} 
+				
 				else if (cmdName.equals(SimulationServiceSlice.SIM_SET_ENVIRONMENT_NEXT_PART)) {
 					@SuppressWarnings("unchecked")
 					Hashtable<AID, Object> nextPartsLocal = (Hashtable<AID, Object>) params[0];
@@ -712,23 +855,28 @@ public class SimulationService extends BaseService {
 			timeDiff2MainContainer = timeDifference;	
 		}
 		
-		private void setManagerAgent(AID agentAddress) {
-			managerAgent = agentAddress;
+		private void setManagerAgent(EnvironmentManagerDescription envManager) {
+			environmentManagerDescription = envManager;
 		}
-		private AID getManagerAgent() {
-			return managerAgent;
-		}
-		
 		private void setEnvironmentModel(EnvironmentModel newEnvironmentModel) {
 			environmentModel = newEnvironmentModel;
-			localServiceActuator.notifySensors(newEnvironmentModel, stepSimulationAsynchronous );
+			//TODO localServiceActuator.notifySensors(newEnvironmentModel, stepSimulationAsynchronous );
 		}
 		private void stepSimulation(EnvironmentModel newEnvironmentModel, boolean aSynchron) {
 			environmentModel = newEnvironmentModel;
 			localServiceActuator.notifySensors(newEnvironmentModel, aSynchron);
 		}
-		private boolean notifySensorAgent(AID agentAID, Object notification, boolean aSynchron){
-			return localServiceActuator.notifySensorAgent(agentAID, notification, aSynchron);
+		private void setEnvironmentInstanceNextPartsExpected(int answersExpected) {
+			environmentInstanceNextPartsExpected=answersExpected;
+		}		
+		private void notifyManagerAgentPutAgentAnswers(Hashtable<AID, Object> allAgentAnswers) {
+			localServiceActuator4Manager.putAgentAnswers(environmentManagerDescription.getAID(), allAgentAnswers, true);
+		}
+		private boolean notifyManagerAgent(EnvironmentNotification notification) {
+			return localServiceActuator4Manager.notifyManager(environmentManagerDescription.getAID(), notification);
+		}		
+		private boolean notifySensorAgent(AID agentAID, EnvironmentNotification notification){
+			return localServiceActuator.notifySensorAgent(agentAID, notification);
 		}
 		private void setPauseSimulation(boolean pause) {
 			pauseSimulation = pause;
@@ -736,6 +884,15 @@ public class SimulationService extends BaseService {
 		
 		private void setEnvironmentInstanceNextPart(Hashtable<AID, Object> nextPartsLocal) {
 			environmentInstanceNextParts.putAll(nextPartsLocal);
+			if (environmentInstanceNextParts.size()>=environmentInstanceNextPartsExpected) {
+				// --- We are in the Main-Container and got the expected ---  
+				// --- number of answers for a single simulation step	 ---
+				try {
+					broadcastNotifyManagerPutAgentAnswers(environmentInstanceNextParts);
+				} catch (ServiceException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		private Hashtable<AID, Object> getEnvironmentInstanceNextParts() {
 			return environmentInstanceNextParts;
@@ -850,7 +1007,7 @@ public class SimulationService extends BaseService {
 				// --- Be sure to get the new (fresh) slice --> Bypass the service cache ---
 				SimulationServiceSlice newSlice = (SimulationServiceSlice) getFreshSlice(newSliceName);
 				// --- Set remote ManagerAgent, TimeModel,EnvironmentInstance --------------
-				newSlice.setManagerAgent(managerAgent);
+				newSlice.setManagerAgent(environmentManagerDescription);
 				newSlice.setEnvironmentModel(environmentModel);	
 				// --- Synchronise the time ------------------------------------------------
 				this.synchTimeOfSlice(newSlice);

@@ -1,11 +1,11 @@
 package game_of_life.SimService.agents;
 
 import game_of_life.gui.GameOfLifeGUI;
-
 import jade.core.AID;
 import jade.core.ServiceException;
 
 import java.util.HashMap;
+import java.util.Hashtable;
 
 import javax.swing.JDesktopPane;
 
@@ -65,21 +65,18 @@ public class SimulationManager extends SimulationManagerAgent {
 
 	public void setRunSimulation(boolean run) {
 		if (run==true) {
-			this.addCyclicSimiulationBehavior();
+			this.addSimulationBehavior();
 		} else {
-			this.removeCyclicSimiulationBehavior();
+			this.removeSimulationBehavior();
 		}
 	}
 	
 	@Override
 	protected void takeDown() {
-		try {
-			gui.doDefaultCloseAction();
-			gui.dispose();			
-			gui = null;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		gui.doDefaultCloseAction();
+		gui.dispose();			
+		gui = null;
+		super.takeDown();
 	}
 	
 	@Override
@@ -95,7 +92,12 @@ public class SimulationManager extends SimulationManagerAgent {
 	@Override
 	public void doSingleSimulationSequennce() {
 
-		// --- Ggf. den Outgoing-Speicher der GUI lesen -----------------------------
+		// --- ggf. den Verzögerungs-Slider berücksichtigen -------------------
+		if (gui.slider.getValue()>0) {
+			doWait(gui.slider.getValue());
+		}
+		
+		// --- Ggf. den Outgoing-Speicher der GUI lesen -----------------------
 		if (gui.localEnvModelOutput.size()!=0) {
 			String[] fieldArray = new String[gui.localEnvModelOutput.size()];
 			fieldArray = gui.localEnvModelOutput.keySet().toArray(fieldArray);
@@ -106,34 +108,34 @@ public class SimulationManager extends SimulationManagerAgent {
 			}
 			gui.localEnvModelOutput.clear();
 		}
+		this.getEnvironmentModel().setAbstractEnvironment(localEnvModel);
 		
-		// --- Simulationsschritt vorbereiten und durchführen -----------------------
+		
+		// --- Simulationsschritt durchführen ---------------------------------
 		try {
-			
 			this.resetEnvironmentInstanceNextParts();
-			this.stepSimulation();
-			this.waitForAgentAnswers(localEnvModel.size());
-			
-			// --- Neues Umgebungsmodell definieren ---------------------------
-			localEnvModelNew = new HashMap<String, Integer>();
-			AID[] agentArray = new AID[agentAnswers.size()];
-			agentArray = agentAnswers.keySet().toArray(agentArray);
-			for (int i = 0; i < agentArray.length; i++) {
-				Integer value = (Integer) agentAnswers.get(agentArray[i]);  
-				localEnvModelNew.put(agentArray[i].getLocalName(), value);
-			}
-			gui.updateGUI(localEnvModelNew);
-			localEnvModel = localEnvModelNew;
-			this.getEnvironmentModel().setAbstractEnvironment(localEnvModel);
-			
+			this.stepSimulation(localEnvModel.size());
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
 		
-		if (gui.slider.getValue()>0) {
-			doWait(gui.slider.getValue());
+	}
+
+	@Override
+	public void proceedAgentAnswers(Hashtable<AID, Object> agentAnswers) {
+
+		// --- Neues Umgebungsmodell definieren ---------------------------
+		localEnvModelNew = new HashMap<String, Integer>();
+		AID[] agentArray = new AID[agentAnswers.size()];
+		agentArray = agentAnswers.keySet().toArray(agentArray);
+		for (int i = 0; i < agentArray.length; i++) {
+			Integer value = (Integer) agentAnswers.get(agentArray[i]);  
+			localEnvModelNew.put(agentArray[i].getLocalName(), value);
 		}
+		gui.updateGUI(localEnvModelNew);
+		localEnvModel = localEnvModelNew;
 		
+		this.doNextSimulationStep();
 		
 	}
 

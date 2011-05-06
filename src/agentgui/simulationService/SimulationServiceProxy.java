@@ -12,6 +12,8 @@ import java.util.Vector;
 
 import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.load.LoadAgentMap.AID_Container;
+import agentgui.simulationService.transaction.EnvironmentManagerDescription;
+import agentgui.simulationService.transaction.EnvironmentNotification;
 
 
 public class SimulationServiceProxy extends SliceProxy implements SimulationServiceSlice {
@@ -70,11 +72,11 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 	// ----------------------------------------------------------
 	// --- Methods on the Manager-Agent --- S T A R T -----------
 	// ----------------------------------------------------------
-	public void setManagerAgent(AID agentAddress) throws IMTPException {
+	public void setManagerAgent(EnvironmentManagerDescription envManager) throws IMTPException {
 
 		try {
 			GenericCommand cmd = new GenericCommand(SIM_SET_MANAGER_AGENT, SimulationService.NAME, null);
-			cmd.addParam(agentAddress);
+			cmd.addParam(envManager);
 			
 			Node n = getNode();
 			Object result = n.accept(cmd);
@@ -90,26 +92,7 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 			throw new IMTPException("Unable to access remote node", se);
 		}
 	}
-	@Override
-	public AID getManagerAgent() throws IMTPException {
-		
-		try {
-			GenericCommand cmd = new GenericCommand(SIM_GET_MANAGER_AGENT, SimulationService.NAME, null);
-			Node n = getNode();
-			Object result = n.accept(cmd);
-			if((result != null) && (result instanceof Throwable)) {
-				if(result instanceof IMTPException) {
-					throw (IMTPException)result;
-				} else {
-					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
-				}
-			}
-			return (AID) result;
-		}
-		catch(ServiceException se) {
-			throw new IMTPException("Unable to access remote node", se);
-		}
-	}
+	
 	// ----------------------------------------------------------
 	// --- Methods on the Manager-Agent --- S T O P -------------
 	// ----------------------------------------------------------
@@ -161,13 +144,34 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 		}		
 	}
 	@Override
-	public boolean notifyAgent(AID agentAID, Object notification, boolean aSynchron) throws IMTPException {
+	public void setAnswersExpected(int answersExpected) throws IMTPException {
+	
+		try {
+			GenericCommand cmd = new GenericCommand(SIM_SET_ANSWERS_EXPECTED, SimulationService.NAME, null);
+			cmd.addParam(answersExpected);
+			
+			Node n = getNode();
+			Object result = n.accept(cmd);
+			if((result != null) && (result instanceof Throwable)) {
+				if(result instanceof IMTPException) {
+					throw (IMTPException)result;
+				} else {
+					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
+				}
+			}
+		}
+		catch(ServiceException se) {
+			throw new IMTPException("Unable to access remote node", se);
+		}
+	}
+	@Override
+	public boolean notifyAgent(AID agentAID, EnvironmentNotification notification) throws IMTPException {
 		
 		try {
 			GenericCommand cmd = new GenericCommand(SIM_NOTIFY_AGENT, SimulationService.NAME, null);
 			cmd.addParam(agentAID);
 			cmd.addParam(notification);
-			cmd.addParam(aSynchron);
+			
 			Node n = getNode();
 			Object result = n.accept(cmd);
 			if((result != null) && (result instanceof Throwable)) {
@@ -182,8 +186,6 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 		catch(ServiceException se) {
 			throw new IMTPException("Unable to access remote node", se);
 		}
-		
-		
 	}
 	@Override
 	public void setPauseSimulation(boolean pauseSimulation) throws IMTPException {
@@ -213,6 +215,49 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 		try {
 			GenericCommand cmd = new GenericCommand(SIM_SET_ENVIRONMENT_NEXT_PART, SimulationService.NAME, null);
 			cmd.addParam(nextPartsLocal);
+			
+			Node n = getNode();
+			Object result = n.accept(cmd);
+			if((result != null) && (result instanceof Throwable)) {
+				if(result instanceof IMTPException) {
+					throw (IMTPException)result;
+				} else {
+					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
+				}
+			}
+		}
+		catch(ServiceException se) {
+			throw new IMTPException("Unable to access remote node", se);
+		}
+	}
+	@Override
+	public boolean notifyManager(EnvironmentNotification notification) throws IMTPException {
+		
+		try {
+			GenericCommand cmd = new GenericCommand(SIM_NOTIFY_MANAGER, SimulationService.NAME, null);
+			cmd.addParam(notification);
+
+			Node n = getNode();
+			Object result = n.accept(cmd);
+			if((result != null) && (result instanceof Throwable)) {
+				if(result instanceof IMTPException) {
+					throw (IMTPException)result;
+				} else {
+					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
+				}
+			}
+			return (Boolean) result;
+		}
+		catch(ServiceException se) {
+			throw new IMTPException("Unable to access remote node", se);
+		}
+		
+	}
+	@Override
+	public void notifyManagerPutAgentAnswers(Hashtable<AID, Object> allAgentAnswers) throws IMTPException {
+		try {
+			GenericCommand cmd = new GenericCommand(SIM_NOTIFY_MANAGER_PUT_AGENT_ANSWERS, SimulationService.NAME, null);
+			cmd.addParam(allAgentAnswers);
 			
 			Node n = getNode();
 			Object result = n.accept(cmd);

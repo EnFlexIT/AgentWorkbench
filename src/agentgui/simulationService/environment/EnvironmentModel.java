@@ -14,6 +14,19 @@ public class EnvironmentModel implements Serializable {
 	private Object displayEnvironment	= null;	
 	
 	/**
+	 * Returns true if nothing is set yet (e.g. timeModel, abstractEnvironment or displayEnvironment)
+	 * @return
+	 */
+	public boolean isEmpty() {
+		if (timeModel==null && abstractEnvironment==null && displayEnvironment==null) {
+			return true;
+		} else {
+			return false;	
+		}	
+	}
+
+	
+	/**
 	 * @return the timeModel
 	 */
 	public TimeModel getTimeModel() {
@@ -52,7 +65,4 @@ public class EnvironmentModel implements Serializable {
 		this.displayEnvironment = displayEnvironment;
 	}
 
-	
-	
-	
 }

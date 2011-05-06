@@ -96,11 +96,5 @@ public class GameOfLifeAgent extends SimulationAgent {
 		return myNextState;
 	}
 
-	@Override
-	protected void onNotification(Object arg0) {
-		
-		
-	
-	}
 	
 } 

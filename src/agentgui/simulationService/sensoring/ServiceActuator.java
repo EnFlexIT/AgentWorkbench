@@ -7,6 +7,7 @@ import java.util.Vector;
 
 import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.load.LoadAgentMap.AID_Container;
+import agentgui.simulationService.transaction.EnvironmentNotification;
 
 
 public class ServiceActuator {
@@ -33,6 +34,24 @@ public class ServiceActuator {
 	 */
 	public void plugOut(ServiceSensor currSensor) {
 		serviceSensors.removeElement(currSensor);
+	}
+	
+	/**
+	 * This method returns the ServiceSensor-Instance identified by the AID of the agent
+	 * @param aid
+	 * @return
+	 */
+	public ServiceSensor getSensor(AID aid) {
+		
+		Object[] arrLocal = serviceSensors.toArray();
+		for (int i = arrLocal.length-1; i>=0; i--) {
+			ServiceSensor sensor = (ServiceSensor)arrLocal[i];
+			AID sensorAgentAID = sensor.myAgent.getAID();
+			if (sensorAgentAID.equals(aid)) {
+				return sensor;				
+			}
+		}
+		return null;
 	}
 	
 	/**
@@ -79,7 +98,7 @@ public class ServiceActuator {
 	 * @param aSynchron
 	 * @return
 	 */
-	public boolean notifySensorAgent(AID aid, Object notification, boolean aSynchron) {
+	public boolean notifySensorAgent(AID aid, EnvironmentNotification notification) {
 		
 		ServiceSensor sensor = getSensor(aid);
 		if (sensor==null) {
@@ -87,7 +106,7 @@ public class ServiceActuator {
 			return false;
 		} else {
 			// --- Agent/Sensor was found -------
-			sensor.notifyAgent(notification, aSynchron);
+			sensor.notifyAgent(notification);
 			return true;
 		}		
 	}
@@ -124,24 +143,6 @@ public class ServiceActuator {
 		return noOfSimulationAnswersExpected;
 	}
 
-	/**
-	 * This method returns the ServiceSensor-Instance identified by the AID of the agent
-	 * @param aid
-	 * @return
-	 */
-	public ServiceSensor getSensor(AID aid) {
-		
-		Object[] arrLocal = serviceSensors.toArray();
-		for (int i = arrLocal.length-1; i>=0; i--) {
-			ServiceSensor sensor = (ServiceSensor)arrLocal[i];
-			AID sensorAgentAID = sensor.myAgent.getAID();
-			if (sensorAgentAID.equals(aid)) {
-				return sensor;				
-			}
-		}
-		return null;
-	}
-	
 	/**
 	 * This method will place a 'newLocation'-Object to every agent 
 	 * which is registered to this actuator 
