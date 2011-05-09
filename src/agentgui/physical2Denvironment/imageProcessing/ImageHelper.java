@@ -82,6 +82,11 @@ public class ImageHelper {
 	{
 		
 	}
+	
+	public ImageHelper(Position destination, String ownID)
+	{
+		
+	}
 		
      /**
       *  Uses recursion to delete node and child nodes 
@@ -210,7 +215,7 @@ public class ImageHelper {
 	 * @return
 	 * @throws Exception
 	 */
-	private agentgui.physical2Denvironment.imageProcessing.StepNode withoutGrid(String id,float target_x,float target_y,float width,float height,String target_id , int direction , float lookAhead, agentgui.physical2Denvironment.imageProcessing.StepNode parent,int pixel) throws Exception
+	private agentgui.physical2Denvironment.imageProcessing.StepNode withoutGrid(String id,float target_x,float target_y,float width,float height, int direction , float lookAhead, agentgui.physical2Denvironment.imageProcessing.StepNode parent,int pixel) throws Exception
 	{
 	
 		ArrayList<agentgui.physical2Denvironment.imageProcessing.StepNode> openList=new ArrayList<agentgui.physical2Denvironment.imageProcessing.StepNode>();
@@ -440,7 +445,7 @@ public class ImageHelper {
 		    
 		    	if(lookAhead-2<0)
 		    	{
-		    		
+		    	
 		    		return current;
 		    	}
 		    	//No path is found. Try too look less pixel ahead
@@ -449,8 +454,10 @@ public class ImageHelper {
 		 
 		    	
 				SVGSafe sg=new SVGSafe();
+				System.out.println("Rekursion!");
 				sg.write("WayPath"+counter+".svg", doc);
-		    	return this.withoutGrid(id, target_x, target_y, width, height, target_id, direction, lookAhead-2, parent, pixel);
+				
+		    	return this.withoutGrid(id, target_x, target_y, width, height, direction, lookAhead-2, parent, pixel);
 		    	}
 		     }		   
 		    
@@ -541,6 +548,9 @@ public class ImageHelper {
 	 * @return target node of the path
 	 * @throws Exception
 	 */
+	
+	
+	
 	public agentgui.physical2Denvironment.imageProcessing.StepNode createPlanImage(String id,String target_id , int direction , float lookAhead) throws Exception
 	{
 		this.createManipulatedWorld();
@@ -567,10 +577,43 @@ public class ImageHelper {
 		root.setTotal_distance((this.getHCost(listXIndex, listYIndex, targetXIndex, targetYIndex)));
 		 root.setParent(null);
 		//int color=this.getPixelsOnce(plan, x, y, width, height);
-		agentgui.physical2Denvironment.imageProcessing.StepNode targetNode= this.withoutGrid(id, target_x, target_y, width, height, target_id, direction, 10.0f,root , -1) ;   //this.originalAStar(id, target_x, target_y, width, height, target_id, direction, lookAhead, root, -1);          //      //this.originalAStar(id, target_x, target_y, width, height, target_id, direction, lookAhead, root, color) ;        //handle_subNodes_brute(id,target_x, target_y,  width, height, target_id, direction, lookAhead,root,color);
+		agentgui.physical2Denvironment.imageProcessing.StepNode targetNode= this.withoutGrid(id, target_x, target_y, width, height, direction, 10.0f,root , -1) ;   //this.originalAStar(id, target_x, target_y, width, height, target_id, direction, lookAhead, root, -1);          //      //this.originalAStar(id, target_x, target_y, width, height, target_id, direction, lookAhead, root, color) ;        //handle_subNodes_brute(id,target_x, target_y,  width, height, target_id, direction, lookAhead,root,color);
 		 return targetNode;
 		
 	}
+	
+	
+	public agentgui.physical2Denvironment.imageProcessing.StepNode createPlanImage(String id,Position target , int direction , float lookAhead) throws Exception
+	{
+		this.createManipulatedWorld();
+		Document doc=helper.getSVGDoc();
+
+		float target_x=target.getXPos();
+		float target_y=target.getYPos();
+		Element self=doc.getElementById(id);
+		final float width=Float.parseFloat(self.getAttribute("width"));
+		final float height=Float.parseFloat(self.getAttribute("height"));
+		float x=Float.parseFloat(self.getAttribute("x"));
+		float y=Float.parseFloat(self.getAttribute("y"));
+		this.firstX=x;
+		this.firstY=y;
+		agentgui.physical2Denvironment.imageProcessing.StepNode root=new agentgui.physical2Denvironment.imageProcessing.StepNode();
+		root.setX(x);
+		root.setY(y);
+		final int listXIndex= (int) (root.getX()/lookAhead);
+		final int listYIndex=  (int) (root.getY()/lookAhead);
+		final int targetXIndex= (int) (target_x/lookAhead);
+		final int targetYIndex=(int) (target_y/lookAhead);
+		root.setDistanceToOrginal(0.0);
+		root.setDistance(this.getHCost(listXIndex, listYIndex, targetXIndex, targetYIndex));
+		root.setTotal_distance((this.getHCost(listXIndex, listYIndex, targetXIndex, targetYIndex)));
+		 root.setParent(null);
+		//int color=this.getPixelsOnce(plan, x, y, width, height);
+		agentgui.physical2Denvironment.imageProcessing.StepNode targetNode= this.withoutGrid(id, target_x, target_y, width, height, direction, 10.0f,root , -1) ;   //this.originalAStar(id, target_x, target_y, width, height, target_id, direction, lookAhead, root, -1);          //      //this.originalAStar(id, target_x, target_y, width, height, target_id, direction, lookAhead, root, color) ;        //handle_subNodes_brute(id,target_x, target_y,  width, height, target_id, direction, lookAhead,root,color);
+		 return targetNode;
+		
+	}
+	
 	
 	
 	/**
@@ -982,15 +1025,18 @@ public class ImageHelper {
 		 }
 		//SVGImage img=new SVGImage( (SVGDocument)doc);
 		//this.evn=(BufferedImage) img.createBufferedImage();
-			if(!READ_WORLD)
-			{	
-		SVGSafe save=new SVGSafe();
-		save.write("myWorld.svg", doc);
-		save.writeJPG("myworld.svg");
+			synchronized (this) {
+				if(!READ_WORLD)
+				{	
+			SVGSafe save=new SVGSafe();
+			save.write("myWorld.svg", doc);
+			save.writeJPG("myworld.svg");
+				}
+			
+			
+			READ_WORLD=true;
 			}
 		
-		
-		READ_WORLD=true;
 
 	   }
 			
@@ -1020,11 +1066,14 @@ public class ImageHelper {
 		 boolean multiStep=false; // Needed for calculation
 			while(total_seconds<=msInSeconds)
 			{
+			
 				xPosDiff = destPos.getXPos() - selfPos.getXPos();
 				yPosDiff = destPos.getYPos() - selfPos.getYPos();
 				double dist = (Math.sqrt(xPosDiff*xPosDiff + yPosDiff*yPosDiff)/10.0d); 
 				double seconds = dist / speed; // seconds to get to the point. Important to calculate dist in meter because speed is also in meter!
 				total_seconds=total_seconds+seconds;
+				//System.out.println("Total Seconds:"+total_seconds);
+				//System.out.println("Seconds:"+seconds);
 				// It's possible to do more than one moment at one time so we add the seconds
 				if(total_seconds<=msInSeconds) // it's smaller so we can contioue walking
 				{
@@ -1058,19 +1107,23 @@ public class ImageHelper {
 					   answer.setSpeed(new Long((long)speed));
 					   answer.setWayToDestination(partSolution);			
 					   posUpdate.setCustomizedParameter(answer);							
-					 
+					   //System.out.println("Ende!!");
 					   return posUpdate;
 				   }
 				}
 				else // The distance is too huge to do in one step
 				{
-					
+					//System.out.println("zu groß!");
 					boolean flag=false;
 					reached=false; // We haven't reached the full distance
 					double max=((speed)*(msInSeconds)); // Calculate the maximum distance we can walk. Result is in meter and seconds
+					//System.out.println("Speed:"+speed);
+					//System.out.println("Ms in Seconds:"+msInSeconds);
 					if(multiStep) // We need to take the difference
 					{
+						//System.out.println("Multi Step");
 						double dif=Math.abs(msInSeconds-total_seconds+seconds);
+						
 						total_time+=dif;
 						if(msInSeconds-total_seconds+seconds<0)
 						{
@@ -1080,13 +1133,18 @@ public class ImageHelper {
 					}
 					else
 					{
+					 //  System.out.println("Kein MultiStep");
 					   total_time+=msInSeconds;	
 					   total_seconds=msInSeconds+1;
 					}
 					if(!flag)
 					{
+					
 					total+=max;
+					
 					max*=10; // calculate into pixel
+				
+					
 					multiStep=false;
 					double correctXDif=0.0d;
 					double correctYDif=0.0d;
@@ -1106,9 +1164,13 @@ public class ImageHelper {
 					{
 						correctYDif=max*-1;
 					}
-					
+					//System.out.println("CorrectXDif:"+correctXDif);
+				//	System.out.println("CorrectYDif:"+ correctYDif);
 					double newXValue=selfPos.getXPos()+correctXDif;
+					//System.out.println("NewXValue:"+newXValue);
+	
 					double newYValue=selfPos.getYPos()+correctYDif;
+					//System.out.println("NewYValue:"+newYValue);
 					newPos.setXPos( (float) newXValue);
 					newPos.setYPos( (float) newYValue);
 					lastPosition=new Position();
@@ -1131,9 +1193,24 @@ public class ImageHelper {
 			posUpdate.setNewPosition(newPos);
 			answer.setSpeed(new Long((long)speed));
 		    answer.setWayToDestination(partSolution);	
+		    //System.out.println("Set Last Index:"+ lastIndex);#
+		    if(reached)
+		    {
+		    	lastIndex++;
+		    	destPos=position.get(lastIndex);
+		    
+		    }
+		    else
+		    {
+		    	destPos=lastPosition;
+		    }
+		//	System.out.println("Self Position after:"+selfPos.getXPos()+","+selfPos.getYPos());
+			//System.out.println("Destination after:" +destPos.getXPos()+","+destPos.getYPos());
+		//	System.out.println("Index:"+lastIndex);
 		    answer.setIndex(lastIndex);
-		    answer.setNextPosition(lastPosition);
+			answer.setNextPosition(destPos);
 			posUpdate.setCustomizedParameter(answer);
+			posUpdate.setNewPosition(selfPos);
 			return posUpdate; 
 		  
 		  
