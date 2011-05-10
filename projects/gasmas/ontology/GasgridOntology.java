@@ -9,7 +9,7 @@ import jade.core.CaseInsensitiveString;
 
 /** file: GasgridOntology.java
  * @author ontology bean generator
- * @version 2011/04/28, 16:09:11
+ * @version 2011/05/8, 09:32:41
  */
 public class GasgridOntology extends jade.content.onto.Ontology  {
   //NAME
@@ -23,42 +23,43 @@ public class GasgridOntology extends jade.content.onto.Ontology  {
 
 
    // VOCABULARY
-    public static final String FLOWPARAMETERS_PRESSURE="pressure";
+    public static final String VALVE="Valve";
+    public static final String BRANCH="Branch";
+    public static final String STORAGE="Storage";
+    public static final String STRUCTURALPARAMETERS_GEOY="geoY";
+    public static final String STRUCTURALPARAMETERS_GEOZ="geoZ";
+    public static final String STRUCTURALPARAMETERS_DIAMETER="diameter";
+    public static final String STRUCTURALPARAMETERS_ATPARENTLENGTHPOS="atParentLengthPos";
+    public static final String STRUCTURALPARAMETERS_GEOX="geoX";
+    public static final String STRUCTURALPARAMETERS="StructuralParameters";
+    public static final String COMPRESSOR="Compressor";
+    public static final String PIPE_RESISTANCE="resistance";
+    public static final String PIPE_LENGTH="length";
+    public static final String PIPE="Pipe";
+    public static final String FLOWPARAMETERS_FLUIDVELOCITY="fluidVelocity";
     public static final String FLOWPARAMETERS_TEMPERATURE="temperature";
     public static final String FLOWPARAMETERS_FLOW="flow";
     public static final String FLOWPARAMETERS_MASSFLOW="massFlow";
     public static final String FLOWPARAMETERS_REYNOLDSNUMBER="reynoldsNumber";
-    public static final String FLOWPARAMETERS_FLUIDVELOCITY="fluidVelocity";
+    public static final String FLOWPARAMETERS_PRESSURE="pressure";
     public static final String FLOWPARAMETERS="FlowParameters";
+    public static final String FLUIDPARAMETERS_KINEMATICVISCOSITY="kinematicViscosity";
+    public static final String FLUIDPARAMETERS_DYNAMICVISCOSITY="dynamicViscosity";
+    public static final String FLUIDPARAMETERS_THERMALCONDUCTIVITY="thermalConductivity";
+    public static final String FLUIDPARAMETERS_DENSITY="density";
+    public static final String FLUIDPARAMETERS="FluidParameters";
+    public static final String PROPAGATIONPOINT_ADJACENTAGENTS="adjacentAgents";
+    public static final String PROPAGATIONPOINT_STRUCTURALPARAMETERS="structuralParameters";
+    public static final String PROPAGATIONPOINT_ID="ID";
+    public static final String PROPAGATIONPOINT_FLOWPARAMETERS="flowParameters";
+    public static final String PROPAGATIONPOINT="PropagationPoint";
     public static final String GRIDCOMPONENT_ID="ID";
     public static final String GRIDCOMPONENT="GridComponent";
     public static final String ENTRY="Entry";
     public static final String EXIT="Exit";
-    public static final String STORAGE="Storage";
-    public static final String FLUIDPARAMETERS_KINEMATICVISCOSITY="kinematicViscosity";
-    public static final String FLUIDPARAMETERS_DENSITY="density";
-    public static final String FLUIDPARAMETERS_THERMALCONDUCTIVITY="thermalConductivity";
-    public static final String FLUIDPARAMETERS_DYNAMICVISCOSITY="dynamicViscosity";
-    public static final String FLUIDPARAMETERS="FluidParameters";
-    public static final String RESISTANCEPARAMETERS_PIPEFRICTION="pipeFriction";
     public static final String RESISTANCEPARAMETERS_COSTS="costs";
+    public static final String RESISTANCEPARAMETERS_PIPEFRICTION="pipeFriction";
     public static final String RESISTANCEPARAMETERS="ResistanceParameters";
-    public static final String PROPAGATIONPOINT_FLOWPARAMETERS="flowParameters";
-    public static final String PROPAGATIONPOINT_ID="ID";
-    public static final String PROPAGATIONPOINT_ADJACENTAGENTS="adjacentAgents";
-    public static final String PROPAGATIONPOINT_STRUCTURALPARAMETERS="structuralParameters";
-    public static final String PROPAGATIONPOINT="PropagationPoint";
-    public static final String VALVE="Valve";
-    public static final String STRUCTURALPARAMETERS_DIAMETER="diameter";
-    public static final String STRUCTURALPARAMETERS_GEOZ="geoZ";
-    public static final String STRUCTURALPARAMETERS_GEOY="geoY";
-    public static final String STRUCTURALPARAMETERS_ATPARENTLENGTHPOS="atParentLengthPos";
-    public static final String STRUCTURALPARAMETERS_GEOX="geoX";
-    public static final String STRUCTURALPARAMETERS="StructuralParameters";
-    public static final String BRANCH="Branch";
-    public static final String PIPE="Pipe";
-    public static final String COMPRESSOR="Compressor";
-    public static final String PRESSURECONTROLSYSTEM="PressureControlSystem";
 
   /**
    * Constructor
@@ -68,34 +69,32 @@ public class GasgridOntology extends jade.content.onto.Ontology  {
     try { 
 
     // adding Concept(s)
-    ConceptSchema pressureControlSystemSchema = new ConceptSchema(PRESSURECONTROLSYSTEM);
-    add(pressureControlSystemSchema, gasmas.ontology.PressureControlSystem.class);
-    ConceptSchema compressorSchema = new ConceptSchema(COMPRESSOR);
-    add(compressorSchema, gasmas.ontology.Compressor.class);
-    ConceptSchema pipeSchema = new ConceptSchema(PIPE);
-    add(pipeSchema, gasmas.ontology.Pipe.class);
-    ConceptSchema branchSchema = new ConceptSchema(BRANCH);
-    add(branchSchema, gasmas.ontology.Branch.class);
-    ConceptSchema structuralParametersSchema = new ConceptSchema(STRUCTURALPARAMETERS);
-    add(structuralParametersSchema, gasmas.ontology.StructuralParameters.class);
-    ConceptSchema valveSchema = new ConceptSchema(VALVE);
-    add(valveSchema, gasmas.ontology.Valve.class);
-    ConceptSchema propagationPointSchema = new ConceptSchema(PROPAGATIONPOINT);
-    add(propagationPointSchema, gasmas.ontology.PropagationPoint.class);
     ConceptSchema resistanceParametersSchema = new ConceptSchema(RESISTANCEPARAMETERS);
     add(resistanceParametersSchema, gasmas.ontology.ResistanceParameters.class);
-    ConceptSchema fluidParametersSchema = new ConceptSchema(FLUIDPARAMETERS);
-    add(fluidParametersSchema, gasmas.ontology.FluidParameters.class);
-    ConceptSchema storageSchema = new ConceptSchema(STORAGE);
-    add(storageSchema, gasmas.ontology.Storage.class);
     ConceptSchema exitSchema = new ConceptSchema(EXIT);
     add(exitSchema, gasmas.ontology.Exit.class);
     ConceptSchema entrySchema = new ConceptSchema(ENTRY);
     add(entrySchema, gasmas.ontology.Entry.class);
     ConceptSchema gridComponentSchema = new ConceptSchema(GRIDCOMPONENT);
     add(gridComponentSchema, gasmas.ontology.GridComponent.class);
+    ConceptSchema propagationPointSchema = new ConceptSchema(PROPAGATIONPOINT);
+    add(propagationPointSchema, gasmas.ontology.PropagationPoint.class);
+    ConceptSchema fluidParametersSchema = new ConceptSchema(FLUIDPARAMETERS);
+    add(fluidParametersSchema, gasmas.ontology.FluidParameters.class);
     ConceptSchema flowParametersSchema = new ConceptSchema(FLOWPARAMETERS);
     add(flowParametersSchema, gasmas.ontology.FlowParameters.class);
+    ConceptSchema pipeSchema = new ConceptSchema(PIPE);
+    add(pipeSchema, gasmas.ontology.Pipe.class);
+    ConceptSchema compressorSchema = new ConceptSchema(COMPRESSOR);
+    add(compressorSchema, gasmas.ontology.Compressor.class);
+    ConceptSchema structuralParametersSchema = new ConceptSchema(STRUCTURALPARAMETERS);
+    add(structuralParametersSchema, gasmas.ontology.StructuralParameters.class);
+    ConceptSchema storageSchema = new ConceptSchema(STORAGE);
+    add(storageSchema, gasmas.ontology.Storage.class);
+    ConceptSchema branchSchema = new ConceptSchema(BRANCH);
+    add(branchSchema, gasmas.ontology.Branch.class);
+    ConceptSchema valveSchema = new ConceptSchema(VALVE);
+    add(valveSchema, gasmas.ontology.Valve.class);
 
     // adding AgentAction(s)
 
@@ -105,40 +104,41 @@ public class GasgridOntology extends jade.content.onto.Ontology  {
 
 
     // adding fields
-    structuralParametersSchema.add(STRUCTURALPARAMETERS_GEOX, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
-    structuralParametersSchema.add(STRUCTURALPARAMETERS_ATPARENTLENGTHPOS, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
-    structuralParametersSchema.add(STRUCTURALPARAMETERS_GEOY, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
-    structuralParametersSchema.add(STRUCTURALPARAMETERS_GEOZ, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
-    structuralParametersSchema.add(STRUCTURALPARAMETERS_DIAMETER, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
+    resistanceParametersSchema.add(RESISTANCEPARAMETERS_PIPEFRICTION, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
+    resistanceParametersSchema.add(RESISTANCEPARAMETERS_COSTS, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
+    gridComponentSchema.add(GRIDCOMPONENT_ID, (TermSchema)getSchema(BasicOntology.STRING), ObjectSchema.MANDATORY);
+    propagationPointSchema.add(PROPAGATIONPOINT_FLOWPARAMETERS, flowParametersSchema, ObjectSchema.OPTIONAL);
+    propagationPointSchema.add(PROPAGATIONPOINT_ID, (TermSchema)getSchema(BasicOntology.STRING), ObjectSchema.MANDATORY);
     propagationPointSchema.add(PROPAGATIONPOINT_STRUCTURALPARAMETERS, structuralParametersSchema, ObjectSchema.OPTIONAL);
     propagationPointSchema.add(PROPAGATIONPOINT_ADJACENTAGENTS, (ConceptSchema)getSchema(BasicOntology.AID), 0, ObjectSchema.UNLIMITED);
-    propagationPointSchema.add(PROPAGATIONPOINT_ID, (TermSchema)getSchema(BasicOntology.STRING), ObjectSchema.MANDATORY);
-    propagationPointSchema.add(PROPAGATIONPOINT_FLOWPARAMETERS, flowParametersSchema, ObjectSchema.OPTIONAL);
-    resistanceParametersSchema.add(RESISTANCEPARAMETERS_COSTS, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
-    resistanceParametersSchema.add(RESISTANCEPARAMETERS_PIPEFRICTION, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
-    fluidParametersSchema.add(FLUIDPARAMETERS_DYNAMICVISCOSITY, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
-    fluidParametersSchema.add(FLUIDPARAMETERS_THERMALCONDUCTIVITY, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
     fluidParametersSchema.add(FLUIDPARAMETERS_DENSITY, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
+    fluidParametersSchema.add(FLUIDPARAMETERS_THERMALCONDUCTIVITY, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
+    fluidParametersSchema.add(FLUIDPARAMETERS_DYNAMICVISCOSITY, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
     fluidParametersSchema.add(FLUIDPARAMETERS_KINEMATICVISCOSITY, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
-    gridComponentSchema.add(GRIDCOMPONENT_ID, (TermSchema)getSchema(BasicOntology.STRING), ObjectSchema.MANDATORY);
-    flowParametersSchema.add(FLOWPARAMETERS_FLUIDVELOCITY, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
+    flowParametersSchema.add(FLOWPARAMETERS_PRESSURE, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
     flowParametersSchema.add(FLOWPARAMETERS_REYNOLDSNUMBER, (TermSchema)getSchema(BasicOntology.INTEGER), ObjectSchema.OPTIONAL);
     flowParametersSchema.add(FLOWPARAMETERS_MASSFLOW, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
     flowParametersSchema.add(FLOWPARAMETERS_FLOW, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
     flowParametersSchema.add(FLOWPARAMETERS_TEMPERATURE, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
-    flowParametersSchema.add(FLOWPARAMETERS_PRESSURE, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
+    flowParametersSchema.add(FLOWPARAMETERS_FLUIDVELOCITY, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
+    pipeSchema.add(PIPE_LENGTH, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
+    pipeSchema.add(PIPE_RESISTANCE, resistanceParametersSchema, ObjectSchema.OPTIONAL);
+    structuralParametersSchema.add(STRUCTURALPARAMETERS_GEOX, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
+    structuralParametersSchema.add(STRUCTURALPARAMETERS_ATPARENTLENGTHPOS, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
+    structuralParametersSchema.add(STRUCTURALPARAMETERS_DIAMETER, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
+    structuralParametersSchema.add(STRUCTURALPARAMETERS_GEOZ, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
+    structuralParametersSchema.add(STRUCTURALPARAMETERS_GEOY, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
 
     // adding name mappings
 
     // adding inheritance
-    pressureControlSystemSchema.addSuperSchema(gridComponentSchema);
-    compressorSchema.addSuperSchema(gridComponentSchema);
-    pipeSchema.addSuperSchema(gridComponentSchema);
-    branchSchema.addSuperSchema(gridComponentSchema);
-    valveSchema.addSuperSchema(gridComponentSchema);
-    storageSchema.addSuperSchema(gridComponentSchema);
     exitSchema.addSuperSchema(gridComponentSchema);
     entrySchema.addSuperSchema(gridComponentSchema);
+    pipeSchema.addSuperSchema(gridComponentSchema);
+    compressorSchema.addSuperSchema(gridComponentSchema);
+    storageSchema.addSuperSchema(gridComponentSchema);
+    branchSchema.addSuperSchema(gridComponentSchema);
+    valveSchema.addSuperSchema(gridComponentSchema);
 
    }catch (java.lang.Exception e) {e.printStackTrace();}
   }

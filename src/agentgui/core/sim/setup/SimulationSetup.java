@@ -15,7 +15,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.application.Project;
-import agentgui.graphEnvironment.environmentModel.GraphElementSettings;
+import agentgui.graphEnvironment.environmentModel.ComponentTypeSettings;
 
 @XmlRootElement public class SimulationSetup {
 
@@ -32,18 +32,18 @@ import agentgui.graphEnvironment.environmentModel.GraphElementSettings;
 	private String environmentFileName = null;
 	private String svgFileName = null;
 	
-	private HashMap<String, GraphElementSettings> graphElementSettings;
+	private HashMap<String, ComponentTypeSettings> graphElementSettings;
 	
 	/**
 	 * @return the elementTypeSettings
 	 */
-	public HashMap<String, GraphElementSettings> getGraphElementSettings() {
+	public HashMap<String, ComponentTypeSettings> getGraphElementSettings() {
 		return graphElementSettings;
 	}
 	/**
 	 * @param graphElementSettings the elementTypeSettings to set
 	 */
-	public void setGraphElementSettings(HashMap<String, GraphElementSettings> graphElementSettings) {
+	public void setGraphElementSettings(HashMap<String, ComponentTypeSettings> graphElementSettings) {
 		this.graphElementSettings = graphElementSettings;
 	}
 	/**

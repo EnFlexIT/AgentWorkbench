@@ -16,7 +16,11 @@ import edu.uci.ics.jung.io.graphml.GraphMLReader2;
 import edu.uci.ics.jung.io.graphml.GraphMetadata;
 import edu.uci.ics.jung.io.graphml.HyperEdgeMetadata;
 import edu.uci.ics.jung.io.graphml.NodeMetadata;
-
+/**
+ * Helper class for YedGraphMLFileImporter, converting the yEd graph to a temporary JUNG graph, which is then processed by the YedGraphMLFileImporter.
+ * @author Nils
+ *
+ */
 public class YedGraphMLParser {
 	
 	int edgeCount = 0;

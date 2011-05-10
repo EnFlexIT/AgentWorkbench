@@ -33,6 +33,10 @@ public class NetworkComponent {
 	 */
 	private String prototypeClassName;
 	/**
+	 * The NetworkComponent's GraphElementPrototype class name
+	 */
+	private String agentClassName;
+	/**
 	 * The ontology object instance representing this component, serialized as a base64 encoded String for saving via JAXB
 	 */
 	private String encodedOntologyRepresentation;
@@ -101,6 +105,18 @@ public class NetworkComponent {
 	 */
 	public void setPrototypeClassName(String prototypeClassName) {
 		this.prototypeClassName = prototypeClassName;
+	}
+	/**
+	 * @return the agentClassName
+	 */
+	public String getAgentClassName() {
+		return agentClassName;
+	}
+	/**
+	 * @param agentClassName the agentClassName to set
+	 */
+	public void setAgentClassName(String agentClassName) {
+		this.agentClassName = agentClassName;
 	}
 	/**
 	 * @return the encodedOntologyRepresentation

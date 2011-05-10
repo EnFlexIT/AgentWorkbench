@@ -24,7 +24,7 @@ import agentgui.core.gui.ClassSelectorTableCellEditor;
 import agentgui.core.gui.components.ClassNameListCellRenderer;
 import agentgui.core.gui.components.ClassNameTableCellRenderer;
 import agentgui.core.jade.ClassSearcherSingle;
-import agentgui.graphEnvironment.environmentModel.GraphElementSettings;
+import agentgui.graphEnvironment.environmentModel.ComponentTypeSettings;
 import agentgui.graphEnvironment.prototypes.GraphElementPrototype;
 
 import java.awt.Insets;
@@ -101,7 +101,7 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 	private void initialize() {
 		this.setSize(400, 300);
 		this.setContentPane(getJContentPane());
-		this.setTitle(Language.translate("Klassenzuordnung"));
+		this.setTitle(Language.translate("Komponententyp-Definition"));
 	}
 
 	/**
@@ -114,18 +114,18 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 			GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
 			gridBagConstraints4.gridx = 3;
 			gridBagConstraints4.anchor = GridBagConstraints.WEST;
-			gridBagConstraints4.gridy = 2;
+			gridBagConstraints4.gridy = 1;
 			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
 			gridBagConstraints3.fill = GridBagConstraints.BOTH;
-			gridBagConstraints3.gridy = 2;
+			gridBagConstraints3.gridy = 1;
 			gridBagConstraints3.weightx = 1.0;
 			gridBagConstraints3.gridx = 2;
 			GridBagConstraints gridBagConstraints12 = new GridBagConstraints();
 			gridBagConstraints12.gridx = 0;
 			gridBagConstraints12.gridwidth = 2;
-			gridBagConstraints12.gridy = 2;
+			gridBagConstraints12.gridy = 1;
 			jLabelNodeClass = new JLabel();
-			jLabelNodeClass.setText("Übergabepunkte");
+			jLabelNodeClass.setText(Language.translate("Verbindungspunkte"));
 			GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
 			gridBagConstraints11.gridx = 1;
 			gridBagConstraints11.insets = new Insets(5, 5, 5, 5);
@@ -136,7 +136,7 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 			gridBagConstraints1.gridy = 3;
 			GridBagConstraints gridBagConstraints10 = new GridBagConstraints();
 			gridBagConstraints10.fill = GridBagConstraints.BOTH;
-			gridBagConstraints10.gridy = 1;
+			gridBagConstraints10.gridy = 2;
 			gridBagConstraints10.weightx = 1.0;
 			gridBagConstraints10.weighty = 1.0;
 			gridBagConstraints10.gridwidth = 4;
@@ -256,23 +256,25 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 		
 		// Headlines
 		Vector<String> titles = new Vector<String>();
-		titles.add(Language.translate("Element"));
+		titles.add(Language.translate("Typ-Bezeichner"));
 //		titles.add(Language.translate("Ontologieklasse"));
 		titles.add(Language.translate("Agentenklasse"));
 		titles.add(Language.translate("Graph-Prototyp"));
 		Vector<Vector<String>> dataRows = new Vector<Vector<String>>();
 		
 		// Set table entries for defined assignments, if any
-		HashMap<String, GraphElementSettings> etsHash = parent.getController().getGraphElementSettings();
+		HashMap<String, ComponentTypeSettings> etsHash = parent.getController().getGraphElementSettings();
 		if(etsHash != null){
 			Iterator<String> etsIter = etsHash.keySet().iterator();
 			while(etsIter.hasNext()){
 				String etName = etsIter.next();
-				Vector<String> newRow = new Vector<String>();
-				newRow.add(etName);
-				newRow.add(etsHash.get(etName).getAgentClass());
-				newRow.add(etsHash.get(etName).getGraphPrototype());
-				dataRows.add(newRow);
+				if(!etName.equals("node")){
+					Vector<String> newRow = new Vector<String>();
+					newRow.add(etName);
+					newRow.add(etsHash.get(etName).getAgentClass());
+					newRow.add(etsHash.get(etName).getGraphPrototype());
+					dataRows.add(newRow);
+				}
 			}
 		}
 		
@@ -381,16 +383,16 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 			JTable jtc = getJTableClasses();
 			
 			int rowNum = jtc.getRowCount();
-			HashMap<String, GraphElementSettings> etsVector = new HashMap<String, GraphElementSettings>();
+			HashMap<String, ComponentTypeSettings> etsVector = new HashMap<String, ComponentTypeSettings>();
 			for(int row=0; row<rowNum; row++){
 				
-				GraphElementSettings ets = new GraphElementSettings(
+				ComponentTypeSettings ets = new ComponentTypeSettings(
 						(String)jtc.getValueAt(row, 1), 
 						(String)jtc.getValueAt(row, 2));
 				// Use name as key
 				etsVector.put((String) jtc.getValueAt(row, 0), ets);
 			}
-			etsVector.put("node", new GraphElementSettings(getJTextFieldNodeClass().getText(), null));
+			etsVector.put("node", new ComponentTypeSettings(getJTextFieldNodeClass().getText(), null));
 			parent.getController().setGraphElementSettings(etsVector);
 			
 			this.setVisible(false);
@@ -423,7 +425,7 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 	private JTextField getJTextFieldNodeClass() {
 		if (jTextFieldNodeClass == null) {
 			jTextFieldNodeClass = new JTextField();
-			GraphElementSettings nodeSettings = parent.getController().getGraphElementSettings().get("node");
+			ComponentTypeSettings nodeSettings = parent.getController().getGraphElementSettings().get("node");
 			if(nodeSettings != null){
 				jTextFieldNodeClass.setText(nodeSettings.getAgentClass());
 			}

@@ -2,7 +2,11 @@ package agentgui.graphEnvironment.environmentModel;
 
 import java.awt.Point;
 import java.awt.geom.Point2D;
-
+/**
+ * This class represents a graph node in an environment model of the type graph / network
+ * @author Nils
+ *
+ */
 public class GraphNode extends GraphElement{
 	/**
 	 * The GraphNode's position in a visualization

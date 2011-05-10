@@ -117,8 +117,9 @@
             <key>n9</key>
             <value>
                 <directed>false</directed>
-                <graphElementIDs>PP11</graphElementIDs>
+                <encodedOntologyRepresentation>PFBpcGUgSUQ9Im45IiBsZW5ndGg9IjEwMC4wRiI+Cgk8cmVzaXN0YW5jZT4KCQk8UmVzaXN0YW5jZVBhcmFtZXRlcnMgcGlwZUZyaWN0aW9uPSIwLjAzRiIgY29zdHM9IjIuNDNGIi8+Cgk8L3Jlc2lzdGFuY2U+CjwvUGlwZT4K</encodedOntologyRepresentation>
                 <graphElementIDs>n9</graphElementIDs>
+                <graphElementIDs>PP11</graphElementIDs>
                 <graphElementIDs>PP6</graphElementIDs>
                 <id>n9</id>
                 <prototypeClassName>agentgui.graphEnvironment.prototypes.SimpleGraphElement</prototypeClassName>
@@ -129,8 +130,8 @@
             <key>n8</key>
             <value>
                 <directed>false</directed>
-                <graphElementIDs>PP10</graphElementIDs>
                 <graphElementIDs>PP9</graphElementIDs>
+                <graphElementIDs>PP10</graphElementIDs>
                 <graphElementIDs>n8</graphElementIDs>
                 <id>n8</id>
                 <prototypeClassName>agentgui.graphEnvironment.prototypes.SimpleGraphElement</prototypeClassName>

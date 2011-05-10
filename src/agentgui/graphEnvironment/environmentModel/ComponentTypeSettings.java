@@ -1,13 +1,13 @@
 package agentgui.graphEnvironment.environmentModel;
 
-public class GraphElementSettings {
+public class ComponentTypeSettings {
 	private String agentClass;
 	private String graphPrototype;
 	
-	public GraphElementSettings(){
+	public ComponentTypeSettings(){
 		super();
 	}
-	public GraphElementSettings(String agentClass, String graphPrototype) {
+	public ComponentTypeSettings(String agentClass, String graphPrototype) {
 		super();
 		this.agentClass = agentClass;
 		this.graphPrototype = graphPrototype;

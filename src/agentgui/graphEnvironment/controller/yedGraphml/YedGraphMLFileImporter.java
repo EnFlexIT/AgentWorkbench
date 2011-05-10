@@ -1,26 +1,16 @@
 package agentgui.graphEnvironment.controller.yedGraphml;
 
-import java.awt.Dimension;
 import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Vector;
 
-import javax.swing.JFrame;
-
-import org.apache.commons.collections15.Transformer;
-
-import edu.uci.ics.jung.algorithms.layout.FRLayout;
-import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.Graph;
-import edu.uci.ics.jung.visualization.VisualizationViewer;
-import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
-import edu.uci.ics.jung.visualization.control.ModalGraphMouse;
 import agentgui.core.application.Language;
 import agentgui.graphEnvironment.controller.GraphFileImporter;
 import agentgui.graphEnvironment.environmentModel.GraphElement;
-import agentgui.graphEnvironment.environmentModel.GraphElementSettings;
+import agentgui.graphEnvironment.environmentModel.ComponentTypeSettings;
 import agentgui.graphEnvironment.environmentModel.NetworkModel;
 import agentgui.graphEnvironment.environmentModel.NetworkComponent;
 import agentgui.graphEnvironment.prototypes.GraphElementPrototype;
@@ -49,13 +39,13 @@ public class YedGraphMLFileImporter extends GraphFileImporter {
 	
 	private HashMap<String, GraphElementPrototype> addedElements = null;
 	
-	public YedGraphMLFileImporter(HashMap<String, GraphElementSettings> elementSettings) {
+	public YedGraphMLFileImporter(HashMap<String, ComponentTypeSettings> elementSettings) {
 		super(elementSettings);
 		addedElements = new HashMap<String, GraphElementPrototype>();
 	}
 
 	@Override
-	public NetworkModel loadGraphFromFile(File graphFile) {
+	public NetworkModel importGraphFromFile(File graphFile) {
 		// GraphML parser instance
 		YedGraphMLParser parser = new YedGraphMLParser();
 		// List of the graphs start nodes
@@ -66,7 +56,6 @@ public class YedGraphMLFileImporter extends GraphFileImporter {
 		if (tempGraph==null) {
 			return null;
 		} else {
-//			showDebugView();
 			// Find the graphs start nodes
 			Iterator<TempNode> nodes = tempGraph.getVertices().iterator();
 			startNodesList = new Vector<TempNode>();
@@ -95,7 +84,7 @@ public class YedGraphMLFileImporter extends GraphFileImporter {
 		NetworkComponent newComponent = new NetworkComponent();
 		newComponent.setId(tempElement.getId());
 		newComponent.setType(tempElement.getType());
-		newComponent.setPrototypeClassName(elementSettings.get(tempElement.getType()).getGraphPrototype());
+		newComponent.setPrototypeClassName(componentTypeSettings.get(tempElement.getType()).getGraphPrototype());
 		
 		
 		GraphElementPrototype newElement = null;
@@ -168,28 +157,4 @@ public class YedGraphMLFileImporter extends GraphFileImporter {
 	public String getTypeString() {
 		return fileTypeDescription;
 	}
-	
-	/**
-	 * Show a simple visualization of the tempGraph for debugging purposes
-	 */
-	@SuppressWarnings("unused")
-	private void showDebugView(){
-		Layout<TempNode, Object> tempGraphLayout = new FRLayout<TempNode, Object>(tempGraph, new Dimension(300, 300));
-		VisualizationViewer<TempNode, Object> visView = new VisualizationViewer<TempNode, Object>(tempGraphLayout, new Dimension(350, 350));
-		DefaultModalGraphMouse<TempNode, Object> dgm = new DefaultModalGraphMouse<TempNode, Object>();
-		dgm.setMode(ModalGraphMouse.Mode.TRANSFORMING);
-		visView.addMouseListener(dgm);
-		visView.getRenderContext().setVertexLabelTransformer(new Transformer<TempNode, String>() {
-			
-			@Override
-			public String transform(TempNode arg0) {
-				return arg0.getType();
-			}
-		});
-		JFrame debugViewFrame = new JFrame("TempGraph Debug View");
-		debugViewFrame.getContentPane().add(visView);
-		debugViewFrame.pack();
-		debugViewFrame.setVisible(true);
-	}
-
 }

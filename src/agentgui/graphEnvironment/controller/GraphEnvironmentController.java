@@ -36,7 +36,7 @@ import agentgui.core.sim.setup.SimulationSetups;
 import agentgui.core.sim.setup.SimulationSetupsChangeNotification;
 import agentgui.graphEnvironment.controller.yedGraphml.YedGraphMLFileImporter;
 import agentgui.graphEnvironment.environmentModel.GraphEdge;
-import agentgui.graphEnvironment.environmentModel.GraphElementSettings;
+import agentgui.graphEnvironment.environmentModel.ComponentTypeSettings;
 import agentgui.graphEnvironment.environmentModel.GraphNode;
 import agentgui.graphEnvironment.environmentModel.NetworkModel;
 import agentgui.graphEnvironment.environmentModel.NetworkComponentList;
@@ -81,7 +81,7 @@ public class GraphEnvironmentController extends Observable implements Observer {
 	/**
 	 * The currently defined GraphElementSettings, accessible by the type string
 	 */
-	private HashMap<String, GraphElementSettings> currentGES = null;
+	private HashMap<String, ComponentTypeSettings> currentGES = null;
 	/**
 	 * The GraphFileImporter used for importing externally defined graph definitions
 	 */
@@ -99,7 +99,7 @@ public class GraphEnvironmentController extends Observable implements Observer {
 		setGraphElementSettings(project.simSetups.getCurrSimSetup().getGraphElementSettings());
 		// If no ETS are specified in the setup, assign an empty HashMap to avoid null pointers
 		if(currentGES == null){
-			currentGES = new HashMap<String, GraphElementSettings>();
+			currentGES = new HashMap<String, ComponentTypeSettings>();
 		}
 	}
 	
@@ -111,7 +111,7 @@ public class GraphEnvironmentController extends Observable implements Observer {
 	 * Set the SimulationSetup's graphElementSettings property
 	 * @param gesVector
 	 */
-	public void setGraphElementSettings(HashMap<String, GraphElementSettings> gesVector){
+	public void setGraphElementSettings(HashMap<String, ComponentTypeSettings> gesVector){
 		currentGES = gesVector;
 		project.simSetups.getCurrSimSetup().setGraphElementSettings(gesVector);
 		project.isUnsaved=true;
@@ -122,7 +122,7 @@ public class GraphEnvironmentController extends Observable implements Observer {
 	 * Gets the current GraphElementSettings
 	 * @return
 	 */
-	public HashMap<String, GraphElementSettings> getGraphElementSettings(){
+	public HashMap<String, ComponentTypeSettings> getGraphElementSettings(){
 		return currentGES;
 	}
 	
@@ -131,7 +131,7 @@ public class GraphEnvironmentController extends Observable implements Observer {
 	 * @param graphMLFile The GraphML file defining the new graph.
 	 */
 	public void importNetworkModel(File graphMLFile){
-		networkModel = getGraphFileImporter().loadGraphFromFile(graphMLFile);
+		networkModel = getGraphFileImporter().importGraphFromFile(graphMLFile);
 		if(networkModel != null){
 			Layout<GraphNode, GraphEdge> initLayout = new FRLayout<GraphNode, GraphEdge>(networkModel.getGraph(), new Dimension(400, 400));
 			
@@ -189,7 +189,7 @@ public class GraphEnvironmentController extends Observable implements Observer {
 
 				@Override
 				public String transform(GraphEdge arg0) {
-					return arg0.getType();
+					return arg0.getComponentType();
 				}
 			});
 			graphMLWriter.setVertexIDs(new Transformer<GraphNode, String>() {

@@ -9,9 +9,32 @@ import jade.core.*;
    * A PropagationPoint is a link between two components of the gas grid.
 * Protege name: PropagationPoint
 * @author ontology bean generator
-* @version 2011/04/28, 16:09:11
+* @version 2011/05/8, 09:32:41
 */
 public class PropagationPoint implements Concept {
+
+   /**
+   * A set of parameters describing the current gas flow at a PropagationPoint.
+* Protege name: flowParameters
+   */
+   private FlowParameters flowParameters;
+   public void setFlowParameters(FlowParameters value) { 
+    this.flowParameters=value;
+   }
+   public FlowParameters getFlowParameters() {
+     return this.flowParameters;
+   }
+
+   /**
+* Protege name: ID
+   */
+   private String iD;
+   public void setID(String value) { 
+    this.iD=value;
+   }
+   public String getID() {
+     return this.iD;
+   }
 
    /**
    * A set of parameters describing the physical properties of a PropagationPoint.
@@ -46,28 +69,5 @@ public class PropagationPoint implements Concept {
    public Iterator getAllAdjacentAgents() {return adjacentAgents.iterator(); }
    public List getAdjacentAgents() {return adjacentAgents; }
    public void setAdjacentAgents(List l) {adjacentAgents = l; }
-
-   /**
-* Protege name: ID
-   */
-   private String iD;
-   public void setID(String value) { 
-    this.iD=value;
-   }
-   public String getID() {
-     return this.iD;
-   }
-
-   /**
-   * A set of parameters describing the current gas flow at a PropagationPoint.
-* Protege name: flowParameters
-   */
-   private FlowParameters flowParameters;
-   public void setFlowParameters(FlowParameters value) { 
-    this.flowParameters=value;
-   }
-   public FlowParameters getFlowParameters() {
-     return this.flowParameters;
-   }
 
 }

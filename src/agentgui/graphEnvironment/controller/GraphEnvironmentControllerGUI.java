@@ -202,7 +202,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	private JButton getBtnSetClasses() {
 		if (btnSetClasses == null) {
 			btnSetClasses = new JButton();
-			btnSetClasses.setText(Language.translate("Klassenzuordnung"));
+			btnSetClasses.setText(Language.translate("Komponenten-Typen"));
 			btnSetClasses.addActionListener(this);
 		}
 		return btnSetClasses;
@@ -335,7 +335,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		
 		Iterator<String> elementIDs = netComp.getGraphElementIDs().iterator();
 		while(elementIDs.hasNext()){
-			elements.add(controller.getGridModel().getComponent(elementIDs.next()));
+			elements.add(controller.getGridModel().getGraphElement(elementIDs.next()));
 		}
 		
 		return elements;

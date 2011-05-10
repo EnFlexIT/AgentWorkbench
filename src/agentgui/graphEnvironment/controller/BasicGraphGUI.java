@@ -212,7 +212,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 	
 				@Override
 				public String transform(GraphEdge arg0) {
-					return arg0.getType()+" "+arg0.getId();
+					return arg0.getComponentType()+" "+arg0.getId();
 				}
 			});
 			// Use straight lines as edges

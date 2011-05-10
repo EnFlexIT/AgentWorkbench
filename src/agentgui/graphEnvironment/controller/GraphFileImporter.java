@@ -7,7 +7,7 @@ import java.util.Iterator;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 
 import agentgui.graphEnvironment.environmentModel.GraphEdge;
-import agentgui.graphEnvironment.environmentModel.GraphElementSettings;
+import agentgui.graphEnvironment.environmentModel.ComponentTypeSettings;
 import agentgui.graphEnvironment.environmentModel.GraphNode;
 import agentgui.graphEnvironment.environmentModel.NetworkModel;
 
@@ -18,10 +18,10 @@ import agentgui.graphEnvironment.environmentModel.NetworkModel;
  */
 public abstract class GraphFileImporter {
 	
-	protected HashMap<String, GraphElementSettings> elementSettings = null;
+	protected HashMap<String, ComponentTypeSettings> componentTypeSettings = null;
 	
-	public GraphFileImporter(HashMap<String, GraphElementSettings> elementSettings){
-		this.elementSettings = elementSettings;
+	public GraphFileImporter(HashMap<String, ComponentTypeSettings> componentTypeSettings){
+		this.componentTypeSettings = componentTypeSettings;
 	}
 	
 	public void initPosition(NetworkModel network, Layout<GraphNode, GraphEdge> layout){
@@ -38,7 +38,7 @@ public abstract class GraphFileImporter {
 	 * @param graphFile The file containing the graph definition.
 	 * @return The JUNG graph.
 	 */
-	public abstract NetworkModel loadGraphFromFile(File graphFile);
+	public abstract NetworkModel importGraphFromFile(File graphFile);
 	/**
 	 * Returns the extension of the file type the GraphFileLoader can handle
 	 * @return The file extension

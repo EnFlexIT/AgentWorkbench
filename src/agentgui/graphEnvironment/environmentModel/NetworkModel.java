@@ -21,7 +21,7 @@ public class NetworkModel extends Observable{
 	/**
 	 * HashMap providing access to the grid components based on the component's agentID
 	 */
-	private HashMap<String, GraphElement> components;
+	private HashMap<String, GraphElement> graphElements;
 	/**
 	 * A list of all NetwirkComponents in the GridModel, accessible by ID
 	 */
@@ -31,7 +31,7 @@ public class NetworkModel extends Observable{
 	 */
 	public NetworkModel(){
 		this.graph = new SparseGraph<GraphNode, GraphEdge>();
-		this.components = new HashMap<String, GraphElement>();
+		this.graphElements = new HashMap<String, GraphElement>();
 		this.networkComponents = new HashMap<String, NetworkComponent>();
 	}
 	/**
@@ -39,14 +39,14 @@ public class NetworkModel extends Observable{
 	 * @param id The ID to look for
 	 * @return The GridComponent
 	 */
-	public GraphElement getComponent(String id){
-		return components.get(id);
+	public GraphElement getGraphElement(String id){
+		return graphElements.get(id);
 	}
 	/**
 	 * Returns a list of all GridComponents
 	 * @return The list
 	 */
-	public Collection<GraphEdge> getComponents() {
+	public Collection<GraphEdge> getEdges() {
 		return graph.getEdges();
 	}
 	public Graph<GraphNode, GraphEdge> getGraph() {
@@ -56,16 +56,16 @@ public class NetworkModel extends Observable{
 		this.graph = graph;
 		
 		// Create HashMap of components
-		this.components = new HashMap<String, GraphElement>();
+		this.graphElements = new HashMap<String, GraphElement>();
 		Iterator<GraphNode> nodeIterator = graph.getVertices().iterator();
 		while(nodeIterator.hasNext()){
 			GraphNode node = nodeIterator.next();
-			components.put(node.getId(), node);
+			graphElements.put(node.getId(), node);
 		}
 		Iterator<GraphEdge> edgeIterator = graph.getEdges().iterator();
 		while(edgeIterator.hasNext()){
 			GraphEdge edge = edgeIterator.next();
-			components.put(edge.getId(), edge);
+			graphElements.put(edge.getId(), edge);
 		}
 	}
 	/**
