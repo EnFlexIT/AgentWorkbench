@@ -12,6 +12,7 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Stack;
 import java.util.Vector;
 
@@ -44,7 +45,8 @@ public class ImageHelper {
 	public static final int DIRECTION_UP_RIGHT=5;
 	public static final int DIRECTION_DOWN_LEFT=6;
 	public static final int DIRECTION_DOWN_RIGHT=7;
-	public static boolean READ_WORLD=false;
+	private static boolean READ_WORLD=false;
+	private static boolean IS_IN_METHOD=false;
 	int divideHeight;
 	int divideWidth;
 	double lastDistance=-20;
@@ -453,9 +455,9 @@ public class ImageHelper {
 		    	{
 		 
 		    	
-				SVGSafe sg=new SVGSafe();
-				System.out.println("Rekursion!");
-				sg.write("WayPath"+counter+".svg", doc);
+				//SVGSafe sg=new SVGSafe();
+				//System.out.println("Rekursion!");
+				//sg.write("WayPath"+counter+".svg", doc);
 				
 		    	return this.withoutGrid(id, target_x, target_y, width, height, direction, lookAhead-2, parent, pixel);
 		    	}
@@ -551,9 +553,30 @@ public class ImageHelper {
 	
 	
 	
-	public agentgui.physical2Denvironment.imageProcessing.StepNode createPlanImage(String id,String target_id , int direction , float lookAhead) throws Exception
+	public synchronized agentgui.physical2Denvironment.imageProcessing.StepNode createPlanImage(String id,String target_id , int direction , float lookAhead) throws Exception
 	{
+	
+		
+		synchronized (this) {
+		if(!READ_WORLD&&!IS_IN_METHOD)
+		{
+		
 		this.createManipulatedWorld();
+		}
+		else
+		{
+
+		this.evn=ImageIO.read(new File("myWorld.jpg"));	
+		}
+			
+		}
+		
+		while(!READ_WORLD)
+		{
+			System.out.println("Warte!");
+			Thread.sleep(50);
+		}
+	
 		Document doc=helper.getSVGDoc();
 		Element target=doc.getElementById(target_id);
 		float target_x=Float.parseFloat(target.getAttribute("x"));
@@ -583,9 +606,16 @@ public class ImageHelper {
 	}
 	
 	
-	public agentgui.physical2Denvironment.imageProcessing.StepNode createPlanImage(String id,Position target , int direction , float lookAhead) throws Exception
+	public synchronized agentgui.physical2Denvironment.imageProcessing.StepNode createPlanImage(String id,Position target , int direction , float lookAhead) throws Exception
 	{
-		this.createManipulatedWorld();
+		synchronized (this) {
+			if(!READ_WORLD)
+			{
+			System.out.println("Create Plan Image und READ_WORLD=false");
+			this.createManipulatedWorld();
+			}
+		}
+		
 		Document doc=helper.getSVGDoc();
 
 		float target_x=target.getXPos();
@@ -975,10 +1005,13 @@ public class ImageHelper {
 	 */
 	public synchronized BufferedImage createManipulatedWorld()
 	{
+	
 		try
 		{
-			if(!READ_WORLD)
+			if(!READ_WORLD&&!IS_IN_METHOD)
 			{
+				System.out.println("Bin drin!");
+				IS_IN_METHOD=true;
 				Document doc=helper.getSVGDoc();
 				EnvironmentWrapper envWrap = new EnvironmentWrapper(helper.getEnvironment());
 				Vector<StaticObject> obstacles=envWrap.getObstacles();
@@ -1033,7 +1066,7 @@ public class ImageHelper {
 			save.writeJPG("myworld.svg");
 				}
 			
-			
+			System.out.println("Setze Real_WORLD auf true!");
 			READ_WORLD=true;
 			}
 		
