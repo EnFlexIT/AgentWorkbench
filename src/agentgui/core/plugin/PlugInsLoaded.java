@@ -90,6 +90,8 @@ public class PlugInsLoaded extends Vector<PlugIn> {
 	public void removePlugIn(PlugIn plugIn) {
 		// --- Call the onPlugOut()method ---------------------------
 		plugIn.onPlugOut();
+		// --- Call the afterPlugOut()method ------------------------
+		plugIn.afterPlugOut();
 		// --- remove the PlugIn from the local Vector --------------
 		this.remove(plugIn);
 	}

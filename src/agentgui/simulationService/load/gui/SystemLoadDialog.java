@@ -61,7 +61,7 @@ public class SystemLoadDialog extends JFrame {
 	@SuppressWarnings("unused")
 	private void setLookAndFeel() {
  
-		String lnfClassname = Application.RunInfo.AppLnF();
+		String lnfClassname = Application.RunInfo.getAppLnF();
 		try {
 			if (lnfClassname == null) {
 				lnfClassname = UIManager.getCrossPlatformLookAndFeelClassName();

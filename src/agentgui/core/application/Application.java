@@ -1,6 +1,7 @@
 package agentgui.core.application;
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import agentgui.core.benchmark.BenchmarkMeasurement;
 import agentgui.core.config.FileProperties;
@@ -17,7 +18,8 @@ import agentgui.core.webserver.DownloadServer;
 import agentgui.simulationService.load.LoadMeasureThread;
 
 /**
- * @author derksen
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class Application {
 		
@@ -43,6 +45,7 @@ public class Application {
 
 	public static boolean benchmarkIsRunning = false; 
 	
+	private static String project2OpenAfterStart = null;
 	
 	// --- Singelton-Construct ---
 	private Application() {
@@ -55,19 +58,101 @@ public class Application {
 	 * main-method for the start of the application 
 	 * @param args
 	 */
-	public static void main( String[] args ) {
+	public static void main(String[] args) {
 		
 		// ----------------------------------------------------------
 		// --- Just starts the base-instances -----------------------
 		RunInfo = new GlobalInfo();
 		properties = new FileProperties();
+		proceedStartArguments(args);
 		new LoadMeasureThread().start();  
 		Console = new CoreWindowConsole();
 		startAgentGUI();
-
+		proceedStartArgumentOpenProject();
 	}	
 
+	/**
+	 * This method will proceed the arguments which are given
+	 * from the  
+	 * @param args
+	 */
+	private static void proceedStartArguments(String[] args){
+		
+		int i = 0;
+		while (i < args.length) {
+
+			if (args[i].startsWith("-")) {
+				
+				// ------------------------------------------------------------
+				// --- open a specified project ------------------------------- 
+				if (args[i].equalsIgnoreCase("-project")) {
+					i++;
+					project2OpenAfterStart = args[i];
+					
+				// ------------------------------------------------------------
+				// --- specify if the console should be used or not -----------
+				} else if (args[i].equalsIgnoreCase("-console")) {
+					i++;
+					if (args[i].equalsIgnoreCase("off")) {
+						RunInfo.setAppUseInternalConsole(false);
+					}
+					
+				// ------------------------------------------------------------
+				// --- print out the hel for the start argumetns --------------					
+				} else if (args[i].equalsIgnoreCase("-help")) {
+					proceedStartArgumentPrintHelp();
+				} else if (args[i].equalsIgnoreCase("-?")) {
+					proceedStartArgumentPrintHelp();
+				}
+				
+			} else {
+				// --- unspecified start option ------------------------------- 
+				System.out.println(Language.translate("Argument") + " " + (i+1) + " '" + args[i] + "': " + Language.translate("Bitte spezifizieren Sie den Typ des Startarguments!"));
+			}
+			
+			// --- proceed next start argument ------------
+			i++;
+		}
+		
+	}
 	
+	/**
+	 * Prints the start-arguments to the console
+	 */
+	private static void proceedStartArgumentPrintHelp() {
+		
+		System.out.println("Agent.GUI - usage of start arguments:");
+		System.out.println("");
+		System.out.println("1. '-project projectFolder': opens the project located in the Agent.GUI folder 'project' (e.g. 'myProject')");
+		System.out.println("2. '-console off'          : switches off the applications console output i. o. to keep the output at the IDE" );
+		System.out.println("3. '-help' or '-?'         : provides this information to the console" );
+		System.out.println("");
+		System.out.println("");
+	}
+	/**
+	 * This methode can be invoked in order to start a project.
+	 * It was implemented to open a project given by the start arguments
+	 * @param projectFolder
+	 */
+	private static void proceedStartArgumentOpenProject() {
+		
+		if (isServer==false && project2OpenAfterStart!=null) {
+			// --- open teh specified project -----------
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					Projects.add(project2OpenAfterStart);
+					project2OpenAfterStart=null;
+				}
+			});
+		}
+	}
+	
+	
+	/**
+	 * This methods starts Agent.GUI in application or server mode
+	 * depending on the configuration in 'properies\agentgui.ini'
+	 */
 	private static void startAgentGUI() {
 		
 		// ----------------------------------------------------------		

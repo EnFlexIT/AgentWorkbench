@@ -139,11 +139,19 @@ public class ProjectsLoaded {
 			// --- XML-Datei einlesen ---------------------
 			JAXBContext pc;
 			Unmarshaller um = null;
-			String XMLFileName = newProject.getProjectFolderFullPath() + Application.RunInfo.getFileNameProject();			
+			String XMLFileName = newProject.getProjectFolderFullPath() + Application.RunInfo.getFileNameProject();	
+			 
+			// --- Gibt es diese Datei überhaupt? ---------
+			File xmlFile = new File(XMLFileName);
+			if (xmlFile.exists()==false) {
+				System.out.println(Language.translate("Verzeichnis wurde nicht gefunden:") + " " + XMLFileName);
+				return null;
+			}
+			// --- Einlesen der Datei 'agentgui.xml' ------
 			try {
 				pc = JAXBContext.newInstance( newProject.getClass() );
 				um = pc.createUnmarshaller();
-				newProject = (Project) um.unmarshal( new FileReader( XMLFileName ) );
+				newProject = (Project) um.unmarshal( new FileReader(XMLFileName) );
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch (JAXBException e) {
@@ -340,7 +348,7 @@ public class ProjectsLoaded {
 		
 		boolean setFontBold = true;
 		
-		JMenu WindowMenu = Application.MainWindow.jMenuMainWindow;
+		JMenu WindowMenu = Application.MainWindow.jMenuMainWindows;
 		WindowMenu.removeAll();
 		if (this.count()==0 ){
 			WindowMenu.add( new JMenuItmen_Window( Language.translate("Kein Projekt geöffnet !"), -1, setFontBold ) );

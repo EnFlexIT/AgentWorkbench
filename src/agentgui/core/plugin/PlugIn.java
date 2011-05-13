@@ -1,8 +1,14 @@
 package agentgui.core.plugin;
 
+import java.awt.Container;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Vector;
 
+import javax.swing.JComponent;
+import javax.swing.JMenu;
+
+import agentgui.core.application.Application;
 import agentgui.core.application.Project;
 import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.core.sim.setup.SimulationSetups;
@@ -25,6 +31,8 @@ public abstract class PlugIn implements Observer {
 	
 	private Project project = null;
 	private String classReference = null;
+	
+	private Vector<JComponent> customJComponent = new Vector<JComponent>();
 	
 	/**
 	 * Default constructor for this class
@@ -65,9 +73,105 @@ public abstract class PlugIn implements Observer {
 	 * project, means immediately before the project will be closed.
 	 */
 	public void onPlugOut() {
-		this.project.deleteObserver(this);
 		System.out.println( "- PlugIn removed [" + this.getName() + "]" );
 	}
+	
+	/**
+	 * This method will be invoked just after the onPlugOut() method 
+	 * was executed.
+	 * DO NOT OVERRIDE !!!
+	 */
+	public void afterPlugOut() {
+		this.project.deleteObserver(this);
+		this.removeCustomJElements();
+	}
+	
+	// --------------------------------------------------------------
+	// --- Handling of custom elements for the GUI -------- START ---
+	// --------------------------------------------------------------
+	// --- Start of adding functions ------------
+	/**
+	 * This method can be used in order to add an individual menu 
+	 * @param myMenu
+	 */
+	protected void addJMenu(JMenu myMenu) {
+		Application.MainWindow.addJMenu(myMenu);
+		customJComponent.add(myMenu);
+	}
+	/**
+	 * This method can be used in order to add an individual menu  
+	 * at a specified index position of the menu bar
+	 * @param myMenu
+	 * @param indexPosition
+	 */
+	protected void addJMenu(JMenu myMenu, int indexPosition) {
+		Application.MainWindow.addJMenu(myMenu, indexPosition);
+		customJComponent.add(myMenu);
+	}
+	
+	/**
+	 * This method can be used in order to add an  
+	 * individual JMmenuItem to the given menu 
+	 * @param menu2add
+	 * @param myMenuItem
+	 */
+	protected void addJMenuItemComponent(JMenu menu2add, JComponent myMenuItemComponent) {
+		Application.MainWindow.addJMenuItemComponent(menu2add, myMenuItemComponent);
+		customJComponent.add(myMenuItemComponent);
+	}
+	/**
+	 * This method can be used in order to add an individual JMmenuItem 
+	 * at a specified index position of the given menu 
+	 * @param menu2add
+	 * @param myMenuItem
+	 * @param indexPosition
+	 */
+	protected void addJMenuItemComponent(JMenu menu2add, JComponent myMenuItemComponent, int indexPosition) {
+		Application.MainWindow.addJMenuItemComponent(menu2add, myMenuItemComponent, indexPosition);
+		customJComponent.add(myMenuItemComponent);
+	}
+	
+	/**
+	 * This method can be used in order to add an  
+	 * individual menu button to the toolbar
+	 * @param myButton
+	 */
+	protected void addJToolbarComponent(JComponent myComponent) {
+		Application.MainWindow.addJToolbarComponent(myComponent);
+		customJComponent.add(myComponent);
+	}
+	/**
+	 * This method can be used in order to add an individual menu button 
+	 * a specified index position of the toolbar
+	 * @param myButton
+	 * @param indexPosition
+	 */
+	protected void addJToolbarComponent(JComponent myComponent, int indexPosition) {
+		Application.MainWindow.addJToolbarComponent(myComponent,indexPosition);
+		customJComponent.add(myComponent);
+	}
+	// --- End of adding functions --------------
+	
+	/**
+	 * This method can be used to remove all custom components 
+	 * for menus and for the toolbar 
+	 */
+	private void removeCustomJElements() {
+		
+		// --- remove custom elements ---------------------
+		for (int i = 0; i < customJComponent.size(); i++) {
+			JComponent button = customJComponent.get(i);
+			Container comp = button.getParent();
+			comp.remove(button);
+		}
+		customJComponent = new Vector<JComponent>();
+		Application.MainWindow.validate();
+	}
+	// --------------------------------------------------------------
+	// --- Handling of custom elements for the GUI -------- END -----
+	// --------------------------------------------------------------
+	
+	
 	
 	/**
 	 * AgentGUI uses the observer pattern to inform about changes 

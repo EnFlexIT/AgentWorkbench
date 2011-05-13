@@ -31,7 +31,7 @@ public class SimStartAgent extends Agent {
 		
 		// --- If the Action is a 'start'-action, it can be also a 'restart'-action -----
 		if (startArg==BASE_ACTION_Start) {
-			if (mainWindow.jButtonSimStop.isEnabled()) {
+			if (mainWindow.isEnabledSimStop()) {
 				startArg = BASE_ACTION_Restart;
 			}
 		}

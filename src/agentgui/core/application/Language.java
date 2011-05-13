@@ -17,8 +17,8 @@ import org.apache.commons.codec.binary.Base64;
 
 public class Language {
 
-	private static String DictFileLocation64 = Application.RunInfo.FileDictionary(true, false);
-	private static String DictFileLocation = Application.RunInfo.FileDictionary(false, false);
+	private static String DictFileLocation64 = Application.RunInfo.FileDictionary(true, true);
+	private static String DictFileLocation = Application.RunInfo.FileDictionary(false, true);
 	private static String NewLine = Application.RunInfo.AppNewLineString();
 	private static String NewLineReplacer = Application.RunInfo.AppNewLineStringReplacer();
 	public final static String Seperator = ";";

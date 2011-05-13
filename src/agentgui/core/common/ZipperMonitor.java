@@ -80,7 +80,7 @@ public class ZipperMonitor extends JDialog implements ActionListener {
 
 	private void setLookAndFeel() {
 		
-		String lnfClassname = Application.RunInfo.AppLnF();
+		String lnfClassname = Application.RunInfo.getAppLnF();
 		try {
 			if (lnfClassname == null) {
 				lnfClassname = UIManager.getCrossPlatformLookAndFeelClassName();

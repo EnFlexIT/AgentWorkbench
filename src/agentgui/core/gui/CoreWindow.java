@@ -3,11 +3,12 @@ package agentgui.core.gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Graphics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -24,6 +25,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDesktopPane;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
@@ -48,31 +50,33 @@ import agentgui.core.application.Project;
 import agentgui.simulationService.agents.SimStartAgent;
 
 /**
- * Main User-Interface of the application
- * @author Christian Derksen
+ * This class represents the main user-interface of the application
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class CoreWindow extends JFrame implements ComponentListener {
 
 	private static final long serialVersionUID = 1L;
 
-	final static String PathImage = Application.RunInfo.PathImageIntern();
+	final static String pathImage = Application.RunInfo.PathImageIntern();
 	
-	private final ImageIcon iconAgentGUI = new ImageIcon( this.getClass().getResource( PathImage + "AgentGUI.png") );
+	private final ImageIcon iconAgentGUI = new ImageIcon( this.getClass().getResource( pathImage + "AgentGUI.png") );
 	private final Image imageAgentGUI = iconAgentGUI.getImage();
 	
-	private final ImageIcon iconGreen = new ImageIcon( this.getClass().getResource( PathImage + "StatGreen.png") );
-	private final ImageIcon iconRed = new ImageIcon( this.getClass().getResource( PathImage + "StatRed.png") );
-	private final ImageIcon iconClose = new ImageIcon( this.getClass().getResource( PathImage + "MBclose.png") );
-	private final ImageIcon iconCloseDummy = new ImageIcon( this.getClass().getResource( PathImage + "MBdummy.png") );
+	private final ImageIcon iconGreen = new ImageIcon( this.getClass().getResource( pathImage + "StatGreen.png") );
+	private final ImageIcon iconRed = new ImageIcon( this.getClass().getResource( pathImage + "StatRed.png") );
+	private final ImageIcon iconClose = new ImageIcon( this.getClass().getResource( pathImage + "MBclose.png") );
+	private final ImageIcon iconCloseDummy = new ImageIcon( this.getClass().getResource( pathImage + "MBdummy.png") );
 	
-	private static JLabel StatusBar;	
-	private JLabel StatusJade;
+	private static JLabel statusBar;	
+	private JLabel statusJade;
 	
-	public JSplitPane SplitProjectDesktop;
-	public JDesktopPane ProjectDesktop;	
-	public JEditorPane ConsoleText;
-	private int ConsoleHeight;
+	private JSplitPane jSplitPane4ProjectDesktop;
+	private JDesktopPane jDesktopPane4Projects;	
+	private JEditorPane consoleText;
+	private int consoleHeight;
 	
+	private JMenuBar jMenuBarBase;
 	private JMenuBar jMenuBarMain;
 	private JMenu jMenuMainProject;
 	private JMenu jMenuMainView;
@@ -81,43 +85,44 @@ public class CoreWindow extends JFrame implements ComponentListener {
 		public JRadioButtonMenuItem viewEndUser; 
 	private JMenu jMenuMainJade;
 	private JMenu jMenuMainSimulation;
+		private JMenuItem jMenuItemSimStart;
+		private JMenuItem jMenuItemSimPause;
+		private JMenuItem jMenuItemSimStop;
 	private JMenu jMenuExtra;
 		private JMenu jMenuExtraLang;
 		private JMenu jMenuExtraLnF;
-	public JMenu jMenuMainWindow;
+	public JMenu jMenuMainWindows;
 	private JMenu jMenuMainHelp;
 
-	private static int jMenuMainHelpPositionLeft;
-	private JLabel jMenuSpacer ;
 	private JMenuItem jMenuCloseButton;
 	
-	private JToolBar jToolBarApp;
+	private JToolBar jToolBarApplication;
 		private JButton JadeTools;	
 		private JPopupMenu JadeToolsPopUp;
 		
 		private JButton jButtonSimStart;
 		private JButton jButtonSimPause;
-		public JButton jButtonSimStop;
-		private JMenuItem jMenuItemSimStart;
-		private JMenuItem jMenuItemSimPause;
-		private JMenuItem jMenuItemSimStop;
+		private JButton jButtonSimStop;
 
-		
+	
 	// ------------------------------------------------------------		
 	// --- Start -------------------------------------------------- 
 	// ------------------------------------------------------------
+	/**
+	 * Constructor of this class
+	 */
 	public CoreWindow() {
 		
 		// --- Set the IconImage ----------------------------------
 		this.setIconImage(imageAgentGUI);
 		
 		// --- Set the Look and Feel of the Application -----------
-		if ( Application.RunInfo.AppLnF() != null ) {
-			setLookAndFeel( Application.RunInfo.AppLnF() );
+		if ( Application.RunInfo.getAppLnF() != null ) {
+			setLookAndFeel( Application.RunInfo.getAppLnF() );
 		}
 		
 		// --- Create the Main-Elements of the Application --------
-		initComponents();
+		this.initComponents();
 		
 		this.setDefaultCloseOperation(CoreWindow.DO_NOTHING_ON_CLOSE);
 		this.getContentPane().setPreferredSize(this.getSize());
@@ -130,8 +135,8 @@ public class CoreWindow extends JFrame implements ComponentListener {
 		this.setCloseButtonPosition(false);
 		
 		// --- configure console ---------------------------------- 
-		ConsoleHeight = SplitProjectDesktop.getHeight() / 4; 
-		SplitProjectDesktop.setDividerLocation( SplitProjectDesktop.getHeight() - ConsoleHeight );
+		consoleHeight = jSplitPane4ProjectDesktop.getHeight() / 4; 
+		jSplitPane4ProjectDesktop.setDividerLocation( jSplitPane4ProjectDesktop.getHeight() - consoleHeight );
 		this.setConsoleVisible(false);
 		
 	}
@@ -144,8 +149,10 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	private void initComponents() {
 
 		// --- Standardeinstellungen ---
-		this.setJMenuBar(getJMenuBarProject());
-		this.add( getJToolBarApp(), BorderLayout.NORTH );
+		
+		this.setJMenuBar(this.getJMenuBarBase());
+		
+		this.add( getJToolBarApplication(), BorderLayout.NORTH );
 		this.add( getStatusBar(), BorderLayout.SOUTH );
 		this.add( getMainSplitpane() );
 		this.setSize(1150, 640);	
@@ -172,15 +179,15 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	private JPanel getStatusBar() {
 	    
 		// --- Linker Teil ----------------------
-		StatusBar = new JLabel();			
-		StatusBar.setPreferredSize( new Dimension(300, 16) );
-		StatusBar.setFont(new Font( "Dialog", Font.PLAIN, 12) );
+		statusBar = new JLabel();			
+		statusBar.setPreferredSize( new Dimension(300, 16) );
+		statusBar.setFont(new Font( "Dialog", Font.PLAIN, 12) );
 		
 		// --- Mittlerer Teil -------------------
-		StatusJade = new JLabel();
-		StatusJade.setPreferredSize( new Dimension(200, 16) );
-		StatusJade.setFont(new Font( "Dialog", Font.PLAIN, 12) );
-		StatusJade.setHorizontalAlignment( SwingConstants.RIGHT );
+		statusJade = new JLabel();
+		statusJade.setPreferredSize( new Dimension(200, 16) );
+		statusJade.setFont(new Font( "Dialog", Font.PLAIN, 12) );
+		statusJade.setHorizontalAlignment( SwingConstants.RIGHT );
 		setStatusJadeRunning( false );
 		
 	    // --- Rechter Teil --------------------- 
@@ -191,51 +198,66 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	    // --- StatusBar zusammenbauen ------------------
 		JPanel JPStat = new JPanel( new BorderLayout() );
 		JPStat.setPreferredSize(new Dimension(10, 23));
-		JPStat.add(StatusBar, BorderLayout.WEST); 
-		JPStat.add(StatusJade, BorderLayout.CENTER);
+		JPStat.add(statusBar, BorderLayout.WEST); 
+		JPStat.add(statusJade, BorderLayout.CENTER);
 		JPStat.add(RightPart, BorderLayout.EAST);
 		return JPStat;
 	}
-	public void setStatusBar(String Message) {
-		if ( Message == null ) {
-			StatusBar.setText("  ");
-		}
-		else {
-			StatusBar.setText("  " + Message);
+	/**
+	 * Sets a text in the applications status bar
+	 * @param message
+	 */
+	public void setStatusBar(String message) {
+		if ( message == null ) {
+			statusBar.setText("  ");
+		} else {
+			statusBar.setText("  " + message);
 		};	
 	}
-	public void setTitelAddition( String Add2BasicTitel ) {
-		if ( Add2BasicTitel != "" ) {
-			this.setTitle( Application.RunInfo.getApplicationTitle() + ": " + Add2BasicTitel );	
-		}
-		else {
+	/**
+	 * This method is used if a project is open. Then the project name is displayed 
+	 * behind the applications title (e.g. 'Agent.GUI: project name' 
+	 * @param add2BasicTitel
+	 */
+	public void setTitelAddition(String add2BasicTitel) {
+		if ( add2BasicTitel != "" ) {
+			this.setTitle( Application.RunInfo.getApplicationTitle() + ": " + add2BasicTitel );	
+		} else {
 			this.setTitle( Application.RunInfo.getApplicationTitle() );
 		}
 	}
-	public void setStatusJadeRunning(boolean runs) {
-		if ( runs == false ) { 
-			StatusJade.setText( Language.translate("JADE wurde noch nicht gestartet.") );
-			StatusJade.setIcon(iconRed);			
-		}
-		else {
-			StatusJade.setText( Language.translate("JADE wurde lokal gestartet.") );
-			StatusJade.setIcon(iconGreen);
+	/**
+	 * Sets the indicator in order to visul inform that JADE is running or not 
+	 * (red or green button in the right corner of the status bar + text)
+	 * @param isRunning
+	 */
+	public void setStatusJadeRunning(boolean isRunning) {
+		if ( isRunning == false ) { 
+			statusJade.setText( Language.translate("JADE wurde noch nicht gestartet.") );
+			statusJade.setIcon(iconRed);			
+		} else {
+			statusJade.setText( Language.translate("JADE wurde lokal gestartet.") );
+			statusJade.setIcon(iconGreen);
 		};		
 	}
-	public void setLookAndFeel( String NewLnF ) {
+	/**
+	 * Here the 'look and feel' LnF of java Swing can be set  
+	 * @param newLnF
+	 */
+	public void setLookAndFeel(String newLnF) {
 		// --- Look and fell einstellen --------------- 
-		if ( NewLnF == null ) return;		
-		Application.RunInfo.setAppLnf( NewLnF );
+		if ( newLnF == null ) return;		
+		Application.RunInfo.setAppLnf(newLnF);
 		try {
-			String lnfClassname = Application.RunInfo.AppLnF();
+			String lnfClassname = Application.RunInfo.getAppLnF();
 			if (lnfClassname == null) {
 				lnfClassname = UIManager.getCrossPlatformLookAndFeelClassName();
 			}
 			UIManager.setLookAndFeel(lnfClassname);
-			SwingUtilities.updateComponentTreeUI(this);				
-		} 
-		catch (Exception e) {
-				System.err.println("Cannot install " + Application.RunInfo.AppLnF()
+			SwingUtilities.updateComponentTreeUI(this);
+			
+		} catch (Exception e) {
+				System.err.println("Cannot install " + Application.RunInfo.getAppLnF()
 					+ " on this platform:" + e.getMessage());
 		}
 		if ( jMenuExtraLnF != null ){
@@ -250,9 +272,9 @@ public class CoreWindow extends JFrame implements ComponentListener {
 			Application.ProjectCurr.setMaximized();
 		}
 	}		
-	public boolean ConsoleIsVisible() {
+	public boolean consoleIsVisible() {
 		// --- Umschalten der Consolen-Ansicht --------------------
-		if ( ConsoleText.isVisible() == true ) {
+		if ( consoleText.isVisible() == true ) {
 			return true;
 		} else {
 			return false;
@@ -260,7 +282,7 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	}
 	public void ConsoleSwitch() {
 		// --- Umschalten der Consolen-Ansicht --------------------
-		if ( ConsoleText.isVisible() == true ) {
+		if ( consoleText.isVisible() == true ) {
 			this.setConsoleVisible(false);
 		} else {
 			this.setConsoleVisible(true);
@@ -270,15 +292,15 @@ public class CoreWindow extends JFrame implements ComponentListener {
 		// --- Ein- und ausblenden der Console --------------------
 		if (show == true) {
 			// --- System.out.println("Console einblenden ...");
-			SplitProjectDesktop.setDividerLocation( SplitProjectDesktop.getHeight() - ConsoleHeight );
-			SplitProjectDesktop.setDividerSize(5);
-			ConsoleText.setVisible(true);			
+			jSplitPane4ProjectDesktop.setDividerLocation( jSplitPane4ProjectDesktop.getHeight() - consoleHeight );
+			jSplitPane4ProjectDesktop.setDividerSize(5);
+			consoleText.setVisible(true);			
 		} else {
 			// --- System.out.println("Console ausblenden ...");			
-			ConsoleHeight = SplitProjectDesktop.getHeight() - SplitProjectDesktop.getDividerLocation(); 
-			SplitProjectDesktop.setDividerLocation( SplitProjectDesktop.getHeight() );			
-			SplitProjectDesktop.setDividerSize( 0 );
-			ConsoleText.setVisible(false);	
+			consoleHeight = jSplitPane4ProjectDesktop.getHeight() - jSplitPane4ProjectDesktop.getDividerLocation(); 
+			jSplitPane4ProjectDesktop.setDividerLocation( jSplitPane4ProjectDesktop.getHeight() );			
+			jSplitPane4ProjectDesktop.setDividerSize( 0 );
+			consoleText.setVisible(false);	
 		}
 		this.validate();
 		if ( Application.Projects.count() != 0 ) {
@@ -304,23 +326,23 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	// --- Desktop der Anwendung definieren - START ---------------
 	// ------------------------------------------------------------
 	private JSplitPane getMainSplitpane() {
-		if (SplitProjectDesktop == null ) {
+		if (jSplitPane4ProjectDesktop == null ) {
 			// --- JEditorPane aus Application-Objekt übernehmen --
-			ConsoleText = Application.Console;
+			consoleText = Application.Console;
 			
 			// --- Panel für Text und Button ----------------------
 			JPanel ConsolePanel = new JPanel();
 			ConsolePanel.setLayout(new BorderLayout());
-			ConsolePanel.add(new JScrollPane(ConsoleText),BorderLayout.CENTER);
+			ConsolePanel.add(new JScrollPane(consoleText),BorderLayout.CENTER);
 			
-			SplitProjectDesktop = new JSplitPane();
-			SplitProjectDesktop.setOrientation(JSplitPane.VERTICAL_SPLIT);
-			SplitProjectDesktop.setDividerSize(5);
-			SplitProjectDesktop.setResizeWeight(1);
-			SplitProjectDesktop.setOneTouchExpandable(false);
-			SplitProjectDesktop.setTopComponent(getJDesktopPaneProjectDesktop());			
-			SplitProjectDesktop.setBottomComponent(ConsolePanel);
-			SplitProjectDesktop.addPropertyChangeListener(new PropertyChangeListener() {
+			jSplitPane4ProjectDesktop = new JSplitPane();
+			jSplitPane4ProjectDesktop.setOrientation(JSplitPane.VERTICAL_SPLIT);
+			jSplitPane4ProjectDesktop.setDividerSize(5);
+			jSplitPane4ProjectDesktop.setResizeWeight(1);
+			jSplitPane4ProjectDesktop.setOneTouchExpandable(false);
+			jSplitPane4ProjectDesktop.setTopComponent(getJDesktopPane4Projects());			
+			jSplitPane4ProjectDesktop.setBottomComponent(ConsolePanel);
+			jSplitPane4ProjectDesktop.addPropertyChangeListener(new PropertyChangeListener() {
 				@Override
 				public void propertyChange(PropertyChangeEvent EventSource) {
 					// --- Deviderpositionierung abfangen ---
@@ -332,45 +354,122 @@ public class CoreWindow extends JFrame implements ComponentListener {
 				}
 			});
 		}
-		return SplitProjectDesktop;		
+		return jSplitPane4ProjectDesktop;		
 	}
-	private JDesktopPane getJDesktopPaneProjectDesktop() {
-		if (ProjectDesktop == null) {
-			ProjectDesktop = new JDesktopPane();
-			ProjectDesktop.setDoubleBuffered(false);
+	/**
+	 * This method returns the JDesktopPane, where the 
+	 * JInternalFrame's of the project will be placed 
+	 * @return
+	 */
+	public JDesktopPane getJDesktopPane4Projects() {
+		if (jDesktopPane4Projects == null) {
+			jDesktopPane4Projects = new JDesktopPane();
+			jDesktopPane4Projects.setDoubleBuffered(false);
 		}
-		return ProjectDesktop;
+		return jDesktopPane4Projects;
 	}
 	// ------------------------------------------------------------
 	// --- Desktop der Anwendung definieren - ENDE ----------------
 	// ------------------------------------------------------------
 
-	
+
+
 	// ------------------------------------------------------------
 	// --- Menüleistendefinition - START --------------------------
 	// ------------------------------------------------------------
-	private JMenuBar getJMenuBarProject() {
+	/**
+	 * This method returns the current instance of the applications menu bar 
+	 */
+	private JMenuBar getJMenuBarBase() {
+		if (jMenuBarBase == null) {
+			jMenuBarBase = new JMenuBar();
+			jMenuBarBase.setLayout(new GridBagLayout());
+			Insets insets = new Insets( 0, 0, 0, 0 );
+			jMenuBarBase.add( this.getJMenuBarMain(), new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.VERTICAL, insets, 0, 0 ));
+			jMenuBarBase.add( this.getCloseButton() , new GridBagConstraints(1, 0, 1, 1, 1.0, 1.0, GridBagConstraints.EAST, GridBagConstraints.VERTICAL, insets, 0, 0 ));
+		}
+		return jMenuBarBase;
+	}
+	/**
+	 * This method returns the current instance of the applications menu bar 
+	 */
+	private JMenuBar getJMenuBarMain() {
 		if (jMenuBarMain == null) {
 			jMenuBarMain = new JMenuBar();
-			jMenuBarMain.add( getjMenuMainProject() );
-			jMenuBarMain.add( getjMenuMainView() );
+			jMenuBarMain.setBorder(null);
+			jMenuBarMain.setLayout(new GridBagLayout());
+			
+			jMenuBarMain.add( getJMenuMainProject() );
+			jMenuBarMain.add( getJMenuMainView() );
 			jMenuBarMain.add( getjMenuMainJade() );
 			jMenuBarMain.add( getjMenuMainSimulation() );
 			jMenuBarMain.add( getjMenuMainExtra() );
 			jMenuBarMain.add( getjMenuMainWindow() );
 			jMenuBarMain.add( getjMenuMainHelp() );	
-			jMenuBarMain.add( getMenuSpacer() );
-			jMenuBarMain.add( getCloseButton() );
+
 		}
 		return jMenuBarMain;
 	}
 
+	/**
+	 * This method can be used in order to add an individual menu  
+	 * at a specified index position of the menu bar
+	 * @param myMenu
+	 * @param indexPosition
+	 */
+	public void addJMenu(JMenu myMenu, int indexPosition) {
+		int nElements = jMenuBarMain.getSubElements().length; 
+		if (indexPosition > (nElements-1)) {
+			this.addJMenu(myMenu);
+		} else {
+			jMenuBarMain.add(myMenu, indexPosition);
+			this.validate();
+		}
+	}
+	/**
+	 * This method can be used in order to add an individual menu 
+	 * @param myMenu
+	 */
+	public void addJMenu(JMenu myMenu) {
+		jMenuBarMain.add(myMenu);
+		this.validate();
+	}
+	
+	/**
+	 * This method can be used in order to add an individual JMmenuItem 
+	 * at a specified index position of the given menu 
+	 * @param menu2add
+	 * @param myMenuItem
+	 * @param indexPosition
+	 */
+	public void addJMenuItemComponent(JMenu menu2add, JComponent myMenuItemComponent, int indexPosition) {
+		int nElements = menu2add.getItemCount(); 
+		if (indexPosition > (nElements-1)) {
+			this.addJMenuItemComponent(menu2add, myMenuItemComponent);
+		} else {
+			menu2add.add(myMenuItemComponent, indexPosition);
+			this.validate();
+		}
+	}
+	/**
+	 * This method can be used in order to add an  
+	 * individual JMmenuItem to the given menu 
+	 * @param menu2add
+	 * @param myMenuItem
+	 */
+	public void addJMenuItemComponent(JMenu menu2add, JComponent myMenuItemComponent) {
+		menu2add.add(myMenuItemComponent);
+		this.validate();
+	}
 	// ------------------------------------------------------------
 	// --- Menü Projekte ------------------------------------------
 	// ------------------------------------------------------------
-	private JMenu getjMenuMainProject() {
+	/**
+	 * This method returns the current instance of the menu "Project"
+	 */
+	public JMenu getJMenuMainProject() {
 		if (jMenuMainProject == null) {
-			jMenuMainProject = new JMenu();
+			jMenuMainProject = new JMenu("Projekte");
 			jMenuMainProject.setText(Language.translate("Projekte"));			
 			jMenuMainProject.add( new CWMenueItem( "ProjectNew", Language.translate("Neues Projekt"), "MBnew.png" )) ;
 			jMenuMainProject.add( new CWMenueItem( "ProjectOpen", Language.translate("Projekt öffnen"), "MBopen.png" )) ;
@@ -388,9 +487,12 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	// ------------------------------------------------------------
 	// --- Menü "View" --------------------------------------------
 	// ------------------------------------------------------------
-	private JMenu getjMenuMainView() {
+	/**
+	 * This method returns the current instance of the menu "View"
+	 */
+	public JMenu getJMenuMainView() {
 		if (jMenuMainView == null) {
-			jMenuMainView = new JMenu();
+			jMenuMainView = new JMenu("Ansicht");
 			jMenuMainView.setText(Language.translate("Ansicht"));
 			
 			// --------------------------------------------
@@ -436,9 +538,12 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	// ------------------------------------------------------------
 	// --- Menü "JADE" --------------------------------------------
 	// ------------------------------------------------------------
-	private JMenu getjMenuMainJade() {
+	/**
+	 * This method returns the current instance of the menu "JADE"
+	 */
+	public JMenu getjMenuMainJade() {
 		if (jMenuMainJade == null) {
-			jMenuMainJade = new JMenu();
+			jMenuMainJade = new JMenu("JADE");
 			jMenuMainJade.setText(Language.translate("JADE"));			
 			jMenuMainJade.add( new CWMenueItem( "JadeStart", Language.translate("JADE starten"), "MBJadeOn.png" )) ;
 			jMenuMainJade.add( new CWMenueItem( "JadeStop", Language.translate("JADE stoppen"), "MBJadeOff.png" )) ;
@@ -457,9 +562,12 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	// ------------------------------------------------------------
 	// --- Menü Simulation ----------------------------------------
 	// ------------------------------------------------------------
-	private JMenu getjMenuMainSimulation() {
+	/**
+	 * This method returns the current instance of the menu "Project"
+	 */
+	public JMenu getjMenuMainSimulation() {
 		if (jMenuMainSimulation == null) {
-			jMenuMainSimulation = new JMenu();
+			jMenuMainSimulation = new JMenu("MAS");
 			jMenuMainSimulation.setText(Language.translate("MAS"));			
 			
 			jMenuItemSimStart = new CWMenueItem( "SimulationStart", Language.translate("Start"), "MBLoadPlay.png");
@@ -476,9 +584,12 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	// ------------------------------------------------------------
 	// --- Menü Extras ---------------------------------------------
 	// ------------------------------------------------------------
-	private JMenu getjMenuMainExtra() {
+	/**
+	 * This method returns the current instance of the menu "Extra"
+	 */
+	public JMenu getjMenuMainExtra() {
 		if (jMenuExtra == null) {
-			jMenuExtra = new JMenu();
+			jMenuExtra = new JMenu("Extras");
 			jMenuExtra.setText(Language.translate("Extras"));
 
 			// --- Menue 'Sprache' ---
@@ -558,7 +669,7 @@ public class CoreWindow extends JFrame implements ComponentListener {
 			UIManager.LookAndFeelInfo plaf[] = UIManager.getInstalledLookAndFeels();
 			
 			for (int i = 0, n = plaf.length; i < n; i++) {
-				if ( plaf[i].getClassName() == Application.RunInfo.AppLnF() )
+				if ( plaf[i].getClassName() == Application.RunInfo.getAppLnF() )
 					setBold = true;
 				else
 					setBold = false;
@@ -597,36 +708,28 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	// --- Menü Fenster -------------------------------------------
 	// ------------------------------------------------------------
 	private JMenu getjMenuMainWindow() {
-		if (jMenuMainWindow == null) {
-			jMenuMainWindow = new JMenu();
-			jMenuMainWindow.setText(Language.translate("Fenster"));
+		if (jMenuMainWindows == null) {
+			jMenuMainWindows = new JMenu("Fenster");
+			jMenuMainWindows.setText(Language.translate("Fenster"));
 		}
-		return jMenuMainWindow;
+		return jMenuMainWindows;
 	}
 	
 	// ------------------------------------------------------------
 	// --- Menü Hilfe ---------------------------------------------
 	// ------------------------------------------------------------
-	private JMenu getjMenuMainHelp() {
+	/**
+	 * This method returns the current instance of the menu "Help"
+	 */
+	public JMenu getjMenuMainHelp() {
 		if (jMenuMainHelp == null) {
-			jMenuMainHelp = new JMenu();
+			jMenuMainHelp = new JMenu("Hilfe");
 			jMenuMainHelp.setText(Language.translate("Hilfe"));
 			jMenuMainHelp.add( new CWMenueItem( "HelpAbout", Language.translate("Über..."), null )) ;
 		}
 		return jMenuMainHelp;
 	}
 
-	// ------------------------------------------------------------
-	// --- Menü-Spacer für den folgenden "Close-Button" -----------
-	// ------------------------------------------------------------
-	private JLabel getMenuSpacer() {
-		if (jMenuSpacer == null ) {
-			jMenuSpacer = new JLabel();
-			jMenuSpacer.setIcon(iconCloseDummy);
-			jMenuSpacer.setVisible(false);			
-		}
-		return jMenuSpacer;
-	}
 	// ------------------------------------------------------------
 	// --- Menü "Close-Button" ------------------------------------
 	// ------------------------------------------------------------
@@ -635,13 +738,12 @@ public class CoreWindow extends JFrame implements ComponentListener {
 			jMenuCloseButton = new CWMenueItem( "ProjectClose", "", "MBclose.png" );
 			jMenuCloseButton.setText("");
 			jMenuCloseButton.setToolTipText( Language.translate("Projekt schließen") );
-			jMenuCloseButton.setBorder( null );
+			jMenuCloseButton.setBorder(null);
 			jMenuCloseButton.setMargin( new Insets(0, 0, 0, 0) );
-			jMenuCloseButton.setComponentOrientation( ComponentOrientation.RIGHT_TO_LEFT );
 			jMenuCloseButton.setPreferredSize( new Dimension ( 30 , jMenuCloseButton.getHeight() ) );
 			jMenuCloseButton.setIcon( iconCloseDummy );
-			jMenuCloseButton.setEnabled( false );
-			jMenuCloseButton.setVisible( false );			
+//			jMenuCloseButton.setEnabled( false );
+//			jMenuCloseButton.setVisible( false );			
 		}
 		return jMenuCloseButton ;
 	}
@@ -650,9 +752,7 @@ public class CoreWindow extends JFrame implements ComponentListener {
 		// --- Positionsmerker für das Fenster setzen ?  ----------
 		// --- Wird nach der Initialisierung ausgewertet ----------
 		if ( jMenuCloseButton.isVisible() == false ) {
-			jMenuMainHelpPositionLeft = jMenuMainHelp.getLocation().x +  jMenuMainHelp.getWidth();
 			jMenuCloseButton.setVisible(true);
-			jMenuSpacer.setVisible(true);
 		}
 		// --- Entsprechendes Icon einblenden --------------------- 
 		if ( setVisible == true ){
@@ -664,19 +764,9 @@ public class CoreWindow extends JFrame implements ComponentListener {
 			jMenuCloseButton.setEnabled( false );
 		}		
 		
-		// --- Breite des jMenuSpacer's anpassen ------------------		 
-		int CBoWidth = 30;
-		int NewWidth = (this.getWidth() - jMenuMainHelpPositionLeft - CBoWidth ) ;
-		if ( NewWidth <= 0 ) {
-			jMenuSpacer.setPreferredSize( new Dimension( 0, jMenuMainProject.getHeight() ) );			
-		}
-		else {
-			jMenuSpacer.setPreferredSize( new Dimension( NewWidth , jMenuMainProject.getHeight() ) );			
-		}
 		// --- Menüleiste neu zeichnen / Änderungen anzeigen ------
 		if ( jMenuBarMain != null ) {
 			jMenuBarMain.revalidate();
-			//jMenuBarMain.updateUI();
 		}						
 	}	
 	
@@ -698,7 +788,7 @@ public class CoreWindow extends JFrame implements ComponentListener {
 			this.setText(Text);
 			if ( imgName != null ) {
 				try {
-					this.setIcon( new ImageIcon( this.getClass().getResource( PathImage + imgName ) ) );
+					this.setIcon( new ImageIcon( this.getClass().getResource( pathImage + imgName ) ) );
 				}
 				catch (Exception err) {
 					System.err.println(Language.translate("Fehler beim Laden des Bildes: ") + err.getMessage());
@@ -813,9 +903,12 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	// ------------------------------------------------------------
 	// --- Symbolleiste erstellen - START -------------------------
 	// ------------------------------------------------------------
-	private JToolBar getJToolBarApp() {
+	/**
+	 * This method will return the current instance of the applications tool bar
+	 */
+	private JToolBar getJToolBarApplication() {
 
-		if ( jToolBarApp == null) {
+		if ( jToolBarApplication == null) {
 			
 			// --- PopUp-Menü zum Button 'JadeTools' definieren (s. u.) ---
 			JadeToolsPopUp = new JPopupMenu("SubBar");
@@ -828,42 +921,67 @@ public class CoreWindow extends JFrame implements ComponentListener {
 			JadeToolsPopUp.add( new CWMenueItem( "PopLog", Language.translate("Log-Manager starten"), "MBJadeLogger.gif" )) ;
 			
 			// --- Symbolleisten-Definition -------------------------------
-			jToolBarApp = new JToolBar("MainBar");
-			jToolBarApp.setFloatable(false);
-			jToolBarApp.setRollover(true);
+			jToolBarApplication = new JToolBar("MainBar");
+			jToolBarApplication.setFloatable(false);
+			jToolBarApplication.setRollover(true);
 			
-			jToolBarApp.add(new JToolBarButton( "New", Language.translate("Neues Projekt"), null, "MBnew.png" ));
-			jToolBarApp.add(new JToolBarButton( "Open", Language.translate("Projekt öffnen"), null, "MBopen.png" ));
-			jToolBarApp.add(new JToolBarButton( "Save", Language.translate("Projekt speichern"), null, "MBsave.png" ));
-			jToolBarApp.addSeparator();
+			jToolBarApplication.add(new JToolBarButton( "New", Language.translate("Neues Projekt"), null, "MBnew.png" ));
+			jToolBarApplication.add(new JToolBarButton( "Open", Language.translate("Projekt öffnen"), null, "MBopen.png" ));
+			jToolBarApplication.add(new JToolBarButton( "Save", Language.translate("Projekt speichern"), null, "MBsave.png" ));
+			jToolBarApplication.addSeparator();
 			
-			jToolBarApp.add(new JToolBarButton( "ViewConsole", Language.translate("Konsole ein- oder ausblenden"), null, "MBConsole.png" ));
-			jToolBarApp.addSeparator();
+			jToolBarApplication.add(new JToolBarButton( "ViewConsole", Language.translate("Konsole ein- oder ausblenden"), null, "MBConsole.png" ));
+			jToolBarApplication.addSeparator();
 			
-			jToolBarApp.add(new JToolBarButton( "JadeStart", Language.translate("JADE starten"), null, "MBJadeOn.png" ));
-			jToolBarApp.add(new JToolBarButton( "JadeStop", Language.translate("JADE stoppen"), null, "MBJadeOff.png" ));
+			jToolBarApplication.add(new JToolBarButton( "JadeStart", Language.translate("JADE starten"), null, "MBJadeOn.png" ));
+			jToolBarApplication.add(new JToolBarButton( "JadeStop", Language.translate("JADE stoppen"), null, "MBJadeOff.png" ));
 			JadeTools = new JToolBarButton( "JadeTools", Language.translate("JADE-Tools..."), null, "MBJadeTools.png" );
-			jToolBarApp.add( JadeTools );
-			jToolBarApp.addSeparator();
-			jToolBarApp.add(new JToolBarButton( "ContainerMonitoring", Language.translate("Auslastungs-Monitor öffnen"), null, "MBLoadMonitor.png" ));
-			jToolBarApp.addSeparator();
+			jToolBarApplication.add( JadeTools );
+			jToolBarApplication.addSeparator();
+			jToolBarApplication.add(new JToolBarButton( "ContainerMonitoring", Language.translate("Auslastungs-Monitor öffnen"), null, "MBLoadMonitor.png" ));
+			jToolBarApplication.addSeparator();
 
 			// --- Simulation Buttons -----------
 			jButtonSimStart = new JToolBarButton( "SimulationStart", Language.translate("MAS-Start"), null, "MBLoadPlay.png" );
-			jToolBarApp.add(jButtonSimStart);
+			jToolBarApplication.add(jButtonSimStart);
 			
 			jButtonSimPause = new JToolBarButton( "SimulationPause", Language.translate("MAS-Pause"), null, "MBLoadPause.png" );
-			jToolBarApp.add(jButtonSimPause);
+			jToolBarApplication.add(jButtonSimPause);
 			
 			jButtonSimStop = new JToolBarButton( "SimulationStop", Language.translate("MAS-Stop"), null, "MBLoadStopRecord.png" );
-			jToolBarApp.add(jButtonSimStop) ;
+			jToolBarApplication.add(jButtonSimStop) ;
 			
-			jToolBarApp.addSeparator();
+			jToolBarApplication.addSeparator();
 			
 			
 		};		
-		return jToolBarApp;
+		return jToolBarApplication;
 	}	
+	
+	/**
+	 * This method can be used in order to add an individual menu button 
+	 * a specified index position of the toolbar
+	 * @param myButton
+	 * @param indexPosition
+	 */
+	public void addJToolbarComponent(JComponent myComponent, int indexPosition) {
+		int nElements = jToolBarApplication.getComponentCount(); 
+		if (indexPosition > (nElements-1)) {
+			this.addJToolbarComponent(myComponent);
+		} else {
+			jToolBarApplication.add(myComponent, indexPosition);
+			this.validate();
+		}
+	}
+	/**
+	 * This method can be used in order to add an  
+	 * individual menu button to the toolbar
+	 * @param myButton
+	 */
+	public void addJToolbarComponent(JComponent myComponent) {
+		jToolBarApplication.add(myComponent);
+		this.validate();
+	}
 	// ------------------------------------------------------------
 	// --- Symbolleiste erstellen - ENDE --------------------------
 	// ------------------------------------------------------------
@@ -894,7 +1012,7 @@ public class CoreWindow extends JFrame implements ComponentListener {
 
 			if ( imgName != null ) {
 				try {
-					ImageIcon ButtIcon = new ImageIcon( this.getClass().getResource( PathImage + imgName ), altText);
+					ImageIcon ButtIcon = new ImageIcon( this.getClass().getResource( pathImage + imgName ), altText);
 					this.setIcon(ButtIcon);
 				}
 				catch (Exception err) {
@@ -975,6 +1093,15 @@ public class CoreWindow extends JFrame implements ComponentListener {
 		jButtonSimStop.setEnabled(enable);
 		jMenuItemSimStop.setEnabled(enable);
 	}
+	public boolean isEnabledSimStart() {
+		return jButtonSimStart.isEnabled();
+	}
+	public boolean isEnabledSimPause() {
+		return jButtonSimPause.isEnabled();
+	}
+	public boolean isEnabledSimStop() {
+		return jButtonSimStop.isEnabled();
+	}
 	public void setSimulationReady2Start() {
 		this.setEnableSimStart(true);
 		this.setEnableSimPause(false);
@@ -995,8 +1122,8 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	}
 	@Override
 	public void componentResized(ComponentEvent e) {
-		if (ConsoleIsVisible() == false) {
-			SplitProjectDesktop.setDividerLocation( SplitProjectDesktop.getHeight() );			
+		if (consoleIsVisible() == false) {
+			jSplitPane4ProjectDesktop.setDividerLocation( jSplitPane4ProjectDesktop.getHeight() );			
 		}
 		if ( Application.Projects.count() != 0 ) {
 			Application.ProjectCurr.setMaximized();

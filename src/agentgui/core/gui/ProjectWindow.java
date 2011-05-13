@@ -93,7 +93,7 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 		
 		this.setVisible(true);
 		this.moveToFront();		
-		Application.MainWindow.ProjectDesktop.add(this);		
+		Application.MainWindow.getJDesktopPane4Projects().add(this);		
 	}
 
 	/**

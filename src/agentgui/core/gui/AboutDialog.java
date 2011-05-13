@@ -66,8 +66,8 @@ public class AboutDialog extends JDialog implements ActionListener{
 		
 		// --- Set the Look and Feel of the Dialog ------------------
 		if (Application.isServer==true) {
-			if (Application.RunInfo.AppLnF()!=null) {
-				setLookAndFeel( Application.RunInfo.AppLnF() );
+			if (Application.RunInfo.getAppLnF()!=null) {
+				setLookAndFeel( Application.RunInfo.getAppLnF() );
 			}
 		}
 		
@@ -232,14 +232,14 @@ public class AboutDialog extends JDialog implements ActionListener{
 		if ( NewLnF == null ) return;		
 		Application.RunInfo.setAppLnf( NewLnF );
 		try {
-			String lnfClassname = Application.RunInfo.AppLnF();
+			String lnfClassname = Application.RunInfo.getAppLnF();
 			if (lnfClassname == null)
 				lnfClassname = UIManager.getCrossPlatformLookAndFeelClassName();
 				UIManager.setLookAndFeel(lnfClassname);
 				SwingUtilities.updateComponentTreeUI(this);				
 		} 
 		catch (Exception e) {
-				System.err.println("Cannot install " + Application.RunInfo.AppLnF()
+				System.err.println("Cannot install " + Application.RunInfo.getAppLnF()
 					+ " on this platform:" + e.getMessage());
 		}
 	}

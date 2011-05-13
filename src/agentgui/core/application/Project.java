@@ -487,7 +487,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	public void setMaximized() {
 		Application.MainWindow.validate();
 		((BasicInternalFrameUI) Application.ProjectCurr.projectWindow.getUI()).setNorthPane(null);
-		Application.MainWindow.ProjectDesktop.getDesktopManager().maximizeFrame( projectWindow );				
+		Application.MainWindow.getJDesktopPane4Projects().getDesktopManager().maximizeFrame( projectWindow );				
 	}
 	
 	/**

@@ -218,9 +218,11 @@ public class GlobalInfo {
 	// --- Look and Feel -------------
 	// -------------------------------
 	/**
-	 * Aktuelle Look and Feel - Einstellung 
+	 * This method will return the current Look and Feel (LnF) for Java Swing.
+	 * Also the class will be validated. If the class could not be found the 
+	 * method will return null  
 	 */
-	public String AppLnF() {
+	public String getAppLnF() {
 		try {
 			@SuppressWarnings("unused")
 			Class<?> currOntoClass = Class.forName(localAppLnF);
@@ -231,7 +233,7 @@ public class GlobalInfo {
 		return null;
 	};
 	/**
-	 * Look and Feel - Einstellung  aendern
+	 * Set the current Look and Feel (LnF) for Java Swing by using its class reference
 	 */
 	public void setAppLnf( String NewLnF ) {
 		localAppLnF = NewLnF;
@@ -304,8 +306,8 @@ public class GlobalInfo {
 	/**
 	 * Unterverzeichnis fuer die JADE-Libraries
 	 */
-	public String PathJade( Boolean Absolute ){
-		if ( Absolute == true ) { 
+	public String PathJade(boolean absolute){
+		if ( absolute == true ) { 
 			return FilePath2Absolute( localPathJade );
 		}
 		else {
@@ -315,8 +317,8 @@ public class GlobalInfo {
 	/**
 	 * Unterverzeichnis fuer die Batik-Libraries
 	 */
-	public String PathBatik( Boolean Absolute ){
-		if ( Absolute == true ) { 
+	public String PathBatik(boolean absolute){
+		if (absolute == true) { 
 			return FilePath2Absolute( localPathBatik );
 		}
 		else {
@@ -326,8 +328,8 @@ public class GlobalInfo {
 	/**
 	 * Unterverzeichnis fuer Eigenschaftsdateien
 	 */
-	public String PathProperty( Boolean Absolute ){
-		if ( Absolute == true ) { 
+	public String PathProperty(boolean absolute){
+		if ( absolute == true ) { 
 			return FilePath2Absolute( localPathProperty );
 		}
 		else {
@@ -337,13 +339,17 @@ public class GlobalInfo {
 	/**
 	 * Unterverzeichnis für die Properties-Datei
 	 */
-	public String getPathConfigFile() {
-		return PathProperty(false) + localFileProperties;
+	public String getPathConfigFile(boolean absolute) {
+		if (absolute==true) {
+			return PathProperty(true) + localFileProperties;
+		} else {
+			return PathProperty(false) + localFileProperties;
+		}
 	}
 	/**
 	 * Unterverzeichnis fuer Projekte
 	 */
-	public String PathProjects( boolean Absolute, boolean UseImportSpecification ){
+	public String PathProjects(boolean absolute, boolean UseImportSpecification){
 
 		if ( UseImportSpecification == true ) {
 			String ImportPath = localPathProjects;
@@ -351,7 +357,7 @@ public class GlobalInfo {
 			ImportPath = ImportPath.replace("src.","");
 			return ImportPath;
 		}
-		if ( Absolute == true ) { 
+		if ( absolute == true ) { 
 			return FilePath2Absolute( localPathProjects );
 		}
 		else {
@@ -438,8 +444,8 @@ public class GlobalInfo {
 	/**
 	 * Standardname *.jar-Bezeichner dieses Projekts (Default: 'AgentGui.jar') 
 	 */
-	public String AppFileRunnableJar( boolean Absolute ){
-		if ( Absolute == true && localFileRunnableJar != null ) { 
+	public String AppFileRunnableJar(boolean absolute){
+		if ( absolute == true && localFileRunnableJar != null ) { 
 			return FilePath2Absolute( localFileRunnableJar );
 		}
 		else {

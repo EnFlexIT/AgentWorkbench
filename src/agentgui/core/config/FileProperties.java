@@ -20,7 +20,7 @@ public class FileProperties extends Properties {
 	
 	private GlobalInfo Global = Application.RunInfo;
 	
-	private String configFile = Global.getPathConfigFile();
+	private String configFile = Global.getPathConfigFile(true);
 	private String configFileDefaultComment = "";
 	
 	public final String DEF_RUNAS = "01_RUNAS";
