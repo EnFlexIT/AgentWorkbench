@@ -297,7 +297,7 @@ public class Translation extends JDialog implements ActionListener {
 		for (String dictLine : dictContent) {
 			
 			Vector<Object> rowData = new Vector<Object>(); 
-			rowData.addAll(Arrays.asList(dictLine.split(Language.Seperator, -1)));
+			rowData.addAll(Arrays.asList(dictLine.split(Language.seperator, -1)));
 			if (rowData.get(0).equals("LANG_DE")==false) {
 				// --- row counter ------------------------
 				rowNo++;
@@ -337,7 +337,7 @@ public class Translation extends JDialog implements ActionListener {
 					if (dictRow.equals("")) {
 						dictRow += rowData.get(i);	
 					} else {
-						dictRow += Language.Seperator + rowData.get(i);
+						dictRow += Language.seperator + rowData.get(i);
 					}
 				}
 				
@@ -1001,7 +1001,7 @@ public class Translation extends JDialog implements ActionListener {
 			if (dictRow.equals("")) {
 				dictRow += currDataSet.get(i);	
 			} else {
-				dictRow += Language.Seperator + currDataSet.get(i);
+				dictRow += Language.seperator + currDataSet.get(i);
 			}
 		}
 		Language.update(deExp, dictRow);

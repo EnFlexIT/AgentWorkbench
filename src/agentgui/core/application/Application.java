@@ -377,7 +377,7 @@ public class Application {
 		
 		// --- Sind die neue und die alte Anzeigesprach gleich ? ----
 		Integer newLangIndex = Language.getIndexOfLanguage(newLang);
-		if ( newLangIndex == Language.DefaultLanguage ) return; 
+		if ( newLangIndex == Language.defaultLanguage ) return; 
 		
 		// --- User fragen, ob die Sprache umgestellt werden soll ---
 		String MsgHead = Language.translate("Anzeigesprache wechseln?");

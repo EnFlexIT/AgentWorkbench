@@ -1,19 +1,25 @@
 package agentgui.core.gui;
 
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Vector;
 
+import javax.swing.JComponent;
 import javax.swing.JInternalFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTree;
+import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -39,21 +45,26 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	
 	private Project currProject;
 	
-	private Vector<ProjectWindowTab> tabVector = new Vector<ProjectWindowTab>();  //  @jve:decl-index=0:
-	
-	private DefaultTreeModel projectTreeModel;
-	private DefaultMutableTreeNode rootNode;
-	private int oldNumberOfNodes = 0;
-	
-	private JTabbedPane projectViewRightTabs = null;
-	private ChangeListener tabSelectionListener = null;  //  @jve:decl-index=0:
-	private boolean pauseTreeSelectionListener = false;
-	private JTree projectTree = null;
-		
 	private JSplitPane ProjectViewSplit = null;
 	private JScrollPane jScrollPane = null;
 	
-
+	private JTree projectTree = null;
+	private DefaultTreeModel projectTreeModel;
+	private DefaultMutableTreeNode rootNode;
+	
+	private JTabbedPane projectViewRightTabs = null;
+	private ChangeListener tabSelectionListener = null;  //  @jve:decl-index=0:
+	private MouseListener tabMouseListener = null;  //  @jve:decl-index=0:
+	
+	private boolean pauseTreeSelectionListener = false;
+	private boolean pauseTabSelectionListener = false;
+	
+	private ProjectWindowTab projectWindowTab4Configuration = null;
+	private ProjectWindowTab projectWindowTab4SimulationSetup = null;
+	private Vector<ProjectWindowTab> tabVector = new Vector<ProjectWindowTab>();  //  @jve:decl-index=0:
+	private int oldNumberOfNodes = 0;
+	
+	
 	/**
 	 * This is the default constructor
 	 */
@@ -68,6 +79,7 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 		projectTreeModel = new DefaultTreeModel( rootNode );	
 		
 		// --- Instanciate Listerner for Tab-Changes -------------
+		this.setTabMouseListener();
 		this.setTabSelectionListener();
 		// --- Projektfenster zusammenbauen ----------------------
 		this.initialize();		
@@ -148,8 +160,10 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 						// ------------------------------------------------------
 						// --- Fokus auf die entsprechende Karteikarte setzen ---
 						// ------------------------------------------------------
+						pauseTabSelectionListener=true;
 						DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) projectTree.getLastSelectedPathComponent();
 						setFocus2Tab(selectedNode);
+						pauseTabSelectionListener=false;
 					} 
 					// ----------------------------------------------------------
 					// --- Tree-Selection abfangen --- S T O P ------------------
@@ -204,13 +218,33 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 			projectViewRightTabs.setTabPlacement(JTabbedPane.TOP);
 			projectViewRightTabs.setPreferredSize(new Dimension(126, 72));
 			projectViewRightTabs.setFont(new Font("Dialog", Font.BOLD, 12));
-			projectViewRightTabs.addChangeListener(tabSelectionListener);
+			projectViewRightTabs.addMouseListener(this.tabMouseListener);
+			projectViewRightTabs.addChangeListener(this.tabSelectionListener);
 		}
 		return projectViewRightTabs;
 	}	
 	
 	/**
-	 * This method instanciates the ChangeListener for Tab-Selections
+	 * This method instanciates the MouseListener for the Tab-Selections
+	 */
+	private void setTabMouseListener() {
+		
+		tabMouseListener = new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent me) {
+				
+				if (me.getClickCount()==2 & SwingUtilities.isLeftMouseButton(me)) {
+					System.out.println("double click on Tab ...");
+				}
+				if (me.getClickCount()==1 & SwingUtilities.isRightMouseButton(me)) {
+					System.out.println("right click on Tab ...");
+				}
+			}
+		};
+	}
+	
+	/**
+	 * This method instantiates the ChangeListener for Tab-Selections
 	 */
 	private void setTabSelectionListener() {
 		
@@ -218,7 +252,7 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 			@Override
 			public void stateChanged(ChangeEvent evt) {
 				
-				if (pauseTreeSelectionListener) return;
+				if (pauseTabSelectionListener) return;
 				
 				// --- To prevent, that an add-action came in ----
 				int newNumberOfNodes = getNumberOfNodes();
@@ -226,12 +260,16 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 					
 					JTabbedPane pane = (JTabbedPane)evt.getSource();
 			        int selIndex = pane.getSelectedIndex();
-			        String title = pane.getTitleAt(selIndex);
-			        DefaultMutableTreeNode selectedNode = getTreeNode(title);
+			        if (selIndex>-1) {
+				        String title = pane.getTitleAt(selIndex);
+				        DefaultMutableTreeNode selectedNode = getTreeNode(title);
 
-			        DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) projectTree.getLastSelectedPathComponent();
-			        if (selectedNode!=currentNode) {
-			        	projectTree.setSelectionPath(new TreePath(selectedNode.getPath()));
+				        DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) projectTree.getLastSelectedPathComponent();
+				        if (selectedNode!=currentNode) {
+				        	pauseTreeSelectionListener=true;
+				        	projectTree.setSelectionPath(new TreePath(selectedNode.getPath()));
+				        	pauseTreeSelectionListener=false;
+				        }
 			        }
 			        
 				} else {
@@ -239,7 +277,6 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 				}
 			}
 		};
-		
 	}
 	
 	/**
@@ -267,49 +304,90 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	}
 
 	/**
-	 * Adds a Project-Tab and a new node (child of a specified parent) to 
-	 * the ProjectWindow
+	 * Adds a Project-Tab and a new node (child of a specified parent) to the ProjectWindow
+	 * @param projectWindowTab
 	 */
-	public void addProjectTab(ProjectWindowTab tab) {
+	public void addProjectTab(ProjectWindowTab projectWindowTab) {
+		this.addProjectTab(projectWindowTab, -1);
+	}
+	/**
+	 * Adds a Project-Tab and a new node (child of a specified parent) to the ProjectWindow
+	 * at the specified index position. The index position has to be greater than 1, in order 
+	 * to keep the 'Info'-Tab and the 'Configuration'-Tab at its provided position! 
+
+	 * @param projectWindowTab
+	 * @param indexPosotionGreaterOne
+	 */
+	public void addProjectTab(ProjectWindowTab projectWindowTab, int indexPositionGreaterOne) {
+
+		int newIndexPos = indexPositionGreaterOne;
+		if (newIndexPos > -1 && newIndexPos < 2) {
+			// ----------------------------------------------------------------
+			// --- if we adding at the root node, we have to make sure that --- 
+			// --- we don't use index position 0 or 1 ! 					---
+			// ----------------------------------------------------------------
+			String parentName = projectWindowTab.getParentName();
+			if (parentName!=null) {
+				DefaultMutableTreeNode pareNode = getTreeNode(parentName);
+				if (pareNode==rootNode) {
+					newIndexPos = 2;
+				}
+			} else {
+				newIndexPos = 2;	
+			}
+			// ----------------------------------------------------------------
+		}
+		projectWindowTab.setIndexPosition(newIndexPos);
 		
 		// --- add to reminder vector -----------
-		this.tabVector.add(tab);
+		this.tabVector.add(projectWindowTab);
+		
 		// --- use the private function ---------
-		this.addProjectTabInternal(tab);
+		this.addProjectTabInternal(projectWindowTab);
+
 	}
+	
 	/**
 	 * Adds a Project-Tab and a new node (child of a specified parent) to 
 	 * the ProjectWindow
 	 */
-	private DefaultMutableTreeNode addProjectTabInternal(ProjectWindowTab tab) {
+	private DefaultMutableTreeNode addProjectTabInternal(ProjectWindowTab projectWindowTab) {
 		
 		// --- create Node ----------------------
-		DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(tab);
-		DefaultMutableTreeNode parNode = null;
-		JTabbedPane newViewCatcher = null; 
+		DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(projectWindowTab);
+		DefaultMutableTreeNode pareNode = null;
+		JTabbedPane tabbedPaneParent = null; 
 		
-		String parentName = tab.getParentName();
+		String parentName = projectWindowTab.getParentName();
 		
 		// --- add to the TreeModel -------------
 		if (parentName!=null) {
-			parNode = getTreeNode(parentName);
-			ProjectWindowTab pwt = (ProjectWindowTab) parNode.getUserObject();
-			newViewCatcher = pwt.getCompForChildComp();
+			pareNode = getTreeNode(parentName);
+			ProjectWindowTab pareNodePWT = (ProjectWindowTab) pareNode.getUserObject();
+			tabbedPaneParent = pareNodePWT.getCompForChildComp();
 			// --- add ChangeListener -----------
-			this.addChangeListener(newViewCatcher);
+			this.addChangeListener(tabbedPaneParent);
 
 		} else {
-			parNode = rootNode;
-			newViewCatcher = projectViewRightTabs;
+			pareNode = rootNode;
+			tabbedPaneParent = projectViewRightTabs;
 		}
 
-		// --- add to the tabs ------------------
-		parNode.add(newNode);
-		newViewCatcher.addTab( tab.getTitle(), tab.getIcon(), tab.getComponent(), tab.getTipText());
-
+		if (projectWindowTab.getIndexPosition() != -1 && projectWindowTab.getIndexPosition()<pareNode.getChildCount()) {
+			// --- add to parent node/tab at index position ----
+			pareNode.insert(newNode, projectWindowTab.getIndexPosition());
+			tabbedPaneParent.insertTab(projectWindowTab.getTitle(), projectWindowTab.getIcon(), projectWindowTab.getComponent(), projectWindowTab.getTipText(), projectWindowTab.getIndexPosition());
+		} else {
+			// --- just add to parent node/tab -----------------
+			pareNode.add(newNode);
+			tabbedPaneParent.addTab( projectWindowTab.getTitle(), projectWindowTab.getIcon(), projectWindowTab.getComponent(), projectWindowTab.getTipText());
+		}
+		
+		// --- refresh view ---------------------
+		this.projectTreeModel.reload();
+		this.projectTreeExpand2Level(3, true);
 		return newNode;
 	}
-
 	/**
 	 * Adds the local ChangeListener named 'tabSelectionListener'
 	 * to a JTabbedPane if not already there
@@ -328,6 +406,45 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 		if (listenerFound==false) {
 			pane.addChangeListener(tabSelectionListener);
 		}
+	}
+	/**
+	 * This removes a given ProjectWindowTab from this ProjectWindow
+	 * @param projectWindowTab
+	 */
+	public void remove(ProjectWindowTab projectWindowTab) {
+	
+		DefaultMutableTreeNode node = this.getTreeNode(projectWindowTab.getTitle());
+		if (node!=null) {
+			DefaultMutableTreeNode pareNode = (DefaultMutableTreeNode) node.getParent();
+			pareNode.remove(node);
+		}
+
+		JComponent component = projectWindowTab.getComponent();
+		Container container = component.getParent();
+		if (container!=null) {
+			container.remove(component);	
+		}
+		this.tabVector.remove(projectWindowTab);
+
+		this.projectTreeModel.reload();
+		this.projectTreeExpand2Level(3, true);
+	}
+	
+	/**
+	 * This method removes all ProjectWindowTabs from the current display
+	 */
+	private void removeAllProjectWindowTabsTemporary4Rebuilding() {
+		
+		Vector<ProjectWindowTab> pwtVector = new Vector<ProjectWindowTab>(this.tabVector); 
+		for (Iterator<ProjectWindowTab> it = pwtVector.iterator(); it.hasNext();) {
+			
+			ProjectWindowTab pwt = (ProjectWindowTab) it.next();
+			if (pwt.getCompForChildComp()!=null) {
+				pwt.getCompForChildComp().removeAll();
+			}
+		}
+		this.rootNode.removeAllChildren();
+		this.projectViewRightTabs.removeAll();
 	}
 	
 	/**
@@ -384,21 +501,22 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	/**
 	 * Sets the focus to a specified Tab of the project Window
 	 */
-	public void setFocus2Tab(DefaultMutableTreeNode currNode) {
+	public void setFocus2Tab(DefaultMutableTreeNode node2Focus) {
 
-		if (currNode== null) return;
+		if (node2Focus== null) return;
 		
 		Vector<DefaultMutableTreeNode> nodeArray = new Vector<DefaultMutableTreeNode>();
-		nodeArray.add(currNode);
+		nodeArray.add(node2Focus);
 		
+		DefaultMutableTreeNode currNode = node2Focus;
 		while (currNode.getParent()!= null) {
 			currNode = (DefaultMutableTreeNode) currNode.getParent();
 			if (currNode!=rootNode) {
 				nodeArray.add(currNode);	
 			}
 		}
-		for (int i = nodeArray.size(); i > 0; i--) {
-			currNode = nodeArray.get(i-1);
+		for (int i = nodeArray.size()-1; i > -1; i--) {
+			currNode = nodeArray.get(i);
 			ProjectWindowTab pwt = (ProjectWindowTab) currNode.getUserObject();
 			Component displayElement = pwt.getComponent();
 			((JTabbedPane) displayElement.getParent()).setSelectedComponent(displayElement);
@@ -432,7 +550,7 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 		
 		// --- Rebuild the display out of the tabVector -------------
 		this.projectTree.setSelectionPath(null);
-		this.removeAllProjectWindowTabs();
+		this.removeAllProjectWindowTabsTemporary4Rebuilding();
 		
 		Vector<ProjectWindowTab> pwtVector = new Vector<ProjectWindowTab>(this.tabVector); 
 		for (Iterator<ProjectWindowTab> it = pwtVector.iterator(); it.hasNext();) {
@@ -483,23 +601,6 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	}
 	
 	/**
-	 * This methode removes all ProjectWindowTabs from the current display
-	 */
-	private void removeAllProjectWindowTabs() {
-		
-		Vector<ProjectWindowTab> pwtVector = new Vector<ProjectWindowTab>(this.tabVector); 
-		for (Iterator<ProjectWindowTab> it = pwtVector.iterator(); it.hasNext();) {
-			
-			ProjectWindowTab pwt = (ProjectWindowTab) it.next();
-			if (pwt.getCompForChildComp()!=null) {
-				pwt.getCompForChildComp().removeAll();
-			}
-		}
-		this.rootNode.removeAllChildren();
-		this.projectViewRightTabs.removeAll();
-	}
-	
-	/**
 	 * This method adds a ProjectWindowTab to the window, considering if a
 	 * projects has a predefined visualization or not
 	 * @param pwt
@@ -519,5 +620,32 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 		}
 		return newNode;
 	}
+
+	/**
+	 * @param projectWindowTab4Configuration the projectWindowTab4Configuration to set
+	 */
+	public void setProjectWindowTab4Configuration(ProjectWindowTab projectWindowTab4Configuration) {
+		this.projectWindowTab4Configuration = projectWindowTab4Configuration;
+	}
+	/**
+	 * @return the projectWindowTab4Configuration
+	 */
+	public ProjectWindowTab getProjectWindowTab4Configuration() {
+		return projectWindowTab4Configuration;
+	}
+
+	/**
+	 * @param projectWindowTab4SimulationSetup the projectWindowTab4SimulationSetup to set
+	 */
+	public void setProjectWindowTab4SimulationSetup(ProjectWindowTab projectWindowTab4SimulationSetup) {
+		this.projectWindowTab4SimulationSetup = projectWindowTab4SimulationSetup;
+	}
+	/**
+	 * @return the projectWindowTab4SimulationSetup
+	 */
+	public ProjectWindowTab getProjectWindowTab4SimulationSetup() {
+		return projectWindowTab4SimulationSetup;
+	}
+
 	
 }  //  @jve:decl-index=0:visual-constraint="10,10"

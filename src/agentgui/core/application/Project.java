@@ -140,53 +140,66 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	public void addDefaultTabs() {
 		
 		ProjectWindowTab pwt = null;
+		// ------------------------------------------------
 		// --- General Informations -----------------------
 		pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, 
 								   Language.translate("Info"), null, null, 
 								   new ProjectInfo(this), null, null);
 		pwt.add();
-		// --- External Resources -------------------------
-		pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, 
-				   Language.translate("Ressourcen"), null, null, 
-				   new ProjectResources(this), null, null);
-		pwt.add();
-		// --- Used Ontologies ----------------------------
-		pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, 
-				   Language.translate("Ontologien"), null, null, 
-				   new OntologyTab(this), null, null);
-		pwt.add();
-		// --- Project Agents -----------------------------
-		pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, 
-				   Language.translate("Agenten"), null, null, 
-				   new BaseAgents(this), null, null);
-		pwt.add();
-		// --- JADE-Configuration -------------------------
-		pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, 
-				   Language.translate("JADE-Konfiguration"), null, null, 
-				   new JadeSetup(this), null, null);
-		pwt.add();
 		
-		// --- Simulations-Setup --------------------------
+		// ------------------------------------------------
+		// --- Configuration ------------------------------
 		TabForSubPanes subPanes = new TabForSubPanes(); 
+		pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, 
+				   Language.translate("Konfiguration"), null, null, 
+				   subPanes, null, subPanes.jTabbedPaneIntern);
+		pwt.add();
+		this.projectWindow.setProjectWindowTab4Configuration(pwt);
+		
+			// --- External Resources -------------------------
+			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, 
+					   Language.translate("Ressourcen"), null, null, 
+					   new ProjectResources(this), Language.translate("Konfiguration"), null);
+			pwt.add();
+			// --- Used Ontologies ----------------------------
+			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, 
+					   Language.translate("Ontologien"), null, null, 
+					   new OntologyTab(this), Language.translate("Konfiguration"), null);
+			pwt.add();
+			// --- Project Agents -----------------------------
+			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, 
+					   Language.translate("Agenten"), null, null, 
+					   new BaseAgents(this), Language.translate("Konfiguration"), null);
+			pwt.add();
+			// --- JADE-Configuration -------------------------
+			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, 
+					   Language.translate("JADE-Konfiguration"), null, null, 
+					   new JadeSetup(this), Language.translate("Konfiguration"), null);
+			pwt.add();
+		
+		// ------------------------------------------------
+		// --- Simulations-Setup --------------------------
+		subPanes = new TabForSubPanes(); 
 		pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, 
 				   Language.translate("Simulations-Setup"), null, null, 
 				   subPanes, null, subPanes.jTabbedPaneIntern);
 		pwt.add();
-
+		this.projectWindow.setProjectWindowTab4SimulationSetup(pwt);
+		
 			// --- start configuration for agents ---------
 			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, 
 					   Language.translate("Agenten-Start"), null, null, 
-					   new StartSetup(this), Language.translate("Simulations-Setup"), subPanes.jTabbedPaneIntern);
+					   new StartSetup(this), Language.translate("Simulations-Setup"), null);
 			pwt.add();
 			// --- simulation environment -----------------
 			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER_VISUALIZATION, 
 					   Language.translate("Simulationsumgebung"), null, null, 
-					   new SimulationEnvironment(this), Language.translate("Simulations-Setup"), subPanes.jTabbedPaneIntern);
+					   new SimulationEnvironment(this), Language.translate("Simulations-Setup"), null);
 			pwt.add();
 			// --- distribution + thresholds --------------
 			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, 
 					   Language.translate("Verteilung + Grenzwerte"), null, null, 
-					   new Distribution(this), Language.translate("Simulations-Setup"), subPanes.jTabbedPaneIntern);
+					   new Distribution(this), Language.translate("Simulations-Setup"), null);
 			pwt.add();
 			
 

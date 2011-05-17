@@ -10,6 +10,7 @@ import javax.swing.JMenu;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Project;
+import agentgui.core.gui.ProjectWindowTab;
 import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.core.sim.setup.SimulationSetups;
 import agentgui.core.sim.setup.SimulationSetupsChangeNotification;
@@ -29,10 +30,11 @@ public abstract class PlugIn implements Observer {
 	public static final int ADDED = 1;
 	public static final int REMOVED = 2;
 	
-	private Project project = null;
-	private String classReference = null;
+	protected Project project = null;
+	protected String classReference = null;
 	
 	private Vector<JComponent> customJComponent = new Vector<JComponent>();
+	private Vector<ProjectWindowTab> customProjectWindowTab = new Vector<ProjectWindowTab>();
 	
 	/**
 	 * Default constructor for this class
@@ -150,6 +152,26 @@ public abstract class PlugIn implements Observer {
 		Application.MainWindow.addJToolbarComponent(myComponent,indexPosition);
 		customJComponent.add(myComponent);
 	}
+	
+	/**
+	 * This method can be used in order to add a customized Tab to the project window
+	 * @param projectWindowTab
+	 */
+	protected void addProjectWindowTab(ProjectWindowTab projectWindowTab) {
+		projectWindowTab.add();
+		customProjectWindowTab.add(projectWindowTab);
+	}
+	/**
+	 * This method can be used in order to add a customized Tab to the project window at the specified index position.
+	 * The index position has to be greater than 1, in order to keep the 'Info'-Tab and the 'Configuration'-Tab at
+	 * its provided position! 
+	 * @param projectWindowTab
+	 * @param indexPositionGreaterOne
+	 */
+	protected void addProjectWindowTab(ProjectWindowTab projectWindowTab, int indexPositionGreaterOne) {
+		projectWindowTab.add(indexPositionGreaterOne);
+		customProjectWindowTab.add(projectWindowTab);
+	}
 	// --- End of adding functions --------------
 	
 	/**
@@ -158,13 +180,20 @@ public abstract class PlugIn implements Observer {
 	 */
 	private void removeCustomJElements() {
 		
-		// --- remove custom elements ---------------------
+		// --- remove custom toolbar/menu elements --------
 		for (int i = 0; i < customJComponent.size(); i++) {
-			JComponent button = customJComponent.get(i);
-			Container comp = button.getParent();
-			comp.remove(button);
+			JComponent component = customJComponent.get(i);
+			Container container = component.getParent();
+			container.remove(component);
 		}
 		customJComponent = new Vector<JComponent>();
+		// --- remove custom Tab-elements -----------------
+		for (int i = customProjectWindowTab.size()-1; i>-1; i--) {
+			ProjectWindowTab pwt = customProjectWindowTab.get(i);
+			pwt.remove();
+		}
+		customProjectWindowTab = new Vector<ProjectWindowTab>();
+		// --- validate/repaint the CorwWindow ------------
 		Application.MainWindow.validate();
 	}
 	// --------------------------------------------------------------
@@ -246,7 +275,7 @@ public abstract class PlugIn implements Observer {
 		// ----------------------------------------------------------
 		// --- Changes with the SimulationSetups --------------------			
 		// ----------------------------------------------------------
-		} else if (updateObject.equals(SimulationSetups.CHANGED)) {
+		} else if (updateObject.toString().equals(SimulationSetups.CHANGED)) {
 			
 			SimulationSetupsChangeNotification sscn = (SimulationSetupsChangeNotification) updateObject;
 			int sscnUpdate = sscn.getUpdateReason();
@@ -268,7 +297,7 @@ public abstract class PlugIn implements Observer {
 		// ----------------------------------------------------------
 		// --- Changes with the Project-PlugIns ---------------------			
 		// ----------------------------------------------------------
-		} else if (updateObject.equals(PlugIn.CHANGED)) {
+		} else if (updateObject.toString().equals(PlugIn.CHANGED)) {
 
 			PlugInNotification pin = (PlugInNotification) updateObject;
 			int pinUpdate = pin.getUpdateReason();

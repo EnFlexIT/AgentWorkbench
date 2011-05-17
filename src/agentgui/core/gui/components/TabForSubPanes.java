@@ -35,7 +35,7 @@ public class TabForSubPanes extends JPanel  {
 		gridBagConstraints.ipady = 0;
 		gridBagConstraints.weightx = 1.0;
 		gridBagConstraints.weighty = 1.0;
-		gridBagConstraints.insets = new Insets(5, 0, 0, 0);
+		gridBagConstraints.insets = new Insets(0, 0, 0, 0);
 		gridBagConstraints.gridx = 0;
 		this.setLayout(new GridBagLayout());
 		this.setSize(421, 239);

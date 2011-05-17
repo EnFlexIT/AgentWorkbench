@@ -17,70 +17,64 @@ import org.apache.commons.codec.binary.Base64;
 
 public class Language {
 
-	private static String DictFileLocation64 = Application.RunInfo.FileDictionary(true, true);
-	private static String DictFileLocation = Application.RunInfo.FileDictionary(false, true);
-	private static String NewLine = Application.RunInfo.AppNewLineString();
-	private static String NewLineReplacer = Application.RunInfo.AppNewLineStringReplacer();
-	public final static String Seperator = ";";
+	private static String dictFileLocation64 = Application.RunInfo.FileDictionary(true, true);
+	private static String dictFileLocation = Application.RunInfo.FileDictionary(false, true);
+	private static String newLine = Application.RunInfo.AppNewLineString();
+	private static String newLineReplacer = Application.RunInfo.AppNewLineStringReplacer();
+	public final static String seperator = ";";
 	
-	public static Integer DefaultLanguage = null;
-	private static Integer DictLangCount = 0;
-	private static String[] DictLangHeader = null;
+	public static Integer defaultLanguage = null;
+	private static Integer dictLanguageCount = 0;
+	private static String[] dictLangHeader = null;
 	
-	private static List<String> DictLineList64 = new ArrayList<String>();
-	private static Hashtable<String, Integer> DictHash64 = new Hashtable<String, Integer>(); 
-	
-	public static int numberOfLanguages = getLanguages().length;
-	private static String emptyLine = stringRepeat(Seperator, numberOfLanguages-1);
+	private static List<String> dictLineList64 = new ArrayList<String>();
+	private static Hashtable<String, Integer> dictHash64 = new Hashtable<String, Integer>(); 
 
-	// -------------------------------------------------------------------------
-	
+
 	/**
-	 * Changing the application language to:
-	 * NewLang => "DE", "EN", "ES", "IT" etc. is equal to the 
-	 * end phrase after the prefix "LANG_". E.g. "LANG_EN" needs "EN" as parameter
+	 * Changing the application language to: newLang
+	 * => "DE", "EN", "IT", "ES" or "FR"  
+	 * @param newLang
 	 */
 	public static void changeLanguageTo(String newLang){
-		
 		String newLangShort = newLang.toLowerCase().replace("lang_", "");
 		Application.RunInfo.setLanguage(newLangShort);
-		DefaultLanguage = getIndexOfLanguage(newLangShort);
+		defaultLanguage = getIndexOfLanguage(newLangShort);
 	}
-	// -------------------------------------------------------------------------	
 		
 	/**
-	 * Translate one Expression, which is based on the German expression
+	 * Translate one expression, which is based on the German expression
 	 */
-	public static String translate( String DE_Exp )  {
+	public static String translate(String DE_Exp)  {
 		
-		if ( DictHash64.isEmpty() ) {
+		if ( dictHash64.isEmpty() ) {
 			loadDictionaryFile();	
-			if (DictLineList64.size() == 0) return DE_Exp;
+			if (dictLineList64.size() == 0) return DE_Exp;
 		};
 		
 		// --- Check if the expression exists ---------------------------------
 		String DE_Exp_Work = DE_Exp.trim();
-		DE_Exp_Work = DE_Exp_Work.replace( NewLine, NewLineReplacer );
+		DE_Exp_Work = DE_Exp_Work.replace( newLine, newLineReplacer );
 		
 		String  TranslationExp = null;
-		Integer TranslationLine = DictHash64.get( DE_Exp_Work );		
+		Integer TranslationLine = dictHash64.get( DE_Exp_Work );		
 		if ( TranslationLine == null ) {
 			// --- Expression NOT there ! => Put to the dictionary ------------
-			String AddLine = DE_Exp_Work + stringRepeat( Seperator, (DictLangCount-1) );
-			DictLineList64.add( AddLine );
-			DictHash64.put( DE_Exp_Work, DictLineList64.size()-1 );			
+			String AddLine = DE_Exp_Work + stringRepeat( seperator, (dictLanguageCount-1) );
+			dictLineList64.add( AddLine );
+			dictHash64.put( DE_Exp_Work, dictLineList64.size()-1 );			
 			TranslationExp = DE_Exp.trim();			
 		}
 		else {
 			// --- Expression IS there! => get translation --------------------
-			String   DictLine = DictLineList64.get( TranslationLine );
-			String[] DictLineValues = DictLine.split( Seperator, -1 );
-			TranslationExp = DictLineValues[DefaultLanguage];
+			String   DictLine = dictLineList64.get( TranslationLine );
+			String[] DictLineValues = DictLine.split( seperator, -1 );
+			TranslationExp = DictLineValues[defaultLanguage];
 			if ( TranslationExp == null || TranslationExp.isEmpty() ) {
 				TranslationExp = DE_Exp.trim();
 			}
 			else {
-				TranslationExp = TranslationExp.replace( NewLineReplacer, NewLine );				
+				TranslationExp = TranslationExp.replace( newLineReplacer, newLine );				
 			};
 		};
 
@@ -94,11 +88,11 @@ public class Language {
 	 * Dictionary file as String-Array
 	 */
 	public static String[] getLanguages () {
-		if ( DictHash64.isEmpty() ) {
+		if ( dictHash64.isEmpty() ) {
 			loadDictionaryFile();	
-			if (DictLineList64.size() == 0) return null;
+			if (dictLineList64.size() == 0) return null;
 		};
-		return DictLangHeader;
+		return dictLangHeader;
 	}
 	// -------------------------------------------------------------------------
 
@@ -108,19 +102,19 @@ public class Language {
 	 */
 	public static String getLanguageName(String LangHeader) {
 		
-		Hashtable<String, String> HeadHash = new Hashtable<String, String>();
-		HeadHash.put("LANG_DE", translate("Deutsch"));
-		HeadHash.put("LANG_EN", translate("Englisch"));
-		HeadHash.put("LANG_IT", translate("Italienisch"));
-		HeadHash.put("LANG_ES", translate("Spanisch"));
-		HeadHash.put("LANG_FR", translate("Französisch"));
+		Hashtable<String, String> headHash = new Hashtable<String, String>();
+		headHash.put("LANG_DE", translate("Deutsch"));
+		headHash.put("LANG_EN", translate("Englisch"));
+		headHash.put("LANG_IT", translate("Italienisch"));
+		headHash.put("LANG_ES", translate("Spanisch"));
+		headHash.put("LANG_FR", translate("Französisch"));
 		
-		String LangHeaderWork = LangHeader.toUpperCase();
-		String LangHeaderD = HeadHash.get(LangHeaderWork);
-		if ( LangHeaderD == null ) {
-			LangHeaderD = LangHeaderWork;
+		String langHeaderWork = LangHeader.toUpperCase();
+		String langHeaderD = headHash.get(langHeaderWork);
+		if ( langHeaderD == null ) {
+			langHeaderD = langHeaderWork;
 		}		
-		return LangHeaderD;		
+		return langHeaderD;		
 	}
 	// -------------------------------------------------------------------------
 	
@@ -135,13 +129,13 @@ public class Language {
 			langWork = langWork.replace("lang_", "");
 		}
 		// --- look at the dictionary header --------------
-		for (int i = 0; i < DictLangHeader.length; i++) {
-			String lang = DictLangHeader[i].toLowerCase().replace("lang_", "");
+		for (int i = 0; i < dictLangHeader.length; i++) {
+			String lang = dictLangHeader[i].toLowerCase().replace("lang_", "");
 			if (lang.equalsIgnoreCase(langWork)) {
 				return i;
 			}
 		}
-		return 0;
+		return -1;
 	}
 	// -------------------------------------------------------------------------
 	
@@ -156,14 +150,14 @@ public class Language {
 		try {        
 			String line;
 			// --- Reading UTF8-File of the dictionary ------------------------		
-			in = new BufferedReader( new InputStreamReader( new FileInputStream(DictFileLocation) , "UTF8" ) );
+			in = new BufferedReader( new InputStreamReader( new FileInputStream(dictFileLocation) , "UTF8" ) );
 			while ((line = in.readLine()) != null) {   
 				//DictLineList.add(line);	
 			}
-			in64 = new BufferedReader( new InputStreamReader( new FileInputStream(DictFileLocation64) , "UTF8" ) );
+			in64 = new BufferedReader( new InputStreamReader( new FileInputStream(dictFileLocation64) , "UTF8" ) );
 			while ((line = in64.readLine()) != null) {
 				String decodedLine = new String(Base64.decodeBase64(line.getBytes()), "UTF8");
-				DictLineList64.add(decodedLine);
+				dictLineList64.add(decodedLine);
 			}			
 		} 
 		catch (IOException ex) {        
@@ -180,21 +174,21 @@ public class Language {
 		}     
 
 		// --- Aufteilung der Zeile in Einzelelmente um die HashMap zu füllen --
-		final String[][] valuesArray = new String[DictLineList64.size()][];    
+		final String[][] valuesArray = new String[dictLineList64.size()][];    
 		int cnt = 0;    
-		for ( final String line : DictLineList64 ) {   
+		for ( final String line : dictLineList64 ) {   
 			if (line != null) {
-				valuesArray[cnt] = line.split( Seperator, -1 );
+				valuesArray[cnt] = line.split( seperator, -1 );
 				if ( ! valuesArray[cnt][0].isEmpty() ) {
 					// --- Dient der Indizierung der Übersetzungsdatei --------
-					DictHash64.put( valuesArray[cnt][0], cnt ); 					
+					dictHash64.put( valuesArray[cnt][0], cnt ); 					
 					if ( valuesArray[cnt][0].equalsIgnoreCase( "LANG_DE" ) ) {
 						// --- Remind this header -----------------------------
-						DictLangHeader = valuesArray[cnt];
+						dictLangHeader = valuesArray[cnt];
 						// --- How many languages are in the dictionary? ------
-						DictLangCount = DictLangHeader.length;				 		
+						dictLanguageCount = dictLangHeader.length;				 		
 						// --- Which Language has to be used ------------------
-						DefaultLanguage = getIndexOfLanguage(Application.RunInfo.getLanguage());	
+						defaultLanguage = getIndexOfLanguage(Application.RunInfo.getLanguage());	
 					};
 				};
 			}
@@ -202,11 +196,11 @@ public class Language {
 		}
 
 		// --- Falls kein Header definiert ist, das jetzt nachholen -----------
-		if (DictHash64.get("LANG_DE")==null) {
+		if (dictHash64.get("LANG_DE")==null) {
 			// --- This entry is mandantory for the dictionary ----------------
 			String line = "LANG_DE;LANG_EN;LANG_IT;LANG_ES;LANG_FR";
-			DictLineList64.add(0, line);
-			DictHash64.put("LANG_DE", 0);
+			dictLineList64.add(0, line);
+			dictHash64.put("LANG_DE", 0);
 			// --- Reload dictionary ------------------------------------------
 			saveDictionaryFile();
 			loadDictionaryFile();
@@ -223,17 +217,17 @@ public class Language {
 		BufferedWriter OutWri = null;
 		BufferedWriter OutWri64 = null;
 		
-		List<String> DictSorted = new Vector<String>(DictLineList64); 
+		List<String> DictSorted = new Vector<String>(dictLineList64); 
 		Collections.sort(DictSorted);
 		
 		try { 
 			// --- UTF8-File for the dictionary -------------------------------- 
-			OutWri = new BufferedWriter( new OutputStreamWriter( new FileOutputStream(DictFileLocation), "UTF8" ) );
-			OutWri64 = new BufferedWriter( new OutputStreamWriter( new FileOutputStream(DictFileLocation64), "UTF8" ) );
+			OutWri = new BufferedWriter( new OutputStreamWriter( new FileOutputStream(dictFileLocation), "UTF8" ) );
+			OutWri64 = new BufferedWriter( new OutputStreamWriter( new FileOutputStream(dictFileLocation64), "UTF8" ) );
 		    
 			for ( final String line : DictSorted ) {
 				
-				if (line.trim().equals(emptyLine)) {
+				if (line.trim().equals(getEmptyLine())) {
 					// --- just ignore this line --------------------
 				} else {
 					// --- TXT-Version of the dictionary ------------
@@ -257,7 +251,20 @@ public class Language {
 		} 
 	}
 	// -------------------------------------------------------------------------
-
+	/**
+	 * returns the number of languages defined in the current dictionoary
+	 */
+	private static int getNumberOfLanguages() {
+		return getLanguages().length;
+	}
+	/**
+	 * retuns an empty dictionary line
+	 * @return
+	 */
+	private static String getEmptyLine() {
+		return stringRepeat(seperator, getNumberOfLanguages()-1);
+	}
+	
 	/**
 	 * Repeat one String n-times and merge them together
 	 */
@@ -276,7 +283,7 @@ public class Language {
 	 * @return the dictLineList64
 	 */
 	public static List<String> getDictLineList() {
-		return DictLineList64;
+		return dictLineList64;
 	}
 
 	/**
@@ -286,9 +293,9 @@ public class Language {
 	 */
 	public static void update(String deExp, String dictRow) {
 
-		Integer line = DictHash64.get(deExp);	
+		Integer line = dictHash64.get(deExp);	
 		if (line!=null) {
-			DictLineList64.set(line, dictRow);
+			dictLineList64.set(line, dictRow);
 		}
 	}
 
@@ -299,10 +306,10 @@ public class Language {
 	 */
 	public static void delete(String deExp) {
 		
-		Integer lineNo = DictHash64.get(deExp);	
+		Integer lineNo = dictHash64.get(deExp);	
 		if (lineNo!=null) {
-			DictLineList64.set(lineNo, emptyLine);
-			DictHash64.remove(deExp);	
+			dictLineList64.set(lineNo, getEmptyLine());
+			dictHash64.remove(deExp);	
 		}
 	}
 	

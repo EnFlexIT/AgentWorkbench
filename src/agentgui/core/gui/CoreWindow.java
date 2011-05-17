@@ -622,7 +622,7 @@ public class CoreWindow extends JFrame implements ComponentListener {
 			String[] DictLineValues = Language.getLanguages(); 
 			boolean setBold = false;
 			for(int i=0; i<DictLineValues.length; i++) {
-				if ( i == Language.DefaultLanguage ) 
+				if ( i == Language.defaultLanguage ) 
 					setBold = true;
 				else 
 					setBold = false;					

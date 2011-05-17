@@ -1,8 +1,7 @@
 package agentgui.core.gui;
 
-import java.awt.Component;
-
 import javax.swing.Icon;
+import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
 
 import agentgui.core.application.Project;
@@ -25,9 +24,10 @@ public class ProjectWindowTab {
 	private Icon icon;
 	
 	private String parentName;
-	private Component comp;
+	private JComponent comp;
 	private JTabbedPane compForChildComp;
 
+	private int indexPosition = -1;
 
 	/**
 	 * Default constructor for this class
@@ -37,7 +37,7 @@ public class ProjectWindowTab {
 	 * @param component
 	 * @param tip
 	 */
-	public ProjectWindowTab(Project currProject, int displayType_DEV_or_USER, String head_title, String aTipText, Icon ico, Component component, String pareName, JTabbedPane jTabbedPane4ChildComponents) {
+	public ProjectWindowTab(Project currProject, int displayType_DEV_or_USER, String head_title, String aTipText, Icon ico, JComponent component, String pareName, JTabbedPane jTabbedPane4ChildComponents) {
 		
 		this.project = currProject;
 		this.displayType = displayType_DEV_or_USER;
@@ -62,10 +62,25 @@ public class ProjectWindowTab {
 	}
 	
 	/**
-	 * Adds the current Tab-Object to the ProjectWindow 
+	 * Adds the current Tab-object to the project window 
 	 */
 	public void add() {
 		this.project.projectWindow.addProjectTab(this);	
+	}
+	/**
+	 * Adds the current Tab-object to the project window  
+	 * at the given index position
+	 * @param indexPosotionGreaterOne
+	 */
+	public void add(int indexPositionGreaterOne) {
+		this.project.projectWindow.addProjectTab(this, indexPositionGreaterOne);	
+	}
+	
+	/**
+	 * This removes the current Tab from the project window  
+	 */
+	public void remove() {
+		this.project.projectWindow.remove(this);
 	}
 	
 	/**
@@ -144,13 +159,13 @@ public class ProjectWindowTab {
 	/**
 	 * @return the comp
 	 */
-	public Component getComponent() {
+	public JComponent getComponent() {
 		return comp;
 	}
 	/**
 	 * @param comp the comp to set
 	 */
-	public void setComponent(Component comp) {
+	public void setJComponent(JComponent comp) {
 		this.comp = comp;
 	}
 
@@ -166,7 +181,20 @@ public class ProjectWindowTab {
 	public JTabbedPane getCompForChildComp() {
 		return compForChildComp;
 	}
-	
+
+	/**
+	 * @param indexPosition the indexPosition to set
+	 */
+	public void setIndexPosition(int indexPosition) {
+		this.indexPosition = indexPosition;
+	}
+	/**
+	 * @return the indexPosition
+	 */
+	public int getIndexPosition() {
+		return indexPosition;
+	}
+
 }
 
 	
