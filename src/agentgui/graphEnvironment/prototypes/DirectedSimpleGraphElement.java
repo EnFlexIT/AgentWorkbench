@@ -3,16 +3,25 @@ package agentgui.graphEnvironment.prototypes;
 import java.util.HashSet;
 
 import agentgui.core.application.Language;
-import agentgui.graphEnvironment.environmentModel.GraphEdge;
-import agentgui.graphEnvironment.environmentModel.GraphElement;
-import agentgui.graphEnvironment.environmentModel.GraphNode;
+import agentgui.graphEnvironment.networkModel.GraphEdge;
+import agentgui.graphEnvironment.networkModel.GraphElement;
+import agentgui.graphEnvironment.networkModel.GraphNode;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.EdgeType;
-
+/**
+ * A simple directed graph / network element with two connection points,
+ * represented by two nodes and a directed edge.
+ * @author Nils
+ *
+ */
 public class DirectedSimpleGraphElement extends GraphElementPrototype {
-	
+	/**
+	 * The node where the edge comes from
+	 */
 	private GraphNode entry;
-	
+	/**
+	 * The node where the edge goes to
+	 */
 	private GraphNode exit;
 
 	@Override

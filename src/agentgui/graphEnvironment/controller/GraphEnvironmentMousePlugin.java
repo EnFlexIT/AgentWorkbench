@@ -4,8 +4,8 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.util.Iterator;
 
-import agentgui.graphEnvironment.environmentModel.GraphEdge;
-import agentgui.graphEnvironment.environmentModel.GraphNode;
+import agentgui.graphEnvironment.networkModel.GraphEdge;
+import agentgui.graphEnvironment.networkModel.GraphNode;
 
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
 import edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin;

@@ -1,4 +1,4 @@
-package agentgui.graphEnvironment.environmentModel;
+package agentgui.graphEnvironment.networkModel;
 
 import java.util.HashMap;
 

@@ -22,9 +22,9 @@ import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.graphEnvironment.environmentModel.GraphEdge;
-import agentgui.graphEnvironment.environmentModel.GraphElement;
-import agentgui.graphEnvironment.environmentModel.GraphNode;
+import agentgui.graphEnvironment.networkModel.GraphEdge;
+import agentgui.graphEnvironment.networkModel.GraphElement;
+import agentgui.graphEnvironment.networkModel.GraphNode;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -35,6 +35,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.util.Iterator;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Vector;
 /**
  * This class implements a GUI component for displaying visualizations for JUNG graphs.
@@ -46,7 +48,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 
 	private static final long serialVersionUID = 1L;
 	/**
-	 * Panel containing controll buttons.
+	 * Panel containing control buttons.
 	 */
 	private JPanel pnlControlls = null;
 	/**
@@ -65,19 +67,25 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 	 * Graph visualization component
 	 */
 	private VisualizationViewer<GraphNode, GraphEdge> visView = null;
+	/**
+	 * JUNG object handling zooming
+	 */
 	private ScalingControl scalingControl = null;
+	/**
+	 * The GUI's main component, either the graph visualization, or an empty JPanel if no graph is loaded   
+	 */
 	private Component rightComponent = null;
 	/**
-	 * Parent GUI containing this BasicGRaphGUI
+	 * As the superclass relationship is occupied by the JPanel, notifications have to be handled by this object
 	 */
-	private GraphEnvironmentControllerGUI parentGUI = null;
+	private MyObservable myObservable;
 
 	/**
 	 * This is the default constructor
 	 */
-	public BasicGraphGUI(GraphEnvironmentControllerGUI parentGUI) {
+	public BasicGraphGUI() {
 		super();
-		this.parentGUI = parentGUI;
+		myObservable = new MyObservable();
 		scalingControl = new CrossoverScalingControl();
 		initialize();
 	}
@@ -88,7 +96,6 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 	 * @return void
 	 */
 	private void initialize() {
-		this.setSize(300, 200);
 		this.setLayout(new BorderLayout());
 		this.add(getPnlControlls(), BorderLayout.WEST);
 	}
@@ -173,7 +180,10 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 		}
 		return btnZoomReset;
 	}
-	
+	/**
+	 * Gets the VisualizationViewer
+	 * @return The VisualizationViewer
+	 */
 	VisualizationViewer<GraphNode, GraphEdge> getVisView(){
 		return visView;
 	}
@@ -263,11 +273,12 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 	}
 	
 	/**
-	 * This method passes object selections to the parent GUI
+	 * This method notifies the observers about a graph object selection
 	 * @param pickedObject The selected object
 	 */
 	void handleObjectSelection(Object pickedObject){
-		parentGUI.selectObject(pickedObject);
+		myObservable.setChanged();
+		myObservable.notifyObservers(pickedObject);
 	}
 	
 	/**
@@ -298,6 +309,34 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 		Iterator<GraphElement> objIter = objects.iterator();
 		while(objIter.hasNext()){
 			setPickedObject(objIter.next());
+		}
+	}
+	
+	/**
+	 * Add an observer to the GUI's Observable
+	 * @param observer
+	 */
+	public void addObserver(Observer observer){
+		myObservable.addObserver(observer);
+	}
+
+	/**
+	 * @return the myObservable
+	 */
+	public Observable getMyObservable() {
+		return myObservable;
+	}
+	
+	/**
+	 * Helper class for making Observable usable in this context
+	 * @author Nils
+	 */
+	private class MyObservable extends Observable{
+		/**
+		 * Calls the superclass' protected setChanged method 
+		 */
+		public void setChanged(){
+			super.setChanged();
 		}
 	}
 	

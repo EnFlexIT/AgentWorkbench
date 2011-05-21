@@ -2,9 +2,9 @@ package agentgui.graphEnvironment.prototypes;
 
 import java.util.HashSet;
 
-import agentgui.graphEnvironment.environmentModel.GraphEdge;
-import agentgui.graphEnvironment.environmentModel.GraphElement;
-import agentgui.graphEnvironment.environmentModel.GraphNode;
+import agentgui.graphEnvironment.networkModel.GraphEdge;
+import agentgui.graphEnvironment.networkModel.GraphElement;
+import agentgui.graphEnvironment.networkModel.GraphNode;
 import edu.uci.ics.jung.graph.Graph;
 
 /**

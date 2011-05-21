@@ -5,9 +5,9 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import agentgui.core.application.Language;
-import agentgui.graphEnvironment.environmentModel.GraphEdge;
-import agentgui.graphEnvironment.environmentModel.GraphElement;
-import agentgui.graphEnvironment.environmentModel.GraphNode;
+import agentgui.graphEnvironment.networkModel.GraphEdge;
+import agentgui.graphEnvironment.networkModel.GraphElement;
+import agentgui.graphEnvironment.networkModel.GraphNode;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.EdgeType;
 

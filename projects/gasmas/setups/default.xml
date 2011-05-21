@@ -57,7 +57,7 @@
             <key>entry</key>
             <value>
                 <agentClass>gasmas.agents.EntryAgent</agentClass>
-                <graphPrototype>agentgui.graphEnvironment.prototypes.SimpleGraphElement</graphPrototype>
+                <graphPrototype>agentgui.graphEnvironment.prototypes.DirectedSimpleGraphElement</graphPrototype>
             </value>
         </entry>
         <entry>
@@ -85,7 +85,7 @@
             <key>exit</key>
             <value>
                 <agentClass>gasmas.agents.ExitAgent</agentClass>
-                <graphPrototype>agentgui.graphEnvironment.prototypes.SimpleGraphElement</graphPrototype>
+                <graphPrototype>agentgui.graphEnvironment.prototypes.DirectedSimpleGraphElement</graphPrototype>
             </value>
         </entry>
         <entry>

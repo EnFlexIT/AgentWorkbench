@@ -9,10 +9,10 @@ import java.util.Vector;
 import edu.uci.ics.jung.graph.Graph;
 import agentgui.core.application.Language;
 import agentgui.graphEnvironment.controller.GraphFileImporter;
-import agentgui.graphEnvironment.environmentModel.GraphElement;
-import agentgui.graphEnvironment.environmentModel.ComponentTypeSettings;
-import agentgui.graphEnvironment.environmentModel.NetworkModel;
-import agentgui.graphEnvironment.environmentModel.NetworkComponent;
+import agentgui.graphEnvironment.networkModel.ComponentTypeSettings;
+import agentgui.graphEnvironment.networkModel.GraphElement;
+import agentgui.graphEnvironment.networkModel.NetworkComponent;
+import agentgui.graphEnvironment.networkModel.NetworkModel;
 import agentgui.graphEnvironment.prototypes.GraphElementPrototype;
 /**
  * GraphFileImporter for GraphML files specified with yEd
@@ -78,15 +78,19 @@ public class YedGraphMLFileImporter extends GraphFileImporter {
 		}		
 		return gridModel;
 	}
-	
+	/**
+	 * This method adds a new element from the temporary graph to the final graph
+	 * @param tempElement
+	 * @param predecessor
+	 */
 	private void addElement(TempNode tempElement, GraphElementPrototype predecessor){
-		
+		// Create a NetworkComponent representing the element
 		NetworkComponent newComponent = new NetworkComponent();
 		newComponent.setId(tempElement.getId());
 		newComponent.setType(tempElement.getType());
 		newComponent.setPrototypeClassName(componentTypeSettings.get(tempElement.getType()).getGraphPrototype());
 		
-		
+		// Create a GraphElementPrototype for the component
 		GraphElementPrototype newElement = null;
 		
 		try {

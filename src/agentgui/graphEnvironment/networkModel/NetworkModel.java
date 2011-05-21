@@ -1,9 +1,8 @@
-package agentgui.graphEnvironment.environmentModel;
+package agentgui.graphEnvironment.networkModel;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Observable;
 
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseGraph;
@@ -13,7 +12,7 @@ import edu.uci.ics.jung.graph.SparseGraph;
  * @author Nils
  *
  */
-public class NetworkModel extends Observable{
+public class NetworkModel{
 	/**
 	 * The JUNG graph.
 	 */

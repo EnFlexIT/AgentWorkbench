@@ -6,8 +6,8 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
 import agentgui.core.ontologies.gui.OntologyInstanceViewer;
-import agentgui.graphEnvironment.environmentModel.GraphNode;
-import agentgui.graphEnvironment.environmentModel.NetworkComponent;
+import agentgui.graphEnvironment.networkModel.GraphNode;
+import agentgui.graphEnvironment.networkModel.NetworkComponent;
 
 import java.awt.Dialog;
 import java.awt.event.ActionEvent;
@@ -19,7 +19,7 @@ import javax.swing.JButton;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 /**
- * GUI component for setting the properties of an ontology object representing a grid component
+ * GUI component for setting the properties of an ontology object representing the domain view of a grid component
  * @author Nils
  *
  */
@@ -29,8 +29,17 @@ public class ComponentSettingsDialog extends JDialog implements ActionListener{
 	 * Generated serialVersionUID
 	 */
 	private static final long serialVersionUID = 1745551171293051322L;
+	/**
+	 * Content pane
+	 */
 	private JPanel jPanelContent = null;
+	/**
+	 * Apply button
+	 */
 	private JButton jButtonApply = null;
+	/**
+	 * cancel button
+	 */
 	private JButton jButtonAbort = null;
 	/**
 	 * The simulation project
@@ -78,6 +87,7 @@ public class ComponentSettingsDialog extends JDialog implements ActionListener{
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		// Confirmed, apply changes
 		if(e.getSource().equals(getJButtonApply())){
 			oiv.save();
 			if(element instanceof GraphNode){
@@ -87,6 +97,7 @@ public class ComponentSettingsDialog extends JDialog implements ActionListener{
 			}
 			parentGUI.componentSettingsChanged();
 			this.dispose();
+		// Canceled, discard changes
 		}else if(e.getSource().equals(getJButtonAbort())){
 			parentGUI.componentSettingsChangeAborted();
 			this.dispose();
@@ -136,7 +147,7 @@ public class ComponentSettingsDialog extends JDialog implements ActionListener{
 		if(element instanceof NetworkComponent){
 			NetworkComponent elemNetComp = (NetworkComponent)element;
 			// Initiate a new OIV using the NetworkComponents agent class
-			oiv = new OntologyInstanceViewer(project, parentGUI.getController().getGraphElementSettings().get(((NetworkComponent) element).getType()).getAgentClass());
+			oiv = new OntologyInstanceViewer(project, parentGUI.getController().getComponentTypeSettings().get(((NetworkComponent) element).getType()).getAgentClass());
 			// If an ontology instance is defined for this component, let the OIV decode and load it 
 			if(elemNetComp.getEncodedOntologyRepresentation()!=null){
 				String[] encodedOntoRepresentation = new String[1];
@@ -146,7 +157,7 @@ public class ComponentSettingsDialog extends JDialog implements ActionListener{
 		}else if(element instanceof GraphNode){
 			// Obtain the ontology class name defined for nodes
 			String[] ontoClassName = new String[1];
-			ontoClassName[0] = parentGUI.getController().getGraphElementSettings().get("node").getAgentClass();
+			ontoClassName[0] = parentGUI.getController().getComponentTypeSettings().get("node").getAgentClass();
 			// Initiate a new OIV with the class name
 			oiv = new OntologyInstanceViewer(project, ontoClassName);
 			// If an ontology instance is defined for this node, let the OIV decode and load it

@@ -28,28 +28,59 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
 import agentgui.core.environment.EnvironmentPanel;
-import agentgui.graphEnvironment.environmentModel.GraphEdge;
-import agentgui.graphEnvironment.environmentModel.GraphElement;
-import agentgui.graphEnvironment.environmentModel.GraphNode;
-import agentgui.graphEnvironment.environmentModel.NetworkComponent;
+import agentgui.graphEnvironment.networkModel.GraphEdge;
+import agentgui.graphEnvironment.networkModel.GraphElement;
+import agentgui.graphEnvironment.networkModel.GraphNode;
+import agentgui.graphEnvironment.networkModel.NetworkComponent;
 
 import javax.swing.JLabel;
-
+/**
+ * The GUI for a GraphEnvironmentController
+ * @author Nils
+ *
+ */
 public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements Observer, ActionListener, ListSelectionListener{
-
+	/**
+	 * Default serial version UID
+	 */
 	private static final long serialVersionUID = 1L;
+	/**
+	 * JPanel containing the controls
+	 */
 	private JPanel pnlControlls = null;
+	/**
+	 * JScrollPane containing the components table
+	 */
 	private JScrollPane scpComponentTable = null;
+	/**
+	 * The components table
+	 */
 	private JTable tblComponents = null;
+	/**
+	 * The import graph button
+	 */
 	private JButton btnLoadGraph = null;
+	/**
+	 * The configure component types button
+	 */
 	private JButton btnSetClasses = null;
-	
+	/**
+	 * The Dialog for setting the component types
+	 */
 	private ClassSelectionDialog classSelectorDialog = null;  //  @jve:decl-index=0:visual-constraint="333,23"
+	/**
+	 * The GUI's GraphEnvironmentController 
+	 */
 	private GraphEnvironmentController controller = null;
 	
 	private JLabel lblTable = null;
+	/**
+	 * The SplitPane containing this GUI's components
+	 */
 	private JSplitPane jSplitPaneRoot = null;
-	
+	/**
+	 * The graph visualization component
+	 */
 	private BasicGraphGUI graphGUI = null;
 	
 	/**
@@ -208,16 +239,24 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		return btnSetClasses;
 	}
 	
+	/**
+	 * Get the component types definition dialog
+	 * @return
+	 */
 	private ClassSelectionDialog getClassSelectorDialog(){
 		if(classSelectorDialog == null){
 			classSelectorDialog = new ClassSelectionDialog(this);
 		}
 		return classSelectorDialog;
 	}
-	
+	/**
+	 * Get the visualization component
+	 * @return
+	 */
 	private BasicGraphGUI getGraphGUI(){
 		if(graphGUI == null){
-			graphGUI = new BasicGraphGUI(this);
+			graphGUI = new BasicGraphGUI();
+			graphGUI.addObserver(this);
 			if(controller.getGridModel() != null && controller.getGridModel().getGraph() != null){
 				graphGUI.setGraph(controller.getGridModel().getGraph());
 			}
@@ -227,9 +266,13 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	
 	@Override
 	public void update(Observable o, Object arg) {
+		// The network model changed
 		if(o.equals(controller) && arg.equals(GraphEnvironmentController.EVENT_NETWORKMODEL_LOADED)){
 			graphGUI.setGraph(controller.getGridModel().getGraph());
 			rebuildTblComponents();
+		// A graph element was selected in the visualization
+		}else if(o.equals(graphGUI.getMyObservable())){
+			selectObject(arg);
 		}
 	}
 	
@@ -238,8 +281,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		if(event.getSource().equals(getBtnImportGraph())){
 			JFileChooser graphFC = new JFileChooser();
 			graphFC.setFileFilter(new FileNameExtensionFilter(Language.translate(controller.getGraphFileImporter().getTypeString()), controller.getGraphFileImporter().getGraphFileExtension()));
-//			graphFC.setCurrentDirectory(Application.RunInfo.getLastSelectedFolder());
-			graphFC.setCurrentDirectory(new File("D:\\Documents\\Studium\\Arbeiten\\Bachelor Dawis"));
+			graphFC.setCurrentDirectory(Application.RunInfo.getLastSelectedFolder());
 			if(graphFC.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
 				Application.RunInfo.setLastSelectedFolder(graphFC.getCurrentDirectory());
 				File graphMLFile = graphFC.getSelectedFile();
@@ -258,7 +300,10 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 			selectObject(component);
 		}
 	}
-	
+	/**
+	 * This method get's the GUI's controller
+	 * @return
+	 */
 	GraphEnvironmentController getController(){
 		return controller;
 	}
@@ -276,17 +321,16 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		}
 		return jSplitPaneRoot;
 	}
-	
-	void selectComponent(Object component){
-		if(getTblComponents().getSelectedRow() == -1){
-		}
-	}
-	
+	/**
+	 * This method is called when the component type settings have been changed
+	 */
 	void componentSettingsChanged(){
 		graphGUI.clearPickedObjects();
 		getTblComponents().getSelectionModel().clearSelection();
 	}
-	
+	/**
+	 * This method is called when changing the component type settings has been aborted
+	 */
 	void componentSettingsChangeAborted(){
 		graphGUI.clearPickedObjects();
 		getTblComponents().getSelectionModel().clearSelection();

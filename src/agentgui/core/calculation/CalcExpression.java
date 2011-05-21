@@ -8,7 +8,7 @@ package agentgui.core.calculation;
 public interface CalcExpression {
 	
 	/**
-	 * Gets the constant's value.
+	 * Gets the result of the calculation.
 	 * @return the value
 	 */
 	public double getValue() throws CalculationException;

@@ -23,8 +23,7 @@ import agentgui.core.gui.ClassSelector;
 import agentgui.core.gui.ClassSelectorTableCellEditor;
 import agentgui.core.gui.components.ClassNameListCellRenderer;
 import agentgui.core.gui.components.ClassNameTableCellRenderer;
-import agentgui.core.jade.ClassSearcherSingle;
-import agentgui.graphEnvironment.environmentModel.ComponentTypeSettings;
+import agentgui.graphEnvironment.networkModel.ComponentTypeSettings;
 import agentgui.graphEnvironment.prototypes.GraphElementPrototype;
 
 import java.awt.Insets;
@@ -38,7 +37,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 /**
- * GUI dialog for assigning ontology and agent classes
+ * GUI dialog for configuring network component types 
  * @author Nils
  *
  */
@@ -47,20 +46,43 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 	 * Generated serialVersionUID
 	 */
 	private static final long serialVersionUID = 1L;
+	/**
+	 * The content pane
+	 */
 	private JPanel jContentPane = null;
+	/**
+	 * The confirm button
+	 */
 	private JButton jButtonConfirm = null;
+	/**
+	 * The cancel button
+	 */
 	private JButton jButtonCancel = null;
+	/**
+	 * The JScrollPane containing the component type table
+	 */
 	private JScrollPane jScrollPaneClassTable = null;
-	private JTable jTableClasses = null;
+	/**
+	 * The component type table
+	 */
+	private JTable jTableComponentTypes = null;
+	/**
+	 * The add row button
+	 */
 	private JButton jButtonAddRow = null;
+	/**
+	 * The remove row button
+	 */
 	private JButton jButtonRemoveRow = null;
+	/**
+	 * The ClassSelector instance used for assigning a graph node class
+	 */
 	private ClassSelector nodeClassSelector = null;
 	/**
 	 * JComboBox used as cell editor for the agent classes column
 	 */
 	private JComboBox jComboBoxAgentClasses = null;
 	
-	private JComboBox jComboBoxPrototypeClasses = null; 
 	/**
 	 * Cell editor for the prototype classes column
 	 */
@@ -70,25 +92,28 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 	 */
 	private HashMap<String, Class<?>> availableAgentClasses = null;
 	
-	private HashMap<String, Class<?>> availablePrototypeClasses = null;
-	
-	private ClassSearcherSingle csPrototypeClasses = null;
 	/**
 	 * The GraphEnvironmentControllerGUI that started this dialog
 	 */
 	private GraphEnvironmentControllerGUI parent = null;
+	/**
+	 * The label for the node class text field
+	 */
 	private JLabel jLabelNodeClass = null;
+	/**
+	 * The JTextField specifying the graph node class
+	 */
 	private JTextField jTextFieldNodeClass = null;
+	/**
+	 * Button invoking the nodeClassSelector
+	 */
 	private JButton jButtonSelectNodeClass = null;
 	/**
 	 * This is the default constructor
+	 * @param parent The parent GUI
 	 */
 	public ClassSelectionDialog(GraphEnvironmentControllerGUI parent) {
 		super(Application.MainWindow, Dialog.ModalityType.APPLICATION_MODAL);
-		
-		csPrototypeClasses = new ClassSearcherSingle(GraphElementPrototype.class);
-		csPrototypeClasses.startSearch();
-		
 		this.parent = parent;
 		initialize();
 	}
@@ -171,6 +196,10 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 		return jContentPane;
 	}
 	
+	/**
+	 * This method initializes the nodeClassSelector
+	 * @return The nodeClassSelector
+	 */
 	private ClassSelector getNodeClassSelector(){
 		if(nodeClassSelector == null){
 			Class<?> superClass = Concept.class;
@@ -229,19 +258,19 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 	 * @return javax.swing.JTable	
 	 */
 	private JTable getJTableClasses() {
-		if (jTableClasses == null) {
-			jTableClasses = new JTable();
-			jTableClasses.setFillsViewportHeight(true);
-			jTableClasses.setShowGrid(true);
-			jTableClasses.setModel(getClassesTableModel());
-			TableColumn agentClassColumn = jTableClasses.getColumnModel().getColumn(1);
+		if (jTableComponentTypes == null) {
+			jTableComponentTypes = new JTable();
+			jTableComponentTypes.setFillsViewportHeight(true);
+			jTableComponentTypes.setShowGrid(true);
+			jTableComponentTypes.setModel(getClassesTableModel());
+			TableColumn agentClassColumn = jTableComponentTypes.getColumnModel().getColumn(1);
 			agentClassColumn.setCellEditor(new DefaultCellEditor(getJComboBoxAgentClasses()));
 			agentClassColumn.setCellRenderer(new ClassNameTableCellRenderer());
-			TableColumn prototypeClassColumn = jTableClasses.getColumnModel().getColumn(2);
+			TableColumn prototypeClassColumn = jTableComponentTypes.getColumnModel().getColumn(2);
 			prototypeClassColumn.setCellEditor(getPrototypeClassesCellEditor());
 			prototypeClassColumn.setCellRenderer(new ClassNameTableCellRenderer());
 		}
-		return jTableClasses;
+		return jTableComponentTypes;
 	}
 	
 	/**
@@ -252,23 +281,21 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 		
 		// The ComboBoxModels must be initiated before adding rows 
 		getJComboBoxAgentClasses();
-		getJComboBoxPrototypeClasses();
 		
 		// Headlines
 		Vector<String> titles = new Vector<String>();
 		titles.add(Language.translate("Typ-Bezeichner"));
-//		titles.add(Language.translate("Ontologieklasse"));
 		titles.add(Language.translate("Agentenklasse"));
 		titles.add(Language.translate("Graph-Prototyp"));
 		Vector<Vector<String>> dataRows = new Vector<Vector<String>>();
 		
 		// Set table entries for defined assignments, if any
-		HashMap<String, ComponentTypeSettings> etsHash = parent.getController().getGraphElementSettings();
+		HashMap<String, ComponentTypeSettings> etsHash = parent.getController().getComponentTypeSettings();
 		if(etsHash != null){
 			Iterator<String> etsIter = etsHash.keySet().iterator();
 			while(etsIter.hasNext()){
 				String etName = etsIter.next();
-				if(!etName.equals("node")){
+				if(!etName.equals("node")){	// The node class is defined in the JTextField, not in the table
 					Vector<String> newRow = new Vector<String>();
 					newRow.add(etName);
 					newRow.add(etsHash.get(etName).getAgentClass());
@@ -343,7 +370,9 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 		availableAgentClasses = new HashMap<String, Class<?>>();
 		availableAgentClasses.put(Language.translate("Nicht definiert"), null);
 		
+		// Get all classes extending jade.core.Agent in the current project 
 		Iterator<Class<?>> agentClassesIterator= Application.ClassDetector.csAgents.getClassesFound(true).iterator();
+		// Build a HashMap containing the simple names as keys and the full class names as values
 		while(agentClassesIterator.hasNext()){
 			Class<?> agentClass = agentClassesIterator.next();
 			availableAgentClasses.put(agentClass.getSimpleName(), agentClass);
@@ -352,38 +381,24 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 		return agentClassNames;
 	}
 	
-	private JComboBox getJComboBoxPrototypeClasses(){
-		if(jComboBoxPrototypeClasses == null){
-			jComboBoxPrototypeClasses = new JComboBox(getPrototypesComboBoxModel());
-		}
-		return jComboBoxPrototypeClasses;
-	}
-	
-	private Vector<String> getPrototypesComboBoxModel(){
-		availablePrototypeClasses = new HashMap<String, Class<?>>();
-		availablePrototypeClasses.put(Language.translate("Undefiniert"), null);
-		Iterator<Class<?>> ptClassesIterator = csPrototypeClasses.getClassesFound(false).iterator();
-		while(ptClassesIterator.hasNext()){
-			Class<?> ptClass = ptClassesIterator.next();
-			availablePrototypeClasses.put(ptClass.getSimpleName(), ptClass);
-		}
-		return new Vector<String>(availablePrototypeClasses.keySet());
-	}
-
 	@Override
 	public void actionPerformed(ActionEvent event) {
+		// Add a new row to the component types table
 		if(event.getSource().equals(getJButtonAddRow())){
 			addRow();
+		// Remove a row from the component types table
 		}else if(event.getSource().equals(getJButtonRemoveRow())){
 			if(getJTableClasses().getSelectedRow() > -1){
 				removeRow(getJTableClasses().getSelectedRow());
 			}
+		// Confirmed, apply changes
 		}else if(event.getSource().equals(getJButtonConfirm())){
 			
 			JTable jtc = getJTableClasses();
 			
 			int rowNum = jtc.getRowCount();
 			HashMap<String, ComponentTypeSettings> etsVector = new HashMap<String, ComponentTypeSettings>();
+			// Get the component type definitions from the table
 			for(int row=0; row<rowNum; row++){
 				
 				ComponentTypeSettings ets = new ComponentTypeSettings(
@@ -392,12 +407,14 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 				// Use name as key
 				etsVector.put((String) jtc.getValueAt(row, 0), ets);
 			}
+			// Add the graph node class definition
 			etsVector.put("node", new ComponentTypeSettings(getJTextFieldNodeClass().getText(), null));
-			parent.getController().setGraphElementSettings(etsVector);
+			// Set the GraphEnvironmentController's componentTypeSettings
+			parent.getController().setComponentTypeSettings(etsVector);
 			
 			this.setVisible(false);
+		// Canceled, discard changes
 		}else if(event.getSource().equals(getJButtonCancel())){
-			// Roll back changes
 			this.setVisible(false);
 		}
 		
@@ -425,7 +442,7 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 	private JTextField getJTextFieldNodeClass() {
 		if (jTextFieldNodeClass == null) {
 			jTextFieldNodeClass = new JTextField();
-			ComponentTypeSettings nodeSettings = parent.getController().getGraphElementSettings().get("node");
+			ComponentTypeSettings nodeSettings = parent.getController().getComponentTypeSettings().get("node");
 			if(nodeSettings != null){
 				jTextFieldNodeClass.setText(nodeSettings.getAgentClass());
 			}

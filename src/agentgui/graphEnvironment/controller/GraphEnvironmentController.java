@@ -35,11 +35,11 @@ import agentgui.core.application.Project;
 import agentgui.core.sim.setup.SimulationSetups;
 import agentgui.core.sim.setup.SimulationSetupsChangeNotification;
 import agentgui.graphEnvironment.controller.yedGraphml.YedGraphMLFileImporter;
-import agentgui.graphEnvironment.environmentModel.GraphEdge;
-import agentgui.graphEnvironment.environmentModel.ComponentTypeSettings;
-import agentgui.graphEnvironment.environmentModel.GraphNode;
-import agentgui.graphEnvironment.environmentModel.NetworkModel;
-import agentgui.graphEnvironment.environmentModel.NetworkComponentList;
+import agentgui.graphEnvironment.networkModel.ComponentTypeSettings;
+import agentgui.graphEnvironment.networkModel.GraphEdge;
+import agentgui.graphEnvironment.networkModel.GraphNode;
+import agentgui.graphEnvironment.networkModel.NetworkComponentList;
+import agentgui.graphEnvironment.networkModel.NetworkModel;
 /**
  * This class manages an environment model of the type graph / network
  * @author Nils
@@ -81,7 +81,7 @@ public class GraphEnvironmentController extends Observable implements Observer {
 	/**
 	 * The currently defined GraphElementSettings, accessible by the type string
 	 */
-	private HashMap<String, ComponentTypeSettings> currentGES = null;
+	private HashMap<String, ComponentTypeSettings> currentCTS = null;
 	/**
 	 * The GraphFileImporter used for importing externally defined graph definitions
 	 */
@@ -96,10 +96,10 @@ public class GraphEnvironmentController extends Observable implements Observer {
 		this.project.addObserver(this);
 		envFilePath = this.project.getProjectFolderFullPath()+this.project.getSubFolderEnvSetups();
 		loadNetworkModel();
-		setGraphElementSettings(project.simSetups.getCurrSimSetup().getGraphElementSettings());
+		setComponentTypeSettings(project.simSetups.getCurrSimSetup().getGraphElementSettings());
 		// If no ETS are specified in the setup, assign an empty HashMap to avoid null pointers
-		if(currentGES == null){
-			currentGES = new HashMap<String, ComponentTypeSettings>();
+		if(currentCTS == null){
+			currentCTS = new HashMap<String, ComponentTypeSettings>();
 		}
 	}
 	
@@ -108,22 +108,22 @@ public class GraphEnvironmentController extends Observable implements Observer {
 	}
 	
 	/**
-	 * Set the SimulationSetup's graphElementSettings property
+	 * Set the SimulationSetup's ComponentTypeSettings property
 	 * @param gesVector
 	 */
-	public void setGraphElementSettings(HashMap<String, ComponentTypeSettings> gesVector){
-		currentGES = gesVector;
+	public void setComponentTypeSettings(HashMap<String, ComponentTypeSettings> gesVector){
+		currentCTS = gesVector;
 		project.simSetups.getCurrSimSetup().setGraphElementSettings(gesVector);
 		project.isUnsaved=true;
 		setChanged();
 		notifyObservers(EVENT_ELEMENT_TYPES_SETTINGS_CHANGED);
 	}
 	/**
-	 * Gets the current GraphElementSettings
+	 * Gets the current ComponentTypeSettings
 	 * @return
 	 */
-	public HashMap<String, ComponentTypeSettings> getGraphElementSettings(){
-		return currentGES;
+	public HashMap<String, ComponentTypeSettings> getComponentTypeSettings(){
+		return currentCTS;
 	}
 	
 	/**
@@ -135,7 +135,7 @@ public class GraphEnvironmentController extends Observable implements Observer {
 		if(networkModel != null){
 			Layout<GraphNode, GraphEdge> initLayout = new FRLayout<GraphNode, GraphEdge>(networkModel.getGraph(), new Dimension(400, 400));
 			
-			// Init node positions  !!! Should be optional later, positions might be defined in the importet file !!!
+			// Initialize node positions  !!! Should be optional later, positions might be defined in the importet file !!!
 			getGraphFileImporter().initPosition(networkModel, initLayout);
 			
 			this.setChanged();
@@ -166,7 +166,7 @@ public class GraphEnvironmentController extends Observable implements Observer {
 	 */
 	GraphFileImporter getGraphFileImporter(){
 		if(graphFileImporter == null){
-			graphFileImporter = new YedGraphMLFileImporter(currentGES);
+			graphFileImporter = new YedGraphMLFileImporter(currentCTS);
 		}
 		return graphFileImporter;
 	}
@@ -303,7 +303,7 @@ public class GraphEnvironmentController extends Observable implements Observer {
 			case SimulationSetups.SIMULATION_SETUP_ADD_NEW:
 				updateGraphFileName();
 				networkModel = new NetworkModel();
-				currentGES = null;
+				currentCTS = null;
 				setChanged();
 				notifyObservers(EVENT_NETWORKMODEL_LOADED);
 			break;
@@ -323,7 +323,7 @@ public class GraphEnvironmentController extends Observable implements Observer {
 			case SimulationSetups.SIMULATION_SETUP_LOAD:
 				updateGraphFileName();
 				loadNetworkModel();
-				setGraphElementSettings(project.simSetups.getCurrSimSetup().getGraphElementSettings());
+				setComponentTypeSettings(project.simSetups.getCurrSimSetup().getGraphElementSettings());
 				setChanged();
 				notifyObservers(EVENT_NETWORKMODEL_LOADED);
 			break;

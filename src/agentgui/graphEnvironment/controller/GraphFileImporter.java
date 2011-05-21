@@ -6,10 +6,10 @@ import java.util.Iterator;
 
 import edu.uci.ics.jung.algorithms.layout.Layout;
 
-import agentgui.graphEnvironment.environmentModel.GraphEdge;
-import agentgui.graphEnvironment.environmentModel.ComponentTypeSettings;
-import agentgui.graphEnvironment.environmentModel.GraphNode;
-import agentgui.graphEnvironment.environmentModel.NetworkModel;
+import agentgui.graphEnvironment.networkModel.ComponentTypeSettings;
+import agentgui.graphEnvironment.networkModel.GraphEdge;
+import agentgui.graphEnvironment.networkModel.GraphNode;
+import agentgui.graphEnvironment.networkModel.NetworkModel;
 
 /**
  * Classes that should work as import components for the GraphEnvironmentController must implement this interface. 
@@ -17,13 +17,23 @@ import agentgui.graphEnvironment.environmentModel.NetworkModel;
  *
  */
 public abstract class GraphFileImporter {
-	
+	/**
+	 * The component type definitions
+	 */
 	protected HashMap<String, ComponentTypeSettings> componentTypeSettings = null;
-	
+	/**
+	 * Constructor
+	 * @param componentTypeSettings	The component type definitions
+	 */
 	public GraphFileImporter(HashMap<String, ComponentTypeSettings> componentTypeSettings){
 		this.componentTypeSettings = componentTypeSettings;
 	}
 	
+	/**
+	 * Initialize the node positions according to a specified layout
+	 * @param network The NetworkModel containing the graph
+	 * @param layout The initial layout
+	 */
 	public void initPosition(NetworkModel network, Layout<GraphNode, GraphEdge> layout){
 		Iterator<GraphNode> nodes = network.getGraph().getVertices().iterator();
 		while(nodes.hasNext()){

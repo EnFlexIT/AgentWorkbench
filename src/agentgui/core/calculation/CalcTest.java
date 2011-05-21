@@ -10,14 +10,14 @@ public class CalcTest {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		ConstantValue velo = new ConstantValue(20);
-		ConstantValue dia = new ConstantValue(0.9);
-		ConstantValue kinVisc = new ConstantValue(14.9E-6);
+		ConstantValue velocity = new ConstantValue(20);
+		ConstantValue diameter = new ConstantValue(0.9);
+		ConstantValue kineticViscosity = new ConstantValue(14.9E-6);
 		
 		Reynolds re = new Reynolds();
-		re.setDiameter(dia);
-		re.setFluidVelocity(velo);
-		re.setKinematicViscosity(kinVisc);
+		re.setDiameter(diameter);
+		re.setFluidVelocity(velocity);
+		re.setKinematicViscosity(kineticViscosity);
 		
 		Nikuradse ni = new Nikuradse();
 		ni.setReynolds(re);

@@ -15,7 +15,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.application.Project;
-import agentgui.graphEnvironment.environmentModel.ComponentTypeSettings;
+import agentgui.graphEnvironment.networkModel.ComponentTypeSettings;
 
 @XmlRootElement public class SimulationSetup {
 

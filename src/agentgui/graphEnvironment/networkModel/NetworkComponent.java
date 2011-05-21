@@ -1,8 +1,6 @@
-package agentgui.graphEnvironment.environmentModel;
+package agentgui.graphEnvironment.networkModel;
 
 import java.util.HashSet;
-
-//import jade.content.Concept;
 
 /**
  * This class represents a component of the modeled network. It contains
