@@ -8,11 +8,15 @@
  */
 package agentgui.physical2Denvironment.imageProcessing;
 
+import jade.core.AID;
+
 import java.awt.Color;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Stack;
 import java.util.Vector;
 
@@ -23,8 +27,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.svg.SVGDocument;
 
 import agentgui.physical2Denvironment.ontology.ActiveObject;
+import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
+import agentgui.physical2Denvironment.ontology.Physical2DObject;
 import agentgui.physical2Denvironment.ontology.Position;
 import agentgui.physical2Denvironment.ontology.PositionUpdate;
 import agentgui.physical2Denvironment.ontology.StaticObject;
@@ -47,6 +54,7 @@ public class ImageHelper {
 	public static final int DIRECTION_DOWN_RIGHT=7;
 	private static boolean READ_WORLD=false;
 	private static boolean IS_IN_METHOD=false;
+	private static boolean FIRST_CALL=true;
 	int divideHeight;
 	int divideWidth;
 	double lastDistance=-20;
@@ -74,6 +82,7 @@ public class ImageHelper {
 	 */
 	public ImageHelper(String fromID,String toID,	EnvironmentProviderHelper helper )
 	{
+	
 		this.fromID=fromID;
 		this.toID=toID;
 		this.helper=helper;
@@ -219,7 +228,16 @@ public class ImageHelper {
 	 */
 	private agentgui.physical2Denvironment.imageProcessing.StepNode withoutGrid(String id,float target_x,float target_y,float width,float height, int direction , float lookAhead, agentgui.physical2Denvironment.imageProcessing.StepNode parent,int pixel) throws Exception
 	{
-	
+			
+		while(this.evn==null)
+		{
+			
+			System.out.println(id + " liest Welt nochmal");
+			this.evn=ImageIO.read(new File("myWorld.jpg"));	
+			
+			
+			
+		}
 		ArrayList<agentgui.physical2Denvironment.imageProcessing.StepNode> openList=new ArrayList<agentgui.physical2Denvironment.imageProcessing.StepNode>();
 		ArrayList<agentgui.physical2Denvironment.imageProcessing.StepNode> closedList=new ArrayList<agentgui.physical2Denvironment.imageProcessing.StepNode>();
 		float worldWidth=helper.getEnvironment().getRootPlayground().getSize().getWidth();
@@ -474,12 +492,14 @@ public class ImageHelper {
 			
 				SVGSafe sg=new SVGSafe();
 				//sg.write("WayPath"+counter+".svg", doc);
+				  System.out.println("ID vollkommen:" + id);
 			  return current;
 			}
 			
 			
 			
 		}
+		  System.out.println("ID vollkommen:" + id);
 		  return current;
 		
 	}
@@ -555,17 +575,19 @@ public class ImageHelper {
 	
 	public synchronized agentgui.physical2Denvironment.imageProcessing.StepNode createPlanImage(String id,String target_id , int direction , float lookAhead) throws Exception
 	{
-	
+		System.out.println("First Call:"+FIRST_CALL);
 		
 		synchronized (this) {
-		if(!READ_WORLD&&!IS_IN_METHOD)
+		if(!READ_WORLD&&!IS_IN_METHOD&FIRST_CALL)
 		{
+		FIRST_CALL=false;
 		
+		System.out.println(id + " erstell Welt");
 		this.createManipulatedWorld();
 		}
 		else
 		{
-
+		System.out.println(id + " liest Welt");
 		this.evn=ImageIO.read(new File("myWorld.jpg"));	
 		}
 			
@@ -573,7 +595,7 @@ public class ImageHelper {
 		
 		while(!READ_WORLD)
 		{
-			System.out.println("Warte!");
+			System.out.println("Warte!"+id);
 			Thread.sleep(50);
 		}
 	
@@ -845,9 +867,9 @@ public class ImageHelper {
 			  {
 				return false;
 			  }
-			 xExit= (int) Math.floor(startx+lookAhead+width);
+			 xExit= (int) Math.floor(startx+lookAhead+width)-1;
 			 startx= (int) Math.floor(startx+lookAhead);
-			 yExit= (int) Math.floor(starty+lookAhead+height);
+			 yExit= (int) Math.floor(starty+lookAhead+height)-1;
 			 starty= (int) Math.floor(starty+lookAhead);
 			 break;
 						
@@ -856,11 +878,20 @@ public class ImageHelper {
 		 {
 			 for(int x=(int)Math.floor(startx);x<=xExit;x++)
 			 {
-				 if(world.getRGB(x, y)==color)
-				 {	
+				 try
+				 {
+					 if(world.getRGB(x, y)==color)
+					 {	
 						 return false;
+					 }
 				 }
-	
+				 catch(Exception e)
+						 {
+					 e.printStackTrace();
+					 System.out.println("X:"+x +"," + y +" ");
+					 
+						 }
+			
 			 	
 			 }
 		 }
@@ -1066,14 +1097,15 @@ public class ImageHelper {
 			save.writeJPG("myworld.svg");
 				}
 			
-			System.out.println("Setze Real_WORLD auf true!");
-			READ_WORLD=true;
+			
 			}
 		
 
 	   }
 			
 		this.evn=ImageIO.read(new File("myWorld.jpg"));
+		System.out.println("Setze Real_WORLD auf true!");
+		READ_WORLD=true;
 		return evn;
 	}
 	catch(Exception e)
@@ -1225,6 +1257,7 @@ public class ImageHelper {
 			PositionUpdate posUpdate=new PositionUpdate();
 			posUpdate.setNewPosition(newPos);
 			answer.setSpeed(new Long((long)speed));
+			//System.out.println("Size of Partsolitin in getMiddle:"+partSolution.size());
 		    answer.setWayToDestination(partSolution);	
 		    //System.out.println("Set Last Index:"+ lastIndex);#
 		    if(reached)
@@ -1266,6 +1299,76 @@ public class ImageHelper {
 		}
 		return pos;
 	}
+	
+	public HashMap<String, ArrayList<String>> getDynamicCollision(HashMap<String,PositionUpdate> update)
+	{
+		try
+		{
+			 HashMap<String, ArrayList<String>> nameList = new HashMap<String, ArrayList<String>>();
+			// Let's find the name of the moving agents
+			EnvironmentWrapper envWrapper=new EnvironmentWrapper(this.helper.getEnvironment());
+			Vector<ActiveObject> agents=envWrapper.getAgents();
+			for(int i=0;i<agents.size();i++)
+			{
+				ArrayList<String> otherAgents=new ArrayList<String>();
+				Physical2DObject agent=agents.get(i);
+				System.out.println("Trying to get:"+agent.getId());
+				PositionUpdate ownAgentPosition= update.get(agent.getId());
+				if(ownAgentPosition != null) // Consider that agents have already reached their target therefore don't send any answer
+				{
+				
+				ArrayList<Position>  ownAgentPositions=((Answer) ownAgentPosition.getCustomizedParameter()).getWayToDestination();
+				for(int counter=i+1;counter<agents.size();counter++)
+				{
+					//System.out.println("Try to compare with:"+ agents.get(counter).getId());
+					PositionUpdate otherAgentPosition= update.get(agents.get(counter).getId());
+				    if(otherAgentPosition != null)
+				    {
+					ArrayList<Position>  otherPositions=((Answer) otherAgentPosition.getCustomizedParameter()).getWayToDestination();
+					
+					
+					int max=Math.min(ownAgentPositions.size(), otherPositions.size());
+					
+					for(int iter=0;iter<max;iter++)
+					{
+						Physical2DObject obj=new Physical2DObject();
+						Position pos=new Position();
+						obj.setPosition(ownAgentPositions.get(iter));
+						obj.setSize(agent.getSize());
+						Physical2DObject other=agents.get(counter);
+						other.setPosition(otherPositions.get(iter));
+						System.out.println("Vergleiche:" + ownAgentPositions.get(iter).getXPos() + "," + ownAgentPositions.get(iter).getYPos());
+						System.out.println("Mit" + otherPositions.get(iter).getXPos() + "," + otherPositions.get(iter).getYPos());
+						boolean result=obj.objectIntersects(other);
+						if(result)
+						{
+							otherAgents.add(agents.get(counter).getId());
+							break;
+						}						
+						
+					}
+				}
+				}	
+				}
+				nameList.put(agent.getId(), otherAgents);
+			
+			}
+			return nameList;
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+		
+		
+	}
+     
+	private boolean checkTimeBetween(Physical2DObject agent,Physical2DObject cmpr)
+	{
+		return agent.objectIntersects(cmpr);
+	}
+	
 	
 }
 	

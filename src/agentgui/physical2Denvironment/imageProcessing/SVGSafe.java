@@ -28,7 +28,7 @@ public class SVGSafe {
 	 * @param svgDoc  The document
 	 * @throws Exception
 	 */
-	public void write(String svgFile,Document svgDoc) throws Exception
+	public synchronized void write(String svgFile,Document svgDoc) throws Exception
 	{
 	FileWriter fw = new FileWriter(svgFile);
 	PrintWriter writer = new PrintWriter(fw);
@@ -41,6 +41,7 @@ public class SVGSafe {
 	SVGTranscoder t = new SVGTranscoder();
 	t.transcode(new TranscoderInput(svgDoc), new TranscoderOutput(writer));
 	writer.close();
+	fw.close();
 	}
 	
 	/**
@@ -49,8 +50,9 @@ public class SVGSafe {
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public String writeJPG(String filename) throws Exception
+	public synchronized String writeJPG(String filename) throws Exception
 	{
+		   System.out.println("Write JPG is called!");
 		   JPEGTranscoder transcoder = new JPEGTranscoder();
 		   TranscoderInput input = new TranscoderInput(new FileInputStream(new File(filename)));
 		   String newFileName=filename.replace("svg", "jpg");
@@ -58,8 +60,15 @@ public class SVGSafe {
 		   TranscoderOutput output = new TranscoderOutput(ostream);
 		   hints.put(JPEGTranscoder.KEY_QUALITY, new Float(1.0f));
 		   transcoder.setTranscodingHints((Map)hints);
+		   if(input==null|| output==null)
+		   {
+			   System.out.println("Fehler!");
+			   
+			   System.exit(0);
+		   }
 	       transcoder.transcode(input, output);
 		   ostream.close();
+		   
 		   return newFileName;		
 	}
 }
