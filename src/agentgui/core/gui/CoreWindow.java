@@ -58,7 +58,7 @@ public class CoreWindow extends JFrame implements ComponentListener {
 
 	private static final long serialVersionUID = 1L;
 
-	final static String pathImage = Application.RunInfo.PathImageIntern();
+	private final String pathImage = Application.RunInfo.PathImageIntern();
 	
 	private final ImageIcon iconAgentGUI = new ImageIcon( this.getClass().getResource( pathImage + "AgentGUI.png") );
 	private final Image imageAgentGUI = iconAgentGUI.getImage();
@@ -280,7 +280,7 @@ public class CoreWindow extends JFrame implements ComponentListener {
 			return false;
 		}		
 	}
-	public void ConsoleSwitch() {
+	private void doSwitchConsole() {
 		// --- Umschalten der Consolen-Ansicht --------------------
 		if ( consoleText.isVisible() == true ) {
 			this.setConsoleVisible(false);
@@ -619,14 +619,14 @@ public class CoreWindow extends JFrame implements ComponentListener {
 		private void setjMenuExtraLang() {
 			
 			// --- Anzeige der Sprachen -------------------
-			String[] DictLineValues = Language.getLanguages(); 
+			String[] languageList = Language.getLanguages(true); 
 			boolean setBold = false;
-			for(int i=0; i<DictLineValues.length; i++) {
-				if ( i == Language.defaultLanguage ) 
+			for(int i=0; i<languageList.length; i++) {
+				if ( Language.isCurrentLanguage(languageList[i])) 
 					setBold = true;
 				else 
 					setBold = false;					
-				jMenuExtraLang.add( new JMenuItemLang(DictLineValues[i], setBold) );
+				jMenuExtraLang.add( new JMenuItemLang(languageList[i], setBold) );
 			};
 
 			// --- Menüpunkt Übersetzung --------------
@@ -747,7 +747,7 @@ public class CoreWindow extends JFrame implements ComponentListener {
 		}
 		return jMenuCloseButton ;
 	}
-	public void setCloseButtonPosition( boolean setVisible ){
+	public void setCloseButtonPosition(boolean setVisible){
 		
 		// --- Positionsmerker für das Fenster setzen ?  ----------
 		// --- Wird nach der Initialisierung ausgewertet ----------
@@ -827,7 +827,7 @@ public class CoreWindow extends JFrame implements ComponentListener {
 			}
 			// --- Menü Ansicht / View ------------------------
 			else if ( ActCMD.equalsIgnoreCase("ViewConsole") ) {
-				Application.MainWindow.ConsoleSwitch();
+				Application.MainWindow.doSwitchConsole();
 			}
 			// --- Menü Jade ----------------------------------
 			else if ( ActCMD.equalsIgnoreCase("JadeStart") ) {
@@ -1038,7 +1038,7 @@ public class CoreWindow extends JFrame implements ComponentListener {
 			}
 			// ------------------------------------------------
 			else if ( ActCMD.equalsIgnoreCase("ViewConsole") ) { 
-				Application.MainWindow.ConsoleSwitch();
+				Application.MainWindow.doSwitchConsole();
 			}
 			// ------------------------------------------------
 			else if ( ActCMD.equalsIgnoreCase("JadeStart") ) { 

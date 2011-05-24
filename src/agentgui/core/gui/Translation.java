@@ -51,6 +51,8 @@ import agentgui.core.application.Language;
 
 import com.google.api.GoogleAPI;
 import com.google.api.translate.Translate;
+import java.awt.Color;
+import javax.swing.SwingConstants;
 
 public class Translation extends JDialog implements ActionListener {
 
@@ -108,6 +110,14 @@ public class Translation extends JDialog implements ActionListener {
 	private JPopupMenu jPopupMenuDictionary = null;
 	private JMenuItem jMenuItemDelete = null;
 	private JMenuItem jMenuItemEdit = null;
+
+	private JButton jButtonImportCSV = null;
+
+	private JPanel jPanelSouthWest = null;
+
+	private JPanel jPanelEast = null;
+
+	private JLabel jLabelSourceLanguage = null;
 	
 	/**
 	 * @param owner
@@ -146,12 +156,12 @@ public class Translation extends JDialog implements ActionListener {
 		
 		// --- Set Selection in combos ------------------------------
 		String currLang = Application.RunInfo.getLanguage();
-		int currLangIndex = Language.getIndexOfLanguage(currLang);
+		int currLangIndex = Language.getIndexOfLanguage(currLang)-1;
 		if (currLang.equalsIgnoreCase("de") || currLang.equalsIgnoreCase("en") ) {
-			jComboBoxSourceLang.setSelectedIndex(Language.getIndexOfLanguage("de"));
-			jComboBoxDestinationLang.setSelectedIndex(Language.getIndexOfLanguage("en"));
+			jComboBoxSourceLang.setSelectedIndex(Language.getIndexOfLanguage("de")-1);
+			jComboBoxDestinationLang.setSelectedIndex(Language.getIndexOfLanguage("en")-1);
 		} else {
-			jComboBoxSourceLang.setSelectedIndex(Language.getIndexOfLanguage("en"));
+			jComboBoxSourceLang.setSelectedIndex(Language.getIndexOfLanguage("en")-1);
 			jComboBoxDestinationLang.setSelectedIndex(currLangIndex);
 		}
 		
@@ -253,7 +263,7 @@ public class Translation extends JDialog implements ActionListener {
 	 * This method will set the data model for the Language selection
 	 */
 	private void setLanguageComboModels() {
-		String[] languages = Language.getLanguages();
+		String[] languages = Language.getLanguages(true);
 		for (int i = 0; i < languages.length; i++) {
 			LanguageListElement lang2List = new LanguageListElement(languages[i], Language.getLanguageName(languages[i]));
 			this.langSelectionModelSource.addElement(lang2List);
@@ -288,7 +298,12 @@ public class Translation extends JDialog implements ActionListener {
 		String[] languages = Language.getLanguages();
 		for (int i = 0; i < languages.length; i++) {
 			String lang = languages[i];
-			this.dictData.addColumn(Language.getLanguageName(lang));	
+			if (lang.equalsIgnoreCase(Language.SOURCE_LANG)) {
+				this.dictData.addColumn(Language.translate("Sprache"));
+			} else {
+				this.dictData.addColumn(Language.getLanguageName(lang));	
+			}
+				
 		}
 		
 		// --- Rows of the dictionary -------------------------------
@@ -298,7 +313,7 @@ public class Translation extends JDialog implements ActionListener {
 			
 			Vector<Object> rowData = new Vector<Object>(); 
 			rowData.addAll(Arrays.asList(dictLine.split(Language.seperator, -1)));
-			if (rowData.get(0).equals("LANG_DE")==false) {
+			if (rowData.get(0).equals(Language.SOURCE_LANG)==false) {
 				// --- row counter ------------------------
 				rowNo++;
 				rowData.add(0, rowNo);
@@ -349,10 +364,15 @@ public class Translation extends JDialog implements ActionListener {
 		
 		// ----------------------------------------------------------
 		// --- Set layout of the table ------------------------------
-		TableColumn tbCol = this.jTableDictionary.getColumnModel().getColumn(0);
-		tbCol.setPreferredWidth(35);
-		tbCol.setMinWidth(35);
-		tbCol.setMaxWidth(45);
+		TableColumn tbColNo = this.jTableDictionary.getColumnModel().getColumn(0);
+		tbColNo.setPreferredWidth(40);
+		tbColNo.setMinWidth(35);
+		tbColNo.setMaxWidth(45);
+		
+		TableColumn tbColSrcLang = this.jTableDictionary.getColumnModel().getColumn(1);
+		tbColSrcLang.setPreferredWidth(55);
+		tbColSrcLang.setMinWidth(35);
+		tbColSrcLang.setMaxWidth(70);
 		
 	}
 	
@@ -499,6 +519,13 @@ public class Translation extends JDialog implements ActionListener {
 	private JPanel getJPanelTranslation() {
 		if (jPanelTranslation == null) {
 			
+			GridBagConstraints gridBagConstraints18 = new GridBagConstraints();
+			gridBagConstraints18.gridx = 6;
+			gridBagConstraints18.anchor = GridBagConstraints.WEST;
+			gridBagConstraints18.insets = new Insets(10, 20, 5, 10);
+			gridBagConstraints18.fill = GridBagConstraints.HORIZONTAL;
+			gridBagConstraints18.gridy = 0;
+			
 			GridBagConstraints gridBagConstraints16 = new GridBagConstraints();
 			gridBagConstraints16.gridx = 4;
 			gridBagConstraints16.insets = new Insets(20, 5, 5, 5);
@@ -506,7 +533,7 @@ public class Translation extends JDialog implements ActionListener {
 			GridBagConstraints gridBagConstraints9 = new GridBagConstraints();
 			gridBagConstraints9.gridx = 5;
 			gridBagConstraints9.anchor = GridBagConstraints.WEST;
-			gridBagConstraints9.insets = new Insets(10, 40, 5, 5);
+			gridBagConstraints9.insets = new Insets(10, 30, 5, 5);
 			gridBagConstraints9.gridy = 0;
 			GridBagConstraints gridBagConstraints15 = new GridBagConstraints();
 			gridBagConstraints15.gridx = 3;
@@ -530,7 +557,7 @@ public class Translation extends JDialog implements ActionListener {
 			gridBagConstraints11.gridy = 5;
 			gridBagConstraints11.weightx = 1.0;
 			gridBagConstraints11.weighty = 1.0;
-			gridBagConstraints11.gridwidth = 6;
+			gridBagConstraints11.gridwidth = 7;
 			gridBagConstraints11.insets = new Insets(0, 10, 10, 10);
 			gridBagConstraints11.anchor = GridBagConstraints.NORTH;
 			gridBagConstraints11.gridx = 0;
@@ -552,7 +579,7 @@ public class Translation extends JDialog implements ActionListener {
 			gridBagConstraints1.weightx = 1.0;
 			gridBagConstraints1.insets = new Insets(0, 10, 0, 10);
 			gridBagConstraints1.weighty = 1.0;
-			gridBagConstraints1.gridwidth = 6;
+			gridBagConstraints1.gridwidth = 7;
 			
 			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
 			gridBagConstraints3.gridx = 0;
@@ -567,7 +594,7 @@ public class Translation extends JDialog implements ActionListener {
 			gridBagConstraints4.weightx = 1.0;
 			gridBagConstraints4.insets = new Insets(0, 10, 0, 10);
 			gridBagConstraints4.weighty = 1.0;
-			gridBagConstraints4.gridwidth = 6;
+			gridBagConstraints4.gridwidth = 7;
 
 			
 			GridBagConstraints gridBagConstraints7 = new GridBagConstraints();
@@ -610,6 +637,13 @@ public class Translation extends JDialog implements ActionListener {
 			jLabelDestination.setText("Übersetzter Text ");
 			jLabelDestination.setFont(new Font("Dialog", Font.BOLD, 12));
 			
+			jLabelSourceLanguage = new JLabel();
+			jLabelSourceLanguage.setText("");
+			jLabelSourceLanguage.setFont(new Font("Dialog", Font.BOLD, 12));
+			jLabelSourceLanguage.setForeground(new Color(204, 0, 0));
+			jLabelSourceLanguage.setHorizontalAlignment(SwingConstants.LEADING);
+			jLabelSourceLanguage.setPreferredSize(new Dimension(38, 26));
+			
 			jLabelGoogleHeader = new JLabel();
 			jLabelGoogleHeader.setText("Google - Übersetzung");
 			jLabelGoogleHeader.setFont(new Font("Dialog", Font.BOLD, 12));
@@ -633,6 +667,7 @@ public class Translation extends JDialog implements ActionListener {
 			jPanelTranslation.add(getJButtonGoogleTake(), gridBagConstraints15);
 			jPanelTranslation.add(getJButtonDelete(), gridBagConstraints9);
 			jPanelTranslation.add(getJButtonFindGap(), gridBagConstraints16);
+			jPanelTranslation.add(jLabelSourceLanguage, gridBagConstraints18);
 		}
 		return jPanelTranslation;
 	}
@@ -656,12 +691,22 @@ public class Translation extends JDialog implements ActionListener {
 	 */
 	private JPanel getJPanelSouth() {
 		if (jPanelSouth == null) {
+			GridBagConstraints gridBagConstraints41 = new GridBagConstraints();
+			gridBagConstraints41.insets = new Insets(10, 10, 15, 10);
+			GridBagConstraints gridBagConstraints31 = new GridBagConstraints();
+			gridBagConstraints31.gridx = 0;
+			gridBagConstraints31.insets = new Insets(10, 10, 15, 10);
+			gridBagConstraints31.gridy = 0;
 			GridBagConstraints gridBagConstraints = new GridBagConstraints();
 			gridBagConstraints.insets = new Insets(10, 10, 15, 10);
+			gridBagConstraints.weightx = 1.0;
+			gridBagConstraints.gridx = 1;
 			gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
 			jPanelSouth = new JPanel();
 			jPanelSouth.setLayout(new GridBagLayout());
+			jPanelSouth.add(getJPanelSouthWest(), gridBagConstraints31);
 			jPanelSouth.add(getJPaneFooter(), gridBagConstraints);
+			jPanelSouth.add(getJPanelEast(), gridBagConstraints41);
 		}
 		return jPanelSouth;
 	}
@@ -672,6 +717,9 @@ public class Translation extends JDialog implements ActionListener {
 	 */
 	private JPanel getJPaneFooter() {
 		if (jPaneFooter == null) {
+			GridBagConstraints gridBagConstraints17 = new GridBagConstraints();
+			gridBagConstraints17.gridx = -1;
+			gridBagConstraints17.gridy = -1;
 			jPaneFooter = new JPanel();
 			jPaneFooter.setLayout(new GridBagLayout());
 			jPaneFooter.add(getJButtonClose(), new GridBagConstraints());
@@ -693,7 +741,46 @@ public class Translation extends JDialog implements ActionListener {
 		}
 		return jButtonClose;
 	}
+	/**
+	 * This method initializes jButtonImportCSV	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getJButtonImportCSV() {
+		if (jButtonImportCSV == null) {
+			jButtonImportCSV = new JButton();
+			jButtonImportCSV.setToolTipText(Language.translate("'.csv'-Version des Wörterbuchs übernehmen ..."));
+			jButtonImportCSV .setIcon(new ImageIcon(getClass().getResource(PathImage + "MBtransImport.png")));
+			jButtonImportCSV.setPreferredSize(new Dimension(26, 26));
+			jButtonImportCSV.addActionListener(this);
+		}
+		return jButtonImportCSV;
+	}
 
+	/**
+	 * This method initializes jPanelSouthWest	
+	 * @return javax.swing.JPanel	
+	 */
+	private JPanel getJPanelSouthWest() {
+		if (jPanelSouthWest == null) {
+			jPanelSouthWest = new JPanel();
+			jPanelSouthWest.setLayout(new GridBagLayout());
+			jPanelSouthWest.add(getJButtonImportCSV(), new GridBagConstraints());
+			
+		}
+		return jPanelSouthWest;
+	}
+	/**
+	 * This method initializes jPanelEast	
+	 * @return javax.swing.JPanel	
+	 */
+	private JPanel getJPanelEast() {
+		if (jPanelEast == null) {
+			jPanelEast = new JPanel();
+			jPanelEast.setLayout(new GridBagLayout());
+			jPanelEast.setPreferredSize(new Dimension(26, 26));
+		}
+		return jPanelEast;
+	}
 	
 	/**
 	 * This method initializes jScrollPaneDictionary	
@@ -753,7 +840,7 @@ public class Translation extends JDialog implements ActionListener {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					if (currDataSet!=null) {
-						jTextFieldSource.setText((String) currDataSet.get(jComboBoxSourceLang.getSelectedIndex()));	
+						jTextFieldSource.setText((String) currDataSet.get(jComboBoxSourceLang.getSelectedIndex()+1));	
 						setGoogleTranslation();
 					}
 				}
@@ -775,7 +862,7 @@ public class Translation extends JDialog implements ActionListener {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					if (currDataSet!=null) {
-						jTextFieldDestination.setText((String) currDataSet.get(jComboBoxDestinationLang.getSelectedIndex()));
+						jTextFieldDestination.setText((String) currDataSet.get(jComboBoxDestinationLang.getSelectedIndex()+1));
 						setGoogleTranslation();
 					}
 				}
@@ -912,8 +999,13 @@ public class Translation extends JDialog implements ActionListener {
 		rowData.removeElementAt(0);
 		currDataSet = new Vector<Object>(rowData);
 
-		jTextFieldSource.setText((String) currDataSet.get(jComboBoxSourceLang.getSelectedIndex()));
-		jTextFieldDestination.setText((String) currDataSet.get(jComboBoxDestinationLang.getSelectedIndex()));
+		jTextFieldSource.setText((String) currDataSet.get(jComboBoxSourceLang.getSelectedIndex()+1));
+		jTextFieldDestination.setText((String) currDataSet.get(jComboBoxDestinationLang.getSelectedIndex()+1));
+		
+		String sourceLang = (String) currDataSet.get(0);
+		String sourceLangDescription = Language.getLanguageName(sourceLang);
+		jLabelSourceLanguage.setText(Language.translate("Quell-Sprache") + ": " + sourceLang + " - " + sourceLangDescription);
+
 		this.setGoogleTranslation();
 		
 	}
@@ -960,8 +1052,10 @@ public class Translation extends JDialog implements ActionListener {
 		
 		if (currDataSet!=null) {
 			// --- remove the entry from the dictionary --- 
-			String deExp = (String) currDataSet.get(0);
-			Language.delete(deExp);
+			String langSource = (String) currDataSet.get(0);
+			int langSourceIndex = Language.getIndexOfLanguage(langSource);
+			String expression = (String) currDataSet.get(langSourceIndex);
+			Language.delete(expression);
 
 			// --- remove the entry from the dataDict -----
 			int row = jTableDictionary.getSelectedRow();
@@ -984,9 +1078,13 @@ public class Translation extends JDialog implements ActionListener {
 		jButtonSave.requestFocusInWindow();
 
 		// --- work on the Text ---------------------------  
-		String deExp = (String) currDataSet.get(0);
+		String sourceLang = (String) currDataSet.get(0);
+		int sourceLangIndex = Language.getIndexOfLanguage(sourceLang);
+		String sourceLangExpression = (String) currDataSet.get(sourceLangIndex);
+
 		String textEdited = jTextFieldDestination.getText();
-		int colEdited = jComboBoxDestinationLang.getSelectedIndex();
+		
+		int colEdited = jComboBoxDestinationLang.getSelectedIndex()+1;
 		int rowEdited = jTableDictionary.getSelectedRow();
 		
 		// --- update current dataset ----------------------
@@ -1004,7 +1102,7 @@ public class Translation extends JDialog implements ActionListener {
 				dictRow += Language.seperator + currDataSet.get(i);
 			}
 		}
-		Language.update(deExp, dictRow);
+		Language.update(sourceLangExpression, dictRow);
 		
 	}
 	
@@ -1042,6 +1140,9 @@ public class Translation extends JDialog implements ActionListener {
 		if (trigger == jButtonClose) {
 			this.setVisible(false);
 			
+		} else if (trigger == jButtonImportCSV) {
+			Language.useCSVDictionaryFile();
+			
 		} else if (trigger == jMenuItemEdit) {
 			jTabbedPane.setSelectedComponent(jPanelTranslation);
 			jTextFieldDestination.requestFocusInWindow();
@@ -1070,8 +1171,6 @@ public class Translation extends JDialog implements ActionListener {
 			System.out.println("Unknown Action-Event" + ae.getActionCommand() );
 		}
 		
-		
 	}
-
 
 }  //  @jve:decl-index=0:visual-constraint="10,10"

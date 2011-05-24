@@ -1,3 +1,30 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.dawis.wiwi.uni-due.de/ 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.core.agents;
 
 import jade.core.Agent;
@@ -11,6 +38,14 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.commons.codec.binary.Base64;
 
+/**
+ * Provides a container instance in order to configure an agents 
+ * start configuration. This class is used in the simulation setup
+ * of <b>Agent.GUI</b>
+ *   
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
+ * @see agentgui.core.sim.setup.SimulationSetup
+ */
 public class AgentClassElement4SimStart {
 	
 	@XmlTransient private DecimalFormat df = new DecimalFormat("00000");
@@ -23,21 +58,19 @@ public class AgentClassElement4SimStart {
 	private String agentClassReference = null;
 	@XmlElement(name="startAsName")
 	private String startAsName = "";
-	@XmlElement(name="mobileAgent")
-	private boolean mobileAgent = true;
 	
 	@XmlElementWrapper(name = "startArguments")
 	@XmlElement(name="argument")
 	private String[] startArguments = null;
 	
 	
-	
-	
 	/**
 	 * Constructor without arguments (This is first of all 
-	 * for the JAXB-Context and should not be used by any
+	 * for the JAXB-context and should not be used by any
 	 * other context)
+	 * @deprecated because of the JAXB-context
 	 */
+	@Deprecated
 	public AgentClassElement4SimStart() {
 	}
 	/**
@@ -60,7 +93,7 @@ public class AgentClassElement4SimStart {
 	}
 	
 	/**
-	 * Sets a default Name for the executed Agent in the Simulation-Experiment
+	 * Sets a default name for the executed Agent in the Simulation-Experiment
 	 */
 	private void setDefaultAgentName() {
 		
@@ -96,7 +129,7 @@ public class AgentClassElement4SimStart {
 	}
 	
 	/**
-	 * Retruns the String-Descriptoin of this Object
+	 * returns the textual description of this Object
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -122,27 +155,30 @@ public class AgentClassElement4SimStart {
 	}
 	
 	/**
-	 * Returns the class of the Agent
-	 * @return
+	 * Returns the class of the current Agent
+	 * @return the Class<? extends Agent> instance of the agent
 	 */
 	public Class<? extends Agent> getElementClass(){
 		return agentClass;
 	}
 	
 	/**
-	 * @return the postionNo
+	 * Returns the position of the currently configured agent in the current list
+	 * @return Integer position number
 	 */
 	@XmlTransient
 	public Integer getPostionNo() {
 		return postionNo;
 	}
 	/**
+	 * Sets the position number of the current agent
 	 * @param postionNo the postionNo to set
 	 */
 	public void setPostionNo(Integer postionNo) {
 		this.postionNo = postionNo;
 	}
 	/**
+	 * Returns the local name of the agent like ((AID)agentAID).getLocalname() 
 	 * @return the startAsName
 	 */
 	@XmlTransient
@@ -150,6 +186,7 @@ public class AgentClassElement4SimStart {
 		return startAsName;
 	}
 	/**
+	 * Here the local name for the agent can be set similar to ((AID)agentAID).getLocalname() 
 	 * @param startAsName the startAsName to set
 	 */
 	public void setStartAsName(String startAsName) {
@@ -157,13 +194,15 @@ public class AgentClassElement4SimStart {
 	}
 
 	/**
-	 * @return the agentClassReference
+	 * This method returns the class reference of the agent
+	 * @return String the agentClassReference
 	 */
 	@XmlTransient
 	public String getAgentClassReference() {
 		return agentClassReference;
 	}
 	/**
+	 * Here the class reference of the agent can be set
 	 * @param agentClassReference the agentClassReference to set
 	 */
 	public void setAgentClassReference(String agentClassReference) {
@@ -171,21 +210,12 @@ public class AgentClassElement4SimStart {
 	}
 	
 	/**
-	 * @return the mobileAgent
-	 */
-	@XmlTransient
-	public boolean isMobileAgent() {
-		return mobileAgent;
-	}
-	/**
-	 * @param mobileAgent the mobileAgent to set
-	 */
-	public void setMobileAgent(boolean mobileAgent) {
-		this.mobileAgent = mobileAgent;
-	}
-	
-	/**
+	 * This method will return the serialized start arguments of the current agent.
+	 * Internally these arguments will be kept as Base64 encoded Strings in order to 
+	 * store this configuration also in the SimulationSetup
+	 *   
 	 * @return the startInstances
+	 * @see agentgui.core.sim.setup.SimulationSetup
 	 */
 	@XmlTransient
 	public String[] getStartArguments() {
@@ -206,7 +236,12 @@ public class AgentClassElement4SimStart {
 		return startArgumentsDecoded;
 	}
 	/**
+	 * This method can be used in order to save the start arguments of the current agent.
+	 * Internally these arguments will be kept as Base64 encoded Strings in order to 
+	 * store this configuration also in the SimulationSetup
+	 *  
 	 * @param startInstances the startInstances to set
+	 * @see agentgui.core.sim.setup.SimulationSetup
 	 */
 	public void setStartArguments(String[] startArgs) {
 		

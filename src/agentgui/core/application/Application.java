@@ -47,7 +47,7 @@ public class Application {
 	
 	private static String project2OpenAfterStart = null;
 	
-	// --- Singelton-Construct ---
+	// --- Singleton-Constructor ---
 	private Application() {
 	}	
 	public static Application getInstance() {
@@ -64,11 +64,13 @@ public class Application {
 		// --- Just starts the base-instances -----------------------
 		RunInfo = new GlobalInfo();
 		properties = new FileProperties();
+		Language.startDictionary();
 		proceedStartArguments(args);
 		new LoadMeasureThread().start();  
 		Console = new CoreWindowConsole();
 		startAgentGUI();
 		proceedStartArgumentOpenProject();
+		
 	}	
 
 	/**
@@ -377,7 +379,7 @@ public class Application {
 		
 		// --- Sind die neue und die alte Anzeigesprach gleich ? ----
 		Integer newLangIndex = Language.getIndexOfLanguage(newLang);
-		if ( newLangIndex == Language.defaultLanguage ) return; 
+		if ( newLangIndex == Language.currLanguageIndex ) return; 
 		
 		// --- User fragen, ob die Sprache umgestellt werden soll ---
 		String MsgHead = Language.translate("Anzeigesprache wechseln?");
@@ -395,7 +397,7 @@ public class Application {
 			if ( Projects.closeAll() == false ) return;	
 		}
 		// --- Sprache umstellen ------------------------------------
-		Language.changeLanguageTo(newLang);
+		Language.changeApplicationLanguageTo(newLang);
 		// --- Anwendungsfenster schliessen -------------------------
 		MainWindow.dispose();
 		MainWindow = null;

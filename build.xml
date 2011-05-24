@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- ====================================================================== 
-     13.07.2009 12:00:00                                                        
+     20.01.2011 12:00:00                                                        
 
-     project:		AgentGUI
-     description	Erzeugung notwendiger Datei- und Verzeichnisstrukturen
-					für das Tool Agent.GUI ....
+     project:		Agent.GUI
+     description	Build the executable version of Agent.GUI, which can
+     				be used as an library for other projects.
+     				The executable version will be packed to the 
+     				folder '\exec\AgentGUI'	
                    
      Christian Derksen                                                                
      ====================================================================== -->
@@ -177,10 +179,8 @@
     </target>
 
 	<target name="execute" depends="cleanup,createdir,compile,supply" description="Executing jar-file ... ">
-	    	
-	    	<!-- Die erzeugte jar ausführen -->
-	    	<java jar="${destinJar}" fork="true" />
-	    	
-	    </target>
+	    <!-- Die erzeugte jar ausführen -->
+		<java jar="${destinJar}" fork="true" />
+	</target>
 	
 </project>

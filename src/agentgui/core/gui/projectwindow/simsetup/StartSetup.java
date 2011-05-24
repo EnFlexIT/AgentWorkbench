@@ -55,6 +55,8 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 	private String newLine = Application.RunInfo.AppNewLineString();  //  @jve:decl-index=0:
 	private final String PathImage = Application.RunInfo.PathImageIntern();  //  @jve:decl-index=0:
 	private final ImageIcon iconGreen = new ImageIcon( this.getClass().getResource( PathImage + "StatGreen.png") );  //  @jve:decl-index=0:
+	
+	@SuppressWarnings("unused")
 	private final ImageIcon iconRed = new ImageIcon( this.getClass().getResource( PathImage + "StatRed.png") );
 	private final ImageIcon imageSave =  new ImageIcon(getClass().getResource(PathImage + "MBsave.png"));  //  @jve:decl-index=0:
 	
@@ -286,11 +288,8 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 					jlab.setText( agentInfo.toString() );
 					jlab.setToolTipText( agentInfo.getAgentClassReference() );
 					jlab.setOpaque(true);
-					if( agentInfo.isMobileAgent() ) {
-						jlab.setIcon(iconGreen);	
-					} else {
-						jlab.setIcon(iconRed);
-					}
+
+					jlab.setIcon(iconGreen);	
 					
 					if (isSelected) {
 						jlab.setForeground(Color.white);

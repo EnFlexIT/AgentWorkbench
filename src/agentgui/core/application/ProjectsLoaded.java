@@ -42,7 +42,7 @@ public class ProjectsLoaded {
 		return this.add(addNew, null);
 	}
 	/**
-	 * Open a project correponding to specified project folder
+	 * Open a project corresponding to specified project folder
 	 * @param selectedProjectFolder
 	 * @return
 	 */
@@ -352,8 +352,7 @@ public class ProjectsLoaded {
 		WindowMenu.removeAll();
 		if (this.count()==0 ){
 			WindowMenu.add( new JMenuItmen_Window( Language.translate("Kein Projekt geöffnet !"), -1, setFontBold ) );
-		}
-		else {
+		} else {
 			for(int i=0; i<this.count(); i++) {
 				String ProjectName = projectsOpen.get(i).getProjectName();
 				if ( ProjectName.equalsIgnoreCase( Application.ProjectCurr.getProjectName() ) ) 
