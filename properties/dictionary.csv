@@ -1,425 +1,425 @@
- ist bereits geÃ¶ffnet!;is already open!;;;
-! MyTab Single !;;;;
-! MyTab with SubTabs !;;;;
-' ist bereits geÃ¶ffnet!;' is already open!;;;
-(Falls bereits verwendet, wird versucht den nÃ¤chst hÃ¶heren Port zu nutzen);(If already used, it will be tried to use the next higher port);;;
-0 Sekunden;0 seconds;;;
-<br>Bitte geben Sie einen anderen Namen fÃ¼r das Setup an.;<br> Please enter a different name for the setup.;;;
-<br>Bitte geben Sie einen lÃ¤ngeren Namen fÃ¼r das Setup an.;<br> Please enter a longer name for the setup.;;;
-<br>Falls nicht, wird eine neue Setup-Datei erzeugt.;<br> If not, a new setup file will be created.;;;
-<br>Kann der Name aus der Liste der Setups entfernt werden?;<br> Can the name be removed from the list of setups?;;;
-Abbrechen;Cancel;;;
-Abbruch: Kein Projekt geÃ¶ffnet!;Canceled: No project open!;;;
-Abbruch;Cancel;;;
-Abtastintervall;Sampling rate;;;
-Agent nach oben verschieben;Move up agent;;;
-Agent nach unten verschieben;Move down agent;;;
-Agent starten...;Start agent...;;;
-Agent.GUI - Projekt Ã¶ffnen;Agent.GUI â€“ Open project;;;
-Agent.GUI - Standard verwenden;Use Agent.GUI defaults;;;
-Agent.GUI Projekt-Datei;Agent.GUI project file;;;
-Agent.GUI umschalten ?;Switch Agent.GUI ?;;;
-Agent:;Agent:;;;
-Agent;agent;;;
-AgentGUI - Standardeinstellungen verwenden;Use Agent.GUI defaults;;;
-Agenten Start-Konfiguration;Agent start configuration;;;
-Agenten entfernen;Remove Agent;;;
-Agenten hinzufÃ¼gen;Add Agent;;;
-Agenten in diesem Projekt;Agents in this project;;;
-Agenten-Klasse;Agent class;;;
-Agenten-Klassen;Agent classes;;;
-Agenten-Konfiguration;Agent-Configuration;;;
-Agenten-Start;Agent-Start;;;
-Agenten;Agents;;;
-Agentenklasse;Agent class;;;
-Agentenliste aktualisieren;Refresh agent list;;;
-Aktualisiere Agenten-Liste...;Refreshing agent list;;;
-Alle Objekte lÃ¶schen;Delete all objects;;;
-Alle Ontologien;All ontologies;;;
-Alle Rechte vorbehalten.;All rights reserved.;;;
-Alter Wert:;Old value:;;;
-Ansicht:;View:;;;
-Ansicht;View;;;
-Anwenden;Apply;;;
-Anwendung;Application;;;
-Anzahl Agenten (erwartet);Number of agents (expected);;;
-Anzahl Container berechnen;Calculate number of container;;;
-Anzahl Container;Number of container;;;
-Anzeigesprache wechseln?;Change the GUI Language?;;;
-Arbeitsspeicher;Memory;;;
-Argument;argument;;;
-AusgewÃ¤hlte Klasse Ã¼bernehmen!;Take selected class!;;;
-Auslastungs-Grenzwerte manuell festlegen;Set load thresholds manually;;;
-Auslastungs-Monitor Ã¶ffnen;Open load monitor;;;
-Auswahl - Agenten;Agent selection;;;
-Auswahl - Ontologien;Ontology selection;;;
-Auswahl Ontologien;Ontology selection;;;
-Basis-Agenten;Base agents;;;
-Basis-Info;Basic info;;;
-Bearbeiten;Edit;;;
-Beenden;Quit;;;
-Beschreibung;Description;;;
-Bitte geben Sie den Namen fÃ¼r das neue Setup an!;Please enter a name for the new setup!;;;
-Bitte geben Sie den neuen Namen fÃ¼r das Setup an!;Please specify the new name for the setup!;;;
-Bitte spezifizieren Sie den Typ des Startarguments!;Please specify the type of the start argument!;;;
-Bitte warten! Der Benchmark wird durchgefÃ¼hrt ...;Please wait! The benchmark is running ...;;;
-Bitte wiederholen Sie den Vorgang bei Bedarf und bestÃ¤tigen Sie dann mit 'Ja'.;Please repeat the process if required and then confirm with 'Yes'.;;;
-Bitte wÃ¤hlen Sie das gewÃ¼nschte Projekt aus!;Please select the desired project!;;;
-Bitte wÃ¤hlen Sie die Ontologie aus, die Ihrem Projekt hinzugefÃ¼gt werden soll !;Please select the ontology, which has to be added to your project!;;;
-Bitte wÃ¤hlen Sie einen Namen fÃ¼r den Agenten!;Please choose a name for the agent!;;;
-Bitte Ã¼berprÃ¼fen Sie die Datenbank-Einstellungen!;Please check your database settings!;;;
-CPU-Auslastung;CPU-Load;;;
-CPU;CPU;;;
-Class not found:;Class not found:;;;
-Container;Container;;;
-DF (Directory Facilitator) starten;Start DF (Directory Facilitator);;;
-DF anzeigen;Show DF GUI;;;
-Das PlugIn wurde bereits in das Projekt integriert und kann deshalb nicht erneut hinzugefÃ¼gt werden!;The plugin is already integrated into the project and therefore can not be added again!;;;
-Das Verzeichnis existiert bereits. Der Import wird unterbrochen.;The directory already exists. The import is interrupted.;;;
-Das aktuelle Projekt '@' ist noch nicht gespeichert!<br>MÃ¶chten Sie es nun speichern ?;The current project '@' is not saved yet! <br>Save it now?;;;
-Das von Ihnen gewÃ¤hlte Projektverzeichnis wird bereits verwendet!<br><br>Bitte wÃ¤hlen Sie einen anderen Namen fÃ¼r Ihr Verzeichnis;Your chosen project directory is already in use! <br><br> Please select another name for the directory;;;
-Datei:;File:;;;
-Dateien einbinden;Include Files;;;
-Datenbank erfolgreich angelegt!;Database created successfully!;;;
-Datenbank fÃ¼r das Hauptserver-Modul;Database for the main server module;;;
-Datenbank nicht vorhanden!;Database does not exist!;;;
-Datenfeld;Data field;;;
-Der Agent ';The Agent ';;;
-Der Agent 'rma' ist bereits geÃ¶ffnet!;The agent 'rma' is already running;;;
-Der Name '@' wird in der Startliste bereits verwendet !<br>Bitte wÃ¤hlen Sie einen anderen Namen fÃ¼r den Agenten.;The name '@' is already used in the start list!<br>Please select another name for the agent.;;;
-Der Name;The name;;;
-Deutsch;German;;;
-Die Datei '@' wurde nicht gefunden!;File '@' was not found!;;;
-Die Datei existiert bereits. Wollen Sie diese Datei Ã¼berschreiben?;The file already exists. Do you want to overwrite this file?;;;
-Die Datei;The file;;;
-Die Datenbank fÃ¼r den Server-Master ist nicht vorhanden.<br>Soll versucht werden diese nun anzulegen?;The database for the Server.Master is not available. <br> Try to create it now?;;;
-Die Konsolenausgabe erfolgt nicht Ã¼ber die Anwendung;The console output will not be done by this application;;;
-Doppelklick um eine Klasse auszuwÃ¤hlen !;Double click to select a class!;;;
-Dummy-Agenten starten;Start Dummy agent;;;
-Dynamische Lastverteilung aktivieren;Enabled dynamic load balancing ;;;
-Eigene Auslastungsgrenzwerte verwenden;Use own threshold values;;;
-Einheit;Unit;;;
-Element-Typ;Element type;;;
-Element;Element;;;
-Endanwender-Ansicht;End users view;;;
-Englisch;English;;;
-Entferne Agent;Remove agent;;;
-Entferne Hindernis;Remove obstacle;;;
-Entpacke;Unpacking;;;
-Entwickler-Ansicht;Developer view;;;
-Erzeuge die Datenbank fÃ¼r den Server-Master ...;Creating the database for the Server.Master ...;;;
-Es wurde kein Name fÃ¼r das PlugIn konfiguriert;There was no name configured for the PlugIn;;;
-Extras;Extras;;;
-Fehlende Angaben Ã¼ber den Datenbank-Host.<br>Bitte Ã¼berprÃ¼fen Sie die Datenbank-Einstellungen!;Missing informations about the database host.<br> Please check your database settings!;;;
-Fehlende Auswahl!;Missing selection!;;;
-Fehlende Ontologie-Auswahl !;Missing ontology selection!;;;
-Fehler - '@';Error â€“ '@';;;
-Fehler - PlugIn:;Error - PlugIn:;;;
-Fehler - Projektauswahl !;Error - project selection!;;;
-Fehler - Projektverzeichnis !;Error - project folder !;;;
-Fehler bei der AusfÃ¼hrung von 'executeQuery'!;Error when executing 'executeQuery'!;;;
-Fehler bei der AusfÃ¼hrung von 'executeUpdate'!;Error when executing 'executeUpdate'!;;;
-Fehler beim Auslesen der DatensÃ¤tzen!;Error while reading records!;;;
-Fehler beim Lesen des Graphen;Error while reading the graph;;;
-Fehler beim Parsen der Umgebungsdatei!;Error while parsing environment file!;;;
-Fehler beim Verbindungsaufbau mit Datenbank-Server!;Error while connecting to database server!;;;
-Fehler in der Datenbank-Konfiguration;Error in the database configuration;;;
-Fehler â€“ '@';Error â€“ '@';;;
-Fehler â€“ Projektauswahl!;Error â€“ Project selection!;;;
-Fehler â€“ Projektname!;Error â€“ Project name;;;
-Fehler â€“ Projektverzeichnis!;Error â€“ Project folder;;;
-Fehler;Error;;;
-Fenster;Window;;;
-Fertig;Ready;;;
-Folgende Add-On-Dienste starten:;Start the following add-on services:;;;
-Folgende Agent.GUI-Dienste starten:;Start the following Agent.GUI services:;;;
-Folgende Jade-Dienste starten:;Start the following JADE-services:;;;
-Folgende Plattform-Dienste starten:;Start the following platform-services:;;;
-Formular;Form;;;
-FranzÃ¶sisch;French;;;
-Google - Ãœbersetzung;Google - Translation;;;
-Google-Ãœbersetzung Ã¼bernehmen (STRG+G);Apply Google translation (CTRL + G);;;
-Graph Importieren;Import Graph;;;
-Graph Laden;Load Graph;;;
-Graph bzw. Netzwerk;Graph or Network;;;
-Graph speichern;Save Graph;;;
-Graph-Datei;Graph file;;;
-Graph-Prototyp;Graph-prototype;;;
-Graph-Prototypen;Graph-prototypes;;;
-GraphML-Dateien;GraphML-Files;;;
-Grenzwerte;Thresholds;;;
-GrÃ¶ÃŸe;Size;;;
-Hauptserver (server.master);main server (server.master);;;
-Hilfe;Help;;;
-Hindernis;Obstacle;;;
-Hindernisse;Obstacles;;;
-HinzufÃ¼gen;Add;;;
-Ihre Umschaltung zwischen 'Anwendung' und 'Server' wurde rÃ¼ckgÃ¤ngig gemacht.;Switching between 'Application' and 'Server' has been reversed.;;;
-Immer Ãœberspringen;Allways Skip;;;
-Info;Info;;;
-Introspector-Agent starten;Start Introspector agent;;;
-Italienisch;Italian;;;
-JADE starten;Start JADE;;;
-JADE stoppen;Stop JADE;;;
-JADE wird zur Zeit ausgefÃ¼hrt!;JADE is already running!;;;
-JADE wurde lokal gestartet.;JADE is running.;;;
-JADE wurde noch nicht gestartet!;JADE has not been started yet!;;;
-JADE wurde noch nicht gestartet.;JADE has not been started yet.;;;
-JADE zu Simulationsbeginn starten;Start JADE if simulation begins;;;
-JADE-Konfiguration;JADE-Configuration;;;
-JADE-Tools...;JADE-Tools...;;;
-JADE;JADE;;;
-JAR;JAR;;;
-JVM Heap-Memory;JVM Heap Memory;;;
-JVM-Heap;JVM Heap;;;
-Jade wurde beendet!;JADE was stopped!;;;
-Java-Klasse fÃ¼r den Start der Simulations-Agenten und die statische Lastverteilung;Java class for the start of the simulation agents and the static load balancing;;;
-Java-Klasse fÃ¼r die dynamische Lastverteilung;Java class for dynamic load balancing;;;
-Kein Projekt geÃ¶ffnet !;No open project!;;;
-Kein SVG zugewiesen;No SVG assigned;;;
-Kein vordefiniertes Umgebungsmodell verwenden;Don't use predefined environment model;;;
-Keine Graph-Datei definiert!;No Graph file defined!;;;
-Keine Klasse definiert;No class defined;;;
-Keine SVG-Datei definiert!;No SVG file defined!;;;
-Keine SVG-Datei definiert;No SVG file defined;;;
-Keine SVG-Datei zugewiesen;No SVG file assigned;;;
-Keine Umgebung definiert;No environment defined;;;
-Keine Umgebungsdatei definiert;No environment file defined;;;
-Keine Umgebungsdatei zugewiesen;No environment file assigned;;;
-Keine;None;;;
-Keiner;None;;;
-Kind-Umgebungen;Child playgrounds;;;
-Klasse auswÃ¤hlen;Select class;;;
-Klasse;Class;;;
-Klassen bestimmen;Determine classes ;;;
-Klassenangabe Ã¼berprÃ¼fen;Check Class specification;;;
-Klassenzuordnung;Class Assignment;;;
-Kommunikation;Communication;;;
-Komponente;Component;;;
-Komponenten-Einstellungen;Component settings;;;
-Komponenten-Typen;Component-Types;;;
-Komponententyp-Definition;Component-Type definition;;;
-Konfiguration des;Configuration of;;;
-Konfiguration;Configuration;;;
-Konsole ein- oder ausblenden;Show / hide console;;;
-Konsole: kann ein- bzw. ausgeblendet werden;Console: Can be shown or hidden;;;
-Konsole;Console;;;
-Kontinuierliches 2D-Umgebungsmodell;Continuous 2D environment model;;;
-LANG_DE;LANG_EN;LANG_IT;LANG_ES;LANG_FR
-Lade SVG-Datei;Loading SVG file;;;
-Lade Umgebung aus;Loading environment from;;;
-Lade Umgebungsdatei;Getting environment file;;;
-Load Monitor Ã¶ffnen;Open load monitor;;;
-Load Monitor;Load Monitor;;;
-Log-Manager starten;Start Log Manager;;;
-LÃ¶schen;Delete;;;
-MAS-Pause;MAS-Pause;;;
-MAS-Start;MAS-Start;;;
-MAS-Stop;MAS-Stop;;;
-MAS;MAS;;;
-Maximale Geschwindigkeit;Maximum speed;;;
-MaÃŸstab festlegen;Set scale;;;
-MaÃŸstab;Scale;;;
-Mess-Agenten anhalten;Stop load measure agent;;;
-Mess-Agenten starten;Start load measure agent;;;
-Messung aufzeichnen;Record measurement;;;
-Messungsaufzeichnung beenden;Stop recording measurement;;;
-MySQL-Fehler:;MySQL-Error:;;;
-MySQL-Fehler;MySQL-Error;;;
-MyTab Single;;;;
-MyTab with SubTabs;;;;
-MÃ¶chten Sie Agent.GUI nun umschalten und neu starten ?;Do you want to switch and restart Agent.GUI ?;;;
-MÃ¶chten Sie JADE nun beenden?;Quit JADE now?;;;
-MÃ¶chten Sie JADE nun starten und fortfahren?;Do you want to start JADE and continue?;;;
-MÃ¶chten Sie das aktuelle Projekt exportieren?;Export the current project?;;;
-MÃ¶chten Sie die Anzeigesprache wirklich umstellen?<br>Die Anwendung muss hierzu neu gestartet und Projekte<br>von Ihnen neu geÃ¶ffnet werden.;Do you want to switch the display language?<br>The application has to be restarted for this<br>purpose and projects has to be reopened.;;;
-MÃ¶chten Sie einen weiteren Agenten dieser Art starten?;Do you want to start another agent of this kind?;;;
-N - Threads;N - Threads;;;
-Name bereits vorhanden!;Name already exists!;;;
-Name ungÃ¼ltig!;Invalid name!;;;
-Netz-Komponenten;Network Components;;;
-Netz;Network;;;
-Netzkomponente;Network component;;;
-Neuer Agent;New agent;;;
-Neuer Eintrag;New Entry;;;
-Neues Hindernis;New obstacle;;;
-Neues Projekt anlegen;Create new project;;;
-Neues Projekt;New project;;;
-Neues Setup anlegen ...;Create new setup ...;;;
-Neustart des Server-Dienstes;Restart the server;;;
-Nicht definiert;Not defined;;;
-Nur Nicht-JADE-Ontologien;Only non-JADE ontologies;;;
-NÃ¤chster Datensatz (STRG+DOWN);Next Record (CTRL + DOWN);;;
-OK;OK;;;
-Objekt Entfernen;Remove object;;;
-Objekt entfernen;Remove object;;;
-Objekt hinzufÃ¼gen;Add object;;;
-Objekt lÃ¶schen;Remove object;;;
-Objekt nach oben;Move object up;;;
-Objekt nach unten;Move object down;;;
-Objekt Ã¼bernehmen;Apply object;;;
-Objekt-Eigenschaften;Object properties;;;
-Objekt-ID;Object ID;;;
-Objekt-Typ;Object type;;;
-Objekt;Object;;;
-Objekte aus Projekt-Ontologie;Objects from project ontology;;;
-Objekteigenschaften;Object properties;;;
-Observer-Output;;;;
-Ontologie hinzufÃ¼gen;Add ontology;;;
-Ontologie hinzufï¿½gen;Add ontology;;;
-Ontologie-Klasse fÃ¼r Ãœbergabepunkte;Ontology class for transfer points;;;
-Ontologie;Ontology;;;
-Ontologieklasse;Ontology Class;;;
-Ontologien;Ontologies;;;
-Optionen;Options;;;
-Packe;Packing;;;
-Passives Objekt;Passive object;;;
-Pause;Pause;;;
-PlugIn fÃ¼r Agent.GUI;PlugIn for Agent.GUI;;;
-Position;Position;;;
-Progamm umschalten auf;Switch progam to;;;
-Programmende...;Application shutdown ...;;;
-Programmstart [Anwendung] ...;Program Start [Application] ...;;;
-Programmstart [Server] ...;Program Start [Server] ...;;;
-Programmstart...;Starting Program ...;;;
-Programmstart;Program Start;;;
-Projekt '@' speichern?;Save Project '@'?;;;
-Projekt exportieren;Export Project;;;
-Projekt exportieren?;Export project?;;;
-Projekt importieren;Import Project;;;
-Projekt schlieÃŸen;Close Project;;;
-Projekt speichern;Save Project;;;
-Projekt speichern?;Save Project?;;;
-Projekt zum Export auswÃ¤hlen;Select a project to export;;;
-Projekt Ã¶ffnen;Open Project;;;
-Projekt-Agenten;Project-Agents;;;
-Projekt-Desktop;Project Desktop;;;
-Projekt-Info;Project info;;;
-Projekt-Ontologie;Project ontology;;;
-Projekt-Ressourcen;Project Resources;;;
-Projekte;Projects;;;
-Projekttitel;Project title;;;
-RMA (Remote Monitoring Agent) Ã¶ffnen;Open RMA (Remote Monitoring Agent);;;
-Rechts-Klick fÃ¼r weitere Optionen;Right-Click for more options;;;
-Ressourcen;Resources;;;
-SVG Dateien;SVG files;;;
-SVG laden;Load SVG;;;
-SVG zuweisen;Assign SVG;;;
-SVG-Datei zuweisen;Assign SVG file;;;
-SVG-Datei;SVG file;;;
-SVG-Dateien;SVG files;;;
-SVG-Elementtyp;SVG element type;;;
-SchlieÃŸen;Close;;;
-SciMark 2.0 - Benchmark;SciMark 2.0 - Benchmark;;;
-Sekunden;Seconds;;;
-Server-Dienst (Master / Slave);Server (Master / Slave);;;
-Server-Dienst beim Programmstart automatisch initialisieren;Automatically initialize Server at startup;;;
-Server-Konfiguration;Server Configuration;;;
-Server;Server;;;
-Setup hinzufÃ¼gen;Add Setup;;;
-Setup kopieren ...;Copy Setup ...;;;
-Setup kopieren;Copy Setup;;;
-Setup lÃ¶schen;Delete Setup;;;
-Setup lÃ¶schen?;Delete Setup?;;;
-Setup umbenennen ...;Rename Setup ...;;;
-Setup umbenennen;Rename Setup;;;
-Setup-Datei nicht gefunden!;Could not find setup file!;;;
-Setup-Name wird bereits verwendet!;Setup name is already used!;;;
-Setup-Name zu kurz!;Setup name too short!;;;
-Simulation starten;Start simulation;;;
-Simulation-Start;Start simulation;;;
-Simulation-Stop;Stop simulation;;;
-Simulation;Simulation;;;
-Simulations-Setup;Simulation-Setup;;;
-Simulations-Visualisierung;Simulation-Visualization;;;
-Simulationsumgebung;Simulation Environment;;;
-Simulationszeit;Simulation time;;;
-Sniffer-Agenten starten;Start Sniffer agent;;;
-Spanisch;Spanish;;;
-Speichere SVG nach;Save SVG to;;;
-Speichere Umgebung nach;Saving environment to;;;
-Speichern;Save;;;
-Spielfeld;Playground;;;
-Sprache:;Language:;;;
-Sprache;Language;;;
-Start-Argumente fÃ¼r den ausgewÃ¤hlten Agenten;Start-arguments for the selected agent;;;
-Start-Konfiguration;Start-Configuration;;;
-Start-Objekte aus Projekt-Ontologie;Startup objects from project-ontology;;;
-Start;Start;;;
-Starte Agent.GUI - Service;Start Agent.GUI - Service;;;
-Starte Agent.GUI als:;Start Agent.GUI as:;;;
-Starte JADE Ã¼ber Port-Nr.:;Start JADE via port no.:;;;
-Starte Messung der Systemauslastung;Start measuring the system load;;;
-Starten als:;Start as:;;;
-Starten als;Start as;;;
-Statische Lastverteilung aktivieren;Enable static load balancing;;;
-Status laden;Load status;;;
-Status speichern;Save status;;;
-Stop Agent.GUI - Service;Stop Agent.GUI - Service;;;
-Stop;Stop;;;
-Suche nach Agenten beendet...;Search for agents finished...;;;
-Suche nach der nÃ¤chsten fehlenden Ãœbersetzung (STRG+F);Search for the next missing translation (CTRL + F);;;
-Suche;Search;;;
-Teil-Umgebung;environment part;;;
-Text zur Ãœbersetzung;Text to translate;;;
-Typ-Bezeichner;Type-Specifier;;;
-Typ;Type;;;
-Umbenennen;Rename;;;
-Umgebung speichern;Save environment;;;
-Umgebung;Environment;;;
-Umgebungs-Setup;Environment setup	;;;
-Umgebungsdatei;Environment file;;;
-Umgebungseigenschaften;Environment properties;;;
-Umgebungskonfiguration;Environment Configuration;;;
-Umgebungstyp;Environment Type;;;
-Umschalten von 'Anwendung' auf 'Server';Switch from 'Application' to 'Server';;;
-Umschalten von 'Server' auf 'Anwendung';Switch from 'Server' to 'Application';;;
-Umschaltung rÃ¼ckgÃ¤ngig gemacht!;Switching undone!;;;
-Unbekannt:;Unknown:;;;
-Undefiniert;undefined;;;
-UngÃ¼ltige Eingabe, ausschlieÃŸlich zahlenwerte zulÃ¤ssig!;Invalid input, only numbers allowed!;;;
-Verbindungspunkte;Connection points;;;
-VergrÃ¶ÃŸern ...;Expand View ...;;;
-VergrÃ¶ÃŸern;Zoom In;;;
-Verkleinern;Zoom out;;;
-Verteilung + Grenzwerte;Distribution + Thresholds;;;
-Verteilung;Distribution;;;
-Verzeichnis bereits vorhanden!;Directory already exists!;;;
-Verzeichnis wurde nicht gefunden:;Directory was not found:;;;
-Verzeichnis;Folder;;;
-Vis.-Geschwindigkeit;Visualisation speed;;;
-Visualisierung;Visualization;;;
-Vorhandene Projektverzeichnisse;Known project folders;;;
-Voriger Datensatz (STRG+UP);Previous Record (CTRL + UP);;;
-Warte auf Agentenliste...;Waiting for agent list...;;;
-Warte auf Ontologie-Liste...;Waiting for ontology list...;;;
-Wollen Sie das aktuelle Setup wirklich lÃ¶schen?;Do you want to delete the current Setup?;;;
-WÃ¶rterbuch;Dictionary;;;
-XML-Dateien;XML files;;;
-XML;XML;;;
-Zur Zeit ist kein Agenten-Projekt geÃ¶ffnet.;There is currently no open agents project .;;;
-ZurÃ¼cksetzen;Reset;;;
-Zyklisch !;Cyclic!;;;
-bereit;ready;;;
-fÃ¼r das Setup;for the setup;;;
-in Datei;In file;;;
-liegt auÃŸerhalb von Playground;is outside of playground;;;
-nicht gefunden!;not found!;;;
-nicht gefunden.;not found.;;;
-nicht gefunden;not found;;;
-nicht unterstÃ¼tzt;not supported;;;
-physikalisch;physical;;;
-speichern;save;;;
-wird bereits verwendet.;is already in use.;;;
-wurde nicht gefunden.;was not found.;;;
-yEd GraphML Datei;yEd GraphML file;;;
-yEd GraphML;yEd GraphML;;;
-zu Datei;to file;;;
-Ã–ffnen;Open;;;
-Ãœber...;About ...;;;
-Ãœbernehmen;Apply;;;
-Ãœbersetzen ...;Translate ...;;;
-Ãœbersetzen;Translate;;;
-Ãœbersetzter Text;Text translated;;;
-Ãœbersetzung speichern (STRG+S);Save translation (CTRL + S);;;
-Ãœberspringen;Skip;;;
+SOURCE_LANGUAGE;DE;EN;IT;ES;FR
+de; ist bereits geöffnet!;is already open!;;;
+de;' ist bereits geöffnet!;' is already open!;;;
+de;'.csv'-Version des Wörterbuchs übernehmen ...;Import the '. csv'-version of the dictionary ...;;;
+de;(Falls bereits verwendet, wird versucht den nächst höheren Port zu nutzen);(If already used, it will be tried to use the next higher port);;;
+de;0 Sekunden;0 seconds;;;
+de;<br>Bitte geben Sie einen anderen Namen für das Setup an.;<br> Please enter a different name for the setup.;;;
+de;<br>Bitte geben Sie einen längeren Namen für das Setup an.;<br> Please enter a longer name for the setup.;;;
+de;<br>Falls nicht, wird eine neue Setup-Datei erzeugt.;<br> If not, a new setup file will be created.;;;
+de;<br>Kann der Name aus der Liste der Setups entfernt werden?;<br> Can the name be removed from the list of setups?;;;
+de;Abbrechen;Cancel;;;
+de;Abbruch: Kein Projekt geöffnet!;Canceled: No project open!;;;
+de;Abbruch;Cancel;;;
+de;Abtastintervall;Sampling rate;;;
+de;Agent nach oben verschieben;Move up agent
+de;Agent nach unten verschieben;Move down agent
+de;Agent starten...;Start agent...
+de;Agent.GUI - Projekt öffnen;Agent.GUI – Open project
+de;Agent.GUI - Standard verwenden;Use Agent.GUI defaults
+de;Agent.GUI Projekt-Datei;Agent.GUI project file
+de;Agent.GUI umschalten ?;Switch Agent.GUI ?
+de;Agent:;Agent:
+de;Agent;agent
+de;AgentGUI - Standardeinstellungen verwenden;Use Agent.GUI defaults
+de;Agenten Start-Konfiguration;Agent start configuration
+de;Agenten entfernen;Remove Agent
+de;Agenten hinzufügen;Add Agent
+de;Agenten in diesem Projekt;Agents in this project
+de;Agenten-Klasse;Agent class
+de;Agenten-Klassen;Agent classes
+de;Agenten-Konfiguration;Agent-Configuration
+de;Agenten-Start;Agent-Start
+de;Agenten;Agents
+de;Agentenklasse;Agent class
+de;Agentenliste aktualisieren;Refresh agent list
+de;Aktualisiere Agenten-Liste...;Refreshing agent list
+de;Alle Objekte löschen;Delete all objects
+de;Alle Ontologien;All ontologies
+de;Alle Rechte vorbehalten.;All rights reserved.
+de;Alter Wert:;Old value:
+de;Ansicht:;View:
+de;Ansicht;View
+de;Anwenden;Apply
+de;Anwendung;Application
+de;Anzahl Agenten (erwartet);Number of agents (expected)
+de;Anzahl Container berechnen;Calculate number of container
+de;Anzahl Container;Number of container
+de;Anzeigesprache wechseln?;Change the GUI Language?
+de;Arbeitsspeicher;Memory
+de;Argument;argument
+de;Ausgewählte Klasse übernehmen!;Take selected class!
+de;Auslastungs-Grenzwerte manuell festlegen;Set load thresholds manually
+de;Auslastungs-Monitor öffnen;Open load monitor
+de;Auswahl - Agenten;Agent selection
+de;Auswahl - Ontologien;Ontology selection
+de;Auswahl Ontologien;Ontology selection
+de;Basis-Agenten;Base agents
+de;Basis-Info;Basic info
+de;Bearbeiten;Edit
+de;Beenden;Quit
+de;Beschreibung;Description
+de;Bitte geben Sie den Namen für das neue Setup an!;Please enter a name for the new setup!
+de;Bitte geben Sie den neuen Namen für das Setup an!;Please specify the new name for the setup!
+de;Bitte spezifizieren Sie den Typ des Startarguments!;Please specify the type of the start argument!
+de;Bitte warten! Der Benchmark wird durchgeführt ...;Please wait! The benchmark is running ...
+de;Bitte wiederholen Sie den Vorgang bei Bedarf und bestätigen Sie dann mit 'Ja'.;Please repeat the process if required and then confirm with 'Yes'.
+de;Bitte wählen Sie das gewünschte Projekt aus!;Please select the desired project!
+de;Bitte wählen Sie die Ontologie aus, die Ihrem Projekt hinzugefügt werden soll !;Please select the ontology, which has to be added to your project!
+de;Bitte wählen Sie einen Namen für den Agenten!;Please choose a name for the agent!
+de;Bitte überprüfen Sie die Datenbank-Einstellungen!;Please check your database settings!
+de;CPU-Auslastung;CPU-Load
+de;CPU;CPU
+de;Class not found:;Class not found:
+de;Container;Container
+de;DF (Directory Facilitator) starten;Start DF (Directory Facilitator)
+de;DF anzeigen;Show DF GUI
+de;Das PlugIn wurde bereits in das Projekt integriert und kann deshalb nicht erneut hinzugefügt werden!;The plugin is already integrated into the project and therefore can not be added again!
+de;Das Verzeichnis existiert bereits. Der Import wird unterbrochen.;The directory already exists. The import is interrupted.
+de;Das aktuelle Projekt '@' ist noch nicht gespeichert!<br>Möchten Sie es nun speichern ?;The current project '@' is not saved yet! <br>Save it now?
+de;Das von Ihnen gewählte Projektverzeichnis wird bereits verwendet!<br><br>Bitte wählen Sie einen anderen Namen für Ihr Verzeichnis;Your chosen project directory is already in use! <br><br> Please select another name for the directory
+de;Datei:;File:
+de;Dateien einbinden;Include Files
+de;Datenbank erfolgreich angelegt!;Database created successfully!
+de;Datenbank für das Hauptserver-Modul;Database for the main server module
+de;Datenbank nicht vorhanden!;Database does not exist!
+de;Datenfeld;Data field
+de;Der Agent ';The Agent '
+de;Der Agent 'rma' ist bereits geöffnet!;The agent 'rma' is already running
+de;Der Name '@' wird in der Startliste bereits verwendet !<br>Bitte wählen Sie einen anderen Namen für den Agenten.;The name '@' is already used in the start list!<br>Please select another name for the agent.
+de;Der Name;The name
+de;Deutsch;German
+de;Die Datei '@' wurde nicht gefunden!;File '@' was not found!
+de;Die Datei existiert bereits. Wollen Sie diese Datei überschreiben?;The file already exists. Do you want to overwrite this file?
+de;Die Datei;The file
+de;Die Datenbank für den Server-Master ist nicht vorhanden.<br>Soll versucht werden diese nun anzulegen?;The database for the Server.Master is not available. <br> Try to create it now?
+de;Die Konsolenausgabe erfolgt nicht über die Anwendung;The console output will not be done by this application
+de;Doppelklick um eine Klasse auszuwählen !;Double click to select a class!
+de;Dummy-Agenten starten;Start Dummy agent
+de;Dynamische Lastverteilung aktivieren;Enabled dynamic load balancing 
+de;Eigene Auslastungsgrenzwerte verwenden;Use own threshold values
+de;Einheit;Unit
+de;Element-Typ;Element type
+de;Element;Element
+de;Endanwender-Ansicht;End users view
+de;Englisch;English
+de;Entferne Agent;Remove agent
+de;Entferne Hindernis;Remove obstacle
+de;Entpacke;Unpacking
+de;Entwickler-Ansicht;Developer view
+de;Erzeuge die Datenbank für den Server-Master ...;Creating the database for the Server.Master ...
+de;Es wurde kein Name für das PlugIn konfiguriert;There was no name configured for the PlugIn
+de;Extras;Extras
+de;Fehlende Angaben über den Datenbank-Host.<br>Bitte überprüfen Sie die Datenbank-Einstellungen!;Missing informations about the database host.<br> Please check your database settings!
+de;Fehlende Auswahl!;Missing selection!
+de;Fehlende Ontologie-Auswahl !;Missing ontology selection!
+de;Fehler - '@';Error – '@'
+de;Fehler - PlugIn:;Error - PlugIn:
+de;Fehler - Projektauswahl !;Error - project selection!
+de;Fehler - Projektverzeichnis !;Error - project folder !
+de;Fehler bei der Ausführung von 'executeQuery'!;Error when executing 'executeQuery'!
+de;Fehler bei der Ausführung von 'executeUpdate'!;Error when executing 'executeUpdate'!
+de;Fehler beim Auslesen der Datensätzen!;Error while reading records!
+de;Fehler beim Lesen des Graphen;Error while reading the graph
+de;Fehler beim Parsen der Umgebungsdatei!;Error while parsing environment file!
+de;Fehler beim Verbindungsaufbau mit Datenbank-Server!;Error while connecting to database server!
+de;Fehler in der Datenbank-Konfiguration;Error in the database configuration
+de;Fehler – '@';Error – '@'
+de;Fehler – Projektauswahl!;Error – Project selection!
+de;Fehler – Projektname!;Error – Project name
+de;Fehler – Projektverzeichnis!;Error – Project folder
+de;Fehler;Error
+de;Fenster;Window
+de;Fertig;Ready
+de;Folgende Add-On-Dienste starten:;Start the following add-on services:
+de;Folgende Agent.GUI-Dienste starten:;Start the following Agent.GUI services:
+de;Folgende Jade-Dienste starten:;Start the following JADE-services:
+de;Folgende Plattform-Dienste starten:;Start the following platform-services:
+de;Formular;Form
+de;Französisch;French
+de;Google - Übersetzung;Google - Translation
+de;Google-Übersetzung übernehmen (STRG+G);Apply Google translation (CTRL + G)
+de;Graph Importieren;Import Graph
+de;Graph Laden;Load Graph
+de;Graph bzw. Netzwerk;Graph or Network
+de;Graph speichern;Save Graph
+de;Graph-Datei;Graph file
+de;Graph-Prototyp;Graph-prototype
+de;Graph-Prototypen;Graph-prototypes
+de;GraphML-Dateien;GraphML-Files
+de;Grenzwerte;Thresholds
+de;Größe;Size
+de;Hauptserver (server.master);main server (server.master)
+de;Hilfe;Help
+de;Hindernis;Obstacle
+de;Hindernisse;Obstacles
+de;Hinzufügen;Add
+de;Ihre Umschaltung zwischen 'Anwendung' und 'Server' wurde rückgängig gemacht.;Switching between 'Application' and 'Server' has been reversed.
+de;Immer Überspringen;Allways Skip
+de;Info;Info
+de;Introspector-Agent starten;Start Introspector agent
+de;Italienisch;Italian
+de;JADE starten;Start JADE
+de;JADE stoppen;Stop JADE
+de;JADE wird zur Zeit ausgeführt!;JADE is already running!
+de;JADE wurde lokal gestartet.;JADE is running.
+de;JADE wurde noch nicht gestartet!;JADE has not been started yet!
+de;JADE wurde noch nicht gestartet.;JADE has not been started yet.
+de;JADE zu Simulationsbeginn starten;Start JADE if simulation begins
+de;JADE-Konfiguration;JADE-Configuration
+de;JADE-Tools...;JADE-Tools...
+de;JADE;JADE
+de;JAR;JAR
+de;JVM Heap-Memory;JVM Heap Memory
+de;JVM-Heap;JVM Heap
+de;Jade wurde beendet!;JADE was stopped!
+de;Java-Klasse für den Start der Simulations-Agenten und die statische Lastverteilung;Java class for the start of the simulation agents and the static load balancing
+de;Java-Klasse für die dynamische Lastverteilung;Java class for dynamic load balancing
+de;Kein Projekt geöffnet !;No open project!
+de;Kein SVG zugewiesen;No SVG assigned
+de;Kein vordefiniertes Umgebungsmodell verwenden;Don't use predefined environment model
+de;Keine Graph-Datei definiert!;No Graph file defined!
+de;Keine Klasse definiert;No class defined
+de;Keine SVG-Datei definiert!;No SVG file defined!
+de;Keine SVG-Datei definiert;No SVG file defined
+de;Keine SVG-Datei zugewiesen;No SVG file assigned
+de;Keine Umgebung definiert;No environment defined
+de;Keine Umgebungsdatei definiert;No environment file defined
+de;Keine Umgebungsdatei zugewiesen;No environment file assigned
+de;Keine;None
+de;Keiner;None
+de;Kind-Umgebungen;Child playgrounds
+de;Klasse auswählen;Select class
+de;Klasse;Class
+de;Klassen bestimmen;Determine classes 
+de;Klassenangabe überprüfen;Check Class specification
+de;Klassenzuordnung;Class Assignment
+de;Kommunikation;Communication
+de;Komponente;Component
+de;Komponenten-Einstellungen;Component settings
+de;Komponenten-Typen;Component-Types
+de;Komponententyp-Definition;Component-Type definition
+de;Konfiguration des;Configuration of
+de;Konfiguration;Configuration
+de;Konsole ein- oder ausblenden;Show / hide console
+de;Konsole: kann ein- bzw. ausgeblendet werden;Console: Can be shown or hidden
+de;Konsole;Console
+de;Kontinuierliches 2D-Umgebungsmodell;Continuous 2D environment model
+de;Lade SVG-Datei;Loading SVG file
+de;Lade Umgebung aus;Loading environment from
+de;Lade Umgebungsdatei;Getting environment file
+de;Load Monitor öffnen;Open load monitor
+de;Load Monitor;Load Monitor
+de;Log-Manager starten;Start Log Manager
+de;Löschen;Delete
+de;MAS-Pause;MAS-Pause
+de;MAS-Start;MAS-Start
+de;MAS-Stop;MAS-Stop
+de;MAS;MAS
+de;Maximale Geschwindigkeit;Maximum speed
+de;Maßstab festlegen;Set scale
+de;Maßstab;Scale
+de;Mess-Agenten anhalten;Stop load measure agent
+de;Mess-Agenten starten;Start load measure agent
+de;Messung aufzeichnen;Record measurement
+de;Messungsaufzeichnung beenden;Stop recording measurement
+de;MySQL-Fehler:;MySQL-Error:
+de;MySQL-Fehler;MySQL-Error
+de;MyTab Single;
+de;MyTab with SubTabs;
+de;Möchten Sie Agent.GUI nun umschalten und neu starten ?;Do you want to switch and restart Agent.GUI ?
+de;Möchten Sie JADE nun beenden?;Quit JADE now?
+de;Möchten Sie JADE nun starten und fortfahren?;Do you want to start JADE and continue?
+de;Möchten Sie das aktuelle Projekt exportieren?;Export the current project?
+de;Möchten Sie die Anzeigesprache wirklich umstellen?<br>Die Anwendung muss hierzu neu gestartet und Projekte<br>von Ihnen neu geöffnet werden.;Do you want to switch the display language?<br>The application has to be restarted for this<br>purpose and projects has to be reopened.
+de;Möchten Sie einen weiteren Agenten dieser Art starten?;Do you want to start another agent of this kind?
+de;N - Threads;N - Threads
+de;Name bereits vorhanden!;Name already exists!
+de;Name ungültig!;Invalid name!
+de;Netz-Komponenten;Network Components
+de;Netz;Network
+de;Netzkomponente;Network component
+de;Neuer Agent;New agent
+de;Neuer Eintrag;New Entry
+de;Neues Hindernis;New obstacle
+de;Neues Projekt anlegen;Create new project
+de;Neues Projekt;New project
+de;Neues Setup anlegen ...;Create new setup ...
+de;Neustart des Server-Dienstes;Restart the server
+de;Nicht definiert;Not defined
+de;Nur Nicht-JADE-Ontologien;Only non-JADE ontologies
+de;Nächster Datensatz (STRG+DOWN);Next Record (CTRL + DOWN)
+de;OK;OK
+de;Objekt Entfernen;Remove object
+de;Objekt entfernen;Remove object
+de;Objekt hinzufügen;Add object
+de;Objekt löschen;Remove object
+de;Objekt nach oben;Move object up
+de;Objekt nach unten;Move object down
+de;Objekt übernehmen;Apply object
+de;Objekt-Eigenschaften;Object properties
+de;Objekt-ID;Object ID
+de;Objekt-Typ;Object type
+de;Objekt;Object
+de;Objekte aus Projekt-Ontologie;Objects from project ontology
+de;Objekteigenschaften;Object properties
+de;Observer-Output;
+de;Ontologie hinzuf?gen;Add ontology
+de;Ontologie hinzufügen;Add ontology
+de;Ontologie-Klasse für Übergabepunkte;Ontology class for transfer points
+de;Ontologie;Ontology
+de;Ontologieklasse;Ontology Class
+de;Ontologien;Ontologies
+de;Optionen;Options
+de;Packe;Packing
+de;Passives Objekt;Passive object
+de;Pause;Pause
+de;PlugIn für Agent.GUI;PlugIn for Agent.GUI
+de;Position;Position
+de;Progamm umschalten auf;Switch progam to
+de;Programmende...;Application shutdown ...
+de;Programmstart [Anwendung] ...;Program Start [Application] ...
+de;Programmstart [Server] ...;Program Start [Server] ...
+de;Programmstart...;Starting Program ...
+de;Programmstart;Program Start
+de;Projekt '@' speichern?;Save Project '@'?
+de;Projekt exportieren;Export Project
+de;Projekt exportieren?;Export project?
+de;Projekt importieren;Import Project
+de;Projekt schließen;Close Project
+de;Projekt speichern;Save Project
+de;Projekt speichern?;Save Project?
+de;Projekt zum Export auswählen;Select a project to export
+de;Projekt öffnen;Open Project
+de;Projekt-Agenten;Project-Agents
+de;Projekt-Desktop;Project Desktop
+de;Projekt-Info;Project info
+de;Projekt-Ontologie;Project ontology
+de;Projekt-Ressourcen;Project Resources
+de;Projekte;Projects
+de;Projekttitel;Project title
+de;Quell-Sprache;Source language;;;
+de;RMA (Remote Monitoring Agent) öffnen;Open RMA (Remote Monitoring Agent)
+de;Rechts-Klick für weitere Optionen;Right-Click for more options
+de;Ressourcen;Resources
+de;SVG Dateien;SVG files
+de;SVG laden;Load SVG
+de;SVG zuweisen;Assign SVG
+de;SVG-Datei zuweisen;Assign SVG file
+de;SVG-Datei;SVG file
+de;SVG-Dateien;SVG files
+de;SVG-Elementtyp;SVG element type
+de;Schließen;Close
+de;SciMark 2.0 - Benchmark;SciMark 2.0 - Benchmark
+de;Sekunden;Seconds
+de;Server-Dienst (Master / Slave);Server (Master / Slave)
+de;Server-Dienst beim Programmstart automatisch initialisieren;Automatically initialize Server at startup
+de;Server-Konfiguration;Server Configuration
+de;Server;Server
+de;Setup hinzufügen;Add Setup
+de;Setup kopieren ...;Copy Setup ...
+de;Setup kopieren;Copy Setup
+de;Setup löschen;Delete Setup
+de;Setup löschen?;Delete Setup?
+de;Setup umbenennen ...;Rename Setup ...
+de;Setup umbenennen;Rename Setup
+de;Setup-Datei nicht gefunden!;Could not find setup file!
+de;Setup-Name wird bereits verwendet!;Setup name is already used!
+de;Setup-Name zu kurz!;Setup name too short!
+de;Simulation starten;Start simulation
+de;Simulation-Start;Start simulation
+de;Simulation-Stop;Stop simulation
+de;Simulation;Simulation
+de;Simulations-Setup;Simulation-Setup
+de;Simulations-Visualisierung;Simulation-Visualization
+de;Simulationsumgebung;Simulation Environment
+de;Simulationszeit;Simulation time
+de;Sniffer-Agenten starten;Start Sniffer agent
+de;Spanisch;Spanish
+de;Speichere SVG nach;Save SVG to
+de;Speichere Umgebung nach;Saving environment to
+de;Speichern;Save
+de;Spielfeld;Playground
+de;Sprache:;Language:
+de;Sprache;Language
+de;Start-Argumente für den ausgewählten Agenten;Start-arguments for the selected agent
+de;Start-Konfiguration;Start-Configuration
+de;Start-Objekte aus Projekt-Ontologie;Startup objects from project-ontology
+de;Start;Start
+de;Starte Agent.GUI - Service;Start Agent.GUI - Service
+de;Starte Agent.GUI als:;Start Agent.GUI as:
+de;Starte JADE über Port-Nr.:;Start JADE via port no.:
+de;Starte Messung der Systemauslastung;Start measuring the system load
+de;Starten als:;Start as:
+de;Starten als;Start as
+de;Statische Lastverteilung aktivieren;Enable static load balancing
+de;Status laden;Load status
+de;Status speichern;Save status
+de;Stop Agent.GUI - Service;Stop Agent.GUI - Service
+de;Stop;Stop
+de;Suche nach Agenten beendet...;Search for agents finished...
+de;Suche nach der nächsten fehlenden Übersetzung (STRG+F);Search for the next missing translation (CTRL + F)
+de;Suche;Search
+de;Teil-Umgebung;environment part
+de;Text zur Übersetzung;Text to translate
+de;Typ-Bezeichner;Type-Specifier
+de;Typ;Type
+de;Umbenennen;Rename
+de;Umgebung speichern;Save environment
+de;Umgebung;Environment
+de;Umgebungs-Setup;"Environment setup	"
+de;Umgebungsdatei;Environment file
+de;Umgebungseigenschaften;Environment properties
+de;Umgebungskonfiguration;Environment Configuration
+de;Umgebungstyp;Environment Type
+de;Umschalten von 'Anwendung' auf 'Server';Switch from 'Application' to 'Server'
+de;Umschalten von 'Server' auf 'Anwendung';Switch from 'Server' to 'Application'
+de;Umschaltung rückgängig gemacht!;Switching undone!
+de;Unbekannt:;Unknown:
+de;Undefiniert;undefined
+de;Ungültige Eingabe, ausschließlich zahlenwerte zulässig!;Invalid input, only numbers allowed!
+de;Verbindungspunkte;Connection points
+de;Vergrößern ...;Expand View ...
+de;Vergrößern;Zoom In
+de;Verkleinern;Zoom out
+de;Verteilung + Grenzwerte;Distribution + Thresholds
+de;Verteilung;Distribution
+de;Verzeichnis bereits vorhanden!;Directory already exists!
+de;Verzeichnis wurde nicht gefunden:;Directory was not found:
+de;Verzeichnis;Folder
+de;Vis.-Geschwindigkeit;Visualisation speed
+de;Visualisierung;Visualization
+de;Vorhandene Projektverzeichnisse;Known project folders
+de;Voriger Datensatz (STRG+UP);Previous Record (CTRL + UP)
+de;Warte auf Agentenliste...;Waiting for agent list...
+de;Warte auf Ontologie-Liste...;Waiting for ontology list...
+de;Wollen Sie das aktuelle Setup wirklich löschen?;Do you want to delete the current Setup?
+de;Wörterbuch;Dictionary
+de;XML-Dateien;XML files
+de;XML;XML
+de;Zur Zeit ist kein Agenten-Projekt geöffnet.;There is currently no open agents project .
+de;Zurücksetzen;Reset
+de;Zyklisch !;Cyclic!
+de;bereit;ready
+de;für das Setup;for the setup
+de;in Datei;In file
+de;liegt außerhalb von Playground;is outside of playground
+de;nicht gefunden!;not found!
+de;nicht gefunden.;not found.
+de;nicht gefunden;not found
+de;nicht unterstützt;not supported
+de;physikalisch;physical
+de;speichern;save
+de;wird bereits verwendet.;is already in use.
+de;wurde nicht gefunden.;was not found.
+de;yEd GraphML Datei;yEd GraphML file
+de;yEd GraphML;yEd GraphML
+de;zu Datei;to file
+de;Öffnen;Open
+de;Über...;About ...
+de;Übernehmen;Apply
+de;Übersetzen ...;Translate ...
+de;Übersetzen;Translate
+de;Übersetzter Text;Text translated
+de;Übersetzung speichern (STRG+S);Save translation (CTRL + S)
+de;Überspringen;Skip
