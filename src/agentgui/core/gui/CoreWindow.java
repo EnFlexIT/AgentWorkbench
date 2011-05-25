@@ -874,8 +874,7 @@ public class CoreWindow extends JFrame implements ComponentListener {
 			}
 			// --- Menü Extras => nicht hier !! ---------------
 			else if ( ActCMD.equalsIgnoreCase("ExtraTranslation") ) {
-				Translation trans = new Translation(Application.MainWindow);
-				trans.setVisible(true);
+				Application.showTranslationDialog();
 			}
 			else if ( ActCMD.equalsIgnoreCase("ExtraBenchmark") ) {
 				Application.doBenchmark(true);

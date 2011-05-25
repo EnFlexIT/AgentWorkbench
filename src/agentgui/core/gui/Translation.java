@@ -30,6 +30,7 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -67,6 +68,8 @@ public class Translation extends JDialog implements ActionListener {
 	private DefaultTableModel dictData = new DefaultTableModel();
 	private DefaultComboBoxModel langSelectionModelSource = new DefaultComboBoxModel();
 	private DefaultComboBoxModel langSelectionModelDestin = new DefaultComboBoxModel();
+	
+	private boolean forceApplicationRestart = false;
 	
 	private JPanel jContentPane = null;
 		private JLabel jLabelNorth = null;
@@ -127,6 +130,21 @@ public class Translation extends JDialog implements ActionListener {
 		initialize();
 	}
 
+	/**
+	 * In order to catch the closing of this window, this method overrides the one
+	 * from the super class.
+	 * In the case that the csv-version of the dictionary was imported, the application
+	 * has to restart now in order to show the right translations.
+	 */
+	@Override
+	public void setVisible(boolean b) {
+		super.setVisible(b);
+		if (this.forceApplicationRestart==true) {
+			System.out.println(Language.translate("Neuinitialsierung des Anwendungsfensters ..."));
+			Application.setLanguage(Application.RunInfo.getLanguage(), false);
+		}
+	}
+	
 	/**
 	 * This method initializes this
 	 * @return void
@@ -313,8 +331,9 @@ public class Translation extends JDialog implements ActionListener {
 			
 			Vector<Object> rowData = new Vector<Object>(); 
 			rowData.addAll(Arrays.asList(dictLine.split(Language.seperator, -1)));
-			if (rowData.get(0).equals(Language.SOURCE_LANG)==false) {
-				// --- row counter ------------------------
+			
+			if (rowData.get(0)!=null && rowData.get(0).equals("")==false && rowData.get(0).equals(Language.SOURCE_LANG)==false) {
+				// --- add row to the displayable dictionary --------
 				rowNo++;
 				rowData.add(0, rowNo);
 				this.dictData.addRow(rowData);	
@@ -1031,18 +1050,41 @@ public class Translation extends JDialog implements ActionListener {
 	 */
 	private void findNextTranslationGap() {
 		
-		int searchColumn = jComboBoxDestinationLang.getSelectedIndex() + 1;
-		
-		for (int searchRow=0;searchRow<dictData.getRowCount();searchRow++) {
+		int searchColumn = jComboBoxDestinationLang.getSelectedIndex() + 2;
+		int searchRow = 0;
+		int searchRowStart = 0;
+		int selectedRow = jTableDictionary.getSelectedRow();
+
+		// --- take into account the current selection --------------
+		if (selectedRow!=-1) {
+			searchRowStart = selectedRow+1;
+		}
+		// --- start search for the next gap in the dictionary ------ 
+		for (searchRow=searchRowStart; searchRow<dictData.getRowCount(); searchRow++) {
 			
 			Vector<?> lineVector = (Vector<?>) dictData.getDataVector().elementAt(searchRow);
 			String element = (String) lineVector.get(searchColumn);
 			
 			if (element==null || element.equals("")) {
 				this.setCurrentDataSet(searchRow);
-				break;
+				return;
 			}
 		}
+		// --- end of dictionary reached, start from the top again --
+		if (selectedRow!=-1) {
+			// --- ... but only if we didn't start from the top -----
+			for (searchRow=0; searchRow<=selectedRow; searchRow++) {
+				
+				Vector<?> lineVector = (Vector<?>) dictData.getDataVector().elementAt(searchRow);
+				String element = (String) lineVector.get(searchColumn);
+				
+				if (element==null || element.equals("")) {
+					this.setCurrentDataSet(searchRow);
+					return;
+				}
+			}
+		}
+		
 	}
 	
 	/**
@@ -1060,8 +1102,11 @@ public class Translation extends JDialog implements ActionListener {
 			// --- remove the entry from the dataDict -----
 			int row = jTableDictionary.getSelectedRow();
 			dictData.removeRow(row);
-			jTableDictionary.setRowSelectionInterval(row-1, row-1);
-			
+			if (row==0) {
+				jTableDictionary.setRowSelectionInterval(row, row);
+			} else {
+				jTableDictionary.setRowSelectionInterval(row-1, row-1);	
+			}
 		}
 	}
 	
@@ -1141,7 +1186,17 @@ public class Translation extends JDialog implements ActionListener {
 			this.setVisible(false);
 			
 		} else if (trigger == jButtonImportCSV) {
-			Language.useCSVDictionaryFile();
+			
+			String title = Language.translate("CSV-Version des Wörterbuchs übernehmen?");
+			String message = Language.translate("Möchten Sie die CSV-Version des Wörterbuches jetzt übernehmen?");
+			
+			int answer = JOptionPane.showConfirmDialog(this, message, title, JOptionPane.YES_NO_OPTION);
+			if (answer == JOptionPane.YES_OPTION) {
+				this.setVisible(false);
+				Language.useCSVDictionaryFile();
+				Application.showTranslationDialog();
+				this.forceApplicationRestart = true;
+			}
 			
 		} else if (trigger == jMenuItemEdit) {
 			jTabbedPane.setSelectedComponent(jPanelTranslation);

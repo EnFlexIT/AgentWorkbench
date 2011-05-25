@@ -84,7 +84,6 @@ public class Language {
 	public static void useCSVDictionaryFile() {
 		dictLineList64 = dictLineListCSV;
 		proceedLoadedDictionaryLines();
-		Application.setLanguage(Application.RunInfo.getLanguage());		
 	}
 	
 	/**
@@ -251,7 +250,6 @@ public class Language {
 	
 	// -------------------------------------------------------------------------
 	
-	
 	/**
 	 * Reading the dictionary files to the memory 
 	 */
@@ -306,31 +304,33 @@ public class Language {
 		// --------------------------------------------------------------------		
 		if (dictLineList64.size()!=0) {
 			
-			final String[][] valuesArray = new String[dictLineList64.size()][];    
-			int cnt = 0;    
-			
-			for ( final String line : dictLineList64 ) {   
+			dictHash64 = new Hashtable<String, Integer>(); 
+    
+			int cnt = 0;			
+			for ( String line : dictLineList64 ) {   
 				if (line != null) {
-					valuesArray[cnt] = line.split(seperator, -1);
-					if ( ! valuesArray[cnt][0].isEmpty() ) {
+					
+					String[] valuesArray = line.split(seperator, -1);
+					if ( ! valuesArray[0].isEmpty() ) {
 						// ------------------------------------------------------------------------
 						// --- Used to identify the Header of the dictionary ----------------------
-						if ( valuesArray[cnt][0].equalsIgnoreCase(Language.SOURCE_LANG) ) {
+						if ( valuesArray[0].equalsIgnoreCase(Language.SOURCE_LANG) ) {
 							// --- Remind this header ---------------------------------------------
-							dictLangHeaderArray = valuesArray[cnt];
+							dictLangHeaderArray = valuesArray;
 							// --- Which Language has to be used ----------------------------------
 							currLanguageIndex = getIndexOfLanguage(Application.RunInfo.getLanguage());	
 							// --- index the Header -----------------------------------------------
-							dictHash64.put( valuesArray[cnt][0], cnt );
+							dictHash64.put( valuesArray[0], cnt );
 							
 						} else {
 							// --- index the expression, that was used in the source code ---------
-							int indexOfExpression = getIndexOfLanguage(valuesArray[cnt][0]);
-							String indexExpression = valuesArray[cnt][indexOfExpression];
-							dictHash64.put( indexExpression, cnt ); 			
+							int indexOfExpression = getIndexOfLanguage(valuesArray[0]);
+							String indexExpression = valuesArray[indexOfExpression];
+							dictHash64.put(indexExpression, cnt); 			
 						}
 						// ------------------------------------------------------------------------
-					};
+					}
+					
 				}
 				cnt++;			
 			}

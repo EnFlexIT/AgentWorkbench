@@ -10,6 +10,7 @@ import agentgui.core.database.DBConnection;
 import agentgui.core.gui.AboutDialog;
 import agentgui.core.gui.CoreWindow;
 import agentgui.core.gui.CoreWindowConsole;
+import agentgui.core.gui.Translation;
 import agentgui.core.gui.options.OptionDialog;
 import agentgui.core.jade.ClassSearcher;
 import agentgui.core.jade.Platform;
@@ -233,6 +234,14 @@ public class Application {
 	}
 
 	/**
+	 * Opens the translation dialog of the application
+	 */
+	public static void showTranslationDialog() {
+		Translation trans = new Translation(Application.MainWindow);
+		trans.setVisible(true);
+	}
+	
+	/**
 	 * Opens the Configuration-Dialog for the 
 	 * AgentGUI-Application without a specific
 	 * Tab to show
@@ -372,23 +381,41 @@ public class Application {
 	 * Changing the application language to:
 	 * NewLang => "DE", "EN", "IT", "ES" or "FR" etc. is equal to the 
 	 * end phrase after the prefix "LANG_". E.g. "LANG_EN" needs "EN" as parameter
+	 * 
+	 * @param newLang
 	 */
-	public static void setLanguage( String newLang ) {
+	public static void setLanguage(String newLang) {
+		setLanguage(newLang, true);
+	}
+	/**
+	 * Changing the application language to:
+	 * NewLang => "DE", "EN", "IT", "ES" or "FR" etc. is equal to the 
+	 * end phrase after the prefix "LANG_". E.g. "LANG_EN" needs "EN" as parameter.
+	 * 
+	 * If 'askUser' is set to false the changes will be done without user interaction. 
+	 * 
+	 * @param newLang
+	 * @param askUser
+	 */
+	public static void setLanguage(String newLang, boolean askUser) {
 
 		String newLine = RunInfo.AppNewLineString();
 		
-		// --- Sind die neue und die alte Anzeigesprach gleich ? ----
-		Integer newLangIndex = Language.getIndexOfLanguage(newLang);
-		if ( newLangIndex == Language.currLanguageIndex ) return; 
-		
-		// --- User fragen, ob die Sprache umgestellt werden soll ---
-		String MsgHead = Language.translate("Anzeigesprache wechseln?");
-		String MsgText = Language.translate(
-						 "Möchten Sie die Anzeigesprache wirklich umstellen?" + newLine + 
-						 "Die Anwendung muss hierzu neu gestartet und Projekte" + newLine +
-						 "von Ihnen neu geöffnet werden.");
-		Integer MsgAnswer = JOptionPane.showInternalConfirmDialog( Application.MainWindow.getContentPane(), MsgText, MsgHead, JOptionPane.YES_NO_OPTION);
-		if (MsgAnswer==1) return;
+		if (askUser) {
+			// --- Sind die neue und die alte Anzeigesprach gleich ? ----
+			Integer newLangIndex = Language.getIndexOfLanguage(newLang);
+			if ( newLangIndex == Language.currLanguageIndex ) return; 
+			
+			// --- User fragen, ob die Sprache umgestellt werden soll ---
+			String MsgHead = Language.translate("Anzeigesprache wechseln?");
+			String MsgText = Language.translate(
+							 "Möchten Sie die Anzeigesprache wirklich umstellen?" + newLine + 
+							 "Die Anwendung muss hierzu neu gestartet und Projekte" + newLine +
+							 "von Ihnen neu geöffnet werden.");
+			Integer MsgAnswer = JOptionPane.showInternalConfirmDialog( Application.MainWindow.getContentPane(), MsgText, MsgHead, JOptionPane.YES_NO_OPTION);
+			if (MsgAnswer==1) return;
+			
+		}
 		
 		// --- JADE stoppen -----------------------------------------		
 		JadePlatform.jadeStop();
