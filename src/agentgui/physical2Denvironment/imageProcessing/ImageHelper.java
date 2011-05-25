@@ -89,6 +89,11 @@ public class ImageHelper {
 	
 	}
 	
+	public ImageHelper(EnvironmentProviderHelper helper)
+	{
+		this.helper=helper;
+	}
+	
 	public ImageHelper() 
 	{
 		
@@ -226,7 +231,7 @@ public class ImageHelper {
 	 * @return
 	 * @throws Exception
 	 */
-	private agentgui.physical2Denvironment.imageProcessing.StepNode withoutGrid(String id,float target_x,float target_y,float width,float height, int direction , float lookAhead, agentgui.physical2Denvironment.imageProcessing.StepNode parent,int pixel) throws Exception
+	private synchronized agentgui.physical2Denvironment.imageProcessing.StepNode withoutGrid(String id,float target_x,float target_y,float width,float height, int direction , float lookAhead, agentgui.physical2Denvironment.imageProcessing.StepNode parent,int pixel) throws Exception
 	{
 			
 		while(this.evn==null)
@@ -255,8 +260,7 @@ public class ImageHelper {
 		closedList.add(current);
 		// While you're not even close
 		while(this.getDistance(target_x, target_y, currentXPos, currentYPos)>10) 
-		{
-				
+		{				
 			
 			// Up left
 			agentgui.physical2Denvironment.imageProcessing.StepNode new_current=null;
@@ -461,23 +465,27 @@ public class ImageHelper {
 			closedList.add(current);
 		    int index=this.getMinimumDistance(openList);
 		    if(index==-1)
-		    {
-		    
+		    {		    
 		    	if(lookAhead-2<0)
 		    	{
-		    	
+		    		System.out.println("LookAhead-2:"+ (lookAhead-2));
+		    		System.out.println("Habe keinen Weg gefunden:" + id);
 		    		return current;
 		    	}
 		    	//No path is found. Try too look less pixel ahead
 		    	else
 		    	{
-		 
-		    	
-				//SVGSafe sg=new SVGSafe();
+		    	SVGSafe sg=new SVGSafe();
 				//System.out.println("Rekursion!");
-				//sg.write("WayPath"+counter+".svg", doc);
-				
-		    	return this.withoutGrid(id, target_x, target_y, width, height, direction, lookAhead-2, parent, pixel);
+				sg.write("WayPath_"+id +","+counter+".svg", doc);
+				//System.out.println("Write File");
+				//System.out.println("Rek with:"+ (lookAhead-2) +" ID:"+id);
+				int faktor=2;
+				if(lookAhead-faktor==0)
+				{
+					faktor=1;
+				}
+		    	return this.withoutGrid(id, target_x, target_y, width, height, direction, lookAhead-faktor, parent, pixel);
 		    	}
 		     }		   
 		    
@@ -575,8 +583,8 @@ public class ImageHelper {
 	
 	public synchronized agentgui.physical2Denvironment.imageProcessing.StepNode createPlanImage(String id,String target_id , int direction , float lookAhead) throws Exception
 	{
-		System.out.println("First Call:"+FIRST_CALL);
-		
+		//System.out.println("Agent:"+id + " will create his own world!");
+		/**
 		synchronized (this) {
 		if(!READ_WORLD&&!IS_IN_METHOD&FIRST_CALL)
 		{
@@ -598,7 +606,8 @@ public class ImageHelper {
 			System.out.println("Warte!"+id);
 			Thread.sleep(50);
 		}
-	
+	 */
+		this.evn=this.createManipulatedWorldPerAgent();
 		Document doc=helper.getSVGDoc();
 		Element target=doc.getElementById(target_id);
 		float target_x=Float.parseFloat(target.getAttribute("x"));
@@ -630,12 +639,28 @@ public class ImageHelper {
 	
 	public synchronized agentgui.physical2Denvironment.imageProcessing.StepNode createPlanImage(String id,Position target , int direction , float lookAhead) throws Exception
 	{
+		System.out.println("First Call:"+FIRST_CALL);
+		
 		synchronized (this) {
-			if(!READ_WORLD)
-			{
-			System.out.println("Create Plan Image und READ_WORLD=false");
-			this.createManipulatedWorld();
-			}
+		if(!READ_WORLD&&!IS_IN_METHOD&FIRST_CALL)
+		{
+		FIRST_CALL=false;
+		
+		System.out.println(id + " erstell Welt");
+		//this.createManipulatedWorldWithAgents(otherAgent);
+		}
+		else
+		{
+		System.out.println(id + " liest Welt");
+		this.evn=ImageIO.read(new File("myWorld.jpg"));	
+		}
+			
+		}
+		
+		while(!READ_WORLD)
+		{
+			System.out.println("Warte!"+id);
+			Thread.sleep(50);
 		}
 		
 		Document doc=helper.getSVGDoc();
@@ -647,6 +672,104 @@ public class ImageHelper {
 		final float height=Float.parseFloat(self.getAttribute("height"));
 		float x=Float.parseFloat(self.getAttribute("x"));
 		float y=Float.parseFloat(self.getAttribute("y"));
+		this.firstX=x;
+		this.firstY=y;
+		agentgui.physical2Denvironment.imageProcessing.StepNode root=new agentgui.physical2Denvironment.imageProcessing.StepNode();
+		root.setX(x);
+		root.setY(y);
+		final int listXIndex= (int) (root.getX()/lookAhead);
+		final int listYIndex=  (int) (root.getY()/lookAhead);
+		final int targetXIndex= (int) (target_x/lookAhead);
+		final int targetYIndex=(int) (target_y/lookAhead);
+		root.setDistanceToOrginal(0.0);
+		root.setDistance(this.getHCost(listXIndex, listYIndex, targetXIndex, targetYIndex));
+		root.setTotal_distance((this.getHCost(listXIndex, listYIndex, targetXIndex, targetYIndex)));
+		 root.setParent(null);
+		//int color=this.getPixelsOnce(plan, x, y, width, height);
+		agentgui.physical2Denvironment.imageProcessing.StepNode targetNode= this.withoutGrid(id, target_x, target_y, width, height, direction, 10.0f,root , -1) ;   //this.originalAStar(id, target_x, target_y, width, height, target_id, direction, lookAhead, root, -1);          //      //this.originalAStar(id, target_x, target_y, width, height, target_id, direction, lookAhead, root, color) ;        //handle_subNodes_brute(id,target_x, target_y,  width, height, target_id, direction, lookAhead,root,color);
+		 return targetNode;
+		
+	}
+	
+
+	public synchronized agentgui.physical2Denvironment.imageProcessing.StepNode createPlanImage(ArrayList<String> otherAgent,Position own,String id ,String target , float lookAhead) throws Exception
+	{
+		System.out.println("First Call:"+FIRST_CALL);
+		
+		synchronized (this) {
+		
+		this.evn=this.createManipulatedWorldWithAgents(otherAgent);
+		}
+		
+		Document doc=helper.getSVGDoc();
+		Element targetElement=doc.getElementById(target);
+		float target_x=Float.parseFloat(targetElement.getAttribute("x"));
+		float target_y=Float.parseFloat(targetElement.getAttribute("y"));
+		Element self=doc.getElementById(id);
+		final float width=Float.parseFloat(self.getAttribute("width"));
+		final float height=Float.parseFloat(self.getAttribute("height"));
+		float x=own.getXPos();
+		float y=own.getYPos();
+		this.firstX=x;
+		this.firstY=y;
+		agentgui.physical2Denvironment.imageProcessing.StepNode root=new agentgui.physical2Denvironment.imageProcessing.StepNode();
+		root.setX(x);
+		root.setY(y);
+		final int listXIndex= (int) (root.getX()/lookAhead);
+		final int listYIndex=  (int) (root.getY()/lookAhead);
+		final int targetXIndex= (int) (target_x/lookAhead);
+		final int targetYIndex=(int) (target_y/lookAhead);
+		root.setDistanceToOrginal(0.0);
+		root.setDistance(this.getHCost(listXIndex, listYIndex, targetXIndex, targetYIndex));
+		root.setTotal_distance((this.getHCost(listXIndex, listYIndex, targetXIndex, targetYIndex)));
+		 root.setParent(null);
+		//int color=this.getPixelsOnce(plan, x, y, width, height);
+		agentgui.physical2Denvironment.imageProcessing.StepNode targetNode= this.withoutGrid(id, target_x, target_y, width, height,ImageHelper.DIRECTION_BACKWARD, 10.0f,root , -1) ;   //this.originalAStar(id, target_x, target_y, width, height, target_id, direction, lookAhead, root, -1);          //      //this.originalAStar(id, target_x, target_y, width, height, target_id, direction, lookAhead, root, color) ;        //handle_subNodes_brute(id,target_x, target_y,  width, height, target_id, direction, lookAhead,root,color);
+		 return targetNode;
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	public synchronized agentgui.physical2Denvironment.imageProcessing.StepNode createPlanImage(String otherAgent,Position own,String id ,Position target , int direction , float lookAhead) throws Exception
+	{
+		System.out.println("First Call:"+FIRST_CALL);
+		
+		synchronized (this) {
+		if(!READ_WORLD&&!IS_IN_METHOD&FIRST_CALL)
+		{
+		FIRST_CALL=false;
+		
+		System.out.println(id + " erstell Welt");
+		this.evn=this.createManipulatedWorldWithAgents(otherAgent);
+		}
+		else
+		{
+		System.out.println(id + " liest Welt");
+		this.evn=ImageIO.read(new File("myWorld.jpg"));	
+		}
+			
+		}
+		
+		while(!READ_WORLD)
+		{
+			System.out.println("Warte!"+id);
+			Thread.sleep(50);
+		}
+		Document doc=helper.getSVGDoc();
+
+		float target_x=target.getXPos();
+		float target_y=target.getYPos();
+		Element self=doc.getElementById(id);
+		final float width=Float.parseFloat(self.getAttribute("width"));
+		final float height=Float.parseFloat(self.getAttribute("height"));
+		float x=own.getXPos();
+		float y=own.getYPos();
 		this.firstX=x;
 		this.firstY=y;
 		agentgui.physical2Denvironment.imageProcessing.StepNode root=new agentgui.physical2Denvironment.imageProcessing.StepNode();
@@ -1115,7 +1238,328 @@ public class ImageHelper {
 	}
 	
  }
+	
+	
+	public synchronized BufferedImage createManipulatedWorldPerAgent()
+	{
+	
+		try
+		{
+			
+				System.out.println("Bin drin!");
+				Document doc=helper.getSVGDoc();
+				EnvironmentWrapper envWrap = new EnvironmentWrapper(helper.getEnvironment());
+				Vector<StaticObject> obstacles=envWrap.getObstacles();
+				Vector<ActiveObject> agents=envWrap.getAgents();
+				for(ActiveObject obj: agents)
+				{
+	    	 	        	Element element=doc.getElementById(obj.getId());
+	    	 	           	Node tmp= element.getParentNode();
+	    	 	           	tmp.removeChild(element);
+	             }  
+			NodeList list=doc.getElementsByTagName("rect");
+			for(int i=0;i<list.getLength();i++)
+			{
+				Node node=list.item(i);
+				if(node.getParentNode().getNodeName().equals("svg"))
+				{
+	    		Node parent=node.getParentNode();
+	    		parent.removeChild(node);
+	    		break;
+				}	  	
+			}
+			
+			for(StaticObject obj: obstacles)
+			{		
+				Element element=doc.getElementById(obj.getId());
+				String oldVal=element.getAttributeNS(null, "style");
+				String search="fill:";
+				int index=oldVal.indexOf(search);
+				int end;
+				if(index!=-1)
+				{
+					end=oldVal.indexOf(";");
+	    	    	if(end==-1)
+	    	    	{
+	    	    		oldVal="fill:gray";
+	    	    	}
+	    	    	else
+	    	    	{
+	    	    		oldVal=oldVal.replaceFirst(oldVal.substring(index+search.length(),end), "gray");
+	    	    	}	        		    
+	    	    	Attr style=element.getAttributeNode("style");
+	    	    	style.setValue(oldVal);
+	    	}
+		 }
+		//SVGImage img=new SVGImage( (SVGDocument)doc);
+		//this.evn=(BufferedImage) img.createBufferedImage();
+			
+			SVGSafe save=new SVGSafe();
+			int i=0;
+			String name="myWorldAgent"+i;
+			File f=new File(name+".svg");
+			while(f.exists())
+			{
+				 i++;
+				 name="myWorldAgent"+i;
+				 f=new File(name+".svg");
+			}
+			save.write(name+".svg", doc);
+			save.writeJPG(name+".svg");
+			this.evn=ImageIO.read(new File(name+".jpg"));
+			return evn;	
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	
+	
+	
+	
 
+	public synchronized BufferedImage createManipulatedWorldWithAgents(String otherAgent)
+	{
+	
+		try
+		{
+			if(!READ_WORLD&&!IS_IN_METHOD)
+			{
+				System.out.println("Bin drin!");
+				IS_IN_METHOD=true;
+				Document doc=helper.getSVGDoc();
+				EnvironmentWrapper envWrap = new EnvironmentWrapper(helper.getEnvironment());
+				Vector<StaticObject> obstacles=envWrap.getObstacles();
+				Vector<ActiveObject> agents=envWrap.getAgents();
+				for(ActiveObject obj: agents)
+				{
+							if(!obj.getId().equals(otherAgent))
+							{
+	    	 	        	Element element=doc.getElementById(obj.getId());
+	    	 	           	Node tmp= element.getParentNode();
+	    	 	           	tmp.removeChild(element);
+							}
+							else
+							{
+								Element element=doc.getElementById(obj.getId());
+								String oldVal=element.getAttributeNS(null, "style");
+								String search="fill:";
+								int index=oldVal.indexOf(search);
+								int end;
+								if(index!=-1)
+								{
+									end=oldVal.indexOf(";");
+					    	    	if(end==-1)
+					    	    	{
+					    	    		oldVal="fill:gray";
+					    	    	}
+					    	    	else
+					    	    	{
+					    	    		oldVal=oldVal.replaceFirst(oldVal.substring(index+search.length(),end), "gray");
+					    	    	}	        		    
+					    	    	Attr style=element.getAttributeNode("style");
+					    	    	style.setValue(oldVal);
+							}
+							}
+	             }  
+			NodeList list=doc.getElementsByTagName("rect");
+			for(int i=0;i<list.getLength();i++)
+			{
+				Node node=list.item(i);
+				if(node.getParentNode().getNodeName().equals("svg"))
+				{
+	    		Node parent=node.getParentNode();
+	    		parent.removeChild(node);
+	    		break;
+				}	  	
+			}
+			
+			for(StaticObject obj: obstacles)
+			{		
+				Element element=doc.getElementById(obj.getId());
+				String oldVal=element.getAttributeNS(null, "style");
+				String search="fill:";
+				int index=oldVal.indexOf(search);
+				int end;
+				if(index!=-1)
+				{
+					end=oldVal.indexOf(";");
+	    	    	if(end==-1)
+	    	    	{
+	    	    		oldVal="fill:gray";
+	    	    	}
+	    	    	else
+	    	    	{
+	    	    		oldVal=oldVal.replaceFirst(oldVal.substring(index+search.length(),end), "gray");
+	    	    	}	        		    
+	    	    	Attr style=element.getAttributeNode("style");
+	    	    	style.setValue(oldVal);
+	    	}
+		 }
+		//SVGImage img=new SVGImage( (SVGDocument)doc);
+		//this.evn=(BufferedImage) img.createBufferedImage();
+			synchronized (this) {
+				if(!READ_WORLD)
+				{	
+			SVGSafe save=new SVGSafe();
+			int i=0;
+			String name="myWorldAgent"+i;
+			File f=new File(name+".svg");
+			while(f.exists())
+			{
+				 i++;
+				 name="myWorldAgent"+i;
+				 f=new File(name+".svg");
+			}
+			save.write(name+".svg", doc);
+			save.writeJPG(name+".svg");
+				}
+			
+			
+			}
+		
+
+	   }
+			
+		this.evn=ImageIO.read(new File("myWorld.jpg"));
+		System.out.println("Setze Real_WORLD auf true!");
+		READ_WORLD=true;
+		return evn;
+	}
+	catch(Exception e)
+	{
+		e.printStackTrace();
+		return null;
+	}
+	
+ }
+	private boolean is_insight(ArrayList<String> other, ActiveObject obj)
+	{
+		for(int i=0;i<other.size();i++)
+		{
+			if(!obj.getId().equals(other.get(i)))
+			{
+				return true;
+			}
+		}
+			return false;
+	
+	}
+					
+	public synchronized BufferedImage createManipulatedWorldWithAgents(ArrayList<String> otherAgent)
+	{
+	
+		try
+		{
+			
+			
+				IS_IN_METHOD=true;
+				Document doc=helper.getSVGDoc();
+				EnvironmentWrapper envWrap = new EnvironmentWrapper(helper.getEnvironment());
+				Vector<StaticObject> obstacles=envWrap.getObstacles();
+				Vector<ActiveObject> agents=envWrap.getAgents();
+				for(ActiveObject obj: agents)
+				{
+							if(!is_insight(otherAgent,obj))
+							{
+						
+	    	 	        	Element element=doc.getElementById(obj.getId());
+	    	 	           	Node tmp= element.getParentNode();
+	    	 	           	tmp.removeChild(element);
+							}
+							else
+							{
+					
+								Element element=doc.getElementById(obj.getId());
+								String oldVal=element.getAttributeNS(null, "style");
+								String search="fill:";
+								int index=oldVal.indexOf(search);
+								int end;
+								if(index!=-1)
+								{
+									end=oldVal.indexOf(";");
+					    	    	if(end==-1)
+					    	    	{
+					    	    		oldVal="fill:gray";
+					    	    	}
+					    	    	else
+					    	    	{
+					    	    		oldVal=oldVal.replaceFirst(oldVal.substring(index+search.length(),end), "gray");
+					    	    	}	        		    
+					    	    	Attr style=element.getAttributeNode("style");
+					    	    	style.setValue(oldVal);
+							}
+							}
+	             }  
+			NodeList list=doc.getElementsByTagName("rect");
+			for(int i=0;i<list.getLength();i++)
+			{
+				Node node=list.item(i);
+				if(node.getParentNode().getNodeName().equals("svg"))
+				{
+	    		Node parent=node.getParentNode();
+	    		parent.removeChild(node);
+	    		break;
+				}	  	
+			}
+			
+			for(StaticObject obj: obstacles)
+			{		
+				Element element=doc.getElementById(obj.getId());
+				String oldVal=element.getAttributeNS(null, "style");
+				String search="fill:";
+				int index=oldVal.indexOf(search);
+				int end;
+				if(index!=-1)
+				{
+					end=oldVal.indexOf(";");
+	    	    	if(end==-1)
+	    	    	{
+	    	    		oldVal="fill:gray";
+	    	    	}
+	    	    	else
+	    	    	{
+	    	    		oldVal=oldVal.replaceFirst(oldVal.substring(index+search.length(),end), "gray");
+	    	    	}	        		    
+	    	    	Attr style=element.getAttributeNode("style");
+	    	    	style.setValue(oldVal);
+	    	}
+		 }
+		//SVGImage img=new SVGImage( (SVGDocument)doc);
+		//this.evn=(BufferedImage) img.createBufferedImage();
+			int i=0;
+			String name="myWorldAgent"+i;
+			synchronized (this) {
+				
+			SVGSafe save=new SVGSafe();
+			
+			
+			File f=new File(name+".svg");
+			while(f.exists())
+			{
+				 i++;
+				 name="myWorldAgent"+i;
+				 f=new File(name+".svg");
+			}
+			
+			save.write(name+".svg", doc);
+			save.writeJPG(name+".svg");
+			this.evn=ImageIO.read(new File(name+".jpg"));	
+			
+			}
+		
+		return evn;
+	}
+	catch(Exception e)
+	{
+		e.printStackTrace();
+		return null;
+	}
+	
+ }	
 	public PositionUpdate calculateNextCoord(int lastIndex,Position selfPos, Position destPos, final double msInSeconds,float speed, Stack<Position> position)
 	  {
 	    Position newPos=new Position(); // Save the Position which is passed to the simulation Agent here
@@ -1154,7 +1598,12 @@ public class ImageHelper {
 				   		destPos=position.get(lastIndex);
 				   		newPos.setXPos(selfPos.getXPos());
 				   		newPos.setYPos(selfPos.getYPos());
-				 	    partSolution.add(newPos);				 	
+				   		Position add=new Position();
+				   		add.setXPos(newPos.getXPos());
+				   		add.setYPos(newPos.getYPos());
+				 	    partSolution.add(add);			
+				 	    System.out.println(" wird hinzugefügt" + newPos.getXPos() + ",y:" + newPos.getYPos());
+				 	    // System.out.println("X Pos:"+newPos.getXPos() + ",y:" + newPos.getYPos());:"+ Pos:"+newPos.getXPos() + ",y:" + newPos.getYPos());
 				   }
 				   else
 				   {
@@ -1166,7 +1615,12 @@ public class ImageHelper {
 					   total_seconds=msInSeconds;
 				
 					   lastIndex++;
-					   partSolution.add(newPos);
+					   Position add=new Position();
+					   add.setXPos(newPos.getXPos());
+				   	   add.setYPos(newPos.getYPos());
+				 	   partSolution.add(add);
+				 	   System.out.println(" wird hinzugefügt:"+newPos.getXPos() + ",y:" + newPos.getYPos());
+				 	 
 					   PositionUpdate posUpdate=new PositionUpdate();
 					   posUpdate.setNewPosition(newPos);
 					   answer.setSpeed(new Long((long)speed));
@@ -1241,7 +1695,7 @@ public class ImageHelper {
 					lastPosition=new Position();
 					lastPosition.setXPos(destPos.getXPos());
 					lastPosition.setYPos(destPos.getYPos());
-					partSolution.add(newPos);
+					
 					selfPos.setXPos(newPos.getXPos());					   
 				    selfPos.setYPos(newPos.getYPos());
 				  	}
@@ -1256,6 +1710,11 @@ public class ImageHelper {
 			}
 			PositionUpdate posUpdate=new PositionUpdate();
 			posUpdate.setNewPosition(newPos);
+			Position add=new Position();
+			add.setXPos(newPos.getXPos());
+			add.setYPos(newPos.getYPos());
+			System.out.println("adde zur Liste:"+newPos.getXPos() + ",y:" + newPos.getYPos());
+		 	partSolution.add(add);
 			answer.setSpeed(new Long((long)speed));
 			//System.out.println("Size of Partsolitin in getMiddle:"+partSolution.size());
 		    answer.setWayToDestination(partSolution);	
@@ -1278,11 +1737,7 @@ public class ImageHelper {
 			posUpdate.setCustomizedParameter(answer);
 			posUpdate.setNewPosition(selfPos);
 			return posUpdate; 
-		  
-		  
-		  
-		  
-	  }
+		  }
 	
 	public Stack<Position> orderAndMiddleCoordinates(StepNode way,float agentWidth,float agentHeight,float factor)
 	{
@@ -1312,7 +1767,8 @@ public class ImageHelper {
 			{
 				ArrayList<String> otherAgents=new ArrayList<String>();
 				Physical2DObject agent=agents.get(i);
-				System.out.println("Trying to get:"+agent.getId());
+				//
+				
 				PositionUpdate ownAgentPosition= update.get(agent.getId());
 				if(ownAgentPosition != null) // Consider that agents have already reached their target therefore don't send any answer
 				{
@@ -1327,24 +1783,50 @@ public class ImageHelper {
 					ArrayList<Position>  otherPositions=((Answer) otherAgentPosition.getCustomizedParameter()).getWayToDestination();
 					
 					
-					int max=Math.min(ownAgentPositions.size(), otherPositions.size());
+					int max=Math.max(ownAgentPositions.size(), otherPositions.size());
+					int min=Math.min(ownAgentPositions.size(), otherPositions.size());
 					
 					for(int iter=0;iter<max;iter++)
 					{
+						if(min!=0)
+						{
 						Physical2DObject obj=new Physical2DObject();
 						Position pos=new Position();
+						if(iter<ownAgentPositions.size())
+						{
 						obj.setPosition(ownAgentPositions.get(iter));
+						}
+						else
+						{
+							obj.setPosition(ownAgentPositions.get(min-1));	
+						}
 						obj.setSize(agent.getSize());
 						Physical2DObject other=agents.get(counter);
+						if(iter < otherPositions.size())
+						{
 						other.setPosition(otherPositions.get(iter));
-						System.out.println("Vergleiche:" + ownAgentPositions.get(iter).getXPos() + "," + ownAgentPositions.get(iter).getYPos());
-						System.out.println("Mit" + otherPositions.get(iter).getXPos() + "," + otherPositions.get(iter).getYPos());
-						boolean result=obj.objectIntersects(other);
+						}
+						else
+						{
+							other.setPosition(otherPositions.get(min-1));	
+						}
+						//System.out.println("--------------------");
+						//System.out.println("Iter:"+iter);
+						//System.out.println("Vergleiche:" + obj.getPosition().getXPos() + "," + obj.getPosition().getYPos());
+						//System.out.println("Mit" + other.getPosition().getXPos() + "," + other.getPosition().getYPos());
+						boolean result=this.checkTimeBetween(obj, other);
+						//System.out.println("--------------------");
 						if(result)
 						{
 							otherAgents.add(agents.get(counter).getId());
+							
 							break;
 						}						
+					}
+						else
+						{
+							break;
+						}
 						
 					}
 				}
@@ -1366,7 +1848,7 @@ public class ImageHelper {
      
 	private boolean checkTimeBetween(Physical2DObject agent,Physical2DObject cmpr)
 	{
-		return agent.objectIntersects(cmpr);
+		return agent.objectIntersects(cmpr)|| cmpr.objectIntersects(agent) || agent.objectContains(cmpr) || cmpr.objectContains(agent);
 	}
 	
 	
