@@ -500,15 +500,21 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
     		Up2TreeLevel = 1000;
     	OntoTreeExpand( new TreePath( CurrProject.ontologies4Project.getOntologyTree().getRoot() ), expand, CurrNodeLevel, Up2TreeLevel);
     }
-    @SuppressWarnings("unchecked")
-	private void OntoTreeExpand( TreePath parent, boolean expand, Integer CurrNodeLevel, Integer Up2TreeLevel) {
+    /**
+     * 
+     * @param parent
+     * @param expand
+     * @param CurrNodeLevel
+     * @param Up2TreeLevel
+     */
+	private void OntoTreeExpand(TreePath parent, boolean expand, Integer CurrNodeLevel, Integer Up2TreeLevel) {
     
         TreeNode node = (TreeNode)parent.getLastPathComponent();
         if (CurrNodeLevel >= Up2TreeLevel) {
         	return;
         }
         if (node.getChildCount() >= 0) {
-            for ( Enumeration e=node.children(); e.hasMoreElements(); ) {
+            for ( Enumeration<?> e=node.children(); e.hasMoreElements(); ) {
                 TreeNode n = (TreeNode) e.nextElement();
                 TreePath path = parent.pathByAddingChild(n);
                 OntoTreeExpand(path, expand, CurrNodeLevel+1, Up2TreeLevel);

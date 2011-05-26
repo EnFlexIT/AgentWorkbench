@@ -45,6 +45,9 @@ import agentgui.core.application.Project;
  * Now the specific parts of this object array can be selected out of one
  * ontology, which is defined in this project. 
  *  
+ * The first String in this HashMap contains the class reference of the agent
+ * and the second String a list of ontology classes, separated by a '|' 
+ *  
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
 public class AgentConfiguration extends Hashtable<String, String> {
@@ -158,22 +161,33 @@ public class AgentConfiguration extends Hashtable<String, String> {
 		}
 	}
 	/**
-	 * This method will update the current 'value' of 'key'
+	 * This method will update the current 'value' of 'key', means the 
+	 * ontology configuration of an agent can be changed directly
 	 *  
-	 * @param key
+	 * @param agentsReference 
 	 * @param value
 	 */
-	private void update(String key, String value) {
-		this.remove(key);
-		if ( value!=null ) {
-			this.put(key, value );	
+	private void update(String agentsReference, String ontologyReferences) {
+		this.remove(agentsReference);
+		if ( ontologyReferences!=null ) {
+			this.put(agentsReference, ontologyReferences );	
 		}
 		currProject.updateAgentReferences();
 	}
-	public boolean movePosition( String agentReference, String agentConfig, Integer agentConfigPos, Integer direction ) {
+	/**
+	 * This method can be used in order to change the order of the ontology-start arguments
+	 * of an agent. So position 1 can be changed to 2 and so on.
+	 * 
+	 * @param agentReference
+	 * @param agentConfig The whole configuration of the start arguments as a string
+	 * @param agentConfigPos Which start argument should change its position? (not Index) 
+	 * @param direction +1 or -1
+	 * @return successful changed or not? 
+	 */
+	public boolean movePosition(String agentReference, String agentConfig, Integer agentConfigPos, Integer direction ) {
 		if ( agentReference != null && agentConfig != null && direction != null ){
 			refsString = this.get( agentReference );
-			refsObject = new References( refsString );
+			refsObject = new References(refsString);
 			refsObject.moveReference(agentConfig, agentConfigPos, direction);
 			this.update(agentReference, refsObject.toString() );
 			return true;
@@ -181,6 +195,10 @@ public class AgentConfiguration extends Hashtable<String, String> {
 			return false;	
 		}
 	}
+
+	/**
+	 * This is just a debugging method in order to just print out the current configuration
+	 */
 	public void printAll2Sysout() {
 		
 		Vector<String> v = new Vector<String>( this.keySet() );
@@ -197,12 +215,30 @@ public class AgentConfiguration extends Hashtable<String, String> {
 	// ------------------------------------------------------------------------
 	// --- Start Sub-Class ----------------------------------------------------
 	// ------------------------------------------------------------------------
-	public class References {
+	/**
+	 * This internal class is used in order to organize the handling of the 
+	 * configured ontology-start arguments. 
+	 * 
+	 * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
+	 */
+	private class References {
 		
+		/**
+		 * Organizes the references in a list in order to access
+		 * a reference by its String representation   
+		 */
 		private TreeMap<String, Integer> refTM;
+		/**
+		 * Organizes the references in a list in order to access
+		 * a reference by its position
+		 */
 		private TreeMap<Integer, String> refMT;
 		
-		public References( String refString ) {
+		/**
+		 * Constructor of this class 
+		 * @param refString The ontology references as a String separated by '|'
+		 */
+		public References(String refString) {
 			// --- Object und die TreeMaps füllen ------------------------
 			refTM = new TreeMap<String, Integer>();
 			refMT = new TreeMap<Integer, String>();
@@ -215,9 +251,20 @@ public class AgentConfiguration extends Hashtable<String, String> {
 				}			
 			}
 		}
+		/**
+		 * Can be used in order to get the whole list of references and its positions  
+		 * @return list with position and its class references 
+		 */
 		public TreeMap<Integer,String> getReferencesTreeMap() {
 			return refMT;
 		}
+		/**
+		 * Here the list of ontology references will be returned as Vector.
+		 * Every entry consists of the position number and the associated 
+		 * ontology reference (e.g. '1: myProject.myOntolog.myOntologyClass').
+		 *  
+		 * @return numbered list of the start arguments 
+		 */
 		public Vector<String> getVectorNumbered() {
 			Vector<Integer> v = new Vector<Integer>( refMT.keySet() );
 			Vector<String> out = new Vector<String>();
@@ -225,11 +272,17 @@ public class AgentConfiguration extends Hashtable<String, String> {
 			Iterator<Integer> it = v.iterator();
 			while (it.hasNext()) {
 				Integer key = it.next();
-				out.add( key + ": " +  refMT.get(key) );
+				out.add(key + ": " +  refMT.get(key));
 			}
 			return out;
 		}
-		public void add( String newReference ) {
+		/**
+		 * This method can be used in order to add a new ontology reference 
+		 * to the set of start arguments
+		 * 
+		 * @param newReference A class reference to one of your configured ontology's
+		 */
+		public void add(String newReference) {
 			// --- Gibt es die Refernce schon? ---------------------------
 			Integer singleRef = refTM.get(newReference);
 			if ( singleRef==null || AllowReferenceDuplicates==true ) {
@@ -238,7 +291,13 @@ public class AgentConfiguration extends Hashtable<String, String> {
 				refTM.put(newReference, refTM.size()+1);
 			}
 		}
-		public void remove( String reference ) {
+		/**
+		 * This method can be used in order to remove an ontology reference 
+		 * from the set of start arguments
+		 * 
+		 * @param reference The class reference to remove 
+		 */
+		public void remove(String reference) {
 		
 			Vector<Integer> v = new Vector<Integer>( refMT.keySet() );
 			Collections.sort(v);
@@ -252,10 +311,24 @@ public class AgentConfiguration extends Hashtable<String, String> {
 				}
 			}
 		}
-		public void remove( Integer removePosition ) {
+		/**
+		 * This method can be used in order to remove an ontology reference 
+		 * from the set of start arguments
+		 * 
+		 * @param removePosition The position on which a start argument can be removed
+		 */
+		public void remove(Integer removePosition) {
 			refMT.remove( removePosition );
 		}
-		public void moveReference( String reference, Integer oldPos, Integer direction ){
+		/**
+		 * This method can be used in order to change the order of the ontology-start arguments
+		 * of an agent. So position 1 can be changed to 2 and so on.
+		 *  
+		 * @param reference The reference to be moved 
+		 * @param oldPos The position of the reference  
+		 * @param direction The direction in which the element shall move ( +1 | -1 ) 
+		 */
+		public void moveReference(String reference, Integer oldPos, Integer direction){
 			
 			Integer newPos = oldPos + direction;
 			if ( refMT.size() > 1 ) {
@@ -291,10 +364,15 @@ public class AgentConfiguration extends Hashtable<String, String> {
 				} // -- End While --
 			} // -- End if --
 		}
+		/**
+		 * returns the current start-argument configuration as a String 
+		 * as it will be stored in the Agent.GUI configuration file 
+		 * (e.g. '/yourProjectFolder/agentgui.xml')   
+		 */
 		public String toString() {
 			// --- Gibt den Gesamt-String der References zurück ----------
 			String refString = "";
-			Vector<Integer> v = new Vector<Integer>( refMT.keySet() );
+			Vector<Integer> v = new Vector<Integer>(refMT.keySet());
 			Collections.sort(v);
 			Iterator<Integer> it = v.iterator();
 			while (it.hasNext()) {
