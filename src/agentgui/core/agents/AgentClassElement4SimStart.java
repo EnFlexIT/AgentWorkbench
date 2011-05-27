@@ -43,8 +43,9 @@ import org.apache.commons.codec.binary.Base64;
  * start configuration. This class is used in the simulation setup
  * of <b>Agent.GUI</b>
  *   
- * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  * @see agentgui.core.sim.setup.SimulationSetup
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen 
  */
 public class AgentClassElement4SimStart {
 	
@@ -240,20 +241,20 @@ public class AgentClassElement4SimStart {
 	 * Internally these arguments will be kept as Base64 encoded Strings in order to 
 	 * store this configuration also in the SimulationSetup
 	 *  
-	 * @param startInstances the startInstances to set
+	 * @param startArguments the startInstances to set for the agent start up
 	 * @see agentgui.core.sim.setup.SimulationSetup
 	 */
-	public void setStartArguments(String[] startArgs) {
+	public void setStartArguments(String[] startArguments) {
 		
-		if (startArgs.length==0) {
+		if (startArguments.length==0) {
 			this.startArguments = null;
 			return;
 		}
-		String[] startArgumentsEncoded = new String[startArgs.length];
+		String[] startArgumentsEncoded = new String[startArguments.length];
 		String encodedArgument = null;
 		try {
-			for (int i = 0; i < startArgs.length; i++) {
-				encodedArgument = new String(Base64.encodeBase64(startArgs[i].getBytes("UTF8")));
+			for (int i = 0; i < startArguments.length; i++) {
+				encodedArgument = new String(Base64.encodeBase64(startArguments[i].getBytes("UTF8")));
 				startArgumentsEncoded[i] = encodedArgument;
 			}
 			

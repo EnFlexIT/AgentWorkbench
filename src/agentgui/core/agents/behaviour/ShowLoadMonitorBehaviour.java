@@ -1,3 +1,30 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.dawis.wiwi.uni-due.de/ 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.core.agents.behaviour;
 
 import jade.content.lang.sl.SLCodec;
@@ -9,10 +36,19 @@ import jade.domain.JADEAgentManagement.JADEManagementOntology;
 import jade.lang.acl.ACLMessage;
 import jade.wrapper.AgentController;
 import jade.wrapper.ControllerException;
+import agentgui.core.agents.UtilityAgent;
+import agentgui.simulationService.agents.LoadAgent;
 import agentgui.simulationService.ontology.ShowMonitorGUI;
 
 /**
- * This Behaviour send a message to the DF, to be visible
+ * This behaviour class will be used by the UtilityAgent, if the LoadAgent (local name = 'server.load') 
+ * should be displayed.<br> 
+ * Actually a message to the 'server.load'-agent will be send and the Agent will appear. 
+ * 
+ * @see UtilityAgent
+ * @see LoadAgent
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
 public class ShowLoadMonitorBehaviour extends OneShotBehaviour {
 

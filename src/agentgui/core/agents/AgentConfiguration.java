@@ -43,7 +43,7 @@ import agentgui.core.application.Project;
  * In other words: Every agent can be configured with a set of start arguments
  * (in JADE this can be done by an object array - Object[]).  
  * Now the specific parts of this object array can be selected out of one
- * ontology, which is defined in this project. 
+ * ontology, which is defined in the current project. 
  *  
  * The first String in this HashMap contains the class reference of the agent
  * and the second String a list of ontology classes, separated by a '|' 
