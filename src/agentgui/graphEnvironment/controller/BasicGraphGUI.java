@@ -1,36 +1,11 @@
 package agentgui.graphEnvironment.controller;
 
-import java.awt.GridBagLayout;
-
-import javax.swing.ImageIcon;
-import javax.swing.JPanel;
 import java.awt.BorderLayout;
-import javax.swing.JButton;
-
-import org.apache.commons.collections15.Transformer;
-
-import edu.uci.ics.jung.algorithms.layout.Layout;
-import edu.uci.ics.jung.algorithms.layout.StaticLayout;
-import edu.uci.ics.jung.graph.Graph;
-import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
-import edu.uci.ics.jung.visualization.Layer;
-import edu.uci.ics.jung.visualization.VisualizationViewer;
-import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
-import edu.uci.ics.jung.visualization.control.PluggableGraphMouse;
-import edu.uci.ics.jung.visualization.control.ScalingControl;
-import edu.uci.ics.jung.visualization.decorators.EdgeShape;
-
-import agentgui.core.application.Application;
-import agentgui.core.application.Language;
-import agentgui.graphEnvironment.networkModel.GraphEdge;
-import agentgui.graphEnvironment.networkModel.GraphElement;
-import agentgui.graphEnvironment.networkModel.GraphNode;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
-import java.awt.Insets;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
@@ -38,6 +13,33 @@ import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Vector;
+
+import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JToggleButton;
+import javax.swing.JToolBar;
+
+import org.apache.commons.collections15.Transformer;
+
+import agentgui.core.application.Application;
+import agentgui.core.application.Language;
+import agentgui.graphEnvironment.networkModel.GraphEdge;
+import agentgui.graphEnvironment.networkModel.GraphElement;
+import agentgui.graphEnvironment.networkModel.GraphNode;
+import edu.uci.ics.jung.algorithms.layout.Layout;
+import edu.uci.ics.jung.algorithms.layout.StaticLayout;
+import edu.uci.ics.jung.graph.Graph;
+import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
+import edu.uci.ics.jung.visualization.Layer;
+import edu.uci.ics.jung.visualization.VisualizationViewer;
+import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
+import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
+import edu.uci.ics.jung.visualization.control.PluggableGraphMouse;
+import edu.uci.ics.jung.visualization.control.ScalingControl;
+import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 /**
  * This class implements a GUI component for displaying visualizations for JUNG graphs.
  * 
@@ -45,28 +47,33 @@ import java.util.Vector;
  *
  */
 public class BasicGraphGUI extends JPanel implements ActionListener{
-
+	/**
+	 * Event Argument for notifying observers(generally parent GUI) throught the Notification class
+	 */
+	public static final String EVENT_NETWORKMODEL_CLEAR = "clear_graph";  //  @jve:decl-index=0:
+	public static final String EVENT_ADD_COMPONENT_CLICKED = "add_component_clicked";  //  @jve:decl-index=0:
+	public static final String EVENT_OBJECT_LEFT_CLICK = "object_left_click";  //  @jve:decl-index=0:
+	public static final String EVENT_OBJECT_RIGHT_CLICK = "object_right_click";  //  @jve:decl-index=0:
+	
 	private static final long serialVersionUID = 1L;
 	/**
 	 * Panel containing control buttons.
 	 */
 	private JPanel pnlControlls = null;
 	/**
-	 * Zoom in button
-	 */
-	private JButton btnZoomIn = null;
-	/**
-	 * Zoom out button
-	 */
-	private JButton btnZoomOut = null;
-	/**
-	 * Reset zoom
-	 */
-	private JButton btnZoomReset = null;
-	/**
 	 * Graph visualization component
 	 */
 	private VisualizationViewer<GraphNode, GraphEdge> visView = null;
+	/**
+	 * The pluggable graph mouse which can be added to the visualization viewer.
+	 * Used here for customized Picking mode
+	 */
+	private PluggableGraphMouse pgm = null;  //  @jve:decl-index=0:
+	/**
+	 * The DefaultModalGraphMouse which can be added to the visualization viewer.
+	 * Used here for the transforming mode 
+	 */
+	private DefaultModalGraphMouse dgm = null;  //  @jve:decl-index=0:
 	/**
 	 * JUNG object handling zooming
 	 */
@@ -79,6 +86,16 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 	 * As the superclass relationship is occupied by the JPanel, notifications have to be handled by this object
 	 */
 	private MyObservable myObservable;
+	private JToolBar jJToolBar = null;
+	private JButton jButtonClearGraph = null;
+	private JButton jButtonZoomIn = null;
+	private JButton jButtonZoomOut = null;
+	private JButton jButtonZoomReset = null;
+	private JButton jButtonAddComponent = null;
+	private JToggleButton jToggleMouseTransforming = null;
+	
+	private final String pathImage = Application.RunInfo.PathImageIntern();  //  @jve:decl-index=0:
+	private JToggleButton jToggleMousePicking = null;
 
 	/**
 	 * This is the default constructor
@@ -98,6 +115,19 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 	private void initialize() {
 		this.setLayout(new BorderLayout());
 		this.add(getPnlControlls(), BorderLayout.WEST);
+		//Initializing JUNG mouse modes
+		initMouseModes();
+	}
+
+	/**
+	 * 
+	 */
+	private void initMouseModes() {
+		pgm = new PluggableGraphMouse();
+		pgm.add(new GraphEnvironmentMousePlugin(this));
+		
+		dgm =  new DefaultModalGraphMouse();
+		dgm.setMode(DefaultModalGraphMouse.Mode.TRANSFORMING);
 	}
 
 	/**
@@ -107,79 +137,22 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 	 */
 	private JPanel getPnlControlls() {
 		if (pnlControlls == null) {
-			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
-			gridBagConstraints2.insets = new Insets(5, 5, 5, 5);
-			gridBagConstraints2.gridy = 0;
-			gridBagConstraints2.gridx = 0;
-			GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
-			gridBagConstraints1.gridx = 0;
-			gridBagConstraints1.insets = new Insets(5, 5, 5, 5);
-			gridBagConstraints1.anchor = GridBagConstraints.NORTH;
-			gridBagConstraints1.weighty = 1.0D;
-			gridBagConstraints1.gridy = 2;
-			GridBagConstraints gridBagConstraints = new GridBagConstraints();
-			gridBagConstraints.gridx = 0;
-			gridBagConstraints.insets = new Insets(5, 5, 5, 5);
-			gridBagConstraints.gridy = 1;
+			GridBagConstraints gridBagConstraints13 = new GridBagConstraints();
+			gridBagConstraints13.fill = GridBagConstraints.VERTICAL;
+			gridBagConstraints13.gridy = 0;
+			gridBagConstraints13.weightx = 0.0;
+			gridBagConstraints13.gridheight = 1;
+			gridBagConstraints13.anchor = GridBagConstraints.NORTH;
+			gridBagConstraints13.weighty = 1.0;
+			gridBagConstraints13.gridx = 0;
 			pnlControlls = new JPanel();
+			pnlControlls.setPreferredSize(new Dimension(50, 400));
 			pnlControlls.setLayout(new GridBagLayout());
-			pnlControlls.add(getBtnZoomIn(), gridBagConstraints2);
-			pnlControlls.add(getBtnZoomOut(), gridBagConstraints);
-			pnlControlls.add(getBtnZoomReset(), gridBagConstraints1);
+			pnlControlls.add(getJJToolBar(), gridBagConstraints13);
 		}
 		return pnlControlls;
 	}
 
-	/**
-	 * This method initializes btnZoomIn	
-	 * 	
-	 * @return javax.swing.JButton	
-	 */
-	private JButton getBtnZoomIn() {
-		if (btnZoomIn == null) {
-			btnZoomIn = new JButton();
-			btnZoomIn.setPreferredSize(new Dimension(45, 26));
-			btnZoomIn.setIcon(new ImageIcon(getClass().getResource(Application.RunInfo.PathImageIntern() + "ListPlus.png")));
-			btnZoomIn.setToolTipText(Language.translate("Vergrößern"));
-			btnZoomIn.addActionListener(this);
-			btnZoomIn.setEnabled(false);
-		}
-		return btnZoomIn;
-	}
-
-	/**
-	 * This method initializes btnZoomOut	
-	 * 	
-	 * @return javax.swing.JButton	
-	 */
-	private JButton getBtnZoomOut() {
-		if (btnZoomOut == null) {
-			btnZoomOut = new JButton();
-			btnZoomOut.setPreferredSize(new Dimension(45, 26));
-			btnZoomOut.setIcon(new ImageIcon(getClass().getResource(Application.RunInfo.PathImageIntern() + "ListMinus.png")));
-			btnZoomOut.setToolTipText(Language.translate("Verkleinern"));
-			btnZoomOut.addActionListener(this);
-			btnZoomOut.setEnabled(false);
-		}
-		return btnZoomOut;
-	}
-
-	/**
-	 * This method initializes btnReset	
-	 * 	
-	 * @return javax.swing.JButton	
-	 */
-	private JButton getBtnZoomReset() {
-		if (btnZoomReset == null) {
-			btnZoomReset = new JButton();
-			btnZoomReset.setPreferredSize(new Dimension(45, 26));
-			btnZoomReset.setIcon(new ImageIcon(getClass().getResource(Application.RunInfo.PathImageIntern() + "Refresh.png")));
-			btnZoomReset.setToolTipText(Language.translate("Zurücksetzen"));
-			btnZoomReset.addActionListener(this);
-			btnZoomReset.setEnabled(false);
-		}
-		return btnZoomReset;
-	}
 	/**
 	 * Gets the VisualizationViewer
 	 * @return The VisualizationViewer
@@ -229,26 +202,15 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 			visView.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line<GraphNode, GraphEdge>());
 			
 			// Configure mouse interaction			
-			PluggableGraphMouse pgm = new PluggableGraphMouse();
-			pgm.add(new GraphEnvironmentMousePlugin(this));
 			visView.setGraphMouse(pgm);
 			
 			visView.setBackground(Color.WHITE);
 			
 			rightComponent = new GraphZoomScrollPane(visView);;
 			
-			// Enable buttons
-			getBtnZoomIn().setEnabled(true);
-			getBtnZoomOut().setEnabled(true);
-			getBtnZoomReset().setEnabled(true);
 		}else{	// No graph passed
 			// Use a JPanel as dummy component
-			rightComponent = new JPanel();
-			
-			// Disable buttons
-			getBtnZoomIn().setEnabled(false);
-			getBtnZoomOut().setEnabled(false);
-			getBtnZoomReset().setEnabled(false);
+			rightComponent = new JPanel();			
 		}
 		
 		this.add(rightComponent, BorderLayout.CENTER);
@@ -259,26 +221,76 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// Zoom in
-		if(e.getSource() == getBtnZoomIn() && visView != null){
+		if(e.getSource() == getJButtonZoomIn() && visView != null){
 			scalingControl.scale(visView, 1.1f, visView.getCenter());
 		// Zoom out
-		}else if(e.getSource() == getBtnZoomOut() && visView != null){
+		}else if(e.getSource() == getJButtonZoomOut() && visView != null){
 			scalingControl.scale(visView, 1/1.1f, visView.getCenter());
 		// Reset zoom
-		}else if(e.getSource() == getBtnZoomReset() && visView != null){
+		}else if(e.getSource() == getJButtonZoomReset() && visView != null){
 			visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).setToIdentity();
 			visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).setToIdentity();
 		}
-		
+		// Clear graph
+		else if(e.getSource() == getJButtonClearGraph() && visView != null){	
+			int n = JOptionPane.showConfirmDialog(
+				    this,
+				    Language.translate("Are you sure to clear the graph?", Language.EN) ,
+				    Language.translate("Confirmation", Language.EN),
+				    JOptionPane.YES_NO_OPTION);
+			
+			if(n == JOptionPane.YES_OPTION){
+				myObservable.setChanged();			
+				myObservable.notifyObservers(new Notification(EVENT_NETWORKMODEL_CLEAR,null));
+			}
+		}
+		//Button Add component clicked 
+		else if(e.getSource() == getJButtonAddComponent() && visView != null){						
+			myObservable.setChanged();			
+			myObservable.notifyObservers(new Notification(EVENT_ADD_COMPONENT_CLICKED,null));
+		}
+		//Transforming Mouse mode button clicked
+		else if(e.getSource() == getJToggleMouseTransforming() && visView != null){						
+			boolean selected = getJToggleMouseTransforming().getModel().isSelected();
+			//Transforming mode										
+			//Setting DefaultModalGraphMouse
+			visView.setGraphMouse(dgm);		
+		}
+		//Picking Mouse mode button clicked
+		else if(e.getSource() == getJToggleMousePicking() && visView != null){						
+			boolean selected = getJToggleMousePicking().getModel().isSelected();
+			//Picking mode
+			//Setting custom pluggable mouse graph 
+			visView.setGraphMouse(pgm);
+		}
 	}
 	
+	/**
+	 * Repaints the visualisation viewer, with the given graph
+	 * (There should be a better way than this)
+	 */
+	public void graphRepaint(Graph<GraphNode, GraphEdge> graph)
+	{
+		visView.getGraphLayout().setGraph(graph);
+		visView.repaint();
+		//visView.setGraphLayout(new StaticLayout<GraphNode, GraphEdge>(graph));
+	}
 	/**
 	 * This method notifies the observers about a graph object selection
 	 * @param pickedObject The selected object
 	 */
 	void handleObjectSelection(Object pickedObject){
 		myObservable.setChanged();
-		myObservable.notifyObservers(pickedObject);
+		myObservable.notifyObservers(new Notification(EVENT_OBJECT_LEFT_CLICK,pickedObject));
+	}
+	
+	/**
+	 * Notifies the observers that this object is right clicked
+	 * @param pickedObject the selected object
+	 */
+	void handleObjectRightClick(Object pickedObject){
+		myObservable.setChanged();
+		myObservable.notifyObservers(new Notification(EVENT_OBJECT_RIGHT_CLICK,pickedObject));
 	}
 	
 	/**
@@ -339,5 +351,177 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 			super.setChanged();
 		}
 	}
-	
+
+	/**
+	 * A class used for combining arguments into single one for notifyObservers() call.
+	 * List of events are defined as static strings at the beginning
+	 * 
+	 * @author Satyadeep
+	 *
+	 */
+	public class Notification{
+		private Object arg;
+		private String event; 
+		
+		public Notification(String event, Object arg) {
+			this.event = event;
+			this.arg   = arg;
+		}
+		 public Object getArg(){
+			return arg;
+		}
+		public String getEvent(){
+			return event;
+		}
+	}
+
+	/**
+	 * This method initializes jJToolBar	
+	 * 	
+	 * @return javax.swing.JToolBar	
+	 */
+	private JToolBar getJJToolBar() {
+		if (jJToolBar == null) {
+			jJToolBar = new JToolBar();
+			jJToolBar.setOrientation(JToolBar.VERTICAL);
+			jJToolBar.setFloatable(false);
+			jJToolBar.setPreferredSize(new Dimension(40, 380));
+			
+			jJToolBar.add(getJToggleMouseTransforming());
+			jJToolBar.add(getJToggleMousePicking());
+			ButtonGroup bg = new ButtonGroup();
+			bg.add(jToggleMousePicking);
+			bg.add(jToggleMouseTransforming);
+			jJToolBar.addSeparator();
+			jJToolBar.add(getJButtonAddComponent());
+			jJToolBar.add(getJButtonClearGraph());
+			jJToolBar.addSeparator();
+			jJToolBar.add(getJButtonZoomIn());
+			jJToolBar.add(getJButtonZoomOut());
+			
+			jJToolBar.add(getJButtonZoomReset());
+			
+		}
+		return jJToolBar;
+	}
+
+	/**
+	 * This method initializes jButtonClearGraph	
+	 * 	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getJButtonClearGraph() {
+		if (jButtonClearGraph == null) {
+			jButtonClearGraph = new JButton();
+			jButtonClearGraph.setPreferredSize(new Dimension(26, 26));
+			jButtonClearGraph.setIcon(new ImageIcon(getClass().getResource(pathImage + "Remove.png")));
+			jButtonClearGraph.setToolTipText(Language.translate("Clear graph", Language.EN));
+			jButtonClearGraph.addActionListener(this);
+
+		}
+		return jButtonClearGraph;
+	}
+
+	/**
+	 * This method initializes jButtonZoomIn	
+	 * 	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getJButtonZoomIn() {
+		if (jButtonZoomIn == null) {
+			jButtonZoomIn = new JButton();
+			jButtonZoomIn.setPreferredSize(new Dimension(26, 26));
+			jButtonZoomIn.setIcon(new ImageIcon(getClass().getResource(pathImage + "ZoomIn.png")));
+			jButtonZoomIn.setToolTipText(Language.translate("Vergrößern"));
+			jButtonZoomIn.addActionListener(this);
+
+		}
+		return jButtonZoomIn;
+	}
+
+	/**
+	 * This method initializes jButtonZoomOut	
+	 * 	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getJButtonZoomOut() {
+		if (jButtonZoomOut == null) {
+			jButtonZoomOut = new JButton();
+			jButtonZoomOut.setIcon(new ImageIcon(getClass().getResource(pathImage + "ZoomOut.png")));
+			jButtonZoomOut.setPreferredSize(new Dimension(26, 26));
+			jButtonZoomOut.setToolTipText(Language.translate("Verkleinern"));
+			jButtonZoomOut.addActionListener(this);
+			
+		}
+		return jButtonZoomOut;
+	}
+
+	/**
+	 * This method initializes jButtonZoomReset	
+	 * 	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getJButtonZoomReset() {
+		if (jButtonZoomReset == null) {
+			jButtonZoomReset = new JButton();
+			jButtonZoomReset.setIcon(new ImageIcon(getClass().getResource(pathImage + "Refresh.png")));
+			jButtonZoomReset.setPreferredSize(new Dimension(26, 26));
+			jButtonZoomReset.setToolTipText(Language.translate("Zurücksetzen"));
+			jButtonZoomReset.addActionListener(this);
+			
+		}
+		return jButtonZoomReset;
+	}
+
+	/**
+	 * This method initializes jButtonAddComponent	
+	 * 	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getJButtonAddComponent() {
+		if (jButtonAddComponent == null) {
+			jButtonAddComponent = new JButton();
+			jButtonAddComponent.setIcon(new ImageIcon(getClass().getResource(pathImage + "ListPlus.png")));
+			jButtonAddComponent.setPreferredSize(new Dimension(26, 26));
+			jButtonAddComponent.setToolTipText(Language.translate("Add new component",Language.EN));
+			jButtonAddComponent.addActionListener(this);
+		}
+		return jButtonAddComponent;
+	}
+
+	/**
+	 * This method initializes jToggleMouseTransforming	
+	 * 	
+	 * @return javax.swing.JToggleButton	
+	 */
+	private JToggleButton getJToggleMouseTransforming() {
+		if (jToggleMouseTransforming == null) {
+			jToggleMouseTransforming = new JToggleButton();
+			jToggleMouseTransforming.setIcon(new ImageIcon(getClass().getResource(pathImage + "move.png")));
+			jToggleMouseTransforming.setPreferredSize(new Dimension(26, 26));
+			jToggleMouseTransforming.setToolTipText(Language.translate("Switch to Transforming mode",Language.EN));
+			jToggleMouseTransforming.setSize(new Dimension(36, 36));
+			jToggleMouseTransforming.addActionListener(this);
+			
+		}
+		return jToggleMouseTransforming;
+	}
+
+	/**
+	 * This method initializes jToggleMousePicking	
+	 * 	
+	 * @return javax.swing.JToggleButton	
+	 */
+	private JToggleButton getJToggleMousePicking() {
+		if (jToggleMousePicking == null) {
+			jToggleMousePicking = new JToggleButton();
+			jToggleMousePicking.setIcon(new ImageIcon(getClass().getResource(pathImage + "edit.png")));
+			jToggleMousePicking.setPreferredSize(new Dimension(26, 26));
+			jToggleMousePicking.setToolTipText(Language.translate("Switch to Picking mode",Language.EN));
+			jToggleMousePicking.setSize(new Dimension(36, 36));
+			jToggleMousePicking.addActionListener(this);
+			jToggleMousePicking.setSelected(true);
+		}
+		return jToggleMousePicking;
+	}
 }

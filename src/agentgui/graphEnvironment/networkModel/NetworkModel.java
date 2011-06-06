@@ -33,6 +33,7 @@ public class NetworkModel{
 		this.graphElements = new HashMap<String, GraphElement>();
 		this.networkComponents = new HashMap<String, NetworkComponent>();
 	}
+	
 	/**
 	 * Returns the GridComponent with the given ID, or null if not found.
 	 * @param id The ID to look for

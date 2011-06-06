@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<networkComponentList>
+    <componentList>
+        <entry>
+            <key>n0</key>
+            <value>
+                <agentClassName>gasmas.agents.BranchAgent</agentClassName>
+                <directed>false</directed>
+                <graphElementIDs>n0_2</graphElementIDs>
+                <graphElementIDs>n0_1</graphElementIDs>
+                <graphElementIDs>new_PP9</graphElementIDs>
+                <graphElementIDs>new_PP8</graphElementIDs>
+                <graphElementIDs>n0_3</graphElementIDs>
+                <graphElementIDs>PP0</graphElementIDs>
+                <id>n0</id>
+                <prototypeClassName>agentgui.graphEnvironment.prototypes.TriangeGraphElement</prototypeClassName>
+                <type>branch</type>
+            </value>
+        </entry>
+    </componentList>
+</networkComponentList>

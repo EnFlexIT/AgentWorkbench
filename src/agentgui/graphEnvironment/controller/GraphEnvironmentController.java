@@ -50,6 +50,18 @@ public class GraphEnvironmentController extends Observable implements Observer {
 	 * Observer notification when a new NetworkModel is set 
 	 */
 	public static final Integer EVENT_NETWORKMODEL_LOADED = 0;
+	
+	/**
+	 * Observer notification when the network model and graph are cleared
+	 */
+	public static final Integer EVENT_NETWORKMODEL_CLEAR = 2;
+	
+	/**
+	 * Observer notification that the network model is updated.
+	 * Similar to the LOADED, but instead of creating a new visualisation viewer, the graph is refreshed.
+	 */
+	public static final Integer EVENT_NETWORKMODEL_REFRESHED = 3;
+
 	/**
 	 * Observer notification when the element type settings have been changed
 	 */
@@ -62,6 +74,7 @@ public class GraphEnvironmentController extends Observable implements Observer {
 	 * The key string used for saving the ontology representation in the GraphML file
 	 */
 	private static final String KEY_ONTOLOGY_REPRESENTATION_PROPERTY = "ontoRepr";
+
 	/**
 	 * The path to the folder where environment related files are stored 
 	 */
@@ -150,13 +163,27 @@ public class GraphEnvironmentController extends Observable implements Observer {
 	public NetworkModel getGridModel() {
 		return networkModel;
 	}
-
+	
+	/**
+	 * Clears the network model by replacing with an empty graph
+	 * and notifies observers
+	 */
+	public void clearNetworkModel(){
+		
+		// clear the network model objects
+		networkModel = new NetworkModel();
+		setChanged();
+		notifyObservers(EVENT_NETWORKMODEL_CLEAR);
+		this.project.setChangedAndNotify(EVENT_NETWORKMODEL_CLEAR);
+	}
+	
 	@Override
 	public void update(Observable o, Object arg) {
 		if(o.equals(project) && arg == Project.SAVED){
 			saveNetworkModel();
 		}else if(o.equals(project) && arg instanceof SimulationSetupsChangeNotification){
 			handleSetupChange((SimulationSetupsChangeNotification) arg);
+			
 		}
 	}
 	
@@ -447,6 +474,16 @@ public class GraphEnvironmentController extends Observable implements Observer {
 		
 		setChanged();
 		notifyObservers(new Integer(EVENT_NETWORKMODEL_LOADED));
+	}
+
+	/**
+	 * Can be used to notify the observers after changing the network model from outside.
+	 */
+	public void refreshGraph() {
+		// TODO Auto-generated method stub
+		setChanged();
+		notifyObservers(EVENT_NETWORKMODEL_REFRESHED);
+		
 	}
 	
 }

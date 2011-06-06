@@ -1,12 +1,19 @@
 package agentgui.graphEnvironment.controller;
 
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.JSplitPane;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dialog;
 import java.awt.GridBagLayout;
+import java.awt.MouseInfo;
+import java.awt.Point;
+
 import javax.swing.JScrollPane;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
@@ -15,6 +22,7 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.JTable;
@@ -22,6 +30,7 @@ import javax.swing.JButton;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.plaf.basic.BasicGraphicsUtils;
 import javax.swing.table.DefaultTableModel;
 
 import agentgui.core.application.Application;
@@ -34,6 +43,8 @@ import agentgui.graphEnvironment.networkModel.GraphNode;
 import agentgui.graphEnvironment.networkModel.NetworkComponent;
 
 import javax.swing.JLabel;
+import javax.swing.JPopupMenu;
+import javax.swing.JMenuItem;
 /**
  * The GUI for a GraphEnvironmentController
  * @author Nils
@@ -68,6 +79,12 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	 * The Dialog for setting the component types
 	 */
 	private ClassSelectionDialog classSelectorDialog = null;  //  @jve:decl-index=0:visual-constraint="333,23"
+	
+	/**
+	 * The Dialog for adding a new network component to the graph 
+	 */
+	private AddComponentDialog addComponentDialog = null;
+
 	/**
 	 * The GUI's GraphEnvironmentController 
 	 */
@@ -82,6 +99,8 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	 * The graph visualization component
 	 */
 	private BasicGraphGUI graphGUI = null;
+	private JPopupMenu popup = null;  //  @jve:decl-index=0:visual-constraint="608,53"
+	private JMenuItem menuAdd = null;
 	
 	/**
 	 * This is the default constructor
@@ -187,6 +206,16 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	}
 	
 	/**
+	 * Clear the components table by removing all the rows
+	 */
+	private void clearTblComponents(){
+		Vector<String> titles = new Vector<String>();
+		titles.add(Language.translate("Komponente"));
+		titles.add(Language.translate("Typ"));
+		getTblComponents().setModel(new DefaultTableModel(titles,0));
+	}
+	
+	/**
 	 * This method builds the tblComponents' contents based on the controllers GridModel 
 	 * @return The grid components' IDs and class names
 	 */
@@ -249,6 +278,17 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		}
 		return classSelectorDialog;
 	}
+	
+	/**
+	 * Get the component types definition dialog.
+	 * New dialog object is created each time. 
+	 * @return
+	 */
+	private AddComponentDialog getAddComponentDialog(){
+			addComponentDialog = new AddComponentDialog(this);
+		return addComponentDialog;
+	}
+	
 	/**
 	 * Get the visualization component
 	 * @return
@@ -266,16 +306,104 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	
 	@Override
 	public void update(Observable o, Object arg) {
-		// The network model changed
+		// The network model loaded 
 		if(o.equals(controller) && arg.equals(GraphEnvironmentController.EVENT_NETWORKMODEL_LOADED)){
 			graphGUI.setGraph(controller.getGridModel().getGraph());
 			rebuildTblComponents();
-		// A graph element was selected in the visualization
-		}else if(o.equals(graphGUI.getMyObservable())){
-			selectObject(arg);
+		}
+		// Network model is cleared 
+		else if(o.equals(controller) && arg.equals(GraphEnvironmentController.EVENT_NETWORKMODEL_CLEAR)){			
+			graphGUI.graphRepaint(controller.getGridModel().getGraph());
+			// Clearing the component table
+			clearTblComponents();
+		}
+		// Network model is updated/refreshed 
+		else if(o.equals(controller) && arg.equals(GraphEnvironmentController.EVENT_NETWORKMODEL_REFRESHED)){			
+			graphGUI.graphRepaint(controller.getGridModel().getGraph());
+			// Rebuilding the component table
+			rebuildTblComponents();
+		}
+		
+		
+		// From BasicGraphGUI Observable
+		else if(o.equals(graphGUI.getMyObservable())){
+			    // Casting the argument into Notification class
+				BasicGraphGUI.Notification notification = (BasicGraphGUI.Notification ) arg;
+				
+				if(notification.getEvent().equals(BasicGraphGUI.EVENT_NETWORKMODEL_CLEAR)){
+					// Clearing the actual Network and Graph model
+					controller.clearNetworkModel();			
+				}
+				else if(notification.getEvent().equals(BasicGraphGUI.EVENT_ADD_COMPONENT_CLICKED)){
+					// Add Component Button Clicked
+					
+						//Starting with an empty graph
+					if(controller.getGridModel().getGraph().getVertexCount()==0){
+						getAddComponentDialog().setVisible(true);				
+					}
+						//Picked a vertex
+					else if(getPickedVertex()!=null){
+							//System.out.println("vertex picked="+getPickedVertex().getId());
+							if(checkGridConstraints(getPickedVertex()))
+								getAddComponentDialog().setVisible(true);
+							else
+								JOptionPane.showMessageDialog(this,"Select a valid vertex","Warning",JOptionPane.WARNING_MESSAGE);						
+					}				
+						//No vertex is picked
+					else{
+						JOptionPane.showMessageDialog(this,"Select a valid vertex first","Warning",JOptionPane.WARNING_MESSAGE);
+					}
+				}
+				else if(notification.getEvent().equals(BasicGraphGUI.EVENT_OBJECT_LEFT_CLICK)){					
+					// A graph element was selected in the visualization				
+					selectObject(notification.getArg());
+				}
+				else if(notification.getEvent().equals(BasicGraphGUI.EVENT_OBJECT_RIGHT_CLICK)){					
+					//Right clicked a node
+					Point currentPoint = MouseInfo.getPointerInfo().getLocation();
+					graphGUI.clearPickedObjects();
+					//Check the constraints and if true, set node as picked 
+					if(checkGridConstraints(notification.getArg())){
+						
+						graphGUI.setPickedObject((GraphElement) notification.getArg());
+					}
+					
+					
+					//Show the right click context menu
+					   //Problem: The menu does not hide when clicked else where 
+					//getPopup().show(null, currentPoint.x, currentPoint.y);				
+				}
 		}
 	}
 	
+	/**
+	 * Checks the constraint for a given node in the network model
+	 * Constraint - a node can be a member of maximum two network components
+	 * @param object - selected node
+	 * @return true if the node is a member of 0 or 1 components, false otherwise
+	 */
+	public boolean checkGridConstraints(Object object) {
+		if(object instanceof GraphNode){
+			GraphNode node = (GraphNode) object;
+			if(controller.getGridModel() != null){				
+				// Get the components from the controllers GridModel
+				Iterator<NetworkComponent> components = controller.getGridModel().getNetworkComponents().values().iterator();
+							
+				int count =0;
+				while(components.hasNext()){ // iterating through all network components
+					NetworkComponent comp = components.next();
+					// check if the component contains the current node
+					if(comp.getGraphElementIDs().contains(node.getId())){
+						count++;
+					}
+				}
+				if(count<2)
+					return true;				
+			}			
+		}	
+		return false;
+	}
+
 	@Override
 	public void actionPerformed(ActionEvent event) {
 		if(event.getSource().equals(getBtnImportGraph())){
@@ -356,6 +484,17 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	}
 	
 	/**
+	 * @return the GraphNode which is picked. 
+	 * If multiple nodes are picked, returns null
+	 */
+	public GraphNode getPickedVertex(){
+			Set<GraphNode> nodeSet = graphGUI.getVisView().getPickedVertexState().getPicked();
+			if(nodeSet.size()==1)
+				return nodeSet.iterator().next();
+			return null;
+	}
+	
+	/**
 	 * This method gets the NetworkComponent the GraphEdge eith the given ID belongs to
 	 * @param edgeID The GraphEdge's ID
 	 * @return The NetworkComponent
@@ -383,5 +522,33 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		}
 		
 		return elements;
+	}
+
+	/**
+	 * This method initializes popup	
+	 * 	
+	 * @return javax.swing.JPopupMenu	
+	 */
+	private JPopupMenu getPopup() {
+		if (popup == null) {
+			popup = new JPopupMenu();
+			popup.add(getMenuAdd());
+			
+		}
+		return popup;
+	}
+
+	/**
+	 * This method initializes menuAdd	
+	 * 	
+	 * @return javax.swing.JMenuItem	
+	 */
+	private JMenuItem getMenuAdd() {
+		if (menuAdd == null) {
+			menuAdd = new JMenuItem();
+			menuAdd.setText("Add Component");
+			menuAdd.addActionListener(this);
+		}
+		return menuAdd;
 	}
 }  //  @jve:decl-index=0:visual-constraint="33,19"

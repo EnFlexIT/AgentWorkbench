@@ -33,29 +33,49 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 
 	@Override
 	public void mouseClicked(MouseEvent e){
-		
-		
-		Object pickedObject = null;
-		
-		Point point = e.getPoint();
-		GraphElementAccessor<GraphNode, GraphEdge>ps = myGUI.getVisView().getPickSupport();
-		
-		// Get the graph node / PropagationPoint at the clicked coordinates
-		GraphNode pickedPP = ps.getVertex(myGUI.getVisView().getGraphLayout(), point.getX(), point.getY());
-		
-		if(pickedPP != null){		// A node / PropagationPoint was clicked
-			pickedObject = pickedPP;
-		}else{			// No node / PropagationPoint was clicked
+		// Left click
+		if(e.getButton()==MouseEvent.BUTTON1){			
 			
-			// Get the graph edge / GridComponent at the clicked coordinates
-			GraphEdge pickedGC = ps.getEdge(myGUI.getVisView().getGraphLayout(), point.getX(), point.getY());
+			Object pickedObject = null;
 			
-			if(pickedGC != null){	// An edge / GridComponent was clicked
-				pickedObject = pickedGC;
+			Point point = e.getPoint();
+			GraphElementAccessor<GraphNode, GraphEdge>ps = myGUI.getVisView().getPickSupport();
+			
+			// Get the graph node / PropagationPoint at the clicked coordinates
+			GraphNode pickedPP = ps.getVertex(myGUI.getVisView().getGraphLayout(), point.getX(), point.getY());
+			
+			if(pickedPP != null){		// A node / PropagationPoint was clicked
+				pickedObject = pickedPP;
+			}else{			// No node / PropagationPoint was clicked
+				
+				// Get the graph edge / GridComponent at the clicked coordinates
+				GraphEdge pickedGC = ps.getEdge(myGUI.getVisView().getGraphLayout(), point.getX(), point.getY());
+				
+				if(pickedGC != null){	// An edge / GridComponent was clicked
+					pickedObject = pickedGC;
+				}
+			}
+			if(pickedObject != null) // only when node or edge is clicked
+			{
+				myGUI.handleObjectSelection(pickedObject);
 			}
 		}
-		
-		myGUI.handleObjectSelection(pickedObject);
+		//Right click
+		else if(e.getButton()==MouseEvent.BUTTON3){			
+			//TODO  Do constraint check and validity for addition and open add component dialog with the prototype image 
+			Object pickedObject = null;
+			
+			Point point = e.getPoint();
+			GraphElementAccessor<GraphNode, GraphEdge>ps = myGUI.getVisView().getPickSupport();
+			
+			// Get the graph node / PropagationPoint at the clicked coordinates
+			GraphNode pickedPP = ps.getVertex(myGUI.getVisView().getGraphLayout(), point.getX(), point.getY());
+			
+			if(pickedPP != null){		// A node / PropagationPoint was clicked
+				pickedObject = pickedPP;
+				myGUI.handleObjectRightClick(pickedObject);
+			}			
+		}
 	}
 	
 	@Override

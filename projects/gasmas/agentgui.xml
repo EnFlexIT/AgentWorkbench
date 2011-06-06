@@ -10,12 +10,12 @@
     </subOntologies>
     <agentConfiguration>
         <entry>
-            <key>gasmas.agents.BranchAgent</key>
-            <value>gasmas.ontology.Branch</value>
-        </entry>
-        <entry>
             <key>gasmas.agents.EntryAgent</key>
             <value>gasmas.ontology.Entry</value>
+        </entry>
+        <entry>
+            <key>gasmas.agents.BranchAgent</key>
+            <value>gasmas.ontology.Branch</value>
         </entry>
         <entry>
             <key>gasmas.agents.ValveAgent</key>
@@ -38,11 +38,15 @@
             <value>gasmas.ontology.Storage</value>
         </entry>
     </agentConfiguration>
-    <simulationSetupCurrent>default</simulationSetupCurrent>
+    <simulationSetupCurrent>Test Graph</simulationSetupCurrent>
     <simulationSetups>
         <entry>
-            <key>default</key>
-            <value>default.xml</value>
+            <key>Test Graph</key>
+            <value>test_graph.xml</value>
+        </entry>
+        <entry>
+            <key>Nils Graph</key>
+            <value>nils_graph.xml</value>
         </entry>
     </simulationSetups>
     <jadeConfiguration>

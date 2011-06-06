@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns/graphml"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
+<key id="ontoRepr" for="node">
+<desc>Base64 encoded ontology representation</desc>
+<default></default>
+</key>
+<key id="pos" for="node">
+<desc>position</desc>
+<default></default>
+</key>
+<graph edgedefault="directed">
+<node id="new_PP9">
+<data key="pos">30.0:123.0</data>
+</node>
+<node id="PP0">
+<data key="pos">30.0:30.0</data>
+</node>
+<node id="new_PP8">
+<data key="pos">111.0:76.0</data>
+</node>
+<edge id="n0_1" directed="false" source="PP0" target="new_PP8">
+<desc>branch</desc>
+</edge>
+<edge id="n0_3" directed="false" source="new_PP8" target="new_PP9">
+<desc>branch</desc>
+</edge>
+<edge id="n0_2" directed="false" source="PP0" target="new_PP9">
+<desc>branch</desc>
+</edge>
+</graph>
+</graphml>
