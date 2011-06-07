@@ -33,8 +33,8 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 
 	@Override
 	public void mouseClicked(MouseEvent e){
-		// Left click
-		if(e.getButton()==MouseEvent.BUTTON1){			
+		// Left click or Right click
+		if(e.getButton()==MouseEvent.BUTTON1 || e.getButton()==MouseEvent.BUTTON3){			
 			
 			Object pickedObject = null;
 			
@@ -57,24 +57,13 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 			}
 			if(pickedObject != null) // only when node or edge is clicked
 			{
-				myGUI.handleObjectSelection(pickedObject);
+				//Left click
+				if(e.getButton()==MouseEvent.BUTTON1)
+					myGUI.handleObjectSelection(pickedObject);
+				//Right click
+				if(e.getButton()==MouseEvent.BUTTON3)
+					myGUI.handleObjectRightClick(pickedObject);
 			}
-		}
-		//Right click
-		else if(e.getButton()==MouseEvent.BUTTON3){			
-			//TODO  Do constraint check and validity for addition and open add component dialog with the prototype image 
-			Object pickedObject = null;
-			
-			Point point = e.getPoint();
-			GraphElementAccessor<GraphNode, GraphEdge>ps = myGUI.getVisView().getPickSupport();
-			
-			// Get the graph node / PropagationPoint at the clicked coordinates
-			GraphNode pickedPP = ps.getVertex(myGUI.getVisView().getGraphLayout(), point.getX(), point.getY());
-			
-			if(pickedPP != null){		// A node / PropagationPoint was clicked
-				pickedObject = pickedPP;
-				myGUI.handleObjectRightClick(pickedObject);
-			}			
 		}
 	}
 	

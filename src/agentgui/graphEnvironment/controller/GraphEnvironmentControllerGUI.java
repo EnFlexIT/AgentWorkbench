@@ -1,36 +1,34 @@
 package agentgui.graphEnvironment.controller;
 
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.JSplitPane;
-import javax.swing.JPanel;
-import javax.swing.ListSelectionModel;
-
 import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dialog;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.MouseInfo;
 import java.awt.Point;
-
-import javax.swing.JScrollPane;
-import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
 import java.util.Vector;
 
-import javax.swing.JTable;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.plaf.basic.BasicGraphicsUtils;
 import javax.swing.table.DefaultTableModel;
 
 import agentgui.core.application.Application;
@@ -41,10 +39,7 @@ import agentgui.graphEnvironment.networkModel.GraphEdge;
 import agentgui.graphEnvironment.networkModel.GraphElement;
 import agentgui.graphEnvironment.networkModel.GraphNode;
 import agentgui.graphEnvironment.networkModel.NetworkComponent;
-
-import javax.swing.JLabel;
-import javax.swing.JPopupMenu;
-import javax.swing.JMenuItem;
+import agentgui.graphEnvironment.networkModel.NetworkModel;
 /**
  * The GUI for a GraphEnvironmentController
  * @author Nils
@@ -310,18 +305,13 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		if(o.equals(controller) && arg.equals(GraphEnvironmentController.EVENT_NETWORKMODEL_LOADED)){
 			graphGUI.setGraph(controller.getGridModel().getGraph());
 			rebuildTblComponents();
-		}
-		// Network model is cleared 
-		else if(o.equals(controller) && arg.equals(GraphEnvironmentController.EVENT_NETWORKMODEL_CLEAR)){			
-			graphGUI.graphRepaint(controller.getGridModel().getGraph());
-			// Clearing the component table
-			clearTblComponents();
-		}
+		}		
 		// Network model is updated/refreshed 
 		else if(o.equals(controller) && arg.equals(GraphEnvironmentController.EVENT_NETWORKMODEL_REFRESHED)){			
 			graphGUI.graphRepaint(controller.getGridModel().getGraph());
 			// Rebuilding the component table
 			rebuildTblComponents();
+			graphGUI.clearPickedObjects();
 		}
 		
 		
@@ -331,15 +321,15 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 				BasicGraphGUI.Notification notification = (BasicGraphGUI.Notification ) arg;
 				
 				if(notification.getEvent().equals(BasicGraphGUI.EVENT_NETWORKMODEL_CLEAR)){
-					// Clearing the actual Network and Graph model
+				// Clearing the actual Network and Graph model
 					controller.clearNetworkModel();			
 				}
 				else if(notification.getEvent().equals(BasicGraphGUI.EVENT_ADD_COMPONENT_CLICKED)){
-					// Add Component Button Clicked
+				// Add Component Button Clicked
 					
-						//Starting with an empty graph
+						//If the graph is empty - starting from scratch
 					if(controller.getGridModel().getGraph().getVertexCount()==0){
-						getAddComponentDialog().setVisible(true);				
+						getAddComponentDialog().setVisible(true);	
 					}
 						//Picked a vertex
 					else if(getPickedVertex()!=null){
@@ -347,35 +337,111 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 							if(checkGridConstraints(getPickedVertex()))
 								getAddComponentDialog().setVisible(true);
 							else
-								JOptionPane.showMessageDialog(this,"Select a valid vertex","Warning",JOptionPane.WARNING_MESSAGE);						
+								JOptionPane.showMessageDialog(this,Language.translate("Select a valid vertex", Language.EN),Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);						
 					}				
 						//No vertex is picked
 					else{
-						JOptionPane.showMessageDialog(this,"Select a valid vertex first","Warning",JOptionPane.WARNING_MESSAGE);
+						JOptionPane.showMessageDialog(this,Language.translate("Right click a valid vertex first", Language.EN),Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
+					}
+				}
+				else if(notification.getEvent().equals(BasicGraphGUI.EVENT_REMOVE_COMPONENT_CLICKED)){					
+				//Remove Component Button clicked
+					Set<GraphEdge> edgeSet = graphGUI.getVisView().getPickedEdgeState().getPicked();
+					// Atleast one edge is picked
+					if(edgeSet.size()>0){ 
+						//Get the Network component from the picked edge
+						NetworkComponent selectedComponent = getNetworkComponent(edgeSet.iterator().next().getId());												
+						//Removing the component from the network model and updating the graph
+						handleRemoveNetworkComponent(selectedComponent);
+						
+						getController().refreshNetworkModel();
+					}
+					// No edge is picked
+					else{ 
+						JOptionPane.showMessageDialog(this,Language.translate("Right click an edge first", Language.EN),Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
 					}
 				}
 				else if(notification.getEvent().equals(BasicGraphGUI.EVENT_OBJECT_LEFT_CLICK)){					
-					// A graph element was selected in the visualization				
+				// A graph element was selected in the visualization				
 					selectObject(notification.getArg());
 				}
 				else if(notification.getEvent().equals(BasicGraphGUI.EVENT_OBJECT_RIGHT_CLICK)){					
-					//Right clicked a node
+				//Right click
 					Point currentPoint = MouseInfo.getPointerInfo().getLocation();
+					Object obj= notification.getArg();
+					
 					graphGUI.clearPickedObjects();
-					//Check the constraints and if true, set node as picked 
-					if(checkGridConstraints(notification.getArg())){
-						
-						graphGUI.setPickedObject((GraphElement) notification.getArg());
+					//Node is clicked
+					if(obj instanceof GraphNode){ 
+						//Check the constraints and if true, set node as picked 
+						if(checkGridConstraints(obj)){						
+							graphGUI.setPickedObject((GraphElement) obj);
+						}
 					}
+					//Edge is clicked
+					else if(obj instanceof GraphEdge){ 
+						//Get the network component and pick the related elements
+						NetworkComponent netComp = getNetworkComponent(((GraphElement)obj).getId());
+						graphGUI.setPickedObjects(getNetworkComponentElements(netComp));
+					}					
 					
-					
-					//Show the right click context menu
+					//TODO  Show the right click context menu
 					   //Problem: The menu does not hide when clicked else where 
 					//getPopup().show(null, currentPoint.x, currentPoint.y);				
 				}
 		}
 	}
 	
+	/**
+	 * Removes the given network component from the network model,
+	 * updates the graph accordingly and the hashmap of graphElements 
+	 * @param selectedComponent The network component to be removed
+	 */
+	private void handleRemoveNetworkComponent(NetworkComponent selectedComponent) {
+		NetworkModel networkModel = getController().getGridModel();
+		
+		//The IDs of the elements present in the given component 
+		HashSet<String> graphElementIDs = selectedComponent.getGraphElementIDs();
+		Iterator<String> idIter = graphElementIDs.iterator();
+		
+		//For each graph element of the network component
+		while(idIter.hasNext()){ 
+			String elementID = idIter.next();
+			GraphElement element = networkModel.getGraphElement(elementID);
+			//For an edge		
+			if(element instanceof GraphEdge){ 
+				//Remove from the Graph
+				networkModel.getGraph().removeEdge((GraphEdge)element);
+				//Remove from the HashMap of GraphElements
+				networkModel.getGraphElements().remove(element.getId());
+			}
+			//For a node
+			else if (element instanceof GraphNode){
+				//Check whether the GraphNode is present in any other NetworkComponent
+				Iterator<String> keyIter = networkModel.getNetworkComponents().keySet().iterator();
+				int count = 0;
+				//For each component in the model
+				while(keyIter.hasNext()){
+					NetworkComponent component = networkModel.getNetworkComponents().get(keyIter.next());
+					//component contains the vertex
+					if(component.getGraphElementIDs().contains(element.getId())){
+						count++;
+					}
+				}
+				
+				// The vertex is only present in the selected component
+				if(count==1){
+					//Removing the vertex from the Graph
+					networkModel.getGraph().removeVertex((GraphNode)element);
+					//Remove from the HashMap of GraphElements
+					networkModel.getGraphElements().remove(element.getId());
+				}
+			}
+		}
+		//Finally, remove the network component from the HashMap of components in the network model
+		networkModel.removeNetworkComponent(selectedComponent);
+	}
+
 	/**
 	 * Checks the constraint for a given node in the network model
 	 * Constraint - a node can be a member of maximum two network components

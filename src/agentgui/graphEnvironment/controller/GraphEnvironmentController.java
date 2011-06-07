@@ -52,11 +52,6 @@ public class GraphEnvironmentController extends Observable implements Observer {
 	public static final Integer EVENT_NETWORKMODEL_LOADED = 0;
 	
 	/**
-	 * Observer notification when the network model and graph are cleared
-	 */
-	public static final Integer EVENT_NETWORKMODEL_CLEAR = 2;
-	
-	/**
 	 * Observer notification that the network model is updated.
 	 * Similar to the LOADED, but instead of creating a new visualisation viewer, the graph is refreshed.
 	 */
@@ -172,9 +167,16 @@ public class GraphEnvironmentController extends Observable implements Observer {
 		
 		// clear the network model objects
 		networkModel = new NetworkModel();
+		refreshNetworkModel();
+	}
+	
+	/**
+	 * Can be used to notify the observers after changing the network model from outside.
+	 */
+	public void refreshNetworkModel() {		
+		this.project.setChangedAndNotify(EVENT_NETWORKMODEL_REFRESHED);	
 		setChanged();
-		notifyObservers(EVENT_NETWORKMODEL_CLEAR);
-		this.project.setChangedAndNotify(EVENT_NETWORKMODEL_CLEAR);
+		notifyObservers(EVENT_NETWORKMODEL_REFRESHED);		
 	}
 	
 	@Override
@@ -467,23 +469,13 @@ public class GraphEnvironmentController extends Observable implements Observer {
 				} catch (FileNotFoundException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}
-				
+				}				
 			}
-		}
-		
+		}		
 		setChanged();
 		notifyObservers(new Integer(EVENT_NETWORKMODEL_LOADED));
 	}
 
-	/**
-	 * Can be used to notify the observers after changing the network model from outside.
-	 */
-	public void refreshGraph() {
-		// TODO Auto-generated method stub
-		setChanged();
-		notifyObservers(EVENT_NETWORKMODEL_REFRESHED);
-		
-	}
+
 	
 }

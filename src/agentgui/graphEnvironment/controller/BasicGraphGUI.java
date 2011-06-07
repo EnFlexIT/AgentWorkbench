@@ -52,6 +52,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 	 */
 	public static final String EVENT_NETWORKMODEL_CLEAR = "clear_graph";  //  @jve:decl-index=0:
 	public static final String EVENT_ADD_COMPONENT_CLICKED = "add_component_clicked";  //  @jve:decl-index=0:
+	public static final String EVENT_REMOVE_COMPONENT_CLICKED = "remove_component_clicked";  //  @jve:decl-index=0:
 	public static final String EVENT_OBJECT_LEFT_CLICK = "object_left_click";  //  @jve:decl-index=0:
 	public static final String EVENT_OBJECT_RIGHT_CLICK = "object_right_click";  //  @jve:decl-index=0:
 	
@@ -96,6 +97,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 	
 	private final String pathImage = Application.RunInfo.PathImageIntern();  //  @jve:decl-index=0:
 	private JToggleButton jToggleMousePicking = null;
+	private JButton jButtonRemoveComponent = null;
 
 	/**
 	 * This is the default constructor
@@ -249,6 +251,12 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 			myObservable.setChanged();			
 			myObservable.notifyObservers(new Notification(EVENT_ADD_COMPONENT_CLICKED,null));
 		}
+		//Button Remove component clicked 
+		else if(e.getSource() == getJButtonRemoveComponent() && visView != null){						
+			myObservable.setChanged();			
+			myObservable.notifyObservers(new Notification(EVENT_REMOVE_COMPONENT_CLICKED,null));
+		}
+		
 		//Transforming Mouse mode button clicked
 		else if(e.getSource() == getJToggleMouseTransforming() && visView != null){						
 			boolean selected = getJToggleMouseTransforming().getModel().isSelected();
@@ -394,6 +402,8 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 			bg.add(jToggleMouseTransforming);
 			jJToolBar.addSeparator();
 			jJToolBar.add(getJButtonAddComponent());
+			jJToolBar.add(getJButtonRemoveComponent());
+			jJToolBar.addSeparator();
 			jJToolBar.add(getJButtonClearGraph());
 			jJToolBar.addSeparator();
 			jJToolBar.add(getJButtonZoomIn());
@@ -523,5 +533,21 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 			jToggleMousePicking.setSelected(true);
 		}
 		return jToggleMousePicking;
+	}
+
+	/**
+	 * This method initializes jButtonRemoveComponent	
+	 * 	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getJButtonRemoveComponent() {
+		if (jButtonRemoveComponent == null) {
+			jButtonRemoveComponent = new JButton();
+			jButtonRemoveComponent.setIcon(new ImageIcon(getClass().getResource(pathImage + "ListMinus.png")));
+			jButtonRemoveComponent.setPreferredSize(new Dimension(26, 26));
+			jButtonRemoveComponent.setToolTipText(Language.translate("Remove selected component",Language.EN));
+			jButtonRemoveComponent.addActionListener(this);
+		}
+		return jButtonRemoveComponent;
 	}
 }

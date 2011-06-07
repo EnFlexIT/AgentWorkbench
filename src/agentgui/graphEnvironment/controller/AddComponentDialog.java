@@ -9,6 +9,7 @@ import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.BorderLayout;
 import java.awt.Point;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -16,12 +17,14 @@ import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.JScrollPane;
 
 import agentgui.core.application.Application;
+import agentgui.core.application.Language;
 import agentgui.graphEnvironment.networkModel.ComponentTypeSettings;
 import agentgui.graphEnvironment.networkModel.GraphEdge;
 import agentgui.graphEnvironment.networkModel.GraphElement;
@@ -76,6 +79,7 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 	private JPanel jBottomPanel = null;
 	private JButton btnCancel = null;
 	private JPanel jViewerPanel = null;
+	private JLabel jLabel = null;
 	/**
 	 * @param owner
 	 */
@@ -92,7 +96,7 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 	 */
 	private void initialize() {				
 		this.setSize(390, 343);
-		this.setTitle("Select Network Component to Add");
+		this.setTitle(Language.translate("Select Network Component to Add",Language.EN));
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		this.setContentPane(getJContentPane());
@@ -113,20 +117,18 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 			gridBagConstraints4.insets = new Insets(0, 105, 0, 105);
 			gridBagConstraints4.ipadx = 0;
 			gridBagConstraints4.anchor = GridBagConstraints.CENTER;
-			gridBagConstraints4.gridy = 1;
+			gridBagConstraints4.gridy = 2;
 			GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
 			gridBagConstraints11.fill = GridBagConstraints.BOTH;
-			gridBagConstraints11.gridwidth = 100;
-			gridBagConstraints11.gridx = 1;
-			gridBagConstraints11.gridy = 0;
-			gridBagConstraints11.gridheight = 100;
+			gridBagConstraints11.gridx = 0;
+			gridBagConstraints11.gridy = 1;			
 			gridBagConstraints11.insets = new Insets(6, 5, 5, 5);
 			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
 			gridBagConstraints3.gridx = 0;
 			gridBagConstraints3.ipadx = 0;
 			gridBagConstraints3.fill = GridBagConstraints.HORIZONTAL;
 			gridBagConstraints3.insets = new Insets(5, 5, 5, 5);
-			gridBagConstraints3.gridy = 2;
+			gridBagConstraints3.gridy = 3;
 			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
 			gridBagConstraints2.fill = GridBagConstraints.BOTH;
 			gridBagConstraints2.gridy = 0;
@@ -140,7 +142,8 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 			jContentPane.setLayout(new GridBagLayout());
 			jContentPane.add(getJScrollPane(), gridBagConstraints2);
 			jContentPane.add(getJBottomPanel(), gridBagConstraints3);
-			jContentPane.add(getJViewerPanel(), gridBagConstraints4);
+			jContentPane.add(getJLabel(), gridBagConstraints11);
+			jContentPane.add(getJViewerPanel(), gridBagConstraints4);			
 		}
 		return jContentPane;
 	}
@@ -195,9 +198,11 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 	    
 	    if(graphElement!=null){	   
 	    	//Generate and use the next unique network component ID
-	    	graphElement.setId(nextNetworkComponentID());	    	
+	    	String nextID = parent.getController().getGridModel().nextNetworkComponentID();
+	    	graphElement.setId(nextID);	    	
 	    	graphElement.setType(componentTypesList.getSelectedValue().toString());
 			
+	    	//Create an empty graph and add the graphElement to it
 	    	Graph<GraphNode, GraphEdge> graph = new SparseGraph<GraphNode,GraphEdge>();	    	
 	    	graphElement.addToGraph(graph);
 	    	graphRepaint(graph);
@@ -205,27 +210,14 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 	
 	}
 	
-	/**
-	 * Generates the next network component ID in the series n1, n2, n3, ... 
-	 * Temporary fix for generating unique network component ID
-	 * This method can be moved to the NetworkModel class instead
-	 * @return 
-	 */
-	private String nextNetworkComponentID() {
-		//Finds the current maximum network component ID and returns the next one to it.		
-		HashMap<String, NetworkComponent> networkComponents = null;
-		networkComponents = parent.getController().getGridModel().getNetworkComponents();
-		Iterator<NetworkComponent> components = networkComponents.values().iterator();
-		int max = -1;
-		while(components.hasNext()){
-			NetworkComponent component = components.next();
-			int num = Integer.parseInt(component.getId().substring(1));
-			if(num>max)
-				max = num;
-		}
-		return "n"+(max+1);
-	}
+	
 
+	private JLabel getJLabel(){
+		if(jLabel == null) {
+			jLabel = new JLabel(Language.translate("Select a vertex to merge",Language.EN));
+		}
+		return jLabel;
+	}
 	/**
 	 * This method initializes jScrollPane	
 	 * 	
@@ -354,9 +346,8 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 				this.dispose();
 			}
 			else{
-				JOptionPane.showMessageDialog(this,"Select one vertex","Warning",JOptionPane.WARNING_MESSAGE);
-			}
-		
+				JOptionPane.showMessageDialog(this,Language.translate("Select one vertex",Language.EN),Language.translate("Warning",Language.EN),JOptionPane.WARNING_MESSAGE);
+			}		
 		}
 		//Cancel button
 		else if(ae.getSource().equals(getBtnCancel()))
@@ -390,7 +381,7 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 		
 		HashSet<GraphElement> graphElements = null;
 		
-		//Adding to an empty graph 
+		//Adding to an empty graph - starting from scratch 
 		if(gridModel.getGraph().getVertexCount()==0){
 			//Creating an initial dummy vertex on the parent graph so that the same merge function can be used
 			GraphNode firstNode = new GraphNode();
@@ -410,11 +401,12 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 				newComponent.getGraphElementIDs().add(id);
 			}
 		}	
+		//Add the newly created component to the network model
 		gridModel.addNetworkComponent(newComponent);
-		
+		//Replace the network model graph with the new one
 		gridModel.setGraph(gridModel.getGraph());
 		
-		parent.getController().refreshGraph();
+		parent.getController().refreshNetworkModel();
 	}
 		
 	/**
@@ -441,7 +433,9 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 			GraphNode v = vertices.next();
 			if(v != v2){
 				GraphNode newNode = new GraphNode();
-				newNode.setId("new_"+v.getId()); //TODO the IDs are not unique - look into it
+				//Generate the unique ID to be assigned to the new node
+				String nextID = parent.getController().getGridModel().nextNodeID();
+				newNode.setId(nextID); 
 				
 				//Set position of node  v1+(v-v2)
 				int x = (int) (v1.getPosition().getX() + (getVisView().getGraphLayout().transform(v).getX() - getVisView().getGraphLayout().transform(v2).getX())) ;
