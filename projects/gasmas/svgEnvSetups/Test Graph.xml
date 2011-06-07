@@ -2,19 +2,84 @@
 <networkComponentList>
     <componentList>
         <entry>
-            <key>n0</key>
+            <key>n1</key>
             <value>
                 <agentClassName>gasmas.agents.BranchAgent</agentClassName>
                 <directed>false</directed>
-                <graphElementIDs>n0_2</graphElementIDs>
-                <graphElementIDs>n0_1</graphElementIDs>
-                <graphElementIDs>new_PP9</graphElementIDs>
-                <graphElementIDs>new_PP8</graphElementIDs>
-                <graphElementIDs>n0_3</graphElementIDs>
-                <graphElementIDs>PP0</graphElementIDs>
-                <id>n0</id>
+                <graphElementIDs>n1_1</graphElementIDs>
+                <graphElementIDs>n1_2</graphElementIDs>
+                <graphElementIDs>n1_3</graphElementIDs>
+                <graphElementIDs>PP1</graphElementIDs>
+                <graphElementIDs>PP3</graphElementIDs>
+                <graphElementIDs>PP2</graphElementIDs>
+                <id>n1</id>
                 <prototypeClassName>agentgui.graphEnvironment.prototypes.TriangeGraphElement</prototypeClassName>
                 <type>branch</type>
+            </value>
+        </entry>
+        <entry>
+            <key>n0</key>
+            <value>
+                <agentClassName>gasmas.agents.EntryAgent</agentClassName>
+                <directed>true</directed>
+                <graphElementIDs>n0</graphElementIDs>
+                <graphElementIDs>PP1</graphElementIDs>
+                <graphElementIDs>PP0</graphElementIDs>
+                <id>n0</id>
+                <prototypeClassName>agentgui.graphEnvironment.prototypes.DirectedSimpleGraphElement</prototypeClassName>
+                <type>entry</type>
+            </value>
+        </entry>
+        <entry>
+            <key>n5</key>
+            <value>
+                <agentClassName>gasmas.agents.ExitAgent</agentClassName>
+                <directed>true</directed>
+                <graphElementIDs>n5</graphElementIDs>
+                <graphElementIDs>PP4</graphElementIDs>
+                <graphElementIDs>PP7</graphElementIDs>
+                <id>n5</id>
+                <prototypeClassName>agentgui.graphEnvironment.prototypes.DirectedSimpleGraphElement</prototypeClassName>
+                <type>exit</type>
+            </value>
+        </entry>
+        <entry>
+            <key>n4</key>
+            <value>
+                <agentClassName>gasmas.agents.ExitAgent</agentClassName>
+                <directed>true</directed>
+                <graphElementIDs>n4</graphElementIDs>
+                <graphElementIDs>PP5</graphElementIDs>
+                <graphElementIDs>PP6</graphElementIDs>
+                <id>n4</id>
+                <prototypeClassName>agentgui.graphEnvironment.prototypes.DirectedSimpleGraphElement</prototypeClassName>
+                <type>exit</type>
+            </value>
+        </entry>
+        <entry>
+            <key>n3</key>
+            <value>
+                <agentClassName>gasmas.agents.CompressorAgent</agentClassName>
+                <directed>true</directed>
+                <graphElementIDs>n3</graphElementIDs>
+                <graphElementIDs>PP5</graphElementIDs>
+                <graphElementIDs>PP2</graphElementIDs>
+                <id>n3</id>
+                <prototypeClassName>agentgui.graphEnvironment.prototypes.DirectedSimpleGraphElement</prototypeClassName>
+                <type>compressor</type>
+            </value>
+        </entry>
+        <entry>
+            <key>n2</key>
+            <value>
+                <agentClassName>gasmas.agents.PipeAgent</agentClassName>
+                <directed>false</directed>
+                <graphElementIDs>n2</graphElementIDs>
+                <graphElementIDs>PP4</graphElementIDs>
+                <graphElementIDs>PP3</graphElementIDs>
+                <id>n2</id>
+                <prototypeClassName>agentgui.graphEnvironment.prototypes.SimpleGraphElement</prototypeClassName>
+                <type>pipe</type>
             </value>
         </entry>
     </componentList>
