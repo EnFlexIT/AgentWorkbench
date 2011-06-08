@@ -53,8 +53,11 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 	public static final String EVENT_NETWORKMODEL_CLEAR = "clear_graph";  //  @jve:decl-index=0:
 	public static final String EVENT_ADD_COMPONENT_CLICKED = "add_component_clicked";  //  @jve:decl-index=0:
 	public static final String EVENT_REMOVE_COMPONENT_CLICKED = "remove_component_clicked";  //  @jve:decl-index=0:
+	public static final String EVENT_MERGE_NODES_CLICKED = "merge_nodes_clicked";  //  @jve:decl-index=0:
 	public static final String EVENT_OBJECT_LEFT_CLICK = "object_left_click";  //  @jve:decl-index=0:
 	public static final String EVENT_OBJECT_RIGHT_CLICK = "object_right_click";  //  @jve:decl-index=0:
+	public static final String EVENT_OBJECT_SHIFT_LEFT_CLICK = "object_shift_left_click";  //  @jve:decl-index=0:
+	public static final String EVENT_OBJECT_SHIFT_RIGHT_CLICK = "object_shift_right_click";  //  @jve:decl-index=0:
 	
 	private static final long serialVersionUID = 1L;
 	/**
@@ -98,6 +101,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 	private final String pathImage = Application.RunInfo.PathImageIntern();  //  @jve:decl-index=0:
 	private JToggleButton jToggleMousePicking = null;
 	private JButton jButtonRemoveComponent = null;
+	private JButton jButtonMergeNodes = null;
 
 	/**
 	 * This is the default constructor
@@ -256,7 +260,11 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 			myObservable.setChanged();			
 			myObservable.notifyObservers(new Notification(EVENT_REMOVE_COMPONENT_CLICKED,null));
 		}
-		
+		//Button Merge Nodes clicked 
+		else if(e.getSource() == getJButtonMergeNodes() && visView != null){						
+			myObservable.setChanged();			
+			myObservable.notifyObservers(new Notification(EVENT_MERGE_NODES_CLICKED,null));
+		}
 		//Transforming Mouse mode button clicked
 		else if(e.getSource() == getJToggleMouseTransforming() && visView != null){						
 			boolean selected = getJToggleMouseTransforming().getModel().isSelected();
@@ -300,7 +308,24 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 		myObservable.setChanged();
 		myObservable.notifyObservers(new Notification(EVENT_OBJECT_RIGHT_CLICK,pickedObject));
 	}
-	
+	/**
+	 * Invoked on Shift + Left click over a node or and edge
+	 * @param pickedObject the selected object
+	 */
+	public void handleObjectShiftLeftClick(Object pickedObject) {
+		myObservable.setChanged();
+		myObservable.notifyObservers(new Notification(EVENT_OBJECT_SHIFT_LEFT_CLICK,pickedObject));
+	}
+
+	/**
+	 * Invoked on Shift + Right click over a node or and edge
+	 * @param pickedObject the selected object
+	 */
+	public void handleObjectShiftRightClick(Object pickedObject) {
+		myObservable.setChanged();
+		myObservable.notifyObservers(new Notification(EVENT_OBJECT_SHIFT_RIGHT_CLICK,pickedObject));
+	}
+
 	/**
 	 * Clears the picked nodes and edges
 	 */
@@ -403,6 +428,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 			jJToolBar.addSeparator();
 			jJToolBar.add(getJButtonAddComponent());
 			jJToolBar.add(getJButtonRemoveComponent());
+			jJToolBar.add(getJButtonMergeNodes());
 			jJToolBar.addSeparator();
 			jJToolBar.add(getJButtonClearGraph());
 			jJToolBar.addSeparator();
@@ -550,4 +576,22 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 		}
 		return jButtonRemoveComponent;
 	}
+
+	/**
+	 * This method initializes jButtonMergeNodes	
+	 * 	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getJButtonMergeNodes() {
+		if (jButtonMergeNodes == null) {
+			jButtonMergeNodes = new JButton();
+			jButtonMergeNodes.setIcon(new ImageIcon(getClass().getResource(pathImage + "Merge.png")));
+			jButtonMergeNodes.setPreferredSize(new Dimension(26, 26));
+			jButtonMergeNodes.setToolTipText(Language.translate("Merge two nodes",Language.EN));
+			jButtonMergeNodes.addActionListener(this);
+		
+		}
+		return jButtonMergeNodes;
+	}
+
 }

@@ -8,6 +8,7 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Observable;
@@ -30,6 +31,9 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
+
+import edu.uci.ics.jung.graph.Graph;
+import edu.uci.ics.jung.graph.util.EdgeType;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
@@ -337,15 +341,18 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 							if(checkGridConstraints(getPickedVertex()))
 								getAddComponentDialog().setVisible(true);
 							else
-								JOptionPane.showMessageDialog(this,Language.translate("Select a valid vertex", Language.EN),Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);						
+								JOptionPane.showMessageDialog(this,Language.translate("Select a valid vertex", Language.EN),
+										Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);						
 					}				
 						//No vertex is picked
 					else{
-						JOptionPane.showMessageDialog(this,Language.translate("Right click a valid vertex first", Language.EN),Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
+						JOptionPane.showMessageDialog(this,Language.translate("Right click a valid vertex first", Language.EN),
+								Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
 					}
 				}
 				else if(notification.getEvent().equals(BasicGraphGUI.EVENT_REMOVE_COMPONENT_CLICKED)){					
 				//Remove Component Button clicked
+					
 					Set<GraphEdge> edgeSet = graphGUI.getVisView().getPickedEdgeState().getPicked();
 					// Atleast one edge is picked
 					if(edgeSet.size()>0){ 
@@ -358,8 +365,35 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 					}
 					// No edge is picked
 					else{ 
-						JOptionPane.showMessageDialog(this,Language.translate("Right click an edge first", Language.EN),Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
+						JOptionPane.showMessageDialog(this,Language.translate("Right click an edge first", Language.EN),
+								Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
 					}
+				}
+				else if(notification.getEvent().equals(BasicGraphGUI.EVENT_MERGE_NODES_CLICKED)){					
+				//Merge Nodes Button clicked
+					
+					Set<GraphNode> nodeSet = graphGUI.getVisView().getPickedVertexState().getPicked();
+					//Two nodes are picked
+					if(nodeSet.size()==2){
+						Iterator<GraphNode> nodeIter = nodeSet.iterator();
+						GraphNode node1 = nodeIter.next();
+						GraphNode node2 = nodeIter.next();
+						//Valid nodes are picked
+						if(checkGridConstraints(node1) && checkGridConstraints(node2)){
+							handleMergeNodes(node1, node2);
+						}
+						//Invalid nodes are picked
+						else{
+							JOptionPane.showMessageDialog(this,Language.translate("Select two valid vertices", Language.EN),
+									Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
+						}
+					}
+					//Two nodes are not picked
+					else{ 
+						JOptionPane.showMessageDialog(this,Language.translate("Use Shift and Right click two vertices", Language.EN),
+								Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
+					}	
+					
 				}
 				else if(notification.getEvent().equals(BasicGraphGUI.EVENT_OBJECT_LEFT_CLICK)){					
 				// A graph element was selected in the visualization				
@@ -389,9 +423,112 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 					   //Problem: The menu does not hide when clicked else where 
 					//getPopup().show(null, currentPoint.x, currentPoint.y);				
 				}
+				else if(notification.getEvent().equals(BasicGraphGUI.EVENT_OBJECT_SHIFT_RIGHT_CLICK) ||
+						notification.getEvent().equals(BasicGraphGUI.EVENT_OBJECT_SHIFT_LEFT_CLICK)){					
+				//Shift + Right OR Shift + Left click
+					
+					Object obj = notification.getArg();
+					if(obj instanceof GraphNode){
+						//If the object is already picked, then unpick it
+						if(graphGUI.getVisView().getPickedVertexState().isPicked((GraphNode)obj)){
+							graphGUI.getVisView().getPickedVertexState().pick((GraphNode)obj, false);
+						}
+						// If the object is not picked already
+						else{
+							//Check the constraints and if true, set node as picked 
+							if(checkGridConstraints(obj)){						
+								graphGUI.setPickedObject((GraphElement) obj);
+							}
+						}						
+					}
+				}
 		}
 	}
 	
+	/**
+	 * Merges the two nodes as a single node and updates the graph and network model
+	 * @param node1
+	 * @param node2
+	 */
+	private void handleMergeNodes(GraphNode node1, GraphNode node2) {
+		//Environment Network Model
+		NetworkModel networkModel = getController().getGridModel();
+		Graph<GraphNode,GraphEdge> graph = networkModel.getGraph();
+		
+		//Get the Network components from the nodes
+		NetworkComponent comp1 = getComponentFromNode(node1);
+		NetworkComponent comp2 = getComponentFromNode(node2);
+		
+		//Finding the intersection set of the Graph elements of the two network components
+		HashSet<String> intersection = new HashSet<String>(comp1.getGraphElementIDs());
+		intersection.retainAll(comp2.getGraphElementIDs());
+		//Checking the constraint - Two network components can have maximum one node in common
+		if(intersection.size()==0){
+			// No common node
+			
+			//Incident Edges on node2
+			Collection<GraphEdge> incidentEdges = graph.getIncidentEdges(node2);		
+			Iterator<GraphEdge> edgeIter = incidentEdges.iterator();
+			while(edgeIter.hasNext()){ // for each incident edge
+				GraphEdge edge = edgeIter.next();
+				//Find the node on the other side of the edge
+				GraphNode otherNode = graph.getOpposite(node2,edge);
+				//Create a new edge with the same ID and type
+				GraphEdge newEdge = new GraphEdge(edge.getId(), edge.getComponentType());
+				
+				//if the edge is directed
+				if(graph.getSource(edge)!=null) 
+				{
+					if(graph.getSource(edge) == node2)
+						graph.addEdge(newEdge,node1, otherNode, EdgeType.DIRECTED);
+					else if(graph.getDest(edge) == node2)
+						graph.addEdge(newEdge,otherNode, node1, EdgeType.DIRECTED);
+				}
+				// if the edge is undirected
+				else 
+					graph.addEdge(newEdge,node1, otherNode, EdgeType.UNDIRECTED);
+				
+				//Removing the old edge from the graph and network model
+				graph.removeEdge(edge);
+				networkModel.getGraphElements().remove(edge.getId());
+				networkModel.getGraphElements().put(newEdge.getId(),newEdge);
+			}
+			
+			//Updating the graph element IDs of the component
+			comp2.getGraphElementIDs().remove(node2.getId());
+			comp2.getGraphElementIDs().add(node1.getId());
+			
+			//Removing node2 from the graph and network model
+			graph.removeVertex(node2);
+			networkModel.getGraphElements().remove(node2.getId());
+			
+			getController().refreshNetworkModel();
+		}
+		else
+		{
+			//Have a common node
+			JOptionPane.showMessageDialog(this,Language.translate("The two network components selected already have a vertex in common", Language.EN),
+					Language.translate("Constraint: Two components can have atmost one common vertex", Language.EN),JOptionPane.WARNING_MESSAGE);
+		}
+	}
+	
+	/**
+	 * Returns the network component containing the given node
+	 * If the node is in multiple components, only the first one is returned
+	 * @return comp
+	 */
+	public NetworkComponent getComponentFromNode(GraphNode node){						
+			// Get the components from the controllers GridModel		    
+			Iterator<NetworkComponent> components = controller.getGridModel().getNetworkComponents().values().iterator();						
+			while(components.hasNext()){ // iterating through all network components
+				NetworkComponent comp = components.next();
+				// check if the component contains the given node
+				if(comp.getGraphElementIDs().contains(node.getId())){
+					return comp;
+				}
+			}
+			return null;		
+	}
 	/**
 	 * Removes the given network component from the network model,
 	 * updates the graph accordingly and the hashmap of graphElements 
@@ -441,7 +578,8 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		//Finally, remove the network component from the HashMap of components in the network model
 		networkModel.removeNetworkComponent(selectedComponent);
 	}
-
+	
+	
 	/**
 	 * Checks the constraint for a given node in the network model
 	 * Constraint - a node can be a member of maximum two network components

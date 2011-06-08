@@ -34,6 +34,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	@Override
 	public void mouseClicked(MouseEvent e){
 		// Left click or Right click
+
 		if(e.getButton()==MouseEvent.BUTTON1 || e.getButton()==MouseEvent.BUTTON3){			
 			
 			Object pickedObject = null;
@@ -57,12 +58,18 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 			}
 			if(pickedObject != null) // only when node or edge is clicked
 			{
+				//Shift + Left click
+				if(e.getButton()==MouseEvent.BUTTON1 && e.isShiftDown())
+					myGUI.handleObjectShiftLeftClick(pickedObject);
+				//Shift + Right click
+				else if(e.getButton()==MouseEvent.BUTTON3 && e.isShiftDown())
+					myGUI.handleObjectShiftRightClick(pickedObject);
 				//Left click
-				if(e.getButton()==MouseEvent.BUTTON1)
+				else if(e.getButton()==MouseEvent.BUTTON1)
 					myGUI.handleObjectSelection(pickedObject);
 				//Right click
-				if(e.getButton()==MouseEvent.BUTTON3)
-					myGUI.handleObjectRightClick(pickedObject);
+				else if(e.getButton()==MouseEvent.BUTTON3)
+					myGUI.handleObjectRightClick(pickedObject);				
 			}
 		}
 	}
