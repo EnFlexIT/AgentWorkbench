@@ -1,6 +1,7 @@
 package agentgui.graphEnvironment.controller;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.MouseInfo;
@@ -26,14 +27,12 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
-
-import edu.uci.ics.jung.graph.Graph;
-import edu.uci.ics.jung.graph.util.EdgeType;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
@@ -44,6 +43,8 @@ import agentgui.graphEnvironment.networkModel.GraphElement;
 import agentgui.graphEnvironment.networkModel.GraphNode;
 import agentgui.graphEnvironment.networkModel.NetworkComponent;
 import agentgui.graphEnvironment.networkModel.NetworkModel;
+import edu.uci.ics.jung.graph.Graph;
+import edu.uci.ics.jung.graph.util.EdgeType;
 /**
  * The GUI for a GraphEnvironmentController
  * @author Nils
@@ -100,6 +101,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	private BasicGraphGUI graphGUI = null;
 	private JPopupMenu popup = null;  //  @jve:decl-index=0:visual-constraint="608,53"
 	private JMenuItem menuAdd = null;
+	private JTextField jTextFieldSearch = null;
 	
 	/**
 	 * This is the default constructor
@@ -128,13 +130,19 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	 */
 	private JPanel getPnlControlls() {
 		if (pnlControlls == null) {
+			GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
+			gridBagConstraints11.fill = GridBagConstraints.BOTH;
+			gridBagConstraints11.gridy = 2;
+			gridBagConstraints11.weightx = 0.5;
+			gridBagConstraints11.gridwidth = 1;
+			gridBagConstraints11.gridx = 0;
 			GridBagConstraints gridBagConstraints7 = new GridBagConstraints();
 			gridBagConstraints7.gridx = 0;
 			gridBagConstraints7.gridy = 0;
 			GridBagConstraints gridBagConstraints6 = new GridBagConstraints();
 			gridBagConstraints6.gridx = 0;
 			gridBagConstraints6.anchor = GridBagConstraints.WEST;
-			gridBagConstraints6.gridy = 2;
+			gridBagConstraints6.gridy = 3;
 			lblTable = new JLabel();
 			lblTable.setText(Language.translate("Netz-Komponenten"));
 			GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
@@ -144,7 +152,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 			gridBagConstraints1.gridwidth = 1;
 			GridBagConstraints gridBagConstraints = new GridBagConstraints();
 			gridBagConstraints.fill = GridBagConstraints.BOTH;
-			gridBagConstraints.gridy = 3;
+			gridBagConstraints.gridy = 4;
 			gridBagConstraints.weightx = 1.0;
 			gridBagConstraints.weighty = 1.0;
 			gridBagConstraints.gridheight = 1;
@@ -155,6 +163,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 			pnlControlls.add(getScpComponentTable(), gridBagConstraints);
 			pnlControlls.add(getBtnImportGraph(), gridBagConstraints1);
 			pnlControlls.add(getBtnSetClasses(), gridBagConstraints7);
+			pnlControlls.add(getJTextFieldSearch(), gridBagConstraints11);
 			pnlControlls.add(lblTable, gridBagConstraints6);
 		}
 		return pnlControlls;
@@ -182,12 +191,12 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 			Vector<String> titles = new Vector<String>();
 			titles.add(Language.translate("Komponente"));
 			titles.add(Language.translate("Typ"));
-			
+			titles.add(Language.translate("Click", Language.EN));
 			tblComponents = new JTable(getComponentTableContents(), titles);
 			tblComponents.getSelectionModel().addListSelectionListener(this);
 			tblComponents.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			tblComponents.setShowGrid(true);
-			tblComponents.setFillsViewportHeight(true);
+			tblComponents.setFillsViewportHeight(true);	
 		}
 		return tblComponents;
 	}
@@ -200,18 +209,9 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		Vector<String> titles = new Vector<String>();
 		titles.add(Language.translate("Komponente"));
 		titles.add(Language.translate("Typ"));
+		titles.add(Language.translate("Click",Language.EN));
 		
 		getTblComponents().setModel(new DefaultTableModel(getComponentTableContents(), titles));
-	}
-	
-	/**
-	 * Clear the components table by removing all the rows
-	 */
-	private void clearTblComponents(){
-		Vector<String> titles = new Vector<String>();
-		titles.add(Language.translate("Komponente"));
-		titles.add(Language.translate("Typ"));
-		getTblComponents().setModel(new DefaultTableModel(titles,0));
 	}
 	
 	/**
@@ -395,6 +395,29 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 					}	
 					
 				}
+
+				else if(notification.getEvent().equals(BasicGraphGUI.EVENT_SPLIT_NODE_CLICKED)){
+				//Split node button clicked
+					GraphNode pickedVertex = getPickedVertex();
+					//One vertex is picked
+					if(pickedVertex!=null){
+						//Check whether it is in two network components
+						if(getNetworkComponentCount(pickedVertex)==2){
+							handleSplitNode(pickedVertex);
+						}
+						else{
+						//The node is not in two components
+							JOptionPane.showMessageDialog(this,Language.translate("Vertex should be in two components", Language.EN),
+									Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
+						}
+							
+					}
+					//Multiple vertices are picked
+					else{
+						JOptionPane.showMessageDialog(this,Language.translate("Select one vertex", Language.EN),
+								Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
+					}
+				}
 				else if(notification.getEvent().equals(BasicGraphGUI.EVENT_OBJECT_LEFT_CLICK)){					
 				// A graph element was selected in the visualization				
 					selectObject(notification.getArg());
@@ -407,11 +430,8 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 					graphGUI.clearPickedObjects();
 					//Node is clicked
 					if(obj instanceof GraphNode){ 
-						//Check the constraints and if true, set node as picked 
-						if(checkGridConstraints(obj)){						
 							graphGUI.setPickedObject((GraphElement) obj);
-						}
-					}
+					}	
 					//Edge is clicked
 					else if(obj instanceof GraphEdge){ 
 						//Get the network component and pick the related elements
@@ -435,16 +455,76 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 						}
 						// If the object is not picked already
 						else{
-							//Check the constraints and if true, set node as picked 
-							if(checkGridConstraints(obj)){						
-								graphGUI.setPickedObject((GraphElement) obj);
-							}
+								graphGUI.setPickedObject((GraphElement) obj);							
 						}						
 					}
 				}
 		}
 	}
 	
+	/**
+	 * Splits the node into two nodes, separating the two network components
+	 * @param node
+	 */
+	private void handleSplitNode(GraphNode node) {
+		// TODO Split node
+		
+		//Environment Network Model
+		NetworkModel networkModel = getController().getGridModel();
+		Graph<GraphNode,GraphEdge> graph = networkModel.getGraph();
+		
+		//Get the components containing the node
+		Iterator<NetworkComponent> compIter = getNetworkComponentsFromNode(node).iterator();		
+		NetworkComponent comp1 = compIter.next();
+		NetworkComponent comp2 = compIter.next();
+		
+		//Creating the new Graph node
+		GraphNode newNode = new GraphNode();
+		newNode.setId(networkModel.nextNodeID());
+			//Shifting position a bit
+		newNode.setPosition(new Point((int)node.getPosition().getX()+20, (int)node.getPosition().getY()+20));
+		node.setPosition(new Point((int)node.getPosition().getX()-20, (int)node.getPosition().getY()-20));
+		
+		//Incident Edges on the node
+		Collection<GraphEdge> incidentEdges = graph.getIncidentEdges(node);		
+		Iterator<GraphEdge> edgeIter = incidentEdges.iterator();
+		while(edgeIter.hasNext()){ // for each incident edge
+			GraphEdge edge = edgeIter.next();
+			//If the edge is in comp2
+			if(comp2.getGraphElementIDs().contains(edge.getId())){						
+				//Find the node on the other side of the edge
+				GraphNode otherNode = graph.getOpposite(node,edge);
+				//Create a new edge with the same ID and type
+				GraphEdge newEdge = new GraphEdge(edge.getId(), edge.getComponentType());				
+				//if the edge is directed
+				if(graph.getSource(edge)!=null) 
+				{
+					if(graph.getSource(edge) == node)
+						graph.addEdge(newEdge,newNode, otherNode, EdgeType.DIRECTED);
+					else if(graph.getDest(edge) == node)
+						graph.addEdge(newEdge,otherNode, newNode, EdgeType.DIRECTED);
+				}
+				// if the edge is undirected
+				else 
+					graph.addEdge(newEdge,newNode, otherNode, EdgeType.UNDIRECTED);
+				
+				//Removing the old edge from the graph and network model
+				graph.removeEdge(edge);
+				networkModel.getGraphElements().remove(edge.getId());
+				networkModel.getGraphElements().put(newEdge.getId(),newEdge);
+			}
+		}
+		
+		//Updating the graph element IDs of the component
+		comp2.getGraphElementIDs().remove(node.getId());
+		comp2.getGraphElementIDs().add(newNode.getId());
+		
+		//Adding new node to the network model
+		networkModel.getGraphElements().put(newNode.getId(),newNode);
+		
+		controller.refreshNetworkModel();
+	}
+
 	/**
 	 * Merges the two nodes as a single node and updates the graph and network model
 	 * @param node1
@@ -456,8 +536,9 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		Graph<GraphNode,GraphEdge> graph = networkModel.getGraph();
 		
 		//Get the Network components from the nodes
-		NetworkComponent comp1 = getComponentFromNode(node1);
-		NetworkComponent comp2 = getComponentFromNode(node2);
+		
+		NetworkComponent comp1 = getNetworkComponentsFromNode(node1).iterator().next();
+		NetworkComponent comp2 = getNetworkComponentsFromNode(node2).iterator().next();
 		
 		//Finding the intersection set of the Graph elements of the two network components
 		HashSet<String> intersection = new HashSet<String>(comp1.getGraphElementIDs());
@@ -512,22 +593,39 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		}
 	}
 	
+	public HashSet<NetworkComponent> getNetworkComponentsFromNode(GraphNode node){						
+		// Get the components from the controllers GridModel
+		HashSet<NetworkComponent>  compSet = new HashSet<NetworkComponent>();
+		Iterator<NetworkComponent> components = controller.getGridModel().getNetworkComponents().values().iterator();						
+		while(components.hasNext()){ // iterating through all network components
+			NetworkComponent comp = components.next();
+			// check if the component contains the given node
+			if(comp.getGraphElementIDs().contains(node.getId())){
+				compSet.add(comp);
+			}
+		}
+		return compSet;		
+	}
+	
 	/**
-	 * Returns the network component containing the given node
-	 * If the node is in multiple components, only the first one is returned
-	 * @return comp
+	 * @param node Vertex in the Graph
+	 * @return count No of network components containing the given node
 	 */
-	public NetworkComponent getComponentFromNode(GraphNode node){						
-			// Get the components from the controllers GridModel		    
+	public int getNetworkComponentCount(GraphNode node){
+		if(controller.getGridModel() != null){				
+			// Get the components from the controllers GridModel
 			Iterator<NetworkComponent> components = controller.getGridModel().getNetworkComponents().values().iterator();						
+			int count = 0;
 			while(components.hasNext()){ // iterating through all network components
 				NetworkComponent comp = components.next();
-				// check if the component contains the given node
+				// check if the component contains the current node
 				if(comp.getGraphElementIDs().contains(node.getId())){
-					return comp;
+					count++;
 				}
 			}
-			return null;		
+			return count;
+		}
+		return 0;
 	}
 	/**
 	 * Removes the given network component from the network model,
@@ -555,19 +653,9 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 			//For a node
 			else if (element instanceof GraphNode){
 				//Check whether the GraphNode is present in any other NetworkComponent
-				Iterator<String> keyIter = networkModel.getNetworkComponents().keySet().iterator();
-				int count = 0;
-				//For each component in the model
-				while(keyIter.hasNext()){
-					NetworkComponent component = networkModel.getNetworkComponents().get(keyIter.next());
-					//component contains the vertex
-					if(component.getGraphElementIDs().contains(element.getId())){
-						count++;
-					}
-				}
 				
 				// The vertex is only present in the selected component
-				if(count==1){
+				if(getNetworkComponentCount((GraphNode)element)==1){
 					//Removing the vertex from the Graph
 					networkModel.getGraph().removeVertex((GraphNode)element);
 					//Remove from the HashMap of GraphElements
@@ -588,26 +676,14 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	 */
 	public boolean checkGridConstraints(Object object) {
 		if(object instanceof GraphNode){
-			GraphNode node = (GraphNode) object;
-			if(controller.getGridModel() != null){				
-				// Get the components from the controllers GridModel
-				Iterator<NetworkComponent> components = controller.getGridModel().getNetworkComponents().values().iterator();
-							
-				int count =0;
-				while(components.hasNext()){ // iterating through all network components
-					NetworkComponent comp = components.next();
-					// check if the component contains the current node
-					if(comp.getGraphElementIDs().contains(node.getId())){
-						count++;
-					}
-				}
-				if(count<2)
+			GraphNode node = (GraphNode) object;			
+				if(getNetworkComponentCount(node)<2)
 					return true;				
-			}			
 		}	
 		return false;
 	}
 
+	
 	@Override
 	public void actionPerformed(ActionEvent event) {
 		if(event.getSource().equals(getBtnImportGraph())){
@@ -629,7 +705,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		if(getTblComponents().getSelectedRowCount() > 0){
 			String componentID = (String) tblComponents.getModel().getValueAt(getTblComponents().getSelectedRow(), 0);
 			NetworkComponent component = controller.getGridModel().getNetworkComponent(componentID);
-			selectObject(component);
+			selectObject(component);			
 		}
 	}
 	/**
@@ -647,6 +723,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	private JSplitPane getJSplitPaneRoot() {
 		if (jSplitPaneRoot == null) {
 			jSplitPaneRoot = new JSplitPane();
+			jSplitPaneRoot.setOneTouchExpandable(true);
 			jSplitPaneRoot.setLeftComponent(getPnlControlls());
 			jSplitPaneRoot.setRightComponent(getGraphGUI());
 			jSplitPaneRoot.setDividerLocation(200);
@@ -754,5 +831,24 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 			menuAdd.addActionListener(this);
 		}
 		return menuAdd;
+	}
+
+	/**
+	 * This method initializes jTextFieldSearch	
+	 * 	
+	 * @return javax.swing.JTextField	
+	 */
+	private JTextField getJTextFieldSearch() {
+		if (jTextFieldSearch == null) {
+			jTextFieldSearch = new JTextField();
+			jTextFieldSearch.setPreferredSize(new Dimension(100, 20));
+			jTextFieldSearch.addKeyListener(new java.awt.event.KeyAdapter() {
+				public void keyTyped(java.awt.event.KeyEvent e) {
+					System.out.println("keyTyped()"); // TODO Auto-generated Event stub keyTyped()
+				
+				}
+			});
+		}
+		return jTextFieldSearch;
 	}
 }  //  @jve:decl-index=0:visual-constraint="33,19"

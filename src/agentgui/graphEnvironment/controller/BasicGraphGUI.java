@@ -54,6 +54,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 	public static final String EVENT_ADD_COMPONENT_CLICKED = "add_component_clicked";  //  @jve:decl-index=0:
 	public static final String EVENT_REMOVE_COMPONENT_CLICKED = "remove_component_clicked";  //  @jve:decl-index=0:
 	public static final String EVENT_MERGE_NODES_CLICKED = "merge_nodes_clicked";  //  @jve:decl-index=0:
+	public static final String EVENT_SPLIT_NODE_CLICKED = "split_node_clicked";  //  @jve:decl-index=0:
 	public static final String EVENT_OBJECT_LEFT_CLICK = "object_left_click";  //  @jve:decl-index=0:
 	public static final String EVENT_OBJECT_RIGHT_CLICK = "object_right_click";  //  @jve:decl-index=0:
 	public static final String EVENT_OBJECT_SHIFT_LEFT_CLICK = "object_shift_left_click";  //  @jve:decl-index=0:
@@ -102,6 +103,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 	private JToggleButton jToggleMousePicking = null;
 	private JButton jButtonRemoveComponent = null;
 	private JButton jButtonMergeNodes = null;
+	private JButton jButtonSplitNode = null;
 
 	/**
 	 * This is the default constructor
@@ -265,6 +267,11 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 			myObservable.setChanged();			
 			myObservable.notifyObservers(new Notification(EVENT_MERGE_NODES_CLICKED,null));
 		}
+		//Button Split node clicked 
+		else if(e.getSource() == getJButtonSplitNode() && visView != null){						
+			myObservable.setChanged();			
+			myObservable.notifyObservers(new Notification(EVENT_SPLIT_NODE_CLICKED,null));
+		}
 		//Transforming Mouse mode button clicked
 		else if(e.getSource() == getJToggleMouseTransforming() && visView != null){						
 			boolean selected = getJToggleMouseTransforming().getModel().isSelected();
@@ -420,6 +427,11 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 			jJToolBar.setFloatable(false);
 			jJToolBar.setPreferredSize(new Dimension(40, 380));
 			
+			jJToolBar.add(getJButtonZoomIn());
+			jJToolBar.add(getJButtonZoomOut());
+			
+			jJToolBar.add(getJButtonZoomReset());
+			jJToolBar.addSeparator();
 			jJToolBar.add(getJToggleMouseTransforming());
 			jJToolBar.add(getJToggleMousePicking());
 			ButtonGroup bg = new ButtonGroup();
@@ -429,13 +441,9 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 			jJToolBar.add(getJButtonAddComponent());
 			jJToolBar.add(getJButtonRemoveComponent());
 			jJToolBar.add(getJButtonMergeNodes());
+			jJToolBar.add(getJButtonSplitNode());
 			jJToolBar.addSeparator();
-			jJToolBar.add(getJButtonClearGraph());
-			jJToolBar.addSeparator();
-			jJToolBar.add(getJButtonZoomIn());
-			jJToolBar.add(getJButtonZoomOut());
-			
-			jJToolBar.add(getJButtonZoomReset());
+			jJToolBar.add(getJButtonClearGraph());		
 			
 		}
 		return jJToolBar;
@@ -592,6 +600,23 @@ public class BasicGraphGUI extends JPanel implements ActionListener{
 		
 		}
 		return jButtonMergeNodes;
+	}
+
+	/**
+	 * This method initializes jButtonSplitNode	
+	 * 	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getJButtonSplitNode() {
+		if (jButtonSplitNode == null) {
+			jButtonSplitNode = new JButton();
+			jButtonSplitNode.setIcon(new ImageIcon(getClass().getResource(pathImage + "split.png")));
+			jButtonSplitNode.setPreferredSize(new Dimension(26, 26));
+			jButtonSplitNode.setToolTipText(Language.translate("Split the node into two nodes",Language.EN));
+			jButtonSplitNode.addActionListener(this);
+		
+		}
+		return jButtonSplitNode;
 	}
 
 }
