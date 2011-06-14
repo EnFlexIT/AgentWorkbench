@@ -63,7 +63,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 		
 		currSimSetup = new SimulationSetup(currProject); 
 		
-		XMLPathName = currProject.getSubFolderSetups(true) + xmlFile;		
+		XMLPathName = currProject.getSubFolder4Setups(true) + xmlFile;		
 		currSimXMLFile = XMLPathName;
 
 		this.setupSave();
@@ -125,7 +125,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 		if (this.containsKey(nameOld)==false) return;
 
 		// --- Verzeichnis-Info zusammenbauen -------------
-		String pathSimXML  = currProject.getSubFolderSetups(true);
+		String pathSimXML  = currProject.getSubFolder4Setups(true);
 		String fileNameXMLNew = pathSimXML + fileNameNew; 
 		// --- Datei kopieren -----------------------------
 		FileCopier fc = new FileCopier();
@@ -151,7 +151,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 		if (this.containsKey(nameOld)==false) return;
 		
 		// --- Verzeichnis-Info zusammenbauen -------------
-		String pathSimXML  = currProject.getSubFolderSetups(true);
+		String pathSimXML  = currProject.getSubFolder4Setups(true);
 		String fileNameXMLNew = pathSimXML + fileNameNew; 
 		// --- Datei kopieren -----------------------------
 		FileCopier fc = new FileCopier();
@@ -175,7 +175,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 		// --- Aktuelles Setup auf Input 'name' -----------
 		currSimSetupName = name;
 		currProject.simSetupCurrent = name;
-		currSimXMLFile = currProject.getSubFolderSetups(true) + this.get(currSimSetupName);
+		currSimXMLFile = currProject.getSubFolder4Setups(true) + this.get(currSimSetupName);
 		
 		// --- 'SimulationSetup'-Objekt neu instanziieren -
 		currSimSetup = new SimulationSetup(currProject);
@@ -313,7 +313,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 	 */
 	public void setupCleanUpSubFolder() {
 		
-		String pathSimXML  = currProject.getSubFolderSetups(true);
+		String pathSimXML  = currProject.getSubFolder4Setups(true);
 		File[] files = new File(pathSimXML).listFiles();
 		if (files != null) {
 			// --- Auflistung der Dateien durchlaufen -----

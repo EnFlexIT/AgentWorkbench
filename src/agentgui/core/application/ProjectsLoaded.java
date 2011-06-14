@@ -1,3 +1,30 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.dawis.wiwi.uni-due.de/ 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.core.application;
 
 import java.awt.Font;
@@ -25,8 +52,10 @@ import agentgui.core.ontologies.Ontologies4Project;
 import agentgui.core.sim.setup.SimulationSetups;
 
 /**
+ * This class holds the list of the projects which are currently open
+ * within Agent.GUI and offers methods to deal with them.  
  * 
- * @author Christian Derksen
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class ProjectsLoaded {
 
@@ -36,7 +65,7 @@ public class ProjectsLoaded {
 	/**
 	 * Adding (Creating or Opening) a new Project to the Application
 	 * @param addNew
-	 * @return Project
+	 * @return The Project-instance that was added here
 	 */
 	public Project add(boolean addNew) {
 		return this.add(addNew, null);
@@ -44,7 +73,7 @@ public class ProjectsLoaded {
 	/**
 	 * Open a project corresponding to specified project folder
 	 * @param selectedProjectFolder
-	 * @return
+	 * @return The Project-instance that was added here
 	 */
 	public Project add(String selectedProjectFolder) {
 		return this.add(false, selectedProjectFolder);
@@ -54,7 +83,7 @@ public class ProjectsLoaded {
 	 * Adding (Creating or Opening) a new Project to the Application
 	 * @param addNew
 	 * @param selectedProjectFolder
-	 * @return
+	 * @return The Project-instance that was added here
 	 */
 	private Project add (boolean addNew, String selectedProjectFolder) {
 
@@ -208,11 +237,10 @@ public class ProjectsLoaded {
 	}
 
 	/**
-	 * Trys to close all current opened projects
-	 * @return
+	 * This method will try to close all open projects
+	 * @return Returns true on success
 	 */
 	public boolean closeAll() {		
-		// --- Alle "aktuellen" Projekte schlieﬂen --------
 		while ( Application.ProjectCurr != null ) {
 			if ( Application.ProjectCurr.close() == false  ) {
 				return false;
@@ -221,53 +249,53 @@ public class ProjectsLoaded {
 		return true;
 	}
 	/**
-	 * Returns the Project-Object
-	 * @param String ProjectName
-	 * @return
+	 * Returns the Project-instance given by its project name
+	 * @param projectName
+	 * @return A Project instance 
 	 */
-	public Project get ( String ProjectName ) {
-		int Index = getIndexByName( ProjectName );
-		if ( Index == -1 ) {
-			// --- Falls der Verzeichnisname genommen wurde ----
-			Index = getIndexByFolderName( ProjectName );
+	public Project get(String projectName) {
+		int index = this.getIndexByName(projectName);
+		if (index == -1 ) {
+			// --- if the folder name was used ---
+			index = this.getIndexByFolderName(projectName);
 		}
-		return get(Index);
+		return get(index);
 	}
 	/**
-	 * Returns the Project-Object
-	 * @param int Index
-	 * @return
+	 * Returns the Project-instance given by its index
+	 * @param indexOfProject
+	 * @return A Project instance
 	 */
-	public Project get( int Index ) {
-		return projectsOpen.get(Index);
+	public Project get(int indexOfProject) {
+		return projectsOpen.get(indexOfProject);
 	}
 
 	/**
 	 * Removes a single Project
-	 * @param String Project2Remove
+	 * @param project2Remove
 	 */
-	public void remove( Project Project2Remove ) {
-		projectsOpen.remove(Project2Remove);
+	public void remove(Project project2Remove) {
+		projectsOpen.remove(project2Remove);
 		this.setProjectView();
 	}
 	/**
 	 * Removes all Projects from the (Array) ProjectList
 	 */
-	public void removeAll( ) {
+	public void removeAll() {
 		projectsOpen.clear();
 		Application.ProjectCurr = null;
 		Application.Projects.setProjectView();		
 	}
 
 	/**
-	 * Identifies a Project by his name and returns the Array-/Window-Index
-	 * @param ProjectName
-	 * @return
+	 * Identifies a Project by its name and returns the Array-/Window-Index
+	 * @param projectName
+	 * @return The index position of a project 
 	 */
-	public int getIndexByName ( String ProjectName ) {
+	public int getIndexByName(String projectName) {
 		int Index = -1;
 		for(int i=0; i<this.count(); i++) {
-			if( projectsOpen.get(i).getProjectName().equalsIgnoreCase(ProjectName) ) {
+			if( projectsOpen.get(i).getProjectName().equalsIgnoreCase(projectName) ) {
 				Index = i;
 				break;
 			}	
@@ -275,19 +303,19 @@ public class ProjectsLoaded {
 		return Index;
 	}
 	/**
-	 * Identifies a Project by his Root-Folder-Name and returns the Array-/Window-Index
-	 * @param ProjectName
-	 * @return
+	 * Identifies a Project by its Root-Folder-Name and returns the Array-/Window-Index
+	 * @param projectFolderName
+	 * @return The index position of a project
 	 */
-	public int getIndexByFolderName ( String ProjectName ) {
-		int Index = -1;
+	public int getIndexByFolderName(String projectFolderName) {
+		int index = -1;
 		for(int i=0; i<this.count(); i++) {
-			if( projectsOpen.get(i).getProjectFolder().toLowerCase().equalsIgnoreCase( ProjectName.toLowerCase() ) ) {
-				Index = i;
+			if( projectsOpen.get(i).getProjectFolder().toLowerCase().equalsIgnoreCase( projectFolderName.toLowerCase() ) ) {
+				index = i;
 				break;
 			}	
 		}
-		return Index;
+		return index;
 	}
 	/**
 	 * Counts the actual open projects
@@ -297,7 +325,7 @@ public class ProjectsLoaded {
 	}
 
 	/**
-	 * Configures the apeareance of the application, depending on the project
+	 * Configures the appearance of the application, depending on the current project configuration
 	 */
 	public void setProjectView() {
 		

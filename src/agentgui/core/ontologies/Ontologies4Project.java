@@ -14,13 +14,17 @@ import javax.swing.tree.DefaultTreeModel;
 import agentgui.core.application.Application;
 import agentgui.core.application.Project;
 
+/**
+ * This class is used for the management of the used Ontologies inside a project.
+ * It can add or remove further (Sub)-Ontologies in order to reduce the
+ * effort of building your own complex ontology
+ * 
+ * 
+ */
+
 public class Ontologies4Project extends HashMap<String, OntologyClass> {
 
-	/**
-	 * This class is used for the management of the used Ontologies inside a project.
-	 * It can add or remove further (Sub)-Ontologies in order to reduce the
-	 * effort of building your own complex ontology
-	 */
+	
 	private static final long serialVersionUID = 2055269152886396404L;
 	
 	private Project currProject;

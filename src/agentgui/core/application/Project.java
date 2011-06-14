@@ -1,3 +1,30 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.dawis.wiwi.uni-due.de/ 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.core.application;
 
 import java.io.File;
@@ -47,27 +74,68 @@ import agentgui.core.sim.setup.SimulationSetups;
 import agentgui.physical2Denvironment.controller.Physical2DEnvironmentController;
 import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 
+/**
+ * This is the class, which holds all necessary informations about a project.<br> 
+ * In order to allow multiple access to the instance of Project, we designed it <br>
+ * in the common <b>MVC pattern</b> (Model-View-Controller)<br>
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ */
 @XmlRootElement public class Project extends Observable {
 
 	// --- public statics --------------------------------------
+	/**
+	 * Constant value in order to inform the Observer about changes of this kind
+	 */
 	@XmlTransient public static final String SAVED = "ProjectSaved";
 	
+
+	/**
+	 * Constant value in order to inform the Observer about changes of this kind
+	 */
 	@XmlTransient public static final String CHANGED_ProjectName = "ProjectName";
+	/**
+	 * Constant value in order to inform the Observer about changes of this kind
+	 */
 	@XmlTransient public static final String CHANGED_ProjectDescription = "ProjectDescription";
+	/**
+	 * Constant value in order to inform the Observer about changes of this kind
+	 */
 	@XmlTransient public static final String CHANGED_ProjectFolder= "ProjectFolder";
+	/**
+	 * Constant value in order to inform the Observer about changes of this kind
+	 */
 	@XmlTransient public static final String CHANGED_ProjectView = "ProjectView";
+	/**
+	 * Constant value in order to inform the Observer about changes of this kind
+	 */
 	@XmlTransient public static final String CHANGED_EnvironmentModel= "EnvironmentModel";
+	/**
+	 * Constant value in order to inform the Observer about changes of this kind
+	 */
 	@XmlTransient public static final String CHANGED_AgentStartConfiguration = "AgentConfiguration4StartArguments";
+	/**
+	 * Constant value in order to inform the Observer about changes of this kind
+	 */
 	@XmlTransient public static final String CHANGED_ProjectOntology = "ProjectOntology";
+	/**
+	 * Constant value in order to inform the Observer about changes of this kind
+	 */
 	@XmlTransient public static final String CHANGED_ProjectResources = "ProjectResources";
 	
+	/**
+	 * Constant value in order to set the project view
+	 */
 	@XmlTransient public static final String VIEW_Developer = "Developer";
+	/**
+	 * Constant value in order to set the project view
+	 */
 	@XmlTransient public static final String VIEW_User = "User";
 	
 	// --- Constants -------------------------------------------
-	@XmlTransient private String defaultSubFolderSetups    = "setups";
+	@XmlTransient private String defaultSubFolder4Setups    = "setups";
 	@XmlTransient private String defaultSubFolderEnvSetups = "svgEnvSetups";
-	@XmlTransient private String[] defaultSubFolders	   = { defaultSubFolderSetups,
+	@XmlTransient private String[] defaultSubFolders	   = { defaultSubFolder4Setups,
 															   defaultSubFolderEnvSetups, 
 															  };
 	
@@ -75,67 +143,114 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	@XmlTransient private static final String PathSep = Application.RunInfo.AppPathSeparatorString();
 	
 	// --- GUI der aktuellen Projekt-Instanz -------------------
+	/**
+	 * This is the 'view' in the context of the mentioned MVC pattern
+	 */
 	@XmlTransient public ProjectWindow projectWindow = null;
+	/**
+	 * This panel holds the instance of environment model display 
+	 */
 	@XmlTransient public JPanel projectVisualizationPanel = null;
+	/**
+	 * This JDesktopPane can be used in order to allow further user interactions within the project
+	 * by using individual JInternalFrames. If frames are added to this desktop, the focus will be 
+	 * set to it.
+	 */
 	@XmlTransient public JDesktopPane projectDesktop = null;
 	
 	// --- Objekt- / Projektvariablen --------------------------
+	/**
+	 * Indicates that the project is unsaved or not
+	 */
 	@XmlTransient public boolean isUnsaved = false;
 	@XmlTransient private String projectFolder;
 	@XmlTransient private String projectFolderFullPath;
-	@XmlTransient public Ontologies4Project ontologies4Project;
-
-	//	@XmlTransient private Physical2DEnvironment environment;
+	
 	@XmlTransient private Physical2DEnvironmentController physical2DEnvironmentController;
 	
-	// --- Speichervariablen der Projektdatei -------------------------
-	@XmlElement(name="projectName")
-	private String projectName;
-	@XmlElement(name="projectDescription")
-	private String projectDescription;
-	@XmlElement(name="projectView")
-	private String projectView;			// --- Developer / End-User ---
+	// --- Vars saved within the project file -------------------------
+	@XmlElement(name="projectName")			private String projectName;
+	@XmlElement(name="projectDescription")	private String projectDescription;
+	@XmlElement(name="projectView")			private String projectView;			// --- Developer / End-User ---
+
+	@XmlElement(name="environmentModel")	private String environmentModel;	
 	
-	@XmlElement(name="environmentModel")
-	private String environmentModel;	
-	
+	/**
+	 * This Vector holds the additional resources which are used for the current project 
+	 * (external jar files or the binary folder of a development project)  
+	 */
 	@XmlElementWrapper(name = "projectResources")
 	@XmlElement(name="projectResource")
 	public Vector<String> projectResources = new Vector<String>();
 
+	/**
+	 * This Vector handles the list of resources which should be loadable in case of 
+	 * distributed simulations. The idea is, that for example external jar-files can
+	 * be distributed to a remote location, where such jar-files will be added automatically 
+	 * to the ClassPath of the starting JVM.         
+	 */
+	@XmlTransient public Vector<String> downloadResources = new Vector<String>();
+	
+	/**
+	 * This Vector will store the class names of the PlugIns which are used within the project
+	 */
 	@XmlElementWrapper(name="plugins")
 	@XmlElement(name="className")
 	public Vector<String> plugIns_Classes = new Vector<String>();
+	/**
+	 * This extended Vector will hold the concrete instances of the PLugIns loaded in this project 
+	 */
 	@XmlTransient public PlugInsLoaded plugIns_Loaded = new PlugInsLoaded();
 	@XmlTransient private boolean plugInVectorLoaded = false;
 	
-	@XmlTransient 
-	public Vector<String> downloadResources = new Vector<String>();
+	/**
+	 * This class is used for the management of the used Ontology's inside a project.
+	 * It handles the concrete instances.
+	 */
+	@XmlTransient public Ontologies4Project ontologies4Project;
 	
+	/**
+	 * This Vector is used in order to store the class names of the used ontology's in the project file
+	 */
 	@XmlElementWrapper(name = "subOntologies")
 	@XmlElement(name="subOntology")
 	public Vector<String> subOntologies = new Vector<String>();
 	
+	/**
+	 * This extended HashTable is used in order to save the relationship between an agent (agents class name)
+	 * and the classes (also class names) which can be used as start-argument for the agents   
+	 */
 	@XmlElementWrapper(name = "agentConfiguration")
 	public AgentConfiguration agentConfig = new AgentConfiguration(this);
 	
-	@XmlElement(name="simulationSetupCurrent")
-	public String simSetupCurrent = null;
-	@XmlElementWrapper(name = "simulationSetups")
-	public SimulationSetups simSetups = new SimulationSetups(this, simSetupCurrent);
-	
+	/**
+	 * This field manages the configuration of JADE (e. g. JADE-Port 1099 etc.)
+	 */
 	@XmlElement(name="jadeConfiguration")
 	public PlatformJadeConfig JadeConfiguration = new PlatformJadeConfig();
 	
 	/**
-	 * Default-Constructor
+	 * This attribute holds the instance of the currently selected SimulationSetup
+	 */
+	@XmlElement(name="simulationSetupCurrent")
+	public String simSetupCurrent = null;
+	/**
+	 * This extended HashTable is used in order to store the SimulationsSetup's names 
+	 * and their file names 
+	 */
+	@XmlElementWrapper(name = "simulationSetups")
+	public SimulationSetups simSetups = new SimulationSetups(this, simSetupCurrent);
+	
+	
+	/**
+	 * Default constructor for Project
 	 */
 	public Project() {
 		// ---
 	};
 	
 	/**
-	 * This methods adds all default Agent.GUI Tabs to the ProjectWindow of the project
+	 * This methods adds all default Agent.GUI-tabs to the ProjectWindow 
 	 */
 	public void addDefaultTabs() {
 		
@@ -222,7 +337,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	}
 	
 	/**
-	 * Save the current MAS-Project
+	 * Saves the current MAS-Project to the file 'agentgui.xml'
 	 */
 	public boolean save() {
 		// --- Save the current project -------------------
@@ -256,8 +371,8 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	}
 	
 	/**
-	 * This method closes the current project and returns true if this was successful 
-	 * @return
+	 * This method closes the current project. If necessary it will try to save the before.  
+	 * @return Returns true if saving was successful
 	 */
 	public boolean close() {
 		// --- Close project? -----------------------------
@@ -323,7 +438,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	/**
 	 * This method will load the ProjectPlugIns, which are configured for the
 	 * current project (plugins_Classes). It will be executed only one time during 
-	 * the 'ProjectsLoaded.add()' execution. After this no further functionallity 
+	 * the 'ProjectsLoaded.add()' execution. After this no further functionality 
 	 * can be expected. 
 	 */
 	public void plugInVectorLoad() {
@@ -354,14 +469,14 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	public void plugInVectorReload() {
 		// --- remove all loaded PlugIns ------------------
 		this.plugInVectorRemove();
-		// --- re-initialize the 'PlugInsLoaded'-Vector ---
+		// --- re-initialise the 'PlugInsLoaded'-Vector ---
 		plugIns_Loaded = new PlugInsLoaded();
 		// --- load all configured PlugIns to the project -
 		this.plugInVectorLoad();
 		
 	}
 	/**
-	 * This method loads a single plugin given by its class reference
+	 * This method loads a single PlugIn, given by its class reference
 	 * @param pluginReference
 	 */
 	public boolean plugInLoad(String pluginReference, boolean add2ProjectReferenceVector) {
@@ -395,8 +510,12 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 		return true;
 	}
 	/**
-	 * This method will unload and remove a single PlugIn 
-	 * @param pluginReference
+	 * This method will unload and remove a single PlugIn. If removeFromProjectReferenceVector is set
+	 * to true, the PlugIn-reference will be also removed from the list of PlugIns', which has to be 
+	 * loaded with the project.
+	 *  
+	 * @param plugIn The PlugIn instance to be removed
+	 * @param removeFromProjectReferenceVector 
 	 */
 	public void plugInRemove(PlugIn plugIn, boolean removeFromProjectReferenceVector) {
 		this.plugIns_Loaded.removePlugIn(plugIn);
@@ -421,8 +540,8 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 		this.checkCreateSubFolders();
 	}
 	/**
-	 * Controls and/or Creates wether the Subfolder-Structure exists 
-	 * @return boolean true or false
+	 * Controls and/or creates whether the sub-folder-Structure exists 
+	 * @return boolean true or false :-)
 	 */	
 	public boolean checkCreateSubFolders() {
 		
@@ -430,7 +549,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 		File f = null;
 		boolean Error = false;
 		
-		for (int i=0; i< defaultSubFolders.length; i++  ) {
+		for (int i=0; i< this.defaultSubFolders.length; i++  ) {
 			// --- ggf. Verzeichnis anlegen ---------------
 			NewDirName = this.projectFolderFullPath + defaultSubFolders[i];
 			f = new File(NewDirName);
@@ -452,7 +571,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	}
 	
 	/**
-	 * To prevent to close the project without saving
+	 * Allow change notifications within the observer pattern without necessarily saving such changes
 	 * @param reason
 	 */
 	public void setNotChangedButNotify(Object reason) {
@@ -460,7 +579,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 		notifyObservers(reason);		
 	}
 	/**
-	 * To prevent to close the project without saving
+	 * To prevent the closing of the project without saving
 	 * @param reason
 	 */
 	public void setChangedAndNotify(Object reason) {
@@ -475,11 +594,11 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	public void setFocus(boolean forceClassPathReload) {
 		
 		if (forceClassPathReload) {
-			// --- ggf. Jade beenden ----------------------
+			// --- stop Jade ------------------------------
 			if (Application.JadePlatform.jadeStopAskUserBefore()==false) {
 				return;
 			}
-			// --- CLASSPATH entladen  --------------------
+			// --- unload CLASSPATH -----------------------
 			Application.ProjectCurr.resourcesRemove();
 		}
 		
@@ -487,7 +606,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 		Application.setTitelAddition( projectName );
 		Application.ProjectCurr = this;
 		Application.Projects.setProjectView();
-		setMaximized();
+		this.setMaximized();
 		
 		if (forceClassPathReload) {
 			// --- CLASSPATH laden ------------------------
@@ -504,7 +623,8 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	}
 	
 	/**
-	 * @param projectFolder the projectName to set
+	 * Set method for the project name
+	 * @param newProjectName the projectName to set
 	 */
 	public void setProjectName(String newProjectName) {
 		projectName = newProjectName;
@@ -521,9 +641,8 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	}
 	
 	/**
-	 * @param projectDescription the projectDescription to set
+	 * @param newProjectDescription the projectDescription to set
 	 */
-	
 	public void setProjectDescription(String newProjectDescription) {
 		projectDescription = newProjectDescription;
 		isUnsaved = true;
@@ -537,6 +656,28 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	public String getProjectDescription() {
 		return projectDescription;
 	}
+	/**
+	 * @param newProjectFolder the projectFolder to set
+	 */
+	@XmlTransient
+	public void setProjectFolder(String newProjectFolder) {
+		projectFolder = newProjectFolder;
+		projectFolderFullPath = Application.RunInfo.PathProjects(true, false) + projectFolder + Application.RunInfo.AppPathSeparatorString();
+		setChanged();
+		notifyObservers(CHANGED_ProjectFolder);
+	}
+	/**
+	 * @return the projectFolder
+	 */
+	public String getProjectFolder() {
+		return projectFolder;
+	}
+	/**
+	 * @return the ProjectFolderFullPath
+	 */
+	public String getProjectFolderFullPath() {
+		return projectFolderFullPath;
+	}
 	
 	/**
 	 * @param projectView the projectView to set
@@ -548,7 +689,6 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 		setChanged();
 		notifyObservers(CHANGED_ProjectView);
 	}
-
 	/**
 	 * @return the projectView
 	 */
@@ -584,29 +724,6 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	}
 	
 	/**
-	 * @param newProjectFolder the projectFolder to set
-	 */
-	@XmlTransient
-	public void setProjectFolder(String newProjectFolder) {
-		projectFolder = newProjectFolder;
-		projectFolderFullPath = Application.RunInfo.PathProjects(true, false) + projectFolder + Application.RunInfo.AppPathSeparatorString();
-		setChanged();
-		notifyObservers(CHANGED_ProjectFolder);
-	}
-	/**
-	 * @return the projectFolder
-	 */
-	public String getProjectFolder() {
-		return projectFolder;
-	}
-	/**
-	 * @return the ProjectFolderFullPath
-	 */
-	public String getProjectFolderFullPath() {
-		return projectFolderFullPath;
-	}
-	
-	/**
 	 * Informs about changes at the AgentConfiguration 'AgentConfig'
 	 */
 	public void updateAgentReferences() {
@@ -620,7 +737,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	 * @return The default environment setup folder
 	 */
 	public String getEnvSetupPath(){
-		return projectFolderFullPath+defaultSubFolderEnvSetups;
+		return projectFolderFullPath + defaultSubFolderEnvSetups;
 	}
 	/**
 	 * @return the environment
@@ -661,10 +778,13 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 		}
 	}	
 	/**
-	 * @param environment the environment to set
+	 * This method can be used in order to set the environment 
+	 * controller for physical 2D environments
+	 * 
+	 * @param environmentController the environment controller to set
 	 */
-	public void setEnvironmentController(Physical2DEnvironmentController ec) {
-		this.physical2DEnvironmentController = ec;
+	public void setEnvironmentController(Physical2DEnvironmentController environmentController) {
+		this.physical2DEnvironmentController = environmentController;
 	}
 	/**
 	 * @return the current EnvironmentController
@@ -673,26 +793,26 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	public Physical2DEnvironmentController getEnvironmentController() {
 		return this.physical2DEnvironmentController;
 	}
+	
 	/**
-	 * @param defaultSubFolderSetups the defaultSubFolderOntology to set
+	 * @param newSubFolder4Setups the defaultSubFolderOntology to set
 	 */
-	public void setSubFolderSetups(String newSubFolderSetups) {
-		defaultSubFolderSetups = newSubFolderSetups;
+	public void setSubFolder4Setups(String newSubFolder4Setups) {
+		defaultSubFolder4Setups = newSubFolder4Setups;
 	}
 	/**
 	 * @return the defaultSubFolderSetups
 	 */
-	public String getSubFolderSetups(boolean fullPath) {
+	public String getSubFolder4Setups(boolean fullPath) {
 		if (fullPath==true) {
-			return getProjectFolderFullPath() + defaultSubFolderSetups + PathSep;
+			return getProjectFolderFullPath() + defaultSubFolder4Setups + PathSep;
 		} else {
-			return defaultSubFolderSetups;	
+			return defaultSubFolder4Setups;	
 		}
-		
 	}
 	
 	/**
-	 * @param defaultSubFolderEnvSetups the defaultSubFolderEnvSetups to set
+	 * @param newSubFolderEnvSetups the defaultSubFolderEnvSetups to set
 	 */
 	public void setSubFolderEnvSetups(String newSubFolderEnvSetups) {
 		defaultSubFolderEnvSetups = newSubFolderEnvSetups;
@@ -705,7 +825,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	}
 
 	/**
-	 * Adds a new sub ontology to the current project onology 
+	 * Adds a new sub ontology to the current project ontology 
 	 * @param newSubOntology
 	 */
 	public void subOntologyAdd(String newSubOntology) {
@@ -717,7 +837,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 		} 
 	}
 	/**
-	 * Removes a new sub ontology from the current project onology 
+	 * Removes a new sub ontology from the current project ontology 
 	 * @param removableSubOntology
 	 */
 	public void subOntologyRemove(String removableSubOntology) {
@@ -727,8 +847,9 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 		notifyObservers(CHANGED_ProjectOntology);
 	}
 	
+	
 	/**
-	 * This method removes adds external project resources (jars) to the CLATHPATH  
+	 * This method adds external project resources (e.g. *.jar-files) to the CLATHPATH  
 	 */
 	public void resourcesLoad() {
 

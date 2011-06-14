@@ -426,3 +426,7 @@ de;Übersetzen;Translate
 de;Übersetzter Text;Text translated
 de;Übersetzung speichern (STRG+S);Save translation (CTRL + S)
 de;Überspringen;Skip
+en;;Add new component;;;
+en;;Clear graph;;;
+en;;Switch to Picking mode;;;
+en;;Switch to Transforming mode;;;

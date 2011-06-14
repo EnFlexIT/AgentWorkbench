@@ -1,3 +1,30 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.dawis.wiwi.uni-due.de/ 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.core.application;
 
 import javax.swing.JOptionPane;
@@ -19,31 +46,80 @@ import agentgui.core.webserver.DownloadServer;
 import agentgui.simulationService.load.LoadMeasureThread;
 
 /**
+ * This is the main class of the application containing the main-method for the program execution.<br> 
+ * This class is designed as singleton class in order to make it accessible from every context of the program. 
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class Application {
-		
+	
+	/**
+	 * The instance of this singleton class
+	 */
 	private static Application thisApp = new Application(); 
 	
+	/**
+	 * This attribute holds the current state of the configurable runtime informations  
+	 */
 	public static GlobalInfo RunInfo = null;
+	/**
+	 * Holds the instance of the file properties which are defined in '/properties/agentgui.ini' 
+	 */
+	public static FileProperties Properties = null;
+	/**
+	 * This is the instance of the main application window
+	 */
 	public static CoreWindowConsole Console = null;
-	public static FileProperties properties = null;
-	public static Platform JadePlatform = null;	
-	public static DownloadServer webServer = null;
+
+	/**
+	 * With this attribute/class the agent platform (JADE) will be controlled 
+	 */
+	public static Platform JadePlatform = null;
+	/**
+	 * This will hold the instance of the download-server, which will be started concurrently
+	 * to the JADE platform. With this simple web-server the external resources (.jar - files), 
+	 * configured in the project can be transfered to remote container
+	 */
+	public static DownloadServer WebServer = null;
+	/**
+	 * This ClassDetector is used in order to search for agent classes, ontology's and base service.
+	 * If a project was newly opened, the search process will start again. 
+	 */
 	public static ClassSearcher ClassDetector = null;
 	
-	public static AgentGUITrayIcon trayIconInstance = null;
+	/**
+	 * Here the tray icon of the application can be accessed
+	 */
+	public static AgentGUITrayIcon TrayIcon = null;
+	/**
+	 * If the application was executed as end user application, this attribute will be false.
+	 * In case of the execution as a 'server'-tool (without GUI but with tray icon control), this will be true. 
+	 */
 	public static boolean isServer = false;
 	
+	/**
+	 * Holds the list of the open projects. Can be also seen in the window menu of the applications main window
+	 */
 	public static ProjectsLoaded Projects = null;
+	/**
+	 * Holds the reference of the currently focused project
+	 */
 	public static Project ProjectCurr = null;
+	/**
+	 * This will hold the instance of the main application window 
+	 */
 	public static CoreWindow MainWindow = null;
+	/**
+	 * In case that this program instance was executed as 'server.master', this 
+	 * will hold the connection to the database 
+	 */
 	public static DBConnection DBconnection = null;
 	
 	private static AboutDialog about = null;
 	private static OptionDialog options = null;
-
+	/**
+	 * Indicates if the benchmark is currently running
+	 */
 	public static boolean benchmarkIsRunning = false; 
 	
 	private static String project2OpenAfterStart = null;
@@ -51,20 +127,26 @@ public class Application {
 	// --- Singleton-Constructor ---
 	private Application() {
 	}	
+	/**
+	 * Will return the instance of this singleton class
+	 * @return The instance of this class
+	 */
 	public static Application getInstance() {
 		return thisApp;
 	}
 	
 	/**
-	 * main-method for the start of the application 
-	 * @param args
+	 * main-method for the start of the application running as end user application or server-tool
+	 * 
+	 * @param args The arguments which can be configured in the command line. 
+	 * -help will print all possible command line arguments 
 	 */
 	public static void main(String[] args) {
 		
 		// ----------------------------------------------------------
 		// --- Just starts the base-instances -----------------------
 		RunInfo = new GlobalInfo();
-		properties = new FileProperties();
+		Properties = new FileProperties();
 		Language.startDictionary();
 		proceedStartArguments(args);
 		new LoadMeasureThread().start();  
@@ -75,8 +157,7 @@ public class Application {
 	}	
 
 	/**
-	 * This method will proceed the arguments which are given
-	 * from the  
+	 * This method will proceed the start-arguments of the application  
 	 * @param args
 	 */
 	private static void proceedStartArguments(String[] args){
@@ -133,9 +214,9 @@ public class Application {
 		System.out.println("");
 	}
 	/**
-	 * This methode can be invoked in order to start a project.
+	 * This method can be invoked in order to start a project.
 	 * It was implemented to open a project given by the start arguments
-	 * @param projectFolder
+	 * after the needed instantiations are done.
 	 */
 	private static void proceedStartArgumentOpenProject() {
 		
@@ -154,14 +235,14 @@ public class Application {
 	
 	/**
 	 * This methods starts Agent.GUI in application or server mode
-	 * depending on the configuration in 'properies\agentgui.ini'
+	 * depending on the configuration in 'properties/agentgui.ini'
 	 */
 	private static void startAgentGUI() {
 		
 		// ----------------------------------------------------------		
 		// --- Start the Application as defined by 'isServer' -------
 		JadePlatform = new Platform();
-		trayIconInstance = new AgentGUITrayIcon();
+		TrayIcon = new AgentGUITrayIcon();
 		if ( isServer == true ) {
 			// ------------------------------------------------------
 			// --- Start Server-Version of AgentGUI -----------------
@@ -183,7 +264,7 @@ public class Application {
 	}
 	
 	/**
-	 * Opens the Main-Window (JFrame)
+	 * Opens the main application window (JFrame)
 	 */
 	public static void startApplication() {
  		// --- open Main-Dialog -------------------------------------		
@@ -193,7 +274,7 @@ public class Application {
 	}
 	
 	/**
-	 * Starts the Main-Procedure for the Server-Version of Agent.GUI
+	 * Starts the main procedure for the Server-Version of Agent.GUI
 	 */
 	public static void startServer() {
 		// --- Automatically Start JADE, if configured --------------
@@ -207,7 +288,7 @@ public class Application {
 				}
 			}			
 			JadePlatform.jadeStart();
-			trayIconInstance.popUp.refreshView();
+			TrayIcon.popUp.refreshView();
 		}
 	}
 	
@@ -225,7 +306,7 @@ public class Application {
 			if ( Projects.closeAll() == false ) return;	
 		}		
 		// --- FileProperties speichern ------------
-		properties.save();
+		Properties.save();
 		
 		// --- Fertig ------------------------------
 		System.out.println( Language.translate("Programmende... ") );
@@ -250,9 +331,8 @@ public class Application {
 		showOptionDialog(null);
 	}
 	/**
-	 * Opens the Configuration-Dialog for the 
-	 * AgentGUI-Application with a specified TabName
-	 * @param showTab
+	 * Opens the Option-Dialog of the application with a specified TabName
+	 * @param focusOnTab Can be used to set the focus directly to a Tab specified by its name 
 	 */
 	public static void showOptionDialog(String focusOnTab) {
 		
@@ -296,8 +376,8 @@ public class Application {
 					System.out.println(Language.translate("Umschalten von 'Server' auf 'Anwendung'"));
 				}				
 				// --- Tray-Icon entfernen / schliessen -------------
-				trayIconInstance.remove();
-				trayIconInstance = null;
+				TrayIcon.remove();
+				TrayIcon = null;
 
 			} else {
 				// --- Umschalten von 'Application' auf 'Server' ----
@@ -310,8 +390,8 @@ public class Application {
 				MainWindow.dispose();
 				MainWindow = null;
 				// --- Tray-Icon schliessen -------------------------
-				trayIconInstance.remove();
-				trayIconInstance = null;
+				TrayIcon.remove();
+				TrayIcon = null;
 			}
 			// --- Restart ------------------------------------------
 			startAgentGUI();
@@ -320,9 +400,7 @@ public class Application {
 	}
 
 	/**
-	 * Opens the Configuration-Dialog for the 
-	 * AgentGUI-Application with a specified TabName
-	 * @param showTab
+	 * Will show the About-Dialog of the application
 	 */
 	public static void showAboutDialog() {
 		
@@ -342,60 +420,54 @@ public class Application {
 	}
 
 	/**
-	 * Adds a complementation to the application title
-	 * @param Add2BasicTitel
+	 * Adds a supplement to the application title
+	 * @param add2BasicTitel
 	 */
-	public static void setTitelAddition( String Add2BasicTitel ) {
-		MainWindow.setTitelAddition(Add2BasicTitel);
+	public static void setTitelAddition( String add2BasicTitel ) {
+		MainWindow.setTitelAddition(add2BasicTitel);
 	}
 
 	/**
-	 * Sets the JADE Status- Visulazitation for the User 
+	 * Sets the status which shows if JADE is running (green or red in the right corner of the status bar)   
 	 * @param runs  
 	 */
 	public static void setStatusJadeRunning(boolean runs) {
 		if (MainWindow!=null) {
 			MainWindow.setStatusJadeRunning(runs);	
 		}
-		trayIconInstance.popUp.refreshView();
+		TrayIcon.popUp.refreshView();
 	}
 	
 	/**
-	 * Sets the text of the status bar
-	 * @param Message
+	 * Enables to set the text of the status bar
+	 * @param statusText
 	 */
-	public static void setStatusBar( String Message ) {
-		MainWindow.setStatusBar(Message);
+	public static void setStatusBar(String statusText) {
+		MainWindow.setStatusBar(statusText);
 	}
 	
 	/**
 	 * Set's the Look and feel of the application
-	 * @param NewLnF
+	 * @param newLnF
 	 */
-	public static void setLookAndFeel( String NewLnF ) {
-		MainWindow.setLookAndFeel(NewLnF);
+	public static void setLookAndFeel(String newLnF) {
+		MainWindow.setLookAndFeel(newLnF);
 		Projects.setProjectView();
 	}	
 	
 	/**
-	 * Changing the application language to:
-	 * NewLang => "DE", "EN", "IT", "ES" or "FR" etc. is equal to the 
-	 * end phrase after the prefix "LANG_". E.g. "LANG_EN" needs "EN" as parameter
-	 * 
-	 * @param newLang
+	 * Enables to change the user language of the application   
+	 * @param newLang => 'de', 'en', 'it', 'es' or 'fr' etc. is equal to the header line of the dictionary
 	 */
 	public static void setLanguage(String newLang) {
 		setLanguage(newLang, true);
 	}
 	/**
-	 * Changing the application language to:
-	 * NewLang => "DE", "EN", "IT", "ES" or "FR" etc. is equal to the 
-	 * end phrase after the prefix "LANG_". E.g. "LANG_EN" needs "EN" as parameter.
-	 * 
+	 * Enables to change the user language of the application  
 	 * If 'askUser' is set to false the changes will be done without user interaction. 
 	 * 
-	 * @param newLang
-	 * @param askUser
+	 * @param newLang => 'de', 'en', 'it', 'es' or 'fr' etc. is equal to the header line of the dictionary
+	 * @param askUser 
 	 */
 	public static void setLanguage(String newLang, boolean askUser) {
 
@@ -434,9 +506,8 @@ public class Application {
 	}	
 	
 	/**
-	 * Executes the Benchmark-Test of SciMark 2.0 to determine the abbility 
-	 * of this system to deal with numbers. The result will be available in 
-	 * Mflops (Millions of floating point operations per second)
+	 * Executes the Benchmark-Test of SciMark 2.0 to determine the ability of this system to deal with number crunching.<br> 
+	 * The result will be available in Mflops (Millions of floating point operations per second)
 	 */
 	public static void doBenchmark(boolean forceBenchmark) {
 		// ------------------------------------------------
@@ -452,41 +523,41 @@ public class Application {
 	}
 	
 	/**
-	 * Starts the Web-Server, so that remote server.slaves are
-	 * able to download additional jar-resources
+	 * Starts the Web-Server, so that a remote server.slave is able 
+	 * to download the additional jar-resources of a project
 	 */
 	public static DownloadServer startDownloadServer() {
 		
-		if (webServer==null) {
-			webServer = new DownloadServer();
-			webServer.setRoot(RunInfo.PathServer(false));
-			new Thread(webServer).start();
+		if (WebServer==null) {
+			WebServer = new DownloadServer();
+			WebServer.setRoot(RunInfo.PathServer(false));
+			new Thread(WebServer).start();
 		}
-		return webServer;
+		return WebServer;
 	}
-
 	/**
-	 * Stops the Web-Server for the resources download of 
-	 * external server.clients
+	 * Stops the Web-Server for the resources download of an external server.slave
 	 */
 	public static void stopDownloadServer() {
 
-		if (webServer!=null) {
-			synchronized (webServer) {
-				webServer.stop();	
+		if (WebServer!=null) {
+			synchronized (WebServer) {
+				WebServer.stop();	
 			}			
-			webServer = null;
+			WebServer = null;
 		}
 	}
 	
 	/**
-	 * @param newApplicationTitle sets a new Application Title/Name 
+	 * This method can be used in order to change the application title 
+	 * @param newApplicationTitle sets a new application title/name 
 	 */
 	public static void setApplicationTitle(String newApplicationTitle) {
 		RunInfo.setApplicationTitle(newApplicationTitle);
 	}
 	/**
-	 * @return the Application Title/Name
+	 * This method return the current title of the application
+	 * @return the Application title/name
 	 */
 	public String getApplicationTitle() {
 		return RunInfo.getApplicationTitle();

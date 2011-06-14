@@ -1,5 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.dawis.wiwi.uni-due.de/ 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.core.benchmark;
-
 
 import java.awt.Dimension;
 import java.awt.Font;
@@ -24,6 +50,12 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.gui.CoreWindow;
 
+/**
+ * This JDialog is used to display the progress of the benchmark during its runtime.<br>
+ * Depending on the context, the benchmark can sometimes be skipped. 
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ */
 public class BenchmarkMonitor extends JDialog implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
@@ -40,24 +72,38 @@ public class BenchmarkMonitor extends JDialog implements ActionListener {
 	private JLabel jLabelBenchmarkOldCaption = null;
 	private JLabel jLabelBenchmarkOldValue = null;
 	
-	public JProgressBar jProgressBarBenchmark = null;
-	public JButton jButtonSkip = null;
-	public JButton jButtonSkipAllways = null;
-	public boolean actionSkip = false;
-	public boolean actionSkipAllways = false;
-	
-
 	/**
-	 * @param owner
+	 * The progress bar of the benchmark window
+	 */
+	public JProgressBar jProgressBarBenchmark = null;
+	/**
+	 * A button in order to skip the current benchmark execution 
+	 */
+	public JButton jButtonSkip = null;
+	/**
+	 * A button in order to always skip the benchmark execution (if possible) 
+	 */
+	public JButton jButtonSkipAllways = null;
+	/**
+	 * Indicator to skip the current benchmark execution
+	 */
+	public boolean actionSkip = false;
+	/**
+	 * Indicator to always skip the benchmark execution (if possible) 
+	 */
+	public boolean actionSkipAllways = false;
+
+	
+	/**
+	 * Constructor of this class
+	 * @param owner The Frame from which the dialog is displayed
 	 */
 	public BenchmarkMonitor(Frame owner) {
 		super(owner);
 		initialize();
 	}
-
 	/**
-	 * This method initializes this
-	 * 
+	 * This method initialises class
 	 * @return void
 	 */
 	private void initialize() {
@@ -75,7 +121,7 @@ public class BenchmarkMonitor extends JDialog implements ActionListener {
 		this.setLocationRelativeTo(null);
 		this.setAlwaysOnTop(true);
 		
-		// --- Übersetzungen festelgen ----
+		// --- Translations ----
 		jLabelBenchmark.setText(Language.translate("Bitte warten! Der Benchmark wird durchgeführt ..."));
 		jLabelBenchmarkOldCaption.setText(Language.translate("Alter Wert: "));
 		jButtonSkip.setText(Language.translate("Überspringen"));
@@ -83,6 +129,9 @@ public class BenchmarkMonitor extends JDialog implements ActionListener {
 		
 	}
 
+	/**
+	 * Sets the look and feel of the JDialog similar to the main application window
+	 */
 	private void setLookAndFeel() {
 		
 		String lnfClassname = Application.RunInfo.getAppLnF();
@@ -98,12 +147,16 @@ public class BenchmarkMonitor extends JDialog implements ActionListener {
 		}		
 	}
 	
+	/**
+	 * This method is used to display the benchmark value in a provided JLable   
+	 * @param benchmarkValue
+	 */
 	public void setBenchmarkValue(Float benchmarkValue) {
-		jLabelBenchmarkOldValue.setText( benchmarkValue +  " Mflops");
+		jLabelBenchmarkOldValue.setText(benchmarkValue +  " Mflops");
 	}
 	
 	/**
-	 * This method initializes jContentPane
+	 * This method initialises jContentPane
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJContentPane() {
@@ -148,7 +201,7 @@ public class BenchmarkMonitor extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * This method initializes jProgressBarBenchmark	
+	 * This method initialises jProgressBarBenchmark	
 	 * @return javax.swing.JProgressBar	
 	 */
 	private JProgressBar getJProgressBarBenchmark() {
@@ -160,7 +213,7 @@ public class BenchmarkMonitor extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * This method initializes jPanelBottomLeft	
+	 * This method initialises jPanelBottomLeft	
 	 * @return javax.swing.JPanel	
 	 */
 	private JPanel getJPanelBottomLeft() {
@@ -185,7 +238,7 @@ public class BenchmarkMonitor extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * This method initializes jButtonSkip	
+	 * This method initialises jButtonSkip	
 	 * @return javax.swing.JButton	
 	 */
 	private JButton getJButtonSkip() {
@@ -200,7 +253,7 @@ public class BenchmarkMonitor extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * This method initializes jButtonSkipAllways	
+	 * This method initialises jButtonSkipAllways	
 	 * @return javax.swing.JButton	
 	 */
 	private JButton getJButtonSkipAllways() {
@@ -214,7 +267,7 @@ public class BenchmarkMonitor extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * This method initializes jPanelBottomRight	
+	 * This method initialises jPanelBottomRight	
 	 * @return javax.swing.JPanel	
 	 */
 	private JPanel getJPanelBottomRight() {
@@ -235,6 +288,9 @@ public class BenchmarkMonitor extends JDialog implements ActionListener {
 		return jPanelBottomRight;
 	}
 
+	/**
+	 * The ActionListener-method for this Dialog
+	 */
 	@Override
 	public void actionPerformed(ActionEvent act) {
 

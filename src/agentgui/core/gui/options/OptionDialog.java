@@ -555,7 +555,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 		this.setFromData2Global();
 		this.canceled = false;
 		this.setVisible(false);
-		Application.properties.save();
+		Application.Properties.save();
 		
 	}
 	

@@ -1,3 +1,30 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.dawis.wiwi.uni-due.de/ 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.core.application;
 
 import java.io.BufferedReader;
@@ -15,10 +42,34 @@ import java.util.Vector;
 
 import org.apache.commons.codec.binary.Base64;
 
+/**
+ * This is the static singleton class for the use of the dictionary by the 
+ * applications translation functionality.<br><br>  
+ * In order to translate the String phrases of your JAVA code into the currently 
+ * selected and displayed language (see App.: 'Extra' - 'Language') use:<br><br>
+ *  
+ * &nbsp; &nbsp; &nbsp; <i>Language.translate("Hello World", Language.EN);</i><br><br>
+ * 
+ * where 'Language.EN' indicates the language in which your text was written (in this case in English).<br> 
+ * If you are writing your text in German you can use<br><br>
+ * 
+ * &nbsp; &nbsp; &nbsp; <i>Language.translate("Hallo Welt");</i><br><br>
+ * 
+ * This method implicitly assumes that you have written your text in German.<br><br>
+ * 
+ * Later on, the phrases which were used with the translate-method can be translated in<br>
+ * the 'Translation' Section of the application (see App.: 'Extra' - 'Language' - 'Translate').<br>
+ *  
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ */
 public class Language {
 
 	private static Language thisSingleton = new Language(); 
 	
+	/**
+	 * This is the separator used in the dictionary file
+	 */
 	public static final String seperator = ";";
 	private static String newLine = Application.RunInfo.AppNewLineString();
 	private static String newLineReplacer = Application.RunInfo.AppNewLineStringReplacer();
@@ -30,15 +81,37 @@ public class Language {
 	private static List<String> dictLineListCSV = new ArrayList<String>();
 	private static Hashtable<String, Integer> dictHash64 = new Hashtable<String, Integer>(); 
 	
+	/**
+	 * The header for the first column (index=0) of the dictionary
+	 */
 	public static final String SOURCE_LANG = "SOURCE_LANGUAGE";	
+	/**
+	 * Constant for German
+	 */
 	public static final String DE = "DE";
+	/**
+	 * Constant for English
+	 */
 	public static final String EN = "EN";
+	/**
+	 * Constant for Italian
+	 */
 	public static final String IT = "IT";
+	/**
+	 * Constant for Spanish
+	 */
 	public static final String ES = "ES";
+	/**
+	 * Constant for French
+	 */
 	public static final String FR = "FR";
 	
 	private static final String dictLangHeaderDefault = SOURCE_LANG + seperator + DE + seperator + EN + seperator + IT + seperator + ES + seperator + FR;
 	private static String[] dictLangHeaderArray = null;
+	
+	/**
+	 * The currently selected language index of the dictionary-file, which is used in the application
+	 */
 	public static Integer currLanguageIndex = null;
 	
 
@@ -47,7 +120,7 @@ public class Language {
 	}
 	/**
 	 * Returns the instance of this Singleton-Class
-	 * @return 
+	 * @return this class instance
 	 */
 	public static Language getInstance() {
 		return thisSingleton;
@@ -99,7 +172,7 @@ public class Language {
 	 * 
 	 * @param expression
 	 * @param language => take one of these parameters: Language.EN, Language.DE and so on
-	 * @return
+	 * @return the translated text of the expression
 	 */
 	public static String translate(String expression, String language)  {
 		
@@ -217,8 +290,11 @@ public class Language {
 	// -------------------------------------------------------------------------
 	
 	/**
-	 * Returns the index of the dictionary column which provides the current  
-	 * translation. The language can be configured in the file 'agentgui.ini'
+	 * Returns the index of the dictionary column which provides the language 
+	 * given by the parameter language. To specify this language, use the
+	 * final Strings from the head of this class (e. g. Language.IT) 
+	 * @param language (e. g. Language.IT)
+	 * @return the index of the language in the dictionary 
 	 */
 	public static int getIndexOfLanguage(String language) {
 		// --- normation of the query string --------------
@@ -234,9 +310,9 @@ public class Language {
 	}
 
 	/**
-	 * Returns true if the language asked for is the current one
+	 * Returns true if the language, given by the parameter language, is the current one
 	 * @param language
-	 * @return
+	 * @return true and false
 	 */
 	public static boolean isCurrentLanguage(String language) {
 		
