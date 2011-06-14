@@ -58,8 +58,12 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 			}
 			if(pickedObject != null) // only when node or edge is clicked
 			{
-				//Shift + Left click
-				if(e.getButton()==MouseEvent.BUTTON1 && e.isShiftDown())
+				//Double click
+				if (e.getClickCount()==2){
+					myGUI.handleObjectDoubleClick(pickedObject);
+				}
+				//Shift + Left click				
+				else if(e.getButton()==MouseEvent.BUTTON1 && e.isShiftDown())
 					myGUI.handleObjectShiftLeftClick(pickedObject);
 				//Shift + Right click
 				else if(e.getButton()==MouseEvent.BUTTON3 && e.isShiftDown())
@@ -69,7 +73,9 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 					myGUI.handleObjectSelection(pickedObject);
 				//Right click
 				else if(e.getButton()==MouseEvent.BUTTON3)
-					myGUI.handleObjectRightClick(pickedObject);				
+					myGUI.handleObjectRightClick(pickedObject);
+				//TODO handle double click
+				
 			}
 		}
 	}
