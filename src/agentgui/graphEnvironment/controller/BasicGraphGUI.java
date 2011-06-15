@@ -711,7 +711,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 		if (jButtonImportGraph == null) {
 			jButtonImportGraph = new JButton();
 			jButtonImportGraph.setIcon(new ImageIcon(getClass().getResource(
-					pathImage + "MBtransImport.png")));
+					pathImage + "import.png")));
 			jButtonImportGraph.setPreferredSize(new Dimension(26, 26));
 			jButtonImportGraph.setToolTipText(Language.translate(
 					"Import Graph from file", Language.EN));

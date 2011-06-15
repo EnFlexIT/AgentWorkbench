@@ -197,14 +197,16 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		colModel = tblComponents.getColumnModel();
         colModel.getColumn(2).setCellRenderer(new JTableButtonRenderer());	        
         colModel.getColumn(2).setCellEditor(new JTableButtonEditor(tblComponents){
-        	/* (non-Javadoc)
+			private static final long serialVersionUID = 1L;
+
+			/* (non-Javadoc)
         	 * @see agentgui.core.gui.components.JTableButtonEditor#actionPerformed(java.awt.event.ActionEvent)
         	 */
         	@Override
         	public void actionPerformed(ActionEvent e) {
         		super.actionPerformed(e);
         		int row = tblComponents.getEditingRow();
-                int col = tblComponents.getEditingColumn();
+               
                 //converting view coordinates to model coordinates
                 int modelRowIndex = tblComponents.convertRowIndexToModel(row);
                 String compID = (String) tblComponents.getModel().getValueAt(modelRowIndex, 0);
@@ -229,7 +231,9 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 			
 	        final Vector<Vector<String>> data = getComponentTableContents();
 			DefaultTableModel model = new DefaultTableModel(data, titles) {		        
-				public Class getColumnClass(int col) {
+				
+				private static final long serialVersionUID = 1636744550817904118L;
+				public Class<?> getColumnClass(int col) {
 					return data.get(0).get(col).getClass();	            
 				}
 				public boolean isCellEditable(int row, int col) {
@@ -293,8 +297,6 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	 */
 	@Override
 	public void tableChanged(TableModelEvent e) {
-		// TODO When a a component is renamed, update the network model. The corresponding edges should also be renamed. 
-		// Then the graph should be refreshed.
 			int row = e.getFirstRow();
 	        int column = e.getColumn(); //In model coordinates
 	        DefaultTableModel model = (DefaultTableModel)e.getSource();
@@ -305,12 +307,77 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	        	NetworkComponent comp = (NetworkComponent) controller.getGridModel().getNetworkComponents().values().toArray()[row];
 	        	//The Old component ID before the change
 	        	String oldCompID = comp.getId();
-	        	System.out.println("old ID: "+oldCompID+ ", new ID: "+newCompID);
+	        	
+	        	//If new ID is not equal to old ID
+	        	if(!oldCompID.equals(newCompID)){
+	        		//If there is a component with the name already
+		        	if(newCompID == null || newCompID.length() == 0){
+		        		JOptionPane.showMessageDialog(this,Language.translate("Enter a valid name", Language.EN),
+								Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);	 
+	        			getTblComponents().getModel().setValueAt(oldCompID, row, column);
+		        	}
+		        	else if(newCompID.contains(" ") || newCompID.contains("_")){
+		        		JOptionPane.showMessageDialog(this,Language.translate("Enter the name without spaces or underscores", Language.EN),
+								Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);	 
+	        			getTblComponents().getModel().setValueAt(oldCompID, row, column);
+		        	}		        	
+		        	else if(controller.getGridModel().getNetworkComponent(newCompID)!=null){
+	        			JOptionPane.showMessageDialog(this,Language.translate("The component name already exists!\n Choose a different one.", Language.EN),
+								Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);	 
+	        			getTblComponents().getModel().setValueAt(oldCompID, row, column);
+	        		}
+	        		else
+	        		{// All validations done, rename the component and update the network model	
+	        			handleRenameComponent(oldCompID,newCompID);
+	        		}
+	        	}
 	        }
 	        //System.out.println(row+","+column);		
 	}
 
 	
+	/**
+	 * Changes the component Id from old to new and updates the graph and the network model
+	 * @param oldCompID
+	 * @param newCompID
+	 */
+	private void handleRenameComponent(String oldCompID, String newCompID) {
+		//Environment network model
+		NetworkModel networkModel = controller.getGridModel();
+		NetworkComponent comp = networkModel.getNetworkComponent(oldCompID);
+		
+		//Temporary set
+		HashSet<String> newGraphElementIDs = new HashSet<String>(comp.getGraphElementIDs());
+		//Renaming the corresponding edges of the network component
+		Iterator<String> elementIter = comp.getGraphElementIDs().iterator();
+		//For each Graph Element of the component
+		while(elementIter.hasNext()){
+			String elementID = elementIter.next();
+			GraphElement element = networkModel.getGraphElement(elementID);
+			if(element instanceof GraphEdge){
+				String newElementID = elementID.replaceFirst(oldCompID, newCompID);
+				//Updating the graph
+				element.setId(newElementID);		
+				
+				newGraphElementIDs.remove(elementID);
+				newGraphElementIDs.add(newElementID);			
+				
+				//Updating the GraphElement HashMap of the network model
+				networkModel.getGraphElements().remove(elementID);
+				networkModel.getGraphElements().put(newElementID,element);
+			}
+		}
+		networkModel.removeNetworkComponent(comp);
+		
+		//Updating the network component
+		comp.setGraphElementIDs(newGraphElementIDs);
+		comp.setId(newCompID);
+		
+		networkModel.addNetworkComponent(comp);
+		
+		controller.refreshNetworkModel();
+	}
+
 	/**
 	 * This method builds the tblComponents' contents based on the controllers GridModel 
 	 * @return The grid components' IDs and class names
@@ -520,8 +587,8 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 				}
 				else if(notification.getEvent().equals(BasicGraphGUI.EVENT_OBJECT_RIGHT_CLICK)){					
 				//Right click
-					Point currentPoint = MouseInfo.getPointerInfo().getLocation();
-					Object obj= notification.getArg();
+//					Point currentPoint = MouseInfo.getPointerInfo().getLocation();
+//					Object obj= notification.getArg();
 					
 					graphGUI.clearPickedObjects();
 					selectObject(notification.getArg());					
@@ -906,10 +973,11 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	 * @param edgeID The GraphEdge's ID
 	 * @return The NetworkComponent
 	 */
+	//TODO does not work if the component ID contains '_'
 	private NetworkComponent getNetworkComponent(String edgeID){
 		String netCompID;
-		if(edgeID.indexOf('_')>=0){
-			netCompID = edgeID.substring(0, edgeID.indexOf('_'));
+		if(edgeID.lastIndexOf('_')>=0){
+			netCompID = edgeID.substring(0, edgeID.lastIndexOf('_'));
 		}else{
 			netCompID = edgeID;
 		}
