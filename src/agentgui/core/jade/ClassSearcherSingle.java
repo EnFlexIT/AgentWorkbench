@@ -51,9 +51,9 @@ public class ClassSearcherSingle {
 	
 	public void startSearch() {
 		
-		classesFound.removeAllElements();
-		jListModelClassesFound.removeAllElements();
-		jListModelClassesFoundProject.removeAllElements();
+		classesFound = new Vector<Class<?>>();
+		jListModelClassesFound = new DefaultListModel();
+		jListModelClassesFoundProject = new DefaultListModel();
 		
 		this.setBusy(true);
 		
@@ -88,7 +88,7 @@ public class ClassSearcherSingle {
 	}
 
 	/**
-	 * Thi will set the current project and evaluate the package-names in the project
+	 * This will set the current project and evaluate the package-names in the project
 	 * @param project
 	 */
 	public void setProject(Project project) {
@@ -277,7 +277,7 @@ public class ClassSearcherSingle {
 			}
 		}
 		
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings("rawtypes")
 		public void add(Class clazz, URL location) {
 			numberOfClasses++;
 			classNamesCache.add(clazz);
@@ -319,7 +319,7 @@ public class ClassSearcherSingle {
 	 * @author derksen
 	 */
 	private class ClassFilter implements ClassFinderFilter {
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings("rawtypes")
 		public boolean include(Class superClazz, Class clazz) {
 			int modifiers = clazz.getModifiers();
 			boolean doInclude = ((modifiers & (ACC_ABSTRACT | ACC_INTERFACE)) == 0);

@@ -1,4 +1,4 @@
-package agentgui.core.calculation;
+package agentgui.math.calculation;
 
 /**
  * This type of exception is thrown when a parameter in a CalcExpression is missing

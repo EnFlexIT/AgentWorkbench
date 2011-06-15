@@ -1,4 +1,8 @@
-package agentgui.core.calculation;
+package gasmas.physics;
+
+import agentgui.math.calculation.CalcExpression;
+import agentgui.math.calculation.CalculationException;
+import agentgui.math.calculation.ParameterNotSetException;
 
 /**
  * This class implements the Nikuradse Formula (see Cerbe Gl 4.2.9)

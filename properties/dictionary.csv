@@ -428,5 +428,12 @@ de;Übersetzung speichern (STRG+S);Save translation (CTRL + S)
 de;Überspringen;Skip
 en;;Add new component;;;
 en;;Clear graph;;;
+en;;Click;;;
+en;;Merge two nodes;;;
+en;;Remove selected component;;;
+en;;Select one vertex;;;
+en;;Split the node into two nodes;;;
 en;;Switch to Picking mode;;;
 en;;Switch to Transforming mode;;;
+en;;Use Shift and Right click two vertices;;;
+en;;Warning;;;

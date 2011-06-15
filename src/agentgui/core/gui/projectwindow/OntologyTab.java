@@ -120,7 +120,6 @@ public class OntologyTab extends JPanel implements Observer, ActionListener {
 
 	/**
 	 * This method initializes OntoTree	
-	 * 	
 	 * @return javax.swing.JTree	
 	 */
 	private JTree getOntoTree() {
@@ -163,7 +162,7 @@ public class OntologyTab extends JPanel implements Observer, ActionListener {
     		Up2TreeLevel = 1000;
     	OntoTreeExpand( new TreePath( CurrProject.ontologies4Project.getOntologyTree().getRoot() ), expand, CurrNodeLevel, Up2TreeLevel);
     }
-    @SuppressWarnings("unchecked")
+    
 	private void OntoTreeExpand( TreePath parent, boolean expand, Integer CurrNodeLevel, Integer Up2TreeLevel) {
     
         TreeNode node = (TreeNode)parent.getLastPathComponent();
@@ -171,7 +170,7 @@ public class OntologyTab extends JPanel implements Observer, ActionListener {
         	return;
         }
         if (node.getChildCount() >= 0) {
-            for ( Enumeration e=node.children(); e.hasMoreElements(); ) {
+            for (Enumeration<?> e=node.children(); e.hasMoreElements();) {
                 TreeNode n = (TreeNode) e.nextElement();
                 TreePath path = parent.pathByAddingChild(n);
                 OntoTreeExpand(path, expand, CurrNodeLevel+1, Up2TreeLevel);
@@ -250,8 +249,7 @@ public class OntologyTab extends JPanel implements Observer, ActionListener {
 	}
 
 	/**
-	 * This method initializes jButtonAddOntology	
-	 * 	
+	 * This method initialises jButtonAddOntology	
 	 * @return javax.swing.JButton	
 	 */
 	private JButton getJButtonAddOntology() {
@@ -267,8 +265,7 @@ public class OntologyTab extends JPanel implements Observer, ActionListener {
 	}
 
 	/**
-	 * This method initializes jButtonRemoveOntology	
-	 * 	
+	 * This method initialises jButtonRemoveOntology	
 	 * @return javax.swing.JButton	
 	 */
 	private JButton getJButtonRemoveOntology() {
@@ -285,13 +282,10 @@ public class OntologyTab extends JPanel implements Observer, ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent ae) {
-		// --- Das ActionCommand und den Auslöser des Events ermitteln ---
+		
 		String ActCMD = ae.getActionCommand();
 		String MsgHead = null;
 		String MsgText = null;
-		//Object Trigger = ae.getSource();
-		//System.out.println( "ActCMD/Wert => " + ActCMD );
-		//System.out.println( "Auslöser => " + Trigger );
 
 		if ( ActCMD.equals("OntologieAdd") ) {
 			// --- Ontologie hinzufgen ------------------------------

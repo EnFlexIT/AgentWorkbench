@@ -35,7 +35,7 @@ public class ReflectClassFiles extends ArrayList<String> {
 		this.currProject = project;
 		
 		// --- Die aktuellen externen Ressourcen zusammenstellen -
-		this.classPathExternalJars = Application.RunInfo.getClassPathExternalJars();
+		this.classPathExternalJars = Application.RunInfo.getClassPathJars();
 		this.classPathExternalJars.addAll(currProject.projectResources);
 		
 		// --- Verzeichnis, in dem die Ontologie liegt auslesen ---
@@ -54,6 +54,7 @@ public class ReflectClassFiles extends ArrayList<String> {
 		String SearchPath = null;
 		List<File> dirs = new ArrayList<File>();
 		ArrayList<String> ClazzList = null;
+		//System.out.println("=> " + SearchINReference);
 		
 		// --- Try to find the resource of the given Reference ------
 		try {
@@ -63,12 +64,14 @@ public class ReflectClassFiles extends ArrayList<String> {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		// --- Look at the Result of the Ressources-Search ----------
-		if (dirs.size()==1) {
+
+		// --- Look at the Result of the Resources-Search ----------
+		if (dirs.size()>0) {
+			//System.out.println("=> " + dirs.toString());
 			File directory = dirs.get(0);
 			String PathOfFile = directory.toString();
-			String reference2JarFile = getJarReferenceFromPathOfFile(PathOfFile);
+			String reference2JarFile = this.getJarReferenceFromPathOfFile(PathOfFile);
+			//System.out.println("=> " + directory.toString() + " <=> " + reference2JarFile); 
 			if ( PathOfFile.startsWith("file:") && reference2JarFile!=null ) {
 				// --- Path points to a jar-file --------------------
 				//System.out.println("Jar-Result: " + SearchINReference + " => " + reference2JarFile);

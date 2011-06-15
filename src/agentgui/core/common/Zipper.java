@@ -1,3 +1,30 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.dawis.wiwi.uni-due.de/ 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.core.common;
 
 import java.io.File;
@@ -15,6 +42,27 @@ import javax.swing.SwingUtilities;
 
 import agentgui.core.application.Application;
 
+/**
+ * This class can be used in order zip or unzip a folder structure.<br><br>
+ * Example of the usage for zipping:<br>
+ * <blockquote>
+ * 		Zipper zipper = new Zipper();<br>
+ * 		zipper.setExcludePattern(".svn");<br>
+ * 		zipper.setZipFolder(zipFolder);<br>
+ *		zipper.setZipSourceFolder(srcFolder);<br>
+ *		zipper.doZipFolder();<br>
+ * </blockquote>  
+ * <br>
+ * Example of the usage for unzipping:<br>
+ * <blockquote> 
+ * 		Zipper zipper = new Zipper();<br>
+ * 		zipper.setUnzipZipFolder(zipFolder);<br>
+ * 		zipper.setUnzipDestinationFolder(destFolder);<br>
+ * 		zipper.doUnzipFolder();<br>
+ * </blockquote>
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ */
 public class Zipper extends Thread {
 
 	private int kindOfExec = 0;
@@ -41,6 +89,10 @@ public class Zipper extends Thread {
 		this.zipMonitor = new ZipperMonitor(Application.MainWindow);
 	}
 	
+	/**
+	 * Starts the execution of the zip- or unzip process in the current thread.<br>
+	 * During the process a Zip-Monitor will be shown to the user.
+	 */
 	@Override
 	public void run() {
 		if (kindOfExec==execZip) {
@@ -64,12 +116,17 @@ public class Zipper extends Thread {
 	}
 	
 	/**
+	 * This exclude pattern can be used in oder to prevent some 
+	 * types of files to be packed. We use this method to prevent
+	 * zipping the svn-folder structure during the project export.
+	 * 
 	 * @param excludePattern the excludePattern to set
 	 */
 	public void setExcludePattern(String excludePattern) {
 		this.excludePattern = excludePattern;
 	}
 	/**
+	 * This method returns the current String, which is used for excluding files to be packed to the zip-file.
 	 * @return the excludePattern
 	 */
 	public String getExcludePattern() {
@@ -77,12 +134,14 @@ public class Zipper extends Thread {
 	}
 
 	/**
-	 * @param zipZipFolder the zipZipFolder to set
+	 * This method can be used in order to specify the zip-file, which has to be packed
+	 * @param zipFolder the zip-folder to set
 	 */
 	public void setZipFolder(String zipFolder) {
 		this.zipFolder = zipFolder;
 	}
 	/**
+	 * Returns the path to the current zip-file for zipping a folder structure
 	 * @return the zipZipFolder
 	 */
 	public String getZipFolder() {
@@ -90,12 +149,14 @@ public class Zipper extends Thread {
 	}
 
 	/**
+	 * Define the source folder, which has to be packed here.
 	 * @param zipSourceFolder the zipSourceFolder to set
 	 */
 	public void setZipSourceFolder(String zipSourceFolder) {
 		this.zipSourceFolder = zipSourceFolder;
 	}
 	/**
+	 * Get the current source folder for packing into a zip-file 
 	 * @return the zipSourceFolder
 	 */
 	public String getZipSourceFolder() {
@@ -103,25 +164,29 @@ public class Zipper extends Thread {
 	}
 
 	/**
-	 * @param unzipZipFolder the unzipZipFolder to set
+	 * Specify the zip-File/Folder here, which has to unpacked
+	 * @param zipFolder the zip-folder to unzip
 	 */
 	public void setUnzipZipFolder(String zipFolder) {
 		this.unzipZipFolder = zipFolder;
 	}
 	/**
-	 * @return the unzipZipFolder
+	 * Get the currently specified zipFile/Folder here 
+	 * @return the zip-folder to unzip
 	 */
 	public String getUnzipZipFolder() {
 		return this.unzipZipFolder;
 	}
 
 	/**
-	 * @param unzipDestinationFolder the unzipDestinationFolder to set
+	 * Set the destination folder for unzipping a zip-File/Folder here
+	 * @param unzipDestinationFolder the destination folder for unzipping
 	 */
-	public void setUnzipDestinationFolder(String destinationFolder) {
-		this.unzipDestinationFolder = destinationFolder;
+	public void setUnzipDestinationFolder(String unzipDestinationFolder) {
+		this.unzipDestinationFolder = unzipDestinationFolder;
 	}
 	/**
+	 * Get the current destination folder for unzipping here
 	 * @return the unzipDestinationFolder
 	 */
 	public String getUnzipDestinationFolder() {
@@ -129,12 +194,14 @@ public class Zipper extends Thread {
 	}
 
 	/**
+	 * Specify the project-folder here, which has to be opened later on 
 	 * @return the projectFolder2Open
 	 */
 	public String getProjectFolder2Open() {
 		return projectFolder2Open;
 	}
 	/**
+	 * Get the current project folder here, which has to be opened later on.
 	 * @param projectFolder2Open the projectFolder2Open to set
 	 */
 	public void setProjectFolder2Open(String projectFolder2Open) {
@@ -142,8 +209,8 @@ public class Zipper extends Thread {
 	}
 
 	/**
-	 * Will do the unzipping of the previously specified file
-	 * @throws Exception 
+	 * This method will evaluate the zip-file in order to find the root-folder of the zip
+	 * @return Returns the root folder name of the zip-file
 	 */
 	public String getRootFolder2Extract() {
 		
@@ -205,7 +272,7 @@ public class Zipper extends Thread {
 	
 	/**
 	 * Will do the unzipping of the previously specified zip-file.
-	 * Afterwards the specified project will be opened
+	 * Afterwards the specified project will be opened.
 	 * @param projectFolder
 	 */
 	public void doUnzipProject(String projectFolder) {
@@ -234,6 +301,7 @@ public class Zipper extends Thread {
 		}		
 	}
 	/**
+	* Will do the actual unzipping of a zip file. 
 	* @param zipFolder the zip file that needs to be unzipped
 	* @param destFolder the folder into which unzip the zip file and create the folder structure
 	*/
@@ -296,8 +364,8 @@ public class Zipper extends Thread {
 	}
 
 	/**
-	 * 
-	 * @return
+	 * This method can be invoked after the parameters are set for zipping a folder.<br>
+	 * See example above.
 	 */
 	public void doZipFolder() {
 		try {
@@ -362,7 +430,7 @@ public class Zipper extends Thread {
 	}
 	
 	/**
-	 * Adds a single source to the zip-file
+	 * Adds a single source file to the zip-file
 	 * @param path
 	 * @param srcFile
 	 * @param zip
@@ -428,7 +496,7 @@ public class Zipper extends Thread {
 	}
 	
 	/**
-	 * This method will evaluate the given folder and it's subfolder.
+	 * This method will evaluate the given folder and it's sub-folder.
 	 * The containing File objects will be stored in the Vector 'fileList'
 	 * @param folder
 	 */

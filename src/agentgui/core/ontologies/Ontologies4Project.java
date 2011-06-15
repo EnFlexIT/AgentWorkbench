@@ -140,7 +140,7 @@ public class Ontologies4Project extends HashMap<String, OntologyClass> {
 	}
 
 	/**
-	 * Adds a Sub-Ontologie to the current Project Ontology
+	 * Adds a Sub-Ontology to the current project 
 	 * @param ontoRef
 	 */
 	public void addSubOntology (String newSubOntology) {

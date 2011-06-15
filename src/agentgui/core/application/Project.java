@@ -407,7 +407,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 		// ------------------------------------------------
 		// --- Clear PlugIns ------------------------------
 		this.plugInVectorRemove();
-		// --- Clear CLASSPATH ----------------------------
+		// --- Clear ClassPath ----------------------------
 		this.resourcesRemove();
 		
 		// --- Close Project ------------------------------
@@ -598,7 +598,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 			if (Application.JadePlatform.jadeStopAskUserBefore()==false) {
 				return;
 			}
-			// --- unload CLASSPATH -----------------------
+			// --- unload ClassPath -----------------------
 			Application.ProjectCurr.resourcesRemove();
 		}
 		
@@ -609,7 +609,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 		this.setMaximized();
 		
 		if (forceClassPathReload) {
-			// --- CLASSPATH laden ------------------------
+			// --- ClassPath laden ------------------------
 			Application.ProjectCurr.resourcesLoad();	
 		}
 	}
@@ -825,7 +825,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	}
 
 	/**
-	 * Adds a new sub ontology to the current project ontology 
+	 * Adds a new sub ontology to the current project  
 	 * @param newSubOntology
 	 */
 	public void subOntologyAdd(String newSubOntology) {
@@ -875,7 +875,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 		this.setChangedAndNotify(CHANGED_ProjectResources);
 	}
 	/**
-	 * This Method reloads the project resources in the CLASSPATH
+	 * This Method reloads the project resources in the ClassPath
 	 */
 	public void resourcesReLoad() {
 		this.resourcesRemove();
@@ -883,7 +883,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	}
 	
 	/**
-	 * This method removes all external project resources (jars) from the CLATHPATH  
+	 * This method removes all external project resources (jars) from the ClassPath  
 	 */
 	public void resourcesRemove() {
 		
@@ -892,7 +892,6 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 			try {
 				jarFile = ClassLoaderUtil.adjustPathForLoadin(jarFile, this.getProjectFolderFullPath());
 				ClassLoaderUtil.removeFile(jarFile);
-				ClassLoaderUtil.removeJarFromClassPath(jarFile);
 			} catch (RuntimeException e1) {
 				e1.printStackTrace();
 			} catch (NoSuchFieldException e1) {

@@ -1,4 +1,4 @@
-package agentgui.core.calculation;
+package agentgui.math.calculation;
 
 public class FormulaNotSetException extends CalculationException {
 

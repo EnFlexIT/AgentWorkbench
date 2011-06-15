@@ -1,5 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.dawis.wiwi.uni-due.de/ 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.core.common;
-
 
 import java.awt.Dimension;
 import java.awt.Font;
@@ -26,6 +52,15 @@ import agentgui.core.gui.CoreWindow;
 import java.awt.Color;
 import java.io.File;
 
+/**
+ * The ZipperMonitor class will be used within the Zipper-class of this package.<br>
+ * It will show the progress of zipping or unzipping a folder structure and will<br>
+ * be closed after the process ends up.
+ * 
+ * @see Zipper
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ */
 public class ZipperMonitor extends JDialog implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
@@ -47,7 +82,8 @@ public class ZipperMonitor extends JDialog implements ActionListener {
 	
 
 	/**
-	 * @param owner
+	 * Constructor of this class
+	 * @param owner the Frame from which the dialog is displayed
 	 */
 	public ZipperMonitor(Frame owner) {
 		super(owner);
@@ -55,7 +91,7 @@ public class ZipperMonitor extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * This method initializes this
+	 * This method initialises this
 	 * @return void
 	 */
 	private void initialize() {
@@ -78,6 +114,9 @@ public class ZipperMonitor extends JDialog implements ActionListener {
 		
 	}
 
+	/**
+	 * Sets the look and feel of the dialog similar to the core application window
+	 */
 	private void setLookAndFeel() {
 		
 		String lnfClassname = Application.RunInfo.getAppLnF();
@@ -94,7 +133,7 @@ public class ZipperMonitor extends JDialog implements ActionListener {
 	}
 	
 	/**
-	 * This method initializes jContentPane
+	 * This method initialises jContentPane
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJContentPane() {
@@ -150,7 +189,7 @@ public class ZipperMonitor extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * This method initializes jProgressBarBenchmark	
+	 * This method initialises jProgressBarBenchmark	
 	 * @return javax.swing.JProgressBar	
 	 */
 	private JProgressBar getJProgressBarProcess() {
@@ -160,13 +199,26 @@ public class ZipperMonitor extends JDialog implements ActionListener {
 		}
 		return jProgressBarProcess;
 	}
-	public void setNumberOfFilesMax(int nuberOfFiles) {
+	/**
+	 * This method can be used in order to set the maximum number of files to be handled 
+	 * @param numberOfFiles
+	 */
+	public void setNumberOfFilesMax(int numberOfFiles) {
 		jProgressBarProcess.setMinimum(0);
-		jProgressBarProcess.setMaximum(nuberOfFiles);
+		jProgressBarProcess.setMaximum(numberOfFiles);
 	}
+	/**
+	 * With this method it can be indicated, that the next file is in progress.<br> 
+	 * The progress bar will change then.
+	 */
 	public void setNumberNextFile() {
 		jProgressBarProcess.setValue(jProgressBarProcess.getValue()+1);
 	}
+	/**
+	 * With this method it can be textual shown, what the process is doing in the moment  
+	 * @param zip Use 'true' if you are packing to a zip; otherwise 'false'
+	 * @param srcName The current file on which we are working in the moment 
+	 */
 	public void setProcessDescription(boolean zip, String srcName) {
 		
 		int maxLength = 60;
@@ -186,13 +238,17 @@ public class ZipperMonitor extends JDialog implements ActionListener {
 			jLabelProcess.setText(Language.translate("Entpacke") + shortNameOfFileOrFolder);
 		}
 	}
+	/**
+	 * Set the file you are currently working on here
+	 * @param fileName
+	 */
 	public void setCurrentJobFile(String fileName) {
 		File file = new File(fileName);
 		jLabelSingleFile.setText(Language.translate("Datei:") + " '" + file.getName() + "':");
 	}
 	
 	/**
-	 * This method initializes jButtonCancel	
+	 * This method initialises jButtonCancel	
 	 * @return javax.swing.JButton	
 	 */
 	private JButton getJButtonCancel() {
@@ -207,18 +263,23 @@ public class ZipperMonitor extends JDialog implements ActionListener {
 		return jButtonCancel;
 	}
 	/**
-	 * @param canceld the canceld to set
+	 * Use this in order to indicate, that the process has to be stopped
+	 * @param canceld true or false !
 	 */
 	public void setCanceled(boolean canceld) {
 		this.canceled = canceld;
 	}
 	/**
-	 * @return the canceld
+	 * If the packing or unpacking process was interrupted by the user, this method will return true 
+	 * @return Returns true or false ;-)
 	 */
 	public boolean isCanceled() {
 		return canceled;
 	}
 	
+	/**
+	 * The action method coming from the ActionListener
+	 */
 	@Override
 	public void actionPerformed(ActionEvent act) {
 

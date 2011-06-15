@@ -1,3 +1,30 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.dawis.wiwi.uni-due.de/ 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.core.config;
 
 import jade.core.Profile;
@@ -17,6 +44,11 @@ import agentgui.core.jade.PlatformJadeConfig;
 import agentgui.graphEnvironment.controller.GraphEnvironmentControllerGUI;
 import agentgui.physical2Denvironment.controller.Physical2DEnvironmentControllerGUI;
 
+/**
+ * 
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ */
 public class GlobalInfo {
 
 	// --- Konstanten ------------------------------------------------------- 
@@ -245,24 +277,17 @@ public class GlobalInfo {
 		return localClassPathEntries;
 	}
 	/**
-	 * This Method returns all external jar-Files, which 
-	 * are part of the ClassPath
-	 * @return
+	 * This Method returns all jar-Files, which are part of the current ClassPath
+	 * @return Returns a Vector<String> with all external jars
 	 */
-	public Vector<String> getClassPathExternalJars() {
-		Vector<String> external = new Vector<String>();
+	public Vector<String> getClassPathJars() {
+		Vector<String> jarFileInCP = new Vector<String>();
 		for (String classPathEntry : localClassPathEntries) {
 			if ( classPathEntry.endsWith(".jar")==true ){
-				if (localFileRunnableJar==null) {
-					external.add(classPathEntry);
-				} else {
-					if (classPathEntry.endsWith(localFileRunnableJar)==false) {
-						external.add(classPathEntry);
-					}
-				}
+				jarFileInCP.add(classPathEntry);
 			}
 		}
-		return external;
+		return jarFileInCP;
 	}
 	// -------------------------------
 	/**

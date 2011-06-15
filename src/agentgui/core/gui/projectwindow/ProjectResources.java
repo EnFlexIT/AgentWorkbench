@@ -314,8 +314,7 @@ public class ProjectResources extends JPanel implements Observer {
 	private JButton getJButtonRefresh() {
 		if (jButtonRefresh == null) {
 			jButtonRefresh = new JButton();
-			jButtonRefresh.setIcon(new ImageIcon(getClass().getResource(
-					PathImage + "Refresh.png")));
+			jButtonRefresh.setIcon(new ImageIcon(getClass().getResource(PathImage + "Refresh.png")));
 			jButtonRefresh.setPreferredSize(new Dimension(45, 26));
 			jButtonRefresh.setToolTipText("Refresh");
 			jButtonRefresh.addActionListener(new ActionListener() {
@@ -324,7 +323,6 @@ public class ProjectResources extends JPanel implements Observer {
 							if (Application.JadePlatform.jadeStopAskUserBefore()) {
 								Application.MainWindow.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 								currProject.resourcesReLoad();
-								Application.ClassDetector.reStartSearch(currProject, null);
 								Application.MainWindow.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 							}
 						}

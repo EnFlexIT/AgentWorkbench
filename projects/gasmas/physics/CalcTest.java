@@ -1,4 +1,8 @@
-package agentgui.core.calculation;
+package gasmas.physics;
+
+import agentgui.math.calculation.CalculationException;
+import agentgui.math.calculation.ConstantValue;
+import agentgui.math.calculation.Formula;
 
 /**
  * Temporary class for the first CalcExpression tests.

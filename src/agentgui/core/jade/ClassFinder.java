@@ -57,7 +57,8 @@ import java.util.jar.JarFile;
  * 
  * @author Daniel Le Berre, Elliott Wade, Paolo Cancedda
  */
-@SuppressWarnings("unchecked")
+
+@SuppressWarnings({"rawtypes","unchecked"})
 public class ClassFinder {
 	private Class searchClass = null;
 	private Map classpathLocations = new HashMap();
@@ -308,9 +309,11 @@ public class ClassFinder {
 
 		Iterator it = locations.keySet().iterator();
 		while (it.hasNext() && isStopSearch()==false) {
-			URL url = (URL)it.next();
-
-			findSubclasses(url, (String)locations.get(url), superClass, setOfClasses);
+			Object nextURL = it.next();
+			if (nextURL instanceof URL) {
+				URL url = (URL)nextURL;
+				findSubclasses(url, (String)locations.get(url), superClass, setOfClasses);
+			}
 		}
 		Iterator iterator = setOfClasses.iterator();
 		while (iterator.hasNext()) {

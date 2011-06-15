@@ -1,4 +1,4 @@
-package agentgui.core.calculation;
+package agentgui.math.calculation;
 
 import java.util.HashMap;
 import java.util.Iterator;
