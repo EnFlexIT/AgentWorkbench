@@ -32,7 +32,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -71,9 +70,8 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
 import agentgui.core.environment.EnvironmentPanel;
-import agentgui.core.gui.components.JTableButtonRenderer;
 import agentgui.core.gui.components.JTableButtonEditor;
-
+import agentgui.core.gui.components.JTableButtonRenderer;
 import agentgui.graphEnvironment.networkModel.GraphEdge;
 import agentgui.graphEnvironment.networkModel.GraphElement;
 import agentgui.graphEnvironment.networkModel.GraphNode;
@@ -671,7 +669,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		
 		//Get the components containing the node
 		Iterator<NetworkComponent> compIter = getNetworkComponentsFromNode(node).iterator();		
-		NetworkComponent comp1 = compIter.next();
+//		NetworkComponent comp1 = compIter.next();
 		NetworkComponent comp2 = compIter.next();
 		
 		//Creating the new Graph node

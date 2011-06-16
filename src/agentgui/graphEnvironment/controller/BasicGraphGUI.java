@@ -111,7 +111,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	 * The DefaultModalGraphMouse which can be added to the visualization
 	 * viewer. Used here for the transforming mode
 	 */
-	private DefaultModalGraphMouse dgm = null; // @jve:decl-index=0:
+	private DefaultModalGraphMouse<GraphNode,GraphEdge> dgm = null; // @jve:decl-index=0:
 	/**
 	 * JUNG object handling zooming
 	 */
@@ -171,7 +171,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 		pgm = new PluggableGraphMouse();
 		pgm.add(new GraphEnvironmentMousePlugin(this));
 
-		dgm = new DefaultModalGraphMouse();
+		dgm = new DefaultModalGraphMouse<GraphNode, GraphEdge>();
 		dgm.setMode(DefaultModalGraphMouse.Mode.TRANSFORMING);
 	}
 
@@ -328,15 +328,13 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 		// Button Transforming Mouse mode clicked
 		else if (e.getSource() == getJToggleMouseTransforming()
 				&& visView != null) {
-			boolean selected = getJToggleMouseTransforming().getModel()
-					.isSelected();
 			// Transforming mode
 			// Setting DefaultModalGraphMouse
 			visView.setGraphMouse(dgm);
 		}
 		// Button Picking Mouse mode clicked
 		else if (e.getSource() == getJToggleMousePicking() && visView != null) {
-			boolean selected = getJToggleMousePicking().getModel().isSelected();
+			
 			// Picking mode
 			// Setting custom pluggable mouse graph
 			visView.setGraphMouse(pgm);

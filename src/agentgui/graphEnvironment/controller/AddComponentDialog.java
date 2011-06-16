@@ -27,25 +27,33 @@
  */
 package agentgui.graphEnvironment.controller;
 
-import javax.swing.JPanel;
-
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dialog;
-import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.Point;
-import java.util.Collection;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.Vector;
 
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
-import javax.swing.ListSelectionModel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.WindowConstants;
+
+import org.apache.commons.collections15.Transformer;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
@@ -56,16 +64,6 @@ import agentgui.graphEnvironment.networkModel.GraphNode;
 import agentgui.graphEnvironment.networkModel.NetworkComponent;
 import agentgui.graphEnvironment.networkModel.NetworkModel;
 import agentgui.graphEnvironment.prototypes.GraphElementPrototype;
-import javax.swing.JButton;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-import javax.swing.WindowConstants;
-import org.apache.commons.collections15.Transformer;
-
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.Graph;
@@ -212,7 +210,7 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 		
 		graphElement = null;
 		try {
-			Class theClass;
+			Class<?> theClass;
 			theClass = Class.forName(graphPrototype);
 			graphElement = (GraphElementPrototype)theClass.newInstance();
 		}

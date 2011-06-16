@@ -35,8 +35,8 @@ public class JTableButtonEditor extends AbstractCellEditor implements TableCellE
     }
 
     public void actionPerformed(ActionEvent e) {
-        int row = table.getEditingRow();
-        int col = table.getEditingColumn();
+//        int row = table.getEditingRow();
+//        int col = table.getEditingColumn();
        // System.out.printf("row = %d  col = %d%n", row, col);    
     }
 
