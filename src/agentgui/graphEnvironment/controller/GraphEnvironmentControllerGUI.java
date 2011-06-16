@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.dawis.wiwi.uni-due.de/ 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
+
 package agentgui.graphEnvironment.controller;
 
 import java.awt.BorderLayout;
@@ -55,8 +83,10 @@ import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.EdgeType;
 /**
  * The GUI for a GraphEnvironmentController
+ * This contains a pane showing the NetworkComponents table and the BasicGraphGUI
+ * The main class which associates with the components table, the environment model and the Basic Graph GUI
  * @author Nils
- *
+ * @author Satyadeep
  */
 public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements Observer, ActionListener, ListSelectionListener, TableModelListener{
 	/**
@@ -189,8 +219,9 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	}
 
 	/**
-	 * This method initializes tblComponents	
-	 * @return javax.swing.JTable	
+	 * This method initializes the table column model.
+	 * Responsible for showing edit buttons in the 3rd column
+	 * @return javax.swing.table.TableColumnModel
 	 */
 	private TableColumnModel getColModel(){
 		final GraphEnvironmentControllerGUI graphEnvironmentControllerGUI = this;		
@@ -221,6 +252,10 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		return colModel;
 	}
 	
+	/**
+	 * This method initializes network components table tblComponents and the TabelModel	
+	 * @return javax.swing.JTable	
+	 */
 	private JTable getTblComponents() {
 		if (tblComponents == null) {
 			// Column titles
@@ -278,7 +313,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	}
 	
 	/**
-	 * Creates a JTable containing the IDs and types of all Components from the GridModel 
+	 * Rebuilds the components table by updating the table data model with a new vector 
 	 */
 	private void rebuildTblComponents(){
 		// Column titles
@@ -337,7 +372,8 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 
 	
 	/**
-	 * Changes the component Id from old to new and updates the graph and the network model
+	 * Changes the network component Id from old to new 
+	 * and updates the graph and the network model accordingly
 	 * @param oldCompID
 	 * @param newCompID
 	 */
@@ -623,6 +659,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	
 	/**
 	 * Splits the node into two nodes, separating the two network components
+	 * and updates the graph and the network model
 	 * @param node
 	 */
 	private void handleSplitNode(GraphNode node) {		
@@ -683,7 +720,8 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	}
 
 	/**
-	 * Merges the two nodes as a single node and updates the graph and network model
+	 * Merges the two nodes as a single node 
+	 * and updates the graph and network model
 	 * @param node1
 	 * @param node2
 	 */
@@ -750,6 +788,11 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		}
 	}
 	
+	/**
+	 * Gives the set of network components containing the given node.
+	 * @param node - A GraphNode
+	 * @return HashSet<NetworkComponent> - The set of components which contain the node
+	 */
 	public HashSet<NetworkComponent> getNetworkComponentsFromNode(GraphNode node){						
 		// Get the components from the controllers GridModel
 		HashSet<NetworkComponent>  compSet = new HashSet<NetworkComponent>();
@@ -899,7 +942,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	}
 	
 	/**
-	 * This method handles the selection of an object, i.e. highlights the related graph elements and shows a ComponentSettingsDialog
+	 * This method handles the selection of an object, i.e. highlights the related graph elements
 	 * @param object The object to select
 	 */
 	void selectObject(Object object){
@@ -958,7 +1001,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	}
 
 	/**
-	 * @return the GraphNode which is picked. 
+	 * @return GraphNode - the GraphNode which is picked. 
 	 * If multiple nodes are picked, returns null
 	 */
 	public GraphNode getPickedVertex(){
@@ -969,7 +1012,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	}
 	
 	/**
-	 * This method gets the NetworkComponent the GraphEdge eith the given ID belongs to
+	 * This method gets the NetworkComponent the GraphEdge with the given ID belongs to
 	 * @param edgeID The GraphEdge's ID
 	 * @return The NetworkComponent
 	 */

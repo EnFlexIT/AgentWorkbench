@@ -1,5 +1,29 @@
 /**
- * 
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.dawis.wiwi.uni-due.de/ 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
  */
 package agentgui.graphEnvironment.controller;
 
@@ -53,14 +77,19 @@ import edu.uci.ics.jung.visualization.control.PluggableGraphMouse;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 
 /**
+ * Dialog for adding a new network component to the model.
+ * All the component types are shown as a list and a preview of the graph prototype 
+ * is shown on selecting the component type.
+ * Adds the selected component to the graph by merging the common selected nodes.
  * @author Satyadeep
  *
  */
 public class AddComponentDialog extends JDialog implements ActionListener{
 
 	private static final long serialVersionUID = 1L;
-
-	//The graph element prototype of the selected component type.
+	/**
+	 * The graph element prototype of the selected component type.
+	 */
 	private GraphElementPrototype graphElement = null;  //  @jve:decl-index=0:
 	
 	private JPanel jContentPane = null;
@@ -81,6 +110,7 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 	private JPanel jViewerPanel = null;
 	private JLabel jLabel = null;
 	/**
+	 * Gets the parent object and initializes
 	 * @param owner
 	 */
 	public AddComponentDialog(GraphEnvironmentControllerGUI parent) {
@@ -211,7 +241,10 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 	}
 	
 	
-
+	/**
+	 * Initializes label
+	 * @return javax.swing.JLabel
+	 */
 	private JLabel getJLabel(){
 		if(jLabel == null) {
 			jLabel = new JLabel(Language.translate("Select a vertex to merge",Language.EN));
@@ -235,7 +268,7 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 	/**
 	 * Gets the list of componentTypeSettings from the controller 
 	 * and returns it as an array
-	 * @return 
+	 * @return Object[] - array of component types
 	 */
 	private Object[] getListData(){
 		Vector<String> list = new Vector<String>();
@@ -253,7 +286,7 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 	}
 	
 	/**
-	 * Gets the VisualizationViewer
+	 * Initializes the VisualizationViewer
 	 * @return The VisualizationViewer
 	 */
 	private VisualizationViewer<GraphNode, GraphEdge> getVisView(){
@@ -301,8 +334,8 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 	}
 	
 	/**
-	 * Repaints the visualisation viewer, with the given graph
-	 * (There should be a better way than this)
+	 * Repaints/Refreshes the visualisation viewer, with the given graph
+	 * @param graph - The new graph to be painted
 	 */
 	public void graphRepaint(Graph<GraphNode, GraphEdge> graph)
 	{
@@ -413,8 +446,8 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 	 * Merge the two graphs into one graph as if v1 and v2 are the same.
 	 * The resultant graph is g1
 	 * Modifying the network model here, may move this function to GraphEnvironmentController instead
-	 * @param g1
-	 * @param g2
+	 * @param g1 First Graph
+	 * @param g2 Second Graph
 	 * @param v1 a vertex in g1
 	 * @param v2 a vertex in g2
 	 */

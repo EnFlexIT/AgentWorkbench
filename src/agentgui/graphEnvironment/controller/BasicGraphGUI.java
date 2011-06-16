@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.dawis.wiwi.uni-due.de/ 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
+
 package agentgui.graphEnvironment.controller;
 
 import java.awt.BorderLayout;
@@ -42,15 +70,15 @@ import edu.uci.ics.jung.visualization.control.ScalingControl;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 
 /**
- * This class implements a GUI component for displaying visualizations for JUNG
- * graphs.
- * 
+ * This class implements a GUI component for displaying visualizations for JUNG graphs. 
+ * This class also has a toolbar component which provides various features for creating and 
+ * editing the graph
  * @author Nils
- * 
+ * @author Satyadeep
  */
 public class BasicGraphGUI extends JPanel implements ActionListener {
 	/**
-	 * Event Argument for notifying observers(generally parent GUI) throught the
+	 * Event Arguments for notifying observers(generally parent GUI) through the
 	 * Notification class
 	 */
 	public static final String EVENT_NETWORKMODEL_CLEAR = "clear_graph"; // @jve:decl-index=0:
@@ -136,7 +164,8 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	}
 
 	/**
-	 * 
+	 * This method initializes the two mouse modes - Transforming mode and picking mode
+	 * by using PluggableGraphMouse and DefaultModalGraphMouse respectively
 	 */
 	private void initMouseModes() {
 		pgm = new PluggableGraphMouse();
@@ -181,7 +210,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	/**
 	 * This method assigns a graph to a new VisualizationViewer and adds it to
 	 * the GUI
-	 * 
+	 * This is used for creating graph for the first time
 	 * @param graph
 	 *            The graph
 	 */
@@ -322,8 +351,8 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	}
 
 	/**
-	 * Repaints the visualisation viewer, with the given graph (There should be
-	 * a better way than this)
+	 * Repaints the visualisation viewer, with the given graph 
+	 * @param graph  -The new graph to be painted with.
 	 */
 	public void graphRepaint(Graph<GraphNode, GraphEdge> graph) {
 		visView.getGraphLayout().setGraph(graph);
@@ -465,7 +494,12 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	public class Notification {
 		private Object arg;
 		private String event;
-
+		
+		/**
+		 * Constructor for creating notification object
+		 * @param event
+		 * @param arg
+		 */
 		public Notification(String event, Object arg) {
 			this.event = event;
 			this.arg = arg;

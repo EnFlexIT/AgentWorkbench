@@ -1,3 +1,30 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.dawis.wiwi.uni-due.de/ 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.graphEnvironment.controller;
 
 import java.awt.Dimension;
@@ -43,7 +70,7 @@ import agentgui.graphEnvironment.networkModel.NetworkModel;
 /**
  * This class manages an environment model of the type graph / network
  * @author Nils
- *
+ * @author Satyadeep
  */
 public class GraphEnvironmentController extends Observable implements Observer {
 	/**
@@ -99,6 +126,10 @@ public class GraphEnvironmentController extends Observable implements Observer {
 	 */
 	private GraphMLWriter<GraphNode, GraphEdge> graphMLWriter = null;
 	
+	/**
+	 * The constructor for the GraphEnvironmentController
+	 * @param project
+	 */
 	public GraphEnvironmentController(Project project){
 		this.project = project;
 		this.project.addObserver(this);
@@ -153,7 +184,7 @@ public class GraphEnvironmentController extends Observable implements Observer {
 	}
 	
 	/**
-	 * @return the graph
+	 * @return NetworkModel - The environment model
 	 */
 	public NetworkModel getGridModel() {
 		return networkModel;
@@ -172,6 +203,7 @@ public class GraphEnvironmentController extends Observable implements Observer {
 	
 	/**
 	 * Can be used to notify the observers after changing the network model from outside.
+	 * Also sets the project as unsaved
 	 */
 	public void refreshNetworkModel() {		
 		this.project.setChangedAndNotify(EVENT_NETWORKMODEL_REFRESHED);	
@@ -191,7 +223,7 @@ public class GraphEnvironmentController extends Observable implements Observer {
 	
 	/**
 	 * Gets the GRaphFileImporter, creates a new instance if null
-	 * @return
+	 * @return GraphFileImporter
 	 */
 	GraphFileImporter getGraphFileImporter(){
 		if(graphFileImporter == null){
