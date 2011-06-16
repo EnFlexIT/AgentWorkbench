@@ -494,12 +494,16 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	public void update(Observable o, Object arg) {
 		// The network model loaded 
 		if(o.equals(controller) && arg.equals(GraphEnvironmentController.EVENT_NETWORKMODEL_LOADED)){
-			graphGUI.setGraph(controller.getGridModel().getGraph());
+			//Loading for the first time
+			if(graphGUI.getVisView()==null)
+				graphGUI.setGraph(controller.getGridModel().getGraph()); // New graph visualization viewer is created
+			else
+				graphGUI.repaintGraph(controller.getGridModel().getGraph()); // Same vis view, but graph is refreshed
 			rebuildTblComponents();
 		}		
 		// Network model is updated/refreshed 
 		else if(o.equals(controller) && arg.equals(GraphEnvironmentController.EVENT_NETWORKMODEL_REFRESHED)){			
-			graphGUI.graphRepaint(controller.getGridModel().getGraph());
+			graphGUI.repaintGraph(controller.getGridModel().getGraph());
 			// Rebuilding the component table
 			rebuildTblComponents();
 			graphGUI.clearPickedObjects();

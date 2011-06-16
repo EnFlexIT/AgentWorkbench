@@ -248,7 +248,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 
 						@Override
 						public String transform(GraphEdge arg0) {
-							return arg0.getComponentType() + " " + arg0.getId();
+							return arg0.getId();
 						}
 					});
 			// Use straight lines as edges
@@ -260,8 +260,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 
 			visView.setBackground(Color.WHITE);
 
-			rightComponent = new GraphZoomScrollPane(visView);
-			;
+			rightComponent = new GraphZoomScrollPane(visView);			
 
 		} else { // No graph passed
 			// Use a JPanel as dummy component
@@ -354,11 +353,9 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	 * Repaints the visualisation viewer, with the given graph 
 	 * @param graph  -The new graph to be painted with.
 	 */
-	public void graphRepaint(Graph<GraphNode, GraphEdge> graph) {
+	public void repaintGraph(Graph<GraphNode, GraphEdge> graph) {
 		visView.getGraphLayout().setGraph(graph);
 		visView.repaint();
-		// visView.setGraphLayout(new StaticLayout<GraphNode,
-		// GraphEdge>(graph));
 	}
 
 	/**
