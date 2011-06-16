@@ -357,16 +357,25 @@ public class GraphEnvironmentController extends Observable implements Observer {
 		switch(sscn.getUpdateReason()){
 			
 			case SimulationSetups.SIMULATION_SETUP_COPY:
+				// Saving the network model of previous setup before loading the next one
+				saveNetworkModel(); 
+				
 				updateGraphFileName();
 				saveNetworkModel();
+				project.isUnsaved = true;
 			break;
 			
 			case SimulationSetups.SIMULATION_SETUP_ADD_NEW:
+				// Saving the network model of previous setup before loading the next one
+				saveNetworkModel(); 
+				
 				updateGraphFileName();
 				networkModel = new NetworkModel();
-				currentCTS = new HashMap<String, ComponentTypeSettings>();;
+				//Copying the component type settings over
+				setComponentTypeSettings(currentCTS);
 				setChanged();
 				notifyObservers(EVENT_NETWORKMODEL_LOADED);
+				
 			break;
 			
 			case SimulationSetups.SIMULATION_SETUP_REMOVE:
@@ -382,11 +391,13 @@ public class GraphEnvironmentController extends Observable implements Observer {
 			// No, there's no break missing here. After deleting a setup another one is loaded.
 			
 			case SimulationSetups.SIMULATION_SETUP_LOAD:
-				saveNetworkModel(); // Saving the network model of previous setup before loading the next one
+				// Saving the network model of previous setup before loading the next one
+				saveNetworkModel(); 
 				
 				updateGraphFileName();
+				loadNetworkModel();	//Loads network model and notifies observers	
 				setComponentTypeSettings(project.simSetups.getCurrSimSetup().getGraphElementSettings());				
-				loadNetworkModel();	//Loads network model and notifies observers			
+						
 			break;
 			
 			case SimulationSetups.SIMULATION_SETUP_RENAME:

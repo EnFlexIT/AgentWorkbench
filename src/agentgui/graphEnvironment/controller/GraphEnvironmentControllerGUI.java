@@ -268,9 +268,6 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 			DefaultTableModel model = new DefaultTableModel(data, titles) {		        
 				
 				private static final long serialVersionUID = 1636744550817904118L;
-				public Class<?> getColumnClass(int col) {
-					return data.get(0).get(col).getClass();	            
-				}
 				public boolean isCellEditable(int row, int col) {
 				        if (col != 1) {
 				            return true;
@@ -459,9 +456,10 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	 * @return
 	 */
 	private ClassSelectionDialog getClassSelectorDialog(){
-		if(classSelectorDialog == null){
+	//Always creating the new one, instead of hide and open
+		//if(classSelectorDialog == null){
 			classSelectorDialog = new ClassSelectionDialog(this);
-		}
+		//}
 		return classSelectorDialog;
 	}
 	

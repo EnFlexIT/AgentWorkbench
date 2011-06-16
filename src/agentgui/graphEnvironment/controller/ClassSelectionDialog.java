@@ -412,10 +412,10 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 			// Set the GraphEnvironmentController's componentTypeSettings
 			parent.getController().setComponentTypeSettings(etsVector);
 			
-			this.setVisible(false);
+			this.dispose();
 		// Canceled, discard changes
 		}else if(event.getSource().equals(getJButtonCancel())){
-			this.setVisible(false);
+			this.dispose();
 		}
 		
 	}
@@ -442,7 +442,9 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 	private JTextField getJTextFieldNodeClass() {
 		if (jTextFieldNodeClass == null) {
 			jTextFieldNodeClass = new JTextField();
+			
 			ComponentTypeSettings nodeSettings = parent.getController().getComponentTypeSettings().get("node");
+			
 			if(nodeSettings != null){
 				jTextFieldNodeClass.setText(nodeSettings.getAgentClass());
 			}
