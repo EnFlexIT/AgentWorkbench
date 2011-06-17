@@ -346,8 +346,8 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 								Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);	 
 	        			getTblComponents().getModel().setValueAt(oldCompID, row, column);
 		        	}
-		        	else if(newCompID.contains(" ") || newCompID.contains("_")){
-		        		JOptionPane.showMessageDialog(this,Language.translate("Enter the name without spaces or underscores", Language.EN),
+		        	else if(newCompID.contains(" ")){
+		        		JOptionPane.showMessageDialog(this,Language.translate("Enter the name without spaces", Language.EN),
 								Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);	 
 	        			getTblComponents().getModel().setValueAt(oldCompID, row, column);
 		        	}		        	
@@ -544,7 +544,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 					// Atleast one edge is picked
 					if(edgeSet.size()>0){ 
 						//Get the Network component from the picked edge
-						NetworkComponent selectedComponent = getNetworkComponent(edgeSet.iterator().next().getId());												
+						NetworkComponent selectedComponent = getNetworkComponentFromEdge(edgeSet.iterator().next());												
 						//Removing the component from the network model and updating the graph
 						handleRemoveNetworkComponent(selectedComponent);
 						
@@ -949,7 +949,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		if(object instanceof GraphNode){
 			graphGUI.setPickedObject((GraphElement) object);
 		}else if(object instanceof GraphEdge){
-			NetworkComponent netComp = getNetworkComponent(((GraphElement)object).getId());
+			NetworkComponent netComp = getNetworkComponentFromEdge((GraphEdge)object);
 			graphGUI.setPickedObjects(getNetworkComponentElements(netComp));
 			selectComponentInTable(netComp);
 		}else if(object instanceof NetworkComponent){
@@ -969,7 +969,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 			if(object instanceof GraphNode){
 				new ComponentSettingsDialog(currProject, this, object).setVisible(true);			
 			}else if(object instanceof GraphEdge){
-				NetworkComponent netComp = getNetworkComponent(((GraphElement)object).getId());
+				NetworkComponent netComp = getNetworkComponentFromEdge((GraphEdge)object);
 				new ComponentSettingsDialog(currProject, this, netComp).setVisible(true);
 			}else if(object instanceof NetworkComponent){
 				new ComponentSettingsDialog(currProject, this, (NetworkComponent)object).setVisible(true);
@@ -1013,18 +1013,20 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	
 	/**
 	 * This method gets the NetworkComponent the GraphEdge with the given ID belongs to
-	 * @param edgeID The GraphEdge's ID
+	 * @param edge The GraphEdge's ID
 	 * @return The NetworkComponent
 	 */
-	//TODO does not work if the component ID contains '_'
-	private NetworkComponent getNetworkComponent(String edgeID){
-		String netCompID;
-		if(edgeID.lastIndexOf('_')>=0){
-			netCompID = edgeID.substring(0, edgeID.lastIndexOf('_'));
-		}else{
-			netCompID = edgeID;
+	private NetworkComponent getNetworkComponentFromEdge(GraphEdge edge){
+		// Get the components from the controllers GridModel
+		Iterator<NetworkComponent> components = controller.getGridModel().getNetworkComponents().values().iterator();						
+		while(components.hasNext()){ // iterating through all network components
+			NetworkComponent comp = components.next();
+			// check if the component contains the given node
+			if(comp.getGraphElementIDs().contains(edge.getId())){
+				return comp;
+			}
 		}
-		return controller.getGridModel().getNetworkComponent(netCompID);
+		return null;
 	}
 	/**
 	 * This method gets the GraphElements that are part of the given NetworkComponent

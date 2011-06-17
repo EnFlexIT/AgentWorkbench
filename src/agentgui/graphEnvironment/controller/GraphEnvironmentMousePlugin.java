@@ -101,9 +101,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 					myGUI.handleObjectSelection(pickedObject);
 				//Right click
 				else if(e.getButton()==MouseEvent.BUTTON3)
-					myGUI.handleObjectRightClick(pickedObject);
-				//TODO handle double click
-				
+					myGUI.handleObjectRightClick(pickedObject);		
 			}
 		}
 	}
