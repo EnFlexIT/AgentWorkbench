@@ -70,22 +70,40 @@ import edu.uci.ics.jung.visualization.control.ScalingControl;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 
 /**
- * This class implements a GUI component for displaying visualizations for JUNG graphs. 
- * This class also has a toolbar component which provides various features for creating and 
- * editing the graph
+ * This class implements a GUI component for displaying visualizations for JUNG graphs. <br>
+ * This class also has a toolbar component which provides various features for editing, importing and 
+ * interacting with the graph.
+ * 
+ * @see GraphEnvironmentControllerGUI
+ * @see GraphEnvironmentMousePlugin
+ * 
  * @author Nils
  * @author Satyadeep
  */
 public class BasicGraphGUI extends JPanel implements ActionListener {
 	/**
-	 * Event Arguments for notifying observers(generally parent GUI) through the
-	 * Notification class
+	 * Event argument for notifying observers that Clear Graph button is clicked
 	 */
 	public static final String EVENT_NETWORKMODEL_CLEAR = "clear_graph"; // @jve:decl-index=0:
+	/**
+	 * Event argument for notifying observers that Add new component button is clicked
+	 */
 	public static final String EVENT_ADD_COMPONENT_CLICKED = "add_component_clicked"; // @jve:decl-index=0:
+	/**
+	 * Event argument for notifying observers that remove selected component button is clicked
+	 */
 	public static final String EVENT_REMOVE_COMPONENT_CLICKED = "remove_component_clicked"; // @jve:decl-index=0:
+	/**
+	 * Event argument for notifying observers that merge two selected nodes button is clicked
+	 */
 	public static final String EVENT_MERGE_NODES_CLICKED = "merge_nodes_clicked"; // @jve:decl-index=0:
+	/**
+	 * Event argument for notifying observers that split selected node button is clicked
+	 */
 	public static final String EVENT_SPLIT_NODE_CLICKED = "split_node_clicked"; // @jve:decl-index=0:
+	/**
+	 * Event argument for notifying observers that import graph from file button is clicked
+	 */
 	public static final String EVENT_IMPORT_GRAPH_CLICKED = "import_graph_clicked"; // @jve:decl-index=0:
 	public static final String EVENT_OBJECT_LEFT_CLICK = "object_left_click"; // @jve:decl-index=0:
 	public static final String EVENT_OBJECT_RIGHT_CLICK = "object_right_click"; // @jve:decl-index=0:
@@ -479,15 +497,21 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	}
 
 	/**
-	 * A class used for combining arguments into single one for
-	 * notifyObservers() call. List of events are defined as static strings at
-	 * the beginning
+	 * A Notification class used for combining arguments into single one for
+	 * notifying observers. Contains the event and the argument to be passed.
 	 * 
 	 * @author Satyadeep
 	 * 
 	 */
 	public class Notification {
+		/**
+		 * The argument object
+		 */
+		
 		private Object arg;
+		/**
+		 * The event description
+		 */
 		private String event;
 		
 		/**
@@ -499,11 +523,19 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 			this.event = event;
 			this.arg = arg;
 		}
-
+		
+		/**
+		 * 
+		 * @return The argument object
+		 */
 		public Object getArg() {
 			return arg;
 		}
 
+		/**
+		 * 
+		 * @return The event String
+		 */
 		public String getEvent() {
 			return event;
 		}

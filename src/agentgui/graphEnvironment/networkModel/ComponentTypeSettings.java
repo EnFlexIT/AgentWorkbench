@@ -1,6 +1,11 @@
 package agentgui.graphEnvironment.networkModel;
+
+import agentgui.graphEnvironment.prototypes.GraphElementPrototype;
+
 /**
  * This class stores the component type settings for a network component type 
+ * 
+ * @see GraphElementPrototype
  * @author Nils
  *
  */
@@ -14,7 +19,7 @@ public class ComponentTypeSettings {
 	 */
 	private String graphPrototype;
 	/**
-	 * Constructor
+	 * Default Constructor
 	 */
 	public ComponentTypeSettings(){
 		super();
@@ -30,12 +35,14 @@ public class ComponentTypeSettings {
 		this.graphPrototype = graphPrototype;
 	}
 	/**
+	 * Returns the agent class
 	 * @return the agentClass
 	 */
 	public String getAgentClass() {
 		return agentClass;
 	}
 	/**
+	 * 
 	 * @param agentClass the agentClass to set
 	 */
 	public void setAgentClass(String agentClass) {

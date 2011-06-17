@@ -13,6 +13,9 @@ import agentgui.graphEnvironment.networkModel.NetworkModel;
 
 /**
  * Classes that should work as import components for the GraphEnvironmentController must implement this interface. 
+ * 
+ * @see GraphEnvironmentController
+ * 
  * @author Nils
  *
  */

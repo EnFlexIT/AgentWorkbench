@@ -80,9 +80,14 @@ import agentgui.graphEnvironment.networkModel.NetworkModel;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.EdgeType;
 /**
- * The GUI for a GraphEnvironmentController
- * This contains a pane showing the NetworkComponents table and the BasicGraphGUI
- * The main class which associates with the components table, the environment model and the Basic Graph GUI
+ * The GUI for a GraphEnvironmentController.
+ * This contains a pane showing the NetworkComponents table and the BasicGraphGUI.
+ * The main class which associates with the components table, the environment model and the Basic Graph GUI.
+ * 
+ * @see GraphEnvironmentController
+ * @see BasicGraphGUI
+ * @see agentgui.graphEnvironment.networkModel
+ * 
  * @author Nils
  * @author Satyadeep
  */
@@ -325,6 +330,10 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	/* (non-Javadoc)
 	 * @see javax.swing.event.TableModelListener#tableChanged(javax.swing.event.TableModelEvent)
 	 */
+	/**
+	 * Invoked when a table data model changes.
+	 * Used for renaming the network component.
+	 */
 	@Override
 	public void tableChanged(TableModelEvent e) {
 			int row = e.getFirstRow();
@@ -486,6 +495,14 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		return graphGUI;
 	}
 	
+	/**
+	 * Very important method which implements handlers for various notifications sent by observables 
+	 * 	({@link GraphEnvironmentController} and {@link BasicGraphGUI} ). <br>
+	 * Handles Network model updates, and button clicks of Graph GUI and mouse interactions.
+	 * 
+	 * @param o The observable which notifies this class
+	 * @param arg Argument passed
+	 */
 	@Override
 	public void update(Observable o, Object arg) {
 		// The network model loaded 
@@ -808,6 +825,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	}
 	
 	/**
+	 * Returns the number of network components which have the given node
 	 * @param node Vertex in the Graph
 	 * @return count No of network components containing the given node
 	 */
@@ -869,8 +887,8 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	
 	
 	/**
-	 * Checks the constraint for a given node in the network model
-	 * Constraint - a node can be a member of maximum two network components
+	 * Checks the constraint for a given node in the network model.
+	 * Constraint - a node can be a member of maximum two network components.
 	 * @param object - selected node
 	 * @return true if the node is a member of 0 or 1 components, false otherwise
 	 */
@@ -891,8 +909,12 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		}
 	}
 
+	/**
+	 * Invoked when a row of the components table is selected.
+	 * Highlights the selected network component in the Graph. 
+	 * @param e List selection event
+	 */
 	@Override
-	//When a row of the components table is selected
 	public void valueChanged(ListSelectionEvent e) {
 		if(getTblComponents().getSelectedRowCount() > 0){
 			//Converting from view coordinates to model coordinates
@@ -906,7 +928,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	}
 	/**
 	 * This method get's the GUI's controller
-	 * @return
+	 * @return GraphEnvironmentController The controller of the environment network model.
 	 */
 	GraphEnvironmentController getController(){
 		return controller;
@@ -1001,8 +1023,9 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	}
 
 	/**
+	 * Returns the node which is picked. If multiple nodes are picked, returns null.
 	 * @return GraphNode - the GraphNode which is picked. 
-	 * If multiple nodes are picked, returns null
+	 * 
 	 */
 	public GraphNode getPickedVertex(){
 			Set<GraphNode> nodeSet = graphGUI.getVisView().getPickedVertexState().getPicked();

@@ -1,6 +1,10 @@
 package agentgui.graphEnvironment.networkModel;
 /**
  * Abstract super class for nodes and edges in an environment model of the type graph / network.
+ * 
+ * @see GraphEdge
+ * @see GraphNode
+ * 
  * @author Nils
  *
  */

@@ -4,6 +4,10 @@ import java.awt.Point;
 import java.awt.geom.Point2D;
 /**
  * This class represents a graph node in an environment model of the type graph / network
+ * 
+ * @see GraphEdge
+ * @see GraphElement
+ * 
  * @author Nils
  *
  */
@@ -17,6 +21,9 @@ public class GraphNode extends GraphElement{
 	 */
 	private String encodedOntologyRepresentation;
 	
+	/**
+	 * Default constructor
+	 */
 	public GraphNode(){
 		this.position = new Point(50, 50);
 	}

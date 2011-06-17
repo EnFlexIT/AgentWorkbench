@@ -3,9 +3,12 @@ package agentgui.graphEnvironment.networkModel;
 import java.util.HashSet;
 
 /**
- * This class represents a component of the modeled network. It contains
+ * This class represents a component of the modelled network. It contains
  * its' ontology representation, its' GraphElementPrototype, the nodes and
  * edges representing it in the environment graph and an ID for easier access. 
+ * 
+ * @see NetworkModel
+ * 
  * @author Nils
  *
  */
@@ -69,12 +72,14 @@ public class NetworkComponent {
 		this.type = type;
 	}
 	/**
+	 * Returns the graph element IDs present in the component as a HashSet
 	 * @return the graphElements
 	 */
 	public HashSet<String> getGraphElementIDs() {
 		return graphElementIDs;
 	}
 	/**
+	 * Sets the graph element IDs as a HashSet
 	 * @param graphElementIDs the graphElements to set
 	 */
 	public void setGraphElementIDs(HashSet<String> graphElementIDs) {
@@ -93,12 +98,14 @@ public class NetworkComponent {
 		this.directed = directed;
 	}
 	/**
+	 * Returns the graph element prototype class name
 	 * @return the prototypeClassName
 	 */
 	public String getPrototypeClassName() {
 		return prototypeClassName;
 	}
 	/**
+	 * Sets the graph element prototype class name
 	 * @param prototypeClassName the prototypeClassName to set
 	 */
 	public void setPrototypeClassName(String prototypeClassName) {

@@ -68,7 +68,15 @@ import agentgui.graphEnvironment.networkModel.GraphNode;
 import agentgui.graphEnvironment.networkModel.NetworkComponentList;
 import agentgui.graphEnvironment.networkModel.NetworkModel;
 /**
- * This class manages an environment model of the type graph / network
+ * This class manages an environment model of the type graph / network.<br>
+ * Also contains the network component type settings configuration.<br>
+ * The observable class of the network model in the observer pattern.
+ *  
+ * @see agentgui.graphEnvironment.networkModel.NetworkModel
+ * @see agentgui.graphEnvironment.networkModel.ComponentTypeSettings
+ * @see GraphEnvironmentControllerGUI
+ * 
+ * 
  * @author Nils
  * @author Satyadeep
  */
@@ -141,7 +149,10 @@ public class GraphEnvironmentController extends Observable implements Observer {
 			currentCTS = new HashMap<String, ComponentTypeSettings>();
 		}
 	}
-	
+	/**
+	 * Returns the current project
+	 * @return The current project
+	 */
 	Project getProject(){
 		return this.project;
 	}
@@ -159,7 +170,7 @@ public class GraphEnvironmentController extends Observable implements Observer {
 	}
 	/**
 	 * Gets the current ComponentTypeSettings
-	 * @return
+	 * @return HashMap<String, ComponentTypeSettings> The current component type settings map.
 	 */
 	public HashMap<String, ComponentTypeSettings> getComponentTypeSettings(){
 		return currentCTS;
@@ -184,6 +195,7 @@ public class GraphEnvironmentController extends Observable implements Observer {
 	}
 	
 	/**
+	 * Returns the environment network model
 	 * @return NetworkModel - The environment model
 	 */
 	public NetworkModel getGridModel() {
@@ -211,6 +223,9 @@ public class GraphEnvironmentController extends Observable implements Observer {
 		notifyObservers(EVENT_NETWORKMODEL_REFRESHED);		
 	}
 	
+	/**
+	 * Invoked when an observable( the {@link Project} in this case) notifies this class.
+	 */
 	@Override
 	public void update(Observable o, Object arg) {
 		if(o.equals(project) && arg == Project.SAVED){
@@ -222,7 +237,7 @@ public class GraphEnvironmentController extends Observable implements Observer {
 	}
 	
 	/**
-	 * Gets the GRaphFileImporter, creates a new instance if null
+	 * Gets the GraphFileImporter, creates a new instance if null
 	 * @return GraphFileImporter
 	 */
 	GraphFileImporter getGraphFileImporter(){

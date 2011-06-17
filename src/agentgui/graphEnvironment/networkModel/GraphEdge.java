@@ -2,6 +2,10 @@ package agentgui.graphEnvironment.networkModel;
 
 /**
  * This class represents a graph edge in an environment model of the type graph / network 
+ * 
+ * @see GraphNode
+ * @see GraphElement
+ * 
  * @author Nils
  *
  */

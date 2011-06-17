@@ -39,6 +39,7 @@ import edu.uci.ics.jung.graph.SparseGraph;
  * The Environment Network Model.
  * This class encapsulates a JUNG graph representing a grid, with edges representing the grid components.
  * @author Nils
+ * @author Satyadeep
  *
  */
 public class NetworkModel{
@@ -51,7 +52,7 @@ public class NetworkModel{
 	 */
 	private HashMap<String, GraphElement> graphElements;
 	/**
-	 * A list of all NetwirkComponents in the GridModel, accessible by ID
+	 * A list of all NetworkComponents in the GridModel, accessible by ID
 	 */
 	private HashMap<String, NetworkComponent> networkComponents;
 	/**
@@ -84,9 +85,17 @@ public class NetworkModel{
 	public Collection<GraphEdge> getEdges() {
 		return graph.getEdges();
 	}
+	/**
+	 * 
+	 * @return The Graph
+	 */
 	public Graph<GraphNode, GraphEdge> getGraph() {
 		return graph;
 	}
+	/**
+	 * Sets the the graph of the network model
+	 * @param graph
+	 */
 	public void setGraph(Graph<GraphNode, GraphEdge> graph) {
 		this.graph = graph;
 		
@@ -141,9 +150,8 @@ public class NetworkModel{
 	}
 	
 	/**
-	 * Generates the next network component ID in the series n1, n2, n3, ... 
+	 * Generates the next unique network component ID in the series n1, n2, n3, ... 
 	 * @return the next unique network component ID 
-	 * @author Satyadeep
 	 */
 	public String nextNetworkComponentID() {
 		//Finds the current maximum network component ID and returns the next one to it.		
@@ -161,9 +169,8 @@ public class NetworkModel{
 	}
 	
 	/**
-	 * Generates the next node ID in the series PP0, PP1, PP2, ... 
-	 * @return
-	 * @author Satyadeep
+	 * Generates the next unique node ID in the series PP0, PP1, PP2, ... 
+	 * @return String The next unique node ID that can be used.
 	 */
 	public String nextNodeID() {
 		//Finds the current maximum node ID and returns the next one to it.		

@@ -40,6 +40,9 @@ import edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin;
 
 /**
  * Handling mouse interaction with graph visualizations in a BasicGraphGUI.
+ * 
+ * @see BasicGraphGUI  
+ * 
  * @author Nils
  * @author Satyadeep
  */
@@ -58,7 +61,10 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 //		this.locked = true;
 		this.myGUI = parentGUI;
 	}
-
+	
+	/**
+	 * Support for Left click, Right click, Double click, Shift + Left click and Shift + Right click.
+	 */
 	@Override
 	public void mouseClicked(MouseEvent e){
 		// Left click or Right click
@@ -106,6 +112,9 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 		}
 	}
 	
+	/**
+	 * Updates the Graph nodes position attribute when mouse dragged.
+	 */
 	@Override
 	public void mouseDragged(MouseEvent e){
 		super.mouseDragged(e);

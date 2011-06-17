@@ -75,10 +75,15 @@ import edu.uci.ics.jung.visualization.control.PluggableGraphMouse;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 
 /**
- * Dialog for adding a new network component to the model.
- * All the component types are shown as a list and a preview of the graph prototype 
- * is shown on selecting the component type.
+ * Dialog for adding a new network component to the model.<br>
+ * List of component types is displayed and on selecting a component type,  
+ * the preview of the graph prototype is shown .<br>
  * Adds the selected component to the graph by merging the common selected nodes.
+ * 
+ * @see GraphEnvironmentControllerGUI
+ * @see GraphEnvironmentController
+ * @see GraphElementPrototype
+ * 
  * @author Satyadeep
  *
  */
@@ -109,7 +114,7 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 	private JLabel jLabel = null;
 	/**
 	 * Gets the parent object and initializes
-	 * @param owner
+	 * @param parent The parent GUI which creates this
 	 */
 	public AddComponentDialog(GraphEnvironmentControllerGUI parent) {
 		super(Application.MainWindow, Dialog.ModalityType.APPLICATION_MODAL);
@@ -333,7 +338,7 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 	
 	/**
 	 * Repaints/Refreshes the visualisation viewer, with the given graph
-	 * @param graph - The new graph to be painted
+	 * @param graph The new graph to be painted
 	 */
 	public void graphRepaint(Graph<GraphNode, GraphEdge> graph)
 	{
