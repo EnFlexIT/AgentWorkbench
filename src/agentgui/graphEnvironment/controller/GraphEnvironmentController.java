@@ -77,8 +77,8 @@ import agentgui.graphEnvironment.networkModel.NetworkModel;
  * @see GraphEnvironmentControllerGUI
  * 
  * 
- * @author Nils
- * @author Satyadeep
+ * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
+ * @author <br>Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati 
  */
 public class GraphEnvironmentController extends Observable implements Observer {
 	/**

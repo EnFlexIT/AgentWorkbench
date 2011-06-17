@@ -88,8 +88,8 @@ import edu.uci.ics.jung.graph.util.EdgeType;
  * @see BasicGraphGUI
  * @see agentgui.graphEnvironment.networkModel
  * 
- * @author Nils
- * @author Satyadeep
+ * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
+ * @author <br>Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati 
  */
 public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements Observer, ActionListener, ListSelectionListener, TableModelListener{
 	/**

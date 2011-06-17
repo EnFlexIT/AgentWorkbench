@@ -77,8 +77,8 @@ import edu.uci.ics.jung.visualization.decorators.EdgeShape;
  * @see GraphEnvironmentControllerGUI
  * @see GraphEnvironmentMousePlugin
  * 
- * @author Nils
- * @author Satyadeep
+ * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
+ * @author <br>Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati 
  */
 public class BasicGraphGUI extends JPanel implements ActionListener {
 	/**

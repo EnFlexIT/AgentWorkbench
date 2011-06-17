@@ -38,7 +38,7 @@ import javax.swing.JTextField;
 
 /**
  * GUI dialog for configuring network component types 
- * @author Nils
+ * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
  *
  */
 public class ClassSelectionDialog extends JDialog implements ActionListener{

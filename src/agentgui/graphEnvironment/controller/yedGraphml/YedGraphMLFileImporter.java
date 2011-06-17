@@ -16,7 +16,7 @@ import agentgui.graphEnvironment.networkModel.NetworkModel;
 import agentgui.graphEnvironment.prototypes.GraphElementPrototype;
 /**
  * GraphFileImporter for GraphML files specified with yEd
- * @author Nils
+ * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen
  *
  */
 public class YedGraphMLFileImporter extends GraphFileImporter {

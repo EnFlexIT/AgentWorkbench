@@ -8,7 +8,7 @@ import java.awt.geom.Point2D;
  * @see GraphEdge
  * @see GraphElement
  * 
- * @author Nils
+ * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
  *
  */
 public class GraphNode extends GraphElement{

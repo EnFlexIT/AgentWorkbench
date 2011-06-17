@@ -6,7 +6,7 @@ import agentgui.graphEnvironment.prototypes.GraphElementPrototype;
  * This class stores the component type settings for a network component type 
  * 
  * @see GraphElementPrototype
- * @author Nils
+ * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
  *
  */
 public class ComponentTypeSettings {

@@ -16,7 +16,7 @@ import agentgui.graphEnvironment.networkModel.NetworkModel;
  * 
  * @see GraphEnvironmentController
  * 
- * @author Nils
+ * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
  *
  */
 public abstract class GraphFileImporter {

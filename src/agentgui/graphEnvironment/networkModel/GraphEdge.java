@@ -6,7 +6,7 @@ package agentgui.graphEnvironment.networkModel;
  * @see GraphNode
  * @see GraphElement
  * 
- * @author Nils
+ * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
  *
  */
 public class GraphEdge extends GraphElement{

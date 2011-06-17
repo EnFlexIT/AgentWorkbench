@@ -16,7 +16,7 @@ import agentgui.graphEnvironment.networkModel.GraphNode;
  * A graph / network element with three connection points and direct
  * connections between each two of them. Represented by a triangle 
  * consisting of three nodes and three edges.
- * @author Nils
+ * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
  *
  */
 public class TriangeGraphElement extends GraphElementPrototype {

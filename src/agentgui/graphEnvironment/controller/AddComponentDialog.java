@@ -84,7 +84,7 @@ import edu.uci.ics.jung.visualization.decorators.EdgeShape;
  * @see GraphEnvironmentController
  * @see GraphElementPrototype
  * 
- * @author Satyadeep
+ * @author Satyadeep - CSE - Indian Institute of Technology, Guwahati
  *
  */
 public class AddComponentDialog extends JDialog implements ActionListener{

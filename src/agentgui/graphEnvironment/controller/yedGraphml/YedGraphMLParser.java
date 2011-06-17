@@ -18,7 +18,7 @@ import edu.uci.ics.jung.io.graphml.HyperEdgeMetadata;
 import edu.uci.ics.jung.io.graphml.NodeMetadata;
 /**
  * Helper class for YedGraphMLFileImporter, converting the yEd graph to a temporary JUNG graph, which is then processed by the YedGraphMLFileImporter.
- * @author Nils
+ * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen
  *
  */
 public class YedGraphMLParser {

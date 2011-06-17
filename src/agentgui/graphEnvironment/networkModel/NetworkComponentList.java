@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * Wrapper class encapsulating a HashMap of NetworkComponents. Its' only 
  * purpose is saving a list of NetworkComponents via JAXB.
- * @author Nils
+ * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
  *
  */
 @XmlRootElement

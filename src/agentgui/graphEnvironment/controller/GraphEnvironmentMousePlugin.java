@@ -43,8 +43,8 @@ import edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin;
  * 
  * @see BasicGraphGUI  
  * 
- * @author Nils
- * @author Satyadeep
+ * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
+ * @author <br>Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati 
  */
 public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNode, GraphEdge> {
 	/**

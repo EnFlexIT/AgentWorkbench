@@ -11,7 +11,7 @@ import edu.uci.ics.jung.graph.util.EdgeType;
 /**
  * A simple directed graph / network element with two connection points,
  * represented by two nodes and a directed edge.
- * @author Nils
+ * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
  *
  */
 public class DirectedSimpleGraphElement extends GraphElementPrototype {

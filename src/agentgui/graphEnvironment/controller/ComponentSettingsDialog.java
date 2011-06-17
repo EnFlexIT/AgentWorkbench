@@ -20,7 +20,7 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 /**
  * GUI component for setting the properties of an ontology object representing the domain view of a grid component
- * @author Nils
+ * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
  *
  */
 public class ComponentSettingsDialog extends JDialog implements ActionListener{

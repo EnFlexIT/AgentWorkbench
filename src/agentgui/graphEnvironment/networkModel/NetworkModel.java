@@ -38,8 +38,8 @@ import edu.uci.ics.jung.graph.SparseGraph;
 /**
  * The Environment Network Model.
  * This class encapsulates a JUNG graph representing a grid, with edges representing the grid components.
- * @author Nils
- * @author Satyadeep
+ * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
+ * @author <br>Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati 
  *
  */
 public class NetworkModel{

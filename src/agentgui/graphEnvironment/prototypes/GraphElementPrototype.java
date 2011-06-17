@@ -14,7 +14,7 @@ import edu.uci.ics.jung.graph.Graph;
  * during graph import only. Later the nodes and edges of the GridModel will be stored directly in
  * GraphML.
  *     
- * @author Nils
+ * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
  *
  */
 public abstract class GraphElementPrototype {
