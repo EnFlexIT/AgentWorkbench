@@ -32,6 +32,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -145,7 +146,6 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	 * The graph visualization component
 	 */
 	private BasicGraphGUI graphGUI = null;
-	private JPopupMenu popup = null;  //  @jve:decl-index=0:visual-constraint="608,53"
 	private JMenuItem menuAdd = null;
 	private JTextField jTextFieldSearch = null;
 	
@@ -550,7 +550,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 					}				
 						//No vertex is picked
 					else{
-						JOptionPane.showMessageDialog(this,Language.translate("Right click a valid vertex first", Language.EN),
+						JOptionPane.showMessageDialog(this,Language.translate("Select a valid vertex first", Language.EN),
 								Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
 					}
 				}
@@ -569,7 +569,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 					}
 					// No edge is picked
 					else{ 
-						JOptionPane.showMessageDialog(this,Language.translate("Right click an edge first", Language.EN),
+						JOptionPane.showMessageDialog(this,Language.translate("Select an edge first", Language.EN),
 								Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
 					}
 				}
@@ -594,7 +594,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 					}
 					//Two nodes are not picked
 					else{ 
-						JOptionPane.showMessageDialog(this,Language.translate("Use Shift and Right click two vertices", Language.EN),
+						JOptionPane.showMessageDialog(this,Language.translate("Use Shift and click two vertices", Language.EN),
 								Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
 					}	
 					
@@ -632,39 +632,28 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 						File graphMLFile = graphFC.getSelectedFile();
 						this.controller.importNetworkModel(graphMLFile);
 					}
-				}	
-				else if(notification.getEvent().equals(BasicGraphGUI.EVENT_OBJECT_LEFT_CLICK)){					
+				}
+				else if(notification.getEvent().equals(BasicGraphGUI.EVENT_NODE_EDIT_PROPERTIES_CLICKED)){
+					// Popup Menu Item Node properties clicked
+					GraphNode pickedVertex = getPickedVertex();
+					if(pickedVertex!=null){
+						new ComponentSettingsDialog(currProject, this, pickedVertex).setVisible(true);
+					}
+				}
+				else if(notification.getEvent().equals(BasicGraphGUI.EVENT_EDGE_EDIT_PROPERTIES_CLICKED)){
+					// Popup Menu Item Edge properties clicked
+					GraphEdge pickedEdge = getPickedEdge();
+					if(pickedEdge!=null){
+						NetworkComponent netComp = getNetworkComponentFromEdge(pickedEdge);						
+						new ComponentSettingsDialog(currProject, this, netComp).setVisible(true);
+					}
+				}
+				else if(notification.getEvent().equals(BasicGraphGUI.EVENT_OBJECT_LEFT_CLICK) ||
+						notification.getEvent().equals(BasicGraphGUI.EVENT_OBJECT_RIGHT_CLICK)){					
 				// A graph element was selected in the visualization		
 					graphGUI.clearPickedObjects();
 					selectObject(notification.getArg());
-				}
-				else if(notification.getEvent().equals(BasicGraphGUI.EVENT_OBJECT_RIGHT_CLICK)){					
-				//Right click
-//					Point currentPoint = MouseInfo.getPointerInfo().getLocation();
-//					Object obj= notification.getArg();
-					
-					graphGUI.clearPickedObjects();
-					selectObject(notification.getArg());					
-					
-					//TODO  Show the right click context menu
-					   //Problem: The menu does not hide when clicked else where 
-					//getPopup().show(null, currentPoint.x, currentPoint.y);				
-				}
-				else if(notification.getEvent().equals(BasicGraphGUI.EVENT_OBJECT_SHIFT_RIGHT_CLICK)){					
-				//Shift + Right click
-					
-					Object obj = notification.getArg();
-					if(obj instanceof GraphNode){
-						//If the object is already picked, then unpick it
-						if(graphGUI.getVisView().getPickedVertexState().isPicked((GraphNode)obj)){
-							graphGUI.getVisView().getPickedVertexState().pick((GraphNode)obj, false);
-						}
-						// If the object is not picked already
-						else{
-								graphGUI.setPickedObject((GraphElement) obj);							
-						}						
-					}
-				}
+				}				
 				//Double click (left or right) - Graph node or edge
 				else if(notification.getEvent().equals(BasicGraphGUI.EVENT_OBJECT_DOUBLE_CLICK)){
 					//Show component settings dialog too
@@ -673,7 +662,6 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 				}
 		}
 	}
-	
 	/**
 	 * Splits the node into two nodes, separating the two network components
 	 * and updates the graph and the network model
@@ -1033,6 +1021,17 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 				return nodeSet.iterator().next();
 			return null;
 	}
+	/**
+	 * Returns the edge which is picked. If multiple nodes are picked, returns null.
+	 * @return GraphEdge - the GraphNode which is picked. 
+	 * 
+	 */
+	public GraphEdge getPickedEdge(){
+			Set<GraphEdge> edgeSet = graphGUI.getVisView().getPickedEdgeState().getPicked();
+			if(edgeSet.size()==1)
+				return edgeSet.iterator().next();
+			return null;
+	}
 	
 	/**
 	 * This method gets the NetworkComponent the GraphEdge with the given ID belongs to
@@ -1065,20 +1064,6 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		}
 		
 		return elements;
-	}
-
-	/**
-	 * This method initializes popup	
-	 * 	
-	 * @return javax.swing.JPopupMenu	
-	 */
-	private JPopupMenu getPopup() {
-		if (popup == null) {
-			popup = new JPopupMenu();
-			popup.add(getMenuAdd());
-			
-		}
-		return popup;
 	}
 
 	/**

@@ -37,6 +37,7 @@ import agentgui.graphEnvironment.networkModel.GraphNode;
 
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
 import edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin;
+import edu.uci.ics.jung.visualization.picking.RadiusPickSupport;
 
 /**
  * Handling mouse interaction with graph visualizations in a BasicGraphGUI.
@@ -74,7 +75,8 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 			Object pickedObject = null;
 			
 			Point point = e.getPoint();
-			GraphElementAccessor<GraphNode, GraphEdge>ps = myGUI.getVisView().getPickSupport();
+			//GraphElementAccessor<GraphNode, GraphEdge>ps = myGUI.getVisView().getPickSupport();
+			RadiusPickSupport<GraphNode, GraphEdge> ps = new RadiusPickSupport<GraphNode, GraphEdge>(3.0);
 			
 			// Get the graph node / PropagationPoint at the clicked coordinates
 			GraphNode pickedPP = ps.getVertex(myGUI.getVisView().getGraphLayout(), point.getX(), point.getY());
@@ -98,16 +100,10 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 				}
 				//Shift + Left click				
 				else if(e.getButton()==MouseEvent.BUTTON1 && e.isShiftDown())
-					myGUI.handleObjectShiftLeftClick(pickedObject);
-				//Shift + Right click
-				else if(e.getButton()==MouseEvent.BUTTON3 && e.isShiftDown())
-					myGUI.handleObjectShiftRightClick(pickedObject);
+				{}
 				//Left click
 				else if(e.getButton()==MouseEvent.BUTTON1)
-					myGUI.handleObjectSelection(pickedObject);
-				//Right click
-				else if(e.getButton()==MouseEvent.BUTTON3)
-					myGUI.handleObjectRightClick(pickedObject);		
+					myGUI.handleObjectLeftClick(pickedObject);
 			}
 		}
 	}

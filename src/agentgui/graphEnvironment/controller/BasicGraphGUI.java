@@ -68,17 +68,21 @@ import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
 import edu.uci.ics.jung.visualization.control.PluggableGraphMouse;
 import edu.uci.ics.jung.visualization.control.ScalingControl;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
+import javax.swing.JPopupMenu;
+import javax.swing.JMenuItem;
 
 /**
- * This class implements a GUI component for displaying visualizations for JUNG graphs. <br>
- * This class also has a toolbar component which provides various features for editing, importing and 
- * interacting with the graph.
+ * This class implements a GUI component for displaying visualizations for JUNG
+ * graphs. <br>
+ * This class also has a toolbar component which provides various features for
+ * editing, importing and interacting with the graph.
  * 
  * @see GraphEnvironmentControllerGUI
  * @see GraphEnvironmentMousePlugin
  * 
- * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
- * @author <br>Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati 
+ * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen
+ * @author <br>
+ *         Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati
  */
 public class BasicGraphGUI extends JPanel implements ActionListener {
 	/**
@@ -86,31 +90,44 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	 */
 	public static final String EVENT_NETWORKMODEL_CLEAR = "clear_graph"; // @jve:decl-index=0:
 	/**
-	 * Event argument for notifying observers that Add new component button is clicked
+	 * Event argument for notifying observers that Add new component button is
+	 * clicked
 	 */
 	public static final String EVENT_ADD_COMPONENT_CLICKED = "add_component_clicked"; // @jve:decl-index=0:
 	/**
-	 * Event argument for notifying observers that remove selected component button is clicked
+	 * Event argument for notifying observers that remove selected component
+	 * button is clicked
 	 */
 	public static final String EVENT_REMOVE_COMPONENT_CLICKED = "remove_component_clicked"; // @jve:decl-index=0:
 	/**
-	 * Event argument for notifying observers that merge two selected nodes button is clicked
+	 * Event argument for notifying observers that merge two selected nodes
+	 * button is clicked
 	 */
 	public static final String EVENT_MERGE_NODES_CLICKED = "merge_nodes_clicked"; // @jve:decl-index=0:
 	/**
-	 * Event argument for notifying observers that split selected node button is clicked
+	 * Event argument for notifying observers that split selected node button is
+	 * clicked
 	 */
 	public static final String EVENT_SPLIT_NODE_CLICKED = "split_node_clicked"; // @jve:decl-index=0:
 	/**
-	 * Event argument for notifying observers that import graph from file button is clicked
+	 * Event argument for notifying observers that edit vertex properties menu item is
+	 * clicked
+	 */
+	public static final String EVENT_NODE_EDIT_PROPERTIES_CLICKED= "node_edit_properties_clicked"; // @jve:decl-index=0:
+	/**
+	 * Event argument for notifying observers that edit edge properties menu item is
+	 * clicked
+	 */
+	public static final String EVENT_EDGE_EDIT_PROPERTIES_CLICKED= "edge_edit_properties_clicked"; // @jve:decl-index=0:
+	/**
+	 * Event argument for notifying observers that import graph from file button
+	 * is clicked
 	 */
 	public static final String EVENT_IMPORT_GRAPH_CLICKED = "import_graph_clicked"; // @jve:decl-index=0:
 	public static final String EVENT_OBJECT_LEFT_CLICK = "object_left_click"; // @jve:decl-index=0:
 	public static final String EVENT_OBJECT_RIGHT_CLICK = "object_right_click"; // @jve:decl-index=0:
-	public static final String EVENT_OBJECT_SHIFT_LEFT_CLICK = "object_shift_left_click"; // @jve:decl-index=0:
-	public static final String EVENT_OBJECT_SHIFT_RIGHT_CLICK = "object_shift_right_click"; // @jve:decl-index=0:
 	public static final String EVENT_OBJECT_DOUBLE_CLICK = "object_double_click"; // @jve:decl-index=0:
-	
+
 	private static final long serialVersionUID = 1L;
 	/**
 	 * Panel containing control buttons.
@@ -129,7 +146,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	 * The DefaultModalGraphMouse which can be added to the visualization
 	 * viewer. Used here for the transforming mode
 	 */
-	private DefaultModalGraphMouse<GraphNode,GraphEdge> dgm = null; // @jve:decl-index=0:
+	private DefaultModalGraphMouse<GraphNode, GraphEdge> dgm = null; // @jve:decl-index=0:
 	/**
 	 * JUNG object handling zooming
 	 */
@@ -158,6 +175,13 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	private JButton jButtonMergeNodes = null;
 	private JButton jButtonSplitNode = null;
 	private JButton jButtonImportGraph = null;
+	private JPopupMenu edgePopup = null;
+	private JPopupMenu vertexPopup = null;
+	private JMenuItem jMenuItemDeleteComp = null;
+	private JMenuItem jMenuItemNodeProp = null;
+	private JMenuItem jMenuItemEdgeProp = null;
+	private JMenuItem jMenuItemAddComp = null;
+	private JMenuItem jMenuItemSplitNode = null;
 
 	/**
 	 * This is the default constructor
@@ -182,12 +206,20 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	}
 
 	/**
-	 * This method initializes the two mouse modes - Transforming mode and picking mode
-	 * by using PluggableGraphMouse and DefaultModalGraphMouse respectively
+	 * This method initializes the two mouse modes - Transforming mode and
+	 * picking mode by using PluggableGraphMouse and DefaultModalGraphMouse
+	 * respectively
 	 */
 	private void initMouseModes() {
 		pgm = new PluggableGraphMouse();
+		// Adding the picking plugin
 		pgm.add(new GraphEnvironmentMousePlugin(this));
+		// Adding the context menu plugin
+		GraphPopupMenuMousePlugin<GraphNode, GraphEdge> popupPlugin = new GraphPopupMenuMousePlugin<GraphNode, GraphEdge>(this);
+		popupPlugin.setEdgePopup(getEdgePopup());
+		popupPlugin.setVertexPopup(getVertexPopup());
+
+		pgm.add(popupPlugin);
 
 		dgm = new DefaultModalGraphMouse<GraphNode, GraphEdge>();
 		dgm.setMode(DefaultModalGraphMouse.Mode.TRANSFORMING);
@@ -227,8 +259,8 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 
 	/**
 	 * This method assigns a graph to a new VisualizationViewer and adds it to
-	 * the GUI
-	 * This is used for creating graph for the first time
+	 * the GUI This is used for creating graph for the first time
+	 * 
 	 * @param graph
 	 *            The graph
 	 */
@@ -278,7 +310,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 
 			visView.setBackground(Color.WHITE);
 
-			rightComponent = new GraphZoomScrollPane(visView);			
+			rightComponent = new GraphZoomScrollPane(visView);
 
 		} else { // No graph passed
 			// Use a JPanel as dummy component
@@ -352,7 +384,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 		}
 		// Button Picking Mouse mode clicked
 		else if (e.getSource() == getJToggleMousePicking() && visView != null) {
-			
+
 			// Picking mode
 			// Setting custom pluggable mouse graph
 			visView.setGraphMouse(pgm);
@@ -363,11 +395,43 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 			myObservable.notifyObservers(new Notification(
 					EVENT_IMPORT_GRAPH_CLICKED, null));
 		}
+		// Popup Menu Item Delete Component clicked
+		else if (e.getSource() == getJMenuItemDeleteComp() && visView != null) {
+			myObservable.setChanged();
+			myObservable.notifyObservers(new Notification(
+					EVENT_REMOVE_COMPONENT_CLICKED, null));
+		}
+		// Popup Menu Item Node properties clicked
+		else if (e.getSource() == getJMenuItemNodeProp() && visView != null) {
+			myObservable.setChanged();
+			myObservable.notifyObservers(new Notification(
+					EVENT_NODE_EDIT_PROPERTIES_CLICKED, null));
+		}
+		// Popup Menu Item Edge properties clicked
+		else if (e.getSource() == getJMenuItemEdgeProp() && visView != null) {
+			myObservable.setChanged();
+			myObservable.notifyObservers(new Notification(
+					EVENT_EDGE_EDIT_PROPERTIES_CLICKED, null));
+		}
+		// Popup Menu Item Add new component clicked
+		else if (e.getSource() == getJMenuItemAddComp() && visView != null) {
+			myObservable.setChanged();
+			myObservable.notifyObservers(new Notification(
+					EVENT_ADD_COMPONENT_CLICKED, null));
+		}
+		// Popup Menu Item Split node clicked
+		else if (e.getSource() == getJMenuItemSplitNode() && visView != null) {
+			myObservable.setChanged();
+			myObservable.notifyObservers(new Notification(
+					EVENT_SPLIT_NODE_CLICKED, null));
+		}
 	}
 
 	/**
-	 * Repaints the visualisation viewer, with the given graph 
-	 * @param graph  -The new graph to be painted with.
+	 * Repaints the visualisation viewer, with the given graph
+	 * 
+	 * @param graph
+	 *            -The new graph to be painted with.
 	 */
 	public void repaintGraph(Graph<GraphNode, GraphEdge> graph) {
 		visView.getGraphLayout().setGraph(graph);
@@ -380,7 +444,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	 * @param pickedObject
 	 *            The selected object
 	 */
-	void handleObjectSelection(Object pickedObject) {
+	void handleObjectLeftClick(Object pickedObject) {
 		myObservable.setChanged();
 		myObservable.notifyObservers(new Notification(EVENT_OBJECT_LEFT_CLICK,
 				pickedObject));
@@ -399,38 +463,16 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	}
 
 	/**
-	 * Invoked on Shift + Left click over a node or and edge
-	 * 
-	 * @param pickedObject
-	 *            the selected object
-	 */
-	public void handleObjectShiftLeftClick(Object pickedObject) {
-		myObservable.setChanged();
-		myObservable.notifyObservers(new Notification(
-				EVENT_OBJECT_SHIFT_LEFT_CLICK, pickedObject));
-	}
-
-	/**
-	 * Invoked on Shift + Right click over a node or and edge
-	 * 
-	 * @param pickedObject
-	 *            the selected object
-	 */
-	public void handleObjectShiftRightClick(Object pickedObject) {
-		myObservable.setChanged();
-		myObservable.notifyObservers(new Notification(
-				EVENT_OBJECT_SHIFT_RIGHT_CLICK, pickedObject));
-	}
-
-	/**
 	 * Inovked when a graph node or edge is double clicked (left or right)
+	 * 
 	 * @param pickedObject
 	 */
 	public void handleObjectDoubleClick(Object pickedObject) {
 		myObservable.setChanged();
-		myObservable.notifyObservers(new Notification(EVENT_OBJECT_DOUBLE_CLICK,
-				pickedObject));
+		myObservable.notifyObservers(new Notification(
+				EVENT_OBJECT_DOUBLE_CLICK, pickedObject));
 	}
+
 	/**
 	 * Clears the picked nodes and edges
 	 */
@@ -507,15 +549,16 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 		/**
 		 * The argument object
 		 */
-		
+
 		private Object arg;
 		/**
 		 * The event description
 		 */
 		private String event;
-		
+
 		/**
 		 * Constructor for creating notification object
+		 * 
 		 * @param event
 		 * @param arg
 		 */
@@ -523,7 +566,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 			this.event = event;
 			this.arg = arg;
 		}
-		
+
 		/**
 		 * 
 		 * @return The argument object
@@ -782,6 +825,109 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 		return jButtonImportGraph;
 	}
 
+	/**
+	 * This method initializes edgePopup The menu is displayed when an edge is
+	 * right clicked
+	 * 
+	 * @return javax.swing.JPopupMenu
+	 */
+	private JPopupMenu getEdgePopup() {
+		if (edgePopup == null) {
+			edgePopup = new JPopupMenu();
+			edgePopup.add(getJMenuItemDeleteComp());
+			edgePopup.addSeparator();
+			edgePopup.add(getJMenuItemEdgeProp());
+		}
+		return edgePopup;
+	}
 
+	/**
+	 * This method initializes vertexPopup The menu is displayed when a vertex
+	 * is right clicked
+	 * 
+	 * @return javax.swing.JPopupMenu
+	 */
+	private JPopupMenu getVertexPopup() {
+		if (vertexPopup == null) {
+			vertexPopup = new JPopupMenu();
+			vertexPopup.add(getJMenuItemAddComp());
+			vertexPopup.add(getJMenuItemSplitNode());
+			vertexPopup.addSeparator();
+			vertexPopup.add(getJMenuItemNodeProp());
+		}
+		return vertexPopup;
+	}
+
+	/**
+	 * This method initializes jMenuItemDeleteComp
+	 * 
+	 * @return javax.swing.JMenuItem
+	 */
+	private JMenuItem getJMenuItemDeleteComp() {
+		if (jMenuItemDeleteComp == null) {
+			jMenuItemDeleteComp = new JMenuItem();
+			jMenuItemDeleteComp.setText(Language.translate("Delete Component", Language.EN));			
+			jMenuItemDeleteComp.addActionListener(this);
+		}
+		return jMenuItemDeleteComp;
+	}
+
+	/**
+	 * This method initializes jMenuItemNodeProp
+	 * 
+	 * @return javax.swing.JMenuItem
+	 */
+	private JMenuItem getJMenuItemNodeProp() {
+		if (jMenuItemNodeProp == null) {
+			jMenuItemNodeProp = new JMenuItem();
+			jMenuItemNodeProp.setText(Language.translate("Edit Properties", Language.EN));
+			jMenuItemNodeProp.addActionListener(this);
+		}
+		return jMenuItemNodeProp;
+	}
+
+	/**
+	 * This method initializes jMenuItemEdgeProp	
+	 * 	
+	 * @return javax.swing.JMenuItem	
+	 */
+	private JMenuItem getJMenuItemEdgeProp() {
+		if (jMenuItemEdgeProp == null) {
+			jMenuItemEdgeProp = new JMenuItem();
+			jMenuItemEdgeProp.setText(Language.translate("Edit Properties", Language.EN));			
+			jMenuItemEdgeProp.addActionListener(this);
+		}
+		return jMenuItemEdgeProp;
+	}
+
+	/**
+	 * This method initializes jMenuItemAddComp	
+	 * 	
+	 * @return javax.swing.JMenuItem	
+	 */
+	private JMenuItem getJMenuItemAddComp() {
+		if (jMenuItemAddComp == null) {
+			jMenuItemAddComp = new JMenuItem();
+			jMenuItemAddComp.setText(Language.translate("Add component", Language.EN));			
+			jMenuItemAddComp.addActionListener(this);
+			
+		}
+		return jMenuItemAddComp;
+	}
+
+	/**
+	 * This method initializes jMenuItemSplitNode	
+	 * 	
+	 * @return javax.swing.JMenuItem	
+	 */
+	private JMenuItem getJMenuItemSplitNode() {
+		if (jMenuItemSplitNode == null) {
+			jMenuItemSplitNode = new JMenuItem();
+			jMenuItemSplitNode.setText(Language.translate("Split Node", Language.EN));			
+			jMenuItemSplitNode.addActionListener(this);
+			
+		}
+		return jMenuItemSplitNode;
+	}
 
 }
