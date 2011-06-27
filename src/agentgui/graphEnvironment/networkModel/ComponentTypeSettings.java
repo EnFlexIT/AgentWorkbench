@@ -18,6 +18,12 @@ public class ComponentTypeSettings {
 	 * The GraphElementPrototype class representing this component type
 	 */
 	private String graphPrototype;
+	
+	/**
+	 * The image icon which will be displayed on the component graph edges.
+	 */
+	private String edgeImage;
+	
 	/**
 	 * Default Constructor
 	 */
@@ -29,10 +35,11 @@ public class ComponentTypeSettings {
 	 * @param agentClass The agent class name
 	 * @param graphPrototype The GraphElementPrototype class name
 	 */
-	public ComponentTypeSettings(String agentClass, String graphPrototype) {
+	public ComponentTypeSettings(String agentClass, String graphPrototype, String edgeImage) {
 		super();
 		this.agentClass = agentClass;
 		this.graphPrototype = graphPrototype;
+		this.edgeImage = edgeImage;
 	}
 	/**
 	 * Returns the agent class
@@ -59,6 +66,19 @@ public class ComponentTypeSettings {
 	 */
 	public void setGraphPrototype(String graphPrototype) {
 		this.graphPrototype = graphPrototype;
+	}
+	/**
+	 * Returns the path to the edge image icon
+	 * @return the edgeImage
+	 */
+	public String getEdgeImage(){
+		return edgeImage;
+	}	
+	/**
+	 * Sets the path to the component edge image icon
+	 */
+	public void setEdgeImage(String edgeImage){
+		this.edgeImage = edgeImage;
 	}
 	
 }

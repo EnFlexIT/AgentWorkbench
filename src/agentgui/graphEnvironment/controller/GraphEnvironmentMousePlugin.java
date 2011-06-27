@@ -34,8 +34,6 @@ import java.util.Iterator;
 
 import agentgui.graphEnvironment.networkModel.GraphEdge;
 import agentgui.graphEnvironment.networkModel.GraphNode;
-
-import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
 import edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin;
 import edu.uci.ics.jung.visualization.picking.RadiusPickSupport;
 

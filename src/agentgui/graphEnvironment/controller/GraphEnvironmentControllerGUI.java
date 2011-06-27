@@ -32,7 +32,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -51,7 +50,6 @@ import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
@@ -486,7 +484,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	 */
 	private BasicGraphGUI getGraphGUI(){
 		if(graphGUI == null){
-			graphGUI = new BasicGraphGUI();
+			graphGUI = new BasicGraphGUI(getController());
 			graphGUI.addObserver(this);
 			if(controller.getGridModel() != null && controller.getGridModel().getGraph() != null){
 				graphGUI.setGraph(controller.getGridModel().getGraph());

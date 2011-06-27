@@ -37,6 +37,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
+import java.net.URL;
 import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
@@ -45,8 +46,10 @@ import java.util.Vector;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 
@@ -68,8 +71,6 @@ import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
 import edu.uci.ics.jung.visualization.control.PluggableGraphMouse;
 import edu.uci.ics.jung.visualization.control.ScalingControl;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
-import javax.swing.JPopupMenu;
-import javax.swing.JMenuItem;
 
 /**
  * This class implements a GUI component for displaying visualizations for JUNG
@@ -156,6 +157,12 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	 * JPanel if no graph is loaded
 	 */
 	private Component rightComponent = null;
+	
+	/**
+	 * Environment model controller, to be passed by the parent GUI.
+	 */
+	private GraphEnvironmentController controller = null;
+	
 	/**
 	 * As the superclass relationship is occupied by the JPanel, notifications
 	 * have to be handled by this object
@@ -182,14 +189,18 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	private JMenuItem jMenuItemEdgeProp = null;
 	private JMenuItem jMenuItemAddComp = null;
 	private JMenuItem jMenuItemSplitNode = null;
+	
 
 	/**
 	 * This is the default constructor
+	 * @param controller The Graph Environment controller
 	 */
-	public BasicGraphGUI() {
+	public BasicGraphGUI(GraphEnvironmentController controller) {
 		super();
 		myObservable = new MyObservable();
 		scalingControl = new CrossoverScalingControl();
+		this.controller = controller; 
+		
 		initialize();
 	}
 
@@ -291,20 +302,30 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 							return arg0.getId();
 						}
 					});
-
-			// Configure edge labels
-			visView.getRenderContext().setEdgeLabelTransformer(
-					new Transformer<GraphEdge, String>() {
-
-						@Override
-						public String transform(GraphEdge arg0) {
-							return arg0.getId();
+			
+			// Configure Edge Image Labels			
+			visView.getRenderContext().setEdgeLabelTransformer(new Transformer<GraphEdge,String>() {	        	
+				public String transform(GraphEdge edge) {
+					//Get the path of the Image from the component type settings
+					String edgeImage = controller.getComponentTypeSettings().get(edge.getComponentType()).getEdgeImage();
+					if(edgeImage!=null){
+						URL url = getClass().getResource(edgeImage);
+						if(url!=null){
+							//If the image path is valid
+							return "<html>"+edge.getId()+"<img src="+url+" height=16 width=16 >";
 						}
-					});
+						else
+							return edge.getId();
+					}
+					else
+						return edge.getId();
+				}
+				});
+			
 			// Use straight lines as edges
 			visView.getRenderContext().setEdgeShapeTransformer(
 					new EdgeShape.Line<GraphNode, GraphEdge>());
-
+		
 			// Configure mouse interaction
 			visView.setGraphMouse(pgm);
 
@@ -867,6 +888,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 		if (jMenuItemDeleteComp == null) {
 			jMenuItemDeleteComp = new JMenuItem();
 			jMenuItemDeleteComp.setText(Language.translate("Delete Component", Language.EN));			
+			jMenuItemDeleteComp.setIcon(new ImageIcon(getClass().getResource("/agentgui/core/gui/img/ListMinus.png")));
 			jMenuItemDeleteComp.addActionListener(this);
 		}
 		return jMenuItemDeleteComp;
@@ -881,6 +903,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 		if (jMenuItemNodeProp == null) {
 			jMenuItemNodeProp = new JMenuItem();
 			jMenuItemNodeProp.setText(Language.translate("Edit Properties", Language.EN));
+			jMenuItemNodeProp.setIcon(new ImageIcon(getClass().getResource("/agentgui/core/gui/img/Properties.jpg")));
 			jMenuItemNodeProp.addActionListener(this);
 		}
 		return jMenuItemNodeProp;
@@ -895,6 +918,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 		if (jMenuItemEdgeProp == null) {
 			jMenuItemEdgeProp = new JMenuItem();
 			jMenuItemEdgeProp.setText(Language.translate("Edit Properties", Language.EN));			
+			jMenuItemEdgeProp.setIcon(new ImageIcon(getClass().getResource("/agentgui/core/gui/img/Properties.jpg")));
 			jMenuItemEdgeProp.addActionListener(this);
 		}
 		return jMenuItemEdgeProp;
@@ -909,6 +933,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 		if (jMenuItemAddComp == null) {
 			jMenuItemAddComp = new JMenuItem();
 			jMenuItemAddComp.setText(Language.translate("Add component", Language.EN));			
+			jMenuItemAddComp.setIcon(new ImageIcon(getClass().getResource("/agentgui/core/gui/img/ListPlus.png")));
 			jMenuItemAddComp.addActionListener(this);
 			
 		}
@@ -924,6 +949,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 		if (jMenuItemSplitNode == null) {
 			jMenuItemSplitNode = new JMenuItem();
 			jMenuItemSplitNode.setText(Language.translate("Split Node", Language.EN));			
+			jMenuItemSplitNode.setIcon(new ImageIcon(getClass().getResource("/agentgui/core/gui/img/split.png")));
 			jMenuItemSplitNode.addActionListener(this);
 			
 		}

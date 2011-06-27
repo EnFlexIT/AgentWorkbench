@@ -1,3 +1,30 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.dawis.wiwi.uni-due.de/ 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.graphEnvironment.controller;
 
 import jade.content.Concept;
@@ -19,10 +46,13 @@ import javax.swing.table.TableModel;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.application.Project;
 import agentgui.core.gui.ClassSelector;
 import agentgui.core.gui.ClassSelectorTableCellEditor;
 import agentgui.core.gui.components.ClassNameListCellRenderer;
 import agentgui.core.gui.components.ClassNameTableCellRenderer;
+import agentgui.core.gui.components.ImageSelectorTableCellEditor;
+import agentgui.core.gui.imaging.MissingIcon;
 import agentgui.graphEnvironment.networkModel.ComponentTypeSettings;
 import agentgui.graphEnvironment.prototypes.GraphElementPrototype;
 
@@ -39,7 +69,8 @@ import javax.swing.JTextField;
 /**
  * GUI dialog for configuring network component types 
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
- *
+ * @author <br>Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati 
+ * 
  */
 public class ClassSelectionDialog extends JDialog implements ActionListener{
 	/**
@@ -97,6 +128,10 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 	 */
 	private GraphEnvironmentControllerGUI parent = null;
 	/**
+	 * The current AgentGUI project
+	 */
+	private Project project = null;
+	/**
 	 * The label for the node class text field
 	 */
 	private JLabel jLabelNodeClass = null;
@@ -108,6 +143,11 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 	 * Button invoking the nodeClassSelector
 	 */
 	private JButton jButtonSelectNodeClass = null;
+	
+	/**
+	 * Application image folder path
+	 */
+	private final String pathImage = Application.RunInfo.PathImageIntern(); 
 	/**
 	 * This is the default constructor
 	 * @param parent The parent GUI
@@ -115,7 +155,9 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 	public ClassSelectionDialog(GraphEnvironmentControllerGUI parent) {
 		super(Application.MainWindow, Dialog.ModalityType.APPLICATION_MODAL);
 		this.parent = parent;
+		project = parent.getController().getProject();
 		initialize();
+		//System.out.println(project.getProjectFolderFullPath());
 	}
 
 	/**
@@ -262,13 +304,19 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 			jTableComponentTypes = new JTable();
 			jTableComponentTypes.setFillsViewportHeight(true);
 			jTableComponentTypes.setShowGrid(true);
+			jTableComponentTypes.setRowHeight(20);
 			jTableComponentTypes.setModel(getClassesTableModel());
+			
 			TableColumn agentClassColumn = jTableComponentTypes.getColumnModel().getColumn(1);
 			agentClassColumn.setCellEditor(new DefaultCellEditor(getJComboBoxAgentClasses()));
 			agentClassColumn.setCellRenderer(new ClassNameTableCellRenderer());
+			
 			TableColumn prototypeClassColumn = jTableComponentTypes.getColumnModel().getColumn(2);
 			prototypeClassColumn.setCellEditor(getPrototypeClassesCellEditor());
 			prototypeClassColumn.setCellRenderer(new ClassNameTableCellRenderer());
+			
+			TableColumn imageIconColumn = jTableComponentTypes.getColumnModel().getColumn(3);
+			imageIconColumn.setCellEditor(new ImageSelectorTableCellEditor(project));			
 		}
 		return jTableComponentTypes;
 	}
@@ -287,7 +335,9 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 		titles.add(Language.translate("Typ-Bezeichner"));
 		titles.add(Language.translate("Agentenklasse"));
 		titles.add(Language.translate("Graph-Prototyp"));
-		Vector<Vector<String>> dataRows = new Vector<Vector<String>>();
+		titles.add(Language.translate("Image",Language.EN));
+		
+		Vector<Vector<Object>> dataRows = new Vector<Vector<Object>>();
 		
 		// Set table entries for defined assignments, if any
 		HashMap<String, ComponentTypeSettings> etsHash = parent.getController().getComponentTypeSettings();
@@ -296,16 +346,27 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 			while(etsIter.hasNext()){
 				String etName = etsIter.next();
 				if(!etName.equals("node")){	// The node class is defined in the JTextField, not in the table
-					Vector<String> newRow = new Vector<String>();
+					Vector<Object> newRow = new Vector<Object>();
 					newRow.add(etName);
 					newRow.add(etsHash.get(etName).getAgentClass());
 					newRow.add(etsHash.get(etName).getGraphPrototype());
+
+					String imagePath = etsHash.get(etName).getEdgeImage();
+					//The description is used to store the path along with the ImageIcon
+					newRow.add(createImageIcon(imagePath, imagePath));
+					
 					dataRows.add(newRow);
 				}
 			}
 		}
 		
-		return new DefaultTableModel(dataRows, titles);
+		return new DefaultTableModel(dataRows, titles){
+			private static final long serialVersionUID = 1L;
+
+			public Class<?> getColumnClass(int c) {
+		            return getValueAt(0, c).getClass();
+		        }
+		};
 	}
 	
 	/**
@@ -333,7 +394,7 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 	private JButton getJButtonAddRow() {
 		if (jButtonAddRow == null) {
 			jButtonAddRow = new JButton();
-			jButtonAddRow.setIcon(new ImageIcon(getClass().getResource("/agentgui/core/gui/img/ListPlus.png")));
+			jButtonAddRow.setIcon(new ImageIcon(getClass().getResource(pathImage + "ListPlus.png")));
 			jButtonAddRow.addActionListener(this);
 		}
 		return jButtonAddRow;
@@ -400,15 +461,16 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 			HashMap<String, ComponentTypeSettings> etsVector = new HashMap<String, ComponentTypeSettings>();
 			// Get the component type definitions from the table
 			for(int row=0; row<rowNum; row++){
-				
+				ImageIcon imageIcon = (ImageIcon)jtc.getValueAt(row,3);
 				ComponentTypeSettings ets = new ComponentTypeSettings(
 						(String)jtc.getValueAt(row, 1), 
-						(String)jtc.getValueAt(row, 2));
+						(String)jtc.getValueAt(row, 2),
+						imageIcon.getDescription());
 				// Use name as key
 				etsVector.put((String) jtc.getValueAt(row, 0), ets);
 			}
 			// Add the graph node class definition
-			etsVector.put("node", new ComponentTypeSettings(getJTextFieldNodeClass().getText(), null));
+			etsVector.put("node", new ComponentTypeSettings(getJTextFieldNodeClass().getText(), null, null));
 			// Set the GraphEnvironmentController's componentTypeSettings
 			parent.getController().setComponentTypeSettings(etsVector);
 			
@@ -428,7 +490,7 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 	private JButton getJButtonRemoveRow() {
 		if (jButtonRemoveRow == null) {
 			jButtonRemoveRow = new JButton();
-			jButtonRemoveRow.setIcon(new ImageIcon(getClass().getResource("/agentgui/core/gui/img/ListMinus.png")));
+			jButtonRemoveRow.setIcon(new ImageIcon(getClass().getResource(pathImage + "ListMinus.png")));
 			jButtonRemoveRow.addActionListener(this);
 		}
 		return jButtonRemoveRow;
@@ -473,6 +535,29 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 			});
 		}
 		return jButtonSelectNodeClass;
+	}
+	
+	/** 
+	 * Returns an ImageIcon, or a default MissingIcon(a red X) if image not found.
+	 * @param path
+	 * @param description
+	 * @return ImageIcon 
+	 */
+	protected ImageIcon createImageIcon(String path,
+	                                           String description) {
+		if(path!=null ){			
+		    java.net.URL imgURL = getClass().getResource(path);
+		    if (imgURL != null) {
+		        return new ImageIcon(imgURL, description);
+		    } else {
+		        System.err.println("Couldn't find file: " + path);
+		        return (new MissingIcon(description));
+		    }
+		}
+		else{
+		    return (new MissingIcon(description));		    
+		}
+			
 	}
 
 }
