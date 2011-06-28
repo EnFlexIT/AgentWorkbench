@@ -127,7 +127,7 @@ ActionListener {
 	            	fileChooser.setCurrentDirectory(new File(project.getProjectFolderFullPath()));
 	            }
 	            
-	            int returnVal = fileChooser.showDialog(button, "Choose Icon");
+	            int returnVal = fileChooser.showDialog(button, Language.translate("Choose Icon",Language.EN));
 	            if (returnVal == JFileChooser.APPROVE_OPTION) {
 	            //Choosen a file
 		            Application.RunInfo.setLastSelectedFolder(fileChooser.getCurrentDirectory());

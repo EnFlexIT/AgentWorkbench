@@ -30,15 +30,20 @@ package agentgui.graphEnvironment.controller;
 import jade.content.Concept;
 
 import javax.swing.DefaultCellEditor;
+import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
+import java.awt.Color;
 import java.awt.Dialog;
+import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
+import java.awt.Toolkit;
+
 import javax.swing.JButton;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
@@ -51,6 +56,8 @@ import agentgui.core.gui.ClassSelector;
 import agentgui.core.gui.ClassSelectorTableCellEditor;
 import agentgui.core.gui.components.ClassNameListCellRenderer;
 import agentgui.core.gui.components.ClassNameTableCellRenderer;
+import agentgui.core.gui.components.ColorEditor;
+import agentgui.core.gui.components.ColorRenderer;
 import agentgui.core.gui.components.ImageSelectorTableCellEditor;
 import agentgui.core.gui.imaging.MissingIcon;
 import agentgui.graphEnvironment.networkModel.ComponentTypeSettings;
@@ -147,7 +154,20 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 	/**
 	 * Application image folder path
 	 */
-	private final String pathImage = Application.RunInfo.PathImageIntern(); 
+	private final String pathImage = Application.RunInfo.PathImageIntern();
+	/**
+	 * Used for assigning the vertex color
+	 */
+	private JButton jButtonNodeColor = null;
+	/**
+	 * Color chooser for selecting the vertex color
+	 */
+	JColorChooser colorChooser = null;
+	/**
+	 * Used by the colorChooser for selecting the vertex color
+	 */
+	JDialog colorDialog = null;
+	private JLabel jLabelNodeColor = null;
 	/**
 	 * This is the default constructor
 	 * @param parent The parent GUI
@@ -166,9 +186,14 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 	 * @return void
 	 */
 	private void initialize() {
-		this.setSize(400, 300);
+		this.setSize(600, 400);
 		this.setContentPane(getJContentPane());
 		this.setTitle(Language.translate("Komponententyp-Definition"));
+		
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
+		int top = (screenSize.height - this.getHeight()) / 2; 
+	    int left = (screenSize.width - this.getWidth()) / 2; 
+	    this.setLocation(left, top);
 	}
 
 	/**
@@ -178,6 +203,17 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 	 */
 	private JPanel getJContentPane() {
 		if (jContentPane == null) {
+			GridBagConstraints gridBagConstraints31 = new GridBagConstraints();
+			gridBagConstraints31.gridx = 4;
+			gridBagConstraints31.insets = new Insets(0, 30, 0, 0);
+			gridBagConstraints31.anchor = GridBagConstraints.EAST;
+			gridBagConstraints31.gridy = 1;
+			jLabelNodeColor = new JLabel();
+			jLabelNodeColor.setText("Vertex Color");
+			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
+			gridBagConstraints2.gridx = 5;
+			gridBagConstraints2.insets = new Insets(5, 5, 5, 5);
+			gridBagConstraints2.gridy = 1;
 			GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
 			gridBagConstraints4.gridx = 3;
 			gridBagConstraints4.anchor = GridBagConstraints.WEST;
@@ -206,7 +242,7 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 			gridBagConstraints10.gridy = 2;
 			gridBagConstraints10.weightx = 1.0;
 			gridBagConstraints10.weighty = 1.0;
-			gridBagConstraints10.gridwidth = 4;
+			gridBagConstraints10.gridwidth = 6;
 			gridBagConstraints10.gridx = 0;
 			GridBagConstraints gridBagConstraints9 = new GridBagConstraints();
 			gridBagConstraints9.gridx = 3;
@@ -234,6 +270,8 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 			jContentPane.add(jLabelNodeClass, gridBagConstraints12);
 			jContentPane.add(getJTextFieldNodeClass(), gridBagConstraints3);
 			jContentPane.add(getJButtonSelectNodeClass(), gridBagConstraints4);
+			jContentPane.add(getJButtonNodeColor(), gridBagConstraints2);
+			jContentPane.add(jLabelNodeColor, gridBagConstraints31);
 		}
 		return jContentPane;
 	}
@@ -295,8 +333,11 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 	}
 
 	/**
-	 * This method initializes jTableClasses	
-	 * 	
+	 * This method initializes jTableClasses.<br>	
+	 * 
+	 * The Images of the component types should be added into the current project folder or subfolders.
+	 * Preferable icon size is 16x16 px.	
+	 * 
 	 * @return javax.swing.JTable	
 	 */
 	private JTable getJTableClasses() {
@@ -307,16 +348,27 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 			jTableComponentTypes.setRowHeight(20);
 			jTableComponentTypes.setModel(getClassesTableModel());
 			
+			//Set up renderer and editor for the agent class column
 			TableColumn agentClassColumn = jTableComponentTypes.getColumnModel().getColumn(1);
 			agentClassColumn.setCellEditor(new DefaultCellEditor(getJComboBoxAgentClasses()));
 			agentClassColumn.setCellRenderer(new ClassNameTableCellRenderer());
 			
+			//Set up renderer and editor for Graph prototype column
 			TableColumn prototypeClassColumn = jTableComponentTypes.getColumnModel().getColumn(2);
 			prototypeClassColumn.setCellEditor(getPrototypeClassesCellEditor());
 			prototypeClassColumn.setCellRenderer(new ClassNameTableCellRenderer());
+			prototypeClassColumn.setPreferredWidth(100);
 			
+			//Set up Editor for the ImageIcon column
 			TableColumn imageIconColumn = jTableComponentTypes.getColumnModel().getColumn(3);
-			imageIconColumn.setCellEditor(new ImageSelectorTableCellEditor(project));			
+			imageIconColumn.setCellEditor(new ImageSelectorTableCellEditor(project));		
+			imageIconColumn.setPreferredWidth(30);
+			
+			//Set up renderer and editor for the  Color column.	        
+			TableColumn colorColumn = jTableComponentTypes.getColumnModel().getColumn(4);
+			colorColumn.setCellEditor(new ColorEditor());
+			colorColumn.setCellRenderer(new ColorRenderer(true));			
+			colorColumn.setPreferredWidth(30);
 		}
 		return jTableComponentTypes;
 	}
@@ -336,6 +388,7 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 		titles.add(Language.translate("Agentenklasse"));
 		titles.add(Language.translate("Graph-Prototyp"));
 		titles.add(Language.translate("Image",Language.EN));
+		titles.add(Language.translate("Edge Color",Language.EN));		
 		
 		Vector<Vector<Object>> dataRows = new Vector<Vector<Object>>();
 		
@@ -355,6 +408,8 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 					//The description is used to store the path along with the ImageIcon
 					newRow.add(createImageIcon(imagePath, imagePath));
 					
+					newRow.add(new Color(Integer.parseInt(etsHash.get(etName).getColor())));
+					
 					dataRows.add(newRow);
 				}
 			}
@@ -364,7 +419,12 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 			private static final long serialVersionUID = 1L;
 
 			public Class<?> getColumnClass(int c) {
-		            return getValueAt(0, c).getClass();
+		            if(c==3)
+		            	return ImageIcon.class;
+		            else if(c==4)
+		            	return Color.class;
+		            else 
+		            	return String.class;
 		        }
 		};
 	}
@@ -373,7 +433,15 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 	 * This method adds a new row to the jTableClasses' TableModel
 	 */
 	private void addRow(){
-		((DefaultTableModel)getJTableClasses().getModel()).addRow(new Vector<String>());
+		//Creating a new dummy row
+		Vector<Object> newRow = new Vector<Object>();
+		newRow.add(null); //Type name
+		newRow.add(null); //Agent class
+		newRow.add(null); //Graph Prototype
+		newRow.add(createImageIcon(null,"MissingIcon")); //Edge ImageIcon
+		newRow.add(BasicGraphGUI.DEFAULT_EDGE_COLOR); //Edge Color
+
+		((DefaultTableModel)getJTableClasses().getModel()).addRow(newRow);
 		getJTableClasses().changeSelection(getJTableClasses().getRowCount()-1, 0, false, false);
 		getJTableClasses().editCellAt(getJTableClasses().getRowCount()-1, 0);
 	}
@@ -461,24 +529,49 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 			HashMap<String, ComponentTypeSettings> etsVector = new HashMap<String, ComponentTypeSettings>();
 			// Get the component type definitions from the table
 			for(int row=0; row<rowNum; row++){
-				ImageIcon imageIcon = (ImageIcon)jtc.getValueAt(row,3);
-				ComponentTypeSettings ets = new ComponentTypeSettings(
-						(String)jtc.getValueAt(row, 1), 
-						(String)jtc.getValueAt(row, 2),
-						imageIcon.getDescription());
-				// Use name as key
-				etsVector.put((String) jtc.getValueAt(row, 0), ets);
+				String name = (String) jtc.getValueAt(row, 0);
+				if(name!=null && name.length()!=0){
+					ImageIcon imageIcon = (ImageIcon)jtc.getValueAt(row,3);
+					Color color = (Color)jtc.getValueAt(row, 4);
+					ComponentTypeSettings ets = new ComponentTypeSettings(
+							(String)jtc.getValueAt(row, 1), 
+							(String)jtc.getValueAt(row, 2),
+							imageIcon.getDescription(),
+							String.valueOf(color.getRGB())
+							);
+							
+					// Use name as key
+					etsVector.put(name, ets);
+				}
 			}
 			// Add the graph node class definition
-			etsVector.put("node", new ComponentTypeSettings(getJTextFieldNodeClass().getText(), null, null));
+			String nodeColor = String.valueOf(getJButtonNodeColor().getBackground().getRGB());
+			etsVector.put("node", 
+					new ComponentTypeSettings(getJTextFieldNodeClass().getText(), null, null, nodeColor));
 			// Set the GraphEnvironmentController's componentTypeSettings
 			parent.getController().setComponentTypeSettings(etsVector);
+			
+			//Refresh the Graph
+			parent.getGraphGUI().getVisView().repaint();
 			
 			this.dispose();
 		// Canceled, discard changes
 		}else if(event.getSource().equals(getJButtonCancel())){
 			this.dispose();
+		}else if(event.getSource().equals(getJButtonNodeColor())){
+		//Change Vertex color button clicked
+			
+			//Set up the dialog that the button brings up.
+			colorChooser = new JColorChooser();
+			Color newColor = JColorChooser.showDialog(
+                    getJButtonNodeColor(),
+                    "Pick a color",
+                    getJButtonNodeColor().getBackground());
+			if(newColor!=null){
+				setNodeColor(newColor);
+			}				
 		}
+		
 		
 	}
 
@@ -558,6 +651,54 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 		    return (new MissingIcon(description));		    
 		}
 			
+	}
+
+	/**
+	 * This method initializes jButtonNodeColor	
+	 * 	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getJButtonNodeColor() {
+		if (jButtonNodeColor == null) {
+			jButtonNodeColor = new JButton();
+			jButtonNodeColor.setPreferredSize(new Dimension(43, 26));
+			//jButtonNodeColor.setBorderPainted(false);
+			jButtonNodeColor.setText(".");
+			jButtonNodeColor.addActionListener(this);
+			
+			//Get the color from the component type settings
+			HashMap<String, ComponentTypeSettings> cts 
+							= parent.getController().getComponentTypeSettings();
+			Color color;
+			if(cts.get("node")!=null)
+			{
+				String colorString= cts.get("node").getColor();				
+				if(colorString!=null){
+					color = new Color(Integer.parseInt(colorString));
+				}
+				else
+					color = BasicGraphGUI.DEFAULT_VERTEX_COLOR;			
+			}
+			else 
+				color = BasicGraphGUI.DEFAULT_VERTEX_COLOR;
+				
+			setNodeColor(color);
+		}
+		return jButtonNodeColor;
+	}
+	
+	/**
+	 * Sets the background color of the node color button
+	 * @param color
+	 */
+	private void setNodeColor(Color color){
+		getJButtonNodeColor().setBackground(color);
+		//Set the Tool tip 
+		if(color!=null){
+			getJButtonNodeColor().setToolTipText("RGB value: " + color.getRed() + ", "
+						                                     + color.getGreen() + ", "
+						                                     + color.getBlue());
+        }
 	}
 
 }

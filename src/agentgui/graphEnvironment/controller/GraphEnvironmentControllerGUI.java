@@ -482,7 +482,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	 * Get the visualization component
 	 * @return
 	 */
-	private BasicGraphGUI getGraphGUI(){
+	public BasicGraphGUI getGraphGUI(){
 		if(graphGUI == null){
 			graphGUI = new BasicGraphGUI(getController());
 			graphGUI.addObserver(this);

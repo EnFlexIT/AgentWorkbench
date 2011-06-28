@@ -6,7 +6,8 @@ import agentgui.graphEnvironment.prototypes.GraphElementPrototype;
  * This class stores the component type settings for a network component type 
  * 
  * @see GraphElementPrototype
- * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
+ * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen
+ * @author Satyadeep 
  *
  */
 public class ComponentTypeSettings {
@@ -25,6 +26,11 @@ public class ComponentTypeSettings {
 	private String edgeImage;
 	
 	/**
+	 * The color which will be displayed on the component graph edges.
+	 */
+	private String color;
+	
+	/**
 	 * Default Constructor
 	 */
 	public ComponentTypeSettings(){
@@ -34,12 +40,15 @@ public class ComponentTypeSettings {
 	 * Constructor
 	 * @param agentClass The agent class name
 	 * @param graphPrototype The GraphElementPrototype class name
+	 * @param edgeImage  The path to the image icon to be used for the component
+	 * @param color The color to be used for the component edges in RGB integer representation.
 	 */
-	public ComponentTypeSettings(String agentClass, String graphPrototype, String edgeImage) {
+	public ComponentTypeSettings(String agentClass, String graphPrototype, String edgeImage, String color) {
 		super();
 		this.agentClass = agentClass;
 		this.graphPrototype = graphPrototype;
 		this.edgeImage = edgeImage;
+		this.color = color;
 	}
 	/**
 	 * Returns the agent class
@@ -80,5 +89,20 @@ public class ComponentTypeSettings {
 	public void setEdgeImage(String edgeImage){
 		this.edgeImage = edgeImage;
 	}
+	/**
+	 * Returns the color of the component edges.
+	 * @return the color as a string in RGB integer representation.
+	 */
+	public String getColor(){
+		return color;
+	}	
+	/**
+	 * Sets the color of the component edges.
+	 * @param color as string in RGB integer representation.
+	 */
+	public void setColor(String color){
+		this.color = color;
+	}
+	
 	
 }

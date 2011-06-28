@@ -34,6 +34,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Paint;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
@@ -86,6 +87,23 @@ import edu.uci.ics.jung.visualization.decorators.EdgeShape;
  *         Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati
  */
 public class BasicGraphGUI extends JPanel implements ActionListener {
+	/**
+	 * Default color to be used for Vertices in the graph
+	 */
+	public static Color DEFAULT_VERTEX_COLOR = Color.RED;  //  @jve:decl-index=0:
+	/**
+	 * Default color to be used for Vertices in the graph when highlighted/picked.
+	 */
+	public static Color DEFAULT_VERTEX_PICKED_COLOR = Color.YELLOW;  //  @jve:decl-index=0:
+	/**
+	 * Default color to be used for edges in the graph
+	 */
+	public static Color DEFAULT_EDGE_COLOR = Color.BLACK;  //  @jve:decl-index=0:
+	/**
+	 * Default color to be used for edges in the graph when highlighted/picked.
+	 */
+	public static Color DEFAULT_EDGE_PICKED_COLOR = Color.CYAN;
+	
 	/**
 	 * Event argument for notifying observers that Clear Graph button is clicked
 	 */
@@ -296,13 +314,54 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 			// Configure node labels
 			visView.getRenderContext().setVertexLabelTransformer(
 					new Transformer<GraphNode, String>() {
-
 						@Override
 						public String transform(GraphNode arg0) {
 							return arg0.getId();
 						}
 					});
-			
+			//Configure vertex colors
+			visView.getRenderContext().setVertexFillPaintTransformer(
+					new Transformer<GraphNode, Paint>() {
+						public Paint transform(GraphNode arg0) {
+							if(visView.getPickedVertexState().isPicked(arg0))
+							{//Highlight color when picked	
+								return BasicGraphGUI.DEFAULT_VERTEX_PICKED_COLOR;
+							}
+							else
+							{	//Get the color from the component type settings
+								String colorString= controller.getComponentTypeSettings().get("node").getColor();
+								if(colorString!=null){
+									Color color = new Color(Integer.parseInt(colorString));							
+									return color;
+								}
+								else
+									return BasicGraphGUI.DEFAULT_VERTEX_COLOR;
+							}
+						}
+					}
+			);
+			//Configure edge colors
+			visView.getRenderContext().setEdgeDrawPaintTransformer(
+			new Transformer<GraphEdge, Paint>() {
+				public Paint transform(GraphEdge arg0) {
+					if(visView.getPickedEdgeState().isPicked(arg0))
+					{//Highlight color when picked	
+						return BasicGraphGUI.DEFAULT_EDGE_PICKED_COLOR;
+					}
+					else
+					{	//Get the color from the component type settings
+						String colorString= controller.getComponentTypeSettings().get(arg0.getComponentType()).getColor();
+						if(colorString!=null){
+							Color color = new Color(Integer.parseInt(colorString));							
+							return color;
+						}
+						else
+							return BasicGraphGUI.DEFAULT_EDGE_COLOR;
+					}
+				}
+			}
+			);
+
 			// Configure Edge Image Labels			
 			visView.getRenderContext().setEdgeLabelTransformer(new Transformer<GraphEdge,String>() {	        	
 				public String transform(GraphEdge edge) {
