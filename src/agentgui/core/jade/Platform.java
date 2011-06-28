@@ -632,33 +632,33 @@ public class Platform extends Object {
 		}
 	}
 	
-	public void jadeAgentStart(String AgentName, Class<? extends Agent> Clazz, Object[] AgentArgs, String ContainerName ) {
+	public void jadeAgentStart(String agentName, Class<? extends Agent> clazz, Object[] agentArgs, String containerName ) {
 		
 		int MsgAnswer;
-		String MsgHead, MsgText;
-		AgentController AgentCont;
-		AgentContainer AgeCont;
+		String msgHead, msgText;
+		AgentController agentController;
+		AgentContainer agentContainer;
 
 		// --- Was the system already started? ---------------
 		if ( jadeMainContainerIsRunning() == false ) {
-			MsgHead = Language.translate("JADE wurde noch nicht gestartet!");
-			MsgText = Language.translate("Möchten Sie JADE nun starten und fortfahren?");
-			MsgAnswer = JOptionPane.showInternalConfirmDialog( Application.MainWindow.getContentPane(), MsgText, MsgHead, JOptionPane.YES_NO_OPTION);
+			msgHead = Language.translate("JADE wurde noch nicht gestartet!");
+			msgText = Language.translate("Möchten Sie JADE nun starten und fortfahren?");
+			MsgAnswer = JOptionPane.showInternalConfirmDialog( Application.MainWindow.getContentPane(), msgText, msgHead, JOptionPane.YES_NO_OPTION);
 			if ( MsgAnswer == 1 ) return; // --- NO,just exit 
 			// --- Start the JADE-Platform -------------------
 			jadeStart();			
 		}
 		
-		AgeCont = this.jadeContainer( ContainerName );
-		if ( AgeCont == null ) {
-			AgeCont = jadeContainerCreate( ContainerName );
+		agentContainer = this.jadeContainer( containerName );
+		if (agentContainer == null) {
+			agentContainer = jadeContainerCreate( containerName );
 		}		
 		try {
-			Agent agent = (Agent) Clazz.newInstance();
-			agent.setArguments(AgentArgs);
-//			AgentCont = AgeCont.createNewAgent( AgentName, Clazz, AgentArgs );
-			AgentCont = AgeCont.acceptNewAgent(AgentName, agent);
-			AgentCont.start();
+			Agent agent = (Agent) clazz.newInstance();
+			agent.setArguments(agentArgs);
+//			AgentCont = AgeCont.createNewAgent( AgentName, clazz, AgentArgs );
+			agentController = agentContainer.acceptNewAgent(agentName, agent);
+			agentController.start();
 
 		} 
 		catch (StaleProxyException e) {

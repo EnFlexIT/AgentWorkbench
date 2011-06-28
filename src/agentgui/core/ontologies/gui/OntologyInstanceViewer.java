@@ -55,7 +55,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 
 
 	/**
-	 * These are the default constructors
+	 * This is the constructor in case that nothing should be displayed (no form, no slots)
 	 */
 	public OntologyInstanceViewer(Project currProject) {
 		this.project = currProject;
@@ -185,7 +185,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	}
 	
 	/**
-	 * This methode can be called to either allow or disallow the enlargement
+	 * This method can be called to either allow or disallow the enlargement
 	 * of View to the OntologyInstanceViewer 
 	 * @param allowEnlargement
 	 */
@@ -199,7 +199,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	}
 	
 	/**
-	 * This Method create the full XML-Text, which can be displayed 
+	 * This method create the full XML-Text, which can be displayed 
 	 * in the local 'jTextArea' for the XML-Representation
 	 * @return
 	 */

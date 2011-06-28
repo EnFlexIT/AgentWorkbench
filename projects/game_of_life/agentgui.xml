@@ -4,15 +4,8 @@
     <projectView>Developer</projectView>
     <projectResources/>
     <plugins/>
-    <subOntologies>
-        <subOntology>agentgui.ontology.AgentGUI_BaseOntology</subOntology>
-    </subOntologies>
-    <agentConfiguration>
-        <entry>
-            <key>game_of_life.SimService.agents.SimulationManager</key>
-            <value>[Width] agentgui.ontology.Simple_Integer|[Height] agentgui.ontology.Simple_Integer</value>
-        </entry>
-    </agentConfiguration>
+    <subOntologies/>
+    <agentConfiguration/>
     <jadeConfiguration>
         <useAppDefaults>true</useAppDefaults>
         <useLocalPort>1099</useLocalPort>

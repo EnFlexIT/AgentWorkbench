@@ -42,6 +42,7 @@ import agentgui.core.application.Project;
 import agentgui.core.gui.components.JListClassSearcher;
 import agentgui.core.jade.ClassSearcher;
 import agentgui.core.ontologies.OntologyClassTreeObject;
+import agentgui.core.ontologies.gui.OntologyInstanceDialog;
 
 public class BaseAgents extends JPanel implements Observer, ActionListener {
 
@@ -103,7 +104,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 		jButtonAgentListRefresh.setToolTipText(Language.translate("Agentenliste aktualisieren"));
 		jButtonMoveUp.setToolTipText(Language.translate("Objekt nach oben"));
 		jButtonMoveDown.setToolTipText(Language.translate("Objekt nach unten"));
-		jButtonRename.setToolTipText(Language.translate("Ontologie Referenz maskieren"));
+		jButtonRename.setToolTipText(Language.translate("Ontologie Referenz benennen"));
 		jButtonRemoveAll.setToolTipText(Language.translate("Alle Objekte löschen"));
 		jButtonReferencesAdd.setToolTipText(Language.translate("Objekt hinzufügen"));
 		jButtonReferencesRemove.setToolTipText(Language.translate("Objekt entfernen"));
@@ -407,7 +408,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 			jButtonRename = new JButton();
 			jButtonRename.setIcon(new ImageIcon(getClass().getResource(PathImage + "Rename.png")));
 			jButtonRename.setPreferredSize(new Dimension(15, 15));
-			jButtonRename.setToolTipText("Ontologie Referenz maskieren");
+			jButtonRename.setToolTipText("Ontologie Referenz benennen");
 			jButtonRename.setActionCommand("OntoRename");
 			jButtonRename.addActionListener(this);
 		}
@@ -762,13 +763,14 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 		return jPanelEastTop;
 	}
 	
+	
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		// --- Das ActionCommand und den Auslöser des Events ermitteln ---
 		String ActCMD = ae.getActionCommand();
-		Object Trigger = ae.getSource();
+		Object trigger = ae.getSource();
 
-		if ( Trigger == jButtonAgentListRefresh ) {
+		if ( trigger == jButtonAgentListRefresh ) {
 			// --- AgentList aktualisieren ----------------
 			Application.ClassDetector.reStartSearch(currProject, ClassSearcher.RESTART_AGENT_SEARCH);
 			
@@ -778,34 +780,53 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 			this.setCurrAgentConfig();
 			this.setTmpAgentConfig();
 		}
-		else if ( Trigger == jButtonStartAgent ) {
-			// --- Den ausgewählten Agenten starten -------
-			Class<? extends Agent> selectedAgentClass=((AgentClassElement)jAgentList.getSelectedValue()).getElementClass();
-			if ( jTextAgentStartAs.getText().length() != 0 && selectedAgentClass != null) {
-				Application.JadePlatform.jadeAgentStart(
-						jTextAgentStartAs.getText(), 
-						selectedAgentClass,
-						null,
-						currProject.getProjectFolder());	
+		else if ( trigger == jButtonStartAgent ) {
+			// ------------------------------------------------------
+			// --- Start the selected agent -------------------------
+			// ------------------------------------------------------
+			Class<? extends Agent> selectedAgentClass = null;
+			String selectedAgentReference 			  = null;
+			String selectedAgentName				  = null;
+			selectedAgentClass		= ((AgentClassElement)jAgentList.getSelectedValue()).getElementClass();
+			selectedAgentReference 	= selectedAgentClass.getName();
+			selectedAgentName		= jTextAgentStartAs.getText();
+			
+			if ( selectedAgentName.length() != 0 && selectedAgentClass != null) {
+				Object [] startArgs = null;
+				String startArgsConfigured = currProject.agentConfig.get(selectedAgentReference);
+				if (startArgsConfigured!=null) {
+					// --- If start-arguments are set, get them now -----
+					OntologyInstanceDialog oid = new OntologyInstanceDialog(Application.MainWindow, this.currProject, selectedAgentReference);
+					oid.setTitle(Language.translate("Startargument definieren für Agent") + " '" + selectedAgentName + "' (" + selectedAgentClass.getSimpleName() + ")");
+					oid.setVisible(true);
+					// --- Wait ---
+					if (oid.isCancelled()) return;
+					startArgs = oid.getObjectConfiguration();
+					oid.dispose();
+					oid = null;	
+				}
+				
+				// --- Start the Agent now --------------------------
+				Application.JadePlatform.jadeAgentStart(jTextAgentStartAs.getText(), selectedAgentClass, startArgs, currProject.getProjectFolder());	
 				jTextAgent.setText(null);
 				jTextAgentStartAs.setText(null);
 				jAgentList.clearSelection();
 			}
-		} else if (Trigger == jButtonMoveUp ) {
-			// --- Agenten-Referenz eins höher ------------
+		} else if (trigger == jButtonMoveUp ) {
+			// --- Agenten-Referenz eins höher ----------------------
 			setTmpAgentConfig();
 			setCurrAgentConfig();
 			if (currProject.agentConfig.movePosition(agentReference, agentConfig, agentConfigPos, -1) ){
 				jListReferences.setSelectedIndex(agentConfigPos-2);
 			}
-		} else if (Trigger == jButtonMoveDown ) {
+		} else if (trigger == jButtonMoveDown ) {
 			// --- Agenten-Referenz eins runter -----------
 			setTmpAgentConfig();
 			setCurrAgentConfig();
 			if (currProject.agentConfig.movePosition(agentReference, agentConfig, agentConfigPos, 1) ){
 				jListReferences.setSelectedIndex(agentConfigPos);
 			}
-		} else if (Trigger == jButtonRename) {
+		} else if (trigger == jButtonRename) {
 			// --- Ontologie-Referenz maskieren -----------
 			setTmpAgentConfig();
 			setCurrAgentConfig();
@@ -829,15 +850,15 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 			currProject.agentConfig.setReferenceMask(agentReference, agentConfigPos-1, input);
 			jListReferences.setSelectedIndex(agentConfigPos-1);
 			
-		} else if (Trigger == jButtonRemoveAll) {
+		} else if (trigger == jButtonRemoveAll) {
 			// --- Agenten-Referenzen komplett entfernen --
 			setTmpAgentConfig();
 			currProject.agentConfig.removeReferencesComplete(agentReference);
-		} else if (Trigger == jButtonReferencesAdd ) {
+		} else if (trigger == jButtonReferencesAdd ) {
 			// --- Agenten-Referenzen hinzufügen ----------
 			setTmpAgentConfig();
 			currProject.agentConfig.addReference(agentReference, ontoReference);
-		} else if (Trigger == jButtonReferencesRemove ) {
+		} else if (trigger == jButtonReferencesRemove ) {
 			// --- Agenten-Referenzen entfernen -----------
 			setTmpAgentConfig();
 			setCurrAgentConfig();

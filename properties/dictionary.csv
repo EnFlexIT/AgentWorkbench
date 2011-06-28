@@ -3,6 +3,7 @@ de;' ist bereits geöffnet!;' is already open!;;;
 de;'.csv'-Version des Wörterbuchs übernehmen ...;Import the '. csv'-version of the dictionary ...;;;
 de;(Falls bereits verwendet, wird versucht den nächst höheren Port zu nutzen);(If already used, it will be tried to use the next higher port);;;
 de;0 Sekunden;0 seconds;;;
+de;;;;;
 de;<br>Bitte geben Sie einen anderen Namen für das Setup an.;<br> Please enter a different name for the setup.;;;
 de;<br>Bitte geben Sie einen längeren Namen für das Setup an.;<br> Please enter a longer name for the setup.;;;
 de;<br>Falls nicht, wird eine neue Setup-Datei erzeugt.;<br> If not, a new setup file will be created.;;;
@@ -60,7 +61,7 @@ de;Beenden;Quit
 de;Beschreibung;Description
 de;Bitte geben Sie den Namen für das neue Setup an!;Please enter a name for the new setup!
 de;Bitte geben Sie den neuen Namen für das Setup an!;Please specify the new name for the setup!
-de;Bitte geben Sie einen Bezeichner für die Referenz an!;;;;
+de;Bitte geben Sie einen Bezeichner für die Referenz an!;Please, specify an identifier for the reference!;;;
 de;Bitte spezifizieren Sie den Typ des Startarguments!;Please specify the type of the start argument!
 de;Bitte warten! Der Benchmark wird durchgeführt ...;Please wait! The benchmark is running ...
 de;Bitte wiederholen Sie den Vorgang bei Bedarf und bestätigen Sie dann mit 'Ja'.;Please repeat the process if required and then confirm with 'Yes'.
@@ -264,10 +265,12 @@ de;Objekt-Typ;Object type
 de;Objekt;Object
 de;Objekte aus Projekt-Ontologie;Objects from project ontology
 de;Objekteigenschaften;Object properties
+de;Ontologie Referenz benennen;Name ontology reference ;;;
 de;Ontologie Referenz maskieren;;;;
 de;Ontologie hinzuf?gen;Add ontology
 de;Ontologie hinzufügen;Add ontology
 de;Ontologie-Klasse für Übergabepunkte;Ontology class for transfer points
+de;Ontologie-Klassen initialisieren;;;;
 de;Ontologie;Ontology
 de;Ontologieklasse;Ontology Class
 de;Ontologien;Ontologies
@@ -347,6 +350,8 @@ de;Start-Argumente für den ausgewählten Agenten;Start-arguments for the selected
 de;Start-Konfiguration;Start-Configuration
 de;Start-Objekte aus Projekt-Ontologie;Startup objects from project-ontology
 de;Start;Start
+de;Startargument definieren für Agent;;;;
+de;Startargument definieren für:;;;;
 de;Starte Agent.GUI - Service;Start Agent.GUI - Service
 de;Starte Agent.GUI als:;Start Agent.GUI as:
 de;Starte JADE über Port-Nr.:;Start JADE via port no.:

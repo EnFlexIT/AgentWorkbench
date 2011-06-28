@@ -915,7 +915,7 @@ public class DynForm extends JPanel {
 				if (startObjectClassMask==null) {
 					objectLabelName.setText(startObjectClassName);	
 				} else {
-					objectLabelName.setText(startObjectClassMask);
+					objectLabelName.setText(startObjectClassMask + " (" + startObjectClassName + ")");
 				}
 				objectLabelName.setFont(new Font(objectLabelName.getFont().getName(),Font.BOLD,objectLabelName.getFont().getSize()));
 				
@@ -931,7 +931,7 @@ public class DynForm extends JPanel {
 				if (startObjectClassMask==null) {
 					objectLabelName.setText(startObjectClassName.substring(startObjectClassName.lastIndexOf(".")+1));
 				} else {
-					objectLabelName.setText(startObjectClassMask);	
+					objectLabelName.setText(startObjectClassMask + " (" + startObjectClassName + ")");
 				}
 				objectLabelName.setFont(new Font(objectLabelName.getFont().getName(),Font.BOLD,objectLabelName.getFont().getSize()));
 				
