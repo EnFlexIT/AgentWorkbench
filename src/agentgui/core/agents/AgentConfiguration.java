@@ -119,6 +119,20 @@ public class AgentConfiguration extends Hashtable<String, String> {
 		}
 	}
 	/**
+	 * This method allows to mask an ontology-class-reference with a different name or identifier 
+	 * 
+	 * @param agentClassReference
+	 * @param ontoClassReference
+	 */
+	public void setReferenceMask(String agentClassReference, int ontoClassReferenceIndex, String newStringMask) {
+		if ( agentClassReference != null ){
+			refsString = this.get(agentClassReference);
+			refsObject = new References(refsString);
+			refsObject.setMask(ontoClassReferenceIndex, newStringMask);
+			this.update(agentClassReference, refsObject.toString() );
+		}
+	}
+	/**
 	 * This method allows to remove an ontology-class-reference from a specified agent
 	 * by using a class reference to a part of an ontology
 	 * 
@@ -216,7 +230,7 @@ public class AgentConfiguration extends Hashtable<String, String> {
 	// --- Start Sub-Class ----------------------------------------------------
 	// ------------------------------------------------------------------------
 	/**
-	 * This internal class is used in order to organize the handling of the 
+	 * This internal class is used in order to organise the handling of the 
 	 * configured ontology-start arguments. 
 	 * 
 	 * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
@@ -224,12 +238,12 @@ public class AgentConfiguration extends Hashtable<String, String> {
 	private class References {
 		
 		/**
-		 * Organizes the references in a list in order to access
+		 * Organises the references in a list in order to access
 		 * a reference by its String representation   
 		 */
 		private TreeMap<String, Integer> refTM;
 		/**
-		 * Organizes the references in a list in order to access
+		 * Organises the references in a list in order to access
 		 * a reference by its position
 		 */
 		private TreeMap<Integer, String> refMT;
@@ -250,6 +264,34 @@ public class AgentConfiguration extends Hashtable<String, String> {
 					refTM.put(refArr[i], i+1);
 				}			
 			}
+		}
+		/**
+		 * This method can be used in order to mask an ontology reference with a different identifier
+		 * @param newStringMask the new identifier to set
+		 */
+		public void setMask(int ontoClassReferenceIndex, String newStringMask) {
+			
+			String ontoRef 		= this.refMT.get(ontoClassReferenceIndex+1);
+			String ontoRefBulk 	= null;
+			String ontoRefNew 	= null;
+			
+			if (ontoRef.contains("]")==true) {
+				int cutPos = ontoRef.indexOf("]");
+				ontoRefBulk = ontoRef.substring(cutPos+1).trim();
+			} else {
+				ontoRefBulk = ontoRef;
+			}
+			
+			if (newStringMask!=null && newStringMask.equals("")==false) {
+				ontoRefNew = "[" + newStringMask + "] " + ontoRefBulk;	
+			} else {
+				ontoRefNew = ontoRefBulk;
+			}
+			
+			refTM.remove(ontoRef);
+			refTM.put(ontoRefNew, ontoClassReferenceIndex+1);
+			refMT.put(ontoClassReferenceIndex+1,ontoRefNew);			
+			
 		}
 		/**
 		 * Can be used in order to get the whole list of references and its positions  

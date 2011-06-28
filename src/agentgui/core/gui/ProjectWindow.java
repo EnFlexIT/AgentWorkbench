@@ -185,7 +185,6 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 
     	ProjectTreeExpand( new TreePath(rootNode), expand, CurrNodeLevel, Up2TreeLevel);
     }
-    @SuppressWarnings("unchecked")
 	private void ProjectTreeExpand( TreePath parent, boolean expand, Integer CurrNodeLevel, Integer Up2TreeLevel) {
     
         TreeNode node = (TreeNode)parent.getLastPathComponent();
@@ -193,7 +192,7 @@ public class ProjectWindow extends JInternalFrame implements Observer {
         	return;
         }
         if (node.getChildCount() >= 0) {
-            for ( Enumeration e=node.children(); e.hasMoreElements(); ) {
+            for ( @SuppressWarnings("rawtypes") Enumeration e=node.children(); e.hasMoreElements(); ) {
                 TreeNode n = (TreeNode) e.nextElement();
                 TreePath path = parent.pathByAddingChild(n);
                 ProjectTreeExpand(path, expand, CurrNodeLevel+1, Up2TreeLevel);

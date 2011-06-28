@@ -280,7 +280,7 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 			ProTree.setBounds(new Rectangle(16, 135, 258, 179));			
 			ProTree.setShowsRootHandles(false);
 			ProTree.setRootVisible(true);
-			ProTree.getSelectionModel().setSelectionMode( TreeSelectionModel.SINGLE_TREE_SELECTION );
+			ProTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 			// --- Node-Objekte einfügen ------------------
 			String[] IDEProjects = Application.RunInfo.getIDEProjects();
 			if (IDEProjects!=null) {

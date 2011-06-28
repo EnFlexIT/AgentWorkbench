@@ -456,7 +456,6 @@ public class OptionDialog extends JDialog implements ActionListener {
 
     	OptionTreeExpand( new TreePath(RootNode), expand, CurrNodeLevel, Up2TreeLevel);
     }
-    @SuppressWarnings("unchecked")
 	private void OptionTreeExpand( TreePath parent, boolean expand, Integer CurrNodeLevel, Integer Up2TreeLevel) {
     
         TreeNode node = (TreeNode)parent.getLastPathComponent();
@@ -464,7 +463,7 @@ public class OptionDialog extends JDialog implements ActionListener {
         	return;
         }
         if (node.getChildCount() >= 0) {
-            for ( Enumeration e=node.children(); e.hasMoreElements(); ) {
+            for ( @SuppressWarnings("rawtypes") Enumeration e=node.children(); e.hasMoreElements(); ) {
                 TreeNode n = (TreeNode) e.nextElement();
                 TreePath path = parent.pathByAddingChild(n);
                 OptionTreeExpand(path, expand, CurrNodeLevel+1, Up2TreeLevel);

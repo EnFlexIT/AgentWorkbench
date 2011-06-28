@@ -1,0 +1,35 @@
+; Tue Jun 28 17:23:47 CEST 2011
+; 
+;+ (version "3.3.1")
+;+ (build "Build 430")
+
+([Formula] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([project+annotation] of  %3APROJECT-ANNOTATION
+
+	(%3ALOCATION "D:\\10 Java Projects\\AgentGUI\\src")
+	(%3AONTOLOGYNAME "AgentGUI_Base")
+	(%3APACKAGE "agentgui.ontology")
+	(%3ASUPPORT "j2se"))
+
+([Simple_Boolean] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([Simple_Float] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([Simple_Integer] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([Simple_Object] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([Simple_String] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))

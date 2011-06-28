@@ -155,16 +155,22 @@ public class DynForm extends JPanel {
 		// --- Iterate over the available Start-Objects ---
 		for (int i = 0; i < currOnotologyClassReferenceList.size(); i++) {
 			
-			String startObjectClass = currOnotologyClassReferenceList.get(i);
 			JPanel startObjectPanel = new JPanel(null);
-//			startObjectPanel.setLayout(null);
+			
+			String startObjectClass = currOnotologyClassReferenceList.get(i);
+			String startObjectClassMask = null;
+			if (startObjectClass.contains("]")) {
+				int cutPos = startObjectClass.indexOf("]");
+				startObjectClassMask = startObjectClass.substring(1, cutPos);
+				startObjectClass = startObjectClass.substring(cutPos+1).trim();
+			}
 			
 			// --- Get the info about the slots --------------------
 			OntologySingleClassDescription osc = currProject.ontologies4Project.getSlots4ClassAsObject(startObjectClass);
 			if(osc!=null) {
-				this.createGUI(osc, startObjectClass, startObjectPanel, 0, (DefaultMutableTreeNode) rootNode);
+				this.createGUI(osc, startObjectClass, startObjectClassMask, startObjectPanel, 0, (DefaultMutableTreeNode) rootNode);
 			} else {
-				System.out.println("Could not get OntologySingleClassDescription for "+startObjectClass);
+				System.out.println("Could not get OntologySingleClassDescription for " + startObjectClass);
 			}
 
 			// --- 
@@ -892,7 +898,7 @@ public class DynForm extends JPanel {
 	 * @param pan
 	 * @param tiefe
 	 */
-	public void createGUI(OntologySingleClassDescription osc, String startObjectClass, JPanel parentPanel, int tiefe, DefaultMutableTreeNode parentNode){
+	public void createGUI(OntologySingleClassDescription osc, String startObjectClass, String startObjectClassMask, JPanel parentPanel, int tiefe, DefaultMutableTreeNode parentNode){
 		
 		String startObjectClassName = startObjectClass.substring(startObjectClass.lastIndexOf(".") + 1, startObjectClass.length());
 		String startObjectPackage = startObjectClass.substring(0, startObjectClass.lastIndexOf("."));
@@ -906,7 +912,11 @@ public class DynForm extends JPanel {
 			if(tiefe == 0){
 				// --- Set the label for the class --- //
 				objectLabelName.setBounds(new Rectangle(10, parentPanel.getHeight()+5 , 350, 16));
-				objectLabelName.setText(startObjectClassName);
+				if (startObjectClassMask==null) {
+					objectLabelName.setText(startObjectClassName);	
+				} else {
+					objectLabelName.setText(startObjectClassMask);
+				}
 				objectLabelName.setFont(new Font(objectLabelName.getFont().getName(),Font.BOLD,objectLabelName.getFont().getSize()));
 				
 				// --- Define a node for current class ------------------
@@ -918,7 +928,11 @@ public class DynForm extends JPanel {
 			} else {
 				// --- Set the label for the class --- //
 				objectLabelName.setBounds(new Rectangle(10, 23 , 350, 16));
-				objectLabelName.setText(startObjectClassName.substring(startObjectClassName.lastIndexOf(".")+1));
+				if (startObjectClassMask==null) {
+					objectLabelName.setText(startObjectClassName.substring(startObjectClassName.lastIndexOf(".")+1));
+				} else {
+					objectLabelName.setText(startObjectClassMask);	
+				}
 				objectLabelName.setFont(new Font(objectLabelName.getFont().getName(),Font.BOLD,objectLabelName.getFont().getSize()));
 				
 			}
@@ -1068,7 +1082,7 @@ public class DynForm extends JPanel {
 		
 		// --- create the inner fields of the current inner class
 		OntologySingleClassDescription osc = currProject.ontologies4Project.getSlots4ClassAsObject(startObjectClassName);
-		this.createGUI(osc, startObjectClassName, dataPanel, tiefe, newNode);
+		this.createGUI(osc, startObjectClassName, null, dataPanel, tiefe, newNode);
 		
 		// --- set the correct height of the parent of this inner class according to the
 		// --- inner class's height

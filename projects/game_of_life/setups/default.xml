@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <simulationSetup>
-    <agentSetup/>
+    <agentSetup>
+        <agent>
+            <postionNo>1</postionNo>
+            <agentClassReference>game_of_life.SimService.agents.SimulationManager</agentClassReference>
+            <startAsName>SiMa</startAsName>
+            <startArguments>
+                <argument>PFNpbXBsZUludGVnZXIgSW50ZWdlclZhbHVlPSIwIi8+Cg==</argument>
+                <argument>PFNpbXBsZUludGVnZXIgSW50ZWdlclZhbHVlPSIwIi8+Cg==</argument>
+            </startArguments>
+        </agent>
+        <agent>
+            <postionNo>2</postionNo>
+            <agentClassReference>agentgui.physical2Denvironment.display.DisplayAgent</agentClassReference>
+            <startAsName>DiAg</startAsName>
+        </agent>
+    </agentSetup>
     <distribution>
         <doDynamicLoadBalalncing>false</doDynamicLoadBalalncing>
         <doStaticLoadBalalncing>true</doStaticLoadBalalncing>
@@ -19,6 +34,6 @@
         </userThresholds>
     </distribution>
     <agentListModel>
-        <size>0</size>
+        <size>2</size>
     </agentListModel>
 </simulationSetup>

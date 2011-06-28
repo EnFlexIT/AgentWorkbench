@@ -60,6 +60,7 @@ de;Beenden;Quit
 de;Beschreibung;Description
 de;Bitte geben Sie den Namen für das neue Setup an!;Please enter a name for the new setup!
 de;Bitte geben Sie den neuen Namen für das Setup an!;Please specify the new name for the setup!
+de;Bitte geben Sie einen Bezeichner für die Referenz an!;;;;
 de;Bitte spezifizieren Sie den Typ des Startarguments!;Please specify the type of the start argument!
 de;Bitte warten! Der Benchmark wird durchgeführt ...;Please wait! The benchmark is running ...
 de;Bitte wiederholen Sie den Vorgang bei Bedarf und bestätigen Sie dann mit 'Ja'.;Please repeat the process if required and then confirm with 'Yes'.
@@ -263,6 +264,7 @@ de;Objekt-Typ;Object type
 de;Objekt;Object
 de;Objekte aus Projekt-Ontologie;Objects from project ontology
 de;Objekteigenschaften;Object properties
+de;Ontologie Referenz maskieren;;;;
 de;Ontologie hinzuf?gen;Add ontology
 de;Ontologie hinzufügen;Add ontology
 de;Ontologie-Klasse für Übergabepunkte;Ontology class for transfer points

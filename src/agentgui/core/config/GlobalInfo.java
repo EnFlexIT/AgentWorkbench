@@ -759,27 +759,7 @@ public class GlobalInfo {
 		return filePropLanguage;
 	}
 
-	/**
-	 * This method can be used in order to define the predefined environment types of Agent.GUI
-	 * @param knowEnvironmentTypes the knowEnvironmentTypes to set
-	 * @see EnvironmentType
-	 * @see EnvironmentTypes
-	 */
-	public void setKnowEnvironmentTypes(EnvironmentTypes knowEnvironmentTypes) {
-		this.knowEnvironmentTypes = knowEnvironmentTypes;
-	}
-	/**
-	 * This method returns all EnvironmentTypes known by Agent.GUI 
-	 * @return the knowEnvironmentTypes
-	 * @see EnvironmentType
-	 * @see EnvironmentTypes
-	 */
-	public EnvironmentTypes getKnowEnvironmentTypes() {
-		return knowEnvironmentTypes;
-	}
-
-
-	// ---- Connection to the Master-Server ----------------------------
+	// ---- Connection to the Master-Server -------------------------
 	/**
 	 * Can be used in order to start the active server mode immediately after the program execution.
 	 * This applies only if the current execution mode is set to server (server.master or server.slave)
@@ -916,7 +896,7 @@ public class GlobalInfo {
 		return filePropServerMasterDBPswd;
 	}
 
-
+	// ---- Methods for the reminder of the last selected folder ----
 	/**
 	 * This method can be used in order to remind the last folder 
 	 * in which a file was selected (e. g. while using a JFileChooser) 
@@ -946,4 +926,51 @@ public class GlobalInfo {
 		}
 		return returnFolder;
 	}
+	
+	// ---- Methods for EnvironmentTypes ----------------------------
+	/**
+	 * This method can be used in order to define the predefined environment types of Agent.GUI
+	 * @param knowEnvironmentTypes the knowEnvironmentTypes to set
+	 * @see EnvironmentType
+	 * @see EnvironmentTypes
+	 */
+	public void setKnowEnvironmentTypes(EnvironmentTypes knowEnvironmentTypes) {
+		this.knowEnvironmentTypes = knowEnvironmentTypes;
+	}
+	/**
+	 * This method returns all EnvironmentTypes known by Agent.GUI 
+	 * @return the knowEnvironmentTypes
+	 * @see EnvironmentType
+	 * @see EnvironmentTypes
+	 */
+	public EnvironmentTypes getKnowEnvironmentTypes() {
+		return knowEnvironmentTypes;
+	}
+	/**
+	 * This method can be used in order to add a tailored environment type
+	 * (assume for example a 3D-environment model)  
+	 * @param envType
+	 * @see EnvironmentType
+	 */
+	public void addEnvironmentType(EnvironmentType envType ) {
+		this.knowEnvironmentTypes.add(envType);
+	}
+	/**
+	 * This method can be used in order to remove a tailored environment type
+	 * @param envType The EnvironmentType instance
+	 * @see EnvironmentType
+	 */
+	public void removeEnvironmentType(EnvironmentType envType) {
+		this.knowEnvironmentTypes.remove(envType);
+	}
+	/**
+	 * This method can be used in order to remove a tailored environment type
+	 * @param envTypeKey The key expression of the environment type
+	 * @see EnvironmentType
+	 */
+	public void removeEnvironmentType(String envTypeKey) {
+		EnvironmentType envType = this.knowEnvironmentTypes.getEnvironmentTypeByKey(envTypeKey);
+		this.knowEnvironmentTypes.remove(envType);
+	}
+	
 }

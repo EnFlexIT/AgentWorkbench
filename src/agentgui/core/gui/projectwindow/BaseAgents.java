@@ -10,6 +10,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Enumeration;
 import java.util.Observable;
 import java.util.Observer;
@@ -19,6 +21,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -45,11 +48,12 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 	private static final long serialVersionUID = 1L;
 	final static String PathImage = Application.RunInfo.PathImageIntern();
 	
-	private Project CurrProject;
+	private Project currProject;
 	private OntologyClassTreeObject CurrOntoObject = null;
 	
 	private String agentConfig = null;  //  @jve:decl-index=0:
 	private Integer agentConfigPos = null;  //  @jve:decl-index=0:
+	private String agentConfigMask = null;  //  @jve:decl-index=0:
 	private String agentReference = null;  //  @jve:decl-index=0:
 	private String ontoReference = null;  //  @jve:decl-index=0:
 	
@@ -79,13 +83,14 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 	private JPanel jPanelWest = null;
 	private JPanel jPanelEast = null;
 	private JPanel jPanelEastTop = null;
+	private JButton jButtonRename = null;
 	/**
 	 * This is the default constructor
 	 */
 	public BaseAgents( Project CP ) {
 		super();
-		this.CurrProject = CP;
-		this.CurrProject.addObserver(this);		
+		this.currProject = CP;
+		this.currProject.addObserver(this);		
 		initialize();	
 		
 		// --- Übersetzung anschmeissen -------------------
@@ -98,6 +103,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 		jButtonAgentListRefresh.setToolTipText(Language.translate("Agentenliste aktualisieren"));
 		jButtonMoveUp.setToolTipText(Language.translate("Objekt nach oben"));
 		jButtonMoveDown.setToolTipText(Language.translate("Objekt nach unten"));
+		jButtonRename.setToolTipText(Language.translate("Ontologie Referenz maskieren"));
 		jButtonRemoveAll.setToolTipText(Language.translate("Alle Objekte löschen"));
 		jButtonReferencesAdd.setToolTipText(Language.translate("Objekt hinzufügen"));
 		jButtonReferencesRemove.setToolTipText(Language.translate("Objekt entfernen"));
@@ -194,7 +200,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 	 */
 	private JListClassSearcher getJAgentList() {
 		if (jAgentList == null) {
-			jAgentList = new JListClassSearcher(ClassSearcher.CLASSES_AGENTS, CurrProject);
+			jAgentList = new JListClassSearcher(ClassSearcher.CLASSES_AGENTS, currProject);
 			jAgentList.setToolTipText(Language.translate("Agenten in diesem Projekt"));
 			jAgentList.setPreferredSize(new Dimension(333, 300));
 			jAgentList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -206,7 +212,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 						//System.out.println("Agent: " + ToDisplay);
 						// -----------------------------------------------------
 						// --- Definierte Start-Referenzen anzeigen ------------ 
-						jListReferences.setListData( CurrProject.agentConfig.getListData(ToDisplay) );
+						jListReferences.setListData( currProject.agentConfig.getListData(ToDisplay) );
 						// -----------------------------------------------------
 						// --- Eintrag für den aktuellen Agenten vornehmen -----
 						int maxLenght = 30;
@@ -245,7 +251,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 						// --- Check, ob es dieser Agent schon läuft -----------
 						int i = 1;
 						StartAsNew = StartAs;
-						while ( Application.JadePlatform.jadeAgentIsRunning( StartAs, CurrProject.getProjectFolder() ) == true ){
+						while ( Application.JadePlatform.jadeAgentIsRunning( StartAs, currProject.getProjectFolder() ) == true ){
 							StartAs = StartAsNew + i;
 							i++; 
 						}
@@ -268,6 +274,11 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 	 */
 	private JPanel getJPanelReferences() {
 		if (jPanelReferences == null) {
+			GridBagConstraints gridBagConstraints17 = new GridBagConstraints();
+			gridBagConstraints17.gridx = 3;
+			gridBagConstraints17.anchor = GridBagConstraints.SOUTH;
+			gridBagConstraints17.insets = new Insets(0, 0, 0, 10);
+			gridBagConstraints17.gridy = 8;
 			GridBagConstraints gridBagConstraints15 = new GridBagConstraints();
 			gridBagConstraints15.gridx = 0;
 			gridBagConstraints15.anchor = GridBagConstraints.WEST;
@@ -292,23 +303,23 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 			gridBagConstraints11.gridy = 9;
 			GridBagConstraints gridBagConstraints10 = new GridBagConstraints();
 			gridBagConstraints10.gridx = 2;
-			gridBagConstraints10.insets = new Insets(10, 0, 0, 10);
+			gridBagConstraints10.insets = new Insets(5, 0, 0, 5);
 			gridBagConstraints10.anchor = GridBagConstraints.SOUTH;
-			gridBagConstraints10.gridy = 7;
+			gridBagConstraints10.gridy = 9;
 			GridBagConstraints gridBagConstraints8 = new GridBagConstraints();
-			gridBagConstraints8.gridx = 2;
-			gridBagConstraints8.insets = new Insets(0, 0, 5, 10);
+			gridBagConstraints8.gridx = 3;
+			gridBagConstraints8.insets = new Insets(0, 0, 0, 10);
 			gridBagConstraints8.gridy = 4;
 			GridBagConstraints gridBagConstraints7 = new GridBagConstraints();
-			gridBagConstraints7.gridx = 2;
-			gridBagConstraints7.insets = new Insets(0, 0, 3, 10);
+			gridBagConstraints7.gridx = 3;
+			gridBagConstraints7.insets = new Insets(0, 0, 1, 10);
 			gridBagConstraints7.gridy = 2;
 			GridBagConstraints gridBagConstraints6 = new GridBagConstraints();
 			gridBagConstraints6.fill = GridBagConstraints.BOTH;
 			gridBagConstraints6.weighty = 1.0;
 			gridBagConstraints6.insets = new Insets(0, 10, 0, 5);
-			gridBagConstraints6.gridheight = 6;
-			gridBagConstraints6.gridwidth = 2;
+			gridBagConstraints6.gridheight = 7;
+			gridBagConstraints6.gridwidth = 3;
 			gridBagConstraints6.gridy = 2;
 			gridBagConstraints6.weightx = 1.0;
 			jPanelReferences = new JPanel();
@@ -316,6 +327,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 			jPanelReferences.add(getJScrollReferences(), gridBagConstraints6);
 			jPanelReferences.add(getJButtonMoveUp(), gridBagConstraints7);
 			jPanelReferences.add(getJButtonMoveDown(), gridBagConstraints8);
+			jPanelReferences.add(getJButtonRename(), gridBagConstraints17);
 			jPanelReferences.add(getJButtonRemoveAll(), gridBagConstraints10);
 			jPanelReferences.add(getJButtonReferencesAdd(), gridBagConstraints11);
 			jPanelReferences.add(getJButtonReferencesRemove(), gridBagConstraints12);
@@ -343,6 +355,13 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 	private JList getJListReferences() {
 		if (jListReferences == null) {
 			jListReferences = new JList();
+			jListReferences.addMouseListener( new MouseAdapter() {
+				public void mouseClicked(MouseEvent me) {
+					if (me.getClickCount() == 2 ) {
+						jButtonRename.doClick();	
+					}
+				}
+			});
 		}
 		return jListReferences;
 	}
@@ -378,9 +397,25 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 		}
 		return jButtonMoveDown;
 	}
-
+	
 	/**
-	 * This method initializes jButtonRemoveAll	
+	 * This method initialises jButtonRename	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getJButtonRename() {
+		if (jButtonRename == null) {
+			jButtonRename = new JButton();
+			jButtonRename.setIcon(new ImageIcon(getClass().getResource(PathImage + "Rename.png")));
+			jButtonRename.setPreferredSize(new Dimension(15, 15));
+			jButtonRename.setToolTipText("Ontologie Referenz maskieren");
+			jButtonRename.setActionCommand("OntoRename");
+			jButtonRename.addActionListener(this);
+		}
+		return jButtonRename;
+	}
+	
+	/**
+	 * This method initialises jButtonRemoveAll	
 	 * @return javax.swing.JButton	
 	 */
 	private JButton getJButtonRemoveAll() {
@@ -464,7 +499,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 		if (jTreeOntology == null) {
 			jTreeOntology = new JTree();
 			//jTreeOntology = new JTree( CurrProject.Ontology.getOntologyTree() );
-			jTreeOntology = new JTree( CurrProject.ontologies4Project.getOntologyTree() );
+			jTreeOntology = new JTree( currProject.ontologies4Project.getOntologyTree() );
 			jTreeOntology.setName("OntoTree");
 			jTreeOntology.setShowsRootHandles(false);
 			jTreeOntology.setRootVisible(true);
@@ -498,7 +533,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
     	Integer CurrNodeLevel = 1;
     	if ( Up2TreeLevel == null ) 
     		Up2TreeLevel = 1000;
-    	OntoTreeExpand( new TreePath( CurrProject.ontologies4Project.getOntologyTree().getRoot() ), expand, CurrNodeLevel, Up2TreeLevel);
+    	OntoTreeExpand( new TreePath( currProject.ontologies4Project.getOntologyTree().getRoot() ), expand, CurrNodeLevel, Up2TreeLevel);
     }
     /**
      * 
@@ -589,7 +624,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 	 * updates the List of the AgetnReferences
 	 */
 	private void updateView4AgentConfig() {
-		jListReferences.setListData( CurrProject.agentConfig.getListData(agentReference) );
+		jListReferences.setListData( currProject.agentConfig.getListData(agentReference) );
 	}
 	/**
 	 * reads the currently selected AgentReference to var. agentConfig
@@ -602,6 +637,12 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 			String[] agentConfigArr = agentConfig.split(":");
 			agentConfigPos = Integer.valueOf(agentConfigArr[0].trim()).intValue();
 			agentConfig = agentConfigArr[1].trim();
+			if (agentConfig.contains("]")) {
+				int cutPos = agentConfig.indexOf("]");
+				agentConfigMask = agentConfig.substring(1, cutPos);
+			} else {
+				agentConfigMask = null;
+			}
 		}
 	}
 	
@@ -729,7 +770,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 
 		if ( Trigger == jButtonAgentListRefresh ) {
 			// --- AgentList aktualisieren ----------------
-			Application.ClassDetector.reStartSearch(CurrProject, ClassSearcher.RESTART_AGENT_SEARCH);
+			Application.ClassDetector.reStartSearch(currProject, ClassSearcher.RESTART_AGENT_SEARCH);
 			
 			jTextAgent.setText(null);
 			jTextAgentStartAs.setText(null);
@@ -745,7 +786,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 						jTextAgentStartAs.getText(), 
 						selectedAgentClass,
 						null,
-						CurrProject.getProjectFolder());	
+						currProject.getProjectFolder());	
 				jTextAgent.setText(null);
 				jTextAgentStartAs.setText(null);
 				jAgentList.clearSelection();
@@ -754,29 +795,53 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 			// --- Agenten-Referenz eins höher ------------
 			setTmpAgentConfig();
 			setCurrAgentConfig();
-			if (CurrProject.agentConfig.movePosition(agentReference, agentConfig, agentConfigPos, -1) ){
+			if (currProject.agentConfig.movePosition(agentReference, agentConfig, agentConfigPos, -1) ){
 				jListReferences.setSelectedIndex(agentConfigPos-2);
 			}
 		} else if (Trigger == jButtonMoveDown ) {
 			// --- Agenten-Referenz eins runter -----------
 			setTmpAgentConfig();
 			setCurrAgentConfig();
-			if (CurrProject.agentConfig.movePosition(agentReference, agentConfig, agentConfigPos, 1) ){
+			if (currProject.agentConfig.movePosition(agentReference, agentConfig, agentConfigPos, 1) ){
 				jListReferences.setSelectedIndex(agentConfigPos);
 			}
+		} else if (Trigger == jButtonRename) {
+			// --- Ontologie-Referenz maskieren -----------
+			setTmpAgentConfig();
+			setCurrAgentConfig();
+			
+			String input = null;
+			String head = Language.translate("Ontologie Referenz maskieren");
+			String msg  = Language.translate("Bitte geben Sie einen Bezeichner für die Referenz an!");
+			
+			if (agentConfigMask== null) {
+				input = (String) JOptionPane.showInputDialog(Application.MainWindow, msg, head, JOptionPane.OK_CANCEL_OPTION);	
+			} else {
+				input = (String) JOptionPane.showInputDialog(Application.MainWindow, msg, head, JOptionPane.OK_CANCEL_OPTION, null, null, agentConfigMask);	
+			}
+			if (input==null) {
+				return;
+			} else {
+				input = input.trim();
+				if (input.equals("")) input = null;
+			}
+			
+			currProject.agentConfig.setReferenceMask(agentReference, agentConfigPos-1, input);
+			jListReferences.setSelectedIndex(agentConfigPos-1);
+			
 		} else if (Trigger == jButtonRemoveAll) {
 			// --- Agenten-Referenzen komplett entfernen --
 			setTmpAgentConfig();
-			CurrProject.agentConfig.removeReferencesComplete(agentReference);
+			currProject.agentConfig.removeReferencesComplete(agentReference);
 		} else if (Trigger == jButtonReferencesAdd ) {
 			// --- Agenten-Referenzen hinzufügen ----------
 			setTmpAgentConfig();
-			CurrProject.agentConfig.addReference(agentReference, ontoReference);
+			currProject.agentConfig.addReference(agentReference, ontoReference);
 		} else if (Trigger == jButtonReferencesRemove ) {
 			// --- Agenten-Referenzen entfernen -----------
 			setTmpAgentConfig();
 			setCurrAgentConfig();
-			CurrProject.agentConfig.removeReference(agentReference, agentConfig);
+			currProject.agentConfig.removeReference(agentReference, agentConfig);
 		}
 		else {
 			System.err.println(Language.translate("Unbekannt: ") + "ActionCommand => " + ActCMD);	
@@ -794,12 +859,14 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 			
 		} else if ( ObjectName.equalsIgnoreCase( Project.CHANGED_ProjectOntology ) ) {
 			// --- Ansicht auf die projekt-Ontologie aktualisieren --
-			this.jTreeOntology.setModel( CurrProject.ontologies4Project.getOntologyTree() );
+			this.jTreeOntology.setModel( currProject.ontologies4Project.getOntologyTree() );
 			this.OntoTreeExpand2Level(3, true);
 			
 		} else {
 			//System.out.println("Unbekannte Meldung vom Observer: " + ObjectName);
 		}
 	}
+
+	
 	
 }  //  @jve:decl-index=0:visual-constraint="10,10"

@@ -4,15 +4,15 @@
     <projectView>Developer</projectView>
     <projectResources/>
     <plugins/>
-    <subOntologies/>
-    <agentConfiguration/>
-    <simulationSetupCurrent>default</simulationSetupCurrent>
-    <simulationSetups>
+    <subOntologies>
+        <subOntology>agentgui.ontology.AgentGUI_BaseOntology</subOntology>
+    </subOntologies>
+    <agentConfiguration>
         <entry>
-            <key>default</key>
-            <value>default.xml</value>
+            <key>game_of_life.SimService.agents.SimulationManager</key>
+            <value>[Height] agentgui.ontology.Simple_Integer|[Width] agentgui.ontology.Simple_Integer</value>
         </entry>
-    </simulationSetups>
+    </agentConfiguration>
     <jadeConfiguration>
         <useAppDefaults>true</useAppDefaults>
         <useLocalPort>1099</useLocalPort>
@@ -23,5 +23,12 @@
             <service>agentgui.simulationService.SimulationService;</service>
         </serviceList>
     </jadeConfiguration>
+    <simulationSetupCurrent>default</simulationSetupCurrent>
+    <simulationSetups>
+        <entry>
+            <key>default</key>
+            <value>default.xml</value>
+        </entry>
+    </simulationSetups>
     <subFolderEnvSetups>svgEnvSetups</subFolderEnvSetups>
 </project>
