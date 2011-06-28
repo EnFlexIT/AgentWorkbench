@@ -45,21 +45,21 @@ import agentgui.core.application.Application;
 /**
  * This class can be used in order zip or unzip a folder structure.<br><br>
  * Example of the usage for zipping:<br>
- * <blockquote>
+ * <blockquote><code>
  * 		Zipper zipper = new Zipper();<br>
  * 		zipper.setExcludePattern(".svn");<br>
  * 		zipper.setZipFolder(zipFolder);<br>
  *		zipper.setZipSourceFolder(srcFolder);<br>
  *		zipper.doZipFolder();<br>
- * </blockquote>  
+ * </code></blockquote>   
  * <br>
  * Example of the usage for unzipping:<br>
- * <blockquote> 
+ * <blockquote><code> 
  * 		Zipper zipper = new Zipper();<br>
  * 		zipper.setUnzipZipFolder(zipFolder);<br>
  * 		zipper.setUnzipDestinationFolder(destFolder);<br>
  * 		zipper.doUnzipFolder();<br>
- * </blockquote>
+ * </code></blockquote>
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */

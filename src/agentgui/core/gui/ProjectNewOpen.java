@@ -74,7 +74,7 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 		NewProject = NewPro;
 		
 		//--- TreeModel initialisieren --------------------------
-		RootNode = new DefaultMutableTreeNode( "... " + Application.RunInfo.PathProjects(false, false) );
+		RootNode = new DefaultMutableTreeNode( "... " + Application.RunInfo.PathProjects(false) );
 		ProjectTreeModel = new DefaultTreeModel( RootNode );	
 		initialize();
 
@@ -481,7 +481,7 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 			// ----------------------------------------------------
 			// --- Test: Basis-Verzeichnis anlegen ----------------
 			if ( ProError==false ) {
-				String NewDirName = Application.RunInfo.PathProjects(true, false) + ProFolder;
+				String NewDirName = Application.RunInfo.PathProjects(true) + ProFolder;
 				File f = new File(NewDirName);
 				if ( f.isDirectory() ) {
 					ProErrorSrc = "ProFolderDouble";
@@ -548,7 +548,7 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 			}
 			// --- Test, ob die Projektdatei gefunden wurde -------
 			if ( ProError==false ) {				
-				String XMLFileName = Application.RunInfo.PathProjects(true, false) + 
+				String XMLFileName = Application.RunInfo.PathProjects(true) + 
 									 ProFolder + 
 									 Application.RunInfo.AppPathSeparatorString() +
 									 Application.RunInfo.getFileNameProject();

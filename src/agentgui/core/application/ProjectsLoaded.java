@@ -463,7 +463,7 @@ public class ProjectsLoaded {
 		File projectFile = chooser.getSelectedFile();
 		if (projectFile!=null && projectFile.exists()) {
 
-			String destFolder = Application.RunInfo.PathProjects(true, false);
+			String destFolder = Application.RunInfo.PathProjects(true);
 			String zipFolder = projectFile.getAbsolutePath();
 			
 			// --- Import project file as a new project ---
@@ -565,7 +565,7 @@ public class ProjectsLoaded {
 			}
 			
 			// --- Export project file as a new project -------------
-			String srcFolder = Application.RunInfo.PathProjects(true, false) + projectFolder;
+			String srcFolder = Application.RunInfo.PathProjects(true) + projectFolder;
 			String zipFolder = projectFile.getAbsolutePath();
 			
 			Zipper zipper = new Zipper();

@@ -36,6 +36,7 @@ import java.util.HashSet;
 import java.util.Vector;
 
 import agentgui.core.application.Application;
+import agentgui.core.benchmark.BenchmarkMeasurement;
 import agentgui.core.common.ClassLoaderUtil;
 import agentgui.core.environment.EnvironmentPanel;
 import agentgui.core.environment.EnvironmentType;
@@ -45,27 +46,32 @@ import agentgui.graphEnvironment.controller.GraphEnvironmentControllerGUI;
 import agentgui.physical2Denvironment.controller.Physical2DEnvironmentControllerGUI;
 
 /**
+ * This class is for constant values or variables, which can
+ * be accessed or used application wide.<br>
+ * In the Application class the running instance can be accessed 
+ * by using the reference Application.RunInfo. 
  * 
+ * @see Application#RunInfo
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class GlobalInfo {
 
-	// --- Konstanten ------------------------------------------------------- 
+	// --- constant values -------------------------------------------------- 
 	private static String localAppTitle = "Agent.GUI";
-	final private static String localAppVersion = "0.97";
+	private final static String localAppVersion = "0.98";
 	
-	final private static String localAppPathSeparatorString = File.separator;
-	final private static String localAppNewLineString = System.getProperty("line.separator");
-	final private static String localAppNewLineStringReplacer = "<br>";
-	final private static String localPathImageIntern = "/agentgui/core/gui/img/";
+	private final static String localAppPathSeparatorString = File.separator;
+	private final static String localAppNewLineString = System.getProperty("line.separator");
+	private final static String localAppNewLineStringReplacer = "<br>";
+	private final static String localPathImageIntern = "/agentgui/core/gui/img/";
 
+	private final static Color localColorMenuHighLight =  new Color(0,0,192);
+	
 	private boolean localAppUseInternalConsole = false;
 	
-	// --- JADE-Variablen ---------------------------------------------------
+	// --- JADE-Variables ---------------------------------------------------
 	private Integer localeJadeLocalPort = 1099;
-	
-	final private static Color localColorMenuHighLight =  new Color(0,0,192);
 	
 	// --- Variablen --------------------------------------------------------
 	private static Vector<String> localClassPathEntries = new Vector<String>();
@@ -115,14 +121,11 @@ public class GlobalInfo {
 	private String filePropServerMasterDBUser = null;
 	private String filePropServerMasterDBPswd = null;
 	
-	// --- Runtime information ----------------------------------------------
+	// --- Reminder information for file dialogs ----------------------------
 	private File lastSelectedFolder = null; 
 	
-	// ----------------------------------------------------------------------
-	// --- Objekt-Initialisierung -------------------------------------------
-	// ----------------------------------------------------------------------
 	/**
-	 * Constructor of this class
+	 * Constructor of this class. 
 	 */
 	public GlobalInfo() {
 
@@ -209,39 +212,44 @@ public class GlobalInfo {
 		this.knowEnvironmentTypes.add(envType);
 		
 	}
-	// ----------------------------------------------------------------------
 	
-	
-	// ----------------------------------------------------------------------
-	// ----------------------------------------------------------------------
 	/**
-	 * Returns the title/name of the application 
+	 * Returns the title/name of the application
+	 * @return the current application title
 	 */
 	public String getApplicationTitle() {
 		return localAppTitle;
 	};
 	/**
+	 * This method can be used in order to set a new application title.
+	 * For the actual renaming of the Application, use the method in the
+	 * class agentgui.core.Application
+	 * 
 	 * @param newApplicationTitle the Application Title to set
+	 * @see Application#setApplicationTitle(String)
 	 */
 	public void setApplicationTitle(String newApplicationTitle) {
 		GlobalInfo.localAppTitle = newApplicationTitle;
 	}
 	
 	/**
-	 * @return the localappversion
+	 * This method returns the current version number of the application 
+	 * @return the version number of the current application 
 	 */
 	public String AppVersion() {
 		return localAppVersion;
 	}
 	/**
-	 * Here the use of the application internal console can be set
+	 * Here the use of the applications internal console can be set
 	 * @param useInternalConsole 
 	 */
 	public void setAppUseInternalConsole(boolean useInternalConsole) {
 		this.localAppUseInternalConsole = useInternalConsole;
 	}
 	/**
-	 * Returns if the System-Output ('Out' or 'Err') goe's throw this application 
+	 * This method can be used in order to evaluate if the internal 
+	 * applications console is used 
+	 * @return true or false
 	 */
 	public boolean isAppUseInternalConsole() {
 		return localAppUseInternalConsole;
@@ -250,9 +258,12 @@ public class GlobalInfo {
 	// --- Look and Feel -------------
 	// -------------------------------
 	/**
-	 * This method will return the current Look and Feel (LnF) for Java Swing.
-	 * Also the class will be validated. If the class could not be found the 
-	 * method will return null  
+	 * This method will return the current Look and Feel (LnF) for Java Swing.<br>
+	 * Also the class reference will be validated. If the class could not be found the 
+	 * method will return null.
+	 * 
+	 * @return the class reference for the current look and feel 
+	 * or null, if the class could not be found
 	 */
 	public String getAppLnF() {
 		try {
@@ -271,7 +282,8 @@ public class GlobalInfo {
 		localAppLnF = NewLnF;
 	};
 	/**
-	 * @return the ClassPath-Entries of the application
+	 * This method returns the ClassPath-Entries of the application 
+	 * @return the ClassPath-Entries 
 	 */
 	public Vector<String> getClassPathEntries() {
 		return localClassPathEntries;
@@ -291,25 +303,34 @@ public class GlobalInfo {
 	}
 	// -------------------------------
 	/**
-	 * 'IDE' oder 'Executable' (jar-File) 
+	 * This method can be used in order to evaluate how Agent.GUI is currently executed
+	 * @return - 'IDE', if Agent.GUI is executed out of the IDE, where Agent.GUI is developed OR<br>
+	 * - 'Executable', if Agent.GUI is running as executable jar-File
 	 */
 	public String AppExecutedOver() {
 		return localAppExecutedOver;
 	}
 	/**
-	 * Verzeichnistrenner: Win='\' Linux='/'
+	 * Returns the separator String for files like File.separator 
+	 * @return the file separator like '\' for Windows OR '/' for Linux
 	 */
 	public String AppPathSeparatorString() {
 		return localAppPathSeparatorString;
 	}
 	/**
-	 * String for the 'new line' charakter inside of this application
+	 * This method returns the actual String for a new line string
+	 * @return a String that can be used for new lines in text  
 	 */
 	public String AppNewLineString(){
 		return localAppNewLineString;
 	}
 	/**
-	 * String for the 'new line' charakter inside of a text file
+	 * This method will return a substitute String for the new line String.
+	 * It is used, for example, in the dictionary, so that it is possible
+	 * to write text with several lines in a single one.<br>
+	 * Basically, the HTML-tag <<i>br</i>> is used here.
+	 * 
+	 * @return a substitute String for a new line
 	 */
 	public String AppNewLineStringReplacer(){
 		return localAppNewLineStringReplacer;
@@ -317,7 +338,8 @@ public class GlobalInfo {
 
 	// --- Allgemeine Verzeichnisangaben ---------------------
 	/**
-	 * Aktuelles Basisverzeichnis der Anwendung
+	 * This method returns the base path of the application (e. g. 'C:\Java_Workspace\AgentGUI\')
+	 * @return the base path of the application
 	 */
 	public String PathBaseDir( ) {
 		return localBaseDir;
@@ -325,11 +347,18 @@ public class GlobalInfo {
 	/**
 	 * Aktuelles KLassenverzeichnis der Anwendung fuer die IDE-Umgebung
 	 */
+	/**
+	 * This method returns the base path of the application, when Agent.GUI is running
+	 * in its development environment / IDE (e. g. 'C:\Java_Workspace\AgentGUI\bin\')
+	 * @return the binary- or bin- base path of the application
+	 */
 	public String PathBaseDirIDE_BIN( ) {
 		return localBaseDir + localPathAgentGUI + localAppPathSeparatorString;
 	}	
 	/**
-	 * Unterverzeichnis fuer die JADE-Libraries
+	 * This method can be invoked in order to get the path to the JADE libraries (e. g. 'lib\jade\lib').
+	 * @param absolute set true if you want to get the full path to this 
+	 * @return the path to the JADE libraries
 	 */
 	public String PathJade(boolean absolute){
 		if ( absolute == true ) { 
@@ -340,7 +369,9 @@ public class GlobalInfo {
 		}		
 	}
 	/**
-	 * Unterverzeichnis fuer die Batik-Libraries
+	 * This method can be invoked in order to get the path to the BATIK libraries (e. g. 'lib\batik').
+	 * @param absolute set true if you want to get the full path to this 
+	 * @return the path to the BATIK libraries
 	 */
 	public String PathBatik(boolean absolute){
 		if (absolute == true) { 
@@ -351,7 +382,9 @@ public class GlobalInfo {
 		}	
 	}
 	/**
-	 * Unterverzeichnis fuer Eigenschaftsdateien
+	 * This method can be invoked in order to get the path to the property folder 'properties\'.
+	 * @param absolute set true if you want to get the full path to this 
+	 * @return the path reference to the property folder
 	 */
 	public String PathProperty(boolean absolute){
 		if ( absolute == true ) { 
@@ -362,9 +395,11 @@ public class GlobalInfo {
 		}	
 	}
 	/**
-	 * Unterverzeichnis für die Properties-Datei
+	 * This method will return the concrete path to the property file 'agentgui.ini' relatively or absolute
+	 * @param absolute set true if you want to get the full path to this
+	 * @return the path reference to the property file agentgui.ini
 	 */
-	public String getPathConfigFile(boolean absolute) {
+	public String PathConfigFile(boolean absolute) {
 		if (absolute==true) {
 			return PathProperty(true) + localFileProperties;
 		} else {
@@ -372,16 +407,11 @@ public class GlobalInfo {
 		}
 	}
 	/**
-	 * Unterverzeichnis fuer Projekte
+	 * This method will return the path to the project folder ('project\')
+	 * @param absolute set true if you want to get the full path to this
+	 * @return the path to the project folder
 	 */
-	public String PathProjects(boolean absolute, boolean UseImportSpecification){
-
-		if ( UseImportSpecification == true ) {
-			String ImportPath = localPathProjects;
-			ImportPath = ImportPath.replace( localAppPathSeparatorString, "." );
-			ImportPath = ImportPath.replace("src.","");
-			return ImportPath;
-		}
+	public String PathProjects(boolean absolute){
 		if ( absolute == true ) { 
 			return FilePath2Absolute( localPathProjects );
 		}
@@ -391,12 +421,13 @@ public class GlobalInfo {
 	}
 	
 	/**
-	 * Returns Main-Projectfolder, which are located in "./src/mas/projects"
+	 * Returns the list of project folders, which are located in the root project folder
+	 * @return Array of project folders
 	 */
 	public String[] getIDEProjects( ){		
-		// --- Projektverzeichnis nach Unterverzeichnissen durchsuchen --
+		// --- Search for sub folders ---
 		localProjects = null;
-		File maindir = new File( PathProjects( true, false ) ) ;
+		File maindir = new File( this.PathProjects( true ) ) ;
 		File files[] = maindir.listFiles();
 		for (int i = 0; i < files.length; i++) {
 			if (files[i].isDirectory() && !files[i].getName().substring(0, 1).equals(".") ) {
@@ -416,16 +447,19 @@ public class GlobalInfo {
 	}	
 	
 	/**
-	 * Bild-Unterverzeichnis fuer das Projekt
+	 * Returns the path to the internal img-folder of Agent.GUI (agentgui.core.gui.img)
+	 * @return path to the images, which are located in our project
 	 */
 	public String PathImageIntern( ){
 		return localPathImageIntern;
 	}
-	
 
 	/**
-	 * Das Server-Root Verzeichnis 
-	 * @return
+	 * Here the local root folder for the download-server can be get. In this folder 
+	 * sources will be stored, which can be loaded to remote containers in order to 
+	 * add them to the ClassPath.   
+	 * If the folder doesn't exists, it will be created.
+	 * @return Local path to the download server of Agent.GUI ('/AgentGUI/server/')
 	 */
 	public String PathServer(boolean absolute) {
 		
@@ -445,8 +479,10 @@ public class GlobalInfo {
 	}
 	
 	/**
-	 * Verzeichnis zum Download von Projekt-Ressourcen
-	 * @return
+	 * This method returns the folder, where downloaded files, coming from the applications
+	 * web-server (server.client) can be stored locally.
+	 * If the folder doesn't exists, it will be created.
+	 * @return Local path to the folder, where downloads will be saved ('/AgentGUI/download/')
 	 */
 	public String PathDownloads(boolean absolute) {
 		
@@ -465,9 +501,11 @@ public class GlobalInfo {
 		return returnPath;
 	}
 	
-	// --- Allgemeine Dateiangaben ---------------------
 	/**
-	 * Standardname *.jar-Bezeichner dieses Projekts (Default: 'AgentGui.jar') 
+	 * This method can be used in order to get the applications executable 
+	 * jar-file. (by default it is the file 'AgentGui.jar')
+	 * @param absolute set true if you want to get the full path to this
+	 * @return the path to the executable jar file
 	 */
 	public String AppFileRunnableJar(boolean absolute){
 		if ( absolute == true && localFileRunnableJar != null ) { 
@@ -478,7 +516,13 @@ public class GlobalInfo {
 		}	
 	}
 	/**
-	 * Link to the dictionary-file for translation
+	 * This method can be use in order to get the path to one of the dictionary files (Base64: '*.bin' | CSV-version: '*.csv'). 
+	 * 
+	 * @param base64 if set true, the method will return the path to the 
+	 * Base64-encoded dictionary file, otherwise the path to the csv-version of the dictionary 
+	 * 
+	 * @param absolute set true if you want to get the full path to this
+	 * @return path to the designated dictionary file
 	 */
 	public String FileDictionary(boolean base64, boolean absolute ){
 		
@@ -497,14 +541,26 @@ public class GlobalInfo {
 			return fileName;	
 		}
 	}
+	/**
+	 * Returns the file name of the xml-file, which contains the project configuration (file: 'agentgui.xml')
+	 * @return file name of the project configuration (agentgui.xml)
+	 */
 	public String getFileNameProject() {
 		return localFileNameProject;
 	};
+	/**
+	 * This method returns the file suffix for Agent.GUI project files 
+	 * ('agui'), which are used for the project exchange within the application
+	 *  
+	 * @return The file suffix for zipped Agent.GUI projects.
+	 */
 	public String getFileEndProjectZip(){
 		return localFileEndProjectZip;
 	}
 	/**
-	 * @return the localFileProjectOntology
+	 * This method will return the name of the predefined ontology, which can be used in order 
+	 * to merge different ontology's to a single one. ('AgentGUIProjectOntology')
+	 * @return name of the predefined meta ontology   
 	 */
 	public String getFileNameProjectOntology() {
 		return localFileNameProjectOntology;
@@ -514,24 +570,27 @@ public class GlobalInfo {
 	// ---------------------------------------------------------
 	// ---------------------------------------------------------
 	/**
-	 * Macht aus einer relativen Verzeichnisangabe eine 
-	 * Absolute Verzeichnisangabe
+	 * This method will convert relative Agent.GUI paths to absolute paths. 
+	 * (e. g. './AgentGUI/properties/' will be converted to 'D:/MyWorkspace/AgentGUI/properties')    
+	 * @param filePathRelative The relative path to convert
+	 * @return The absolute path of the given relative one 
 	 */
-	private String FilePath2Absolute( String FilePathRelative ){
-		String PathAbsolute = localBaseDir + FilePathRelative;
-		return PathAbsolute;		
+	private String FilePath2Absolute(String filePathRelative){
+		String pathAbsolute = localBaseDir + filePathRelative;
+		return pathAbsolute;		
 	}
 	// ---------------------------------------------------------
 	// ---------------------------------------------------------
 
-	
 	/**
+	 * This method can be used in order to set the port on which JADE is running (by default: 1099)
 	 * @param localeJadeDefaultPort the localeJadeDefaultPort to set
 	 */
 	public void setJadeLocalPort(int localeJadeDefaultPort) {
 		localeJadeLocalPort = localeJadeDefaultPort;
 	}
 	/**
+	 * Returns the port on which JADE will run. 
 	 * @return the localeJadeDefaultPort
 	 */
 	public Integer getJadeLocalPort() {
@@ -539,8 +598,9 @@ public class GlobalInfo {
 	}
 	
 	/**
-	 * This method return the default Platform-Configuration
-	 * @return instance of class 'PlatformJadeConfig'
+	 * This method return the default platform configuration for JADE
+	 * @return instance of class 'PlatformJadeConfig', which holds the configuration of JADE
+	 * @see PlatformJadeConfig
 	 */
 	public PlatformJadeConfig getJadeDefaultPlatformConfig() {
 		
@@ -558,9 +618,11 @@ public class GlobalInfo {
 		return jadeConfig;
 	}
 	/**
-	 * This Method returns the default Jade-Container-Profile
-	 * of the AgentGUI-Application 
-	 * @return the localeJadeDefaultProfile
+	 * This Method returns the default JADE container-profile
+	 * of the AgentGUI-Application
+	 *  
+	 * @return The local JADE default profile
+	 * @see Profile
 	 */
 	public Profile getJadeDefaultProfile() {
 		PlatformJadeConfig jadeConfig = getJadeDefaultPlatformConfig();
@@ -570,6 +632,10 @@ public class GlobalInfo {
 	// ---------------------------------------------------------
 	// --- Laufzeitinformationen zu JADE -----------------------
 	// ---------------------------------------------------------
+	/**
+	 * Returns the JADE version
+	 * @return String, which contains the version of JADE
+	 */
 	public String getJadeVersion(){
 		return jade.core.Runtime.getVersion();
 	}
@@ -577,6 +643,10 @@ public class GlobalInfo {
 	// ---------------------------------------------------------
 	// --- Farbvariablen ---------------------------------------
 	// ---------------------------------------------------------
+	/**
+	 * Due this method the colour for menu highlighting an be get
+	 * @return colour for highlighted menus
+	 */
 	public Color ColorMenuHighLight () {
 		return localColorMenuHighLight;
 	}
@@ -586,14 +656,18 @@ public class GlobalInfo {
 	// --- File-Properties -------------------------------------
 	// ---------------------------------------------------------
 	/**
-	 * @param filePropRunAsServer the filePropRunAsServer to set
+	 * This method can be used in order to configure the current execution 
+	 * of Agent.GUI as an server tool (for 'server.master' or 'server.slave') 
+	 * @param runAsServer The boolean to set
 	 */
 	public void setRunAsServer(boolean runAsServer) {
 		this.filePropRunAsServer = runAsServer;
 		Application.isServer = runAsServer;
 	}
 	/**
-	 * @return the filePropRunAsServer
+	 * Can be accessed in order to find out whether the current execution 
+	 * of Agent.GUI is running as server or as application
+	 * @return true if the application is running in server mode - otherwise false
 	 */
 	public boolean isRunAsServer() {
 		return this.filePropRunAsServer;
@@ -601,39 +675,64 @@ public class GlobalInfo {
 
 	// ---- SciMark 2.0 Benchmark ----------------------------
 	/**
-	 * @return the filePropBenchValue
+	 * Returns the benchmark value of the current execution of Agent.GUI that 
+	 * will be measured at the initial program execution (if required)
+	 * @return The benchmark value, stored in the file properties
+	 * @see BenchmarkMeasurement
+	 * @see FileProperties
 	 */
 	public Float getBenchValue() {
 		return filePropBenchValue;
 	}
 	/**
-	 * @param filePropBenchValue the filePropBenchValue to set
+	 * Can be used in order to set the benchmark value in the file properties
+	 * @param benchValue The result of the initial benchmark
+	 * @see BenchmarkMeasurement
+	 * @see FileProperties
 	 */
 	public void setBenchValue(float benchValue) {
 		this.filePropBenchValue = benchValue;
 	}
 
 	/**
+	 * Here the reminder value can be get, which stores the computer/host name on which Agent.GUI 
+	 * was executed the last time (evaluated due: <code>InetAddress.getLocalHost().getCanonicalHostName())</code>.<br>
+	 * This can prevent the execution of the benchmark measurement, if the application will be 
+	 * executed on the same machine next time.  
+	 *   
 	 * @return the filePropBenchExecOn
+	 * @see BenchmarkMeasurement
+	 * @see FileProperties
 	 */
 	public String getBenchExecOn() {
 		return filePropBenchExecOn;
 	}
 	/**
-	 * @param filePropBenchExecOn the filePropBenchExecOn to set
+	 * This method can be used in order to set the reminder value for the computer/host name on which
+	 * the benchmark test was executed the last time (With Agent.GUI evaluated due: <code>InetAddress.getLocalHost().getCanonicalHostName()</code>)
+	 *  
+	 * @param benchExecOn the filePropBenchExecOn to set
+	 * @see BenchmarkMeasurement
+	 * @see FileProperties
 	 */
 	public void setBenchExecOn(String benchExecOn) {
 		this.filePropBenchExecOn = benchExecOn;
 	}
 
 	/**
+	 * Returns if the file properties are configured to always skip the benchmark
 	 * @return the filePropBenchAllwaySkip
+	 * @see BenchmarkMeasurement
+	 * @see FileProperties
 	 */
 	public boolean isBenchAllwaysSkip() {
 		return filePropBenchAllwaysSkip;
 	}
 	/**
-	 * @param filePropBenchAllwaySkip the filePropBenchAllwaySkip to set
+	 * Can be used in order to set the file properties to always skip the benchmark
+	 * @param benchAllwaySkip the filePropBenchAllwaySkip to set
+	 * @see BenchmarkMeasurement
+	 * @see FileProperties
 	 */
 	public void setBenchAllwaysSkip(boolean benchAllwaySkip) {
 		this.filePropBenchAllwaysSkip = benchAllwaySkip;
@@ -641,27 +740,39 @@ public class GlobalInfo {
 
 	// ---- Currently used language ------------------------------------
 	/**
-	 * @param filePropLanguage the filePropLanguage to set
+	 * This method can be used in order to set the current application language
+	 * to the property file. 
+	 * @param currentLanguage the filePropLanguage to set
+	 * @see BenchmarkMeasurement
+	 * @see FileProperties
 	 */
 	public void setLanguage(String currentLanguage) {
 		this.filePropLanguage = currentLanguage;
 	}
 	/**
+	 * Returns the currently configured language of the file properties
 	 * @return the filePropLanguage
+	 * @see BenchmarkMeasurement
+	 * @see FileProperties
 	 */
 	public String getLanguage() {
 		return filePropLanguage;
 	}
 
-
 	/**
+	 * This method can be used in order to define the predefined environment types of Agent.GUI
 	 * @param knowEnvironmentTypes the knowEnvironmentTypes to set
+	 * @see EnvironmentType
+	 * @see EnvironmentTypes
 	 */
 	public void setKnowEnvironmentTypes(EnvironmentTypes knowEnvironmentTypes) {
 		this.knowEnvironmentTypes = knowEnvironmentTypes;
 	}
 	/**
+	 * This method returns all EnvironmentTypes known by Agent.GUI 
 	 * @return the knowEnvironmentTypes
+	 * @see EnvironmentType
+	 * @see EnvironmentTypes
 	 */
 	public EnvironmentTypes getKnowEnvironmentTypes() {
 		return knowEnvironmentTypes;
@@ -670,98 +781,136 @@ public class GlobalInfo {
 
 	// ---- Connection to the Master-Server ----------------------------
 	/**
-	 * @param filePropAutoRun the filePropAutoRun to set
+	 * Can be used in order to start the active server mode immediately after the program execution.
+	 * This applies only if the current execution mode is set to server (server.master or server.slave)
+	 * @param serverAutoRun the filePropAutoRun to set
+	 * @see FileProperties
 	 */
 	public void setServerAutoRun(boolean serverAutoRun) {
 		this.filePropServerAutoRun = serverAutoRun;
 	}
 	/**
+	 * This method returns the current setting for the file property '10_AUTOSTART', which is 
+	 * used for whether or not to start the server execution mode immediately after the program
+	 * execution. This applies only if the current execution mode is set to server (server.master 
+	 * or server.slave)
+	 * 
 	 * @return the filePropAutoRun
+	 * @see FileProperties
+	 * @see GlobalInfo#setServerAutoRun(boolean)
 	 */
 	public boolean isServerAutoRun() {
 		return this.filePropServerAutoRun;
 	}
 	/**
-	 * @param filePropMasterURL the filePropMasterURL to set
+	 * Here the URLS or IP of the server.master can be set 
+	 * @param serverMasterURL the filePropMasterURL to set
+	 * @see FileProperties
 	 */
 	public void setServerMasterURL(String serverMasterURL) {
 		this.filePropServerMasterURL = serverMasterURL;
 	}
 	/**
+	 * Here the URL or IP of the server.master can be get
 	 * @return the filePropMasterURL
+	 * @see FileProperties
 	 */
 	public String getServerMasterURL() {
 		return this.filePropServerMasterURL;
 	}
 	/**
-	 * @param filePropMasterPort the filePropMasterPort to set
+	 * Here the port for the server.master can be set
+	 * @param serverMasterPort the filePropMasterPort to set
+	 * @see FileProperties
 	 */
 	public void setServerMasterPort(Integer serverMasterPort) {
 		this.filePropServerMasterPort = serverMasterPort;
 	}
 	/**
-	 * @return the filePropMasterPort
+	 * This method returns the port on which s´the server.master can be reached 
+	 * @return The port of the server.master
+	 * @see FileProperties
 	 */
 	public Integer getServerMasterPort() {
 		return this.filePropServerMasterPort;
 	}
 	/**
-	 * @param filePropMasterPort the filePropMasterPort to set
+	 * This method can be used in order to set the MTP port of the server.master
+	 * @param serverMasterPort4MTP the filePropMasterPort to set
+	 * @see FileProperties
 	 */
-	public void setServerMasterPort4MTP(Integer serverMasterPort) {
-		this.filePropServerMasterPort4MTP = serverMasterPort;
+	public void setServerMasterPort4MTP(Integer serverMasterPort4MTP) {
+		this.filePropServerMasterPort4MTP = serverMasterPort4MTP;
 	}
 	/**
+	 * Returns the MTP port of the server.master 
 	 * @return the filePropMasterPort
+	 * @see FileProperties
 	 */
 	public Integer getServerMasterPort4MTP() {
 		return this.filePropServerMasterPort4MTP;
 	}
 
 	/**
-	 * @param filePropServerMasterDBHost the filePropServerMasterDBHost to set
+	 * Database property for the server.nmaster
+	 * @param newDBHost the filePropServerMasterDBHost to set
+	 * @see FileProperties
 	 */
 	public void setServerMasterDBHost(String newDBHost) {
 		this.filePropServerMasterDBHost = newDBHost;
 	}
 	/**
+	 * Database property for the server.nmaster 
 	 * @return the filePropServerMasterDBHost
+	 * @see FileProperties
 	 */
 	public String getServerMasterDBHost() {
 		return filePropServerMasterDBHost;
 	}
 	/**
-	 * @param filePropServerMasterDBName the filePropServerMasterDBName to set
+	 * Database property for the server.nmaster
+	 * @param newDBName the filePropServerMasterDBName to set
+	 * @see FileProperties
 	 */
 	public void setServerMasterDBName(String newDBName) {
 		this.filePropServerMasterDBName = newDBName;
 	}
 	/**
+	 * Database property for the server.nmaster
 	 * @return the filePropServerMasterDBName
+	 * @see FileProperties
 	 */
 	public String getServerMasterDBName() {
 		return filePropServerMasterDBName;
 	}
 	/**
-	 * @param filePropServerMasterDBUser the filePropServerMasterDBUser to set
+	 * Database property for the server.nmaster
+	 * @param newDBUser the filePropServerMasterDBUser to set
+	 * @see FileProperties
 	 */
 	public void setServerMasterDBUser(String newDBUser) {
 		this.filePropServerMasterDBUser = newDBUser;
 	}
 	/**
+	 * Database property for the server.nmaster
 	 * @return the filePropServerMasterDBUser
+	 * @see FileProperties
 	 */
 	public String getServerMasterDBUser() {
 		return filePropServerMasterDBUser;
 	}
 	/**
-	 * @param filePropServerMasterDBPswd the filePropServerMasterDBPswd to set
+	 * Database property for the server.nmaster
+	 * @param newDBPswd the filePropServerMasterDBPswd to set
+	 * @see FileProperties
 	 */
 	public void setServerMasterDBPswd(String newDBPswd) {
 		this.filePropServerMasterDBPswd = newDBPswd;
 	}
 	/**
+	 * Database property for the server.nmaster
 	 * @return the filePropServerMasterDBPswd
+	 * @see FileProperties
 	 */
 	public String getServerMasterDBPswd() {
 		return filePropServerMasterDBPswd;
@@ -769,12 +918,15 @@ public class GlobalInfo {
 
 
 	/**
+	 * This method can be used in order to remind the last folder 
+	 * in which a file was selected (e. g. while using a JFileChooser) 
 	 * @param lastSelectedFolder the lastSelectedFolder to set
 	 */
 	public void setLastSelectedFolder(File lastSelectedFolder) {
 		this.lastSelectedFolder = lastSelectedFolder;
 	}
 	/**
+	 * Returns the reminder value of the last selected folder as File object 
 	 * @return the lastSelectedFolder
 	 */
 	public File getLastSelectedFolder() {
@@ -784,6 +936,7 @@ public class GlobalInfo {
 		return lastSelectedFolder;	
 	}
 	/**
+	 * Returns the reminder value of the last selected folder as String
 	 * @return the lastSelectedFolder as String
 	 */
 	public String getLastSelectedFolderAsString() {

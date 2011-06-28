@@ -662,7 +662,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	@XmlTransient
 	public void setProjectFolder(String newProjectFolder) {
 		projectFolder = newProjectFolder;
-		projectFolderFullPath = Application.RunInfo.PathProjects(true, false) + projectFolder + Application.RunInfo.AppPathSeparatorString();
+		projectFolderFullPath = Application.RunInfo.PathProjects(true) + projectFolder + Application.RunInfo.AppPathSeparatorString();
 		setChanged();
 		notifyObservers(CHANGED_ProjectFolder);
 	}

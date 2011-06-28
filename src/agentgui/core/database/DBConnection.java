@@ -1,3 +1,30 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.dawis.wiwi.uni-due.de/ 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.core.database;
 
 import java.awt.Toolkit;
@@ -16,15 +43,29 @@ import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.ResultSet;
 import com.mysql.jdbc.Statement;
 
-
+/**
+ * This class is used within the execution mode as server.master for the
+ * background system of Agent.GUI.<br>
+ * In this mode the server.master agent will manage all server.slaves
+ * and server.clients in a database table. 
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ */
 public class DBConnection {
 	
 	private String newLine = Application.RunInfo.AppNewLineString();
 	private String sql = null;
 		
-	public boolean hasErrors = false;
-	
 	private Connection connection = null;
+	
+	/**
+	 * Flag that shows if errors have occurred 
+	 */
+	public boolean hasErrors = false;
+	/**
+	 * The Error object of this class
+	 * @see Error
+	 */
 	public Error dbError = new Error();
 	
 	private String dbHost = null;
@@ -33,7 +74,7 @@ public class DBConnection {
 	private String dbPswd = null;
 	
 	/**
-	 * Constructor of this class
+	 * Constructor of this class. Try's to connect to or build the database for the server.master agent
 	 */
 	public DBConnection() {
 		
@@ -52,8 +93,8 @@ public class DBConnection {
 	}
 
 	/**
-	 * Creates the required Database for the server.master-Agent
-	 * @return
+	 * Creates the required Database for the server.master agent
+	 * @return True, if the database creation was successful
 	 */
 	private boolean dbCreate(){
 		
@@ -129,7 +170,7 @@ public class DBConnection {
 	
 	/**
 	 * Checks if the required database is available
-	 * @return
+	 * @return True, if the database is available
 	 */
 	private boolean dbIsAvailable() {
 
@@ -159,7 +200,7 @@ public class DBConnection {
 	
 	/**
 	 * Does the setCatalog-method for the current connection
-	 * @param database
+	 * @param database on which we would like to connect
 	 */
 	private void setConnection2Database(String database) {
 		
@@ -177,24 +218,24 @@ public class DBConnection {
 	}
 
 	/**
-	 * This Method executes a SQL-Statement (Create, Insert, Update)in
+	 * This Method executes a SQL-Statement (Create, Insert, Update) in
 	 * the database and returns true if this was successful 
-	 * @param sqlStmt
-	 * @return
+	 * @param sqlStatement the SQL-Statement to execute
+	 * @return True, if the execution was successful
 	 */
-	public boolean getSqlExecuteUpdate(String sqlStmt) {
+	public boolean getSqlExecuteUpdate(String sqlStatement) {
 		
 		Statement state = getNewStatement();
 		if (state!=null) {
 			try {
-				state.executeUpdate(sqlStmt);
+				state.executeUpdate(sqlStatement);
 				return true;
 			} catch (SQLException e) {
 				//e.printStackTrace();
 				String msg = e.getLocalizedMessage() + newLine;
-				msg += sqlStmt;
+				msg += sqlStatement;
 				this.dbError.setText(msg);
-				this.dbError.put2Clipboard(sqlStmt);
+				this.dbError.put2Clipboard(sqlStatement);
 				this.dbError.setErrNumber( e.getErrorCode() );
 				this.dbError.setHead( "Fehler bei der Ausführung von 'executeUpdate'!" );
 				this.dbError.setErr(true);
@@ -203,11 +244,10 @@ public class DBConnection {
 		}
 		return false;
 	}
-	
 	/**
 	 * This method returns the number of rows from a ResultSet-Object
 	 * @param rs
-	 * @return
+	 * @return Number of rows from a result set, after SQL execution 
 	 */
 	public int getRowCount(ResultSet rs){
         int numResults = 0;
@@ -270,9 +310,9 @@ public class DBConnection {
 	}
 	
 	/**
-	 * This method initializes the Connection to the Database-Server
+	 * This method initialises the connection to the Database-Server
 	 * defined in the Application-Options
-	 * @return
+	 * @return True, if the connection was established successfully 
 	 */
 	private boolean connect() {
 		
@@ -345,7 +385,9 @@ public class DBConnection {
 	// --- Start Sub-Class ----------
 	// ------------------------------
 	/**
-	 * This Sub-Class handels the Errors which ocur during the SQL-Interactions 
+	 * This inner class handles the Errors which can occur during the SQL-Interactions
+	 * 
+	 * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
 	 */
 	public class Error {
 		
@@ -356,6 +398,9 @@ public class DBConnection {
 		
 		private String msg = "";
 		
+		/**
+		 * Constructor of this class 
+		 */
 		public Error () {
 			//------
 		}
@@ -380,7 +425,8 @@ public class DBConnection {
 			errHead = Language.translate(errHead);
 		}
 		/**
-		 * shows the current Error-Message an OptionPane-MessageDialog
+		 * Shows the current Error-Message on an OptionPane-MessageDialog.
+		 * Afterwards, the error will be reseted
 		 */
 		public void show() {
 			this.setMessage();
@@ -388,8 +434,8 @@ public class DBConnection {
 			this.resetError();
 		}
 		/**
-		 * shows the current Message and returns the User-Answer
-		 * @return int
+		 * Shows the current message, will ask the user and returns the User-Answer
+		 * @return Answer of the user, coming from a JOptionPane. 
 		 */
 		public int showQuestion() {
 			this.setMessage();
@@ -398,7 +444,7 @@ public class DBConnection {
 			return answer;			
 		}	
 		/**
-		 * Thie Method resets the current Err-Object to a non-Error State
+		 * This Method resets the current Err-Object to a non-Error State
 		 */
 		private void resetError(){
 			errNumber = 0;
@@ -408,7 +454,7 @@ public class DBConnection {
 			msg = "";
 		}
 		/**
-		 * Here a Error-Numer (for SQL) can be set
+		 * Here a error-number (for SQL) can be set
 		 * @param newErrNumber
 		 */
 		public void setErrNumber(Integer newErrNumber) {
@@ -436,17 +482,17 @@ public class DBConnection {
 			this.err = err;
 		}
 		/**
-		 * This method return, if there is an Error or Not
+		 * This method returns, if there is an error or not
 		 * @return boolean
 		 */
 		public boolean isErr() {
 			return err;
 		}
 		/**
-		 * This method puts the value of 'toClipboard' to the Clipboard
+		 * This method puts the value of 'toClipboard' to the clipboard
 		 * In case of an SQL-Error, the SQL-Statement will be placed in
-		 * such a way and can be used in an external application.
-		 * @param toClipboard
+		 * such a way and can be used in an external application as well.
+		 * @param toClipboard String which will be placed in the clipboard
 		 */
 		public void put2Clipboard(String toClipboard) {
 			StringSelection data = new StringSelection(toClipboard);
@@ -459,7 +505,7 @@ public class DBConnection {
 		 * of the Text (shown in the JOptionpane) to a maximum
 		 * width of 100 characters by adding line breaks. 
 		 * @param currText
-		 * @return
+		 * @return formated String with line breaks
 		 */
 		private String formatText(String currText) {
 			
@@ -485,7 +531,9 @@ public class DBConnection {
 	
 	
 	/**
-	 * This method converts an DB-Integer to a Java-boolean
+	 * This method converts an DB-Integer to a Java-boolean 
+	 * @param intValue
+	 * @return False, if the integer value is equal 0 - otherwise true
 	 */
 	public boolean dbInteger2Bool(Integer intValue) {
 		if (intValue.equals(0)) {
@@ -497,7 +545,7 @@ public class DBConnection {
 	/**
 	 * This method converts an DB-boolean to an Java-Integer
 	 * @param booleanValue
-	 * @return
+	 * @return 0, if the boolean is true - otherwise -1
 	 */
 	public Integer dbBool2Integer(boolean booleanValue) {
 		if (booleanValue==true) {

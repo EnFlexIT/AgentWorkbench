@@ -549,7 +549,7 @@ public class Application {
 	}
 	
 	/**
-	 * This method can be used in order to change the application title 
+	 * This method can be used in order to change the application title during runtime
 	 * @param newApplicationTitle sets a new application title/name 
 	 */
 	public static void setApplicationTitle(String newApplicationTitle) {

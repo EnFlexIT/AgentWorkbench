@@ -42,7 +42,13 @@ import java.util.Vector;
 import agentgui.core.application.Application;
 
 /**
- * This class manages the 
+ * This class manages the properties that are located in the
+ * file /AgentGUI/properties/agentgui.ini.
+ * In the Application class the running instance can be accessed 
+ * by accessing the reference Application.Properties.
+ * 
+ * @see Application#Properties
+ * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class FileProperties extends Properties {
@@ -51,26 +57,26 @@ public class FileProperties extends Properties {
 	
 	private GlobalInfo Global = Application.RunInfo;
 	
-	private String configFile = Global.getPathConfigFile(true);
+	private String configFile = Global.PathConfigFile(true);
 	private String configFileDefaultComment = "";
-	
-	public final String DEF_RUNAS = "01_RUNAS";
-	
-	public final String DEF_BENCH_VALUE = "02_BENCH_VALUE";
-	public final String DEF_BENCH_EXEC_ON = "03_BENCH_EXEC_ON";
-	public final String DEF_BENCH_SKIP_ALLWAYS = "04_BENCH_SKIP_ALLWAYS";
 
-	public final String DEF_LANGUAGE = "05_LANGUAGE";
+	private final String DEF_RUNAS = "01_RUNAS";
 	
-	public final String DEF_AUTOSTART = "10_AUTOSTART";
-	public final String DEF_MASTER_URL = "11_MASTER_URL";
-	public final String DEF_MASTER_PORT = "12_MASTER_PORT";
-	public final String DEF_MASTER_PORT4MTP = "13_MASTER_PORT4MTP";
+	private final String DEF_BENCH_VALUE = "02_BENCH_VALUE";
+	private final String DEF_BENCH_EXEC_ON = "03_BENCH_EXEC_ON";
+	private final String DEF_BENCH_SKIP_ALLWAYS = "04_BENCH_SKIP_ALLWAYS";
+
+	private final String DEF_LANGUAGE = "05_LANGUAGE";
 	
-	public final String DEF_MASTER_DB_HOST = "20_MASTER_DB_HOST";
-	public final String DEF_MASTER_DB_NAME = "21_MASTER_DB_NAME";
-	public final String DEF_MASTER_DB_USER = "22_MASTER_DB_USER";
-	public final String DEF_MASTER_DB_PSWD = "23_MASTER_DB_PSWD";
+	private final String DEF_AUTOSTART = "10_AUTOSTART";
+	private final String DEF_MASTER_URL = "11_MASTER_URL";
+	private final String DEF_MASTER_PORT = "12_MASTER_PORT";
+	private final String DEF_MASTER_PORT4MTP = "13_MASTER_PORT4MTP";
+	
+	private final String DEF_MASTER_DB_HOST = "20_MASTER_DB_HOST";
+	private final String DEF_MASTER_DB_NAME = "21_MASTER_DB_NAME";
+	private final String DEF_MASTER_DB_USER = "22_MASTER_DB_USER";
+	private final String DEF_MASTER_DB_PSWD = "23_MASTER_DB_PSWD";
 	
 	private String[] mandantoryProps = {this.DEF_RUNAS,
 										this.DEF_BENCH_VALUE,
@@ -84,7 +90,7 @@ public class FileProperties extends Properties {
 										};
 	
 	/**
-	 * Default Constructor of this class. Uses the Default(!) config-file
+	 * Default constructor of this class. Will use the default config-file 'agentgui.xml'
 	 */
 	public FileProperties() {
 		this.initialize();
@@ -92,15 +98,7 @@ public class FileProperties extends Properties {
 //		println4EnvProps();
 	}
 	/**
-	 * Constructor of this class, for an alternatively config-file
-	 */
-	public FileProperties( String fileName ) {
-		this.configFile = fileName;
-		this.initialize();
-	}
-	
-	/**
-	 * initialize the instance of this class
+	 * Initialises the instance of this class
 	 */
 	private void initialize() {
 
@@ -134,7 +132,9 @@ public class FileProperties extends Properties {
 	}
 	
 	/**
-	 * Overrides the super-method to sort the entries, called by the store method
+	 * Overrides the super-method in order to sort the entries, when 
+	 * the store-method will be invoked during the save()-method is
+	 * invoked.
 	 */
 	public synchronized Enumeration<Object> keys() {
 		Enumeration<Object> keysEnum = super.keys();
@@ -153,7 +153,7 @@ public class FileProperties extends Properties {
 	
 	/**
 	 * This method sets the values from the config-file to the
-	 * Runtime Variables in class Global
+	 * Runtime Variables in class Global ('Application.RunInfo')
 	 */
 	private void setConfig2Global() {
 		
@@ -260,8 +260,8 @@ public class FileProperties extends Properties {
 	}
 
 	/**
-	 * This method sets the values from the Runtime Variables 
-	 * in class Global ot the config-file 
+	 * This method sets the values from the Runtime Variables in class Global ('Application.RunInfo')
+	 * to this property-file / config-file / 'agentgui.xml' 
 	 */
 	private void setGlobal2Config() {
 		
@@ -342,7 +342,7 @@ public class FileProperties extends Properties {
 	}	
 	
 	/**
-	 * This method sets the mandantory properties to the config-file 
+	 * This method sets the mandatory properties with default values to this properties 
 	 */
 	private void setDefaultConfigValues() {
 		for (int i = 0; i < mandantoryProps.length; i++) {
@@ -362,8 +362,8 @@ public class FileProperties extends Properties {
 	}
 
 	/**
-	 * This method check if some mandantory properties in the
-	 * the config-file are available. If not they will be added. 
+	 * This method checks if some mandatory properties in the
+	 * the config-file are available. If not, they will be added. 
 	 */
 	private void checkDefaultConfigValues() {
 		
@@ -391,21 +391,20 @@ public class FileProperties extends Properties {
 	}
 	
 	/**
-	 * Set's the default comment for the Local configFile 'config.ini'.
+	 * This method will set the default comments to the property file.
 	 * This text is hard coded !
 	 */
 	private void setDefaultComment() {
 
 		String defaultComment = "";		
 		defaultComment = defaultComment + " Configuration of " + Global.getApplicationTitle() + " (Version: " + Global.AppVersion() + ")\n"; 
-		defaultComment = defaultComment + " by Christian Derksen - DAWIS - University Duisburg-Essen\n";
+		defaultComment = defaultComment + " by Christian Derksen - DAWIS - ICB - University Duisburg-Essen\n";
 		defaultComment = defaultComment + " Email: christian.derksen@icb.uni-due.de\n";
 		configFileDefaultComment = defaultComment;
 	}
 	
 	/**
-	 * This method saves the current state of the 
-	 * configuration to the predetermined file   
+	 * This method saves the current settings to the property file
 	 */
 	public void save() {
 		// --- getting the current values of the mandantory variables ---
@@ -421,7 +420,7 @@ public class FileProperties extends Properties {
 	}
 	
 	/**
-	 * This methd prints out every available value of the system properties
+	 * This method prints out every available value of the system properties
 	 */
 	public void println4SysProps() {
 
@@ -438,7 +437,7 @@ public class FileProperties extends Properties {
 	}
 
 	/**
-	 * This methd prints out every available value of the system environment
+	 * This method prints out every available value of the system environment
 	 */
 	public void println4EnvProps() {
 		
