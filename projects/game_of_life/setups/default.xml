@@ -6,8 +6,8 @@
             <agentClassReference>game_of_life.SimService.agents.SimulationManager</agentClassReference>
             <startAsName>SiMa</startAsName>
             <startArguments>
-                <argument>PFNpbXBsZUludGVnZXIgSW50ZWdlclZhbHVlPSIwIi8+Cg==</argument>
-                <argument>PFNpbXBsZUludGVnZXIgSW50ZWdlclZhbHVlPSIwIi8+Cg==</argument>
+                <argument>PFNpbXBsZV9JbnRlZ2VyIEludGVnZXJWYWx1ZT0iMTAiLz4K</argument>
+                <argument>PFNpbXBsZV9JbnRlZ2VyIEludGVnZXJWYWx1ZT0iMjAiLz4K</argument>
             </startArguments>
         </agent>
         <agent>

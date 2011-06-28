@@ -10,7 +10,7 @@
     <agentConfiguration>
         <entry>
             <key>game_of_life.SimService.agents.SimulationManager</key>
-            <value>[Height] agentgui.ontology.Simple_Integer|[Width] agentgui.ontology.Simple_Integer</value>
+            <value>[Width] agentgui.ontology.Simple_Integer|[Height] agentgui.ontology.Simple_Integer</value>
         </entry>
     </agentConfiguration>
     <jadeConfiguration>
