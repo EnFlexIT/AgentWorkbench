@@ -422,20 +422,25 @@ de;Übersetzen;Translate
 de;Übersetzter Text;Text translated
 de;Übersetzung speichern (STRG+S);Save translation (CTRL + S)
 de;Überspringen;Skip
-en;;Add new component;;;
-en;;Clear graph;;;
-en;;Click;;;
-en;;Import Graph from file;;;
-en;;Merge two nodes;;;
-en;;Options;;;
-en;;Remove selected component;;;
-en;;Right click a valid vertex first;;;
-en;;Search Components;;;
-en;;Select Network Component to Add;;;
-en;;Select a vertex to merge;;;
-en;;Select one vertex;;;
-en;;Split the node into two nodes;;;
-en;;Switch to Picking mode;;;
-en;;Switch to Transforming mode;;;
-en;;Use Shift and Right click two vertices;;;
-en;;Warning;;;
+en;Ausgewählte Komponente entfernen;Remove selected component;;;
+en;Auswahl Netzwerk-Komonente!;Select Network Component to Add;;;
+en;Bild;Image;;;
+en;Bitte wählen Sie einen Knoten.;Select one vertex;;;
+en;Bitte wählen Sie zuerst einen Knoten mit einem Rechtsklick aus!;Right click a valid vertex first;;;
+en;Eigenschaften bearbeiten;Edit Properties;;;
+en;Graph importieren;Import Graph from file;;;
+en;Graph löschen;Clear graph;;;
+en;Halten Sie die Umschalttaste gedrückt und klicken mit der rechten Maustaste auf  zwei Knoten;Use Shift and Right click two vertices;;;
+en;Klicken;Click;;;
+en;Knoten verbinden;Merge two nodes;;;
+en;Komponente hinzufügen;Add component;;;
+en;Komponente hinzufügen;Add new component;;;
+en;Komponente löschen;Delete Component;;;
+en;Komponentensuche;Search Components;;;
+en;Optionen;Options;;;
+en;Umschalten auf Picking-Modus;Switch to Picking mode;;;
+en;Unschalten auf Transorming-Modus;Switch to Transforming mode;;;
+en;Verbindungsknoten in zwei Knoten aufteilen;Split the node into two nodes;;;
+en;Verbindungsknoten trennen;Split Node;;;
+en;Warnung;Warning;;;
+en;Wählen Sie einen Knoten, um diese zu verbinden;Select a vertex to merge;;;
