@@ -23,7 +23,7 @@ import java.awt.Insets;
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
  *
  */
-public class ComponentSettingsDialog extends JDialog implements ActionListener{
+public class OntologySettingsDialog extends JDialog implements ActionListener{
 
 	/**
 	 * Generated serialVersionUID
@@ -63,7 +63,7 @@ public class ComponentSettingsDialog extends JDialog implements ActionListener{
 	 * @param parentGUI The GraphEnvironmentControllerGUI that opened the dialog
 	 * @param element The GraphElement containing the ontology object
 	 */
-	public ComponentSettingsDialog(Project project, GraphEnvironmentControllerGUI parentGUI, Object element){
+	public OntologySettingsDialog(Project project, GraphEnvironmentControllerGUI parentGUI, Object element){
 		super(Application.MainWindow, Dialog.ModalityType.APPLICATION_MODAL);
 		this.project = project;
 		this.parentGUI = parentGUI;

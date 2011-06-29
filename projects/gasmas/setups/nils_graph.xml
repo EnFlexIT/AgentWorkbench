@@ -6,8 +6,7 @@
             <agentClassReference>gasmas.agents.CompressorAgent</agentClassReference>
             <startAsName>CoAg</startAsName>
             <startArguments>
-                <argument>PENvbXByZXNzb3IgaWQ9InVnamtoZ3VoemciPgoJPHBvc2l0aW9uMT4KCQk8UHJvcGFnYXRpb25Qb2ludCBnZW9aPSIwLjBGIiBkaWFtZXRlcj0iMC4wRiIgYXRQYXJlbnRMZW5ndGhQb3M9IjAuMEYiIGdlb1g9IjAuMEYiIGdlb1k9IjAuMEYiLz4KCTwvcG9zaXRpb24xPgoJPHBvc2l0aW9uMj4KCQk8UHJvcGFnYXRpb25Qb2ludCBnZW9aPSIwLjBGIiBkaWFtZXRlcj0iMC4wRiIgYXRQYXJlbnRMZW5ndGhQb3M9IjAuMEYiIGdlb1g9IjAuMEYiIGdlb1k9IjAuMEYiLz4KCTwvcG9zaXRpb24yPgo8L0NvbXByZXNzb3I+Cg==</argument>
-                <argument>PE9TSW5mbyBvc192ZXJzaW9uPSIiIG9zX25hbWU9IiIgb3NfYXJjaD0iIi8+Cg==</argument>
+                <argument>PENvbXByZXNzb3IgSUQ9IiIvPgo=</argument>
             </startArguments>
         </agent>
         <agent>
@@ -82,21 +81,21 @@
             </value>
         </entry>
         <entry>
-            <key>pipe</key>
-            <value>
-                <agentClass>gasmas.agents.PipeAgent</agentClass>
-                <color>-6711040</color>
-                <edgeImage>/gasmas/img/MBLoadMonitor.png</edgeImage>
-                <graphPrototype>agentgui.graphEnvironment.prototypes.SimpleGraphElement</graphPrototype>
-            </value>
-        </entry>
-        <entry>
             <key>exit</key>
             <value>
                 <agentClass>gasmas.agents.ExitAgent</agentClass>
                 <color>-16751104</color>
                 <edgeImage>/gasmas/img/MBLoadStopRecord.png</edgeImage>
                 <graphPrototype>agentgui.graphEnvironment.prototypes.DirectedSimpleGraphElement</graphPrototype>
+            </value>
+        </entry>
+        <entry>
+            <key>pipe</key>
+            <value>
+                <agentClass>gasmas.agents.PipeAgent</agentClass>
+                <color>-6711040</color>
+                <edgeImage>/gasmas/img/MBLoadMonitor.png</edgeImage>
+                <graphPrototype>agentgui.graphEnvironment.prototypes.SimpleGraphElement</graphPrototype>
             </value>
         </entry>
         <entry>

@@ -121,8 +121,9 @@ public class AgentConfiguration extends Hashtable<String, String> {
 	/**
 	 * This method allows to mask an ontology-class-reference with a different name or identifier 
 	 * 
-	 * @param agentClassReference
-	 * @param ontoClassReference
+	 * @param agentClassReference The reference to the agent
+	 * @param ontoClassReferenceIndex The index of the start argument we're working on
+	 * @param newStringMask The new identifier string for the start argument 
 	 */
 	public void setReferenceMask(String agentClassReference, int ontoClassReferenceIndex, String newStringMask) {
 		if ( agentClassReference != null ){

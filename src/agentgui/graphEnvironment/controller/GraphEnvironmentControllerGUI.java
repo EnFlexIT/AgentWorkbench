@@ -77,6 +77,8 @@ import agentgui.graphEnvironment.networkModel.NetworkComponent;
 import agentgui.graphEnvironment.networkModel.NetworkModel;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.EdgeType;
+import java.awt.Insets;
+import java.awt.Font;
 /**
  * The GUI for a GraphEnvironmentController.
  * This contains a pane showing the NetworkComponents table and the BasicGraphGUI.
@@ -122,7 +124,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	/**
 	 * The Dialog for setting the component types
 	 */
-	private ClassSelectionDialog classSelectorDialog = null;  //  @jve:decl-index=0:visual-constraint="333,23"
+	private ComponentTypeDialog classSelectorDialog = null;  //  @jve:decl-index=0:visual-constraint="333,23"
 	
 	/**
 	 * The Dialog for adding a new network component to the graph 
@@ -177,16 +179,21 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 			gridBagConstraints11.gridy = 1;
 			gridBagConstraints11.weightx = 0.5;
 			gridBagConstraints11.gridwidth = 1;
+			gridBagConstraints11.insets = new Insets(0, 10, 0, 5);
 			gridBagConstraints11.gridx = 0;
 			GridBagConstraints gridBagConstraints7 = new GridBagConstraints();
 			gridBagConstraints7.gridx = 0;
+			gridBagConstraints7.insets = new Insets(5, 10, 5, 0);
 			gridBagConstraints7.gridy = 3;
 			GridBagConstraints gridBagConstraints6 = new GridBagConstraints();
 			gridBagConstraints6.gridx = 0;
 			gridBagConstraints6.anchor = GridBagConstraints.WEST;
+			gridBagConstraints6.insets = new Insets(0, 15, 0, 0);
 			gridBagConstraints6.gridy = 0;
 			lblTable = new JLabel();
-			lblTable.setText(Language.translate("Search Components",Language.EN));
+			lblTable.setText("Search Components");
+			lblTable.setFont(new Font("Dialog", Font.BOLD, 12));
+			lblTable.setText(Language.translate(lblTable.getText(),Language.EN));
 			GridBagConstraints gridBagConstraints = new GridBagConstraints();
 			gridBagConstraints.fill = GridBagConstraints.BOTH;
 			gridBagConstraints.gridy = 2;
@@ -194,6 +201,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 			gridBagConstraints.weighty = 1.0;
 			gridBagConstraints.gridheight = 1;
 			gridBagConstraints.gridwidth = 0;
+			gridBagConstraints.insets = new Insets(0, 10, 0, 5);
 			gridBagConstraints.gridx = 0;
 			pnlControlls = new JPanel();
 			pnlControlls.setLayout(new GridBagLayout());
@@ -241,7 +249,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
                 int modelRowIndex = tblComponents.convertRowIndexToModel(row);
                 String compID = (String) tblComponents.getModel().getValueAt(modelRowIndex, 0);
         		NetworkComponent comp = controller.getGridModel().getNetworkComponent(compID);
-        		new ComponentSettingsDialog(currProject, graphEnvironmentControllerGUI, comp).setVisible(true);
+        		new OntologySettingsDialog(currProject, graphEnvironmentControllerGUI, comp).setVisible(true);
         	}
         });
         
@@ -458,10 +466,10 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	 * Get the component types definition dialog
 	 * @return
 	 */
-	private ClassSelectionDialog getClassSelectorDialog(){
+	private ComponentTypeDialog getClassSelectorDialog(){
 	//Always creating the new one, instead of hide and open
 		//if(classSelectorDialog == null){
-			classSelectorDialog = new ClassSelectionDialog(this);
+			classSelectorDialog = new ComponentTypeDialog(this);
 		//}
 		return classSelectorDialog;
 	}
@@ -633,7 +641,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 					// Popup Menu Item Node properties clicked
 					GraphNode pickedVertex = getPickedVertex();
 					if(pickedVertex!=null){
-						new ComponentSettingsDialog(currProject, this, pickedVertex).setVisible(true);
+						new OntologySettingsDialog(currProject, this, pickedVertex).setVisible(true);
 					}
 				}
 				else if(notification.getEvent().equals(BasicGraphGUI.EVENT_EDGE_EDIT_PROPERTIES_CLICKED)){
@@ -641,7 +649,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 					GraphEdge pickedEdge = getPickedEdge();
 					if(pickedEdge!=null){
 						NetworkComponent netComp = getNetworkComponentFromEdge(pickedEdge);						
-						new ComponentSettingsDialog(currProject, this, netComp).setVisible(true);
+						new OntologySettingsDialog(currProject, this, netComp).setVisible(true);
 					}
 				}
 				else if(notification.getEvent().equals(BasicGraphGUI.EVENT_OBJECT_LEFT_CLICK) ||
@@ -928,7 +936,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 			jSplitPaneRoot.setOneTouchExpandable(true);
 			jSplitPaneRoot.setLeftComponent(getPnlControlls());
 			jSplitPaneRoot.setRightComponent(getGraphGUI());
-			jSplitPaneRoot.setDividerLocation(200);
+			jSplitPaneRoot.setDividerLocation(230);
 		}
 		return jSplitPaneRoot;
 	}
@@ -973,12 +981,12 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		
 		if(showComponentSettingsDialog){
 			if(object instanceof GraphNode){
-				new ComponentSettingsDialog(currProject, this, object).setVisible(true);			
+				new OntologySettingsDialog(currProject, this, object).setVisible(true);			
 			}else if(object instanceof GraphEdge){
 				NetworkComponent netComp = getNetworkComponentFromEdge((GraphEdge)object);
-				new ComponentSettingsDialog(currProject, this, netComp).setVisible(true);
+				new OntologySettingsDialog(currProject, this, netComp).setVisible(true);
 			}else if(object instanceof NetworkComponent){
-				new ComponentSettingsDialog(currProject, this, (NetworkComponent)object).setVisible(true);
+				new OntologySettingsDialog(currProject, this, (NetworkComponent)object).setVisible(true);
 			}		
 		}
 	}

@@ -72,6 +72,7 @@ import java.util.Vector;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+import java.awt.Font;
 
 /**
  * GUI dialog for configuring network component types 
@@ -79,7 +80,7 @@ import javax.swing.JTextField;
  * @author <br>Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati 
  * 
  */
-public class ClassSelectionDialog extends JDialog implements ActionListener{
+public class ComponentTypeDialog extends JDialog implements ActionListener{
 	/**
 	 * Generated serialVersionUID
 	 */
@@ -168,11 +169,12 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 	 */
 	JDialog colorDialog = null;
 	private JLabel jLabelNodeColor = null;
+	private JPanel jPanelTop = null;
 	/**
 	 * This is the default constructor
 	 * @param parent The parent GUI
 	 */
-	public ClassSelectionDialog(GraphEnvironmentControllerGUI parent) {
+	public ComponentTypeDialog(GraphEnvironmentControllerGUI parent) {
 		super(Application.MainWindow, Dialog.ModalityType.APPLICATION_MODAL);
 		this.parent = parent;
 		project = parent.getController().getProject();
@@ -203,39 +205,26 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 	 */
 	private JPanel getJContentPane() {
 		if (jContentPane == null) {
-			GridBagConstraints gridBagConstraints31 = new GridBagConstraints();
-			gridBagConstraints31.gridx = 4;
-			gridBagConstraints31.insets = new Insets(0, 30, 0, 0);
-			gridBagConstraints31.anchor = GridBagConstraints.EAST;
-			gridBagConstraints31.gridy = 1;
+			GridBagConstraints gridBagConstraints13 = new GridBagConstraints();
+			gridBagConstraints13.gridx = 0;
+			gridBagConstraints13.gridwidth = 6;
+			gridBagConstraints13.fill = GridBagConstraints.BOTH;
+			gridBagConstraints13.insets = new Insets(15, 10, 10, 10);
+			gridBagConstraints13.gridy = 0;
 			jLabelNodeColor = new JLabel();
 			jLabelNodeColor.setText("Vertex Color");
-			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
-			gridBagConstraints2.gridx = 5;
-			gridBagConstraints2.insets = new Insets(5, 5, 5, 5);
-			gridBagConstraints2.gridy = 1;
-			GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
-			gridBagConstraints4.gridx = 3;
-			gridBagConstraints4.anchor = GridBagConstraints.WEST;
-			gridBagConstraints4.gridy = 1;
-			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
-			gridBagConstraints3.fill = GridBagConstraints.BOTH;
-			gridBagConstraints3.gridy = 1;
-			gridBagConstraints3.weightx = 1.0;
-			gridBagConstraints3.gridx = 2;
-			GridBagConstraints gridBagConstraints12 = new GridBagConstraints();
-			gridBagConstraints12.gridx = 0;
-			gridBagConstraints12.gridwidth = 2;
-			gridBagConstraints12.gridy = 1;
+			jLabelNodeColor.setFont(new Font("Dialog", Font.BOLD, 12));
 			jLabelNodeClass = new JLabel();
-			jLabelNodeClass.setText(Language.translate("Verbindungspunkte"));
+			jLabelNodeClass.setText("Verbindungspunkte");
+			jLabelNodeClass.setFont(new Font("Dialog", Font.BOLD, 12));
+			jLabelNodeClass.setText(Language.translate(jLabelNodeClass.getText()));
 			GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
 			gridBagConstraints11.gridx = 1;
-			gridBagConstraints11.insets = new Insets(5, 5, 5, 5);
+			gridBagConstraints11.insets = new Insets(10, 5, 10, 5);
 			gridBagConstraints11.gridy = 3;
 			GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
 			gridBagConstraints1.gridx = 0;
-			gridBagConstraints1.insets = new Insets(5, 5, 5, 5);
+			gridBagConstraints1.insets = new Insets(10, 10, 10, 5);
 			gridBagConstraints1.gridy = 3;
 			GridBagConstraints gridBagConstraints10 = new GridBagConstraints();
 			gridBagConstraints10.fill = GridBagConstraints.BOTH;
@@ -243,16 +232,17 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 			gridBagConstraints10.weightx = 1.0;
 			gridBagConstraints10.weighty = 1.0;
 			gridBagConstraints10.gridwidth = 6;
+			gridBagConstraints10.insets = new Insets(0, 10, 0, 10);
 			gridBagConstraints10.gridx = 0;
 			GridBagConstraints gridBagConstraints9 = new GridBagConstraints();
-			gridBagConstraints9.gridx = 3;
-			gridBagConstraints9.insets = new Insets(5, 5, 5, 5);
+			gridBagConstraints9.gridx = 5;
+			gridBagConstraints9.insets = new Insets(10, 5, 10, 10);
 			gridBagConstraints9.gridy = 3;
 			GridBagConstraints gridBagConstraints8 = new GridBagConstraints();
-			gridBagConstraints8.gridx = 2;
+			gridBagConstraints8.gridx = 4;
 			gridBagConstraints8.weightx = 1.0D;
 			gridBagConstraints8.anchor = GridBagConstraints.EAST;
-			gridBagConstraints8.insets = new Insets(5, 5, 5, 5);
+			gridBagConstraints8.insets = new Insets(10, 5, 10, 5);
 			gridBagConstraints8.gridy = 3;
 			GridBagConstraints gridBagConstraints = new GridBagConstraints();
 			gridBagConstraints.fill = GridBagConstraints.BOTH;
@@ -267,11 +257,7 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 			jContentPane.add(getJScrollPaneClassTable(), gridBagConstraints10);
 			jContentPane.add(getJButtonAddRow(), gridBagConstraints1);
 			jContentPane.add(getJButtonRemoveRow(), gridBagConstraints11);
-			jContentPane.add(jLabelNodeClass, gridBagConstraints12);
-			jContentPane.add(getJTextFieldNodeClass(), gridBagConstraints3);
-			jContentPane.add(getJButtonSelectNodeClass(), gridBagConstraints4);
-			jContentPane.add(getJButtonNodeColor(), gridBagConstraints2);
-			jContentPane.add(jLabelNodeColor, gridBagConstraints31);
+			jContentPane.add(getJPanelTop(), gridBagConstraints13);
 		}
 		return jContentPane;
 	}
@@ -300,6 +286,8 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 		if (jButtonConfirm == null) {
 			jButtonConfirm = new JButton();
 			jButtonConfirm.setText(Language.translate("Übernehmen"));
+			jButtonConfirm.setFont(new Font("Dialog", Font.BOLD, 12));
+			jButtonConfirm.setForeground(new Color(0, 153, 0));
 			jButtonConfirm.addActionListener(this);
 		}
 		return jButtonConfirm;
@@ -314,6 +302,8 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 		if (jButtonCancel == null) {
 			jButtonCancel = new JButton();
 			jButtonCancel.setText(Language.translate("Abbrechen"));
+			jButtonCancel.setFont(new Font("Dialog", Font.BOLD, 12));
+			jButtonCancel.setForeground(new Color(153, 0, 0));
 			jButtonCancel.addActionListener(this);
 		}
 		return jButtonCancel;
@@ -699,6 +689,49 @@ public class ClassSelectionDialog extends JDialog implements ActionListener{
 						                                     + color.getGreen() + ", "
 						                                     + color.getBlue());
         }
+	}
+
+	/**
+	 * This method initializes jPanelTop	
+	 * 	
+	 * @return javax.swing.JPanel	
+	 */
+	private JPanel getJPanelTop() {
+		if (jPanelTop == null) {
+			GridBagConstraints gridBagConstraints6 = new GridBagConstraints();
+			gridBagConstraints6.gridwidth = 2;
+			gridBagConstraints6.gridy = 0;
+			gridBagConstraints6.insets = new Insets(0, 5, 0, 5);
+			gridBagConstraints6.gridx = 0;
+			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
+			gridBagConstraints2.insets = new Insets(0, 5, 0, 0);
+			gridBagConstraints2.gridy = -1;
+			gridBagConstraints2.gridx = 5;
+			GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
+			gridBagConstraints5.anchor = GridBagConstraints.EAST;
+			gridBagConstraints5.gridx = 4;
+			gridBagConstraints5.gridy = -1;
+			gridBagConstraints5.insets = new Insets(0, 30, 0, 0);
+			GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
+			gridBagConstraints4.anchor = GridBagConstraints.WEST;
+			gridBagConstraints4.gridx = 3;
+			gridBagConstraints4.gridy = -1;
+			gridBagConstraints4.insets = new Insets(0, 0, 0, 0);
+			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
+			gridBagConstraints3.fill = GridBagConstraints.HORIZONTAL;
+			gridBagConstraints3.gridy = 0;
+			gridBagConstraints3.weightx = 1.0;
+			gridBagConstraints3.insets = new Insets(0, 0, 0, 5);
+			gridBagConstraints3.gridx = 2;
+			jPanelTop = new JPanel();
+			jPanelTop.setLayout(new GridBagLayout());
+			jPanelTop.add(jLabelNodeClass, gridBagConstraints6);
+			jPanelTop.add(getJTextFieldNodeClass(), gridBagConstraints3);
+			jPanelTop.add(getJButtonSelectNodeClass(), gridBagConstraints4);
+			jPanelTop.add(jLabelNodeColor, gridBagConstraints5);
+			jPanelTop.add(getJButtonNodeColor(), gridBagConstraints2);
+		}
+		return jPanelTop;
 	}
 
 }
