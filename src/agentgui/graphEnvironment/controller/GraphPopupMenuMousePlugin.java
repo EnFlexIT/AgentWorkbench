@@ -98,7 +98,7 @@ public class GraphPopupMenuMousePlugin<V, E> extends AbstractPopupGraphMousePlug
         }
     }
     
-    private void updateVertexMenu(V v, VisualizationViewer vv, Point2D point) {
+    private void updateVertexMenu(V v, VisualizationViewer<V, E> vv, Point2D point) {
         if (vertexPopup == null) return;
         Component[] menuComps = vertexPopup.getComponents();
         //TODO needed for context sensitive menu items
@@ -146,7 +146,7 @@ public class GraphPopupMenuMousePlugin<V, E> extends AbstractPopupGraphMousePlug
         this.vertexPopup = vertexPopup;
     }
     
-    private void updateEdgeMenu(E edge, VisualizationViewer vv, Point2D point) {
+    private void updateEdgeMenu(E edge, VisualizationViewer<V, E> vv, Point2D point) {
         if (edgePopup == null) return;
         Component[] menuComps = edgePopup.getComponents();
         //TODO needed for context sensitive menu items

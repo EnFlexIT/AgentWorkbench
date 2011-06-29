@@ -34,8 +34,9 @@ import java.util.Iterator;
 
 import agentgui.graphEnvironment.networkModel.GraphEdge;
 import agentgui.graphEnvironment.networkModel.GraphNode;
+import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
+import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin;
-import edu.uci.ics.jung.visualization.picking.RadiusPickSupport;
 
 /**
  * Handling mouse interaction with graph visualizations in a BasicGraphGUI.
@@ -69,22 +70,22 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 		// Left click or Right click
 
 		if(e.getButton()==MouseEvent.BUTTON1 || e.getButton()==MouseEvent.BUTTON3){			
-			
 			Object pickedObject = null;
-			
+			final VisualizationViewer<GraphNode,GraphEdge> vv =
+                (VisualizationViewer<GraphNode,GraphEdge>)e.getSource();
 			Point point = e.getPoint();
-			//GraphElementAccessor<GraphNode, GraphEdge>ps = myGUI.getVisView().getPickSupport();
-			RadiusPickSupport<GraphNode, GraphEdge> ps = new RadiusPickSupport<GraphNode, GraphEdge>(3.0);
 			
-			// Get the graph node / PropagationPoint at the clicked coordinates
-			GraphNode pickedPP = ps.getVertex(myGUI.getVisView().getGraphLayout(), point.getX(), point.getY());
+			GraphElementAccessor<GraphNode, GraphEdge>ps = vv.getPickSupport();
 			
+			// Get the graph node / PropagationPoint at the clicked coordinates			
+			GraphNode pickedPP = ps.getVertex(vv.getGraphLayout(), point.getX(), point.getY());
+		
 			if(pickedPP != null){		// A node / PropagationPoint was clicked
 				pickedObject = pickedPP;
 			}else{			// No node / PropagationPoint was clicked
 				
 				// Get the graph edge / GridComponent at the clicked coordinates
-				GraphEdge pickedGC = ps.getEdge(myGUI.getVisView().getGraphLayout(), point.getX(), point.getY());
+				GraphEdge pickedGC = ps.getEdge(vv.getGraphLayout(), point.getX(), point.getY());
 				
 				if(pickedGC != null){	// An edge / GridComponent was clicked
 					pickedObject = pickedGC;

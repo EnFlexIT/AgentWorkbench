@@ -28,6 +28,7 @@
 
 package agentgui.graphEnvironment.controller;
 
+import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -36,6 +37,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Paint;
 import java.awt.Shape;
+import java.awt.Stroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
@@ -74,6 +76,7 @@ import edu.uci.ics.jung.visualization.control.PluggableGraphMouse;
 import edu.uci.ics.jung.visualization.control.ScalingControl;
 import edu.uci.ics.jung.visualization.decorators.AbstractVertexShapeTransformer;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
+import edu.uci.ics.jung.visualization.picking.RadiusPickSupport;
 
 /**
  * This class implements a GUI component for displaying visualizations for JUNG
@@ -167,6 +170,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	 * Used here for customized Picking mode
 	 */
 	private PluggableGraphMouse pgm = null; // @jve:decl-index=0:
+	GraphEnvironmentMousePlugin graphEnvironmentMousePlugin = null;
 	/**
 	 * The DefaultModalGraphMouse which can be added to the visualization
 	 * viewer. Used here for the transforming mode
@@ -248,6 +252,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	private void initMouseModes() {
 		pgm = new PluggableGraphMouse();
 		// Adding the picking plugin
+
 		pgm.add(new GraphEnvironmentMousePlugin(this));
 		// Adding the context menu plugin
 		GraphPopupMenuMousePlugin<GraphNode, GraphEdge> popupPlugin = new GraphPopupMenuMousePlugin<GraphNode, GraphEdge>(this);
@@ -390,14 +395,23 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 			// Use straight lines as edges
 			visView.getRenderContext().setEdgeShapeTransformer(
 					new EdgeShape.Line<GraphNode, GraphEdge>());
-			
-			// Configure vertex shape and size		
+			 
+			//Set edge width
+			visView.getRenderContext().setEdgeStrokeTransformer(new Transformer<GraphEdge, Stroke>(){
+
+				@Override
+				public Stroke transform(GraphEdge arg0) {
+					return new BasicStroke(2);
+				}
 				
+			}); 
+
+			// Configure vertex shape and size						
 			VertexShapeSizeAspect<GraphNode, GraphEdge> vssa = new VertexShapeSizeAspect<GraphNode, GraphEdge>();
 			vssa.setScaling(true);
 			visView.getRenderContext().setVertexShapeTransformer(vssa); 
 			
-			// Configure mouse interaction
+			// Configure mouse interaction			
 			visView.setGraphMouse(pgm);
 
 			visView.setBackground(Color.WHITE);
@@ -479,6 +493,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 
 			// Picking mode
 			// Setting custom pluggable mouse graph
+			//TODO bug when transformed 
 			visView.setGraphMouse(pgm);
 		}
 		// Button Import graph from file clicked

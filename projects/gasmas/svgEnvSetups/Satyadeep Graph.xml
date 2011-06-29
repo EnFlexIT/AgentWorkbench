@@ -30,5 +30,18 @@
                 <type>entry</type>
             </value>
         </entry>
+        <entry>
+            <key>n2</key>
+            <value>
+                <agentClassName>gasmas.agents.ValveAgent</agentClassName>
+                <directed>false</directed>
+                <graphElementIDs>n2</graphElementIDs>
+                <graphElementIDs>PP5</graphElementIDs>
+                <graphElementIDs>PP3</graphElementIDs>
+                <id>n2</id>
+                <prototypeClassName>agentgui.graphEnvironment.prototypes.SimpleGraphElement</prototypeClassName>
+                <type>valve</type>
+            </value>
+        </entry>
     </componentList>
 </networkComponentList>
