@@ -29,22 +29,31 @@ package agentgui.graphEnvironment.controller;
 
 import jade.content.Concept;
 
-import javax.swing.DefaultCellEditor;
-import javax.swing.JColorChooser;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-
 import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.Dimension;
-import java.awt.GridBagLayout;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Vector;
 
+import javax.swing.DefaultCellEditor;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JColorChooser;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
@@ -62,17 +71,6 @@ import agentgui.core.gui.components.ImageSelectorTableCellEditor;
 import agentgui.core.gui.imaging.MissingIcon;
 import agentgui.graphEnvironment.networkModel.ComponentTypeSettings;
 import agentgui.graphEnvironment.prototypes.GraphElementPrototype;
-
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Vector;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-import java.awt.Font;
 
 /**
  * GUI dialog for configuring network component types 
@@ -170,6 +168,8 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	JDialog colorDialog = null;
 	private JLabel jLabelNodeColor = null;
 	private JPanel jPanelTop = null;
+	private JComboBox jComboBoxNodeSize = null;
+	private JLabel jLabelVertexSize = null;
 	/**
 	 * This is the default constructor
 	 * @param parent The parent GUI
@@ -207,12 +207,13 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		if (jContentPane == null) {
 			GridBagConstraints gridBagConstraints13 = new GridBagConstraints();
 			gridBagConstraints13.gridx = 0;
-			gridBagConstraints13.gridwidth = 6;
+			gridBagConstraints13.gridwidth = 7;
 			gridBagConstraints13.fill = GridBagConstraints.BOTH;
 			gridBagConstraints13.insets = new Insets(15, 10, 10, 10);
 			gridBagConstraints13.gridy = 0;
 			jLabelNodeColor = new JLabel();
 			jLabelNodeColor.setText("Vertex Color");
+			jLabelNodeColor.setText(Language.translate(jLabelNodeColor.getText(),Language.EN));
 			jLabelNodeColor.setFont(new Font("Dialog", Font.BOLD, 12));
 			jLabelNodeClass = new JLabel();
 			jLabelNodeClass.setText("Verbindungspunkte");
@@ -231,15 +232,15 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			gridBagConstraints10.gridy = 2;
 			gridBagConstraints10.weightx = 1.0;
 			gridBagConstraints10.weighty = 1.0;
-			gridBagConstraints10.gridwidth = 6;
+			gridBagConstraints10.gridwidth = 7;
 			gridBagConstraints10.insets = new Insets(0, 10, 0, 10);
 			gridBagConstraints10.gridx = 0;
 			GridBagConstraints gridBagConstraints9 = new GridBagConstraints();
-			gridBagConstraints9.gridx = 5;
+			gridBagConstraints9.gridx = 6;
 			gridBagConstraints9.insets = new Insets(10, 5, 10, 10);
 			gridBagConstraints9.gridy = 3;
 			GridBagConstraints gridBagConstraints8 = new GridBagConstraints();
-			gridBagConstraints8.gridx = 4;
+			gridBagConstraints8.gridx = 5;
 			gridBagConstraints8.weightx = 1.0D;
 			gridBagConstraints8.anchor = GridBagConstraints.EAST;
 			gridBagConstraints8.insets = new Insets(10, 5, 10, 5);
@@ -520,6 +521,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			// Get the component type definitions from the table
 			for(int row=0; row<rowNum; row++){
 				String name = (String) jtc.getValueAt(row, 0);
+				//Check for non empty name
 				if(name!=null && name.length()!=0){
 					ImageIcon imageIcon = (ImageIcon)jtc.getValueAt(row,3);
 					Color color = (Color)jtc.getValueAt(row, 4);
@@ -529,15 +531,16 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 							imageIcon.getDescription(),
 							String.valueOf(color.getRGB())
 							);
-							
 					// Use name as key
 					etsVector.put(name, ets);
 				}
 			}
 			// Add the graph node class definition
 			String nodeColor = String.valueOf(getJButtonNodeColor().getBackground().getRGB());
-			etsVector.put("node", 
-					new ComponentTypeSettings(getJTextFieldNodeClass().getText(), null, null, nodeColor));
+			ComponentTypeSettings ets = new ComponentTypeSettings(getJTextFieldNodeClass().getText(), null, null, nodeColor);
+			ets.setVertexSize(String.valueOf(jComboBoxNodeSize.getSelectedItem()));
+			etsVector.put("node", ets);
+			
 			// Set the GraphEnvironmentController's componentTypeSettings
 			parent.getController().setComponentTypeSettings(etsVector);
 			
@@ -698,6 +701,18 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	 */
 	private JPanel getJPanelTop() {
 		if (jPanelTop == null) {
+			GridBagConstraints gridBagConstraints12 = new GridBagConstraints();
+			gridBagConstraints12.insets = new Insets(0, 15, 0, 0);
+			gridBagConstraints12.anchor = GridBagConstraints.EAST;
+			jLabelVertexSize = new JLabel();
+			jLabelVertexSize.setText("Vertex Size");
+			jLabelVertexSize.setFont(new Font("Dialog", Font.BOLD, 12));
+			GridBagConstraints gridBagConstraints7 = new GridBagConstraints();
+			gridBagConstraints7.fill = GridBagConstraints.NONE;
+			gridBagConstraints7.gridy = -1;
+			gridBagConstraints7.weightx = 0.0;
+			gridBagConstraints7.anchor = GridBagConstraints.WEST;
+			gridBagConstraints7.gridx = -1;
 			GridBagConstraints gridBagConstraints6 = new GridBagConstraints();
 			gridBagConstraints6.gridwidth = 2;
 			gridBagConstraints6.gridy = 0;
@@ -710,7 +725,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
 			gridBagConstraints5.anchor = GridBagConstraints.EAST;
 			gridBagConstraints5.gridx = 4;
-			gridBagConstraints5.gridy = -1;
+			gridBagConstraints5.gridy = 0;
 			gridBagConstraints5.insets = new Insets(0, 30, 0, 0);
 			GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
 			gridBagConstraints4.anchor = GridBagConstraints.WEST;
@@ -730,8 +745,41 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			jPanelTop.add(getJButtonSelectNodeClass(), gridBagConstraints4);
 			jPanelTop.add(jLabelNodeColor, gridBagConstraints5);
 			jPanelTop.add(getJButtonNodeColor(), gridBagConstraints2);
+			jPanelTop.add(jLabelVertexSize, gridBagConstraints12);
+			jPanelTop.add(getJComboBoxNodeSize(), gridBagConstraints7);
 		}
 		return jPanelTop;
+	}
+
+	/**
+	 * This method initializes jComboBoxNodeSize	
+	 * 	
+	 * @return javax.swing.JComboBox	
+	 */
+	private JComboBox getJComboBoxNodeSize() {
+		if (jComboBoxNodeSize == null) {
+			Integer[] sizeList = {1,2,3,4,5};
+			jComboBoxNodeSize = new JComboBox(sizeList);
+			//Get the vertex size from the component type settings
+			HashMap<String, ComponentTypeSettings> cts 
+							= parent.getController().getComponentTypeSettings();
+			
+			Integer size;
+			if(cts.get("node")!=null)
+			{
+				String vertexSize= cts.get("node").getVertexSize();				
+				if(vertexSize!=null){
+					size = Integer.parseInt(vertexSize);
+				}
+				else
+					size = BasicGraphGUI.DEFAULT_VERTEX_SIZE;			
+			}
+			else 
+				size = BasicGraphGUI.DEFAULT_VERTEX_SIZE;
+			
+			jComboBoxNodeSize.setSelectedItem(size);
+		}
+		return jComboBoxNodeSize;
 	}
 
 }

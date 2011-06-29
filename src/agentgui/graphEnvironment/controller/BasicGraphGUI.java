@@ -35,6 +35,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Paint;
+import java.awt.Shape;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
@@ -71,6 +72,7 @@ import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
 import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
 import edu.uci.ics.jung.visualization.control.PluggableGraphMouse;
 import edu.uci.ics.jung.visualization.control.ScalingControl;
+import edu.uci.ics.jung.visualization.decorators.AbstractVertexShapeTransformer;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 
 /**
@@ -103,6 +105,10 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	 * Default color to be used for edges in the graph when highlighted/picked.
 	 */
 	public static Color DEFAULT_EDGE_PICKED_COLOR = Color.CYAN;
+	/**
+	 * Default vertex size of the nodes to be used in the range 1 to 5.
+	 */
+	public static Integer DEFAULT_VERTEX_SIZE = 3; 
 	
 	/**
 	 * Event argument for notifying observers that Clear Graph button is clicked
@@ -384,7 +390,13 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 			// Use straight lines as edges
 			visView.getRenderContext().setEdgeShapeTransformer(
 					new EdgeShape.Line<GraphNode, GraphEdge>());
-		
+			
+			// Configure vertex shape and size		
+				
+			VertexShapeSizeAspect<GraphNode, GraphEdge> vssa = new VertexShapeSizeAspect<GraphNode, GraphEdge>();
+			vssa.setScaling(true);
+			visView.getRenderContext().setVertexShapeTransformer(vssa); 
+			
 			// Configure mouse interaction
 			visView.setGraphMouse(pgm);
 
@@ -1014,5 +1026,49 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 		}
 		return jMenuItemSplitNode;
 	}
+	 
+    /**
+     * Controls the shape, size, and aspect ratio for each vertex.
+     * 
+     * @author Satyadeep
+     */
+    private final class VertexShapeSizeAspect<V,E>
+    extends AbstractVertexShapeTransformer <V>
+    implements Transformer<V,Shape>  {
+    	
+        protected boolean scale = false; 
+        public VertexShapeSizeAspect()
+        {
+        	setSizeTransformer(new Transformer<V,Integer>() {
 
+				public Integer transform(V v) {
+		            if (scale)
+		            {   // Get the vertex size from the component type settings
+		            	String vertexSize= controller.getComponentTypeSettings().get("node").getVertexSize();
+		    			Integer size;
+		    			if(vertexSize!=null){
+		    				size = Integer.parseInt(vertexSize);
+		    			}
+		    			else{
+		    				size = BasicGraphGUI.DEFAULT_VERTEX_SIZE;
+		    			}			
+		                return (int)(size * 5) + 5;
+		            }
+		            else
+		                return 20;
+
+				}});
+        }
+        
+		public void setScaling(boolean scale)
+        {
+            this.scale = scale;
+        }
+                
+        public Shape transform(V v)
+        {
+        	return factory.getEllipse(v);
+        }
+    }
+    
 }

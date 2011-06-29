@@ -42,6 +42,7 @@
             <value>
                 <agentClass>gasmas.ontology.PropagationPoint</agentClass>
                 <color>-3407872</color>
+                <vertexSize>2</vertexSize>
             </value>
         </entry>
         <entry>
@@ -81,21 +82,21 @@
             </value>
         </entry>
         <entry>
-            <key>exit</key>
-            <value>
-                <agentClass>gasmas.agents.ExitAgent</agentClass>
-                <color>-16751104</color>
-                <edgeImage>/gasmas/img/MBLoadStopRecord.png</edgeImage>
-                <graphPrototype>agentgui.graphEnvironment.prototypes.DirectedSimpleGraphElement</graphPrototype>
-            </value>
-        </entry>
-        <entry>
             <key>pipe</key>
             <value>
                 <agentClass>gasmas.agents.PipeAgent</agentClass>
                 <color>-6711040</color>
                 <edgeImage>/gasmas/img/MBLoadMonitor.png</edgeImage>
                 <graphPrototype>agentgui.graphEnvironment.prototypes.SimpleGraphElement</graphPrototype>
+            </value>
+        </entry>
+        <entry>
+            <key>exit</key>
+            <value>
+                <agentClass>gasmas.agents.ExitAgent</agentClass>
+                <color>-16751104</color>
+                <edgeImage>/gasmas/img/MBLoadStopRecord.png</edgeImage>
+                <graphPrototype>agentgui.graphEnvironment.prototypes.DirectedSimpleGraphElement</graphPrototype>
             </value>
         </entry>
         <entry>
