@@ -161,5 +161,18 @@
                 <type>valve</type>
             </value>
         </entry>
+        <entry>
+            <key>n13</key>
+            <value>
+                <agentClassName>gasmas.agents.PipeAgent</agentClassName>
+                <directed>false</directed>
+                <graphElementIDs>PP14</graphElementIDs>
+                <graphElementIDs>PP15</graphElementIDs>
+                <graphElementIDs>n13</graphElementIDs>
+                <id>n13</id>
+                <prototypeClassName>agentgui.graphEnvironment.prototypes.SimpleGraphElement</prototypeClassName>
+                <type>pipe</type>
+            </value>
+        </entry>
     </componentList>
 </networkComponentList>

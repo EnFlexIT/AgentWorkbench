@@ -1,24 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <simulationSetup>
-    <agentSetup>
-        <agent>
-            <postionNo>1</postionNo>
-            <agentClassReference>gasmas.agents.CompressorAgent</agentClassReference>
-            <startAsName>CoAg</startAsName>
-            <startArguments>
-                <argument>PENvbXByZXNzb3IgaWQ9InVnamtoZ3VoemciPgoJPHBvc2l0aW9uMT4KCQk8UHJvcGFnYXRpb25Qb2ludCBnZW9aPSIwLjBGIiBkaWFtZXRlcj0iMC4wRiIgYXRQYXJlbnRMZW5ndGhQb3M9IjAuMEYiIGdlb1g9IjAuMEYiIGdlb1k9IjAuMEYiLz4KCTwvcG9zaXRpb24xPgoJPHBvc2l0aW9uMj4KCQk8UHJvcGFnYXRpb25Qb2ludCBnZW9aPSIwLjBGIiBkaWFtZXRlcj0iMC4wRiIgYXRQYXJlbnRMZW5ndGhQb3M9IjAuMEYiIGdlb1g9IjAuMEYiIGdlb1k9IjAuMEYiLz4KCTwvcG9zaXRpb24yPgo8L0NvbXByZXNzb3I+Cg==</argument>
-                <argument>PE9TSW5mbyBvc192ZXJzaW9uPSIiIG9zX25hbWU9IiIgb3NfYXJjaD0iIi8+Cg==</argument>
-            </startArguments>
-        </agent>
-        <agent>
-            <postionNo>2</postionNo>
-            <agentClassReference>gasmas.agents.CompressorAgent</agentClassReference>
-            <startAsName>CoAg_1</startAsName>
-            <startArguments>
-                <argument>PENvbXByZXNzb3IgSUQ9IiIvPgo=</argument>
-            </startArguments>
-        </agent>
-    </agentSetup>
+    <agentSetup/>
     <distribution>
         <doDynamicLoadBalalncing>false</doDynamicLoadBalalncing>
         <doStaticLoadBalalncing>false</doStaticLoadBalalncing>
@@ -37,7 +19,7 @@
         </userThresholds>
     </distribution>
     <agentListModel>
-        <size>2</size>
+        <size>0</size>
     </agentListModel>
     <environmentFileName>Satyadeep Graph.graphml</environmentFileName>
     <graphElementSettings>
@@ -45,12 +27,15 @@
             <key>node</key>
             <value>
                 <agentClass>gasmas.ontology.PropagationPoint</agentClass>
+                <color>-3407872</color>
             </value>
         </entry>
         <entry>
             <key>valve</key>
             <value>
                 <agentClass>gasmas.agents.ValveAgent</agentClass>
+                <color>-16776961</color>
+                <edgeImage>/gasmas/img/StatGreen.png</edgeImage>
                 <graphPrototype>agentgui.graphEnvironment.prototypes.SimpleGraphElement</graphPrototype>
             </value>
         </entry>
@@ -58,6 +43,8 @@
             <key>entry</key>
             <value>
                 <agentClass>gasmas.agents.EntryAgent</agentClass>
+                <color>-13434829</color>
+                <edgeImage>/gasmas/img/MBcheckGreen.png</edgeImage>
                 <graphPrototype>agentgui.graphEnvironment.prototypes.DirectedSimpleGraphElement</graphPrototype>
             </value>
         </entry>
@@ -65,6 +52,8 @@
             <key>branch</key>
             <value>
                 <agentClass>gasmas.agents.BranchAgent</agentClass>
+                <color>-16737946</color>
+                <edgeImage>/gasmas/img/edit.png</edgeImage>
                 <graphPrototype>agentgui.graphEnvironment.prototypes.TriangeGraphElement</graphPrototype>
             </value>
         </entry>
@@ -72,6 +61,8 @@
             <key>compressor</key>
             <value>
                 <agentClass>gasmas.agents.CompressorAgent</agentClass>
+                <color>-26164</color>
+                <edgeImage>/gasmas/img/MBJadeTools.png</edgeImage>
                 <graphPrototype>agentgui.graphEnvironment.prototypes.DirectedSimpleGraphElement</graphPrototype>
             </value>
         </entry>
@@ -79,6 +70,8 @@
             <key>pipe</key>
             <value>
                 <agentClass>gasmas.agents.PipeAgent</agentClass>
+                <color>-6711040</color>
+                <edgeImage>/gasmas/img/MBLoadMonitor.png</edgeImage>
                 <graphPrototype>agentgui.graphEnvironment.prototypes.SimpleGraphElement</graphPrototype>
             </value>
         </entry>
@@ -86,6 +79,8 @@
             <key>exit</key>
             <value>
                 <agentClass>gasmas.agents.ExitAgent</agentClass>
+                <color>-16751104</color>
+                <edgeImage>/gasmas/img/MBLoadStopRecord.png</edgeImage>
                 <graphPrototype>agentgui.graphEnvironment.prototypes.DirectedSimpleGraphElement</graphPrototype>
             </value>
         </entry>
@@ -93,6 +88,8 @@
             <key>storage</key>
             <value>
                 <agentClass>gasmas.agents.StorageAgent</agentClass>
+                <color>-65536</color>
+                <edgeImage>/gasmas/img/MBLoadPlay.png</edgeImage>
                 <graphPrototype>agentgui.graphEnvironment.prototypes.SimpleGraphElement</graphPrototype>
             </value>
         </entry>

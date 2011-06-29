@@ -47,7 +47,6 @@ import java.util.Vector;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -144,7 +143,6 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	 * The graph visualization component
 	 */
 	private BasicGraphGUI graphGUI = null;
-	private JMenuItem menuAdd = null;
 	private JTextField jTextFieldSearch = null;
 	
 	/**
@@ -1062,20 +1060,6 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		}
 		
 		return elements;
-	}
-
-	/**
-	 * This method initializes menuAdd	
-	 * 	
-	 * @return javax.swing.JMenuItem	
-	 */
-	private JMenuItem getMenuAdd() {
-		if (menuAdd == null) {
-			menuAdd = new JMenuItem();
-			menuAdd.setText("Add Component");
-			menuAdd.addActionListener(this);
-		}
-		return menuAdd;
 	}
 
 	/**

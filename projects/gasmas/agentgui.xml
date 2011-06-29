@@ -51,10 +51,6 @@
     <simulationSetupCurrent>Nils Graph</simulationSetupCurrent>
     <simulationSetups>
         <entry>
-            <key>Satyadeep Graph (Copy)</key>
-            <value>satyadeep_graph_copy.xml</value>
-        </entry>
-        <entry>
             <key>Satyadeep Graph</key>
             <value>satyadeep_graph.xml</value>
         </entry>
