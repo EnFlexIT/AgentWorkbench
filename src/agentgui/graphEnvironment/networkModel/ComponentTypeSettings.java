@@ -23,13 +23,17 @@ public class ComponentTypeSettings {
 	/**
 	 * The image icon which will be displayed on the component graph edges.
 	 */
-	private String edgeImage;
+	private String edgeImage = null;
 	
 	/**
 	 * The color which will be displayed on the component graph edges.
 	 */
-	private String color;
+	private String color = null;
 	
+	/**
+	 * The vertex size, used only for the component type settings of the key "node".
+	 */
+	private String vertexSize = null;
 	/**
 	 * Default Constructor
 	 */
@@ -104,5 +108,20 @@ public class ComponentTypeSettings {
 		this.color = color;
 	}
 	
-	
+	/**
+	 * Returns the vertex size of the node.
+	 * Used only for the component type settings of the key "node".
+	 * @return the vertex size as String. 
+	 */
+	public String getVertexSize(){
+		return this.vertexSize;
+	}
+	/**
+	 * Sets the vertex size of the node.
+	 * Used only for the component type settings of the key "node".
+	 * @param vertexSize
+	 */
+	public void setVertexSize(String vertexSize){
+		this.vertexSize = vertexSize;
+	}
 }
