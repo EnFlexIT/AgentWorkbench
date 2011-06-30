@@ -450,13 +450,14 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 
 	/**
 	 * This method initializes btnSetClasses	
-	 * 	
 	 * @return javax.swing.JButton	
 	 */
 	private JButton getBtnSetClasses() {
 		if (btnSetClasses == null) {
 			btnSetClasses = new JButton();
-			btnSetClasses.setText(Language.translate("Komponenten-Typen"));
+			btnSetClasses.setText("Komponenten-Typen");
+			btnSetClasses.setText(Language.translate(btnSetClasses.getText()));
+			btnSetClasses.setFont(new Font("Dialog", Font.BOLD, 12));
 			btnSetClasses.addActionListener(this);
 		}
 		return btnSetClasses;
@@ -922,7 +923,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	 * This method get's the GUI's controller
 	 * @return GraphEnvironmentController The controller of the environment network model.
 	 */
-	GraphEnvironmentController getController(){
+	public GraphEnvironmentController getController(){
 		return controller;
 	}
 	

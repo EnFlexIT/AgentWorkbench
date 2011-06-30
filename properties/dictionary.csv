@@ -431,6 +431,9 @@ de;Übersetzung speichern (STRG+S);Save translation (CTRL + S)
 de;Überspringen;Skip
 en;;Choose Icon;;;
 en;;Edge Color;;;
+en;;Select a valid vertex first;;;
+en;;Select a valid vertex;;;
+en;;Vertex Color;;;
 en;Ausgewählte Komponente entfernen;Remove selected component;;;
 en;Auswahl Netzwerk-Komonente!;Select Network Component to Add;;;
 en;Bild;Image;;;

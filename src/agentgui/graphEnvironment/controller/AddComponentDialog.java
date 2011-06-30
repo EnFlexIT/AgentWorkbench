@@ -29,8 +29,8 @@ package agentgui.graphEnvironment.controller;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dialog;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -43,6 +43,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.Vector;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -52,6 +53,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.WindowConstants;
+import javax.swing.border.EtchedBorder;
 
 import org.apache.commons.collections15.Transformer;
 
@@ -101,34 +103,38 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 	/**
 	 * The GraphEnvironmentControllerGUI that started this dialog
 	 */
-	private GraphEnvironmentControllerGUI parent = null;
+	private GraphEnvironmentControllerGUI parentGUI = null;
 	private JScrollPane jScrollPane = null;
 	/**
 	 * Graph visualization component
 	 */
 	private VisualizationViewer<GraphNode, GraphEdge> visView = null;
-	private JButton btnOK = null;
-	private JPanel jBottomPanel = null;
-	private JButton btnCancel = null;
-	private JPanel jViewerPanel = null;
-	private JLabel jLabel = null;
+	
+	private JPanel jPanelBottom = null;
+	private JButton jButtonOK = null;
+	private JButton jButtonCancel = null;
+	private JPanel jPanelViewer = null;
+	private JLabel jLabelInstruction = null;
+
+	
+	
 	/**
 	 * Gets the parent object and initializes
 	 * @param parent The parent GUI which creates this
 	 */
 	public AddComponentDialog(GraphEnvironmentControllerGUI parent) {
-		super(Application.MainWindow, Dialog.ModalityType.APPLICATION_MODAL);
-		this.parent = parent;
+		super(Application.MainWindow);
+		this.parentGUI = parent;
 		initialize();
 	}
 
 	/**
 	 * This method initializes this
-	 * 
 	 * @return void
 	 */
 	private void initialize() {				
-		this.setSize(390, 343);
+		this.setSize(400, 450);
+		this.setModal(true);
 		this.setTitle(Language.translate("Select Network Component to Add",Language.EN));
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -137,7 +143,6 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 
 	/**
 	 * This method initializes jContentPane
-	 * 
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJContentPane() {
@@ -146,8 +151,8 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 			gridBagConstraints4.gridx = 0;
 			gridBagConstraints4.fill = GridBagConstraints.BOTH;
 			gridBagConstraints4.weightx = 0.0;
-			gridBagConstraints4.weighty = 0.6;
-			gridBagConstraints4.insets = new Insets(0, 105, 0, 105);
+			gridBagConstraints4.weighty = 0.5;
+			gridBagConstraints4.insets = new Insets(5, 10, 0, 10);
 			gridBagConstraints4.ipadx = 0;
 			gridBagConstraints4.anchor = GridBagConstraints.CENTER;
 			gridBagConstraints4.gridy = 2;
@@ -155,12 +160,12 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 			gridBagConstraints11.fill = GridBagConstraints.BOTH;
 			gridBagConstraints11.gridx = 0;
 			gridBagConstraints11.gridy = 1;			
-			gridBagConstraints11.insets = new Insets(6, 5, 5, 5);
+			gridBagConstraints11.insets = new Insets(10, 12, 0, 10);
 			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
 			gridBagConstraints3.gridx = 0;
 			gridBagConstraints3.ipadx = 0;
 			gridBagConstraints3.fill = GridBagConstraints.HORIZONTAL;
-			gridBagConstraints3.insets = new Insets(5, 5, 5, 5);
+			gridBagConstraints3.insets = new Insets(10, 10, 10, 10);
 			gridBagConstraints3.gridy = 3;
 			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
 			gridBagConstraints2.fill = GridBagConstraints.BOTH;
@@ -168,35 +173,34 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 			gridBagConstraints2.ipadx = 0;
 			gridBagConstraints2.ipady = 0;
 			gridBagConstraints2.weightx = 1.0;
-			gridBagConstraints2.weighty = 0.4;
-			gridBagConstraints2.insets = new Insets(5, 5, 5, 5);
+			gridBagConstraints2.weighty = 0.5;
+			gridBagConstraints2.insets = new Insets(15, 10, 0, 10);
 			gridBagConstraints2.gridx = 0;
+			
 			jContentPane = new JPanel();
 			jContentPane.setLayout(new GridBagLayout());
 			jContentPane.add(getJScrollPane(), gridBagConstraints2);
 			jContentPane.add(getJBottomPanel(), gridBagConstraints3);
 			jContentPane.add(getJLabel(), gridBagConstraints11);
-			jContentPane.add(getJViewerPanel(), gridBagConstraints4);			
+			jContentPane.add(getJViewerPanel(), gridBagConstraints4);
 		}
 		return jContentPane;
 	}
 
 	/**
 	 * This method initializes componentTypesList	
-	 * 	
 	 * @return javax.swing.JList	
 	 */
 	private JList getComponentTypesList() {
 		if (componentTypesList == null) {
 			componentTypesList = new JList(getListData());
 			componentTypesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			componentTypesList
-					.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+			componentTypesList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
 						public void valueChanged(javax.swing.event.ListSelectionEvent e) {
 							if(!e.getValueIsAdjusting()){
 								String selected = (String) componentTypesList.getSelectedValue();
 								//Gets the class name of the GraphPrototype of the selected component type from the environment controller
-								String graphPrototype = parent.getController().getComponentTypeSettings().get(selected).getGraphPrototype();
+								String graphPrototype = parentGUI.getController().getComponentTypeSettings().get(selected).getGraphPrototype();
 								//System.out.println("selected prototype: "+graphPrototype);
 								showPrototypePreview(graphPrototype);
 							}
@@ -231,7 +235,7 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 	    
 	    if(graphElement!=null){	   
 	    	//Generate and use the next unique network component ID
-	    	String nextID = parent.getController().getGridModel().nextNetworkComponentID();
+	    	String nextID = parentGUI.getController().getGridModel().nextNetworkComponentID();
 	    	graphElement.setId(nextID);	    	
 	    	graphElement.setType(componentTypesList.getSelectedValue().toString());
 			
@@ -243,20 +247,21 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 	
 	}
 	
-	
 	/**
 	 * Initializes label
 	 * @return javax.swing.JLabel
 	 */
 	private JLabel getJLabel(){
-		if(jLabel == null) {
-			jLabel = new JLabel(Language.translate("Select a vertex to merge",Language.EN));
+		if(jLabelInstruction == null) {
+			jLabelInstruction = new JLabel();
+			jLabelInstruction.setText("Select a vertex to merge");
+			jLabelInstruction.setFont(new Font("Dialog", Font.BOLD, 12));
+			jLabelInstruction.setText(Language.translate(jLabelInstruction.getText(),Language.EN));
 		}
-		return jLabel;
+		return jLabelInstruction;
 	}
 	/**
 	 * This method initializes jScrollPane	
-	 * 	
 	 * @return javax.swing.JScrollPane	
 	 */
 	private JScrollPane getJScrollPane() {
@@ -275,7 +280,7 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 	 */
 	private Object[] getListData(){
 		Vector<String> list = new Vector<String>();
-		HashMap<String, ComponentTypeSettings> etsHash = parent.getController().getComponentTypeSettings();
+		HashMap<String, ComponentTypeSettings> etsHash = parentGUI.getController().getComponentTypeSettings();
 		if(etsHash != null){
 			Iterator<String> etsIter = etsHash.keySet().iterator();
 			while(etsIter.hasNext()){
@@ -328,10 +333,10 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 				PluggableGraphMouse pgm = new PluggableGraphMouse();
 				pgm.add(new PickingGraphMousePlugin<GraphNode,GraphEdge>());
 				visView.setGraphMouse(pgm);
-				
 				visView.setBackground(Color.WHITE);
-
+				visView.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 				visView.setPreferredSize(new Dimension(200, 200));
+				
 		}
 		return visView;
 	}
@@ -340,8 +345,7 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 	 * Repaints/Refreshes the visualisation viewer, with the given graph
 	 * @param graph The new graph to be painted
 	 */
-	public void graphRepaint(Graph<GraphNode, GraphEdge> graph)
-	{
+	private void graphRepaint(Graph<GraphNode, GraphEdge> graph) 	{
 		Layout<GraphNode, GraphEdge> layout = new CircleLayout<GraphNode, GraphEdge>(graph);
 		layout.setSize(new Dimension(120,120));
 		visView.setGraphLayout(layout);
@@ -351,61 +355,33 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 	
 	/**
 	 * This method initializes btnOK	
-	 * 	
 	 * @return javax.swing.JButton	
 	 */
 	private JButton getBtnOK() {
-		if (btnOK == null) {
-			btnOK = new JButton();
-			btnOK.setText("OK");
-			btnOK.addActionListener(this);
+		if (jButtonOK == null) {
+			jButtonOK = new JButton();
+			jButtonOK.setText("OK");
+			jButtonOK.setPreferredSize(new Dimension(80, 26));
+			jButtonOK.setForeground(new Color(0, 153, 0));
+			jButtonOK.setFont(new Font("Dialog", Font.BOLD, 12));
+			jButtonOK.addActionListener(this);
 		}
-		return btnOK;
+		return jButtonOK;
 	}
-	/* (non-Javadoc)
-	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	
+	/**
+	 * Add a new network component of selectedType to the main graph joined at the pickedVertex.
+	 * Updates the environment network model accordingly.  
+	 * @param selectedType - The Network component type selected
+	 * @param pickedVertex - The vertex selected in the prototype preview which is to be used as common point for merging
 	 */
-	@Override
-	public void actionPerformed(ActionEvent ae) {
-		//OK button
-		if(ae.getSource().equals(getBtnOK())){					
-			//check whether only one vertex is picked or not
-			String selected = (String) componentTypesList.getSelectedValue();
-			Set<GraphNode> nodeSet = getVisView().getPickedVertexState().getPicked();
-			if(nodeSet.size() == 1){
-				GraphNode pickedVertex = nodeSet.iterator().next();
-				//System.out.println("pos: "+getVisView().getGraphLayout().transform(pickedVertex));
-
-				addElement(selected,pickedVertex);
-				
-				//this.setVisible(false);
-				this.dispose();
-			}
-			else{
-				JOptionPane.showMessageDialog(this,Language.translate("Select one vertex",Language.EN),Language.translate("Warning",Language.EN),JOptionPane.WARNING_MESSAGE);
-			}		
-		}
-		//Cancel button
-		else if(ae.getSource().equals(getBtnCancel()))
-		{
-			//this.setVisible(false);
-			this.dispose();
-		}
-	}
-
-/**
- * Add a new network component of selectedType to the main graph joined at the pickedVertex.
- * Updates the environment network model accordingly.  
- * @param selectedType - The Network component type selected
- * @param pickedVertex - The vertex selected in the prototype preview which is to be used as common point for merging
- */
-	private void addElement(String selectedType, GraphNode pickedVertex) {
+	private void addGraphPrototype(String selectedType, GraphNode pickedVertex) {
 		//Environment network model
-		NetworkModel gridModel = parent.getController().getGridModel();		
+		NetworkModel gridModel = parentGUI.getController().getGridModel();		
 		//The Node picked in the parent graph
-		GraphNode parentPickedVertex = parent.getPickedVertex();
+		GraphNode parentPickedVertex = parentGUI.getPickedVertex();
 		
-		HashMap<String, ComponentTypeSettings> componentTypeSettings = parent.getController().getComponentTypeSettings();
+		HashMap<String, ComponentTypeSettings> componentTypeSettings = parentGUI.getController().getComponentTypeSettings();
 		
 		// Create a NetworkComponent representing the element
 		NetworkComponent newComponent = new NetworkComponent();
@@ -442,7 +418,9 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 		//Replace the network model graph with the new one
 		gridModel.setGraph(gridModel.getGraph());
 		
-		parent.getController().refreshNetworkModel();
+		GraphEnvironmentController gec = parentGUI.getController(); 
+		gec.refreshNetworkModel();	
+		
 	}
 		
 	/**
@@ -470,7 +448,7 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 			if(v != v2){
 				GraphNode newNode = new GraphNode();
 				//Generate the unique ID to be assigned to the new node
-				String nextID = parent.getController().getGridModel().nextNodeID();
+				String nextID = parentGUI.getController().getGridModel().nextNodeID();
 				newNode.setId(nextID); 
 				
 				//Set position of node  v1+(v-v2)
@@ -514,58 +492,89 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 	
 	/**
 	 * This method initializes jBottomPanel	
-	 * 	
 	 * @return javax.swing.JPanel	
 	 */
 	private JPanel getJBottomPanel() {
-		if (jBottomPanel == null) {
-			
+		if (jPanelBottom == null) {
 			GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
 			gridBagConstraints1.gridwidth = 1;
 			gridBagConstraints1.anchor = GridBagConstraints.CENTER;
-			gridBagConstraints1.insets = new Insets(0, 0, 0, 10);
+			gridBagConstraints1.insets = new Insets(5, 0, 5, 20);
 			gridBagConstraints1.ipadx = 3;
 			GridBagConstraints gridBagConstraints = new GridBagConstraints();
 			gridBagConstraints.gridx = 1;
 			gridBagConstraints.gridwidth = 1;
-			gridBagConstraints.insets = new Insets(0, 10, 0, 0);
+			gridBagConstraints.insets = new Insets(5, 20, 5, 0);
 			gridBagConstraints.gridy = 0;
-			jBottomPanel = new JPanel();
-			jBottomPanel.setLayout(new GridBagLayout());
-			jBottomPanel.add(getBtnOK(), gridBagConstraints1);
-			jBottomPanel.add(getBtnCancel(), gridBagConstraints);
+			jPanelBottom = new JPanel();
+			jPanelBottom.setLayout(new GridBagLayout());
+			jPanelBottom.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+			jPanelBottom.add(getBtnOK(), gridBagConstraints1);
+			jPanelBottom.add(getBtnCancel(), gridBagConstraints);
 		}
-		return jBottomPanel;
+		return jPanelBottom;
 	}
 
 
 	/**
 	 * This method initializes btnCancel	
-	 * 	
 	 * @return javax.swing.JButton	
 	 */
 	private JButton getBtnCancel() {
-		if (btnCancel == null) {
-			btnCancel = new JButton();
-			btnCancel.setText("Cancel");
-			btnCancel.addActionListener(this);
+		if (jButtonCancel == null) {
+			jButtonCancel = new JButton();
+			jButtonCancel.setText("Cancel");
+			jButtonCancel.setPreferredSize(new Dimension(80, 26));
+			jButtonCancel.setFont(new Font("Dialog", Font.BOLD, 12));
+			jButtonCancel.setForeground(new Color(153, 0, 0));
+			jButtonCancel.addActionListener(this);
 		}
-		return btnCancel;
+		return jButtonCancel;
 	}
 
 	/**
 	 * This method initializes jViewerPanel	
-	 * 	
 	 * @return javax.swing.JPanel	
 	 */
 	private JPanel getJViewerPanel() {
-		if (jViewerPanel == null) {
+		if (jPanelViewer == null) {
 			BorderLayout borderLayout = new BorderLayout();
 			borderLayout.setHgap(0);
-			jViewerPanel = new JPanel();
-			jViewerPanel.setLayout(borderLayout);
-			jViewerPanel.add(getVisView(), BorderLayout.CENTER);
+			jPanelViewer = new JPanel();
+			jPanelViewer.setLayout(borderLayout);
+			jPanelViewer.add(getVisView(), BorderLayout.CENTER);
 		}
-		return jViewerPanel;
+		return jPanelViewer;
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
+	@Override
+	public void actionPerformed(ActionEvent ae) {
+
+		if(ae.getSource().equals(getBtnOK())){					
+			// --- OK button ---
+			//check whether only one vertex is picked or not
+			String selected = (String) componentTypesList.getSelectedValue();
+			Set<GraphNode> nodeSet = getVisView().getPickedVertexState().getPicked();
+			if(nodeSet.size() == 1){
+				GraphNode pickedVertex = nodeSet.iterator().next();
+				//System.out.println("pos: "+getVisView().getGraphLayout().transform(pickedVertex));
+				addGraphPrototype(selected,pickedVertex);
+				
+				//this.setVisible(false);
+				this.dispose();
+			
+			} else{
+				JOptionPane.showMessageDialog(this,Language.translate("Select one vertex",Language.EN),Language.translate("Warning",Language.EN),JOptionPane.WARNING_MESSAGE);
+			}		
+		
+		} else if(ae.getSource().equals(getBtnCancel())) {
+			// --- Cancel button ---
+			//this.setVisible(false);
+			this.dispose();
+		}
+	}
+	
 }  //  @jve:decl-index=0:visual-constraint="18,-13"
