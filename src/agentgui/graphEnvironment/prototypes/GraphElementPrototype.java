@@ -37,12 +37,14 @@ public abstract class GraphElementPrototype {
 
 	/**
 	 * This method adds a GraphElementPrototype to a JUNG graph, with no connection to other graph elements.
+	 * This method should be implemented, for new graph prototypes.
 	 * @param graph The JUNG graph
 	 * @return A HashSet containing the GraphElements representing this component, or null if adding failed  
 	 */
 	public abstract HashSet<GraphElement> addToGraph(Graph<GraphNode, GraphEdge> graph);
 	/**
 	 * This method adds a GraphElementPrototype to a JUNG graph after another element.
+	 * This method is only used for importing the graph from the GraphML file.
 	 * @param graph The JUNG graph
 	 * @param predecessor The GraphElementPrototype's predecessor
 	 * @return A HashSet containing the GraphElements representing this component, or null if adding failed
@@ -50,6 +52,7 @@ public abstract class GraphElementPrototype {
 	public abstract HashSet<GraphElement> addAfter(Graph<GraphNode, GraphEdge> graph, GraphElementPrototype predecessor);
 	/**
 	 * This method adds a GraphElementPrototype to a JUNG graph before another element.
+	 * This method is only used for importing the graph from the GraphML file.
 	 * @param graph The JUNG graph
 	 * @param successor The GraphElementPrototype's successor
 	 * @return A HashSet containing the GraphElements representing this component, or null if adding failed
@@ -57,6 +60,7 @@ public abstract class GraphElementPrototype {
 	public abstract HashSet<GraphElement> addBefore(Graph<GraphNode, GraphEdge> graph, GraphElementPrototype successor);
 	/**
 	 * This method adds a GraphElementPrototype to a JUNG graph between two other elements.
+	 * This method is only used for importing the graph from the GraphML file.
 	 * @param graph The JUNG graph
 	 * @param predecessor The GraphElementPrototype's predecessor
 	 * @param successor The GraphElementPrototype's successor

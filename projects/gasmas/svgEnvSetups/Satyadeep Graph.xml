@@ -31,6 +31,45 @@
             </value>
         </entry>
         <entry>
+            <key>n5</key>
+            <value>
+                <agentClassName>gasmas.agents.CompressorAgent</agentClassName>
+                <directed>true</directed>
+                <graphElementIDs>n5</graphElementIDs>
+                <graphElementIDs>PP8</graphElementIDs>
+                <graphElementIDs>PP7</graphElementIDs>
+                <id>n5</id>
+                <prototypeClassName>agentgui.graphEnvironment.prototypes.DirectedSimpleGraphElement</prototypeClassName>
+                <type>compressor</type>
+            </value>
+        </entry>
+        <entry>
+            <key>n4</key>
+            <value>
+                <agentClassName>gasmas.agents.StorageAgent</agentClassName>
+                <directed>false</directed>
+                <graphElementIDs>n4</graphElementIDs>
+                <graphElementIDs>PP7</graphElementIDs>
+                <graphElementIDs>PP6</graphElementIDs>
+                <id>n4</id>
+                <prototypeClassName>agentgui.graphEnvironment.prototypes.SimpleGraphElement</prototypeClassName>
+                <type>storage</type>
+            </value>
+        </entry>
+        <entry>
+            <key>n3</key>
+            <value>
+                <agentClassName>gasmas.agents.StorageAgent</agentClassName>
+                <directed>false</directed>
+                <graphElementIDs>n3</graphElementIDs>
+                <graphElementIDs>PP5</graphElementIDs>
+                <graphElementIDs>PP6</graphElementIDs>
+                <id>n3</id>
+                <prototypeClassName>agentgui.graphEnvironment.prototypes.SimpleGraphElement</prototypeClassName>
+                <type>storage</type>
+            </value>
+        </entry>
+        <entry>
             <key>n2</key>
             <value>
                 <agentClassName>gasmas.agents.ValveAgent</agentClassName>
@@ -41,6 +80,68 @@
                 <id>n2</id>
                 <prototypeClassName>agentgui.graphEnvironment.prototypes.SimpleGraphElement</prototypeClassName>
                 <type>valve</type>
+            </value>
+        </entry>
+        <entry>
+            <key>n9</key>
+            <value>
+                <directed>false</directed>
+                <graphElementIDs>n9_2</graphElementIDs>
+                <graphElementIDs>n9_4</graphElementIDs>
+                <graphElementIDs>n9_3</graphElementIDs>
+                <graphElementIDs>n9_0</graphElementIDs>
+                <graphElementIDs>n9_1</graphElementIDs>
+                <graphElementIDs>PP11</graphElementIDs>
+                <graphElementIDs>PP13</graphElementIDs>
+                <graphElementIDs>PP14</graphElementIDs>
+                <graphElementIDs>PP15</graphElementIDs>
+                <graphElementIDs>PP16</graphElementIDs>
+                <graphElementIDs>PP17</graphElementIDs>
+                <id>n9</id>
+                <prototypeClassName>agentgui.graphEnvironment.prototypes.Star5GraphElement</prototypeClassName>
+                <type>star</type>
+            </value>
+        </entry>
+        <entry>
+            <key>n8</key>
+            <value>
+                <agentClassName>gasmas.agents.ExitAgent</agentClassName>
+                <directed>true</directed>
+                <graphElementIDs>PP9</graphElementIDs>
+                <graphElementIDs>n8</graphElementIDs>
+                <graphElementIDs>PP12</graphElementIDs>
+                <id>n8</id>
+                <prototypeClassName>agentgui.graphEnvironment.prototypes.DirectedSimpleGraphElement</prototypeClassName>
+                <type>exit</type>
+            </value>
+        </entry>
+        <entry>
+            <key>n7</key>
+            <value>
+                <agentClassName>gasmas.agents.ExitAgent</agentClassName>
+                <directed>true</directed>
+                <graphElementIDs>PP10</graphElementIDs>
+                <graphElementIDs>PP11</graphElementIDs>
+                <graphElementIDs>n7</graphElementIDs>
+                <id>n7</id>
+                <prototypeClassName>agentgui.graphEnvironment.prototypes.DirectedSimpleGraphElement</prototypeClassName>
+                <type>exit</type>
+            </value>
+        </entry>
+        <entry>
+            <key>n6</key>
+            <value>
+                <agentClassName>gasmas.agents.BranchAgent</agentClassName>
+                <directed>false</directed>
+                <graphElementIDs>PP9</graphElementIDs>
+                <graphElementIDs>PP10</graphElementIDs>
+                <graphElementIDs>PP8</graphElementIDs>
+                <graphElementIDs>n6_3</graphElementIDs>
+                <graphElementIDs>n6_2</graphElementIDs>
+                <graphElementIDs>n6_1</graphElementIDs>
+                <id>n6</id>
+                <prototypeClassName>agentgui.graphEnvironment.prototypes.TriangeGraphElement</prototypeClassName>
+                <type>branch</type>
             </value>
         </entry>
     </componentList>

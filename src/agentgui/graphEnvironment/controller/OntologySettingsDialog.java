@@ -16,8 +16,11 @@ import java.awt.Dimension;
 import javax.swing.JPanel;
 import java.awt.GridBagLayout;
 import javax.swing.JButton;
+
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+import java.awt.Font;
 /**
  * GUI component for setting the properties of an ontology object representing the domain view of a grid component
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
@@ -181,7 +184,10 @@ public class OntologySettingsDialog extends JDialog implements ActionListener{
 	private JButton getJButtonApply() {
 		if (jButtonApply == null) {
 			jButtonApply = new JButton();
-			jButtonApply.setText(Language.translate("Übernehmen"));
+			jButtonApply.setText("Übernehmen");
+			jButtonApply.setText(Language.translate(jButtonApply.getText()));
+			jButtonApply.setFont(new Font("Dialog", Font.BOLD, 12));
+			jButtonApply.setForeground(new Color(0,153,0));			
 			jButtonApply.addActionListener(this);
 		}
 		return jButtonApply;
@@ -195,7 +201,11 @@ public class OntologySettingsDialog extends JDialog implements ActionListener{
 	private JButton getJButtonAbort() {
 		if (jButtonAbort == null) {
 			jButtonAbort = new JButton();
-			jButtonAbort.setText(Language.translate("Abbrechen"));
+			
+			jButtonAbort.setText("Abbrechen");
+			jButtonAbort.setText(Language.translate(jButtonAbort.getText()));
+			jButtonAbort.setForeground(new Color(153,0,0));
+			jButtonAbort.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonAbort.addActionListener(this);
 		}
 		return jButtonAbort;

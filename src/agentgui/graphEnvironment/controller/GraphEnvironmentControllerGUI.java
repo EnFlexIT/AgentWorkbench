@@ -99,15 +99,15 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	/**
 	 * JPanel containing the controls
 	 */
-	private JPanel pnlControlls = null;
+	private JPanel jPanelControls = null;
 	/**
 	 * JScrollPane containing the components table
 	 */
-	private JScrollPane scpComponentTable = null;
+	private JScrollPane jScrollPaneComponentsTable = null;
 	/**
 	 * The components table
 	 */
-	private JTable tblComponents = null;
+	private JTable jTableComponents = null;
 	/**
 	 *Used for showing buttons in the components table 
 	 */
@@ -120,7 +120,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	/**
 	 * The configure component types button
 	 */
-	private JButton btnSetClasses = null;
+	private JButton jButtonSetComponentTypes = null;
 	/**
 	 * The Dialog for setting the component types
 	 */
@@ -136,7 +136,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	 */
 	private GraphEnvironmentController controller = null;
 	
-	private JLabel lblTable = null;
+	private JLabel jLabelTable = null;
 	/**
 	 * The SplitPane containing this GUI's components
 	 */
@@ -173,7 +173,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	 * @return javax.swing.JPanel	
 	 */
 	private JPanel getPnlControlls() {
-		if (pnlControlls == null) {
+		if (jPanelControls == null) {
 			GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
 			gridBagConstraints11.fill = GridBagConstraints.BOTH;
 			gridBagConstraints11.gridy = 1;
@@ -190,10 +190,10 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 			gridBagConstraints6.anchor = GridBagConstraints.WEST;
 			gridBagConstraints6.insets = new Insets(0, 15, 0, 0);
 			gridBagConstraints6.gridy = 0;
-			lblTable = new JLabel();
-			lblTable.setText("Search Components");
-			lblTable.setFont(new Font("Dialog", Font.BOLD, 12));
-			lblTable.setText(Language.translate(lblTable.getText(),Language.EN));
+			jLabelTable = new JLabel();
+			jLabelTable.setText("Search Components");
+			jLabelTable.setFont(new Font("Dialog", Font.BOLD, 12));
+			jLabelTable.setText(Language.translate(jLabelTable.getText(),Language.EN));
 			GridBagConstraints gridBagConstraints = new GridBagConstraints();
 			gridBagConstraints.fill = GridBagConstraints.BOTH;
 			gridBagConstraints.gridy = 2;
@@ -203,14 +203,14 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 			gridBagConstraints.gridwidth = 0;
 			gridBagConstraints.insets = new Insets(0, 10, 0, 5);
 			gridBagConstraints.gridx = 0;
-			pnlControlls = new JPanel();
-			pnlControlls.setLayout(new GridBagLayout());
-			pnlControlls.add(lblTable, gridBagConstraints6);
-			pnlControlls.add(getJTextFieldSearch(), gridBagConstraints11);
-			pnlControlls.add(getScpComponentTable(), gridBagConstraints);
-			pnlControlls.add(getBtnSetClasses(), gridBagConstraints7);
+			jPanelControls = new JPanel();
+			jPanelControls.setLayout(new GridBagLayout());
+			jPanelControls.add(jLabelTable, gridBagConstraints6);
+			jPanelControls.add(getJTextFieldSearch(), gridBagConstraints11);
+			jPanelControls.add(getScpComponentTable(), gridBagConstraints);
+			jPanelControls.add(getBtnSetClasses(), gridBagConstraints7);
 		}
-		return pnlControlls;
+		return jPanelControls;
 	}
 
 	/**
@@ -218,11 +218,11 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	 * @return javax.swing.JScrollPane	
 	 */
 	private JScrollPane getScpComponentTable() {
-		if (scpComponentTable == null) {
-			scpComponentTable = new JScrollPane();
-			scpComponentTable.setViewportView(getTblComponents());
+		if (jScrollPaneComponentsTable == null) {
+			jScrollPaneComponentsTable = new JScrollPane();
+			jScrollPaneComponentsTable.setViewportView(getTblComponents());
 		}
-		return scpComponentTable;
+		return jScrollPaneComponentsTable;
 	}
 
 	/**
@@ -232,9 +232,9 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	 */
 	private TableColumnModel getColModel(){
 		final GraphEnvironmentControllerGUI graphEnvironmentControllerGUI = this;		
-		colModel = tblComponents.getColumnModel();
+		colModel = jTableComponents.getColumnModel();
         colModel.getColumn(2).setCellRenderer(new JTableButtonRenderer());	        
-        colModel.getColumn(2).setCellEditor(new JTableButtonEditor(tblComponents){
+        colModel.getColumn(2).setCellEditor(new JTableButtonEditor(jTableComponents){
 			private static final long serialVersionUID = 1L;
 
 			/* (non-Javadoc)
@@ -243,11 +243,11 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
         	@Override
         	public void actionPerformed(ActionEvent e) {
         		super.actionPerformed(e);
-        		int row = tblComponents.getEditingRow();
+        		int row = jTableComponents.getEditingRow();
                
                 //converting view coordinates to model coordinates
-                int modelRowIndex = tblComponents.convertRowIndexToModel(row);
-                String compID = (String) tblComponents.getModel().getValueAt(modelRowIndex, 0);
+                int modelRowIndex = jTableComponents.convertRowIndexToModel(row);
+                String compID = (String) jTableComponents.getModel().getValueAt(modelRowIndex, 0);
         		NetworkComponent comp = controller.getGridModel().getNetworkComponent(compID);
         		new OntologySettingsDialog(currProject, graphEnvironmentControllerGUI, comp).setVisible(true);
         	}
@@ -264,7 +264,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	 * @return javax.swing.JTable	
 	 */
 	private JTable getTblComponents() {
-		if (tblComponents == null) {
+		if (jTableComponents == null) {
 			// Column titles
 			Vector<String> titles = new Vector<String>();
 			titles.add(Language.translate("Komponente"));
@@ -285,20 +285,20 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 			};
 			
 			tblSorter = new TableRowSorter<DefaultTableModel>(model);	
-			tblComponents = new JTable(model);
-			tblComponents.setRowSorter(tblSorter);
-			tblComponents.setColumnModel(getColModel());
+			jTableComponents = new JTable(model);
+			jTableComponents.setRowSorter(tblSorter);
+			jTableComponents.setColumnModel(getColModel());
 			
-			tblComponents.getSelectionModel().addListSelectionListener(this);
-			tblComponents.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			tblComponents.setShowGrid(true);
-			tblComponents.setFillsViewportHeight(true);							
-			tblComponents.setCellSelectionEnabled(true);	    
+			jTableComponents.getSelectionModel().addListSelectionListener(this);
+			jTableComponents.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			jTableComponents.setShowGrid(true);
+			jTableComponents.setFillsViewportHeight(true);							
+			jTableComponents.setCellSelectionEnabled(true);	    
 	        
-	        tblComponents.getModel().addTableModelListener(this);
+	        jTableComponents.getModel().addTableModelListener(this);
 
 		}
-		return tblComponents;
+		return jTableComponents;
 	}
 	
 	/**
@@ -453,14 +453,14 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	 * @return javax.swing.JButton	
 	 */
 	private JButton getBtnSetClasses() {
-		if (btnSetClasses == null) {
-			btnSetClasses = new JButton();
-			btnSetClasses.setText("Komponenten-Typen");
-			btnSetClasses.setText(Language.translate(btnSetClasses.getText()));
-			btnSetClasses.setFont(new Font("Dialog", Font.BOLD, 12));
-			btnSetClasses.addActionListener(this);
+		if (jButtonSetComponentTypes == null) {
+			jButtonSetComponentTypes = new JButton();
+			jButtonSetComponentTypes.setText("Komponenten-Typen");
+			jButtonSetComponentTypes.setText(Language.translate(jButtonSetComponentTypes.getText()));
+			jButtonSetComponentTypes.setFont(new Font("Dialog", Font.BOLD, 12));
+			jButtonSetComponentTypes.addActionListener(this);
 		}
-		return btnSetClasses;
+		return jButtonSetComponentTypes;
 	}
 	
 	/**
@@ -912,7 +912,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		if(getTblComponents().getSelectedRowCount() > 0){
 			//Converting from view coordinates to model coordinates
 			int selectedIndex = getTblComponents().convertRowIndexToModel(getTblComponents().getSelectedRow());
-			String componentID = (String) tblComponents.getModel().getValueAt(selectedIndex, 0);
+			String componentID = (String) jTableComponents.getModel().getValueAt(selectedIndex, 0);
 			NetworkComponent component = controller.getGridModel().getNetworkComponent(componentID);
 			
 			graphGUI.clearPickedObjects();

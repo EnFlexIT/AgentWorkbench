@@ -27,6 +27,7 @@
  */
 package agentgui.graphEnvironment.controller;
 
+import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -34,9 +35,12 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Paint;
 import java.awt.Point;
+import java.awt.Stroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -71,10 +75,12 @@ import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseGraph;
 import edu.uci.ics.jung.graph.util.EdgeType;
+import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin;
 import edu.uci.ics.jung.visualization.control.PluggableGraphMouse;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
+import edu.uci.ics.jung.visualization.transform.MutableTransformer;
 
 /**
  * Dialog for adding a new network component to the model.<br>
@@ -309,25 +315,87 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 				
 				visView.setLayout(new GridBagLayout());
 				
-				// Configure node labels
-				visView.getRenderContext().setVertexLabelTransformer(new Transformer<GraphNode, String>() {
-					
-					@Override
-					public String transform(GraphNode arg0) {
-						return arg0.getId();
-					}
-				});
+				//Translate the graph to the right to bring it to the center
+				MutableTransformer mutableLayout= getVisView().getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT);
+				mutableLayout.translate(120, 10);
 				
-				// Configure edge labels
+				// Configure edge labels, show the icon
 				visView.getRenderContext().setEdgeLabelTransformer(new Transformer<GraphEdge, String>() {
 		
 					@Override
-					public String transform(GraphEdge arg0) {
-						return arg0.getComponentType()+" "+arg0.getId();
+					public String transform(GraphEdge edge) {
+						//Get the path of the Image from the component type settings
+						String edgeImage = parentGUI.getController().getComponentTypeSettings().get(edge.getComponentType()).getEdgeImage();
+						if(edgeImage!=null){
+							URL url = getClass().getResource(edgeImage);
+							if(url!=null){
+								//If the image path is valid
+								return "<html><img src="+url+" height=16 width=16 >";
+							}
+							else
+								return "";
+						}
+						else
+							return "";
 					}
 				});
+				
+				//Configure vertex colors
+				visView.getRenderContext().setVertexFillPaintTransformer(
+						new Transformer<GraphNode, Paint>() {
+							public Paint transform(GraphNode arg0) {
+								if(visView.getPickedVertexState().isPicked(arg0))
+								{//Highlight color when picked	
+									return BasicGraphGUI.DEFAULT_VERTEX_PICKED_COLOR;
+								}
+								else
+								{	//Get the color from the component type settings
+									String colorString= parentGUI.getController().getComponentTypeSettings().get("node").getColor();
+									if(colorString!=null){
+										Color color = new Color(Integer.parseInt(colorString));							
+										return color;
+									}
+									else
+										return BasicGraphGUI.DEFAULT_VERTEX_COLOR;
+								}
+							}
+						}
+				);
+				
+				//Configure edge colors
+				visView.getRenderContext().setEdgeDrawPaintTransformer(
+				new Transformer<GraphEdge, Paint>() {
+					public Paint transform(GraphEdge arg0) {
+						if(visView.getPickedEdgeState().isPicked(arg0))
+						{//Highlight color when picked	
+							return BasicGraphGUI.DEFAULT_EDGE_PICKED_COLOR;
+						}
+						else
+						{	//Get the color from the component type settings
+							String colorString= parentGUI.getController().getComponentTypeSettings().get(arg0.getComponentType()).getColor();
+							if(colorString!=null){
+								Color color = new Color(Integer.parseInt(colorString));							
+								return color;
+							}
+							else
+								return BasicGraphGUI.DEFAULT_EDGE_COLOR;
+						}
+					}
+				}
+				);
+				
 				// Use straight lines as edges
 				visView.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line<GraphNode, GraphEdge>());
+				
+				//Set edge width
+				visView.getRenderContext().setEdgeStrokeTransformer(new Transformer<GraphEdge, Stroke>(){
+
+					@Override
+					public Stroke transform(GraphEdge arg0) {
+						return new BasicStroke(2);
+					}
+					
+				}); 
 				
 				//Mouse plugin to be placed here
 				PluggableGraphMouse pgm = new PluggableGraphMouse();
@@ -348,6 +416,7 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 	private void graphRepaint(Graph<GraphNode, GraphEdge> graph) 	{
 		Layout<GraphNode, GraphEdge> layout = new CircleLayout<GraphNode, GraphEdge>(graph);
 		layout.setSize(new Dimension(120,120));
+				
 		visView.setGraphLayout(layout);
 		visView.repaint();
 		jContentPane.repaint();
@@ -397,7 +466,7 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 		if(gridModel.getGraph().getVertexCount()==0){
 			//Creating an initial dummy vertex on the parent graph so that the same merge function can be used
 			GraphNode firstNode = new GraphNode();
-			firstNode.setId("PP0"); //TODO ID may not be hard coded
+			firstNode.setId("PP0"); 
 			firstNode.setPosition(new Point(30,30));
 			gridModel.getGraph().addVertex(firstNode);
 			parentPickedVertex = firstNode;

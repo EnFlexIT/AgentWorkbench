@@ -27,7 +27,7 @@
             <key>node</key>
             <value>
                 <agentClass>gasmas.ontology.PropagationPoint</agentClass>
-                <color>-3407872</color>
+                <color>-6710785</color>
                 <vertexSize>2</vertexSize>
             </value>
         </entry>
@@ -50,6 +50,14 @@
             </value>
         </entry>
         <entry>
+            <key>star</key>
+            <value>
+                <color>-10066432</color>
+                <edgeImage>MissingIcon</edgeImage>
+                <graphPrototype>agentgui.graphEnvironment.prototypes.Star5GraphElement</graphPrototype>
+            </value>
+        </entry>
+        <entry>
             <key>branch</key>
             <value>
                 <agentClass>gasmas.agents.BranchAgent</agentClass>
@@ -68,21 +76,21 @@
             </value>
         </entry>
         <entry>
-            <key>pipe</key>
-            <value>
-                <agentClass>gasmas.agents.PipeAgent</agentClass>
-                <color>-6711040</color>
-                <edgeImage>/gasmas/img/MBLoadMonitor.png</edgeImage>
-                <graphPrototype>agentgui.graphEnvironment.prototypes.SimpleGraphElement</graphPrototype>
-            </value>
-        </entry>
-        <entry>
             <key>exit</key>
             <value>
                 <agentClass>gasmas.agents.ExitAgent</agentClass>
                 <color>-16751104</color>
                 <edgeImage>/gasmas/img/MBLoadStopRecord.png</edgeImage>
                 <graphPrototype>agentgui.graphEnvironment.prototypes.DirectedSimpleGraphElement</graphPrototype>
+            </value>
+        </entry>
+        <entry>
+            <key>pipe</key>
+            <value>
+                <agentClass>gasmas.agents.PipeAgent</agentClass>
+                <color>-6711040</color>
+                <edgeImage>/gasmas/img/MBLoadMonitor.png</edgeImage>
+                <graphPrototype>agentgui.graphEnvironment.prototypes.SimpleGraphElement</graphPrototype>
             </value>
         </entry>
         <entry>

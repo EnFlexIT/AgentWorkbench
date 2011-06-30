@@ -159,7 +159,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	/**
 	 * Panel containing control buttons.
 	 */
-	private JPanel pnlControlls = null;
+	private JPanel jPanelControls = null;
 	/**
 	 * Graph visualization component
 	 */
@@ -270,7 +270,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getPnlControlls() {
-		if (pnlControlls == null) {
+		if (jPanelControls == null) {
 			GridBagConstraints gridBagConstraints13 = new GridBagConstraints();
 			gridBagConstraints13.fill = GridBagConstraints.VERTICAL;
 			gridBagConstraints13.gridy = 0;
@@ -279,12 +279,12 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 			gridBagConstraints13.anchor = GridBagConstraints.NORTH;
 			gridBagConstraints13.weighty = 1.0;
 			gridBagConstraints13.gridx = 0;
-			pnlControlls = new JPanel();
-			pnlControlls.setPreferredSize(new Dimension(50, 400));
-			pnlControlls.setLayout(new GridBagLayout());
-			pnlControlls.add(getJJToolBar(), gridBagConstraints13);
+			jPanelControls = new JPanel();
+			jPanelControls.setPreferredSize(new Dimension(50, 400));
+			jPanelControls.setLayout(new GridBagLayout());
+			jPanelControls.add(getJJToolBar(), gridBagConstraints13);
 		}
-		return pnlControlls;
+		return jPanelControls;
 	}
 
 	/**
