@@ -780,7 +780,9 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 			// --- Save the current configuration -----------------------------
 			this.currOntoInstViewer.save();
 			// --- Set the current configuration to the simulation setup ------
-			this.agentSelectedLast.setStartArguments(currOntoInstViewer.getConfigurationXML());
+			if (this.agentSelectedLast!=null) {
+				this.agentSelectedLast.setStartArguments(currOntoInstViewer.getConfigurationXML());	
+			}
 		}
 		this.currSimSetup.save();
 		

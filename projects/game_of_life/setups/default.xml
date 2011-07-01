@@ -1,23 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <simulationSetup>
-    <agentSetup>
-        <agent>
-            <postionNo>1</postionNo>
-            <agentClassReference>game_of_life.SimService.agents.SimulationManager</agentClassReference>
-            <startAsName>SiMa</startAsName>
-        </agent>
-        <agent>
-            <postionNo>2</postionNo>
-            <agentClassReference>agentgui.physical2Denvironment.display.DisplayAgent</agentClassReference>
-            <startAsName>DiAg</startAsName>
-        </agent>
-        <agent>
-            <postionNo>3</postionNo>
-            <listMembership>01AgentStartManual</listMembership>
-            <agentClassReference>game_of_life.SimService.agents.GameOfLifeAgent</agentClassReference>
-            <startAsName>GaOfLiAg</startAsName>
-        </agent>
-    </agentSetup>
+    <agentSetup/>
     <distribution>
         <doDynamicLoadBalalncing>false</doDynamicLoadBalalncing>
         <doStaticLoadBalalncing>true</doStaticLoadBalalncing>
