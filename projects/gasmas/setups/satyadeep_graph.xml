@@ -24,6 +24,14 @@
     <environmentFileName>Satyadeep Graph.graphml</environmentFileName>
     <graphElementSettings>
         <entry>
+            <key>ring</key>
+            <value>
+                <color>-39322</color>
+                <edgeImage>MissingIcon</edgeImage>
+                <graphPrototype>agentgui.graphEnvironment.prototypes.Ring4GraphElement</graphPrototype>
+            </value>
+        </entry>
+        <entry>
             <key>node</key>
             <value>
                 <agentClass>gasmas.ontology.PropagationPoint</agentClass>
@@ -54,7 +62,7 @@
             <value>
                 <color>-10066432</color>
                 <edgeImage>MissingIcon</edgeImage>
-                <graphPrototype>agentgui.graphEnvironment.prototypes.Star5GraphElement</graphPrototype>
+                <graphPrototype>agentgui.graphEnvironment.prototypes.Star4GraphElement</graphPrototype>
             </value>
         </entry>
         <entry>

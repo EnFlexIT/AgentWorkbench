@@ -94,12 +94,13 @@ public abstract class GraphElementPrototype {
 	}
 	/**
 	 * This method returns a node in which a predecessor can be connected to this GraphElementPrototype 
-	 *
+	 * This method is only used for importing the graph from the GraphML file.
 	 * @return The node
 	 */
 	public abstract GraphNode getFreeEntry();
 	/**
 	 * This method returns a node in which a successor can be connected to this GraphElementPrototype
+	 * This method is only used for importing the graph from the GraphML file.
 	 * @return The node
 	 */
 	public abstract GraphNode getFreeExit();

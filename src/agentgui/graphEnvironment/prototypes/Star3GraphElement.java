@@ -118,8 +118,7 @@ public class Star3GraphElement extends GraphElementPrototype{
 			return elements;
 		}
 		else
-		{	System.err.println("NStarGraphElement: number of corners(n) is null");
-			return null;
+		{	throw new GraphElementPrototypeException("Number of connection points (n) is null");
 		}
 	}
 	

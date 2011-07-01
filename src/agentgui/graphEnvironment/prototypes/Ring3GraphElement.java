@@ -38,35 +38,35 @@ import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.EdgeType;
 
 /**
- * A graph / network element with a mesh arrangement.
- * Extend this class for implementing 'n' vertex mesh graph element prototypes. 
+ * A graph / network element with a ring arrangement.
+ * Extend this class for implementing 'n' ring graph element prototypes. 
  * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati
  */
-public class Mesh3GraphElement extends GraphElementPrototype{
+public class Ring3GraphElement extends GraphElementPrototype{
 	/**
 	 * The number of connection points
 	 */
 	private Integer n = null;
 	
 	/**
-	 * The vector of nodes which form the connection points
+	 * The vector of nodes which forms the corners of the element.
 	 */
 	Vector<GraphNode> nodes;
 	
 	/**
 	 * Default constructor with 3 corners
 	 */
-	public Mesh3GraphElement(){
+	public Ring3GraphElement(){
 		super();
 		n=3;
 		nodes =  new Vector<GraphNode>();
 	}
 	
 	/**
-	 * Constructor for creating the Mesh prototype with 'n' connection points
+	 * Constructor for creating the ring prototype with 'n' connection points
 	 * @param n  the number of connection points
 	 */
-	public Mesh3GraphElement(Integer n){
+	public Ring3GraphElement(Integer n){
 		super();
 		if( n >= 3){
 			this.n = n;
@@ -97,20 +97,24 @@ public class Mesh3GraphElement extends GraphElementPrototype{
 			}
 			
 			//Creating edges
-			for(int i=0; i<n; i++){
-				for(int j=i+1; j<n; j++){
+			for(int i=0; i<n-1; i++){
 					//Creating edge
-					GraphEdge edge = new GraphEdge(getId()+"_"+i+","+j, getType());
+					GraphEdge edge = new GraphEdge(getId()+"_"+i+","+(i+1), getType());
 					
 					//Adding to the graph
-					graph.addEdge(edge, nodes.get(i), nodes.get(j), EdgeType.UNDIRECTED);
-					elements.add(edge);					
-				}
+					graph.addEdge(edge, nodes.get(i), nodes.get(i+1), EdgeType.UNDIRECTED);
+					elements.add(edge);									
 			}
+			//Creating last edge
+			GraphEdge edge = new GraphEdge(getId()+"_"+0+","+(n-1), getType());
+			
+			//Adding to the graph
+			graph.addEdge(edge, nodes.get(n-1), nodes.get(0), EdgeType.UNDIRECTED);
+			elements.add(edge);
 			return elements;
 		}
 		else
-		{	throw new GraphElementPrototypeException("Number of connection points (n) is null");	
+		{	throw new GraphElementPrototypeException("Number of connection points (n) is null");			
 		}
 	}
 	

@@ -29,16 +29,16 @@
 package agentgui.graphEnvironment.prototypes;
 
 /**
- * A sample graph element prototype of star type with 5 connection points
+ * A sample graph element prototype of star type with 4 connection points
  * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati
  * @see Star3GraphElement
  * @see GraphElementPrototype
  *
  */
-public class Star5GraphElement extends Star3GraphElement{
+public class Star4GraphElement extends Star3GraphElement{
 
-	public Star5GraphElement() {
-		super(5);
+	public Star4GraphElement() {
+		super(4);
 	}
 	
 
