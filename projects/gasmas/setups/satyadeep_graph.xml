@@ -40,6 +40,14 @@
             </value>
         </entry>
         <entry>
+            <key>star3</key>
+            <value>
+                <color>-16777216</color>
+                <edgeImage>MissingIcon</edgeImage>
+                <graphPrototype>agentgui.graphEnvironment.prototypes.Star3GraphElement</graphPrototype>
+            </value>
+        </entry>
+        <entry>
             <key>valve</key>
             <value>
                 <agentClass>gasmas.agents.ValveAgent</agentClass>
@@ -84,15 +92,6 @@
             </value>
         </entry>
         <entry>
-            <key>pipe</key>
-            <value>
-                <agentClass>gasmas.agents.PipeAgent</agentClass>
-                <color>-6711040</color>
-                <edgeImage>/gasmas/img/MBLoadMonitor.png</edgeImage>
-                <graphPrototype>agentgui.graphEnvironment.prototypes.SimpleGraphElement</graphPrototype>
-            </value>
-        </entry>
-        <entry>
             <key>exit</key>
             <value>
                 <agentClass>gasmas.agents.ExitAgent</agentClass>
@@ -102,11 +101,11 @@
             </value>
         </entry>
         <entry>
-            <key>storage</key>
+            <key>pipe</key>
             <value>
-                <agentClass>gasmas.agents.StorageAgent</agentClass>
-                <color>-65536</color>
-                <edgeImage>/gasmas/img/MBLoadPlay.png</edgeImage>
+                <agentClass>gasmas.agents.PipeAgent</agentClass>
+                <color>-6711040</color>
+                <edgeImage>/gasmas/img/MBLoadMonitor.png</edgeImage>
                 <graphPrototype>agentgui.graphEnvironment.prototypes.SimpleGraphElement</graphPrototype>
             </value>
         </entry>
@@ -116,6 +115,15 @@
                 <color>-65281</color>
                 <edgeImage>MissingIcon</edgeImage>
                 <graphPrototype>agentgui.graphEnvironment.prototypes.Mesh4GraphElement</graphPrototype>
+            </value>
+        </entry>
+        <entry>
+            <key>storage</key>
+            <value>
+                <agentClass>gasmas.agents.StorageAgent</agentClass>
+                <color>-65536</color>
+                <edgeImage>/gasmas/img/MBLoadPlay.png</edgeImage>
+                <graphPrototype>agentgui.graphEnvironment.prototypes.SimpleGraphElement</graphPrototype>
             </value>
         </entry>
     </graphElementSettings>

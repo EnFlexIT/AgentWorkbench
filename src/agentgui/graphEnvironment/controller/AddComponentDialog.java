@@ -70,6 +70,7 @@ import agentgui.graphEnvironment.networkModel.GraphNode;
 import agentgui.graphEnvironment.networkModel.NetworkComponent;
 import agentgui.graphEnvironment.networkModel.NetworkModel;
 import agentgui.graphEnvironment.prototypes.GraphElementPrototype;
+import agentgui.graphEnvironment.prototypes.Star3GraphElement;
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.Graph;
@@ -628,15 +629,27 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 			String selected = (String) componentTypesList.getSelectedValue();
 			Set<GraphNode> nodeSet = getVisView().getPickedVertexState().getPicked();
 			if(nodeSet.size() == 1){
+			//Picked one vertex	
 				GraphNode pickedVertex = nodeSet.iterator().next();
-				//System.out.println("pos: "+getVisView().getGraphLayout().transform(pickedVertex));
+				//Check for Star prototype
+				if(graphElement instanceof Star3GraphElement){
+				//If the picked vertex is the center of the star, cannot add	
+					Graph<GraphNode,GraphEdge> graph = getVisView().getGraphLayout().getGraph();
+					//All the edges in the graph or incident on the pickedVertex => It is a center
+					if(graph.getEdgeCount() == graph.getIncidentEdges(pickedVertex).size()){
+						JOptionPane.showMessageDialog(this,Language.translate("Select a vertex other than the center of the star",Language.EN),
+								Language.translate("Warning",Language.EN),JOptionPane.WARNING_MESSAGE);
+						return;
+					}
+				}
 				addGraphPrototype(selected,pickedVertex);
 				
 				//this.setVisible(false);
 				this.dispose();
 			
 			} else{
-				JOptionPane.showMessageDialog(this,Language.translate("Select one vertex",Language.EN),Language.translate("Warning",Language.EN),JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(this,Language.translate("Select one vertex",Language.EN),
+						Language.translate("Warning",Language.EN),JOptionPane.WARNING_MESSAGE);
 			}		
 		
 		} else if(ae.getSource().equals(getBtnCancel())) {

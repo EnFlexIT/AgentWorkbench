@@ -75,6 +75,8 @@ import agentgui.graphEnvironment.networkModel.GraphElement;
 import agentgui.graphEnvironment.networkModel.GraphNode;
 import agentgui.graphEnvironment.networkModel.NetworkComponent;
 import agentgui.graphEnvironment.networkModel.NetworkModel;
+import agentgui.graphEnvironment.prototypes.GraphElementPrototype;
+import agentgui.graphEnvironment.prototypes.Star3GraphElement;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.EdgeType;
 import java.awt.Insets;
@@ -547,7 +549,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 						//Picked a vertex
 					else if(getPickedVertex()!=null){
 							//System.out.println("vertex picked="+getPickedVertex().getId());
-							if(checkGridConstraints(getPickedVertex()))
+							if(isFreeToAddComponent(getPickedVertex()))
 								getAddComponentDialog().setVisible(true);
 							else
 								JOptionPane.showMessageDialog(this,Language.translate("Select a valid vertex", Language.EN),
@@ -588,7 +590,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 						GraphNode node1 = nodeIter.next();
 						GraphNode node2 = nodeIter.next();
 						//Valid nodes are picked
-						if(checkGridConstraints(node1) && checkGridConstraints(node2)){
+						if(isFreeToAddComponent(node1) && isFreeToAddComponent(node2)){
 							handleMergeNodes(node1, node2);
 						}
 						//Invalid nodes are picked
@@ -880,21 +882,83 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	
 	
 	/**
-	 * Checks the constraint for a given node in the network model.
-	 * Constraint - a node can be a member of maximum two network components.
+	 * Checks the constraint for a given node in the network model whether it is free to add a component.
+	 * Constraint :- a node can be a member of maximum two network components.
 	 * @param object - selected node
 	 * @return true if the node is a member of 0 or 1 components, false otherwise
 	 */
-	public boolean checkGridConstraints(Object object) {
+	public boolean isFreeToAddComponent(Object object) {
 		if(object instanceof GraphNode){
-			GraphNode node = (GraphNode) object;			
-				if(getNetworkComponentCount(node)<2)
-					return true;				
+			GraphNode node = (GraphNode) object;	
+			int compCount = getNetworkComponentCount(node);
+			if(compCount == 1)
+			{ //Node is present in only one component
+				
+				NetworkComponent comp = getNetworkComponentsFromNode(node).iterator().next();
+				if(isStarGraphElement(comp)){
+				//If it is a star component
+					//Check whether the given node is the center of the star.
+					if(isCenterNodeOfStar(node,comp))
+						return false;						
+				}
+				return true;
+			}					
 		}	
 		return false;
 	}
 
 	
+	/**
+	 * Given  a node and a graph component of star prototype, 
+	 * checks whether the node is the center of the star or not.
+	 * @param node The node to be checked 
+	 * @param comp The network component containing the node having the star prototype
+	 */
+	private boolean isCenterNodeOfStar(GraphNode node, NetworkComponent comp) {
+		//Get the network model
+		NetworkModel networkModel = getController().getGridModel();
+		Iterator<String> iter  = comp.getGraphElementIDs().iterator();
+		//For each graph element of the component
+		while(iter.hasNext()){
+			GraphElement elem =  networkModel.getGraphElement(iter.next());
+			if(elem instanceof GraphEdge){		
+				//The center node should be incident on all the edges of the component
+				if( ! networkModel.getGraph().isIncident(node, (GraphEdge)elem))
+					return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Checks whether a network component is in the star graph element
+	 * @param comp the network component
+	 * @return true if the component is a star graph element
+	 */
+	private boolean isStarGraphElement(NetworkComponent comp) {
+		GraphElementPrototype graphElement = null;
+		try {
+			Class<?> theClass;
+			theClass = Class.forName(comp.getPrototypeClassName());
+			graphElement = (GraphElementPrototype)theClass.newInstance();
+		}
+		catch (ClassNotFoundException ex ){
+		      System.err.println( ex + " GraphElementPrototype class must be in class path.");
+		}
+	    catch(InstantiationException ex ){
+	      System.err.println( ex + " GraphElementPrototype class must be concrete.");
+	    }
+	    catch(IllegalAccessException ex ){
+	      System.err.println( ex + " GraphElementPrototype class must have a no-arg constructor.");
+	    }
+	    
+	    if(graphElement instanceof Star3GraphElement){
+	    	return true;
+	    }
+	    else
+	    	return false;
+	}
+
 	@Override
 	public void actionPerformed(ActionEvent event) {
 		if(event.getSource().equals(getBtnSetClasses())){

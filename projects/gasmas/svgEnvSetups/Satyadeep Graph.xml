@@ -5,19 +5,18 @@
             <key>n10</key>
             <value>
                 <directed>false</directed>
-                <graphElementIDs>n10_1,2</graphElementIDs>
-                <graphElementIDs>n10_0,2</graphElementIDs>
-                <graphElementIDs>n10_1,3</graphElementIDs>
-                <graphElementIDs>n10_0,3</graphElementIDs>
-                <graphElementIDs>n10_0,1</graphElementIDs>
-                <graphElementIDs>PP20</graphElementIDs>
-                <graphElementIDs>PP29</graphElementIDs>
-                <graphElementIDs>PP15</graphElementIDs>
+                <graphElementIDs>PP19</graphElementIDs>
+                <graphElementIDs>n10_3</graphElementIDs>
+                <graphElementIDs>n10_1</graphElementIDs>
+                <graphElementIDs>n10_0</graphElementIDs>
+                <graphElementIDs>n10_2</graphElementIDs>
+                <graphElementIDs>PP13</graphElementIDs>
                 <graphElementIDs>PP16</graphElementIDs>
-                <graphElementIDs>n10_2,3</graphElementIDs>
+                <graphElementIDs>PP17</graphElementIDs>
+                <graphElementIDs>PP18</graphElementIDs>
                 <id>n10</id>
-                <prototypeClassName>agentgui.graphEnvironment.prototypes.Mesh4GraphElement</prototypeClassName>
-                <type>mesh</type>
+                <prototypeClassName>agentgui.graphEnvironment.prototypes.Star4GraphElement</prototypeClassName>
+                <type>star</type>
             </value>
         </entry>
         <entry>
@@ -37,51 +36,39 @@
             </value>
         </entry>
         <entry>
-            <key>n0</key>
-            <value>
-                <agentClassName>gasmas.agents.EntryAgent</agentClassName>
-                <directed>true</directed>
-                <graphElementIDs>n0</graphElementIDs>
-                <graphElementIDs>PP1</graphElementIDs>
-                <graphElementIDs>PP0</graphElementIDs>
-                <id>n0</id>
-                <prototypeClassName>agentgui.graphEnvironment.prototypes.DirectedSimpleGraphElement</prototypeClassName>
-                <type>entry</type>
-            </value>
-        </entry>
-        <entry>
             <key>n12</key>
             <value>
                 <directed>false</directed>
-                <graphElementIDs>n12_1,2</graphElementIDs>
-                <graphElementIDs>n12_2,3</graphElementIDs>
+                <graphElementIDs>PP20</graphElementIDs>
+                <graphElementIDs>n12_1</graphElementIDs>
+                <graphElementIDs>n12_0</graphElementIDs>
+                <graphElementIDs>n12_3</graphElementIDs>
+                <graphElementIDs>n12_2</graphElementIDs>
+                <graphElementIDs>n12_5</graphElementIDs>
                 <graphElementIDs>PP24</graphElementIDs>
-                <graphElementIDs>n12_0,3</graphElementIDs>
-                <graphElementIDs>PP16</graphElementIDs>
-                <graphElementIDs>PP22</graphElementIDs>
+                <graphElementIDs>PP25</graphElementIDs>
+                <graphElementIDs>n12_4</graphElementIDs>
                 <graphElementIDs>PP23</graphElementIDs>
-                <graphElementIDs>n12_0,1</graphElementIDs>
                 <id>n12</id>
-                <prototypeClassName>agentgui.graphEnvironment.prototypes.Ring4GraphElement</prototypeClassName>
-                <type>ring</type>
+                <prototypeClassName>agentgui.graphEnvironment.prototypes.Mesh4GraphElement</prototypeClassName>
+                <type>mesh</type>
             </value>
         </entry>
         <entry>
             <key>n11</key>
             <value>
                 <directed>false</directed>
-                <graphElementIDs>PP19</graphElementIDs>
                 <graphElementIDs>n11_2</graphElementIDs>
                 <graphElementIDs>n11_1</graphElementIDs>
                 <graphElementIDs>PP21</graphElementIDs>
                 <graphElementIDs>PP20</graphElementIDs>
                 <graphElementIDs>n11_3</graphElementIDs>
-                <graphElementIDs>PP11</graphElementIDs>
                 <graphElementIDs>n11_0</graphElementIDs>
+                <graphElementIDs>PP22</graphElementIDs>
                 <graphElementIDs>PP18</graphElementIDs>
                 <id>n11</id>
-                <prototypeClassName>agentgui.graphEnvironment.prototypes.Star4GraphElement</prototypeClassName>
-                <type>star</type>
+                <prototypeClassName>agentgui.graphEnvironment.prototypes.Ring4GraphElement</prototypeClassName>
+                <type>ring</type>
             </value>
         </entry>
         <entry>
@@ -137,6 +124,22 @@
             </value>
         </entry>
         <entry>
+            <key>n9</key>
+            <value>
+                <directed>false</directed>
+                <graphElementIDs>n9_2</graphElementIDs>
+                <graphElementIDs>n9_0</graphElementIDs>
+                <graphElementIDs>n9_1</graphElementIDs>
+                <graphElementIDs>PP11</graphElementIDs>
+                <graphElementIDs>PP13</graphElementIDs>
+                <graphElementIDs>PP14</graphElementIDs>
+                <graphElementIDs>PP15</graphElementIDs>
+                <id>n9</id>
+                <prototypeClassName>agentgui.graphEnvironment.prototypes.Star3GraphElement</prototypeClassName>
+                <type>star3</type>
+            </value>
+        </entry>
+        <entry>
             <key>n8</key>
             <value>
                 <agentClassName>gasmas.agents.ExitAgent</agentClassName>
@@ -176,60 +179,6 @@
                 <id>n6</id>
                 <prototypeClassName>agentgui.graphEnvironment.prototypes.TriangeGraphElement</prototypeClassName>
                 <type>branch</type>
-            </value>
-        </entry>
-        <entry>
-            <key>n13</key>
-            <value>
-                <directed>false</directed>
-                <graphElementIDs>PP28</graphElementIDs>
-                <graphElementIDs>n13_3</graphElementIDs>
-                <graphElementIDs>PP26</graphElementIDs>
-                <graphElementIDs>PP27</graphElementIDs>
-                <graphElementIDs>PP24</graphElementIDs>
-                <graphElementIDs>n13_1</graphElementIDs>
-                <graphElementIDs>n13_2</graphElementIDs>
-                <graphElementIDs>PP25</graphElementIDs>
-                <graphElementIDs>n13_0</graphElementIDs>
-                <id>n13</id>
-                <prototypeClassName>agentgui.graphEnvironment.prototypes.Star4GraphElement</prototypeClassName>
-                <type>star</type>
-            </value>
-        </entry>
-        <entry>
-            <key>n14</key>
-            <value>
-                <directed>false</directed>
-                <graphElementIDs>PP31</graphElementIDs>
-                <graphElementIDs>n14_1,2</graphElementIDs>
-                <graphElementIDs>n14_1,3</graphElementIDs>
-                <graphElementIDs>PP30</graphElementIDs>
-                <graphElementIDs>n14_0,3</graphElementIDs>
-                <graphElementIDs>n14_0,2</graphElementIDs>
-                <graphElementIDs>PP28</graphElementIDs>
-                <graphElementIDs>PP29</graphElementIDs>
-                <graphElementIDs>n14_0,1</graphElementIDs>
-                <graphElementIDs>n14_2,3</graphElementIDs>
-                <id>n14</id>
-                <prototypeClassName>agentgui.graphEnvironment.prototypes.Mesh4GraphElement</prototypeClassName>
-                <type>mesh</type>
-            </value>
-        </entry>
-        <entry>
-            <key>n15</key>
-            <value>
-                <directed>false</directed>
-                <graphElementIDs>PP32</graphElementIDs>
-                <graphElementIDs>n15_2,3</graphElementIDs>
-                <graphElementIDs>n15_0,1</graphElementIDs>
-                <graphElementIDs>PP27</graphElementIDs>
-                <graphElementIDs>n15_0,3</graphElementIDs>
-                <graphElementIDs>n15_1,2</graphElementIDs>
-                <graphElementIDs>PP33</graphElementIDs>
-                <graphElementIDs>PP34</graphElementIDs>
-                <id>n15</id>
-                <prototypeClassName>agentgui.graphEnvironment.prototypes.Ring4GraphElement</prototypeClassName>
-                <type>ring</type>
             </value>
         </entry>
     </componentList>

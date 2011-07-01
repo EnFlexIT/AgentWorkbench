@@ -97,16 +97,18 @@ public class Ring3GraphElement extends GraphElementPrototype{
 			}
 			
 			//Creating edges
+			int edgeCount =0;
 			for(int i=0; i<n-1; i++){
 					//Creating edge
-					GraphEdge edge = new GraphEdge(getId()+"_"+i+","+(i+1), getType());
+					GraphEdge edge = new GraphEdge(getId()+"_"+edgeCount, getType());
 					
 					//Adding to the graph
 					graph.addEdge(edge, nodes.get(i), nodes.get(i+1), EdgeType.UNDIRECTED);
-					elements.add(edge);									
+					elements.add(edge);			
+					edgeCount++;
 			}
 			//Creating last edge
-			GraphEdge edge = new GraphEdge(getId()+"_"+0+","+(n-1), getType());
+			GraphEdge edge = new GraphEdge(getId()+"_"+edgeCount, getType());
 			
 			//Adding to the graph
 			graph.addEdge(edge, nodes.get(n-1), nodes.get(0), EdgeType.UNDIRECTED);

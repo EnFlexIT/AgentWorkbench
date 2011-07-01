@@ -97,14 +97,16 @@ public class Mesh3GraphElement extends GraphElementPrototype{
 			}
 			
 			//Creating edges
+			int edgeCount = 0 ;
 			for(int i=0; i<n; i++){
 				for(int j=i+1; j<n; j++){
-					//Creating edge
-					GraphEdge edge = new GraphEdge(getId()+"_"+i+","+j, getType());
+					//Creating edge					
+					GraphEdge edge = new GraphEdge(getId()+"_"+edgeCount, getType());
 					
 					//Adding to the graph
 					graph.addEdge(edge, nodes.get(i), nodes.get(j), EdgeType.UNDIRECTED);
-					elements.add(edge);					
+					elements.add(edge);	
+					edgeCount++;
 				}
 			}
 			return elements;
