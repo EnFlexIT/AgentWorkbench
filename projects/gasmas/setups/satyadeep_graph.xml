@@ -76,15 +76,6 @@
             </value>
         </entry>
         <entry>
-            <key>exit</key>
-            <value>
-                <agentClass>gasmas.agents.ExitAgent</agentClass>
-                <color>-16751104</color>
-                <edgeImage>/gasmas/img/MBLoadStopRecord.png</edgeImage>
-                <graphPrototype>agentgui.graphEnvironment.prototypes.DirectedSimpleGraphElement</graphPrototype>
-            </value>
-        </entry>
-        <entry>
             <key>pipe</key>
             <value>
                 <agentClass>gasmas.agents.PipeAgent</agentClass>
@@ -94,12 +85,29 @@
             </value>
         </entry>
         <entry>
+            <key>exit</key>
+            <value>
+                <agentClass>gasmas.agents.ExitAgent</agentClass>
+                <color>-16751104</color>
+                <edgeImage>/gasmas/img/MBLoadStopRecord.png</edgeImage>
+                <graphPrototype>agentgui.graphEnvironment.prototypes.DirectedSimpleGraphElement</graphPrototype>
+            </value>
+        </entry>
+        <entry>
             <key>storage</key>
             <value>
                 <agentClass>gasmas.agents.StorageAgent</agentClass>
                 <color>-65536</color>
                 <edgeImage>/gasmas/img/MBLoadPlay.png</edgeImage>
                 <graphPrototype>agentgui.graphEnvironment.prototypes.SimpleGraphElement</graphPrototype>
+            </value>
+        </entry>
+        <entry>
+            <key>mesh</key>
+            <value>
+                <color>-65281</color>
+                <edgeImage>MissingIcon</edgeImage>
+                <graphPrototype>agentgui.graphEnvironment.prototypes.Mesh4GraphElement</graphPrototype>
             </value>
         </entry>
     </graphElementSettings>

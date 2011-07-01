@@ -94,6 +94,7 @@ public abstract class GraphElementPrototype {
 	}
 	/**
 	 * This method returns a node in which a predecessor can be connected to this GraphElementPrototype 
+	 *
 	 * @return The node
 	 */
 	public abstract GraphNode getFreeEntry();
@@ -106,4 +107,8 @@ public abstract class GraphElementPrototype {
 	 * @return True if directed, false if undirected
 	 */
 	public abstract boolean isDirected();
+	
+	//TODO think about this vs the current implementation based on the 
+	//	constraint that a node can be in max two network components. (eg. Star) 
+	//public abstract boolean isFreeConnectionPoint();
 }

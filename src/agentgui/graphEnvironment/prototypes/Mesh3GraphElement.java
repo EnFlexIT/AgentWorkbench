@@ -29,7 +29,6 @@
 package agentgui.graphEnvironment.prototypes;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Vector;
 
 import agentgui.graphEnvironment.networkModel.GraphEdge;
@@ -39,44 +38,39 @@ import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.EdgeType;
 
 /**
- * A graph / network element with a star arrangement.
- * Extend this class for implementing 'n' star graph element prototypes. 
+ * A graph / network element with a mesh arrangement.
+ * Extend this class for implementing 'n' mesh graph element prototypes. 
  * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati
  */
-public class Star3GraphElement extends GraphElementPrototype{
+public class Mesh3GraphElement extends GraphElementPrototype{
 	/**
-	 * The number of corners or edges of the graph prototype
+	 * The number of connection points
 	 */
 	private Integer n = null;
 	
 	/**
 	 * The vector of outernodes which forms the corners of the element.
 	 */
-	Vector<GraphNode> outerNodes;
-	
-	/**
-	 * The central node of the element, to which all outernodes are connected.
-	 */
-	GraphNode centralNode;
+	Vector<GraphNode> nodes;
 	
 	/**
 	 * Default constructor with 3 corners
 	 */
-	public Star3GraphElement(){
+	public Mesh3GraphElement(){
 		super();
 		n=3;
-		outerNodes =  new Vector<GraphNode>();
+		nodes =  new Vector<GraphNode>();
 	}
 	
 	/**
 	 * Constructor for creating the Star prototype with 'n' connection points
 	 * @param n  the number of connection points
 	 */
-	public Star3GraphElement(Integer n){
+	public Mesh3GraphElement(Integer n){
 		super();
 		if( n >= 3){
 			this.n = n;
-			outerNodes =  new Vector<GraphNode>();
+			nodes =  new Vector<GraphNode>();
 		}
 		else
 		{
@@ -91,34 +85,31 @@ public class Star3GraphElement extends GraphElementPrototype{
 			this.graph = graph;
 			// Create a HashSet for the nodes and edges
 			HashSet<GraphElement> elements = new HashSet<GraphElement>();
-		
-			// Create central node and add to the graph
-			centralNode = new GraphNode();
-			centralNode.setId("PP"+(nodeCounter++));
-			graph.addVertex(centralNode);
-			elements.add(centralNode);
 			
 			//Creating outer nodes and edges
 			for(int i=0;i<n;i++){
 				//Create the node and add to the vector
 				GraphNode node = new GraphNode();
 				node.setId("PP"+(nodeCounter++));
-				outerNodes.add(node);
-				elements.add(node);
-				
-				//Creating edge
-				GraphEdge edge = new GraphEdge(getId()+"_"+i, getType());
-				
-				//Adding to the graph
 				graph.addVertex(node);
-				graph.addEdge(edge, centralNode, node, EdgeType.UNDIRECTED);
-				elements.add(edge);
+				nodes.add(node);
+				elements.add(node);
 			}
 			
+			for(int i=0; i<n; i++){
+				for(int j=i+1; j<n; j++){
+					//Creating edge
+					GraphEdge edge = new GraphEdge(getId()+"_"+i+","+j, getType());
+					
+					//Adding to the graph
+					graph.addEdge(edge, nodes.get(i), nodes.get(j), EdgeType.UNDIRECTED);
+					elements.add(edge);					
+				}
+			}
 			return elements;
 		}
 		else
-		{	System.err.println("NStarGraphElement: number of corners(n) is null");
+		{	System.err.println("NMeshGraphElement: number of connection points(n) is null");
 			return null;
 		}
 	}
@@ -146,13 +137,14 @@ public class Star3GraphElement extends GraphElementPrototype{
 
 	@Override
 	public GraphNode getFreeEntry() {
-		Iterator<GraphNode> iter = outerNodes.iterator();
-		while(iter.hasNext()){
-			GraphNode node = iter.next();
-			if(graph.getNeighborCount(node) < 2){
-				return node;
-			}
-		}
+		//TODO 
+//		Iterator<GraphNode> iter = outerNodes.iterator();
+//		while(iter.hasNext()){
+//			GraphNode node = iter.next();
+//			if(graph.getNeighborCount(node) < 2){
+//				return node;
+//			}
+//		}
 		return null;
 	}
 
