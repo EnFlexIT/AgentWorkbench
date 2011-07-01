@@ -3,7 +3,10 @@ package agentgui.core.sim.setup;
 import java.io.FileWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Set;
+import java.util.Vector;
 
 import javax.swing.DefaultListModel;
 import javax.xml.bind.JAXBContext;
@@ -19,8 +22,23 @@ import agentgui.graphEnvironment.networkModel.ComponentTypeSettings;
 
 @XmlRootElement public class SimulationSetup {
 
+	/**
+	 * Standard name for an agent start list if the current start element was configured in the 
+	 * tab 'Simulation-Setup' => 'Agent-Start'   
+	 */
+	@XmlTransient public static final String AGENT_LIST_ManualConfiguration = "01AgentStartManual";
+	/**
+	 *  Standard name for an agent start list if the current start element was configured for a predefined
+	 *  environment model in the tab 'Simulation-Setup' => 'Simulation Environment'   
+	 */
+	@XmlTransient public static final String AGENT_LIST_EnvironmentConfiguration = "02AgentStartEnvironment";
+	/**
+	 * This Hash holds the instances of all agent start lists
+	 */
+	@XmlTransient private HashMap<String, DefaultListModel> agentSetupLists = new HashMap<String, DefaultListModel>();
+	
+
 	@XmlTransient private Project currProject = null;	
-	@XmlTransient private DefaultListModel agentListModel = null;	
 	
 	@XmlElementWrapper(name = "agentSetup")
 	@XmlElement(name="agent")
@@ -35,22 +53,10 @@ import agentgui.graphEnvironment.networkModel.ComponentTypeSettings;
 	private HashMap<String, ComponentTypeSettings> graphElementSettings;
 	
 	/**
-	 * @return the elementTypeSettings
-	 */
-	public HashMap<String, ComponentTypeSettings> getGraphElementSettings() {
-		return graphElementSettings;
-	}
-	/**
-	 * @param graphElementSettings the elementTypeSettings to set
-	 */
-	public void setGraphElementSettings(HashMap<String, ComponentTypeSettings> graphElementSettings) {
-		this.graphElementSettings = graphElementSettings;
-	}
-	/**
 	 * Constructor without arguments (This is first of all 
 	 * for the JAXB-Context and should not be used by any
 	 * other context)
-	 */
+	 */	
 	public SimulationSetup() {
 	}
 	/**
@@ -75,7 +81,16 @@ import agentgui.graphEnvironment.networkModel.ComponentTypeSettings;
 		
 		// ------------------------------------------------
 		// --- Write Data from GUI to the Model -----------
-		this.setAgentList(this.agentListModel);
+		Set<String> agentListNamesSet = agentSetupLists.keySet();
+		Vector<String> agentListNames = new Vector<String>();
+		agentListNames.addAll(agentListNamesSet);
+		Collections.sort(agentListNames);
+		
+		for (int i = 0; i < agentListNames.size(); i++) {
+			DefaultListModel dlm = agentSetupLists.get(agentListNames.get(i));
+			this.setAgentList(dlm);
+		}
+		
 		
 		// ------------------------------------------------
 		// --- Save the current simulation setup ----------
@@ -127,20 +142,43 @@ import agentgui.graphEnvironment.networkModel.ComponentTypeSettings;
 	}
 	
 	/**
-	 * @param agentListModel the agentListModel to set
+	 * This method can be used in order to add an individual agent start list to the SimulationSetup.<br>
+	 * The list will be filled with elements of the type {@link AgentClassElement4SimStart} coming from
+	 * the stored setup file and will be later on also stored in the file of the simulation setup.
+	 * 
+	 * @param defaultListModel4AgentStarts the new DefaultListModel to set
+	 * @see AgentClassElement4SimStart
 	 */
-	public void setAgentListModel(DefaultListModel agentListModel) {
-		this.agentListModel = agentListModel;
-		this.agentListModel.removeAllElements();
+	public void registerAgentDefaultListModel(DefaultListModel newDefaultListModel4AgentStarts, String listName) {
+
+		newDefaultListModel4AgentStarts.removeAllElements();
 		for (int i = 0; i < agentList.size(); i++) {
-			this.agentListModel.addElement(agentList.get(i));
+
+			AgentClassElement4SimStart ac4s = agentList.get(i);
+			if (ac4s.getListMembership()==null && listName.equals(SimulationSetup.AGENT_LIST_ManualConfiguration)) {
+				newDefaultListModel4AgentStarts.addElement(ac4s);
+			
+			} else if (ac4s.getListMembership().equals(listName)) {
+				newDefaultListModel4AgentStarts.addElement(ac4s);	
+			}
+			
 		}
+		agentSetupLists.put(listName, newDefaultListModel4AgentStarts);
 	}
 	/**
+	 * This method can be used in order to get an agents start list for the 
+	 * simulation, given by  
 	 * @return the agentListModel
 	 */
-	public DefaultListModel getAgentListModel() {
-		return agentListModel;
+	public DefaultListModel getAgentDefaultListModel(String listName) {
+		return agentSetupLists.get(listName);
+	}
+	/**
+	 * Here a complete agent start list can be added to the simulation setup 
+	 * @return the agentListModel
+	 */
+	public void setAgentDefaultListModel(DefaultListModel defaultListModel4AgentStarts, String listName) {
+		agentSetupLists.put(listName, defaultListModel4AgentStarts);
 	}
 	
 	
@@ -178,5 +216,18 @@ import agentgui.graphEnvironment.networkModel.ComponentTypeSettings;
 		this.distributionSetup = distributionSetup;
 	}
 	
+	
+	/**
+	 * @return the elementTypeSettings
+	 */
+	public HashMap<String, ComponentTypeSettings> getGraphElementSettings() {
+		return graphElementSettings;
+	}
+	/**
+	 * @param graphElementSettings the elementTypeSettings to set
+	 */
+	public void setGraphElementSettings(HashMap<String, ComponentTypeSettings> graphElementSettings) {
+		this.graphElementSettings = graphElementSettings;
+	}
 	
 }

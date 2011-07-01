@@ -5,15 +5,17 @@
             <postionNo>1</postionNo>
             <agentClassReference>game_of_life.SimService.agents.SimulationManager</agentClassReference>
             <startAsName>SiMa</startAsName>
-            <startArguments>
-                <argument>PFNpbXBsZV9JbnRlZ2VyIEludGVnZXJWYWx1ZT0iMTAiLz4K</argument>
-                <argument>PFNpbXBsZV9JbnRlZ2VyIEludGVnZXJWYWx1ZT0iMjAiLz4K</argument>
-            </startArguments>
         </agent>
         <agent>
             <postionNo>2</postionNo>
             <agentClassReference>agentgui.physical2Denvironment.display.DisplayAgent</agentClassReference>
             <startAsName>DiAg</startAsName>
+        </agent>
+        <agent>
+            <postionNo>3</postionNo>
+            <listMembership>01AgentStartManual</listMembership>
+            <agentClassReference>game_of_life.SimService.agents.GameOfLifeAgent</agentClassReference>
+            <startAsName>GaOfLiAg</startAsName>
         </agent>
     </agentSetup>
     <distribution>
@@ -33,7 +35,4 @@
             <thNoThreadsL>50</thNoThreadsL>
         </userThresholds>
     </distribution>
-    <agentListModel>
-        <size>2</size>
-    </agentListModel>
 </simulationSetup>

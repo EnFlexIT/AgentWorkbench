@@ -55,6 +55,8 @@ public class AgentClassElement4SimStart {
 	
 	@XmlElement(name="postionNo")
 	private Integer postionNo = 0;
+	@XmlElement(name="listMembership")
+	private String listMembership = null;
 	@XmlElement(name="agentClassReference")
 	private String agentClassReference = null;
 	@XmlElement(name="startAsName")
@@ -78,18 +80,20 @@ public class AgentClassElement4SimStart {
 	 * Constructor of this class by using the Class which extends Agent 
 	 * @param agentClass
 	 */
-	public AgentClassElement4SimStart(Class<? extends Agent> agentClass){
+	public AgentClassElement4SimStart(Class<? extends Agent> agentClass, String listMembership){
 		this.agentClass=agentClass;
 		this.agentClassReference = this.agentClass.getName();
+		this.listMembership = listMembership;
 		this.setDefaultAgentName();
 	}
 	/**
 	 * Constructor of this class by using an AgentClassElement-Object
-	 * @param agentClass
+	 * @param agentClassElement
 	 */
-	public AgentClassElement4SimStart(AgentClassElement agentClass){
-		this.agentClass=agentClass.getElementClass();
+	public AgentClassElement4SimStart(AgentClassElement agentClassElement, String listMembership){
+		this.agentClass=agentClassElement.getElementClass();
 		this.agentClassReference = this.agentClass.getName();
+		this.listMembership = listMembership;
 		this.setDefaultAgentName();
 	}
 	
@@ -177,6 +181,21 @@ public class AgentClassElement4SimStart {
 	 */
 	public void setPostionNo(Integer postionNo) {
 		this.postionNo = postionNo;
+	}
+	/**
+	 * Returns the listType this entry belongs to 
+	 * @return the listType
+	 */
+	@XmlTransient
+	public String getListMembership() {
+		return listMembership;
+	}
+	/**
+	 * Sets the type of the list this entry belongs to
+	 * @param listMembership the listType to set
+	 */
+	public void setListMembership(String listMembership) {
+		this.listMembership = listMembership;
 	}
 	/**
 	 * Returns the local name of the agent like ((AID)agentAID).getLocalname() 

@@ -580,7 +580,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 			currProject.simSetups.setupLoadAndFocus(SimulationSetups.SIMULATION_SETUP_LOAD, currProject.simSetupCurrent, false);
 			currSimSetup = currProject.simSetups.getCurrSimSetup();
 		}
-		this.currSimSetup.setAgentListModel(this.jListModelAgents2Start);
+		this.currSimSetup.registerAgentDefaultListModel(this.jListModelAgents2Start, SimulationSetup.AGENT_LIST_ManualConfiguration);
 
 		// --- Formular-Elemente einstellen ---
 		//jTextFieldStartAs.setText("");
@@ -605,7 +605,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 			Object[] agentsSelected = agentSelector.getSelectedAgentClasses();
 			for (int i = 0; i < agentsSelected.length; i++) {
 				
-				AgentClassElement4SimStart ac4s = new AgentClassElement4SimStart((AgentClassElement) agentsSelected[i]); 
+				AgentClassElement4SimStart ac4s = new AgentClassElement4SimStart((AgentClassElement) agentsSelected[i], SimulationSetup.AGENT_LIST_ManualConfiguration); 
 				// --- Set the order number -------------------------
 				ac4s.setPostionNo(startCounter);
 				startCounter++;
@@ -646,7 +646,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 	}
 	
 	/**
-	 * This Method trys to find a new unique name for an agent 
+	 * This Method tries to find a new unique name for an agent 
 	 * by starting with the given/current agent name  
 	 * @param currAgentName
 	 * @return

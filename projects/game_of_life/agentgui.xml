@@ -4,9 +4,7 @@
     <projectView>Developer</projectView>
     <projectResources/>
     <plugins/>
-    <subOntologies>
-        <subOntology>agentgui.ontology.AgentGUI_BaseOntology</subOntology>
-    </subOntologies>
+    <subOntologies/>
     <agentConfiguration/>
     <jadeConfiguration>
         <useAppDefaults>true</useAppDefaults>
