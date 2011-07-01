@@ -890,6 +890,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	public boolean isFreeToAddComponent(Object object) {
 		if(object instanceof GraphNode){
 			GraphNode node = (GraphNode) object;	
+			//The number of network components containing this node
 			int compCount = getNetworkComponentCount(node);
 			if(compCount == 1)
 			{ //Node is present in only one component
@@ -952,6 +953,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	      System.err.println( ex + " GraphElementPrototype class must have a no-arg constructor.");
 	    }
 	    
+	    //Star3GraphElement is the super class of all star graph elements
 	    if(graphElement instanceof Star3GraphElement){
 	    	return true;
 	    }
