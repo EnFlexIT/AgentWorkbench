@@ -3,14 +3,16 @@
     <agentSetup>
         <agent>
             <postionNo>1</postionNo>
+            <listMembership>01AgentStartManual</listMembership>
             <agentClassReference>gasmas.agents.CompressorAgent</agentClassReference>
             <startAsName>CoAg</startAsName>
             <startArguments>
-                <argument>PENvbXByZXNzb3IgSUQ9IiIvPgo=</argument>
+                <argument>PENvbXByZXNzb3IgSUQ9IkhBTExPIi8+Cg==</argument>
             </startArguments>
         </agent>
         <agent>
             <postionNo>2</postionNo>
+            <listMembership>01AgentStartManual</listMembership>
             <agentClassReference>gasmas.agents.CompressorAgent</agentClassReference>
             <startAsName>CoAg_1</startAsName>
         </agent>
@@ -32,9 +34,6 @@
             <thNoThreadsL>50</thNoThreadsL>
         </userThresholds>
     </distribution>
-    <agentListModel>
-        <size>2</size>
-    </agentListModel>
     <environmentFileName>Nils Graph.graphml</environmentFileName>
     <graphElementSettings>
         <entry>
@@ -82,21 +81,21 @@
             </value>
         </entry>
         <entry>
-            <key>pipe</key>
-            <value>
-                <agentClass>gasmas.agents.PipeAgent</agentClass>
-                <color>-6711040</color>
-                <edgeImage>/gasmas/img/MBLoadMonitor.png</edgeImage>
-                <graphPrototype>agentgui.graphEnvironment.prototypes.SimpleGraphElement</graphPrototype>
-            </value>
-        </entry>
-        <entry>
             <key>exit</key>
             <value>
                 <agentClass>gasmas.agents.ExitAgent</agentClass>
                 <color>-16751104</color>
                 <edgeImage>/gasmas/img/MBLoadStopRecord.png</edgeImage>
                 <graphPrototype>agentgui.graphEnvironment.prototypes.DirectedSimpleGraphElement</graphPrototype>
+            </value>
+        </entry>
+        <entry>
+            <key>pipe</key>
+            <value>
+                <agentClass>gasmas.agents.PipeAgent</agentClass>
+                <color>-6711040</color>
+                <edgeImage>/gasmas/img/MBLoadMonitor.png</edgeImage>
+                <graphPrototype>agentgui.graphEnvironment.prototypes.SimpleGraphElement</graphPrototype>
             </value>
         </entry>
         <entry>

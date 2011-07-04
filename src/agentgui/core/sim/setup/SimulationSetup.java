@@ -80,6 +80,10 @@ import agentgui.graphEnvironment.networkModel.ComponentTypeSettings;
 	public boolean save() {
 		
 		// ------------------------------------------------
+		// --- Reset the whole agentList-Instance ---------
+		agentList = new ArrayList<AgentClassElement4SimStart>();
+		
+		// ------------------------------------------------
 		// --- Write Data from GUI to the Model -----------
 		Set<String> agentListNamesSet = agentSetupLists.keySet();
 		Vector<String> agentListNames = new Vector<String>();
@@ -135,7 +139,6 @@ import agentgui.graphEnvironment.networkModel.ComponentTypeSettings;
 	 */
 	public void setAgentList(DefaultListModel lm) {
 		if (lm==null) return;
-		agentList = new ArrayList<AgentClassElement4SimStart>();
 		for (int i = 0; i < lm.size(); i++) {
 			agentList.add((AgentClassElement4SimStart) lm.get(i));
 		}		
