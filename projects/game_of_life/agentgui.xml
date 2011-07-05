@@ -23,5 +23,5 @@
             <value>default.xml</value>
         </entry>
     </simulationSetups>
-    <subFolderEnvSetups>svgEnvSetups</subFolderEnvSetups>
+    <subFolderEnvSetups>envSetups</subFolderEnvSetups>
 </project>

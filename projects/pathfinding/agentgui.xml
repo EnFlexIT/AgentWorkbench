@@ -6,26 +6,11 @@
         <projectResource>C:\Programme\Java\jdk1.6.0_14\jre\lib\ext\jai_codec.jar</projectResource>
         <projectResource>C:\Programme\Java\jdk1.6.0_14\jre\lib\ext\jai_core.jar</projectResource>
         <projectResource>C:\Programme\Java\jdk1.6.0_14\jre\lib\ext\mlibwrapper_jai.jar</projectResource>
-        <projectResource>D:\10 Java Projects\PathFinding\bin</projectResource>
+        <projectResource>C:\Users\deepu\Dropbox\workspace\PathFinding\bin</projectResource>
     </projectResources>
     <plugins/>
     <subOntologies/>
     <agentConfiguration/>
-    <simulationSetupCurrent>Test</simulationSetupCurrent>
-    <simulationSetups>
-        <entry>
-            <key>default</key>
-            <value>default.xml</value>
-        </entry>
-        <entry>
-            <key>Test 2</key>
-            <value>test_2.xml</value>
-        </entry>
-        <entry>
-            <key>Test</key>
-            <value>test.xml</value>
-        </entry>
-    </simulationSetups>
     <jadeConfiguration>
         <useAppDefaults>false</useAppDefaults>
         <useLocalPort>1123</useLocalPort>
@@ -38,5 +23,20 @@
             <service>agentgui.physical2Denvironment.provider.EnvironmentProviderService;</service>
         </serviceList>
     </jadeConfiguration>
-    <subFolderEnvSetups>svgEnvSetups</subFolderEnvSetups>
+    <simulationSetupCurrent>Test</simulationSetupCurrent>
+    <simulationSetups>
+        <entry>
+            <key>Test 2</key>
+            <value>test_2.xml</value>
+        </entry>
+        <entry>
+            <key>default</key>
+            <value>default.xml</value>
+        </entry>
+        <entry>
+            <key>Test</key>
+            <value>test.xml</value>
+        </entry>
+    </simulationSetups>
+    <subFolderEnvSetups>envSetups</subFolderEnvSetups>
 </project>

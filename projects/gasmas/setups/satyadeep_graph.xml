@@ -43,6 +43,12 @@
                 <argument>PFBpcGUgSUQ9IiIgbGVuZ3RoPSIwLjBGIj4KCTxyZXNpc3RhbmNlPgoJCTxSZXNpc3RhbmNlUGFyYW1ldGVycyBwaXBlRnJpY3Rpb249IjAuMEYiIGNvc3RzPSIwLjVGIi8+Cgk8L3Jlc2lzdGFuY2U+CjwvUGlwZT4K</argument>
             </startArguments>
         </agent>
+        <agent>
+            <postionNo>5</postionNo>
+            <listMembership>02AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.PipeAgent</agentClassReference>
+            <startAsName>n4</startAsName>
+        </agent>
     </agentSetup>
     <distribution>
         <doDynamicLoadBalalncing>false</doDynamicLoadBalalncing>

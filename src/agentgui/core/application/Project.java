@@ -134,7 +134,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	
 	// --- Constants -------------------------------------------
 	@XmlTransient private String defaultSubFolder4Setups    = "setups";
-	@XmlTransient private String defaultSubFolderEnvSetups = "svgEnvSetups";
+	@XmlTransient private String defaultSubFolderEnvSetups = "envSetups";
 	@XmlTransient private String[] defaultSubFolders	   = { defaultSubFolder4Setups,
 															   defaultSubFolderEnvSetups, 
 															  };
