@@ -39,6 +39,7 @@ import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 
+import javax.swing.DefaultListModel;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -59,6 +60,7 @@ import edu.uci.ics.jung.io.graphml.HyperEdgeMetadata;
 import edu.uci.ics.jung.io.graphml.NodeMetadata;
 
 import agentgui.core.application.Project;
+import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.core.sim.setup.SimulationSetups;
 import agentgui.core.sim.setup.SimulationSetupsChangeNotification;
 import agentgui.graphEnvironment.controller.yedGraphml.YedGraphMLFileImporter;
@@ -133,6 +135,9 @@ public class GraphEnvironmentController extends Observable implements Observer {
 	 * The GraphMLWriter used to save the graph
 	 */
 	private GraphMLWriter<GraphNode, GraphEdge> graphMLWriter = null;
+	
+	private DefaultListModel agents2Start= new DefaultListModel();
+
 	
 	/**
 	 * The constructor for the GraphEnvironmentController
@@ -210,6 +215,8 @@ public class GraphEnvironmentController extends Observable implements Observer {
 		
 		// clear the network model objects
 		networkModel = new NetworkModel();
+		agents2Start.clear();
+		
 		refreshNetworkModel();
 	}
 	
@@ -492,6 +499,7 @@ public class GraphEnvironmentController extends Observable implements Observer {
 		
 		String fileName = project.simSetups.getCurrSimSetup().getEnvironmentFileName();
 		if(fileName != null){
+			project.simSetups.getCurrSimSetup().registerAgentDefaultListModel(agents2Start, SimulationSetup.AGENT_LIST_EnvironmentConfiguration);
 			
 			String folderPath = this.project.getProjectFolderFullPath()+this.project.getSubFolderEnvSetups();
 			
@@ -534,6 +542,16 @@ public class GraphEnvironmentController extends Observable implements Observer {
 		notifyObservers(new Integer(EVENT_NETWORKMODEL_LOADED));
 	}
 
-
-	
+	/**
+	 * @return the agents2Start
+	 */
+	public DefaultListModel getAgents2Start() {
+		return agents2Start;
+	}
+	/**
+	 * @param agents2Start the agents2Start to set
+	 */
+	public void setAgents2Start(DefaultListModel agents2Start) {
+		this.agents2Start = agents2Start;
+	}	
 }

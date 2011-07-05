@@ -1,7 +1,9 @@
 package agentgui.graphEnvironment.controller;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JDialog;
 
+import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
@@ -49,7 +51,7 @@ public class OntologySettingsDialog extends JDialog implements ActionListener{
 	 */
 	private Project project = null;
 	/**
-	 * The graph node containing the ontology object
+	 * The graph element containing the ontology object
 	 */
 	private Object element = null;
 	/**
@@ -97,6 +99,16 @@ public class OntologySettingsDialog extends JDialog implements ActionListener{
 				((GraphNode)element).setEncodedOntologyRepresentation(oiv.getConfigurationXML64()[0]);
 			}else if(element instanceof NetworkComponent){
 				((NetworkComponent)element).setEncodedOntologyRepresentation(oiv.getConfigurationXML64()[0]);
+				DefaultListModel agents2Start = parentGUI.getController().getAgents2Start();
+				
+				//Setting the start arguments of the ontology instance in the agent start list of the environment.
+				for(int i=0;i< agents2Start.size() ; i++){
+					AgentClassElement4SimStart ac4s = (AgentClassElement4SimStart) agents2Start.get(i);
+					if(ac4s.getStartAsName().equals(((NetworkComponent)element).getId())){
+						ac4s.setStartArguments(oiv.getConfigurationXML());
+						break;
+					}
+				}
 			}
 			parentGUI.componentSettingsChanged();
 			this.dispose();

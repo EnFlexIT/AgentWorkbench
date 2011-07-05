@@ -44,6 +44,7 @@ import java.util.Observer;
 import java.util.Set;
 import java.util.Vector;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -64,6 +65,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableRowSorter;
 
+import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
@@ -148,6 +150,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	 */
 	private BasicGraphGUI graphGUI = null;
 	private JTextField jTextFieldSearch = null;
+	
 	
 	/**
 	 * This is the default constructor
@@ -304,7 +307,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	}
 	
 	/**
-	 * Row filter for updating the table view based on the expression in the text box
+	 * Row filter for updating table view based on the expression in the text box
 	 * Used for searching components
 	 */
 	public void tblFilter(){
@@ -355,22 +358,30 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	        	
 	        	//If new ID is not equal to old ID
 	        	if(!oldCompID.equals(newCompID)){
-	        		//If there is a component with the name already
+	        		//Check if the  component id is empty
 		        	if(newCompID == null || newCompID.length() == 0){
 		        		JOptionPane.showMessageDialog(this,Language.translate("Enter a valid name", Language.EN),
 								Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);	 
 	        			getTblComponents().getModel().setValueAt(oldCompID, row, column);
 		        	}
+		        	//Check for spaces
 		        	else if(newCompID.contains(" ")){
 		        		JOptionPane.showMessageDialog(this,Language.translate("Enter the name without spaces", Language.EN),
 								Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);	 
 	        			getTblComponents().getModel().setValueAt(oldCompID, row, column);
-		        	}		        	
+		        	}
+		        	//Check if a network component name already exists
 		        	else if(controller.getGridModel().getNetworkComponent(newCompID)!=null){
 	        			JOptionPane.showMessageDialog(this,Language.translate("The component name already exists!\n Choose a different one.", Language.EN),
 								Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);	 
 	        			getTblComponents().getModel().setValueAt(oldCompID, row, column);
 	        		}
+		        	//Check if the agent name already exists in the simulation setup
+		        	else if(controller.getProject().simSetups.getCurrSimSetup().isAgentNameExists(newCompID)){
+		        		JOptionPane.showMessageDialog(this,Language.translate("An agent with the name already exists in the simulation setup!\n Choose a different one.", Language.EN),
+								Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);	 
+	        			getTblComponents().getModel().setValueAt(oldCompID, row, column);
+		        	}
 	        		else
 	        		{// All validations done, rename the component and update the network model	
 	        			handleRenameComponent(oldCompID,newCompID);
@@ -422,6 +433,17 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		networkModel.addNetworkComponent(comp);
 		
 		controller.refreshNetworkModel();
+		
+		//Renaming the agent in the agent start list of the simulation setup
+		int i=0;
+		for( i=0; i < getController().getAgents2Start().size(); i++)
+		{
+			AgentClassElement4SimStart ac4s = (AgentClassElement4SimStart) getController().getAgents2Start().get(i);
+			if(ac4s.getStartAsName().equals(oldCompID)){
+				ac4s.setStartAsName(newCompID);
+				break;
+			}
+		}
 	}
 
 	/**
@@ -878,6 +900,23 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		}
 		//Finally, remove the network component from the HashMap of components in the network model
 		networkModel.removeNetworkComponent(selectedComponent);
+		
+		//Removing the new agent from the agent start list of the simulation setup
+		int i=0;
+		for( i=0; i < getController().getAgents2Start().size(); i++)
+		{
+			AgentClassElement4SimStart ac4s = (AgentClassElement4SimStart) getController().getAgents2Start().get(i);
+			if(ac4s.getStartAsName().equals(selectedComponent.getId())){
+				getController().getAgents2Start().remove(i);
+				break;
+			}
+		}
+		
+		//Shifting the positions of the later components by 1
+		for(int j=i; j<getController().getAgents2Start().size();j++){
+			AgentClassElement4SimStart ac4s = (AgentClassElement4SimStart) getController().getAgents2Start().get(j);
+			ac4s.setPostionNo(ac4s.getPostionNo()-1);
+		}
 	}
 	
 	

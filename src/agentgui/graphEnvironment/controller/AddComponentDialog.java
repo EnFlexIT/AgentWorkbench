@@ -27,6 +27,8 @@
  */
 package agentgui.graphEnvironment.controller;
 
+import jade.core.Agent;
+
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -61,8 +63,11 @@ import javax.swing.border.EtchedBorder;
 
 import org.apache.commons.collections15.Transformer;
 
+import agentgui.core.agents.AgentClassElement;
+import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.graphEnvironment.networkModel.ComponentTypeSettings;
 import agentgui.graphEnvironment.networkModel.GraphEdge;
 import agentgui.graphEnvironment.networkModel.GraphElement;
@@ -445,6 +450,7 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 	 * @param selectedType - The Network component type selected
 	 * @param pickedVertex - The vertex selected in the prototype preview which is to be used as common point for merging
 	 */
+	@SuppressWarnings("unchecked")
 	private void addGraphPrototype(String selectedType, GraphNode pickedVertex) {
 		//Environment network model
 		NetworkModel gridModel = parentGUI.getController().getGridModel();		
@@ -491,7 +497,21 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 		GraphEnvironmentController gec = parentGUI.getController(); 
 		gec.refreshNetworkModel();	
 		
-	}
+		//Adding the new agent to the agent start list of the environment
+		Class<? extends Agent> theAgentClass = null;
+		try {
+			theAgentClass = (Class<? extends Agent>)  Class.forName(newComponent.getAgentClassName());
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+		AgentClassElement4SimStart ac4s = new AgentClassElement4SimStart(theAgentClass, SimulationSetup.AGENT_LIST_EnvironmentConfiguration);
+		ac4s.setStartAsName(newComponent.getId());
+		ac4s.setPostionNo(gec.getAgents2Start().size()+1);
+		
+		gec.getAgents2Start().addElement(ac4s);
+		
+		}
 		
 	/**
 	 * Merge the two graphs into one graph as if v1 and v2 are the same.

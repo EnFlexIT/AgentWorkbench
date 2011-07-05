@@ -10,12 +10,12 @@
     </subOntologies>
     <agentConfiguration>
         <entry>
-            <key>gasmas.agents.EntryAgent</key>
-            <value>gasmas.ontology.Entry</value>
-        </entry>
-        <entry>
             <key>gasmas.agents.BranchAgent</key>
             <value>gasmas.ontology.Branch</value>
+        </entry>
+        <entry>
+            <key>gasmas.agents.EntryAgent</key>
+            <value>gasmas.ontology.Entry</value>
         </entry>
         <entry>
             <key>gasmas.agents.ValveAgent</key>
@@ -48,7 +48,7 @@
             <service>agentgui.simulationService.SimulationService;</service>
         </serviceList>
     </jadeConfiguration>
-    <simulationSetupCurrent>Nils Graph</simulationSetupCurrent>
+    <simulationSetupCurrent>Satyadeep Graph</simulationSetupCurrent>
     <simulationSetups>
         <entry>
             <key>Satyadeep Graph</key>

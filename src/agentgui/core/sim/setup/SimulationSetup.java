@@ -72,15 +72,11 @@ import agentgui.graphEnvironment.networkModel.ComponentTypeSettings;
 	public void setCurrProject(Project currProject) {
 		this.currProject = currProject;
 	}
-	
 	/**
-	 * This method saves the current Simulation-Setup
-	 * @return
+	 * Will merge all default list models to one array list
 	 */
-	public boolean save() {
-		
-		// ------------------------------------------------
-		// --- Reset the whole agentList-Instance ---------
+	private void mergeListModels(){
+		//
 		agentList = new ArrayList<AgentClassElement4SimStart>();
 		
 		// ------------------------------------------------
@@ -94,7 +90,15 @@ import agentgui.graphEnvironment.networkModel.ComponentTypeSettings;
 			DefaultListModel dlm = agentSetupLists.get(agentListNames.get(i));
 			this.setAgentList(dlm);
 		}
+	}
+	
+	/**
+	 * This method saves the current Simulation-Setup
+	 * @return
+	 */
+	public boolean save() {
 		
+		mergeListModels();
 		
 		// ------------------------------------------------
 		// --- Save the current simulation setup ----------
@@ -233,4 +237,18 @@ import agentgui.graphEnvironment.networkModel.ComponentTypeSettings;
 		this.graphElementSettings = graphElementSettings;
 	}
 	
+	/**
+	 * Checks whether the agent name already exists in the current agent configuration
+	 * @param localAgentName
+	 * @return true if the agent name already exists
+	 */
+	public boolean isAgentNameExists(String localAgentName){
+		mergeListModels();
+		
+		for (int i = 0; i < agentList.size(); i++) {
+			if(agentList.get(i).getStartAsName().equals(localAgentName))
+				return true;			
+		}
+		return false;
+	}
 }

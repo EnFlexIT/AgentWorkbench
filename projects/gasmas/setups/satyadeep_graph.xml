@@ -1,6 +1,49 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <simulationSetup>
-    <agentSetup/>
+    <agentSetup>
+        <agent>
+            <postionNo>1</postionNo>
+            <listMembership>01AgentStartManual</listMembership>
+            <agentClassReference>gasmas.agents.PipeAgent</agentClassReference>
+            <startAsName>PiAg</startAsName>
+            <startArguments>
+                <argument>PFBpcGUgSUQ9IiIgbGVuZ3RoPSIwLjBGIj4KCTxyZXNpc3RhbmNlPgoJCTxSZXNpc3RhbmNlUGFyYW1ldGVycyBwaXBlRnJpY3Rpb249IjAuNUYiIGNvc3RzPSIxLjBGIi8+Cgk8L3Jlc2lzdGFuY2U+CjwvUGlwZT4K</argument>
+            </startArguments>
+        </agent>
+        <agent>
+            <postionNo>2</postionNo>
+            <listMembership>01AgentStartManual</listMembership>
+            <agentClassReference>gasmas.agents.CompressorAgent</agentClassReference>
+            <startAsName>CoAg</startAsName>
+        </agent>
+        <agent>
+            <postionNo>1</postionNo>
+            <listMembership>02AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.BranchAgent</agentClassReference>
+            <startAsName>n3</startAsName>
+        </agent>
+        <agent>
+            <postionNo>2</postionNo>
+            <listMembership>02AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.ExitAgent</agentClassReference>
+            <startAsName>n2</startAsName>
+        </agent>
+        <agent>
+            <postionNo>3</postionNo>
+            <listMembership>02AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.ValveAgent</agentClassReference>
+            <startAsName>n0</startAsName>
+        </agent>
+        <agent>
+            <postionNo>4</postionNo>
+            <listMembership>02AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.PipeAgent</agentClassReference>
+            <startAsName>n1</startAsName>
+            <startArguments>
+                <argument>PFBpcGUgSUQ9IiIgbGVuZ3RoPSIwLjBGIj4KCTxyZXNpc3RhbmNlPgoJCTxSZXNpc3RhbmNlUGFyYW1ldGVycyBwaXBlRnJpY3Rpb249IjAuMEYiIGNvc3RzPSIwLjVGIi8+Cgk8L3Jlc2lzdGFuY2U+CjwvUGlwZT4K</argument>
+            </startArguments>
+        </agent>
+    </agentSetup>
     <distribution>
         <doDynamicLoadBalalncing>false</doDynamicLoadBalalncing>
         <doStaticLoadBalalncing>false</doStaticLoadBalalncing>
@@ -18,14 +61,12 @@
             <thNoThreadsL>50</thNoThreadsL>
         </userThresholds>
     </distribution>
-    <agentListModel>
-        <size>0</size>
-    </agentListModel>
     <environmentFileName>Satyadeep Graph.graphml</environmentFileName>
     <graphElementSettings>
         <entry>
             <key>ring</key>
             <value>
+                <agentClass>gasmas.agents.BranchAgent</agentClass>
                 <color>-39322</color>
                 <edgeImage>MissingIcon</edgeImage>
                 <graphPrototype>agentgui.graphEnvironment.prototypes.Ring4GraphElement</graphPrototype>
@@ -42,6 +83,7 @@
         <entry>
             <key>star3</key>
             <value>
+                <agentClass>gasmas.agents.BranchAgent</agentClass>
                 <color>-16777216</color>
                 <edgeImage>MissingIcon</edgeImage>
                 <graphPrototype>agentgui.graphEnvironment.prototypes.Star3GraphElement</graphPrototype>
@@ -68,6 +110,7 @@
         <entry>
             <key>star</key>
             <value>
+                <agentClass>gasmas.agents.BranchAgent</agentClass>
                 <color>-10066432</color>
                 <edgeImage>MissingIcon</edgeImage>
                 <graphPrototype>agentgui.graphEnvironment.prototypes.Star4GraphElement</graphPrototype>
@@ -92,15 +135,6 @@
             </value>
         </entry>
         <entry>
-            <key>exit</key>
-            <value>
-                <agentClass>gasmas.agents.ExitAgent</agentClass>
-                <color>-16751104</color>
-                <edgeImage>/gasmas/img/MBLoadStopRecord.png</edgeImage>
-                <graphPrototype>agentgui.graphEnvironment.prototypes.DirectedSimpleGraphElement</graphPrototype>
-            </value>
-        </entry>
-        <entry>
             <key>pipe</key>
             <value>
                 <agentClass>gasmas.agents.PipeAgent</agentClass>
@@ -110,11 +144,12 @@
             </value>
         </entry>
         <entry>
-            <key>mesh</key>
+            <key>exit</key>
             <value>
-                <color>-65281</color>
-                <edgeImage>MissingIcon</edgeImage>
-                <graphPrototype>agentgui.graphEnvironment.prototypes.Mesh4GraphElement</graphPrototype>
+                <agentClass>gasmas.agents.ExitAgent</agentClass>
+                <color>-16751104</color>
+                <edgeImage>/gasmas/img/MBLoadStopRecord.png</edgeImage>
+                <graphPrototype>agentgui.graphEnvironment.prototypes.DirectedSimpleGraphElement</graphPrototype>
             </value>
         </entry>
         <entry>
@@ -124,6 +159,15 @@
                 <color>-65536</color>
                 <edgeImage>/gasmas/img/MBLoadPlay.png</edgeImage>
                 <graphPrototype>agentgui.graphEnvironment.prototypes.SimpleGraphElement</graphPrototype>
+            </value>
+        </entry>
+        <entry>
+            <key>mesh</key>
+            <value>
+                <agentClass>gasmas.agents.BranchAgent</agentClass>
+                <color>-65281</color>
+                <edgeImage>MissingIcon</edgeImage>
+                <graphPrototype>agentgui.graphEnvironment.prototypes.Mesh4GraphElement</graphPrototype>
             </value>
         </entry>
     </graphElementSettings>
