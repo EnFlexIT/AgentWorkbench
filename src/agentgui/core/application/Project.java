@@ -229,6 +229,13 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	@XmlElement(name="jadeConfiguration")
 	public PlatformJadeConfig JadeConfiguration = new PlatformJadeConfig();
 	
+	
+	/**
+	 * This field can be used in order to provide customised objects during
+	 * the runtime of a project. This will be not stored within the file 'agentgui.xml' 
+	 */
+	@XmlTransient private Object userRuntimeObject = null;
+	
 	/**
 	 * This attribute holds the instance of the currently selected SimulationSetup
 	 */
@@ -901,6 +908,19 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 			}
 		}
 		this.setChangedAndNotify(CHANGED_ProjectResources);
+	}
+
+	/**
+	 * @return the userRuntimeObject
+	 */
+	public Object getUserRuntimeObject() {
+		return userRuntimeObject;
+	}
+	/**
+	 * @param userRuntimeObject the userRuntimeObject to set
+	 */
+	public void setUserRuntimeObject(Object userRuntimeObject) {
+		this.userRuntimeObject = userRuntimeObject;
 	}
 
 }
