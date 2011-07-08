@@ -35,6 +35,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Observer;
 
@@ -46,6 +48,7 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.collections15.Transformer;
 
+import FIPA.DateTime;
 import agentgui.core.application.Project;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.sim.setup.SimulationSetup;
@@ -117,6 +120,7 @@ public class GraphEnvironmentController extends EnvironmentController implements
 	private NetworkModel networkModel = null;
 	/**
 	 * The currently defined GraphElementSettings, accessible by the type string
+	 * It is obtained from the Project userRuntimeObject which is stored in the project folder.
 	 */
 	private HashMap<String, ComponentTypeSettings> currentCTS = null;
 	/**
@@ -137,7 +141,7 @@ public class GraphEnvironmentController extends EnvironmentController implements
 	 */
 	public GraphEnvironmentController(Project project){
 		super(project);		
-		loadEnvironment();		
+		loadEnvironment();				
 	}
 	
 	/**
@@ -146,7 +150,7 @@ public class GraphEnvironmentController extends EnvironmentController implements
 	 */
 	public void setComponentTypeSettings(HashMap<String, ComponentTypeSettings> gesVector){
 		currentCTS = gesVector;
-		getCurrentSimSetup().setGraphElementSettings(gesVector);
+		project.setUserRuntimeObject(gesVector);
 		project.isUnsaved=true;
 		setChanged();
 		notifyObservers(EVENT_ELEMENT_TYPES_SETTINGS_CHANGED);
@@ -358,8 +362,7 @@ public class GraphEnvironmentController extends EnvironmentController implements
 				
 				updateGraphFileName();
 				networkModel = new NetworkModel();
-				//Copying the component type settings over
-				setComponentTypeSettings(currentCTS);
+				
 				setChanged();
 				notifyObservers(EVENT_NETWORKMODEL_LOADED);
 				
@@ -383,7 +386,8 @@ public class GraphEnvironmentController extends EnvironmentController implements
 				
 				updateGraphFileName();
 				loadEnvironment(); //Loads network model and notifies observers	
-				setComponentTypeSettings(getCurrentSimSetup().getGraphElementSettings());				
+			HashMap<String, ComponentTypeSettings> userRuntimeObject = (HashMap<String, ComponentTypeSettings>) project.getUserRuntimeObject();
+			setComponentTypeSettings(userRuntimeObject);				
 						
 			break;
 			
@@ -477,7 +481,9 @@ public class GraphEnvironmentController extends EnvironmentController implements
 		
 		//TODO remove cts from simSetup
 		//Loading component type settings from the simulation setup
-		setComponentTypeSettings(getCurrentSimSetup().getGraphElementSettings());
+		HashMap<String, ComponentTypeSettings> userRuntimeObject = (HashMap<String, ComponentTypeSettings>) project.getUserRuntimeObject();
+		setComponentTypeSettings(userRuntimeObject);
+		
 		// If no ETS are specified in the setup, assign an empty HashMap to avoid null pointers
 		if(currentCTS == null){
 			currentCTS = new HashMap<String, ComponentTypeSettings>();

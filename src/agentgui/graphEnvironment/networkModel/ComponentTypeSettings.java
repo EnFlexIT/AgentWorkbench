@@ -1,5 +1,7 @@
 package agentgui.graphEnvironment.networkModel;
 
+import java.io.Serializable;
+
 import agentgui.graphEnvironment.prototypes.GraphElementPrototype;
 
 /**
@@ -10,7 +12,11 @@ import agentgui.graphEnvironment.prototypes.GraphElementPrototype;
  * @author Satyadeep 
  *
  */
-public class ComponentTypeSettings {
+public class ComponentTypeSettings implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2456632300628196922L;
 	/**
 	 * The agent class representing this component type
 	 */

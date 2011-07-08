@@ -1,8 +1,12 @@
 package agentgui.core.sim.setup;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -288,6 +292,28 @@ public class SimulationSetups extends Hashtable<String, String> {
 			// --- 'SimulationSetup'-Objekt neu "instanziieren" -
 			currSimSetup = (SimulationSetup) um.unmarshal( new FileReader( currSimXMLFile ) );
 			currSimSetup.setCurrProject(currProject);
+			
+			//--- Reading the serializable user object of the simsetup from the 'agentgui_userobject.bin' ---
+			String userObjectFileName = currProject.getSubFolder4Setups(true)+ currSimSetupName +".bin" ;
+			Serializable userObject = null;
+			FileInputStream fis = null;
+			ObjectInputStream in = null;
+	    	  try
+	    	  {
+	    	    fis = new FileInputStream(userObjectFileName);
+	    	    in = new ObjectInputStream(fis);
+	    	    userObject = (Serializable)in.readObject();
+	    	    in.close();
+	    	  }
+	    	  catch(IOException ex)
+	    	  {
+	    		 ex.printStackTrace();
+	    	  }
+	    	  catch(ClassNotFoundException ex)
+	    	  {
+	    	    ex.printStackTrace();
+	    	  }
+	    	  currSimSetup.setUserRuntimeObject(userObject);
 
 		} catch (FileNotFoundException e) {
 

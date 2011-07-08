@@ -61,6 +61,7 @@ import org.apache.commons.collections15.Transformer;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.graphEnvironment.networkModel.ComponentTypeSettings;
 import agentgui.graphEnvironment.networkModel.GraphEdge;
 import agentgui.graphEnvironment.networkModel.GraphElement;
 import agentgui.graphEnvironment.networkModel.GraphNode;
@@ -339,13 +340,20 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 							}
 							else
 							{	//Get the color from the component type settings
-								String colorString= controller.getComponentTypeSettings().get("node").getColor();
-								if(colorString!=null){
-									Color color = new Color(Integer.parseInt(colorString));							
-									return color;
+								try{
+									ComponentTypeSettings cts = controller.getComponentTypeSettings().get("node");
+									String colorString= cts.getColor();
+									if(colorString!=null){
+										Color color = new Color(Integer.parseInt(colorString));							
+										return color;
+									}
+									else
+										return BasicGraphGUI.DEFAULT_VERTEX_COLOR;
 								}
-								else
-									return BasicGraphGUI.DEFAULT_VERTEX_COLOR;
+								catch(NullPointerException ex){
+									ex.printStackTrace();
+									return BasicGraphGUI.DEFAULT_VERTEX_COLOR;					
+								}
 							}
 						}
 					}
@@ -360,13 +368,21 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 					}
 					else
 					{	//Get the color from the component type settings
-						String colorString= controller.getComponentTypeSettings().get(arg0.getComponentType()).getColor();
-						if(colorString!=null){
-							Color color = new Color(Integer.parseInt(colorString));							
-							return color;
+						try{
+							ComponentTypeSettings cts = controller.getComponentTypeSettings().get(arg0.getComponentType());
+							String colorString= cts.getColor();
+							if(colorString!=null){
+								Color color = new Color(Integer.parseInt(colorString));							
+								return color;
+							}
+							else
+								return BasicGraphGUI.DEFAULT_EDGE_COLOR;
 						}
-						else
-							return BasicGraphGUI.DEFAULT_EDGE_COLOR;
+						catch(NullPointerException ex){
+							ex.printStackTrace();
+							return BasicGraphGUI.DEFAULT_EDGE_COLOR;							
+						}
+							
 					}
 				}
 			}
@@ -376,18 +392,25 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 			visView.getRenderContext().setEdgeLabelTransformer(new Transformer<GraphEdge,String>() {	        	
 				public String transform(GraphEdge edge) {
 					//Get the path of the Image from the component type settings
-					String edgeImage = controller.getComponentTypeSettings().get(edge.getComponentType()).getEdgeImage();
-					if(edgeImage!=null){
-						URL url = getClass().getResource(edgeImage);
-						if(url!=null){
-							//If the image path is valid
-							return "<html>"+edge.getId()+"<img src="+url+" height=16 width=16 >";
+					try{
+						ComponentTypeSettings cts = controller.getComponentTypeSettings().get(edge.getComponentType());
+						String edgeImage = cts.getEdgeImage();
+						if(edgeImage!=null){
+							URL url = getClass().getResource(edgeImage);
+							if(url!=null){
+								//If the image path is valid
+								return "<html>"+edge.getId()+"<img src="+url+" height=16 width=16 >";
+							}
+							else
+								return edge.getId();
 						}
 						else
 							return edge.getId();
 					}
-					else
-						return edge.getId();
+					catch(NullPointerException ex){
+						ex.printStackTrace();
+						return edge.getId();						
+					}
 				}
 				});
 			
@@ -1058,15 +1081,22 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 				public Integer transform(V v) {
 		            if (scale)
 		            {   // Get the vertex size from the component type settings
-		            	String vertexSize= controller.getComponentTypeSettings().get("node").getVertexSize();
-		    			Integer size;
-		    			if(vertexSize!=null){
-		    				size = Integer.parseInt(vertexSize);
-		    			}
-		    			else{
-		    				size = BasicGraphGUI.DEFAULT_VERTEX_SIZE;
-		    			}			
-		                return (int)(size * 5) + 5;
+		            	Integer size;
+		            	try{
+			            	ComponentTypeSettings cts =  controller.getComponentTypeSettings().get("node");
+			            	String vertexSize= cts.getVertexSize();
+			    			if(vertexSize!=null){
+			    				size = Integer.parseInt(vertexSize);
+			    			}
+			    			else{
+			    				size = BasicGraphGUI.DEFAULT_VERTEX_SIZE;
+			    			}			
+		            	}
+		            	catch(NullPointerException ex){
+							ex.printStackTrace();
+							size = BasicGraphGUI.DEFAULT_VERTEX_SIZE;				
+						}
+		            	return (int)(size * 5) + 5;
 		            }
 		            else
 		                return 20;

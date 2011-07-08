@@ -94,6 +94,7 @@ public class GlobalInfo {
 	private static String localFileDictionary  = localPathProperty + "dictionary";
 	private static String localFileProperties  = "agentgui.ini";
 	private static String localFileNameProject = "agentgui.xml";
+	private static String localFileNameProjectUserObject = "agentgui_userobject.bin";
 	private static String localFileEndProjectZip = "agui";
 	private static String localFileNameProjectOntology = "AgentGUIProjectOntology";
 	
@@ -548,6 +549,13 @@ public class GlobalInfo {
 	public String getFileNameProject() {
 		return localFileNameProject;
 	};
+	/**
+	 * Returns the file name of the binary file, which contains the serializable user object of the Project(file: 'agentgui_userobject.bin')
+	 * @return file name of the project user object binary. (agentgui_userobject.bin)
+	 */
+	public String getFilenameProjectUserObject(){
+		return localFileNameProjectUserObject;
+	}
 	/**
 	 * This method returns the file suffix for Agent.GUI project files 
 	 * ('agui'), which are used for the project exchange within the application

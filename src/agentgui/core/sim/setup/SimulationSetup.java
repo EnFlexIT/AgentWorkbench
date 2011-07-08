@@ -1,6 +1,10 @@
 package agentgui.core.sim.setup;
 
+import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,7 +22,6 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.application.Project;
-import agentgui.graphEnvironment.networkModel.ComponentTypeSettings;
 
 @XmlRootElement public class SimulationSetup {
 
@@ -51,16 +54,10 @@ import agentgui.graphEnvironment.networkModel.ComponentTypeSettings;
 	private String svgFileName = null;
 	
 	/**
-	 * Instead use userRuntimeObject to load simulationSetup specific settings at runtime.
-	 */
-	@Deprecated
-	private HashMap<String, ComponentTypeSettings> graphElementSettings;
-	
-	/**
 	 * This field can be used in order to provide customised objects during
 	 * the runtime of a project. This will be not stored within the file 'agentgui.xml' 
 	 */
-	@XmlTransient private Object userRuntimeObject = null;
+	@XmlTransient private Serializable userRuntimeObject = null;
 	
 	/**
 	 * Constructor without arguments (This is first of all 
@@ -123,6 +120,21 @@ import agentgui.graphEnvironment.networkModel.ComponentTypeSettings;
 			Writer pw = new FileWriter( currProject.simSetups.getCurrSimXMLFile() );
 			pm.marshal( this, pw );
 						
+			// --- Save the userRuntimeObject in the Simsetup into a different file as a serializable binary object.
+			FileOutputStream fos = null;
+			ObjectOutputStream out = null;
+		    try
+		    {
+		       fos = new FileOutputStream(currProject.getSubFolder4Setups(true)+currProject.simSetupCurrent+".bin");
+		       out = new ObjectOutputStream(fos);
+		       out.writeObject(this.userRuntimeObject);
+		       out.close();
+		    }
+		    catch(IOException ex)
+		    {
+		      ex.printStackTrace();
+		    }
+		    
 			currProject.setNotChangedButNotify(new SimulationSetupsChangeNotification(SimulationSetups.SIMULATION_SETUP_SAVED));
 		} 
 		catch (Exception e) {
@@ -233,20 +245,6 @@ import agentgui.graphEnvironment.networkModel.ComponentTypeSettings;
 		this.distributionSetup = distributionSetup;
 	}
 	
-	
-	/**
-	 * @return the elementTypeSettings
-	 */
-	public HashMap<String, ComponentTypeSettings> getGraphElementSettings() {
-		return graphElementSettings;
-	}
-	/**
-	 * @param graphElementSettings the elementTypeSettings to set
-	 */
-	public void setGraphElementSettings(HashMap<String, ComponentTypeSettings> graphElementSettings) {
-		this.graphElementSettings = graphElementSettings;
-	}
-	
 	/**
 	 * Checks whether the agent name already exists in the current agent configuration
 	 * @param localAgentName
@@ -264,13 +262,14 @@ import agentgui.graphEnvironment.networkModel.ComponentTypeSettings;
 	/**
 	 * @param userRuntimeObject the userRuntimeObject to set
 	 */
-	public void setUserRuntimeObject(Object userRuntimeObject) {
+	public void setUserRuntimeObject(Serializable userRuntimeObject) {
 		this.userRuntimeObject = userRuntimeObject;
 	}
 	/**
 	 * @return the userRuntimeObject
 	 */
-	public Object getUserRuntimeObject() {
+	@XmlTransient
+	public Serializable getUserRuntimeObject() {
 		return userRuntimeObject;
 	}
 }

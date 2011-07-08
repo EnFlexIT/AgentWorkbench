@@ -338,6 +338,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			jTableComponentTypes.setShowGrid(true);
 			jTableComponentTypes.setRowHeight(20);
 			jTableComponentTypes.setModel(getClassesTableModel());
+			jTableComponentTypes.setAutoCreateRowSorter(true);
 			
 			//Set up renderer and editor for the agent class column
 			TableColumn agentClassColumn = jTableComponentTypes.getColumnModel().getColumn(1);
@@ -636,7 +637,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		    if (imgURL != null) {
 		        return new ImageIcon(imgURL, description);
 		    } else {
-		        System.err.println("Couldn't find file: " + path);
+		       // System.err.println("Couldn't find file: " + path);
 		        return (new MissingIcon(description));
 		    }
 		}

@@ -31,8 +31,12 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import javax.swing.JFileChooser;
@@ -169,7 +173,7 @@ public class ProjectsLoaded {
 			JAXBContext pc;
 			Unmarshaller um = null;
 			String XMLFileName = newProject.getProjectFolderFullPath() + Application.RunInfo.getFileNameProject();	
-			 
+			String userObjectFileName =  newProject.getProjectFolderFullPath() + Application.RunInfo.getFilenameProjectUserObject();
 			// --- Gibt es diese Datei überhaupt? ---------
 			File xmlFile = new File(XMLFileName);
 			if (xmlFile.exists()==false) {
@@ -186,6 +190,29 @@ public class ProjectsLoaded {
 			} catch (JAXBException e) {
 				e.printStackTrace();
 			}
+			
+			//--- Reading the serializable user object of the Project from the 'agentgui_userobject.bin' ---
+			Serializable userObject = null;
+			FileInputStream fis = null;
+			ObjectInputStream in = null;
+	    	  try
+	    	  {
+	    	    fis = new FileInputStream(userObjectFileName);
+	    	    in = new ObjectInputStream(fis);
+	    	    userObject = (Serializable)in.readObject();
+	    	    in.close();
+	    	  }
+	    	  catch(IOException ex)
+	    	  {
+	    		 ex.printStackTrace();
+	    	  }
+
+	    	  catch(ClassNotFoundException ex)
+	    	  {
+	    	    ex.printStackTrace();
+	    	  }
+			  newProject.setUserRuntimeObject(userObject);
+			  
 			// --- Folder auf aktuellen Projektordner einstellen ---
 			newProject.setProjectFolder( localTmpProjectFolder );	
 			

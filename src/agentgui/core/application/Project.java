@@ -27,9 +27,13 @@
  */
 package agentgui.core.application;
 
+import java.io.Serializable;
+
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.Writer;
 import java.util.Observable;
 import java.util.Vector;
@@ -229,7 +233,7 @@ import agentgui.core.sim.setup.SimulationSetups;
 	 * This field can be used in order to provide customised objects during
 	 * the runtime of a project. This will be not stored within the file 'agentgui.xml' 
 	 */
-	@XmlTransient private Object userRuntimeObject = null;
+	@XmlTransient private Serializable userRuntimeObject = null;
 	
 	/**
 	 * This attribute holds the instance of the currently selected SimulationSetup
@@ -361,6 +365,21 @@ import agentgui.core.sim.setup.SimulationSetups;
 			Writer pw = new FileWriter( projectFolderFullPath + Application.RunInfo.getFileNameProject() );
 			pm.marshal( this, pw );
 			
+			// --- Save the userRuntimeObject in the Project into a different file as a serializable binary object.
+			FileOutputStream fos = null;
+			ObjectOutputStream out = null;
+		     try
+		     {
+		       fos = new FileOutputStream(projectFolderFullPath + Application.RunInfo.getFilenameProjectUserObject());
+		       out = new ObjectOutputStream(fos);
+		       out.writeObject(this.userRuntimeObject);
+		       out.close();
+		    }
+		    catch(IOException ex)
+		    {
+		      ex.printStackTrace();
+		    }
+		    
 			// --- Save the current SimulationSetup -------
 			this.simSetups.setupSave();
 			
@@ -762,7 +781,7 @@ import agentgui.core.sim.setup.SimulationSetups;
 			return getProjectFolderFullPath() + defaultSubFolder4Setups + PathSep;
 		} else {
 			return defaultSubFolder4Setups;	
-		}
+		}	
 	}
 	
 	/**
@@ -800,7 +819,6 @@ import agentgui.core.sim.setup.SimulationSetups;
 		setChanged();
 		notifyObservers(CHANGED_ProjectOntology);
 	}
-	
 	
 	/**
 	 * This method adds external project resources (e.g. *.jar-files) to the CLATHPATH  
@@ -867,7 +885,7 @@ import agentgui.core.sim.setup.SimulationSetups;
 	/**
 	 * @param userRuntimeObject the userRuntimeObject to set
 	 */
-	public void setUserRuntimeObject(Object userRuntimeObject) {
+	public void setUserRuntimeObject(Serializable userRuntimeObject) {
 		this.userRuntimeObject = userRuntimeObject;
 	}
 
