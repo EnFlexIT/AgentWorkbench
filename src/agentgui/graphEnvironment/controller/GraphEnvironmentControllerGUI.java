@@ -30,8 +30,10 @@ package agentgui.graphEnvironment.controller;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -44,7 +46,6 @@ import java.util.Observer;
 import java.util.Set;
 import java.util.Vector;
 
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -81,8 +82,6 @@ import agentgui.graphEnvironment.prototypes.GraphElementPrototype;
 import agentgui.graphEnvironment.prototypes.Star3GraphElement;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.EdgeType;
-import java.awt.Insets;
-import java.awt.Font;
 /**
  * The GUI for a GraphEnvironmentController.
  * This contains a pane showing the NetworkComponents table and the BasicGraphGUI.
@@ -157,6 +156,13 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	 */
 	public GraphEnvironmentControllerGUI(Project project) {
 		super(project);
+
+		//Creating a new Graph environment controller 
+		controller = new GraphEnvironmentController(this.currProject);
+		controller.addObserver(this);
+
+		this.setEnvironmentController(controller);
+		
 		initialize();
 	}
 
@@ -165,10 +171,6 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	 * @return void
 	 */
 	private void initialize() {
-
-		controller = new GraphEnvironmentController(this.currProject);
-		controller.addObserver(this);
-		
 		this.setLayout(new BorderLayout());
 		this.add(getJSplitPaneRoot(), null);
 	}

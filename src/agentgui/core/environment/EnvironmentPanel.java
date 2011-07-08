@@ -30,33 +30,55 @@ package agentgui.core.environment;
 import javax.swing.JPanel;
 
 import agentgui.core.application.Project;
+import agentgui.graphEnvironment.controller.GraphEnvironmentControllerGUI;
 
 /**
  * In order to build an user interface, where environments can be defined by
  * end users in a visual way, this class has to be extended.  
  * 
+ * @see GraphEnvironmentControllerGUI
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class EnvironmentPanel extends JPanel {
 
 	private static final long serialVersionUID = -5522022346976174783L;
 
+	/**
+	 * The current Agent.GUI project
+	 */
 	protected Project currProject = null;
 	
 	/**
-	 * Don't use this constructor !
+	 * The environment controller which is to be used for managing the environment model.
+	 */
+	protected EnvironmentController environmentController = null;
+	/**
+	 * Do not use this constructor.
 	 */
 	@Deprecated
-	public EnvironmentPanel() {
-		super();
+	public EnvironmentPanel(){
+		
 	}
 	/**
-	 * This is the default constructor for this class
+	 * This is the  constructor for this class
 	 * @param project
 	 */
 	public EnvironmentPanel(Project project) {
 		super();
 		this.currProject = project;
+		project.setEnvironmentPanel(this);
+	}
+	/**
+	 * @return the environmentController
+	 */
+	public EnvironmentController getEnvironmentController() {
+		return environmentController;
+	}
+	/**
+	 * @param environmentController the environmentController to set
+	 */
+	public void setEnvironmentController(EnvironmentController environmentController) {
+		this.environmentController = environmentController;
 	}
 	
 }

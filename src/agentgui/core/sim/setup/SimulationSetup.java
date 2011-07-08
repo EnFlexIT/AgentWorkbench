@@ -50,7 +50,17 @@ import agentgui.graphEnvironment.networkModel.ComponentTypeSettings;
 	private String environmentFileName = null;
 	private String svgFileName = null;
 	
+	/**
+	 * Instead use userRuntimeObject to load simulationSetup specific settings at runtime.
+	 */
+	@Deprecated
 	private HashMap<String, ComponentTypeSettings> graphElementSettings;
+	
+	/**
+	 * This field can be used in order to provide customised objects during
+	 * the runtime of a project. This will be not stored within the file 'agentgui.xml' 
+	 */
+	@XmlTransient private Object userRuntimeObject = null;
 	
 	/**
 	 * Constructor without arguments (This is first of all 
@@ -250,5 +260,17 @@ import agentgui.graphEnvironment.networkModel.ComponentTypeSettings;
 				return true;			
 		}
 		return false;
+	}
+	/**
+	 * @param userRuntimeObject the userRuntimeObject to set
+	 */
+	public void setUserRuntimeObject(Object userRuntimeObject) {
+		this.userRuntimeObject = userRuntimeObject;
+	}
+	/**
+	 * @return the userRuntimeObject
+	 */
+	public Object getUserRuntimeObject() {
+		return userRuntimeObject;
 	}
 }

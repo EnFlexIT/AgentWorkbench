@@ -23,6 +23,7 @@ import agentgui.core.application.Project;
 import agentgui.core.jade.Platform;
 import agentgui.core.sim.setup.DistributionSetup;
 import agentgui.core.sim.setup.SimulationSetup;
+import agentgui.physical2Denvironment.controller.Physical2DEnvironmentController;
 import agentgui.physical2Denvironment.ontology.ActiveObject;
 import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 import agentgui.simulationService.LoadService;
@@ -146,9 +147,12 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 	 * svg - visualization will be started here
 	 */
 	protected void startSVGVisualizationAgents() {
+		//Get the environment controller using the environment panel class from Project
+		Physical2DEnvironmentController physical2DEnvironmentController =  
+			(Physical2DEnvironmentController) currProject.getEnvironmentPanel().getEnvironmentController() ;
 		
-		Physical2DEnvironment environment = currProject.getEnvironmentCopy();
-		Document svgDocument = currProject.getSVGDocCopy();
+		Physical2DEnvironment environment = physical2DEnvironmentController.getEnvironmentCopy();
+		Document svgDocument = physical2DEnvironmentController.getSvgDocCopy();
 		
 		if (environment!=null && svgDocument!=null) {
 			
@@ -164,8 +168,8 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 			startArg[2] = environment;
 			this.startAgent("EvVis", agentgui.physical2Denvironment.display.DisplayAgent.class, startArg);
 			
-			// --- get agents, defined in the physical-/svg-setup ---
-			Vector<ActiveObject> activeObjects = currProject.getEnvironmentController().getEnvWrap().getAgents();
+			// --- get agents, defined in the physical-/svg-setup ---			
+			Vector<ActiveObject> activeObjects = physical2DEnvironmentController.getEnvWrap().getAgents();
 			for (Iterator<ActiveObject> iterator = activeObjects.iterator(); iterator.hasNext();) {
 				
 				ActiveObject activeObject = iterator.next();

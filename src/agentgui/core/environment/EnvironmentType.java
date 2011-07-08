@@ -48,19 +48,19 @@ public class EnvironmentType {
 
 	private String internalKey = null;
 	private String displayName = null;
-	private Class<? extends EnvironmentPanel> displayPanel = null;
+	private Class<? extends EnvironmentPanel> displayPanelClass = null;
 		
 	/**
 	 * Constructor for this class.
 	 * 
 	 * @param key A unique identifier for the environment model type  
 	 * @param displayName A name that will be displayed later on
-	 * @param panel The panel on which all components have to be placed in order to allow end users to define their own environment model
+	 * @param panelClass The panel on which all components have to be placed in order to allow end users to define their own environment model
 	 */
-	public EnvironmentType(String key, String displayName, Class<? extends EnvironmentPanel> panel) {
+	public EnvironmentType(String key, String displayName, Class<? extends EnvironmentPanel> panelClass) {
 		this.internalKey = key;
 		this.displayName = displayName;
-		this.displayPanel = panel;
+		this.displayPanelClass = panelClass;
 	}
 	
 	/**
@@ -97,16 +97,16 @@ public class EnvironmentType {
 	}
 
 	/**
-	 * @return the displayPanel
+	 * @return the displayPanelClass
 	 */
-	public Class<? extends EnvironmentPanel> getDisplayPanel() {
-		return displayPanel;
+	public Class<? extends EnvironmentPanel> getDisplayPanelClass() {
+		return displayPanelClass;
 	}
 	/**
-	 * @param displayPanel the displayPanel to set
+	 * @param displayPanelClass the displayPanel to set
 	 */
-	public void setDisplayPanel(Class<? extends EnvironmentPanel> displayPanel) {
-		this.displayPanel = displayPanel;
+	public void setDisplayPanelClass(Class<? extends EnvironmentPanel> displayPanelClass) {
+		this.displayPanelClass = displayPanelClass;
 	}
 	
 }

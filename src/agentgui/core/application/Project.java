@@ -45,10 +45,9 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.w3c.dom.Document;
-
 import agentgui.core.agents.AgentConfiguration;
 import agentgui.core.common.ClassLoaderUtil;
+import agentgui.core.environment.EnvironmentPanel;
 import agentgui.core.environment.EnvironmentType;
 import agentgui.core.gui.ProjectWindow;
 import agentgui.core.gui.ProjectWindowTab;
@@ -71,8 +70,6 @@ import agentgui.core.plugin.PlugInLoadException;
 import agentgui.core.plugin.PlugInNotification;
 import agentgui.core.plugin.PlugInsLoaded;
 import agentgui.core.sim.setup.SimulationSetups;
-import agentgui.physical2Denvironment.controller.Physical2DEnvironmentController;
-import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 
 /**
  * This is the class, which holds all necessary informations about a project.<br> 
@@ -166,8 +163,6 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	@XmlTransient private String projectFolder;
 	@XmlTransient private String projectFolderFullPath;
 	
-	@XmlTransient private Physical2DEnvironmentController physical2DEnvironmentController;
-	
 	// --- Vars saved within the project file -------------------------
 	@XmlElement(name="projectName")			private String projectName;
 	@XmlElement(name="projectDescription")	private String projectDescription;
@@ -247,6 +242,12 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	 */
 	@XmlElementWrapper(name = "simulationSetups")
 	public SimulationSetups simSetups = new SimulationSetups(this, simSetupCurrent);
+
+	/**
+	 * The environment controllerGUI of the project. Usually a subclass of EnvironmentPanel.
+	 */
+	@XmlTransient
+	private EnvironmentPanel environmentPanel = null;
 	
 	
 	/**
@@ -745,61 +746,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	 */
 	public String getEnvSetupPath(){
 		return projectFolderFullPath + defaultSubFolderEnvSetups;
-	}
-	/**
-	 * @return the environment
-	 */
-	@XmlTransient
-	public Physical2DEnvironment getEnvironment() {
-		if (this.physical2DEnvironmentController==null) {
-			return null;
-		} else {
-			return this.physical2DEnvironmentController.getEnvironment();	
-		}
-	}
-	public Physical2DEnvironment getEnvironmentCopy() {
-		if (this.physical2DEnvironmentController==null) {
-			return null;
-		} else {
-			return this.physical2DEnvironmentController.getEnvironmentCopy();	
-		}
-		
-	}
-	/**
-	 * 
-	 * @return The SVG document
-	 */
-	@XmlTransient
-	public Document getSVGDoc(){
-		if (this.physical2DEnvironmentController==null) {
-			return null;
-		} else {
-			return this.physical2DEnvironmentController.getSvgDoc();	
-		}
-	}
-	public Document getSVGDocCopy(){
-		if (this.physical2DEnvironmentController==null) {
-			return null;
-		} else {
-			return this.physical2DEnvironmentController.getSvgDocCopy();	
-		}
-	}	
-	/**
-	 * This method can be used in order to set the environment 
-	 * controller for physical 2D environments
-	 * 
-	 * @param environmentController the environment controller to set
-	 */
-	public void setEnvironmentController(Physical2DEnvironmentController environmentController) {
-		this.physical2DEnvironmentController = environmentController;
-	}
-	/**
-	 * @return the current EnvironmentController
-	 */
-	@XmlTransient
-	public Physical2DEnvironmentController getEnvironmentController() {
-		return this.physical2DEnvironmentController;
-	}
+	}		
 	
 	/**
 	 * @param newSubFolder4Setups the defaultSubFolderOntology to set
@@ -913,6 +860,7 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	/**
 	 * @return the userRuntimeObject
 	 */
+	@XmlTransient
 	public Object getUserRuntimeObject() {
 		return userRuntimeObject;
 	}
@@ -921,6 +869,22 @@ import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
 	 */
 	public void setUserRuntimeObject(Object userRuntimeObject) {
 		this.userRuntimeObject = userRuntimeObject;
+	}
+
+	/**
+	 * Returns the current environment controllerGUI
+	 * @return the environment panel 
+	 */
+	@XmlTransient
+	public EnvironmentPanel getEnvironmentPanel(){
+		return this.environmentPanel;
+	}
+	/**
+	 * Sets the environment controller GUI
+	 * @param environmentPanel
+	 */
+	public void setEnvironmentPanel(EnvironmentPanel environmentPanel) {
+		this.environmentPanel = environmentPanel;
 	}
 
 }

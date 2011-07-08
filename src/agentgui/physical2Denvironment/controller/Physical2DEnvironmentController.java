@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.dawis.wiwi.uni-due.de/ 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
+
 package agentgui.physical2Denvironment.controller;
 
 
@@ -16,7 +44,6 @@ import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Observable;
 import java.util.Observer;
 
 import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
@@ -33,6 +60,7 @@ import org.w3c.dom.Element;
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
 import agentgui.core.common.FileCopier;
+import agentgui.core.environment.EnvironmentController;
 import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.core.sim.setup.SimulationSetups;
 import agentgui.core.sim.setup.SimulationSetupsChangeNotification;
@@ -50,11 +78,11 @@ import agentgui.physical2Denvironment.utils.EnvironmentHelper;
 import agentgui.physical2Denvironment.utils.EnvironmentWrapper;
 
 /**
- * Hepler class for managing an environment ontology object
+ * The controller for Physical2D environment which manages the Physical 2d environment model
  * @author Nils
  *
  */
-public class Physical2DEnvironmentController extends Observable implements Observer {
+public class Physical2DEnvironmentController extends EnvironmentController implements Observer {
 	/**
 	 * Observable event code: New environment instance assigned
 	 */
@@ -95,10 +123,6 @@ public class Physical2DEnvironmentController extends Observable implements Obser
 	private Physical2DEnvironmentControllerGUI myGUI = null;
 
 	/**
-	 * The path where environment and SVG files are stored
-	 */
-	private String baseFilePath = null;
-	/**
 	 * Path for saving the SVG
 	 */
 	private String currentSVGPath = null;
@@ -117,11 +141,7 @@ public class Physical2DEnvironmentController extends Observable implements Obser
 	/**
 	 * The SVG document representing this environment; 
 	 */
-	private Document svgDoc = null;
-	/**
-	 * The project the controlled environment belongs to
-	 */
-	private Project project;
+	private Document svgDoc = null;	
 	/**
 	 * The Physical2DObject currently selected for editing
 	 */
@@ -133,27 +153,9 @@ public class Physical2DEnvironmentController extends Observable implements Obser
 	 * @param project The Agent.GUI project
 	 */
 	public Physical2DEnvironmentController(Project project){
-		this.project = project;
-		this.project.setEnvironmentController(this);
-		this.project.addObserver(this);
-		this.baseFilePath = this.project.getProjectFolderFullPath()+this.project.getSubFolderEnvSetups()+File.separator;
+		super(project);
 		this.setDefaultFileNames();
-		SimulationSetup currentSetup = project.simSetups.getCurrSimSetup(); 
-		// Load SVG file if specified
-		if(currentSetup.getSvgFileName() != null && currentSetup.getSvgFileName().length() >0){
-			currentSVGPath = project.getProjectFolderFullPath()+project.getSubFolderEnvSetups()+File.separator+currentSetup.getSvgFileName();
-			setSvgDoc(loadSVG(new File(currentSVGPath)));
-		}
-		// Load environment file if specified
-		if(currentSetup.getEnvironmentFileName() != null && currentSetup.getEnvironmentFileName().length() >0){
-			currentEnvironmentPath = project.getProjectFolderFullPath()+project.getSubFolderEnvSetups()+File.separator+currentSetup.getEnvironmentFileName();
-			setEnvironment(loadEnvironment(new File(currentEnvironmentPath)));
-		}
-		// If SVG present and environment not, create a new blank environment 
-		if(this.svgDoc != null && this.environment == null){
-			setEnvironment(initEnvironment());
-		}
-		
+		loadEnvironment();
 	}
 	
 	/**
@@ -178,21 +180,17 @@ public class Physical2DEnvironmentController extends Observable implements Obser
 	public Physical2DEnvironment getEnvironment() {
 		return environment;
 	}
-	
-	Project getProject(){
-		return this.project;
-	}
+		
 	public Physical2DEnvironment getEnvironmentCopy() {
 		// --- Datei kopieren ---
-		String pathSetup = project.getProjectFolderFullPath() + project.getSubFolderEnvSetups() + File.separator;
-		String fileSrc   = pathSetup + project.simSetups.getCurrSimSetup().getEnvironmentFileName();
+		String fileSrc   = envFolderPath + getCurrentSimSetup().getEnvironmentFileName();
 		String fileDest  = fileSrc.substring(0, fileSrc.length()-4) + "_tmp.xml";
 		
 		FileCopier fc = new FileCopier();
 		fc.copyFile(fileSrc, fileDest);
 
 		// --- Load Env. --------
-		Physical2DEnvironment p2de = this.loadEnvironment(new File(fileDest));
+		Physical2DEnvironment p2de = this.loadEnvironmentFromXML(new File(fileDest));
 		
 		// --- Rückgabe ---------
 		return p2de;
@@ -235,7 +233,7 @@ public class Physical2DEnvironmentController extends Observable implements Obser
 			newEnv.setProjectName(project.getProjectName());
 			
 			String envFileName = project.simSetupCurrent+".xml";
-			project.simSetups.getCurrSimSetup().setEnvironmentFileName(envFileName);
+			getCurrentSimSetup().setEnvironmentFileName(envFileName);
 		}
 		return newEnv;
 	}
@@ -278,11 +276,11 @@ public class Physical2DEnvironmentController extends Observable implements Obser
 	
 	public void setSVGFile(File file){
 		setSvgDoc(loadSVG(file));
-		if(!file.getParentFile().getAbsolutePath().equals(project.getProjectFolderFullPath()+project.getSubFolderEnvSetups())){
+		if(!(file.getParentFile().getAbsolutePath()+File.separator).equals(envFolderPath)){
 			file = new File(currentSVGPath);
 			saveSVG(file);
 		}
-		project.simSetups.getCurrSimSetup().setSvgFileName(file.getName());
+		getCurrentSimSetup().setSvgFileName(file.getName());
 		setEnvironment(initEnvironment());
 	}
 	/**
@@ -378,22 +376,12 @@ public class Physical2DEnvironmentController extends Observable implements Obser
 		setChanged();
 		notifyObservers(new Integer(SVG_CHANGED));
 	}
-	/**
-	 * Saves SVG and environment to the default paths
-	 */
-	public void save(){
-		if (currentSVGPath!=null){
-			saveSVG(new File(currentSVGPath));	
-		}
-		if (currentEnvironmentPath!=null) {
-			saveEnvironment(new File(currentEnvironmentPath));	
-		}		
-	}
+	
 	/**
 	 * Saves the current environment to a file
 	 * @param envFile The file to save to
 	 */
-	private void saveEnvironment(File envFile){
+	private void savePhysical2DEnvironment(File envFile){
 		
 		if(environment != null){
 			try {
@@ -411,13 +399,10 @@ public class Physical2DEnvironmentController extends Observable implements Obser
 				fw.append(xmlRepresentation);
 				fw.close();
 			} catch (CodecException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 			} catch (OntologyException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -428,7 +413,7 @@ public class Physical2DEnvironmentController extends Observable implements Obser
 	 * @param envFile The XML file
 	 * @return The environment
 	 */
-	private Physical2DEnvironment loadEnvironment(File envFile){
+	private Physical2DEnvironment loadEnvironmentFromXML(File envFile){
 		Physical2DEnvironment env = null;
 		if(envFile.exists()){
 			try {
@@ -549,10 +534,8 @@ public class Physical2DEnvironmentController extends Observable implements Obser
 					
 				}
 			} catch (InstantiationException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}else{	// ID already in use -> don't create the object 
@@ -668,30 +651,21 @@ public class Physical2DEnvironmentController extends Observable implements Obser
 	}
 	
 	@Override
-	public void update(Observable arg0, Object arg1) {
-		if(arg0 == project && arg1.toString().equals(SimulationSetups.CHANGED)){
-			handleSetupChange((SimulationSetupsChangeNotification) arg1);
-		}else if(arg1.equals(Project.SAVED)){
-			this.save();
-		}
-	}
-	
-	private void handleSetupChange(SimulationSetupsChangeNotification sscn){
+	protected void handleSimSetupChange(SimulationSetupsChangeNotification sscn){
 		
 		switch(sscn.getUpdateReason()){
 			
 			case SimulationSetups.SIMULATION_SETUP_COPY:
 				setDefaultFileNames();
-				this.currentEnvironmentPath = this.baseFilePath + project.simSetups.getCurrSimSetup().getEnvironmentFileName();
-				this.currentSVGPath = this.baseFilePath + project.simSetups.getCurrSimSetup().getSvgFileName();
-				saveEnvironment(new File(this.currentEnvironmentPath));
-				saveSVG(new File(this.currentSVGPath));
+				this.currentEnvironmentPath = this.envFolderPath + getCurrentSimSetup().getEnvironmentFileName();
+				this.currentSVGPath = this.envFolderPath + getCurrentSimSetup().getSvgFileName();
+				saveEnvironment();
 			break;
 			
 			case SimulationSetups.SIMULATION_SETUP_ADD_NEW:
 				setDefaultFileNames();
-				this.currentEnvironmentPath = this.baseFilePath + project.simSetups.getCurrSimSetup().getEnvironmentFileName();
-				this.currentSVGPath = this.baseFilePath + project.simSetups.getCurrSimSetup().getSvgFileName();
+				this.currentEnvironmentPath = this.envFolderPath + getCurrentSimSetup().getEnvironmentFileName();
+				this.currentSVGPath = this.envFolderPath + getCurrentSimSetup().getSvgFileName();
 				setEnvironment(null);
 				setSvgDoc(null);
 			break;
@@ -709,9 +683,9 @@ public class Physical2DEnvironmentController extends Observable implements Obser
 			// No, there's no break missing here. After deleting a setup another one is loaded.
 			
 			case SimulationSetups.SIMULATION_SETUP_LOAD:
-				this.currentEnvironmentPath = this.baseFilePath + project.simSetups.getCurrSimSetup().getEnvironmentFileName();
-				this.currentSVGPath = this.baseFilePath + project.simSetups.getCurrSimSetup().getSvgFileName();
-				setEnvironment(loadEnvironment(new File(this.currentEnvironmentPath)));
+				this.currentEnvironmentPath = this.envFolderPath + getCurrentSimSetup().getEnvironmentFileName();
+				this.currentSVGPath = this.envFolderPath + getCurrentSimSetup().getSvgFileName();
+				setEnvironment(loadEnvironmentFromXML(new File(this.currentEnvironmentPath)));
 				setSvgDoc(loadSVG(new File(this.currentSVGPath)));
 			break;
 			
@@ -721,17 +695,17 @@ public class Physical2DEnvironmentController extends Observable implements Obser
 				
 				setDefaultFileNames();
 				if(oldEnvFile.exists()){
-					File newEnvFile = new File(this.baseFilePath+project.simSetups.getCurrSimSetup().getEnvironmentFileName());
+					File newEnvFile = new File(this.envFolderPath+getCurrentSimSetup().getEnvironmentFileName());
 					oldEnvFile.renameTo(newEnvFile);
 				}
 				
 				if(oldSVGFile.exists()){
-					File newSvgFile = new File(this.baseFilePath+project.simSetups.getCurrSimSetup().getSvgFileName());
+					File newSvgFile = new File(this.envFolderPath+getCurrentSimSetup().getSvgFileName());
 					oldSVGFile.renameTo(newSvgFile);
 				}
 				
-				this.currentEnvironmentPath = this.baseFilePath + project.simSetups.getCurrSimSetup().getEnvironmentFileName();
-				this.currentSVGPath = this.baseFilePath + project.simSetups.getCurrSimSetup().getSvgFileName();
+				this.currentEnvironmentPath = this.envFolderPath + getCurrentSimSetup().getEnvironmentFileName();
+				this.currentSVGPath = this.envFolderPath + getCurrentSimSetup().getSvgFileName();
 			break;
 		}
 		
@@ -739,8 +713,9 @@ public class Physical2DEnvironmentController extends Observable implements Obser
 	
 	private void setDefaultFileNames(){
 		String baseFileName = project.simSetupCurrent;
-		project.simSetups.getCurrSimSetup().setEnvironmentFileName(baseFileName+".xml");
-		project.simSetups.getCurrSimSetup().setSvgFileName(baseFileName+".svg");
+		//TODO remove the path from the simsetup
+		getCurrentSimSetup().setEnvironmentFileName(baseFileName+".xml");
+		getCurrentSimSetup().setSvgFileName(baseFileName+".svg");
 	}
 	
 	public void setScale(Scale scale){
@@ -760,6 +735,53 @@ public class Physical2DEnvironmentController extends Observable implements Obser
 		setChanged();
 		notifyObservers(new Integer(SCALE_CHANGED));
 		project.isUnsaved = true;
+	}
+
+
+	/* (non-Javadoc)
+	 * @see agentgui.core.environment.EnvironmentController#loadEnvironment()
+	 */
+	@Override
+	protected void loadEnvironment() {
+		SimulationSetup currentSetup = getCurrentSimSetup(); 
+		// Load SVG file if specified
+		if(currentSetup.getSvgFileName() != null && currentSetup.getSvgFileName().length() >0){
+			currentSVGPath = envFolderPath + currentSetup.getSvgFileName();
+			setSvgDoc(loadSVG(new File(currentSVGPath)));
+		}
+		// Load environment file if specified
+		if(currentSetup.getEnvironmentFileName() != null && currentSetup.getEnvironmentFileName().length() >0){
+			currentEnvironmentPath = envFolderPath + currentSetup.getEnvironmentFileName();
+			setEnvironment(loadEnvironmentFromXML(new File(currentEnvironmentPath)));
+		}
+		// If SVG present and environment not, create a new blank environment 
+		if(this.svgDoc != null && this.environment == null){
+			setEnvironment(initEnvironment());
+		}
+	
+	}
+
+
+	/* (non-Javadoc)
+	 * @see agentgui.core.environment.EnvironmentController#saveEnvironment()
+	 */
+	@Override
+	protected void saveEnvironment() {
+		if (currentSVGPath!=null){
+			saveSVG(new File(currentSVGPath));	
+		}
+		if (currentEnvironmentPath!=null) {
+			savePhysical2DEnvironment(new File(currentEnvironmentPath));	
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see agentgui.core.environment.EnvironmentController#setEnvironment(java.lang.Object)
+	 */
+	@Override
+	protected void setEnvironment(Object environmentObject) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	

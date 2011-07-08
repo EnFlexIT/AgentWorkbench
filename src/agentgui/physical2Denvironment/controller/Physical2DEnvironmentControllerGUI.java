@@ -131,6 +131,8 @@ public class Physical2DEnvironmentControllerGUI extends EnvironmentPanel impleme
 		
 		
 		this.controller = new Physical2DEnvironmentController(currProject);
+		this.setEnvironmentController(controller);
+		
 		controller.addObserver(this);
 		controller.setGUI(this);
 		if(controller.getSvgDoc() != null){

@@ -21,11 +21,28 @@
                 <agentClassName>gasmas.agents.ValveAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>n0</graphElementIDs>
-                <graphElementIDs>PP10</graphElementIDs>
                 <graphElementIDs>PP9</graphElementIDs>
+                <graphElementIDs>PP10</graphElementIDs>
                 <id>n0</id>
                 <prototypeClassName>agentgui.graphEnvironment.prototypes.SimpleGraphElement</prototypeClassName>
                 <type>valve</type>
+            </value>
+        </entry>
+        <entry>
+            <key>n5</key>
+            <value>
+                <agentClassName>gasmas.agents.BranchAgent</agentClassName>
+                <directed>false</directed>
+                <graphElementIDs>n5_2</graphElementIDs>
+                <graphElementIDs>n5_1</graphElementIDs>
+                <graphElementIDs>n5_0</graphElementIDs>
+                <graphElementIDs>PP12</graphElementIDs>
+                <graphElementIDs>PP13</graphElementIDs>
+                <graphElementIDs>PP14</graphElementIDs>
+                <graphElementIDs>PP15</graphElementIDs>
+                <id>n5</id>
+                <prototypeClassName>agentgui.graphEnvironment.prototypes.Star3GraphElement</prototypeClassName>
+                <type>star3</type>
             </value>
         </entry>
         <entry>
@@ -47,10 +64,10 @@
                 <agentClassName>gasmas.agents.BranchAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>n3_1</graphElementIDs>
-                <graphElementIDs>PP7</graphElementIDs>
                 <graphElementIDs>n3_3</graphElementIDs>
-                <graphElementIDs>PP6</graphElementIDs>
+                <graphElementIDs>PP7</graphElementIDs>
                 <graphElementIDs>n3_2</graphElementIDs>
+                <graphElementIDs>PP6</graphElementIDs>
                 <graphElementIDs>PP3</graphElementIDs>
                 <id>n3</id>
                 <prototypeClassName>agentgui.graphEnvironment.prototypes.TriangeGraphElement</prototypeClassName>
