@@ -28,6 +28,7 @@
 package agentgui.graphEnvironment.controller;
 
 import jade.content.Concept;
+import jade.core.Agent;
 
 import java.awt.Color;
 import java.awt.Dialog;
@@ -63,6 +64,7 @@ import agentgui.core.application.Language;
 import agentgui.core.application.Project;
 import agentgui.core.gui.ClassSelector;
 import agentgui.core.gui.ClassSelectorTableCellEditor;
+import agentgui.core.gui.components.AgentClassTableCellEditor;
 import agentgui.core.gui.components.ClassNameListCellRenderer;
 import agentgui.core.gui.components.ClassNameTableCellRenderer;
 import agentgui.core.gui.components.ColorEditor;
@@ -123,7 +125,8 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	/**
 	 * Cell editor for the prototype classes column
 	 */
-	private ClassSelectorTableCellEditor prototypeClassesCellEditor = null;
+	private ClassSelectorTableCellEditor prototypeClassesCellEditor = null;  //  @jve:decl-index=0:
+	private ClassSelectorTableCellEditor agentClassesCellEditor = null;
 	/**
 	 * All available agent classes, accessible by simple class name
 	 */
@@ -342,8 +345,9 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			
 			//Set up renderer and editor for the agent class column
 			TableColumn agentClassColumn = jTableComponentTypes.getColumnModel().getColumn(1);
-			agentClassColumn.setCellEditor(new DefaultCellEditor(getJComboBoxAgentClasses()));
+			agentClassColumn.setCellEditor(new AgentClassTableCellEditor());
 			agentClassColumn.setCellRenderer(new ClassNameTableCellRenderer());
+			
 			
 			//Set up renderer and editor for Graph prototype column
 			TableColumn prototypeClassColumn = jTableComponentTypes.getColumnModel().getColumn(2);

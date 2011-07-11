@@ -15,6 +15,9 @@
             <listMembership>01AgentStartManual</listMembership>
             <agentClassReference>gasmas.agents.CompressorAgent</agentClassReference>
             <startAsName>CoAg</startAsName>
+            <startArguments>
+                <argument>PENvbXByZXNzb3IgSUQ9IiIvPgo=</argument>
+            </startArguments>
         </agent>
         <agent>
             <postionNo>1</postionNo>

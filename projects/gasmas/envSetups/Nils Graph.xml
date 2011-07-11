@@ -117,8 +117,8 @@
             <key>n9</key>
             <value>
                 <directed>false</directed>
-                <graphElementIDs>n9</graphElementIDs>
                 <graphElementIDs>PP11</graphElementIDs>
+                <graphElementIDs>n9</graphElementIDs>
                 <graphElementIDs>PP6</graphElementIDs>
                 <id>n9</id>
                 <prototypeClassName>agentgui.graphEnvironment.prototypes.SimpleGraphElement</prototypeClassName>
@@ -129,8 +129,8 @@
             <key>n8</key>
             <value>
                 <directed>true</directed>
-                <graphElementIDs>PP10</graphElementIDs>
                 <graphElementIDs>PP9</graphElementIDs>
+                <graphElementIDs>PP10</graphElementIDs>
                 <graphElementIDs>n8</graphElementIDs>
                 <id>n8</id>
                 <prototypeClassName>agentgui.graphEnvironment.prototypes.DirectedSimpleGraphElement</prototypeClassName>
@@ -168,8 +168,8 @@
                 <agentClassName>gasmas.agents.PipeAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>PP14</graphElementIDs>
-                <graphElementIDs>n13</graphElementIDs>
                 <graphElementIDs>PP15</graphElementIDs>
+                <graphElementIDs>n13</graphElementIDs>
                 <id>n13</id>
                 <prototypeClassName>agentgui.graphEnvironment.prototypes.SimpleGraphElement</prototypeClassName>
                 <type>pipe</type>
