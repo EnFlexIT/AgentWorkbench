@@ -196,21 +196,21 @@ public class GlobalInfo {
 		envDisplayName = "Kein vordefiniertes Umgebungsmodell verwenden";
 		envPanelClass = null;
 		envType = new EnvironmentType(envKey, envDisplayName, envPanelClass);
-		this.knowEnvironmentTypes.add(envType);
+		addEnvironmentType(envType);
 		
 		// --- Continuous 2D environment ------------------------------------
 		envKey = "continous2Denvironment";
 		envDisplayName = "Kontinuierliches 2D-Umgebungsmodell";
 		envPanelClass = Physical2DEnvironmentControllerGUI.class;
 		envType = new EnvironmentType(envKey, envDisplayName, envPanelClass);
-		this.knowEnvironmentTypes.add(envType);
+		addEnvironmentType(envType);
 		
 		// --- Grid Environment ---------------------------------------------
 		envKey = "gridEnvironment";
 		envDisplayName = "Graph bzw. Netzwerk";
 		envPanelClass = GraphEnvironmentControllerGUI.class;
 		envType = new EnvironmentType(envKey, envDisplayName, envPanelClass);
-		this.knowEnvironmentTypes.add(envType);
+		addEnvironmentType(envType);
 		
 	}
 	

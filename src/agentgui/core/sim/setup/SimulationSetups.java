@@ -196,7 +196,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 	
 	/**
 	 * Finds and returns the first Setup name using an alphabetic order  
-	 * @return
+	 * @return the first Setup name using an alphabetic order 
 	 */
 	public String getFirstSetup() {
 
@@ -215,7 +215,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 	/**
 	 * This method returns a Suggestion for the Name of a Setup-File
 	 * @param inputText
-	 * @return
+	 * @return returns a Suggestion for the Name of a Setup-File
 	 */
 	public String getSuggestSetupFile(String inputText) {
 		
@@ -248,7 +248,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 	 * This Method checks if the incomming Setup-Name is already
 	 * used in the current List of Setups (Hashmap)
 	 * @param setupName2Test
-	 * @return
+	 * @return true if the setup name is already used in the current list of setups
 	 */
 	public boolean containsSetupName(String setupName2Test) {
 		
@@ -265,7 +265,6 @@ public class SimulationSetups extends Hashtable<String, String> {
 	
 	/**
 	 * This Method saves the current
-	 * @return Simulation-Setup
 	 */
 	public void setupSave() {
 		if (currSimSetup!=null) {

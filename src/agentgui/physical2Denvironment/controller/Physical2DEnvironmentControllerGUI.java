@@ -54,7 +54,7 @@ import agentgui.physical2Denvironment.ontology.Scale;
 import agentgui.physical2Denvironment.ontology.StaticObject;
 import agentgui.physical2Denvironment.utils.EnvironmentHelper;
 
-public class Physical2DEnvironmentControllerGUI extends EnvironmentPanel implements ActionListener, Observer{
+public class Physical2DEnvironmentControllerGUI extends EnvironmentPanel implements ActionListener{
 
 	private static final long serialVersionUID = 1L;
 	public static final String SETTINGS_KEY_ID = "id";
@@ -99,6 +99,13 @@ public class Physical2DEnvironmentControllerGUI extends EnvironmentPanel impleme
 	 */
 	public Physical2DEnvironmentControllerGUI(Project project) {
 		super(project);
+	
+		//Creating a new Physical 2D environment controller 
+		controller = new Physical2DEnvironmentController(currProject);
+		controller.addObserver(this);
+		
+		this.setEnvironmentController(controller);
+		
 		initialize();
 	}
 
@@ -130,10 +137,6 @@ public class Physical2DEnvironmentControllerGUI extends EnvironmentPanel impleme
 //		this.add(getJPanelTopNew(), gridBagConstraints1);
 		
 		
-		this.controller = new Physical2DEnvironmentController(currProject);
-		this.setEnvironmentController(controller);
-		
-		controller.addObserver(this);
 		controller.setGUI(this);
 		if(controller.getSvgDoc() != null){
 			setSVGDocument(controller.getSvgDoc());

@@ -158,7 +158,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		super(project);
 
 		//Creating a new Graph environment controller 
-		controller = new GraphEnvironmentController(this.currProject);
+		controller = new GraphEnvironmentController(currProject);
 		controller.addObserver(this);
 
 		this.setEnvironmentController(controller);
@@ -513,7 +513,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	
 	/**
 	 * Get the visualization component
-	 * @return
+	 * @return the basic graph GUI which contains the graph visualization component
 	 */
 	public BasicGraphGUI getGraphGUI(){
 		if(graphGUI == null){

@@ -29,10 +29,7 @@
 
 package agentgui.core.gui.components;
 
-/* 
- * Used by the JTable in ClassSelectionDialog
- * @author Satyadeep - CSE - Indian Institute of Technology, Guwahati
- */
+
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.table.TableCellEditor;
@@ -44,7 +41,10 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
+/**
+ * Used by the JTable in ClassSelectionDialog
+ * @author Satyadeep - CSE - Indian Institute of Technology, Guwahati
+ */
 public class ColorEditor extends AbstractCellEditor
                          implements TableCellEditor,
 			            ActionListener {

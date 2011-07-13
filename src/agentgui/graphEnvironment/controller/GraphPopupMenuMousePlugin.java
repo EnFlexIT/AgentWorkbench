@@ -116,7 +116,7 @@ public class GraphPopupMenuMousePlugin<V, E> extends AbstractPopupGraphMousePlug
     
     /**
      * Getter for the edge popup.
-     * @return 
+     * @return the edge popup menu
      */
     public JPopupMenu getEdgePopup() {
         return edgePopup;
@@ -132,7 +132,7 @@ public class GraphPopupMenuMousePlugin<V, E> extends AbstractPopupGraphMousePlug
     
     /**
      * Getter for the vertex popup.
-     * @return 
+     * @return  the vertex popup menu
      */
     public JPopupMenu getVertexPopup() {
         return vertexPopup;

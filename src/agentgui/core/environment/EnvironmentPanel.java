@@ -27,6 +27,9 @@
  */
 package agentgui.core.environment;
 
+import java.util.Observable;
+import java.util.Observer;
+
 import javax.swing.JPanel;
 
 import agentgui.core.application.Project;
@@ -39,7 +42,7 @@ import agentgui.graphEnvironment.controller.GraphEnvironmentControllerGUI;
  * @see GraphEnvironmentControllerGUI
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class EnvironmentPanel extends JPanel {
+public abstract class EnvironmentPanel extends JPanel implements  Observer{
 
 	private static final long serialVersionUID = -5522022346976174783L;
 
@@ -80,5 +83,10 @@ public class EnvironmentPanel extends JPanel {
 	public void setEnvironmentController(EnvironmentController environmentController) {
 		this.environmentController = environmentController;
 	}
+	/* (non-Javadoc)
+	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
+	 */
+	@Override
+	public abstract void update(Observable o, Object arg) ;
 	
 }

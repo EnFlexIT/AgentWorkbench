@@ -9,7 +9,10 @@ import agentgui.graphEnvironment.networkModel.ComponentTypeSettings;
 import jade.util.leap.Serializable;
 
 /**
- * @author Satyadeep
+ * A custom user object encapsulating the required objects which can be placed in the Project object. 
+ * You can add more attributes in this class if required, but be careful to cast and use the user object properly.
+ * 
+ * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati 
  *
  */
 public class ProjectUserObject implements Serializable{
@@ -20,13 +23,14 @@ public class ProjectUserObject implements Serializable{
 	private HashMap<String, ComponentTypeSettings> currentCTS = null;
 
 	/**
-	 * @param currentCTS
+	 * Default constructor
 	 */
 	public ProjectUserObject() {
 		currentCTS = new HashMap<String, ComponentTypeSettings>();
 	}
 
 	/**
+	 * Get the component type settings hashmap 
 	 * @return the currentCTS
 	 */
 	public HashMap<String, ComponentTypeSettings> getCurrentCTS() {
@@ -34,6 +38,7 @@ public class ProjectUserObject implements Serializable{
 	}
 
 	/**
+	 * Set the component type settings hashmap
 	 * @param currentCTS the currentCTS to set
 	 */
 	public void setCurrentCTS(HashMap<String, ComponentTypeSettings> currentCTS) {

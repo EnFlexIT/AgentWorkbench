@@ -29,10 +29,7 @@
 
 package agentgui.core.gui.components;
 
-/* 
- * Used by the JTable in ClassSelectionDialog
- * @author Satyadeep - CSE - Indian Institute of Technology, Guwahati
- */
+
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -41,12 +38,13 @@ import javax.swing.border.Border;
 import javax.swing.table.TableCellRenderer;
 import java.awt.Color;
 import java.awt.Component;
-
+/** 
+ * Used by the JTable in ClassSelectionDialog
+ * @author Satyadeep - CSE - Indian Institute of Technology, Guwahati
+ */
 public class ColorRenderer extends JLabel
                            implements TableCellRenderer {
-    /**
-	 * 
-	 */
+  
 	private static final long serialVersionUID = -8306759337392868942L;
 	Border unselectedBorder = null;
     Border selectedBorder = null;

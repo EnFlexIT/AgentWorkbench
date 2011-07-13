@@ -101,10 +101,10 @@ import agentgui.core.application.Project;
 	
 	/**
 	 * This method saves the current Simulation-Setup
-	 * @return
+	 * @return true if save is successful
 	 */
 	public boolean save() {
-		
+		boolean saved = true;
 		mergeListModels();
 		
 		// ------------------------------------------------
@@ -133,6 +133,7 @@ import agentgui.core.application.Project;
 		    catch(IOException ex)
 		    {
 		      ex.printStackTrace();
+		      saved = false;
 		    }
 		    
 			currProject.setNotChangedButNotify(new SimulationSetupsChangeNotification(SimulationSetups.SIMULATION_SETUP_SAVED));
@@ -140,8 +141,9 @@ import agentgui.core.application.Project;
 		catch (Exception e) {
 			System.out.println("XML-Error while saving Setup-File!");
 			e.printStackTrace();
-		}
-		return true;		
+			saved = false;
+		}		
+		return saved;		
 	}
 	
 	/**
@@ -175,7 +177,8 @@ import agentgui.core.application.Project;
 	 * The list will be filled with elements of the type {@link AgentClassElement4SimStart} coming from
 	 * the stored setup file and will be later on also stored in the file of the simulation setup.
 	 * 
-	 * @param defaultListModel4AgentStarts the new DefaultListModel to set
+	 * @param newDefaultListModel4AgentStarts the new DefaultListModel to set
+	 * @param listName the name of the list to be assigned
 	 * @see AgentClassElement4SimStart
 	 */
 	public void registerAgentDefaultListModel(DefaultListModel newDefaultListModel4AgentStarts, String listName) {
@@ -204,7 +207,6 @@ import agentgui.core.application.Project;
 	}
 	/**
 	 * Here a complete agent start list can be added to the simulation setup 
-	 * @return the agentListModel
 	 */
 	public void setAgentDefaultListModel(DefaultListModel defaultListModel4AgentStarts, String listName) {
 		agentSetupLists.put(listName, defaultListModel4AgentStarts);
@@ -248,7 +250,7 @@ import agentgui.core.application.Project;
 	/**
 	 * Checks whether the agent name already exists in the current agent configuration
 	 * @param localAgentName
-	 * @return true if the agent name already exists
+	 * @return true, if the agent name already exists
 	 */
 	public boolean isAgentNameExists(String localAgentName){
 		mergeListModels();

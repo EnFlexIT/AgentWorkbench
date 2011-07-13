@@ -45,11 +45,20 @@ public class SimulationEnvironment extends JPanel implements Observer, ActionLis
 	 */
 	private EnvironmentPanel getEnvironmentControllerGUI(){
 		
-		environmentControllerGUI = new EnvironmentPanel(this.project);
+		environmentControllerGUI = new EnvironmentPanel(this.project){
+
+			private static final long serialVersionUID = 4276637599115228527L;
+
+			@Override
+			public void update(Observable o, Object arg) {
+				// TODO Auto-generated method stub
+				
+			}
+		};
 		
 		EnvironmentType envType = project.getEnvironmentModelType();
 		Class<? extends EnvironmentPanel> envPanelClass = envType.getDisplayPanelClass();
-
+	
 		if (envPanelClass==null) {
 			// ------------------------------------------------------
 			// --- If NO environment is specified -------------------

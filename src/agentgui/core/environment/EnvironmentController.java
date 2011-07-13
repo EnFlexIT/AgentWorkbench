@@ -114,7 +114,7 @@ public abstract class EnvironmentController extends Observable implements Observ
 	protected abstract void setEnvironment(Object environmentObject);
 	
 	/**
-	 * 
+	 * The current project
 	 * @return the current project
 	 */
 	public Project getProject(){
@@ -122,7 +122,7 @@ public abstract class EnvironmentController extends Observable implements Observ
 	}
 	
 	/**
-	 * 
+	 * Returns the current simulation setup
 	 * @return the current simulation setup
 	 */
 	public SimulationSetup getCurrentSimSetup(){
@@ -130,7 +130,7 @@ public abstract class EnvironmentController extends Observable implements Observ
 	}
 	
 	/**
-	 * 
+	 * The folder path where environment related files are stored (contains the slash at the end.)
 	 * @return the folder path where environment related files are stored (contains the slash at the end.)
 	 */
 	public String getEnvFolderPath(){

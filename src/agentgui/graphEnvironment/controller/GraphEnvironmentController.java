@@ -81,7 +81,7 @@ import edu.uci.ics.jung.io.graphml.NodeMetadata;
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
  * @author <br>Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati 
  */
-public class GraphEnvironmentController extends EnvironmentController implements Observer {
+public class GraphEnvironmentController extends EnvironmentController {
 	/**
 	 * Observer notification when a new NetworkModel is set 
 	 */
