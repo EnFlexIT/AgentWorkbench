@@ -477,6 +477,8 @@ public class ImageHelper {
 					//System.out.println("Rekursion!");
 					sg.write("NO_WayPath_"+id +","+counter+".svg", doc);
 			    	}
+		    		current.setX(-666);
+		    		current.setY(-666);
 		    		return current;
 		    	}
 		    	//No path is found. Try too look less pixel ahead
@@ -719,12 +721,17 @@ public class ImageHelper {
 	}
 	
 
-	public synchronized agentgui.physical2Denvironment.imageProcessing.StepNode createPlanImage(ArrayList<String> otherAgent,ArrayList<Position> collpos, Position own,String id ,String target , float lookAhead) throws Exception
+	public synchronized agentgui.physical2Denvironment.imageProcessing.StepNode createPlanImage(ArrayList<CombinedNameAndPos> otherAgent, Position own,String id ,String target , float lookAhead, double discreteTime) throws Exception
 	{
 		Position pos;
 			
 		synchronized (this) {		
-		this.evn=this.createManipulatedWorldWithAgents(otherAgent,id , collpos);
+		this.evn=this.createManipulatedWorldWithAgents(otherAgent,id,discreteTime);
+		if(this.evn==null)
+		{
+			System.out.println("Sollte nicht vorkommen!");
+			return null;
+		}
 		}
 		
 		Document doc=helper.getSVGDoc();
@@ -1252,7 +1259,7 @@ public class ImageHelper {
 	   }
 			
 		this.evn=ImageIO.read(new File("myWorld.jpg"));
-		System.out.println("Setze Real_WORLD auf true!");
+	//	System.out.println("Setze Real_WORLD auf true!");
 		READ_WORLD=true;
 		return evn;
 	}
@@ -1352,9 +1359,9 @@ public class ImageHelper {
 	}
 			
 					
-	public synchronized BufferedImage createManipulatedWorldWithAgents(ArrayList<String> otherAgent , String id , ArrayList<Position> cords)
+	public synchronized BufferedImage createManipulatedWorldWithAgents(ArrayList<CombinedNameAndPos> otherAgent , String id,double discreteTime)
 	{
-	System.out.println("Create Manipulated:"+otherAgent.size());
+	//System.out.println("Create Manipulated:"+otherAgent.size());
 		try
 		{			
 			
@@ -1363,19 +1370,19 @@ public class ImageHelper {
 				// Reset Positions
 				String [] oldX=new String[otherAgent.size()];
 				String [] oldY=new String[otherAgent.size()];
-				System.out.println("Self:"+id);
+				//System.out.println("Self:"+id);
 				for(int i=0;i<otherAgent.size();i++)
 				{
-					System.out.println("Name:"+otherAgent.get(i));
-					Element element=doc.getElementById(otherAgent.get(i));
+					//System.out.println("Name:"+otherAgent.get(i));
+					Element element=doc.getElementById(otherAgent.get(i).getName());
 					oldX[i]=element.getAttribute("x");
 					oldY[i]=element.getAttribute("y");
 					//System.out.println("X vorher:"+ element.getAttribute("x"));
 					//System.out.println("Y vorher:"+ element.getAttribute("y"));
 					element.removeAttribute("x");
-					element.setAttribute("x", String.valueOf(cords.get(i).getXPos()));
+					element.setAttribute("x", String.valueOf(otherAgent.get(i).getPos().getXPos()));
 					element.removeAttribute("y");
-					element.setAttribute("y", String.valueOf(cords.get(i).getYPos()));
+					element.setAttribute("y", String.valueOf(otherAgent.get(i).getPos().getYPos()));
 					//System.out.println("X nacher:"+ element.getAttribute("x"));
 					//System.out.println("Y nacher:"+ element.getAttribute("y"));
 				}
@@ -1392,10 +1399,13 @@ public class ImageHelper {
 	 	           	tmp.removeChild(element);				
 					
 				}
-				
-				
+				Element self=doc.getElementById(id);
+				float selfX= Float.parseFloat(self.getAttribute("x"));
+				float selfY=Float.parseFloat(self.getAttribute("y"));
+				double ownSpeed= ((ActiveObject) envWrap.getObjectById(id)).getMaxSpeed();
 				for(ActiveObject obj: agents)
 				{
+						
 							//System.out.println("Untersuche:"+ obj.getId());
 							if(obj.getId().equals(id))
 							{
@@ -1406,8 +1416,31 @@ public class ImageHelper {
 							}
 							else
 							{
-					
+								Element elem=doc.getElementById(obj.getId());
+								if(elem==null)
+								{
+								System.out.println("Element ist null!");
+								}
+								else
+								{
+									System.out.println("Element gefunden!");
+								}
+								float otherX=Float.parseFloat(elem.getAttribute("x"));
+								float otherY=Float.parseFloat(elem.getAttribute("y"));
+											
 								Element element=doc.getElementById(obj.getId());
+								double distance=this.getDistance(selfX, selfY, otherX , otherY);
+								distance=distance/10.0;
+								double seconds = distance / ownSpeed; 
+								System.out.println("Seconds:"+seconds);
+								System.out.println("Discrete Time:"+discreteTime);
+								if(seconds>discreteTime)
+								{
+									System.out.println("Abstand zu weit weswegen der andere gelöscht werden kann!");
+									element.getParentNode().removeChild(element);
+								}
+								else
+								{
 								String oldVal=element.getAttributeNS(null, "style");
 								String search="fill:";
 								int index=oldVal.indexOf(search);
@@ -1426,6 +1459,7 @@ public class ImageHelper {
 					    	    	Attr style=element.getAttributeNode("style");
 					    	    	style.setValue(oldVal);
 							}
+						}		
 							}
 	             }  
 			NodeList list=doc.getElementsByTagName("rect");
@@ -1482,6 +1516,8 @@ public class ImageHelper {
 			save.write(name+".svg", doc);
 			save.writeJPG(name+".svg");
 			this.evn=ImageIO.read(new File(name+".jpg"));
+			System.out.println("Saved");
+		
 			/**
 			for(int counter=0;i<otherAgent.size();counter++)
 			{
@@ -1698,17 +1734,17 @@ public class ImageHelper {
 		return pos;
 	}
 	
-	public HashMap<String, ArrayList<String>> getDynamicCollision(HashMap<String,PositionUpdate> update)
+	public HashMap<String, ArrayList<CombinedNameAndPos>> getDynamicCollision(HashMap<String,PositionUpdate> update)
 	{
 		try
 		{
-			HashMap<String, ArrayList<String>> nameList = new HashMap<String, ArrayList<String>>();
+			HashMap<String, ArrayList<CombinedNameAndPos>> nameList = new HashMap<String, ArrayList<CombinedNameAndPos>>();
 			// Let's find the name of the moving agents
 			EnvironmentWrapper envWrapper=new EnvironmentWrapper(this.helper.getEnvironment());
 			Vector<ActiveObject> agents=envWrapper.getAgents();
 			for(int i=0;i<agents.size();i++)
 			{
-				ArrayList<String> otherAgents=new ArrayList<String>();
+				ArrayList<CombinedNameAndPos> otherAgents=new ArrayList<CombinedNameAndPos>();
 				Physical2DObject agent=agents.get(i);
 				//
 				
@@ -1775,7 +1811,12 @@ public class ImageHelper {
 								System.out.println("I:"+counter);
 								System.out.println("Sollte eigentlich nicht passieren");
 							}
-							otherAgents.add(agents.get(counter).getId());
+							CombinedNameAndPos combined=new CombinedNameAndPos();
+							combined.setName(agents.get(counter).getId());
+							combined.setPos(obj.getPosition());
+							System.out.println("Kollision Agent Name:"+combined.getName());
+							System.out.println("Kollision Pos:"+combined.getPos().getXPos() + ","+ combined.getPos().getYPos());
+							otherAgents.add(combined);
 							
 							break;
 						}						
