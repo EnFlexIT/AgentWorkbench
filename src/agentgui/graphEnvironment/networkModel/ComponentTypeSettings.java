@@ -13,9 +13,8 @@ import agentgui.graphEnvironment.prototypes.GraphElementPrototype;
  *
  */
 public class ComponentTypeSettings implements Serializable{
-	/**
-	 * 
-	 */
+	
+	
 	private static final long serialVersionUID = 2456632300628196922L;
 	/**
 	 * The agent class representing this component type
@@ -40,6 +39,13 @@ public class ComponentTypeSettings implements Serializable{
 	 * The vertex size, used only for the component type settings of the key "node".
 	 */
 	private String vertexSize = null;
+	
+	/**
+	 * Indicates if a label is visible or not.
+	 */
+	private boolean showLable = true;
+	
+	
 	/**
 	 * Default Constructor
 	 */
@@ -129,5 +135,18 @@ public class ComponentTypeSettings implements Serializable{
 	 */
 	public void setVertexSize(String vertexSize){
 		this.vertexSize = vertexSize;
+	}
+
+	/**
+	 * @param showLable the showLable to set
+	 */
+	public void setShowLable(boolean showLable) {
+		this.showLable = showLable;
+	}
+	/**
+	 * @return the showLable
+	 */
+	public boolean isShowLable() {
+		return showLable;
 	}
 }

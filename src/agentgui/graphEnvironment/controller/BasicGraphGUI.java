@@ -307,9 +307,12 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	public void setGraph(Graph<GraphNode, GraphEdge> graph) {
 
 		if (graph != null) { // A graph was passed
+
+			// Get the ComponentTypeSettings for nodes 
+			final ComponentTypeSettings cts = controller.getComponentTypeSettings().get("node");
+			
 			// Define graph layout
-			Layout<GraphNode, GraphEdge> layout = new StaticLayout<GraphNode, GraphEdge>(
-					graph);
+			Layout<GraphNode, GraphEdge> layout = new StaticLayout<GraphNode, GraphEdge>(graph);
 			layout.setSize(new Dimension(400, 400));
 			layout.setInitializer(new Transformer<GraphNode, Point2D>() {
 
@@ -323,13 +326,16 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 			// Create a new VisualizationViewer instance
 			visView = new VisualizationViewer<GraphNode, GraphEdge>(layout);
 			// Configure node labels
-			visView.getRenderContext().setVertexLabelTransformer(
-					new Transformer<GraphNode, String>() {
-						@Override
-						public String transform(GraphNode arg0) {
-							return arg0.getId();
-						}
-					});
+			if (cts.isShowLable()==true) {
+				visView.getRenderContext().setVertexLabelTransformer(
+						new Transformer<GraphNode, String>() {
+							@Override
+							public String transform(GraphNode node) {
+								return node.getId();
+							}
+						});
+			}
+
 			//Configure vertex colors
 			visView.getRenderContext().setVertexFillPaintTransformer(
 					new Transformer<GraphNode, Paint>() {
@@ -341,7 +347,6 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 							else
 							{	//Get the color from the component type settings
 								try{
-									ComponentTypeSettings cts = controller.getComponentTypeSettings().get("node");
 									String colorString= cts.getColor();
 									if(colorString!=null){
 										Color color = new Color(Integer.parseInt(colorString));							
@@ -1069,13 +1074,12 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
      * 
      * @author Satyadeep
      */
-    private final class VertexShapeSizeAspect<V,E>
-    extends AbstractVertexShapeTransformer <V>
-    implements Transformer<V,Shape>  {
+    private final class VertexShapeSizeAspect<V,E> extends AbstractVertexShapeTransformer <V> implements Transformer<V,Shape>  {
     	
-        protected boolean scale = false; 
-        public VertexShapeSizeAspect()
-        {
+        protected boolean scale = false;
+        
+        public VertexShapeSizeAspect() {
+        
         	setSizeTransformer(new Transformer<V,Integer>() {
 
 				public Integer transform(V v) {
@@ -1104,13 +1108,11 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 				}});
         }
         
-		public void setScaling(boolean scale)
-        {
+		public void setScaling(boolean scale) {
             this.scale = scale;
         }
                 
-        public Shape transform(V v)
-        {
+        public Shape transform(V v) {
         	return factory.getEllipse(v);
         }
     }

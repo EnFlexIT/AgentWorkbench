@@ -63,7 +63,6 @@ import javax.swing.border.EtchedBorder;
 
 import org.apache.commons.collections15.Transformer;
 
-import agentgui.core.agents.AgentClassElement;
 import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;

@@ -36,7 +36,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
-import java.util.Observer;
 
 import javax.swing.DefaultListModel;
 import javax.xml.bind.JAXBContext;

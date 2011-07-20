@@ -3,7 +3,6 @@ de;' ist bereits geöffnet!;' is already open!;;;
 de;'.csv'-Version des Wörterbuchs übernehmen ...;Import the '. csv'-version of the dictionary ...;;;
 de;(Falls bereits verwendet, wird versucht den nächst höheren Port zu nutzen);(If already used, it will be tried to use the next higher port);;;
 de;0 Sekunden;0 seconds;;;
-de;;;;;
 de;<br>Bitte geben Sie einen anderen Namen für das Setup an.;<br> Please enter a different name for the setup.;;;
 de;<br>Bitte geben Sie einen längeren Namen für das Setup an.;<br> Please enter a longer name for the setup.;;;
 de;<br>Falls nicht, wird eine neue Setup-Datei erzeugt.;<br> If not, a new setup file will be created.;;;
@@ -59,6 +58,7 @@ de;Basis-Info;Basic info
 de;Bearbeiten;Edit
 de;Beenden;Quit
 de;Beschreibung;Description
+de;Beschriftung anzeigen;Show labels;;;
 de;Bitte geben Sie den Namen für das neue Setup an!;Please enter a name for the new setup!
 de;Bitte geben Sie den neuen Namen für das Setup an!;Please specify the new name for the setup!
 de;Bitte geben Sie einen Bezeichner für die Referenz an!;Please, specify an identifier for the reference!;;;
@@ -215,7 +215,7 @@ de;Load Monitor;Load Monitor
 de;Log-Manager starten;Start Log Manager
 de;Löschen;Delete
 de;MAS-Pause;MAS-Pause
-de;MAS-Start;MAS-Start
+de;MAS-Start;MAS-Start;null;null;null
 de;MAS-Stop;MAS-Stop
 de;MAS;MAS
 de;Maximale Geschwindigkeit;Maximum speed
@@ -266,11 +266,12 @@ de;Objekt;Object
 de;Objekte aus Projekt-Ontologie;Objects from project ontology
 de;Objekteigenschaften;Object properties
 de;Ontologie Referenz benennen;Name ontology reference ;;;
-de;Ontologie Referenz maskieren;;;;
+de;Ontologie Referenz maskieren;Mask ontology reference;;;
 de;Ontologie hinzuf?gen;Add ontology
 de;Ontologie hinzufügen;Add ontology
 de;Ontologie-Klasse für Übergabepunkte;Ontology class for transfer points
-de;Ontologie-Klassen initialisieren;;;;
+de;Ontologie-Klasse;Ontology Class;;;
+de;Ontologie-Klassen initialisieren;initialize ontology classes;;;
 de;Ontologie;Ontology
 de;Ontologieklasse;Ontology Class
 de;Ontologien;Ontologies
@@ -350,8 +351,6 @@ de;Start-Argumente für den ausgewählten Agenten;Start-arguments for the selected
 de;Start-Konfiguration;Start-Configuration
 de;Start-Objekte aus Projekt-Ontologie;Startup objects from project-ontology
 de;Start;Start
-de;Startargument definieren für Agent;;;;
-de;Startargument definieren für:;;;;
 de;Starte Agent.GUI - Service;Start Agent.GUI - Service
 de;Starte Agent.GUI als:;Start Agent.GUI as:
 de;Starte JADE über Port-Nr.:;Start JADE via port no.:
@@ -384,7 +383,7 @@ de;Umschaltung rückgängig gemacht!;Switching undone!
 de;Unbekannt:;Unknown:
 de;Undefiniert;undefined
 de;Ungültige Eingabe, ausschließlich zahlenwerte zulässig!;Invalid input, only numbers allowed!
-de;Verbindungspunkte;Connection points
+de;Verbindungspunkte;Connection Points;null;null;null
 de;Vergrößern ...;Expand View ...
 de;Vergrößern;Zoom In
 de;Verkleinern;Zoom out
@@ -429,30 +428,34 @@ de;Übersetzen;Translate
 de;Übersetzter Text;Text translated
 de;Übersetzung speichern (STRG+S);Save translation (CTRL + S)
 de;Überspringen;Skip
-en;;Choose Icon;;;
-en;;Edge Color;;;
-en;;Select a valid vertex first;;;
-en;;Select a valid vertex;;;
-en;;Vertex Color;;;
 en;Ausgewählte Komponente entfernen;Remove selected component;;;
 en;Auswahl Netzwerk-Komonente!;Select Network Component to Add;;;
+en;Bestätigung;Confirmation;;;
 en;Bild;Image;;;
+en;Bitte wählen Sie einen Knoten ausserhalb des Zentrums;Select a vertex other than the center of the star;;;
 en;Bitte wählen Sie einen Knoten.;Select one vertex;;;
+en;Bitte wählen Sie einen gültigen Knoten;Select a valid vertex first;;;
 en;Bitte wählen Sie zuerst einen Knoten mit einem Rechtsklick aus!;Right click a valid vertex first;;;
 en;Eigenschaften bearbeiten;Edit Properties;;;
 en;Graph importieren;Import Graph from file;;;
 en;Graph löschen;Clear graph;;;
 en;Halten Sie die Umschalttaste gedrückt und klicken mit der rechten Maustaste auf  zwei Knoten;Use Shift and Right click two vertices;;;
+en;Icon auswählen;Choose Icon;;;
+en;Kantenfarbe;Edge Color;;;
 en;Klicken;Click;;;
 en;Knoten verbinden;Merge two nodes;;;
+en;Knotenfarbe;Vertex Color;;;
+en;Knotengröße;Vertex Size;;;
 en;Komponente hinzufügen;Add component;;;
 en;Komponente hinzufügen;Add new component;;;
 en;Komponente löschen;Delete Component;;;
 en;Komponentensuche;Search Components;;;
 en;Optionen;Options;;;
+en;Sind Sie sicher, dass Sie den Graphen löschen wollen?;Are you sure to clear the graph?;;;
 en;Umschalten auf Picking-Modus;Switch to Picking mode;;;
 en;Unschalten auf Transorming-Modus;Switch to Transforming mode;;;
 en;Verbindungsknoten in zwei Knoten aufteilen;Split the node into two nodes;;;
 en;Verbindungsknoten trennen;Split Node;;;
 en;Warnung;Warning;;;
 en;Wählen Sie einen Knoten, um diese zu verbinden;Select a vertex to merge;;;
+en;Wählen Sie einen gültigen Knoten;Select a valid vertex;;;

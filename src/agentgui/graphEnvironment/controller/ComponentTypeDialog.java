@@ -163,14 +163,8 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	 * Used for assigning the vertex color
 	 */
 	private JButton jButtonNodeColor = null;
-	/**
-	 * Color chooser for selecting the vertex color
-	 */
-	JColorChooser colorChooser = null;
-	/**
-	 * Used by the colorChooser for selecting the vertex color
-	 */
-	JDialog colorDialog = null;
+
+
 	private JLabel jLabelNodeColor = null;
 	private JPanel jPanelTop = null;
 	private JComboBox jComboBoxNodeSize = null;
@@ -192,13 +186,15 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 
 	/**
 	 * This method initializes this
-	 * 
 	 * @return void
 	 */
 	private void initialize() {
+		
 		this.setSize(601, 465);
 		this.setContentPane(getJContentPane());
 		this.setTitle(Language.translate("Komponententyp-Definition"));
+		
+		this.setNodeConfiguration();
 		
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
 		int top = (screenSize.height - this.getHeight()) / 2; 
@@ -207,8 +203,60 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	}
 
 	/**
+	 * This will set the current configuration for the nodes (propagation points) to the
+	 * current view
+	 */
+	private void setNodeConfiguration() {
+	
+		ComponentTypeSettings ctsNode = parent.getController().getComponentTypeSettings().get("node"); 
+		
+		// --- Set the ontology class for the vertices ------------------------
+		if(ctsNode!= null){
+			jTextFieldNodeClass.setText(ctsNode.getAgentClass());
+		}
+		
+		// --- Set the show label property ------------------------------------
+		if(ctsNode!= null){
+			this.jCheckBoxLableVisible.setSelected(ctsNode.isShowLable());
+		}  else {
+			this.jCheckBoxLableVisible.setSelected(true);
+		}
+		
+		// --- Set the vertex size from the component type settings -----------
+		Integer size;
+		if(ctsNode!=null) {
+			String vertexSize= ctsNode.getVertexSize();				
+			if(vertexSize!=null){
+				size = Integer.parseInt(vertexSize);
+			} else {
+				size = BasicGraphGUI.DEFAULT_VERTEX_SIZE;
+			}
+		} else {
+			size = BasicGraphGUI.DEFAULT_VERTEX_SIZE;
+		}
+		jComboBoxNodeSize.setSelectedItem(size);
+
+		
+		// --- Get the color from the component type settings -----------------
+		Color color;
+		if(ctsNode!=null) {
+			String colorString= ctsNode.getColor();				
+			if(colorString!=null){
+				color = new Color(Integer.parseInt(colorString));
+			} else {
+				color = BasicGraphGUI.DEFAULT_VERTEX_COLOR;
+			}
+		}
+		else {
+			color = BasicGraphGUI.DEFAULT_VERTEX_COLOR;
+		}
+		this.setNodeColor(color);
+		
+	}
+	
+	
+	/**
 	 * This method initializes jContentPane
-	 * 
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJContentPane() {
@@ -548,6 +596,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			String nodeColor = String.valueOf(getJButtonNodeColor().getBackground().getRGB());
 			ComponentTypeSettings ets = new ComponentTypeSettings(getJTextFieldNodeClass().getText(), null, null, nodeColor);
 			ets.setVertexSize(String.valueOf(jComboBoxNodeSize.getSelectedItem()));
+			ets.setShowLable(this.jCheckBoxLableVisible.isSelected());
 			etsVector.put("node", ets);
 			
 			// Set the GraphEnvironmentController's componentTypeSettings
@@ -564,7 +613,6 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		//Change Vertex color button clicked
 			
 			//Set up the dialog that the button brings up.
-			colorChooser = new JColorChooser();
 			Color newColor = JColorChooser.showDialog(
                     getJButtonNodeColor(),
                     "Pick a color",
@@ -599,14 +647,8 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	private JTextField getJTextFieldNodeClass() {
 		if (jTextFieldNodeClass == null) {
 			jTextFieldNodeClass = new JTextField();
-			
-			ComponentTypeSettings nodeSettings = parent.getController().getComponentTypeSettings().get("node");
-			
-			if(nodeSettings != null){
-				jTextFieldNodeClass.setText(nodeSettings.getAgentClass());
-				jTextFieldNodeClass.setPreferredSize(new Dimension(4, 26));
-				jTextFieldNodeClass.setEditable(false);
-			}
+			jTextFieldNodeClass.setPreferredSize(new Dimension(4, 26));
+			jTextFieldNodeClass.setEditable(false);
 		}
 		return jTextFieldNodeClass;
 	}
@@ -660,34 +702,14 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 
 	/**
 	 * This method initializes jButtonNodeColor	
-	 * 	
 	 * @return javax.swing.JButton	
 	 */
 	private JButton getJButtonNodeColor() {
 		if (jButtonNodeColor == null) {
 			jButtonNodeColor = new JButton();
 			jButtonNodeColor.setPreferredSize(new Dimension(43, 26));
-			//jButtonNodeColor.setBorderPainted(false);
 			jButtonNodeColor.setText(".");
 			jButtonNodeColor.addActionListener(this);
-			
-			//Get the color from the component type settings
-			HashMap<String, ComponentTypeSettings> cts 
-							= parent.getController().getComponentTypeSettings();
-			Color color;
-			if(cts.get("node")!=null)
-			{
-				String colorString= cts.get("node").getColor();				
-				if(colorString!=null){
-					color = new Color(Integer.parseInt(colorString));
-				}
-				else
-					color = BasicGraphGUI.DEFAULT_VERTEX_COLOR;			
-			}
-			else 
-				color = BasicGraphGUI.DEFAULT_VERTEX_COLOR;
-				
-			setNodeColor(color);
 		}
 		return jButtonNodeColor;
 	}
@@ -811,21 +833,6 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			DefaultComboBoxModel cbmSizes = new DefaultComboBoxModel(sizeList); 
 			jComboBoxNodeSize.setModel(cbmSizes);
 			
-			//Get the vertex size from the component type settings
-			HashMap<String, ComponentTypeSettings> cts = parent.getController().getComponentTypeSettings();
-			
-			Integer size;
-			if(cts.get("node")!=null) {
-				String vertexSize= cts.get("node").getVertexSize();				
-				if(vertexSize!=null){
-					size = Integer.parseInt(vertexSize);
-				} else {
-					size = BasicGraphGUI.DEFAULT_VERTEX_SIZE;
-				}
-			} else {
-				size = BasicGraphGUI.DEFAULT_VERTEX_SIZE;
-			}
-			jComboBoxNodeSize.setSelectedItem(size);
 		}
 		return jComboBoxNodeSize;
 	}

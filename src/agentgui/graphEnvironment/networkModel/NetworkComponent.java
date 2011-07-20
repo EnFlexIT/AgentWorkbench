@@ -132,8 +132,7 @@ public class NetworkComponent {
 	/**
 	 * @param encodedOntologyRepresentation the encodedOntologyRepresentation to set
 	 */
-	public void setEncodedOntologyRepresentation(
-			String encodedOntologyRepresentation) {
+	public void setEncodedOntologyRepresentation(String encodedOntologyRepresentation) {
 		this.encodedOntologyRepresentation = encodedOntologyRepresentation;
 	}
 	
