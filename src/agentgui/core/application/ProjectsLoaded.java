@@ -173,7 +173,7 @@ public class ProjectsLoaded {
 			JAXBContext pc;
 			Unmarshaller um = null;
 			String XMLFileName = newProject.getProjectFolderFullPath() + Application.RunInfo.getFileNameProject();	
-			String userObjectFileName =  newProject.getProjectFolderFullPath() + Application.RunInfo.getFilenameProjectUserObject();
+			String userObjectFileName = newProject.getProjectFolderFullPath() + Application.RunInfo.getFilenameProjectUserObject();
 			// --- Gibt es diese Datei überhaupt? ---------
 			File xmlFile = new File(XMLFileName);
 			if (xmlFile.exists()==false) {
@@ -191,27 +191,25 @@ public class ProjectsLoaded {
 				e.printStackTrace();
 			}
 			
-			//--- Reading the serializable user object of the Project from the 'agentgui_userobject.bin' ---
-			Serializable userObject = null;
-			FileInputStream fis = null;
-			ObjectInputStream in = null;
-	    	  try
-	    	  {
-	    	    fis = new FileInputStream(userObjectFileName);
-	    	    in = new ObjectInputStream(fis);
-	    	    userObject = (Serializable)in.readObject();
-	    	    in.close();
-	    	  }
-	    	  catch(IOException ex)
-	    	  {
-	    		 ex.printStackTrace();
-	    	  }
-
-	    	  catch(ClassNotFoundException ex)
-	    	  {
-	    	    ex.printStackTrace();
-	    	  }
-			  newProject.setUserRuntimeObject(userObject);
+			//--- Reading the serializable user object of the Project from the 'agentgui.bin' ---
+			File userObjectFile = new File(userObjectFileName);
+			if (userObjectFile.exists()) {
+				
+				Serializable userObject = null;
+				FileInputStream fis = null;
+				ObjectInputStream in = null;
+				try {
+					fis = new FileInputStream(userObjectFileName);
+					in = new ObjectInputStream(fis);
+					userObject = (Serializable)in.readObject();
+					in.close();
+				} catch(IOException ex) {
+					ex.printStackTrace();
+				} catch(ClassNotFoundException ex) {
+					ex.printStackTrace();
+				}
+				newProject.setUserRuntimeObject(userObject);				
+			}
 			  
 			// --- Folder auf aktuellen Projektordner einstellen ---
 			newProject.setProjectFolder( localTmpProjectFolder );	

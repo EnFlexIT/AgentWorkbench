@@ -61,6 +61,9 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 		currDisSetup = currSimSetup.getDistributionSetup();
 		// --- Which agents are to start ----------------------------
 		currAgentList = currSimSetup.getAgentList();	
+
+		// --- Get number of expected agents and the number --------- 
+		// --- of container, which are wanted for this setup --------
 		currNumberOfAgents = currDisSetup.getNumberOfAgents();
 		currNumberOfContainer = currDisSetup.getNumberOfContainer();
 	}

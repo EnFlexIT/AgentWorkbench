@@ -292,28 +292,6 @@ public class SimulationSetups extends Hashtable<String, String> {
 			currSimSetup = (SimulationSetup) um.unmarshal( new FileReader( currSimXMLFile ) );
 			currSimSetup.setCurrProject(currProject);
 			
-			//--- Reading the serializable user object of the simsetup from the 'agentgui_userobject.bin' ---
-			String userObjectFileName = currProject.getSubFolder4Setups(true)+ currSimSetupName +".bin" ;
-			Serializable userObject = null;
-			FileInputStream fis = null;
-			ObjectInputStream in = null;
-	    	  try
-	    	  {
-	    	    fis = new FileInputStream(userObjectFileName);
-	    	    in = new ObjectInputStream(fis);
-	    	    userObject = (Serializable)in.readObject();
-	    	    in.close();
-	    	  }
-	    	  catch(IOException ex)
-	    	  {
-	    		 ex.printStackTrace();
-	    	  }
-	    	  catch(ClassNotFoundException ex)
-	    	  {
-	    	    ex.printStackTrace();
-	    	  }
-	    	  currSimSetup.setUserRuntimeObject(userObject);
-
 		} catch (FileNotFoundException e) {
 
 			// --- Die Datei wurde nicht gefunden ---------
@@ -328,6 +306,26 @@ public class SimulationSetups extends Hashtable<String, String> {
 			
 		} catch (JAXBException e) {
 			e.printStackTrace();
+		}
+
+		//--- Reading the serializable user object of the simsetup from the 'agentgui_userobject.bin' ---
+		String userObjectFileName = currProject.getSubFolder4Setups(true)+ currSimSetupName +".bin" ;
+		File userObjectFile = new File(userObjectFileName);
+		if (userObjectFile.exists()) {
+			Serializable userObject = null;
+			FileInputStream fis = null;
+			ObjectInputStream in = null;
+			try {
+				fis = new FileInputStream(userObjectFileName);
+				in = new ObjectInputStream(fis);
+				userObject = (Serializable)in.readObject();
+				in.close();
+			} catch(IOException ex) {
+				ex.printStackTrace();
+			} catch(ClassNotFoundException ex) {
+				ex.printStackTrace();
+			}
+			currSimSetup.setUserRuntimeObject(userObject);
 		}
 		
 	}

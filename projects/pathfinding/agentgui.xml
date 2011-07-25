@@ -6,7 +6,7 @@
         <projectResource>C:\Programme\Java\jdk1.6.0_14\jre\lib\ext\jai_codec.jar</projectResource>
         <projectResource>C:\Programme\Java\jdk1.6.0_14\jre\lib\ext\jai_core.jar</projectResource>
         <projectResource>C:\Programme\Java\jdk1.6.0_14\jre\lib\ext\mlibwrapper_jai.jar</projectResource>
-        <projectResource>C:\Users\deepu\Dropbox\workspace\PathFinding\bin</projectResource>
+        <projectResource>D:\10 Java Projects\PathFinding\bin</projectResource>
     </projectResources>
     <plugins/>
     <subOntologies/>
@@ -26,12 +26,12 @@
     <simulationSetupCurrent>Test</simulationSetupCurrent>
     <simulationSetups>
         <entry>
-            <key>Test 2</key>
-            <value>test_2.xml</value>
-        </entry>
-        <entry>
             <key>default</key>
             <value>default.xml</value>
+        </entry>
+        <entry>
+            <key>Test 2</key>
+            <value>test_2.xml</value>
         </entry>
         <entry>
             <key>Test</key>

@@ -94,7 +94,7 @@ public class GlobalInfo {
 	private static String localFileDictionary  = localPathProperty + "dictionary";
 	private static String localFileProperties  = "agentgui.ini";
 	private static String localFileNameProject = "agentgui.xml";
-	private static String localFileNameProjectUserObject = "agentgui_userobject.bin";
+	private static String localFileNameProjectUserObject = "agentgui.bin";
 	private static String localFileEndProjectZip = "agui";
 	private static String localFileNameProjectOntology = "AgentGUIProjectOntology";
 	

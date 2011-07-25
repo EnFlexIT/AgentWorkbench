@@ -42,6 +42,7 @@ import agentgui.core.sim.setup.SimulationSetupsChangeNotification;
  * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati 
  */
 public abstract class EnvironmentController extends Observable implements Observer {
+
 	/**
 	 * The current project
 	 */
