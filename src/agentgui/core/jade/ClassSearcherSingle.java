@@ -211,7 +211,11 @@ public class ClassSearcherSingle {
 						listModel.addElement(new ClassElement2Display(clazz));
 						
 					} else if (class2Search4 == ClassSearcher.CLASSES_BASESERVICE) {
-						listModel.addElement(new ClassElement2Display(clazz));
+						ClassElement2Display ce2d = new ClassElement2Display(clazz);
+						if (PlatformJadeConfig.isAutoService(clazz.getName())==true) {
+							ce2d.setAdditionalText(PlatformJadeConfig.getAutoServiceTextAddition());
+						}
+						listModel.addElement(ce2d);
 						
 					} else {
 						listModel.addElement(new ClassElement2Display(clazz));

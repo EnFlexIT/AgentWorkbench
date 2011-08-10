@@ -85,7 +85,7 @@ public class JadeSetupNewPort extends JDialog implements ActionListener {
 	    this.getRootPane().registerKeyboardAction(this, "KeyENTER", keyStrokeENTER,JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
 	    // --- Position des Dialogs einstellen ----------------------
-	    this.setLocation(currPosition.x, currPosition.y-16);
+	    this.setLocation(currPosition.x, currPosition.y-11);
 	    
 	}
 	/**

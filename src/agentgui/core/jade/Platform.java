@@ -226,17 +226,11 @@ public class Platform extends Object {
 			System.out.println("JADE-Profile: Use AgentGUI-defaults");
 		} else {
 			// --- Take the Profile of the current Project ----------
-			if (currProject.JadeConfiguration.isUseDefaults()==true) {
-				this.MASplatformConfig = Application.RunInfo.getJadeDefaultPlatformConfig();
-				MAScontainerProfile = Application.RunInfo.getJadeDefaultProfile();
-				System.out.println("JADE-Profile: Use Agent.GUI-defaults");
-			} else {
-				this.MASplatformConfig = currProject.JadeConfiguration;
-				MAScontainerProfile = currProject.JadeConfiguration.getNewInstanceOfProfilImpl();				
-				System.out.println("JADE-Profile: Use " + currProject.getProjectName() + "-configuration" );
-			}
+			this.MASplatformConfig = currProject.JadeConfiguration;
+			MAScontainerProfile = currProject.JadeConfiguration.getNewInstanceOfProfilImpl();				
+			System.out.println("JADE-Profile: Use " + currProject.getProjectName() + "-configuration" );
 			
-			// --- Start Download-Server for project-ressources -----
+			// --- Start Download-Server for project-resources ------
 			DownloadServer webServer = Application.startDownloadServer();			
 			
 			// --- If the current project has external resources ---- 

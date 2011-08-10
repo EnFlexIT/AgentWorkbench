@@ -13,6 +13,7 @@
         <projectResource>\ContMAS_lib\slf4j-log4j12-1.5.6.jar</projectResource>
         <projectResource>\ContMAS_lib\xercesImpl-2.7.1.jar</projectResource>
     </projectResources>
+    <plugins/>
     <subOntologies>
         <subOntology>de.unidue.stud.sehawagn.contmas.ontology.ContainerTerminalOntology</subOntology>
     </subOntologies>
@@ -26,6 +27,16 @@
             <value>de.unidue.stud.sehawagn.contmas.ontology.Phy_Movement|de.unidue.stud.sehawagn.contmas.ontology.ProvideScMove|de.unidue.stud.sehawagn.contmas.ontology.BayMap|de.unidue.stud.sehawagn.contmas.ontology.BlockAddress</value>
         </entry>
     </agentConfiguration>
+    <jadeConfiguration>
+        <useLocalPort>1099</useLocalPort>
+        <serviceList>
+            <service>agentgui.simulationService.LoadService</service>
+            <service>jade.core.event.NotificationService</service>
+            <service>agentgui.simulationService.SimulationService</service>
+            <service>jade.core.messaging.TopicManagementService</service>
+            <service>agentgui.physical2Denvironment.provider.EnvironmentProviderService</service>
+        </serviceList>
+    </jadeConfiguration>
     <simulationSetupCurrent>map_port_chalmers_agentgui</simulationSetupCurrent>
     <simulationSetups>
         <entry>
@@ -41,16 +52,5 @@
             <value>map_port_chalmers_highly_simplified.xml</value>
         </entry>
     </simulationSetups>
-    <jadeConfiguration>
-        <start4Sim>true</start4Sim>
-        <useAppDefaults>false</useAppDefaults>
-        <useLocalPort>1099</useLocalPort>
-        <serviceList>
-            <service>jade.core.messaging.TopicManagementService;</service>
-            <service>jade.core.event.NotificationService;</service>
-            <service>agentgui.simulationService.SimulationService;</service>
-            <service>agentgui.physical2Denvironment.provider.EnvironmentProviderService;</service>
-        </serviceList>
-    </jadeConfiguration>
     <subFolderEnvSetups>svgEnvSetups</subFolderEnvSetups>
 </project>

@@ -47,7 +47,7 @@ import agentgui.core.ontologies.gui.OntologyInstanceDialog;
 public class BaseAgents extends JPanel implements Observer, ActionListener {
 
 	private static final long serialVersionUID = 1L;
-	final static String PathImage = Application.RunInfo.PathImageIntern();
+	private final static String PathImage = Application.RunInfo.PathImageIntern();
 	
 	private Project currProject;
 	private OntologyClassTreeObject CurrOntoObject = null;

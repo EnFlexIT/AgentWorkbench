@@ -12,26 +12,25 @@
     <subOntologies/>
     <agentConfiguration/>
     <jadeConfiguration>
-        <useAppDefaults>false</useAppDefaults>
-        <useLocalPort>1123</useLocalPort>
+        <useLocalPort>1099</useLocalPort>
         <serviceList>
-            <service>agentgui.simulationService.LoadService;</service>
-            <service>jade.core.messaging.TopicManagementService;</service>
-            <service>jade.core.event.NotificationService;</service>
-            <service>jade.core.mobility.AgentMobilityService;</service>
-            <service>agentgui.simulationService.SimulationService;</service>
-            <service>agentgui.physical2Denvironment.provider.EnvironmentProviderService;</service>
+            <service>agentgui.simulationService.LoadService</service>
+            <service>jade.core.event.NotificationService</service>
+            <service>agentgui.simulationService.SimulationService</service>
+            <service>jade.core.messaging.TopicManagementService</service>
+            <service>jade.core.mobility.AgentMobilityService</service>
+            <service>agentgui.physical2Denvironment.provider.EnvironmentProviderService</service>
         </serviceList>
     </jadeConfiguration>
     <simulationSetupCurrent>Test</simulationSetupCurrent>
     <simulationSetups>
         <entry>
-            <key>default</key>
-            <value>default.xml</value>
-        </entry>
-        <entry>
             <key>Test 2</key>
             <value>test_2.xml</value>
+        </entry>
+        <entry>
+            <key>default</key>
+            <value>default.xml</value>
         </entry>
         <entry>
             <key>Test</key>

@@ -218,38 +218,40 @@ public class ProjectsLoaded {
 			newProject.checkCreateSubFolders();
 		}
 		
-		// --- ClassLoader/CLASSPATH laden ----------------
+		// --- ClassLoader/CLASSPATH laden ------------------------------------
 		newProject.resourcesLoad();
 		
-		// --- Das Ontologie-Objekt beladen --------------- 
+		// --- Das Ontologie-Objekt beladen ----------------------------------- 
 		newProject.ontologies4Project = new Ontologies4Project(newProject);
 
-		// --- ggf. AgentGUI - DefaultProfile übernehmen --
-		if( newProject.JadeConfiguration.isUseDefaults()==true) {
+		// --- ggf. AgentGUI - DefaultProfile übernehmen ----------------------
+		if(addNew==true) {
 			newProject.JadeConfiguration = Application.RunInfo.getJadeDefaultPlatformConfig();
 		}
+		// --- Set Project reference to the current JADE configuration -------- 
+		newProject.JadeConfiguration.setProject(newProject);
 		
-		// --- Gibt es bereits ein Simulations-Setup? -----
+		// --- Gibt es bereits ein Simulations-Setup? -------------------------
 		if (newProject.simSetups.size()==0) {
 			newProject.simSetups = new SimulationSetups(newProject, "default");
 			newProject.simSetups.setupCreateDefault();			
 		}
 		
-		// --- Projektfenster und Standard-Tabs anhängen --
+		// --- Projektfenster und Standard-Tabs anhängen ----------------------
 		newProject.projectWindow = new ProjectWindow(newProject);
 		newProject.addDefaultTabs();
 		
-		// --- Konfigurierte PlugIns laden ----------------
+		// --- Konfigurierte PlugIns laden ------------------------------------
 		newProject.plugInVectorLoad();
 		
-		// --- Projekt als aktuell markieren -------------- 
+		// --- Projekt als aktuell markieren ----------------------------------
 		newProject.isUnsaved = false;
 				
-		// --- Objekt an die Projektauflistung hängen -----
+		// --- Objekt an die Projektauflistung hängen -------------------------
 		projectsOpen.add(newProject);
 		Application.ProjectCurr = newProject;
 
-		// --- Anzeige anpassen ---------------------------
+		// --- Anzeige anpassen -----------------------------------------------
 		Application.Projects.setProjectView();		
 		Application.MainWindow.setCloseButtonPosition(true);
 		Application.setTitelAddition( newProject.getProjectName() );

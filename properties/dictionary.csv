@@ -47,6 +47,7 @@ de;Anzahl Container;Number of container
 de;Anzeigesprache wechseln?;Change the GUI Language?
 de;Arbeitsspeicher;Memory
 de;Argument;argument
+de;Ausgewählte JADE-Services;Selected JADE Services;;;
 de;Ausgewählte Klasse übernehmen!;Take selected class!
 de;Auslastungs-Grenzwerte manuell festlegen;Set load thresholds manually
 de;Auslastungs-Monitor öffnen;Open load monitor
@@ -169,6 +170,7 @@ de;JADE wurde noch nicht gestartet!;JADE has not been started yet!
 de;JADE wurde noch nicht gestartet.;JADE has not been started yet.
 de;JADE zu Simulationsbeginn starten;Start JADE if simulation begins
 de;JADE-Konfiguration;JADE-Configuration
+de;JADE-Port bearbeiten;Edit JADE port;;;
 de;JADE-Tools...;JADE-Tools...
 de;JADE;JADE
 de;JAR;JAR
@@ -321,6 +323,8 @@ de;Server-Dienst (Master / Slave);Server (Master / Slave)
 de;Server-Dienst beim Programmstart automatisch initialisieren;Automatically initialize Server at startup
 de;Server-Konfiguration;Server Configuration
 de;Server;Server
+de;Service entfernen;Remove Service;;;
+de;Service hinzufügen;Add Service;;;
 de;Setup hinzufügen;Add Setup
 de;Setup kopieren ...;Copy Setup ...
 de;Setup kopieren;Copy Setup
@@ -347,6 +351,8 @@ de;Speichern;Save
 de;Spielfeld;Playground
 de;Sprache:;Language:
 de;Sprache;Language
+de;Standard verwenden;Use Default;;;
+de;Standardkonfiguration verwenden;Use default configuration;;;
 de;Start-Argumente für den ausgewählten Agenten;Start-arguments for the selected agent
 de;Start-Konfiguration;Start-Configuration
 de;Start-Objekte aus Projekt-Ontologie;Startup objects from project-ontology
@@ -357,6 +363,7 @@ de;Starte JADE über Port-Nr.:;Start JADE via port no.:
 de;Starte Messung der Systemauslastung;Start measuring the system load
 de;Starten als:;Start as:
 de;Starten als;Start as
+de;Startet automatisch !;Starts automatically !;;;
 de;Statische Lastverteilung aktivieren;Enable static load balancing
 de;Status laden;Load status
 de;Status speichern;Save status
@@ -384,6 +391,7 @@ de;Unbekannt:;Unknown:
 de;Undefiniert;undefined
 de;Ungültige Eingabe, ausschließlich zahlenwerte zulässig!;Invalid input, only numbers allowed!
 de;Verbindungspunkte;Connection Points;null;null;null
+de;Verfügbare JADE-Services;Available JADE Services;;;
 de;Vergrößern ...;Expand View ...
 de;Vergrößern;Zoom In
 de;Verkleinern;Zoom out

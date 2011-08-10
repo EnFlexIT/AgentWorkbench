@@ -1,77 +1,120 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.dawis.wiwi.uni-due.de/ 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.core.jade;
 /**
- * @author Christian Derksen
+ 
  */
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Vector;
 
+import javax.swing.DefaultListModel;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlTransient;
 
 import agentgui.core.application.Application;
+import agentgui.core.application.Language;
+import agentgui.core.application.Project;
 import agentgui.core.network.PortChecker;
 
+/**
+ * With this class, the Profile of a new JADE-Container can be configured.
+ * To use this class, just create a new instance of it and go throw 
+ * configurations like in the example below.<br>
+ * After configuration you can use the method 'getNewInstanceOfProfilImpl()'
+ * which returns a new Instance of 'jade.core.Profile'. This can be used to 
+ * create a new JADE-Container.<br>
+ * <br>
+ * EXAMPLE:<br><br
+ * <blockquote><code>
+ *  PlatformJadeConfig pjc = new PlatformJadeConfig();<br>
+ *	pjc.setLocalPort(1099);<br>
+ *	pjc.addService(PlatformJadeConfig.SERVICE_AgentGUI_LoadService);<br>
+ *  pjc.addService(PlatformJadeConfig.SERVICE_AgentGUI_SimulationService);<br>
+ *  pjc.addService(PlatformJadeConfig.SERVICE_NotificationService);<br>
+ *  <br>
+ *	Profile profile = pjc.getNewInstanceOfProfilImpl();<br>
+ * </code></blockquote>
+ *  
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
+ */
 public class PlatformJadeConfig implements Serializable {
 
-	/**
-	 * With this class, the Profile of a new JADE-Container can be configured.
-	 * To use this class, just create a new instance of it and go throw 
-	 * configurations like in the example below.
-	 * Be aware of the fact, that the default value of the 'UsesDefaults'-Variable 
-	 * is true. Therfore you should keep in mind, that for your own configuration, 
-	 * you should always set the value of 'UsesDefaults' to false first.
-	 * 
-	 * After configuration you can use the method 'getNewInstanceOfProfilImpl()'
-	 * which returns a new Instance of 'jade.core.Profile'. This can be used to 
-	 * create a new JADE-Container.
-	 *
-	 * EXAMPLE:
-	 * 
-	 *  PlatformJadeConfig pjc = new PlatformJadeConfig();
-	 *	pjc.setUseDefaults(false);
-	 *  pjc.runAgentMobilityService(true);	
-	 *  pjc.runInterPlatformMobilityService(true);
-	 *	pjc.setLocalPort(1234);
-	 *	Profile profil = pjc.getNewInstanceOfProfilImpl();
-	 *
-	 */
 	
 	private static final long serialVersionUID = -9062155032902746361L;
-	// --- Services "Active by default" ---------------------------------------
-	public static final String SERVICE_AgentMobilityService = "jade.core.mobility.AgentMobilityService;";
-	public static final String SERVICE_NotificationService = "jade.core.event.NotificationService;"; 
+	// --- Services 'Activated automatically' ---------------------------------
+	public static final String SERVICE_MessagingService = "jade.core.messaging.MessagingService";
+	public static final String SERVICE_AgentManagementService = "jade.core.management.AgentManagementService";
 	
-	// --- Services "Inactive by default" -------------------------------------
-	public static final String SERVICE_MainReplicationService = "jade.core.replication.MainReplicationService;";
-	public static final String SERVICE_FaultRecoveryService = "jade.core.faultRecovery.FaultRecoveryService;";
-	public static final String SERVICE_AddressNotificationService = "jade.core.replication.AddressNotificationService;";
-	public static final String SERVICE_TopicManagementService = "jade.core.messaging.TopicManagementService;";
-	public static final String SERVICE_PersistentDeliveryService = "jade.core.messaging.PersistentDeliveryService;";
-	public static final String SERVICE_UDPNodeMonitoringServ = "jade.core.nodeMonitoring.UDPNodeMonitoringService;";
-	public static final String SERVICE_BEManagementService = "jade.imtp.leap.nio.BEManagementService;";
+	// --- Services 'Active by default' ---------------------------------------
+	public static final String SERVICE_AgentMobilityService = "jade.core.mobility.AgentMobilityService";
+	public static final String SERVICE_NotificationService = "jade.core.event.NotificationService"; 
+	
+	// --- Services 'Inactive by default' -------------------------------------
+	public static final String SERVICE_MainReplicationService = "jade.core.replication.MainReplicationService";
+	public static final String SERVICE_FaultRecoveryService = "jade.core.faultRecovery.FaultRecoveryService";
+	public static final String SERVICE_AddressNotificationService = "jade.core.replication.AddressNotificationService";
+	public static final String SERVICE_TopicManagementService = "jade.core.messaging.TopicManagementService";
+	public static final String SERVICE_PersistentDeliveryService = "jade.core.messaging.PersistentDeliveryService";
+	public static final String SERVICE_UDPNodeMonitoringServ = "jade.core.nodeMonitoring.UDPNodeMonitoringService";
+	public static final String SERVICE_BEManagementService = "jade.imtp.leap.nio.BEManagementService";
 	
 	// --- Agent.GUI-Services -------------------------------------------------
-	public static final String SERVICE_LoadService = "agentgui.simulationService.LoadService;";
-	public static final String SERVICE_SimulationService = "agentgui.simulationService.SimulationService;";
-	public static final String SERVICE_EnvironmentProviderService = "agentgui.physical2Denvironment.provider.EnvironmentProviderService;";
+	public static final String SERVICE_AgentGUI_LoadService = "agentgui.simulationService.LoadService";
+	public static final String SERVICE_AgentGUI_SimulationService = "agentgui.simulationService.SimulationService";
+	public static final String SERVICE_AgentGUI_EnvironmentProviderService = "agentgui.physical2Denvironment.provider.EnvironmentProviderService";
 	
 	// --- Add-On-Services ----------------------------------------------------
 	public static final String SERVICE_InterPlatformMobilityService = "jade.core.migration.InterPlatformMobilityService;";
 	
-	// --- Weitere Vars. ------------------------------------------------------ 
-	@XmlElement(name="useAppDefaults")		
-	private boolean useDefaults = true;
+	/**
+	 * Array of services, which will be started with JADE in every case
+	 */
+	private static final String[] autoServices = {SERVICE_MessagingService, SERVICE_AgentManagementService};
+	private static final String AUTOSERVICE_TextAddition = "Startet automatisch !";
+	 
+	
+	// --- Runtime variables -------------------------------------------------- 
+	@XmlTransient
+	private Project currProject = null;
 	@XmlElement(name="useLocalPort")	
 	private Integer useLocalPort = Application.RunInfo.getJadeLocalPort();
-	
 	@XmlElementWrapper(name = "serviceList")
 	@XmlElement(name="service")			
 	private HashSet<String> useServiceList = new HashSet<String>();
+	@XmlTransient
+	private DefaultListModel listModelServices = null;
 	
 	/**
 	 * Constructor of this class
@@ -80,6 +123,34 @@ public class PlatformJadeConfig implements Serializable {
 	
 	}
 	
+	/**
+	 * This method returns the TextAddition if a Service is an automatically starting service of JADE
+	 * @return
+	 */
+	public static String getAutoServiceTextAddition() {
+		return " " + Language.translate(AUTOSERVICE_TextAddition) + " ";
+	}
+	/**
+	 * Returns if a service generally starts while JADE is starting  
+	 * @param serviceReference
+	 * @return 
+	 */
+	public static boolean isAutoService(String serviceReference) {
+		for (int i = 0; i < autoServices.length; i++) {
+			if (autoServices[i].equalsIgnoreCase(serviceReference)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * @param currProject the currProject to set
+	 */
+	public void setProject(Project project) {
+		this.currProject = project;
+	}
+
 	/**
 	 * This Method returns a new Instance of Profil, which   
 	 * can be used for starting a new JADE-Container
@@ -126,17 +197,77 @@ public class PlatformJadeConfig implements Serializable {
 		return profile;
 	}	
 	/**
-	 * This method walks through the HashSet of configured Services and returns them as a String 
+	 * This method walks through the HashSet of configured Services and returns them 
+	 * as a String separated with a semicolon (';') 
 	 * @return String
 	 */
 	public String getServiceListArgument() {
 		String serviceListString = "";
 		Iterator<String> it = useServiceList.iterator();
 		while (it.hasNext()) {
-			serviceListString += it.next();
+			String singeleService = it.next();
+			if (singeleService.endsWith(";")==true) {
+				serviceListString += singeleService;
+			} else {
+				serviceListString += singeleService + ";";	
+			}
 		}
 		return serviceListString;
 	}
+	
+	/**
+	 * Can be used in order to add a class reference to an extended JADE-BaseService 
+	 * @param serviceClassReference
+	 */
+	public void addService(String serviceClassReference) {
+		
+		if (this.isUsingService(serviceClassReference)==false && serviceClassReference.contains(getAutoServiceTextAddition())==false) {
+			
+			// --- add to the local HashSet -------------------------
+			this.useServiceList.add(serviceClassReference);
+			// --- add to the DefaultListModel ----------------------
+			DefaultListModel delimo = this.getListModelServices();
+			delimo.addElement(serviceClassReference);
+			// --- sort the ListModel -------------------------------
+			this.sortListModelServices();
+			// --- if set, set project changed and unsaved ----------
+			if (currProject!=null) {
+				this.currProject.setChangedAndNotify(Project.CHANGED_JadeConfiguration);
+			}
+		}
+	}
+
+	/**
+	 * Can be used in order to remove a class reference to an extended JADE-BaseService
+	 * @param serviceClassReference
+	 */
+	public void removeService(String serviceClassReference) {
+		
+		if (this.isUsingService(serviceClassReference)==true) {
+			// --- remove from the local HashSet --------------------
+			this.useServiceList.remove(serviceClassReference);
+			// --- remove from the DefaultListModel -----------------
+			DefaultListModel delimo = this.getListModelServices();
+			delimo.removeElement(serviceClassReference);
+			// --- if set, set project changed and unsaved ----------
+			if (currProject!=null) {
+				this.currProject.setChangedAndNotify(Project.CHANGED_JadeConfiguration);
+			}
+		}
+	}
+	
+	/**
+	 * This method will remove all Services from the current Profile
+	 */
+	public void removeAllServices() {
+		this.useServiceList.clear();
+		this.listModelServices.removeAllElements();
+		// --- if set, set project changed and unsaved ----------
+		if (currProject!=null) {
+			this.currProject.setChangedAndNotify(Project.CHANGED_JadeConfiguration);
+		}
+	}
+	
 	/**
 	 * Checks if a Service is configured for this instance.
 	 * The requested Service can be given with the actual class of the service
@@ -164,6 +295,10 @@ public class PlatformJadeConfig implements Serializable {
 	 */
 	public void setLocalPort(int port2Use){
 		useLocalPort = port2Use;
+		// --- if set, set project changed and unsaved ----------
+		if (currProject!=null) {
+			this.currProject.setChangedAndNotify(Project.CHANGED_JadeConfiguration);
+		}
 	}
 	/**
 	 * Returns the current Port which is  configured for a JADE-Container 
@@ -173,161 +308,34 @@ public class PlatformJadeConfig implements Serializable {
 		return useLocalPort;
 	}
 	/**
-	 * @param useDefaults the useDefaults to set
-	 */
-	public void setUseDefaults(boolean useDefaults) {
-		this.useDefaults = useDefaults;
-	}
-	/**
-	 * @return the useDefaults
+	 * @return the listModelServices
 	 */
 	@XmlTransient
-	public boolean isUseDefaults() {
-		return useDefaults;
+	public DefaultListModel getListModelServices() {
+		if (listModelServices==null) {
+			listModelServices = new DefaultListModel();
+			Iterator<String> it = useServiceList.iterator();
+			while (it.hasNext()) {
+				listModelServices.addElement(it.next());
+			}
+			this.sortListModelServices();
+		}
+		return listModelServices;
 	}
 
-	// --- Services "Active by default" ---------------------------------------
-	public void runAgentMobilityService(boolean runService) {
-		if (runService==true) {
-			this.useServiceList.add(SERVICE_AgentMobilityService);	
-		}else {
-			this.useServiceList.remove(SERVICE_AgentMobilityService);
+	/**
+	 * This method will sort the current list model for the chosen services 
+	 */
+	private void sortListModelServices() {
+		
+		if (useServiceList.size()>1) {
+			Vector<String> sorty = new Vector<String>(useServiceList);
+			Collections.sort(sorty);
+			this.listModelServices.removeAllElements();
+			for (int i = 0; i < sorty.size(); i++) {
+				this.listModelServices.addElement(sorty.get(i));
+			}
 		}
-	}
-	public void runNotificationService(boolean runService) {
-		if (runService==true) {
-			this.useServiceList.add(SERVICE_NotificationService);	
-		}else {
-			this.useServiceList.remove(SERVICE_NotificationService);
-		}
-	}
-	
-	// --- Services "Inactive by default" -------------------------------------
-	public void runMainReplicationService(boolean runService) {
-		if (runService==true) {
-			this.useServiceList.add(SERVICE_MainReplicationService);	
-		}else {
-			this.useServiceList.remove(SERVICE_MainReplicationService);
-		}
-	}
-	public void runFaultRecoveryService(boolean runService) {
-		if (runService==true) {
-			this.useServiceList.add(SERVICE_FaultRecoveryService);	
-		}else {
-			this.useServiceList.remove(SERVICE_FaultRecoveryService);
-		}
-	}
-	public void runAddressNotificationService(boolean runService) {
-		if (runService==true) {
-			this.useServiceList.add(SERVICE_AddressNotificationService);	
-		}else {
-			this.useServiceList.remove(SERVICE_AddressNotificationService);
-		}
-	}
-	public void runTopicManagementService(boolean runService) {
-		if (runService==true) {
-			this.useServiceList.add(SERVICE_TopicManagementService);	
-		}else {
-			this.useServiceList.remove(SERVICE_TopicManagementService);
-		}
-	}
-	public void runPersistentDeliveryService(boolean runService) {
-		if (runService==true) {
-			this.useServiceList.add(SERVICE_PersistentDeliveryService);	
-		}else {
-			this.useServiceList.remove(SERVICE_PersistentDeliveryService);
-		}
-	}
-	public void runUDPNodeMonitoringServ(boolean runService) {
-		if (runService==true) {
-			this.useServiceList.add(SERVICE_UDPNodeMonitoringServ);	
-		}else {
-			this.useServiceList.remove(SERVICE_UDPNodeMonitoringServ);
-		}
-	}
-	public void runBEManagementService(boolean runService) {
-		if (runService==true) {
-			this.useServiceList.add(SERVICE_BEManagementService);	
-		}else {
-			this.useServiceList.remove(SERVICE_BEManagementService);
-		}
-	}
-
-	// --- Agent.GUI-Services --------------------------------------------------
-	public void runLoadService(boolean runService) {
-		if (runService==true) {
-			this.useServiceList.add(SERVICE_LoadService);	
-		}else {
-			this.useServiceList.remove(SERVICE_LoadService);
-		}
-	}
-	public void runSimulationService(boolean runService) {
-		if (runService==true) {
-			this.useServiceList.add(SERVICE_SimulationService);	
-		}else {
-			this.useServiceList.remove(SERVICE_SimulationService);
-		}
-	}
-	public void runEnvironmentProviderService(boolean runService) {
-		if (runService==true) {
-			this.useServiceList.add(SERVICE_EnvironmentProviderService);	
-		}else {
-			this.useServiceList.remove(SERVICE_EnvironmentProviderService);
-		}
-	}
-
-	
-	// --- Add-On-Services ----------------------------------------------------
-	public void runInterPlatformMobilityService(boolean runService) {
-		if (runService==true) {
-			this.useServiceList.add(SERVICE_InterPlatformMobilityService);	
-		}else {
-			this.useServiceList.remove(SERVICE_InterPlatformMobilityService);
-		}
-	}
-	
-	// --- Services "Active by default" ---------------------------------------
-	public boolean isAgentMobilityService() {
-		return this.useServiceList.contains(SERVICE_AgentMobilityService);	
-	}
-	public boolean isNotificationService() {
-		return this.useServiceList.contains(SERVICE_NotificationService);	
-	}
-	// --- Services "Inactive by default" -------------------------------------
-	public boolean isMainReplicationService() {
-		return this.useServiceList.contains(SERVICE_MainReplicationService);	
-	}
-	public boolean isFaultRecoveryService() {
-		return this.useServiceList.contains(SERVICE_FaultRecoveryService);	
-	}
-	public boolean isAddressNotificationService() {
-		return this.useServiceList.contains(SERVICE_AddressNotificationService);	
-	}
-	public boolean isTopicManagementService() {
-		return this.useServiceList.contains(SERVICE_TopicManagementService);	
-	}
-	public boolean isPersistentDeliveryService() {
-		return this.useServiceList.contains(SERVICE_PersistentDeliveryService);	
-	}
-	public boolean isUDPNodeMonitoringServ() {
-		return this.useServiceList.contains(SERVICE_UDPNodeMonitoringServ);	
-	}
-	public boolean isBEManagementService() {
-		return this.useServiceList.contains(SERVICE_BEManagementService);	
-	}
-	// --- Agent.GUI-Services -------------------------------------------------
-	public boolean isLoadService() {
-		return this.useServiceList.contains(SERVICE_LoadService);	
-	}
-	public boolean isSimulationService() {
-		return this.useServiceList.contains(SERVICE_SimulationService);	
-	}
-	public boolean isEnvironmentProviderService() {
-		return this.useServiceList.contains(SERVICE_EnvironmentProviderService);
-	}
-	// --- Add-On-Services ----------------------------------------------------
-	public boolean isInterPlatformMobilityService() {
-		return this.useServiceList.contains(SERVICE_InterPlatformMobilityService);	
 	}
 	
 	/**
@@ -364,16 +372,9 @@ public class PlatformJadeConfig implements Serializable {
 	 * @return String 
 	 */
 	public String toString() {
-		
 		String bugOut = ""; 
-		bugOut += "UseDefaults:" + useDefaults + ";";
 		bugOut += "LocalPort:" + useLocalPort + ";";
-		
-		bugOut += "Services:";
-		Iterator<String> it = this.useServiceList.iterator();
-		while( it.hasNext() ) {
-			bugOut += it.next();
-		}
+		bugOut += "Services:" + getServiceListArgument();
 		return bugOut;
 	}
 	

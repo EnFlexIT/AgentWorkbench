@@ -271,7 +271,8 @@ public abstract class PlugIn implements Observer {
 			this.onProjectChangedProjectOntology();
 		} else if (updateObject.equals(Project.CHANGED_ProjectResources)) {
 			this.onProjectChangedProjectResources();
-		
+		} else if (updateObject.equals(Project.CHANGED_JadeConfiguration)) {
+			this.onProjectChangedJadeConfiguration();
 		// ----------------------------------------------------------
 		// --- Changes with the SimulationSetups --------------------			
 		// ----------------------------------------------------------
@@ -341,6 +342,8 @@ public abstract class PlugIn implements Observer {
 	protected void onProjectChangedAgentStartConfiguration() {
 	}
 	protected void onProjectChangedProjectResources() {
+	}
+	protected void onProjectChangedJadeConfiguration() {
 	}
 	protected void onProjectChangedProjectOntology() {
 	}

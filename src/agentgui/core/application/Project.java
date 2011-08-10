@@ -27,13 +27,12 @@
  */
 package agentgui.core.application;
 
-import java.io.Serializable;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.io.Writer;
 import java.util.Observable;
 import java.util.Vector;
@@ -123,6 +122,10 @@ import agentgui.core.sim.setup.SimulationSetups;
 	 * Constant value in order to inform the Observer about changes of this kind
 	 */
 	@XmlTransient public static final String CHANGED_ProjectResources = "ProjectResources";
+	/**
+	 * Constant value in order to inform the Observer about changes of this kind
+	 */
+	@XmlTransient public static final String CHANGED_JadeConfiguration = "JadeConfiguration";
 	
 	/**
 	 * Constant value in order to set the project view
@@ -258,7 +261,6 @@ import agentgui.core.sim.setup.SimulationSetups;
 	 * Default constructor for Project
 	 */
 	public Project() {
-		// ---
 	};
 	
 	/**

@@ -274,10 +274,10 @@ public class JadeRemoteStart extends Thread {
 
 		// -----------------------------------------------------
 		// --- Configuration in relation to the JADE-Services -- 
-		if (ServiceList.contains(PlatformJadeConfig.SERVICE_SimulationService)) {
+		if (ServiceList.contains(PlatformJadeConfig.SERVICE_AgentGUI_SimulationService)) {
 			classPath += "./lib/jade/lib/simulation.jar;";	
 		}
-		if (ServiceList.contains(PlatformJadeConfig.SERVICE_EnvironmentProviderService)) {
+		if (ServiceList.contains(PlatformJadeConfig.SERVICE_AgentGUI_EnvironmentProviderService)) {
 			classPath += "./lib/jade/lib/visualization.jar;";
 			// --- Batik einbinden ------------------------
 			classPath += "./lib/batik/batik-rasterizer.jar;";

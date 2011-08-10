@@ -614,14 +614,15 @@ public class GlobalInfo {
 		
 		// --- Here the default-values can be configured ------------
 		PlatformJadeConfig jadeConfig = new PlatformJadeConfig();
-		jadeConfig.runNotificationService(true);
-		jadeConfig.runLoadService(true);
-		jadeConfig.runSimulationService(true);
 		jadeConfig.setLocalPort(localeJadeLocalPort);
+		
+		jadeConfig.addService(PlatformJadeConfig.SERVICE_AgentGUI_LoadService);
+		jadeConfig.addService(PlatformJadeConfig.SERVICE_AgentGUI_SimulationService);
+		jadeConfig.addService(PlatformJadeConfig.SERVICE_NotificationService);
 		
 		if (Application.isServer==false) {
 			// --- Running as application ---------------------------
-			jadeConfig.runAgentMobilityService(true);
+			jadeConfig.addService(PlatformJadeConfig.SERVICE_AgentMobilityService);
 		}
 		return jadeConfig;
 	}
