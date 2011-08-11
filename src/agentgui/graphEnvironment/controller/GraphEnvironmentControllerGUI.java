@@ -162,8 +162,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		controller.addObserver(this);
 
 		this.setEnvironmentController(controller);
-		
-		initialize();
+		this.initialize();
 	}
 
 	/**
@@ -520,7 +519,9 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 			graphGUI = new BasicGraphGUI(getController());
 			graphGUI.addObserver(this);
 			if(controller.getGridModel() != null && controller.getGridModel().getGraph() != null){
-				graphGUI.setGraph(controller.getGridModel().getGraph());
+				NetworkModel nemo = controller.getGridModel();
+				Graph<GraphNode, GraphEdge> graph = nemo.getGraph();
+				graphGUI.setGraph(graph);
 			}
 		}
 		return graphGUI;

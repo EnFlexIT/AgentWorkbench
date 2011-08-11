@@ -119,7 +119,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 * Custom user object to be placed in the project object.
 	 * Used here for storing the current component type settings.
 	 */
-	ProjectUserObject projectUserObject = null;
+	private ProjectUserObject projectUserObject = null;
 	/**
 	 * The GraphFileImporter used for importing externally defined graph definitions
 	 */
@@ -137,8 +137,8 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 */
 	public GraphEnvironmentController(Project project){
 		super(project);		
-		updateGraphFileName();
-		loadEnvironment();				
+		this.updateGraphFileName();
+		this.loadEnvironment();				
 	}
 	
 	/**

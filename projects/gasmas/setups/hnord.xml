@@ -3,6 +3,12 @@
     <agentSetup>
         <agent>
             <postionNo>1</postionNo>
+            <listMembership>01AgentStartManual</listMembership>
+            <agentClassReference>gasmas.agents.PipeAgent</agentClassReference>
+            <startAsName>PiAg</startAsName>
+        </agent>
+        <agent>
+            <postionNo>1</postionNo>
             <listMembership>02AgentStartEnvironment</listMembership>
             <agentClassReference>gasmas.agents.ValveAgent</agentClassReference>
             <startAsName>n11</startAsName>

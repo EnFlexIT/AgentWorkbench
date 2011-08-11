@@ -301,8 +301,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	 * This method assigns a graph to a new VisualizationViewer and adds it to
 	 * the GUI This is used for creating graph for the first time
 	 * 
-	 * @param graph
-	 *            The graph
+	 * @param graph The graph
 	 */
 	public void setGraph(Graph<GraphNode, GraphEdge> graph) {
 
@@ -325,8 +324,18 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 
 			// Create a new VisualizationViewer instance
 			visView = new VisualizationViewer<GraphNode, GraphEdge>(layout);
+			
+			// Configure to show node labels
+			boolean showLable = false;
+			if (cts==null) {
+				showLable = true;
+			} else {
+				if (cts.isShowLable()==true){
+					showLable = true;
+				}
+			}
 			// Configure node labels
-			if (cts.isShowLable()==true) {
+			if (showLable==true) {
 				visView.getRenderContext().setVertexLabelTransformer(
 						new Transformer<GraphNode, String>() {
 							@Override
@@ -363,6 +372,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 						}
 					}
 			);
+			
 			//Configure edge colors
 			visView.getRenderContext().setEdgeDrawPaintTransformer(
 			new Transformer<GraphEdge, Paint>() {
@@ -420,17 +430,14 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 				});
 			
 			// Use straight lines as edges
-			visView.getRenderContext().setEdgeShapeTransformer(
-					new EdgeShape.Line<GraphNode, GraphEdge>());
+			visView.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line<GraphNode, GraphEdge>());
 			 
 			//Set edge width
 			visView.getRenderContext().setEdgeStrokeTransformer(new Transformer<GraphEdge, Stroke>(){
-
 				@Override
 				public Stroke transform(GraphEdge arg0) {
 					return new BasicStroke(2);
 				}
-				
 			}); 
 
 			// Configure vertex shape and size						
@@ -445,8 +452,8 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 
 			rightComponent = new GraphZoomScrollPane(visView);
 
-		} else { // No graph passed
-			// Use a JPanel as dummy component
+		} else { 
+			// --- No graph passed Use a JPanel as dummy component ---
 			rightComponent = new JPanel();
 		}
 

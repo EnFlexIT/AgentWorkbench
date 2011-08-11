@@ -4,10 +4,12 @@
     <projectView>Developer</projectView>
     <projectResources/>
     <plugins/>
-    <subOntologies/>
+    <subOntologies>
+        <subOntology>agentgui.ontology.AgentGUI_BaseOntology</subOntology>
+    </subOntologies>
     <agentConfiguration/>
     <jadeConfiguration>
-        <useLocalPort>1099</useLocalPort>
+        <useLocalPort>1100</useLocalPort>
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
