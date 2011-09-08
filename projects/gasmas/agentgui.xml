@@ -10,12 +10,12 @@
     </subOntologies>
     <agentConfiguration>
         <entry>
-            <key>gasmas.agents.BranchAgent</key>
-            <value>gasmas.ontology.Branch</value>
-        </entry>
-        <entry>
             <key>gasmas.agents.EntryAgent</key>
             <value>gasmas.ontology.Entry</value>
+        </entry>
+        <entry>
+            <key>gasmas.agents.BranchAgent</key>
+            <value>gasmas.ontology.Branch</value>
         </entry>
         <entry>
             <key>gasmas.agents.ValveAgent</key>
@@ -56,10 +56,6 @@
         <entry>
             <key>HNord</key>
             <value>hnord.xml</value>
-        </entry>
-        <entry>
-            <key>Nils Graph</key>
-            <value>nils_graph.xml</value>
         </entry>
     </simulationSetups>
     <subFolderEnvSetups>envSetups</subFolderEnvSetups>

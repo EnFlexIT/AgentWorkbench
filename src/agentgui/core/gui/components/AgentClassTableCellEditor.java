@@ -40,7 +40,7 @@ import javax.swing.table.TableCellEditor;
 import agentgui.core.agents.AgentClassElement;
 import agentgui.core.application.Application;
 import agentgui.core.gui.AgentSelector;
-import agentgui.graphEnvironment.controller.ComponentTypeDialog;
+import agentgui.envModel.graph.controller.ComponentTypeDialog;
 
 /**
  * This class is used in the {@link ComponentTypeDialog} for showing the agent class selector dialog 

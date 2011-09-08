@@ -45,6 +45,7 @@ public class SimulationEnvironment extends JPanel implements Observer, ActionLis
 	 */
 	private EnvironmentPanel getEnvironmentControllerGUI(){
 		
+		// --- Create an empty panel --------------------------------
 		environmentControllerGUI = new EnvironmentPanel(this.project){
 
 			private static final long serialVersionUID = 4276637599115228527L;

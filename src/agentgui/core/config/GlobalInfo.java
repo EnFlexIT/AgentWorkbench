@@ -42,8 +42,8 @@ import agentgui.core.environment.EnvironmentPanel;
 import agentgui.core.environment.EnvironmentType;
 import agentgui.core.environment.EnvironmentTypes;
 import agentgui.core.jade.PlatformJadeConfig;
-import agentgui.graphEnvironment.controller.GraphEnvironmentControllerGUI;
-import agentgui.physical2Denvironment.controller.Physical2DEnvironmentControllerGUI;
+import agentgui.envModel.graph.controller.GraphEnvironmentControllerGUI;
+import agentgui.envModel.p2Dsvg.controller.Physical2DEnvironmentControllerGUI;
 
 /**
  * This class is for constant values or variables, which can

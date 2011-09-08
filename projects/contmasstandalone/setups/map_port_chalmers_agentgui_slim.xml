@@ -18,9 +18,6 @@
             <thNoThreadsL>50</thNoThreadsL>
         </userThresholds>
     </distribution>
-    <agentListModel>
-        <size>0</size>
-    </agentListModel>
     <environmentFileName>map_port_chalmers_agentgui_slim.xml</environmentFileName>
     <svgFileName>map_port_chalmers_agentgui_slim.svg</svgFileName>
 </simulationSetup>

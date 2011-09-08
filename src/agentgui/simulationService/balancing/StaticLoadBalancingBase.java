@@ -23,9 +23,9 @@ import agentgui.core.application.Project;
 import agentgui.core.jade.Platform;
 import agentgui.core.sim.setup.DistributionSetup;
 import agentgui.core.sim.setup.SimulationSetup;
-import agentgui.physical2Denvironment.controller.Physical2DEnvironmentController;
-import agentgui.physical2Denvironment.ontology.ActiveObject;
-import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
+import agentgui.envModel.p2Dsvg.controller.Physical2DEnvironmentController;
+import agentgui.envModel.p2Dsvg.ontology.ActiveObject;
+import agentgui.envModel.p2Dsvg.ontology.Physical2DEnvironment;
 import agentgui.simulationService.LoadService;
 import agentgui.simulationService.LoadServiceHelper;
 import agentgui.simulationService.load.LoadMeasureThread;
@@ -162,14 +162,14 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 			// --- Start the agent visualisation --------------------
 			Object[] args = {environment, svgDocument};
 			//TODO agentgui.physical2Denvironment.provider.EnvironmentProviderAgentNew
-			this.startAgent("EvPrAg_"+ currProject.getProjectFolder(), agentgui.physical2Denvironment.provider.EnvironmentProviderAgent.class, args);
+			this.startAgent("EvPrAg_"+ currProject.getProjectFolder(), agentgui.envModel.p2Dsvg.provider.EnvironmentProviderAgent.class, args);
 			
 			// --- Start the DisplayAgent inside of Agent.GUI -------
 			Object[] startArg = new Object[3];
 			startArg[0] = currProject.projectVisualizationPanel;
 			startArg[1] = svgDocument;
 			startArg[2] = environment;
-			this.startAgent("EvVis", agentgui.physical2Denvironment.display.DisplayAgent.class, startArg);
+			this.startAgent("EvVis", agentgui.envModel.p2Dsvg.display.DisplayAgent.class, startArg);
 			
 			// --- get agents, defined in the physical-/svg-setup ---			
 			Vector<ActiveObject> activeObjects = physical2DEnvironmentController.getEnvWrap().getAgents();

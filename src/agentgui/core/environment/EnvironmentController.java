@@ -54,6 +54,7 @@ public abstract class EnvironmentController extends Observable implements Observ
 	 */
 	protected String envFolderPath = null;
 	
+	
 	/**
 	 * Do not use this constructor
 	 */
@@ -72,56 +73,12 @@ public abstract class EnvironmentController extends Observable implements Observ
 	}
 	
 	/**
-	 * Load environment model from files
-	 */
-	protected abstract void loadEnvironment();
-	
-	/**
-	 * Save environment model to files
-	 */
-	protected abstract void saveEnvironment();
-	
-	/**
-	 * Invoked by the project when the simulation setup change event occurs.
-	 * @param sscn
-	 */
-	protected abstract void handleSimSetupChange(SimulationSetupsChangeNotification sscn);
-	
-	/**
-	 * 
-	 */
-	protected void refreshFileName(){
-	
-	}
-	
-
-	/**
-	 * Invoked when an observable( the {@link Project} in this case) notifies this class.
-	 */
-	@Override
-	public void update(Observable o, Object arg) {
-		if(o.equals(project) && arg == Project.SAVED){
-			saveEnvironment();
-		}else if(o.equals(project) && arg instanceof SimulationSetupsChangeNotification){
-			handleSimSetupChange((SimulationSetupsChangeNotification) arg);
-			
-		}
-	}
-	
-	/**
-	 * Set the environment object 
-	 * @param environmentObject the environment model
-	 */
-	protected abstract void setEnvironment(Object environmentObject);
-	
-	/**
 	 * The current project
 	 * @return the current project
 	 */
 	public Project getProject(){
 		return project;
 	}
-	
 	/**
 	 * Returns the current simulation setup
 	 * @return the current simulation setup
@@ -137,4 +94,49 @@ public abstract class EnvironmentController extends Observable implements Observ
 	public String getEnvFolderPath(){
 		return envFolderPath;
 	}
+	/**
+	 * 
+	 */
+	protected void refreshFileName(){
+	
+	}
+	
+	/**
+	 * Invoked when an observable( the {@link Project} in this case) notifies this class.
+	 */
+	@Override
+	public void update(Observable o, Object arg) {
+		if(o.equals(project) && arg == Project.SAVED){
+			this.saveEnvironment();
+		}else if(o.equals(project) && arg instanceof SimulationSetupsChangeNotification){
+			this.handleSimSetupChange((SimulationSetupsChangeNotification) arg);
+		}
+	}
+	
+	/**
+	 * Load environment model from files
+	 */
+	protected abstract void loadEnvironment();
+	
+	/**
+	 * Save environment model to files
+	 */
+	protected abstract void saveEnvironment();
+	
+	/**
+	 * Invoked by the project when the simulation setup change event occurs.
+	 * @param sscn
+	 */
+	protected abstract void handleSimSetupChange(SimulationSetupsChangeNotification sscn);
+	
+	
+	/**
+	 * Set the environment object 
+	 * @param environmentObject the environment model
+	 */
+	protected abstract void setEnvironment(Object environmentObject);
+	
+	
+	
+	
 }

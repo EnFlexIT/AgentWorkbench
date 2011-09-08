@@ -33,7 +33,7 @@ import java.util.Observer;
 import javax.swing.JPanel;
 
 import agentgui.core.application.Project;
-import agentgui.graphEnvironment.controller.GraphEnvironmentControllerGUI;
+import agentgui.envModel.graph.controller.GraphEnvironmentControllerGUI;
 
 /**
  * In order to build an user interface, where environments can be defined by
@@ -42,7 +42,7 @@ import agentgui.graphEnvironment.controller.GraphEnvironmentControllerGUI;
  * @see GraphEnvironmentControllerGUI
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public abstract class EnvironmentPanel extends JPanel implements  Observer{
+public abstract class EnvironmentPanel extends JPanel implements Observer{
 
 	private static final long serialVersionUID = -5522022346976174783L;
 
@@ -69,7 +69,7 @@ public abstract class EnvironmentPanel extends JPanel implements  Observer{
 	public EnvironmentPanel(Project project) {
 		super();
 		this.currProject = project;
-		project.setEnvironmentPanel(this);
+		this.currProject.setEnvironmentPanel(this);
 	}
 	/**
 	 * @return the environmentController

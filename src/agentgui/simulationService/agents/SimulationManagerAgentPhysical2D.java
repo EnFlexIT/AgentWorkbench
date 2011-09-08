@@ -8,11 +8,11 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Set;
 
-import agentgui.physical2Denvironment.ontology.Physical2DEnvironment;
-import agentgui.physical2Denvironment.ontology.Physical2DObject;
-import agentgui.physical2Denvironment.ontology.PositionUpdate;
-import agentgui.physical2Denvironment.provider.EnvironmentProviderHelper;
-import agentgui.physical2Denvironment.provider.EnvironmentProviderService;
+import agentgui.envModel.p2Dsvg.ontology.Physical2DEnvironment;
+import agentgui.envModel.p2Dsvg.ontology.Physical2DObject;
+import agentgui.envModel.p2Dsvg.ontology.PositionUpdate;
+import agentgui.envModel.p2Dsvg.provider.EnvironmentProviderHelper;
+import agentgui.envModel.p2Dsvg.provider.EnvironmentProviderService;
 
 public abstract class SimulationManagerAgentPhysical2D extends SimulationManagerAgent implements SimulationManagerInterface {
 
