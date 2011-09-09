@@ -37,7 +37,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
 
-import javax.swing.DefaultListModel;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -79,6 +78,10 @@ import edu.uci.ics.jung.io.graphml.NodeMetadata;
  * 
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
  * @author <br>Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati 
+ */
+/**
+ * @author derksen
+ *
  */
 public class GraphEnvironmentController extends EnvironmentController {
 	/**
@@ -129,8 +132,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 */
 	private GraphMLWriter<GraphNode, GraphEdge> graphMLWriter = null;
 	
-	private DefaultListModel agents2Start= new DefaultListModel();
-	
+
 	/**
 	 * The constructor for the GraphEnvironmentController
 	 * @param project
@@ -147,8 +149,8 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 */
 	public void setComponentTypeSettings(HashMap<String, ComponentTypeSettings> gesVector){
 		projectUserObject.setCurrentCTS(gesVector);
-		project.setUserRuntimeObject(projectUserObject);
-		project.isUnsaved=true;
+		currProject.setUserRuntimeObject(projectUserObject);
+		currProject.isUnsaved=true;
 		setChanged();
 		notifyObservers(EVENT_ELEMENT_TYPES_SETTINGS_CHANGED);
 	}
@@ -175,7 +177,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 			this.setChanged();
 			notifyObservers(EVENT_NETWORKMODEL_LOADED);
 		}
-		project.isUnsaved = true;
+		currProject.isUnsaved = true;
 	}
 	
 	/**
@@ -204,7 +206,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 * Also sets the project as unsaved
 	 */
 	public void refreshNetworkModel() {		
-		this.project.setChangedAndNotify(EVENT_NETWORKMODEL_REFRESHED);	
+		this.currProject.setChangedAndNotify(EVENT_NETWORKMODEL_REFRESHED);	
 		setChanged();
 		notifyObservers(EVENT_NETWORKMODEL_REFRESHED);		
 	}	
@@ -213,7 +215,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 * Gets the GraphFileImporter, creates a new instance if null
 	 * @return GraphFileImporter
 	 */
-	GraphFileImporter getGraphFileImporter(){
+	public GraphFileImporter getGraphFileImporter(){
 		if(graphFileImporter == null){
 			graphFileImporter = new YedGraphMLFileImporter(getComponentTypeSettings());
 		}
@@ -340,7 +342,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 * @param sscn The SimulationSetupChangeNotifications to handle
 	 */
 	@Override
-	 protected void handleSimSetupChange(SimulationSetupsChangeNotification sscn){
+	protected void handleSimSetupChange(SimulationSetupsChangeNotification sscn){
 		
 		switch(sscn.getUpdateReason()){
 			
@@ -350,7 +352,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 				
 				updateGraphFileName();
 				saveEnvironment();
-				project.isUnsaved = true;
+				currProject.isUnsaved = true;
 			break;
 			
 			case SimulationSetups.SIMULATION_SETUP_ADD_NEW:
@@ -382,9 +384,10 @@ public class GraphEnvironmentController extends EnvironmentController {
 				saveEnvironment();
 				
 				updateGraphFileName();
-				loadEnvironment(); //Loads network model and notifies observers	
-			projectUserObject = (ProjectUserObject) project.getUserRuntimeObject();
-			setComponentTypeSettings(projectUserObject.getCurrentCTS());				
+				this.loadEnvironment(); //Loads network model and notifies observers	
+			
+				projectUserObject = (ProjectUserObject) currProject.getUserRuntimeObject();
+				setComponentTypeSettings(projectUserObject.getCurrentCTS());				
 						
 			break;
 			
@@ -412,24 +415,12 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 * This method sets the baseFileName property and the SimulationSetup's environmentFileName according to the current SimulationSetup
 	 */
 	private void updateGraphFileName(){
-		baseFileName = project.simSetupCurrent;
+		baseFileName = currProject.simSetupCurrent;
 		getCurrentSimSetup().setEnvironmentFileName(baseFileName+".graphml");
 	}
 	
-	/**
-	 * @return the agents2Start
-	 */
-	public DefaultListModel getAgents2Start() {
-		return agents2Start;
-	}
-	/**
-	 * @param agents2Start the agents2Start to set
-	 */
-	public void setAgents2Start(DefaultListModel agents2Start) {
-		this.agents2Start = agents2Start;
-	}
 	/* (non-Javadoc)
-	 * @see agentgui.core.environment.EnvironmentController#loadEnvironment()
+	 * @see EnvironmentController#loadEnvironment()
 	 */
 	@Override
 	protected void loadEnvironment() {
@@ -437,9 +428,11 @@ public class GraphEnvironmentController extends EnvironmentController {
 		
 		String fileName = getCurrentSimSetup().getEnvironmentFileName();
 		if(fileName != null){
-			getCurrentSimSetup().registerAgentDefaultListModel(agents2Start, SimulationSetup.AGENT_LIST_EnvironmentConfiguration);
+
+			// --- register the list of agents, which has to be started with the environment ------
+			this.registerDefaultListModel4SimulationStart(SimulationSetup.AGENT_LIST_EnvironmentConfiguration);
 			
-			// Load the graph topology from the graph file
+			// --- Load the graph topology from the graph file ------
 			File graphFile = new File(envFolderPath+fileName);
 			if(graphFile.exists()){
 				baseFileName = fileName.substring(0, fileName.lastIndexOf('.'));
@@ -474,7 +467,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 		notifyObservers(new Integer(EVENT_NETWORKMODEL_LOADED));
 				
 		//Loading component type settings from the simulation setup		
-		projectUserObject = (ProjectUserObject) project.getUserRuntimeObject();
+		projectUserObject = (ProjectUserObject) currProject.getUserRuntimeObject();
 		// If no ETS are specified in the setup, assign an empty HashMap to avoid null pointers
 		if(projectUserObject == null){
 			projectUserObject = new ProjectUserObject();
@@ -484,7 +477,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 		
 	}
 	/* (non-Javadoc)
-	 * @see agentgui.core.environment.EnvironmentController#saveEnvironment()
+	 * @see EnvironmentController#saveEnvironment()
 	 */
 	@Override
 	protected void saveEnvironment() {
@@ -521,12 +514,33 @@ public class GraphEnvironmentController extends EnvironmentController {
 			}
 		}
 	}
+	
 	/* (non-Javadoc)
-	 * @see agentgui.core.environment.EnvironmentController#setEnvironment(java.lang.Object)
+	 * @see agentgui.core.environment.EnvironmentController#setEnvironmentModel(java.lang.Object)
 	 */
 	@Override
-	protected void setEnvironment(Object environmentObject) {
-		// TODO Auto-generated method stub
-		
+	public void setEnvironmentModel(Object environmentObject) {
+		try {
+			this.networkModel = (NetworkModel) environmentObject;	
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see agentgui.core.environment.EnvironmentController#getEnvironmentModel()
+	 */
+	@Override
+	public Object getEnvironmentModel() {
+		return this.networkModel;
+	}
+
+	/* (non-Javadoc)
+	 * @see agentgui.core.environment.EnvironmentController#getEnvironmentModelCopy()
+	 */
+	@Override
+	public Object getEnvironmentModelCopy() {
+		return null;
 	}	
+	
 }

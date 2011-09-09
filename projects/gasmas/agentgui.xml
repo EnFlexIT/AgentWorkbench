@@ -58,5 +58,5 @@
             <value>hnord.xml</value>
         </entry>
     </simulationSetups>
-    <subFolderEnvSetups>envSetups</subFolderEnvSetups>
+    <subFolderEnvSetups>setupsEnv</subFolderEnvSetups>
 </project>

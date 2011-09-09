@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.Vector;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
@@ -23,25 +24,35 @@ import javax.xml.bind.annotation.XmlTransient;
 import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.application.Project;
 
+/**
+ * @author derksen
+ *
+ */
 @XmlRootElement public class SimulationSetup {
 
+	/**
+	 * The refernece to the current project
+	 */
+	@XmlTransient private Project currProject = null;
+	
 	/**
 	 * Standard name for an agent start list if the current start element was configured in the 
 	 * tab 'Simulation-Setup' => 'Agent-Start'   
 	 */
-	@XmlTransient public static final String AGENT_LIST_ManualConfiguration = "01AgentStartManual";
+	@XmlTransient public static final String AGENT_LIST_ManualConfiguration = "01 AgentStartManual";
+	
 	/**
 	 *  Standard name for an agent start list if the current start element was configured for a predefined
 	 *  environment model in the tab 'Simulation-Setup' => 'Simulation Environment'   
 	 */
-	@XmlTransient public static final String AGENT_LIST_EnvironmentConfiguration = "02AgentStartEnvironment";
+	@XmlTransient public static final String AGENT_LIST_EnvironmentConfiguration = "02 AgentStartEnvironment";
+	
 	/**
 	 * This Hash holds the instances of all agent start lists
 	 */
-	@XmlTransient private HashMap<String, DefaultListModel> agentSetupLists = new HashMap<String, DefaultListModel>();
+	@XmlTransient private HashMap<String, DefaultListModel> hashMap4AgentDefaulListModels = new HashMap<String, DefaultListModel>();
+	@XmlTransient private DefaultComboBoxModel comboBoxModel4AgentLists = new DefaultComboBoxModel();
 	
-
-	@XmlTransient private Project currProject = null;	
 	
 	@XmlElementWrapper(name = "agentSetup")
 	@XmlElement(name="agent")
@@ -83,18 +94,18 @@ import agentgui.core.application.Project;
 	 * Will merge all default list models to one array list
 	 */
 	private void mergeListModels(){
-		//
+
 		agentList = new ArrayList<AgentClassElement4SimStart>();
-		
+
 		// ------------------------------------------------
-		// --- Write Data from GUI to the Model -----------
-		Set<String> agentListNamesSet = agentSetupLists.keySet();
+		// --- Write Data from GUI to the local variable --
+		Set<String> agentListNamesSet = hashMap4AgentDefaulListModels.keySet();
 		Vector<String> agentListNames = new Vector<String>();
 		agentListNames.addAll(agentListNamesSet);
 		Collections.sort(agentListNames);
 		
 		for (int i = 0; i < agentListNames.size(); i++) {
-			DefaultListModel dlm = agentSetupLists.get(agentListNames.get(i));
+			DefaultListModel dlm = hashMap4AgentDefaulListModels.get(agentListNames.get(i));
 			this.setAgentList(dlm);
 		}
 	}
@@ -105,7 +116,7 @@ import agentgui.core.application.Project;
 	 */
 	public boolean save() {
 		boolean saved = true;
-		mergeListModels();
+		this.mergeListModels();
 		
 		// ------------------------------------------------
 		// --- Save the current simulation setup ----------
@@ -120,23 +131,21 @@ import agentgui.core.application.Project;
 			Writer pw = new FileWriter( currProject.simSetups.getCurrSimXMLFile() );
 			pm.marshal( this, pw );
 						
-			// --- Save the userRuntimeObject in the Simsetup into a different file as a serializable binary object.
+			// --- Save the userRuntimeObject in the SimSetup into a different file as a Serializable binary object.
 			FileOutputStream fos = null;
 			ObjectOutputStream out = null;
-		    try
-		    {
-		       fos = new FileOutputStream(currProject.getSubFolder4Setups(true)+currProject.simSetupCurrent+".bin");
-		       out = new ObjectOutputStream(fos);
-		       out.writeObject(this.userRuntimeObject);
-		       out.close();
+		    try  {
+		    	fos = new FileOutputStream(currProject.getSubFolder4Setups(true)+currProject.simSetupCurrent+".bin");
+		    	out = new ObjectOutputStream(fos);
+		    	out.writeObject(this.userRuntimeObject);
+		    	out.close();
+		       
+		    } catch(IOException ex) {
+		    	ex.printStackTrace();
+		    	saved = false;
 		    }
-		    catch(IOException ex)
-		    {
-		      ex.printStackTrace();
-		      saved = false;
-		    }
-		    
 			currProject.setNotChangedButNotify(new SimulationSetupsChangeNotification(SimulationSetups.SIMULATION_SETUP_SAVED));
+		
 		} 
 		catch (Exception e) {
 			System.out.println("XML-Error while saving Setup-File!");
@@ -173,29 +182,45 @@ import agentgui.core.application.Project;
 	}
 	
 	/**
-	 * This method can be used in order to add an individual agent start list to the SimulationSetup.<br>
-	 * The list will be filled with elements of the type {@link AgentClassElement4SimStart} coming from
-	 * the stored setup file and will be later on also stored in the file of the simulation setup.
-	 * 
-	 * @param newDefaultListModel4AgentStarts the new DefaultListModel to set
-	 * @param listName the name of the list to be assigned
-	 * @see AgentClassElement4SimStart
+	 * This method will create all DefaultListModels which will be used within the visible application<br> 
+	 * as for example for the manual agent configuration (tab 'Simulation-Setup' => 'Agent-Start')<br>
+	 * or the configuration of the environment model (tab 'Simulation-Setup' => 'Simulation Environment').<br>
+	 * The resulting ListModels can be get by using {@link #getAgentDefaultListModel(String)}
 	 */
-	public void registerAgentDefaultListModel(DefaultListModel newDefaultListModel4AgentStarts, String listName) {
+	public void createHashMap4AgentDefaulListModelsFromAgentList() {
 
-		newDefaultListModel4AgentStarts.removeAllElements();
-		for (int i = 0; i < agentList.size(); i++) {
-
-			AgentClassElement4SimStart ac4s = agentList.get(i);
-			if (ac4s.getListMembership()==null && listName.equals(SimulationSetup.AGENT_LIST_ManualConfiguration)) {
-				newDefaultListModel4AgentStarts.addElement(ac4s);
-			
-			} else if (ac4s.getListMembership().equals(listName)) {
-				newDefaultListModel4AgentStarts.addElement(ac4s);	
-			}
-			
+		DefaultListModel dlm = null;
+		
+		if (this.hashMap4AgentDefaulListModels==null) {
+			this.hashMap4AgentDefaulListModels = new HashMap<String, DefaultListModel>();
 		}
-		agentSetupLists.put(listName, newDefaultListModel4AgentStarts);
+		
+		// --- Rebuild the ComboBoxModel for all start lists --------
+		comboBoxModel4AgentLists = new DefaultComboBoxModel();
+		
+		// --- Run through the list of all configured agent --------- 
+		for (int i = 0; i < agentList.size(); i++) {
+			
+			AgentClassElement4SimStart ace4ss = agentList.get(i);
+			String memberOf = ace4ss.getListMembership();
+			if (hashMap4AgentDefaulListModels.get(memberOf)==null) {
+				dlm = new DefaultListModel();
+				this.setAgentDefaultListModel(memberOf, dlm);
+			} else {
+				dlm = hashMap4AgentDefaulListModels.get(memberOf);
+			}
+			dlm.addElement(ace4ss);
+		}
+	}
+	
+	/**
+	 * Here a complete agent start list (DefaultListModel) can be added to the simulation setup 
+	 */
+	public void setAgentDefaultListModel(String listName, DefaultListModel defaultListModel4AgentStarts) {
+		if (listName!=null) {
+			this.hashMap4AgentDefaulListModels.put(listName, defaultListModel4AgentStarts);
+			this.comboBoxModel4AgentLists.addElement(listName);
+		}
 	}
 	/**
 	 * This method can be used in order to get an agents start list for the 
@@ -203,14 +228,43 @@ import agentgui.core.application.Project;
 	 * @return the agentListModel
 	 */
 	public DefaultListModel getAgentDefaultListModel(String listName) {
-		return agentSetupLists.get(listName);
+		return hashMap4AgentDefaulListModels.get(listName);
 	}
 	/**
-	 * Here a complete agent start list can be added to the simulation setup 
+	 * This method can be used in order to add an individual agent start list to the SimulationSetup.<br>
+	 * The list will be filled with elements of the type {@link AgentClassElement4SimStart} coming from
+	 * the stored setup file and will be later on also stored in the file of the simulation setup.
+	 * 
+	 * @param newDefaultListModel4AgentStarts the new DefaultListModel to set
+	 * @param listName the name of the list to be assigned. 
+	 * Consider the use of one of the constants {@link #AGENT_LIST_ManualConfiguration} or {@link #AGENT_LIST_EnvironmentConfiguration} 
+	 * or just use an individual name
+	 * @see AgentClassElement4SimStart AgentClassElement4SimStart - The type to use within a concrete list model 
 	 */
-	public void setAgentDefaultListModel(DefaultListModel defaultListModel4AgentStarts, String listName) {
-		agentSetupLists.put(listName, defaultListModel4AgentStarts);
+	public DefaultListModel getAgentDefaultListModel(DefaultListModel newDefaultListModel4AgentStarts, String listName) {
+
+		DefaultListModel dlm = this.getAgentDefaultListModel(listName);
+		if (dlm==null) {
+			dlm = newDefaultListModel4AgentStarts;
+			this.setAgentDefaultListModel(listName, dlm);			
+		}
+		return dlm;
 	}
+	
+	/**
+	 * @param comboBoxModel4AgentLists the comboBoxModel4AgentLists to set
+	 */
+	public void setComboBoxModel4AgentLists(DefaultComboBoxModel comboBoxModel4AgentLists) {
+		this.comboBoxModel4AgentLists = comboBoxModel4AgentLists;
+	}
+	/**
+	 * @return the comboBoxModel4AgentLists
+	 */
+	@XmlTransient
+	public DefaultComboBoxModel getComboBoxModel4AgentLists() {
+		return comboBoxModel4AgentLists;
+	}
+	
 	
 	
 	/**
@@ -225,13 +279,19 @@ import agentgui.core.application.Project;
 	public void setSvgFileName(String svgFileName) {
 		this.svgFileName = svgFileName;
 	}
+	
+	/**
+	 * @return
+	 */
 	public String getEnvironmentFileName() {
 		return environmentFileName;
 	}
+	/**
+	 * @param environmentFile
+	 */
 	public void setEnvironmentFileName(String environmentFile) {
 		this.environmentFileName = environmentFile;
 	}
-	
 	
 	/**
 	 * @return the distributionSetup
@@ -248,20 +308,6 @@ import agentgui.core.application.Project;
 	}
 	
 	/**
-	 * Checks whether the agent name already exists in the current agent configuration
-	 * @param localAgentName
-	 * @return true, if the agent name already exists
-	 */
-	public boolean isAgentNameExists(String localAgentName){
-		mergeListModels();
-		
-		for (int i = 0; i < agentList.size(); i++) {
-			if(agentList.get(i).getStartAsName().equals(localAgentName))
-				return true;			
-		}
-		return false;
-	}
-	/**
 	 * @param userRuntimeObject the userRuntimeObject to set
 	 */
 	public void setUserRuntimeObject(Serializable userRuntimeObject) {
@@ -274,4 +320,54 @@ import agentgui.core.application.Project;
 	public Serializable getUserRuntimeObject() {
 		return userRuntimeObject;
 	}
+	
+	/**
+	 * Checks if an agent name already exists in the current agent configuration
+	 * @param localAgentName The agent name to search for
+	 * @return true, if the agent name already exists
+	 */
+	public boolean isAgentNameExists(String localAgentName){
+		return isAgentNameExists(localAgentName, true);
+	}
+	/**
+	 * Checks if an agent name already exists in the current agent configuration
+	 * @param agentName2Check The agent name to search for
+	 * @param mergeListModels indicates if the over all {@link #agentList} has to be build new
+	 * @return true, if the agent name already exists
+	 */
+	public boolean isAgentNameExists(String agentName2Check, boolean mergeListModels){
+		
+		if (mergeListModels==true) {
+			// --- merge all list models to the complete list 'agentList' -----
+			this.mergeListModels();	
+		}
+		// --- search for the agent name in the list 'agentList' --------------s  
+		for (int i = 0; i < agentList.size(); i++) {
+			if(agentList.get(i).getStartAsName().equals(agentName2Check))
+				return true;			
+		}
+		return false;
+	}
+	/**
+	 * Will find a new unique name for an agent, if the suggestion is not already unique 
+	 * @param agentNameSuggestion 
+	 * @return unique agent name for the simulation setup
+	 */
+	public String getAgentNameUnique(String agentNameSuggestion) {
+		
+		int incrementNo = 1;
+		String newAgentName = agentNameSuggestion;
+		
+		// --- merge the list models to a complete list ---
+		this.mergeListModels();
+		
+		// --- find a new name ----------------------------
+		while (isAgentNameExists(newAgentName, false)==true) {
+			newAgentName = agentNameSuggestion + "_" + incrementNo;
+			incrementNo++;
+		}
+		return newAgentName;
+	}
+	
+
 }

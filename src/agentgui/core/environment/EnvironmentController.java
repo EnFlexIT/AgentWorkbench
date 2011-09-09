@@ -31,6 +31,8 @@ import java.io.File;
 import java.util.Observable;
 import java.util.Observer;
 
+import javax.swing.DefaultListModel;
+
 import agentgui.core.application.Project;
 import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.core.sim.setup.SimulationSetupsChangeNotification;
@@ -46,59 +48,58 @@ public abstract class EnvironmentController extends Observable implements Observ
 	/**
 	 * The current project
 	 */
-	protected Project project = null;
-	
+	protected Project currProject = null;
 	/**
 	 * The path to the folder where all environment related files are stored.
 	 * (Contains the slash at the end).
 	 */
 	protected String envFolderPath = null;
-	
-	
 	/**
-	 * Do not use this constructor
+	 * The list model for the agents, which has to be started with the current environment model 
 	 */
-	@Deprecated
-	public EnvironmentController(){
-		
-	}
+	protected DefaultListModel agents2Start= new DefaultListModel();
+
+
 	/**
 	 * Constructor to be invoked by all the subclasses
 	 * @param project the current project
 	 */
 	public EnvironmentController(Project project){
-		this.project = project;
-		this.project.addObserver(this);
-		envFolderPath = this.project.getProjectFolderFullPath()+this.project.getSubFolderEnvSetups() + File.separator;
+		this.currProject = project;
+		this.currProject.addObserver(this);
+		this.envFolderPath = this.currProject.getProjectFolderFullPath()+this.currProject.getSubFolderEnvSetups() + File.separator;
 	}
 	
-	/**
-	 * The current project
-	 * @return the current project
-	 */
-	public Project getProject(){
-		return project;
-	}
 	/**
 	 * Returns the current simulation setup
 	 * @return the current simulation setup
 	 */
-	public SimulationSetup getCurrentSimSetup(){
-		return project.simSetups.getCurrSimSetup();
+	protected SimulationSetup getCurrentSimSetup(){
+		return currProject.simSetups.getCurrSimSetup();
 	}
 	
 	/**
-	 * The folder path where environment related files are stored (contains the slash at the end.)
-	 * @return the folder path where environment related files are stored (contains the slash at the end.)
+	 * @return the agents2Start
 	 */
-	public String getEnvFolderPath(){
-		return envFolderPath;
+	public DefaultListModel getAgents2Start() {
+		return agents2Start;
 	}
 	/**
-	 * 
+	 * @param agents2Start the agents2Start to set
 	 */
-	protected void refreshFileName(){
-	
+	public void setAgents2Start(DefaultListModel agents2Start) {
+		this.agents2Start = agents2Start;
+	}
+
+	/**
+	 * With this method the list of Agents {@link EnvironmentController#agents2Start}, which has to 
+	 * be started with the environment can be registered at the {@link SimulationSetup}
+	 *  
+	 * @param listName Consider the use of the constant value {@link SimulationSetup#AGENT_LIST_EnvironmentConfiguration} 
+	 * or just use an individual name   
+	 */
+	protected void registerDefaultListModel4SimulationStart(String listName) {
+		this.agents2Start = this.getCurrentSimSetup().getAgentDefaultListModel(this.agents2Start, listName);
 	}
 	
 	/**
@@ -106,23 +107,12 @@ public abstract class EnvironmentController extends Observable implements Observ
 	 */
 	@Override
 	public void update(Observable o, Object arg) {
-		if(o.equals(project) && arg == Project.SAVED){
+		if(o.equals(currProject) && arg == Project.SAVED){
 			this.saveEnvironment();
-		}else if(o.equals(project) && arg instanceof SimulationSetupsChangeNotification){
+		}else if(o.equals(currProject) && arg instanceof SimulationSetupsChangeNotification){
 			this.handleSimSetupChange((SimulationSetupsChangeNotification) arg);
 		}
 	}
-	
-	/**
-	 * Load environment model from files
-	 */
-	protected abstract void loadEnvironment();
-	
-	/**
-	 * Save environment model to files
-	 */
-	protected abstract void saveEnvironment();
-	
 	/**
 	 * Invoked by the project when the simulation setup change event occurs.
 	 * @param sscn
@@ -131,12 +121,29 @@ public abstract class EnvironmentController extends Observable implements Observ
 	
 	
 	/**
+	 * Load environment model from files
+	 */
+	protected abstract void loadEnvironment();
+	/**
+	 * Save environment model to files
+	 */
+	protected abstract void saveEnvironment();
+	
+	
+	/**
 	 * Set the environment object 
 	 * @param environmentObject the environment model
 	 */
-	protected abstract void setEnvironment(Object environmentObject);
-	
-	
-	
+	public abstract void setEnvironmentModel(Object environmentObject);
+	/**
+	 * Get the current environment object
+	 * @return the current instance of the environment model
+	 */
+	public abstract Object getEnvironmentModel();
+	 /**
+	  * Get the current environment object as a copy
+	  * @return a copy of the environment model
+	  */
+	public abstract Object getEnvironmentModelCopy();
 	
 }

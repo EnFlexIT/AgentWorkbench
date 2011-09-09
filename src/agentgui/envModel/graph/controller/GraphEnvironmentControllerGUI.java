@@ -378,7 +378,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	        			getTblComponents().getModel().setValueAt(oldCompID, row, column);
 	        		}
 		        	//Check if the agent name already exists in the simulation setup
-		        	else if(controller.getProject().simSetups.getCurrSimSetup().isAgentNameExists(newCompID)){
+		        	else if(this.currProject.simSetups.getCurrSimSetup().isAgentNameExists(newCompID)){
 		        		JOptionPane.showMessageDialog(this,Language.translate("An agent with the name already exists in the simulation setup!\n Choose a different one.", Language.EN),
 								Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);	 
 	        			getTblComponents().getModel().setValueAt(oldCompID, row, column);
@@ -493,10 +493,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	 * @return
 	 */
 	private ComponentTypeDialog getClassSelectorDialog(){
-	//Always creating the new one, instead of hide and open
-		//if(classSelectorDialog == null){
-			classSelectorDialog = new ComponentTypeDialog(this);
-		//}
+		classSelectorDialog = new ComponentTypeDialog(this, this.currProject);
 		return classSelectorDialog;
 	}
 	

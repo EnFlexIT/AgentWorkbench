@@ -19,7 +19,7 @@ public class SimulationEnvironment extends JPanel implements Observer, ActionLis
 	private static final long serialVersionUID = 3230313372954316520L;
 	
 	private Project project;
-	private StartSetupSelector jPanelTopNew = null;
+	private SetupSelector jPanelTopNew = null;
 	
 	private EnvironmentPanel environmentControllerGUI = null;
 	
@@ -113,7 +113,7 @@ public class SimulationEnvironment extends JPanel implements Observer, ActionLis
 	 */
 	private JPanel getJPanelTopNew() {
 		if (jPanelTopNew == null) {
-			jPanelTopNew = new StartSetupSelector(this.project);
+			jPanelTopNew = new SetupSelector(this.project);
 		}
 		return jPanelTopNew;
 	}

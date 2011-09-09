@@ -113,7 +113,7 @@ import agentgui.core.sim.setup.SimulationSetups;
 	/**
 	 * Constant value in order to inform the Observer about changes of this kind
 	 */
-	@XmlTransient public static final String CHANGED_AgentStartConfiguration = "AgentConfiguration4StartArguments";
+	@XmlTransient public static final String CHANGED_StartArguments4BaseAgent = "StartArguments4BaseAgents";
 	/**
 	 * Constant value in order to inform the Observer about changes of this kind
 	 */
@@ -138,7 +138,7 @@ import agentgui.core.sim.setup.SimulationSetups;
 	
 	// --- Constants -------------------------------------------
 	@XmlTransient private String defaultSubFolder4Setups    = "setups";
-	@XmlTransient private String defaultSubFolderEnvSetups = "envSetups";
+	@XmlTransient private String defaultSubFolderEnvSetups = "setupsEnv";
 	@XmlTransient private String[] defaultSubFolders	   = { defaultSubFolder4Setups,
 															   defaultSubFolderEnvSetups, 
 															  };
@@ -236,7 +236,8 @@ import agentgui.core.sim.setup.SimulationSetups;
 	 * This field can be used in order to provide customised objects during
 	 * the runtime of a project. This will be not stored within the file 'agentgui.xml' 
 	 */
-	@XmlTransient private Serializable userRuntimeObject = null;
+	@XmlTransient 
+	private Serializable userRuntimeObject = null;
 	
 	/**
 	 * This attribute holds the instance of the currently selected SimulationSetup
@@ -370,15 +371,13 @@ import agentgui.core.sim.setup.SimulationSetups;
 			// --- Save the userRuntimeObject in the Project into a different file as a serializable binary object.
 			FileOutputStream fos = null;
 			ObjectOutputStream out = null;
-		     try
-		     {
+		    try {
 		       fos = new FileOutputStream(projectFolderFullPath + Application.RunInfo.getFilenameProjectUserObject());
 		       out = new ObjectOutputStream(fos);
 		       out.writeObject(this.userRuntimeObject);
 		       out.close();
-		    }
-		    catch(IOException ex)
-		    {
+		       
+		    } catch(IOException ex) {
 		      ex.printStackTrace();
 		    }
 		    
@@ -758,7 +757,7 @@ import agentgui.core.sim.setup.SimulationSetups;
 	public void updateAgentReferences() {
 		isUnsaved = true;
 		setChanged();
-		notifyObservers(CHANGED_AgentStartConfiguration);
+		notifyObservers(CHANGED_StartArguments4BaseAgent);
 	}
 	
 	/**

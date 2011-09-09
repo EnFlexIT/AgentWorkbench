@@ -355,7 +355,7 @@ public class Physical2DObjectSettingsPanel extends JPanel{
 	void setInputValues(Element elem){
 		if(elem != null){
 			
-			Scale scale = parent.controller.getEnvironment().getScale();
+			Scale scale = parent.controller.getEnvironmentModel().getScale();
 			
 			
 			getTfId().setText(elem.getAttributeNS(null, "id"));

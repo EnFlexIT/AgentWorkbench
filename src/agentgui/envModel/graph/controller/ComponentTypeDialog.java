@@ -30,7 +30,7 @@ package agentgui.envModel.graph.controller;
 import jade.content.Concept;
 
 import java.awt.Color;
-import java.awt.Dialog;
+import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -43,9 +43,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
 
+import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -54,6 +56,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.border.EtchedBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
@@ -73,11 +76,6 @@ import agentgui.core.gui.imaging.MissingIcon;
 import agentgui.envModel.graph.networkModel.ComponentTypeSettings;
 import agentgui.envModel.graph.prototypes.GraphElementPrototype;
 
-import javax.swing.JCheckBox;
-import javax.swing.BorderFactory;
-import javax.swing.border.EtchedBorder;
-import java.awt.ComponentOrientation;
-
 /**
  * GUI dialog for configuring network component types 
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
@@ -85,10 +83,12 @@ import java.awt.ComponentOrientation;
  * 
  */
 public class ComponentTypeDialog extends JDialog implements ActionListener{
+	
 	/**
 	 * Generated serialVersionUID
 	 */
 	private static final long serialVersionUID = 1L;
+	
 	/**
 	 * The content pane
 	 */
@@ -142,7 +142,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	/**
 	 * The current AgentGUI project
 	 */
-	private Project project = null;
+	private Project currProject = null;
 	/**
 	 * The label for the node class text field
 	 */
@@ -173,16 +173,18 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	private JCheckBox jCheckBoxLableVisible = null;
 	private JLabel jLabelSeperator = null;
 	private JLabel jLabelOntoClass = null;
+	
+	
 	/**
 	 * This is the default constructor
 	 * @param parent The parent GUI
 	 */
-	public ComponentTypeDialog(GraphEnvironmentControllerGUI parent) {
-		super(Application.MainWindow, Dialog.ModalityType.APPLICATION_MODAL);
+	public ComponentTypeDialog(GraphEnvironmentControllerGUI parent, Project project) {
+		super(Application.MainWindow);
 		this.parent = parent;
-		project = parent.getController().getProject();
+		this.currProject = project;
 		initialize();
-		//System.out.println(project.getProjectFolderFullPath());
+		
 	}
 
 	/**
@@ -194,6 +196,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		this.setSize(601, 465);
 		this.setContentPane(getJContentPane());
 		this.setTitle(Language.translate("Komponententyp-Definition"));
+		this.setModal(true);
 		
 		this.setNodeConfiguration();
 		
@@ -410,7 +413,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			
 			//Set up Editor for the ImageIcon column
 			TableColumn imageIconColumn = jTableComponentTypes.getColumnModel().getColumn(3);
-			imageIconColumn.setCellEditor(new ImageSelectorTableCellEditor(project));		
+			imageIconColumn.setCellEditor(new ImageSelectorTableCellEditor(currProject));		
 			imageIconColumn.setPreferredWidth(30);
 			
 			//Set up renderer and editor for the  Color column.	        

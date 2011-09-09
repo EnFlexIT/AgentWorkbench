@@ -3,7 +3,7 @@
     <agentSetup>
         <agent>
             <postionNo>1</postionNo>
-            <listMembership>01AgentStartManual</listMembership>
+            <listMembership>01 AgentStartManual</listMembership>
             <agentClassReference>gasmas.agents.PipeAgent</agentClassReference>
             <startAsName>PiAg</startAsName>
             <startArguments>
@@ -12,7 +12,7 @@
         </agent>
         <agent>
             <postionNo>2</postionNo>
-            <listMembership>01AgentStartManual</listMembership>
+            <listMembership>01 AgentStartManual</listMembership>
             <agentClassReference>gasmas.agents.CompressorAgent</agentClassReference>
             <startAsName>CoAg</startAsName>
             <startArguments>
@@ -21,25 +21,25 @@
         </agent>
         <agent>
             <postionNo>1</postionNo>
-            <listMembership>02AgentStartEnvironment</listMembership>
+            <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>gasmas.agents.BranchAgent</agentClassReference>
             <startAsName>n3</startAsName>
         </agent>
         <agent>
             <postionNo>2</postionNo>
-            <listMembership>02AgentStartEnvironment</listMembership>
+            <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>gasmas.agents.ExitAgent</agentClassReference>
             <startAsName>n2</startAsName>
         </agent>
         <agent>
             <postionNo>3</postionNo>
-            <listMembership>02AgentStartEnvironment</listMembership>
+            <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>gasmas.agents.ValveAgent</agentClassReference>
             <startAsName>n0</startAsName>
         </agent>
         <agent>
             <postionNo>4</postionNo>
-            <listMembership>02AgentStartEnvironment</listMembership>
+            <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>gasmas.agents.PipeAgent</agentClassReference>
             <startAsName>n1</startAsName>
             <startArguments>
@@ -48,13 +48,13 @@
         </agent>
         <agent>
             <postionNo>5</postionNo>
-            <listMembership>02AgentStartEnvironment</listMembership>
+            <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>gasmas.agents.PipeAgent</agentClassReference>
             <startAsName>n4</startAsName>
         </agent>
         <agent>
             <postionNo>6</postionNo>
-            <listMembership>02AgentStartEnvironment</listMembership>
+            <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>gasmas.agents.BranchAgent</agentClassReference>
             <startAsName>n5</startAsName>
         </agent>

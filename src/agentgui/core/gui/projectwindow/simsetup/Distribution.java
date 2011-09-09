@@ -49,7 +49,7 @@ public class Distribution extends JPanel implements ActionListener, Observer, Ke
 	private DistributionSetup currDistributionSetup = null; 
 	private LoadThresholdLevels currUserThresholds = null;
 	
-	private StartSetupSelector jPanelSetupSelection = null;
+	private SetupSelector jPanelSetupSelection = null;
 	
 	private JPanel jPanelStatic = null;
 	private JPanel jPanelStaticClass = null;
@@ -740,7 +740,7 @@ public class Distribution extends JPanel implements ActionListener, Observer, Ke
 	 */
 	private JPanel getJPanelSetupSelection() {
 		if (jPanelSetupSelection == null) {
-			jPanelSetupSelection = new StartSetupSelector(currProject);
+			jPanelSetupSelection = new SetupSelector(currProject);
 		}
 		return jPanelSetupSelection;
 	}

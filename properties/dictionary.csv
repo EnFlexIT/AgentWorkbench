@@ -54,6 +54,7 @@ de;Auslastungs-Monitor öffnen;Open load monitor
 de;Auswahl - Agenten;Agent selection
 de;Auswahl - Ontologien;Ontology selection
 de;Auswahl Ontologien;Ontology selection
+de;Auswahl Startliste;;;;
 de;Basis-Agenten;Base agents
 de;Basis-Info;Basic info
 de;Bearbeiten;Edit
@@ -355,6 +356,7 @@ de;Standard verwenden;Use Default;;;
 de;Standardkonfiguration verwenden;Use default configuration;;;
 de;Start-Argumente für den ausgewählten Agenten;Start-arguments for the selected agent
 de;Start-Konfiguration;Start-Configuration
+de;Start-Liste:;;;;
 de;Start-Objekte aus Projekt-Ontologie;Startup objects from project-ontology
 de;Start;Start
 de;Startargument definieren für Agent;;;;

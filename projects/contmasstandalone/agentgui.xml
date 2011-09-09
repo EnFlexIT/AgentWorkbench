@@ -52,5 +52,5 @@
             <value>map_port_chalmers_highly_simplified.xml</value>
         </entry>
     </simulationSetups>
-    <subFolderEnvSetups>svgEnvSetups</subFolderEnvSetups>
+    <subFolderEnvSetups>setupsEnv</subFolderEnvSetups>
 </project>

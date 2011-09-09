@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <simulationSetup>
-    <agentSetup>
-        <agent>
-            <postionNo>1</postionNo>
-            <agentClassReference>imageProcessing.ImageHelper</agentClassReference>
-            <startAsName>ImHe</startAsName>
-        </agent>
-    </agentSetup>
+    <agentSetup/>
     <distribution>
         <doDynamicLoadBalalncing>false</doDynamicLoadBalalncing>
         <doStaticLoadBalalncing>false</doStaticLoadBalalncing>
@@ -24,9 +18,6 @@
             <thNoThreadsL>50</thNoThreadsL>
         </userThresholds>
     </distribution>
-    <agentListModel>
-        <size>1</size>
-    </agentListModel>
     <environmentFileName>Test 2.xml</environmentFileName>
     <svgFileName>Test 2.svg</svgFileName>
 </simulationSetup>

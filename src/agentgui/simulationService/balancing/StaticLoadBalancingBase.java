@@ -154,7 +154,7 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 		Physical2DEnvironmentController physical2DEnvironmentController =  
 			(Physical2DEnvironmentController) currProject.getEnvironmentPanel().getEnvironmentController() ;
 		
-		Physical2DEnvironment environment = physical2DEnvironmentController.getEnvironmentCopy();
+		Physical2DEnvironment environment = physical2DEnvironmentController.getEnvironmentModelCopy();
 		Document svgDocument = physical2DEnvironmentController.getSvgDocCopy();
 		
 		if (environment!=null && svgDocument!=null) {

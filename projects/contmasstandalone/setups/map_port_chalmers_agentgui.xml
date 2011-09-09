@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <simulationSetup>
-    <agentSetup>
-        <agent>
-            <postionNo>1</postionNo>
-            <agentClassReference>de.unidue.stud.sehawagn.contmas.agents.HarborMasterAgent</agentClassReference>
-            <startAsName>HaMaAg</startAsName>
-        </agent>
-    </agentSetup>
+    <agentSetup/>
     <distribution>
         <doDynamicLoadBalalncing>false</doDynamicLoadBalalncing>
         <doStaticLoadBalalncing>false</doStaticLoadBalalncing>

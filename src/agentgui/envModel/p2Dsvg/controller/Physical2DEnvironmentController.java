@@ -174,14 +174,20 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 	public void setSelectedObject(String id) {
 		this.selectedObject = envWrap.getObjectById(id);
 	}
+	/* (non-Javadoc)
+	 * @see agentgui.core.environment.EnvironmentController#setEnvironment(java.lang.Object)
+	 */
+	@Override
+	public void setEnvironmentModel(Object environmentObject) {
+	}
 	/**
 	 * @return The current projects Environment
 	 */
-	public Physical2DEnvironment getEnvironment() {
+	public Physical2DEnvironment getEnvironmentModel() {
 		return environment;
 	}
 		
-	public Physical2DEnvironment getEnvironmentCopy() {
+	public Physical2DEnvironment getEnvironmentModelCopy() {
 		// --- Datei kopieren ---
 		String fileSrc   = envFolderPath + getCurrentSimSetup().getEnvironmentFileName();
 		String fileDest  = fileSrc.substring(0, fileSrc.length()-4) + "_tmp.xml";
@@ -230,9 +236,9 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 			newEnv = new Physical2DEnvironment();
 			newEnv.setRootPlayground(rootPg);
 			newEnv.setScale(defaultScale);
-			newEnv.setProjectName(project.getProjectName());
+			newEnv.setProjectName(currProject.getProjectName());
 			
-			String envFileName = project.simSetupCurrent+".xml";
+			String envFileName = currProject.simSetupCurrent+".xml";
 			getCurrentSimSetup().setEnvironmentFileName(envFileName);
 		}
 		return newEnv;
@@ -500,7 +506,7 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 			setChanged();
 			notifyObservers(new Integer(OBJECTS_CHANGED));
 			
-			project.isUnsaved = true;
+			currProject.isUnsaved = true;
 		}
 		
 		return success;
@@ -712,7 +718,7 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 	}
 	
 	private void setDefaultFileNames(){
-		String baseFileName = project.simSetupCurrent;
+		String baseFileName = currProject.simSetupCurrent;
 		//TODO remove the path from the simsetup
 		getCurrentSimSetup().setEnvironmentFileName(baseFileName+".xml");
 		getCurrentSimSetup().setSvgFileName(baseFileName+".svg");
@@ -734,7 +740,7 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 		}
 		setChanged();
 		notifyObservers(new Integer(SCALE_CHANGED));
-		project.isUnsaved = true;
+		currProject.isUnsaved = true;
 	}
 
 
@@ -775,15 +781,5 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see agentgui.core.environment.EnvironmentController#setEnvironment(java.lang.Object)
-	 */
-	@Override
-	protected void setEnvironment(Object environmentObject) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	
 	
 }

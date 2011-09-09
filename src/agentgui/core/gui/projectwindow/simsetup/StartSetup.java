@@ -16,6 +16,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -44,6 +45,7 @@ import agentgui.core.sim.setup.SimulationSetups;
 import agentgui.core.sim.setup.SimulationSetupsChangeNotification;
 
 import javax.swing.JSplitPane;
+import javax.swing.JComboBox;
 
 /**
  * @author: Christian Derksen
@@ -67,7 +69,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 	
 	private DefaultListModel jListModelAgents2Start = new DefaultListModel();
 	
-	private StartSetupSelector jPanelTopNew = null;
+	private SetupSelector jPanelTopNew = null;
 	
 	private JSplitPane jSplitPane = null;
 	private JPanel jPanelRightSplit = null;
@@ -89,27 +91,33 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 	private JTextField jTextFieldStartAs = null;
 	private JButton jButtonStartOK = null;
 	private JLabel jLabelHeader = null;
+
+	private JComboBox jComboBoxStartLists = null;
+
+	private JLabel jLabelStartList = null;
 	
 	
 	/**
 	 * This is the default constructor
 	 */
-	public StartSetup( Project project ) {
+	public StartSetup(Project project) {
 		super();
 		this.currProject = project;
 		this.currProject.addObserver(this);		
-		initialize();	
+		this.initialize();	
 		
 		// --- Das aktuelle Setup laden -------------------
 		this.setupLoad();
 		
 		// --- Übersetzungen laden ------------------------
+		jComboBoxStartLists.setToolTipText(Language.translate(jComboBoxStartLists.getToolTipText()));
 		jButtonAgentAdd.setToolTipText(Language.translate("Agenten hinzufügen"));
 		jButtonAgentRemove.setToolTipText(Language.translate("Agenten entfernen"));
 		jButtonMoveUp.setToolTipText(Language.translate("Agent nach oben verschieben"));
 		jButtonMoveDown.setToolTipText(Language.translate("Agent nach unten verschieben"));
 		
 		jLabelHeader.setText(Language.translate("Starten als") + ":");
+		jLabelStartList.setText(Language.translate("Start-Liste:"));
 		
 	}
 
@@ -152,7 +160,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 	 */
 	private JPanel getJPanelTopNew() {
 		if (jPanelTopNew == null) {
-			jPanelTopNew = new StartSetupSelector(currProject);
+			jPanelTopNew = new SetupSelector(currProject);
 		}
 		return jPanelTopNew;
 	}
@@ -208,16 +216,32 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 	 */
 	private JPanel getJPanelLeftSplit() {
 		if (jPanelLeftSplit == null) {
+			GridBagConstraints gridBagConstraints9 = new GridBagConstraints();
+			gridBagConstraints9.gridx = 0;
+			gridBagConstraints9.insets = new Insets(5, 10, 0, 0);
+			gridBagConstraints9.gridy = 0;
+			jLabelStartList = new JLabel();
+			jLabelStartList.setFont(new Font("Dialog", Font.BOLD, 12));
+			jLabelStartList.setText("Start-Liste:");
+			GridBagConstraints gridBagConstraints8 = new GridBagConstraints();
+			gridBagConstraints8.fill = GridBagConstraints.BOTH;
+			gridBagConstraints8.gridy = 0;
+			gridBagConstraints8.weightx = 1.0;
+			gridBagConstraints8.insets = new Insets(5, 5, 0, 5);
+			gridBagConstraints8.gridx = 1;
 			GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
 			gridBagConstraints11.fill = GridBagConstraints.BOTH;
-			gridBagConstraints11.gridy = -1;
+			gridBagConstraints11.gridy = 1;
 			gridBagConstraints11.weightx = 1.0;
 			gridBagConstraints11.weighty = 1.0;
 			gridBagConstraints11.insets = new Insets(5, 10, 2, 5);
-			gridBagConstraints11.gridx = -1;
+			gridBagConstraints11.gridwidth = 2;
+			gridBagConstraints11.gridx = 0;
 			jPanelLeftSplit = new JPanel();
 			jPanelLeftSplit.setLayout(new GridBagLayout());
 			jPanelLeftSplit.add(getJScrollPaneStartList(), gridBagConstraints11);
+			jPanelLeftSplit.add(getJComboBoxStartLists(), gridBagConstraints8);
+			jPanelLeftSplit.add(jLabelStartList, gridBagConstraints9);
 		}
 		return jPanelLeftSplit;
 	}
@@ -236,6 +260,21 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		return jScrollPaneStartList;
 	}
 
+	/**
+	 * This method initializes jComboBoxStartLists	
+	 * @return javax.swing.JComboBox	
+	 */
+	private JComboBox getJComboBoxStartLists() {
+		if (jComboBoxStartLists == null) {
+			jComboBoxStartLists = new JComboBox();
+			jComboBoxStartLists.setModel(currSimSetup.getComboBoxModel4AgentLists());
+			//jComboBoxStartLists.setFont(new Font("Dialog", Font.BOLD, 12));
+			jComboBoxStartLists.setToolTipText("Auswahl Startliste");
+			jComboBoxStartLists.addActionListener(this);
+		}
+		return jComboBoxStartLists;
+	}
+	
 	/**
 	 * This method initializes jListStartList	
 	 * @return javax.swing.JList	
@@ -344,6 +383,19 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		return jListStartList;
 	}
 
+	/**
+	 * This method will remove the selections from {@link #jListStartList} and will 
+	 * set the needed blank {@link OntologyInstanceViewer} 
+	 */
+	private void setJListStartListEmptySelection() {
+		
+		agentSelectedLast = null;
+		jListStartList.setSelectedValue(null, false);
+		
+		OntologyInstanceViewer oiv = new OntologyInstanceViewer(currProject);
+		setOntologyInstView(oiv);
+		
+	}
 	/**
 	 * This method initializes jButtonAgentAdd	
 	 * @return javax.swing.JButton	
@@ -544,10 +596,10 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		// --- Remind the current Viewer ------------------
 		this.currOntoInstViewer = ontoInstView;
 		// --- Set the view to the current Viewer ---------
-		this.jPanelOntoloInstView.removeAll();
-		this.jPanelOntoloInstView.add(ontoInstView);
-		this.jPanelOntoloInstView.validate();
-		this.jPanelOntoloInstView.repaint();
+		this.getJPanelOntoloInstView().removeAll();
+		this.getJPanelOntoloInstView().add(ontoInstView);
+		this.getJPanelOntoloInstView().validate();
+		this.getJPanelOntoloInstView().repaint();
 	}
 	
 	/**
@@ -574,17 +626,22 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 
 	private void setupLoad() {
 	
-		// --- Das akuelle DefaultListModel laden ---------
+		// --- Load the current SimulationSetup ---------------------
 		currSimSetup = currProject.simSetups.getCurrSimSetup();
 		if ( currSimSetup==null ) {
 			currProject.simSetups.setupLoadAndFocus(SimulationSetups.SIMULATION_SETUP_LOAD, currProject.simSetupCurrent, false);
 			currSimSetup = currProject.simSetups.getCurrSimSetup();
 		}
-		this.currSimSetup.registerAgentDefaultListModel(this.jListModelAgents2Start, SimulationSetup.AGENT_LIST_ManualConfiguration);
-
-		// --- Formular-Elemente einstellen ---
-		//jTextFieldStartAs.setText("");
-		//jCheckBoxIsMobileAgent.setSelected(false);		
+		// --- Load the current DefaultListModel laden --------------
+		this.jListModelAgents2Start = this.currSimSetup.getAgentDefaultListModel(this.jListModelAgents2Start, SimulationSetup.AGENT_LIST_ManualConfiguration);
+		this.getJListStartList().setModel(this.jListModelAgents2Start);
+		
+		// --- Set the ComboBoxModel for the StartList Selector -----
+		DefaultComboBoxModel cbm = currSimSetup.getComboBoxModel4AgentLists();
+		cbm.setSelectedItem(SimulationSetup.AGENT_LIST_ManualConfiguration);
+		this.getJComboBoxStartLists().setModel(cbm);
+				
+		this.setJListStartListEmptySelection();
 	}
 	
 	/**
@@ -611,8 +668,8 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 				startCounter++;
 				// --- Check the name to prevent name clashes -------
 				String nameSuggestion = ac4s.getStartAsName();
-				if (this.agentNameExists(nameSuggestion)==true) {
-					ac4s.setStartAsName(this.agentFindNewName(nameSuggestion));
+				if (currSimSetup.isAgentNameExists(nameSuggestion)==true) {
+					ac4s.setStartAsName(currSimSetup.getAgentNameUnique(nameSuggestion));
 				}								
 				// --- Add to start-list ----------------------------
 				jListModelAgents2Start.addElement(ac4s);
@@ -621,47 +678,6 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		agentSelector.dispose();
 		this.save();
 		// ==================================================================
-	}
-	
-	/**
-	 * This method checks if a given 'Start as'-Name of an agent already exists or not
-	 * @param nameSuggestion
-	 * @return
-	 */
-	private boolean agentNameExists(String nameSuggestion) {
-		
-		boolean exists = false;
-		
-		// --- check if this name is allready be used by an other agent -------
-		for (int i=0; i<jListModelAgents2Start.size(); i++) {
-			
-			AgentClassElement4SimStart currStartObj = (AgentClassElement4SimStart) jListModelAgents2Start.get(i);
-			String nameCurr = currStartObj.getStartAsName();
-			if (nameCurr.equalsIgnoreCase(nameSuggestion)) {
-				exists = true;
-				break;
-			}
-		}
-		return exists;
-	}
-	
-	/**
-	 * This Method tries to find a new unique name for an agent 
-	 * by starting with the given/current agent name  
-	 * @param currAgentName
-	 * @return
-	 */
-	private String agentFindNewName(String currAgentName) {
-		
-		int incrementNo = 1;
-		String newAgentName = currAgentName;
-		
-		// --- find a new name -------------
-		while (agentNameExists(newAgentName)==true) {
-			newAgentName = currAgentName + "_" + incrementNo;
-			incrementNo++;
-		}
-		return newAgentName;
 	}
 	
 	/**
@@ -683,7 +699,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		// --- new name == old name ? --------------------------------
 		if (agentSelected.getStartAsName().equalsIgnoreCase(newAgentName)==false) {
 			// --- new name entered ----------------------------------
-			if (agentNameExists(newAgentName)==false) {
+			if (currSimSetup.isAgentNameExists(newAgentName)==false) {
 				agentSelected.setStartAsName(newAgentName);
 				jListStartList.repaint();
 			} else {
@@ -794,25 +810,35 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		// --- Das ActionCommand und den Auslöser des Events ermitteln ---
-		Object Trigger = ae.getSource();
+		Object trigger = ae.getSource();
 		
 		// --- Fallunterscheidung 'Auslöser' -----------------------------
-		if ( Trigger == jButtonAgentAdd ) {
+		if (trigger==jComboBoxStartLists) {
+			String selectedItem = (String) jComboBoxStartLists.getSelectedItem(); 
+			if (selectedItem!=null) {
+				DefaultListModel dlm = currSimSetup.getAgentDefaultListModel(selectedItem);
+				this.jListStartList.setModel(dlm);
+				this.setJListStartListEmptySelection();
+			}
+			
+		}else if (trigger == jButtonAgentAdd) {
 			this.agentAdd();			
-		} else if ( Trigger == jButtonAgentRemove ) {
+		} else if (trigger == jButtonAgentRemove ) {
 			this.agentRemove();
-		} else if ( Trigger == jButtonMoveUp ) {
+		} else if (trigger == jButtonMoveUp) {
 			this.agentMovePosition(-1);
-		} else if ( Trigger == jButtonMoveDown ) {
+		} else if (trigger == jButtonMoveDown) {
 			this.agentMovePosition(1);
-		} else if ( Trigger == jTextFieldStartAs ) {
+		} else if (trigger == jTextFieldStartAs) {
 			jButtonStartOK.requestFocus();
 			this.agentNameSet(jTextFieldStartAs.getText());
-		} else if ( Trigger == jButtonStartOK ) {
+		} else if (trigger == jButtonStartOK) {
 			this.agentNameSet(jTextFieldStartAs.getText());
 		} else {
 			System.out.println(ae.toString());
 		};
 	}
+
+	
 	
 }  //  @jve:decl-index=0:visual-constraint="20,8"

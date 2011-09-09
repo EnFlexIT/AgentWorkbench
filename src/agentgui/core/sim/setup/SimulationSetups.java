@@ -320,13 +320,17 @@ public class SimulationSetups extends Hashtable<String, String> {
 				in = new ObjectInputStream(fis);
 				userObject = (Serializable)in.readObject();
 				in.close();
+				currSimSetup.setUserRuntimeObject(userObject);
+				
 			} catch(IOException ex) {
 				ex.printStackTrace();
 			} catch(ClassNotFoundException ex) {
 				ex.printStackTrace();
 			}
-			currSimSetup.setUserRuntimeObject(userObject);
 		}
+		
+		// --- Create the DefaultListModels for the current agent configuration --------- 
+		currSimSetup.createHashMap4AgentDefaulListModelsFromAgentList();
 		
 	}
 

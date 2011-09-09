@@ -37,5 +37,5 @@
             <value>test.xml</value>
         </entry>
     </simulationSetups>
-    <subFolderEnvSetups>envSetups</subFolderEnvSetups>
+    <subFolderEnvSetups>setupsEnv</subFolderEnvSetups>
 </project>

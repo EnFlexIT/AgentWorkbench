@@ -36,7 +36,7 @@ import agentgui.core.sim.setup.SimulationSetupsChangeNotification;
  * @author: Christian Derksen
  *
  */
-public class StartSetupSelector extends JPanel implements Observer, ActionListener {
+public class SetupSelector extends JPanel implements Observer, ActionListener {
 
 	private static final long serialVersionUID = -3929823093128900880L;
 	
@@ -61,7 +61,7 @@ public class StartSetupSelector extends JPanel implements Observer, ActionListen
 	/**
 	 * This is the default constructor
 	 */
-	public StartSetupSelector( Project project ) {
+	public SetupSelector( Project project ) {
 		super();
 		this.currProject = project;
 		this.currProject.addObserver(this);		
@@ -172,6 +172,7 @@ public class StartSetupSelector extends JPanel implements Observer, ActionListen
 		if (jComboBoxSetupSelector == null) {
 			jComboBoxSetupSelector = new JComboBox(jComboBoxModel4Setups);
 			jComboBoxSetupSelector.setPreferredSize(new Dimension(100, 26));
+			//jComboBoxSetupSelector.setFont(new Font("Dialog", Font.BOLD, 12));
 			jComboBoxSetupSelector.setActionCommand("SetupSelected");
 			jComboBoxSetupSelector.addActionListener(this);
 		}
