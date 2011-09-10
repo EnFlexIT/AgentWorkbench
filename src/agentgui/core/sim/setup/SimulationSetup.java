@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import agentgui.core.agents.AgentClassElement4SimStart;
+import agentgui.core.application.Application;
 import agentgui.core.application.Project;
 
 /**
@@ -122,7 +123,7 @@ import agentgui.core.application.Project;
 		// --- Save the current simulation setup ----------
 		try {			
 			// --- prepare context and Marshaller ---------
-			JAXBContext pc = JAXBContext.newInstance( this.getClass() ); 
+			JAXBContext pc = JAXBContext.newInstance(this.getClass()); 
 			Marshaller pm = pc.createMarshaller(); 
 			pm.setProperty( Marshaller.JAXB_ENCODING, "UTF-8" );
 			pm.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE ); 
@@ -135,7 +136,8 @@ import agentgui.core.application.Project;
 			FileOutputStream fos = null;
 			ObjectOutputStream out = null;
 		    try  {
-		    	fos = new FileOutputStream(currProject.getSubFolder4Setups(true)+currProject.simSetupCurrent+".bin");
+		    	String binFileName = Application.RunInfo.getBinFileNameFromXmlFileName(currProject.simSetups.getCurrSimXMLFile()); 
+		    	fos = new FileOutputStream(binFileName);
 		    	out = new ObjectOutputStream(fos);
 		    	out.writeObject(this.userRuntimeObject);
 		    	out.close();

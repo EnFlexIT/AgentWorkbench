@@ -2,6 +2,7 @@
 <project>
     <projectName>GasMAS</projectName>
     <projectDescription>MAS zur Simulation eines Gasnetzes (nur technische Ebene).</projectDescription>
+    <projectView>Developer</projectView>
     <environmentModel>gridEnvironment</environmentModel>
     <projectResources/>
     <plugins/>

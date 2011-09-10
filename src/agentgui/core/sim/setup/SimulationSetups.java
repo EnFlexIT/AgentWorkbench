@@ -35,7 +35,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 	public static final int SIMULATION_SETUP_RENAME = 4;
 	public static final int SIMULATION_SETUP_SAVED = 5;
 	
-	public final String XML_FilePostfix = ".xml";
+	private final String XML_FilePostfix = Application.RunInfo.getXmlFilePostfix();
 	private Project currProject = Application.ProjectCurr;
 	
 	private String currSimSetupName = null;
@@ -86,7 +86,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 		// --- Name und Dateiname hinzufügen --------------
 		this.put(name, newFileName);
 		// --- Fokus auf das aktuelle Setup ---------------
-		this.setupLoadAndFocus(SIMULATION_SETUP_ADD_NEW,name, true);
+		this.setupLoadAndFocus(SIMULATION_SETUP_ADD_NEW, name, true);
 		// --- Projekt speichern --------------------------
 		currProject.save();
 	}
@@ -309,7 +309,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 		}
 
 		//--- Reading the serializable user object of the simsetup from the 'agentgui_userobject.bin' ---
-		String userObjectFileName = currProject.getSubFolder4Setups(true)+ currSimSetupName +".bin" ;
+		String userObjectFileName = Application.RunInfo.getBinFileNameFromXmlFileName(currSimXMLFile);
 		File userObjectFile = new File(userObjectFileName);
 		if (userObjectFile.exists()) {
 			Serializable userObject = null;
@@ -349,6 +349,15 @@ public class SimulationSetups extends Hashtable<String, String> {
 				if (files[i].getName().endsWith(XML_FilePostfix)) {
 					if (this.containsValue(files[i].getName())==false) {
 						files[i].delete();
+						// --- bin File ebenfalls löschen -
+						String binFileName = Application.RunInfo.getBinFileNameFromXmlFileName(files[i].getAbsolutePath());
+						if (binFileName!=null) {
+							File binFile = new File(binFileName);
+							if (binFile.exists()==true) {
+								binFile.delete();
+							}
+						}
+						// --------------------------------
 					}
 				}
 			}

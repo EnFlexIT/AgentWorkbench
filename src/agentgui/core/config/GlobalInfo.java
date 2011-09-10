@@ -95,6 +95,8 @@ public class GlobalInfo {
 	private static String localFileProperties  = "agentgui.ini";
 	private static String localFileNameProject = "agentgui.xml";
 	private static String localFileNameProjectUserObject = "agentgui.bin";
+	private static String localXML_FilePostfix = ".xml";
+	private static String localBIN_FilePostfix = ".bin";
 	private static String localFileEndProjectZip = "agui";
 	private static String localFileNameProjectOntology = "AgentGUIProjectOntology";
 	
@@ -502,6 +504,40 @@ public class GlobalInfo {
 		return returnPath;
 	}
 	
+	/**
+	 * Returns the common file postfix for XML-files
+	 * @return the xmlFilepostfix
+	 */
+	public String getXmlFilePostfix() {
+		return localXML_FilePostfix;
+	}
+	/**
+	 * Returns the common file postfix for bin-files
+	 * @return the xmlFilepostfix
+	 */
+	public String getBinFilePostfix() {
+		return localBIN_FilePostfix;
+	}
+	/**
+	 * Returns the path or file name for a given XML-file
+	 * @param xmlFileName
+	 * @return
+	 */
+	public String getBinFileNameFromXmlFileName(String xmlFileName) {
+		
+		String fileName = xmlFileName;
+		if(fileName.endsWith(getXmlFilePostfix())) {
+			fileName = fileName.substring( 0, (fileName.length()-getXmlFilePostfix().length()) );
+			fileName = fileName + getBinFilePostfix();
+		}
+		
+		if (fileName.equals(xmlFileName)==false) {
+			return fileName;	
+		} else {
+			return null;
+		}
+		
+	}
 	/**
 	 * This method can be used in order to get the applications executable 
 	 * jar-file. (by default it is the file 'AgentGui.jar')

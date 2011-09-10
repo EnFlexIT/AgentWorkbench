@@ -54,7 +54,7 @@ de;Auslastungs-Monitor öffnen;Open load monitor
 de;Auswahl - Agenten;Agent selection
 de;Auswahl - Ontologien;Ontology selection
 de;Auswahl Ontologien;Ontology selection
-de;Auswahl Startliste;;;;
+de;Auswahl Startliste;Selection: start list;;;
 de;Basis-Agenten;Base agents
 de;Basis-Info;Basic info
 de;Bearbeiten;Edit
@@ -356,10 +356,9 @@ de;Standard verwenden;Use Default;;;
 de;Standardkonfiguration verwenden;Use default configuration;;;
 de;Start-Argumente für den ausgewählten Agenten;Start-arguments for the selected agent
 de;Start-Konfiguration;Start-Configuration
-de;Start-Liste:;;;;
+de;Start-Liste:;Start list:;;;
 de;Start-Objekte aus Projekt-Ontologie;Startup objects from project-ontology
 de;Start;Start
-de;Startargument definieren für Agent;;;;
 de;Starte Agent.GUI - Service;Start Agent.GUI - Service
 de;Starte Agent.GUI als:;Start Agent.GUI as:
 de;Starte JADE über Port-Nr.:;Start JADE via port no.:
