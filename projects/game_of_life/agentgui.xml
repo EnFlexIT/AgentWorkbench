@@ -9,7 +9,7 @@
     </subOntologies>
     <agentConfiguration/>
     <jadeConfiguration>
-        <useLocalPort>1100</useLocalPort>
+        <useLocalPort>1104</useLocalPort>
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
@@ -17,11 +17,15 @@
             <service>jade.core.mobility.AgentMobilityService</service>
         </serviceList>
     </jadeConfiguration>
-    <simulationSetupCurrent>default</simulationSetupCurrent>
+    <simulationSetupCurrent>GoL SimService</simulationSetupCurrent>
     <simulationSetups>
         <entry>
-            <key>default</key>
-            <value>default.xml</value>
+            <key>GoL ACL-Messages</key>
+            <value>gol_acl_messages.xml</value>
+        </entry>
+        <entry>
+            <key>GoL SimService</key>
+            <value>gol_simservice.xml</value>
         </entry>
     </simulationSetups>
     <subFolderEnvSetups>setupsEnv</subFolderEnvSetups>

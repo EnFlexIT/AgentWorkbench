@@ -11,7 +11,7 @@
                 <graphElementIDs>PP10</graphElementIDs>
                 <graphElementIDs>PP11</graphElementIDs>
                 <id>n1</id>
-                <prototypeClassName>agentgui.graphEnvironment.prototypes.SimpleGraphElement</prototypeClassName>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
                 <type>pipe</type>
             </value>
         </entry>
@@ -21,10 +21,10 @@
                 <agentClassName>gasmas.agents.ValveAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>n0</graphElementIDs>
-                <graphElementIDs>PP9</graphElementIDs>
                 <graphElementIDs>PP10</graphElementIDs>
+                <graphElementIDs>PP16</graphElementIDs>
                 <id>n0</id>
-                <prototypeClassName>agentgui.graphEnvironment.prototypes.SimpleGraphElement</prototypeClassName>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
                 <type>valve</type>
             </value>
         </entry>
@@ -36,13 +36,13 @@
                 <graphElementIDs>n5_2</graphElementIDs>
                 <graphElementIDs>n5_1</graphElementIDs>
                 <graphElementIDs>n5_0</graphElementIDs>
-                <graphElementIDs>PP12</graphElementIDs>
                 <graphElementIDs>PP13</graphElementIDs>
                 <graphElementIDs>PP14</graphElementIDs>
                 <graphElementIDs>PP15</graphElementIDs>
+                <graphElementIDs>PP3</graphElementIDs>
                 <id>n5</id>
-                <prototypeClassName>agentgui.graphEnvironment.prototypes.Star3GraphElement</prototypeClassName>
-                <type>star3</type>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.Star3GraphElement</prototypeClassName>
+                <type>branch</type>
             </value>
         </entry>
         <entry>
@@ -54,37 +54,21 @@
                 <graphElementIDs>PP12</graphElementIDs>
                 <graphElementIDs>PP3</graphElementIDs>
                 <id>n4</id>
-                <prototypeClassName>agentgui.graphEnvironment.prototypes.SimpleGraphElement</prototypeClassName>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
                 <type>pipe</type>
             </value>
         </entry>
         <entry>
-            <key>n3</key>
+            <key>n6</key>
             <value>
-                <agentClassName>gasmas.agents.BranchAgent</agentClassName>
-                <directed>false</directed>
-                <graphElementIDs>n3_1</graphElementIDs>
-                <graphElementIDs>n3_3</graphElementIDs>
-                <graphElementIDs>PP7</graphElementIDs>
-                <graphElementIDs>n3_2</graphElementIDs>
-                <graphElementIDs>PP6</graphElementIDs>
-                <graphElementIDs>PP3</graphElementIDs>
-                <id>n3</id>
-                <prototypeClassName>agentgui.graphEnvironment.prototypes.TriangeGraphElement</prototypeClassName>
-                <type>branch</type>
-            </value>
-        </entry>
-        <entry>
-            <key>n2</key>
-            <value>
-                <agentClassName>gasmas.agents.ExitAgent</agentClassName>
+                <agentClassName>gasmas.agents.CompressorAgent</agentClassName>
                 <directed>true</directed>
-                <graphElementIDs>PP9</graphElementIDs>
-                <graphElementIDs>n2</graphElementIDs>
-                <graphElementIDs>PP7</graphElementIDs>
-                <id>n2</id>
-                <prototypeClassName>agentgui.graphEnvironment.prototypes.DirectedSimpleGraphElement</prototypeClassName>
-                <type>exit</type>
+                <graphElementIDs>PP13</graphElementIDs>
+                <graphElementIDs>n6</graphElementIDs>
+                <graphElementIDs>PP16</graphElementIDs>
+                <id>n6</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</prototypeClassName>
+                <type>compressor</type>
             </value>
         </entry>
     </componentList>

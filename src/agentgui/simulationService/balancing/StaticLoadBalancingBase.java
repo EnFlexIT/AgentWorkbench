@@ -20,18 +20,21 @@ import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
+import agentgui.core.environment.EnvironmentController;
+import agentgui.core.environment.EnvironmentPanel;
+import agentgui.core.environment.EnvironmentType;
 import agentgui.core.jade.Platform;
+import agentgui.core.ontologies.gui.OntologyInstanceViewer;
 import agentgui.core.sim.setup.DistributionSetup;
 import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.envModel.p2Dsvg.controller.Physical2DEnvironmentController;
-import agentgui.envModel.p2Dsvg.ontology.ActiveObject;
 import agentgui.envModel.p2Dsvg.ontology.Physical2DEnvironment;
 import agentgui.simulationService.LoadService;
 import agentgui.simulationService.LoadServiceHelper;
-import agentgui.simulationService.load.LoadMeasureThread;
-import agentgui.simulationService.load.LoadThresholdLevels;
 import agentgui.simulationService.load.LoadInformation.Container2Wait4;
 import agentgui.simulationService.load.LoadInformation.NodeDescription;
+import agentgui.simulationService.load.LoadMeasureThread;
+import agentgui.simulationService.load.LoadThresholdLevels;
 
 public class StaticLoadBalancingBase extends OneShotBehaviour {
 
@@ -43,7 +46,6 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 	protected SimulationSetup currSimSetup = null;
 	protected DistributionSetup currDisSetup = null;
 	protected ArrayList<AgentClassElement4SimStart> currAgentList = null;
-	protected ArrayList<AgentClassElement4SimStart> currAgentListVisual = null;
 	
 	protected int currNumberOfAgents = 0;
 	protected int currNumberOfContainer = 0;
@@ -76,7 +78,7 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 	public void onStart() {
 		super.onStart();
 		this.setSimHelperAndThresholds();
-		this.startSVGVisualizationAgents();
+		this.startVisualizationAgent();
 	}
 	
 	@Override
@@ -128,20 +130,56 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 		
 		for (Iterator<AgentClassElement4SimStart> iterator = currAgentList.iterator(); iterator.hasNext();) {
 			AgentClassElement4SimStart agent2Start = iterator.next();
-			this.startAgent(agent2Start.getStartAsName(), agent2Start.getAgentClassReference(), null);
+			// --- Check for start arguments -------------------------
+			Object[] startArgs = this.getStartArguments(agent2Start);
+			// --- Start the agent -----------------------------------
+			this.startAgent(agent2Start.getStartAsName(), agent2Start.getAgentClassReference(), startArgs);
 		} 
 	}
 
 	/**
-	 * Start the agents coming from the visual-agent-configuration
+	 * This method will start the agents, which will show the 
+	 * visualisation of the current environment model
 	 */
-	protected void startAgentsFromCurrAgentListVisual() {
-	
-		if (currAgentListVisual!=null) {
-			for (Iterator<AgentClassElement4SimStart> iterator = currAgentListVisual.iterator(); iterator.hasNext();) {
-				AgentClassElement4SimStart agent2Start = iterator.next();
-				this.startAgent(agent2Start.getStartAsName(), agent2Start.getAgentClassReference(), null);
-			} 
+	protected void startVisualizationAgent() {
+		
+		EnvironmentPanel envPanel = currProject.getEnvironmentPanel();
+		if (envPanel!=null) {
+			
+			EnvironmentType envType = currProject.getEnvironmentModelType();
+			String envTypeInternalKey = envType.getInternalKey();
+			
+			// ----------------------------------------------------------------
+			// --- If an visualised environment is used -----------------------
+			// ----------------------------------------------------------------
+			if (envTypeInternalKey.equalsIgnoreCase("none")) {
+				// --- Do nothing here ------------------------------
+			} else if (envTypeInternalKey.equalsIgnoreCase("continous2Denvironment")) {
+				// --------------------------------------------------
+				// --- Start the SVG visualization ------------------
+				// --------------------------------------------------
+				Physical2DEnvironmentController envController = (Physical2DEnvironmentController) envPanel.getEnvironmentController();
+				this.startSVGVisualizationAgents(envController);
+			
+			} else {
+				// --------------------------------------------------
+				// --- Start the visualization of the model ---------
+				// --------------------------------------------------
+				EnvironmentController envController = envPanel.getEnvironmentController();
+				Object envModel = envController.getEnvironmentModelCopy();
+
+				// --- Get the Agent which has to be started for ---
+				Class<? extends Agent> displayAgentClass = envType.getDisplayAgentClass();
+				
+				Object[] startArg = new Object[3];
+				startArg[0] = currProject.projectVisualizationPanel;
+				startArg[1] = envModel;
+				this.startAgent("DisplayAgent", displayAgentClass, startArg);
+				
+				// --- Set the focus on Visualisation-Tab ---------------------
+				currProject.projectWindow.setFocus2Tab(Language.translate("Simulations-Visualisierung"));
+			}
+			// ----------------------------------------------------------------
 		}
 	}
 	
@@ -149,10 +187,7 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 	 * Depending on the current project configuration, the 
 	 * svg - visualization will be started here
 	 */
-	protected void startSVGVisualizationAgents() {
-		//Get the environment controller using the environment panel class from Project
-		Physical2DEnvironmentController physical2DEnvironmentController =  
-			(Physical2DEnvironmentController) currProject.getEnvironmentPanel().getEnvironmentController() ;
+	protected void startSVGVisualizationAgents(Physical2DEnvironmentController physical2DEnvironmentController) {
 		
 		Physical2DEnvironment environment = physical2DEnvironmentController.getEnvironmentModelCopy();
 		Document svgDocument = physical2DEnvironmentController.getSvgDocCopy();
@@ -161,7 +196,6 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 			
 			// --- Start the agent visualisation --------------------
 			Object[] args = {environment, svgDocument};
-			//TODO agentgui.physical2Denvironment.provider.EnvironmentProviderAgentNew
 			this.startAgent("EvPrAg_"+ currProject.getProjectFolder(), agentgui.envModel.p2Dsvg.provider.EnvironmentProviderAgent.class, args);
 			
 			// --- Start the DisplayAgent inside of Agent.GUI -------
@@ -172,23 +206,41 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 			this.startAgent("EvVis", agentgui.envModel.p2Dsvg.display.DisplayAgent.class, startArg);
 			
 			// --- get agents, defined in the physical-/svg-setup ---			
-			Vector<ActiveObject> activeObjects = physical2DEnvironmentController.getEnvWrap().getAgents();
-			for (Iterator<ActiveObject> iterator = activeObjects.iterator(); iterator.hasNext();) {
-				
-				ActiveObject activeObject = iterator.next();
-				String agentClassName = activeObject.getAgentClassName();
-				String agentName = activeObject.getId();
-				
-				if (currAgentListVisual==null) {
-					currAgentListVisual= new ArrayList<AgentClassElement4SimStart>();
-				}
-				AgentClassElement4SimStart ace4s = new AgentClassElement4SimStart();
-				ace4s.setAgentClassReference(agentClassName);
-				ace4s.setStartAsName(agentName);
-				currAgentListVisual.add(ace4s);
-			}
-			// --- set focus on Visualization-Tab -------------------
+//			Vector<ActiveObject> activeObjects = physical2DEnvironmentController.getEnvWrap().getAgents();
+//			for (Iterator<ActiveObject> iterator = activeObjects.iterator(); iterator.hasNext();) {
+//				
+//				ActiveObject activeObject = iterator.next();
+//				String agentClassName = activeObject.getAgentClassName();
+//				String agentName = activeObject.getId();
+//				
+//				if (currAgentListVisual==null) {
+//					currAgentListVisual= new ArrayList<AgentClassElement4SimStart>();
+//				}
+//				AgentClassElement4SimStart ace4s = new AgentClassElement4SimStart();
+//				ace4s.setAgentClassReference(agentClassName);
+//				ace4s.setStartAsName(agentName);
+//				currAgentListVisual.add(ace4s);
+//			}
+			// --- set focus on Visualisation-Tab -------------------
 			currProject.projectWindow.setFocus2Tab(Language.translate("Simulations-Visualisierung"));
+		}
+	}
+	
+	/**
+	 * This method will return the Object Array for the start argument of an agent 
+	 * @param ace4SimStart
+	 */
+	protected Object[] getStartArguments(AgentClassElement4SimStart ace4SimStart) {
+		
+		if (ace4SimStart.getStartArguments()==null) {
+			return null;
+		} else {
+			String selectedAgentReference = ace4SimStart.getElementClass().getName();
+			OntologyInstanceViewer oiv = new OntologyInstanceViewer(currProject, selectedAgentReference);
+			oiv.setConfigurationXML(ace4SimStart.getStartArguments());
+			
+			Object[] startArgs = oiv.getConfigurationInstances();
+			return startArgs;
 		}
 	}
 	

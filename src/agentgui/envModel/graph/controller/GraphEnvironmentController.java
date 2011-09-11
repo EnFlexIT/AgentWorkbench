@@ -540,7 +540,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 */
 	@Override
 	public Object getEnvironmentModelCopy() {
-		return null;
+		return this.networkModel.clone();
 	}	
 	
 }

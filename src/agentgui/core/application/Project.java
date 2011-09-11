@@ -175,7 +175,7 @@ import agentgui.core.sim.setup.SimulationSetups;
 	@XmlElement(name="projectDescription")	private String projectDescription;
 	@XmlElement(name="projectView")			private String projectView;			// --- Developer / End-User ---
 
-	@XmlElement(name="environmentModel")	private String environmentModel;	
+	@XmlElement(name="environmentModel")	private String environmentModelName;	
 	
 	/**
 	 * This Vector holds the additional resources which are used for the current project 
@@ -732,8 +732,8 @@ import agentgui.core.sim.setup.SimulationSetups;
 	 * @param environmentModel the environmentModel to set
 	 */
 	@XmlTransient
-	public void setEnvironmentModel(String environmentModel) {
-		this.environmentModel = environmentModel;
+	public void setEnvironmentModelName(String environmentModel) {
+		this.environmentModelName = environmentModel;
 		this.isUnsaved = true;
 		setChanged();
 		notifyObservers(CHANGED_EnvironmentModel);
@@ -741,14 +741,14 @@ import agentgui.core.sim.setup.SimulationSetups;
 	/**
 	 * @return the environmentModel
 	 */
-	public String getEnvironmentModel() {
-		return environmentModel;
+	public String getEnvironmentModelName() {
+		return environmentModelName;
 	}
 	/**
 	 * @return the 'EnvironmentType' of the current EnvironmentModel
 	 */
 	public EnvironmentType getEnvironmentModelType() {
-		return Application.RunInfo.getKnowEnvironmentTypes().getEnvironmentTypeByKey(this.environmentModel);
+		return Application.RunInfo.getKnowEnvironmentTypes().getEnvironmentTypeByKey(this.environmentModelName);
 	}
 	
 	/**

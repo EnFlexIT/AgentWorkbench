@@ -7,7 +7,7 @@
             <agentClassReference>gasmas.agents.PipeAgent</agentClassReference>
             <startAsName>PiAg</startAsName>
             <startArguments>
-                <argument>PFBpcGUgSUQ9IiIgbGVuZ3RoPSIxMC4wRiI+Cgk8cmVzaXN0YW5jZT4KCQk8UmVzaXN0YW5jZVBhcmFtZXRlcnMgcGlwZUZyaWN0aW9uPSIwLjBGIiBjb3N0cz0iMC4wRiIvPgoJPC9yZXNpc3RhbmNlPgo8L1BpcGU+Cg==</argument>
+                <argument>PFBpcGUgSUQ9IkhhbGxvIiBsZW5ndGg9IjEwLjBGIj4KCTxyZXNpc3RhbmNlPgoJCTxSZXNpc3RhbmNlUGFyYW1ldGVycyBwaXBlRnJpY3Rpb249IjAuMEYiIGNvc3RzPSIwLjBGIi8+Cgk8L3Jlc2lzdGFuY2U+CjwvUGlwZT4K</argument>
             </startArguments>
         </agent>
         <agent>
@@ -417,6 +417,12 @@
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>gasmas.agents.PipeAgent</agentClassReference>
             <startAsName>n78</startAsName>
+        </agent>
+        <agent>
+            <postionNo>69</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.BranchAgent</agentClassReference>
+            <startAsName>n79</startAsName>
         </agent>
     </agentSetup>
     <distribution>

@@ -410,7 +410,7 @@ public class ProjectResources extends JPanel implements Observer {
 		if(jComboBoxEnvironmentModelSelector == null){
 			
 			// --- Get current definitions --------------------------
-			String currEnvTypeKey = currProject.getEnvironmentModel();
+			String currEnvTypeKey = currProject.getEnvironmentModelName();
 			EnvironmentType envType = Application.RunInfo.getKnowEnvironmentTypes().getEnvironmentTypeByKey(currEnvTypeKey);
 			
 			jComboBoxEnvironmentModelSelector = new JComboBox();
@@ -422,9 +422,9 @@ public class ProjectResources extends JPanel implements Observer {
 				public void actionPerformed(ActionEvent e) {
 					EnvironmentType envType = (EnvironmentType) getJComboBoxEnvironmentModelSelector().getSelectedItem();
 					String newEnvModel = envType.getInternalKey();
-					String oldEnvModel = currProject.getEnvironmentModel();
+					String oldEnvModel = currProject.getEnvironmentModelName();
 					if (newEnvModel.equals(oldEnvModel)==false) {
-						currProject.setEnvironmentModel(newEnvModel);
+						currProject.setEnvironmentModelName(newEnvModel);
 					}
 				}
 			});

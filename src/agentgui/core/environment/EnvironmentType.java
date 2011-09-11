@@ -27,6 +27,7 @@
  */
 package agentgui.core.environment;
 
+import jade.core.Agent;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
@@ -49,7 +50,8 @@ public class EnvironmentType {
 	private String internalKey = null;
 	private String displayName = null;
 	private Class<? extends EnvironmentPanel> displayPanelClass = null;
-		
+	private Class<? extends Agent> displayAgentClass = null;
+	
 	/**
 	 * Constructor for this class.
 	 * 
@@ -57,10 +59,11 @@ public class EnvironmentType {
 	 * @param displayName A name that will be displayed later on
 	 * @param panelClass The panel on which all components have to be placed in order to allow end users to define their own environment model
 	 */
-	public EnvironmentType(String key, String displayName, Class<? extends EnvironmentPanel> panelClass) {
+	public EnvironmentType(String key, String displayName, Class<? extends EnvironmentPanel> panelClass, Class<? extends Agent> agentClass) {
 		this.internalKey = key;
 		this.displayName = displayName;
 		this.displayPanelClass = panelClass;
+		this.displayAgentClass = agentClass;
 	}
 	
 	/**
@@ -107,6 +110,19 @@ public class EnvironmentType {
 	 */
 	public void setDisplayPanelClass(Class<? extends EnvironmentPanel> displayPanelClass) {
 		this.displayPanelClass = displayPanelClass;
+	}
+
+	/**
+	 * @param displayAgent the displayAgent to set
+	 */
+	public void setDisplayAgentClass(Class<? extends Agent> displayAgentClass) {
+		this.displayAgentClass = displayAgentClass;
+	}
+	/**
+	 * @return the displayAgent
+	 */
+	public Class<? extends Agent> getDisplayAgentClass() {
+		return displayAgentClass;
 	}
 	
 }

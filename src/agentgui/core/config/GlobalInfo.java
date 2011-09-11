@@ -27,6 +27,7 @@
  */
 package agentgui.core.config;
 
+import jade.core.Agent;
 import jade.core.Profile;
 
 import java.awt.Color;
@@ -43,6 +44,7 @@ import agentgui.core.environment.EnvironmentType;
 import agentgui.core.environment.EnvironmentTypes;
 import agentgui.core.jade.PlatformJadeConfig;
 import agentgui.envModel.graph.controller.GraphEnvironmentControllerGUI;
+import agentgui.envModel.graph.visualisation.DisplayAgent;
 import agentgui.envModel.p2Dsvg.controller.Physical2DEnvironmentControllerGUI;
 
 /**
@@ -191,27 +193,31 @@ public class GlobalInfo {
 		String envKey = null;
 		String envDisplayName = null;
 		Class<? extends EnvironmentPanel> envPanelClass = null;
+		Class<? extends Agent> displayAgentClass = null;
 		EnvironmentType envType = null;
 		
 		// --- No environment -----------------------------------------------
 		envKey = "none";
 		envDisplayName = "Kein vordefiniertes Umgebungsmodell verwenden";
 		envPanelClass = null;
-		envType = new EnvironmentType(envKey, envDisplayName, envPanelClass);
+		displayAgentClass = null;
+		envType = new EnvironmentType(envKey, envDisplayName, envPanelClass, displayAgentClass);
 		addEnvironmentType(envType);
 		
 		// --- Continuous 2D environment ------------------------------------
 		envKey = "continous2Denvironment";
 		envDisplayName = "Kontinuierliches 2D-Umgebungsmodell";
 		envPanelClass = Physical2DEnvironmentControllerGUI.class;
-		envType = new EnvironmentType(envKey, envDisplayName, envPanelClass);
+		displayAgentClass = agentgui.envModel.p2Dsvg.provider.EnvironmentProviderAgent.class;
+		envType = new EnvironmentType(envKey, envDisplayName, envPanelClass, displayAgentClass);
 		addEnvironmentType(envType);
 		
 		// --- Grid Environment ---------------------------------------------
 		envKey = "gridEnvironment";
 		envDisplayName = "Graph bzw. Netzwerk";
 		envPanelClass = GraphEnvironmentControllerGUI.class;
-		envType = new EnvironmentType(envKey, envDisplayName, envPanelClass);
+		displayAgentClass = DisplayAgent.class;
+		envType = new EnvironmentType(envKey, envDisplayName, envPanelClass, displayAgentClass);
 		addEnvironmentType(envType);
 		
 	}

@@ -31,7 +31,6 @@ public class StaticLoadBalancing extends StaticLoadBalancingBase {
 			// --- => Just start all defined agents ----------------------
 			// -----------------------------------------------------------
 			this.startAgentsFromCurrAgentList();
-			this.startAgentsFromCurrAgentListVisual();
 			
 		} else {
 			// -----------------------------------------------------------
@@ -54,7 +53,6 @@ public class StaticLoadBalancing extends StaticLoadBalancingBase {
 			if (currNumberOfContainer<=1) {
 				// --- Just start all defined agents ---------------------
 				this.startAgentsFromCurrAgentList();
-				this.startAgentsFromCurrAgentListVisual();
 				return;
 			}
 			
@@ -73,18 +71,17 @@ public class StaticLoadBalancing extends StaticLoadBalancingBase {
 			if (currAgentList!=null) {
 				currAgentListMerged.addAll(currAgentList);	
 			}			
-			if (currAgentListVisual!=null) {
-				currAgentListMerged.addAll(currAgentListVisual);	
-			}
 			
 			// --- start the distribution of the agents to the locations -
 			for (Iterator<AgentClassElement4SimStart> iterator = currAgentListMerged.iterator(); iterator.hasNext();) {
 				// --- Get the agent, which has to be started ------------
 				AgentClassElement4SimStart agent2Start = iterator.next();
-				
+				// --- Check for start arguments -------------------------
+				Object[] startArgs = this.getStartArguments(agent2Start);
+
 				if (locationNames==null) {
 					// --- Just start the agent locally ------------------
-					this.startAgent(agent2Start.getStartAsName(), agent2Start.getAgentClassReference(),null , null);
+					this.startAgent(agent2Start.getStartAsName(), agent2Start.getAgentClassReference(), startArgs , null);
 
 				} else {
 					// --- Set the location for the agent ----------------
@@ -95,7 +92,7 @@ public class StaticLoadBalancing extends StaticLoadBalancingBase {
 						cont4DisI=0;
 					}
 					// --- finally start the agent -----------------------				
-					this.startAgent(agent2Start.getStartAsName(), agent2Start.getAgentClassReference(), null, location);
+					this.startAgent(agent2Start.getStartAsName(), agent2Start.getAgentClassReference(), startArgs, location);
 				
 				}
 			} // --- end for

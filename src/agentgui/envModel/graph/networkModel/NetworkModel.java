@@ -42,7 +42,7 @@ import edu.uci.ics.jung.graph.SparseGraph;
  * @author <br>Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati 
  *
  */
-public class NetworkModel{
+public class NetworkModel implements Cloneable {
 	/**
 	 * The JUNG graph.
 	 */
@@ -64,6 +64,18 @@ public class NetworkModel{
 		this.networkComponents = new HashMap<String, NetworkComponent>();
 	}
 	
+	/**
+	 * Creates a clone of the current instance
+	 */
+	@Override
+	public Object clone() {
+		try {
+			return super.clone();
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 	/**
 	 * Returns the GridComponent with the given ID, or null if not found.
 	 * @param id The ID to look for
@@ -144,8 +156,7 @@ public class NetworkModel{
 	/**
 	 * @param networkComponents the networkComponents to set
 	 */
-	public void setNetworkComponents(
-			HashMap<String, NetworkComponent> networkComponents) {
+	public void setNetworkComponents(HashMap<String, NetworkComponent> networkComponents) {
 		this.networkComponents = networkComponents;
 	}
 	

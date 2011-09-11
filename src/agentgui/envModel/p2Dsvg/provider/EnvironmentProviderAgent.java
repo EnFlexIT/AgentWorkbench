@@ -40,7 +40,7 @@ public class EnvironmentProviderAgent extends Agent {
 		if(args != null && args[0] != null && args[0] instanceof Physical2DEnvironment){
 			try {
 				this.helper = (EnvironmentProviderHelper) getHelper(EnvironmentProviderService.SERVICE_NAME);
-				helper.setEnvironment((Physical2DEnvironment) args[0]);
+				this.helper.setEnvironment((Physical2DEnvironment) args[0]);
 				if(args[1] != null && args[1] instanceof Document){
 					helper.setSVGDoc((Document) args[1]);
 				}
@@ -62,9 +62,6 @@ public class EnvironmentProviderAgent extends Agent {
 	 */
 	private class UpdatePositionsBehaviour extends TickerBehaviour{
 		
-		/**
-		 * 
-		 */
 		private static final long serialVersionUID = 3819944524810503066L;
 		private EnvironmentProviderHelper helper;
 
@@ -76,7 +73,7 @@ public class EnvironmentProviderAgent extends Agent {
 		@SuppressWarnings("unchecked")
 		@Override
 		protected synchronized void onTick() {
-			// --- CD: Bug wg. concurrent Exception behogen ----
+			// --- CD: Bug wg. concurrent Exception behoben ----
 			HashSet<ActiveObject> moving = new HashSet<ActiveObject>( helper.getCurrentlyMovingAgents() );
 			if(moving.size() > 0){	// Any moving agents?
 				
