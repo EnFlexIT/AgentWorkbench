@@ -359,6 +359,7 @@ de;Start-Konfiguration;Start-Configuration
 de;Start-Liste:;Start list:;;;
 de;Start-Objekte aus Projekt-Ontologie;Startup objects from project-ontology
 de;Start;Start
+de;Startargument definieren für Agent;Define start argument for agent;;;
 de;Starte Agent.GUI - Service;Start Agent.GUI - Service
 de;Starte Agent.GUI als:;Start Agent.GUI as:
 de;Starte JADE über Port-Nr.:;Start JADE via port no.:

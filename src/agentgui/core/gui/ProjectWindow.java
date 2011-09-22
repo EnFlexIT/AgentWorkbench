@@ -45,7 +45,7 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	
 	private Project currProject;
 	
-	private JSplitPane ProjectViewSplit = null;
+	private JSplitPane jSplitPaneProjectView = null;
 	private JScrollPane jScrollPane = null;
 	
 	private JTree projectTree = null;
@@ -59,10 +59,16 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	private boolean pauseTreeSelectionListener = false;
 	private boolean pauseTabSelectionListener = false;
 	
-	private ProjectWindowTab projectWindowTab4Configuration = null;
-	private ProjectWindowTab projectWindowTab4SimulationSetup = null;
 	private Vector<ProjectWindowTab> tabVector = new Vector<ProjectWindowTab>();  //  @jve:decl-index=0:
 	private int oldNumberOfNodes = 0;
+	
+	
+	private JTabbedPane tabClicked = null;
+	private int tabClickedIndex = 0;
+	private String tabClickedName = null;
+
+	private boolean tabClickedMaximized = false;
+	private int dividerLocation = 0;
 	
 	
 	/**
@@ -75,12 +81,9 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 		this.currProject.addObserver(this);		
 		
 		// --- TreeModel initialisieren --------------------------
-		rootNode = new DefaultMutableTreeNode( currProject.getProjectName() );
-		projectTreeModel = new DefaultTreeModel( rootNode );	
+		this.rootNode = new DefaultMutableTreeNode( currProject.getProjectName() );
+		this.projectTreeModel = new DefaultTreeModel( rootNode );	
 		
-		// --- Instanciate Listerner for Tab-Changes -------------
-		this.setTabMouseListener();
-		this.setTabSelectionListener();
 		// --- Projektfenster zusammenbauen ----------------------
 		this.initialize();		
 
@@ -113,15 +116,15 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	 * @return javax.swing.JSplitPane	
 	 */
 	private JSplitPane getProjectViewSplit() {
-		if (ProjectViewSplit == null) {
-			ProjectViewSplit = new JSplitPane();
-			ProjectViewSplit.setOneTouchExpandable(true);
-			ProjectViewSplit.setDividerLocation(200);
-			ProjectViewSplit.setDividerSize(10);			
-			ProjectViewSplit.setLeftComponent(getJScrollPane());			
-			ProjectViewSplit.setRightComponent( getProjectViewRightTabs() );
+		if (jSplitPaneProjectView == null) {
+			jSplitPaneProjectView = new JSplitPane();
+			jSplitPaneProjectView.setOneTouchExpandable(true);
+			jSplitPaneProjectView.setDividerLocation(200);
+			jSplitPaneProjectView.setDividerSize(10);			
+			jSplitPaneProjectView.setLeftComponent(getJScrollPane());			
+			jSplitPaneProjectView.setRightComponent( getProjectViewRightTabs() );
 		}
-		return ProjectViewSplit;
+		return jSplitPaneProjectView;
 	}
 	
 	/**
@@ -183,9 +186,9 @@ public class ProjectWindow extends JInternalFrame implements Observer {
     	if ( Up2TreeLevel == null ) 
     		Up2TreeLevel = 1000;
 
-    	ProjectTreeExpand( new TreePath(rootNode), expand, CurrNodeLevel, Up2TreeLevel);
+    	projectTreeExpand(new TreePath(rootNode), expand, CurrNodeLevel, Up2TreeLevel);
     }
-	private void ProjectTreeExpand( TreePath parent, boolean expand, Integer CurrNodeLevel, Integer Up2TreeLevel) {
+	private void projectTreeExpand( TreePath parent, boolean expand, Integer CurrNodeLevel, Integer Up2TreeLevel) {
     
         TreeNode node = (TreeNode)parent.getLastPathComponent();
         if (CurrNodeLevel >= Up2TreeLevel) {
@@ -195,7 +198,7 @@ public class ProjectWindow extends JInternalFrame implements Observer {
             for ( @SuppressWarnings("rawtypes") Enumeration e=node.children(); e.hasMoreElements(); ) {
                 TreeNode n = (TreeNode) e.nextElement();
                 TreePath path = parent.pathByAddingChild(n);
-                ProjectTreeExpand(path, expand, CurrNodeLevel+1, Up2TreeLevel);
+                projectTreeExpand(path, expand, CurrNodeLevel+1, Up2TreeLevel);
             }
         }    
         // Expansion or collapse must be done bottom-up
@@ -217,65 +220,93 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 			projectViewRightTabs.setTabPlacement(JTabbedPane.TOP);
 			projectViewRightTabs.setPreferredSize(new Dimension(126, 72));
 			projectViewRightTabs.setFont(new Font("Dialog", Font.BOLD, 12));
-			projectViewRightTabs.addMouseListener(this.tabMouseListener);
-			projectViewRightTabs.addChangeListener(this.tabSelectionListener);
+			projectViewRightTabs.addMouseListener(this.getTabMouseListener());
+			projectViewRightTabs.addChangeListener(this.getTabSelectionListener());
 		}
 		return projectViewRightTabs;
 	}	
 	
 	/**
-	 * This method instanciates the MouseListener for the Tab-Selections
+	 * This method instantiates the MouseListener for the Tab-Selections
 	 */
-	private void setTabMouseListener() {
+	public MouseListener getTabMouseListener() {
 		
-		tabMouseListener = new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent me) {
-				
-				if (me.getClickCount()==2 & SwingUtilities.isLeftMouseButton(me)) {
-					System.out.println("double click on Tab ...");
+		if (tabMouseListener==null) {
+			
+			this.tabMouseListener = new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent me) {
+					
+					tabClicked = (JTabbedPane) me.getComponent();
+					tabClickedIndex = tabClicked.getSelectedIndex();
+					tabClickedName = tabClicked.getTitleAt(tabClickedIndex);
+					
+					if (me.getClickCount()==2 & SwingUtilities.isLeftMouseButton(me)) {
+						if (tabClickedMaximized==false) {
+							tabMaximize();
+						} else {
+							tabRestore();
+						}
+					}
+					if (me.getClickCount()==1 & SwingUtilities.isRightMouseButton(me)) {
+						System.out.println("right click on Tab " + tabClickedName + " ...");
+					}
 				}
-				if (me.getClickCount()==1 & SwingUtilities.isRightMouseButton(me)) {
-					System.out.println("right click on Tab ...");
-				}
-			}
-		};
+			};
+		}
+		return tabMouseListener;
+	}
+	
+	private void tabMaximize() {
+		//System.out.println("Maximize");
+		this.tabClickedMaximized = true;
+		this.dividerLocation = this.jSplitPaneProjectView.getDividerLocation();
+		this.jSplitPaneProjectView.setDividerLocation(0);
+		
+	}
+	private void tabRestore(){
+		//System.out.println("Maximize");
+		this.tabClickedMaximized = false;
+		this.jSplitPaneProjectView.setDividerLocation(this.dividerLocation);
 	}
 	
 	/**
 	 * This method instantiates the ChangeListener for Tab-Selections
 	 */
-	private void setTabSelectionListener() {
+	public ChangeListener getTabSelectionListener() {
 		
-		tabSelectionListener = new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent evt) {
-				
-				if (pauseTabSelectionListener) return;
-				
-				// --- To prevent, that an add-action came in ----
-				int newNumberOfNodes = getNumberOfNodes();
-				if (newNumberOfNodes==oldNumberOfNodes) {
+		if (tabSelectionListener==null) {
+			tabSelectionListener = new ChangeListener() {
+				@Override
+				public void stateChanged(ChangeEvent evt) {
 					
-					JTabbedPane pane = (JTabbedPane)evt.getSource();
-			        int selIndex = pane.getSelectedIndex();
-			        if (selIndex>-1) {
-				        String title = pane.getTitleAt(selIndex);
-				        DefaultMutableTreeNode selectedNode = getTreeNode(title);
+					if (pauseTabSelectionListener) return;
+					
+					// --- To prevent, that an add-action came in ----
+					int newNumberOfNodes = getNumberOfNodes();
+					if (newNumberOfNodes==oldNumberOfNodes) {
+						
+						JTabbedPane pane = (JTabbedPane)evt.getSource();
+				        int selIndex = pane.getSelectedIndex();
+				        if (selIndex>-1) {
+					        String title = pane.getTitleAt(selIndex);
+					        DefaultMutableTreeNode selectedNode = getTreeNode(title);
 
-				        DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) projectTree.getLastSelectedPathComponent();
-				        if (selectedNode!=currentNode) {
-				        	pauseTreeSelectionListener=true;
-				        	projectTree.setSelectionPath(new TreePath(selectedNode.getPath()));
-				        	pauseTreeSelectionListener=false;
+					        DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) projectTree.getLastSelectedPathComponent();
+					        if (selectedNode!=currentNode) {
+					        	pauseTreeSelectionListener=true;
+					        	projectTree.setSelectionPath(new TreePath(selectedNode.getPath()));
+					        	pauseTreeSelectionListener=false;
+					        }
 				        }
-			        }
-			        
-				} else {
-					oldNumberOfNodes = newNumberOfNodes; 
+				        
+					} else {
+						oldNumberOfNodes = newNumberOfNodes; 
+					}
 				}
-			}
-		};
+			};
+		}
+		return tabSelectionListener;
 	}
 	
 	/**
@@ -397,13 +428,13 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 		ChangeListener[] listener = pane.getChangeListeners();
 		for (int i = 0; i < listener.length; i++) {
 			ChangeListener cl = listener[i];
-			if (cl==tabSelectionListener) {
+			if (cl==this.getTabSelectionListener()) {
 				listenerFound = true;
 			}
 		} 
 		
 		if (listenerFound==false) {
-			pane.addChangeListener(tabSelectionListener);
+			pane.addChangeListener(this.getTabSelectionListener());
 		}
 	}
 	/**
@@ -618,32 +649,6 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 			newNode = this.addProjectTabInternal(pwt);	
 		}
 		return newNode;
-	}
-
-	/**
-	 * @param projectWindowTab4Configuration the projectWindowTab4Configuration to set
-	 */
-	public void setProjectWindowTab4Configuration(ProjectWindowTab projectWindowTab4Configuration) {
-		this.projectWindowTab4Configuration = projectWindowTab4Configuration;
-	}
-	/**
-	 * @return the projectWindowTab4Configuration
-	 */
-	public ProjectWindowTab getProjectWindowTab4Configuration() {
-		return projectWindowTab4Configuration;
-	}
-
-	/**
-	 * @param projectWindowTab4SimulationSetup the projectWindowTab4SimulationSetup to set
-	 */
-	public void setProjectWindowTab4SimulationSetup(ProjectWindowTab projectWindowTab4SimulationSetup) {
-		this.projectWindowTab4SimulationSetup = projectWindowTab4SimulationSetup;
-	}
-	/**
-	 * @return the projectWindowTab4SimulationSetup
-	 */
-	public ProjectWindowTab getProjectWindowTab4SimulationSetup() {
-		return projectWindowTab4SimulationSetup;
 	}
 
 	

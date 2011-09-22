@@ -267,7 +267,9 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 	private JComboBox getJComboBoxStartLists() {
 		if (jComboBoxStartLists == null) {
 			jComboBoxStartLists = new JComboBox();
-			jComboBoxStartLists.setModel(currSimSetup.getComboBoxModel4AgentLists());
+			if (currSimSetup!=null) {
+				jComboBoxStartLists.setModel(currSimSetup.getComboBoxModel4AgentLists());	
+			}
 			//jComboBoxStartLists.setFont(new Font("Dialog", Font.BOLD, 12));
 			jComboBoxStartLists.setToolTipText("Auswahl Startliste");
 			jComboBoxStartLists.addActionListener(this);

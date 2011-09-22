@@ -17,7 +17,7 @@ public class ProjectWindowTab {
 	public final static int DISPLAY_4_DEVELOPER = 10;
 	private int displayType = 0;
 
-	private Project project;
+	private Project currProject;
 	
 	private String title;
 	private String tipText;
@@ -37,9 +37,9 @@ public class ProjectWindowTab {
 	 * @param component
 	 * @param tip
 	 */
-	public ProjectWindowTab(Project currProject, int displayType_DEV_or_USER, String head_title, String aTipText, Icon ico, JComponent component, String pareName, JTabbedPane jTabbedPane4ChildComponents) {
+	public ProjectWindowTab(Project project, int displayType_DEV_or_USER, String head_title, String aTipText, Icon ico, JComponent component, String pareName, JTabbedPane jTabbedPane4ChildComponents) {
 		
-		this.project = currProject;
+		this.currProject = project;		
 		this.displayType = displayType_DEV_or_USER;
 		
 		this.title = head_title;
@@ -65,7 +65,7 @@ public class ProjectWindowTab {
 	 * Adds the current Tab-object to the project window 
 	 */
 	public void add() {
-		this.project.projectWindow.addProjectTab(this);	
+		this.currProject.projectWindow.addProjectTab(this);	
 	}
 	/**
 	 * Adds the current Tab-object to the project window  
@@ -73,14 +73,14 @@ public class ProjectWindowTab {
 	 * @param indexPosotionGreaterOne
 	 */
 	public void add(int indexPositionGreaterOne) {
-		this.project.projectWindow.addProjectTab(this, indexPositionGreaterOne);	
+		this.currProject.projectWindow.addProjectTab(this, indexPositionGreaterOne);	
 	}
 	
 	/**
 	 * This removes the current Tab from the project window  
 	 */
 	public void remove() {
-		this.project.projectWindow.remove(this);
+		this.currProject.projectWindow.remove(this);
 	}
 	
 	/**

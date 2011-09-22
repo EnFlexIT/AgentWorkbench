@@ -424,6 +424,12 @@
             <agentClassReference>gasmas.agents.BranchAgent</agentClassReference>
             <startAsName>n79</startAsName>
         </agent>
+        <agent>
+            <postionNo>70</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.PipeAgent</agentClassReference>
+            <startAsName>n80</startAsName>
+        </agent>
     </agentSetup>
     <distribution>
         <doDynamicLoadBalalncing>false</doDynamicLoadBalalncing>

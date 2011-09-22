@@ -9,17 +9,21 @@ import java.awt.Insets;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
+import agentgui.core.application.Project;
+
 public class TabForSubPanes extends JPanel  {
 
 	private static final long serialVersionUID = 1L;
 
-	public JTabbedPane jTabbedPaneIntern = null;
+	private Project currProject = null;
+	private JTabbedPane jTabbedPaneIntern = null;
 
 	/**
 	 * This is the default constructor
 	 */
-	public TabForSubPanes() {
+	public TabForSubPanes(Project project) {
 		super();
+		this.currProject = project;
 		initialize();
 	}
 
@@ -39,19 +43,23 @@ public class TabForSubPanes extends JPanel  {
 		gridBagConstraints.gridx = 0;
 		this.setLayout(new GridBagLayout());
 		this.setSize(421, 239);
-		this.add(getJTabbedPaneSimSetup(), gridBagConstraints);
+		this.add(getJTabbedPane(), gridBagConstraints);
 	}
 
 	/**
 	 * This method initializes jTabbedPaneSimSetup	
 	 * @return javax.swing.JTabbedPane	
 	 */
-	private JTabbedPane getJTabbedPaneSimSetup() {
+	public JTabbedPane getJTabbedPane() {
 		if (jTabbedPaneIntern == null) {
 			jTabbedPaneIntern = new JTabbedPane();
 			jTabbedPaneIntern.setFont(new Font("Dialog", Font.BOLD, 12));
+			jTabbedPaneIntern.addMouseListener(currProject.projectWindow.getTabMouseListener());
+			jTabbedPaneIntern.addChangeListener(currProject.projectWindow.getTabSelectionListener());
 		}
 		return jTabbedPaneIntern;
 	}
+	
+	
 	
 }  //  @jve:decl-index=0:visual-constraint="10,21"

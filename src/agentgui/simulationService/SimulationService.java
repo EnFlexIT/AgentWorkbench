@@ -192,7 +192,11 @@ public class SimulationService extends BaseService {
 			broadcastManagerAgent(envManager, slices);
 		}		
 		public AID getManagerAgent() throws ServiceException {
-			return environmentManagerDescription.getAID();
+			if (environmentManagerDescription==null) {
+				return null;
+			} else {
+				return environmentManagerDescription.getAID();	
+			}
 		}
 		
 		// ----------------------------------------------------------

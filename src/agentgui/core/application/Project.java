@@ -279,12 +279,11 @@ import agentgui.core.sim.setup.SimulationSetups;
 		
 		// ------------------------------------------------
 		// --- Configuration ------------------------------
-		TabForSubPanes subPanes = new TabForSubPanes(); 
+		TabForSubPanes subPanes = new TabForSubPanes(this); 
 		pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, 
 				   Language.translate("Konfiguration"), null, null, 
-				   subPanes, null, subPanes.jTabbedPaneIntern);
+				   subPanes, null, subPanes.getJTabbedPane());
 		pwt.add();
-		this.projectWindow.setProjectWindowTab4Configuration(pwt);
 		
 			// --- External Resources -------------------------
 			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, 
@@ -309,12 +308,11 @@ import agentgui.core.sim.setup.SimulationSetups;
 		
 		// ------------------------------------------------
 		// --- Simulations-Setup --------------------------
-		subPanes = new TabForSubPanes(); 
+		subPanes = new TabForSubPanes(this); 
 		pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, 
 				   Language.translate("Simulations-Setup"), null, null, 
-				   subPanes, null, subPanes.jTabbedPaneIntern);
+				   subPanes, null, subPanes.getJTabbedPane());
 		pwt.add();
-		this.projectWindow.setProjectWindowTab4SimulationSetup(pwt);
 		
 			// --- start configuration for agents ---------
 			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, 

@@ -21,8 +21,8 @@ public class ReflectClassFiles extends ArrayList<String> {
 
 	private Project currProject = null;
 	
-	private String SearchINReference = null;
-	private String[] SearchINPathParts = null;
+	private String searchINReference = null;
+	private String[] searchINPathParts = null;
 
 	private Vector<String> classPathExternalJars = null;
 	
@@ -39,9 +39,9 @@ public class ReflectClassFiles extends ArrayList<String> {
 		this.classPathExternalJars.addAll(currProject.projectResources);
 		
 		// --- Verzeichnis, in dem die Ontologie liegt auslesen ---
-		SearchINReference = SearchReference;
-		if ( !(SearchINReference == null) ) {
-			SearchINPathParts = SearchINReference.split("\\.");
+		searchINReference = SearchReference;
+		if ( !(searchINReference == null) ) {
+			searchINPathParts = searchINReference.split("\\.");
 		}
 		this.setClasses();
 	}
@@ -58,7 +58,8 @@ public class ReflectClassFiles extends ArrayList<String> {
 		
 		// --- Try to find the resource of the given Reference ------
 		try {
-			dirs = getClassResources(SearchINReference);
+			dirs = getClassResources(searchINReference);
+			//System.out.println( "=> " + dirs.toString());
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -67,23 +68,31 @@ public class ReflectClassFiles extends ArrayList<String> {
 
 		// --- Look at the Result of the Resources-Search ----------
 		if (dirs.size()>0) {
-			//System.out.println("=> " + dirs.toString());
 			File directory = dirs.get(0);
 			String PathOfFile = directory.toString();
 			String reference2JarFile = this.getJarReferenceFromPathOfFile(PathOfFile);
 			//System.out.println("=> " + directory.toString() + " <=> " + reference2JarFile); 
-			if ( PathOfFile.startsWith("file:") && reference2JarFile!=null ) {
-				// --- Path points to a jar-file --------------------
-				//System.out.println("Jar-Result: " + SearchINReference + " => " + reference2JarFile);
-				reference2JarFile = PathOfFile.substring(0, PathOfFile.lastIndexOf(reference2JarFile)) + reference2JarFile;
-				reference2JarFile = reference2JarFile.replace("file:\\", "");
-				ClazzList = getJARClasses( reference2JarFile );
+			
+			if ( reference2JarFile!=null ) {
+				if (PathOfFile.startsWith("file:")) {
+					// --- Path points to a jar-file ----------------
+					//System.out.println("Jar-Result: " + SearchINReference + " => " + reference2JarFile);
+					reference2JarFile = PathOfFile.substring(0, PathOfFile.lastIndexOf(reference2JarFile)) + reference2JarFile;
+					reference2JarFile = reference2JarFile.replace("file:\\", "");
+					ClazzList = getJARClasses( reference2JarFile );
+					
+				} else {
+					// --- Path points to an external IDE-path ------
+					SearchPath = reference2JarFile;
+					ClazzList = getIDEClasses( SearchPath, SearchPath );
+				}
+				
 			} else {
-				// --- Points to the IDE-Physical2DEnvironment ----------------
-				//System.out.println("IDE-Result: " + SearchINReference);
+				// --- Points to the Agent.GUI IDE-Environment ------
 				SearchPath = Application.RunInfo.PathBaseDirIDE_BIN();
 				ClazzList = getIDEClasses( SearchPath, SearchPath );
 			}
+			
 		}
 		if(ClazzList!=null){
 			this.addAll( ClazzList );
@@ -158,10 +167,10 @@ public class ReflectClassFiles extends ArrayList<String> {
 					CurrClass = jarEntry.getName().replaceAll("/", "\\.");
 					CurrClass = CurrClass.substring(0, CurrClass.length() - (".class").length());
 					// --- Klasse in die Auflistung aufnehmen ? ---
-					if (SearchINReference == null) {
+					if (searchINReference == null) {
 						classes.add( CurrClass );	
 					} else {
-						if (CurrClass.startsWith(SearchINReference) ) {
+						if (CurrClass.startsWith(searchINReference) ) {
 							classes.add( CurrClass );
 						}		
 					}
@@ -185,9 +194,9 @@ public class ReflectClassFiles extends ArrayList<String> {
 
 		ArrayList<String> FileList = new ArrayList<String>();
 		
-		int CutBegin = BasePath.toString().length();
-		int CutEnd   = 0;
-		String CurrClass = "";
+		int cutBegin = BasePath.toString().length();
+		int cutEnd   = 0;
+		String currClass = "";
 		
 		File dir = new File(SearchPath);
 		File[] files = dir.listFiles();
@@ -195,10 +204,10 @@ public class ReflectClassFiles extends ArrayList<String> {
 			for (int i = 0; i < files.length; i++) {
 				// --------------------------------------------------------------------
 				// --------------------------------------------------------------------
-				if ( files[i].isDirectory() ) {
+				if ( files[i].isDirectory()==true ) {
 					// ----------------------------------------------------------------
 					// --- System.out.print(" (Unterordner)\n");
-					if ( SearchINReference == null ) {
+					if ( searchINReference == null ) {
 						// ------------------------------------------------------------
 						// --- Falls nach nichts konkretem gesucht wird, dann --------- 
 						// --- alles in die Ergebnisliste aufnehmen 		  ---------
@@ -209,13 +218,14 @@ public class ReflectClassFiles extends ArrayList<String> {
 						boolean MoveDeeper = false;
 						String SearchINPath = null;
 						// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-						for (int j=0; j<SearchINPathParts.length; j++) {
+						for (int j=0; j<searchINPathParts.length; j++) {
 							if ( SearchINPath == null ) {
-								SearchINPath = SearchINPathParts[j];	
+								SearchINPath = searchINPathParts[j];	
 							} else {
-								SearchINPath = SearchINPath +  Application.RunInfo.AppPathSeparatorString() + SearchINPathParts[j];
+								SearchINPath = SearchINPath +  Application.RunInfo.AppPathSeparatorString() + searchINPathParts[j];
 							}								
 							// --- Aktuellen Pfad untersuchen / vergleichen -----------
+							//System.out.println(files[i].getAbsolutePath());
 							if ( files[i].getAbsolutePath().endsWith( SearchINPath) ) {
 								MoveDeeper = true;
 								break;
@@ -232,18 +242,21 @@ public class ReflectClassFiles extends ArrayList<String> {
 				} else {
 					// ----------------------------------------------------------------
 					// --- System.out.println("Datei: " + CurrClass );
-					CurrClass = files[i].getAbsolutePath().toString();
-					if ( CurrClass.endsWith(".class") ) {
+					currClass = files[i].getAbsolutePath();
+					if ( currClass.endsWith(".class") ) {
 						// --- String der Klassendatei anpassen -----------------------
-						CutEnd    = CurrClass.length() - (".class").length();						
-						CurrClass = CurrClass.substring(CutBegin, CutEnd);
-						CurrClass = CurrClass.replace('/', '.').replace('\\', '.');						
+						cutEnd    = currClass.length() - (".class").length();						
+						currClass = currClass.substring(cutBegin, cutEnd);
+						currClass = currClass.replace('/', '.').replace('\\', '.');						
+						while(currClass.startsWith(".")) {
+							currClass = currClass.substring(1, currClass.length());
+						}
 						// --- Klasse in die Auflistung aufnehmen ? -------------------
-						if ( SearchINReference == null ) {
-							FileList.add( CurrClass );	
+						if ( searchINReference == null ) {
+							FileList.add( currClass );	
 						} else {
-							if (CurrClass.startsWith( SearchINReference ) ) {
-								FileList.add( CurrClass );
+							if (currClass.startsWith( searchINReference ) ) {
+								FileList.add( currClass );
 							}		
 						}
 						// ------------------------------------------------------------
