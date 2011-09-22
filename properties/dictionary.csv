@@ -97,7 +97,7 @@ de;Die Datei '@' wurde nicht gefunden!;File '@' was not found!
 de;Die Datei existiert bereits. Wollen Sie diese Datei überschreiben?;The file already exists. Do you want to overwrite this file?
 de;Die Datei;The file
 de;Die Datenbank für den Server-Master ist nicht vorhanden.<br>Soll versucht werden diese nun anzulegen?;The database for the Server.Master is not available. <br> Try to create it now?
-de;Die Konsolenausgabe erfolgt nicht über die Anwendung;The console output will not be done by this application
+de;Die Konsolenausgabe erfolgt nicht über die Anwendung;The console output will not be done by the application;null;null;null
 de;Doppelklick um eine Klasse auszuwählen !;Double click to select a class!
 de;Dummy-Agenten starten;Start Dummy agent
 de;Dynamische Lastverteilung aktivieren;Enabled dynamic load balancing 
@@ -216,6 +216,7 @@ de;Lade Umgebungsdatei;Getting environment file
 de;Load Monitor öffnen;Open load monitor
 de;Load Monitor;Load Monitor
 de;Log-Manager starten;Start Log Manager
+de;Lokal;Local;;;
 de;Löschen;Delete
 de;MAS-Pause;MAS-Pause
 de;MAS-Start;MAS-Start;null;null;null

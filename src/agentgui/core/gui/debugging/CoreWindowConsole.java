@@ -1,4 +1,4 @@
-package agentgui.core.gui;
+package agentgui.core.gui.debugging;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -19,34 +19,8 @@ import agentgui.core.application.Language;
 
 public class CoreWindowConsole extends JEditorPane  {
 
-		class TextAreaOutputStream extends OutputStream{
-			private CoreWindowConsole textArea;
-			private Boolean error=false;
-
-			TextAreaOutputStream(CoreWindowConsole textArea, Boolean error){
-				super();
-				this.error=error;
-				this.textArea=textArea;
-			}
-
-			@Override
-			public void write(byte[] b,int off,int len) throws IOException{
-				this.textArea.appendText(new String(b,off,len),error);
-			}
-
-			@Override
-			public void write(byte[] b) throws IOException{
-				this.write(b,0,b.length);
-			}
-
-			@Override
-			public void write(int b) throws IOException{
-				this.write(new byte[] {(byte) b});
-			}
-		}
-
-	private static final long serialVersionUID = 1L;
-
+	private static final long serialVersionUID = 8836132571457271033L;
+	
 	private MutableAttributeSet black;
 	private MutableAttributeSet red;
 	private AttributeSet attribute;
@@ -101,6 +75,37 @@ public class CoreWindowConsole extends JEditorPane  {
 		}
 	}
 	private void appendText(String Text) {
-		appendText(Text, false);
+		this.appendText(Text, false);
 	}
+	
+	/**
+	 * 
+	 * @author derksen
+	 */
+	private class TextAreaOutputStream extends OutputStream {
+		private CoreWindowConsole textArea;
+		private Boolean error=false;
+
+		TextAreaOutputStream(CoreWindowConsole textArea, Boolean error){
+			super();
+			this.error=error;
+			this.textArea=textArea;
+		}
+
+		@Override
+		public void write(byte[] b,int off,int len) throws IOException{
+			this.textArea.appendText(new String(b,off,len),error);
+		}
+
+		@Override
+		public void write(byte[] b) throws IOException{
+			this.write(b,0,b.length);
+		}
+
+		@Override
+		public void write(int b) throws IOException{
+			this.write(new byte[] {(byte) b});
+		}
+	}
+	
 }

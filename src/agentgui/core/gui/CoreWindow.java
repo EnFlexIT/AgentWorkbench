@@ -38,6 +38,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -47,6 +48,7 @@ import javax.swing.border.EtchedBorder;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
+import agentgui.core.gui.debugging.CoreWindowConsoleTabbedPane;
 import agentgui.simulationService.agents.SimStartAgent;
 
 /**
@@ -73,7 +75,8 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	
 	private JSplitPane jSplitPane4ProjectDesktop;
 	private JDesktopPane jDesktopPane4Projects;	
-	private JEditorPane consoleText;
+	private JTabbedPane jTabbedPane4Console;
+	private JEditorPane jEditorPaneConsole = Application.Console;;
 	private int consoleHeight;
 	
 	private JMenuBar jMenuBarBase;
@@ -274,7 +277,7 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	}		
 	public boolean consoleIsVisible() {
 		// --- Umschalten der Consolen-Ansicht --------------------
-		if ( consoleText.isVisible() == true ) {
+		if ( jEditorPaneConsole.isVisible() == true ) {
 			return true;
 		} else {
 			return false;
@@ -282,7 +285,7 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	}
 	private void doSwitchConsole() {
 		// --- Umschalten der Consolen-Ansicht --------------------
-		if ( consoleText.isVisible() == true ) {
+		if ( jEditorPaneConsole.isVisible() == true ) {
 			this.setConsoleVisible(false);
 		} else {
 			this.setConsoleVisible(true);
@@ -293,14 +296,14 @@ public class CoreWindow extends JFrame implements ComponentListener {
 		if (show == true) {
 			// --- System.out.println("Console einblenden ...");
 			jSplitPane4ProjectDesktop.setDividerLocation( jSplitPane4ProjectDesktop.getHeight() - consoleHeight );
-			jSplitPane4ProjectDesktop.setDividerSize(5);
-			consoleText.setVisible(true);			
+			jSplitPane4ProjectDesktop.setDividerSize(10);
+			jEditorPaneConsole.setVisible(true);			
 		} else {
 			// --- System.out.println("Console ausblenden ...");			
 			consoleHeight = jSplitPane4ProjectDesktop.getHeight() - jSplitPane4ProjectDesktop.getDividerLocation(); 
 			jSplitPane4ProjectDesktop.setDividerLocation( jSplitPane4ProjectDesktop.getHeight() );			
-			jSplitPane4ProjectDesktop.setDividerSize( 0 );
-			consoleText.setVisible(false);	
+			jSplitPane4ProjectDesktop.setDividerSize(0);
+			jEditorPaneConsole.setVisible(false);	
 		}
 		this.validate();
 		if ( Application.Projects.count() != 0 ) {
@@ -327,21 +330,14 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	// ------------------------------------------------------------
 	private JSplitPane getMainSplitpane() {
 		if (jSplitPane4ProjectDesktop == null ) {
-			// --- JEditorPane aus Application-Objekt übernehmen --
-			consoleText = Application.Console;
-			
-			// --- Panel für Text und Button ----------------------
-			JPanel ConsolePanel = new JPanel();
-			ConsolePanel.setLayout(new BorderLayout());
-			ConsolePanel.add(new JScrollPane(consoleText),BorderLayout.CENTER);
 			
 			jSplitPane4ProjectDesktop = new JSplitPane();
 			jSplitPane4ProjectDesktop.setOrientation(JSplitPane.VERTICAL_SPLIT);
-			jSplitPane4ProjectDesktop.setDividerSize(5);
+			jSplitPane4ProjectDesktop.setDividerSize(10);
 			jSplitPane4ProjectDesktop.setResizeWeight(1);
-			jSplitPane4ProjectDesktop.setOneTouchExpandable(false);
+			jSplitPane4ProjectDesktop.setOneTouchExpandable(true);
 			jSplitPane4ProjectDesktop.setTopComponent(getJDesktopPane4Projects());			
-			jSplitPane4ProjectDesktop.setBottomComponent(ConsolePanel);
+			jSplitPane4ProjectDesktop.setBottomComponent(getJTabbedPane4Console());
 			jSplitPane4ProjectDesktop.addPropertyChangeListener(new PropertyChangeListener() {
 				@Override
 				public void propertyChange(PropertyChangeEvent EventSource) {
@@ -355,6 +351,23 @@ public class CoreWindow extends JFrame implements ComponentListener {
 			});
 		}
 		return jSplitPane4ProjectDesktop;		
+	}
+	/**
+	 * This method returns the JTabbedPane for console windows
+	 * @return
+	 */
+	public JTabbedPane getJTabbedPane4Console() {
+		
+		if (jTabbedPane4Console==null) {
+			// --- Get the local console output -------------------
+			JPanel consoleLocal = new JPanel();
+			consoleLocal.setLayout(new BorderLayout());
+			consoleLocal.add(new JScrollPane(jEditorPaneConsole),BorderLayout.CENTER);
+			// --- Get the TabPane for Console-Tabs ---------------
+			jTabbedPane4Console = new CoreWindowConsoleTabbedPane();
+			jTabbedPane4Console.add(Language.translate("Lokal"), consoleLocal);
+		}
+		return jTabbedPane4Console;
 	}
 	/**
 	 * This method returns the JDesktopPane, where the 
