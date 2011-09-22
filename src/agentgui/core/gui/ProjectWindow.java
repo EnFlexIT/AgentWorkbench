@@ -14,6 +14,7 @@ import java.util.Observer;
 import java.util.Vector;
 
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -119,7 +120,7 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 		if (jSplitPaneProjectView == null) {
 			jSplitPaneProjectView = new JSplitPane();
 			jSplitPaneProjectView.setOneTouchExpandable(true);
-			jSplitPaneProjectView.setDividerLocation(200);
+			jSplitPaneProjectView.setDividerLocation(210);
 			jSplitPaneProjectView.setDividerSize(10);			
 			jSplitPaneProjectView.setLeftComponent(getJScrollPane());			
 			jSplitPaneProjectView.setRightComponent( getProjectViewRightTabs() );
@@ -149,6 +150,8 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 			projectTree.setShowsRootHandles(false);
 			projectTree.setRootVisible(true);
 			projectTree.getSelectionModel().setSelectionMode( TreeSelectionModel.SINGLE_TREE_SELECTION );
+			// ------------------------------------------------------------------
+			// ------------------------------------------------------------------
 			projectTree.addTreeSelectionListener( new TreeSelectionListener() {
 				@Override
 				public void valueChanged(TreeSelectionEvent ts) {
@@ -173,7 +176,22 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 					// ----------------------------------------------------------
 				}// End - valueChanged
 			});
-
+			// ------------------------------------------------------------------
+			// ------------------------------------------------------------------
+			projectTree.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent me) {
+					if (me.getClickCount()==2 & SwingUtilities.isLeftMouseButton(me)) {
+						// --- Catch double click on node ---
+						TreePath tp = projectTree.getPathForLocation(me.getX(), me.getY());
+						if (tp != null) {
+							tabMaximize();
+						}
+					}
+					
+				}//End - mouseClicked
+			});
+			// ------------------------------------------------------------------
 		}
 		return projectTree;
 	}
@@ -258,10 +276,19 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	}
 	
 	private void tabMaximize() {
-		//System.out.println("Maximize");
-		this.tabClickedMaximized = true;
-		this.dividerLocation = this.jSplitPaneProjectView.getDividerLocation();
-		this.jSplitPaneProjectView.setDividerLocation(0);
+
+		// --- Maximize the main window -------------------
+		Application.MainWindow.setExtendedState(JFrame.MAXIMIZED_BOTH);
+
+		// --- Wait for the end of maximisation -----------
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				tabClickedMaximized = true;
+				dividerLocation = jSplitPaneProjectView.getDividerLocation();
+				jSplitPaneProjectView.setDividerLocation(0);
+			}
+		});
 		
 	}
 	private void tabRestore(){

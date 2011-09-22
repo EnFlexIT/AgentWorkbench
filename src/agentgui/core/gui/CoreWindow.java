@@ -315,7 +315,7 @@ public class CoreWindow extends JFrame implements ComponentListener {
 			this.setState(Frame.NORMAL);
 		} 
 		this.setAlwaysOnTop(true);
-		this.setAlwaysOnTop(false);
+		this.setAlwaysOnTop(false);		
 	}
 	// ------------------------------------------------------------
 	// --- Statusanzeigen etc. definieren - ENDE ------------------
