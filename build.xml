@@ -30,9 +30,17 @@
 	<property name="simServiceDestinDir" value="lib\jade\lib\\" />
 	<property name="simServiceDestinJar" value="${simServiceDestinDir}\simulation.jar" />
 	
-	<property name="visServiceSourceDir" value="${binaryDirANT}\agentgui\physical2Denvironment\\" />
-	<property name="visServiceDestinDir" value="lib\jade\lib\\" />
-	<property name="visServiceDestinJar" value="${simServiceDestinDir}\visualization.jar" />
+	<property name="envModelP2DsvgSourceDir" value="${binaryDirANT}\agentgui\envModel\p2Dsvg\\" />
+	<property name="envModelP2DsvgDestinDir" value="lib\jade\lib\\" />
+	<property name="envModelP2DsvgDestinJar" value="${simServiceDestinDir}\envModelP2Dsvg.jar" />
+
+	<property name="envModelGraphSourceDir" value="${binaryDirANT}\agentgui\envModel\graph\\" />
+	<property name="envModelGraphDestinDir" value="lib\jade\lib\\" />
+	<property name="envModelGraphDestinJar" value="${simServiceDestinDir}\envModelGraph.jar" />
+
+	<property name="debugServiceSourceDir" value="${binaryDirANT}\jade\debugging\\" />
+	<property name="debugServiceDestinDir" value="lib\jade\lib\\" />
+	<property name="debugServiceDestinJar" value="${simServiceDestinDir}\debugging.jar" />
 
 	<property name="destinDir" value="exec\AgentGUI\\" />
 	<property name="destinJar" value="${destinDir}\AgentGui.jar" />		
@@ -142,20 +150,45 @@
     		</fileset>    		
         </jar>
     	
-    	<!-- Alte visualization.jar löschen -->
-    	<delete failonerror="false" file="${visServiceDestinJar}" />    	
+    	<!-- Alte envModelP2Dsvg.jar löschen -->
+    	<delete failonerror="false" file="${envModelP2DsvgDestinJar}" />    	
     	<!-- Erzeugen der lokalen Datei visualization.jar -->
-    	<jar compress="true" destfile="${visServiceDestinJar}" >
+    	<jar compress="true" destfile="${envModelP2DsvgDestinJar}" >
  			<manifest>
 				<attribute name="Built-By" value="${user.name}"/>
  				<attribute name="Built-Lang" value="${user.language}"/>
 			</manifest>    		
     		<fileset dir="${binaryDirANT}">
-    			<include name="**/agentgui/physical2Denvironment/**"/>
-    			<include name="**/agentgui/graphEnvironment/**"/>
+    			<include name="**/agentgui/envModel/p2Dsvg/**"/>
     		</fileset>    		
         </jar>
-    			
+    	
+    	<!-- Alte envModelGraph.jar löschen -->
+    	<delete failonerror="false" file="${envModelGraphDestinJar}" />    	
+    	<!-- Erzeugen der lokalen Datei visualization.jar -->
+    	<jar compress="true" destfile="${envModelGraphDestinJar}" >
+ 			<manifest>
+				<attribute name="Built-By" value="${user.name}"/>
+ 				<attribute name="Built-Lang" value="${user.language}"/>
+			</manifest>    		
+    		<fileset dir="${binaryDirANT}">
+    			<include name="**/agentgui/envModel/graph/**"/>
+    		</fileset>    		
+        </jar>
+    	
+    	<!-- Alte debugging.jar löschen -->
+    	<delete failonerror="false" file="${visServiceDestinJar}" />    	
+    	<!-- Erzeugen der lokalen Datei visualization.jar -->
+    	<jar compress="true" destfile="${debugServiceDestinJar}" >
+ 			<manifest>
+				<attribute name="Built-By" value="${user.name}"/>
+ 				<attribute name="Built-Lang" value="${user.language}"/>
+			</manifest>    		
+    		<fileset dir="${binaryDirANT}">
+    			<include name="**/jade/debugging/**"/>
+    		</fileset>    		
+        </jar>
+    	
     	<!-- Kopieren der Property-Files -->    	
     	<copy todir="${destinDirProperties}">
     		<fileset dir="${sourceDirProperties}" />

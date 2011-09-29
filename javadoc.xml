@@ -78,55 +78,55 @@
 						agentgui.simulationService.time,
 						agentgui.simulationService.transaction"
 			
-			classpath= "lib/batik/batik-rasterizer.jar;
-						lib/jung/jung-io-2.0.1.jar;lib/batik/batik-ttf2svg.jar;
-						lib/jung/jung-graph-impl-2.0.1.jar;
-						lib/batik/lib/batik-ext.jar;
-						lib/google-api-translate-java-0.92.jar;
-						lib/jung/jung-jai-2.0.1.jar;
-						lib/batik/lib/batik-script.jar;
-						lib/jung/colt-1.2.0.jar;lib/jung/jung-samples-2.0.1.jar;
+			classpath= "lib;
+						lib/jade/lib/commons-codec/commons-codec-1.3.jar;
 						lib/jade/lib/jade.jar;
-						lib/jdbc/mysql-connector-java-3.0.17-ga-bin.jar;
-						lib/jung/stax-api-1.0.1.jar;
-						lib;
-						lib/batik/lib/xalan-2.6.0.jar;
 						lib/jade/lib/migration.jar;
-						lib/batik/lib/xml-apis-ext.jar;
-						lib/batik/lib/batik-css.jar;
-						lib/hyperic-sigar/sigar-bin/lib/log4j.jar;
-						lib/jung/jung-visualization-2.0.1.jar;
-						lib/batik/lib/xercesImpl-2.7.1.jar;
+						lib/jade/lib/XMLCodec.jar;
+						lib/jdbc/mysql-connector-java-3.0.17-ga-bin.jar;
+						lib/google-api-translate-java-0.92.jar;
 						lib/scimark2lib.jar;
-						lib/batik/lib/js.jar;
+						lib/hyperic-sigar/sigar-bin/lib/junit.jar;
+						lib/hyperic-sigar/sigar-bin/lib/log4j.jar;
+						lib/hyperic-sigar/sigar-bin/lib/sigar.jar;
+						lib/jep-2.3.1/jep-2.3.1.jar;
+						lib/jung/collections-generic-4.01.jar;lib/batik/lib/pdf-transcoder.jar
+						lib/jung/colt-1.2.0.jar;lib/jung/jung-samples-2.0.1.jar;
 						lib/jung/jung-algorithms-2.0.1.jar;
 						lib/jung/jung-api-2.0.1.jar;
-						lib/batik/lib/batik-xml.jar;lib/batik;
-						lib/batik/lib/batik-svg-dom.jar;
-						lib/batik/lib/batik-awt-util.jar;
-						lib/batik/batik-squiggle.jar;
-						lib/jade/lib/XMLCodec.jar;
-						lib/hyperic-sigar/sigar-bin/lib/junit.jar;
-						lib/batik/batik.jar;lib/jung/concurrent-1.3.4.jar;
-						lib/jade/lib/commons-codec/commons-codec-1.3.jar;
+						lib/jung/jung-graph-impl-2.0.1.jar;
+						lib/jung/jung-io-2.0.1.jar;lib/batik/batik-ttf2svg.jar;
+						lib/jung/jung-jai-2.0.1.jar;
+						lib/jung/jung-visualization-2.0.1.jar;
+						lib/jung/stax-api-1.0.1.jar;
 						lib/jung/vecmath-1.3.1.jar;
-						lib/batik/lib/batik-dom.jar;
+						lib/jung/wstx-asl-3.2.6.jar;			
+						lib/batik/batik.jar;lib/jung/concurrent-1.3.4.jar;
+						lib/batik/batik-rasterizer.jar;
+						lib/batik/batik-slideshow.jar;
+						lib/batik/batik-squiggle.jar;
+						lib/batik/lib/batik-anim.jar;lib/batik/batik-svgpp.jar;
+						lib/batik/lib/batik-awt-util.jar;
 						lib/batik/lib/batik-bridge.jar;
+						lib/batik/lib/batik-codec.jar;
+						lib/batik/lib/batik-css.jar;
+						lib/batik/lib/batik-dom.jar;
+						lib/batik/lib/batik-ext.jar;
+						lib/batik/lib/batik-gui-util.jar;
+						lib/batik/lib/batik-gvt.jar;
+						lib/batik/lib/batik-parser.jar;
+						lib/batik/lib/batik-script.jar;
+						lib/batik/lib/batik-svg-dom.jar;
+						lib/batik/lib/batik-svggen.jar;
 						lib/batik/lib/batik-swing.jar;
 						lib/batik/lib/batik-transcoder.jar;
-						lib/batik/lib/batik-parser.jar;
 						lib/batik/lib/batik-util.jar;
-						lib/batik/batik-slideshow.jar;
-						lib/batik/lib/batik-codec.jar;
-						lib/batik/lib/batik-gui-util.jar;
-						lib/batik/lib/batik-svggen.jar;
+						lib/batik/lib/batik-xml.jar;lib/batik;
+						lib/batik/lib/js.jar;
+						lib/batik/lib/xalan-2.6.0.jar;
+						lib/batik/lib/xercesImpl-2.7.1.jar;
 						lib/batik/lib/xml-apis.jar;
-						lib/jung/wstx-asl-3.2.6.jar;
-						lib/jep-2.3.1/jep-2.3.1.jar;
-						lib/batik/lib/batik-gvt.jar;
-						lib/hyperic-sigar/sigar-bin/lib/sigar.jar;
-						lib/batik/lib/batik-anim.jar;lib/batik/batik-svgpp.jar;
-						lib/jung/collections-generic-4.01.jar;lib/batik/lib/pdf-transcoder.jar"
+						lib/batik/lib/xml-apis-ext.jar;"
 			/>
 		
 	</target>

@@ -4,7 +4,7 @@
 	<classpathentry excluding="contmasstandalone/|sma/resources/|sma/setups/|sma/svgEnvSetups/" kind="src" path="projects"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/google-api-translate-java-0.92.jar" sourcepath="/Google-Translate"/>
-	<classpathentry kind="lib" path="lib/jade/lib/jade.jar" sourcepath="/Jade 4.0.1/src">
+	<classpathentry kind="lib" path="lib/jade/lib/jade.jar" sourcepath="/JADE/src">
 		<attributes>
 			<attribute name="javadoc_location" value="file:/D:/00 Tmp/10 Jade/Jade 4.01/JADE-doc-4.0.1/jade/doc/api/"/>
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="D:/10 Java Projects/Jade 4.0.1/src"/>
