@@ -11,50 +11,50 @@ xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
 <default></default>
 </key>
 <graph edgedefault="directed">
-<node id="PP14">
-<data key="pos">261.0:96.0</data>
-</node>
-<node id="PP11">
-<data key="pos">437.0:330.0</data>
-</node>
-<node id="PP15">
-<data key="pos">297.0:51.0</data>
-</node>
 <node id="PP3">
 <data key="pos">196.0:111.0</data>
-</node>
-<node id="PP13">
-<data key="pos">279.0:159.0</data>
-</node>
-<node id="PP12">
-<data key="pos">121.0:92.0</data>
 </node>
 <node id="PP10">
 <data key="pos">441.0:251.0</data>
 </node>
+<node id="PP12">
+<data key="pos">121.0:92.0</data>
+</node>
+<node id="PP13">
+<data key="pos">279.0:159.0</data>
+</node>
 <node id="PP16">
 <data key="pos">351.0:202.0</data>
+</node>
+<node id="PP11">
+<data key="pos">437.0:330.0</data>
+</node>
+<node id="PP14">
+<data key="pos">261.0:96.0</data>
+</node>
+<node id="PP15">
+<data key="pos">297.0:51.0</data>
 </node>
 <edge id="n6" source="PP13" target="PP16">
 <desc>compressor</desc>
 </edge>
-<edge id="n4" directed="false" source="PP3" target="PP12">
+<edge id="n1" directed="false" source="PP11" target="PP10">
 <desc>pipe</desc>
-</edge>
-<edge id="n0" directed="false" source="PP16" target="PP10">
-<desc>valve</desc>
 </edge>
 <edge id="n5_1" directed="false" source="PP14" target="PP13">
 <desc>branch</desc>
 </edge>
-<edge id="n1" directed="false" source="PP11" target="PP10">
-<desc>pipe</desc>
+<edge id="n5_2" directed="false" source="PP14" target="PP3">
+<desc>branch</desc>
 </edge>
 <edge id="n5_0" directed="false" source="PP14" target="PP15">
 <desc>branch</desc>
 </edge>
-<edge id="n5_2" directed="false" source="PP14" target="PP3">
-<desc>branch</desc>
+<edge id="n0" directed="false" source="PP16" target="PP10">
+<desc>valve</desc>
+</edge>
+<edge id="n4" directed="false" source="PP3" target="PP12">
+<desc>pipe</desc>
 </edge>
 </graph>
 </graphml>

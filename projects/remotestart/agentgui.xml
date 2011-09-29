@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <project>
-    <projectName>Game of Life</projectName>
-    <projectView>Developer</projectView>
+    <projectName>RemoteStart</projectName>
     <projectResources/>
     <plugins/>
     <subOntologies>
@@ -9,28 +8,25 @@
     </subOntologies>
     <agentConfiguration>
         <entry>
-            <key>game_of_life.SimService.agents.GameOfLifeAgent</key>
-            <value>[Toast] agentgui.ontology.Simple_Boolean|[Vollkorn] agentgui.ontology.Simple_Integer|agentgui.ontology.Simple_String</value>
+            <key>remotestart.agents.SystemOutAgent</key>
+            <value>agentgui.ontology.Simple_Integer|agentgui.ontology.Simple_String</value>
         </entry>
     </agentConfiguration>
     <jadeConfiguration>
-        <useLocalPort>1103</useLocalPort>
+        <useLocalPort>1099</useLocalPort>
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
+            <service>jade.debugging.DebugService</service>
             <service>agentgui.simulationService.SimulationService</service>
             <service>jade.core.mobility.AgentMobilityService</service>
         </serviceList>
     </jadeConfiguration>
-    <simulationSetupCurrent>GoL SimService</simulationSetupCurrent>
+    <simulationSetupCurrent>default</simulationSetupCurrent>
     <simulationSetups>
         <entry>
-            <key>GoL ACL-Messages</key>
-            <value>gol_acl_messages.xml</value>
-        </entry>
-        <entry>
-            <key>GoL SimService</key>
-            <value>gol_simservice.xml</value>
+            <key>default</key>
+            <value>default.xml</value>
         </entry>
     </simulationSetups>
     <subFolderEnvSetups>setupsEnv</subFolderEnvSetups>

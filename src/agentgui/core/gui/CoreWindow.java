@@ -1,5 +1,9 @@
 package agentgui.core.gui;
 
+import jade.debugging.components.JPanelConsole;
+import jade.debugging.components.JTabbedPane4Consoles;
+import jade.debugging.components.SysOutBoard;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -27,7 +31,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDesktopPane;
-import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -36,9 +39,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
-import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -48,7 +49,6 @@ import javax.swing.border.EtchedBorder;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
-import agentgui.core.gui.debugging.CoreWindowConsoleTabbedPane;
 import agentgui.simulationService.agents.SimStartAgent;
 
 /**
@@ -75,9 +75,9 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	
 	private JSplitPane jSplitPane4ProjectDesktop;
 	private JDesktopPane jDesktopPane4Projects;	
-	private JTabbedPane jTabbedPane4Console;
-	private JEditorPane jEditorPaneConsole = Application.Console;;
-	private int consoleHeight;
+	private JTabbedPane4Consoles jTabbedPane4Console;
+	private JPanelConsole jPanelConsoleLocal = Application.Console;;
+	private int oldDividerLocation;
 	
 	private JMenuBar jMenuBarBase;
 	private JMenuBar jMenuBarMain;
@@ -138,9 +138,12 @@ public class CoreWindow extends JFrame implements ComponentListener {
 		this.setCloseButtonPosition(false);
 		
 		// --- configure console ---------------------------------- 
-		consoleHeight = jSplitPane4ProjectDesktop.getHeight() / 4; 
-		jSplitPane4ProjectDesktop.setDividerLocation( jSplitPane4ProjectDesktop.getHeight() - consoleHeight );
+		oldDividerLocation = jSplitPane4ProjectDesktop.getHeight() * 3 / 4; 
+		jSplitPane4ProjectDesktop.setDividerLocation(oldDividerLocation);
 		this.setConsoleVisible(false);
+		
+		// --- Set the JTabbedPan for remote console output -----------
+		SysOutBoard.setJTabbedPane4Consoles(this.getJTabbedPane4Console());
 		
 	}
 	// ------------------------------------------------------------	
@@ -152,7 +155,6 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	private void initComponents() {
 
 		// --- Standardeinstellungen ---
-		
 		this.setJMenuBar(this.getJMenuBarBase());
 		
 		this.add( getJToolBarApplication(), BorderLayout.NORTH );
@@ -170,6 +172,7 @@ public class CoreWindow extends JFrame implements ComponentListener {
 		
 		// --- Schaltflächen für die Simulationskontrolle einstellen --
 		this.setSimulationReady2Start();
+		
 	}	
 	// ------------------------------------------------------------
 	// --- Initialisierung des Fensters - ENDE --------------------
@@ -277,7 +280,7 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	}		
 	public boolean consoleIsVisible() {
 		// --- Umschalten der Consolen-Ansicht --------------------
-		if ( jEditorPaneConsole.isVisible() == true ) {
+		if ( jPanelConsoleLocal.isVisible() == true ) {
 			return true;
 		} else {
 			return false;
@@ -285,7 +288,7 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	}
 	private void doSwitchConsole() {
 		// --- Umschalten der Consolen-Ansicht --------------------
-		if ( jEditorPaneConsole.isVisible() == true ) {
+		if (jSplitPane4ProjectDesktop.getDividerSize()>0) {
 			this.setConsoleVisible(false);
 		} else {
 			this.setConsoleVisible(true);
@@ -295,15 +298,16 @@ public class CoreWindow extends JFrame implements ComponentListener {
 		// --- Ein- und ausblenden der Console --------------------
 		if (show == true) {
 			// --- System.out.println("Console einblenden ...");
-			jSplitPane4ProjectDesktop.setDividerLocation( jSplitPane4ProjectDesktop.getHeight() - consoleHeight );
+			jSplitPane4ProjectDesktop.setBottomComponent(this.getJTabbedPane4Console());
+			jSplitPane4ProjectDesktop.setDividerLocation(oldDividerLocation);
 			jSplitPane4ProjectDesktop.setDividerSize(10);
-			jEditorPaneConsole.setVisible(true);			
+			
 		} else {
 			// --- System.out.println("Console ausblenden ...");			
-			consoleHeight = jSplitPane4ProjectDesktop.getHeight() - jSplitPane4ProjectDesktop.getDividerLocation(); 
-			jSplitPane4ProjectDesktop.setDividerLocation( jSplitPane4ProjectDesktop.getHeight() );			
+			oldDividerLocation = jSplitPane4ProjectDesktop.getDividerLocation(); 
 			jSplitPane4ProjectDesktop.setDividerSize(0);
-			jEditorPaneConsole.setVisible(false);	
+			jSplitPane4ProjectDesktop.setDividerLocation(jSplitPane4ProjectDesktop.getHeight());			
+			jSplitPane4ProjectDesktop.remove(this.getJTabbedPane4Console());
 		}
 		this.validate();
 		if ( Application.Projects.count() != 0 ) {
@@ -356,16 +360,12 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	 * This method returns the JTabbedPane for console windows
 	 * @return
 	 */
-	public JTabbedPane getJTabbedPane4Console() {
+	public JTabbedPane4Consoles getJTabbedPane4Console() {
 		
 		if (jTabbedPane4Console==null) {
-			// --- Get the local console output -------------------
-			JPanel consoleLocal = new JPanel();
-			consoleLocal.setLayout(new BorderLayout());
-			consoleLocal.add(new JScrollPane(jEditorPaneConsole),BorderLayout.CENTER);
 			// --- Get the TabPane for Console-Tabs ---------------
-			jTabbedPane4Console = new CoreWindowConsoleTabbedPane();
-			jTabbedPane4Console.add(Language.translate("Lokal"), consoleLocal);
+			jTabbedPane4Console = new JTabbedPane4Consoles();
+			jTabbedPane4Console.add(Language.translate("Lokal"), this.jPanelConsoleLocal);
 		}
 		return jTabbedPane4Console;
 	}

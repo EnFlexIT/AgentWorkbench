@@ -70,8 +70,6 @@ public class GlobalInfo {
 
 	private final static Color localColorMenuHighLight =  new Color(0,0,192);
 	
-	private boolean localAppUseInternalConsole = false;
-	
 	// --- JADE-Variables ---------------------------------------------------
 	private Integer localeJadeLocalPort = 1099;
 	
@@ -147,7 +145,6 @@ public class GlobalInfo {
 			if ( JCP_Files[i].endsWith( localFileRunnableJar )  ) {
 				localAppExecutedOver = "Executable";
 				// --- Bei jar, immer interne Console verwenden -------------
-				this.setAppUseInternalConsole(true);
 				CutAt = JCP_Files[i].lastIndexOf( localAppPathSeparatorString ) + 1;
 				localBaseDir = JCP_Folders[i].substring(0, CutAt);	
 
@@ -248,21 +245,7 @@ public class GlobalInfo {
 	public String AppVersion() {
 		return localAppVersion;
 	}
-	/**
-	 * Here the use of the applications internal console can be set
-	 * @param useInternalConsole 
-	 */
-	public void setAppUseInternalConsole(boolean useInternalConsole) {
-		this.localAppUseInternalConsole = useInternalConsole;
-	}
-	/**
-	 * This method can be used in order to evaluate if the internal 
-	 * applications console is used 
-	 * @return true or false
-	 */
-	public boolean isAppUseInternalConsole() {
-		return localAppUseInternalConsole;
-	};
+	
 	// -------------------------------
 	// --- Look and Feel -------------
 	// -------------------------------

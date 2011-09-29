@@ -70,9 +70,7 @@ public class AgentGUITrayPopUp extends PopupMenu implements ActionListener {
 			this.add(itemOpenRMA);
 			this.addSeparator();
 			this.add(itemConfig);
-			if (Application.RunInfo.isAppUseInternalConsole()==true) {
-				this.add(itemConsole);	
-			}			
+			this.add(itemConsole);	
 			this.addSeparator();
 			this.add(itemExit);
 		} else {

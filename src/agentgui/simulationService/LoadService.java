@@ -48,14 +48,14 @@ import java.util.Vector;
 
 import agentgui.core.application.Application;
 import agentgui.simulationService.load.LoadAgentMap;
+import agentgui.simulationService.load.LoadAgentMap.AID_Container;
 import agentgui.simulationService.load.LoadInformation;
+import agentgui.simulationService.load.LoadInformation.Container2Wait4;
+import agentgui.simulationService.load.LoadInformation.NodeDescription;
 import agentgui.simulationService.load.LoadMeasureSigar;
 import agentgui.simulationService.load.LoadMeasureThread;
 import agentgui.simulationService.load.LoadThresholdLevels;
 import agentgui.simulationService.load.LoadUnits;
-import agentgui.simulationService.load.LoadAgentMap.AID_Container;
-import agentgui.simulationService.load.LoadInformation.Container2Wait4;
-import agentgui.simulationService.load.LoadInformation.NodeDescription;
 import agentgui.simulationService.ontology.AgentGUI_DistributionOntology;
 import agentgui.simulationService.ontology.BenchmarkResult;
 import agentgui.simulationService.ontology.ClientRemoteContainerReply;
@@ -95,6 +95,7 @@ public class LoadService extends BaseService {
 	
 	// --- The Load-Information Array of all slices ---------------------------
 	private LoadInformation loadInfo = new LoadInformation(); 
+	
 	
 	
 	public void init(AgentContainer ac, Profile p) throws ProfileException {
@@ -280,7 +281,6 @@ public class LoadService extends BaseService {
 			Service.Slice[] slices = getAllSlices();
 			broadcastAgentMigration(transferAgents, slices);
 		}
-		
 
 	}
 	// --------------------------------------------------------------	
@@ -935,10 +935,13 @@ public class LoadService extends BaseService {
 				String sliceName = slice.getNode().getName();
 				if (sliceName.startsWith(newContainerPrefix)) {
 					String endString = sliceName.replace(newContainerPrefix, "");
-					Integer endNumber = Integer.parseInt(endString);
-					if (endNumber>newContainerNo) {
-						newContainerNo = endNumber;
-					}
+					try {
+						Integer endNumber = Integer.parseInt(endString);
+						if (endNumber>newContainerNo) {
+							newContainerNo = endNumber;
+						}	
+						
+					} catch (Exception e) {}
 				}
 			}	
 		} catch (ServiceException errSlices) {

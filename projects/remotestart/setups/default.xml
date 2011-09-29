@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<simulationSetup>
+    <agentSetup>
+        <agent>
+            <postionNo>1</postionNo>
+            <listMembership>01 AgentStartManual</listMembership>
+            <agentClassReference>remotestart.agents.RemoteStarterAgent</agentClassReference>
+            <startAsName>ReStAg</startAsName>
+        </agent>
+        <agent>
+            <postionNo>2</postionNo>
+            <listMembership>01 AgentStartManual</listMembership>
+            <agentClassReference>remotestart.agents.SystemOutAgent</agentClassReference>
+            <startAsName>SyOuAg</startAsName>
+            <startArguments>
+                <argument>PFNpbXBsZV9JbnRlZ2VyIEludGVnZXJWYWx1ZT0iMTAiLz4K</argument>
+                <argument>PFNpbXBsZV9TdHJpbmcgU3RyaW5nVmFsdWU9IkhhbGxvLCBpY2ggYmluIGVpbiBUZXN0YXVzZHJ1Y2siLz4K</argument>
+            </startArguments>
+        </agent>
+    </agentSetup>
+    <distribution>
+        <doDynamicLoadBalalncing>false</doDynamicLoadBalalncing>
+        <doStaticLoadBalalncing>false</doStaticLoadBalalncing>
+        <dynamicLoadBalancingClass>agentgui.simulationService.balancing.DynamicLoadBalancing</dynamicLoadBalancingClass>
+        <numberOfAgents>0</numberOfAgents>
+        <numberOfContainer>0</numberOfContainer>
+        <staticLoadBalancingClass>agentgui.simulationService.balancing.StaticLoadBalancing</staticLoadBalancingClass>
+        <useUserThresholds>false</useUserThresholds>
+        <userThresholds>
+            <thCpuH>80</thCpuH>
+            <thCpuL>5</thCpuL>
+            <thMemoH>80</thMemoH>
+            <thMemoL>5</thMemoL>
+            <thNoThreadsH>1500</thNoThreadsH>
+            <thNoThreadsL>50</thNoThreadsL>
+        </userThresholds>
+    </distribution>
+</simulationSetup>

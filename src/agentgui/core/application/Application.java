@@ -27,6 +27,8 @@
  */
 package agentgui.core.application;
 
+import jade.debugging.components.JPanelConsole;
+
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
@@ -37,7 +39,6 @@ import agentgui.core.database.DBConnection;
 import agentgui.core.gui.AboutDialog;
 import agentgui.core.gui.CoreWindow;
 import agentgui.core.gui.Translation;
-import agentgui.core.gui.debugging.CoreWindowConsole;
 import agentgui.core.gui.options.OptionDialog;
 import agentgui.core.jade.ClassSearcher;
 import agentgui.core.jade.Platform;
@@ -57,7 +58,6 @@ public class Application {
 	 * The instance of this singleton class
 	 */
 	private static Application thisApp = new Application(); 
-	
 	/**
 	 * This attribute holds the current state of the configurable runtime informations  
 	 */
@@ -69,7 +69,7 @@ public class Application {
 	/**
 	 * This is the instance of the main application window
 	 */
-	public static CoreWindowConsole Console = null;
+	public static JPanelConsole Console = null;
 
 	/**
 	 * With this attribute/class the agent platform (JADE) will be controlled 
@@ -142,15 +142,15 @@ public class Application {
 	 * -help will print all possible command line arguments 
 	 */
 	public static void main(String[] args) {
-		
+
 		// ----------------------------------------------------------
 		// --- Just starts the base-instances -----------------------
+		Console = new JPanelConsole(true);
 		RunInfo = new GlobalInfo();
 		Properties = new FileProperties();
 		Language.startDictionary();
 		proceedStartArguments(args);
 		new LoadMeasureThread().start();  
-		Console = new CoreWindowConsole();
 		startAgentGUI();
 		proceedStartArgumentOpenProject();
 		
@@ -174,15 +174,7 @@ public class Application {
 					project2OpenAfterStart = args[i];
 					
 				// ------------------------------------------------------------
-				// --- specify if the console should be used or not -----------
-				} else if (args[i].equalsIgnoreCase("-console")) {
-					i++;
-					if (args[i].equalsIgnoreCase("off")) {
-						RunInfo.setAppUseInternalConsole(false);
-					}
-					
-				// ------------------------------------------------------------
-				// --- print out the hel for the start argumetns --------------					
+				// --- print out the help for the start arguments --------------					
 				} else if (args[i].equalsIgnoreCase("-help")) {
 					proceedStartArgumentPrintHelp();
 				} else if (args[i].equalsIgnoreCase("-?")) {
@@ -208,8 +200,7 @@ public class Application {
 		System.out.println("Agent.GUI - usage of start arguments:");
 		System.out.println("");
 		System.out.println("1. '-project projectFolder': opens the project located in the Agent.GUI folder 'project' (e.g. 'myProject')");
-		System.out.println("2. '-console off'          : switches off the applications console output i. o. to keep the output at the IDE" );
-		System.out.println("3. '-help' or '-?'         : provides this information to the console" );
+		System.out.println("2. '-help' or '-?'         : provides this information to the console" );
 		System.out.println("");
 		System.out.println("");
 	}

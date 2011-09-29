@@ -24,7 +24,6 @@ import java.util.Vector;
 import java.util.logging.Level;
 
 import agentgui.simulationService.environment.EnvironmentModel;
-import agentgui.simulationService.load.LoadMeasureThread;
 import agentgui.simulationService.load.LoadAgentMap.AID_Container;
 import agentgui.simulationService.sensoring.ServiceActuator;
 import agentgui.simulationService.sensoring.ServiceActuatorManager;
@@ -105,8 +104,6 @@ public class SimulationService extends BaseService {
 				myLogger.log(Logger.FINE, "Main-Container: " + myMainContainer.toString());
 			}
 		}
-		// --- Start the Load-Measurements on this Node ---
-		new LoadMeasureThread().start();  
 		
 		// --- Reduce the logging level for Messaging -----
 		Logger.getMyLogger("jade.core.messaging.Messaging").setLevel(Level.WARNING);

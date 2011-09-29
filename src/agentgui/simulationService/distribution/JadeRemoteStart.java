@@ -39,12 +39,9 @@ public class JadeRemoteStart extends Thread {
 	private final String pathBaseDir = Application.RunInfo.PathBaseDir();
 	
 	/**
-	 * Default-Constructor
+	 * Default constructor	
+	 * @param reCoCo
 	 */
-	public JadeRemoteStart() {
-		
-	}	
-	
 	public JadeRemoteStart(RemoteContainerConfig reCoCo) {
 		
 		jadeIsRemoteContainer = true;
@@ -263,22 +260,48 @@ public class JadeRemoteStart extends Thread {
 		// --- Basic - Configuration ---------------------------
 		classPath += "-classpath ";
 		classPath += ".;";
+		
+		// -----------------------------------------------------
+		// --- Agent.GUI related -----
+		classPath += "./lib/jade/lib/envModelGraph.jar;";
+		// --- JUNG einbinden ------------------------
+		classPath += "./lib/jung/collections-generic-4.01.jar;";
+		classPath += "./lib/jung/colt-1.2.0.jar;";
+		classPath += "./lib/jung/concurrent-1.3.4.jar;";
+		classPath += "./lib/jung/jung-algorithms-2.0.1.jar;";
+		classPath += "./lib/jung/jung-api-2.0.1.jar;";
+		classPath += "./lib/jung/jung-graph-impl-2.0.1.jar;";
+		classPath += "./lib/jung/jung-io-2.0.1.jar;";
+		classPath += "./lib/jung/jung-jai-2.0.1.jar;";
+		classPath += "./lib/jung/jung-samples-2.0.1.jar;";
+		classPath += "./lib/jung/jung-visualization-2.0.1.jar;";
+		classPath += "./lib/jung/stax-api-1.0.1.jar;";
+		classPath += "./lib/jung/vecmath-1.3.1.jar;";
+		classPath += "./lib/jung/wstx-asl-3.2.6.jar;";
+
+		// -----------------------------------------------------
 		// --- Jade  himself ----------
 		classPath += "./lib/jade/lib/jade.jar;";
 		classPath += "./lib/jade/lib/XMLCodec.jar;"; 							// xml-codec
 		classPath += "./lib/jade/lib/commons-codec/commons-codec-1.3.jar;"; 	// commons-codec
-		// --- Hyperic-Sigar ----------
-		classPath += "./lib/hyperic-sigar/sigar-bin/lib/sigar.jar;";
-		classPath += "./lib/hyperic-sigar/sigar-bin/lib/log4j.jar;";
-		classPath += "./lib/hyperic-sigar/sigar-bin/lib/junit.jar;";
-
+		
 		// -----------------------------------------------------
-		// --- Configuration in relation to the JADE-Services -- 
-		if (ServiceList.contains(PlatformJadeConfig.SERVICE_AgentGUI_SimulationService)) {
-			classPath += "./lib/jade/lib/simulation.jar;";	
+		// --- Configuration in relation to the JADE-Services --
+		if (ServiceList.contains(PlatformJadeConfig.SERVICE_InterPlatformMobilityService)) {
+			classPath += "./lib/jade/lib/migration.jar;";						// Mobility
 		}
-		if (ServiceList.contains(PlatformJadeConfig.SERVICE_AgentGUI_EnvironmentProviderService)) {
-			classPath += "./lib/jade/lib/visualization.jar;";
+		if (ServiceList.contains(PlatformJadeConfig.SERVICE_AgentGUI_SimulationService) || ServiceList.contains(PlatformJadeConfig.SERVICE_AgentGUI_LoadService)) {
+			classPath += "./lib/jade/lib/simulation.jar;";						// Load and Simulation
+			// --- Hyperic-Sigar ----------
+			classPath += "./lib/hyperic-sigar/sigar-bin/lib/sigar.jar;";
+			classPath += "./lib/hyperic-sigar/sigar-bin/lib/log4j.jar;";
+			classPath += "./lib/hyperic-sigar/sigar-bin/lib/junit.jar;";
+		}
+		if (ServiceList.contains(PlatformJadeConfig.SERVICE_DebugService)) {
+			classPath += "./lib/jade/lib/debugging.jar;";						// Debugging
+		}
+		if (ServiceList.contains(PlatformJadeConfig.SERVICE_AgentGUI_P2DEnvironmentProviderService)) {
+			classPath += "./lib/jade/lib/envModelP2Dsvg.jar;";
 			// --- Batik einbinden ------------------------
 			classPath += "./lib/batik/batik-rasterizer.jar;";
 			classPath += "./lib/batik/batik-slideshow.jar;";
@@ -297,9 +320,6 @@ public class JadeRemoteStart extends Thread {
 			classPath += "./lib/batik/lib/batik-dom.jar;";
 			classPath += "./lib/batik/lib/batik-ext.jar;";
 			classPath += "./lib/batik/lib/xercesImpl-2.7.1.jar;";
-		}
-		if (ServiceList.contains(PlatformJadeConfig.SERVICE_InterPlatformMobilityService)) {
-			classPath += "./lib/jade/lib/migration.jar;";	
 		}
 		
 		// -----------------------------------------------------

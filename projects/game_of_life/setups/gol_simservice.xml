@@ -5,8 +5,8 @@
         <doDynamicLoadBalalncing>false</doDynamicLoadBalalncing>
         <doStaticLoadBalalncing>true</doStaticLoadBalalncing>
         <dynamicLoadBalancingClass>agentgui.simulationService.balancing.DynamicLoadBalancing</dynamicLoadBalancingClass>
-        <numberOfAgents>1500</numberOfAgents>
-        <numberOfContainer>2</numberOfContainer>
+        <numberOfAgents>2000</numberOfAgents>
+        <numberOfContainer>1</numberOfContainer>
         <staticLoadBalancingClass>game_of_life.SimService.balancing.StartAndBalancing</staticLoadBalancingClass>
         <useUserThresholds>false</useUserThresholds>
         <userThresholds>

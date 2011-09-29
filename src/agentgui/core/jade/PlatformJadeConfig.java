@@ -74,29 +74,30 @@ public class PlatformJadeConfig implements Serializable {
 	
 	private static final long serialVersionUID = -9062155032902746361L;
 	// --- Services 'Activated automatically' ---------------------------------
-	public static final String SERVICE_MessagingService = "jade.core.messaging.MessagingService";
-	public static final String SERVICE_AgentManagementService = "jade.core.management.AgentManagementService";
+	public static final String SERVICE_MessagingService = jade.core.messaging.MessagingService.class.getName();
+	public static final String SERVICE_AgentManagementService = jade.core.management.AgentManagementService.class.getName();
 	
 	// --- Services 'Active by default' ---------------------------------------
-	public static final String SERVICE_AgentMobilityService = "jade.core.mobility.AgentMobilityService";
-	public static final String SERVICE_NotificationService = "jade.core.event.NotificationService"; 
+	public static final String SERVICE_AgentMobilityService = jade.core.mobility.AgentMobilityService.class.getName();
+	public static final String SERVICE_NotificationService = jade.core.event.NotificationService.class.getName(); 
 	
 	// --- Services 'Inactive by default' -------------------------------------
-	public static final String SERVICE_MainReplicationService = "jade.core.replication.MainReplicationService";
-	public static final String SERVICE_FaultRecoveryService = "jade.core.faultRecovery.FaultRecoveryService";
-	public static final String SERVICE_AddressNotificationService = "jade.core.replication.AddressNotificationService";
-	public static final String SERVICE_TopicManagementService = "jade.core.messaging.TopicManagementService";
-	public static final String SERVICE_PersistentDeliveryService = "jade.core.messaging.PersistentDeliveryService";
-	public static final String SERVICE_UDPNodeMonitoringServ = "jade.core.nodeMonitoring.UDPNodeMonitoringService";
-	public static final String SERVICE_BEManagementService = "jade.imtp.leap.nio.BEManagementService";
+	public static final String SERVICE_MainReplicationService = jade.core.replication.MainReplicationService.class.getName();
+	public static final String SERVICE_FaultRecoveryService = jade.core.faultRecovery.FaultRecoveryService.class.getName();
+	public static final String SERVICE_AddressNotificationService = jade.core.replication.AddressNotificationService.class.getName();
+	public static final String SERVICE_TopicManagementService = jade.core.messaging.TopicManagementService.class.getName();
+	public static final String SERVICE_PersistentDeliveryService = jade.core.messaging.PersistentDeliveryService.class.getName();
+	public static final String SERVICE_UDPNodeMonitoringServ = jade.core.nodeMonitoring.UDPNodeMonitoringService.class.getName();
+	public static final String SERVICE_BEManagementService = jade.imtp.leap.nio.BEManagementService.class.getName();
 	
 	// --- Agent.GUI-Services -------------------------------------------------
-	public static final String SERVICE_AgentGUI_LoadService = "agentgui.simulationService.LoadService";
-	public static final String SERVICE_AgentGUI_SimulationService = "agentgui.simulationService.SimulationService";
-	public static final String SERVICE_AgentGUI_EnvironmentProviderService = "agentgui.physical2Denvironment.provider.EnvironmentProviderService";
+	public static final String SERVICE_DebugService = jade.debugging.DebugService.class.getName();
+	public static final String SERVICE_AgentGUI_LoadService = agentgui.simulationService.LoadService.class.getName();
+	public static final String SERVICE_AgentGUI_SimulationService = agentgui.simulationService.SimulationService.class.getName();
+	public static final String SERVICE_AgentGUI_P2DEnvironmentProviderService = agentgui.envModel.p2Dsvg.provider.EnvironmentProviderService.class.getName();
 	
 	// --- Add-On-Services ----------------------------------------------------
-	public static final String SERVICE_InterPlatformMobilityService = "jade.core.migration.InterPlatformMobilityService;";
+	public static final String SERVICE_InterPlatformMobilityService = jade.core.migration.InterPlatformMobilityService.class.getName();
 	
 	/**
 	 * Array of services, which will be started with JADE in every case
@@ -170,7 +171,6 @@ public class PlatformJadeConfig implements Serializable {
 	 * @param portSearchStart
 	 */
 	private void findFreePort(int portSearchStart){
-		// --- Freien Port für die Plattform finden ---------
 		PortChecker portCheck = new PortChecker(portSearchStart);
 		useLocalPort = portCheck.getFreePort();
 	}
