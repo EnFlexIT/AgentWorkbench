@@ -183,6 +183,7 @@ public class Platform extends Object {
 						MASmc = null;
 						MASrt = null;
 						Application.setStatusJadeRunning(false);
+						Application.MainWindow.setSimulationReady2Start();
 					}
 				});
 				// --- Start MainContainer --------------------------				

@@ -341,7 +341,7 @@ public class CoreWindow extends JFrame implements ComponentListener {
 			jSplitPane4ProjectDesktop.setResizeWeight(1);
 			jSplitPane4ProjectDesktop.setOneTouchExpandable(true);
 			jSplitPane4ProjectDesktop.setTopComponent(getJDesktopPane4Projects());			
-			jSplitPane4ProjectDesktop.setBottomComponent(getJTabbedPane4Console());
+			//jSplitPane4ProjectDesktop.setBottomComponent(getJTabbedPane4Console());
 			jSplitPane4ProjectDesktop.addPropertyChangeListener(new PropertyChangeListener() {
 				@Override
 				public void propertyChange(PropertyChangeEvent EventSource) {

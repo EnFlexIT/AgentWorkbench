@@ -33,6 +33,8 @@ import jade.debugging.DebugService;
 import java.io.PrintStream;
 import java.util.Vector;
 
+import javax.swing.SwingUtilities;
+
 /**
  * This Class can be used in order to listen to the output which will be generated<br> 
  * through the console by using System.out and System.err - commands.<br>
@@ -107,7 +109,13 @@ public class SysOutScanner {
 		
 		// --- If a local Console window is used --------------------------------------------------
 		if (this.localConsole!=null) {
-			this.localConsole.appendText(this.getStack());
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					localConsole.appendText(getStack());		
+				}
+			});
+					
 		}
 		
 		// --- If a DebuggingService is registered transfer the output to the Main-Container ------

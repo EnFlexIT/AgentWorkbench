@@ -13,8 +13,8 @@
             <agentClassReference>remotestart.agents.SystemOutAgent</agentClassReference>
             <startAsName>SyOuAg</startAsName>
             <startArguments>
-                <argument>PFNpbXBsZV9JbnRlZ2VyIEludGVnZXJWYWx1ZT0iMTAiLz4K</argument>
-                <argument>PFNpbXBsZV9TdHJpbmcgU3RyaW5nVmFsdWU9IkhhbGxvLCBpY2ggYmluIGVpbiBUZXN0YXVzZHJ1Y2siLz4K</argument>
+                <argument>PFNpbXBsZV9JbnRlZ2VyIEludGVnZXJWYWx1ZT0iNSIvPgo=</argument>
+                <argument>PFNpbXBsZV9TdHJpbmcgU3RyaW5nVmFsdWU9IlRoaXMgaXMgYSB0ZXN0IGZvciB0aGUgc3lzdGVtIG91dHB1dCAhIi8+Cg==</argument>
             </startArguments>
         </agent>
     </agentSetup>

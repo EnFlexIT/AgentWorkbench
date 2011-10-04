@@ -102,7 +102,7 @@ public class JPanelConsole extends JPanel {
 	    this.add(getJScrollPane(),BorderLayout.CENTER);
 		
 		if (localConsole==true) {
-			// --- listen to Out/Err-Output -----------------
+			// --- listen to local Out/Err-Output ---------
 			sos = new SysOutScanner(this);
 			SysOutBoard.setSysOutScanner(sos);
 		}

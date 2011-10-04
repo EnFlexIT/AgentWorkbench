@@ -46,10 +46,12 @@ public class PrintStreamListener extends PrintStream {
 		// --- Create the String for the console output ---
 		String lineOutput = new String(byteArray);
 		lineOutput = this.prefix2use + " " + lineOutput;
+		final String lineOutputFinal = lineOutput;
+
 		// --- send to Main-Container ---------------------
 		if (sos!=null) {
 			synchronized (sos) {
-				this.sos.append2Stack(lineOutput);
+				sos.append2Stack(lineOutputFinal);
 			}
 		}
 

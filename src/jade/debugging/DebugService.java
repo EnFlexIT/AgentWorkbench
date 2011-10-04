@@ -45,6 +45,7 @@ import jade.core.management.AgentManagementSlice;
 import jade.debugging.components.JFrame4Consoles;
 import jade.debugging.components.JPanelConsole;
 import jade.debugging.components.JTabbedPane4Consoles;
+import jade.debugging.components.PrintStreamListener;
 import jade.debugging.components.SysOutBoard;
 import jade.debugging.components.SysOutScanner;
 import jade.util.Logger;
@@ -56,6 +57,18 @@ import java.util.Vector;
 
 
 /**
+ * This Service can be used in order to direct (as a copy) the system output generated<br>
+ * by commands like System.out and System.err to the Main-Container of a platform.<br> 
+ * <br>
+ * For this several components were developed, like a PrintStreamListener, which<br>  
+ * listens to the current PrintStrem without disturbing it.<br>
+ * Covering the circumstance, that in one JVM several containers can run, the<br>
+ * Services comes with a Singleton class, which holds the needed information<br>
+ * for one JVM.<br>
+ * 
+ * @see PrintStreamListener
+ * @see SysOutBoard
+ * @see #boot(Profile)
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg / Essen
  */
@@ -65,7 +78,7 @@ public class DebugService extends BaseService {
 	
 	private AgentContainer myContainer;
 	private MainContainer myMainContainer;
-
+	
 	private Filter incFilter;
 	private Filter outFilter;
 	private ServiceComponent localSlice;
@@ -76,6 +89,7 @@ public class DebugService extends BaseService {
 		super.init(ac,p);
 		myContainer = ac;
 		myMainContainer = ac.getMain();		
+
 		// --- Create filters -----------------------------
 		outFilter = new CommandOutgoingFilter();
 		incFilter = new CommandIncomingFilter();
@@ -84,23 +98,40 @@ public class DebugService extends BaseService {
 		
 		if (myContainer!=null) {
 			if (myLogger.isLoggable(Logger.FINE)) {
-				myLogger.log(Logger.FINE, "Starting LoadService: My-Container: " + myContainer.toString());
+				myLogger.log(Logger.FINE, "Starting DebugService: My-Container: " + myContainer.toString());
 			}
 		}
 		
 	}
+	/**
+	 * Depending on the execution location the service configures independently
+	 */
 	public void boot(Profile p) throws ServiceException {
 		
 		if (myMainContainer==null) {
 			// -----------------------------------------------------------------------
-			// --- We are in a satellite container -----------------------------------
+			// --- We are in a remote/satellite container ----------------------------
 			// -----------------------------------------------------------------------
-			// --- Start the console Scanner --------------
-			if (SysOutBoard.isLocationOfMainContainer()==false && SysOutBoard.isRunningSysOutScanner()==false) {
-				if (myLogger.isLoggable(Logger.FINE)) {
-					myLogger.log(Logger.FINE, "Satellite container '" + localSlice.getNode().getName() + "': Attaching SystemOutputScanner");
+			if (SysOutBoard.isLocationOfMainContainer()==false) {
+				
+				if (SysOutBoard.isRunningSysOutScanner()==false) {
+					// --- Start the console Scanner --------------
+					if (myLogger.isLoggable(Logger.FINE)) {
+						myLogger.log(Logger.FINE, "Satellite container '" + localSlice.getNode().getName() + "': Attaching SystemOutputScanner");
+					}
+					SysOutBoard.setSysOutScanner(new SysOutScanner(this));
+					
 				}
-				SysOutBoard.setSysOutScanner(new SysOutScanner(this));
+				
+			} else {
+				// --- Remove such local consoles because the output ---------- 
+				// --- will come in the local console				 ----------
+				String localSliceName = localSlice.getNode().getName();
+				JPanelConsole jpc = SysOutBoard.getHashMapJPanelConsoles().get(localSliceName);
+				if (jpc!=null) {
+					SysOutBoard.getJTabbedPane4Consoles().remove(jpc);
+					SysOutBoard.getHashMapJPanelConsoles().remove(localSliceName);
+				}
 				
 			}
 			
@@ -121,6 +152,16 @@ public class DebugService extends BaseService {
 				tp4c = displayFrame.getJTabbedPaneRemoteConsoles();
 				SysOutBoard.setJFrame4Display(displayFrame);
 				SysOutBoard.setJTabbedPane4Consoles(tp4c);
+				
+				// --- Create a console window for the local output -----------
+				JPanelConsole localConsole = new JPanelConsole(true);
+				SysOutBoard.getJTabbedPane4Consoles().addTab("Local", localConsole);
+				SysOutBoard.setHashMapJPanelConsoles(new HashMap<String, JPanelConsole>());
+				SysOutBoard.getHashMapJPanelConsoles().put("Local", localConsole);
+
+				// --- Show the dialog for the system output ------------------
+				displayFrame.setVisible(true);
+				
 			}
 			
 			// --- If there are old consoles, remove them from tab ------------
@@ -129,14 +170,21 @@ public class DebugService extends BaseService {
 				if (consoleHash.size()>0) {
 					Set<String> consoleKeys = consoleHash.keySet();
 					for (Iterator<String> iterator = consoleKeys.iterator(); iterator.hasNext();) {
-						String key = (String) iterator.next();
-						tp4c.remove(consoleHash.get(key));
+						String consoleKey = (String) iterator.next();
+						JPanelConsole currConsole = consoleHash.get(consoleKey);
+						if (currConsole.isLocalConsole()==false) {
+							tp4c.remove(consoleHash.get(consoleKey));
+							SysOutBoard.getHashMapJPanelConsoles().remove(consoleKey);
+							
+						}
 					}	
 				}
 			}
 			
 			// --- Configure the SysOutBoard for the current environment ------
-			SysOutBoard.setHashMapJPanelConsoles(new HashMap<String, JPanelConsole>());
+			if (SysOutBoard.getHashMapJPanelConsoles() ==null) {
+				SysOutBoard.setHashMapJPanelConsoles(new HashMap<String, JPanelConsole>());
+			}
 			SysOutBoard.setIsLocationOfMainContainer(true);
 			
 		}
@@ -188,17 +236,6 @@ public class DebugService extends BaseService {
 				lines2transfer = SysOutBoard.getSysOutScanner().getStack();	
 			}
 			sendLocalConsoleOutput2Main(lines2transfer);
-		}
-
-		@Override
-		public JFrame4Consoles getRemoteConsolesDisplay() throws ServiceException {
-			if (SysOutBoard.isLocationOfMainContainer()==true) {
-				JFrame4Consoles jf4c = SysOutBoard.getJFrame4Display();  
-				if (jf4c!=null) {
-					return jf4c;
-				}
-			}
-			return null;
 		}
 
 	}
@@ -257,14 +294,12 @@ public class DebugService extends BaseService {
 		
 		public VerticalCommand serve(HorizontalCommand cmd) {
 			
+			if (cmd==null) return null;
 			try {
-				if (cmd==null) return null;
-				//if ( ! cmd.getService().equals(NAME) ) return null;
-				
 				String cmdName = cmd.getName();
 				Object[] params = cmd.getParams();
 				
-				//System.out.println( "=> LOAD ServiceComponent " + cmd.getService() + " " +  cmdName);
+				//System.out.println( "=> DebugService ServiceComponent " + cmd.getService() + " " +  cmdName);
 				if (cmdName.equals(DebugServiceSlice.DEBUG_SEND_LOCAL_OUTPUT)) {
 					String containerName = (String) params[0];
 					@SuppressWarnings("unchecked")
@@ -287,6 +322,7 @@ public class DebugService extends BaseService {
 		// -----------------------------------------------------------------
 		private void addConsoleLines(String containerName, Vector<String> lines2transfer) {
 
+			// --- If console for container does not exists, create it ----- 
 			JPanelConsole currConsole = SysOutBoard.getHashMapJPanelConsoles().get(containerName);
 			if (currConsole==null) {
 				
@@ -310,8 +346,6 @@ public class DebugService extends BaseService {
 		// -----------------------------------------------------------------
 		// --- The real functions for the Service Component --- Stop ------- 
 		// -----------------------------------------------------------------
-
-		
 	} 
 	// --------------------------------------------------------------	
 	// ---- Inner-Class 'ServiceComponent' ---- End -----------------
@@ -327,7 +361,6 @@ public class DebugService extends BaseService {
 	private class CommandOutgoingFilter extends Filter {
 		public CommandOutgoingFilter() {
 			super();
-			//setPreferredPosition(2);  // Before the Messaging (encoding) filter and the security related ones
 		}
 		public final boolean accept(VerticalCommand cmd) {
 			
@@ -365,14 +398,13 @@ public class DebugService extends BaseService {
 			
 			if (myMainContainer != null) {
 				if (cmdName.equals(Service.NEW_SLICE)) {
-					// --- If the new slice is a LoadServiceSlice, notify it about the current state ---
+					// --- If the new slice is a DebugServiceSlice, notify it about the current state ---
 					handleNewSlice(cmd);
 				}
 				
 			} else {
 				if (cmdName.equals(Service.REATTACHED)) {
 					// The Main lost all information related to this container --> Notify it again
-					
 				}
 			}
 			// Never veto a Command
@@ -389,9 +421,24 @@ public class DebugService extends BaseService {
 	private void handleNewSlice(VerticalCommand cmd) {
 		
 		if (cmd.getService().equals(NAME)) {
-			// --- We ARE in the Main-Container !!! ----------------------------------------
-//			Object[] params = cmd.getParams();
-//			String newSliceName = (String) params[0];
+			// --- We ARE in the Main-Container !!! -----------------
+			Object[] params = cmd.getParams();
+			String newSliceName = (String) params[0];
+
+			String localSliceName = null; 
+			try {
+				localSliceName = localSlice.getNode().getName();
+			} catch (ServiceException e) {
+				e.printStackTrace();
+			}
+			
+			if (newSliceName.equals(localSliceName)==false) {
+				Vector<String> lineOutput= new Vector<String>();
+				lineOutput.add(PrintStreamListener.SystemError + "INFO: --- Container <" + newSliceName + "> was added to the platform! ---");
+				localSlice.addConsoleLines(newSliceName, lineOutput);
+				
+			}
+			
 		}
 	}
 

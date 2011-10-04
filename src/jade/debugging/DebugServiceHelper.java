@@ -29,7 +29,6 @@ package jade.debugging;
 
 import jade.core.ServiceException;
 import jade.core.ServiceHelper;
-import jade.debugging.components.JFrame4Consoles;
 
 
 /**
@@ -41,6 +40,5 @@ public interface DebugServiceHelper extends ServiceHelper {
 	
 	// --- Methods for distributed debugging ------------------------
 	public void sendLocalConsoleOutput() throws ServiceException;
-	public JFrame4Consoles getRemoteConsolesDisplay() throws ServiceException;
 	
 }

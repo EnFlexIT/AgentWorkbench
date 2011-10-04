@@ -31,7 +31,7 @@ public class JFrame4Consoles extends JFrame {
 		
 		this.setSize(800, 300);
 		this.setContentPane(getJContentPane());
-		this.setTitle("JADE - Remote Debugging");
+		this.setTitle("JADE - Debugging");
 		
 		// --- Listener für das Schließen der Applikation ----
 		this.addWindowListener(new WindowAdapter() {
