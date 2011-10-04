@@ -11,10 +11,30 @@
             <postionNo>2</postionNo>
             <listMembership>01 AgentStartManual</listMembership>
             <agentClassReference>remotestart.agents.SystemOutAgent</agentClassReference>
-            <startAsName>SyOuAg</startAsName>
+            <startAsName>SyOuAg1</startAsName>
             <startArguments>
-                <argument>PFNpbXBsZV9JbnRlZ2VyIEludGVnZXJWYWx1ZT0iNSIvPgo=</argument>
+                <argument>PFNpbXBsZV9JbnRlZ2VyIEludGVnZXJWYWx1ZT0iMSIvPgo=</argument>
                 <argument>PFNpbXBsZV9TdHJpbmcgU3RyaW5nVmFsdWU9IlRoaXMgaXMgYSB0ZXN0IGZvciB0aGUgc3lzdGVtIG91dHB1dCAhIi8+Cg==</argument>
+            </startArguments>
+        </agent>
+        <agent>
+            <postionNo>3</postionNo>
+            <listMembership>01 AgentStartManual</listMembership>
+            <agentClassReference>remotestart.agents.SystemOutAgent</agentClassReference>
+            <startAsName>SyOuAg2</startAsName>
+            <startArguments>
+                <argument>PFNpbXBsZV9JbnRlZ2VyIEludGVnZXJWYWx1ZT0iMSIvPgo=</argument>
+                <argument>PFNpbXBsZV9TdHJpbmcgU3RyaW5nVmFsdWU9IlRoaXMgaXMgdGhlIHNlY29uZCBhZ2VudCAhIi8+Cg==</argument>
+            </startArguments>
+        </agent>
+        <agent>
+            <postionNo>4</postionNo>
+            <listMembership>01 AgentStartManual</listMembership>
+            <agentClassReference>remotestart.agents.SystemOutAgent</agentClassReference>
+            <startAsName>SyOuAg3</startAsName>
+            <startArguments>
+                <argument>PFNpbXBsZV9JbnRlZ2VyIEludGVnZXJWYWx1ZT0iMCIvPgo=</argument>
+                <argument>PFNpbXBsZV9TdHJpbmcgU3RyaW5nVmFsdWU9IiIvPgo=</argument>
             </startArguments>
         </agent>
     </agentSetup>

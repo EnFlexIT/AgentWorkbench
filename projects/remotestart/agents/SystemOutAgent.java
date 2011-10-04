@@ -32,6 +32,14 @@ public class SystemOutAgent extends Agent {
 				} catch (Exception e) {}
 			}
 		}
+		
+		if (speakingInterval==0) {
+			speakingInterval = 5;
+			
+		}
+		if (speakingText==null) {
+			speakingText = "Error, while computing start arguments !";
+		}
 		this.addBehaviour(new SpeakTick(this, speakingInterval*1000));
 	}
 	

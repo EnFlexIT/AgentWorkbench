@@ -51,7 +51,7 @@ public class PrintStreamListener extends PrintStream {
 		// --- send to Main-Container ---------------------
 		if (sos!=null) {
 			synchronized (sos) {
-				sos.append2Stack(lineOutputFinal);
+				this.sos.append2Stack(lineOutputFinal);
 			}
 		}
 

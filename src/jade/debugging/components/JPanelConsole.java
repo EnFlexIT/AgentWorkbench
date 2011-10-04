@@ -54,9 +54,9 @@ public class JPanelConsole extends JPanel {
 	private static final long serialVersionUID = 8836132571457271033L;
 	
 	private final String lineSeparator = System.getProperty("line.separator");
+	private AttributeSet attribute;
 	private MutableAttributeSet black;  //  @jve:decl-index=0:
 	private MutableAttributeSet red;
-	private AttributeSet attribute;
 	
 	private SysOutScanner sos = null;
 	
@@ -64,6 +64,10 @@ public class JPanelConsole extends JPanel {
 	private boolean localConsole = false;
 
 	private JScrollPane jScrollPane = null;
+
+	private Integer printLinesCounter = 0;
+	private Integer printLinesMax = 400;
+	private Integer printLinesCut = 100; 
 	
 	/**
 	 * Default Constructor of this class
@@ -142,37 +146,70 @@ public class JPanelConsole extends JPanel {
 	 * @param isError specifies if the text is an error
 	 */
 	public void appendText(String text, boolean isError) {
-
+		
+		// --- Work on the incoming text --------
 		text = text.trim();
 		if (text==null || text.equals("")) {
 			return;
 		} else if (text.endsWith(lineSeparator)==false) {
 			text = text + lineSeparator;
 		}
-		
+		// --- Set the right color attribute ----
 		if (isError == false ) {
 	    	attribute = black;
 		} else {
 			attribute = red;
 		}		
 		
+		// --- Insert the text in the document --
 		Document doc = this.getJEditorPaneOutput().getDocument();
 		try {
 			doc.insertString(doc.getLength(), text, attribute);
+			printLinesCounter++;
 		} catch (BadLocationException ex) {
 			ex.printStackTrace();
 		}
-		
-		 // Keep the text area down to a certain character size
-        int idealSize = 1000;
-        int maxExcess = 500;
-        int excess = doc.getLength() - idealSize;
-        
-        if (excess >= maxExcess) {
-//            this.jEditorPaneOutput.replaceRange("", 0, excess);
-//            doc.remove(offs, len);
-        }
 
+		// --- Set the maximum length of the text shown --- 
+		if ( printLinesCounter > (printLinesMax+printLinesCut) ) {
+
+			// --- Get document as String -------
+			String docText = null;
+			try {
+				docText = doc.getText(0, doc.getLength());
+			} catch (BadLocationException e) {
+				e.printStackTrace();
+			}
+			
+			// --- Find the lines to remove -----
+			int lineSeparatorFound = 0;
+			int offset = 0;
+			while(lineSeparatorFound < printLinesCut ) {
+				
+				int found = docText.indexOf(lineSeparator, offset);
+				if (found == -1) {
+					// --- nothing found ---
+					break;
+				} else {
+					lineSeparatorFound++;
+					offset = found+1;
+				}
+				
+			}
+			// --- Remove the lines -------------
+			if (offset>0) {
+				offset--;
+				offset = offset + lineSeparator.length();
+				try {
+					doc.remove(0, offset);
+				} catch (BadLocationException e) {
+					e.printStackTrace();
+				}
+				printLinesCounter = printLinesCounter-lineSeparatorFound;
+			}
+			
+		}
+		
         // --- Focus to the end ---------------------------
         this.getJEditorPaneOutput().setCaretPosition(doc.getLength());
 		
