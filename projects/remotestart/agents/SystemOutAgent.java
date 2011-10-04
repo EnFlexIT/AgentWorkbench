@@ -21,21 +21,24 @@ public class SystemOutAgent extends Agent {
 	
 		Object[] startArgs = this.getArguments();
 		if (startArgs!=null) {
-			if (startArgs[0]!= null) {
-				try {
-					speakingInterval = ((Simple_Integer) startArgs[0]).getIntegerValue();	
-				} catch (Exception e) {}
-			}
-			if (startArgs[1]!= null) {
-				try {
-					speakingText = ((Simple_String) startArgs[1]).getStringValue();
-				} catch (Exception e) {}
+			if (startArgs.length>0) {
+				// --- Work on the start argument ---------
+				if (startArgs[0]!= null) {
+					try {
+						speakingInterval = ((Simple_Integer) startArgs[0]).getIntegerValue();	
+					} catch (Exception e) {}
+				}
+				if (startArgs[1]!= null) {
+					try {
+						speakingText = ((Simple_String) startArgs[1]).getStringValue();
+					} catch (Exception e) {}
+				}
+				
 			}
 		}
 		
 		if (speakingInterval==0) {
 			speakingInterval = 5;
-			
 		}
 		if (speakingText==null) {
 			speakingText = "Error, while computing start arguments !";

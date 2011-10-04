@@ -5,6 +5,7 @@ import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
 
 import agentgui.core.application.Project;
+import agentgui.core.gui.components.TabForSubPanels;
 
 /**
  * 
@@ -17,6 +18,9 @@ public class ProjectWindowTab {
 	public final static int DISPLAY_4_DEVELOPER = 10;
 	private int displayType = 0;
 
+	public final static String TAB_4_SUB_PANES_Configuration = "Configuration";
+	public final static String TAB_4_SUB_PANES_SimSetup ="SimulationSetup";
+	
 	private Project currProject;
 	
 	private String title;
@@ -37,7 +41,7 @@ public class ProjectWindowTab {
 	 * @param component
 	 * @param tip
 	 */
-	public ProjectWindowTab(Project project, int displayType_DEV_or_USER, String head_title, String aTipText, Icon ico, JComponent component, String pareName, JTabbedPane jTabbedPane4ChildComponents) {
+	public ProjectWindowTab(Project project, int displayType_DEV_or_USER, String head_title, String aTipText, Icon ico, JComponent component, String pareName) {
 		
 		this.currProject = project;		
 		this.displayType = displayType_DEV_or_USER;
@@ -56,8 +60,11 @@ public class ProjectWindowTab {
 		} else {
 			this.parentName = pareName;	
 		}		
+		
 		this.comp = component;
-		this.compForChildComp = jTabbedPane4ChildComponents;
+		if (component instanceof TabForSubPanels) {
+			this.compForChildComp = ((TabForSubPanels) component).getJTabbedPane();	
+		}
 		
 	}
 	

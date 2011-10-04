@@ -8,6 +8,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
@@ -60,6 +61,7 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	private boolean pauseTreeSelectionListener = false;
 	private boolean pauseTabSelectionListener = false;
 	
+	private HashMap<String, ProjectWindowTab> tab4SubPanel = new HashMap<String, ProjectWindowTab>();  //  @jve:decl-index=0:
 	private Vector<ProjectWindowTab> tabVector = new Vector<ProjectWindowTab>();  //  @jve:decl-index=0:
 	private int oldNumberOfNodes = 0;
 	
@@ -676,6 +678,31 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 			newNode = this.addProjectTabInternal(pwt);	
 		}
 		return newNode;
+	}
+
+	/**
+	 * Can be used in order to register a tab which can hold sub panes, by
+	 * using a JTabbedPane. So it allows the later access.
+	 * @param name
+	 * @param tab4SubPanes
+	 */
+	public void registerTabForSubPanels(String name, ProjectWindowTab tab4SubPanes) {
+		this.tab4SubPanel.put(name, tab4SubPanes);
+	}
+	/**
+	 * Can be used in order to access a special tab, which can hold sub tabs 
+	 * @param name
+	 */
+	public ProjectWindowTab getTabForSubPanels(String name) {
+		return this.tab4SubPanel.get(name);
+	}
+	/**
+	 * Can be used in order to unregister a tab which can hold sub panes, by
+	 * using a JTabbedPane. 
+	 * @param name
+	 */
+	public void deregisterTabForSubPanels(String name) {
+		this.tab4SubPanel.remove(name);
 	}
 
 	

@@ -54,7 +54,7 @@ import agentgui.core.environment.EnvironmentPanel;
 import agentgui.core.environment.EnvironmentType;
 import agentgui.core.gui.ProjectWindow;
 import agentgui.core.gui.ProjectWindowTab;
-import agentgui.core.gui.components.TabForSubPanes;
+import agentgui.core.gui.components.TabForSubPanels;
 import agentgui.core.gui.projectwindow.BaseAgents;
 import agentgui.core.gui.projectwindow.JadeSetup;
 import agentgui.core.gui.projectwindow.OntologyTab;
@@ -143,8 +143,8 @@ import agentgui.core.sim.setup.SimulationSetups;
 															   defaultSubFolderEnvSetups, 
 															  };
 	
-	@XmlTransient private static final String NewLine = Application.RunInfo.AppNewLineString();	
-	@XmlTransient private static final String PathSep = Application.RunInfo.AppPathSeparatorString();
+	@XmlTransient private static final String newLine = Application.RunInfo.AppNewLineString();	
+	@XmlTransient private static final String pathSep = Application.RunInfo.AppPathSeparatorString();
 	
 	// --- GUI der aktuellen Projekt-Instanz -------------------
 	/**
@@ -274,74 +274,75 @@ import agentgui.core.sim.setup.SimulationSetups;
 		// --- General Informations -----------------------
 		pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, 
 								   Language.translate("Info"), null, null, 
-								   new ProjectInfo(this), null, null);
+								   new ProjectInfo(this), null);
 		pwt.add();
 		
 		// ------------------------------------------------
 		// --- Configuration ------------------------------
-		TabForSubPanes subPanes = new TabForSubPanes(this); 
 		pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, 
 				   Language.translate("Konfiguration"), null, null, 
-				   subPanes, null, subPanes.getJTabbedPane());
+				   new TabForSubPanels(this), null);
 		pwt.add();
+		projectWindow.registerTabForSubPanels(ProjectWindowTab.TAB_4_SUB_PANES_Configuration, pwt);
+		
 		
 			// --- External Resources -------------------------
 			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, 
 					   Language.translate("Ressourcen"), null, null, 
-					   new ProjectResources(this), Language.translate("Konfiguration"), null);
+					   new ProjectResources(this), Language.translate("Konfiguration"));
 			pwt.add();
 			// --- Used Ontologies ----------------------------
 			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, 
 					   Language.translate("Ontologien"), null, null, 
-					   new OntologyTab(this), Language.translate("Konfiguration"), null);
+					   new OntologyTab(this), Language.translate("Konfiguration"));
 			pwt.add();
 			// --- Project Agents -----------------------------
 			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, 
 					   Language.translate("Agenten"), null, null, 
-					   new BaseAgents(this), Language.translate("Konfiguration"), null);
+					   new BaseAgents(this), Language.translate("Konfiguration"));
 			pwt.add();
 			// --- JADE-Configuration -------------------------
 			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, 
 					   Language.translate("JADE-Konfiguration"), null, null, 
-					   new JadeSetup(this), Language.translate("Konfiguration"), null);
+					   new JadeSetup(this), Language.translate("Konfiguration"));
 			pwt.add();
 		
 		// ------------------------------------------------
 		// --- Simulations-Setup --------------------------
-		subPanes = new TabForSubPanes(this); 
 		pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, 
 				   Language.translate("Simulations-Setup"), null, null, 
-				   subPanes, null, subPanes.getJTabbedPane());
+				   new TabForSubPanels(this), null);
 		pwt.add();
+		projectWindow.registerTabForSubPanels(ProjectWindowTab.TAB_4_SUB_PANES_SimSetup, pwt);
 		
 			// --- start configuration for agents ---------
 			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, 
 					   Language.translate("Agenten-Start"), null, null, 
-					   new StartSetup(this), Language.translate("Simulations-Setup"), null);
+					   new StartSetup(this), Language.translate("Simulations-Setup"));
 			pwt.add();
 			// --- simulation environment -----------------
 			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER_VISUALIZATION, 
 					   Language.translate("Simulationsumgebung"), null, null, 
-					   new SimulationEnvironment(this), Language.translate("Simulations-Setup"), null);
+					   new SimulationEnvironment(this), Language.translate("Simulations-Setup"));
 			pwt.add();
 			// --- distribution + thresholds --------------
 			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, 
 					   Language.translate("Verteilung + Grenzwerte"), null, null, 
-					   new Distribution(this), Language.translate("Simulations-Setup"), null);
+					   new Distribution(this), Language.translate("Simulations-Setup"));
 			pwt.add();
 			
 
-		// --- SVG-visualisation --------------------------
+		// --- Visualisation ------------------------------
 		Visualization visualization = new Visualization(this);
 		this.projectVisualizationPanel = visualization.getJPanel4Visualization();
 		pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER_VISUALIZATION, 
 				   Language.translate("Simulations-Visualisierung"), null, null, 
-				   this.projectVisualizationPanel, null, null);
+				   this.projectVisualizationPanel, null);
 		pwt.add();
 		// --- Project Desktop ----------------------------
 		pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, 
 				   Language.translate("Projekt-Desktop"), null, null, 
-				   new ProjectDesktop(this), null, null);
+				   new ProjectDesktop(this), null);
 		pwt.add();
 		
 		// --- Expand the tree view -----------------------
@@ -411,7 +412,7 @@ import agentgui.core.sim.setup.SimulationSetups;
 			MsgHead = Language.translate("Projekt '@' speichern?");
 			MsgHead = MsgHead.replace( "'@'", "'" + projectName + "'");			
 			MsgText = Language.translate(
-						"Das aktuelle Projekt '@' ist noch nicht gespeichert!" + NewLine + 
+						"Das aktuelle Projekt '@' ist noch nicht gespeichert!" + newLine + 
 						"Möchten Sie es nun speichern ?");
 			MsgText = MsgText.replace( "'@'", "'" + projectName + "'");
 			
@@ -777,7 +778,7 @@ import agentgui.core.sim.setup.SimulationSetups;
 	 */
 	public String getSubFolder4Setups(boolean fullPath) {
 		if (fullPath==true) {
-			return getProjectFolderFullPath() + defaultSubFolder4Setups + PathSep;
+			return getProjectFolderFullPath() + defaultSubFolder4Setups + pathSep;
 		} else {
 			return defaultSubFolder4Setups;	
 		}	

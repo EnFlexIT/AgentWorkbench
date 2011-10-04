@@ -11,7 +11,7 @@ import javax.swing.JTabbedPane;
 
 import agentgui.core.application.Project;
 
-public class TabForSubPanes extends JPanel  {
+public class TabForSubPanels extends JPanel  {
 
 	private static final long serialVersionUID = 1L;
 
@@ -21,7 +21,7 @@ public class TabForSubPanes extends JPanel  {
 	/**
 	 * This is the default constructor
 	 */
-	public TabForSubPanes(Project project) {
+	public TabForSubPanels(Project project) {
 		super();
 		this.currProject = project;
 		initialize();
