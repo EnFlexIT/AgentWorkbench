@@ -280,10 +280,10 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	}		
 	public boolean consoleIsVisible() {
 		// --- Umschalten der Consolen-Ansicht --------------------
-		if ( jPanelConsoleLocal.isVisible() == true ) {
-			return true;
-		} else {
+		if (jSplitPane4ProjectDesktop.getDividerSize()==0) {
 			return false;
+		} else {
+			return true;
 		}		
 	}
 	private void doSwitchConsole() {

@@ -13,10 +13,11 @@
         </entry>
     </agentConfiguration>
     <jadeConfiguration>
-        <useLocalPort>1105</useLocalPort>
+        <useLocalPort>1107</useLocalPort>
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
+            <service>jade.debugging.DebugService</service>
             <service>agentgui.simulationService.SimulationService</service>
             <service>jade.core.mobility.AgentMobilityService</service>
         </serviceList>
