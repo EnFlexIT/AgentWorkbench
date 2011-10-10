@@ -11,10 +11,11 @@
      Christian Derksen                                                                
      ====================================================================== -->
 <project name="AgentGui" default="execute" basedir=".">
-
+	
 	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-          properties: Wichtige Verzeichniseinstellungen                      
+          Properties: Folder structure / ClassPath / Version Info                        
          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<!-- Folder - Information - - - - - - -->
 	<property name="sourceDir" value="src" />
 	<property name="sourceDirLibraries" value="lib" />
 	<property name="sourceDirProperties" value="properties" />
@@ -48,7 +49,7 @@
 	<property name="destinDirProperties" value="${destinDir}\properties\\" />
 	<property name="destinDirProjects" value="${destinDir}\projects\\" />
 	
-	<!-- Jar's für den Class-Path im Manifest  -->
+	<!-- Jar's for the Class-Path in the AgentGui.jar-Manifest  -->
 	<property name="destinClassPath" 
 		     value="lib/jade/lib/jade.jar
 					lib/jade/lib/migration.jar
@@ -87,17 +88,55 @@
 					lib/hyperic-sigar/sigar-bin/lib/log4j.jar 
 					lib/hyperic-sigar/sigar-bin/lib/sigar.jar  " />
 	
+	<!-- Version - Information - - - - -  -->
+	<property name="versionPropertyFile" value="${sourceDir}\agentgui\version.properties"/>
+	<property name="versionBuildNumberFile" value="${sourceDir}\agentgui\build.number"/>
+	<property name="destinVersionPropertyFile" value="${binaryDirANT}\agentgui\version.properties"/>
+
+	
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-          target: cleanup => Aufräumen, bevor es wirklich los geht                      
+          target: execute => Create and start the AgentGui.jar executable                        
          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-    <target name="cleanup" description="Löschen der alten Datei- und Verzeichnisstruktur ...">
+	<target name="execute" depends="versioning,cleanup,createdir,compile,jarZip" description="Executing jar-file ... ">
+		<java jar="${destinJar}" fork="true" />
+	</target>
+	
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+          target: versioning => Update the version info                       
+         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<target name="versioning" description="Updating version and build information ... ">
+		
+		<buildnumber file="${versionBuildNumberFile}"/>
+		<tstamp/>
+		
+		<!-- Updates the version.properties file -->
+		<property prefix="old" file="${versionPropertyFile}"/>
+		<property name="version.major" value="${old.version.major}"/>
+		<property name="version.minor" value="${old.version.minor}"/>
+		<property name="version.build" value="${build.number}"/>
+			  
+		<propertyfile file="${versionPropertyFile}">
+			<entry key="version.major" value="${version.major}"/>
+		    <entry key="version.minor" value="${version.minor}"/>
+		    <entry key="version.build" value="${version.build}"/>
+			<entry key="version.date" value="${DSTAMP}${TSTAMP}"/>
+		</propertyfile>
+		  
+		<echo>Building Version: ${version.major}.${version.minor} - ${version.build}</echo>
+		
+	</target>
+	
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+          target: cleanup => Free the bin folder before creation                      
+         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <target name="cleanup" description="Deleting old folder structure ...">
     	<delete failonerror="false" dir="${binaryDirANT}" />    	    	
     </target>
 	
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-          target: createdir => Anlegen der Verzeichnisstruktur                      
+          target: createdir => Create the new folder structure                      
          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-    <target name="createdir" description="Erstellung der Verzeichnisstruktur ...">
+    <target name="createdir" description="Creating new folder structure ...">
     	<mkdir dir="${destinDir}" />  	
     	<mkdir dir="${destinDirLibraries}" />
     	<mkdir dir="${destinDirProperties}" />
@@ -105,9 +144,9 @@
     </target>
 	
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-          target: compile => Anlegen der Verzeichnisstruktur                      
+          target: compile => Create the new Byte-Code in the bin folder                      
          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-    <target name="compile" description="Erzeugung des Byte-Codes ...">
+    <target name="compile" description="Creating the new Byte-Code ...">
     	
     	<delete failonerror="false" dir="${binaryDirANT}" />
     	<mkdir dir="${binaryDirANT}" />    	
@@ -128,14 +167,15 @@
     		<fileset dir="${sourceDirImages}" />
     	</copy>  
     	<copy tofile="${binaryFileProjectOntology}" file="${sourceFileProjectOntology}" />
+    	<!-- Version information to ANT folder -->
+    	<copy tofile="${destinVersionPropertyFile}" file="${versionPropertyFile}" />
     		
     </target>
 	
 	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-          target: supply => .jar-externe Dateien' verschieben
-          				 => Erzeugung der ausführbaren Struktur              
+          target: jarZip => Create (executable) jar files 
          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-    <target name="supply" description="Erstellung der Dateistruktur ... ">
+    <target name="jarZip" description="Creating (executable) jar-files ... ">
     	
     	<!-- Alte simulation.jar löschen -->
     	<delete failonerror="false" file="${simServiceDestinJar}" />    	
@@ -214,9 +254,5 @@
     	
     </target>
 
-	<target name="execute" depends="cleanup,createdir,compile,supply" description="Executing jar-file ... ">
-	    <!-- Die erzeugte jar ausführen -->
-		<java jar="${destinJar}" fork="true" />
-	</target>
 	
 </project>

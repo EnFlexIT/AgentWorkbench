@@ -35,6 +35,7 @@ import javax.swing.SwingUtilities;
 import agentgui.core.benchmark.BenchmarkMeasurement;
 import agentgui.core.config.FileProperties;
 import agentgui.core.config.GlobalInfo;
+import agentgui.core.config.VersionInfo;
 import agentgui.core.database.DBConnection;
 import agentgui.core.gui.AboutDialog;
 import agentgui.core.gui.CoreWindow;
@@ -62,6 +63,10 @@ public class Application {
 	 * This attribute holds the current state of the configurable runtime informations  
 	 */
 	public static GlobalInfo RunInfo = null;
+	/**
+	 * Can be used in order to access the version information
+	 */
+	public static VersionInfo Version = null;
 	/**
 	 * Holds the instance of the file properties which are defined in '/properties/agentgui.ini' 
 	 */
@@ -147,6 +152,7 @@ public class Application {
 		// --- Just starts the base-instances -----------------------
 		Console = new JPanelConsole(true);
 		RunInfo = new GlobalInfo();
+		Version = new VersionInfo();
 		Properties = new FileProperties();
 		Language.startDictionary();
 		proceedStartArguments(args);
