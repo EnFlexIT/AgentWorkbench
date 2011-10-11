@@ -4,8 +4,9 @@
  * applications based on the JADE - Framework in compliance with the 
  * FIPA specifications. 
  * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
  * http://sourceforge.net/projects/agentgui/
- * http://www.dawis.wiwi.uni-due.de/ 
+ * http://www.agentgui.org 
  *
  * GNU Lesser General Public License
  *
@@ -53,14 +54,14 @@ import agentgui.core.common.ClassLoaderUtil;
 import agentgui.core.environment.EnvironmentPanel;
 import agentgui.core.environment.EnvironmentType;
 import agentgui.core.gui.ProjectWindow;
-import agentgui.core.gui.ProjectWindowTab;
-import agentgui.core.gui.components.TabForSubPanels;
 import agentgui.core.gui.projectwindow.BaseAgents;
 import agentgui.core.gui.projectwindow.JadeSetup;
 import agentgui.core.gui.projectwindow.OntologyTab;
 import agentgui.core.gui.projectwindow.ProjectDesktop;
 import agentgui.core.gui.projectwindow.ProjectInfo;
 import agentgui.core.gui.projectwindow.ProjectResources;
+import agentgui.core.gui.projectwindow.ProjectWindowTab;
+import agentgui.core.gui.projectwindow.TabForSubPanels;
 import agentgui.core.gui.projectwindow.Visualization;
 import agentgui.core.gui.projectwindow.simsetup.Distribution;
 import agentgui.core.gui.projectwindow.simsetup.SimulationEnvironment;

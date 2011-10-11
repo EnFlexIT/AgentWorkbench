@@ -4,8 +4,9 @@
  * applications based on the JADE - Framework in compliance with the 
  * FIPA specifications. 
  * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
  * http://sourceforge.net/projects/agentgui/
- * http://www.dawis.wiwi.uni-due.de/ 
+ * http://www.agentgui.org 
  *
  * GNU Lesser General Public License
  *
@@ -49,36 +50,50 @@ import org.apache.commons.codec.binary.Base64;
  */
 public class AgentClassElement4SimStart {
 	
+	/** The df. */
 	@XmlTransient private DecimalFormat df = new DecimalFormat("00000");
 
+	/** The agent class. */
 	private Class<? extends Agent> agentClass = null;
 	
+	/** The postion no. */
 	@XmlElement(name="postionNo")
 	private Integer postionNo = 0;
+	
+	/** The list membership. */
 	@XmlElement(name="listMembership")
 	private String listMembership = null;
+	
+	/** The agent class reference. */
 	@XmlElement(name="agentClassReference")
 	private String agentClassReference = null;
+	
+	/** The start as name. */
 	@XmlElement(name="startAsName")
 	private String startAsName = "";
 	
+	/** The start arguments. */
 	@XmlElementWrapper(name = "startArguments")
 	@XmlElement(name="argument")
 	private String[] startArguments = null;
 	
 	
 	/**
-	 * Constructor without arguments (This is first of all 
+	 * Constructor without arguments (This is first of all
 	 * for the JAXB-context and should not be used by any
-	 * other context)
+	 * other context).
+	 *
 	 * @deprecated because of the JAXB-context
 	 */
 	@Deprecated
 	public AgentClassElement4SimStart() {
 	}
+	
 	/**
-	 * Constructor of this class by using the Class which extends Agent 
-	 * @param agentClass
+	 * Constructor of this class by using the Class which extends Agent.
+	 *
+	 * @param agentClass the agent class
+	 * @param listMembership the list membership
 	 */
 	public AgentClassElement4SimStart(Class<? extends Agent> agentClass, String listMembership){
 		this.agentClass=agentClass;
@@ -86,9 +101,12 @@ public class AgentClassElement4SimStart {
 		this.listMembership = listMembership;
 		this.setDefaultAgentName();
 	}
+	
 	/**
-	 * Constructor of this class by using an AgentClassElement-Object
-	 * @param agentClassElement
+	 * Constructor of this class by using an AgentClassElement-Object.
+	 *
+	 * @param agentClassElement the agent class element
+	 * @param listMembership the list membership
 	 */
 	public AgentClassElement4SimStart(AgentClassElement agentClassElement, String listMembership){
 		this.agentClass=agentClassElement.getElementClass();
@@ -98,7 +116,7 @@ public class AgentClassElement4SimStart {
 	}
 	
 	/**
-	 * Sets a default name for the executed Agent in the Simulation-Experiment
+	 * Sets a default name for the executed Agent in the Simulation-Experiment.
 	 */
 	private void setDefaultAgentName() {
 		
@@ -134,7 +152,9 @@ public class AgentClassElement4SimStart {
 	}
 	
 	/**
-	 * returns the textual description of this Object
+	 * returns the textual description of this Object.
+	 *
+	 * @return the string
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -160,7 +180,8 @@ public class AgentClassElement4SimStart {
 	}
 	
 	/**
-	 * Returns the class of the current Agent
+	 * Returns the class of the current Agent.
+	 *
 	 * @return the Class<? extends Agent> instance of the agent
 	 */
 	public Class<? extends Agent> getElementClass(){
@@ -168,30 +189,37 @@ public class AgentClassElement4SimStart {
 	}
 	
 	/**
-	 * Returns the position of the currently configured agent in the current list
+	 * Returns the position of the currently configured agent in the current list.
+	 *
 	 * @return Integer position number
 	 */
 	@XmlTransient
 	public Integer getPostionNo() {
 		return postionNo;
 	}
+	
 	/**
-	 * Sets the position number of the current agent
+	 * Sets the position number of the current agent.
+	 *
 	 * @param postionNo the postionNo to set
 	 */
 	public void setPostionNo(Integer postionNo) {
 		this.postionNo = postionNo;
 	}
+	
 	/**
-	 * Returns the listType this entry belongs to 
+	 * Returns the listType this entry belongs to.
+	 *
 	 * @return the listType
 	 */
 	@XmlTransient
 	public String getListMembership() {
 		return listMembership;
 	}
+	
 	/**
-	 * Sets the type of the list this entry belongs to
+	 * Sets the type of the list this entry belongs to.
+	 *
 	 * @param listMembership the listType to set
 	 */
 	public void setListMembership(String listMembership) {
@@ -214,15 +242,18 @@ public class AgentClassElement4SimStart {
 	}
 
 	/**
-	 * This method returns the class reference of the agent
+	 * This method returns the class reference of the agent.
+	 *
 	 * @return String the agentClassReference
 	 */
 	@XmlTransient
 	public String getAgentClassReference() {
 		return agentClassReference;
 	}
+	
 	/**
-	 * Here the class reference of the agent can be set
+	 * Here the class reference of the agent can be set.
+	 *
 	 * @param agentClassReference the agentClassReference to set
 	 */
 	public void setAgentClassReference(String agentClassReference) {

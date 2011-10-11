@@ -4,8 +4,9 @@
  * applications based on the JADE - Framework in compliance with the 
  * FIPA specifications. 
  * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
  * http://sourceforge.net/projects/agentgui/
- * http://www.dawis.wiwi.uni-due.de/ 
+ * http://www.agentgui.org 
  *
  * GNU Lesser General Public License
  *
@@ -58,52 +59,65 @@ import agentgui.core.gui.CoreWindow;
  */
 public class BenchmarkMonitor extends JDialog implements ActionListener {
 
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 
+	/** The Constant PathImage. */
 	private final static String PathImage = Application.RunInfo.PathImageIntern();
+	
+	/** The icon agent gui. */
 	private final ImageIcon iconAgentGUI = new ImageIcon( this.getClass().getResource( PathImage + "AgentGUI.png") );
+	
+	/** The image agent gui. */
 	private final Image imageAgentGUI = iconAgentGUI.getImage();
 
+	/** The j content pane. */
 	private JPanel jContentPane = null;
+	
+	/** The j panel bottom right. */
 	private JPanel jPanelBottomRight = null;
 	
+	/** The j label benchmark. */
 	private JLabel jLabelBenchmark = null;
+	
+	/** The j panel bottom left. */
 	private JPanel jPanelBottomLeft = null;
+	
+	/** The j label benchmark old caption. */
 	private JLabel jLabelBenchmarkOldCaption = null;
+	
+	/** The j label benchmark old value. */
 	private JLabel jLabelBenchmarkOldValue = null;
 	
-	/**
-	 * The progress bar of the benchmark window
-	 */
+	/** The progress bar of the benchmark window. */
 	public JProgressBar jProgressBarBenchmark = null;
-	/**
-	 * A button in order to skip the current benchmark execution 
-	 */
+	
+	/** A button in order to skip the current benchmark execution. */
 	public JButton jButtonSkip = null;
-	/**
-	 * A button in order to always skip the benchmark execution (if possible) 
-	 */
+	
+	/** A button in order to always skip the benchmark execution (if possible). */
 	public JButton jButtonSkipAllways = null;
-	/**
-	 * Indicator to skip the current benchmark execution
-	 */
+	
+	/** Indicator to skip the current benchmark execution. */
 	public boolean actionSkip = false;
-	/**
-	 * Indicator to always skip the benchmark execution (if possible) 
-	 */
+	
+	/** Indicator to always skip the benchmark execution (if possible). */
 	public boolean actionSkipAllways = false;
 
 	
 	/**
-	 * Constructor of this class
+	 * Constructor of this class.
+	 *
 	 * @param owner The Frame from which the dialog is displayed
 	 */
 	public BenchmarkMonitor(Frame owner) {
 		super(owner);
 		initialize();
 	}
+	
 	/**
-	 * This method initialises class
+	 * This method initialises class.
+	 *
 	 * @return void
 	 */
 	private void initialize() {
@@ -130,7 +144,7 @@ public class BenchmarkMonitor extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * Sets the look and feel of the JDialog similar to the main application window
+	 * Sets the look and feel of the JDialog similar to the main application window.
 	 */
 	private void setLookAndFeel() {
 		
@@ -148,15 +162,17 @@ public class BenchmarkMonitor extends JDialog implements ActionListener {
 	}
 	
 	/**
-	 * This method is used to display the benchmark value in a provided JLable   
-	 * @param benchmarkValue
+	 * This method is used to display the benchmark value in a provided JLable.
+	 *
+	 * @param benchmarkValue the new benchmark value
 	 */
 	public void setBenchmarkValue(Float benchmarkValue) {
 		jLabelBenchmarkOldValue.setText(benchmarkValue +  " Mflops");
 	}
 	
 	/**
-	 * This method initialises jContentPane
+	 * This method initialises jContentPane.
+	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJContentPane() {
@@ -201,8 +217,9 @@ public class BenchmarkMonitor extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * This method initialises jProgressBarBenchmark	
-	 * @return javax.swing.JProgressBar	
+	 * This method initialises jProgressBarBenchmark.
+	 *
+	 * @return javax.swing.JProgressBar
 	 */
 	private JProgressBar getJProgressBarBenchmark() {
 		if (jProgressBarBenchmark == null) {
@@ -213,8 +230,9 @@ public class BenchmarkMonitor extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * This method initialises jPanelBottomLeft	
-	 * @return javax.swing.JPanel	
+	 * This method initialises jPanelBottomLeft.
+	 *
+	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJPanelBottomLeft() {
 		if (jPanelBottomLeft == null) {
@@ -238,8 +256,9 @@ public class BenchmarkMonitor extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * This method initialises jButtonSkip	
-	 * @return javax.swing.JButton	
+	 * This method initialises jButtonSkip.
+	 *
+	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonSkip() {
 		if (jButtonSkip == null) {
@@ -253,8 +272,9 @@ public class BenchmarkMonitor extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * This method initialises jButtonSkipAllways	
-	 * @return javax.swing.JButton	
+	 * This method initialises jButtonSkipAllways.
+	 *
+	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonSkipAllways() {
 		if (jButtonSkipAllways == null) {
@@ -267,8 +287,9 @@ public class BenchmarkMonitor extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * This method initialises jPanelBottomRight	
-	 * @return javax.swing.JPanel	
+	 * This method initialises jPanelBottomRight.
+	 *
+	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJPanelBottomRight() {
 		if (jPanelBottomRight == null) {
@@ -289,7 +310,9 @@ public class BenchmarkMonitor extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * The ActionListener-method for this Dialog
+	 * The ActionListener-method for this Dialog.
+	 *
+	 * @param act the act
 	 */
 	@Override
 	public void actionPerformed(ActionEvent act) {

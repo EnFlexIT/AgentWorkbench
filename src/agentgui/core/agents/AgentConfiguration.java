@@ -4,8 +4,9 @@
  * applications based on the JADE - Framework in compliance with the 
  * FIPA specifications. 
  * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
  * http://sourceforge.net/projects/agentgui/
- * http://www.dawis.wiwi.uni-due.de/ 
+ * http://www.agentgui.org 
  *
  * GNU Lesser General Public License
  *
@@ -52,17 +53,25 @@ import agentgui.core.application.Project;
  */
 public class AgentConfiguration extends Hashtable<String, String> {
 	
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -1826500137791805011L;
 
+	/** The Allow reference duplicates. */
 	private boolean AllowReferenceDuplicates = true;
 	
+	/** The curr project. */
 	private Project currProject; 
+	
+	/** The refs string. */
 	private String refsString;
+	
+	/** The refs object. */
 	private References refsObject;
 	
 	/**
-	 * The constructor of this class
-	 * @param project
+	 * The constructor of this class.
+	 *
+	 * @param project the project
 	 */
 	public AgentConfiguration(Project project) {
 		currProject = project;
@@ -70,8 +79,9 @@ public class AgentConfiguration extends Hashtable<String, String> {
 	
 	/**
 	 * This method will return the references of the start arguments as
-	 * enumerated and ordered String-Vector   
-	 * @param agentReference
+	 * enumerated and ordered String-Vector.
+	 *
+	 * @param agentReference the agent reference
 	 * @return Vector<String> enumerated and ordered String-Vector of the start arguments
 	 */
 	public Vector<String> getListData(String agentReference) {
@@ -89,8 +99,8 @@ public class AgentConfiguration extends Hashtable<String, String> {
 	 * This method will return the references of the start arguments as
 	 * enumerated TreeMap<Integer, String>, where the Integer value keeps
 	 * the position of a start argument and the String the reference to
-	 * the start arguments      
-	 * 
+	 * the start arguments.
+	 *
 	 * @param agentReference the reference to the agent class
 	 * @return The enumerated list of start arguments
 	 */
@@ -104,11 +114,12 @@ public class AgentConfiguration extends Hashtable<String, String> {
 			return null;
 		}	
 	}
+	
 	/**
-	 * This method allows to add an ontology-class-reference to a specified agent
-	 * 
-	 * @param agentClassReference
-	 * @param ontoClassReference
+	 * This method allows to add an ontology-class-reference to a specified agent.
+	 *
+	 * @param agentClassReference the agent class reference
+	 * @param ontoClassReference the onto class reference
 	 */
 	public void addReference(String agentClassReference, String ontoClassReference) {
 		if ( agentClassReference != null && ontoClassReference != null ){
@@ -118,12 +129,13 @@ public class AgentConfiguration extends Hashtable<String, String> {
 			this.update(agentClassReference, refsObject.toString() );
 		}
 	}
+	
 	/**
-	 * This method allows to mask an ontology-class-reference with a different name or identifier 
-	 * 
+	 * This method allows to mask an ontology-class-reference with a different name or identifier.
+	 *
 	 * @param agentClassReference The reference to the agent
 	 * @param ontoClassReferenceIndex The index of the start argument we're working on
-	 * @param newStringMask The new identifier string for the start argument 
+	 * @param newStringMask The new identifier string for the start argument
 	 */
 	public void setReferenceMask(String agentClassReference, int ontoClassReferenceIndex, String newStringMask) {
 		if ( agentClassReference != null ){
@@ -133,12 +145,13 @@ public class AgentConfiguration extends Hashtable<String, String> {
 			this.update(agentClassReference, refsObject.toString() );
 		}
 	}
+	
 	/**
 	 * This method allows to remove an ontology-class-reference from a specified agent
-	 * by using a class reference to a part of an ontology
-	 * 
-	 * @param agentClassReference
-	 * @param ontoClassReference
+	 * by using a class reference to a part of an ontology.
+	 *
+	 * @param agentClassReference the agent class reference
+	 * @param ontoClassReference the onto class reference
 	 */
 	public void removeReference(String agentClassReference, String ontoClassReference) {
 		if ( agentClassReference != null && ontoClassReference != null ){
@@ -148,12 +161,13 @@ public class AgentConfiguration extends Hashtable<String, String> {
 			this.update(agentClassReference, refsObject.toString() );
 		}
 	}
+	
 	/**
 	 * This method allows to remove an ontology-class-reference from a specified agent
-	 * by using position number of the class reference
-	 * 
-	 * @param agentClassReference
-	 * @param positionOfReference
+	 * by using position number of the class reference.
+	 *
+	 * @param agentClassReference the agent class reference
+	 * @param positionOfReference the position of reference
 	 */
 	public void removeReference(String agentClassReference, Integer positionOfReference) {
 		if ( agentClassReference != null && positionOfReference != null ){
@@ -163,11 +177,12 @@ public class AgentConfiguration extends Hashtable<String, String> {
 			this.update(agentClassReference, refsObject.toString() );
 		}
 	}
+	
 	/**
 	 * This method will remove all ontology-class-reference from the specified agent.
 	 * All start arguments for the agents will be removed
-	 * 
-	 * @param agentClassReference
+	 *
+	 * @param agentClassReference the agent class reference
 	 */
 	public void removeReferencesComplete(String agentClassReference) {
 		if ( agentClassReference!= null ) {
@@ -175,12 +190,13 @@ public class AgentConfiguration extends Hashtable<String, String> {
 			currProject.updateAgentReferences();
 		}
 	}
+	
 	/**
-	 * This method will update the current 'value' of 'key', means the 
-	 * ontology configuration of an agent can be changed directly
-	 *  
-	 * @param agentsReference 
-	 * @param value
+	 * This method will update the current 'value' of 'key', means the
+	 * ontology configuration of an agent can be changed directly.
+	 *
+	 * @param agentsReference the agents reference
+	 * @param ontologyReferences the ontology references
 	 */
 	private void update(String agentsReference, String ontologyReferences) {
 		this.remove(agentsReference);
@@ -189,15 +205,16 @@ public class AgentConfiguration extends Hashtable<String, String> {
 		}
 		currProject.updateAgentReferences();
 	}
+	
 	/**
 	 * This method can be used in order to change the order of the ontology-start arguments
 	 * of an agent. So position 1 can be changed to 2 and so on.
-	 * 
-	 * @param agentReference
+	 *
+	 * @param agentReference the agent reference
 	 * @param agentConfig The whole configuration of the start arguments as a string
-	 * @param agentConfigPos Which start argument should change its position? (not Index) 
+	 * @param agentConfigPos Which start argument should change its position? (not Index)
 	 * @param direction +1 or -1
-	 * @return successful changed or not? 
+	 * @return successful changed or not?
 	 */
 	public boolean movePosition(String agentReference, String agentConfig, Integer agentConfigPos, Integer direction ) {
 		if ( agentReference != null && agentConfig != null && direction != null ){
@@ -212,7 +229,7 @@ public class AgentConfiguration extends Hashtable<String, String> {
 	}
 
 	/**
-	 * This is just a debugging method in order to just print out the current configuration
+	 * This is just a debugging method in order to just print out the current configuration.
 	 */
 	public void printAll2Sysout() {
 		
@@ -238,19 +255,15 @@ public class AgentConfiguration extends Hashtable<String, String> {
 	 */
 	private class References {
 		
-		/**
-		 * Organises the references in a list in order to access
-		 * a reference by its String representation   
-		 */
+		/** Organises the references in a list in order to access a reference by its String representation. */
 		private TreeMap<String, Integer> refTM;
-		/**
-		 * Organises the references in a list in order to access
-		 * a reference by its position
-		 */
+		
+		/** Organises the references in a list in order to access a reference by its position. */
 		private TreeMap<Integer, String> refMT;
 		
 		/**
-		 * Constructor of this class 
+		 * Constructor of this class.
+		 *
 		 * @param refString The ontology references as a String separated by '|'
 		 */
 		public References(String refString) {
@@ -266,8 +279,11 @@ public class AgentConfiguration extends Hashtable<String, String> {
 				}			
 			}
 		}
+		
 		/**
-		 * This method can be used in order to mask an ontology reference with a different identifier
+		 * This method can be used in order to mask an ontology reference with a different identifier.
+		 *
+		 * @param ontoClassReferenceIndex the onto class reference index
 		 * @param newStringMask the new identifier to set
 		 */
 		public void setMask(int ontoClassReferenceIndex, String newStringMask) {
@@ -294,9 +310,11 @@ public class AgentConfiguration extends Hashtable<String, String> {
 			refMT.put(ontoClassReferenceIndex+1,ontoRefNew);			
 			
 		}
+		
 		/**
-		 * Can be used in order to get the whole list of references and its positions  
-		 * @return list with position and its class references 
+		 * Can be used in order to get the whole list of references and its positions.
+		 *
+		 * @return list with position and its class references
 		 */
 		public TreeMap<Integer,String> getReferencesTreeMap() {
 			return refMT;
@@ -319,10 +337,11 @@ public class AgentConfiguration extends Hashtable<String, String> {
 			}
 			return out;
 		}
+		
 		/**
-		 * This method can be used in order to add a new ontology reference 
-		 * to the set of start arguments
-		 * 
+		 * This method can be used in order to add a new ontology reference
+		 * to the set of start arguments.
+		 *
 		 * @param newReference A class reference to one of your configured ontology's
 		 */
 		public void add(String newReference) {
@@ -334,11 +353,12 @@ public class AgentConfiguration extends Hashtable<String, String> {
 				refTM.put(newReference, refTM.size()+1);
 			}
 		}
+		
 		/**
-		 * This method can be used in order to remove an ontology reference 
-		 * from the set of start arguments
-		 * 
-		 * @param reference The class reference to remove 
+		 * This method can be used in order to remove an ontology reference
+		 * from the set of start arguments.
+		 *
+		 * @param reference The class reference to remove
 		 */
 		public void remove(String reference) {
 		
@@ -354,10 +374,11 @@ public class AgentConfiguration extends Hashtable<String, String> {
 				}
 			}
 		}
+		
 		/**
-		 * This method can be used in order to remove an ontology reference 
-		 * from the set of start arguments
-		 * 
+		 * This method can be used in order to remove an ontology reference
+		 * from the set of start arguments.
+		 *
 		 * @param removePosition The position on which a start argument can be removed
 		 */
 		public void remove(Integer removePosition) {
@@ -407,10 +428,13 @@ public class AgentConfiguration extends Hashtable<String, String> {
 				} // -- End While --
 			} // -- End if --
 		}
+		
 		/**
-		 * returns the current start-argument configuration as a String 
-		 * as it will be stored in the Agent.GUI configuration file 
-		 * (e.g. '/yourProjectFolder/agentgui.xml')   
+		 * returns the current start-argument configuration as a String
+		 * as it will be stored in the Agent.GUI configuration file
+		 * (e.g. '/yourProjectFolder/agentgui.xml')
+		 *
+		 * @return the string
 		 */
 		public String toString() {
 			// --- Gibt den Gesamt-String der References zurück ----------

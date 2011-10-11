@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.core.gui;
 
 import java.awt.BorderLayout;
@@ -55,9 +83,14 @@ import com.google.api.translate.Translate;
 import java.awt.Color;
 import javax.swing.SwingConstants;
 
+/**
+ * The JDialog is used in order to allow the translations between all defined languages
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ */
 public class Translation extends JDialog implements ActionListener {
 
-	private static final long serialVersionUID = 1L;
+private static final long serialVersionUID = 1L;
 	
 	private final String appName = Application.RunInfo.getApplicationTitle();  //  @jve:decl-index=0:
 	private final String PathImage = Application.RunInfo.PathImageIntern();  //  @jve:decl-index=0:
@@ -115,15 +148,15 @@ public class Translation extends JDialog implements ActionListener {
 	private JMenuItem jMenuItemEdit = null;
 
 	private JButton jButtonImportCSV = null;
-
 	private JPanel jPanelSouthWest = null;
-
 	private JPanel jPanelEast = null;
-
 	private JLabel jLabelSourceLanguage = null;
+
 	
 	/**
-	 * @param owner
+	 * Instantiates a new translation.
+	 *
+	 * @param owner the owner
 	 */
 	public Translation(Frame owner) {
 		super(owner);
@@ -135,6 +168,8 @@ public class Translation extends JDialog implements ActionListener {
 	 * from the super class.
 	 * In the case that the csv-version of the dictionary was imported, the application
 	 * has to restart now in order to show the right translations.
+	 *
+	 * @param b the new visible
 	 */
 	@Override
 	public void setVisible(boolean b) {
@@ -146,7 +181,8 @@ public class Translation extends JDialog implements ActionListener {
 	}
 	
 	/**
-	 * This method initializes this
+	 * This method initializes this.
+	 *
 	 * @return void
 	 */
 	private void initialize() {
@@ -219,7 +255,7 @@ public class Translation extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * Here the key actions will be handled 
+	 * Here the key actions will be handled.
 	 */
 	private void setKeyListenEvents() {
 		
@@ -278,7 +314,7 @@ public class Translation extends JDialog implements ActionListener {
 	}
 	
 	/**
-	 * This method will set the data model for the Language selection
+	 * This method will set the data model for the Language selection.
 	 */
 	private void setLanguageComboModels() {
 		String[] languages = Language.getLanguages(true);
@@ -288,26 +324,57 @@ public class Translation extends JDialog implements ActionListener {
 			this.langSelectionModelDestin.addElement(lang2List);
 		}
 	}
+	
+	/**
+	 * The Class LanguageListElement.
+	 */
 	public class LanguageListElement {
+		
+		/** The lang short. */
 		private String langShort;
+		
+		/** The lang long. */
 		private String langLong;
+		
+		/**
+		 * Instantiates a new language list element.
+		 *
+		 * @param langShortText the lang short text
+		 * @param langLongText the lang long text
+		 */
 		public LanguageListElement(String langShortText, String langLongText) {
 			this.langShort = langShortText; 
 			this.langLong = langLongText;
 		}
+		
+		/* (non-Javadoc)
+		 * @see java.lang.Object#toString()
+		 */
 		public String toString() {
 			return this.langLong;
 		}
+		
+		/**
+		 * Gets the lang short.
+		 *
+		 * @return the lang short
+		 */
 		public String getLangShort() {
 			return langShort;
 		}
+		
+		/**
+		 * Gets the lang long.
+		 *
+		 * @return the lang long
+		 */
 		public String getLangLong() {
 			return langLong;
 		}
 	}
 	
 	/**
-	 * dictionary data will be loaded to the TableModel
+	 * dictionary data will be loaded to the TableModel.
 	 */
 	private void setDictionaryTable() {
 		
@@ -396,8 +463,9 @@ public class Translation extends JDialog implements ActionListener {
 	}
 	
 	/**
-	 * This method initializes jTableDictionary	
-	 * @return javax.swing.JTable	
+	 * This method initializes jTableDictionary.
+	 *
+	 * @return javax.swing.JTable
 	 */
 	private JTable getJTableDictionary() {
 		if (jTableDictionary == null) {
@@ -451,8 +519,9 @@ public class Translation extends JDialog implements ActionListener {
 	}
 	
 	/**
-	 * This method initializes jPopupMenuDictionary	
-	 * @return javax.swing.JPopupMenu	
+	 * This method initializes jPopupMenuDictionary.
+	 *
+	 * @return javax.swing.JPopupMenu
 	 */
 	private JPopupMenu getJPopupMenuDictionary() {
 		if (jPopupMenuDictionary == null) {
@@ -464,8 +533,9 @@ public class Translation extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * This method initializes jMenuItemDelete	
-	 * @return javax.swing.JMenuItem	
+	 * This method initializes jMenuItemDelete.
+	 *
+	 * @return javax.swing.JMenuItem
 	 */
 	private JMenuItem getJMenuItemDelete() {
 		if (jMenuItemDelete == null) {
@@ -477,8 +547,9 @@ public class Translation extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * This method initializes jMenuItemEdit	
-	 * @return javax.swing.JMenuItem	
+	 * This method initializes jMenuItemEdit.
+	 *
+	 * @return javax.swing.JMenuItem
 	 */
 	private JMenuItem getJMenuItemEdit() {
 		if (jMenuItemEdit == null) {
@@ -490,7 +561,8 @@ public class Translation extends JDialog implements ActionListener {
 	}
 	
 	/**
-	 * This method initializes jContentPane
+	 * This method initializes jContentPane.
+	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJContentPane() {
@@ -519,8 +591,9 @@ public class Translation extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * This method initializes jTabbedPane	
-	 * @return javax.swing.JTabbedPane	
+	 * This method initializes jTabbedPane.
+	 *
+	 * @return javax.swing.JTabbedPane
 	 */
 	private JTabbedPane getJTabbedPane() {
 		if (jTabbedPane == null) {
@@ -532,8 +605,9 @@ public class Translation extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * This method initializes jPanelTranslation	
-	 * @return javax.swing.JPanel	
+	 * This method initializes jPanelTranslation.
+	 *
+	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJPanelTranslation() {
 		if (jPanelTranslation == null) {
@@ -692,8 +766,9 @@ public class Translation extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * This method initializes jScrollPaneDictionary	
-	 * @return javax.swing.JScrollPane	
+	 * This method initializes jScrollPaneDictionary.
+	 *
+	 * @return javax.swing.JScrollPane
 	 */
 	private JScrollPane getJScrollPaneDictionary() {
 		if (jScrollPaneDictionary == null) {
@@ -705,8 +780,9 @@ public class Translation extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * This method initializes jPanelSouth	
-	 * @return javax.swing.JPanel	
+	 * This method initializes jPanelSouth.
+	 *
+	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJPanelSouth() {
 		if (jPanelSouth == null) {
@@ -731,8 +807,9 @@ public class Translation extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * This method initializes jPaneFooter	
-	 * @return javax.swing.JPanel	
+	 * This method initializes jPaneFooter.
+	 *
+	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJPaneFooter() {
 		if (jPaneFooter == null) {
@@ -747,8 +824,9 @@ public class Translation extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * This method initializes jButtonClose	
-	 * @return javax.swing.JButton	
+	 * This method initializes jButtonClose.
+	 *
+	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonClose() {
 		if (jButtonClose == null) {
@@ -760,9 +838,11 @@ public class Translation extends JDialog implements ActionListener {
 		}
 		return jButtonClose;
 	}
+	
 	/**
-	 * This method initializes jButtonImportCSV	
-	 * @return javax.swing.JButton	
+	 * This method initializes jButtonImportCSV.
+	 *
+	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonImportCSV() {
 		if (jButtonImportCSV == null) {
@@ -776,8 +856,9 @@ public class Translation extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * This method initializes jPanelSouthWest	
-	 * @return javax.swing.JPanel	
+	 * This method initializes jPanelSouthWest.
+	 *
+	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJPanelSouthWest() {
 		if (jPanelSouthWest == null) {
@@ -788,9 +869,11 @@ public class Translation extends JDialog implements ActionListener {
 		}
 		return jPanelSouthWest;
 	}
+	
 	/**
-	 * This method initializes jPanelEast	
-	 * @return javax.swing.JPanel	
+	 * This method initializes jPanelEast.
+	 *
+	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJPanelEast() {
 		if (jPanelEast == null) {
@@ -802,8 +885,9 @@ public class Translation extends JDialog implements ActionListener {
 	}
 	
 	/**
-	 * This method initializes jScrollPaneDictionary	
-	 * @return javax.swing.JScrollPane	
+	 * This method initializes jScrollPaneDictionary.
+	 *
+	 * @return javax.swing.JScrollPane
 	 */
 	private JScrollPane getJScrollPaneTextSource() {
 		if (jScrollPaneTextSource == null) {
@@ -812,9 +896,11 @@ public class Translation extends JDialog implements ActionListener {
 		}
 		return jScrollPaneTextSource;
 	}
+	
 	/**
-	 * This method initializes jTextFieldSource	
-	 * @return javax.swing.JTextField	
+	 * This method initializes jTextFieldSource.
+	 *
+	 * @return javax.swing.JTextField
 	 */
 	private JTextPane getJTextFieldSource() {
 		if (jTextFieldSource == null) {
@@ -825,8 +911,9 @@ public class Translation extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * This method initializes jScrollPaneDictionary	
-	 * @return javax.swing.JScrollPane	
+	 * This method initializes jScrollPaneDictionary.
+	 *
+	 * @return javax.swing.JScrollPane
 	 */
 	private JScrollPane getJScrollPaneTextDestination() {
 		if (jScrollPaneTextDestination == null) {
@@ -835,9 +922,11 @@ public class Translation extends JDialog implements ActionListener {
 		}
 		return jScrollPaneTextDestination;
 	}
+	
 	/**
-	 * This method initializes jTextFieldDestination	
-	 * @return javax.swing.JTextField	
+	 * This method initializes jTextFieldDestination.
+	 *
+	 * @return javax.swing.JTextField
 	 */
 	private JTextPane getJTextFieldDestination() {
 		if (jTextFieldDestination == null) {
@@ -847,8 +936,9 @@ public class Translation extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * This method initializes jComboBoxSourceLang	
-	 * @return javax.swing.JComboBox	
+	 * This method initializes jComboBoxSourceLang.
+	 *
+	 * @return javax.swing.JComboBox
 	 */
 	private JComboBox getJComboBoxSourceLang() {
 		if (jComboBoxSourceLang == null) {
@@ -869,8 +959,9 @@ public class Translation extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * This method initializes jComboBoxDestinationLang	
-	 * @return javax.swing.JComboBox	
+	 * This method initializes jComboBoxDestinationLang.
+	 *
+	 * @return javax.swing.JComboBox
 	 */
 	private JComboBox getJComboBoxDestinationLang() {
 		if (jComboBoxDestinationLang == null) {
@@ -891,8 +982,9 @@ public class Translation extends JDialog implements ActionListener {
 	}
 	
 	/**
-	 * This method initializes jScrollPanelGoogle	
-	 * @return javax.swing.JScrollPane	
+	 * This method initializes jScrollPanelGoogle.
+	 *
+	 * @return javax.swing.JScrollPane
 	 */
 	private JScrollPane getJScrollPanelGoogle() {
 		if (jScrollPanelGoogle == null) {
@@ -903,8 +995,9 @@ public class Translation extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * This method initializes jTextAreaGoogle	
-	 * @return javax.swing.JTextArea	
+	 * This method initializes jTextAreaGoogle.
+	 *
+	 * @return javax.swing.JTextArea
 	 */
 	private JTextPane getJTextAreaGoogle() {
 		if (jTextAreaGoogle == null) {
@@ -915,8 +1008,9 @@ public class Translation extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * This method initializes jButtonNextDS	
-	 * @return javax.swing.JButton	
+	 * This method initializes jButtonNextDS.
+	 *
+	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonNextDS() {
 		if (jButtonNextDS == null) {
@@ -930,8 +1024,9 @@ public class Translation extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * This method initializes jButtonPreviousDS	
-	 * @return javax.swing.JButton	
+	 * This method initializes jButtonPreviousDS.
+	 *
+	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonPreviousDS() {
 		if (jButtonPreviousDS == null) {
@@ -945,8 +1040,9 @@ public class Translation extends JDialog implements ActionListener {
 	}
 	
 	/**
-	 * This method initializes jButtonDelete	
-	 * @return javax.swing.JButton	
+	 * This method initializes jButtonDelete.
+	 *
+	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonDelete() {
 		if (jButtonDelete == null) {
@@ -958,9 +1054,11 @@ public class Translation extends JDialog implements ActionListener {
 		}
 		return jButtonDelete;
 	}
+	
 	/**
-	 * This method initializes jButtonSave	
-	 * @return javax.swing.JButton	
+	 * This method initializes jButtonSave.
+	 *
+	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonSave() {
 		if (jButtonSave == null) {
@@ -974,8 +1072,9 @@ public class Translation extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * This method initializes jButtonFindGap	
-	 * @return javax.swing.JButton	
+	 * This method initializes jButtonFindGap.
+	 *
+	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonFindGap() {
 		if (jButtonFindGap == null) {
@@ -989,8 +1088,9 @@ public class Translation extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * This method initializes jButtonGoogleTake	
-	 * @return javax.swing.JButton	
+	 * This method initializes jButtonGoogleTake.
+	 *
+	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonGoogleTake() {
 		if (jButtonGoogleTake == null) {
@@ -1004,8 +1104,9 @@ public class Translation extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * Sets the current dataset to the specfied row 
-	 * @param rowNumber
+	 * Sets the current dataset to the specfied row.
+	 *
+	 * @param rowNumber the new current data set
 	 */
 	private void setCurrentDataSet(int rowNumber) {
 		
@@ -1030,8 +1131,9 @@ public class Translation extends JDialog implements ActionListener {
 	}
 	
 	/**
-	 * Set the focus to the directed dataset
-	 * @param direction
+	 * Set the focus to the directed dataset.
+	 *
+	 * @param direction the direction
 	 */
 	private void move2Dataset(int direction) {
 				
@@ -1046,7 +1148,7 @@ public class Translation extends JDialog implements ActionListener {
 	}
 	
 	/**
-	 * Shows and displays the next translation gap
+	 * Shows and displays the next translation gap.
 	 */
 	private void findNextTranslationGap() {
 		
@@ -1088,7 +1190,7 @@ public class Translation extends JDialog implements ActionListener {
 	}
 	
 	/**
-	 * Delete the current dataset
+	 * Delete the current dataset.
 	 */
 	private void deleteDS() {
 		
@@ -1111,7 +1213,7 @@ public class Translation extends JDialog implements ActionListener {
 	}
 	
 	/**
-	 * Save the current dataset
+	 * Save the current dataset.
 	 */
 	private void saveDS() {
 		
@@ -1152,7 +1254,7 @@ public class Translation extends JDialog implements ActionListener {
 	}
 	
 	/**
-	 * Translate the given text by using the Google-Translate-API
+	 * Translate the given text by using the Google-Translate-API.
 	 */
 	private void setGoogleTranslation() {
 		
@@ -1178,6 +1280,9 @@ public class Translation extends JDialog implements ActionListener {
 	}
 	
 	
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 

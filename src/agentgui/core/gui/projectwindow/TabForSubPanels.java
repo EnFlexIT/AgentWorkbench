@@ -1,4 +1,4 @@
-package agentgui.core.gui.components;
+package agentgui.core.gui.projectwindow;
 
 
 import java.awt.Font;

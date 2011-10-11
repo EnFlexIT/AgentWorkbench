@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.core.gui;
 
 
@@ -29,8 +57,14 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.gui.components.JHyperLink;
 
+/**
+ * The GUI of the AboutDialog.
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ */
 public class AboutDialog extends JDialog implements ActionListener{
 
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -5882844235988801425L;
 	
 	private final String PathImage = Application.RunInfo.PathImageIntern();
@@ -47,12 +81,16 @@ public class AboutDialog extends JDialog implements ActionListener{
 	private JHyperLink jLabelLink = null;
 
 	private JButton jButtonOk = null;
-
 	private JLabel jLabelMember = null;
 	private JLabel jLabelMembership = null;
+
+	/** The team member. */
 	private String teamMember = "";  //  @jve:decl-index=0:
+	
 	/**
-	 * @param owner
+	 * Instantiates a new about dialog.
+	 *
+	 * @param owner the owner
 	 */
 	public AboutDialog(Frame owner) {
 		super(owner);
@@ -89,7 +127,8 @@ public class AboutDialog extends JDialog implements ActionListener{
 	}
 
 	/**
-	 * This method initializes this
+	 * This method initializes this.
+	 *
 	 * @return void
 	 */
 	private void initialize() {
@@ -107,8 +146,8 @@ public class AboutDialog extends JDialog implements ActionListener{
 	}
 
 	/**
-	 * This method initializes jContentPane
-	 * 
+	 * This method initializes jContentPane.
+	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJContentPane() {
@@ -208,8 +247,9 @@ public class AboutDialog extends JDialog implements ActionListener{
 	}
 
 	/**
-	 * This method initializes jButtonOk	
-	 * @return javax.swing.JButton	
+	 * This method initializes jButtonOk.
+	 *
+	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonOk() {
 		if (jButtonOk == null) {
@@ -224,8 +264,9 @@ public class AboutDialog extends JDialog implements ActionListener{
 	}		
 
 	/**
-	 * This method set the Look and Feel of this Dialog
-	 * @param NewLnF
+	 * This method set the Look and Feel of this Dialog.
+	 *
+	 * @param NewLnF the new look and feel
 	 */
 	private void setLookAndFeel( String NewLnF ) {
 		// --- Look and fell einstellen --------------- 
@@ -244,6 +285,9 @@ public class AboutDialog extends JDialog implements ActionListener{
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		

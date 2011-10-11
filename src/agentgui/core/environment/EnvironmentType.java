@@ -113,7 +113,7 @@ public class EnvironmentType {
 	}
 
 	/**
-	 * @param displayAgent the displayAgent to set
+	 * @param displayAgentClass the displayAgent to set
 	 */
 	public void setDisplayAgentClass(Class<? extends Agent> displayAgentClass) {
 		this.displayAgentClass = displayAgentClass;

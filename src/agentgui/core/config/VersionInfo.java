@@ -4,8 +4,9 @@
  * applications based on the JADE - Framework in compliance with the 
  * FIPA specifications. 
  * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
  * http://sourceforge.net/projects/agentgui/
- * http://www.dawis.wiwi.uni-due.de/ 
+ * http://www.agentgui.org 
  *
  * GNU Lesser General Public License
  *
@@ -47,13 +48,17 @@ import agentgui.core.application.Application;
  */
 public class VersionInfo extends Properties {
 
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 6896459166091752107L;
 
+	/** The debug. */
 	private boolean debug = false;
+	
+	/** The version file. */
 	private String versionFile = "agentgui/version.properties";
 
 	/**
-	 * Constructor of this class
+	 * Constructor of this class.
 	 */
 	public VersionInfo() {
 		super();
@@ -63,7 +68,7 @@ public class VersionInfo extends Properties {
 
 
 	/**
-	 * Loads the version information to this instance
+	 * Loads the version information to this instance.
 	 */
 	private void readVersionInfo() {
 		
@@ -78,7 +83,7 @@ public class VersionInfo extends Properties {
 	}
 	
 	/**
-	 * Prints out the current version and build information
+	 * Prints out the current version and build information.
 	 */
 	public void printVersionInfo() {
 		System.out.println(this.getFullVersionInfo(true, " "));
@@ -92,10 +97,10 @@ public class VersionInfo extends Properties {
 
 	/**
 	 * This method returns the full version information of Agent.GUI.
-	 * 
-	 * @param includeApplicationTitle
-	 * @param newLineString
-	 * @return
+	 *
+	 * @param includeApplicationTitle the include application title
+	 * @param newLineString the new line string
+	 * @return the full version info
 	 */
 	public String getFullVersionInfo(boolean includeApplicationTitle, String newLineString) {
 		
@@ -116,32 +121,39 @@ public class VersionInfo extends Properties {
 	}
 	
 	/**
-	 * Provides the major version number
-	 * @return
+	 * Provides the major version number.
+	 *
+	 * @return the version major
 	 */
 	public Integer getVersionMajor() {
 		Integer version = Integer.valueOf(this.getProperty("version.major"));
 		return version;
 	}
+	
 	/**
-	 * Provides the minor version number
-	 * @return
+	 * Provides the minor version number.
+	 *
+	 * @return the version minor
 	 */
 	public Integer getVersionMinor() {
 		Integer version = Integer.valueOf(this.getProperty("version.minor"));
 		return version;
 	}
+	
 	/**
-	 * Provides the build number of the version 
-	 * @return
+	 * Provides the build number of the version.
+	 *
+	 * @return the version build
 	 */
 	public Integer getVersionBuild() {
 		Integer version = Integer.valueOf(this.getProperty("version.build"));
 		return version;
 	}
+	
 	/**
-	 * Provides the date where this version was build as Date
-	 * @return
+	 * Provides the date where this version was build as Date.
+	 *
+	 * @return the version date
 	 */
 	public Date getVersionDate() {
 		Date date=null;
@@ -152,9 +164,11 @@ public class VersionInfo extends Properties {
 		}
 		return date;
 	}
+	
 	/**
-	 * Provides the date where this version was build as a String
-	 * @return
+	 * Provides the date where this version was build as a String.
+	 *
+	 * @return the version date as string
 	 */
 	public String getVersionDateAsString() {
 		return this.getProperty("version.date");

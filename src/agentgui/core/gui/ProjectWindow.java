@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.core.gui;
 
 import java.awt.Component;
@@ -37,14 +65,20 @@ import javax.swing.tree.TreeSelectionModel;
 import agentgui.core.application.Application;
 import agentgui.core.application.Project;
 import agentgui.core.environment.EnvironmentPanel;
+import agentgui.core.gui.projectwindow.ProjectWindowTab;
 
 /**
- * @author: Christian Derksen
+ * This extended JInternalFrame graphically encapsulates the the project in the
+ * main window (class CoreWindow)
+ *  
+ * @see CoreWindow
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class ProjectWindow extends JInternalFrame implements Observer {
-
-	private static final long serialVersionUID = 1L;
 	
+	private static final long serialVersionUID = -1462483441246136949L;
+
 	private Project currProject;
 	
 	private JSplitPane jSplitPaneProjectView = null;
@@ -75,12 +109,14 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	
 	
 	/**
-	 * This is the default constructor
+	 * This is the default constructor.
+	 *
+	 * @param project the current Project instance
 	 */
-	public ProjectWindow(Project cp) {
+	public ProjectWindow(Project project) {
 		
 		super();
-		this.currProject = cp;		
+		this.currProject = project;		
 		this.currProject.addObserver(this);		
 		
 		// --- TreeModel initialisieren --------------------------
@@ -93,7 +129,8 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	}
 
 	/**
-	 * This method initializes this
+	 * This method initializes this.
+	 *
 	 * @return void
 	 */
 	private void initialize() {
@@ -115,8 +152,9 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	}
 
 	/**
-	 * This method initializes ProjectViewSplit	
-	 * @return javax.swing.JSplitPane	
+	 * This method initializes ProjectViewSplit.
+	 *
+	 * @return javax.swing.JSplitPane
 	 */
 	private JSplitPane getProjectViewSplit() {
 		if (jSplitPaneProjectView == null) {
@@ -131,8 +169,9 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	}
 	
 	/**
-	 * This method initializes jScrollPane	
-	 * @return javax.swing.JScrollPane	
+	 * This method initializes jScrollPane.
+	 *
+	 * @return javax.swing.JScrollPane
 	 */
 	private JScrollPane getJScrollPane() {
 		if (jScrollPane == null) {
@@ -141,9 +180,11 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 		}
 		return jScrollPane;
 	}
+	
 	/**
-	 * This method initializes ProjectTree	
-	 * @return javax.swing.JTree	
+	 * This method initializes ProjectTree.
+	 *
+	 * @return javax.swing.JTree
 	 */
 	private JTree getProjectTree() {
 		if (projectTree == null) {
@@ -200,7 +241,13 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	
 	// If expand is true, expands all nodes in the tree.
     // Otherwise, collapses all nodes in the tree.
-    public void projectTreeExpand2Level(Integer Up2TreeLevel, boolean expand ) {
+    /**
+	 * Project tree expand2 level.
+	 *
+	 * @param Up2TreeLevel the up2 tree level
+	 * @param expand the expand
+	 */
+	public void projectTreeExpand2Level(Integer Up2TreeLevel, boolean expand ) {
     	
     	Integer CurrNodeLevel = 1;
     	if ( Up2TreeLevel == null ) 
@@ -208,6 +255,15 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 
     	projectTreeExpand(new TreePath(rootNode), expand, CurrNodeLevel, Up2TreeLevel);
     }
+	
+	/**
+	 * Project tree expand.
+	 *
+	 * @param parent the parent
+	 * @param expand the expand
+	 * @param CurrNodeLevel the curr node level
+	 * @param Up2TreeLevel the up2 tree level
+	 */
 	private void projectTreeExpand( TreePath parent, boolean expand, Integer CurrNodeLevel, Integer Up2TreeLevel) {
     
         TreeNode node = (TreeNode)parent.getLastPathComponent();
@@ -230,9 +286,10 @@ public class ProjectWindow extends JInternalFrame implements Observer {
     }
 	
     /**
-	 * This method initializes ProjectViewRight	
-	 * @return javax.swing.JTabbedPane	
-	 */
+     * This method initializes ProjectViewRight.
+     *
+     * @return javax.swing.JTabbedPane
+     */
 	private JTabbedPane getProjectViewRightTabs() {
 		if (projectViewRightTabs == null) {
 			projectViewRightTabs = new JTabbedPane();
@@ -247,7 +304,9 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	}	
 	
 	/**
-	 * This method instantiates the MouseListener for the Tab-Selections
+	 * This method instantiates the MouseListener for the Tab-Selections.
+	 *
+	 * @return the tab mouse listener
 	 */
 	public MouseListener getTabMouseListener() {
 		
@@ -277,6 +336,9 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 		return tabMouseListener;
 	}
 	
+	/**
+	 * Tab maximize.
+	 */
 	private void tabMaximize() {
 
 		// --- Maximize the main window -------------------
@@ -293,6 +355,10 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 		});
 		
 	}
+	
+	/**
+	 * Tab restore.
+	 */
 	private void tabRestore(){
 		//System.out.println("Maximize");
 		this.tabClickedMaximized = false;
@@ -300,7 +366,9 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	}
 	
 	/**
-	 * This method instantiates the ChangeListener for Tab-Selections
+	 * This method instantiates the ChangeListener for Tab-Selections.
+	 *
+	 * @return the tab selection listener
 	 */
 	public ChangeListener getTabSelectionListener() {
 		
@@ -339,7 +407,10 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	}
 	
 	/**
-	 * Get the notification of the ObjectModel
+	 * Get the notification of the ObjectModel.
+	 *
+	 * @param arg0 the arg0
+	 * @param OName the o name
 	 */
 	public void update(Observable arg0, Object OName) {
 		
@@ -363,19 +434,21 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	}
 
 	/**
-	 * Adds a Project-Tab and a new node (child of a specified parent) to the ProjectWindow
-	 * @param projectWindowTab
+	 * Adds a Project-Tab and a new node (child of a specified parent) to the ProjectWindow.
+	 *
+	 * @param projectWindowTab the project window tab
 	 */
 	public void addProjectTab(ProjectWindowTab projectWindowTab) {
 		this.addProjectTab(projectWindowTab, -1);
 	}
+	
 	/**
 	 * Adds a Project-Tab and a new node (child of a specified parent) to the ProjectWindow
-	 * at the specified index position. The index position has to be greater than 1, in order 
-	 * to keep the 'Info'-Tab and the 'Configuration'-Tab at its provided position! 
-
-	 * @param projectWindowTab
-	 * @param indexPosotionGreaterOne
+	 * at the specified index position. The index position has to be greater than 1, in order
+	 * to keep the 'Info'-Tab and the 'Configuration'-Tab at its provided position!
+	 *
+	 * @param projectWindowTab the project window tab
+	 * @param indexPositionGreaterOne the index position greater one
 	 */
 	public void addProjectTab(ProjectWindowTab projectWindowTab, int indexPositionGreaterOne) {
 
@@ -407,8 +480,11 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	}
 	
 	/**
-	 * Adds a Project-Tab and a new node (child of a specified parent) to 
-	 * the ProjectWindow
+	 * Adds a Project-Tab and a new node (child of a specified parent) to
+	 * the ProjectWindow.
+	 *
+	 * @param projectWindowTab the project window tab
+	 * @return the default mutable tree node
 	 */
 	private DefaultMutableTreeNode addProjectTabInternal(ProjectWindowTab projectWindowTab) {
 		
@@ -447,9 +523,12 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 		this.projectTreeExpand2Level(3, true);
 		return newNode;
 	}
+	
 	/**
 	 * Adds the local ChangeListener named 'tabSelectionListener'
-	 * to a JTabbedPane if not already there
+	 * to a JTabbedPane if not already there.
+	 *
+	 * @param pane the pane
 	 */
 	private void addChangeListener(JTabbedPane pane) {
 		
@@ -466,9 +545,11 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 			pane.addChangeListener(this.getTabSelectionListener());
 		}
 	}
+	
 	/**
-	 * This removes a given ProjectWindowTab from this ProjectWindow
-	 * @param projectWindowTab
+	 * This removes a given ProjectWindowTab from this ProjectWindow.
+	 *
+	 * @param projectWindowTab the project window tab
 	 */
 	public void remove(ProjectWindowTab projectWindowTab) {
 	
@@ -490,7 +571,7 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	}
 	
 	/**
-	 * This method removes all ProjectWindowTabs from the current display
+	 * This method removes all ProjectWindowTabs from the current display.
 	 */
 	private void removeAllProjectWindowTabsTemporary4Rebuilding() {
 		
@@ -507,9 +588,10 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	}
 	
 	/**
-	 * Returns the Tree-Node requested by the Reference 
-	 * @param Reference
-	 * @return
+	 * Returns the Tree-Node requested by the Reference.
+	 *
+	 * @param searchFor the search for
+	 * @return the tree node
 	 */
 	@SuppressWarnings("unchecked")
 	private DefaultMutableTreeNode getTreeNode(String searchFor) {
@@ -530,6 +612,8 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	}
 	
 	/**
+	 * Gets the number of nodes.
+	 *
 	 * @return the number of nodes in the tree
 	 */
 	@SuppressWarnings("unchecked")
@@ -544,21 +628,29 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	}
 	
 	/**
-	 * Sets the focus to a specified Tab of the project Window
+	 * Sets the focus to a specified Tab of the project Window.
+	 *
+	 * @param searchFor the new focus2 tab
 	 */
 	public void setFocus2Tab(String searchFor) {
 		DefaultMutableTreeNode currNode = getTreeNode(searchFor);
 		this.setFocus2Tab(currNode);
 	}
+	
 	/**
-	 * Sets the focus to a specified Tab of the project Window
+	 * Sets the focus to a specified Tab of the project Window.
+	 *
+	 * @param pwt the new focus2 tab
 	 */
 	public void setFocus2Tab(ProjectWindowTab pwt) {
 		String tabCaption = pwt.getTitle();
 		setFocus2Tab(tabCaption);
 	}
+	
 	/**
-	 * Sets the focus to a specified Tab of the project Window
+	 * Sets the focus to a specified Tab of the project Window.
+	 *
+	 * @param node2Focus the new focus2 tab
 	 */
 	public void setFocus2Tab(DefaultMutableTreeNode node2Focus) {
 
@@ -584,8 +676,8 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	
 	/**
 	 * Rebuilds the ProjectWindow depending on the selected view.
-	 * View can be, up to now, the developer view or the end user view 
-	 * @param viewToSet
+	 * View can be, up to now, the developer view or the end user view
+	 *
 	 */
 	public void setView() {
 		
@@ -661,9 +753,11 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	
 	/**
 	 * This method adds a ProjectWindowTab to the window, considering if a
-	 * projects has a predefined visualization or not
-	 * @param pwt
-	 * @param displayPanel
+	 * projects has a predefined visualization or not.
+	 *
+	 * @param pwt the pwt
+	 * @param displayPanel the display panel
+	 * @return the default mutable tree node
 	 */
 	private DefaultMutableTreeNode setViewFilterVisualization(ProjectWindowTab pwt, Class<? extends EnvironmentPanel> displayPanel) {
 		
@@ -683,23 +777,29 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	/**
 	 * Can be used in order to register a tab which can hold sub panes, by
 	 * using a JTabbedPane. So it allows the later access.
-	 * @param name
-	 * @param tab4SubPanes
+	 *
+	 * @param name the name
+	 * @param tab4SubPanes the tab4 sub panes
 	 */
 	public void registerTabForSubPanels(String name, ProjectWindowTab tab4SubPanes) {
 		this.tab4SubPanel.put(name, tab4SubPanes);
 	}
+	
 	/**
-	 * Can be used in order to access a special tab, which can hold sub tabs 
-	 * @param name
+	 * Can be used in order to access a special tab, which can hold sub tabs.
+	 *
+	 * @param name the name
+	 * @return the tab for sub panels
 	 */
 	public ProjectWindowTab getTabForSubPanels(String name) {
 		return this.tab4SubPanel.get(name);
 	}
+	
 	/**
 	 * Can be used in order to unregister a tab which can hold sub panes, by
-	 * using a JTabbedPane. 
-	 * @param name
+	 * using a JTabbedPane.
+	 *
+	 * @param name the name
 	 */
 	public void deregisterTabForSubPanels(String name) {
 		this.tab4SubPanel.remove(name);

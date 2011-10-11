@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.core.gui;
 
 import jade.debugging.components.JPanelConsole;
@@ -52,8 +80,8 @@ import agentgui.core.application.Project;
 import agentgui.simulationService.agents.SimStartAgent;
 
 /**
- * This class represents the main user-interface of the application
- * 
+ * This class represents the main user-interface of the application AgentGUI.
+ *
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class CoreWindow extends JFrame implements ComponentListener {
@@ -112,7 +140,7 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	// --- Start -------------------------------------------------- 
 	// ------------------------------------------------------------
 	/**
-	 * Constructor of this class
+	 * Constructor of this class.
 	 */
 	public CoreWindow() {
 		
@@ -152,6 +180,9 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	// ------------------------------------------------------------
 	// --- Initialisierung des Fensters - START -------------------
 	// ------------------------------------------------------------
+	/**
+	 * Inits the components.
+	 */
 	private void initComponents() {
 
 		// --- Standardeinstellungen ---
@@ -182,6 +213,11 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	// ------------------------------------------------------------
 	// --- Statusanzeigen etc. definieren - START -----------------
 	// ------------------------------------------------------------
+	/**
+	 * Gets the status bar.
+	 *
+	 * @return the status bar
+	 */
 	private JPanel getStatusBar() {
 	    
 		// --- Linker Teil ----------------------
@@ -209,9 +245,11 @@ public class CoreWindow extends JFrame implements ComponentListener {
 		JPStat.add(RightPart, BorderLayout.EAST);
 		return JPStat;
 	}
+	
 	/**
-	 * Sets a text in the applications status bar
-	 * @param message
+	 * Sets a text in the applications status bar.
+	 *
+	 * @param message the new status bar
 	 */
 	public void setStatusBar(String message) {
 		if ( message == null ) {
@@ -220,10 +258,12 @@ public class CoreWindow extends JFrame implements ComponentListener {
 			statusBar.setText("  " + message);
 		};	
 	}
+	
 	/**
-	 * This method is used if a project is open. Then the project name is displayed 
-	 * behind the applications title (e.g. 'Agent.GUI: project name' 
-	 * @param add2BasicTitel
+	 * This method is used if a project is open. Then the project name is displayed
+	 * behind the applications title (e.g. 'Agent.GUI: project name'
+	 *
+	 * @param add2BasicTitel the new titel addition
 	 */
 	public void setTitelAddition(String add2BasicTitel) {
 		if ( add2BasicTitel != "" ) {
@@ -232,10 +272,12 @@ public class CoreWindow extends JFrame implements ComponentListener {
 			this.setTitle( Application.RunInfo.getApplicationTitle() );
 		}
 	}
+	
 	/**
-	 * Sets the indicator in order to visul inform that JADE is running or not 
-	 * (red or green button in the right corner of the status bar + text)
-	 * @param isRunning
+	 * Sets the indicator in order to visul inform that JADE is running or not
+	 * (red or green button in the right corner of the status bar + text).
+	 *
+	 * @param isRunning the new status jade running
 	 */
 	public void setStatusJadeRunning(boolean isRunning) {
 		if ( isRunning == false ) { 
@@ -246,9 +288,11 @@ public class CoreWindow extends JFrame implements ComponentListener {
 			statusJade.setIcon(iconGreen);
 		};		
 	}
+	
 	/**
-	 * Here the 'look and feel' LnF of java Swing can be set  
-	 * @param newLnF
+	 * Here the 'look and feel' LnF of java Swing can be set.
+	 *
+	 * @param newLnF the new look and feel
 	 */
 	public void setLookAndFeel(String newLnF) {
 		// --- Look and fell einstellen --------------- 
@@ -278,6 +322,12 @@ public class CoreWindow extends JFrame implements ComponentListener {
 			Application.ProjectCurr.setMaximized();
 		}
 	}		
+	
+	/**
+	 * Console is visible.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean consoleIsVisible() {
 		// --- Umschalten der Consolen-Ansicht --------------------
 		if (jSplitPane4ProjectDesktop.getDividerSize()==0) {
@@ -286,6 +336,10 @@ public class CoreWindow extends JFrame implements ComponentListener {
 			return true;
 		}		
 	}
+	
+	/**
+	 * Do switch console.
+	 */
 	private void doSwitchConsole() {
 		// --- Umschalten der Consolen-Ansicht --------------------
 		if (jSplitPane4ProjectDesktop.getDividerSize()>0) {
@@ -294,6 +348,12 @@ public class CoreWindow extends JFrame implements ComponentListener {
 			this.setConsoleVisible(true);
 		}
 	}
+	
+	/**
+	 * Sets the console visible.
+	 *
+	 * @param show the new console visible
+	 */
 	private void setConsoleVisible(boolean show) {
 		// --- Ein- und ausblenden der Console --------------------
 		if (show == true) {
@@ -314,8 +374,9 @@ public class CoreWindow extends JFrame implements ComponentListener {
 			Application.ProjectCurr.setMaximized();
 		}
 	}
+	
 	/**
-	 * This method sets back the focus to this JFrame 
+	 * This method sets back the focus to this JFrame.
 	 */
 	public void restoreFocus() {
 		if ( this.getExtendedState()==Frame.ICONIFIED || this.getExtendedState()==Frame.ICONIFIED+Frame.MAXIMIZED_BOTH) {
@@ -332,6 +393,11 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	// ------------------------------------------------------------
 	// --- Desktop der Anwendung definieren - START ---------------
 	// ------------------------------------------------------------
+	/**
+	 * Gets the main splitpane.
+	 *
+	 * @return the main splitpane
+	 */
 	private JSplitPane getMainSplitpane() {
 		if (jSplitPane4ProjectDesktop == null ) {
 			
@@ -356,9 +422,11 @@ public class CoreWindow extends JFrame implements ComponentListener {
 		}
 		return jSplitPane4ProjectDesktop;		
 	}
+	
 	/**
-	 * This method returns the JTabbedPane for console windows
-	 * @return
+	 * This method returns the JTabbedPane for console windows.
+	 *
+	 * @return the j tabbed pane4 console
 	 */
 	public JTabbedPane4Consoles getJTabbedPane4Console() {
 		
@@ -369,10 +437,12 @@ public class CoreWindow extends JFrame implements ComponentListener {
 		}
 		return jTabbedPane4Console;
 	}
+	
 	/**
-	 * This method returns the JDesktopPane, where the 
-	 * JInternalFrame's of the project will be placed 
-	 * @return
+	 * This method returns the JDesktopPane, where the
+	 * JInternalFrame's of the project will be placed.
+	 *
+	 * @return the j desktop pane4 projects
 	 */
 	public JDesktopPane getJDesktopPane4Projects() {
 		if (jDesktopPane4Projects == null) {
@@ -391,7 +461,9 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	// --- Menüleistendefinition - START --------------------------
 	// ------------------------------------------------------------
 	/**
-	 * This method returns the current instance of the applications menu bar 
+	 * This method returns the current instance of the applications menu bar.
+	 *
+	 * @return the j menu bar base
 	 */
 	private JMenuBar getJMenuBarBase() {
 		if (jMenuBarBase == null) {
@@ -403,8 +475,11 @@ public class CoreWindow extends JFrame implements ComponentListener {
 		}
 		return jMenuBarBase;
 	}
+	
 	/**
-	 * This method returns the current instance of the applications menu bar 
+	 * This method returns the current instance of the applications menu bar.
+	 *
+	 * @return the j menu bar main
 	 */
 	private JMenuBar getJMenuBarMain() {
 		if (jMenuBarMain == null) {
@@ -425,10 +500,11 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	}
 
 	/**
-	 * This method can be used in order to add an individual menu  
-	 * at a specified index position of the menu bar
-	 * @param myMenu
-	 * @param indexPosition
+	 * This method can be used in order to add an individual menu
+	 * at a specified index position of the menu bar.
+	 *
+	 * @param myMenu the my menu
+	 * @param indexPosition the index position
 	 */
 	public void addJMenu(JMenu myMenu, int indexPosition) {
 		int nElements = jMenuBarMain.getSubElements().length; 
@@ -439,9 +515,11 @@ public class CoreWindow extends JFrame implements ComponentListener {
 			this.validate();
 		}
 	}
+	
 	/**
-	 * This method can be used in order to add an individual menu 
-	 * @param myMenu
+	 * This method can be used in order to add an individual menu.
+	 *
+	 * @param myMenu the my menu
 	 */
 	public void addJMenu(JMenu myMenu) {
 		jMenuBarMain.add(myMenu);
@@ -449,11 +527,12 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	}
 	
 	/**
-	 * This method can be used in order to add an individual JMmenuItem 
-	 * at a specified index position of the given menu 
-	 * @param menu2add
-	 * @param myMenuItem
-	 * @param indexPosition
+	 * This method can be used in order to add an individual JMmenuItem
+	 * at a specified index position of the given menu.
+	 *
+	 * @param menu2add the menu2add
+	 * @param myMenuItemComponent the my menu item component
+	 * @param indexPosition the index position
 	 */
 	public void addJMenuItemComponent(JMenu menu2add, JComponent myMenuItemComponent, int indexPosition) {
 		int nElements = menu2add.getItemCount(); 
@@ -464,11 +543,13 @@ public class CoreWindow extends JFrame implements ComponentListener {
 			this.validate();
 		}
 	}
+	
 	/**
-	 * This method can be used in order to add an  
-	 * individual JMmenuItem to the given menu 
-	 * @param menu2add
-	 * @param myMenuItem
+	 * This method can be used in order to add an
+	 * individual JMmenuItem to the given menu.
+	 *
+	 * @param menu2add the menu2add
+	 * @param myMenuItemComponent the my menu item component
 	 */
 	public void addJMenuItemComponent(JMenu menu2add, JComponent myMenuItemComponent) {
 		menu2add.add(myMenuItemComponent);
@@ -478,7 +559,9 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	// --- Menü Projekte ------------------------------------------
 	// ------------------------------------------------------------
 	/**
-	 * This method returns the current instance of the menu "Project"
+	 * This method returns the current instance of the menu "Project".
+	 *
+	 * @return the j menu main project
 	 */
 	public JMenu getJMenuMainProject() {
 		if (jMenuMainProject == null) {
@@ -501,7 +584,9 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	// --- Menü "View" --------------------------------------------
 	// ------------------------------------------------------------
 	/**
-	 * This method returns the current instance of the menu "View"
+	 * This method returns the current instance of the menu "View".
+	 *
+	 * @return the j menu main view
 	 */
 	public JMenu getJMenuMainView() {
 		if (jMenuMainView == null) {
@@ -552,7 +637,9 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	// --- Menü "JADE" --------------------------------------------
 	// ------------------------------------------------------------
 	/**
-	 * This method returns the current instance of the menu "JADE"
+	 * This method returns the current instance of the menu "JADE".
+	 *
+	 * @return the j menu main jade
 	 */
 	public JMenu getjMenuMainJade() {
 		if (jMenuMainJade == null) {
@@ -576,7 +663,9 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	// --- Menü Simulation ----------------------------------------
 	// ------------------------------------------------------------
 	/**
-	 * This method returns the current instance of the menu "Project"
+	 * This method returns the current instance of the menu "Project".
+	 *
+	 * @return the j menu main simulation
 	 */
 	public JMenu getjMenuMainSimulation() {
 		if (jMenuMainSimulation == null) {
@@ -598,7 +687,9 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	// --- Menü Extras ---------------------------------------------
 	// ------------------------------------------------------------
 	/**
-	 * This method returns the current instance of the menu "Extra"
+	 * This method returns the current instance of the menu "Extra".
+	 *
+	 * @return the j menu main extra
 	 */
 	public JMenu getjMenuMainExtra() {
 		if (jMenuExtra == null) {
@@ -629,6 +720,9 @@ public class CoreWindow extends JFrame implements ComponentListener {
 		// ------------------------------------------------------------
 		// --- Sprache ------------------------------------------------
 		// ------------------------------------------------------------
+		/**
+		 * Setj menu extra lang.
+		 */
 		private void setjMenuExtraLang() {
 			
 			// --- Anzeige der Sprachen -------------------
@@ -648,10 +742,20 @@ public class CoreWindow extends JFrame implements ComponentListener {
 		
 		}
 		// --- Unterklasse für die verfügbaren Sprachen  --------------
+		/**
+		 * The Class JMenuItemLang.
+		 */
 		private class JMenuItemLang extends JMenuItem implements ActionListener {
 			 
+			/** The Constant serialVersionUID. */
 			private static final long serialVersionUID = 1L;
 			
+			/**
+			 * Instantiates a new j menu item lang.
+			 *
+			 * @param LangHeader the lang header
+			 * @param setBold the set bold
+			 */
 			private JMenuItemLang( String LangHeader, boolean setBold ) {
 				this.setText( Language.getLanguageName( LangHeader.toUpperCase() ) );			
 				if ( setBold ) {
@@ -666,6 +770,10 @@ public class CoreWindow extends JFrame implements ComponentListener {
 				this.addActionListener(this);
 				this.setActionCommand( LangHeader );
 			}
+			
+			/* (non-Javadoc)
+			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+			 */
 			public void actionPerformed(ActionEvent evt) {
 				String ActCMD = evt.getActionCommand();	
 				Application.setLanguage(ActCMD);							
@@ -676,6 +784,9 @@ public class CoreWindow extends JFrame implements ComponentListener {
 		// ------------------------------------------------------------
 		// --- Look and Feel ------------------------------------------
 		// ------------------------------------------------------------
+		/**
+		 * Setj menu extra ln f.
+		 */
 		private void setjMenuExtraLnF() {
 
 			boolean setBold = false;
@@ -690,11 +801,24 @@ public class CoreWindow extends JFrame implements ComponentListener {
 			    };			
 		}
 		// --- Unterklasse für die Look and Feel Menü-Elemente --------
+		/**
+		 * The Class JMenuItmenLnF.
+		 */
 		private class JMenuItmenLnF extends JMenuItem  {
 	 
+			/** The Constant serialVersionUID. */
 			private static final long serialVersionUID = 1L;
+			
+			/** The Ln f path. */
 			private String LnFPath; 
 			
+			/**
+			 * Instantiates a new j menu itmen ln f.
+			 *
+			 * @param LnFName the ln f name
+			 * @param LnFClass the ln f class
+			 * @param setBold the set bold
+			 */
 			private JMenuItmenLnF( String LnFName, String LnFClass, boolean setBold  ) {
 				LnFPath = LnFClass;	
 				this.setText( LnFName );
@@ -720,7 +844,12 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	// ------------------------------------------------------------
 	// --- Menü Fenster -------------------------------------------
 	// ------------------------------------------------------------
-	private JMenu getjMenuMainWindow() {
+	/**
+		 * Gets the j menu main window.
+		 *
+		 * @return the j menu main window
+		 */
+		private JMenu getjMenuMainWindow() {
 		if (jMenuMainWindows == null) {
 			jMenuMainWindows = new JMenu("Fenster");
 			jMenuMainWindows.setText(Language.translate("Fenster"));
@@ -732,7 +861,9 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	// --- Menü Hilfe ---------------------------------------------
 	// ------------------------------------------------------------
 	/**
-	 * This method returns the current instance of the menu "Help"
+	 * This method returns the current instance of the menu "Help".
+	 *
+	 * @return the j menu main help
 	 */
 	public JMenu getjMenuMainHelp() {
 		if (jMenuMainHelp == null) {
@@ -746,6 +877,11 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	// ------------------------------------------------------------
 	// --- Menü "Close-Button" ------------------------------------
 	// ------------------------------------------------------------
+	/**
+	 * Gets the close button.
+	 *
+	 * @return the close button
+	 */
 	private JMenuItem getCloseButton() {
 		if (jMenuCloseButton == null ) {
 			jMenuCloseButton = new CWMenueItem( "ProjectClose", "", "MBclose.png" );
@@ -760,6 +896,12 @@ public class CoreWindow extends JFrame implements ComponentListener {
 		}
 		return jMenuCloseButton ;
 	}
+	
+	/**
+	 * Sets the close button position.
+	 *
+	 * @param setVisible the new close button position
+	 */
 	public void setCloseButtonPosition(boolean setVisible){
 		
 		// --- Positionsmerker für das Fenster setzen ?  ----------
@@ -787,13 +929,21 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	// ------------------------------------------------------------
 	// --- Unterklasse für alle einfachen Menüelemente - START ----
 	// ------------------------------------------------------------	
+	/**
+	 * The Class CWMenueItem.
+	 */
 	private class CWMenueItem extends JMenuItem implements ActionListener {
-		/**
-		 * Creat's a JMenueItem for PopUp- or normal Menue's and 
-		 * holds the ActionListener for them     
-		 */
+		
+		/** Creat's a JMenueItem for PopUp- or normal Menue's and holds the ActionListener for them. */
 		private static final long serialVersionUID = 1L;
 
+		/**
+		 * Instantiates a new cW menue item.
+		 *
+		 * @param actionCommand the action command
+		 * @param Text the text
+		 * @param imgName the img name
+		 */
 		private CWMenueItem( String actionCommand, 
 							 String Text, 
 							 String imgName ) {
@@ -811,6 +961,9 @@ public class CoreWindow extends JFrame implements ComponentListener {
 			this.setActionCommand(actionCommand);
 		}
 
+		/* (non-Javadoc)
+		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+		 */
 		public void actionPerformed(ActionEvent ae) {
 			String ActCMD = ae.getActionCommand();	
 	
@@ -916,7 +1069,9 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	// --- Symbolleiste erstellen - START -------------------------
 	// ------------------------------------------------------------
 	/**
-	 * This method will return the current instance of the applications tool bar
+	 * This method will return the current instance of the applications tool bar.
+	 *
+	 * @return the j tool bar application
 	 */
 	private JToolBar getJToolBarApplication() {
 
@@ -971,10 +1126,11 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	}	
 	
 	/**
-	 * This method can be used in order to add an individual menu button 
-	 * a specified index position of the toolbar
-	 * @param myButton
-	 * @param indexPosition
+	 * This method can be used in order to add an individual menu button
+	 * a specified index position of the toolbar.
+	 *
+	 * @param myComponent the my component
+	 * @param indexPosition the index position
 	 */
 	public void addJToolbarComponent(JComponent myComponent, int indexPosition) {
 		int nElements = jToolBarApplication.getComponentCount(); 
@@ -985,10 +1141,12 @@ public class CoreWindow extends JFrame implements ComponentListener {
 			this.validate();
 		}
 	}
+	
 	/**
-	 * This method can be used in order to add an  
-	 * individual menu button to the toolbar
-	 * @param myButton
+	 * This method can be used in order to add an
+	 * individual menu button to the toolbar.
+	 *
+	 * @param myComponent the my component
 	 */
 	public void addJToolbarComponent(JComponent myComponent) {
 		jToolBarApplication.add(myComponent);
@@ -1002,10 +1160,22 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	// ------------------------------------------------------------
 	// --- Unterklasse für die Symbolleisten-Buttons --------------
 	// ------------------------------------------------------------	
+	/**
+	 * The Class JToolBarButton.
+	 */
 	public class JToolBarButton extends JButton implements ActionListener {
 
+		/** The Constant serialVersionUID. */
 		private static final long serialVersionUID = 1L;
  
+		/**
+		 * Instantiates a new j tool bar button.
+		 *
+		 * @param actionCommand the action command
+		 * @param toolTipText the tool tip text
+		 * @param altText the alt text
+		 * @param imgName the img name
+		 */
 		private JToolBarButton( String actionCommand, 
 								String toolTipText, 
 								String altText, 
@@ -1035,6 +1205,9 @@ public class CoreWindow extends JFrame implements ComponentListener {
 			this.setActionCommand(actionCommand);
 		}
 		
+		/* (non-Javadoc)
+		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+		 */
 		public void actionPerformed(ActionEvent ae) {
 			// --- Fallunterscheidung 'cmd' einbauen ---
 			String ActCMD = ae.getActionCommand();			
@@ -1093,27 +1266,66 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	// -------------------------------------------------------------------
 	// --- Methods to control the Buttons for the simulation control ----- 
 	// -------------------------------------------------------------------
+	/**
+	 * Sets the enable sim start.
+	 *
+	 * @param enable the new enable sim start
+	 */
 	public void setEnableSimStart(boolean enable) {
 		jButtonSimStart.setEnabled(enable);
 		jMenuItemSimStart.setEnabled(enable);	
 	}
+	
+	/**
+	 * Sets the enable sim pause.
+	 *
+	 * @param enable the new enable sim pause
+	 */
 	public void setEnableSimPause(boolean enable) {
 		jButtonSimPause.setEnabled(enable);
 		jMenuItemSimPause.setEnabled(enable);
 	}
+	
+	/**
+	 * Sets the enable sim stop.
+	 *
+	 * @param enable the new enable sim stop
+	 */
 	public void setEnableSimStop(boolean enable) {
 		jButtonSimStop.setEnabled(enable);
 		jMenuItemSimStop.setEnabled(enable);
 	}
+	
+	/**
+	 * Checks if is enabled sim start.
+	 *
+	 * @return true, if is enabled sim start
+	 */
 	public boolean isEnabledSimStart() {
 		return jButtonSimStart.isEnabled();
 	}
+	
+	/**
+	 * Checks if is enabled sim pause.
+	 *
+	 * @return true, if is enabled sim pause
+	 */
 	public boolean isEnabledSimPause() {
 		return jButtonSimPause.isEnabled();
 	}
+	
+	/**
+	 * Checks if is enabled sim stop.
+	 *
+	 * @return true, if is enabled sim stop
+	 */
 	public boolean isEnabledSimStop() {
 		return jButtonSimStop.isEnabled();
 	}
+	
+	/**
+	 * Sets the simulation ready2 start.
+	 */
 	public void setSimulationReady2Start() {
 		this.setEnableSimStart(true);
 		this.setEnableSimPause(false);
@@ -1123,15 +1335,30 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	// -------------------------------------------------------------------
 	
 	
+	/* (non-Javadoc)
+	 * @see java.awt.event.ComponentListener#componentShown(java.awt.event.ComponentEvent)
+	 */
 	@Override
 	public void componentShown(ComponentEvent e) {
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.awt.event.ComponentListener#componentHidden(java.awt.event.ComponentEvent)
+	 */
 	@Override
 	public void componentHidden(ComponentEvent e) {
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.awt.event.ComponentListener#componentMoved(java.awt.event.ComponentEvent)
+	 */
 	@Override
 	public void componentMoved(ComponentEvent e) {
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.awt.event.ComponentListener#componentResized(java.awt.event.ComponentEvent)
+	 */
 	@Override
 	public void componentResized(ComponentEvent e) {
 		if (consoleIsVisible() == false) {
@@ -1150,21 +1377,40 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	// --- Unterklasse für die Schräge im unteren  
 	// --- rechten Teil des Hauptfenmsters
 	// ------------------------------------------------------------	
+	/**
+	 * The Class AngledLinesWindowsCornerIcon.
+	 */
 	private class AngledLinesWindowsCornerIcon implements Icon {
 		  
+		/** The WHIT e_ lin e_ color. */
 		private final Color WHITE_LINE_COLOR = new Color(255, 255, 255);
+		
+		/** The GRA y_ lin e_ color. */
 		private final Color GRAY_LINE_COLOR = new Color(172, 168, 153);
+		
+		/** The Constant WIDTH. */
 		private static final int WIDTH = 13;
+		
+		/** The Constant HEIGHT. */
 		private static final int HEIGHT = 13;
 
+		/* (non-Javadoc)
+		 * @see javax.swing.Icon#getIconHeight()
+		 */
 		public int getIconHeight() {
 			return WIDTH;
 		}
 
+		/* (non-Javadoc)
+		 * @see javax.swing.Icon#getIconWidth()
+		 */
 		public int getIconWidth() {
 			return HEIGHT;
 		}
 
+		/* (non-Javadoc)
+		 * @see javax.swing.Icon#paintIcon(java.awt.Component, java.awt.Graphics, int, int)
+		 */
 		public void paintIcon(Component c, Graphics g, int x, int y) {
 
 			g.setColor(WHITE_LINE_COLOR);

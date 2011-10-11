@@ -4,8 +4,9 @@
  * applications based on the JADE - Framework in compliance with the 
  * FIPA specifications. 
  * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
  * http://sourceforge.net/projects/agentgui/
- * http://www.dawis.wiwi.uni-due.de/ 
+ * http://www.agentgui.org 
  *
  * GNU Lesser General Public License
  *
@@ -499,9 +500,9 @@ public class GlobalInfo {
 		return localBIN_FilePostfix;
 	}
 	/**
-	 * Returns the path or file name for a given XML-file
+	 * Returns the path or file name for a given XML-file name
 	 * @param xmlFileName
-	 * @return
+	 * @return filename with the bin-suffix
 	 */
 	public String getBinFileNameFromXmlFileName(String xmlFileName) {
 		

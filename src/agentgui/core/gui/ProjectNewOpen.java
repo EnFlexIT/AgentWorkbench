@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.core.gui;
 
 import java.awt.Dimension;
@@ -39,9 +67,15 @@ import agentgui.core.application.Language;
 import java.awt.Color;
 
 
+/**
+ * This GUI is used in order to open or create a project
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ */
 public class ProjectNewOpen extends JDialog implements ActionListener {
+	
+	private static final long serialVersionUID = 4979849463130057295L;
 
-	private static final long serialVersionUID = 1L;
 	private static String NewLine = Application.RunInfo.AppNewLineString();  //  @jve:decl-index=0:
 	
 	private JPanel jContentPane = null;
@@ -67,7 +101,12 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 	private boolean Canceled = false;
 	
 	/**
-	 * @param owner
+	 * Constructor of this class
+	 *
+	 * @param owner the owner
+	 * @param titel the titel
+	 * @param modal the modal
+	 * @param NewPro the new pro
 	 */
 	public ProjectNewOpen(Frame owner, String titel, boolean modal, boolean NewPro) {
 		super(owner, titel, modal);		
@@ -99,7 +138,8 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * This method initializes this
+	 * This method initializes this.
+	 *
 	 * @return void
 	 */
 	private void initialize() {
@@ -116,7 +156,8 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * This method initializes jContentPane
+	 * This method initializes jContentPane.
+	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJContentPane() {
@@ -169,6 +210,11 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 	}
 
 	
+	/**
+	 * Gets the project name.
+	 *
+	 * @return the project name
+	 */
 	private JTextField getProjectName() {
 		if (ProjectName == null) {
 			ProjectName = new JTextField();
@@ -241,8 +287,9 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 	}
 	
 	/**
-	 * This method initializes jTextField	
-	 * @return javax.swing.JTextField	
+	 * This method initializes jTextField.
+	 *
+	 * @return javax.swing.JTextField
 	 */
 	private JTextField getProjectFolder() {
 		if (ProjectFolder == null) {
@@ -256,8 +303,9 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * This method initializes jScrollTree	
-	 * @return javax.swing.JScrollPane	
+	 * This method initializes jScrollTree.
+	 *
+	 * @return javax.swing.JScrollPane
 	 */
 	private JScrollPane getJScrollTree() {
 		if (jScrollTree == null) {
@@ -269,9 +317,9 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 	}
 	
 	/**
-	 * This method initializes ProTree	
-	 * 	
-	 * @return javax.swing.JTextArea	
+	 * This method initializes ProTree.
+	 *
+	 * @return javax.swing.JTextArea
 	 */
 	private JTree getProTree() {
 		if (ProTree == null) {
@@ -326,8 +374,9 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * This method initializes jButtonOK	
-	 * @return javax.swing.JButton	
+	 * This method initializes jButtonOK.
+	 *
+	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonOK() {
 		if (jButtonOK == null) {
@@ -342,8 +391,9 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * This method initializes jButtonCancel	
-	 * @return javax.swing.JButton	
+	 * This method initializes jButtonCancel.
+	 *
+	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonCancel() {
 		if (jButtonCancel == null) {
@@ -359,29 +409,73 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 		return jButtonCancel;
 	}
 
+	/**
+	 * Checks if is canceled.
+	 *
+	 * @return true, if is canceled
+	 */
 	public boolean isCanceled(){
 		return Canceled;
 	}
+	
+	/**
+	 * Sets the var project name.
+	 *
+	 * @param text the new var project name
+	 */
 	public void setVarProjectName(String text) {
 		ProjectName.setText(text);
 	}
+	
+	/**
+	 * Gets the var project name.
+	 *
+	 * @return the var project name
+	 */
 	public String getVarProjectName() {
 		return ProjectName.getText();
 	}
+	
+	/**
+	 * Sets the var project folder.
+	 *
+	 * @param text the new var project folder
+	 */
 	public void setVarProjectFolder(String text) {
 		ProjectFolder.setText(text);
 	}
+	
+	/**
+	 * Gets the var project folder.
+	 *
+	 * @return the var project folder
+	 */
 	public String getVarProjectFolder() {
 		return ProjectFolder.getText();
 	}
+	
+	/**
+	 * Gets the var project folder full path.
+	 *
+	 * @return the var project folder full path
+	 */
 	public String getVarProjectFolderFullPath() {
 		return ProjectFolder.getText();
 	}
+	
+	/**
+	 * Sets the ok button text.
+	 *
+	 * @param newText the new ok button text
+	 */
 	public void setOkButtonText(String newText) {
 		jButtonOK.setText(newText);
 	}
 	
 	
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
 	@Override
 	public void actionPerformed(ActionEvent AC) {
 
@@ -407,7 +501,8 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * 
+	 * Project error.
+	 *
 	 * @return true or false
 	 */
 	public boolean ProjectError () {

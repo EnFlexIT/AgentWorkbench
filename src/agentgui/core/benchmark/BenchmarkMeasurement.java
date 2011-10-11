@@ -4,8 +4,9 @@
  * applications based on the JADE - Framework in compliance with the 
  * FIPA specifications. 
  * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
  * http://sourceforge.net/projects/agentgui/
- * http://www.dawis.wiwi.uni-due.de/ 
+ * http://www.agentgui.org 
  *
  * GNU Lesser General Public License
  *
@@ -50,28 +51,49 @@ import jnt.scimark2.kernel;
  */
 public class BenchmarkMeasurement extends Thread {
 
+	/** The bench gui. */
 	private BenchmarkMonitor benchGUI = null;
 	
+	/** The bench value old. */
 	private float benchValueOld = Application.RunInfo.getBenchValue();
+	
+	/** The bench allways skip. */
 	private boolean benchAllwaysSkip = Application.RunInfo.isBenchAllwaysSkip();
+	
+	/** The force bench. */
 	private boolean forceBench = false;
+	
+	/** The bench exec on. */
 	private String benchExecOn = Application.RunInfo.getBenchExecOn();
+	
+	/** The now exec on. */
 	private String nowExecOn = null;
 	
+	/** The min_time. */
 	private double min_time = Constants.RESOLUTION_DEFAULT;
 
+	/** The FF t_size. */
 	private int FFT_size = Constants.FFT_SIZE;
+	
+	/** The SO r_size. */
 	private int SOR_size =  Constants.SOR_SIZE;
+	
+	/** The Sparse_size_ m. */
 	private int Sparse_size_M = Constants.SPARSE_SIZE_M;
+	
+	/** The Sparse_size_nz. */
 	private int Sparse_size_nz = Constants.SPARSE_SIZE_nz;
+	
+	/** The L u_size. */
 	private int LU_size = Constants.LU_SIZE;
 	
 	/**
-	 * The constructor of this class.<br> 
-	 * If <i>forceBenchmark</i> is set to true the benchmark will be executed regardless of 
+	 * The constructor of this class.<br>
+	 * If <i>forceBenchmark</i> is set to true the benchmark will be executed regardless of
 	 * the settings in the property file or if the system was executed in the same network
 	 * already or not.
-	 * @param forceBenchmark
+	 *
+	 * @param forceBenchmark the force benchmark
 	 */
 	public BenchmarkMeasurement(boolean forceBenchmark) {
 		this.forceBench = forceBenchmark;	
@@ -183,8 +205,9 @@ public class BenchmarkMeasurement extends Thread {
 	}
 	
 	/**
-	 * This Method checks if a skip-button was pressed on the Monitor-GUI
-	 * @return
+	 * This Method checks if a skip-button was pressed on the Monitor-GUI.
+	 *
+	 * @return true, if is skip action
 	 */
 	private boolean isSkipAction() {
 		
@@ -203,7 +226,7 @@ public class BenchmarkMeasurement extends Thread {
 	}
 	
 	/**
-	 * This method closes teh Monitor-GUI
+	 * This method closes teh Monitor-GUI.
 	 */
 	private void closeGUI() {
 		
@@ -213,9 +236,10 @@ public class BenchmarkMeasurement extends Thread {
 	}
 	
 	/**
-	 * Returns the local 'CanonicalHostName' to identify 
-	 * on which computer this measurement were executed
-	 * @return
+	 * Returns the local 'CanonicalHostName' to identify
+	 * on which computer this measurement were executed.
+	 *
+	 * @return the local computer name
 	 */
 	private String getLocalComputerName() {
 

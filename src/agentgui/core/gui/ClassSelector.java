@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.core.gui;
 
 import java.awt.Color;
@@ -38,8 +66,14 @@ import agentgui.core.jade.ClassSearcherSingle;
 import javax.swing.BorderFactory;
 import javax.swing.border.EtchedBorder;
 
+/**
+ * The GUI to select a class, which extends a given super class
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ */
 public class ClassSelector extends JDialog {
 
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 	
 	private final String PathImage = Application.RunInfo.PathImageIntern();  //  @jve:decl-index=0:
@@ -51,32 +85,29 @@ public class ClassSelector extends JDialog {
 	private JTextField jTextFieldCustomizeClass = null;
 	private JButton jButtonDefaultClass = null;
 	private JButton jButtonCheckClass = null;
-
 	private JPanel jPanelProceed = null;
 	private JButton jButtonOK = null;
 	private JButton jButtonCancel = null;
-	
 	private JLabel jLabelSeperator = null;
-
 	private JLabel jLabelSearchCaption = null;
 	private JTextField jTextFieldSearch = null;
 	private JButton jButtonTakeSelected = null;
 	private JListClassSearcher jListClassesFound = null;
-	
+	/** The class2 search4. */
 	private Class<?> class2Search4 = Object.class;  //  @jve:decl-index=0:
 	private String class2Search4CurrentValue = null;  //  @jve:decl-index=0:
 	private String class2Search4DefaultValue = null;  //  @jve:decl-index=0:
 	private String class2Search4Description = "Klassen der aktuellen Laufzeitumgebung.";  //  @jve:decl-index=0:
 
 	private ClassSearcherSingle css = null;
-	
 	private boolean canceled = false;
 	private String classSelected = null;  //  @jve:decl-index=0:
 
 
 	/**
-	 * Default constructor 
-	 * @param owner
+	 * Default constructor.
+	 *
+	 * @param owner the owner
 	 */
 	public ClassSelector(Frame owner) {
 		super(owner);
@@ -84,12 +115,13 @@ public class ClassSelector extends JDialog {
 	}
 
 	/**
-	 * Constructor to configure the type of class, we are looking for 
-	 * @param owner
-	 * @param clazz2Search4
-	 * @param clazz2Search4CurrentValue
-	 * @param clazz2Search4DefaultValue
-	 * @param clazz2Search4Description
+	 * Constructor to configure the type of class, we are looking for.
+	 *
+	 * @param owner the owner
+	 * @param clazz2Search4 the clazz2 search4
+	 * @param clazz2Search4CurrentValue the clazz2 search4 current value
+	 * @param clazz2Search4DefaultValue the clazz2 search4 default value
+	 * @param clazz2Search4Description the clazz2 search4 description
 	 */
 	public ClassSelector(Frame owner, Class<?> clazz2Search4, String clazz2Search4CurrentValue, String clazz2Search4DefaultValue, String clazz2Search4Description) {
 		super(owner);
@@ -103,12 +135,17 @@ public class ClassSelector extends JDialog {
 	}
 
 	/**
+	 * Gets the class2 search4.
+	 *
 	 * @return the class2Search4
 	 */
 	public Class<?> getClass2Search4() {
 		return class2Search4;
 	}
+	
 	/**
+	 * Gets the class2 search4 current value.
+	 *
 	 * @return the class2Search4CurrentValue
 	 */
 	public String getClass2Search4CurrentValue() {
@@ -116,24 +153,35 @@ public class ClassSelector extends JDialog {
 	}
 
 	/**
+	 * Gets the class2 search4 default value.
+	 *
 	 * @return the class2Search4DefaultValue
 	 */
 	public String getClass2Search4DefaultValue() {
 		return class2Search4DefaultValue;
 	}
+	
 	/**
+	 * Gets the class2 search4 description.
+	 *
 	 * @return the class2Search4Description
 	 */
 	public String getClass2Search4Description() {
 		return class2Search4Description;
 	}
+	
 	/**
+	 * Sets the canceled.
+	 *
 	 * @param canceled the canceled to set
 	 */
 	public void setCanceled(boolean canceled) {
 		this.canceled = canceled;
 	}
+	
 	/**
+	 * Checks if is canceled.
+	 *
 	 * @return the canceled
 	 */
 	public boolean isCanceled() {
@@ -141,18 +189,26 @@ public class ClassSelector extends JDialog {
 	}
 
 	/**
+	 * Sets the class selected.
+	 *
 	 * @param classSelected the classSelected to set
 	 */
 	public void setClassSelected(String classSelected) {
 		this.classSelected = classSelected;
 	}
+	
 	/**
+	 * Gets the class selected.
+	 *
 	 * @return the classSelected
 	 */
 	public String getClassSelected() {
 		return classSelected;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.awt.Dialog#setVisible(boolean)
+	 */
 	@Override
 	public void setVisible(boolean visible) {
 		if (visible==false) {
@@ -164,7 +220,8 @@ public class ClassSelector extends JDialog {
 	
 	
 	/**
-	 * This method initializes this
+	 * This method initializes this.
+	 *
 	 * @return void
 	 */
 	private void initialize() {
@@ -194,7 +251,8 @@ public class ClassSelector extends JDialog {
 	}
 
 	/**
-	 * This method initializes jContentPane
+	 * This method initializes jContentPane.
+	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJContentPane() {
@@ -288,8 +346,9 @@ public class ClassSelector extends JDialog {
 	}
 
 	/**
-	 * This method initializes jTextFieldCustomizeClass	
-	 * @return javax.swing.JTextField	
+	 * This method initializes jTextFieldCustomizeClass.
+	 *
+	 * @return javax.swing.JTextField
 	 */
 	private JTextField getJTextFieldCustomizeClass() {
 		if (jTextFieldCustomizeClass == null) {
@@ -306,9 +365,11 @@ public class ClassSelector extends JDialog {
 		}
 		return jTextFieldCustomizeClass;
 	}
+	
 	/**
-	 * This method initializes jButtonDefaultClass	
-	 * @return javax.swing.JButton	
+	 * This method initializes jButtonDefaultClass.
+	 *
+	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonDefaultClass() {
 		if (jButtonDefaultClass == null) {
@@ -330,8 +391,9 @@ public class ClassSelector extends JDialog {
 	}
 	
 	/**
-	 * This method initializes jButtonDefaultClassCustomize	
-	 * @return javax.swing.JButton	
+	 * This method initializes jButtonDefaultClassCustomize.
+	 *
+	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonDefaultClassCustomize() {
 		if (jButtonCheckClass == null) {
@@ -350,9 +412,11 @@ public class ClassSelector extends JDialog {
 	}
 	
 	/**
-	 * This method checks if a given classs reference is valid
-	 * @param className: reference to the class  
-	 * @param classType: static(0) or dynamic(1)
+	 * This method checks if a given classs reference is valid.
+	 *
+	 * @param jTextField the j text field
+	 * @param jButton the j button
+	 * @return true, if is valid class
 	 */
 	private boolean isValidClass(JTextField jTextField, JButton jButton) {
 		
@@ -379,8 +443,9 @@ public class ClassSelector extends JDialog {
 	}
 
 	/**
-	 * This method initializes jPanelProceed	
-	 * @return javax.swing.JPanel	
+	 * This method initializes jPanelProceed.
+	 *
+	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJPanelProceed() {
 		if (jPanelProceed == null) {
@@ -397,10 +462,11 @@ public class ClassSelector extends JDialog {
 	}
 
 	/**
-	 * This method initializes jButtonOK	
-	 * @return javax.swing.JButton	
+	 * This method initializes jButtonOK.
+	 *
+	 * @return javax.swing.JButton
 	 */
-	JButton getJButtonOK() {
+	public JButton getJButtonOK() {
 		if (jButtonOK == null) {
 			jButtonOK = new JButton();
 			jButtonOK.setPreferredSize(new Dimension(120, 26));
@@ -411,14 +477,6 @@ public class ClassSelector extends JDialog {
 			jButtonOK.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-//					System.out.println("ClassSelector Listener");
-//					if (isValidClass(jTextFieldCustomizeClass, jButtonCheckClass)) {
-//						setClassSelected(jTextFieldCustomizeClass.getText().trim());
-//						setCanceled(false);
-//						setVisible(false);
-//					} else {
-//						System.out.println(Language.translate("Class not found:") + " '" + jTextFieldCustomizeClass.getText() + "'");						
-//					}
 					handleOkClick();
 				}
 			});
@@ -427,9 +485,9 @@ public class ClassSelector extends JDialog {
 	}
 	
 	/**
-	 * This method is called by the jButtonOK's ActionListener
+	 * This method is called by the jButtonOK's ActionListener.
 	 */
-	void handleOkClick(){
+	public void handleOkClick(){
 		if (isValidClass(jTextFieldCustomizeClass, jButtonCheckClass)) {
 			setClassSelected(jTextFieldCustomizeClass.getText().trim());
 			setCanceled(false);
@@ -440,10 +498,11 @@ public class ClassSelector extends JDialog {
 	}
 
 	/**
-	 * This method initializes jButtonCancel	
-	 * @return javax.swing.JButton	
+	 * This method initializes jButtonCancel.
+	 *
+	 * @return javax.swing.JButton
 	 */
-	JButton getJButtonCancel() {
+	public JButton getJButtonCancel() {
 		if (jButtonCancel == null) {
 			jButtonCancel = new JButton();
 			jButtonCancel.setPreferredSize(new Dimension(120, 26));
@@ -463,8 +522,9 @@ public class ClassSelector extends JDialog {
 	}
 
 	/**
-	 * This method initializes jTextFieldSearch	
-	 * @return javax.swing.JTextField	
+	 * This method initializes jTextFieldSearch.
+	 *
+	 * @return javax.swing.JTextField
 	 */
 	private JTextField getJTextFieldSearch() {
 		if (jTextFieldSearch == null) {
@@ -478,18 +538,21 @@ public class ClassSelector extends JDialog {
 		}
 		return jTextFieldSearch;
 	}
+	
 	/**
-	 * This will filter the list of classes depending on 
-	 * the content of the Input-Parameter 
-	 * @param filter4
+	 * This will filter the list of classes depending on
+	 * the content of the Input-Parameter.
+	 *
+	 * @param filter4 the filter4
 	 */
 	private void filterList(String filter4) {
 		jListClassesFound.setModelFiltered(filter4);
 	}
 	
 	/**
-	 * This method initializes jButtonTakeSelected	
-	 * @return javax.swing.JButton	
+	 * This method initializes jButtonTakeSelected.
+	 *
+	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonTakeSelected() {
 		if (jButtonTakeSelected == null) {
@@ -513,8 +576,9 @@ public class ClassSelector extends JDialog {
 	}
 	
 	/**
-	 * This method initializes jListClassesFound	
-	 * @return javax.swing.JList	
+	 * This method initializes jListClassesFound.
+	 *
+	 * @return javax.swing.JList
 	 */
 	private JListWithProgressBar getJListClassesFound() {
 		if (jListClassesFound == null) {

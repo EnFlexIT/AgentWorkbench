@@ -4,8 +4,9 @@
  * applications based on the JADE - Framework in compliance with the 
  * FIPA specifications. 
  * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
  * http://sourceforge.net/projects/agentgui/
- * http://www.dawis.wiwi.uni-due.de/ 
+ * http://www.agentgui.org 
  *
  * GNU Lesser General Public License
  *
@@ -62,6 +63,7 @@ import jade.core.Agent;
  */
 public class UtilityAgent extends Agent {
 
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 4018534357973603L;
 
 	/**

@@ -10,7 +10,7 @@ import javax.swing.JMenu;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Project;
-import agentgui.core.gui.ProjectWindowTab;
+import agentgui.core.gui.projectwindow.ProjectWindowTab;
 import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.core.sim.setup.SimulationSetups;
 import agentgui.core.sim.setup.SimulationSetupsChangeNotification;

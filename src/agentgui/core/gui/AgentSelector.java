@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.core.gui;
 
 import java.awt.Color;
@@ -29,38 +57,74 @@ import agentgui.core.application.Language;
 import agentgui.core.gui.components.JListClassSearcher;
 import agentgui.core.jade.ClassSearcher;
 
+/**
+ * The Class AgentSelector provides a GUI in order to select an agent 
+ * known in the current JVM
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ */
 public class AgentSelector extends JDialog implements ActionListener {
 
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 	
+	/** The Path image. */
 	private final String PathImage = Application.RunInfo.PathImageIntern();  //  @jve:decl-index=0:
+	
+	/** The image icon. */
 	private ImageIcon imageIcon = new ImageIcon( this.getClass().getResource( PathImage + "AgentGUI.png") );
+	
+	/** The image. */
 	private Image image = imageIcon.getImage();
 	
+	/** The selected agent classes. */
 	private Object[] selectedAgentClasses = null; 
+	
+	/** The canceled. */
 	private boolean canceled = false;
 	
+	/** The j content pane. */
 	private JPanel jContentPane = null;
+	
+	/** The j list agents. */
 	private JListClassSearcher jListAgents = null;
+	
+	/** The j button ok. */
 	private JButton jButtonOk = null;
+	
+	/** The j button cancel. */
 	private JButton jButtonCancel = null;
+	
+	/** The j panel bottom. */
 	private JPanel jPanelBottom = null;
 
+	/** The j label search caption. */
 	private JLabel jLabelSearchCaption = null;
+	
+	/** The j text field search. */
 	private JTextField jTextFieldSearch = null;
 
+	/**
+	 * Instantiates a new agent selector.
+	 */
 	public AgentSelector() {
 		super(Application.MainWindow);
 		initialize();
 	}
 	
+	/**
+	 * Instantiates a new agent selector.
+	 *
+	 * @param owner the owner
+	 */
 	public AgentSelector(Frame owner) {
 		super(owner);
 		initialize();
 	}
 
 	/**
-	 * This method initializes this
+	 * This method initializes this.
+	 *
 	 * @return void
 	 */
 	private void initialize() {
@@ -89,7 +153,8 @@ public class AgentSelector extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * This method initializes jContentPane
+	 * This method initializes jContentPane.
+	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJContentPane() {
@@ -137,8 +202,9 @@ public class AgentSelector extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * This method initializes jTextFieldSearch	
-	 * @return javax.swing.JTextField	
+	 * This method initializes jTextFieldSearch.
+	 *
+	 * @return javax.swing.JTextField
 	 */
 	private JTextField getJTextFieldSearch() {
 		if (jTextFieldSearch == null) {
@@ -154,8 +220,9 @@ public class AgentSelector extends JDialog implements ActionListener {
 	}
 	
 	/**
-	 * This method initializes jListAgents	
-	 * @return javax.swing.JList	
+	 * This method initializes jListAgents.
+	 *
+	 * @return javax.swing.JList
 	 */
 	private JListClassSearcher getJListAgents() {
 		if (jListAgents == null) {
@@ -172,17 +239,19 @@ public class AgentSelector extends JDialog implements ActionListener {
 	}
 	
 	/**
-	 * This will filter the list of Agents depending on 
-	 * the content of the Input-Parameter 
-	 * @param filter4
+	 * This will filter the list of Agents depending on
+	 * the content of the Input-Parameter.
+	 *
+	 * @param filter4 the filter4
 	 */
 	private void filterAgentList(String filter4) {
 		jListAgents.setModelFiltered(filter4);
 	}
 	
 	/**
-	 * This method initializes jButtonOk	
-	 * @return javax.swing.JButton	
+	 * This method initializes jButtonOk.
+	 *
+	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonOk() {
 		if (jButtonOk == null) {
@@ -198,8 +267,9 @@ public class AgentSelector extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * This method initializes jButtonCancel	
-	 * @return javax.swing.JButton	
+	 * This method initializes jButtonCancel.
+	 *
+	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonCancel() {
 		if (jButtonCancel == null) {
@@ -215,8 +285,9 @@ public class AgentSelector extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * This method initializes jPanelBottom	
-	 * @return javax.swing.JPanel	
+	 * This method initializes jPanelBottom.
+	 *
+	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJPanelBottom() {
 		if (jPanelBottom == null) {
@@ -240,6 +311,8 @@ public class AgentSelector extends JDialog implements ActionListener {
 	}
 
 	/**
+	 * Checks if is canceled.
+	 *
 	 * @return the canceled
 	 */
 	public boolean isCanceled() {
@@ -247,6 +320,8 @@ public class AgentSelector extends JDialog implements ActionListener {
 	}
 	
 	/**
+	 * Gets the selected agent classes.
+	 *
 	 * @return the selectedAgentClasses
 	 */
 	public Object[] getSelectedAgentClasses() {
@@ -254,8 +329,9 @@ public class AgentSelector extends JDialog implements ActionListener {
 	}
 	
 	/**
-	 * Saves the selected Agents in the ResultArray
-	 * @return
+	 * Saves the selected Agents in the ResultArray.
+	 *
+	 * @return true, if successful
 	 */
 	private boolean okAction() {
 
@@ -270,7 +346,9 @@ public class AgentSelector extends JDialog implements ActionListener {
 	
 	
 	/**
-	 * This manages the incomming Action-Calls
+	 * This manages the incomming Action-Calls.
+	 *
+	 * @param ae the ae
 	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
