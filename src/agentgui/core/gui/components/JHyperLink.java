@@ -41,38 +41,46 @@ import java.util.LinkedList;
 
 import javax.swing.JLabel;
 
+/**
+ * This class extends and can be used like a JLable and provides a clickable
+ * text in order to navigate to a Link.
+ *
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ */
 public class JHyperLink extends JLabel {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -8351025656123572661L;
 
 	protected final Color LINK_COLOR = Color.blue;
-	protected LinkedList<ActionListener> actionListenerList = new LinkedList<ActionListener>();
 	protected boolean underline;
-
+	
+	protected LinkedList<ActionListener> actionListenerList = new LinkedList<ActionListener>();
 	protected MouseListener mouseListener = new MouseAdapter() {
+											public void mouseEntered(MouseEvent me) {
+												underline = true;
+												repaint();
+											}
+											public void mouseExited(MouseEvent me) {
+												underline = false;
+												repaint();
+											}
+											public void mouseClicked(MouseEvent me) {
+												fireActionEvent();
+											}
+										};
 
-		public void mouseEntered(MouseEvent me) {
-			underline = true;
-			repaint();
-		}
-
-		public void mouseExited(MouseEvent me) {
-			underline = false;
-			repaint();
-		}
-
-		public void mouseClicked(MouseEvent me) {
-			fireActionEvent();
-		}
-	};
-
+	/**
+	 * Instantiates a new j hyper link.
+	 */
 	public JHyperLink() {
 		this("");
 	}
 
+	/**
+	 * Instantiates a new j hyper link.
+	 *
+	 * @param text the text
+	 */
 	public JHyperLink(String text) {
 		super(text);
 		setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -80,23 +88,39 @@ public class JHyperLink extends JLabel {
 		addMouseListener(mouseListener);
 	}
 
-	public void addActionListener(ActionListener l) {
-		if (!actionListenerList.contains(l)) {
-			actionListenerList.add(l);
+	/**
+	 * Adds the ActionListener.
+	 *
+	 * @param actionListener the ActionListener
+	 */
+	public void addActionListener(ActionListener actionListener) {
+		if (!actionListenerList.contains(actionListener)) {
+			actionListenerList.add(actionListener);
 		}
 	}
 
-	public void removeActionListener(ActionListener l) {
-		actionListenerList.remove(l);
+	/**
+	 * Removes the ActionListener.
+	 *
+	 * @param actionListener the ActionListener
+	 */
+	public void removeActionListener(ActionListener actionListener) {
+		actionListenerList.remove(actionListener);
 	}
 
+	/**
+	 * Fire action event.
+	 */
 	protected void fireActionEvent() {
-		ActionEvent e = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, getText());
+		ActionEvent event = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, getText());
 		for (ActionListener l : actionListenerList) {
-			l.actionPerformed(e);
+			l.actionPerformed(event);
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see javax.swing.JComponent#paint(java.awt.Graphics)
+	 */
 	public void paint(Graphics g) {
 		super.paint(g);
 		if (underline) {

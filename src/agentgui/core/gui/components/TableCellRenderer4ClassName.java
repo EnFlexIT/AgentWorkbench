@@ -28,21 +28,32 @@
  */
 package agentgui.core.gui.components;
 
+import java.awt.Color;
 import java.awt.Component;
 
 import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.ListCellRenderer;
+import javax.swing.JTable;
+import javax.swing.table.TableCellRenderer;
 
-public class ClassNameListCellRenderer implements ListCellRenderer {
+import agentgui.envModel.graph.controller.ComponentTypeDialog;
 
+/**
+ * Is used in the {@link ComponentTypeDialog} for displaying agent classes and selected graph prototypes.
+ *
+ * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati
+ */
+public class TableCellRenderer4ClassName implements TableCellRenderer {
+
+	/* (non-Javadoc)
+	 * @see javax.swing.table.TableCellRenderer#getTableCellRendererComponent(javax.swing.JTable, java.lang.Object, boolean, boolean, int, int)
+	 */
 	@Override
-	public Component getListCellRendererComponent(JList arg0, Object arg1,
-			int arg2, boolean arg3, boolean arg4) {
+	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 		JLabel rendererComponent = new JLabel();
 		String simpleClassName = "";
-		if(arg1 != null){
-			String className = (String) arg1;
+		
+		if(value != null){
+			String className = (String) value;
 			int simpleNameStart = className.lastIndexOf(".");
 			if(simpleNameStart > -1){
 				simpleClassName = className.substring(simpleNameStart+1);
@@ -50,6 +61,10 @@ public class ClassNameListCellRenderer implements ListCellRenderer {
 		}
 		
 		rendererComponent.setText(simpleClassName);
+		if(row % 2 == 0){
+			rendererComponent.setOpaque(true);
+			rendererComponent.setBackground(new Color(242,242,242));
+		}
 		return rendererComponent;
 	}
 

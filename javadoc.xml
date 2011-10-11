@@ -37,6 +37,7 @@
 						agentgui.core.environment,
 						agentgui.core.gui,
 						agentgui.core.gui.components,
+						agentgui.core.gui.imaging,
 						agentgui.core.gui.img,
 						agentgui.core.gui.options,
 						agentgui.core.gui.projectwindow,

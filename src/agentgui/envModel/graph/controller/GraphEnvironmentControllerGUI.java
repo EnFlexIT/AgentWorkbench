@@ -71,8 +71,8 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
 import agentgui.core.environment.EnvironmentPanel;
-import agentgui.core.gui.components.JTableButtonEditor;
-import agentgui.core.gui.components.JTableButtonRenderer;
+import agentgui.core.gui.components.TableCellEditor4TableButton;
+import agentgui.core.gui.components.TableCellRenderer4Button;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphElement;
 import agentgui.envModel.graph.networkModel.GraphNode;
@@ -239,8 +239,8 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	private TableColumnModel getColModel(){
 		final GraphEnvironmentControllerGUI graphEnvironmentControllerGUI = this;		
 		colModel = jTableComponents.getColumnModel();
-        colModel.getColumn(2).setCellRenderer(new JTableButtonRenderer());	        
-        colModel.getColumn(2).setCellEditor(new JTableButtonEditor(jTableComponents){
+        colModel.getColumn(2).setCellRenderer(new TableCellRenderer4Button());	        
+        colModel.getColumn(2).setCellEditor(new TableCellEditor4TableButton(jTableComponents){
 			private static final long serialVersionUID = 1L;
 
 			/* (non-Javadoc)

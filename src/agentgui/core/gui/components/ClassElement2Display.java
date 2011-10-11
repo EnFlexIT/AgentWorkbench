@@ -28,6 +28,11 @@
  */
 package agentgui.core.gui.components;
 
+/**
+ * This class is used in several JList elements in order to display selected classes
+ *  
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ */
 public class ClassElement2Display {
 
 	private Class<?> currClass = null;
@@ -51,6 +56,7 @@ public class ClassElement2Display {
 		}
 	}
 	/**
+	 * Provides the Class
 	 * @return the Class
 	 */
 	public Class<?> getElementClass(){
@@ -58,12 +64,14 @@ public class ClassElement2Display {
 	}
 	
 	/**
+	 * Can be used in order to set text, which can be stored as an additional information
 	 * @param additionalText the additionalText to set
 	 */
 	public void setAdditionalText(String additionalText) {
 		this.additionalText = additionalText;
 	}
 	/**
+	 * Returns text, which will be stored as an additional information
 	 * @return the additionalText
 	 */
 	public String getAdditionalText() {

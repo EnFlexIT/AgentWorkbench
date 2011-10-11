@@ -11,7 +11,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Iterator;
 import java.util.Observable;
-import java.util.Observer;
 
 import javax.swing.DropMode;
 import javax.swing.JFileChooser;

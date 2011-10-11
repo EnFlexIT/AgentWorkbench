@@ -46,10 +46,10 @@ import agentgui.envModel.graph.controller.ComponentTypeDialog;
 /**
  * This class is used in the {@link ComponentTypeDialog} for showing the agent class selector dialog 
  * for the agent column in the JTable
- * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati 
  *
+ * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati 
  */
-public class AgentClassTableCellEditor extends AbstractCellEditor
+public class TableCellEditor4AgentClass extends AbstractCellEditor
 implements TableCellEditor,
 ActionListener{
 	private static final long serialVersionUID = -1937780991527069423L;
@@ -66,7 +66,7 @@ ActionListener{
 	/**
 	 * Default constructor
 	 */
-	public AgentClassTableCellEditor() {
+	public TableCellEditor4AgentClass() {
 		button = new JButton();
         button.setActionCommand(EDIT);
         button.addActionListener(this);

@@ -65,13 +65,13 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
 import agentgui.core.gui.ClassSelector;
-import agentgui.core.gui.components.AgentClassTableCellEditor;
-import agentgui.core.gui.components.ClassNameListCellRenderer;
-import agentgui.core.gui.components.ClassNameTableCellRenderer;
-import agentgui.core.gui.components.ClassSelectorTableCellEditor;
-import agentgui.core.gui.components.ColorEditor;
-import agentgui.core.gui.components.ColorRenderer;
-import agentgui.core.gui.components.ImageSelectorTableCellEditor;
+import agentgui.core.gui.components.TableCellEditor4AgentClass;
+import agentgui.core.gui.components.TableCellRenderer4ClassNameList;
+import agentgui.core.gui.components.TableCellRenderer4ClassName;
+import agentgui.core.gui.components.TableCellEditor4ClassSelector;
+import agentgui.core.gui.components.TableCellEditor4Color;
+import agentgui.core.gui.components.TableCellRenderer4Color;
+import agentgui.core.gui.components.TableCellEditor4Image;
 import agentgui.core.gui.imaging.MissingIcon;
 import agentgui.envModel.graph.networkModel.ComponentTypeSettings;
 import agentgui.envModel.graph.prototypes.GraphElementPrototype;
@@ -129,7 +129,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	/**
 	 * Cell editor for the prototype classes column
 	 */
-	private ClassSelectorTableCellEditor prototypeClassesCellEditor = null;  //  @jve:decl-index=0:
+	private TableCellEditor4ClassSelector prototypeClassesCellEditor = null;  //  @jve:decl-index=0:
 	/**
 	 * All available agent classes, accessible by simple class name
 	 */
@@ -401,25 +401,24 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			
 			//Set up renderer and editor for the agent class column
 			TableColumn agentClassColumn = jTableComponentTypes.getColumnModel().getColumn(1);
-			agentClassColumn.setCellEditor(new AgentClassTableCellEditor());
-			agentClassColumn.setCellRenderer(new ClassNameTableCellRenderer());
-			
+			agentClassColumn.setCellEditor(new TableCellEditor4AgentClass());
+			agentClassColumn.setCellRenderer(new TableCellRenderer4ClassName());
 			
 			//Set up renderer and editor for Graph prototype column
 			TableColumn prototypeClassColumn = jTableComponentTypes.getColumnModel().getColumn(2);
 			prototypeClassColumn.setCellEditor(getPrototypeClassesCellEditor());
-			prototypeClassColumn.setCellRenderer(new ClassNameTableCellRenderer());
+			prototypeClassColumn.setCellRenderer(new TableCellRenderer4ClassName());
 			prototypeClassColumn.setPreferredWidth(100);
 			
 			//Set up Editor for the ImageIcon column
 			TableColumn imageIconColumn = jTableComponentTypes.getColumnModel().getColumn(3);
-			imageIconColumn.setCellEditor(new ImageSelectorTableCellEditor(currProject));		
+			imageIconColumn.setCellEditor(new TableCellEditor4Image(currProject));		
 			imageIconColumn.setPreferredWidth(30);
 			
 			//Set up renderer and editor for the  Color column.	        
 			TableColumn colorColumn = jTableComponentTypes.getColumnModel().getColumn(4);
-			colorColumn.setCellEditor(new ColorEditor());
-			colorColumn.setCellRenderer(new ColorRenderer(true));			
+			colorColumn.setCellEditor(new TableCellEditor4Color());
+			colorColumn.setCellRenderer(new TableCellRenderer4Color(true));			
 			colorColumn.setPreferredWidth(30);
 		}
 		return jTableComponentTypes;
@@ -528,14 +527,14 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	private JComboBox getJComboBoxAgentClasses(){
 		if(jComboBoxAgentClasses == null){
 			jComboBoxAgentClasses = new JComboBox(getAgentComboBoxModel());
-			jComboBoxAgentClasses.setRenderer(new ClassNameListCellRenderer());
+			jComboBoxAgentClasses.setRenderer(new TableCellRenderer4ClassNameList());
 		}
 		return jComboBoxAgentClasses;
 	}
 	
-	private ClassSelectorTableCellEditor getPrototypeClassesCellEditor(){
+	private TableCellEditor4ClassSelector getPrototypeClassesCellEditor(){
 		if(prototypeClassesCellEditor == null){
-			prototypeClassesCellEditor = new ClassSelectorTableCellEditor(Application.MainWindow, GraphElementPrototype.class, "", "", Language.translate("Graph-Prototypen"));
+			prototypeClassesCellEditor = new TableCellEditor4ClassSelector(Application.MainWindow, GraphElementPrototype.class, "", "", Language.translate("Graph-Prototypen"));
 		}
 		return prototypeClassesCellEditor;
 	}

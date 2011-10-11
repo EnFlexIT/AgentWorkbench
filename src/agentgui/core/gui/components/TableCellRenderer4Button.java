@@ -26,7 +26,6 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-
 package agentgui.core.gui.components;
 
 import java.awt.Component;
@@ -35,19 +34,23 @@ import javax.swing.JButton;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
-/**
- * @author Satyadeep - CSE - Indian Institute of Technology, Guwahati
- *
- */
-public class JTableButtonRenderer implements TableCellRenderer {
-	 JButton button = new JButton();
+import agentgui.envModel.graph.controller.ComponentTypeDialog;
 
-	    public Component getTableCellRendererComponent(JTable table,
-	                                                   Object value,
-	                                                   boolean isSelected,
-	                                                   boolean hasFocus,
-	                                                   int row, int column) {
-	        button.setText(value.toString());
-	        return button;
-	    }
+/**
+ * Is used in the {@link ComponentTypeDialog} for rendering JButton.
+ *
+ * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati
+ */
+public class TableCellRenderer4Button implements TableCellRenderer {
+	
+	private JButton button = new JButton();
+
+	/* (non-Javadoc)
+	 * @see javax.swing.table.TableCellRenderer#getTableCellRendererComponent(javax.swing.JTable, java.lang.Object, boolean, boolean, int, int)
+	 */
+	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+		button.setText(value.toString());
+		return button;
+	}
+	 
 }

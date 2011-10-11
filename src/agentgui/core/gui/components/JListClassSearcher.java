@@ -36,7 +36,12 @@ import agentgui.core.application.Project;
 import agentgui.core.jade.ClassSearcher;
 import agentgui.core.jade.ClassSearcherSingle;
 
-
+/**
+ * This class can be use like a JList, but it will show a progress, if
+ * the corresponding search process is still running
+ *
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ */
 public class JListClassSearcher extends JListWithProgressBar {
 
 	private static final long serialVersionUID = 6613469481292382381L;
@@ -60,11 +65,11 @@ public class JListClassSearcher extends JListWithProgressBar {
 	/**
 	 * Constructor for this class in case that we DON'T NEED project-specific
 	 * Classes. Needs constants from the class 'ClassSearcher'
-	 * @param searchFor
+	 * @param class2Search4
 	 */
-	public JListClassSearcher(Class<?> searchFor) {
+	public JListClassSearcher(Class<?> class2Search4) {
 		super();
-		this.currSearchFor = searchFor;
+		this.currSearchFor = class2Search4;
 		this.setListModel();
 	}
 

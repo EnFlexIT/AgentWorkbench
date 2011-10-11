@@ -40,32 +40,44 @@ import javax.swing.JButton;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 
-/**
- * @author Satyadeep - CSE - Indian Institute of Technology, Guwahati
- *
- */
+import agentgui.envModel.graph.controller.ComponentTypeDialog;
 
-public class JTableButtonEditor extends AbstractCellEditor implements TableCellEditor,
-                                                         ActionListener {
-    /**
-	 * 
-	 */
+/**
+ * Is used in the {@link ComponentTypeDialog}.
+ *
+ * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati
+ */
+public class TableCellEditor4TableButton extends AbstractCellEditor implements TableCellEditor, ActionListener {
+
 	private static final long serialVersionUID = 3607367692654837941L;
-	JTable table;
-    JButton button = new JButton();
+	
+	@SuppressWarnings("unused")
+	private JTable table = null;
+	private JButton button = new JButton();
     int clickCountToStart = 1;
 
-    public JTableButtonEditor(JTable table) {
-        this.table = table;
-        button.addActionListener(this);
+    /**
+     * Constructor of this class
+     *
+     * @param table the table
+     */
+    public TableCellEditor4TableButton(JTable table) {
+    	this.table = table;
+    	this.button.addActionListener(this);
     }
 
+    /* (non-Javadoc)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
     public void actionPerformed(ActionEvent e) {
-//        int row = table.getEditingRow();
-//        int col = table.getEditingColumn();
-       // System.out.printf("row = %d  col = %d%n", row, col);    
+//        int row = this.table.getEditingRow();
+//        int col = this.table.getEditingColumn();
+//        System.out.printf("row = %d  col = %d%n", row, col);    
     }
 
+    /* (non-Javadoc)
+     * @see javax.swing.table.TableCellEditor#getTableCellEditorComponent(javax.swing.JTable, java.lang.Object, boolean, int, int)
+     */
     public Component getTableCellEditorComponent(JTable table,
                                                  Object value,
                                                  boolean isSelected,
@@ -74,10 +86,16 @@ public class JTableButtonEditor extends AbstractCellEditor implements TableCellE
         return button;
     }
 
+    /* (non-Javadoc)
+     * @see javax.swing.CellEditor#getCellEditorValue()
+     */
     public Object getCellEditorValue() {
         return button.getText();
     }
 
+    /* (non-Javadoc)
+     * @see javax.swing.AbstractCellEditor#isCellEditable(java.util.EventObject)
+     */
     public boolean isCellEditable(EventObject anEvent) {
         if(anEvent instanceof MouseEvent) { 
             return ((MouseEvent)anEvent).getClickCount() >= clickCountToStart;
@@ -85,14 +103,23 @@ public class JTableButtonEditor extends AbstractCellEditor implements TableCellE
         return true;
     }
 
+    /* (non-Javadoc)
+     * @see javax.swing.AbstractCellEditor#shouldSelectCell(java.util.EventObject)
+     */
     public boolean shouldSelectCell(EventObject anEvent) {
         return true;
     }
 
+    /* (non-Javadoc)
+     * @see javax.swing.AbstractCellEditor#stopCellEditing()
+     */
     public boolean stopCellEditing() {
         return super.stopCellEditing();
     }
 
+    /* (non-Javadoc)
+     * @see javax.swing.AbstractCellEditor#cancelCellEditing()
+     */
     public void cancelCellEditing() {
         super.cancelCellEditing();
     }

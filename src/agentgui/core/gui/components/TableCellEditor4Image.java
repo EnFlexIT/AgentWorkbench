@@ -52,36 +52,36 @@ import agentgui.core.gui.imaging.MissingIcon;
 /**
  * Table cell editor for displaying the file chooser dialog for selecting
  * ImageIcon for a network component type.
- * @author Satyadeep - CSE - Indian Institute of Technology, Guwahati
- *
+ * 
+ * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati
  */
-public class ImageSelectorTableCellEditor extends AbstractCellEditor
-implements TableCellEditor,
-ActionListener {
+public class TableCellEditor4Image extends AbstractCellEditor implements TableCellEditor, ActionListener {
 
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -1601832987481564552L;
-	/**
-	 * Current ImageIcon of the selected Cell
-	 */
-	ImageIcon currentImageIcon;
+	
+	/** Current ImageIcon of the selected Cell. */
+	private ImageIcon currentImageIcon;
 	/**
 	 * Button to be displayed in the cell during editing.
 	 */
-	JButton button;
-	/**
-	 * File chooser for selecting the image
-	 */
+	private JButton button;
+	
+	/** File chooser for selecting the image. */
 	JFileChooser fileChooser;
+    
+    /** The Constant EDIT. */
     protected static final String EDIT = "edit";
+    
+    /** Current project. */
+    private Project project= null;
+    
     /**
-     * Current project
+     * Constructor.
+     *
+     * @param project The current project to be passed by the parent
      */
-    Project project= null;
-    /**
-	 * Constructor
-	 * @param project The current project to be passed by the parent
-	 */
-	public ImageSelectorTableCellEditor(Project project) {
+	public TableCellEditor4Image(Project project) {
 		this.project = project;
 		
 		//Creating the button
@@ -106,13 +106,18 @@ ActionListener {
 	}
 	
 	/**
-	 * Value to be returned to the table after editing
+	 * Value to be returned to the table after editing.
+	 *
+	 * @return the cell editor value
 	 */
 	@Override
 	public Object getCellEditorValue() {
 		return currentImageIcon;
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		  	if (EDIT.equals(e.getActionCommand())) {
@@ -161,17 +166,22 @@ ActionListener {
 	        }
 	}
 
+	/* (non-Javadoc)
+	 * @see javax.swing.table.TableCellEditor#getTableCellEditorComponent(javax.swing.JTable, java.lang.Object, boolean, int, int)
+	 */
 	@Override
 	public Component getTableCellEditorComponent(JTable table, Object value,
 			boolean isSelected, int row, int column) {
 		currentImageIcon = (ImageIcon) value;
 		return button;
 	}
-	/** 
+	
+	/**
 	 * Returns an ImageIcon, or a default MissingIcon(a red X) if image not found.
-	 * @param path 
-	 * @param description
-	 * @return ImageIcon  
+	 *
+	 * @param path the path
+	 * @param description the description
+	 * @return ImageIcon
 	 */
 	protected ImageIcon createImageIcon(String path,
 	                                           String description) {

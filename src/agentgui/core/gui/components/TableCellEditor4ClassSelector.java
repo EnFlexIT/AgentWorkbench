@@ -39,37 +39,46 @@ import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 
 import agentgui.core.gui.ClassSelector;
+import agentgui.envModel.graph.controller.ComponentTypeDialog;
 
-public class ClassSelectorTableCellEditor extends AbstractCellEditor implements TableCellEditor{
+/**
+ * Is used in the {@link ComponentTypeDialog} for displaying agent classes.
+ *
+ * @author Nils Loose - University of Duisburg - Essen
+ */
+public class TableCellEditor4ClassSelector extends AbstractCellEditor implements TableCellEditor{
 	
-	private ClassSelector classSelector = null;
-	
-	private String currentClass = null;
-
-	/**
-	 * Generated serialVersionUID
-	 */
 	private static final long serialVersionUID = -445634898566639002L;
 	
-	public ClassSelectorTableCellEditor(Frame owner, Class<?> clazz2Search4, String clazz2Search4CurrentValue, String clazz2Search4DefaultValue, String clazz2Search4Description){
+	private ClassSelector classSelector = null;
+	private String currentClass = null;
+
+
+	/**
+	 * Instantiates a new class selector table cell editor.
+	 *
+	 * @param owner the owner
+	 * @param clazz2Search4 the clazz2 search4
+	 * @param clazz2Search4CurrentValue the clazz2 search4 current value
+	 * @param clazz2Search4DefaultValue the clazz2 search4 default value
+	 * @param clazz2Search4Description the clazz2 search4 description
+	 */
+	public TableCellEditor4ClassSelector(Frame owner, Class<?> clazz2Search4, String clazz2Search4CurrentValue, String clazz2Search4DefaultValue, String clazz2Search4Description){
+		
 		classSelector = new ClassSelector(owner, clazz2Search4, clazz2Search4CurrentValue, clazz2Search4DefaultValue, clazz2Search4Description);
 		JButton btnOk = classSelector.getJButtonOK(); 
+		
 		btnOk.removeActionListener(btnOk.getActionListeners()[0]);
 		btnOk.addActionListener(new ActionListener() {
-			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-//				System.out.println("CellEditor Listener");
-//				currentClass = classSelector.getClassSelected();
-//				fireEditingStopped();
-				
 				classSelector.handleOkClick();
 				currentClass = classSelector.getClassSelected();
 				fireEditingStopped();
 			}
 		});
+
 		classSelector.getJButtonCancel().addActionListener(new ActionListener() {
-			
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				fireEditingCanceled();
@@ -77,14 +86,20 @@ public class ClassSelectorTableCellEditor extends AbstractCellEditor implements 
 		});
 	}
 
+	/* (non-Javadoc)
+	 * @see javax.swing.CellEditor#getCellEditorValue()
+	 */
 	@Override
 	public Object getCellEditorValue() {
 		return currentClass;
 	}
 
+	/* (non-Javadoc)
+	 * @see javax.swing.table.TableCellEditor#getTableCellEditorComponent(javax.swing.JTable, java.lang.Object, boolean, int, int)
+	 */
 	@Override
-	public Component getTableCellEditorComponent(JTable table, Object value,
-			boolean isSelected, int row, int column) {
+	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+		
 		currentClass = (String)value;
 		JButton btn = new JButton();
 		btn.setText(currentClass);
@@ -100,6 +115,4 @@ public class ClassSelectorTableCellEditor extends AbstractCellEditor implements 
 		return btn;
 	}
 	
-	
-
 }

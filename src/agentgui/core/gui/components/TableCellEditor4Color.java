@@ -26,11 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-
-
 package agentgui.core.gui.components;
-
-
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.table.TableCellEditor;
@@ -38,28 +34,33 @@ import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JDialog;
 import javax.swing.JTable;
+
+import agentgui.envModel.graph.controller.ComponentTypeDialog;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 /**
- * Used by the JTable in ClassSelectionDialog
- * @author Satyadeep - CSE - Indian Institute of Technology, Guwahati
+ * Is used in the {@link ComponentTypeDialog} for selecting colors.
+ *
+ * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati
  */
-public class ColorEditor extends AbstractCellEditor
-                         implements TableCellEditor,
-			            ActionListener {
-    /**
-	 * 
-	 */
+public class TableCellEditor4Color extends AbstractCellEditor implements TableCellEditor, ActionListener {
+
 	private static final long serialVersionUID = 2997237817617185155L;
-	Color currentColor;
-    JButton button;
-    JColorChooser colorChooser;
-    JDialog dialog;
+
+	private Color currentColor;
+	private JButton button;
+	private JColorChooser colorChooser;
+	private JDialog dialog;
     protected static final String EDIT = "edit";
 
-    public ColorEditor() {
+    /**
+     * Instantiates a new color editor.
+     */
+    public TableCellEditor4Color() {
         //Set up the editor (from the table's point of view),
         //which is a button.
         //This button brings up the color chooser dialog,
@@ -82,9 +83,11 @@ public class ColorEditor extends AbstractCellEditor
     /**
      * Handles events from the editor button and from
      * the dialog's OK button.
+     *
+     * @param actionEvent the event
      */
-    public void actionPerformed(ActionEvent e) {
-        if (EDIT.equals(e.getActionCommand())) {
+    public void actionPerformed(ActionEvent actionEvent) {
+        if (EDIT.equals(actionEvent.getActionCommand())) {
             //The user has clicked the cell, so
             //bring up the dialog.
             button.setBackground(currentColor);
@@ -100,16 +103,18 @@ public class ColorEditor extends AbstractCellEditor
     }
 
     //Implement the one CellEditor method that AbstractCellEditor doesn't.
+    /* (non-Javadoc)
+     * @see javax.swing.CellEditor#getCellEditorValue()
+     */
     public Object getCellEditorValue() {
         return currentColor;
     }
 
     //Implement the one method defined by TableCellEditor.
-    public Component getTableCellEditorComponent(JTable table,
-                                                 Object value,
-                                                 boolean isSelected,
-                                                 int row,
-                                                 int column) {
+    /* (non-Javadoc)
+     * @see javax.swing.table.TableCellEditor#getTableCellEditorComponent(javax.swing.JTable, java.lang.Object, boolean, int, int)
+     */
+    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         currentColor = (Color)value;
         return button;
     }
