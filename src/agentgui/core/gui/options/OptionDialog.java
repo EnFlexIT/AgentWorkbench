@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.core.gui.options;
 
 import java.awt.Color;
@@ -42,36 +70,75 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 
+/**
+ * This JDialog represents the option dialog, where the 
+ * background system can be set up. 
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ */
 public class OptionDialog extends JDialog implements ActionListener {
 
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 
+	/** The global. */
 	private GlobalInfo global = Application.RunInfo;  //  @jve:decl-index=0:
+	
+	/** The Path image. */
 	private final String PathImage = Application.RunInfo.PathImageIntern();  //  @jve:decl-index=0:
 	
+	/** The image icon. */
 	private ImageIcon imageIcon = new ImageIcon( this.getClass().getResource( PathImage + "AgentGUI.png") );
+	
+	/** The image. */
 	private Image image = imageIcon.getImage();  //  @jve:decl-index=0:
 	
+	/** The j split pane main. */
 	private JSplitPane jSplitPaneMain = null;
+	
+	/** The j tabbed pane right. */
 	private JTabbedPane jTabbedPaneRight = null;
+	
+	/** The j scroll pane left. */
 	private JScrollPane jScrollPaneLeft = null;
+	
+	/** The j tree options. */
 	private JTree jTreeOptions = null;
+	
+	/** The j panel base. */
 	private JPanel jPanelBase = null;
+	
+	/** The j panel south. */
 	private JPanel jPanelSouth = null;
+	
+	/** The j button ok. */
 	private JButton jButtonOK = null;
+	
+	/** The j button cancel. */
 	private JButton jButtonCancel = null;
 	
+	/** The Option tree model. */
 	private DefaultTreeModel OptionTreeModel;
+	
+	/** The Root node. */
 	private DefaultMutableTreeNode RootNode;
+	
+	/** The additional nodes. */
 	private TreeMap<Integer, String[]> additionalNodes = new TreeMap<Integer, String[]>();  //  @jve:decl-index=0:
 	
+	/** The options start. */
 	private StartOptions optionsStart = null;
 	
+	/** The canceled. */
 	private boolean canceled = false;
+	
+	/** The force restart. */
 	private boolean forceRestart = false;  //  @jve:decl-index=0:
 		
 	/**
-	 * @param owner
+	 * Instantiates a new option dialog.
+	 *
+	 * @param owner the owner
 	 */
 	public OptionDialog(Frame owner) {
 		super(owner);
@@ -125,7 +192,8 @@ public class OptionDialog extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * This method initializes this
+	 * This method initializes this.
+	 *
 	 * @return void
 	 */
 	private void initialize() {
@@ -148,8 +216,9 @@ public class OptionDialog extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * This method set the Look and Feel of this Dialog
-	 * @param NewLnF
+	 * This method set the Look and Feel of this Dialog.
+	 *
+	 * @param NewLnF the new look and feel
 	 */
 	private void setLookAndFeel( String NewLnF ) {
 		// --- Look and fell einstellen --------------- 
@@ -170,8 +239,9 @@ public class OptionDialog extends JDialog implements ActionListener {
 	}		
 	
 	/**
-	 * This method initializes jSplitPaneMain	
-	 * @return javax.swing.JSplitPane	
+	 * This method initializes jSplitPaneMain.
+	 *
+	 * @return javax.swing.JSplitPane
 	 */
 	private JSplitPane getJSplitPaneMain() {
 		if (jSplitPaneMain == null) {
@@ -186,8 +256,9 @@ public class OptionDialog extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * This method initializes jTabbedPaneRight	
-	 * @return javax.swing.JTabbedPane	
+	 * This method initializes jTabbedPaneRight.
+	 *
+	 * @return javax.swing.JTabbedPane
 	 */
 	private JTabbedPane getJTabbedPaneRight() {
 		if (jTabbedPaneRight == null) {
@@ -199,8 +270,9 @@ public class OptionDialog extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * This method initializes jScrollPaneLeft	
-	 * @return javax.swing.JScrollPane	
+	 * This method initializes jScrollPaneLeft.
+	 *
+	 * @return javax.swing.JScrollPane
 	 */
 	private JScrollPane getJScrollPaneLeft() {
 		if (jScrollPaneLeft == null) {
@@ -211,8 +283,9 @@ public class OptionDialog extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * This method initializes jTreeOptionGroup	
-	 * @return javax.swing.JTree	
+	 * This method initializes jTreeOptionGroup.
+	 *
+	 * @return javax.swing.JTree
 	 */
 	private JTree getJTreeOptions() {
 		if (jTreeOptions == null) {
@@ -284,8 +357,9 @@ public class OptionDialog extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * This method initializes jPanelBase	
-	 * @return javax.swing.JPanel	
+	 * This method initializes jPanelBase.
+	 *
+	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJPanelBase() {
 		if (jPanelBase == null) {
@@ -308,8 +382,9 @@ public class OptionDialog extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * This method initializes jPanelSouth	
-	 * @return javax.swing.JPanel	
+	 * This method initializes jPanelSouth.
+	 *
+	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJPanelSouth() {
 		if (jPanelSouth == null) {
@@ -330,8 +405,9 @@ public class OptionDialog extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * This method initializes jButtonOK	
-	 * @return javax.swing.JButton	
+	 * This method initializes jButtonOK.
+	 *
+	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonOK() {
 		if (jButtonOK == null) {
@@ -347,8 +423,9 @@ public class OptionDialog extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * This method initializes jButtonCancel	
-	 * @return javax.swing.JButton	
+	 * This method initializes jButtonCancel.
+	 *
+	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonCancel() {
 		if (jButtonCancel == null) {
@@ -365,13 +442,13 @@ public class OptionDialog extends JDialog implements ActionListener {
 	
 
 	/**
-	 * Adds a Project-Tab and a new Base Folder 
-	 * (child of root!) to the ProjectWindow
-	 * 
-	 * @param title
-	 * @param icon
-	 * @param component
-	 * @param tip
+	 * Adds a Project-Tab and a new Base Folder
+	 * (child of root!) to the ProjectWindow.
+	 *
+	 * @param title the title
+	 * @param icon the icon
+	 * @param component the component
+	 * @param tip the tip
 	 */	
 	public void addOptionTab( String title, Icon icon, Component component, String tip ) {
 		// --- GUI-Komponente in das TabbedPane-Objekt einfügen -------------
@@ -382,21 +459,23 @@ public class OptionDialog extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * Adds a new node to the left Project-Tree
-	 * @param newNode
+	 * Adds a new node to the left Project-Tree.
+	 *
+	 * @param newNode the new node
 	 */
 	public void addOptionTabNode( String newNode ) {
 		RootNode.add( new DefaultMutableTreeNode( newNode ) );
 	}
 	
 	/**
-	 * Adds a child-node to a given parent node of the left Project-Tree.
-	 * If the node can not be found, the methode adds the textual node-definition
-	 * to the local TreeMap 'additionalNodes', for a later addition to the Tree
-	 * @param parentNode
-	 * @param newNode
+	 * Adds a child-node to a given parent node of the left project tree.
+	 * If the node can not be found, the method adds the textual node-definition
+	 * to the local TreeMap 'additionalNodes', for a later addition to the tree
+	 * 
+	 * @param parentNodeName name of the parent node
+	 * @param newNodeName name of the new node
 	 */
-	public void addOptionTabNode( String parentNodeName, String newNodeName ) {
+	public void addOptionTabNode(String parentNodeName, String newNodeName) {
 		DefaultMutableTreeNode currentNode = new DefaultMutableTreeNode( newNodeName );
 		DefaultMutableTreeNode parentNode  = getTreeNode(parentNodeName); 
 		if (parentNode!=null) {
@@ -410,36 +489,38 @@ public class OptionDialog extends JDialog implements ActionListener {
 	}
 	
 	/**
-	 * Returns the Tree-Node requested by the Reference 
-	 * @param Reference
-	 * @return
+	 * Returns the tree node requested by the node name.
+	 *
+	 * @param nodeName the node name
+	 * @return the DefaultMutableTreeNode, if found
 	 */
-	@SuppressWarnings("unchecked")
-	public DefaultMutableTreeNode getTreeNode(String Reference) {
+	public DefaultMutableTreeNode getTreeNode(String nodeName) {
 		
 		DefaultMutableTreeNode nodeFound = null;
 		DefaultMutableTreeNode currNode = null;
 		String currNodeText;
 		
-		for (Enumeration<DefaultMutableTreeNode> e = RootNode.breadthFirstEnumeration(); e.hasMoreElements();) {
-			currNode = e.nextElement();
+		for (int i = 0; i < RootNode.getChildCount(); i++) {
+			currNode = (DefaultMutableTreeNode) RootNode.getChildAt(i);
 			currNodeText = currNode.getUserObject().toString(); 
-			if ( currNodeText.equals(Reference) ) {				
+			if (currNodeText.equals(nodeName)) {				
 				nodeFound = currNode;
 				break;
 			} 
+			
 		}
 		return nodeFound;
 	}
 	
 	/**
-	 * Setzt den Fokus auf eine bestimmte Karteikarte
-	 * @param title
+	 * Sets the focus to a given tab.
+	 *
+	 * @param titleOfTab the new focus on tab
 	 */
-	public void setFocusOnTab (String title) {
+	public void setFocusOnTab (String titleOfTab) {
 		for (int i=0; i<jTabbedPaneRight.getComponentCount();  i++ ) {
 			Component Comp = jTabbedPaneRight.getComponent(i);
-			if ( Comp.getName().equalsIgnoreCase( Language.translate(title) ) ) {
+			if ( Comp.getName().equalsIgnoreCase( Language.translate(titleOfTab) ) ) {
 				jTabbedPaneRight.setSelectedIndex(i);		
 			}
 		}	
@@ -448,7 +529,13 @@ public class OptionDialog extends JDialog implements ActionListener {
 	
 	// If expand is true, expands all nodes in the tree.
     // Otherwise, collapses all nodes in the tree.
-    public void OptionTreeExpand2Level(Integer Up2TreeLevel, boolean expand ) {
+    /**
+	 * Option tree expand2 level.
+	 *
+	 * @param Up2TreeLevel the up2 tree level
+	 * @param expand the expand
+	 */
+	public void OptionTreeExpand2Level(Integer Up2TreeLevel, boolean expand ) {
     	
     	Integer CurrNodeLevel = 1;
     	if ( Up2TreeLevel == null ) 
@@ -456,6 +543,15 @@ public class OptionDialog extends JDialog implements ActionListener {
 
     	OptionTreeExpand( new TreePath(RootNode), expand, CurrNodeLevel, Up2TreeLevel);
     }
+	
+	/**
+	 * Option tree expand.
+	 *
+	 * @param parent the parent
+	 * @param expand the expand
+	 * @param CurrNodeLevel the curr node level
+	 * @param Up2TreeLevel the up2 tree level
+	 */
 	private void OptionTreeExpand( TreePath parent, boolean expand, Integer CurrNodeLevel, Integer Up2TreeLevel) {
     
         TreeNode node = (TreeNode)parent.getLastPathComponent();
@@ -478,7 +574,9 @@ public class OptionDialog extends JDialog implements ActionListener {
     }
 	
 	/**
-	 * Handles the ActionEvents of this dialog
+	 * Handles the ActionEvents of this dialog.
+	 *
+	 * @param ae the ae
 	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
@@ -496,7 +594,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 	}
 	
 	/**
-	 * Doe's the Actions when using the OK-Button -------------------
+	 * Doe's the actions when using the OK-Button.
 	 */
 	private void doOkAction() {
 		
@@ -559,22 +657,25 @@ public class OptionDialog extends JDialog implements ActionListener {
 	}
 	
 	/**
-	 * Returns, if this Dialog was canceled
-	 * @return boolean 
+	 * Returns, if this Dialog was cancelled.
+	 *
+	 * @return boolean
 	 */
 	public boolean isCanceled(){
 		return canceled;
 	}
+	
 	/**
-	 * Returns, if the Application should be restarted
-	 * @return
+	 * Returns, if the Application should be restarted.
+	 *
+	 * @return true, if is force restart
 	 */
 	public boolean isForceRestart() {
 		return forceRestart;
 	}
 	
 	/**
-	 * This method sets the Data from the global Area to the Form
+	 * This method sets the Data from the global Area to the Form.
 	 */
 	private void setGlobalData2Form(){
 		
@@ -604,7 +705,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 	}
 	
 	/**
-	 * This method writes the data back from the form to the global area 
+	 * This method writes the data back from the form to the global area.
 	 */
 	private void setFromData2Global() {
 		
@@ -626,7 +727,8 @@ public class OptionDialog extends JDialog implements ActionListener {
 	}
 	
 	/**
-	 * This method doe's the Error-Handling for this Dialog 
+	 * This method doe's the Error-Handling for this Dialog.
+	 *
 	 * @return true or false
 	 */
 	private boolean errorFound() {

@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.core.gui.projectwindow;
 
 
@@ -34,8 +62,9 @@ import agentgui.core.ontologies.OntologyClass;
 import agentgui.core.ontologies.OntologyClassTreeObject;
 
 /**
- * @author: Christian Derksen
- *
+ * Represents the JPanel/Tab 'Configuration' - 'Ontologies'
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class OntologyTab extends JPanel implements Observer, ActionListener {
 
@@ -43,7 +72,7 @@ public class OntologyTab extends JPanel implements Observer, ActionListener {
 	
 	final static String PathImage = Application.RunInfo.PathImageIntern();
 	
-	private Project CurrProject;
+	private Project currProject;
 	private JSplitPane OntoSplitPane = null;
 	private JScrollPane TreeScrollPane = null;
 
@@ -59,8 +88,8 @@ public class OntologyTab extends JPanel implements Observer, ActionListener {
 	 */
 	public OntologyTab( Project CP ) {
 		super();
-		this.CurrProject = CP;
-		this.CurrProject.addObserver(this);		
+		this.currProject = CP;
+		this.currProject.addObserver(this);		
 		
 		// --- Form aufbauen -------------------------------------
 		this.initialize();	
@@ -125,7 +154,7 @@ public class OntologyTab extends JPanel implements Observer, ActionListener {
 	private JTree getOntoTree() {
 		if (OntoTree == null) {
 			//OntoTree = new JTree( CurrProject.Ontology.getOntologyTree() );
-			OntoTree = new JTree( CurrProject.ontologies4Project.getOntologyTree() );
+			OntoTree = new JTree( currProject.ontologies4Project.getOntologyTree() );
 			OntoTree.setName("OntoTree");
 			OntoTree.setShowsRootHandles(false);
 			OntoTree.setRootVisible(true);
@@ -160,7 +189,7 @@ public class OntologyTab extends JPanel implements Observer, ActionListener {
     	Integer CurrNodeLevel = 1;
     	if ( Up2TreeLevel == null ) 
     		Up2TreeLevel = 1000;
-    	OntoTreeExpand( new TreePath( CurrProject.ontologies4Project.getOntologyTree().getRoot() ), expand, CurrNodeLevel, Up2TreeLevel);
+    	OntoTreeExpand( new TreePath( currProject.ontologies4Project.getOntologyTree().getRoot() ), expand, CurrNodeLevel, Up2TreeLevel);
     }
     
 	private void OntoTreeExpand( TreePath parent, boolean expand, Integer CurrNodeLevel, Integer Up2TreeLevel) {
@@ -290,7 +319,7 @@ public class OntologyTab extends JPanel implements Observer, ActionListener {
 		if ( ActCMD.equals("OntologieAdd") ) {
 			// --- Ontologie hinzufgen ------------------------------
 			String ActionTitel = Language.translate("Ontologie hinzufügen"); 
-			OntologieSelector onSel = new OntologieSelector( Application.MainWindow, CurrProject.getProjectName() + ": " + ActionTitel,true );			
+			OntologieSelector onSel = new OntologieSelector( Application.MainWindow, currProject.getProjectName() + ": " + ActionTitel,true );			
 			onSel.setVisible(true);
 			// === Hier geht's weiter, wenn der Dialog wieder geschlossen ist ===
 			if ( onSel.isCanceled() == true ) {
@@ -301,7 +330,7 @@ public class OntologyTab extends JPanel implements Observer, ActionListener {
 			onSel.dispose();
 			onSel = null;
 			// --- Neu gewählte Ontologie hinzufügen ---------------- 
-			CurrProject.subOntologyAdd(newOntologie);
+			currProject.subOntologyAdd(newOntologie);
 		}
 		else if ( ActCMD.equals("OntologieRemove") ) {
 			// --- Ontologie entfernen ------------------------------
@@ -318,7 +347,7 @@ public class OntologyTab extends JPanel implements Observer, ActionListener {
 				return;
 			}
 			// --- Gewählte Ontologie entfernen ---------------------
-			CurrProject.subOntologyRemove(oc.getOntologyMainClass());
+			currProject.subOntologyRemove(oc.getOntologyMainClass());
 		}
 		else {
 			System.out.println( "Unknown ActionCommand: " + ActCMD );
@@ -331,7 +360,7 @@ public class OntologyTab extends JPanel implements Observer, ActionListener {
 		String ObjectName = OName.toString();
 		if ( ObjectName.equalsIgnoreCase( Project.CHANGED_ProjectOntology ) ) {
 			// --- Ansicht auf die projekt-Ontologie aktualisieren --
-			this.OntoTree.setModel( CurrProject.ontologies4Project.getOntologyTree() );
+			this.OntoTree.setModel( currProject.ontologies4Project.getOntologyTree() );
 			this.OntoTreeExpand2Level(4, true);
 		} else {
 			//System.out.println("Unbekannte Meldung vom Observer: " + ObjectName);

@@ -57,7 +57,7 @@ import agentgui.core.ontologies.Ontologies4Project;
 import agentgui.core.sim.setup.SimulationSetups;
 
 /**
- * This class holds the list of the projects which are currently open
+ * This class holds the list of the projects, that are currently open
  * within Agent.GUI and offers methods to deal with them.  
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
