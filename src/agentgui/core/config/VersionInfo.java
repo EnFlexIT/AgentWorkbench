@@ -100,7 +100,7 @@ public class VersionInfo extends Properties {
 	public String getFullVersionInfo(boolean includeApplicationTitle, String newLineString) {
 		
 		String versionInfo = "";
-		String dateString = new SimpleDateFormat("yyyy/MM/dd hh:mm").format(this.getVersionDate());
+		String dateString = new SimpleDateFormat("yyyy/MM/dd HH:mm").format(this.getVersionDate());
 		
 		if (newLineString==null) {
 			newLineString="";
