@@ -81,7 +81,7 @@ public class VersionInfo extends Properties {
 	 * Prints out the current version and build information
 	 */
 	public void printVersionInfo() {
-		System.out.println("Agent.GUI " + this.getVersionMajor() + "." + this.getVersionMinor() + " Build: " + this.getVersionBuild());
+		System.out.println(this.getFullVersionInfo(true, " "));
 		if (debug==true) {
 			System.out.println("Version.Mayor " + this.getVersionMajor());
 			System.out.println("Version.Minor " + this.getVersionMinor());
@@ -90,6 +90,31 @@ public class VersionInfo extends Properties {
 		}
 	}
 
+	/**
+	 * This method returns the full version information of Agent.GUI.
+	 * 
+	 * @param includeApplicationTitle
+	 * @param newLineString
+	 * @return
+	 */
+	public String getFullVersionInfo(boolean includeApplicationTitle, String newLineString) {
+		
+		String versionInfo = "";
+		String dateString = new SimpleDateFormat("yyyy/MM/dd hh:mm").format(this.getVersionDate());
+		
+		if (newLineString==null) {
+			newLineString="";
+		}
+		
+		if (includeApplicationTitle) {
+			versionInfo += Application.RunInfo.getApplicationTitle() + newLineString;	
+		}
+
+		versionInfo += this.getVersionMajor() + "." + this.getVersionMinor() + newLineString;
+		versionInfo += "revision " + this.getVersionBuild() + " of " + dateString; 
+		return versionInfo;
+	}
+	
 	/**
 	 * Provides the major version number
 	 * @return

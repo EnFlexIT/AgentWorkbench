@@ -55,9 +55,10 @@ public class FileProperties extends Properties {
 
 	private static final long serialVersionUID = 7953205356494195952L;
 	
-	private GlobalInfo Global = Application.RunInfo;
+	private GlobalInfo global = Application.RunInfo;
+	private VersionInfo version = Application.Version;
 	
-	private String configFile = Global.PathConfigFile(true);
+	private String configFile = global.PathConfigFile(true);
 	private String configFileDefaultComment = "";
 
 	private final String DEF_RUNAS = "01_RUNAS";
@@ -397,7 +398,7 @@ public class FileProperties extends Properties {
 	private void setDefaultComment() {
 
 		String defaultComment = "";		
-		defaultComment = defaultComment + " Configuration of " + Global.getApplicationTitle() + " (Version: " + Global.AppVersion() + ")\n"; 
+		defaultComment = defaultComment + " Configuration of " + global.getApplicationTitle() + " (Version: " + version.getFullVersionInfo(false, " ") + ")\n"; 
 		defaultComment = defaultComment + " by Christian Derksen - DAWIS - ICB - University Duisburg-Essen\n";
 		defaultComment = defaultComment + " Email: christian.derksen@icb.uni-due.de\n";
 		configFileDefaultComment = defaultComment;

@@ -61,7 +61,6 @@ public class GlobalInfo {
 
 	// --- constant values -------------------------------------------------- 
 	private static String localAppTitle = "Agent.GUI";
-	private final static String localAppVersion = "0.98";
 	
 	private final static String localAppPathSeparatorString = File.separator;
 	private final static String localAppNewLineString = System.getProperty("line.separator");
@@ -236,14 +235,6 @@ public class GlobalInfo {
 	 */
 	public void setApplicationTitle(String newApplicationTitle) {
 		GlobalInfo.localAppTitle = newApplicationTitle;
-	}
-	
-	/**
-	 * This method returns the current version number of the application 
-	 * @return the version number of the current application 
-	 */
-	public String AppVersion() {
-		return localAppVersion;
 	}
 	
 	// -------------------------------

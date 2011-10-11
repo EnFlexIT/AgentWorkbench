@@ -77,7 +77,7 @@ public class AboutDialog extends JDialog implements ActionListener{
 		// --- Übersetzungen einstellen -----------------------------
 		this.setTitle( Application.RunInfo.getApplicationTitle() );
 		jLabelTitle.setText( Application.RunInfo.getApplicationTitle());
-		jLabelVersion.setText("Version: " +  Application.RunInfo.AppVersion());
+		jLabelVersion.setText("Version: " +  Application.Version.getFullVersionInfo(false, " "));
 		jLabelCopyright3.setText(Language.translate("Alle Rechte vorbehalten."));
 		
 		// --- Dialog zentrieren ------------------------------------
