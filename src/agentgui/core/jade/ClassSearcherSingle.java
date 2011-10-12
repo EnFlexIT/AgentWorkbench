@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.core.jade;
 
 import jade.core.Agent;
@@ -19,36 +47,69 @@ import agentgui.core.common.ClassLoaderUtil;
 import agentgui.core.gui.components.ClassElement2Display;
 import agentgui.core.gui.components.JListClassSearcher;
 
+/**
+ * This class will start a search process for classes that are extending a specified super class. 
+ * 
+ * @see ClassFinder
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ */
 public class ClassSearcherSingle {
 
+	/** The Constant ACC_INTERFACE. */
 	public static final int ACC_INTERFACE = 0x0200;
+	
+	/** The Constant ACC_ABSTRACT. */
 	public static final int ACC_ABSTRACT = 0x0400;
 	
+	/** The curr project. */
 	private Project currProject = null;
+	
+	/** The packages in project. */
 	private Vector<String> packagesInProject = new Vector<String>();
 	
+	/** The cu. */
 	private ClassUpdater cu = null;
+	
+	/** The class2 search4. */
 	private Class<?> class2Search4;
+	
+	/** The classname. */
 	private String classname;
+	
+	/** The classfilter. */
 	private ClassFinderFilter classfilter;
 	
+	/** The busy. */
 	private boolean busy = false;
+	
+	/** The classes loaded. */
 	private boolean classesLoaded = false;
+	
+	/** The classes found. */
 	private Vector<Class<?>> classesFound = new Vector<Class<?>>();
 	
+	/** The j list model classes found. */
 	private DefaultListModel jListModelClassesFound = new DefaultListModel();
+	
+	/** The j list model classes found project. */
 	private DefaultListModel jListModelClassesFoundProject = new DefaultListModel();
+	
+	/** The j list progress. */
 	private Vector<JListClassSearcher> jListProgress = new Vector<JListClassSearcher>();
 	
 	/**
 	 * Constructor of this class. Executes the search for the class
-	 * @param search4Class
+	 * @param clazz2Search4 The super class to search for
 	 */
 	public ClassSearcherSingle(Class<?> clazz2Search4) {
 		this.class2Search4 =  clazz2Search4;
 		this.classname = clazz2Search4.getName();
 	}
 	
+	/**
+	 * Start search.
+	 */
 	public void startSearch() {
 		
 		classesFound = new Vector<Class<?>>();
@@ -64,10 +125,18 @@ public class ClassSearcherSingle {
 		}
 		new Thread(cu).start();		
 	}
+	
+	/**
+	 * Re start search.
+	 */
 	public void reStartSearch() {
 		this.stopSearch();
 		this.startSearch();
 	}
+	
+	/**
+	 * Stop search.
+	 */
 	public void stopSearch() {
 		if (cu!=null) {
 			synchronized (cu) {
@@ -75,10 +144,22 @@ public class ClassSearcherSingle {
 			}
 		}
 	}
+	
+	/**
+	 * Register j list with progress.
+	 *
+	 * @param jListClassSearcher the j list class searcher
+	 */
 	public void registerJListWithProgress(JListClassSearcher jListClassSearcher) {
 		jListProgress.addElement(jListClassSearcher);	
 		jListClassSearcher.setBusy(this.busy);
 	}
+	
+	/**
+	 * Sets the busy.
+	 *
+	 * @param isBusy the new busy
+	 */
 	private void setBusy(boolean isBusy) {
 		this.busy = isBusy;
 		Vector<JListClassSearcher> jList2Display = new Vector<JListClassSearcher>(jListProgress);
@@ -88,8 +169,9 @@ public class ClassSearcherSingle {
 	}
 
 	/**
-	 * This will set the current project and evaluate the package-names in the project
-	 * @param project
+	 * This will set the current project and evaluate the package-names in the project.
+	 *
+	 * @param project the new project
 	 */
 	public void setProject(Project project) {
 		
@@ -118,12 +200,18 @@ public class ClassSearcherSingle {
 	}
 	
 	/**
+	 * Checks if is classes loaded.
+	 *
 	 * @return the classesLoaded
 	 */
 	public boolean isClassesLoaded() {
 		return classesLoaded;
 	}
+	
 	/**
+	 * Gets the classes found.
+	 *
+	 * @param classesFromProjectOnly the classes from project only
 	 * @return the classesFound
 	 */
 	public Vector<Class<?>> getClassesFound(boolean classesFromProjectOnly) {
@@ -152,8 +240,9 @@ public class ClassSearcherSingle {
 	}
 	
 	/**
-	 * Allows the running Thread to add the latest results
-	 * @param list
+	 * Allows the running Thread to add the latest results.
+	 *
+	 * @param list the list
 	 */
 	private void appendToList(List<Class<?>> list) {
 		synchronized (classesFound) {
@@ -192,6 +281,12 @@ public class ClassSearcherSingle {
 		}//end synchronized
 	}
 	
+	/**
+	 * Add2 list model.
+	 *
+	 * @param listModel the list model
+	 * @param clazz the clazz
+	 */
 	@SuppressWarnings("unchecked")
 	public void add2ListModel(final DefaultListModel listModel, final Class<?> clazz) {
 	
@@ -227,6 +322,8 @@ public class ClassSearcherSingle {
 	}
 	
 	/**
+	 * Gets the j list model classes found.
+	 *
 	 * @return the jListModelClassesFound
 	 */
 	public DefaultListModel getjListModelClassesFound() {
@@ -236,7 +333,10 @@ public class ClassSearcherSingle {
 			return jListModelClassesFound;	
 		}
 	}
+	
 	/**
+	 * Gets the j list model classes found project.
+	 *
 	 * @return the jListModelClassesFoundProject
 	 */
 	public DefaultListModel getjListModelClassesFoundProject() {
@@ -252,35 +352,63 @@ public class ClassSearcherSingle {
 	// --- Sub-Class - 'ClassUpdater' --- S T A R T ---------------------------
 	// ------------------------------------------------------------------------
 	/**
-	 * This will be the running thread, searching for the classes
-	 * @author derksen
+	 * This will be the running thread, searching for the classes.
+	 *
+	 * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
 	 */
 	private class ClassUpdater extends Thread implements ClassFinderListener {
 
+		/** The update every. */
 		private int updateEvery = 1;
+		
+		/** The number of classes. */
 		private int numberOfClasses;
 
+		/** The class names cache. */
 		private List<Class<?>> classNamesCache;
+		
+		/** The classname. */
 		private String classname;
+		
+		/** The cf. */
 		private ClassFinder cf;
+		
+		/** The classfilter. */
 		private ClassFinderFilter classfilter;
 
 		
+		/**
+		 * Instantiates a new class updater.
+		 *
+		 * @param classname the classname
+		 * @param classfilter the classfilter
+		 */
 		public ClassUpdater(String classname, ClassFinderFilter classfilter) {
 			this.classname = classname;
 			this.classfilter = classfilter;
 		}
 
+		/**
+		 * Sets the update every.
+		 *
+		 * @param updateEvery the new update every
+		 */
 		public void setUpdateEvery(int updateEvery) {
 			this.updateEvery = updateEvery;
 		}
 
+		/**
+		 * Stop search.
+		 */
 		public void stopSearch() {
 			if (cf!=null) {
 				cf.setStopSearch(true);
 			}
 		}
 		
+		/* (non-Javadoc)
+		 * @see jade.util.ClassFinderListener#add(java.lang.Class, java.net.URL)
+		 */
 		@SuppressWarnings("rawtypes")
 		public void add(Class clazz, URL location) {
 			numberOfClasses++;
@@ -291,6 +419,9 @@ public class ClassSearcherSingle {
 			}
 		}
 
+		/* (non-Javadoc)
+		 * @see java.lang.Thread#run()
+		 */
 		public void run() {
 			
 			Thread.currentThread().setName("ClassSearch-" + class2Search4.getSimpleName());
@@ -319,10 +450,15 @@ public class ClassSearcherSingle {
 	// --- Sub-Class - 'ClassFilter' --- S T A R T ----------------------------
 	// ------------------------------------------------------------------------
 	/**
-	 * Filter-Object to find the right classes
+	 * Filter-Object to find the right classes.
+	 *
 	 * @author derksen
 	 */
 	private class ClassFilter implements ClassFinderFilter {
+		
+		/* (non-Javadoc)
+		 * @see jade.util.ClassFinderFilter#include(java.lang.Class, java.lang.Class)
+		 */
 		@SuppressWarnings("rawtypes")
 		public boolean include(Class superClazz, Class clazz) {
 			int modifiers = clazz.getModifiers();

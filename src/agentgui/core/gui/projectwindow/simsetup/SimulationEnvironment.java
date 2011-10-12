@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.core.gui.projectwindow.simsetup;
 
 import java.awt.BorderLayout;
@@ -14,22 +42,34 @@ import agentgui.core.application.Project;
 import agentgui.core.environment.EnvironmentPanel;
 import agentgui.core.environment.EnvironmentType;
 
+/**
+ * Represents the JPanel/Tab 'Configuration' - 'Simulation Environment'.
+ *
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ */
 public class SimulationEnvironment extends JPanel implements Observer, ActionListener {
 
 	private static final long serialVersionUID = 3230313372954316520L;
 	
 	private Project project;
-	private SetupSelector jPanelTopNew = null;
 	
+	private SetupSelector jPanelTopNew = null;
 	private EnvironmentPanel environmentControllerGUI = null;
 	
-	
+	/**
+	 * Constructor.
+	 *
+	 * @param project the project
+	 */
 	public SimulationEnvironment(Project project){
 		this.project = project;
 		this.project.addObserver(this);
 		this.initialize();
 	}
 	
+	/**
+	 * Initialize.
+	 */
 	private void initialize(){
 		
 		this.setLayout(new BorderLayout());
@@ -40,7 +80,8 @@ public class SimulationEnvironment extends JPanel implements Observer, ActionLis
 	
 	/**
 	 * Depending on the currently configured (predefined) environment/visualisation model, this
-	 * method returns the EnvironmentPanel, which has to be displayed here on this JPanel
+	 * method returns the EnvironmentPanel, which has to be displayed here on this JPanel.
+	 *
 	 * @return the currently configured Environment-Display
 	 */
 	private EnvironmentPanel getEnvironmentControllerGUI(){
@@ -101,6 +142,11 @@ public class SimulationEnvironment extends JPanel implements Observer, ActionLis
 		return environmentControllerGUI;
 	}
 	
+	/**
+	 * Switch environment mode.
+	 *
+	 * @param mode the mode
+	 */
 	private void switchEnvironmentMode(String mode){
 		this.remove(environmentControllerGUI);
 		this.getEnvironmentControllerGUI();
@@ -108,8 +154,9 @@ public class SimulationEnvironment extends JPanel implements Observer, ActionLis
 	}
 	
 	/**
-	 * This method initializes jPanelTopNew	
-	 * @return javax.swing.JPanel	
+	 * This method initializes jPanelTopNew.
+	 *
+	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJPanelTopNew() {
 		if (jPanelTopNew == null) {
@@ -118,6 +165,9 @@ public class SimulationEnvironment extends JPanel implements Observer, ActionLis
 		return jPanelTopNew;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
+	 */
 	@Override
 	public void update(Observable o, Object arg) {
 		if(o.equals(project) && arg.equals(Project.CHANGED_EnvironmentModel)){
@@ -125,6 +175,9 @@ public class SimulationEnvironment extends JPanel implements Observer, ActionLis
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub

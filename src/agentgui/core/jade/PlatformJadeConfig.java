@@ -4,8 +4,9 @@
  * applications based on the JADE - Framework in compliance with the 
  * FIPA specifications. 
  * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
  * http://sourceforge.net/projects/agentgui/
- * http://www.dawis.wiwi.uni-due.de/ 
+ * http://www.agentgui.org 
  *
  * GNU Lesser General Public License
  *
@@ -26,9 +27,7 @@
  * **************************************************************
  */
 package agentgui.core.jade;
-/**
- 
- */
+
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 
@@ -70,9 +69,9 @@ import agentgui.core.network.PortChecker;
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
 public class PlatformJadeConfig implements Serializable {
-
 	
 	private static final long serialVersionUID = -9062155032902746361L;
+	
 	// --- Services 'Activated automatically' ---------------------------------
 	public static final String SERVICE_MessagingService = jade.core.messaging.MessagingService.class.getName();
 	public static final String SERVICE_AgentManagementService = jade.core.management.AgentManagementService.class.getName();
@@ -117,24 +116,28 @@ public class PlatformJadeConfig implements Serializable {
 	@XmlTransient
 	private DefaultListModel listModelServices = null;
 	
+	
 	/**
-	 * Constructor of this class
+	 * Constructor of this class.
 	 */
 	public PlatformJadeConfig() {
 	
 	}
 	
 	/**
-	 * This method returns the TextAddition if a Service is an automatically starting service of JADE
-	 * @return
+	 * This method returns the TextAddition if a Service is an automatically starting service of JADE.
+	 *
+	 * @return the auto service text addition
 	 */
 	public static String getAutoServiceTextAddition() {
 		return " " + Language.translate(AUTOSERVICE_TextAddition) + " ";
 	}
+	
 	/**
-	 * Returns if a service generally starts while JADE is starting  
-	 * @param serviceReference
-	 * @return 
+	 * Returns if a service generally starts while JADE is starting.
+	 *
+	 * @param serviceReference the service reference
+	 * @return true, if is auto service
 	 */
 	public static boolean isAutoService(String serviceReference) {
 		for (int i = 0; i < autoServices.length; i++) {
@@ -146,15 +149,18 @@ public class PlatformJadeConfig implements Serializable {
 	}
 	
 	/**
-	 * @param currProject the currProject to set
+	 * Sets the project.
+	 *
+	 * @param project the new project
 	 */
 	public void setProject(Project project) {
 		this.currProject = project;
 	}
 
 	/**
-	 * This Method returns a new Instance of Profil, which   
-	 * can be used for starting a new JADE-Container
+	 * This Method returns a new Instance of Profil, which
+	 * can be used for starting a new JADE-Container.
+	 *
 	 * @return jade.core.Profile
 	 */
 	public Profile getNewInstanceOfProfilImpl(){
@@ -163,20 +169,24 @@ public class PlatformJadeConfig implements Serializable {
 		prof = this.setProfileServices(prof);		
 		return prof;
 	}
+	
 	/**
 	 * This Method scans for a free Port, which can be used
 	 * for the JADE-Container. It's starts searching for a free
 	 * Port on 'portSearchStart'. If not available, it checks
-	 * the next higher Port and so on. 
-	 * @param portSearchStart
+	 * the next higher Port and so on.
+	 *
+	 * @param portSearchStart the port search start
 	 */
 	private void findFreePort(int portSearchStart){
 		PortChecker portCheck = new PortChecker(portSearchStart);
 		useLocalPort = portCheck.getFreePort();
 	}
+	
 	/**
-	 * Adds the local configured 'LocalPort' to the input instance of Profile
-	 * @param profile
+	 * Adds the local configured 'LocalPort' to the input instance of Profile.
+	 *
+	 * @param profile the profile
 	 * @return jade.core.Profile
 	 */
 	private Profile setProfileLocalPort(Profile profile){
@@ -184,9 +194,11 @@ public class PlatformJadeConfig implements Serializable {
 		profile.setParameter(Profile.LOCAL_PORT, useLocalPort.toString());
 		return profile;
 	}
+	
 	/**
-	 * Adds the local configured services to the input instance of Profile
-	 * @param profile
+	 * Adds the local configured services to the input instance of Profile.
+	 *
+	 * @param profile the profile
 	 * @return jade.core.Profile
 	 */
 	private Profile setProfileServices(Profile profile){
@@ -196,9 +208,11 @@ public class PlatformJadeConfig implements Serializable {
 		}
 		return profile;
 	}	
+	
 	/**
-	 * This method walks through the HashSet of configured Services and returns them 
-	 * as a String separated with a semicolon (';') 
+	 * This method walks through the HashSet of configured Services and returns them
+	 * as a String separated with a semicolon (';').
+	 *
 	 * @return String
 	 */
 	public String getServiceListArgument() {
@@ -216,8 +230,9 @@ public class PlatformJadeConfig implements Serializable {
 	}
 	
 	/**
-	 * Can be used in order to add a class reference to an extended JADE-BaseService 
-	 * @param serviceClassReference
+	 * Can be used in order to add a class reference to an extended JADE-BaseService.
+	 *
+	 * @param serviceClassReference the service class reference
 	 */
 	public void addService(String serviceClassReference) {
 		
@@ -238,8 +253,9 @@ public class PlatformJadeConfig implements Serializable {
 	}
 
 	/**
-	 * Can be used in order to remove a class reference to an extended JADE-BaseService
-	 * @param serviceClassReference
+	 * Can be used in order to remove a class reference to an extended JADE-BaseService.
+	 *
+	 * @param serviceClassReference the service class reference
 	 */
 	public void removeService(String serviceClassReference) {
 		
@@ -257,7 +273,7 @@ public class PlatformJadeConfig implements Serializable {
 	}
 	
 	/**
-	 * This method will remove all Services from the current Profile
+	 * This method will remove all Services from the current Profile.
 	 */
 	public void removeAllServices() {
 		this.useServiceList.clear();
@@ -271,7 +287,8 @@ public class PlatformJadeConfig implements Serializable {
 	/**
 	 * Checks if a Service is configured for this instance.
 	 * The requested Service can be given with the actual class of the service
-	 * @param requestedService
+	 *
+	 * @param requestedService the requested service
 	 * @return boolean
 	 */
 	public boolean isUsingService(String requestedService) {
@@ -281,17 +298,20 @@ public class PlatformJadeConfig implements Serializable {
 			return false;
 		}
 	}
+	
 	/**
-	 * Counts the number of services which are currently configured 
-	 * @return
+	 * Counts the number of services which are currently configured.
+	 *
+	 * @return the integer
 	 */
 	public Integer countUsedServices() {
 		return this.useServiceList.size();
 	}
 	
 	/**
-	 * With this class the LocalPort, which will be used from a JADE-Container can be set 
-	 * @param port2Use
+	 * With this class the LocalPort, which will be used from a JADE-Container can be set.
+	 *
+	 * @param port2Use the new local port
 	 */
 	public void setLocalPort(int port2Use){
 		useLocalPort = port2Use;
@@ -300,14 +320,19 @@ public class PlatformJadeConfig implements Serializable {
 			this.currProject.setChangedAndNotify(Project.CHANGED_JadeConfiguration);
 		}
 	}
+	
 	/**
-	 * Returns the current Port which is  configured for a JADE-Container 
+	 * Returns the current Port which is  configured for a JADE-Container.
+	 *
 	 * @return Integer
 	 */
 	public Integer getLocalPort() {
 		return useLocalPort;
 	}
+	
 	/**
+	 * Gets the list model services.
+	 *
 	 * @return the listModelServices
 	 */
 	@XmlTransient
@@ -324,7 +349,7 @@ public class PlatformJadeConfig implements Serializable {
 	}
 
 	/**
-	 * This method will sort the current list model for the chosen services 
+	 * This method will sort the current list model for the chosen services.
 	 */
 	private void sortListModelServices() {
 		
@@ -339,9 +364,10 @@ public class PlatformJadeConfig implements Serializable {
 	}
 	
 	/**
-	 * This Method compares the current instance with another instances  
-	 * of this class and returns true, if they are logical identical
-	 * @param jadeConfig2
+	 * This Method compares the current instance with another instances
+	 * of this class and returns true, if they are logical identical.
+	 *
+	 * @param jadeConfig2 the jade config2
 	 * @return boolean
 	 */
 	public boolean isEqual(PlatformJadeConfig jadeConfig2) {
@@ -367,9 +393,10 @@ public class PlatformJadeConfig implements Serializable {
 	}
 
 	/**
-	 * This Method returns a String which shows the current 
-	 * configuration of this instance
-	 * @return String 
+	 * This Method returns a String which shows the current
+	 * configuration of this instance.
+	 *
+	 * @return String
 	 */
 	public String toString() {
 		String bugOut = ""; 

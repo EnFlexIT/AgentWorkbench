@@ -101,7 +101,7 @@ public class ServerClientAgent extends Agent {
 		}
 		
 		// --- Define Main-Platform-Info ------------------
-		JadeUrlChecker myURL = Application.JadePlatform.MASmasterAddress;
+		JadeUrlChecker myURL = Application.JadePlatform.urlChecker;
 		mainPlatform.setIp(myURL.getHostIP());
 		mainPlatform.setUrl(myURL.getHostName());
 		mainPlatform.setPort(myURL.getPort());
