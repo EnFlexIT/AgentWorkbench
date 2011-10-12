@@ -29,6 +29,7 @@
 package agentgui.core.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
@@ -66,6 +67,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.ListSelectionEvent;
@@ -77,11 +79,6 @@ import javax.swing.table.TableColumn;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-
-import com.google.api.GoogleAPI;
-import com.google.api.translate.Translate;
-import java.awt.Color;
-import javax.swing.SwingConstants;
 
 /**
  * The JDialog is used in order to allow the translations between all defined languages
@@ -220,7 +217,7 @@ private static final long serialVersionUID = 1L;
 		}
 		
 		// --- Set Google-HttpReferrer ------------------------------
-		GoogleAPI.setHttpReferrer("http://code.google.com/p/google-api-translate-java/");
+		com.google.api.GoogleAPI.setHttpReferrer("http://code.google.com/p/google-api-translate-java/");
 		
 		// --- Listen to keyboard events ----------------------------
 		this.setKeyListenEvents();
@@ -1270,7 +1267,7 @@ private static final long serialVersionUID = 1L;
 		
 		String translation = null; 
 		try {
-			translation = Translate.execute(text2Translate, langGoogleSource, langGoogleDestin);
+			translation = com.google.api.translate.Translate.execute(text2Translate, langGoogleSource, langGoogleDestin);
 		} catch (Exception e) {
 			translation = "ERROR: " + e.getLocalizedMessage();
 			//e.printStackTrace();
