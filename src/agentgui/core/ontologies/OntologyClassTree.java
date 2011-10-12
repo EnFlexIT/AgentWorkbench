@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.core.ontologies;
 
 import java.io.Serializable;
@@ -13,13 +41,14 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Project;
 import agentgui.core.reflection.ReflectClassFiles;
 
+/**
+ * This class represents the DefaultTreeModel for a single ontology, used in the current project.
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ */
 public class OntologyClassTree extends DefaultTreeModel implements Serializable {
 
-	/**
-	 * This class represents the TreeModel for the Ontology of
-	 * the current Project 
-	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 719806666309626657L;
 
 	private Project currProject;
 	private OntologyClass currOntoClass;
@@ -48,6 +77,14 @@ public class OntologyClassTree extends DefaultTreeModel implements Serializable 
 	public final static String BaseClassAID = "jade.core.AID";
 	// --------------------------------------------------------------------------
 	
+
+	/**
+	 * Constructor of this class
+	 * @param project The current Project
+	 * @param root The root node where further nodes can be added
+	 * @param ontoClass The current instance of OntologyClass
+	 * @param ontologieSourcePackage The reference to the package of the ontology 
+	 */ 
 	public OntologyClassTree(Project project, DefaultMutableTreeNode root, OntologyClass ontoClass, String ontologieSourcePackage) {
 		
 		super(root);
@@ -179,7 +216,7 @@ public class OntologyClassTree extends DefaultTreeModel implements Serializable 
 				        		// --- Vokabular der Ontologie auslesen ----
 				        		// --- und im Project-Objekt bereitstellen -
 				        		currOntoClass.setOntologyVocabulary(Cla);
-				        		currOntoClass.setOntologyName(currOntoClass.getOntologyWord("ONTOLOGY_NAME"));
+				        		currOntoClass.setOntologyName(currOntoClass.getVocabularyValue("ONTOLOGY_NAME"));
 				        		currOntoClass.setOntologyMainClass(Cla.getName());
 				        		// --- Root-Object neu belegen -------------
 				        		OntologyClassTreeObject OCTO = new OntologyClassTreeObject(currOntoClass, Cla);
@@ -263,26 +300,27 @@ public class OntologyClassTree extends DefaultTreeModel implements Serializable 
 	}
 	
 	/**
-	 * Returns the Tree-Node requested by the Reference 
-	 * @param Reference
-	 * @return
+	 * Returns the TreeNode requested by the reference 
+	 * @param reference
+	 * @return The found DefaultMutableTreeNode
 	 */
 	@SuppressWarnings("unchecked")
-	public DefaultMutableTreeNode getTreeNode( String Reference ) {
+	public DefaultMutableTreeNode getTreeNode(String reference) {
 		
-		DefaultMutableTreeNode NodeFound = null;
-		DefaultMutableTreeNode CurrNode = null;
-		Reference = Reference.replace( SearchIN + "." , "");
-		String CurrNodeText;
+		DefaultMutableTreeNode nodeFound = null;
+		DefaultMutableTreeNode currNode  = null;
+		String currNodeText = null;
+		
+		reference = reference.replace(SearchIN + "." , "");
 		
 		for (Enumeration<DefaultMutableTreeNode> e = rootNode.breadthFirstEnumeration(); e.hasMoreElements();) {
-			CurrNode = e.nextElement();
-			CurrNodeText = CurrNode.getUserObject().toString(); 
-			if ( CurrNodeText.equals(Reference) ) {				
-				NodeFound = CurrNode;
+			currNode = e.nextElement();
+			currNodeText = currNode.getUserObject().toString(); 
+			if ( currNodeText.equals(reference) ) {				
+				nodeFound = currNode;
 				break;
 			} 
 		}
-		return NodeFound;
+		return nodeFound;
 	}
 }

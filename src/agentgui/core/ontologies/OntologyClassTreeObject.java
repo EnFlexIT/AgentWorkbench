@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.core.ontologies;
 
 import java.util.Collections;
@@ -12,42 +40,52 @@ import agentgui.core.reflection.ReflectClass;
 import agentgui.core.reflection.ReflectClass.Slot;
 
 
+/**
+ * The instances of this class represents the UserObjects which are located in the Nodes of the OntologyClassTree.
+ *
+ * @see OntologyClassTree
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ */
 public class OntologyClassTreeObject extends Object {
 
-	/**
-	 * The instances of this class represents the UserObjects
-	 * which are located in the Nodes of the OntologyTree 
-	 */
 	private OntologyClass ontologyClass = null;
 	private Class<?> ontologySubClass = null;
 	private String objectTitle = null;
 	private boolean isAConcept = false;
 	private boolean isAAgentAction = false;
 	private boolean isAPredicate = false;
-	
 	private OntologyClassTreeObject parentOntologyClassTreeObject = null;
-		
+
+	
 	/**
-	 * Defines the Class belonging to the represented node
-	 * @param Clazz
+	 * Defines the Class belonging to the represented node.
+	 *
+	 * @param ontologyClazz the ontology clazz
+	 * @param clazz the clazz
 	 */
 	public OntologyClassTreeObject (OntologyClass ontologyClazz, Class<?> clazz) {
 		ontologyClass = ontologyClazz;
 		ontologySubClass = clazz;
 	}
+	
 	/**
 	 * In case, that there is no class, a node can be
 	 * represented by a simple String. E.g. in case of
 	 * 'Concept' or 'AgentAction' there is no class
-	 * related to this node. 
-	 * @param ontologyClazz, nodeTitle
+	 * related to this node.
+	 *
+	 * @param ontologyClazz the ontology clazz
+	 * @param nodeTitle the node title
 	 */
 	public OntologyClassTreeObject (OntologyClass ontologyClazz, String nodeTitle) {
 		ontologyClass = ontologyClazz;
 		objectTitle = nodeTitle;
 	}
+	
 	/**
-	 * returns the title of this node object
+	 * returns the title of this node object.
+	 *
+	 * @return the string
 	 */
 	public String toString() {
 		if ( ontologySubClass == null) {
@@ -64,9 +102,11 @@ public class OntologyClassTreeObject extends Object {
 			}
 		}
 	}
+	
 	/**
-	 * Returns TRUE if the current Instance has an 
-	 * real Ontology-Class 
+	 * Returns TRUE if the current Instance has an
+	 * real Ontology-Class.
+	 *
 	 * @return boolean
 	 */
 	public boolean isClass() {
@@ -76,17 +116,21 @@ public class OntologyClassTreeObject extends Object {
 			return true;
 		}
 	}
+	
 	/**
-	 * Returns the simple class name from a class-reference
+	 * Returns the simple class name from a class-reference.
+	 *
 	 * @return String
 	 */
 	public String getClassTextSimple() {
 		String Reference = ontologySubClass.getName();
 		return Reference.substring( Reference.lastIndexOf(".")+1 );
 	}
+	
 	/**
-	 * Returns the full class-reference of the current ontology-sub-class
-	 * @return
+	 * Returns the full class-reference of the current ontology-sub-class.
+	 *
+	 * @return the class reference
 	 */
 	public String getClassReference() {
 		if (ontologySubClass==null) {
@@ -99,34 +143,42 @@ public class OntologyClassTreeObject extends Object {
 			return ontologySubClass.getName();	
 		}
 	}
+	
 	/**
 	 * This method returns the instance of the OntologyClass which
-	 * belongs to the current Tree-Object. 
+	 * belongs to the current Tree-Object.
 	 * Here, the basic informations about the Ontology are available!
-	 * @return
+	 *
+	 * @return the ontology class
 	 */
 	public OntologyClass getOntologyClass() {
 		return this.ontologyClass;
 	}
+	
 	/**
-	 * returns the Class of the current ontology node
-	 * @return
+	 * returns the Class of the current ontology node.
+	 *
+	 * @return the ontology sub class
 	 */
 	public Class<?> getOntologySubClass() {
 		return ontologySubClass;
 	}
+	
 	/**
-	 * Allows to set the node title, even if there is a 
-	 * concrete class (with reference and title)
-	 * @param OntologyTitle
+	 * Allows to set the node title, even if there is a
+	 * concrete class (with reference and title).
+	 *
+	 * @param ontologyTitle the new object title
 	 */
 	public void setObjectTitle(String ontologyTitle){
 		objectTitle = ontologyTitle;
 	}
+	
 	/**
 	 * This returns the 'DefaultTableModel' for a single
-	 * class out of the ontology-classes 
-	 * @return
+	 * class out of the ontology-classes.
+	 *
+	 * @return the table model4 slot
 	 */
 	public DefaultTableModel getTableModel4Slot() {
 		
@@ -183,10 +235,12 @@ public class OntologyClassTreeObject extends Object {
 	    // ----------------------------------------------------------
 	    return tm4s;		
 	}
+	
 	/**
 	 * This returns the a ArrayList of Slots for a single
-	 * class out of the ontology-classes 
-	 * @return
+	 * class out of the ontology-classes.
+	 *
+	 * @return the class description
 	 */
 	public OntologySingleClassDescription getClassDescription() {
 		
@@ -227,7 +281,7 @@ public class OntologyClassTreeObject extends Object {
 	    	osd.setSlotMethodList(currSlot.MethodList);
 	    	
 	    	// --- An Auflistung anfügen ----------------------------
-	    	ocd.osdArr.add(osd);
+	    	ocd.arrayList4SlotDescriptions.add(osd);
 	    }		
 	    
 	    // ----------------------------------------------------------
@@ -235,44 +289,61 @@ public class OntologyClassTreeObject extends Object {
 	    // ----------------------------------------------------------
 	    if (parentOntologyClassTreeObject!=null) {
 	    	OntologySingleClassDescription subOCD = parentOntologyClassTreeObject.getClassDescription();
-	    	ocd.osdArr.addAll(subOCD.osdArr);
-	    	Sorter.sortSlotDescriptionArray(ocd.osdArr);
+	    	ocd.arrayList4SlotDescriptions.addAll(subOCD.arrayList4SlotDescriptions);
+	    	Sorter.sortSlotDescriptionArray(ocd.arrayList4SlotDescriptions);
 	    }
 	    // ----------------------------------------------------------
 		return ocd;
 	}
 	
 	/**
-	 * @param isAConcept the isAConcept to set
+	 * Sets the checks if is concept.
+	 *
+	 * @param isConcept the new checks if is concept
 	 */
 	public void setIsConcept(boolean isConcept) {
 		this.isAConcept = isConcept;
 	}
+	
 	/**
+	 * Checks if is concept.
+	 *
 	 * @return the isAConcept
 	 */
 	public boolean isConcept() {
 		return isAConcept;
 	}
+	
 	/**
-	 * @param isAAgentAction the isAAgentAction to set
+	 * Sets the checks if is agent action.
+	 *
+	 * @param isAgentAction the new checks if is agent action
 	 */
 	public void setIsAgentAction(boolean isAgentAction) {
 		this.isAAgentAction = isAgentAction;
 	}
+	
 	/**
+	 * Checks if is agent action.
+	 *
 	 * @return the isAAgentAction
 	 */
 	public boolean isAgentAction() {
 		return isAAgentAction;
 	}
+	
 	/**
-	 * @param isAPredicate the isAPredicate to set
+	 * Sets the checks if is predicate.
+	 *
+	 * @param isPredicate the new checks if is predicate
 	 */
 	public void setIsPredicate(boolean isPredicate) {
 		this.isAPredicate = isPredicate;
 	}
+	
 	/**
+	 * Checks if is predicate.
+	 *
 	 * @return the isAPredicate
 	 */
 	public boolean isPredicate() {
@@ -280,12 +351,17 @@ public class OntologyClassTreeObject extends Object {
 	}
 	
 	/**
+	 * Sets the parent ontology class tree object.
+	 *
 	 * @param parentOntologyClassTreeObject the parentOntologyClassTreeObject to set
 	 */
 	public void setParentOntologyClassTreeObject(OntologyClassTreeObject parentOntologyClassTreeObject) {
 		this.parentOntologyClassTreeObject = parentOntologyClassTreeObject;
 	}
+	
 	/**
+	 * Gets the parent ontology class tree object.
+	 *
 	 * @return the parentOntologyClassTreeObject
 	 */
 	public OntologyClassTreeObject getParentOntologyClassTreeObject() {

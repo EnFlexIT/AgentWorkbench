@@ -942,7 +942,7 @@ public class DynForm extends JPanel {
 			this.setPanelBounds(parentPanel);
 			
 			// --- go through each field / inner class ----
-			Iterator<OntologySingleClassSlotDescription> iterator = osc.osdArr.iterator();
+			Iterator<OntologySingleClassSlotDescription> iterator = osc.arrayList4SlotDescriptions.iterator();
 			while (iterator.hasNext()) {
 				
 				OntologySingleClassSlotDescription oscsd = iterator.next();

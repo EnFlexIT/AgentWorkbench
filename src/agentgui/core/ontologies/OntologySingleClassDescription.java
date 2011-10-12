@@ -1,7 +1,40 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.core.ontologies;
 
 import java.util.ArrayList;
 
+/**
+ * This class represents the description of all slots in an ontology 
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ */
 public class OntologySingleClassDescription {
 
 	private Class<?> clazz = null;
@@ -9,7 +42,10 @@ public class OntologySingleClassDescription {
 	private String className = null;
 	private String packageName = null;
 	
-	public ArrayList<OntologySingleClassSlotDescription> osdArr = new ArrayList<OntologySingleClassSlotDescription>();
+	/**
+	 * Holds all slot descriptions for the current single ontology class  
+	 */
+	public ArrayList<OntologySingleClassSlotDescription> arrayList4SlotDescriptions = new ArrayList<OntologySingleClassSlotDescription>();
 	
 	
 	/**
@@ -39,14 +75,14 @@ public class OntologySingleClassDescription {
 		return reference;
 	}
 	/**
-	 * @param reference the reference to set
+	 * @param classReference the reference to set
 	 */
-	public void setClassReference(String ref) {
-		this.reference = ref;
-		String Package = ref.substring(0, ref.lastIndexOf("."));
-		String ClassName = ref.substring(ref.lastIndexOf(".") + 1, ref.length());
-		this.setPackageName(Package);
-		this.setClassName(ClassName);
+	public void setClassReference(String classReference) {
+		this.reference     = classReference;
+		String packageName = classReference.substring(0, classReference.lastIndexOf("."));
+		String className   = classReference.substring(classReference.lastIndexOf(".") + 1, classReference.length());
+		this.setPackageName(packageName);
+		this.setClassName(className);
 	}
 
 	/**
@@ -74,8 +110,5 @@ public class OntologySingleClassDescription {
 	public void setPackageName(String packageName) {
 		this.packageName = packageName;
 	}
-
-
-	
 
 }

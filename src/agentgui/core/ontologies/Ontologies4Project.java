@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.core.ontologies;
 
 import java.util.ArrayList;
@@ -15,16 +43,14 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Project;
 
 /**
- * This class is used for the management of the used Ontologies inside a project.
- * It can add or remove further (Sub)-Ontologies in order to reduce the
- * effort of building your own complex ontology
+ * This class is used for the management of the used ontologies inside a project.
+ * It can add or remove further (sub)-ontologies in order to reduce the effort 
+ * of building your own complex ontology
  * 
- * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-
 public class Ontologies4Project extends HashMap<String, OntologyClass> {
 
-	
 	private static final long serialVersionUID = 2055269152886396404L;
 	
 	private Project currProject;
@@ -33,8 +59,9 @@ public class Ontologies4Project extends HashMap<String, OntologyClass> {
 	private ArrayList<String> errorStack = new ArrayList<String>();
 		
 	/**
-	 * Constructor of the Class
-	 * @param project
+	 * Constructor of the Class.
+	 *
+	 * @param project the project
 	 */
 	public Ontologies4Project(Project project) {
 		currProject = project;	
@@ -43,7 +70,8 @@ public class Ontologies4Project extends HashMap<String, OntologyClass> {
 	
 	/**
 	 * This method sets the whole TreeModel for the project ontology, which
-	 * can consist of one or more Sub-Ontologies
+	 * can consist of one or more Sub-Ontologies.
+	 *
 	 * @return DefaultTreeModel
 	 */
 	private void setOntologyTree() {
@@ -73,7 +101,7 @@ public class Ontologies4Project extends HashMap<String, OntologyClass> {
 	}
 	
 	/**
-	 * This Method builds up the DefaultTreeModel for the project ontology 
+	 * This method builds up the DefaultTreeModel for the project ontology.
 	 */
 	private void buildOntologyTree() {
 		
@@ -116,19 +144,29 @@ public class Ontologies4Project extends HashMap<String, OntologyClass> {
 		}
 		
 	}
+	
 	/**
 	 * This method returns the whole TreeModel for the project ontology, which
-	 * can consist of one or more Sub-Ontologies
+	 * can consist of one or more Sub-Ontologies.
+	 *
 	 * @return DefaultTreeModel
 	 */
 	public DefaultTreeModel getOntologyTree() {
 		return projectOntologyTree;
 	}	
 	
+	/**
+	 * Checks for error.
+	 *
+	 * @return true, if an error has occurred
+	 */
 	public boolean hasError() {
 		return hasErrors;
 	}
+	
 	/**
+	 * Gets the error stack.
+	 *
 	 * @return the errorStack
 	 */
 	public String getErrorStack() {
@@ -140,8 +178,9 @@ public class Ontologies4Project extends HashMap<String, OntologyClass> {
 	}
 
 	/**
-	 * Adds a Sub-Ontology to the current project 
-	 * @param ontoRef
+	 * Adds a new sub-ontology to the current project.
+	 *
+	 * @param newSubOntology the new sub ontology
 	 */
 	public void addSubOntology (String newSubOntology) {
 		OntologyClass onCla = new OntologyClass(currProject, newSubOntology);
@@ -151,9 +190,11 @@ public class Ontologies4Project extends HashMap<String, OntologyClass> {
 		this.put(onCla.getOntologyMainClass(), onCla);
 		this.buildOntologyTree();
 	}
+	
 	/**
-	 * Removes a Sub-Ontologie from the current Project Ontology
-	 * @param ontoRef
+	 * Removes a sub-ontology from the current project.
+	 *
+	 * @param removableSubOntology the removable sub ontology
 	 */
 	public void removeSubOntology (String removableSubOntology) {
 		currProject.subOntologies.remove(removableSubOntology);
@@ -162,10 +203,10 @@ public class Ontologies4Project extends HashMap<String, OntologyClass> {
 	}
 	
 	/**
-	 * This Method filters all available Ontologies 
-	 * by the already used Project-Ontologies and 
-	 * returns the remaining classes as Vector<String> 
-	 * @return
+	 * This Method filters all available ontologies by the already used 
+	 * project-ontologies and returns the remaining classes as Vector<String>.
+	 *
+	 * @return the all none used ontologies
 	 */
 	public Vector<Class<?>> getAllNoneUsedOntologies() {
 		
@@ -182,10 +223,11 @@ public class Ontologies4Project extends HashMap<String, OntologyClass> {
 	}
 	
 	/**
-	 * This Method returns the 'TreeNode' for class to 
-	 * search, which is a part of the Project-Ontologie
-	 * @param classReference2Search
-	 * @return
+	 * This Method returns the 'TreeNode' for class to
+	 * search, which is a part of the project ontology.
+	 *
+	 * @param classReference2Search the class reference2 search
+	 * @return the class tree node
 	 */
 	public DefaultMutableTreeNode getClassTreeNode(String classReference2Search) {
 		
@@ -200,7 +242,7 @@ public class Ontologies4Project extends HashMap<String, OntologyClass> {
 			searchSrcClass = "AID";
 			
 		} else {
-			// --- Get the designated Ontologieclass ---------------------
+			// --- Get the designated ontology class ---------------------
 			Iterator<String> it = currProject.subOntologies.iterator();
 			while (it.hasNext()) {
 				String subOntoMainClas = it.next();	
@@ -225,10 +267,11 @@ public class Ontologies4Project extends HashMap<String, OntologyClass> {
 	}
 	
 	/**
-	 * This Method returns the 'OntologyClassTreeObject' for class to 
-	 * search, which is a part of the Project-Ontologie
-	 * @param classReference2Search
-	 * @return
+	 * This Method returns the 'OntologyClassTreeObject' for class to
+	 * search, which is a part of the project-ontology.
+	 *
+	 * @param classReference2Search the class reference2 search
+	 * @return the class tree object
 	 */
 	public OntologyClassTreeObject getClassTreeObject(String classReference2Search) {
 		
@@ -242,9 +285,10 @@ public class Ontologies4Project extends HashMap<String, OntologyClass> {
 	}
 	
 	/**
-	 * This Method returns a DefaultTableModel for a   
-	 * given class inside of the project-ontology 
-	 * @param classReference2Search
+	 * This Method returns a DefaultTableModel for a
+	 * given class inside of the project-ontology.
+	 *
+	 * @param classReference2Search the class reference2 search
 	 * @return DefaultTableModel
 	 */
 	public DefaultTableModel getSlots4Class(String classReference2Search) {
@@ -257,9 +301,10 @@ public class Ontologies4Project extends HashMap<String, OntologyClass> {
 	}
 
 	/**
-	 * This Method returns a ArrayList of Slot-Descriptions for a   
-	 * given class inside of the project-ontology 
-	 * @param classReference2Search
+	 * This Method returns a ArrayList of Slot-Descriptions for a
+	 * given class inside of the project-ontology.
+	 *
+	 * @param classReference2Search the class reference2 search
 	 * @return DefaultTableModel
 	 */
 	public OntologySingleClassDescription getSlots4ClassAsObject(String classReference2Search) {
@@ -286,21 +331,22 @@ public class Ontologies4Project extends HashMap<String, OntologyClass> {
 		private ArrayList<String> mergerConcepts = new ArrayList<String>();
 		private ArrayList<String> mergerAgentActions =  new ArrayList<String>();
 		private ArrayList<String> mergerPredicates =  new ArrayList<String>();
-		private ArrayList<String> mergerClasses = new ArrayList<String>();
 		
+		private ArrayList<String> mergerClasses = new ArrayList<String>();
 		private ArrayList<String> mergerConceptsUnique = new ArrayList<String>();
 		private ArrayList<String> mergerAgentActionsUnique =  new ArrayList<String>();
 		private ArrayList<String> mergerPredicatesUnique =  new ArrayList<String>();
 		private ArrayList<String> mergerClassesUnique = new ArrayList<String>();
-		
+
 		private ArrayList<String> duplicateConcepts =  new ArrayList<String>();
 		private ArrayList<String> duplicateAgentActions=  new ArrayList<String>();
 		private ArrayList<String> duplicatePredicates =  new ArrayList<String>();
 		private ArrayList<String> duplicateClasses =  new ArrayList<String>();
 		
 		/**
-		 * Constructor of this class
-		 * @param projectOntology
+		 * Constructor of this class.
+		 *
+		 * @param projectOntology the project ontology
 		 */
 		public ErrorCheck(Ontologies4Project projectOntology) {
 			
@@ -326,10 +372,11 @@ public class Ontologies4Project extends HashMap<String, OntologyClass> {
 		
 		
 		/**
-		 * This method searches inside the sub-ontologies for the given 
-		 * class name and returns it use as an Information-String
-		 * @param classname
-		 * @return
+		 * This method searches inside the sub-ontologies for the given
+		 * class name and returns it use as an Information-String.
+		 *
+		 * @param classname the classname
+		 * @return the where class is used
 		 */
 		private String getWhereClassIsUsed(String classname) {
 			
@@ -363,7 +410,7 @@ public class Ontologies4Project extends HashMap<String, OntologyClass> {
 		
 		/**
 		 * This Method creates the merged and unique ArrayLists<String>
-		 * for the comparison of Concept, AgentActions and Predicates
+		 * for the comparison of Concept, AgentActions and Predicates.
 		 */
 		private void setMergedUniqueAndDuplicateArrays() {
 			
@@ -398,10 +445,12 @@ public class Ontologies4Project extends HashMap<String, OntologyClass> {
 			duplicatePredicates = getDuplicateEntries(mergerPredicates, mergerPredicatesUnique);
 			duplicateClasses = getDuplicateEntries(mergerClasses, mergerClassesUnique);
 		}
+		
 		/**
-		 * This Method returns a ArrayList<String> without duplicate-entries
-		 * @param arrayList
-		 * @return
+		 * This Method returns a ArrayList<String> without duplicate-entries.
+		 *
+		 * @param arrayList the array list
+		 * @return the array list
 		 */
 		private ArrayList<String> removeDuplicatedEntries(ArrayList<String> arrayList) {
 		    HashSet<String> hashSet = new HashSet<String>(arrayList);
@@ -409,11 +458,13 @@ public class Ontologies4Project extends HashMap<String, OntologyClass> {
 		    arrLi.addAll(hashSet);
 			return arrLi;
 		}
+		
 		/**
-		 * Method looks for the duplicate entry inside the merged Array
-		 * @param mergedArray
-		 * @param mergedArrayUnique
-		 * @return
+		 * Method looks for the duplicate entry inside the merged Array.
+		 *
+		 * @param mergedArray the merged array
+		 * @param mergedArrayUnique the merged array unique
+		 * @return the duplicate entries
 		 */
 		private ArrayList<String> getDuplicateEntries(ArrayList<String> mergedArray, ArrayList<String> mergedArrayUnique ) {
 			ArrayList<String> returnList = new ArrayList<String>();
