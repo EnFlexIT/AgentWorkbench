@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.core.ontologies.gui;
 
 import java.awt.BorderLayout;
@@ -26,10 +54,16 @@ import agentgui.core.application.Project;
 import java.awt.Font;
 import java.io.UnsupportedEncodingException;
 
+/**
+ * This class can be used to display a user interface thats allows to configure
+ * an instance of an ontology in a different component.
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ */
 public class OntologyInstanceViewer extends JTabbedPane {
 
-	private static final long serialVersionUID = 1L;
-
+private static final long serialVersionUID = 6748263753769300242L;
+	
 	final static String PathImage = Application.RunInfo.PathImageIntern();  //  @jve:decl-index=0:
 	private ImageIcon imageEnlarge =  new ImageIcon(getClass().getResource(PathImage + "MBFullScreen.png"));  //  @jve:decl-index=0:
 	
@@ -55,7 +89,9 @@ public class OntologyInstanceViewer extends JTabbedPane {
 
 
 	/**
-	 * This is the constructor in case that nothing should be displayed (no form, no slots)
+	 * This is the constructor in case that nothing should be displayed (no form, no slots).
+	 *
+	 * @param currProject the curr project
 	 */
 	public OntologyInstanceViewer(Project currProject) {
 		this.project = currProject;
@@ -64,6 +100,13 @@ public class OntologyInstanceViewer extends JTabbedPane {
 		this.use4Agents = true;
 		initialize();
 	}
+	
+	/**
+	 * Instantiates a new ontology instance viewer.
+	 *
+	 * @param currProject the curr project
+	 * @param currAgentReference the curr agent reference
+	 */
 	public OntologyInstanceViewer(Project currProject, String currAgentReference) {
 		super();
 		this.project = currProject;
@@ -72,6 +115,13 @@ public class OntologyInstanceViewer extends JTabbedPane {
 		this.use4Agents = true;
 		initialize();
 	}
+	
+	/**
+	 * Instantiates a new ontology instance viewer.
+	 *
+	 * @param currProject the curr project
+	 * @param currOntologyClassReference the curr ontology class reference
+	 */
 	public OntologyInstanceViewer(Project currProject, String[] currOntologyClassReference) {
 		super();
 		this.project = currProject;
@@ -82,7 +132,8 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	}
 
 	/**
-	 * This method initialises this
+	 * This method initialises this.
+	 *
 	 * @return void
 	 */
 	private void initialize() {
@@ -108,7 +159,9 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	
 	/**
 	 * This method overrides the 'setSelectedIndex' method
-	 * in order to catch the selection of the 'Enlarge view - Tab' 
+	 * in order to catch the selection of the 'Enlarge view - Tab'.
+	 *
+	 * @param index the new selected index
 	 */
 	@Override
 	public void setSelectedIndex(int index) {
@@ -137,8 +190,8 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	}
 	
 	/**
-	 * This method shows the enlarged dialog for the current ontology class instances 
-	 * in order to provide an easier access for the end user  
+	 * This method shows the enlarged dialog for the current ontology class instances
+	 * in order to provide an easier access for the end user.
 	 */
 	private void setEnlargedView() {
 		
@@ -186,8 +239,9 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	
 	/**
 	 * This method can be called to either allow or disallow the enlargement
-	 * of View to the OntologyInstanceViewer 
-	 * @param allowEnlargement
+	 * of View to the OntologyInstanceViewer.
+	 *
+	 * @param allowEnlargement the new allow view enlargement
 	 */
 	public void setAllowViewEnlargement(boolean allowEnlargement) {
 		if (this.getTabCount()==3 && allowEnlargement==false) {
@@ -199,9 +253,8 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	}
 	
 	/**
-	 * This method create the full XML-Text, which can be displayed 
-	 * in the local 'jTextArea' for the XML-Representation
-	 * @return
+	 * This method create the full XML-Text, which can be displayed
+	 * in the local 'jTextArea' for the XML-Representation.
 	 */
 	private void setXMLText() {
 		
@@ -227,9 +280,10 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	}
 	
 	/**
-	 * This method will separate the 
-	 * @param currText
-	 * @return
+	 * This method will separate the.
+	 *
+	 * @param currText the current text
+	 * @return the XML parts
 	 */	
 	private String [] getXMLParts(String currText) {
 		
@@ -280,8 +334,9 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	}
 	
 	/**
-	 * This method initialises jContentPane	
-	 * @return javax.swing.JPanel	
+	 * This method initialises jContentPane.
+	 *
+	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJContentPane() {
 		if (jContentPane == null) {
@@ -297,9 +352,11 @@ public class OntologyInstanceViewer extends JTabbedPane {
 		}
 		return jContentPane;
 	}
+	
 	/**
-	 * This method initialises jPanel4TouchDown	
-	 * @return javax.swing.JPanel	
+	 * This method initialises jPanel4TouchDown.
+	 *
+	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJPanel4TouchDown() {
 		if (jPanel4TouchDown == null) {
@@ -311,23 +368,26 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	}
 	
 	/**
-	 * This method adds the Enlarge-View-Tab to THIS TabbedPane
+	 * This method adds the Enlarge-View-Tab to THIS TabbedPane.
 	 */
 	private void addEnlargeTab() {
 		this.addTab("Vergrößern", getJPanelEnlarege());
 		this.setTabComponentAt(2, this.getJLabelTitleEnlarge());
 		this.jLabelTitleEnlarge.setText("  " + Language.translate("Vergrößern ...") + "  ");
 	}
+	
 	/**
-	 * This method removes the Enlarge-View-Tab to THIS TabbedPane
+	 * This method removes the Enlarge-View-Tab to THIS TabbedPane.
 	 */
 	private void removeEnlargeTab() {
 		this.remove(jPanelEnlarege);
 	}
 	
 	/**
-	 * This method initialises dynForm
-	 * @return
+	 * This method initialises dynForm.
+	 *
+	 * @return the dynform
+	 * @see DynForm
 	 */
 	private DynForm getDynForm() {
 		if (dynForm==null) {
@@ -341,8 +401,9 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	}
 	
 	/**
-	 * This method initialises jScrollPaneDynForm	
-	 * @return javax.swing.JScrollPane	
+	 * This method initialises jScrollPaneDynForm.
+	 *
+	 * @return javax.swing.JScrollPane
 	 */
 	private JScrollPane getJScrollPaneDynForm() {
 		if (jScrollPaneDynForm == null) {
@@ -354,8 +415,9 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	}
 
 	/**
-	 * This method initialises jScrollPaneTextVersion	
-	 * @return javax.swing.JScrollPane	
+	 * This method initialises jScrollPaneTextVersion.
+	 *
+	 * @return javax.swing.JScrollPane
 	 */
 	private JScrollPane getJScrollPaneTextVersion() {
 		if (jScrollPaneTextVersion == null) {
@@ -366,8 +428,9 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	}
 
 	/**
-	 * This method initialises jTextArea	
-	 * @return javax.swing.JTextArea	
+	 * This method initialises jTextArea.
+	 *
+	 * @return javax.swing.JTextArea
 	 */
 	private JTextArea getJTextArea() {
 		if (jTextArea == null) {
@@ -378,8 +441,9 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	}
 	
 	/**
-	 * This method initialises jPanelEnlarege	
-	 * @return javax.swing.JPanel	
+	 * This method initialises jPanelEnlarege.
+	 *
+	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJPanelEnlarege() {
 		if (jPanelEnlarege == null) {
@@ -390,8 +454,9 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	}
 
 	/**
-	 * This method initialises jLabelTitleEnlarge	
-	 * @return javax.swing.JLabel	
+	 * This method initialises jLabelTitleEnlarge.
+	 *
+	 * @return javax.swing.JLabel
 	 */
 	private JLabel getJLabelTitleEnlarge() {
 		if (jLabelTitleEnlarge == null) {
@@ -404,7 +469,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 
 	
 	/**
-	 * This method saves the current configuration 
+	 * This method saves the current configuration.
 	 */
 	public void save() {
 		
@@ -425,6 +490,8 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	}
 	
 	/**
+	 * Sets the configuration in XML.
+	 *
 	 * @param configurationXML the configurationXML to set
 	 */
 	public void setConfigurationXML(String[] configurationXML) {
@@ -433,7 +500,10 @@ public class OntologyInstanceViewer extends JTabbedPane {
 			this.setXMLText();
 		}
 	}
+	
 	/**
+	 * Gets the configuration in XML.
+	 *
 	 * @return the configurationXML
 	 */
 	public String[] getConfigurationXML() {
@@ -441,7 +511,9 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	}
 	
 	/**
-	 * @param configurationXML the configurationXML to set as Base64 encoded String
+	 * Sets the configuration in XML in a Base64 decode form.
+	 *
+	 * @param configurationXML64 the new configuration xm l64
 	 */
 	public void setConfigurationXML64(String[] configurationXML64) {
 		
@@ -459,7 +531,10 @@ public class OntologyInstanceViewer extends JTabbedPane {
 			this.setXMLText();
 		}
 	}
+	
 	/**
+	 * Gets the configuration in XML in a Base64 encoded form.
+	 *
 	 * @return the configurationXML as Base64-String
 	 */
 	public String[] getConfigurationXML64() {
@@ -479,6 +554,8 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	}
 	
 	/**
+	 * Sets the configuration instances.
+	 *
 	 * @param configurationInstances the configurationInstances to set
 	 */
 	public void setConfigurationInstances(Object[] configurationInstances) {
@@ -487,7 +564,10 @@ public class OntologyInstanceViewer extends JTabbedPane {
 			this.setXMLText();
 		}
 	}
+	
 	/**
+	 * Gets the configuration instances.
+	 *
 	 * @return the configurationInstances
 	 */
 	public Object[] getConfigurationInstances() {

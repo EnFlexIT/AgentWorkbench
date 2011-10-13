@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.core.ontologies.gui;
 
 import java.awt.Color;
@@ -24,36 +52,67 @@ import agentgui.core.application.Project;
 import javax.swing.BorderFactory;
 import javax.swing.border.EtchedBorder;
 
+/**
+ * This class can be used to display a user interface thats allows to configure
+ * an instance of an ontology in a separate JDialog. 
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ */
 public class OntologyInstanceDialog extends JDialog implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
+	
 	private Project currProject = null;
+	
 	private String currAgentReference = null;
 	private String[] ontologyClassReference = null;
-	
-	private boolean cancelled = false;
 	private Object [] objectConfiguration = null;
-	
+
 	private OntologyInstanceViewer oiv = null;
+
 	private JPanel jContentPane = null;
 	private JButton jButtonOK = null;
 	private JButton jButtonCancel = null;
 	private JPanel jPanelBottom = null;
+
+	private boolean cancelled = false;
 	
 	/**
-	 * @param owner
+	 * Instantiates a new ontology instance dialog. In this special case an empty
+	 * form will be created, because of missing references to special ontology classes.
+	 *
+	 * @param owner the owner
+	 * @param project the project
 	 */
 	public OntologyInstanceDialog(Frame owner, Project project) {
 		super(owner);
 		this.currProject = project;
 		initialize();
 	}
+	
+	/**
+	 * Instantiates a new ontology instance dialog. The dialog will be created depending
+	 * on the start arguments configured for an agent.
+	 *
+	 * @param owner the owner
+	 * @param project the project
+	 * @param agentReference the agent reference
+	 */
 	public OntologyInstanceDialog(Frame owner, Project project, String agentReference) {
 		super(owner);
 		this.currProject = project;
 		this.currAgentReference = agentReference;
 		initialize();
 	}
+	
+	/**
+	 * Instantiates a new ontology instance dialog. The dialog will be created depending
+	 * on the class references. This classes have to be part of an ontology.
+	 *
+	 * @param owner the owner
+	 * @param project the project
+	 * @param ontologyClassReference the ontology class reference
+	 */
 	public OntologyInstanceDialog(Frame owner, Project project, String[] ontologyClassReference) {
 		super(owner);
 		this.currProject = project;
@@ -62,7 +121,7 @@ public class OntologyInstanceDialog extends JDialog implements ActionListener {
 	}
 	
 	/**
-	 * This method initialises this
+	 * This method initialises this.
 	 */
 	private void initialize() {
 		
@@ -91,9 +150,11 @@ public class OntologyInstanceDialog extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * @return
+	 * Gets the ontology instance viewer.
+	 *
+	 * @return the ontology instance viewer
 	 */
-	private OntologyInstanceViewer getOIV() {
+	private OntologyInstanceViewer getOntologyInstanceViewer() {
 		if(oiv==null) {
 			if (currAgentReference!=null && oiv==null) {
 				oiv = new OntologyInstanceViewer(currProject, currAgentReference);
@@ -108,12 +169,17 @@ public class OntologyInstanceDialog extends JDialog implements ActionListener {
 	}
 	
 	/**
-	 * @param canceld the cancelled to set
+	 * Sets the cancelled.
+	 *
+	 * @param canceled the new cancelled
 	 */
 	public void setCancelled(boolean canceled) {
 		this.cancelled = canceled;
 	}
+	
 	/**
+	 * Checks if is cancelled.
+	 *
 	 * @return the cancelled
 	 */
 	public boolean isCancelled() {
@@ -121,19 +187,26 @@ public class OntologyInstanceDialog extends JDialog implements ActionListener {
 	}
 	
 	/**
+	 * Sets the object configuration.
+	 *
 	 * @param objectConfiguration the objectConfiguration to set
 	 */
 	public void setObjectConfiguration(Object [] objectConfiguration) {
 		this.objectConfiguration = objectConfiguration;
 	}
+	
 	/**
+	 * Gets the object configuration.
+	 *
 	 * @return the objectConfiguration
 	 */
 	public Object [] getObjectConfiguration() {
 		return objectConfiguration;
 	}
+	
 	/**
-	 * This method initialises jContentPane
+	 * This method initialises jContentPane.
+	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJContentPane() {
@@ -154,15 +227,16 @@ public class OntologyInstanceDialog extends JDialog implements ActionListener {
 			gridBagConstraints.gridx = 0;
 			jContentPane = new JPanel();
 			jContentPane.setLayout(new GridBagLayout());
-			jContentPane.add(getOIV(), gridBagConstraints);
+			jContentPane.add(getOntologyInstanceViewer(), gridBagConstraints);
 			jContentPane.add(getJPanelBottom(), gridBagConstraints3);
 		}
 		return jContentPane;
 	}
 	
 	/**
-	 * This method initialises jButtonOK	
-	 * @return javax.swing.JButton	
+	 * This method initialises jButtonOK.
+	 *
+	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonOK() {
 		if (jButtonOK == null) {
@@ -176,9 +250,11 @@ public class OntologyInstanceDialog extends JDialog implements ActionListener {
 		}
 		return jButtonOK;
 	}
+	
 	/**
-	 * This method initialises jButtonCancel	
-	 * @return javax.swing.JButton	
+	 * This method initialises jButtonCancel.
+	 *
+	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonCancel() {
 		if (jButtonCancel == null) {
@@ -192,9 +268,11 @@ public class OntologyInstanceDialog extends JDialog implements ActionListener {
 		}
 		return jButtonCancel;
 	}
+	
 	/**
-	 * This method initialises jPanelBottom	
-	 * @return javax.swing.JPanel	
+	 * This method initialises jPanelBottom.
+	 *
+	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJPanelBottom() {
 		if (jPanelBottom == null) {
@@ -216,6 +294,9 @@ public class OntologyInstanceDialog extends JDialog implements ActionListener {
 		return jPanelBottom;
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		
