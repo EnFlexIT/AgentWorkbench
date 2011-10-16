@@ -244,13 +244,13 @@ import agentgui.core.sim.setup.SimulationSetups;
 	 * This attribute holds the instance of the currently selected SimulationSetup
 	 */
 	@XmlElement(name="simulationSetupCurrent")
-	public String simSetupCurrent = null;
+	public String simulationSetupCurrent = null;
 	/**
 	 * This extended HashTable is used in order to store the SimulationsSetup's names 
 	 * and their file names 
 	 */
 	@XmlElementWrapper(name = "simulationSetups")
-	public SimulationSetups simSetups = new SimulationSetups(this, simSetupCurrent);
+	public SimulationSetups simulationSetups = new SimulationSetups(this, simulationSetupCurrent);
 
 	/**
 	 * The environment controllerGUI of the project. Usually a subclass of EnvironmentPanel.
@@ -382,7 +382,7 @@ import agentgui.core.sim.setup.SimulationSetups;
 		    }
 		    
 			// --- Save the current SimulationSetup -------
-			this.simSetups.setupSave();
+			this.simulationSetups.setupSave();
 			
 			this.isUnsaved = false;			
 

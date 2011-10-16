@@ -378,7 +378,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	        			getTblComponents().getModel().setValueAt(oldCompID, row, column);
 	        		}
 		        	//Check if the agent name already exists in the simulation setup
-		        	else if(this.currProject.simSetups.getCurrSimSetup().isAgentNameExists(newCompID)){
+		        	else if(this.currProject.simulationSetups.getCurrSimSetup().isAgentNameExists(newCompID)){
 		        		JOptionPane.showMessageDialog(this,Language.translate("An agent with the name already exists in the simulation setup!\n Choose a different one.", Language.EN),
 								Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);	 
 	        			getTblComponents().getModel().setValueAt(oldCompID, row, column);

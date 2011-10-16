@@ -826,20 +826,20 @@ public class Distribution extends JPanel implements ActionListener, Observer, Ke
 	private void setupLoad() {
 		
 		// --- Das akuelle DefaultListModel laden ---------
-		this.currSimSetup = currProject.simSetups.getCurrSimSetup();
+		this.currSimSetup = currProject.simulationSetups.getCurrSimSetup();
 		if ( currSimSetup==null ) {
-			currProject.simSetups.setupLoadAndFocus(SimulationSetups.SIMULATION_SETUP_LOAD, currProject.simSetupCurrent, false);
-			currSimSetup = currProject.simSetups.getCurrSimSetup();
+			currProject.simulationSetups.setupLoadAndFocus(SimulationSetups.SIMULATION_SETUP_LOAD, currProject.simulationSetupCurrent, false);
+			currSimSetup = currProject.simulationSetups.getCurrSimSetup();
 		}
 		currDistributionSetup = this.currSimSetup.getDistributionSetup();
 		currUserThresholds = currDistributionSetup.getUserThresholds();
 		
-		this.jCheckBoxDoLoadStatic.setSelected(currDistributionSetup.isDoStaticLoadBalalncing());
+		this.jCheckBoxDoLoadStatic.setSelected(currDistributionSetup.isDoStaticLoadBalancing());
 		this.jTextFieldAgentsExpected.setText(((Integer)currDistributionSetup.getNumberOfAgents()).toString());
 		this.jTextFieldContainerExpected.setText(((Integer)currDistributionSetup.getNumberOfContainer()).toString());
 		this.jTextFieldStaticLoadClass.setText(currDistributionSetup.getStaticLoadBalancingClass());
 		
-		this.jCheckBoxDoLoadDynamic.setSelected(currDistributionSetup.isDoDynamicLoadBalalncing());
+		this.jCheckBoxDoLoadDynamic.setSelected(currDistributionSetup.isDoDynamicLoadBalancing());
 		this.jTextFieldDynamicLoadClass.setText(currDistributionSetup.getDynamicLoadBalancingClass());
 		
 		this.jCheckBoxThresholdDefinition.setSelected(currDistributionSetup.isUseUserThresholds());
@@ -938,9 +938,9 @@ public class Distribution extends JPanel implements ActionListener, Observer, Ke
 			this.setBalancingClass(DYNAMIC_BALANCING_CLASS);
 			
 		} else if (trigger==jCheckBoxDoLoadStatic) {
-			currDistributionSetup.setDoStaticLoadBalalncing(jCheckBoxDoLoadStatic.isSelected());
+			currDistributionSetup.setDoStaticLoadBalancing(jCheckBoxDoLoadStatic.isSelected());
 		} else if (trigger==jCheckBoxDoLoadDynamic) {
-			currDistributionSetup.setDoDynamicLoadBalalncing(jCheckBoxDoLoadDynamic.isSelected());
+			currDistributionSetup.setDoDynamicLoadBalancing(jCheckBoxDoLoadDynamic.isSelected());
 		} else if (trigger==jCheckBoxThresholdDefinition) {
 			currDistributionSetup.setUseUserThresholds(jCheckBoxThresholdDefinition.isSelected());
 		} else {

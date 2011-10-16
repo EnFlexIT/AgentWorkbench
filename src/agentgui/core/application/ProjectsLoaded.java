@@ -233,9 +233,9 @@ public class ProjectsLoaded {
 		newProject.JadeConfiguration.setProject(newProject);
 		
 		// --- Gibt es bereits ein Simulations-Setup? -------------------------
-		if (newProject.simSetups.size()==0) {
-			newProject.simSetups = new SimulationSetups(newProject, "default");
-			newProject.simSetups.setupCreateDefault();			
+		if (newProject.simulationSetups.size()==0) {
+			newProject.simulationSetups = new SimulationSetups(newProject, "default");
+			newProject.simulationSetups.setupCreateDefault();			
 		}
 		
 		// --- Projektfenster und Standard-Tabs anhängen ----------------------

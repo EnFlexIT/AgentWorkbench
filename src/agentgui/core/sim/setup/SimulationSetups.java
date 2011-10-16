@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.core.sim.setup;
 
 import java.io.File;
@@ -23,6 +51,15 @@ import agentgui.core.application.Language;
 import agentgui.core.application.Project;
 import agentgui.core.common.FileCopier;
 
+/**
+ * This class represents the list of setups available in a {@link Project}.
+ *  
+ * @see Project
+ * @see Project#simulationSetups
+ * @see Project#simulationSetupCurrent
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ */
 public class SimulationSetups extends Hashtable<String, String> {
 
 	private static final long serialVersionUID = -9078535303459653695L;
@@ -36,23 +73,27 @@ public class SimulationSetups extends Hashtable<String, String> {
 	public static final int SIMULATION_SETUP_SAVED = 5;
 	
 	private final String XML_FilePostfix = Application.RunInfo.getXmlFilePostfix();
+	
 	private Project currProject = Application.ProjectCurr;
+	private SimulationSetup currSimSetup = null;
 	
 	private String currSimSetupName = null;
 	private String currSimXMLFile = null;
-	private SimulationSetup currSimSetup = null;
+
 	
 	/**
-	 * Constructor of this class
-	 * @param project
+	 * Constructor of this class.
+	 *
+	 * @param project the project
+	 * @param currentSimulationSetup the current simulation setup 
 	 */
-	public SimulationSetups(Project project, String simSetupCurrent) {
+	public SimulationSetups(Project project, String currentSimulationSetup) {
 		currProject = project;
-		currSimSetupName = simSetupCurrent;
+		currSimSetupName = currentSimulationSetup;
 	}
 	
 	/**
-	 * This Method creates the 'default' - Simulation-Setup 
+	 * This Method creates the 'default' - Simulation-Setup.
 	 */
 	public void setupCreateDefault() {
 		
@@ -60,10 +101,10 @@ public class SimulationSetups extends Hashtable<String, String> {
 		String XMLPathName = null;
 						
 		this.currSimSetupName = "default";
-		xmlFile = currProject.simSetups.getSuggestSetupFile(currSimSetupName);
+		xmlFile = currProject.simulationSetups.getSuggestSetupFile(currSimSetupName);
 		
 		this.put(currSimSetupName, xmlFile);
-		currProject.simSetupCurrent = currSimSetupName;
+		currProject.simulationSetupCurrent = currSimSetupName;
 		
 		currSimSetup = new SimulationSetup(currProject); 
 		
@@ -75,9 +116,10 @@ public class SimulationSetups extends Hashtable<String, String> {
 	}
 	
 	/**
-	 * Adds a new Setup to this Hashtable
-	 * @param name
-	 * @param newFileName
+	 * Adds a new Setup to this Hashtable.
+	 *
+	 * @param name the name
+	 * @param newFileName the new file name
 	 */
 	public void setupAddNew(String name, String newFileName) {
 		
@@ -92,8 +134,9 @@ public class SimulationSetups extends Hashtable<String, String> {
 	}
 
 	/**
-	 * Removes a Setup form this Hashtable
-	 * @param name
+	 * Removes a Setup form this Hashtable.
+	 *
+	 * @param name the new up remove
 	 */
 	public void setupRemove(String name) {
 		
@@ -119,10 +162,11 @@ public class SimulationSetups extends Hashtable<String, String> {
 	}
 	
 	/**
-	 * Renames a Setup and the associated file
-	 * @param nameOld
-	 * @param nameNew
-	 * @param fileNameNew
+	 * Renames a Setup and the associated file.
+	 *
+	 * @param nameOld the name old
+	 * @param nameNew the name new
+	 * @param fileNameNew the file name new
 	 */
 	public void setupRename(String nameOld, String nameNew, String fileNameNew) {
 
@@ -145,10 +189,11 @@ public class SimulationSetups extends Hashtable<String, String> {
 	}
 
 	/**
-	 * Copies a Setup and the associated file
-	 * @param nameOld
-	 * @param nameNew
-	 * @param fileNameNew
+	 * Copies a Setup and the associated file.
+	 *
+	 * @param nameOld the name old
+	 * @param nameNew the name new
+	 * @param fileNameNew the file name new
 	 */
 	public void setupCopy(String nameOld, String nameNew, String fileNameNew) {
 
@@ -169,8 +214,11 @@ public class SimulationSetups extends Hashtable<String, String> {
 	}
 	
 	/**
-	 * Set the current Setup-File to the one given by name
-	 * @param name
+	 * Set the current Setup-File to the one given by name.
+	 *
+	 * @param action the action
+	 * @param name the name
+	 * @param isAddedNew the is added new
 	 */
 	public void setupLoadAndFocus(int action, String name, boolean isAddedNew) {
 		
@@ -178,7 +226,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 		
 		// --- Aktuelles Setup auf Input 'name' -----------
 		currSimSetupName = name;
-		currProject.simSetupCurrent = name;
+		currProject.simulationSetupCurrent = name;
 		currSimXMLFile = currProject.getSubFolder4Setups(true) + this.get(currSimSetupName);
 		
 		// --- 'SimulationSetup'-Objekt neu instanziieren -
@@ -195,8 +243,9 @@ public class SimulationSetups extends Hashtable<String, String> {
 	}
 	
 	/**
-	 * Finds and returns the first Setup name using an alphabetic order  
-	 * @return the first Setup name using an alphabetic order 
+	 * Finds and returns the first Setup name using an alphabetic order.
+	 *
+	 * @return the first Setup name using an alphabetic order
 	 */
 	public String getFirstSetup() {
 
@@ -213,9 +262,10 @@ public class SimulationSetups extends Hashtable<String, String> {
 	}
 	
 	/**
-	 * This method returns a Suggestion for the Name of a Setup-File
-	 * @param inputText
-	 * @return returns a Suggestion for the Name of a Setup-File
+	 * This method returns a Suggestion for the Name of a Setup-File.
+	 *
+	 * @param inputText the input text
+	 * @return a Suggestion for the Name of a Setup-File
 	 */
 	public String getSuggestSetupFile(String inputText) {
 		
@@ -246,8 +296,9 @@ public class SimulationSetups extends Hashtable<String, String> {
 	
 	/**
 	 * This Method checks if the incomming Setup-Name is already
-	 * used in the current List of Setups (Hashmap)
-	 * @param setupName2Test
+	 * used in the current List of Setups (Hashmap).
+	 *
+	 * @param setupName2Test the setup name2 test
 	 * @return true if the setup name is already used in the current list of setups
 	 */
 	public boolean containsSetupName(String setupName2Test) {
@@ -264,7 +315,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 	}
 	
 	/**
-	 * This Method saves the current
+	 * This Method saves the current.
 	 */
 	public void setupSave() {
 		if (currSimSetup!=null) {
@@ -276,7 +327,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 	/**
 	 * This Method loads the current Simulation-Setup to the local
 	 * variable 'currSimSetup' which can be get and set by using
-	 * 'getCurrSimSetup' or 'setCurrSimSetup'
+	 * 'getCurrSimSetup' or 'setCurrSimSetup'.
 	 */
 	private void setupOpen() {
 		
@@ -336,7 +387,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 
 	/**
 	 * This Method scans the Folder of the Simulation-Setups and
-	 * deletes all file, which are not used in this project
+	 * deletes all file, which are not used in this project.
 	 */
 	public void setupCleanUpSubFolder() {
 		
@@ -366,12 +417,17 @@ public class SimulationSetups extends Hashtable<String, String> {
 	}
 	
 	/**
+	 * Gets the curr sim setup.
+	 *
 	 * @return the currSimSetup
 	 */
 	public SimulationSetup getCurrSimSetup() {
 		return currSimSetup;
 	}
+	
 	/**
+	 * Sets the curr sim setup.
+	 *
 	 * @param currSimSetup the currSimSetup to set
 	 */
 	public void setCurrSimSetup(SimulationSetup currSimSetup) {
@@ -379,12 +435,17 @@ public class SimulationSetups extends Hashtable<String, String> {
 	}
 
 	/**
+	 * Sets the curr sim xml file.
+	 *
 	 * @param currSimXMLFile the currSimXMLFile to set
 	 */
 	public void setCurrSimXMLFile(String currSimXMLFile) {
 		this.currSimXMLFile = currSimXMLFile;
 	}
+	
 	/**
+	 * Gets the curr sim xml file.
+	 *
 	 * @return the currSimXMLFile
 	 */
 	public String getCurrSimXMLFile() {

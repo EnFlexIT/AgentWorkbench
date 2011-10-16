@@ -238,7 +238,7 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 			newEnv.setScale(defaultScale);
 			newEnv.setProjectName(currProject.getProjectName());
 			
-			String envFileName = currProject.simSetupCurrent+".xml";
+			String envFileName = currProject.simulationSetupCurrent+".xml";
 			getCurrentSimSetup().setEnvironmentFileName(envFileName);
 		}
 		return newEnv;
@@ -718,7 +718,7 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 	}
 	
 	private void setDefaultFileNames(){
-		String baseFileName = currProject.simSetupCurrent;
+		String baseFileName = currProject.simulationSetupCurrent;
 		//TODO remove the path from the simsetup
 		getCurrentSimSetup().setEnvironmentFileName(baseFileName+".xml");
 		getCurrentSimSetup().setSvgFileName(baseFileName+".svg");

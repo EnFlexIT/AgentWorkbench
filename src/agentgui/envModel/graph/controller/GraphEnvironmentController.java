@@ -415,7 +415,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 * This method sets the baseFileName property and the SimulationSetup's environmentFileName according to the current SimulationSetup
 	 */
 	private void updateGraphFileName(){
-		baseFileName = currProject.simSetupCurrent;
+		baseFileName = currProject.simulationSetupCurrent;
 		getCurrentSimSetup().setEnvironmentFileName(baseFileName+".graphml");
 	}
 	

@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.core.sim.setup;
 
 import java.io.FileOutputStream;
@@ -26,43 +54,41 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Project;
 
 /**
- * @author derksen
- *
+ * This is the model class for a simulation setup.
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 @XmlRootElement public class SimulationSetup {
 
-	/**
-	 * The refernece to the current project
-	 */
+	/** The refernece to the current project. */
 	@XmlTransient private Project currProject = null;
 	
-	/**
-	 * Standard name for an agent start list if the current start element was configured in the 
-	 * tab 'Simulation-Setup' => 'Agent-Start'   
-	 */
+	/** Standard name for an agent start list if the current start element was configured in the tab 'Simulation-Setup' => 'Agent-Start'. */
 	@XmlTransient public static final String AGENT_LIST_ManualConfiguration = "01 AgentStartManual";
 	
-	/**
-	 *  Standard name for an agent start list if the current start element was configured for a predefined
-	 *  environment model in the tab 'Simulation-Setup' => 'Simulation Environment'   
-	 */
+	/** Standard name for an agent start list if the current start element was configured for a predefined environment model in the tab 'Simulation-Setup' => 'Simulation Environment'. */
 	@XmlTransient public static final String AGENT_LIST_EnvironmentConfiguration = "02 AgentStartEnvironment";
 	
-	/**
-	 * This Hash holds the instances of all agent start lists
-	 */
+	/** This Hash holds the instances of all agent start lists. */
 	@XmlTransient private HashMap<String, DefaultListModel> hashMap4AgentDefaulListModels = new HashMap<String, DefaultListModel>();
+	
+	/** The combo box model4 agent lists. */
 	@XmlTransient private DefaultComboBoxModel comboBoxModel4AgentLists = new DefaultComboBoxModel();
 	
 	
+	/** The agent list. */
 	@XmlElementWrapper(name = "agentSetup")
 	@XmlElement(name="agent")
 	private ArrayList<AgentClassElement4SimStart> agentList = new ArrayList<AgentClassElement4SimStart>();
 
+	/** The distribution setup. */
 	@XmlElement(name="distribution")
 	public DistributionSetup distributionSetup = new DistributionSetup();
 	
+	/** The environment file name. */
 	private String environmentFileName = null;
+	
+	/** The svg file name. */
 	private String svgFileName = null;
 	
 	/**
@@ -72,27 +98,33 @@ import agentgui.core.application.Project;
 	@XmlTransient private Serializable userRuntimeObject = null;
 	
 	/**
-	 * Constructor without arguments (This is first of all 
+	 * Constructor without arguments (This is first of all
 	 * for the JAXB-Context and should not be used by any
-	 * other context)
+	 * other context).
 	 */	
 	public SimulationSetup() {
 	}
+	
 	/**
-	 * Default Constructor of this class
-	 * @param project
+	 * Default Constructor of this class.
+	 *
+	 * @param project the project
 	 */
 	public SimulationSetup(Project project) {
 		this.currProject = project;
 	}
+	
 	/**
-	 * @param currProject the currProject to set
+	 * Sets the curr project.
+	 *
+	 * @param project the currProject to set
 	 */
-	public void setCurrProject(Project currProject) {
-		this.currProject = currProject;
+	public void setCurrProject(Project project) {
+		this.currProject = project;
 	}
+	
 	/**
-	 * Will merge all default list models to one array list
+	 * Will merge all default list models to one array list.
 	 */
 	private void mergeListModels(){
 
@@ -112,8 +144,9 @@ import agentgui.core.application.Project;
 	}
 	
 	/**
-	 * This method saves the current Simulation-Setup
-	 * @return true if save is successful
+	 * This method saves the current Simulation-Setup.
+	 *
+	 * @return true, if saving was successful
 	 */
 	public boolean save() {
 		boolean saved = true;
@@ -129,14 +162,14 @@ import agentgui.core.application.Project;
 			pm.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE ); 
 
 			// --- Objektwerte in xml-Datei schreiben ----
-			Writer pw = new FileWriter( currProject.simSetups.getCurrSimXMLFile() );
+			Writer pw = new FileWriter( currProject.simulationSetups.getCurrSimXMLFile() );
 			pm.marshal( this, pw );
 						
 			// --- Save the userRuntimeObject in the SimSetup into a different file as a Serializable binary object.
 			FileOutputStream fos = null;
 			ObjectOutputStream out = null;
 		    try  {
-		    	String binFileName = Application.RunInfo.getBinFileNameFromXmlFileName(currProject.simSetups.getCurrSimXMLFile()); 
+		    	String binFileName = Application.RunInfo.getBinFileNameFromXmlFileName(currProject.simulationSetups.getCurrSimXMLFile()); 
 		    	fos = new FileOutputStream(binFileName);
 		    	out = new ObjectOutputStream(fos);
 		    	out.writeObject(this.userRuntimeObject);
@@ -158,23 +191,30 @@ import agentgui.core.application.Project;
 	}
 	
 	/**
+	 * Gets the agent list.
+	 *
 	 * @return the agentList
 	 */
 	@XmlTransient
 	public ArrayList<AgentClassElement4SimStart> getAgentList() {
 		return agentList;
 	}
+	
 	/**
+	 * Sets the agent list.
+	 *
 	 * @param agentList the agentList to set
 	 */
 	public void setAgentList(ArrayList<AgentClassElement4SimStart> agentList) {
 		this.agentList = agentList;
 	}
+	
 	/**
-	 * This Method transfers a DefaultListModel to 
-	 * the localArrayList 'agentList' which is a 
-	 * type of 'AgentClassElement4SimStart'
-	 * @param lm
+	 * This Method transfers a DefaultListModel to
+	 * the localArrayList 'agentList' which is a
+	 * type of 'AgentClassElement4SimStart'.
+	 *
+	 * @param lm the new agent list
 	 */
 	public void setAgentList(DefaultListModel lm) {
 		if (lm==null) return;
@@ -216,7 +256,10 @@ import agentgui.core.application.Project;
 	}
 	
 	/**
-	 * Here a complete agent start list (DefaultListModel) can be added to the simulation setup 
+	 * Here a complete agent start list (DefaultListModel) can be added to the simulation setup.
+	 *
+	 * @param listName the list name
+	 * @param defaultListModel4AgentStarts the default list model4 agent starts
 	 */
 	public void setAgentDefaultListModel(String listName, DefaultListModel defaultListModel4AgentStarts) {
 		if (listName!=null) {
@@ -224,24 +267,29 @@ import agentgui.core.application.Project;
 			this.comboBoxModel4AgentLists.addElement(listName);
 		}
 	}
+	
 	/**
-	 * This method can be used in order to get an agents start list for the 
-	 * simulation, given by  
+	 * This method can be used in order to get an agents start list for the
+	 * simulation, given by.
+	 *
+	 * @param listName the list name
 	 * @return the agentListModel
 	 */
 	public DefaultListModel getAgentDefaultListModel(String listName) {
 		return hashMap4AgentDefaulListModels.get(listName);
 	}
+	
 	/**
 	 * This method can be used in order to add an individual agent start list to the SimulationSetup.<br>
 	 * The list will be filled with elements of the type {@link AgentClassElement4SimStart} coming from
 	 * the stored setup file and will be later on also stored in the file of the simulation setup.
-	 * 
+	 *
 	 * @param newDefaultListModel4AgentStarts the new DefaultListModel to set
-	 * @param listName the name of the list to be assigned. 
-	 * Consider the use of one of the constants {@link #AGENT_LIST_ManualConfiguration} or {@link #AGENT_LIST_EnvironmentConfiguration} 
+	 * @param listName the name of the list to be assigned.
+	 * Consider the use of one of the constants {@link #AGENT_LIST_ManualConfiguration} or {@link #AGENT_LIST_EnvironmentConfiguration}
 	 * or just use an individual name
-	 * @see AgentClassElement4SimStart AgentClassElement4SimStart - The type to use within a concrete list model 
+	 * @return the agent default list model
+	 * @see AgentClassElement4SimStart AgentClassElement4SimStart - The type to use within a concrete list model
 	 */
 	public DefaultListModel getAgentDefaultListModel(DefaultListModel newDefaultListModel4AgentStarts, String listName) {
 
@@ -254,12 +302,17 @@ import agentgui.core.application.Project;
 	}
 	
 	/**
+	 * Sets the combo box model4 agent lists.
+	 *
 	 * @param comboBoxModel4AgentLists the comboBoxModel4AgentLists to set
 	 */
 	public void setComboBoxModel4AgentLists(DefaultComboBoxModel comboBoxModel4AgentLists) {
 		this.comboBoxModel4AgentLists = comboBoxModel4AgentLists;
 	}
+	
 	/**
+	 * Gets the combo box model4 agent lists.
+	 *
 	 * @return the comboBoxModel4AgentLists
 	 */
 	@XmlTransient
@@ -270,12 +323,17 @@ import agentgui.core.application.Project;
 	
 	
 	/**
+	 * Gets the svg file name.
+	 *
 	 * @return the svgFileName
 	 */
 	public String getSvgFileName() {
 		return svgFileName;
 	}
+	
 	/**
+	 * Sets the svg file name.
+	 *
 	 * @param svgFileName the svgFileName to set
 	 */
 	public void setSvgFileName(String svgFileName) {
@@ -283,26 +341,36 @@ import agentgui.core.application.Project;
 	}
 	
 	/**
-	 * @return
+	 * Gets the environment file name.
+	 *
+	 * @return the environment file name
 	 */
 	public String getEnvironmentFileName() {
 		return environmentFileName;
 	}
+	
 	/**
-	 * @param environmentFile
+	 * Sets the environment file name.
+	 *
+	 * @param environmentFile the new environment file name
 	 */
 	public void setEnvironmentFileName(String environmentFile) {
 		this.environmentFileName = environmentFile;
 	}
 	
 	/**
+	 * Gets the distribution setup.
+	 *
 	 * @return the distributionSetup
 	 */
 	@XmlTransient
 	public DistributionSetup getDistributionSetup() {
 		return distributionSetup;
 	}
+	
 	/**
+	 * Sets the distribution setup.
+	 *
 	 * @param distributionSetup the distributionSetup to set
 	 */
 	public void setDistributionSetup(DistributionSetup distributionSetup) {
@@ -310,12 +378,17 @@ import agentgui.core.application.Project;
 	}
 	
 	/**
+	 * Sets the user runtime object.
+	 *
 	 * @param userRuntimeObject the userRuntimeObject to set
 	 */
 	public void setUserRuntimeObject(Serializable userRuntimeObject) {
 		this.userRuntimeObject = userRuntimeObject;
 	}
+	
 	/**
+	 * Gets the user runtime object.
+	 *
 	 * @return the userRuntimeObject
 	 */
 	@XmlTransient
@@ -324,15 +397,18 @@ import agentgui.core.application.Project;
 	}
 	
 	/**
-	 * Checks if an agent name already exists in the current agent configuration
+	 * Checks if an agent name already exists in the current agent configuration.
+	 *
 	 * @param localAgentName The agent name to search for
 	 * @return true, if the agent name already exists
 	 */
 	public boolean isAgentNameExists(String localAgentName){
 		return isAgentNameExists(localAgentName, true);
 	}
+	
 	/**
-	 * Checks if an agent name already exists in the current agent configuration
+	 * Checks if an agent name already exists in the current agent configuration.
+	 *
 	 * @param agentName2Check The agent name to search for
 	 * @param mergeListModels indicates if the over all {@link #agentList} has to be build new
 	 * @return true, if the agent name already exists
@@ -350,9 +426,11 @@ import agentgui.core.application.Project;
 		}
 		return false;
 	}
+	
 	/**
-	 * Will find a new unique name for an agent, if the suggestion is not already unique 
-	 * @param agentNameSuggestion 
+	 * Will find a new unique name for an agent, if the suggestion is not already unique.
+	 *
+	 * @param agentNameSuggestion the agent name suggestion
 	 * @return unique agent name for the simulation setup
 	 */
 	public String getAgentNameUnique(String agentNameSuggestion) {

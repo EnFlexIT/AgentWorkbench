@@ -25,7 +25,7 @@ public class StaticLoadBalancing extends StaticLoadBalancingBase {
 	@Override
 	public void action() {
 		
-		if (currDisSetup.isDoStaticLoadBalalncing()==false) {
+		if (currDisSetup.isDoStaticLoadBalancing()==false) {
 			// -----------------------------------------------------------
 			// --- This is the very default case -------------------------
 			// --- => Just start all defined agents ----------------------

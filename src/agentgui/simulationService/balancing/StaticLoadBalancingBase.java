@@ -58,7 +58,7 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 		// --- Which project is currently used?  --------------------
 		currProject = Application.ProjectCurr;		
 		// --- Get the current simulation setup ---------------------
-		currSimSetup = currProject.simSetups.getCurrSimSetup();
+		currSimSetup = currProject.simulationSetups.getCurrSimSetup();
 		// --- Get the current distribution setup -------------------
 		currDisSetup = currSimSetup.getDistributionSetup();
 		// --- Which agents are to start ----------------------------

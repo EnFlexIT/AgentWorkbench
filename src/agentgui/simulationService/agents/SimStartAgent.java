@@ -98,11 +98,11 @@ public class SimStartAgent extends Agent {
 	private StaticLoadBalancingBase getStartAndStaticLoadBalancingClass() {
 		
 		// --- Get the current simulation setup -----------
-		SimulationSetup currSimSetup = Application.ProjectCurr.simSetups.getCurrSimSetup();
+		SimulationSetup currSimSetup = Application.ProjectCurr.simulationSetups.getCurrSimSetup();
 		// --- Get the current distribution setup ---------
 		DistributionSetup currDisSetup = currSimSetup.getDistributionSetup();
 		
-		if (currDisSetup.isDoStaticLoadBalalncing()== true) {
+		if (currDisSetup.isDoStaticLoadBalancing()== true) {
 
 			try {
 				@SuppressWarnings("unchecked")

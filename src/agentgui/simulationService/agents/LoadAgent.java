@@ -348,12 +348,12 @@ public class LoadAgent extends Agent {
 				return;
 			} 
 			// --- Get the current simulation setup ---------------------------
-			currSimSetup = currProject.simSetups.getCurrSimSetup();
+			currSimSetup = currProject.simulationSetups.getCurrSimSetup();
 			// --- Get the current distribution setup -------------------------
 			currDisSetup = currSimSetup.getDistributionSetup();
 			
 			// --- If the dynamic load balancing is activated: ----------------
-			if (currDisSetup!=null && currDisSetup.isDoDynamicLoadBalalncing()==true) {
+			if (currDisSetup!=null && currDisSetup.isDoDynamicLoadBalancing()==true) {
 			
 				LoadAgent thisLoadAgent = (LoadAgent) myAgent;
 				try {
