@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.core.plugin;
 
 import java.awt.Container;
@@ -16,13 +44,13 @@ import agentgui.core.sim.setup.SimulationSetups;
 import agentgui.core.sim.setup.SimulationSetupsChangeNotification;
 
 /**
- * This class is the root for a customised plugin, which can
- * be loaded to extend an individual agent project.
+ * This abstract class is the root for customized plug-in's, which can
+ * be loaded to extend an individual agent project.<br>
  * Classes which inherit from this class can be registered to an
  * agent project by using the "Resources"-Tab in the project
  * configuration. 
  *   
- * @author Christian Derksen
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public abstract class PlugIn implements Observer {
 
@@ -32,13 +60,14 @@ public abstract class PlugIn implements Observer {
 	
 	protected Project project = null;
 	protected String classReference = null;
-	
+
 	private Vector<JComponent> customJComponent = new Vector<JComponent>();
 	private Vector<ProjectWindowTab> customProjectWindowTab = new Vector<ProjectWindowTab>();
 	
 	/**
-	 * Default constructor for this class
-	 * @param currProject
+	 * Default constructor for this class.
+	 *
+	 * @param currProject the current project
 	 */
 	public PlugIn(Project currProject) {
 		this.project = currProject;
@@ -46,12 +75,17 @@ public abstract class PlugIn implements Observer {
 	}
 	
 	/**
+	 * Sets the class reference.
+	 *
 	 * @param classReference the classReference to set
 	 */
 	public void setClassReference(String classReference) {
 		this.classReference = classReference;
 	}
+	
 	/**
+	 * Gets the class reference.
+	 *
 	 * @return the classReference
 	 */
 	public String getClassReference() {
@@ -59,23 +93,25 @@ public abstract class PlugIn implements Observer {
 	}
 
 	/**
+	 * Gets the name.
+	 *
 	 * @return the pluginName
 	 */
 	public abstract String getName();
 
 	/**
-	 * This method be called if the plugin is loaded into the project.
+	 * This method be called if the plug-in is loaded into the project.
 	 * This happens immediately after the project was opened. 
 	 */
 	public void onPlugIn() {
-		System.out.println( "+ PlugIn loaded [" + this.getName() + "]" );
+		System.out.println( "+ Plug-In loaded [" + this.getName() + "]" );
 	}
 	/**
-	 * This method will be called if the plugin will be removed from the 
+	 * This method will be called if the plug-in will be removed from the 
 	 * project, means immediately before the project will be closed.
 	 */
 	public void onPlugOut() {
-		System.out.println( "- PlugIn removed [" + this.getName() + "]" );
+		System.out.println( "- Plug-In removed [" + this.getName() + "]" );
 	}
 	
 	/**
@@ -93,18 +129,21 @@ public abstract class PlugIn implements Observer {
 	// --------------------------------------------------------------
 	// --- Start of adding functions ------------
 	/**
-	 * This method can be used in order to add an individual menu 
-	 * @param myMenu
+	 * This method can be used in order to add an individual menu.
+	 *
+	 * @param myMenu the my menu
 	 */
 	protected void addJMenu(JMenu myMenu) {
 		Application.MainWindow.addJMenu(myMenu);
 		customJComponent.add(myMenu);
 	}
+	
 	/**
-	 * This method can be used in order to add an individual menu  
-	 * at a specified index position of the menu bar
-	 * @param myMenu
-	 * @param indexPosition
+	 * This method can be used in order to add an individual menu
+	 * at a specified index position of the menu bar.
+	 *
+	 * @param myMenu the my menu
+	 * @param indexPosition the index position
 	 */
 	protected void addJMenu(JMenu myMenu, int indexPosition) {
 		Application.MainWindow.addJMenu(myMenu, indexPosition);
@@ -112,21 +151,24 @@ public abstract class PlugIn implements Observer {
 	}
 	
 	/**
-	 * This method can be used in order to add an  
-	 * individual JMmenuItem to the given menu 
-	 * @param menu2add
-	 * @param myMenuItem
+	 * This method can be used in order to add an
+	 * individual JMmenuItem to the given menu.
+	 *
+	 * @param menu2add the menu2add
+	 * @param myMenuItemComponent the my menu item component
 	 */
 	protected void addJMenuItemComponent(JMenu menu2add, JComponent myMenuItemComponent) {
 		Application.MainWindow.addJMenuItemComponent(menu2add, myMenuItemComponent);
 		customJComponent.add(myMenuItemComponent);
 	}
+	
 	/**
-	 * This method can be used in order to add an individual JMmenuItem 
-	 * at a specified index position of the given menu 
-	 * @param menu2add
-	 * @param myMenuItem
-	 * @param indexPosition
+	 * This method can be used in order to add an individual JMmenuItem
+	 * at a specified index position of the given menu.
+	 *
+	 * @param menu2add the menu2add
+	 * @param myMenuItemComponent the my menu item component
+	 * @param indexPosition the index position
 	 */
 	protected void addJMenuItemComponent(JMenu menu2add, JComponent myMenuItemComponent, int indexPosition) {
 		Application.MainWindow.addJMenuItemComponent(menu2add, myMenuItemComponent, indexPosition);
@@ -134,19 +176,22 @@ public abstract class PlugIn implements Observer {
 	}
 	
 	/**
-	 * This method can be used in order to add an  
-	 * individual menu button to the toolbar
-	 * @param myButton
+	 * This method can be used in order to add an
+	 * individual menu button to the toolbar.
+	 *
+	 * @param myComponent the my component
 	 */
 	protected void addJToolbarComponent(JComponent myComponent) {
 		Application.MainWindow.addJToolbarComponent(myComponent);
 		customJComponent.add(myComponent);
 	}
+	
 	/**
-	 * This method can be used in order to add an individual menu button 
-	 * a specified index position of the toolbar
-	 * @param myButton
-	 * @param indexPosition
+	 * This method can be used in order to add an individual menu button
+	 * a specified index position of the toolbar.
+	 *
+	 * @param myComponent the my component
+	 * @param indexPosition the index position
 	 */
 	protected void addJToolbarComponent(JComponent myComponent, int indexPosition) {
 		Application.MainWindow.addJToolbarComponent(myComponent,indexPosition);
@@ -154,19 +199,22 @@ public abstract class PlugIn implements Observer {
 	}
 	
 	/**
-	 * This method can be used in order to add a customized Tab to the project window
-	 * @param projectWindowTab
+	 * This method can be used in order to add a customized Tab to the project window.
+	 *
+	 * @param projectWindowTab the project window tab
 	 */
 	protected void addProjectWindowTab(ProjectWindowTab projectWindowTab) {
 		projectWindowTab.add();
 		customProjectWindowTab.add(projectWindowTab);
 	}
+	
 	/**
 	 * This method can be used in order to add a customized Tab to the project window at the specified index position.
 	 * The index position has to be greater than 1, in order to keep the 'Info'-Tab and the 'Configuration'-Tab at
-	 * its provided position! 
-	 * @param projectWindowTab
-	 * @param indexPositionGreaterOne
+	 * its provided position!
+	 *
+	 * @param projectWindowTab the project window tab
+	 * @param indexPositionGreaterOne the index position greater one
 	 */
 	protected void addProjectWindowTab(ProjectWindowTab projectWindowTab, int indexPositionGreaterOne) {
 		projectWindowTab.add(indexPositionGreaterOne);
@@ -175,8 +223,8 @@ public abstract class PlugIn implements Observer {
 	// --- End of adding functions --------------
 	
 	/**
-	 * This method can be used to remove all custom components 
-	 * for menus and for the toolbar 
+	 * This method can be used to remove all custom components
+	 * for menus and for the toolbar.
 	 */
 	private void removeCustomJElements() {
 		
@@ -203,42 +251,52 @@ public abstract class PlugIn implements Observer {
 	
 	
 	/**
-	 * AgentGUI uses the observer pattern to inform about changes 
+	 * AgentGUI uses the observer pattern to inform about changes
 	 * within the project. They can consist on the following kinds
-	 * of notifications  
+	 * of notifications<br>
+	 * <br>
+	 * - String Project.SAVED<br>
+	 * - String Project.CHANGED_ProjectName<br>
+	 * - String Project.CHANGED_ProjectDescription<br>
+	 * - String Project.CHANGED_ProjectFolder<br>
+	 * - String Project.CHANGED_ProjectView<br>
+	 * - String Project.CHANGED_EnvironmentModel<br>
+	 * - String Project.CHANGED_AgentReferences<br>
+	 * - String Project.CHANGED_ProjectOntology<br>
+	 * - String Project.CHANGED_ProjectResources<br>
+	 * <br>
+	 * - String SimulationSetups.CHANGED<br>
+	 * Here in Detail, while using the
+	 * 'SimulationSetupsChangeNotification.getUpdateReason' - method:<br>
+	 * => int SimulationSetups.SIMULATION_SETUP_LOAD<br>
+	 * => int SimulationSetups.SIMULATION_SETUP_ADD_NEW<br>
+	 * => int SimulationSetups.SIMULATION_SETUP_COPY<br>
+	 * => int SimulationSetups.SIMULATION_SETUP_REMOVE<br>
+	 * => int SimulationSetups.SIMULATION_SETUP_RENAME<br>
+	 * => int SimulationSetups.SIMULATION_SETUP_SAVED<br>
+	 * <br>
+	 * - String PlugIn.CHANGED<br>
+	 * Here in Detail, while using the
+	 * 'PlugInNotification.getUpdateReason' - method:<br>
+	 * => int PlugIn.ADDED<br>
+	 * => int PlugIn.REMOVED<br>
+	 * Furthermore the instance of the PlugIn can be get
+	 * by using 'PlugInNotification.getPlugIn()'<br>
+	 * <br>
+	 * <br>
+	 * Do NOT override this method directly. Use the updateFromObserver()-method
+	 * instead, in order to get your individual Observer-Changes.
 	 * 
-	 * - String Project.SAVED
-	 * - String Project.CHANGED_ProjectName
-	 * - String Project.CHANGED_ProjectDescription 
-	 * - String Project.CHANGED_ProjectFolder
-	 * - String Project.CHANGED_ProjectView 
-	 * - String Project.CHANGED_EnvironmentModel
-	 * - String Project.CHANGED_AgentReferences 
-	 * - String Project.CHANGED_ProjectOntology 
-	 * - String Project.CHANGED_ProjectResources
+	 * @see Project
+	 * @see SimulationSetup
 	 * 
-	 * - String SimulationSetups.CHANGED
-	 * 	 Here in Detail, while using the 
-	 *   'SimulationSetupsChangeNotification.getUpdateReason' - method:
-	 * 	 => int SimulationSetups.SIMULATION_SETUP_LOAD
-	 * 	 => int SimulationSetups.SIMULATION_SETUP_ADD_NEW
-	 * 	 => int SimulationSetups.SIMULATION_SETUP_COPY
-	 * 	 => int SimulationSetups.SIMULATION_SETUP_REMOVE
-	 * 	 => int SimulationSetups.SIMULATION_SETUP_RENAME
-	 *   => int SimulationSetups.SIMULATION_SETUP_SAVED
-	 * 
-	 * - String PlugIn.CHANGED
-	 * 	 Here in Detail, while using the 
-	 *   'PlugInNotification.getUpdateReason' - method:
-	 *   => int PlugIn.ADDED
-	 *   => int PlugIn.REMOVED
-	 *   Furthermore the instance of the PlugIn can be get
-	 *   by using 'PlugInNotification.getPlugIn()'
-	 *   	 
-	 * 
-	 * Do NOT override this methode directly. Use the updateFromObserver()-method
-	 * instead, in order to get your individual Observer-Changes.  
-	 * 
+	 * @see PlugIn#CHANGED
+	 * @see PlugIn#ADDED
+	 * @see PlugIn#REMOVED
+	 * @see PlugInNotification
+	 *
+	 * @param observable the observable
+	 * @param updateObject the update object
 	 */
 	@Override
 	public void update(Observable observable, Object updateObject) {
@@ -319,9 +377,10 @@ public abstract class PlugIn implements Observer {
 	/**
 	 * In order to perceive individual informations from the project Observer
 	 * (observer pattern), this mehtod should be used in the extended class.
-	 * !!! Do NOT override the update methode directly !! 
-	 * @param observable
-	 * @param updateObject
+	 * !!! Do NOT override the update methode directly !!
+	 *
+	 * @param observable the observable
+	 * @param updateObject the update object
 	 */
 	protected void updateFromObserver(Observable observable, Object updateObject) {
 	}
@@ -331,42 +390,123 @@ public abstract class PlugIn implements Observer {
 	// ------------------------------------------------------------------------
 	
 	// --- Changes in the project configuration --------------------------
+	/**
+	 * On project saved.
+	 */
 	protected void onProjectSaved() {
 	}
+	
+	/**
+	 * On project changed project name.
+	 */
 	protected void onProjectChangedProjectName() {
 	}
+	
+	/**
+	 * On project changed project description.
+	 */
 	protected void onProjectChangedProjectDescription() {
 	}
+	
+	/**
+	 * On project changed environment model.
+	 */
 	protected void onProjectChangedEnvironmentModel() {
 	}
+	
+	/**
+	 * On project changed agent start configuration.
+	 */
 	protected void onProjectChangedAgentStartConfiguration() {
 	}
+	
+	/**
+	 * On project changed project resources.
+	 */
 	protected void onProjectChangedProjectResources() {
 	}
+	
+	/**
+	 * On project changed jade configuration.
+	 */
 	protected void onProjectChangedJadeConfiguration() {
 	}
+	
+	/**
+	 * On project changed project ontology.
+	 */
 	protected void onProjectChangedProjectOntology() {
 	}
+	
+	/**
+	 * On project changed project view.
+	 */
 	protected void onProjectChangedProjectView() {
 	}
 	
 	// --- Changes in the SimulationSetup --------------------------------
+	/**
+	 * On sim setup changed add new.
+	 *
+	 * @param currSimSetup the curr sim setup
+	 */
 	private void onSimSetupChangedAddNew(SimulationSetup currSimSetup) {
 	}
+	
+	/**
+	 * On sim setup changed copy.
+	 *
+	 * @param currSimSetup the curr sim setup
+	 */
 	private void onSimSetupChangedCopy(SimulationSetup currSimSetup) {
 	}
+	
+	/**
+	 * On sim setup changed load.
+	 *
+	 * @param currSimSetup the curr sim setup
+	 */
 	private void onSimSetupChangedLoad(SimulationSetup currSimSetup) {
 	}
+	
+	/**
+	 * On sim setup changed remove.
+	 *
+	 * @param currSimSetup the curr sim setup
+	 */
 	private void onSimSetupChangedRemove(SimulationSetup currSimSetup) {
 	}
+	
+	/**
+	 * On sim setup changed rename.
+	 *
+	 * @param currSimSetup the curr sim setup
+	 */
 	private void onSimSetupChangedRename(SimulationSetup currSimSetup) {
 	}
+	
+	/**
+	 * On sim setup changed saved.
+	 *
+	 * @param currSimSetup the curr sim setup
+	 */
 	private void onSimSetupChangedSaved(SimulationSetup currSimSetup) {
 	}
 
 	// --- Changes with the PlugIns --------------------------------------
+	/**
+	 * On plug in removed.
+	 *
+	 * @param plugIn the plug in
+	 */
 	private void onPlugInRemoved(PlugIn plugIn) {
 	}
+	
+	/**
+	 * On plug in added.
+	 *
+	 * @param plugIn the plug in
+	 */
 	private void onPlugInAdded(PlugIn plugIn) {
 	}
 

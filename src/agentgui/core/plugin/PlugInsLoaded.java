@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.core.plugin;
 
 import java.lang.reflect.Constructor;
@@ -8,16 +36,24 @@ import agentgui.core.application.Language;
 import agentgui.core.application.Project;
 
 /**
+ * This class represents the list of plug-in's, which are loaded in a single
+ * project.
  * 
- * @author Christian Derksen 
+ * @see Project#plugIns_Loaded
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class PlugInsLoaded extends Vector<PlugIn> {
 
 	private static final long serialVersionUID = 8827995777943963298L;
 	
 	/**
-	 * This method will load a PlugIn given by its class-reference 
-	 * @param plugInRefernce
+	 * This method will load a PlugIn given by its class-reference.
+	 *
+	 * @param project the project
+	 * @param plugInReference the reference to the plug-in class 
+	 * @return the plug-in
+	 * @throws PlugInLoadException the plug in load exception
 	 */
 	public PlugIn loadPlugin(Project project, String plugInReference) throws PlugInLoadException {
 		
@@ -84,8 +120,9 @@ public class PlugInsLoaded extends Vector<PlugIn> {
 	}
 	
 	/**
-	 * This will unload and remove a single ProjectPlugin from the current project
-	 * @param plugIn
+	 * This will unload and remove a single ProjectPlugin from the current project.
+	 *
+	 * @param plugIn the plug-in
 	 */
 	public void removePlugIn(PlugIn plugIn) {
 		// --- Call the onPlugOut()method ---------------------------
@@ -98,11 +135,11 @@ public class PlugInsLoaded extends Vector<PlugIn> {
 	
 	
 	/**
-	 * This method returns a single PlugIn Instance  
-	 * given by its name or its class reference 
-	 * 
-	 * @param plugInName_or_plugInReference
-	 * @return
+	 * This method returns a single PlugIn Instance
+	 * given by its name or its class reference.
+	 *
+	 * @param plugInName_or_plugInReference the plug in name_or_plug in reference
+	 * @return the plug in
 	 */
 	public PlugIn getPlugIn(String plugInName_or_plugInReference) {
 
@@ -119,22 +156,18 @@ public class PlugInsLoaded extends Vector<PlugIn> {
 	}
 	
 	/**
-	 * This method checks if a PlugInClass is already loaded 
-	 * @param PlugInNameOrReference
-	 * @return
+	 * This method checks if a PlugInClass is already loaded.
+	 *
+	 * @param plugInName_or_plugInReference the plug-in name or the plug-in reference
+	 * @return true, if is loaded
 	 */
 	public boolean isLoaded(String plugInName_or_plugInReference) {
 
-		String search = plugInName_or_plugInReference;
-		for (int i = 0; i < this.size(); i++) {
-			PlugIn pi = this.get(i);
-			if (pi.getName().equals(search)) {
-				return true;
-			} else if (pi.getClassReference().equals(search)) {
-				return true;
-			}
+		if (this.getPlugIn(plugInName_or_plugInReference)==null) {
+			return false;
+		} else {
+			return true;
 		}
-		return false;
 	}
 
 }
