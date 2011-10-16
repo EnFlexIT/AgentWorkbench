@@ -36,8 +36,8 @@ import java.util.Vector;
 import javax.swing.table.DefaultTableModel;
 
 import agentgui.core.ontologies.gui.Sorter;
-import agentgui.core.reflection.ReflectClass;
-import agentgui.core.reflection.ReflectClass.Slot;
+import agentgui.core.ontologies.reflection.ReflectClass;
+import agentgui.core.ontologies.reflection.ReflectClass.Slot;
 
 
 /**
@@ -196,27 +196,27 @@ public class OntologyClassTreeObject extends Object {
 		}
 		
 		// --- Nach den entsprechenden Slots im Vokabular filtern ---
-		Hashtable<String, String> OntoSlotHash = ontologyClass.ontologieVocabulary.getSlots( ontologySubClass );
-		ReflectClass RefCla = new ReflectClass( ontologySubClass, OntoSlotHash );
+		Hashtable<String, String> ontoSlotHash = ontologyClass.ontologieVocabulary.getSlots(ontologySubClass);
+		ReflectClass reflectedClass = new ReflectClass(ontologySubClass, ontoSlotHash);
 		
-		Vector<String> v = new Vector<String>( OntoSlotHash.keySet() );
+		Vector<String> v = new Vector<String>( ontoSlotHash.keySet() );
 	    Collections.sort(v);
 	    Iterator<String> it = v.iterator();
 	    while (it.hasNext()) {
 	    	
 	    	// --- Wort/Slot  der Ontologie ermitteln --------------- 
-	    	String Key = it.next();
-	    	String Word = OntoSlotHash.get(Key);
+	    	String key = it.next();
+	    	String word = ontoSlotHash.get(key);
 	    	
 	    	// --- Slot untersuchen ... -----------------------------
-	    	Slot CurrSlot = RefCla.getSlot(Word);
+	    	Slot currSlot = reflectedClass.getSlot(word);
 	    	
 	    	// --- Zeile an TableModel anfügen ----------------------	    	
 	    	Vector<String> rowData = new Vector<String>(); 
-	    	rowData.add( Word );
-	    	rowData.add( CurrSlot.Cardinality );
-	    	rowData.add( CurrSlot.VarType );
-	    	rowData.add( CurrSlot.OtherFacts );
+	    	rowData.add(word );
+	    	rowData.add(currSlot.Cardinality);
+	    	rowData.add(currSlot.VarType);
+	    	rowData.add(currSlot.OtherFacts);
 	    	tm4s.addRow(rowData);
 	    }	
 	    
@@ -257,24 +257,24 @@ public class OntologyClassTreeObject extends Object {
 		ocd.setClassReference(this.getClassReference()); // Package und Class werden hier automatisch gesetzt
 		
 		// --- Nach den entsprechenden Slots im Vokabular filtern ---
-		Hashtable<String, String> OntoSlotHash = ontologyClass.ontologieVocabulary.getSlots( ontologySubClass );
-		ReflectClass RefCla = new ReflectClass( ontologySubClass, OntoSlotHash );
+		Hashtable<String, String> ontoSlotHash = ontologyClass.ontologieVocabulary.getSlots(ontologySubClass);
+		ReflectClass reflectedClass = new ReflectClass(ontologySubClass, ontoSlotHash);
 
-		Vector<String> v = new Vector<String>( OntoSlotHash.keySet() );
+		Vector<String> v = new Vector<String>( ontoSlotHash.keySet() );
 	    Collections.sort(v);
 	    Iterator<String> it = v.iterator();
 	    while (it.hasNext()) {
 	    	
-	    	// --- Wort/Slot  der Ontologie ermitteln --------------- 
-	    	String Key = it.next();
-	    	String Word = OntoSlotHash.get(Key);
+	    	// --- Wort/Slot der Ontologie ermitteln --------------- 
+	    	String key = it.next();
+	    	String word = ontoSlotHash.get(key);
 	    	
 	    	// --- Slot untersuchen ... -----------------------------
-	    	Slot currSlot = RefCla.getSlot(Word);
+	    	Slot currSlot = reflectedClass.getSlot(word);
 	    	
 	    	// --- Objekt v. Typ 'OntologySlotDescription' erzeugen -	    	
 	    	osd = new OntologySingleClassSlotDescription();
-	    	osd.setSlotName(Word);
+	    	osd.setSlotName(word);
 	    	osd.setSlotCardinality(currSlot.Cardinality);
 	    	osd.setSlotVarType(currSlot.VarType);
 	    	osd.setSlotOtherFacts(currSlot.OtherFacts);

@@ -39,7 +39,7 @@ import javax.swing.tree.DefaultTreeModel;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Project;
-import agentgui.core.reflection.ReflectClassFiles;
+import agentgui.core.ontologies.reflection.ReflectClassFiles;
 
 /**
  * This class represents the DefaultTreeModel for a single ontology, used in the current project.
@@ -61,7 +61,7 @@ public class OntologyClassTree extends DefaultTreeModel implements Serializable 
 	private DefaultMutableTreeNode aActionNode;
 	private DefaultMutableTreeNode predicateNode;
 	
-	private String SearchIN;
+	private String searchInPackage;
 	
 	// --------------------------------------------------------------------------
 	// --- "jade.content.onto.Ontology" - Basisklasse der Ontologie			  ---
@@ -90,7 +90,7 @@ public class OntologyClassTree extends DefaultTreeModel implements Serializable 
 		super(root);
 		this.currProject = project;
 		this.currOntoClass = ontoClass;
-		this.SearchIN = ontologieSourcePackage;
+		this.searchInPackage = ontologieSourcePackage;
 		this.rootNode = root;
 		
 		String logMsgOnto = "";
@@ -123,7 +123,7 @@ public class OntologyClassTree extends DefaultTreeModel implements Serializable 
 		
 
 		// --- get the class-files from the package ------------
-		ArrayList<String> projectOntologyClassList = new ReflectClassFiles(currProject, SearchIN);
+		ArrayList<String> projectOntologyClassList = new ReflectClassFiles(currProject, searchInPackage);
 		
 		// --- investigate classes -----------------------------
 		Class<?> Cla = null;
@@ -311,7 +311,7 @@ public class OntologyClassTree extends DefaultTreeModel implements Serializable 
 		DefaultMutableTreeNode currNode  = null;
 		String currNodeText = null;
 		
-		reference = reference.replace(SearchIN + "." , "");
+		reference = reference.replace(searchInPackage + "." , "");
 		
 		for (Enumeration<DefaultMutableTreeNode> e = rootNode.breadthFirstEnumeration(); e.hasMoreElements();) {
 			currNode = e.nextElement();
