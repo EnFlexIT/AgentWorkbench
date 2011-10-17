@@ -3,6 +3,8 @@ package agentgui.envModel.p2Dsvg.behaviours;
 
 import java.util.Iterator;
 
+import javax.jws.soap.SOAPBinding.Use;
+
 import agentgui.core.application.Language;
 import agentgui.envModel.p2Dsvg.ontology.ActiveObject;
 import agentgui.envModel.p2Dsvg.ontology.Movement;
@@ -67,8 +69,8 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 	 */
 	public MoveToPointBehaviour(Agent a, Position destPos, float speed) throws ServiceException{
 		super(a, PERIOD);
-		IS_USED=true;
-		System.out.println("Call Move to Point");
+	
+		
 		try {
 			this.destPos = destPos;
 			this.speed = speed;
@@ -95,6 +97,8 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 		/**
 		 * Get the agent's ActiveObject from the 
 		 */
+		System.out.println("OnTick MoveToPointBehaviour");
+		//IS_USED=true;
 		ActiveObject self = (ActiveObject) helper.getObject(myAgent.getLocalName());
 		
 		// The first step
