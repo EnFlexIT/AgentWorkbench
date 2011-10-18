@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.envModel.p2Dsvg.display;
 
 import jade.core.AID;
@@ -19,9 +47,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JSlider;
 
-import org.omg.CORBA.Environment;
 import org.w3c.dom.Document;
 
 import agentgui.core.application.Application;
@@ -32,17 +58,17 @@ import agentgui.envModel.p2Dsvg.ontology.Physical2DObject;
 import agentgui.envModel.p2Dsvg.ontology.PositionUpdate;
 import agentgui.envModel.p2Dsvg.provider.EnvironmentProviderHelper;
 import agentgui.envModel.p2Dsvg.provider.EnvironmentProviderService;
-import agentgui.envModel.p2Dsvg.utils.EnvironmentHelper;
-import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.SimulationServiceHelper;
 import agentgui.simulationService.environment.EnvironmentModel;
-import agentgui.simulationService.time.TimeModel;
 import agentgui.simulationService.time.TimeModelDiscrete;
 /**
  * This type of agent controls a visualization of a Physical2DEnvironment 
- * @author Nils
+ * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
+ * @author Tim Lewen  - DAWIS - ICB - University of Duisburg - Essen
  *
  */
+
+@SuppressWarnings("deprecation")
 public class DisplayAgent extends Agent {
 	
 	private static final long serialVersionUID = 8613715346940866246L;
@@ -260,7 +286,7 @@ public class DisplayAgent extends Agent {
 		}
 		
 		public HashSet<Physical2DObject> fordwardToVisualation(HashMap<AID,PositionUpdate> pos)	{
-		    
+		    System.out.println("----");
 			HashSet<Physical2DObject> movingObjects=envHelper.getCurrentlyMovingObjects();
 		
 			if(movingObjects.size()>0)
@@ -276,15 +302,18 @@ public class DisplayAgent extends Agent {
 				AID aid=it.next();
 				Physical2DObject obj=envHelper.getObject(aid.getLocalName());
 				obj.setPosition(pos.get(aid).getNewPosition());
+				//System.out.println("DisplayAgent:"+aid.getLocalName() +","+pos.get(aid).getNewPosition().getXPos()+","+pos.get(aid).getNewPosition().getYPos());
 				movingObjects.add(obj);
 			}
+		    //System.out.println("----");
 			return movingObjects;
 		}
 		@Override
 		protected void onTick() {
-		
+			
 			try
 			{
+				
 				if(MoveToPointBehaviour.IS_USED)
 				{
 					
@@ -304,6 +333,7 @@ public class DisplayAgent extends Agent {
 					size=helper.getTransactionSize();
 					 if(lastMaximumValue!=size)
 					 {
+					
 					sameTransactionSizeCounter=0;
 					 myGUI.setMaximum(size);
 					 }
@@ -333,7 +363,8 @@ public class DisplayAgent extends Agent {
 							}							
 							 myGUI.setCurrentTimePos(counter);
 							 if(play)
-							 {				 
+							 {				
+								
 								  if(counter+addValue<size)
 								  {
 								
