@@ -63,7 +63,7 @@ public class StepNode {
 	
 	/**
 	 * Returns all Nodes which are part of this nodes
-	 * @return
+	 * @return a list with all successors
 	 */
 	public LinkedList<StepNode> getFurtherPossiblities() {
 		return furtherPossiblities;
@@ -197,7 +197,7 @@ public class StepNode {
 	/**
 	 * Checks if even the parents of a nodes are equal
 	 * @param tmp
-	 * @return
+	 * @return true if its equal
 	 */
 	public boolean is_deep_equals(StepNode tmp)
 	{
@@ -248,7 +248,7 @@ public class StepNode {
 
 	/**
 	 * Can be used if the path finding algorithm uses a grid. Returns the Y Index of the grid
-	 * @return
+	 * @return the y index of the grid
 	 */
 	public int getYIndex() {
 		return YIndex;
@@ -263,7 +263,7 @@ public class StepNode {
 	}
 	/**
 	 * Can be used if the path finding algorithm uses a grid. Returns the X Index of the grid
-	 * @return
+	 * @return the x index which can be used for the position in the grid.
 	 */
 	public int getXIndex() {
 		return xIndex;
@@ -281,7 +281,7 @@ public class StepNode {
 	/**
 	 * Compares just the location of the node
 	 * @param obj which must be a stepnode
-	 * @return
+	 * @return true if the coordinates are the same
 	 */
 	public boolean is_geo_equals(Object obj)
 	{

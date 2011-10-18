@@ -126,7 +126,7 @@ public class SVGImage {
     /**
      * Sets the width of the image to rasterize.
      *
-     * @param width the image width
+     * @param width of the image 
      */
     public void setImageWidth(float width) {
         hints.put(ImageTranscoder.KEY_WIDTH, new Float(width));
@@ -135,7 +135,7 @@ public class SVGImage {
     /**
      * Sets the height of the image to rasterize.
      *
-     * @param width the image height
+     * @param height the image 
      */
     public void setImageHeight(float height) {
         hints.put(ImageTranscoder.KEY_HEIGHT, new Float(height));

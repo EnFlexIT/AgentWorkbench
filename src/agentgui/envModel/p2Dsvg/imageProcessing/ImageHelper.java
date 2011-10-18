@@ -887,7 +887,7 @@ public class ImageHelper {
 	 * @param height Value of height Attribue
 	 * @param id  The id which should be set
 	 * @param doc The svn Document
-	 * @return
+	 * @return an element whith the set attributes
 	 */
 	public Element createNewElement(String nodename,float x,float y, String transform, float width,  float height, String id, Document doc)
 	{
@@ -1049,7 +1049,7 @@ public class ImageHelper {
 	 * @param direction Direction
 	 * @param lookAhead How Many pixel ahead
 	 * @param target_id targetID
-	 * @return
+	 * @return Creates a list with all elements which are being checked.
 	 * @throws Exception
 	 */
 	public ArrayList<Element> draw_way(String id,float x,float y,float width,float height ,int direction,float lookAhead,String target_id) throws Exception
@@ -1171,7 +1171,7 @@ public class ImageHelper {
 	
 	/**
 	 * Deletes every object of the SVG except the agent
-	 * @return
+	 * @return The manipuated world saved in a BufferedImage
 	 */
 	public synchronized BufferedImage createManipulatedWorld()
 	{
