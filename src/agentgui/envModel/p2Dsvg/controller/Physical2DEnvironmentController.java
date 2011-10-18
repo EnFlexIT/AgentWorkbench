@@ -57,6 +57,7 @@ import org.apache.batik.util.XMLResourceDescriptor;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
 import agentgui.core.common.FileCopier;
@@ -78,8 +79,8 @@ import agentgui.envModel.p2Dsvg.utils.EnvironmentHelper;
 import agentgui.envModel.p2Dsvg.utils.EnvironmentWrapper;
 
 /**
- * The controller for Physical2D environment which manages the Physical 2d environment model
- * @author Nils
+ * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
+ * This class controlls/manages the enviroment. You can get a copy of the current enviroment, load and save SVG files.
  *
  */
 public class Physical2DEnvironmentController extends EnvironmentController implements Observer {
@@ -485,6 +486,33 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 		setChanged();
 		notifyObservers(new Integer(ENVIRONMENT_CHANGED));
 	}
+	
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private void addToAgentList(Physical2DObject  obj)
+	{	
+		if(obj instanceof ActiveObject)
+		{
+					
+	        String className= ((ActiveObject) obj).getAgentClassName();
+	        if(className==""||className==null)
+	        {
+	        	return;
+	        }
+	        try
+	        {
+	          
+	        	Class cls=Class.forName(className);
+				AgentClassElement4SimStart simStart=new AgentClassElement4SimStart(cls,this.currProject.getProjectName());
+				this.agents2Start.addElement(simStart);
+		    }
+		    catch(Exception e)
+		    {
+		       	e.printStackTrace();
+		    }
+		}
+	}
+	
 	/**
 	 * This method is called by the EnvironmentSetup to create or change Physical2DObjects 
 	 * @param settings
@@ -495,6 +523,7 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 		if(selectedObject == null){
 			// Create mode
 			Physical2DObject newObject = createObject(settings);
+			addToAgentList(newObject);
 			envWrap.addObject(newObject);
 			success = (newObject != null);
 		}else{
@@ -750,6 +779,8 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 	@Override
 	protected void loadEnvironment() {
 		SimulationSetup currentSetup = getCurrentSimSetup(); 
+		
+				
 		// Load SVG file if specified
 		if(currentSetup.getSvgFileName() != null && currentSetup.getSvgFileName().length() >0){
 			currentSVGPath = envFolderPath + currentSetup.getSvgFileName();
@@ -764,7 +795,8 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 		if(this.svgDoc != null && this.environment == null){
 			setEnvironment(initEnvironment());
 		}
-	
+
+		this.registerDefaultListModel4SimulationStart(SimulationSetup.AGENT_LIST_EnvironmentConfiguration);
 	}
 
 
