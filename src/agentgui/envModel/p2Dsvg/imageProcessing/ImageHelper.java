@@ -1,21 +1,37 @@
-/** 
- * This class provides the functionality to calculate a way from point A to Point B based on the
- * astar algoritmn. The used heuristic is the distance between the current position and the starting point and
- * the distance to the destination point.
- * 
- * @author Tim Lewen
- * 
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
  */
 package agentgui.envModel.p2Dsvg.imageProcessing;
 
-import jade.core.AID;
-
 import java.awt.Color;
-import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Stack;
 import java.util.Vector;
@@ -27,11 +43,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.svg.SVGDocument;
 
 import agentgui.envModel.p2Dsvg.ontology.ActiveObject;
 import agentgui.envModel.p2Dsvg.ontology.PassiveObject;
-import agentgui.envModel.p2Dsvg.ontology.Physical2DEnvironment;
 import agentgui.envModel.p2Dsvg.ontology.Physical2DObject;
 import agentgui.envModel.p2Dsvg.ontology.Position;
 import agentgui.envModel.p2Dsvg.ontology.PositionUpdate;
@@ -40,11 +54,12 @@ import agentgui.envModel.p2Dsvg.provider.EnvironmentProviderHelper;
 import agentgui.envModel.p2Dsvg.utils.EnvironmentWrapper;
 
 
-
+/**
+ * The class provides methods for dynamic path finding. It also can detect collissions.
+ *  * @author Tim Lewen - DAWIS - ICB - University of Duisburg - Essen
+ *
+ */
 public class ImageHelper { 
-
-	private static final long serialVersionUID = -9171029311830052421L;
-
 	public static final int DIRECTION_FORWARD=0;
 	public static final int DIRECTION_BACKWARD=1;
 	public static final int DIRECTION_LEFT=2;
@@ -60,7 +75,6 @@ public class ImageHelper {
 	int divideWidth;
 	double lastDistance=-20;
 	private BufferedImage evn=null;
-	private BufferedImage plan=null;
 	int endung=0;
 	private float firstX;
 	private float firstY;
@@ -486,9 +500,6 @@ public class ImageHelper {
 		    	{
 		    	if(DEBUG)
 		    	{
-		    	SVGSafe sg=new SVGSafe();
-				//System.out.println("Rekursion!");
-				sg.write("WayPath_"+id +","+counter+".svg", doc);
 		    	}
 				//System.out.println("Write File");
 				//System.out.println("Rek with:"+ (lookAhead-2) +" ID:"+id);
@@ -510,16 +521,16 @@ public class ImageHelper {
 			
 			if(this.getDistance(target_x, target_y, currentXPos, currentYPos)<=10)
 			{
-			
-				SVGSafe sg=new SVGSafe();
+				
 				//sg.write("WayPath"+counter+".svg", doc);
 				  //System.out.println("ID vollkommen:" + id);
 				  if(DEBUG)
 			    	{
 			 
 					//System.out.println("Rekursion!");
-					sg.write("WayPath_"+id +","+counter+".svg", doc);
+					//sg.write("WayPath_"+id +","+counter+".svg", doc);
 			    	}
+				
 			  return current;
 			}
 			
@@ -528,9 +539,7 @@ public class ImageHelper {
 		}
 		if(DEBUG)
     	{
-    	SVGSafe sg=new SVGSafe();
-		//System.out.println("Rekursion!");
-		sg.write("WayPath_"+id +","+counter+".svg", doc);
+    	
     	}
 		  //System.out.println("ID vollkommen:" + id);
 		  return current;
@@ -668,29 +677,8 @@ public class ImageHelper {
 	
 	public synchronized agentgui.envModel.p2Dsvg.imageProcessing.StepNode createPlanImage(String id,Position target , int direction , float lookAhead) throws Exception
 	{
-		System.out.println("First Call:"+FIRST_CALL);
 		
-		synchronized (this) {
-		if(!READ_WORLD&&!IS_IN_METHOD&FIRST_CALL)
-		{
-		FIRST_CALL=false;
-		
-		System.out.println(id + " erstell Welt");
-		//this.createManipulatedWorldWithAgents(otherAgent);
-		}
-		else
-		{
-		System.out.println(id + " liest Welt");
-		this.evn=ImageIO.read(new File("myWorld.jpg"));	
-		}
-			
-		}
-		
-		while(!READ_WORLD)
-		{
-			System.out.println("Warte!"+id);
-			Thread.sleep(50);
-		}
+		this.evn=this.createManipulatedWorldPerAgent();
 		
 		Document doc=helper.getSVGDoc();
 
@@ -723,8 +711,6 @@ public class ImageHelper {
 
 	public synchronized agentgui.envModel.p2Dsvg.imageProcessing.StepNode createPlanImage(ArrayList<CombinedNameAndPos> otherAgent, Position own,String id ,String target , float lookAhead, double discreteTime) throws Exception
 	{
-		Position pos;
-			
 		synchronized (this) {		
 		this.evn=this.createManipulatedWorldWithAgents(otherAgent,id,discreteTime);
 		if(this.evn==null)
@@ -745,8 +731,7 @@ public class ImageHelper {
 		final float height=Float.parseFloat(self.getAttribute("height"));
 		float x=own.getXPos()*10.0f;
 		float y=own.getYPos()*10.0f;
-		System.out.println("First x:"+x);
-		System.out.println("First y:"+y);
+		
 		this.firstX=x;
 		this.firstY=y;
 		agentgui.envModel.p2Dsvg.imageProcessing.StepNode root=new agentgui.envModel.p2Dsvg.imageProcessing.StepNode();
@@ -770,19 +755,18 @@ public class ImageHelper {
 	
 	public synchronized agentgui.envModel.p2Dsvg.imageProcessing.StepNode createPlanImage(String otherAgent,Position own,String id ,Position target , int direction , float lookAhead) throws Exception
 	{
-		System.out.println("First Call:"+FIRST_CALL);
-		
+				
 		synchronized (this) {
 		if(!READ_WORLD&&!IS_IN_METHOD&FIRST_CALL)
 		{
 		FIRST_CALL=false;
 		
-		System.out.println(id + " erstell Welt");
+		
 		//this.evn=this.createManipulatedWorldWithAgents(otherAgent);
 		}
 		else
 		{
-		System.out.println(id + " liest Welt");
+
 		this.evn=ImageIO.read(new File("myWorld.jpg"));	
 		}
 			
@@ -790,7 +774,7 @@ public class ImageHelper {
 		
 		while(!READ_WORLD)
 		{
-			System.out.println("Warte!"+id);
+			
 			Thread.sleep(50);
 		}
 		Document doc=helper.getSVGDoc();
@@ -1144,7 +1128,7 @@ public class ImageHelper {
 	    }
 	    
  		
- 		this.plan=ImageIO.read(new File("plan.jpg"));
+ 		ImageIO.read(new File("plan.jpg"));
         this.endung++;
     	return elements;
 		
@@ -1274,12 +1258,15 @@ public class ImageHelper {
 	
 	public synchronized BufferedImage createManipulatedWorldPerAgent()
 	{
-	
+
 		try
 		{
 			
-				System.out.println("Bin drin!");
+			
+			
 				Document doc=helper.getSVGDoc();
+				
+			
 				EnvironmentWrapper envWrap = new EnvironmentWrapper(helper.getEnvironment());
 				Vector<StaticObject> obstacles=envWrap.getObstacles();
 				Vector<ActiveObject> agents=envWrap.getAgents();
@@ -1299,6 +1286,7 @@ public class ImageHelper {
 	    	 	           	Node tmp= element.getParentNode();
 	    	 	           	tmp.removeChild(element);
 	             }  
+			
 			NodeList list=doc.getElementsByTagName("rect");
 			for(int i=0;i<list.getLength();i++)
 			{
@@ -1310,7 +1298,7 @@ public class ImageHelper {
 	    		break;
 				}	  	
 			}
-			
+			System.out.println("Nodes ready");
 			for(StaticObject obj: obstacles)
 			{		
 				Element element=doc.getElementById(obj.getId());
@@ -1333,6 +1321,7 @@ public class ImageHelper {
 	    	    	style.setValue(oldVal);
 	    	}
 		 }
+			System.out.println("Obstacles ready");
 		//SVGImage img=new SVGImage( (SVGDocument)doc);
 		//this.evn=(BufferedImage) img.createBufferedImage();
 			
@@ -1348,12 +1337,14 @@ public class ImageHelper {
 			}
 			save.write(name+".svg", doc);
 			save.writeJPG(name+".svg");
+			System.out.println("Image geschrieben");
 			this.evn=ImageIO.read(new File(name+".jpg"));
 			return evn;	
 		}
 		catch(Exception e)
 		{
 			e.printStackTrace();
+			System.out.println("Return null!");
 			return null;
 		}
 	}
@@ -1417,14 +1408,6 @@ public class ImageHelper {
 							else
 							{
 								Element elem=doc.getElementById(obj.getId());
-								if(elem==null)
-								{
-								System.out.println("Element ist null!");
-								}
-								else
-								{
-									System.out.println("Element gefunden!");
-								}
 								float otherX=Float.parseFloat(elem.getAttribute("x"));
 								float otherY=Float.parseFloat(elem.getAttribute("y"));
 											
@@ -1516,7 +1499,7 @@ public class ImageHelper {
 			save.write(name+".svg", doc);
 			save.writeJPG(name+".svg");
 			this.evn=ImageIO.read(new File(name+".jpg"));
-			System.out.println("Saved");
+			
 		
 			/**
 			for(int counter=0;i<otherAgent.size();counter++)
@@ -1545,8 +1528,6 @@ public class ImageHelper {
 	    Position lastPosition=null;
 	    Answer answer=new Answer();
 		boolean reached=false;
-		float total=0.0f;
-		double total_time=0.0d;
 		ArrayList<Position> partSolution=new ArrayList<Position>();
 		float xPosDiff=0.0f; // Difference
 		float yPosDiff=0.0f; // Difference
@@ -1566,8 +1547,6 @@ public class ImageHelper {
 				if(total_seconds<=msInSeconds) // it's smaller so we can contioue walking
 				{
 				  reached=true;
-				  total+=dist;
-				  total_time+=seconds;
 				  multiStep=true;
 				  lastIndex++;	// Increase the Index 
 				  	if(lastIndex<position.size()) // Are we add the end?
@@ -1581,8 +1560,7 @@ public class ImageHelper {
 				   		add.setXPos(newPos.getXPos());
 				   		add.setYPos(newPos.getYPos());
 				 	    partSolution.add(add);			
-				 	   // System.out.println(" wird hinzugefügt" + newPos.getXPos() + ",y:" + newPos.getYPos());
-				 	    // System.out.println("X Pos:"+newPos.getXPos() + ",y:" + newPos.getYPos());:"+ Pos:"+newPos.getXPos() + ",y:" + newPos.getYPos());
+				 	   
 				   }
 				   else
 				   {
@@ -1598,7 +1576,7 @@ public class ImageHelper {
 					   add.setXPos(newPos.getXPos());
 				   	   add.setYPos(newPos.getYPos());
 				 	   partSolution.add(add);
-				 	   //System.out.println(" wird hinzugefügt:"+newPos.getXPos() + ",y:" + newPos.getYPos());
+				 	 
 				 	 
 					   PositionUpdate posUpdate=new PositionUpdate();
 					   posUpdate.setNewPosition(newPos);
@@ -1611,18 +1589,15 @@ public class ImageHelper {
 				}
 				else // The distance is too huge to do in one step
 				{
-					//System.out.println("zu groß!");
+					
 					boolean flag=false;
 					reached=false; // We haven't reached the full distance
 					double max=((speed)*(msInSeconds)); // Calculate the maximum distance we can walk. Result is in meter and seconds
-					//System.out.println("Speed:"+speed);
-					//System.out.println("Ms in Seconds:"+msInSeconds);
 					if(multiStep) // We need to take the difference
 					{
 						//System.out.println("Multi Step");
 						double dif=Math.abs(msInSeconds-total_seconds+seconds);
 						
-						total_time+=dif;
 						if(msInSeconds-total_seconds+seconds<0)
 						{
 							flag=true;
@@ -1631,14 +1606,10 @@ public class ImageHelper {
 					}
 					else
 					{
-					 //  System.out.println("Kein MultiStep");
-					   total_time+=msInSeconds;	
-					   total_seconds=msInSeconds+1;
+					 total_seconds=msInSeconds+1;
 					}
 					if(!flag)
 					{
-					
-					total+=max;
 					
 					max*=10; // calculate into pixel
 				
@@ -1662,13 +1633,9 @@ public class ImageHelper {
 					{
 						correctYDif=max*-1;
 					}
-					//System.out.println("CorrectXDif:"+correctXDif);
-				//	System.out.println("CorrectYDif:"+ correctYDif);
+				
 					double newXValue=selfPos.getXPos()+correctXDif;
-					//System.out.println("NewXValue:"+newXValue);
-	
 					double newYValue=selfPos.getYPos()+correctYDif;
-					//System.out.println("NewYValue:"+newYValue);
 					newPos.setXPos( (float) newXValue);
 					newPos.setYPos( (float) newYValue);
 					lastPosition=new Position();
@@ -1692,12 +1659,8 @@ public class ImageHelper {
 			Position add=new Position();
 			add.setXPos(newPos.getXPos());
 			add.setYPos(newPos.getYPos());
-			//System.out.println("adde zur Liste:"+newPos.getXPos() + ",y:" + newPos.getYPos());
 		 	partSolution.add(add);
-			answer.setSpeed(new Long((long)speed));
-			//System.out.println("Size of Partsolitin in getMiddle:"+partSolution.size());
 		    answer.setWayToDestination(partSolution);	
-		    //System.out.println("Set Last Index:"+ lastIndex);#
 		    if(reached)
 		    {
 		    	lastIndex++;
@@ -1708,9 +1671,7 @@ public class ImageHelper {
 		    {
 		    	destPos=lastPosition;
 		    }
-		//	System.out.println("Self Position after:"+selfPos.getXPos()+","+selfPos.getYPos());
-			//System.out.println("Destination after:" +destPos.getXPos()+","+destPos.getYPos());
-		//	System.out.println("Index:"+lastIndex);
+		
 		    answer.setIndex(lastIndex);
 			answer.setNextPosition(destPos);
 			posUpdate.setCustomizedParameter(answer);
@@ -1721,13 +1682,18 @@ public class ImageHelper {
 	public Stack<Position> orderAndMiddleCoordinates(StepNode way,float agentWidth,float agentHeight,float factor)
 	{
 		Stack<Position> pos=new Stack<Position>();
+		System.out.println("Agent Height:"+ agentHeight);
+		System.out.println("Agent Width:"+ agentWidth);
 		while(way.getParent()!=null) 
 		{
 			 	Position p=new Position();
+			 	System.out.println("Before Motivated:"+way.getX()+","+way.getY());
+			 	
 				float x=(way.getX()+agentWidth/2); // middle it
 				float y=(way.getY()+agentHeight/2); // middle it
 				p.setXPos(x/factor);
 				p.setYPos(y/factor);
+				System.out.println("Add:"+p.getXPos()+"," + p.getYPos());
 				pos.add(0,p);	
 				way=way.getParent();
 		}
@@ -1772,7 +1738,6 @@ public class ImageHelper {
 						if(min!=0)
 						{
 						Physical2DObject obj=new Physical2DObject();
-						Position pos=new Position();
 						if(iter<ownAgentPositions.size())
 						{
 						obj.setPosition(ownAgentPositions.get(iter));

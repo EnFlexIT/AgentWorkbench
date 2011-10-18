@@ -1,25 +1,45 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.envModel.p2Dsvg.imageProcessing;
 
-import java.awt.image.BufferedImage;
-
 import java.awt.Paint;
-
-import java.io.File;
-import java.io.FileInputStream;
+import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.io.Reader;
-
 import java.net.URL;
-
 import java.util.Map;
 
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.TranscodingHints;
-
 import org.apache.batik.transcoder.image.ImageTranscoder;
-
 import org.w3c.dom.svg.SVGDocument;
 
 /**
@@ -95,7 +115,8 @@ public class SVGImage {
     /**
      * Returns the image that represents the SVG document.
      */
-    public BufferedImage createBufferedImage() throws TranscoderException {
+    @SuppressWarnings("rawtypes")
+	public BufferedImage createBufferedImage() throws TranscoderException {
         Rasterizer r = new Rasterizer();
         r.setTranscodingHints((Map)hints);
         r.transcode(input, null);
@@ -138,7 +159,8 @@ public class SVGImage {
      *
      * @param px2mm the pixel to millimeter convertion factor.
      */
-    public void setPixelToMMFactor(float px2mm) {
+    @SuppressWarnings("deprecation")
+	public void setPixelToMMFactor(float px2mm) {
         hints.put(ImageTranscoder.KEY_PIXEL_TO_MM, new Float(px2mm));
     }
 

@@ -1,6 +1,30 @@
 /**
- * The class can safe SVG Documents in the JPG or SVG format.
- * 
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
  */
 package agentgui.envModel.p2Dsvg.imageProcessing;
 
@@ -20,13 +44,22 @@ import org.apache.batik.transcoder.svg2svg.SVGTranscoder;
 import org.apache.batik.util.SVGConstants;
 import org.w3c.dom.Document;
 
+/**
+ * This class can save a document in the SVG file and convert a SVG file into a JPG.
+ * @author Tim Lewen - DAWIS - ICB - University of Duisburg - Essen
+ *
+ */
 public class SVGSafe {
+    
+    /** The hints. */
     protected TranscodingHints hints = new TranscodingHints();
     
 	/**
+	 * Write.
+	 *
 	 * @param svgFile The Filename
 	 * @param svgDoc  The document
-	 * @throws Exception
+	 * @throws Exception the exception
 	 */
 	public synchronized void write(String svgFile,Document svgDoc) throws Exception
 	{
@@ -45,14 +78,16 @@ public class SVGSafe {
 	}
 	
 	/**
+	 * Write jpg.
+	 *
 	 * @param filename The filename  of the SVG File
 	 * @return Returns the filename of JPG File
-	 * @throws Exception
+	 * @throws Exception the exception
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public synchronized String writeJPG(String filename) throws Exception
 	{
-		   System.out.println("Write JPG is called!");
+		
 		   JPEGTranscoder transcoder = new JPEGTranscoder();
 		   TranscoderInput input = new TranscoderInput(new FileInputStream(new File(filename)));
 		   String newFileName=filename.replace("svg", "jpg");
