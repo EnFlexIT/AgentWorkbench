@@ -645,7 +645,7 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 	 * Adds the object with the given objectID to the playground with the given playgroundID
 	 * @param objectId
 	 * @param playgroundId
-	 * @return 
+	 * @return true if the change can be performed otherweise false.
 	 */
 	public boolean moveObjectToPlayground(String objectId, String playgroundId){
 		Physical2DObject object = envWrap.getObjectById(objectId);
