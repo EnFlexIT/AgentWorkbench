@@ -1,28 +1,81 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
+
 package agentgui.envModel.p2Dsvg.behaviours;
 
-
-import java.util.Iterator;
-
-import javax.jws.soap.SOAPBinding.Use;
-
-import agentgui.core.application.Language;
-import agentgui.envModel.p2Dsvg.ontology.ActiveObject;
-import agentgui.envModel.p2Dsvg.ontology.Movement;
-import agentgui.envModel.p2Dsvg.ontology.PassiveObject;
-import agentgui.envModel.p2Dsvg.ontology.Physical2DObject;
-import agentgui.envModel.p2Dsvg.ontology.PlaygroundObject;
-import agentgui.envModel.p2Dsvg.ontology.Position;
-import agentgui.envModel.p2Dsvg.provider.EnvironmentProviderHelper;
-import agentgui.envModel.p2Dsvg.provider.EnvironmentProviderService;
 import jade.core.Agent;
 import jade.core.ServiceException;
 import jade.core.behaviours.TickerBehaviour;
+import agentgui.core.application.Language;
+import agentgui.envModel.p2Dsvg.ontology.ActiveObject;
+import agentgui.envModel.p2Dsvg.ontology.Movement;
+import agentgui.envModel.p2Dsvg.ontology.Physical2DObject;
+import agentgui.envModel.p2Dsvg.ontology.Position;
+import agentgui.envModel.p2Dsvg.provider.EnvironmentProviderHelper;
+import agentgui.envModel.p2Dsvg.provider.EnvironmentProviderService;
 
 /**
  * This behaviour implements an agent's movement to a destination point in a straight line 
- * @author Nils
+ * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
+ * @deprecated Use ImageHelper instead
+ * @see  agentgui.envModel.p2Dsvg.imageProcessing.ImageHelper
  *
  */
+ @Deprecated 
 public class MoveToPointBehaviour extends TickerBehaviour {
 	/**
 	 * Time between to position checks. Should match the EnvironmentProviderAgent's period 
@@ -187,30 +240,5 @@ public class MoveToPointBehaviour extends TickerBehaviour {
 		return playground.objectContains(selfAtDestPos);
 	}
 	
-	/**
-	 * @return Collision with other Physical2DObjects?
-	 */
-	@SuppressWarnings("unchecked")
-	private boolean checkCollisions(){
-		// Get the agent's Physical2DObject
-		Physical2DObject self = helper.getObject(myAgent.getLocalName());
-		// Get the agent's parent playground
-		PlaygroundObject parentPG = (PlaygroundObject) helper.getObject(self.getParentPlaygroundID());
-			
-		// Check for collisions with every Physical2DObject inside the playground
-		Iterator<Physical2DObject> pgObjects = parentPG.getAllChildObjects();
-		while(pgObjects.hasNext()){
-			Physical2DObject object = pgObjects.next();
-			if( (!object.getId().equals(self.getId()))			// Object can't collide with itself 
-					&& ! (object instanceof PassiveObject) 		// Collisions with PassiveObjects disabled
-					&& self.objectIntersects(object)			// Check for collision
-			){
-				System.err.println(Language.translate("Kollision mit Objekt "+object.getId()));
-				return true;
-			}
-		}
-		return false;
-	}
-
-
+	
 }
