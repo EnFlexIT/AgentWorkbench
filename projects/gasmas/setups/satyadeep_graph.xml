@@ -54,8 +54,8 @@
         </agent>
     </agentSetup>
     <distribution>
-        <doDynamicLoadBalalncing>false</doDynamicLoadBalalncing>
-        <doStaticLoadBalalncing>false</doStaticLoadBalalncing>
+        <doDynamicLoadBalancing>false</doDynamicLoadBalancing>
+        <doStaticLoadBalancing>false</doStaticLoadBalancing>
         <dynamicLoadBalancingClass>agentgui.simulationService.balancing.DynamicLoadBalancing</dynamicLoadBalancingClass>
         <numberOfAgents>0</numberOfAgents>
         <numberOfContainer>0</numberOfContainer>

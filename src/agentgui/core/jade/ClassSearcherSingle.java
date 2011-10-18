@@ -358,22 +358,13 @@ public class ClassSearcherSingle {
 	 */
 	private class ClassUpdater extends Thread implements ClassFinderListener {
 
-		/** The update every. */
 		private int updateEvery = 1;
-		
-		/** The number of classes. */
 		private int numberOfClasses;
-
-		/** The class names cache. */
-		private List<Class<?>> classNamesCache;
 		
-		/** The classname. */
+		private List<Class<?>> classNamesCache;
 		private String classname;
 		
-		/** The cf. */
 		private ClassFinder cf;
-		
-		/** The classfilter. */
 		private ClassFinderFilter classfilter;
 
 		

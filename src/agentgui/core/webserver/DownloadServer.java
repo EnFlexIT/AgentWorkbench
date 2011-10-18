@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.core.webserver;
 
 import java.io.*;
@@ -9,6 +37,14 @@ import agentgui.core.application.Project;
 import agentgui.core.common.FileCopier;
 import agentgui.core.network.PortChecker;
 
+/**
+ * This class provides the main class of the <b>Agent.GUI</b> web server for the
+ * resources download to remote hosts.<br>
+ * During instantiation of the web server 5 further worker threads will be started
+ * in order to handle the client request.  
+ * 
+ * @see DownloadWorker
+ */
 public class DownloadServer implements HttpConstants, Runnable {
 
     private Vector<DownloadWorker> threads = new Vector<DownloadWorker>();		/* Where worker threads stand idle */
@@ -29,6 +65,9 @@ public class DownloadServer implements HttpConstants, Runnable {
     public DownloadServer() {
     }
     
+    /* (non-Javadoc)
+     * @see java.lang.Runnable#run()
+     */
     @Override
 	public void run() {
     	
@@ -77,7 +116,7 @@ public class DownloadServer implements HttpConstants, Runnable {
 	}
     
     /**
-     * This method stops the Download - Webserver
+     * This method stops the download-web server.
      */
     public synchronized void stop() {
 	
@@ -110,8 +149,9 @@ public class DownloadServer implements HttpConstants, Runnable {
 	}
     
     /**
-     * Returns the Webserver-Address including the currently used port 
-     * @return
+     * Returns the webserver-Address including the currently used port.
+     *
+     * @return the hTTP address
      */
     public String getHTTPAddress() {
     	
@@ -130,7 +170,9 @@ public class DownloadServer implements HttpConstants, Runnable {
     /**
      * This method will place the specific project-resources (jar-files)
      * in the download-folder and will leave the http-Addresses of this
-     * files as complete download-link in Project.downloadResources 									
+     * files as complete download-link in Project.downloadResources
+     *
+     * @param project the project with its download resources
      */
     public void setProjectDownloadResources(Project project) {
     	 
@@ -188,9 +230,9 @@ public class DownloadServer implements HttpConstants, Runnable {
 					// --- Pack a jar of all class-files of the current project -------
 					String pathBin = singelSourceFile.getAbsolutePath();
 					String pathBinHash = ((Integer)pathBin.hashCode()).toString();
-					JarFileCreater jarCreator = new JarFileCreater(pathBin, null);
+					JarFileCreator jarCreator = new JarFileCreator(pathBin);
 					
-					String jarArchiveName = "BIN_DUMP_IDE_" + pathBinHash + ".jar";
+					String jarArchiveName = "BIN_DUMP_" + pathBinHash + ".jar";
 					String jarArchivePath = destinDirName + pathSep + jarArchiveName;
 					File jarArchiveFile = new File(jarArchivePath);
 					jarCreator.createJarArchive(jarArchiveFile);
@@ -240,7 +282,7 @@ public class DownloadServer implements HttpConstants, Runnable {
 			
 			// --- Pack a jar of all class-files of the current project ------------
 			String pathBin = Application.RunInfo.PathBaseDirIDE_BIN();
-			JarFileCreater jarCreator = new JarFileCreater(pathBin, project.getProjectFolder());
+			JarFileCreator jarCreator = new JarFileCreator(pathBin, project.getProjectFolder());
 			
 			String jarArchiveName = project.getProjectFolder() + "_IDE.jar";
 			String jarArchivePath = destinDirName + pathSep + jarArchiveName;
@@ -255,9 +297,11 @@ public class DownloadServer implements HttpConstants, Runnable {
     	// --- Store the download links of the resources in the Project-Instance ---
     	project.downloadResources = downloadLinks;
     }
+    
     /**
-     * Deletes a folder and all subelements
-     * @param directory
+     * Deletes a folder and all sub elements.
+     *
+     * @param directory the directory
      */
     private void deleteFolder(File directory) {
     	
@@ -271,40 +315,62 @@ public class DownloadServer implements HttpConstants, Runnable {
 
 
     /**
-	 * @return the threads
-	 */
+     * Gets the threads.
+     *
+     * @return the threads
+     */
 	public Vector<DownloadWorker> getThreads() {
 		return threads;
 	}
+	
 	/**
+	 * Sets the threads.
+	 *
 	 * @param threads the threads to set
 	 */
 	public void setThreads(Vector<DownloadWorker> threads) {
 		this.threads = threads;
 	}
+	
 	/**
+	 * Gets the root.
+	 *
 	 * @return the root
 	 */
 	public File getRoot() {
 		return root;
 	}
+	
 	/**
+	 * Sets the root.
+	 *
 	 * @param root the root to set
 	 */
 	public void setRoot(File root) {
 		this.root = root;
 	}
+	
+	/**
+	 * Sets the root.
+	 *
+	 * @param rootDirectory the new root
+	 */
 	public void setRoot(String rootDirectory) {
 		this.root = new File(rootDirectory);
 	}
 	
 	/**
+	 * Gets the port.
+	 *
 	 * @return the port
 	 */
 	public int getPort() {
 		return port;
 	}
+	
 	/**
+	 * Sets the port.
+	 *
 	 * @param port the port to set
 	 */
 	public void setPort(int port) {
@@ -312,12 +378,17 @@ public class DownloadServer implements HttpConstants, Runnable {
 	}
 	
 	/**
+	 * Gets the timeout.
+	 *
 	 * @return the timeout
 	 */
 	public int getTimeout() {
 		return timeout;
 	}
+	
 	/**
+	 * Sets the timeout.
+	 *
 	 * @param timeout the timeout to set
 	 */
 	public void setTimeout(int timeout) {
@@ -325,12 +396,17 @@ public class DownloadServer implements HttpConstants, Runnable {
 	}
 	
 	/**
+	 * Gets the workers.
+	 *
 	 * @return the workers
 	 */
 	public int getWorkers() {
 		return workers;
 	}
+	
 	/**
+	 * Sets the workers.
+	 *
 	 * @param workers the workers to set
 	 */
 	public void setWorkers(int workers) {

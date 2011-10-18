@@ -184,8 +184,9 @@ public class ClassFinder {
 
 		Iterator it = map.keySet().iterator();
 		while (it.hasNext()) {
+			Object nextURL = it.next();
 			@SuppressWarnings("unused")
-			URL url = (URL)it.next();
+			URL url = (URL)nextURL;
 		}
 
 		return map;

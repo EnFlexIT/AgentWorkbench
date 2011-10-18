@@ -46,7 +46,7 @@ import agentgui.core.gui.components.JListClassSearcher;
  * The found classes will be stored and used in several user views like 'Configuration' - 'Agents'<br> 
  * or for the selection of an ontology.<br>
  * <br>
- * Within Agent.GUI and for the visualization of the search result, the {@link JListClassSearcher} is used.<br> 
+ * Within Agent.GUI and for the visualisation of the search result, the {@link JListClassSearcher} is used.<br> 
  * 
  * @see Agent
  * @see Ontology
@@ -152,30 +152,30 @@ public class ClassSearcher {
 	}
 	
 	/**
-	 * Gets the agent classe.
+	 * Gets the agent classes.
 	 *
 	 * @param filtered the filtered
-	 * @return the agent classe
+	 * @return the agent classes
 	 */
 	public Vector<Class<?>> getAgentClasse(boolean filtered) {
 		return csAgents.getClassesFound(filtered);
 	}
 	
 	/**
-	 * Gets the ontologie classe.
+	 * Gets the ontology classes.
 	 *
 	 * @param filtered the filtered
-	 * @return the ontologie classe
+	 * @return the ontology classes
 	 */
 	public Vector<Class<?>> getOntologieClasse(boolean filtered) {
 		return csOntologies.getClassesFound(filtered);
 	}
 	
 	/**
-	 * Gets the base service classe.
+	 * Gets the base service classes.
 	 *
 	 * @param filtered the filtered
-	 * @return the base service classe
+	 * @return the base service classes
 	 */
 	public Vector<Class<?>> getBaseServiceClasse(boolean filtered) {
 		return csBaseService.getClassesFound(filtered);

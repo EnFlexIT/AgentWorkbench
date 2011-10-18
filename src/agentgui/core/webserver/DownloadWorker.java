@@ -1,9 +1,43 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.core.webserver;
 
 import java.io.*;
 import java.net.*;
 import java.util.*;
 
+/**
+ * This class will be used within the {@link DownloadServer} as handler for
+ * HTTP-requests.
+ *  
+ * @see DownloadServer
+ */
 public class DownloadWorker extends DownloadServer implements HttpConstants, Runnable {
 
 	final static int BUF_SIZE = 2048;
@@ -15,21 +49,37 @@ public class DownloadWorker extends DownloadServer implements HttpConstants, Run
     private DownloadServer server = null;
     private boolean stopWorker = false;
     
+    /**
+     * Instantiates a new download worker.
+     *
+     * @param webServer the web server
+     */
     public DownloadWorker(DownloadServer webServer) {
     	this.server = webServer;
         this.buf = new byte[BUF_SIZE];
         this.s = null;
     }
 
+    /**
+     * Sets the socket.
+     *
+     * @param s the new socket
+     */
     synchronized void setSocket(Socket s) {
         this.s = s;
         notify();
     }
 
+	/**
+	 * Stop execution.
+	 */
 	public void stopExecution() {
 		this.stopWorker = true;
 	}
 
+    /* (non-Javadoc)
+     * @see agentgui.core.webserver.DownloadServer#run()
+     */
     public synchronized void run() {
         while(true) {
             if (s == null) {
@@ -65,6 +115,11 @@ public class DownloadWorker extends DownloadServer implements HttpConstants, Run
         }
     }
 
+    /**
+     * Handle client.
+     *
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     void handleClient() throws IOException {
         
     	InputStream is = new BufferedInputStream(s.getInputStream());
@@ -168,6 +223,14 @@ outerloop:
         }
     }
 
+    /**
+     * Prints the headers.
+     *
+     * @param targ the targ
+     * @param ps the ps
+     * @return true, if successful
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     boolean printHeaders(File targ, PrintStream ps) throws IOException {
         
     	boolean ret = false;
@@ -216,12 +279,26 @@ outerloop:
         return ret;
     }
 
+    /**
+     * Send404.
+     *
+     * @param targ the targ
+     * @param ps the ps
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     void send404(File targ, PrintStream ps) throws IOException {
         ps.write(EOL);
         ps.write(EOL);
         ps.println("Not Found\n\n" + "The requested resource was not found.\n");
     }
 
+    /**
+     * Send file.
+     *
+     * @param targ the targ
+     * @param ps the ps
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     void sendFile(File targ, PrintStream ps) throws IOException {
         InputStream is = null;
         ps.write(EOL);
@@ -243,15 +320,26 @@ outerloop:
     }
 
     /* mapping of file extensions to content-types */
+    /** The map. */
     static java.util.Hashtable<String, String> map = new java.util.Hashtable<String, String>();
 
     static {
         fillMap();
     }
+    
+    /**
+     * Sets the suffix.
+     *
+     * @param k the k
+     * @param v the v
+     */
     static void setSuffix(String k, String v) {
         map.put(k, v);
     }
 
+    /**
+     * Fill map.
+     */
     static void fillMap() {
         setSuffix("", "content/unknown");
         setSuffix(".uu", "application/octet-stream");
@@ -278,6 +366,13 @@ outerloop:
         setSuffix(".java", "text/plain");
     }
 
+    /**
+     * List directory.
+     *
+     * @param dir the dir
+     * @param ps the ps
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     void listDirectory(File dir, PrintStream ps) throws IOException {
         ps.println("<TITLE>Directory listing</TITLE><P>\n");
         ps.println("<A HREF=\"..\">Parent Directory</A><BR>\n");
