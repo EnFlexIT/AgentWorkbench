@@ -4,8 +4,9 @@
  * applications based on the JADE - Framework in compliance with the 
  * FIPA specifications. 
  * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
  * http://sourceforge.net/projects/agentgui/
- * http://www.dawis.wiwi.uni-due.de/ 
+ * http://www.agentgui.org 
  *
  * GNU Lesser General Public License
  *
@@ -71,8 +72,8 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 
 		if(e.getButton()==MouseEvent.BUTTON1 || e.getButton()==MouseEvent.BUTTON3){			
 			Object pickedObject = null;
-			final VisualizationViewer<GraphNode,GraphEdge> vv =
-                (VisualizationViewer<GraphNode,GraphEdge>)e.getSource();
+			@SuppressWarnings("unchecked")
+			final VisualizationViewer<GraphNode,GraphEdge> vv = (VisualizationViewer<GraphNode,GraphEdge>)e.getSource();
 			Point point = e.getPoint();
 			
 			GraphElementAccessor<GraphNode, GraphEdge>ps = vv.getPickSupport();

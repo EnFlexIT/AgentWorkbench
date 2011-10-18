@@ -4,8 +4,9 @@
  * applications based on the JADE - Framework in compliance with the 
  * FIPA specifications. 
  * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
  * http://sourceforge.net/projects/agentgui/
- * http://www.dawis.wiwi.uni-due.de/ 
+ * http://www.agentgui.org 
  *
  * GNU Lesser General Public License
  *
@@ -37,7 +38,7 @@ import java.awt.geom.Point2D;
 import javax.swing.JPopupMenu;
 
 /**
- * A GraphMousePlugin that brings up distinct popup menus when an edge or vertex is
+ * A GraphMousePlugin that brings up distinct pop up menus when an edge or vertex is
  * appropriately clicked in a graph.  If these menus contain components that implement
  * either the EdgeMenuListener or VertexMenuListener then the corresponding interface
  * methods will be called prior to the display of the menus (so that they can display
@@ -73,8 +74,7 @@ public class GraphPopupMenuMousePlugin<V, E> extends AbstractPopupGraphMousePlug
      * @param e 
      */
     protected void handlePopup(MouseEvent e) {
-        final VisualizationViewer<V,E> vv =
-                (VisualizationViewer<V,E>)e.getSource();
+        final VisualizationViewer<V,E> vv = (VisualizationViewer<V,E>)e.getSource();
         Point2D p = e.getPoint();
         
         GraphElementAccessor<V,E> pickSupport = vv.getPickSupport();
