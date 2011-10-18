@@ -189,7 +189,7 @@ public class DownloadServer implements HttpConstants, Runnable {
     	// -------------------------------------------------------------------------
     	// --- Look for external jar-resources of the project ----------------------
     	// -------------------------------------------------------------------------
-    	for (Iterator<String> iterator = project.projectResources.iterator(); iterator.hasNext();) {
+    	for (Iterator<String> iterator = project.getProjectResources().iterator(); iterator.hasNext();) {
 			
     		// ---------------------------------------------------------------------
     		// --- Create destination directory newly, even if it already exists --- 

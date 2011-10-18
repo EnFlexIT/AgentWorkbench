@@ -287,7 +287,7 @@ public class ClassSelector extends JDialog {
 			gridBagConstraints21.gridy = 4;
 			jLabelSearchCaption = new JLabel();
 			jLabelSearchCaption.setFont(new Font("Dialog", Font.BOLD, 12));
-			jLabelSearchCaption.setText("Suche");
+			jLabelSearchCaption.setText("Suche & Auswahl");
 			jLabelSearchCaption.setText(Language.translate(jLabelSearchCaption.getText()) + ": Class extends " + class2Search4.getName() );
 			GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
 			gridBagConstraints11.fill = GridBagConstraints.BOTH;

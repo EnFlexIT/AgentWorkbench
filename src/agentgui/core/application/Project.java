@@ -35,6 +35,8 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.io.Writer;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Observable;
 import java.util.Vector;
 
@@ -73,7 +75,9 @@ import agentgui.core.plugin.PlugIn;
 import agentgui.core.plugin.PlugInLoadException;
 import agentgui.core.plugin.PlugInNotification;
 import agentgui.core.plugin.PlugInsLoaded;
+import agentgui.core.resources.VectorOfProjectResources;
 import agentgui.core.sim.setup.SimulationSetups;
+import agentgui.core.webserver.JarFileCreator;
 
 /**
  * This is the class, which holds all necessary informations about a project.<br> 
@@ -184,8 +188,8 @@ import agentgui.core.sim.setup.SimulationSetups;
 	 */
 	@XmlElementWrapper(name = "projectResources")
 	@XmlElement(name="projectResource")
-	public Vector<String> projectResources = new Vector<String>();
-
+	private VectorOfProjectResources projectResources = new VectorOfProjectResources();
+	
 	/**
 	 * This Vector handles the list of resources which should be loadable in case of 
 	 * distributed simulations. The idea is, that for example external jar-files can
@@ -708,6 +712,20 @@ import agentgui.core.sim.setup.SimulationSetups;
 	}
 	
 	/**
+	 * Gets the projects temporary folder.
+	 *
+	 * @return the projects temporary folder
+	 */
+	public String getProjectTempFolderFullPath(){
+		String tmpFolder = this.getProjectFolderFullPath() + "~tmp" + File.separator;
+		File tmpFile = new File(tmpFolder);
+		if (tmpFile.exists()==false) {
+			tmpFile.mkdir();
+		}
+		tmpFile.deleteOnExit();
+		return tmpFolder;
+	}
+	/**
 	 * @param projectView the projectView to set
 	 */
 	@XmlTransient
@@ -822,23 +840,86 @@ import agentgui.core.sim.setup.SimulationSetups;
 	}
 	
 	/**
-	 * This method adds external project resources (e.g. *.jar-files) to the CLATHPATH  
+	 * @param projectResources the projectResources to set
+	 */
+	public void setProjectResources(VectorOfProjectResources projectResources) {
+		this.projectResources = projectResources;
+	}
+	/**
+	 * @return the projectResources
+	 */
+	@XmlTransient
+	public VectorOfProjectResources getProjectResources() {
+		return projectResources;
+	}
+	
+	/**
+	 * This method adds external project resources (*.jar-files) to the CLATHPATH  
 	 */
 	public void resourcesLoad() {
 
-		for(String jarFile : projectResources) {
-			
+		for(String jarFile4Display : this.getProjectResources()) {
+
+			String prefixText = null;
+			String suffixText = null;
+
 			try {
-				jarFile = ClassLoaderUtil.adjustPathForLoadin(jarFile, this.getProjectFolderFullPath());
-				File file = new File(jarFile);
-				ClassLoaderUtil.addFile(file.getAbsoluteFile());
-				ClassLoaderUtil.addJarToClassPath(jarFile);
+				
+				String jarFileCorrected = ClassLoaderUtil.adjustPathForLoadIn(jarFile4Display, this.getProjectFolderFullPath());
+				File file = new File(jarFileCorrected);
+				if (file.exists()==false) {
+					prefixText = "ERROR";
+					suffixText = Language.translate("Datei nicht gefunden!");
+					
+				} else if (file.isDirectory()) {
+					prefixText = "";
+					suffixText = "proceeding started";
+					
+					// --- Prepare the path variables -----
+					String pathBin = file.getAbsolutePath();
+					String pathBinHash = ((Integer)pathBin.hashCode()).toString();
+					String jarArchiveFileName = "BIN_DUMP_" + pathBinHash + ".jar";
+					String jarArchivePath = this.getProjectTempFolderFullPath() + jarArchiveFileName;
+					
+					// --- Create the jar-file ------------
+					JarFileCreator jarCreator = new JarFileCreator(pathBin);
+					File jarArchiveFile = new File(jarArchivePath);
+					jarCreator.createJarArchive(jarArchiveFile);
+					jarArchiveFile.deleteOnExit();
+					
+					// --- Add to the class loader --------
+					ClassLoaderUtil.addFile(jarArchiveFile.getAbsoluteFile());
+					ClassLoaderUtil.addJarToClassPath(jarArchivePath);
+					
+					// --- prepare the notification -------
+					SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
+					String dateText = dateFormat.format(new Date());
+					
+					prefixText = "OK";
+					suffixText = Language.translate("Verzeichnis gepackt zu") + " '" + File.separator + "~tmp" + File.separator + jarArchiveFileName + "' " + Language.translate("um") + " " + dateText;
+					
+				} else {
+					ClassLoaderUtil.addFile(file.getAbsoluteFile());
+					ClassLoaderUtil.addJarToClassPath(jarFileCorrected);
+					
+					prefixText = "OK";
+					suffixText = null;
+					
+				}
+				
 			} catch (IOException e) {
 				e.printStackTrace();
+				prefixText = "ERROR";
+				suffixText = e.getMessage();
 			}
+			
+			// --- Set the additional text ----------------
+			this.getProjectResources().setPrefixText(jarFile4Display, prefixText);
+			this.getProjectResources().setSuffixText(jarFile4Display, suffixText);
+			
 		}
 		
-		// --- Nach Agent-, Ontology- und BaseService - Classes suchen ----
+		// --- Search for Agent-, Ontology- and BaseService - Classes ----
 		if (Application.ClassDetector == null) {
 			Application.ClassDetector = new ClassSearcher(this);
 		} else {
@@ -860,11 +941,28 @@ import agentgui.core.sim.setup.SimulationSetups;
 	 */
 	public void resourcesRemove() {
 		
-		for(String jarFile : projectResources) {
+		for(String jarFile : getProjectResources()) {
 			
 			try {
-				jarFile = ClassLoaderUtil.adjustPathForLoadin(jarFile, this.getProjectFolderFullPath());
-				ClassLoaderUtil.removeFile(jarFile);
+				String jarFileCorrected = ClassLoaderUtil.adjustPathForLoadIn(jarFile, this.getProjectFolderFullPath());
+				File file = new File(jarFileCorrected);
+				if (file.isDirectory()) {
+					// --- Prepare the path variables -----
+					String pathBin = file.getAbsolutePath();
+					String pathBinHash = ((Integer)pathBin.hashCode()).toString();
+					String jarArchiveFileName = "BIN_DUMP_" + pathBinHash + ".jar";
+					String jarArchivePath = this.getProjectTempFolderFullPath() + jarArchiveFileName;
+					
+					ClassLoaderUtil.removeFile(jarArchivePath);
+
+					File jarArchiveFile = new File(jarArchivePath);
+					jarArchiveFile.delete();
+					
+				} else {
+					ClassLoaderUtil.removeFile(jarFileCorrected);
+					
+				}
+				
 			} catch (RuntimeException e1) {
 				e1.printStackTrace();
 			} catch (NoSuchFieldException e1) {

@@ -219,9 +219,6 @@ public class ProjectsLoaded {
 			newProject.checkCreateSubFolders();
 		}
 		
-		// --- ClassLoader/CLASSPATH laden ------------------------------------
-		newProject.resourcesLoad();
-		
 		// --- Das Ontologie-Objekt beladen ----------------------------------- 
 		newProject.ontologies4Project = new Ontologies4Project(newProject);
 
@@ -241,7 +238,10 @@ public class ProjectsLoaded {
 		// --- Projektfenster und Standard-Tabs anhängen ----------------------
 		newProject.projectWindow = new ProjectWindow(newProject);
 		newProject.addDefaultTabs();
-		
+
+		// --- ClassLoader/CLASSPATH laden ------------------------------------
+		newProject.resourcesLoad();
+
 		// --- Konfigurierte PlugIns laden ------------------------------------
 		newProject.plugInVectorLoad();
 		

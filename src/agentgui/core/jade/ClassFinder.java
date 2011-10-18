@@ -40,6 +40,7 @@ import java.io.IOException;
 import java.net.JarURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Enumeration;
@@ -263,7 +264,9 @@ public class ClassFinder {
 			}
 			jarURL = new URL("file:" + canonicalPath);
 			jarURL = new URL("jar:" + jarURL.toExternalForm() + "!/");
-			JarURLConnection conn = (JarURLConnection) jarURL.openConnection();
+			
+			URLConnection urlConnection = jarURL.openConnection();
+			JarURLConnection conn = (JarURLConnection) urlConnection;
 			jar = conn.getJarFile();
 		} catch (Exception e) {
 			// not a JAR or disk I/O error
@@ -385,7 +388,9 @@ public class ClassFinder {
 					try {
 						// It does not work with the filesystem: we must
 						// be in the case of a package contained in a jar file.
-						JarURLConnection conn = (JarURLConnection) url.openConnection();
+						URLConnection urlConnection = url.openConnection();
+						//System.out.println(urlConnection.getURL().toString());
+						JarURLConnection conn = (JarURLConnection)urlConnection;
 						JarFile jarFile = conn.getJarFile();
 
 						Enumeration e = jarFile.entries();

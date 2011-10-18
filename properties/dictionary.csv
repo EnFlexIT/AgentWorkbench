@@ -1,4 +1,6 @@
 SOURCE_LANGUAGE;DE;EN;IT;ES;FR
+de;! MyTab Single !;;;;
+de;! MyTab with SubTabs !;;;;
 de;' ist bereits geöffnet!;' is already open!;;;
 de;'.csv'-Version des Wörterbuchs übernehmen ...;Import the '. csv'-version of the dictionary ...;;;
 de;(Falls bereits verwendet, wird versucht den nächst höheren Port zu nutzen);(If already used, it will be tried to use the next higher port);;;
@@ -82,6 +84,7 @@ de;Das PlugIn wurde bereits in das Projekt integriert und kann deshalb nicht ern
 de;Das Verzeichnis existiert bereits. Der Import wird unterbrochen.;The directory already exists. The import is interrupted.
 de;Das aktuelle Projekt '@' ist noch nicht gespeichert!<br>Möchten Sie es nun speichern ?;The current project '@' is not saved yet! <br>Save it now?
 de;Das von Ihnen gewählte Projektverzeichnis wird bereits verwendet!<br><br>Bitte wählen Sie einen anderen Namen für Ihr Verzeichnis;Your chosen project directory is already in use! <br><br> Please select another name for the directory
+de;Datei nicht gefunden!;File not found!;;;
 de;Datei:;File:
 de;Dateien einbinden;Include Files
 de;Datenbank erfolgreich angelegt!;Database created successfully!
@@ -97,7 +100,6 @@ de;Die Datei '@' wurde nicht gefunden!;File '@' was not found!
 de;Die Datei existiert bereits. Wollen Sie diese Datei überschreiben?;The file already exists. Do you want to overwrite this file?
 de;Die Datei;The file
 de;Die Datenbank für den Server-Master ist nicht vorhanden.<br>Soll versucht werden diese nun anzulegen?;The database for the Server.Master is not available. <br> Try to create it now?
-de;Die Konsolenausgabe erfolgt nicht über die Anwendung;The console output will not be done by the application;null;null;null
 de;Doppelklick um eine Klasse auszuwählen !;Double click to select a class!
 de;Dummy-Agenten starten;Start Dummy agent
 de;Dynamische Lastverteilung aktivieren;Enabled dynamic load balancing 
@@ -109,10 +111,12 @@ de;Endanwender-Ansicht;End users view
 de;Englisch;English
 de;Entferne Agent;Remove agent
 de;Entferne Hindernis;Remove obstacle
+de;Entfernen;Remove;;;
 de;Entpacke;Unpacking
 de;Entwickler-Ansicht;Developer view
 de;Erzeuge die Datenbank für den Server-Master ...;Creating the database for the Server.Master ...
 de;Es wurde kein Name für das PlugIn konfiguriert;There was no name configured for the PlugIn
+de;Externe jar-Ressourcen;External jar resources;;;
 de;Extras;Extras
 de;Fehlende Angaben über den Datenbank-Host.<br>Bitte überprüfen Sie die Datenbank-Einstellungen!;Missing informations about the database host.<br> Please check your database settings!
 de;Fehlende Auswahl!;Missing selection!
@@ -182,7 +186,7 @@ de;Java-Klasse für den Start der Simulations-Agenten und die statische Lastverte
 de;Java-Klasse für die dynamische Lastverteilung;Java class for dynamic load balancing
 de;Kein Projekt geöffnet !;No open project!
 de;Kein SVG zugewiesen;No SVG assigned
-de;Kein vordefiniertes Umgebungsmodell verwenden;Don't use predefined environment model
+de;Kein vordefiniertes Umgebungsmodell verwenden;Don't use a predefined environment model;null;null;null
 de;Keine Graph-Datei definiert!;No Graph file defined!
 de;Keine Klasse definiert;No class defined
 de;Keine SVG-Datei definiert!;No SVG file defined!
@@ -219,7 +223,7 @@ de;Log-Manager starten;Start Log Manager
 de;Lokal;Local;;;
 de;Löschen;Delete
 de;MAS-Pause;MAS-Pause
-de;MAS-Start;MAS-Start;null;null;null
+de;MAS-Start;;;;
 de;MAS-Stop;MAS-Stop
 de;MAS;MAS
 de;Maximale Geschwindigkeit;Maximum speed
@@ -244,6 +248,7 @@ de;Name ungültig!;Invalid name!
 de;Netz-Komponenten;Network Components
 de;Netz;Network
 de;Netzkomponente;Network component
+de;Neu laden;Reload;;;
 de;Neuer Agent;New agent
 de;Neuer Eintrag;New Entry
 de;Neues Hindernis;New obstacle
@@ -269,6 +274,7 @@ de;Objekt-Typ;Object type
 de;Objekt;Object
 de;Objekte aus Projekt-Ontologie;Objects from project ontology
 de;Objekteigenschaften;Object properties
+de;Observer-Output;;;;
 de;Ontologie Referenz benennen;Name ontology reference ;;;
 de;Ontologie Referenz maskieren;Mask ontology reference;;;
 de;Ontologie hinzuf?gen;Add ontology
@@ -283,6 +289,7 @@ de;Optionen;Options
 de;Packe;Packing
 de;Passives Objekt;Passive object
 de;Pause;Pause
+de;Plug-Ins;Plug-Ins;;;
 de;PlugIn für Agent.GUI;PlugIn for Agent.GUI
 de;Position;Position
 de;Progamm umschalten auf;Switch progam to
@@ -373,6 +380,7 @@ de;Status laden;Load status
 de;Status speichern;Save status
 de;Stop Agent.GUI - Service;Stop Agent.GUI - Service
 de;Stop;Stop
+de;Suche & Auswahl;Search & Selection;;;
 de;Suche nach Agenten beendet...;Search for agents finished...
 de;Suche nach der nächsten fehlenden Übersetzung (STRG+F);Search for the next missing translation (CTRL + F)
 de;Suche;Search
@@ -387,6 +395,7 @@ de;Umgebungs-Setup;"Environment setup	"
 de;Umgebungsdatei;Environment file
 de;Umgebungseigenschaften;Environment properties
 de;Umgebungskonfiguration;Environment Configuration
+de;Umgebungstyp bzw. -modell für Simulation und Visualisierung;Environment typ and model for simulation and visualization;;;
 de;Umgebungstyp;Environment Type
 de;Umschalten von 'Anwendung' auf 'Server';Switch from 'Application' to 'Server'
 de;Umschalten von 'Server' auf 'Anwendung';Switch from 'Server' to 'Application'
@@ -402,6 +411,7 @@ de;Verkleinern;Zoom out
 de;Verteilung + Grenzwerte;Distribution + Thresholds
 de;Verteilung;Distribution
 de;Verzeichnis bereits vorhanden!;Directory already exists!
+de;Verzeichnis gepackt zu;Folder packed to;;;
 de;Verzeichnis wurde nicht gefunden:;Directory was not found:
 de;Verzeichnis;Folder
 de;Vis.-Geschwindigkeit;Visualisation speed
@@ -427,6 +437,7 @@ de;nicht gefunden;not found
 de;nicht unterstützt;not supported
 de;physikalisch;physical
 de;speichern;save
+de;um;at;;;
 de;wird bereits verwendet.;is already in use.
 de;wurde nicht gefunden.;was not found.
 de;yEd GraphML Datei;yEd GraphML file

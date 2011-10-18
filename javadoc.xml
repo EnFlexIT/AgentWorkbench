@@ -48,6 +48,7 @@
 						agentgui.core.ontologies.gui,
 						agentgui.core.ontologies.reflection,
 						agentgui.core.plugin,
+						agentgui.core.resources,
 						agentgui.core.rollout,
 						agentgui.core.sim.setup,
 						agentgui.core.systemtray,

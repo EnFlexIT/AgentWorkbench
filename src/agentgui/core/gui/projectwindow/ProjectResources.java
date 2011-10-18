@@ -62,6 +62,7 @@ import agentgui.core.gui.ClassSelector;
 import agentgui.core.plugin.PlugIn;
 import agentgui.core.plugin.PlugInListElement;
 import agentgui.core.plugin.PlugInNotification;
+import agentgui.core.resources.Resources2Display;
 
 /**
  * Represents the JPanel/Tab 'Configuration' - 'Resources'
@@ -76,12 +77,11 @@ public class ProjectResources extends JPanel implements Observer {
 	
 	private JPanel jPanelRight = null;
 	private JScrollPane jScrollPane = null;
-	private DefaultListModel resourcesListModel = null;
 	
 	private JList jListResources = null;
-	private JButton jButtonAdd = null;
-	private JButton jButtonRemove = null;
-	private JButton jButtonRefresh = null;
+	private JButton jButtonResourcesAdd = null;
+	private JButton jButtonResourcesRemove = null;
+	private JButton jButtonRecourcesRefresh = null;
 
 	private JPanel jPanelSimulationEnvironment = null;
 	
@@ -109,13 +109,24 @@ public class ProjectResources extends JPanel implements Observer {
 		this.currProject = cp;
 		this.currProject.addObserver(this);
 		
-		initialize();
-		resourcesListModel = new DefaultListModel();
-		jListResources.setModel(resourcesListModel);
-		for (String file : currProject.projectResources) {
-			resourcesListModel.addElement(file);
-		}
+		this.initialize();
+		
+		// --- Fill the list model for the external resources -------
+		jListResources.setModel(currProject.getProjectResources().getResourcesListModel());
 
+		// --- Set the translations ---------------------------------
+		jLabelEnvTyp.setText(Language.translate("Umgebungstyp bzw. -modell für Simulation und Visualisierung"));
+		jLabelResources.setText(Language.translate("Externe jar-Ressourcen"));
+		jLabelPlugIns.setText(Language.translate("Plug-Ins"));
+		
+		jButtonResourcesAdd.setToolTipText(Language.translate("Hinzufügen"));
+		jButtonResourcesRemove.setToolTipText(Language.translate("Entfernen"));
+		jButtonRecourcesRefresh.setToolTipText(Language.translate("Neu laden"));
+		
+		jButtonAddPlugIns.setToolTipText(Language.translate("Hinzufügen"));
+		jButtonRemovePlugIns.setToolTipText(Language.translate("Entfernen"));
+		jButtonRefreshPlugIns.setToolTipText(Language.translate("Neu laden"));
+		
 	}
 
 	private String adjustString(String path) {
@@ -128,13 +139,13 @@ public class ProjectResources extends JPanel implements Observer {
 		return path;
 	}
 
-	private boolean alreay_there(String path) {
-		return currProject.projectResources.contains(path);
+	private boolean alreadyThere(String path) {
+		return currProject.getProjectResources().contains(path);
 	}
 
 	private Vector<String> adjustPaths(File[] files) {
+		
 		Vector<String> result = new Vector<String>();
-
 		if (files != null) {
 
 			for (File file : files) {
@@ -145,7 +156,7 @@ public class ProjectResources extends JPanel implements Observer {
 					Vector<String> directoryFiles = handleDirectories(file);
 					for (String foreignJar : directoryFiles) {
 						String resourcCheck = this.adjustString(foreignJar);
-						if (!alreay_there(resourcCheck)) {
+						if (!alreadyThere(resourcCheck)) {
 							result.add(this.adjustString(foreignJar)); // Use relative paths within projects
 						}
 					}
@@ -153,7 +164,7 @@ public class ProjectResources extends JPanel implements Observer {
 				} else	{
 					// --- If this is a jar-file ----------
 					String resourcCheck = this.adjustString(path);
-					if (!alreay_there(resourcCheck)) {
+					if (!alreadyThere(resourcCheck)) {
 						result.add(this.adjustString(path)); // Use absolut within projects
 					}
 				}
@@ -269,12 +280,12 @@ public class ProjectResources extends JPanel implements Observer {
 	 * @return javax.swing.JButton	
 	 */
 	private JButton getJButtonAdd() {
-		if (jButtonAdd == null) {
-			jButtonAdd = new JButton();
-			jButtonAdd.setPreferredSize(new Dimension(45, 26));
-			jButtonAdd.setIcon(new ImageIcon(getClass().getResource(PathImage + "ListPlus.png")));
-			jButtonAdd.setToolTipText("Add");
-			jButtonAdd.addActionListener(new ActionListener() {
+		if (jButtonResourcesAdd == null) {
+			jButtonResourcesAdd = new JButton();
+			jButtonResourcesAdd.setPreferredSize(new Dimension(45, 26));
+			jButtonResourcesAdd.setIcon(new ImageIcon(getClass().getResource(PathImage + "ListPlus.png")));
+			jButtonResourcesAdd.setToolTipText("Add");
+			jButtonResourcesAdd.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 
 					if (Application.JadePlatform.jadeStopAskUserBefore()) {
@@ -288,24 +299,19 @@ public class ProjectResources extends JPanel implements Observer {
 						chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 						chooser.setAcceptAllFileFilterUsed(false);
 						
-						int answerChooser = chooser.showDialog(jButtonAdd, Language.translate("Dateien einbinden"));
+						int answerChooser = chooser.showDialog(jButtonResourcesAdd, Language.translate("Dateien einbinden"));
 						if (answerChooser==JFileChooser.CANCEL_OPTION) return;
 						Application.RunInfo.setLastSelectedFolder(chooser.getCurrentDirectory());
 						
 						Vector<String> names = adjustPaths(chooser.getSelectedFiles());
-						currProject.projectResources.addAll(names);
-
-						for (String name : names) {
-							resourcesListModel.addElement(name);
-						
-						}
+						currProject.getProjectResources().addAll(names);
 						currProject.resourcesReLoad();
 						jListResources.updateUI();
 					}
 				} // end actionPerformed
 			}); // end addActionListener
 		}
-		return jButtonAdd;
+		return jButtonResourcesAdd;
 	}
 
 	/**
@@ -313,28 +319,31 @@ public class ProjectResources extends JPanel implements Observer {
 	 * @return javax.swing.JButton	
 	 */
 	private JButton getJButtonRemove() {
-		if (jButtonRemove == null) {
-			jButtonRemove = new JButton();
-			jButtonRemove.setIcon(new ImageIcon(getClass().getResource(PathImage + "ListMinus.png")));
-			jButtonRemove.setPreferredSize(new Dimension(45, 26));
-			jButtonRemove.setToolTipText("Remove");
-			jButtonRemove.addActionListener(new ActionListener() {
+		if (jButtonResourcesRemove == null) {
+			jButtonResourcesRemove = new JButton();
+			jButtonResourcesRemove.setIcon(new ImageIcon(getClass().getResource(PathImage + "ListMinus.png")));
+			jButtonResourcesRemove.setPreferredSize(new Dimension(45, 26));
+			jButtonResourcesRemove.setToolTipText("Remove");
+			jButtonResourcesRemove.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
 
-							if (Application.JadePlatform.jadeStopAskUserBefore()) {
-								//Remove from the classpath
-								Object[] values = jListResources.getSelectedValues();
-								
-								for (Object file : values) {
-									resourcesListModel.removeElement(file);
-									currProject.projectResources.remove(file);
+							if (Application.JadePlatform.jadeStopAskUserBefore()==true) {
+								// --- Remove from the ClassPath ----
+								Vector<String> selection = new Vector<String>();
+								Object[] selectionArray = jListResources.getSelectedValues();
+								for (Object fileR2DObject : selectionArray) {
+									Resources2Display fileR2D = (Resources2Display) fileR2DObject;
+									selection.add(fileR2D.getFileOrFolderResource());
 								}
-								currProject.resourcesReLoad();
+								if (selection.size()>0) {
+									currProject.getProjectResources().removeAll(selection);
+									currProject.resourcesReLoad();
+								}
 							}
 						}
 					});
 		}
-		return jButtonRemove;
+		return jButtonResourcesRemove;
 	}
 
 	/**
@@ -342,12 +351,12 @@ public class ProjectResources extends JPanel implements Observer {
 	 * @return javax.swing.JButton	
 	 */
 	private JButton getJButtonRefresh() {
-		if (jButtonRefresh == null) {
-			jButtonRefresh = new JButton();
-			jButtonRefresh.setIcon(new ImageIcon(getClass().getResource(PathImage + "Refresh.png")));
-			jButtonRefresh.setPreferredSize(new Dimension(45, 26));
-			jButtonRefresh.setToolTipText("Refresh");
-			jButtonRefresh.addActionListener(new ActionListener() {
+		if (jButtonRecourcesRefresh == null) {
+			jButtonRecourcesRefresh = new JButton();
+			jButtonRecourcesRefresh.setIcon(new ImageIcon(getClass().getResource(PathImage + "Refresh.png")));
+			jButtonRecourcesRefresh.setPreferredSize(new Dimension(45, 26));
+			jButtonRecourcesRefresh.setToolTipText("Refresh");
+			jButtonRecourcesRefresh.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
 							
 							if (Application.JadePlatform.jadeStopAskUserBefore()) {
@@ -358,7 +367,7 @@ public class ProjectResources extends JPanel implements Observer {
 						}
 					});
 		}
-		return jButtonRefresh;
+		return jButtonRecourcesRefresh;
 	}
 
 	/**

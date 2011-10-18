@@ -186,8 +186,8 @@ public class ClassSearcherSingle {
 				packagesInProject.addElement(currProject.getProjectFolder());
 			} 
 			// --- If we have external resources ----------
-			if (currProject.projectResources!=null && currProject.projectResources.size()>0) {
-				Vector<String> extResources = currProject.projectResources;
+			if (currProject.getProjectResources()!=null && currProject.getProjectResources().size()>0) {
+				Vector<String> extResources = currProject.getProjectResources();
 				String absProPath = currProject.getProjectFolderFullPath();
 				try {
 					packagesInProject.addAll(ClassLoaderUtil.getPackageNames(extResources, absProPath)) ;
@@ -416,16 +416,25 @@ public class ClassSearcherSingle {
 		public void run() {
 			
 			Thread.currentThread().setName("ClassSearch-" + class2Search4.getSimpleName());
+			
 			classNamesCache = new ArrayList<Class<?>>(updateEvery);
 			numberOfClasses = 0;
-			cf = new ClassFinder();
-			cf.findSubclasses(classname, this, classfilter);
-			if (classNamesCache.size() > 0) {
+			
+			try {
+				// Start the ClassFinder
+				cf = new ClassFinder();
+				cf.findSubclasses(classname, this, classfilter);
+				if (classNamesCache.size() > 0) {
+					appendToList(classNamesCache);
+					classNamesCache.clear();
+				}
+				// last call, with empty list, to update status message
 				appendToList(classNamesCache);
-				classNamesCache.clear();
+				
+			} catch (Exception exception) {
+				exception.printStackTrace();
 			}
-			// last call, with empty list, to update status message
-			appendToList(classNamesCache);
+			
 			classNamesCache = null;
 			classesLoaded = true;
 			setBusy(false);

@@ -282,7 +282,7 @@ public class Platform extends Object {
 			
 			// --- If the current project has external resources ---- 
 			boolean ideExecuted = Application.RunInfo.AppExecutedOver().equalsIgnoreCase("IDE");
-			if (currProject.projectResources.size()>0 || ideExecuted==true) {
+			if (currProject.getProjectResources().size()>0 || ideExecuted==true) {
 				webServer.setProjectDownloadResources(currProject);
 			}
 			

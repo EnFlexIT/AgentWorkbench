@@ -1213,10 +1213,10 @@ public class CoreWindow extends JFrame implements ComponentListener {
 			String ActCMD = ae.getActionCommand();			
 			// ------------------------------------------------
 			if ( ActCMD.equalsIgnoreCase("New") ) {
-				Application.Projects.add( true );
+				Application.Projects.add(true);
 			}
 			else if ( ActCMD.equalsIgnoreCase("Open") ) {
-				Application.Projects.add( false );			}
+				Application.Projects.add(false);			}
 			else if ( ActCMD.equalsIgnoreCase("Save") ) {
 				Project CurPro = Application.ProjectCurr;
 				if ( CurPro != null ) CurPro.save();

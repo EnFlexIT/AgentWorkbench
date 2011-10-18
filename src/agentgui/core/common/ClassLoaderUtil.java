@@ -70,10 +70,13 @@ public class ClassLoaderUtil {
 		Vector<String> resources = new Vector<String>(resourcesAlreadyThere); // make a copy of this instance
 		for (String resource : resources) {
 			
-			resource = ClassLoaderUtil.adjustPathForLoadin(resource, fullProjectFolderPath);
+			resource = ClassLoaderUtil.adjustPathForLoadIn(resource, fullProjectFolderPath);
 			File file = new File(resource);
 			
-			if (file.isDirectory()) {
+			if (file.exists()==false)  {
+				// --- Do nothing in here -------
+				
+			} else if (file.isDirectory()) {
 				// --- Search Folder ------------ 
 				result.addAll(ClassLoaderUtil.getFolderStructure(file, file));
 				
@@ -291,18 +294,26 @@ public class ClassLoaderUtil {
 	 * @param fullProjectFolderPath
 	 * @return Returns an adjusted/corrected path for a jar resource 
 	 */
-	public static String adjustPathForLoadin(String selectedJar, String fullProjectFolderPath) {
+	public static String adjustPathForLoadIn(String selectedJar, String fullProjectFolderPath) {
 		
-		File checkFile = new File(selectedJar);
+		String checkPath = selectedJar;
+		File checkFile = new File(checkPath);
 		if (checkFile.exists()) {
-			// --- absolute path ---
-			return selectedJar;
+			// --- right path was given -----------------------------
+			return checkPath;
+			
 		} else {
-			// --- relative path ---
-			selectedJar = fullProjectFolderPath	+ selectedJar;
-			selectedJar = selectedJar.replace((File.separator + File.separator), File.separator);
-			return selectedJar;
+			// --- retry with the addition of the project folder ----
+			checkPath = fullProjectFolderPath + checkPath;
+			checkPath = checkPath.replace((File.separator + File.separator), File.separator);
+			checkFile = new File(checkPath);
+			if (checkFile.exists()) {
+				return checkPath;
+			} 
+			
 		}
+		return selectedJar;
+		
 	}
 
 	/**

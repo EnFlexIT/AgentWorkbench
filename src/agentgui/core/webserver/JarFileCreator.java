@@ -131,7 +131,7 @@ public class JarFileCreator {
 	 *
 	 * @param archiveFile the archive file
 	 */
-	protected void createJarArchive(File archiveFile) {
+	public void createJarArchive(File archiveFile) {
 		this.createJarArchive(archiveFile, fileList);
 	}
 	
@@ -141,7 +141,7 @@ public class JarFileCreator {
 	 * @param archiveFile the archive file
 	 * @param toBeJared the files that has to be packed
 	 */
-	protected void createJarArchive(File archiveFile, File[] toBeJared) {
+	public void createJarArchive(File archiveFile, File[] toBeJared) {
 
 		try {
 			

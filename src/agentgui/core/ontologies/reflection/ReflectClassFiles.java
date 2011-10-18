@@ -77,7 +77,7 @@ public class ReflectClassFiles extends ArrayList<String> {
 		
 		// --- Die aktuellen externen Ressourcen zusammenstellen -
 		this.classPathExternalJars = Application.RunInfo.getClassPathJars();
-		this.classPathExternalJars.addAll(currProject.projectResources);
+		this.classPathExternalJars.addAll(currProject.getProjectResources());
 		
 		// --- Verzeichnis, in dem die Ontologie liegt auslesen ---
 		this.searchINReference = searchInPackage;
