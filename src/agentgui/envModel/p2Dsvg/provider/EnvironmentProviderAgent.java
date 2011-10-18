@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.envModel.p2Dsvg.provider;
 
 import java.util.HashSet;
@@ -12,28 +40,27 @@ import agentgui.envModel.p2Dsvg.ontology.Physical2DEnvironment;
 import jade.core.Agent;
 import jade.core.ServiceException;
 import jade.core.behaviours.TickerBehaviour;
+
 /**
- * Agent managing a Physical2dEnvironment instance
- * @author Nils
+ * Agent managing a Physical2dEnvironment instance.
  *
+ * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
  */
 public class EnvironmentProviderAgent extends Agent {
 	
-	/**
-	 * serialVersionUID
-	 */
+	/** serialVersionUID. */
 	private static final long serialVersionUID = -2239610711152280115L;
-	/**
-	 * Number of milliseconds between two position updates
-	 */
+	
+	/** Number of milliseconds between two position updates. */
 	private final int PERIOD = 100;
 	
+	/** The helper. */
 	private EnvironmentProviderHelper helper = null;
 	
 	
 	/**
-	 * Setup method 
-	 * This method initializes environment and envWrap properties and registers this agent at the local EnvironmentProviderService
+	 * Setup method
+	 * This method initializes environment and envWrap properties and registers this agent at the local EnvironmentProviderService.
 	 */
 	public void setup(){
 		Object[] args = getArguments();
@@ -55,21 +82,35 @@ public class EnvironmentProviderAgent extends Agent {
 		}
 		
 	}
+	
 	/**
-	 * This behaviour updates the positions of all moving environment objects
-	 * @author Nils
+	 * This behaviour updates the positions of all moving environment objects.
 	 *
+	 * @author Nils
 	 */
 	private class UpdatePositionsBehaviour extends TickerBehaviour{
 		
+		/** The Constant serialVersionUID. */
 		private static final long serialVersionUID = 3819944524810503066L;
+		
+		/** The helper. */
 		private EnvironmentProviderHelper helper;
 
+		/**
+		 * Instantiates a new update positions behaviour.
+		 *
+		 * @param a the a
+		 * @param period the period
+		 * @throws ServiceException the service exception
+		 */
 		public UpdatePositionsBehaviour(Agent a, long period) throws ServiceException {
 			super(a, period);
 			helper = (EnvironmentProviderHelper) getHelper(EnvironmentProviderService.SERVICE_NAME);
 		}
 
+		/* (non-Javadoc)
+		 * @see jade.core.behaviours.TickerBehaviour#onTick()
+		 */
 		@SuppressWarnings("unchecked")
 		@Override
 		protected synchronized void onTick() {

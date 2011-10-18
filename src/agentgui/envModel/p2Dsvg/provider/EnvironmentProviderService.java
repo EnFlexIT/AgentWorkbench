@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.envModel.p2Dsvg.provider;
 
 import jade.core.AID;
@@ -12,18 +40,13 @@ import jade.core.ServiceException;
 import jade.core.ServiceHelper;
 import jade.core.VerticalCommand;
 import jade.util.Logger;
-import jade.util.SynchList;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.BlockingDeque;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.SynchronousQueue;
 
 import org.w3c.dom.Document;
 
@@ -37,63 +60,68 @@ import agentgui.envModel.p2Dsvg.ontology.PlaygroundObject;
 import agentgui.envModel.p2Dsvg.ontology.Position;
 import agentgui.envModel.p2Dsvg.ontology.PositionUpdate;
 import agentgui.envModel.p2Dsvg.utils.EnvironmentWrapper;
+
 /**
- * This service provides and manages a Physical2DEnvironment for a distributed simulation 
- * @author Nils
+ * This service provides and manages a Physical2DEnvironment for a distributed simulation.
  *
+ *  @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
+ *  @author Tim Lewen  - DAWIS - ICB - University of Duisburg - Essen
  */
 public class EnvironmentProviderService extends BaseService {
-	/**
-	 * The service name
-	 */
-	public static String SERVICE_NAME = "agentgui.physical2Denvironment.provider.EnvironmentProvider";
-	/**
-	 * The Physical2DEnvironment handled by this service
-	 */
+	
+	/** The service name. */
+	public static String SERVICE_NAME = "agentgui.envModel.p2Dsvg.provider.EnvironmentProvider";
+	
+	/** The Physical2DEnvironment handled by this service. */
 	private Physical2DEnvironment environment = null;
-	/**
-	 * Wrapper object for easier handling of the Physical2DEnvironment object
-	 */
+	
+	/** Wrapper object for easier handling of the Physical2DEnvironment object. */
 	private EnvironmentWrapper envWrap = null;
-	/**
-	 * The SVG document visualizing the Physical2DEnvironment
-	 */
+	
+	/** The SVG document visualizing the Physical2DEnvironment. */
 	private Document svgDoc = null;
-	/**
-	 * The EnvironmentProviderHelper instance 
-	 */
+	
+	/** The EnvironmentProviderHelper instance. */
 	private ServiceHelper helper = new EnvironmentProviderHelperImpl();
-	/**
-	 * The local EnvironmentProviderSlice instance
-	 */
+	
+	/** The local EnvironmentProviderSlice instance. */
 	private Service.Slice localSlice = new EnvironmentProviderSliceImpl();
-	/**
-	 * Is the local node hosting the Physical2DEnvironment
-	 */
+	
+	/** Is the local node hosting the Physical2DEnvironment. */
 	private boolean masterNode = false;
-	/**
-	 * The name of the node hosting the Physical2DEnvironment
-	 */
+	
+	/** The name of the node hosting the Physical2DEnvironment. */
 	private String masterSlice = null;
-	/**
-	 * Set of currently moving ActiveObjects
-	 */
+	
+	/** Set of currently moving ActiveObjects. */
 	private HashSet<ActiveObject> currentlyMovingAgents;
-	/**
-	 * Set of currently moving Physical2DObjects
-	 */
+	
+	/** Set of currently moving Physical2DObjects. */
 	private HashSet<Physical2DObject> currentlyMovingObjects;
 	
+	/** The step. */
 	private int step;
+	
+	/** The transaction size. */
 	private int transactionSize=-1;
+	
+	/** The is_running. */
 	private boolean is_running=true;
+	
+	/** The transaction. */
 	private HashMap <AID,ArrayList<PositionUpdate>> transaction=new HashMap<AID,ArrayList<PositionUpdate>>();
 	
+	/* (non-Javadoc)
+	 * @see jade.core.Service#getName()
+	 */
 	@Override
 	public String getName() {
 		 return SERVICE_NAME;
 	}
 	
+	/* (non-Javadoc)
+	 * @see jade.core.BaseService#boot(jade.core.Profile)
+	 */
 	public void boot(Profile p){
 		try {
 			super.boot(p);
@@ -107,8 +135,10 @@ public class EnvironmentProviderService extends BaseService {
 		}
 		
 	}
+	
 	/**
-	 * Initializes the Physical2DEnvironment
+	 * Initializes the Physical2DEnvironment.
+	 *
 	 * @param environment The environment
 	 */
 	private void setEnvironment(Physical2DEnvironment environment){
@@ -154,12 +184,17 @@ public class EnvironmentProviderService extends BaseService {
 	}
 	
 	/**
+	 * Checks if is master.
+	 *
 	 * @return Result Is the local node the master node?
 	 */
 	private boolean isMaster(){
 		return masterNode;
 	}
+	
 	/**
+	 * Gets the environment.
+	 *
 	 * @return The Physical2DEnvironment object
 	 */
 	private Physical2DEnvironment getEnvironment(){
@@ -181,8 +216,11 @@ public class EnvironmentProviderService extends BaseService {
 		
 		return env;
 	}
+	
 	/**
-	 * @return The name of the project the Physical2DEnvironment belongs to 
+	 * Gets the project name.
+	 *
+	 * @return The name of the project the Physical2DEnvironment belongs to
 	 */
 	private String getProjectName(){
 		if(masterNode){
@@ -202,8 +240,10 @@ public class EnvironmentProviderService extends BaseService {
 			return projectName;
 		}
 	}
+	
 	/**
-	 * Gets the Physical2DObject with the specified ID from the Physical2DEnvironment
+	 * Gets the Physical2DObject with the specified ID from the Physical2DEnvironment.
+	 *
 	 * @param id The Physical2DObject's ID
 	 * @return The Physical2DObject
 	 */
@@ -229,12 +269,17 @@ public class EnvironmentProviderService extends BaseService {
 	}
 	
 	/**
-	 * @return List of all currently moving ActiveObjects within the Physical2DEnvironment 
+	 * Gets the currently moving agents.
+	 *
+	 * @return List of all currently moving ActiveObjects within the Physical2DEnvironment
 	 */
 	private HashSet<ActiveObject> getCurrentlyMovingAgents(){
 		return this.currentlyMovingAgents;
 	}
+	
 	/**
+	 * Gets the currently moving objects.
+	 *
 	 * @return List of all currently moving Physical2DObjects within the environment
 	 */
 	private HashSet<Physical2DObject> getCurrentlyMovingObjects(){
@@ -260,7 +305,8 @@ public class EnvironmentProviderService extends BaseService {
 	}
 	
 	/**
-	 * Setting an ActiveObjects movement
+	 * Setting an ActiveObjects movement.
+	 *
 	 * @param objectID The ActiveObject's ID
 	 * @param movement The Movement instance
 	 * @return Successful?
@@ -278,9 +324,8 @@ public class EnvironmentProviderService extends BaseService {
 		
 					
 		
-				float maxSpeed = agent.getMaxSpeed();
-//				if(movement.getSpeed() <= maxSpeed+0.0005){		// Small tolerance required for inaccuracy in speed calculation  
-					System.out.println("Set Movement:"+movement.getXPosChange());
+				//				if(movement.getSpeed() <= maxSpeed+0.0005){		// Small tolerance required for inaccuracy in speed calculation  
+					
 					agent.setMovement(movement);
 					
 //				}
@@ -318,6 +363,8 @@ public class EnvironmentProviderService extends BaseService {
 	}
 	
 	/**
+	 * Gets the sVG doc.
+	 *
 	 * @return The SVG document visualizing the Physical2DEnvironment
 	 */
 	private Document getSVGDoc(){
@@ -344,7 +391,8 @@ public class EnvironmentProviderService extends BaseService {
 	}
 	
 	/**
-	 * Gets all Physical2DObjects within a specified PlaygroundObject
+	 * Gets all Physical2DObjects within a specified PlaygroundObject.
+	 *
 	 * @param playgroundID The PlaygroundObject's ID
 	 * @return List of Physical2DObjects
 	 */
@@ -370,8 +418,9 @@ public class EnvironmentProviderService extends BaseService {
 	}
 	
 	/**
-	 * Assigns a PassiveObject to an ActiveObject
-	 * @param passiveObjectID The PassiveObject's ID 
+	 * Assigns a PassiveObject to an ActiveObject.
+	 *
+	 * @param passiveObjectID The PassiveObject's ID
 	 * @param activeObjectID The ActiveObject's ID
 	 * @return Successful?
 	 */
@@ -412,7 +461,8 @@ public class EnvironmentProviderService extends BaseService {
 	}
 	
 	/**
-	 * Releases a PassiveObject from an ActiveObject controlling it
+	 * Releases a PassiveObject from an ActiveObject controlling it.
+	 *
 	 * @param passiveObjectID The PassiveObject's ID
 	 */
 	private void releasePassiveObject(String passiveObjectID){
@@ -441,13 +491,17 @@ public class EnvironmentProviderService extends BaseService {
 	}
 	
 	/**
-	 * Sets the SVG document
+	 * Sets the SVG document.
+	 *
 	 * @param svgDoc the SVG document
 	 */
 	private void setSVGDoc(Document svgDoc){
 		this.svgDoc = svgDoc;
 	}
 	
+	/* (non-Javadoc)
+	 * @see jade.core.BaseService#getHelper(jade.core.Agent)
+	 */
 	public ServiceHelper getHelper(Agent a){
 		return helper;
 	}
@@ -455,6 +509,12 @@ public class EnvironmentProviderService extends BaseService {
 	
 
 
+	/**
+	 * Gets the model.
+	 *
+	 * @param pos the pos
+	 * @return the model
+	 */
 	private HashMap<AID, PositionUpdate> getModel(int pos) {
 		if(masterNode)
 		{
@@ -470,8 +530,10 @@ public class EnvironmentProviderService extends BaseService {
 			}
 			else
 			{
+		
 			 update=transaction.get(key).get(size-1);
 			}
+			
 			result.put(key, update);
 		}
 		
@@ -494,6 +556,12 @@ public class EnvironmentProviderService extends BaseService {
 	}
 	
 
+	/**
+	 * Step model.
+	 *
+	 * @param key the key
+	 * @param updatedPosition the updated position
+	 */
 	private void stepModel(AID key, PositionUpdate updatedPosition)
 	{
 		if(masterNode)
@@ -511,6 +579,7 @@ public class EnvironmentProviderService extends BaseService {
 		Position p=new Position();
 		p.setXPos(updatedPosition.getNewPosition().getXPos());
 		p.setYPos(updatedPosition.getNewPosition().getYPos());
+		//System.out.println("EnviromentProvider Step Model:"+ key.getLocalName() +":"+ list.size() +","+p.getXPos() +","+p.getYPos() );
 		newPosition.setNewPosition(p);
 		newPosition.setCustomizedParameter(updatedPosition.getCustomizedParameter());
 		list.add(newPosition);
@@ -538,6 +607,11 @@ public class EnvironmentProviderService extends BaseService {
 	}
 
 	
+	/**
+	 * Gets the transaction size.
+	 *
+	 * @return the transaction size
+	 */
 	private int getTransactionSize() {
 		int result=0;  
 		try
@@ -563,11 +637,19 @@ public class EnvironmentProviderService extends BaseService {
 		return result;
 	}
 	
-	@SuppressWarnings("unchecked")
+	/* (non-Javadoc)
+	 * @see jade.core.BaseService#getHorizontalInterface()
+	 */
+	@SuppressWarnings({ "rawtypes" })
 	public Class getHorizontalInterface(){
 		return EnvironmentProviderSlice.class;
 	}
 	
+	/**
+	 * Gets the local slize.
+	 *
+	 * @return the local slize
+	 */
 	public Service.Slice getLocalSlize(){
 		return localSlice;
 	}
@@ -585,16 +667,25 @@ public class EnvironmentProviderService extends BaseService {
 	 */
 	public class EnvironmentProviderHelperImpl implements EnvironmentProviderHelper{
 
+		/* (non-Javadoc)
+		 * @see agentgui.envModel.p2Dsvg.provider.EnvironmentProviderHelper#getEnvironment()
+		 */
 		@Override
 		public Physical2DEnvironment getEnvironment() {
 			return EnvironmentProviderService.this.getEnvironment();
 		}
 
+		/* (non-Javadoc)
+		 * @see agentgui.envModel.p2Dsvg.provider.EnvironmentProviderHelper#getObject(java.lang.String)
+		 */
 		@Override
 		public Physical2DObject getObject(String objectID) {
 			return EnvironmentProviderService.this.getObject(objectID);
 		}
 
+		/* (non-Javadoc)
+		 * @see jade.core.ServiceHelper#init(jade.core.Agent)
+		 */
 		@Override
 		public void init(Agent arg0) {
 			// TODO Auto-generated method stub
@@ -602,63 +693,99 @@ public class EnvironmentProviderService extends BaseService {
 		}
 		
 
+		/* (non-Javadoc)
+		 * @see agentgui.envModel.p2Dsvg.provider.EnvironmentProviderHelper#setCurrentPos(int)
+		 */
 		@Override
 		public void setCurrentPos(int pos) {
 			step=pos;
 			
 		}
 
+		/* (non-Javadoc)
+		 * @see agentgui.envModel.p2Dsvg.provider.EnvironmentProviderHelper#getCurrentPos()
+		 */
 		@Override
 		public int getCurrentPos() {
 		
 			return step;
 		}
 
+		/* (non-Javadoc)
+		 * @see agentgui.envModel.p2Dsvg.provider.EnvironmentProviderHelper#setEnvironment(agentgui.envModel.p2Dsvg.ontology.Physical2DEnvironment)
+		 */
 		@Override
 		public void setEnvironment(Physical2DEnvironment environment) {
 			EnvironmentProviderService.this.setEnvironment(environment);
 		}
 
+		/* (non-Javadoc)
+		 * @see agentgui.envModel.p2Dsvg.provider.EnvironmentProviderHelper#getCurrentlyMovingAgents()
+		 */
 		@Override
 		public HashSet<ActiveObject> getCurrentlyMovingAgents() {
 			return EnvironmentProviderService.this.getCurrentlyMovingAgents();
 		}
 
+		/* (non-Javadoc)
+		 * @see agentgui.envModel.p2Dsvg.provider.EnvironmentProviderHelper#setMovement(java.lang.String, agentgui.envModel.p2Dsvg.ontology.Movement)
+		 */
 		@Override
 		public boolean setMovement(String agentID, Movement movement) {
 			return EnvironmentProviderService.this.setMovement(agentID, movement);
 		}
 
+		/* (non-Javadoc)
+		 * @see agentgui.envModel.p2Dsvg.provider.EnvironmentProviderHelper#getSVGDoc()
+		 */
 		@Override
 		public Document getSVGDoc() {
 			return EnvironmentProviderService.this.getSVGDoc();
 		}
 
+		/* (non-Javadoc)
+		 * @see agentgui.envModel.p2Dsvg.provider.EnvironmentProviderHelper#setSVGDoc(org.w3c.dom.Document)
+		 */
 		@Override
 		public void setSVGDoc(Document svgDoc) {
 			EnvironmentProviderService.this.setSVGDoc(svgDoc);
 		}
 
+		/* (non-Javadoc)
+		 * @see agentgui.envModel.p2Dsvg.provider.EnvironmentProviderHelper#getCurrentlyMovingObjects()
+		 */
 		@Override
 		public HashSet<Physical2DObject> getCurrentlyMovingObjects() {
 			return EnvironmentProviderService.this.getCurrentlyMovingObjects();
 		}
 
+		/* (non-Javadoc)
+		 * @see agentgui.envModel.p2Dsvg.provider.EnvironmentProviderHelper#getPlaygroundObjects(java.lang.String)
+		 */
 		@Override
 		public List<Physical2DObject> getPlaygroundObjects(String playgroundID) {
 			return EnvironmentProviderService.this.getPlaygroundObjects(playgroundID);
 		}
 
+		/* (non-Javadoc)
+		 * @see agentgui.envModel.p2Dsvg.provider.EnvironmentProviderHelper#releasePassiveObject(java.lang.String)
+		 */
 		@Override
 		public void releasePassiveObject(String objectID) {
 			EnvironmentProviderService.this.releasePassiveObject(objectID);
 		}
 
+		/* (non-Javadoc)
+		 * @see agentgui.envModel.p2Dsvg.provider.EnvironmentProviderHelper#assignPassiveObject(java.lang.String, java.lang.String)
+		 */
 		@Override
 		public boolean assignPassiveObject(String objectID, String agentID) {
 			return EnvironmentProviderService.this.assignPassiveObject(objectID, agentID);
 		}
 
+		/* (non-Javadoc)
+		 * @see agentgui.envModel.p2Dsvg.provider.EnvironmentProviderHelper#getProjectName()
+		 */
 		@Override
 		public String getProjectName() {
 			return EnvironmentProviderService.this.getProjectName();
@@ -670,27 +797,42 @@ public class EnvironmentProviderService extends BaseService {
 		
 
 
+		/* (non-Javadoc)
+		 * @see agentgui.envModel.p2Dsvg.provider.EnvironmentProviderHelper#is_running()
+		 */
 		@Override
 		public boolean is_running() {
 			return is_running;
 		}
 
+		/* (non-Javadoc)
+		 * @see agentgui.envModel.p2Dsvg.provider.EnvironmentProviderHelper#setRunning(boolean)
+		 */
 		@Override
 		public void setRunning(boolean running) {
 			is_running=running;
 			
 		}
 
+		/* (non-Javadoc)
+		 * @see agentgui.envModel.p2Dsvg.provider.EnvironmentProviderHelper#getModel(int)
+		 */
 		@Override
 		public HashMap<AID, PositionUpdate> getModel(int pos) {
 			return  EnvironmentProviderService.this.getModel(pos);
 		}
 
+		/* (non-Javadoc)
+		 * @see agentgui.envModel.p2Dsvg.provider.EnvironmentProviderHelper#getTransactionSize()
+		 */
 		@Override
 		public int getTransactionSize() {
 			return  EnvironmentProviderService.this.getTransactionSize();
 		}
 
+		/* (non-Javadoc)
+		 * @see agentgui.envModel.p2Dsvg.provider.EnvironmentProviderHelper#stepModel(jade.core.AID, agentgui.envModel.p2Dsvg.ontology.PositionUpdate)
+		 */
 		@Override
 		public void stepModel(AID key, PositionUpdate updatedPosition) {
 			EnvironmentProviderService.this.stepModel(key, updatedPosition);
@@ -707,11 +849,12 @@ public class EnvironmentProviderService extends BaseService {
 	 */
 	private class EnvironmentProviderSliceImpl implements Service.Slice{
 
-		/**
-		 * serialVersionUID
-		 */
+		/** serialVersionUID. */
 		private static final long serialVersionUID = -8545545290495057267L;
 
+		/* (non-Javadoc)
+		 * @see jade.core.Service.Slice#getNode()
+		 */
 		@Override
 		public Node getNode() throws ServiceException {
 			try {
@@ -722,11 +865,17 @@ public class EnvironmentProviderService extends BaseService {
 			}
 		}
 
+		/* (non-Javadoc)
+		 * @see jade.core.Service.Slice#getService()
+		 */
 		@Override
 		public Service getService() {
 			return EnvironmentProviderService.this;
 		}
 
+		/* (non-Javadoc)
+		 * @see jade.core.Service.Slice#serve(jade.core.HorizontalCommand)
+		 */
 		@Override
 		public VerticalCommand serve(HorizontalCommand cmd) {
 			
