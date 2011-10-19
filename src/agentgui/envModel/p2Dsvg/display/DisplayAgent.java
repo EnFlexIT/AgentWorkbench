@@ -286,7 +286,7 @@ public class DisplayAgent extends Agent {
 		}
 		
 		public HashSet<Physical2DObject> fordwardToVisualation(HashMap<AID,PositionUpdate> pos)	{
-		    System.out.println("----");
+		 
 			HashSet<Physical2DObject> movingObjects=envHelper.getCurrentlyMovingObjects();
 		
 			if(movingObjects.size()>0)
