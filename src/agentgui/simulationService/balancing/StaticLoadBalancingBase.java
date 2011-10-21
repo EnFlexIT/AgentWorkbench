@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.simulationService.balancing;
 
 import jade.core.Agent;
@@ -14,8 +42,6 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
 
-import org.w3c.dom.Document;
-
 import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
@@ -26,8 +52,6 @@ import agentgui.core.jade.Platform;
 import agentgui.core.ontologies.gui.OntologyInstanceViewer;
 import agentgui.core.sim.setup.DistributionSetup;
 import agentgui.core.sim.setup.SimulationSetup;
-import agentgui.envModel.p2Dsvg.controller.Physical2DEnvironmentController;
-import agentgui.envModel.p2Dsvg.ontology.Physical2DEnvironment;
 import agentgui.simulationService.LoadService;
 import agentgui.simulationService.LoadServiceHelper;
 import agentgui.simulationService.load.LoadInformation.Container2Wait4;
@@ -79,6 +103,9 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 		this.startVisualizationAgent();
 	}
 	
+	/* (non-Javadoc)
+	 * @see jade.core.behaviours.Behaviour#action()
+	 */
 	@Override
 	public void action() {
 		
@@ -170,49 +197,6 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 				currProject.projectWindow.setFocus2Tab(Language.translate("Simulations-Visualisierung"));
 			}
 			// ----------------------------------------------------------------
-		}
-	}
-	
-	/**
-	 * Depending on the current project configuration, the 
-	 * svg - visualization will be started here
-	 */
-	protected void startSVGVisualizationAgents(Physical2DEnvironmentController physical2DEnvironmentController) {
-		
-		Physical2DEnvironment environment = physical2DEnvironmentController.getEnvironmentModelCopy();
-		Document svgDocument = physical2DEnvironmentController.getSvgDocCopy();
-		
-		if (environment!=null && svgDocument!=null) {
-			
-			// --- Start the agent visualisation --------------------
-			Object[] args = {environment, svgDocument};
-			this.startAgent("EvPrAg_"+ currProject.getProjectFolder(), agentgui.envModel.p2Dsvg.provider.EnvironmentProviderAgent.class, args);
-			
-			// --- Start the DisplayAgent inside of Agent.GUI -------
-			Object[] startArg = new Object[3];
-			startArg[0] = currProject.projectVisualizationPanel;
-			startArg[1] = svgDocument;
-			startArg[2] = environment;
-			this.startAgent("EvVis", agentgui.envModel.p2Dsvg.display.DisplayAgent.class, startArg);
-			
-			// --- get agents, defined in the physical-/svg-setup ---			
-//			Vector<ActiveObject> activeObjects = physical2DEnvironmentController.getEnvWrap().getAgents();
-//			for (Iterator<ActiveObject> iterator = activeObjects.iterator(); iterator.hasNext();) {
-//				
-//				ActiveObject activeObject = iterator.next();
-//				String agentClassName = activeObject.getAgentClassName();
-//				String agentName = activeObject.getId();
-//				
-//				if (currAgentListVisual==null) {
-//					currAgentListVisual= new ArrayList<AgentClassElement4SimStart>();
-//				}
-//				AgentClassElement4SimStart ace4s = new AgentClassElement4SimStart();
-//				ace4s.setAgentClassReference(agentClassName);
-//				ace4s.setStartAsName(agentName);
-//				currAgentListVisual.add(ace4s);
-//			}
-			// --- set focus on Visualisation-Tab -------------------
-			currProject.projectWindow.setFocus2Tab(Language.translate("Simulations-Visualisierung"));
 		}
 	}
 	
