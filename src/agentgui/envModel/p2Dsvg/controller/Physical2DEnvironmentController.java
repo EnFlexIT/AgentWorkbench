@@ -4,8 +4,9 @@
  * applications based on the JADE - Framework in compliance with the 
  * FIPA specifications. 
  * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
  * http://sourceforge.net/projects/agentgui/
- * http://www.dawis.wiwi.uni-due.de/ 
+ * http://www.agentgui.org 
  *
  * GNU Lesser General Public License
  *
@@ -57,6 +58,7 @@ import org.apache.batik.util.XMLResourceDescriptor;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import agentgui.core.agents.AgentClassElement;
 import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
@@ -491,20 +493,38 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void addToAgentList(Physical2DObject  obj)
 	{	
+		System.out.println("Add to agent");
 		if(obj instanceof ActiveObject)
-		{
-					
+		{					
+	
 	        String className= ((ActiveObject) obj).getAgentClassName();
 	        if(className==""||className==null)
 	        {
+	        	System.out.println("Class Name nicht gesetzt");
 	        	return;
 	        }
 	        try
 	        {
 	          
 	        	Class cls=Class.forName(className);
-				AgentClassElement4SimStart simStart=new AgentClassElement4SimStart(cls,this.currProject.getProjectName());
-				this.agents2Start.addElement(simStart);
+	    		
+	 			AgentClassElement4SimStart simStart=new AgentClassElement4SimStart(cls, SimulationSetup.AGENT_LIST_EnvironmentConfiguration);
+	 			simStart.setStartAsName(obj.getId());
+	 			simStart.setPostionNo(this.agents2Start.size()+1);
+	 			
+	 			if(checkListForID(obj.getId()))
+	 			{
+	 			System.out.println("Element added");
+	 			this.agents2Start.addElement(simStart);
+	 			this.updatePositionNr();
+	 			}
+	 			else
+	 			{
+	 				System.out.println("ID stimmt nicht");
+	 				this.agents2Start.addElement(simStart);
+		 			this.updatePositionNr();
+	 			}
+				
 		    }
 		    catch(Exception e)
 		    {
@@ -512,6 +532,61 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 		    }
 		}
 	}
+	
+
+	 /**
+ 	 * Updates the agent list if an element is changed.
+ 	 *
+ 	 * @param object the object
+ 	 * @param settings the settings
+ 	 */
+ 	private void changeElementFromAgentList(Physical2DObject  object, HashMap<String, Object> settings)
+	 {		
+			this.removeFromAgentList(selectedObject);
+			this.addToAgentList(createObject(settings));
+		
+	}
+	
+	private void removeFromAgentList(Physical2DObject  obj)
+	{	
+		if(obj instanceof ActiveObject)
+		{	        	
+				for(int i=0;i<this.agents2Start.size();i++)
+				{
+					
+				AgentClassElement4SimStart cmprElement= (AgentClassElement4SimStart) this.agents2Start.get(i);
+				if(cmprElement.getStartAsName().equals(obj.getId()))
+				{
+					this.agents2Start.remove(i);
+					break;
+				}
+				
+		 }
+		  this.updatePositionNr();	
+		   
+		}
+	}
+		
+	
+	private void updatePositionNr()
+	{
+		for(int i=0;i<this.agents2Start.size();i++)
+		{
+			AgentClassElement4SimStart cmprElement= (AgentClassElement4SimStart) this.agents2Start.get(i);
+			cmprElement.setPostionNo(i);
+		}
+		
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	/**
 	 * This method is called by the EnvironmentSetup to create or change Physical2DObjects 
@@ -521,13 +596,17 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 		
 		boolean success = false;
 		if(selectedObject == null){
+			
 			// Create mode
 			Physical2DObject newObject = createObject(settings);
-			addToAgentList(newObject);
 			envWrap.addObject(newObject);
 			success = (newObject != null);
+			this.addToAgentList(newObject);
+			
 		}else{
+			this.changeElementFromAgentList(selectedObject,settings);
 			changeObject(selectedObject, settings);
+			
 			envWrap.rebuildLists();
 			success = true;
 		}
@@ -625,12 +704,31 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 		return (envWrap.getObjectById(id) == null);
 	}
 	
+	/**
+	 * Checks if the given ID is available
+	 * @param id The ID to check
+	 * @return True if available, false if already in use
+	 */
+	private boolean checkListForID(String id){
+		for(int i=0;i<this.agents2Start.size();i++)
+		{
+			AgentClassElement4SimStart tmp=(AgentClassElement4SimStart) this.agents2Start.get(i);
+			if(tmp.getStartAsName().equals(id))
+			{
+				return false;
+			}
+			
+			
+		}
+		return true;
+	}
 	
 	/**
 	 * Removing the currently selected object from the environment
 	 */
 	public void removeObject(){
 		envWrap.removeObject(selectedObject);
+		this.removeFromAgentList(selectedObject);
 		setChanged();
 		notifyObservers(new Integer(OBJECTS_CHANGED));
 	}
@@ -778,6 +876,7 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 	 */
 	@Override
 	protected void loadEnvironment() {
+	
 		SimulationSetup currentSetup = getCurrentSimSetup(); 
 		
 				
@@ -795,7 +894,7 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 		if(this.svgDoc != null && this.environment == null){
 			setEnvironment(initEnvironment());
 		}
-
+		
 		this.registerDefaultListModel4SimulationStart(SimulationSetup.AGENT_LIST_EnvironmentConfiguration);
 	}
 
