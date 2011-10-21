@@ -191,7 +191,7 @@ public class OntologyInstanceDialog extends JDialog implements ActionListener {
 	 *
 	 * @param objectConfiguration the objectConfiguration to set
 	 */
-	public void setObjectConfiguration(Object [] objectConfiguration) {
+	public void setObjectConfiguration(Object[] objectConfiguration) {
 		this.objectConfiguration = objectConfiguration;
 	}
 	
@@ -200,7 +200,7 @@ public class OntologyInstanceDialog extends JDialog implements ActionListener {
 	 *
 	 * @return the objectConfiguration
 	 */
-	public Object [] getObjectConfiguration() {
+	public Object[] getObjectConfiguration() {
 		return objectConfiguration;
 	}
 	

@@ -229,30 +229,37 @@ public class ProjectsLoaded {
 		// --- Set Project reference to the current JADE configuration -------- 
 		newProject.JadeConfiguration.setProject(newProject);
 		
-		// --- Gibt es bereits ein Simulations-Setup? -------------------------
+		// --- Is there already a simulation setup? ---------------------------
 		if (newProject.simulationSetups.size()==0) {
+			// --- Create default simulations setup ---------------------------
 			newProject.simulationSetups = new SimulationSetups(newProject, "default");
 			newProject.simulationSetups.setupCreateDefault();			
 		}
+
+		// --------------------------------------------------------------------
+		// --- !Important! Don't do this after you have build the -------------  
+		// --------------------------------------------------------------------		
+		// --- Load additional external resources with the ClassLoader --------
+		newProject.resourcesLoad();
+		// --------------------------------------------------------------------
+		// --- !Important! Don't do this after you have build the -------------  
+		// --------------------------------------------------------------------		
 		
-		// --- Projektfenster und Standard-Tabs anhängen ----------------------
+		// --- Instantiate project-window and the default tabs ----------------
 		newProject.projectWindow = new ProjectWindow(newProject);
 		newProject.addDefaultTabs();
 
-		// --- ClassLoader/CLASSPATH laden ------------------------------------
-		newProject.resourcesLoad();
-
-		// --- Konfigurierte PlugIns laden ------------------------------------
+		// --- Load configured PlugIns ----------------------------------------
 		newProject.plugInVectorLoad();
 		
-		// --- Projekt als aktuell markieren ----------------------------------
+		// --- Set Project to unsaved -----------------------------------------
 		newProject.isUnsaved = false;
 				
-		// --- Objekt an die Projektauflistung hängen -------------------------
+		// --- add project to the project-listing -----------------------------
 		projectsOpen.add(newProject);
 		Application.ProjectCurr = newProject;
 
-		// --- Anzeige anpassen -----------------------------------------------
+		// --- Configure the project view in the main application -------------
 		Application.Projects.setProjectView();		
 		Application.MainWindow.setCloseButtonPosition(true);
 		Application.setTitelAddition( newProject.getProjectName() );
