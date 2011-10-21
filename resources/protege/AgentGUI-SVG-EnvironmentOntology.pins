@@ -1,0 +1,53 @@
+; Fri Oct 21 11:25:32 CEST 2011
+; 
+;+ (version "3.3.1")
+;+ (build "Build 430")
+
+([ActiveObject] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([Movement] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE)
+	(%3AJADE-JAVA-CODE "/**\n    * This method calculates movement's speed\n    * This method calculates the speed from the movement's x and y components using the Pythagorean theorem\n    * @return The speed\n    */\n   public float getSpeed(){\n	   return (float) Math.sqrt(xPosChange*xPosChange + yPosChange*yPosChange);\n   }"))
+
+([PassiveObject] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([Physical2DEnvironment] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([Physical2DObject] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE)
+	(%3AJADE-JAVA-CODE "/**\n    * Checks if this Physical2DObject completely contains another one \n    * @param object The other Physical2DObject\n    * @return True or false\n    */\n   public boolean objectContains(Physical2DObject object){\n	   // Calculate top left coordinates from center coordinates and size\n	   float myTopLeftX = getPosition().getXPos() - getSize().getWidth() / 2;\n	   float myTopLeftY = getPosition().getYPos() - getSize().getHeight() / 2;\n	   \n	   float objectTopLeftX = object.getPosition().getXPos() - object.getSize().getWidth() / 2;\n	   float objectTopLeftY = object.getPosition().getYPos() - object.getSize().getHeight() / 2;\n	   \n	   // Create Rectangle2D representations\n	   java.awt.geom.Rectangle2D.Float myRect = new java.awt.geom.Rectangle2D.Float(myTopLeftX, myTopLeftY, getSize().getWidth(), getSize().getHeight());\n	   java.awt.geom.Rectangle2D.Float objectRect = new java.awt.geom.Rectangle2D.Float(objectTopLeftX, objectTopLeftY, object.getSize().getWidth(), object.getSize().getHeight());\n	   \n	   // Check for containment\n	   return myRect.contains(objectRect);\n   }\n   \n   /**\n    * Checks if this Physical2DObject intersects another one\n    * @param object The other Physical2DObject\n    * @return True or false\n    */\n   public boolean objectIntersects(Physical2DObject object){\n	// Calculate top left coordinates from center coordinates and size\n	   float myTopLeftX = getPosition().getXPos() - getSize().getWidth() / 2;\n	   float myTopLeftY = getPosition().getYPos() - getSize().getHeight() / 2;\n	   \n	   float objectTopLeftX = object.getPosition().getXPos() - object.getSize().getWidth() / 2;\n	   float objectTopLeftY = object.getPosition().getYPos() - object.getSize().getHeight() / 2;\n	   \n	   // Create Rectangle2D representations\n	   java.awt.geom.Rectangle2D.Float myRect = new java.awt.geom.Rectangle2D.Float(myTopLeftX, myTopLeftY, getSize().getWidth(), getSize().getHeight());\n	   java.awt.geom.Rectangle2D.Float objectRect = new java.awt.geom.Rectangle2D.Float(objectTopLeftX, objectTopLeftY, object.getSize().getWidth(), object.getSize().getHeight());\n	   \n	   // Check for intersection\n	   return myRect.intersects(objectRect);\n   }"))
+
+([PlaygroundObject] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([Position] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([project+annotation] of  %3APROJECT-ANNOTATION
+
+	(%3ALOCATION "D:\\Anwendungsdaten\\Eclipse Workspace\\AgentGUI\\src")
+	(%3AONTOLOGYNAME "Environment")
+	(%3APACKAGE "agentgui.physical2Denvironment.ontology")
+	(%3ASUPPORT "j2se"))
+
+([Scale] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([Size] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([StaticObject] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
