@@ -63,7 +63,6 @@
 						agentgui.envModel.p2Dsvg.display,
 						agentgui.envModel.p2Dsvg.imageProcessing,
 						agentgui.envModel.p2Dsvg.ontology,
-						agentgui.envModel.p2Dsvg.ontology.protegeFiles,
 						agentgui.envModel.p2Dsvg.provider,
 						agentgui.envModel.p2Dsvg.utils,
 						agentgui.math.calculation,
