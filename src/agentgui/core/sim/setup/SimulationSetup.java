@@ -197,6 +197,7 @@ import agentgui.core.application.Project;
 	 */
 	@XmlTransient
 	public ArrayList<AgentClassElement4SimStart> getAgentList() {
+		this.mergeListModels();
 		return agentList;
 	}
 	

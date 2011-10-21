@@ -33,6 +33,7 @@ package agentgui.envModel.p2Dsvg.controller;
 import jade.content.lang.Codec.CodecException;
 import jade.content.lang.xml.XMLCodec;
 import jade.content.onto.OntologyException;
+import jade.core.Agent;
 
 import java.awt.geom.Rectangle2D;
 import java.io.BufferedReader;
@@ -58,7 +59,6 @@ import org.apache.batik.util.XMLResourceDescriptor;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import agentgui.core.agents.AgentClassElement;
 import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
@@ -466,11 +466,10 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 				setChanged();
 				notifyObservers(new Integer(EC_ERROR));
 			}
-		}else{
+			
+		} else {
 			System.out.println(Language.translate("Umgebungsdatei")+" "+envFile.getPath()+" "+Language.translate("nicht gefunden"));
-//			this.setLastErrorMessage(Language.translate("Umgebungsdatei")+" "+envFile.getName()+" "+Language.translate("nicht gefunden"));
-//			setChanged();
-//			notifyObservers(new Integer(EC_ERROR));
+
 		}
 		return env;
 	}
@@ -490,46 +489,38 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 	}
 	
 	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private void addToAgentList(Physical2DObject  obj)
-	{	
-		System.out.println("Add to agent");
-		if(obj instanceof ActiveObject)
-		{					
+	/**
+	 * Adds the a new agent to the agent-list.
+	 *
+	 * @param p2DObj the Physical2DObject
+	 */
+	private void addToAgentList(Physical2DObject p2DObj) {	
+		
+		if(p2DObj instanceof ActiveObject) {					
 	
-	        String className= ((ActiveObject) obj).getAgentClassName();
-	        if(className==""||className==null)
-	        {
-	        	System.out.println("Class Name nicht gesetzt");
+	        String className = ((ActiveObject) p2DObj).getAgentClassName();
+	        if(className.equals("")||className==null) {
+	        	System.out.println("Class name not set");
 	        	return;
 	        }
-	        try
-	        {
-	          
-	        	Class cls=Class.forName(className);
-	    		
+	        
+	        try {
+	        	@SuppressWarnings("unchecked")
+				Class<? extends Agent> cls = (Class<? extends Agent>) Class.forName(className);
+	        	
 	 			AgentClassElement4SimStart simStart=new AgentClassElement4SimStart(cls, SimulationSetup.AGENT_LIST_EnvironmentConfiguration);
-	 			simStart.setStartAsName(obj.getId());
+	 			simStart.setStartAsName(p2DObj.getId());
 	 			simStart.setPostionNo(this.agents2Start.size()+1);
 	 			
-	 			if(checkListForID(obj.getId()))
-	 			{
-	 			System.out.println("Element added");
-	 			this.agents2Start.addElement(simStart);
-	 			this.updatePositionNr();
-	 			}
-	 			else
-	 			{
-	 				System.out.println("ID stimmt nicht");
-	 				this.agents2Start.addElement(simStart);
+	 			if(isInListForAgents2Start(p2DObj.getId())==false) {
+		 			this.agents2Start.addElement(simStart);
 		 			this.updatePositionNr();
-	 			}
+	 			} 
 				
-		    }
-		    catch(Exception e)
-		    {
+		    } catch(Exception e)  {
 		       	e.printStackTrace();
 		    }
+		    
 		}
 	}
 	
@@ -540,8 +531,7 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
  	 * @param object the object
  	 * @param settings the settings
  	 */
- 	private void changeElementFromAgentList(Physical2DObject  object, HashMap<String, Object> settings)
-	 {		
+ 	private void changeElementFromAgentList(Physical2DObject  object, HashMap<String, Object> settings) {		
 			this.removeFromAgentList(selectedObject);
 			this.addToAgentList(createObject(settings));
 		
@@ -709,18 +699,15 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 	 * @param id The ID to check
 	 * @return True if available, false if already in use
 	 */
-	private boolean checkListForID(String id){
-		for(int i=0;i<this.agents2Start.size();i++)
-		{
+	private boolean isInListForAgents2Start(String id){
+		
+		for(int i=0;i<this.agents2Start.size();i++) {
 			AgentClassElement4SimStart tmp=(AgentClassElement4SimStart) this.agents2Start.get(i);
-			if(tmp.getStartAsName().equals(id))
-			{
-				return false;
+			if(tmp.getStartAsName().equals(id)) {
+				return true;
 			}
-			
-			
 		}
-		return true;
+		return false;
 	}
 	
 	/**

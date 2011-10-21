@@ -20,7 +20,6 @@ import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
-import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentPanel;
 import agentgui.core.environment.EnvironmentType;
 import agentgui.core.jade.Platform;
@@ -76,8 +75,7 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 	 */
 	@Override
 	public void onStart() {
-		super.onStart();
-		this.setSimHelperAndThresholds();
+		this.setLoadHelperAndThresholds();
 		this.startVisualizationAgent();
 	}
 	
@@ -99,7 +97,7 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 	 * This method initializes the simHelper - Instance and sets the user
 	 * threshold to the currently running system 
 	 */
-	private void setSimHelperAndThresholds() {
+	private void setLoadHelperAndThresholds() {
 		
 		// --- Set the simHelper-Instance ---------------------------
 		try {
@@ -154,26 +152,18 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 			// ----------------------------------------------------------------
 			if (envTypeInternalKey.equalsIgnoreCase("none")) {
 				// --- Do nothing here ------------------------------
-			} else if (envTypeInternalKey.equalsIgnoreCase("condhfghftinous2Denvironment")) {
-				// --------------------------------------------------
-				// --- Start the SVG visualization ------------------
-				// --------------------------------------------------
-				Physical2DEnvironmentController envController = (Physical2DEnvironmentController) envPanel.getEnvironmentController();
-				this.startSVGVisualizationAgents(envController);
 			
 			} else {
 				// --------------------------------------------------
 				// --- Start the visualization of the model ---------
 				// --------------------------------------------------
-				EnvironmentController envController = envPanel.getEnvironmentController();
-				Object envModel = envController.getEnvironmentModelCopy();
 
 				// --- Get the Agent which has to be started for ---
 				Class<? extends Agent> displayAgentClass = envType.getDisplayAgentClass();
 				
 				Object[] startArg = new Object[3];
 				startArg[0] = currProject.projectVisualizationPanel;
-				startArg[1] = envModel;
+				startArg[1] = envPanel;
 				this.startAgent("DisplayAgent", displayAgentClass, startArg);
 				
 				// --- Set the focus on Visualisation-Tab ---------------------
