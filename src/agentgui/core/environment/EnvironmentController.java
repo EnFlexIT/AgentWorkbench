@@ -57,7 +57,7 @@ public abstract class EnvironmentController extends Observable implements Observ
 	/**
 	 * The list model for the agents, which has to be started with the current environment model 
 	 */
-	protected DefaultListModel agents2Start= new DefaultListModel();
+	protected DefaultListModel agents2Start = new DefaultListModel();
 
 
 	/**

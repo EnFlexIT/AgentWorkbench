@@ -690,7 +690,7 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 		}
 		
 		// --- Exists a Panle for the current environment model? ---- 
-		Class<? extends EnvironmentPanel> displayPanel = this.currProject.getEnvironmentModelType().getDisplayPanelClass();
+		Class<? extends EnvironmentPanel> displayPanel = this.currProject.getEnvironmentModelType().getEnvironmentPanelClass();
 		
 		// --- Remind the current selection -------------------------
 		DefaultMutableTreeNode lastSelectedNode = null;

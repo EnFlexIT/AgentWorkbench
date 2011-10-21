@@ -77,7 +77,6 @@ public class Physical2DObjectSettingsPanel extends JPanel{
 	private JTextField tfMaxSpeed = null;
 	private JLabel lblPosSeparator = null;
 	private JTextField tfId = null;
-	@SuppressWarnings("rawtypes")
 	private JComboBox cbOntologyClass = null;
 	private JLabel lblUnit1 = null;
 	private JLabel lblUnit2 = null;
@@ -326,7 +325,6 @@ public class Physical2DObjectSettingsPanel extends JPanel{
 	 * 	
 	 * @return javax.swing.JComboBox	
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	JComboBox getOntologyClass() {
 		if (cbOntologyClass == null) {
 			

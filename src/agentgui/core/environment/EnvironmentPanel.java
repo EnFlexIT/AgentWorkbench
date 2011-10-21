@@ -55,6 +55,7 @@ public abstract class EnvironmentPanel extends JPanel implements Observer{
 	 * The environment controller which is to be used for managing the environment model.
 	 */
 	protected EnvironmentController environmentController = null;
+	
 	/**
 	 * Do not use this constructor.
 	 */

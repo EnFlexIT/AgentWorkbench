@@ -205,7 +205,7 @@ public class GlobalInfo {
 		envKey = "continous2Denvironment";
 		envDisplayName = "Kontinuierliches 2D-Umgebungsmodell";
 		envPanelClass = Physical2DEnvironmentControllerGUI.class;
-		displayAgentClass = agentgui.envModel.p2Dsvg.provider.EnvironmentProviderAgent.class;
+		displayAgentClass = agentgui.envModel.p2Dsvg.display.DisplayAgent.class;
 		envType = new EnvironmentType(envKey, envDisplayName, envPanelClass, displayAgentClass);
 		addEnvironmentType(envType);
 		

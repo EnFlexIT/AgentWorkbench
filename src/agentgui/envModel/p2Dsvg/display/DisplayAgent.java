@@ -34,6 +34,7 @@ import jade.core.ServiceException;
 import jade.core.behaviours.TickerBehaviour;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -53,6 +54,8 @@ import org.w3c.dom.Document;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.envModel.p2Dsvg.behaviours.MoveToPointBehaviour;
+import agentgui.envModel.p2Dsvg.controller.Physical2DEnvironmentController;
+import agentgui.envModel.p2Dsvg.controller.Physical2DEnvironmentControllerGUI;
 import agentgui.envModel.p2Dsvg.ontology.Physical2DEnvironment;
 import agentgui.envModel.p2Dsvg.ontology.Physical2DObject;
 import agentgui.envModel.p2Dsvg.ontology.PositionUpdate;
@@ -97,6 +100,7 @@ public class DisplayAgent extends Agent {
 	public void setup(){
 	
 		int use4Visualization = 0;
+		
 		Object[] startArgs = getArguments();
 		if (startArgs==null || startArgs.length==0) {
 			// --- started in a normal way ----------------  
@@ -109,13 +113,25 @@ public class DisplayAgent extends Agent {
 			} catch (ServiceException e) {
 				System.err.println(getLocalName()+" - Error: Could not retrieve EnvironmentProviderHelper, shutting down!");
 				doDelete();
-			}			
+			}		
+			
 		} else {
+			System.out.println("Found start arguments sdfsdf");
 			// --- started from Agent.GUI -----------------
 			use4Visualization = 2;
 			usePanel = (JPanel) startArgs[0];
-			svgDoc = (Document) startArgs[1];
-			environment = (Physical2DEnvironment) startArgs[2];
+			environment = (Physical2DEnvironment) startArgs[1];
+			// --- get the SVG-Doc ------------------------
+			for (int i = 0; i < usePanel.getComponentCount(); i++) {
+				Component comp = usePanel.getComponent(i);	
+				if (comp instanceof Physical2DEnvironmentControllerGUI) {
+					Physical2DEnvironmentControllerGUI p2DEnvPanel = (Physical2DEnvironmentControllerGUI) comp;
+					Physical2DEnvironmentController p2DEnvController = (Physical2DEnvironmentController) p2DEnvPanel.getEnvironmentController();
+					svgDoc = p2DEnvController.getSvgDocCopy();
+					break;
+				}
+			}
+			
 		}
 
 		// --- initiate the GUI - element -----------------

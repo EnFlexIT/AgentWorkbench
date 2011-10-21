@@ -53,7 +53,7 @@ public class Physical2DEnvironmentSettingsPanel extends JPanel {
 	private JLabel lblScale = null;
 	private JTextField tfRwu = null;
 	private JTextField tfPx = null;
-	@SuppressWarnings("rawtypes")
+	
 	private JComboBox cbUnit = null;
 	private JLabel lblPx = null;
 	private JButton btnSetScale = null;
@@ -111,7 +111,6 @@ public class Physical2DEnvironmentSettingsPanel extends JPanel {
 	 * 	
 	 * @return javax.swing.JComboBox	
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	JComboBox getCbUnit() {
 		if (cbUnit == null) {
 			cbUnit = new JComboBox();

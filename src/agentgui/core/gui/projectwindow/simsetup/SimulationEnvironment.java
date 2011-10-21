@@ -43,7 +43,7 @@ import agentgui.core.environment.EnvironmentPanel;
 import agentgui.core.environment.EnvironmentType;
 
 /**
- * Represents the JPanel/Tab 'Configuration' - 'Simulation Environment'.
+ * Represents the JPanel/Tab 'Simulation-Setup' - 'Simulation Environment'.
  *
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
@@ -99,7 +99,7 @@ public class SimulationEnvironment extends JPanel implements Observer, ActionLis
 		};
 		
 		EnvironmentType envType = project.getEnvironmentModelType();
-		Class<? extends EnvironmentPanel> envPanelClass = envType.getDisplayPanelClass();
+		Class<? extends EnvironmentPanel> envPanelClass = envType.getEnvironmentPanelClass();
 	
 		if (envPanelClass==null) {
 			// ------------------------------------------------------

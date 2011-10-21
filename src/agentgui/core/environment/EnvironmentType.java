@@ -49,7 +49,7 @@ public class EnvironmentType {
 
 	private String internalKey = null;
 	private String displayName = null;
-	private Class<? extends EnvironmentPanel> displayPanelClass = null;
+	private Class<? extends EnvironmentPanel> environmentPanelClass = null;
 	private Class<? extends Agent> displayAgentClass = null;
 	
 	/**
@@ -62,7 +62,7 @@ public class EnvironmentType {
 	public EnvironmentType(String key, String displayName, Class<? extends EnvironmentPanel> panelClass, Class<? extends Agent> agentClass) {
 		this.internalKey = key;
 		this.displayName = displayName;
-		this.displayPanelClass = panelClass;
+		this.environmentPanelClass = panelClass;
 		this.displayAgentClass = agentClass;
 	}
 	
@@ -102,14 +102,14 @@ public class EnvironmentType {
 	/**
 	 * @return the displayPanelClass
 	 */
-	public Class<? extends EnvironmentPanel> getDisplayPanelClass() {
-		return displayPanelClass;
+	public Class<? extends EnvironmentPanel> getEnvironmentPanelClass() {
+		return environmentPanelClass;
 	}
 	/**
 	 * @param displayPanelClass the displayPanel to set
 	 */
-	public void setDisplayPanelClass(Class<? extends EnvironmentPanel> displayPanelClass) {
-		this.displayPanelClass = displayPanelClass;
+	public void setEnvironmentPanelClass(Class<? extends EnvironmentPanel> displayPanelClass) {
+		this.environmentPanelClass = displayPanelClass;
 	}
 
 	/**

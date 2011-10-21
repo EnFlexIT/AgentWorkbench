@@ -39,7 +39,7 @@ public class StaticLoadBalancing extends StaticLoadBalancingBase {
 			// --- and distribute the agents, defined in 			 -----
 			// --- 'this.currAgentList' to these container			 -----
 			// --- => The Agents defined in the visualization-setup  -----
-			// --- will be deistributed as well 					 -----
+			// --- will be distributed as well 					 	 -----
 			// -----------------------------------------------------------
 
 			// --- Just in case, that we don't have enough information ---

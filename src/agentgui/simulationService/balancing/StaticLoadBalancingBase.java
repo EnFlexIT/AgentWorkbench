@@ -154,7 +154,7 @@ public class StaticLoadBalancingBase extends OneShotBehaviour {
 			// ----------------------------------------------------------------
 			if (envTypeInternalKey.equalsIgnoreCase("none")) {
 				// --- Do nothing here ------------------------------
-			} else if (envTypeInternalKey.equalsIgnoreCase("continous2Denvironment")) {
+			} else if (envTypeInternalKey.equalsIgnoreCase("condhfghftinous2Denvironment")) {
 				// --------------------------------------------------
 				// --- Start the SVG visualization ------------------
 				// --------------------------------------------------
