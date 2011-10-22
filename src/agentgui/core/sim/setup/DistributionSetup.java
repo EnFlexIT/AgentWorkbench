@@ -69,7 +69,7 @@ public class DistributionSetup implements Serializable {
 		return doStaticLoadBalancing;
 	}
 	/**
-	 * Sets the do static load balalncing.
+	 * Sets the do static load balancing.
 	 *
 	 * @param doStaticLoadBalalncing the doStaticLoadBalalncing to set
 	 */

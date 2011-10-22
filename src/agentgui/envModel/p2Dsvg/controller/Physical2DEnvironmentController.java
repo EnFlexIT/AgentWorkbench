@@ -106,20 +106,7 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 	 * An error occured  
 	 */
 	public static final int EC_ERROR = 4;
-	/**
-	 * @return the lastErrorMessage
-	 */
-	public String getLastErrorMessage() {
-		return lastErrorMessage;
-	}
-
-
-	/**
-	 * @param lastErrorMessage the lastErrorMessage to set
-	 */
-	private void setLastErrorMessage(String lastErrorMessage) {
-		this.lastErrorMessage = lastErrorMessage;
-	}
+	
 	/**
 	 * This EnvironmentController's GUI
 	 */
@@ -145,6 +132,10 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 	 * The SVG document representing this environment; 
 	 */
 	private Document svgDoc = null;	
+	/** 
+	 * The SVG file name. 
+	 */
+	private String svgFileName = null;
 	/**
 	 * The Physical2DObject currently selected for editing
 	 */
@@ -289,7 +280,7 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 			file = new File(currentSVGPath);
 			saveSVG(file);
 		}
-		getCurrentSimSetup().setSvgFileName(file.getName());
+		this.setSvgFileName(file.getName());
 		setEnvironment(initEnvironment());
 	}
 	/**
@@ -778,14 +769,14 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 			case SimulationSetups.SIMULATION_SETUP_COPY:
 				setDefaultFileNames();
 				this.currentEnvironmentPath = this.envFolderPath + getCurrentSimSetup().getEnvironmentFileName();
-				this.currentSVGPath = this.envFolderPath + getCurrentSimSetup().getSvgFileName();
+				this.currentSVGPath = this.envFolderPath + this.getSvgFileName();
 				saveEnvironment();
 			break;
 			
 			case SimulationSetups.SIMULATION_SETUP_ADD_NEW:
 				setDefaultFileNames();
 				this.currentEnvironmentPath = this.envFolderPath + getCurrentSimSetup().getEnvironmentFileName();
-				this.currentSVGPath = this.envFolderPath + getCurrentSimSetup().getSvgFileName();
+				this.currentSVGPath = this.envFolderPath + this.getSvgFileName();
 				setEnvironment(null);
 				setSvgDoc(null);
 			break;
@@ -804,7 +795,7 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 			
 			case SimulationSetups.SIMULATION_SETUP_LOAD:
 				this.currentEnvironmentPath = this.envFolderPath + getCurrentSimSetup().getEnvironmentFileName();
-				this.currentSVGPath = this.envFolderPath + getCurrentSimSetup().getSvgFileName();
+				this.currentSVGPath = this.envFolderPath + this.getSvgFileName();
 				setEnvironment(loadEnvironmentFromXML(new File(this.currentEnvironmentPath)));
 				setSvgDoc(loadSVG(new File(this.currentSVGPath)));
 			break;
@@ -820,12 +811,12 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 				}
 				
 				if(oldSVGFile.exists()){
-					File newSvgFile = new File(this.envFolderPath+getCurrentSimSetup().getSvgFileName());
+					File newSvgFile = new File(this.envFolderPath + this.getSvgFileName());
 					oldSVGFile.renameTo(newSvgFile);
 				}
 				
 				this.currentEnvironmentPath = this.envFolderPath + getCurrentSimSetup().getEnvironmentFileName();
-				this.currentSVGPath = this.envFolderPath + getCurrentSimSetup().getSvgFileName();
+				this.currentSVGPath = this.envFolderPath + this.getSvgFileName();
 			break;
 		}
 		
@@ -835,7 +826,7 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 		String baseFileName = currProject.simulationSetupCurrent;
 		//TODO remove the path from the simsetup
 		getCurrentSimSetup().setEnvironmentFileName(baseFileName+".xml");
-		getCurrentSimSetup().setSvgFileName(baseFileName+".svg");
+		this.setSvgFileName(baseFileName+".svg");
 	}
 	
 	public void setScale(Scale scale){
@@ -868,8 +859,8 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 		
 				
 		// Load SVG file if specified
-		if(currentSetup.getSvgFileName() != null && currentSetup.getSvgFileName().length() >0){
-			currentSVGPath = envFolderPath + currentSetup.getSvgFileName();
+		if(this.getSvgFileName() != null && this.getSvgFileName().length() >0){
+			currentSVGPath = envFolderPath + this.getSvgFileName();
 			setSvgDoc(loadSVG(new File(currentSVGPath)));
 		}
 		// Load environment file if specified
@@ -897,6 +888,37 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 		if (currentEnvironmentPath!=null) {
 			savePhysical2DEnvironment(new File(currentEnvironmentPath));	
 		}
+	}
+
+
+	/**
+	 * @return the lastErrorMessage
+	 */
+	public String getLastErrorMessage() {
+		return lastErrorMessage;
+	}
+	/**
+	 * @param lastErrorMessage the lastErrorMessage to set
+	 */
+	private void setLastErrorMessage(String lastErrorMessage) {
+		this.lastErrorMessage = lastErrorMessage;
+	}
+	
+	/**
+	 * Provides the svg file name.
+	 *
+	 * @return the svgFileName
+	 */
+	public String getSvgFileName() {
+		return svgFileName;
+	}
+	/**
+	 * Sets the svg file name.
+	 *
+	 * @param svgFileName the svgFileName to set
+	 */
+	public void setSvgFileName(String svgFileName) {
+		this.svgFileName = svgFileName;
 	}
 
 	

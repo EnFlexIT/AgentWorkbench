@@ -88,9 +88,6 @@ import agentgui.core.application.Project;
 	/** The environment file name. */
 	private String environmentFileName = null;
 	
-	/** The svg file name. */
-	private String svgFileName = null;
-	
 	/**
 	 * This field can be used in order to provide customised objects during
 	 * the runtime of a project. This will be not stored within the file 'agentgui.xml' 
@@ -149,23 +146,27 @@ import agentgui.core.application.Project;
 	 * @return true, if saving was successful
 	 */
 	public boolean save() {
+		
 		boolean saved = true;
 		this.mergeListModels();
 		
-		// ------------------------------------------------
-		// --- Save the current simulation setup ----------
 		try {			
-			// --- prepare context and Marshaller ---------
+			// --------------------------------------------
+			// --- Save this instance as XML-file ---------
+			// --------------------------------------------
 			JAXBContext pc = JAXBContext.newInstance(this.getClass()); 
 			Marshaller pm = pc.createMarshaller(); 
 			pm.setProperty( Marshaller.JAXB_ENCODING, "UTF-8" );
 			pm.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE ); 
 
-			// --- Objektwerte in xml-Datei schreiben ----
 			Writer pw = new FileWriter( currProject.simulationSetups.getCurrSimXMLFile() );
-			pm.marshal( this, pw );
+			pm.marshal(this, pw);
 						
-			// --- Save the userRuntimeObject in the SimSetup into a different file as a Serializable binary object.
+			// --------------------------------------------
+			// --- Save the userRuntimeObject in the   ----
+			// --- SimSetup into a different file as a ----
+			// --- Serializable binary object.		   ----
+			// --------------------------------------------
 			FileOutputStream fos = null;
 			ObjectOutputStream out = null;
 		    try  {
@@ -181,8 +182,7 @@ import agentgui.core.application.Project;
 		    }
 			currProject.setNotChangedButNotify(new SimulationSetupsChangeNotification(SimulationSetups.SIMULATION_SETUP_SAVED));
 		
-		} 
-		catch (Exception e) {
+		} catch (Exception e) {
 			System.out.println("XML-Error while saving Setup-File!");
 			e.printStackTrace();
 			saved = false;
@@ -321,26 +321,6 @@ import agentgui.core.application.Project;
 		return comboBoxModel4AgentLists;
 	}
 	
-	
-	
-	/**
-	 * Gets the svg file name.
-	 *
-	 * @return the svgFileName
-	 */
-	public String getSvgFileName() {
-		return svgFileName;
-	}
-	
-	/**
-	 * Sets the svg file name.
-	 *
-	 * @param svgFileName the svgFileName to set
-	 */
-	public void setSvgFileName(String svgFileName) {
-		this.svgFileName = svgFileName;
-	}
-	
 	/**
 	 * Gets the environment file name.
 	 *
@@ -349,7 +329,6 @@ import agentgui.core.application.Project;
 	public String getEnvironmentFileName() {
 		return environmentFileName;
 	}
-	
 	/**
 	 * Sets the environment file name.
 	 *
