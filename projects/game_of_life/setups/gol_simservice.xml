@@ -2,8 +2,8 @@
 <simulationSetup>
     <agentSetup/>
     <distribution>
-        <doDynamicLoadBalalncing>false</doDynamicLoadBalalncing>
-        <doStaticLoadBalalncing>true</doStaticLoadBalalncing>
+        <doDynamicLoadBalancing>false</doDynamicLoadBalancing>
+        <doStaticLoadBalancing>false</doStaticLoadBalancing>
         <dynamicLoadBalancingClass>agentgui.simulationService.balancing.DynamicLoadBalancing</dynamicLoadBalancingClass>
         <numberOfAgents>1500</numberOfAgents>
         <numberOfContainer>1</numberOfContainer>
