@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.simulationService;
 
 import jade.content.lang.sl.SLCodec;
@@ -67,13 +95,30 @@ import agentgui.simulationService.ontology.PlatformPerformance;
 import agentgui.simulationService.ontology.RemoteContainerConfig;
 
 /**
+ * This extended BaseService is basically used to transport the load information 
+ * from different remote locations to the Main-Container. Beside the load, measured
+ * with HypericSigar in the {@link LoadMeasureThread}, its evaluates also some local
+ * information and enables to set the migration of agents.<br> 
+ * Additionally it can be used in order to start agents directly on remote container, 
+ * which requires to have the agents resources (e.g. a jar file) available there. 
+ * 
+ * @see LoadMeasureThread
+ * @see LoadServiceHelper
+ * @see LoadServiceProxy
+ * @see LoadServiceSlice 
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg / Essen
  */
 public class LoadService extends BaseService {
 
+	
+	/** The external NAME of the this Service ('agentgui.simulationService.LoadService'). */
 	public static final String NAME = LoadServiceHelper.SERVICE_NAME;
+	
+	/** The file-name which stores the local node- (computer)- description as a file. */
 	public static final String SERVICE_NODE_DESCRIPTION_FILE = LoadServiceHelper.SERVICE_NODE_DESCRIPTION_FILE;
+	/** A marker to prevent concurrent access to the NODE_DESCRIPTION_FILE */
+	public static boolean currentlyWritingFile = false;
 	
 	private AgentContainer myContainer;
 	private MainContainer myMainContainer;
@@ -82,22 +127,23 @@ public class LoadService extends BaseService {
 	private Filter outFilter;
 	private ServiceComponent localSlice;
 	
-	// --- This is the Object with all necessary informations about ----------- 
-	// --- this slice, which are needed by AgentGUI					-----------
 	private String myContainerMTPurl = null;
-	private ClientRemoteContainerReply myCRCReply = null; 
-	public static boolean currentlyWritingFile = false;  
 	
-	// --- The List of Agents, which are registered to this service ----------- 
+	/** The my crc reply. */
+	private ClientRemoteContainerReply myCRCReply = null; 
+	
+	/** The List of Agents, which are registered to this service  **/ 
 	private Hashtable<String,AID> agentList = new Hashtable<String,AID>();
-	// --- Default value for starting remote-container ------------------------
+	/** Default value for starting remote-container **/
 	private boolean DEFAULT_preventUsageOfAlreadyUsedComputers = true;
 	
-	// --- The Load-Information Array of all slices ---------------------------
+	/**  The Load-Information Array of all slices **/
 	private LoadInformation loadInfo = new LoadInformation(); 
 	
 	
-	
+	/* (non-Javadoc)
+	 * @see jade.core.BaseService#init(jade.core.AgentContainer, jade.core.Profile)
+	 */
 	public void init(AgentContainer ac, Profile p) throws ProfileException {
 		
 		super.init(ac,p);
@@ -124,18 +170,30 @@ public class LoadService extends BaseService {
 		new LoadMeasureThread().start();  
 		
 	}
+	/* (non-Javadoc)
+	 * @see jade.core.BaseService#boot(jade.core.Profile)
+	 */
 	public void boot(Profile p) throws ServiceException {
 		super.boot(p);
 		if (myMainContainer==null) {
 			setLocalCRCReply(true);
 		}
 	}
+	/* (non-Javadoc)
+	 * @see jade.core.Service#getName()
+	 */
 	public String getName() {
 		return NAME;
 	}
+	/* (non-Javadoc)
+	 * @see jade.core.BaseService#getHelper(jade.core.Agent)
+	 */
 	public ServiceHelper getHelper (Agent ag) {
 		return new LoadServiceImpl();
 	}
+	/* (non-Javadoc)
+	 * @see jade.core.BaseService#getCommandFilter(boolean)
+	 */
 	public Filter getCommandFilter(boolean direction) {
 		if(direction == Filter.INCOMING) {
 			return incFilter;
@@ -144,11 +202,14 @@ public class LoadService extends BaseService {
 			return outFilter;
 		}
 	}
+	/* (non-Javadoc)
+	 * @see jade.core.BaseService#getHorizontalInterface()
+	 */
 	public Class<?> getHorizontalInterface() {
 		return LoadServiceSlice.class;
 	}
-	/**
-	 * Retrieve the locally installed slice of this service.
+	/* (non-Javadoc)
+	 * @see jade.core.BaseService#getLocalSlice()
 	 */
 	public Service.Slice getLocalSlice() {
 		return localSlice;
@@ -159,41 +220,67 @@ public class LoadService extends BaseService {
 	// ---- Inner-Class 'AgentTimeImpl' ---- Start ------------------
 	// --------------------------------------------------------------
 	/**
-	 * Sub-Class to provide interaction between Agents and this Service
+	 * Sub-Class to provide interaction between Agents and this Service by using the {@link LoadServiceHelper}.
+	 *
 	 * @author Christian Derksen - DAWIS - ICB - University of Duisburg / Essen
 	 */
 	public class LoadServiceImpl implements LoadServiceHelper {
 
-		private static final long serialVersionUID = 5741448121178289099L;
-
+		/* (non-Javadoc)
+		 * @see jade.core.ServiceHelper#init(jade.core.Agent)
+		 */
 		public void init(Agent ag) {
 			// --- Store the Agent in the agentList -----------------
 			agentList.put(ag.getName(), ag.getAID());			
 		}
 				
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.LoadServiceHelper#startAgent(java.lang.String, java.lang.String, java.lang.Object[], java.lang.String)
+		 */
 		public boolean startAgent(String nickName, String agentClassName, Object[] args, String containerName) throws ServiceException {
 			return broadcastStartAgent(nickName, agentClassName, args, containerName);
 		}
 		
 		// ----------------------------------------------------------
 		// --- Methods to start a new remote-container -------------- 
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.LoadServiceHelper#getDefaultRemoteContainerConfig()
+		 */
 		public RemoteContainerConfig getDefaultRemoteContainerConfig() throws ServiceException {
 			return this.getDefaultRemoteContainerConfig(DEFAULT_preventUsageOfAlreadyUsedComputers);
 		}
+		
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.LoadServiceHelper#getDefaultRemoteContainerConfig(boolean)
+		 */
 		public RemoteContainerConfig getDefaultRemoteContainerConfig(boolean preventUsageOfAlreadyUsedComputers) throws ServiceException {
 			return broadcastGetDefaultRemoteContainerConfig(preventUsageOfAlreadyUsedComputers);
 		}
 		
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.LoadServiceHelper#startNewRemoteContainer()
+		 */
 		public String startNewRemoteContainer() throws ServiceException {
 			return this.startNewRemoteContainer(null, DEFAULT_preventUsageOfAlreadyUsedComputers);
 		}
+		
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.LoadServiceHelper#startNewRemoteContainer(boolean)
+		 */
 		public String startNewRemoteContainer(boolean preventUsageOfAlreadyUsedComputers) throws ServiceException {
 			return this.startNewRemoteContainer(null, preventUsageOfAlreadyUsedComputers);
 		}
+		
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.LoadServiceHelper#startNewRemoteContainer(agentgui.simulationService.ontology.RemoteContainerConfig, boolean)
+		 */
 		public String startNewRemoteContainer(RemoteContainerConfig remoteConfig, boolean preventUsageOfAlreadyUsedComputers) throws ServiceException {
 			return broadcastStartNewRemoteContainer(remoteConfig, preventUsageOfAlreadyUsedComputers);
 		}
 		
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.LoadServiceHelper#startNewRemoteContainerStaus(java.lang.String)
+		 */
 		public Container2Wait4 startNewRemoteContainerStaus(String containerName) throws ServiceException {
 			return broadcastGetNewContainer2Wait4Status(containerName);
 		}
@@ -201,9 +288,16 @@ public class LoadService extends BaseService {
 		// ----------------------------------------------------------
 		// --- Methods to set the local description of this node ----
 		// --- which is stored in the file 'AgentGUINode.bin'    ----
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.LoadServiceHelper#getLocalCRCReply()
+		 */
 		public ClientRemoteContainerReply getLocalCRCReply() throws ServiceException {
 			return myCRCReply;
 		}
+		
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.LoadServiceHelper#setAndSaveCRCReplyLocal(agentgui.simulationService.ontology.ClientRemoteContainerReply)
+		 */
 		public void setAndSaveCRCReplyLocal(ClientRemoteContainerReply crcReply) throws ServiceException {
 			myCRCReply = crcReply;
 			saveCRCReply(myCRCReply);
@@ -211,6 +305,9 @@ public class LoadService extends BaseService {
 
 		// ----------------------------------------------------------
 		// --- Methods for container info about OS, benchmark etc. -- 
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.LoadServiceHelper#putContainerDescription(agentgui.simulationService.ontology.ClientRemoteContainerReply)
+		 */
 		public void putContainerDescription(ClientRemoteContainerReply crcReply) throws ServiceException {
 			if (crcReply.getRemoteAddress()==null && crcReply.getRemoteOS()==null && crcReply.getRemotePerformance()==null && crcReply.getRemoteBenchmarkResult()==null) {
 				// --- RemoteContainerRequest WAS NOT successful ----
@@ -220,20 +317,35 @@ public class LoadService extends BaseService {
 				broadcastPutContainerDescription(slices, crcReply);	
 			}
 		}
+		
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.LoadServiceHelper#getContainerDescriptions()
+		 */
 		public Hashtable<String, NodeDescription> getContainerDescriptions() throws ServiceException {
 			return loadInfo.containerDescription;
 		}
+		
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.LoadServiceHelper#getContainerDescription(java.lang.String)
+		 */
 		public NodeDescription getContainerDescription(String containerName) throws ServiceException {
 			return loadInfo.containerDescription.get(containerName);
 		}
 		
 		// ----------------------------------------------------------
 		// --- Method for getting Location-Objects ------------------ 
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.LoadServiceHelper#getContainerLocations()
+		 */
 		public Hashtable<String, Location> getContainerLocations() throws ServiceException {
 			Service.Slice[] slices = getAllSlices();
 			broadcastGetContainerLocation(slices);
 			return loadInfo.containerLocations;
 		}
+		
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.LoadServiceHelper#getContainerLocation(java.lang.String)
+		 */
 		public Location getContainerLocation(String containerName) throws ServiceException {
 			this.getContainerLocations();
 			return loadInfo.containerLocations.get(containerName);
@@ -241,33 +353,57 @@ public class LoadService extends BaseService {
 		
 		// ----------------------------------------------------------
 		// --- Method to get the Load-Informations of all containers 
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.LoadServiceHelper#setThresholdLevels(agentgui.simulationService.load.LoadThresholdLevels)
+		 */
 		public void setThresholdLevels(LoadThresholdLevels thresholdLevels) throws ServiceException {
 			Service.Slice[] slices = getAllSlices();
 			broadcastThresholdLevels(slices, thresholdLevels);
 		}
+		
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.LoadServiceHelper#getContainerLoads()
+		 */
 		public Hashtable<String, PlatformLoad> getContainerLoads() throws ServiceException {
 			Service.Slice[] slices = getAllSlices();
 			broadcastMeasureLoad(slices);
 			return loadInfo.containerLoads;
 		}
+		
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.LoadServiceHelper#getContainerLoad(java.lang.String)
+		 */
 		public PlatformLoad getContainerLoad(String containerName) throws ServiceException {
 			Service.Slice[] slices = getAllSlices();
 			broadcastMeasureLoad(slices);
 			return loadInfo.containerLoads.get(containerName);
 		}
 		
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.LoadServiceHelper#getContainerQueue()
+		 */
 		public Vector<String> getContainerQueue() throws ServiceException {
 			return loadInfo.containerQueue;
 		}
 		
-		public void setCycleStartTimeStamp() throws ServiceException {
-			loadInfo.setCycleStartTimeStamp();
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.LoadServiceHelper#setSimulationCycleStartTimeStamp()
+		 */
+		public void setSimulationCycleStartTimeStamp() throws ServiceException {
+			loadInfo.setSimulationCycleStartTimeStamp();
 		}
+		
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.LoadServiceHelper#getAvgCycleTime()
+		 */
 		public double getAvgCycleTime() throws ServiceException{
 			return loadInfo.getAvgCycleTime();
 		}
 		// ----------------------------------------------------------
 		// --- Method to get positions of Agents at this platform --- 
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.LoadServiceHelper#getAgentMap()
+		 */
 		public LoadAgentMap getAgentMap() throws ServiceException {
 			Service.Slice[] slices = getAllSlices();
 			broadcastGetAIDListSensorAgents(slices);
@@ -277,6 +413,9 @@ public class LoadService extends BaseService {
 		
 		// ----------------------------------------------------------
 		// --- Method to set the agent migration --------------------
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.LoadServiceHelper#setAgentMigration(java.util.Vector)
+		 */
 		public void setAgentMigration(Vector<AID_Container> transferAgents) throws ServiceException {
 			Service.Slice[] slices = getAllSlices();
 			broadcastAgentMigration(transferAgents, slices);
@@ -288,11 +427,12 @@ public class LoadService extends BaseService {
 	// --------------------------------------------------------------
 	
 	/**
-	 * Broadcast the new locations to the agents
-	 * @param transferAgents 
-	 * @param aSynchron
-	 * @param slices
-	 * @throws ServiceException
+	 * Broadcast the new locations to the agents.
+	 *
+	 * @see AID_Container
+	 * @param transferAgents the Vector of agents to transfer 
+	 * @param slices the slices
+	 * @throws ServiceException the service exception
 	 */
 	private void broadcastAgentMigration(Vector<AID_Container> transferAgents, Service.Slice[] slices) throws ServiceException {
 		
@@ -317,27 +457,28 @@ public class LoadService extends BaseService {
 	}
 
 	/**
-	 * This mehtods starts an agent on an designate (remote) container
-	 * @param nickName
-	 * @param agentClass
-	 * @param args
-	 * @param containerName
-	 * @return
-	 * @throws ServiceException
+	 * This method starts an agent on an designate (remote) container.
+	 *
+	 * @param localName4Agent the nick local Name of the agent
+	 * @param agentClassName the agent class name
+	 * @param args the args
+	 * @param containerName the container name
+	 * @return true, if successful
+	 * @throws ServiceException the service exception
 	 */
-	private boolean broadcastStartAgent (String nickName, String agentClassName, Object[] args, String containerName) throws ServiceException {
+	private boolean broadcastStartAgent(String localName4Agent, String agentClassName, Object[] args, String containerName) throws ServiceException {
 			
 		if (myLogger.isLoggable(Logger.CONFIG)) {
-			myLogger.log(Logger.CONFIG, "Try to start agent '" + nickName + "' on container " + containerName + "!");
+			myLogger.log(Logger.CONFIG, "Try to start agent '" + localName4Agent + "' on container " + containerName + "!");
 		}
 		String sliceName = null;
 		try {
 			LoadServiceSlice slice = (LoadServiceSlice) getSlice(containerName);
 			sliceName = slice.getNode().getName();
 			if (myLogger.isLoggable(Logger.FINER)) {
-				myLogger.log(Logger.FINER, "Start agent '" + nickName + "' on container " + sliceName + "");
+				myLogger.log(Logger.FINER, "Start agent '" + localName4Agent + "' on container " + sliceName + "");
 			}
-			return slice.startAgent(nickName, agentClassName, args);
+			return slice.startAgent(localName4Agent, agentClassName, args);
 		}
 		catch(Throwable t) {
 			// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
@@ -347,10 +488,11 @@ public class LoadService extends BaseService {
 	}
 	
 	/**
-	 * This Methods returns the default Remote-Container-Configuration, coming from the Main-Container
-	 * @param slices
-	 * @return
-	 * @throws ServiceException
+	 * This Methods returns the default Remote-Container-Configuration, coming from the Main-Container.
+	 *
+	 * @param preventUsageOfAlreadyUsedComputers the prevent usage of already used computers
+	 * @return the RemoteContainerConfig
+	 * @throws ServiceException the service exception
 	 */
 	private RemoteContainerConfig broadcastGetDefaultRemoteContainerConfig(boolean preventUsageOfAlreadyUsedComputers) throws ServiceException {
 		
@@ -374,9 +516,12 @@ public class LoadService extends BaseService {
 	}
 	
 	/**
-	 * Broadcast to start a new remote-container for this platform to the Main-Container 
-	 * @param slices
-	 * @throws ServiceException
+	 * Broadcast to start a new remote-container for this platform to the Main-Container.
+	 *
+	 * @param remoteConfig the configuration of the remote container
+	 * @param preventUsageOfAlreadyUsedComputers the prevent usage of already used computers
+	 * @return the name of the new container
+	 * @throws ServiceException the service exception
 	 */
 	private String broadcastStartNewRemoteContainer(RemoteContainerConfig remoteConfig, boolean preventUsageOfAlreadyUsedComputers) throws ServiceException {
 		
@@ -400,9 +545,11 @@ public class LoadService extends BaseService {
 	}
 	
 	/**
-	 * Broadcast to start a new remote-container for this platform 
-	 * @param slices
-	 * @throws ServiceException
+	 * Broadcast to start a new remote-container for this platform.
+	 *
+	 * @param containerName2Wait4 the container name2 wait4
+	 * @return the container2 wait4
+	 * @throws ServiceException the service exception
 	 */
 	private Container2Wait4 broadcastGetNewContainer2Wait4Status(String containerName2Wait4) throws ServiceException {
 		
@@ -426,9 +573,11 @@ public class LoadService extends BaseService {
 	}
 	
 	/**
-	 * Broadcast to start a new remote-container for this platform 
-	 * @param slices
-	 * @throws ServiceException
+	 * Collects all {@link Location} information from the connected container. 
+	 * The information will be set to the local {@link #loadInfo}.
+	 *
+	 * @param slices the slices
+	 * @throws ServiceException the service exception
 	 */
 	private void broadcastGetContainerLocation(Service.Slice[] slices) throws ServiceException {
 		
@@ -456,9 +605,11 @@ public class LoadService extends BaseService {
 	}
 	
 	/**
-	 * Broadcast informtion's of the remote-container (OS etc.) to all remote-container of this platform 
-	 * @param slices
-	 * @throws ServiceException
+	 * Broadcast informtion's of the remote-container (OS etc.) to all remote-container of this platform.
+	 *
+	 * @param slices the slices
+	 * @param crcReply the ClientRemoteContainerReply
+	 * @throws ServiceException the service exception
 	 */
 	private void broadcastPutContainerDescription(Service.Slice[] slices, ClientRemoteContainerReply crcReply) throws ServiceException {
 		
@@ -483,9 +634,11 @@ public class LoadService extends BaseService {
 	}
 	
 	/**
-	 * Broadcast the set of threshold levels to all container
-	 * @param slices
-	 * @throws ServiceException
+	 * Broadcast the set of threshold levels to all container.
+	 *
+	 * @param slices the slices
+	 * @param thresholdLevels the threshold levels
+	 * @throws ServiceException the service exception
 	 */
 	private void broadcastThresholdLevels(Service.Slice[] slices, LoadThresholdLevels thresholdLevels) throws ServiceException {
 		
@@ -512,9 +665,11 @@ public class LoadService extends BaseService {
 	}
 	
 	/**
-	 * 'Broadcast' (or receive) all Informations about the containers load
-	 * @param slices
-	 * @throws ServiceException
+	 * 'Broadcast' (or receive) all Informations about the containers load.
+	 * The information will be set to the local {@link #loadInfo}.
+	 *
+	 * @param slices the slices
+	 * @throws ServiceException the service exception
 	 */
 	private void broadcastMeasureLoad(Service.Slice[] slices) throws ServiceException {
 		
@@ -542,9 +697,11 @@ public class LoadService extends BaseService {
 	}
 	
 	/**
-	 * 'Broadcast' (or receive) the list of all agents in a container
-	 * @param slices
-	 * @throws ServiceException
+	 * 'Broadcast' (or receive) the list of all agents in a container.
+	 * The information will be set to the local {@link #loadInfo}.
+	 *
+	 * @param slices the slices
+	 * @throws ServiceException the service exception
 	 */
 	private void broadcastGetAIDList(Service.Slice[] slices) throws ServiceException {
 		
@@ -573,9 +730,11 @@ public class LoadService extends BaseService {
 	}
 	
 	/**
-	 * 'Broadcast' (or receive) the list of all agents in a container with a registered sensor
-	 * @param slices
-	 * @throws ServiceException
+	 * 'Broadcast' (or receive) the list of all agents in a container with a registered sensor.
+	 * The information will be set to the local {@link #loadInfo}.
+	 *
+	 * @param slices the slices
+	 * @throws ServiceException the service exception
 	 */
 	private void broadcastGetAIDListSensorAgents(Service.Slice[] slices) throws ServiceException {
 		
@@ -608,16 +767,22 @@ public class LoadService extends BaseService {
 	// --------------------------------------------------------------
 	/**
 	 * Inner class ServiceComponent. Will receive Commands, which 
-	 * are coming from the LoadServiceProxy 
+	 * are coming from the LoadServiceProxy and do local method invocations. 
 	 */
 	private class ServiceComponent implements Service.Slice {
 		
 		private static final long serialVersionUID = 1776886375724997808L;
 
+		/* (non-Javadoc)
+		 * @see jade.core.Service.Slice#getService()
+		 */
 		public Service getService() {
 			return LoadService.this;
 		}
 		
+		/* (non-Javadoc)
+		 * @see jade.core.Service.Slice#getNode()
+		 */
 		public Node getNode() throws ServiceException {
 			try {
 				return LoadService.this.getLocalNode();
@@ -627,6 +792,9 @@ public class LoadService extends BaseService {
 			}
 		}
 		
+		/* (non-Javadoc)
+		 * @see jade.core.Service.Slice#serve(jade.core.HorizontalCommand)
+		 */
 		public VerticalCommand serve(HorizontalCommand cmd) {
 			
 			try {
@@ -703,7 +871,7 @@ public class LoadService extends BaseService {
 					if (myLogger.isLoggable(Logger.FINE)) {
 						myLogger.log(Logger.FINE, "Received 'Step Simulation'");
 					}	
-					this.stepSimulation();
+					this.setSimulationCycleStartTimeStamp();
 				}
 			}
 			catch (Throwable t) {
@@ -713,8 +881,16 @@ public class LoadService extends BaseService {
 		}
 		
 		// -----------------------------------------------------------------
-		// --- The real functions for the Service Component --- Start ------ 
+		// --- The real methods for the Service Component --- Start -------- 
 		// -----------------------------------------------------------------
+		/**
+		 * Start agent.
+		 *
+		 * @param nickName the nick name
+		 * @param agentClassName the agent class name
+		 * @param args the args
+		 * @return true, if successful
+		 */
 		private boolean startAgent(String nickName, String agentClassName, Object[] args) {
 			
 			AID agentID = new AID();
@@ -748,19 +924,51 @@ public class LoadService extends BaseService {
 		}
 		// ----------------------------------------------------------
 		// --- Method to set the agent migration --------------------
+		/**
+		 * Start remote container.
+		 *
+		 * @param remoteConfig the remote config
+		 * @param preventUsageOfAlreadyUsedComputers the prevent usage of already used computers
+		 * @return the string
+		 */
 		private String startRemoteContainer(RemoteContainerConfig remoteConfig, boolean preventUsageOfAlreadyUsedComputers) {
 			return sendMsgRemoteContainerRequest(remoteConfig, preventUsageOfAlreadyUsedComputers);
 		}
+		
+		/**
+		 * Gets the default remote container config.
+		 *
+		 * @param preventUsageOfAlreadyUsedComputers the prevent usage of already used computers
+		 * @return the default remote container config
+		 */
 		private RemoteContainerConfig getDefaultRemoteContainerConfig(boolean preventUsageOfAlreadyUsedComputers) {
 			return getRemoteContainerConfigDefault(preventUsageOfAlreadyUsedComputers);
 		}
+		
+		/**
+		 * Gets the new container to wait status.
+		 *
+		 * @param container2Wait4 the container2 wait4
+		 * @return the new container2 wait4 status
+		 */
 		private Container2Wait4 getNewContainer2Wait4Status(String container2Wait4) {
 			return loadInfo.getNewContainer2Wait4Status(container2Wait4);
 		}
 		
+		/**
+		 * Sets the threshold levels.
+		 *
+		 * @param thresholdLevels the new threshold levels
+		 */
 		private void setThresholdLevels(LoadThresholdLevels thresholdLevels) {
 			LoadMeasureThread.setThresholdLevels(thresholdLevels);
 		}
+		
+		/**
+		 * Measures the local system load.
+		 *
+		 * @return the platform load
+		 */
 		private PlatformLoad measureLoad() {
 			PlatformLoad pl = new PlatformLoad();
 			pl.setLoadCPU(LoadMeasureThread.getLoadCPU());
@@ -771,14 +979,29 @@ public class LoadService extends BaseService {
 			return pl;
 		}
 		
+		/**
+		 * Put the container description of the {@link LoadService#loadInfo}.
+		 *
+		 * @param crcReply the ClientRemoteContainerReply
+		 */
 		private void putContainerDescription(ClientRemoteContainerReply crcReply) {
 			loadInfo.putContainerDescription(crcReply);
 		}
+		
+		/**
+		 * Returns the local container description.
+		 *
+		 * @return the container description
+		 */
 		private ClientRemoteContainerReply getContainerDescription() {
 			return myCRCReply;
 		}
-		private void stepSimulation() {
-			loadInfo.setCycleStartTimeStamp();
+		
+		/**
+		 * Step simulation.
+		 */
+		private void setSimulationCycleStartTimeStamp() {
+			loadInfo.setSimulationCycleStartTimeStamp();
 		}
 		// -----------------------------------------------------------------
 		// --- The real functions for the Service Component --- Stop ------- 
@@ -798,10 +1021,18 @@ public class LoadService extends BaseService {
 	 * Inner class CommandOutgoingFilter.
 	 */
 	private class CommandOutgoingFilter extends Filter {
+		
+		/**
+		 * Instantiates a new command outgoing filter.
+		 */
 		public CommandOutgoingFilter() {
 			super();
 			//setPreferredPosition(2);  // Before the Messaging (encoding) filter and the security related ones
 		}
+		
+		/* (non-Javadoc)
+		 * @see jade.core.Filter#accept(jade.core.VerticalCommand)
+		 */
 		public final boolean accept(VerticalCommand cmd) {
 			
 			if (cmd==null) return true;
@@ -851,6 +1082,9 @@ public class LoadService extends BaseService {
 	 */
 	private class CommandIncomingFilter extends Filter {
 		
+		/* (non-Javadoc)
+		 * @see jade.core.Filter#accept(jade.core.VerticalCommand)
+		 */
 		public boolean accept(VerticalCommand cmd) {
 			
 			if (cmd==null) return true;
@@ -866,7 +1100,6 @@ public class LoadService extends BaseService {
 			} else {
 				if (cmdName.equals(Service.REATTACHED)) {
 					// The Main lost all information related to this container --> Notify it again
-					
 				}
 			}
 			// Never veto a Command
@@ -878,7 +1111,9 @@ public class LoadService extends BaseService {
 	// --------------------------------------------------------------
 
 	/**
-	 * If the new slice is a LoadServiceSlice notify it about the current state
+	 * If the new slice is a LoadServiceSlice notify it about the current state.
+	 *
+	 * @param cmd the VerticalCommand
 	 */
 	private void handleNewSlice(VerticalCommand cmd) {
 		
@@ -891,26 +1126,27 @@ public class LoadService extends BaseService {
 				loadInfo.setNewContainerStarted(newSliceName);
 				// --- Be sure to get the new (fresh) slice --> Bypass the service cache ---
 				LoadServiceSlice newSlice = (LoadServiceSlice) getFreshSlice(newSliceName);
-				// --- Set remote ManagerAgent, TimeModel,EnvironmentInstance --------------
+				// --- Set the local ThresholdLevels to the new container ------------------
 				newSlice.setThresholdLevels(LoadMeasureThread.getThresholdLevels());
 				
-			}
-			catch (Throwable t) {
+			} catch (Throwable t) {
 				myLogger.log(Logger.WARNING, "Error notifying new slice "+newSliceName+" about current LoadService-State", t);
 			}
 		}
 	}
 	
 	/**
-	 * This method returns a default configuration for a new remote container
-	 * @return
+	 * This method returns a default configuration for a new remote container.
+	 *
+	 * @param preventUsageOfAlreadyUsedComputers the prevent usage of already used computers
+	 * @return the default RemoteContainerConfig
 	 */
 	private RemoteContainerConfig getRemoteContainerConfigDefault(boolean preventUsageOfAlreadyUsedComputers) {
 		
 		// --- Variable for the new container name ------------------
 		String newContainerPrefix = "remote";
-		Integer newContainerNo = 0;
 		String newContainerName = null;
+		Integer newContainerNo = 0;
 		
 		// --- Get the local IP-Address -----------------------------
 		String myIP = myContainer.getNodeDescriptor().getContainer().getAddress();
@@ -997,8 +1233,11 @@ public class LoadService extends BaseService {
 	}
 	
 	/**
-	 * This method configures and send a ACLMessage to start a new remote-Container
-	 * @param remConf, a RemoteContainerConfig-Object
+	 * This method configures and send a ACLMessage to start a new remote-Container.
+	 *
+	 * @param remConf the RemoteContainerConfig
+	 * @param preventUsageOfAlreadyUsedComputers the boolean prevent usage of already used computers
+	 * @return the name of the container
 	 */
 	private String sendMsgRemoteContainerRequest(RemoteContainerConfig remConf, boolean preventUsageOfAlreadyUsedComputers) {
 		
@@ -1045,8 +1284,9 @@ public class LoadService extends BaseService {
 	}
 	
 	/**
-	 * Here the local ContainerDescription will be stored on disk
-	 * @param crcReply
+	 * Here the local ContainerDescription will be stored on disk.
+	 *
+	 * @param crcReply the ClientRemoteContainerReply to store
 	 */
 	private void saveCRCReply(ClientRemoteContainerReply crcReply) {
 		
@@ -1065,9 +1305,12 @@ public class LoadService extends BaseService {
 		}
 		LoadService.currentlyWritingFile = false;
 	}
+	
 	/**
-	 * This method reads the ContainerDescription from the file to
-	 * the local object 'myCRCReply'
+	 * This method reads the ContainerDescription from the local file.
+	 *
+	 * @return the stored ClientRemoteContainerReply, if available
+	 * @see LoadService#SERVICE_NODE_DESCRIPTION_FILE
 	 */
 	private ClientRemoteContainerReply loadCRCReply() {
 		
@@ -1108,8 +1351,9 @@ public class LoadService extends BaseService {
 	/**
 	 * This method defines the local field 'myCRCReply' which is an instance
 	 * of 'ClientRemoteContainerReply' and holds the information about
-	 * Performance, BenchmarkResult, Network-Addresses of this container-node
-	 * @param loadFile
+	 * Performance, BenchmarkResult, Network-Addresses of this container-node.
+	 *
+	 * @param loadFile indicates if the local file should be used or not
 	 */
 	private void setLocalCRCReply(boolean loadFile) {
 		

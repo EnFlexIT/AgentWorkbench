@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.simulationService;
 
 import jade.core.AID;
@@ -23,6 +51,8 @@ import java.util.Hashtable;
 import java.util.Vector;
 import java.util.logging.Level;
 
+import agentgui.simulationService.agents.SimulationAgent;
+import agentgui.simulationService.agents.SimulationManagerAgent;
 import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.load.LoadAgentMap.AID_Container;
 import agentgui.simulationService.sensoring.ServiceActuator;
@@ -34,6 +64,27 @@ import agentgui.simulationService.transaction.EnvironmentNotification;
 import agentgui.simulationService.transaction.TransactionMap;
 
 /**
+ * This is the SimulationService, which provides a list of functionalities for agent based simulations.
+ * These are namely:<br>
+ * - time synchronisation for all involved (remote) container,<br>
+ * - methods to stop agents, that are using the Actuator/Sensor relationship between agents and this service,<br>
+ * - a method to pause a running simulation, <br>
+ * - methods to transport an {@link EnvironmentModel} model to all connected agents in an asynchronous way and<br>
+ * - methods to receive changes or notifications from single {@link SimulationAgent}<br>
+ * 
+ * @see SimulationServiceHelper
+ * @see SimulationServiceImpl
+ * @see SimulationServiceProxy
+ * 
+ * @see ServiceActuator
+ * @see ServiceSensor
+ * @see ServiceActuatorManager
+ * @see ServiceSensorManager
+ * 
+ * @see SimulationAgent
+ * @see SimulationManagerAgent
+ * 
+ * @see EnvironmentModel
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
@@ -51,8 +102,8 @@ public class SimulationService extends BaseService {
 	
 	// --- Variables for the Time-Synchronisation -----------------------------
 	private long timeMeasureNext = 0;				// --- When was the MainContainerTime last measured 
-	private long timeMeasureInterval = 1000*5; 	// --- measure every 5 seconds 
-	private int timeMeasureCountMax = 100;		// --- How often the time-difference should be measured to build an average value?
+	private long timeMeasureInterval = 1000*5; 		// --- measure every 5 seconds 
+	private int timeMeasureCountMax = 100;			// --- How often the time-difference should be measured to build an average value?
 	private long timeDiff2MainContainer = 0;		// --- Difference between this and the MainContainer-Time
 	
 	// --- The Agent who is the Manager / Controller of the Simulation --------
@@ -82,6 +133,9 @@ public class SimulationService extends BaseService {
 	private Hashtable<AID, Object> environmentInstanceNextPartsLocal = new Hashtable<AID, Object>();
 	
 		
+	/* (non-Javadoc)
+	 * @see jade.core.BaseService#init(jade.core.AgentContainer, jade.core.Profile)
+	 */
 	public void init(AgentContainer ac, Profile p) throws ProfileException {
 		
 		super.init(ac, p);
@@ -110,14 +164,26 @@ public class SimulationService extends BaseService {
 		Logger.getMyLogger("jade.core.messaging.MessageManager").setLevel(Level.WARNING);
 		
 	}
+	/* (non-Javadoc)
+	 * @see jade.core.BaseService#boot(jade.core.Profile)
+	 */
 	public void boot(Profile p) throws ServiceException {
 	}
+	/* (non-Javadoc)
+	 * @see jade.core.Service#getName()
+	 */
 	public String getName() {
 		return NAME;
 	}
+	/* (non-Javadoc)
+	 * @see jade.core.BaseService#getHelper(jade.core.Agent)
+	 */
 	public ServiceHelper getHelper (Agent ag) {
 		return new SimulationServiceImpl();
 	}
+	/* (non-Javadoc)
+	 * @see jade.core.BaseService#getCommandFilter(boolean)
+	 */
 	public Filter getCommandFilter(boolean direction) {
 		if(direction == Filter.INCOMING) {
 			return incFilter;
@@ -126,28 +192,35 @@ public class SimulationService extends BaseService {
 			return outFilter;
 		}
 	}
+	/* (non-Javadoc)
+	 * @see jade.core.BaseService#getHorizontalInterface()
+	 */
 	public Class<?> getHorizontalInterface() {
 		return SimulationServiceSlice.class;
 	}
-	/**
-	 * Retrieve the locally installed slice of this service.
+	/* (non-Javadoc)
+	 * @see jade.core.BaseService#getLocalSlice()
 	 */
 	public Service.Slice getLocalSlice() {
 		return localSlice;
 	}
-
 	
 	// --------------------------------------------------------------	
 	// ---- Inner-Class 'AgentTimeImpl' ---- Start ------------------
 	// --------------------------------------------------------------
 	/**
-	 * Sub-Class to provide interaction between Agents and this Service
+	 * Sub-Class to provide interaction between Agents and this Service.
+	 *
 	 * @author Christian Derksen - DAWIS - ICB - University of Duisburg / Essen
 	 */
 	public class SimulationServiceImpl implements SimulationServiceHelper {
 
+		/** The Constant serialVersionUID. */
 		private static final long serialVersionUID = 5741448121178289099L;
 
+		/* (non-Javadoc)
+		 * @see jade.core.ServiceHelper#init(jade.core.Agent)
+		 */
 		public void init(Agent ag) {
 			// --- Store the Agent in the agentList -----------------
 			agentList.put(ag.getName(), ag.getAID());			
@@ -155,39 +228,73 @@ public class SimulationService extends BaseService {
 				
 		// ----------------------------------------------------------
 		// --- Methods for the synchronised time --------------------
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.SimulationServiceHelper#getSynchTimeDifferenceMillis()
+		 */
 		public long getSynchTimeDifferenceMillis() throws ServiceException {
 			return timeDiff2MainContainer;
 		}
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.SimulationServiceHelper#getSynchTimeMillis()
+		 */
 		public long getSynchTimeMillis() throws ServiceException {
 			if (myMainContainer==null) {
-				requestMainContainerTime();	
+				setMainContainerTimeLocally();	
 			}			
 			return System.currentTimeMillis() + timeDiff2MainContainer;
 		}
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.SimulationServiceHelper#getSynchTimeDate()
+		 */
 		public Date getSynchTimeDate() throws ServiceException {
 			return new Date(this.getSynchTimeMillis());
 		}
 		
-
 		// ----------------------------------------------------------
-		// --- Method to set the agent migration --------------------
+		// --- Methods to work on agents ----------------------------
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.SimulationServiceHelper#setAgentMigration(java.util.Vector)
+		 */
 		public void setAgentMigration(Vector<AID_Container> transferAgents) throws ServiceException {
 			Service.Slice[] slices = getAllSlices();
 			broadcastAgentMigration(transferAgents, slices);
 		}
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.SimulationServiceHelper#stopSimulationAgents()
+		 */
 		public void stopSimulationAgents() throws ServiceException {
 			Service.Slice[] slices = getAllSlices();
 			broadcastStopSimulationAgents(slices);
 		}
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.SimulationServiceHelper#setPauseSimulation(boolean)
+		 */
+		public void setPauseSimulation(boolean pause) throws ServiceException {
+			// --- block or unblock the simulation ------------
+			Service.Slice[] slices = getAllSlices();
+			broadcastPauseSimulation(pause, slices);
+			if (pause==false) {
+				// --- Reset next parts of the environement ---
+				this.resetEnvironmentInstanceNextParts();
+				// --- Restart simulation  --------------------
+				this.stepSimulation(environmentModel, environmentInstanceNextPartsExpected);
+			}
+		}
 		
 		// ----------------------------------------------------------
 		// --- Methods for the Manager-Agent ------------------------
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.SimulationServiceHelper#setManagerAgent(jade.core.AID)
+		 */
 		public void setManagerAgent(AID agentAddress) throws ServiceException {
 			
 			EnvironmentManagerDescription envManager = new EnvironmentManagerDescription(agentAddress, myContainer.here());
 			Service.Slice[] slices = getAllSlices();
 			broadcastManagerAgent(envManager, slices);
 		}		
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.SimulationServiceHelper#getManagerAgent()
+		 */
 		public AID getManagerAgent() throws ServiceException {
 			if (environmentManagerDescription==null) {
 				return null;
@@ -198,34 +305,57 @@ public class SimulationService extends BaseService {
 		
 		// ----------------------------------------------------------
 		// --- Register, unregister or notify Agents-Sensors --------
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.SimulationServiceHelper#sensorPlugIn(agentgui.simulationService.sensoring.ServiceSensor)
+		 */
 		public void sensorPlugIn(ServiceSensor sensor) throws ServiceException {
 			localServiceActuator.plugIn(sensor);
 		}
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.SimulationServiceHelper#sensorPlugOut(agentgui.simulationService.sensoring.ServiceSensor)
+		 */
 		public void sensorPlugOut(ServiceSensor sensor) throws ServiceException {
 			localServiceActuator.plugOut(sensor);	
 		}		
 		
 		// ----------------------------------------------------------
 		// --- Register, unregister or notify Manager-Sensors -------
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.SimulationServiceHelper#sensorPlugIn4Manager(agentgui.simulationService.sensoring.ServiceSensorManager)
+		 */
 		public void sensorPlugIn4Manager(ServiceSensorManager sensor) throws ServiceException {
 			localServiceActuator4Manager.plugIn(sensor);
 		}
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.SimulationServiceHelper#sensorPlugOut4Manager(agentgui.simulationService.sensoring.ServiceSensorManager)
+		 */
 		public void sensorPlugOut4Manager(ServiceSensorManager sensor) throws ServiceException {
 			localServiceActuator4Manager.plugOut(sensor);	
 		}		
 
 		// ----------------------------------------------------------
 		// --- Methods for the Simulation ---------------------------
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.SimulationServiceHelper#getStepSimulationAsynchronous()
+		 */
 		public boolean getStepSimulationAsynchronous() throws ServiceException {
 			return stepSimulationAsynchronous;
 		}
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.SimulationServiceHelper#setStepSimulationAsynchronous(boolean)
+		 */
 		public void setStepSimulationAsynchronous(boolean stepAsynchronous) throws ServiceException {
 			stepSimulationAsynchronous = stepAsynchronous;
 		}
-
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.SimulationServiceHelper#stepSimulation(agentgui.simulationService.environment.EnvironmentModel, int)
+		 */
 		public void stepSimulation(EnvironmentModel envModel, int answersExpected) throws ServiceException {
 			this.stepSimulation(envModel, answersExpected, stepSimulationAsynchronous);
 		}
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.SimulationServiceHelper#stepSimulation(agentgui.simulationService.environment.EnvironmentModel, int, boolean)
+		 */
 		public void stepSimulation(EnvironmentModel envModel, int answersExpected, boolean aSynchron) throws ServiceException {
 			if (pauseSimulation==false) {
 				// --- step forward the transaction map -------
@@ -238,18 +368,9 @@ public class SimulationService extends BaseService {
 				broadcastStepSimulation(envModel, aSynchron, slices);
 			}
 		}
-		public void setPauseSimulation(boolean pause) throws ServiceException {
-			// --- block or unblock the simulation ------------
-			Service.Slice[] slices = getAllSlices();
-			broadcastPauseSimulation(pause, slices);
-			if (pause==false) {
-				// --- Reset next parts of the environement ---
-				this.resetEnvironmentInstanceNextParts();
-				// --- Restart simulation  --------------------
-				this.stepSimulation(environmentModel, environmentInstanceNextPartsExpected);
-			}
-		}
-			
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.SimulationServiceHelper#notifySensorAgent(jade.core.AID, agentgui.simulationService.transaction.EnvironmentNotification)
+		 */
 		public boolean notifySensorAgent(AID agentAID, EnvironmentNotification notification) throws ServiceException {
 			if (pauseSimulation==true) {
 				return false;
@@ -258,6 +379,9 @@ public class SimulationService extends BaseService {
 				return broadcastNotifyAgent(agentAID, notification, slices);	
 			}
 		}
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.SimulationServiceHelper#notifyManagerAgent(agentgui.simulationService.transaction.EnvironmentNotification)
+		 */
 		public boolean notifyManagerAgent(EnvironmentNotification notification) throws ServiceException {
 			if (pauseSimulation==true) {
 				return false;
@@ -266,16 +390,24 @@ public class SimulationService extends BaseService {
 			}
 		}
 		
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.SimulationServiceHelper#getEnvironmentModel()
+		 */
 		public EnvironmentModel getEnvironmentModel() throws ServiceException {
 			return environmentModel;
 		}
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.SimulationServiceHelper#setEnvironmentModel(agentgui.simulationService.environment.EnvironmentModel)
+		 */
 		public void setEnvironmentModel(EnvironmentModel envModel) throws ServiceException {
 			Service.Slice[] slices = getAllSlices();
 			broadcastSetEnvironmentModel(envModel, slices);
 		}
-		
 		// ----------------------------------------------------------
 		// --- EnvironmentModel of the next simulation step ---------
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.SimulationServiceHelper#setEnvironmentInstanceNextPart(jade.core.AID, java.lang.Object)
+		 */
 		public void setEnvironmentInstanceNextPart(AID fromAgent, Object nextPart) throws ServiceException {
 
 			synchronized(environmentInstanceNextPartsLocal) {
@@ -292,9 +424,15 @@ public class SimulationService extends BaseService {
 			}
 			
 		}
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.SimulationServiceHelper#getEnvironmentInstanceNextParts()
+		 */
 		public Hashtable<AID, Object> getEnvironmentInstanceNextParts() throws ServiceException {
 			return mainGetEnvironmentInstanceNextParts();
 		}
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.SimulationServiceHelper#resetEnvironmentInstanceNextParts()
+		 */
 		public void resetEnvironmentInstanceNextParts() throws ServiceException {
 			mainResetEnvironmentInstanceNextParts();
 		}
@@ -307,10 +445,12 @@ public class SimulationService extends BaseService {
 	
 	
 	/**
-	 * Broadcast the AID of the Simulation-Manager Agent to all Slices
-	 * @param timeModel 
-	 * @param slices
-	 * @throws ServiceException
+	 * Broadcast the EnvironmentManagerDescription of the Simulation-Manager Agent to all Slices.
+	 *
+	 * @param envManager EnvironmentManagerDescription
+	 * @param slices the array of slices
+	 * @throws ServiceException the service exception
+	 * @see EnvironmentManagerDescription
 	 */
 	private void broadcastManagerAgent(EnvironmentManagerDescription envManager, Service.Slice[] slices) throws ServiceException {
 		
@@ -335,10 +475,10 @@ public class SimulationService extends BaseService {
 	}
 	
 	/**
-	 * Sends the local next parts of the environment-model to the Main-Container 
-	 * @param fromAgent
-	 * @param nextPart
-	 * @throws ServiceException
+	 * Sends the local next parts of the environment-model to the Main-Container.
+	 *
+	 * @param nextPartsLocal the Hashtable of local environment changes, coming from different agents
+	 * @throws ServiceException the service exception
 	 */
 	private void mainSetEnvironmentInstanceNextPart(Hashtable<AID, Object> nextPartsLocal) throws ServiceException {
 		
@@ -361,9 +501,10 @@ public class SimulationService extends BaseService {
 	}	
 	
 	/**
-	 * This returns the complete environment-model-changes from the Main-Container
-	 * @return
-	 * @throws ServiceException
+	 * This method returns the complete environment-model-changes from the Main-Container.
+	 *
+	 * @return the hashtable
+	 * @throws ServiceException the service exception
 	 */
 	private Hashtable<AID, Object> mainGetEnvironmentInstanceNextParts() throws ServiceException {
 		
@@ -387,8 +528,9 @@ public class SimulationService extends BaseService {
 	}	
 	
 	/**
-	 * This Method resets the hash with the single environment-model-changes
-	 * @throws ServiceException
+	 * This method resets the hash with the single environment-model-changes.
+	 *
+	 * @throws ServiceException the service exception
 	 */
 	private void mainResetEnvironmentInstanceNextParts() throws ServiceException {
 		
@@ -411,10 +553,12 @@ public class SimulationService extends BaseService {
 	}	
 	
 	/**
-	 * Broadcasts the current EnvironmentModel to all slices
-	 * @param envModel 
-	 * @param slices
-	 * @throws ServiceException
+	 * Broadcasts the current EnvironmentModel to all slices.
+	 *
+	 * @param envModel the EnvironmentModel
+	 * @param slices the slices
+	 * @throws ServiceException the service exception
+	 * @see EnvironmentModel
 	 */
 	private void broadcastSetEnvironmentModel(EnvironmentModel envModel, Service.Slice[] slices) throws ServiceException {
 		
@@ -439,11 +583,14 @@ public class SimulationService extends BaseService {
 	}
 
 	/**
-	 * Broadcast that all agents have to informed about changes in the EnvironmentModel through his ServiceSensor
-	 * @param envModel 
-	 * @param aSynchron
-	 * @param slices
-	 * @throws ServiceException
+	 * Broadcasts to all agents that the simulation steps forward by using their {@link ServiceSensor} and 
+	 * putting the new {@link EnvironmentModel} in there.
+	 *
+	 * @param envModel the EnvironmentModel
+	 * @param aSynchron true, if asynchronous
+	 * @param slices the slices
+	 * @throws ServiceException the service exception
+	 * @see EnvironmentModel
 	 */
 	private void broadcastStepSimulation(EnvironmentModel envModel, boolean aSynchron, Service.Slice[] slices) throws ServiceException {
 		
@@ -466,12 +613,13 @@ public class SimulationService extends BaseService {
 			}
 		}
 	}
+	
 	/**
-	 * Broadcast the number of agent answers that are expected for single simulation step
-	 * @param envModel 
-	 * @param aSynchron
-	 * @param slices
-	 * @throws ServiceException
+	 * Broadcast the number of agent answers that are expected for single simulation step.
+	 *
+	 * @param answersExpected the answers expected
+	 * @param slices the slices
+	 * @throws ServiceException the service exception
 	 */
 	private void broadcastAnswersExpected(int answersExpected, Service.Slice[] slices) throws ServiceException {
 		
@@ -496,11 +644,10 @@ public class SimulationService extends BaseService {
 	}
 
 	/**
-	 * Sends the current set of agent answers to the manager agent of the environment 
-	 * @param envModel 
-	 * @param aSynchron
-	 * @param slices
-	 * @throws ServiceException
+	 * Sends the current set of agent answers to the manager agent of the environment.
+	 *
+	 * @param agentAnswers the agent answers
+	 * @throws ServiceException the service exception
 	 */
 	private void broadcastNotifyManagerPutAgentAnswers(final Hashtable<AID, Object> agentAnswers) throws ServiceException {
 		
@@ -528,12 +675,13 @@ public class SimulationService extends BaseService {
 	}
 	
 	/**
-	 * Broadcast a single notification object to a specific agent by using its ServiceSensor
-	 * @param agentAID
-	 * @param notification
-	 * @param aSynchron
-	 * @param slices
-	 * @throws ServiceException
+	 * Broadcast a single notification object to a specific agent by using its ServiceSensor.
+	 *
+	 * @param agentAID the agent aid
+	 * @param notification the notification
+	 * @param slices the slices
+	 * @return true, if successful
+	 * @throws ServiceException the service exception
 	 */
 	private boolean broadcastNotifyAgent(AID agentAID, EnvironmentNotification notification, Service.Slice[] slices) throws ServiceException {
 		
@@ -560,12 +708,13 @@ public class SimulationService extends BaseService {
 		}
 		return false;
 	}
+	
 	/**
-	 * Sends a notification to the manager agent of the environment 
-	 * @param envModel 
-	 * @param aSynchron
-	 * @param slices
-	 * @throws ServiceException
+	 * Sends a notification to the manager agent of the environment.
+	 *
+	 * @param notification the notification
+	 * @return true, if successful
+	 * @throws ServiceException the service exception
 	 */
 	private boolean broadcastNotifyManager(EnvironmentNotification notification) throws ServiceException {
 		
@@ -594,11 +743,11 @@ public class SimulationService extends BaseService {
 	}
 	
 	/**
-	 * This method will broadcast that the current simulation should pause or not
-	 * @param pauseSimulation
-	 * @param slices
-	 * @return
-	 * @throws ServiceException
+	 * This method will broadcast that the current simulation should pause or not.
+	 *
+	 * @param pauseSimulation the pause simulation
+	 * @param slices the slices
+	 * @throws ServiceException the service exception
 	 */
 	private void broadcastPauseSimulation(boolean pauseSimulation, Service.Slice[] slices) throws ServiceException {
 		
@@ -623,11 +772,12 @@ public class SimulationService extends BaseService {
 	}
 	
 	/**
-	 * Broadcast the new locations to the agents
-	 * @param transferAgents 
-	 * @param aSynchron
-	 * @param slices
-	 * @throws ServiceException
+	 * Broadcast the new locations to the agents.
+	 *
+	 * @param transferAgents the agents to migrate 
+	 * @param slices the slices
+	 * @throws ServiceException the service exception
+	 * @see AID_Container
 	 */
 	private void broadcastAgentMigration(Vector<AID_Container> transferAgents, Service.Slice[] slices) throws ServiceException {
 		
@@ -652,11 +802,12 @@ public class SimulationService extends BaseService {
 	}
 
 	/**
-	 * Stops the simulation by invoking the doDelete method at all agents which are 
-	 * extending the class 'agentgui.simulationService.agents.SimulationAgent' and 
-	 * which are 'connected to a service actuator  
-	 * @param slices
-	 * @throws ServiceException
+	 * Stops the simulation by invoking the doDelete method at all agents which are
+	 * extending the class 'agentgui.simulationService.agents.SimulationAgent' and
+	 * which are 'connected to a service actuator
+	 *
+	 * @param slices the slices
+	 * @throws ServiceException the service exception
 	 */
 	private void broadcastStopSimulationAgents(Service.Slice[] slices) throws ServiceException {
 		
@@ -692,10 +843,15 @@ public class SimulationService extends BaseService {
 		
 		private static final long serialVersionUID = 1776886375724997808L;
 
+		/* (non-Javadoc)
+		 * @see jade.core.Service.Slice#getService()
+		 */
 		public Service getService() {
 			return SimulationService.this;
 		}
-		
+		/* (non-Javadoc)
+		 * @see jade.core.Service.Slice#getNode()
+		 */
 		public Node getNode() throws ServiceException {
 			try {
 				return SimulationService.this.getLocalNode();
@@ -704,7 +860,9 @@ public class SimulationService extends BaseService {
 				throw new ServiceException("Error retrieving local node", imtpe);
 			}
 		}
-		
+		/* (non-Javadoc)
+		 * @see jade.core.Service.Slice#serve(jade.core.HorizontalCommand)
+		 */
 		public VerticalCommand serve(HorizontalCommand cmd) {
 			
 			try {
@@ -849,40 +1007,93 @@ public class SimulationService extends BaseService {
 		// -----------------------------------------------------------------
 		// --- The real functions for the Service Component --- Start ------ 
 		// -----------------------------------------------------------------
+		/**
+		 * Gets the local time.
+		 *
+		 * @return the local time
+		 */
 		private long getLocalTime() {
 			return System.currentTimeMillis();
 		}
+		/**
+		 * Sets the time difference compared to the Main-Container.
+		 *
+		 * @param timeDifference the time difference
+		 */
 		private void setPlatformTimeDiff(long timeDifference) {
 			timeDiff2MainContainer = timeDifference;	
 		}
 		
+		
+		/**
+		 * Sets the EnvironmentManagerDescription of the manager agent.
+		 *
+		 * @param envManager the new manager agent
+		 */
 		private void setManagerAgent(EnvironmentManagerDescription envManager) {
 			environmentManagerDescription = envManager;
 		}
+		/**
+		 * Sets the environment model.
+		 *
+		 * @param newEnvironmentModel the new environment model
+		 */
 		private void setEnvironmentModel(EnvironmentModel newEnvironmentModel) {
 			environmentModel = newEnvironmentModel;
-			//TODO localServiceActuator.notifySensors(newEnvironmentModel, stepSimulationAsynchronous );
+			// Do it or not? localServiceActuator.notifySensors(newEnvironmentModel, stepSimulationAsynchronous );
 		}
+		/**
+		 * Steps the simulation locally by putting the new EnvironmentModel to the connected agents.
+		 *
+		 * @param newEnvironmentModel the new environment model
+		 * @param aSynchron true, if step is asynchronously
+		 */
 		private void stepSimulation(EnvironmentModel newEnvironmentModel, boolean aSynchron) {
 			environmentModel = newEnvironmentModel;
 			localServiceActuator.notifySensors(newEnvironmentModel, aSynchron);
-		}
-		private void setEnvironmentInstanceNextPartsExpected(int answersExpected) {
-			environmentInstanceNextPartsExpected=answersExpected;
-		}		
+		} 
+		/**
+		 * Notifies the manager agent about the agent answers.
+		 *
+		 * @param allAgentAnswers the all agent answers
+		 */
 		private void notifyManagerAgentPutAgentAnswers(Hashtable<AID, Object> allAgentAnswers) {
 			localServiceActuator4Manager.putAgentAnswers(environmentManagerDescription.getAID(), allAgentAnswers, true);
 		}
+		/**
+		 * Sends a notification to the manager agent.
+		 *
+		 * @param notification the notification
+		 * @return true, if successful
+		 */
 		private boolean notifyManagerAgent(EnvironmentNotification notification) {
 			return localServiceActuator4Manager.notifyManager(environmentManagerDescription.getAID(), notification);
 		}		
+		/**
+		 * Sends a notification to a specified sensor agent.
+		 *
+		 * @param agentAID the agent aid
+		 * @param notification the notification
+		 * @return true, if successful
+		 */
 		private boolean notifySensorAgent(AID agentAID, EnvironmentNotification notification){
 			return localServiceActuator.notifySensorAgent(agentAID, notification);
 		}
-		private void setPauseSimulation(boolean pause) {
-			pauseSimulation = pause;
-		}
 		
+		/**
+		 * Sets the number of environment changes expected within one simulation step.
+		 *
+		 * @param answersExpected the number of answers expected
+		 */
+		private void setEnvironmentInstanceNextPartsExpected(int answersExpected) {
+			environmentInstanceNextPartsExpected=answersExpected;
+		}	
+		/**
+		 * Will receive the environment changes from a different (remote) container. 
+		 * If the answers are complete, it will notify the manager agent.
+		 *
+		 * @param nextPartsLocal the Hashtable of changes in the environment
+		 */
 		private void setEnvironmentInstanceNextPart(Hashtable<AID, Object> nextPartsLocal) {
 			environmentInstanceNextParts.putAll(nextPartsLocal);
 			if (environmentInstanceNextParts.size()>=environmentInstanceNextPartsExpected) {
@@ -895,23 +1106,61 @@ public class SimulationService extends BaseService {
 				}
 			}
 		}
+		/**
+		 * Provides the environment changes as a Hashtable<AID, Object>
+		 *
+		 * @return the environment changes for the next simulation step
+		 */
 		private Hashtable<AID, Object> getEnvironmentInstanceNextParts() {
 			return environmentInstanceNextParts;
 		}
+		/**
+		 * Will reset the local set of environment changes to a new and empty Hashtable.
+		 */
 		private void resetEnvironmentInstanceNextParts() {
 			environmentInstanceNextParts = new Hashtable<AID, Object>();
 			environmentInstanceNextPartsLocal = new Hashtable<AID, Object>();
 		}
 		
+		/**
+		 * Stop simulation agents.
+		 */
 		private void stopSimulationAgents() {
 			localServiceActuator.notifySensorAgentsDoDelete();
 		}
+		
+		/**
+		 * Sets the pause of the simulation.
+		 *
+		 * @param pause true, if the simulation should pause
+		 */
+		private void setPauseSimulation(boolean pause) {
+			pauseSimulation = pause;
+		}
+		
+		/**
+		 * Sets the agent migration.
+		 *
+		 * @param transferAgents the new agent migration
+		 */
 		private void setAgentMigration(Vector<AID_Container> transferAgents) {
 			localServiceActuator.setMigration(transferAgents);
 		}
+		
+		/**
+		 * Returns the list of agents running in this container.
+		 *
+		 * @return the list of agents
+		 */
 		private AID[] getListOfAgents() {
 			return myContainer.agentNames();
 		}
+		
+		/**
+		 * Returns the list of agents, which are connected through the {@link ServiceActuator}.
+		 *
+		 * @return the list of agents with sensors
+		 */
 		private AID[] getListOfAgentsWithSensors() {
 			return localServiceActuator.getSensorAgents();
 		}
@@ -934,10 +1183,17 @@ public class SimulationService extends BaseService {
 	 * Inner class CommandOutgoingFilter.
 	 */
 	private class CommandOutgoingFilter extends Filter {
+		
+		/**
+		 * Instantiates a new command outgoing filter.
+		 */
 		public CommandOutgoingFilter() {
 			super();
 			//setPreferredPosition(2);  // Before the Messaging (encoding) filter and the security related ones
 		}
+		/* (non-Javadoc)
+		 * @see jade.core.Filter#accept(jade.core.VerticalCommand)
+		 */
 		public final boolean accept(VerticalCommand cmd) {
 			
 			if (cmd==null) return true;
@@ -969,6 +1225,9 @@ public class SimulationService extends BaseService {
 	 */
 	private class CommandIncomingFilter extends Filter {
 		
+		/* (non-Javadoc)
+		 * @see jade.core.Filter#accept(jade.core.VerticalCommand)
+		 */
 		public boolean accept(VerticalCommand cmd) {
 			
 			if (cmd==null) return true;
@@ -996,7 +1255,9 @@ public class SimulationService extends BaseService {
 	// --------------------------------------------------------------
 
 	/**
-	 * If the new slice is a SimulationServiceSlice notify it about the current state
+	 * If the new slice is a SimulationServiceSlice notify it about the current state.
+	 *
+	 * @param cmd the VerticalCommand
 	 */
 	private void handleNewSlice(VerticalCommand cmd) {
 		
@@ -1011,7 +1272,7 @@ public class SimulationService extends BaseService {
 				newSlice.setManagerAgent(environmentManagerDescription);
 				newSlice.setEnvironmentModel(environmentModel);	
 				// --- Synchronise the time ------------------------------------------------
-				this.synchTimeOfSlice(newSlice);
+				this.synchroniseTimeOfSlice(newSlice);
 				
 			}
 			catch (Throwable t) {
@@ -1021,17 +1282,19 @@ public class SimulationService extends BaseService {
 	}
 	
 	/**
-	 * This method will synchronise the time between Main-Container and Remote-Container 
-	 * @param slice
+	 * This method will synchronise the time between Main-Container and Remote-Container.
+	 * It is used only from a Main-Container.
+	 * 
+	 * @param slice the slice
 	 */
-	private void synchTimeOfSlice(SimulationServiceSlice slice) {
+	private void synchroniseTimeOfSlice(SimulationServiceSlice slice) {
 		
 		int countMax = timeMeasureCountMax;
 		long locTime1Milli = 0;
 		long remTimeMilli = 0;
 
-		long locTime1Nano = 0;
-		long locTime2Nano = 0;
+		long measureTime1Nano = 0;
+		long measureTime2Nano = 0;
 		
 		double timeDiffAccumulate = 0;
 		
@@ -1039,12 +1302,12 @@ public class SimulationService extends BaseService {
 	
 			for (int i=0; i<countMax; i++) {
 				// --- Measure local time and ask for the remote time ---
-				locTime1Milli = System.currentTimeMillis();								// --- milli-seconds ---
-				locTime1Nano = System.nanoTime();										// --- nano-seconds ---
-				remTimeMilli = slice.getRemoteTime();									// --- milli-seconds ---
-				locTime2Nano = System.nanoTime();										// --- nano-seconds ---
+				locTime1Milli = System.currentTimeMillis();			// --- milliseconds ---
+				measureTime1Nano = System.nanoTime();					// --- nanoseconds ---
+				remTimeMilli = slice.getRemoteTime();				// --- milliseconds ---
+				measureTime2Nano = System.nanoTime();					// --- nanoseconds ---
 				
-				timeDiffAccumulate += getContainerTimeDifference(locTime1Milli, remTimeMilli, locTime1Nano, locTime2Nano);
+				timeDiffAccumulate += getContainerTimeDifference(locTime1Milli, remTimeMilli, measureTime1Nano, measureTime2Nano);
 
 			}
 			slice.setRemoteTimeDiff(Math.round(timeDiffAccumulate / countMax));	
@@ -1053,20 +1316,20 @@ public class SimulationService extends BaseService {
 			e.printStackTrace();
 		}
 	}
-	
 	/**
 	 * This Method returns the time difference between this and the remote node
-	 * by using the local-time and the time to get the remote-time
-	 * @param locTime1Milli
-	 * @param remTimeMilli
-	 * @param locTime1Nano
-	 * @param locTime2Nano
-	 * @return
+	 * by using the local-time and the time to get the remote-time.
+	 *
+	 * @param locTime1Milli the local time in milliseconds
+	 * @param remTimeMilli the remote time in milliseconds
+	 * @param measureTime1Nano the time where the measurement STARTED in nanoseconds
+	 * @param measureTime2Nano the time where the measurement STOPED in nanoseconds
+	 * @return the container time difference
 	 */
-	private double getContainerTimeDifference(long locTime1Milli, long remTimeMilli, long locTime1Nano, long locTime2Nano) {
+	private double getContainerTimeDifference(long locTime1Milli, long remTimeMilli, long measureTime1Nano, long measureTime2Nano) {
 		
 		// --- Calculate the correction value of the remote time
-		long measureTimeNanoCorrect = (locTime2Nano - locTime1Nano)/2;
+		long measureTimeNanoCorrect = (measureTime2Nano - measureTime1Nano)/2;
 		double measureTimeMilliCorrect = measureTimeNanoCorrect * Math.pow(10, -6);;
 		// --- Correct the measured remote time -----------------
 		double remTimeMilliCorrect = remTimeMilli - measureTimeMilliCorrect;
@@ -1075,11 +1338,9 @@ public class SimulationService extends BaseService {
 		return locTime1Milli - remTimeMilliCorrect;
 	}
 	/**
-	 * This method asks the MainContainer of his local time 
-	 * and stores all important informations in this class 
-	 * @return
+	 * This method will synchronise the local time with the time in the Main-Container.
 	 */
-	private void requestMainContainerTime() {
+	private void setMainContainerTimeLocally() {
 		
 		int counter = timeMeasureCountMax;
 		long locTime1Milli = 0;

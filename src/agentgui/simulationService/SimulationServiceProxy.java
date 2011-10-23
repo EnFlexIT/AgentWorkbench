@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.simulationService;
 
 import jade.core.AID;
@@ -15,14 +43,20 @@ import agentgui.simulationService.load.LoadAgentMap.AID_Container;
 import agentgui.simulationService.transaction.EnvironmentManagerDescription;
 import agentgui.simulationService.transaction.EnvironmentNotification;
 
-
+/**
+ * This class provides the reals functionalities for the {@link SimulationServiceSlice}.
+ */
 public class SimulationServiceProxy extends SliceProxy implements SimulationServiceSlice {
 
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -7016240061703852319L;
 
 	// ----------------------------------------------------------
 	// --- Methods to synchronise the Time --- S T A R T --------
 	// ----------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.SimulationServiceSlice#getRemoteTime()
+	 */
 	@Override
 	public long getRemoteTime() throws IMTPException {
 		
@@ -43,6 +77,10 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 			throw new IMTPException("Unable to access remote node", se);
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.SimulationServiceSlice#setRemoteTimeDiff(long)
+	 */
 	@Override
 	public void setRemoteTimeDiff(long timeDifference) throws IMTPException {
 
@@ -72,6 +110,9 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 	// ----------------------------------------------------------
 	// --- Methods on the Manager-Agent --- S T A R T -----------
 	// ----------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.SimulationServiceSlice#setManagerAgent(agentgui.simulationService.transaction.EnvironmentManagerDescription)
+	 */
 	public void setManagerAgent(EnvironmentManagerDescription envManager) throws IMTPException {
 
 		try {
@@ -96,6 +137,9 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 	// ----------------------------------------------------------
 	// --- Methods on the Manager-Agent --- S T O P -------------
 	// ----------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.SimulationServiceSlice#setEnvironmentModel(agentgui.simulationService.environment.EnvironmentModel)
+	 */
 	@Override
 	public void setEnvironmentModel(EnvironmentModel envModel) throws IMTPException {
 
@@ -117,6 +161,10 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 			throw new IMTPException("Unable to access remote node", se);
 		}			
 	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.SimulationServiceSlice#stepSimulation(agentgui.simulationService.environment.EnvironmentModel, boolean)
+	 */
 	@Override
 	public void stepSimulation(EnvironmentModel envModel, boolean aSynchron) throws IMTPException {
 
@@ -143,6 +191,10 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 			throw new IMTPException("Unable to access remote node", se);
 		}		
 	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.SimulationServiceSlice#setAnswersExpected(int)
+	 */
 	@Override
 	public void setAnswersExpected(int answersExpected) throws IMTPException {
 	
@@ -164,6 +216,10 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 			throw new IMTPException("Unable to access remote node", se);
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.SimulationServiceSlice#notifyAgent(jade.core.AID, agentgui.simulationService.transaction.EnvironmentNotification)
+	 */
 	@Override
 	public boolean notifyAgent(AID agentAID, EnvironmentNotification notification) throws IMTPException {
 		
@@ -187,6 +243,10 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 			throw new IMTPException("Unable to access remote node", se);
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.SimulationServiceSlice#setPauseSimulation(boolean)
+	 */
 	@Override
 	public void setPauseSimulation(boolean pauseSimulation) throws IMTPException {
 		
@@ -209,6 +269,10 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 		}
 		
 	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.SimulationServiceSlice#setEnvironmentInstanceNextPart(java.util.Hashtable)
+	 */
 	@Override
 	public void setEnvironmentInstanceNextPart(Hashtable<AID, Object> nextPartsLocal) throws IMTPException {
 		
@@ -230,6 +294,10 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 			throw new IMTPException("Unable to access remote node", se);
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.SimulationServiceSlice#notifyManager(agentgui.simulationService.transaction.EnvironmentNotification)
+	 */
 	@Override
 	public boolean notifyManager(EnvironmentNotification notification) throws IMTPException {
 		
@@ -253,6 +321,10 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 		}
 		
 	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.SimulationServiceSlice#notifyManagerPutAgentAnswers(java.util.Hashtable)
+	 */
 	@Override
 	public void notifyManagerPutAgentAnswers(Hashtable<AID, Object> allAgentAnswers) throws IMTPException {
 		try {
@@ -273,6 +345,10 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 			throw new IMTPException("Unable to access remote node", se);
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.SimulationServiceSlice#getEnvironmentInstanceNextParts()
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public Hashtable<AID, Object> getEnvironmentInstanceNextParts() throws IMTPException {
@@ -294,6 +370,10 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 			throw new IMTPException("Unable to access remote node", se);
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.SimulationServiceSlice#resetEnvironmentInstanceNextParts()
+	 */
 	@Override
 	public void resetEnvironmentInstanceNextParts() throws IMTPException {
 
@@ -316,6 +396,9 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 	// ----------------------------------------------------------
 	// --- Methods on the Environment --- E N D -----------------
 	// ----------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.SimulationServiceSlice#stopSimulationAgents()
+	 */
 	@Override
 	public void stopSimulationAgents() throws IMTPException {
 		
@@ -336,6 +419,10 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 			throw new IMTPException("Unable to access remote node", se);
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.SimulationServiceSlice#setAgentMigration(java.util.Vector)
+	 */
 	@Override
 	public void setAgentMigration(Vector<AID_Container> transferAgents) throws IMTPException {
 		try {

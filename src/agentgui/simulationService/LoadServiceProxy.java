@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.simulationService;
 
 import jade.core.AID;
@@ -18,14 +46,21 @@ import agentgui.simulationService.ontology.PlatformLoad;
 import agentgui.simulationService.ontology.RemoteContainerConfig;
 
 
+/**
+ * This class provides the reals functionalities for the {@link LoadServiceSlice}.
+ */
 public class LoadServiceProxy extends SliceProxy implements LoadServiceSlice {
 
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -7016240061703852319L;
 
 	// ----------------------------------------------------------
 	// --- Method to get the Load-Informations of all ----------- 
 	// --- containers ----------------------------- S T A R T ---
 	// ----------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.LoadServiceSlice#startAgent(java.lang.String, java.lang.String, java.lang.Object[])
+	 */
 	@Override
 	public boolean startAgent(String nickName, String agentClassName, Object[] args) throws IMTPException {
 
@@ -50,6 +85,10 @@ public class LoadServiceProxy extends SliceProxy implements LoadServiceSlice {
 			throw new IMTPException("Unable to access remote node", se);
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.LoadServiceSlice#startNewRemoteContainer(agentgui.simulationService.ontology.RemoteContainerConfig, boolean)
+	 */
 	@Override
 	public String startNewRemoteContainer(RemoteContainerConfig remoteConfig, boolean preventUsageOfAlreadyUsedComputers ) throws IMTPException {
 		
@@ -73,6 +112,10 @@ public class LoadServiceProxy extends SliceProxy implements LoadServiceSlice {
 			throw new IMTPException("Unable to access remote node", se);
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.LoadServiceSlice#getDefaultRemoteContainerConfig(boolean)
+	 */
 	@Override
 	public RemoteContainerConfig getDefaultRemoteContainerConfig(boolean preventUsageOfAlreadyUsedComputers) throws IMTPException {
 
@@ -95,6 +138,10 @@ public class LoadServiceProxy extends SliceProxy implements LoadServiceSlice {
 			throw new IMTPException("Unable to access remote node", se);
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.LoadServiceSlice#getNewContainer2Wait4Status(java.lang.String)
+	 */
 	@Override
 	public Container2Wait4 getNewContainer2Wait4Status(String containerName2Wait4) throws IMTPException {
 		
@@ -117,6 +164,10 @@ public class LoadServiceProxy extends SliceProxy implements LoadServiceSlice {
 			throw new IMTPException("Unable to access remote node", se);
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.LoadServiceSlice#getLocation()
+	 */
 	@Override
 	public Location getLocation() throws IMTPException {
 		
@@ -139,6 +190,10 @@ public class LoadServiceProxy extends SliceProxy implements LoadServiceSlice {
 			throw new IMTPException("Unable to access remote node", se);
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.LoadServiceSlice#setThresholdLevels(agentgui.simulationService.load.LoadThresholdLevels)
+	 */
 	@Override
 	public void setThresholdLevels(LoadThresholdLevels thresholdLevels) throws IMTPException {
 
@@ -160,6 +215,10 @@ public class LoadServiceProxy extends SliceProxy implements LoadServiceSlice {
 			throw new IMTPException("Unable to access remote node", se);
 		}		
 	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.LoadServiceSlice#measureLoad()
+	 */
 	@Override
 	public PlatformLoad measureLoad() throws IMTPException {
 
@@ -181,6 +240,10 @@ public class LoadServiceProxy extends SliceProxy implements LoadServiceSlice {
 			throw new IMTPException("Unable to access remote node", se);
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.LoadServiceSlice#getAIDList()
+	 */
 	@Override
 	public AID[] getAIDList() throws IMTPException {
 
@@ -202,6 +265,10 @@ public class LoadServiceProxy extends SliceProxy implements LoadServiceSlice {
 			throw new IMTPException("Unable to access remote node", se);
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.LoadServiceSlice#getAIDListSensorAgents()
+	 */
 	@Override
 	public AID[] getAIDListSensorAgents() throws IMTPException {
 
@@ -223,6 +290,10 @@ public class LoadServiceProxy extends SliceProxy implements LoadServiceSlice {
 			throw new IMTPException("Unable to access remote node", se);
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.LoadServiceSlice#setAgentMigration(java.util.Vector)
+	 */
 	@Override
 	public void setAgentMigration(Vector<AID_Container> transferAgents) throws IMTPException {
 		try {
@@ -248,6 +319,9 @@ public class LoadServiceProxy extends SliceProxy implements LoadServiceSlice {
 	// --- containers ----------------------------- E N D -------
 	// ----------------------------------------------------------
 
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.LoadServiceSlice#putContainerDescription(agentgui.simulationService.ontology.ClientRemoteContainerReply)
+	 */
 	@Override
 	public void putContainerDescription(ClientRemoteContainerReply crcReply) throws IMTPException {
 		
@@ -271,6 +345,9 @@ public class LoadServiceProxy extends SliceProxy implements LoadServiceSlice {
 		
 	}
 	
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.LoadServiceSlice#getCRCReply()
+	 */
 	@Override
 	public ClientRemoteContainerReply getCRCReply() throws IMTPException {
 	
