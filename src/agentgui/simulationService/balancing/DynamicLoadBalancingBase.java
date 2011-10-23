@@ -59,7 +59,7 @@ public class DynamicLoadBalancingBase extends OneShotBehaviour {
 	public void action() {
 		this.setMeasurements();
 		this.doBalancing();	
-		myLoadAgent.loadBalancingActivated = false;
+		myLoadAgent.loadBalancingIsStillActivated = false;
 	}
 	/**
 	 * This method transfers the measurement data from the loadAgent

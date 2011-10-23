@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.simulationService.agents.example;
 
 import jade.core.Agent;
@@ -22,19 +50,35 @@ import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.SimulationServiceHelper;
 import agentgui.simulationService.agents.SimulationAgent;
 
-
 /**
- * @version 1.0
- */ 
+ * The agent can be used in order to test the synchronisation of the time, which is provided by 
+ * the {@link SimulationService}.<br> 
+ * Just start one agent of this kind locally and the other on a remote container.<br>
+ * In order to start a new remote container, set up the background system and start the agent 
+ * {@link RemoteStarterAgent}.<br> 
+ * The usage of this agent is described in its class.<br>
+ * 
+ * @see SimulationService
+ * @see SimulationServiceHelper#getSynchTimeMillis()
+ * @see SimulationServiceHelper#getSynchTimeDate()
+ * @see SimulationServiceHelper#getSynchTimeDifferenceMillis()
+ * @see RemoteStarterAgent
+ *
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ */
 public class ASynchTimeTestAgent extends SimulationAgent { 
 
 	private static final long serialVersionUID = 1L;
 	
 	private String myName = null;
 	private SynchTimeGUI gui = null;
+
 	private Date curSynchDate = null;
 	private long currSynchDiff = 0;
 
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.agents.SimulationAgent#setup()
+	 */
 	protected void setup() { 
 		
 		this.myName = this.getLocalName();
@@ -61,14 +105,25 @@ public class ASynchTimeTestAgent extends SimulationAgent {
 		
 	} 
 	
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.agents.SimulationAgent#takeDown()
+	 */
 	protected void takeDown() {
 		super.takeDown();
 		stopGUI();
 	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.agents.SimulationAgent#beforeMove()
+	 */
 	protected void beforeMove() {
 		super.beforeMove();
 		stopGUI();
 	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.agents.SimulationAgent#afterMove()
+	 */
 	protected void afterMove() {
 		super.afterMove();
 		startGUI();
@@ -87,6 +142,9 @@ public class ASynchTimeTestAgent extends SimulationAgent {
 		
 	}
 	
+	/**
+	 * This method starts the clock GUI, which will display the current and the synchronised time.
+	 */
 	private void startGUI(){
 		gui = new SynchTimeGUI(null);
 		SimulationServiceHelper simHelper = null;
@@ -102,6 +160,10 @@ public class ASynchTimeTestAgent extends SimulationAgent {
 		}
 		
 	}
+	
+	/**
+	 * Will remove and destroy the clock GUI.
+	 */
 	private void stopGUI() {
 		if (gui!=null){
 			gui.setVisible(false);
@@ -109,13 +171,26 @@ public class ASynchTimeTestAgent extends SimulationAgent {
 		}
 	}
 	
+	/**
+	 * The ShowTimeBehaviour.
+	 */
 	class ShowTimeBehaviour extends TickerBehaviour { 
 
 		private static final long serialVersionUID = 1L;
+		
+		/**
+		 * Instantiates a new show time behaviour.
+		 *
+		 * @param a the a
+		 * @param period the period
+		 */
 		public ShowTimeBehaviour(Agent a, long period) {
 			super(a, period);
 		}
 		
+		/* (non-Javadoc)
+		 * @see jade.core.behaviours.TickerBehaviour#onTick()
+		 */
 		protected void onTick() {
 			SimulationServiceHelper simHelper = null;
 			try {
@@ -134,6 +209,9 @@ public class ASynchTimeTestAgent extends SimulationAgent {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.agents.SimulationAgent#onEnvironmentStimulus()
+	 */
 	@Override
 	protected void onEnvironmentStimulus() {
 		
@@ -153,35 +231,49 @@ public class ASynchTimeTestAgent extends SimulationAgent {
 	
 	
 
+	/**
+	 * The Class SynchTimeGUI.
+	 */
 	public class SynchTimeGUI extends JDialog {
 
 		private static final long serialVersionUID = 1L;
-		private JPanel jContentPane = null;
 		
+		private JPanel jContentPane = null;
+
 		private JLabel jLabelTime = null;
 		private JLabel jLabelTimeLocal = null;
 		private JLabel jLabelTimeDiff = null;
-		
 		private JLabel jLabelTimeLocalCaption = null;
 		private JLabel jLabelTimeCaption = null;
 		private JLabel jLabelTimeDiffCaption = null;
 		
 		
+		/**
+		 * Sets the time.
+		 *
+		 * @param currSynchTime the curr synch time
+		 * @param difference the difference
+		 */
 		public void setTime(Date currSynchTime, Long difference) {
 			SimpleDateFormat df = new SimpleDateFormat( "dd.MM.yy HH:mm:ss.S" );
 			jLabelTimeLocal.setText(df.format(new Date(System.currentTimeMillis())));
 			jLabelTime.setText(df.format(currSynchTime));
 			jLabelTimeDiff.setText(difference.toString());
 		}
+		
 		/**
-		 * @param owner
+		 * Instantiates a new synch time gui.
+		 *
+		 * @param owner the owner
 		 */
 		public SynchTimeGUI(Frame owner) {
 			super(owner);
 			initialize();
 		}
+		
 		/**
-		 * This method initializes this
+		 * This method initializes this.
+		 *
 		 * @return void
 		 */
 		private void initialize() {
@@ -190,8 +282,10 @@ public class ASynchTimeTestAgent extends SimulationAgent {
 			this.setContentPane(getJContentPane());
 			this.setAlwaysOnTop(true);
 		}
+		
 		/**
-		 * This method initializes jContentPane
+		 * This method initializes jContentPane.
+		 *
 		 * @return javax.swing.JPanel
 		 */
 		private JPanel getJContentPane() {

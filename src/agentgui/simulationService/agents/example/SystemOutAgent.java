@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.simulationService.agents.example;
 
 import java.text.SimpleDateFormat;
@@ -9,6 +37,15 @@ import agentgui.ontology.Simple_String;
 import jade.core.Agent;
 import jade.core.behaviours.TickerBehaviour;
 
+/**
+ * If this agent is started its prints out a test message every 5 seconds, by
+ * using <code>System.out.println(String)</code> and <code>System.err.println(String)</code>.<br>  
+ * The agent can be migrated to a remote container, if the background system is set up
+ * and will demonstrate the usage of the remote debugging ability of <b>Agent.GUI</b>.<br> 
+ * Therefore the Service 'jade.debugging.DebugService' has to be set up within a project!
+ *    
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ */
 public class SystemOutAgent extends Agent {
 
 	private static final long serialVersionUID = 471703602130677272L;
@@ -16,6 +53,9 @@ public class SystemOutAgent extends Agent {
 	private Integer speakingInterval = 5;
 	private String speakingText = "This is a test system output!";
 	
+	/* (non-Javadoc)
+	 * @see jade.core.Agent#setup()
+	 */
 	@Override
 	protected void setup() {
 	
@@ -47,14 +87,26 @@ public class SystemOutAgent extends Agent {
 	}
 	
 	
+	/**
+	 * The Class SpeakTick.
+	 */
 	private class SpeakTick extends TickerBehaviour {
 
 		private static final long serialVersionUID = 757478665038190137L;
 
+		/**
+		 * Instantiates a new speak tick.
+		 *
+		 * @param a the a
+		 * @param period the period
+		 */
 		public SpeakTick(Agent a, long period) {
 			super(a, period);
 		}
 
+		/* (non-Javadoc)
+		 * @see jade.core.behaviours.TickerBehaviour#onTick()
+		 */
 		@Override
 		protected void onTick() {
 			

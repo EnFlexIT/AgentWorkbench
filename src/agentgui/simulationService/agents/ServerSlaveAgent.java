@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.simulationService.agents;
 
 import jade.content.Concept;
@@ -36,6 +64,18 @@ import agentgui.simulationService.ontology.SlaveRegister;
 import agentgui.simulationService.ontology.SlaveTrigger;
 import agentgui.simulationService.ontology.SlaveUnregister;
 
+/**
+ * This agent is part of the <b>Agent.GUI</b> background-system and waits for a 
+ * so called {@link ClientRemoteContainerRequest} in order to start a new 
+ * container for a remotely located platform.<br>
+ * Additionally this agent informs the {@link ServerMasterAgent} about the current
+ * state of the machine, where this agent is located. 
+ * 
+ * @see ServerMasterAgent
+ * @see ServerClientAgent
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ */
 public class ServerSlaveAgent extends Agent {
 
 	private static final long serialVersionUID = -3947798460986588734L;
@@ -63,6 +103,9 @@ public class ServerSlaveAgent extends Agent {
 	private long triggerTime = new Long(1000*1);
 	private long triggerTime4Reconnection = new Long(1000*20);
 
+	/* (non-Javadoc)
+	 * @see jade.core.Agent#setup()
+	 */
 	@Override
 	protected void setup() {
 		super.setup();
@@ -110,7 +153,7 @@ public class ServerSlaveAgent extends Agent {
 
 		// --- Add Main-Behaiviours -----------------------
 		parBehaiv = new ParallelBehaviour(this,ParallelBehaviour.WHEN_ALL);
-		parBehaiv.addSubBehaviour( new ReceiveBehaviour() );
+		parBehaiv.addSubBehaviour( new MessageReceiveBehaviour() );
 		trigger = new TriggerBehaiviour(this,triggerTime);
 		parBehaiv.addSubBehaviour( trigger );
 		sndBehaiv = new SaveNodeDescriptionBehaviour(this,500);
@@ -121,6 +164,9 @@ public class ServerSlaveAgent extends Agent {
 		
 	}
 	
+	/* (non-Javadoc)
+	 * @see jade.core.Agent#takeDown()
+	 */
 	@Override
 	protected void takeDown() {
 		super.takeDown();
@@ -135,7 +181,13 @@ public class ServerSlaveAgent extends Agent {
 				
 	}
 	
-	private boolean sendMessage2MainServer( Concept agentAction ) {
+	/**
+	 * This method sends a message to the ServerMasterAgent.
+	 *
+	 * @param agentAction the agent action
+	 * @return true, if successful
+	 */
+	private boolean sendMessage2MainServer(Concept agentAction) {
 		
 		try {
 			// --- Definition einer neuen 'Action' --------
@@ -165,13 +217,26 @@ public class ServerSlaveAgent extends Agent {
 		
 	}
 
+	/**
+	 * The TriggerBehaiviour of the agents, which informs the ServerMasterAgent
+	 * about the current system state and load.
+	 */
 	private class TriggerBehaiviour extends TickerBehaviour {
 
 		private static final long serialVersionUID = -1701739199514787426L;
 
-		public TriggerBehaiviour(Agent a, long period) {
-			super(a, period);
+		/**
+		 * Instantiates a new trigger behaiviour.
+		 *
+		 * @param agent the agent
+		 * @param period the period
+		 */
+		public TriggerBehaiviour(Agent agent, long period) {
+			super(agent, period);
 		}
+		/* (non-Javadoc)
+		 * @see jade.core.behaviours.TickerBehaviour#onTick()
+		 */
 		@Override
 		protected void onTick() {
 			// --- Current Time ---------------------------------
@@ -222,10 +287,16 @@ public class ServerSlaveAgent extends Agent {
 	// -----------------------------------------------------
 	// --- Message-Receive-Behaiviour --- S T A R T --------
 	// -----------------------------------------------------
-	private class ReceiveBehaviour extends CyclicBehaviour {
+	/**
+	 * The Class MessageReceiveBehaviour of this agent.
+	 */
+	private class MessageReceiveBehaviour extends CyclicBehaviour {
 
 		private static final long serialVersionUID = -1701739199514787426L;
 
+		/* (non-Javadoc)
+		 * @see jade.core.behaviours.Behaviour#action()
+		 */
 		@Override
 		public void action() {
 			
@@ -296,25 +367,41 @@ public class ServerSlaveAgent extends Agent {
 	// -----------------------------------------------------
 
 	/**
-	 * Starts a Remote-Container for given RemoteContainerConfig-Instance
+	 * Starts a Remote-Container for given RemoteContainerConfig-Instance.
+	 *
+	 * @param remoteContainerConfig the remote container configuration
 	 */
-	private void startRemoteContainer(RemoteContainerConfig rcc) {
+	private void startRemoteContainer(RemoteContainerConfig remoteContainerConfig) {
 		
 		System.out.println("Starte Remote-Container ... ");
-		new JadeRemoteStart(rcc).start();		
+		new JadeRemoteStart(remoteContainerConfig).start();		
 		
 	}
 	
 	// -----------------------------------------------------
 	// --- Save Node Description Behaviour --- S T A R T ---
 	// -----------------------------------------------------
+	/**
+	 * The SaveNodeDescriptionBehaviour, which waits for the result of the benchmark 
+	 * in order to save this value also in the local node description by using the LoadService.
+	 */
 	private class SaveNodeDescriptionBehaviour extends TickerBehaviour {
 
 		private static final long serialVersionUID = 5704581376150290621L;
 		
+		/**
+		 * Instantiates a new save node description behaviour.
+		 *
+		 * @param a the a
+		 * @param period the period
+		 */
 		public SaveNodeDescriptionBehaviour(Agent a, long period) {
 			super(a, period);
 		}
+		
+		/* (non-Javadoc)
+		 * @see jade.core.behaviours.TickerBehaviour#onTick()
+		 */
 		protected void onTick() {
 			
 			if (LoadMeasureThread.getCompositeBenchmarkValue()!=0) {

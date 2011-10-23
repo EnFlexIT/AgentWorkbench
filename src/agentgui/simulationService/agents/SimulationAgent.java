@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.simulationService.agents;
 
 import java.util.Vector;
@@ -6,6 +34,7 @@ import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.SimulationServiceHelper;
 
 import agentgui.simulationService.environment.EnvironmentModel;
+import agentgui.simulationService.sensoring.ServiceActuator;
 import agentgui.simulationService.sensoring.ServiceSensor;
 import agentgui.simulationService.transaction.EnvironmentNotification;
 import jade.core.AID;
@@ -15,28 +44,50 @@ import jade.core.ServiceException;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
 
+/**
+ * This agent class can be used for simulations based on agents, that are using the
+ * <b>Agent.GUI</b> {@link SimulationService}.
+ * 
+ * @see SimulationService
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ */
 public class SimulationAgent extends Agent {
 
 	private static final long serialVersionUID = 1782853782362543057L;
 
+	/** The ServiceSensor of this agent. */
 	protected ServiceSensor mySensor;
+	/** The current EnvironmentModel. */
 	protected EnvironmentModel myEnvironmentModel;
+	/** The location, where the agent has to migrate to. */
 	protected Location myNewLocation;
 	
 	private CyclicNotificationHandler notifyHandler = null;
 	private Vector<EnvironmentNotification> notifications = new Vector<EnvironmentNotification>();
 
+	/* (non-Javadoc)
+	 * @see jade.core.Agent#setup()
+	 */
 	@Override
 	protected void setup() {
 		super.setup();
 		this.sensorPlugIn();
 		this.addNotificationHandler();
 	}
+	
+	/* (non-Javadoc)
+	 * @see jade.core.Agent#beforeMove()
+	 */
 	@Override
 	protected void beforeMove() {
 		super.beforeMove();
 		this.sensorPlugOut();
 	}
+	
+	/* (non-Javadoc)
+	 * @see jade.core.Agent#afterMove()
+	 */
 	@Override
 	protected void afterMove() {
 		myNewLocation = null;
@@ -44,17 +95,29 @@ public class SimulationAgent extends Agent {
 		this.sensorPlugIn();
 		this.checkAndActOnEnvironmentChanges();
 	}
+	
+	/* (non-Javadoc)
+	 * @see jade.core.Agent#beforeClone()
+	 */
 	@Override
 	protected void beforeClone() {
 		super.beforeClone();
 		this.sensorPlugOut();
 	}
+	
+	/* (non-Javadoc)
+	 * @see jade.core.Agent#afterClone()
+	 */
 	@Override
 	protected void afterClone() {
 		super.afterClone();
 		this.sensorPlugIn();
 		this.checkAndActOnEnvironmentChanges();
 	}
+	
+	/* (non-Javadoc)
+	 * @see jade.core.Agent#takeDown()
+	 */
 	@Override
 	protected void takeDown() {
 		super.takeDown();
@@ -63,7 +126,7 @@ public class SimulationAgent extends Agent {
 	}
 	
 	/**
-	 * This Method plugs IN the service sensor
+	 * This Method plugs IN the service sensor.
 	 */
 	protected void sensorPlugIn() {
 		// --- Start the ServiceSensor ------------------------------
@@ -76,8 +139,9 @@ public class SimulationAgent extends Agent {
 			e.printStackTrace();
 		}
 	}
+	
 	/**
-	 * This Method plugs OUT the service sensor
+	 * This Method plugs OUT the service sensor.
 	 */
 	protected void sensorPlugOut() {
 		// --- plug-out the Sensor ----------------------------------
@@ -110,21 +174,23 @@ public class SimulationAgent extends Agent {
 	
 	/**
 	 * This method will be used by the ServiceActuator (class) to inform
-	 * this agent about its new migration location. 
-	 * @param newLocation
+	 * this agent about its new migration location.
+	 *
+	 * @param newLocation the new Location for the migration
 	 */
 	public void setMigration(Location newLocation) {
 		myNewLocation = newLocation;
 	}
 	
 	/**
-	 * This method will be used by the ServiceActuator (class) to inform
+	 * This method will be used by the {@link ServiceActuator} to inform
 	 * this agent about changes in the environment. It can be either used
-	 * to do this asynchron or synchron. It is highly recommended to do
-	 * this asynchron, so that the agencie can act parallel and not
-	 * sequently. 
-	 * @param envModel
-	 * @param aSynchron
+	 * to do this asynchronously or synchronously. It is highly recommended 
+	 * to do this asynchronously, so that the agency can act parallel and not
+	 * sequentially.
+	 *
+	 * @param envModel the current or new EnvironmentModel
+	 * @param aSynchron true, if this should be done asynchronously
 	 */
 	public void setEnvironmentModel(EnvironmentModel envModel, boolean aSynchron) {
 		myEnvironmentModel = envModel;
@@ -134,10 +200,13 @@ public class SimulationAgent extends Agent {
 			this.onEnvironmentStimulus();	
 		}		
 	}
+	
+		
 	/**
 	 * This Behaviour is used to stimulate the agent from the outside 
 	 * in a asynchronous way.
-	 * @author derksen
+	 * 	 
+	 * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
 	 */
 	private class ServiceStimulus extends OneShotBehaviour {
 		private static final long serialVersionUID = 1441989543791055996L;
@@ -155,8 +224,9 @@ public class SimulationAgent extends Agent {
 	
 	/**
 	 * This method sets the answer respectively the change of a single simulation agent
-	 * back to the central simulation manager
-	 * @param answer
+	 * back to the central simulation manager.
+	 *
+	 * @param myNextState the next state of this agent in the next instance of the environment model
 	 */
 	protected void setMyStimulusAnswer(Object myNextState) {
 		try {
@@ -168,9 +238,10 @@ public class SimulationAgent extends Agent {
 	}
 
 	/**
-	 * This method can be used to transfer any kind of information to the Manager of the current environment model  
-	 * @param notification
-	 * @return
+	 * This method can be used to transfer any kind of information to the Manager of the current environment model.
+	 *
+	 * @param notification the notification
+	 * @return true, if successful
 	 */
 	protected boolean sendManagerNotification(Object notification) {
 		boolean send = false;
@@ -185,9 +256,11 @@ public class SimulationAgent extends Agent {
 	}
 	
 	/**
-	 * This method can be used to transfer any kind of information to one member of the current environment model  
-	 * @param notification
-	 * @return
+	 * This method can be used to transfer any kind of information to one member of the current environment model.
+	 *
+	 * @param receiverAID the AID of receiver agent
+	 * @param notification the notification
+	 * @return true, if successful
 	 */
 	protected boolean sendAgentNotification(AID receiverAID, Object notification) {
 		boolean send = false;
@@ -203,10 +276,10 @@ public class SimulationAgent extends Agent {
 	
 	
 	/**
-	 * This method can be invoked from the simulation service, if 
-	 * a notification for the manager has to be delivered 
-	 * @param notification
-	 * @param aSynchron
+	 * This method can be invoked from the simulation service, if
+	 * a notification for the manager has to be delivered.
+	 *
+	 * @param notification the new notification
 	 */
 	public void setNotification(EnvironmentNotification notification) {
 		// --- place the notification into the notification vector -------
@@ -218,7 +291,7 @@ public class SimulationAgent extends Agent {
 			
 	}
 	/**
-	 * This method adds the CyclicNotificationHandler to this agent
+	 * This method adds the CyclicNotificationHandler to this agent.
 	 */
 	private void addNotificationHandler() {
 		if (this.notifyHandler==null) {
@@ -227,14 +300,24 @@ public class SimulationAgent extends Agent {
 		this.addBehaviour(this.notifyHandler);
 	}
 	/**
-	 * This method removes the CyclicNotificationHandler from this agent
+	 * This method removes the CyclicNotificationHandler from this agent.
 	 */
 	private void removeNotificationHandler() {
 		this.removeBehaviour(this.notifyHandler);
 	}
 
+	/**
+	 * This CyclicBehaviour is used in order to act on the incoming notifications.
+	 *  
+	 * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+	 */
 	private class CyclicNotificationHandler extends CyclicBehaviour {
+		
 		private static final long serialVersionUID = 4638681927192305608L;
+		
+		/* (non-Javadoc)
+		 * @see jade.core.behaviours.Behaviour#action()
+		 */
 		@Override
 		public void action() {
 			
@@ -258,9 +341,11 @@ public class SimulationAgent extends Agent {
 			}
 		}
 	}
+	
 	/**
-	 * This mehtod will be executed if a ManagerNotification arrives this agent
-	 * @param notification
+	 * This method will be executed if a ManagerNotification arrives this agent.
+	 *
+	 * @param notification the notification
 	 */
 	protected void onEnvironmentNotification(EnvironmentNotification notification) {};
 	

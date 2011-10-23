@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.simulationService.agents;
 
 import jade.content.Concept;
@@ -41,6 +69,16 @@ import agentgui.simulationService.ontology.PlatformTime;
 import agentgui.simulationService.ontology.RegisterReceipt;
 import agentgui.simulationService.ontology.RemoteContainerConfig;
 
+/**
+ * This agent is part of the <b>Agent.GUI</b> background-system and connects the
+ * end-user application with the {@link ServerMasterAgent} in order to allow the
+ * start of new remote container.  
+ * 
+ * @see ServerMasterAgent
+ * @see ServerSlaveAgent
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ */
 public class ServerClientAgent extends Agent {
 
 	private static final long serialVersionUID = -3947798460986588734L;
@@ -69,6 +107,9 @@ public class ServerClientAgent extends Agent {
 	private long triggerTime = new Long(1000*1);
 	private long triggerTime4Reconnection = new Long(1000*20);
 	
+	/* (non-Javadoc)
+	 * @see jade.core.Agent#setup()
+	 */
 	@Override
 	protected void setup() {
 		super.setup();
@@ -126,10 +167,10 @@ public class ServerClientAgent extends Agent {
 		
 		// --- Add Main-Behaviours ------------------------
 		parBehaiv = new ParallelBehaviour(this,ParallelBehaviour.WHEN_ALL);
-		parBehaiv.addSubBehaviour( new ReceiveBehaviour() );
+		parBehaiv.addSubBehaviour( new MessageReceiveBehaviour() );
 		trigger = new TriggerBehaiviour(this,triggerTime);
 		parBehaiv.addSubBehaviour( trigger );
-		sndBehaiv = new SaveNodeDescriptionBehaviour(this,500);
+		sndBehaiv = new SaveNodeDescriptionBehaviour(this, 500);
 		parBehaiv.addSubBehaviour( sndBehaiv );
 		
 		// --- Add the parallel Behaviour from above ------
@@ -144,6 +185,9 @@ public class ServerClientAgent extends Agent {
 		
 	}
 	
+	/* (non-Javadoc)
+	 * @see jade.core.Agent#takeDown()
+	 */
 	@Override
 	protected void takeDown() {
 		super.takeDown();
@@ -160,6 +204,12 @@ public class ServerClientAgent extends Agent {
 	}
 
 	
+	/**
+	 * This method sends a message to the ServerMasterAgent.
+	 *
+	 * @param agentAction the agent action
+	 * @return true, if successful
+	 */
 	private boolean sendMessage2MainServer(Concept agentAction) {
 		
 		// --- In case that we have no address ------------
@@ -194,6 +244,12 @@ public class ServerClientAgent extends Agent {
 		
 	}
 	
+	/**
+	 * Forwards a remote container request to the ServerMasterAgent, which comes from
+	 * the local SimulationService.
+	 *
+	 * @param agentAction the agent action
+	 */
 	private void forwardRemoteContainerRequest(Concept agentAction) {
 		
 		// --- Request to start a new Remote-Container -----
@@ -218,7 +274,10 @@ public class ServerClientAgent extends Agent {
 	// -----------------------------------------------------
 	// --- Message-Receive-Behaviour --- S T A R T ---------
 	// -----------------------------------------------------
-	private class ReceiveBehaviour extends CyclicBehaviour {
+	/**
+	 * The MessageReceiveBehaviour of this agent.
+	 */
+	private class MessageReceiveBehaviour extends CyclicBehaviour {
 
 		private static final long serialVersionUID = -1701739199514787426L;
 
@@ -338,13 +397,27 @@ public class ServerClientAgent extends Agent {
 	// -----------------------------------------------------
 	// --- Trigger-Behaviour --- S T A R T -----------------
 	// -----------------------------------------------------
+	/**
+	 * The TriggerBehaiviour of the agents, which informs the ServerMasterAgent
+	 * about the current system state and load.
+	 */
 	private class TriggerBehaiviour extends TickerBehaviour {
 
 		private static final long serialVersionUID = -1701739199514787426L;
 
+		/**
+		 * Instantiates a new trigger behaiviour.
+		 *
+		 * @param a the a
+		 * @param period the period
+		 */
 		public TriggerBehaiviour(Agent a, long period) {
 			super(a, period);
 		}
+		
+		/* (non-Javadoc)
+		 * @see jade.core.behaviours.TickerBehaviour#onTick()
+		 */
 		@Override
 		protected void onTick() {
 
@@ -397,13 +470,27 @@ public class ServerClientAgent extends Agent {
 	// -----------------------------------------------------
 	// --- Save Node Description Behaviour --- S T A R T ---
 	// -----------------------------------------------------
+	/**
+	 * The SaveNodeDescriptionBehaviour, which waits for the result of the benchmark 
+	 * in order to save this value also in the local node description by using the LoadService.
+	 */
 	private class SaveNodeDescriptionBehaviour extends TickerBehaviour {
 
 		private static final long serialVersionUID = 5704581376150290621L;
 		
+		/**
+		 * Instantiates a new save node description behaviour.
+		 *
+		 * @param a the a
+		 * @param period the period
+		 */
 		public SaveNodeDescriptionBehaviour(Agent a, long period) {
 			super(a, period);
 		}
+		
+		/* (non-Javadoc)
+		 * @see jade.core.behaviours.TickerBehaviour#onTick()
+		 */
 		protected void onTick() {
 			
 			if (LoadMeasureThread.getCompositeBenchmarkValue()!=0) {

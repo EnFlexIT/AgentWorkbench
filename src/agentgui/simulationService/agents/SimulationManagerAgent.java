@@ -1,6 +1,30 @@
 /**
- * This class provides the basic functionality for implemented simulation
- * 
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
  */
 package agentgui.simulationService.agents;
 
@@ -16,31 +40,42 @@ import java.util.Vector;
 import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.SimulationServiceHelper;
 import agentgui.simulationService.environment.EnvironmentModel;
+import agentgui.simulationService.sensoring.ServiceActuatorManager;
 import agentgui.simulationService.sensoring.ServiceSensorManager;
 import agentgui.simulationService.time.TimeModel;
 import agentgui.simulationService.transaction.EnvironmentNotification;
 
+/** 
+ * This prototype agent can be used in order to build a tailored manager for a simulation. 
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ */
 public abstract class SimulationManagerAgent extends Agent implements SimulationManagerInterface {
 	
 	private static final long serialVersionUID = -7398714332312572026L;
 
+	/** The SimulationServiceHelper. */
 	protected SimulationServiceHelper simHelper = null;
+	/** The ServiceSensorManager for this agent. */
 	protected ServiceSensorManager mySensor = null;
 	
-	/**
-	 *  The environment model which contains an abstract and   
-	 *  a displayable enviroment model as well as a time model 
-	 */
+	/** The environment model which contains an abstract and a displayable environment model as well as a time model */
 	protected EnvironmentModel envModel = new EnvironmentModel();
+	
+	/** The answers/next state of all involved agents. */
 	protected Hashtable<AID, Object> agentAnswers = null;
 
-	private CyclicSimulationBehavior simBehavior = null;
+	/** The CyclicSimulationBehavior. */
+	private CyclicSimulationBehaviour simBehaviour = null;
 
+	/** The CyclicNotificationHandler for incoming notification. */
 	private CyclicNotificationHandler notifyHandler = null;
+	
+	/** The notifications, which arrived at this agent . */
 	private Vector<EnvironmentNotification> notifications = new Vector<EnvironmentNotification>();
 	
 	/**
-	 *  Mandatory setup()-functionality
+	 * Mandatory setup()-functionality.
 	 */
 	@Override
 	protected void setup() {		  
@@ -56,6 +91,10 @@ public abstract class SimulationManagerAgent extends Agent implements Simulation
 		this.sensorPlugIn();
 		this.addNotificationHandler();
 	}
+	
+	/* (non-Javadoc)
+	 * @see jade.core.Agent#takeDown()
+	 */
 	@Override
 	protected void takeDown() {
 		this.removeNotificationHandler();
@@ -63,7 +102,7 @@ public abstract class SimulationManagerAgent extends Agent implements Simulation
 	}
 	
 	/**
-	 * This Method plugs IN the service sensor
+	 * This Method plugs IN the service sensor.
 	 */
 	protected void sensorPlugIn() {
 		// --- Start the ServiceSensor ------------------------------
@@ -75,8 +114,9 @@ public abstract class SimulationManagerAgent extends Agent implements Simulation
 			e.printStackTrace();
 		}
 	}
+	
 	/**
-	 * This Method plugs OUT the service sensor
+	 * This Method plugs OUT the service sensor.
 	 */
 	protected void sensorPlugOut() {
 		// --- plug-out the Sensor ----------------------------------
@@ -89,34 +129,47 @@ public abstract class SimulationManagerAgent extends Agent implements Simulation
 	}
 	
 	/**
-	 * This method adds the mandatory CyclicSimulationBehavior to this agent
+	 * This method adds the mandatory CyclicSimulationBehavior to this agent.
 	 */
 	protected void addSimulationBehavior() {
 		// --- Start the cyclic SimulationBehavior of this manager --
-		if (this.simBehavior==null) {
-			this.simBehavior = new CyclicSimulationBehavior();	
+		if (this.simBehaviour==null) {
+			this.simBehaviour = new CyclicSimulationBehaviour();	
 		}		
-		this.addBehaviour(this.simBehavior);
-	}
-	protected void removeSimulationBehavior() {
-		// --- Remove the cyclic SimulationBehavior of this manager --
-		this.removeBehaviour(this.simBehavior);
+		this.addBehaviour(this.simBehaviour);
 	}
 	
 	/**
-	 * This method adds the core behavior to the agent which is controlling the 
-	 * sequence (cyclic) simulation behavior
-	 *    
-	 * @author Christian Derksen 
+	 * Removes the simulation behaviour.
 	 */
-	private class CyclicSimulationBehavior extends CyclicBehaviour {
+	protected void removeSimulationBehaviour() {
+		// --- Remove the cyclic SimulationBehavior of this manager --
+		this.removeBehaviour(this.simBehaviour);
+	}
+	
+	
+	/**
+	 * This method adds the core behaviour to the agent which is controlling the 
+	 * sequence (cyclic) simulation behaviour
+	 *  
+	 * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+	 */
+	private class CyclicSimulationBehaviour extends CyclicBehaviour {
 		private static final long serialVersionUID = 7456541169963374884L;
-		public CyclicSimulationBehavior() {
+		
+		/**
+		 * Instantiates a new cyclic simulation behaviour.
+		 */
+		public CyclicSimulationBehaviour() {
 			// --- Get the initial Environment Model locally ------------
 			if (getEnvironmentModel().isEmpty()) {
 				setEnvironmentModel(getInitialEnvironmentModel());	
 			}
 		}
+		
+		/* (non-Javadoc)
+		 * @see jade.core.behaviours.Behaviour#action()
+		 */
 		@Override
 		public void action() {
 			doSingleSimulationSequennce();
@@ -125,40 +178,52 @@ public abstract class SimulationManagerAgent extends Agent implements Simulation
 	}
 	
 	/**
-	 * This method has to be called if the next simulation step can be executed
+	 * This method has to be called if the next simulation step can be executed.
 	 */
 	protected void doNextSimulationStep() {
-		this.simBehavior.restart();
+		this.simBehaviour.restart();
 	}
 	
 	/**
 	 * Steps the simulation. As a side effect a transition of current environment is written into the transaction list
-	 * @throws Exception
+	 *
+	 * @param answersExpected the expected number answers from the involved {@link SimulationAgent}'s 
+	 * @throws ServiceException the ServiceException
 	 */
 	protected void stepSimulation(int answersExpected) throws ServiceException {
 		simHelper.stepSimulation(this.envModel, answersExpected);
 	}
+	
+	/**
+	 * Steps the simulation. As a side effect a transition of current environment is written into the transaction list
+	 *
+	 * @param environmentModel the new {@link EnvironmentModel} to set
+	 * @param answersExpected the expected number answers from the involved {@link SimulationAgent}'s
+	 * @throws ServiceException the ServiceException
+	 */
 	protected void stepSimulation(EnvironmentModel environmentModel, int answersExpected) throws ServiceException {
 		this.setEnvironmentModel(environmentModel);
 		simHelper.stepSimulation(this.envModel, answersExpected);
 	}
 
 	/**
-	 * Resets the answers of the agents in the simulation service to an empty Hashmap
-	 * @throws Exception
+	 * Resets the answers of the agents in the simulation service to an empty Hashtable.
+	 *
+	 * @throws ServiceException ServiceException
 	 */
 	protected void resetEnvironmentInstanceNextParts() throws ServiceException {
 		simHelper.resetEnvironmentInstanceNextParts();
 	}
 	
 	/**
-	 * This method will be used by the ServiceActuatorManager (class) to inform
-	 * this manager about the agent answers for environment changes. It can be either 
-	 * used to do this asynchron or synchron. It is highly recommended to do
-	 * this asynchron, so that the agencie can act parallel and not sequently.
-	 *  
-	 * @param agentAnswers
-	 * @param aSynchron
+	 * This method will be used by the {@link ServiceActuatorManager} to inform
+	 * this manager about agent answers for environment changes. It can be either 
+	 * used to do this asynchronously or synchronously. It is highly recommended 
+	 * to do this asynchronously, so that the agency can act parallel and not
+	 * sequentially.
+	 *
+	 * @param agentAnswers the agent answers as a Hashtable
+	 * @param aSynchron true, if this should be done asynchronously
 	 */
 	public void putAgentAnswers(Hashtable<AID, Object> agentAnswers, boolean aSynchron) {
 		this.setAgentAnswers(agentAnswers);
@@ -171,32 +236,49 @@ public abstract class SimulationManagerAgent extends Agent implements Simulation
 	/**
 	 * This Behaviour is used to stimulate the manager from the outside 
 	 * in a asynchronous way.
-	 * @author derksen
+	 * 
+	 * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
 	 */
 	private class AgentAnswerStimulus extends OneShotBehaviour {
+		
 		private static final long serialVersionUID = 1441989543791055996L;
+		
 		private Hashtable<AID, Object> aa = null;
+		
+		/**
+		 * Instantiates a new agent answer stimulus.
+		 *
+		 * @param answersHash the answers hash
+		 */
 		public AgentAnswerStimulus(Hashtable<AID, Object> answersHash) {
 			aa = answersHash;
 		}
+		
+		/* (non-Javadoc)
+		 * @see jade.core.behaviours.Behaviour#action()
+		 */
 		@Override
 		public void action() {
 			proceedAgentAnswers(aa);
 		}
 	}
+	
 	/**
 	 * This method is called if a stimulus from the outside reached this agent.
 	 * It can be overwritten in the child class to act on the agent answers
-	 * in order to build the next EnvironmentModel. 
+	 * in order to build the next EnvironmentModel.
+	 *
+	 * @param agentAnswers the agent answers as a Hashtable
 	 */
 	protected void proceedAgentAnswers(Hashtable<AID, Object> agentAnswers) {}
 	
 	
 	/**
-	 * This method can be used to transfer any kind of information to one member of the current environment model 
-	 * @param receiverAID
-	 * @param notification
-	 * @return
+	 * This method can be used to transfer any kind of information to one member of the current environment model.
+	 *
+	 * @param receiverAID the AID of the receiver
+	 * @param notification the notification
+	 * @return true, if successful
 	 */
 	protected boolean sendAgentNotification(AID receiverAID, Object notification) {
 		boolean send = false;
@@ -210,10 +292,10 @@ public abstract class SimulationManagerAgent extends Agent implements Simulation
 	}
 	
 	/**
-	 * This method can be invoked from the simulation service, if 
-	 * a notification for the manager has to be delivered 
-	 * @param notification
-	 * @param aSynchron
+	 * This method can be invoked from the simulation service, if
+	 * a notification for the manager has to be delivered.
+	 *
+	 * @param notification the new EnvironmentNotification for this manager agent
 	 */
 	public void setManagerNotification(EnvironmentNotification notification) {
 		// --- place the notification into the notification vector -------
@@ -225,7 +307,7 @@ public abstract class SimulationManagerAgent extends Agent implements Simulation
 			
 	}
 	/**
-	 * This method adds the CyclicNotificationHandler to this agent
+	 * This method adds the CyclicNotificationHandler to this agent.
 	 */
 	private void addNotificationHandler() {
 		if (this.notifyHandler==null) {
@@ -234,14 +316,23 @@ public abstract class SimulationManagerAgent extends Agent implements Simulation
 		this.addBehaviour(this.notifyHandler);
 	}
 	/**
-	 * This method removes the CyclicNotificationHandler from this agent
+	 * This method removes the CyclicNotificationHandler from this agent.
 	 */
 	private void removeNotificationHandler() {
 		this.removeBehaviour(this.notifyHandler);
 	}
 
+	/**
+	 * This CyclicBehaviour is used in order to act on the incoming notifications.
+	 *  
+	 * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+	 */
 	private class CyclicNotificationHandler extends CyclicBehaviour {
 		private static final long serialVersionUID = 4638681927192305608L;
+		
+		/* (non-Javadoc)
+		 * @see jade.core.behaviours.Behaviour#action()
+		 */
 		@Override
 		public void action() {
 			
@@ -265,9 +356,11 @@ public abstract class SimulationManagerAgent extends Agent implements Simulation
 			}
 		}
 	}
+	
 	/**
-	 * This mehtod will be executed if a ManagerNotification arrives this agent
-	 * @param notification
+	 * This method will be executed if a ManagerNotification arrives this agent.
+	 *
+	 * @param notification the EnvironmentNotification for this agent
 	 */
 	protected void onManagerNotification(EnvironmentNotification notification) {};
 	
@@ -277,44 +370,104 @@ public abstract class SimulationManagerAgent extends Agent implements Simulation
 	// ----------------------------------------------------------------------
 	// --- From here on some simple getter and setter methods are placed ----
 	// ----------------------------------------------------------------------
+	/**
+	 * Provides the environment model.
+	 *
+	 * @return the environment model
+	 */
 	protected EnvironmentModel getEnvironmentModel() {
 		return envModel;
 	}
+	/**
+	 * Sets the environment model.
+	 *
+	 * @param environmentModel the new environment model
+	 */
 	protected void setEnvironmentModel(EnvironmentModel environmentModel) {
 		this.envModel = environmentModel;
 	}
 	
+	/**
+	 * Provides the current time model.
+	 *
+	 * @return the time model
+	 */
 	protected TimeModel getTimeModel() {
 		return this.envModel.getTimeModel();
 	}
+	/**
+	 * Sets the current time model.
+	 *
+	 * @param timeModel the new time model
+	 */
 	protected void setTimeModel(TimeModel timeModel) {
 		this.envModel.setTimeModel(timeModel);
 	}
 	
+	/**
+	 * Returns the current abstract environment model.
+	 *
+	 * @return the abstract environment
+	 */
 	protected Object getAbstractEnvironment() {
 		return this.envModel.getAbstractEnvironment();
 	}
+	/**
+	 * Sets the abstract environment.
+	 *
+	 * @param abstractEnvironment the new abstract environment
+	 */
 	protected void setAbstractEnvironment(Object abstractEnvironment) {
 		this.envModel.setAbstractEnvironment(abstractEnvironment);
 	}
 
+	/**
+	 * Returns the current display environment.
+	 *
+	 * @return the display environment
+	 */
 	protected Object getDisplayEnvironment() {
 		return this.envModel.getDisplayEnvironment();
 	}
+	/**
+	 * Sets the display environment.
+	 *
+	 * @param displayEnvironment the new display environment
+	 */
 	protected void setDisplayEnvironment(Object displayEnvironment) {
 		this.envModel.setDisplayEnvironment(displayEnvironment);
 	}
 
+	/**
+	 * Gets the agent answers.
+	 *
+	 * @return the agent answers
+	 */
 	protected Hashtable<AID, Object> getAgentAnswers() {
 		return agentAnswers;
 	}
+	/**
+	 * Sets the agent answers.
+	 *
+	 * @param agentAnswers the agent answers
+	 */
 	protected void setAgentAnswers(Hashtable<AID, Object> agentAnswers) {
 		this.agentAnswers = agentAnswers;
 	}
 	
+	/**
+	 * tReturns the Vector of current EnvironmentNotification's.
+	 *
+	 * @return the notifications
+	 */
 	public Vector<EnvironmentNotification> getNotifications() {
 		return notifications;
 	}
+	/**
+	 * Sets the notifications.
+	 *
+	 * @param notifications the new notifications
+	 */
 	public void setNotifications(Vector<EnvironmentNotification> notifications) {
 		this.notifications = notifications;
 	}

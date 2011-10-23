@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.simulationService.agents;
 
 import jade.content.Concept;
@@ -43,7 +71,25 @@ import agentgui.simulationService.ontology.SlaveUnregister;
 
 import com.mysql.jdbc.ResultSet;
 
-
+/**
+ * This agent is part of the <b>Agent.GUI</b> background-system and collects the
+ * system information of {@link ServerClientAgent}'s and {@link ServerSlaveAgent}'s
+ * to the connected MySQL database.<br>
+ * <br>
+ * Furthermore the agent answers to {@link ClientRemoteContainerRequest} of<br>
+ * {@link ServerClientAgent}'s in that way, that it on one hand side forwards <br>
+ * this request to a selected {@link ServerSlaveAgent} - on the other hand it<br>
+ * answers the {@link ServerClientAgent} about the available and  selected<br> 
+ * machine or node with a {@link ClientRemoteContainerReply}, so that the start<br> 
+ * of a remote container can be observed, e. g. by using time outs and so on.<br>     
+ * 
+ * @see ServerClientAgent
+ * @see ServerSlaveAgent
+ * @see ClientRemoteContainerRequest
+ * @see ClientRemoteContainerReply
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ */
 public class ServerMasterAgent extends Agent {
 
 	private static final long serialVersionUID = -3947798460986588734L;
@@ -55,6 +101,9 @@ public class ServerMasterAgent extends Agent {
 	private DBConnection dbConn = Application.DBconnection;
 
 	
+	/* (non-Javadoc)
+	 * @see jade.core.Agent#setup()
+	 */
 	@Override
 	protected void setup() {
 		super.setup();
@@ -64,19 +113,29 @@ public class ServerMasterAgent extends Agent {
 
 		// --- Add Main-Behaviours ------------------------
 		parBehaiv = new ParallelBehaviour(this,ParallelBehaviour.WHEN_ALL);
-		parBehaiv.addSubBehaviour( new ReceiveBehaviour() );
+		parBehaiv.addSubBehaviour( new MessageReceiveBehaviour() );
 		parBehaiv.addSubBehaviour( new CleanUpBehaviour(this, 1000*60) );
 		// --- Add Parallel Behaviour ---------------------
 		this.addBehaviour(parBehaiv);
 	}
 	
+	/* (non-Javadoc)
+	 * @see jade.core.Agent#takeDown()
+	 */
 	@Override
 	protected void takeDown() {
 		super.takeDown();
 		
 	}
 
-	private boolean sendReply(ACLMessage msg,Concept agentAction) {
+	/**
+	 * Sends a reply ACL message with a specified agent action.
+	 *
+	 * @param msg the ACL message
+	 * @param agentAction the agent action
+	 * @return true, if successful
+	 */
+	private boolean sendReply(ACLMessage msg, Concept agentAction) {
 		
 		// --- Define a new action ------------------------
 		Action act = new Action();
@@ -101,6 +160,9 @@ public class ServerMasterAgent extends Agent {
 	// -----------------------------------------------------
 	// --- ClenUp-Behaviour --- S T A R T ------------------
 	// -----------------------------------------------------
+	/**
+	 * The CleanUpBehaviour searches for old database entries and removes them.
+	 */
 	private class CleanUpBehaviour extends TickerBehaviour {
 
 		private static final long serialVersionUID = -2401912961869254054L;
@@ -133,10 +195,16 @@ public class ServerMasterAgent extends Agent {
 	// -----------------------------------------------------
 	// --- Message-Receive-Behaviour --- S T A R T ---------
 	// -----------------------------------------------------
-	private class ReceiveBehaviour extends CyclicBehaviour {
+	/**
+	 * The MessageReceiveBehaviour.
+	 */
+	private class MessageReceiveBehaviour extends CyclicBehaviour {
 
 		private static final long serialVersionUID = -1701739199514787426L;
 
+		/* (non-Javadoc)
+		 * @see jade.core.behaviours.Behaviour#action()
+		 */
 		@Override
 		public void action() {
 			
@@ -244,7 +312,7 @@ public class ServerMasterAgent extends Agent {
 					} else if ( agentAction instanceof ClientRemoteContainerRequest ) {
 
 						ClientRemoteContainerRequest crcr = (ClientRemoteContainerRequest) agentAction;
-						handleContainerRequest(msg, crcr); // --- !!!!! ---
+						handleClientRemoteContainerRequest(msg, crcr); // --- !!!!! ---
 						
 					} else {
 						// --- Unknown AgentAction ------------
@@ -268,8 +336,19 @@ public class ServerMasterAgent extends Agent {
 	// -----------------------------------------------------
 
 	/**
-	 * This method is used for Register Slave-Platforms
-	 * in the database - table
+	 * This method is used for the registration of slave- and client-platforms
+	 * in the database table 'platforms' of the used database.
+	 *
+	 * @param sender the AID of the sender
+	 * @param os the information about the operating system
+	 * @param platform the PlatformAddress of the platform
+	 * @param performance the PlatformPerformance
+	 * @param time the time
+	 * @param isServer true, if the sender is a server instance of Agent.GUI
+	 * 
+	 * @see OSInfo
+	 * @see PlatformAddress
+	 * @see PlatformPerformance
 	 */
 	private void dbRegisterPlatform(AID sender, OSInfo os, PlatformAddress platform, PlatformPerformance performance, Date time, boolean isServer) {
 		
@@ -350,7 +429,18 @@ public class ServerMasterAgent extends Agent {
 		
 	}
 	
-	private void dbTriggerPlatform(AID sender, Date time, PlatformLoad plLoad, BenchmarkResult bmr) {
+	/**
+	 * This method will process the trigger events of the involved slave- and client-platforms.
+	 *
+	 * @param sender the AID of the sender
+	 * @param time the time
+	 * @param platformLoad the PlatformLoad of the platform
+	 * @param benchmarkResult the BenchmarkResult of the platform
+	 * 
+	 * @see PlatformLoad
+	 * @see BenchmarkResult
+	 */
+	private void dbTriggerPlatform(AID sender, Date time, PlatformLoad platformLoad, BenchmarkResult benchmarkResult) {
 		
 		String sqlStmt = "";
 		Timestamp sqlDate = new Timestamp(time.getTime());
@@ -359,17 +449,22 @@ public class ServerMasterAgent extends Agent {
 		sqlStmt = "UPDATE platforms SET " +
 					"last_contact_at = now()," +
 					"local_last_contact_at = '" + sqlDate + "'," +
-					"benchmark_value = " + bmr.getBenchmarkValue() + "," +
+					"benchmark_value = " + benchmarkResult.getBenchmarkValue() + "," +
 					"currently_available = -1, " +
-					"current_load_cpu = " + plLoad.getLoadCPU() + "," +
-					"current_load_memory_system = " + plLoad.getLoadMemorySystem() + "," +
-					"current_load_memory_jvm = " + plLoad.getLoadMemoryJVM() + "," +
-					"current_load_no_threads = " + plLoad.getLoadNoThreads() + "," +
-					"current_load_threshold_exceeded = " + plLoad.getLoadExceeded() + " " + 
+					"current_load_cpu = " + platformLoad.getLoadCPU() + "," +
+					"current_load_memory_system = " + platformLoad.getLoadMemorySystem() + "," +
+					"current_load_memory_jvm = " + platformLoad.getLoadMemoryJVM() + "," +
+					"current_load_no_threads = " + platformLoad.getLoadNoThreads() + "," +
+					"current_load_threshold_exceeded = " + platformLoad.getLoadExceeded() + " " + 
 				   "WHERE contact_agent='" + sender.getName() + "'";
 		dbConn.getSqlExecuteUpdate(sqlStmt);
 	}
 	
+	/**
+	 * This method will unregister slave- and client-platform.
+	 *
+	 * @param sender the AID of the sender
+	 */
 	private void dbUnregisterPlatform(AID sender) {
 		
 		String sqlStmt = "";
@@ -388,7 +483,14 @@ public class ServerMasterAgent extends Agent {
 	}
 	
 	
-	private boolean handleContainerRequest( ACLMessage request, ClientRemoteContainerRequest crcr ) {
+	/**
+	 * Handles the client remote container request.
+	 *
+	 * @param request the request ACLMessage
+	 * @param crcr the ClientRemoteContainerRequest
+	 * @return true, if successful
+	 */
+	private boolean handleClientRemoteContainerRequest(ACLMessage request, ClientRemoteContainerRequest crcr) {
 		
 		boolean exitRequest = false;
 		
@@ -557,7 +659,7 @@ public class ServerMasterAgent extends Agent {
 		}		
 		
 		return true;		
-
+	
 	}
 	
 }

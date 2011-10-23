@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.simulationService.agents;
 
 import jade.content.Concept;
@@ -54,15 +82,24 @@ import agentgui.simulationService.ontology.PlatformLoad;
 import agentgui.simulationService.ontology.PlatformPerformance;
 import agentgui.simulationService.ontology.ShowMonitorGUI;
 
-
+/**
+ * This class represents the agent, which monitors the load information 
+ * of all involved JVM's, nodes, container and agents from the whole platform.<br>   
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ */
 public class LoadAgent extends Agent {
 
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 3035508112883482740L;
 	
 	// --------------------------------------------------------------
 	// --- To which Project are we running in the moment ------------ 
+	/** The current project. */
 	protected Project currProject = null;
+	/** The current SimulationSetup. */
 	protected SimulationSetup currSimSetup = null;
+	/** The current DistributionSetup. */
 	protected DistributionSetup currDisSetup = null;
 	
 	// --------------------------------------------------------------
@@ -75,6 +112,7 @@ public class LoadAgent extends Agent {
 
 	// --------------------------------------------------------------
 	// --- The measure/display behaviour of the agent --------------- 
+	/** The monitor behaviour, which is a TickerBehaviour. */
 	public MonitorBehaviour monitorBehaviour = null;
 	private long monitorBehaviourTickingPeriod = 0;
 	// --------------------------------------------------------------
@@ -82,31 +120,37 @@ public class LoadAgent extends Agent {
 	// --------------------------------------------------------------
 	// --- The balancing algorithm of this agent --------------------
 	private DynamicLoadBalancingBase loadBalancing = null;
-	public boolean loadBalancingActivated = false;
+	/** Indicator if a activate DynamicLoadBalancing is still active. */
+	public boolean loadBalancingIsStillActivated = false;
 	// --------------------------------------------------------------
 	
 	// --------------------------------------------------------------
 	// --- Over all and current threshold level ---------------------
+	/** The indicator if thresholds exceeded over all. */
 	public Integer loadThresholdExceededOverAll = 0;
+	/** The currently configured threshold levels. */
 	public LoadThresholdLevels loadThresholdLevels = null;
+	/** The average cycle time of a simulation. */
 	public double loadCycleTime = 0;
-	
-	// --- Used (dead or alive) Nodes of the system, ordered --------
+	/** The used (dead or alive) nodes of the system, ordered ascending. */
 	public Vector<String> loadContainer2Display = null;
+	/** The current LoadAgentMap. */
 	public LoadAgentMap loadContainerAgentMap = null;
+	/** The PlatformLoad in the different container. */
 	public Hashtable<String, PlatformLoad> loadContainer = null;
+	/** The Location information in the different container. */
 	public Hashtable<String, Location> loadContainerLoactions = null;
+	/** The benchmark value /results in the different container. */
 	public Hashtable<String, Float> loadContainerBenchmarkResults = new Hashtable<String, Float>();
 	
-	// --- Currently running JVM's for this platform -----------------
+	/** The currently running JVM's for this platform. */
 	public Hashtable<String, LoadMerger> loadJVM4Balancing = new Hashtable<String, LoadMerger>();
-
-	// --- Currently running phys. Machine for this platform ---------
+	/** The currently running physical machines for this platform. */
 	public Hashtable<String, LoadMerger> loadMachines4Balancing = new Hashtable<String, LoadMerger>();
 	// --------------------------------------------------------------
 
 	// --------------------------------------------------------------
-	// ---- Variables for storing the current measurements ----------
+	// ---- Variables for storing the measurements in a file --------
 	private boolean monitorSaveLoad = false;
 	private BufferedWriter monitorDatasetWriter = null;
 	// --- Some System-String ---------------------------------------
@@ -127,9 +171,11 @@ public class LoadAgent extends Agent {
 	// --------------------------------------------------------------
 	
 	
+	/* (non-Javadoc)
+	 * @see jade.core.Agent#setup()
+	 */
 	@Override
 	protected void setup() {
-		super.setup();
 		
 		DecimalFormatSymbols dfs = new DecimalFormatSymbols(); 
 		monitorDecimalSeparator = Character.toString(dfs.getDecimalSeparator());
@@ -151,6 +197,9 @@ public class LoadAgent extends Agent {
 		this.addBehaviour(new ReceiveBehaviour());
 	}
 	
+	/* (non-Javadoc)
+	 * @see jade.core.Agent#takeDown()
+	 */
 	@Override
 	protected void takeDown() {
 		super.takeDown();
@@ -164,50 +213,74 @@ public class LoadAgent extends Agent {
 	}
 	
 	/**
-	 * This Method shows the GUI of this LoadAgent
+	 * This Method shows the GUI of this LoadAgent.
 	 */
 	public void showGUI() {
 		loadDialog.setVisible(true);
 	}
+	
 	/**
+	 * Returns the monitor behaviour ticking period.
+	 *
 	 * @return the monitorBehaviourTickingPeriod
 	 */
 	public long getMonitorBehaviourTickingPeriod() {
 		return monitorBehaviourTickingPeriod;
 	}
 	/**
+	 * Sets the monitor behaviour ticking period.
+	 *
 	 * @param monitorBehaviourTickingPeriod the monitorBehaviourTickingPeriod to set
 	 */
 	public void setMonitorBehaviourTickingPeriod(long monitorBehaviourTickingPeriod) {
 		this.monitorBehaviourTickingPeriod = monitorBehaviourTickingPeriod;
 		this.monitorBehaviour.reset(monitorBehaviourTickingPeriod);
 	}
+	
 	/**
-	 * @param loadBalancingBase the loadBalancing to set
+	 * Sets the instance of the dynamic load balancing algorithm to use.
+	 *
+	 * @param loadBalancing the new load balancing
 	 */
 	public void setLoadBalancing(DynamicLoadBalancingBase loadBalancing) {
 		this.loadBalancing = loadBalancing;
 	}
 	/**
+	 * Gets the currently use dynamic load balancing algorithm.
+	 *
 	 * @return the loadBalancing
 	 */
 	public DynamicLoadBalancingBase getLoadBalancing() {
 		return loadBalancing;
 	}
 
+	
 	/**
-	 * This behaviour measures, display and (if wanted) stores the measured load values 
-	 * @author Christian Derksen
+	 * This TickerBehaviour measures, displays (if wanted) and stores the measured load values.
+	 * 
+	 * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
 	 */
 	public class MonitorBehaviour extends TickerBehaviour {
 
+		/** The Constant serialVersionUID. */
 		private static final long serialVersionUID = -5802791218164507242L;
+		
+		/** The load dialog height. */
 		private int loadDialogHeight = 0;
 		
-		public MonitorBehaviour(Agent a, long period) {
-			super(a, period);
+		/**
+		 * Instantiates a new monitor behaviour.
+		 *
+		 * @param agent the agent
+		 * @param tickerPeriod the period in which the measurements are done
+		 */
+		public MonitorBehaviour(Agent agent, long tickerPeriod) {
+			super(agent, tickerPeriod);
 		}
 
+		/* (non-Javadoc)
+		 * @see jade.core.behaviours.TickerBehaviour#onTick()
+		 */
 		@Override
 		protected void onTick() {
 			
@@ -331,14 +404,14 @@ public class LoadAgent extends Agent {
 		 * in the currently executed project and which class should be 
 		 * used for it.
 		 */
-		public void doCheckDynamicLoadBalancing() {
+		private void doCheckDynamicLoadBalancing() {
 			
-			// --- if the dynamic load balancing is still running, executed --- 
-			// --- the last time, exit here to prevent side effects  		---
-			if (loadBalancingActivated == true) {
+			// --- If the dynamic load balancing is still running/executed  	 --- 
+			// --- from the last measure tick, exit here to prevent side effects ---
+			if (loadBalancingIsStillActivated == true) {
 				return;
 			}
-			loadBalancingActivated = true;
+			loadBalancingIsStillActivated = true;
 			
 			// --- Which project is currently used?  --------------------------
 			currProject = Application.ProjectCurr;		
@@ -394,50 +467,60 @@ public class LoadAgent extends Agent {
 	
 	
 	/**
+	 * Checks if the current LoadAgent has to the save the load information in a file.
+	 *
 	 * @return the monitorSaveLoad
 	 */
 	public boolean isMonitorSaveLoad() {
 		return monitorSaveLoad;
 	}
+	
 	/**
-	 * @param monitorSaveLoad the monitorSaveLoad to set
+	 * Sets the current LoadAgent to save or not save the load information in a file.
+	 *
+	 * @param monitorSaveLoad true, if the information should be saved
 	 */
 	public void setMonitorSaveLoad(boolean monitorSaveLoad) {
 		this.monitorSaveLoad = monitorSaveLoad;
 
 		// --- Create DatasetWriter -----------------------
-		if (monitorSaveLoad==true) {
-			monitorDatasetWriter = createMonitorFile(monitorFileMeasurementTmp);
+		if (this.monitorSaveLoad==true) {
+			monitorDatasetWriter = this.createMonitorFile(this.monitorFileMeasurementTmp);
 		}
 		// --- Close the current DatasetWriter ------------ 
-		if (monitorSaveLoad==false && monitorDatasetWriter!=null) {
+		if (this.monitorSaveLoad==false && this.monitorDatasetWriter!=null) {
 			this.closeMonitorFile();				
 		}
 	}
 	
 	/**
-	 * This method builds one part for the load dataset where  
-	 * one part corresponds to one container 
+	 * This method builds one part for the load dataset where one part corresponds to one container.
+	 *
+	 * @param containerName the container name
+	 * @param nodeDescription the NodeDescription
+	 * @param benchmarkValue the benchmark value
+	 * @param platformLoad the PlatformLoad
+	 * @param numberOfAgents the number of agents
 	 */
-	private void buildDatasetPart(String containerName, NodeDescription nD, float benchmarkValue, PlatformLoad pL, Integer noAg) {
+	private void buildDatasetPart(String containerName, NodeDescription nodeDescription, float benchmarkValue, PlatformLoad platformLoad, Integer numberOfAgents) {
 		
 		String dataSet = null;
-		if (pL == null) {
+		if (platformLoad == null) {
 			
 			dataSet = getDatasetPartEmpty();
 		} else {
 			
 			StringBuilder sb = new StringBuilder();
 			// --- CPU-Load -----------------------------------
-			sb.append(pL.getLoadCPU()).append(monitorDatasetDelimiter);
+			sb.append(platformLoad.getLoadCPU()).append(monitorDatasetDelimiter);
 			// --- Memory-Load of the machine -----------------
-			sb.append(pL.getLoadMemorySystem()).append(monitorDatasetDelimiter);
+			sb.append(platformLoad.getLoadMemorySystem()).append(monitorDatasetDelimiter);
 			// --- Java Heap-Load -----------------------------
-			sb.append(pL.getLoadMemoryJVM()).append(monitorDatasetDelimiter);
+			sb.append(platformLoad.getLoadMemoryJVM()).append(monitorDatasetDelimiter);
 			// --- Number of Threads --------------------------
-			sb.append(pL.getLoadNoThreads()).append(monitorDatasetDelimiter);
+			sb.append(platformLoad.getLoadNoThreads()).append(monitorDatasetDelimiter);
 			// --- Number of Agents ---------------------------
-			sb.append(noAg).append(monitorDatasetDelimiter);
+			sb.append(numberOfAgents).append(monitorDatasetDelimiter);
 			dataSet = sb.toString();
 		}
 		monitorDatasetParts.put(containerName, dataSet);
@@ -464,10 +547,10 @@ public class LoadAgent extends Agent {
 			
 			String newLine = monitorDatasetLineSeperator;
 			
-			OSInfo os = nD.getOsInfo();
+			OSInfo os = nodeDescription.getOsInfo();
 			String opSys = os.getOs_name() + " " + os.getOs_version();
 			
-			PlatformPerformance pP = nD.getPlPerformace();
+			PlatformPerformance pP = nodeDescription.getPlPerformace();
 			String perform = pP.getCpu_vendor() + ": " + pP.getCpu_model();
 			perform = perform.replaceAll("  ", " ");
 			perform+= newLine + pP.getCpu_numberOf() + " x "+ pP.getCpu_speedMhz() + "MHz [" + pP.getMemory_totalMB() + " MB RAM]";
@@ -480,8 +563,9 @@ public class LoadAgent extends Agent {
 	}
 	
 	/**
-	 * This method builds one EMPTY part for the load dataset where  
-	 * one part correspond to one container 
+	 * This method builds one EMPTY part for the load dataset, where one part correspond to one container.
+	 *
+	 * @return an empty String for a dataset 
 	 */
 	private String getDatasetPartEmpty() {
 		
@@ -534,21 +618,23 @@ public class LoadAgent extends Agent {
 		// --- Reset the dataset Array --------------------
 		monitorDatasetParts.clear();
 	}
+	
 	/**
-	 * This method writes a dataset to the current file of the 'monitorDatasetWriter'
-	 * @param dataSet
+	 * This method writes a single dataset to the current file of the 'monitorDatasetWriter'.
+	 *
+	 * @param dataSet the dataset
 	 */
 	private void saveDataSet(String dataSet) {
 	
 		// --- Check if the file is open ------------------
-		if (monitorDatasetWriter==null) {
-			monitorDatasetWriter = createMonitorFile(monitorFileMeasurement);
+		if (this.monitorDatasetWriter==null) {
+			this.monitorDatasetWriter = this.createMonitorFile(this.monitorFileMeasurement);
 		}
 		
-		// --- Write teh dataset to the file --------------
+		// --- Write the dataset to the file --------------
 		try {
-			monitorDatasetWriter.write(dataSet + monitorDatasetLineSeperator);
-			monitorDatasetWriter.flush();
+			this.monitorDatasetWriter.write(dataSet + this.monitorDatasetLineSeperator);
+			this.monitorDatasetWriter.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} 
@@ -556,8 +642,9 @@ public class LoadAgent extends Agent {
 	}
 
 	/**
-	 * This Method returns the header line for the main monitoring file 
-	 * @return
+	 * This Method returns the header line for the main monitoring file.
+	 *
+	 * @return the header line as a String
 	 */
 	private String getHeaderLine() {
 		
@@ -577,9 +664,10 @@ public class LoadAgent extends Agent {
 	}
 	
 	/**
-	 * This method creates a BufferedWriter for the measurements
-	 * @param fileName
-	 * @return
+	 * This method creates a BufferedWriter for the measurements.
+	 *
+	 * @param fileName the file name
+	 * @return the buffered writer
 	 */
 	private BufferedWriter createMonitorFile(String fileName) {
 		
@@ -594,8 +682,9 @@ public class LoadAgent extends Agent {
 		} 
 		return bw;
 	}
+	
 	/**
-	 * This method closes the BufferedWriter for the Measurements
+	 * This method closes the BufferedWriter for the Measurements.
 	 */
 	private void closeMonitorFile() {
 		
@@ -603,26 +692,26 @@ public class LoadAgent extends Agent {
 		// --- Close the file now -----------------------------------
 		// ----------------------------------------------------------
 		try {
-			monitorDatasetWriter.close();
+			this.monitorDatasetWriter.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		monitorDatasetWriter = null;
+		this.monitorDatasetWriter = null;
 
 		// ----------------------------------------------------------
 		// --- Create a complete file of the Monitoring with header - 
 		// ----------------------------------------------------------
 		// --- Writer to copy the tmp-file ----------------
-		BufferedWriter bw = createMonitorFile(monitorFileMeasurement);
+		BufferedWriter bw = createMonitorFile(this.monitorFileMeasurement);
 		BufferedReader br = null;
 		String currLine = null;
 		try {
 			// --- add the header-part --------------------	
-			bw.write(this.getHeaderLine() + monitorDatasetLineSeperator);
+			bw.write(this.getHeaderLine() + this.monitorDatasetLineSeperator);
 			// --- open tmp-file and write it new ---------
-			br = new BufferedReader(new FileReader(monitorFileMeasurementTmp));
+			br = new BufferedReader(new FileReader(this.monitorFileMeasurementTmp));
 			while ((currLine = br.readLine()) != null) { 
-				bw.write(currLine + monitorDatasetLineSeperator);
+				bw.write(currLine + this.monitorDatasetLineSeperator);
 				bw.flush();
 			} 
 			bw.close();
@@ -637,13 +726,13 @@ public class LoadAgent extends Agent {
 		// ----------------------------------------------------------
 		// --- Write down all container descriptions ---------------- 
 		// ----------------------------------------------------------
-		bw = createMonitorFile(monitorFileMachines);
+		bw = createMonitorFile(this.monitorFileMachines);
 		try {
-			Iterator<String> it = loadContainer2Display.iterator();
+			Iterator<String> it = this.loadContainer2Display.iterator();
 			while (it.hasNext()) {
 				
 				String containerName = it.next();
-				bw.write(monitorDatasetPartsDescription.get(containerName));
+				bw.write(this.monitorDatasetPartsDescription.get(containerName));
 				bw.flush();
 			}
 			bw.close();
@@ -657,13 +746,21 @@ public class LoadAgent extends Agent {
 	// -----------------------------------------------------
 	// --- Message-Receive-Behaiviour --- S T A R T --------
 	// -----------------------------------------------------
+
+
 	/**
-	 * This is the message receive behaviour of the agent
+	 * This is the message receive behaviour of the agent, which is basically waiting 
+	 * for a message to open the {@link SystemLoadDialog}. 
+	 * 
 	 */
 	private class ReceiveBehaviour extends CyclicBehaviour {
 
+		/** The Constant serialVersionUID. */
 		private static final long serialVersionUID = -1701739199514787426L;
 
+		/* (non-Javadoc)
+		 * @see jade.core.behaviours.Behaviour#action()
+		 */
 		@Override
 		public void action() {
 			
