@@ -47,7 +47,7 @@ public class LoadInformation  {
 	/**
 	 * Method to calculate the cycle-frequency
 	 */
-	public void setCycleStartTimeStamp() {
+	public void setSimulationCycleStartTimeStamp() {
 		
 		long cycleTimeNow = System.currentTimeMillis();
 		if (this.cycleTimeStart != 0) {
