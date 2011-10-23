@@ -52,7 +52,6 @@ import org.w3c.dom.Document;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.envModel.p2Dsvg.behaviours.MoveToPointBehaviour;
 import agentgui.envModel.p2Dsvg.controller.Physical2DEnvironmentController;
 import agentgui.envModel.p2Dsvg.controller.Physical2DEnvironmentControllerGUI;
 import agentgui.envModel.p2Dsvg.ontology.Physical2DEnvironment;
@@ -158,20 +157,17 @@ public class DisplayAgent extends Agent {
 			myGUI.jPanelSimuInfos.setVisible(true);
 			SimulationServiceHelper simHelper = (SimulationServiceHelper) getHelper(SimulationServiceHelper.SERVICE_NAME);
 			EnvironmentModel envModel = simHelper.getEnvironmentModel();
-			while (envModel == null && MoveToPointBehaviour.IS_USED == false) {
+			while (envModel == null) {
 				Thread.sleep(100);
 				envModel = simHelper.getEnvironmentModel();
 			}
-			if (!MoveToPointBehaviour.IS_USED) {
-				TimeModelDiscrete model = (TimeModelDiscrete) envModel
-						.getTimeModel();
+			TimeModelDiscrete model = (TimeModelDiscrete) envModel.getTimeModel();
 				initialTimeStep = model.getStep();
 				String unit = Language.translate("Sekunden");
-				myGUI.jLabelSpeedFactor.setText((initialTimeStep / 1000.0)
-						+ " " + unit);
+				myGUI.jLabelSpeedFactor.setText((initialTimeStep / 1000.0)+ " " + unit);
 			}
 
-		} catch (Exception e) {
+		 catch (Exception e) {
 			e.printStackTrace();
 		}
 
@@ -238,18 +234,12 @@ public class DisplayAgent extends Agent {
 						try {
 							if (simHelper == null) {
 								simHelper = (SimulationServiceHelper) getHelper(SimulationServiceHelper.SERVICE_NAME);
-								TimeModelDiscrete model = (TimeModelDiscrete) simHelper
-										.getEnvironmentModel().getTimeModel();
+								TimeModelDiscrete model = (TimeModelDiscrete) simHelper.getEnvironmentModel().getTimeModel();
 								initialTimeStep = model.getStep();
 							}
 
 							String unit = Language.translate("Sekunden");
-							myGUI.jLabelSpeedFactor.setText((((myGUI.jSliderVisualation
-									.getValue() * initialTimeStep)) / 1000.0)
-									+ " " + unit);
-							// TimeModelDiscrete model=(TimeModelDiscrete)
-							// simHelper.getEnvironmentModel().getTimeModel();
-							// model.setStep(initialTimeStep*myGUI.jSliderVisualation.getValue());
+							myGUI.jLabelSpeedFactor.setText((((myGUI.jSliderVisualation.getValue() * initialTimeStep)) / 1000.0) + " " + unit);
 							addValue = myGUI.jSliderVisualation.getValue();
 
 						} catch (Exception ex) {
@@ -301,9 +291,7 @@ public class DisplayAgent extends Agent {
 			try {
 				helper = (EnvironmentProviderHelper) getHelper(EnvironmentProviderService.SERVICE_NAME);
 			} catch (ServiceException e) {
-				System.err
-						.println(getLocalName()
-								+ " - EnvironmentProviderHelper not found, shutting down");
+				System.err.println(getLocalName()+ " - EnvironmentProviderHelper not found, shutting down");
 				doDelete();
 			}
 		}
@@ -311,12 +299,8 @@ public class DisplayAgent extends Agent {
 		public HashSet<Physical2DObject> fordwardToVisualation(
 				HashMap<AID, PositionUpdate> pos) {
 
-			HashSet<Physical2DObject> movingObjects = envHelper
-					.getCurrentlyMovingObjects();
-
-			if (movingObjects.size() > 0) {
-
-			}
+			HashSet<Physical2DObject> movingObjects = envHelper	.getCurrentlyMovingObjects();
+		
 			// Clear map
 			movingObjects.clear();
 			Set<AID> keys = pos.keySet();
@@ -325,8 +309,6 @@ public class DisplayAgent extends Agent {
 				AID aid = it.next();
 				Physical2DObject obj = envHelper.getObject(aid.getLocalName());
 				obj.setPosition(pos.get(aid).getNewPosition());
-				// System.out.println("DisplayAgent:"+aid.getLocalName()
-				// +","+pos.get(aid).getNewPosition().getXPos()+","+pos.get(aid).getNewPosition().getYPos());
 				movingObjects.add(obj);
 			}
 			// System.out.println("----");
@@ -337,17 +319,9 @@ public class DisplayAgent extends Agent {
 		protected void onTick() {
 
 			try {
-
-				if (MoveToPointBehaviour.IS_USED) {
-
-					myGUI.updatePositions(helper.getCurrentlyMovingObjects());
-					return;
-
-				}
 				int size = -1;
 				if (sameTransactionSizeCounter == 20) {
 					size = lastMaximumValue;
-
 				} else {
 
 					size = helper.getTransactionSize();
