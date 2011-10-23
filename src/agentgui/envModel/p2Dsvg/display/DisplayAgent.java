@@ -68,9 +68,7 @@ import agentgui.simulationService.time.TimeModelDiscrete;
  * 
  * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
  * @author Tim Lewen - DAWIS - ICB - University of Duisburg - Essen
- * 
  */
-@SuppressWarnings("deprecation")
 public class DisplayAgent extends Agent {
 
 	private static final long serialVersionUID = 8613715346940866246L;
@@ -278,7 +276,7 @@ public class DisplayAgent extends Agent {
 
 	/**
 	 * 
-	 * @author 
+	 * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
 	 */
 	private class UpdateSVGBehaviour extends TickerBehaviour {
 
