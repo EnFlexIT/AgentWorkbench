@@ -50,12 +50,19 @@ import agentgui.simulationService.ontology.RemoteContainerConfig;
  */
 public class JadeRemoteStart extends Thread {
 
+	/** Constant for a memory of 16 MB. */
 	public final String jvmMemo0016MB = "16m";
+	/** Constant for a memory of 32 MB. */
 	public final String jvmMemo0032MB = "32m";
+	/** Constant for a memory of 64 MB. */
 	public final String jvmMemo0064MB = "64m";
+	/** Constant for a memory of 128 MB. */
 	public final String jvmMemo0128MB = "128m";
+	/** Constant for a memory of 256 MB. */
 	public final String jvmMemo0256MB = "256m";
+	/** Constant for a memory of 512 MB. */
 	public final String jvmMemo0512MB = "512m";
+	/** Constant for a memory of 1024 MB. */
 	public final String jvmMemo1024MB = "1024m";
 	
 	private boolean jvmMemAllocUseDefaults = true;

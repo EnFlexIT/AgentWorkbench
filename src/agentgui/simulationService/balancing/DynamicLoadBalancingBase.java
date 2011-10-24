@@ -133,11 +133,11 @@ public abstract class DynamicLoadBalancingBase extends BaseLoadBalancing  {
 	
 	/**
 	 * Updates the local load information if a new container was started. These are in detail 
-	 * the local variables {@link #loadThresholdExceededOverAll}, {@link #loadMachines4Balancing} 
+	 * the local variables {@link #currThresholdExceededOverAll}, {@link #loadMachines4Balancing} 
 	 * and {@link #loadJVM4Balancing}.Additionally the method {@link #refreshCountingsAndLists()} 
 	 * will be invoked at the end. 
 	 * 
-	 * @see #loadThresholdExceededOverAll
+	 * @see #currThresholdExceededOverAll
 	 * @see #loadMachines4Balancing
 	 * @see #loadJVM4Balancing
 	 * @see #refreshCountingsAndLists()
