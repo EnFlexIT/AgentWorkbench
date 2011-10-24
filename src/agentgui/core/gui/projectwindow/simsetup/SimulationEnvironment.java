@@ -38,9 +38,9 @@ import java.util.Observer;
 
 import javax.swing.JPanel;
 
-import agentgui.core.application.Project;
 import agentgui.core.environment.EnvironmentPanel;
 import agentgui.core.environment.EnvironmentType;
+import agentgui.core.project.Project;
 
 /**
  * Represents the JPanel/Tab 'Simulation-Setup' - 'Simulation Environment'.

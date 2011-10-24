@@ -28,7 +28,7 @@
  */
 package agentgui.core.plugin;
 
-import agentgui.core.application.Project;
+import agentgui.core.project.Project;
 
 /**
  * This class is used within the observer pattern of projects. It informs

@@ -14,15 +14,34 @@
         </entry>
     </agentConfiguration>
     <jadeConfiguration>
-        <useLocalPort>1100</useLocalPort>
+        <useLocalPort>1108</useLocalPort>
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
             <service>agentgui.simulationService.SimulationService</service>
+            <service>jade.debugging.DebugService</service>
             <service>jade.core.mobility.AgentMobilityService</service>
         </serviceList>
     </jadeConfiguration>
-    <simulationSetupCurrent>GoL SimService</simulationSetupCurrent>
+    <distributionSetup>
+        <doDynamicLoadBalancing>false</doDynamicLoadBalancing>
+        <doStaticLoadBalancing>true</doStaticLoadBalancing>
+        <dynamicLoadBalancingClass>agentgui.simulationService.balancing.DynamicLoadBalancing</dynamicLoadBalancingClass>
+        <numberOfAgents>200</numberOfAgents>
+        <numberOfContainer>2</numberOfContainer>
+        <staticLoadBalancingClass>game_of_life.SimService.balancing.StartAndBalancing</staticLoadBalancingClass>
+        <useUserThresholds>false</useUserThresholds>
+        <userThresholds>
+            <thCpuH>80</thCpuH>
+            <thCpuL>5</thCpuL>
+            <thMemoH>80</thMemoH>
+            <thMemoL>5</thMemoL>
+            <thNoThreadsH>1500</thNoThreadsH>
+            <thNoThreadsL>50</thNoThreadsL>
+        </userThresholds>
+    </distributionSetup>
+    <remoteContainerConfiguration/>
+    <simulationSetupCurrent>GoL ACL-Messages</simulationSetupCurrent>
     <simulationSetups>
         <entry>
             <key>GoL ACL-Messages</key>

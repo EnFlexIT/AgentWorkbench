@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.simulationService.distribution;
 
 import jade.util.leap.ArrayList;
@@ -7,9 +35,19 @@ import java.io.IOException;
 import java.util.Scanner;
 
 import agentgui.core.application.Application;
-import agentgui.core.jade.PlatformJadeConfig;
+import agentgui.core.project.PlatformJadeConfig;
+import agentgui.simulationService.agents.ServerSlaveAgent;
 import agentgui.simulationService.ontology.RemoteContainerConfig;
 
+/**
+ * This class is only used by the {@link ServerSlaveAgent} of the background
+ * system. It enables the agent to start a new process in order to extend
+ * a remote JADE platform and join that platform with a new container.
+ * 
+ * @see ServerSlaveAgent
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ */
 public class JadeRemoteStart extends Thread {
 
 	public final String jvmMemo0016MB = "16m";
@@ -39,8 +77,9 @@ public class JadeRemoteStart extends Thread {
 	private final String pathBaseDir = Application.RunInfo.PathBaseDir();
 	
 	/**
-	 * Default constructor	
-	 * @param reCoCo
+	 * Default constructor.
+	 *
+	 * @param reCoCo the RemoteContainerConfig
 	 */
 	public JadeRemoteStart(RemoteContainerConfig reCoCo) {
 		
@@ -76,7 +115,7 @@ public class JadeRemoteStart extends Thread {
 	
 	/**
 	 * If the request of a remote container contains external jars, download
-	 * them and include them in the current CLASSPATH
+	 * them and include them in the current CLASSPATH.
 	 */
 	private void handelExternalJars() {
 		
@@ -132,10 +171,12 @@ public class JadeRemoteStart extends Thread {
 			System.out.println(downloadProtocol);
 		}
 	}
-	 /**
-     * Deletes a folder and all subelements
-     * @param directory
-     */
+	 
+ 	/**
+ 	 * Deletes a folder and all subelements.
+ 	 *
+ 	 * @param directory the directory
+ 	 */
     private void deleteFolder(File directory) {
     	
     	for (File file : directory.listFiles()) {
@@ -156,7 +197,7 @@ public class JadeRemoteStart extends Thread {
 	}
 	
 	/**
-	 * This Method starts a Jade-Platform within a new Java Virtual Machine 
+	 * This Method starts a Jade-Platform within a new Java Virtual Machine.
 	 */
 	public void startJade(){
 		
@@ -248,9 +289,10 @@ public class JadeRemoteStart extends Thread {
 	}
 
 	/**
-	 * This method configures the CLASSPATH for the remote-container  
-	 * @param ServiceList
-	 * @return
+	 * This method configures the CLASSPATH for the remote-container.
+	 *
+	 * @param ServiceList the service list
+	 * @return the new class path
 	 */
 	private String getClassPath(String ServiceList) {
 		
@@ -335,13 +377,17 @@ public class JadeRemoteStart extends Thread {
 	}
 	
 	/**
+	 * Checks if is memory allocation for the new JVM will be the default one.
+	 *
 	 * @return the jvmMemAllocUseDefaults
 	 */
 	public boolean isJVMMemAllocUseDefaults() {
 		return jvmMemAllocUseDefaults;
 	}
 	/**
-	 * @param jvmMemAllocUseDefaults the jvmMemAllocUseDefaults to set
+	 * Sets the memory allocation for the new JVM to be the default value or not.
+	 *
+	 * @param useDefaults the new jVM mem alloc use defaults
 	 */
 	public void setJVMMemAllocUseDefaults(boolean useDefaults) {
 		this.jvmMemAllocUseDefaults = useDefaults;

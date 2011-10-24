@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.core.agents;
+package agentgui.core.project;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -35,7 +35,6 @@ import java.util.Iterator;
 import java.util.TreeMap;
 import java.util.Vector;
 
-import agentgui.core.application.Project;
 
 /**
  * This Class represents the mappings of all project agents to a specific starting 

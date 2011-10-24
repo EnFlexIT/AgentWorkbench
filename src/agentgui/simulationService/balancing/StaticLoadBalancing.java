@@ -35,7 +35,7 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import agentgui.core.agents.AgentClassElement4SimStart;
-import agentgui.core.gui.projectwindow.simsetup.Distribution;
+import agentgui.core.gui.projectwindow.Distribution;
 import agentgui.simulationService.agents.LoadExecutionAgent;
 
 /**
@@ -99,7 +99,7 @@ public class StaticLoadBalancing extends StaticLoadBalancingBase {
 			Vector<String> locationNames = null;
 			int cont4DisMax = 0;
 			int cont4DisI = 0;
-			Hashtable<String, Location> newContainerLocations = this.startRemoteContainer(currNumberOfContainer - 1, true, true);
+			Hashtable<String, Location> newContainerLocations = this.startNumberOfRemoteContainer(currNumberOfContainer - 1, true, null, true);
 			if (newContainerLocations!=null) {
 				locationNames = new Vector<String>(newContainerLocations.keySet());
 				cont4DisMax = newContainerLocations.size();

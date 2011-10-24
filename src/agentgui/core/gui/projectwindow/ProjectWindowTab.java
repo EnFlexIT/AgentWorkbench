@@ -32,8 +32,8 @@ import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
 
-import agentgui.core.application.Project;
 import agentgui.core.gui.ProjectWindow;
+import agentgui.core.project.Project;
 
 /**
  * This class can be used in order to add a customized component to the ProjectWindow

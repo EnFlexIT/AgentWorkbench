@@ -131,7 +131,7 @@ public abstract class SimulationManagerAgent extends Agent implements Simulation
 	/**
 	 * This method adds the mandatory CyclicSimulationBehavior to this agent.
 	 */
-	protected void addSimulationBehavior() {
+	protected void addSimulationBehaviour() {
 		// --- Start the cyclic SimulationBehavior of this manager --
 		if (this.simBehaviour==null) {
 			this.simBehaviour = new CyclicSimulationBehaviour();	

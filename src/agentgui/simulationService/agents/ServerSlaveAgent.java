@@ -74,6 +74,8 @@ import agentgui.simulationService.ontology.SlaveUnregister;
  * @see ServerMasterAgent
  * @see ServerClientAgent
  * 
+ * @see JadeRemoteStart
+ * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class ServerSlaveAgent extends Agent {

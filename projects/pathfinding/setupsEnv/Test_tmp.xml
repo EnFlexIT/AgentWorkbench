@@ -12,17 +12,6 @@
 				<Position xPos="300.0F" yPos="200.0F"/>
 			</position>
 			<childObjects>
-				<ActiveObject parentPlaygroundID="RootPlayground" id="MovingAgent" maxSpeed="13.5F" agentClassName="">
-					<size>
-						<Size height="3.024055F" width="3.573883F"/>
-					</size>
-					<position>
-						<Position xPos="6.8728523F" yPos="4.2611685F"/>
-					</position>
-					<movement>
-						<Movement xPosChange="0.0F" yPosChange="0.0F"/>
-					</movement>
-				</ActiveObject>
 				<ActiveObject parentPlaygroundID="RootPlayground" id="mov2" maxSpeed="2.0F" agentClassName="">
 					<size>
 						<Size height="1.9243987F" width="1.3745708F"/>
@@ -90,6 +79,17 @@
 						<Position xPos="9.140894F" yPos="8.934708F"/>
 					</position>
 				</PassiveObject>
+				<ActiveObject parentPlaygroundID="RootPlayground" id="MovingAgent" maxSpeed="2.0F" agentClassName="agents.MovingAgent">
+					<size>
+						<Size height="3.024055F" width="3.573883F"/>
+					</size>
+					<position>
+						<Position xPos="6.8728523F" yPos="4.2611685F"/>
+					</position>
+					<movement>
+						<Movement xPosChange="0.0F" yPosChange="0.0F"/>
+					</movement>
+				</ActiveObject>
 			</childObjects>
 		</PlaygroundObject>
 	</rootPlayground>

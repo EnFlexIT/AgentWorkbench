@@ -44,6 +44,8 @@ import agentgui.core.gui.Translation;
 import agentgui.core.gui.options.OptionDialog;
 import agentgui.core.jade.ClassSearcher;
 import agentgui.core.jade.Platform;
+import agentgui.core.project.Project;
+import agentgui.core.project.ProjectsLoaded;
 import agentgui.core.systemtray.AgentGUITrayIcon;
 import agentgui.core.webserver.DownloadServer;
 import agentgui.simulationService.load.LoadMeasureThread;
@@ -528,7 +530,7 @@ public class Application {
 		
 		if (WebServer==null) {
 			WebServer = new DownloadServer();
-			WebServer.setRoot(RunInfo.PathServer(false));
+			WebServer.setRoot(RunInfo.PathWebServer(true));
 			new Thread(WebServer).start();
 		}
 		return WebServer;

@@ -51,7 +51,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.application.Application;
-import agentgui.core.application.Project;
+import agentgui.core.project.Project;
 
 /**
  * This is the model class for a simulation setup.
@@ -81,9 +81,7 @@ import agentgui.core.application.Project;
 	@XmlElement(name="agent")
 	private ArrayList<AgentClassElement4SimStart> agentList = new ArrayList<AgentClassElement4SimStart>();
 
-	/** The distribution setup. */
-	@XmlElement(name="distribution")
-	public DistributionSetup distributionSetup = new DistributionSetup();
+	
 	
 	/** The environment file name. */
 	private String environmentFileName = null;
@@ -336,25 +334,6 @@ import agentgui.core.application.Project;
 	 */
 	public void setEnvironmentFileName(String environmentFile) {
 		this.environmentFileName = environmentFile;
-	}
-	
-	/**
-	 * Gets the distribution setup.
-	 *
-	 * @return the distributionSetup
-	 */
-	@XmlTransient
-	public DistributionSetup getDistributionSetup() {
-		return distributionSetup;
-	}
-	
-	/**
-	 * Sets the distribution setup.
-	 *
-	 * @param distributionSetup the distributionSetup to set
-	 */
-	public void setDistributionSetup(DistributionSetup distributionSetup) {
-		this.distributionSetup = distributionSetup;
 	}
 	
 	/**

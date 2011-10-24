@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.core.application;
+package agentgui.core.project;
 
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -50,6 +50,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import agentgui.core.application.Application;
+import agentgui.core.application.Language;
 import agentgui.core.common.Zipper;
 import agentgui.core.gui.ProjectNewOpen;
 import agentgui.core.gui.ProjectWindow;

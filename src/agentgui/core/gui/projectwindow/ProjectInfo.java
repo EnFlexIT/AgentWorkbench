@@ -47,7 +47,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import agentgui.core.application.Language;
-import agentgui.core.application.Project;
+import agentgui.core.project.Project;
 
 /**
  * Represents the JPanel/Tab 'Info' for the general project information

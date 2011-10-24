@@ -48,7 +48,8 @@ import javax.swing.WindowConstants;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.core.application.Project;
+import agentgui.core.project.Project;
+
 import javax.swing.BorderFactory;
 import javax.swing.border.EtchedBorder;
 

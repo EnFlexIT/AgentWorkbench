@@ -34,8 +34,8 @@ import javax.swing.JDialog;
 import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.core.application.Project;
 import agentgui.core.ontologies.gui.OntologyInstanceViewer;
+import agentgui.core.project.Project;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 

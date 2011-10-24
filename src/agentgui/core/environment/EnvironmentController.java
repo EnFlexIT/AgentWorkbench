@@ -33,7 +33,7 @@ import java.util.Observer;
 
 import javax.swing.DefaultListModel;
 
-import agentgui.core.application.Project;
+import agentgui.core.project.Project;
 import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.core.sim.setup.SimulationSetupsChangeNotification;
 

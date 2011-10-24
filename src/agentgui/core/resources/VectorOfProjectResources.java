@@ -35,7 +35,7 @@ import java.util.Vector;
 import javax.swing.DefaultListModel;
 import javax.xml.bind.annotation.XmlTransient;
 
-import agentgui.core.application.Project;
+import agentgui.core.project.Project;
 
 /**
  * This extended Vector<String> is used as a data model for project resources.

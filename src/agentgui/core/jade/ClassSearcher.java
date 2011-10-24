@@ -34,8 +34,8 @@ import jade.core.BaseService;
 
 import java.util.Vector;
 
-import agentgui.core.application.Project;
 import agentgui.core.gui.components.JListClassSearcher;
+import agentgui.core.project.Project;
 
 
 /**

@@ -40,7 +40,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Project;
+import agentgui.core.project.Project;
 
 /**
  * This class is used for the management of the used ontologies inside a project.

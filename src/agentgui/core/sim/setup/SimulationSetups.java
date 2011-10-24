@@ -48,8 +48,8 @@ import javax.xml.bind.Unmarshaller;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.core.application.Project;
 import agentgui.core.common.FileCopier;
+import agentgui.core.project.Project;
 
 /**
  * This class represents the list of setups available in a {@link Project}.

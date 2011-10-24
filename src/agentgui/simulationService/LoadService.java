@@ -135,7 +135,7 @@ public class LoadService extends BaseService {
 	/** The List of Agents, which are registered to this service  **/ 
 	private Hashtable<String,AID> agentList = new Hashtable<String,AID>();
 	/** Default value for starting remote-container **/
-	private boolean DEFAULT_preventUsageOfAlreadyUsedComputers = true;
+	public static final boolean DEFAULT_preventUsageOfAlreadyUsedComputers = true;
 	
 	/**  The Load-Information Array of all slices **/
 	private LoadInformation loadInfo = new LoadInformation(); 

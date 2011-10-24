@@ -37,7 +37,7 @@ import java.util.List;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import agentgui.core.application.Project;
+import agentgui.core.project.Project;
 
 /**
  * This class holds detailed information of a single ontology, given by its class reference.<br>

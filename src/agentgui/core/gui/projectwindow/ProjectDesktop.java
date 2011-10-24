@@ -31,7 +31,7 @@ package agentgui.core.gui.projectwindow;
 import javax.swing.JDesktopPane;
 import javax.swing.JTabbedPane;
 
-import agentgui.core.application.Project;
+import agentgui.core.project.Project;
 
 /**
  * Represents the tab 'Project Desktop'.<br>

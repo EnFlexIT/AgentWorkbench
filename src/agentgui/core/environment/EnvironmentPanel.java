@@ -32,7 +32,7 @@ import java.util.Observer;
 
 import javax.swing.JPanel;
 
-import agentgui.core.application.Project;
+import agentgui.core.project.Project;
 import agentgui.envModel.graph.controller.GraphEnvironmentControllerGUI;
 
 /**

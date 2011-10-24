@@ -45,8 +45,8 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.collections15.Transformer;
 
-import agentgui.core.application.Project;
 import agentgui.core.environment.EnvironmentController;
+import agentgui.core.project.Project;
 import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.core.sim.setup.SimulationSetups;
 import agentgui.core.sim.setup.SimulationSetupsChangeNotification;

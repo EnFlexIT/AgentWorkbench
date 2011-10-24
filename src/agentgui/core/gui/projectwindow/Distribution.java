@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.core.gui.projectwindow.simsetup;
+package agentgui.core.gui.projectwindow;
 
 import java.awt.Dimension;
 import java.awt.Font;
@@ -50,10 +50,9 @@ import javax.swing.JTextField;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.core.application.Project;
 import agentgui.core.gui.ClassSelector;
-import agentgui.core.sim.setup.DistributionSetup;
-import agentgui.core.sim.setup.SimulationSetup;
+import agentgui.core.project.DistributionSetup;
+import agentgui.core.project.Project;
 import agentgui.core.sim.setup.SimulationSetups;
 import agentgui.core.sim.setup.SimulationSetupsChangeNotification;
 import agentgui.simulationService.balancing.DynamicLoadBalancing;
@@ -78,11 +77,8 @@ public class Distribution extends JPanel implements ActionListener, Observer, Ke
 	private final String PathImage = Application.RunInfo.PathImageIntern();  //  @jve:decl-index=0:
 	
 	private Project currProject = null;
-	private SimulationSetup currSimSetup = null;  //  @jve:decl-index=0:
 	private DistributionSetup currDistributionSetup = null; 
 	private LoadThresholdLevels currUserThresholds = null;
-	
-	private SetupSelector jPanelSetupSelection = null;
 	
 	private JPanel jPanelStatic = null;
 	private JPanel jPanelStaticClass = null;
@@ -174,12 +170,6 @@ public class Distribution extends JPanel implements ActionListener, Observer, Ke
 		gridBagConstraints110.anchor = GridBagConstraints.WEST;
 		gridBagConstraints110.insets = new Insets(5, 30, 0, 0);
 		gridBagConstraints110.gridy = 3;
-		GridBagConstraints gridBagConstraints111 = new GridBagConstraints();
-		gridBagConstraints111.gridx = 0;
-		gridBagConstraints111.gridy = 0;
-		gridBagConstraints111.weightx = 0.0;
-		gridBagConstraints111.fill = GridBagConstraints.HORIZONTAL;
-		gridBagConstraints111.insets = new Insets(0, 0, 0, 0);
 		
 		GridBagConstraints gridBagConstraints101 = new GridBagConstraints();
 		gridBagConstraints101.gridx = 0;
@@ -234,7 +224,6 @@ public class Distribution extends JPanel implements ActionListener, Observer, Ke
 		this.add(getJCheckBoxThresholdDefinition(), gridBagConstraints41);
 		this.add(getJPanelThreshold(), gridBagConstraints51);
 		this.add(getJPanelDummy(), gridBagConstraints101);
-		this.add(getJPanelSetupSelection(), gridBagConstraints111);
 		this.add(getJPanelStaticClass(), gridBagConstraints110);
 	}
 
@@ -766,18 +755,6 @@ public class Distribution extends JPanel implements ActionListener, Observer, Ke
 		}
 		return jButtonDefaultThreshold;
 	}
-
-	/**
-	 * This method initializes jPanelSetupSelection	
-	 * @return javax.swing.JPanel	
-	 */
-	private JPanel getJPanelSetupSelection() {
-		if (jPanelSetupSelection == null) {
-			jPanelSetupSelection = new SetupSelector(currProject);
-		}
-		return jPanelSetupSelection;
-	}
-
 	
 	// --------------------------------------------------------------
 	// --------------------------------------------------------------
@@ -817,7 +794,7 @@ public class Distribution extends JPanel implements ActionListener, Observer, Ke
 			this.jTextFieldThreadsHigh.setText("1500");
 			this.currUserThresholds.setThNoThreadsH(1500);
 		}
-		this.currSimSetup.save();
+		currProject.setDistributionSetup(this.currDistributionSetup);
 	}
 	
 	/**
@@ -826,12 +803,7 @@ public class Distribution extends JPanel implements ActionListener, Observer, Ke
 	private void setupLoad() {
 		
 		// --- Das akuelle DefaultListModel laden ---------
-		this.currSimSetup = currProject.simulationSetups.getCurrSimSetup();
-		if ( currSimSetup==null ) {
-			currProject.simulationSetups.setupLoadAndFocus(SimulationSetups.SIMULATION_SETUP_LOAD, currProject.simulationSetupCurrent, false);
-			currSimSetup = currProject.simulationSetups.getCurrSimSetup();
-		}
-		currDistributionSetup = this.currSimSetup.getDistributionSetup();
+		currDistributionSetup = this.currProject.getDistributionSetup();
 		currUserThresholds = currDistributionSetup.getUserThresholds();
 		
 		this.jCheckBoxDoLoadStatic.setSelected(currDistributionSetup.isDoStaticLoadBalancing());
@@ -946,7 +918,7 @@ public class Distribution extends JPanel implements ActionListener, Observer, Ke
 		} else {
 			//System.err.println("Action nicht implementiert: " + ae.getActionCommand());
 		}
-		this.currSimSetup.save();
+		currProject.setDistributionSetup(this.currDistributionSetup);
 	}
 	
 	@Override
@@ -959,7 +931,6 @@ public class Distribution extends JPanel implements ActionListener, Observer, Ke
 			case SimulationSetups.SIMULATION_SETUP_SAVED:
 				break;
 			default:
-				this.setupLoad();	
 				break;
 			}
 			
@@ -1017,7 +988,7 @@ public class Distribution extends JPanel implements ActionListener, Observer, Ke
 		} else {
 			//System.err.println("Textfeld nicht implementiert: " + sourceText.getName());
 		}
-		this.currSimSetup.save();
+		currProject.setDistributionSetup(this.currDistributionSetup);
 	}
 
 

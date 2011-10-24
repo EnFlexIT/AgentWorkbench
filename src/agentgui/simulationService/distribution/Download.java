@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.simulationService.distribution;
 
 import java.io.File;
@@ -6,6 +34,11 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+/**
+ * This class enables the download from a given URL to a local destination folder.
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ */
 public class Download {
 
 	private String srcFileURL;
@@ -15,7 +48,13 @@ public class Download {
 	private boolean downloadFinished = false;
 	
 	
-	public Download( String sourceFileURL, String destinationFileLocal ) {
+	/**
+	 * Instantiates a new download.
+	 *
+	 * @param sourceFileURL the URL of the source file 
+	 * @param destinationFileLocal the local destination file 
+	 */
+	public Download(String sourceFileURL, String destinationFileLocal) {
 		// --- Set the local variables ----
 		this.srcFileURL  = sourceFileURL;
 		this.destFileLocale = destinationFileLocal;
@@ -24,6 +63,11 @@ public class Download {
 		this.downloadFinished = true;
 	}
 	
+	/**
+	 * Will download the configured file.
+	 *
+	 * @return true, if successful
+	 */
 	private boolean downloadFile(){
 		
 		URL url;
@@ -66,22 +110,23 @@ public class Download {
 	}
 	
 	/**
-	 * Retruns if a download is finished or not
-	 * @return true / false
+	 * Informs about a finished download.
+	 * @return true, if the download is finished
 	 */
 	public boolean isFinished() {
 		return this.downloadFinished;
 	}
 
 	/**
-	 * Retruns if a download was successful or not
-	 * @return true / false
+	 * Informs if the download was successful.
+	 * @return true, if the download was successful 
 	 */
 	public boolean wasSuccessful() {
 		return this.downloadSuccessful;
 	}
 
 	/**
+	 * Informs about the current download progress.
 	 * @return the downloadProgress
 	 */
 	public Integer getDownloadProgress() {

@@ -43,7 +43,7 @@ import agentgui.core.common.ClassLoaderUtil;
 import agentgui.core.environment.EnvironmentPanel;
 import agentgui.core.environment.EnvironmentType;
 import agentgui.core.environment.EnvironmentTypes;
-import agentgui.core.jade.PlatformJadeConfig;
+import agentgui.core.project.PlatformJadeConfig;
 import agentgui.envModel.graph.controller.GraphEnvironmentControllerGUI;
 import agentgui.envModel.graph.visualisation.DisplayAgent;
 import agentgui.envModel.p2Dsvg.controller.Physical2DEnvironmentControllerGUI;
@@ -84,7 +84,7 @@ public class GlobalInfo {
 	private static String localPathBatik	= "lib" + localAppPathSeparatorString + "batik";	
 	private static String localPathProperty = "properties" + localAppPathSeparatorString;
 	private static String localPathProjects = "projects" + localAppPathSeparatorString;
-	private static String localPathServer   = "server" + localAppPathSeparatorString;
+	private static String localPathWebServer   = "server" + localAppPathSeparatorString;
 	private static String localPathDownloads= "download" + localAppPathSeparatorString;
 	
 	private static String localPathProjectsIDE =  localPathProjects;
@@ -445,14 +445,14 @@ public class GlobalInfo {
 	 * If the folder doesn't exists, it will be created.
 	 * @return Local path to the download server of Agent.GUI ('/AgentGUI/server/')
 	 */
-	public String PathServer(boolean absolute) {
+	public String PathWebServer(boolean absolute) {
 		
 		String returnPath = null;
 		if (absolute==true) { 
-			returnPath = FilePath2Absolute(localPathServer);
+			returnPath = FilePath2Absolute(localPathWebServer);
 		}
 		else {
-			returnPath = localPathServer;	
+			returnPath = localPathWebServer;	
 		}
 		
 		File dir = new File(returnPath);

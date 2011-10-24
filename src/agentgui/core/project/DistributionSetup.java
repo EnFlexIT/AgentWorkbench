@@ -26,11 +26,11 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.core.sim.setup;
+package agentgui.core.project;
 
 import java.io.Serializable;
 
-import agentgui.core.gui.projectwindow.simsetup.Distribution;
+import agentgui.core.gui.projectwindow.Distribution;
 import agentgui.simulationService.load.LoadThresholdLevels;
 
 /**

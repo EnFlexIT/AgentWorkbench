@@ -33,7 +33,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Vector;
 
 import agentgui.core.application.Language;
-import agentgui.core.application.Project;
+import agentgui.core.project.Project;
 
 /**
  * This class represents the list of plug-in's, which are loaded in a single

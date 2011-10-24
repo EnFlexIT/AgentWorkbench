@@ -28,9 +28,6 @@
  */
 package agentgui.simulationService.balancing;
 
-import java.util.Hashtable;
-import java.util.Vector;
-
 import jade.core.Agent;
 import jade.core.Location;
 import jade.core.ServiceException;
@@ -39,22 +36,28 @@ import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
 import jade.wrapper.ControllerException;
 import jade.wrapper.StaleProxyException;
+
+import java.util.Hashtable;
+import java.util.Vector;
+
 import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.core.application.Project;
 import agentgui.core.jade.Platform;
 import agentgui.core.ontologies.gui.OntologyInstanceViewer;
-import agentgui.core.sim.setup.DistributionSetup;
+import agentgui.core.project.DistributionSetup;
+import agentgui.core.project.Project;
 import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.simulationService.LoadService;
 import agentgui.simulationService.LoadServiceHelper;
 import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.SimulationServiceHelper;
-import agentgui.simulationService.load.LoadMeasureThread;
-import agentgui.simulationService.load.LoadThresholdLevels;
+import agentgui.simulationService.load.LoadAgentMap.AID_Container;
 import agentgui.simulationService.load.LoadInformation.Container2Wait4;
 import agentgui.simulationService.load.LoadInformation.NodeDescription;
+import agentgui.simulationService.load.LoadMeasureThread;
+import agentgui.simulationService.load.LoadThresholdLevels;
+import agentgui.simulationService.ontology.RemoteContainerConfig;
 
 /**
  * This class is the abstract super class for the dynamic and static load balancing.
@@ -73,21 +76,29 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 	/** The load helper for the connection to the LoadService. */
 	protected LoadServiceHelper loadHelper = null;
 	
+	
 	/** The current project instance. */
 	protected Project currProject = null;
 	/** The current simulation setup. */
 	protected SimulationSetup currSimSetup = null;
-	
 	/** The current distribution setup. */ 
 	protected DistributionSetup currDisSetup = null;
+	/** The current remote container configuration. */
+	protected RemoteContainerConfig currRemConConfig = null;
+	
 	
 	/** The current threshold levels. */
 	protected LoadThresholdLevels currThresholdLevels = null;
+	/** The indicator that says if the thresholds were exceeded over all. */
+	protected Integer currThresholdExceededOverAll = 0;
 	
 	/** The BenchmarkResults of all involved container. */
-	protected Hashtable<String, Float> currentContainerBenchmarkResults = new Hashtable<String, Float>();
+	protected Hashtable<String, Float> currContainerBenchmarkResults = new Hashtable<String, Float>();
+	/** The locations in the distributed system. */
+	protected Hashtable<String, Location> currContainerLoactions = null;
 	
-
+	
+	
 	/**
 	 * Instantiates a new base load balancing.
 	 */
@@ -95,7 +106,8 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 		super(agent);
 		currProject = Application.ProjectCurr;		
 		currSimSetup = currProject.simulationSetups.getCurrSimSetup();
-		currDisSetup = currSimSetup.getDistributionSetup();
+		currDisSetup = currProject.getDistributionSetup();
+		currRemConConfig = currProject.getRemoteContainerConfiguration().getOntologyRemoteConfainerConfig();
 		this.setLoadHelper();
 		this.setSimulationLoadHelper();
 		this.setThresholdLevels();
@@ -366,14 +378,112 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 	}
 	
 	/**
-	 * This method will start the number of agents.
+	 * This Method can be invoked, if a new remote container is required.
+	 * If the container was started the method returns the new containers name and
+	 * will update the local information of {@link #currContainerLoactions} and
+	 * {@link #currContainerBenchmarkResults}.
+	 *
+	 * @return the name of the new container
+	 * 
+	 * @see #currContainerLoactions
+	 * @see #currContainerBenchmarkResults
+	 */
+	protected String startRemoteContainer() {
+		return this.startRemoteContainer(LoadService.DEFAULT_preventUsageOfAlreadyUsedComputers);
+	}
+	/**
+	 * This Method can be invoked, if a new remote container is required.
+	 * If the container was started the method returns the new containers name and
+	 * will update the local information of {@link #currContainerLoactions} and
+	 * {@link #currContainerBenchmarkResults}.
+	 *
+	 * @param preventUsageOfAlreadyUsedComputers can prevent the usage of already used computers
+	 * @return the name of the new container
+	 * 
+	 * @see #currContainerLoactions
+	 * @see #currContainerBenchmarkResults
+	 */
+	protected String startRemoteContainer(boolean preventUsageOfAlreadyUsedComputers) {
+		return this.startRemoteContainer(null, preventUsageOfAlreadyUsedComputers);
+	}
+	/**
+	 * This Method can be invoked, if a new remote container is required.
+	 * If the container was started the method returns the new containers name and
+	 * will update the local information of {@link #currContainerLoactions} and
+	 * {@link #currContainerBenchmarkResults}.
+	 *
+	 * @param remoteContainerConfig the remote container configuration out of the Project 
+	 * @param preventUsageOfAlreadyUsedComputers can prevent the usage of already used computers
+	 * @return the name of the new container
+	 * 
+	 * @see #currContainerLoactions
+	 * @see #currContainerBenchmarkResults
+	 */
+	protected String startRemoteContainer(RemoteContainerConfig remoteContainerConfig, boolean preventUsageOfAlreadyUsedComputers) {
+		
+		boolean newContainerStarted = false;
+		String newContainerName = null;
+		try {
+			// --- Start a new remote container -----------------
+			LoadServiceHelper loadHelper = (LoadServiceHelper) myAgent.getHelper(LoadService.NAME);
+			newContainerName = loadHelper.startNewRemoteContainer(remoteContainerConfig, preventUsageOfAlreadyUsedComputers);
+			
+			while (true) {
+				Container2Wait4 waitCont = loadHelper.startNewRemoteContainerStaus(newContainerName);	
+				if (waitCont.isStarted()) {
+					System.out.println("Remote Container '" + newContainerName + "' was started!");
+					newContainerStarted = true;
+					break;
+				}
+				if (waitCont.isCancelled()) {
+					System.out.println("Remote Container '" + newContainerName + "' was NOT started!");
+					newContainerStarted = false;
+					break;
+				}
+				if (waitCont.isTimedOut()) {
+					System.out.println("Remote Container '" + newContainerName + "' timed out!");
+					newContainerStarted = false;
+					break;	
+				}
+				this.block(100);
+			} // end while
+			
+			if (newContainerStarted==true) {
+
+				while (loadHelper.getContainerDescription(newContainerName).getJvmPID()==null) {
+					this.block(100);
+				}
+				while (loadHelper.getContainerLoads().get(newContainerName)==null) {
+					this.block(100);
+				}
+				// --- Update the locations of all involved container --------------- 
+				currContainerLoactions = loadHelper.getContainerLocations();
+				
+				// --- Get the benchmark-result for this node/container -------------
+				NodeDescription containerDesc = loadHelper.getContainerDescription(newContainerName);
+				Float benchmarkValue = containerDesc.getBenchmarkValue().getBenchmarkValue();
+				currContainerBenchmarkResults.put(newContainerName, benchmarkValue);
+				
+				return newContainerName;
+			}
+			
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
+		return null;		
+	}
+
+	/**
+	 * This method will start a number of remote container.
 	 *
 	 * @param numberOfContainer the number of container
+	 * @param remoteContainerConfig the remote container configuration
 	 * @param preventUsageOfAlreadyUsedComputers the prevent usage of already used computers
 	 * @param filterMainContainer true, if the Main-Container should be filter out of the result
+	 * 
 	 * @return the of all newly started locations
 	 */
-	protected Hashtable<String, Location> startRemoteContainer(int numberOfContainer, boolean preventUsageOfAlreadyUsedComputers, boolean filterMainContainer) {
+	protected Hashtable<String, Location> startNumberOfRemoteContainer(int numberOfContainer, boolean filterMainContainer, RemoteContainerConfig remoteContainerConfig, boolean preventUsageOfAlreadyUsedComputers) {
 		
 		Hashtable<String, Location> newContainerLocations = null;
 		
@@ -420,63 +530,23 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 		}
 		return newContainerLocations;
 	}
-	
+
+
 	/**
-	 * This Method can be invoked, if a new remote container is required. The Method
-	 * returns the informations about the new container are available.
+	 * This Method transfers the new LoadAgentMap-Instance to the SimulationService
+	 * and informs the agent about the location they have to migrate.
 	 *
-	 * @param preventUsageOfAlreadyUsedComputers the prevent usage of already used computers
-	 * @return the name of the new container
+	 * @param transferAgents the new agent migration
 	 */
-	protected String startRemoteContainer(boolean preventUsageOfAlreadyUsedComputers) {
+	protected void setAgentMigration(Vector<AID_Container> transferAgents) {
 		
-		boolean newContainerStarted = false;
-		String newContainerName = null;
 		try {
-			// --- Start a new remote container -----------------
-			LoadServiceHelper loadHelper = (LoadServiceHelper) myAgent.getHelper(LoadService.NAME);
-			newContainerName = loadHelper.startNewRemoteContainer(preventUsageOfAlreadyUsedComputers);
-			while (true) {
-				Container2Wait4 waitCont = loadHelper.startNewRemoteContainerStaus(newContainerName);	
-				if (waitCont.isStarted()) {
-					System.out.println("Remote Container '" + newContainerName + "' was started!");
-					newContainerStarted = true;
-					break;
-				}
-				if (waitCont.isCancelled()) {
-					System.out.println("Remote Container '" + newContainerName + "' was NOT started!");
-					newContainerStarted = false;
-					break;
-				}
-				if (waitCont.isTimedOut()) {
-					System.out.println("Remote Container '" + newContainerName + "' timed out!");
-					newContainerStarted = false;
-					break;	
-				}
-				this.block(100);
-			} // end while
-			
-			if (newContainerStarted==true) {
-
-				while (loadHelper.getContainerDescription(newContainerName).getJvmPID()==null) {
-					this.block(100);
-				}
-				while (loadHelper.getContainerLoads().get(newContainerName)==null) {
-					this.block(100);
-				}
-
-				// --- Get the benchmark-result for this node/container -------------
-				NodeDescription containerDesc = loadHelper.getContainerDescription(newContainerName);
-				Float benchmarkValue = containerDesc.getBenchmarkValue().getBenchmarkValue();
-				currentContainerBenchmarkResults.put(newContainerName, benchmarkValue);				
-				return newContainerName;
-			}
+			simHelper.setAgentMigration(transferAgents);
 			
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
-		return null;		
+		
 	}
-
 	
 }

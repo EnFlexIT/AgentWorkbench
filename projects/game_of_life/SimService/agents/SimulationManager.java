@@ -65,7 +65,7 @@ public class SimulationManager extends SimulationManagerAgent {
 
 	public void setRunSimulation(boolean run) {
 		if (run==true) {
-			this.addSimulationBehavior();
+			this.addSimulationBehaviour();
 		} else {
 			this.removeSimulationBehaviour();
 		}

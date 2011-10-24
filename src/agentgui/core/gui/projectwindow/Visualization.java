@@ -34,7 +34,8 @@ import java.awt.Insets;
 
 import javax.swing.JPanel;
 
-import agentgui.core.application.Project;
+import agentgui.core.project.Project;
+
 import java.awt.BorderLayout;
 import javax.swing.BorderFactory;
 import javax.swing.border.EtchedBorder;

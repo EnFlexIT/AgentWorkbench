@@ -32,9 +32,9 @@ import javax.swing.DefaultListModel;
 
 import agentgui.core.agents.AgentClassElement;
 import agentgui.core.application.Application;
-import agentgui.core.application.Project;
 import agentgui.core.jade.ClassSearcher;
 import agentgui.core.jade.ClassSearcherSingle;
+import agentgui.core.project.Project;
 
 /**
  * This class can be use like a JList, but it will show a progress, if

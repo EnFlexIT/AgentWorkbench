@@ -63,9 +63,9 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Project;
 import agentgui.core.environment.EnvironmentPanel;
 import agentgui.core.gui.projectwindow.ProjectWindowTab;
+import agentgui.core.project.Project;
 
 /**
  * This extended JInternalFrame graphically encapsulates the the project in the

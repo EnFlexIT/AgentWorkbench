@@ -62,11 +62,11 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
 import agentgui.core.application.Language;
-import agentgui.core.application.Project;
 import agentgui.core.ontologies.OntologyClassTree;
 import agentgui.core.ontologies.OntologyClassTreeObject;
 import agentgui.core.ontologies.OntologySingleClassDescription;
 import agentgui.core.ontologies.OntologySingleClassSlotDescription;
+import agentgui.core.project.Project;
 
 /**
  * This class can be used in order to generate a Swing based user form, that represents

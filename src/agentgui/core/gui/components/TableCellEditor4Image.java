@@ -43,11 +43,11 @@ import javax.swing.table.TableCellEditor;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.core.application.Project;
 import agentgui.core.gui.imaging.ImageFileView;
 import agentgui.core.gui.imaging.ImageFilter;
 import agentgui.core.gui.imaging.ImagePreview;
 import agentgui.core.gui.imaging.MissingIcon;
+import agentgui.core.project.Project;
 
 /**
  * Table cell editor for displaying the file chooser dialog for selecting

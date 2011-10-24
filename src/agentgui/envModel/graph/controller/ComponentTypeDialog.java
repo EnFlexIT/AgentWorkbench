@@ -64,7 +64,6 @@ import javax.swing.table.TableModel;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.core.application.Project;
 import agentgui.core.gui.ClassSelector;
 import agentgui.core.gui.components.TableCellEditor4AgentClass;
 import agentgui.core.gui.components.TableCellRenderer4ClassNameList;
@@ -74,6 +73,7 @@ import agentgui.core.gui.components.TableCellEditor4Color;
 import agentgui.core.gui.components.TableCellRenderer4Color;
 import agentgui.core.gui.components.TableCellEditor4Image;
 import agentgui.core.gui.imaging.MissingIcon;
+import agentgui.core.project.Project;
 import agentgui.envModel.graph.networkModel.ComponentTypeSettings;
 import agentgui.envModel.graph.prototypes.GraphElementPrototype;
 

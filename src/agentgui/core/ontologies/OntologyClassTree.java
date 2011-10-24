@@ -38,8 +38,8 @@ import javax.swing.tree.DefaultTreeModel;
 
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Project;
 import agentgui.core.ontologies.reflection.ReflectClassFiles;
+import agentgui.core.project.Project;
 
 /**
  * This class represents the DefaultTreeModel for a single ontology, used in the current project.

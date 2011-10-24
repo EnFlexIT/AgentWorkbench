@@ -76,7 +76,7 @@ import javax.swing.border.EtchedBorder;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.core.application.Project;
+import agentgui.core.project.Project;
 import agentgui.simulationService.agents.LoadExecutionAgent;
 
 /**

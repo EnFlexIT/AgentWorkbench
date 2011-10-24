@@ -46,9 +46,10 @@ import javax.swing.JOptionPane;
 import agentgui.core.agents.UtilityAgent;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.core.application.Project;
 import agentgui.core.database.DBConnection;
 import agentgui.core.network.JadeUrlChecker;
+import agentgui.core.project.PlatformJadeConfig;
+import agentgui.core.project.Project;
 import agentgui.core.webserver.DownloadServer;
 
 /**

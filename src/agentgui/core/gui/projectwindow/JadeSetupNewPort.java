@@ -53,7 +53,7 @@ import javax.swing.WindowConstants;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
 
-import agentgui.core.application.Project;
+import agentgui.core.project.Project;
 
 /**
  * This JDialog is used for the configuration of the port, which JADE uses for its platform

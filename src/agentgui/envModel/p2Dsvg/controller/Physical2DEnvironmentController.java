@@ -61,9 +61,9 @@ import org.w3c.dom.Element;
 
 import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.application.Language;
-import agentgui.core.application.Project;
 import agentgui.core.common.FileCopier;
 import agentgui.core.environment.EnvironmentController;
+import agentgui.core.project.Project;
 import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.core.sim.setup.SimulationSetups;
 import agentgui.core.sim.setup.SimulationSetupsChangeNotification;

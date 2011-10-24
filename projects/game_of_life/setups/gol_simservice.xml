@@ -3,11 +3,11 @@
     <agentSetup/>
     <distribution>
         <doDynamicLoadBalancing>false</doDynamicLoadBalancing>
-        <doStaticLoadBalancing>true</doStaticLoadBalancing>
+        <doStaticLoadBalancing>false</doStaticLoadBalancing>
         <dynamicLoadBalancingClass>agentgui.simulationService.balancing.DynamicLoadBalancing</dynamicLoadBalancingClass>
-        <numberOfAgents>100</numberOfAgents>
-        <numberOfContainer>1</numberOfContainer>
-        <staticLoadBalancingClass>game_of_life.SimService.balancing.StartAndBalancing</staticLoadBalancingClass>
+        <numberOfAgents>0</numberOfAgents>
+        <numberOfContainer>0</numberOfContainer>
+        <staticLoadBalancingClass>agentgui.simulationService.balancing.StaticLoadBalancing</staticLoadBalancingClass>
         <useUserThresholds>false</useUserThresholds>
         <userThresholds>
             <thCpuH>80</thCpuH>

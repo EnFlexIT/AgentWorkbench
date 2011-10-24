@@ -50,7 +50,8 @@ import org.apache.commons.codec.binary.Base64;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.core.application.Project;
+import agentgui.core.project.Project;
+
 import java.awt.Font;
 import java.io.UnsupportedEncodingException;
 

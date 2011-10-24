@@ -41,8 +41,8 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Project;
 import agentgui.core.ontologies.OntologyClassTree;
+import agentgui.core.project.Project;
 
 /**
  * This extended ArrayList<String> is used for the search of classes 

@@ -34,7 +34,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
 
-import agentgui.core.gui.projectwindow.simsetup.Distribution;
+import agentgui.core.gui.projectwindow.Distribution;
 import agentgui.simulationService.agents.LoadMeasureAgent;
 import agentgui.simulationService.load.LoadMerger;
 import agentgui.simulationService.load.LoadAgentMap.AID_Container;
@@ -73,7 +73,7 @@ public class DynamicLoadBalancing extends DynamicLoadBalancingBase {
 		
 		Vector<AID_Container> transferAgents = new Vector<AID_Container>();
 		
-		if (loadThresholdExceededOverAll!=0) {
+		if (currThresholdExceededOverAll!=0) {
 			// --------------------------------------------------------------------------
 			// --- If the threshold level is exceeded, start a new remote container -----
 			// --------------------------------------------------------------------------
@@ -192,7 +192,7 @@ public class DynamicLoadBalancing extends DynamicLoadBalancingBase {
 			Iterator<String> itContainer = loadJVM4Balancing.get(jvmPID).getContainerList().iterator();
 			while (itContainer.hasNext()) {
 				String containerName = itContainer.next();
-				Location newLocation = loadContainerLoactions.get(containerName); 
+				Location newLocation = currContainerLoactions.get(containerName); 
 				lastNewLocation = newLocation;
 				
 				// --- 3. Set the new locations in the transfer list --------------------
@@ -225,8 +225,8 @@ public class DynamicLoadBalancing extends DynamicLoadBalancingBase {
 		while (itJVM.hasNext()) {
 			String jvmPID = itJVM.next();
 			int noOfThreads = loadJVM4Balancing.get(jvmPID).getMachineLoad().getLoadNoThreads();
-			if (noOfThreads>loadThresholdLevels.getThNoThreadsH()) {
-				no2MigrateSum += noOfThreads-loadThresholdLevels.getThNoThreadsH();
+			if (noOfThreads>currThresholdLevels.getThNoThreadsH()) {
+				no2MigrateSum += noOfThreads-currThresholdLevels.getThNoThreadsH();
 			}
 		}
 		

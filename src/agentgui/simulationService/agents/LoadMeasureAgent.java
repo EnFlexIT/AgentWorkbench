@@ -61,8 +61,8 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Project;
-import agentgui.core.sim.setup.DistributionSetup;
+import agentgui.core.project.DistributionSetup;
+import agentgui.core.project.Project;
 import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.simulationService.LoadService;
 import agentgui.simulationService.LoadServiceHelper;
@@ -423,7 +423,7 @@ public class LoadMeasureAgent extends Agent {
 			// --- Get the current simulation setup ---------------------------
 			currSimSetup = currProject.simulationSetups.getCurrSimSetup();
 			// --- Get the current distribution setup -------------------------
-			currDisSetup = currSimSetup.getDistributionSetup();
+			currDisSetup = currProject.getDistributionSetup();
 			
 			// --- If the dynamic load balancing is activated: ----------------
 			if (currDisSetup!=null && currDisSetup.isDoDynamicLoadBalancing()==true) {

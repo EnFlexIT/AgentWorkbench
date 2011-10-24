@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.core.jade;
+package agentgui.core.project;
 
 import jade.core.Profile;
 import jade.core.ProfileImpl;
@@ -44,7 +44,6 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.core.application.Project;
 import agentgui.core.network.PortChecker;
 
 /**

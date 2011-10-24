@@ -33,9 +33,9 @@ import java.net.*;
 import java.util.*;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Project;
 import agentgui.core.common.FileCopier;
 import agentgui.core.network.PortChecker;
+import agentgui.core.project.Project;
 
 /**
  * This class provides the main class of the <b>Agent.GUI</b> web server for the
@@ -178,7 +178,7 @@ public class DownloadServer implements HttpConstants, Runnable {
     	 
     	String pathSep = Application.RunInfo.AppPathSeparatorString();
     	String sourceDirName = project.getProjectFolderFullPath();
-    	String destinDirName = Application.RunInfo.PathServer(true) + project.getProjectFolder();    	
+    	String destinDirName = Application.RunInfo.PathWebServer(true) + project.getProjectFolder();    	
     	
     	File destinDir = null;
     	boolean destinDirNewlyCreated = false;

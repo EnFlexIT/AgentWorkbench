@@ -56,10 +56,10 @@ import javax.swing.tree.TreeSelectionModel;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.core.application.Project;
 import agentgui.core.gui.OntologieSelector;
 import agentgui.core.ontologies.OntologyClass;
 import agentgui.core.ontologies.OntologyClassTreeObject;
+import agentgui.core.project.Project;
 
 /**
  * Represents the JPanel/Tab 'Configuration' - 'Ontologies'

@@ -42,10 +42,11 @@ import javax.swing.SwingUtilities;
 
 import agentgui.core.agents.AgentClassElement;
 import agentgui.core.application.Application;
-import agentgui.core.application.Project;
 import agentgui.core.common.ClassLoaderUtil;
 import agentgui.core.gui.components.ClassElement2Display;
 import agentgui.core.gui.components.JListClassSearcher;
+import agentgui.core.project.PlatformJadeConfig;
+import agentgui.core.project.Project;
 
 /**
  * This class will start a search process for classes that are extending a specified super class. 

@@ -1,9 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <simulationSetup>
-    <agentSetup/>
+    <agentSetup>
+        <agent>
+            <postionNo>1</postionNo>
+            <listMembership>01 AgentStartManual</listMembership>
+            <agentClassReference>agents.SimulationManagerAgent</agentClassReference>
+            <startAsName>SiMaAg</startAsName>
+        </agent>
+        <agent>
+            <postionNo>0</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>agents.MovingAgent</agentClassReference>
+            <startAsName>MovingAgent</startAsName>
+        </agent>
+    </agentSetup>
     <distribution>
-        <doDynamicLoadBalalncing>false</doDynamicLoadBalalncing>
-        <doStaticLoadBalalncing>false</doStaticLoadBalalncing>
+        <doDynamicLoadBalancing>false</doDynamicLoadBalancing>
+        <doStaticLoadBalancing>false</doStaticLoadBalancing>
         <dynamicLoadBalancingClass>agentgui.simulationService.balancing.DynamicLoadBalancing</dynamicLoadBalancingClass>
         <numberOfAgents>6</numberOfAgents>
         <numberOfContainer>1</numberOfContainer>

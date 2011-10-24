@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.core.application;
+package agentgui.core.project;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -51,12 +51,14 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import agentgui.core.agents.AgentConfiguration;
+import agentgui.core.application.Application;
+import agentgui.core.application.Language;
 import agentgui.core.common.ClassLoaderUtil;
 import agentgui.core.environment.EnvironmentPanel;
 import agentgui.core.environment.EnvironmentType;
 import agentgui.core.gui.ProjectWindow;
 import agentgui.core.gui.projectwindow.BaseAgents;
+import agentgui.core.gui.projectwindow.Distribution;
 import agentgui.core.gui.projectwindow.JadeSetup;
 import agentgui.core.gui.projectwindow.OntologyTab;
 import agentgui.core.gui.projectwindow.ProjectDesktop;
@@ -65,11 +67,9 @@ import agentgui.core.gui.projectwindow.ProjectResources;
 import agentgui.core.gui.projectwindow.ProjectWindowTab;
 import agentgui.core.gui.projectwindow.TabForSubPanels;
 import agentgui.core.gui.projectwindow.Visualization;
-import agentgui.core.gui.projectwindow.simsetup.Distribution;
 import agentgui.core.gui.projectwindow.simsetup.SimulationEnvironment;
 import agentgui.core.gui.projectwindow.simsetup.StartSetup;
 import agentgui.core.jade.ClassSearcher;
-import agentgui.core.jade.PlatformJadeConfig;
 import agentgui.core.ontologies.Ontologies4Project;
 import agentgui.core.plugin.PlugIn;
 import agentgui.core.plugin.PlugInLoadException;
@@ -131,6 +131,18 @@ import agentgui.core.webserver.JarFileCreator;
 	 * Constant value in order to inform the Observer about changes of this kind
 	 */
 	@XmlTransient public static final String CHANGED_JadeConfiguration = "JadeConfiguration";
+	/**
+	 * Constant value in order to inform the Observer about changes of this kind
+	 */
+	@XmlTransient public static final String CHANGED_DistributionSetup = "DistributionSetup";
+	/**
+	 * Constant value in order to inform the Observer about changes of this kind
+	 */
+	@XmlTransient public static final String CHANGED_RemoteContainerConfiguration = "RemoteContainerConfiguration";
+	/**
+	 * Constant value in order to inform the Observer about changes of this kind
+	 */
+	@XmlTransient public static final String CHANGED_UserRuntimeObject = "UserRuntimeObject";
 	
 	/**
 	 * Constant value in order to set the project view
@@ -236,6 +248,15 @@ import agentgui.core.webserver.JarFileCreator;
 	@XmlElement(name="jadeConfiguration")
 	public PlatformJadeConfig JadeConfiguration = new PlatformJadeConfig();
 	
+	/** The distribution setup. */
+	@XmlElement(name="distributionSetup")
+	public DistributionSetup distributionSetup = new DistributionSetup();
+	
+	/**
+	 * This field manages the configuration of remote container if needed
+	 */
+	@XmlElement(name="remoteContainerConfiguration")
+	private RemoteContainerConfiguration remoteContainerConfiguration = new RemoteContainerConfiguration();
 	
 	/**
 	 * This field can be used in order to provide customised objects during
@@ -311,7 +332,12 @@ import agentgui.core.webserver.JarFileCreator;
 					   Language.translate("JADE-Konfiguration"), null, null, 
 					   new JadeSetup(this), Language.translate("Konfiguration"));
 			pwt.add();
-		
+			// --- distribution + thresholds --------------
+			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, 
+					   Language.translate("Verteilung + Grenzwerte"), null, null, 
+					   new Distribution(this), Language.translate("Konfiguration"));
+			pwt.add();
+
 		// ------------------------------------------------
 		// --- Simulations-Setup --------------------------
 		pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, 
@@ -329,11 +355,6 @@ import agentgui.core.webserver.JarFileCreator;
 			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER_VISUALIZATION, 
 					   Language.translate("Simulationsumgebung"), null, null, 
 					   new SimulationEnvironment(this), Language.translate("Simulations-Setup"));
-			pwt.add();
-			// --- distribution + thresholds --------------
-			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, 
-					   Language.translate("Verteilung + Grenzwerte"), null, null, 
-					   new Distribution(this), Language.translate("Simulations-Setup"));
 			pwt.add();
 			
 
@@ -975,6 +996,42 @@ import agentgui.core.webserver.JarFileCreator;
 	}
 
 	/**
+	 * Gets the distribution setup.
+	 * @return the distributionSetup
+	 */
+	@XmlTransient
+	public DistributionSetup getDistributionSetup() {
+		return distributionSetup;
+	}
+	/**
+	 * Sets the distribution setup.
+	 * @param distributionSetup the distributionSetup to set
+	 */
+	public void setDistributionSetup(DistributionSetup distributionSetup) {
+		this.distributionSetup = distributionSetup;
+		isUnsaved = true;
+		setChanged();
+		notifyObservers(CHANGED_DistributionSetup);
+	}
+	
+	/**
+	 * @return the remoteContainerConfiguration
+	 */
+	@XmlTransient
+	public RemoteContainerConfiguration getRemoteContainerConfiguration() {
+		return remoteContainerConfiguration;
+	}
+	/**
+	 * @param remoteContainerConfiguration the remoteContainerConfiguration to set
+	 */
+	public void setRemoteContainerConfiguration(RemoteContainerConfiguration remoteContainerConfiguration) {
+		this.remoteContainerConfiguration = remoteContainerConfiguration;
+		isUnsaved = true;
+		setChanged();
+		notifyObservers(CHANGED_RemoteContainerConfiguration);
+	}
+	
+	/**
 	 * @return the userRuntimeObject
 	 */
 	@XmlTransient
@@ -986,6 +1043,9 @@ import agentgui.core.webserver.JarFileCreator;
 	 */
 	public void setUserRuntimeObject(Serializable userRuntimeObject) {
 		this.userRuntimeObject = userRuntimeObject;
+		isUnsaved = true;
+		setChanged();
+		notifyObservers(CHANGED_UserRuntimeObject);
 	}
 
 	/**
