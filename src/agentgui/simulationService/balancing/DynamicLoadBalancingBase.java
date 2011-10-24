@@ -1,8 +1,35 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.simulationService.balancing;
 
 import jade.core.Location;
 import jade.core.ServiceException;
-import jade.core.behaviours.OneShotBehaviour;
 
 import java.util.Hashtable;
 import java.util.Vector;
@@ -11,50 +38,73 @@ import agentgui.simulationService.LoadService;
 import agentgui.simulationService.LoadServiceHelper;
 import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.SimulationServiceHelper;
-import agentgui.simulationService.agents.LoadAgent;
+import agentgui.simulationService.agents.LoadMeasureAgent;
 import agentgui.simulationService.load.LoadAgentMap;
-import agentgui.simulationService.load.LoadMerger;
-import agentgui.simulationService.load.LoadThresholdLevels;
 import agentgui.simulationService.load.LoadAgentMap.AID_Container;
 import agentgui.simulationService.load.LoadInformation.Container2Wait4;
 import agentgui.simulationService.load.LoadInformation.NodeDescription;
+import agentgui.simulationService.load.LoadMerger;
+import agentgui.simulationService.load.LoadThresholdLevels;
 import agentgui.simulationService.ontology.PlatformLoad;
 
-
-public class DynamicLoadBalancingBase extends OneShotBehaviour {
+/**
+ * This is the base class for every tailored dynamic load balancing approach.
+ * Its collects the load information from the running {@link LoadMeasureAgent} and
+ * accumulates them in the local attribute. 
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ */
+public abstract class DynamicLoadBalancingBase extends BaseLoadBalancing  {
 
 	private static final long serialVersionUID = -7614035278070031234L;
 
 	// -------------
-	protected LoadAgent myLoadAgent = null;
+	/** The reference to the load agent. */
+	protected LoadMeasureAgent myLoadAgent = null;
 	// -------------
+	/** The indicator that says if the thresholds were exceeded over all. */
 	protected Integer loadThresholdExceededOverAll = 0;
+	/** The current threshold levels. */
 	protected LoadThresholdLevels loadThresholdLevels = null; 
 	
+	/** The load information distributed over all machines. */
 	protected Hashtable<String, LoadMerger> loadMachines4Balancing = null;
+	/** The load information distributed over all JVM's. */
 	protected Hashtable<String, LoadMerger> loadJVM4Balancing = null;
 	
+	/** The LoadAgentMap. */
 	protected LoadAgentMap loadContainerAgentMap = null;
+	/** The load distributed over container. */
 	protected Hashtable<String, PlatformLoad> loadContainer = null;
+	/** The location in the distributed system. */
 	protected Hashtable<String, Location> loadContainerLoactions = null;
+	/** The benchmark results of all containers. */
 	protected Hashtable<String, Float> loadContainerBenchmarkResults = null;
 
 	
+	/** The number of machines. */
 	protected int noMachines = 0;
+	/** The Array for all machine names */
 	protected String[] machineArray = null; 
+	/** The number of agents in the system. */
 	protected int noAgents = 0;
+	/** the summation of all benchmark values */
 	protected float machinesBenchmarkSummation = 0;
 	
 	
 	/**
-	 * Default constructor of this class  
-	 * @param loadAgent
+	 * Default constructor of this class.
+	 *
+	 * @param loadMeasureAgent the running load agent of the system
 	 */
-	public DynamicLoadBalancingBase(LoadAgent loadAgent) {
-		super(loadAgent);
-		myLoadAgent = loadAgent;
+	public DynamicLoadBalancingBase(LoadMeasureAgent loadMeasureAgent) {
+		super(loadMeasureAgent);
+		myLoadAgent = loadMeasureAgent;
 	}
 	
+	/* (non-Javadoc)
+	 * @see jade.core.behaviours.Behaviour#action()
+	 */
 	@Override
 	public void action() {
 		this.setMeasurements();
@@ -83,7 +133,7 @@ public class DynamicLoadBalancingBase extends OneShotBehaviour {
 	}
 
 	/**
-	 * Here some important counting will be done standarized
+	 * Here some important counting will be done by default.
 	 */
 	private void refreshCountingsAndLists() {
 		
@@ -100,16 +150,10 @@ public class DynamicLoadBalancingBase extends OneShotBehaviour {
 	}
 	
 	/**
-	 * This method will do the balancing. Use sub classes to do your
-	 * own balancing while implementing the 'LoadBalancingInterface'
-	 */
-	public void doBalancing() {
-		
-	}
-	
-	/**
-	 * This Method can be invoked, if a new remote container is required. The Method 
+	 * This Method can be invoked, if a new remote container is required. The Method
 	 * returns, if informations about the new container are available.
+	 *
+	 * @return the new container name 
 	 */
 	protected String startRemoteContainer() {
 		
@@ -197,8 +241,9 @@ public class DynamicLoadBalancingBase extends OneShotBehaviour {
 	
 	/**
 	 * This Method transfers the new LoadAgentMap-Instance to the SimulationService
-	 * and informs the agent about the location they have to migrate
-	 * @param newAgentMap
+	 * and informs the agent about the location they have to migrate.
+	 *
+	 * @param transferAgents the new agent migration
 	 */
 	protected void setAgentMigration(Vector<AID_Container> transferAgents) {
 		
@@ -209,7 +254,7 @@ public class DynamicLoadBalancingBase extends OneShotBehaviour {
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
-
 		
 	}
+
 }

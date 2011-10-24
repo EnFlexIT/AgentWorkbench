@@ -77,7 +77,7 @@ import javax.swing.border.EtchedBorder;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.application.Project;
-import agentgui.simulationService.agents.SimStartAgent;
+import agentgui.simulationService.agents.LoadExecutionAgent;
 
 /**
  * This class represents the main user-interface of the application AgentGUI.
@@ -1023,12 +1023,12 @@ public class CoreWindow extends JFrame implements ComponentListener {
 			// --- Menü Simulation ----------------------------
 			else if ( ActCMD.equalsIgnoreCase("SimulationStart") ) {
 				Object[] startWith = new Object[1];
-				startWith[0] = SimStartAgent.BASE_ACTION_Start;
+				startWith[0] = LoadExecutionAgent.BASE_ACTION_Start;
 				Application.JadePlatform.jadeSystemAgentOpen("simstarter", null, startWith);
 			}
 			else if ( ActCMD.equalsIgnoreCase("SimulationPause") ) {
 				Object[] startWith = new Object[1];
-				startWith[0] = SimStartAgent.BASE_ACTION_Pause;
+				startWith[0] = LoadExecutionAgent.BASE_ACTION_Pause;
 				Application.JadePlatform.jadeSystemAgentOpen("simstarter", null, startWith);
 			}
 			else if ( ActCMD.equalsIgnoreCase("SimulationStop") ) {
@@ -1241,12 +1241,12 @@ public class CoreWindow extends JFrame implements ComponentListener {
 			// ------------------------------------------------
 			else if ( ActCMD.equalsIgnoreCase("SimulationStart") ) {
 				Object[] startWith = new Object[1];
-				startWith[0] = SimStartAgent.BASE_ACTION_Start;
+				startWith[0] = LoadExecutionAgent.BASE_ACTION_Start;
 				Application.JadePlatform.jadeSystemAgentOpen("simstarter", null, startWith);
 			}
 			else if ( ActCMD.equalsIgnoreCase("SimulationPause") ) {
 				Object[] startWith = new Object[1];
-				startWith[0] = SimStartAgent.BASE_ACTION_Pause;
+				startWith[0] = LoadExecutionAgent.BASE_ACTION_Pause;
 				Application.JadePlatform.jadeSystemAgentOpen("simstarter", null, startWith);
 			}
 			else if ( ActCMD.equalsIgnoreCase("SimulationStop") ) {

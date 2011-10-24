@@ -38,7 +38,7 @@ import jade.lang.acl.ACLMessage;
 import jade.wrapper.AgentController;
 import jade.wrapper.ControllerException;
 import agentgui.core.agents.UtilityAgent;
-import agentgui.simulationService.agents.LoadAgent;
+import agentgui.simulationService.agents.LoadMeasureAgent;
 import agentgui.simulationService.ontology.ShowMonitorGUI;
 
 /**
@@ -47,7 +47,7 @@ import agentgui.simulationService.ontology.ShowMonitorGUI;
  * Actually a message to the 'server.load'-agent will be send and the Agent will appear. 
  * 
  * @see UtilityAgent
- * @see LoadAgent
+ * @see LoadMeasureAgent
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */

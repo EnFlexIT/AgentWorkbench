@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package game_of_life.SimService.balancing;
 
 import jade.core.Location;
@@ -10,6 +38,7 @@ import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
+import agentgui.simulationService.agents.LoadExecutionAgent;
 import agentgui.simulationService.balancing.StaticLoadBalancingBase;
 
 public class StartAndBalancing extends StaticLoadBalancingBase {
@@ -29,9 +58,17 @@ public class StartAndBalancing extends StaticLoadBalancingBase {
 	private Integer agentsStarted = 0;
 	private Integer agentsStartedOld = 0;
 	
+	
+	public StartAndBalancing(LoadExecutionAgent agent) {
+		super(agent);
+	}
+
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.balancing.BaseLoadBalancingInterface#doBalancing()
+	 */
 	@Override
-	public void action() {
-		
+	public void doBalancing() {
+
 		System.out.println("Starting 'Game Of Life' ...");
 		
 		// -----------------------------------------------------
@@ -124,9 +161,7 @@ public class StartAndBalancing extends StaticLoadBalancingBase {
 		arg[1] = nbCol;
 		arg[2] = environmentModel;
 		this.startAgent("sim.manager", agentManagerAgent, arg);
-		
 	}
-	
 	
 
 	private Vector<String> getNeighbourVector(String currAgentName) {
@@ -152,6 +187,6 @@ public class StartAndBalancing extends StaticLoadBalancingBase {
 		}
 		return neighbour;
 	}
-	
-	
+
+
 }

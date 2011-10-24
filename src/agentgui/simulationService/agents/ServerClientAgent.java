@@ -178,7 +178,7 @@ public class ServerClientAgent extends Agent {
 		
 		// --- Finally start the LoadAgent ----------------
 		try {
-			this.getContainerController().createNewAgent("server.load", agentgui.simulationService.agents.LoadAgent.class.getName(), null).start();
+			this.getContainerController().createNewAgent("server.load", agentgui.simulationService.agents.LoadMeasureAgent.class.getName(), null).start();
 		} catch (StaleProxyException agentErr) {
 			agentErr.printStackTrace();
 		}

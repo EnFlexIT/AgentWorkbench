@@ -84,11 +84,11 @@ import agentgui.simulationService.ontology.ShowMonitorGUI;
 
 /**
  * This class represents the agent, which monitors the load information 
- * of all involved JVM's, nodes, container and agents from the whole platform.<br>   
+ * of all involved JVM's, container and agents of the platform.<br>   
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class LoadAgent extends Agent {
+public class LoadMeasureAgent extends Agent {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 3035508112883482740L;
@@ -415,7 +415,7 @@ public class LoadAgent extends Agent {
 			
 			// --- Which project is currently used?  --------------------------
 			currProject = Application.ProjectCurr;		
-			if ( currProject == null ) {
+			if (currProject == null) {
 				currSimSetup = null;
 				currDisSetup = null;
 				return;
@@ -428,7 +428,7 @@ public class LoadAgent extends Agent {
 			// --- If the dynamic load balancing is activated: ----------------
 			if (currDisSetup!=null && currDisSetup.isDoDynamicLoadBalancing()==true) {
 			
-				LoadAgent thisLoadAgent = (LoadAgent) myAgent;
+				LoadMeasureAgent thisLoadAgent = (LoadMeasureAgent) myAgent;
 				try {
 					@SuppressWarnings("unchecked")
 					Class<? extends DynamicLoadBalancingBase> dynLoBaClass = (Class<? extends DynamicLoadBalancingBase>) Class.forName(currDisSetup.getDynamicLoadBalancingClass());

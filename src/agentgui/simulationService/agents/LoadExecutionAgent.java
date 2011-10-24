@@ -30,6 +30,10 @@ package agentgui.simulationService.agents;
 
 import jade.core.Agent;
 import jade.core.ServiceException;
+import jade.core.behaviours.OneShotBehaviour;
+
+import java.lang.reflect.InvocationTargetException;
+
 import agentgui.core.application.Application;
 import agentgui.core.application.Project;
 import agentgui.core.gui.CoreWindow;
@@ -52,7 +56,7 @@ import agentgui.simulationService.balancing.StaticLoadBalancingBase;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class SimStartAgent extends Agent {
+public class LoadExecutionAgent extends Agent {
 
 	private static final long serialVersionUID = 7768569966599564839L;
 
@@ -65,7 +69,10 @@ public class SimStartAgent extends Agent {
 	/** The Constant BASE_ACTION_Stop. */
 	public final static int BASE_ACTION_Stop = 3;
 	
+	private int startArg;
+	
 	private CoreWindow mainWindow = Application.MainWindow;
+	
 	
 	/* (non-Javadoc)
 	 * @see jade.core.Agent#setup()
@@ -75,50 +82,70 @@ public class SimStartAgent extends Agent {
 		super.setup();
 		
 		Object[] startArgs = getArguments();
-		int startArg = (Integer) startArgs[0];
+		startArg = (Integer) startArgs[0];
 		
-		// --- If the Action is a 'start'-action, it can be also a 'restart'-action -----
-		if (startArg==BASE_ACTION_Start) {
-			if (mainWindow.isEnabledSimStop()) {
-				startArg = BASE_ACTION_Restart;
-			}
+		this.addBehaviour(new DoStartAction(this));
+		
+	}
+	
+	/**
+	 * The Class DoStartAction.
+	 */
+	private class DoStartAction extends OneShotBehaviour {
+
+		private static final long serialVersionUID = -559016842727286483L;
+
+		public DoStartAction(Agent agent) {
+			super(agent);
 		}
 		
-		// --- Do the wanted/necessary action -------------------------------------------
-		switch (startArg) {
-		case BASE_ACTION_Start:
-			StaticLoadBalancingBase staticBalancing = this.getStartAndStaticLoadBalancingClass();
-			if (staticBalancing!=null) {
-				this.addBehaviour(staticBalancing);	
+		@Override
+		public void action() {
+			
+			// --- If the Action is a 'start'-action, it can be also a 'restart'-action -----
+			if (startArg==BASE_ACTION_Start) {
+				if (mainWindow.isEnabledSimStop()) {
+					startArg = BASE_ACTION_Restart;
+				}
+			}
+			
+			// --- Do the wanted/necessary action -------------------------------------------
+			switch (startArg) {
+			case BASE_ACTION_Start:
+				StaticLoadBalancingBase staticBalancing = getStartAndStaticLoadBalancingClass(myAgent);
+				if (staticBalancing!=null) {
+					myAgent.addBehaviour(staticBalancing);	
+					mainWindow.setEnableSimStart(false);
+					mainWindow.setEnableSimPause(true);
+					mainWindow.setEnableSimStop(true);
+				} else {
+					myAgent.doDelete();
+				}
+				break;
+
+			case BASE_ACTION_Pause:
+				setPauseSimulation(true);
+				mainWindow.setEnableSimStart(true);
+				mainWindow.setEnableSimPause(false);
+				mainWindow.setEnableSimStop(true);
+				myAgent.doDelete();
+				break;
+			case BASE_ACTION_Restart:
+				setPauseSimulation(false);
 				mainWindow.setEnableSimStart(false);
 				mainWindow.setEnableSimPause(true);
 				mainWindow.setEnableSimStop(true);
-			} else {
-				this.doDelete();
+				myAgent.doDelete();
+				break;
+			case BASE_ACTION_Stop:
+				//Application.JadePlatform.jadeStop();
+				mainWindow.setEnableSimStart(true);
+				mainWindow.setEnableSimPause(false);
+				mainWindow.setEnableSimStop(false);
+				myAgent.doDelete();
+				break;
 			}
-			break;
-
-		case BASE_ACTION_Pause:
-			this.setPauseSimulation(true);
-			mainWindow.setEnableSimStart(true);
-			mainWindow.setEnableSimPause(false);
-			mainWindow.setEnableSimStop(true);
-			this.doDelete();
-			break;
-		case BASE_ACTION_Restart:
-			this.setPauseSimulation(false);
-			mainWindow.setEnableSimStart(false);
-			mainWindow.setEnableSimPause(true);
-			mainWindow.setEnableSimStop(true);
-			this.doDelete();
-			break;
-		case BASE_ACTION_Stop:
-			//Application.JadePlatform.jadeStop();
-			mainWindow.setEnableSimStart(true);
-			mainWindow.setEnableSimPause(false);
-			mainWindow.setEnableSimStop(false);
-			this.doDelete();
-			break;
+			
 		}
 		
 	}
@@ -146,7 +173,7 @@ public class SimStartAgent extends Agent {
 	 *
 	 * @return the start and static load balancing instance
 	 */
-	private StaticLoadBalancingBase getStartAndStaticLoadBalancingClass() {
+	private StaticLoadBalancingBase getStartAndStaticLoadBalancingClass(Agent myAgent) {
 		
 		// --- Get the current simulation setup -----------
 		SimulationSetup currSimSetup = Application.ProjectCurr.simulationSetups.getCurrSimSetup();
@@ -157,18 +184,26 @@ public class SimStartAgent extends Agent {
 
 			try {
 				@SuppressWarnings("unchecked")
-				Class<? extends StaticLoadBalancingBase> staticLoadBalancingClass = (Class<? extends StaticLoadBalancingBase>) Class.forName(currDisSetup.getStaticLoadBalancingClass());	
-				return staticLoadBalancingClass.newInstance();
+				Class<? extends StaticLoadBalancingBase> staLoBaClass = (Class<? extends StaticLoadBalancingBase>) Class.forName(currDisSetup.getStaticLoadBalancingClass());
+				return staLoBaClass.getDeclaredConstructor( new Class[] { myAgent.getClass() }).newInstance( new Object[] {myAgent});
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			} catch (InstantiationException e) {
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (SecurityException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			} catch (NoSuchMethodException e) {
+				e.printStackTrace();
 			}
 			
 		} else {
-			return new StaticLoadBalancing();
+			return new StaticLoadBalancing(this);
 		}
 		return null;
 	}

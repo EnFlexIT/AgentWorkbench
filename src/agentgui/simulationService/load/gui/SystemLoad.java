@@ -21,7 +21,7 @@ import javax.swing.JToolBar;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.simulationService.agents.LoadAgent;
+import agentgui.simulationService.agents.LoadMeasureAgent;
 import javax.swing.JTextField;
 
 public class SystemLoad extends JPanel {
@@ -30,7 +30,7 @@ public class SystemLoad extends JPanel {
 	
 	final static String PathImage = Application.RunInfo.PathImageIntern();  //  @jve:decl-index=0:
 	
-	private LoadAgent myAgent = null;
+	private LoadMeasureAgent myAgent = null;
 	
 	private JScrollPane jScrollPane = null;
 	public JPanel jPanelLoad = null;
@@ -54,7 +54,7 @@ public class SystemLoad extends JPanel {
 	/**
 	 * This is the default constructor
 	 */
-	public SystemLoad(LoadAgent agent) {
+	public SystemLoad(LoadMeasureAgent agent) {
 		super();
 		myAgent = agent;
 		initialize();

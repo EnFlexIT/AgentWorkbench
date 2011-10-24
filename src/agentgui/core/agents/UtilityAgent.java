@@ -57,7 +57,7 @@ import jade.core.Agent;
  * 
  * @see agentgui.core.jade.Platform#UTIL_CMD_OpenLoadMonitor
  * @see agentgui.core.agents.behaviour.ShowLoadMonitorBehaviour
- * @see agentgui.simulationService.agents.LoadAgent
+ * @see agentgui.simulationService.agents.LoadMeasureAgent
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */

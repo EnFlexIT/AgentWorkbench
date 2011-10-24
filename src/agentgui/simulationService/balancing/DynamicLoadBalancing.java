@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.simulationService.balancing;
 
 import jade.core.Location;
@@ -6,23 +34,41 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
 
-import agentgui.simulationService.agents.LoadAgent;
+import agentgui.core.gui.projectwindow.simsetup.Distribution;
+import agentgui.simulationService.agents.LoadMeasureAgent;
 import agentgui.simulationService.load.LoadMerger;
 import agentgui.simulationService.load.LoadAgentMap.AID_Container;
 import agentgui.simulationService.load.LoadAgentMap.AID_Container_List;
 
-
-public class DynamicLoadBalancing extends DynamicLoadBalancingBase implements DynamicLoadBalancingInterface {
+/**
+ * This is the default class for the dynamic load balancing. It will apply, if
+ * the 'Enable dynamic load balancing' - checkbox is set selected.
+ * 
+ * @see DynamicLoadBalancingBase
+ * @see BaseLoadBalancingInterface
+ * @see Distribution
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ */
+public class DynamicLoadBalancing extends DynamicLoadBalancingBase {
 
 	private static final long serialVersionUID = -4721675611537786965L;
 
 	private Location lastNewLocation = null;
 	
-	public DynamicLoadBalancing(LoadAgent loadAgent) {
-		super(loadAgent);
+	/**
+	 * Instantiates a new dynamic load balancing.
+	 *
+	 * @param loadMeasureAgent the load agent
+	 */
+	public DynamicLoadBalancing(LoadMeasureAgent loadMeasureAgent) {
+		super(loadMeasureAgent);
 	}
 
-	@Override
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.balancing.DynamicLoadBalancingBase#doBalancing()
+	 */
+	//@Override
 	public void doBalancing() {
 		
 		Vector<AID_Container> transferAgents = new Vector<AID_Container>();
@@ -121,10 +167,13 @@ public class DynamicLoadBalancing extends DynamicLoadBalancingBase implements Dy
 	
 	/**
 	 * This method will distribute the given number of agents to the machine
-	 * identified by the 'identifier' of 'load'
-	 * @param transferAgents
-	 * @param loadOnMachine
-	 * @param no2MigrateSum
+	 * identified by the 'identifier' of 'load'.
+	 *
+	 * @param transferAgents the transfer agents
+	 * @param loadOnMachine the load on machine
+	 * @param no2MigrateSum the no to migrate in sum
+	 * @param transferAgentsPointer the transfer agents pointer
+	 * @return the number of agents to transfer  
 	 */
 	private int setAgents4MigrationToMachine(Vector<AID_Container>transferAgents, LoadMerger loadOnMachine, int no2MigrateSum, int transferAgentsPointer) {
 		
@@ -161,10 +210,11 @@ public class DynamicLoadBalancing extends DynamicLoadBalancingBase implements Dy
 	
 	/**
 	 * This method selects agents which can be migrated from the machine
-	 * identified by the 'identifier' of 'load'
-	 * @param transferAgents
-	 * @param loadOnMachine
-	 * @param no2MigrateSum
+	 * identified by the 'identifier' of 'load'.
+	 *
+	 * @param transferAgents the transfer agents
+	 * @param loadOnMachine the load on machine
+	 * @param no2MigrateSum the no2 migrate sum
 	 */
 	private void selectAgents4MigrationFromMachine(Vector<AID_Container>transferAgents, LoadMerger loadOnMachine, int no2MigrateSum) {
 
@@ -203,5 +253,6 @@ public class DynamicLoadBalancing extends DynamicLoadBalancingBase implements Dy
 			}// - end while -
 		}// - end while -
 	}
+
 	
 }

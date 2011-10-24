@@ -437,8 +437,8 @@ public class Platform extends Object {
 		JadeSystemTools.put( "log", "jade.tools.logging.LogManagerAgent" );
 
 		// --- AgentGUI - Agents --------------------------
-		JadeSystemTools.put( "loadmonitor", agentgui.simulationService.agents.LoadAgent.class.getName());
-		JadeSystemTools.put( "simstarter", agentgui.simulationService.agents.SimStartAgent.class.getName());
+		JadeSystemTools.put( "loadmonitor", agentgui.simulationService.agents.LoadMeasureAgent.class.getName());
+		JadeSystemTools.put( "simstarter", agentgui.simulationService.agents.LoadExecutionAgent.class.getName());
 		
 		boolean showRMA = true;
 		
