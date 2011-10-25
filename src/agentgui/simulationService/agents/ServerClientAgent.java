@@ -448,7 +448,7 @@ public class ServerClientAgent extends Agent {
 				myLoad.setLoadMemorySystem(LoadMeasureThread.getLoadMemorySystem());
 				myLoad.setLoadMemoryJVM(LoadMeasureThread.getLoadMemoryJVM());
 				myLoad.setLoadNoThreads(LoadMeasureThread.getLoadNoThreads());
-				myLoad.setLoadExceeded(LoadMeasureThread.getThresholdLevelesExceeded());
+				myLoad.setLoadExceeded(LoadMeasureThread.getThresholdLevelExceeded());
 				trig.setClientLoad(myLoad);
 				
 				// --- get Current Benchmark-Result -----------------

@@ -34,28 +34,56 @@ import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
 import java.util.Hashtable;
 
+/**
+ * This class will do the actual load measurement of the currently running 
+ * JVM. It is used from the {@link LoadMeasureThread}, which coordinates all
+ * measurements.
+ * 
+ * @see LoadMeasureThread
+ *  
+ * @author Christopher Nde - DAWIS - ICB - University of Duisburg - Essen
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ */
 public class LoadMeasureJVM implements Cloneable {
 
 	private static final long serialVersionUID = -5202880756096638141L;
 	
-	private String jvmPID = null; 
+	/** The JVM PID (process ID). */
+	private String jvmPID = null;
+	/** The free memory of the JVM. */
+	private long jvmMemoFree = 0;			// bytes 
+	/** The total memory of the JVM. */
+	private long jvmMemoTotal = 0;			// bytes
+	/** The maximum memory of the JVM. */
+	private long jvmMemoMax = 0;			// bytes
+    /** The currently used heap . */
+    private long jvmHeapUsed = 0;  			// bytes
+    /** The heap committed. */
+    private long jvmHeapCommitted = 0;  	// bytes            
+    /** The maximum heap. */
+    private long jvmHeapMax = 0;  			// bytes
+    /** The initial heap. */
+    private long jvmHeapInit = 0;  			// bytes
 	
-	private long jvmMemoFree = 0;			// Byte 
-	private long jvmMemoTotal = 0;			// Byte
-	private long jvmMemoMax = 0;			// Byte
-   
+	/** The current MemoryMXBean. */
 	private MemoryMXBean memXB = ManagementFactory.getMemoryMXBean();
-    private long jvmHeapUsed = 0;  			// Byte
-    private long jvmHeapCommited = 0;  		// Byte
-    private long jvmHeapMax = 0;  			// Byte
-    private long jvmHeapInit = 0;  			// Byte
-	
+    /** The current ThreadMXBean. */
     private ThreadMXBean threadXB = ManagementFactory.getThreadMXBean();
-    boolean threadMonitoringSupported = threadXB.isThreadContentionMonitoringSupported();
-    boolean threadCpuTimeSupported = threadXB.isThreadCpuTimeSupported(); 
+    
+    /** True, if thread monitoring is supported. */
+    private boolean threadMonitoringSupported = threadXB.isThreadContentionMonitoringSupported();
+    /** True, if threadCpuTime is supported. */
+    private boolean threadCpuTimeSupported = threadXB.isThreadCpuTimeSupported(); 
+    
+    /** The number of threads running in this JVM. */
     private int jvmThreadCount = 0;
+    /** The thread times in the JVM. */
     private Hashtable<String, Long> jvmThreadTimes = null;
     
+    
+    /**
+     * Instantiates this class.
+     */
     public LoadMeasureJVM() {
     	
     	this.jvmPID = ManagementFactory.getRuntimeMXBean().getName();
@@ -71,7 +99,8 @@ public class LoadMeasureJVM implements Cloneable {
     }
 	
     /**
-     * returns a copy of the current object
+     * Returns a clone of the current object.
+     * @return LoadMeasureJVM, a new instance of this class 
      */
     @Override
     protected LoadMeasureJVM clone() {
@@ -84,7 +113,7 @@ public class LoadMeasureJVM implements Cloneable {
     }
     
     /**
-     * This method measures the current load of th system 
+     * This method measures the current load of the system by using the on board functionalities of the JVM.
      */
 	public void measureLoadOfSystem() {
 
@@ -95,7 +124,7 @@ public class LoadMeasureJVM implements Cloneable {
 		jvmHeapInit     = memXB.getHeapMemoryUsage().getInit();
 		jvmHeapMax      = memXB.getHeapMemoryUsage().getMax();
 		jvmHeapUsed     = memXB.getHeapMemoryUsage().getUsed();
-		jvmHeapCommited = memXB.getHeapMemoryUsage().getCommitted();    
+		jvmHeapCommitted = memXB.getHeapMemoryUsage().getCommitted();    
 		
 		if (threadXB.isObjectMonitorUsageSupported()) {
 			
@@ -118,9 +147,9 @@ public class LoadMeasureJVM implements Cloneable {
 	}
 
 	/**
-	 * This method return treu/false if a Thread, given by it's name exists or not
-	 * @param threadName2LookAt
-	 * @return boolean
+	 * This method return true/false if a Thread, given by it's name exists or not.
+	 * @param threadName2LookAt the name of the thread
+	 * @return boolean true, if the named thread exists
 	 */
 	public boolean threadExists(String threadName2LookAt) {
 		
@@ -139,12 +168,14 @@ public class LoadMeasureJVM implements Cloneable {
 	}
 	
 	/**
+	 * Sets the JVM PID.
 	 * @param jvmPID the jvmPID to set
 	 */
 	public void setJvmPID(String jvmPID) {
 		this.jvmPID = jvmPID;
 	}
 	/**
+	 * Returns the JVM PID.
 	 * @return the jvmPID
 	 */
 	public String getJvmPID() {
@@ -152,12 +183,14 @@ public class LoadMeasureJVM implements Cloneable {
 	}
 
 	/**
+	 * Returns the JVM free memory.
 	 * @return the jvmMemoFree
 	 */
 	public long getJvmMemoFree() {
 		return jvmMemoFree;
 	}
 	/**
+	 * Sets the JVM free memory.
 	 * @param jvmMemoFree the jvmMemoFree to set
 	 */
 	public void setJvmMemoFree(long jvmMemoFree) {
@@ -165,12 +198,14 @@ public class LoadMeasureJVM implements Cloneable {
 	}
 
 	/**
+	 * Returns the JVM total memory.
 	 * @return the jvmMemoTotal
 	 */
 	public long getJvmMemoTotal() {
 		return jvmMemoTotal;
 	}
 	/**
+	 * Sets the JVM total memory.
 	 * @param jvmMemoTotal the jvmMemoTotal to set
 	 */
 	public void setJvmMemoTotal(long jvmMemoTotal) {
@@ -178,12 +213,14 @@ public class LoadMeasureJVM implements Cloneable {
 	}
 
 	/**
+	 * Returns the JVM maximum memory.
 	 * @return the jvmMemoMax
 	 */
 	public long getJvmMemoMax() {
 		return jvmMemoMax;
 	}
 	/**
+	 * Sets the JVM maximum memory.
 	 * @param jvmMemoMax the jvmMemoMax to set
 	 */
 	public void setJvmMemoMax(long jvmMemoMax) {
@@ -191,12 +228,14 @@ public class LoadMeasureJVM implements Cloneable {
 	}
 
 	/**
+	 * Returns the JVM used heap memory.
 	 * @return the jvmHeapUsed
 	 */
 	public long getJvmHeapUsed() {
 		return jvmHeapUsed;
 	}
 	/**
+	 * Sets the JVM used heap memory.
 	 * @param jvmHeapUsed the jvmHeapUsed to set
 	 */
 	public void setJvmHeapUsed(long jvmHeapUsed) {
@@ -204,51 +243,60 @@ public class LoadMeasureJVM implements Cloneable {
 	}
 
 	/**
+	 * Returns the JVM committed heap memory.
 	 * @return the jvmHeapCommited
 	 */
-	public long getJvmHeapCommited() {
-		return jvmHeapCommited;
+	public long getJvmHeapCommitted() {
+		return jvmHeapCommitted;
 	}
 	/**
+	 * Sets the JVM committed heap memory.
 	 * @param jvmHeapCommited the jvmHeapCommited to set
 	 */
-	public void setJvmHeapCommited(long jvmHeapCommited) {
-		this.jvmHeapCommited = jvmHeapCommited;
+	public void setJvmHeapCommitted(long jvmHeapCommited) {
+		this.jvmHeapCommitted = jvmHeapCommited;
 	}
 
 	/**
-	 * @return the jvmHeapMaxt
+	 * Returns the JVM maximum heap memory.
+	 * @return the jvmHeapMax
 	 */
 	public long getJvmHeapMax() {
 		return jvmHeapMax;
 	}
 	/**
-	 * @param jvmHeapMaxt the jvmHeapMaxt to set
+	 * Sets the JVM maximum heap memory.
+	 * @param jvmHeapMax the jvmHeapMax to set
 	 */
 	public void setJvmHeapMax(long jvmHeapMax) {
 		this.jvmHeapMax = jvmHeapMax;
 	}
 
 	/**
+	 * Returns the JVM initial heap memory.
 	 * @return the jvmHeapInit
 	 */
 	public long getJvmHeapInit() {
 		return jvmHeapInit;
 	}
 	/**
+	 * Returns the JVM initial heap memory.
 	 * @param jvmHeapInit the jvmHeapInit to set
 	 */
 	public void setJvmHeapInit(long jvmHeapInit) {
 		this.jvmHeapInit = jvmHeapInit;
 	}
+	
 
 	/**
+	 * Returns the number of threads running in the JVM.
 	 * @return the jvmThreadCount
 	 */
 	public int getJvmThreadCount() {
 		return jvmThreadCount;
 	}
 	/**
+	 * Sets the number of threads running in the JVM.
 	 * @param jvmThreadCount the jvmThreadCount to set
 	 */
 	public void setJvmThreadCount(int jvmThreadCount) {
@@ -256,18 +304,20 @@ public class LoadMeasureJVM implements Cloneable {
 	}
 
 	/**
+	 * Returns the times of the threads running in the JVM.
 	 * @return the jvmThreadTimes
 	 */
 	public Hashtable<String, Long> getJvmThreadTimes() {
 		return jvmThreadTimes;
 	}
+	
 	/**
+	 * Sets the times of the threads running in the JVM.
 	 * @param jvmThreadTimes the jvmThreadTimes to set
 	 */
 	public void setJvmThreadTimes(Hashtable<String, Long> jvmThreadTimes) {
 		this.jvmThreadTimes = jvmThreadTimes;
 	}
 
-	
 
 }

@@ -36,30 +36,45 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
 
+import agentgui.simulationService.LoadService;
+
 /**
- * 
+ * This class provides a map that describes the locations of agents on the platform
+ * and the number of them at the platform or at a specified container.
+ * The class is used through the {@link LoadInformation}, which is part of the 
+ * {@link LoadService}.
+ *
+ * @see LoadInformation
+ * @see LoadService
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class LoadAgentMap implements Serializable {
 	
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 7651064205614961934L;
 
+	/** The agents at platform. */
 	private Hashtable<String, AID_Container> agentsAtPlatform = new Hashtable<String, AID_Container>();
+	
+	/** The agents at container. */
 	private Hashtable<String, AID_Container_List> agentsAtContainer = new Hashtable<String, AID_Container_List>();
 	
+	/** The no agents at platform. */
 	public Integer noAgentsAtPlatform = null;
+	
+	/** The no agents at container. */
 	public Hashtable<String, Integer> noAgentsAtContainer = null;
 	
 	/**
-	 * Constructor of this class
+	 * Constructor of this class.
 	 */
 	public LoadAgentMap() {
 	}
 	
 	/**
-	 * This method counts all of the agents at the platform and 
-	 * the agents, which are located at one specific container  
+	 * This method counts all of the agents at the platform and
+	 * the agents, which are located at one specific container.
 	 */
 	public void doCountings() {
 		
@@ -80,8 +95,11 @@ public class LoadAgentMap implements Serializable {
 	}
 	
 	/**
-	 * Which agents are available at the platform
-	 * @param aid
+	 * Which agents are available at the platform.
+	 *
+	 * @param containerName the container name
+	 * @param aid the AID of an agent
+	 * @param hasServiceSensor the has service sensor
 	 */
 	public void put(String containerName, AID aid, boolean hasServiceSensor) {
 		if (aid==null) {
@@ -96,10 +114,12 @@ public class LoadAgentMap implements Serializable {
 			this.put2AgentsAtContainer(containerName, cAID);
 		}
 	}
+	
 	/**
-	 * Which agents are in which container
-	 * @param containeName
-	 * @param aid
+	 * This method stores the information which agents are in which container.
+	 *
+	 * @param containerName the container name
+	 * @param cAID the AID_Container
 	 */
 	private void put2AgentsAtContainer(String containerName, AID_Container cAID) {
 		AID_Container_List agentList = agentsAtContainer.get(containerName);
@@ -113,12 +133,15 @@ public class LoadAgentMap implements Serializable {
 	}
 	
 	/**
+	 * Provides the agents at the whole platform.
 	 * @return the agentsAtPlatform
 	 */
 	public Hashtable<String, AID_Container> getAgentsAtPlatform() {
 		return agentsAtPlatform;
 	}
+	
 	/**
+	 * Gets the agents at container.
 	 * @return the agentsAtContainer
 	 */
 	public Hashtable<String, AID_Container_List> getAgentsAtContainer() {
@@ -126,12 +149,13 @@ public class LoadAgentMap implements Serializable {
 	}
 
 	/**
-	 * Search's for the stored agent information. With this, the current 
-	 * location of the agent can be found for example 
-	 * @param agentAddress
-	 * @return
+	 * Search's for the stored agent information. With this, the current
+	 * location of the agent can be found for example
+	 *
+	 * @param agentsAID the agents AID
+	 * @return the AID_Container of the agent
 	 */
-	public AID_Container getcAID(AID agentAddress) {
+	public AID_Container getAID_Container(AID agentsAID) {
 				
 		String[] aidArr = new String[this.agentsAtPlatform.keySet().size()];  
 		aidArr = (String[]) this.agentsAtPlatform.keySet().toArray();
@@ -139,7 +163,7 @@ public class LoadAgentMap implements Serializable {
 		for (int i = 0; i < aidArr.length; i++) {
 			String key = aidArr[i];
 			AID_Container cAID = this.agentsAtPlatform.get(key);
-			if (cAID.getAID().equals(agentAddress) ) {
+			if (cAID.getAID().equals(agentsAID) ) {
 				return cAID;
 			}
 		}
@@ -150,8 +174,17 @@ public class LoadAgentMap implements Serializable {
 	// ----------------------------------------------------------
 	// --- Sub-Class AID_Container_List --- S T A R T -----------
 	// ----------------------------------------------------------
+	/**
+	 * The Class AID_Container_List is an extended <code>Hashtable<String, AID_Container></code>.
+	 */
 	public class AID_Container_List extends Hashtable<String, AID_Container> implements Serializable {
+		
+		/** The Constant serialVersionUID. */
 		private static final long serialVersionUID = -575499631355769830L;
+		
+		/**
+		 * Instantiates a new AID_Container_List.
+		 */
 		public AID_Container_List() {
 			super();
 		}
@@ -163,61 +196,82 @@ public class LoadAgentMap implements Serializable {
 	// ----------------------------------------------------------
 	// --- Sub-Class AID_Container --- S T A R T ----------------
 	// ----------------------------------------------------------
+	/**
+	 * The Class AID_Container is used to extend the information of an agent, behind
+	 * the point of just knowing its AID.
+	 */
 	public class AID_Container implements Serializable {
 		
 		private static final long serialVersionUID = 3077331688501516668L;
+		
 		private AID agentAID = null;
 		private String containerName = null;
 		private boolean serviceSensor = false;
 		private Location newlocation = null;
 		
+		/**
+		 * Instantiates a new AID_Container.
+		 * @param aid the AID of an agent
+		 */
 		public AID_Container(AID aid) {
 			setAID(aid);
 		}
+		
 		/**
-		 * @param agentAID the agentAID to set
+		 * Sets the AID.
+		 * @param agentAID the AID of the agent.
 		 */
 		public void setAID(AID agentAID) {
 			this.agentAID = agentAID;
 		}
 		/**
-		 * @return the agentAID
+		 * Provides the AID of an agent.
+		 * @return the AID of the agent
 		 */
 		public AID getAID() {
 			return this.agentAID;
 		}
+		
 		/**
+		 * Sets the container name.
 		 * @param containerName the containerName to set
 		 */
 		public void setContainerName(String containerName) {
 			this.containerName = containerName;
 		}
 		/**
+		 * Gets the container name.
 		 * @return the containerName
 		 */
 		public String getContainerName() {
 			return this.containerName;
 		}
+		
 		/**
-		 * @param sensor the sensor to set
+		 * Sets the availability of a service sensor.
+		 * @param hasSensor the new service sensor
 		 */
 		public void setServiceSensor(boolean hasSensor) {
 			this.serviceSensor = hasSensor;
 		}
 		/**
-		 * @return the sensor
+		 * Checks for service sensor.
+		 * @return true, if an sensor is available 
 		 */
 		public boolean hasServiceSensor() {
 			return serviceSensor;
 		}
+		
 		/**
-		 * @param newlocation the newlocation to set
+		 * Sets the new location for an agent.
+		 * @param newLocation the new location
 		 */
 		public void setNewLocation(Location newLocation) {
 			this.newlocation = newLocation;
 		}
 		/**
-		 * @return the newlocation
+		 * Gets the new location for an agent.
+		 * @return the new location
 		 */
 		public Location getNewLocation() {
 			return newlocation;

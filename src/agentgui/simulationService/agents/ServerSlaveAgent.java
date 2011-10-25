@@ -269,7 +269,7 @@ public class ServerSlaveAgent extends Agent {
 				myLoad.setLoadMemorySystem(LoadMeasureThread.getLoadMemorySystem());
 				myLoad.setLoadMemoryJVM(LoadMeasureThread.getLoadMemoryJVM());
 				myLoad.setLoadNoThreads(LoadMeasureThread.getLoadNoThreads());
-				myLoad.setLoadExceeded(LoadMeasureThread.getThresholdLevelesExceeded());
+				myLoad.setLoadExceeded(LoadMeasureThread.getThresholdLevelExceeded());
 				trig.setSlaveLoad(myLoad);
 				
 				// --- get Current Benchmark-Result -----------------

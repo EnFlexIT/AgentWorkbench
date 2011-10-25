@@ -975,7 +975,7 @@ public class LoadService extends BaseService {
 			pl.setLoadMemorySystem(LoadMeasureThread.getLoadMemorySystem());
 			pl.setLoadMemoryJVM(LoadMeasureThread.getLoadMemoryJVM());
 			pl.setLoadNoThreads(LoadMeasureThread.getLoadNoThreads());
-			pl.setLoadExceeded(LoadMeasureThread.getThresholdLevelesExceeded());
+			pl.setLoadExceeded(LoadMeasureThread.getThresholdLevelExceeded());
 			return pl;
 		}
 		

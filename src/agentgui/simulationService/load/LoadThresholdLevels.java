@@ -30,91 +30,122 @@ package agentgui.simulationService.load;
 
 import java.io.Serializable;
 
+/**
+ * This is a serializable class, which holds the (default) threshold 
+ * levels for the running platform.   
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ */
 public class LoadThresholdLevels implements Serializable {
 
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1795189499689460795L;
 	
+	/** Default Level. */
 	private Integer thCpuL = 5;
+	/** Default Level. */
 	private Integer thCpuH = 80;
 	
+	/** Default Level. */
 	private Integer thMemoL = 5;
+	/** Default Level. */
 	private Integer thMemoH = 80;
 	
-	private Integer thNoThreadsL = 50;
-	private Integer thNoThreadsH = 1500;
+	/** Default Level. */
+	private Integer thNoThreadsL = 5;
+	/** Default Level. */
+	private Integer thNoThreadsH = 500;
 	
 		
 	/**
-	 * @return the thCpuL
+	 * Returns the threshold level for CPU-LOW level
+	 * @return the CPU-LOW level
 	 */
 	public Integer getThCpuL() {
 		return thCpuL;
 	}
 	/**
-	 * @param thCpuL the thCpuL to set
+	 * Sets the threshold level for CPU-LOW level
+	 * @param thCpuL the CPU-LOW level
 	 */
 	public void setThCpuL(Integer thCpuL) {
 		this.thCpuL = thCpuL;
 	}
+	
 	/**
-	 * @return the thCpuH
+	 * Returns the threshold level for CPU-HIGH level
+	 * @return the CPU-HIGH level
 	 */
 	public Integer getThCpuH() {
 		return thCpuH;
 	}
 	/**
-	 * @param thCpuH the thCpuH to set
+	 * Sets the threshold level for CPU-HIGH level
+	 * @param thCpuH the CPU-HIGH level
 	 */
 	public void setThCpuH(Integer thCpuH) {
 		this.thCpuH = thCpuH;
 	}
+	
 	/**
-	 * @return the thMemL
+	 * Returns the threshold level for MEMORY-LOW level
+	 * @return the MEMORY-LOW level
 	 */
 	public Integer getThMemoL() {
 		return thMemoL;
 	}
 	/**
-	 * @param thMemL the thMemL to set
+	 * Sets the threshold level for MEMORY-LOW level
+	 * @param thMemoL the MEMORY-LOW level
 	 */
 	public void setThMemoL(Integer thMemoL) {
 		this.thMemoL = thMemoL;
 	}
+	
 	/**
-	 * @return the thMemH
+	 * Returns the threshold level for MEMORY-HIGH level
+	 * @return the MEMORY-HIGH level
 	 */
 	public Integer getThMemoH() {
 		return thMemoH;
 	}
 	/**
-	 * @param thMemH the thMemH to set
+	 * Sets the threshold level for MEMORY-HIGH level
+	 * @param thMemoH the MEMORY-HIGH level
 	 */
 	public void setThMemoH(Integer thMemoH) {
 		this.thMemoH = thMemoH;
 	}
+	
 	/**
-	 * @param thNoThreadsL the thNoThreadsL to set
+	 * Sets the threshold Number-of-threads-LOW level
+	 * @param thNoThreadsL the threshold Number-of-threads-LOW level
 	 */
 	public void setThNoThreadsL(Integer thNoThreadsL) {
 		this.thNoThreadsL = thNoThreadsL;
 	}
 	/**
-	 * @return the thNoThreadsL
+	 * Returns the threshold Number-of-threads-LOW level
+	 * @return the threshold Number-of-threads-LOW level
 	 */
 	public Integer getThNoThreadsL() {
 		return thNoThreadsL;
 	}
+	
 	/**
-	 * @param thNoThreadsH the thNoThreadsH to set
+	 * Sets the threshold Number-of-threads-HIGH level 
+	 * @param thNoThreadsH the threshold Number-of-threads-HIGH level
 	 */
 	public void setThNoThreadsH(Integer thNoThreadsH) {
 		this.thNoThreadsH = thNoThreadsH;
 	}
 	/**
-	 * @return the thNoThreadsH
+	 * Returns the threshold Number-of-threads-HIGH level
+	 * @return the threshold Number-of-threads-HIGH level
 	 */
 	public Integer getThNoThreadsH() {
 		return thNoThreadsH;
 	}
+	
 	
 }
