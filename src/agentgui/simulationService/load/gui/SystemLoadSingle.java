@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.simulationService.load.gui;
 
 import java.awt.Dimension;
@@ -18,9 +46,14 @@ import agentgui.simulationService.ontology.PlatformPerformance;
 
 import java.awt.Font;
 
+/**
+ * This class is used in order to display the load on a single container in a modular way.  
+ *  
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ */
 public class SystemLoadSingle extends JPanel {
 
-	private static final long serialVersionUID = 1L;
+private static final long serialVersionUID = 1L;
 	
 	final static String PathImage = Application.RunInfo.PathImageIntern();
 	private final ImageIcon iconGreen = new ImageIcon( this.getClass().getResource( PathImage + "StatGreen.png") );  //  @jve:decl-index=0:
@@ -36,13 +69,11 @@ public class SystemLoadSingle extends JPanel {
 	private JLabel jLabelNoAgents = null;
 
 	private JLabel jLabelCPUCaption = null;
-
 	private JLabel jLabelMemCaption = null;
-
 	private JLabel jLabelHeapCaption = null;
 
 	/**
-	 * This is the default constructor
+	 * This is the default constructor.
 	 */
 	public SystemLoadSingle() {
 		super();
@@ -50,8 +81,7 @@ public class SystemLoadSingle extends JPanel {
 	}
 
 	/**
-	 * This method initialises this
-	 * @return void
+	 * This method initialises this.
 	 */
 	private void initialize() {
 		GridBagConstraints gridBagConstraints31 = new GridBagConstraints();
@@ -149,8 +179,8 @@ public class SystemLoadSingle extends JPanel {
 	}
 
 	/**
-	 * This method initializes jLoadCPU	
-	 * @return javax.swing.JProgressBar	
+	 * This method initializes jLoadCPU.
+	 * @return javax.swing.JProgressBar
 	 */
 	private JProgressBar getJLoadCPU() {
 		if (jLoadCPU == null) {
@@ -164,8 +194,8 @@ public class SystemLoadSingle extends JPanel {
 	}
 
 	/**
-	 * This method initializes jLoadMemory	
-	 * @return javax.swing.JProgressBar	
+	 * This method initializes jLoadMemory.
+	 * @return javax.swing.JProgressBar
 	 */
 	private JProgressBar getJLoadMemory() {
 		if (jLoadMemory == null) {
@@ -179,8 +209,8 @@ public class SystemLoadSingle extends JPanel {
 	}
 
 	/**
-	 * This method initializes jLoadJVM	
-	 * @return javax.swing.JProgressBar	
+	 * This method initializes jLoadJVM.
+	 * @return javax.swing.JProgressBar
 	 */
 	private JProgressBar getJLoadJVM() {
 		if (jLoadJVM == null) {
@@ -193,7 +223,16 @@ public class SystemLoadSingle extends JPanel {
 		return jLoadJVM;
 	}
 
-	public void updateView( String containerName, NodeDescription nD, float benchmarkValue, PlatformLoad pL, Integer noAg ) {
+	/**
+	 * Update view.
+	 *
+	 * @param containerName the container name
+	 * @param nD the NodeDescription
+	 * @param benchmarkValue the benchmark value
+	 * @param pL the PlatformLoad
+	 * @param noAg the number of agents
+	 */
+	public void updateView(String containerName, NodeDescription nD, float benchmarkValue, PlatformLoad pL, Integer noAg) {
 
 		jLabelContainerName.setText(containerName);
 		if (pL.getLoadExceeded()==0) {
@@ -222,7 +261,8 @@ public class SystemLoadSingle extends JPanel {
 		
 		String description = "<HTML><BODY>" + opSys + "<br>" + perform + "<br>" + bench + "</BODY></HTML>";
 		jLabelNodeDescription.setText(description);
-		
-}
+
+	}
+
 	
 }  //  @jve:decl-index=0:visual-constraint="10,10"

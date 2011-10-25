@@ -1,5 +1,32 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.simulationService.load.gui;
-
 
 import java.awt.Image;
 import java.awt.event.WindowAdapter;
@@ -13,17 +40,26 @@ import javax.swing.UIManager;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.gui.CoreWindow;
+import agentgui.simulationService.agents.LoadMeasureAgent;
 
+/**
+ * This is the dialog window for displaying the current system load on
+ * the platform and is used by the {@link LoadMeasureAgent}.
+ * 
+ * @see LoadMeasureAgent
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ */
 public class SystemLoadDialog extends JFrame {
 
-	private static final long serialVersionUID = 1L;
+private static final long serialVersionUID = 1L;
 	
 	final static String PathImage = Application.RunInfo.PathImageIntern();
 	private final ImageIcon iconAgentGUI = new ImageIcon( this.getClass().getResource( PathImage + "AgentGUI.png") );
 	private final Image imageAgentGUI = iconAgentGUI.getImage();
 
 	/**
-	 * @param owner
+	 * Instantiates a new system load dialog.
 	 */
 	public SystemLoadDialog() {
 		super();
@@ -31,13 +67,12 @@ public class SystemLoadDialog extends JFrame {
 	}
 
 	/**
-	 * This method initialises this
-	 * @return void
+	 * This method initialises this.
 	 */
 	private void initialize() {
 		this.setSize(620, 120);
 		this.setIconImage(imageAgentGUI);
-	    this.setTitle( Application.RunInfo.getApplicationTitle() + ": " + Language.translate("Load Monitor") );
+	    this.setTitle(Application.RunInfo.getApplicationTitle() + ": " + Language.translate("Load Monitor"));
 		this.setDefaultCloseOperation(CoreWindow.DO_NOTHING_ON_CLOSE);
 
 		// --- Set the Look and Feel of the Dialog ------------------
@@ -55,8 +90,7 @@ public class SystemLoadDialog extends JFrame {
 
 	
 	/**
-	 * This method set the Look and Feel of this Dialog
-	 * @param NewLnF
+	 * This method set the Look and Feel of this Dialog.
 	 */
 	@SuppressWarnings("unused")
 	private void setLookAndFeel() {

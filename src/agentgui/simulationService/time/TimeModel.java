@@ -1,51 +1,52 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.simulationService.time;
 
 import jade.util.leap.Serializable;
 
-
 /**
+ * This is the abstract base class for a time model.
  * 
- * @author Christian Derksen
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class TimeModel implements Serializable {
+public abstract class TimeModel implements TimeModelInterface, Serializable {
 
 	private static final long serialVersionUID = 4597561080133786915L;
 	
 	public static final int STROKE = 1;
 	public static final int DISCRETE_TIME = 2;
 	
-	private Integer typeOfTimeModel = 0; 
-	
-	// --- Constructor for Stroke-TimeModel ---------------
+	/**
+	 * Instantiates a new time model.
+	 */
 	public TimeModel(){
-		
 	}
 		
-	/**
-	 * This Method steps the concrete discrete TimeModel
-	 * @param timeModel
-	 */
-	public void step(TimeModel timeModel) {
-		if ( timeModel instanceof TimeModelStroke ) {
-			TimeModelStroke tms =(TimeModelStroke) timeModel;
-			tms.step();
-		} else if ( timeModel instanceof TimeModelDiscrete ) {
-			TimeModelDiscrete tmd =(TimeModelDiscrete) timeModel;
-			tmd.step();
-		}
-	}
-	
-	/**
-	 * @param typeOfTimeModel the typeOfTimeModel to set
-	 */
-	public void setTypeOfTimeModel(Integer typeOfTimeModel) {
-		this.typeOfTimeModel = typeOfTimeModel;
-	}
-	/**
-	 * @return the typeOfTimeModel
-	 */
-	public Integer getTypeOfTimeModel() {
-		return typeOfTimeModel;
-	}
 		
 }

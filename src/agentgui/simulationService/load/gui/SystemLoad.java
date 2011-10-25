@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.simulationService.load.gui;
 
 import java.awt.BorderLayout;
@@ -24,6 +52,15 @@ import agentgui.core.application.Language;
 import agentgui.simulationService.agents.LoadMeasureAgent;
 import javax.swing.JTextField;
 
+/**
+ * This panel will display all occurring elements of the type {@link SystemLoadSingle}
+ * in this panel with each other. It is used by the {@link LoadMeasureAgent}. 
+ *  
+ * @see SystemLoadSingle
+ * @see LoadMeasureAgent
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ */
 public class SystemLoad extends JPanel {
 
 	private static final long serialVersionUID = 1L;
@@ -50,9 +87,11 @@ public class SystemLoad extends JPanel {
 		private JLabel jLabelContainerCount = null;
 		
 		private JTextField jTextFieldCyclesPerSecond = null;
+
 	
 	/**
-	 * This is the default constructor
+	 * This is the default constructor.
+	 * @param agent the agent
 	 */
 	public SystemLoad(LoadMeasureAgent agent) {
 		super();
@@ -69,7 +108,7 @@ public class SystemLoad extends JPanel {
 	}
 
 	/**
-	 * This method initializes this
+	 * This method initializes this.
 	 * @return void
 	 */
 	private void initialize() {
@@ -80,6 +119,10 @@ public class SystemLoad extends JPanel {
 		this.add(getJScrollPane(), BorderLayout.CENTER);
 	}
 
+	/**
+	 * Sets the number of agents.
+	 * @param noAgents the new number of agents
+	 */
 	public void setNumberOfAgents(Integer noAgents) {
 		
 		String displayText = null;
@@ -97,6 +140,10 @@ public class SystemLoad extends JPanel {
 		jLabelAgentCount.setText(displayText);
 	}
 	
+	/**
+	 * Sets the number of container.
+	 * @param noContainer the new number of container
+	 */
 	public void setNumberOfContainer(Integer noContainer) {
 		
 		NumberFormat nf = NumberFormat.getInstance(); 
@@ -107,6 +154,10 @@ public class SystemLoad extends JPanel {
 		jLabelContainerCount.setText(displaText);
 	}
 
+	/**
+	 * Sets the cycle time.
+	 * @param cycleTime the new cycle time
+	 */
 	public void setCycleTime(double cycleTime) {
 		
 		if (cycleTime==0) {
@@ -124,8 +175,8 @@ public class SystemLoad extends JPanel {
 	}
 	
 	/**
-	 * This method initializes jJToolBarLoad	
-	 * @return javax.swing.JToolBar	
+	 * This method initializes jJToolBarLoad.
+	 * @return javax.swing.JToolBar
 	 */
 	private JToolBar getJJToolBarLoad() {
 		if (jJToolBarLoad == null) {
@@ -193,8 +244,8 @@ public class SystemLoad extends JPanel {
 	}
 
 	/**
-	 * This method initializes jScrollPane	
-	 * @return javax.swing.JScrollPane	
+	 * This method initializes jScrollPane.
+	 * @return javax.swing.JScrollPane
 	 */
 	private JScrollPane getJScrollPane() {
 		if (jScrollPane == null) {
@@ -207,8 +258,8 @@ public class SystemLoad extends JPanel {
 	}
 
 	/**
-	 * This method initializes jPanelLoad	
-	 * @return javax.swing.JPanel	
+	 * This method initializes jPanelLoad.
+	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJPanelLoad() {
 		if (jPanelLoad == null) {
@@ -220,8 +271,8 @@ public class SystemLoad extends JPanel {
 	}
 
 	/**
-	 * This method initializes jComboBoxInterval	
-	 * @return javax.swing.JComboBox	
+	 * This method initializes jComboBoxInterval.
+	 * @return javax.swing.JComboBox
 	 */
 	private JComboBox getJComboBoxInterval() {
 		if (jComboBoxInterval == null) {
@@ -243,7 +294,7 @@ public class SystemLoad extends JPanel {
 	}
 	
 	/**
-	 * This method sets the default values for the ComboBoxModel
+	 * This method sets the default values for the ComboBoxModel of sampling interval.
 	 */
 	private void setComboBoxModel() {
 		
@@ -272,16 +323,24 @@ public class SystemLoad extends JPanel {
 	// ------------------------------------------------------------
 	// --- Unterklasse für die Symbolleisten-Buttons --- START ----
 	// ------------------------------------------------------------	
+	/**
+	 * Sub class for generating JToolBarButton's.
+	 */
 	private class JToolBarButton extends JButton implements ActionListener {
 
 		private static final long serialVersionUID = 1L;
  
-		private JToolBarButton( String actionCommand, 
-								String toolTipText, 
-								String altText, 
-								String imgName ) {
+		/**
+		 * Instantiates a new JToolBarButton.
+		 *
+		 * @param actionCommand the action command
+		 * @param toolTipText the tool tip text
+		 * @param text the text
+		 * @param imgName the image name
+		 */
+		private JToolBarButton(String actionCommand, String toolTipText, String text, String imgName) {
 				
-			this.setText(altText);
+			this.setText(text);
 			this.setToolTipText(toolTipText);
 			this.setSize(36, 36);
 			
@@ -294,7 +353,7 @@ public class SystemLoad extends JPanel {
 
 			if ( imgName != null ) {
 				try {
-					ImageIcon ButtIcon = new ImageIcon( this.getClass().getResource( PathImage + imgName ), altText);
+					ImageIcon ButtIcon = new ImageIcon( this.getClass().getResource( PathImage + imgName ), text);
 					this.setIcon(ButtIcon);
 				}
 				catch (Exception err) {
@@ -305,6 +364,9 @@ public class SystemLoad extends JPanel {
 			this.setActionCommand(actionCommand);
 		}
 		
+		/* (non-Javadoc)
+		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+		 */
 		public void actionPerformed(ActionEvent ae) {
 			// --- Fallunterscheidung 'cmd' einbauen ---
 			String ActCMD = ae.getActionCommand();			
@@ -343,27 +405,41 @@ public class SystemLoad extends JPanel {
 	// ------------------------------------------------------------
 	// --- Unterklasse für das ComboBoxModel --- START ------------
 	// ------------------------------------------------------------	
+	/**
+	 * The class TimeSelection is used for the ComboBoxModel of the 
+	 * sampling interval as user object.
+	 */
 	public class TimeSelection {
 		
+		/** The time in milliseconds. */
 		private int timeInMill = 0;
 		
+		/**
+		 * Instantiates a new time selection.
+		 * @param timeInMillis the time in milliseconds
+		 */
 		public TimeSelection(int timeInMillis) {
 			this.timeInMill = timeInMillis;
 		}
+		
 		/**
-		 * @return the timeInMill
+		 * Gets the time in milliseconds.
+		 * @return the time in milliseconds
 		 */
 		public int getTimeInMill() {
 			return timeInMill;
 		}
 		/**
-		 * @param timeInMill the timeInMill to set
+		 * Sets the time in milliseconds.
+		 * @param timeInMill the milliseconds to set
 		 */
 		public void setTimeInMill(int timeInMill) {
 			this.timeInMill = timeInMill;
 		}
+		
 		/**
-		 * @return the text to display
+		 * Converts the milliseconds into seconds.
+		 * @return the text to display in seconds
 		 */
 		public String toString() {
 			int timeInTenth = Math.round(timeInMill/100);

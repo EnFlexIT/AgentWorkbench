@@ -28,60 +28,20 @@
  */
 package agentgui.simulationService.time;
 
-import agentgui.simulationService.environment.EnvironmentModel;
-
 /**
- * This is a stroke time model, which inherits just a simple counter and can
- * be used in an {@link EnvironmentModel}
- * 
+ * Here the necessary methods for a {@link TimeModel} are prepared.
+ *  
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class TimeModelStroke extends TimeModel {
+public interface TimeModelInterface {
 
-	private static final long serialVersionUID = -63223704339241994L;
-
-	private int counter = 0;
+	/**
+	 * Steps the time model one single discrete step forward.
+	 */
+	public void step();
 	
 	/**
-	 * Instantiates a new time model stroke.
+	 * Steps back the time model one single discrete step backwards.
 	 */
-	public TimeModelStroke() {
-	}
-	/**
-	 * Instantiates a new time model stroke.
-	 * @param counterStart the position number the counter has to start from
-	 */
-	public TimeModelStroke(Integer counterStart) {
-		this.counter = counterStart;
-	}
-
-	/* (non-Javadoc)
-	 * @see agentgui.simulationService.time.TimeModelInterface#step()
-	 */
-	public void step() {
-		counter++;
-	}
-	/* (non-Javadoc)
-	 * @see agentgui.simulationService.time.TimeModelInterface#stepBack()
-	 */
-	@Override
-	public void stepBack() {
-		counter--;
-	}
-
-	/**
-	 * Sets the counter.
-	 * @param counter the counter to set
-	 */
-	public void setCounter(Integer counter) {
-		this.counter = counter;
-	}
-	/**
-	 * Returns the counter.
-	 * @return the counter
-	 */
-	public Integer getCounter() {
-		return counter;
-	}
-	
-} // --- End of Sub-Class -----
+	public void stepBack();
+}

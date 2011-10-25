@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.simulationService.sensoring;
 
 import jade.core.AID;
@@ -5,11 +33,30 @@ import jade.core.Location;
 
 import java.util.Vector;
 
+import agentgui.simulationService.SimulationService;
+import agentgui.simulationService.agents.SimulationAgent;
 import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.load.LoadAgentMap.AID_Container;
 import agentgui.simulationService.transaction.EnvironmentNotification;
 
-
+/**
+ * This is the class for an actuator of the {@link SimulationService}, which is able to 
+ * inform all connected {@link SimulationAgent} with an integrated {@link ServiceSensor} 
+ * about a new {@link EnvironmentModel} or with an {@link EnvironmentNotification}.  
+ * Furthermore it can inform the connected agents about the {@link Location}, where they
+ * have to migrate, delegated by the load balancing process, or that they just have to die. 
+ * <br><br>
+ * The functionalities are not finalised yet.
+ * 
+ * @see SimulationService
+ * @see SimulationAgent
+ * @see ServiceSensor
+ * @see EnvironmentModel
+ * @see EnvironmentNotification
+ * @see Location
+ *  
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ */
 public class ServiceActuator {
 
 	private Vector<ServiceSensor> serviceSensors = new Vector<ServiceSensor>();
@@ -22,24 +69,24 @@ public class ServiceActuator {
 	
 	
 	/**
-	 * Opportunity for the agents to plugIn to this service
-	 * @param currSensor
+	 * Method for agents to plug-in to this actuator.
+	 * @param currSensor the ServiceSensor to plug-in
 	 */
 	public void plugIn(ServiceSensor currSensor) {
 		serviceSensors.addElement(currSensor);		
 	}
 	/**
-	 * Method to plugOut from this actuator
-	 * @param currSensor
+	 * Method to plug-out from this actuator
+	 * @param currSensor the ServiceSensor to plug-out
 	 */
 	public void plugOut(ServiceSensor currSensor) {
 		serviceSensors.removeElement(currSensor);
 	}
 	
 	/**
-	 * This method returns the ServiceSensor-Instance identified by the AID of the agent
-	 * @param aid
-	 * @return
+	 * This method returns the instance of the ServiceSensor identified by the AID of the agent.
+	 * @param aid the AID of the agent
+	 * @return the ServiceSensor
 	 */
 	public ServiceSensor getSensor(AID aid) {
 		
@@ -55,8 +102,8 @@ public class ServiceActuator {
 	}
 	
 	/**
-	 * returns all agents registered to this actuator by a sensor 
-	 * @return
+	 * Returns all agents registered to this actuator by a sensor.
+	 * @return the sensor agents
 	 */
 	public AID[] getSensorAgents() {
 		AID[] sensorAgents = new AID[serviceSensors.size()];
@@ -70,11 +117,12 @@ public class ServiceActuator {
 	
 	/**
 	 * This method informs all Sensors about the new environment model.
-	 * It can be either used to do this asynchron or synchron, but it. 
-	 * is highly recommended to do this asynchron, so that the agencie 
-	 * can act parallel and not sequential. 
-	 * @param currEnvironmentModel
-	 * @param aSynchron
+	 * It can be either used to do this asynchronously or asynchronously, but it.
+	 * is highly recommended to do this asynchronously, so that the agency
+	 * can act parallel and not sequential.
+	 *
+	 * @param currEnvironmentModel the current environment model
+	 * @param aSynchron true, if this should be don asynchronously
 	 */
 	public void notifySensors(final EnvironmentModel currEnvironmentModel, final boolean aSynchron) {
 		
@@ -92,11 +140,11 @@ public class ServiceActuator {
 	}
 
 	/**
-	 * 
-	 * @param agentAID
-	 * @param notification
-	 * @param aSynchron
-	 * @return
+	 * Notify an agent through the sensor.
+	 *
+	 * @param aid the aid
+	 * @param notification the notification
+	 * @return true, if successful
 	 */
 	public boolean notifySensorAgent(AID aid, EnvironmentNotification notification) {
 		
@@ -112,8 +160,8 @@ public class ServiceActuator {
 	}
 
 	/**
-	 * This method will kill all registered Simulations-Agents
-	 * to provide a (hopefully) faster shut-down of the system
+	 * This method will kill all registered SimulationAgents
+	 * to provide a faster(!) shut-down of the system.
 	 */
 	public void notifySensorAgentsDoDelete() {
 		
@@ -131,12 +179,14 @@ public class ServiceActuator {
 	}
 	
 	/**
+	 * Sets the number of simulation answers expected.
 	 * @param noOfSimulationAnswersExpected the noOfSimulationAnswersExpected to set
 	 */
 	public void setNoOfSimulationAnswersExpected(int noOfSimulationAnswersExpected) {
 		this.noOfSimulationAnswersExpected = noOfSimulationAnswersExpected;
 	}
 	/**
+	 * Returns the number of simulation answers expected.
 	 * @return the noOfSimulationAnswersExpected
 	 */
 	public int getNoOfSimulationAnswersExpected() {
@@ -144,9 +194,8 @@ public class ServiceActuator {
 	}
 
 	/**
-	 * This method will place a 'newLocation'-Object to every agent 
-	 * which is registered to this actuator 
-	 * @param transferAgents
+	 * This method will place a 'newLocation'-Object to every agent which is registered to this actuator.
+	 * @param transferAgents the Vector of agents to migrate
 	 */
 	public void setMigration(Vector<AID_Container> transferAgents) {
 
@@ -157,7 +206,7 @@ public class ServiceActuator {
 			Location newLocation = ((AID_Container)arrTransfer[i]).getNewLocation();
 			ServiceSensor sensorAgent = this.getSensor(aid); 
 			if (sensorAgent!=null) {
-				sensorAgent.putMigrationInfo(newLocation);
+				sensorAgent.putMigrationLocation(newLocation);
 				
 				//MigrationReminder migRem = new MigrationReminder(sensorAgent, newLocation);
 				//migrationList.addElement(migRem);
@@ -182,15 +231,15 @@ public class ServiceActuator {
 				break;
 			}
 			migrationListInMovement.addElement(migrationList.get(0));
-			migrationList.get(0).sensor.putMigrationInfo(migrationList.get(0).getSensorAgentsNewLocation());
+			migrationList.get(0).sensor.putMigrationLocation(migrationList.get(0).getSensorAgentsNewLocation());
 			migrationList.remove(0);
 		}
 	}
 	
 	/**
 	 * If the migration of an agent is completed, the SimulationsService informs
-	 * the local ServiceActuator by using this method about the 
-	 * @param aidMigrated
+	 * the local ServiceActuator by using this method about the.
+	 * @param aidMigrated the new agent migrated
 	 */
 	public void setAgentMigrated(AID aidMigrated) {
 		
