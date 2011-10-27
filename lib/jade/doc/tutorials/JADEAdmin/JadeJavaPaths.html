@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+
+	<head>
+		<meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
+		<meta name="generator" content="Adobe GoLive 6">
+		<title>JADE Paths</title>
+	</head>
+
+	<body bgcolor="black" text="#ffd700">
+		<h2>Note on JADE Boot Paths</h2>
+		<h3>Relative Paths</h3>
+		<p>These tutorials use relative paths. For example, runjade.bat has one line:</p>
+		
+<p><tt>java -classpath .;.\lib\jade.jar;.\lib\jadeTools.jar;.\lib\iiop.jar;.\lib\commons-codec\commons-codec-1.3.jar 
+  jade.Boot %1 %2 %3 %4 %5 %6 %7 %8 %9 </tt></p>
+		<p>A JADE platform is created with runjade -gui from the command prompt of the console.</p>
+		<p>This arrangement implies that your working directory where runjade.bat is located  (probably called &quot;jade&quot;) is the parent of the JADE lib directory. To load an agent into this platform, its class file should also be a subdirectory of the working directory.</p>
+		<p>For example, the PingAgent.class, in package examples.PingAgent must be in the directory PingAgent which is a subdirectory of examples, which in turn is a subdirectory of the working directory (usually called jade).</p>
+		<p>Relative paths such as ./lib/jade.jar, are convenient enough. They are independent of where JADE is located. You jus need to be in the directory above the lib directory and keep your code parallel to the lib directory. But absolute paths can also have their advantages.</p>
+		<h3>Absolute Paths</h3>
+		<p>Instead of what you see above, you could have, on a system like mine, a batch file with absolute paths:</p>
+		
+<p><tt>java -classpath c:\jade\lib\jade.jar;c:\jade\lib\jadeTools.jar;c:\jade\lib\iiop.jar;c:\jade\lib\commons-codec\commons-codec-1.3.jar;c:\jade\lib\crimson.jar;c:\jade\lib\http.jar;. 
+  jade.Boot %1 %2 %3 %4 %5 %6 %7 %8 %9<br>
+			</tt></p>
+		<p>If you put this in a batch file and put the file somewhere which is on your PATH you can call it from anywhere. To load an agent it must still be located below the directory from which you call this batch file.</p>
+	</body>
+
+</html>

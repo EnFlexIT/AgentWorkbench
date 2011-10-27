@@ -1,0 +1,123 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.06 [en] (WinNT; I) [Netscape]">
+   <META NAME="ProgId" CONTENT="FrontPage.Editor.Document">
+   <TITLE>How to upgrade user code to JADE 2.0</TITLE>
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000FF" VLINK="#0000FF" ALINK="#0000FF">
+&nbsp;
+
+<H1 STYLE="border: none; padding: 0in">How to upgrade user code to JADE 2.0 </H1>
+<P STYLE="margin-bottom: 0in; border: none; padding: 0in"><I>Author:
+Fabio Bellifemine (CSELT S.p.A.), Tiziana Trucco (CSELT S.p.A.)
+</I></P>
+<P STYLE="margin-bottom: 0in; border: none; padding: 0in"><I>Date: <SDFIELD TYPE=DOCINFO SUBTYPE=CHANGE FORMAT=DATE SDNUM="1033;1033;NNNNMMMM D, YYYY">January,17 2000</SDFIELD></I></P>
+<P STYLE="margin-bottom: 0in; border: none; padding: 0in"><I><FONT SIZE=2>Java
+platform: <A HREF="http://java.sun.com/j2se/1.3/">Sun JDK 1.2
+Windows</A></FONT></I></P>
+<P STYLE="margin-bottom: 0in; border: none; padding: 0in"><I><FONT SIZE=2><A HREF="http://jade.cselt.it/">JADE</A>
+version 2.1</FONT></I></P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+
+
+<P><SPAN lang="EN-GB">
+<BR><FONT FACE="Arial,Helvetica">
+Compliance to FIPA 2000 specifications required also a slight modification of the API's of JADE 2.0. At a first glance, the user might be discouraged on porting his code from JADE 1.X to JADE 2.X because of the high number of error that the JAVA compiler would report; however in all cases, it is just a question of automatic replacement of code. This tutorial tries to help in this upgrading phase. 
+<p>
+The following are the most considerable modifications in FIPA and how they impact your user code.
+<UL>
+<li><B> Command line options</B></li>
+<UL><br>
+<li> The <I>-platform</I> option has been now set to the default. Therefore the command  "java jade.Boot" does not start any more an agent container, instead it launches an agent platform. This default behaviour is more intuitive than the old one.</li>
+</UL><br>
+<li><B>Agent class</B></li>
+<UL><br>
+<li> According to the new FIPA specifications, the agent name, that was previously a String, has been replaced by the class <FONT FACE= "courier">jade.core.AID</FONT> and composed of several attributes (i.e. <FONT FACE = "courier">name, addresses, resolvers </FONT>).In particular the <FONT FACE= "courier"> name</FONT> attribute is the globally unique identifier of the agent and, conceptually, replaces the agent name of the previous version of JADE. The previous methods <FONT FACE= "courier">Agent.getLocalName()</FONT> and <FONT FACE= "courier">Agent.getName()</FONT> continue to exist and work at the same way; however the full name of an agent is no more composed of its local name and the IIOP address of the platform. On the other hand, FIPA specifications do not allow any more to decompose an agent name and distinguish between the local name and its home agent platform (HAP) address (i.e. the separator '@' is no more used). Further to these methods, a new method has been added in JADE, <FONT FACE= "courier">Agent.getAID()</FONT>, that returns the Agent Identifier of the agent. 
+The constructor <FONT FACE= "courier">AID(String guid)</FONT> is available to construct an Agent Identifier on the basis of the known string representing the name of the agent.</li>
+<li> All the methods to access the services of the DF and the AMS have been moved from this class into the classes <FONT FACE= "courier">DFServiceCommunicator</FONT> and <FONT FACE= "courier"> AMSServiceCommunicator</FONT>, part of the package <FONT FACE= "courier">jade.domain</FONT>. Therefore, it is necessary to replace any call to <FONT FACE= "courier">Agent.registerDF(..)</FONT> with <FONT FACE= "courier"> DFServiceCommunicator.register(...)</FONT> </li>
+<li> The two methods <FONT FACE= "courier"> getDefaultDF()</FONT> and <FONT FACE= "courier"> getAMS()</FONT> have been added that return the AID of the default DF and AMS of the platform.</li>
+<li> Because the SL-0 language has been modified to represent t-uples, the two methods <FONT FACE= "courier"> fillContent</FONT> and <FONT FACE= "courier">extractContent</FONT> require/return a List argument, where the List represents the t-uple. Each element of the t-uple is an expression of the content language.</li>
+</UL><br>
+<li><B>ACLMessage class</B></li>
+<UL><br>
+<li> The new FIPA specifications have added two new parameters <FONT FACE= "courier">reply-to</FONT> and <FONT FACE= "courier">encoding</FONT> to the ACL Message structure, the first representing the AID of the agents to which the reply should be sent, the second representing the encoding scheme of the content. The specs also removed the envelope parameter that is now treated separately. The <FONT FACE= "courier">sender</FONT> and <FONT FACE= "courier">receiver</FONT> parameters do not contain any more <FONT FACE= "courier">String</FONT>'s, but <FONT FACE= "courier">AID</FONT>'s. As a consequence of that, the user code must be modified as follows:</li>
+<UL>
+<li> replace the <FONT FACE= "courier">getSource()</FONT> and <FONT FACE= "courier">setSource(String)</FONT> with <FONT FACE= "courier">getSender()</FONT> and <FONT FACE= "courier">setSender(myAgent.getAID())</FONT></li>
+<li> replace <FONT FACE= "courier">getDest(), getFirstDest(), addDest() </FONT> with <FONT FACE= "courier">getAllReceiver() </FONT> (that returns an Iterator over all the receivers), <FONT FACE= "courier"> clearAllReceiver(), addReceiverAID(), removeReceiver(AID)</FONT>.</li>
+<li> replace <FONT FACE= "courier">setReplyTo()</FONT> and <FONT FACE= "courier">getReplyTo()</FONT> with <FONT FACE= "courier">setInReplyTo </FONT> and <FONT FACE= "courier"> getInReplyTo</FONT>. This modification has been made to avoid ambiguity with the new <FONT FACE= "courier">reply-to</FONT> parameter of FIPA.</li>
+<li> replace <FONT FACE= "courier">setEnvelope(String)</FONT> and <FONT FACE= "courier">getEnvelope(String)</FONT> with <FONT FACE= "courier">  addUserDefinedParameters("X:-envelope",String), getUserDefinedParameter("X:-envelope")</FONT> because envelope is no more a parameter of an ACLMessage in the FIPA specs.</li>
+<li> take care of replying to messages by using the <FONT FACE= "courier">AID</FONT>'s in the <FONT FACE= "courier">reply-to </FONT> parameter, when present, instead of those in the <FONT FACE= "courier">sender</FONT> parameter. The best practice is to use the method <FONT FACE= "courier"> ACLMessage.createReply()</FONT> that already takes care of that.</li>
+<li> Care must be taken because the getXXX() methods return null, while in the previous realase they returned an empty string, when the parameter has not been set.</li>
+<li> the deprecated method <FONT FACE= "courier">dump()</FONT> has been removed, replace it with <FONT FACE= "courier"> System.out.println(msg.toString())</FONT>.</li>
+<li> the deprecated method <FONT FACE= "courier"> setType(String)</FONT> has been removed, replace it with <FONT FACE= "courier"> setPerformative(ACLMessage.REQUEST)</FONT>.</li>
+<li> the methods <FONT FACE= "courier"> fromText()</FONT> and <FONT FACE= "courier">toText()</FONT> have been removed and replaced by the methods <FONT FACE= "courier"> decode </FONT> and <FONT FACE= "courier">encode </FONT> in <FONT FACE= "courier"> jade.lang.acl.StringACLCodec</FONT>.</li>
+</UL>
+</UL><br>
+<li><B>Message Template class</B></li>
+<ul><br>
+<li> this class has been updated by adding methods to match the two new parameters <FONT FACE= "courier"> encoding</FONT> and <FONT FACE= "courier"> reply-to</FONT> and by removing the method to match the <FONT FACE= "courier">envelope</FONT>.</li>
+<li> just remind to rename <FONT FACE= "courier">MatchReplyTo </FONT> with <FONT FACE= "courier"> MatchInReplyTo</FONT>.</li>
+</ul><br>
+<li><B>AgentGroup class</B></li>
+<ul><br>
+<li> this class has been removed because obsolete. No class has been provided to replace this one: infact, a group of agent identifiers can easly be represented by a <FONT FACE= "courier"> java.util.ArrayList()</FONT>.</li>
+</ul><br>
+<li><B>Class jade.domain.FIPAAgentManagement and its inner classes</B></li>
+<ul><br>
+<li> This class in JADE 1.4 included a number of inner classes to represent the concepts of the FIPA-Agent-Management ontology, included concepts like DFAgentDescription, ServiceAgentDescription,...
+All this classes have been update to the new FIPA specifications and have been moved into the package jade.domain.FIPAAgentManagement. There is now one class for each concept of the ontology. Every class is a simple collection of the attributes defined by FIPA, with public methods to read and write them. </li>
+</ul><br>
+<li><B>class jade.lang.SL0Codec and interface jade.lang.Codec</B></li>
+<ul><br>
+<li> because FIPA specifications have modified the SL-0 content language to allow only t-uple as content, the <FONT FACE= "courier"> encode</FONT> and <FONT FACE= "courier">decode </FONT> methods have been modified to work with <FONT FACE= "courier"> List</FONT> rather than <FONT FACE= "courier"> Object</FONT>.</li>
+</ul><br>
+<li><B>Package jade.onto and support to user defined ontologies</B></li>
+<ul><br>
+<li> This support has been simplified and improved by fixing a bug and adding support for set, sequences, and values of undefined type. Its quality, unfortunately, is not very yet satisfactory because it suffers from a lack of standadization for FIPA of an abstract content language and an abstract ontology. There, it might be modified again in the future.
+The modifications are the following:
+<ul>
+<li> The class TermDescriptor has been renamed into SlotDescriptior. The constructor of a SlotDescriptor has 4 arguments. The first is the name of the slot and can be omitted for unnamed slots. The second is the category of thew slot (i.e. FRAME, SET, SEQUENCE, PRIMITIVE,ANY). The third identifies the type of the values of the slot (e.g. STRING_TYPE,LONG_TYPE,...). The last indicates if the presence of the slot is mandatory or optional.</li>
+<li> The class RoleFactory has been renamed into RoleEntityFactory.</li>
+<li> The class <FONT FACE= "courier">jade.onto.basic.BasicOntology </FONT> represents an ontology with basic concepts, like Actions, TruePredicate, AID,... It can be joined to any user-defined ontology.</li>
+</ul>
+</ul><br>
+<li><B>Class FIPARequestResponderBehaviour</B></li>
+<ul><br>
+<li> The interface of this class and its inner classes (i.e. <FONT FACE= "courier"> ActionHandler</FONT> and <FONT FACE= "courier"> Factory</FONT>) has been modified. </li>
+<li> The method <FONT FACE= "courier"> create()</FONT> of the <FONT FACE= "courier"> Factory</FONT> has now an argument which is the received request <FONT FACE= "courier"> ACLMessage</FONT>.</li>
+<li> The inner class <FONT FACE= "courier">Action</FONT> has been renamed into <FONT FACE= "courier">ActionHandler</FONT> in order to avoid ambiguity with <FONT FACE= "courier"> jade.onto.basic.Action</FONT>. </li>
+<ul>
+<li> A second argument, that is the received request <FONT FACE= "courier"> ACLMessage</FONT>, has been added to the constructor.</li>
+<li> All the method <FONT FACE= "courier">sendRefuse, sendAgree, sendFailure, sendInform, sendNotUnderstood </FONT> have been joined into a single method <FONT FACE= "courier"> sendReply</FONT> with two arguments: the performative and the content of the message.</li>
+</ul>
+<li> A new method <FONT FACE= "courier"> getActionName</FONT> has been added to the <FONT FACE= "courier"> FIPARequestResponderBehaviour</FONT> class. The default implementation works only if both the content language and the ontology of the received request message were registered with the agent; otherwise it throws an exception. In general, it is expected that the user have to override this method with their application-dependent implementation.</li>
+</ul>
+</ul>
+
+
+
+</FONT> 
+<HR>
+<CENTER>
+<P><FONT FACE="Arial"><FONT SIZE=-1><A HREF="http://jade.cselt.it/">JADE</A>
+is a trademark of
+<A HREF="http://www.cselt.it">CSELT</A>. <A HREF="http://jade.cselt.it/">JADE</A>
+has been developed jointly by <A HREF="http://www.cselt.it">CSELT</A> and
+the <A HREF="http://www.ce.unipr.it">Computer Engineering Group</A> of
+the <A HREF="http://www.unipr.it">University of Parma</A></FONT></FONT></CENTER>
+
+<BR>&nbsp;
+<P><BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+</BODY>
+</HTML>

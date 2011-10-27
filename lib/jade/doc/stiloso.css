@@ -1,0 +1,97 @@
+body {
+	margin: 0px;
+	padding: 0px;
+}
+.evidenza {
+	color: #FF3333;
+}
+.neretto {
+	font-weight: bold;
+}
+.testo {
+	font-family: Verdana;
+	font-size: 12px;
+	color: #003366;
+	margin: 0px;
+	padding: 5px 5px 5px 15px;
+}a:link {
+	font-family: Verdana;
+	text-decoration: none;
+	color: #40B31A;
+	font-weight: bold;
+
+
+}
+a:visited {
+	font-family: Verdana;
+	text-decoration: none;
+	color: #40B31A;
+	font-weight: bold;
+
+
+}
+a:hover {
+	font-family: Verdana;
+	color: #40B31A;
+	text-decoration: underline;
+	font-weight: bold;
+
+}
+a:active {
+	font-family: Verdana;
+	color: #40B31A;
+	text-decoration: none;
+	font-weight: bold;
+
+}
+.testotabadd {
+	font-family: Verdana;
+	font-size: 12px;
+	color: #003366;
+	margin: 0px;
+	padding: 3px;
+	background-color: #FFFFFF;
+
+
+}
+.tabella {
+	background-color: #003366;
+
+
+}
+.textfield {
+	font-family: Verdana;
+	font-size: 12px;
+	color: #003366;
+	margin: 0px;
+	padding: 0px;
+	border: 1px solid #003366;
+}
+.formcheck {
+	color: #003366;
+	background-color: #FFFFFF;
+
+}
+.formbutton {
+	font-family: Verdana;
+	font-size: 11px;
+	color: #003366;
+	background-color: #FFFFFF;
+	margin: 0px;
+	padding: 2px;
+	border-top: 1px solid #003366;
+	border-right: 1px groove #003366;
+	border-bottom: 1px groove #003366;
+	border-left: 1px solid #003366;
+
+}
+.boxverdetesto {
+	font-family: Verdana;
+	font-size: 12px;
+	color: #003366;
+	margin: 0px;
+	padding: 3px;
+	background-color: #FFFFFF;
+	border: 1px solid #40B31A;
+
+}

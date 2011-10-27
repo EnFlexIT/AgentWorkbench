@@ -1,0 +1,284 @@
+<html>
+<!-- created by Alessandro Beneventi, Universita' degli Studi di Parma -->
+<!--            alessandro.beneventi@re.nettuno.it                     -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>Starting The Sniffer</title>
+<LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
+</head>
+
+<body bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#0000FF" alink="#0000FF">
+
+<table BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0">
+  <tr>
+    <td BGCOLOR="#EEEEFF" ID="NavBarCell1">
+      <table BORDER="0" CELLPADDING="0" CELLSPACING="3">
+        <tr ALIGN="center" VALIGN="top">
+          <td BGCOLOR="#EEEEFF" ID="NavBarCell1"><font id="NavBarFont1">Sections:</font>&nbsp;</td>
+          <td BGCOLOR="#EEEEFF" ID="NavBarCell1"><a href="../index.html"><font id="NavBarFont1"><b>Index</b></font></a>&nbsp;</td>
+          <td BGCOLOR="#EEEEFF" ID="NavBarCell1"><a HREF="intro.htm"><font id="NavBarFont1"><b>Introduction</b></font></a>&nbsp;</td>
+          <td BGCOLOR="#FFFFFF" ID="NavBarCell1Rev">&nbsp;<font id="NavBarFont1Rev"><b>More
+            Info.</b></font>&nbsp;</td>
+          <td BGCOLOR="#EEEEFF" ID="NavBarCell1"><a HREF="visualindex.htm"><font id="NavBarFont1"><b>Visual
+            Index</b></font></a>&nbsp;</td>
+          <td BGCOLOR="#EEEEFF" ID="NavBarCell1"><a href="./jdoc/index.html"><font id="NavBarFont1"><b>Class
+            by Class</b></font></a>&nbsp;</td>
+          <td BGCOLOR="#EEEEFF" ID="NavBarCell1"><a href="links.htm"><font id="NavBarFont1"><b>Links</b></font></a>&nbsp;</td>
+        </tr>
+      </table>
+    </td>
+    <td ALIGN="right" VALIGN="top" ROWSPAN="2"></td>
+  </tr>
+</table>
+
+&nbsp;
+<div align="left">
+  <table border="0" cellpadding="0" cellspacing="0">
+    <tr>
+      <td width="40">&nbsp;</td>
+      <td>
+
+<p><font face="Arial" size="6"><b>More Informations</b></font></p>
+
+<h1><span lang="EN-GB"><font face="Arial" size="3">1. Initialization</font></span></h1>
+<p><span lang="EN-GB"><font face="Arial" size="3">When the user starts the
+Sniffer, a new instance of the class <i> jade.tools.sniffer.Sniffer</i> is created: this
+class extends <i>jade.core.Agent</i>, therefore the Sniffer is like any other agent;
+interaction with Jade environment and with the Sniffer gui are the main tasks of
+this class.<br>
+<br>
+In order to let the user chose which agents are to be sniffed, the Sniffer must
+be constantly informed on born agents, dead agents, created and deleted
+container: for security's sake these informations are not available to a common
+agent. Hence to get these informations, the Sniffer registers itself as an <i> rma</i> on
+the Agent Management System (ams). The subscription is performed by sending to
+the ams a
+message like the following one :</font></span></p>
+<div align="left">
+  <table border="0" cellpadding="0" cellspacing="0">
+    <tr>
+      <td width="15" BGCOLOR="#EEEEFF">&nbsp;</td>
+      <td width="5" BGCOLOR="#ffffff">&nbsp;</td>
+      <td>
+<p><font face="Arial" size="3"><span style="mso-fareast-font-family: MS Mincho">(<b>subscribe</b><br>
+<b> :sender</b>   <i>  the_sniffer</i><br>
+<b> :receiver</b> ams<br>
+<b> :content</b>  "iota ?x ( :container-list-delta ?x )"<br>
+<b> :reply-with</b>  RMA-subscription<br>
+<b> :language</b>  SL<br>
+<b> :ontology</b>  jade-agent-management<br>
+)</span></font></p>
+
+      </td>
+    </tr>
+  </table>
+</div>
+
+<p><span lang="EN-GB"><font face="Arial" size="3">On the Sniffer takedown a
+message like the following one is sent to the ams to unsubscribe the Sniffer.</font></span></p>
+<div align="left">
+  <table border="0" cellpadding="0" cellspacing="0">
+    <tr>
+      <td width="15" BGCOLOR="#EEEEFF">&nbsp;</td>
+      <td width="5" BGCOLOR="#ffffff">&nbsp;</td>
+      <td>
+<p><font face="Arial" size="3"><span style="mso-fareast-font-family: MS Mincho">(<b>cancel</b><br>
+<b> :sender</b>    <i>   the_sniffer</i><br>
+<b> :receiver</b>  ams<br>
+<b> :content</b>   &quot;iota ?x ( :container-list-delta ?x )&quot;<br>
+<b> :reply-with</b>   RMA-cancellation<br>
+<b> :language</b>   SL<br>
+<b> :ontology</b>   jade-agent-management<br>
+)</span></font></p>
+
+      </td>
+    </tr>
+  </table>
+</div>
+
+<p><span lang="EN-GB"><font face="Arial" size="3">From now on, every time an
+agent is born, a container is created, the Sniffer is instantly informed with
+messages like the following one:</font></span></p>
+<div align="left">
+  <table border="0" cellpadding="0" cellspacing="0">
+    <tr>
+      <td width="15" BGCOLOR="#EEEEFF">&nbsp;</td>
+      <td width="5" BGCOLOR="#ffffff">&nbsp;</td>
+      <td>
+<p><font face="Arial" size="3"><span style="mso-fareast-font-family: MS Mincho">(<b>inform</b><br>
+<b> :sender</b>  ams<br>
+<b> :receiver</b>  <i> the_sniffer</i><br>
+<b> :content</b>  (new-container Front-End )<br>
+<b> :in-reply-to</b>  RMA-subscription<br>
+<b> :language</b>  SL<br>
+<b> :ontology</b>  jade-agent-management<br>
+)</span></font></p>
+
+      </td>
+    </tr>
+  </table>
+</div>
+
+<h1><font face="Arial" size="3">2. Telling the Ams to sniff&nbsp; an Agent</font></h1>
+
+<p><span lang="EN-GB"><font face="Arial" size="3">When the user selects an agent
+to be sniffed from the Add/Remove Agent window, the Sniffer gets the ams to know
+this by sending a message like the following one:</font></span></p>
+<div align="left">
+  <table border="0" cellpadding="0" cellspacing="0">
+    <tr>
+      <td width="15" BGCOLOR="#EEEEFF">&nbsp;</td>
+      <td width="5" BGCOLOR="#ffffff">&nbsp;</td>
+      <td>
+<p><font face="Arial" size="3"><span style="mso-fareast-font-family: MS Mincho">(<b>request</b><br>
+<b> :sender</b>   <i>  the_sniffer</i><br>
+<b> :receiver</b> ams<br>
+<b> :content</b>  ( action ams ( sniff-agent-on ( :sniffer-name <i> the_sniffer</i> :agent-list {
+<i> the_agent_list</i> } ) ) )<br>
+<b> :language</b>  SL0<br>
+<b> :ontology</b>  fipa-agent-management<br>
+<b> :protocol</b>  fipa-request<br>
+)</span></font></p>
+
+      </td>
+    </tr>
+  </table>
+</div>
+<p><span lang="EN-GB"><font face="Arial" size="3">If the user does not want an
+agent to be sniffed anymore, the Sniffer informs the ams by sending a message
+like the following one:</font></span></p>
+<div align="left">
+  <table border="0" cellpadding="0" cellspacing="0">
+    <tr>
+      <td width="15" BGCOLOR="#EEEEFF">&nbsp;</td>
+      <td width="5" BGCOLOR="#ffffff">&nbsp;</td>
+      <td>
+<p><font face="Arial" size="3"><span style="mso-fareast-font-family: MS Mincho">(<b>request</b><br>
+<b> :sender</b>   <i>  the_sniffer</i><br>
+<b> :receiver</b> ams<br>
+<b> :content</b>  ( action ams ( sniff-agent-off ( :sniffer-name <i> the_sniffer</i> :agent-list {
+<i> the_agent_list</i> } ) ) )<br>
+<b> :language</b>  SL0<br>
+<b> :ontology</b>  fipa-agent-management<br>
+<b> :protocol</b>  fipa-request<br>
+)</span></font></p>
+
+      </td>
+    </tr>
+  </table>
+</div>
+
+
+<p><span lang="EN-GB"><font face="Arial" size="3">Then the ams parses the
+incoming message and, if it turns out to be successful, the platform or the
+container is told to send to the Sniffer a copy of every message coming from or
+going to an agent in the sniffed agent list.</font></span></p>
+
+<h1><font face="Arial" size="3">3. Sniffed Messages</font></h1>
+<p>Every time the agent platform dispatches a message, it looks in the sniffed
+agents table to find out whether the sender of the message, the receiver of the
+message or both are in the sniffed agents list: if so, the platform create a new
+message like the following one:</p>
+<div align="left">
+  <table border="0" cellpadding="0" cellspacing="0">
+    <tr>
+      <td width="15" BGCOLOR="#EEEEFF">&nbsp;</td>
+      <td width="5" BGCOLOR="#ffffff">&nbsp;</td>
+      <td>
+<p><font face="Arial" size="3"><span style="mso-fareast-font-family: MS Mincho">(<b>inform</b><br>
+<b> :sender</b>     <i>ams</i><br>
+<b> :receiver</b>   <i>a_sniffer</i><br>
+<b> :content</b>    <i>sniffed_message</i><br>
+<b> :ontology</b>    sniffed-message<br>
+)</span></font></p>
+
+      </td>
+    </tr>
+  </table>
+</div>
+
+<p>The message is directed to one or more sniffers registered to sniff one or
+more agent. The list of the sniffers for an agent is contained in the sniffed
+agent list. The ontology of the message must be set to <i>sniffed-message</i>.
+The platform now performs a sort of tunnelling by putting the sniffed message in
+the :content field of the above message to be sent to the sniffer. When this one
+receives a message from the ams with the :ontology field set as before it
+extracts the content and create a new ACLMessage to be displayed from the Gui
+when the user double-click on the arrow representing it.</p>
+
+<h1><font face="Arial" size="3">4. Integration with Jade</font></h1>
+<p>The integration of the Sniffer with Jade environment has been a three-step
+process, shortly described just after:</p>
+<ol>
+  <li><p>The <i>jade.domain.AgentManagementParser.jj</i> grammar has been modified
+    to parse correctly the previously described messages to enable the sniffing
+    action upon an agent</p></li>
+  <li><p>The <i>jade.domain.ams</i> class has been modified to correctly manage the
+    data returned by the previous parsing step and set correct data in the agent
+    platform</p></li>
+  <li><p>The <i>jade.core.AgentPlatformImpl</i> and <i>jade.core.AgentContainerImpl</i>
+    classes has been modified to send to the sniffer/sniffers a copy of every
+    message coming from or directed to a sniffed agent.</p></li>
+</ol>
+<p>The <i>ams</i> always listens for a sniff-on/sniff-of message to arrive: when one of
+these arrives it invokes the parser to check the message and extract the useful
+data in it.&nbsp;<br>
+After that the parser has successfully analyzed the message (otherwise an
+exception is thrown) it returns an instance of a <i>
+jade.domain.AgentManagementOntology.SniffAgentOnAction</i> or <i>
+jade.domain.AgentManagementOntology.SniffAgentOffAction</i> object to the ams depending on the
+fact that the user wants to activate or disable the sniffer on a particular
+bunch of agents. Both mentioned classes are inner classes of the main <i>
+jade.doman.AgentManagementOntology</i> class and extend <i>jade.domain.AgentManagementOntology.AMSAction</i>.&nbsp;<br>
+ Making use of these classes'
+methods, the parser loads the sniffer name in the variable snifferName and the
+agents to be sniffer/not to be sniffed in a map depending on what kind of action
+the user would like to do. Taking for example the SniffAgentOnAction, the parser
+uses the method setSnifferName(String sn) to set the name of the sniffer for the
+agents that the parser collects in the ACLMessage (in the :agent-list field) and
+puts in a map called myAgentList using the method addSniffedAgent(String ag).
+Then the ams informs the sniffer if somethig has gone wrong or extract the
+sniffer name and the agent list from the returning object with the following
+instruction&nbsp;
+<p><font >myAction = (AgentManagementOntology.SniffAgentOnAction)<br>
+AgentManagementOntology.SniffAgentOnAction.fromText(new
+StringReader(content));<br>
+myPlatform.AMSActivateSniffer(myAction.getSnifferName(),myAction.getEntireList());</font></p>
+<p>and passes them to his platform telling the sniffer that the action
+was successful.&nbsp;<br>
+<br>
+Within the agent platform, the AMSActivateSniffer and AMSDisableSniffer methods
+add and remove agents from the SniffedAgents map according to what they have
+been told by the ams. The SniffedAgents list is ajava.util.Map object: in this
+map the agent names are the keys and sniffer vectors are the values for the
+keys: by doing so, every agent can be sniffed by any number of sniffers and
+every sniffer can sniff any number of agents. For more details please see the
+code or the relative documentation. It's important to underline that agents name
+are put in the list with the following convention: local agent names are put in
+the list without the address and converted to lower case whereas external agent
+names are put in the list with address and converted to lowercase.<br>
+<br>
+This sniffing task is performed by the container in the <i> commHandle</i> method: as
+the name itself it handles every incoming or outgoing messagge with internal
+protocol, rmi or corba/IIOP. In more detail, the commHandle methos check if the
+sender or the receiver/group of recever is a sniffed agent: if so, it sends a
+copy of that message to every sniffer registered for that agent.
+      </td>
+    </tr>
+  </table>
+</div>
+
+<p>&nbsp;</p>
+<hr>
+<p align="center"><font face="Arial" size="2"><a href="http://jade.cselt.it/">JADE</a>
+is a trademark of <a href="http://www.cselt.it">CSELT</a>. <a href="http://jade.cselt.it/">JADE</a>
+has been developed jointly by <a href="http://www.cselt.it">CSELT</a> and the <a href="http://www.ce.unipr.it">Computer
+Engineering Group</a> of the <a href="http://www.unipr.it">University of Parma</a></font></p>
+
+<p align="center">&nbsp;</p>
+
+</body>
+
+</html>

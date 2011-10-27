@@ -1,0 +1,185 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><html><!-- #BeginTemplate "/Templates/maintemplate.dwt" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- #BeginEditable "doctitle" --><title>GroupJep - Exact arithmetic over the integers, rationals and other groups.</title><!-- #EndEditable --> 
+<link rel="stylesheet" type="text/css" href="../main.css" title="style1">
+</head>
+
+<body>
+<!-- #BeginEditable "Sub%20Menu" --> <!-- #BeginLibraryItem "/Library/Docu Menu.lbi" --><!-- NAVIGATION ---------------------------------------------------- -->
+<div id="navcontainer">
+<ul>
+<li><a href="../../javadoc/index.html" target="_blank">JavaDoc*</a></li>
+</ul>
+
+<hr/>
+
+<ul>
+<li><a href="../index.html">Usage</a></li>
+<li><a href="../op_and_func.html">Operators &amp; Functions</a></li>
+<li><a href="../grammar.html">Grammar</a></li>
+<li><a href="../cust_func.html">Custom Functions</a></li>
+<li><a href="../newfeatures-2.3.html">New Features</a></li>
+<li><a href="../faq.html">FAQ</a></li>
+<li><a href="../version.html">Version History</a></li>
+</ul>
+
+<hr/>
+
+<ul>
+<li><a href="index.html">DJEP</a></li>
+<li><a href="XJep.html">XJep</a></li>
+<li><a href="DJep.html">Differentiation</a></li>
+<li><a href="groups.html">Groups</a></li>
+<li><a href="VectorJep.html">Vectors &amp; Matrices</a></li>
+<li><a href="version.html">Version History</a></li>
+</ul>
+</div><!-- #EndLibraryItem --><!-- #EndEditable -->
+<div id="centercontent">
+<!-- #BeginEditable "Text" --> 
+        <h1><a name="top"></a>GroupJep - Exact arithmetic over the integers, rationals and other groups</h1>
+        <p><br>The <a href="../../javadoc/org/lsmp/djep/groupJep/package-summary.html">org.lsmp.djep.groupJep</a> package offers:</p>
+        <ul>
+        <li>Exact arithmetic for the integers and rationals</li>
+        <li>A framework for allowing arbitrary groups, rings and fields to be used</li>
+		<li>Implementation of several groups: integers mod n, free groups, finite field extensions (allowing the use of algebraic numbers)</li>
+        </ul>
+		
+  <p> This package is primarily a bit of a play thing, allowing the JEP parser 
+    and evaluator to be used with arbitrary groups. It should not be treated as 
+    a substitute for a dedicated computer algebra package but it does allow a 
+    bit of experimentation with different groups rings and fields.
+  <p>&nbsp;
+  <!-- #BeginLibraryItem "/Library/top bar.lbi" --><table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr>
+    <td align="right"><a href="#top"><img src="../img/top.gif" width="38" height="15" name="top" border="0"></a></td></tr>
+<tr>
+ <td bgcolor="#CCCCCC"><img src="../img/spacer.gif" width="1" height="1"></td></tr></table><br><br><!-- #EndLibraryItem --> 
+  <p></p><h2><a name="assignment"></a>Basic usage</h2>
+
+The GroupJep package is relatively easy to use, all the standard JEP features 
+  are enabled. To create a version of JEP for a particular group the <a href="../../javadoc/org/lsmp/djep/groupJep/GroupJep.html#GroupJep(org.lsmp.djep.groupJep.GroupI)">GroupJep(GroupI 
+  group)</a> constructor should be called where the argument is the specification 
+  of a certain group. For example to work of arbitrary precision integers to calculate 
+  factorial 20 use: 
+  <pre>import org.lsmp.djep.groupJep.*;<br>import org.lsmp.djep.groupJep.groups.*;<br><br>JEP j = new GroupJep(new Integers());<br>Node node = j.parse("1*2*3*4*5*6*7*8*9*10*11*12*13*14*15*16*17*18*19*20");<br>Object value = j.evaluate(node);<br>System.out.println(value.toString());<br>// prints 2432902008176640000<br></pre>
+
+A number of predefined groups are provided. These are all found in the
+org.lsmp.djep.groupJep.groups package.
+<ul>
+<li><a href="../../javadoc/org/lsmp/djep/groupJep/groups/Integers.html">Integers</a>: arbitrary precision integers, implement as java.math.BigInteger.
+</li><li><a href="../../javadoc/org/lsmp/djep/groupJep/groups/Rationals.html">Rationals</a>: arbitrary precision rational numbers: implemented as a quotient of BigInteger's.
+</li><li><a href="../../javadoc/org/lsmp/djep/groupJep/groups/Reals.html">Reals</a>: real numbers implemented as double.
+</li><li><a href="../../javadoc/org/lsmp/djep/groupJep/groups/BigReals.html">BigReals</a>: real numbers implemented as either BigDecimals.
+</li><li><a href="../../javadoc/org/lsmp/djep/groupJep/groups/Zn.html">Zn</a>: integers mod n.
+</li><li><a href="../../javadoc/org/lsmp/djep/groupJep/groups/FreeGroup.html">FreeGroup</a>: the free group with one generator, elements a_n t^n + ...+ a_1 t + a_0.
+</li><li><a href="../../javadoc/org/lsmp/djep/groupJep/groups/AlgebraicExtension.html">AlgebraicExtension</a>: a group extended by an algebraic number. Allows exact computation
+	using algebraic numbers.
+</li></ul>
+Examples of the use of these groups:
+<pre>import org.lsmp.djep.groupJep.*;<br>import org.lsmp.djep.groupJep.groups.*;<br><br>class GroupExamples {<br>public static void main(String args[])<br>{<br>JEP j = new GroupJep(new Integers());<br>Node node = j.parse("1*2*3*4*5*6*7*8*9*10*11*12*13*14*15*16*17*18*19*20");<br>Object value = j.evaluate(node);<br>System.out.println(value.toString());<br>// prints 2432902008176640000<br><br>j =  new GroupJep(new Rationals());<br>node = j.parse("(1/2)-(1/3)");<br>value = j.evaluate(node);<br>System.out.println(value.toString());<br>// prints 1/6<br><br>j = new GroupJep(new Zn(BigInteger.valueOf(5)));<br>node = j.parse("3+3");<br>value = j.evaluate(node);<br>System.out.println(value.toString()); // prints 1<br><br>node = j.parse("3*3");<br>value = j.evaluate(node);<br>System.out.println(value.toString()); // prints 4<br></pre>
+
+<h3>Free groups</h3>
+Any ring can be extended to form a <a href="../../javadoc/org/lsmp/djep/groupJep/groups/FreeGroup.html">FreeGroup</a> with
+a single generator:
+<pre>import org.lsmp.djep.groupJep.interfaces.*;<br>import org.lsmp.djep.groupJep.*;<br>...<br>RingI ring = new Integers();<br>RingI freeGroup = new FreeGroup(ring,"t");<br>JEP j = new GroupJep(freeGroup);<br>// this line is needed to ensure the parser recognises the symbol t<br>j.addStandardConstants();	<br><br>Node node = j.parse("(t + 2)*(t+4)");<br>Object value = j.evaluate(node);<br>System.out.println(value.toString()); // prints t^2+5 t+6<br></pre>
+Note that the addStandardConstants method of JEP must be
+called to ensure that the variable t is added to the parser.
+Free groups with more than one generator can be constructed
+by repeatedly extending a ring:
+<pre>RingI freeGroup = new FreeGroup(new FreeGroup(new Integers(),"t"),"s");<br></pre>
+
+<h3>Algebraic Numbers</h3>
+In a similar fashion a ring can be extended by an algebraic number
+t to form an <a href="../../javadoc/org/lsmp/djep/groupJep/groups/AlgebraicExtension.html">AlgebraicExtension</a>. The algebraic number is defined to be a root of a <a href="../../javadoc/org/lsmp/djep/groupJep/values/Polynomial.html">Polynomial </a>equation with coefficients in the base ring.
+<pre>import org.lsmp.djep.groupJep.*;<br>import org.lsmp.djep.groupJep.interfaces.*;<br>import org.lsmp.djep.groupJep.groups.*;<br>import org.lsmp.djep.groupJep.values.*;<br>...<br>RingI ring = new Integers();<br>// specify the polynomial 1 x^2 + 0 x -2<br>Number coeffs[] = new Number[]{<br>			BigInteger.valueOf(-2),<br>			BigInteger.ZERO,<br>			BigInteger.ONE};<br>Polynomial p1 = new Polynomial(ring,"rt2",coeffs);<br><br>j = new GroupJep(new AlgebraicExtension(ring, p1));<br>j.addStandardConstants();<br><br>Node node = j.parse("(t+1)*(t+1)");<br>Object value = j.evaluate(node);<br>System.out.println(value.toString()); // prints 2 t+3<br>System.out.println(((HasComplexValueI) value).getComplexValue());<br>	// prints (5.82842712474619, 0.0)<br></pre>
+Note in the last line the values can be converted to 
+approximate complex numbers (in the group constructor
+if the polynomial is quadratic or an n-th root then
+an approximation to the complex value of a solution is calculate.
+The value returned by j.evaluate will be an object of type <a href="../../javadoc/org/lsmp/djep/groupJep/values/AlgebraicExtensionElement.html">AlgebraicExtensionElement
+      </a>which implements
+org.lsmp.djep.groupJep.values.HasComplexValueI
+by providing a getComplexValue() method.
+This method will use the approximate value of the root
+to calculate the complex value of this element.
+
+<h3>Creating your own groups</h3>
+Creating a group class is fairly straight forward.
+The class must implement <a href="../../javadoc/org/lsmp/djep/groupJep/GroupI.html">org.lsmp.djep.groupJep.GroupI</a>
+or one of the other interfaces in the
+      <a href="../../javadoc/org/lsmp/djep/groupJep/interfaces/package-summary.html">org.lsmp.djep.groupJep.interfaces</a> package which give
+extra properties such as <a href="../../javadoc/org/lsmp/djep/groupJep/interfaces/RingI.html">RingI</a>, <a href="../../javadoc/org/lsmp/djep/groupJep/interfaces/FieldI.html">FieldI</a>.
+Typically the group will subclass org.lsmp.djep.groupJep.groups.Group
+which provides a few default methods.
+All groups should provide the methods:
+<pre>public Number getZERO();<br>public Number getInverse(Number num);<br>public Number add(Number a,Number b);<br>public Number sub(Number a,Number b);<br>public boolean equals(Number a,Number b);<br>public Number valueOf(String s);<br></pre>
+      <p>The different interfaces available and the methods they define are:</p>
+
+<table border="1">
+<tbody><tr><th>Interface</th><th>Methods</th></tr>
+<tr><td><a href="../../javadoc/org/lsmp/djep/groupJep/GroupI.html">GroupI</a></td><td>
+public Number getZERO();<br>
+public Number getInverse(Number num);<br>
+public Number add(Number a,Number b);<br>
+public Number sub(Number a,Number b);<br>
+public boolean equals(Number a,Number b);<br>
+public Number valueOf(String s);
+</td></tr>
+<tr><td><a href="../../javadoc/org/lsmp/djep/groupJep/interfaces/AbelianGroupI.html">AbelianGroupI</a></td><td>
+Same methods as GroupI.<br>
+implies group is commutative under +.
+</td></tr>
+<tr><td><a href="../../javadoc/org/lsmp/djep/groupJep/interfaces/RingI.html">RingI</a></td><td>
+methods for GroupI plus<br>
+public Number getONE();<br>
+public Number mul(Number a,Number b);<br>
+</td></tr>
+<tr><td><a href="../../javadoc/org/lsmp/djep/groupJep/interfaces/IntegralDomainI.html">IntegralDomainI</a></td><td>
+methods for RingI implies the group has
+an identity for multiplication *, it is 
+commutative under * and cancellation is meaningful:
+if a is not 0 then a*b = a*c implies b = c.
+</td></tr>
+<tr><td><a href="../../javadoc/org/lsmp/djep/groupJep/interfaces/HasDivI.html">HasDivI</a></td><td>
+Group has some notion of division i.e. integers<br>
+public Number div(Number a,Number b);
+</td></tr>
+<tr><td><a href="../../javadoc/org/lsmp/djep/groupJep/interfaces/FieldI.html">FieldI</a></td><td>
+Same methods as for RingI plus<br>
+public Number getMulInverse(Number num);<br>
+public Number div(Number a,Number b);
+</td></tr>
+<tr><td><a href="../../javadoc/org/lsmp/djep/groupJep/interfaces/HasDivI.html">HasDivI</a></td><td>
+Group has some notion of division, but is not necessary a Field. e.g the integers<br>
+public Number div(Number a,Number b);
+</td></tr>
+<tr><td><a href="../../javadoc/org/lsmp/djep/groupJep/interfaces/HasModI.html">HasModI</a></td><td>
+The modulus function is defined:<br>
+public Number mod(Number a,Number b);
+</td></tr>
+<tr><td><a href="../../javadoc/org/lsmp/djep/groupJep/interfaces/HasPowerI.html">HasPowerI</a></td><td>
+The power function is defined:<br>
+public Number pow(Number a,Number b);
+</td></tr>
+<tr><td><a href="../../javadoc/org/lsmp/djep/groupJep/interfaces/OrderedSetI.html">OrderedSetI</a></td><td>
+There is a natural ordering to the set<br>
+public int compare(Number a,Number b);<br>
+will return -1 if a&lt;b, 0 if a=b, +1 if a&gt;b.
+</td></tr>
+</tbody></table>
+
+        
+  <p>&nbsp;</p>
+  <!-- #BeginLibraryItem "/Library/top bar.lbi" --><table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr>
+    <td align="right"><a href="#top"><img src="../img/top.gif" width="38" height="15" name="top" border="0"></a></td></tr>
+<tr>
+ <td bgcolor="#CCCCCC"><img src="../img/spacer.gif" width="1" height="1"></td></tr></table><br><br><!-- #EndLibraryItem --><!-- #EndEditable -->
+<br/>
+<br/>
+<br/>
+  <div id="footer"> &copy; 2006 Singular Systems</div>
+</div>
+</body>
+<!-- #EndTemplate --></html>

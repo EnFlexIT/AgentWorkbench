@@ -1,0 +1,143 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<title>How to use the HTTP MTP with JADE</title>
+</head>
+<body bgcolor="#FFFFFF" >
+<h1>How to use the HTTP MTP with JADE</h1>
+<p><i>Author: Ion Constantinescu (EPFL)</i><br>
+</p>
+<p><i>Date: May 31, 2001 </i><br>
+</p>
+<p><i>Java platform: Sun JDK 1.2 Windows </i><br>
+</p>
+<p><i><A HREF="http://jade.cselt.it/">JADE</a> version 2.1 </i><br>
+</p>
+<p>Since JADE 2.1, FIPA-compliant Message Transport Protocols can be plugged and 
+  activated at run-time on any JADE container. By default, the platform uses an 
+  IIOP based MTP which relies on the ORB provided with jdk1.2. However, HTTP can 
+  be used as an alternative transport. This tutorial describes how to install 
+  and use the HTTP MTP with JADE. </p>
+<h2>Installation.</h2>
+<p> In order to install HTTP the following steps must be performed:</p>
+<ul>
+  <li>The HTTP MTP must be downloaded from the <a target=new href="http://jade.cselt.it/">JADE</a> 
+    download page. 
+  <li>after downloading you <b>MUST</b> unzip the HTTP MTP package under the root 
+    of the jade distribution tree. You should end having a hierarchy like jade/add-ons/http. 
+  <li>A <a target=new  href="http://www.megginson.com/SAX/">SAX</a> parser must 
+    be downloaded and installed into the system. See below a list of known parsers 
+    and configuration options. 
+  <li>The xml parser jar file must be added to the CLASSPATH or specified in the 
+    -classpath argument when starting the virtual machine 
+</ul>
+<h2>Compiling</h2>
+<p>The default Makefile rules don't take the HTTP MTP into account. For handling 
+  the compilation process of the HTTP MTP you have to use the 'build.xml' ant-file 
+  located in the http directory. The following rules are available:</p>
+<ul>
+  <li>ant - compiles the http classes 
+  <li>ant lib - creates the http.jar archive in the lib directory 
+  <li>ant clean - removes the compiled classes and the http.jar archive 
+</ul>
+<h2>Configuration and Usage</h2>
+<p>The current implementation has been tested with the following parsers:</p>
+<table border="1">
+  <tr> 
+    <td>Parser Name</td>
+    <td>Parser Class</td>
+  </tr>
+  <tr> 
+    <td><a target=new href="http://xml.apache.org/crimson/index.html">Crimson</a></td>
+    <td>org.apache.crimson.parser.XMLReaderImpl</td>
+  </tr>
+  <tr> 
+    <td><a target=new href="http://xml.apache.org/xerces-j/index.html">Xerces</a></td>
+    <td>org.apache.xerces.parsers.SAXParser</td>
+  </tr>
+</table>
+<p>The current configuration uses Crimson as the default parser. So if you don't 
+  want to make any changes you just have to download Crimson from the link provided 
+  above and make sure it is added to the classpath when starting ( either by including 
+  it into the $CLASSPATH environment variable - %CLASSPATH% under windows or by 
+  specifing it on the command line ) . </p>
+<p>Here is an example of how you would start the platform assuming that you copied 
+  crimson.jar from the initial distribution to the jade/lib directory:</p>
+<code>java -classpath ./lib/jade.jar:./lib/jadeTools.jar:./lib/crimson.jar:./http/lib/http.jar 
+jade.Boot </code> ( for Unix ) <br>
+or<br>
+<code>java -classpath .\lib\jade.jar;.\lib\jadeTools.jar;.\lib\crimson.jar;.\http\lib\http.jar 
+jade.Boot</code> ( for Windows )<br>
+<p> If you want to use another parser suplementary you have to specify in the 
+  command line the system property <em>org.xml.sax.parser</em> as in the following 
+  example ( also assuming that you have copied xerces.jar from the initial distribution 
+  to the jade/lib directory ) :</p>
+<code>java -Dorg.xml.sax.parser=org.apache.xerces.parsers.SAXParser -classpath 
+./lib/jade.jar:./lib/jadeTools.jar:./lib/xerces.jar:./http/lib/http.jar jade.Boot 
+</code> ( for Unix ) <br>
+or<br>
+<code>java -Dorg.xml.sax.parser=org.apache.xerces.parsers.SAXParser -classpath 
+.\lib\jade.jar;.\lib\jadeTools.jar;.\lib\xerces.jar;.\http\lib\http.jar jade.Boot</code> 
+( for Windows )<br>
+<p>It is possible to activate one ore more communication endpoints. There are 
+  two main ways for doing such an activation:</p>
+<ul>
+  <li>from the command line when you start a JADE container. 
+  <li>from the GUI of the RMA 
+</ul>
+<h2>Configuring MTPs from the command line. </h2>
+<p>In this case the following parameter must be specified: </p>
+<ul>
+  <li>-mtp jamr.jademtp.http.MessageTransportProtocol -which will start the MTP 
+    on the default address port 
+  <li>-mtp 'jamr.jademtp.http.MessageTransportProtocol(http://myaddress.com:9999/acc)' 
+    - which will start the MTP on the port / host given as address. Note that 
+    in case of some platforms /configurations the ' might be required. 
+</ul>
+<h2>Configuring MTPs from the graphical management console. </h2>
+<p>Select a container from the GUI, click the right button of the mouse and a 
+  popup menu appears. Choose the Install a new MTP option and a dialog will be 
+  shown. Here the following information can be set:</p>
+<ul>
+  <li>the container to install the new MTP on (if different from the selected 
+    one) 
+  <li>the fully qualified name of the class implementing the jade.mtp.MTP interface, 
+    and (if it is supported by the chosen protocol) 
+  <li>optionally the transport address that will be used to contact the new MTP. 
+</ul>
+<p>For example, in order to install a new HTTP endpoint on the default local port 
+  by using the HTTP MTP, one should write jamr.jademtp.http.MessageTransportProtocol 
+  as the class name and nothing as the address. In order to use the transport 
+  on a different port or a particular interface of the current machine you could 
+  provide as the transport address a standard http url: http://mymachinename.org:8978 
+  ( where 8978 would be the port number on which the transport will bind ).</p>
+<p>Choosing Uninstall an MTP shows a dialog where the user can select from a list 
+  one of the currently installed MTPs and remove it from the platform. </p>
+<h2>Notes:</h2>
+<p>When activated the HTTP MTP uses by default the local port 7778. Please take 
+  into consideration that using other dedicated ports ( such as 80, 8080, etc. 
+  on a machine running a web server or a proxy server ) might result in configuration 
+  conflicts and unpredictable results.</p>
+<p>When activating the HTTP MTP from the command line it is preferable to specify 
+  also the full transport address - preventing the binding of the server socket 
+  to addresses not accessible from outside the domain.</p>
+<HR>
+<P> 
+  <CENTER>
+    <FONT FACE="Arial" size="-1"><A HREF="http://jade.cselt.it/">JADE</A> is a 
+    trademark of <A HREF="http://www.cselt.it">CSELT</A>. <A HREF="http://jade.cselt.it/">JADE</A> 
+    has been developed jointly by <A HREF="http://www.cselt.it">CSELT</A> and 
+    the <A HREF="http://www.ce.unipr.it">Computer Engineering Group</A> of the 
+    <A HREF="http://www.unipr.it">University of Parma</A>.</font> 
+  </center>
+  <FONT FACE="Arial"> 
+  <CENTER>
+    <FONT SIZE=-1>The HTTP MTP implementation was developed in the <a href="http://liawww.epfl.ch/">Artificial 
+    Inteligence Laboratory ( LIA )</a> at the <a href="http://www.epfl.ch/">Swiss 
+    Federal Institute of Technology Lausanne ( EPFL )</a> by <a href="mailto:ion.constantinescu@epfl.ch">Ion 
+    Constantinescu</a>. </FONT> 
+  </CENTER>
+  <BR>
+  &nbsp; </font> 
+</body>
+</html>

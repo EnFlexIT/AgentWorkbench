@@ -105,9 +105,11 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 	public BaseLoadBalancing(Agent agent) {
 		super(agent);
 		currProject = Application.ProjectCurr;		
-		currSimSetup = currProject.simulationSetups.getCurrSimSetup();
-		currDisSetup = currProject.getDistributionSetup();
-		currRemConConfig = currProject.getRemoteContainerConfiguration().getOntologyRemoteConfainerConfig();
+		if (currProject!=null) {
+			currSimSetup = currProject.simulationSetups.getCurrSimSetup();
+			currDisSetup = currProject.getDistributionSetup();
+			currRemConConfig = currProject.getRemoteContainerConfiguration().getOntologyRemoteConfainerConfig();
+		}
 		this.setLoadHelper();
 		this.setSimulationLoadHelper();
 		this.setThresholdLevels();
@@ -147,20 +149,26 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 	 */
 	private void setThresholdLevels() {
 		
-		// --- If the user wants to use his own Threshold, ----------
-		// --- load them to the SimulationsService		   ----------
-		if (currDisSetup.isUseUserThresholds()) {
-			currThresholdLevels = currDisSetup.getUserThresholds();
-			try {
-				loadHelper.setThresholdLevels(currThresholdLevels);
-			} catch (ServiceException e) {
-				e.printStackTrace();
-			}	
+		if (currDisSetup!=null) {
+			// --- If the user wants to use his own Threshold, ----------
+			// --- load them to the SimulationsService		   ----------
+			if (currDisSetup.isUseUserThresholds()) {
+				currThresholdLevels = currDisSetup.getUserThresholds();
+				try {
+					loadHelper.setThresholdLevels(currThresholdLevels);
+				} catch (ServiceException e) {
+					e.printStackTrace();
+				}
+				return;
+			} else {
+				currThresholdLevels = LoadMeasureThread.getThresholdLevels();
+			}
+			
 		} else {
 			currThresholdLevels = LoadMeasureThread.getThresholdLevels();
 		}
+
 	}
-	
 	
 	
 	/**

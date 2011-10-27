@@ -87,7 +87,6 @@ public class GlobalInfo {
 	private static String localPathWebServer   = "server" + localAppPathSeparatorString;
 	private static String localPathDownloads= "download" + localAppPathSeparatorString;
 	
-	private static String localPathProjectsIDE =  localPathProjects;
 	private static String[] localProjects = null;
 	
 	private static String localFileRunnableJar = "AgentGui.jar";
@@ -180,7 +179,6 @@ public class GlobalInfo {
 			// --------------------------------------------------------------
 			// --- Bei Ausfuehrung IDE, einige Variablen umstellen ----------			
 			localFileRunnableJar = null;
-			localPathProjects =  localPathProjectsIDE;
 			
 		}
 		// ------------------------------------------------------------------
@@ -396,12 +394,18 @@ public class GlobalInfo {
 	 * @return the path to the project folder
 	 */
 	public String PathProjects(boolean absolute){
-		if ( absolute == true ) { 
-			return FilePath2Absolute( localPathProjects );
+		String retunPath = null;
+		if (absolute == true) { 
+			retunPath = FilePath2Absolute( localPathProjects );
+		} else {
+			retunPath = localPathProjects;	
 		}
-		else {
-			return localPathProjects;	
-		}	
+		// --- See if the folder exists. If not create ---------
+		File testFile = new File(retunPath);
+		if (testFile.exists()==false) {
+			testFile.mkdir();
+		}
+		return retunPath;
 	}
 	
 	/**
@@ -411,7 +415,7 @@ public class GlobalInfo {
 	public String[] getIDEProjects( ){		
 		// --- Search for sub folders ---
 		localProjects = null;
-		File maindir = new File( this.PathProjects( true ) ) ;
+		File maindir = new File(this.PathProjects(true)) ;
 		File files[] = maindir.listFiles();
 		for (int i = 0; i < files.length; i++) {
 			if (files[i].isDirectory() && !files[i].getName().substring(0, 1).equals(".") ) {

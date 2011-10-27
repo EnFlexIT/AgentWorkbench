@@ -1,0 +1,26 @@
+<pre>
+<tt>
+<font color=#990000>&lt;</font><font color=#990000>%</font>@ page <b><font color=#000080>import</font></b><font color=#990000>=</font><font color=#FF0000>"jade.core.*"</font> <font color=#990000>%</font><font color=#990000>&gt;</font>
+<font color=#990000>&lt;</font>jsp<font color=#990000>:</font>useBean id<font color=#990000>=</font><font color=#FF0000>"oldsnooper"</font> <b><font color=#0000FF>class</font></b><font color=#990000>=</font><font color=#FF0000>"examples.jsp.Snooper"</font> scope<font color=#990000>=</font><font color=#FF0000>"application"</font><font color=#990000>&gt;</font>
+<font color=#990000>&lt;</font><font color=#990000>%</font> <b><font color=#0000FF>try</font></b> <font color=#FF0000>{</font>
+    <i><font color=#9A1900>// Does not work for the moment</font></i>
+    <i><font color=#9A1900>// JADE 1.4 String [] args = {"-platform", "buffer:examples.jsp.Buffer"};</font></i>
+    String <font color=#990000>[</font><font color=#990000>]</font> args <font color=#990000>=</font> <font color=#FF0000>{</font><font color=#FF0000>"-container"</font><font color=#FF0000>}</font><font color=#990000>;</font>
+    jade<font color=#990000>.</font>Boot<font color=#990000>.</font><b><font color=#000000>main</font></b><font color=#990000>(</font>args<font color=#990000>)</font><font color=#990000>;</font>
+    System<font color=#990000>.</font>out<font color=#990000>.</font><b><font color=#000000>println</font></b><font color=#990000>(</font><font color=#FF0000>"Jade Inited()"</font><font color=#990000>)</font><font color=#990000>;</font>
+    System<font color=#990000>.</font>out<font color=#990000>.</font><b><font color=#000000>println</font></b><font color=#990000>(</font><font color=#FF0000>"Start"</font><font color=#990000>)</font><font color=#990000>;</font>
+    oldsnooper<font color=#990000>.</font><b><font color=#000000>doStart</font></b><font color=#990000>(</font><font color=#FF0000>"oldsnooper"</font><font color=#990000>)</font><font color=#990000>;</font>
+   <font color=#FF0000>}</font> <b><font color=#000000>catch</font></b> <font color=#990000>(</font>Exception ex<font color=#990000>)</font> <font color=#FF0000>{</font>
+       out<font color=#990000>.</font><b><font color=#000000>println</font></b><font color=#990000>(</font>ex<font color=#990000>)</font><font color=#990000>;</font>
+   <font color=#FF0000>}</font>
+ <font color=#990000>%</font><font color=#990000>&gt;</font>
+<font color=#990000>&lt;</font><font color=#990000>/</font>jsp<font color=#990000>:</font>useBean<font color=#990000>&gt;</font>
+
+<font color=#990000>&lt;</font><font color=#990000>%</font> oldsnooper<font color=#990000>.</font><b><font color=#000000>snoop</font></b><font color=#990000>(</font>request<font color=#990000>.</font><b><font color=#000000>getRemoteHost</font></b><font color=#990000>(</font><font color=#990000>)</font><font color=#990000>+</font><font color=#FF0000>" "</font><font color=#990000>+</font><font color=#990000>(</font><b><font color=#0000FF>new</font></b> java<font color=#990000>.</font>util<font color=#990000>.</font><b><font color=#000000>Date</font></b><font color=#990000>(</font><font color=#990000>)</font><font color=#990000>)</font><font color=#990000>+</font><font color=#FF0000>" "</font><font color=#990000>+</font>request<font color=#990000>.</font><b><font color=#000000>getRequestURI</font></b><font color=#990000>(</font><font color=#990000>)</font><font color=#990000>)</font><font color=#990000>;</font> <font color=#990000>%</font><font color=#990000>&gt;</font>
+<font color=#990000>&lt;</font>HTML<font color=#990000>&gt;</font>
+<font color=#990000>&lt;</font>BODY<font color=#990000>&gt;</font>
+It works <font color=#990000>!</font><font color=#990000>!</font><font color=#990000>!</font><font color=#990000>!</font>
+<font color=#990000>&lt;</font><font color=#990000>/</font>BODY<font color=#990000>&gt;</font>
+<font color=#990000>&lt;</font><font color=#990000>/</font>HTML<font color=#990000>&gt;</font>
+</tt>
+</pre>

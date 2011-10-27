@@ -1,0 +1,343 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15">
+   <meta http-equiv="CONTENT-TYPE" content="text/html; charset=iso-8859-15">
+   <meta name="GENERATOR" content="Mozilla/4.76 [en] (Windows NT 5.0; U) [Netscape]">
+   <meta name="AUTHOR" content="Daniel Le Berre">
+   <meta name="CREATED" content="20000814;14394714">
+   <meta name="CHANGEDBY" content="Daniel Le Berre">
+   <meta name="CHANGED" content="20020605;13230000">
+<style>
+	<!--
+		@page { size: 21.01cm 29.69cm; margin-left: 3.18cm; margin-right: 3.18cm; margin-top: 2.54cm; margin-bottom: 2.54cm }
+		H1 { margin-bottom: 0.2cm; font-family: "Arial", sans-serif; font-size: 16pt }
+		H2 { margin-bottom: 0.2cm; font-family: "Arial", sans-serif; font-size: 14pt; font-style: italic }
+		H3 { margin-bottom: 0.2cm; font-family: "Arial", sans-serif }
+	-->
+	</style>
+</head>
+<body LANG="fr-FR">
+
+<h1 STYLE="border: none; padding: 0cm">
+Using JADE with Java Server Pages (JSP)</h1>
+
+<div STYLE="margin-bottom: 0cm; border: none; padding: 0cm"><i>Authors:
+<a href="http://www.cril.univ-artois.fr/~leberre/">Daniel
+Le Berre</a> (<a href="mailto:leberre@cril.univ-artois.fr">leberre@cril.univ-artois.fr</a>),
+Olivier Fourdrinoy</i></div>
+
+
+<p STYLE="margin-bottom: 0cm; border: none; padding: 0cm"><i>Last modified:&nbsp;<SDFIELD TYPE=DOCINFO SUBTYPE=CHANGE FORMAT=DATE SDNUM="1036;0;NNNNJ MMMM AAAA">mercredi
+5 juin 2002</i></SDFIELD>
+
+<p STYLE="margin-bottom: 0cm; border: none; padding: 0cm"><i><font size=-1>Java
+platform: <a href="http://java.sun.com/j2se/1.3/">Sun JDK 1.3 and over</a></font></i>
+
+<p STYLE="margin-bottom: 0cm; border: none; padding: 0cm"><i><font size=-1>JSP
+platform: <a href="http://java.sun.com/products/jsp/download.html">Sun
+Java Server Web Development Kit (JSWDK) 1.0.1</a> , <a href="http://jakarta.apache.org/">Jakarta
+Tomcat 3.X/4.0</a></font></i>
+
+<p STYLE="margin-bottom: 0cm; border: none; padding: 0cm"><i><font size=-1><a href="http://jade.cselt.it/">JADE</a>
+versions 1.4 and over.</font></i>
+<br>&nbsp;
+<div STYLE="margin-bottom: 0cm"></div>&nbsp;
+
+
+<p STYLE="margin-bottom: 0cm">One of the major interest when adopting the
+Java Server Pages approach to generate dynamic HTML, is to be able to use
+available Java APIs to handle various work such as database connection,
+authentication, etc... One interesting feature of JSP is also the convenient
+way to handle forms with JavaBeans.
+
+<p STYLE="margin-bottom: 0cm">Since JADE is written in Java, it is pretty
+easy to integrate JADE agents with JSP. This allows you to have for instance
+an agent looking at all the connections made to a particularly sensitive
+web page, and report you each of them (this is particularly interesting
+in the Java Server Pages context for the error page for instance). This
+will be the application we are going to design in this tutorial.
+<br>&nbsp;
+<div STYLE="margin-bottom: 0cm"></div>&nbsp;
+
+
+<p STYLE="margin-bottom: 0cm"><i>This tutorial assumes that:</i>
+<ul>
+  <div STYLE="margin-bottom: 0cm"><i>you are familiar with Java and have Java 
+    correctly installed.</i></div>
+  <p STYLE="margin-bottom: 0cm"><i>you are familiar with JADE and have JADE correctly 
+    installed.</i> 
+  <p STYLE="margin-bottom: 0cm"><i>you are familiar with JSP and have a JSP enabled 
+    web server correctly installed.</i> 
+  <div STYLE="margin-bottom: 0cm"><i></i></div>
+  <p STYLE="margin-bottom: 0cm"><i>you have downloaded the <a href="http://jade.cselt.it/thirdpartysw.html">JADE 
+    tag library add-on</a> from the <a href="http://jade.cselt.it/">JADE web site</a> 
+    and you have executed the scripts 'ant lib' and 'ant examples' that create 
+    the appropriate jar files.</i>
+</ul>
+
+<h2>
+The problem</h2>
+
+<div STYLE="margin-bottom: 0cm">We have three agents, namely <i>snooper</i>,
+<i>buffer</i>
+and <i>client</i>. <i>Snooper</i> is the agent that is living on the sensitive
+web page, <i>client</i> is an agent that must display the information concerning
+the connections to the web page to the webmaster. Since the latter can
+not be logged on his computer,
+<i>buffer</i> is an agent that will keep
+the information if the webmaster is not reachable. Furthermore, the snooper
+client must act quickly to not delay the availability of the web page,
+so it will just send the information for the webmaster trough the <i>buffer</i>,
+that will always be reachable. <i>buffer</i> will manage the connection
+with <i>client</i>: the latter will subscribe/unsubscribe when it is launched/stopped.
+It will check that the client has really received the information before
+deleting it.</div>
+
+<br>&nbsp;
+<div STYLE="margin-bottom: 0cm"></div>&nbsp;
+
+
+<p STYLE="margin-bottom: 0cm"><p STYLE="margin-top: 0.2cm; margin-bottom: 0.2cm">
+
+<span ID="Frame2" STYLE="float: left; width: 9.04cm; height: 7.09cm; border: none; padding: 0cm; background: #ffffff"><img SRC="svlm9lma.gif" NAME="Graphic1" BORDER=0 height=267 width=342 align=LEFT>
+<br><i><font size=-1>Drawing 1 JADE agents</font></i>
+<br></span>
+<br>&nbsp;
+<br>&nbsp;
+<div STYLE="margin-bottom: 0cm"></div>&nbsp;
+
+<br>&nbsp;
+<div STYLE="margin-bottom: 0cm"></div>&nbsp;
+
+<h2>
+Creating the agents</h2>
+
+<div STYLE="margin-bottom: 0cm">The three agents are really easy to construct.
+The code should work both under JADE 1.4 and JADE 2.0 after minor syntactical
+modifications given in the code.</div>
+
+<h3>
+<a href="Snooper.java.html">Snooper.java</a></h3>
+
+<h3>
+<a href="Buffer.java.html">Buffer.java</a></h3>
+
+<h3>
+<a href="Client.java.html">Client.java</a></h3>
+
+<div STYLE="margin-bottom: 0cm">There are two tips in this code:</div>
+
+<ul>
+<div STYLE="margin-bottom: 0cm">I am using the block() method both on Client
+and Buffer agents to avoid CPU consumption overhead.</div>
+
+
+<p STYLE="margin-bottom: 0cm">To be able to know if the client is alive
+or not, I need to wait for a reply from the client during 10 seconds. If
+no confirmation arrive, I suppose that the agent is not there and I do
+not clear the message in the buffer agent.</ul>
+
+<div STYLE="margin-bottom: 0cm"></div>
+
+<h3>
+Agent and JSP (Updated June 2002 with jade taglib)</h3>
+Now we have all our JADE agents defined. We need to integrate the Snooper
+agent in our web page. Here is how to proceed.
+<h4>
+Without jade taglib</h4>
+We first need to import some jade classes using the page import statement.
+Then we declare our agent, <b>with an application scope</b>. This is important
+because it means that the agent will have the same life than the enclosing
+servlet (the JSP page). So the agent will still living even if there is
+no connections to the page. Furthermore, all the initialization code defined
+between the useBean tags will be only executed once.
+
+<p STYLE="margin-bottom: 0cm">To be able to use JADE agent, we need at
+least one agent container on the JVM running the servlet. So we need to
+integrate the call to JADE platform or container, usually done from the
+command line, directly in the JSP page. Here I simulate a command line
+call with no option for JADE 1.4, with the "-container" for JADE 2.0, which
+means that the JADE platform is running on the same machine than the JSP
+web server. A JADE Agent Platform cannot be created within a JSP page because
+of security restrictions. In the next releases of JADE this limitation
+will probably be removed.
+<br>&nbsp;
+<div STYLE="margin-bottom: 0cm"></div>&nbsp;
+
+
+<p STYLE="margin-bottom: 0cm">Once the JADE container is created, we need
+to register our Snooper agent to the container. This is done using the
+doStart() method. Note that the reference to our agent is the ID defined
+in the useBean declaration.
+<h3>
+<a href="testjade.html">formertestjade.jsp</a></h3>
+
+<div STYLE="margin-bottom: 0cm">Now we can use our agent to snoop each
+connection to this JSP page. Here the message sends the name of the remote
+host, the date and the name of the web page.</div>
+
+<br>&nbsp;
+<div STYLE="margin-bottom: 0cm"></div>&nbsp;
+
+<p>The main problem with that approach is that:
+<ul>The initialization of the container must be done inside a jsp:useBean
+tag of scope application. If your agent must be of application scope, it
+is ok, but if one would like to declare agents having a session scope,
+the container initialization must be done inside a fake jsp:useBean tag.
+<p>The user need to manipulate directly the agent in the code.</ul>
+To solve the second problem, JADE team released wrappers for manipulatig
+agents from objects, in the java.wrapper package. To solve the first one,
+the best solution is to create a new tag.
+<h4>
+With jade taglib</h4>
+Here the solution is more elegant in the JSP page, but a bit more difficult
+to deploy.
+<p>What is needed:
+<ul>The jadetaglib.jar file: it contains the java code of the jade tags.
+<p>The jspagents.jar file: it contains the Snooper, Buffer and Client classes
+(actually, you just need the Snooper agent here).
+<p>The jade.tld file: it maps each tag to a class.
+<p>The web.xml file: this files maps the jade taglib id « jade » to the
+jade.tld file.</ul>
+Suppose that you are creating a JSP application myapp in Tomcat. Then you
+will put all the files related to myapp in the directory $tomcat/webapps/myapp.
+You should have the following directory structure:
+<pre>$tomcat/webapps/myapp
+&nbsp; all the jsp files (jestjade.jsp, testagade.jsp, testagade1.jsp)
+
+$tomcat/webapps/myapp/WEB-INF
+&nbsp; web.xml, jade.tld
+
+$tomcat/webapps/myapp/WEB-INF/lib
+&nbsp;all jade jar files (jade.jar, jadeTools.jar, etc.) + the jadetaglib.jar file + jspagents.jar</pre>
+&nbsp;
+<p>&nbsp;
+<br>&nbsp;
+<p>Note that is it necessary to put all the jar files in the same lib directory.
+For instance, if one want to share jade classes between several JSP applications,
+then putting jade jar files in the main lib directory ($tomcat/lib) is
+possible if you also move the jadetaglib.jar and jspagents.jar files there.
+<p>To declare the jade taglib in a jsp page, one must put this line at
+the very begining of the file:
+<pre STYLE="margin-bottom: 0.5cm">&lt;%@ taglib uri="jade.wrapper.taglib" prefix="jade" %></pre>
+&nbsp;
+<p>&nbsp;
+<br>&nbsp;
+<p>Then it is possible to use the three tags container, useAgent and sendObject:
+<p>container:
+<p>The container tag creates a JADE container with an application scope.
+The options available are the ones available from jade command line: hostname,
+port and a string parameter for future extensions. Note that for the moment
+one can only creates new containers for an existing JADE platform, due
+to security restrictions.
+<pre STYLE="margin-bottom: 0.5cm">&lt;jade:container id="mycontainer" host="myhost" port="1099"/></pre>
+useAgent:
+<p>The useAgent tag creates a new agent in a given container for a given
+scope. The agent id is the name of the agent in the container, and the
+name of the proxy agent in the jsp page.
+<pre STYLE="margin-bottom: 0.5cm">&lt;jade:useAgent id="snooper" classname="examples.jsp.Snooper" container="mycontainer" scope="application"/></pre>
+sendObject:
+<p>The last tag should replace the agent.putO2AObject() method. Unfortunately,
+for the moment, only String objects can be sent to the agent.
+<p>The following code:
+<pre STYLE="margin-bottom: 0.5cm">&lt;% snooper.putO2AObject(request.getRemoteHost()+" "+(new java.util.Date())+" "+request.getRequestURI(),false); %></pre>
+is equivalent to:
+<pre STYLE="margin-bottom: 0.5cm">&lt;jade:sendObject id="snooper" blocking="false">&lt;%= request.getRemoteHost()+" "+(new java.util.Date())+" "+request.getRequestURI() %>&lt;/jade:sendObject></pre>
+If one to to pass an object an not a String to an object, he should use
+the first approach.
+<p>The following jsp files creates one container and two agents, using
+those tags:
+<h3>
+<a href="testagade.html">testagade.jsp</a></h3>
+
+<h2>
+Putting everything to work</h2>
+Here is the architecture of our working JADE environment with a JSP page.
+
+<p STYLE="margin-bottom: 0cm"><p STYLE="margin-top: 0.2cm; margin-bottom: 0.2cm">
+
+<span ID="Frame1" STYLE="float: left; width: 12.09cm; height: 5.64cm; border: none; padding: 0cm; background: #ffffff"><img SRC="svlm9lmb.gif" NAME="Graphic2" BORDER=0 height=213 width=457 align=LEFT>
+<br><i><font size=-1>Drawing 2 JADE containers</font></i>
+<br></span>
+<br>&nbsp;
+<ul>
+<div STYLE="margin-bottom: 0cm">The server contains two different JVM:
+one to run JSP/servlet plus one JADE container, and another one to run
+JADE platform. I don't see how to change this design since it does not
+seem possible to run the JADE platform directly inside JSP/Servlet JVM.</div>
+
+
+<p STYLE="margin-bottom: 0cm">The client is running another instance of
+the JVM to run a second JADE container.</ul>
+
+<div STYLE="margin-bottom: 0cm"></div>
+
+
+<p STYLE="margin-bottom: 0cm">The interesting feature of this design is
+that the platform (and the buffer agent) is dissociated from the JSP page.
+Since each time that you change the JSP page you delete the snooper agent
+and his container, using a separate container for the buffer avoid to loose
+all the information it contains.
+<br>&nbsp;
+<div STYLE="margin-bottom: 0cm"></div>&nbsp;
+
+
+<p STYLE="margin-bottom: 0cm">To run this example, compile the three agent
+java files. Put <font face="Courier New, monospace"><font size=-1>Snooper.class</font></font>
+and <font face="Courier New, monospace"><font size=-1>Buffer.class</font></font>
+in the server in a directory of the classpath of your JSP web server (the
+<font face="Courier New, monospace"><font size=-1>classes</font></font>
+directory with tomcat, the <font face="Courier New, monospace"><font size=-1>webpages/WEB-INF/jsp/beans/</font></font>
+with JSWDK for instance). Do not forget to add JADE jar files in the
+<font face="Courier New, monospace"><font size=-1>lib</font></font>
+directory of the JSP web server. (they will be added automatically on the
+JSP web server classpath). Put <font face="Courier New, monospace"><font size=-1>Client.class</font></font>
+on the client computer. (I assume that JADE is installed on this computers).
+Remember that if you use the package <font face="Courier New, monospace"><font size=-1>examples.jsp</font></font>,
+you have to put the class files in a subdirectory <font face="Courier New, monospace"><font size=-1>examples/jsp/</font></font>.
+Put the file <font face="Courier New, monospace"><font size=-1>testjade.jsp</font></font>
+in a directory accessible from your JSP web server (<font face="Courier New, monospace"><font size=-1>webpages/</font></font>
+for instance).
+<br>&nbsp;
+<div STYLE="margin-bottom: 0cm"></div>&nbsp;
+
+
+<p STYLE="margin-bottom: 0cm">1. Run JADE platform with buffer agent on
+the server
+<br>&nbsp;
+<div STYLE="margin-bottom: 0cm"></div>&nbsp;
+
+<pre STYLE="margin-bottom: 0.51cm">java jade.Boot -platform buffer:examples.jsp.Buffer</pre>
+
+<div STYLE="margin-bottom: 0cm"></div>&nbsp;
+
+<p>&nbsp;
+
+<p STYLE="margin-bottom: 0cm">2. Run the JSP page with the snooper agent
+on the server
+<br>&nbsp;
+<div STYLE="margin-bottom: 0cm"></div>&nbsp;
+
+
+<p STYLE="margin-bottom: 0cm">request the testjade.jsp from your JSP web
+server
+<br>&nbsp;
+<div STYLE="margin-bottom: 0cm"></div>&nbsp;
+
+
+<p STYLE="margin-bottom: 0cm">3. Run the client agent into a jade container
+on the client
+<br>&nbsp;
+<div STYLE="margin-bottom: 0cm"></div>&nbsp;
+
+<pre STYLE="margin-bottom: 0.51cm">java jade.Boot -container -host server.domain daniel:examples.jsp.Client</pre>
+
+<div STYLE="margin-bottom: 0cm"></div>&nbsp;
+
+<p>&nbsp;
+<br>&nbsp;
+<div STYLE="margin-bottom: 0cm"></div>&nbsp;
+
+</body>
+</html>

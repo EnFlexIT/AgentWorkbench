@@ -1,0 +1,1 @@
+javac  -classpath .\lib\jade.jar;.\lib\jadeTools.jar;.\lib\iiop.jar;.\lib\commons-codec\commons-codec-1.3.jar;.  %1 %2 %3 %4 %5 %6 %7 %8 %9

@@ -1,0 +1,96 @@
+<pre>
+<tt>
+<font color=#0000FF>package</font> examples.jsp;
+
+<font color=#0000FF>import</font> java.io.*;
+<font color=#0000FF>import</font> java.awt.*;
+<font color=#0000FF>import</font> javax.swing.*;
+<font color=#0000FF>import</font> java.awt.event.*;
+
+<font color=#0000FF>import</font> jade.core.*;
+<font color=#0000FF>import</font> jade.core.behaviours.*;
+<font color=#0000FF>import</font> jade.lang.acl.ACLMessage;
+<font color=#0000FF>import</font> jade.lang.acl.MessageTemplate;
+
+<font color=#0000FF>public</font> <font color=#0000FF>class</font> Client <font color=#0000FF>extends</font> Agent {
+    <font color=#9A1900>// Used to display the messages
+</font>    <font color=#0000FF>private</font> JTextArea result;
+
+    <font color=#0000FF>public</font> Client() {
+	result = <font color=#0000FF>new</font> JTextArea();
+    }
+
+    <font color=#9A1900>/**
+     * Wait for a message from the buffer. Confirm the reception.
+     */</font>
+    <font color=#0000FF>class</font> MyBehaviour <font color=#0000FF>extends</font> CyclicBehaviour {
+	<font color=#0000FF>private</font> MessageTemplate m1;
+
+	<font color=#0000FF>public</font> MyBehaviour(Agent a) {
+	    <font color=#0000FF>super</font>(a);
+	    m1 = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
+	}
+
+	<font color=#0000FF>public</font> <font color=#009900>void</font> action() {
+	    <font color=#9A1900>// Wait for a message from the Buffer
+</font>	    ACLMessage msg = receive(m1);
+	    <font color=#0000FF>if</font> (msg!= <font color=#0000FF>null</font>){
+		<font color=#9A1900>// display the message
+</font>		result.append(msg.getContent());
+		<font color=#9A1900>// confirm that the message has been received.
+</font>		ACLMessage reply = msg.createReply();
+		reply.setPerformative(ACLMessage.CONFIRM);
+		send(reply);
+	    } <font color=#0000FF>else</font> {
+		block();
+	    }
+	}
+    }
+
+    <font color=#0000FF>protected</font> <font color=#009900>void</font> unsubscribe() {
+	ACLMessage msg = <font color=#0000FF>new</font> ACLMessage(ACLMessage.CANCEL);
+	<font color=#9A1900>// JADE 2.3
+</font>	msg.addReceiver(<font color=#0000FF>new</font> AID(<font color=#FF0000>"buffer"</font>,AID.ISLOCALNAME));
+	<font color=#9A1900>// JADE 2.0:
+</font>	<font color=#9A1900>// msg.addReceiver(new AID("buffer@"+getHap()));
+</font>	<font color=#9A1900>// JADE 1.4:
+</font>	<font color=#9A1900>//msg.addDest("buffer");
+</font>	send(msg);
+    }
+
+    <font color=#0000FF>protected</font> <font color=#009900>void</font> setup() {
+	addBehaviour(<font color=#0000FF>new</font> MyBehaviour(<font color=#0000FF>this</font>));
+	<font color=#9A1900>// create a GUI that display the messages
+</font>	JFrame frame = <font color=#0000FF>new</font> JFrame(<font color=#FF0000>"Snooper client"</font>);
+	<font color=#9A1900>// When the window is closed, unsubscribe from the buffer.
+</font>	frame.addWindowListener(<font color=#0000FF>new</font> WindowAdapter() {
+		<font color=#0000FF>public</font> <font color=#009900>void</font> windowClosing(WindowEvent we) {
+		    unsubscribe();
+		    doDelete();
+		    System.exit(<font color=#CC33CC>0</font>); 
+		    <font color=#9A1900>// kill all the container because there is also
+</font>		    <font color=#9A1900>// 1 client running.
+</font>		    <font color=#9A1900>// doDelete();
+</font>		}
+	    });
+	JScrollPane scp = <font color=#0000FF>new</font> JScrollPane();
+	scp.getViewport().add(result);
+	frame.getContentPane().add(scp);
+	frame.setSize(<font color=#CC33CC>300</font>,<font color=#CC33CC>200</font>);
+	frame.setVisible(true);
+	
+	<font color=#9A1900>// ask to the buffer stored messages.
+</font>	ACLMessage msg = <font color=#0000FF>new</font> ACLMessage(ACLMessage.REQUEST);
+	<font color=#9A1900>// JADE 2.3
+</font>	msg.addReceiver(<font color=#0000FF>new</font> AID(<font color=#FF0000>"buffer"</font>,AID.ISLOCALNAME));
+	<font color=#9A1900>// JADE 2.0:
+</font>	<font color=#9A1900>// msg.addReceiver(new AID("buffer@"+getHap()));
+</font>	<font color=#9A1900>// JADE 1.4:
+</font>	<font color=#9A1900>//msg.addDest("buffer");
+</font>	send(msg);
+    }
+}
+
+
+</tt>
+</pre>

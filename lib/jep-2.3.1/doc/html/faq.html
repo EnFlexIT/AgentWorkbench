@@ -1,0 +1,110 @@
+<html><!-- #BeginTemplate "/Templates/maintemplate.dwt" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- #BeginEditable "doctitle" --> 
+<title>JEP - Java Math Expression Parser</title>
+<!-- #EndEditable --> 
+<link rel="stylesheet" type="text/css" href="main.css" title="style1">
+</head>
+
+<body>
+<!-- #BeginEditable "Sub%20Menu" --> <!-- #BeginLibraryItem "/Library/Docu Menu.lbi" --><!-- NAVIGATION ---------------------------------------------------- -->
+<div id="navcontainer">
+<ul>
+<li><a href="../javadoc/index.html" target="_blank">JavaDoc*</a></li>
+</ul>
+
+<hr/>
+
+<ul>
+<li><a href="index.html">Usage</a></li>
+<li><a href="op_and_func.html">Operators &amp; Functions</a></li>
+<li><a href="grammar.html">Grammar</a></li>
+<li><a href="cust_func.html">Custom Functions</a></li>
+<li><a href="newfeatures-2.3.html">New Features</a></li>
+<li><a href="faq.html">FAQ</a></li>
+<li><a href="version.html">Version History</a></li>
+</ul>
+
+<hr/>
+
+<ul>
+<li><a href="djep/index.html">DJEP</a></li>
+<li><a href="djep/XJep.html">XJep</a></li>
+<li><a href="djep/DJep.html">Differentiation</a></li>
+<li><a href="djep/groups.html">Groups</a></li>
+<li><a href="djep/VectorJep.html">Vectors &amp; Matrices</a></li>
+<li><a href="djep/version.html">Version History</a></li>
+</ul>
+</div><!-- #EndLibraryItem --><!-- #EndEditable -->
+<div id="centercontent">
+<!-- #BeginEditable "Text" --> 
+        
+  <h1>Frequently Asked Questions</h1>
+        <p><b>Q: How can I add custom functions with a variable number of parameters?</b></p>
+        <blockquote> 
+          <p><b>A:</b> Create a custom function class and set the number of parameters 
+            to -1. The parser will then accept any number of parameters.</p>
+        </blockquote>
+          <table width="100%" border="0" cellspacing="0" cellpadding="0">
+            <tr> 
+              <td bgcolor="#CCCCCC"><img src="img/spacer.gif" width="1" height="1"></td></tr></table><br>
+        <p><b>Q: I don't need all the functions supplied by JEP. Is there a way 
+          to not load some of them, or completely remove some from the package?</b></p>
+        <blockquote> 
+          <p><b>A:</b> Stripping down JEP into a lean mean arithmetic machine!</p>
+          <p><b>Option 1:</b><br>
+            In some cases you will not require all the built in functions supported 
+            by JEP. The easiest way to accomplish this is simply not calling the 
+            addStandardFunctions() method before parsing. Then, you can call addFunction() 
+            for any specific functions you may require.</p>
+          <p><b>Option 2:</b><br>
+            If you think it is necessary to minimize the size of JEP to a minimum, 
+            you can remove all function classes other than the operators (if you 
+            don't need them). This will leave you with a parser that can still 
+            do basic arithmetic, but not the fancy functions like sin() and cos(). 
+            It saves you about 17KB of classes (15% of JEP in total). </p>
+          <p><b>Instructions:</b><br>
+            - The function classes are all located in the org.nfunk.jep.function 
+            package. Operators (+, -, *, /,&#133;) are also implemented as functions. 
+            These should NOT be removed if you still want JEP to work properly. 
+            The following function classes are used to implement operators:</p>
+          <blockquote> 
+            <table width="400" border="0" cellspacing="0" cellpadding="2">
+              <tr> 
+                <td>Add</td>
+                <td>Modulus</td>
+                <td>Subtract</td>
+              </tr>
+              <tr> 
+                <td>Comparative</td>
+                <td>Multiply</td>
+                <td>UMinus</td>
+              </tr>
+              <tr> 
+                <td>Divide</td>
+                <td>Not</td>
+                <td>&nbsp;</td>
+              </tr>
+              <tr> 
+                <td>Logical</td>
+                <td>Power</td>
+                <td>&nbsp;</td>
+              </tr>
+            </table>
+          </blockquote>
+          <p> - Open the source code for JEP and look for the addStandardFunctions() 
+            method. It contains a list of almost all non-operator functions. For 
+            every function class you remove from the function directory, you must 
+            also remove the associated line from this method.<br>
+            - Recompile JEP, and you should have a lean mean arithmetic machine!<br>
+          </p>
+        </blockquote>
+        <!-- #EndEditable -->
+<br/>
+<br/>
+<br/>
+  <div id="footer"> &copy; 2006 Singular Systems</div>
+</div>
+</body>
+<!-- #EndTemplate --></html>

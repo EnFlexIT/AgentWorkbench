@@ -1,0 +1,332 @@
+<html><!-- #BeginTemplate "/Templates/maintemplate.dwt" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- #BeginEditable "doctitle" --> 
+<title>JEP - Java Math Expression Parser</title>
+<!-- #EndEditable --> 
+<link rel="stylesheet" type="text/css" href="main.css" title="style1">
+</head>
+
+<body>
+<!-- #BeginEditable "Sub%20Menu" --> <!-- #BeginLibraryItem "/Library/Docu Menu.lbi" --><!-- NAVIGATION ---------------------------------------------------- -->
+<div id="navcontainer">
+<ul>
+<li><a href="../javadoc/index.html" target="_blank">JavaDoc*</a></li>
+</ul>
+
+<hr/>
+
+<ul>
+<li><a href="index.html">Usage</a></li>
+<li><a href="op_and_func.html">Operators &amp; Functions</a></li>
+<li><a href="grammar.html">Grammar</a></li>
+<li><a href="cust_func.html">Custom Functions</a></li>
+<li><a href="newfeatures-2.3.html">New Features</a></li>
+<li><a href="faq.html">FAQ</a></li>
+<li><a href="version.html">Version History</a></li>
+</ul>
+
+<hr/>
+
+<ul>
+<li><a href="djep/index.html">DJEP</a></li>
+<li><a href="djep/XJep.html">XJep</a></li>
+<li><a href="djep/DJep.html">Differentiation</a></li>
+<li><a href="djep/groups.html">Groups</a></li>
+<li><a href="djep/VectorJep.html">Vectors &amp; Matrices</a></li>
+<li><a href="djep/version.html">Version History</a></li>
+</ul>
+</div><!-- #EndLibraryItem --><!-- #EndEditable -->
+<div id="centercontent">
+<!-- #BeginEditable "Text" --> 
+  <h1><a name="top"></a>Usage</h1>
+  <ul>
+    <li><a href="#basicusage">Basic usage</a></li>
+    <li><a href="#evaluatingexpressions">Evaluating expressions</a></li>
+    <li><a href="#errorhandling">Error handling</a></li>
+    <li><a href="#implicitmul">Implicit multiplication</a></li>
+    <li><a href="#allowingundeclared">Allowing undeclared variables</a></li>
+    <li><a href="#obtainingalist">Obtaining a list of variables</a></li>
+    <li><a href="#complexnumbers">Complex numbers</a></li>
+    <li><a href="#usingvectors">Using Vectors</a></li>
+    <li><a href="#usingstrings">Using Strings</a></li>
+    <li><a href="#customtypes">Custom types</a></li>
+    <li><a href="#manipulating">Manipulating expressions</a></li>
+    <li><a href="#usingcustomnumberclasses">Using custom number classes</a></li>
+  </ul>
+  <h3><a name="basicusage"></a>Basic usage</h3>
+  <p>Using the JEP package of classes in your project is simple. The following 
+    steps will get you started quickly.</p>
+  <ol>
+    <li>Download the JEP package</li>
+    <li>Unpack the archive</li>
+    <li>Move the jep-x.xx.jar file to a directory of your choice (optional)</li>
+    <li>IMPORTANT: For the Java compiler to be able to find the JEP classes when 
+      compiling your program, it needs to know their location. So you will need 
+      to add the location of the .jar file to your CLASSPATH environment variable 
+      (if you don't know how, <a href="http://java.sun.com/j2se/1.4/docs/tooldocs/windows/classpath.html" target="_blank">read 
+      this</a>). Your CLASSPATH variable should contain something like C:\java\packages\jep-x.xx.jar, 
+      depending on where you place the jar file. Alternatively you may need to 
+      set the location of the jar archive in your Java IDE so that the compiler 
+      finds the library.</li>
+    <li>In your program, create a new parser object with 
+      <pre>org.nfunk.jep.JEP myParser = new org.nfunk.jep.<a href="../javadoc/org/nfunk/jep/JEP.html" target="_blank">JEP</a>();</pre>
+    </li>
+    <li>Add the standard functions and constants if you want to be able to evaluate 
+      expressions with trigonometric functions and the constants <i>pi</i> and 
+      <i>e</i>. 
+      <pre>myParser.<a href="../javadoc/org/nfunk/jep/JEP.html#addStandardFunctions()" target="_blank">addStandardFunctions()</a>;
+myParser.<a href="../javadoc/org/nfunk/jep/JEP.html#addStandardConstants()" target="_blank">addStandardConstants()</a>;</pre>
+    </li>
+    <li> By default you need to specify which variables can be used in the expression. 
+      If a variable is not added before the expression is parsed, the parser will 
+      claim that the expression is invalid (this can be changed by <a href="#allowingundeclared">allowing 
+      undeclared variables</a>).<br>
+      To add the variable <i>x</i> and initialize it to 0 for example, write 
+      <pre>myParser.<a href="../javadoc/org/nfunk/jep/JEP.html#addVariable(java.lang.String, double)" target="_blank">addVariable(&quot;x&quot;, 0)</a>;</pre>
+    </li>
+    <li>Parse the expression, and evaluate it: 
+      <pre>myParser.<a href="../javadoc/org/nfunk/jep/JEP.html#parseExpression(java.lang.String)" target="_blank">parseExpression(ExpressionString)</a>;
+result = myParser.<a href="../javadoc/org/nfunk/jep/JEP.html#getValue()" target="_blank">getValue()</a>;</pre>
+    </li>
+    <li> The values of variables can be changed with the <a href="../javadoc/org/nfunk/jep/JEP.html#addVariable(java.lang.String, double)" target="_blank">addVariable(String, 
+      double)</a> method.<br>
+    </li>
+  </ol>
+  <p>The code of the sample applets provide more extensive look at how the parser 
+    methods are used.</p>
+  <!-- #BeginLibraryItem "/Library/top%20bar.lbi" --><table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr>
+    <td align="right"><a href="#top"><img src="img/top.gif" width="38" height="15" name="top" border="0"></a></td>
+</tr>
+<tr>
+ <td bgcolor="#CCCCCC"><img src="img/spacer.gif" width="1" height="1"></td></tr></table>
+ <br><br><!-- #EndLibraryItem --> 
+  <h3><a name="evaluatingexpressions"></a>Evaluating expressions</h3>
+  <p>Three methods for evaluating an expression are available:</p>
+  <ul>
+    <li><a href="../javadoc/org/nfunk/jep/JEP.html#getValue()" target="_blank">getValue()</a>: 
+      Use this if you are expecting a normal floating point value.</li>
+    <li><a href="../javadoc/org/nfunk/jep/JEP.html#getComplexValue()" target="_blank">getComplexValue()</a>: 
+      Use this if you are expecting a complex value.</li>
+    <li><a href="../javadoc/org/nfunk/jep/JEP.html#getValueAsObject()" target="_blank">getValueAsObject()</a>: 
+      Returns the result as an Object. Can be any type.</li>
+  </ul>
+  <p>The first two methods call <a href="../javadoc/org/nfunk/jep/JEP.html#getValueAsObject()" target="_blank">getValueAsObject()</a> 
+    internally, and perform the necessary conversions into either a <code>double</code> 
+    value, or a <code>Complex</code> object.</p>
+  <!-- #BeginLibraryItem "/Library/top%20bar.lbi" --><table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr>
+    <td align="right"><a href="#top"><img src="img/top.gif" width="38" height="15" name="top" border="0"></a></td>
+</tr>
+<tr>
+ <td bgcolor="#CCCCCC"><img src="img/spacer.gif" width="1" height="1"></td></tr></table>
+ <br><br><!-- #EndLibraryItem --> 
+  <h3><a name="errorhandling"></a>Error handling</h3>
+  <p>Errors can occur both while parsing an expression and while evaluating an 
+    expression. The <a href="../javadoc/org/nfunk/jep/JEP.html#hasError()" target="_blank">hasError()</a> 
+    method reports whether an error has occured during the most recent action 
+    (either parsing or evaluation). If the result is <code>true</code>, you can 
+    then use <a href="../javadoc/org/nfunk/jep/JEP.html#getErrorInfo()" target="_blank">getErrorInfo()</a> 
+    to obtain further information on the errors that have occured.</p>
+  <!-- #BeginLibraryItem "/Library/top%20bar.lbi" --><table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr>
+    <td align="right"><a href="#top"><img src="img/top.gif" width="38" height="15" name="top" border="0"></a></td>
+</tr>
+<tr>
+ <td bgcolor="#CCCCCC"><img src="img/spacer.gif" width="1" height="1"></td></tr></table>
+ <br><br><!-- #EndLibraryItem --> 
+  <h3><a name="implicitmul"></a>Implicit multiplication</h3>
+  <p>You can enable the implicit multiplication option with <a href="../javadoc/org/nfunk/jep/JEP.html#setImplicitMul(boolean)" target="_blank">setImplicitMul(true)</a>. 
+    The default setting is false (no implicit multiplication).</p>
+  <p>Implicit multiplication allows expressions such as &quot;2 x&quot; to be 
+    interpreted as &quot;2*x&quot;. Note that a space is required between two 
+    variables for them to be interpreted as being multiplied. The same holds for 
+    a variable followed by a number. For example &quot;y 3&quot; is interpreted 
+    as &quot;y*3&quot;, but &quot;y3&quot; is interpreted as a single variable 
+    with the name y3. If a variable is preceded by a number, no space is required 
+    between them for implicit multiplication to come in effect.</p>
+  <!-- #BeginLibraryItem "/Library/top%20bar.lbi" --><table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr>
+    <td align="right"><a href="#top"><img src="img/top.gif" width="38" height="15" name="top" border="0"></a></td>
+</tr>
+<tr>
+ <td bgcolor="#CCCCCC"><img src="img/spacer.gif" width="1" height="1"></td></tr></table>
+ <br><br><!-- #EndLibraryItem --> 
+  <h3><a name="allowingundeclared"></a>Allowing undeclared variables</h3>
+  <p>To enable parsing of undeclared variables, use <a href="../javadoc/org/nfunk/jep/JEP.html#setAllowUndeclared(boolean)" target="_blank">setAllowUndeclared(true)</a>. 
+    The default setting is false (undeclared variables are not allowed).</p>
+  <p>If you do not know what variable names may occur in the expression before 
+    parsing it, you can use <code>setAllowUndeclared(true)</code>. With this option 
+    enabled, it is not necessary to add variables to the parser before parsing 
+    an expression. If a new variable is found while parsing, it is automatically 
+    added to the symbol table. See <a href="#obtainingalist">Obtaining a list 
+    of variables</a> to read about how to access these variables.</p>
+  <!-- #BeginLibraryItem "/Library/top%20bar.lbi" --><table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr>
+    <td align="right"><a href="#top"><img src="img/top.gif" width="38" height="15" name="top" border="0"></a></td>
+</tr>
+<tr>
+ <td bgcolor="#CCCCCC"><img src="img/spacer.gif" width="1" height="1"></td></tr></table>
+ <br><br><!-- #EndLibraryItem --> 
+  <h3><a name="obtainingalist"></a>Obtaining a list of variables</h3>
+  <p>While parsing an expression with undeclared variables allowed, all A list 
+    of all the variables and constants that have been added to the parser, can 
+    be obtained with the <a href="../javadoc/org/nfunk/jep/JEP.html#getSymbolTable()" target="_blank">getSymbolTable()</a> 
+    method.</p>
+  <p>This method is most useful when the undeclared variables option is enabled. 
+    After an expression has been parsed, a list of all variables occurring in 
+    that expression can be obtained using the <code>getSymbolTable()</code> method. 
+    The return value is a SymbolTable object. Note that SymbolTable extends Hashtable.</p>
+  <!-- #BeginLibraryItem "/Library/top%20bar.lbi" --><table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr>
+    <td align="right"><a href="#top"><img src="img/top.gif" width="38" height="15" name="top" border="0"></a></td>
+</tr>
+<tr>
+ <td bgcolor="#CCCCCC"><img src="img/spacer.gif" width="1" height="1"></td></tr></table>
+ <br><br><!-- #EndLibraryItem --> 
+  <h3><a name="complexnumbers"></a>Complex numbers</h3>
+  <p>If you want to use complex numbers in your expression, you can call <a href="../javadoc/org/nfunk/jep/JEP.html#addComplex()" target="_blank">addComplex()</a> 
+    after creating the parser object. This will add the imaginary unit as constant<b> 
+    </b><i>i</i>. Two parser functions re() and im() are also added and can be 
+    used to obtain the real and imaginary components of complex numbers. You will 
+    need to import the <a href="../javadoc/org/nfunk/jep/type/Complex.html" target="_blank">org.nfunk.jep.type.Complex</a> 
+    class to be able to manipulate complex values from expressions.</p>
+  <p>By using the imaginary unit constant <i>i</i>, you can work with complex 
+    numbers in your expressions. A sample complex expression would be (1+2*i)^3. 
+    Currently the (re, im) notation is not supported.</p>
+  <p>To obtain a complex value from an expression, you must use the <a href="../javadoc/org/nfunk/jep/JEP.html#getComplexValue()" target="_blank">getComplexValue()</a> 
+    function. It will evaluate the expression and return the result as a Complex 
+    object. Note that the class used internally for Complex numbers is also used 
+    for returning the value.</p>
+  <p>Adding a complex variable or constant to the parser before evaluating an 
+    expression can be done with <a href="../javadoc/org/nfunk/jep/JEP.html#addVariable(java.lang.String, double, double)" target="_blank">addVariable(String 
+    name, double re, double im)</a>. It takes three parameters: the name of the 
+    variable as string, the real component, and the imaginary component.</p>
+  <!-- #BeginLibraryItem "/Library/top%20bar.lbi" --><table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr>
+    <td align="right"><a href="#top"><img src="img/top.gif" width="38" height="15" name="top" border="0"></a></td>
+</tr>
+<tr>
+ <td bgcolor="#CCCCCC"><img src="img/spacer.gif" width="1" height="1"></td></tr></table>
+ <br><br><!-- #EndLibraryItem --> 
+  <h3><a name="usingvectors"></a>Using Vectors</h3>
+  <h2> </h2>
+  <p>Vectors are ordered sets of Double elements. A vector is a list of values, 
+    separated by commas, and enclosed by square brackets. An example expression 
+    involving a vector is: 
+  <pre>[3, 4, 5]*2</pre>
+  <p>It would be evaluated as [6, 8, 10] by JEP. To add a vector as variable, 
+    use the <a href="../javadoc/org/nfunk/jep/JEP.html#addVariable(java.lang.String, java.lang.Object)" target="_blank">addVariable(String 
+    name, Object value)</a> method. If the result of an expression is a vector, 
+    it can be obtained by calling the <a href="../javadoc/org/nfunk/jep/JEP.html#getValueAsObject()" target="_blank">getValueAsObject()</a> 
+    function.</p>
+  <!-- #BeginLibraryItem "/Library/top%20bar.lbi" --><table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr>
+    <td align="right"><a href="#top"><img src="img/top.gif" width="38" height="15" name="top" border="0"></a></td>
+</tr>
+<tr>
+ <td bgcolor="#CCCCCC"><img src="img/spacer.gif" width="1" height="1"></td></tr></table>
+ <br><br><!-- #EndLibraryItem --> 
+  <h3><a name="usingstrings"></a>Using Strings</h3>
+  <p>Strings can be entered in an expression by using double quotes. They can 
+    be concatenated with the + operator and compared with the == and != relational 
+    operators. A sample expression involving the string type is &quot;foo&quot; 
+    + &quot;bar&quot; == &quot;foobar&quot;, which would be evaluated by JEP as 
+    1 (true).</p>
+  <p>To add a string as a variable, use the <a href="../javadoc/org/nfunk/jep/JEP.html#addVariable(java.lang.String, java.lang.Object)" target="_blank">addVariable(String 
+    name, Object value)</a> method. If the result of an expression is a string, 
+    it can be obtained by calling the <a href="../javadoc/org/nfunk/jep/JEP.html#getValueAsObject()" target="_blank">getValueAsObject()</a> 
+    function.</p>
+  <!-- #BeginLibraryItem "/Library/top%20bar.lbi" --><table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr>
+    <td align="right"><a href="#top"><img src="img/top.gif" width="38" height="15" name="top" border="0"></a></td>
+</tr>
+<tr>
+ <td bgcolor="#CCCCCC"><img src="img/spacer.gif" width="1" height="1"></td></tr></table>
+ <br><br><!-- #EndLibraryItem --> 
+  <h3><a name="customtypes"></a>Custom types</h3>
+  <p>In most cases, you will only need to work with the few built in types that 
+    JEP supplies (Double, Complex, Vector, String). But suppose you want to evaluate 
+    expressions that involve other types. This is possible by using the <a href="../javadoc/org/nfunk/jep/JEP.html#addVariable(java.lang.String, java.lang.Object)" target="_blank">addVariableAsObject(String 
+    name, Object value)</a> method to add variables of any type. The only place 
+    where the type of a variable matters, is in the function classes.</p>
+  <p>When an expression is evaluated, values are operated on with the classes 
+    in the function package. These include the operators (such as <a href="../javadoc/org/nfunk/jep/function/Add.html" target="_blank">Add</a> 
+    and <a href="../javadoc/org/nfunk/jep/function/Subtract.html" target="_blank">Subtract</a>), 
+    as well as the functions (such as <a href="../javadoc/org/nfunk/jep/function/Sine.html" target="_blank">Sine</a> 
+    and <a href="../javadoc/org/nfunk/jep/function/Cosine.html" target="_blank">Cosine</a>). 
+    Without making modifications to the source code, only the default types are 
+    handled with these classes. So, in order to be able to handle your own types, 
+    you will need to modify theses classes, or make your own function classes 
+    as described in the custom functions section.</p>
+  <!-- #BeginLibraryItem "/Library/top%20bar.lbi" --><table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr>
+    <td align="right"><a href="#top"><img src="img/top.gif" width="38" height="15" name="top" border="0"></a></td>
+</tr>
+<tr>
+ <td bgcolor="#CCCCCC"><img src="img/spacer.gif" width="1" height="1"></td></tr></table>
+ <br><br><!-- #EndLibraryItem --> 
+  <h3><a name="manipulating"></a>Manipulating expressions</h3>
+  <p>The <a href="../javadoc/org/nfunk/jep/JEP.html#getTopNode()" target="_blank">getTopNode()</a> 
+    method can be used to get the expression tree after parsing an expression. 
+    This will be useful if you want to do more than just evaluate the expressions 
+    you parse. For example, you may want to determine the derivative of an expression. 
+    In order to be able to this, you will need direct access to the expression 
+    tree.</p>
+  <p>The expression tree consists of nodes. Each of the nodes in the parse tree 
+    is an object of one of the following types:</p>
+  <ul>
+    <li><a href="../javadoc/org/nfunk/jep/ASTFunNode.html" target="_blank">ASTFunNode</a> 
+      - Functions and operators</li>
+    <li><a href="../javadoc/org/nfunk/jep/ASTConstant.html" target="_blank">ASTConstant</a> 
+      - Constants</li>
+    <li><a href="../javadoc/org/nfunk/jep/ASTVarNode.html" target="_blank">ASTVarNode</a> 
+      - Variables</li>
+  </ul>
+  <p>All of them extend the <a href="../javadoc/org/nfunk/jep/SimpleNode.html" target="_blank">SimpleNode</a> 
+    class (which implements the <a href="../javadoc/org/nfunk/jep/Node.html" target="_blank">Node</a> 
+    interface). Binary operators (+,-,*,/...) and functions are ASTFunNodes. The 
+    type of operator (the function class) is stored in the pfmc member, and as 
+    a string in the name member. Use the <a href="../javadoc/org/nfunk/jep/ASTFunNode.html#getPFMC()" target="_blank">getPFMC()</a> 
+    and <a href="../javadoc/org/nfunk/jep/ASTFunNode.html#getName()" target="_blank">getName()</a> 
+    methods to access these members.</p>
+  <p>To traverse the expression tree you can use a visitor class (<a href="../javadoc/org/nfunk/jep/ParserDumpVisitor.html" target="_blank">ParserDumpVisitor</a> 
+    is an example class used to print out all the nodes). Look at the <a href="../javadoc/org/nfunk/jep/EvaluatorVisitor.html" target="_blank">EvaluatorVisitor</a> 
+    class to see how expressions are evaluated using the Visitor design pattern.</p>
+  <!-- #BeginLibraryItem "/Library/top%20bar.lbi" --><table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr>
+    <td align="right"><a href="#top"><img src="img/top.gif" width="38" height="15" name="top" border="0"></a></td>
+</tr>
+<tr>
+ <td bgcolor="#CCCCCC"><img src="img/spacer.gif" width="1" height="1"></td></tr></table>
+ <br><br><!-- #EndLibraryItem --> 
+  <h3><a name="usingcustomnumberclasses"></a>Using custom number classes</h3>
+  <p>By default when an expression such as &quot;1+2&quot; is parsed, the constants 
+    &quot;1&quot; and &quot;2&quot; are created internally as Double objects. 
+    In most cases this is fine, but in some cases you may want to use custom classes 
+    for representing numbers.</p>
+  <p>This is made possible through creating a number class that implements the 
+    <a href="../javadoc/org/nfunk/jep/type/NumberFactory.html" target="_blank">NumberFactory</a> 
+    interface. It includes one method called <a href="../javadoc/org/nfunk/jep/type/NumberFactory.html#createNumber(java.lang.String)" target="_blank">createNumber(String 
+    value)</a>, which should return an object initialized to the value of the 
+    parameter. You can load your custom number factory with the JEP constructor 
+    <code>JEP(boolean traverse_in, Boolean allowUndeclared_in, Boolean implicitMul_in, 
+    NumberFactory numberFactory_in)</code>.</p>
+  <p>The custom number objects need to be handled by custom functions which you 
+    can create by following the instructions on the <a href="cust_func.html">Custom 
+    Functions</a> page.</p>
+  <!-- #BeginLibraryItem "/Library/top%20bar.lbi" --><table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr>
+    <td align="right"><a href="#top"><img src="img/top.gif" width="38" height="15" name="top" border="0"></a></td>
+</tr>
+<tr>
+ <td bgcolor="#CCCCCC"><img src="img/spacer.gif" width="1" height="1"></td></tr></table>
+ <br><br><!-- #EndLibraryItem --><!-- #EndEditable -->
+<br/>
+<br/>
+<br/>
+  <div id="footer"> &copy; 2006 Singular Systems</div>
+</div>
+</body>
+<!-- #EndTemplate --></html>

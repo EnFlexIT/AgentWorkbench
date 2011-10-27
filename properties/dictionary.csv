@@ -1,6 +1,4 @@
 SOURCE_LANGUAGE;DE;EN;IT;ES;FR
-de;! MyTab Single !;;;;
-de;! MyTab with SubTabs !;;;;
 de;' ist bereits geöffnet!;' is already open!;;;
 de;'.csv'-Version des Wörterbuchs übernehmen ...;Import the '. csv'-version of the dictionary ...;;;
 de;(Falls bereits verwendet, wird versucht den nächst höheren Port zu nutzen);(If already used, it will be tried to use the next higher port);;;
@@ -136,7 +134,6 @@ de;Fehler – '@';Error – '@'
 de;Fehler – Projektauswahl!;Error – Project selection!
 de;Fehler – Projektname!;Error – Project name
 de;Fehler – Projektverzeichnis!;Error – Project folder
-de;Fehler: Die gewählte ID ist bereits vergeben!;;;;
 de;Fehler;Error
 de;Fenster;Window
 de;Fertig;Ready
@@ -275,7 +272,6 @@ de;Objekt-Typ;Object type
 de;Objekt;Object
 de;Objekte aus Projekt-Ontologie;Objects from project ontology
 de;Objekteigenschaften;Object properties
-de;Observer-Output;;;;
 de;Ontologie Referenz benennen;Name ontology reference ;;;
 de;Ontologie Referenz maskieren;Mask ontology reference;;;
 de;Ontologie hinzuf?gen;Add ontology
@@ -452,9 +448,6 @@ de;Übersetzen;Translate
 de;Übersetzter Text;Text translated
 de;Übersetzung speichern (STRG+S);Save translation (CTRL + S)
 de;Überspringen;Skip
-en;;Select an edge first;;;
-en;;The component name already exists!
- Choose a different one.;;;
 en;Ausgewählte Komponente entfernen;Remove selected component;;;
 en;Auswahl Netzwerk-Komonente!;Select Network Component to Add;;;
 en;Bestätigung;Confirmation;;;
@@ -462,7 +455,11 @@ en;Bild;Image;;;
 en;Bitte wählen Sie einen Knoten ausserhalb des Zentrums;Select a vertex other than the center of the star;;;
 en;Bitte wählen Sie einen Knoten.;Select one vertex;;;
 en;Bitte wählen Sie einen gültigen Knoten;Select a valid vertex first;;;
+en;Bitte wählen Sie zuerst eine Kante;Select an edge first;;;
 en;Bitte wählen Sie zuerst einen Knoten mit einem Rechtsklick aus!;Right click a valid vertex first;;;
+en;Die Komponente ist bereits vorhanden!
+  Bitte wählen Sie einen anderen Namen.;The component name already exists!
+ Choose a different one.;;;
 en;Eigenschaften bearbeiten;Edit Properties;;;
 en;Graph importieren;Import Graph from file;;;
 en;Graph löschen;Clear graph;;;

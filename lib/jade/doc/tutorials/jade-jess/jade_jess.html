@@ -1,0 +1,362 @@
+<html><head><title>Integrating JADE and Jess</title></head><body>
+<h1>Integrating JADE and Jess</h1>
+<p><i>Author: Henrique Lopes Cardoso (University of Porto) - hlc@fe.up.pt</i></p>
+<p><i>Date: March 2007</i></p>
+
+<h2>Index</h2>
+<ol>
+	<li><a href="#1._Introduction">Introduction</a></li>
+	<li><a href="#2._Developing_JADE_agents_using_Jess">Developing JADE agents with Jess</a></li>
+	<li><a href="#3._Implementation_choices">Implementation choices</a></li>
+	<li><a href="#4._Acknowledgements">Acknowledgements</a></li>
+</ol>
+<h2><a name="1._Introduction">1. Introduction</a></h2>
+<p>This brief tutorial explains how to integrate a Jess component into a JADE 
+agent.</p>
+<p>From the <a href="http://www.jessrules.com/">Jess homepage</a>: <i>«Jess is a 
+rule engine and scripting environment written entirely in Sun's Java language by 
+Ernest Friedman-Hill at Sandia National Laboratories in Livermore, CA. Using 
+Jess, you can build Java software that has the capacity to &quot;reason&quot; using 
+knowledge you supply in the form of declarative rules. Jess is small, light, and 
+one of the fastest rule engines available.»</i></p>
+<p>Jess was originally conceived as a tool for building expert systems. In the 
+multi-agent systems world, it can be used as a decision component of an agent, 
+which is implemented in a declarative way (see <a href="#Figure_1">Figure 1</a>).</p>
+<p>
+<i><a name="Figure_1">Figure 1</a>. An agent and its environment: JADE and Jess integration (adapted 
+from Russel &amp; Norvig, &quot;Artificial Intelligence: A Modern Approach&quot;, Prentice 
+Hall).<br>
+</i><img border="0" src="agent-environment.gif" width="530" height="295"></p>
+<p>The rest of the tutorial is concerned with the implementation of a Jess 
+decision module and its integration with the code of a JADE agent. This tutorial 
+does not deal with why you should use Jess, does not describe in detail the 
+functioning of the Jess engine, nor does it cover Jess installation issues. For 
+this, read the <a href="http://www.jessrules.com/">Jess documentation</a>.</p>
+<p>This tutorial is based on JADE 3.4.1 and Jess 7.0p1, although it may be 
+applicable to earlier versions of these tools.</p>
+<h2><a name="2._Developing_JADE_agents_using_Jess">2. Developing JADE agents using Jess</a></h2>
+<p>Before integrating both tools, it is essential to keep in mind some of the 
+main issues concerning the functioning of both JADE agents and Jess engines. 
+Also, there are a number of different approaches that enable you to choose the 
+amount of the agent program that you wish to implement in Jess.</p>
+<h3>2.1 Important considerations</h3>
+<p>First of all, it is worth remembering that, in principle, a JADE agent is 
+single-threaded. This means that one must be careful if an agent ought to be 
+able to interact with its environment while reasoning and making decisions. This 
+is not Jess related, though. Whether or not you use Jess, this is an issue to 
+take into account.</p>
+<p>Being a rule engine, Jess includes a special class called <i>Rete</i>, which 
+implements the rule-based inference engine. To embed Jess in a Java application 
+(such as a JADE agent), you simply need to create a <code>jess.Rete</code> object and 
+manipulate it appropriately. Now, one of the methods included in this class that 
+allow you to run the inference engine is <code>Rete.run()</code>. This method will 
+make the engine consecutively fire applicable rules, and will return only when 
+there are no more rules to fire, that is, when the engine stops; therefore, 
+meanwhile the calling thread will be blocked. (If you want to understand how 
+rules are applied, take a look at <a href="http://www.jessrules.com/links/">Jess 
+documentation links</a>.)</p>
+<p>Now, if we block the calling thread, we block the entire single-threaded 
+agent. This may be relevant or not, depending on how long the rule-based 
+reasoning will take. Fortunately, the <code>jess.Rete</code> 
+class includes another run method that allows us to specify the maximum number of cycles 
+the engine should run. This will allow us to interleave the Jess-based reasoning 
+with other agent activities.</p>
+<h3>2.2 Implementing a Jess behaviour</h3>
+<p>Taking into account the above considerations, the proposed implementation 
+consists of embedding an instance of the Jess engine inside a behaviour. Since 
+we want the agent to be able to continuously reason, we implement a <i>
+CyclicBehaviour</i> whose action will consist of running the Jess engine. 
+However, we will be careful not to block other agent's behaviours for a 
+considerable amount of time.</p>
+<p>The following code snippet shows the implementation:</p>
+<blockquote>
+	<pre style="margin-top: 0; margin-bottom: 0"> 1 class JessBehaviour extends CyclicBehaviour {</pre>
+	<pre style="margin-top: 0; margin-bottom: 0"> 2     <font color="#008000">// the Jess engine</font></pre>
+	<pre style="margin-top: 0; margin-bottom: 0"> 3     private jess.Rete jess;</pre>
+	<pre style="margin-top: 0; margin-bottom: 0"> 4     <font color="#008000">// maximum number of passes that a run of Jess can execute before giving control to the agent</font></pre>
+	<pre style="margin-top: 0; margin-bottom: 0"> 5     private static final int MAX_JESS_PASSES = 1;</pre>
+	<pre style="margin-top: 0; margin-bottom: 0"> 6     </pre>
+	<pre style="margin-top: 0; margin-bottom: 0"> 7     JessBehaviour(Agent agent, String jessFile) {</pre>
+	<pre style="margin-top: 0; margin-bottom: 0"> 8         super(agent);</pre>
+	<pre style="margin-top: 0; margin-bottom: 0"> 9         <font color="#008000">// create a Jess engine</font></pre>
+	<pre style="margin-top: 0; margin-bottom: 0">10         jess = new jess.Rete();</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">11         <font color="#008000">// load the Jess file</font></pre>
+	<pre style="margin-top: 0; margin-bottom: 0">12         try {</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">13             <font color="#008000">// open the Jess file</font></pre>
+	<pre style="margin-top: 0; margin-bottom: 0">14             FileReader fr = new FileReader(jessFile);</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">15             <font color="#008000">// create a parser for the file</font></pre>
+	<pre style="margin-top: 0; margin-bottom: 0">16             jess.Jesp j = new jess.Jesp(fr, jess);</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">17             <font color="#008000">// parse the input file into the engine</font></pre>
+	<pre style="margin-top: 0; margin-bottom: 0">18             try {</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">19                 j.parse(false);</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">20             } catch (jess.JessException je) {</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">21                 je.printStackTrace();</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">22             }</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">23             fr.close();</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">24         } catch (IOException ioe) {</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">25             System.err.println(&quot;Error loading Jess file - engine is empty&quot;);</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">26         }</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">27     }</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">28     </pre>
+	<pre style="margin-top: 0; margin-bottom: 0">29     public void action() {</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">30         <font color="#008000">// to count the number of Jess passes</font></pre>
+	<pre style="margin-top: 0; margin-bottom: 0">31         int executedPasses = -1;</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">32         <font color="#008000">// run jess</font></pre>
+	<pre style="margin-top: 0; margin-bottom: 0">33         try {</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">34             <font color="#008000">// run a maximum number of steps</font></pre>
+	<pre style="margin-top: 0; margin-bottom: 0">35             executedPasses = jess.run(MAX_JESS_PASSES);</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">36         } catch (JessException je) {</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">37             je.printStackTrace();</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">38         }</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">39         <font color="#008000">// if the engine stopped, block this behaviour</font></pre>
+	<pre style="margin-top: 0; margin-bottom: 0">40         if(executedPasses &lt; MAX_JESS_PASSES)</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">41             block();</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">42             <font color="#008000">// the behaviour shall be unblocked by a call to restart()</font></pre>
+	<pre style="margin-top: 0; margin-bottom: 0">43     }</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">44     </pre>
+	<pre style="margin-top: 0; margin-bottom: 0">..     ...</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">64 } <font color="#008000">// end JessBehaviour class</font></pre>
+</blockquote>
+<p>The behaviour's constructor (lines 7-27) starts by creating an instance of a 
+Jess engine (line 10), and then loads a previously created Jess code file, using 
+a Jess parser (lines 16, 19). The behaviour execution (lines 29-43) runs the 
+Jess engine indicating the maximum number of passes it should run (line 35). The 
+run method employed returns the actual number of executed passes, which may be 
+from zero up to the value of the argument. After running the engine, these 
+numbers (the maximum and the actual executed passes) are compared (line 40) to 
+determine if the engine stopped because there were no more rules to fire. If so, 
+this behaviour is blocked (line 41), since a subsequent call to run (in the next 
+round-robin behaviour execution) would have no effect at all.</p>
+<p>This implementation assumes that you will have a way of asserting new 
+information into the Jess engine, and a way of restarting the <code>JessBehaviour</code> (see 
+comment at line 42). One way of doing this is by providing access to the 
+<code>JessBehaviour</code> class instance, and implementing appropriate methods that will be 
+responsible for both tasks (asserting information and waking). Here is an 
+example method for the <code>JessBehaviour</code> class:</p>
+<blockquote>
+	<pre style="margin-top: 0; margin-bottom: 0">45     boolean addFact(String jessFact) {</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">46         <font color="#008000">// assert the fact into the Jess engine</font></pre>
+	<pre style="margin-top: 0; margin-bottom: 0">47         try {</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">48             jess.assertString(jessFact);</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">49         } catch(JessException je) {</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">50             return false;</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">51         }</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">52         <font color="#008000">// if blocked, wake up!</font></pre>
+	<pre style="margin-top: 0; margin-bottom: 0">53         if(!isRunnable()) restart();</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">54         <font color="#008000">// message asserted</font></pre>
+	<pre style="margin-top: 0; margin-bottom: 0">55         return true;</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">56     }</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">57     </pre>
+</blockquote>
+<p>The method takes a Jess fact construct as an argument and asserts it into 
+Jess (line 48). (The <code>assertString(String)</code> method is one of the methods 
+available in <code>jess.Rete</code> 
+to make assertions.) The behaviour is then restarted if it was blocked (line 53). 
+This will have the effect of executing the behaviour (and running the Jess 
+engine) in the next round-robin opportunity. You might also want to consider 
+implementing methods that, instead of receiving directly the Jess fact as a 
+<code>String</code>, receive something else (e.g. an <code>ACLMessage</code>) and assemble the Jess code 
+themselves. This makes sense if you want to isolate Jess usage inside <code>JessBehaviour</code>. 
+One of those methods could be:</p>
+<blockquote>
+	<pre style="margin-top: 0; margin-bottom: 0">58     boolean newMsg(ACLMessage msg) {</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">59         String jf = ... <font color="#008000">// use msg to assemble a Jess construct</font></pre>
+	<pre style="margin-top: 0; margin-bottom: 0">60         <font color="#008000">// &quot;feed&quot; Jess engine</font></pre>
+	<pre style="margin-top: 0; margin-bottom: 0">61         return addFact(jf);</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">62     }</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">63     </pre>
+</blockquote>
+<p>Line 59 is where you would build the Jess construct to be asserted into Jess. 
+This construct would be a function of the <code>ACLMessage</code> parameter, 
+e.g. based on the message content.</p>
+<p>A typical (although not mandatory) means of integrating this approach with the interacting facet of 
+an agent would be to implement behaviours that handle incoming messages and 
+that make use of <code>JessBehaviour</code> methods for asserting corresponding 
+facts into the Jess engine. Here is a snippet for an example message handling behaviour:</p>
+<blockquote>
+	<pre style="margin-top: 0; margin-bottom: 0"> 1 class MsgListening extends CyclicBehaviour {</pre>
+	<pre style="margin-top: 0; margin-bottom: 0"> 2     <font color="#008000">// a reference to the JessBehaviour instance</font></pre>
+	<pre style="margin-top: 0; margin-bottom: 0"> 3     private JessBehaviour jessBeh;</pre>
+	<pre style="margin-top: 0; margin-bottom: 0"> 4     </pre>
+	<pre style="margin-top: 0; margin-bottom: 0"> 5     MsgListening(Agent agent, JessBehaviour jessBeh) {</pre>
+	<pre style="margin-top: 0; margin-bottom: 0"> 6         super(agent);</pre>
+	<pre style="margin-top: 0; margin-bottom: 0"> 7         <font color="#008000">// save reference to the JessBehaviour instance</font></pre>
+	<pre style="margin-top: 0; margin-bottom: 0"> 8         this.jessBeh = jessBeh;</pre>
+	<pre style="margin-top: 0; margin-bottom: 0"> 9     }</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">10     </pre>
+	<pre style="margin-top: 0; margin-bottom: 0">11     public void action() {</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">12         MessageTemplate mt = ... <font color="#008000">// some template</font></pre>
+	<pre style="margin-top: 0; margin-bottom: 0">13         ACLMessage msg = myAgent.receive(mt);</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">14         if (msg != null) {</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">15             <font color="#008000">// put into Jess engine</font></pre>
+	<pre style="margin-top: 0; margin-bottom: 0">16             if(jessBeh.newMsg(msg))</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">17                 ... <font color="#008000">// do something</font></pre>
+	<pre style="margin-top: 0; margin-bottom: 0">18             else</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">19                 ... <font color="#008000">// do something else</font></pre>
+	<pre style="margin-top: 0; margin-bottom: 0">20         } else</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">21             block();</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">22     }</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">23     </pre>
+	<pre style="margin-top: 0; margin-bottom: 0">24 } <font color="#008000">// end MsgListening class</font></pre>
+</blockquote>
+<p>The behaviour's constructor (lines 5-9) stores a reference to the 
+<code>JessBehaviour</code> instance (line 8). The behaviour execution (lines 11-22) gets an 
+incoming message (line 13) and adds it to the Jess engine by invoking an 
+appropriate method (line 16).</p>
+<h2><a name="3._Implementation_choices">3. Implementation choices</a></h2>
+<p>The integration of JADE and Jess can be done in a number of different ways 
+(see the &quot;<a href="http://herzberg.ca.sandia.gov/jess/docs/70/architecture.html">Jess 
+Application Design</a>&quot; section of the Jess manual for possible Jess and Java 
+integrations). In this section a few options are highlighted.</p>
+<h3>3.1 From percepts to Jess</h3>
+<p>Looking back at <a href="#Figure_1">Figure 1</a>, so far we have dealt with 
+implementing part of the agent's program using Jess, and the provision of 
+information coming from the agent's percepts (i.e., messages) to the Jess 
+engine. Even in this part of the process, we could have a tighter integration of JADE and Jess 
+by letting the Jess engine access the whole ACL message structure. There are two 
+ways to do that.</p>
+<p>One way is to define a Jess <code>ACLMessage</code> template that maps the <code>ACLMessage</code> 
+class. Something like:</p>
+<blockquote>
+	<pre style="margin-top: 0; margin-bottom: 0"><font color="#800000">(deftemplate ACLMessage</font></pre>
+	<pre style="margin-top: 0; margin-bottom: 0"><font color="#800000">    (slot communicative-act)</font></pre>
+	<pre style="margin-top: 0; margin-bottom: 0"><font color="#800000">    (slot sender)</font></pre>
+	<pre style="margin-top: 0; margin-bottom: 0"><font color="#800000">    (multislot receiver)</font></pre>
+	<pre style="margin-top: 0; margin-bottom: 0"><font color="#800000">    (slot content)</font></pre>
+	<pre style="margin-top: 0; margin-bottom: 0"><font color="#800000">    (slot reply-with)</font></pre>
+	<pre style="margin-top: 0; margin-bottom: 0"><font color="#800000">    (slot in-reply-to)</font></pre>
+	<pre style="margin-top: 0; margin-bottom: 0"><font color="#800000">    ...)</font></pre>
+</blockquote>
+<p>This way, we only need a method that translates an <code>ACLMessage</code> 
+object into a Jess construct for an <code>ACLMessage</code> fact. Jess rules 
+could then directly process these facts. Caution must be taken when converting 
+the content slot. This is because in an ACL message you can have a content as a 
+string including spaces, which will not qualify as a valid slot value in Jess 
+(see the <a href="http://herzberg.ca.sandia.gov/jess/docs/70/basics.html">Jess 
+language basics</a>). A solution might be surrounding the content string with 
+double quotes (<code>&quot;</code>), and escaping embedded quote symbols (<code>\&quot;</code>).</p>
+<p>Another more interesting and simple approach would be to take advantage of the 
+Jess-Java integration, which allows Jess to access any Java object (read the
+<a href="http://herzberg.ca.sandia.gov/jess/docs/70/memory.html#shadow_facts">
+Jess manual on shadow facts</a> for details). This way, we no longer need to 
+assemble, in Java, a Jess construct from an <code>ACLMessage</code> object. You 
+define an appropriate Jess template for the class:</p>
+<blockquote>
+	<pre style="margin-top: 0; margin-bottom: 0"><font color="#800000">(deftemplate ACLMessage</font></pre>
+	<pre style="margin-top: 0; margin-bottom: 0"><font color="#800000">    (declare(from-class ACLMessage)))</font></pre>
+</blockquote>
+<p>You can add an <code>ACLMessage</code> object to the Jess engine working 
+memory by using <code>Rete.add(ACLMessage)</code>, and
+<a href="http://herzberg.ca.sandia.gov/jess/docs/70/java.html#beanprops">access 
+its beans</a> directly inside Jess rules. Something like:</p>
+<blockquote>
+	<pre style="margin-top: 0; margin-bottom: 0"><font color="#800000">(defrule incomming-msg</font></pre>
+	<pre style="margin-top: 0; margin-bottom: 0"><font color="#800000">    (ACLMessage (sender ?s))</font></pre>
+	<pre style="margin-top: 0; margin-bottom: 0"><font color="#800000">    =&gt;</font></pre>
+	<pre style="margin-top: 0; margin-bottom: 0"><font color="#800000">    (printout t &quot;Just received a message from &quot; (?s getLocalName) crlf))</font></pre>
+</blockquote>
+<p>Unfortunately, <code>ACLMessage</code> objects that include a string content 
+(which will happen most of the times, since using content objects is not FIPA 
+compliant) misbehave when asserting them as shadow facts in Jess. I believe 
+this is due to the non-compliance of this class with the standard design patters 
+of <a href="http://java.sun.com/products/javabeans/docs/index.html">JavaBeans</a> used in <code>
+<a href="http://java.sun.com/j2se/1.5.0/docs/api/java/beans/Introspector.html">java.beans.Introspector</a></code> (and through it in 
+Jess). The content parameter is defined as a <code>StringBuffer</code>, while 
+its getter/setter methods are implemented as returning/getting a <code>String</code>.</p>
+<p>To solve this issue, you may have to implement an <code>ACLMessage<a href="http://java.sun.com/j2se/1.5.0/docs/api/java/beans/BeanInfo.html">BeanInfo</a></code> 
+class. 
+An alternative solution is to extend the <code>ACLMessage</code> class and 
+override the use of the content parameter. Something like:</p>
+<blockquote>
+	<pre style="margin-top: 0; margin-bottom: 0">public class MyACLMessage extends ACLMessage {</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">    private String content;</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">    </pre>
+	<pre style="margin-top: 0; margin-bottom: 0">    MyACLMessage(int perf) {</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">        super(perf);</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">    }</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">    </pre>
+	<pre style="margin-top: 0; margin-bottom: 0">    public String getContent() {</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">        return content;</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">    }</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">    </pre>
+	<pre style="margin-top: 0; margin-bottom: 0">    public void setContent(String content) {</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">        this.content = content;</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">    }</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">}</pre>
+</blockquote>
+<p>You then base your <code>ACLMessage</code> Jess template in the <code>
+MyACLMessage</code> class (at <code>from-class</code>). You may, however, loose some of the functionality of the current <code>ACLMessage</code> 
+implementation. It might also be useful to add a constructor that takes an <code>ACLMessage</code> 
+as an argument, to be used when you want to assert the message into Jess (unless 
+all your agents use <code>MyACLMessage</code>).</p>
+<h3>3.2 From Jess to actions</h3>
+<p>The acting part of the process illustrated in <a href="#Figure_1">Figure 1</a>, 
+where an action consists of sending a message, is discussed in this section.</p>
+<p>The example included in the &quot;<a href="http://herzberg.ca.sandia.gov/jess/docs/70/embedding.html">Embedding 
+Jess in a Java Application</a>&quot; section of the Jess manual shows how to get the 
+results from the inference engine after it stops. A similar approach could be 
+implemented in the <code>JessBehaviour</code>.<code>action()</code> method: after 
+the Jess engine stops, a procedure for collecting specific types of facts that 
+represent the output of the reasoning process would be executed, and those facts 
+could then be used, e.g., to create a reply message. However, this would not 
+take advantage of a tighter integration with JADE.</p>
+<p>Message sending can also be done from Jess itself. Again depending on the 
+intended level of integration, there are at least two ways of accomplishing this 
+task. One way is to make use of Jess user-functions. This feature enables you to 
+implement, in Java, a function that is to be invoked in your Jess code. You 
+could, therefore, implement a <code>jess.Userfunction</code> for allowing 
+message sending from Jess:</p>
+<blockquote>
+	<pre style="margin-top: 0; margin-bottom: 0"> 1 public class JessSend implements jess.Userfunction {</pre>
+	<pre style="margin-top: 0; margin-bottom: 0"> 2     private Agent myAgent;</pre>
+	<pre style="margin-top: 0; margin-bottom: 0"> 3     </pre>
+	<pre style="margin-top: 0; margin-bottom: 0"> 4     public JessSend(Agent a) {</pre>
+	<pre style="margin-top: 0; margin-bottom: 0"> 5         myAgent = a;</pre>
+	<pre style="margin-top: 0; margin-bottom: 0"> 6     }</pre>
+	<pre style="margin-top: 0; margin-bottom: 0"> 7     </pre>
+	<pre style="margin-top: 0; margin-bottom: 0"> 8     <font color="#008000">// Function name to be used in Jess</font></pre>
+	<pre style="margin-top: 0; margin-bottom: 0"> 9     public String getName() {</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">10         return (&quot;send&quot;);</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">11     }</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">12     </pre>
+	<pre style="margin-top: 0; margin-bottom: 0">13     <font color="#008000">// Called when (send ...) is executed at Jess</font></pre>
+	<pre style="margin-top: 0; margin-bottom: 0">14     public Value call(ValueVector vv, Context context) throws JessException {</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">15         <font color="#008000">// get function arguments</font></pre>
+	<pre style="margin-top: 0; margin-bottom: 0">16         ... vv.get(...</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">17         ...</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">18         </pre>
+	<pre style="margin-top: 0; margin-bottom: 0">19         <font color="#008000">// prepare message to send</font></pre>
+	<pre style="margin-top: 0; margin-bottom: 0">20         ACLMessage msg = new ACLMessage(...);</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">21         msg.set...</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">22         ...</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">23         </pre>
+	<pre style="margin-top: 0; margin-bottom: 0">24         <font color="#008000">// send the message</font></pre>
+	<pre style="margin-top: 0; margin-bottom: 0">25         myAgent.send(msg);</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">26         </pre>
+	<pre style="margin-top: 0; margin-bottom: 0">27         return Funcall.TRUE;</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">28     }</pre>
+	<pre style="margin-top: 0; margin-bottom: 0">29     </pre>
+	<pre style="margin-top: 0; margin-bottom: 0">30 } <font color="#008000">// end JessSend class</font></pre>
+</blockquote>
+<p>And add this function to the Jess engine at the <code>JessBehaviour</code> 
+constructor:</p>
+<blockquote>
+	<pre style="margin-top: 0; margin-bottom: 0">jess.addUserfunction(new JessSend(myAgent));</pre>
+</blockquote>
+<p>Whenever Jess finds a <code>(send ...)</code> function call, it will use the 
+above <code>JessSend.call(ValueVector, Context)</code> method (lines 14-28). Inside it, and depending on 
+whatever information your implementation passes to the <code>send</code> 
+function, you get the function's arguments (lines 15-17) and use them somehow to 
+compose a message to send (lines 20-22). Depending on your choices from section 
+3.1, you could pass the <code>send</code> function a Jess <code>ACLMessage</code> 
+construct or even an <code>ACLMessage</code> object.</p>
+<p>Another way of sending messages from Jess, with increasing JADE-Jess mixture, 
+is to grant it access to the <code>Agent</code> object, using <code>Rete.add(Agent)</code>. 
+The <code>Agent.send(ACLMessage)</code> method is then directly 
+<a href="http://herzberg.ca.sandia.gov/jess/docs/70/java.html">invokeable from Jess code</a>.</p>
+<h2><a name="4._Acknowledgements">4. Acknowledgements</a></h2>
+<p>Part of the code presented in this tutorial is based on the
+<a href="http://jade.tilab.com/doc/examples/Jess.html">Jess example</a> 
+currently provided with JADE. Credits go to Fabio Bellifemine.</p>
+
+</body></html>

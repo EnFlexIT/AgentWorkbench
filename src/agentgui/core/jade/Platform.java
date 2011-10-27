@@ -234,7 +234,7 @@ public class Platform extends Object {
 					}
 				});
 				// --- Start MainContainer --------------------------				
-				jadeMainContainer = jadeRuntime.createMainContainer( this.jadeGetContainerProfile() );
+				jadeMainContainer = jadeRuntime.createMainContainer(this.jadeGetContainerProfile());
 				startSucceed = true;
 			}
 			catch ( Exception e ) {
@@ -263,19 +263,21 @@ public class Platform extends Object {
 	 */
 	private Profile jadeGetContainerProfile() {
 
-		Profile MAScontainerProfile = null;
+		Profile jadeContainerProfile = null;
 		Project currProject = Application.ProjectCurr;
 		
 		// --- Configure the JADE-Profile to use --------------------
 		if (currProject==null) {
 			// --- Take the AgentGUI-Default-Profile ----------------
 			this.jadePlatformConfig = Application.RunInfo.getJadeDefaultPlatformConfig();
-			MAScontainerProfile = Application.RunInfo.getJadeDefaultProfile();
+			jadeContainerProfile = Application.RunInfo.getJadeDefaultProfile();
 			System.out.println("JADE-Profile: Use AgentGUI-defaults");
 		} else {
 			// --- Take the Profile of the current Project ----------
 			this.jadePlatformConfig = currProject.JadeConfiguration;
-			MAScontainerProfile = currProject.JadeConfiguration.getNewInstanceOfProfilImpl();				
+			jadeContainerProfile = currProject.JadeConfiguration.getNewInstanceOfProfilImpl();	
+			// --- Invoke the Profile configuration in the plug-ins -- 
+			jadeContainerProfile = currProject.plugIns_Loaded.getJadeProfile(jadeContainerProfile);
 			System.out.println("JADE-Profile: Use " + currProject.getProjectName() + "-configuration" );
 			
 			// --- Start Download-Server for project-resources ------
@@ -288,7 +290,7 @@ public class Platform extends Object {
 			}
 			
 		}		
-		return MAScontainerProfile;
+		return jadeContainerProfile;
 	}
 	
 	/**

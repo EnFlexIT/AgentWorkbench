@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0113)file://C:\Documents%20and%20Settings\bellifemine\Local%20Settings\Temporary%20Internet%20Files\OLKA\benchmark.htm -->
+<HTML><HEAD><TITLE>How to use benchmark packege with JADE</TITLE>
+<META http-equiv=Content-Type content="text/html; charset=windows-1252">
+<META content="MSHTML 6.00.2600.0" name=GENERATOR></HEAD>
+<BODY bgColor=#ffffff>
+<H1>How to use the benchmark packege with JADE Message Transport Protocol</H1>
+<P><I>Author: <A href="mailto:elisabetta.cortese@tilab.com">Elisabetta 
+Cortese</A> (<A href="http://www.telecomitalialab.com/">TiLab</A>) </I><BR></P>
+<P><I>Date: September 20, 2002 </I><BR></P>
+<P><I><A href="http://java.sun.com/j2se/1.3.0/">Java platform: Sun JDK 1.3.0 
+Windows or later</I></A><BR></P>
+<P><I><A href="http://jade.cselt.it/">JADE</A> version 2.5 or later</I><BR></P>
+<H2>Introduction</H2>
+<P>This tutorial describes how to install and use the benchmark add-on with 
+JADE. This package contains a Java implementation of test to show how works JADE 
+Message Transport and to show JADE behaviours when agents' number is high. You 
+can run these tests for two configurations: 
+<OL>
+  <LI>Intra platform communication: 
+  <OL type=a>
+    <LI>all agents are in Main-Container; 
+    <LI>receiver agents in Main-Container and sender agents in onother 
+    Container; </LI></OL>
+  <LI>Inter platform communication: 
+  <OL type=a>
+    <LI>MTP IIOP; 
+    <LI>MTP ORBacus; 
+    <LI>MTP HTTP. </LI></OL></LI></OL>
+<P></P>
+<H2>Problem</H2>
+<P>In this context, we have presented the results of test measurements of the 
+messaging transport system of JADE The results of message round-trip 
+measurements for several platform and load configurations, and different MTPs 
+are then presented and analyzed. The obtained results show that JADE well 
+performs in scalability in several scenarios (intra- and inter-platform). Read 
+the <A 
+href="JADERTTBenchmark.htm">benchmark</A> 
+document details. </P>
+<H2>Installation</H2>
+<P>In order to install the benchmark package the following steps must be 
+performed: The benchmark add-on must be downloaded from the JADE download page. 
+after downloading you MUST unzip the benchamerk package under the root of the 
+jade distribution tree. You should end having a hierarchy like 
+jade/add-ons/benchmark </P>
+<H2>Compiling</H2>
+<P>If you have "ANT" program on your computer, in benchmark directory find 
+build.xml<BR>so digit: ant <BR><B>Notice</B> that kind of Makefile works with 
+every OS. </P>
+<H2>Package contents</H2>
+<P>Enclosed in this package is the source code, some configuration files and 
+some documentation. <BR>After compilation you'll find also classess and doc 
+directories. </P>
+<H2>Getting started</H2>
+<P>In conf directory you'll find some configuration file to run the test, go to 
+classes/benchmark/roundTripTime/ and digit: <BR>java jade.Boot -conf file.conf 
+
+
+<H2>Tests in "Parallel Mode"</H2>
+In the previous tests each sender sends a message and wait for a reply before sending 
+the next one, in a "serial" fashion.<br>
+It is also possible to run a set of tests into "parallel" mode, where each sender sends in sequence all the messages without 
+waiting for the replies.<br><br>
+Some configuration files for the parallel tests are available:<br>
+<ul>
+ <li> ParalleTestSingleContainer.conf, for intra-container measurements
+ <li> ParalleTest2Containers_TX.conf, ParalleTest2Containers_RX.conf, for inter-container measurements
+</ul>
+
+<p>
+ For intra-container, just run:<br>
+   <code>java jade.Boot -conf ParalleTestSingleContainer.conf</code><br>
+  or, for inter-container:
+   <code>java jade.Boot -conf ParalleTest2Containers_RX.conf</code><br>
+   <code>java jade.Boot -conf ParalleTest2Containers_TX.conf</code><br>
+<br><br><br>
+</P></BODY></HTML>

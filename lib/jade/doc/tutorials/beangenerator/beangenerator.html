@@ -1,0 +1,129 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
+  <title>Java Ontology Bean Generator for JADE</title>
+</head>
+<body>
+<big><big><span style="font-weight: bold;">How to use the Java Ontology
+Bean Generator for JADE</span><br>
+<br>
+</big></big>The
+beangenerator allows to generate Java files representing an ontology
+that can be used within the <a target="_blank"
+ href="http://jade.tilab.com">JADE Toolkit (3.0)</a>.
+The beangenerator is implemented as a plug-in for <a target="_blank"
+ href="http://protege.stanford.edu/download.html">Prot&eacute;g&eacute;
+(1.9)</a>. Within Prot&eacute;g&eacute; you can import and export RDF
+and RDFS. With the beangenerator tool you can generate JADE compliant
+ontologies from RDF(S), XML and Prot&eacute;g&eacute; projects.<br>
+<br>
+<big style="font-weight: bold;">Installation</big><br>
+The beangenerator requires the following tools:<br>
+<ul>
+  <li>JADE 3.0 or later, available <a href="http://jade.tilab.com">here;</a></li>
+  <li>Prot&eacute;g&eacute; 2.1, available <a
+ href="http://protege.stanford.edu/download.html">here</a></li>
+</ul>
+<span style="font-size: 11pt;" lang="EN-GB">The Ontology Bean
+Generator&nbsp; must be downloaded from the </span><span
+ style="font-size: 11pt;" lang="IT"><a target="new"
+ href="http://jade.cselt.it/"><span lang="EN-GB">JADE</span></a></span><span
+ style="font-size: 11pt;" lang="EN-GB"> download page.<br>
+</span><span style="font-size: 11pt;" lang="EN-GB">After downloading
+you must unzip the Bean Generator package under the root of the jade
+distribution tree. You should end having a hierarchy like
+jade/add-ons/beangenerator.<br>
+<br>
+</span><big style="font-weight: bold;">Compilation</big><br>
+<span style="font-size: 11pt;" lang="EN-GB">For handling the
+compilation process of the Ontology Bean Generator you have to use the
+'build.xml' ant-file located in the beangenerator directory. <br>
+</span><span style="font-size: 11pt;"><span lang="EN-GB"
+ style="font-size: 11pt;">Note:<span
+ style="font-weight: bold; font-style: italic;"> </span><span
+ style="font-style: italic;">the environment
+variable PROTEGE_HOME must point on the Prot&eacute;g&eacute; home
+directory</span>.</span><br>
+</span><span style="font-size: 11pt;" lang="EN-GB">The
+following rules are available:</span>
+<ul type="disc">
+  <li style="text-align: justify;"><span style="font-size: 11pt;"
+ lang="EN-GB">ant - compiles the Bean Generator classes </span></li>
+  <li style="text-align: justify;"><span style="font-size: 11pt;"
+ lang="EN-GB">ant lib - creates the beangenerator.jar
+archive in the lib directory</span></li>
+  <li style="text-align: justify;"><span style="font-size: 11pt;"
+ lang="EN-GB">ant install - install the Bean Generator
+plug-in for Prot&eacute;g&eacute;.</span><span style="font-size: 11pt;"><span
+ lang="EN-GB" style="font-size: 11pt;"></span></span></li>
+  <li style="text-align: justify;"><span style="font-size: 11pt;"
+		  lang="EN-GB">ant clean - removes the compiled classes and
+		  the beangenerator.jar archive</span></li>
+  <li style="text-align: justify;"><span style="font-size: 11pt;"
+ lang="EN-GB">ant examples - install into the
+Prot&eacute;g&eacute; directory some examples of ontologies defined
+with Prot&eacute;g&eacute;<br>
+    </span></li>
+</ul>
+<big style="font-weight: bold;">Usage<br>
+</big>
+<ol>
+  <li><big><font size="-1"><big>make sure you've got the RDF back-end plug-in for Prot&eacute;g&eacute;</big></font></big></li>
+  <li>You
+should also let your <b>CLASSPATH</b> link to the beangenerator.jar
+file</li>
+  <li><big><font size="-1"><big>open a new or existing
+Prot&eacute;g&eacute; project</big></font></big></li>
+  <li><big><font size="-1"><big>include the SimpleJADEAbstractOntology into your project for a regular protege project, include the OWLSimpleJADEAbstractOntology into your project for a OWL project</big></font></big></li>
+  <li><big><font size="-1"><big>create <span style="font-weight: bold;">concepts
+    </span>by making subclasses of the class [Concept], e.g. <i>CD,
+Items.</i></big></font></big></li>
+  <li><big><font size="-1"><big>create <span style="font-weight: bold;">agentactions
+    </span>by making subclasses of the class [AgentAction]</big></font>,
+e.g. <i>Sell, Buy</i>.</big></li>
+  <li><big><font size="-1"><big>create <span style="font-weight: bold;">agents
+    </span>by making subclasses of the class [AID]</big></font>, e.g. <i>Seller,
+Buyer</i></big></li>
+  <li><big><font size="-1"><big>create <span style="font-weight: bold;">predicates
+    </span>by making subclasses of the class [Predicate]</big></font>,
+e.g. <i>Owns, Contains</i></big></li>
+  <li><big><font size="-1"><big>go to menu of Prot&eacute;g&eacute;:
+open project&gt;configure...
+and select the OntologyBeanGeneratorTab checkbox</big></font></big></li>
+  <li><big><font size="-1"><big>select the Ontology Bean Generator tab</big></font></big></li>
+  <li><big><font size="-1"><big>specify (or select from the combobox) a
+package name, e.g. mypackage.onto</big></font></big></li>
+  <li><big><font size="-1"><big>specify (or select from the combobox or
+from the [...] button) a location where the java files are to be
+created
+(make sure the directory exists) e.g.
+.../projects/mypackage/src/mypackage/onto</big></font></big></li>
+  <li><big><font size="-1"><big>specify (or select from the combobox) a
+ontology name: e.g. Newspaper</big></font></big></li>
+  <li><big><font size="-1"><big>press the generate button (old
+generated files will be overwritten)</big></font></big></li>
+  <li><big><font size="-1"><big>import the the ontology files into your
+agent project</big></font></big></li>
+  <li><big><font size="-1"><big>register the ontology in the agent</big></font></big></li>
+  <li><big><font size="-1"><big>you (the agents) are ready to go!</big></font></big></li>
+</ol>
+<div style="text-align: center;"><img
+ style="width: 794px; height: 698px;" alt="" src="shot.gif"><br>
+<p style="text-align: center;" align="center"><span
+ style="font-size: 10pt; font-family: Arial;">Jade is a trademark of <span
+ class="linkcorsotestoverde">Tilab</span>&nbsp; <font size="1"></font></span><span
+ lang="IT"><a href="http://www.unipr.it/"><span
+ style="font-size: 10pt; font-family: Arial;" lang="EN-GB"></span></a></span><span
+ lang="EN-GB"></span></p>
+<p style="text-align: center;" align="center"><span lang="EN-GB">The
+Ontology Bean Generator&nbsp; implementation was developed by <a
+ href="http://gaper.swi.psy.uva.nl/beangenerator/"><span
+ style="text-decoration: underline;">University of Amsterdam</span></a><a
+ href="http://aot.ce.unipr.it/"></a></span></p>
+<br>
+</div>
+<br>
+</body>
+</html>

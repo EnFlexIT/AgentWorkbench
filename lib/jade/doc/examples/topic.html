@@ -1,0 +1,156 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<title>Topic based communication</title>
+<link rel="stylesheet" type="text/css" href="stylesheet.css"
+title="Style">
+<!-- created by Alessandro Beneventi, Universita' degli Studi di Parma -->
+<!--            alessandro.beneventi@re.nettuno.it                     -->
+</head>
+
+<body bgcolor="#FFFFFF" text="#000000" link="#0000FF"
+vlink="#0000FF" alink="#0000FF">
+
+<table border="0" cellspacing="0" width="100%">
+    <tr>
+        <td bgcolor="#EEEEFF" id="NavBarCell1"><a
+        name="navbar_top_firstrow"></a> <table border="0"
+        cellpadding="0" cellspacing="3">
+            <tr>
+                <td align="center" valign="top" bgcolor="#EEEEFF"
+                id="NavBarCell1">Sections:</td>
+                <td align="center" valign="top" bgcolor="#EEEEFF"
+                id="NavBarCell1"><a href="index.html"><b>Index</b></a></td>
+                <td align="center" valign="top" bgcolor="#FFFFFF"
+                id="NavBarCell1Rev">&nbsp;<b>Introduction</b></td>
+                <td align="center" valign="top" bgcolor="#EEEEFF"
+                id="NavBarCell1"><b>More Info.</b></td>
+                <td align="center" valign="top" bgcolor="#EEEEFF"
+                id="NavBarCell1"><b>Visual Index</b></td>
+                <td align="center" valign="top" bgcolor="#EEEEFF"
+                id="NavBarCell1"><a href="../api/index.html"><b>Class
+                by Class</b></a></td>
+                <td align="center" valign="top" bgcolor="#EEEEFF"
+                id="NavBarCell1"><a href="../links.htm"><b>Links</b></a></td>
+            </tr>
+        </table>
+        </td>
+        <td align="right" valign="top" rowspan="2">&nbsp;</td>
+    </tr>
+</table>
+
+<p><font size="6" face="Arial"><b>Topic based communication</b></font> </p>
+
+<p>Author: Giovanni Caire (Telecom Italia)<br>
+  Date: 02/06/2007</p>
+
+<p> </p>
+<span lang="EN-GB"> 
+<p><font face="Arial,Helvetica">This example shows how to use the topic-based 
+  message delivery mechanism supported by JADE since version 3.5. By means of 
+  this mechanism it is possible to send a message that &quot;is about a given 
+  topic&quot; without knowing who will actually receive this message.</font></p>
+<p><font face="Arial,Helvetica">The example includes two types of agent: </font></p>
+</span>
+<ul>
+  <li><span lang="EN-GB"><font face="Arial,Helvetica">the <a href="#target1">TopicMessageSenderAgent</a> 
+    that periodically sends messages about topic &quot;JADE&quot;</font></span></li>
+  <li><span lang="EN-GB"><font face="Arial,Helvetica">the <a href="#target2">TopicMessageReceiverAgent</a> 
+    that registers to messages about topic &quot;JADE&quot; and prints the content 
+    of received messages.</font></span></li>
+</ul>
+<span lang="EN-GB"> 
+<p><font face="Arial,Helvetica">Assuming all jade classes are in the classpath, 
+  you can try this example with the following commands:</font> </p>
+<p><font face="Arial,Helvetica">java jade.Boot -gui -services jade.core.event.NotificationService;jade.core.messaging.TopicManagementService 
+  sender:examples.topic.TopicMessageSenderAgent&nbsp;</font> </p>
+<p><font face="Arial,Helvetica">The above command line starts the JADE Main Container 
+  and launches an agent called "sender" of type TopicMessageSenderAgent. The -services 
+  option specifies that the TopicManagementService (that implements the topic-based 
+  message delivery mechanism) must be activated. </font></p>
+<p><span lang="EN-GB"><font face="Arial,Helvetica">java jade.Boot -container -services 
+  jade.core.event.NotificationService;jade.core.messaging.TopicManagementService 
+  receiver:examples.topic.TopicMessageReceiverAgent&nbsp;</font> </span></p>
+</span>
+<p><span lang="EN-GB"><font face="Arial,Helvetica">The above command line starts 
+  a JADE container and launches an agent called "receiver" of type TopicMessageSenderAgent. 
+  Looking at the output of the two agents it will be possible to see that all 
+  messages about topic &quot;JADE&quot; sent by the TopicMessageSenderAgent will 
+  be received by the TopicMessageReceiverAgent. </font></span></p>
+<p></p>
+<span lang="EN-GB">
+<p>&nbsp; </p>
+<table border="1" cellpadding="3" cellspacing="0" width="100%">
+  <tr> 
+    <td colspan="2" bgcolor="#CCCCFF"><a name="target1"><font size="5"><b>TopicMessageSenderAgent</b></font></a></td>
+  </tr>
+  <tr> 
+    <td bgcolor="#FFFFFF"><strong>Description:</strong></td>
+  </tr>
+  <tr> 
+    <td><font face="Arial,Helvetica">This agent periodically sends messages about 
+      topic &quot;JADE&quot;. </font> </td>
+  </tr>
+  <tr> 
+    <td><strong>Jade classes used: </strong></td>
+  </tr>
+  <tr> 
+    <td>Agent, Topic, TopicManagementHelper, ACLMessage, TickerBehaviour</td>
+  </tr>
+  <tr> 
+    <td><strong>Source</strong></td>
+  </tr>
+  <tr> 
+    <td>\src\examples\topic\TopicMessageSenderAgent.java</td>
+  </tr>
+</table>
+</span> 
+<p><span lang="EN-GB"></span> &nbsp;</p>
+<table border="1" cellpadding="3" cellspacing="0" width="100%">
+  <tr> 
+    <td colspan="2" bgcolor="#CCCCFF"><span lang="EN-GB"><a name="target2"><font size="5"><b>TopicMessageReceiverAgent</b></font></a></span></td>
+  </tr>
+  <tr> 
+    <td bgcolor="#FFFFFF"><span lang="EN-GB"><strong>Description:</strong></span></td>
+  </tr>
+  <tr> 
+    <td><span lang="EN-GB"><font face="Arial,Helvetica">This agent registers to 
+      messages about topic &quot;JADE&quot; and prints their content. </font> 
+      </span></td>
+  </tr>
+  <tr> 
+    <td><span lang="EN-GB"><strong>Jade classes used: </strong></span></td>
+  </tr>
+  <tr> 
+    <td><span lang="EN-GB">Agent, Topic, TopicManagementHelper, ACLMessage, MessageTemplate, 
+      CyclicBehaviour</span></td>
+  </tr>
+  <tr> 
+    <td><span lang="EN-GB"><strong>Source</strong></span></td>
+  </tr>
+  <tr> 
+    <td><span lang="EN-GB">\src\examples\topic\TopicMessageReceiverAgent.java</span></td>
+  </tr>
+</table>
+<hr>
+
+<p align="left"><a href="http://jade.cselt.it/"><font size="2"
+face="Arial">JADE</font></a><font size="2" face="Arial"> is a
+trademark of <a href="http://www.telecomitalialab.com">TILAB</a> (formerly </font><a href="http://www.cselt.it"><font size="2"
+face="Arial">CSELT</font></a><font size="2" face="Arial">).&nbsp;</font><a
+href="http://jade.cselt.it/"><font size="2" face="Arial"><br>
+JADE</font></a><font
+size="2" face="Arial"> has been developed jointly by <a href="http://www.telecomitalialab.com">TILAB</a>
+(formerly </font><a href="http://www.cselt.it"><font size="2"
+face="Arial">CSELT</font></a><font size="2" face="Arial">) and the </font><a
+href="http://www.ce.unipr.it"><font size="2" face="Arial">Computer
+Engineering Group</font></a><font size="2" face="Arial"> of the </font><a
+href="http://www.unipr.it"><font size="2" face="Arial">University
+of Parma</font></a> </p>
+
+</body>
+</html>

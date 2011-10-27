@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+
+	<head>
+		<meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
+		<meta name="generator" content="Adobe GoLive 6">
+		<title>JADE+JBuilder Summary</title>
+	</head>
+
+	<body bgcolor="#d3d3d3">
+		<h1>Using JBuilder with JADE: Quick Summary</h1>
+		<p>To set up JBuilder for JADE.</p>
+		<h3>Do once.</h3>
+		<ol>
+			<li>Tools-&gt;Configure Libraries
+			<li>Select User Home, click Add and add in the JADE jar files as instructed by the &quot;New Library Wizard&quot;.
+			<li>You can also make JBuilder aware of the JADE&nbsp;API&nbsp;docs  from the Documentation tab.
+		</ol>
+		<h3>Do for each project.</h3>
+		<ol>
+			<li>Tools-&gt;Config Libraries
+			<li>Choose &quot;Required Libraries&quot; tab. Select the JADE library group under User Home		</ol>
+		<h3>Do  to prepare for Running</h3>
+		<ol>
+			<li>Select the project (.jpx) file and right click.
+			<li>Choose Properties and choose the Run tab.
+			<li>In the Runtime Configuration Properties window click New (or Edit to make changes). For the Main class field you need to search and find jade.Boot
+			<li>Fill in the Application Parameters field with JADE command line arguments.
+		</ol>
+		<h2>JADE Containers and Platforms</h2>
+		<p>The best way to run is to use the -container switch in the Application Properties window and keep a Main-container running in some accessible location.. Run and debug new agents in their own containers, making sure to kill the container after each run to avoid name clashes.</p>
+		<p></p>
+		<p></p>
+	</body>
+
+</html>

@@ -28,6 +28,8 @@
  */
 package agentgui.core.plugin;
 
+import jade.core.Profile;
+
 import java.awt.Container;
 import java.util.Observable;
 import java.util.Observer;
@@ -331,6 +333,14 @@ public abstract class PlugIn implements Observer {
 			this.onProjectChangedProjectResources();
 		} else if (updateObject.equals(Project.CHANGED_JadeConfiguration)) {
 			this.onProjectChangedJadeConfiguration();
+			
+		} else if (updateObject.equals(Project.CHANGED_DistributionSetup)) {
+			this.onProjectChangedDistributionSetup();
+		} else if (updateObject.equals(Project.CHANGED_RemoteContainerConfiguration)) {
+			this.onProjectChangedRemoteContainerConfiguration();
+		} else if (updateObject.equals(Project.CHANGED_UserRuntimeObject)) {
+			this.onProjectChangedUserRuntimeObject();
+			
 		// ----------------------------------------------------------
 		// --- Changes with the SimulationSetups --------------------			
 		// ----------------------------------------------------------
@@ -376,8 +386,8 @@ public abstract class PlugIn implements Observer {
 
 	/**
 	 * In order to perceive individual informations from the project Observer
-	 * (observer pattern), this mehtod should be used in the extended class.
-	 * !!! Do NOT override the update methode directly !!
+	 * (observer pattern), this method should be used in the extended class.
+	 * !!! Do NOT override the update method directly !!
 	 *
 	 * @param observable the observable
 	 * @param updateObject the update object
@@ -390,59 +400,42 @@ public abstract class PlugIn implements Observer {
 	// ------------------------------------------------------------------------
 	
 	// --- Changes in the project configuration --------------------------
-	/**
-	 * On project saved.
-	 */
-	protected void onProjectSaved() {
-	}
+	/**On project saved. */
+	protected void onProjectSaved() { }
 	
-	/**
-	 * On project changed project name.
-	 */
-	protected void onProjectChangedProjectName() {
-	}
+	/** On project changed project name. */
+	protected void onProjectChangedProjectName() { }
 	
-	/**
-	 * On project changed project description.
-	 */
-	protected void onProjectChangedProjectDescription() {
-	}
+	/** On project changed project description. */
+	protected void onProjectChangedProjectDescription() { }
 	
-	/**
-	 * On project changed environment model.
-	 */
-	protected void onProjectChangedEnvironmentModel() {
-	}
+	/** On project changed environment model. */
+	protected void onProjectChangedEnvironmentModel() {	}
 	
-	/**
-	 * On project changed agent start configuration.
-	 */
-	protected void onProjectChangedAgentStartConfiguration() {
-	}
+	/** On project changed agent start configuration. */
+	protected void onProjectChangedAgentStartConfiguration() { }
 	
-	/**
-	 * On project changed project resources.
-	 */
-	protected void onProjectChangedProjectResources() {
-	}
+	/** On project changed project resources. */
+	protected void onProjectChangedProjectResources() {	}
 	
-	/**
-	 * On project changed jade configuration.
-	 */
-	protected void onProjectChangedJadeConfiguration() {
-	}
+	/** On project changed jade configuration. */
+	protected void onProjectChangedJadeConfiguration() { }
 	
-	/**
-	 * On project changed project ontology.
-	 */
-	protected void onProjectChangedProjectOntology() {
-	}
+	/** On project changed project ontology. */
+	protected void onProjectChangedProjectOntology() { }
 	
-	/**
-	 * On project changed project view.
-	 */
-	protected void onProjectChangedProjectView() {
-	}
+	/** On project changed project view. */
+	protected void onProjectChangedProjectView() {	}
+	
+	/** On project changed user runtime object. */
+	private void onProjectChangedUserRuntimeObject() { }
+
+	/** On project changed remote container configuration. */
+	private void onProjectChangedRemoteContainerConfiguration() { }
+
+	/** On project changed distribution setup. */
+	private void onProjectChangedDistributionSetup() { }
+	
 	
 	// --- Changes in the SimulationSetup --------------------------------
 	/**
@@ -508,6 +501,17 @@ public abstract class PlugIn implements Observer {
 	 * @param plugIn the plug in
 	 */
 	private void onPlugInAdded(PlugIn plugIn) {
+	}
+
+	/**
+	 * Overriding his method allows to extend/change the currently 
+	 * used Profile JADE container.
+	 * 
+	 * @param jadeContainerProfile The profile to CHANGE
+	 * @return the CHANGED (!) configuration of the JADE Profile
+	 */
+	public Profile getJadeProfile(Profile jadeContainerProfile) {
+		return jadeContainerProfile;
 	}
 
 	// ------------------------------------------------------------------------

@@ -1,0 +1,90 @@
+<html><!-- #BeginTemplate "/Templates/maintemplate.dwt" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- #BeginEditable "doctitle" --> 
+<title>JEP - Java Math Expression Parser</title>
+<!-- #EndEditable --> 
+<link rel="stylesheet" type="text/css" href="main.css" title="style1">
+</head>
+
+<body>
+<!-- #BeginEditable "Sub%20Menu" --> <!-- #BeginLibraryItem "/Library/Docu Menu.lbi" --><!-- NAVIGATION ---------------------------------------------------- -->
+<div id="navcontainer">
+<ul>
+<li><a href="../javadoc/index.html" target="_blank">JavaDoc*</a></li>
+</ul>
+
+<hr/>
+
+<ul>
+<li><a href="index.html">Usage</a></li>
+<li><a href="op_and_func.html">Operators &amp; Functions</a></li>
+<li><a href="grammar.html">Grammar</a></li>
+<li><a href="cust_func.html">Custom Functions</a></li>
+<li><a href="newfeatures-2.3.html">New Features</a></li>
+<li><a href="faq.html">FAQ</a></li>
+<li><a href="version.html">Version History</a></li>
+</ul>
+
+<hr/>
+
+<ul>
+<li><a href="djep/index.html">DJEP</a></li>
+<li><a href="djep/XJep.html">XJep</a></li>
+<li><a href="djep/DJep.html">Differentiation</a></li>
+<li><a href="djep/groups.html">Groups</a></li>
+<li><a href="djep/VectorJep.html">Vectors &amp; Matrices</a></li>
+<li><a href="djep/version.html">Version History</a></li>
+</ul>
+</div><!-- #EndLibraryItem --><!-- #EndEditable -->
+<div id="centercontent">
+<!-- #BeginEditable "Text" --> 
+        
+  <h1>Custom Functions</h1>
+        <p>This may be best explained by an example. Let's assume you want to 
+          add a function &quot;half&quot; to divide a number by two (for demonstration 
+          purposes).</p>
+        <ol>
+          <li>Create a class that extends PostfixMathCommand (in the org.nfunk.jep.function 
+            package). In this example we will name it &quot;Half&quot;</li>
+          <li>In the constructor set the number of arguments to be taken. In our 
+            case this is one. Do this by writing &quot;numberOfParameters = 1;&quot;<br>
+            If you want to allow any number of parameters, initialize the numberOfParameters 
+            value to -1. It is highly recommended to study the Sum.java code as 
+            an example of a function that accepts any number of parameters.</li>
+          <li> Implement the run(Stack inStack) method. The parameters are passed 
+            in a Stack object. This same stack is used as the output for the function. 
+            So we first need to pop the parameter off the stack, calculate the 
+            result, and finally pop the result back on the stack. 
+            <pre>public void run(Stack inStack) throws ParseException {
+
+   <font color="#999999">// check the stack</font>
+   checkStack(inStack);
+   
+   <font color="#999999">// get the parameter from the stack</font>
+   Object param = inStack.pop();
+
+   <font color="#999999">// check whether the argument is of the right type</font><br>   if (param instanceof Double) {
+      <font color="#999999">// calculate the result</font><br>      double r = ((Double)param).doubleValue() / 2;
+      <font color="#999999">// push the result on the inStack</font><br>      inStack.push(new Double(r)); <br>   } else {<br>      throw new ParseException(&quot;Invalid parameter type&quot;);
+   }
+}</pre>
+          </li>
+          <li>In your main program or applet that is using the parser, add the 
+            new function. Do this by writing<br>
+            <pre>parser.addFunction("half", new Half());</pre>
+          </li>
+        </ol>
+        <p><b>Source files</b></p>
+        <ul>
+          <li><a href="CustFunc.java">CustFunc.java</a> (a testing class)</li>
+          <li><a href="Half.java">Half.java</a> (the Half function class)</li>
+        </ul>
+        <!-- #EndEditable -->
+<br/>
+<br/>
+<br/>
+  <div id="footer"> &copy; 2006 Singular Systems</div>
+</div>
+</body>
+<!-- #EndTemplate --></html>

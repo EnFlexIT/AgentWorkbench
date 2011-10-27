@@ -1,0 +1,149 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><html><!-- #BeginTemplate "/Templates/maintemplate.dwt" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- #BeginEditable "doctitle" --><title>DJep - Version history</title><!-- #EndEditable --> 
+<link rel="stylesheet" type="text/css" href="../main.css" title="style1">
+</head>
+
+<body>
+<!-- #BeginEditable "Sub%20Menu" --> <!-- #BeginLibraryItem "/Library/Docu Menu.lbi" --><!-- NAVIGATION ---------------------------------------------------- -->
+<div id="navcontainer">
+<ul>
+<li><a href="../../javadoc/index.html" target="_blank">JavaDoc*</a></li>
+</ul>
+
+<hr/>
+
+<ul>
+<li><a href="../index.html">Usage</a></li>
+<li><a href="../op_and_func.html">Operators &amp; Functions</a></li>
+<li><a href="../grammar.html">Grammar</a></li>
+<li><a href="../cust_func.html">Custom Functions</a></li>
+<li><a href="../newfeatures-2.3.html">New Features</a></li>
+<li><a href="../faq.html">FAQ</a></li>
+<li><a href="../version.html">Version History</a></li>
+</ul>
+
+<hr/>
+
+<ul>
+<li><a href="index.html">DJEP</a></li>
+<li><a href="XJep.html">XJep</a></li>
+<li><a href="DJep.html">Differentiation</a></li>
+<li><a href="groups.html">Groups</a></li>
+<li><a href="VectorJep.html">Vectors &amp; Matrices</a></li>
+<li><a href="version.html">Version History</a></li>
+</ul>
+</div><!-- #EndLibraryItem --><!-- #EndEditable -->
+<div id="centercontent">
+<!-- #BeginEditable "Text" --> 
+  <h1><a name="top"></a>DJep Version History</h1>
+  <p><font color="#333333">The version numbering system was changed multiple times 
+    before the release of this document. We apologize for the confusion.</font></p>
+  <h2>Version 2.3.0 release (renamed to DJEP 1.0.0)</h2>
+  <p>No major changes were made for the release.</p>
+  <h2>Version 2.3.0 beta 1 - 12 April 2004 (formerly known as 2.3.2 beta)<br>
+  </h2>
+  This version now has a stable API an should be used in preference to earlier 
+  versions.<br>
+  <br>
+  Main changes since 2.3.0a:<br>
+  <ul>
+    <li>Added a groupJep package: this allows calculation over arbitrary groups 
+      like the rational numbers.</li>
+    <li>Changed the org.nfunk.jep.values.Complex to extend number, modified all 
+      postfix math commands to suit.</li>
+    <li>Changed the Scaler, MVector and Matrix types to extend number.</li>
+    <li>Added features for a re-enterant parser.</li>
+    <li>Major re-nameing of packages and classes. Removed unnecessary classes.</li>
+    <li>Documentation updated.</li>
+    <li>The ^ operator is now overloaded to be the cross product for 3D vectors 
+      as well as power.</li>
+    <li>Parser is now switchable for whether . can appear in an identifier x.y 
+      can either be a single variable (default for JEP,XJep and DJep) or as the 
+      dot product x . y (default for VectorJep and MatrixJep).</li>
+    <li>New functions if, str, complex, polar.</li>
+    <li>Several other minor changes.</li>
+  </ul>
+  <h3>TODO features yet to come</h3>
+  <br>
+  A few new functions to be added, min, max, sgn, differentiation for if.<br>
+  Vector and matrix functions: det, inverse, transpose ....<br>
+  Faster evaluation, possibly based of a reverse polish type of evaluation scheme, 
+  eliminating as much object creation as possible.<br>
+  Various conversion routines to other formats MathML etc.<br>
+  <h2>Version 2.3.0 alpha - 28 Feb 2004 (formerly known as 2.3.1 alpha)</h2>
+  <p> This is the third release of the package, released 28/Feb/04. I'm really 
+    just rushing this out as some people have been asking for documentation which 
+    is included here. Still more documentation to come. Also the code is still 
+    in a fairly mutable state and I still expect to move some things around so 
+    don't expect the the API to be stable. Hopefully it will just be the inner 
+    workings which change the main interface for users is nearly fixed. The most 
+    important changes in this package are </p>
+  <ul>
+    <li>Renames org.lsmp.djep.matrixJep.MatrixDJep to org.lsmp.djep.matrixJep.MatrixDJep. 
+    </li>
+    <li>Moved the console applications to their own package </li>
+    <li>Added some more examples </li>
+    <li>Added some documentation </li>
+    <li>Added some JUnit test </li>
+    <li>Rationalised some of inner workings and cleaned up some unnecessary stuff, 
+      notably in relation to variables and their evaluation.</li>
+  </ul>
+  <h2>Version 2.3.0a - Jan 04</h2>
+  <br>
+  First release as an official part of JEP.<br>
+  <br>
+  Added support for vectors and matrices.<br>
+  Major reworking of differentiation, functionality now split into two packages 
+  org.lsmp.djep.xjep - printing, tree manipulation etc, and org.lsmp.djep.djep 
+  - differentiation.<br>
+  Changed the org.nfunk.jep.SymbolTable class so the elements are now of type 
+  org.nfunk.jep.Variable rather than just its value. ASTVarNodes now refer to 
+  the variable object.<br>
+  Several changes in exposed API for JEP.<br>
+  Introduced an org.nfunk.jep.Operator and org.nfunk.jep.OperatorSet types which 
+  represent the basic +,-,*,/,etc operators. Eliminates the excess creation of 
+  one object for each instance of an operator.<br>
+  <h2>Known bugs in version 2.3.0a</h2>
+  Several bugs are known in version 2.3.0a. 
+  <ul>
+    <li>Differential of "diff(a^x,x)" should be "a^x * ln(a)" but it's "a^x * 
+      ln(x)". </li>
+    <li>Evaluation of "(x*x)*(x*x)" causes a ParseError in VectorJep and MatrixJep. 
+      Quick fix: edit org.lsmp.djep.vectorJep.function.MMultiply.java<br>
+      On line 72: in the run method, comment out the line 
+      <pre>if(stack.size()!=2) throw new ParseException("Multiply: should have two children its got "+stack.size());</pre>
+    </li>
+    <li>Matrix multiplication (i.e. matrix * matrix) does not work. Fix: upgrade 
+      to later version. </li>
+    <li>vector * vector multiplication does not work. </li>
+    <li>cannot combine results of matrix operations with functions ie. "sqrt([1,2].[1,2])" 
+      fails. Fix: upgrade. </li>
+    <li>Dot and cross product cannot be differentiated. </li>
+    <li>uminus is broken for MatrixJep. </li>
+    <li>Problems repeated evaluation of sequences of equations.<br>
+      Quick fix: always uses before reevaluation. j.getSymbolTable().clearValues(); 
+    </li>
+    <li>Problems with using different types of JEP in the same application. They 
+      share a static Operator class which can have the wrong pfmc's for the type 
+      of JEP.</li>
+  </ul>
+  <h2>First release</h2>
+  <p>The first release of the package was about September last year. It just included 
+    differentiation facilities. The package has had a major rework since then.</p>
+  <!-- #BeginLibraryItem "/Library/top bar.lbi" --><table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr>
+    <td align="right"><a href="#top"><img src="../img/top.gif" width="38" height="15" name="top" border="0"></a></td></tr>
+<tr>
+ <td bgcolor="#CCCCCC"><img src="../img/spacer.gif" width="1" height="1"></td></tr></table><br><br><!-- #EndLibraryItem --> 
+  <p><br>
+  </p>
+  <!-- #EndEditable -->
+<br/>
+<br/>
+<br/>
+  <div id="footer"> &copy; 2006 Singular Systems</div>
+</div>
+</body>
+<!-- #EndTemplate --></html>

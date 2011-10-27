@@ -1,0 +1,145 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <title>JADE Security</title>
+</head>
+<body bgcolor="#FFFFFF" link="#0000FF" vlink="#0000FF" lang="EN-US" style="tab-interval:35.4pt">
+
+<div class=Section1>
+<h1>
+JADE Security Plug-in Tutorial</h1>
+<i>Author: Giosue Vitaglione </i>(TILAB S.p.A.)
+<p><i>Date:&nbsp; 2002 September 20th.</i>
+<p><i>Java platform: <a href="http://java.sun.com/j2se/1.4/">Sun SDK 1.4</a></i>
+<p><i><a href="http://jade.cselt.it/">JADE</a> version 2.61</i>
+
+<p style="text-align:justify">This tutorial describes how to install and
+start using the JADE Security Plug-in.
+<h2>
+Overview</h2>
+
+<div style="text-align:justify">The JADE Security Plug-in enables a set
+of security features and provides the base technology to programmers who
+aim at real-world agent-based application development.</div>
+
+
+
+<p style="text-align:justify">Multi-agent systems without any security
+support cannot provide e-commerce services or any application on the Internet.
+A malicious agent ‘M’, for example, could kill a reseller agent ‘A’, and
+take its place selling items, placing/accepting orders and getting payments,
+acting with a fake identity. As another example, anyone could connect a
+remote container to your platform, move a malicious agent onto your main
+container, and read/delete all the files on your machine.
+
+<p style="text-align:justify">This Plug-in includes features such as user/agent
+authentication, authorization and secure communication inside an agent
+platform. More information about the available features, as well as practical
+details about permission configuration and a step-by-step guide for starting
+a secure JADE platform,&nbsp; can be found in the <a href="SecurityAdminGuide.pdf">Security
+Administrator Guide</a>.
+<h2>
+Installation</h2>
+
+<div style="text-align:justify">The JADE Security Plug-in can be downloaded
+here: <a href="http://jade.cselt.it/thirdpartysw.html">jadesecurity.zip</a></div>
+
+<div style="text-align:justify">This plug-in is distributed under the LGPL
+License. See the file <a href="http://jade.cselt.it/License">Copying</a>
+for details.</div>
+
+<ul type=disc>
+<li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     text-align:justify;mso-list:l0 level1 lfo3;tab-stops:list .5in">
+Download 'jadesecurity.zip' and unpack it in the same directory of your
+JADE installation.</li>
+
+<li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     text-align:justify;mso-list:l0 level1 lfo3;tab-stops:list .5in">
+All the files will be copied in the directory:&nbsp; jade/add-ons/security</li>
+
+<li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     text-align:justify;mso-list:l0 level1 lfo3;tab-stops:list .5in">
+In order to use the Security Examples, you need the standard JADE 'jar'
+files installed in the jade/lib directory. If you are using the source
+code, please create the 'jar' files by typing: 'ant jade lib' in your jade/
+directory.</li>
+
+<li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     text-align:justify;mso-list:l0 level1 lfo3;tab-stops:list .5in">
+Please note that you need JADE 2.61 or later. The plug-in does not work
+with earlier versions of JADE.</li>
+</ul>
+
+<h2>
+Examples</h2>
+In order to run the examples, you do not need to set the CLASSPATH variable
+or compile something.
+<p>Just launch the <tt>.bat</tt> files you find in the subdirectories of&nbsp;
+jade/add-ons/security/runExamples/.
+<br>Usually you need to call <tt>main.bat</tt> first, and then <tt>cont.bat</tt>.
+Please note that JADE with the Security Plug-in take more time than the
+standard version to start-up.
+<br>A README file is provided for most examples.
+<p>Step-by-step instructions are provided for the examples: 'myfirst' in
+the <a href="SecurityAdminGuide.pdf">Security Administrator Guide</a>.
+<p>Unix/Linux users might need to edit the <tt>.bat</tt> files, in order
+to properly set the environment variables.
+<h2>
+Compiling</h2>
+The plug-in is distributed with a pre-compiled jadeS.jar.
+<br>The examples source are pre-compiled, as well (into the jade/add-ons/security/classes/examples).
+<br>You do not need to compile anything to run the examples.
+<p>If you want to re-compile the Plug-in or the examples, read the folllowing
+instructions.
+<p>JADE Security Plug-in needs a recent version the program 'ant' for compiling.
+You can download it <a href="http://jakarta.apache.org/ant/">here</a>.
+<br>&nbsp;
+<div style="text-align:justify">In order to re-compile the examples, type:</div>
+
+<div style="text-align:justify">&nbsp; > cd jade/add-ons/security</div>
+
+<div style="text-align:justify">&nbsp; > ant</div>
+
+<div style="text-align:justify">&nbsp;</div>
+If you want to re-compile the Plug-in, type:
+<div style="text-align:justify">&nbsp; > cd jade/add-ons/security</div>
+
+<div style="text-align:justify">&nbsp; > ant compile lib</div>
+this will compile both the Plug-in and the examples.
+<p>More options can be shown with:
+<div style="text-align:justify">&nbsp; > ant -projecthelp</div>
+
+<h2>
+Configuration and Usage</h2>
+Assuming jadeS.jar (and all the other standard JADE jar files) is in your
+CLASSPATH:
+<br>in order to start a secure JADE platform, type:
+<div>&nbsp;
+<br>&nbsp;&nbsp; java -Djava.security.manager -Djava.security.policy=myfirst.policy
+-Djade.security.password=myfirst.password jade.Boot&nbsp; -owner bob:letmepass
+<p>in the same directory where proper&nbsp; <tt>myfirst.policy</tt> and
+<tt>myfirst.password</tt>
+files are.
+<br>Please also check carefully the path to the jar files included in the
+policy file. The file provided in the examples can help.
+<p>It is recommended to read the <a href="SecurityAdminGuide.pdf">Security
+Administrator Guide</a> for more details.
+<br>&nbsp;
+<p><br>
+<center>
+<p>
+<hr size=2 width="100%" align=center></center>
+</div>
+
+<center><a href="http://jade.cselt.it/">JADE</a> is a trademark of <a href="http://www.tilab.com/">TILAB</a>.
+
+<br><a href="http://jade.cselt.it/">JADE</a> has been developed jointly
+by TILAB (formely <a href="http://www.cselt.it/">CSELT)</a> and the <a href="http://www.ce.unipr.it/">Computer
+Engineering Group</a> of the <a href="http://www.unipr.it/">University
+of Parma</a></center>
+</div>
+
+</body>
+</html>

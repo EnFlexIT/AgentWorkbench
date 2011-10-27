@@ -1,0 +1,249 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<title>Behaviours</title>
+<link rel="stylesheet" type="text/css" href="stylesheet.css"
+title="Style">
+<!-- created by Alessandro Beneventi, Universita' degli Studi di Parma -->
+<!--            alessandro.beneventi@re.nettuno.it                     -->
+</head>
+
+<body bgcolor="#FFFFFF" text="#000000" link="#0000FF"
+vlink="#0000FF" alink="#0000FF">
+
+<table border="0" cellspacing="0" width="100%">
+    <tr>
+        <td bgcolor="#EEEEFF" id="NavBarCell1"><a
+        name="navbar_top_firstrow"></a> <table border="0"
+        cellpadding="0" cellspacing="3">
+            <tr>
+                <td align="center" valign="top" bgcolor="#EEEEFF"
+                id="NavBarCell1">Sections:</td>
+                <td align="center" valign="top" bgcolor="#EEEEFF"
+                id="NavBarCell1"><a href="index.html"><b>Index</b></a></td>
+                <td align="center" valign="top" bgcolor="#FFFFFF"
+                id="NavBarCell1Rev">&nbsp;<b>Introduction</b></td>
+                <td align="center" valign="top" bgcolor="#EEEEFF"
+                id="NavBarCell1"><b>More Info.</b></td>
+                <td align="center" valign="top" bgcolor="#EEEEFF"
+                id="NavBarCell1"><b>Visual Index</b></td>
+                <td align="center" valign="top" bgcolor="#EEEEFF"
+                id="NavBarCell1"><a
+                href="file:///C|/jade/jade/doc/api/index.html"><b>Class
+                by Class</b></a></td>
+                <td align="center" valign="top" bgcolor="#EEEEFF"
+                id="NavBarCell1"><a
+                href="file:///C|/jade/jade/doc/links.htm"><b>Links</b></a></td>
+            </tr>
+        </table>
+        </td>
+        <td align="right" valign="top" rowspan="2">&nbsp;</td>
+    </tr>
+</table>
+
+<p><font size="6" face="Arial"><b>Behaviours</b></font> </p>
+
+<p><font face="Arial,Helvetica">The following examples introduce
+the user to the concept of agent behaviour showing the agent
+computational model supported by Jade. In detail, they show the
+use of the behaviour class hierarchy provided by the framework (
+for further information, see the Jade programmer's guide ).</font></p>
+
+<ul>
+    <li><a href="#target1"><font size="4">SimpleAgent</font></a><font
+        size="4"><br>
+        <br>
+        </font><font size="3">Author: Giovanni Caire (TILab
+        S.p.a)<br>
+        Date: 26/11/2003<br>
+        </font></li>
+</ul>
+
+<ul>
+    <li><a href="#target2"><font size="4">TimeAgent</font></a><font
+        size="4"><br>
+        <br>
+        </font><font size="3">Author: Giovanni Caire (TILab
+        S.p.a)<br>
+        Date: 26/11/2003<br>
+        </font></li>
+</ul>
+
+<ul>
+    <li><a href="#target3"><font size="4">ComplexBehaviourAgent</font></a><font
+        size="4"><br>
+        <br>
+        </font><font size="3">Author: Giovanni Rimassa
+        (Università di Parma)<br>
+        Date: 06/08/2001</font></li>
+</ul>
+
+<ul>
+    <li><a href="#target4"><font size="4">FSMAgent</font></a><font
+        size="4"><br>
+        <br>
+        </font><font size="3">Author: Tiziana Trucco (TILab
+        S.p.a)<br>
+        Date: 12/09/2000</font></li>
+</ul>
+
+<p>&nbsp;</p>
+
+<table border="1" cellpadding="3" cellspacing="0" width="100%">
+    <tr>
+        <td colspan="2" bgcolor="#CCCCFF"><a name="target1"><font
+        size="5"><b>SimpleAgent</b></font></a></td>
+    </tr>
+    <tr>
+        <td bgcolor="#FFFFFF"><strong>Description:</strong></td>
+    </tr>
+    <tr>
+        <td><font face="Arial,Helvetica">This example shows the basic usage of JADE behaviours.<br>
+   More in details this agent executes a <code>CyclicBehaviour</code> that shows 
+   a printout at each round and a generic behaviour that performs four successive
+   "dummy" operations. The second operation in particular involves adding a
+   <code>OneShotBehaviour</code>. When the generic behaviour completes the
+   agent terminates.
+.</font> </td>
+    </tr>
+    <tr>
+        <td><strong>Jade classes used: </strong></td>
+    </tr>
+    <tr>
+        <td>Behaviour, CyclicBehaviour, OneShotBehaviour</td>
+    </tr>
+    <tr>
+        <td><strong>Source</strong></td>
+    </tr>
+    <tr>
+        <td>\src\examples\behaviours\SimpleAgent.java</td>
+    </tr>
+</table>
+
+<p>&nbsp;</p>
+
+<table border="1" cellpadding="3" cellspacing="0" width="100%">
+    <tr>
+        <td colspan="2" bgcolor="#CCCCFF"><a name="target2"><font
+        size="5"><b>TimeAgent</b></font></a></td>
+    </tr>
+    <tr>
+        <td bgcolor="#FFFFFF"><strong>Description:</strong></td>
+    </tr>
+    <tr>
+        <td><font face="Arial,Helvetica">This example shows the usage of the 
+        <code>WakerBehaviour</code> and <code>TickerBehaviour</code> that allow 
+        scheduling actions at given points in time.<br> 
+        More in details this agent executes a <code>TickerBehaviour</code> that prints the agent name every second and a <code>WakerBehaviour</code> 
+        that kills the agent after 10 seconds.
+.</font> </td>
+    </tr>
+    <tr>
+        <td><strong>Jade classes used: </strong></td>
+    </tr>
+    <tr>
+        <td>TickerBehaviour, WakerBehaviour</td>
+    </tr>
+    <tr>
+        <td><strong>Source</strong></td>
+    </tr>
+    <tr>
+        <td>\src\examples\behaviours\TimeAgent.java</td>
+    </tr>
+</table>
+
+<p>&nbsp;</p>
+
+<table border="1" cellpadding="3" cellspacing="0" width="100%">
+    <tr>
+        <td colspan="2" bgcolor="#CCCCFF"><a name="target3"><font
+        size="5"><b>ComplexBehaviourAgent</b></font></a></td>
+    </tr>
+    <tr>
+        <td bgcolor="#FFFFFF"><strong>Description:</strong></td>
+    </tr>
+    <tr>
+        <td><font face="Arial,Helvetica">An agent with a
+        behaviour made of many&nbsp; steps with some steps that
+        have sub-steps themselves. This example shows how
+        jade.core.behaviours.SequentialBehaviour class allows the
+        construction of aggregate behaviours starting from simple
+        ones, even with recursive aggregations. The </font><a
+        href="javascript:void(null)"
+        onclick="window.open ('images/ComplexBehaviourAgent_1.gif', 'ExampleBehaviourStructure','status=yes,height=540,width=720')"><font
+        face="Arial,Helvetica">figure</font></a><font
+        face="Arial,Helvetica"> shows the nested structure of the
+        behaviours of this example agent</font>. <font
+        face="Arial,Helvetica">Besides, it shows the cooperative
+        multitasking presently used for intra-agent behaviour
+        scheduling.</font>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+    </tr>
+    <tr>
+        <td><strong>Jade classes used: </strong></td>
+    </tr>
+    <tr>
+        <td>SequentialBehaviour, OneShotBehaviour</td>
+    </tr>
+    <tr>
+        <td><strong>Source</strong></td>
+    </tr>
+    <tr>
+        <td>\src\examples\behaviours\ComplexBehaviourAgent.java</td>
+    </tr>
+</table>
+
+<p>&nbsp;</p>
+
+<table border="1" cellpadding="3" cellspacing="0" width="100%">
+    <tr>
+        <td colspan="2" bgcolor="#CCCCFF"><a name="target4"><font
+        size="5"><b>FSMAgent</b></font></a></td>
+    </tr>
+    <tr>
+        <td bgcolor="#FFFFFF"><strong>Description:</strong></td>
+    </tr>
+    <tr>
+        <td><font face="Arial,Helvetica">This example shows the usage of the <code>FSMBehavior</code> that allows
+   composing behaviours according to a Finite State Machine.<br>
+        In this case we present an agent executing one <code>FSMBehaviour</code> acting as the finite state machine represented 
+        <a href="javascript:void(null)"
+           onclick="window.open ('images/FSMAgent_1.gif', 'ExampleBehaviourStructure','status=yes,height=640,width=720')">
+        <font face="Arial,Helvetica">here</font></a>, where each state corresponds
+        to the execution of a simple behaviour.
+        </font> </td>
+    </tr>
+    <tr>
+        <td><strong>Jade classes used: </strong></td>
+    </tr>
+    <tr>
+        <td>FSMBehaviour, OneShotBehaviour</td>
+    </tr>
+    <tr>
+        <td><strong>Source</strong></td>
+    </tr>
+    <tr>
+        <td>\src\examples\behaviours\FSMAgent.java</td>
+    </tr>
+</table>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<hr>
+
+<p align="left"><a href="http://jade.cselt.it/"><font face="Arial" size="2">JADE</font></a><font face="Arial" size="2">
+is a trademark of <a href="http://www.telecomitalialab.com">TILAB</a> (formerly </font><a href="http://www.cselt.it"><font face="Arial" size="2">CSELT</font></a><font face="Arial" size="2">).&nbsp;</font><a href="http://jade.cselt.it/"><font face="Arial" size="2"><br>
+JADE</font></a><font face="Arial" size="2"> has been developed jointly by <a href="http://www.telecomitalialab.com">TILAB</a>
+(formerly </font><a href="http://www.cselt.it"><font face="Arial" size="2">CSELT</font></a><font face="Arial" size="2">)
+and the </font><a href="http://www.ce.unipr.it"><font face="Arial" size="2">Computer
+Engineering Group</font></a><font face="Arial" size="2"> of the </font><a href="http://www.unipr.it"><font face="Arial" size="2">University
+of Parma</font></a> </p>
+
+</body>
+</html>

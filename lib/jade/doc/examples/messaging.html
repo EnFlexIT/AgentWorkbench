@@ -1,0 +1,219 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<title>Messaging</title>
+<link rel="stylesheet" type="text/css" href="stylesheet.css"
+title="Style">
+<!-- created by Alessandro Beneventi, Universita' degli Studi di Parma -->
+<!--            alessandro.beneventi@re.nettuno.it                     -->
+</head>
+
+<body bgcolor="#FFFFFF" text="#000000" link="#0000FF"
+vlink="#0000FF" alink="#0000FF">
+
+<table border="0" cellspacing="0" width="100%">
+    <tr>
+        <td bgcolor="#EEEEFF" id="NavBarCell1"><a
+        name="navbar_top_firstrow"></a> <table border="0"
+        cellpadding="0" cellspacing="3">
+            <tr>
+                <td align="center" valign="top" bgcolor="#EEEEFF"
+                id="NavBarCell1">Sections:</td>
+                <td align="center" valign="top" bgcolor="#EEEEFF"
+                id="NavBarCell1"><a href="index.html"><b>Index</b></a></td>
+                <td align="center" valign="top" bgcolor="#FFFFFF"
+                id="NavBarCell1Rev">&nbsp;<b>Introduction</b></td>
+                <td align="center" valign="top" bgcolor="#EEEEFF"
+                id="NavBarCell1"><b>More Info.</b></td>
+                <td align="center" valign="top" bgcolor="#EEEEFF"
+                id="NavBarCell1"><b>Visual Index</b></td>
+                <td align="center" valign="top" bgcolor="#EEEEFF"
+                id="NavBarCell1"><a
+                href="file:///C|/jade/jade/doc/api/index.html"><b>Class
+                by Class</b></a></td>
+                <td align="center" valign="top" bgcolor="#EEEEFF"
+                id="NavBarCell1"><a
+                href="file:///C|/jade/jade/doc/links.htm"><b>Links</b></a></td>
+            </tr>
+        </table>
+        </td>
+        <td align="right" valign="top" rowspan="2">&nbsp;</td>
+    </tr>
+</table>
+
+<p><font size="6" face="Arial"><b>Messaging</b></font> </p>
+
+<p><font face="Arial,Helvetica">The following examples show how to make 
+	JADE agents communicate by exchanging ACL messages</font></p>
+
+<ul>
+    <li><a href="#target1"><font size="4">PingAgent</font></a><font
+        size="4"><br>
+        <br>
+        </font><font size="3">Author: Giovanni Caire (TILab
+        S.p.a)<br>
+        Date: 26/11/2003<br>
+        </font></li>
+</ul>
+
+<ul>
+    <li><a href="#target2"><font size="4">BlockingReceiveAgent</font></a><font
+        size="4"><br>
+        <br>
+        </font><font size="3">Author: Giovanni Caire (TILab
+        S.p.a)<br>
+        Date: 26/11/2003<br>
+        </font></li>
+</ul>
+
+<ul>
+    <li><a href="#target3"><font size="4">CustomTemplateAgent</font></a><font
+        size="4"><br>
+        <br>
+        </font><font size="3">Author: Giovanni Caire (TILab
+        S.p.a)<br>
+        Date: 01/12/2003<br>
+        </font></li>
+</ul>
+
+<p>&nbsp;</p>
+
+<table border="1" cellpadding="3" cellspacing="0" width="100%">
+    <tr>
+        <td colspan="2" bgcolor="#CCCCFF"><a name="target1"><font
+        size="5"><b>PingAgent</b></font></a></td>
+    </tr>
+    <tr>
+        <td bgcolor="#FFFFFF"><strong>Description:</strong></td>
+    </tr>
+    <tr>
+        <td><font face="Arial,Helvetica">
+        This example shows an agent able to respond to other agents wishing
+        to know if it is alive. More in details we use a 
+        <code>CyclicBehaviour</code> that receives only messages of type 
+        <code>QUERY_IF</code> and using the <code>presence</code> ontology.
+        All other messages are ignored. This is acheved by specifying a 
+        proper <code>MessageTemplate</code>. Whenever such a message is 
+        received an <code>INFORM</code> message is sent back as reply.
+        <br><br>
+        In order to run this example, start the JADE runtime (with the management 
+        GUI) and launch a PingAgent on it. Then starts the DummyAgent from
+        the JADE management GUI. From the DummyAgent send a message of 
+        type <code>QUERY_IF</code> with ontology "presence" and "alive" as 
+        content to the PingAgent. Use the DummyAgent again to inspect the response.
+.				</font> </td>
+    </tr>
+    <tr>
+        <td><strong>Jade classes used: </strong></td>
+    </tr>
+    <tr>
+        <td>Agent, ACLMessage, MessageTemplate, CyclicBehaviour</td>
+    </tr>
+    <tr>
+        <td><strong>Source</strong></td>
+    </tr>
+    <tr>
+        <td>\src\examples\messaging\PingAgent.java</td>
+    </tr>
+</table>
+
+<p>&nbsp;</p>
+
+<table border="1" cellpadding="3" cellspacing="0" width="100%">
+    <tr>
+        <td colspan="2" bgcolor="#CCCCFF"><a name="target2"><font
+        size="5"><b>BlockingReceiveAgent</b></font></a></td>
+    </tr>
+    <tr>
+        <td bgcolor="#FFFFFF"><strong>Description:</strong></td>
+    </tr>
+    <tr>
+        <td><font face="Arial,Helvetica">
+        This example shows how to receive messages in blocking mode
+        by means of the <code>blockingReceive()</code> method. Note that 
+        this method blocks the whole agent. If you call it from within
+        a behaviour you have to take into account that all other behaviours
+        will not be able to run until the call to <code>blockingReceive()</code>
+        returns.
+        <br><br>
+        In order to run this example, start the JADE runtime (with the management 
+        GUI) and launch a BlockingReceiveAgent on it. Then starts the DummyAgent from
+        the JADE management GUI. From the DummyAgent send a message of 
+        type <code>REQUEST</code> to the BlockingReceiveAgent. 
+        Use the DummyAgent again to inspect the response.
+        </font> </td>
+    </tr>
+    <tr>
+        <td><strong>Jade classes used: </strong></td>
+    </tr>
+    <tr>
+        <td>Agent, ACLMessage, MessageTemplate</td>
+    </tr>
+    <tr>
+        <td><strong>Source</strong></td>
+    </tr>
+    <tr>
+        <td>\src\examples\messaging\BlockingReceiveAgent.java</td>
+    </tr>
+</table>
+
+<p>&nbsp;</p>
+
+<table border="1" cellpadding="3" cellspacing="0" width="100%">
+    <tr>
+        <td colspan="2" bgcolor="#CCCCFF"><a name="target3"><font
+        size="5"><b>BlockingReceiveAgent</b></font></a></td>
+    </tr>
+    <tr>
+        <td bgcolor="#FFFFFF"><strong>Description:</strong></td>
+    </tr>
+    <tr>
+        <td><font face="Arial,Helvetica">
+		    This example shows how to create a custom <code>MessageTemplate</code>.
+		    In this case in particular we define a template matching only REQUEST 
+		    messages where the ontology starts with "X".
+        <br><br>
+        In order to run this example, start the JADE runtime (with the management 
+        GUI) and launch a CustomTemplateAgent on it. Then starts the DummyAgent from
+        the JADE management GUI. From the DummyAgent send a message of 
+        type <code>REQUEST</code> to the CustomTemplateAgent specifying a value starting with "X" (e.g. 
+        "X-onto") in the <code>:ontology</code> slot: the CustomTemplateAgent
+        will catch the message. Then try to send another message with a value not 
+        starting with "X" in the ontology field: the CustomTemplateAgent will
+        ignore the message.
+        </font> </td>
+    </tr>
+    <tr>
+        <td><strong>Jade classes used: </strong></td>
+    </tr>
+    <tr>
+        <td>Agent, ACLMessage, MessageTemplate, MessageTemplate.MatchExpression</td>
+    </tr>
+    <tr>
+        <td><strong>Source</strong></td>
+    </tr>
+    <tr>
+        <td>\src\examples\messaging\BlockingReceiveAgent.java</td>
+    </tr>
+</table>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<hr>
+
+<p align="left"><a href="http://jade.cselt.it/"><font face="Arial" size="2">JADE</font></a><font face="Arial" size="2">
+is a trademark of <a href="http://www.telecomitalialab.com">TILAB</a> (formerly </font><a href="http://www.cselt.it"><font face="Arial" size="2">CSELT</font></a><font face="Arial" size="2">).&nbsp;</font><a href="http://jade.cselt.it/"><font face="Arial" size="2"><br>
+JADE</font></a><font face="Arial" size="2"> has been developed jointly by <a href="http://www.telecomitalialab.com">TILAB</a>
+(formerly </font><a href="http://www.cselt.it"><font face="Arial" size="2">CSELT</font></a><font face="Arial" size="2">)
+and the </font><a href="http://www.ce.unipr.it"><font face="Arial" size="2">Computer
+Engineering Group</font></a><font face="Arial" size="2"> of the </font><a href="http://www.unipr.it"><font face="Arial" size="2">University
+of Parma</font></a> </p>
+
+</body>
+</html>

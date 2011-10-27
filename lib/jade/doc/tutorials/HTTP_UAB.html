@@ -1,0 +1,327 @@
+<HTML>
+<HEAD>
+<TITLE>
+How to use the new HTTP MTP with JADE
+</TITLE>
+<BODY>
+<h1>Configuring the JADE HTTP MTP </h1>
+<br>
+<i>Jose A. Exposito</i><br>
+<i>Joan Ametller (jametller@ccd.uab.es)</i><br>
+<i>Sergi Robles (srobles@ccd.uab.es)</i><br>
+<i>October 20th 2003</i><br>
+<br>
+<i>Last update: April 15th 2010</i><br>
+
+<h2>0. Index</h2>
+
+1. Introduction<br>
+2. Basic Configuration<br>
+3. HTTPS Support<br>
+4. HTTPS Configuration<br>
+
+<br>
+<h2>1. Introduction</h2>
+<p> The HTTP MTP is directly included in the JADE distribution and is activated 
+  by default on Main Containers. As usual for MTPs it is possible to activate 
+  it on peripheral containers too by means of the -mtps option (look at the JADE 
+  Administrator's guide for details).</p>
+<p>This document describes how to configure it to tune its behaviour according 
+  to the application requirements (e.g. performances) and the environment characteristics 
+  (e.g. firewalls and proxies). Such configurations can be specified by means of 
+  typical JADE command line options in the form <tt>-&lt;key&gt; &lt;value&gt;</tt> or, 
+  in case the <tt>-conf &lt;properties file&gt;</tt> option is used, by means of properties in the form<br>
+  <tt>key=value</tt></p> 
+
+
+
+<h2>2. Basic Configuration</h2>
+
+
+In order to speed up performances the HTTP MTP is able to reuse connections instead 
+of opening new ones each time a message must be delivered to a remote platform. 
+This mechanism is totally compatible with FIPA-compliant platforms that do not 
+implement it. We can choose to use keep-alive or close connections from the configuration. 
+If we choose to use keep-alive connections but a remote platform, which we want 
+to communicate to does not support it, the behaviour of the HTTP MTP will be to 
+close connections with that platform after each usage. 
+<p> <tt>jade_http_mtp_numKeepAlive=n</tt> </p>
+
+<p> This parameter allows specifying the maximum number of connections that the 
+  mtp is allowed to keep. Default value for this parameter is 10. A value of 0 
+  means that the connection reusage mechanism is turned off. </p>
+
+<p><tt>jade_http_mtp_timeout=milliseconds</tt> 
+<p> The Server part of the HTTP MTP also keeps alive connections from other platforms 
+  that are using the connection reusage feature. By setting up this timeout we 
+  can set a maximum idle time for these connections in order to improve the memory 
+  consumption. Default value for this parameter is 60000 (1 minute). If we want 
+  this time to be infinite we must put this value to 0. </p>
+
+<tt>jade_http_mtp_outPort=n</tt>
+
+<p>This parameter allows specifying the local port used by outgoing connections 
+  with remote platforms. If this parameter is not specified, a random free port 
+  will be used.</p>
+<tt>
+jade_http_mtp_proxyHost=hostName<br>
+jade_http_mtp_proxyPort=portNumber
+</tt>
+<p>
+Setting up these parameters we can use a HTTP Proxy to redirect
+the platform outgoing messages. If these parameters are not specified, then
+connections will be opened directly to the remote platforms.
+</p>
+
+<tt>jade_http_mtp_parser=saxClassName</tt>
+<p> The HTTP MTP needs a SAX XML Parser. By means of this parameter it is possible 
+  to specify the SAX parser implementation class (fully qualified class name). 
+  Such class must be in the classpath. If this parameter is not specified the 
+  default SAX parser included in the underlying JDK is used.
+
+<h2>3. HTTPS Support</h2>
+<p> This HTTP MTP includes support for HTTPS, that means HTTP over SSL connections. 
+  This functionality basically permits having a secure and authenticated channel 
+  between platforms using this MTP. </p>
+<p> 
+
+How it works ? Basically when a connection is being established
+between two platforms, the platform acting as server (receiver), sends
+its Certificate to the platform that acts as client (sender). At this
+moment, the client side must decide if this certificate is
+trusted. Optionally, the server can request the client to be
+authenticated. If this occurs, client must send its certificate to the
+server and makes also its own trust decision from the received
+certificate. At this point, if both parts agree in having a secure
+communication (because they trust each other), they exchange a session
+key, that will be used to encrypt all data sent through the network.
+</p>
+<p> What we gain in using HTTPS? We gain in security. Using SSL in
+communications we are sure that nobody can spy data sent through the
+network. If we are doing trust decisions properly, we are also sure
+that messages are sent to the correct platform. If we force client
+authentication, we can also assure that platforms sending messages to
+our platform are trusted platforms.
+<p>
+What we loose ? Obviously we loose in performance. HTTPS MTP is
+approximately 15% slower than normal HTTP MTP.
+</p>
+
+<h2>4. HTTPS Configuration</h2>
+
+<p>HTTPS MTP configuration is not easy as with HTTP MTP. It requires
+to understand some basic concepts that will be exposed in the
+following lines.</p>
+
+<p>As we said in the previous section using SSL connections implies
+using certificates to authenticate platforms. It implies also making
+decisions when a certificate from a remote platform is received. All
+those things are done automatically by this MTP but we must specify
+where this certificates are, and which trust decisions are made when
+remote certificates are received.</p>
+
+<h3>4.1 Java keytool</h3>
+
+<p>The first step in order to use HTTPS MTP is creating our platform's
+certificate. We can solve this step by using java keytool. This
+program is provided with Java SDK and JRE platforms. If we don't have
+a certificate signed by a Certification Authority, we can create our
+own self-signed certificate by using the following command:</p> <br>
+<b>keytool -genkey -alias name -keystore filename</b>
+<br>
+$ keytool -genkey -alias myplatformname -keystore keyfile<br>
+Enter keystore password:  mypassword<br>
+What is your first and last name?<br>
+  [Unknown]:  Joan Ametller<br>
+What is the name of your organizational unit?<br>
+  [Unknown]:  CCD <br>
+What is the name of your organization?<br>
+  [Unknown]:  UAB<br>
+What is the name of your City or Locality?<br>
+  [Unknown]:  Bellaterra<br>
+What is the name of your State or Province?<br>
+  [Unknown]:  Barcelona<br>
+What is the two-letter country code for this unit?<br>
+  [Unknown]:  SP<br>
+Is CN=Joan Ametller, OU=CCD, O=UAB, L=Bellaterra, ST=Barcelona, C=SP correct?<br>
+  [no]:  yes<br>
+<br>
+Enter key password for <myplatformname><br>
+        (RETURN if same as keystore password):<br>  
+<br>
+<p>After this step we have a java Keystore (file named
+<i>keyfile</i>) that contains our platform's certificate and private
+key. This information is protected with the password
+<i>mypassword</i>.</p>
+
+<h3>4.2 Key Managers</h3>
+
+<p>The sending of certificates during the handshaking process of the
+protocol is done automatically. Key Managers are responsible to locate
+the certificate and private key of the platform when are needed by
+HTTPS. The default KeyManager searches for keys and certificates
+inside a Java Keystore file. There are two mandatory arguments for
+default keymanager: location of our platform's Java Keystore file and
+password for accessing key material inside this file. The name of the
+parameters can be specified from the command line: </p>
+
+<br>
+java jade.Boot -jade_mtp_http_https_keyStoreFile=keyfile
+-jade_mtp_http_https_keyStorePass=mypassword <br>
+
+<p> Or putting them inside a jade configuration file</p>
+
+<h3>4.3 Trust Managers</h3>
+
+<p>As we said in the introduction, an HTTPS client must perform some
+trust decisions. More precisely, when a server certificate is received
+it must be decided weather this certificate is trusted or not. In case the
+certificate is not trusted, the connection will be aborted. This trust
+decision is done automatically by HTTPS MTP and we provide 3 different
+behaviours for performing trust decisions:</p> 
+
+<ol>
+  <li><b>No Authentication: </b>When the server's certificate is received, we 
+    trust this certificate always without checking it. In other words, we trust 
+    all certificates. This behaviour is dangerous from the security point of view 
+    (we have no authentication) but it is the easiest behaviour in terms of configuration.</li>
+  <br>
+  In order to use this kind of behaviour we must set the next configuration parameter:<br>
+  <i>jade_mtp_http_https_tustManagerClass=jade.mtp.http.https.NoAuthentication</i><br>
+  <br>
+  <li><b>Strong Authentication: </b> When the server's certificate is received, 
+    we will only trust this certificate if it is signed by one of the official 
+    Certification Authorities recognised by Java (VeriSign, Thawte, ...). The 
+    list of this Certification authority certificates is inside the file JAVA_HOME/jre/lib/security/cacerts, 
+    and can be listed using keytool program (keytool -list -keystore cacerts)</li>
+  <br>
+  To use Strong authentication we must set the parameter <i>trustManagerClass</i> 
+  as follows:<br>
+  <i>jade_mtp_http_https_tustManagerClass=jade.mtp.http.https.StrongAuthentication</i><br>
+  <br>
+  <li><b>Friend List Authentication: </b>This last behaviour uses as parameter, 
+    a java keystore containing a list of trusted certificates. When a secure connection 
+    is being established and certificates are sent, only certificates that are 
+    present inside our list of trusted certificates, or certificates issued by 
+    one of this trusted certificates will be accepted. </li>
+  <br>
+  This last behaviour needs some more parameters than the others listed. We will 
+  need to set 3: 
+  <ul>
+    <li><i>jade_mtp_http_httpstrustManagerClass=jade.mtp.http.https.FriendListAuthentication</i> 
+      Indicating that Friend List based behaviour will be used by this MTP</li>
+    <li><i>jade_mtp_http_https_friendListFile=trust.ks</i> Indicating the file 
+      containing the list of trusted certificates.</li>
+    <li><i>jade_mtp_http_https_friendListFilePass=mypassword</i> Indicating the 
+      password for the keystore containing the list of trusted certificates.</li>
+  </ul>
+  <br>
+  How can we create a list of trusted certificates ? Using keytool program. We 
+  will explain that through an example. Imagine that Alice has her own Java Keystore 
+  with its certificate and private key. Bob wants to create a list of trusted 
+  certificates including Alice certificate in it. The steps to create the list 
+  must be the next:<br>
+  <ol>
+    <li> First of all, Alice needs to export its certificate from its Java KeyStore 
+      file and give it to Bob. In order to export this certificate Alice must 
+      execute the following command:</li>
+    <br>
+    <b>keytool -export -alias certName -file alice.cer -keystore alicekeystore</b><br>
+    This will export Alice certificate to the file alice.cer<br>
+    <br>
+    <li> Alice gives alice.cer to Bob</li>
+    <li> Bob includes certificate of alice in its list of trusted certificates 
+      by using the command:</li>
+    <br>
+    <b>keytool -import -alias alice -file alice.cer -keystore trustedList</b> 
+  </ol>
+</ol>
+
+<h3>4.4 Client Authentication</h3>
+<p>
+As we said previously, we can force authentication from the server
+side. This means that we are forcing all platforms trying to send
+messages to our platform to be authenticated. This issue can help us
+to restrict the set of platforms being able to send messages to us. To
+enable this feature you only need to set the following parameter:</p><br>
+<i>jade_mtp_http_https_needClientAuth=yes</i>
+
+<h3>4.5 Switching on HTTPS</h3> 
+<p>
+HTTPS MTP is included within the HTTP MTP so it is not really another
+MTP. The behaviour of this MTP is working without secure
+communications by default. If we want the MTP running with secure
+connections, we must initialise it by setting a transport address
+beginning with "https". This will be detectedat the
+beginning and security connections will be used. Of course, using
+security connections implies setting also required configuration
+parameters as we said previously.</p>
+Example starting HTTP MTP with HTTPS support:
+<br><br>
+<b>java jade.Boot -mtp jade.mtp.http.MessageTransportProtocol(https://machine:port/acc)</b>
+
+<h3>4.6 Configuration Examples</h3>
+
+<p>For all the cases explained here we need platform certificate and
+private key. We will suppose that we have created a self signed-certificate
+for our platform:</p>
+<b>keytool -genkey -alias myplatform -keystore mykeys.ks</b><br> 
+
+<p>After this file is created we will show some jade configuration
+files, exploiting all HTTPS MTP different behaviours:</p><br>
+
+<b>1. No Authentication Configuration</b><br><br>
+Configuration parameters inside jade.conf file:<br><br>
+--------------------------<br>
+mtp=jade.mtp.http.MessageTransportProtocol(https://myhost:7778/acc)<br>
+jade_mtp_http_https_keyStoreFile=mykeys.ks<br>
+jade_mtp_http_https_keyStorePass=mypassword<br>
+jade_mtp_http_https_trustManagerClass=jade.mtp.http.https.NoAuthentication<br>
+--------------------------<br><br>
+<b>2. Strong Authentication Configuration</b><br><br>
+Configuration parameters inside jade.conf file:<br><br>
+--------------------------<br>
+mtp=jade.mtp.http.MessageTransportProtocol(https://myhost:7778/acc)<br>
+jade_mtp_http_https_keyStoreFile=mykeys.ks<br>
+jade_mtp_http_https_keyStorePass=mypassword<br>
+jade_mtp_http_https_trustManagerClass=jade.mtp.http.https.StrongAuthentication<br>
+--------------------------<br><br>
+<b>3. Friend List Authentication Configuration</b><br><br> Remember
+that using a configuration based on a Friend List implies creating
+a list of trusted certificates (see section 5.3). We will suppose that
+we have created this list previously and it is named
+<i>friends.ks</i>. The password used to protect this file is
+<i>mypassword</i>.<br><br> 
+Configuration parameters inside jade.conf
+file:<br><br> 
+--------------------------<br>
+mtp=jade.mtp.http.MessageTransportProtocol(https://myhost:7778/acc)<br>
+jade_mtp_http_https_keyStoreFile=mykeys.ks<br>
+jade_mtp_http_https_keyStorePass=mypassword<br>
+jade_mtp_http_https_trustManagerClass=jade.mtp.http.https.FriendListAuthentication<br>
+jade_mtp_http_https_friendListFile=friends.ks<br>
+jade_mtp_http_https_friendListPass=mypassword<br>
+--------------------------<br><br>
+
+To run this configurations we only need to invoke JADE with this
+configuration file:<br><br>
+<b>java jade.Boot -conf jade.conf</b><br> 
+
+
+<hr>
+
+<p> <center>
+    <font FACE="Arial" size="-1"><a
+  HREF="http://jade.tilab.com/">JADE</a> is a trademark of <a
+  HREF="http://www.telecomitalia.it">Telecom Italia</a>.</font> 
+  </center>
+      
+  <font FACE="Arial"> <center> <font SIZE=-1>The HTTP implementation
+  was developed in the <a href="http://www.ccd.uab.es/">Combinatorics
+  and Communications Unit</a> at the <a
+  href="http://www.uab.es/">Universitat Autònoma of Barcelona</a> by
+  Jose Antonio Exposito, Joan Ametller and Nicolas Lhuillier (Motorola).
+</font> </center> <br>
+	
+</font></BODY>
+</HTML>

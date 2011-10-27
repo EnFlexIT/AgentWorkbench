@@ -1,0 +1,190 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html><!-- #BeginTemplate "/Templates/maintemplate.dwt" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- #BeginEditable "doctitle" --> 
+<title>JEP - Java Math Expression Parser</title>
+<!-- #EndEditable --> 
+<link rel="stylesheet" type="text/css" href="main.css" title="style1">
+</head>
+
+<body>
+<!-- #BeginEditable "Sub%20Menu" --><!-- #BeginLibraryItem "/Library/Docu Menu.lbi" --><!-- NAVIGATION ---------------------------------------------------- -->
+<div id="navcontainer">
+<ul>
+<li><a href="../javadoc/index.html" target="_blank">JavaDoc*</a></li>
+</ul>
+
+<hr/>
+
+<ul>
+<li><a href="index.html">Usage</a></li>
+<li><a href="op_and_func.html">Operators &amp; Functions</a></li>
+<li><a href="grammar.html">Grammar</a></li>
+<li><a href="cust_func.html">Custom Functions</a></li>
+<li><a href="newfeatures-2.3.html">New Features</a></li>
+<li><a href="faq.html">FAQ</a></li>
+<li><a href="version.html">Version History</a></li>
+</ul>
+
+<hr/>
+
+<ul>
+<li><a href="djep/index.html">DJEP</a></li>
+<li><a href="djep/XJep.html">XJep</a></li>
+<li><a href="djep/DJep.html">Differentiation</a></li>
+<li><a href="djep/groups.html">Groups</a></li>
+<li><a href="djep/VectorJep.html">Vectors &amp; Matrices</a></li>
+<li><a href="djep/version.html">Version History</a></li>
+</ul>
+</div><!-- #EndLibraryItem --><!-- #EndEditable -->
+<div id="centercontent">
+<!-- #BeginEditable "Text" -->
+        
+  <h1>Grammar</h1>
+        
+  <p>This grammar was generated from the Parser.jjt file using the jjdoc utility 
+    from JavaCC. Operators are ordered from lowest to highest precedence (from 
+    top to bottom).</p>
+<TABLE>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod1">Start</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod2">Expression</A> ( &lt;EOF&gt; | &lt;SEMI&gt; ) | ( &lt;EOF&gt; | &lt;SEMI&gt; ) )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod2">Expression</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE><A HREF="#prod3">AssignExpression</A></TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>|</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE><A HREF="#prod4">OrExpression</A></TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod3">AssignExpression</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod5">Variable</A> &lt;ASSIGN&gt; <A HREF="#prod2">Expression</A> )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod4">OrExpression</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE><A HREF="#prod6">AndExpression</A> ( ( &lt;OR&gt; <A HREF="#prod6">AndExpression</A> ) )*</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod6">AndExpression</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE><A HREF="#prod7">EqualExpression</A> ( ( &lt;AND&gt; <A HREF="#prod7">EqualExpression</A> ) )*</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod7">EqualExpression</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE><A HREF="#prod8">RelationalExpression</A> ( ( &lt;NE&gt; <A HREF="#prod8">RelationalExpression</A> ) | ( &lt;EQ&gt; <A HREF="#prod8">RelationalExpression</A> ) )*</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod8">RelationalExpression</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE><A HREF="#prod9">AdditiveExpression</A> ( ( &lt;LT&gt; <A HREF="#prod9">AdditiveExpression</A> ) | ( &lt;GT&gt; <A HREF="#prod9">AdditiveExpression</A> ) | ( &lt;LE&gt; <A HREF="#prod9">AdditiveExpression</A> ) | ( &lt;GE&gt; <A HREF="#prod9">AdditiveExpression</A> ) )*</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod9">AdditiveExpression</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE><A HREF="#prod10">MultiplicativeExpression</A> ( ( &lt;PLUS&gt; <A HREF="#prod10">MultiplicativeExpression</A> ) | ( &lt;MINUS&gt; <A HREF="#prod10">MultiplicativeExpression</A> ) )*</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod10">MultiplicativeExpression</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE><A HREF="#prod11">UnaryExpression</A> ( ( <A HREF="#prod12">PowerExpression</A> ) | ( &lt;MUL&gt; <A HREF="#prod11">UnaryExpression</A> ) | ( &lt;DOT&gt; <A HREF="#prod11">UnaryExpression</A> ) | ( &lt;CROSS&gt; <A HREF="#prod11">UnaryExpression</A> ) | ( &lt;DIV&gt; <A HREF="#prod11">UnaryExpression</A> ) | ( &lt;MOD&gt; <A HREF="#prod11">UnaryExpression</A> ) )*</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod11">UnaryExpression</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( &lt;PLUS&gt; <A HREF="#prod11">UnaryExpression</A> )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>|</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( &lt;MINUS&gt; <A HREF="#prod11">UnaryExpression</A> )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>|</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( &lt;NOT&gt; <A HREF="#prod11">UnaryExpression</A> )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>|</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE><A HREF="#prod12">PowerExpression</A></TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod12">PowerExpression</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE><A HREF="#prod13">UnaryExpressionNotPlusMinus</A> ( ( &lt;POWER&gt; <A HREF="#prod11">UnaryExpression</A> ) )?</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod13">UnaryExpressionNotPlusMinus</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE><A HREF="#prod14">AnyConstant</A></TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>|</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod15">Function</A> | <A HREF="#prod5">Variable</A> )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>|</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>&lt;LRND&gt; <A HREF="#prod2">Expression</A> &lt;RRND&gt;</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>|</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE><A HREF="#prod16">ListExpression</A></TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod16">ListExpression</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( &lt;LSQ&gt; <A HREF="#prod2">Expression</A> ( &lt;COMMA&gt; <A HREF="#prod2">Expression</A> )* &lt;RSQ&gt; )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod5">Variable</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod17">Identifier</A> )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod15">Function</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod17">Identifier</A> &lt;LRND&gt; <A HREF="#prod18">ArgumentList</A> &lt;RRND&gt; )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod18">ArgumentList</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod2">Expression</A> ( &lt;COMMA&gt; <A HREF="#prod2">Expression</A> )* )?</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod17">Identifier</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( &lt;INDENTIFIER1&gt; | &lt;INDENTIFIER2&gt; )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod14">AnyConstant</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( &lt;STRING_LITERAL&gt; | <A HREF="#prod19">RealConstant</A> )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod19">RealConstant</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( &lt;INTEGER_LITERAL&gt; | &lt;FLOATING_POINT_LITERAL&gt; )</TD>
+</TR>
+</TABLE>
+
+  <!-- #EndEditable -->
+<br/>
+<br/>
+<br/>
+  <div id="footer"> &copy; 2006 Singular Systems</div>
+</div>
+</body>
+<!-- #EndTemplate --></html>

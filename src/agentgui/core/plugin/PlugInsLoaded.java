@@ -28,6 +28,8 @@
  */
 package agentgui.core.plugin;
 
+import jade.core.Profile;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Vector;
@@ -168,6 +170,22 @@ public class PlugInsLoaded extends Vector<PlugIn> {
 		} else {
 			return true;
 		}
+	}
+
+	/**
+	 * This method invokes all loaded PlugIn-Classes, so that it can set 
+	 * further configurations for JADE container.
+	 * 
+	 * @param jadeContainerProfile The profile to change
+	 * @return the configured JADE Profile
+	 */
+	public Profile getJadeProfile(Profile jadeContainerProfile) {
+
+		for (int i = 0; i < this.size(); i++) {
+			PlugIn pi = this.get(i);
+			jadeContainerProfile = pi.getJadeProfile(jadeContainerProfile);
+		}
+		return jadeContainerProfile;
 	}
 
 }

@@ -1,0 +1,226 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.06 [en] (WinNT; I) [Netscape]">
+   <META NAME="ProgId" CONTENT="FrontPage.Editor.Document">
+   <META NAME="Author" CONTENT="Tiziana Trucco">
+   <TITLE>RMA</TITLE>
+<LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000FF" VLINK="#0000FF" ALINK="#0000FF">
+&nbsp;
+<TABLE BORDER=0 CELLSPACING=0 WIDTH="100%" >
+<TR>
+<TD BGCOLOR="#EEEEFF" ID="NavBarCell1">
+<TABLE BORDER=0 CELLSPACING=3 CELLPADDING=0 >
+<TR ALIGN=CENTER VALIGN=TOP>
+<TD BGCOLOR="#EEEEFF" ID="NavBarCell1">Sections:</TD>
+
+<TD BGCOLOR="#EEEEFF" ID="NavBarCell1"><B><A HREF="../index.html">Index</A></B></TD>
+
+<TD BGCOLOR="#EEEEFF" ID="NavBarCell1"><B><A HREF="intro.htm">Introduction</A></B></TD>
+
+<TD BGCOLOR="#FFFFFF" ID="NavBarCell1Rev">&nbsp;<B>More Info.</B></TD>
+
+<TD BGCOLOR="#EEEEFF" ID="NavBarCell1"><B>Visual Index</B></TD>
+
+<TD BGCOLOR="#EEEEFF" ID="NavBarCell1"><B>Class by Class</B></TD>
+
+<TD BGCOLOR="#EEEEFF" ID="NavBarCell1"><B><A HREF="links.htm">Links</A></B></TD>
+</TR>
+</TABLE>
+</TD>
+
+<TD ALIGN=RIGHT VALIGN=TOP ROWSPAN="2"></TD>
+</TR>
+</TABLE>
+
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 >
+<TR>
+<TD WIDTH="40">&nbsp;</TD>
+
+<TD>
+<BR><B><FONT FACE="Arial"><FONT SIZE=+3>More Informations</FONT></FONT></B>
+<P><SPAN lang="EN-GB"><FONT FACE="Arial,Helvetica">The RMA GUI offers access
+to platform features using the menu bar and the tool bar visible, but also
+provides context-sensitive popup menus and tool tips. The RMA GUI starts showing on the left side of the window,
+a tree, whose  root is called "AgentPlatforms". The default children is a folder whose name is the name of the local Agent Platform.
+Right clicking with the mouse on this folder the user is able to show the local Agent Platform Description ("View AP Description" action). 
+Now a list of the menu options available will be presented, along with the toolbar buttons
+that can be used to perform it, if any.</FONT></SPAN>
+<BR>&nbsp;
+<H1>
+<FONT FACE="Arial"><FONT SIZE=+0>1. File Menu</FONT></FONT></H1>
+<SPAN lang="EN-GB"><FONT FACE="Arial,Helvetica">This menu contains the
+general commands to the RMA.</FONT>
+<OL>
+<LI>
+<B><FONT FACE="Arial,Helvetica">Close RMA Agent</FONT></B></LI>
+
+<BR><FONT FACE="Arial,Helvetica">This item terminates the RMA agent, invoking
+its doDelete() method, but leaves all the rest of the platform unaffected.
+Closing the RMA window has the same effect as invoking this command.</FONT>
+<BR>&nbsp;
+<LI>
+<B><FONT FACE="Arial,Helvetica">Exit this Container</FONT></B></LI>
+
+<BR><FONT FACE="Arial,Helvetica">This item terminates the agent container
+the RMA is living in, killing the RMA and all the other agents in the process.
+If this container is the Agent Platform Front-End, then the whole platform
+is shut down.</FONT>
+<BR>&nbsp;
+<LI>
+<B><FONT FACE="Arial,Helvetica">Shut down Agent Platform</FONT></B></LI>
+
+<BR><FONT FACE="Arial,Helvetica">This item closes down the whole agent
+platform, terminating all connected containers, then all user agents present
+on platform front end, and eventually JADE system agents.</FONT></OL>
+</SPAN>
+<H1>
+<FONT FACE="Arial"><FONT SIZE=+0>2. Action Menu</FONT></FONT></H1>
+<FONT FACE="Arial,Helvetica">This menu contains items to invoke all the
+various administrative actions needed on the platform as a whole or on
+a set of agents or agent containers. The requested action is performed
+using the current selection of the agent tree as the target; most of these
+actions also are associated to toolbar buttons.</FONT>
+<OL>
+<LI>
+<B><FONT FACE="Arial,Helvetica">Start New Agent</FONT></B></LI>
+
+<BR><FONT FACE="Arial,Helvetica">This action creates a new agent. The user
+is prompted for the name of the new agent and the name of the Java class
+the new agent is an instance of. Moreover, if an agent container is currently
+selected, the agent is created and started on that container; otherwise,
+the user can write the name of the container he or she wants the agent
+to start on. If no container is specified, the agent is launched on the
+Agent Platform Front-End. The leftmost button of the toolbar (&nbsp;<IMG SRC="../images/baby.gif" HEIGHT=20 WIDTH=20>
+)performs this action.</FONT>
+<BR>&nbsp;
+<LI>
+<B><FONT FACE="Arial,Helvetica">Kill Selected Items</FONT></B></LI>
+
+<BR><FONT FACE="Arial,Helvetica">This action kills all the agents and agent
+containers currently selected. Killing an agent is equivalent to calling
+its doDelete() method, whereas killing an agent container kills all the
+agent it holds and then deregisters that container from the platform. Of
+course, if the Agent Platform Front-End is currently selected, then the
+whole platform is shut down. The third button of the toolbar (<IMG SRC="../images/kill.gif" HEIGHT=20 WIDTH=20>
+) fires this action.</FONT>
+<BR>&nbsp;
+<LI>
+<B><FONT FACE="Arial,Helvetica">Suspend Selected Agents</FONT></B></LI>
+
+<BR><FONT FACE="Arial,Helvetica">This action suspends the selected agents
+and is equivalent to calling its doSuspend() method. Beware that suspending
+a system agent, particularly the AMS, deadlocks the platform, since the
+RMA acts as a client and is the AMS who ultimately carries out all requested
+administrative operations. This action can be requested clicking on the
+fourth (<IMG SRC="../images/suspend.gif" HEIGHT=20 WIDTH=20> ) button of the toolbar.</FONT>
+<BR>&nbsp;
+<LI>
+<B><FONT FACE="Arial,Helvetica">Resume Selected Agents</FONT></B></LI>
+
+<BR><FONT FACE="Arial,Helvetica">This action puts the selected agents back
+into th AP_ACTIVE state, provided they were actually suspended, and works
+just the same as calling their doActivate() method. It is linked to the
+fifth (<IMG SRC="../images/sveglia.gif" HEIGHT=20 WIDTH=20>) button in the toolbar.</FONT>
+<BR>&nbsp;
+
+<LI>
+<B><FONT FACE="Arial,Helvetica">Send Custom Message to Selected Agents</FONT></B></LI>
+</OL>
+<IMG SRC="../images/acl.GIF" HEIGHT=550 WIDTH=400'>
+<P><FONT FACE="Arial,Helvetica">This action allows to send an ACL message
+to an agent. Currently, multiple receivers are not supported. When the
+user selects this menu item (or clicks on the next to rightmost button
+of the toolbar&nbsp;<IMG SRC="../images/custom.gif" HEIGHT=20 WIDTH=26>&nbsp; ),
+a special dialog is displayed in which an ACL message can be composed and
+sent, as the figure below shows.</FONT>
+<BR>&nbsp;
+<LI>
+<B><FONT FACE="Arial,Helvetica">Migrate Agent</FONT></B></LI>
+
+<P><FONT FACE= "Arial,Helvetica">This action allows to migrate an agent. When the user selects this menu item, a special dialog is displayed in which the user must specify the container of the platform where the selected agent must migrate. Not all the agents can migrate because of lack of serialization support in their implementation. In this case the user can press the cancel button of this dialog.</FONT> 
+<BR>&nbsp;
+<LI>
+<B><FONT FACE="Arial,Helvetica">Clone Agent</FONT></B></LI>
+<P><FONT FACE="Arial,Helvetica">This action allows to clone a selected agent. When the user selects this   menu item a dialog is displayed in which the user must write the new name of the agent and the container where the new agent will start.</FONT>
+<H1>
+<FONT FACE="Arial"><FONT SIZE=+0>4. Tools menu:</FONT></FONT></H1>
+<FONT FACE="Arial"><FONT SIZE=+0>This menu contains the commands to start
+all the various tools provided by JADE to application programmers. These
+tools will help developing and testing JADE based agent systems</FONT></FONT>
+<OL>
+<LI>
+<B><FONT FACE="Arial"><FONT SIZE=+0>Start DummyAgent</FONT></FONT></B></LI>
+
+<BR><FONT FACE="Arial"><FONT SIZE=+0>The DummyAgent tool allows users to
+interact with JADE agents hiding themselves behind a special agent.DummyAgent’s
+GUI allows to compose and send ACL messages, but also keeps a list of all
+ACL messages sent and received. This list can be examined by the user and
+each message can be viewed in detail or even edited. Furthermore, the message
+list can be saved to disk and retrieved later. Many instances of DummyAgent
+can be started from this menu item or from the associated toolbar button
+(&nbsp;<IMG SRC="../images/dummyagent.gif" HEIGHT=20 WIDTH=21> ).&nbsp;</FONT></FONT>
+<BR>&nbsp;
+<LI>
+<B><FONT FACE="Arial"><FONT SIZE=+0>Show the DF GUI</FONT></FONT></B></LI>
+
+<BR><FONT FACE="Arial"><FONT SIZE=+0>This item of the menu allows to activate
+the GUI of the default DF of the platform. Notice that this GUI is actually
+executed on the host where the platform (front-end container) was executed.</FONT></FONT></OL>
+<H1>
+<FONT FACE="Arial"><FONT SIZE=+0>5. Remote platforms menu:</FONT></FONT></H1>
+<FONT FACE="Arial"><FONT SIZE=+0>
+This menu allows controlling some remote platforms that comply with the FIPA specifications. Notice that these remote platforms can even be non-JADE platforms.   </FONT></FONT>
+<OL>
+<LI>
+<B><FONT FACE="Arial"><FONT SIZE=+0>Add Platform via AMS AID</FONT></FONT></B></LI>
+<BR><FONT FACE="Arial"><FONT SIZE=+0>
+This action allows getting the description (called APDescription in FIPA terminology) of a remote Agent Platform via the remote AMS. The user is requested to insert the AID of the remote AMS and the remote platform is then added to the tree showed in the RMA GUI.
+<BR>&nbsp;
+<LI>
+<B><FONT FACE="Arial"><FONT SIZE=+0>Add Platform via URL</FONT></FONT></B></LI>
+<BR><FONT FACE="Arial"><FONT SIZE=+0>
+This action allows getting the description (called APDescription in FIPA terminology) of a remote Agent Platform via a URL. The content of the URL must be the stringified APDescription, as specified by FIPA. The user is requested to insert the URL that contains the remote APDescription and the remote platform is then added to the tree showed in the RMA GUI. 
+<BR>&nbsp 
+<LI><B>View AP Description:</B> to view the AP Description of a selected platform. <BR>&nbsp
+<LI><B>Refresh AP Description:</B> since a remote platform could change dynamically its AP description, this action asks the remote AMS for the APDescription and refresh the old one.
+<BR>&nbsp
+<LI><B>Remove Remote Platform:</B> to remove from the GUI the reference to the selected remote platform.<BR>&nbsp
+<LI><B>Refresh Agent List:</B> 
+This action performs a search with the AMS of the Remote Platform and the full list of agents belonging to the remote platform are then displayed in the tree. Then right clicking on these agent the  "Send Custom Message" action is allowed.  </FONT></FONT>
+<BR>&nbsp;
+</OL>
+</TD>
+</TR>
+</TABLE>
+
+<P>
+<HR>
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>
+<BR>
+<BR>
+<BR>
+<CENTER>
+<P><FONT FACE="Arial"><FONT SIZE=-1><A HREF="http://jade.cselt.it/">JADE</A>
+is a trademark of <A HREF="http://www.cselt.it">CSELT</A>. <A HREF="http://jade.cselt.it/">JADE</A>
+has been developed jointly by <A HREF="http://www.cselt.it">CSELT</A> and
+the <A HREF="http://www.ce.unipr.it">Computer Engineering Group</A> of
+the <A HREF="http://www.unipr.it">University of Parma</A></FONT></FONT></CENTER>
+
+<BR>&nbsp;
+<P><BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+</BODY>
+</HTML>

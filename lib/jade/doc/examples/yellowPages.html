@@ -1,0 +1,273 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<title>Yellow Pages</title>
+<link rel="stylesheet" type="text/css" href="stylesheet.css"
+title="Style">
+<!-- created by Alessandro Beneventi, Universita' degli Studi di Parma -->
+<!--            alessandro.beneventi@re.nettuno.it                     -->
+</head>
+
+<body bgcolor="#FFFFFF" text="#000000" link="#0000FF"
+vlink="#0000FF" alink="#0000FF">
+
+<table border="0" cellspacing="0" width="100%">
+    <tr>
+        <td bgcolor="#EEEEFF" id="NavBarCell1"><a
+        name="navbar_top_firstrow"></a> <table border="0"
+        cellpadding="0" cellspacing="3">
+            <tr>
+                <td align="center" valign="top" bgcolor="#EEEEFF"
+                id="NavBarCell1">Sections:</td>
+                <td align="center" valign="top" bgcolor="#EEEEFF"
+                id="NavBarCell1"><a href="index.html"><b>Index</b></a></td>
+                <td align="center" valign="top" bgcolor="#FFFFFF"
+                id="NavBarCell1Rev">&nbsp;<b>Introduction</b></td>
+                <td align="center" valign="top" bgcolor="#EEEEFF"
+                id="NavBarCell1"><b>More Info.</b></td>
+                <td align="center" valign="top" bgcolor="#EEEEFF"
+                id="NavBarCell1"><b>Visual Index</b></td>
+                <td align="center" valign="top" bgcolor="#EEEEFF"
+                id="NavBarCell1"><a
+                href="file:///C|/jade/jade/doc/api/index.html"><b>Class
+                by Class</b></a></td>
+                <td align="center" valign="top" bgcolor="#EEEEFF"
+                id="NavBarCell1"><a
+                href="file:///C|/jade/jade/doc/links.htm"><b>Links</b></a></td>
+            </tr>
+        </table>
+        </td>
+        <td align="right" valign="top" rowspan="2">&nbsp;</td>
+    </tr>
+</table>
+
+<p><font size="6" face="Arial"><b>Yellow Pages</b></font> </p>
+
+<p><font face="Arial,Helvetica">The following examples show how to use
+the Yellow Pages service provided by the DF (Directory Facilitator) agent.</font></p>
+
+<ul>
+    <li><a href="#target1"><font size="4">DFRegisterAgent</font></a><font
+        size="4"><br>
+        <br>
+        </font><font size="3">Author: Giovanni Caire (TILab
+        S.p.a)<br>
+        Date: 26/11/2003<br>
+        </font></li>
+</ul>
+
+<ul>
+    <li><a href="#target2"><font size="4">DFSearchAgent</font></a><font
+        size="4"><br>
+        <br>
+        </font><font size="3">Author: Giovanni Caire (TILab
+        S.p.a)<br>
+        Date: 26/11/2003<br>
+        </font></li>
+</ul>
+
+<ul>
+    <li><a href="#target3"><font size="4">DFSubscribeAgent</font></a><font
+        size="4"><br>
+        <br>
+        </font><font size="3">Author: Giovanni Caire (TILab
+        S.p.a)<br>
+        Date: 01/12/2003<br>
+        </font></li>
+</ul>
+
+<ul>
+    <li><a href="#target4"><font size="4">Sub-DF</font></a><font
+        size="4"><br>
+        <br>
+        </font><font size="3">Author: Giovanni Rimassa (Università di Parma)<br>
+        Date: 12/09/2000<br>
+        </font></li>
+</ul>
+
+<p>&nbsp;</p>
+
+<table border="1" cellpadding="3" cellspacing="0" width="100%">
+    <tr>
+        <td colspan="2" bgcolor="#CCCCFF"><a name="target1"><font
+        size="5"><b>DFRegisterAgent</b></font></a></td>
+    </tr>
+    <tr>
+        <td bgcolor="#FFFFFF"><strong>Description:</strong></td>
+    </tr>
+    <tr>
+        <td><font face="Arial,Helvetica">
+        This example shows how to register an application specific service in the Yellow Pages
+        catalogue managed by the DF Agent so that other agents can dynamically discover it.
+        In this case in particular we register a "Weather-forecast" service for 
+        Italy. The name of this service is specified as a command line argument.
+        <br><br>
+        This example should be used together with the <a href="#target2"><font size="4">DFSearchAgent</font></a>
+        and the <a href="#target3"><font size="4">DFSubscribeAgent</font></a> as described below.<br>
+        Start the JADE runtime (with the management GUI) and launch a DFRegisterAgent
+        on it. Also specify a name for the service to register (e.g. "my-forecast") 
+        as an argument. The command line could be<br>
+        java jade.Boot -gui provider:examples.yellowPages.DFRegisterAgent(my-forecast)<br>
+        Then, from another window (or from the management GUI), launch a
+        DFSearchAgent.<br>
+        java jade.Boot -container searcher:examples.yellowPages.DFSearchAgent<br>
+        The DFSearchAgent should find the service registered by the DFRegisterAgent.<br>
+        After that, from another window (or from the management GUI), launch a
+        DFSubscribeAgent.<br> 
+        java jade.Boot -container subscriber:examples.yellowPages.DFSubscribeAgent<br>
+        The DFSubscribeAgent should immediately be notified about the service registered by 
+        the DFRegisterAgent.<br>
+        Finally, from another window (or from the management GUI), launch another
+        DFRegisterAgent.<br>
+        java jade.Boot -container provider-1:examples.yellowPages.DFRegisterAgent("forecast-1")<br>
+        The DFSubsribeAgent should automatically be notified about the newly registered service. 
+.				</font> </td>
+    </tr>
+    <tr>
+        <td><strong>Jade classes used: </strong></td>
+    </tr>
+    <tr>
+        <td>Agent, DFService, DFAgentDescription, ServiceDescription, Property</td>
+    </tr>
+    <tr>
+        <td><strong>Source</strong></td>
+    </tr>
+    <tr>
+        <td>\src\examples\yellowPages\DFRegisterAgent.java</td>
+    </tr>
+</table>
+
+<p>&nbsp;</p>
+
+<table border="1" cellpadding="3" cellspacing="0" width="100%">
+    <tr>
+        <td colspan="2" bgcolor="#CCCCFF"><a name="target2"><font
+        size="5"><b>DFSearchAgent</b></font></a></td>
+    </tr>
+    <tr>
+        <td bgcolor="#FFFFFF"><strong>Description:</strong></td>
+    </tr>
+    <tr>
+        <td><font face="Arial,Helvetica">
+        This example shows how to search for services provided by other agents 
+        and advertised in the Yellow Pages catalogue managed by the DF agent.
+        In this case in particular we search for agents providing a 
+        "Weather-forecast" service.
+        <br><br>
+        This example should be used together with the <a href="#target1"><font size="4">DFRegisterAgent</font></a>
+        and the <a href="#target3"><font size="4">DFSubscribeAgent</font></a> as described
+        <a href="#target1">here.</a>
+        </font> </td>
+    </tr>
+    <tr>
+        <td><strong>Jade classes used: </strong></td>
+    </tr>
+    <tr>
+        <td>Agent, DFService, DFAgentDescription, ServiceDescription, SearchConstraints</td>
+    </tr>
+    <tr>
+        <td><strong>Source</strong></td>
+    </tr>
+    <tr>
+        <td>\src\examples\yellowPages\DFSearchAgent.java</td>
+    </tr>
+</table>
+
+<p>&nbsp;</p>
+
+<table border="1" cellpadding="3" cellspacing="0" width="100%">
+    <tr>
+        <td colspan="2" bgcolor="#CCCCFF"><a name="target3"><font
+        size="5"><b>DFSubscribeAgent</b></font></a></td>
+    </tr>
+    <tr>
+        <td bgcolor="#FFFFFF"><strong>Description:</strong></td>
+    </tr>
+    <tr>
+        <td><font face="Arial,Helvetica">
+		    This example shows how to subscribe to the DF agent in order to be notified 
+		    each time a given service is published in the yellow pages catalogue.
+		    In this case in particular we want to be informed whenever a service of type
+		    "Weather-forecast" for Italy becomes available. 
+        <br><br>
+        This example should be used together with the <a href="#target1"><font size="4">DFRegisterAgent</font></a>
+        and the <a href="#target2"><font size="4">DFSearchAgent</font></a> as described
+        <a href="#target1">here.</a>
+        </font> </td>
+    </tr>
+    <tr>
+        <td><strong>Jade classes used: </strong></td>
+    </tr>
+    <tr>
+        <td>Agent, DFService, DFAgentDescription, ServiceDescription, SearchConstraints, Property, SubscriptionInitiator</td>
+    </tr>
+    <tr>
+        <td><strong>Source</strong></td>
+    </tr>
+    <tr>
+        <td>\src\examples\yellowPages\DFSubscribeAgent.java</td>
+    </tr>
+</table>
+
+<p>&nbsp;</p>
+
+<table border="1" cellpadding="3" cellspacing="0" width="100%">
+    <tr>
+        <td colspan="2" bgcolor="#CCCCFF"><a name="target4"><font
+        size="5"><b>Sub-DF</b></font></a></td>
+    </tr>
+    <tr>
+        <td bgcolor="#FFFFFF"><strong>Description:</strong></td>
+    </tr>
+    <tr>
+        <td><font face="Arial,Helvetica">
+		    This examples shows how to set up
+        multiple Agent Domains by means of a network of connected (federated)
+        Directory Facilitator Agents.</font> <br>
+        <font face="Arial,Helvetica">In particular this DF agent plays the
+        role of a sub-df by automatically registering with a
+        parent DF. This "SUBDF" inherits all the functionalities of
+        the default DF, including its GUI. Once federated, the two DF agents
+        provide recursive
+        search capabilities. </font><br>
+        <font face="Arial,Helvetica">Notice that the same might be done
+        without writing any line of code: just start a new agent subdf of
+        classe jade.domain.df (subdf:jade.domain.df), send it a message
+        to request to show the GUI (by using the dummyAgent), and then
+        use its GUI to federate with its parent.
+        </font> </td>
+    </tr>
+    <tr>
+        <td><strong>Jade classes used: </strong></td>
+    </tr>
+    <tr>
+        <td>df</td>
+    </tr>
+    <tr>
+        <td><strong>Source</strong></td>
+    </tr>
+    <tr>
+        <td>\src\examples\yellowPages\SubDF.java</td>
+    </tr>
+</table>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<hr>
+
+<p align="left"><a href="http://jade.cselt.it/"><font face="Arial" size="2">JADE</font></a><font face="Arial" size="2">
+is a trademark of <a href="http://www.telecomitalialab.com">TILAB</a> (formerly </font><a href="http://www.cselt.it"><font face="Arial" size="2">CSELT</font></a><font face="Arial" size="2">).&nbsp;</font><a href="http://jade.cselt.it/"><font face="Arial" size="2"><br>
+JADE</font></a><font face="Arial" size="2"> has been developed jointly by <a href="http://www.telecomitalialab.com">TILAB</a>
+(formerly </font><a href="http://www.cselt.it"><font face="Arial" size="2">CSELT</font></a><font face="Arial" size="2">)
+and the </font><a href="http://www.ce.unipr.it"><font face="Arial" size="2">Computer
+Engineering Group</font></a><font face="Arial" size="2"> of the </font><a href="http://www.unipr.it"><font face="Arial" size="2">University
+of Parma</font></a> </p>
+
+</body>
+</html>

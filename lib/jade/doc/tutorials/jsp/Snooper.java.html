@@ -1,0 +1,76 @@
+<pre>
+<tt>
+<b><font color=#0000FF>package</font></b> examples<font color=#990000>.</font>jsp<font color=#990000>;</font>
+
+<b><font color=#000080>import</font></b> jade<font color=#990000>.</font>core<font color=#990000>.</font><font color=#990000>*</font><font color=#990000>;</font>
+<b><font color=#000080>import</font></b> jade<font color=#990000>.</font>core<font color=#990000>.</font>behaviours<font color=#990000>.</font><font color=#990000>*</font><font color=#990000>;</font>
+<b><font color=#000080>import</font></b> jade<font color=#990000>.</font>lang<font color=#990000>.</font>acl<font color=#990000>.</font><font color=#990000>*</font><font color=#990000>;</font>
+
+<i><font color=#9A1900>/**
+ * This agent is to be used in a JSP page. It just sends
+ * messages to a buffer agent.
+ */</font></i>
+<b><font color=#0000FF>public</font></b> <b><font color=#0000FF>class</font></b> Snooper <b><font color=#0000FF>extends</font></b> Agent <font color=#FF0000>{</font>
+    <b><font color=#0000FF>private</font></b> ACLMessage msg<font color=#990000>;</font>
+
+    <b><font color=#0000FF>public</font></b> <b><font color=#000000>Snooper</font></b><font color=#990000>(</font><font color=#990000>)</font> <font color=#FF0000>{</font>
+	<i><font color=#9A1900>// Create the message to send to the client</font></i>
+        msg <font color=#990000>=</font> <b><font color=#0000FF>new</font></b> <b><font color=#000000>ACLMessage</font></b><font color=#990000>(</font>ACLMessage<font color=#990000>.</font>INFORM<font color=#990000>)</font><font color=#990000>;</font>
+	System<font color=#990000>.</font>out<font color=#990000>.</font><b><font color=#000000>println</font></b><font color=#990000>(</font><font color=#FF0000>"Snooper created"</font><font color=#990000>)</font><font color=#990000>;</font>
+    <font color=#FF0000>}</font>
+
+    <b><font color=#0000FF>public</font></b> <font color=#009900>void</font> <b><font color=#000000>setup</font></b><font color=#990000>(</font><font color=#990000>)</font> <font color=#FF0000>{</font>
+      <i><font color=#9A1900>// Accept objects through the object-to-agent communication</font></i>
+      <i><font color=#9A1900>// channel, with a maximum size of 10 queued objects</font></i>
+      <b><font color=#000000>setEnabledO2ACommunication</font></b><font color=#990000>(</font>true<font color=#990000>,</font> <font color=#993399>10</font><font color=#990000>)</font><font color=#990000>;</font>
+
+
+      <i><font color=#9A1900>// Add a suitable cyclic behaviour...</font></i>
+      <b><font color=#000000>addBehaviour</font></b><font color=#990000>(</font><b><font color=#0000FF>new</font></b> jade<font color=#990000>.</font>core<font color=#990000>.</font>behaviours<font color=#990000>.</font><b><font color=#000000>CyclicBehaviour</font></b><font color=#990000>(</font><font color=#990000>)</font> <font color=#FF0000>{</font>
+	      
+	      <b><font color=#0000FF>public</font></b> <font color=#009900>void</font> <b><font color=#000000>action</font></b><font color=#990000>(</font><font color=#990000>)</font> <font color=#FF0000>{</font>
+		  System<font color=#990000>.</font>out<font color=#990000>.</font><b><font color=#000000>println</font></b><font color=#990000>(</font><font color=#FF0000>" Trying... "</font><font color=#990000>)</font><font color=#990000>;</font>
+		  Object obj <font color=#990000>=</font> <b><font color=#000000>getO2AObject</font></b><font color=#990000>(</font><font color=#990000>)</font><font color=#990000>;</font>
+		  <b><font color=#000000>if</font></b><font color=#990000>(</font>obj <font color=#990000>!</font><font color=#990000>=</font> <b><font color=#0000FF>null</font></b><font color=#990000>)</font> <font color=#FF0000>{</font>
+		      System<font color=#990000>.</font>out<font color=#990000>.</font><b><font color=#000000>println</font></b><font color=#990000>(</font><font color=#FF0000>" Snooping "</font><font color=#990000>+</font>obj<font color=#990000>)</font><font color=#990000>;</font>
+		      <b><font color=#000000>snoop</font></b><font color=#990000>(</font>obj<font color=#990000>.</font><b><font color=#000000>toString</font></b><font color=#990000>(</font><font color=#990000>)</font><font color=#990000>)</font><font color=#990000>;</font>
+		  <font color=#FF0000>}</font> <b><font color=#0000FF>else</font></b> <font color=#FF0000>{</font> 
+		      <b><font color=#000000>block</font></b><font color=#990000>(</font><font color=#990000>)</font><font color=#990000>;</font>
+		  <font color=#FF0000>}</font>
+	      <font color=#FF0000>}</font>
+      <font color=#FF0000>}</font><font color=#990000>)</font><font color=#990000>;</font>
+    <font color=#FF0000>}</font>
+
+    <b><font color=#0000FF>public</font></b> <font color=#009900>void</font> <b><font color=#000000>takeDown</font></b><font color=#990000>(</font><font color=#990000>)</font> <font color=#FF0000>{</font>
+      <i><font color=#9A1900>// Disables the object-to-agent communication channel, thus</font></i>
+      <i><font color=#9A1900>// waking up all waiting threads</font></i>
+      <b><font color=#000000>setEnabledO2ACommunication</font></b><font color=#990000>(</font>false<font color=#990000>,</font> <font color=#993399>0</font><font color=#990000>)</font><font color=#990000>;</font>
+    <font color=#FF0000>}</font>
+
+
+    <i><font color=#9A1900>/**
+     * The method that will be invoked in the JSP page.
+     * @param str the message to send to the client
+     */</font></i>
+    <b><font color=#0000FF>public</font></b> <font color=#009900>void</font> <b><font color=#000000>snoop</font></b><font color=#990000>(</font>String str<font color=#990000>)</font> <font color=#FF0000>{</font>
+	<i><font color=#9A1900>// JADE 2.3</font></i>
+	msg<font color=#990000>.</font><b><font color=#000000>clearAllReceiver</font></b><font color=#990000>(</font><font color=#990000>)</font><font color=#990000>;</font>
+	msg<font color=#990000>.</font><b><font color=#000000>addReceiver</font></b><font color=#990000>(</font><b><font color=#0000FF>new</font></b> <b><font color=#000000>AID</font></b><font color=#990000>(</font><font color=#FF0000>"buffer"</font><font color=#990000>,</font>AID<font color=#990000>.</font>ISLOCALNAME<font color=#990000>)</font><font color=#990000>)</font><font color=#990000>;</font>
+        <i><font color=#9A1900>// JADE 2.0: </font></i>
+        <i><font color=#9A1900>// getHap() cannot be moved in the constructor because it would not </font></i>
+	<i><font color=#9A1900>// work! each time the previous entry must be removed.</font></i>
+	<i><font color=#9A1900>// msg.clearAllReceiver();</font></i>
+	<i><font color=#9A1900>// msg.addReceiver(new AID("buffer@"+getHap()));</font></i>
+	<i><font color=#9A1900>// JADE 1.4:</font></i>
+	<i><font color=#9A1900>// msg.removeAllDests();</font></i>
+	<i><font color=#9A1900>//msg.addDest("buffer");</font></i>
+	msg<font color=#990000>.</font><b><font color=#000000>setContent</font></b><font color=#990000>(</font>str<font color=#990000>)</font><font color=#990000>;</font>
+	<b><font color=#000000>send</font></b><font color=#990000>(</font>msg<font color=#990000>)</font><font color=#990000>;</font>
+    <font color=#FF0000>}</font>
+<font color=#FF0000>}</font>
+
+
+
+
+</tt>
+</pre>

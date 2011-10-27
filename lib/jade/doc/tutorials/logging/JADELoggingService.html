@@ -1,0 +1,350 @@
+<html>
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<link rel=Edit-Time-Data href="editdata.mso">
+<title>JADE Logging Service</title>
+<style><!--
+.MsoToc1
+	{font-size:12.0pt;
+	font-family:Arial;
+	color:windowtext;
+	text-transform:uppercase;
+	font-weight:bold;}
+.MsoToc2
+	{font-size:12.0pt;
+	font-family:"Times New Roman";
+	color:windowtext;
+	font-weight:bold;}
+.MsoCaption
+	{text-align:justify;
+	text-indent:-6.0pt;
+	line-height:82%;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	color:windowtext;
+	letter-spacing:.25pt;
+	font-style:italic;}
+.MsoTitle
+	{text-align:center;
+	font-size:22.0pt;
+	font-family:"Times New Roman";
+	color:windowtext;
+	text-transform:uppercase;
+	letter-spacing:3.0pt;}
+.MsoBodyText
+	{text-align:justify;
+	text-indent:.25in;
+	font-size:11.0pt;
+	font-family:"Times New Roman";
+	color:windowtext;}
+.MsoSubtitle
+	{text-align:center;
+	font-size:13.5pt;
+	font-family:"Times New Roman";
+	font-variant:small-caps;
+	color:windowtext;
+	letter-spacing:1.0pt;}
+.BodyTextKeep
+	{text-align:justify;
+	text-indent:.25in;
+	font-size:11.0pt;
+	font-family:"Times New Roman";
+	color:windowtext;}
+.SpellE
+	{}
+.GramE
+	{}
+.Section1
+	{page:Section1;}
+-->
+</style>
+</head>
+<body bgcolor="#FFFFFF" link=blue vlink=purple class="Normal" lang=EN-US>
+<div class=Section1> 
+  <p class=MsoTitle><a
+name="_Toc524248714"></a><a name="_Ref495812690"></a><a name="_Ref493323928"></a><a
+name="_Toc484831892"><span><b><span lang=EN-GB>J</span></b></span></a><a name="_Ref497796828"></a><span><b><span lang=EN-GB>ADE 
+    TUTORIAL</span></b></span></p>
+  <p class=MsoTitle><span><b><span
+style='font-size:18.0pt;'>JADE Logging service</span></b></span></p>
+  <p class=MsoSubtitle><span>USAGE RESTRICTED ACCORDING TO LICENSE AGREEMENT.</span></p>
+  <p class=MsoBodyText><span>last update: 20 July 2004.    JADE 3.2</span></p>
+  <p class=BodyTextKeep style='margin-bottom:0in;margin-bottom:.0001pt;
+margin-bottom:.0001pt;
+</span></span></span></span></p>
+
+<p class=BodyTextKeep style='margin-bottom:0in;margin-bottom:.0001pt;
+margin-bottom:.0001pt;
+></p>
+  <div style='border:solid windowtext 1.0pt;padding:1.0pt 4.0pt 1.0pt 4.0pt'> 
+    <p style='border:none;padding:0in;'><span>JADE - Java Agent <span class=SpellE>DEvelopment</span> 
+      Framework is a framework to develop multi-agent systems in compliance with 
+      the FIPA specifications. JADE successfully passed the 1<sup>st</sup> FIPA 
+      interoperability test in </span><span>Seoul</span><span> (Jan. 99) and the 
+      2<sup>nd</sup> FIPA interoperability test in </span><span>London</span><span> 
+      (Apr. 01).</span></p>
+    <p style='border:none;padding:0in;'><span>
+	  Copyright (C) 2000 CSELT S.p.A.   (C) 2001 TILab S.p.A. (C) 2002 TILab S.p.A.</span></p>
+    <p style='border:none;padding:0in;'><span>This library is free software; you 
+      can redistribute it and/or modify it under the terms of the GNU Lesser General 
+      Public License as published by the Free Software Foundation, version 2.1 
+      of the License. </span></p>
+    <p style='border:none;padding:0in;'><span>This library is distributed in the 
+      hope that it will be useful, but WITHOUT ANY WARRANTY; without even the 
+      implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+      See the GNU Lesser General Public License for more details.</span></p>
+    <p style='border:none;padding:0in;'><span>You should have received a copy 
+      of the GNU Lesser General Public License along with this library; if not, 
+      write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330, 
+      Boston, MA 02111-1307, USA.</span></p>
+  </div>
+  <br clear=all style='page-break-before:always'>
+  <p align=center style='text-align:center'><span><b>TABLE OF CONTENTS</b></span></p>
+  <p class=MsoToc1> <a
+href="#_Toc78110284"><span>1. LOGGING SERVICE Overview</span></a></p>
+  <p class=MsoToc1><a
+href="#_Toc78110285"><span>2. Logging Mechanism</span></a></p>
+  <p class=MsoToc1><a
+href="#_Toc78110286"><span>3. Log levels</span></a></p>
+  <p class=MsoToc1><a
+href="#_Toc78110287"><span>4. Log Handlers</span></a></p>
+  <p class=MsoToc1><a
+href="#_Toc78110288"><span>5. Dynamic Configurations Updates</span></a></p>
+  <p class=MsoToc2><a
+href="#_Toc78110289"><span>5.1 Logging Configuration File</span></a></p>
+  <p class=MsoToc2><a
+href="#_Toc78110290"><span>5.2 LogManagerAgent</span></a></p>
+  <br clear=all style='page-break-before:always'>
+  <p class=MsoTitle>JADE Logging service</p>
+  <p class=MsoBodyText>Since JADE 3.2, the logging facilities of JADE are based 
+    upon the package <span class=SpellE>java.util.logging</span>. This tutorial 
+    shows how to use JADE logging service.</p>
+  <div style='border-top:solid gray 1.0pt;border-left:none;border-bottom:solid gray 1.0pt;
+border-right:none;padding:6.0pt 0in 6.0pt 0in'> 
+    <h1 style='&quot;%1\:1\:0\:&quot; &quot;Telecom Italia S\.p\.A\.&quot; 20040721T1557'><a name="_Ref17017584"></a><a
+name="_Toc78110284"> 
+<span style='layout-grid-mode:line'>1 Logging Service Overview</span></a></h1>
+  </div>
+  <p class=MsoBodyText>The goal of this document is to provide an overview of 
+    the key elements of the JADE logging service. The logging service class provides 
+    a uniform way to produce logging printouts by hiding to applications the characteristics 
+    of the device (e.g. on a MIDP device a <span class=SpellE>RecordStore</span> 
+    is used). The full implementation running in a JAVA5 (or later) environment 
+    is a pure extension of the <span
+class=SpellE>java.util.logging.Logger</span> class and provides the whole set 
+    of functionalities of <span class=SpellE>java.util.logging</span>. When using 
+    the LEAP Add-on, the implementation for MIDP and PJAVA environments, instead, 
+    provide the same API but a reduced set of functionalities: please refer the 
+    documentation provided for class <span
+class=SpellE><i>jade.util.Logger</i></span> for further information about this 
+    topic. The class <span class=SpellE>jade.util.Logger</span> <span class=GramE>is,</span> 
+    <span class=SpellE>infact</span>, the main class on which applications make 
+    logging calls.</p>
+  <div style='border-top:solid gray 1.0pt;border-left:none;border-bottom:solid gray 1.0pt;
+border-right:none;padding:6.0pt 0in 6.0pt 0in'> 
+    <h1 style='&quot;%1\:2\:0\:&quot; &quot;Telecom Italia S\.p\.A\.&quot; 20040721T1557'><a name="_Toc78110285"> 
+      <span
+style='font-size:11.0pt;'></span> <span
+style='layout-grid-mode:line'>2 Logging Mechanism</span></a></h1>
+  </div>
+  <p class=MsoBodyText>JADE classes and user's applications use logging service 
+    by making logging calls on <i>jade.util.Logger</i> objects. Because its implementation is based upon the <span
+class=SpellE>java.util.logging</span> package, loggers are organized into a hierarchical 
+    name space and child can inherit properties from parents.</p>
+  <p class=MsoBodyText>When the user instantiates a logger object, he assigns 
+    it a unique name, which can be, for instance, the name of the class in which 
+    the object has been created. The usage of the following coding style is recommended 
+    in order to create a Logger object for class<i> <span class=SpellE>mypackage.MyClass</span></i> 
+  </p>
+
+<code>Logger logger = jade.util.Logger.getMyLogger(this.getClass().getName());</code>
+
+  <p style='text-align:justify'><span style='font-size:11.0pt;color:windowtext'>Notice 
+    that the static method <span class=SpellE>getMyLogger</span> is used instead 
+    of the class constructor.</span></p>
+  <p style='text-align:justify'><span style='font-size:11.0pt;color:windowtext'>Logger 
+    objects provide an easy mean to produce messages of interest to end users 
+    and/or software developers and to log them to different kinds of destinations 
+    such as, for instance, the standard output or a file. (cfr LOG HANDLERS). Each log message has an associated log Level. The Level gives 
+    a rough guide to the importance and urgency of a log message (cfr 
+    LOG LEVELS). The usage of the following coding 
+    style is recommended in order to log a message with a certain level of importance:</span></p>
+  <p class=MsoBodyText align=left style='text-align:left;'><code>
+if (logger.isLoggable(jade.util.Logger.myLevel)) <br>
+ logger.log(jade.util.Logger.myLevel, "this is the message to log");
+</code>
+  <p class=MsoBodyText><span class=GramE>where</span> <span
+class=SpellE>myLevel</span> will be one of the levels allowed ( for instance <span
+class=SpellE>jade.util.Logger.SEVERE</span>). Notice that testing if the level 
+    is <span class=SpellE>loggable</span> before actually calling the <i>log</i> 
+    method allows relevant performance improvements.</p>
+  <div style='border-top:solid gray 1.0pt;border-left:none;border-bottom:solid gray 1.0pt;
+border-right:none;padding:6.0pt 0in 6.0pt 0in'> 
+    <h1 style='&quot;%1\:3\:0\:&quot; &quot;Telecom Italia S\.p\.A\.&quot; 20040721T1557'><a name="_Toc78110286"> 
+      <span
+style='layout-grid-mode:line'>3<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span> <span
+style='layout-grid-mode:line'>Log levels</span></a></h1>
+  </div>
+  <p class=MsoBodyText>Levels provided by jade logging services are the same as 
+    java logging ones. Please refer to <span class=SpellE>java.util.logging</span> 
+    documentation for further <span class=SpellE>informations</span> about it.</p>
+  <div style='border-top:solid gray 1.0pt;border-left:none;border-bottom:solid gray 1.0pt;
+border-right:none;padding:6.0pt 0in 6.0pt 0in'> 
+    <h1 style='&quot;%1\:4\:0\:&quot; &quot;Telecom Italia S\.p\.A\.&quot; 20040721T1557'><a name="_Toc78110287"> 
+      <span
+style='layout-grid-mode:line'>4<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span> <span
+style='layout-grid-mode:line'>Log Handlers</span></a></h1>
+  </div>
+  <p class=MsoBodyText>Handlers provided by jade logging services are the same 
+    as java logging ones. Please refer to java logging documentation for further 
+    details about it.</p>
+  <div style='border-top:solid gray 1.0pt;border-left:none;border-bottom:solid gray 1.0pt;
+border-right:none;padding:6.0pt 0in 6.0pt 0in'> 
+    <h1 style='&quot;%1\:5\:0\:&quot; &quot;Telecom Italia S\.p\.A\.&quot; 20040721T1557'><a name="_Toc78110288"> 
+      5<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span> <span style='layout-grid-mode:line'>Logging 
+      Configuration</span></a></h1>
+  </div>
+  <p class=MsoBodyText>User can change the log level for a logger object and the 
+    handlers associated with it. JADE provides two ways to control the logging 
+    configuration:</p>
+  <p class=MsoBodyText style='
+&quot;Telecom Italia S\.p\.A\.&quot; 20040721T1557;
+'> -<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    </span> at deployment time: the JVM can be launched by passing a logging configuration 
+    file that specifies logging level and handlers for each class</p>
+  <p class=MsoBodyText style='
+&quot;Telecom Italia S\.p\.A\.&quot; 20040721T1557;
+'> -<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    </span> <span class=GramE>at</span> execution time: the Log Manager Agent 
+    can be launched at anytime during the execution of JADE. This graphical tool 
+    allows to change the logging configuration (again level and handler) on a 
+    per-class basis.</p>
+  <h2 style='&quot;%1\:5\:0\:\.%2\:1\:0\:&quot; &quot;Telecom Italia S\.p\.A\.&quot; 20040721T1557'><a
+name="_Toc78110289"> <span lang=EN-GB>5.1<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; 
+    </span></span> <span lang=EN-GB>Logging Configuration File</span></a></h2>
+  <p><span style='font-size:11.0pt;color:windowtext'>Here is an example of a logging 
+    configuration file (<span class=SpellE>myLogging.properties</span><span
+class=GramE>) :</span> </span></p>
+  <p><tt><span style='font-size:10.0pt'># Properties <span class=GramE>file</span> 
+    which configures the operation of the JDK</span></tt> <br>
+    <tt><span style='font-size:10.0pt'># logging facility.</span></tt> </p>
+  <p><tt><span style='font-size:10.0pt'># <span class=GramE>The</span> system 
+    will look for this <span class=SpellE>config</span> file, first using</span></tt> 
+    <br>
+    <tt><span style='font-size:10.0pt'># a System property specified at startup:</span></tt> 
+    <br>
+    <tt><span style='font-size:10.0pt'>#</span></tt> <br>
+    <tt><span style='font-size:10.0pt'># &gt;java -<span class=SpellE>Djava.util.logging.config.file</span>=C:\Jade\myLogging.properties</span></tt> 
+    <br>
+    <tt><span style='font-size:10.0pt'>#</span></tt> <br>
+    <tt><span style='font-size:10.0pt'># If this property is not specified, then 
+    the <span class=SpellE>config</span> file is</span></tt> <br>
+    <tt><span style='font-size:10.0pt'># retrieved from its default location at:</span></tt> 
+    <br>
+    <tt><span style='font-size:10.0pt'>#</span></tt> <br>
+    <tt><span style='font-size:10.0pt'># JDK_HOME/<span class=SpellE>jre/lib/logging.properties</span></span></tt> 
+  </p>
+  <p><span class=GramE><tt><span style='font-size:10.0pt'># Global logging properties.</span></tt></span> 
+    <br>
+    <tt><span style='font-size:10.0pt'># ------------------------------------------</span></tt> 
+    <br>
+    <tt><span style='font-size:10.0pt'># <span class=GramE>The</span> set of handlers 
+    to be loaded upon startup.</span></tt> <br>
+    <tt><span style='font-size:10.0pt'># Comma-separated list of class names.</span></tt> 
+    <br>
+    <span class=GramE><tt><span style='font-size:10.0pt'>handlers=</span></tt></span><span
+class=SpellE><tt><span style='font-size:10.0pt'>java.util.logging.FileHandler</span></tt></span><tt><span
+style='font-size:10.0pt'>, <span class=SpellE>java.util.logging.ConsoleHandler</span></span></tt> 
+  </p>
+  <p><span class=GramE><tt><span style='font-size:10.0pt'># Default global logging 
+    level.</span></tt></span> <br>
+    <tt><span style='font-size:10.0pt'># Loggers and Handlers may override this 
+    level</span></tt> <br>
+    <tt><span style='font-size:10.0pt'>.level=INFO</span></tt> </p>
+  <p><tt><span style='font-size:10.0pt'># Loggers</span></tt> <br>
+    <tt><span style='font-size:10.0pt'># ------------------------------------------</span></tt> 
+    <br>
+    <tt><span style='font-size:10.0pt'># Loggers are usually attached to packages.</span></tt> 
+    <br>
+    <tt><span style='font-size:10.0pt'># <span class=GramE>Here</span>, the level 
+    for each package is specified.</span></tt> <br>
+    <tt><span style='font-size:10.0pt'># <span class=GramE>The</span> global level 
+    is used by default, so levels</span></tt> <br>
+    <tt><span style='font-size:10.0pt'># specified here simply act as an override.</span></tt> 
+    <br>
+    <span class=SpellE><tt><span style='font-size:10.0pt'>jade.core.level</span></tt></span><tt><span
+style='font-size:10.0pt'>=ALL</span></tt> <br>
+    <span class=SpellE><tt><span style='font-size:10.0pt'>jade.domain.mobility.level</span></tt></span><tt><span
+style='font-size:10.0pt'>=CONFIG</span></tt> <br>
+    <br>
+  </p>
+  <p><tt><span style='font-size:10.0pt'># Handlers</span></tt> <br>
+    <tt><span style='font-size:10.0pt'># -----------------------------------------</span></tt> 
+  </p>
+  <p><tt><span style='font-size:10.0pt'># --- <span class=SpellE>ConsoleHandler</span> 
+    ---</span></tt> <br>
+    <tt><span style='font-size:10.0pt'># Override of global logging level</span></tt> 
+    <br>
+    <span class=SpellE><tt><span style='font-size:10.0pt'>java.util.logging.ConsoleHandler.level</span></tt></span><tt><span
+style='font-size:10.0pt'>=SEVERE</span></tt> <br>
+    <tt><span style='font-size:10.0pt'>java.util.logging.ConsoleHandler.formatter=java.util.logging.SimpleFormatter</span></tt> 
+  </p>
+  <p><tt><span style='font-size:10.0pt'># --- <span class=SpellE>FileHandler</span> 
+    ---</span></tt> <br>
+    <tt><span style='font-size:10.0pt'># Override of global logging level</span></tt> 
+    <br>
+    <span class=SpellE><tt><span style='font-size:10.0pt'>java.util.logging.FileHandler.level</span></tt></span><tt><span
+style='font-size:10.0pt'>=ALL</span></tt> </p>
+  <p><tt><span style='font-size:10.0pt'># <span class=GramE>Naming</span> style 
+    for the output file:</span></tt> <br>
+    <tt><span style='font-size:10.0pt'># (The output file is placed in the directory</span></tt> 
+    <br>
+    <tt><span style='font-size:10.0pt'># defined by the &quot;<span class=SpellE>user.home</span>&quot; 
+    System property.)</span></tt> <br>
+    <span class=SpellE><tt><span style='font-size:10.0pt'>java.util.logging.FileHandler.pattern</span></tt></span><tt><span
+style='font-size:10.0pt'>=%h/<span class=SpellE>java%u.log</span></span></tt> 
+  </p>
+  <p><tt><span style='font-size:10.0pt'># Limiting size of output file in bytes:</span></tt> 
+    <br>
+    <span class=SpellE><tt><span style='font-size:10.0pt'>java.util.logging.FileHandler.limit</span></tt></span><tt><span
+style='font-size:10.0pt'>=50000</span></tt> </p>
+  <p><tt><span style='font-size:10.0pt'># Number of output files to cycle through, 
+    by appending <span class=GramE>an</span></span></tt> <br>
+    <tt><span style='font-size:10.0pt'># integer to the base file name:</span></tt> 
+    <br>
+    <span class=SpellE><tt><span style='font-size:10.0pt'>java.util.logging.FileHandler.count</span></tt></span><tt><span
+style='font-size:10.0pt'>=1</span></tt> </p>
+  <p><tt><span style='font-size:10.0pt'># Style of output (Simple or XML):</span></tt> 
+    <br>
+    <tt><span style='font-size:10.0pt'>java.util.logging.FileHandler.formatter=java.util.logging.SimpleFormatter</span></tt> 
+  </p>
+  <h2 style='&quot;%1\:5\:0\:\.%2\:2\:0\:&quot; &quot;Telecom Italia S\.p\.A\.&quot; 20040721T1557'><a
+name="_Toc78110290"> <span lang=EN-GB>5.2<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; 
+    </span></span> </a><span class=SpellE><span lang=EN-GB>LogManagerAgent</span></span></h2>
+  <p class=MsoBodyText> <span class=SpellE>LogManager</span> Agent can be launched 
+    via the JADE RMA <span class=SpellE><span class=GramE>gui</span></span> using 
+    the icon shown below.</p>
+  <img src="image003.png" width="64" height="64"><br clear=ALL>
+  <p class=MsoBodyText>After <span class=SpellE>LogManager</span> Agent has been 
+    launched the <span class=SpellE><span class=GramE>gui</span></span> shown 
+    in Figure 1 will appear.</p>
+  <p class=MsoBodyText> <img 
+src="image001.jpg" v:shapes="_x0000_i1026"> </p>
+  <p class=MsoCaption>Figure <span>1 : <span class=SpellE>LogManager</span> Agent 
+    user interface</span></p><span>
+  <p class=MsoBodyText>The column <i>LoggerName</i> shows 
+    a list of the logger objects currently instantiated in the platform. For each 
+    logger, you can change the log level <b>at runtime</b> by setting it using 
+    the combo box as shown in Figure 2. The column Handlers shows the handlers 
+    currently <span
+lang=EN-GB>settled</span> for the logger object on the same row. The column <i>Set 
+    Log File</i> allows you to create a file at runtime and send your logs to it. 
+    In the example shown in the picture above, the logs generated by class <span class=SpellE><i>jade.content.shema.AgentActionSchema</i></span> 
+    will be sent both to console and to file logFile.txt.</p>
+</span></div>
+</body>
+</html>

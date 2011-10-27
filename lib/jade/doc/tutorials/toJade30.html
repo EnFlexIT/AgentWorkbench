@@ -1,0 +1,129 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.06 [en] (WinNT; I) [Netscape]">
+   <META NAME="ProgId" CONTENT="FrontPage.Editor.Document">
+   <TITLE>How to upgrade user code to JADE 3.0</TITLE>
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000FF" VLINK="#0000FF" ALINK="#0000FF">
+&nbsp;
+
+<H1 STYLE="border: none; padding: 0in">How to upgrade user code to JADE 3.0 </H1>
+<P STYLE="margin-bottom: 0in; border: none; padding: 0in"><I>Author:
+Giovanni Caire (TILAB S.p.A.), Filippo Quarta (TILAB S.p.A.)
+</I></P>
+<P STYLE="margin-bottom: 0in; border: none; padding: 0in"><I>Date: <SDFIELD TYPE=DOCINFO SUBTYPE=CHANGE FORMAT=DATE SDNUM="1033;1033;NNNNMMMM D, YYYY">March,12 2003</SDFIELD></I></P>
+<P STYLE="margin-bottom: 0in; border: none; padding: 0in"><I><FONT SIZE=2>Java
+platform: <A HREF="http://java.sun.com/j2se/1.3/">Sun JDK 1.2
+Windows</A></FONT></I></P>
+<P STYLE="margin-bottom: 0in; border: none; padding: 0in"><I><FONT SIZE=2><A HREF="http://jade.cselt.it/">JADE</A>
+version 3.0</FONT></I></P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+
+
+<P><SPAN lang="EN-GB">
+<BR><FONT FACE="Arial,Helvetica">
+Compliance to FIPA 2002 STANDARD specifications required also a slight modification of the API's of JADE 3.0. In order to simplify the code we also decided to remove some deprecated classes that where there for backward compatibility only. As a consequence in some cases applications written for JADE2.x may not run or even compile with JADE3.0. This tutorial tries to help in this upgrading phase. 
+<p>
+The modifications introduced in JADE3.0 that may lead to backward incompatibilities are listed below together with an explanation about how to upgrade your code. 
+
+<UL>
+<li><B>Accessing the Yellow Pages and White Pages services provided by the JADE DF and AMS agents</B></li>
+<UL><br>
+<li> The <FONT FACE= "courier">register()</FONT> and <FONT FACE= "courier">modify()</FONT> methods of the <FONT FACE= "courier">jade.domain.DFService</FONT> class now return the <FONT FACE= "courier">DFAgentDescription</FONT> that has actually been stored by the DF agent. In fact, due to the introduction of the lease time in the yellow pages service, this description may be different with respect to the requested one (typically because a shorter lease time has been granted).
+If you used these methods a <FONT FACE= "courier">java.lang.IncompatibleClassChangeError</FONT> may be thrown when running your old application on JADE3.0. In order to solve this problem you only need to recompile your old application with JADE3.0 in the classpath.</li>
+<li> When searching the DF a <FONT FACE= "courier">SerachConstraints</FONT> object has to be specified indicating, among others, the maximum number of results that you would like to receive from the DF. When this limit is not specified the DF (according to the new FIPA specifications) now sets it to 1 while it used to set it to "infinite" in JADE2.x.
+In order to make the DF behave as it used to do in JADE2.x when the max result limit is not specified, you should explicitly set it to -1 ("infinite").</li>  
+<li> The old (already deprecated) classes to access the services of the AMS and DF agent <FONT FACE= "courier">jade.domain.AMSServiceCommunicator, jade.domain.DFServiceCommunicator and jade.domain.FIPAServiceCommunicator</FONT> have been removed. You should use <FONT FACE= "courier">jade.domain.AMSService, jade.domain.DFService and jade.domain.FIPAService</FONT> instead. Look at the javadoc and JADE Programmers Guide for details on these classes</li>
+</UL><br>
+
+<li><B>JADE-Agent-Management ontology</B></li>
+<UL><br>
+<li> The definition of the Agent Platform description (<em>ap-description</em>) has changed in the new FIPA specifications. As a consequence the classes of the <FONT FACE= "courier">jade.domain.FIPAAgentManagement</FONT> package related to it have been modified accordingly. 
+More in details an <em>ap-description</em> definition now includes a <em>name</em> and a set of <em>services</em> represented each one by an object of the <FONT FACE= "courier">APService</FONT> class. The <em>ap-transport-description</em> and related <em>mtp-descriptions</em>, on the other hand, are no longer part of an <em>ap-description</em> definition and, as a consequence, the <FONT FACE= "courier">ApTransportDescription and MTPDescription</FONT> classes representing them have been removed.
+</li>
+<li> In the new FIPA specifications the <em>quit</em> action is no longer part of the FIPA Agent Management ontology. As a consequence the <FONT FACE= "courier">jade.domain.FIPAAgentManagement.Quit</FONT> class has been removed.
+</li>
+</UL><br>
+
+<li><B>Content language and ontology support</B></li>
+<UL><br>
+<li> The old support for content language and ontology based on the <FONT FACE= "courier">jade.onto</FONT> package and on the <FONT FACE= "courier">registerLanguage(), registerOntology(), fillContent() and extractContent()</FONT> methods of the <FONT FACE= "courier">jade.core.Agent</FONT> class has been removed. Programmers should migrate to the new support included into the <FONT FACE= "courier">jade.content</FONT> package. 
+Details about how to use it and how to migrate code based on the old support to the new one are provided in <A HREF="CLOntoSupport.pdf">JADE Support to application-defined ontologies and content languages</A></li>
+<li><font face="Arial,Helvetica">In order to make the transition between the old and the new support for content language and ontologies as smooth as possible
+    you can still use previously written application
+    ontologies, with minimal modification of your
+    code, by means of the <em>jade2xback</em> add-on available
+    on the jade site. A brief description about the use of this add-on follows:</font>
+    <ul>
+        <li><font face="Arial,Helvetica">change your 
+            code replacing<em> import jade.core.Agent</em>
+            with <em>import jade.backward.Agent</em></font></li>
+        <li><font face="Arial,Helvetica">add the
+            jade2xback.jar to the classpath <B>before</B>
+            other JADE libraries</font></li>
+        <li><font face="Arial,Helvetica">run your
+            application as usual</font></li>
+    </ul>
+    Programmers are in any case strongly encouraged to migrate to the new support since a proper maintenance of the jade2xback add-on is not guaranteed.
+</li>
+</UL><br>
+
+<li><B>JADE built-in ontologies</B></li>
+<UL><br>
+<li> All the ontologies included in JADE, i.e. <FONT FACE= "courier">jade.domain.FIPAAgentManagement.FIPAAgentManagementOntology, jade.domain.JADEAgentManagement.JADEAgentManagementOntology, jade.domain.MobilityOntology and jade.domain.introspection.JADEIntrospectionOntology</FONT>, have been substituted with the following ontologies compliant to the new ontology support (see previous bullet):
+<FONT FACE= "courier">jade.domain.FIPAAgentManagement.FIPAManagementOntology, jade.domain.JADEAgentManagement.JADEManagementOntology, jade.domain.mobility.MobilityOntology and jade.domain.introspection.IntrospectionOntology</FONT>.
+All classes representing elements in these ontologies have been modified removing the (already deprecated) methods <FONT FACE= "courier">get_0()/set_0(), get_1()/set_1()...</FONT> required by the old support for ontologies.</li>
+</UL><br>
+
+<li><B>Interaction Protocols</B></li>
+<UL><br>
+<li> The (already deprecated) classes providing support for interaction protocols <FONT FACE= "courier">FipaRequestInitiatorBehaviour, FipaRequestResponderBehaviour, FipaQueryInitiatorBehaviour, FipaQueryResponderBehaviour, FipaContractNetInitiatorBehaviour, FipaContractNetResponderBehaviour</FONT> included in the <FONT FACE= "courier"> jade.proto</FONT> package have been substituted by a set of new classes 
+that provide a better, more uniform and more flexible support. These classes are <FONT FACE= "courier">AchieveREInitiator and AchieveREResponder</FONT>, that should be used to implement FIPA-REQUEST like protocols including FIPA-QUERY, and <FONT FACE= "courier">ContractNetInitiator and ContractNetResponder</FONT>. They are all included in the <FONT FACE= "courier">jade.proto</FONT> package too.
+</li>
+<li> In order to make the transition between the old and the new interaction protocols classes as smooth as possible
+the old classes are still available in the <em>jade2xback</em> add-on (see bullet on content language and ontology support).
+</li> 
+<li> Following to the modification of the <em>fipa-subscribe</em> interaction protocol introduced in the new FIPA specification, the signature of the <FONT FACE= "courier">deregister()</FONT> method of the <FONT FACE= "courier">jade.proto.SubscriptionResponder.SubscriptionManager</FONT> interface has slightly changed. Now it returns a <FONT FACE= "courier">boolean</FONT> value (while it used to return <FONT FACE= "courier">void</FONT>) and throws <FONT FACE= "courier">jade.domain.FIPAAgentManagement.FailureException</FONT> instead of <FONT FACE= "courier">jade.domain.FIPAAgentManagement.RefuseException and jade.domain.FIPAAgentManagement.NotUnderstoodException</FONT></li> 
+</ul><br>
+
+<li><B>Other deprecated classes and methods removed</B></li>
+<ul><br>
+<li> The <FONT FACE= "courier">jade.core.behaviours.NonDeterministicBehaviour</FONT> class has been removed. Programmers should use <FONT FACE= "courier">jade.core.behaviours.ParallelBehaviour</FONT> instead. The old class is still available in the <em>jade2xback</em> add-on (see bullet on content language and ontology support)</li>
+<li> The <FONT FACE= "courier">setArguments(String)</FONT> method of the <FONT FACE= "courier">jade.core.Agent</FONT> class has been removed. Programmers should explicitly call <FONT FACE= "courier">Object[] getArguments()</FONT> from within the <FONT FACE= "courier">setup()</FONT> method instead.</li>
+<li> The <FONT FACE= "courier">toText()</FONT> method of the <FONT FACE= "courier">jade.core.AID</FONT> class has been removed. Programmers should use <FONT FACE= "courier">toString()</FONT> instead.</li>
+<li> The <FONT FACE= "courier">preAction() and postAction()</FONT> methods of the <FONT FACE= "courier">jade.core.behaviours.CompositeBehaviour</FONT> class have been removed. Programmers should use <FONT FACE= "courier">onStart() and onEnd()</FONT> instead.</li>
+<li> The <FONT FACE= "courier">toText(), getAllPerformatives() and setReplyBy(String)</FONT> methods of the <FONT FACE= "courier">jade.lang.acl.ACLMessage</FONT> class have been removed. Programmers should use <FONT FACE= "courier">toString(), getAllPerformativeNames(), setReplyByDate(Date)</FONT> instead.</li>
+<li> The <FONT FACE= "courier">MatchReceiver(java.util.List), MatchReplyTo(java.util.List) and MatchReplyBy(String)</FONT> methods of the <FONT FACE= "courier">jade.lang.acl.MessageTemplate</FONT> class have been removed. Programmers should use <FONT FACE= "courier">MatchReceiver(AID[]), MatchReplyTo(AID[]) and MatchReplyByDate(Date)</FONT> instead.</li>
+<li> The <FONT FACE= "courier">delete()</FONT> method of the <FONT FACE= "courier">jade.wrapper.Agent</FONT> class has been removed. Programmers should use <FONT FACE= "courier">kill()</FONT> instead.</li>
+<li> The <FONT FACE= "courier">createAgent()</FONT> method of the <FONT FACE= "courier">jade.wrapper.AgentContainer</FONT> class has been removed. Programmers should use <FONT FACE= "courier">createNewAgent()</FONT> instead.</li>
+</ul><br>
+</ul>
+</ul>
+
+
+
+</FONT> 
+<HR>
+<CENTER>
+<P><FONT FACE="Arial"><FONT SIZE=-1><A HREF="http://jade.cselt.it/">JADE</A>
+is a trademark of
+<A HREF="http://www.telecomitalialab.com">TILAB</A>. <A HREF="http://jade.cselt.it/">JADE</A>
+has been developed jointly by <A HREF="http://www.telecomitalialab.com">CSELT</A> and
+the <A HREF="http://www.ce.unipr.it">Computer Engineering Group</A> of
+the <A HREF="http://www.unipr.it">University of Parma</A></FONT></FONT></CENTER>
+
+<BR>&nbsp;
+<P><BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+</BODY>
+</HTML>

@@ -1,0 +1,318 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"> 
+<html>
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<link rel=Edit-Time-Data
+href="./How%20to%20use%20the%20RDF%20support%20with%20JADE_files/editdata.mso">
+<title>How to use the RDF support with JADE</title>
+<style><!--
+.Normal
+	{font-size:12.0pt;
+	font-family:"Times New Roman";}
+.MsoBodyText
+	{text-align:justify;
+	font-size:10.0pt;
+	font-family:"Courier New";}
+-->
+</style>
+</head>
+<body bgcolor=#FFFFFF lang=EN-US link=blue vlink=blue class="Normal">
+<h1><span lang=EN-GB>How to use the RDF support with JADE</span></h1>
+<p><i><span lang=EN-GB>Author: Paola Turci </span></i><span
+lang=EN-GB>(University of Parma)</span></p>
+<p><i><span lang=EN-GB>Date: October 18, 2001 </span></i><span
+lang=EN-GB></span></p>
+<p><i><span lang=EN-GB>Java platform: </span></i><i><span
+lang=IT><a href="http://java.sun.com/j2se/1.3/"><span
+lang=EN-GB>Sun JDK 1.2 Windows</span></a></span></i><i><span
+lang=IT> </span></i><span lang=EN-GB></span></p>
+<p><i><span lang=IT><a href="http://jade.cselt.it/"><span
+lang=FR>JADE</span></a></span></i><i><span
+lang=FR> version 2.4</span></i></p>
+<p><i><span lang=FR>SAX parser (e.g. </span></i><span
+lang=IT><a
+href="http://xml.apache.org/xerces-j/index.html" target=new><span lang=FR>Xerces</span></a></span><span lang=FR>)<i></i></span></p>
+<p><i><span lang=FR>RDF parser:</span></i><span
+lang=FR style='font-size:11.0pt;'> </span><i><span lang=IT style='font-size:11.0pt;'><a href="http://www-db.stanford.edu/~melnik/rdf/api.html">http://www-db.stanford.edu/~melnik/rdf/api.html</a></span></i><span
+lang=FR></span></p>
+<p style='text-align:justify'><span lang=EN-GB style='font-size:11.0pt;
+'>This tutorial describes how to install and use the RDF support with JADE; the 
+  RDF support permits to use a concrete syntax, for ACLmessage content, based 
+  on RDF/RDFS. The RDFCodec.java class implements the Codec interface of JADE 
+  (jade.content.lang.Codec) and allows converting back and forth between arrays 
+  of byte in RDF format and AbsContentElement (abstract descriptor of the message 
+  content). Since RDFCodec package uses the package jade.content and its sub-packages, 
+  it requires JADE 2.4.</span><span lang=EN-GB></span></p>
+<h2><span lang=EN-GB>Installation.</span></h2>
+<p style='text-align:justify'><span lang=EN-GB style='font-size:11.0pt;
+'>In order to install RDF support&nbsp;the following steps must be performed:</span></p>
+<ul type=disc>
+  <li style='     text-align:justify;'><span
+     lang=EN-GB style='font-size:11.0pt;'>The RDFCodec must be downloaded from 
+    the </span><span lang=IT
+     style='font-size:11.0pt;'><a
+     href="http://jade.cselt.it/" target=new><span lang=EN-GB>JADE</span></a></span><span lang=EN-GB style='font-size:11.0pt;
+     '> download page. </span></li>
+  <li style='     text-align:justify;'><span
+     lang=EN-GB style='font-size:11.0pt;'>After downloading you must unzip the 
+    RDFCodec package under the root of the jade distribution tree. You should 
+    end having a hierarchy like jade/add-ons/RDFCodec. </span></li>
+  <li style='     text-align:justify;'><span
+     lang=EN-GB style='font-size:11.0pt;'>A </span><span lang=IT style='font-size:11.0pt;'><a href="http://www.megginson.com/SAX/"
+     target=new><span lang=EN-GB>SAX</span></a></span><span
+     lang=EN-GB style='font-size:11.0pt;'> parser (e.g. </span><span lang=IT style='font-size:11.0pt;
+     '><a
+     href="http://xml.apache.org/xerces-j/index.html" target=new><span
+     lang=EN-GB>Xerces</span></a></span><span
+     lang=EN-GB style='font-size:11.0pt;'>) and the RDF parser (</span><span lang=IT style='font-size:11.0pt;
+     '><a
+     href="http://www-db.stanford.edu/~melnik/rdf/api.html">http://www-db.stanford.edu/~melnik/rdf/api.html</a>) 
+    </span><span lang=EN-GB style='font-size:11.0pt;     '>must be downloaded 
+    and installed into the system. </span></li>
+  <li style='     text-align:justify;'><span
+     lang=EN-GB style='font-size:11.0pt;'>The xml parser jar file (e.g. xerces.jar) 
+    and the RDF parser jar file (<b>rdf-api-2001-01-19.jar</b>) must be added 
+    to the CLASSPATH or specified in the -classpath argument when starting the 
+    virtual machine </span></li>
+</ul>
+<h2><span lang=EN-GB>Compiling</span></h2>
+<p style='text-align:justify'><span lang=EN-GB style='font-size:11.0pt;
+'>The default JADE Makefile rules don't take the RDFCodec into account. For handling 
+  the compilation process of the RDFCodec you have to use the 'build.xml' ant-file 
+  located in the RDFCodec directory. The following rules are available:</span></p>
+<ul type=disc>
+  <li style='     text-align:justify;'><span
+     lang=EN-GB style='font-size:11.0pt;'>ant - compiles the RDFCodec classes 
+    (if you want to recompile the package you must put <u>rdf-api-2001-01-19.jar</u> 
+    archives in the jade/lib directory or change the 'build.xml' makefile) </span></li>
+  <li style='     text-align:justify;'><span
+     lang=EN-GB style='font-size:11.0pt;'>ant lib - creates the rdf.jar archive 
+    in the lib directory </span></li>
+  <li style='     text-align:justify;'><span
+     lang=EN-GB style='font-size:11.0pt;'>ant clean - removes the compiled classes 
+    and the rdf.jar archive </span></li>
+  <li style='     text-align:justify;'><span
+     lang=EN-GB style='font-size:11.0pt;'>ant examples – compiles the example 
+    classes</span><span
+      lang=EN-GB style='font-size:11.0pt;'></span></li>
+</ul>
+<h2><span lang=EN-GB>Configuration and Usage</span></h2>
+<p style='text-align:justify'><span lang=EN-GB style='font-size:11.0pt;
+'>The current configuration uses Xerces as the default SAX parser. So if you don't 
+  want to make any changes you just have to download Xerces from the link provided 
+  above and make sure it is added to the classpath when starting (either by including 
+  it into the $CLASSPATH environment variable - %CLASSPATH% under windows or by 
+  specifing it on the command line). Moreover this package uses Stanford API (rdf-api-2001-01-19.jar) 
+  as rdf parser, so you must download and added it to the classpath too. </span></p>
+<p><span lang=EN-GB style='font-size:11.0pt;'>Here is an example of how you would 
+  start the platform assuming that you copied xerces.jar and rdf-api-2001-01-19.jar 
+  from the initial distribution to the RDFCodec/lib directory:</span></p>
+<p><code><span lang=EN-GB style='font-size:11.0pt;font-family:"Courier New";'>java 
+  -classpath ./lib/jade.jar:./lib/iiop.jar:./add-ons/RDFCodec/lib/xerces.jar:./add-ons/RDFCodec/lib/</span></code><span
+lang=EN-GB style='font-size:11.0pt;font-family:&quot;Courier New&quot;;
+'>rdf-api-2001-01-19.jar</span><code><span lang=EN-GB
+style='font-size:11.0pt;font-family:&quot;Courier New&quot;;
+'>:./add-ons/RDFCodec/lib/rdf.jar jade.Boot </span></code><span
+lang=EN-GB style='font-size:11.0pt;'>( for Unix )</span><span lang=EN-GB style='font-size:11.0pt;font-family:"Courier New";'> 
+  <br>
+  </span><span lang=EN-GB style='font-size:11.0pt;'>or</span><span lang=EN-GB style='font-size:11.0pt;
+font-family:&quot;Courier New&quot;;'><br>
+  </span><code><span lang=EN-GB style='font-size:11.0pt;font-family:"Courier New";'>java 
+  -classpath .\lib\jade.jar;.\lib\iiop.jar;.\add-ons\RDFCodec\lib\xerces.jar;.\add-ons\RDFCodec\lib\</span></code><span
+lang=EN-GB style='font-size:11.0pt;font-family:&quot;Courier New&quot;;
+'>rdf-api-2001-01-19</span><code><span lang=EN-GB
+style='font-size:11.0pt;font-family:&quot;Courier New&quot;;
+'>.jar;.\add-ons\RDFCodec\lib\rdf.jar jade.Boot</span></code><span
+lang=EN-GB style='font-size:11.0pt;font-family:&quot;Courier New&quot;;
+'> </span><span lang=EN-GB style='font-size:11.0pt;
+'>( for Windows )</span><span
+lang=EN-GB style='font-size:11.0pt;font-family:&quot;Courier New&quot;;
+'></span></p>
+<p><span lang=EN-GB style='font-size:11.0pt;'>If you want to use another xml parser 
+  you have to specify in the command line the system property <em>org.xml.sax.parser</em><em><span
+style='font-style:normal'>.</span></em></span></p>
+<p style='text-align:justify'><span lang=EN-GB
+style='font-size:11.0pt;'>When an agent wants to send an RDF encoded message, 
+  it must register the language with the </span><span lang=EN-GB style='font-size:11.0pt;font-family:"Courier New";'>registerLanguage() 
+  </span><span
+lang=EN-GB style='font-size:11.0pt;'>method of the </span><span lang=EN-GB style='font-size:11.0pt;
+font-family:&quot;Courier New&quot;;'>ContentManager</span><span
+lang=EN-GB style='font-size:11.0pt;'> class. For example (assuming </span><span lang=EN-GB style='font-size:
+11.0pt;font-family:&quot;Courier New&quot;;'>manager</span><span lang=EN-GB style='font-size:11.0pt;'> 
+  is the </span><span lang=EN-GB
+style='font-size:11.0pt;font-family:&quot;Courier New&quot;;
+'>ContentManager</span><span lang=EN-GB
+style='font-size:11.0pt;'>):</span></p>
+<p align=center style='text-align:center'><span lang=EN-GB
+style='font-size:11.0pt;font-family:&quot;Courier New&quot;;
+'>manager.registerLanguage(new RDFCodec());</span></p>
+<p style='text-align:justify'><span lang=EN-GB
+style='font-size:11.0pt;'>Moreover it is recommended to set the language of the 
+  message. For example (assuming ACLmsg is the ACL message):</span></p>
+<p style='text-align:justify'><span>   </span></p>
+<p align=center style='text-align:center'><span lang=EN-GB
+style='font-size:11.0pt;font-family:&quot;Courier New&quot;;
+'>ACLmsg.setLanguage(RDFCodec.NAME);</span><span
+lang=EN-GB style='font-size:11.0pt;'></span></p>
+<p style='text-align:justify'><span>    </span></p>
+<p style='text-align:justify'><span lang=EN-GB
+style='font-size:11.0pt;'>Using RDFCodec, the messages are arrays of byte in RDF 
+  format; the tags used are those defined in the subsequent RDF schema.</span></p>
+<p style='text-align:justify'><span lang=DE style='font-size:
+11.0pt;font-family:&quot;Courier New&quot;;'>&lt;?xml version=\&quot;1.0\&quot;?&gt;</span></p>
+<p style='text-align:justify'><span lang=DE style='font-size:
+11.0pt;font-family:&quot;Courier New&quot;;'>&lt;rdf:RDF </span></p>
+<p style='text-align:justify'><span>  </span>xmlns:rdf=&quot;http://www.w3.org/1999/02/22-rdf-syntax-ns#&quot; 
+</p>
+<p style='text-align:justify'><span>  </span>xmlns:rdfs=&quot;http://www.w3.org/TR/1999/PR-rdf-schema-19990303#&quot;&gt;</p>
+<p style='text-align:justify'><b><span lang=EN-GB
+style='font-size:11.0pt;font-family:&quot;Courier New&quot;;
+'>&lt;!--- resources ---&gt;</span></b></p>
+<p style='text-align:justify'><span lang=EN-GB
+style='font-size:11.0pt;font-family:&quot;Courier New&quot;;
+'>&lt;rdfs:Class rdf:about=&quot;Object&quot;&gt;</span></p>
+<p style='text-align:justify'><span>           </span>&lt;!--- superclass ---&gt;</p>
+<p style='text-align:justify'><span>           </span>&lt;rdfs:subClassOf rdf:resource=&quot;rdfs:Resource&quot;/&gt;     
+</p>
+<p style='text-align:justify'><span lang=EN-GB
+style='font-size:11.0pt;font-family:&quot;Courier New&quot;;
+'>&lt;/rdfs:Class&gt;</span></p>
+<p style='text-align:justify'><span lang=EN-GB
+style='font-size:11.0pt;font-family:&quot;Courier New&quot;;
+'>&lt;rdfs:Class rdf:about=&quot;AttributeDescription&quot;&gt;</span></p>
+<p style='text-align:justify'><span>     </span>&lt;rdfs:subClassOf rdf:resource=&quot;#Object&quot;/&gt;</p>
+<p style='text-align:justify'><span lang=EN-GB
+style='font-size:11.0pt;font-family:&quot;Courier New&quot;;
+'>&lt;/rdfs:Class&gt;</span></p>
+<p style='text-align:justify'><span lang=EN-GB
+style='font-size:11.0pt;font-family:&quot;Courier New&quot;;
+'>&lt;rdfs:Class rdf:about=&quot;Term&quot;&gt;</span></p>
+<p style='text-align:justify'><span>     </span>&lt;rdfs:subClassOf rdf:resource=&quot;#Object&quot;/&gt;</p>
+<p style='text-align:justify'><span lang=EN-GB
+style='font-size:11.0pt;font-family:&quot;Courier New&quot;;
+'>&lt;/rdfs:Class&gt;</span></p>
+<p style='text-align:justify'><span lang=EN-GB
+style='font-size:11.0pt;font-family:&quot;Courier New&quot;;
+'>&lt;rdfs:Class rdf:about=&quot;Aggregate&quot;&gt;</span></p>
+<p style='text-align:justify'><span>     </span>&lt;rdfs:subClassOf rdf:resource=&quot;#Term&quot;/&gt;</p>
+<p style='text-align:justify'><span lang=EN-GB
+style='font-size:11.0pt;font-family:&quot;Courier New&quot;;
+'>&lt;/rdfs:Class&gt;</span></p>
+<p style='text-align:justify'><span lang=EN-GB
+style='font-size:11.0pt;font-family:&quot;Courier New&quot;;
+'>&lt;rdfs:Class rdf:about=&quot;Primitive&quot;&gt;</span></p>
+<p style='text-align:justify'><span>     </span>&lt;rdfs:subClassOf rdf:resource=&quot;#Term&quot;/&gt;</p>
+<p style='text-align:justify'><span lang=EN-GB
+style='font-size:11.0pt;font-family:&quot;Courier New&quot;;
+'>&lt;/rdfs:Class&gt;</span></p>
+<p style='text-align:justify'><span lang=EN-GB
+style='font-size:11.0pt;font-family:&quot;Courier New&quot;;
+'>&lt;rdfs:Class rdf:about=&quot;ContentElement&quot;&gt;</span></p>
+<p style='text-align:justify'><span>     </span>&lt;rdfs:subClassOf rdf:resource=&quot;#Object&quot;/&gt;</p>
+<p style='text-align:justify'><span lang=EN-GB
+style='font-size:11.0pt;font-family:&quot;Courier New&quot;;
+'>&lt;/rdfs:Class&gt;</span></p>
+<p style='text-align:justify'><span lang=EN-GB
+style='font-size:11.0pt;font-family:&quot;Courier New&quot;;
+'>&lt;rdfs:Class rdf:about=&quot;ContentElementList&quot;&gt;</span></p>
+<p style='text-align:justify'><span>     </span>&lt;rdfs:subClassOf rdf:resource=&quot;#ContentElement&quot;/&gt;</p>
+<p style='text-align:justify'><span lang=EN-GB
+style='font-size:11.0pt;font-family:&quot;Courier New&quot;;
+'>&lt;/rdfs:Class&gt;</span></p>
+<p style='text-align:justify'><b><span lang=EN-GB
+style='font-size:11.0pt;font-family:&quot;Courier New&quot;;
+'>&lt;!--- properties ---&gt;</span></b></p>
+<p style='text-align:justify'><span lang=EN-GB
+style='font-size:11.0pt;font-family:&quot;Courier New&quot;;
+'>&lt;rdf:Property rdf:about=&quot;type&quot;&gt;</span></p>
+<p style='text-align:justify'><span>     </span>&lt;rdfs:domain rdf:resource=&quot;#Object&quot;/&gt;</p>
+<p style='text-align:justify'><span>     </span>&lt;rdfs:range rdf:resource=&quot;rdfs:Literal&quot;/&gt;</p>
+<p style='text-align:justify'><span lang=EN-GB
+style='font-size:11.0pt;font-family:&quot;Courier New&quot;;
+'>&lt;/rdf:Property&gt;</span></p>
+<p style='text-align:justify'><span lang=EN-GB
+style='font-size:11.0pt;font-family:&quot;Courier New&quot;;
+'>&lt;rdf:Property rdf:about=&quot;Attributes&quot;&gt;</span></p>
+<p style='text-align:justify'><span>     </span>&lt;rdfs:domain rdf:resource=&quot;#Object&quot;/&gt;</p>
+<p style='text-align:justify'><span>     </span>&lt;rdfs:range rdf:resource=&quot;#AttributeDescription&quot;/&gt;</p>
+<p style='text-align:justify'><span lang=EN-GB
+style='font-size:11.0pt;font-family:&quot;Courier New&quot;;
+'>&lt;/rdf:Property&gt;</span></p>
+<p style='text-align:justify'><span lang=EN-GB
+style='font-size:11.0pt;font-family:&quot;Courier New&quot;;
+'>&lt;rdf:Property rdf:about=&quot;attributeValue&quot;&gt;</span></p>
+<p style='text-align:justify'><span>     </span>&lt;rdfs:domain rdf:resource=&quot;#AttributeDescription&quot;/&gt;</p>
+<p style='text-align:justify'><span>     </span>&lt;rdfs:range rdf:resource=&quot;#Object&quot;/&gt;</p>
+<p style='text-align:justify'><span lang=EN-GB
+style='font-size:11.0pt;font-family:&quot;Courier New&quot;;
+'>&lt;/rdf:Property&gt;</span></p>
+<p style='text-align:justify'><span lang=EN-GB
+style='font-size:11.0pt;font-family:&quot;Courier New&quot;;
+'>&lt;rdf:Property rdf:about=&quot;aggregateElements&quot;&gt;</span></p>
+<p style='text-align:justify'><span>     </span>&lt;rdfs:domain rdf:resource=&quot;Aggregate&quot;/&gt;</p>
+<p style='text-align:justify'><span>     </span>&lt;rdfs:range rdf:resource=&quot;Term&quot;/&gt;</p>
+<p style='text-align:justify'><span lang=EN-GB
+style='font-size:11.0pt;font-family:&quot;Courier New&quot;;
+'>&lt;/rdf:Property&gt;</span></p>
+<p style='text-align:justify'><span lang=EN-GB
+style='font-size:11.0pt;font-family:&quot;Courier New&quot;;
+'>&lt;rdf:Property rdf:about=&quot;primitiveValue&quot;&gt;</span></p>
+<p style='text-align:justify'><span>     </span>&lt;rdfs:domain rdf:resource=&quot;#Primitive&quot;/&gt;</p>
+<p style='text-align:justify'><span>     </span>&lt;rdfs:range rdf:resource=&quot;rdfs:Literal&quot;/&gt;</p>
+<p style='text-align:justify'><span lang=EN-GB
+style='font-size:11.0pt;font-family:&quot;Courier New&quot;;
+'>&lt;/rdf:Property&gt;</span></p>
+<p style='text-align:justify'><span lang=EN-GB
+style='font-size:11.0pt;font-family:&quot;Courier New&quot;;
+'>&lt;rdf:Property rdf:about=&quot;contentElementListElements&quot;&gt;</span></p>
+<p style='text-align:justify'><span>     </span>&lt;rdfs:domain rdf:resource=&quot;#ContentElementList&quot;/&gt;</p>
+<p style='text-align:justify'><span>     </span>&lt;rdfs:range rdf:resource=&quot;#ContentElement&quot;/&gt;</p>
+<p style='text-align:justify'><span lang=EN-GB
+style='font-size:11.0pt;font-family:&quot;Courier New&quot;;
+'>&lt;/rdf:Property&gt;</span></p>
+<p style='text-align:justify'><span lang=EN-GB
+style='font-size:11.0pt;font-family:&quot;Courier New&quot;;
+'>&lt;/rdf:RDF&gt;</span></p>
+<p style='text-align:justify'><span lang=EN-GB
+style='font-size:11.0pt;'>RDFCodec package refers to this RDF schema to verify 
+  the validity of the message content.</span></p>
+<h2><span lang=EN-GB>Examples</span></h2>
+<p style='text-align:justify'><span lang=EN-GB
+style='font-size:11.0pt;'>After setting properly the CLASSPATH, execute the following 
+  command to start Sender and Receiver agents: </span></p>
+<p class=MsoBodyText align=left style='text-align:left'><code><span lang=EN-GB
+style='font-size:11.0pt;'>java jade.Boot </span></code><span
+lang=EN-GB style='font-size:11.0pt;'>receiver:examples.rdfcontent.Receiver sender:examples.rdfcontent.Sender</span></p>
+<p style='text-align:justify'><span lang=EN-GB
+style='font-size:11.0pt;'>To see the messages RDF format, execute the following 
+  command:</span></p>
+<p class=MsoBodyText align=left style='text-align:left'><code><span lang=EN-GB
+style='font-size:11.0pt;'>java jade.Boot –gui</span></code><span
+lang=EN-GB style='font-size:11.0pt;'></span></p>
+<p style='text-align:justify'><span lang=EN-GB
+style='font-size:11.0pt;'>after, utilize the gui to run receiver and sender agents; 
+  utilize the sniffer agent to see the messages.</span></p>
+<div align=center style='text-align:center'><span lang=IT> 
+  <hr size=2 width="100%" align=center>
+  </span></div>
+<p align=center style='text-align:center'><span lang=IT><a href="http://jade.cselt.it/"><span lang=EN-GB style='font-size:10.0pt;
+font-family:Arial;'>JADE</span></a></span><span
+lang=EN-GB> is a trademark of </span><span
+lang=IT><a href="http://www.cselt.it/"><span
+lang=EN-GB style='font-size:10.0pt;font-family:Arial;'>CSELT</span></a></span><span
+lang=EN-GB>. </span><span lang=IT><a href="http://jade.cselt.it/"><span lang=EN-GB
+style='font-size:10.0pt;font-family:Arial;'>JADE</span></a></span><span
+lang=EN-GB> has been developed jointly by </span><span
+lang=IT><a href="http://www.cselt.it/"><span
+lang=EN-GB style='font-size:10.0pt;font-family:Arial;'>CSELT</span></a></span><span
+lang=EN-GB> and the </span><span lang=IT><a href="http://www.ce.unipr.it/"><span
+lang=EN-GB style='font-size:10.0pt;font-family:Arial;'>Computer Engineering Group</span></a></span><span lang=EN-GB> 
+  of the </span><span lang=IT><a
+href="http://www.unipr.it/"><span lang=EN-GB style='font-size:10.0pt;
+font-family:Arial;'>University of Parma</span></a></span><span
+lang=EN-GB></span></p>
+<p align=center style='text-align:center'><span lang=EN-GB>The RDFCodec implementation 
+  was developed by <a
+href="http://aot.ce.unipr.it/">AOTLab of the University of Parma</a></span></p>
+</body>
+</html>

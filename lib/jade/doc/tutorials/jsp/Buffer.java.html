@@ -1,0 +1,171 @@
+<pre>
+<tt>
+<font color=#0000FF>package</font> examples.jsp;
+
+<font color=#0000FF>import</font> java.util.Vector;
+<font color=#0000FF>import</font> jade.core.*;
+<font color=#0000FF>import</font> jade.core.behaviours.*;
+<font color=#0000FF>import</font> jade.lang.acl.*;
+
+<font color=#9A1900>/**
+ * This agent manage all the messages received from the JSP page.
+ * If there is an agent listening somewhere, the received messages
+ * are forwarded to this agent, either they are buffered.
+ */</font> 
+<font color=#0000FF>public</font> <font color=#0000FF>class</font> Buffer <font color=#0000FF>extends</font> Agent {
+    <font color=#0000FF>private</font> Vector buffer;
+    <font color=#0000FF>private</font> <font color=#009900>boolean</font> online;
+    <font color=#9A1900>//  JADE 2.0
+</font>    <font color=#0000FF>private</font> AID clientName;
+    <font color=#9A1900>// JADE 1.4
+</font>  <font color=#9A1900>//private String clientName;
+</font>
+    <font color=#0000FF>public</font> Buffer() {
+	buffer = <font color=#0000FF>new</font> Vector();
+	online = false;
+    }
+
+    <font color=#9A1900>/**
+     * When an inform message is received (from the JSP page),
+     * then the message is forwarded to an online listener,
+     * or either cached. A reception confirmation is needed before 
+     * deleting the forwarded message.
+     */</font>
+    <font color=#0000FF>class</font> ReceiveBehaviour <font color=#0000FF>extends</font> CyclicBehaviour {
+	<font color=#0000FF>private</font> MessageTemplate m1;
+	<font color=#0000FF>private</font> ACLMessage msg; 
+	<font color=#0000FF>public</font> ReceiveBehaviour(Agent a) {
+	    <font color=#0000FF>super</font>(a);
+	    m1 = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
+	}
+
+	<font color=#0000FF>public</font> <font color=#009900>void</font> action() {
+	    <font color=#9A1900>// Wait for an inform message from the snooper and store it
+</font>	    msg = receive(m1);
+	    <font color=#0000FF>if</font> (msg!= <font color=#0000FF>null</font>){
+		buffer.add(msg.getContent()+<font color=#FF0000>"\n"</font>);
+		<font color=#0000FF>if</font> (online) {
+		    addBehaviour(<font color=#0000FF>new</font> SendAndWaitConfirmBehaviour(myAgent));
+		}
+	    } <font color=#0000FF>else</font> {
+		<font color=#9A1900>// block if there is no message for this behaviour
+</font>		block();   
+	    }
+	}
+    }
+
+    <font color=#9A1900>/**
+     * Wait during 10 seconds a receiving confirmation of the client
+     * agent. If a confirmation is received, the buffer is cleared.
+     */</font>
+    <font color=#0000FF>class</font> SendAndWaitConfirmBehaviour <font color=#0000FF>extends</font> SimpleBehaviour {
+	<font color=#0000FF>private</font> <font color=#009900>boolean</font> finished;
+	<font color=#0000FF>private</font> <font color=#0000FF>static</font> <font color=#0000FF>final</font> <font color=#009900>long</font> TIMEOUT = <font color=#CC33CC>10000</font>; <font color=#9A1900>//10 seconds
+</font>	<font color=#0000FF>private</font> MessageTemplate m1;
+        <font color=#0000FF>private</font> <font color=#009900>long</font> maximumTime;
+
+	<font color=#0000FF>public</font> SendAndWaitConfirmBehaviour(Agent a) {
+	    <font color=#0000FF>super</font>(a);
+	    ACLMessage msg2 = <font color=#0000FF>new</font> ACLMessage(ACLMessage.INFORM);
+	    <font color=#9A1900>// JADE 2.0:
+</font>	    msg2.addReceiver(clientName);
+	    <font color=#9A1900>// JADE 1.4:
+</font>	    <font color=#9A1900>//msg2.addDest(clientName);
+</font>	    StringBuffer stb = <font color=#0000FF>new</font> StringBuffer();
+	    <font color=#0000FF>for</font> (<font color=#009900>int</font> i=<font color=#CC33CC>0</font>;i&lt;buffer.size();i++)
+		stb.append(buffer.get(i));
+	    msg2.setContent(stb.toString());
+	    send(msg2);
+	    finished=false;
+	    m1 = MessageTemplate.MatchPerformative(ACLMessage.CONFIRM);
+	    maximumTime = System.currentTimeMillis() + TIMEOUT;
+	}
+
+	<font color=#9A1900>/**
+	 * This task is finished only when a confirmation is received
+	 * or the timeout is reached.
+	 */</font>
+	<font color=#0000FF>public</font> <font color=#009900>boolean</font> done() { 
+	    <font color=#0000FF>return</font> finished; 
+	}
+
+	<font color=#0000FF>public</font> <font color=#009900>void</font> action() {
+	    ACLMessage msg = myAgent.receive(m1);
+	    <font color=#0000FF>if</font> (msg != <font color=#0000FF>null</font>) {
+		<font color=#9A1900>// A confirmation is received
+</font>		buffer.clear();
+		finished=true; <font color=#9A1900>// the behaviour is finished
+</font>	    } <font color=#0000FF>else</font> {
+	      <font color=#0000FF>if</font> (System.currentTimeMillis() &gt;= maximumTime) 
+		<font color=#9A1900>// timeout is elapsed
+</font>		<font color=#9A1900>// the behaviour is finished without clearing the buufer
+</font>		finished=true; 
+	      <font color=#0000FF>else</font> <font color=#9A1900>// timout not yet elapsed
+</font>		block(maximumTime - System.currentTimeMillis());
+	    }
+	}
+    }
+
+    <font color=#9A1900>/**
+     * Wait a connection from the Client.
+     */</font>
+    <font color=#0000FF>class</font> WaitRequestBehaviour <font color=#0000FF>extends</font> CyclicBehaviour {
+	MessageTemplate m1;
+	ACLMessage msg;
+
+	<font color=#0000FF>public</font> WaitRequestBehaviour(Agent a) {
+	    <font color=#0000FF>super</font>(a);
+	    m1 = MessageTemplate.MatchPerformative(ACLMessage.REQUEST);
+	}
+
+	<font color=#0000FF>public</font> <font color=#009900>void</font> action() {
+	    <font color=#9A1900>// wait for a request message from the client and send it
+</font>	    <font color=#9A1900>// the content of the buffer. Then the buffer is cleaned.
+</font>	    msg = receive(m1);
+	    <font color=#0000FF>if</font> (msg!= <font color=#0000FF>null</font>){
+		online = true;
+		<font color=#9A1900>// JADE 2.0
+</font>		clientName = msg.getSender(); 
+		<font color=#9A1900>// JADE 1.4
+</font>		<font color=#9A1900>//clientName = msg.getSource();
+</font>		addBehaviour(<font color=#0000FF>new</font> SendAndWaitConfirmBehaviour(myAgent));
+	    } <font color=#0000FF>else</font> 
+		<font color=#9A1900>// block if there is no message for this behaviour
+</font>		block();
+	}
+    }
+
+    <font color=#9A1900>/**
+     * Wait a disconnection from the client.
+     */</font>
+    <font color=#0000FF>class</font> NotOnlineBehaviour <font color=#0000FF>extends</font> CyclicBehaviour {
+	MessageTemplate m1;
+	ACLMessage msg;
+
+	<font color=#0000FF>public</font> NotOnlineBehaviour(Agent a) {
+	    <font color=#0000FF>super</font>(a);
+	    m1 = MessageTemplate.MatchPerformative(ACLMessage.CANCEL);
+	}
+
+	<font color=#0000FF>public</font> <font color=#009900>void</font> action() {
+	    msg = receive(m1);
+	    <font color=#0000FF>if</font> (msg!= <font color=#0000FF>null</font>){
+		online = false;
+	    } <font color=#0000FF>else</font> 
+		<font color=#9A1900>// block if there is no message for this behaviour
+</font>		block();
+	}
+    }
+
+    <font color=#0000FF>protected</font> <font color=#009900>void</font> setup() {
+	addBehaviour(<font color=#0000FF>new</font> ReceiveBehaviour(<font color=#0000FF>this</font>));
+	addBehaviour(<font color=#0000FF>new</font> WaitRequestBehaviour(<font color=#0000FF>this</font>));
+	addBehaviour(<font color=#0000FF>new</font> NotOnlineBehaviour(<font color=#0000FF>this</font>));
+    }
+}
+
+
+
+
+</tt>
+</pre>

@@ -1,0 +1,139 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<meta name="GENERATOR" content="Microsoft FrontPage Express 2.0">
+<title>Introduction</title>
+<link rel="stylesheet" type="text/css" href="stylesheet.css"
+title="Style">
+<!-- created by Alessandro Beneventi, Universita' degli Studi di Parma -->
+<!--            alessandro.beneventi@re.nettuno.it                     -->
+</head>
+
+<body bgcolor="#FFFFFF" text="#000000" link="#0000FF"
+vlink="#0000FF" alink="#0000FF">
+
+<table border="0" cellspacing="0" width="100%">
+    <tr>
+        <td bgcolor="#EEEEFF" id="NavBarCell1"><a
+        name="navbar_top_firstrow"></a> <table border="0"
+        cellpadding="0" cellspacing="3">
+            <tr>
+                <td align="center" valign="top" bgcolor="#EEEEFF"
+                id="NavBarCell1">Sections:</td>
+                <td align="center" valign="top" bgcolor="#EEEEFF"
+                id="NavBarCell1"><a href="index.html"><b>Index</b></a></td>
+                <td align="center" valign="top" bgcolor="#FFFFFF"
+                id="NavBarCell1Rev">&nbsp;<b>Introduction</b></td>
+                <td align="center" valign="top" bgcolor="#EEEEFF"
+                id="NavBarCell1"><b>More Info.</b></td>
+                <td align="center" valign="top" bgcolor="#EEEEFF"
+                id="NavBarCell1"><b>Visual Index</b></td>
+                <td align="center" valign="top" bgcolor="#EEEEFF"
+                id="NavBarCell1"><a href="../api/index.html"><b>Class
+                by Class</b></a></td>
+                <td align="center" valign="top" bgcolor="#EEEEFF"
+                id="NavBarCell1"><a href="../links.htm"><b>Links</b></a></td>
+            </tr>
+        </table>
+        </td>
+        <td align="right" valign="top" rowspan="2">&nbsp;</td>
+    </tr>
+</table>
+
+<p><font size="6" face="Arial"><b>JadeJessProtege</b></font> </p>
+
+<p>Author: Oliver Hoffman, Fabio Bellifemine, Ernest
+Friedman-Hill<br>
+<span lang="EN-GB"></p>
+
+<p><font face="Arial,Helvetica">This package includes examples
+for a closer integration of JADE with JESS, optionally also with
+protege. Aspects are</font> <br>
+<font face="Arial,Helvetica">- starting a JADE agent from a
+running JESS engine</font> <br>
+<font face="Arial,Helvetica">- interactively developing JADE
+agent behaviour from a JESS console</font> <br>
+<font face="Arial,Helvetica">- protege ontology support for JADE
+agents in JESS rules</font> <br>
+<font face="Arial">The example requires JESS version 6.0 and up
+in order to be compiled. It has been actually tested with version
+6.0a6 and 6.0a5.JESS can be downloaded at
+http://herzberg.ca.sandia.gov/jess/. If the rule file 'Jess.clp'
+is used, then at execution time, the example just requires JESS
+and JADE. If the rule file 'JessProtege.clp' is used, instead,
+then at execution time, the example requires also JessTab (it has
+been tested with version 1.0beta1) and Protege (it has been
+tested with version 1.6beta). JessTab can be downloaded at the
+JESS web site under &quot;user contributions&quot;Protege can be
+downloaded at http://protege.stanford.edu </font></p>
+
+<p><font face="Arial">The rule file Jess.clp shows integration of
+JADE with JESS and the rule file JessProtege.clp shows the
+3-way-integration of JADE, JESS and protege using the JessTab.
+JADE agents and JESS engines connected to JADE agents run in
+their own seperate threads of execution. Usage:</font></p>
+
+<p><font face="Arial">(A) start jess.Main with the file Jess.clp
+as parameter for instance: java jess.Main
+examples/JadeJessProtege/Jess.clp </font></p>
+
+<p><font face="Arial">or </font></p>
+
+<p><font face="Arial">(B) use the batch command to load Jess.clp
+from jess.console or JessWin for instance: (batch
+&quot;examples/JadeJessProtege/Jess.clp&quot;)</font></p>
+
+<p><font face="Arial">or </font></p>
+
+<p><font face="Arial">(C) use the batch command to load Jess.clp
+or JessProtege.clp from the JessTab for instance:
+(batch&quot;examples/JadeJessProtege/JessProtege.clp&quot;)</font></p>
+
+<p><font face="Arial">It is assumed that JADE and JESS in their
+latest versions are installed and that the JadeJessProtege
+directory is on the classpath, for (C) it is assumed that protege
+and the JessTab are installed.Test by sending a CFP message to
+the example agent, it should reply with a PROPOSE message,
+copying original content.</font></p>
+
+<p><font face="Arial">(A) and (B) show how JADE can be started
+from a running JESS engine</font></p>
+
+<p><font face="Arial">(C) shows in addition how protege
+ontologies can be used by JADE agents</font><br>
+&nbsp;</p>
+
+<p><font face="Arial,Helvetica">The example has been kindly
+developed by Oliver Hoffmann (oliver@hoffmann.org).</font> </p>
+
+<p></span> </p>
+
+<hr>
+
+<p align="center"><a href="http://jade.cselt.it/"><font size="2"
+face="Arial">JADE</font></a><font size="2" face="Arial"> is a
+trademark of </font><a href="http://www.cselt.it"><font size="2"
+face="Arial">CSELT</font></a><font size="2" face="Arial">. </font><a
+href="http://jade.cselt.it/"><font size="2" face="Arial">JADE</font></a><font
+size="2" face="Arial"> has been developed jointly by </font><a
+href="http://www.cselt.it"><font size="2" face="Arial">CSELT</font></a><font
+size="2" face="Arial"> and the </font><a
+href="http://www.ce.unipr.it"><font size="2" face="Arial">Computer
+Engineering Group</font></a><font size="2" face="Arial"> of the </font><a
+href="http://www.unipr.it"><font size="2" face="Arial">University
+of Parma</font></a> </p>
+
+<p><br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+</p>
+</body>
+</html>

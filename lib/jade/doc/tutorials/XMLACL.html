@@ -1,0 +1,111 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<title>How to use the XML-ACL Codec with JADE</title>
+</head>
+<body bgcolor="#FFFFFF" >
+<h1>How to use the XML-ACL Codec with JADE</h1>
+<p><i>Author: Ion Constantinescu (EPFL)</i><br>
+</p>
+<p><i>Date: March 27, 2001 </i><br>
+</p>
+<p><i>Java platform: Sun JDK 1.2 Windows </i><br>
+</p>
+<p><i><A HREF="http://jade.cselt.it/">JADE</a> version 2.2 </i><br>
+</p>
+<p>This tutorial describes how to install and use the XML-ACL Codec with JADE. 
+  This codec implements the <A HREF="http://www.fipa.org/specs/fipa00071/"> FIPA 
+  Specifications no. 71 <i>FIPA ACL Message Representation in XML Specification 
+  </i></a> </p>
+<h2>Installation.</h2>
+<p> In order to install XML-ACL the following steps must be performed:</p>
+<ul>
+  <li>The XML-ACL codec must be downloaded from the <a href="http://jade.cselt.it/">JADE</a> 
+    download page. 
+  <li>after downloading you <b>MUST</b> unzip the XML-ACL codec package under 
+    the root of the jade distribution tree. You should end having a hierarchy 
+    like jade/add-ons/xmlacl. 
+  <li>A <a href="http://www.megginson.com/SAX/">SAX</a> parser must be downloaded 
+    and installed into the system. See below a list of known parsers and configuration 
+    options. 
+  <li>The xml parser jar file must be added to the CLASSPATH or specified in the 
+    -classpath argument when starting the virtual machine 
+</ul>
+<h2>Compiling</h2>
+<p>The default Makefile rules don't take the XML-ACL Codec into account. For handling 
+  the compilation process of the XML-ACL Codec you have to use the 'build.xml' 
+  ant-file located in the xmlacl directory. The following rules are available:</p>
+<ul>
+  <li>ant - compiles the codec class 
+  <li>ant lib - creates the xmlacl.jar archive 
+  <li>ant clean - removes the compiled classes and the xmlacl.jar archive 
+</ul>
+<h2>Configuration and Usage</h2>
+<p>The current implementation has been tested with the following parsers:</p>
+<table border="1">
+  <tr> 
+    <td>Parser Name</td>
+    <td>Parser Class</td>
+  </tr>
+  <tr> 
+    <td><a href="http://xml.apache.org/crimson/index.html">Crimson</a></td>
+    <td>org.apache.crimson.parser.XMLReaderImpl</td>
+  </tr>
+  <tr> 
+    <td><a href="http://xml.apache.org/xerces-j/index.html">Xerces</a></td>
+    <td>org.apache.xerces.parsers.SAXParser</td>
+  </tr>
+</table>
+<p>The current configuration uses Crimson as the default parser. So if you don't 
+  want to make any changes you just have to download Crimson from the link provided 
+  above and make sure it is added to the classpath when starting ( either by including 
+  it into the $CLASSPATH environment variable - %CLASSPATH% under windows or by 
+  specifing it on the command line ) . Notice that the XML-ACL codec must be launched 
+  on all the JADE containers</p>
+<p>Here is an example of how you would start the platform assuming that you copied 
+  crimson.jar from the initial distribution to the jade/lib directory) :</p>
+<code>java -classpath ./lib/jade.jar:./lib/jadeTools.jar:./lib/iiop.jar:./lib/crimson.jar:./add-ons/xmlacl/lib/xmlacl.jar 
+jade.Boot -aclcodec jamr.jadeacl.xml.XMLACLCodec </code> ( for Unix ) <br>
+or<br>
+<code>java -classpath .\lib\jade.jar;.\lib\jadeTools.jar;./lib/iiop.jar;.\lib\crimson.jar;.\add-ons\xmlacl\lib\xmlacl.jar 
+jade.Boot -aclcodec jamr.jadeacl.xml.XMLACLCodec </code> ( for Windows )<br>
+<p> If you want to use another parser suplementary you have to specify in the 
+  command line the system property <em>org.xml.sax.parser</em> as in the following 
+  example ( also assuming that you have copied xerces.jar from the initial distribution 
+  to the jade/lib directory ) :</p>
+<code>java -Dorg.xml.sax.parser=org.apache.xerces.parsers.SAXParser -classpath 
+./lib/jade.jar:./lib/jadeTools.jar:./lib/iiop.jar:./lib/xerces.jar:./add-ons/xmlacl/lib/xmlacl.jar 
+jade.Boot -aclcodec jamr.jadeacl.xml.XMLACLCodec</code> ( for Unix ) <br>
+or<br>
+<code>java -Dorg.xml.sax.parser=org.apache.xerces.parsers.SAXParser -classpath 
+.\lib\jade.jar;.\lib\jadeTools.jar;.\lib\iiop.jar;.\lib\xerces.jar;.\add-ons\xmlacl\lib\xmlacl.jar 
+jade.Boot -aclcodec jamr.jadeacl.xml.XMLACLCodec</code> ( for Windows )<br>
+<h2>Examples</h2>
+<h4>Using XML-ACLCodec in Jade</h4>
+When an agent wants to send a XML encoded message, all it has to do is to indicate 
+this in the message envelope. For example (assuming <code>e</code> is the message 
+envelope): <br>
+<br>
+<code> e.setAclRepresentation("fipa.acl.rep.xml.std"); </code><br>
+<br>
+and Jade takes care of the rest. When receiving xml encoded messages, the agent 
+does not have to do anything, Jade is working for him. 
+<HR>
+<P> 
+  <CENTER>
+    <FONT FACE="Arial" size="-1"><A HREF="http://jade.cselt.it/">JADE</A> is a 
+    trademark of <A HREF="http://www.cselt.it">CSELT</A>. <A HREF="http://jade.cselt.it/">JADE</A> 
+    has been developed jointly by <A HREF="http://www.cselt.it">CSELT</A> and 
+    the <A HREF="http://www.ce.unipr.it">Computer Engineering Group</A> of the 
+    <A HREF="http://www.unipr.it">University of Parma</A>.</font> 
+  </center>
+  <FONT FACE="Arial"> 
+  <CENTER>
+    <FONT SIZE=-1>The XML-ACL Codec implementation was developed in the <a href="http://liawww.epfl.ch/">Artificial 
+    Inteligence Laboratory ( LIA )</a> at the <a href="http://www.epfl.ch/">Swiss 
+    Federal Institute of Technology Lausanne ( EPFL )</a>. </FONT> 
+  </CENTER>
+  <BR>
+  &nbsp; </font> 
+</body>
+</html>

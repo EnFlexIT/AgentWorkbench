@@ -1,0 +1,131 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>How to use the new HTTP MTP with JADE</title>
+</head>
+<body>
+<h1>How to use the XMPP MTP with JADE</h1>
+<i><br>
+V. Botti(vbotti@dsic.upv.es)</i><br>
+<i>J. Palanca (jpalanca@dsic.upv.es)</i><br>
+<i>M. Escriv&agrave; (mescriva@dsic.upv.es)<br>
+V. Juli&aacute;n (vinglada@dsic.upv.es)<br>
+</i><br>
+<i>October 30th 2005</i><br>
+<br>
+<h2>0. Index</h2>
+1. Introduction<br>
+2. Building and Installing<br>
+3. Usage<br>
+4. Supported MTP address kinds<br>
+<br>
+<h2>1. Introduction</h2>
+<p>This contribution proposes a new method of communicating agents and FIPA&nbsp;platforms 
+  using a more natural way to develop conversations: Jabber, an Instant Messaging 
+  (IM) protocol designed to sustain lengthy bidirectional communications among 
+  entities on the Internet. <br>
+  <br>
+  Jabber is an open protocol that is based on standard XML (eXtensible Markup 
+  Language) for the exchange of messages and presence information between two 
+  Internet points. This protocol was proposed by the Jabber Software Foundation1. 
+  The main use of Jabber technology is an extensible IM network that has similar 
+  features to other IM services like AIM, ICQ, MSN Messenger and Yahoo. Therefore, 
+  Jabber is an open, secure, and free alternative to consumer IM services. Under 
+  the hood, Jabber is a of streaming XML protocols and technologies that enable 
+  any two entities on the Internet to exchange messages, presence, and other structured 
+  information in close to real-time. Jabber enables Peer-To-Peer computing. Although 
+  it makes use of a server between clients, its operation is similar to a peer-to-peer 
+  model that puts two or more entities in touch with each other. <br>
+  <br>
+  Nowadays, there are Instant Messaging Networks that are used by millions of 
+  people to communicate. These IM Networks can also be used by agents to communicate 
+  with each other. Using the same IM Networks that humans do provides several 
+  advantages, such as a more comfortable and easy interaction between humans and 
+  agents. These networks have been extensively tested and can support a very high 
+  workload. Other important matters are the new mechanisms provided for this protocol 
+  (Presence Notification, Multi-User Conference) that can improve the communicative 
+  acts. These characteristics, which are not directly mentioned in the FIPA standard, 
+  perform new communication capabilities between agents which make them more versatile.</p>
+<p>The XMPP-MTP add-on can be downloaded from the <a href="http://jade.tilab.com/community-3rdpartysw.htm">3rd 
+  party sw area</a> of the JADE Web site.<br>
+</p>
+<h2>2. Building and Installing</h2>
+<h3>System Requirements </h3>
+This MTP requires JADE, smack and crimson libraries.
+<br>
+&nbsp;<br>
+<ul>
+  <li><span style="font-weight: bold;">SMACK</span>: <a
+ href="http://www.jivesoftware.org/smack/">http://www.jivesoftware.org/smack/</a></li>
+  <li><span style="font-weight: bold;">CRIMSON</span>: <a
+ href="http://xml.apache.org/crimson/">http://xml.apache.org/crimson/</a></li>
+</ul>
+<h3>2.1 Building</h3>
+<p>The default Makefile rules don't take the XMPP MTP into account. For
+handling the compilation process of the XMPP MTP you have to use the
+'build.xml' ant-file located in the xmpp directory. The following rules
+are available:</p>
+<ul>
+  <li>ant - compiles the mtp class </li>
+  <li>ant lib - creates the xmpp.jar archive </li>
+  <li>ant clean - removes the compiled classes and the xmpp.jar archive</li>
+  <li>ant dist - creates the xmpp.zip archive for distribution</li>
+</ul>
+<h3>2.2 Installing</h3>
+<p>
+To use the XMPP MTP we can choose to specify it from the command line:
+</p>
+<tt>java jade.Boot -mtp jade.mtp.xmpp.MessageTransportProtocol</tt>
+<p>or install it from the RMA's graphical environment. Obviously,
+the xmpp.jar
+containing the MTP class files must be in the classpath.
+</p>
+<h2>3. Usage</h2>
+<p>Running the MTP from the command line requires 3 parameters:
+<br>
+&nbsp;&nbsp;<br>
+</p>
+<ul>
+  <li><code>-jade_mtp_xmpp_server &lt;jabber server&gt;</code> </li>
+  <li><code>-jade_mtp_xmpp_username &lt;username&gt;</code> </li>
+  <li><code>-jade_mtp_xmpp_password &lt;password&gt; </code></li>
+</ul>
+<h3>3.1&nbsp;Example
+</h3>
+<p><code>&nbsp;java jade.Boot -mtp
+jade.mtp.xmpp.MessageTransportProtocol -jade_mtp_xmpp_server&nbsp;<span
+ style="font-style: italic;">jabber.org</span> -jade_mtp_xmpp_username <span
+ style="font-style: italic;">jadeuser</span> -jade_mtp_xmpp_password <span
+ style="font-style: italic;">secret</span></code>
+<br>
+</p>
+<h2>4. Supported MTP address kinds&nbsp;</h2>
+&nbsp;<br>
+The XMPP MTP supports '<code>xmpp://</code>' addresses.
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<center> <font face="Arial" size="-1"><a href="http://jade.cselt.it/">JADE</a>
+is a trademark
+of <a href="http://www.cselt.it/">CSELT</a>. <a
+ href="http://jade.cselt.it/">JADE</a> has been
+developed jointly by <a href="http://www.cselt.it/">CSELT</a>
+and the <a href="http://www.ce.unipr.it/">Computer
+Engineering Group</a> of the <a href="http://www.unipr.it/">University
+of Parma</a>.</font> </center>
+<font face="Arial"> </font>
+<center><font face="Arial"> <font size="-1">The XMPP implementation
+was developed in the <a href="http://www.dsic.upv.es/users/ia/ia.html">Grupo
+de Tecnolog&iacute;a Inform&aacute;tica-Inteligencia Artificial</a> at
+the <a href="http://www.upv.es">Universitat Polit&egrave;cnica&nbsp;of
+Valencia</a> by Miguel Escriv&agrave;, Javier Palanca and Vicent Botti (<a
+ href="http://www.dsic.upv.es">DSIC</a>).
+</font> </font></center>
+<font face="Arial"> <br>
+</font>
+</body>
+</html>

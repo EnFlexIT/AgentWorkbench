@@ -1,0 +1,414 @@
+<html><!-- #BeginTemplate "/Templates/maintemplate.dwt" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- #BeginEditable "doctitle" --> 
+<title>JEP - Java Math Expression Parser</title>
+<!-- #EndEditable --> 
+<link rel="stylesheet" type="text/css" href="main.css" title="style1">
+</head>
+
+<body>
+<!-- #BeginEditable "Sub%20Menu" --> <!-- #BeginLibraryItem "/Library/Docu Menu.lbi" --><!-- NAVIGATION ---------------------------------------------------- -->
+<div id="navcontainer">
+<ul>
+<li><a href="../javadoc/index.html" target="_blank">JavaDoc*</a></li>
+</ul>
+
+<hr/>
+
+<ul>
+<li><a href="index.html">Usage</a></li>
+<li><a href="op_and_func.html">Operators &amp; Functions</a></li>
+<li><a href="grammar.html">Grammar</a></li>
+<li><a href="cust_func.html">Custom Functions</a></li>
+<li><a href="newfeatures-2.3.html">New Features</a></li>
+<li><a href="faq.html">FAQ</a></li>
+<li><a href="version.html">Version History</a></li>
+</ul>
+
+<hr/>
+
+<ul>
+<li><a href="djep/index.html">DJEP</a></li>
+<li><a href="djep/XJep.html">XJep</a></li>
+<li><a href="djep/DJep.html">Differentiation</a></li>
+<li><a href="djep/groups.html">Groups</a></li>
+<li><a href="djep/VectorJep.html">Vectors &amp; Matrices</a></li>
+<li><a href="djep/version.html">Version History</a></li>
+</ul>
+</div><!-- #EndLibraryItem --><!-- #EndEditable -->
+<div id="centercontent">
+<!-- #BeginEditable "Text" --> 
+        
+  <h1>Operators</h1>
+        <p>All common arithmetic operators are supported. Boolean operators are 
+          also fully supported. Boolean expressions are evaluated to be either 
+          1 or 0 (true or false respectively).</p>
+        <p>An <img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"> 
+          indicates that the operator can be used with the specific type of variable. 
+          Refer to the <a href="grammar.html">grammar</a> for detailed information 
+          about operator precedence.</p>
+        <table border="0" cellspacing="1" cellpadding="2" width="100%" bgcolor="#CCCCCC">
+          <tr bgcolor="#FFFFFF"> 
+            <td width="225">&nbsp;</td>
+            <td width="91">&nbsp;</td>
+            <td width="76"><b>Double</b></td>
+            <td width="81"><b>Complex</b></td>
+            <td width="91"><b>String</b></td>
+            <td width="91"><b>Vector</b></td>
+          </tr>
+          <tr bgcolor="#FFFFFF"> 
+            <td width="225">Power</td>
+            <td width="91">^</td>
+            <td width="76" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+            <td width="81" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+            <td width="91" align="center">&nbsp;</td>
+            <td width="91" align="center">&nbsp;</td>
+          </tr>
+          <tr bgcolor="#FFFFFF"> 
+            <td width="225">Boolean Not</td>
+            <td width="91">!</td>
+            <td width="76" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+            <td width="81" align="center">&nbsp;</td>
+            <td width="91" align="center">&nbsp;</td>
+            <td width="91" align="center">&nbsp;</td>
+          </tr>
+          <tr bgcolor="#FFFFFF"> 
+            <td width="225">Unary Plus, Unary Minus</td>
+            <td width="91">+x, -x</td>
+            <td width="76" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+            <td width="81" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+            <td width="91" align="center">&nbsp;</td>
+            <td width="91" align="center">&nbsp;</td>
+          </tr>
+          <tr bgcolor="#FFFFFF"> 
+            <td width="225">Modulus</td>
+            <td width="91">%</td>
+            <td width="76" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+            <td width="81" align="center">&nbsp;</td>
+            <td width="91" align="center">&nbsp;</td>
+            <td width="91" align="center">&nbsp;</td>
+          </tr>
+          <tr bgcolor="#FFFFFF"> 
+            <td width="225">Division</td>
+            <td width="91">/</td>
+            <td width="76" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+            <td width="81" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+            <td width="91" align="center">&nbsp;</td>
+            <td width="91" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+          </tr>
+          <tr bgcolor="#FFFFFF"> 
+            <td width="225">Multiplication</td>
+            <td width="91">*</td>
+            <td width="76" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+            <td width="81" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+            <td width="91" align="center">&nbsp;</td>
+            <td width="91" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+          </tr>
+          <tr bgcolor="#FFFFFF"> 
+            <td width="225">Addition, Subtraction</td>
+            <td width="91">+, -</td>
+            <td width="76" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+            <td width="81" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+            <td width="91" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"> 
+              (only +)</td>
+            <td width="91" align="center">&nbsp;</td>
+          </tr>
+          <tr bgcolor="#FFFFFF"> 
+            <td width="225">Less or Equal, More or Equal</td>
+            <td width="91" bordercolor="#CCCCCC">&lt;=, &gt;=</td>
+            <td width="76" bordercolor="#CCCCCC" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+            <td width="81" bordercolor="#CCCCCC" align="center">&nbsp;</td>
+            <td width="91" bordercolor="#CCCCCC" align="center">&nbsp;</td>
+            <td width="91" bordercolor="#CCCCCC" align="center">&nbsp;</td>
+          </tr>
+          <tr bgcolor="#FFFFFF"> 
+            <td width="225">Less Than, Greater Than</td>
+            <td width="91">&lt;, &gt;</td>
+            <td width="76" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+            <td width="81" align="center">&nbsp;</td>
+            <td width="91" align="center">&nbsp;</td>
+            <td width="91" align="center">&nbsp;</td>
+          </tr>
+          <tr bgcolor="#FFFFFF"> 
+            <td width="225">Not Equal, Equal</td>
+            <td width="91">!=, ==</td>
+            <td width="76" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+            <td width="81" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+            <td width="91" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+            <td width="91" align="center">&nbsp;</td>
+          </tr>
+          <tr bgcolor="#FFFFFF">
+            <td width="225">Boolean And</td>
+            <td width="91">&amp;&amp;</td>
+            <td width="76" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+            <td width="81" align="center">&nbsp;</td>
+            <td width="91" align="center">&nbsp;</td>
+            <td width="91" align="center">&nbsp;</td>
+          </tr>
+          <tr bgcolor="#FFFFFF"> 
+            <td width="225">Boolean Or</td>
+            <td width="91">||</td>
+            <td width="76" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+            <td width="81" align="center">&nbsp;</td>
+            <td width="91" align="center">&nbsp;</td>
+            <td width="91" align="center">&nbsp;</td>
+          </tr>
+        </table>
+        <p><br>
+          <br>
+          <br>
+        </p>
+        <h2>Functions</h2>
+        <p> Note that you can always add new functions as described in the documentation. 
+          Each of the following functions can be applied to objects of the types 
+          indicated. </p>
+        Functions added with <b>addStandardFunctions()</b>: 
+        
+  <table border="0" cellspacing="1" cellpadding="2" width="100%" bgcolor="#CCCCCC">
+    <tr bgcolor="#FFFFFF"> 
+      <td width="225">&nbsp;</td>
+      <td width="91">&nbsp;</td>
+      <td width="76"><b>Double</b></td>
+      <td width="81"><b>Complex</b></td>
+      <td width="91"><b>String</b></td>
+      <td width="91"><b>Vector</b></td>
+    </tr>
+    <tr bgcolor="#FFFFFF"> 
+      <td width="225">Sine</td>
+      <td width="91">sin(x)</td>
+      <td width="76" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+      <td width="81" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+      <td width="91" align="center">&nbsp;</td>
+      <td width="91" align="center">&nbsp;</td>
+    </tr>
+    <tr bgcolor="#FFFFFF"> 
+      <td width="225">Cosine</td>
+      <td width="91">cos(x)</td>
+      <td width="76" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+      <td width="81" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+      <td width="91" align="center">&nbsp;</td>
+      <td width="91" align="center">&nbsp;</td>
+    </tr>
+    <tr bgcolor="#FFFFFF"> 
+      <td width="225">Tangent</td>
+      <td width="91">tan(x)</td>
+      <td width="76" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+      <td width="81" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+      <td width="91" align="center">&nbsp;</td>
+      <td width="91" align="center">&nbsp;</td>
+    </tr>
+    <tr bgcolor="#FFFFFF"> 
+      <td width="225">Arc Sine</td>
+      <td width="91">asin(x)</td>
+      <td width="76" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+      <td width="81" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+      <td width="91" align="center">&nbsp;</td>
+      <td width="91" align="center">&nbsp;</td>
+    </tr>
+    <tr bgcolor="#FFFFFF"> 
+      <td width="225">Arc Cosine</td>
+      <td width="91">acos(x)</td>
+      <td width="76" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+      <td width="81" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+      <td width="91" align="center">&nbsp;</td>
+      <td width="91" align="center">&nbsp;</td>
+    </tr>
+    <tr bgcolor="#FFFFFF"> 
+      <td width="225">Arc Tangent</td>
+      <td width="91">atan(x)</td>
+      <td width="76" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+      <td width="81" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+      <td width="91" align="center">&nbsp;</td>
+      <td width="91" align="center">&nbsp;</td>
+    </tr>
+    <tr bgcolor="#FFFFFF"> 
+      <td width="225">Arc Tangent (with 2 parameters)</td>
+      <td width="91">atan2(y, x)</td>
+      <td width="76" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+      <td width="81" align="center">&nbsp;</td>
+      <td width="91" align="center">&nbsp;</td>
+      <td width="91" align="center">&nbsp;</td>
+    </tr>
+    <tr bgcolor="#FFFFFF"> 
+      <td width="225">Hyperbolic Sine</td>
+      <td width="91">sinh(x)</td>
+      <td width="76" bordercolor="#CCCCCC" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+      <td width="81" bordercolor="#CCCCCC" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+      <td width="91" bordercolor="#CCCCCC" align="center">&nbsp;</td>
+      <td width="91" bordercolor="#CCCCCC" align="center">&nbsp;</td>
+    </tr>
+    <tr bgcolor="#FFFFFF"> 
+      <td width="225">Hyperbolic Cosine</td>
+      <td width="91">cosh(x)</td>
+      <td width="76" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+      <td width="81" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+      <td width="91" align="center">&nbsp;</td>
+      <td width="91" align="center">&nbsp;</td>
+    </tr>
+    <tr bgcolor="#FFFFFF"> 
+      <td width="225">Hyperbolic Tangent</td>
+      <td width="91">tanh(x)</td>
+      <td width="76" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+      <td width="81" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+      <td width="91" align="center">&nbsp;</td>
+      <td width="91" align="center">&nbsp;</td>
+    </tr>
+    <tr bgcolor="#FFFFFF"> 
+      <td width="225">Inverse Hyperbolic Sine</td>
+      <td width="91">asinh(x)</td>
+      <td width="76" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+      <td width="81" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+      <td width="91" align="center">&nbsp;</td>
+      <td width="91" align="center">&nbsp;</td>
+    </tr>
+    <tr bgcolor="#FFFFFF"> 
+      <td width="225">Inverse Hyperbolic Cosine</td>
+      <td width="91">acosh(x)</td>
+      <td width="76" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+      <td width="81" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+      <td width="91" align="center">&nbsp;</td>
+      <td width="91" align="center">&nbsp;</td>
+    </tr>
+    <tr bgcolor="#FFFFFF"> 
+      <td width="225">Inverse Hyperbolic Tangent</td>
+      <td width="91">atanh(x)</td>
+      <td width="76" bordercolor="#CCCCCC" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+      <td width="81" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+      <td width="91" align="center">&nbsp;</td>
+      <td width="91" align="center">&nbsp;</td>
+    </tr>
+    <tr bgcolor="#FFFFFF"> 
+      <td width="225">Natural Logarithm</td>
+      <td width="91">ln(x)</td>
+      <td width="76" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+      <td width="81" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+      <td width="91" align="center">&nbsp;</td>
+      <td width="91" align="center">&nbsp;</td>
+    </tr>
+    <tr bgcolor="#FFFFFF"> 
+      <td width="225">Logarithm base 10</td>
+      <td width="91">log(x)</td>
+      <td width="76" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+      <td width="81" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+      <td width="91" align="center">&nbsp;</td>
+      <td width="91" align="center">&nbsp;</td>
+    </tr>
+    <tr bgcolor="#FFFFFF"> 
+      <td width="225">Exponential</td>
+      <td width="91">exp(x)</td>
+      <td width="76" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+      <td width="81" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+      <td width="91" align="center">&nbsp;</td>
+      <td width="91" align="center">&nbsp;</td>
+    </tr>
+    <tr bgcolor="#FFFFFF"> 
+      <td width="225">Absolute Value / Magnitude</td>
+      <td width="91">abs()</td>
+      <td width="76" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+      <td width="81" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+      <td width="91" align="center">&nbsp;</td>
+      <td width="91" align="center">&nbsp;</td>
+    </tr>
+    <tr bgcolor="#FFFFFF"> 
+      <td width="225">Random number (between 0 and 1)</td>
+      <td width="91">rand()</td>
+      <td width="76" align="center">&nbsp;</td>
+      <td width="81" align="center">&nbsp;</td>
+      <td width="91" align="center">&nbsp;</td>
+      <td width="91" align="center">&nbsp;</td>
+    </tr>
+    <tr bgcolor="#FFFFFF"> 
+      <td width="225">Modulus</td>
+      <td width="91">mod()</td>
+      <td width="76" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+      <td width="81" align="center">&nbsp;</td>
+      <td width="91" align="center">&nbsp;</td>
+      <td width="91" align="center">&nbsp;</td>
+    </tr>
+    <tr bgcolor="#FFFFFF"> 
+      <td width="225">Square Root</td>
+      <td width="91">sqrt()</td>
+      <td width="76" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+      <td width="81" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+      <td width="91" align="center">&nbsp;</td>
+      <td width="91" align="center">&nbsp;</td>
+    </tr>
+    <tr bgcolor="#FFFFFF"> 
+      <td width="225">Sum</td>
+      <td width="91">sum()</td>
+      <td width="76" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+      <td width="81" align="center">&nbsp;</td>
+      <td width="91" align="center">&nbsp;</td>
+      <td width="91" align="center">&nbsp;</td>
+    </tr>
+    <tr bgcolor="#FFFFFF"> 
+      <td width="225">If</td>
+      <td width="91">if()</td>
+      <td width="76" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+      <td width="81" align="center">&nbsp;</td>
+      <td width="91" align="center">&nbsp;</td>
+      <td width="91" align="center">&nbsp;</td>
+    </tr>
+    <tr bgcolor="#FFFFFF"> 
+      <td width="225">Str</td>
+      <td width="91">str()</td>
+      <td width="76" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+      <td width="81" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+      <td width="91" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+      <td width="91" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+    </tr>
+  </table>
+        <br>
+        Functions added with <b>addComplex()</b>: 
+        
+  <table border="0" cellspacing="1" cellpadding="2" width="100%" bgcolor="#CCCCCC">
+    <tr bgcolor="#FFFFFF"> 
+      <td width="225">&nbsp;</td>
+      <td width="91">&nbsp;</td>
+      <td width="76"><b>Double</b></td>
+      <td width="81"><b>Complex</b></td>
+      <td width="91"><b>String</b></td>
+      <td width="91"><b>Vector</b></td>
+    </tr>
+    <tr bgcolor="#FFFFFF"> 
+      <td width="225">Real Component</td>
+      <td width="91">re()</td>
+      <td width="76" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+      <td width="81" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+      <td width="91" align="center">&nbsp;</td>
+      <td width="91" align="center">&nbsp;</td>
+    </tr>
+    <tr bgcolor="#FFFFFF"> 
+      <td width="225">Imaginary Component</td>
+      <td width="91">im()</td>
+      <td width="76" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+      <td width="81" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+      <td width="91" align="center">&nbsp;</td>
+      <td width="91" align="center">&nbsp;</td>
+    </tr>
+    <tr bgcolor="#FFFFFF">
+      <td width="225">Complex Modulus (Absolute Value)</td>
+      <td width="91">cmod()</td>
+      <td width="76" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+      <td width="81" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+      <td width="91" align="center">&nbsp;</td>
+      <td width="91" align="center">&nbsp;</td>
+    </tr>
+    <tr bgcolor="#FFFFFF">
+      <td width="225">Complex</td>
+      <td width="91">complex()</td>
+      <td width="76" align="center"><img src="img/checkmark.gif" width="10" height="10" border="0" alt="Check"></td>
+      <td width="81" align="center">&nbsp;</td>
+      <td width="91" align="center">&nbsp;</td>
+      <td width="91" align="center">&nbsp;</td>
+    </tr>
+  </table>
+        <!-- #EndEditable -->
+<br/>
+<br/>
+<br/>
+  <div id="footer"> &copy; 2006 Singular Systems</div>
+</div>
+</body>
+<!-- #EndTemplate --></html>

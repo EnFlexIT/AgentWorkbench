@@ -1,0 +1,109 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.06 [en] (WinNT; I) [Netscape]">
+   <META NAME="ProgId" CONTENT="FrontPage.Editor.Document">
+   <TITLE>Introduction</TITLE>
+<LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000FF" VLINK="#0000FF" ALINK="#0000FF">
+&nbsp;
+<TABLE BORDER=0 CELLSPACING=0 WIDTH="100%" >
+<TR>
+<TD BGCOLOR="#EEEEFF" ID="NavBarCell1"><A NAME="navbar_top_firstrow"></A>
+<TABLE BORDER=0 CELLSPACING=3 CELLPADDING=0 >
+<TR ALIGN=CENTER VALIGN=TOP>
+<TD BGCOLOR="#EEEEFF" ID="NavBarCell1">Sections:</TD>
+
+<TD BGCOLOR="#EEEEFF" ID="NavBarCell1"><B><A HREF="../index.html">Index</A></B></TD>
+
+<TD BGCOLOR="#FFFFFF" ID="NavBarCell1Rev">&nbsp;<B>Introduction</B></TD>
+
+<TD BGCOLOR="#EEEEFF" ID="NavBarCell1"><B>More Info.</B></TD>
+
+<TD BGCOLOR="#EEEEFF" ID="NavBarCell1"><B>Visual Index</B></TD>
+
+<TD BGCOLOR="#EEEEFF" ID="NavBarCell1"><B>Class by Class</B></TD>
+
+<TD BGCOLOR="#EEEEFF" ID="NavBarCell1"><B><A HREF="links.htm">Links</A></B></TD>
+</TR>
+</TABLE>
+</TD>
+
+<TD ALIGN=RIGHT VALIGN=TOP ROWSPAN="2"></TD>
+</TR>
+</TABLE>
+
+<P><B><FONT FACE="Arial"><FONT SIZE=+3>Introduction</FONT></FONT></B>
+<P><SPAN lang="EN-GB"><FONT FACE="Arial,Helvetica">SocketProxyAgent is
+a JADE agent that can be executed to communicate with remote clients via
+a socket.</FONT>
+<P></SPAN>
+<P><B><FONT FACE="Arial"><FONT SIZE=+3>Starting the SocketProxyAgent</FONT></FONT></B>
+<P><FONT FACE="Arial,Helvetica">It is a JADE agent itself and, therefore,
+must be launched within a JADE container with the following command:</FONT>
+<P><FONT FACE="Arial,Helvetica"><I>&nbsp;&nbsp;&nbsp;&nbsp; </I><B>java
+jade.Boot spa:jade.tools.SocketProxyAgent.SocketProxyAgent</B></FONT>
+<P><FONT FACE="Arial,Helvetica">At the startup, the agent searchs for a
+file that contains its initialization parameters.</FONT>
+<BR><FONT FACE="Arial,Helvetica">The file must be named <B>&lt;agentname>.inf
+</B>and
+must be put in the current working directory.</FONT>
+<BR><FONT FACE="Arial,Helvetica">The first line in this file must contain
+the port number to which the agent listens for connections (put 0 for the
+default port number, i.e. 6789).</FONT>
+<BR><FONT FACE="Arial,Helvetica">The second line in the file must contain
+the list P of agent names that wish this proxy agent to forward messages
+to them. All names must be on the same single line and must be separated
+by a blank.</FONT>
+<P><FONT FACE="Arial,Helvetica">The agent accepts up to 50 parallel connections.</FONT>
+<BR><FONT FACE="Arial,Helvetica">Each message that arrives through the
+socket, is parsed, the destination agent is checked against the list P
+of agent names, and, eventually, forwarded to the destination agent. Each
+answer from the destination agent, is forwarded back through the socket
+again.</FONT>
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<OL>&nbsp;</OL>
+
+<HR>
+<CENTER>
+<P><FONT FACE="Arial"><FONT SIZE=-1><A HREF="http://jade.cselt.it/">JADE</A>
+is a trademark of
+<A HREF="http://www.cselt.it">CSELT</A>. <A HREF="http://jade.cselt.it/">JADE</A>
+has been developed jointly by <A HREF="http://www.cselt.it">CSELT</A> and
+the <A HREF="http://www.ce.unipr.it">Computer Engineering Group</A> of
+the <A HREF="http://www.unipr.it">University of Parma</A></FONT></FONT></CENTER>
+
+<BR>&nbsp;
+<P><BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+</BODY>
+</HTML>

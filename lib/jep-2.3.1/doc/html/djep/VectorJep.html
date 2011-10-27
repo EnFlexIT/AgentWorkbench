@@ -1,0 +1,168 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><html><!-- #BeginTemplate "/Templates/maintemplate.dwt" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- #BeginEditable "doctitle" --><title>VectorJep - Vectors and Matrices in JEP</title><!-- #EndEditable --> 
+<link rel="stylesheet" type="text/css" href="../main.css" title="style1">
+</head>
+
+<body>
+<!-- #BeginEditable "Sub%20Menu" --> <!-- #BeginLibraryItem "/Library/Docu Menu.lbi" --><!-- NAVIGATION ---------------------------------------------------- -->
+<div id="navcontainer">
+<ul>
+<li><a href="../../javadoc/index.html" target="_blank">JavaDoc*</a></li>
+</ul>
+
+<hr/>
+
+<ul>
+<li><a href="../index.html">Usage</a></li>
+<li><a href="../op_and_func.html">Operators &amp; Functions</a></li>
+<li><a href="../grammar.html">Grammar</a></li>
+<li><a href="../cust_func.html">Custom Functions</a></li>
+<li><a href="../newfeatures-2.3.html">New Features</a></li>
+<li><a href="../faq.html">FAQ</a></li>
+<li><a href="../version.html">Version History</a></li>
+</ul>
+
+<hr/>
+
+<ul>
+<li><a href="index.html">DJEP</a></li>
+<li><a href="XJep.html">XJep</a></li>
+<li><a href="DJep.html">Differentiation</a></li>
+<li><a href="groups.html">Groups</a></li>
+<li><a href="VectorJep.html">Vectors &amp; Matrices</a></li>
+<li><a href="version.html">Version History</a></li>
+</ul>
+</div><!-- #EndLibraryItem --><!-- #EndEditable -->
+<div id="centercontent">
+<!-- #BeginEditable "Text" --> 
+        <h1><a name="top"></a>Vectors and Matrices</h1>
+<p>
+There are two packages which offer support for vectors and matrices
+</p><ul>
+<li>org.lsmp.djep.vectorJep - standard vector and matrix handling
+</li><li>org.lsmp.djep.matrixJep - advanced vector and matrix handling
+</li></ul>for most applications the first package should suffice. The
+second
+package allows differentiation of equations with vectors and matrices;
+the overloading of the ^ operator to be both power and cross product;
+a slight speed advantages; and the calculation of the dimensions
+of each equation. The downside is that it adds about 65K to the size of
+the required packages.
+
+<p>
+Most of the functionality is common to both packages and the following
+syntax is allow:
+</p><ul>
+<li><b>Vectors</b>: <tt>[1,2,3]</tt> denotes a vector, variables and equations can be used
+	throughout i.e. <tt>[x,y,2*x+3*y]</tt></li>
+<li><b>Matrices</b>: <tt>[[1,2],[3,4]]</tt> a matrix with rows [1,2] and [3,4].</li>
+<li><b>Tensors</b>: <tt>[[[1,2],[3,4]],[[5,6],[7,8]]]</tt> higher rank tensors are also allowed.</li>
+<li><b>Addition and subtraction</b> of vectors, matrices and tensors, using + and -.
+</li><li><b>Multiplication</b> of matrices using * (note size of matrices must match).
+</li><li><b>Dot product</b> of vectors <tt>[1,2,3].[4,5,6]</tt></li>
+<li><b>Cross product</b> of vectors. The ^ operator is overloaded to be either the cross product: <tt>[1,2,3]^[4,5,6]</tt>
+	or the power operator 2^3. The ^^ operator can be used to force interpretation as a cross product.</li>
+<li>An <tt>ele(vec,index)</tt> function to access the elements of a vector
+	and an <tt>ele(matrix,[index1,index2])</tt> to access an element of a matrix.</li><li>As
+. is used to represent dot product it cannot normally be used inside a
+variable name. This behaviour can be changed by setting a flag in the
+parser.<br>
+        </li>
+
+</ul>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tbody><tr><td align="right"><a href="#top"><img src="../img/top.gif" width="38" height="15" name="top" border="0"></a></td></tr>
+<tr><td bgcolor="#cccccc"><img src="../img/spacer.gif" width="1" height="1"></td></tr>
+</tbody>
+</table>
+
+<h2><a name="VEC"></a>vectorJep</h2>
+<p>
+The use of the package can be illustrated by
+</p><pre>import org.nfunk.jep.*;<br>import org.lsmp.djep.vectorJep.*;<br><br>public class VectorExample {<br>    static VectorJep j;<br>  <br>    public static void main(String args[])    {<br>    	// initialise<br>        j = new VectorJep();<br>        j.addStandardConstants();<br>        j.addStandardFunctions();<br>        j.addComplex();<br>        j.setAllowUndeclared(true);<br>        j.setImplicitMul(true);<br>        j.setAllowAssignment(true);<br><br>		// parse and evaluate each equation in turn<br>		<br>        doStuff("[1,2,3]");               // Value: [1.0,2.0,3.0]<br>        doStuff("[1,2,3].[4,5,6]");       // Value: 32.0<br>        doStuff("[1,2,3]^^[4,5,6]");      // Value: [-3.0,6.0,-3.0]<br>        doStuff("[1,2,3]+[4,5,6]");       // Value: [5.0,7.0,9.0]<br>        doStuff("[[1,2],[3,4]]");         // Value: [[1.0,2.0],[3.0,4.0]]<br>        doStuff("[[1,2],[3,4]]*[1,0]");   // Value: [1.0,3.0]<br>        doStuff("[1,0]*[[1,2],[3,4]]");   // Value: [1.0,2.0]<br>        doStuff("[[1,2],[3,4]]*[[1,2],[3,4]]");   // Value: [[7.0,10.0],[15.0,22.0]]<br>        doStuff("x=[1,2,3]");             // Value: [1.0,2.0,3.0]<br>        doStuff("x+x");                   // Value: [2.0,4.0,6.0]<br>        doStuff("x.x");                 // Value: 14.0<br>        doStuff("x^x");                  // Value: [0.0,0.0,0.0]<br>        doStuff("ele(x,2)");              // Value: 2.0<br>        doStuff("y=[[1,2],[3,4]]");       // Value: [[1.0,2.0],[3.0,4.0]]<br>        doStuff("y * y");                 // Value: [[7.0,10.0],[15.0,22.0]]<br>        doStuff("ele(y,[1,2])");          // Value: 2.0<br>		<br>    }<br>	// parse, evaluate and print the value of the expression <br>    public static void doStuff(String str)    {<br>        try {<br>            Node node = j.parse(str);<br>            Object value = j.evaluate(node);<br>            System.out.println(str + "\tvalue " + value.toString());<br>        }<br>        catch(ParseException e) { System.out.println("Parse error "+e.getMessage()); }<br>        catch(Exception e) { System.out.println("evaluation error "+e.getMessage()); }<br>    }<br>}<br></pre>
+      <h3>Values returned by evaluate</h3>
+
+
+  <p> The values returned by <a href="../../javadoc/org/lsmp/djep/matrixJep/MatrixJep.html#evaluateRaw(org.nfunk.jep.Node)">evaluateRaw(Node 
+    node)</a> or <a href="../../javadoc/org/lsmp/djep/matrixJep/MatrixJep.html#getValueAsObject()">getValueAsObject()</a> 
+    or <a href="../../javadoc/org/lsmp/djep/matrixJep/MatrixJep.html#getVarValue(java.lang.String)">getVarValue(String 
+    name)</a> are one of the types in <a href="../../javadoc/org/lsmp/djep/matrixJep/values/package-summary.html"><tt>org.lsmp.djep.vectorJep.values</tt></a>. 
+    These are: </p>
+  <ul>
+<li><a href="../../javadoc/org/lsmp/djep/vectorJep/values/Scaler.html">Scaler</a> Scaler values.</li>
+<li><a href="../../javadoc/org/lsmp/djep/vectorJep/values/MVector.html">MVector</a> a vector, note the M to distinguish the class from java.util.Vector.</li>
+<li><a href="../../javadoc/org/lsmp/djep/vectorJep/values/Matrix.html">Matrix</a> a matrix.
+</li><li><a href="../../javadoc/org/lsmp/djep/vectorJep/values/Tensor.html">Tensor</a> a tensor of rank 3 or higher.
+</li><li><a href="../../javadoc/org/lsmp/djep/vectorJep/values/MatrixValueI.html">MatrixValueI</a> an interface defining common methods of above.
+</li></ul>
+Several methods are common to all types
+      <a href="../../javadoc/org/lsmp/djep/vectorJep/values/MatrixValueI.html#getDim()">getDim()</a> (returns the dimension of object)
+      <a href="../../javadoc/org/lsmp/djep/vectorJep/values/MatrixValueI.html#getNumEles()">getNumEles()</a> (returns the total number of elements)
+      <a href="../../javadoc/org/lsmp/djep/vectorJep/values/MatrixValueI.html#getEle(int)">getEle(i)</a> (returns the i-th element of the object)
+      <a href="../../javadoc/org/lsmp/djep/vectorJep/values/MatrixValueI.html#setEle(int, java.lang.Object)">setEle(i,value)</a> (sets the value of an element).
+In addition <tt>Matrix</tt> has a <a href="../../javadoc/org/lsmp/djep/vectorJep/values/Matrix.html#getEle(int, int)">getEle(row,col)</a> and a <a href="../../javadoc/org/lsmp/djep/vectorJep/values/Matrix.html#setEle(int, int, java.lang.Object)">setEle(row,col,value)</a>.
+These methods allow the individual elements of vector or matrix to be set and queried.<br>
+      <br>
+The <a href="../../javadoc/org/lsmp/djep/matrixJep/MatrixJep.html#evaluateRaw(org.nfunk.jep.Node)">evaluate(Node node)</a> method behaves the same as <a href="../../javadoc/org/lsmp/djep/matrixJep/MatrixJep.html#evaluateRaw(org.nfunk.jep.Node)">evaluateRaw(Node node)</a><br>
+however if the result is a Scaler then it will be unwrapped and the
+single value will be returned, typically a Double or Complex.<br>
+
+
+
+<h3>Printing with vectorJep</h3>
+<p>
+To keep package size down print facilities are not provided in the
+<tt>org.lsmp.djep.vectorJep</tt> package. However it is easy to include
+them by using the <tt>org.lsmp.djep.xjep.printVisitor</tt> class.
+For example:
+</p><pre>import org.lsmp.djep.xjep.PrintVisitor;<br>....<br>PrintVisitor pv = new PrintVisitor();<br>Node node = j.parse("[1,2,3]");<br>pv.print(node);<br>String str = pv.toString(node);<br></pre>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tbody><tr><td align="right"><a href="#top"><img src="../img/top.gif" width="38" height="15" name="top" border="0"></a></td></tr>
+<tr><td bgcolor="#cccccc"><img src="../img/spacer.gif" width="1" height="1"></td></tr>
+</tbody>
+</table>
+
+<h2><a name="MAT"></a>MatrixJep</h2>
+The MatrixJep package offers the same functionality as the VectorJep
+package however it is implemented in a different manner internally
+which offers a few new features:<br>
+      <ul>
+        <li>A speed improvement - matrix operations are about a third faster.</li>
+        <li>The preprocessing stage is used to calculate the dimension of each node.</li>
+        <li>All the features of the XJep package are enabled.</li>
+        <li>Differentiation is enabled.</li>
+      </ul>
+      <p>It is essential that the <a href="../../javadoc/org/lsmp/djep/matrixJep/MatrixJep.html#preprocess(org.nfunk.jep.Node)">preprocess</a>
+method is called after an equation is parsed. This will find the
+dimensions of each node, process the diff operator and set the
+equations of variables.<br>
+</p>
+      <p>A typical example of the use of this package is: (differences from vectorJep are shown in bold)<br>
+      </p>
+      <pre>import org.nfunk.jep.*;<br><b>import org.lsmp.djep.matrixJep.*;</b><br><b>import org.lsmp.djep.matrixJep.nodeTypes.*; // only needed if you wish <br>                                            // to find the dimension of a node</b><br><br>public class MatrixExample {<br>    static MatrixJep j;<br>  <br>    public static void main(String args[])    {<br>    	// initialise<br>        <b>j = new MatrixJep();</b><br>        j.addStandardConstants();<br>        j.addStandardFunctions();<br>        j.addComplex();<br>        j.setAllowUndeclared(true);<br>        j.setImplicitMul(true);<br>        j.setAllowAssignment(true);<br><br>		// parse and evaluate each equation in turn<br>		<br>        doStuff("[1,2,3]");               // Value: [1.0,2.0,3.0]<br>        doStuff("[1,2,3].[4,5,6]");       // Value: 32.0<br>        doStuff("[1,2,3]^^[4,5,6]");      // Value: [-3.0,6.0,-3.0]<br>        doStuff("[1,2,3]+[4,5,6]");       // Value: [5.0,7.0,9.0]<br>        doStuff("[[1,2],[3,4]]");         // Value: [[1.0,2.0],[3.0,4.0]]<br>        doStuff("[[1,2],[3,4]]*[1,0]");   // Value: [1.0,3.0]<br>        doStuff("[1,0]*[[1,2],[3,4]]");   // Value: [1.0,2.0]<br>        doStuff("[[1,2],[3,4]]*[[1,2],[3,4]]");   // Value: [[7.0,10.0],[15.0,22.0]]<br>        doStuff("x=[1,2,3]");             // Value: [1.0,2.0,3.0]<br>        doStuff("x+x");                   // Value: [2.0,4.0,6.0]<br>        doStuff("x.x");                   // Value: 14.0<br><b>	// ^ can be used to represent the cross product as well as power.<br></b><b>        doStuff("x^x");                   // Value: [0.0,0.0,0.0]<br></b>        doStuff("ele(x,2)");              // Value: 2.0<br>        doStuff("y=[[1,2],[3,4]]");       // Value: [[1.0,2.0],[3.0,4.0]]<br>        doStuff("y * y");                 // Value: [[7.0,10.0],[15.0,22.0]]<br>        doStuff("ele(y,[1,2])");          // Value: 2.0<br><b><br>	// using differentiation<br>	doStuff("x=2");	                  // 2.0<br>	doStuff("y=[x^3,x^2,x]");         // [8.0,4.0,2.0]<br>	doStuff("z=diff(y,x)");	          // [12.0,4.0,1.0]<br>	doStuff("diff([x^3,x^2,x],x)");<br><br>	// Finding the dimension of a variable	<br>	System.out.println("dim(z) "+((MatrixVariableI) j.getVar("z")).getDimensions());<br></b>    }<br>	// parse, evaluate and print the value of the expression <br>    public static void doStuff(String str)    {<br>        try {<br>            Node node = j.parse(str);<br><b>	    Node proc = j.preprocess(node);<br>	    Node simp = j.simplify(proc);<br></b>            Object value = j.evaluate(simp);<br><b>            // Print the equation and its dimension<br>            j.print(simp);<br>            System.out.print("\t dim "+((MatrixNodeI) simp).getDim());<br></b>            System.out.println("\tvalue " + value.toString());<br>        }<br>        catch(ParseException e) { System.out.println("Parse error "+e.getMessage()); }<br>        catch(Exception e) { System.out.println("evaluation error "+e.getMessage()); }<br>    }<br>}<br></pre>
+      <p>Note that in MatrixJep variables and Node have dimensions. Each variable will be of type <a href="../../javadoc/org/lsmp/djep/matrixJep/MatrixVariableI.html">MatrixVariableI</a> and the dimension of this can be found by the <a href="../../javadoc/org/lsmp/djep/matrixJep/MatrixVaraibleI.html#getDim">getDim</a> method. After the <a href="../../javadoc/org/lsmp/djep/matrixJep/MatrixJep.html#preprocess(org.nfunk.jep.Node)">preprocess</a> method is called the nodes in the parse tree all implement <a href="../../javadoc/org/lsmp/djep/matrixJep/nodeTypes/MatrixNodeI.html">MatrixNodeI</a> which have a <a href="../../javadoc/org/lsmp/djep/matrixJep/nodeTypes/MatrixNodeI.html#getDimensions">getDimensions</a> method. Each node also has a object of type <a href="../../javadoc/org/lsmp/djep/vectorJep/values/MatrixValueI.html">MatrixValueI</a> which stores intermediate values. By reusing these objects evaluation speeds are increased by a third.<br>
+      </p>
+
+
+
+
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tbody><tr><td align="right"><a href="#top"><img src="../img/top.gif" width="38" height="15" name="top" border="0"></a></td></tr>
+<tr><td bgcolor="#cccccc"><img src="../img/spacer.gif" width="1" height="1"></td></tr>
+</tbody>
+</table>
+
+
+  <!-- #EndEditable -->
+<br/>
+<br/>
+<br/>
+  <div id="footer"> &copy; 2006 Singular Systems</div>
+</div>
+</body>
+<!-- #EndTemplate --></html>

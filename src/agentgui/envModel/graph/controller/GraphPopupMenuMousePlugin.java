@@ -74,7 +74,9 @@ public class GraphPopupMenuMousePlugin<V, E> extends AbstractPopupGraphMousePlug
      * @param e 
      */
     protected void handlePopup(MouseEvent e) {
-        final VisualizationViewer<V,E> vv = (VisualizationViewer<V,E>)e.getSource();
+        
+    	@SuppressWarnings("unchecked")
+		final VisualizationViewer<V,E> vv = (VisualizationViewer<V,E>)e.getSource();
         Point2D p = e.getPoint();
         
         GraphElementAccessor<V,E> pickSupport = vv.getPickSupport();

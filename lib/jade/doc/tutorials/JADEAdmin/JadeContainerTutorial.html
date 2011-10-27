@@ -1,0 +1,91 @@
+<html>
+
+	<head>
+		<meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
+		<meta name="generator" content="Adobe GoLive 5">
+		<title>Tutorial 3. Creating a distributed platform</title>
+		<link rel="stylesheet" href="../cps.css">
+	</head>
+
+	<body bgcolor="#d3d3d3">
+	
+		<a href="index.html">Table of contents</a><br>
+		<a href="JadePlatformTutorial.html">Next</a><br>
+		<a href="startJade.html">Previous</a><br>
+		<hr>
+		
+		<h1>Tutorial 3. Creating a distributed platform</h1>
+		<p>In previous section we shown how to start the JADE Main Container. In this tutorial we will see how to 
+		start peripheral containers thus creating a distributed JADE platform. 
+		</p>
+		<h2>Multiple Containers on one Computer</h2>
+		<p>Keep the Main Container activated in <a href="startJade.html">Tutorial 2</a> on, then open another shell,
+		move to the <tt>jade</tt> directory and type<br>
+		<br>		
+		<tt>java -cp lib\jade.jar;classes jade.Boot -container</tt><br>
+		<br>
+		An output similar to that presented in previous section appears. If you look at the RMA GUI (i.e. the 
+		Management Console), beside the Main Container, you will see a new container called <tt>Container-1</tt>
+		as depicted below.<br>
+		<br>
+		<img src="images/jadeGUI2Containers.png"  border="0"><br>
+		<b>Figure 1. Multiple containers in the JADE Management Console</b>
+		</p> 
+		    
+		<p>The <tt>-container</tt> option tells JADE to start a peripheral container instead of a Main Container.
+		A peripheral container cannot live "alone" and must connect to a Main Container at startup. Therefore 
+		typically it is necessary to tell it where to find the Main Container to connect to. This is done by 
+		means of the <tt>-host &lt;host-name&gt;</tt> and <tt>-port &lt;port-number&gt;</tt>. In our case it was 
+		not necessary to specify such options as the Main Container is running on the local host and on the JADE 
+		default port <tt>1099</tt>. Therefore the command line we typed is fully equivalent to<br>
+		<br>		
+		<tt>java -cp lib\jade.jar;classes jade.Boot -container -host localhost -port 1099</tt><br>
+		</p>
+		<h3>Try out the agents</h3>
+		<p>In the RMA window select the newly created container <tt>Container-1</tt> and then launch a DummyAgent
+		clicking on the <tt>Start DummyAgent</tt> button as we did in <a href="startJade.html">previous section</a>.
+		The DummyAgent GUI appears, but, unlike the previous section, this time you will see that the DummyAgent
+		is running in <tt>Container-1</tt>. You can try sending messages from the DummyAgent to the two PingAgents 
+		<tt>ping1</tt> and <tt>ping2</tt> running in the Main Container.
+		</p> 
+
+		<p>Invoke the DummyAgent and use it to send a message to ping0 in the same way as was done in Tutorial 1. (Fill in the receivers=ping0@Frodo:1099/JADE, communicative act=QUERY-REF, Content=ping) If you examine the return message it is the same as in Tutorial 1, namely &quot;(pong)&quot; or &quot;alive&quot;, depending on your JADE version..</p>
+		<p>Try changing the commutative act to INFORM and send the message to ping0. You will get a NOT-UNDERSTOOD reply. Look at the content of this message for an example of the SL&nbsp;language constructed by JADE.</p>
+		
+		<h2>Remote Containers</h2>
+		<p>Up to now we created a JADE platform distributed over two processes running in the same host. 
+		Now we will create another container on a second computer thus obtaining a fully distributed platform.<br>
+		For the sake of simplicity let's assume the host where we worked up to now (i.e. the one we started our 
+		Main Container and our peripheral container <tt>Container-1</tt> on) is called <tt>frodo</tt>. Let's also 
+		assume we have a second host called <tt>bilbo</tt> networked with the first one.<br>
+		Move to <tt>bilbo</tt> and unzip the JADE binary, source and examples distribution somewhere as you did 
+		in <tt>frodo</tt>. Then compile the examples opening a shell, moving to the <tt>jade</tt> directory and typing<br>
+		<br>
+		<tt>ant examples</tt><br>
+		<br>
+		Finally launch a new peripheral container connecting to the Main Container in 
+		<tt>frodo</tt> with a third PingAgent called <tt>ping3</tt> on top by typing the command line below<br>
+		<br>  
+		<tt>java -cp lib\jade.jar;classes jade.Boot -container -host frodo -port 1099 -agents ping3:examples.PingAgent.PingAgent</tt><br>
+		<br>
+		The usual JADE runtime output saying that a container called <tt>Container-2</tt> is up and running should 
+		appear. Looking at the RMA GUI in <tt>frodo</tt> you should see a situation similar to that depicted in Figure2.<br>
+		<br>
+		<img src="images/jadeGUI3Containers.png"  border="0"><br>
+		<b>Figure 2. The JADE Management Console showing a distributed platform</b>
+		</p> 
+		<p>Using the DummyAgent in <tt>frodo</tt> send a message to the <tt>ping3</tt> PingAgent in <tt>bilbo</tt>
+		and check that <tt>ping3</tt> replies as expected. Finally using the RMA Management Console in 
+		<tt>frodo</tt> start a forth PingAgent in <tt>bilbo</tt>: as we did in previous section right-click on 
+		<tt>Container-2</tt>, select <tt>Start New Agent</tt>, insert the name and fully qualified class name in the 
+		<tt>Start New Agent</tt> dialog box and press <tt>OK</tt>.
+		</p>
+		  
+		
+		<hr>
+		<a href="index.html">Table of contents</a><br>
+		<a href="JadePlatformTutorial.html">Next</a><br>
+		<a href="startJade.html">Previous</a><br>
+	</body>
+
+</html>

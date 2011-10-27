@@ -188,9 +188,9 @@ public class CoreWindow extends JFrame implements ComponentListener {
 		// --- Standardeinstellungen ---
 		this.setJMenuBar(this.getJMenuBarBase());
 		
-		this.add( getJToolBarApplication(), BorderLayout.NORTH );
-		this.add( getStatusBar(), BorderLayout.SOUTH );
-		this.add( getMainSplitpane() );
+		this.add(getJToolBarApplication(), BorderLayout.NORTH);
+		this.add(getStatusBar(), BorderLayout.SOUTH);
+		this.add(getMainSplitpane());
 		this.setSize(1150, 640);	
 		
 		// --- Listener für das Schließen der Applikation ----
@@ -355,10 +355,9 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	 * @param show the new console visible
 	 */
 	private void setConsoleVisible(boolean show) {
-		// --- Ein- und ausblenden der Console --------------------
+
 		if (show == true) {
 			// --- System.out.println("Console einblenden ...");
-			jSplitPane4ProjectDesktop.setBottomComponent(this.getJTabbedPane4Console());
 			jSplitPane4ProjectDesktop.setDividerLocation(oldDividerLocation);
 			jSplitPane4ProjectDesktop.setDividerSize(10);
 			
@@ -367,7 +366,6 @@ public class CoreWindow extends JFrame implements ComponentListener {
 			oldDividerLocation = jSplitPane4ProjectDesktop.getDividerLocation(); 
 			jSplitPane4ProjectDesktop.setDividerSize(0);
 			jSplitPane4ProjectDesktop.setDividerLocation(jSplitPane4ProjectDesktop.getHeight());			
-			jSplitPane4ProjectDesktop.remove(this.getJTabbedPane4Console());
 		}
 		this.validate();
 		if ( Application.Projects.count() != 0 ) {
@@ -407,7 +405,7 @@ public class CoreWindow extends JFrame implements ComponentListener {
 			jSplitPane4ProjectDesktop.setResizeWeight(1);
 			jSplitPane4ProjectDesktop.setOneTouchExpandable(true);
 			jSplitPane4ProjectDesktop.setTopComponent(getJDesktopPane4Projects());			
-			//jSplitPane4ProjectDesktop.setBottomComponent(getJTabbedPane4Console());
+			jSplitPane4ProjectDesktop.setBottomComponent(getJTabbedPane4Console());
 			jSplitPane4ProjectDesktop.addPropertyChangeListener(new PropertyChangeListener() {
 				@Override
 				public void propertyChange(PropertyChangeEvent EventSource) {

@@ -1,0 +1,158 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<title>Description of the examples</title>
+<link rel="stylesheet" type="text/css" href="stylesheet.css"
+title="Style">
+<!-- created by Alessandro Beneventi, Universita' degli Studi di Parma -->
+<!--            alessandro.beneventi@re.nettuno.it                     -->
+</head>
+
+<body bgcolor="#FFFFFF" text="#000000" link="#0000FF"
+vlink="#0000FF" alink="#0000FF">
+
+<table border="0" cellspacing="0" width="100%">
+    <tr>
+        <td bgcolor="#EEEEFF" id="NavBarCell1"><a
+        name="navbar_top_firstrow"></a> <table border="0"
+        cellpadding="0" cellspacing="3">
+            <tr>
+                <td align="center" valign="top" bgcolor="#EEEEFF"
+                id="NavBarCell1">Sections:</td>
+                <td align="center" valign="top" bgcolor="#EEEEFF"
+                id="NavBarCell1"><a href="../index.html"><b>Index</b></a></td>
+                <td align="center" valign="top" bgcolor="#FFFFFF"
+                id="NavBarCell1Rev">&nbsp;<b>Introduction</b></td>
+                <td align="center" valign="top" bgcolor="#EEEEFF"
+                id="NavBarCell1"><b>More Info.</b></td>
+                <td align="center" valign="top" bgcolor="#EEEEFF"
+                id="NavBarCell1"><b>Visual Index</b></td>
+                <td align="center" valign="top" bgcolor="#EEEEFF"
+                id="NavBarCell1"><a href="../api/index.html"><b>Class
+                by Class</b></a></td>
+                <td align="center" valign="top" bgcolor="#EEEEFF"
+                id="NavBarCell1"><a href="../links.htm"><b>Links</b></a></td>
+            </tr>
+        </table>
+        </td>
+        <td align="right" valign="top" rowspan="2">&nbsp;</td>
+    </tr>
+</table>
+
+<p><font size="6"><b>Description of the examples</b></font> </p>
+
+<p><span lang="EN-GB"> <br>
+<font face="Arial,Helvetica">Some examples are distributed with
+the JADE software, that&nbsp; show how to use some of the JADE
+features and some suggested programming idioms.&nbsp;&nbsp;</font>
+</span></p>
+
+<p> <font face="Arial,Helvetica"><span lang="EN-GB"> All the examples must be
+compiled because only their source code has been distributed. The ant file 'build.xml'
+in the JADE root directory includes the target 'examples' that allows to compile
+the examples by using the 'ant' program (i.e. just type </span></font>'ant
+examples').<font face="Arial,Helvetica"><span lang="EN-GB">&nbsp;</span></font></p>
+
+<p><span lang="EN-GB"><font face="Arial,Helvetica">In order to run the examples,&nbsp; 
+  set the CLASSPATH environment variable to contain the files </font><font face="Courier">jade.jar, 
+  commons-codec/commons-codec-1.3.jar</font><font face="Arial,Helvetica"> 
+  and the directory where the </font><font face="Courier">.class</font><font
+face="Arial,Helvetica"> files of the examples have been generated, usually&nbsp; 
+  ('.').&nbsp; All example agent classes belong to subpackages of the 'examples' 
+  package, refer to the various example agents with a fully qualified package 
+  name; for example, class ComplexBehaviourAgent in 'behaviours' subdirectory 
+  of 'examples' directory must be started&nbsp; via the following command line:</font> 
+  </span></p>
+<span lang="EN-GB"> 
+<p><font face="Arial,Helvetica">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; java jade.Boot 
+  -platform agent1:examples.behaviours.ComplexBehaviourAgent</font> </p>
+<p><font face="Arial,Helvetica">The following is the list of all the example programs 
+  distributed in the 'src/examples' directory.</font> </p>
+<p><font face="Arial,Helvetica"><b>Basic features.</b></font> </p>
+<ul>
+  <li><a href="hello.html"><font face="Arial,Helvetica">Hello World</font></a><font
+        face="Arial,Helvetica">: Shows a minimal agent printing "Hello World!" 
+    and then terminating.</font></li>
+  <li><a href="behaviours.html"><font face="Arial,Helvetica">Behaviours</font></a><font
+        face="Arial,Helvetica">: Includes examples showing the usage of simple 
+    and composite behaviours.</font></li>
+  <li><a href="messaging.html"><font face="Arial,Helvetica">Messaging</font></a><font
+        face="Arial,Helvetica">: Includes examples showing how to make JADE agents 
+    communicate.</font></li>
+  <li><a href="yellowPages.html"><font face="Arial,Helvetica">Yellow Pages</font></a><font
+        face="Arial,Helvetica">: Includes examples showing how to use the Yellow 
+    Pages service provided by the DF agent.</font></li>
+  <li><span lang="EN-GB"><a href="topic.html"><font face="Arial,Helvetica">Topic-based 
+    communication </font></a><font
+        face="Arial,Helvetica">: Includes examples showing how to use the topic-based 
+    message delivery mechanism introduced with release 3.5.</font></span></li>
+  <li><a href="bookTrading.html"><font face="Arial,Helvetica">Book Trading</font></a><font
+        face="Arial,Helvetica">, Shows a very simple multi agent system for trading 
+    books online.</font></li>
+</ul>
+<p><font face="Arial,Helvetica"><b>Advanced features.</b></font> </p>
+<ul>
+  <li><a href="protocols.html"><font face="Arial,Helvetica">Protocols</font></a><font
+        face="Arial,Helvetica">, Includes examples showing the usage of the support 
+    provided by JADE for interaction protocols.</font></li>
+  <li><a href="ontology.html"><font face="Arial,Helvetica">Ontology</font></a><font
+        face="Arial,Helvetica">, this example shows how to use the support for 
+    application specific ontologies.</font></li>
+  <li><a href="inprocess.html"><font face="Arial,Helvetica">In Process</font></a><font face="Arial,Helvetica">, 
+    this example shows the usage of the jade.wrapper package to start a JADE runtime 
+    and control a number of agents from an external application.&nbsp;</font></li>
+  <li><a href="Base64.html"><font face="Arial,Helvetica">Base 64</font></a><font face="Arial,Helvetica">, 
+    this example shows how to encode serialized Java objects into the content 
+    of an ACLMessage; it also shows how to force the platform to use bit-efficient 
+    and/or XML ACLCodec.</font></li>
+  <li><a href="mobile.html"><font face="Arial,Helvetica">Mobile</font></a><font
+        face="Arial,Helvetica">, this is an example of a mobile agent.</font></li>
+</ul>
+<p><font face="Arial,Helvetica"><b>Using JADE with other technologies.</b></font> 
+</p>
+<ul>
+  <li><a href="jsp.html"><font face="Arial,Helvetica">JSP</font></a><font
+        face="Arial,Helvetica">, this is an example of integration of JADE and 
+    JSP kindly provided by Daniel Le Berre. Look at the </font><a
+        href="../tutorials/jsp/JADE4JSP.html"><font
+        face="Arial,Helvetica">tutorial</font></a><font
+        face="Arial,Helvetica"> in the documentation.</font></li>
+  <li><a href="Jess.html"><font face="Arial,Helvetica">Jess</font></a><font
+        face="Arial,Helvetica">, is a sample agent that allows the programmer 
+    to avoid writing any line of Java code and implement everything in CLIPS by 
+    using JESS.</font></li>
+  <li><a href="JadeJessProtege.html"><font
+        face="Arial,Helvetica">JadeJessProtege</font></a><font
+        face="Arial,Helvetica">, this package includes examples for a closer integration 
+    of JADE with JESS, optionally also with protege.</font></li>
+</ul>
+<p><font face="Arial,Helvetica"><b>Simple applications.</b></font></p>
+<ul>
+  <li><a href="thanksAgent.html"><font face="Arial,Helvetica">ThanksAgent</font></a><font
+        face="Arial,Helvetica">, this example shows an agent that creates some 
+    other agents and has a simple conversation with them</font></li>
+  <li><font face="Arial,Helvetica"><a href="party.html">Party</a>, this is an 
+    example of a simple multi-agent application where an host sets a party and 
+    invite a number of guests</font></li>
+  <li><font face="Arial,Helvetica"><a href="../../demo/MeetingScheduler.html">MeetingScheduler</a>, 
+    this is a simple demo of a MeetingScheduler multi-agent system</font></li>
+  <li><a href="PingAgent.html"><font face="Arial,Helvetica">The Agentcities PingAgent</font></a><font
+        face="Arial,Helvetica">, this directory contains a simple Ping Agent.</font></li>
+</ul>
+</span> 
+<hr>
+
+<p align="left"><a href="http://jade.cselt.it/"><font face="Arial" size="2">JADE</font></a><font face="Arial" size="2">
+is a trademark of <a href="http://www.telecomitalialab.com">TILAB</a> (formerly </font><a href="http://www.cselt.it"><font face="Arial" size="2">CSELT</font></a><font face="Arial" size="2">).&nbsp;</font><a href="http://jade.cselt.it/"><font face="Arial" size="2"><br>
+JADE</font></a><font face="Arial" size="2"> has been developed jointly by <a href="http://www.telecomitalialab.com">TILAB</a>
+(formerly </font><a href="http://www.cselt.it"><font face="Arial" size="2">CSELT</font></a><font face="Arial" size="2">)
+and the </font><a href="http://www.ce.unipr.it"><font face="Arial" size="2">Computer
+Engineering Group</font></a><font face="Arial" size="2"> of the </font><a href="http://www.unipr.it"><font face="Arial" size="2">University
+of Parma</font></a> </p>
+
+</body>
+</html>

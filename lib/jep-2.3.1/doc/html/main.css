@@ -1,0 +1,131 @@
+BODY  {
+	BACKGROUND-COLOR : #fff;
+	COLOR : #000;
+	FONT-FAMILY : Verdana, Arial, Helvetica, sans-serif;
+	FONT-SIZE : 10pt;
+}
+
+TD  {
+	FONT-FAMILY : Verdana, Arial, Helvetica, sans-serif;
+	FONT-SIZE : 10pt;
+}
+
+A  {
+	FONT-FAMILY : Verdana, Arial, Helvetica, sans-serif;
+	COLOR : #036;
+	FONT-SIZE : 10pt;
+}
+
+A:VISITED {
+	color : #009;
+}
+
+A:HOVER {
+	color : #33f;
+}
+
+P  {
+	FONT-FAMILY : Verdana, Arial, Helvetica, sans-serif;
+	FONT-SIZE : 10pt;
+	margin-top: 0px;
+	padding-top: 0px;
+}
+
+H1  {
+	COLOR : #003;
+	FONT-FAMILY : Arial, Helvetica, sans-serif;
+	FONT-SIZE : 15pt;
+	FONT-WEIGHT : bold;
+	margin-bottom: 20px;
+	padding-bottom: 0px;
+	border-bottom: solid;
+	border-width: 1px;
+	border-color: #ccc;
+}
+
+H2  {
+	COLOR : #036;
+	FONT-FAMILY : Arial, Helvetica, sans-serif;
+	FONT-SIZE : 13pt;
+	margin-bottom: 0px;
+	padding-bottom: 0px;
+}
+
+H3  {
+	COLOR : #369;
+	FONT-FAMILY : Arial, Helvetica, sans-serif;
+	FONT-SIZE : 12pt;
+	margin-bottom: 5px;
+	padding-bottom: 0px;
+}
+
+OL  {
+	FONT-FAMILY : Verdana, Arial, Helvetica, sans-serif;
+	FONT-SIZE : 10pt;
+}
+
+UL  {
+	FONT-FAMILY : Verdana, Arial, Helvetica, sans-serif;
+	FONT-SIZE : 10pt;
+}
+
+LI  {
+	FONT-FAMILY : Verdana, Arial, Helvetica, sans-serif;
+	FONT-SIZE : 10pt;
+}
+
+pre {  font-size: 10pt}
+
+/*-- navcontainer ----------------------------------------------*/
+
+#navcontainer {
+	position:absolute;
+	top:12px;
+	left:12px;
+	width:120px;
+	border:1px solid #999;
+	/*border-right:1px solid #999;*/
+}
+
+#navcontainer ul {
+	margin:0;
+	padding:0;
+	font-size:14px;
+	font-weight:bold;
+	color:#000;
+	background:#fff;
+}
+
+#navcontainer ul li {
+	display:inline;
+}
+
+#navcontainer ul li a {
+	display:block;
+	padding:5px 5px;
+	color:#000;
+	background:#fff;
+	text-decoration:none;
+}
+
+#navcontainer ul li a:hover {
+	color:#fff;
+	background:#036;
+}
+
+/*-- centercontent ----------------------------------------------*/
+										
+#centercontent {
+	width:500px;
+	text-align:left;
+	margin-left:150px;
+	margin-right:auto;
+}
+
+
+/*-- centercontent ----------------------------------------------*/
+										
+#footer {
+	border-top:1px solid #999;
+	color:#333;
+}

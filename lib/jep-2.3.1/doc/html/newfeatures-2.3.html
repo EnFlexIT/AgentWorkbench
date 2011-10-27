@@ -1,0 +1,151 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><html><!-- #BeginTemplate "/Templates/maintemplate.dwt" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- #BeginEditable "doctitle" --><title>JEP - Java Math Expression Parser</title><!-- #EndEditable --> 
+<link rel="stylesheet" type="text/css" href="main.css" title="style1">
+</head>
+
+<body>
+<!-- #BeginEditable "Sub%20Menu" --> <!-- #BeginLibraryItem "/Library/Docu Menu.lbi" --><!-- NAVIGATION ---------------------------------------------------- -->
+<div id="navcontainer">
+<ul>
+<li><a href="../javadoc/index.html" target="_blank">JavaDoc*</a></li>
+</ul>
+
+<hr/>
+
+<ul>
+<li><a href="index.html">Usage</a></li>
+<li><a href="op_and_func.html">Operators &amp; Functions</a></li>
+<li><a href="grammar.html">Grammar</a></li>
+<li><a href="cust_func.html">Custom Functions</a></li>
+<li><a href="newfeatures-2.3.html">New Features</a></li>
+<li><a href="faq.html">FAQ</a></li>
+<li><a href="version.html">Version History</a></li>
+</ul>
+
+<hr/>
+
+<ul>
+<li><a href="djep/index.html">DJEP</a></li>
+<li><a href="djep/XJep.html">XJep</a></li>
+<li><a href="djep/DJep.html">Differentiation</a></li>
+<li><a href="djep/groups.html">Groups</a></li>
+<li><a href="djep/VectorJep.html">Vectors &amp; Matrices</a></li>
+<li><a href="djep/version.html">Version History</a></li>
+</ul>
+</div><!-- #EndLibraryItem --><!-- #EndEditable -->
+<div id="centercontent">
+<!-- #BeginEditable "Text" --> 
+  <h1><a name="top"></a>New Features in JEP 2.3</h1>
+  <table cellpadding="2" cellspacing="2" border="0" width="100%">
+    <tbody> 
+    <tr> 
+      <td valign="top"><b>Feature</b></td>
+      <td valign="top"><b>Package (JavaDoc)</b></td>
+    </tr>
+    <tr> 
+      <td valign="top"><a href="#ASSIGN">Assignment</a></td>
+      <td valign="top"><a href="../javadoc/org/nfunk/jep/package-summary.html">org.nfunk.jep.*</a></td>
+    </tr>
+    <tr> 
+      <td valign="top"><a href="#SYNTAX">New Syntax for parsing and evaluation</a> 
+        (allows several expressions to be used simultaneously)</td>
+      <td valign="top"><a href="../javadoc/org/nfunk/jep/package-summary.html">org.nfunk.jep.*</a></td>
+    </tr>
+    <tr> 
+      <td valign="top"><a href="#FUN">New Functions</a></td>
+      <td valign="top"><a href="../javadoc/org/nfunk/jep/package-summary.html">org.nfunk.jep.*</a></td>
+    </tr>
+    <tr> 
+      <td valign="top">Changes to ways <a href="#VAR">variables</a> are implemented.</td>
+      <td valign="top"><a href="../javadoc/org/nfunk/jep/package-summary.html">org.nfunk.jep.*</a></td>
+    </tr>
+    </tbody> 
+  </table>
+  <br>
+  <h2>Additional features and changes to the core JEP package</h2>
+  <h2><a name="ASSIGN"></a>Assignment</h2>
+  <p> Assignment allows the values of variables to be set by using the <tt>=</tt> 
+    operator in equations so it is possible to do something like <tt>x=3</tt> 
+    then <tt>y=x^2</tt> and <tt>y</tt> will have the value 9. Assignment can be 
+    used with the standard JEP package, there is no need to use any of the packages 
+    in the org.lsmp.djep tree. To switch on assignment facilities the <a href="../javadoc/org/nfunk/jep/JEP.html#setAllowAssignment(boolean)">setAllowAssignment</a> 
+    method of the main JEP object should be called. </p>
+  <pre>// standard initialisation<br>JEP j = new JEP();<br>j.addStandardConstants();<br>j.addStandardFunctions();<br>j.addComplex();<br>j.setAllowUndeclared(true);<br>j.setImplicitMul(true);<br><br>// switch assignment facilities on<br>j.setAllowAssignment(true);<br><br>// parse assignment equations<br>j.parseExpression("x=3");<br>// evaluate it - no need to save the value returned (unless you want to)<br>j.getValueAsObject();<br>// parse a second equation<br>j.parseExpression("y=2");<br>j.getValueAsObject();<br><br>// an equation involving above variables<br>j.parseExpression("x^y");<br>Object val3 = j.getValueAsObject();<br>System.out.println("Value is "+val3);<br></pre>
+  <!-- #BeginLibraryItem "/Library/top%20bar.lbi" --><table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr>
+    <td align="right"><a href="#top"><img src="img/top.gif" width="38" height="15" name="top" border="0"></a></td>
+</tr>
+<tr>
+ <td bgcolor="#CCCCCC"><img src="img/spacer.gif" width="1" height="1"></td></tr></table>
+ <br><br><!-- #EndLibraryItem --> 
+  <h2><a name="SYNTAX"></a>Alternate syntax</h2>
+  <p>A couple of utility functions have been added to the make it easier to work 
+    with a set of related equations. These are: </p>
+  <pre>public Node <a href="../javadoc/org/nfunk/jep/JEP.html#parse(java.lang.String)">parse(String expression)</a> throws ParseException<br>public Object <a href="../javadoc/org/nfunk/jep/JEP.html#evaluate(org.nfunk.jep.Node)">evaluate(Node node)</a> throws Exception<br></pre>
+  which parse and evaluate the expression. These can be used like 
+  <pre>try<br>{<br>	// Alternative syntax<br>	Node node1 = j.parse("z=i*pi");<br>	j.evaluate(node1);<br>	Node node2 = j.parse("exp(z)");<br>	Object val2 = j.evaluate(node2);<br>	System.out.println("Value: "+val2);<br>}<br>catch(ParseException e)	{<br>	System.out.println("Error with parsing");<br>}<br>catch(Exception e)	{<br>	System.out.println("Error with evaluation");<br>}</pre>
+  <p>Hence its a bit easier to keep track of a number of equations. Note that 
+    using this syntax Exceptions need to be caught and the <a href="../javadoc/org/nfunk/jep/JEP.html#getTopNode()">getTopNode()</a> 
+    method will not return meaningful results. 
+  <!-- #BeginLibraryItem "/Library/top%20bar.lbi" --><table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr>
+    <td align="right"><a href="#top"><img src="img/top.gif" width="38" height="15" name="top" border="0"></a></td>
+</tr>
+<tr>
+ <td bgcolor="#CCCCCC"><img src="img/spacer.gif" width="1" height="1"></td></tr></table>
+ <br><br><!-- #EndLibraryItem --> 
+  <h2><a name="FUN"></a>New Functions</h2>
+  A number of new functions have been added to the standard list of functions. 
+  These are:<br>
+  <ul>
+    <li><tt>if(a,b,c)</tt> if a is positive gives the value of b, otherwise (zero 
+      or negative) gives the value of c.</li>
+    <li><tt>exp(x)</tt> calculates the exponential e^x of a number.<br>
+    </li>
+    <li><tt>str(x)</tt> converts a number to its string representation.</li>
+    <li><tt>arg(z)</tt> returns the argument of a complex number z.</li>
+    <li><tt>cmod(z)</tt> returns the modulus of a complex number z.</li>
+    <li><tt>complex(x,y)</tt> converts a pair of real numbers into a complex number 
+      x + i y.</li>
+    <li><tt>polar(r,theta)</tt> converts a radius and argument to a complex number 
+      z = r * e^(i theta).</li>
+  </ul>
+  <!-- #BeginLibraryItem "/Library/top%20bar.lbi" --><table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr>
+    <td align="right"><a href="#top"><img src="img/top.gif" width="38" height="15" name="top" border="0"></a></td>
+</tr>
+<tr>
+ <td bgcolor="#CCCCCC"><img src="img/spacer.gif" width="1" height="1"></td></tr></table>
+ <br><br><!-- #EndLibraryItem --> 
+  <h2><a name="VAR"></a>Working 
+    with variables</h2>
+  <p> The value of a variable can be set and queried using the <a href="../javadoc/org/nfunk/jep/JEP.html#setVarValue(java.lang.String, java.lang.Object)">setVarValue</a> 
+    and <a href="../javadoc/org/nfunk/jep/JEP.html#getVarValue(java.lang.String)">getVarValue</a> 
+    methods of the jep instance. A further method <a href="../javadoc/org/nfunk/jep/JEP.html#getVar(java.lang.String)">getVar</a> 
+    returns an object representing the variable. </p>
+  <pre>JEP j = new JEP();<br>try {<br>    Node node = j.parse("z=x^y");<br>    j.setVarValue("x",new Double(2));<br>    j.setVarValue("y",new Double(3));<br>    j.evaluate(node);<br>    System.out.println(j.getVarValue("z")); // prints 8<br>} catch .....<br></pre>
+  <p>The SymbolTable class now stores objects representing variables rather than 
+    just their values and the <a href="../javadoc/org/nfunk/jep/SymbolTable.html#get(java.lang.Object)">get</a> 
+    and <a href="../javadoc/org/nfunk/jep/SymbolTable.html#put(java.lang.Object, java.lang.Object)">put</a> 
+    methods of this class are deprecated. This results in a slight speed up during 
+    evaluation.<br>
+  </p>
+  <p>Variables can be constants which cannot have their values changed. To add 
+    a new constant use <a href="../javadoc/org/nfunk/jep/JEP.html#addConstant(java.lang.String, java.lang.Object)">addConstant</a> 
+    to add a mutable variable use&nbsp;<a href="../javadoc/org/nfunk/jep/JEP.html#addVariable(java.lang.String, java.lang.Object)">addVariable</a>.</p>
+  <!-- #BeginLibraryItem "/Library/top%20bar.lbi" --><table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr>
+    <td align="right"><a href="#top"><img src="img/top.gif" width="38" height="15" name="top" border="0"></a></td>
+</tr>
+<tr>
+ <td bgcolor="#CCCCCC"><img src="img/spacer.gif" width="1" height="1"></td></tr></table>
+ <br><br><!-- #EndLibraryItem --><!-- #EndEditable -->
+<br/>
+<br/>
+<br/>
+  <div id="footer"> &copy; 2006 Singular Systems</div>
+</div>
+</body>
+<!-- #EndTemplate --></html>

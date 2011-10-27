@@ -1,0 +1,135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+
+	<head>
+		<meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
+		<meta name="generator" content="Adobe GoLive 6">
+		<title>JADE and JBuilder</title>
+	</head>
+
+	<body bgcolor="#d3d3d3" text="black">
+		<h1>Tutorial 5: Integrating JBuilder with&nbsp;JADE</h1>
+		<h2>Introduction</h2>
+		<p>[Note: This tutorial is quite detailed and assumes very no knowledge of JBuilder and only a little of JADE. If you find such verbose tutorials boring, or you just want a quick review, click <a href="jadeJbuilderQuick.html">Fast Forward</a> for a summary exposition.]</p>
+		<p>I have programmed JADE using a ordinary text editor (TextPad on Windows 2000) and running JADE from the console. I have, however, eyed those fancy Java IDEs from Borland (JBuilder), Sun (Forte for Java), and IBM (Visual Agen for Java). The incentive has usually been the need for an agent with a GUI. Programming swing things such as GridBagLayouts can be tedious. These IDEs let you draw the UI and then they generate the code to implement the properties of the components you have drawn. Much more fun!</p>
+		<p>So, one way to take advantage of these (free!) IDEs with JADE is to simply use them to draw GUIs and then use the code with other code (non-graphic) code written with your trusty text editor. For this purpose I believe JBuilder is the best choice as it seems to generate the cleanest code, putting all the generated code in clearly defined places, which makes it easy to read and understand (and maybe modify).</p>
+		<p>But, wouldn't it be nice to take advantage of many other convenient features provided by these IDEs when developing the whole of your agent system, not just the GUI parts. This is indeed possible. This tutorial shows one way to do it using JBuilder.</p>
+		<h2>Getting and Installing JBuilder</h2>
+		<p>You can obtain the free JBuilder Personal from, http://www.borland.com/jbuilder/personal/index.html. For Windows it comes in a 59MB zip file. For UNIX systems (various) it comes in a 71MB .tar.gz file. It also comes in 5 human language versions. On MS Windows you unzip it into a temp folder and then run the install program. JBuilder comes with its own JRE.</p>
+		<p>To run JBuilder you must install a file containing a key in your home directory. This is emailed to you when you register with Borland. I comes with documentation telling you what JBuilder considers to be your home directory on the various operating systems.</p>
+		<h2>Making the JADE Libraries Known to JBuilder</h2>
+		
+<p>The JADE main libraries are jade.jar, jadeTools.jar, iiop.jar, and commons-codec-1.3.jar. 
+  You may also want to include some add-ons such as http.jar (and crimson.jar). 
+  To allow JBuilder to access these, do the following: (This step only needs to 
+  be done once.)</p>
+		<p>Click Tools-&gt;Configure Libraries. This window pops up:</p>
+		<p><img src="images/jb_lib_conf_win.gif" alt="" height="471" width="717" border="0"></p>
+		<p>Select User Home and click the New button. Another window pops up:</p>
+		<p><img src="images/jb_lib_add.gif" alt="" height="432" width="558" border="0"></p>
+		
+<p>Fill a name, e.g., JadeLib but leave the location alone. Click the Add button 
+  and navigate to, and select, the jade.jar file on your system. Click OK in the 
+  file window. Repeat the process for jadeTools.jar, iiop.jar, commons-codec-1.3.jar, 
+  and any JADE add-ons you like. (These can be added any time later.) When the 
+  libraries have been added you get this:</p>
+		<p><img src="images/jb_lib_add_finished.gif" alt="" height="432" width="558" border="0"></p>
+		<p>Click OK. And on the previous window, also click OK. Now JBuilder knows about JADE. However, you still have to tell your projects about JADE.</p>
+		<h3>JADE API Documentation</h3>
+		<p>Of course you can look at this by pointing your browser at, for example, c:\jade\docs\api\index.html. But you can also, if you wish, integrate the API docs into JBuilder.</p>
+		<p>Go to Tools-&gt;Config Libraries and choose the Documentation tab. Click the Add button and navigate to the directory c:\jade\docs\api (or the equivalent on your system. Click the OK button (on each window). JBuilder should now be able to see the JADE API docs.</p>
+		<p>In the JBuilder editor you should be able to access the documentation of a JADE class by placing the cursor inside the class (or method) name and pressing F1. (It may take a little time the first time you do this.) Of course you have to have spelled the name correctly!</p>
+		<p></p>
+		<h2>Compiling JADE in JBuilder</h2>
+		<p>First of all, clear out any old project. Choose:</p>
+		<ul>
+			<li>File-&gt;Close Project
+		</ul>
+		<p>Next, start a new project. Doing this the standard way may not be exactly what you want in JADE. JBuilder initially creates a default application consisting of two files. One is a simple class with a Java main() method. The second file contains a subclass of JFrame. You can run this simple system right away, creating an empty window in the centre of the screen.</p>
+		<p>You could of course use these files. The JFrame subclass  could be beefed up to create an agent's GUI. The other file you could make inherit from class Agent. On the other hand maybe it would be cleaner to start with one file inheriting from Agent. This tutorial will do it that way.</p>
+		<h2>Creating a Simple Agent using JBuilder</h2>
+		<p>Let's create a HelloAgent which says &quot;Hello World!&quot; Upon receiving any ACLMessage from any agent (e.g. from DummyAgent).</p>
+		<p>Set Up the Project</p>
+		<p>Click File-&gt;New and choose &quot;New Class&quot; from the window which pops up. This action brings up the project wizard.</p>
+		<p><img src="images/jp_proj_win1.gif" alt="" height="444" width="595" border="0"></p>
+		<p>The image shows the default values chosen by JBuilder. We will call our project HelloJadeProject. Note that when you type this in, JBuilder puts it in the Directory field. For this example we accept the path suggested by JBuilder.</p>
+		<p>Clicking the Next button gets you to another important window:</p>
+		<p><img src="images/jb_add_lib.gif" alt="" height="546" width="595" border="0"></p>
+		<p>Here you can change the location where JBuilder will find your source files. We will just use the default shown for this example. More importantly from the JADE point of view is to click the tab &quot;Required Libraries&quot;. Then click the Add button. Up comes a window showing all the libraries JBuilder knows about. Under &quot;User Home&quot; you should see JadeLibs. Select it and click the OK button. You are returned to step 2 of the wizard. Click the Next button. Here there is a documentation form you can fill in. Then click the Finish button.</p>
+		<p>You are presented with yet another pop-up window, this one belonging to the &quot;Class Wizard&quot;.</p>
+		<p><img src="images/jb_class_wizard.gif" alt="" height="447" width="558" border="0">.</p>
+		<p>Note that by default, JBuilder suggests a package name which is the same as the project name you chose, but all lower case. You can accept this but maybe you wish to change it. Suppose we want to follow the other JADE examples and name this package, examples.helloworld. Type this into the package field.</p>
+		<p>For the class name, type in HelloWorldAgent.</p>
+		<p>The default base classes proposed by JBuilder are not suitable for JADE, so hit the Browse Button to the right of the base class field. The Select a Base Class window pops up. In the search field start typing, decoder. If the JADE libraries have been correctly set up in JBuilder a list of classes appears. You can select jade.core.Agent and click OK. Unselect &quot;Generate Default Constructor&quot; and click the OK button. After a short time JBuilder is ready to go.</p>
+		<p>The JBuilder editor has many nice features. You can colour code various things. It also checks for lexical errors before compilation. Another neat feature are the windows that pop up allowing you to reduce typing or review the number and types of arguments to a method. For example, we want to add a CyclicBehaviour to the HelloWorldAgent. As you type impor ... Various completion windows pop up:</p>
+		<p><img src="images/jb_completion_1.gif" alt="" height="768" width="1024" border="0"></p>
+		<p>Select the appropriate package (or class) and hit Enter. This can be repeated several times until you get: import jade.core.behaviours.CyclicBehaviour;</p>
+		<p>As you enter code, you will often see helpful pop-ups. For instance,</p>
+		<p><img src="images/jb_completion_2.gif" alt="" height="469" width="647" border="0"></p>
+		<p>... which tells you that addBehaviour() takes one argument of type Behaviour, rather obvious in this case but quite helpful if the method takes 3 or 4 arguments.</p>
+		<p>After you have entered your code you can build/compile it in the normal JBuilder way because JBuilder (and your project) know about the JADE libraries.</p>
+		<p>Check all this out by entering and compiling the following simple Agent. (A few lines should have already been created by JBuilder.)</p>
+		<p>Note: This code compiles and runs but doesn't do anything because of an omission which we will fix later.</p>
+		<dl>
+			<dd>package examples.helloworld;
+			<dd>import jade.core.Agent;
+			<dd>import jade.core.behaviours.CyclicBehaviour;
+			<dd>import jade.lang.acl.ACLMessage;
+			<dd>/**
+			<dd>* &lt;p&gt;Title Hello JJADE&lt;/p&gt;
+			<dd>* &lt;p&gt;Description: A very simple agent which replies ot any message with an INFORM message with content &quot;Hello World&quot;&lt;/p&gt;
+			<dd>* &lt;p&gt;Copyright: Copyright (c) 2003&lt;/p&gt;
+			<dd>* &lt;p&gt;Company: Ryerson University, Toronto, Canada&lt;/p&gt;
+			<dd>* @author David Grimshaw
+			<dd>* @version 1.0
+			<dd>*/
+			<dd>public class HelloWorldAgent extends Agent {
+			<dl>
+				<dd>public void setup() {
+				<dl>
+					<dd>addBehaviour(new HelloBehaviour());
+				</dl>
+				<dd>}
+				<dd>class HelloBehaviour extends CyclicBehaviour {
+				<dl>
+					<dd>public void action() {
+					<dl>
+						<dd>ACLMessage received = blockingReceive();
+						<dd>ACLMessage reply = received.createReply();
+						<dd>reply.setContent(&quot;Hello World!&quot;);
+						<dd>reply.setPerformative(ACLMessage.INFORM);
+					</dl>
+					<dd>}
+				</dl>
+				<dd>}
+			</dl>
+			<dd>}
+		</dl>
+		<h2>Running a JADE Program from JBuilder</h2>
+		<p>To conveniently run your agent in at JADE container without having to load your classes outside JBuilder requires that you tell JBuilder a few more things. For this tutorial we have to run and test HelloWorldAgent by sending it a message from DummyAgent.</p>
+		<p>To set up JBuilder with the JADE Platform, do the following:</p>
+		<p></p>
+		<p>Click Project-&gt;Project Properties (or, select HelloJadeProject.jpx and right-click.. Then select Properties.) In the Properties window which pops up, choose the Run tab. Click the New button. The Runtime Configuration Properties window appears. Fill in the Main Class and Application Parameters fields. To fill in the Main Class field you must click the button at its right in order to bring up the Selection window:  <img src="images/jb_run_select_main_class.gif" alt="" height="472" width="385" border="0"> (Various classes appear as you type jade. .. into the Search window. We want jad.Boot.) Select jade.Boot and click OK. You are returned to the Runtime Configuration window. Now fill in your Application parameters.</p>
+		<p>What you fill in here is the command line options for jade.Boot which are appropriate to the way you wish to run JADE.</p>
+		<p>The image below shows -container hello0:examples.helloworld.HelloWorldAgent. This assumes that a Main container (platform) is already running on the local machine. In this case a new container will be created, containing the HelloWorldAgent, and attached to the already existing Main container.</p>
+		<p><img src="images/jb_run_config.gif" alt="" height="526" width="408" border="0"></p>
+		<p>Alternatively, you could decide to always boot a new platform so you would have -gui hello0:examples.helloworld.HelloWorldAgent.</p>
+		<p>After setting this field, click OK, and OK again on the previous window.</p>
+		<h3>Actually Running</h3>
+		<p>In the example as illustrated in the above image, we need to make sure that we already have a Main container running. Do this in the usual way by opening a Command Prompt (Console) and booting JADE with the -gui option. Note that you only have to do this once since the new agent will appear in its own container.</p>
+		<p>Once the JADE main container is running, return to JBuilder and click the Run button (or choose Run-&gt; Run Project). </p>
+		<p>If all is well you will see the RMA agent looking something like this:</p>
+		<p><img src="images/jb_rma.gif" alt="" height="400" width="600" border="0"></p>
+		<p>Test the agent by using DummyAgent to send it a message. There are no error messages but no response either. We forgot to invoke the send() method! So close container-1 (select-&gt;right-click-&gt;kill). Return to the JBuilder editor and add send(reply) at the end of the action() method. Then run again and test again. This illustrates the typical development cycle when using JADE with JBuilder.</p>
+		<p>It is quite convenient to test your code in new containers since you can leave other agents (DummyAgent in this case) running in another container and you don't have to keep reloading them. But don't forget to kill the container containing the agent under development. Otherwise you will get a name clash for different versions of your agent. </p>
+		<h2>Running on a Network</h2>
+		<p>You do not have to have the Main-container running on the same machine as JBuilder. The JADE platform only needs to be accessible. For example, suppose I have a LAN with a JADE platform running on a machine called IBM on default port 7778 with its RMI server on default port 1099. And suppose I am developing on a machine called Frodo where JBuilder is running.</p>
+		<p>Then everything is the same as the above except that in the Runtime Configuration Properties window of JBuilder I enter,</p>
+		<p>-container -host IBM  rma1:jade.tools.rma.rma hello0:exampples.helloworld.HelloWorldAgent</p>
+		<p>We add in an Remote Management Agent so we can see what we are doing. (There could be a problem here if we happened to choose the same names for our agents as someone else on the LAN.)</p>
+		<p>When you run, say, DummyAgent, in this distributed environment,  make sure you have the right (local, e.g., container-1) selected. Otherwise you could run the agent on the remote server. In the case of the DummyAgent, its UI would pop up on the  remote machine.</p>
+		<p></p>
+	</body>
+
+</html>

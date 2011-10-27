@@ -1,0 +1,220 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage Express 2.0">
+<title>How to use the XML support with JADE</title>
+</head>
+
+<body>
+<style><!--
+.Normal
+	{font-size:12.0pt;
+	font-family:"Times New Roman";}
+.MsoBodyText
+	{text-align:justify;
+	font-size:10.0pt;
+	font-family:"Courier New";}
+--></style>
+
+<h1><span lang="EN-GB">Using the XMLCodec add-on</span></h1>
+
+<p><i><span lang="EN-GB">Author: Giovanni Caire </span></i><span lang="EN-GB">(Telecom Italia)</span></p>
+
+<p><i><span lang="EN-GB">Date: November 10, 2006</span><span lang="EN-GB"></span></i></p>
+
+<p><i><span lang="EN-GB">Java platform: </span><span lang="EN-GB">Sun JDK 1.4 or later</span></i></p>
+
+<p><i><span lang="EN-GB"><a href="http://jade.tilab.com/">JADE</a></span><span lang="EN-GB"> 
+  version 3.0 or later</span></i></p>
+<p>&nbsp;</p>
+
+<h2><span lang="EN-GB">Introduction</span></h2>
+
+<p style="text-align:justify"><span lang="EN-GB" style="font-size:11.0pt;"> This 
+  tutorial describes how to use the XMLCodec add-on in combination with the JADE 
+  support for content languages and ontologies to encode and decode content expressions 
+  (i.e. expressions that can be included in the content slot of ACL messages) 
+  according to an XML-based syntax. </span></p>
+<p style="text-align:justify"><span lang="EN-GB" style="font-size:11.0pt;">Furthermore 
+  the add-on provides utility methods to export and import whatever ontological 
+  element (regardless of whether or not it represents a Content Element) to/from 
+  an XML format.</span></p>
+
+<h2><span lang="EN-GB">Installation.</span></h2>
+
+<p style="text-align:justify"><span lang="EN-GB" style="font-size:11.0pt;
+">In order to install XMLCodec add-on the following steps must be performed:</span></p>
+
+<ul type="disc">
+  <li style="text-align:justify;"><span lang="EN-GB" style="font-size:11.0pt;">Download 
+    the add-on from the add-ons area of the </span><span lang="IT" style="font-size:11.0pt;"><span lang="EN-GB"><a href="http://jade.tilab.com">JADE 
+    web site</a></span></span></li>
+  <li style="text-align:justify;"><span lang="EN-GB" style="font-size:11.0pt;">Unzip 
+    the XMLCodec package in the root directory of the jade distribution. A directory 
+    <em>&lt;jade-home&gt;/add-ons/XMLCodec</em> should be created, being &lt;jade-home&gt; 
+    the root directory of the jade distribution. </span></li>
+  <li style="     text-align:justify;"><span lang="EN-GB" style="font-size:11.0pt;">Add 
+    the <em>XMLCodec.jar</em> file included in the <em>XMLCodec/lib</em> directory 
+    to the CLASSPATH. </span></li>
+</ul>
+
+<h2><span lang="EN-GB">Compilation</span></h2>
+
+<p style="text-align:justify"><span lang="EN-GB" style="font-size:11.0pt;
+">The XMLCodec add-on can be re-compiled by means of the following ant targets 
+  defined in the <em>XMLCodec/build.xml</em> file:</span></p>
+
+<ul type="disc">
+    <li style="     text-align:justify;"><span lang="EN-GB" style="font-size:11.0pt;">ant - compiles the
+        XMLCodec classes </span></li>
+    
+  <li style="     text-align:justify;"><span lang="EN-GB" style="font-size:11.0pt;">ant 
+    lib - creates the XMLCodec.jar archive in the <em>lib</em> directory </span></li>
+    <li style="     text-align:justify;"><span lang="EN-GB" style="font-size:11.0pt;">ant clean - removes the
+        compiled classes and the XMLCodec.jar archive </span></li>
+    <li style="     text-align:justify;"><span lang="EN-GB" style="font-size:11.0pt;">ant examples &#150;
+        compiles the example classes</span><span lang="EN-GB" style="font-size:11.0pt;"></span></li>
+</ul>
+
+<h2><span lang="EN-GB">Using the XMLCodec add-on to encode/decode content expressions</span></h2>
+
+<p style="text-align:justify"><span lang="EN-GB" style="font-size:11.0pt;
+">The <font face="Courier New, Courier, mono">jade.content.lang.xml.XMLCodec</font> 
+  class implemnts the <font face="Courier New, Courier, mono">jade.content.lang.Codec</font> 
+  interface and can therefore be used as other JADE codecs such as the SLCodec 
+  or the LEAPCodec. The code below, where an agent informs another agent that 
+  John is the father of Bill and Mary using the PeopleOntology, shows an example 
+  (look at the Tutorial on content languages and ontologies available on the JADE 
+  web site for details about codecs and ontologies).</span></p>
+  
+<p style="text-align:justify"><code>...<br>
+private Codec xmlCodec = new XMLCodec();<br>
+private Ontology onto = PeopleOntology.getInstance();<br>
+...<br>
+protected void setup() { 
+<blockquote>
+...<br>
+getContentManager().registerLanguage(xmlCodec);<br>
+...<br>
+ACLMessage msg = new ACLMessage(ACLMessage.INFORM);<br>
+// Fill message receiver and other message slots<br>
+msg.setOntology(onto.getName())<br>
+msg.setLanguage(XMLCodec.NAME);<br>
+<br>
+FatherOf fo = new FatherOf();<br>
+Man m = new Man();<br>
+m.setName("John");<br>
+fo.setFather(m);<br>
+List children = new ArrayList();<br>
+m = new Man();<br>
+m.setName("Bill");<br>
+children.add(m);<br>
+Woman w = new Woman();<br>
+w.setName("Mary");<br>
+children.add(w);<br>
+fo.setChildren(children);<br>
+try {
+<blockquote>
+getContentManager().fillContent(msg, fo);<br>
+send(msg);
+</blockquote>
+}<br>
+catch (Exception e) {
+<blockquote>
+e.printStackTrace();
+</blockquote>
+}<br>
+...
+</blockquote>
+}<br>
+...
+</code>
+<p></p>
+<br>
+<br>
+<p style="text-align:justify">If we sniffed the message prepared and sent by the 
+  code above and we printed its content we would see the following output.</p>
+<p style="text-align:justify"><font face="Arial, Helvetica, sans-serif"> &lt;father-of&gt;<br>
+  &nbsp;&nbsp;&lt;man&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&lt;name&gt;John&lt;/name&gt;<br>
+  &nbsp;&nbsp;&lt;/man&gt;<br>
+  &nbsp;&nbsp;&lt;children&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&lt;man&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;name&gt;Bill&lt;/name&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&lt;/man&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&lt;woman&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;name&gt;Mary&lt;/name&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&lt;/woman&gt;<br>
+  &nbsp;&nbsp;&lt;/children&gt;<br>
+  &lt;/father-of&gt;<br>
+  </font></p>
+  
+<h2 style="text-align:justify">Using the XMLCodec add-on to export/import ontological 
+  elements to/from XML form </h2>
+<p style="text-align:justify">Besides the methods of the <font face="Courier New, Courier, mono">jade.content.lang.Codec</font> 
+  interface, the <font face="Courier New, Courier, mono">jade.content.lang.xml.XMLCodec</font> 
+  class also provides utility methods that can be used to export/import whatever 
+  ontological element (i.e. whatever object whose class is associated to a schema 
+  in an ontology) to/from an XML format regardless of whether or not it represents 
+  a content element. As an example the code below shows how to export a <font face="Courier New, Courier, mono">DFAgentDescription</font> 
+  to XML. It should be noticed that this feature does not involve the agent <font face="Courier New, Courier, mono">ContentManager</font> 
+  and therefore there is no need to register neither the codec nor the ontologies 
+  with it.</p>
+
+<p style="text-align:justify"> <code> ...<br>
+  DFAgentDescription dfd = new DFAgentDescription();<br>
+  dfd.setName(new AID("a", AID.ISLOCALNAME));<br>
+  ServiceDescription sd = new ServiceDescription();<br>
+  sd.setName("foo1");<br>
+  sd.setType("bar1");<br>
+  dfd.addServices(sd);<br>
+  ServiceDescription sd = new ServiceDescription();<br>
+  sd.setName("foo2");<br>
+  sd.setType("bar2");<br>
+  dfd.addServices(sd);<br>
+  try {<br>
+  &nbsp;&nbsp;String s = xmlCodec.encodeObject(FIPAManagementOntology.getInstance(), 
+  dfd, true);<br>
+  &nbsp;&nbsp;System.out.println(s);<br>
+  }<br>
+  catch (Exception e) {<br>
+  &nbsp;&nbsp;e.printStackTrace();<br>
+  }<br>
+  ...<br>
+  </code></p>
+<p style="text-align:justify">The output produced by the above code is as follows 
+  (the third parameter of the <font face="Courier New, Courier, mono">encodeObject(</font>) 
+  method set to <font face="Courier New, Courier, mono">true</font> indicates 
+  that the XML must be indented).</p>
+
+<p style="text-align:justify"><font face="Arial, Helvetica, sans-serif"> &lt;df-agent-description&gt;<br>
+  &nbsp;&nbsp;&lt;name&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&lt;agent-identifier&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;name&gt;a@foo-platform&lt;/name&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&lt;/agent-identifier&gt;<br>
+  &nbsp;&nbsp;&lt;/name&gt;<br>
+  &nbsp;&nbsp;&lt;services&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&lt;service-description&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;name&gt;foo1&lt;/name&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;type&gt;bar1&lt;/type&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&lt;/service-description&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&lt;service-description&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;name&gt;foo2&lt;/name&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;type&gt;bar2&lt;/type&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&lt;/service-description&gt;<br>
+  &nbsp;&nbsp;&lt;/services&gt;<br>
+  &lt;/df-agent-description&gt;<br>
+  </font> </p>
+
+
+<span lang="IT">
+<hr>
+</span> 
+<p align="center" style="text-align:center"><span lang="IT"><span lang="EN-GB" style="font-size:10.0pt;
+font-family:Arial;"><a href="http://jade.tilab.com/">JADE</a></span></span><span lang="EN-GB"> 
+  is a trademark of </span><span lang="IT"><span lang="EN-GB" style="font-size:10.0pt;font-family:Arial;"><a href="http://www.telecomitalia.it/">Telecom 
+  Italia</a></span></span><span lang="EN-GB">. </span></p>
+</body>
+</html>

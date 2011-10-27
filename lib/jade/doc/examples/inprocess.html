@@ -1,0 +1,135 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<title>InProcess</title>
+<link rel="stylesheet" type="text/css" href="stylesheet.css"
+title="Style">
+<!-- created by Alessandro Beneventi, Universita' degli Studi di Parma -->
+<!--            alessandro.beneventi@re.nettuno.it                     -->
+</head>
+
+<body bgcolor="#FFFFFF" text="#000000" link="#0000FF"
+vlink="#0000FF" alink="#0000FF">
+
+<table border="0" cellspacing="0" width="100%">
+    <tr>
+        <td bgcolor="#EEEEFF" id="NavBarCell1"><a
+        name="navbar_top_firstrow"></a> <table border="0"
+        cellpadding="0" cellspacing="3">
+            <tr>
+                <td align="center" valign="top" bgcolor="#EEEEFF"
+                id="NavBarCell1">Sections:</td>
+                <td align="center" valign="top" bgcolor="#EEEEFF"
+                id="NavBarCell1"><a href="index.html"><b>Index</b></a></td>
+                <td align="center" valign="top" bgcolor="#FFFFFF"
+                id="NavBarCell1Rev">&nbsp;<b>Introduction</b></td>
+                <td align="center" valign="top" bgcolor="#EEEEFF"
+                id="NavBarCell1"><b>More Info.</b></td>
+                <td align="center" valign="top" bgcolor="#EEEEFF"
+                id="NavBarCell1"><b>Visual Index</b></td>
+                <td align="center" valign="top" bgcolor="#EEEEFF"
+                id="NavBarCell1"><a href="../api/index.html"><b>Class
+                by Class</b></a></td>
+                <td align="center" valign="top" bgcolor="#EEEEFF"
+                id="NavBarCell1"><a href="../links.htm"><b>Links</b></a></td>
+            </tr>
+        </table>
+        </td>
+        <td align="right" valign="top" rowspan="2">&nbsp;</td>
+    </tr>
+</table>
+
+<p><font size="6" face="Arial"><b>Inprocess</b></font> </p>
+
+<p>Author: Giovanni Rimassa (Università di Parma)<br>
+<span lang="EN-GB"></p>
+
+<p><font face="Arial,Helvetica">Since Jade 2.3, an in- process
+interface has been implemented that allows Java application to
+use JADE as a kind of library. This example, in particular, shows
+how to start a JADE runtime from an external application.
+The implemented mechanism is very valuable and allows several
+different configurations for a JADE platform, such as a complete
+in-process platform composed of several containers on the same
+JVM, an hybrid platform partly in-process (containers launched by
+an external Java application) and partly out-of-process
+(containers launched from the command line).</font><br>
+<font face="Arial,Helvetica">The two following examples list the
+commands to issue in</font> <font face="Arial,Helvetica">order to
+create two sample hybrid platforms</font> <font
+face="Arial,Helvetica">&nbsp; </font></p>
+
+<p><font face="Arial,Helvetica">Example 1: In-process main
+container and out-of-process additional container.</font> <br>
+<font face="Arial,Helvetica">&nbsp; a) java
+examples.inprocess.InProcessTest (one main container and an
+additional one)</font> <br>
+<font face="Arial,Helvetica">&nbsp; b) java jade.Boot -container
+-port 8888 (an out-of-process container, connecting to the
+in-process platform).</font> </p>
+
+<p><font face="Arial,Helvetica">Example 2: Out-of-process main
+container and in-process additional containers.</font> <br>
+<font face="Arial,Helvetica">&nbsp; a) java jade.Boot -gui (on
+out-of-process main container, listening on port 1099)</font> <br>
+<font face="Arial,Helvetica">&nbsp; b) java
+examples.inprocess.InProcessTest -container (an in-process
+container, connecting to the out-of-process platform).</font> </p>
+
+<p>&nbsp;</p>
+
+<table border="1" cellpadding="3" cellspacing="0" width="100%">
+    <tr>
+        <td colspan="2" bgcolor="#CCCCFF"><font size="5"><b>InProcessTest</b></font></td>
+    </tr>
+    <tr>
+        <td bgcolor="#FFFFFF"><strong>Description:</strong></td>
+    </tr>
+    <tr>
+        <td><font face="Arial,Helvetica">The InProcessTest class
+        is not a JADE agent, but has its own main() method
+        instead. When started, the example launches a JADE main
+        container on the local host, on port 8888, and a
+        peripheral container, both within the same JVM. An RMA
+        agent is also started.(example1).If the '-container'
+        option is given, then two non-main container that are
+        started try to connect to an external main container that
+        must be already active on the local host, port 1099. Then
+        the platform starts and kills a DummyAgent and finally it
+        starts the MobileAgent example (example2). Using this
+        example and the regular jade.Boot loader, hybrid
+        platforms</font> <font face="Arial,Helvetica">(i.e.
+        platform that live partly in-process and out-of-process)
+        can be deployed</font></td>
+    </tr>
+    <tr>
+        <td><strong>Jade classes used: </strong></td>
+    </tr>
+    <tr>
+        <td>Runtime, Profile, package jade.wrapper</td>
+    </tr>
+    <tr>
+        <td><strong>Source</strong></td>
+    </tr>
+    <tr>
+        <td>\src\examples\inprocess\InProcessTest.java</td>
+    </tr>
+</table>
+
+<p>&nbsp;</p>
+
+<hr>
+
+<p align="center"><a href="http://jade.cselt.it/"><font face="Arial" size="2">JADE</font></a><font face="Arial" size="2">
+is a trademark of <a href="http://www.telecomitalialab.com">TILAB</a> (formerly </font><a href="http://www.cselt.it"><font face="Arial" size="2">CSELT</font></a><font face="Arial" size="2">).&nbsp;</font><a href="http://jade.cselt.it/"><font face="Arial" size="2"><br>
+JADE</font></a><font face="Arial" size="2"> has been developed jointly by <a href="http://www.telecomitalialab.com">TILAB</a>
+(formerly </font><a href="http://www.cselt.it"><font face="Arial" size="2">CSELT</font></a><font face="Arial" size="2">)
+and the </font><a href="http://www.ce.unipr.it"><font face="Arial" size="2">Computer
+Engineering Group</font></a><font face="Arial" size="2"> of the </font><a href="http://www.unipr.it"><font face="Arial" size="2">University
+of Parma</font></a> </p>
+</body>
+</html>

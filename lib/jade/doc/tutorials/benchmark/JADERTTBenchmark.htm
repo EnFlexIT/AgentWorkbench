@@ -1,0 +1,3381 @@
+<html xmlns:v="urn:schemas-microsoft-com:vml"
+xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:w="urn:schemas-microsoft-com:office:word"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<meta name=ProgId content=Word.Document>
+<meta name=Generator content="Microsoft Word 9">
+<meta name=Originator content="Microsoft Word 9">
+<link rel=File-List href="./JADERTTBenchmark_files/filelist.xml">
+<link rel=Edit-Time-Data href="./JADERTTBenchmark_files/editdata.mso">
+<link rel=OLE-Object-Data href="./JADERTTBenchmark_files/oledata.mso">
+<!--[if !mso]>
+<style>
+v\:* {behavior:url(#default#VML);}
+o\:* {behavior:url(#default#VML);}
+w\:* {behavior:url(#default#VML);}
+.shape {behavior:url(#default#VML);}
+</style>
+<![endif]-->
+<title>Scalability and Performance of JADE Message Transport System</title>
+<!--[if gte mso 9]><xml>
+ <o:DocumentProperties>
+  <o:Author>E.Cortese, F.Quarta, G.Vitaglione </o:Author>
+  <o:Keywords>Scalability, Agent communication, Applications, Agent messaging, Performance, Benchmark, Roundtrip, Measurement.</o:Keywords>
+  <o:LastAuthor>Fabio Bellifemine</o:LastAuthor>
+  <o:Revision>2</o:Revision>
+  <o:TotalTime>3</o:TotalTime>
+  <o:LastPrinted>2002-05-30T14:28:00Z</o:LastPrinted>
+  <o:Created>2002-07-15T10:27:00Z</o:Created>
+  <o:LastSaved>2002-07-15T10:27:00Z</o:LastSaved>
+  <o:Pages>9</o:Pages>
+  <o:Words>3188</o:Words>
+  <o:Characters>18173</o:Characters>
+  <o:Category>Software Agents, Multi Agent Systems, Algorithms, Measurement, Performance, Design.</o:Category>
+  <o:Company>TILAB</o:Company>
+  <o:Bytes>868352</o:Bytes>
+  <o:Lines>151</o:Lines>
+  <o:Paragraphs>36</o:Paragraphs>
+  <o:CharactersWithSpaces>22317</o:CharactersWithSpaces>
+  <o:Version>9.4402</o:Version>
+ </o:DocumentProperties>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <w:WordDocument>
+  <w:DoNotShowRevisions/>
+  <w:DoNotPrintRevisions/>
+  <w:DisplayHorizontalDrawingGridEvery>0</w:DisplayHorizontalDrawingGridEvery>
+  <w:DisplayVerticalDrawingGridEvery>0</w:DisplayVerticalDrawingGridEvery>
+  <w:UseMarginsForDrawingGridOrigin/>
+  <w:Compatibility>
+   <w:UsePrinterMetrics/>
+   <w:WW6BorderRules/>
+   <w:FootnoteLayoutLikeWW8/>
+   <w:ShapeLayoutLikeWW8/>
+   <w:AlignTablesRowByRow/>
+   <w:ForgetLastTabAlignment/>
+   <w:LayoutRawTableWidth/>
+   <w:LayoutTableRowsApart/>
+  </w:Compatibility>
+ </w:WordDocument>
+</xml><![endif]-->
+<style>
+<!--
+ /* Font Definitions */
+@font-face
+	{font-family:Times;
+	panose-1:2 2 6 3 5 4 5 2 3 4;
+	mso-font-charset:0;
+	mso-generic-font-family:roman;
+	mso-font-format:other;
+	mso-font-pitch:variable;
+	mso-font-signature:3 0 0 0 1 0;}
+@font-face
+	{font-family:Helvetica;
+	panose-1:2 11 6 4 2 2 2 2 2 4;
+	mso-font-charset:0;
+	mso-generic-font-family:swiss;
+	mso-font-format:other;
+	mso-font-pitch:variable;
+	mso-font-signature:3 0 0 0 1 0;}
+@font-face
+	{font-family:Wingdings;
+	panose-1:5 0 0 0 0 0 0 0 0 0;
+	mso-font-charset:2;
+	mso-generic-font-family:auto;
+	mso-font-pitch:variable;
+	mso-font-signature:0 268435456 0 0 -2147483648 0;}
+@font-face
+	{font-family:Tahoma;
+	panose-1:2 11 6 4 3 5 4 4 2 4;
+	mso-font-charset:0;
+	mso-generic-font-family:swiss;
+	mso-font-pitch:variable;
+	mso-font-signature:553679495 -2147483648 8 0 66047 0;}
+@font-face
+	{font-family:Miriam;
+	mso-font-alt:"Times New Roman";
+	mso-font-charset:177;
+	mso-generic-font-family:auto;
+	mso-font-pitch:variable;
+	mso-font-signature:6145 0 0 0 32 0;}
+ /* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-update:auto;
+	mso-style-parent:"";
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:0in;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+h1
+	{mso-style-next:Normal;
+	margin-top:2.0pt;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:0in;
+	margin-bottom:.0001pt;
+	text-align:left;
+	text-indent:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:1;
+	mso-list:l9 level1 lfo1;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-font-kerning:14.0pt;
+	font-weight:bold;
+	mso-bidi-font-weight:normal;}
+h2
+	{mso-style-parent:"Heading 1";
+	mso-style-next:Normal;
+	margin-top:2.0pt;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:0in;
+	margin-bottom:.0001pt;
+	text-align:left;
+	text-indent:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:2;
+	mso-list:l9 level2 lfo1;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-font-kerning:14.0pt;
+	font-weight:bold;
+	mso-bidi-font-weight:normal;}
+h3
+	{mso-style-parent:"Heading 2";
+	mso-style-next:Normal;
+	margin-top:2.0pt;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:0in;
+	margin-bottom:.0001pt;
+	text-align:left;
+	text-indent:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:3;
+	mso-list:l9 level3 lfo1;
+	font-size:11.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-font-kerning:14.0pt;
+	font-weight:normal;
+	font-style:italic;
+	mso-bidi-font-style:normal;}
+h4
+	{mso-style-parent:"Heading 3";
+	mso-style-next:Normal;
+	margin-top:2.0pt;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:0in;
+	margin-bottom:.0001pt;
+	text-align:left;
+	text-indent:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:4;
+	mso-list:l9 level4 lfo1;
+	font-size:11.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-font-kerning:14.0pt;
+	font-weight:normal;
+	font-style:italic;
+	mso-bidi-font-style:normal;}
+h5
+	{mso-style-parent:"List Number 3";
+	mso-style-next:Normal;
+	margin-top:2.0pt;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:0in;
+	margin-bottom:.0001pt;
+	text-align:left;
+	text-indent:0in;
+	mso-pagination:widow-orphan;
+	mso-outline-level:5;
+	mso-list:l9 level5 lfo1;
+	font-size:11.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:"Times New Roman";
+	font-weight:normal;
+	font-style:italic;
+	mso-bidi-font-style:normal;}
+h6
+	{mso-style-next:Normal;
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	text-align:justify;
+	text-indent:0in;
+	mso-pagination:widow-orphan;
+	mso-outline-level:6;
+	mso-list:l9 level6 lfo1;
+	font-size:11.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Arial;
+	mso-bidi-font-family:"Times New Roman";
+	font-weight:normal;
+	font-style:italic;
+	mso-bidi-font-style:normal;}
+p.MsoHeading7, li.MsoHeading7, div.MsoHeading7
+	{mso-style-next:Normal;
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	text-align:justify;
+	text-indent:0in;
+	mso-pagination:widow-orphan;
+	mso-outline-level:7;
+	mso-list:l9 level7 lfo1;
+	font-size:10.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+p.MsoHeading8, li.MsoHeading8, div.MsoHeading8
+	{mso-style-next:Normal;
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	text-align:justify;
+	text-indent:0in;
+	mso-pagination:widow-orphan;
+	mso-outline-level:8;
+	mso-list:l9 level8 lfo1;
+	font-size:10.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	font-style:italic;
+	mso-bidi-font-style:normal;}
+p.MsoHeading9, li.MsoHeading9, div.MsoHeading9
+	{mso-style-next:Normal;
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	text-align:justify;
+	text-indent:0in;
+	mso-pagination:widow-orphan;
+	mso-outline-level:9;
+	mso-list:l9 level9 lfo1;
+	font-size:9.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	font-style:italic;
+	mso-bidi-font-style:normal;}
+p.MsoIndex1, li.MsoIndex1, div.MsoIndex1
+	{mso-style-update:auto;
+	mso-style-next:Normal;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:9.0pt;
+	text-align:justify;
+	text-indent:-9.0pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoIndex2, li.MsoIndex2, div.MsoIndex2
+	{mso-style-update:auto;
+	mso-style-next:Normal;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:.25in;
+	text-align:justify;
+	text-indent:-9.0pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoIndex3, li.MsoIndex3, div.MsoIndex3
+	{mso-style-update:auto;
+	mso-style-next:Normal;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:27.0pt;
+	text-align:justify;
+	text-indent:-9.0pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoIndex4, li.MsoIndex4, div.MsoIndex4
+	{mso-style-update:auto;
+	mso-style-next:Normal;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:.5in;
+	text-align:justify;
+	text-indent:-9.0pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoIndex5, li.MsoIndex5, div.MsoIndex5
+	{mso-style-update:auto;
+	mso-style-next:Normal;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:45.0pt;
+	text-align:justify;
+	text-indent:-9.0pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoIndex6, li.MsoIndex6, div.MsoIndex6
+	{mso-style-update:auto;
+	mso-style-next:Normal;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:.75in;
+	text-align:justify;
+	text-indent:-9.0pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoIndex7, li.MsoIndex7, div.MsoIndex7
+	{mso-style-update:auto;
+	mso-style-next:Normal;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:63.0pt;
+	text-align:justify;
+	text-indent:-9.0pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoIndex8, li.MsoIndex8, div.MsoIndex8
+	{mso-style-update:auto;
+	mso-style-next:Normal;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:1.0in;
+	text-align:justify;
+	text-indent:-9.0pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoIndex9, li.MsoIndex9, div.MsoIndex9
+	{mso-style-update:auto;
+	mso-style-next:Normal;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:81.0pt;
+	text-align:justify;
+	text-indent:-9.0pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoToc1, li.MsoToc1, div.MsoToc1
+	{mso-style-update:auto;
+	mso-style-next:Normal;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:0in;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoToc2, li.MsoToc2, div.MsoToc2
+	{mso-style-update:auto;
+	mso-style-next:Normal;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:9.0pt;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoToc3, li.MsoToc3, div.MsoToc3
+	{mso-style-update:auto;
+	mso-style-next:Normal;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:.25in;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoToc4, li.MsoToc4, div.MsoToc4
+	{mso-style-update:auto;
+	mso-style-next:Normal;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:27.0pt;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoToc5, li.MsoToc5, div.MsoToc5
+	{mso-style-update:auto;
+	mso-style-next:Normal;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:.5in;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoToc6, li.MsoToc6, div.MsoToc6
+	{mso-style-update:auto;
+	mso-style-next:Normal;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:45.0pt;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoToc7, li.MsoToc7, div.MsoToc7
+	{mso-style-update:auto;
+	mso-style-next:Normal;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:.75in;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoToc8, li.MsoToc8, div.MsoToc8
+	{mso-style-update:auto;
+	mso-style-next:Normal;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:63.0pt;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoToc9, li.MsoToc9, div.MsoToc9
+	{mso-style-update:auto;
+	mso-style-next:Normal;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:1.0in;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoNormalIndent, li.MsoNormalIndent, div.MsoNormalIndent
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:35.4pt;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoFootnoteText, li.MsoFootnoteText, div.MsoFootnoteText
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:.1in;
+	text-align:justify;
+	text-indent:-.1in;
+	mso-pagination:widow-orphan;
+	font-size:9.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoCommentText, li.MsoCommentText, div.MsoCommentText
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:0in;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoHeader, li.MsoHeader, div.MsoHeader
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:0in;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	tab-stops:center 3.0in right 6.0in;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoFooter, li.MsoFooter, div.MsoFooter
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:0in;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	tab-stops:center 3.0in right 6.0in;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoIndexHeading, li.MsoIndexHeading, div.MsoIndexHeading
+	{mso-style-next:"Index 1";
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:0in;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";
+	font-weight:bold;}
+p.MsoCaption, li.MsoCaption, div.MsoCaption
+	{mso-style-next:Normal;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:0in;
+	text-align:center;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	mso-bidi-font-size:9.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:Miriam;
+	mso-fareast-language:EN-AU;
+	font-weight:bold;}
+p.MsoTof, li.MsoTof, div.MsoTof
+	{mso-style-next:Normal;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:.25in;
+	text-align:justify;
+	text-indent:-.25in;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoEnvelopeAddress, li.MsoEnvelopeAddress, div.MsoEnvelopeAddress
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:2.0in;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	mso-element:frame;
+	mso-element-frame-width:5.5in;
+	mso-element-frame-height:99.0pt;
+	mso-element-frame-hspace:7.05pt;
+	mso-element-wrap:auto;
+	mso-element-anchor-horizontal:page;
+	mso-element-left:center;
+	mso-element-top:bottom;
+	mso-height-rule:exactly;
+	font-size:12.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoEnvelopeReturn, li.MsoEnvelopeReturn, div.MsoEnvelopeReturn
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:0in;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";}
+span.MsoFootnoteReference
+	{mso-ansi-font-size:9.0pt;
+	mso-ascii-font-family:"Times New Roman";
+	mso-hansi-font-family:"Times New Roman";
+	vertical-align:super;}
+span.MsoCommentReference
+	{mso-ansi-font-size:8.0pt;
+	mso-bidi-font-size:8.0pt;}
+p.MsoEndnoteText, li.MsoEndnoteText, div.MsoEndnoteText
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:0in;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoToa, li.MsoToa, div.MsoToa
+	{mso-style-next:Normal;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:9.0pt;
+	text-align:justify;
+	text-indent:-9.0pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoMacroText, li.MsoMacroText, div.MsoMacroText
+	{mso-style-parent:"";
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:0in;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	tab-stops:24.0pt 48.0pt 1.0in 96.0pt 120.0pt 2.0in 168.0pt 192.0pt 3.0in;
+	font-size:10.0pt;
+	font-family:"Courier New";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoToaHeading, li.MsoToaHeading, div.MsoToaHeading
+	{mso-style-next:Normal;
+	margin-top:6.0pt;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:0in;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";
+	font-weight:bold;}
+p.MsoList, li.MsoList, div.MsoList
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:14.15pt;
+	text-align:justify;
+	text-indent:-14.15pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoListBullet, li.MsoListBullet, div.MsoListBullet
+	{mso-style-update:auto;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:.25in;
+	text-align:justify;
+	text-indent:-.25in;
+	mso-pagination:widow-orphan;
+	mso-list:l8 level1 lfo21;
+	tab-stops:list .25in;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoListNumber, li.MsoListNumber, div.MsoListNumber
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:.25in;
+	text-align:justify;
+	text-indent:-.25in;
+	mso-pagination:widow-orphan;
+	mso-list:l7 level1 lfo17;
+	tab-stops:list .25in;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoList2, li.MsoList2, div.MsoList2
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:28.3pt;
+	text-align:justify;
+	text-indent:-14.15pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoList3, li.MsoList3, div.MsoList3
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:42.45pt;
+	text-align:justify;
+	text-indent:-14.15pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoList4, li.MsoList4, div.MsoList4
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:56.6pt;
+	text-align:justify;
+	text-indent:-14.15pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoList5, li.MsoList5, div.MsoList5
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:70.75pt;
+	text-align:justify;
+	text-indent:-14.15pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoListBullet2, li.MsoListBullet2, div.MsoListBullet2
+	{mso-style-update:auto;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:32.15pt;
+	text-align:justify;
+	text-indent:-.25in;
+	mso-pagination:widow-orphan;
+	mso-list:l6 level1 lfo22;
+	tab-stops:list 32.15pt;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoListBullet3, li.MsoListBullet3, div.MsoListBullet3
+	{mso-style-update:auto;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:46.3pt;
+	text-align:justify;
+	text-indent:-.25in;
+	mso-pagination:widow-orphan;
+	mso-list:l5 level1 lfo23;
+	tab-stops:list 46.3pt;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoListBullet4, li.MsoListBullet4, div.MsoListBullet4
+	{mso-style-update:auto;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:60.45pt;
+	text-align:justify;
+	text-indent:-.25in;
+	mso-pagination:widow-orphan;
+	mso-list:l4 level1 lfo24;
+	tab-stops:list 60.45pt;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoListBullet5, li.MsoListBullet5, div.MsoListBullet5
+	{mso-style-update:auto;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:74.6pt;
+	text-align:justify;
+	text-indent:-.25in;
+	mso-pagination:widow-orphan;
+	mso-list:l3 level1 lfo25;
+	tab-stops:list 74.6pt;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoListNumber2, li.MsoListNumber2, div.MsoListNumber2
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:32.15pt;
+	text-align:justify;
+	text-indent:-.25in;
+	mso-pagination:widow-orphan;
+	mso-list:l2 level1 lfo18;
+	tab-stops:list 32.15pt;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoListNumber3, li.MsoListNumber3, div.MsoListNumber3
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:.75in;
+	text-align:justify;
+	text-indent:-.25in;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoListNumber4, li.MsoListNumber4, div.MsoListNumber4
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:60.45pt;
+	text-align:justify;
+	text-indent:-.25in;
+	mso-pagination:widow-orphan;
+	mso-list:l1 level1 lfo19;
+	tab-stops:list 60.45pt;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoListNumber5, li.MsoListNumber5, div.MsoListNumber5
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:74.6pt;
+	text-align:justify;
+	text-indent:-.25in;
+	mso-pagination:widow-orphan;
+	mso-list:l0 level1 lfo20;
+	tab-stops:list 74.6pt;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoTitle, li.MsoTitle, div.MsoTitle
+	{margin:0in;
+	margin-bottom:.0001pt;
+	text-align:center;
+	mso-pagination:widow-orphan;
+	font-size:16.0pt;
+	mso-bidi-font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-ansi-language:IT;
+	mso-fareast-language:IT;
+	font-weight:bold;}
+p.MsoClosing, li.MsoClosing, div.MsoClosing
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:212.6pt;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoSignature, li.MsoSignature, div.MsoSignature
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:212.6pt;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoBodyText, li.MsoBodyText, div.MsoBodyText
+	{margin:0in;
+	margin-bottom:.0001pt;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	mso-element:frame;
+	mso-element-frame-width:3.25in;
+	mso-element-frame-height:105.6pt;
+	mso-element-frame-hspace:9.35pt;
+	mso-element-wrap:around;
+	mso-element-anchor-vertical:page;
+	mso-element-anchor-horizontal:page;
+	mso-element-left:57.75pt;
+	mso-element-top:612.25pt;
+	mso-height-rule:exactly;
+	mso-element-anchor-lock:locked;
+	font-size:8.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoBodyTextIndent, li.MsoBodyTextIndent, div.MsoBodyTextIndent
+	{mso-style-update:auto;
+	margin:0in;
+	margin-bottom:.0001pt;
+	text-align:justify;
+	text-indent:.25in;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoListContinue, li.MsoListContinue, div.MsoListContinue
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:14.15pt;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoListContinue2, li.MsoListContinue2, div.MsoListContinue2
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:28.3pt;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoListContinue3, li.MsoListContinue3, div.MsoListContinue3
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:42.45pt;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoListContinue4, li.MsoListContinue4, div.MsoListContinue4
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:56.6pt;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoListContinue5, li.MsoListContinue5, div.MsoListContinue5
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:70.75pt;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoMessageHeader, li.MsoMessageHeader, div.MsoMessageHeader
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:56.7pt;
+	text-align:justify;
+	text-indent:-56.7pt;
+	mso-pagination:widow-orphan;
+	background:#CCCCCC;
+	mso-shading:windowtext;
+	mso-pattern:gray-20 auto;
+	border:none;
+	mso-border-alt:solid windowtext .75pt;
+	padding:0in;
+	mso-padding-alt:1.0pt 1.0pt 1.0pt 1.0pt;
+	font-size:12.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoSubtitle, li.MsoSubtitle, div.MsoSubtitle
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	text-align:center;
+	mso-pagination:widow-orphan;
+	mso-outline-level:2;
+	font-size:12.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoSalutation, li.MsoSalutation, div.MsoSalutation
+	{mso-style-next:Normal;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:0in;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoDate, li.MsoDate, div.MsoDate
+	{mso-style-next:Normal;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:0in;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoBodyTextFirstIndent, li.MsoBodyTextFirstIndent, div.MsoBodyTextFirstIndent
+	{mso-style-parent:"Body Text";
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:0in;
+	text-align:justify;
+	text-indent:10.5pt;
+	mso-pagination:widow-orphan;
+	font-size:9.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoBodyTextFirstIndent2, li.MsoBodyTextFirstIndent2, div.MsoBodyTextFirstIndent2
+	{mso-style-parent:"Body Text Indent";
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:14.15pt;
+	text-align:justify;
+	text-indent:10.5pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoNoteHeading, li.MsoNoteHeading, div.MsoNoteHeading
+	{mso-style-next:Normal;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:0in;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoBodyText2, li.MsoBodyText2, div.MsoBodyText2
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:0in;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	font-size:8.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-ansi-language:IT;}
+p.MsoBodyText3, li.MsoBodyText3, div.MsoBodyText3
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:0in;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	font-size:8.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoBodyTextIndent2, li.MsoBodyTextIndent2, div.MsoBodyTextIndent2
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:2.2pt;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-ansi-language:EN-AU;}
+p.MsoBodyTextIndent3, li.MsoBodyTextIndent3, div.MsoBodyTextIndent3
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:14.15pt;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	font-size:8.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoBlockText, li.MsoBlockText, div.MsoBlockText
+	{margin-top:0in;
+	margin-right:1.0in;
+	margin-bottom:6.0pt;
+	margin-left:1.0in;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+a:link, span.MsoHyperlink
+	{color:blue;
+	text-decoration:underline;
+	text-underline:single;}
+a:visited, span.MsoHyperlinkFollowed
+	{color:purple;
+	text-decoration:underline;
+	text-underline:single;}
+p.MsoDocumentMap, li.MsoDocumentMap, div.MsoDocumentMap
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:0in;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	background:navy;
+	font-size:10.0pt;
+	font-family:Tahoma;
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoPlainText, li.MsoPlainText, div.MsoPlainText
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:0in;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Courier New";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoAutoSig, li.MsoAutoSig, div.MsoAutoSig
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:0in;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:0in;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+address
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:0in;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	font-style:italic;}
+pre
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:0in;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	tab-stops:.5in;
+	font-size:10.0pt;
+	font-family:"Courier New";
+	mso-fareast-font-family:"Times New Roman";}
+p.Author, li.Author, div.Author
+	{mso-style-name:Author;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:0in;
+	text-align:center;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Helvetica;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+p.Paper-Title, li.Paper-Title, div.Paper-Title
+	{mso-style-name:Paper-Title;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:0in;
+	text-align:center;
+	mso-pagination:widow-orphan;
+	font-size:18.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Helvetica;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	font-weight:bold;
+	mso-bidi-font-weight:normal;}
+p.Affiliations, li.Affiliations, div.Affiliations
+	{mso-style-name:Affiliations;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:0in;
+	text-align:center;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:Helvetica;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+p.Bullet, li.Bullet, div.Bullet
+	{mso-style-name:Bullet;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:.1in;
+	text-align:justify;
+	text-indent:-.1in;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.E-Mail, li.E-Mail, div.E-Mail
+	{mso-style-name:E-Mail;
+	mso-style-parent:Author;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	text-align:center;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Helvetica;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+p.Abstract, li.Abstract, div.Abstract
+	{mso-style-name:Abstract;
+	mso-style-parent:"Heading 1";
+	margin-top:2.0pt;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:0in;
+	margin-bottom:.0001pt;
+	text-align:left;
+	text-indent:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-font-kerning:14.0pt;
+	font-weight:bold;
+	mso-bidi-font-weight:normal;}
+p.Captions, li.Captions, div.Captions
+	{mso-style-name:Captions;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:0in;
+	text-align:center;
+	mso-pagination:widow-orphan;
+	mso-element:frame;
+	mso-element-frame-width:3.25in;
+	mso-element-frame-height:1.5in;
+	mso-element-frame-hspace:9.35pt;
+	mso-element-wrap:around;
+	mso-element-anchor-horizontal:column;
+	mso-element-top:bottom;
+	mso-height-rule:exactly;
+	mso-element-anchor-lock:locked;
+	font-size:9.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	font-weight:bold;
+	mso-bidi-font-weight:normal;}
+p.References, li.References, div.References
+	{mso-style-name:References;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:4.0pt;
+	margin-left:.25in;
+	text-align:justify;
+	text-indent:-.25in;
+	mso-pagination:widow-orphan;
+	mso-list:l23 level1 lfo2;
+	tab-stops:list .25in;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+@page Section1
+	{size:8.5in 11.0in;
+	margin:1.0in .75in 1.0in .75in;
+	mso-header-margin:.5in;
+	mso-footer-margin:.5in;
+	mso-even-footer:url("./JADERTTBenchmark_files/header.htm") ef1;
+	mso-paper-source:0;}
+div.Section1
+	{page:Section1;}
+@page Section2
+	{size:8.5in 11.0in;
+	margin:1.0in .75in 1.0in .75in;
+	mso-header-margin:.5in;
+	mso-footer-margin:.5in;
+	mso-even-footer:url("./JADERTTBenchmark_files/header.htm") ef1;
+	mso-paper-source:0;}
+div.Section2
+	{page:Section2;}
+@page Section3
+	{size:8.5in 11.0in;
+	margin:1.0in .75in 1.0in .75in;
+	mso-header-margin:.5in;
+	mso-footer-margin:.5in;
+	mso-even-footer:url("./JADERTTBenchmark_files/header.htm") ef1;
+	mso-paper-source:0;}
+div.Section3
+	{page:Section3;}
+ /* List Definitions */
+@list l0
+	{mso-list-id:-132;
+	mso-list-type:simple;
+	mso-list-template-ids:-1219719724;}
+@list l0:level1
+	{mso-level-style-link:"List Number 5";
+	mso-level-tab-stop:74.6pt;
+	mso-level-number-position:left;
+	margin-left:74.6pt;
+	text-indent:-.25in;}
+@list l1
+	{mso-list-id:-131;
+	mso-list-type:simple;
+	mso-list-template-ids:-1063085990;}
+@list l1:level1
+	{mso-level-style-link:"List Number 4";
+	mso-level-tab-stop:60.45pt;
+	mso-level-number-position:left;
+	margin-left:60.45pt;
+	text-indent:-.25in;}
+@list l2
+	{mso-list-id:-129;
+	mso-list-type:simple;
+	mso-list-template-ids:-1671005170;}
+@list l2:level1
+	{mso-level-style-link:"List Number 2";
+	mso-level-tab-stop:32.15pt;
+	mso-level-number-position:left;
+	margin-left:32.15pt;
+	text-indent:-.25in;}
+@list l3
+	{mso-list-id:-128;
+	mso-list-type:simple;
+	mso-list-template-ids:-272320212;}
+@list l3:level1
+	{mso-level-number-format:bullet;
+	mso-level-style-link:"List Bullet 5";
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:74.6pt;
+	mso-level-number-position:left;
+	margin-left:74.6pt;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l4
+	{mso-list-id:-127;
+	mso-list-type:simple;
+	mso-list-template-ids:-1157831152;}
+@list l4:level1
+	{mso-level-number-format:bullet;
+	mso-level-style-link:"List Bullet 4";
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:60.45pt;
+	mso-level-number-position:left;
+	margin-left:60.45pt;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l5
+	{mso-list-id:-126;
+	mso-list-type:simple;
+	mso-list-template-ids:-314640326;}
+@list l5:level1
+	{mso-level-number-format:bullet;
+	mso-level-style-link:"List Bullet 3";
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:46.3pt;
+	mso-level-number-position:left;
+	margin-left:46.3pt;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l6
+	{mso-list-id:-125;
+	mso-list-type:simple;
+	mso-list-template-ids:-1288111744;}
+@list l6:level1
+	{mso-level-number-format:bullet;
+	mso-level-style-link:"List Bullet 2";
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:32.15pt;
+	mso-level-number-position:left;
+	margin-left:32.15pt;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l7
+	{mso-list-id:-120;
+	mso-list-type:simple;
+	mso-list-template-ids:-1209475070;}
+@list l7:level1
+	{mso-level-style-link:"List Number";
+	mso-level-tab-stop:.25in;
+	mso-level-number-position:left;
+	margin-left:.25in;
+	text-indent:-.25in;}
+@list l8
+	{mso-list-id:-119;
+	mso-list-type:simple;
+	mso-list-template-ids:1673695718;}
+@list l8:level1
+	{mso-level-number-format:bullet;
+	mso-level-style-link:"List Bullet";
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.25in;
+	mso-level-number-position:left;
+	margin-left:.25in;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l9
+	{mso-list-id:-5;
+	mso-list-template-ids:-1;}
+@list l9:level1
+	{mso-level-style-link:"Heading 1";
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:0in;
+	mso-level-legacy-space:.1in;
+	margin-left:0in;
+	text-indent:0in;}
+@list l9:level2
+	{mso-level-style-link:"Heading 2";
+	mso-level-text:"%1\.%2";
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:0in;
+	mso-level-legacy-space:.1in;
+	margin-left:0in;
+	text-indent:0in;}
+@list l9:level3
+	{mso-level-style-link:"Heading 3";
+	mso-level-text:"%1\.%2\.%3";
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:0in;
+	mso-level-legacy-space:.1in;
+	margin-left:0in;
+	text-indent:0in;}
+@list l9:level4
+	{mso-level-style-link:"Heading 4";
+	mso-level-text:"%1\.%2\.%3\.%4";
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:0in;
+	mso-level-legacy-space:.1in;
+	margin-left:0in;
+	text-indent:0in;}
+@list l9:level5
+	{mso-level-style-link:"Heading 5";
+	mso-level-text:"%1\.%2\.%3\.%4\.%5";
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:0in;
+	mso-level-legacy-space:.1in;
+	margin-left:0in;
+	text-indent:0in;}
+@list l9:level6
+	{mso-level-style-link:"Heading 6";
+	mso-level-text:"%1\.%2\.%3\.%4\.%5\.%6";
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:0in;
+	mso-level-legacy-space:.1in;
+	margin-left:0in;
+	text-indent:0in;}
+@list l9:level7
+	{mso-level-style-link:"Heading 7";
+	mso-level-text:"%1\.%2\.%3\.%4\.%5\.%6\.%7";
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:0in;
+	mso-level-legacy-space:.1in;
+	margin-left:0in;
+	text-indent:0in;}
+@list l9:level8
+	{mso-level-style-link:"Heading 8";
+	mso-level-text:"%1\.%2\.%3\.%4\.%5\.%6\.%7\.%8";
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:0in;
+	mso-level-legacy-space:.1in;
+	margin-left:0in;
+	text-indent:0in;}
+@list l9:level9
+	{mso-level-style-link:"Heading 9";
+	mso-level-text:"%1\.%2\.%3\.%4\.%5\.%6\.%7\.%8\.%9";
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:0in;
+	mso-level-legacy-space:.1in;
+	margin-left:0in;
+	text-indent:0in;}
+@list l10
+	{mso-list-id:71003764;
+	mso-list-type:hybrid;
+	mso-list-template-ids:681183516 68157445 68157443 68157445 68157441 68157443 68157445 68157441 68157443 68157445;}
+@list l10:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0A7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	font-family:Wingdings;}
+@list l10:level3
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0A7;
+	mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	font-family:Wingdings;}
+@list l11
+	{mso-list-id:165292710;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-756651774 68157455 68157465 68157467 68157455 68157465 68157467 68157455 68157465 68157467;}
+@list l11:level1
+	{mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l12
+	{mso-list-id:215706172;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1300209634 68157455 68157465 68157467 68157455 68157465 68157467 68157455 68157465 68157467;}
+@list l12:level1
+	{mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l13
+	{mso-list-id:676885738;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-303527812 68157445 68157443 68157445 68157441 68157443 68157445 68157441 68157443 68157445;}
+@list l13:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0A7;
+	mso-level-tab-stop:112.5pt;
+	mso-level-number-position:left;
+	margin-left:112.5pt;
+	text-indent:-.25in;
+	font-family:Wingdings;}
+@list l14
+	{mso-list-id:793059462;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1292051832 68157453 68157443 68157445 68157441 68157443 68157445 68157441 68157443 68157445;}
+@list l14:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0FC;
+	mso-level-tab-stop:38.2pt;
+	mso-level-number-position:left;
+	margin-left:38.2pt;
+	text-indent:-.25in;
+	font-family:Wingdings;}
+@list l15
+	{mso-list-id:885340527;
+	mso-list-type:hybrid;
+	mso-list-template-ids:704778580 68157445 68157443 68157445 68157441 68157443 68157445 68157441 68157443 68157445;}
+@list l15:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0A7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	font-family:Wingdings;}
+@list l15:level3
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0A7;
+	mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	font-family:Wingdings;}
+@list l16
+	{mso-list-id:1193687063;
+	mso-list-type:hybrid;
+	mso-list-template-ids:706778288 68157445 68157443 68157445 68157441 68157443 68157445 68157441 68157443 68157445;}
+@list l16:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0A7;
+	mso-level-tab-stop:.75in;
+	mso-level-number-position:left;
+	margin-left:.75in;
+	text-indent:-.25in;
+	font-family:Wingdings;}
+@list l17
+	{mso-list-id:1390181700;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1159444518 68157445 -433576612 68157445 68157441 68157443 68157445 68157441 68157443 68157445;}
+@list l17:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0A7;
+	mso-level-tab-stop:46.35pt;
+	mso-level-number-position:left;
+	margin-left:46.35pt;
+	text-indent:-.25in;
+	font-family:Wingdings;}
+@list l17:level2
+	{mso-level-start-at:2;
+	mso-level-number-format:bullet;
+	mso-level-text:-;
+	mso-level-tab-stop:82.35pt;
+	mso-level-number-position:left;
+	margin-left:82.35pt;
+	text-indent:-.25in;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+@list l18
+	{mso-list-id:1530602168;
+	mso-list-type:hybrid;
+	mso-list-template-ids:1328025954 1653884984 68157443 68157445 68157441 68157443 68157445 68157441 68157443 68157445;}
+@list l18:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0DE;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	font-family:Symbol;
+	color:windowtext;}
+@list l19
+	{mso-list-id:1630625785;
+	mso-list-type:hybrid;
+	mso-list-template-ids:818703688 -1557614536 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l19:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:23.3pt;
+	mso-level-number-position:left;
+	margin-left:23.3pt;
+	text-indent:-20.15pt;
+	font-family:Symbol;}
+@list l19:level2
+	{mso-level-number-format:bullet;
+	mso-level-text:o;
+	mso-level-tab-stop:75.15pt;
+	mso-level-number-position:left;
+	margin-left:75.15pt;
+	text-indent:-.25in;
+	font-family:"Courier New";
+	mso-bidi-font-family:"Times New Roman";}
+@list l19:level3
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0A7;
+	mso-level-tab-stop:111.15pt;
+	mso-level-number-position:left;
+	margin-left:111.15pt;
+	text-indent:-.25in;
+	font-family:Wingdings;}
+@list l20
+	{mso-list-id:1657144666;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-190830826 67698703 68157465 68157467 68157455 68157465 68157467 68157455 68157465 68157467;}
+@list l20:level1
+	{mso-level-tab-stop:.25in;
+	mso-level-number-position:left;
+	margin-left:.25in;
+	text-indent:-.25in;}
+@list l21
+	{mso-list-id:1735010283;
+	mso-list-type:hybrid;
+	mso-list-template-ids:486207980 68157445 68157443 68157445 68157441 68157443 68157445 68157441 68157443 68157445;}
+@list l21:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0A7;
+	mso-level-tab-stop:.75in;
+	mso-level-number-position:left;
+	margin-left:.75in;
+	text-indent:-.25in;
+	font-family:Wingdings;}
+@list l22
+	{mso-list-id:1820687790;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-190830826 -439201844 68157465 68157467 68157455 68157465 68157467 68157455 68157465 68157467;}
+@list l22:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.75in;
+	mso-level-number-position:left;
+	margin-left:.75in;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l23
+	{mso-list-id:1864198689;
+	mso-list-type:simple;
+	mso-list-template-ids:2109927540;}
+@list l23:level1
+	{mso-level-style-link:References;
+	mso-level-text:"\[%1\]";
+	mso-level-tab-stop:.25in;
+	mso-level-number-position:left;
+	margin-left:.25in;
+	text-indent:-.25in;
+	mso-ansi-font-size:10.0pt;
+	font-family:"Times New Roman";}
+@list l24
+	{mso-list-id:1994138078;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-234066588 68157445 68157443 68157445 68157441 68157443 68157445 68157441 68157443 68157445;}
+@list l24:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0A7;
+	mso-level-tab-stop:.75in;
+	mso-level-number-position:left;
+	margin-left:.75in;
+	text-indent:-.25in;
+	font-family:Wingdings;}
+ol
+	{margin-bottom:0in;}
+ul
+	{margin-bottom:0in;}
+-->
+</style>
+<!--[if gte mso 9]><xml>
+ <o:shapedefaults v:ext="edit" spidmax="2050"/>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <o:shapelayout v:ext="edit">
+  <o:idmap v:ext="edit" data="1"/>
+  <o:rules v:ext="edit">
+   <o:r id="V:Rule2" type="arc" idref="#_x0000_s1113"/>
+   <o:r id="V:Rule3" type="arc" idref="#_x0000_s1114"/>
+   <o:r id="V:Rule6" type="arc" idref="#_x0000_s1119"/>
+   <o:r id="V:Rule7" type="arc" idref="#_x0000_s1120"/>
+  </o:rules>
+  <o:regrouptable v:ext="edit">
+   <o:entry new="1" old="0"/>
+   <o:entry new="2" old="0"/>
+   <o:entry new="3" old="0"/>
+   <o:entry new="4" old="0"/>
+   <o:entry new="5" old="0"/>
+   <o:entry new="6" old="0"/>
+   <o:entry new="7" old="0"/>
+   <o:entry new="8" old="0"/>
+   <o:entry new="9" old="0"/>
+   <o:entry new="10" old="0"/>
+   <o:entry new="11" old="0"/>
+  </o:regrouptable>
+ </o:shapelayout></xml><![endif]-->
+</head>
+
+<body lang=EN-US link=blue vlink=purple style='tab-interval:.5in'>
+
+<div class=Section1>
+
+<p class=Paper-Title style='margin-bottom:3.0pt'>Benchmark on </p>
+
+<p class=Paper-Title style='margin-bottom:3.0pt'><span lang=EN-AU
+style='mso-ansi-language:EN-AU'>JADE Message Transport System<o:p></o:p></span></p>
+
+</div>
+
+<b style='mso-bidi-font-weight:normal'><span lang=EN-AU style='font-size:18.0pt;
+mso-bidi-font-size:10.0pt;font-family:Helvetica;mso-fareast-font-family:"Times New Roman";
+mso-bidi-font-family:"Times New Roman";mso-ansi-language:EN-AU;mso-fareast-language:
+EN-US;mso-bidi-language:AR-SA'><br clear=all style='page-break-before:auto;
+mso-break-type:section-break'>
+</span></b>
+
+<div class=Section2>
+
+<p class=Author style='margin-bottom:0in;margin-bottom:.0001pt'><span
+lang=EN-AU style='letter-spacing:-.1pt;mso-ansi-language:EN-AU'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=Author style='margin-bottom:0in;margin-bottom:.0001pt'><span
+lang=EN-AU style='letter-spacing:-.1pt;mso-ansi-language:EN-AU'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=Author style='margin-bottom:0in;margin-bottom:.0001pt'><span lang=IT
+style='letter-spacing:-.1pt;mso-ansi-language:IT'>Elisabetta Cortese<o:p></o:p></span></p>
+
+<p class=Affiliations><span lang=IT style='letter-spacing:-.1pt;mso-ansi-language:
+IT'>Telecom Italia LAB <br>
+Centro Direzionale isola F7<o:p></o:p></span></p>
+
+<p class=Affiliations><span lang=IT style='letter-spacing:-.1pt;mso-ansi-language:
+IT'>80143 Naples – Italy<o:p></o:p></span></p>
+
+<p class=Affiliations><span lang=IT style='letter-spacing:-.1pt;mso-ansi-language:
+IT'>+390819718364<o:p></o:p></span></p>
+
+<p class=E-Mail><span lang=IT style='font-size:11.0pt;mso-bidi-font-size:10.0pt;
+letter-spacing:-.1pt;mso-ansi-language:IT'>Elisabetta.Cortese@TILAB.com<o:p></o:p></span></p>
+
+<span lang=IT style='font-size:12.0pt;mso-bidi-font-size:10.0pt;font-family:
+Helvetica;mso-fareast-font-family:"Times New Roman";mso-bidi-font-family:"Times New Roman";
+letter-spacing:-.1pt;mso-ansi-language:IT;mso-fareast-language:EN-US;
+mso-bidi-language:AR-SA'><br clear=all style='mso-special-character:line-break;
+mso-column-break-before:always'>
+</span>
+
+<p class=E-Mail><span lang=IT style='font-size:11.0pt;mso-bidi-font-size:10.0pt;
+letter-spacing:-.1pt;mso-ansi-language:IT'><o:p></o:p></span></p>
+
+<p class=E-Mail><span lang=IT style='mso-ansi-language:IT'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+</div>
+
+<span lang=IT style='font-size:10.0pt;font-family:"Times New Roman";mso-fareast-font-family:
+"Times New Roman";mso-ansi-language:IT;mso-fareast-language:EN-US;mso-bidi-language:
+AR-SA'><br clear=all style='page-break-before:auto;mso-break-type:section-break'>
+</span>
+
+<div class=Section3>
+
+<p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><b
+style='mso-bidi-font-weight:normal'><span lang=EN-AU style='font-size:12.0pt;
+mso-bidi-font-size:10.0pt;mso-ansi-language:EN-AU'>Introduction</span></b><span
+lang=EN-AU style='mso-ansi-language:EN-AU'><o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent>In this document, we present the results of test
+measurements of the messaging transport system of JADE The results of message
+round-trip measurements for several platform and load configurations, and
+different MTPs are then presented and analyzed. The obtained results show that
+JADE well performs in scalability in several scenarios (intra- and
+inter-platform).</p>
+
+<h1 style='margin-top:6.0pt;margin-right:0in;margin-bottom:0in;margin-left:
+0in;margin-bottom:.0001pt;text-indent:0in'><![if !supportLists]><span
+lang=EN-AU style='mso-ansi-language:EN-AU'>1.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><span lang=EN-AU style='mso-ansi-language:EN-AU'>JADE
+Messaging Architecture<o:p></o:p></span></h1>
+
+<p class=MsoBodyTextIndent><span lang=EN-AU style='mso-ansi-language:EN-AU'>A
+JADE platform is a distributed environment composed of several run-time c<i>ontainers</i>
+launched over one or more hosts across a network (figure 1). In the platform,
+an important role is played by the <i>Main Container</i> where the FIPA service
+agents live (i.e. the AMS and the DF agent). The GUID (Global Unique
+IDentifier) is the logical reference of an agent, independent to the agent
+location, that is used into the ACLMessage and then resolved by the platform
+into a physical address transparently to the programmer.<o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent><span lang=EN-AU style='mso-ansi-language:EN-AU'>For
+a better understanding of JADE messaging architecture (figure 2), we
+distinguish between <b>intra-platform</b> and <b>inter-platform</b> agents
+communication. <o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent><span lang=EN-AU style='mso-ansi-language:EN-AU'>The
+first case involves agents living in the same platform and JADE uses its
+internal message transport protocols (IMTPs) for implementing delivery
+services. JADE delivers messages as follows:<o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent><span lang=EN-AU style='mso-ansi-language:EN-AU'>using
+event passing when both the sender and the receiver agents live in the same
+container. That implies also that the message is not serialized, but cloned,
+and the new object reference is passed to the receiver;<o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:38.2pt;text-indent:-.25in;mso-list:l14 level1 lfo4;
+tab-stops:list 38.2pt'><![if !supportLists]><span lang=EN-AU style='font-family:
+Wingdings;mso-ansi-language:EN-AU'>ü<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><span lang=EN-AU style='mso-ansi-language:EN-AU'>using
+RMI for inter-container communications, i.e. when sender and receiver live in
+different containers.<o:p></o:p></span></p>
+
+<p class=MsoNormal align=center style='text-align:center'><!--[if gte vml 1]><v:shapetype
+ id="_x0000_t75" coordsize="21600,21600" o:spt="75" o:preferrelative="t"
+ path="m@4@5l@4@11@9@11@9@5xe" filled="f" stroked="f">
+ <v:stroke joinstyle="miter"/>
+ <v:formulas>
+  <v:f eqn="if lineDrawn pixelLineWidth 0"/>
+  <v:f eqn="sum @0 1 0"/>
+  <v:f eqn="sum 0 0 @1"/>
+  <v:f eqn="prod @2 1 2"/>
+  <v:f eqn="prod @3 21600 pixelWidth"/>
+  <v:f eqn="prod @3 21600 pixelHeight"/>
+  <v:f eqn="sum @0 0 1"/>
+  <v:f eqn="prod @6 1 2"/>
+  <v:f eqn="prod @7 21600 pixelWidth"/>
+  <v:f eqn="sum @8 21600 0"/>
+  <v:f eqn="prod @7 21600 pixelHeight"/>
+  <v:f eqn="sum @10 21600 0"/>
+ </v:formulas>
+ <v:path o:extrusionok="f" gradientshapeok="t" o:connecttype="rect"/>
+ <o:lock v:ext="edit" aspectratio="t"/>
+</v:shapetype><v:shape id="_x0000_i1025" type="#_x0000_t75" style='width:220.5pt;
+ height:141.75pt' o:ole="">
+ <v:imagedata src="./JADERTTBenchmark_files/image001.png" o:title=""/>
+</v:shape><![endif]--><![if !vml]><img width=294 height=189
+src="./JADERTTBenchmark_files/image002.gif" v:shapes="_x0000_i1025"><![endif]><!--[if gte mso 9]><xml>
+ <o:OLEObject Type="Embed" ProgID="PBrush" ShapeID="_x0000_i1025"
+  DrawAspect="Content" ObjectID="_1088241216">
+ </o:OLEObject>
+</xml><![endif]--></p>
+
+<p class=MsoCaption><span lang=EN-AU style='font-size:8.0pt;mso-bidi-font-size:
+9.0pt;mso-ansi-language:EN-AU'>Figure </span><!--[if supportFields]><span
+style='font-size:8.0pt;mso-bidi-font-size:9.0pt'><span style='mso-element:field-begin'></span></span><span
+lang=EN-AU style='font-size:8.0pt;mso-bidi-font-size:9.0pt;mso-ansi-language:
+EN-AU'><span style="mso-spacerun: yes"> </span>SEQ Figura \* ARABIC </span><span
+style='font-size:8.0pt;mso-bidi-font-size:9.0pt'><span style='mso-element:field-separator'></span></span><![endif]--><span
+lang=EN-AU style='font-size:8.0pt;mso-bidi-font-size:9.0pt;mso-ansi-language:
+EN-AU'>1</span><!--[if supportFields]><span style='font-size:8.0pt;mso-bidi-font-size:
+9.0pt'><span style='mso-element:field-end'></span></span><![endif]--><span
+lang=EN-AU style='font-size:8.0pt;mso-bidi-font-size:9.0pt;mso-ansi-language:
+EN-AU'>: </span><span lang=EN-AU style='font-size:8.0pt;mso-bidi-font-size:
+10.0pt;mso-bidi-font-family:"Times New Roman";mso-ansi-language:EN-AU;
+mso-fareast-language:EN-US'>A JADE platform</span><span lang=EN-AU
+style='font-size:8.0pt;mso-bidi-font-size:9.0pt;mso-ansi-language:EN-AU'><o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent><span lang=EN-AU style='mso-ansi-language:EN-AU'>In
+the inter-platform scenario, interaction among agents is achieved by the Agent
+Communication Channel (ACC), which is physically distributed across all the
+containers of the platform. In fact, each container can be launched with one or
+more message transport protocols (MTPs) and the entire platform is able to
+internally route the messages and select the best MTP (which might be even on a
+different container) for each situation. The following MTPs are currently available
+for JADE:<o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:38.2pt;text-indent:-.25in;mso-list:l14 level1 lfo4;
+tab-stops:list 38.2pt'><![if !supportLists]><span lang=EN-AU style='font-family:
+Wingdings;mso-ansi-language:EN-AU'>ü<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><span lang=EN-AU style='mso-ansi-language:EN-AU'>CORBA
+IIOP MTP based on standard Sun ORB provided with the JDK. (the default
+installation)<o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:38.2pt;text-indent:-.25in;mso-list:l14 level1 lfo4;
+tab-stops:list 38.2pt'><![if !supportLists]><span lang=EN-AU style='font-family:
+Wingdings;mso-ansi-language:EN-AU'>ü<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><span lang=EN-AU style='mso-ansi-language:EN-AU'>CORBA
+IIOP MTP based on ORBACUS <span style='mso-field-code:"REF _Ref7431253 \\r \\h"'>[7]<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000C0000005F0052006500660037003400330031003200350033000000</w:data>
+</xml><![endif]--></span>.<o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:38.2pt;text-indent:-.25in;mso-list:l14 level1 lfo4;
+tab-stops:list 38.2pt'><![if !supportLists]><span lang=EN-AU style='font-family:
+Wingdings;mso-ansi-language:EN-AU'>ü<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><span lang=EN-AU style='mso-ansi-language:EN-AU'>HTTP-based
+MTP.<o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent>JADE provides a Java interface both for implementing
+new ad-hoc IMTP and MTP. A<span lang=EN-AU style='mso-ansi-language:EN-AU'>n
+alternative IMTP, </span>for example, has been implemented for <span
+lang=EN-AU style='mso-ansi-language:EN-AU'>JADE integrated with LEAP in order
+to </span>provide inter-container communication <span lang=EN-AU
+style='mso-ansi-language:EN-AU'>in wireless environments</span>,<span
+lang=EN-AU style='mso-ansi-language:EN-AU'> where RMI is not available.<o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent><span lang=EN-AU style='mso-ansi-language:EN-AU'>A
+requirement for JADE was to avoid the main container to be a bottleneck for
+messaging and platform management. Thus the ACC is distributed and MTPs are
+“pluggable” to any container, not necessarily “Main Container”. Also very
+important is the cache in any container for mapping a GUID with a physical
+address. The main container is the only one that has got the complete
+GUID-physical address association for the whole platform, and it is contacted
+by the other containers only in a cache-miss case, that happens only the first
+time a message is sent to a certain agent on a different container. JADE
+performs all that transparently to the programmer, and the caching mechanism
+provides good performance, as also shown by the present work. <o:p></o:p></span></p>
+
+<p class=MsoCaption><span style='font-size:8.0pt;mso-bidi-font-size:9.0pt'><!--[if gte vml 1]><v:shape
+ id="_x0000_i1026" type="#_x0000_t75" style='width:248.25pt;height:141.75pt'
+ o:ole="">
+ <v:imagedata src="./JADERTTBenchmark_files/image003.png" o:title=""/>
+</v:shape><![endif]--><![if !vml]><img width=331 height=189
+src="./JADERTTBenchmark_files/image004.jpg" v:shapes="_x0000_i1026"><![endif]><!--[if gte mso 9]><xml>
+ <o:OLEObject Type="Embed" ProgID="PBrush" ShapeID="_x0000_i1026"
+  DrawAspect="Content" ObjectID="_1088241218">
+ </o:OLEObject>
+</xml><![endif]--><o:p></o:p></span></p>
+
+<p class=MsoCaption><span style='font-size:8.0pt;mso-bidi-font-size:9.0pt'>Figure
+<span style='mso-field-code:"SEQ Figura \\* ARABIC"'>2</span>: Components of
+Jade Messaging Architecture<o:p></o:p></span></p>
+
+<h1 style='margin-top:6.0pt;margin-right:0in;margin-bottom:0in;margin-left:
+0in;margin-bottom:.0001pt;text-indent:0in'><![if !supportLists]>2.<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp; </span><![endif]>TEST
+DESCRIPTION </h1>
+
+<h2 style='margin:0in;margin-bottom:.0001pt;text-indent:0in'><![if !supportLists]>2.1<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp; </span><![endif]>Goal</h2>
+
+<p class=MsoBodyTextIndent>We intend to evaluate the performance of the JADE
+messaging subsystem for typical configuration scenarios.<span style='font-size:
+8.0pt;mso-bidi-font-size:10.0pt'><o:p></o:p></span></p>
+
+<h2 style='margin-left:0in;text-indent:0in'><![if !supportLists]>2.2<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp; </span><![endif]>Testbed</h2>
+
+<p class=MsoBodyTextIndent>We measured the roundtrip time defined as the
+required time for a circular exchange of an ACL message between a Sender agent
+and a Receiver agent.</p>
+
+<p class=MsoBodyTextIndent>In order to evaluate the scalability of the
+platform, we started with a single couple Sender/Receiver, then we increased
+the number of couples<i> </i>and observed how the <i>roundtrip</i> time grows.</p>
+
+<p class=MsoBodyTextIndent>For each measurement we want to obtain the avgRTT
+(average roundtrip time) defined as the total measurement time divided by the
+number of times a message is exchanged for each couple and by the number of
+couples. In other terms, avgRTT is the average time needed to send a message and
+receive the reply. </p>
+
+<p class=MsoBodyTextIndent align=center style='text-align:center'><!--[if gte vml 1]><v:oval
+ id="_x0000_s1111" style='position:absolute;left:0;text-align:left;
+ margin-left:166.05pt;margin-top:28.75pt;width:45pt;height:27pt;z-index:1'>
+ <v:textbox inset="0,,0">
+  <![if !mso]>
+  <table cellpadding=0 cellspacing=0 width="100%">
+   <tr>
+    <td><![endif]>
+    <div>
+    <p class=MsoBodyText2 align=center style='text-align:center'><span
+    lang=EN-GB style='mso-ansi-language:EN-GB'>Sender</span></p>
+    </div>
+    <![if !mso]></td>
+   </tr>
+  </table>
+  <![endif]></v:textbox>
+</v:oval><v:oval id="_x0000_s1112" style='position:absolute;left:0;
+ text-align:left;margin-left:300.9pt;margin-top:28.75pt;width:45pt;height:27pt;
+ z-index:2'>
+ <v:textbox inset="0,,0">
+  <![if !mso]>
+  <table cellpadding=0 cellspacing=0 width="100%">
+   <tr>
+    <td><![endif]>
+    <div>
+    <p class=MsoNormal align=center style='text-align:center'><span lang=EN-GB
+    style='font-size:8.0pt;mso-bidi-font-size:10.0pt;mso-ansi-language:EN-GB'>Receiver</span><span
+    lang=IT style='font-size:8.0pt;mso-bidi-font-size:10.0pt;mso-ansi-language:
+    IT'><o:p></o:p></span></p>
+    </div>
+    <![if !mso]></td>
+   </tr>
+  </table>
+  <![endif]></v:textbox>
+</v:oval><v:group id="_x0000_s1117" style='position:absolute;left:0;
+ text-align:left;margin-left:210.9pt;margin-top:24.7pt;width:90pt;height:9pt;
+ z-index:3' coordorigin="7641,1906" coordsize="1800,180">
+ <v:shapetype id="_x0000_t19" coordsize="21600,21600" o:spt="19" adj="-5898240,,,21600,21600"
+  path="wr-21600,,21600,43200,,,21600,21600nfewr-21600,,21600,43200,,,21600,21600l0,21600nsxe"
+  filled="f">
+  <v:formulas>
+   <v:f eqn="val #2"/>
+   <v:f eqn="val #3"/>
+   <v:f eqn="val #4"/>
+  </v:formulas>
+  <v:path arrowok="t" o:extrusionok="f" gradientshapeok="t" o:connecttype="custom"
+   o:connectlocs="0,0;21600,21600;0,21600"/>
+  <v:handles>
+   <v:h position="@2,#0" polar="@0,@1"/>
+   <v:h position="@2,#1" polar="@0,@1"/>
+  </v:handles>
+ </v:shapetype><v:shape id="_x0000_s1113" type="#_x0000_t19" style='position:absolute;
+  left:7641;top:1906;width:900;height:180;flip:x'>
+  <v:stroke dashstyle="dash"/>
+ </v:shape><v:shape id="_x0000_s1114" type="#_x0000_t19" style='position:absolute;
+  left:8541;top:1906;width:900;height:180'>
+  <v:stroke dashstyle="dash"/>
+ </v:shape></v:group><v:group id="_x0000_s1118" style='position:absolute;
+ left:0;text-align:left;margin-left:211.55pt;margin-top:49.65pt;width:90pt;
+ height:9.9pt;flip:y;z-index:4' coordorigin="7641,1906" coordsize="1800,180">
+ <v:shape id="_x0000_s1119" type="#_x0000_t19" style='position:absolute;left:7641;
+  top:1906;width:900;height:180;flip:x'>
+  <v:stroke dashstyle="dash"/>
+ </v:shape><v:shape id="_x0000_s1120" type="#_x0000_t19" style='position:absolute;
+  left:8541;top:1906;width:900;height:180'>
+  <v:stroke dashstyle="dash"/>
+ </v:shape></v:group><v:rect id="_x0000_s1121" style='position:absolute;left:0;
+ text-align:left;margin-left:246.9pt;margin-top:10.1pt;width:18pt;height:9pt;
+ z-index:5'/><v:line id="_x0000_s1122" style='position:absolute;left:0;
+ text-align:left;flip:x;z-index:6' from="247.05pt,9.2pt" to="256.05pt,9.2pt"/><v:polyline
+ id="_x0000_s1123" style='position:absolute;left:0;text-align:left;z-index:7;
+ mso-position-horizontal:absolute;mso-position-vertical:absolute' points="255.55pt,14.65pt,247.05pt,9.2pt"
+ coordsize="170,109" filled="f">
+ <v:path arrowok="t"/>
+</v:polyline><v:polyline id="_x0000_s1124" style='position:absolute;left:0;
+ text-align:left;z-index:8;mso-position-horizontal:absolute;
+ mso-position-vertical:absolute' points="255.75pt,14.7pt,265.05pt,9.2pt"
+ coordsize="186,110" filled="f">
+ <v:path arrowok="t"/>
+</v:polyline><v:shapetype id="_x0000_t13" coordsize="21600,21600" o:spt="13"
+ adj="16200,5400" path="m@0,0l@0@1,0@1,0@2@0@2@0,21600,21600,10800xe">
+ <v:stroke joinstyle="miter"/>
+ <v:formulas>
+  <v:f eqn="val #0"/>
+  <v:f eqn="val #1"/>
+  <v:f eqn="sum height 0 #1"/>
+  <v:f eqn="sum 10800 0 #1"/>
+  <v:f eqn="sum width 0 #0"/>
+  <v:f eqn="prod @4 @3 10800"/>
+  <v:f eqn="sum width 0 @5"/>
+ </v:formulas>
+ <v:path o:connecttype="custom" o:connectlocs="@0,0;0,10800;@0,21600;21600,10800"
+  o:connectangles="270,180,90,0" textboxrect="0,@1,@6,@2"/>
+ <v:handles>
+  <v:h position="#0,#1" xrange="0,21600" yrange="0,10800"/>
+ </v:handles>
+</v:shapetype><v:shape id="_x0000_s1125" type="#_x0000_t13" style='position:absolute;
+ left:0;text-align:left;margin-left:272.45pt;margin-top:13.65pt;width:18pt;
+ height:8.8pt;rotation:15;z-index:9'/><v:shape id="_x0000_s1126" type="#_x0000_t13"
+ style='position:absolute;left:0;text-align:left;margin-left:280.4pt;
+ margin-top:59.25pt;width:18pt;height:8.8pt;rotation:165;z-index:10'/><![endif]--><![if !vml]><span
+style='mso-ignore:vglayout;position:relative;z-index:0;left:221px;top:-5px;
+width:243px;height:88px'><img width=243 height=88
+src="./JADERTTBenchmark_files/image005.gif" v:shapes="_x0000_s1111 _x0000_s1112 _x0000_s1117 _x0000_s1113 _x0000_s1114 _x0000_s1118 _x0000_s1119 _x0000_s1120 _x0000_s1121 _x0000_s1122 _x0000_s1123 _x0000_s1124 _x0000_s1125 _x0000_s1126"></span><![endif]><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoBodyTextIndent align=center style='text-align:center'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoBodyTextIndent align=center style='text-align:center'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoBodyTextIndent align=center style='text-align:center'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoBodyTextIndent align=center style='text-align:center'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoBodyTextIndent align=center style='text-align:center'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoBodyTextIndent align=center style='text-align:center'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<br style='mso-ignore:vglayout' clear=ALL>
+
+<p class=MsoCaption><span style='font-size:8.0pt;mso-bidi-font-size:9.0pt'>Figure
+<span style='mso-field-code:"SEQ Figura \\* ARABIC"'>3</span>: ACL message
+round trip<o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent>As shown in <span style='mso-field-code:"REF _Ref7410350 \\h"'><span
+style='font-size:8.0pt;mso-bidi-font-size:10.0pt'>Figure 4</span><!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000C0000005F0052006500660037003400310030003300350030000000</w:data>
+</xml><![endif]--></span>, the Sender i-th communicates only with Receiver
+i-th, every couple exchanges 10000 messages. The content field of each message
+is filled with a string of 7 characters.</p>
+
+<p class=MsoBodyTextIndent><span lang=EN-AU style='mso-ansi-language:EN-AU'>Both
+agents are implemented by using the <i>CyclicBehaviour </i>class (the JADE
+abstraction for a repetitive cyclic agent task) to handle incoming messages. </span>In
+detail, t<span lang=EN-AU style='mso-ansi-language:EN-AU'>he steps executed by
+the two agents, <i>sender</i> and <i>receiver, </i>are the following: <o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent><span lang=EN-AU style='font-size:4.0pt;mso-bidi-font-size:
+10.0pt;mso-ansi-language:EN-AU'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent><span lang=EN-AU style='mso-ansi-language:EN-AU'>The
+<i>Sender </i>agent that has the <i>initiator role</i>:<o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent><span lang=EN-AU style='mso-ansi-language:EN-AU'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent align=left style='text-align:left'><b><span
+lang=EN-AU style='mso-ansi-language:EN-AU'>Sender</span></b><span lang=EN-AU
+style='mso-ansi-language:EN-AU'>:<b><o:p></o:p></b></span></p>
+
+<p class=MsoNormal align=left style='margin-left:.25in;text-align:left'><span
+lang=EN-AU style='font-size:8.0pt;mso-bidi-font-size:10.0pt;font-family:"Courier New";
+mso-ansi-language:EN-AU'>Create a message to send<o:p></o:p></span></p>
+
+<p class=MsoNormal align=left style='margin-left:.25in;text-align:left'><span
+lang=EN-AU style='font-size:8.0pt;mso-bidi-font-size:10.0pt;font-family:"Courier New";
+mso-ansi-language:EN-AU'>Take start time<o:p></o:p></span></p>
+
+<p class=MsoNormal align=left style='margin-left:.25in;text-align:left'><span
+lang=EN-AU style='font-size:8.0pt;mso-bidi-font-size:10.0pt;font-family:"Courier New";
+mso-ansi-language:EN-AU'>For all number of message to send<o:p></o:p></span></p>
+
+<p class=MsoNormal align=left style='margin-left:1.25in;text-align:left'><span
+lang=EN-AU style='font-size:8.0pt;mso-bidi-font-size:10.0pt;font-family:"Courier New";
+mso-ansi-language:EN-AU'>Send message to receiver<o:p></o:p></span></p>
+
+<p class=MsoNormal align=left style='margin-left:1.25in;text-align:left'><span
+lang=EN-AU style='font-size:8.0pt;mso-bidi-font-size:10.0pt;font-family:"Courier New";
+mso-ansi-language:EN-AU'>Wait the reply message from receiver<o:p></o:p></span></p>
+
+<p class=MsoNormal align=left style='margin-left:.25in;text-align:left'><span
+lang=EN-AU style='font-size:8.0pt;mso-bidi-font-size:10.0pt;font-family:"Courier New";
+mso-ansi-language:EN-AU'>Take finish time<o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent><span lang=EN-AU style='mso-ansi-language:EN-AU'>The
+Receiver agent has <i>responder role</i>:<o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent><span lang=EN-AU style='mso-ansi-language:EN-AU'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal align=left style='text-align:left;text-indent:21.3pt'><b><span
+lang=EN-AU style='mso-ansi-language:EN-AU'>Receiver</span></b><span lang=EN-AU
+style='mso-ansi-language:EN-AU'>:<o:p></o:p></span></p>
+
+<p class=MsoNormal align=left style='text-align:left;text-indent:21.3pt'><span
+lang=EN-AU style='font-size:8.0pt;mso-bidi-font-size:10.0pt;font-family:"Courier New";
+mso-ansi-language:EN-AU'>wait the message from sender<o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent align=left style='text-align:left;text-indent:21.3pt'><span
+lang=EN-AU style='font-size:8.0pt;mso-bidi-font-size:10.0pt;font-family:"Courier New";
+mso-ansi-language:EN-AU'>send the reply message back to sender</span><span
+lang=EN-AU style='mso-ansi-language:EN-AU'><o:p></o:p></span></p>
+
+<p class=MsoCaption><span lang=FR style='mso-ansi-language:FR'><!--[if gte vml 1]><v:shape
+ id="_x0000_i1027" type="#_x0000_t75" style='width:225pt;height:141.75pt'>
+ <v:imagedata src="./JADERTTBenchmark_files/image006.png" o:title="NCoppie"
+  croptop="16054f" cropbottom="11467f" cropleft="10321f" cropright="10321f"/>
+</v:shape><![endif]--><![if !vml]><img width=300 height=189
+src="./JADERTTBenchmark_files/image007.gif" v:shapes="_x0000_i1027"><![endif]></span><span
+lang=EN-AU style='mso-ansi-language:EN-AU'><o:p></o:p></span></p>
+
+<p class=MsoCaption><a name="_Ref7410350"><span style='font-size:8.0pt;
+mso-bidi-font-size:9.0pt'>Figure <span style='mso-field-code:"SEQ Figura \\* ARABIC"'>4</span></span></a><span
+style='font-size:8.0pt;mso-bidi-font-size:9.0pt'>: Testbed Architecture</span><span
+lang=EN-AU style='font-size:8.0pt;mso-bidi-font-size:9.0pt;font-family:"Courier New";
+mso-ansi-language:EN-AU'><o:p></o:p></span></p>
+
+<h2 style='margin-left:0in;text-indent:0in'><![if !supportLists]><span
+lang=EN-AU style='mso-ansi-language:EN-AU'>2.3<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><span lang=EN-AU style='mso-ansi-language:EN-AU'>Scenarios<o:p></o:p></span></h2>
+
+<p class=MsoBodyTextIndent>The measurement is repeated for several
+configurations, with the agents situated into the same platform or in different
+platforms. So, we distinguish between:</p>
+
+<p class=MsoBodyTextIndent style='margin-left:112.5pt;text-indent:-84.15pt;
+mso-list:l13 level1 lfo5;tab-stops:list 28.35pt'><![if !supportLists]><span
+lang=EN-AU style='font-family:Wingdings;mso-ansi-language:EN-AU'>§<span
+style='font:7.0pt "Times New Roman"'>&nbsp; </span></span><![endif]><span
+lang=EN-AU style='mso-ansi-language:EN-AU'>intra-platform communication<o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent style='margin-left:112.5pt;text-indent:-84.15pt;
+mso-list:l13 level1 lfo5;tab-stops:list 35.45pt'><![if !supportLists]><span
+lang=EN-AU style='font-family:Wingdings;mso-ansi-language:EN-AU'>§<span
+style='font:7.0pt "Times New Roman"'>&nbsp; </span></span><![endif]><span
+lang=EN-AU style='mso-ansi-language:EN-AU'>inter-platform communication<o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent style='text-indent:0in'><span lang=EN-AU
+style='mso-ansi-language:EN-AU'>When all agents run into a single platform, we
+have two sub-cases:<o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent style='margin-left:35.45pt;text-indent:-7.1pt;
+mso-list:l17 level1 lfo6;tab-stops:list 35.45pt'><![if !supportLists]><span
+lang=EN-AU style='font-family:Wingdings;mso-ansi-language:EN-AU'>§<span
+style='font:7.0pt "Times New Roman"'>&nbsp; </span></span><![endif]><span
+lang=EN-AU style='mso-ansi-language:EN-AU'>Communication between agents both
+living in the same container<o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent style='margin-left:35.45pt;text-indent:-7.1pt;
+mso-list:l17 level1 lfo6;tab-stops:list 35.45pt'><![if !supportLists]><span
+lang=EN-AU style='font-family:Wingdings;mso-ansi-language:EN-AU'>§<span
+style='font:7.0pt "Times New Roman"'>&nbsp; </span></span><![endif]><span
+lang=EN-AU style='mso-ansi-language:EN-AU'>Communication between agents living
+in two different containers.<o:p></o:p></span></p>
+
+<h2 style='margin-left:0in;text-indent:0in'><![if !supportLists]><span
+lang=EN-AU style='mso-ansi-language:EN-AU'>2.4<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><span lang=EN-AU style='mso-ansi-language:EN-AU'>Measurement
+issues <o:p></o:p></span></h2>
+
+<h3 style='margin-left:0in;text-indent:0in'><![if !supportLists]>2.4.1<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp; </span><![endif]>Time
+measurements in Java</h3>
+
+<p class=MsoBodyTextIndent>In order to measure time intervals we used the Java
+method: <i>long System.currentTimeMillis(),</i> that returns the number of
+milliseconds passed since 1<sup>st</sup> Jan 1970, as common in Unix systems.
+Different JVM implementations can provide different precision levels. Sun SDK
+1.4 on Windows 2000, for example, provides a precision of 10ms. </p>
+
+<p class=MsoBodyTextIndent>Since the duration of our phenomena is in the order
+of magnitude of milliseconds, we need to measure the roundtrip time as average,
+taking the time of a message to complete N roundtrips, and dividing it by N.
+The value of N has to be chosen high enough so that the measurement error
+introduced by Java does not influence our measurement.<span style='font-family:
+Arial;mso-bidi-font-family:"Times New Roman"'><o:p></o:p></span></p>
+
+<h3 style='margin-left:0in;text-indent:0in'><![if !supportLists]>2.4.2<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp; </span><![endif]>Measurement
+at “Full Load” </h3>
+
+<p class=MsoBodyTextIndent>During a measurement we can identify three
+intervals, as shown in <!--[if supportFields]><span style='mso-element:field-begin'></span><span
+style="mso-spacerun: yes"> </span>REF _Ref7187136 \h <span style='mso-element:
+field-separator'></span><![endif]--><span style='font-size:8.0pt;mso-bidi-font-size:
+10.0pt'>Figure 5</span><!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000C0000005F0052006500660037003100380037003100330036000000</w:data>
+</xml><![endif]--><!--[if supportFields]><span style='mso-element:field-end'></span><![endif]-->.
+Na(t) is the number of active agents and N is the total number of agents. </p>
+
+<p class=MsoBodyTextIndent>During T<sub>1</sub> all the agents are sequentially
+created (and start competing for the CPU), and after a little while (thicker
+line) they actually start exchanging ACL messages. In this phase two different
+phenomena can be experienced that tend to distort the measurements: the
+measured avgRTT tends to be lower (i.e. faster exchange) than reality because
+not all the couples are born yet; the avgRTT tends to appear higher (i.e.
+slower exchange) because agent’s creation takes CPU.</p>
+
+<p class=MsoBodyTextIndent>During the interval T<sub>2</sub> all the couples
+are created and are ready to exchange messages.</p>
+
+<p class=MsoBodyTextIndent>In the T<sub>3</sub> phase the measurement is again
+influenced by the lower number of agents competing for the CPU, and by the
+agent destruction time, similarly to the T<sub>1</sub> phase. We want to focus
+on the messaging subsystem performance, so other effects on avgRTT should not
+be taken into account. Otherwise we would include someway the agent
+creation/destruction performance in the avgRTT measurement.</p>
+
+<p class=MsoBodyTextIndent><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoBodyTextIndent><!--[if gte vml 1]><v:polyline id="_x0000_s1079"
+ style='position:absolute;left:0;text-align:left;z-index:11;
+ mso-position-horizontal:absolute;mso-position-vertical:absolute' points="133.5pt,79.45pt,348.35pt,79.4pt"
+ coordsize="4297,1" o:regroupid="11" filled="f">
+ <v:stroke endarrow="block"/>
+ <v:path arrowok="t"/>
+</v:polyline><v:line id="_x0000_s1080" style='position:absolute;left:0;
+ text-align:left;flip:y;z-index:12' from="133.5pt,2.85pt" to="133.5pt,83.45pt"
+ o:regroupid="11">
+ <v:stroke endarrow="block"/>
+</v:line><v:shapetype id="_x0000_t202" coordsize="21600,21600" o:spt="202"
+ path="m0,0l0,21600,21600,21600,21600,0xe">
+ <v:stroke joinstyle="miter"/>
+ <v:path gradientshapeok="t" o:connecttype="rect"/>
+</v:shapetype><v:shape id="_x0000_s1081" type="#_x0000_t202" style='position:absolute;
+ left:0;text-align:left;margin-left:103.05pt;margin-top:1.2pt;width:38.05pt;
+ height:23.6pt;z-index:13' o:regroupid="11" filled="f" stroked="f">
+ <v:textbox style='mso-next-textbox:#_x0000_s1081'>
+  <![if !mso]>
+  <table cellpadding=0 cellspacing=0 width="100%">
+   <tr>
+    <td><![endif]>
+    <div>
+    <p class=MsoNormal>Na(t)</p>
+    </div>
+    <![if !mso]></td>
+   </tr>
+  </table>
+  <![endif]></v:textbox>
+</v:shape><v:shape id="_x0000_s1082" style='position:absolute;left:0;
+ text-align:left;margin-left:136.25pt;margin-top:28.05pt;width:179.2pt;
+ height:.15pt;z-index:14;mso-position-horizontal:absolute;
+ mso-position-vertical:absolute' coordsize="4237,4" o:regroupid="11" path="m0,0l4237,4e"
+ filled="f" strokecolor="#969696" strokeweight=".5pt">
+ <v:stroke dashstyle="dash"/>
+ <v:path arrowok="t"/>
+</v:shape><v:line id="_x0000_s1083" style='position:absolute;left:0;
+ text-align:left;flip:y;z-index:15' from="163.95pt,30.3pt" to="202.05pt,79.45pt"
+ o:regroupid="11"/><v:polyline id="_x0000_s1084" style='position:absolute;
+ left:0;text-align:left;z-index:16;mso-position-horizontal:absolute;
+ mso-position-vertical:absolute' points="202.05pt,28.05pt,302.65pt,28.05pt"
+ coordsize="2012,1" o:regroupid="11" filled="f">
+ <v:path arrowok="t"/>
+</v:polyline><v:polyline id="_x0000_s1085" style='position:absolute;left:0;
+ text-align:left;z-index:17;mso-position-horizontal:absolute;
+ mso-position-vertical:absolute' points="302.9pt,30.1pt,325.8pt,79.75pt"
+ coordsize="458,993" o:regroupid="11" filled="f">
+ <v:path arrowok="t"/>
+</v:polyline><v:line id="_x0000_s1086" style='position:absolute;left:0;
+ text-align:left;z-index:18' from="204.8pt,28.05pt" to="204.8pt,100.6pt"
+ o:regroupid="11" strokecolor="#fc0">
+ <v:stroke dashstyle="dash"/>
+</v:line><v:line id="_x0000_s1087" style='position:absolute;left:0;
+ text-align:left;z-index:19' from="301.95pt,30.3pt" to="301.95pt,102.85pt"
+ o:regroupid="11" strokecolor="#fc0">
+ <v:stroke dashstyle="dash"/>
+</v:line><v:shape id="_x0000_s1088" style='position:absolute;left:0;
+ text-align:left;margin-left:163.95pt;margin-top:71.55pt;width:.2pt;height:28.35pt;
+ z-index:20;mso-position-horizontal:absolute;mso-position-vertical:absolute'
+ coordsize="5,649" o:regroupid="11" path="m5,0l0,649e" filled="f"
+ strokecolor="#fc0">
+ <v:stroke dashstyle="dash"/>
+ <v:path arrowok="t"/>
+</v:shape><v:shape id="_x0000_s1089" style='position:absolute;left:0;
+ text-align:left;margin-left:213.5pt;margin-top:71.1pt;width:.2pt;height:28.35pt;
+ z-index:21;mso-position-horizontal:absolute;mso-position-vertical:absolute'
+ coordsize="5,649" o:regroupid="11" path="m5,0l0,649e" filled="f"
+ strokecolor="#fc0">
+ <v:stroke dashstyle="dash"/>
+ <v:path arrowok="t"/>
+</v:shape><v:line id="_x0000_s1090" style='position:absolute;left:0;
+ text-align:left;z-index:22' from="163.95pt,103pt" to="202.05pt,103pt"
+ o:regroupid="11" strokeweight=".25pt">
+ <v:stroke startarrow="open" startarrowwidth="narrow" startarrowlength="short"
+  endarrow="open" endarrowwidth="narrow" endarrowlength="short"/>
+</v:line><v:polyline id="_x0000_s1091" style='position:absolute;left:0;
+ text-align:left;z-index:23' points="190pt,103.9pt,211.9pt,103.8pt"
+ coordsize="438,2" o:regroupid="11" filled="f" strokeweight=".25pt">
+ <v:stroke startarrow="open" startarrowwidth="narrow" startarrowlength="short"
+  endarrow="open" endarrowwidth="narrow" endarrowlength="short"/>
+ <v:path arrowok="t"/>
+</v:polyline><v:polyline id="_x0000_s1092" style='position:absolute;left:0;
+ text-align:left;z-index:24;mso-position-horizontal:absolute;
+ mso-position-vertical:absolute' points="204.6pt,103pt,300.55pt,103pt"
+ coordsize="1919,1" o:regroupid="11" filled="f" strokeweight=".25pt">
+ <v:stroke startarrow="open" startarrowwidth="narrow" startarrowlength="short"
+  endarrow="open" endarrowwidth="narrow" endarrowlength="short"/>
+ <v:path arrowok="t"/>
+</v:polyline><v:shape id="_x0000_s1093" type="#_x0000_t202" style='position:absolute;
+ left:0;text-align:left;margin-left:174.1pt;margin-top:85.3pt;width:30.45pt;
+ height:31.45pt;z-index:25' o:regroupid="11" filled="f" stroked="f">
+ <v:textbox style='mso-next-textbox:#_x0000_s1093'>
+  <![if !mso]>
+  <table cellpadding=0 cellspacing=0 width="100%">
+   <tr>
+    <td><![endif]>
+    <div>
+    <p class=MsoNormal>T<sub>1</sub></p>
+    </div>
+    <![if !mso]></td>
+   </tr>
+  </table>
+  <![endif]></v:textbox>
+</v:shape><v:shape id="_x0000_s1094" type="#_x0000_t202" style='position:absolute;
+ left:0;text-align:left;margin-left:237.55pt;margin-top:86.65pt;width:30.45pt;
+ height:31.4pt;z-index:26' o:regroupid="11" filled="f" stroked="f">
+ <v:textbox style='mso-next-textbox:#_x0000_s1094'>
+  <![if !mso]>
+  <table cellpadding=0 cellspacing=0 width="100%">
+   <tr>
+    <td><![endif]>
+    <div>
+    <p class=MsoNormal>T<sub>2</sub></p>
+    </div>
+    <![if !mso]></td>
+   </tr>
+  </table>
+  <![endif]></v:textbox>
+</v:shape><v:shape id="_x0000_s1095" type="#_x0000_t202" style='position:absolute;
+ left:0;text-align:left;margin-left:301.75pt;margin-top:86.65pt;width:30.45pt;
+ height:31.4pt;z-index:27' o:regroupid="11" filled="f" stroked="f">
+ <v:textbox style='mso-next-textbox:#_x0000_s1095'>
+  <![if !mso]>
+  <table cellpadding=0 cellspacing=0 width="100%">
+   <tr>
+    <td><![endif]>
+    <div>
+    <p class=MsoNormal>T<sub>3</sub></p>
+    </div>
+    <![if !mso]></td>
+   </tr>
+  </table>
+  <![endif]></v:textbox>
+</v:shape><v:shape id="_x0000_s1096" type="#_x0000_t202" style='position:absolute;
+ left:0;text-align:left;margin-left:112.05pt;margin-top:11.9pt;width:30.45pt;
+ height:23.6pt;z-index:28' o:regroupid="11" filled="f" stroked="f">
+ <v:textbox style='mso-next-textbox:#_x0000_s1096'>
+  <![if !mso]>
+  <table cellpadding=0 cellspacing=0 width="100%">
+   <tr>
+    <td><![endif]>
+    <div>
+    <p class=MsoNormal>N</p>
+    </div>
+    <![if !mso]></td>
+   </tr>
+  </table>
+  <![endif]></v:textbox>
+</v:shape><v:line id="_x0000_s1097" style='position:absolute;left:0;
+ text-align:left;flip:y;z-index:29' from="179.65pt,28.9pt" to="217.75pt,78.05pt"
+ o:regroupid="11" strokecolor="red" strokeweight="2pt"/><v:polyline id="_x0000_s1099"
+ style='position:absolute;left:0;text-align:left;z-index:30;
+ mso-position-horizontal:absolute;mso-position-vertical:absolute' points="217pt,29.9pt,297.2pt,29.9pt"
+ coordsize="1604,1" o:regroupid="11" filled="f" strokecolor="red"
+ strokeweight="2pt">
+ <v:path arrowok="t"/>
+</v:polyline><v:polyline id="_x0000_s1100" style='position:absolute;left:0;
+ text-align:left;z-index:31;mso-position-horizontal:absolute;
+ mso-position-vertical:absolute' points="216.85pt,13.3pt,216.75pt,46.7pt"
+ coordsize="2,668" o:regroupid="11" filled="f" strokecolor="red">
+ <v:stroke dashstyle="dash"/>
+ <v:path arrowok="t"/>
+</v:polyline><v:polyline id="_x0000_s1101" style='position:absolute;left:0;
+ text-align:left;z-index:32;mso-position-horizontal:absolute;
+ mso-position-vertical:absolute' points="269.1pt,10.15pt,269.35pt,43.55pt"
+ coordsize="5,668" o:regroupid="11" filled="f" strokecolor="red">
+ <v:stroke dashstyle="dash"/>
+ <v:path arrowok="t"/>
+</v:polyline><v:polyline id="_x0000_s1102" style='position:absolute;left:0;
+ text-align:left;z-index:33;mso-position-horizontal:absolute;
+ mso-position-vertical:absolute' points="217.25pt,12.35pt,265.95pt,12.4pt"
+ coordsize="974,1" o:regroupid="11" filled="f" strokeweight=".25pt">
+ <v:stroke startarrow="open" startarrowwidth="narrow" startarrowlength="short"
+  endarrow="open" endarrowwidth="narrow" endarrowlength="short"/>
+ <v:path arrowok="t"/>
+</v:polyline><v:shape id="_x0000_s1103" type="#_x0000_t202" style='position:absolute;
+ left:0;text-align:left;margin-left:230.05pt;margin-top:-1.7pt;width:30.45pt;
+ height:31.4pt;z-index:34' o:regroupid="11" filled="f" stroked="f">
+ <v:textbox style='mso-next-textbox:#_x0000_s1103'>
+  <![if !mso]>
+  <table cellpadding=0 cellspacing=0 width="100%">
+   <tr>
+    <td><![endif]>
+    <div>
+    <p class=MsoNormal>Tm</p>
+    </div>
+    <![if !mso]></td>
+   </tr>
+  </table>
+  <![endif]></v:textbox>
+</v:shape><v:shape id="_x0000_s1128" type="#_x0000_t202" style='position:absolute;
+ left:0;text-align:left;margin-left:226.55pt;margin-top:81.4pt;width:30.45pt;
+ height:23.6pt;z-index:35' o:regroupid="11" filled="f" stroked="f">
+ <v:textbox style='mso-next-textbox:#_x0000_s1128'>
+  <![if !mso]>
+  <table cellpadding=0 cellspacing=0 width="100%">
+   <tr>
+    <td><![endif]>
+    <div>
+    <p class=MsoNormal>t</p>
+    </div>
+    <![if !mso]></td>
+   </tr>
+  </table>
+  <![endif]></v:textbox>
+</v:shape><v:polyline id="_x0000_s1129" style='position:absolute;left:0;
+ text-align:left;z-index:36;mso-position-horizontal:absolute;
+ mso-position-vertical:absolute' points="296.35pt,29.05pt,318.95pt,78.65pt"
+ coordsize="452,992" o:regroupid="11" filled="f" strokecolor="red"
+ strokeweight="2pt">
+ <v:path arrowok="t"/>
+</v:polyline><![endif]--><![if !vml]><span style='mso-ignore:vglayout;
+position:relative;z-index:14'><span style='left:0px;position:absolute;
+left:137px;top:-107px;width:329px;height:161px'><img width=329 height=161
+src="./JADERTTBenchmark_files/image008.gif" v:shapes="_x0000_s1079 _x0000_s1080 _x0000_s1081 _x0000_s1082 _x0000_s1083 _x0000_s1084 _x0000_s1085 _x0000_s1086 _x0000_s1087 _x0000_s1088 _x0000_s1089 _x0000_s1090 _x0000_s1091 _x0000_s1092 _x0000_s1093 _x0000_s1094 _x0000_s1095 _x0000_s1096 _x0000_s1097 _x0000_s1099 _x0000_s1100 _x0000_s1101 _x0000_s1102 _x0000_s1103 _x0000_s1128 _x0000_s1129"></span></span><![endif]><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoBodyTextIndent><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoBodyTextIndent><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoBodyTextIndent><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoBodyTextIndent><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoBodyTextIndent><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoBodyTextIndent><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoBodyTextIndent><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoBodyTextIndent><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoBodyTextIndent><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<br style='mso-ignore:vglayout' clear=ALL>
+
+<p class=MsoCaption><a name="_Ref7187136"><span style='font-size:8.0pt;
+mso-bidi-font-size:9.0pt'>Figure <span style='mso-field-code:"SEQ Figura \\* ARABIC"'>5</span></span></a><span
+style='font-size:8.0pt;mso-bidi-font-size:9.0pt'>:<span style="mso-spacerun:
+yes">  </span>Na(t) is the number of active agents during the three considered
+intervals. The thicker line shows the number of agents that are actually
+sending messages.<o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent><span style='font-size:4.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent>Given the aforementioned, for each couple we measure
+the avgRTT only during the interval T<sub>m</sub> when the system is working at
+“Full Load” i.e. all the couples are actually exchanging messages. In
+particular we make T<sub>m</sub> last until 10000 messages are exchanged. The
+algorithm has been implemented so that a couple, after taking the “finish time”
+at the and of T<sub>m</sub>, does not stop exchanging messages in order to keep
+the “Full Load” condition for the other couples that are still working in the T<sub>m</sub>
+phase. The program stops as soon as all the couples completed the Tm interval.
+This has been implemented by using a <span style='font-family:"Courier New"'>static
+</span>variable in the Sender class, incremented by each agent when starts
+sending messages. By doing that, each sender knows how many couples are
+actually sending messages.</p>
+
+<p class=MsoBodyTextIndent>It has been verified that values obtained with the
+mechanism we used, are actually different than calculating the avgRTT<span
+style="mso-spacerun: yes">  </span>as the total time (T<sub>1</sub>+ T<sub>2</sub>+
+T<sub>3</sub>) divided by<span style="mso-spacerun: yes">  </span>(exchanged
+messages<span style="mso-spacerun: yes">  </span>* number of couples).</p>
+
+<h3 style='margin-left:0in;text-indent:0in'><![if !supportLists]>2.4.3<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp; </span><![endif]>Just-in-Time
+compilation effects</h3>
+
+<p class=MsoBodyTextIndent>The JVM we used (Sun SDK 1.4) offers, as default,
+the <i>HotSpot</i> technology, that provides a “Just-in-Time” compilation. Most
+used parts of code are compiled at run-time by the JVM to native code, in order
+to speed up their execution.</p>
+
+<p class=MsoBodyTextIndent>Running a roundtrip time measurement with 50 couples
+of JADE agents, with JIT (as default) or disabling it (-Xint option), for
+10000, 30000 and 50000 trips, we obtained these values:</p>
+
+<p class=MsoBodyTextIndent><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoBodyTextIndent><span style='font-size:4.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<div align=center>
+
+<table border=1 cellspacing=0 cellpadding=0 width=266 style='width:199.2pt;
+ border-collapse:collapse;border:none;mso-border-alt:solid windowtext .5pt;
+ mso-padding-alt:0in 0in 0in 0in'>
+ <tr style='height:18.6pt'>
+  <td width=88 nowrap valign=bottom style='width:66.0pt;border:solid windowtext .5pt;
+  padding:.75pt .75pt 0in .75pt;height:18.6pt'>
+  <p class=MsoNormal align=right style='text-align:right'><i><span lang=EN-GB
+  style='font-size:8.0pt;mso-bidi-font-size:10.0pt;mso-ansi-language:EN-GB'>#
+  Trips<span style="mso-spacerun: yes">  </span><u><o:p></o:p></u></span></i></p>
+  </td>
+  <td width=59 nowrap valign=bottom style='width:44.4pt;border:solid windowtext .5pt;
+  border-left:none;mso-border-left-alt:solid windowtext .5pt;padding:.75pt .75pt 0in .75pt;
+  height:18.6pt'>
+  <p class=MsoNormal align=center style='text-align:center'><i><span
+  style='font-size:8.0pt;mso-bidi-font-size:10.0pt;mso-bidi-font-family:Arial'>10000<o:p></o:p></span></i></p>
+  </td>
+  <td width=59 nowrap valign=bottom style='width:44.4pt;border:solid windowtext .5pt;
+  border-left:none;mso-border-left-alt:solid windowtext .5pt;padding:.75pt .75pt 0in .75pt;
+  height:18.6pt'>
+  <p class=MsoNormal align=center style='text-align:center'><i><span
+  style='font-size:8.0pt;mso-bidi-font-size:10.0pt;mso-bidi-font-family:Arial'>30000<o:p></o:p></span></i></p>
+  </td>
+  <td width=59 nowrap valign=bottom style='width:44.4pt;border:solid windowtext .5pt;
+  border-left:none;mso-border-left-alt:solid windowtext .5pt;padding:.75pt .75pt 0in .75pt;
+  height:18.6pt'>
+  <p class=MsoNormal align=center style='text-align:center'><i><span
+  style='font-size:8.0pt;mso-bidi-font-size:10.0pt;mso-bidi-font-family:Arial'>50000<o:p></o:p></span></i></p>
+  </td>
+ </tr>
+ <tr style='height:12.75pt'>
+  <td width=88 nowrap valign=bottom style='width:66.0pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:.75pt .75pt 0in .75pt;
+  height:12.75pt'>
+  <p class=MsoNormal><span lang=EN-GB style='font-size:8.0pt;mso-bidi-font-size:
+  10.0pt;mso-ansi-language:EN-GB'>With JIT</span><b><span lang=EN-GB
+  style='font-size:8.0pt;mso-bidi-font-size:10.0pt;mso-bidi-font-family:Arial;
+  mso-ansi-language:EN-GB'> <o:p></o:p></span></b></p>
+  </td>
+  <td width=59 nowrap valign=bottom style='width:44.4pt;border-top:none;
+  border-left:none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:.75pt .75pt 0in .75pt;height:12.75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='font-size:8.0pt;mso-bidi-font-size:10.0pt;mso-bidi-font-family:Arial'>13,4<o:p></o:p></span></p>
+  </td>
+  <td width=59 nowrap valign=bottom style='width:44.4pt;border-top:none;
+  border-left:none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:.75pt .75pt 0in .75pt;height:12.75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='font-size:8.0pt;mso-bidi-font-size:10.0pt;mso-bidi-font-family:Arial'>11,9<o:p></o:p></span></p>
+  </td>
+  <td width=59 nowrap valign=bottom style='width:44.4pt;border-top:none;
+  border-left:none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:.75pt .75pt 0in .75pt;height:12.75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='font-size:8.0pt;mso-bidi-font-size:10.0pt;mso-bidi-font-family:Arial'>11,6<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr style='height:12.75pt'>
+  <td width=88 nowrap valign=bottom style='width:66.0pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:.75pt .75pt 0in .75pt;
+  height:12.75pt'>
+  <p class=MsoNormal><span lang=EN-GB style='font-size:8.0pt;mso-bidi-font-size:
+  10.0pt;mso-ansi-language:EN-GB'>NO JIT (-Xint)</span><b><span lang=EN-GB
+  style='font-size:8.0pt;mso-bidi-font-size:10.0pt;mso-bidi-font-family:Arial;
+  mso-ansi-language:EN-GB'><o:p></o:p></span></b></p>
+  </td>
+  <td width=59 valign=bottom style='width:44.4pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 0in 0in 0in;height:12.75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-GB
+  style='font-size:8.0pt;mso-bidi-font-size:10.0pt;mso-bidi-font-family:Arial;
+  mso-ansi-language:EN-GB'>64,1<o:p></o:p></span></p>
+  </td>
+  <td width=59 valign=bottom style='width:44.4pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 0in 0in 0in;height:12.75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-GB
+  style='font-size:8.0pt;mso-bidi-font-size:10.0pt;mso-bidi-font-family:Arial;
+  mso-ansi-language:EN-GB'>63,9<o:p></o:p></span></p>
+  </td>
+  <td width=59 valign=bottom style='width:44.4pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 0in 0in 0in;height:12.75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-GB
+  style='font-size:8.0pt;mso-bidi-font-size:10.0pt;mso-bidi-font-family:Arial;
+  mso-ansi-language:EN-GB'>63,8<o:p></o:p></span></p>
+  </td>
+ </tr>
+</table>
+
+</div>
+
+<p class=MsoCaption style='text-align:justify'><span style='font-size:8.0pt;
+mso-bidi-font-size:9.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoCaption><span style='font-size:8.0pt;mso-bidi-font-size:9.0pt'>Table
+<span style='mso-field-code:"SEQ Tabella \\* ARABIC"'>1</span>: Measured values
+of </span><span lang=EN-AU style='font-size:8.0pt;mso-bidi-font-size:9.0pt;
+mso-ansi-language:EN-AU'>avgRTT for different numbers of trips (times a message
+is exchanged) for each couple. Considered 50 couples, values in ms.<o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent><span lang=EN-AU style='mso-ansi-language:EN-AU'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent><span lang=EN-AU style='mso-ansi-language:EN-AU'>The
+variations between 10000 and 50000 trips are:<o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent><span lang=EN-AU style='mso-ansi-language:EN-AU'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent align=center style='text-align:center'><u><span
+lang=EN-GB style='mso-ansi-language:EN-GB'>With JIT:</span></u><span
+lang=EN-GB style='mso-ansi-language:EN-GB'> -12,9 %<span style="mso-spacerun:
+yes">        </span><u>NO JIT:</u> -0,5 %<o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent align=center style='text-align:center'><span
+lang=EN-GB style='mso-ansi-language:EN-GB'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent><span lang=EN-GB style='mso-ansi-language:EN-GB'>The
+first value shows that the performance improvement due to the JIT compilation
+is higher for longer measurement. This is because at the beginning the compiler
+takes time (and CPU) to produce native code, but in the long run this becomes
+more and more convenient because the compilation overhead is spread over a
+longer period of time. On the other hand, without JIT compilation, as we
+expected, the avgRTT doesn’t vary significantly with the number of trips.
+Another consideration is the big performance improvement due to the JIT
+compilation for our testbed.<o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent><span lang=EN-GB style='mso-ansi-language:EN-GB'>In
+order to make the results comparable, we run all the measurements with 10000
+trips for each couple of agents, without disabling the JIT compilation.<o:p></o:p></span></p>
+
+<h2 style='margin-left:0in;text-indent:0in'><![if !supportLists]><span
+lang=EN-GB style='mso-ansi-language:EN-GB'>2.5<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><span lang=EN-GB style='mso-ansi-language:EN-GB'>Hardware
+&amp; software configuration <o:p></o:p></span></h2>
+
+<p class=MsoBodyTextIndent><span lang=EN-GB style='mso-ansi-language:EN-GB'>We
+used two HP VECTRA personal computers connected by a 100Mbit/s Ethernet LAN.
+The two hosts were in a proper VLAN so that the network traffic generated by
+other host did not affect the measures. The following table provides
+information, obtained with MS System Info, which shows the characteristics of
+the two PCs.<o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent><span lang=EN-GB style='mso-ansi-language:EN-GB'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<div align=center>
+
+<table border=1 cellspacing=0 cellpadding=0 style='border-collapse:collapse;
+ border:none;mso-border-alt:solid windowtext .5pt;mso-padding-alt:0in 3.5pt 0in 3.5pt'>
+ <tr>
+  <td width=109 style='width:81.5pt;border:solid windowtext .5pt;background:
+  #CCCCCC;padding:0in 3.5pt 0in 3.5pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=IT
+  style='font-size:8.0pt;mso-bidi-font-size:10.0pt;mso-ansi-language:IT'>Model<o:p></o:p></span></p>
+  </td>
+  <td width=198 style='width:148.8pt;border:solid windowtext .5pt;border-left:
+  none;mso-border-left-alt:solid windowtext .5pt;padding:0in 3.5pt 0in 3.5pt'>
+  <p class=MsoNormal align=left style='text-align:left'><span lang=IT
+  style='font-size:8.0pt;mso-bidi-font-size:10.0pt;mso-ansi-language:IT'>HP
+  Vectra<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=109 style='width:81.5pt;border:solid windowtext .5pt;border-top:
+  none;mso-border-top-alt:solid windowtext .5pt;background:#CCCCCC;padding:
+  0in 3.5pt 0in 3.5pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-GB
+  style='font-size:8.0pt;mso-bidi-font-size:10.0pt;mso-ansi-language:EN-GB'>Processor<o:p></o:p></span></p>
+  </td>
+  <td width=198 style='width:148.8pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 3.5pt 0in 3.5pt'>
+  <p class=MsoNormal align=left style='text-align:left'><span lang=EN-GB
+  style='font-size:8.0pt;mso-bidi-font-size:10.0pt;mso-ansi-language:EN-GB'>x86
+  Family 6 Model 8 Stepping 6 GenuineIntel ~800 MHZ<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=109 style='width:81.5pt;border:solid windowtext .5pt;border-top:
+  none;mso-border-top-alt:solid windowtext .5pt;background:#CCCCCC;padding:
+  0in 3.5pt 0in 3.5pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-GB
+  style='font-size:8.0pt;mso-bidi-font-size:10.0pt;mso-ansi-language:EN-GB'>BIOS
+  version<o:p></o:p></span></p>
+  </td>
+  <td width=198 style='width:148.8pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 3.5pt 0in 3.5pt'>
+  <p class=MsoNormal align=left style='text-align:left'><span lang=EN-GB
+  style='font-size:8.0pt;mso-bidi-font-size:10.0pt;mso-ansi-language:EN-GB'>PhoenixBIOS
+  4.0 Release 6.0<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=109 style='width:81.5pt;border:solid windowtext .5pt;border-top:
+  none;mso-border-top-alt:solid windowtext .5pt;background:#CCCCCC;padding:
+  0in 3.5pt 0in 3.5pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-GB
+  style='font-size:8.0pt;mso-bidi-font-size:10.0pt;mso-ansi-language:EN-GB'>Total
+  memory<o:p></o:p></span></p>
+  </td>
+  <td width=198 style='width:148.8pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 3.5pt 0in 3.5pt'>
+  <p class=MsoNormal align=left style='text-align:left'><span lang=EN-GB
+  style='font-size:8.0pt;mso-bidi-font-size:10.0pt;mso-ansi-language:EN-GB'>256
+  MB<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=109 style='width:81.5pt;border:solid windowtext .5pt;border-top:
+  none;mso-border-top-alt:solid windowtext .5pt;background:#CCCCCC;padding:
+  0in 3.5pt 0in 3.5pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-GB
+  style='font-size:8.0pt;mso-bidi-font-size:10.0pt;mso-ansi-language:EN-GB'>Operating
+  System<o:p></o:p></span></p>
+  </td>
+  <td width=198 style='width:148.8pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 3.5pt 0in 3.5pt'>
+  <p class=MsoNormal align=left style='text-align:left'><span lang=EN-GB
+  style='font-size:8.0pt;mso-bidi-font-size:10.0pt;mso-ansi-language:EN-GB'>Microsoft
+  Windows 2000 Professional<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=109 style='width:81.5pt;border:solid windowtext .5pt;border-top:
+  none;mso-border-top-alt:solid windowtext .5pt;background:#CCCCCC;padding:
+  0in 3.5pt 0in 3.5pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-GB
+  style='font-size:8.0pt;mso-bidi-font-size:10.0pt;mso-ansi-language:EN-GB'>OS
+  version<o:p></o:p></span></p>
+  </td>
+  <td width=198 style='width:148.8pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 3.5pt 0in 3.5pt'>
+  <p class=MsoNormal align=left style='text-align:left'><span lang=EN-GB
+  style='font-size:8.0pt;mso-bidi-font-size:10.0pt;mso-ansi-language:EN-GB'>5.0.2195
+  Service Pack 1 Build 2195<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=109 style='width:81.5pt;border:solid windowtext .5pt;border-top:
+  none;mso-border-top-alt:solid windowtext .5pt;background:#CCCCCC;padding:
+  0in 3.5pt 0in 3.5pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=IT
+  style='font-size:8.0pt;mso-bidi-font-size:10.0pt;mso-ansi-language:IT'>Java<o:p></o:p></span></p>
+  </td>
+  <td width=198 style='width:148.8pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 3.5pt 0in 3.5pt'>
+  <p class=MsoNormal align=left style='text-align:left'><span lang=IT
+  style='font-size:8.0pt;mso-bidi-font-size:10.0pt;mso-ansi-language:IT'>Sun
+  SDK 1.4<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=109 style='width:81.5pt;border:solid windowtext .5pt;border-top:
+  none;mso-border-top-alt:solid windowtext .5pt;background:#CCCCCC;padding:
+  0in 3.5pt 0in 3.5pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-GB
+  style='font-size:8.0pt;mso-bidi-font-size:10.0pt;mso-ansi-language:EN-GB'>JADE<o:p></o:p></span></p>
+  </td>
+  <td width=198 style='width:148.8pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 3.5pt 0in 3.5pt'>
+  <p class=MsoNormal align=left style='text-align:left'><span lang=EN-GB
+  style='font-size:8.0pt;mso-bidi-font-size:10.0pt;mso-ansi-language:EN-GB'>2.5<o:p></o:p></span></p>
+  </td>
+ </tr>
+</table>
+
+</div>
+
+<p class=MsoCaption><span style='font-size:8.0pt;mso-bidi-font-size:9.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoCaption><span style='font-size:8.0pt;mso-bidi-font-size:9.0pt'>Table
+<span style='mso-field-code:"SEQ Tabella \\* ARABIC"'>2</span>: Hardware and
+Software testbed configuration</span><span lang=EN-GB style='font-size:8.0pt;
+mso-bidi-font-size:9.0pt;mso-ansi-language:EN-GB'><o:p></o:p></span></p>
+
+<h1 style='margin-left:0in;text-indent:0in'><![if !supportLists]><span
+lang=EN-AU style='mso-ansi-language:EN-AU'>3.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><span lang=EN-AU style='mso-ansi-language:EN-AU'>EXPERIMENT
+RESULTS<o:p></o:p></span></h1>
+
+<h2 style='margin-top:6.0pt;margin-right:0in;margin-bottom:0in;margin-left:
+0in;margin-bottom:.0001pt;text-indent:0in'><![if !supportLists]>3.1<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp; </span><![endif]>JADE</h2>
+
+<h3 style='margin-left:0in;text-indent:0in'><![if !supportLists]>3.1.1<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp; </span><![endif]>Intra
+Platform</h3>
+
+<p class=MsoBodyTextIndent>In this section we present the measured round-trip
+time, when the agents run in the same platform. There are three result sets, as
+shown in <span style='mso-field-code:"REF _Ref7243303 \\h"'><span
+style='font-size:8.0pt;mso-bidi-font-size:10.0pt'>Figure 6</span><!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000C0000005F0052006500660037003200340033003300300033000000</w:data>
+</xml><![endif]--></span>, one for each configuration:</p>
+
+<p class=MsoBodyTextIndent style='margin-left:.75in;text-indent:-.25in;
+mso-list:l24 level1 lfo8;tab-stops:list .75in'><![if !supportLists]><span
+style='font-family:Wingdings'>§<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]>One container </p>
+
+<p class=MsoBodyTextIndent style='margin-left:.75in;text-indent:-.25in;
+mso-list:l24 level1 lfo8;tab-stops:list .75in'><![if !supportLists]><span
+style='font-family:Wingdings'>§<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]>Two containers on the same host</p>
+
+<p class=MsoBodyTextIndent style='margin-left:.75in;text-indent:-.25in;
+mso-list:l24 level1 lfo8;tab-stops:list .75in'><![if !supportLists]><span
+style='font-family:Wingdings'>§<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]>Two containers on two different hosts</p>
+
+<p class=MsoBodyTextIndent style='text-indent:0in'><span style='font-size:4.0pt;
+mso-bidi-font-size:10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent style='text-indent:0in'>All the following figures
+are in milliseconds and showed low standard deviations during the tests.<span
+style="mso-spacerun: yes">  </span>For every graph, the X axis contains the
+number of couples and the Y axis the related average roundtrip time (avgRTT)
+expressed in milliseconds (ms).</p>
+
+<p class=MsoBodyTextIndent>At first glance, we can see that the avgRTT measured
+when the agents run into same container is very low, indeed JADE optimizes on
+agents localization and uses event passing when the agents are in the same
+container. Furthermore, the middleware showed a linear growth of the roundtrip
+time as function of the number of couples in all cases, in the considered
+range.</p>
+
+<p class=MsoBodyTextIndent style='text-indent:0in'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoBodyTextIndent align=center style='margin-bottom:6.0pt;text-align:
+center;text-indent:0in'><!--[if gte vml 1]><v:shape id="_x0000_i1028" type="#_x0000_t75"
+ style='width:229.5pt;height:160.5pt' o:allowoverlap="f">
+ <v:imagedata src="./JADERTTBenchmark_files/image009.wmz" o:title=""/>
+</v:shape><![endif]--><![if !vml]><img width=306 height=214
+src="./JADERTTBenchmark_files/image010.gif" v:shapes="_x0000_i1028"><![endif]></p>
+
+<p class=MsoCaption><a name="_Ref7243303"><span style='font-size:8.0pt;
+mso-bidi-font-size:9.0pt'>Figure <span style='mso-field-code:"SEQ Figura \\* ARABIC"'>6</span></span></a><span
+style='font-size:8.0pt;mso-bidi-font-size:9.0pt'>: Round Trip time - Intra Platform
+communication <o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent>When the communication happens between agents on two
+different containers, JADE uses RMI to send the messages. Roundtrip time for
+the two hosts configuration results lower than the 1-host case because the
+computation load is split between two CPUs. </p>
+
+<p class=MsoBodyTextIndent style='text-indent:0in'>The low growth rate of
+avgRTT for the <i>same container</i> configuration, compared to the other
+cases, shows that the messaging architecture of this middleware can support
+high load, without heavy performance degradation.</p>
+
+<h3 style='margin-left:0in;text-indent:0in'><![if !supportLists]>3.1.2<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp; </span><![endif]>Inter
+Platform</h3>
+
+<p class=MsoBodyTextIndent>The graph in <span style='mso-field-code:"REF _Ref7248264 \\h"'><span
+style='font-size:8.0pt;mso-bidi-font-size:10.0pt'>Figure 7</span><!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000C0000005F0052006500660037003200340038003200360034000000</w:data>
+</xml><![endif]--></span> shows the roundtrip time between agents on different
+platforms, each living on a different host.</p>
+
+<p class=MsoBodyTextIndent><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoCaption><!--[if gte vml 1]><v:shape id="_x0000_i1029" type="#_x0000_t75"
+ style='width:235.5pt;height:159.75pt' o:allowoverlap="f">
+ <v:imagedata src="./JADERTTBenchmark_files/image011.wmz" o:title=""/>
+</v:shape><![endif]--><![if !vml]><img width=314 height=213
+src="./JADERTTBenchmark_files/image012.gif" v:shapes="_x0000_i1029"><![endif]><span
+style="mso-spacerun: yes"> </span></p>
+
+<p class=MsoCaption><a name="_Ref7248264"><span style='font-size:8.0pt;
+mso-bidi-font-size:9.0pt'>Figure <span style='mso-field-code:"SEQ Figura \\* ARABIC"'>7</span></span></a><span
+style='font-size:8.0pt;mso-bidi-font-size:9.0pt'>: Round Trip Time -Inter
+Platform communication. </span><span lang=EN-AU style='font-size:8.0pt;
+mso-bidi-font-size:9.0pt;mso-ansi-language:EN-AU'><o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent><span lang=EN-AU style='mso-ansi-language:EN-AU'>Since
+it is possible to change transparently the Message Transport Protocol (MTP), we
+have compared the results obtained by using the ORB produced by Sun
+Microsystems to ORBacus produced by IONA without affecting in any way the
+agents’ code. The results show that ORBacus performance are slightly
+better.<span style="mso-spacerun: yes">  </span><o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent><span lang=EN-AU style='mso-ansi-language:EN-AU'>JADE
+uses MTPs that are compliant to FIPA specifications. This implies that JADE for
+inter-platform communication has to add an envelope to the message, code it via
+StringACLEncoding before delivering and then parse it at the receiver side.
+Considered that the roundtrip time for inter-platform scenario is very similar
+to the intra-platform one, the FIPA-MTP based upon IIOP has good performance
+and JADE implementation of the FIPA specifications is very efficient.<o:p></o:p></span></p>
+
+<h3 style='margin-left:0in;text-indent:0in'><![if !supportLists]><span
+lang=EN-AU style='mso-ansi-language:EN-AU'>3.1.3<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><span lang=EN-AU style='mso-ansi-language:EN-AU'>Intra
+Platform and Inter Platform<o:p></o:p></span></h3>
+
+<p class=MsoBodyTextIndent><span lang=EN-AU style='mso-ansi-language:EN-AU'>Comparing
+the results for the two containers on two hosts configuration, to the case with
+two containers belonging to different platforms on two hosts, we can see that
+performance are similar (<span style='mso-field-code:"REF _Ref7249191 \\h"'><span
+lang=EN-GB style='font-size:8.0pt;mso-bidi-font-size:10.0pt;mso-ansi-language:
+EN-GB'>Figure 8</span><!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000C0000005F0052006500660037003200340039003100390031000000</w:data>
+</xml><![endif]--></span>).<o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent align=center style='text-align:center;text-indent:
+0in'><!--[if gte vml 1]><v:shape id="_x0000_i1030" type="#_x0000_t75" style='width:234pt;
+ height:159.75pt' o:allowoverlap="f">
+ <v:imagedata src="./JADERTTBenchmark_files/image013.wmz" o:title=""/>
+</v:shape><![endif]--><![if !vml]><img width=312 height=213
+src="./JADERTTBenchmark_files/image014.gif" v:shapes="_x0000_i1030"><![endif]><span
+lang=EN-AU style='mso-ansi-language:EN-AU'><o:p></o:p></span></p>
+
+<p class=MsoCaption><a name="_Ref7249191"><span lang=EN-GB style='font-size:
+8.0pt;mso-bidi-font-size:9.0pt;mso-ansi-language:EN-GB'>Figure <span
+style='mso-field-code:"SEQ Figura \\* ARABIC"'>8</span></span></a><span
+lang=EN-GB style='font-size:8.0pt;mso-bidi-font-size:9.0pt;mso-ansi-language:
+EN-GB'>: Comparison between 2 Container and 2 Platform communication<o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-AU style='mso-ansi-language:EN-AU'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent><span lang=EN-AU style='mso-ansi-language:EN-AU'>Multi
+agent systems are considered to be a valuable technology for integrating
+loosely coupled systems, like information systems of different departments or
+B2B process integration. This kind of applications requires agents on different
+platforms that might be under the control of different organizations, to
+interact efficiently. Since JADE inter-platform communication performs as well
+as the intra-platform one, the middleware can be efficiently used as enabling
+technology for these scenarios.<o:p></o:p></span></p>
+
+<h3 style='margin-left:0in;text-indent:0in'><![if !supportLists]>3.1.4<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp; </span><![endif]>Comparison
+with a RMI implementation of the testbed</h3>
+
+<p class=MsoBodyTextIndent><span lang=EN-AU style='mso-ansi-language:EN-AU'>As
+term of comparison we implemented a version of the testbed by using RMI without
+the facilities offered by the JADE middleware.</span><span lang=EN-AU> </span><span
+lang=EN-AU style='mso-ansi-language:EN-AU'>In more details, we set up this
+implementation for two main reasons:<o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent style='margin-left:.5in;text-indent:-.25in;
+mso-list:l22 level1 lfo15;tab-stops:list .5in'><![if !supportLists]><span
+lang=EN-AU style='font-family:Symbol;mso-ansi-language:EN-AU'>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><span lang=EN-AU style='mso-ansi-language:EN-AU'>have </span>a
+baseline for appreciating the values of the reported absolute times, <span
+lang=EN-AU style='mso-ansi-language:EN-AU'>based upon the most used JAVA
+features for agent implementation, like multithreading and Java-RMI;<o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent style='margin-left:.5in;text-indent:-.25in;
+mso-list:l22 level1 lfo15;tab-stops:list .5in'><![if !supportLists]><span
+lang=EN-AU style='font-family:Symbol;mso-ansi-language:EN-AU'>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><span lang=EN-AU style='mso-ansi-language:EN-AU'>try to
+understand the overhead introduced by the standard JADE IMTP in respect to its
+underlining technology.<o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent style='margin-bottom:6.0pt;text-indent:0in'><span
+lang=EN-AU style='mso-ansi-language:EN-AU'>The implementation is composed of
+two agent classes that are substantially Java remote objects with an active
+thread (<span style='mso-field-code:"REF _Ref7250454 \\h"'><span lang=EN-US
+style='font-size:8.0pt;mso-bidi-font-size:10.0pt;mso-ansi-language:EN-US'>Figure
+9</span><!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000C0000005F0052006500660037003200350030003400350034000000</w:data>
+</xml><![endif]--></span>). In order to perform the circular exchange of
+messages, each agent has a message queue and a thread that monitors its queue.
+When the thread is notified that there is a message in the queue, it calls a
+remote method on the other agent with an ACL message object as parameter, in
+order to fill the queue of the counterpart. This loop is repeated several times
+to get the avgRTT.<o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent align=center style='margin-bottom:6.0pt;text-align:
+center;text-indent:0in'><!--[if gte vml 1]><v:shape id="_x0000_i1031" type="#_x0000_t75"
+ style='width:202.5pt;height:99pt' o:ole="">
+ <v:imagedata src="./JADERTTBenchmark_files/image015.png" o:title=""
+  cropbottom="4721f"/>
+</v:shape><![endif]--><![if !vml]><img width=270 height=132
+src="./JADERTTBenchmark_files/image016.jpg" v:shapes="_x0000_i1031"><![endif]><!--[if gte mso 9]><xml>
+ <o:OLEObject Type="Embed" ProgID="PBrush" ShapeID="_x0000_i1031"
+  DrawAspect="Content" ObjectID="_1088241222">
+ </o:OLEObject>
+</xml><![endif]--><b><o:p></o:p></b></p>
+
+<p class=MsoCaption><a name="_Ref7250454"><span style='font-size:8.0pt;
+mso-bidi-font-size:9.0pt'>Figure <span style='mso-field-code:"SEQ Figura \\* ARABIC"'>9</span></span></a><span
+style='font-size:8.0pt;mso-bidi-font-size:9.0pt'>: Implementation of the RMI
+testbed<o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent style='margin-bottom:6.0pt;text-indent:0in'><span
+lang=EN-AU style='mso-ansi-language:EN-AU'>We have considered two scenarios:
+“agents” on the same java virtual machine and “agents” on two different hosts.
+These two configurations show the effect of using the same transport mechanism
+for communication between agents that are near or far. “Near”</span> means that
+agents run in the same JVM/Host and “far” means that they are executing on
+different ones. Active objects on the same JVM, communicate always through RMI,
+and don’t take advantage of agents’ locality.</p>
+
+<p class=MsoBodyTextIndent>The obtained results (<span style='mso-field-code:
+"REF _Ref7250935 \\h"'><span style='font-size:8.0pt;mso-bidi-font-size:10.0pt'>Figure
+10</span><!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000C0000005F0052006500660037003200350030003900330035000000</w:data>
+</xml><![endif]--></span>) show how better is JADE in exploiting the locality
+of the communication in respect to the RMI implementation of the testbed.
+Application developers can take advantage from that, getting better performance
+by grouping in the same container agents that need to interact a lot. Agent
+mobility can be also used for dynamically grouping agents at run-time.</p>
+
+<p class=MsoBodyTextIndent><span style='font-size:4.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent align=center style='margin-bottom:6.0pt;text-align:
+center;text-indent:0in'><!--[if gte vml 1]><v:shape id="_x0000_i1032" type="#_x0000_t75"
+ style='width:248.25pt;height:160.5pt' o:allowoverlap="f">
+ <v:imagedata src="./JADERTTBenchmark_files/image017.wmz" o:title=""/>
+</v:shape><![endif]--><![if !vml]><img width=331 height=214
+src="./JADERTTBenchmark_files/image018.gif" v:shapes="_x0000_i1032"><![endif]><b><o:p></o:p></b></p>
+
+<p class=MsoCaption style='tab-stops:49.65pt'><a name="_Ref7250935"><span
+style='font-size:8.0pt;mso-bidi-font-size:9.0pt'>Figure <span style='mso-field-code:
+"SEQ Figura \\* ARABIC"'>10</span></span></a><span style='font-size:8.0pt;
+mso-bidi-font-size:9.0pt'>: Comparison for “near” agents</span><span
+style='font-size:8.0pt;mso-bidi-font-size:9.0pt;font-weight:normal'><o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent>Considering agents on two different hosts, JADE
+shows higher roundtrip time (<span style='mso-field-code:"REF _Ref7251377 \\h"'><span
+style='font-size:8.0pt;mso-bidi-font-size:10.0pt'>Figure 11</span><!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000C0000005F0052006500660037003200350031003300370037000000</w:data>
+</xml><![endif]--></span>), but still has the same order of magnitude. This is
+due to the higher level of abstraction introduced by the middleware to support
+message routing based on agent unique identifiers, encoding of ACL message (as
+request by FIPA specification) and the possibility to use other internal message
+transport protocols than RMI. Our RMI testbed implementation simply relies on
+rmiregistry to locate the agents. </p>
+
+<p class=MsoBodyTextIndent>It is worth to notice that this overhead introduced
+by JADE is well balanced by the fact that the JADE platform hides to the
+developer all tedious issues of dealing with remote method calls and
+interfaces, thread synchronization, resulting in a shorter development time.</p>
+
+<p class=MsoBodyTextIndent style='text-indent:0in'><span style='font-size:4.0pt;
+mso-bidi-font-size:10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent align=center style='margin-bottom:6.0pt;text-align:
+center;text-indent:0in'><!--[if gte vml 1]><v:shape id="_x0000_i1033" type="#_x0000_t75"
+ style='width:233.25pt;height:159.75pt' o:allowoverlap="f">
+ <v:imagedata src="./JADERTTBenchmark_files/image019.wmz" o:title=""/>
+</v:shape><![endif]--><![if !vml]><img width=311 height=213
+src="./JADERTTBenchmark_files/image020.gif" v:shapes="_x0000_i1033"><![endif]><b><o:p></o:p></b></p>
+
+<p class=MsoCaption><a name="_Ref7251377"><span style='font-size:8.0pt;
+mso-bidi-font-size:9.0pt'>Figure <span style='mso-field-code:"SEQ Figura \\* ARABIC"'>11</span></span></a><span
+style='font-size:8.0pt;mso-bidi-font-size:9.0pt'>: Comparison for “far” agents<o:p></o:p></span></p>
+
+<h1 style='margin-top:6.0pt;margin-right:0in;margin-bottom:0in;margin-left:
+0in;margin-bottom:.0001pt;text-indent:0in'><![if !supportLists]><span
+lang=EN-AU style='mso-ansi-language:EN-AU'>4.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><span lang=EN-AU style='mso-ansi-language:EN-AU'>CONCLUSION<o:p></o:p></span></h1>
+
+<p class=MsoBodyTextIndent><span lang=EN-AU style='mso-ansi-language:EN-AU'>We
+developed a simple testbed in order to evaluate performance and scalability of
+JADE messaging subsystem. Specifically, we measured the average roundtrip time
+for a message exchange between a couple of agents. The algorithm we used and
+some measurement issues were described. The results of measurements made using
+several configuration scenarios, both intra- and inter- platform, were
+analysed. In order to have a term of comparison, some of the obtained results
+were compared to the performance of an implementation of the testbed based on
+agents as simple “active objects” communicating through RMI.<o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent><span lang=EN-AU style='mso-ansi-language:EN-AU'>We
+found that, in the considered range, JADE scales linearly, equally well in all
+the configuration scenarios, and its scalability is similar to RMI when agents
+are distributed across the network.<o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent><span lang=EN-AU style='mso-ansi-language:EN-AU'>JADE
+messaging performance, when both sender and receiver agents live in the same
+container, are very good and much superior compared to those provided by the
+RMI experiments (see <span style='mso-field-code:"REF _Ref7250935 \\h"'><span
+lang=EN-US style='font-size:8.0pt;mso-bidi-font-size:10.0pt;mso-ansi-language:
+EN-US'>Figure 10</span><!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000C0000005F0052006500660037003200350030003900330035000000</w:data>
+</xml><![endif]--></span>). On the other hand, JADE inter-container communication
+provides performance comparable with pure RMI with an overhead well balanced by
+the benefits of a shorter development time and ease of use. <o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent><span lang=EN-AU style='mso-ansi-language:EN-AU'>Communication
+between different platforms, via the IIOP-MTP, does not suffer any performance
+degradation, and enables an efficient integration of Multi-MAS. In fact, the
+measured values are comparable to JADE inter-container transport based on RMI.
+Furthermore, it has been easy to change message transport protocol for
+inter-platform communication, plugging-in a different MTP, without affecting
+the testbed code. <o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent><span lang=EN-AU style='mso-ansi-language:EN-AU'>We
+also measured a little performance improvement from Sun ORB implementation to
+Iona ORBacus.<o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent>Locality of agents allows an efficient MAS
+deployment improving messaging performance by distributing properly the agents
+into containers at design time or, by using<span style="mso-spacerun: yes"> 
+</span>intra-platform agent mobility provided by JADE, also at run-time. </p>
+
+<p class=MsoBodyTextIndent>Finally, these measurements showed good JADE message
+system performance, and highlighted that it is a good candidate for developing
+heavy-load distributed applications. </p>
+
+<p class=MsoBodyTextIndent>All the source code of the performed tests can be
+downloaded from the official JADE web site. <span style='mso-field-code:"REF _Ref7430781 \\r \\h"'>[2]<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000C0000005F0052006500660037003400330030003700380031000000</w:data>
+</xml><![endif]--></span></p>
+
+<p class=MsoBodyTextIndent><span style='font-size:5.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent>Tests will be extended as future work to evaluate
+other MTPs, in particular the HTTP-based, and to finalize some specific design
+choices of JADE, such as cooperative scheduling of the agent tasks (i.e. the
+behaviours). </p>
+
+<h1 style='margin-top:6.0pt;margin-right:0in;margin-bottom:0in;margin-left:
+0in;margin-bottom:.0001pt;text-indent:0in'><![if !supportLists]>5.<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp; </span><![endif]>ACKNOWLEDGMENTS</h1>
+
+<p class=MsoBodyTextIndent style='margin-bottom:6.0pt;text-indent:0in'>We would
+like to thank the JADE developers team for the great support during our work
+and all people who contribute to JADE growth by actively participating to the
+mailing list.</p>
+
+<p class=MsoBodyTextIndent style='margin-bottom:6.0pt;text-indent:0in'>We
+acknowledge that this work has been partially supported by the Italian M.I.U.R.
+(Ministero dell’Istruzione dell’Università e della Ricerca) through the
+Te.S.C.He.T. Project (Technology System for Cultural Heritage in Tourism).</p>
+
+<h1 style='margin-top:6.0pt;margin-right:0in;margin-bottom:0in;margin-left:
+0in;margin-bottom:.0001pt;text-indent:0in'><![if !supportLists]>6.<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp; </span><![endif]>REFERENCES</h1>
+
+<p class=References align=left style='text-align:left'><a name="_Ref7425922"><![if !supportLists]>[1]<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp; </span><![endif]><span
+style='font-size:9.0pt;mso-bidi-font-size:10.0pt'>FIPA - Foundation for
+Intelligent Physical Agents. </span></a><a href="http://www.fipa.org/"><span
+style='mso-bookmark:_Ref7425922'><span style='font-size:9.0pt;mso-bidi-font-size:
+10.0pt'>http://www.fipa.org</span></span><span style='mso-bookmark:_Ref7425922'></span></a><span
+style='mso-bookmark:_Ref7425922'><span style='font-size:9.0pt;mso-bidi-font-size:
+10.0pt'>.</span></span><span style='font-size:9.0pt;mso-bidi-font-size:10.0pt'><o:p></o:p></span></p>
+
+<p class=References align=left style='text-align:left'><a name="_Ref7430781"><![if !supportLists]>[2]<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp; </span><![endif]><span
+style='font-size:9.0pt;mso-bidi-font-size:10.0pt'>JADE, Java Agent DEvelopment
+framework. </span></a><a href="http://jade.cselt.it/"><span style='mso-bookmark:
+_Ref7430781'><span style='font-size:9.0pt;mso-bidi-font-size:10.0pt'>http://jade.cselt.it</span></span><span
+style='mso-bookmark:_Ref7430781'></span></a><span style='mso-bookmark:_Ref7430781'></span><span
+style='font-size:9.0pt;mso-bidi-font-size:10.0pt'><o:p></o:p></span></p>
+
+<p class=References align=left style='text-align:left'><a name="_Ref7430863"><![if !supportLists]>[3]<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp; </span><![endif]><span
+style='font-size:9.0pt;mso-bidi-font-size:10.0pt'>LEAP, Lightweight Extensible
+Agent Platform</span></a><span style='font-size:9.0pt;mso-bidi-font-size:10.0pt'>
+<o:p></o:p></span></p>
+
+<p class=References align=left style='margin-left:0in;text-align:left;
+text-indent:.25in;mso-list:none;tab-stops:.5in'><span style='font-size:9.0pt;
+mso-bidi-font-size:10.0pt'>http://leap.crm-paris.com/<o:p></o:p></span></p>
+
+<p class=References align=left style='text-align:left'><![if !supportLists]>[4]<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp; </span><![endif]><span
+style='font-size:9.0pt;mso-bidi-font-size:10.0pt'>F.Bellifemine, A.Poggi,
+G.Rimassa, P.Turci, “An Object Oriented Framework to Realize Agent System”: </span><span
+style='font-size:9.0pt;mso-bidi-font-size:13.5pt'>Proceedings of WOA 2000 Workshop,
+Parma, May 2000, pagg. 52-57</span><span style='font-size:9.0pt;mso-bidi-font-size:
+10.0pt'>.<o:p></o:p></span></p>
+
+<p class=References align=left style='text-align:left'><![if !supportLists]>[5]<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp; </span><![endif]><span
+lang=IT style='font-size:9.0pt;mso-bidi-font-size:10.0pt;mso-ansi-language:
+IT'>F. Bellifemine, A. Poggi, G. Rimassa. </span><span style='font-size:9.0pt;
+mso-bidi-font-size:10.0pt'>“Developing Multi-Agent Systems with a
+FIPA-compliant Agent Framework”. Software: Practice &amp; Experience,
+31:103-128, 2001.<o:p></o:p></span></p>
+
+<p class=References align=left style='text-align:left'><![if !supportLists]>[6]<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp; </span><![endif]><span
+style='font-size:9.0pt;mso-bidi-font-size:10.0pt'>R.Deters, “Scalability &amp;
+Multi-Agent Systems”, 2<sup>nd</sup> International Workshop Infrastructure for
+Agents, MAS and Scalable MAS. 5<sup>th</sup> int.conference on Autonomous
+Agents, May-June 2001.<o:p></o:p></span></p>
+
+<p class=References align=left style='text-align:left'><a name="_Ref7431253"><![if !supportLists]><span
+lang=FR style='mso-ansi-language:FR'>[7]<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><span lang=FR style='font-size:9.0pt;mso-bidi-font-size:
+10.0pt;mso-ansi-language:FR'>ORBacus, IONA Techologies, </span></a><a
+href="http://www.orbacus.com/"><span style='mso-bookmark:_Ref7431253'><span
+lang=FR style='font-size:9.0pt;mso-bidi-font-size:10.0pt;mso-ansi-language:
+FR'>http://www.orbacus.com/</span></span><span style='mso-bookmark:_Ref7431253'></span></a><span
+style='mso-bookmark:_Ref7431253'></span><span lang=FR style='font-size:9.0pt;
+mso-bidi-font-size:10.0pt;mso-ansi-language:FR'><o:p></o:p></span></p>
+
+<p class=References align=left style='text-align:left'><![if !supportLists]><span
+lang=EN-AU style='mso-ansi-language:EN-AU'>[8]<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><span lang=EN-AU style='font-size:9.0pt;mso-bidi-font-size:
+10.0pt;mso-ansi-language:EN-AU'>Niek Wijngaards, Maarten van Steen, Frances
+Brazier, “On MAS Scalability”, Proc.2<sup>nd</sup> Int’l Workshop on Infrastructure
+for Agents, MAS and Scalable MAS. May 2001.<o:p></o:p></span></p>
+
+<p class=References align=left style='text-align:left'><![if !supportLists]><span
+lang=EN-AU style='mso-ansi-language:EN-AU'>[9]<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><span lang=EN-AU style='font-size:9.0pt;mso-bidi-font-size:
+10.0pt;mso-ansi-language:EN-AU'>P.J.Turner, N.R.Jennings, “Improving
+Scalability of Multi-Agent Systems”, Proc.1<sup>st</sup> Int’l Workshop
+Infrastructure for Scalable Multi-Agent Systems. June 2000.<o:p></o:p></span></p>
+
+<p class=References align=left style='text-align:left'><![if !supportLists]><span
+lang=EN-AU style='mso-ansi-language:EN-AU'>[10]<span style='font:7.0pt "Times New Roman"'>&nbsp;
+</span></span><![endif]><span lang=EN-AU style='font-size:9.0pt;mso-bidi-font-size:
+10.0pt;mso-ansi-language:EN-AU'>O.F.Rana, K.Stout, “What is Scalability in
+Multi-Agent Systems”, Autonomous Agents 2000, June’00, ACM Press.<o:p></o:p></span></p>
+
+<p class=References align=left style='text-align:left'><![if !supportLists]><span
+lang=EN-AU style='mso-ansi-language:EN-AU'>[11]<span style='font:7.0pt "Times New Roman"'>&nbsp;
+</span></span><![endif]><span lang=EN-AU style='font-size:9.0pt;mso-bidi-font-size:
+10.0pt;mso-ansi-language:EN-AU'>L.C.Lee,H.S.Nwana,D.T.Ndumu, P De Wilde , “The
+stability, scalability and performance of multi-agent Systems”, </span><span
+style='font-size:9.0pt;mso-bidi-font-size:10.0pt;color:black'>BT Technol J Vol
+16 No 3 July 1998 94</span><span lang=EN-AU style='font-size:9.0pt;mso-bidi-font-size:
+10.0pt;mso-ansi-language:EN-AU'> <o:p></o:p></span></p>
+
+<p class=References align=left style='text-align:left'><![if !supportLists]><span
+lang=EN-AU style='mso-ansi-language:EN-AU'>[12]<span style='font:7.0pt "Times New Roman"'>&nbsp;
+</span></span><![endif]><span lang=EN-AU style='font-size:9.0pt;mso-bidi-font-size:
+10.0pt;mso-ansi-language:EN-AU'>O.Shehory, “A Scalable Agent Location
+Mechanism”,<span style="mso-spacerun: yes">  </span>Intelligent Agents VI,
+vol.1757 of Lecture Notes in AI, pages.162.172, Springer-Verlang, Berlin,
+Germany, 1999<o:p></o:p></span></p>
+
+<p class=References align=left style='text-align:left'><![if !supportLists]><span
+lang=EN-AU style='mso-ansi-language:EN-AU'>[13]<span style='font:7.0pt "Times New Roman"'>&nbsp;
+</span></span><![endif]><span lang=EN-AU style='font-size:9.0pt;mso-bidi-font-size:
+10.0pt;mso-ansi-language:EN-AU'>B.Neuman, “Scale in Distributed Systems”, in
+Readings in Distributed Computing Systems, pag.463-489, IEEE Computer Society
+Press, Los Alamitos, CA, 1994<o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent style='text-indent:0in'><span lang=EN-AU
+style='mso-ansi-language:EN-AU'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+</div>
+
+</body>
+
+</html>

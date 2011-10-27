@@ -1,0 +1,129 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<title>Mobile</title>
+<link rel="stylesheet" type="text/css" href="stylesheet.css"
+title="Style">
+<!-- created by Alessandro Beneventi, Universita' degli Studi di Parma -->
+<!--            alessandro.beneventi@re.nettuno.it                     -->
+</head>
+
+<body bgcolor="#FFFFFF" text="#000000" link="#0000FF"
+vlink="#0000FF" alink="#0000FF">
+
+<table border="0" cellspacing="0" width="100%">
+    <tr>
+        <td bgcolor="#EEEEFF" id="NavBarCell1"><a
+        name="navbar_top_firstrow"></a> <table border="0"
+        cellpadding="0" cellspacing="3">
+            <tr>
+                <td align="center" valign="top" bgcolor="#EEEEFF"
+                id="NavBarCell1">Sections:</td>
+                <td align="center" valign="top" bgcolor="#EEEEFF"
+                id="NavBarCell1"><a href="index.html"><b>Index</b></a></td>
+                <td align="center" valign="top" bgcolor="#FFFFFF"
+                id="NavBarCell1Rev">&nbsp;<b>Introduction</b></td>
+                <td align="center" valign="top" bgcolor="#EEEEFF"
+                id="NavBarCell1"><b>More Info.</b></td>
+                <td align="center" valign="top" bgcolor="#EEEEFF"
+                id="NavBarCell1"><b>Visual Index</b></td>
+                <td align="center" valign="top" bgcolor="#EEEEFF"
+                id="NavBarCell1"><a href="../api/index.html"><b>Class
+                by Class</b></a></td>
+                <td align="center" valign="top" bgcolor="#EEEEFF"
+                id="NavBarCell1"><a href="../links.htm"><b>Links</b></a></td>
+            </tr>
+        </table>
+        </td>
+        <td align="right" valign="top" rowspan="2">&nbsp;</td>
+    </tr>
+</table>
+
+<p><font size="6" face="Arial"><b>Mobile</b></font> </p>
+
+<p>Author: Giovanni Caire (TILab S.p.a)<br>
+Date: 08/08/2001<br>
+</p>
+
+<p><font face="Arial">This example shows a mobile agent, which is able to migrate or
+clone across
+multiple network hosts. In this version of JADE only
+intra-platform mobility is supported. An agent can navigate across different agent containers but is confined to a single
+JADE platform (see the programmer's guide for more details on
+Agent Mobility).</font></p>
+
+<p><font face="Arial">To launch this examples, the user can
+activate the main container (java jade.Boot -gui), several
+agent containers (java jade.Boot -container) and then start
+MobileAgent from command line (java jade.Boot -container
+mobile:examples.mobile.MobileAgent).Through the agent's GUI it is
+possible to select the location (i.e. container) on which move or
+clone the agent.</font></p>
+
+<p><font face="Arial">The agent is also able to serve requests from other
+agents. In particular it must receive a REQUEST ACLMessage with one of the
+following contents:&nbsp;</font></p>
+<ul>
+  <li>(move &lt;destination>)  to move the Agent to another container.&nbsp;<br>
+			          Example: (move Front-End) or (move Container-1)</li>
+  <li>(exit) to request the agent to exit</li>
+  <li>(stop) to stop the counter</li>
+  <li>(continue) to continue counting</li>
+</ul>
+
+<p>&nbsp;</p>
+
+<table border="1" cellpadding="3" cellspacing="0" width="100%">
+    <tr>
+        <td colspan="2" bgcolor="#CCCCFF"><font size="5"><b>MobileAgent</b></font></td>
+    </tr>
+    <tr>
+        <td bgcolor="#FFFFFF"><strong>Description:</strong></td>
+    </tr>
+    <tr>
+        <td><font face="Arial,Helvetica">This class contains the
+        two resources used by the agent behaviours: the counter
+        cnt and the flag cntEnabled. At the setup it adds two
+        behaviours to serve the incoming messages and to
+        increment the counter. In particular, notice the usage of
+        the two methods beforeMove() and afterMove() to execute
+        some application-specific tasks just before&nbsp; and
+        just after the agent migration takes effect.</font> </td>
+    </tr>
+    <tr>
+        <td><strong>Jade classes used: </strong></td>
+    </tr>
+    <tr>
+        <td>mobilityOntology,Codec,SL0Codec</td>
+    </tr>
+    <tr>
+        <td><strong>Support Classes</strong></td>
+    </tr>
+    <tr>
+        <td>CounterBehaviour,GetAvailableLocationsBehaviour,ServeIncomingMessagesBehaviour,MobileAgentGui,LocationTableModel</td>
+    </tr>
+    <tr>
+        <td><strong>Source</strong></td>
+    </tr>
+    <tr>
+        <td>\src\examples\mobile\MobileAgent.java</td>
+    </tr>
+</table>
+
+<p>&nbsp;</p>
+
+<hr>
+
+<p align="center"><font face="Arial" size="2">J</font><a href="http://jade.cselt.it/"><font face="Arial" size="2">ADE</font></a><font face="Arial" size="2">
+is a trademark of <a href="http://www.telecomitalialab.com">TILAB</a> (formerly </font><a href="http://www.cselt.it"><font face="Arial" size="2">CSELT</font></a><font face="Arial" size="2">).&nbsp;</font><a href="http://jade.cselt.it/"><font face="Arial" size="2"><br>
+JADE</font></a><font face="Arial" size="2"> has been developed jointly by <a href="http://www.telecomitalialab.com">TILAB</a>
+(formerly </font><a href="http://www.cselt.it"><font face="Arial" size="2">CSELT</font></a><font face="Arial" size="2">)
+and the </font><a href="http://www.ce.unipr.it"><font face="Arial" size="2">Computer
+Engineering Group</font></a><font face="Arial" size="2"> of the </font><a href="http://www.unipr.it"><font face="Arial" size="2">University
+of Parma</font></a> </p>
+</body>
+</html>

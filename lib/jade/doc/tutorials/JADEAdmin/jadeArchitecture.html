@@ -1,0 +1,82 @@
+<html>
+
+	<head>
+		<meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
+		<meta name="generator" content="Adobe GoLive 5">
+		<title>Tutorial 1: JADE Architecture Overview</title>
+		<link rel="stylesheet" href="../cps.css">
+	</head>
+
+	<body bgcolor="d3d3d3" text="black">
+	
+		<a href="index.html">Table of contents</a><br>
+		<a href="startJade.html">Next</a><br>
+		<hr>
+		
+		<h1>Tutorial 1: JADE Architecture Overview</h1>
+		<p>This tutorial provides an overview of the JADE Architecture introducing the notions of 
+		<ul>
+	 		<li><b>Agent</b></li>
+			<li><b>Container</b></li>
+			<li><b>Platform</b></li>
+			<li><b>Main Container</b></li>
+			<li><b>AMS</b> and <b>DF</b></li>
+		</ul>
+		</p>
+		
+		Figure 1 represents the main JADE architectural elements. An application based on JADE is made of 
+		a set of components called <i><b>Agents</b></i> each one having a unique name. Agents execute tasks and interact by 
+		exchanging messages. Look at the <a href="../JADEProgramming-Tutorial-for-beginners.pdf">JADE Programming Tutorial</a> for a detailed explanation 
+		about how to develop agents and to make them execute tasks and communicate. Agents live on top of a <i><b>Platform</b></i>
+		that provides them with basic services such as message delivery. A platform is composed of one or more <i><b>Containers</b></i>.
+		Containers can be executed on different hosts thus achieving a <b>distributed</b> platform. Each container can 
+		contain zero or more agents. For instance, with reference to the picture below, container "Container 1" in host <i>Host 3</i> 
+		contains agents A2 and A3. Even if in some particular scenarios this is not always the case, you can think of a Container 
+		as a JVM (so, 1 JVM ==> 1 container ==> 0 or many agents). A special container called <i><b>Main Container</b></i> exists in 
+		the platform. The main container is itself a container and can therefore contain agents, but differs from other 
+		containers as
+		<ol>
+			<li>It must be the first container to start in the platform and all other containers register to it 
+			at bootstrap time</li>
+			<li>It includes two special agents: the <i><b>AMS</b></i> that represents the authority in the platform and is the only
+			agent able to perform platform management actions such as starting and killing agents or shutting down the whole
+			platform (normal agents can request such actions to the AMS). The <i><b>DF</b></i> that provides the <b>Yellow Pages</b>
+			service where agents can publish the services they provide and find other agents providing the services they need.</li>
+		</ol>  
+		 
+		<img src="images/jadeArchitecture.png"  border="0"><br>
+		<b>Figure 1. The JADE Architecture</b>
+		
+		<p>It should be noticed that if another main container is started, as in host <i>Host 4</i> in Figure 1, this constitutes a
+		new platform.</p>
+		
+		<h2>Agent communication</h2>
+		<p>Agents can communicate transparently regardless of whether they live in the same container (e.g. A2 and A3), 
+		in different containers (in the same or in different hosts) belonging to the same platform (e.g. A1 and A2) or in different
+		platforms (e.g. A1 and A5). Communication is based on an asynchronous message passing paradigm. Message format 
+		is defined by the <b>ACL</b> language defined by <a href="http://www.fipa.org">FIPA</a>, an international organization
+		that issued a set of specifications for agent interoperability. An ACL Message contains a number of fields
+		including
+		<ul>
+		<li> the <tt><b>sender</b></tt></li>
+		<li> the <tt><b>receiver(s)</b></tt></li>
+		<li> the <tt><b>communicative act</b></tt> (also called <tt>performative</tt>) that represents
+		the intention of the sender of the message. For instance when an agent sends an <tt>INFORM</tt> message
+		it wishes the receiver(s) to become aware about a fact (e.g. <tt>(INFORM "today it's raining")</tt>). When 
+		an agent sends a <tt>REQUEST</tt> message it wishes the receiver(s) to perform an action. FIPA defined 22
+		communicative acts, each one with a well defined semantics, that ACL gurus assert can cover more than 95% of 
+		all possible situations. Fortunately in 99% of the cases we don't need to care about the formal semantics 
+		behind Communicative acts and we just use them for their intuitive meaning.</li>
+		<li> the <tt><b>content</b></tt> i.e. the actual information conveyed by the message (the fact the receiver
+		should become aware of in case of an <tt>INFORM</tt> message, the action that the receiver is expected to
+		perform in case of a <tt>REQUEST</tt> message)</li>
+		</ul>
+		</p>
+		
+		<hr>
+		<a href="index.html">Table of contents</a><br>
+		<a href="startJade.html">Next</a><br>
+		
+	</body>
+
+</html>

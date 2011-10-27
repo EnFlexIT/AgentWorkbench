@@ -1,0 +1,128 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.76 [en] (Windows NT 5.0; U) [Netscape]">
+   <title>How to use the Bit-efficient ACL encoding with JADE</title>
+</head>
+<body bgcolor="#FFFFFF">
+
+<h1>
+How to use the Bit-efficient ACL (BE-ACL) encoding with JADE</h1>
+<i>Author: <a href="mailto:Heikki.J.Helin@sonera.com">Heikki Helin</a>
+(<a href="http://www.sonera.com">Sonera</a>), Mikko Laukkanen (<a href="http://www.sonera.com">Sonera</a>),</i>
+<p><i>Date: March 29, 2001</i>
+<p><i>Java platform: Sun JDK 1.2 Linux</i>
+<p><i><a href="http://jade.cselt.it/">JADE</a> version 2.2</i>
+<p>Since JADE 2.2, FIPA-ACL Message codecs can be plugged and activated
+via the command line on any JADE container. By default, the platform uses
+a String ACL codec However, Bit-efficient codec can be used as an alternative
+FIPA-ACL encoding. This tutorial describes how to install and use the the
+bit-efficient ACL codec with JADE. The bit-efficient ACL codec is implementation
+of experimental FIPA standard number <a href="http://www.fipa.org/specs/fipa00069">00069</a>
+(FIPA ACL Message Representation in Bit-Efficient Specification).
+<h2>
+Installation</h2>
+In order to install BE-ACL the following steps must be performed:
+<ul>
+<li>
+The BE-ACL must be downloaded from the <a href="http://jade.cselt.it/" target="new">JADE</a>
+download page.</li>
+
+<li>
+after downloading you <b>MUST</b> unzip the BE-ACL package under the root
+of the jade distribution tree. You should end having a hierarchy like jade/add-ons/BEFipaMessage</li>
+</ul>
+
+<h2>
+Compiling</h2>
+The Jade Makefile rules don't take the BE-ACL into account. For handling
+the compilation process of the BE-ACL you have to use the 'build.xml' ant-file
+located in the BEFipaMessage directory. The following rules are available:
+<ul>
+<li>
+ant compile - compiles the BE-ACL classes</li>
+
+<li>
+ant lib - creates the BEFipaMessage.jar archive</li>
+
+<li>
+ant clean - removes the compiled classes and the .jar archive</li>
+
+<li>
+ant doc - creates javadoc of BE-ACL</li>
+
+<li>
+ant examples - compiles the BE-ACL examples.</li>
+</ul>
+
+<h2>
+Configuration and Usage</h2>
+In order to use BE-ACL codec, the BEFipaMessage.jar must be added to the
+classpath when starting( either by including it into the $CLASSPATH environment
+variable - %CLASSPATH% under windows or by specifying it on the command
+line ). Notice that the BE-ACL codec must be launched on all the JADE containers
+<p>Here is an example of how you would start the platform assuming you
+are in the root of the Jade directory:
+<br><tt>java -classpath ./lib/jade.jar:./lib/jadeTools.jar:./lib/iiop.jar:./add-ons/BEFipaMessage/lib/BEFipaMessage.jar
+jade.Boot -aclcodec sonera.fipa.acl.BitEffACLCodec</tt> (for Unix)
+<br>or
+<br><tt>java -classpath ./lib/jade.jar;./lib/jadeTools.jar;./lib/iiop.jar;./add-ons/BEFipaMessage/lib/BEFipaMessage.jar
+jade.Boot -aclcodec sonera.fipa.acl.BitEffACLCodec</tt> (for Windows)
+<p>More aclcodecs can be indicated separated by a ';'
+<h2>
+Examples</h2>
+
+<h4>
+Using BE-ACL in Jade</h4>
+When an agent wants to send a bit-efficiently encoded message, all it has
+to do is to indicate this in the message envelope. For example (assuming
+<tt>e</tt>
+is the message envelope):
+<p><tt>e.setAclRepresentation("fipa.acl.rep.bitefficient.std");</tt>
+<p>and Jade takes care of the rest. When receiving bit-efficiently encoded
+messages, the agent does not have to do anything, Jade is working for him.
+<h4>
+Using off-line examples</h4>
+The BE-ACL package comes with simple off-line Encoder and Decoder that
+can be used to explore features BE-ACL encoding. The DummyEncoder reads
+ACL messages from standard input and writes bit-efficiently encoded messages
+to standard output. For example, assume that file
+<tt>test.msg</tt> contains
+one or more ACL messages encoded using string-based representation, then
+<p><tt>java DummyEncoder &lt; test.msg > be.msg</tt>
+<p>encodes these messages to file <tt>be.msg</tt>. (Notice that <tt>BEFipaMessage.jar</tt>
+and <tt>jade.jar</tt> must be added to the classpath).
+<p>Similarly, the DummyDecoder reads bit-efficiently encoded messages from
+standard input and writes the messages to standard output using string-based
+encoding. For example,
+<p><tt>java DummyDecoder &lt; be.msg > new.msg</tt>
+<p>writes the messages to file <tt>new.msg</tt>. The contents of <tt>test.msg</tt>
+and <tt>new.msg</tt> should be the same. However, this is not necessarily
+true.e The number of white space might be different as well as the order
+of message parameters (if <tt>new.msg</tt> is encoded and decoded again,
+then the new result should be exactly the same).
+<p>By default, these applications does not use dynamic codetable. However,
+it is possible to give an additional command line parameter to each of
+these programs that defines the size of the code table. For example:
+<p><tt>java DummyEncoder 9 &lt; test.msg > be.msg</tt>
+<p>and
+<p><tt>java DummyDecoder 9 &lt; be.msg > new.msg</tt>
+<p>In the example above, code table size 9 is used (i.e., 2^9 entries in
+the code table). The size must be between 8 and 16. Notice that exactly
+same code table size must be given to both applications, otherwise decoding
+fails.
+<hr>
+<center>
+<p><font face="Arial"><font size=-1><a href="http://jade.cselt.it/">JADE</a>
+is a trademark of
+<a href="http://www.cselt.it">CSELT</a>. <a href="http://jade.cselt.it/">JADE</a>
+has been developed jointly by <a href="http://www.cselt.it">CSELT</a> and
+the <a href="http://www.ce.unipr.it">Computer Engineering Group</a> of
+the <a href="http://www.unipr.it">University of Parma</a>.</font></font>
+<br><font face="Arial"><font size=-1>The BE-ACL codec implementation was
+developed by <a href="http://www.sonera.com">Sonera Corporation</a>.</font></font></center>
+
+<p><br>
+</body>
+</html>

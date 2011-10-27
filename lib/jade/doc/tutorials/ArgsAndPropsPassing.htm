@@ -1,0 +1,141 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD><TITLE>How to use arguments or properties to configure your agent.</TITLE>
+<META http-equiv=Content-Type content="text/html; charset=windows-1252">
+<META content="MSHTML 6.00.2600.0" name=GENERATOR></HEAD>
+<BODY text=#000000 vLink=#0000ff aLink=#0000ff link=#0000ff bgColor=#ffffff>
+<FONT face=Arial,Helvetica size=3> 
+<H1>How to use arguments or properties to configure your agent.</H1>
+<P><I>Author: Dick Cowan, Menehune Software Inc.</I></P>
+<P><I>Email: <A href="mailto:rm.cowan@verizon.net">rm.cowan@verizon.net</A></I></P>
+<P><I>Last update: April 15, 2010. </I></P>
+<P><I>Java platform: Java Standard Edition version 5 or later</I></P>
+<P><I><A href="http://jade.cselt.it/">JADE</A> version 4.0 and above.</I></P>
+<P>JADE provides a simple mechanism to pass arguments to agents via the command-line 
+  or via the in-process interface. 
+<P>For instance, the following <U>command line</U> passes 3 arguments to the agent 
+  FooAgent: 
+<PRE>
+    java jade.Boot foo:FooAgent(1,arg2,argument3)
+</PRE>
+<P> the three arguments (separated by commas ',') can then be extracted by the 
+  FooAgent code via a simple call to the Agent method <CODE>getArguments()</CODE> 
+  that returns an array of type <CODE>java.lang.Object</CODE>. 
+<PRE>
+    public void setup() {
+        Object[] args = getArguments();
+        String arg1 = args[0].toString(); // this returns the String "1"
+        String arg2 = args[1].toString(); // this returns the String "arg2"
+        String arg3 = args[2].toString(); // this returns the String "argument3"
+    }
+</PRE>
+<P>The same arguments can be passed <U>via the in-process</U> interface as follows: 
+<PRE>
+    Object args = new Object[3];
+    args[0] = "1";
+    args[1] = "arg2";
+    args[3] = "argument3";
+    AgentController dummy = ac.createNewAgent("foo", "FooAgent", args);
+</PRE>
+<P>It should be noticed that when using the in-process interface the type of arguments 
+  is not limited to String and whatever Java Object can be passed. 
+<P> The command line can also be effectively used in order to pass general properties 
+  to all the agents in the system. For instance, the following command line sets 
+  to 3 the value of the property named verbosity: 
+<pre>
+    java jade.Boot -verbosity 3 foo:FooAgent(1,arg2,argument3)
+</pre>
+<p> The same property can be set also via the in-process interface, in particular 
+  by setting that value in the Profile object: 
+<pre>
+    Profile p = new ProfileImpl();
+    p.setParameter(&quot;verbosity&quot;,&quot;3&quot;);
+    AgentContainer ac = rt.createAgentContainer(p);
+</pre>
+<p>In both cases, all agents can then get that value via the <code><a href="../api/jade/core/Agent.html#getProperty(java.lang.String, java.lang.String)">getProperty</a></code> 
+  method call provided by the <code>jade.core.Agent </code> class: 
+<pre>
+    String verbosity = getProperty(&quot;verbosity&quot;, &quot;0&quot;);
+</pre>
+<P>However, attempting to pass other than a few simple arguments via the command 
+  line is difficult. Particularly trying to do so in a platform neutral manner. 
+<P>To overcome this limitation the Agents for Mobility group at HP Labs created 
+  a small framework of properties oriented classes that enable a richer and more 
+  flexible method of passing arguments to agents. Since version 4.0 this class 
+  framework has been simplified so that all extended properties management features 
+  have been embedded into a single class called <A 
+href="../api/jade/util/ExtendedProperties.html">ExtendedProperties.</A> 
+<P>The ExtendedProperties class extends the usual Properties class adding the 
+  following features
+<P>1) Support for referencing <strong>System</strong> as well as <strong>Environment 
+  Variables</strong> into properties. For instance let's assume you have defined 
+  the <font face="Courier New, Courier, mono">CLASSPATH</font> environment variable 
+  to <font face="Courier New, Courier, mono">c:\myProject\classes;c:\jade\lib\jade.jar</font>. 
+  If you insert the following property in a properties file 
+<P><font face="Courier New, Courier, mono">classpath-message = Classpath is 
+  ${CLASSPATH}</font>
+<P>and you load this property file into an ExtendedProperties object, getting 
+  the value of the <font face="Courier New, Courier, mono">classpath-message</font> 
+  property would result in 
+<P><font face="Courier New, Courier, mono">Classpath is c:\myProject\classes;c:\jade\lib\jade.jar</font> 
+<P>2) Similarly it is possible to <strong>reference other properties</strong> 
+  in the same properties file as exemplified below: 
+<P>  
+<tt>
+argument = 3<br>
+agents = a1:myPackage.MyClass(${argument}) \<br>
+a2:myPackage.MyClass(${argument}) \<br>
+a3:myPackage.MyClass(${argument}) \<br>
+a4:myPackage.MyClass(${argument}) \<br>
+a5:myPackage.MyClass(${argument}) \<br>
+  a6:myPackage.MyClass(${argument}) \</tt> 
+<P>allows you to change the argument to pass to all your agents by just modifying 
+  the value of the <tt>argument</tt> property. 
+<P>3) Suppport for <strong>importing properties</strong> specified in another 
+  properties file. This can be done by means of the <font face="Courier New, Courier, mono">import</font> 
+  property as exemplified below 
+<P> <tt> <b>File props1.txt</b><br>
+  --------------------<br>
+  port = 1111<br>
+  host = avalon.tilab.com<br>
+  # Import properties from file props2.txt<br>
+  import = props2.txt<br>
+  <br>
+  <b>File props2.txt</b><br>
+  --------------------<br>
+  services = jade.core.replication.MainReplicationService<br>
+  backupmain = true</tt> 
+<P>
+The above situation is fully equivalent to having a single property file with the following content:
+<P> <tt> port = 1111<br>
+  host = avalon.tilab.com<br>
+  services = jade.core.replication.MainReplicationService<br>
+  backupmain = true</tt>
+<P>4) Support for extracting <strong>prefixed properties</strong>. Given an ExtendedProperties 
+  object, by means of the <font face="Courier New, Courier, mono">extractSubset() 
+  </font>method, It is possible to copy in a new ExtendedProperties object all 
+  properties whose keys start with a given prefix. The prefix is automatically 
+  removed. For instance let's assume you have the following properties 
+<P> 
+  <tt> 
+  port = 1111<br>
+  host = avalon.tilab.com<br>
+  server.foo = x<br>
+  server.bar = y</tt> 
+<P> Calling the <font face="Courier New, Courier, mono">extractSubset()</font> 
+  method would create a new ExtendedProperties object including the following 
+  properties: 
+<P> <tt> foo = x<br>
+  bar = y<br>
+  </tt>
+<HR>
+<P> 
+  <CENTER>
+    <FONT face=Arial size="-1"><A href="http://jade.cselt.it/">JADE</A> is a trademark 
+    of <A href="http://www.cselt.it/">CSELT</A>. </FONT> 
+  </CENTER>
+  <BR>
+  &nbsp; 
+<P><BR>
+</P>
+</font> 
+</BODY></HTML>

@@ -1,0 +1,217 @@
+<html>
+
+	<head>
+		<meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
+		<meta name="generator" content="Adobe GoLive 5">
+		<title>Tutorial 2: Starting JADE</title>
+		<link rel="stylesheet" href="../cps.css">
+	</head>
+
+	<body bgcolor="d3d3d3" text="black">
+	
+		<a href="index.html">Table of contents</a><br>
+		<a href="JadeContainerTutorial.html">Next</a><br>
+		<a href="jadeArchitecture.html">Previous</a><br>
+		<hr>
+		
+		<h1>Tutorial 2: Starting JADE</h1>
+		<p>This tutorial describes how to launch the JADE runtime and provides a brief description of the 
+		main features of the JADE administration GUI.<br>
+		As described in <a href="jadeArchitecture.html">previous section</a> launching the JADE runtime means 
+		creating a Container. Such container can then contain agents that can be started directly at container startup
+		time or later on e.g. through the JADE Management GUI. Moreover, being the first container in the platform,
+		such container MUST be the platform Main Container</p>
+		
+		<p>This section assumes you have downloaded the JADE binary distribution (<tt>JADE-bin-4.0.zip</tt>), the 
+		JADE source distribution (<tt>JADE-src-4.0.zip</tt>) and the 
+		JADE examples distribution (<tt>JADE-examples-4.0.zip</tt>). Once you have unzipped them somewhere on your disk
+		you should end up with a directory structure similar to that below:<br><br>
+		<img src="images/jadeDirectoryStructure.png" border="0"><br>
+		</p>
+		The JADE runtime can be launched in several ways. The easiest way is to open a shell (a DOS prompt in Windows),
+		move to the <tt>jade</tt> directory and type<br>
+		<br>		
+		<tt>java -cp lib\jade.jar jade.Boot -gui</tt><br>
+		<br>
+		You should see an output similar to that below.<br>
+		<br>
+		<img src="images/jadeOutput.png"  border="0"><br>
+		<br>
+		We will go back to this output in next sections. For the moment just note the two information highlighted with 
+		dotted red circles. The first one indicates the host (typically the local host) and port (<tt>1099</tt> by default)
+		where the Main Container accepts incoming connections from other containers (e.g. requests to join the platform 
+		as discussed in <a href="JadeContainerTutorial.html">next section</a>). It is possible to make JADE use a different port 
+		by means of the <tt>-local-port &lt;a-port&gt;</tt> option. For instance to make the Main Container accept 
+		incoming connections from other containers on port <tt>1111</tt> it would be sufficient to type the 
+		command line below.<br>
+		<br>
+		<tt>java -cp lib\jade.jar jade.Boot -gui -local-port 1111</tt><br>
+		<br>
+		Similarly it is possible to make JADE use a different host name/address with respect to that read from the
+		underlying network stack by means of the <tt>-local-host &lt;host-name-or-address&gt;</tt> option. This is 
+		typically useful when dealing with network environments where hosts can be reached only by specifying  
+		hostnames including the network domain (e.g. <tt>avalon.tilab.com</tt> instead of just <tt>avalon</tt>) as  
+		exemplified below<br>
+		<br>
+		<tt>java -cp lib\jade.jar jade.Boot -gui -local-host avalon.tilab.com</tt><br>
+		<br>
+		The second highlighted information is the name of the newly started Container (remember that the Main Container is itself a Container).
+		By default the name assigned to a Main Container is <tt>"Main Container"</tt>. You can explicitly assign a name to a Container
+		(regardless of it is a Main or peripheral Container) by means of the <tt>-container-name &lt;a-name&gt;</tt> 
+		option.  
+		
+		<p>
+		Since we specified the <tt>-gui</tt> option, the JADE Management Console depicted in Figure 2 should also appear.<br>
+		<br>
+		<img src="images/jadeAdministrationGUI.png"  border="0"><br>
+		<b>Figure 1. The JADE Management Console</b>
+		</p> 
+		
+		In the left part of the Management Console you can see a tree showing that there is a <b>Platform</b> called
+		<tt>&lt;Main-Container-host&gt;:&lt;Main-Container-port&gt;/JADE</tt> (note that, by the fact the we 
+		launched a Main Container, we actually created a Platform) that is composed of a single Container called 
+		<tt>Main Container</tt>, that, on its turn, contains three agents:
+		<ul>
+		<li>The <tt>ams</tt> activated by default since we launched a Main Container</li> 
+		<li>The <tt>df</tt> activated by default since we launched a Main Container</li>
+		<li>The <tt>rma</tt> (Remote Management Agent) i.e. the agent implementing the JADE Management Console itself</li>
+		</ul> 
+		Looking at agent names we see that they have the form<br>
+		<br>
+		<tt>&lt;local-name&gt;@&lt;platform-name&gt;</tt><br>
+		<br>
+		It is possible to set a different platform name by means of the <tt>-platform-id &lt;a-platform-name&gt;</tt> 
+		configuration option as in the command line below.<br>
+		<br>
+		<tt>java -cp lib\jade.jar jade.Boot -gui -platform-id MyPlatform</tt><br>
+		<br>
+		If we did that, agents would have been called <tt>ams@MyPlatform</tt>, <tt>df@MyPlatform</tt> and  
+		<tt>rma@MyPlatform</tt> respectively.
+ 
+ 
+		<h2>Shutting Down the Platform</h2>
+		<p>In order to shut the platform down, in the Management Gui, choose <tt>File --&gt; Shut down Agent Platform</tt>
+		and then select <tt>Yes</tt> when prompted for confirmation. 
+		</p>
+
+ 
+		<h2>Running Some Agents</h2>
+		<p>In this section we will start some agents and we will make them communicate. In particular we will use the 
+		DummyAgent, a ready-made agent (included among the JADE tools) that can be used to send and receive custom messages,
+		and the PingAgent, an example included in the JADE  examples distribution. The latter (as all JADE examples)
+		must be compiled first.</p>
+		
+		<h3>Compiling the PingAgent</h3>
+		<p>The sources of the PingAgent are included in the <tt>src\examples\PingAgent</tt> directory. 
+		To compile them (as for any Java source files) it is possible to type<br>
+		<br>
+		<tt>javac -classpath lib\jade.jar -d classes src\examples\PingAgent\*.java</tt><br>
+		<br>
+		If you have <a href="http://ant.apache.org/">ANT</a> installed, however you can simply type<br>
+		<br> 
+		<tt>ant examples</tt><br>
+		<br>
+		This will compile all JADE examples at once and put the generated <tt>.class</tt> files into the <tt>classes</tt>
+		directory.
+		
+		<h3>Starting the PingAgent</h3>
+		<p>Agents can be started in two ways: directly from the command line (at container startup time) by means of 
+		the <tt>-agents</tt> option, or later on by means of the Management GUI</p>
+		<p>In both cases, unless we use more sophisticated features such as Agent Mobility or <i>Jar-packaged-agents</i> 
+		which are out of the scope of this tutorial (see the JADE Administrator's Guide for details), 
+		the agent classes must be included in the classpath of the Container where we want to start them.
+		</p>
+		<b>Starting agents using the command line</b><br>
+		<p>
+		In the shell type the command line below<br>
+		<br>
+		<tt>java -cp lib\jade.jar;classes jade.Boot -gui -agents ping1:examples.PingAgent.PingAgent </tt><br>
+		<br>
+		Note that the classpath includes JADE classes (<tt>lib\jade.jar</tt>) and the previously compiled classes
+		of the examples (<tt>classes</tt>). Note also that the value of the <tt>-agents</tt> option takes the form<br>
+		<br>
+		<tt>&lt;agent-local-name&gt;:&lt;fully-qualified-agent-class&gt;</tt><br>
+		<br> 
+		Using JADE terminology, this is called an "Agent Specifier". More than one agent can be started by just 
+		typing several agent specifiers separated by a semicolon (';') as in the example below<br>
+		<br>
+		<tt>java -cp lib\jade.jar;classes jade.Boot -gui -agents ping1:examples.PingAgent.PingAgent;ping2:examples.PingAgent.PingAgent </tt><br>
+		<br>
+		The above example also shows that you can start several agents sharing the same class. Each one will have
+		its name and will operate independently from the others.
+		</p>
+		<p>If you typed everything correctly you should see the RMA Management GUI appearing again. Expanding the tree,
+		besides the usual <tt>ams</tt>, <tt>df</tt> and <tt>rma</tt>, you should also see an agent called 
+		<tt>ping1</tt>. This is our PingAgent.<br>
+		The PingAgent is a very simple agent waiting for messages. If a <tt>REQUEST</tt> message with content 
+		<tt>ping</tt> is received, an <tt>INFORM</tt> message with content <tt>pong</tt> is sent back. If any other
+		message is received, a <tt>NOT_UNDERSTOOD</tt> message is sent back. Refer to the <a href="../JADEProgramming-Tutorial-for-beginners.pdf">JADE Programming Tutorial</a>
+		for an explanation on message format (defined by the ACL language specified by <a href="http://www.fipa.org">FIPA</a>)
+		and for details about how to program agents so that they are able to send and receive messages.</p>
+		<b>Starting agents using the Management Console</b><br>
+		<p>Let's now start a second PingAgent using the Management Console. Right-click on the Main Container 
+		(currently we only have this container in our platform and as a consequence we can only start agents there). 
+		In the popup menu select the <tt>Start New Agent</tt> item. A dialog box similar to that depicted in 
+		Figure 2 appears. Type the name (<tt>ping2</tt>) and the fully qualified class name 
+		(<tt>examples.PingAgent.PingAgent</tt>) then press OK. The <tt>ping2</tt> agent should appear in the 
+		RMA Management Console under the Main Container.<br>
+		<br> 
+		<img src="images/startNewAgentDialog.png"  border="0"><br>
+		<b>Figure 2. The Start New Agent dialog box</b>
+		</p>
+		
+		<h3>The Dummy Agent</h3>
+		<p>At this point we have two PingAgents, <tt>ping1</tt> and <tt>ping2</tt>, waiting for messages. Now we
+		will use the <b>Dummy Agent</b>, a ready-made "tool" agent that allows sending/receiving custom messages, to stimulate 
+		them. Besides the Dummy Agent, JADE provides other useful tool agents. The <b>Sniffer Agent</b> that 
+		allows inspecting conversations between agents, the <b>Introspector</b> or <b>Debugger Agent</b> that allows inspecting 
+		the internals of an agent (e.g. the tasks it is currently executing) and the <b>Log Manager Agent</b> that 
+		allows changing the log levels of classes at runtime. Tool agents can be started as we did for the Ping Agent.
+		However they have a shortcut button in the RMA GUI. So let's click on the <tt>Start DummyAgent</tt> button in the 
+		upper right toolbar of the Management Console. A DummyAgent called <tt>da0</tt> should be created and its GUI
+		should appear as depicted in Figure 3.<br>
+		<br>
+		<img src="images/dummyAgent.png"  border="0"><br>
+		<b>Figure 3. The DummyAgent GUI</b>
+		</p>
+		<p>The form in the left part of the DummyAgent GUI shows the slots of an ACL Message. All slots, but the 
+		<tt>Communicative Act</tt> are optional.<br>
+		So select the <tt>REQUEST</tt> communicative act, type <tt>ping</tt> in the <tt>Content</tt> slot and 
+		finally select a receiver for the message: e.g. <tt>ping1</tt>. In order to do that, right-click in the 
+		<tt>Receivers</tt> text area and select the <tt>Add</tt> menu item. A dialog box similar to that depicted in 
+		Figure 4 should appear.<br>
+		<br>
+		<img src="images/aidEditingDialog.png" border="0"></p>
+		<b>Figure 4. The AID editing dialog box</b>
+		</p>	
+		<p>As you can see from this dialog box an agent is fully identified by an <b>AID</b> (Agent Identifier).
+		The AID contains a unique name, that, as already mentioned, has the form <tt>&lt;local-name&gt;@&lt;platform-name&gt;</tt>,
+		plus some (possibly none) transport addresses. Actually there are also other information. These however are there 
+		just for compliance with the FIPA specification: you can forget about them. 
+		Addresses are used only when communication occurs 
+		between agents living in different platforms as will be described in <a href="JadePlatformTutorial.html">Tutorial 4</a>.
+		Whenever the communication occurs between agents belonging to the same platform only agent names are used.
+		So fill in the form in the manner shown and click the OK button. Checking the box beside the <tt>NAME</tt> text 
+		field means that we are specifying the agent local-name only. JADE will append the <tt>@&lt;platform-name&gt;</tt>
+		automatically.</p>
+		
+		<h3>Send a message</h3>
+		<p>Finally click the button with the message icon in the DummyAgent GUI.
+		In the right pane of the DummyAgent GUI two lines appear, one red, the other blue. The most recent is the 
+		topmost. Blue refers to sent messages, red to received messages. You should see something similar to that 
+		depicted in Figure 5.<br>
+		<br>
+		<img src="images/dummyAgentSentReceived.png" border="0"><br>
+		<b>Figure 5. Sent and received messages in the DummyAgent GUI</b>
+		</p>
+		<p>You can examine the received INFORM message (sent by the <tt>ping1</tt> agent) by selecting it and then 
+		clicking the button with the &quot;glasses&quot; icon. As mentioned before the <tt>ping1</tt> agent replied
+		with &quot;pong&quot;.
+		
+		<hr>
+		<a href="index.html">Table of contents</a><br>
+		<a href="JadeContainerTutorial.html">Next</a><br>
+		<a href="jadeArchitecture.html">Previous</a><br>
+	</body>
+
+</html>
