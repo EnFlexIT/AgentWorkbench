@@ -5,8 +5,7 @@
 	<property name="destinDirAPI" value="${destinDir}\api\\" />
 	<property name="destinDirIMG" value="${destinDir}\img\\" />
 
-	<target name="execute" depends="cleanup,javadoc" description="Executing jar-file ... ">
-	
+	<target name="execute" depends="cleanup,javadoc" description="Creating javadoc ... ">
 	</target>
 	
 	<target name="cleanup" description="Delete old API folder structure ...">
