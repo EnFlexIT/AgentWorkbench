@@ -57,7 +57,7 @@
 					lib/jade/lib/commons-codec/commons-codec-1.3.jar
 					
 					lib/scimark2lib.jar
-					lib/google-api-translate-java-0.92.jar
+					lib/google-api-translate-java-0.95.jar
 					lib/jdbc/mysql-connector-java-3.0.17-ga-bin.jar
 					
 					lib/batik/batik-slideshow.jar

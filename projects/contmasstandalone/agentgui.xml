@@ -14,9 +14,7 @@
         <projectResource>\ContMAS_lib\xercesImpl-2.7.1.jar</projectResource>
     </projectResources>
     <plugins/>
-    <subOntologies>
-        <subOntology>de.unidue.stud.sehawagn.contmas.ontology.ContainerTerminalOntology</subOntology>
-    </subOntologies>
+    <subOntologies/>
     <agentConfiguration>
         <entry>
             <key>de.unidue.stud.sehawagn.contmas.agents.RandomGeneratorAgent</key>
@@ -37,7 +35,25 @@
             <service>agentgui.physical2Denvironment.provider.EnvironmentProviderService</service>
         </serviceList>
     </jadeConfiguration>
-    <simulationSetupCurrent>map_port_chalmers_agentgui</simulationSetupCurrent>
+    <distributionSetup>
+        <doDynamicLoadBalancing>false</doDynamicLoadBalancing>
+        <doStaticLoadBalancing>false</doStaticLoadBalancing>
+        <dynamicLoadBalancingClass>agentgui.simulationService.balancing.DynamicLoadBalancing</dynamicLoadBalancingClass>
+        <numberOfAgents>0</numberOfAgents>
+        <numberOfContainer>0</numberOfContainer>
+        <staticLoadBalancingClass>agentgui.simulationService.balancing.StaticLoadBalancing</staticLoadBalancingClass>
+        <useUserThresholds>false</useUserThresholds>
+        <userThresholds>
+            <thCpuH>80</thCpuH>
+            <thCpuL>5</thCpuL>
+            <thMemoH>80</thMemoH>
+            <thMemoL>5</thMemoL>
+            <thNoThreadsH>500</thNoThreadsH>
+            <thNoThreadsL>5</thNoThreadsL>
+        </userThresholds>
+    </distributionSetup>
+    <remoteContainerConfiguration/>
+    <simulationSetupCurrent>map_port_chalmers_agentgui_slim</simulationSetupCurrent>
     <simulationSetups>
         <entry>
             <key>map_port_chalmers_agentgui_slim</key>

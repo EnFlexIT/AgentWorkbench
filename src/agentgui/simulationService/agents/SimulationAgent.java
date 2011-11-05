@@ -303,7 +303,9 @@ public class SimulationAgent extends Agent {
 	 * This method removes the CyclicNotificationHandler from this agent.
 	 */
 	private void removeNotificationHandler() {
-		this.removeBehaviour(this.notifyHandler);
+		if (this.notifyHandler!=null) {
+			this.removeBehaviour(this.notifyHandler);	
+		}
 	}
 
 	/**
