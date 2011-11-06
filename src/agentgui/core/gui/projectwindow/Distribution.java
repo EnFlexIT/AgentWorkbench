@@ -779,20 +779,16 @@ public class Distribution extends JPanel implements ActionListener, Observer, Ke
 			this.jCheckBoxThresholdDefinition.setSelected(false);
 			this.currDistributionSetup.setUseUserThresholds(false);
 			
-			this.jTextFieldCpuLow.setText("5");
-			this.currUserThresholds.setThCpuL(5);
-			this.jTextFieldCpuHigh.setText("80");
-			this.currUserThresholds.setThCpuH(80);
+			this.currUserThresholds = new LoadThresholdLevels();
 			
-			this.jTextFieldMemLow.setText("5");
-			this.currUserThresholds.setThMemoL(5);
-			this.jTextFieldMemHigh.setText("80");
-			this.currUserThresholds.setThMemoH(80);
+			this.jTextFieldCpuLow.setText(this.currUserThresholds.getThCpuL().toString());
+			this.jTextFieldCpuHigh.setText(this.currUserThresholds.getThCpuH().toString());
 			
-			this.jTextFieldThreadsLow.setText("50");
-			this.currUserThresholds.setThNoThreadsL(50);
-			this.jTextFieldThreadsHigh.setText("1500");
-			this.currUserThresholds.setThNoThreadsH(1500);
+			this.jTextFieldMemLow.setText(this.currUserThresholds.getThMemoL().toString());
+			this.jTextFieldMemHigh.setText(this.currUserThresholds.getThMemoH().toString());
+			
+			this.jTextFieldThreadsLow.setText(this.currUserThresholds.getThNoThreadsL().toString());
+			this.jTextFieldThreadsHigh.setText(this.currUserThresholds.getThNoThreadsH().toString());
 		}
 		currProject.setDistributionSetup(this.currDistributionSetup);
 	}
