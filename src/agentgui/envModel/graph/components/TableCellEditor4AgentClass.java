@@ -27,7 +27,7 @@
  * **************************************************************
  */
 
-package agentgui.core.gui.components;
+package agentgui.envModel.graph.components;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -41,7 +41,6 @@ import javax.swing.table.TableCellEditor;
 import agentgui.core.agents.AgentClassElement;
 import agentgui.core.application.Application;
 import agentgui.core.gui.AgentSelector;
-import agentgui.envModel.graph.controller.ComponentTypeDialog;
 
 /**
  * This class is used in the {@link ComponentTypeDialog} for showing the agent class selector dialog 

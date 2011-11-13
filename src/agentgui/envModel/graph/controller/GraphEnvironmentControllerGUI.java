@@ -72,9 +72,11 @@ import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.environment.EnvironmentPanel;
-import agentgui.core.gui.components.TableCellEditor4TableButton;
-import agentgui.core.gui.components.TableCellRenderer4Button;
 import agentgui.core.project.Project;
+import agentgui.envModel.graph.GraphGlobals;
+import agentgui.envModel.graph.components.ComponentTypeDialog;
+import agentgui.envModel.graph.components.TableCellEditor4TableButton;
+import agentgui.envModel.graph.components.TableCellRenderer4Button;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphElement;
 import agentgui.envModel.graph.networkModel.GraphNode;
@@ -101,7 +103,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	
 	private static final long serialVersionUID = 1L;
 	
-	private final static String PathImage = Application.RunInfo.PathImageIntern();
+	private final static String pathImage = GraphGlobals.getPathImages();
 	
 	/**
 	 * JPanel containing the controls
@@ -548,8 +550,8 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	}
 	
 	/**
-	 * Sets the graph gui.
-	 * @param BasicGraphGUI the new graph gui
+	 * Sets the graph GUI.
+	 * @param basicGraphGUI the new graph GUI
 	 */
 	public void setGraphGUI(BasicGraphGUI basicGraphGUI) {
 		
@@ -624,26 +626,26 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 								Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
 					}
 					
-				} else if(notification.getEvent().equals(BasicGraphGUI.EVENT_REMOVE_COMPONENT_CLICKED)){					
+				} else if(notification.getEvent().equals(BasicGraphGUI.EVENT_REMOVE_COMPONENT_CLICKED)) {					
 				//Remove Component Button clicked
 					
 					Set<GraphEdge> edgeSet = graphGUI.getVisView().getPickedEdgeState().getPicked();
-					// Atleast one edge is picked
 					if(edgeSet.size()>0){ 
+						// --- At least one edge is picked ----------
 						//Get the Network component from the picked edge
 						NetworkComponent selectedComponent = getNetworkComponentFromEdge(edgeSet.iterator().next());												
 						//Removing the component from the network model and updating the graph
 						handleRemoveNetworkComponent(selectedComponent);
 						
 						getController().refreshNetworkModel();
-					}
-					// No edge is picked
-					else{ 
+						
+					} else{
+						// --- No edge is picked --------------------
 						JOptionPane.showMessageDialog(this,Language.translate("Select an edge first", Language.EN),
 								Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
 					}
 					
-				} else if(notification.getEvent().equals(BasicGraphGUI.EVENT_MERGE_NODES_CLICKED)){					
+				} else if(notification.getEvent().equals(BasicGraphGUI.EVENT_MERGE_NODES_CLICKED)) {					
 				//Merge Nodes Button clicked
 					
 					Set<GraphNode> nodeSet = graphGUI.getVisView().getPickedVertexState().getPicked();
@@ -903,10 +905,12 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	}
 	/**
 	 * Removes the given network component from the network model,
-	 * updates the graph accordingly and the hashmap of graphElements 
+	 * updates the graph accordingly and the HashMap of graphElements 
+	 * 
 	 * @param selectedComponent The network component to be removed
 	 */
 	private void handleRemoveNetworkComponent(NetworkComponent selectedComponent) {
+		
 		NetworkModel networkModel = getController().getNetworkModel();
 		
 		//The IDs of the elements present in the given component 
@@ -1241,7 +1245,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		if (jButtonClearSearch == null) {
 			jButtonClearSearch = new JButton();
 			jButtonClearSearch.setPreferredSize(new Dimension(16, 20));
-			jButtonClearSearch.setIcon(new ImageIcon( this.getClass().getResource( PathImage + "ClearSearch.png")));
+			jButtonClearSearch.setIcon(new ImageIcon(this.getClass().getResource( pathImage + "ClearSearch.png")));
 			jButtonClearSearch.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					getJTextFieldSearch().setText(null);

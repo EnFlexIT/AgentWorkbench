@@ -98,6 +98,7 @@ public class DisplayAgent extends Agent {
 		// --- Build the new Controller GUI ---------------
 		GraphEnvironmentController myGraphEnvController = new GraphEnvironmentController(netModel);
 		myGraphDisplay = new GraphEnvironmentControllerGUI(myGraphEnvController);
+		
 		BasicGraphGUI graphGUI = new BasicGraphGUI(myGraphEnvController);
 		graphGUI.addObserver(myGraphDisplay);
 		if (netModel!=null) {

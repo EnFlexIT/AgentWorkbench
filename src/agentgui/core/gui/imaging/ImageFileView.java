@@ -32,7 +32,7 @@ import java.io.File;
 import javax.swing.*;
 import javax.swing.filechooser.*;
 
-import agentgui.core.application.Application;
+import agentgui.envModel.graph.GraphGlobals;
 
 /**
  * The ImageFileView class shows a different icon for each type of image accepted by the image filter.
@@ -41,12 +41,13 @@ import agentgui.core.application.Application;
  *
  */
 public class ImageFileView extends FileView {
-	private final String pathImage = Application.RunInfo.PathImageIntern(); 
 	
-    ImageIcon jpgIcon = ImageUtils.createImageIcon(pathImage+  "jpgIcon.gif");
-    ImageIcon gifIcon = ImageUtils.createImageIcon(pathImage+  "gifIcon.gif");
-    ImageIcon tiffIcon = ImageUtils.createImageIcon(pathImage+ "tiffIcon.gif");
-    ImageIcon pngIcon = ImageUtils.createImageIcon(pathImage+  "pngIcon.png");
+	private final String pathImage = GraphGlobals.getPathImages(); 
+	
+    private ImageIcon jpgIcon = ImageUtils.createImageIcon(pathImage +  "jpgIcon.gif");
+    private ImageIcon gifIcon = ImageUtils.createImageIcon(pathImage +  "gifIcon.gif");
+    private ImageIcon tiffIcon = ImageUtils.createImageIcon(pathImage + "tiffIcon.gif");
+    private ImageIcon pngIcon = ImageUtils.createImageIcon(pathImage +  "pngIcon.png");
 
     public String getName(File f) {
         return null; //let the L&F FileView figure this out

@@ -34,9 +34,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import agentgui.envModel.graph.controller.GeneralGraphSettings4MAS;
-
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseGraph;
+import edu.uci.ics.jung.graph.util.EdgeType;
 
 /**
  * The Environment Network Model.
@@ -80,14 +80,49 @@ public class NetworkModel implements Cloneable, Serializable {
 	/**
 	 * Creates a clone of the current instance
 	 */
-	@Override
-	public Object clone() {
-		try {
-			return super.clone();
-		} catch (CloneNotSupportedException e) {
-			e.printStackTrace();
-			return null;
+	public NetworkModel getCopy() {
+			
+		// ----------------------------------------------------------
+		// --- Create a copy of the Graph ---------------------------
+		// ----------------------------------------------------------
+		Graph<GraphNode, GraphEdge> copyGraph = new SparseGraph<GraphNode, GraphEdge>();
+		
+		// --- Copy the vertices / nodes ----------------------------
+//		Collection<GraphNode> nodesCollection = this.graph.getVertices();
+//		GraphNode[] nodes = nodesCollection.toArray(new GraphNode [nodesCollection.size()]);
+//		for (int i = 0; i < nodes.length; i++) {
+//			GraphNode node = nodes[i];
+//			copyGraph.addVertex(node.getCopy());
+//		}
+		
+		// --- Copy the edges with their nodes of the graph ---------
+		Collection<GraphEdge> edgesCollection = this.graph.getEdges();
+		GraphEdge[] edges = edgesCollection.toArray(new GraphEdge [edgesCollection.size()]);
+		for (int i = 0; i < edges.length; i++) {
+			GraphEdge edge = edges[i];
+
+			GraphNode first  = this.graph.getEndpoints(edge).getFirst().getCopy();
+			GraphNode second = this.graph.getEndpoints(edge).getSecond().getCopy();
+			EdgeType edgeType =  this.graph.getEdgeType(edge);
+			GraphEdge edgeCopy = edge.getCopy();
+			
+			copyGraph.addEdge(edgeCopy, first, second, edgeType);
+
 		}
+		
+		// ----------------------------------------------------------
+		// -- Create a copy of the networkComponents ----------------
+		// ----------------------------------------------------------
+		HashMap<String, NetworkComponent> copyComponents = new HashMap<String, NetworkComponent>(this.networkComponents);
+		
+		// ----------------------------------------------------------
+		// -- Create a new NetworkModel -----------------------------
+		// ----------------------------------------------------------
+		NetworkModel netModel = new NetworkModel();
+		netModel.setGraph(copyGraph);
+		netModel.setNetworkComponents(copyComponents);
+		return netModel;
+		
 	}
 	/**
 	 * Returns the GridComponent with the given ID, or null if not found.

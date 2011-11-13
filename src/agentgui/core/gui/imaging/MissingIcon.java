@@ -43,10 +43,8 @@ import javax.swing.ImageIcon;
  */
 public class MissingIcon extends ImageIcon{
     
-    /**
-	 * 
-	 */
 	private static final long serialVersionUID = 7912176274161834855L;
+
 	private int width = 16;
     private int height = 16;
     

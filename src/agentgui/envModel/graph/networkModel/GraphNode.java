@@ -39,7 +39,8 @@ import java.awt.geom.Point2D;
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
  *
  */
-public class GraphNode extends GraphElement{
+public class GraphNode extends GraphElement {
+	
 	/**
 	 * The GraphNode's position in a visualization
 	 */
@@ -49,13 +50,34 @@ public class GraphNode extends GraphElement{
 	 */
 	private String encodedOntologyRepresentation;
 	
+	
 	/**
 	 * Default constructor
 	 */
 	public GraphNode(){
 		this.position = new Point(50, 50);
 	}
-
+	
+	
+	/**
+	 * Gets the copy of the current instance.
+	 * @return the copy
+	 */
+	public GraphNode getCopy() {
+			
+		GraphNode nodeCopy = new GraphNode();
+		
+		String newID = new String (this.getId());
+		Point2D newPos = new Point();
+		newPos.setLocation(this.position.getX(), this.position.getY());
+		
+		nodeCopy.setId(newID);
+		nodeCopy.setPosition(newPos);
+		nodeCopy.setEncodedOntologyRepresentation(this.encodedOntologyRepresentation);
+		return nodeCopy;
+	}
+	
+	
 	/**
 	 * @param point2d the position to set
 	 */

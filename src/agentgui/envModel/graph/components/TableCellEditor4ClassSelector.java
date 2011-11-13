@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.core.gui.components;
+package agentgui.envModel.graph.components;
 
 import java.awt.Component;
 import java.awt.Frame;
@@ -39,7 +39,6 @@ import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 
 import agentgui.core.gui.ClassSelector;
-import agentgui.envModel.graph.controller.ComponentTypeDialog;
 
 /**
  * Is used in the {@link ComponentTypeDialog} for displaying agent classes.

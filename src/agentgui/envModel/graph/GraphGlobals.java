@@ -26,41 +26,26 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.core.gui.components;
-
-import java.awt.Component;
-
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.ListCellRenderer;
-
-import agentgui.envModel.graph.controller.ComponentTypeDialog;
+package agentgui.envModel.graph;
 
 /**
- * Is used in the {@link ComponentTypeDialog} for displaying agent classes
+ * The Class Globals for global constant values of the Graph or Network model.
  * 
- * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class TableCellRenderer4ClassNameList implements ListCellRenderer {
+public class GraphGlobals {
 
-	/* (non-Javadoc)
-	 * @see javax.swing.ListCellRenderer#getListCellRendererComponent(javax.swing.JList, java.lang.Object, int, boolean, boolean)
+	/** The path images. */
+	private static String pathImages = "/agentgui/envModel/graph/img/";
+
+
+	/**
+	 * Gets the path images.
+	 *
+	 * @return the pathImages
 	 */
-	@Override
-	public Component getListCellRendererComponent(JList arg0, Object arg1, int arg2, boolean arg3, boolean arg4) {
-		
-		JLabel rendererComponent = new JLabel();
-		String simpleClassName = "";
-		if(arg1 != null){
-			String className = (String) arg1;
-			int simpleNameStart = className.lastIndexOf(".");
-			if(simpleNameStart > -1){
-				simpleClassName = className.substring(simpleNameStart+1);
-			}
-		}
-		
-		rendererComponent.setText(simpleClassName);
-		return rendererComponent;
+	public static String getPathImages() {
+		return pathImages;
 	}
-
+	
 }

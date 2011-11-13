@@ -53,6 +53,8 @@
 						agentgui.core.sim.setup,
 						agentgui.core.systemtray,
 						agentgui.core.webserver,
+						agentgui.envModel.graph,
+						agentgui.envModel.graph.components,			
 						agentgui.envModel.graph.controller,
 						agentgui.envModel.graph.controller.yedGraphml,
 						agentgui.envModel.graph.networkModel,

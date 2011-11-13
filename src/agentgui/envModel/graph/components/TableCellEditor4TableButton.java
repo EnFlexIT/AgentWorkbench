@@ -27,7 +27,7 @@
  * **************************************************************
  */
 
-package agentgui.core.gui.components;
+package agentgui.envModel.graph.components;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -40,7 +40,6 @@ import javax.swing.JButton;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 
-import agentgui.envModel.graph.controller.ComponentTypeDialog;
 
 /**
  * Is used in the {@link ComponentTypeDialog}.

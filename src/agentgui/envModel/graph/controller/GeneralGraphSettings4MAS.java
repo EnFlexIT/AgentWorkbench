@@ -43,6 +43,7 @@ import jade.util.leap.Serializable;
 public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	
 	private static final long serialVersionUID = 7425147528482747232L;
+	
 	/**
 	 * The component type settings used in the {@link GraphEnvironmentController}
 	 */
@@ -55,7 +56,6 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	public GeneralGraphSettings4MAS() {
 		currentCTS = new HashMap<String, ComponentTypeSettings>();
 	}
-
 	/**
 	 * Creates a clone of the current instance
 	 */
@@ -76,7 +76,6 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	public HashMap<String, ComponentTypeSettings> getCurrentCTS() {
 		return currentCTS;
 	}
-
 	/**
 	 * Set the component type settings hashmap
 	 * @param currentCTS the currentCTS to set
@@ -84,4 +83,5 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	public void setCurrentCTS(HashMap<String, ComponentTypeSettings> currentCTS) {
 		this.currentCTS = currentCTS;
 	}
+	
 }

@@ -38,7 +38,9 @@
 	<property name="envModelGraphSourceDir" value="${binaryDirANT}\agentgui\envModel\graph\\" />
 	<property name="envModelGraphDestinDir" value="lib\jade\lib\\" />
 	<property name="envModelGraphDestinJar" value="${simServiceDestinDir}\envModelGraph.jar" />
-
+	<property name="envModelGraphDirIagesSource" value="src\agentgui\envModel\graph\img" />
+	<property name="envModelGraphDirIagesDestin" value="build\agentgui\envModel\graph\img" />
+	
 	<property name="debugServiceSourceDir" value="${binaryDirANT}\jade\debugging\\" />
 	<property name="debugServiceDestinDir" value="lib\jade\lib\\" />
 	<property name="debugServiceDestinJar" value="${simServiceDestinDir}\debugging.jar" />
@@ -163,10 +165,17 @@
     		<classpath refid="class.path" />
     	</javac>
 
+    	<!-- Copy images of Agent.GUI to bin-folder -->
     	<copy todir="${binaryDirIMG}">
     		<fileset dir="${sourceDirImages}" />
     	</copy>  
+    	<!-- Copy images of network model to bin-folder -->
+    	<copy todir="${envModelGraphDirIagesDestin}">
+    	    <fileset dir="${envModelGraphDirIagesSource}" />
+    	</copy>
+    	
     	<copy tofile="${binaryFileProjectOntology}" file="${sourceFileProjectOntology}" />
+    	
     	<!-- Version information to ANT folder -->
     	<copy tofile="${destinVersionPropertyFile}" file="${versionPropertyFile}" />
     		

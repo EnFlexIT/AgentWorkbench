@@ -570,7 +570,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 */
 	@Override
 	public Object getEnvironmentModelCopy() {
-		NetworkModel netModel = (NetworkModel) this.networkModel.clone();
+		NetworkModel netModel = this.networkModel.getCopy();
 		netModel.setGeneralGraphSettings4MAS((GeneralGraphSettings4MAS) this.generalGraphSettings4MAS.clone());
 		return netModel;
 	}	

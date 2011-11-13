@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.envModel.graph.controller;
+package agentgui.envModel.graph.components;
 
 import jade.content.Concept;
 
@@ -65,15 +65,11 @@ import javax.swing.table.TableModel;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.gui.ClassSelector;
-import agentgui.core.gui.components.TableCellEditor4AgentClass;
-import agentgui.core.gui.components.TableCellRenderer4ClassNameList;
-import agentgui.core.gui.components.TableCellRenderer4ClassName;
-import agentgui.core.gui.components.TableCellEditor4ClassSelector;
-import agentgui.core.gui.components.TableCellEditor4Color;
-import agentgui.core.gui.components.TableCellRenderer4Color;
-import agentgui.core.gui.components.TableCellEditor4Image;
 import agentgui.core.gui.imaging.MissingIcon;
 import agentgui.core.project.Project;
+import agentgui.envModel.graph.GraphGlobals;
+import agentgui.envModel.graph.controller.BasicGraphGUI;
+import agentgui.envModel.graph.controller.GraphEnvironmentControllerGUI;
 import agentgui.envModel.graph.networkModel.ComponentTypeSettings;
 import agentgui.envModel.graph.prototypes.GraphElementPrototype;
 
@@ -160,7 +156,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	/**
 	 * Application image folder path
 	 */
-	private final String pathImage = Application.RunInfo.PathImageIntern();
+	private final String pathImage = GraphGlobals.getPathImages();
 	/**
 	 * Used for assigning the vertex color
 	 */

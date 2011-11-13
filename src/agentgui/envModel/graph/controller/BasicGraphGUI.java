@@ -60,8 +60,8 @@ import javax.swing.JToolBar;
 
 import org.apache.commons.collections15.Transformer;
 
-import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.envModel.graph.GraphGlobals;
 import agentgui.envModel.graph.networkModel.ComponentTypeSettings;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphElement;
@@ -89,8 +89,7 @@ import edu.uci.ics.jung.visualization.decorators.EdgeShape;
  * @see GraphEnvironmentMousePlugin
  * 
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen
- * @author <br>
- *         Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati
+ * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati
  */
 public class BasicGraphGUI extends JPanel implements ActionListener {
 	/**
@@ -205,7 +204,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	private JButton jButtonAddComponent = null;
 	private JToggleButton jToggleMouseTransforming = null;
 
-	private final String pathImage = Application.RunInfo.PathImageIntern(); // @jve:decl-index=0:
+	private final String pathImage = GraphGlobals.getPathImages(); // @jve:decl-index=0:
 	private JToggleButton jToggleMousePicking = null;
 	private JButton jButtonRemoveComponent = null;
 	private JButton jButtonMergeNodes = null;
@@ -295,7 +294,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	 * 
 	 * @return The VisualizationViewer
 	 */
-	VisualizationViewer<GraphNode, GraphEdge> getVisView() {
+	public VisualizationViewer<GraphNode, GraphEdge> getVisView() {
 		return visView;
 	}
 
@@ -605,7 +604,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	}
 
 	/**
-	 * Inovked when a graph node or edge is double clicked (left or right)
+	 * Invoked when a graph node or edge is double clicked (left or right)
 	 * 
 	 * @param pickedObject
 	 */
@@ -756,7 +755,6 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 			jJToolBar.addSeparator();
 			jJToolBar.add(getJButtonClearGraph());
 			jJToolBar.add(getJButtonImportGraph());
-
 		}
 		return jJToolBar;
 	}
@@ -770,12 +768,9 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 		if (jButtonClearGraph == null) {
 			jButtonClearGraph = new JButton();
 			jButtonClearGraph.setPreferredSize(new Dimension(26, 26));
-			jButtonClearGraph.setIcon(new ImageIcon(getClass().getResource(
-					pathImage + "Remove.png")));
-			jButtonClearGraph.setToolTipText(Language.translate("Clear graph",
-					Language.EN));
+			jButtonClearGraph.setIcon(new ImageIcon(getClass().getResource(pathImage + "Remove.png")));
+			jButtonClearGraph.setToolTipText(Language.translate("Clear graph", Language.EN));
 			jButtonClearGraph.addActionListener(this);
-
 		}
 		return jButtonClearGraph;
 	}
@@ -789,11 +784,9 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 		if (jButtonZoomIn == null) {
 			jButtonZoomIn = new JButton();
 			jButtonZoomIn.setPreferredSize(new Dimension(26, 26));
-			jButtonZoomIn.setIcon(new ImageIcon(getClass().getResource(
-					pathImage + "ZoomIn.png")));
+			jButtonZoomIn.setIcon(new ImageIcon(getClass().getResource(pathImage + "ZoomIn.png")));
 			jButtonZoomIn.setToolTipText(Language.translate("Vergrößern"));
 			jButtonZoomIn.addActionListener(this);
-
 		}
 		return jButtonZoomIn;
 	}
@@ -806,12 +799,10 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	private JButton getJButtonZoomOut() {
 		if (jButtonZoomOut == null) {
 			jButtonZoomOut = new JButton();
-			jButtonZoomOut.setIcon(new ImageIcon(getClass().getResource(
-					pathImage + "ZoomOut.png")));
+			jButtonZoomOut.setIcon(new ImageIcon(getClass().getResource(pathImage + "ZoomOut.png")));
 			jButtonZoomOut.setPreferredSize(new Dimension(26, 26));
 			jButtonZoomOut.setToolTipText(Language.translate("Verkleinern"));
 			jButtonZoomOut.addActionListener(this);
-
 		}
 		return jButtonZoomOut;
 	}
@@ -824,12 +815,10 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	private JButton getJButtonZoomReset() {
 		if (jButtonZoomReset == null) {
 			jButtonZoomReset = new JButton();
-			jButtonZoomReset.setIcon(new ImageIcon(getClass().getResource(
-					pathImage + "Refresh.png")));
+			jButtonZoomReset.setIcon(new ImageIcon(getClass().getResource(pathImage + "Refresh.png")));
 			jButtonZoomReset.setPreferredSize(new Dimension(26, 26));
 			jButtonZoomReset.setToolTipText(Language.translate("Zurücksetzen"));
 			jButtonZoomReset.addActionListener(this);
-
 		}
 		return jButtonZoomReset;
 	}
@@ -842,11 +831,9 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	private JButton getJButtonAddComponent() {
 		if (jButtonAddComponent == null) {
 			jButtonAddComponent = new JButton();
-			jButtonAddComponent.setIcon(new ImageIcon(getClass().getResource(
-					pathImage + "ListPlus.png")));
+			jButtonAddComponent.setIcon(new ImageIcon(getClass().getResource(pathImage + "ListPlus.png")));
 			jButtonAddComponent.setPreferredSize(new Dimension(26, 26));
-			jButtonAddComponent.setToolTipText(Language.translate(
-					"Add new component", Language.EN));
+			jButtonAddComponent.setToolTipText(Language.translate("Add new component", Language.EN));
 			jButtonAddComponent.addActionListener(this);
 		}
 		return jButtonAddComponent;
@@ -860,11 +847,9 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	private JToggleButton getJToggleMouseTransforming() {
 		if (jToggleMouseTransforming == null) {
 			jToggleMouseTransforming = new JToggleButton();
-			jToggleMouseTransforming.setIcon(new ImageIcon(getClass()
-					.getResource(pathImage + "move.png")));
+			jToggleMouseTransforming.setIcon(new ImageIcon(getClass().getResource(pathImage + "move.png")));
 			jToggleMouseTransforming.setPreferredSize(new Dimension(26, 26));
-			jToggleMouseTransforming.setToolTipText(Language.translate(
-					"Switch to Transforming mode", Language.EN));
+			jToggleMouseTransforming.setToolTipText(Language.translate("Switch to Transforming mode", Language.EN));
 			jToggleMouseTransforming.setSize(new Dimension(36, 36));
 			jToggleMouseTransforming.addActionListener(this);
 
@@ -880,11 +865,9 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	private JToggleButton getJToggleMousePicking() {
 		if (jToggleMousePicking == null) {
 			jToggleMousePicking = new JToggleButton();
-			jToggleMousePicking.setIcon(new ImageIcon(getClass().getResource(
-					pathImage + "edit.png")));
+			jToggleMousePicking.setIcon(new ImageIcon(getClass().getResource(pathImage + "edit.png")));
 			jToggleMousePicking.setPreferredSize(new Dimension(26, 26));
-			jToggleMousePicking.setToolTipText(Language.translate(
-					"Switch to Picking mode", Language.EN));
+			jToggleMousePicking.setToolTipText(Language.translate("Switch to Picking mode", Language.EN));
 			jToggleMousePicking.setSize(new Dimension(36, 36));
 			jToggleMousePicking.addActionListener(this);
 			jToggleMousePicking.setSelected(true);
@@ -900,11 +883,9 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	private JButton getJButtonRemoveComponent() {
 		if (jButtonRemoveComponent == null) {
 			jButtonRemoveComponent = new JButton();
-			jButtonRemoveComponent.setIcon(new ImageIcon(getClass()
-					.getResource(pathImage + "ListMinus.png")));
+			jButtonRemoveComponent.setIcon(new ImageIcon(getClass().getResource(pathImage + "ListMinus.png")));
 			jButtonRemoveComponent.setPreferredSize(new Dimension(26, 26));
-			jButtonRemoveComponent.setToolTipText(Language.translate(
-					"Remove selected component", Language.EN));
+			jButtonRemoveComponent.setToolTipText(Language.translate("Remove selected component", Language.EN));
 			jButtonRemoveComponent.addActionListener(this);
 		}
 		return jButtonRemoveComponent;
@@ -918,13 +899,10 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	private JButton getJButtonMergeNodes() {
 		if (jButtonMergeNodes == null) {
 			jButtonMergeNodes = new JButton();
-			jButtonMergeNodes.setIcon(new ImageIcon(getClass().getResource(
-					pathImage + "Merge.png")));
+			jButtonMergeNodes.setIcon(new ImageIcon(getClass().getResource(pathImage + "Merge.png")));
 			jButtonMergeNodes.setPreferredSize(new Dimension(26, 26));
-			jButtonMergeNodes.setToolTipText(Language.translate(
-					"Merge two nodes", Language.EN));
+			jButtonMergeNodes.setToolTipText(Language.translate("Merge two nodes", Language.EN));
 			jButtonMergeNodes.addActionListener(this);
-
 		}
 		return jButtonMergeNodes;
 	}
@@ -937,13 +915,10 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	private JButton getJButtonSplitNode() {
 		if (jButtonSplitNode == null) {
 			jButtonSplitNode = new JButton();
-			jButtonSplitNode.setIcon(new ImageIcon(getClass().getResource(
-					pathImage + "split.png")));
+			jButtonSplitNode.setIcon(new ImageIcon(getClass().getResource(pathImage + "split.png")));
 			jButtonSplitNode.setPreferredSize(new Dimension(26, 26));
-			jButtonSplitNode.setToolTipText(Language.translate(
-					"Split the node into two nodes", Language.EN));
+			jButtonSplitNode.setToolTipText(Language.translate("Split the node into two nodes", Language.EN));
 			jButtonSplitNode.addActionListener(this);
-
 		}
 		return jButtonSplitNode;
 	}
@@ -956,13 +931,10 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	private JButton getJButtonImportGraph() {
 		if (jButtonImportGraph == null) {
 			jButtonImportGraph = new JButton();
-			jButtonImportGraph.setIcon(new ImageIcon(getClass().getResource(
-					pathImage + "import.png")));
+			jButtonImportGraph.setIcon(new ImageIcon(getClass().getResource(pathImage + "import.png")));
 			jButtonImportGraph.setPreferredSize(new Dimension(26, 26));
-			jButtonImportGraph.setToolTipText(Language.translate(
-					"Import Graph from file", Language.EN));
+			jButtonImportGraph.setToolTipText(Language.translate("Import Graph from file", Language.EN));
 			jButtonImportGraph.addActionListener(this);
-
 		}
 		return jButtonImportGraph;
 	}
@@ -1009,7 +981,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 		if (jMenuItemDeleteComp == null) {
 			jMenuItemDeleteComp = new JMenuItem();
 			jMenuItemDeleteComp.setText(Language.translate("Delete Component", Language.EN));			
-			jMenuItemDeleteComp.setIcon(new ImageIcon(getClass().getResource("/agentgui/core/gui/img/ListMinus.png")));
+			jMenuItemDeleteComp.setIcon(new ImageIcon(getClass().getResource(pathImage + "ListMinus.png")));
 			jMenuItemDeleteComp.addActionListener(this);
 		}
 		return jMenuItemDeleteComp;
@@ -1024,7 +996,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 		if (jMenuItemNodeProp == null) {
 			jMenuItemNodeProp = new JMenuItem();
 			jMenuItemNodeProp.setText(Language.translate("Edit Properties", Language.EN));
-			jMenuItemNodeProp.setIcon(new ImageIcon(getClass().getResource("/agentgui/core/gui/img/Properties.jpg")));
+			jMenuItemNodeProp.setIcon(new ImageIcon(getClass().getResource(pathImage + "Properties.jpg")));
 			jMenuItemNodeProp.addActionListener(this);
 		}
 		return jMenuItemNodeProp;
@@ -1039,7 +1011,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 		if (jMenuItemEdgeProp == null) {
 			jMenuItemEdgeProp = new JMenuItem();
 			jMenuItemEdgeProp.setText(Language.translate("Edit Properties", Language.EN));			
-			jMenuItemEdgeProp.setIcon(new ImageIcon(getClass().getResource("/agentgui/core/gui/img/Properties.jpg")));
+			jMenuItemEdgeProp.setIcon(new ImageIcon(getClass().getResource(pathImage + "Properties.jpg")));
 			jMenuItemEdgeProp.addActionListener(this);
 		}
 		return jMenuItemEdgeProp;
@@ -1054,9 +1026,8 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 		if (jMenuItemAddComp == null) {
 			jMenuItemAddComp = new JMenuItem();
 			jMenuItemAddComp.setText(Language.translate("Add component", Language.EN));			
-			jMenuItemAddComp.setIcon(new ImageIcon(getClass().getResource("/agentgui/core/gui/img/ListPlus.png")));
+			jMenuItemAddComp.setIcon(new ImageIcon(getClass().getResource(pathImage + "ListPlus.png")));
 			jMenuItemAddComp.addActionListener(this);
-			
 		}
 		return jMenuItemAddComp;
 	}
@@ -1070,9 +1041,8 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 		if (jMenuItemSplitNode == null) {
 			jMenuItemSplitNode = new JMenuItem();
 			jMenuItemSplitNode.setText(Language.translate("Split Node", Language.EN));			
-			jMenuItemSplitNode.setIcon(new ImageIcon(getClass().getResource("/agentgui/core/gui/img/split.png")));
+			jMenuItemSplitNode.setIcon(new ImageIcon(getClass().getResource(pathImage + "split.png")));
 			jMenuItemSplitNode.addActionListener(this);
-			
 		}
 		return jMenuItemSplitNode;
 	}

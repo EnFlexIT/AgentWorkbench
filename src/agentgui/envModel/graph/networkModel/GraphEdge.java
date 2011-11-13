@@ -37,7 +37,8 @@ package agentgui.envModel.graph.networkModel;
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
  *
  */
-public class GraphEdge extends GraphElement{
+public class GraphEdge extends GraphElement {
+	
 	/**
 	 * The type identifier of the network component represented by this edge
 	 */
@@ -46,6 +47,7 @@ public class GraphEdge extends GraphElement{
 	 * The weight / costs of this edge / component
 	 */
 	private float weight;
+	
 	/**
 	 * Constructor
 	 * @param id The id of this GraphEdge
@@ -56,6 +58,16 @@ public class GraphEdge extends GraphElement{
 		this.id = id;
 		this.componentType = componentType;
 	}
+	/**
+	 * Gets the copy of the GraphNode.
+	 * @return the copy
+	 */
+	public GraphEdge getCopy() {
+		
+		GraphEdge edgceCopy = new GraphEdge( new String(this.id), new String(this.componentType) ); 
+		return edgceCopy;
+	}
+	
 	/**
 	 * @return the componentType
 	 */
@@ -80,4 +92,5 @@ public class GraphEdge extends GraphElement{
 	public void setWeight(float weight) {
 		this.weight = weight;
 	}
+	
 }

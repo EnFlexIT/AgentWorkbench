@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.core.gui.components;
+package agentgui.envModel.graph.components;
 
 import java.awt.Component;
 
@@ -34,7 +34,6 @@ import javax.swing.JButton;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
-import agentgui.envModel.graph.controller.ComponentTypeDialog;
 
 /**
  * Is used in the {@link ComponentTypeDialog} for rendering JButton.

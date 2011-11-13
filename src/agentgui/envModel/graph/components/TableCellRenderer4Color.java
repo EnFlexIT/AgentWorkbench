@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.core.gui.components;
+package agentgui.envModel.graph.components;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -34,7 +34,6 @@ import javax.swing.JTable;
 import javax.swing.border.Border;
 import javax.swing.table.TableCellRenderer;
 
-import agentgui.envModel.graph.controller.ComponentTypeDialog;
 
 import java.awt.Color;
 import java.awt.Component;

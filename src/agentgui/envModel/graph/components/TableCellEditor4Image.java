@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.core.gui.components;
+package agentgui.envModel.graph.components;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -183,8 +183,8 @@ public class TableCellEditor4Image extends AbstractCellEditor implements TableCe
 	 * @param description the description
 	 * @return ImageIcon
 	 */
-	protected ImageIcon createImageIcon(String path,
-	                                           String description) {
+	protected ImageIcon createImageIcon(String path, String description) {
+		
 		if(path!=null ){			
 		    java.net.URL imgURL = getClass().getResource(path);
 		    if (imgURL != null) {
