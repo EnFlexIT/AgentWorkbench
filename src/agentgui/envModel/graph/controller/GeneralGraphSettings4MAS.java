@@ -40,22 +40,37 @@ import jade.util.leap.Serializable;
  * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati 
  *
  */
-public class ProjectUserObject implements Serializable{
+public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
+	
 	private static final long serialVersionUID = 7425147528482747232L;
 	/**
 	 * The component type settings used in the {@link GraphEnvironmentController}
 	 */
 	private HashMap<String, ComponentTypeSettings> currentCTS = null;
 
+	
 	/**
 	 * Default constructor
 	 */
-	public ProjectUserObject() {
+	public GeneralGraphSettings4MAS() {
 		currentCTS = new HashMap<String, ComponentTypeSettings>();
 	}
 
 	/**
-	 * Get the component type settings hashmap 
+	 * Creates a clone of the current instance
+	 */
+	@Override
+	public Object clone() {
+		try {
+			return super.clone();
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	/**
+	 * Get the component type settings HashMap 
 	 * @return the currentCTS
 	 */
 	public HashMap<String, ComponentTypeSettings> getCurrentCTS() {

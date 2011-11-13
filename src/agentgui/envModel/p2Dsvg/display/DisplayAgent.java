@@ -74,6 +74,7 @@ public class DisplayAgent extends Agent {
 	private static final long serialVersionUID = 8613715346940866246L;
 
 	private static final int PERIOD = 50;
+	
 	/**
 	 * The DisplayAgent's GUI
 	 */

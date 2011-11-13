@@ -28,7 +28,6 @@
  */
 package agentgui.envModel.graph.controller;
 
-import java.awt.Dimension;
 import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -56,8 +55,6 @@ import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponentList;
 import agentgui.envModel.graph.networkModel.NetworkModel;
-import edu.uci.ics.jung.algorithms.layout.FRLayout;
-import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseGraph;
 import edu.uci.ics.jung.io.GraphIOException;
@@ -67,6 +64,7 @@ import edu.uci.ics.jung.io.graphml.GraphMLReader2;
 import edu.uci.ics.jung.io.graphml.GraphMetadata;
 import edu.uci.ics.jung.io.graphml.HyperEdgeMetadata;
 import edu.uci.ics.jung.io.graphml.NodeMetadata;
+
 /**
  * This class manages an environment model of the type graph / network.<br>
  * Also contains the network component type settings configuration.<br>
@@ -76,26 +74,20 @@ import edu.uci.ics.jung.io.graphml.NodeMetadata;
  * @see agentgui.envModel.graph.networkModel.ComponentTypeSettings
  * @see GraphEnvironmentControllerGUI
  * 
- * 
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
- * @author <br>Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati 
- */
-/**
- * @author derksen
- *
+ * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati 
  */
 public class GraphEnvironmentController extends EnvironmentController {
+	
 	/**
 	 * Observer notification when a new NetworkModel is set 
 	 */
 	public static final Integer EVENT_NETWORKMODEL_LOADED = 0;
-	
 	/**
 	 * Observer notification that the network model is updated.
 	 * Similar to the LOADED, but instead of creating a new visualisation viewer, the graph is refreshed.
 	 */
 	public static final Integer EVENT_NETWORKMODEL_REFRESHED = 3;
-
 	/**
 	 * Observer notification when the element type settings have been changed
 	 */
@@ -113,7 +105,6 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 * The base file name used for saving the graph and the components (without suffix)
 	 */
 	private String baseFileName = null;
-
 	/**
 	 * The network model currently loaded
 	 */
@@ -123,7 +114,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 * Custom user object to be placed in the project object.
 	 * Used here for storing the current component type settings.
 	 */
-	private ProjectUserObject projectUserObject = null;
+	private GeneralGraphSettings4MAS generalGraphSettings4MAS = null;
 	/**
 	 * The GraphFileImporter used for importing externally defined graph definitions
 	 */
@@ -133,15 +124,27 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 */
 	private GraphMLWriter<GraphNode, GraphEdge> graphMLWriter = null;
 	
-
+	
 	/**
 	 * The constructor for the GraphEnvironmentController
-	 * @param project
+	 * for displaying the current environment model during 
+	 * a running simulation.
+	 */
+	public GraphEnvironmentController(NetworkModel networkModel) { 
+		this.setEnvironmentModel(networkModel);
+	}
+	/**
+	 * The constructor for the GraphEnvironmentController 
+	 * for configurations within Agent.GUI
+	 * 
+	 * @param project The current project
 	 */
 	public GraphEnvironmentController(Project project){
 		super(project);		
-		this.updateGraphFileName();
-		this.loadEnvironment();				
+		if (this.currProject!=null) {
+			this.updateGraphFileName();
+			this.loadEnvironment();				
+		}
 	}
 	
 	/**
@@ -149,18 +152,25 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 * @param gesVector
 	 */
 	public void setComponentTypeSettings(HashMap<String, ComponentTypeSettings> gesVector){
-		projectUserObject.setCurrentCTS(gesVector);
-		currProject.setUserRuntimeObject(projectUserObject);
-		currProject.isUnsaved=true;
-		setChanged();
-		notifyObservers(EVENT_ELEMENT_TYPES_SETTINGS_CHANGED);
+		
+		if (this.generalGraphSettings4MAS==null) {
+			this.generalGraphSettings4MAS = new GeneralGraphSettings4MAS();
+		}
+		this.generalGraphSettings4MAS.setCurrentCTS(gesVector);
+
+		if (this.currProject!=null) {
+			this.currProject.setUserRuntimeObject(generalGraphSettings4MAS);
+			this.currProject.isUnsaved=true;			
+		}
+		this.setChanged();
+		this.notifyObservers(EVENT_ELEMENT_TYPES_SETTINGS_CHANGED);
 	}
 	/**
 	 * Gets the current ComponentTypeSettings
 	 * @return HashMap<String, ComponentTypeSettings> The current component type settings map.
 	 */
 	public HashMap<String, ComponentTypeSettings> getComponentTypeSettings(){
-		return projectUserObject.getCurrentCTS();
+		return generalGraphSettings4MAS.getCurrentCTS();
 	}
 	
 	/**
@@ -168,24 +178,29 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 * @param graphMLFile The GraphML file defining the new graph.
 	 */
 	public void importNetworkModel(File graphMLFile){
-		networkModel = getGraphFileImporter().importGraphFromFile(graphMLFile);
-		if(networkModel != null){
-			Layout<GraphNode, GraphEdge> initLayout = new FRLayout<GraphNode, GraphEdge>(networkModel.getGraph(), new Dimension(400, 400));
-			
-			// Initialize node positions  !!! Should be optional later, positions might be defined in the importet file !!!
-			getGraphFileImporter().initPosition(networkModel, initLayout);
-			
+		NetworkModel netModel = this.getGraphFileImporter().importGraphFromFile(graphMLFile);
+		this.setNetworkModel(netModel);
+	}
+	
+	/**
+	 * Sets the environment network model
+	 * @return NetworkModel - The environment model
+	 */
+	private void setNetworkModel(NetworkModel networkModel) {
+		this.networkModel = networkModel;
+		if(this.networkModel!=null){
 			this.setChanged();
 			notifyObservers(EVENT_NETWORKMODEL_LOADED);
 		}
-		currProject.isUnsaved = true;
+		if (currProject!=null) {
+			currProject.isUnsaved = true;
+		}
 	}
-	
 	/**
 	 * Returns the environment network model
 	 * @return NetworkModel - The environment model
 	 */
-	public NetworkModel getGridModel() {
+	public NetworkModel getNetworkModel() {
 		return networkModel;
 	}
 	
@@ -207,7 +222,9 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 * Also sets the project as unsaved
 	 */
 	public void refreshNetworkModel() {		
-		this.currProject.setChangedAndNotify(EVENT_NETWORKMODEL_REFRESHED);	
+		if (this.currProject!=null) {
+			this.currProject.setChangedAndNotify(EVENT_NETWORKMODEL_REFRESHED);	
+		}
 		setChanged();
 		notifyObservers(EVENT_NETWORKMODEL_REFRESHED);		
 	}	
@@ -387,8 +404,8 @@ public class GraphEnvironmentController extends EnvironmentController {
 				updateGraphFileName();
 				this.loadEnvironment(); //Loads network model and notifies observers	
 			
-				projectUserObject = (ProjectUserObject) currProject.getUserRuntimeObject();
-				setComponentTypeSettings(projectUserObject.getCurrentCTS());				
+				generalGraphSettings4MAS = (GeneralGraphSettings4MAS) currProject.getUserRuntimeObject();
+				setComponentTypeSettings(generalGraphSettings4MAS.getCurrentCTS());				
 						
 			break;
 			
@@ -468,13 +485,13 @@ public class GraphEnvironmentController extends EnvironmentController {
 		notifyObservers(new Integer(EVENT_NETWORKMODEL_LOADED));
 				
 		//Loading component type settings from the simulation setup		
-		projectUserObject = (ProjectUserObject) currProject.getUserRuntimeObject();
+		generalGraphSettings4MAS = (GeneralGraphSettings4MAS) currProject.getUserRuntimeObject();
 		// If no ETS are specified in the setup, assign an empty HashMap to avoid null pointers
-		if(projectUserObject == null){
-			projectUserObject = new ProjectUserObject();
+		if(generalGraphSettings4MAS == null){
+			generalGraphSettings4MAS = new GeneralGraphSettings4MAS();
 		}
 		
-		setComponentTypeSettings(projectUserObject.getCurrentCTS());
+		setComponentTypeSettings(generalGraphSettings4MAS.getCurrentCTS());
 		
 	}
 	/* (non-Javadoc)
@@ -522,7 +539,19 @@ public class GraphEnvironmentController extends EnvironmentController {
 	@Override
 	public void setEnvironmentModel(Object environmentObject) {
 		try {
-			this.networkModel = (NetworkModel) environmentObject;	
+			if (environmentObject==null) {
+				this.setNetworkModel(null);
+				this.generalGraphSettings4MAS = null;
+				
+			} else {
+				this.networkModel = (NetworkModel) environmentObject;
+				if (this.networkModel.getGeneralGraphSettings4MAS()!=null) {
+					this.generalGraphSettings4MAS = this.networkModel.getGeneralGraphSettings4MAS(); 
+				}
+				this.setNetworkModel((NetworkModel) environmentObject);
+				
+			}
+			
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -541,7 +570,9 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 */
 	@Override
 	public Object getEnvironmentModelCopy() {
-		return this.networkModel.clone();
+		NetworkModel netModel = (NetworkModel) this.networkModel.clone();
+		netModel.setGeneralGraphSettings4MAS((GeneralGraphSettings4MAS) this.generalGraphSettings4MAS.clone());
+		return netModel;
 	}	
 	
 }

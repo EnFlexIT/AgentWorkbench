@@ -26,12 +26,14 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-
 package agentgui.envModel.graph.networkModel;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+
+import agentgui.envModel.graph.controller.GeneralGraphSettings4MAS;
 
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseGraph;
@@ -39,11 +41,15 @@ import edu.uci.ics.jung.graph.SparseGraph;
 /**
  * The Environment Network Model.
  * This class encapsulates a JUNG graph representing a grid, with edges representing the grid components.
+ * 
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
  * @author <br>Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati 
  *
  */
-public class NetworkModel implements Cloneable {
+public class NetworkModel implements Cloneable, Serializable {
+	
+	private static final long serialVersionUID = -5712689010090750522L;
+	
 	/**
 	 * The JUNG graph.
 	 */
@@ -56,6 +62,12 @@ public class NetworkModel implements Cloneable {
 	 * A list of all NetworkComponents in the GridModel, accessible by ID
 	 */
 	private HashMap<String, NetworkComponent> networkComponents;
+	/**
+	 * The user object, which stores the component type settings for example
+	 */
+	private GeneralGraphSettings4MAS generalGraphSettings4MAS = null;
+	
+	
 	/**
 	 * Default constructor
 	 */
@@ -198,4 +210,20 @@ public class NetworkModel implements Cloneable {
 		}
 		return "PP"+(max+1);
 	}
+
+	/**
+	 * Sets the general graph settings for the MAS.
+	 * @param generalGraphSettings4MAS the new general graph settings for the MAS
+	 */
+	public void setGeneralGraphSettings4MAS(GeneralGraphSettings4MAS generalGraphSettings4MAS) {
+		this.generalGraphSettings4MAS = generalGraphSettings4MAS;
+	}
+	/**
+	 * Gets the general graph settings for the MAS.
+	 * @return the general graph settings for the MAS
+	 */
+	public GeneralGraphSettings4MAS getGeneralGraphSettings4MAS() {
+		return generalGraphSettings4MAS;
+	}
+	
 }

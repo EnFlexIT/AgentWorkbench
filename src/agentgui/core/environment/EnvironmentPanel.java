@@ -42,7 +42,7 @@ import agentgui.envModel.graph.controller.GraphEnvironmentControllerGUI;
  * @see GraphEnvironmentControllerGUI
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public abstract class EnvironmentPanel extends JPanel implements Observer{
+public abstract class EnvironmentPanel extends JPanel implements Observer {
 
 	private static final long serialVersionUID = -5522022346976174783L;
 
@@ -50,21 +50,20 @@ public abstract class EnvironmentPanel extends JPanel implements Observer{
 	 * The current Agent.GUI project
 	 */
 	protected Project currProject = null;
-	
 	/**
 	 * The environment controller which is to be used for managing the environment model.
 	 */
 	protected EnvironmentController environmentController = null;
 	
+	
 	/**
-	 * Do not use this constructor.
+	 * Constructor for displaying the current environment model during a running simulation.
 	 */
-	@Deprecated
 	public EnvironmentPanel(){
-		
+		super();
 	}
 	/**
-	 * This is the  constructor for this class
+	 * This is the constructor for a controller within the Agent.GUI application
 	 * @param project
 	 */
 	public EnvironmentPanel(Project project) {
@@ -72,6 +71,7 @@ public abstract class EnvironmentPanel extends JPanel implements Observer{
 		this.currProject = project;
 		this.currProject.setEnvironmentPanel(this);
 	}
+	
 	/**
 	 * @return the environmentController
 	 */
@@ -84,6 +84,7 @@ public abstract class EnvironmentPanel extends JPanel implements Observer{
 	public void setEnvironmentController(EnvironmentController environmentController) {
 		this.environmentController = environmentController;
 	}
+	
 	/* (non-Javadoc)
 	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
 	 */

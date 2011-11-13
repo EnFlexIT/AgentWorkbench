@@ -247,7 +247,7 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 	    
 	    if(graphElement!=null){	   
 	    	//Generate and use the next unique network component ID
-	    	String nextID = parentGUI.getController().getGridModel().nextNetworkComponentID();
+	    	String nextID = parentGUI.getController().getNetworkModel().nextNetworkComponentID();
 	    	graphElement.setId(nextID);	    	
 	    	graphElement.setType(componentTypesList.getSelectedValue().toString());
 			
@@ -453,7 +453,7 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 	@SuppressWarnings("unchecked")
 	private void addGraphPrototype(String selectedType, GraphNode pickedVertex) {
 		//Environment network model
-		NetworkModel gridModel = parentGUI.getController().getGridModel();		
+		NetworkModel gridModel = parentGUI.getController().getNetworkModel();		
 		//The Node picked in the parent graph
 		GraphNode parentPickedVertex = parentGUI.getPickedVertex();
 		
@@ -538,7 +538,7 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 			if(v != v2){
 				GraphNode newNode = new GraphNode();
 				//Generate the unique ID to be assigned to the new node
-				String nextID = parentGUI.getController().getGridModel().nextNodeID();
+				String nextID = parentGUI.getController().getNetworkModel().nextNodeID();
 				newNode.setId(nextID); 
 				
 				//Set position of node  v1+(v-v2)

@@ -76,7 +76,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 			final VisualizationViewer<GraphNode,GraphEdge> vv = (VisualizationViewer<GraphNode,GraphEdge>)e.getSource();
 			Point point = e.getPoint();
 			
-			GraphElementAccessor<GraphNode, GraphEdge>ps = vv.getPickSupport();
+			GraphElementAccessor<GraphNode, GraphEdge> ps = vv.getPickSupport();
 			
 			// Get the graph node / PropagationPoint at the clicked coordinates			
 			GraphNode pickedPP = ps.getVertex(vv.getGraphLayout(), point.getX(), point.getY());
@@ -92,8 +92,8 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 					pickedObject = pickedGC;
 				}
 			}
-			if(pickedObject != null) // only when node or edge is clicked
-			{
+			// Only when node or edge is clicked
+			if(pickedObject != null) {
 				//Double click
 				if (e.getClickCount()==2){
 					myGUI.handleObjectDoubleClick(pickedObject);

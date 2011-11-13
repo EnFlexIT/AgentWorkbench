@@ -40,7 +40,7 @@ import agentgui.envModel.graph.prototypes.GraphElementPrototype;
  * @author Satyadeep 
  *
  */
-public class ComponentTypeSettings implements Serializable{
+public class ComponentTypeSettings implements Serializable {
 	
 	
 	private static final long serialVersionUID = 2456632300628196922L;

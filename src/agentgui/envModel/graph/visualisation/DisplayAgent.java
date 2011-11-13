@@ -29,15 +29,125 @@
 package agentgui.envModel.graph.visualisation;
 
 import jade.core.Agent;
+import jade.core.ServiceException;
 
+import java.awt.BorderLayout;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+import agentgui.envModel.graph.controller.BasicGraphGUI;
+import agentgui.envModel.graph.controller.GraphEnvironmentController;
+import agentgui.envModel.graph.controller.GraphEnvironmentControllerGUI;
+import agentgui.envModel.graph.networkModel.NetworkModel;
+import agentgui.simulationService.SimulationService;
+import agentgui.simulationService.SimulationServiceHelper;
+
+/**
+ * This agent can be used in order to display the current network model
+ * during a running simulation. It is not necessary that this agent is
+ * used within the application window - it is also possible to just start 
+ * this agent anywhere else.  
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ */
 public class DisplayAgent extends Agent {
 
 	private static final long serialVersionUID = -766291673903767678L;
 
+	private JFrame useFrame = null;
+	private JPanel usePanel = null;
+	
+	private GraphEnvironmentControllerGUI myGraphDisplay = null;
+	
+	
+	/* (non-Javadoc)
+	 * @see jade.core.Agent#setup()
+	 */
 	@Override
 	protected void setup() {
 	
+		NetworkModel netModel = null;
+		
+		Object[] startArgs = getArguments();
+		if (startArgs == null || startArgs.length == 0) {
+			// --- started in a normal way ----------------
+			useFrame = getIndependentFrame();
+			try {
+				SimulationServiceHelper simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
+				Object envObject = simHelper.getEnvironmentModel();
+				netModel = (NetworkModel) envObject;
+				
+			} catch (ServiceException e) {
+				System.err.println(getLocalName() +  " - Error: Could not retrieve EnvironmentProviderHelper, shutting down!");
+				this.doDelete();
+			}
+
+		} else {
+			// --- started from Agent.GUI -----------------
+			usePanel = (JPanel) startArgs[0];
+			
+			GraphEnvironmentControllerGUI startEnvPanel = (GraphEnvironmentControllerGUI) startArgs[1];
+			GraphEnvironmentController startController = (GraphEnvironmentController) startEnvPanel.getEnvironmentController();
+			netModel = (NetworkModel) startController.getEnvironmentModelCopy();
+			
+		}
+
+		// --- Build the new Controller GUI ---------------
+		GraphEnvironmentController myGraphEnvController = new GraphEnvironmentController(netModel);
+		myGraphDisplay = new GraphEnvironmentControllerGUI(myGraphEnvController);
+		BasicGraphGUI graphGUI = new BasicGraphGUI(myGraphEnvController);
+		graphGUI.addObserver(myGraphDisplay);
+		if (netModel!=null) {
+			graphGUI.setGraph(netModel.getGraph());	
+		}
+		myGraphDisplay.setGraphGUI(graphGUI);
+				
+		if (useFrame!=null) {
+			useFrame.setContentPane(myGraphDisplay);
+			useFrame.setSize(800, 600);
+			useFrame.setVisible(true);
+			useFrame.pack();
+		} else {
+			usePanel.add(myGraphDisplay, BorderLayout.CENTER);
+			usePanel.validate();
+			usePanel.repaint();
+		}
 		
 	}
 	
+	/**
+	 * Gets the independent frame.
+	 *
+	 * @return the independent frame
+	 */
+	private JFrame getIndependentFrame() {
+
+		JFrame frame = new JFrame();
+		frame.setTitle("DisplayAgent " + getLocalName() + " - GUI");
+		frame.addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent we) {
+				DisplayAgent.this.doDelete();
+			}
+		});
+		return frame;
+	}
+		
+	/* (non-Javadoc)
+	 * @see jade.core.Agent#takeDown()
+	 */
+	@Override
+	protected void takeDown() {
+		if (useFrame != null) {
+			useFrame.dispose();
+		}
+		if (usePanel != null) {
+			usePanel.removeAll();
+			usePanel.repaint();
+			myGraphDisplay=null;
+		}
+	}
+		
 }

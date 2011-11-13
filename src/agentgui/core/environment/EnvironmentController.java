@@ -4,8 +4,9 @@
  * applications based on the JADE - Framework in compliance with the 
  * FIPA specifications. 
  * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
  * http://sourceforge.net/projects/agentgui/
- * http://www.dawis.wiwi.uni-due.de/ 
+ * http://www.agentgui.org 
  *
  * GNU Lesser General Public License
  *
@@ -59,15 +60,25 @@ public abstract class EnvironmentController extends Observable implements Observ
 	 */
 	protected DefaultListModel agents2Start = new DefaultListModel();
 
-
+	
 	/**
-	 * Constructor to be invoked by all the subclasses
+	 * Constructor for a new environment controller
+	 * for displaying the current environment model
+	 * during a running simulation.
+	 */
+	public EnvironmentController() { }
+	
+	/**
+	 * Constructor for a controller within the Agent.GUI application.
 	 * @param project the current project
 	 */
 	public EnvironmentController(Project project){
+		
 		this.currProject = project;
-		this.currProject.addObserver(this);
-		this.envFolderPath = this.currProject.getProjectFolderFullPath()+this.currProject.getSubFolderEnvSetups() + File.separator;
+		if (currProject!=null) {
+			this.currProject.addObserver(this);
+			this.envFolderPath = this.currProject.getProjectFolderFullPath()+this.currProject.getSubFolderEnvSetups() + File.separator;	
+		}
 	}
 	
 	/**

@@ -226,9 +226,10 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	 */
 	public BasicGraphGUI(GraphEnvironmentController controller) {
 		super();
+		this.controller = controller; 
+		
 		myObservable = new MyObservable();
 		scalingControl = new CrossoverScalingControl();
-		this.controller = controller; 
 		
 		initialize();
 	}
@@ -588,8 +589,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	 */
 	void handleObjectLeftClick(Object pickedObject) {
 		myObservable.setChanged();
-		myObservable.notifyObservers(new Notification(EVENT_OBJECT_LEFT_CLICK,
-				pickedObject));
+		myObservable.notifyObservers(new Notification(EVENT_OBJECT_LEFT_CLICK, pickedObject));
 	}
 
 	/**

@@ -57,6 +57,7 @@ import agentgui.core.common.ClassLoaderUtil;
 import agentgui.core.environment.EnvironmentPanel;
 import agentgui.core.environment.EnvironmentType;
 import agentgui.core.gui.ProjectWindow;
+import agentgui.core.gui.components.JPanel4Visualization;
 import agentgui.core.gui.projectwindow.BaseAgents;
 import agentgui.core.gui.projectwindow.Distribution;
 import agentgui.core.gui.projectwindow.JadeSetup;
@@ -66,7 +67,6 @@ import agentgui.core.gui.projectwindow.ProjectInfo;
 import agentgui.core.gui.projectwindow.ProjectResources;
 import agentgui.core.gui.projectwindow.ProjectWindowTab;
 import agentgui.core.gui.projectwindow.TabForSubPanels;
-import agentgui.core.gui.projectwindow.Visualization;
 import agentgui.core.gui.projectwindow.simsetup.SimulationEnvironment;
 import agentgui.core.gui.projectwindow.simsetup.StartSetup;
 import agentgui.core.jade.ClassSearcher;
@@ -359,8 +359,7 @@ import agentgui.core.webserver.JarFileCreator;
 			
 
 		// --- Visualisation ------------------------------
-		Visualization visualization = new Visualization(this);
-		this.projectVisualizationPanel = visualization.getJPanel4Visualization();
+		this.projectVisualizationPanel = new JPanel4Visualization(this, Language.translate("Simulations-Visualisierung"));
 		pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER_VISUALIZATION, 
 				   Language.translate("Simulations-Visualisierung"), null, null, 
 				   this.projectVisualizationPanel, null);
