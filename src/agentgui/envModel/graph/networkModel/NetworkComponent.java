@@ -38,43 +38,31 @@ import java.util.HashSet;
  * @see NetworkModel
  * 
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
- *
  */
 public class NetworkComponent {
-	/**
-	 * The NetworkComponent's ID
-	 */
+	
+	/** The NetworkComponent's ID */
 	private String id;
-	/**
-	 * The NetworkComponent's type
-	 */
+	/** The NetworkComponent's type */
 	private String type;
-	/**
-	 * The IDs of the nodes and edges that are part of this NetworkComponent
-	 */
+	/** The IDs of the nodes and edges that are part of this NetworkComponent */
 	private HashSet<String> graphElementIDs;
-	/**
-	 * Specifies if the NetworkComponent is directed or undirected
-	 */
+	/** Specifies if the NetworkComponent is directed or undirected */
 	private boolean directed;
-	/**
-	 * The NetworkComponent's GraphElementPrototype class name
-	 */
+	/** The NetworkComponent's GraphElementPrototype class name */
 	private String prototypeClassName;
-	/**
-	 * The NetworkComponent's GraphElementPrototype class name
-	 */
+	/** The NetworkComponent's GraphElementPrototype class name */
 	private String agentClassName;
-	/**
-	 * The ontology object instance representing this component, serialized as a base64 encoded String for saving via JAXB
-	 */
+	/** The ontology object instance representing this component, serialized as a base64 encoded String for saving via JAXB */
 	private String encodedOntologyRepresentation;
+	
 	/**
 	 * Default constructor
 	 */
 	public NetworkComponent(){
 		graphElementIDs = new HashSet<String>();
 	}
+	
 	/**
 	 * @return the id
 	 */
@@ -87,6 +75,7 @@ public class NetworkComponent {
 	public void setId(String id) {
 		this.id = id;
 	}
+	
 	/**
 	 * @return the type
 	 */
@@ -99,6 +88,7 @@ public class NetworkComponent {
 	public void setType(String type) {
 		this.type = type;
 	}
+	
 	/**
 	 * Returns the graph element IDs present in the component as a HashSet
 	 * @return the graphElements
@@ -125,6 +115,7 @@ public class NetworkComponent {
 	public void setDirected(boolean directed) {
 		this.directed = directed;
 	}
+	
 	/**
 	 * Returns the graph element prototype class name
 	 * @return the prototypeClassName
@@ -139,6 +130,7 @@ public class NetworkComponent {
 	public void setPrototypeClassName(String prototypeClassName) {
 		this.prototypeClassName = prototypeClassName;
 	}
+	
 	/**
 	 * @return the agentClassName
 	 */
@@ -151,6 +143,7 @@ public class NetworkComponent {
 	public void setAgentClassName(String agentClassName) {
 		this.agentClassName = agentClassName;
 	}
+	
 	/**
 	 * @return the encodedOntologyRepresentation
 	 */
