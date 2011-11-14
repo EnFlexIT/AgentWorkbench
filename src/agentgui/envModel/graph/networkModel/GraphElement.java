@@ -27,6 +27,7 @@
  * **************************************************************
  */
 package agentgui.envModel.graph.networkModel;
+
 /**
  * Abstract super class for nodes and edges in an environment model of the type graph / network.
  * 
@@ -34,22 +35,24 @@ package agentgui.envModel.graph.networkModel;
  * @see GraphNode
  * 
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
- *
  */
 public abstract class GraphElement {
+	
 	/**
 	 * Used for identification of a specific GraphElement instance
 	 */
 	protected String id = null;
 
 	/**
+	 * Gets the id.
 	 * @return the id
 	 */
 	public String getId() {
 		return id;
 	}
-
+	
 	/**
+	 * Sets the id.
 	 * @param id the id to set
 	 */
 	public void setId(String id) {

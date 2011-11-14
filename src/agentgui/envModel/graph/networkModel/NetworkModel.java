@@ -86,28 +86,41 @@ public class NetworkModel implements Cloneable, Serializable {
 		// --- Create a copy of the Graph ---------------------------
 		// ----------------------------------------------------------
 		Graph<GraphNode, GraphEdge> copyGraph = new SparseGraph<GraphNode, GraphEdge>();
-		
-		// --- Copy the vertices / nodes ----------------------------
-//		Collection<GraphNode> nodesCollection = this.graph.getVertices();
-//		GraphNode[] nodes = nodesCollection.toArray(new GraphNode [nodesCollection.size()]);
-//		for (int i = 0; i < nodes.length; i++) {
-//			GraphNode node = nodes[i];
-//			copyGraph.addVertex(node.getCopy());
-//		}
+		HashMap<String, GraphElement> copyGraphElements = new HashMap<String, GraphElement>();
 		
 		// --- Copy the edges with their nodes of the graph ---------
 		Collection<GraphEdge> edgesCollection = this.graph.getEdges();
 		GraphEdge[] edges = edgesCollection.toArray(new GraphEdge [edgesCollection.size()]);
 		for (int i = 0; i < edges.length; i++) {
 			GraphEdge edge = edges[i];
-
-			GraphNode first  = this.graph.getEndpoints(edge).getFirst().getCopy();
-			GraphNode second = this.graph.getEndpoints(edge).getSecond().getCopy();
 			EdgeType edgeType =  this.graph.getEdgeType(edge);
-			GraphEdge edgeCopy = edge.getCopy();
 			
-			copyGraph.addEdge(edgeCopy, first, second, edgeType);
-
+			GraphNode first  = this.graph.getEndpoints(edge).getFirst();
+			GraphNode second = this.graph.getEndpoints(edge).getSecond();
+			
+			// --- See if the elements are already there ------------
+			if (copyGraphElements.get(first.getId())==null) {
+				first = first.getCopy();
+				copyGraphElements.put(first.getId(), first);
+			} else {
+				first = (GraphNode) copyGraphElements.get(first.getId());
+			}
+			if (copyGraphElements.get(second.getId())==null) {
+				second = second.getCopy();
+				copyGraphElements.put(second.getId(), second);
+			} else { 
+				second = (GraphNode) copyGraphElements.get(second.getId());
+			}
+			if (copyGraphElements.get(edge.getId())==null) {
+				edge = edge.getCopy();
+				copyGraphElements.put(edge.getId(), edge);
+			} else{
+				edge = (GraphEdge) copyGraphElements.get(edge.getId());
+			}
+			
+			// --- Add the edge and their components to the graph ---			
+			copyGraph.addEdge(edge, first, second, edgeType);
+			
 		}
 		
 		// ----------------------------------------------------------
