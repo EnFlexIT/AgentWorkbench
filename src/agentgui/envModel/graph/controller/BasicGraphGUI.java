@@ -90,96 +90,60 @@ import edu.uci.ics.jung.visualization.decorators.EdgeShape;
  * 
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen
  * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class BasicGraphGUI extends JPanel implements ActionListener {
-	/**
-	 * Default color to be used for Vertices in the graph
-	 */
+
+	private static final long serialVersionUID = 5764679914667183305L;
+	/** Default color to be used for Vertices in the graph */
 	public static Color DEFAULT_VERTEX_COLOR = Color.RED;  //  @jve:decl-index=0:
-	/**
-	 * Default color to be used for Vertices in the graph when highlighted/picked.
-	 */
+	/** Default color to be used for Vertices in the graph when highlighted/picked.	 */
 	public static Color DEFAULT_VERTEX_PICKED_COLOR = Color.YELLOW;  //  @jve:decl-index=0:
-	/**
-	 * Default color to be used for edges in the graph
-	 */
+	/** Default color to be used for edges in the graph	 */
 	public static Color DEFAULT_EDGE_COLOR = Color.BLACK;  //  @jve:decl-index=0:
-	/**
-	 * Default color to be used for edges in the graph when highlighted/picked.
-	 */
+	/** Default color to be used for edges in the graph when highlighted/picked. */
 	public static Color DEFAULT_EDGE_PICKED_COLOR = Color.CYAN;
-	/**
-	 * Default vertex size of the nodes to be used in the range 1 to 5.
-	 */
+	/** Default vertex size of the nodes to be used in the range 1 to 5. */
 	public static Integer DEFAULT_VERTEX_SIZE = 3; 
 	
-	/**
-	 * Event argument for notifying observers that Clear Graph button is clicked
-	 */
+	/** Event argument for notifying observers that Clear Graph button is clicked */
 	public static final String EVENT_NETWORKMODEL_CLEAR = "clear_graph"; // @jve:decl-index=0:
-	/**
-	 * Event argument for notifying observers that Add new component button is
-	 * clicked
-	 */
+	/** Event argument for notifying observers that Add new component button is clicked */
 	public static final String EVENT_ADD_COMPONENT_CLICKED = "add_component_clicked"; // @jve:decl-index=0:
-	/**
-	 * Event argument for notifying observers that remove selected component
-	 * button is clicked
-	 */
+	/** Event argument for notifying observers that remove selected component button is clicked	*/
 	public static final String EVENT_REMOVE_COMPONENT_CLICKED = "remove_component_clicked"; // @jve:decl-index=0:
-	/**
-	 * Event argument for notifying observers that merge two selected nodes
-	 * button is clicked
-	 */
+	/** Event argument for notifying observers that merge two selected nodes button is clicked */
 	public static final String EVENT_MERGE_NODES_CLICKED = "merge_nodes_clicked"; // @jve:decl-index=0:
-	/**
-	 * Event argument for notifying observers that split selected node button is
-	 * clicked
-	 */
+	/** Event argument for notifying observers that split selected node button is clicked */
 	public static final String EVENT_SPLIT_NODE_CLICKED = "split_node_clicked"; // @jve:decl-index=0:
-	/**
-	 * Event argument for notifying observers that edit vertex properties menu item is
-	 * clicked
-	 */
+	/** Event argument for notifying observers that edit vertex properties menu item is clicked */
 	public static final String EVENT_NODE_EDIT_PROPERTIES_CLICKED= "node_edit_properties_clicked"; // @jve:decl-index=0:
-	/**
-	 * Event argument for notifying observers that edit edge properties menu item is
-	 * clicked
-	 */
+	/** Event argument for notifying observers that edit edge properties menu item is clicked */
 	public static final String EVENT_EDGE_EDIT_PROPERTIES_CLICKED= "edge_edit_properties_clicked"; // @jve:decl-index=0:
-	/**
-	 * Event argument for notifying observers that import graph from file button
-	 * is clicked
-	 */
-	public static final String EVENT_IMPORT_GRAPH_CLICKED = "import_graph_clicked"; // @jve:decl-index=0:
-	public static final String EVENT_OBJECT_LEFT_CLICK = "object_left_click"; // @jve:decl-index=0:
-	public static final String EVENT_OBJECT_RIGHT_CLICK = "object_right_click"; // @jve:decl-index=0:
-	public static final String EVENT_OBJECT_DOUBLE_CLICK = "object_double_click"; // @jve:decl-index=0:
+	/** Event argument for notifying observers that import graph from file button is clicked */
+	public static final String EVENT_IMPORT_GRAPH_CLICKED = "import_graph_clicked"; 	// @jve:decl-index=0:
+	public static final String EVENT_OBJECT_LEFT_CLICK = "object_left_click"; 			// @jve:decl-index=0:
+	public static final String EVENT_OBJECT_RIGHT_CLICK = "object_right_click"; 		// @jve:decl-index=0:
+	public static final String EVENT_OBJECT_DOUBLE_CLICK = "object_double_click"; 		// @jve:decl-index=0:
 
-	private static final long serialVersionUID = 1L;
-	/**
-	 * Panel containing control buttons.
-	 */
+	/** Panel containing control buttons. */
 	private JPanel jPanelControls = null;
-	/**
-	 * Graph visualization component
-	 */
+	/** Graph visualization component */
 	private VisualizationViewer<GraphNode, GraphEdge> visView = null;
-	/**
-	 * The pluggable graph mouse which can be added to the visualization viewer.
-	 * Used here for customized Picking mode
-	 */
-	private PluggableGraphMouse pgm = null; // @jve:decl-index=0:
-	GraphEnvironmentMousePlugin graphEnvironmentMousePlugin = null;
+	/** JUNG object handling zooming */
+	private ScalingControl scalingControl = null;
+
 	/**
 	 * The DefaultModalGraphMouse which can be added to the visualization
 	 * viewer. Used here for the transforming mode
 	 */
-	private DefaultModalGraphMouse<GraphNode, GraphEdge> dgm = null; // @jve:decl-index=0:
+	private DefaultModalGraphMouse<GraphNode, GraphEdge> dgm = null; 		// @jve:decl-index=0:
 	/**
-	 * JUNG object handling zooming
+	 * The pluggable graph mouse which can be added to the visualization viewer.
+	 * Used here for customized Picking mode
 	 */
-	private ScalingControl scalingControl = null;
+	private PluggableGraphMouse pgm = null; 								// @jve:decl-index=0:
+
 	/**
 	 * The GUI's main component, either the graph visualization, or an empty
 	 * JPanel if no graph is loaded
@@ -189,7 +153,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	/**
 	 * Environment model controller, to be passed by the parent GUI.
 	 */
-	private GraphEnvironmentController controller = null;
+	private GraphEnvironmentController controller = null;  //  @jve:decl-index=0:
 	
 	/**
 	 * As the superclass relationship is occupied by the JPanel, notifications
@@ -235,14 +199,14 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 
 	/**
 	 * This method initializes this
-	 * 
 	 * @return void
 	 */
 	private void initialize() {
 		this.setLayout(new BorderLayout());
 		this.add(getPnlControlls(), BorderLayout.WEST);
+		
 		// Initializing JUNG mouse modes
-		initMouseModes();
+		this.initMouseModes();
 	}
 
 	/**
@@ -251,15 +215,17 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	 * respectively
 	 */
 	private void initMouseModes() {
+		
 		pgm = new PluggableGraphMouse();
+		
 		// Adding the picking plugin
 
 		pgm.add(new GraphEnvironmentMousePlugin(this));
 		// Adding the context menu plugin
-		GraphPopupMenuMousePlugin<GraphNode, GraphEdge> popupPlugin = new GraphPopupMenuMousePlugin<GraphNode, GraphEdge>(this);
+		GraphEnvironmentPopupPlugin<GraphNode, GraphEdge> popupPlugin = new GraphEnvironmentPopupPlugin<GraphNode, GraphEdge>(this);
 		popupPlugin.setEdgePopup(getEdgePopup());
 		popupPlugin.setVertexPopup(getVertexPopup());
-
+		
 		pgm.add(popupPlugin);
 
 		dgm = new DefaultModalGraphMouse<GraphNode, GraphEdge>();
@@ -268,7 +234,6 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 
 	/**
 	 * This method initializes pnlControlls
-	 * 
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getPnlControlls() {
@@ -291,7 +256,6 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 
 	/**
 	 * Gets the VisualizationViewer
-	 * 
 	 * @return The VisualizationViewer
 	 */
 	public VisualizationViewer<GraphNode, GraphEdge> getVisView() {
@@ -313,7 +277,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 			
 			// Define graph layout
 			Layout<GraphNode, GraphEdge> layout = new StaticLayout<GraphNode, GraphEdge>(graph);
-			layout.setSize(new Dimension(400, 400));
+			layout.setSize(new Dimension(800, 800));
 			layout.setInitializer(new Transformer<GraphNode, Point2D>() {
 
 				@Override
@@ -464,21 +428,22 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// Button Zoom in
+
 		if (e.getSource() == getJButtonZoomIn() && visView != null) {
+			// --- Button Zoom in -------------------------
 			scalingControl.scale(visView, 1.1f, visView.getCenter());
-			// Button Zoom out
+			
 		} else if (e.getSource() == getJButtonZoomOut() && visView != null) {
+			// --- Button Zoom out ------------------------
 			scalingControl.scale(visView, 1 / 1.1f, visView.getCenter());
-			// Button Reset zoom
+
 		} else if (e.getSource() == getJButtonZoomReset() && visView != null) {
-			visView.getRenderContext().getMultiLayerTransformer()
-					.getTransformer(Layer.LAYOUT).setToIdentity();
-			visView.getRenderContext().getMultiLayerTransformer()
-					.getTransformer(Layer.VIEW).setToIdentity();
-		}
-		// Button Clear graph
-		else if (e.getSource() == getJButtonClearGraph() && visView != null) {
+			// --- Button Reset zoom ----------------------
+			visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).setToIdentity();
+			visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).setToIdentity();
+			
+		} else if (e.getSource() == getJButtonClearGraph() && visView != null) {
+			// --- Button Clear graph ---------------------
 			int n = JOptionPane.showConfirmDialog(this, Language.translate(
 					"Are you sure to clear the graph?", Language.EN), Language
 					.translate("Confirmation", Language.EN),
@@ -486,94 +451,78 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 
 			if (n == JOptionPane.YES_OPTION) {
 				myObservable.setChanged();
-				myObservable.notifyObservers(new Notification(
-						EVENT_NETWORKMODEL_CLEAR, null));
+				myObservable.notifyObservers(new Notification(EVENT_NETWORKMODEL_CLEAR, null));
 			}
-		}
-
-		// Button Add component clicked
-		else if (e.getSource() == getJButtonAddComponent() && visView != null) {
+			
+		} else if (e.getSource() == getJButtonAddComponent() && visView != null) {
+			// --- Button Add component -------------------
 			myObservable.setChanged();
 			myObservable.notifyObservers(new Notification(
 					EVENT_ADD_COMPONENT_CLICKED, null));
 		}
-		// Button Remove component clicked
-		else if (e.getSource() == getJButtonRemoveComponent()
-				&& visView != null) {
+		
+		else if (e.getSource() == getJButtonRemoveComponent() && visView != null) {
+			// --- Button Remove component ----------------
 			myObservable.setChanged();
 			myObservable.notifyObservers(new Notification(
 					EVENT_REMOVE_COMPONENT_CLICKED, null));
-		}
-		// Button Merge Nodes clicked
-		else if (e.getSource() == getJButtonMergeNodes() && visView != null) {
+			
+		} else if (e.getSource() == getJButtonMergeNodes() && visView != null) {
+			// --- Button Merge Nodes ---------------------
 			myObservable.setChanged();
-			myObservable.notifyObservers(new Notification(
-					EVENT_MERGE_NODES_CLICKED, null));
-		}
-		// Button Split node clicked
-		else if (e.getSource() == getJButtonSplitNode() && visView != null) {
+			myObservable.notifyObservers(new Notification(EVENT_MERGE_NODES_CLICKED, null));
+			
+		} else if (e.getSource() == getJButtonSplitNode() && visView != null) {
+			// --- Button Split node ----------------------
 			myObservable.setChanged();
-			myObservable.notifyObservers(new Notification(
-					EVENT_SPLIT_NODE_CLICKED, null));
-		}
-		// Button Transforming Mouse mode clicked
-		else if (e.getSource() == getJToggleMouseTransforming()
-				&& visView != null) {
+			myObservable.notifyObservers(new Notification(EVENT_SPLIT_NODE_CLICKED, null));
+			
+		} else if (e.getSource() == getJToggleMouseTransforming() && visView != null) {
+			// --- Button Transforming Mouse mode ---------
 			// Transforming mode
 			// Setting DefaultModalGraphMouse
 			visView.setGraphMouse(dgm);
-		}
-		// Button Picking Mouse mode clicked
-		else if (e.getSource() == getJToggleMousePicking() && visView != null) {
-
-			// Picking mode
-			// Setting custom pluggable mouse graph
-			//TODO bug when transformed 
+			
+		} else if (e.getSource() == getJToggleMousePicking() && visView != null) {
+			// --- Button Picking Mouse mode --------------
 			visView.setGraphMouse(pgm);
-		}
-		// Button Import graph from file clicked
-		else if (e.getSource() == getJButtonImportGraph() && visView != null) {
+			
+		} else if (e.getSource() == getJButtonImportGraph() && visView != null) {
+			// --- Button Import graph from file ----------
 			myObservable.setChanged();
-			myObservable.notifyObservers(new Notification(
-					EVENT_IMPORT_GRAPH_CLICKED, null));
-		}
-		// Popup Menu Item Delete Component clicked
-		else if (e.getSource() == getJMenuItemDeleteComp() && visView != null) {
+			myObservable.notifyObservers(new Notification(EVENT_IMPORT_GRAPH_CLICKED, null));
+			
+		} else if (e.getSource() == getJMenuItemDeleteComp() && visView != null) {
+			// --- Popup Menu Item Delete Component -------
 			myObservable.setChanged();
-			myObservable.notifyObservers(new Notification(
-					EVENT_REMOVE_COMPONENT_CLICKED, null));
-		}
-		// Popup Menu Item Node properties clicked
-		else if (e.getSource() == getJMenuItemNodeProp() && visView != null) {
+			myObservable.notifyObservers(new Notification(EVENT_REMOVE_COMPONENT_CLICKED, null));
+			
+		} else if (e.getSource() == getJMenuItemNodeProp() && visView != null) {
+			// --- Popup Menu Item Node properties --------
 			myObservable.setChanged();
-			myObservable.notifyObservers(new Notification(
-					EVENT_NODE_EDIT_PROPERTIES_CLICKED, null));
-		}
-		// Popup Menu Item Edge properties clicked
-		else if (e.getSource() == getJMenuItemEdgeProp() && visView != null) {
+			myObservable.notifyObservers(new Notification(EVENT_NODE_EDIT_PROPERTIES_CLICKED, null));
+			
+		} else if (e.getSource() == getJMenuItemEdgeProp() && visView != null) {
+			// --- Popup Menu Item Edge properties --------
 			myObservable.setChanged();
-			myObservable.notifyObservers(new Notification(
-					EVENT_EDGE_EDIT_PROPERTIES_CLICKED, null));
-		}
-		// Popup Menu Item Add new component clicked
-		else if (e.getSource() == getJMenuItemAddComp() && visView != null) {
+			myObservable.notifyObservers(new Notification(EVENT_EDGE_EDIT_PROPERTIES_CLICKED, null));
+			
+		} else if (e.getSource() == getJMenuItemAddComp() && visView != null) {
+			// --- Popup Menu Item Add new component ------ 
 			myObservable.setChanged();
-			myObservable.notifyObservers(new Notification(
-					EVENT_ADD_COMPONENT_CLICKED, null));
-		}
-		// Popup Menu Item Split node clicked
-		else if (e.getSource() == getJMenuItemSplitNode() && visView != null) {
+			myObservable.notifyObservers(new Notification(EVENT_ADD_COMPONENT_CLICKED, null));
+			
+		}else if (e.getSource() == getJMenuItemSplitNode() && visView != null) {
+			// --- Popup Menu Item Split node clicked -----
 			myObservable.setChanged();
-			myObservable.notifyObservers(new Notification(
-					EVENT_SPLIT_NODE_CLICKED, null));
+			myObservable.notifyObservers(new Notification(EVENT_SPLIT_NODE_CLICKED, null));
+			
 		}
 	}
 
 	/**
 	 * Repaints the visualisation viewer, with the given graph
-	 * 
-	 * @param graph
-	 *            -The new graph to be painted with.
+	 * @param graph The new graph to be painted with.
 	 */
 	public void repaintGraph(Graph<GraphNode, GraphEdge> graph) {
 		visView.getGraphLayout().setGraph(graph);
@@ -582,9 +531,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 
 	/**
 	 * This method notifies the observers about a graph object selection
-	 * 
-	 * @param pickedObject
-	 *            The selected object
+	 * @param pickedObject The selected object
 	 */
 	void handleObjectLeftClick(Object pickedObject) {
 		myObservable.setChanged();
@@ -593,9 +540,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 
 	/**
 	 * Notifies the observers that this object is right clicked
-	 * 
-	 * @param pickedObject
-	 *            the selected object
+	 * @param pickedObject the selected object
 	 */
 	void handleObjectRightClick(Object pickedObject) {
 		myObservable.setChanged();
@@ -624,9 +569,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 
 	/**
 	 * Sets a node or edge as picked
-	 * 
-	 * @param object
-	 *            The GraphNode or GraphEdge to pick
+	 * @param object The GraphNode or GraphEdge to pick
 	 */
 	void setPickedObject(GraphElement object) {
 		if (object instanceof GraphEdge) {
@@ -638,9 +581,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 
 	/**
 	 * Marks a group of objects as picked
-	 * 
-	 * @param objects
-	 *            The objects
+	 * @param objects The objects
 	 */
 	void setPickedObjects(Vector<GraphElement> objects) {
 		Iterator<GraphElement> objIter = objects.iterator();
@@ -651,7 +592,6 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 
 	/**
 	 * Add an observer to the GUI's Observable
-	 * 
 	 * @param observer
 	 */
 	public void addObserver(Observer observer) {
@@ -667,10 +607,10 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 
 	/**
 	 * Helper class for making Observable usable in this context
-	 * 
 	 * @author Nils
 	 */
 	private class MyObservable extends Observable {
+		
 		/**
 		 * Calls the superclass' protected setChanged method
 		 */
@@ -684,7 +624,6 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	 * notifying observers. Contains the event and the argument to be passed.
 	 * 
 	 * @author Satyadeep
-	 * 
 	 */
 	public class Notification {
 		/**
@@ -974,7 +913,6 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 
 	/**
 	 * This method initializes jMenuItemDeleteComp
-	 * 
 	 * @return javax.swing.JMenuItem
 	 */
 	private JMenuItem getJMenuItemDeleteComp() {
@@ -989,7 +927,6 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 
 	/**
 	 * This method initializes jMenuItemNodeProp
-	 * 
 	 * @return javax.swing.JMenuItem
 	 */
 	private JMenuItem getJMenuItemNodeProp() {
@@ -1004,7 +941,6 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 
 	/**
 	 * This method initializes jMenuItemEdgeProp	
-	 * 	
 	 * @return javax.swing.JMenuItem	
 	 */
 	private JMenuItem getJMenuItemEdgeProp() {
@@ -1019,7 +955,6 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 
 	/**
 	 * This method initializes jMenuItemAddComp	
-	 * 	
 	 * @return javax.swing.JMenuItem	
 	 */
 	private JMenuItem getJMenuItemAddComp() {
@@ -1034,7 +969,6 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 
 	/**
 	 * This method initializes jMenuItemSplitNode	
-	 * 	
 	 * @return javax.swing.JMenuItem	
 	 */
 	private JMenuItem getJMenuItemSplitNode() {
@@ -1049,7 +983,6 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	 
     /**
      * Controls the shape, size, and aspect ratio for each vertex.
-     * 
      * @author Satyadeep
      */
     private final class VertexShapeSizeAspect<V,E> extends AbstractVertexShapeTransformer <V> implements Transformer<V,Shape>  {
@@ -1094,5 +1027,20 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
         	return factory.getEllipse(v);
         }
     }
+
+	/**
+	 * Gets the graph environment controller.
+	 * @return the controller
+	 */
+	public GraphEnvironmentController getGraphEnvironmentController() {
+		return controller;
+	}
+	/**
+	 * Sets the graph environment controller.
+	 * @param controller the controller to set
+	 */
+	public void setGraphEnvironmentController(GraphEnvironmentController controller) {
+		this.controller = controller;
+	}
     
 }

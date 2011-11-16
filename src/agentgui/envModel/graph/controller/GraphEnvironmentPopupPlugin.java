@@ -46,7 +46,7 @@ import javax.swing.JPopupMenu;
  * 
  * @author <br>Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati 
  */
-public class GraphPopupMenuMousePlugin<V, E> extends AbstractPopupGraphMousePlugin {
+public class GraphEnvironmentPopupPlugin<V, E> extends AbstractPopupGraphMousePlugin {
 	/**
 	 * The parent BasicGraphGUI
 	 */
@@ -55,7 +55,7 @@ public class GraphPopupMenuMousePlugin<V, E> extends AbstractPopupGraphMousePlug
     private JPopupMenu edgePopup, vertexPopup;
     
     /** Creates a new instance of GraphPopupMenuMousePlugin */
-    public GraphPopupMenuMousePlugin(BasicGraphGUI parentGUI) {
+    public GraphEnvironmentPopupPlugin(BasicGraphGUI parentGUI) {
         this(MouseEvent.BUTTON3_MASK);
         this.myGUI = parentGUI;
     }
@@ -64,7 +64,7 @@ public class GraphPopupMenuMousePlugin<V, E> extends AbstractPopupGraphMousePlug
      * Creates a new instance of PopupVertexEdgeMenuMousePlugin
      * @param modifiers mouse event modifiers see the jung visualization Event class.
      */
-    public GraphPopupMenuMousePlugin(int modifiers) {
+    public GraphEnvironmentPopupPlugin(int modifiers) {
         super(modifiers);
     }
     

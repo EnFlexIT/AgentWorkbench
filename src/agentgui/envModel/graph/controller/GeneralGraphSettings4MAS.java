@@ -77,7 +77,7 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 		return currentCTS;
 	}
 	/**
-	 * Set the component type settings hashmap
+	 * Set the component type settings HashMap
 	 * @param currentCTS the currentCTS to set
 	 */
 	public void setCurrentCTS(HashMap<String, ComponentTypeSettings> currentCTS) {

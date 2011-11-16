@@ -28,7 +28,6 @@
  */
 package agentgui.envModel.graph.networkModel;
 
-import java.awt.Point;
 import java.awt.geom.Point2D;
 /**
  * This class represents a graph node in an environment model of the type graph / network
@@ -44,7 +43,7 @@ public class GraphNode extends GraphElement {
 	/**
 	 * The GraphNode's position in a visualization
 	 */
-	private Point2D position;
+	private Point2D position = null;
 	/**
 	 * The ontology object instance representing this component, serialized as a base64 encoded String for saving via JAXB
 	 */
@@ -55,7 +54,7 @@ public class GraphNode extends GraphElement {
 	 * Default constructor
 	 */
 	public GraphNode(){
-		this.position = new Point(50, 50);
+		this.position = new Point2D.Double(50.0, 50.0);
 	}
 	
 	
@@ -68,7 +67,7 @@ public class GraphNode extends GraphElement {
 		GraphNode nodeCopy = new GraphNode();
 		
 		String newID = new String (this.getId());
-		Point2D newPos = new Point();
+		Point2D newPos = new Point2D.Double(0.0, 0.0);
 		newPos.setLocation(this.position.getX(), this.position.getY());
 		
 		nodeCopy.setId(newID);
@@ -77,14 +76,12 @@ public class GraphNode extends GraphElement {
 		return nodeCopy;
 	}
 	
-	
 	/**
 	 * @param point2d the position to set
 	 */
 	public void setPosition(Point2D point2d) {
 		this.position = point2d;
 	}
-
 	/**
 	 * @return the position
 	 */

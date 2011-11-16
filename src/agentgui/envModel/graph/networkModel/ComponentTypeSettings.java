@@ -42,38 +42,26 @@ import agentgui.envModel.graph.prototypes.GraphElementPrototype;
  */
 public class ComponentTypeSettings implements Serializable {
 	
-	
 	private static final long serialVersionUID = 2456632300628196922L;
-	/**
-	 * The agent class representing this component type
-	 */
+	
+	/** The agent class representing this component type */
 	private String agentClass;
-	/**
-	 * The GraphElementPrototype class representing this component type
-	 */
+	/** The GraphElementPrototype class representing this component type */
 	private String graphPrototype;
-	
-	/**
-	 * The image icon which will be displayed on the component graph edges.
-	 */
+	/** The image icon which will be displayed on the component graph edges. */
 	private String edgeImage = null;
-	
-	/**
-	 * The color which will be displayed on the component graph edges.
-	 */
+	/** The color which will be displayed on the component graph edges. */
 	private String color = null;
-	
-	/**
-	 * The vertex size, used only for the component type settings of the key "node".
-	 */
-	private String vertexSize = null;
-	
-	/**
-	 * Indicates if a label is visible or not.
-	 */
+	/** Indicates if a label is visible or not. */
 	private boolean showLable = true;
 	
-	
+	/** The vertex size, used only for the component type settings of the key "node". */
+	private String vertexSize = null;
+	/** The vertex size, used only for the component type settings of the key "node". */
+	private boolean snap2Grid= false;
+	/** The vertex size, used only for the component type settings of the key "node". */
+	private double snapRaster = 0.0;
+
 	/**
 	 * Default Constructor
 	 */
@@ -133,6 +121,7 @@ public class ComponentTypeSettings implements Serializable {
 	public void setEdgeImage(String edgeImage){
 		this.edgeImage = edgeImage;
 	}
+	
 	/**
 	 * Returns the color of the component edges.
 	 * @return the color as a string in RGB integer representation.
@@ -147,6 +136,20 @@ public class ComponentTypeSettings implements Serializable {
 	public void setColor(String color){
 		this.color = color;
 	}
+	
+	/**
+	 * @param showLable the showLable to set
+	 */
+	public void setShowLable(boolean showLable) {
+		this.showLable = showLable;
+	}
+	/**
+	 * @return the showLable
+	 */
+	public boolean isShowLable() {
+		return showLable;
+	}
+	
 	
 	/**
 	 * Returns the vertex size of the node.
@@ -164,17 +167,35 @@ public class ComponentTypeSettings implements Serializable {
 	public void setVertexSize(String vertexSize){
 		this.vertexSize = vertexSize;
 	}
+	
+	/**
+	 * Checks if is snap2 grid.
+	 * @return true, if is snap2 grid
+	 */
+	public boolean isSnap2Grid() {
+		return snap2Grid;
+	}
+	/**
+	 * Sets the snap2 grid.
+	 * @param snap2Grid the new snap2 grid
+	 */
+	public void setSnap2Grid(boolean snap2Grid) {
+		this.snap2Grid = snap2Grid;
+	}
 
 	/**
-	 * @param showLable the showLable to set
+	 * Sets the snap raster.
+	 * @param snapRaster the new snap raster
 	 */
-	public void setShowLable(boolean showLable) {
-		this.showLable = showLable;
+	public void setSnapRaster(double snapRaster) {
+		this.snapRaster = snapRaster;
 	}
 	/**
-	 * @return the showLable
+	 * Gets the snap raster.
+	 * @return the snap raster
 	 */
-	public boolean isShowLable() {
-		return showLable;
+	public double getSnapRaster() {
+		return snapRaster;
 	}
+
 }
