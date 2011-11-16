@@ -285,7 +285,7 @@ public class ImageHelper {
 					 {
 						 if(new_current!=null)
 						 {
-						 //this.drawLineToSave("l", String.valueOf(new_current.getX()), String.valueOf(width), String.valueOf(new_current.getY()), String.valueOf(height), doc,true,"red");	
+						 this.drawLineToSave("l", String.valueOf(new_current.getX()), String.valueOf(width), String.valueOf(new_current.getY()), String.valueOf(height), doc,true,"red");	
 					 
 						 }
 					 }
@@ -309,7 +309,7 @@ public class ImageHelper {
 					 {
 						 if(new_current!=null)
 						 {
-						// this.drawLineToSave("l", String.valueOf(new_current.getX()), String.valueOf(width), String.valueOf(new_current.getY()), String.valueOf(height), doc,true,"red");	
+						 this.drawLineToSave("l", String.valueOf(new_current.getX()), String.valueOf(width), String.valueOf(new_current.getY()), String.valueOf(height), doc,true,"red");	
 					 
 						 }
 					 }
@@ -333,7 +333,7 @@ public class ImageHelper {
 					 {
 						 if(new_current!=null)
 						 {
-					//	 this.drawLineToSave("l", String.valueOf(new_current.getX()), String.valueOf(width), String.valueOf(new_current.getY()), String.valueOf(height), doc,true,"red");	
+						 this.drawLineToSave("l", String.valueOf(new_current.getX()), String.valueOf(width), String.valueOf(new_current.getY()), String.valueOf(height), doc,true,"red");	
 					 
 						 }
 					 }
@@ -483,13 +483,22 @@ public class ImageHelper {
 		    {		    
 		    	if(lookAhead-2<0)
 		    	{
-		    		System.out.println("LookAhead-2:"+ (lookAhead-2));
+		    		
 		    		System.out.println("Habe keinen Weg gefunden:" + id);
 		    		if(DEBUG)
 			    	{
 			    	SVGSafe sg=new SVGSafe();
-					//System.out.println("Rekursion!");
-					sg.write("NO_WayPath_"+id +","+counter+".svg", doc);
+			    	String name="WayPath"+ id+counter;
+					File f=new File(name+".svg");
+					while(f.exists())
+					{
+						 counter++;
+						 name="WayPath"+id+counter;
+						 f=new File(name+".svg");
+					}
+					
+					sg.write(name+".svg", doc);
+					System.out.println("Datei geschrieben!");
 			    	}
 		    		current.setX(-666);
 		    		current.setY(-666);
@@ -508,7 +517,19 @@ public class ImageHelper {
 				{
 					faktor=1;
 				}
+				SVGSafe sg=new SVGSafe();
+	
+		    	String name="WayPath"+id+counter;
+				File f=new File(name+".svg");
+				while(f.exists())
+				{
+					 counter++;
+					 name="WayPath"+ id+counter;
+					 f=new File(name+".svg");
+				}
 				
+				sg.write(name+".svg", doc);
+				System.out.println("Neue Datei geschreieben");
 		    	return this.withoutGrid(id, target_x, target_y, width, height, direction, lookAhead-faktor, parent, pixel);
 		    	}
 		     }		   
@@ -521,8 +542,20 @@ public class ImageHelper {
 			
 			if(this.getDistance(target_x, target_y, currentXPos, currentYPos)<=10)
 			{
+				SVGSafe sg=new SVGSafe();
 				
-				//sg.write("WayPath"+counter+".svg", doc);
+		    	String name="WayPath"+id+counter;
+				File f=new File(name+".svg");
+				while(f.exists())
+				{
+					 counter++;
+					 name="WayPath"+id+counter;
+					 f=new File(name+".svg");
+				}
+				
+				sg.write(name+".svg", doc);
+				System.out.println("WayPath"+ id +""+counter+".svg gespeichert");
+				System.out.println("Schreib!");
 				  //System.out.println("ID vollkommen:" + id);
 				  if(DEBUG)
 			    	{
@@ -542,6 +575,19 @@ public class ImageHelper {
     	
     	}
 		  //System.out.println("ID vollkommen:" + id);
+		SVGSafe sg=new SVGSafe();
+		
+    	String name="WayPath"+ id +""+counter;
+		File f=new File(name+".svg");
+		while(f.exists())
+		{
+			 counter++;
+			 name="WayPath"+ id +""+counter;
+			 f=new File(name+".svg");
+		}
+		
+		sg.write(name+".svg", doc);
+		System.out.println("Datei geschrieben");
 		  return current;
 		
 	}
@@ -729,9 +775,10 @@ public class ImageHelper {
 		Element self=doc.getElementById(id);
 		final float width=Float.parseFloat(self.getAttribute("width"));
 		final float height=Float.parseFloat(self.getAttribute("height"));
-		float x=own.getXPos()*10.0f;
-		float y=own.getYPos()*10.0f;
-		
+		float x=own.getXPos();
+		float y=own.getYPos();
+		self.setAttribute("x", String.valueOf(x));
+		self.setAttribute("y", String.valueOf(y));
 		this.firstX=x;
 		this.firstY=y;
 		agentgui.envModel.p2Dsvg.imageProcessing.StepNode root=new agentgui.envModel.p2Dsvg.imageProcessing.StepNode();
@@ -1258,15 +1305,9 @@ public class ImageHelper {
 	
 	public synchronized BufferedImage createManipulatedWorldPerAgent()
 	{
-
 		try
-		{
-			
-			
-			
-				Document doc=helper.getSVGDoc();
-				
-			
+		{			
+				Document doc=helper.getSVGDoc();			
 				EnvironmentWrapper envWrap = new EnvironmentWrapper(helper.getEnvironment());
 				Vector<StaticObject> obstacles=envWrap.getObstacles();
 				Vector<ActiveObject> agents=envWrap.getAgents();
@@ -1277,17 +1318,14 @@ public class ImageHelper {
 	 	           	Node tmp= element.getParentNode();
 	 	           	tmp.removeChild(element);				
 					
-				}
-				
-				
+				}				
 				for(ActiveObject obj: agents)
 				{
 	    	 	        	Element element=doc.getElementById(obj.getId());
 	    	 	           	Node tmp= element.getParentNode();
 	    	 	           	tmp.removeChild(element);
 	             }  
-			
-			NodeList list=doc.getElementsByTagName("rect");
+		   		NodeList list=doc.getElementsByTagName("rect");
 			for(int i=0;i<list.getLength();i++)
 			{
 				Node node=list.item(i);
@@ -1298,7 +1336,7 @@ public class ImageHelper {
 	    		break;
 				}	  	
 			}
-			System.out.println("Nodes ready");
+			
 			for(StaticObject obj: obstacles)
 			{		
 				Element element=doc.getElementById(obj.getId());
@@ -1321,7 +1359,7 @@ public class ImageHelper {
 	    	    	style.setValue(oldVal);
 	    	}
 		 }
-			System.out.println("Obstacles ready");
+			
 		//SVGImage img=new SVGImage( (SVGDocument)doc);
 		//this.evn=(BufferedImage) img.createBufferedImage();
 			
@@ -1352,36 +1390,18 @@ public class ImageHelper {
 					
 	public synchronized BufferedImage createManipulatedWorldWithAgents(ArrayList<CombinedNameAndPos> otherAgent , String id,double discreteTime)
 	{
-	//System.out.println("Create Manipulated:"+otherAgent.size());
+	
 		try
 		{			
-			
+				
 				IS_IN_METHOD=true;
 				Document doc=helper.getSVGDoc();
-				// Reset Positions
-				String [] oldX=new String[otherAgent.size()];
-				String [] oldY=new String[otherAgent.size()];
-				//System.out.println("Self:"+id);
-				for(int i=0;i<otherAgent.size();i++)
-				{
-					//System.out.println("Name:"+otherAgent.get(i));
-					Element element=doc.getElementById(otherAgent.get(i).getName());
-					oldX[i]=element.getAttribute("x");
-					oldY[i]=element.getAttribute("y");
-					//System.out.println("X vorher:"+ element.getAttribute("x"));
-					//System.out.println("Y vorher:"+ element.getAttribute("y"));
-					element.removeAttribute("x");
-					element.setAttribute("x", String.valueOf(otherAgent.get(i).getPos().getXPos()));
-					element.removeAttribute("y");
-					element.setAttribute("y", String.valueOf(otherAgent.get(i).getPos().getYPos()));
-					//System.out.println("X nacher:"+ element.getAttribute("x"));
-					//System.out.println("Y nacher:"+ element.getAttribute("y"));
-				}
+				
 				
 				
 				EnvironmentWrapper envWrap = new EnvironmentWrapper(helper.getEnvironment());
+		
 				Vector<StaticObject> obstacles=envWrap.getObstacles();
-				Vector<ActiveObject> agents=envWrap.getAgents();
 				Vector<PassiveObject> passiveObjects=envWrap.getPayloads();
 				for(PassiveObject passiveObject: passiveObjects)
 				{
@@ -1390,23 +1410,27 @@ public class ImageHelper {
 	 	           	tmp.removeChild(element);				
 					
 				}
-				Element self=doc.getElementById(id);
-				float selfX= Float.parseFloat(self.getAttribute("x"));
-				float selfY=Float.parseFloat(self.getAttribute("y"));
-				double ownSpeed= ((ActiveObject) envWrap.getObjectById(id)).getMaxSpeed();
-				for(ActiveObject obj: agents)
+				
+				for(int i=0;i<otherAgent.size();i++)
 				{
-						
+				
+					Element element=doc.getElementById(otherAgent.get(i).name);
+					
+					element.removeAttribute("x");
+					element.setAttribute("x", String.valueOf(otherAgent.get(i).getPos().getXPos()));
+					element.removeAttribute("y");
+					element.setAttribute("y", String.valueOf(otherAgent.get(i).getPos().getYPos()));
+				
 							//System.out.println("Untersuche:"+ obj.getId());
-							if(obj.getId().equals(id))
+							if((otherAgent.get(i).getName().equals(id)))
 							{
-						//	System.out.println("Delete:"+obj.getId());
-	    	 	        	Element element=doc.getElementById(obj.getId());
-	    	 	           	Node tmp= element.getParentNode();
-	    	 	           	tmp.removeChild(element);
+								
+		    	 	           	//ode tmp= element.getParentNode();
+		    	 	           	//tmp.removeChild(element);
+	    	 	           	
 							}
 							else
-							{
+							{    /*
 								Element elem=doc.getElementById(obj.getId());
 								float otherX=Float.parseFloat(elem.getAttribute("x"));
 								float otherY=Float.parseFloat(elem.getAttribute("y"));
@@ -1415,15 +1439,15 @@ public class ImageHelper {
 								double distance=this.getDistance(selfX, selfY, otherX , otherY);
 								distance=distance/10.0;
 								double seconds = distance / ownSpeed; 
-								System.out.println("Seconds:"+seconds);
-								System.out.println("Discrete Time:"+discreteTime);
+							/**
 								if(seconds>discreteTime)
 								{
-									System.out.println("Abstand zu weit weswegen der andere gelöscht werden kann!");
-									element.getParentNode().removeChild(element);
+									//System.out.println("Abstand zu weit weswegen der andere gelöscht werden kann!");
+									//element.getParentNode().removeChild(element);
 								}
-								else
-								{
+								*/
+								//else
+								//{
 								String oldVal=element.getAttributeNS(null, "style");
 								String search="fill:";
 								int index=oldVal.indexOf(search);
@@ -1441,13 +1465,16 @@ public class ImageHelper {
 					    	    	}	        		    
 					    	    	Attr style=element.getAttributeNode("style");
 					    	    	style.setValue(oldVal);
-							}
+					 
+							//}
 						}		
 							}
 	             }  
 			NodeList list=doc.getElementsByTagName("rect");
-			for(int i=0;i<list.getLength();i++)
-			{
+			if(list!=null)
+			{		
+				for(int i=0;i<list.getLength();i++)
+				{
 				Node node=list.item(i);
 				if(node.getParentNode().getNodeName().equals("svg"))
 				{
@@ -1455,8 +1482,9 @@ public class ImageHelper {
 	    		parent.removeChild(node);
 	    		break;
 				}	  	
+				}
 			}
-			
+		
 			for(StaticObject obj: obstacles)
 			{		
 				Element element=doc.getElementById(obj.getId());
@@ -1476,13 +1504,14 @@ public class ImageHelper {
 	    	    		oldVal=oldVal.replaceFirst(oldVal.substring(index+search.length(),end), "gray");
 	    	    	}	        		    
 	    	    	Attr style=element.getAttributeNode("style");
-	    	    	style.setValue(oldVal);
+	    	      	style.setValue(oldVal);
 	    	}
 		 }
+			
 		//SVGImage img=new SVGImage( (SVGDocument)doc);
 		//this.evn=(BufferedImage) img.createBufferedImage();
 			int i=0;
-			String name=id+"myWorldAgent"+i;
+			String name=id+"myWorldAgentWithOther"+i;
 			synchronized (this) {
 				
 			SVGSafe save=new SVGSafe();
@@ -1492,14 +1521,13 @@ public class ImageHelper {
 			while(f.exists())
 			{
 				 i++;
-				 name=id + "myWorldAgent"+i;
+				 name=id + "myWorldAgentWithOther"+i;
 				 f=new File(name+".svg");
 			}
 			
 			save.write(name+".svg", doc);
 			save.writeJPG(name+".svg");
 			this.evn=ImageIO.read(new File(name+".jpg"));
-			
 		
 			/**
 			for(int counter=0;i<otherAgent.size();counter++)
@@ -1682,18 +1710,14 @@ public class ImageHelper {
 	public Stack<Position> orderAndMiddleCoordinates(StepNode way,float agentWidth,float agentHeight,float factor)
 	{
 		Stack<Position> pos=new Stack<Position>();
-		System.out.println("Agent Height:"+ agentHeight);
-		System.out.println("Agent Width:"+ agentWidth);
 		while(way.getParent()!=null) 
 		{
 			 	Position p=new Position();
-			 	System.out.println("Before Motivated:"+way.getX()+","+way.getY());
-			 	
-				float x=(way.getX()+agentWidth/2); // middle it
+			 	float x=(way.getX()+agentWidth/2); // middle it
 				float y=(way.getY()+agentHeight/2); // middle it
 				p.setXPos(x/factor);
 				p.setYPos(y/factor);
-				System.out.println("Add:"+p.getXPos()+"," + p.getYPos());
+				
 				pos.add(0,p);	
 				way=way.getParent();
 		}
@@ -1756,31 +1780,20 @@ public class ImageHelper {
 						{
 							other.setPosition(otherPositions.get(min-1));	
 						}
-						//System.out.println("--------------------");
-						//System.out.println("Iter:"+iter);
-						//System.out.println("Vergleiche:" + obj.getPosition().getXPos() + "," + obj.getPosition().getYPos());
-						//System.out.println("Mit" + other.getPosition().getXPos() + "," + other.getPosition().getYPos());
-						//System.out.println("OBJ:"+ obj.getPosition().getXPos()+"," + obj.getPosition().getYPos());
-						//System.out.println("OTHER:"+ other.getPosition().getXPos() +"," + other.getPosition().getYPos());
+						
+						//	System.out.println(obj.getId() +" in Detection "+ obj.getPosition().getXPos()+","+obj.getPosition().getYPos());
+						//	System.out.println(other.getId() +" in Detection "+ other.getPosition().getXPos()+","+other.getPosition().getYPos());
+						
 						boolean result=this.checkTimeBetween(obj, other);
+						//System.out.println("Result von Überprüfung:"+result +" Iter:"+iter);
 						//System.out.println("--------------------");
 						if(result)
 						{
-							//System.out.println("Vergleich OBJ:"+ obj.getPosition().getXPos()+"," + obj.getPosition().getYPos());
-							//System.out.println("Vergleich OTHER:"+ other.getPosition().getXPos() +"," + other.getPosition().getYPos());
-							//System.out.println("Self:"+agent.getId());
-							//System.out.println("Füge:"+agents.get(counter).getId() +" hinzu!");
-							if(agents.get(counter).getId().equals(agent.getId()))
-							{
-								System.out.println("Counter:"+counter);
-								System.out.println("I:"+counter);
-								System.out.println("Sollte eigentlich nicht passieren");
-							}
+							
+							
 							CombinedNameAndPos combined=new CombinedNameAndPos();
 							combined.setName(agents.get(counter).getId());
 							combined.setPos(obj.getPosition());
-							System.out.println("Kollision Agent Name:"+combined.getName());
-							System.out.println("Kollision Pos:"+combined.getPos().getXPos() + ","+ combined.getPos().getYPos());
 							otherAgents.add(combined);
 							
 							break;
