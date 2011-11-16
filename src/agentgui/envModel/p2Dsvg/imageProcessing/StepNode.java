@@ -29,6 +29,8 @@
  
 package agentgui.envModel.p2Dsvg.imageProcessing;
 
+import jade.util.leap.Serializable;
+
 import java.util.LinkedList;
 
 
@@ -37,8 +39,12 @@ import java.util.LinkedList;
  * @author Tim Lewen - DAWIS - ICB - University of Duisburg - Essen
  *
  */
-public class StepNode {
+public class StepNode implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private double distance;
 	private double distanceToOrginal;
 	private double total_distance;
