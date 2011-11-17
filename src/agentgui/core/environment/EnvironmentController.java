@@ -90,6 +90,21 @@ public abstract class EnvironmentController extends Observable implements Observ
 	}
 	
 	/**
+	 * Gets the project.
+	 * @return the project
+	 */
+	public Project getProject() {
+		return currProject;
+	}
+	/**
+	 * Sets the project.
+	 * @param currProject the new project
+	 */
+	public void setProject(Project currProject) {
+		this.currProject = currProject;
+	}
+
+	/**
 	 * @return the agents2Start
 	 */
 	public DefaultListModel getAgents2Start() {

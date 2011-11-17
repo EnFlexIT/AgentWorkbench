@@ -96,7 +96,8 @@ public class DisplayAgent extends Agent {
 		}
 
 		// --- Build the new Controller GUI ---------------
-		GraphEnvironmentController myGraphEnvController = new GraphEnvironmentController(netModel);
+		GraphEnvironmentController myGraphEnvController = new GraphEnvironmentController();
+		myGraphEnvController.setEnvironmentModel(netModel);
 		myGraphDisplay = new GraphEnvironmentControllerGUI(myGraphEnvController);
 		
 		BasicGraphGUI graphGUI = new BasicGraphGUI(myGraphEnvController);

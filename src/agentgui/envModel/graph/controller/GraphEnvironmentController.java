@@ -79,27 +79,17 @@ import edu.uci.ics.jung.io.graphml.NodeMetadata;
  */
 public class GraphEnvironmentController extends EnvironmentController {
 	
-	/**
-	 * Observer notification when a new NetworkModel is set 
-	 */
+	/** Observer notification when a new NetworkModel is set */
 	public static final Integer EVENT_NETWORKMODEL_LOADED = 0;
-	/**
-	 * Observer notification that the network model is updated.
-	 * Similar to the LOADED, but instead of creating a new visualisation viewer, the graph is refreshed.
-	 */
+	/** Observer notification that the network model has to be refreshed */
 	public static final Integer EVENT_NETWORKMODEL_REFRESHED = 3;
-	/**
-	 * Observer notification when the element type settings have been changed
-	 */
+	/** Observer notification when the element type settings have been changed */
 	public static final Integer EVENT_ELEMENT_TYPES_SETTINGS_CHANGED = 1;
-	/**
-	 * The key string used for saving the position in the GraphML file
-	 */
+	/** The key string used for saving the position in the GraphML file	 */
 	private static final String KEY_POSITION_PROPERTY = "pos";
-	/**
-	 * The key string used for saving the ontology representation in the GraphML file
-	 */
+	/** The key string used for saving the ontology representation in the GraphML file */
 	private static final String KEY_ONTOLOGY_REPRESENTATION_PROPERTY = "ontoRepr";
+	
 	
 	/**
 	 * The base file name used for saving the graph and the components (without suffix)
@@ -129,10 +119,10 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 * The constructor for the GraphEnvironmentController
 	 * for displaying the current environment model during 
 	 * a running simulation.
+	 * Use {@link #setEnvironmentModel(Object)}, in order to set 
+	 * the current {@link NetworkModel}.
 	 */
-	public GraphEnvironmentController(NetworkModel networkModel) { 
-		this.setEnvironmentModel(networkModel);
-	}
+	public GraphEnvironmentController() { }
 	/**
 	 * The constructor for the GraphEnvironmentController 
 	 * for configurations within Agent.GUI

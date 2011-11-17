@@ -62,6 +62,7 @@ import org.apache.commons.collections15.Transformer;
 
 import agentgui.core.application.Language;
 import agentgui.envModel.graph.GraphGlobals;
+import agentgui.envModel.graph.components.ComponentTypeDialog;
 import agentgui.envModel.graph.networkModel.ComponentTypeSettings;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphElement;
@@ -162,6 +163,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	private MyObservable myObservable;
 	private JToolBar jJToolBar = null;
 	private JButton jButtonClearGraph = null;
+	private JButton jButtonComponents = null;
 	private JButton jButtonZoomIn = null;
 	private JButton jButtonZoomOut = null;
 	private JButton jButtonZoomReset = null;
@@ -445,22 +447,38 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	@Override
-	public void actionPerformed(ActionEvent e) {
+	public void actionPerformed(ActionEvent ae) {
 
-		if (e.getSource() == getJButtonZoomIn() && visView != null) {
+		if (visView==null) {
+			return;
+		}
+		
+		if (ae.getSource() == getJButtonComponents()) {
+			// --- Edit the ComponentType settings --------
+			ComponentTypeDialog ctsDialog = new ComponentTypeDialog(this.controller.getComponentTypeSettings(), this.controller.getProject());
+			ctsDialog.setVisible(true);
+			// - - - Waiting here - - -
+			if (ctsDialog.isCanceled()==false) {
+				this.controller.setComponentTypeSettings(ctsDialog.getComponentTypeSettings());
+				this.setGraph(controller.getNetworkModel().getGraph());
+			}
+			ctsDialog.dispose();
+			ctsDialog = null;
+			
+		} else if (ae.getSource() == getJButtonZoomIn()) {
 			// --- Button Zoom in -------------------------
 			scalingControl.scale(visView, 1.1f, visView.getCenter());
 			
-		} else if (e.getSource() == getJButtonZoomOut() && visView != null) {
+		} else if (ae.getSource() == getJButtonZoomOut()) {
 			// --- Button Zoom out ------------------------
 			scalingControl.scale(visView, 1 / 1.1f, visView.getCenter());
 
-		} else if (e.getSource() == getJButtonZoomReset() && visView != null) {
+		} else if (ae.getSource() == getJButtonZoomReset()) {
 			// --- Button Reset zoom ----------------------
 			visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).setToIdentity();
 			visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).setToIdentity();
 			
-		} else if (e.getSource() == getJButtonClearGraph() && visView != null) {
+		} else if (ae.getSource() == getJButtonClearGraph()) {
 			// --- Button Clear graph ---------------------
 			int n = JOptionPane.showConfirmDialog(this, Language.translate(
 					"Are you sure to clear the graph?", Language.EN), Language
@@ -472,65 +490,65 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 				myObservable.notifyObservers(new Notification(EVENT_NETWORKMODEL_CLEAR, null));
 			}
 			
-		} else if (e.getSource() == getJButtonAddComponent() && visView != null) {
+		} else if (ae.getSource() == getJButtonAddComponent()) {
 			// --- Button Add component -------------------
 			myObservable.setChanged();
 			myObservable.notifyObservers(new Notification(
 					EVENT_ADD_COMPONENT_CLICKED, null));
 		}
 		
-		else if (e.getSource() == getJButtonRemoveComponent() && visView != null) {
+		else if (ae.getSource() == getJButtonRemoveComponent()) {
 			// --- Button Remove component ----------------
 			myObservable.setChanged();
 			myObservable.notifyObservers(new Notification(
 					EVENT_REMOVE_COMPONENT_CLICKED, null));
 			
-		} else if (e.getSource() == getJButtonMergeNodes() && visView != null) {
+		} else if (ae.getSource() == getJButtonMergeNodes()) {
 			// --- Button Merge Nodes ---------------------
 			myObservable.setChanged();
 			myObservable.notifyObservers(new Notification(EVENT_MERGE_NODES_CLICKED, null));
 			
-		} else if (e.getSource() == getJButtonSplitNode() && visView != null) {
+		} else if (ae.getSource() == getJButtonSplitNode()) {
 			// --- Button Split node ----------------------
 			myObservable.setChanged();
 			myObservable.notifyObservers(new Notification(EVENT_SPLIT_NODE_CLICKED, null));
 			
-		} else if (e.getSource() == getJToggleMouseTransforming() && visView != null) {
+		} else if (ae.getSource() == getJToggleMouseTransforming()) {
 			// --- Button Transforming Mouse mode ---------
 			// Transforming mode
 			// Setting DefaultModalGraphMouse
 			visView.setGraphMouse(dgm);
 			
-		} else if (e.getSource() == getJToggleMousePicking() && visView != null) {
+		} else if (ae.getSource() == getJToggleMousePicking()) {
 			// --- Button Picking Mouse mode --------------
 			visView.setGraphMouse(pgm);
 			
-		} else if (e.getSource() == getJButtonImportGraph() && visView != null) {
+		} else if (ae.getSource() == getJButtonImportGraph()) {
 			// --- Button Import graph from file ----------
 			myObservable.setChanged();
 			myObservable.notifyObservers(new Notification(EVENT_IMPORT_GRAPH_CLICKED, null));
 			
-		} else if (e.getSource() == getJMenuItemDeleteComp() && visView != null) {
+		} else if (ae.getSource() == getJMenuItemDeleteComp()) {
 			// --- Popup Menu Item Delete Component -------
 			myObservable.setChanged();
 			myObservable.notifyObservers(new Notification(EVENT_REMOVE_COMPONENT_CLICKED, null));
 			
-		} else if (e.getSource() == getJMenuItemNodeProp() && visView != null) {
+		} else if (ae.getSource() == getJMenuItemNodeProp()) {
 			// --- Popup Menu Item Node properties --------
 			myObservable.setChanged();
 			myObservable.notifyObservers(new Notification(EVENT_NODE_EDIT_PROPERTIES_CLICKED, null));
 			
-		} else if (e.getSource() == getJMenuItemEdgeProp() && visView != null) {
+		} else if (ae.getSource() == getJMenuItemEdgeProp()) {
 			// --- Popup Menu Item Edge properties --------
 			myObservable.setChanged();
 			myObservable.notifyObservers(new Notification(EVENT_EDGE_EDIT_PROPERTIES_CLICKED, null));
 			
-		} else if (e.getSource() == getJMenuItemAddComp() && visView != null) {
+		} else if (ae.getSource() == getJMenuItemAddComp()) {
 			// --- Popup Menu Item Add new component ------ 
 			myObservable.setChanged();
 			myObservable.notifyObservers(new Notification(EVENT_ADD_COMPONENT_CLICKED, null));
 			
-		}else if (e.getSource() == getJMenuItemSplitNode() && visView != null) {
+		}else if (ae.getSource() == getJMenuItemSplitNode()) {
 			// --- Popup Menu Item Split node clicked -----
 			myObservable.setChanged();
 			myObservable.notifyObservers(new Notification(EVENT_SPLIT_NODE_CLICKED, null));
@@ -683,24 +701,35 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 			jJToolBar.setFloatable(false);
 			jJToolBar.setPreferredSize(new Dimension(40, 380));
 
+			jJToolBar.add(getJButtonComponents());
+			jJToolBar.addSeparator();
+			
 			jJToolBar.add(getJButtonZoomIn());
 			jJToolBar.add(getJButtonZoomOut());
-
 			jJToolBar.add(getJButtonZoomReset());
+			
 			jJToolBar.addSeparator();
 			jJToolBar.add(getJToggleMouseTransforming());
 			jJToolBar.add(getJToggleMousePicking());
+			
 			ButtonGroup bg = new ButtonGroup();
 			bg.add(jToggleMousePicking);
 			bg.add(jToggleMouseTransforming);
-			jJToolBar.addSeparator();
-			jJToolBar.add(getJButtonAddComponent());
-			jJToolBar.add(getJButtonRemoveComponent());
-			jJToolBar.add(getJButtonMergeNodes());
-			jJToolBar.add(getJButtonSplitNode());
-			jJToolBar.addSeparator();
-			jJToolBar.add(getJButtonClearGraph());
-			jJToolBar.add(getJButtonImportGraph());
+			
+			// --- In case of editing the simulation setup ----------
+			if (this.controller.getProject()!=null) {
+				
+				jJToolBar.addSeparator();
+				jJToolBar.add(getJButtonAddComponent());
+				jJToolBar.add(getJButtonRemoveComponent());
+				jJToolBar.add(getJButtonMergeNodes());
+				jJToolBar.add(getJButtonSplitNode());
+				
+				jJToolBar.addSeparator();
+				jJToolBar.add(getJButtonClearGraph());
+				jJToolBar.add(getJButtonImportGraph());
+			}
+
 		}
 		return jJToolBar;
 	}
@@ -721,9 +750,24 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 		return jButtonClearGraph;
 	}
 
+	
 	/**
 	 * This method initializes jButtonZoomIn
-	 * 
+	 * @return javax.swing.JButton
+	 */
+	private JButton getJButtonComponents() {
+		if (jButtonComponents == null) {
+			jButtonComponents = new JButton();
+			jButtonComponents.setPreferredSize(new Dimension(26, 26));
+			jButtonComponents.setIcon(new ImageIcon(getClass().getResource(pathImage + "components.gif")));
+			jButtonComponents.setToolTipText(Language.translate("Graph-Komponenten"));
+			jButtonComponents.addActionListener(this);
+		}
+		return jButtonComponents;
+	}
+	
+	/**
+	 * This method initializes jButtonZoomIn
 	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonZoomIn() {

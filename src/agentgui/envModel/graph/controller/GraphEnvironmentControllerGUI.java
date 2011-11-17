@@ -74,7 +74,6 @@ import agentgui.core.application.Language;
 import agentgui.core.environment.EnvironmentPanel;
 import agentgui.core.project.Project;
 import agentgui.envModel.graph.GraphGlobals;
-import agentgui.envModel.graph.components.ComponentTypeDialog;
 import agentgui.envModel.graph.components.TableCellEditor4TableButton;
 import agentgui.envModel.graph.components.TableCellRenderer4Button;
 import agentgui.envModel.graph.networkModel.GraphEdge;
@@ -99,7 +98,7 @@ import edu.uci.ics.jung.graph.util.EdgeType;
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
  * @author <br>Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati 
  */
-public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements Observer, ActionListener, ListSelectionListener, TableModelListener{
+public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements Observer, ListSelectionListener, TableModelListener{
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -126,10 +125,6 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	 */
 	private TableRowSorter<DefaultTableModel> tblSorter = null;
 
-	/**
-	 * The configure component types button
-	 */
-	private JButton jButtonComponentTypes = null;
 	/**
 	 * The Dialog for adding a new network component to the graph 
 	 */
@@ -205,11 +200,6 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 			gridBagConstraints11.gridwidth = 1;
 			gridBagConstraints11.insets = new Insets(0, 10, 0, 1);
 			gridBagConstraints11.gridx = 0;
-			GridBagConstraints gridBagConstraints7 = new GridBagConstraints();
-			gridBagConstraints7.gridx = 0;
-			gridBagConstraints7.insets = new Insets(5, 10, 5, 0);
-			gridBagConstraints7.gridwidth = 2;
-			gridBagConstraints7.gridy = 3;
 			GridBagConstraints gridBagConstraints6 = new GridBagConstraints();
 			gridBagConstraints6.gridx = 0;
 			gridBagConstraints6.anchor = GridBagConstraints.WEST;
@@ -233,7 +223,6 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 			jPanelControls.add(jLabelTable, gridBagConstraints6);
 			jPanelControls.add(getJTextFieldSearch(), gridBagConstraints11);
 			jPanelControls.add(getScpComponentTable(), gridBagConstraints);
-			jPanelControls.add(getJButtonComponentTypes(), gridBagConstraints7);
 			jPanelControls.add(getJButtonClearSearch(), gridBagConstraints1);
 		}
 		return jPanelControls;
@@ -493,21 +482,6 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		return componentVector;
 	}
 
-	/**
-	 * Gets the JButton for component types.
-	 * @return the j button component types
-	 */
-	private JButton getJButtonComponentTypes() {
-		if (jButtonComponentTypes == null) {
-			jButtonComponentTypes = new JButton();
-			jButtonComponentTypes.setText("Komponenten-Typen");
-			jButtonComponentTypes.setText(Language.translate(jButtonComponentTypes.getText()));
-			jButtonComponentTypes.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonComponentTypes.addActionListener(this);
-		}
-		return jButtonComponentTypes;
-	}
-	
 	/**
 	 * Get the component types definition dialog.
 	 * New dialog object is created each time. 
@@ -1235,24 +1209,6 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		return jButtonClearSearch;
 	}
 	
-	/* (non-Javadoc)
-	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-	 */
-	@Override
-	public void actionPerformed(ActionEvent event) {
-		
-		if(event.getSource().equals(getJButtonComponentTypes())){
-			ComponentTypeDialog ctsDialog = new ComponentTypeDialog(controller.getComponentTypeSettings(), this.currProject);
-			ctsDialog.setVisible(true);
-			// --- Waiting here ----
-			if (ctsDialog.isCanceled()==false) {
-				this.controller.setComponentTypeSettings(ctsDialog.getComponentTypeSettings());
-				this.graphGUI.setGraph(controller.getNetworkModel().getGraph());
-			}
-			ctsDialog.dispose();
-			ctsDialog = null;
-		}
-	}
 	
 	
 }  //  @jve:decl-index=0:visual-constraint="33,19"

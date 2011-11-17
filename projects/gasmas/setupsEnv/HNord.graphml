@@ -11,9 +11,6 @@ xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
 <default></default>
 </key>
 <graph edgedefault="directed">
-<node id="PP2">
-<data key="pos">460.0:240.0</data>
-</node>
 <node id="PP1">
 <data key="pos">280.0:240.0</data>
 </node>
@@ -23,11 +20,14 @@ xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
 <node id="PP10">
 <data key="pos">500.0:240.0</data>
 </node>
-<node id="PP8">
-<data key="pos">500.0:200.0</data>
-</node>
 <node id="PP9">
 <data key="pos">500.0:280.0</data>
+</node>
+<node id="PP2">
+<data key="pos">460.0:240.0</data>
+</node>
+<node id="PP8">
+<data key="pos">500.0:200.0</data>
 </node>
 <node id="PP7">
 <data key="pos">360.0:240.0</data>
@@ -41,14 +41,14 @@ xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
 <edge id="n3" directed="false" source="PP1" target="PP6">
 <desc>pipe</desc>
 </edge>
-<edge id="n1" directed="false" source="PP7" target="PP2">
-<desc>pipe</desc>
-</edge>
 <edge id="n5_1" directed="false" source="PP10" target="PP8">
 <desc>branch</desc>
 </edge>
 <edge id="n5_2" directed="false" source="PP10" target="PP2">
 <desc>branch</desc>
+</edge>
+<edge id="n1" directed="false" source="PP7" target="PP2">
+<desc>pipe</desc>
 </edge>
 </graph>
 </graphml>
