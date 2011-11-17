@@ -157,6 +157,7 @@ de;Grenzwerte;Thresholds
 de;Größe;Size
 de;Hauptserver (server.master);main server (server.master)
 de;Hilfe;Help
+de;Hilfs-Raster;Guide Grid;;;
 de;Hindernis;Obstacle
 de;Hindernisse;Obstacles
 de;Hinzufügen;Add
@@ -246,6 +247,7 @@ de;Name ungültig!;Invalid name!
 de;Netz-Komponenten;Network Components
 de;Netz;Network
 de;Netzkomponente;Network component
+de;Netzwerk-Komponenten;Network Components;;;
 de;Neu laden;Reload;;;
 de;Neuer Agent;New agent
 de;Neuer Eintrag;New Entry
@@ -313,6 +315,8 @@ de;Projekte;Projects
 de;Projekttitel;Project title
 de;Quell-Sprache;Source language;;;
 de;RMA (Remote Monitoring Agent) öffnen;Open RMA (Remote Monitoring Agent)
+de;Raster verwenden;Use guide grid;;;
+de;Raster-Breite;Grid width;;;
 de;Rechts-Klick für weitere Optionen;Right-Click for more options
 de;Ressourcen;Resources
 de;SVG Dateien;SVG files
@@ -400,7 +404,7 @@ de;Umschaltung rückgängig gemacht!;Switching undone!
 de;Unbekannt:;Unknown:
 de;Undefiniert;undefined
 de;Ungültige Eingabe, ausschließlich zahlenwerte zulässig!;Invalid input, only numbers allowed!
-de;Verbindungspunkte;Connection Points;null;null;null
+de;Verbindungsknoten;Connection nodes;;;
 de;Verfügbare JADE-Services;Available JADE Services;;;
 de;Vergrößern ...;Expand View ...
 de;Vergrößern;Zoom In

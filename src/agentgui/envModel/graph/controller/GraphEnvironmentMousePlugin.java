@@ -36,6 +36,7 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.Point2D;
 import java.util.Iterator;
+import java.util.Vector;
 
 import javax.swing.SwingUtilities;
 
@@ -43,6 +44,7 @@ import agentgui.envModel.graph.networkModel.ComponentTypeSettings;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
+import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
@@ -66,9 +68,14 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	/** The current VisualizationViewer	*/
 	private VisualizationViewer<GraphNode,GraphEdge> vv = null; 	
 	
-	/** MoveAction with right */
-	private boolean moveWithRightAction = false;
+	/** Move panel with right currently ? */
+	private boolean movePanelWithRightAction = false;
+	/** Move node with left currently ? */
+	private boolean moveNodeWithLeftAction = false;
 
+	private Vector<GraphNode> nodesTemp = new Vector<GraphNode>();
+	private Vector<GraphNode> nodesMoved = new Vector<GraphNode>();
+	
 	/** Whether to center the zoom at the current mouse position */
 	private boolean zoomAtMouse = true;
 	/** controls scaling operations */
@@ -93,7 +100,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	 */
 	@SuppressWarnings("unchecked")
 	private void setVisualizationViewer(MouseEvent me) {
-		this.vv = (VisualizationViewer<GraphNode,GraphEdge>)me.getSource();
+		this.vv = (VisualizationViewer<GraphNode, GraphEdge>)me.getSource();
 	}
 	/**
 	 * Rounds a position value to the closest position using the grid raster.
@@ -110,27 +117,66 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 		return rounded;
 	}
 	
+	/**
+	 * Sets the nodes moved2 end position.
+	 */
+	private void setNodesMoved2EndPosition() {
+		this.removeAllTemporaryNodes(myGUI.getGraphEnvironmentController().getNetworkModel().getGraph());
+		for (int i = 0; i < this.nodesMoved.size(); i++) {
+			GraphNode node = this.nodesMoved.get(i);
+			vv.getGraphLayout().setLocation(node, node.getPosition());
+		}
+		this.nodesMoved.removeAllElements();
+	}
+	
+	/**
+	 * Sets a temporary node.
+	 * @param graph the graph
+	 * @param point2d the point2d
+	 */
+	private void addTemporaryNode(Graph<GraphNode, GraphEdge> graph, Point2D point2d) {
+		GraphNode tmpNode = new GraphNode();
+		tmpNode.setPosition(point2d);
+		graph.addVertex(tmpNode);
+		this.nodesTemp.add(tmpNode);
+	}
+	/**
+	 * Removes all temporary nodes.
+	 * @param graph the graph
+	 */
+	private void removeAllTemporaryNodes(Graph<GraphNode, GraphEdge> graph) {
+		for (int i = 0; i < this.nodesTemp.size(); i++) {
+			GraphNode node = this.nodesTemp.get(i);
+			graph.removeVertex(node);
+		}
+		this.nodesTemp.removeAllElements();
+	}
+	
 	/* (non-Javadoc)
 	 * @see edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin#mousePressed(java.awt.event.MouseEvent)
 	 */
 	@Override
 	public void mousePressed(MouseEvent me) {
 		super.mousePressed(me);
+
+		this.setVisualizationViewer(me);
+		GraphElementAccessor<GraphNode, GraphEdge> ps = vv.getPickSupport();
+
+		Point position = me.getPoint();
+		GraphNode pickedNode = ps.getVertex(vv.getGraphLayout(), position.getX(), position.getY());
+		GraphEdge pickedEdge = ps.getEdge(vv.getGraphLayout(), position.getX(), position.getY());
 		
 		if (SwingUtilities.isRightMouseButton(me)) {
-			
-			Point position = me.getPoint();
-			this.setVisualizationViewer(me);
-			GraphElementAccessor<GraphNode, GraphEdge> ps = vv.getPickSupport();
-			GraphNode pickedPP = ps.getVertex(vv.getGraphLayout(), position.getX(), position.getY());
-			GraphEdge pickedGC = ps.getEdge(vv.getGraphLayout(), position.getX(), position.getY());
-			
-			if(pickedPP == null && pickedGC==null){		
-				this.moveWithRightAction = true;
+			if(pickedNode == null && pickedEdge==null){		
+				this.movePanelWithRightAction = true;
 				vv.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
 			} 
-			
+		} else if (SwingUtilities.isLeftMouseButton(me)) {
+			if (pickedNode!=null) {
+				this.moveNodeWithLeftAction = true;	
+			}
 		}
+		
 	}
 	
 	/* (non-Javadoc)
@@ -139,14 +185,20 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	@Override
 	public void mouseReleased(MouseEvent me) {
 		super.mouseReleased(me);
+		
 		if (SwingUtilities.isRightMouseButton(me)) {
-			if (moveWithRightAction==true) {
-				this.moveWithRightAction = false;
+			if (movePanelWithRightAction==true) {
+				this.movePanelWithRightAction = false;
 				this.setVisualizationViewer(me);
 				vv.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 			}
-			
+		} else if (SwingUtilities.isLeftMouseButton(me)) {
+			if (moveNodeWithLeftAction=true) {
+				this.moveNodeWithLeftAction = true;	
+				this.setNodesMoved2EndPosition();
+			}
 		}
+	
 	}
 	
 	/* (non-Javadoc)
@@ -156,24 +208,22 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	public void mouseClicked(MouseEvent me){
 
 		if(me.getButton()==MouseEvent.BUTTON1 || me.getButton()==MouseEvent.BUTTON3){			
-			// --- Left click or Right click ---			
-			Object pickedObject = null;
+			
+			// --- Left click or Right click --------------
 			Point point = me.getPoint();
 			
 			this.setVisualizationViewer(me);
 			GraphElementAccessor<GraphNode, GraphEdge> ps = vv.getPickSupport();
-			
-			GraphNode pickedPP = ps.getVertex(vv.getGraphLayout(), point.getX(), point.getY());
-			if(pickedPP != null){		
-				// --- A node / PropagationPoint was clicked ---
-				pickedObject = pickedPP;
-				
-			} else {					
-				// --- No node / PropagationPoint was clicked --
-				GraphEdge pickedGC = ps.getEdge(vv.getGraphLayout(), point.getX(), point.getY());
-				if(pickedGC != null){	
-					// --- An edge / GridComponent was clicked -
-					pickedObject = pickedGC;
+
+			// --- Check if an object was selected --------
+			Object pickedObject = null;
+			GraphNode pickedNode = ps.getVertex(vv.getGraphLayout(), point.getX(), point.getY());
+			if(pickedNode != null) {  
+				pickedObject = pickedNode;
+			} else {
+				GraphEdge pickedEdge = ps.getEdge(vv.getGraphLayout(), point.getX(), point.getY());
+				if(pickedEdge != null) { 
+					pickedObject = pickedEdge;
 				}
 			}
 
@@ -190,6 +240,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 					myGUI.handleObjectLeftClick(pickedObject);
 				}
 			}
+			
 		}
 		
 	}
@@ -207,7 +258,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 		// ----------------------------------------------------------------------------------------
 		// --- Action if the right mouse button is pressed and no graph element is selected -------
 		// ----------------------------------------------------------------------------------------
-		if (moveWithRightAction==true) {
+		if (movePanelWithRightAction==true) {
 			
             try {
                 Point2D q = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(down);
@@ -230,34 +281,47 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 		// ----------------------------------------------------------------------------------------
 		// --- Update the GraphNode's position attribute ------------------------------------------ 
 		// ----------------------------------------------------------------------------------------
-		ComponentTypeSettings cts = null;
-		boolean snapToGrid = false;
-		double snapRaster = 0;
-		
-		Iterator<GraphNode> pickedNodes = vv.getPickedVertexState().getPicked().iterator();
-		while(pickedNodes.hasNext()){
-
-			// --- Get the ComponentTypeSettings, if not already there --------
-			if (cts==null) {
-				cts = myGUI.getGraphEnvironmentController().getComponentTypeSettings().get("node");	
-				snapToGrid = cts.isSnap2Grid();
-				snapRaster = cts.getSnapRaster();
-				snapToGrid = true;
-				snapRaster = 10.0;
-			}
+		if (moveNodeWithLeftAction==true) {
 			
-			// --- Get the position of the node -------------------------------
-			GraphNode pickedNode = pickedNodes.next();
-			Point2D newPos = myGUI.getVisView().getGraphLayout().transform(pickedNode);
-			if (snapToGrid==true && snapRaster>0) {
-				double xPos = roundGridSnap(newPos.getX(), snapRaster); 
-				double yPos = roundGridSnap(newPos.getY(), snapRaster);
-				newPos.setLocation(xPos, yPos);
+			Graph<GraphNode, GraphEdge> graph = null;
+			ComponentTypeSettings cts = null;
+			boolean snapToGrid = false;
+			double snapRaster = 0;
+			
+			Iterator<GraphNode> pickedNodes = vv.getPickedVertexState().getPicked().iterator();
+			while(pickedNodes.hasNext()){
+
+				// --- Get the Graph, if not already there --------------------
+				if (graph==null) {
+					graph = myGUI.getGraphEnvironmentController().getNetworkModel().getGraph();
+					this.nodesMoved.removeAllElements();
+					this.removeAllTemporaryNodes(graph);
+				}
+				// --- Get the ComponentTypeSettings, if not already there ----
+				if (cts==null) {
+					cts = myGUI.getGraphEnvironmentController().getComponentTypeSettings().get("node");	
+					snapToGrid = cts.isSnap2Grid();
+					snapRaster = cts.getSnapRaster();
+				}
+				
+				// --- Get the position of the node ---------------------------
+				GraphNode pickedNode = pickedNodes.next();
+				Point2D newPos = myGUI.getVisView().getGraphLayout().transform(pickedNode);
+				if (snapToGrid==true && snapRaster>0) {
+					double xPos = roundGridSnap(newPos.getX(), snapRaster); 
+					double yPos = roundGridSnap(newPos.getY(), snapRaster);
+					newPos.setLocation(xPos, yPos);
+					
+					this.nodesMoved.add(pickedNode);
+					this.addTemporaryNode(graph, newPos);
+				}
+				pickedNode.setPosition(newPos);
+				
 			}
-			pickedNode.setPosition(newPos);
-			//myGUI.getVisView().getGraphLayout().setLocation(pickedNode, newPos);
-			//vv.getGraphLayout().setLocation(pickedNode, newPos);
+			me.consume();
+	        vv.repaint();
 		}
+		
 	}
 
 	/* (non-Javadoc)
