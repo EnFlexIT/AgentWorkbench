@@ -129,12 +129,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	/**
 	 * The configure component types button
 	 */
-	private JButton jButtonSetComponentTypes = null;
-	/**
-	 * The Dialog for setting the component types
-	 */
-	private ComponentTypeDialog classSelectorDialog = null;  //  @jve:decl-index=0:visual-constraint="333,23"
-	
+	private JButton jButtonComponentTypes = null;
 	/**
 	 * The Dialog for adding a new network component to the graph 
 	 */
@@ -238,7 +233,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 			jPanelControls.add(jLabelTable, gridBagConstraints6);
 			jPanelControls.add(getJTextFieldSearch(), gridBagConstraints11);
 			jPanelControls.add(getScpComponentTable(), gridBagConstraints);
-			jPanelControls.add(getBtnSetClasses(), gridBagConstraints7);
+			jPanelControls.add(getJButtonComponentTypes(), gridBagConstraints7);
 			jPanelControls.add(getJButtonClearSearch(), gridBagConstraints1);
 		}
 		return jPanelControls;
@@ -499,27 +494,18 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	}
 
 	/**
-	 * This method initializes btnSetClasses	
-	 * @return javax.swing.JButton	
+	 * Gets the JButton for component types.
+	 * @return the j button component types
 	 */
-	private JButton getBtnSetClasses() {
-		if (jButtonSetComponentTypes == null) {
-			jButtonSetComponentTypes = new JButton();
-			jButtonSetComponentTypes.setText("Komponenten-Typen");
-			jButtonSetComponentTypes.setText(Language.translate(jButtonSetComponentTypes.getText()));
-			jButtonSetComponentTypes.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonSetComponentTypes.addActionListener(this);
+	private JButton getJButtonComponentTypes() {
+		if (jButtonComponentTypes == null) {
+			jButtonComponentTypes = new JButton();
+			jButtonComponentTypes.setText("Komponenten-Typen");
+			jButtonComponentTypes.setText(Language.translate(jButtonComponentTypes.getText()));
+			jButtonComponentTypes.setFont(new Font("Dialog", Font.BOLD, 12));
+			jButtonComponentTypes.addActionListener(this);
 		}
-		return jButtonSetComponentTypes;
-	}
-	
-	/**
-	 * Get the component types definition dialog
-	 * @return
-	 */
-	private ComponentTypeDialog getClassSelectorDialog(){
-		classSelectorDialog = new ComponentTypeDialog(this, this.currProject);
-		return classSelectorDialog;
+		return jButtonComponentTypes;
 	}
 	
 	/**
@@ -538,12 +524,10 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	 */
 	public BasicGraphGUI getGraphGUI(){
 		if(graphGUI == null){
-			graphGUI = new BasicGraphGUI(getController());
+			graphGUI = new BasicGraphGUI(this.getController());
 			graphGUI.addObserver(this);
-			if(controller.getNetworkModel() != null && controller.getNetworkModel().getGraph() != null){
-				NetworkModel nemo = controller.getNetworkModel();
-				Graph<GraphNode, GraphEdge> graph = nemo.getGraph();
-				graphGUI.setGraph(graph);
+			if(controller.getNetworkModel()!=null && controller.getNetworkModel().getGraph()!=null){
+				graphGUI.setGraph(controller.getNetworkModel().getGraph());
 			}
 		}
 		return graphGUI;
@@ -577,20 +561,22 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	@Override
 	public void update(Observable o, Object arg) {
 		
-		// The network model loaded 
 		if(o.equals(controller) && arg.equals(GraphEnvironmentController.EVENT_NETWORKMODEL_LOADED)){
-			//Loading for the first time
-			if(graphGUI.getVisView()==null)
-				graphGUI.setGraph(controller.getNetworkModel().getGraph()); // New graph visualization viewer is created
-			else
-				graphGUI.repaintGraph(controller.getNetworkModel().getGraph()); // Same vis view, but graph is refreshed
+			// --- The network model loaded --------------- 
+			if(graphGUI.getVisView()==null) {
+				// Create new graph visualization viewer --
+				graphGUI.setGraph(controller.getNetworkModel().getGraph()); 
+			} else {
+				// Same vis view, but graph is refreshed
+				graphGUI.repaintGraph(controller.getNetworkModel().getGraph()); 
+			}
 			rebuildTblComponents();
-		}		
-		// Network model is updated/refreshed 
-		else if(o.equals(controller) && arg.equals(GraphEnvironmentController.EVENT_NETWORKMODEL_REFRESHED)){			
+			
+		} else if(o.equals(controller) && arg.equals(GraphEnvironmentController.EVENT_NETWORKMODEL_REFRESHED)) {			
+			// --- Network model is updated/refreshed -----
 			graphGUI.repaintGraph(controller.getNetworkModel().getGraph());
-			// Rebuilding the component table
-			rebuildTblComponents();
+			// --- Rebuilding the component table ---------
+			this.rebuildTblComponents();
 			graphGUI.clearPickedObjects();
 		}
 		
@@ -1043,13 +1029,6 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	    	return false;
 	}
 
-	@Override
-	public void actionPerformed(ActionEvent event) {
-		if(event.getSource().equals(getBtnSetClasses())){
-			getClassSelectorDialog().setVisible(true);
-		}
-	}
-
 	/**
 	 * Invoked when a row of the components table is selected.
 	 * Highlights the selected network component in the Graph. 
@@ -1255,5 +1234,25 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		}
 		return jButtonClearSearch;
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
+	@Override
+	public void actionPerformed(ActionEvent event) {
+		
+		if(event.getSource().equals(getJButtonComponentTypes())){
+			ComponentTypeDialog ctsDialog = new ComponentTypeDialog(controller.getComponentTypeSettings(), this.currProject);
+			ctsDialog.setVisible(true);
+			// --- Waiting here ----
+			if (ctsDialog.isCanceled()==false) {
+				this.controller.setComponentTypeSettings(ctsDialog.getComponentTypeSettings());
+				this.graphGUI.setGraph(controller.getNetworkModel().getGraph());
+			}
+			ctsDialog.dispose();
+			ctsDialog = null;
+		}
+	}
+	
+	
 }  //  @jve:decl-index=0:visual-constraint="33,19"

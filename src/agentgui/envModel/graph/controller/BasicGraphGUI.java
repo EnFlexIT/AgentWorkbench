@@ -148,7 +148,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	 * The GUI's main component, either the graph visualization, or an empty
 	 * JPanel if no graph is loaded
 	 */
-	private Component rightComponent = null;
+	private Component centerComponent = null;
 	
 	/**
 	 * Environment model controller, to be passed by the parent GUI.
@@ -270,162 +270,180 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	 */
 	public void setGraph(Graph<GraphNode, GraphEdge> graph) {
 
-		if (graph != null) { // A graph was passed
+		if (graph==null) {
+			if (centerComponent!=null) {
+				this.remove(centerComponent);
+			}
+			centerComponent = new JPanel();
+			this.add(centerComponent, BorderLayout.CENTER);
+			return;
+		}
 
-			// Get the ComponentTypeSettings for nodes 
-			final ComponentTypeSettings cts = controller.getComponentTypeSettings().get("node");
-			
-			// Define graph layout
-			Layout<GraphNode, GraphEdge> layout = new StaticLayout<GraphNode, GraphEdge>(graph);
-			layout.setSize(new Dimension(800, 800));
-			layout.setInitializer(new Transformer<GraphNode, Point2D>() {
+		// --- Get the ComponentTypeSettings for nodes -------------------- 
+		final ComponentTypeSettings cts = controller.getComponentTypeSettings().get("node");
+		
+		// ----------------------------------------------------------------
+		// --- Define graph layout ----------------------------------------
+		// ----------------------------------------------------------------
+		Layout<GraphNode, GraphEdge> layout = new StaticLayout<GraphNode, GraphEdge>(graph);
+		layout.setSize(new Dimension(800, 800));
+		layout.setInitializer(new Transformer<GraphNode, Point2D>() {
 
-				@Override
-				public Point2D transform(GraphNode node) {
-					// The position is specified in the GraphNode instance
-					return node.getPosition();
-				}
-			});
+			@Override
+			public Point2D transform(GraphNode node) {
+				// The position is specified in the GraphNode instance
+				return node.getPosition();
+			}
+		});
 
-			// Create a new VisualizationViewer instance
-			visView = new VisualizationViewer<GraphNode, GraphEdge>(layout);
-			
-			// Configure to show node labels
-			boolean showLable = false;
-			if (cts==null) {
+		// ----------------------------------------------------------------
+		// --- Create a new VisualizationViewer instance ------------------
+		// ----------------------------------------------------------------
+		visView = new VisualizationViewer<GraphNode, GraphEdge>(layout);
+		visView.setBackground(Color.WHITE);
+		
+		// --- Configure vertex shape and size --						
+		VertexShapeSizeAspect<GraphNode, GraphEdge> vssa = new VertexShapeSizeAspect<GraphNode, GraphEdge>();
+		vssa.setScaling(true);
+		visView.getRenderContext().setVertexShapeTransformer(vssa); 
+		
+		// --- Configure mouse interaction ----		
+		visView.setGraphMouse(pgm);
+
+
+		// --- Configure to show node labels ------------------------------
+		boolean showLable = false;
+		if (cts==null) {
+			showLable = true;
+		} else {
+			if (cts.isShowLable()==true){
 				showLable = true;
-			} else {
-				if (cts.isShowLable()==true){
-					showLable = true;
-				}
 			}
-			// Configure node labels
-			if (showLable==true) {
-				visView.getRenderContext().setVertexLabelTransformer(
-						new Transformer<GraphNode, String>() {
-							@Override
-							public String transform(GraphNode node) {
-								return node.getId();
-							}
-						});
-			}
-
-			//Configure vertex colors
-			visView.getRenderContext().setVertexFillPaintTransformer(
-					new Transformer<GraphNode, Paint>() {
-						public Paint transform(GraphNode arg0) {
-							if(visView.getPickedVertexState().isPicked(arg0))
-							{//Highlight color when picked	
-								return BasicGraphGUI.DEFAULT_VERTEX_PICKED_COLOR;
-							}
-							else
-							{	//Get the color from the component type settings
-								try{
-									String colorString= cts.getColor();
-									if(colorString!=null){
-										Color color = new Color(Integer.parseInt(colorString));							
-										return color;
-									}
-									else
-										return BasicGraphGUI.DEFAULT_VERTEX_COLOR;
+		}
+		// --- Configure node labels --------------------------------------
+		if (showLable==true) {
+			visView.getRenderContext().setVertexLabelTransformer(
+					new Transformer<GraphNode, String>() {
+						@Override
+						public String transform(GraphNode node) {
+							return node.getId();
+						}
+					});
+		}
+		// --- Configure vertex colors ------------------------------------
+		visView.getRenderContext().setVertexFillPaintTransformer(
+				new Transformer<GraphNode, Paint>() {
+					public Paint transform(GraphNode arg0) {
+						if(visView.getPickedVertexState().isPicked(arg0))
+						{//Highlight color when picked	
+							return BasicGraphGUI.DEFAULT_VERTEX_PICKED_COLOR;
+						}
+						else
+						{	//Get the color from the component type settings
+							try{
+								String colorString= cts.getColor();
+								if(colorString!=null){
+									Color color = new Color(Integer.parseInt(colorString));							
+									return color;
 								}
-								catch(NullPointerException ex){
-									ex.printStackTrace();
-									return BasicGraphGUI.DEFAULT_VERTEX_COLOR;					
-								}
+								else
+									return BasicGraphGUI.DEFAULT_VERTEX_COLOR;
+							}
+							catch(NullPointerException ex){
+								ex.printStackTrace();
+								return BasicGraphGUI.DEFAULT_VERTEX_COLOR;					
 							}
 						}
-					}
-			);
-			
-			//Configure edge colors
-			visView.getRenderContext().setEdgeDrawPaintTransformer(
-			new Transformer<GraphEdge, Paint>() {
-				public Paint transform(GraphEdge arg0) {
-					if(visView.getPickedEdgeState().isPicked(arg0))
-					{//Highlight color when picked	
-						return BasicGraphGUI.DEFAULT_EDGE_PICKED_COLOR;
-					}
-					else
-					{	//Get the color from the component type settings
-						try{
-							ComponentTypeSettings cts = controller.getComponentTypeSettings().get(arg0.getComponentType());
-							String colorString= cts.getColor();
-							if(colorString!=null){
-								Color color = new Color(Integer.parseInt(colorString));							
-								return color;
-							}
-							else
-								return BasicGraphGUI.DEFAULT_EDGE_COLOR;
-						}
-						catch(NullPointerException ex){
-							ex.printStackTrace();
-							return BasicGraphGUI.DEFAULT_EDGE_COLOR;							
-						}
-							
 					}
 				}
-			}
-			);
-
-			// Configure Edge Image Labels			
-			visView.getRenderContext().setEdgeLabelTransformer(new Transformer<GraphEdge,String>() {	        	
-				public String transform(GraphEdge edge) {
-					//Get the path of the Image from the component type settings
+		);
+		// --- Configure edge colors --------------------------------------
+		visView.getRenderContext().setEdgeDrawPaintTransformer(
+		new Transformer<GraphEdge, Paint>() {
+			public Paint transform(GraphEdge arg0) {
+				if(visView.getPickedEdgeState().isPicked(arg0))
+				{//Highlight color when picked	
+					return BasicGraphGUI.DEFAULT_EDGE_PICKED_COLOR;
+				}
+				else
+				{	//Get the color from the component type settings
 					try{
-						ComponentTypeSettings cts = controller.getComponentTypeSettings().get(edge.getComponentType());
-						String edgeImage = cts.getEdgeImage();
-						if(edgeImage!=null){
-							URL url = getClass().getResource(edgeImage);
-							if(url!=null){
-								//If the image path is valid
-								return "<html>"+edge.getId()+"<img src="+url+" height=16 width=16 >";
-							}
-							else
-								return edge.getId();
+						ComponentTypeSettings cts = controller.getComponentTypeSettings().get(arg0.getComponentType());
+						String colorString= cts.getColor();
+						if(colorString!=null){
+							Color color = new Color(Integer.parseInt(colorString));							
+							return color;
+						}
+						else
+							return BasicGraphGUI.DEFAULT_EDGE_COLOR;
+					}
+					catch(NullPointerException ex){
+						ex.printStackTrace();
+						return BasicGraphGUI.DEFAULT_EDGE_COLOR;							
+					}
+						
+				}
+			}
+		}
+		);
+		// --- Configure Edge Image Labels --------------------------------			
+		visView.getRenderContext().setEdgeLabelTransformer(new Transformer<GraphEdge,String>() {	        	
+			public String transform(GraphEdge edge) {
+				//Get the path of the Image from the component type settings
+				try{
+					ComponentTypeSettings cts = controller.getComponentTypeSettings().get(edge.getComponentType());
+					String edgeImage = cts.getEdgeImage();
+					if(edgeImage!=null){
+						URL url = getClass().getResource(edgeImage);
+						if(url!=null){
+							//If the image path is valid
+							return "<html>"+edge.getId()+"<img src="+url+" height=16 width=16 >";
 						}
 						else
 							return edge.getId();
 					}
-					catch(NullPointerException ex){
-						ex.printStackTrace();
-						return edge.getId();						
-					}
+					else
+						return edge.getId();
 				}
-				});
-			
-			// Use straight lines as edges
-			visView.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line<GraphNode, GraphEdge>());
-			 
-			//Set edge width
-			visView.getRenderContext().setEdgeStrokeTransformer(new Transformer<GraphEdge, Stroke>(){
-				@Override
-				public Stroke transform(GraphEdge arg0) {
-					return new BasicStroke(2);
+				catch(NullPointerException ex){
+					ex.printStackTrace();
+					return edge.getId();						
 				}
-			}); 
-
-			// Configure vertex shape and size						
-			VertexShapeSizeAspect<GraphNode, GraphEdge> vssa = new VertexShapeSizeAspect<GraphNode, GraphEdge>();
-			vssa.setScaling(true);
-			visView.getRenderContext().setVertexShapeTransformer(vssa); 
-			
-			// Configure mouse interaction			
-			visView.setGraphMouse(pgm);
-
-			visView.setBackground(Color.WHITE);
-
-			rightComponent = new GraphZoomScrollPane(visView);
-
-		} else { 
-			// --- No graph passed Use a JPanel as dummy component ---
-			rightComponent = new JPanel();
+			}
+			});
+		
+		// --- Use straight lines as edges --------------------------------
+		visView.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line<GraphNode, GraphEdge>());
+		 
+		// --- Set edge width ---------------------------------------------
+		visView.getRenderContext().setEdgeStrokeTransformer(new Transformer<GraphEdge, Stroke>(){
+			@Override
+			public Stroke transform(GraphEdge arg0) {
+				return new BasicStroke(2);
+			}
+		}); 
+		
+		// --- Finally set the right view ---------------------------------
+		if (centerComponent!=null) {
+			this.remove(centerComponent);
 		}
-
-		this.add(rightComponent, BorderLayout.CENTER);
+		centerComponent = new GraphZoomScrollPane(visView);
+		this.add(centerComponent, BorderLayout.CENTER);
 
 	}
 
+	/**
+	 * Repaints the visualisation viewer, with the given graph
+	 * @param graph The new graph to be painted with.
+	 */
+	public void repaintGraph(Graph<GraphNode, GraphEdge> graph) {
+		visView.getGraphLayout().setGraph(graph);
+		visView.repaint();
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 
@@ -521,15 +539,6 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	}
 
 	/**
-	 * Repaints the visualisation viewer, with the given graph
-	 * @param graph The new graph to be painted with.
-	 */
-	public void repaintGraph(Graph<GraphNode, GraphEdge> graph) {
-		visView.getGraphLayout().setGraph(graph);
-		visView.repaint();
-	}
-
-	/**
 	 * This method notifies the observers about a graph object selection
 	 * @param pickedObject The selected object
 	 */
@@ -544,8 +553,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	 */
 	void handleObjectRightClick(Object pickedObject) {
 		myObservable.setChanged();
-		myObservable.notifyObservers(new Notification(EVENT_OBJECT_RIGHT_CLICK,
-				pickedObject));
+		myObservable.notifyObservers(new Notification(EVENT_OBJECT_RIGHT_CLICK, pickedObject));
 	}
 
 	/**
@@ -555,8 +563,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	 */
 	public void handleObjectDoubleClick(Object pickedObject) {
 		myObservable.setChanged();
-		myObservable.notifyObservers(new Notification(
-				EVENT_OBJECT_DOUBLE_CLICK, pickedObject));
+		myObservable.notifyObservers(new Notification(EVENT_OBJECT_DOUBLE_CLICK, pickedObject));
 	}
 
 	/**

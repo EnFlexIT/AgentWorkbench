@@ -40,6 +40,8 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
@@ -71,7 +73,6 @@ import agentgui.core.gui.imaging.MissingIcon;
 import agentgui.core.project.Project;
 import agentgui.envModel.graph.GraphGlobals;
 import agentgui.envModel.graph.controller.BasicGraphGUI;
-import agentgui.envModel.graph.controller.GraphEnvironmentControllerGUI;
 import agentgui.envModel.graph.networkModel.ComponentTypeSettings;
 import agentgui.envModel.graph.prototypes.GraphElementPrototype;
 
@@ -86,73 +87,59 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	/** Generated serialVersionUID */
 	private static final long serialVersionUID = 1L;
 	
-	/** The content pane */
-	private JPanel jContentPane = null;
-	/** The confirm button */
-	private JButton jButtonConfirm = null;
-	/** The cancel button */
-	private JButton jButtonCancel = null;
-	/** The JScrollPane containing the component type table */
-	private JScrollPane jScrollPaneClassTable = null;
-	/** The component type table */
-	private JTable jTableComponentTypes = null;
-	/** The add row button */
-	private JButton jButtonAddRow = null;
-	/** The remove row button */
-	private JButton jButtonRemoveRow = null;
-	/** The ClassSelector instance used for assigning a graph node class */
-	private ClassSelector nodeClassSelector = null;
-	/** JComboBox used as cell editor for the agent classes column */
-	private JComboBox jComboBoxAgentClasses = null;
-	
-	/** Cell editor for the prototype classes column */
-	private TableCellEditor4ClassSelector prototypeClassesCellEditor = null;  //  @jve:decl-index=0:
-	/** All available agent classes, accessible by simple class name */
-	private HashMap<String, Class<?>> availableAgentClasses = null;
-	
-	/** The GraphEnvironmentControllerGUI that started this dialog */
-	private GraphEnvironmentControllerGUI parent = null;
-	/** The current AgentGUI project */
-	private Project currProject = null;
-	/** The label for the node class text field */
-	private JLabel jLabelNodeClass = null;
-	/** The JTextField specifying the graph node class */
-	private JTextField jTextFieldNodeClass = null;
-	/** Button invoking the nodeClassSelector */
-	private JButton jButtonSelectNodeClass = null;
-	
-	/** Application image folder path */
 	private final String pathImage = GraphGlobals.getPathImages();
-	/** Used for assigning the vertex color */
-	private JButton jButtonNodeColor = null;
 
+	private Project currProject = null;
+	private HashMap<String, ComponentTypeSettings> currCompTypSettings = null;
+	private boolean canceled = false;
+	
+	private JPanel jContentPane = null;
 	private JPanel jPanelTop = null;
 	private JPanel jPanelButtonOkCancel = null;
 	private JPanel jPanelComponents = null;
+	private JScrollPane jScrollPaneClassTable = null;
 	
+	private JLabel jLabelNodeClass = null;
+	private JLabel jLabelOntoClass = null;
+	private JLabel jLabelComponentHeader = null;
+	private JLabel jLabelGridHeader = null;
+	private JLabel jLabelGuideGridWidth = null;
 	private JLabel jLabelVertexSize = null;
 	private JLabel jLabelNodeColor = null;
 	private JLabel jLabelSeperatorHorizontal = null;
 	private JLabel jLabelSeperatorVertical = null;
 	private JLabel jLabelSeperatorVertical1 = null;
-
-	private JLabel jLabelOntoClass = null;
-	private JLabel jLabelComponentHeader = null;
-	private JLabel jLabelGridHeader = null;
-	private JLabel jLabelGuideGridWidth = null;
 	
+	private JTextField jTextFieldNodeClass = null;
 	private JCheckBox jCheckBoxSnap2Grid = null;
-	private JSpinner jSpnnerGridWidth = null;
 	private JCheckBox jCheckBoxLableVisible = null;
 	private JComboBox jComboBoxNodeSize = null;
+	private JSpinner jSpnnerGridWidth = null;
+
+	private JButton jButtonConfirm = null;
+	private JButton jButtonCancel = null;
+	private JButton jButtonAddRow = null;
+	private JButton jButtonRemoveRow = null;
+	private JButton jButtonSelectNodeClass = null;
+	private JButton jButtonNodeColor = null;
+	
+	private JTable jTableComponentTypes = null;
+	private ClassSelector nodeClassSelector = null;
+	private JComboBox jComboBoxAgentClasses = null;
+	
+	/** Cell editor for the prototype classes column */
+	private TableCellEditor4ClassSelector prototypeClassesCellEditor = null;  //  @jve:decl-index=0:
+	/** All available agent classes, accessible by simple class name */
+	private HashMap<String, Class<?>> availableAgentClasses = null;  //  @jve:decl-index=0:
+	
 	
 	/**
 	 * This is the default constructor
 	 * @param parent The parent GUI
 	 */
-	public ComponentTypeDialog(GraphEnvironmentControllerGUI parent, Project project) {
+	public ComponentTypeDialog(HashMap<String,ComponentTypeSettings> currentCTS, Project project) {
 		super(Application.MainWindow);
-		this.parent = parent;
+		this.currCompTypSettings = currentCTS;
 		this.currProject = project;
 		initialize();
 	}
@@ -168,13 +155,27 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		this.setTitle("Komponententyp-Definition");
 		this.setTitle(Language.translate(this.getTitle()));
 		this.setModal(true);
-		
-		this.setNodeConfiguration();
+		this.addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent evt) {
+				canceled = true;
+				setVisible(false);
+			}
+		});
 		
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
 		int top = (screenSize.height - this.getHeight()) / 2; 
 	    int left = (screenSize.width - this.getWidth()) / 2; 
-	    this.setLocation(left, top);
+	    this.setLocation(left, top);		
+		
+	    this.setNodeConfiguration();
+	    
+	}
+	/**
+	 * Checks if is canceled.
+	 * @return true, if is canceled
+	 */
+	public boolean isCanceled() {
+		return canceled;
 	}
 
 	/**
@@ -183,7 +184,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	 */
 	private void setNodeConfiguration() {
 	
-		ComponentTypeSettings ctsNode = parent.getController().getComponentTypeSettings().get("node"); 
+		ComponentTypeSettings ctsNode = this.currCompTypSettings.get("node"); 
 		
 		// --- Set the ontology class for the vertices ------------------------
 		if(ctsNode!= null){
@@ -237,6 +238,13 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		
 	}
 	
+	/**
+	 * Returns all component type settings.
+	 * @return the component type settings
+	 */
+	public HashMap<String, ComponentTypeSettings> getComponentTypeSettings() {
+		return this.currCompTypSettings;
+	}
 	
 	/**
 	 * This method initializes jContentPane
@@ -411,22 +419,22 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		Vector<Vector<Object>> dataRows = new Vector<Vector<Object>>();
 		
 		// Set table entries for defined assignments, if any
-		HashMap<String, ComponentTypeSettings> etsHash = parent.getController().getComponentTypeSettings();
-		if(etsHash != null){
-			Iterator<String> etsIter = etsHash.keySet().iterator();
+		if(this.currCompTypSettings!=null){
+			Iterator<String> etsIter = this.currCompTypSettings.keySet().iterator();
 			while(etsIter.hasNext()){
 				String etName = etsIter.next();
-				if(!etName.equals("node")){	// The node class is defined in the JTextField, not in the table
+				if(etName.equals("node")==false){	// The node class is defined in the JTextField, not in the table
+					
 					Vector<Object> newRow = new Vector<Object>();
 					newRow.add(etName);
-					newRow.add(etsHash.get(etName).getAgentClass());
-					newRow.add(etsHash.get(etName).getGraphPrototype());
+					newRow.add(this.currCompTypSettings.get(etName).getAgentClass());
+					newRow.add(this.currCompTypSettings.get(etName).getGraphPrototype());
 
-					String imagePath = etsHash.get(etName).getEdgeImage();
 					//The description is used to store the path along with the ImageIcon
+					String imagePath = this.currCompTypSettings.get(etName).getEdgeImage();
 					newRow.add(createImageIcon(imagePath, imagePath));
 					
-					newRow.add(new Color(Integer.parseInt(etsHash.get(etName).getColor())));
+					newRow.add(new Color(Integer.parseInt(this.currCompTypSettings.get(etName).getColor())));
 					
 					dataRows.add(newRow);
 				}
@@ -524,76 +532,6 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			agentClassNames.add(agentClass.getName());
 		}
 		return agentClassNames;
-	}
-	
-	@Override
-	public void actionPerformed(ActionEvent event) {
-
-		if(event.getSource().equals(getJButtonAddRow())){
-			// --- Add a new row to the component types table -------
-			addRow();
-		} else if(event.getSource().equals(getJButtonRemoveRow())) {
-			// --- Remove a row from the component types table ------
-			if(getJTableClasses().getSelectedRow() > -1){
-				removeRow(getJTableClasses().getSelectedRow());
-			}
-		} else if(event.getSource().equals(getJButtonConfirm())) {
-			// --- Confirmed, apply changes -------------------------			
-			JTable jtc = getJTableClasses();
-			
-			int rowNum = jtc.getRowCount();
-			HashMap<String, ComponentTypeSettings> etsVector = new HashMap<String, ComponentTypeSettings>();
-			// Get the component type definitions from the table
-			for(int row=0; row<rowNum; row++){
-				String name = (String) jtc.getValueAt(row, 0);
-				//Check for non empty name
-				if(name!=null && name.length()!=0){
-					ImageIcon imageIcon = (ImageIcon)jtc.getValueAt(row,3);
-					Color color = (Color)jtc.getValueAt(row, 4);
-					ComponentTypeSettings ets = new ComponentTypeSettings(
-							(String)jtc.getValueAt(row, 1), 
-							(String)jtc.getValueAt(row, 2),
-							imageIcon.getDescription(),
-							String.valueOf(color.getRGB())
-							);
-					// Use name as key
-					etsVector.put(name, ets);
-				}
-			}
-			// Add the graph node class definition
-			String nodeColor = String.valueOf(getJButtonNodeColor().getBackground().getRGB());
-			
-			ComponentTypeSettings cts = new ComponentTypeSettings(getJTextFieldNodeClass().getText(), null, null, nodeColor);
-			cts.setVertexSize(String.valueOf(jComboBoxNodeSize.getSelectedItem()));
-			cts.setShowLable(this.jCheckBoxLableVisible.isSelected());
-			cts.setSnap2Grid(this.jCheckBoxSnap2Grid.isSelected());
-			cts.setSnapRaster((Double)jSpnnerGridWidth.getValue());
-			etsVector.put("node", cts);
-			
-			// Set the GraphEnvironmentController's componentTypeSettings
-			parent.getController().setComponentTypeSettings(etsVector);
-			
-			//Refresh the Graph
-			parent.getGraphGUI().getVisView().repaint();
-			
-			this.dispose();
-		// Canceled, discard changes
-		}else if(event.getSource().equals(getJButtonCancel())){
-			this.dispose();
-		}else if(event.getSource().equals(getJButtonNodeColor())){
-		//Change Vertex color button clicked
-			
-			//Set up the dialog that the button brings up.
-			Color newColor = JColorChooser.showDialog(
-                    getJButtonNodeColor(),
-                    "Pick a color",
-                    getJButtonNodeColor().getBackground());
-			if(newColor!=null){
-				setNodeColor(newColor);
-			}				
-		}
-		
-		
 	}
 
 	/**
@@ -972,4 +910,72 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		return jSpnnerGridWidth;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
+	@Override
+	public void actionPerformed(ActionEvent event) {
+
+		if(event.getSource().equals(getJButtonAddRow())){
+			// --- Add a new row to the component types table -------
+			addRow();
+		} else if(event.getSource().equals(getJButtonRemoveRow())) {
+			// --- Remove a row from the component types table ------
+			if(getJTableClasses().getSelectedRow() > -1){
+				removeRow(getJTableClasses().getSelectedRow());
+			}
+		} else if(event.getSource().equals(getJButtonConfirm())) {
+			// --- Confirmed, apply changes -------------------------			
+			JTable jtc = getJTableClasses();
+			
+			HashMap<String, ComponentTypeSettings> ctsHash = new HashMap<String, ComponentTypeSettings>();
+			
+			// Get the component type definitions from the table
+			for(int row=0; row<jtc.getRowCount(); row++){
+				String name = (String) jtc.getValueAt(row, 0);
+				//Check for non empty name
+				if(name!=null && name.length()!=0){
+					ImageIcon imageIcon = (ImageIcon)jtc.getValueAt(row,3);
+					Color color = (Color)jtc.getValueAt(row, 4);
+					ComponentTypeSettings ets = new ComponentTypeSettings(
+							(String)jtc.getValueAt(row, 1), 
+							(String)jtc.getValueAt(row, 2),
+							imageIcon.getDescription(),
+							String.valueOf(color.getRGB())
+							);
+					// Use name as key
+					ctsHash.put(name, ets);
+				}
+			}
+			
+			// --- Add the graph node definition ----------
+			String nodeColor = String.valueOf(getJButtonNodeColor().getBackground().getRGB());
+			
+			ComponentTypeSettings cts = new ComponentTypeSettings(getJTextFieldNodeClass().getText(), null, null, nodeColor);
+			cts.setVertexSize(String.valueOf(jComboBoxNodeSize.getSelectedItem()));
+			cts.setShowLable(this.jCheckBoxLableVisible.isSelected());
+			cts.setSnap2Grid(this.jCheckBoxSnap2Grid.isSelected());
+			cts.setSnapRaster((Double)jSpnnerGridWidth.getValue());
+			ctsHash.put("node", cts);
+			
+			this.currCompTypSettings = ctsHash;
+			this.canceled = false;
+			this.setVisible(false);
+		
+		} else if(event.getSource().equals(getJButtonCancel())) {
+			// --- Canceled, discard changes --------------
+			this.canceled = true;
+			this.setVisible(false);
+			
+		} else if(event.getSource().equals(getJButtonNodeColor())) {
+			// --- Change Vertex color button clicked -----
+			Color newColor = JColorChooser.showDialog(getJButtonNodeColor(), "Pick a color", getJButtonNodeColor().getBackground());
+			if(newColor!=null){
+				setNodeColor(newColor);
+			}				
+		}
+		
+	}
+	
+	
 }  //  @jve:decl-index=0:visual-constraint="10,10"
