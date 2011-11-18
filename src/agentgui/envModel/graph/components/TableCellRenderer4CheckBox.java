@@ -31,8 +31,9 @@ package agentgui.envModel.graph.components;
 import java.awt.Color;
 import java.awt.Component;
 
-import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.table.TableCellRenderer;
 
 /**
@@ -40,21 +41,25 @@ import javax.swing.table.TableCellRenderer;
  *
  * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati
  */
-public class TableCellRenderer4Button implements TableCellRenderer {
+public class TableCellRenderer4CheckBox implements TableCellRenderer {
 	
-	private JButton button = new JButton();
+	private JCheckBox checkBox = new JCheckBox();
 
 	/* (non-Javadoc)
 	 * @see javax.swing.table.TableCellRenderer#getTableCellRendererComponent(javax.swing.JTable, java.lang.Object, boolean, boolean, int, int)
 	 */
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-		button.setText(value.toString());
-		button.setOpaque(true);
+		
+		checkBox.setSelected((Boolean) value);
+		checkBox.setHorizontalAlignment(SwingConstants.CENTER);
+		
+		checkBox.setOpaque(true);
 		if(row % 2 == 0){
-			button.setBackground(new Color(242,242,242));
+			checkBox.setBackground(new Color(242,242,242));
 		} else {
-			button.setBackground(new Color(255,255,255));
+			checkBox.setBackground(new Color(255,255,255));
 		}
-		return button;
+		return checkBox;
 	}
+	 
 }

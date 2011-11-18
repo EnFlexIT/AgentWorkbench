@@ -103,9 +103,13 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	/** Default color to be used for edges in the graph	 */
 	public static Color DEFAULT_EDGE_COLOR = Color.BLACK;  //  @jve:decl-index=0:
 	/** Default color to be used for edges in the graph when highlighted/picked. */
-	public static Color DEFAULT_EDGE_PICKED_COLOR = Color.CYAN;
-	/** Default vertex size of the nodes to be used in the range 1 to 5. */
-	public static Integer DEFAULT_VERTEX_SIZE = 3; 
+	public static Color DEFAULT_EDGE_PICKED_COLOR = Color.CYAN;  //  @jve:decl-index=0:
+	/** Default vertex size of the nodes. */
+	public static Integer DEFAULT_VERTEX_SIZE = 10;  //  @jve:decl-index=0:
+	/** Default raster size for guide grid. */
+	public static Integer DEFAULT_RASTER_SIZE = 20;  //  @jve:decl-index=0:
+	/** Default widt for edges. */
+	public static float DEFAULT_EDGE_WIDTH = 2;
 	
 	/** Event argument for notifying observers that Clear Graph button is clicked */
 	public static final String EVENT_NETWORKMODEL_CLEAR = "clear_graph"; // @jve:decl-index=0:
@@ -257,13 +261,64 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	}
 
 	/**
+     * Controls the shape, size, and aspect ratio for each vertex.
+     * @author Satyadeep
+     */
+    private final class VertexShapeSizeAspect<V,E> extends AbstractVertexShapeTransformer <V> implements Transformer<V,Shape>  {
+    	
+        protected boolean scale = false;
+        
+        public VertexShapeSizeAspect() {
+        
+        	this.setSizeTransformer(new Transformer<V,Integer>() {
+        		
+				public Integer transform(V v) {
+		            
+					Integer size = BasicGraphGUI.DEFAULT_VERTEX_SIZE; // default
+					if (scale) {   
+		            	try{
+		            		// --- Get the vertex size from the component type settings -
+			            	ComponentTypeSettings cts = controller.getComponentTypeSettings().get("node");
+			            	Integer vertexSize = cts.getVertexSize();
+			    			if(vertexSize!=null){
+			    				size = vertexSize;
+			    			} else{
+			    				size = BasicGraphGUI.DEFAULT_VERTEX_SIZE;
+			    			}			
+		            	
+		            	} catch(NullPointerException ex){
+							ex.printStackTrace();
+							size = BasicGraphGUI.DEFAULT_VERTEX_SIZE;				
+						}
+		            } 
+		            return size;
+				}});
+        
+        }//end constructor
+        
+		/**
+		 * Sets the scaling.
+		 * @param scale the new scaling
+		 */
+		public void setScaling(boolean scale) {
+            this.scale = scale;
+        }
+                
+        /* (non-Javadoc)
+         * @see org.apache.commons.collections15.Transformer#transform(java.lang.Object)
+         */
+        public Shape transform(V v) {
+        	return factory.getEllipse(v);
+        }
+    }
+    
+    /**
 	 * Gets the VisualizationViewer
 	 * @return The VisualizationViewer
 	 */
 	public VisualizationViewer<GraphNode, GraphEdge> getVisView() {
 		return visView;
 	}
-
 	/**
 	 * This method assigns a graph to a new VisualizationViewer and adds it to
 	 * the GUI This is used for creating graph for the first time
@@ -318,7 +373,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 		if (cts==null) {
 			showLable = true;
 		} else {
-			if (cts.isShowLable()==true){
+			if (cts.isShowLabel()==true){
 				showLable = true;
 			}
 		}
@@ -335,8 +390,8 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 		// --- Configure vertex colors ------------------------------------
 		visView.getRenderContext().setVertexFillPaintTransformer(
 				new Transformer<GraphNode, Paint>() {
-					public Paint transform(GraphNode arg0) {
-						if(visView.getPickedVertexState().isPicked(arg0))
+					public Paint transform(GraphNode node) {
+						if(visView.getPickedVertexState().isPicked(node))
 						{//Highlight color when picked	
 							return BasicGraphGUI.DEFAULT_VERTEX_PICKED_COLOR;
 						}
@@ -362,16 +417,15 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 		// --- Configure edge colors --------------------------------------
 		visView.getRenderContext().setEdgeDrawPaintTransformer(
 		new Transformer<GraphEdge, Paint>() {
-			public Paint transform(GraphEdge arg0) {
-				if(visView.getPickedEdgeState().isPicked(arg0))
-				{//Highlight color when picked	
+			public Paint transform(GraphEdge edge) {
+				if(visView.getPickedEdgeState().isPicked(edge)) {
+					//Highlight color when picked	
 					return BasicGraphGUI.DEFAULT_EDGE_PICKED_COLOR;
-				}
-				else
-				{	//Get the color from the component type settings
+					
+				} else {	//Get the color from the component type settings
 					try{
-						ComponentTypeSettings cts = controller.getComponentTypeSettings().get(arg0.getComponentType());
-						String colorString= cts.getColor();
+						ComponentTypeSettings cts = controller.getComponentTypeSettings().get(edge.getComponentType());
+						String colorString = cts.getColor();
 						if(colorString!=null){
 							Color color = new Color(Integer.parseInt(colorString));							
 							return color;
@@ -392,22 +446,30 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 		visView.getRenderContext().setEdgeLabelTransformer(new Transformer<GraphEdge,String>() {	        	
 			public String transform(GraphEdge edge) {
 				//Get the path of the Image from the component type settings
+				String textDisplay = null;
 				try{
 					ComponentTypeSettings cts = controller.getComponentTypeSettings().get(edge.getComponentType());
 					String edgeImage = cts.getEdgeImage();
+					boolean showLabel = cts.isShowLabel();
+					
+					if (showLabel) {
+						textDisplay = edge.getId();
+					}
+					
 					if(edgeImage!=null){
 						URL url = getClass().getResource(edgeImage);
 						if(url!=null){
-							//If the image path is valid
-							return "<html>"+edge.getId()+"<img src="+url+" height=16 width=16 >";
+							return "<html>"+textDisplay+"<img src="+url+" height=16 width=16 >";
 						}
-						else
-							return edge.getId();
+						else {
+							return textDisplay;
+						}
 					}
-					else
-						return edge.getId();
-				}
-				catch(NullPointerException ex){
+					else {
+						return textDisplay;
+					}
+				
+				} catch(NullPointerException ex) {
 					ex.printStackTrace();
 					return edge.getId();						
 				}
@@ -416,12 +478,24 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 		
 		// --- Use straight lines as edges --------------------------------
 		visView.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line<GraphNode, GraphEdge>());
-		 
+		
 		// --- Set edge width ---------------------------------------------
 		visView.getRenderContext().setEdgeStrokeTransformer(new Transformer<GraphEdge, Stroke>(){
 			@Override
-			public Stroke transform(GraphEdge arg0) {
-				return new BasicStroke(2);
+			public Stroke transform(GraphEdge edge) {
+				float edgeWidth = BasicGraphGUI.DEFAULT_EDGE_WIDTH;
+				try {
+					ComponentTypeSettings cts = controller.getComponentTypeSettings().get(edge.getComponentType());
+					edgeWidth = cts.getEdgeWidth();
+					if(edgeWidth==0) {
+						edgeWidth = BasicGraphGUI.DEFAULT_EDGE_WIDTH;
+					}  
+					
+				} catch (Exception e) {
+					e.printStackTrace();
+					edgeWidth = BasicGraphGUI.DEFAULT_EDGE_WIDTH;
+				}
+				return new BasicStroke(edgeWidth);
 			}
 		}); 
 		
@@ -1032,53 +1106,6 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 		return jMenuItemSplitNode;
 	}
 	 
-    /**
-     * Controls the shape, size, and aspect ratio for each vertex.
-     * @author Satyadeep
-     */
-    private final class VertexShapeSizeAspect<V,E> extends AbstractVertexShapeTransformer <V> implements Transformer<V,Shape>  {
-    	
-        protected boolean scale = false;
-        
-        public VertexShapeSizeAspect() {
-        
-        	setSizeTransformer(new Transformer<V,Integer>() {
-
-				public Integer transform(V v) {
-		            if (scale)
-		            {   // Get the vertex size from the component type settings
-		            	Integer size;
-		            	try{
-			            	ComponentTypeSettings cts =  controller.getComponentTypeSettings().get("node");
-			            	String vertexSize= cts.getVertexSize();
-			    			if(vertexSize!=null){
-			    				size = Integer.parseInt(vertexSize);
-			    			}
-			    			else{
-			    				size = BasicGraphGUI.DEFAULT_VERTEX_SIZE;
-			    			}			
-		            	}
-		            	catch(NullPointerException ex){
-							ex.printStackTrace();
-							size = BasicGraphGUI.DEFAULT_VERTEX_SIZE;				
-						}
-		            	return (int)(size * 5) + 5;
-		            }
-		            else
-		                return 20;
-
-				}});
-        }
-        
-		public void setScaling(boolean scale) {
-            this.scale = scale;
-        }
-                
-        public Shape transform(V v) {
-        	return factory.getEllipse(v);
-        }
-    }
-
 	/**
 	 * Gets the graph environment controller.
 	 * @return the controller

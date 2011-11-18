@@ -60,7 +60,8 @@ de;Basis-Info;Basic info
 de;Bearbeiten;Edit
 de;Beenden;Quit
 de;Beschreibung;Description
-de;Beschriftung anzeigen;Show labels;;;
+de;Beschriftung anzeigen;Show label;;;
+de;Beschriftungen anzeigen;Show labels;;;
 de;Bitte geben Sie den Namen für das neue Setup an!;Please enter a name for the new setup!
 de;Bitte geben Sie den neuen Namen für das Setup an!;Please specify the new name for the setup!
 de;Bitte geben Sie einen Bezeichner für die Referenz an!;Please, specify an identifier for the reference!;;;
@@ -453,6 +454,7 @@ de;Übersetzen;Translate
 de;Übersetzter Text;Text translated
 de;Übersetzung speichern (STRG+S);Save translation (CTRL + S)
 de;Überspringen;Skip
+en;;Edge Width;;;
 en;Ausgewählte Komponente entfernen;Remove selected component;;;
 en;Auswahl Netzwerk-Komonente!;Select Network Component to Add;;;
 en;Bestätigung;Confirmation;;;

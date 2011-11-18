@@ -77,10 +77,7 @@ public class TableCellEditor4TableButton extends AbstractCellEditor implements T
     /* (non-Javadoc)
      * @see javax.swing.table.TableCellEditor#getTableCellEditorComponent(javax.swing.JTable, java.lang.Object, boolean, int, int)
      */
-    public Component getTableCellEditorComponent(JTable table,
-                                                 Object value,
-                                                 boolean isSelected,
-                                                 int row, int column) {
+    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         button.setText(value.toString());
         return button;
     }

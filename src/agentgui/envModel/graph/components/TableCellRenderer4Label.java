@@ -41,13 +41,14 @@ import javax.swing.table.TableCellRenderer;
  *
  * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati
  */
-public class TableCellRenderer4ClassName implements TableCellRenderer {
+public class TableCellRenderer4Label implements TableCellRenderer {
 
 	/* (non-Javadoc)
 	 * @see javax.swing.table.TableCellRenderer#getTableCellRendererComponent(javax.swing.JTable, java.lang.Object, boolean, boolean, int, int)
 	 */
 	@Override
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+		
 		JLabel rendererComponent = new JLabel();
 		String simpleClassName = "";
 		
@@ -60,10 +61,13 @@ public class TableCellRenderer4ClassName implements TableCellRenderer {
 		}
 		
 		rendererComponent.setText(simpleClassName);
+		rendererComponent.setOpaque(true);
 		if(row % 2 == 0){
-			rendererComponent.setOpaque(true);
 			rendererComponent.setBackground(new Color(242,242,242));
+		} else {
+			rendererComponent.setBackground(new Color(255,255,255));
 		}
+		
 		return rendererComponent;
 	}
 

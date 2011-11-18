@@ -61,6 +61,7 @@ import javax.swing.JSpinner;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingConstants;
 import javax.swing.border.EtchedBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
@@ -77,10 +78,10 @@ import agentgui.envModel.graph.networkModel.ComponentTypeSettings;
 import agentgui.envModel.graph.prototypes.GraphElementPrototype;
 
 /**
- * GUI dialog for configuring network component types 
+ * GUI dialog for configuring network component types
+ *  
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
- * @author <br>Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati 
- * 
+ * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati 
  */
 public class ComponentTypeDialog extends JDialog implements ActionListener{
 	
@@ -193,7 +194,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		
 		// --- Set the show label property ------------------------------------
 		if(ctsNode!= null){
-			this.jCheckBoxLableVisible.setSelected(ctsNode.isShowLable());
+			this.jCheckBoxLableVisible.setSelected(ctsNode.isShowLabel());
 		}  else {
 			this.jCheckBoxLableVisible.setSelected(true);
 		}
@@ -201,9 +202,9 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		// --- Set the vertex size from the component type settings -----------
 		Integer size;
 		if(ctsNode!=null) {
-			String vertexSize= ctsNode.getVertexSize();				
+			Integer vertexSize= ctsNode.getVertexSize();				
 			if(vertexSize!=null){
-				size = Integer.parseInt(vertexSize);
+				size = vertexSize;
 			} else {
 				size = BasicGraphGUI.DEFAULT_VERTEX_SIZE;
 			}
@@ -211,7 +212,6 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			size = BasicGraphGUI.DEFAULT_VERTEX_SIZE;
 		}
 		jComboBoxNodeSize.setSelectedItem(size);
-
 		
 		// --- Get the color from the component type settings -----------------
 		Color color;
@@ -231,9 +231,14 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		// --- Get the Guide grid configuration -------------------------------
 		if (ctsNode!=null) {
 			
-			double snapRaster = ctsNode.getSnapRaster();
-			this.getJSpinnerGridWidth().setValue(new Double(snapRaster));
 			this.getJCheckBoxSnap2Grid().setSelected(ctsNode.isSnap2Grid());
+			
+			double snapRaster = ctsNode.getSnapRaster();
+			if (snapRaster==0) {
+				snapRaster = BasicGraphGUI.DEFAULT_RASTER_SIZE;
+			}
+			this.getJSpinnerGridWidth().setValue(new Double(snapRaster));
+			
 		}
 		
 	}
@@ -374,27 +379,37 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			jTableComponentTypes.setModel(getClassesTableModel());
 			jTableComponentTypes.setAutoCreateRowSorter(true);
 			
+			//Set up renderer and editor for show label
+			TableColumn showLabelClassColumn = jTableComponentTypes.getColumnModel().getColumn(1);
+			showLabelClassColumn.setCellEditor(new TableCellEditor4CheckBox(this.getCheckBoxEdgeWidth()));
+			showLabelClassColumn.setCellRenderer(new TableCellRenderer4CheckBox());
+			showLabelClassColumn.setPreferredWidth(30);
+			
 			//Set up renderer and editor for the agent class column
-			TableColumn agentClassColumn = jTableComponentTypes.getColumnModel().getColumn(1);
+			TableColumn agentClassColumn = jTableComponentTypes.getColumnModel().getColumn(2);
 			agentClassColumn.setCellEditor(new TableCellEditor4AgentClass());
-			agentClassColumn.setCellRenderer(new TableCellRenderer4ClassName());
+			agentClassColumn.setCellRenderer(new TableCellRenderer4Label());
 			
 			//Set up renderer and editor for Graph prototype column
-			TableColumn prototypeClassColumn = jTableComponentTypes.getColumnModel().getColumn(2);
+			TableColumn prototypeClassColumn = jTableComponentTypes.getColumnModel().getColumn(3);
 			prototypeClassColumn.setCellEditor(getPrototypeClassesCellEditor());
-			prototypeClassColumn.setCellRenderer(new TableCellRenderer4ClassName());
-			prototypeClassColumn.setPreferredWidth(100);
+			prototypeClassColumn.setCellRenderer(new TableCellRenderer4Label());
 			
 			//Set up Editor for the ImageIcon column
-			TableColumn imageIconColumn = jTableComponentTypes.getColumnModel().getColumn(3);
+			TableColumn imageIconColumn = jTableComponentTypes.getColumnModel().getColumn(4);
 			imageIconColumn.setCellEditor(new TableCellEditor4Image(currProject));		
 			imageIconColumn.setPreferredWidth(30);
 			
+			//Set up renderer and editor for the edge width.	        
+			TableColumn edgeWidthColumn = jTableComponentTypes.getColumnModel().getColumn(5);
+			edgeWidthColumn.setCellEditor(new TableCellEditor4Combo(this.getCombo4EdgeWidth()));
+			edgeWidthColumn.setPreferredWidth(20);
+			
 			//Set up renderer and editor for the  Color column.	        
-			TableColumn colorColumn = jTableComponentTypes.getColumnModel().getColumn(4);
+			TableColumn colorColumn = jTableComponentTypes.getColumnModel().getColumn(6);
 			colorColumn.setCellEditor(new TableCellEditor4Color());
 			colorColumn.setCellRenderer(new TableCellRenderer4Color(true));			
-			colorColumn.setPreferredWidth(30);
+			colorColumn.setPreferredWidth(20);
 		}
 		return jTableComponentTypes;
 	}
@@ -411,9 +426,11 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		// Headlines
 		Vector<String> titles = new Vector<String>();
 		titles.add(Language.translate("Typ-Bezeichner"));
+		titles.add(Language.translate("Beschriftung anzeigen"));
 		titles.add(Language.translate("Agentenklasse"));
 		titles.add(Language.translate("Graph-Prototyp"));
 		titles.add(Language.translate("Image",Language.EN));
+		titles.add(Language.translate("Edge Width",Language.EN));
 		titles.add(Language.translate("Edge Color",Language.EN));		
 		
 		Vector<Vector<Object>> dataRows = new Vector<Vector<Object>>();
@@ -425,16 +442,23 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 				String etName = etsIter.next();
 				if(etName.equals("node")==false){	// The node class is defined in the JTextField, not in the table
 					
+					ComponentTypeSettings cts = this.currCompTypSettings.get(etName);
+					String imagePath = cts.getEdgeImage();
+					Float edgeWidth = cts.getEdgeWidth();
+					if (edgeWidth==0) {
+						edgeWidth = BasicGraphGUI.DEFAULT_EDGE_WIDTH;
+					}
+					Color edgeColor = new Color(Integer.parseInt(cts.getColor()));
+					
+					// --- Create row vector --------------
 					Vector<Object> newRow = new Vector<Object>();
 					newRow.add(etName);
-					newRow.add(this.currCompTypSettings.get(etName).getAgentClass());
-					newRow.add(this.currCompTypSettings.get(etName).getGraphPrototype());
-
-					//The description is used to store the path along with the ImageIcon
-					String imagePath = this.currCompTypSettings.get(etName).getEdgeImage();
+					newRow.add(cts.isShowLabel());
+					newRow.add(cts.getAgentClass());
+					newRow.add(cts.getGraphPrototype());
 					newRow.add(createImageIcon(imagePath, imagePath));
-					
-					newRow.add(new Color(Integer.parseInt(this.currCompTypSettings.get(etName).getColor())));
+					newRow.add(edgeWidth);
+					newRow.add(edgeColor);
 					
 					dataRows.add(newRow);
 				}
@@ -445,9 +469,9 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			private static final long serialVersionUID = 1L;
 
 			public Class<?> getColumnClass(int c) {
-		            if(c==3)
+		            if(c==4)
 		            	return ImageIcon.class;
-		            else if(c==4)
+		            else if(c==6)
 		            	return Color.class;
 		            else 
 		            	return String.class;
@@ -465,6 +489,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		newRow.add(null); //Agent class
 		newRow.add(null); //Graph Prototype
 		newRow.add(createImageIcon(null,"MissingIcon")); //Edge ImageIcon
+		newRow.add(BasicGraphGUI.DEFAULT_EDGE_WIDTH); //Edge Width
 		newRow.add(BasicGraphGUI.DEFAULT_EDGE_COLOR); //Edge Color
 
 		((DefaultTableModel)getJTableClasses().getModel()).addRow(newRow);
@@ -512,6 +537,26 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		return prototypeClassesCellEditor;
 	}
 	
+	/**
+	 * Gets the combo4 edge width.
+	 * @return the combo4 edge width
+	 */
+	private JComboBox getCombo4EdgeWidth() {
+		Float[] sizeList = {(float) 1.0, (float) 1.5, (float) 2.0, (float) 2.5, (float) 3.0, (float) 3.5, (float) 4.0, (float) 4.5, (float) 5.0};
+		DefaultComboBoxModel cbmSizes = new DefaultComboBoxModel(sizeList); 
+		JComboBox combo = new JComboBox(cbmSizes);
+		return combo;
+	}
+	
+	/**
+	 * Gets the check box edge width.
+	 * @return the check box edge width
+	 */
+	private JCheckBox getCheckBoxEdgeWidth() {
+		JCheckBox checkBox = new JCheckBox();
+		checkBox.setHorizontalAlignment(SwingConstants.CENTER);
+		return checkBox;
+	}
 	/**
 	 * This method builds a vector for initiating the cellEditorAgentClass' ComboBox model, and initiates the agentClasses HashMap.	
 	 * @return Vector containing the simple names of the projects agent classes.
@@ -589,18 +634,17 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	 * @param description
 	 * @return ImageIcon 
 	 */
-	protected ImageIcon createImageIcon(String path,
-	                                           String description) {
+	protected ImageIcon createImageIcon(String path, String description) {
+		
 		if(path!=null ){			
 		    java.net.URL imgURL = getClass().getResource(path);
 		    if (imgURL != null) {
 		        return new ImageIcon(imgURL, description);
 		    } else {
-		       // System.err.println("Couldn't find file: " + path);
 		        return (new MissingIcon(description));
 		    }
-		}
-		else{
+		
+		} else{
 		    return (new MissingIcon(description));		    
 		}
 			
@@ -806,11 +850,11 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	 */
 	private JComboBox getJComboBoxNodeSize() {
 		if (jComboBoxNodeSize == null) {
-			jComboBoxNodeSize = new JComboBox();
-			jComboBoxNodeSize.setPreferredSize(new Dimension(43, 26));
-			Integer[] sizeList = {1,2,3,4,5};
+			Integer[] sizeList = {0,5,6,7,8,9,10,11,12,13,14,15,20,25,30,35,40,45,50};
 			DefaultComboBoxModel cbmSizes = new DefaultComboBoxModel(sizeList); 
-			jComboBoxNodeSize.setModel(cbmSizes);
+
+			jComboBoxNodeSize = new JComboBox(cbmSizes);
+			jComboBoxNodeSize.setPreferredSize(new Dimension(50, 26));
 			
 		}
 		return jComboBoxNodeSize;
@@ -823,7 +867,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	private JCheckBox getJCheckBoxLableVisible() {
 		if (jCheckBoxLableVisible == null) {
 			jCheckBoxLableVisible = new JCheckBox();
-			jCheckBoxLableVisible.setText("Beschriftung anzeigen");
+			jCheckBoxLableVisible.setText("Beschriftungen anzeigen");
 			jCheckBoxLableVisible.setText(Language.translate(jCheckBoxLableVisible.getText()));
 		}
 		return jCheckBoxLableVisible;
@@ -904,7 +948,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	 */
 	private JSpinner getJSpinnerGridWidth() {
 		if (jSpnnerGridWidth == null) {
-			jSpnnerGridWidth = new JSpinner(new SpinnerNumberModel(0.0, 0.0, 100.0, 0.1));
+			jSpnnerGridWidth = new JSpinner(new SpinnerNumberModel(5.0, 5.0, 100.0, 0.1));
 			jSpnnerGridWidth.setPreferredSize(new Dimension(80, 26));
 		}
 		return jSpnnerGridWidth;
@@ -935,16 +979,22 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 				String name = (String) jtc.getValueAt(row, 0);
 				//Check for non empty name
 				if(name!=null && name.length()!=0){
-					ImageIcon imageIcon = (ImageIcon)jtc.getValueAt(row,3);
-					Color color = (Color)jtc.getValueAt(row, 4);
-					ComponentTypeSettings ets = new ComponentTypeSettings(
-							(String)jtc.getValueAt(row, 1), 
-							(String)jtc.getValueAt(row, 2),
+					
+					ImageIcon imageIcon = (ImageIcon)jtc.getValueAt(row,4);
+					float edgeWidth = (Float)jtc.getValueAt(row, 5);
+					Color color = (Color)jtc.getValueAt(row, 6);
+					boolean showLable = (Boolean) jtc.getValueAt(row, 1);
+					
+					ComponentTypeSettings cts = new ComponentTypeSettings(
+							(String)jtc.getValueAt(row, 2), 
+							(String)jtc.getValueAt(row, 3),
 							imageIcon.getDescription(),
 							String.valueOf(color.getRGB())
 							);
+					cts.setEdgeWidth(edgeWidth);
+					cts.setShowLabel(showLable);
 					// Use name as key
-					ctsHash.put(name, ets);
+					ctsHash.put(name, cts);
 				}
 			}
 			
@@ -952,8 +1002,8 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			String nodeColor = String.valueOf(getJButtonNodeColor().getBackground().getRGB());
 			
 			ComponentTypeSettings cts = new ComponentTypeSettings(getJTextFieldNodeClass().getText(), null, null, nodeColor);
-			cts.setVertexSize(String.valueOf(jComboBoxNodeSize.getSelectedItem()));
-			cts.setShowLable(this.jCheckBoxLableVisible.isSelected());
+			cts.setVertexSize((Integer) this.jComboBoxNodeSize.getSelectedItem());
+			cts.setShowLabel(this.jCheckBoxLableVisible.isSelected());
 			cts.setSnap2Grid(this.jCheckBoxSnap2Grid.isSelected());
 			cts.setSnapRaster((Double)jSpnnerGridWidth.getValue());
 			ctsHash.put("node", cts);
@@ -974,8 +1024,8 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 				setNodeColor(newColor);
 			}				
 		}
-		
-	}
 	
+	}
+
 	
 }  //  @jve:decl-index=0:visual-constraint="10,10"

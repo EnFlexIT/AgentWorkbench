@@ -49,14 +49,16 @@ public class ComponentTypeSettings implements Serializable {
 	/** The GraphElementPrototype class representing this component type */
 	private String graphPrototype;
 	/** The image icon which will be displayed on the component graph edges. */
+	private float edgeWidth = 2;
+	/** The image icon which will be displayed on the component graph edges. */
 	private String edgeImage = null;
 	/** The color which will be displayed on the component graph edges. */
 	private String color = null;
 	/** Indicates if a label is visible or not. */
-	private boolean showLable = true;
+	private boolean showLabel = true;
 	
 	/** The vertex size, used only for the component type settings of the key "node". */
-	private String vertexSize = null;
+	private Integer vertexSize = null;
 	/** The vertex size, used only for the component type settings of the key "node". */
 	private boolean snap2Grid= false;
 	/** The vertex size, used only for the component type settings of the key "node". */
@@ -108,6 +110,22 @@ public class ComponentTypeSettings implements Serializable {
 	public void setGraphPrototype(String graphPrototype) {
 		this.graphPrototype = graphPrototype;
 	}
+	
+	/**
+	 * Gets the edge width.
+	 * @return the edge width
+	 */
+	public float getEdgeWidth() {
+		return edgeWidth;
+	}
+	/**
+	 * Sets the edge width.
+	 * @param edgeWidth the new edge width
+	 */
+	public void setEdgeWidth(float edgeWidth) {
+		this.edgeWidth = edgeWidth;
+	}
+	
 	/**
 	 * Returns the path to the edge image icon
 	 * @return the edgeImage
@@ -140,14 +158,14 @@ public class ComponentTypeSettings implements Serializable {
 	/**
 	 * @param showLable the showLable to set
 	 */
-	public void setShowLable(boolean showLable) {
-		this.showLable = showLable;
+	public void setShowLabel(boolean showLable) {
+		this.showLabel = showLable;
 	}
 	/**
 	 * @return the showLable
 	 */
-	public boolean isShowLable() {
-		return showLable;
+	public boolean isShowLabel() {
+		return showLabel;
 	}
 	
 	
@@ -156,7 +174,7 @@ public class ComponentTypeSettings implements Serializable {
 	 * Used only for the component type settings of the key "node".
 	 * @return the vertex size as String. 
 	 */
-	public String getVertexSize(){
+	public Integer getVertexSize(){
 		return this.vertexSize;
 	}
 	/**
@@ -164,7 +182,7 @@ public class ComponentTypeSettings implements Serializable {
 	 * Used only for the component type settings of the key "node".
 	 * @param vertexSize
 	 */
-	public void setVertexSize(String vertexSize){
+	public void setVertexSize(Integer vertexSize){
 		this.vertexSize = vertexSize;
 	}
 	
@@ -197,5 +215,6 @@ public class ComponentTypeSettings implements Serializable {
 	public double getSnapRaster() {
 		return snapRaster;
 	}
+	
 
 }

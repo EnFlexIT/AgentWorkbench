@@ -324,7 +324,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		RowFilter<DefaultTableModel, Object> rf = null;
         //If current expression doesn't parse, don't update.
         try {
-            rf = RowFilter.regexFilter(getJTextFieldSearch().getText(), 0, 1);
+            rf = RowFilter.regexFilter("(?i).*(" + getJTextFieldSearch().getText() + ").*",  0, 1);
         } catch (java.util.regex.PatternSyntaxException e) {
             return;
         }
