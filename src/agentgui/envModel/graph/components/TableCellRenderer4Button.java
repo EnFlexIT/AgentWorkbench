@@ -28,12 +28,13 @@
  */
 package agentgui.envModel.graph.components;
 
-import java.awt.Color;
 import java.awt.Component;
 
 import javax.swing.JButton;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
+
+import agentgui.envModel.graph.GraphGlobals;
 
 /**
  * Is used in the {@link ComponentTypeDialog} for rendering JButton.
@@ -50,11 +51,7 @@ public class TableCellRenderer4Button implements TableCellRenderer {
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 		button.setText(value.toString());
 		button.setOpaque(true);
-		if(row % 2 == 0){
-			button.setBackground(new Color(242,242,242));
-		} else {
-			button.setBackground(new Color(255,255,255));
-		}
+		GraphGlobals.Colors.setTableCellRendererColors(button, row, isSelected);
 		return button;
 	}
 }

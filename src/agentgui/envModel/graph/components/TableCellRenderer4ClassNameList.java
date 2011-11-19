@@ -34,6 +34,8 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 
+import agentgui.envModel.graph.GraphGlobals;
+
 
 /**
  * Is used in the {@link ComponentTypeDialog} for displaying agent classes
@@ -42,13 +44,14 @@ import javax.swing.ListCellRenderer;
  */
 public class TableCellRenderer4ClassNameList implements ListCellRenderer {
 
+	JLabel rendererComponent = new JLabel();
+	
 	/* (non-Javadoc)
 	 * @see javax.swing.ListCellRenderer#getListCellRendererComponent(javax.swing.JList, java.lang.Object, int, boolean, boolean)
 	 */
 	@Override
 	public Component getListCellRendererComponent(JList arg0, Object arg1, int arg2, boolean arg3, boolean arg4) {
 		
-		JLabel rendererComponent = new JLabel();
 		String simpleClassName = "";
 		if(arg1 != null){
 			String className = (String) arg1;
@@ -58,6 +61,7 @@ public class TableCellRenderer4ClassNameList implements ListCellRenderer {
 			}
 		}
 		
+		GraphGlobals.Colors.setTableCellRendererColors(rendererComponent, arg2, arg3);
 		rendererComponent.setText(simpleClassName);
 		return rendererComponent;
 	}

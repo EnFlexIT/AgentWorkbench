@@ -14,52 +14,49 @@ xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
 <node id="PP10">
 <data key="pos">260.0:190.0</data>
 </node>
-<node id="PP7">
-<data key="pos">260.0:410.0</data>
-</node>
 <node id="PP3">
 <data key="pos">230.0:440.0</data>
-</node>
-<node id="PP11">
-<data key="pos">260.0:160.0</data>
-</node>
-<node id="PP5">
-<data key="pos">290.0:440.0</data>
-</node>
-<node id="PP4">
-<data key="pos">260.0:440.0</data>
-</node>
-<node id="PP9">
-<data key="pos">260.0:130.0</data>
-</node>
-<node id="PP1">
-<data key="pos">260.0:230.0</data>
 </node>
 <node id="PP8">
 <data key="pos">260.0:70.0</data>
 </node>
+<node id="PP9">
+<data key="pos">260.0:130.0</data>
+</node>
+<node id="PP4">
+<data key="pos">260.0:440.0</data>
+</node>
+<node id="PP11">
+<data key="pos">260.0:160.0</data>
+</node>
 <node id="PP2">
 <data key="pos">260.0:310.0</data>
 </node>
-<node id="PP12">
-<data key="pos">290.0:160.0</data>
+<node id="PP1">
+<data key="pos">260.0:230.0</data>
+</node>
+<node id="PP7">
+<data key="pos">260.0:410.0</data>
 </node>
 <node id="PP13">
 <data key="pos">400.0:160.0</data>
 </node>
-<edge id="n6" source="PP13" target="PP12">
+<node id="PP12">
+<data key="pos">290.0:160.0</data>
+</node>
+<node id="PP5">
+<data key="pos">290.0:440.0</data>
+</node>
+<edge id="n1" source="PP1" target="PP2">
 <desc>Compressor</desc>
 </edge>
 <edge id="n4" source="PP9" target="PP8">
 <desc>Compressor</desc>
 </edge>
-<edge id="n1" source="PP1" target="PP2">
+<edge id="n6" source="PP13" target="PP12">
 <desc>Compressor</desc>
 </edge>
 <edge id="n5_1" directed="false" source="PP11" target="PP10">
-<desc>Branch</desc>
-</edge>
-<edge id="n2_0" directed="false" source="PP7" target="PP4">
 <desc>Branch</desc>
 </edge>
 <edge id="n2_1" directed="false" source="PP4" target="PP3">
@@ -68,16 +65,19 @@ xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
 <edge id="n5_2" directed="false" source="PP11" target="PP9">
 <desc>Branch</desc>
 </edge>
-<edge id="n3" directed="false" source="PP2" target="PP7">
-<desc>Pipe</desc>
+<edge id="n2_2" directed="false" source="PP4" target="PP5">
+<desc>Branch</desc>
 </edge>
 <edge id="n0" directed="false" source="PP10" target="PP1">
 <desc>Pipe</desc>
 </edge>
-<edge id="n2_2" directed="false" source="PP4" target="PP5">
-<desc>Branch</desc>
+<edge id="n3" directed="false" source="PP2" target="PP7">
+<desc>Pipe</desc>
 </edge>
 <edge id="n5_0" directed="false" source="PP11" target="PP12">
+<desc>Branch</desc>
+</edge>
+<edge id="n2_0" directed="false" source="PP7" target="PP4">
 <desc>Branch</desc>
 </edge>
 </graph>

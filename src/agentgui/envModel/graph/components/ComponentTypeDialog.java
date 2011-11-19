@@ -64,8 +64,9 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EtchedBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
+import javax.swing.table.TableColumnModel;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
@@ -87,6 +88,15 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	
 	/** Generated serialVersionUID */
 	private static final long serialVersionUID = 1L;
+	
+	private Vector<String> columnHeader 	= null;  //  @jve:decl-index=0:
+	public final String COL_TypeSpecifier 	= Language.translate("Type-Specifier", Language.EN);  //  @jve:decl-index=0:
+	public final String COL_AgentClass 		= Language.translate("Agent class", Language.EN);
+	public final String COL_GraphPrototyp 	= Language.translate("Graph-prototype", Language.EN);  //  @jve:decl-index=0:
+	public final String COL_ShowLabel 		= Language.translate("Show label", Language.EN);  //  @jve:decl-index=0:
+	public final String COL_Image 			= Language.translate("Image", Language.EN);  //  @jve:decl-index=0:
+	public final String COL_EdgeWidth 		= Language.translate("Edge Width", Language.EN);  //  @jve:decl-index=0:
+	public final String COL_EdgeColor 		= Language.translate("Edge Color", Language.EN);  //  @jve:decl-index=0:
 	
 	private final String pathImage = GraphGlobals.getPathImages();
 
@@ -125,18 +135,19 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	private JButton jButtonNodeColor = null;
 	
 	private JTable jTableComponentTypes = null;
+	private DefaultTableModel componentTypesModel = null;
+	
 	private ClassSelector nodeClassSelector = null;
-	private JComboBox jComboBoxAgentClasses = null;
 	
 	/** Cell editor for the prototype classes column */
 	private TableCellEditor4ClassSelector prototypeClassesCellEditor = null;  //  @jve:decl-index=0:
-	/** All available agent classes, accessible by simple class name */
-	private HashMap<String, Class<?>> availableAgentClasses = null;  //  @jve:decl-index=0:
 	
 	
 	/**
-	 * This is the default constructor
-	 * @param parent The parent GUI
+	 * This is the default constructor.
+	 *
+	 * @param currentCTS the current HashMap with the ComponentTypeSettings
+	 * @param project the current project
 	 */
 	public ComponentTypeDialog(HashMap<String,ComponentTypeSettings> currentCTS, Project project) {
 		super(Application.MainWindow);
@@ -152,7 +163,6 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	private void initialize() {
 		
 		this.setSize(980, 589);
-		this.setContentPane(getJContentPane());
 		this.setTitle("Komponententyp-Definition");
 		this.setTitle(Language.translate(this.getTitle()));
 		this.setModal(true);
@@ -167,7 +177,8 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		int top = (screenSize.height - this.getHeight()) / 2; 
 	    int left = (screenSize.width - this.getWidth()) / 2; 
 	    this.setLocation(left, top);		
-		
+	    
+	    this.setContentPane(getJContentPane());
 	    this.setNodeConfiguration();
 	    
 	}
@@ -356,7 +367,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	private JScrollPane getJScrollPaneClassTable() {
 		if (jScrollPaneClassTable == null) {
 			jScrollPaneClassTable = new JScrollPane();
-			jScrollPaneClassTable.setViewportView(getJTableClasses());
+			jScrollPaneClassTable.setViewportView(getJTable4ComponentTypes());
 		}
 		return jScrollPaneClassTable;
 	}
@@ -369,132 +380,189 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	 * 
 	 * @return javax.swing.JTable	
 	 */
-	private JTable getJTableClasses() {
+	private JTable getJTable4ComponentTypes() {
 		if (jTableComponentTypes == null) {
 			jTableComponentTypes = new JTable();
 			jTableComponentTypes.setFillsViewportHeight(true);
 			jTableComponentTypes.setShowGrid(true);
 			jTableComponentTypes.setRowHeight(20);
 			jTableComponentTypes.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jTableComponentTypes.setModel(getClassesTableModel());
+			jTableComponentTypes.setModel(getTableModel4ComponentTypes());
 			jTableComponentTypes.setAutoCreateRowSorter(true);
 			
-			//Set up renderer and editor for show label
-			TableColumn showLabelClassColumn = jTableComponentTypes.getColumnModel().getColumn(1);
-			showLabelClassColumn.setCellEditor(new TableCellEditor4CheckBox(this.getCheckBoxEdgeWidth()));
-			showLabelClassColumn.setCellRenderer(new TableCellRenderer4CheckBox());
-			showLabelClassColumn.setPreferredWidth(30);
+			TableColumnModel tcm = jTableComponentTypes.getColumnModel();
 			
 			//Set up renderer and editor for the agent class column
-			TableColumn agentClassColumn = jTableComponentTypes.getColumnModel().getColumn(2);
+			TableColumn agentClassColumn = tcm.getColumn(getColumnHeaderIndex(COL_AgentClass));
 			agentClassColumn.setCellEditor(new TableCellEditor4AgentClass());
 			agentClassColumn.setCellRenderer(new TableCellRenderer4Label());
 			
 			//Set up renderer and editor for Graph prototype column
-			TableColumn prototypeClassColumn = jTableComponentTypes.getColumnModel().getColumn(3);
+			TableColumn prototypeClassColumn = tcm.getColumn(getColumnHeaderIndex(COL_GraphPrototyp));
 			prototypeClassColumn.setCellEditor(getPrototypeClassesCellEditor());
 			prototypeClassColumn.setCellRenderer(new TableCellRenderer4Label());
 			
+			//Set up renderer and editor for show label
+			TableColumn showLabelClassColumn = tcm.getColumn(getColumnHeaderIndex(COL_ShowLabel));
+			showLabelClassColumn.setCellEditor(new TableCellEditor4CheckBox(this.getCheckBoxEdgeWidth()));
+			showLabelClassColumn.setCellRenderer(new TableCellRenderer4CheckBox());
+			showLabelClassColumn.setPreferredWidth(15);
+			
 			//Set up Editor for the ImageIcon column
-			TableColumn imageIconColumn = jTableComponentTypes.getColumnModel().getColumn(4);
+			TableColumn imageIconColumn = tcm.getColumn(getColumnHeaderIndex(COL_Image));
 			imageIconColumn.setCellEditor(new TableCellEditor4Image(currProject));		
-			imageIconColumn.setPreferredWidth(30);
+			imageIconColumn.setPreferredWidth(15);
 			
 			//Set up renderer and editor for the edge width.	        
-			TableColumn edgeWidthColumn = jTableComponentTypes.getColumnModel().getColumn(5);
+			TableColumn edgeWidthColumn = tcm.getColumn(getColumnHeaderIndex(COL_EdgeWidth));
 			edgeWidthColumn.setCellEditor(new TableCellEditor4Combo(this.getCombo4EdgeWidth()));
-			edgeWidthColumn.setPreferredWidth(20);
+			edgeWidthColumn.setPreferredWidth(15);
 			
 			//Set up renderer and editor for the  Color column.	        
-			TableColumn colorColumn = jTableComponentTypes.getColumnModel().getColumn(6);
+			TableColumn colorColumn = tcm.getColumn(getColumnHeaderIndex(COL_EdgeColor));
 			colorColumn.setCellEditor(new TableCellEditor4Color());
 			colorColumn.setCellRenderer(new TableCellRenderer4Color(true));			
-			colorColumn.setPreferredWidth(20);
+			colorColumn.setPreferredWidth(15);
 		}
 		return jTableComponentTypes;
+	}
+	
+	
+	/**
+	 * Gets the Vector of the column header in the needed order.
+	 * @return the column header
+	 */
+	private Vector<String> getColumnHeader() {
+		if (columnHeader==null) {
+			columnHeader = new Vector<String>();
+			columnHeader.add(COL_TypeSpecifier);
+			columnHeader.add(COL_AgentClass);
+			columnHeader.add(COL_GraphPrototyp);
+			columnHeader.add(COL_ShowLabel);
+			columnHeader.add(COL_Image);			
+			columnHeader.add(COL_EdgeWidth);
+			columnHeader.add(COL_EdgeColor);
+		}
+		return columnHeader;
+	}
+	/**
+	 * Gets the header index.
+	 *
+	 * @param header the header
+	 * @return the header index
+	 */
+	private int getColumnHeaderIndex(String header) {
+		
+		Vector<String> headers = this.getColumnHeader();
+		int headerIndex = -1;
+		for (int i=0; i < headers.size(); i++) {
+			if (headers.get(i).equals(header)) {
+				headerIndex = i;
+				break;
+			}
+		}
+		return headerIndex;
 	}
 	
 	/**
 	 * This method initiates the jTableClasses' TableModel
 	 * @return The TableModel
 	 */
-	private TableModel getClassesTableModel(){
-		
-		// The ComboBoxModels must be initiated before adding rows 
-		getJComboBoxAgentClasses();
-		
-		// Headlines
-		Vector<String> titles = new Vector<String>();
-		titles.add(Language.translate("Typ-Bezeichner"));
-		titles.add(Language.translate("Beschriftung anzeigen"));
-		titles.add(Language.translate("Agentenklasse"));
-		titles.add(Language.translate("Graph-Prototyp"));
-		titles.add(Language.translate("Image",Language.EN));
-		titles.add(Language.translate("Edge Width",Language.EN));
-		titles.add(Language.translate("Edge Color",Language.EN));		
-		
-		Vector<Vector<Object>> dataRows = new Vector<Vector<Object>>();
-		
-		// Set table entries for defined assignments, if any
-		if(this.currCompTypSettings!=null){
-			Iterator<String> etsIter = this.currCompTypSettings.keySet().iterator();
-			while(etsIter.hasNext()){
-				String etName = etsIter.next();
-				if(etName.equals("node")==false){	// The node class is defined in the JTextField, not in the table
-					
-					ComponentTypeSettings cts = this.currCompTypSettings.get(etName);
-					String imagePath = cts.getEdgeImage();
-					Float edgeWidth = cts.getEdgeWidth();
-					if (edgeWidth==0) {
-						edgeWidth = BasicGraphGUI.DEFAULT_EDGE_WIDTH;
+	private DefaultTableModel getTableModel4ComponentTypes(){
+		if (componentTypesModel== null) {
+			// ----------------------------------------------------------------
+			// The ComboBoxModels must be initiated before adding rows 
+			//getJComboBoxAgentClasses();
+			
+			Vector<Vector<Object>> dataRows = new Vector<Vector<Object>>();
+			
+			// Set table entries for defined assignments, if any
+			if(this.currCompTypSettings!=null){
+				Iterator<String> etsIter = this.currCompTypSettings.keySet().iterator();
+				while(etsIter.hasNext()){
+					String etName = etsIter.next();
+					if(etName.equals("node")==false){	// The node class is defined in the JTextField, not in the table
+						
+						ComponentTypeSettings cts = this.currCompTypSettings.get(etName);
+						String imagePath = cts.getEdgeImage();
+						Float edgeWidth = cts.getEdgeWidth();
+						if (edgeWidth==0) {
+							edgeWidth = BasicGraphGUI.DEFAULT_EDGE_WIDTH;
+						}
+						Color edgeColor = new Color(Integer.parseInt(cts.getColor()));
+						
+						// --- Create row vector --------------
+						Vector<Object> newRow = new Vector<Object>();
+						for (int i = 0; i < this.getColumnHeader().size(); i++) {
+							if (i == getColumnHeaderIndex(COL_TypeSpecifier)) {
+								newRow.add(etName);
+							} else if (i == getColumnHeaderIndex(COL_AgentClass)) {
+								newRow.add(cts.getAgentClass());
+							} else if (i == getColumnHeaderIndex(COL_GraphPrototyp)) {
+								newRow.add(cts.getGraphPrototype());
+							} else if (i == getColumnHeaderIndex(COL_ShowLabel)) {
+								newRow.add(cts.isShowLabel());
+							} else if (i == getColumnHeaderIndex(COL_Image)) {
+								newRow.add(createImageIcon(imagePath, imagePath));
+							} else if (i == getColumnHeaderIndex(COL_EdgeWidth)) {
+								newRow.add(edgeWidth);
+							} else if (i == getColumnHeaderIndex(COL_EdgeColor)) {
+								newRow.add(edgeColor);
+							}
+						}
+						dataRows.add(newRow);
 					}
-					Color edgeColor = new Color(Integer.parseInt(cts.getColor()));
-					
-					// --- Create row vector --------------
-					Vector<Object> newRow = new Vector<Object>();
-					newRow.add(etName);
-					newRow.add(cts.isShowLabel());
-					newRow.add(cts.getAgentClass());
-					newRow.add(cts.getGraphPrototype());
-					newRow.add(createImageIcon(imagePath, imagePath));
-					newRow.add(edgeWidth);
-					newRow.add(edgeColor);
-					
-					dataRows.add(newRow);
 				}
 			}
+			// --------------------------------------------
+			// --- define the TableModel --- Start --------
+			componentTypesModel = new DefaultTableModel(dataRows, this.getColumnHeader()){
+				private static final long serialVersionUID = 3550155601170744633L;
+				/* (non-Javadoc)
+				 * @see javax.swing.table.AbstractTableModel#getColumnClass(int)
+				 */
+				public Class<?> getColumnClass(int columnIndex) {
+			            if(columnIndex==getColumnHeaderIndex(COL_Image))
+			            	return ImageIcon.class;
+			            else if(columnIndex==getColumnHeaderIndex(COL_EdgeColor))
+			            	return Color.class;
+			            else 
+			            	return String.class;
+			        }
+				};
+			// --- define the TableModel --- End ----------
+			// --------------------------------------------
+			// ----------------------------------------------------------------
 		}
-		
-		return new DefaultTableModel(dataRows, titles){
-			private static final long serialVersionUID = 1L;
-
-			public Class<?> getColumnClass(int c) {
-		            if(c==4)
-		            	return ImageIcon.class;
-		            else if(c==6)
-		            	return Color.class;
-		            else 
-		            	return String.class;
-		        }
-		};
+		return componentTypesModel;
 	}
 	
 	/**
 	 * This method adds a new row to the jTableClasses' TableModel
 	 */
 	private void addRow(){
-		//Creating a new dummy row
+		// --- Create row vector --------------
 		Vector<Object> newRow = new Vector<Object>();
-		newRow.add(null); //Type name
-		newRow.add(null); //Agent class
-		newRow.add(null); //Graph Prototype
-		newRow.add(createImageIcon(null,"MissingIcon")); //Edge ImageIcon
-		newRow.add(BasicGraphGUI.DEFAULT_EDGE_WIDTH); //Edge Width
-		newRow.add(BasicGraphGUI.DEFAULT_EDGE_COLOR); //Edge Color
-
-		((DefaultTableModel)getJTableClasses().getModel()).addRow(newRow);
-		getJTableClasses().changeSelection(getJTableClasses().getRowCount()-1, 0, false, false);
-		getJTableClasses().editCellAt(getJTableClasses().getRowCount()-1, 0);
+		for (int i = 0; i < this.getColumnHeader().size(); i++) {
+			if (i == getColumnHeaderIndex(COL_TypeSpecifier)) {
+				newRow.add(null);
+			} else if (i == getColumnHeaderIndex(COL_AgentClass)) {
+				newRow.add(null);
+			} else if (i == getColumnHeaderIndex(COL_GraphPrototyp)) {
+				newRow.add(null);
+			} else if (i == getColumnHeaderIndex(COL_ShowLabel)) {
+				newRow.add(true);
+			} else if (i == getColumnHeaderIndex(COL_Image)) {
+				newRow.add(createImageIcon(null,"MissingIcon"));
+			} else if (i == getColumnHeaderIndex(COL_EdgeWidth)) {
+				newRow.add(BasicGraphGUI.DEFAULT_EDGE_WIDTH);
+			} else if (i == getColumnHeaderIndex(COL_EdgeColor)) {
+				newRow.add(BasicGraphGUI.DEFAULT_EDGE_COLOR);
+			}
+		}
+		this.getTableModel4ComponentTypes().addRow(newRow);
+		this.getJTable4ComponentTypes().changeSelection(getJTable4ComponentTypes().getRowCount()-1, 0, false, false);
+		this.getJTable4ComponentTypes().editCellAt(getJTable4ComponentTypes().getRowCount()-1, 0);
 	}
 	
 	/**
@@ -502,7 +570,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	 * @param rowNum
 	 */
 	private void removeRow(int rowNum){
-		((DefaultTableModel)getJTableClasses().getModel()).removeRow(rowNum);
+		((DefaultTableModel)getJTable4ComponentTypes().getModel()).removeRow(rowNum);
 	}
 
 	/**
@@ -516,18 +584,6 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			jButtonAddRow.addActionListener(this);
 		}
 		return jButtonAddRow;
-	}
-	
-	/**
-	 * This method initializes cellEditorAgentClass
-	 * @return @return javax.swing.JComboBox
-	 */
-	private JComboBox getJComboBoxAgentClasses(){
-		if(jComboBoxAgentClasses == null){
-			jComboBoxAgentClasses = new JComboBox(getAgentComboBoxModel());
-			jComboBoxAgentClasses.setRenderer(new TableCellRenderer4ClassNameList());
-		}
-		return jComboBoxAgentClasses;
 	}
 	
 	private TableCellEditor4ClassSelector getPrototypeClassesCellEditor(){
@@ -556,27 +612,6 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		JCheckBox checkBox = new JCheckBox();
 		checkBox.setHorizontalAlignment(SwingConstants.CENTER);
 		return checkBox;
-	}
-	/**
-	 * This method builds a vector for initiating the cellEditorAgentClass' ComboBox model, and initiates the agentClasses HashMap.	
-	 * @return Vector containing the simple names of the projects agent classes.
-	 */
-	private Vector<String> getAgentComboBoxModel(){
-		Vector<String> agentClassNames = new Vector<String>();
-		agentClassNames.add(Language.translate("Nicht definiert"));
-		
-		availableAgentClasses = new HashMap<String, Class<?>>();
-		availableAgentClasses.put(Language.translate("Nicht definiert"), null);
-		
-		// Get all classes extending jade.core.Agent in the current project 
-		Iterator<Class<?>> agentClassesIterator= Application.ClassDetector.csAgents.getClassesFound(true).iterator();
-		// Build a HashMap containing the simple names as keys and the full class names as values
-		while(agentClassesIterator.hasNext()){
-			Class<?> agentClass = agentClassesIterator.next();
-			availableAgentClasses.put(agentClass.getSimpleName(), agentClass);
-			agentClassNames.add(agentClass.getName());
-		}
-		return agentClassNames;
 	}
 
 	/**
@@ -965,35 +1000,41 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			addRow();
 		} else if(event.getSource().equals(getJButtonRemoveRow())) {
 			// --- Remove a row from the component types table ------
-			if(getJTableClasses().getSelectedRow() > -1){
-				removeRow(getJTableClasses().getSelectedRow());
+			if(getJTable4ComponentTypes().getSelectedRow() > -1){
+				removeRow(getJTable4ComponentTypes().getSelectedRow());
 			}
 		} else if(event.getSource().equals(getJButtonConfirm())) {
-			// --- Confirmed, apply changes -------------------------			
-			JTable jtc = getJTableClasses();
+			
+			JTable jtc = this.getJTable4ComponentTypes();
+			DefaultTableModel dtm = this.getTableModel4ComponentTypes();
 			
 			HashMap<String, ComponentTypeSettings> ctsHash = new HashMap<String, ComponentTypeSettings>();
 			
-			// Get the component type definitions from the table
-			for(int row=0; row<jtc.getRowCount(); row++){
-				String name = (String) jtc.getValueAt(row, 0);
-				//Check for non empty name
+			// --- Confirm, apply changes in table ------------------			
+			TableCellEditor tce = jtc.getCellEditor();
+			if (tce!=null) {
+				tce.stopCellEditing();
+			}
+			
+			// --- Get the component type definitions from table ----
+			for(int row=0; row<dtm.getRowCount(); row++){
+				
+				String name = (String) dtm.getValueAt(row, this.getColumnHeaderIndex(COL_TypeSpecifier));
 				if(name!=null && name.length()!=0){
 					
-					ImageIcon imageIcon = (ImageIcon)jtc.getValueAt(row,4);
-					float edgeWidth = (Float)jtc.getValueAt(row, 5);
-					Color color = (Color)jtc.getValueAt(row, 6);
-					boolean showLable = (Boolean) jtc.getValueAt(row, 1);
+					String agentClass 	 = (String)dtm.getValueAt(row, this.getColumnHeaderIndex(COL_AgentClass));
+					String graphProto 	 = (String)dtm.getValueAt(row, this.getColumnHeaderIndex(COL_GraphPrototyp));
+					ImageIcon imageIcon  = (ImageIcon)dtm.getValueAt(row,this.getColumnHeaderIndex(COL_Image));
+					String imageIconDesc = imageIcon.getDescription();
+					float edgeWidth 	 = (Float)dtm.getValueAt(row, this.getColumnHeaderIndex(COL_EdgeWidth));
+					Color color 		 = (Color)dtm.getValueAt(row, this.getColumnHeaderIndex(COL_EdgeColor));
+					String colorString 	 = String.valueOf(color.getRGB());
+					boolean showLable 	 = (Boolean) dtm.getValueAt(row, this.getColumnHeaderIndex(COL_ShowLabel));
 					
-					ComponentTypeSettings cts = new ComponentTypeSettings(
-							(String)jtc.getValueAt(row, 2), 
-							(String)jtc.getValueAt(row, 3),
-							imageIcon.getDescription(),
-							String.valueOf(color.getRGB())
-							);
+					ComponentTypeSettings cts = new ComponentTypeSettings(agentClass, graphProto, imageIconDesc, colorString );
 					cts.setEdgeWidth(edgeWidth);
 					cts.setShowLabel(showLable);
-					// Use name as key
+
 					ctsHash.put(name, cts);
 				}
 			}
@@ -1008,10 +1049,11 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			cts.setSnapRaster((Double)jSpnnerGridWidth.getValue());
 			ctsHash.put("node", cts);
 			
+			
 			this.currCompTypSettings = ctsHash;
 			this.canceled = false;
 			this.setVisible(false);
-		
+			
 		} else if(event.getSource().equals(getJButtonCancel())) {
 			// --- Canceled, discard changes --------------
 			this.canceled = true;

@@ -151,7 +151,7 @@ de;Graph Laden;Load Graph
 de;Graph bzw. Netzwerk;Graph or Network
 de;Graph speichern;Save Graph
 de;Graph-Datei;Graph file
-de;Graph-Komponenten;;;;
+de;Graph-Komponenten;Graph-Component;;;
 de;Graph-Prototyp;Graph-prototype
 de;Graph-Prototypen;Graph-prototypes
 de;GraphML-Dateien;GraphML-Files
@@ -224,7 +224,7 @@ de;Log-Manager starten;Start Log Manager
 de;Lokal;Local;;;
 de;Löschen;Delete
 de;MAS-Pause;MAS-Pause
-de;MAS-Start;;;;
+de;MAS-Start;MAS-Start;;;
 de;MAS-Stop;MAS-Stop
 de;MAS;MAS
 de;Maximale Geschwindigkeit;Maximum speed
@@ -454,9 +454,10 @@ de;Übersetzen;Translate
 de;Übersetzter Text;Text translated
 de;Übersetzung speichern (STRG+S);Save translation (CTRL + S)
 de;Überspringen;Skip
-en;;Edge Width;;;
+en;Agenten-Klasse;Agent class;;;
 en;Ausgewählte Komponente entfernen;Remove selected component;;;
 en;Auswahl Netzwerk-Komonente!;Select Network Component to Add;;;
+en;Beschriftung zeigen;Show label;;;
 en;Bestätigung;Confirmation;;;
 en;Bild;Image;;;
 en;Bitte wählen Sie einen Knoten ausserhalb des Zentrums;Select a vertex other than the center of the star;;;
@@ -470,8 +471,10 @@ en;Die Komponente ist bereits vorhanden!
 en;Eigenschaften bearbeiten;Edit Properties;;;
 en;Graph importieren;Import Graph from file;;;
 en;Graph löschen;Clear graph;;;
+en;Graph-Prototyp;Graph-prototype;;;
 en;Halten Sie die Umschalttaste gedrückt und klicken mit der rechten Maustaste auf  zwei Knoten;Use Shift and Right click two vertices;;;
 en;Icon auswählen;Choose Icon;;;
+en;Kanten-Breite;Edge Width;;;
 en;Kantenfarbe;Edge Color;;;
 en;Klicken;Click;;;
 en;Knoten verbinden;Merge two nodes;;;
@@ -483,6 +486,7 @@ en;Komponente löschen;Delete Component;;;
 en;Komponentensuche;Search Components;;;
 en;Optionen;Options;;;
 en;Sind Sie sicher, dass Sie den Graphen löschen wollen?;Are you sure to clear the graph?;;;
+en;Typen-Bezeichnung;Type-Specifier;;;
 en;Umschalten auf Picking-Modus;Switch to Picking mode;;;
 en;Unschalten auf Transorming-Modus;Switch to Transforming mode;;;
 en;Verbindungsknoten in zwei Knoten aufteilen;Split the node into two nodes;;;

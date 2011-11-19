@@ -28,20 +28,23 @@
  */
 package agentgui.envModel.graph.components;
 
-import java.awt.Color;
 import java.awt.Component;
 
 import javax.swing.JCheckBox;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
-import javax.swing.table.TableCellRenderer;
+import javax.swing.table.DefaultTableCellRenderer;
+
+import agentgui.envModel.graph.GraphGlobals;
 
 /**
  * Is used in the {@link ComponentTypeDialog} for rendering JButton.
  *
  * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati
  */
-public class TableCellRenderer4CheckBox implements TableCellRenderer {
+public class TableCellRenderer4CheckBox extends DefaultTableCellRenderer {
+	
+	private static final long serialVersionUID = 6053370819529907169L;
 	
 	private JCheckBox checkBox = new JCheckBox();
 
@@ -52,14 +55,8 @@ public class TableCellRenderer4CheckBox implements TableCellRenderer {
 		
 		checkBox.setSelected((Boolean) value);
 		checkBox.setHorizontalAlignment(SwingConstants.CENTER);
-		
-		checkBox.setOpaque(true);
-		if(row % 2 == 0){
-			checkBox.setBackground(new Color(242,242,242));
-		} else {
-			checkBox.setBackground(new Color(255,255,255));
-		}
+		GraphGlobals.Colors.setTableCellRendererColors(checkBox, row, isSelected);
 		return checkBox;
 	}
-	 
+
 }

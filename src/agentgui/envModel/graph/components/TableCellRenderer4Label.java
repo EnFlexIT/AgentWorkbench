@@ -28,13 +28,13 @@
  */
 package agentgui.envModel.graph.components;
 
-import java.awt.Color;
 import java.awt.Component;
 
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
+import agentgui.envModel.graph.GraphGlobals;
 
 /**
  * Is used in the {@link ComponentTypeDialog} for displaying agent classes and selected graph prototypes.
@@ -43,30 +43,26 @@ import javax.swing.table.TableCellRenderer;
  */
 public class TableCellRenderer4Label implements TableCellRenderer {
 
+	private JLabel rendererComponent = new JLabel();
+	
 	/* (non-Javadoc)
 	 * @see javax.swing.table.TableCellRenderer#getTableCellRendererComponent(javax.swing.JTable, java.lang.Object, boolean, boolean, int, int)
 	 */
 	@Override
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 		
-		JLabel rendererComponent = new JLabel();
 		String simpleClassName = "";
 		
-		if(value != null){
+		if(value!=null){
 			String className = (String) value;
 			int simpleNameStart = className.lastIndexOf(".");
 			if(simpleNameStart > -1){
 				simpleClassName = className.substring(simpleNameStart+1);
 			}
 		}
-		
 		rendererComponent.setText(simpleClassName);
-		rendererComponent.setOpaque(true);
-		if(row % 2 == 0){
-			rendererComponent.setBackground(new Color(242,242,242));
-		} else {
-			rendererComponent.setBackground(new Color(255,255,255));
-		}
+
+		GraphGlobals.Colors.setTableCellRendererColors(rendererComponent, row, isSelected);
 		
 		return rendererComponent;
 	}

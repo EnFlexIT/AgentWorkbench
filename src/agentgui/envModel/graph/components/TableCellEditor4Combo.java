@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.envModel.graph.components;
 
 import java.awt.Component;
@@ -11,29 +39,50 @@ import javax.swing.JComboBox;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 
+/**
+ * The Class TableCellEditor4Combo.
+ */
 public class TableCellEditor4Combo extends AbstractCellEditor implements TableCellEditor, ActionListener {
 
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -1544056145162025328L;
 
+	/** The combo. */
 	private JComboBox combo = null;
+	
+	/** The click count to start. */
 	private int clickCountToStart = 1;
 	 
+	/**
+	 * Instantiates a new table cell editor4 combo.
+	 *
+	 * @param comboBox the combo box
+	 */
 	public TableCellEditor4Combo(JComboBox comboBox) {
 		this.combo = comboBox;
 		this.combo.addActionListener(this);
 	}
 	
+	/* (non-Javadoc)
+	 * @see javax.swing.table.TableCellEditor#getTableCellEditorComponent(javax.swing.JTable, java.lang.Object, boolean, int, int)
+	 */
 	@Override
 	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
 		combo.setSelectedItem(value);
 		return combo;
 	}
 	
+	/* (non-Javadoc)
+	 * @see javax.swing.CellEditor#getCellEditorValue()
+	 */
 	@Override
 	public Object getCellEditorValue() {
 		return combo.getSelectedItem();
 	}
 	
+	/* (non-Javadoc)
+	 * @see javax.swing.AbstractCellEditor#isCellEditable(java.util.EventObject)
+	 */
 	@Override
 	public boolean isCellEditable(EventObject anEvent) {
         if(anEvent instanceof MouseEvent) { 
@@ -41,18 +90,34 @@ public class TableCellEditor4Combo extends AbstractCellEditor implements TableCe
         }
         return true;
     }
+	
+	/* (non-Javadoc)
+	 * @see javax.swing.AbstractCellEditor#shouldSelectCell(java.util.EventObject)
+	 */
 	@Override
 	public boolean shouldSelectCell(EventObject anEvent) {
 		return true;
 	}
+	
+	/* (non-Javadoc)
+	 * @see javax.swing.AbstractCellEditor#stopCellEditing()
+	 */
 	@Override
     public boolean stopCellEditing() {
         return super.stopCellEditing();
     }
+	
+	/* (non-Javadoc)
+	 * @see javax.swing.AbstractCellEditor#cancelCellEditing()
+	 */
 	@Override
 	public void cancelCellEditing() {
         super.cancelCellEditing();
     }
+	
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		

@@ -1,8 +1,6 @@
 package agentgui.envModel.graph.components;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.util.EventObject;
 
@@ -11,7 +9,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 
-public class TableCellEditor4CheckBox extends AbstractCellEditor implements TableCellEditor, ActionListener {
+public class TableCellEditor4CheckBox extends AbstractCellEditor implements TableCellEditor {
 
 	private static final long serialVersionUID = -1544056145162025328L;
 
@@ -20,7 +18,6 @@ public class TableCellEditor4CheckBox extends AbstractCellEditor implements Tabl
 	 
 	public TableCellEditor4CheckBox(JCheckBox checkBox) {
 		this.checkBox = checkBox;
-		this.checkBox.addActionListener(this);
 	}
 	
 	@Override
@@ -40,21 +37,5 @@ public class TableCellEditor4CheckBox extends AbstractCellEditor implements Tabl
         }
         return true;
     }
-	@Override
-	public boolean shouldSelectCell(EventObject anEvent) {
-		return true;
-	}
-	@Override
-    public boolean stopCellEditing() {
-        return super.stopCellEditing();
-    }
-	@Override
-	public void cancelCellEditing() {
-        super.cancelCellEditing();
-    }
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		
-	}
 	
 }
