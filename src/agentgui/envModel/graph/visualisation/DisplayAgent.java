@@ -28,7 +28,6 @@
  */
 package agentgui.envModel.graph.visualisation;
 
-import jade.core.Agent;
 import jade.core.ServiceException;
 
 import java.awt.BorderLayout;
@@ -44,6 +43,7 @@ import agentgui.envModel.graph.controller.GraphEnvironmentControllerGUI;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.SimulationServiceHelper;
+import agentgui.simulationService.agents.SimulationAgent;
 
 /**
  * This agent can be used in order to display the current network model
@@ -53,7 +53,7 @@ import agentgui.simulationService.SimulationServiceHelper;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class DisplayAgent extends Agent {
+public class DisplayAgent extends SimulationAgent {
 
 	private static final long serialVersionUID = -766291673903767678L;
 
@@ -68,7 +68,8 @@ public class DisplayAgent extends Agent {
 	 */
 	@Override
 	protected void setup() {
-	
+		super.setup();
+		
 		NetworkModel netModel = null;
 		
 		Object[] startArgs = getArguments();
@@ -100,12 +101,12 @@ public class DisplayAgent extends Agent {
 		myGraphEnvController.setEnvironmentModel(netModel);
 		myGraphDisplay = new GraphEnvironmentControllerGUI(myGraphEnvController);
 		
-		BasicGraphGUI graphGUI = new BasicGraphGUI(myGraphEnvController);
-		graphGUI.addObserver(myGraphDisplay);
+		BasicGraphGUI basicGraphGUI = new BasicGraphGUI(myGraphEnvController);
+		basicGraphGUI.addObserver(myGraphDisplay);
 		if (netModel!=null) {
-			graphGUI.setGraph(netModel.getGraph());	
+			basicGraphGUI.setGraph(netModel.getGraph());	
 		}
-		myGraphDisplay.setGraphGUI(graphGUI);
+		myGraphDisplay.setGraphGUI(basicGraphGUI);
 				
 		if (useFrame!=null) {
 			useFrame.setContentPane(myGraphDisplay);
@@ -120,9 +121,17 @@ public class DisplayAgent extends Agent {
 		
 	}
 	
+	@Override
+	protected void onEnvironmentStimulus() {
+		
+		
+		
+		
+	}
+	
+	
 	/**
 	 * Gets the independent frame.
-	 *
 	 * @return the independent frame
 	 */
 	private JFrame getIndependentFrame() {
@@ -142,6 +151,7 @@ public class DisplayAgent extends Agent {
 	 */
 	@Override
 	protected void takeDown() {
+		super.takeDown();
 		if (useFrame != null) {
 			useFrame.dispose();
 		}
