@@ -48,15 +48,14 @@ import agentgui.core.gui.AgentSelector;
  *
  * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati 
  */
-public class TableCellEditor4AgentClass extends AbstractCellEditor
-implements TableCellEditor,
-ActionListener{
+public class TableCellEditor4AgentClass extends AbstractCellEditor implements TableCellEditor, ActionListener {
 	private static final long serialVersionUID = -1937780991527069423L;
-	JButton button;
+	
+	private JButton button;
 	/**
 	 * The agent class selector dialog
 	 */
-	AgentSelector agentSelector;
+	private AgentSelector agentSelector;
 	/**
 	 * The current agent class 
 	 */
@@ -111,11 +110,7 @@ ActionListener{
 	 * @see javax.swing.table.TableCellEditor#getTableCellEditorComponent(javax.swing.JTable, java.lang.Object, boolean, int, int)
 	 */
 	@Override
-	public Component getTableCellEditorComponent(JTable table,
-								            Object value,
-								            boolean isSelected,
-								            int row,
-								            int column) {
+	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
 		currentAgentClass = (String) value;
 		return button;
 	}

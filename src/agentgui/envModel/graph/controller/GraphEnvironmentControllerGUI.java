@@ -1,6 +1,6 @@
 /**
  * ***************************************************************
- * Agent.GUI is a framework to develop Multi-agent based simulation 
+h * Agent.GUI is a framework to develop Multi-agent based simulation 
  * applications based on the JADE - Framework in compliance with the 
  * FIPA specifications. 
  * Copyright (C) 2010 Christian Derksen and DAWIS
@@ -583,7 +583,8 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 			
 			if(notification.getEvent().equals(BasicGraphGUI.EVENT_NETWORKMODEL_CLEAR)){
 				// --- Clearing the actual Network and Graph model ------------
-				controller.clearNetworkModel();
+				this.controller.clearNetworkModel();
+				this.showNumberOfComponents();
 				
 			} else if(notification.getEvent().equals(BasicGraphGUI.EVENT_ADD_COMPONENT_CLICKED)) {
 				// --- Add Component Button Clicked ---------------------------

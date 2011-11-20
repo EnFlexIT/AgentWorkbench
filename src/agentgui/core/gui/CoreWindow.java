@@ -148,8 +148,8 @@ public class CoreWindow extends JFrame implements ComponentListener {
 		this.setIconImage(imageAgentGUI);
 		
 		// --- Set the Look and Feel of the Application -----------
-		if ( Application.RunInfo.getAppLnF() != null ) {
-			setLookAndFeel( Application.RunInfo.getAppLnF() );
+		if (Application.RunInfo.getAppLnF() != null) {
+			this.setLookAndFeel(Application.RunInfo.getAppLnF());
 		}
 		
 		// --- Create the Main-Elements of the Application --------
@@ -158,20 +158,22 @@ public class CoreWindow extends JFrame implements ComponentListener {
 		this.setDefaultCloseOperation(CoreWindow.DO_NOTHING_ON_CLOSE);
 		this.getContentPane().setPreferredSize(this.getSize());
 		this.setLocationRelativeTo(null);
+		
+		// --- configure console ---------------------------------- 
+		this.oldDividerLocation = this.jSplitPane4ProjectDesktop.getHeight() * 3 / 4; 
+		this.jSplitPane4ProjectDesktop.setDividerLocation(this.oldDividerLocation);
+		this.setConsoleVisible(false);
+		
+		// --- Set the JTabbedPan for remote console output -------
+		SysOutBoard.setJTabbedPane4Consoles(this.getJTabbedPane4Console());
+
+		// --- Finalize the display of the application ------------
+		this.setTitelAddition("");
+		this.setCloseButtonPosition(false);
 		this.pack();		
 		
 		//this.setExtendedState(Frame.MAXIMIZED_BOTH);
 		this.setVisible(true);
-		this.setTitelAddition("");
-		this.setCloseButtonPosition(false);
-		
-		// --- configure console ---------------------------------- 
-		oldDividerLocation = jSplitPane4ProjectDesktop.getHeight() * 3 / 4; 
-		jSplitPane4ProjectDesktop.setDividerLocation(oldDividerLocation);
-		this.setConsoleVisible(false);
-		
-		// --- Set the JTabbedPan for remote console output -----------
-		SysOutBoard.setJTabbedPane4Consoles(this.getJTabbedPane4Console());
 		
 	}
 	// ------------------------------------------------------------	

@@ -149,8 +149,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	 * @param currentCTS the current HashMap with the ComponentTypeSettings
 	 * @param project the current project
 	 */
-	public ComponentTypeDialog(HashMap<String,ComponentTypeSettings> currentCTS, Project project) {
-		super(Application.MainWindow);
+	public ComponentTypeDialog(HashMap<String, ComponentTypeSettings> currentCTS, Project project) {
 		this.currCompTypSettings = currentCTS;
 		this.currProject = project;
 		initialize();
@@ -180,6 +179,14 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	    
 	    this.setContentPane(getJContentPane());
 	    this.setNodeConfiguration();
+	    
+	    // --- In case that we're in an executed MAS ------
+	    if (this.currProject==null) {
+	    	this.getJTable4ComponentTypes().setEnabled(false);
+	    	this.getJButtonAddRow().setEnabled(false);
+	    	this.getJButtonRemoveRow().setEnabled(false);
+	    	this.getJButtonConfirm().setEnabled(false);
+	    }
 	    
 	}
 	/**

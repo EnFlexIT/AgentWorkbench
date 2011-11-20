@@ -110,7 +110,7 @@ import agentgui.core.project.Project;
 	}
 	
 	/**
-	 * Sets the curr project.
+	 * Sets the current project.
 	 *
 	 * @param project the currProject to set
 	 */
@@ -251,6 +251,29 @@ import agentgui.core.project.Project;
 				dlm = hashMap4AgentDefaulListModels.get(memberOf);
 			}
 			dlm.addElement(ace4ss);
+		}
+		
+		// --- Ensure the right order in the ComboBoxModel ----------
+		this.sortComboBoxModel4AgentLists();
+		
+	}
+	
+	/**
+	 * Sort ComboBoxModel for agent lists.
+	 */
+	private void sortComboBoxModel4AgentLists() {
+		
+		Vector<String> agentLists = new Vector<String>();
+		DefaultComboBoxModel dlm = this.comboBoxModel4AgentLists;
+		for (int i = 0; i < dlm.getSize(); i++) {
+			agentLists.add((String) dlm.getElementAt(i));
+		}
+		
+		Collections.sort(agentLists);
+		
+		this.comboBoxModel4AgentLists = new DefaultComboBoxModel();
+		for (int i = 0; i < agentLists.size(); i++) {
+			this.comboBoxModel4AgentLists.addElement(agentLists.get(i));
 		}
 	}
 	

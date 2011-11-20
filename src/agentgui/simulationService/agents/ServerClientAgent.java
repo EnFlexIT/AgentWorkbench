@@ -107,6 +107,9 @@ public class ServerClientAgent extends Agent {
 	private long triggerTime = new Long(1000*1);
 	private long triggerTime4Reconnection = new Long(1000*20);
 	
+	private int sendNotReachable = 0;
+	private int sendNotReachableMax = 3;
+	
 	/* (non-Javadoc)
 	 * @see jade.core.Agent#setup()
 	 */
@@ -311,7 +314,13 @@ public class ServerClientAgent extends Agent {
 						// --- Server.Master not reachable ? ------------
 						String msgContent = msg.getContent();
 						if (msgContent.contains("server.master")) {
-							System.out.println( "Server.Master not reachable! Try to reconnect in " + (triggerTime4Reconnection/1000) + " seconds ..." );
+							if (sendNotReachable<sendNotReachableMax) {
+								System.out.println( "Server.Master not reachable! Try to reconnect in " + (triggerTime4Reconnection/1000) + " seconds ..." );
+								sendNotReachable++;
+								if (sendNotReachable>=sendNotReachableMax) {
+									System.out.println( "Stop now to inform that Server.Master is not reachable!" );
+								}
+							}
 							trigger.reset(triggerTime4Reconnection);
 							mainPlatformReachable = false;							
 						} else {
@@ -355,6 +364,7 @@ public class ServerClientAgent extends Agent {
 					// ------------------------------------------------------------------
 					if (agentAction instanceof RegisterReceipt) {
 						System.out.println( "Server.Master (re)connected!" );
+						sendNotReachable = 0;
 						mainPlatformReachable = true;
 						trigger.reset(triggerTime);
 					

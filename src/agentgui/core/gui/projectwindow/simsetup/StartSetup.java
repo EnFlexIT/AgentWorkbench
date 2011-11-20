@@ -850,6 +850,13 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 				this.jListModelAgents2Start = dlm;
 				this.jListStartList.setModel(dlm);
 				this.setJListStartListEmptySelection();
+				if (selectedItem.equals(SimulationSetup.AGENT_LIST_ManualConfiguration)) {
+					this.jButtonAgentAdd.setEnabled(true);
+					this.jButtonAgentRemove.setEnabled(true);
+				} else {
+					this.jButtonAgentAdd.setEnabled(false);
+					this.jButtonAgentRemove.setEnabled(false);
+				}
 			}
 			
 		}else if (trigger == jButtonAgentAdd) {

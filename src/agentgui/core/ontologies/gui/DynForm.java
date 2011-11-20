@@ -81,6 +81,7 @@ public class DynForm extends JPanel {
 
 	private boolean debug = false;
 	private DynTreeViewer dtv = null;
+	private boolean emptyForm = true;
 	
 	// --- Based on this vector the display will be created ---------
 	private Vector<String> currOnotologyClassReferenceList = new Vector<String>();
@@ -136,6 +137,7 @@ public class DynForm extends JPanel {
 				
 				// --- Start building the GUI -----------------------
 				this.buildGUI();
+				this.emptyForm = false;
 				// --- If wanted show some debug informations -------
 				if (debug==true) {
 					this.objectTreeShow();
@@ -168,6 +170,7 @@ public class DynForm extends JPanel {
 
 			// --- Start building the GUI -----------------------
 			this.buildGUI();
+			this.emptyForm = false;
 			// --- If wanted show some debug informations -------
 			if (debug==true) {
 				this.objectTreeShow();
@@ -177,8 +180,14 @@ public class DynForm extends JPanel {
 	}
 	
 	/**
+	 * Indicates if the created form is empty.
+	 * @return the emptyForm
+	 */
+	public boolean isEmptyForm() {
+		return emptyForm;
+	}
+	/**
 	 * This method starts building the Swing GUI.
-	 *
 	 */
 	private void buildGUI(){
 		

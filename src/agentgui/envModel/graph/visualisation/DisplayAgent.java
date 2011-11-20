@@ -31,12 +31,15 @@ package agentgui.envModel.graph.visualisation;
 import jade.core.ServiceException;
 
 import java.awt.BorderLayout;
+import java.awt.Image;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import agentgui.envModel.graph.GraphGlobals;
 import agentgui.envModel.graph.controller.BasicGraphGUI;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.controller.GraphEnvironmentControllerGUI;
@@ -44,6 +47,7 @@ import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.SimulationServiceHelper;
 import agentgui.simulationService.agents.SimulationAgent;
+import agentgui.simulationService.environment.EnvironmentModel;
 
 /**
  * This agent can be used in order to display the current network model
@@ -57,11 +61,13 @@ public class DisplayAgent extends SimulationAgent {
 
 	private static final long serialVersionUID = -766291673903767678L;
 
+	private final String pathImage = GraphGlobals.getPathImages();
+	
 	private JFrame useFrame = null;
 	private JPanel usePanel = null;
 	
 	private GraphEnvironmentControllerGUI myGraphDisplay = null;
-	
+	private NetworkModel netModel = null;
 	
 	/* (non-Javadoc)
 	 * @see jade.core.Agent#setup()
@@ -70,65 +76,106 @@ public class DisplayAgent extends SimulationAgent {
 	protected void setup() {
 		super.setup();
 		
-		NetworkModel netModel = null;
-		
 		Object[] startArgs = getArguments();
 		if (startArgs == null || startArgs.length == 0) {
 			// --- started in a normal way ----------------
-			useFrame = getIndependentFrame();
-			try {
-				SimulationServiceHelper simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
-				Object envObject = simHelper.getEnvironmentModel();
-				netModel = (NetworkModel) envObject;
-				
-			} catch (ServiceException e) {
-				System.err.println(getLocalName() +  " - Error: Could not retrieve EnvironmentProviderHelper, shutting down!");
-				this.doDelete();
-			}
+			this.useFrame = this.getIndependentFrame();
+			
+			EnvironmentModel envModel = this.grabEnvironmentModelFromSimulationService(); 
+			this.netModel = (NetworkModel) envModel.getAbstractEnvironment();
 
 		} else {
 			// --- started from Agent.GUI -----------------
-			usePanel = (JPanel) startArgs[0];
+			this.usePanel = (JPanel) startArgs[0];
 			
 			GraphEnvironmentControllerGUI startEnvPanel = (GraphEnvironmentControllerGUI) startArgs[1];
 			GraphEnvironmentController startController = (GraphEnvironmentController) startEnvPanel.getEnvironmentController();
-			netModel = (NetworkModel) startController.getEnvironmentModelCopy();
+			this.netModel = (NetworkModel) startController.getEnvironmentModelCopy();
 			
 		}
-
+		// --- Build the visual components ----------------
+		this.buildVisualizationGUI();
+		
+	}
+	/* (non-Javadoc)
+	 * @see jade.core.Agent#takeDown()
+	 */
+	@Override
+	protected void takeDown() {
+		super.takeDown();
+		this.destroyVisualizationGUI();
+	}
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.agents.SimulationAgent#beforeMove()
+	 */
+	@Override
+	protected void beforeMove() {
+		this.destroyVisualizationGUI();
+		super.beforeMove();
+		
+	}
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.agents.SimulationAgent#afterMove()
+	 */
+	@Override
+	protected void afterMove() {
+		this.useFrame = this.getIndependentFrame();
+		EnvironmentModel envModel = this.grabEnvironmentModelFromSimulationService(); 
+		this.netModel = (NetworkModel) envModel.getAbstractEnvironment();
+		this.buildVisualizationGUI();
+		super.afterMove();
+	}
+	
+	/**
+	 * Builds the visualization GUI.
+	 */
+	private void buildVisualizationGUI() {
+		
 		// --- Build the new Controller GUI ---------------
 		GraphEnvironmentController myGraphEnvController = new GraphEnvironmentController();
-		myGraphEnvController.setEnvironmentModel(netModel);
-		myGraphDisplay = new GraphEnvironmentControllerGUI(myGraphEnvController);
+		myGraphEnvController.setEnvironmentModel(this.netModel);
+		this.myGraphDisplay = new GraphEnvironmentControllerGUI(myGraphEnvController);
 		
 		BasicGraphGUI basicGraphGUI = new BasicGraphGUI(myGraphEnvController);
-		basicGraphGUI.addObserver(myGraphDisplay);
-		if (netModel!=null) {
-			basicGraphGUI.setGraph(netModel.getGraph());	
+		basicGraphGUI.addObserver(this.myGraphDisplay);
+		if (this.netModel!=null) {
+			basicGraphGUI.setGraph(this.netModel.getGraph());	
 		}
-		myGraphDisplay.setGraphGUI(basicGraphGUI);
+		this.myGraphDisplay.setGraphGUI(basicGraphGUI);
 				
-		if (useFrame!=null) {
-			useFrame.setContentPane(myGraphDisplay);
-			useFrame.setSize(800, 600);
-			useFrame.setVisible(true);
-			useFrame.pack();
+		if (this.useFrame!=null) {
+			this.useFrame.setContentPane(this.myGraphDisplay);
+			this.useFrame.pack();
+			this.useFrame.setVisible(true);
+			
 		} else {
-			usePanel.add(myGraphDisplay, BorderLayout.CENTER);
-			usePanel.validate();
-			usePanel.repaint();
+			this.usePanel.add(this.myGraphDisplay, BorderLayout.CENTER);
+			this.usePanel.validate();
+			this.usePanel.repaint();
+			
 		}
-		
 	}
 	
-	@Override
-	protected void onEnvironmentStimulus() {
+	/**
+	 * Destroys the visualization GUI.
+	 */
+	private void destroyVisualizationGUI() {
 		
-		
-		
-		
+		this.netModel = null;
+		if (this.myGraphDisplay!=null) {
+			this.myGraphDisplay.setVisible(false);
+			this.myGraphDisplay=null;
+		}
+		if (this.useFrame != null) {
+			this.useFrame.dispose();
+			this.useFrame = null;
+		}
+		if (this.usePanel != null) {
+			this.usePanel.removeAll();
+			this.usePanel.repaint();
+			this.usePanel = null;
+		}
 	}
-	
 	
 	/**
 	 * Gets the independent frame.
@@ -136,8 +183,14 @@ public class DisplayAgent extends SimulationAgent {
 	 */
 	private JFrame getIndependentFrame() {
 
+		ImageIcon iconAgentGUI = new ImageIcon( this.getClass().getResource(pathImage + "AgentGUI.png"));
+		Image imageAgentGUI = iconAgentGUI.getImage();
+
 		JFrame frame = new JFrame();
-		frame.setTitle("DisplayAgent " + getLocalName() + " - GUI");
+		frame.setSize(1150, 640);
+		frame.setTitle("DisplayAgent: " + getLocalName());
+		frame.setIconImage(imageAgentGUI);		
+		frame.setLocationRelativeTo(null);
 		frame.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent we) {
 				DisplayAgent.this.doDelete();
@@ -146,20 +199,29 @@ public class DisplayAgent extends SimulationAgent {
 		return frame;
 	}
 		
+	/**
+	 * Grab the environment model from the simulation service.
+	 * @return the environment model
+	 */
+	private EnvironmentModel grabEnvironmentModelFromSimulationService(){
+		EnvironmentModel envModel = null;
+		try {
+			SimulationServiceHelper simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
+			envModel = simHelper.getEnvironmentModel();
+		} catch (ServiceException e) {
+			System.err.println(getLocalName() +  " - Error: Could not retrieve SimulationServiceHelper, shutting down!");
+			this.doDelete();
+		}
+		return envModel;
+	}
+	
 	/* (non-Javadoc)
-	 * @see jade.core.Agent#takeDown()
+	 * @see agentgui.simulationService.agents.SimulationAgent#onEnvironmentStimulus()
 	 */
 	@Override
-	protected void takeDown() {
-		super.takeDown();
-		if (useFrame != null) {
-			useFrame.dispose();
-		}
-		if (usePanel != null) {
-			usePanel.removeAll();
-			usePanel.repaint();
-			myGraphDisplay=null;
-		}
-	}
+	protected void onEnvironmentStimulus() {
 		
+		
+	}
+	
 }

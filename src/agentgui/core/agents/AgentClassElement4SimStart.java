@@ -165,8 +165,9 @@ public class AgentClassElement4SimStart {
 			try {
 				// --- Gibt es die Klasse überhaupt? ------
 				agentClass = (Class<? extends Agent>) Class.forName(agentClassReference);
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
+			} catch (ClassNotFoundException exeption) {
+				//exeption.printStackTrace();
+				System.err.println("Could not find agent class '" + agentClassReference + "'!");
 			}
 		} 
 		

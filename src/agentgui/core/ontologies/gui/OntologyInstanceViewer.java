@@ -150,7 +150,9 @@ private static final long serialVersionUID = 6748263753769300242L;
 		this.addTab("XML", getJScrollPaneTextVersion());
 
 		// --- Add Enlarge-Tab ----------------------------
-		this.addEnlargeTab();
+		if (this.getDynForm().isEmptyForm()==false) {
+			this.addEnlargeTab();	
+		}
 
 		// --- Configure Translations ---------------------
 		this.setTitleAt(0, "  " + Language.translate("Formular") + "  ");
@@ -437,6 +439,10 @@ private static final long serialVersionUID = 6748263753769300242L;
 		if (jTextArea == null) {
 			jTextArea = new JTextArea();
 			jTextArea.setFont(new Font("Courier New", Font.PLAIN, 12));
+			if (this.getDynForm().isEmptyForm()==true){
+				jTextArea.setEditable(false);
+			}
+
 		}
 		return jTextArea;
 	}

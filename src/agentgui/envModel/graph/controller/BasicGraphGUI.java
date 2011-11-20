@@ -60,6 +60,7 @@ import javax.swing.JToolBar;
 
 import org.apache.commons.collections15.Transformer;
 
+import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.envModel.graph.GraphGlobals;
 import agentgui.envModel.graph.components.ComponentTypeDialog;
@@ -1017,8 +1018,8 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 			
 		} else if (ae.getSource() == getJButtonClearGraph()) {
 			// --- Button Clear graph ---------------------
-			int n = JOptionPane.showConfirmDialog(this, Language.translate(
-					"Are you sure to clear the graph?", Language.EN), Language
+			int n = JOptionPane.showConfirmDialog(Application.MainWindow, Language.translate(
+					"Are you sure that you want to clear the graph?", Language.EN), Language
 					.translate("Confirmation", Language.EN),
 					JOptionPane.YES_NO_OPTION);
 
