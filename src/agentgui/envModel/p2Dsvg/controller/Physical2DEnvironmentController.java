@@ -183,7 +183,7 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 		
 	public Physical2DEnvironment getEnvironmentModelCopy() {
 		// --- Datei kopieren ---
-		String fileSrc   = envFolderPath + getCurrentSimSetup().getEnvironmentFileName();
+		String fileSrc   = getEnvFolderPath() + getCurrentSimSetup().getEnvironmentFileName();
 		String fileDest  = fileSrc.substring(0, fileSrc.length()-4) + "_tmp.xml";
 		
 		FileCopier fc = new FileCopier();
@@ -230,9 +230,9 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 			newEnv = new Physical2DEnvironment();
 			newEnv.setRootPlayground(rootPg);
 			newEnv.setScale(defaultScale);
-			newEnv.setProjectName(currProject.getProjectName());
+			newEnv.setProjectName(this.getProject().getProjectName());
 			
-			String envFileName = currProject.simulationSetupCurrent+".xml";
+			String envFileName = this.getProject().simulationSetupCurrent+".xml";
 			getCurrentSimSetup().setEnvironmentFileName(envFileName);
 		}
 		return newEnv;
@@ -276,7 +276,7 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 	
 	public void setSVGFile(File file){
 		setSvgDoc(loadSVG(file));
-		if(!(file.getParentFile().getAbsolutePath()+File.separator).equals(envFolderPath)){
+		if(!(file.getParentFile().getAbsolutePath()+File.separator).equals(getEnvFolderPath())){
 			file = new File(currentSVGPath);
 			saveSVG(file);
 		}
@@ -501,10 +501,10 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 	        	
 	 			AgentClassElement4SimStart simStart=new AgentClassElement4SimStart(cls, SimulationSetup.AGENT_LIST_EnvironmentConfiguration);
 	 			simStart.setStartAsName(p2DObj.getId());
-	 			simStart.setPostionNo(this.agents2Start.size()+1);
+	 			simStart.setPostionNo(this.getAgents2Start().size()+1);
 	 			
 	 			if(isInListForAgents2Start(p2DObj.getId())==false) {
-		 			this.agents2Start.addElement(simStart);
+		 			this.getAgents2Start().addElement(simStart);
 		 			this.updatePositionNr();
 	 			} 
 				
@@ -532,13 +532,13 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 	{	
 		if(obj instanceof ActiveObject)
 		{	        	
-				for(int i=0;i<this.agents2Start.size();i++)
+				for(int i=0;i<this.getAgents2Start().size();i++)
 				{
 					
-				AgentClassElement4SimStart cmprElement= (AgentClassElement4SimStart) this.agents2Start.get(i);
+				AgentClassElement4SimStart cmprElement= (AgentClassElement4SimStart) this.getAgents2Start().get(i);
 				if(cmprElement.getStartAsName().equals(obj.getId()))
 				{
-					this.agents2Start.remove(i);
+					this.getAgents2Start().remove(i);
 					break;
 				}
 				
@@ -547,27 +547,16 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 		   
 		}
 	}
-		
 	
-	private void updatePositionNr()
-	{
-		for(int i=0;i<this.agents2Start.size();i++)
-		{
-			AgentClassElement4SimStart cmprElement= (AgentClassElement4SimStart) this.agents2Start.get(i);
+	/**
+	 * Update position nr.
+	 */
+	private void updatePositionNr() {
+		for(int i=0;i<this.getAgents2Start().size();i++) {
+			AgentClassElement4SimStart cmprElement= (AgentClassElement4SimStart) this.getAgents2Start().get(i);
 			cmprElement.setPostionNo(i);
 		}
-		
-		
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	/**
 	 * This method is called by the EnvironmentSetup to create or change Physical2DObjects 
@@ -595,7 +584,7 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 			setChanged();
 			notifyObservers(new Integer(OBJECTS_CHANGED));
 			
-			currProject.isUnsaved = true;
+			this.getProject().isUnsaved = true;
 		}
 		
 		return success;
@@ -692,8 +681,8 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 	 */
 	private boolean isInListForAgents2Start(String id){
 		
-		for(int i=0;i<this.agents2Start.size();i++) {
-			AgentClassElement4SimStart tmp=(AgentClassElement4SimStart) this.agents2Start.get(i);
+		for(int i=0;i<this.getAgents2Start().size();i++) {
+			AgentClassElement4SimStart tmp=(AgentClassElement4SimStart) this.getAgents2Start().get(i);
 			if(tmp.getStartAsName().equals(id)) {
 				return true;
 			}
@@ -768,15 +757,15 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 			
 			case SimulationSetups.SIMULATION_SETUP_COPY:
 				setDefaultFileNames();
-				this.currentEnvironmentPath = this.envFolderPath + getCurrentSimSetup().getEnvironmentFileName();
-				this.currentSVGPath = this.envFolderPath + this.getSvgFileName();
+				this.currentEnvironmentPath = this.getEnvFolderPath() + getCurrentSimSetup().getEnvironmentFileName();
+				this.currentSVGPath = this.getEnvFolderPath() + this.getSvgFileName();
 				saveEnvironment();
 			break;
 			
 			case SimulationSetups.SIMULATION_SETUP_ADD_NEW:
 				setDefaultFileNames();
-				this.currentEnvironmentPath = this.envFolderPath + getCurrentSimSetup().getEnvironmentFileName();
-				this.currentSVGPath = this.envFolderPath + this.getSvgFileName();
+				this.currentEnvironmentPath = this.getEnvFolderPath() + getCurrentSimSetup().getEnvironmentFileName();
+				this.currentSVGPath = this.getEnvFolderPath() + this.getSvgFileName();
 				setEnvironment(null);
 				setSvgDoc(null);
 			break;
@@ -794,8 +783,8 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 			// No, there's no break missing here. After deleting a setup another one is loaded.
 			
 			case SimulationSetups.SIMULATION_SETUP_LOAD:
-				this.currentEnvironmentPath = this.envFolderPath + getCurrentSimSetup().getEnvironmentFileName();
-				this.currentSVGPath = this.envFolderPath + this.getSvgFileName();
+				this.currentEnvironmentPath = this.getEnvFolderPath() + getCurrentSimSetup().getEnvironmentFileName();
+				this.currentSVGPath = this.getEnvFolderPath() + this.getSvgFileName();
 				setEnvironment(loadEnvironmentFromXML(new File(this.currentEnvironmentPath)));
 				setSvgDoc(loadSVG(new File(this.currentSVGPath)));
 			break;
@@ -806,24 +795,24 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 				
 				setDefaultFileNames();
 				if(oldEnvFile.exists()){
-					File newEnvFile = new File(this.envFolderPath+getCurrentSimSetup().getEnvironmentFileName());
+					File newEnvFile = new File(this.getEnvFolderPath()+getCurrentSimSetup().getEnvironmentFileName());
 					oldEnvFile.renameTo(newEnvFile);
 				}
 				
 				if(oldSVGFile.exists()){
-					File newSvgFile = new File(this.envFolderPath + this.getSvgFileName());
+					File newSvgFile = new File(this.getEnvFolderPath() + this.getSvgFileName());
 					oldSVGFile.renameTo(newSvgFile);
 				}
 				
-				this.currentEnvironmentPath = this.envFolderPath + getCurrentSimSetup().getEnvironmentFileName();
-				this.currentSVGPath = this.envFolderPath + this.getSvgFileName();
+				this.currentEnvironmentPath = this.getEnvFolderPath() + getCurrentSimSetup().getEnvironmentFileName();
+				this.currentSVGPath = this.getEnvFolderPath() + this.getSvgFileName();
 			break;
 		}
 		
 	}
 	
 	private void setDefaultFileNames(){
-		String baseFileName = currProject.simulationSetupCurrent;
+		String baseFileName = this.getProject().simulationSetupCurrent;
 		//TODO remove the path from the simsetup
 		getCurrentSimSetup().setEnvironmentFileName(baseFileName+".xml");
 		this.setSvgFileName(baseFileName+".svg");
@@ -845,7 +834,7 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 		}
 		setChanged();
 		notifyObservers(new Integer(SCALE_CHANGED));
-		currProject.isUnsaved = true;
+		this.getProject().isUnsaved = true;
 	}
 
 
@@ -860,12 +849,12 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 				
 		// Load SVG file if specified
 		if(this.getSvgFileName() != null && this.getSvgFileName().length() >0){
-			currentSVGPath = envFolderPath + this.getSvgFileName();
+			currentSVGPath = getEnvFolderPath() + this.getSvgFileName();
 			setSvgDoc(loadSVG(new File(currentSVGPath)));
 		}
 		// Load environment file if specified
 		if(currentSetup.getEnvironmentFileName() != null && currentSetup.getEnvironmentFileName().length() >0){
-			currentEnvironmentPath = envFolderPath + currentSetup.getEnvironmentFileName();
+			currentEnvironmentPath = getEnvFolderPath() + currentSetup.getEnvironmentFileName();
 			setEnvironment(loadEnvironmentFromXML(new File(currentEnvironmentPath)));
 		}
 		// If SVG present and environment not, create a new blank environment 

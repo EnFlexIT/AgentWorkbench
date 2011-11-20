@@ -301,8 +301,7 @@ import agentgui.core.project.Project;
 	}
 	
 	/**
-	 * Sets the combo box model4 agent lists.
-	 *
+	 * Sets the ComboBoxModel for agent lists.
 	 * @param comboBoxModel4AgentLists the comboBoxModel4AgentLists to set
 	 */
 	public void setComboBoxModel4AgentLists(DefaultComboBoxModel comboBoxModel4AgentLists) {
@@ -311,7 +310,6 @@ import agentgui.core.project.Project;
 	
 	/**
 	 * Gets the combo box model4 agent lists.
-	 *
 	 * @return the comboBoxModel4AgentLists
 	 */
 	@XmlTransient
@@ -321,7 +319,6 @@ import agentgui.core.project.Project;
 	
 	/**
 	 * Gets the environment file name.
-	 *
 	 * @return the environment file name
 	 */
 	public String getEnvironmentFileName() {
@@ -329,7 +326,6 @@ import agentgui.core.project.Project;
 	}
 	/**
 	 * Sets the environment file name.
-	 *
 	 * @param environmentFile the new environment file name
 	 */
 	public void setEnvironmentFileName(String environmentFile) {
@@ -338,7 +334,6 @@ import agentgui.core.project.Project;
 	
 	/**
 	 * Sets the user runtime object.
-	 *
 	 * @param userRuntimeObject the userRuntimeObject to set
 	 */
 	public void setUserRuntimeObject(Serializable userRuntimeObject) {
@@ -347,7 +342,6 @@ import agentgui.core.project.Project;
 	
 	/**
 	 * Gets the user runtime object.
-	 *
 	 * @return the userRuntimeObject
 	 */
 	@XmlTransient
@@ -357,7 +351,6 @@ import agentgui.core.project.Project;
 	
 	/**
 	 * Checks if an agent name already exists in the current agent configuration.
-	 *
 	 * @param localAgentName The agent name to search for
 	 * @return true, if the agent name already exists
 	 */
@@ -367,7 +360,6 @@ import agentgui.core.project.Project;
 	
 	/**
 	 * Checks if an agent name already exists in the current agent configuration.
-	 *
 	 * @param agentName2Check The agent name to search for
 	 * @param mergeListModels indicates if the over all {@link #agentList} has to be build new
 	 * @return true, if the agent name already exists

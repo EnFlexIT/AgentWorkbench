@@ -49,16 +49,16 @@ public abstract class EnvironmentController extends Observable implements Observ
 	/**
 	 * The current project
 	 */
-	protected Project currProject = null;
+	private Project currProject = null;
 	/**
 	 * The path to the folder where all environment related files are stored.
 	 * (Contains the slash at the end).
 	 */
-	protected String envFolderPath = null;
+	private String envFolderPath = null;
 	/**
 	 * The list model for the agents, which has to be started with the current environment model 
 	 */
-	protected DefaultListModel agents2Start = new DefaultListModel();
+	private DefaultListModel agents2Start = new DefaultListModel();
 
 	
 	/**
@@ -77,7 +77,7 @@ public abstract class EnvironmentController extends Observable implements Observ
 		this.currProject = project;
 		if (currProject!=null) {
 			this.currProject.addObserver(this);
-			this.envFolderPath = this.currProject.getProjectFolderFullPath()+this.currProject.getSubFolderEnvSetups() + File.separator;	
+			this.setEnvFolderPath(this.currProject.getProjectFolderFullPath()+this.currProject.getSubFolderEnvSetups() + File.separator);	
 		}
 	}
 	
@@ -105,13 +105,30 @@ public abstract class EnvironmentController extends Observable implements Observ
 	}
 
 	/**
-	 * @return the agents2Start
+	 * Sets the environment folder path.
+	 * @param envFolderPath the new environment folder path
+	 */
+	public void setEnvFolderPath(String envFolderPath) {
+		this.envFolderPath = envFolderPath;
+	}
+	/**
+	 * Gets the environment folder path.
+	 * @return the environment folder path
+	 */
+	public String getEnvFolderPath() {
+		return envFolderPath;
+	}
+
+	/**
+	 * Gets the list of agents to start.
+	 * @return the agents2 start
 	 */
 	public DefaultListModel getAgents2Start() {
 		return agents2Start;
 	}
 	/**
-	 * @param agents2Start the agents2Start to set
+	 * Sets the list of agents to start.
+	 * @param agents2Start the new agents2 start
 	 */
 	public void setAgents2Start(DefaultListModel agents2Start) {
 		this.agents2Start = agents2Start;
@@ -171,5 +188,6 @@ public abstract class EnvironmentController extends Observable implements Observ
 	  * @return a copy of the environment model
 	  */
 	public abstract Object getEnvironmentModelCopy();
+	
 	
 }

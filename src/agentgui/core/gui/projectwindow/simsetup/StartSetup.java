@@ -122,9 +122,8 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 	private JButton jButtonStartOK = null;
 	private JLabel jLabelHeader = null;
 
-	private JComboBox jComboBoxStartLists = null;
-
 	private JLabel jLabelStartList = null;
+	private JComboBox jComboBoxStartLists = null;
 	
 	
 	/**
@@ -841,14 +840,14 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
-		// --- Das ActionCommand und den Auslöser des Events ermitteln ---
+
 		Object trigger = ae.getSource();
 		
-		// --- Fallunterscheidung 'Auslöser' -----------------------------
 		if (trigger==jComboBoxStartLists) {
 			String selectedItem = (String) jComboBoxStartLists.getSelectedItem(); 
 			if (selectedItem!=null) {
 				DefaultListModel dlm = currSimSetup.getAgentDefaultListModel(selectedItem);
+				this.jListModelAgents2Start = dlm;
 				this.jListStartList.setModel(dlm);
 				this.setJListStartListEmptySelection();
 			}

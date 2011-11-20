@@ -62,51 +62,40 @@ public class OntologySettingsDialog extends JDialog implements ActionListener{
 	 * Generated serialVersionUID
 	 */
 	private static final long serialVersionUID = 1745551171293051322L;
-	/**
-	 * Content pane
-	 */
-	private JPanel jPanelContent = null;
-	/**
-	 * Apply button
-	 */
-	private JButton jButtonApply = null;
-	/**
-	 * cancel button
-	 */
-	private JButton jButtonAbort = null;
-	/**
-	 * The simulation project
-	 */
+
 	private Project project = null;
-	/**
-	 * The graph element containing the ontology object
-	 */
+
 	private Object element = null;
+	
+	private JPanel jPanelContent = null;
+	private JButton jButtonApply = null;
+	private JButton jButtonAbort = null;
+
 	/**
 	 * The parent GUI
 	 */
-	private GraphEnvironmentControllerGUI parentGUI = null;
+	private GraphEnvironmentControllerGUI graphEnvContGUI = null;
 	/**
 	 * The OntologyInstanceViewer instance used for editing ontology objects
 	 */
 	private OntologyInstanceViewer oiv = null;
+	
 	/**
 	 * Constructor
 	 * @param project The simulation project
 	 * @param parentGUI The GraphEnvironmentControllerGUI that opened the dialog
 	 * @param element The GraphElement containing the ontology object
 	 */
-	public OntologySettingsDialog(Project project, GraphEnvironmentControllerGUI parentGUI, Object element){
+	public OntologySettingsDialog(Project project, GraphEnvironmentControllerGUI graphEnvContGUI, Object element) {
 		super(Application.MainWindow, Dialog.ModalityType.APPLICATION_MODAL);
 		this.project = project;
-		this.parentGUI = parentGUI;
+		this.graphEnvContGUI = graphEnvContGUI;
 		this.element = element;
 		initialize();
 	}
 	
 	/**
 	 * This method initializes this
-	 * 
 	 */
 	private void initialize() {
         this.setContentPane(getJPanelContent());
@@ -120,14 +109,15 @@ public class OntologySettingsDialog extends JDialog implements ActionListener{
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// Confirmed, apply changes
+		
 		if(e.getSource().equals(getJButtonApply())){
+			// --- Confirmed, apply changes -----
 			oiv.save();
-			if(element instanceof GraphNode){
+			if (element instanceof GraphNode) {
 				((GraphNode)element).setEncodedOntologyRepresentation(oiv.getConfigurationXML64()[0]);
-			}else if(element instanceof NetworkComponent){
+			} else if(element instanceof NetworkComponent) {
 				((NetworkComponent)element).setEncodedOntologyRepresentation(oiv.getConfigurationXML64()[0]);
-				DefaultListModel agents2Start = parentGUI.getController().getAgents2Start();
+				DefaultListModel agents2Start = graphEnvContGUI.getController().getAgents2Start();
 				
 				//Setting the start arguments of the ontology instance in the agent start list of the environment.
 				for(int i=0;i< agents2Start.size() ; i++){
@@ -138,18 +128,18 @@ public class OntologySettingsDialog extends JDialog implements ActionListener{
 					}
 				}
 			}
-			parentGUI.componentSettingsChanged();
+			graphEnvContGUI.componentSettingsChanged();
 			this.dispose();
-		// Canceled, discard changes
-		}else if(e.getSource().equals(getJButtonAbort())){
-			parentGUI.componentSettingsChangeAborted();
+		
+		} else if(e.getSource().equals(getJButtonAbort())) {
+			// --- Canceled, discard changes ----
+			graphEnvContGUI.componentSettingsChangeAborted();
 			this.dispose();
 		}
 	}
 
 	/**
 	 * This method initializes jPanelContent	
-	 * 	
 	 * @return javax.swing.JPanel	
 	 */
 	private JPanel getJPanelContent() {
@@ -176,7 +166,12 @@ public class OntologySettingsDialog extends JDialog implements ActionListener{
 			jPanelContent.add(getJButtonApply(), gridBagConstraints);
 			jPanelContent.add(getJButtonAbort(), gridBagConstraints1);
 			
-			jPanelContent.add(getOIV(), gridBagConstraints11);
+			OntologyInstanceViewer oiv = getOIV();
+			if (oiv==null) {
+				jPanelContent.remove(this.getJButtonApply());
+			} else {
+				jPanelContent.add(oiv, gridBagConstraints11);
+			}
 			
 		}
 		return jPanelContent;
@@ -187,20 +182,25 @@ public class OntologySettingsDialog extends JDialog implements ActionListener{
 	 * @return
 	 */
 	private OntologyInstanceViewer getOIV(){
+		
 		if(element instanceof NetworkComponent){
 			NetworkComponent elemNetComp = (NetworkComponent)element;
 			// Initiate a new OIV using the NetworkComponents agent class
-			oiv = new OntologyInstanceViewer(project, parentGUI.getController().getComponentTypeSettings().get(((NetworkComponent) element).getType()).getAgentClass());
+			oiv = new OntologyInstanceViewer(project, graphEnvContGUI.getController().getComponentTypeSettings().get(((NetworkComponent) element).getType()).getAgentClass());
 			// If an ontology instance is defined for this component, let the OIV decode and load it 
 			if(elemNetComp.getEncodedOntologyRepresentation()!=null){
 				String[] encodedOntoRepresentation = new String[1];
 				encodedOntoRepresentation[0]=elemNetComp.getEncodedOntologyRepresentation();
 				oiv.setConfigurationXML64(encodedOntoRepresentation);
 			}
-		}else if(element instanceof GraphNode){
+			
+		} else if(element instanceof GraphNode) {
 			// Obtain the ontology class name defined for nodes
 			String[] ontoClassName = new String[1];
-			ontoClassName[0] = parentGUI.getController().getComponentTypeSettings().get("node").getAgentClass();
+			ontoClassName[0] = graphEnvContGUI.getController().getComponentTypeSettings().get("node").getAgentClass();
+			if (ontoClassName[0]==null || ontoClassName[0].equals("") ) {
+				return null;
+			}
 			// Initiate a new OIV with the class name
 			oiv = new OntologyInstanceViewer(project, ontoClassName);
 			// If an ontology instance is defined for this node, let the OIV decode and load it
@@ -209,10 +209,9 @@ public class OntologySettingsDialog extends JDialog implements ActionListener{
 				encodedOntoRepresentation[0]=((GraphNode)element).getEncodedOntologyRepresentation();
 				oiv.setConfigurationXML64(encodedOntoRepresentation);
 			}
+			
 		}
-		
 		oiv.setAllowViewEnlargement(false);
-		
 		return oiv;
 	}
 

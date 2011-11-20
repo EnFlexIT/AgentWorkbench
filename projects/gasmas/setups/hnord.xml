@@ -3,15 +3,6 @@
     <agentSetup>
         <agent>
             <postionNo>1</postionNo>
-            <listMembership>01 AgentStartManual</listMembership>
-            <agentClassReference>gasmas.agents.PipeAgent</agentClassReference>
-            <startAsName>PiAg</startAsName>
-            <startArguments>
-                <argument>PFBpcGUgSUQ9IkhhbGxvIiBsZW5ndGg9IjEwLjBGIj4KCTxyZXNpc3RhbmNlPgoJCTxSZXNpc3RhbmNlUGFyYW1ldGVycyBwaXBlRnJpY3Rpb249IjAuMEYiIGNvc3RzPSIwLjBGIi8+Cgk8L3Jlc2lzdGFuY2U+CjwvUGlwZT4K</argument>
-            </startArguments>
-        </agent>
-        <agent>
-            <postionNo>1</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>gasmas.agents.PipeAgent</agentClassReference>
             <startAsName>n0</startAsName>
@@ -25,32 +16,44 @@
         <agent>
             <postionNo>3</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>gasmas.agents.BranchAgent</agentClassReference>
-            <startAsName>n2</startAsName>
-        </agent>
-        <agent>
-            <postionNo>4</postionNo>
-            <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>gasmas.agents.PipeAgent</agentClassReference>
-            <startAsName>n3</startAsName>
-        </agent>
-        <agent>
-            <postionNo>5</postionNo>
-            <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>gasmas.agents.CompressorAgent</agentClassReference>
             <startAsName>n4</startAsName>
         </agent>
         <agent>
-            <postionNo>6</postionNo>
+            <postionNo>4</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>gasmas.agents.BranchAgent</agentClassReference>
             <startAsName>n5</startAsName>
         </agent>
         <agent>
-            <postionNo>7</postionNo>
+            <postionNo>5</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>gasmas.agents.CompressorAgent</agentClassReference>
             <startAsName>n6</startAsName>
+        </agent>
+        <agent>
+            <postionNo>6</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.CompressorAgent</agentClassReference>
+            <startAsName>n7</startAsName>
+        </agent>
+        <agent>
+            <postionNo>7</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.BranchAgent</agentClassReference>
+            <startAsName>n8</startAsName>
+        </agent>
+        <agent>
+            <postionNo>8</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.CompressorAgent</agentClassReference>
+            <startAsName>n9</startAsName>
+        </agent>
+        <agent>
+            <postionNo>9</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.PipeAgent</agentClassReference>
+            <startAsName>n10</startAsName>
         </agent>
     </agentSetup>
     <environmentFileName>HNord.graphml</environmentFileName>

@@ -181,6 +181,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	private void initialize() {
 		this.setLayout(new BorderLayout());
 		this.add(getJSplitPaneRoot(), null);
+		this.showNumberOfComponents();
 	}
 
 	/**
@@ -203,7 +204,9 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 			GridBagConstraints gridBagConstraints6 = new GridBagConstraints();
 			gridBagConstraints6.gridx = 0;
 			gridBagConstraints6.anchor = GridBagConstraints.WEST;
-			gridBagConstraints6.insets = new Insets(0, 15, 0, 0);
+			gridBagConstraints6.insets = new Insets(0, 15, 0, 5);
+			gridBagConstraints6.gridwidth = 2;
+			gridBagConstraints6.fill = GridBagConstraints.HORIZONTAL;
 			gridBagConstraints6.gridy = 0;
 			jLabelTable = new JLabel();
 			jLabelTable.setText("Search Components");
@@ -246,6 +249,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	 * @return javax.swing.table.TableColumnModel
 	 */
 	private TableColumnModel getColModel(){
+		
 		final GraphEnvironmentControllerGUI graphEnvironmentControllerGUI = this;		
 		colModel = jTableComponents.getColumnModel();
         colModel.getColumn(2).setCellRenderer(new TableCellRenderer4Button());	        
@@ -329,6 +333,22 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
             return;
         }
         tblSorter.setRowFilter(rf);
+        
+        this.showNumberOfComponents();
+      
+	}
+	
+	/**
+	 * Show number of components.
+	 */
+	private void showNumberOfComponents() {
+		// --- Set the number of rows displayed -----------
+        String text = this.jLabelTable.getText();
+        if (text.indexOf("(") > -1) {
+        	text = text.substring(0, text.indexOf("(")).trim();
+        }
+        text = text + " (" + jTableComponents.getRowCount() + ")";
+        this.jLabelTable.setText(text);
 	}
 	
 	/**
@@ -552,144 +572,141 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 			// --- Rebuilding the component table ---------
 			this.rebuildTblComponents();
 			graphGUI.clearPickedObjects();
-		}
+			
+		} else if(o.equals(graphGUI.getMyObservable())) {
 		
+			// --- From BasicGraphGUI Observable - Start --
+			// --- From BasicGraphGUI Observable - End ----
 		
-		// From BasicGraphGUI Observable
-		else if(o.equals(graphGUI.getMyObservable())){
-			    // Casting the argument into Notification class
-				BasicGraphGUI.Notification notification = (BasicGraphGUI.Notification ) arg;
+		    // Casting the argument into Notification class
+			BasicGraphGUI.Notification notification = (BasicGraphGUI.Notification ) arg;
+			
+			if(notification.getEvent().equals(BasicGraphGUI.EVENT_NETWORKMODEL_CLEAR)){
+				// --- Clearing the actual Network and Graph model ------------
+				controller.clearNetworkModel();
 				
-				if(notification.getEvent().equals(BasicGraphGUI.EVENT_NETWORKMODEL_CLEAR)){
-				// Clearing the actual Network and Graph model
-					controller.clearNetworkModel();			
-				}
-				else if(notification.getEvent().equals(BasicGraphGUI.EVENT_ADD_COMPONENT_CLICKED)){
-				// Add Component Button Clicked
-					
-						//If the graph is empty - starting from scratch
-					if(controller.getNetworkModel().getGraph().getVertexCount()==0){
-						getAddComponentDialog().setVisible(true);	
-					}
-						//Picked a vertex
-					else if(getPickedVertex()!=null){
-							//System.out.println("vertex picked="+getPickedVertex().getId());
-							if(isFreeToAddComponent(getPickedVertex()))
-								getAddComponentDialog().setVisible(true);
-							else
-								JOptionPane.showMessageDialog(this,Language.translate("Select a valid vertex", Language.EN),
-										Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);						
-					}				
-						//No vertex is picked
-					else{
-						JOptionPane.showMessageDialog(this,Language.translate("Select a valid vertex first", Language.EN),
-								Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
-					}
-					
-				} else if(notification.getEvent().equals(BasicGraphGUI.EVENT_REMOVE_COMPONENT_CLICKED)) {					
-				//Remove Component Button clicked
-					
-					Set<GraphEdge> edgeSet = graphGUI.getVisView().getPickedEdgeState().getPicked();
-					if(edgeSet.size()>0){ 
-						// --- At least one edge is picked ----------
-						//Get the Network component from the picked edge
-						NetworkComponent selectedComponent = getNetworkComponentFromEdge(edgeSet.iterator().next());												
-						//Removing the component from the network model and updating the graph
-						handleRemoveNetworkComponent(selectedComponent);
-						
-						getController().refreshNetworkModel();
-						
-					} else{
-						// --- No edge is picked --------------------
-						JOptionPane.showMessageDialog(this,Language.translate("Select an edge first", Language.EN),
-								Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
-					}
-					
-				} else if(notification.getEvent().equals(BasicGraphGUI.EVENT_MERGE_NODES_CLICKED)) {					
-				//Merge Nodes Button clicked
-					
-					Set<GraphNode> nodeSet = graphGUI.getVisView().getPickedVertexState().getPicked();
-					//Two nodes are picked
-					if(nodeSet.size()==2){
-						Iterator<GraphNode> nodeIter = nodeSet.iterator();
-						GraphNode node1 = nodeIter.next();
-						GraphNode node2 = nodeIter.next();
-						//Valid nodes are picked
-						if(isFreeToAddComponent(node1) && isFreeToAddComponent(node2)){
-							handleMergeNodes(node1, node2);
-						}
-						//Invalid nodes are picked
-						else{
-							JOptionPane.showMessageDialog(this,Language.translate("Select two valid vertices", Language.EN),
+			} else if(notification.getEvent().equals(BasicGraphGUI.EVENT_ADD_COMPONENT_CLICKED)) {
+				// --- Add Component Button Clicked ---------------------------
+				if(controller.getNetworkModel().getGraph().getVertexCount()==0){
+					// --- If the graph is empty - starting from scratch -
+					getAddComponentDialog().setVisible(true);	
+				} else if(getPickedVertex()!=null) {
+					// --- Picked a vertex -------------------------------
+						if(isFreeToAddComponent(getPickedVertex())) {
+							getAddComponentDialog().setVisible(true);
+						} else {
+							JOptionPane.showMessageDialog(this,Language.translate("Select a valid vertex", Language.EN),
 									Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
-						}
-					}
-					//Two nodes are not picked
-					else{ 
-						JOptionPane.showMessageDialog(this,Language.translate("Use Shift and click two vertices", Language.EN),
-								Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
-					}	
-					
-				} else if(notification.getEvent().equals(BasicGraphGUI.EVENT_SPLIT_NODE_CLICKED)){
-				//Split node button clicked
-					GraphNode pickedVertex = getPickedVertex();
-					//One vertex is picked
-					if(pickedVertex!=null){
-						//Check whether it is in two network components
-						if(getNetworkComponentCount(pickedVertex)==2){
-							handleSplitNode(pickedVertex);
-						}
-						else{
-						//The node is not in two components
-							JOptionPane.showMessageDialog(this,Language.translate("Vertex should be in two components", Language.EN),
-									Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
-						}
-							
-					}
-					//Multiple vertices are picked
-					else{
-						JOptionPane.showMessageDialog(this,Language.translate("Select one vertex", Language.EN),
-								Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
-					}
-				
-				} else if(notification.getEvent().equals(BasicGraphGUI.EVENT_IMPORT_GRAPH_CLICKED)){
-					//Import Graph button clicked
-					JFileChooser graphFC = new JFileChooser();
-					graphFC.setFileFilter(new FileNameExtensionFilter(Language.translate(controller.getGraphFileImporter().getTypeString()), controller.getGraphFileImporter().getGraphFileExtension()));
-					graphFC.setCurrentDirectory(Application.RunInfo.getLastSelectedFolder());
-					if(graphFC.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
-						Application.RunInfo.setLastSelectedFolder(graphFC.getCurrentDirectory());
-						File graphMLFile = graphFC.getSelectedFile();
-						this.controller.importNetworkModel(graphMLFile);
-					}
-				
-				} else if(notification.getEvent().equals(BasicGraphGUI.EVENT_NODE_EDIT_PROPERTIES_CLICKED)){
-					// Popup Menu Item Node properties clicked
-					GraphNode pickedVertex = getPickedVertex();
-					if(pickedVertex!=null){
-						new OntologySettingsDialog(currProject, this, pickedVertex).setVisible(true);
-					}
-				
-				} else if(notification.getEvent().equals(BasicGraphGUI.EVENT_EDGE_EDIT_PROPERTIES_CLICKED)){
-					// Popup Menu Item Edge properties clicked
-					GraphEdge pickedEdge = getPickedEdge();
-					if(pickedEdge!=null){
-						NetworkComponent netComp = getNetworkComponentFromEdge(pickedEdge);						
-						new OntologySettingsDialog(currProject, this, netComp).setVisible(true);
-					}
-					
-				} else if(notification.getEvent().equals(BasicGraphGUI.EVENT_OBJECT_LEFT_CLICK) ||
-						notification.getEvent().equals(BasicGraphGUI.EVENT_OBJECT_RIGHT_CLICK)){					
-				// A graph element was selected in the visualization		
-					graphGUI.clearPickedObjects();
-					selectObject(notification.getArg());
-					
-				} else if(notification.getEvent().equals(BasicGraphGUI.EVENT_OBJECT_DOUBLE_CLICK)){
-					//Double click (left or right) - Graph node or edge
-					//Show component settings dialog too
-					graphGUI.clearPickedObjects();
-					selectObject(notification.getArg(), true);
+						};
+				} else {
+					// --- No vertex is picked ---------------------------
+					JOptionPane.showMessageDialog(this,Language.translate("Select a valid vertex first", Language.EN),
+							Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
 				}
+				
+			} else if(notification.getEvent().equals(BasicGraphGUI.EVENT_REMOVE_COMPONENT_CLICKED)) {					
+				// --- Remove Component Button clicked ------------------------
+				Set<GraphEdge> edgeSet = graphGUI.getVisView().getPickedEdgeState().getPicked();
+				if(edgeSet.size()>0){ 
+					// --- At least one edge is picked -------------------
+					//Get the Network component from the picked edge
+					NetworkComponent selectedComponent = getNetworkComponentFromEdge(edgeSet.iterator().next());												
+					//Removing the component from the network model and updating the graph
+					this.handleRemoveNetworkComponent(selectedComponent);
+					this.getController().refreshNetworkModel();
+					
+				} else {
+					// --- No edge is picked -----------------------------
+					JOptionPane.showMessageDialog(this,Language.translate("Select an edge first", Language.EN),
+							Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
+				}
+				
+			} else if (notification.getEvent().equals(BasicGraphGUI.EVENT_MERGE_NODES_CLICKED)) {					
+				// --- Merge Nodes Button clicked ------------------------
+				
+				Set<GraphNode> nodeSet = graphGUI.getVisView().getPickedVertexState().getPicked();
+				//Two nodes are picked
+				if(nodeSet.size()==2){
+					Iterator<GraphNode> nodeIter = nodeSet.iterator();
+					GraphNode node1 = nodeIter.next();
+					GraphNode node2 = nodeIter.next();
+					//Valid nodes are picked
+					if(isFreeToAddComponent(node1) && isFreeToAddComponent(node2)){
+						handleMergeNodes(node1, node2);
+					}
+					//Invalid nodes are picked
+					else{
+						JOptionPane.showMessageDialog(this,Language.translate("Select two valid vertices", Language.EN),
+								Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
+					}
+				}
+				//Two nodes are not picked
+				else{ 
+					JOptionPane.showMessageDialog(this,Language.translate("Use Shift and click two vertices", Language.EN),
+							Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
+				}	
+				
+			} else if(notification.getEvent().equals(BasicGraphGUI.EVENT_SPLIT_NODE_CLICKED)){
+			//Split node button clicked
+				GraphNode pickedVertex = getPickedVertex();
+				//One vertex is picked
+				if(pickedVertex!=null){
+					//Check whether it is in two network components
+					if(getNetworkComponentCount(pickedVertex)==2){
+						handleSplitNode(pickedVertex);
+					}
+					else{
+					//The node is not in two components
+						JOptionPane.showMessageDialog(this,Language.translate("Vertex should be in two components", Language.EN),
+								Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
+					}
+						
+				}
+				//Multiple vertices are picked
+				else{
+					JOptionPane.showMessageDialog(this,Language.translate("Select one vertex", Language.EN),
+							Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
+				}
+			
+			} else if(notification.getEvent().equals(BasicGraphGUI.EVENT_IMPORT_GRAPH_CLICKED)){
+				//Import Graph button clicked
+				JFileChooser graphFC = new JFileChooser();
+				graphFC.setFileFilter(new FileNameExtensionFilter(Language.translate(controller.getGraphFileImporter().getTypeString()), controller.getGraphFileImporter().getGraphFileExtension()));
+				graphFC.setCurrentDirectory(Application.RunInfo.getLastSelectedFolder());
+				if(graphFC.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
+					Application.RunInfo.setLastSelectedFolder(graphFC.getCurrentDirectory());
+					File graphMLFile = graphFC.getSelectedFile();
+					this.controller.importNetworkModel(graphMLFile);
+				}
+			
+			} else if(notification.getEvent().equals(BasicGraphGUI.EVENT_NODE_EDIT_PROPERTIES_CLICKED)){
+				// Popup Menu Item Node properties clicked
+				GraphNode pickedVertex = getPickedVertex();
+				if(pickedVertex!=null){
+					new OntologySettingsDialog(currProject, this, pickedVertex).setVisible(true);
+				}
+			
+			} else if(notification.getEvent().equals(BasicGraphGUI.EVENT_EDGE_EDIT_PROPERTIES_CLICKED)){
+				// Popup Menu Item Edge properties clicked
+				GraphEdge pickedEdge = getPickedEdge();
+				if(pickedEdge!=null){
+					NetworkComponent netComp = getNetworkComponentFromEdge(pickedEdge);						
+					new OntologySettingsDialog(currProject, this, netComp).setVisible(true);
+				}
+				
+			} else if(notification.getEvent().equals(BasicGraphGUI.EVENT_OBJECT_LEFT_CLICK) ||
+					notification.getEvent().equals(BasicGraphGUI.EVENT_OBJECT_RIGHT_CLICK)){					
+			// A graph element was selected in the visualization		
+				graphGUI.clearPickedObjects();
+				selectObject(notification.getArg());
+				
+			} else if(notification.getEvent().equals(BasicGraphGUI.EVENT_OBJECT_DOUBLE_CLICK)){
+				//Double click (left or right) - Graph node or edge
+				//Show component settings dialog too
+				graphGUI.clearPickedObjects();
+				selectObject(notification.getArg(), true);
+			}
+			// --- From BasicGraphGUI Observable - End ---
 		}
 	}
 	/**
@@ -906,8 +923,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		
 		//Removing the new agent from the agent start list of the simulation setup
 		int i=0;
-		for( i=0; i < getController().getAgents2Start().size(); i++)
-		{
+		for( i=0; i < getController().getAgents2Start().size(); i++) {
 			AgentClassElement4SimStart ac4s = (AgentClassElement4SimStart) getController().getAgents2Start().get(i);
 			if(ac4s.getStartAsName().equals(selectedComponent.getId())){
 				getController().getAgents2Start().remove(i);
@@ -916,7 +932,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		}
 		
 		//Shifting the positions of the later components by 1
-		for(int j=i; j<getController().getAgents2Start().size();j++){
+		for(int j=i; j<getController().getAgents2Start().size();j++) {
 			AgentClassElement4SimStart ac4s = (AgentClassElement4SimStart) getController().getAgents2Start().get(j);
 			ac4s.setPostionNo(ac4s.getPostionNo()-1);
 		}
@@ -1079,17 +1095,20 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	 * @param showComponentSettingsDialog - shows the dialog if true
 	 */
 	void selectObject(Object object, boolean showComponentSettingsDialog){
-		selectObject(object);
+		
+		this.selectObject(object);
 		
 		if(showComponentSettingsDialog){
+			OntologySettingsDialog osd = null;
 			if(object instanceof GraphNode){
-				new OntologySettingsDialog(currProject, this, object).setVisible(true);			
+				osd = new OntologySettingsDialog(currProject, this, object);			
 			}else if(object instanceof GraphEdge){
 				NetworkComponent netComp = getNetworkComponentFromEdge((GraphEdge)object);
-				new OntologySettingsDialog(currProject, this, netComp).setVisible(true);
+				osd = new OntologySettingsDialog(currProject, this, netComp);
 			}else if(object instanceof NetworkComponent){
-				new OntologySettingsDialog(currProject, this, (NetworkComponent)object).setVisible(true);
+				osd = new OntologySettingsDialog(currProject, this, (NetworkComponent)object);
 			}		
+			osd.setVisible(true);
 		}
 	}
 	/**
