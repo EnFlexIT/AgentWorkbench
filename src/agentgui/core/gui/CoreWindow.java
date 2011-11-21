@@ -158,6 +158,7 @@ public class CoreWindow extends JFrame implements ComponentListener {
 		this.setDefaultCloseOperation(CoreWindow.DO_NOTHING_ON_CLOSE);
 		this.getContentPane().setPreferredSize(this.getSize());
 		this.setLocationRelativeTo(null);
+		this.pack();	
 		
 		// --- configure console ---------------------------------- 
 		this.oldDividerLocation = this.jSplitPane4ProjectDesktop.getHeight() * 3 / 4; 

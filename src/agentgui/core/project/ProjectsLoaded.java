@@ -168,33 +168,36 @@ public class ProjectsLoaded {
 		newProject.setProjectFolder( localTmpProjectFolder );
 
 		if (addNew==true) {			
-			// --- Standardstruktur anlegen ---------------
+			// --- Create default project structure -------
 			newProject.createDefaultProjectStructure();
 		} 
 		else {
-			// --- XML-Datei einlesen ---------------------
+			// --- Get data model from file ---------------
 			JAXBContext pc;
 			Unmarshaller um = null;
 			String XMLFileName = newProject.getProjectFolderFullPath() + Application.RunInfo.getFileNameProject();	
 			String userObjectFileName = newProject.getProjectFolderFullPath() + Application.RunInfo.getFilenameProjectUserObject();
-			// --- Gibt es diese Datei überhaupt? ---------
+		
+			// --- Does the file exists -------------------
 			File xmlFile = new File(XMLFileName);
 			if (xmlFile.exists()==false) {
 				System.out.println(Language.translate("Verzeichnis wurde nicht gefunden:") + " " + XMLFileName);
 				return null;
 			}
-			// --- Einlesen der Datei 'agentgui.xml' ------
+			
+			// --- Read file 'agentgui.xml' --------------
 			try {
-				pc = JAXBContext.newInstance( newProject.getClass() );
+				pc = JAXBContext.newInstance(newProject.getClass());
 				um = pc.createUnmarshaller();
-				newProject = (Project) um.unmarshal( new FileReader(XMLFileName) );
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (JAXBException e) {
-				e.printStackTrace();
+				newProject = (Project) um.unmarshal(new FileReader(XMLFileName));
+			} catch (FileNotFoundException ex) {
+				ex.printStackTrace();
+			} catch (JAXBException ex) {
+				ex.printStackTrace();
 			}
 			
-			//--- Reading the serializable user object of the Project from the 'agentgui.bin' ---
+			// --- Reading the serializable user object of - 
+			// --- the Project from the 'agentgui.bin' -----
 			File userObjectFile = new File(userObjectFileName);
 			if (userObjectFile.exists()) {
 				
@@ -213,18 +216,22 @@ public class ProjectsLoaded {
 				}
 				newProject.setUserRuntimeObject(userObject);				
 			}
-			  
-			// --- Folder auf aktuellen Projektordner einstellen ---
-			newProject.setProjectFolder( localTmpProjectFolder );	
 			
-			// --- check/create default folders -------------------- 
+			// --- check/create default folders --------------------
+			newProject.setProjectFolder(localTmpProjectFolder);
 			newProject.checkCreateSubFolders();
 		}
 		
-		// --- Das Ontologie-Objekt beladen ----------------------------------- 
+		// --------------------------------------------------------------------
+		// --- Load additional external resources with the ClassLoader --------
+		// --------------------------------------------------------------------
+		newProject.resourcesLoad();
+		// --------------------------------------------------------------------
+		
+		// --- Load the ontology objects -------------------------------------- 
 		newProject.ontologies4Project = new Ontologies4Project(newProject);
 
-		// --- ggf. AgentGUI - DefaultProfile übernehmen ----------------------
+		// --- Maybe take over Agent.GUI default JADE configuration -----------
 		if(addNew==true) {
 			newProject.JadeConfiguration = Application.RunInfo.getJadeDefaultPlatformConfig();
 		}
@@ -238,15 +245,6 @@ public class ProjectsLoaded {
 			newProject.simulationSetups.setupCreateDefault();			
 		}
 
-		// --------------------------------------------------------------------
-		// --- !Important! Don't do this after you have build the -------------  
-		// --------------------------------------------------------------------		
-		// --- Load additional external resources with the ClassLoader --------
-		newProject.resourcesLoad();
-		// --------------------------------------------------------------------
-		// --- !Important! Don't do this after you have build the -------------  
-		// --------------------------------------------------------------------		
-		
 		// --- Instantiate project-window and the default tabs ----------------
 		newProject.projectWindow = new ProjectWindow(newProject);
 		newProject.addDefaultTabs();

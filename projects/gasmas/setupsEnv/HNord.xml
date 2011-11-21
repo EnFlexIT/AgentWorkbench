@@ -31,5 +31,48 @@
                 <type>Compressor</type>
             </value>
         </entry>
+        <entry>
+            <key>n4</key>
+            <value>
+                <agentClassName>gasmas.agents.components.CompressorAgent</agentClassName>
+                <directed>true</directed>
+                <graphElementIDs>PP9</graphElementIDs>
+                <graphElementIDs>n4</graphElementIDs>
+                <graphElementIDs>PP7</graphElementIDs>
+                <id>n4</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</prototypeClassName>
+                <type>Compressor</type>
+            </value>
+        </entry>
+        <entry>
+            <key>n3</key>
+            <value>
+                <agentClassName>gasmas.agents.components.BranchAgent</agentClassName>
+                <directed>false</directed>
+                <graphElementIDs>n3_1</graphElementIDs>
+                <graphElementIDs>PP8</graphElementIDs>
+                <graphElementIDs>n3_0</graphElementIDs>
+                <graphElementIDs>PP5</graphElementIDs>
+                <graphElementIDs>PP7</graphElementIDs>
+                <graphElementIDs>n3_2</graphElementIDs>
+                <graphElementIDs>PP6</graphElementIDs>
+                <id>n3</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.Star3GraphElement</prototypeClassName>
+                <type>Branch</type>
+            </value>
+        </entry>
+        <entry>
+            <key>n2</key>
+            <value>
+                <agentClassName>gasmas.agents.components.PipeAgent</agentClassName>
+                <directed>false</directed>
+                <graphElementIDs>n2</graphElementIDs>
+                <graphElementIDs>PP5</graphElementIDs>
+                <graphElementIDs>PP3</graphElementIDs>
+                <id>n2</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
+                <type>Pipe</type>
+            </value>
+        </entry>
     </componentList>
 </networkComponentList>

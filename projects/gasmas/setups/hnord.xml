@@ -19,6 +19,24 @@
             <agentClassReference>gasmas.agents.components.BranchAgent</agentClassReference>
             <startAsName>n1</startAsName>
         </agent>
+        <agent>
+            <postionNo>3</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.PipeAgent</agentClassReference>
+            <startAsName>n2</startAsName>
+        </agent>
+        <agent>
+            <postionNo>4</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.BranchAgent</agentClassReference>
+            <startAsName>n3</startAsName>
+        </agent>
+        <agent>
+            <postionNo>5</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.CompressorAgent</agentClassReference>
+            <startAsName>n4</startAsName>
+        </agent>
     </agentSetup>
     <environmentFileName>HNord.graphml</environmentFileName>
 </simulationSetup>
