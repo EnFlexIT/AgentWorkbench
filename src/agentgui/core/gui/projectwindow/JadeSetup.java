@@ -449,8 +449,11 @@ public class JadeSetup extends JPanel implements ActionListener, Observer {
 	
 	@Override
 	public void update(Observable observable, Object updateObject) {
+		
 		if (updateObject==Project.CHANGED_JadeConfiguration) {
 			this.refreshDataView();
+		} else if (updateObject == Project.CHANGED_ProjectResources ) {
+			this.getJListServicesAvailable().reSetListModel();
 		}
 	}
 

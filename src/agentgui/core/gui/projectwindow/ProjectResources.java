@@ -288,7 +288,7 @@ public class ProjectResources extends JPanel implements Observer {
 			jButtonResourcesAdd.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 
-					if (Application.JadePlatform.jadeStopAskUserBefore()) {
+					if (Application.JadePlatform.jadeStopAskUserBefore()==true) {
 						
 						FileNameExtensionFilter filter = new FileNameExtensionFilter("jar", "JAR");
 						

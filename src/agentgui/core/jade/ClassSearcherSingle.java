@@ -57,46 +57,26 @@ import agentgui.core.project.Project;
  */
 public class ClassSearcherSingle {
 
-	/** The Constant ACC_INTERFACE. */
 	public static final int ACC_INTERFACE = 0x0200;
-	
-	/** The Constant ACC_ABSTRACT. */
 	public static final int ACC_ABSTRACT = 0x0400;
 	
-	/** The curr project. */
 	private Project currProject = null;
 	
 	/** The packages in project. */
 	private Vector<String> packagesInProject = new Vector<String>();
 	
-	/** The cu. */
 	private ClassUpdater cu = null;
-	
-	/** The class2 search4. */
 	private Class<?> class2Search4;
-	
-	/** The classname. */
 	private String classname;
-	
-	/** The classfilter. */
 	private ClassFinderFilter classfilter;
 	
-	/** The busy. */
 	private boolean busy = false;
-	
-	/** The classes loaded. */
+
 	private boolean classesLoaded = false;
-	
-	/** The classes found. */
 	private Vector<Class<?>> classesFound = new Vector<Class<?>>();
-	
-	/** The j list model classes found. */
 	private DefaultListModel jListModelClassesFound = new DefaultListModel();
-	
-	/** The j list model classes found project. */
 	private DefaultListModel jListModelClassesFoundProject = new DefaultListModel();
 	
-	/** The j list progress. */
 	private Vector<JListClassSearcher> jListProgress = new Vector<JListClassSearcher>();
 	
 	/**
@@ -108,9 +88,7 @@ public class ClassSearcherSingle {
 		this.classname = clazz2Search4.getName();
 	}
 	
-	/**
-	 * Start search.
-	 */
+	/** Start the search process. */
 	public void startSearch() {
 		
 		classesFound = new Vector<Class<?>>();
@@ -118,32 +96,32 @@ public class ClassSearcherSingle {
 		jListModelClassesFoundProject = new DefaultListModel();
 		
 		this.setBusy(true);
+
+		// --- If there is a running search stop it -------
+		if (cu!=null) {
+			this.stopSearch();
+		}
 		
 		// --- Start the search of classes ----------------
 		cu = new ClassUpdater(classname, classfilter == null ? new ClassFilter() : classfilter);
 		if (classname.equals(Object.class.getName())) {
 			cu.setUpdateEvery(10);	
 		}
-		new Thread(cu).start();		
+		cu.startSearch();
+				
 	}
-	
-	/**
-	 * Re start search.
-	 */
+	/** Stop the search process. */
+	public void stopSearch() {
+		if (cu!=null) {
+			cu.interruptSearch();
+			cu.stopSearch();
+			cu = null;
+		}
+	}
+	/** Re start search. */
 	public void reStartSearch() {
 		this.stopSearch();
 		this.startSearch();
-	}
-	
-	/**
-	 * Stop search.
-	 */
-	public void stopSearch() {
-		if (cu!=null) {
-			synchronized (cu) {
-				cu.stopSearch();
-			}
-		}
 	}
 	
 	/**
@@ -152,7 +130,9 @@ public class ClassSearcherSingle {
 	 * @param jListClassSearcher the j list class searcher
 	 */
 	public void registerJListWithProgress(JListClassSearcher jListClassSearcher) {
-		jListProgress.addElement(jListClassSearcher);	
+		if (this.jListProgress.contains(jListClassSearcher)==false) {
+			jListProgress.addElement(jListClassSearcher);	
+		}
 		jListClassSearcher.setBusy(this.busy);
 	}
 	
@@ -357,7 +337,7 @@ public class ClassSearcherSingle {
 	 *
 	 * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
 	 */
-	private class ClassUpdater extends Thread implements ClassFinderListener {
+	private class ClassUpdater implements Runnable, ClassFinderListener {
 
 		private int updateEvery = 1;
 		private int numberOfClasses;
@@ -368,6 +348,7 @@ public class ClassSearcherSingle {
 		private ClassFinder cf;
 		private ClassFinderFilter classfilter;
 
+		private Thread searchThread = null;
 		
 		/**
 		 * Instantiates a new class updater.
@@ -381,36 +362,33 @@ public class ClassSearcherSingle {
 		}
 
 		/**
-		 * Sets the update every.
-		 *
-		 * @param updateEvery the new update every
+		 * Start search.
 		 */
-		public void setUpdateEvery(int updateEvery) {
-			this.updateEvery = updateEvery;
+		public synchronized void startSearch(){
+		    if (searchThread == null){
+		    	searchThread = new Thread(this);
+		    	searchThread.start();
+		    }
 		}
-
+		/**
+		 * Interrupt search.
+		 */
+		public synchronized void interruptSearch() {
+		    if (searchThread != null) {
+		    	searchThread.interrupt();
+		    }
+		}   
 		/**
 		 * Stop search.
 		 */
-		public void stopSearch() {
+		public synchronized void stopSearch() {
 			if (cf!=null) {
 				cf.setStopSearch(true);
+				if (searchThread!=null) {
+					searchThread =null;
+				}
 			}
 		}
-		
-		/* (non-Javadoc)
-		 * @see jade.util.ClassFinderListener#add(java.lang.Class, java.net.URL)
-		 */
-		@SuppressWarnings("rawtypes")
-		public void add(Class clazz, URL location) {
-			numberOfClasses++;
-			classNamesCache.add(clazz);
-			if ((numberOfClasses % this.updateEvery) == 0) {
-				appendToList(classNamesCache);
-				classNamesCache.clear();
-			}
-		}
-
 		/* (non-Javadoc)
 		 * @see java.lang.Thread#run()
 		 */
@@ -439,8 +417,32 @@ public class ClassSearcherSingle {
 			classNamesCache = null;
 			classesLoaded = true;
 			setBusy(false);
+			this.stopSearch();
+			
 		}
 		
+		/**
+		 * Sets the update every.
+		 *
+		 * @param updateEvery the new update every
+		 */
+		public void setUpdateEvery(int updateEvery) {
+			this.updateEvery = updateEvery;
+		}
+		
+		/* (non-Javadoc)
+		 * @see jade.util.ClassFinderListener#add(java.lang.Class, java.net.URL)
+		 */
+		@SuppressWarnings("rawtypes")
+		public void add(Class clazz, URL location) {
+			numberOfClasses++;
+			classNamesCache.add(clazz);
+			if ((numberOfClasses % this.updateEvery) == 0) {
+				appendToList(classNamesCache);
+				classNamesCache.clear();
+			}
+		}
+
 	}
 	// ------------------------------------------------------------------------
 	// --- Sub-Class - 'ClassUpdater' --- S T O P -----------------------------

@@ -14,23 +14,5 @@
             <startAsName>MovingAgent</startAsName>
         </agent>
     </agentSetup>
-    <distribution>
-        <doDynamicLoadBalancing>false</doDynamicLoadBalancing>
-        <doStaticLoadBalancing>false</doStaticLoadBalancing>
-        <dynamicLoadBalancingClass>agentgui.simulationService.balancing.DynamicLoadBalancing</dynamicLoadBalancingClass>
-        <numberOfAgents>6</numberOfAgents>
-        <numberOfContainer>1</numberOfContainer>
-        <staticLoadBalancingClass>agentgui.simulationService.balancing.StaticLoadBalancing</staticLoadBalancingClass>
-        <useUserThresholds>false</useUserThresholds>
-        <userThresholds>
-            <thCpuH>80</thCpuH>
-            <thCpuL>5</thCpuL>
-            <thMemoH>80</thMemoH>
-            <thMemoL>5</thMemoL>
-            <thNoThreadsH>1500</thNoThreadsH>
-            <thNoThreadsL>50</thNoThreadsL>
-        </userThresholds>
-    </distribution>
     <environmentFileName>Test.xml</environmentFileName>
-    <svgFileName>Test.svg</svgFileName>
 </simulationSetup>

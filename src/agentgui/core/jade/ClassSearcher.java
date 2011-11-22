@@ -152,6 +152,40 @@ public class ClassSearcher {
 	}
 	
 	/**
+	 * Stops all search process or the specified one.
+	 * 
+	 * @param searchOf the search of
+	 */
+	public void stopSearch(Integer searchOf) {
+	
+		if (searchOf==null) {
+			csAgents.stopSearch();
+			csOntologies.stopSearch();
+			csBaseService.stopSearch();
+			
+		} else {
+			
+			switch (searchOf) {
+			case RESTART_AGENT_SEARCH:
+				// --- Start search for Agent ---------------------
+				csAgents.stopSearch();
+				break;
+				
+			case RESTART_ONTOLOGY_SEARCH:
+				// --- Start search for Ontology ------------------
+				csOntologies.stopSearch();
+				break;
+				
+			case RESTART_BASESERVICE_SEARCH:
+				// --- Start search for BaseService ---------------
+				csBaseService.stopSearch();
+				break;
+			}
+		}
+	}
+	
+	
+	/**
 	 * Gets the agent classes.
 	 *
 	 * @param filtered the filtered

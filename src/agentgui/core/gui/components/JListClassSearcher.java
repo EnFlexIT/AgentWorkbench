@@ -70,7 +70,7 @@ public class JListClassSearcher extends JListWithProgressBar {
 	public JListClassSearcher(Class<?> class2Search4) {
 		super();
 		this.currSearchFor = class2Search4;
-		this.setListModel();
+		this.reSetListModel();
 	}
 
 	/**
@@ -82,7 +82,7 @@ public class JListClassSearcher extends JListWithProgressBar {
 		super();
 		this.currSearchFor = searchFor;
 		this.currClassSearcherSingle = css;
-		this.setListModel();
+		this.reSetListModel();
 	}
 	
 	/**
@@ -94,13 +94,13 @@ public class JListClassSearcher extends JListWithProgressBar {
 		super();
 		this.currSearchFor = searchFor;
 		this.currProject = project;
-		this.setListModel();
+		this.reSetListModel();
 	}
 	
 	/**
 	 * Sets the DefaultListModel for the current JList to display
 	 */
-	private void setListModel() {
+	public void reSetListModel() {
 
 		// --- Select the required 'ClassSearcherSingle' --
 		if (this.currSearchFor == ClassSearcher.CLASSES_AGENTS) {
@@ -119,7 +119,7 @@ public class JListClassSearcher extends JListWithProgressBar {
 		}
 		
 		this.currClassSearcherSingle.registerJListWithProgress(this);
-		this.setModel(currListModel);
+		this.setModel(this.currListModel);
 	}
 
 	

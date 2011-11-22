@@ -35,6 +35,8 @@ import java.awt.event.*;
 
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
 
 import agentgui.core.application.Language;
 import agentgui.core.gui.components.ClassElement2Display;
@@ -194,6 +196,20 @@ public class OntologieSelector extends JDialog implements ActionListener{
 		if (jListOntologies == null) {
 			jListOntologies = new JListClassSearcher(ClassSearcher.CLASSES_ONTOLOGIES);
 			jListOntologies.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			jListOntologies.getModel().addListDataListener(new ListDataListener() {
+				@Override
+				public void contentsChanged(ListDataEvent e) {
+					filterOntology();
+				}
+				@Override
+				public void intervalRemoved(ListDataEvent e) { 
+					filterOntology();
+				}
+				@Override
+				public void intervalAdded(ListDataEvent e) {
+					filterOntology();
+				}
+			});
 			jListOntologies.jListLoading.addMouseListener( new MouseAdapter() {
 				public void mouseClicked(MouseEvent me) {
 					if (me.getClickCount() == 2 ) {
@@ -272,6 +288,10 @@ public class OntologieSelector extends JDialog implements ActionListener{
 		return jButtonCancel;
 	}
 
+	/**
+	 * Checks if is canceled.
+	 * @return true, if is canceled
+	 */
 	public boolean isCanceled(){
 		return canceled;
 	}
@@ -352,6 +372,9 @@ public class OntologieSelector extends JDialog implements ActionListener{
 		return jRadioButtonShowNoneJade;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		

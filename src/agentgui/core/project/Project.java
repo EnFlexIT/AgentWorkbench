@@ -651,7 +651,7 @@ import agentgui.core.webserver.JarFileCreator;
 				return;
 			}
 			// --- unload ClassPath -----------------------
-			Application.ProjectCurr.resourcesRemove();
+			this.resourcesRemove();
 		}
 		
 		projectWindow.moveToFront();
@@ -662,7 +662,7 @@ import agentgui.core.webserver.JarFileCreator;
 		
 		if (forceClassPathReload) {
 			// --- ClassPath laden ------------------------
-			Application.ProjectCurr.resourcesLoad();	
+			this.resourcesLoad();	
 		}
 	}
 	/**
@@ -940,11 +940,11 @@ import agentgui.core.webserver.JarFileCreator;
 		}
 		
 		// --- Search for Agent-, Ontology- and BaseService - Classes ----
-		if (Application.ClassDetector == null) {
-			Application.ClassDetector = new ClassSearcher(this);
-		} else {
-			Application.ClassDetector.reStartSearch(this, null);
+		if (Application.ClassDetector != null) {
+			Application.ClassDetector.stopSearch(null);
+			Application.ClassDetector = null;
 		}
+		Application.ClassDetector = new ClassSearcher(this);
 		
 		this.setChangedAndNotify(CHANGED_ProjectResources);
 	}
