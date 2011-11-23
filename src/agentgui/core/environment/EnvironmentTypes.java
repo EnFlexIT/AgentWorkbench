@@ -4,8 +4,9 @@
  * applications based on the JADE - Framework in compliance with the 
  * FIPA specifications. 
  * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
  * http://sourceforge.net/projects/agentgui/
- * http://www.dawis.wiwi.uni-due.de/ 
+ * http://www.agentgui.org 
  *
  * GNU Lesser General Public License
  *
@@ -42,8 +43,8 @@ import agentgui.core.config.GlobalInfo;
  *
  * @see Application#RunInfo
  * @see GlobalInfo
- * @see GlobalInfo#getKnowEnvironmentTypes()
- * @see GlobalInfo#setKnowEnvironmentTypes(EnvironmentTypes)
+ * @see GlobalInfo#getKnownEnvironmentTypes()
+ * @see GlobalInfo#setKnownEnvironmentTypes(EnvironmentTypes)
  * @see EnvironmentType
  *   
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
@@ -52,11 +53,40 @@ public class EnvironmentTypes extends Vector<EnvironmentType>{
 
 	private static final long serialVersionUID = 1887651840189227293L;
 
+	private DefaultComboBoxModel myComboBoxModel = new DefaultComboBoxModel();
+	
 	/**
 	 * Constructor of this class
 	 */
 	public EnvironmentTypes() {
 		super();
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.util.Vector#add(java.lang.Object)
+	 */
+	@Override
+	public synchronized boolean add(EnvironmentType envType) {
+		try {
+			this.add2MyComboBoxModel(envType);
+			return super.add(envType);	
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return false;
+	}
+	/* (non-Javadoc)
+	 * @see java.util.Vector#remove(java.lang.Object)
+	 */
+	@Override
+	public boolean remove(Object o) {
+		try {
+			this.removeFromMyComboBoxModel((EnvironmentType) o);
+			return super.remove(o);	
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return false;
 	}
 	
 	/**
@@ -81,13 +111,27 @@ public class EnvironmentTypes extends Vector<EnvironmentType>{
 	 * @return The DefaultComboBoxModel for the list of all EnvironmentType 
 	 */
 	public DefaultComboBoxModel getComboBoxModel() {
-		
-		DefaultComboBoxModel cbm = new DefaultComboBoxModel();
-		for (Iterator<EnvironmentType> it = this.iterator(); it.hasNext();) {
-			EnvironmentType envTyp = it.next();
-			cbm.addElement(envTyp);
+		if (myComboBoxModel==null) {
+			myComboBoxModel = new DefaultComboBoxModel();
+			for (Iterator<EnvironmentType> it = this.iterator(); it.hasNext();) {
+				EnvironmentType envTyp = it.next();
+				myComboBoxModel.addElement(envTyp);
+			}
 		}
-		return cbm;
+		return myComboBoxModel;
+	}
+	/**
+	 * Add a new EnvironmentType to ComboBox model.
+	 */
+	private void add2MyComboBoxModel(EnvironmentType envTyp) {
+		this.getComboBoxModel().addElement(envTyp);
+	}
+	/**
+	 * Removes an EnvironmentType from ComboBox model.
+	 * @param envTyp the EnvironmentType
+	 */
+	private void removeFromMyComboBoxModel(EnvironmentType envTyp) {
+		this.getComboBoxModel().removeElement(envTyp);
 	}
 	
 }

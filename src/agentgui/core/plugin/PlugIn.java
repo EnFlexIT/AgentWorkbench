@@ -39,6 +39,7 @@ import javax.swing.JComponent;
 import javax.swing.JMenu;
 
 import agentgui.core.application.Application;
+import agentgui.core.environment.EnvironmentType;
 import agentgui.core.gui.projectwindow.ProjectWindowTab;
 import agentgui.core.project.Project;
 import agentgui.core.sim.setup.SimulationSetup;
@@ -65,6 +66,7 @@ public abstract class PlugIn implements Observer {
 
 	private Vector<JComponent> customJComponent = new Vector<JComponent>();
 	private Vector<ProjectWindowTab> customProjectWindowTab = new Vector<ProjectWindowTab>();
+	private Vector<EnvironmentType> customEnvironmentTypes = new Vector<EnvironmentType>();
 	
 	/**
 	 * Default constructor for this class.
@@ -123,7 +125,7 @@ public abstract class PlugIn implements Observer {
 	 */
 	public void afterPlugOut() {
 		this.project.deleteObserver(this);
-		this.removeCustomJElements();
+		this.removeCustomElements();
 	}
 	
 	// --------------------------------------------------------------
@@ -132,7 +134,6 @@ public abstract class PlugIn implements Observer {
 	// --- Start of adding functions ------------
 	/**
 	 * This method can be used in order to add an individual menu.
-	 *
 	 * @param myMenu the my menu
 	 */
 	protected void addJMenu(JMenu myMenu) {
@@ -222,13 +223,28 @@ public abstract class PlugIn implements Observer {
 		projectWindowTab.add(indexPositionGreaterOne);
 		customProjectWindowTab.add(projectWindowTab);
 	}
+	
+	/**
+	 * Adds an environment type to the list of available environment types. It can be used 
+	 * in order to register an individual, taylored EnvironmentType to Agent.GUI.<br>
+	 * After this method was invoked the EnvironmentType can be found for selection
+	 * in the Resources-Tab of the project configuration.
+	 *  
+	 * @param envType the new EnvironmentType
+	 */
+	protected void addEnvironmentType(EnvironmentType envType) {
+		if (envType!=null) {
+			Application.RunInfo.addEnvironmentType(envType);	
+			customEnvironmentTypes.add(envType);
+		}
+	}
 	// --- End of adding functions --------------
 	
 	/**
 	 * This method can be used to remove all custom components
 	 * for menus and for the toolbar.
 	 */
-	private void removeCustomJElements() {
+	private void removeCustomElements() {
 		
 		// --- remove custom toolbar/menu elements --------
 		for (int i = 0; i < customJComponent.size(); i++) {
@@ -243,6 +259,11 @@ public abstract class PlugIn implements Observer {
 			pwt.remove();
 		}
 		customProjectWindowTab = new Vector<ProjectWindowTab>();
+		// --- remove custom environment types ------------
+		for (int i = customEnvironmentTypes.size()-1; i>-1; i--) {
+			EnvironmentType envType = customEnvironmentTypes.get(i);
+			Application.RunInfo.removeEnvironmentType(envType);
+		}
 		// --- validate/repaint the CorwWindow ------------
 		Application.MainWindow.validate();
 	}

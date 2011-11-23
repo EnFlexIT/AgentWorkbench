@@ -54,6 +54,7 @@ import javax.xml.bind.Unmarshaller;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.common.Zipper;
+import agentgui.core.environment.EnvironmentType;
 import agentgui.core.gui.ProjectNewOpen;
 import agentgui.core.gui.ProjectWindow;
 import agentgui.core.ontologies.Ontologies4Project;
@@ -232,6 +233,19 @@ public class ProjectsLoaded {
 		newProject.resourcesLoad();
 		// --------------------------------------------------------------------
 		
+		// --- Remind the current name of the used environment model type -----
+		boolean reloadEnvironmentType = false;
+		String envModelName = newProject.getEnvironmentModelName();
+		EnvironmentType envType = newProject.getEnvironmentModelType();
+		if (envType.getInternalKey().equals("none")) {
+			// --- The environment model was NOT FOUND YET ----------
+			// --- => Maybe a PlugIn contains an environment model --
+			reloadEnvironmentType = true;
+		} else {
+			// --- The environment model was ALREADY FOUND ----------
+			reloadEnvironmentType = false;
+		}
+		
 		// --- Load the ontology objects -------------------------------------- 
 		newProject.ontologies4Project = new Ontologies4Project(newProject);
 
@@ -256,9 +270,6 @@ public class ProjectsLoaded {
 		// --- Load configured PlugIns ----------------------------------------
 		newProject.plugInVectorLoad();
 		
-		// --- Set Project to unsaved -----------------------------------------
-		newProject.isUnsaved = false;
-				
 		// --- add project to the project-listing -----------------------------
 		projectsOpen.add(newProject);
 		Application.ProjectCurr = newProject;
@@ -267,11 +278,22 @@ public class ProjectsLoaded {
 		Application.Projects.setProjectView();		
 		Application.MainWindow.setCloseButtonPosition(true);
 		Application.setTitelAddition( newProject.getProjectName() );
-		Application.setStatusBar( Language.translate("Fertig") );	
+		Application.setStatusBar(Language.translate("Fertig"));	
 		newProject.setMaximized();
+		
 		if (addNew==true) {
-			newProject.save();   // --- Erstmalig speichern ---	
-		}		
+			// --- Save project for the first time ---
+			newProject.save();   	
+		} else {
+			// --- Set Project to unsaved ------------
+			newProject.isUnsaved = false;
+		}
+
+		// --- In case of an environment model in a PlugIn --------------------
+		if (envModelName!=null && reloadEnvironmentType==true) {
+			newProject.setNotChangedButNotify(Project.CHANGED_EnvironmentModel);
+		}
+		
 		return newProject;
 	}
 

@@ -160,7 +160,7 @@
     	</path>
 
     	<echo message="Compile: Java-Version ${ant.java.version}" />
-    	<javac destdir="${binaryDirANT}" encoding="iso-8859-1">    		
+    	<javac debug="true" destdir="${binaryDirANT}" encoding="iso-8859-1">    		
     		<src path="${sourceDir}" />
     		<classpath refid="class.path" />
     	</javac>

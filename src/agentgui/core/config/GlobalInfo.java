@@ -960,12 +960,12 @@ public class GlobalInfo {
 	// ---- Methods for EnvironmentTypes ----------------------------
 	/**
 	 * This method can be used in order to define the predefined environment types of Agent.GUI
-	 * @param knowEnvironmentTypes the knowEnvironmentTypes to set
+	 * @param knownEnvironmentTypes the knowEnvironmentTypes to set
 	 * @see EnvironmentType
 	 * @see EnvironmentTypes
 	 */
-	public void setKnowEnvironmentTypes(EnvironmentTypes knowEnvironmentTypes) {
-		this.knowEnvironmentTypes = knowEnvironmentTypes;
+	public void setKnownEnvironmentTypes(EnvironmentTypes knownEnvironmentTypes) {
+		this.knowEnvironmentTypes = knownEnvironmentTypes;
 	}
 	/**
 	 * This method returns all EnvironmentTypes known by Agent.GUI 
@@ -973,7 +973,7 @@ public class GlobalInfo {
 	 * @see EnvironmentType
 	 * @see EnvironmentTypes
 	 */
-	public EnvironmentTypes getKnowEnvironmentTypes() {
+	public EnvironmentTypes getKnownEnvironmentTypes() {
 		return knowEnvironmentTypes;
 	}
 	/**
@@ -1000,7 +1000,7 @@ public class GlobalInfo {
 	 */
 	public void removeEnvironmentType(String envTypeKey) {
 		EnvironmentType envType = this.knowEnvironmentTypes.getEnvironmentTypeByKey(envTypeKey);
-		this.knowEnvironmentTypes.remove(envType);
+		this.removeEnvironmentType(envType);
 	}
 	
 }

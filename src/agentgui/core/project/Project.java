@@ -500,7 +500,7 @@ import agentgui.core.webserver.JarFileCreator;
 	 * This method loads a single PlugIn, given by its class reference
 	 * @param pluginReference
 	 */
-	public boolean plugInLoad(String pluginReference, boolean add2ProjectReferenceVector) {
+	public boolean plugInLoad(String pluginReference, boolean add2PlugInReferenceVector) {
 		
 		String MsgHead = "";
 		String MsgText = "";
@@ -519,7 +519,7 @@ import agentgui.core.webserver.JarFileCreator;
 				// --- PlugIn can be loaded -----------------------------------
 				PlugIn ppi = plugIns_Loaded.loadPlugin(this, pluginReference);
 				this.setNotChangedButNotify(new PlugInNotification(PlugIn.ADDED, ppi));
-				if (add2ProjectReferenceVector) {
+				if (add2PlugInReferenceVector) {
 					this.plugIns_Classes.add(pluginReference);	
 				}
 			}
@@ -755,7 +755,7 @@ import agentgui.core.webserver.JarFileCreator;
 	 * @return the 'EnvironmentType' of the current EnvironmentModel
 	 */
 	public EnvironmentType getEnvironmentModelType() {
-		return Application.RunInfo.getKnowEnvironmentTypes().getEnvironmentTypeByKey(this.environmentModelName);
+		return Application.RunInfo.getKnownEnvironmentTypes().getEnvironmentTypeByKey(this.environmentModelName);
 	}
 	
 	/**
