@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Vector;
 
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
@@ -94,6 +95,7 @@ public class ProjectsLoaded {
 	 */
 	private Project add (boolean addNew, String selectedProjectFolder) {
 
+		int action = 0;
 		String actionTitel = null;
 		String projectNameTest = null;
 		String projectFolderTest = null;
@@ -109,6 +111,7 @@ public class ProjectsLoaded {
 		if (addNew == true){
 			// --------------------------------------------
 			// --- Anlegen eines neuen Projekts -----------
+			action = ProjectNewOpen.ACTION_NewProject;
 			actionTitel = Language.translate("Neues Projekt anlegen");
 			
 			// --- Neuen, allgemeinen Projektnamen finden -----		
@@ -122,10 +125,11 @@ public class ProjectsLoaded {
 				i++;
 			}
 			projectFolderTest = projectNameTest.toLowerCase().replace(" ", "_");
-		}
-		else {
+		
+		} else {
 			// --------------------------------------------
 			// --- Öffnen eine vorhandenen Projekts -------
+			action = ProjectNewOpen.ACTION_OpenProject;
 			actionTitel = Language.translate("Projekt öffnen");			
 		}
 		Application.MainWindow.setStatusBar(actionTitel + " ...");
@@ -134,17 +138,17 @@ public class ProjectsLoaded {
 		if (selectedProjectFolder==null) {
 			// ------------------------------------------------
 			// --- Benutzer-Dialog öffnen ---------------------
-			ProjectNewOpen newProDia = new ProjectNewOpen( Application.MainWindow, Application.RunInfo.getApplicationTitle() + ": " + actionTitel, true, addNew );
-			newProDia.setVarProjectName( projectNameTest );
-			newProDia.setVarProjectFolder( projectFolderTest );
+			ProjectNewOpen newProDia = new ProjectNewOpen(Application.MainWindow, Application.RunInfo.getApplicationTitle() + ": " + actionTitel, action);
+			newProDia.setProjectName(projectNameTest);
+			newProDia.setProjectFolder(projectFolderTest);
 			newProDia.setVisible(true);
 			// === Hier geht's weiter, wenn der Dialog wieder geschlossen ist ===
 			if ( newProDia.isCanceled() == true ) {
 				Application.setStatusBar( Language.translate("Fertig") );
 				return null;
 			} else {
-				localTmpProjectName = newProDia.getVarProjectName();
-				localTmpProjectFolder = newProDia.getVarProjectFolder(); 
+				localTmpProjectName = newProDia.getProjectName();
+				localTmpProjectFolder = newProDia.getProjectFolder(); 
 			}
 			newProDia.dispose();
 			newProDia = null;	
@@ -530,34 +534,47 @@ public class ProjectsLoaded {
 	 * Exports a project to a Agent.GUI project file (*.agui)
 	 */
 	public void projectExport() {
+		this.projectExport(null);
+	}
+	
+	/**
+	 * Exports a project to a Agent.GUI project file (*.agui)
+	 *
+	 * @param projectFolder the project folder
+	 * @return true, if successful
+	 */
+	public boolean projectExport(String projectFolder) {
 		
 		String optionMsg = null;
 		String optionTitle = null;
 		
 		String actionTitel = Language.translate("Projekt zum Export auswählen");
-		String projectFolder = null;
 		
-		// --- If a project is open, ask to export this project -----
-		if (Application.ProjectCurr!=null) {
-			optionTitle = "" + Application.ProjectCurr.getProjectName() + ": " + Language.translate("Projekt exportieren?");
-			optionMsg = Language.translate("Möchten Sie das aktuelle Projekt exportieren?");
-			int answer = JOptionPane.showConfirmDialog(Application.MainWindow, optionMsg, optionTitle, JOptionPane.YES_NO_OPTION);
-			if (answer==JOptionPane.YES_OPTION) {
-				projectFolder = Application.ProjectCurr.getProjectFolder();
-			}
-		}
-		
-		// --- If no projectFolder is specified yet ----------------- 
 		if (projectFolder==null) {
-			// --- Select the project to export ---------------------
-			ProjectNewOpen newProDia = new ProjectNewOpen( Application.MainWindow, Application.RunInfo.getApplicationTitle() + ": " + actionTitel, true, false );
-			newProDia.setOkButtonText("Export");
-			newProDia.setVisible(true);
-			// === Hier geht's weiter, wenn der Dialog wieder geschlossen ist ===
-			if (newProDia.isCanceled()==true) return;
-			projectFolder = newProDia.getVarProjectFolder(); 
-			newProDia.dispose();
-			newProDia = null;
+			// --- If a project is open, ask to export this project -----
+			if (Application.ProjectCurr!=null) {
+				optionTitle = "" + Application.ProjectCurr.getProjectName() + ": " + Language.translate("Projekt exportieren?");
+				optionMsg = Language.translate("Möchten Sie das aktuelle Projekt exportieren?");
+				int answer = JOptionPane.showConfirmDialog(Application.MainWindow, optionMsg, optionTitle, JOptionPane.YES_NO_OPTION);
+				if (answer==JOptionPane.YES_OPTION) {
+					projectFolder = Application.ProjectCurr.getProjectFolder();
+				}
+			}
+			
+			// --- If no projectFolder is specified yet ----------------- 
+			if (projectFolder==null) {
+				// --- Select the project to export ---------------------
+				ProjectNewOpen newProDia = new ProjectNewOpen(Application.MainWindow, Application.RunInfo.getApplicationTitle() + ": " + actionTitel, ProjectNewOpen.ACTION_OpenProject);
+				newProDia.setOkButtonText("Export");
+				newProDia.setVisible(true);
+				// === Hier geht's weiter, wenn der Dialog wieder geschlossen ist ===
+				if (newProDia.isCanceled()==true) {
+					return false;
+				}
+				projectFolder = newProDia.getProjectFolder(); 
+				newProDia.dispose();
+				newProDia = null;
+			}
 		}
 
 		// --- Select a *.agui file ---------------------------------
@@ -575,43 +592,159 @@ public class ProjectsLoaded {
 		chooser.setAcceptAllFileFilterUsed(false);
 		
 		int answerChooser = chooser.showDialog(Application.MainWindow, Language.translate("Projekt exportieren"));
-		if (answerChooser==JFileChooser.CANCEL_OPTION) return;
+		if (answerChooser==JFileChooser.CANCEL_OPTION) {
+			return false;
+		}
 		Application.RunInfo.setLastSelectedFolder(chooser.getCurrentDirectory());		
 		
-		
 		File projectFile = chooser.getSelectedFile();
-		if (projectFile!=null) {
-			// --- Make sure that the file end is the correct one ---
-			if (projectFile.getName().endsWith("." + fileEnd)==false) {
-				projectFile = new File(projectFile.getAbsolutePath() + "." + fileEnd);
-			}
-
-			// --- Some Error-Handlings -----------------------------
-			// --- File already there? ----------
-			if (projectFile.exists()==true) {
-				optionTitle = projectFile.getName() + ": " + Language.translate("Datei überschreiben?");
-				optionMsg = Language.translate("Die Datei existiert bereits. Wollen Sie diese Datei überschreiben?");
-				int answer = JOptionPane.showConfirmDialog(Application.MainWindow, optionMsg, optionTitle, JOptionPane.YES_NO_OPTION);
-				if (answer==JOptionPane.YES_OPTION) {
-					projectFile.delete();
-				} else {
-					return;
-				}
-			}
-			
-			// --- Export project file as a new project -------------
-			String srcFolder = Application.RunInfo.PathProjects(true) + projectFolder;
-			String zipFolder = projectFile.getAbsolutePath();
-			
-			Zipper zipper = new Zipper();
-			zipper.setExcludePattern(".svn");
-			zipper.setZipFolder(zipFolder);
-			zipper.setZipSourceFolder(srcFolder);
-			zipper.doZipFolder();
-			zipper = null;
-			
+		if (projectFile==null) {
+			return false;
 		}
 		
+		// --- Make sure that the file end is the correct one ---
+		if (projectFile.getName().endsWith("." + fileEnd)==false) {
+			projectFile = new File(projectFile.getAbsolutePath() + "." + fileEnd);
+		}
+
+		// --- Some Error-Handlings -----------------------------
+		// --- File already there? ----------
+		if (projectFile.exists()==true) {
+			optionTitle = projectFile.getName() + ": " + Language.translate("Datei überschreiben?");
+			optionMsg = Language.translate("Die Datei existiert bereits. Wollen Sie diese Datei überschreiben?");
+			int answer = JOptionPane.showConfirmDialog(Application.MainWindow, optionMsg, optionTitle, JOptionPane.YES_NO_OPTION);
+			if (answer==JOptionPane.YES_OPTION) {
+				projectFile.delete();
+			} else {
+				return false;
+			}
+		}
+		
+		// --- Export project file as a new project -------------
+		String srcFolder = Application.RunInfo.PathProjects(true) + projectFolder;
+		String zipFolder = projectFile.getAbsolutePath();
+		
+		Zipper zipper = new Zipper();
+		zipper.setExcludePattern(".svn");
+		zipper.setZipFolder(zipFolder);
+		zipper.setZipSourceFolder(srcFolder);
+		zipper.doZipFolder();
+		zipper = null;
+		
+		return true;
+		
+	}
+	
+	/**
+	 * Can be used in order to delete a project.
+	 */
+	public void projectDelete() {
+		
+		String optionMsg = null;
+		String optionTitle = null;
+		String projectFolder = null;
+		String projectFolderFullPath = null;
+		boolean exportBeforeDelete = false;
+		
+		int action = ProjectNewOpen.ACTION_DeleteProject;
+		String actionTitel = Language.translate("Projekt löschen");
+		
+		Application.MainWindow.setStatusBar(actionTitel + " ...");
+		
+		// ----------------------------------------------------------
+		// --- Open project selection dialog ------------------------
+		ProjectNewOpen newProDia = new ProjectNewOpen(Application.MainWindow, Application.RunInfo.getApplicationTitle() + ": " + actionTitel, action);
+		newProDia.setVisible(true);
+		// === Waiting for closing dialog ===
+		if ( newProDia.isCanceled() == true ) {
+			Application.setStatusBar(Language.translate("Fertig"));
+			return;
+		} else {
+			exportBeforeDelete = newProDia.isExportBeforeDelete();
+			projectFolder = newProDia.getProjectFolder();
+		}
+		newProDia.dispose();
+		newProDia = null;	
+	
+		// ----------------------------------------------------------
+		// --- If a project is open, ask to close this project ------
+		if (Application.ProjectCurr!=null) {
+			
+			int iProject = this.getIndexByFolderName(projectFolder);
+			if (iProject>=0) {
+			
+				// --- The selected project is open -----------------
+				Project currProject = this.get(iProject);	
+				optionTitle = "" + currProject.getProjectName() + " - " + Language.translate("Projekt schließen");
+				optionMsg = currProject.getProjectName() + ": " + Language.translate("Das Projekt wird nun geschlossen!");
+				int answer = JOptionPane.showConfirmDialog(Application.MainWindow, optionMsg, optionTitle, JOptionPane.OK_CANCEL_OPTION);
+				if (answer==JOptionPane.CANCEL_OPTION) {
+					Application.setStatusBar(Language.translate("Fertig"));
+					return;
+				}
+				// --- Close the project window ---------------------
+				while (iProject>=0) {
+					currProject = this.get(iProject);
+					if (currProject.close()==false) {
+						Application.setStatusBar(Language.translate("Fertig"));
+						return;
+					}
+					iProject = this.getIndexByFolderName(projectFolder);
+				}
+			}
+		}
+		
+		// ----------------------------------------------------------
+		// --- Export before delete ? -------------------------------
+		if (exportBeforeDelete==true) {
+			if (this.projectExport(projectFolder)==false){
+				Application.setStatusBar(Language.translate("Fertig"));
+				return;
+			}
+		}
+		
+		// ----------------------------------------------------------
+		// --- Delete the folders of the project --------------------
+		projectFolderFullPath = Application.RunInfo.PathProjects(true) + projectFolder;
+		System.out.println(Language.translate("Lösche Verzeichnis") +": " + projectFolderFullPath);
+
+		// --- Get the files and folders in the project folder ------
+		Vector<File> files = this.getFilesAndFolders(projectFolderFullPath);
+		for (int i = files.size()-1; i>-1 ; i--) {
+			File file = files.get(i);
+			file.delete();
+		}
+
+		// --- Delete the project folder itself ---------------------
+		File file = new File(projectFolderFullPath);
+		file.delete();
+		
+		Application.setStatusBar(Language.translate("Fertig"));
+	}
+	
+	/**
+	 * This method will evaluate the given folder and it's sub-folder recursively.
+	 * The containing File objects will be returned in the Vector.
+	 *
+	 * @param srcFolder the folder to evaluate
+	 * @return the files and folders
+	 */
+	private Vector<File> getFilesAndFolders(String srcFolder) {
+		
+		Vector<File> filesFound = new Vector<File>();
+		
+		File folder = new File(srcFolder);
+		String listOfFiles[] = folder.list();
+		for (int i = 0; i < listOfFiles.length; i++) {
+			
+			// --- If the current file should be included -----------
+			File sngFileObject = new File(srcFolder + File.separator + listOfFiles[i]);
+			filesFound.add(sngFileObject);
+			if (sngFileObject.isDirectory()) {
+				filesFound.addAll(this.getFilesAndFolders(sngFileObject.getAbsolutePath()));
+			}
+		} // end for
+		return filesFound;
 	}
 	
 }

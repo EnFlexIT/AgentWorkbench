@@ -44,8 +44,8 @@ import agentgui.envModel.graph.networkModel.GraphNode;
  * A graph / network element with three connection points and direct
  * connections between each two of them. Represented by a triangle 
  * consisting of three nodes and three edges.
+ * 
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
- *
  */
 public class TriangeGraphElement extends GraphElementPrototype {
 	/**
@@ -210,6 +210,7 @@ public class TriangeGraphElement extends GraphElementPrototype {
 			elements.add(e2);
 			elements.add(e3);
 			return elements;
+			
 		}else{
 			if(n1 == null){
 				System.err.println(Language.translate("Fehler beim Einfügen von Komponente "+getId()+" : Kein freier Anschlusspunkt an Vorgänger ")+predecessor.getId());

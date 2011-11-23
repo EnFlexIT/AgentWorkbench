@@ -43,39 +43,31 @@ import edu.uci.ics.jung.graph.util.EdgeType;
  * Extend this class for implementing 'n' ring graph element prototypes. 
  * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati
  */
-public class Ring3GraphElement extends GraphElementPrototype{
-	/**
-	 * The number of connection points
-	 */
+public class Ring3GraphElement extends GraphElementPrototype {
+	
+	/** The number of connection points */
 	private Integer n = null;
+	/** The vector of nodes which forms the corners of the element. */
+	private Vector<GraphNode> nodes = new Vector<GraphNode>();
 	
 	/**
-	 * The vector of nodes which forms the corners of the element.
-	 */
-	Vector<GraphNode> nodes;
-	
-	/**
-	 * Default constructor with 3 corners
+	 * Default constructor with 3 nodes
 	 */
 	public Ring3GraphElement(){
 		super();
 		n=3;
-		nodes =  new Vector<GraphNode>();
 	}
 	
 	/**
 	 * Constructor for creating the ring prototype with 'n' connection points
-	 * @param n  the number of connection points
+	 * @param nNodes  the number of connection points
 	 */
-	public Ring3GraphElement(Integer n){
+	public Ring3GraphElement(Integer nNodes){
 		super();
-		if( n >= 3){
-			this.n = n;
-			nodes =  new Vector<GraphNode>();
-		}
-		else
-		{
-			throw new GraphElementPrototypeException("Number of connection points should be greater than 3");
+		if( nNodes >= 3){
+			this.n = nNodes;
+		} else {
+			throw new GraphElementPrototypeException("Number of connection points should be greater or equal than 3 !");
 		}
 	}
 	
@@ -115,29 +107,26 @@ public class Ring3GraphElement extends GraphElementPrototype{
 			graph.addEdge(edge, nodes.get(n-1), nodes.get(0), EdgeType.UNDIRECTED);
 			elements.add(edge);
 			return elements;
-		}
-		else
-		{	throw new GraphElementPrototypeException("Number of connection points (n) is null");			
+			
+		} else {	
+			throw new GraphElementPrototypeException("Number of connection points (n) is null");			
 		}
 	}
 	
 	@Override
-	public HashSet<GraphElement> addAfter(Graph<GraphNode, GraphEdge> graph,
-			GraphElementPrototype predecessor) {
+	public HashSet<GraphElement> addAfter(Graph<GraphNode, GraphEdge> graph, GraphElementPrototype predecessor) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 	
 	@Override
-	public HashSet<GraphElement> addBefore(Graph<GraphNode, GraphEdge> graph,
-			GraphElementPrototype successor) {
+	public HashSet<GraphElement> addBefore(Graph<GraphNode, GraphEdge> graph, GraphElementPrototype successor) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public HashSet<GraphElement> addBetween(Graph<GraphNode, GraphEdge> graph,
-			GraphElementPrototype predecessor, GraphElementPrototype successor) {
+	public HashSet<GraphElement> addBetween(Graph<GraphNode, GraphEdge> graph, GraphElementPrototype predecessor, GraphElementPrototype successor) {
 		// TODO Auto-generated method stub
 		return null;
 	}

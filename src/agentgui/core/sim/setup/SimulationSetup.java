@@ -263,14 +263,20 @@ import agentgui.core.project.Project;
 	 */
 	private void sortComboBoxModel4AgentLists() {
 		
+		// --- Move the current entries to a Vector -----------------
 		Vector<String> agentLists = new Vector<String>();
 		DefaultComboBoxModel dlm = this.comboBoxModel4AgentLists;
 		for (int i = 0; i < dlm.getSize(); i++) {
 			agentLists.add((String) dlm.getElementAt(i));
 		}
-		
+		// --- If the default list is not there, create it ----------
+		if (agentLists.contains(AGENT_LIST_ManualConfiguration)==false) {
+			this.getAgentDefaultListModel(new DefaultListModel(), AGENT_LIST_ManualConfiguration);
+			agentLists.add(AGENT_LIST_ManualConfiguration);
+		}
+		// --- Sort the list ----------------------------------------
 		Collections.sort(agentLists);
-		
+		// --- Recreate the JComboBoxModel for agent lists ----------
 		this.comboBoxModel4AgentLists = new DefaultComboBoxModel();
 		for (int i = 0; i < agentLists.size(); i++) {
 			this.comboBoxModel4AgentLists.addElement(agentLists.get(i));

@@ -89,68 +89,36 @@ import agentgui.core.webserver.JarFileCreator;
 @XmlRootElement public class Project extends Observable {
 
 	// --- public statics --------------------------------------
-	/**
-	 * Constant value in order to inform the Observer about changes of this kind
-	 */
+	/** Constant value in order to inform the Observer about changes of this kind */
 	@XmlTransient public static final String SAVED = "ProjectSaved";
-	
-
-	/**
-	 * Constant value in order to inform the Observer about changes of this kind
-	 */
+	/** Constant value in order to inform the Observer about changes of this kind */
 	@XmlTransient public static final String CHANGED_ProjectName = "ProjectName";
-	/**
-	 * Constant value in order to inform the Observer about changes of this kind
-	 */
+	/** Constant value in order to inform the Observer about changes of this kind */
 	@XmlTransient public static final String CHANGED_ProjectDescription = "ProjectDescription";
-	/**
-	 * Constant value in order to inform the Observer about changes of this kind
-	 */
+	/** Constant value in order to inform the Observer about changes of this kind */
 	@XmlTransient public static final String CHANGED_ProjectFolder= "ProjectFolder";
-	/**
-	 * Constant value in order to inform the Observer about changes of this kind
-	 */
+	/** Constant value in order to inform the Observer about changes of this kind */
 	@XmlTransient public static final String CHANGED_ProjectView = "ProjectView";
-	/**
-	 * Constant value in order to inform the Observer about changes of this kind
-	 */
+	/** Constant value in order to inform the Observer about changes of this kind */
 	@XmlTransient public static final String CHANGED_EnvironmentModel= "EnvironmentModel";
-	/**
-	 * Constant value in order to inform the Observer about changes of this kind
-	 */
+	/** Constant value in order to inform the Observer about changes of this kind */
 	@XmlTransient public static final String CHANGED_StartArguments4BaseAgent = "StartArguments4BaseAgents";
-	/**
-	 * Constant value in order to inform the Observer about changes of this kind
-	 */
+	/** Constant value in order to inform the Observer about changes of this kind */
 	@XmlTransient public static final String CHANGED_ProjectOntology = "ProjectOntology";
-	/**
-	 * Constant value in order to inform the Observer about changes of this kind
-	 */
+	/** Constant value in order to inform the Observer about changes of this kind */
 	@XmlTransient public static final String CHANGED_ProjectResources = "ProjectResources";
-	/**
-	 * Constant value in order to inform the Observer about changes of this kind
-	 */
+	/** Constant value in order to inform the Observer about changes of this kind */
 	@XmlTransient public static final String CHANGED_JadeConfiguration = "JadeConfiguration";
-	/**
-	 * Constant value in order to inform the Observer about changes of this kind
-	 */
+	/** Constant value in order to inform the Observer about changes of this kind */
 	@XmlTransient public static final String CHANGED_DistributionSetup = "DistributionSetup";
-	/**
-	 * Constant value in order to inform the Observer about changes of this kind
-	 */
+	/** Constant value in order to inform the Observer about changes of this kind */
 	@XmlTransient public static final String CHANGED_RemoteContainerConfiguration = "RemoteContainerConfiguration";
-	/**
-	 * Constant value in order to inform the Observer about changes of this kind
-	 */
+	/** Constant value in order to inform the Observer about changes of this kind */
 	@XmlTransient public static final String CHANGED_UserRuntimeObject = "UserRuntimeObject";
 	
-	/**
-	 * Constant value in order to set the project view
-	 */
+	/** Constant value in order to set the project view */
 	@XmlTransient public static final String VIEW_Developer = "Developer";
-	/**
-	 * Constant value in order to set the project view
-	 */
+	/** Constant value in order to set the project view */
 	@XmlTransient public static final String VIEW_User = "User";
 	
 	// --- Constants -------------------------------------------
@@ -423,10 +391,11 @@ import agentgui.core.webserver.JarFileCreator;
 	}
 	
 	/**
-	 * This method closes the current project. If necessary it will try to save the before.  
+	 * This method closes the current project. If necessary it will try to save the before.
 	 * @return Returns true if saving was successful
 	 */
 	public boolean close() {
+		
 		// --- Close project? -----------------------------
 		String MsgHead = null;
 		String MsgText = null;
@@ -463,7 +432,7 @@ import agentgui.core.webserver.JarFileCreator;
 		this.resourcesRemove();
 		
 		// --- Close Project ------------------------------
-		int Index = Application.Projects.getIndexByName( projectName ); // --- Merker Index ---		
+		int Index = Application.Projects.getIndexByName(projectName); // --- Merker Index ---		
 		projectWindow.dispose();
 		Application.Projects.remove(this);
 		

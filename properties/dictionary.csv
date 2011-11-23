@@ -80,6 +80,7 @@ de;Container;Container
 de;DF (Directory Facilitator) starten;Start DF (Directory Facilitator)
 de;DF anzeigen;Show DF GUI
 de;Das PlugIn wurde bereits in das Projekt integriert und kann deshalb nicht erneut hinzugefügt werden!;The plugin is already integrated into the project and therefore can not be added again!
+de;Das Projekt wird nun geschlossen!;The project will be closed now!;;;
 de;Das Verzeichnis existiert bereits. Der Import wird unterbrochen.;The directory already exists. The import is interrupted.
 de;Das aktuelle Projekt '@' ist noch nicht gespeichert!<br>Möchten Sie es nun speichern ?;The current project '@' is not saved yet! <br>Save it now?
 de;Das von Ihnen gewählte Projektverzeichnis wird bereits verwendet!<br><br>Bitte wählen Sie einen anderen Namen für Ihr Verzeichnis;Your chosen project directory is already in use! <br><br> Please select another name for the directory
@@ -222,6 +223,7 @@ de;Load Monitor öffnen;Open load monitor
 de;Load Monitor;Load Monitor
 de;Log-Manager starten;Start Log Manager
 de;Lokal;Local;;;
+de;Lösche Verzeichnis;Delete Folder;;;
 de;Löschen;Delete
 de;MAS-Pause;MAS-Pause
 de;MAS-Start;MAS-Start;;;
@@ -303,6 +305,7 @@ de;Projekt '@' speichern?;Save Project '@'?
 de;Projekt exportieren;Export Project
 de;Projekt exportieren?;Export project?
 de;Projekt importieren;Import Project
+de;Projekt löschen;Delete Project;;;
 de;Projekt schließen;Close Project
 de;Projekt speichern;Save Project
 de;Projekt speichern?;Save Project?
@@ -419,7 +422,8 @@ de;Verzeichnis wurde nicht gefunden:;Directory was not found:
 de;Verzeichnis;Folder
 de;Vis.-Geschwindigkeit;Visualisation speed
 de;Visualisierung;Visualization
-de;Vorhandene Projektverzeichnisse;Known project folders
+de;Vor dem Löschen exportieren!;Export before deleting!;;;
+de;Vorhandene Projektverzeichnisse;Available project folders;null;null;null
 de;Voriger Datensatz (STRG+UP);Previous Record (CTRL + UP)
 de;Warte auf Agentenliste...;Waiting for agent list...
 de;Warte auf Ontologie-Liste...;Waiting for ontology list...
@@ -454,7 +458,6 @@ de;Übersetzen;Translate
 de;Übersetzter Text;Text translated
 de;Übersetzung speichern (STRG+S);Save translation (CTRL + S)
 de;Überspringen;Skip
-en;;Use Shift and click two vertices;;;
 en;Agenten-Klasse;Agent class;;;
 en;Ausgewählte Komponente entfernen;Remove selected component;;;
 en;Auswahl Netzwerk-Komonente!;Select Network Component to Add;;;
@@ -495,3 +498,4 @@ en;Verbindungsknoten trennen;Split Node;;;
 en;Warnung;Warning;;;
 en;Wählen Sie einen Knoten, um diese zu verbinden;Select a vertex to merge;;;
 en;Wählen Sie einen gültigen Knoten;Select a valid vertex;;;
+en;Wählen Sie genau zwei Knoten mit Hilfe der Umschalttaste.;Use Shift and click two vertices;;;

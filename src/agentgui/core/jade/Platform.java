@@ -221,7 +221,7 @@ public class Platform extends Object {
 		
 		boolean startSucceed = false;		
 		
-		if ( jadeMainContainerIsRunning() == false ) {
+		if (jadeMainContainerIsRunning()==false) {
 			try {
 				// --- Start Platform -------------------------------
 				jadeRuntime = Runtime.instance();	
@@ -338,7 +338,6 @@ public class Platform extends Object {
 	
 	/**
 	 * Asks the user to shutdown Jade.
-	 *
 	 * @return true, if the user answered 'yes'
 	 */
 	public boolean jadeStopAskUserBefore() {

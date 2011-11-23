@@ -577,6 +577,8 @@ public class CoreWindow extends JFrame implements ComponentListener {
 			jMenuMainProject.add( new CWMenueItem( "ProjectImport", Language.translate("Projekt importieren"), "MBtransImport.png" )) ;
 			jMenuMainProject.add( new CWMenueItem( "ProjectExport", Language.translate("Projekt exportieren"), "MBtransExport.png" )) ;
 			jMenuMainProject.addSeparator();
+			jMenuMainProject.add( new CWMenueItem( "ProjectDelete", Language.translate("Projekt löschen"), "Delete.png" )) ;
+			jMenuMainProject.addSeparator();
 			jMenuMainProject.add( new CWMenueItem( "ApplicationQuit", Language.translate("Beenden"), null )) ;			
 		}
 		return jMenuMainProject;
@@ -988,6 +990,9 @@ public class CoreWindow extends JFrame implements ComponentListener {
 			}
 			else if ( ActCMD.equalsIgnoreCase("ProjectExport") ) {
 				Application.Projects.projectExport();
+			}
+			else if ( ActCMD.equalsIgnoreCase("ProjectDelete") ) {
+				Application.Projects.projectDelete();
 			}
 			else if ( ActCMD.equalsIgnoreCase("ApplicationQuit") ) {
 				Application.quit();
