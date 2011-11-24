@@ -72,34 +72,36 @@ import agentgui.core.resources.Resources2Display;
 public class ProjectResources extends JPanel implements Observer {
 
 	private static final long serialVersionUID = 1L;
+	
 	final static String PathImage = Application.RunInfo.PathImageIntern();
 	private Project currProject = null;
 	
+	private JPanel jPanelSimulationEnvironment = null;
+	private JPanel jPanelRightPlugIns = null;
 	private JPanel jPanelRight = null;
+	
+	private JComboBox jComboBoxEnvironmentModelSelector = null;
+
 	private JScrollPane jScrollPane = null;
+	private JScrollPane jScrollPanePlugIns = null;
 	
 	private JList jListResources = null;
+	private JList jListPlugIns = null;
+	private DefaultListModel plugInsListModel = new DefaultListModel();
+	
 	private JButton jButtonResourcesAdd = null;
 	private JButton jButtonResourcesRemove = null;
 	private JButton jButtonRecourcesRefresh = null;
 
-	private JPanel jPanelSimulationEnvironment = null;
-	
-	private JComboBox jComboBoxEnvironmentModelSelector = null;
+	private JButton jButtonAddPlugIns = null;
+	private JButton jButtonRemovePlugIns = null;
+	private JButton jButtonRefreshPlugIns = null;
+
 	private JLabel jLabelEnvTyp = null;
 	private JLabel jLabelResources = null;
 	private JLabel jLabelSeperator = null;
 	private JLabel jLabelPlugIns = null;
 	
-	private JScrollPane jScrollPanePlugIns = null;
-	private JPanel jPanelRightPlugIns = null;
-	private JButton jButtonAddPlugIns = null;
-	private JButton jButtonRemovePlugIns = null;
-	private JButton jButtonRefreshPlugIns = null;
-	private JList jListPlugIns = null;
-	
-	private DefaultListModel plugInsListModel = new DefaultListModel();
-
 	
 	/**
 	 * This is the default constructor
@@ -449,13 +451,10 @@ public class ProjectResources extends JPanel implements Observer {
 		if(jComboBoxEnvironmentModelSelector == null){
 			
 			// --- Get current definitions --------------------------
-			String currEnvTypeKey = currProject.getEnvironmentModelName();
-			EnvironmentType envType = Application.RunInfo.getKnownEnvironmentTypes().getEnvironmentTypeByKey(currEnvTypeKey);
-			
 			jComboBoxEnvironmentModelSelector = new JComboBox();
 			jComboBoxEnvironmentModelSelector.setModel(Application.RunInfo.getKnownEnvironmentTypes().getComboBoxModel());
 			jComboBoxEnvironmentModelSelector.setPreferredSize(new Dimension(400, 25));
-			jComboBoxEnvironmentModelSelector.setSelectedItem(envType);
+			jComboBoxEnvironmentModelSelector.setSelectedItem(this.currProject.getEnvironmentModelType());
 			jComboBoxEnvironmentModelSelector.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -651,6 +650,9 @@ public class ProjectResources extends JPanel implements Observer {
 			} else if (updateReason==PlugIn.REMOVED) {
 				this.removePlugInElement2List(pin.getPlugIn());
 			}
+			
+		} else if (updated.equals(Project.CHANGED_EnvironmentModel)) {
+			this.getJComboBoxEnvironmentModelSelector().setSelectedItem(this.currProject.getEnvironmentModelType());	
 			
 		} else {
 			// ----

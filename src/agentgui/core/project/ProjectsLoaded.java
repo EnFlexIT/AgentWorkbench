@@ -288,12 +288,11 @@ public class ProjectsLoaded {
 			// --- Set Project to unsaved ------------
 			newProject.isUnsaved = false;
 		}
-
+		
 		// --- In case of an environment model in a PlugIn --------------------
 		if (envModelName!=null && reloadEnvironmentType==true) {
-			newProject.setNotChangedButNotify(Project.CHANGED_EnvironmentModel);
+			newProject.setNotChangedButNotify(Project.CHANGED_EnvironmentModel);		
 		}
-		
 		return newProject;
 	}
 

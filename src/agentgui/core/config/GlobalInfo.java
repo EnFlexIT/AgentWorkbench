@@ -38,6 +38,7 @@ import java.util.HashSet;
 import java.util.Vector;
 
 import agentgui.core.application.Application;
+import agentgui.core.application.Language;
 import agentgui.core.benchmark.BenchmarkMeasurement;
 import agentgui.core.common.ClassLoaderUtil;
 import agentgui.core.environment.EnvironmentPanel;
@@ -187,6 +188,7 @@ public class GlobalInfo {
 		// --- Define the known EnvironmentTypes of Agent.GUI ---------------
 		String envKey = null;
 		String envDisplayName = null;
+		String envDisplayNameLanguage = null;
 		Class<? extends EnvironmentPanel> envPanelClass = null;
 		Class<? extends Agent> displayAgentClass = null;
 		EnvironmentType envType = null;
@@ -194,25 +196,28 @@ public class GlobalInfo {
 		// --- No environment -----------------------------------------------
 		envKey = "none";
 		envDisplayName = "Kein vordefiniertes Umgebungsmodell verwenden";
+		envDisplayNameLanguage = Language.DE;
 		envPanelClass = null;
 		displayAgentClass = null;
-		envType = new EnvironmentType(envKey, envDisplayName, envPanelClass, displayAgentClass);
+		envType = new EnvironmentType(envKey, envDisplayName, envDisplayNameLanguage, envPanelClass, displayAgentClass);
 		addEnvironmentType(envType);
 		
 		// --- Continuous 2D environment ------------------------------------
 		envKey = "continous2Denvironment";
 		envDisplayName = "Kontinuierliches 2D-Umgebungsmodell";
+		envDisplayNameLanguage = Language.DE;
 		envPanelClass = Physical2DEnvironmentControllerGUI.class;
 		displayAgentClass = agentgui.envModel.p2Dsvg.display.DisplayAgent.class;
-		envType = new EnvironmentType(envKey, envDisplayName, envPanelClass, displayAgentClass);
+		envType = new EnvironmentType(envKey, envDisplayName, envDisplayNameLanguage, envPanelClass, displayAgentClass);
 		addEnvironmentType(envType);
 		
 		// --- Grid Environment ---------------------------------------------
 		envKey = "gridEnvironment";
 		envDisplayName = "Graph bzw. Netzwerk";
+		envDisplayNameLanguage = Language.DE;
 		envPanelClass = GraphEnvironmentControllerGUI.class;
 		displayAgentClass = DisplayAgent.class;
-		envType = new EnvironmentType(envKey, envDisplayName, envPanelClass, displayAgentClass);
+		envType = new EnvironmentType(envKey, envDisplayName, envDisplayNameLanguage, envPanelClass, displayAgentClass);
 		addEnvironmentType(envType);
 		
 	}

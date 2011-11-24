@@ -262,6 +262,9 @@ public abstract class PlugIn implements Observer {
 		// --- remove custom environment types ------------
 		for (int i = customEnvironmentTypes.size()-1; i>-1; i--) {
 			EnvironmentType envType = customEnvironmentTypes.get(i);
+			if (envType.equals(this.project.getEnvironmentModelType())) {
+				this.project.setEnvironmentModelName("none");
+			}
 			Application.RunInfo.removeEnvironmentType(envType);
 		}
 		// --- validate/repaint the CorwWindow ------------

@@ -40,6 +40,7 @@ import java.util.Date;
 import java.util.Observable;
 import java.util.Vector;
 
+import javax.swing.DesktopManager;
 import javax.swing.JDesktopPane;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -638,9 +639,17 @@ import agentgui.core.webserver.JarFileCreator;
 	 * Maximise the Project-Window within the AgenGUI-Application
 	 */
 	public void setMaximized() {
+		// --- Validate the min application window ------------------
 		Application.MainWindow.validate();
-		((BasicInternalFrameUI) Application.ProjectCurr.projectWindow.getUI()).setNorthPane(null);
-		Application.MainWindow.getJDesktopPane4Projects().getDesktopManager().maximizeFrame( projectWindow );				
+		// --- Be sure that everything is there as needed ----------- 
+		if (projectWindow!=null && projectWindow.getParent()!=null) {
+			// --- maximize now -------------------------------------
+			((BasicInternalFrameUI) projectWindow.getUI()).setNorthPane(null);
+			DesktopManager dtm = Application.MainWindow.getJDesktopPane4Projects().getDesktopManager();
+			if (dtm!=null) {
+				dtm.maximizeFrame(projectWindow);	
+			}
+		}
 	}
 	
 	/**

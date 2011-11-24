@@ -4,8 +4,9 @@
  * applications based on the JADE - Framework in compliance with the 
  * FIPA specifications. 
  * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
  * http://sourceforge.net/projects/agentgui/
- * http://www.dawis.wiwi.uni-due.de/ 
+ * http://www.agentgui.org 
  *
  * GNU Lesser General Public License
  *
@@ -49,6 +50,7 @@ public class EnvironmentType {
 
 	private String internalKey = null;
 	private String displayName = null;
+	private String displayNameLanguage = null;
 	private Class<? extends EnvironmentPanel> environmentPanelClass = null;
 	private Class<? extends Agent> displayAgentClass = null;
 	
@@ -59,11 +61,41 @@ public class EnvironmentType {
 	 * @param displayName A name that will be displayed later on
 	 * @param panelClass The panel on which all components have to be placed in order to allow end users to define their own environment model
 	 */
-	public EnvironmentType(String key, String displayName, Class<? extends EnvironmentPanel> panelClass, Class<? extends Agent> agentClass) {
+	public EnvironmentType(String key, String displayName, String displayNameLanguage, Class<? extends EnvironmentPanel> panelClass, Class<? extends Agent> agentClass) {
 		this.internalKey = key;
 		this.displayName = displayName;
+		this.displayNameLanguage = displayNameLanguage;
 		this.environmentPanelClass = panelClass;
 		this.displayAgentClass = agentClass;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object object) {
+	
+		if (object instanceof EnvironmentType) {
+			EnvironmentType envType = (EnvironmentType) object;
+			if (envType.getInternalKey().equals(this.getInternalKey())==false) {
+				return false; 
+			}
+			if (envType.getDisplayName().equals(this.getDisplayName())==false) {
+				return false; 
+			}
+			if (!(envType.getEnvironmentPanelClass()==null & this.getEnvironmentPanelClass()==null)) {
+				if (envType.getEnvironmentPanelClass().equals(this.getEnvironmentPanelClass())==false) {
+					return false; 
+				}
+			}
+			if (!(envType.getDisplayAgentClass()==null & this.getDisplayAgentClass()==null)) {
+				if (envType.getDisplayAgentClass().equals(this.getDisplayAgentClass())==false) {
+					return false; 
+				}
+			}
+			return true;
+		}
+		return false;
 	}
 	
 	/**
@@ -71,8 +103,13 @@ public class EnvironmentType {
 	 */
 	@Override
 	public String toString() {
-		return Language.translate(this.displayName);
+		if (this.displayNameLanguage==null) {
+			return this.displayName;
+		} else {
+			return Language.translate(this.displayName, this.displayNameLanguage);
+		}
 	}
+	
 	/**
 	 * @return the internalKey
 	 */
