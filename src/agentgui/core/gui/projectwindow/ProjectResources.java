@@ -41,7 +41,6 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Vector;
 
-import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -51,7 +50,6 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.border.EtchedBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import agentgui.core.application.Application;
@@ -99,7 +97,6 @@ public class ProjectResources extends JPanel implements Observer {
 
 	private JLabel jLabelEnvTyp = null;
 	private JLabel jLabelResources = null;
-	private JLabel jLabelSeperator = null;
 	private JLabel jLabelPlugIns = null;
 	
 	
@@ -186,10 +183,10 @@ public class ProjectResources extends JPanel implements Observer {
 		gridBagConstraints31.gridx = 1;
 		gridBagConstraints31.anchor = GridBagConstraints.NORTH;
 		gridBagConstraints31.insets = new Insets(5, 5, 5, 10);
-		gridBagConstraints31.gridy = 6;
+		gridBagConstraints31.gridy = 5;
 		GridBagConstraints gridBagConstraints22 = new GridBagConstraints();
 		gridBagConstraints22.fill = GridBagConstraints.BOTH;
-		gridBagConstraints22.gridy = 6;
+		gridBagConstraints22.gridy = 5;
 		gridBagConstraints22.weightx = 1.0;
 		gridBagConstraints22.weighty = 0.5;
 		gridBagConstraints22.insets = new Insets(5, 10, 0, 5);
@@ -199,21 +196,15 @@ public class ProjectResources extends JPanel implements Observer {
 		gridBagConstraints13.gridx = 0;
 		gridBagConstraints13.insets = new Insets(10, 10, 0, 0);
 		gridBagConstraints13.anchor = GridBagConstraints.WEST;
-		gridBagConstraints13.gridy = 5;
+		gridBagConstraints13.gridy = 4;
 		jLabelPlugIns = new JLabel();
 		jLabelPlugIns.setFont(new Font("Dialog", Font.BOLD, 12));
 		jLabelPlugIns.setText("PlugIns");
-		GridBagConstraints gridBagConstraints41 = new GridBagConstraints();
-		gridBagConstraints41.fill = GridBagConstraints.HORIZONTAL;
-		gridBagConstraints41.gridx = 0;
-		gridBagConstraints41.gridy = 2;
-		gridBagConstraints41.insets = new Insets(15, 10, 0, 10);
-		gridBagConstraints41.gridwidth = 2;
 		GridBagConstraints gridBagConstraints32 = new GridBagConstraints();
 		gridBagConstraints32.gridx = 0;
 		gridBagConstraints32.anchor = GridBagConstraints.WEST;
 		gridBagConstraints32.insets = new Insets(10, 10, 0, 0);
-		gridBagConstraints32.gridy = 3;
+		gridBagConstraints32.gridy = 2;
 		jLabelResources = new JLabel();
 		jLabelResources.setText("Externe jar-Ressourcen");
 		jLabelResources.setFont(new Font("Dialog", Font.BOLD, 12));
@@ -226,7 +217,7 @@ public class ProjectResources extends JPanel implements Observer {
 		gridBagConstraints11.fill = GridBagConstraints.BOTH;
 		gridBagConstraints11.weighty = 0.5;
 		gridBagConstraints11.gridx = 0;
-		gridBagConstraints11.gridy = 4;
+		gridBagConstraints11.gridy = 3;
 		gridBagConstraints11.insets = new Insets(5, 10, 0, 5);
 		gridBagConstraints11.anchor = GridBagConstraints.NORTH;
 		gridBagConstraints11.weightx = 1.0;
@@ -235,7 +226,7 @@ public class ProjectResources extends JPanel implements Observer {
 		gridBagConstraints12.fill = GridBagConstraints.NONE;
 		gridBagConstraints12.insets = new Insets(5, 5, 5, 10);
 		gridBagConstraints12.anchor = GridBagConstraints.NORTH;
-		gridBagConstraints12.gridy = 4;
+		gridBagConstraints12.gridy = 3;
 		GridBagConstraints gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.fill = GridBagConstraints.BOTH;
 		gridBagConstraints.gridy = 0;
@@ -243,13 +234,12 @@ public class ProjectResources extends JPanel implements Observer {
 		gridBagConstraints.weighty = 1.0;
 		gridBagConstraints.insets = new Insets(10, 10, 5, 10);
 		gridBagConstraints.gridx = 0;
-		this.setSize(727, 381);
+		this.setSize(727, 392);
 		this.setLayout(new GridBagLayout());
 		this.add(getJPanelRight(), gridBagConstraints12);
 		this.add(getJScrollPane(), gridBagConstraints11);
 		this.add(getJPanelSimulationEnvironment(), gridBagConstraints21);
 		this.add(jLabelResources, gridBagConstraints32);
-		this.add(jLabelSeperator, gridBagConstraints41);
 		this.add(jLabelPlugIns, gridBagConstraints13);
 		this.add(getJScrollPanePlugIns(), gridBagConstraints22);
 		this.add(getJPanelRightPlugIns(), gridBagConstraints31);
@@ -418,13 +408,10 @@ public class ProjectResources extends JPanel implements Observer {
 	 */
 	private JPanel getJPanelSimulationEnvironment() {
 		if (jPanelSimulationEnvironment == null) {
-			jLabelSeperator = new JLabel();
-			jLabelSeperator.setText(" ");
-			jLabelSeperator.setPreferredSize(new Dimension(200, 2));
-			jLabelSeperator.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 			GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
 			gridBagConstraints5.gridx = 0;
 			gridBagConstraints5.anchor = GridBagConstraints.WEST;
+			gridBagConstraints5.insets = new Insets(0, 0, 0, 0);
 			gridBagConstraints5.gridy = 0;
 			jLabelEnvTyp = new JLabel();
 			jLabelEnvTyp.setText("Umgebungstyp bzw. -modell für Simulation und Visualisierung");
@@ -652,7 +639,11 @@ public class ProjectResources extends JPanel implements Observer {
 			}
 			
 		} else if (updated.equals(Project.CHANGED_EnvironmentModel)) {
-			this.getJComboBoxEnvironmentModelSelector().setSelectedItem(this.currProject.getEnvironmentModelType());	
+			EnvironmentType envTypeOld = (EnvironmentType) this.getJComboBoxEnvironmentModelSelector().getSelectedItem();
+			EnvironmentType envTypeNew = this.currProject.getEnvironmentModelType();
+			if (envTypeOld.equals(envTypeNew)==false) {
+				this.getJComboBoxEnvironmentModelSelector().setSelectedItem(this.currProject.getEnvironmentModelType());	
+			}
 			
 		} else {
 			// ----
