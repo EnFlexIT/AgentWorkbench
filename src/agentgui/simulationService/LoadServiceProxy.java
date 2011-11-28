@@ -90,12 +90,11 @@ public class LoadServiceProxy extends SliceProxy implements LoadServiceSlice {
 	 * @see agentgui.simulationService.LoadServiceSlice#startNewRemoteContainer(agentgui.simulationService.ontology.RemoteContainerConfig, boolean)
 	 */
 	@Override
-	public String startNewRemoteContainer(RemoteContainerConfig remoteConfig, boolean preventUsageOfAlreadyUsedComputers ) throws IMTPException {
+	public String startNewRemoteContainer(RemoteContainerConfig remoteConfig) throws IMTPException {
 		
 		try {
 			GenericCommand cmd = new GenericCommand(SERVICE_START_NEW_REMOTE_CONTAINER, LoadService.NAME, null);
 			cmd.addParam(remoteConfig);
-			cmd.addParam(preventUsageOfAlreadyUsedComputers);
 			
 			Node n = getNode();
 			Object result = n.accept(cmd);
@@ -114,15 +113,38 @@ public class LoadServiceProxy extends SliceProxy implements LoadServiceSlice {
 	}
 	
 	/* (non-Javadoc)
+	 * @see agentgui.simulationService.LoadServiceSlice#setDefaults4RemoteContainerConfig(agentgui.simulationService.ontology.RemoteContainerConfig)
+	 */
+	@Override
+	public void setDefaults4RemoteContainerConfig(RemoteContainerConfig remoteConfig) throws IMTPException {
+		
+		try {
+			GenericCommand cmd = new GenericCommand(SERVICE_SET_DEFAULTS_4_REMOTE_CONTAINER_CONFIG, LoadService.NAME, null);
+			cmd.addParam(remoteConfig);
+			
+			Node n = getNode();
+			Object result = n.accept(cmd);
+			if((result != null) && (result instanceof Throwable)) {
+				if(result instanceof IMTPException) {
+					throw (IMTPException)result;
+				} else {
+					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
+				}
+			}
+		}
+		catch(ServiceException se) {
+			throw new IMTPException("Unable to access remote node", se);
+		}
+	}
+	
+	/* (non-Javadoc)
 	 * @see agentgui.simulationService.LoadServiceSlice#getDefaultRemoteContainerConfig(boolean)
 	 */
 	@Override
-	public RemoteContainerConfig getDefaultRemoteContainerConfig(boolean preventUsageOfAlreadyUsedComputers) throws IMTPException {
+	public RemoteContainerConfig getAutoRemoteContainerConfig() throws IMTPException {
 
 		try {
-			GenericCommand cmd = new GenericCommand(SERVICE_GET_DEFAULT_REMOTE_CONTAINER_CONFIG, LoadService.NAME, null);
-			cmd.addParam(preventUsageOfAlreadyUsedComputers);
-			
+			GenericCommand cmd = new GenericCommand(SERVICE_GET_AUTO_REMOTE_CONTAINER_CONFIG, LoadService.NAME, null);
 			Node n = getNode();
 			Object result = n.accept(cmd);
 			if((result != null) && (result instanceof Throwable)) {
@@ -369,5 +391,6 @@ public class LoadServiceProxy extends SliceProxy implements LoadServiceSlice {
 			throw new IMTPException("Unable to access remote node", se);
 		}
 	}
+
 	
 }

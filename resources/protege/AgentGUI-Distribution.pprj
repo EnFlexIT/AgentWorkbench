@@ -1,4 +1,4 @@
-; Fri Nov 19 16:08:02 CET 2010
+; Sun Nov 27 23:41:13 CET 2011
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -56,36 +56,34 @@
 ([AgentGUI-Distribution_ProjectKB_Instance_10147] of  Property_List
 )
 
-([AgentGUI-Distribution_ProjectKB_Instance_10148] of  Widget
+([AgentGUI-Distribution_ProjectKB_Instance_10153] of  String
 
-	(is_hidden FALSE)
-	(name "SimulationServiceStatus")
-	(property_list [AgentGUI-Distribution_ProjectKB_Instance_10149])
-	(widget_class_name "edu.stanford.smi.protege.widget.FormWidget"))
+	(name ":INSTANCE-ANNOTATION")
+	(string_value "%3AANNOTATION-TEXT"))
 
-([AgentGUI-Distribution_ProjectKB_Instance_10149] of  Property_List
+([AgentGUI-Distribution_ProjectKB_Instance_10154] of  Map_Entry
 
-	(properties
-		[AgentGUI-Distribution_ProjectKB_Instance_10150]
-		[AgentGUI-Distribution_ProjectKB_Instance_20165]))
+	(key "add_name_on_instance_form")
+	(key_class "java.lang.String")
+	(value "false")
+	(value_class "java.lang.String"))
 
-([AgentGUI-Distribution_ProjectKB_Instance_10150] of  Property_List
+([AgentGUI-Distribution_ProjectKB_Instance_10155] of  Map_Entry
 
-	(name "layout properties"))
+	(key "change_tracking_active")
+	(key_class "java.lang.String")
+	(value "false")
+	(value_class "java.lang.String"))
 
-([AgentGUI-Distribution_ProjectKB_Instance_10151] of  Widget
-
-	(height 60)
-	(is_hidden FALSE)
-	(name "status")
-	(property_list [AgentGUI-Distribution_ProjectKB_Instance_10152])
-	(widget_class_name "edu.stanford.smi.protege.widget.ComboBoxWidget")
-	(width 100)
-	(x 0)
-	(y 0))
-
-([AgentGUI-Distribution_ProjectKB_Instance_10152] of  Property_List
+([AgentGUI-Distribution_ProjectKB_Instance_10156] of  Map
 )
+
+([AgentGUI-Distribution_ProjectKB_Instance_10157] of  Map_Entry
+
+	(key "InstanceDisplay.yellow_stickies")
+	(key_class "java.lang.String")
+	(value "AgentGUI-Distribution_ProjectKB_Instance_10156")
+	(value_class "java.util.Map"))
 
 ([AgentGUI-Distribution_ProjectKB_Instance_133] of  Widget
 
@@ -406,144 +404,6 @@
 ([AgentGUI-Distribution_ProjectKB_Instance_20149] of  Property_List
 )
 
-([AgentGUI-Distribution_ProjectKB_Instance_20153] of  Widget
-
-	(height 60)
-	(is_hidden FALSE)
-	(name "status")
-	(property_list [AgentGUI-Distribution_ProjectKB_Instance_20154])
-	(widget_class_name "edu.stanford.smi.protege.widget.InstanceFieldWidget")
-	(width 200)
-	(x 0)
-	(y 0))
-
-([AgentGUI-Distribution_ProjectKB_Instance_20154] of  Property_List
-
-	(properties
-		[AgentGUI-Distribution_ProjectKB_Instance_20155]
-		[AgentGUI-Distribution_ProjectKB_Instance_20156]))
-
-([AgentGUI-Distribution_ProjectKB_Instance_20155] of  Boolean
-
-	(boolean_value FALSE)
-	(name "ButtonDisplayed-View References to Value"))
-
-([AgentGUI-Distribution_ProjectKB_Instance_20156] of  Boolean
-
-	(boolean_value FALSE)
-	(name "ButtonDisplayed-Delete Instance"))
-
-([AgentGUI-Distribution_ProjectKB_Instance_20157] of  Widget
-
-	(height 60)
-	(is_hidden FALSE)
-	(name "status")
-	(property_list [AgentGUI-Distribution_ProjectKB_Instance_20158])
-	(widget_class_name "edu.stanford.smi.protege.widget.ComboBoxWidget")
-	(width 100)
-	(x 0)
-	(y 0))
-
-([AgentGUI-Distribution_ProjectKB_Instance_20158] of  Property_List
-)
-
-([AgentGUI-Distribution_ProjectKB_Instance_20159] of  Widget
-
-	(height 60)
-	(is_hidden FALSE)
-	(name "status")
-	(property_list [AgentGUI-Distribution_ProjectKB_Instance_20160])
-	(widget_class_name "edu.stanford.smi.protege.widget.InstanceFieldWidget")
-	(width 200)
-	(x 0)
-	(y 0))
-
-([AgentGUI-Distribution_ProjectKB_Instance_20160] of  Property_List
-
-	(properties
-		[AgentGUI-Distribution_ProjectKB_Instance_20161]
-		[AgentGUI-Distribution_ProjectKB_Instance_20162]))
-
-([AgentGUI-Distribution_ProjectKB_Instance_20161] of  Boolean
-
-	(boolean_value FALSE)
-	(name "ButtonDisplayed-View References to Value"))
-
-([AgentGUI-Distribution_ProjectKB_Instance_20162] of  Boolean
-
-	(boolean_value FALSE)
-	(name "ButtonDisplayed-Delete Instance"))
-
-([AgentGUI-Distribution_ProjectKB_Instance_20163] of  Widget
-
-	(height 60)
-	(is_hidden FALSE)
-	(name "status")
-	(property_list [AgentGUI-Distribution_ProjectKB_Instance_20164])
-	(widget_class_name "edu.stanford.smi.protege.widget.IntegerFieldWidget")
-	(width 100)
-	(x 0)
-	(y 0))
-
-([AgentGUI-Distribution_ProjectKB_Instance_20164] of  Property_List
-)
-
-([AgentGUI-Distribution_ProjectKB_Instance_20165] of  Widget
-
-	(height 60)
-	(is_hidden FALSE)
-	(name "status")
-	(property_list [AgentGUI-Distribution_ProjectKB_Instance_20166])
-	(widget_class_name "edu.stanford.smi.protege.widget.InstanceFieldWidget")
-	(width 200)
-	(x 0)
-	(y 0))
-
-([AgentGUI-Distribution_ProjectKB_Instance_20166] of  Property_List
-
-	(properties
-		[AgentGUI-Distribution_ProjectKB_Instance_20167]
-		[AgentGUI-Distribution_ProjectKB_Instance_20168]))
-
-([AgentGUI-Distribution_ProjectKB_Instance_20167] of  Boolean
-
-	(boolean_value FALSE)
-	(name "ButtonDisplayed-View References to Value"))
-
-([AgentGUI-Distribution_ProjectKB_Instance_20168] of  Boolean
-
-	(boolean_value FALSE)
-	(name "ButtonDisplayed-Delete Instance"))
-
-([AgentGUI-Distribution_ProjectKB_Instance_20169] of  String
-
-	(name ":INSTANCE-ANNOTATION")
-	(string_value "%3AANNOTATION-TEXT"))
-
-([AgentGUI-Distribution_ProjectKB_Instance_20170] of  Map_Entry
-
-	(key "add_name_on_instance_form")
-	(key_class "java.lang.String")
-	(value "false")
-	(value_class "java.lang.String"))
-
-([AgentGUI-Distribution_ProjectKB_Instance_20171] of  Map_Entry
-
-	(key "change_tracking_active")
-	(key_class "java.lang.String")
-	(value "false")
-	(value_class "java.lang.String"))
-
-([AgentGUI-Distribution_ProjectKB_Instance_20172] of  Map
-)
-
-([AgentGUI-Distribution_ProjectKB_Instance_20173] of  Map_Entry
-
-	(key "InstanceDisplay.yellow_stickies")
-	(key_class "java.lang.String")
-	(value "AgentGUI-Distribution_ProjectKB_Instance_20172")
-	(value_class "java.util.Map"))
-
 ([AgentGUI-Distribution_ProjectKB_Instance_202] of  Property_List
 )
 
@@ -559,10 +419,10 @@
 ([AgentGUI-Distribution_ProjectKB_Instance_224] of  Map
 
 	(entries
-		[AgentGUI-Distribution_ProjectKB_Instance_20170]
-		[AgentGUI-Distribution_ProjectKB_Instance_20171]
-		[AgentGUI-Distribution_ProjectKB_Instance_20173])
-	(referenced_maps [AgentGUI-Distribution_ProjectKB_Instance_20172]))
+		[AgentGUI-Distribution_ProjectKB_Instance_10154]
+		[AgentGUI-Distribution_ProjectKB_Instance_10155]
+		[AgentGUI-Distribution_ProjectKB_Instance_10157])
+	(referenced_maps [AgentGUI-Distribution_ProjectKB_Instance_10156]))
 
 ([AgentGUI-Distribution_ProjectKB_Instance_98] of  String
 
@@ -585,7 +445,7 @@
 
 ([BROWSER_SLOT_NAMES] of  Property_List
 
-	(properties [AgentGUI-Distribution_ProjectKB_Instance_20169]))
+	(properties [AgentGUI-Distribution_ProjectKB_Instance_10153]))
 
 ([CLSES_TAB] of  Widget
 

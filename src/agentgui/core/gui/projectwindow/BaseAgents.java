@@ -632,9 +632,9 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 		if (jSplitOntologie == null) {
 			jSplitOntologie = new JSplitPane();
 			jSplitOntologie.setOrientation(JSplitPane.VERTICAL_SPLIT);
-			jSplitOntologie.setDividerSize(1);
+			jSplitOntologie.setDividerSize(3);
 			jSplitOntologie.setDividerLocation(150);
-			jSplitOntologie.setResizeWeight(1.0D);
+			jSplitOntologie.setResizeWeight(0.5D);
 			jSplitOntologie.setBottomComponent(getJPanelOntoSlots());
 			jSplitOntologie.setTopComponent(getJPanelOntology());
 		}
@@ -708,10 +708,11 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 			GridBagConstraints gridBagConstraints18 = new GridBagConstraints();
 			gridBagConstraints18.fill = GridBagConstraints.BOTH;
 			gridBagConstraints18.gridy = 2;
-			gridBagConstraints18.weightx = 0.0;
+			gridBagConstraints18.weightx = 1.0;
 			gridBagConstraints18.weighty = 1.0;
 			gridBagConstraints18.gridwidth = 2;
 			gridBagConstraints18.insets = new Insets(0, 10, 0, 0);
+			gridBagConstraints18.ipady = 0;
 			gridBagConstraints18.gridx = 0;
 			
 			GridBagConstraints gridBagConstraints = new GridBagConstraints();
@@ -860,18 +861,27 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 				jListReferences.setSelectedIndex(agentConfigPos);
 			}
 		} else if (trigger == jButtonRename) {
-			// --- Ontologie-Referenz maskieren -----------
+			// --- mask ontology-reference ----------------
+			String input = null;
+			String head  = null;
+			String msg   = null;
+			
+			if (jListReferences.getSelectedValue()==null) {
+				head = Language.translate("Ontologie-Referenz auswählen!");
+				msg  = Language.translate("Bitte wählen Sie eine der zugeordneten Ontologie-Referenzen aus der Liste.");
+				JOptionPane.showMessageDialog(Application.MainWindow, msg, head, JOptionPane.WARNING_MESSAGE);
+				return;
+			}
 			setTmpAgentConfig();
 			setCurrAgentConfig();
 			
-			String input = null;
-			String head = Language.translate("Ontologie Referenz maskieren");
-			String msg  = Language.translate("Bitte geben Sie einen Bezeichner für die Referenz an!");
-			
+			input = null;
+			head = Language.translate("Ontologie Referenz maskieren");
+			msg  = Language.translate("Bitte geben Sie einen Bezeichner für die Referenz an!");
 			if (agentConfigMask== null) {
-				input = (String) JOptionPane.showInputDialog(Application.MainWindow, msg, head, JOptionPane.OK_CANCEL_OPTION);	
+				input = (String) JOptionPane.showInputDialog(Application.MainWindow, msg, head, JOptionPane.QUESTION_MESSAGE);	
 			} else {
-				input = (String) JOptionPane.showInputDialog(Application.MainWindow, msg, head, JOptionPane.OK_CANCEL_OPTION, null, null, agentConfigMask);	
+				input = (String) JOptionPane.showInputDialog(Application.MainWindow, msg, head, JOptionPane.QUESTION_MESSAGE, null, null, agentConfigMask);	
 			}
 			if (input==null) {
 				return;

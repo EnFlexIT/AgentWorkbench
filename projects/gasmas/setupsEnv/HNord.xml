@@ -50,12 +50,12 @@
                 <agentClassName>gasmas.agents.components.BranchAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>n3_1</graphElementIDs>
-                <graphElementIDs>PP8</graphElementIDs>
                 <graphElementIDs>n3_0</graphElementIDs>
+                <graphElementIDs>PP8</graphElementIDs>
                 <graphElementIDs>PP5</graphElementIDs>
                 <graphElementIDs>PP7</graphElementIDs>
-                <graphElementIDs>n3_2</graphElementIDs>
                 <graphElementIDs>PP6</graphElementIDs>
+                <graphElementIDs>n3_2</graphElementIDs>
                 <id>n3</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.Star3GraphElement</prototypeClassName>
                 <type>Branch</type>

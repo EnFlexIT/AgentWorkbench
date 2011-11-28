@@ -37,7 +37,7 @@
 			<attribute name="javadoc_location" value="file:/D:/10 Java Projects/AgentGUI/lib/jung/apidocs/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/jung/jung-api-2.0.1.jar">
+	<classpathentry kind="lib" path="lib/jung/jung-api-2.0.1.jar" sourcepath="/jung-api">
 		<attributes>
 			<attribute name="javadoc_location" value="file:/D:/10 Java Projects/AgentGUI/lib/jung/apidocs/"/>
 		</attributes>

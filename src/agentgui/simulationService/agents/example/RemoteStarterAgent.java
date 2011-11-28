@@ -74,7 +74,7 @@ public class RemoteStarterAgent extends Agent {
 			LoadServiceHelper loadHelper;
 			try {
 				loadHelper = (LoadServiceHelper) myAgent.getHelper(LoadService.NAME);
-				String newContainerName = loadHelper.startNewRemoteContainer(false);
+				String newContainerName = loadHelper.startNewRemoteContainer();
 				while (true) {
 					Container2Wait4 waitCont = loadHelper.startNewRemoteContainerStaus(newContainerName);	
 					if (waitCont.isStarted()) {

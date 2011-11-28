@@ -45,6 +45,7 @@ de;Anzahl Agenten (erwartet);Number of agents (expected)
 de;Anzahl Container berechnen;Calculate number of container
 de;Anzahl Container;Number of container
 de;Anzeigesprache wechseln?;Change the GUI Language?
+de;Arbeitsspeicher für Remote-JVM;Memory for remote JVM;;;
 de;Arbeitsspeicher;Memory
 de;Argument;argument
 de;Ausgewählte JADE-Services;Selected JADE Services;;;
@@ -70,6 +71,7 @@ de;Bitte warten! Der Benchmark wird durchgeführt ...;Please wait! The benchmark 
 de;Bitte wiederholen Sie den Vorgang bei Bedarf und bestätigen Sie dann mit 'Ja'.;Please repeat the process if required and then confirm with 'Yes'.
 de;Bitte wählen Sie das gewünschte Projekt aus!;Please select the desired project!
 de;Bitte wählen Sie die Ontologie aus, die Ihrem Projekt hinzugefügt werden soll !;Please select the ontology, which has to be added to your project!
+de;Bitte wählen Sie eine der zugeordneten Ontologie-Referenzen aus der Liste.;Please select one of the mapped ontology references from the list.;;;
 de;Bitte wählen Sie einen Namen für den Agenten!;Please choose a name for the agent!
 de;Bitte überprüfen Sie die Datenbank-Einstellungen!;Please check your database settings!
 de;CPU-Auslastung;CPU-Load
@@ -95,6 +97,7 @@ de;Der Agent ';The Agent '
 de;Der Agent 'rma' ist bereits geöffnet!;The agent 'rma' is already running
 de;Der Name '@' wird in der Startliste bereits verwendet !<br>Bitte wählen Sie einen anderen Namen für den Agenten.;The name '@' is already used in the start list!<br>Please select another name for the agent.
 de;Der Name;The name
+de;Der maximale Arbeitsspeicher muss größer als der initiale Arbeitsspeicher sein.;The maximum memory must be greater than the initial memory.;;;
 de;Deutsch;German
 de;Die Datei '@' wurde nicht gefunden!;File '@' was not found!
 de;Die Datei existiert bereits. Wollen Sie diese Datei überschreiben?;The file already exists. Do you want to overwrite this file?
@@ -102,7 +105,7 @@ de;Die Datei;The file
 de;Die Datenbank für den Server-Master ist nicht vorhanden.<br>Soll versucht werden diese nun anzulegen?;The database for the Server.Master is not available. <br> Try to create it now?
 de;Doppelklick um eine Klasse auszuwählen !;Double click to select a class!
 de;Dummy-Agenten starten;Start Dummy agent
-de;Dynamische Lastverteilung aktivieren;Enabled dynamic load balancing 
+de;Dynamische Lastverteilung aktivieren;Enable dynamic load balancing ;null;null;null
 de;Eigene Auslastungsgrenzwerte verwenden;Use own threshold values
 de;Einheit;Unit
 de;Element-Typ;Element type
@@ -167,6 +170,7 @@ de;Hinzufügen;Add
 de;Ihre Umschaltung zwischen 'Anwendung' und 'Server' wurde rückgängig gemacht.;Switching between 'Application' and 'Server' has been reversed.
 de;Immer Überspringen;Allways Skip
 de;Info;Info
+de;Initialer Arbeitsspeicher >= Maximaler Arbeitsspeicher !;Initial Memory >= Maximum Memory !;;;
 de;Introspector-Agent starten;Start Introspector agent
 de;Italienisch;Italian
 de;JADE starten;Start JADE
@@ -189,6 +193,7 @@ de;Java-Klasse für die dynamische Lastverteilung;Java class for dynamic load bal
 de;Kein Projekt geöffnet !;No open project!
 de;Kein SVG zugewiesen;No SVG assigned
 de;Kein vordefiniertes Umgebungsmodell verwenden;Don't use a predefined environment model;null;null;null
+de;Keine Computer nutzen, die bereits einen Remote-Container beherbergen;Don't use computer that are already host a remote-container;;;
 de;Keine Graph-Datei definiert!;No Graph file defined!
 de;Keine Klasse definiert;No class defined
 de;Keine SVG-Datei definiert!;No SVG file defined!
@@ -285,6 +290,7 @@ de;Ontologie hinzufügen;Add ontology
 de;Ontologie-Klasse für Übergabepunkte;Ontology class for transfer points
 de;Ontologie-Klasse;Ontology Class;;;
 de;Ontologie-Klassen initialisieren;initialize ontology classes;;;
+de;Ontologie-Referenz auswählen!;Select an ontology reference!;;;
 de;Ontologie;Ontology
 de;Ontologieklasse;Ontology Class
 de;Ontologien;Ontologies
@@ -323,6 +329,7 @@ de;RMA (Remote Monitoring Agent) öffnen;Open RMA (Remote Monitoring Agent)
 de;Raster verwenden;Use guide grid;;;
 de;Raster-Breite;Grid width;;;
 de;Rechts-Klick für weitere Optionen;Right-Click for more options
+de;Remote JADE-RMA beim Start des entfernten Containers anzeigen;Display remote JADE-RMA at the start of the remote container;;;
 de;Ressourcen;Resources
 de;SVG Dateien;SVG files
 de;SVG laden;Load SVG

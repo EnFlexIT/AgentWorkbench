@@ -227,35 +227,15 @@ public abstract class DynamicLoadBalancingBase extends BaseLoadBalancing  {
 	 * Additionally this method will update the load information for machines and JVM
 	 * by invoking {@link #updateLoadInfo4JVMandMachine(String)}.
 	 *
-	 * @param preventUsageOfAlreadyUsedComputers can prevent the usage of already used computers
-	 * @return the name of the new container
-	 * 
-	 * @see #currContainerLoactions
-	 * @see #currContainerBenchmarkResults
-	 */
-	protected String startRemoteContainer(boolean preventUsageOfAlreadyUsedComputers) {
-		String newContainerName = super.startRemoteContainer(preventUsageOfAlreadyUsedComputers);
-		this.updateLoadInfo4JVMandMachine(newContainerName);
-		return newContainerName;
-	}
-	/**
-	 * This Method can be invoked, if a new remote container is required.
-	 * If the container was started the method returns the new containers name and
-	 * will update the local information of {@link #currContainerLoactions} and
-	 * {@link #currContainerBenchmarkResults}.<br>
-	 * Additionally this method will update the load information for machines and JVM
-	 * by invoking {@link #updateLoadInfo4JVMandMachine(String)}.
-	 *
 	 * @param remoteContainerConfig the remote container configuration out of the Project 
-	 * @param preventUsageOfAlreadyUsedComputers can prevent the usage of already used computers
 	 * @return the name of the new container
 	 * 
 	 * @see #currContainerLoactions
 	 * @see #currContainerBenchmarkResults
 	 */
 	@Override
-	protected String startRemoteContainer(RemoteContainerConfig remoteContainerConfig, boolean preventUsageOfAlreadyUsedComputers) {
-		String newContainerName = super.startRemoteContainer(remoteContainerConfig,preventUsageOfAlreadyUsedComputers);
+	protected String startRemoteContainer(RemoteContainerConfig remoteContainerConfig) {
+		String newContainerName = super.startRemoteContainer(remoteContainerConfig);
 		this.updateLoadInfo4JVMandMachine(newContainerName);
 		return newContainerName;
 	}

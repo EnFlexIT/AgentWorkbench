@@ -61,8 +61,11 @@ public interface LoadServiceSlice extends Service.Slice {
 	/** The Constant SERVICE_START_NEW_REMOTE_CONTAINER. */
 	static final String SERVICE_START_NEW_REMOTE_CONTAINER = "start-new-remote-container";
 	
-	/** The Constant SERVICE_GET_DEFAULT_REMOTE_CONTAINER_CONFIG. */
-	static final String SERVICE_GET_DEFAULT_REMOTE_CONTAINER_CONFIG = "get-default-remote-container-config";
+	/** The Constant SERVICE_SET_DEFAULTS_4_REMOTE_CONTAINER_CONFIG. */
+	static final String SERVICE_SET_DEFAULTS_4_REMOTE_CONTAINER_CONFIG = "service-set-defaults-4-remote-container-config";
+	
+	/** The Constant SERVICE_GET_AUTO_REMOTE_CONTAINER_CONFIG. */
+	static final String SERVICE_GET_AUTO_REMOTE_CONTAINER_CONFIG = "get-auto-remote-container-config";
 	
 	/** The Constant SERVICE_GET_NEW_CONTAINER_2_WAIT_4_STATUS. */
 	static final String SERVICE_GET_NEW_CONTAINER_2_WAIT_4_STATUS = "get-new-container-2-wait-4-status";
@@ -86,7 +89,15 @@ public interface LoadServiceSlice extends Service.Slice {
 	 * @return the name of the remote container  
 	 * @throws IMTPException the IMTPException
 	 */
-	public String startNewRemoteContainer(RemoteContainerConfig remoteConfig, boolean preventUsageOfAlreadyUsedComputers) throws IMTPException;
+	public String startNewRemoteContainer(RemoteContainerConfig remoteConfig) throws IMTPException;
+	
+	/**
+	 * Sets the defaults for a remote container configuration.
+	 *
+	 * @return the object
+	 * @throws IMTPException the iMTP exception
+	 */
+	public void setDefaults4RemoteContainerConfig(RemoteContainerConfig remoteConfig) throws IMTPException;
 	
 	/**
 	 * Provides the Default remote container configuration.
@@ -95,7 +106,7 @@ public interface LoadServiceSlice extends Service.Slice {
 	 * @return the default RemoteContainerConfig
 	 * @throws IMTPException the IMTPException
 	 */
-	public RemoteContainerConfig getDefaultRemoteContainerConfig(boolean preventUsageOfAlreadyUsedComputers) throws IMTPException;
+	public RemoteContainerConfig getAutoRemoteContainerConfig() throws IMTPException;
 	
 	/**
 	 * Returns the current status of the requested new container.
@@ -206,5 +217,6 @@ public interface LoadServiceSlice extends Service.Slice {
 	 * @throws IMTPException the IMTPException
 	 */
 	public void setAgentMigration(Vector<AID_Container> transferAgents) throws IMTPException;
+
 
 }

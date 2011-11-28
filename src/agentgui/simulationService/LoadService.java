@@ -129,13 +129,16 @@ public class LoadService extends BaseService {
 	
 	private String myContainerMTPurl = null;
 	
-	/** The my crc reply. */
+	/** The local ClientRemoteContainerReply instance. */
 	private ClientRemoteContainerReply myCRCReply = null; 
 	
 	/** The List of Agents, which are registered to this service  **/ 
 	private Hashtable<String,AID> agentList = new Hashtable<String,AID>();
-	/** Default value for starting remote-container **/
-	public static final boolean DEFAULT_preventUsageOfAlreadyUsedComputers = true;
+	
+	/** Default values for starting new remote-container **/
+	//public static final boolean DEFAULT_preventUsageOfAlreadyUsedComputers = true;
+	
+	private RemoteContainerConfig defaults4RemoteContainerConfig = null; 
 	
 	/**  The Load-Information Array of all slices **/
 	private LoadInformation loadInfo = new LoadInformation(); 
@@ -244,38 +247,30 @@ public class LoadService extends BaseService {
 		// ----------------------------------------------------------
 		// --- Methods to start a new remote-container -------------- 
 		/* (non-Javadoc)
-		 * @see agentgui.simulationService.LoadServiceHelper#getDefaultRemoteContainerConfig()
-		 */
-		public RemoteContainerConfig getDefaultRemoteContainerConfig() throws ServiceException {
-			return this.getDefaultRemoteContainerConfig(DEFAULT_preventUsageOfAlreadyUsedComputers);
-		}
-		
-		/* (non-Javadoc)
 		 * @see agentgui.simulationService.LoadServiceHelper#getDefaultRemoteContainerConfig(boolean)
 		 */
-		public RemoteContainerConfig getDefaultRemoteContainerConfig(boolean preventUsageOfAlreadyUsedComputers) throws ServiceException {
-			return broadcastGetDefaultRemoteContainerConfig(preventUsageOfAlreadyUsedComputers);
+		public RemoteContainerConfig getAutoRemoteContainerConfig() throws ServiceException {
+			return broadcastGetAutoRemoteContainerConfig();
 		}
-		
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.LoadServiceHelper#setDefaultRemoteContainerConfig(agentgui.simulationService.ontology.RemoteContainerConfig)
+		 */
+		public void setDefaults4RemoteContainerConfig(RemoteContainerConfig remoteContainerConfig) throws ServiceException {
+			broadcastSetDefaults4RemoteContainerConfig(remoteContainerConfig);
+		}
+
 		/* (non-Javadoc)
 		 * @see agentgui.simulationService.LoadServiceHelper#startNewRemoteContainer()
 		 */
 		public String startNewRemoteContainer() throws ServiceException {
-			return this.startNewRemoteContainer(null, DEFAULT_preventUsageOfAlreadyUsedComputers);
-		}
-		
-		/* (non-Javadoc)
-		 * @see agentgui.simulationService.LoadServiceHelper#startNewRemoteContainer(boolean)
-		 */
-		public String startNewRemoteContainer(boolean preventUsageOfAlreadyUsedComputers) throws ServiceException {
-			return this.startNewRemoteContainer(null, preventUsageOfAlreadyUsedComputers);
+			return this.startNewRemoteContainer(null);
 		}
 		
 		/* (non-Javadoc)
 		 * @see agentgui.simulationService.LoadServiceHelper#startNewRemoteContainer(agentgui.simulationService.ontology.RemoteContainerConfig, boolean)
 		 */
-		public String startNewRemoteContainer(RemoteContainerConfig remoteConfig, boolean preventUsageOfAlreadyUsedComputers) throws ServiceException {
-			return broadcastStartNewRemoteContainer(remoteConfig, preventUsageOfAlreadyUsedComputers);
+		public String startNewRemoteContainer(RemoteContainerConfig remoteConfig) throws ServiceException {
+			return broadcastStartNewRemoteContainer(remoteConfig);
 		}
 		
 		/* (non-Javadoc)
@@ -488,13 +483,40 @@ public class LoadService extends BaseService {
 	}
 	
 	/**
+	 * Broadcast to set the defaults for a remote container configuration.
+	 *
+	 * @param remoteContainerConfig the remote container configuration
+	 * @throws ServiceException the service exception
+	 */
+	private void broadcastSetDefaults4RemoteContainerConfig(RemoteContainerConfig remoteContainerConfig) throws ServiceException {
+
+		if (myLogger.isLoggable(Logger.CONFIG)) {
+			myLogger.log(Logger.CONFIG, "Sending the default remote container configuration!");
+		}
+		String sliceName = null;
+		try {
+			LoadServiceSlice slice = (LoadServiceSlice) getSlice(MAIN_SLICE);
+			sliceName = slice.getNode().getName();
+			if (myLogger.isLoggable(Logger.FINER)) {
+				myLogger.log(Logger.FINER, "Sending the default remote container configuration to container (" + sliceName + ")");
+			}
+			slice.setDefaults4RemoteContainerConfig(remoteContainerConfig);
+		}
+		catch(Throwable t) {
+			// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
+			myLogger.log(Logger.WARNING, "Error while try to send the default remote container configuration to container " + sliceName, t);
+		}
+		
+	}
+	
+	/**
 	 * This Methods returns the default Remote-Container-Configuration, coming from the Main-Container.
 	 *
 	 * @param preventUsageOfAlreadyUsedComputers the prevent usage of already used computers
 	 * @return the RemoteContainerConfig
 	 * @throws ServiceException the service exception
 	 */
-	private RemoteContainerConfig broadcastGetDefaultRemoteContainerConfig(boolean preventUsageOfAlreadyUsedComputers) throws ServiceException {
+	private RemoteContainerConfig broadcastGetAutoRemoteContainerConfig() throws ServiceException {
 		
 		if (myLogger.isLoggable(Logger.CONFIG)) {
 			myLogger.log(Logger.CONFIG, "Start request for the default remote container configuration!");
@@ -506,7 +528,7 @@ public class LoadService extends BaseService {
 			if (myLogger.isLoggable(Logger.FINER)) {
 				myLogger.log(Logger.FINER, "Start request for the default remote container configuration at container (" + sliceName + ")");
 			}
-			return slice.getDefaultRemoteContainerConfig(preventUsageOfAlreadyUsedComputers);
+			return slice.getAutoRemoteContainerConfig();
 		}
 		catch(Throwable t) {
 			// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
@@ -523,7 +545,7 @@ public class LoadService extends BaseService {
 	 * @return the name of the new container
 	 * @throws ServiceException the service exception
 	 */
-	private String broadcastStartNewRemoteContainer(RemoteContainerConfig remoteConfig, boolean preventUsageOfAlreadyUsedComputers) throws ServiceException {
+	private String broadcastStartNewRemoteContainer(RemoteContainerConfig remoteConfig) throws ServiceException {
 		
 		if (myLogger.isLoggable(Logger.CONFIG)) {
 			myLogger.log(Logger.CONFIG, "Start a new remote container!");
@@ -535,7 +557,7 @@ public class LoadService extends BaseService {
 			if (myLogger.isLoggable(Logger.FINER)) {
 				myLogger.log(Logger.FINER, "Try to start a new remote container (" + sliceName + ")");
 			}
-			return slice.startNewRemoteContainer(remoteConfig, preventUsageOfAlreadyUsedComputers);
+			return slice.startNewRemoteContainer(remoteConfig);
 		}
 		catch(Throwable t) {
 			// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
@@ -819,15 +841,20 @@ public class LoadService extends BaseService {
 						myLogger.log(Logger.FINE, "Starting a new remote-container for this platform");
 					}
 					RemoteContainerConfig remoteConfig = (RemoteContainerConfig) params[0];
-					boolean preventUsageOfAlreadyUsedComputers = (Boolean) params[1];
-					cmd.setReturnValue(this.startRemoteContainer(remoteConfig, preventUsageOfAlreadyUsedComputers));
+					cmd.setReturnValue(this.startRemoteContainer(remoteConfig));
 				}
-				else if (cmdName.equals(LoadServiceSlice.SERVICE_GET_DEFAULT_REMOTE_CONTAINER_CONFIG)) {
+				else if (cmdName.equals(LoadServiceSlice.SERVICE_SET_DEFAULTS_4_REMOTE_CONTAINER_CONFIG)) {
+					if (myLogger.isLoggable(Logger.FINE)) {
+						myLogger.log(Logger.FINE, "Got the default settings for ");
+					}
+					RemoteContainerConfig remoteContainerConfig = (RemoteContainerConfig) params[0];
+					defaults4RemoteContainerConfig = remoteContainerConfig;
+				}
+				else if (cmdName.equals(LoadServiceSlice.SERVICE_GET_AUTO_REMOTE_CONTAINER_CONFIG)) {
 					if (myLogger.isLoggable(Logger.FINE)) {
 						myLogger.log(Logger.FINE, "Answering to request for 'get_default_remote_container_config'");
 					}
-					boolean preventUsageOfAlreadyUsedComputers = (Boolean) params[0];
-					cmd.setReturnValue(this.getDefaultRemoteContainerConfig(preventUsageOfAlreadyUsedComputers));
+					cmd.setReturnValue(this.getAutoRemoteContainerConfig());
 				}
 				else if (cmdName.equals(LoadServiceSlice.SERVICE_GET_NEW_CONTAINER_2_WAIT_4_STATUS)) {
 					String container2Wait4 = (String) params[0];
@@ -931,8 +958,8 @@ public class LoadService extends BaseService {
 		 * @param preventUsageOfAlreadyUsedComputers the prevent usage of already used computers
 		 * @return the string
 		 */
-		private String startRemoteContainer(RemoteContainerConfig remoteConfig, boolean preventUsageOfAlreadyUsedComputers) {
-			return sendMsgRemoteContainerRequest(remoteConfig, preventUsageOfAlreadyUsedComputers);
+		private String startRemoteContainer(RemoteContainerConfig remoteConfig) {
+			return sendMsgRemoteContainerRequest(remoteConfig);
 		}
 		
 		/**
@@ -941,8 +968,8 @@ public class LoadService extends BaseService {
 		 * @param preventUsageOfAlreadyUsedComputers the prevent usage of already used computers
 		 * @return the default remote container config
 		 */
-		private RemoteContainerConfig getDefaultRemoteContainerConfig(boolean preventUsageOfAlreadyUsedComputers) {
-			return getRemoteContainerConfigDefault(preventUsageOfAlreadyUsedComputers);
+		private RemoteContainerConfig getAutoRemoteContainerConfig() {
+			return getRemoteContainerConfigAuto();
 		}
 		
 		/**
@@ -1141,7 +1168,7 @@ public class LoadService extends BaseService {
 	 * @param preventUsageOfAlreadyUsedComputers the prevent usage of already used computers
 	 * @return the default RemoteContainerConfig
 	 */
-	private RemoteContainerConfig getRemoteContainerConfigDefault(boolean preventUsageOfAlreadyUsedComputers) {
+	private RemoteContainerConfig getRemoteContainerConfigAuto() {
 		
 		// --- Variable for the new container name ------------------
 		String newContainerPrefix = "remote";
@@ -1226,9 +1253,16 @@ public class LoadService extends BaseService {
 		remConf.setJadeContainerName(newContainerName);
 		remConf.setJadeShowGUI(true);
 		remConf.setJadeJarIncludeList(extJars);
-		if (preventUsageOfAlreadyUsedComputers) {
-			remConf.setHostExcludeIP(hostExcludeIP);	
-		}			
+		
+		// --- Apply defaults, if set -------------------------------
+		if (this.defaults4RemoteContainerConfig!=null) {
+			if (defaults4RemoteContainerConfig.getPreventUsageOfUsedComputer()==true) {
+				remConf.setHostExcludeIP(hostExcludeIP);	
+			}
+			remConf.setJadeShowGUI(this.defaults4RemoteContainerConfig.getJadeShowGUI());
+			remConf.setJvmMemAllocInitial(this.defaults4RemoteContainerConfig.getJvmMemAllocInitial());
+			remConf.setJvmMemAllocMaximum(this.defaults4RemoteContainerConfig.getJvmMemAllocMaximum());
+		}
 		return remConf;
 	}
 	
@@ -1239,14 +1273,14 @@ public class LoadService extends BaseService {
 	 * @param preventUsageOfAlreadyUsedComputers the boolean prevent usage of already used computers
 	 * @return the name of the container
 	 */
-	private String sendMsgRemoteContainerRequest(RemoteContainerConfig remConf, boolean preventUsageOfAlreadyUsedComputers) {
+	private String sendMsgRemoteContainerRequest(RemoteContainerConfig remConf) {
 		
 		// --- Get the local Address of JADE ------------------------
 		String myPlatformAddress = myContainer.getPlatformID();
 		
 		// --- If the remote-configuration is null configure it now -
 		if (remConf==null) {
-			remConf = this.getRemoteContainerConfigDefault(preventUsageOfAlreadyUsedComputers);
+			remConf = this.getRemoteContainerConfigAuto();
 		}
 		
 		// --- Define the AgentAction -------------------------------

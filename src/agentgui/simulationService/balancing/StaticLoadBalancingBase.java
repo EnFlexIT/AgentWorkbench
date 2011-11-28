@@ -29,6 +29,7 @@
 package agentgui.simulationService.balancing;
 
 import jade.core.Agent;
+import jade.core.ServiceException;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -37,7 +38,9 @@ import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.application.Language;
 import agentgui.core.environment.EnvironmentPanel;
 import agentgui.core.environment.EnvironmentType;
+import agentgui.core.project.RemoteContainerConfiguration;
 import agentgui.simulationService.agents.LoadExecutionAgent;
+import agentgui.simulationService.ontology.RemoteContainerConfig;
 
 /**
  * This is the base class for every tailored static load balancing class.
@@ -71,16 +74,17 @@ public abstract class StaticLoadBalancingBase extends BaseLoadBalancing {
 	}
 	
 	/**
-	 * This Method will be call right before the begin of the action() method and 
+	 * This Method will be called right before the begin of the action() method and 
 	 * will start the visualization agent in the prepared tag of <b>Agent.GUI</b>.
 	 */
 	@Override
 	public void onStart() {
+		this.setDefaults4RemoteContainerConfig();
 		this.startVisualizationAgent();
 	}
 	
 	/**
-	 * This Method will be call right after the end of the action() method and 
+	 * This Method will be called right after the end of the action() method and 
 	 * will remove shut down the current agent.
 	 *
 	 * @return an integer code representing the termination value of the behaviour.
@@ -104,6 +108,29 @@ public abstract class StaticLoadBalancingBase extends BaseLoadBalancing {
 			// --- Start the agent -----------------------------------
 			this.startAgent(agent2Start.getStartAsName(), agent2Start.getAgentClassReference(), startArgs);
 		} 
+	}
+
+	/**
+	 * Sets the defaults4 remote container config.
+	 */
+	private void setDefaults4RemoteContainerConfig() {
+
+		if (this.currRemConConfig==null) {
+			this.currRemConConfig = new RemoteContainerConfiguration();
+		}
+		
+		RemoteContainerConfig remConConf = new RemoteContainerConfig();
+		remConConf.setPreventUsageOfUsedComputer(currRemConConfig.isPreventUsageOfAlreadyUsedComputers());
+		remConConf.setJadeShowGUI(currRemConConfig.isShowJADErmaGUI());
+		remConConf.setJvmMemAllocInitial(currRemConConfig.getJvmMemAllocInitial());
+		remConConf.setJvmMemAllocMaximum(currRemConConfig.getJvmMemAllocMaximum());
+		
+		try {
+			loadHelper.setDefaults4RemoteContainerConfig(remConConf);
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
+		
 	}
 
 	/**
@@ -143,6 +170,5 @@ public abstract class StaticLoadBalancingBase extends BaseLoadBalancing {
 			// ----------------------------------------------------------------
 		}
 	}
-	
 	
 }

@@ -47,6 +47,7 @@ import agentgui.core.jade.Platform;
 import agentgui.core.ontologies.gui.OntologyInstanceViewer;
 import agentgui.core.project.DistributionSetup;
 import agentgui.core.project.Project;
+import agentgui.core.project.RemoteContainerConfiguration;
 import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.simulationService.LoadService;
 import agentgui.simulationService.LoadServiceHelper;
@@ -83,8 +84,8 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 	protected SimulationSetup currSimSetup = null;
 	/** The current distribution setup. */ 
 	protected DistributionSetup currDisSetup = null;
-	/** The current remote container configuration. */
-	protected RemoteContainerConfig currRemConConfig = null;
+	/** The current remote container configuration, stored in the current project (NOT the ontology instance {@link RemoteContainerConfig}). */
+	protected RemoteContainerConfiguration currRemConConfig = null;
 	
 	
 	/** The current threshold levels. */
@@ -108,7 +109,7 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 		if (currProject!=null) {
 			currSimSetup = currProject.simulationSetups.getCurrSimSetup();
 			currDisSetup = currProject.getDistributionSetup();
-			currRemConConfig = currProject.getRemoteContainerConfiguration().getOntologyRemoteConfainerConfig();
+			currRemConConfig = currProject.getRemoteContainerConfiguration();
 		}
 		this.setLoadHelper();
 		this.setSimulationLoadHelper();
@@ -391,28 +392,14 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 	 * will update the local information of {@link #currContainerLoactions} and
 	 * {@link #currContainerBenchmarkResults}.
 	 *
-	 * @return the name of the new container
-	 * 
-	 * @see #currContainerLoactions
-	 * @see #currContainerBenchmarkResults
-	 */
-	protected String startRemoteContainer() {
-		return this.startRemoteContainer(LoadService.DEFAULT_preventUsageOfAlreadyUsedComputers);
-	}
-	/**
-	 * This Method can be invoked, if a new remote container is required.
-	 * If the container was started the method returns the new containers name and
-	 * will update the local information of {@link #currContainerLoactions} and
-	 * {@link #currContainerBenchmarkResults}.
-	 *
 	 * @param preventUsageOfAlreadyUsedComputers can prevent the usage of already used computers
 	 * @return the name of the new container
 	 * 
 	 * @see #currContainerLoactions
 	 * @see #currContainerBenchmarkResults
 	 */
-	protected String startRemoteContainer(boolean preventUsageOfAlreadyUsedComputers) {
-		return this.startRemoteContainer(null, preventUsageOfAlreadyUsedComputers);
+	protected String startRemoteContainer() {
+		return this.startRemoteContainer(null);
 	}
 	/**
 	 * This Method can be invoked, if a new remote container is required.
@@ -427,14 +414,14 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 	 * @see #currContainerLoactions
 	 * @see #currContainerBenchmarkResults
 	 */
-	protected String startRemoteContainer(RemoteContainerConfig remoteContainerConfig, boolean preventUsageOfAlreadyUsedComputers) {
+	protected String startRemoteContainer(RemoteContainerConfig remoteContainerConfig) {
 		
 		boolean newContainerStarted = false;
 		String newContainerName = null;
 		try {
 			// --- Start a new remote container -----------------
 			LoadServiceHelper loadHelper = (LoadServiceHelper) myAgent.getHelper(LoadService.NAME);
-			newContainerName = loadHelper.startNewRemoteContainer(remoteContainerConfig, preventUsageOfAlreadyUsedComputers);
+			newContainerName = loadHelper.startNewRemoteContainer(remoteContainerConfig);
 			
 			while (true) {
 				Container2Wait4 waitCont = loadHelper.startNewRemoteContainerStaus(newContainerName);	
@@ -491,7 +478,7 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 	 * 
 	 * @return the of all newly started locations
 	 */
-	protected Hashtable<String, Location> startNumberOfRemoteContainer(int numberOfContainer, boolean filterMainContainer, RemoteContainerConfig remoteContainerConfig, boolean preventUsageOfAlreadyUsedComputers) {
+	protected Hashtable<String, Location> startNumberOfRemoteContainer(int numberOfContainer, boolean filterMainContainer, RemoteContainerConfig remoteContainerConfig) {
 		
 		Hashtable<String, Location> newContainerLocations = null;
 		
@@ -507,7 +494,7 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 		Vector<String> containerList = new Vector<String>();
 		while (containerList.size()< numberOfContainer) {
 		
-			String newContainer = this.startRemoteContainer(preventUsageOfAlreadyUsedComputers);
+			String newContainer = this.startRemoteContainer();
 			if (newContainer!=null) {
 				containerList.add(newContainer);	
 			} else {

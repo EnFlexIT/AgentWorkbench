@@ -57,7 +57,7 @@ public class JListClassSearcher extends JListWithProgressBar {
 	/**
 	 * This constructor was only build to enable the use of the Visual Editor  
 	 */
-	@Deprecated
+	//@Deprecated
 	public JListClassSearcher() {
 		super();
 	}

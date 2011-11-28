@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: RemoteContainerConfig
 * @author ontology bean generator
-* @version 2010/11/19, 15:30:25
+* @version 2011/11/27, 23:21:43
 */
 public class RemoteContainerConfig implements Concept {
 
@@ -35,6 +35,17 @@ public class RemoteContainerConfig implements Concept {
    }
 
    /**
+* Protege name: jadeHost
+   */
+   private String jadeHost;
+   public void setJadeHost(String value) { 
+    this.jadeHost=value;
+   }
+   public String getJadeHost() {
+     return this.jadeHost;
+   }
+
+   /**
 * Protege name: jadeContainerName
    */
    private String jadeContainerName;
@@ -54,28 +65,6 @@ public class RemoteContainerConfig implements Concept {
    }
    public String getJadePort() {
      return this.jadePort;
-   }
-
-   /**
-* Protege name: jadeIsRemoteContainer
-   */
-   private boolean jadeIsRemoteContainer;
-   public void setJadeIsRemoteContainer(boolean value) { 
-    this.jadeIsRemoteContainer=value;
-   }
-   public boolean getJadeIsRemoteContainer() {
-     return this.jadeIsRemoteContainer;
-   }
-
-   /**
-* Protege name: jvmMemAllocMaximum
-   */
-   private String jvmMemAllocMaximum;
-   public void setJvmMemAllocMaximum(String value) { 
-    this.jvmMemAllocMaximum=value;
-   }
-   public String getJvmMemAllocMaximum() {
-     return this.jvmMemAllocMaximum;
    }
 
    /**
@@ -132,14 +121,36 @@ public class RemoteContainerConfig implements Concept {
    }
 
    /**
-* Protege name: jadeHost
+* Protege name: preventUsageOfUsedComputer
    */
-   private String jadeHost;
-   public void setJadeHost(String value) { 
-    this.jadeHost=value;
+   private boolean preventUsageOfUsedComputer;
+   public void setPreventUsageOfUsedComputer(boolean value) { 
+    this.preventUsageOfUsedComputer=value;
    }
-   public String getJadeHost() {
-     return this.jadeHost;
+   public boolean getPreventUsageOfUsedComputer() {
+     return this.preventUsageOfUsedComputer;
+   }
+
+   /**
+* Protege name: jvmMemAllocMaximum
+   */
+   private String jvmMemAllocMaximum;
+   public void setJvmMemAllocMaximum(String value) { 
+    this.jvmMemAllocMaximum=value;
+   }
+   public String getJvmMemAllocMaximum() {
+     return this.jvmMemAllocMaximum;
+   }
+
+   /**
+* Protege name: jadeIsRemoteContainer
+   */
+   private boolean jadeIsRemoteContainer;
+   public void setJadeIsRemoteContainer(boolean value) { 
+    this.jadeIsRemoteContainer=value;
+   }
+   public boolean getJadeIsRemoteContainer() {
+     return this.jadeIsRemoteContainer;
    }
 
 }

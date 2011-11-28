@@ -11,12 +11,12 @@
     </subOntologies>
     <agentConfiguration>
         <entry>
-            <key>gasmas.agents.EntryAgent</key>
-            <value>gasmas.ontology.Entry</value>
-        </entry>
-        <entry>
             <key>gasmas.agents.BranchAgent</key>
             <value>gasmas.ontology.Branch</value>
+        </entry>
+        <entry>
+            <key>gasmas.agents.EntryAgent</key>
+            <value>gasmas.ontology.Entry</value>
         </entry>
         <entry>
             <key>gasmas.agents.ValveAgent</key>
@@ -40,7 +40,7 @@
         </entry>
     </agentConfiguration>
     <jadeConfiguration>
-        <useLocalPort>1106</useLocalPort>
+        <useLocalPort>1105</useLocalPort>
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
@@ -52,8 +52,8 @@
         <doDynamicLoadBalancing>false</doDynamicLoadBalancing>
         <doStaticLoadBalancing>false</doStaticLoadBalancing>
         <dynamicLoadBalancingClass>agentgui.simulationService.balancing.DynamicLoadBalancing</dynamicLoadBalancingClass>
-        <numberOfAgents>0</numberOfAgents>
-        <numberOfContainer>0</numberOfContainer>
+        <numberOfAgents>1500</numberOfAgents>
+        <numberOfContainer>4</numberOfContainer>
         <staticLoadBalancingClass>agentgui.simulationService.balancing.StaticLoadBalancing</staticLoadBalancingClass>
         <useUserThresholds>false</useUserThresholds>
         <userThresholds>
@@ -65,7 +65,12 @@
             <thNoThreadsL>50</thNoThreadsL>
         </userThresholds>
     </distributionSetup>
-    <remoteContainerConfiguration/>
+    <remoteContainerConfiguration>
+        <jvmMemAllocInitial>128m</jvmMemAllocInitial>
+        <jvmMemAllocMaximum>1024m</jvmMemAllocMaximum>
+        <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
+        <showJADErmaGUI>false</showJADErmaGUI>
+    </remoteContainerConfiguration>
     <simulationSetupCurrent>HNord</simulationSetupCurrent>
     <simulationSetups>
         <entry>

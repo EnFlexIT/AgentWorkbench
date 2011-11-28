@@ -359,7 +359,8 @@ import agentgui.core.webserver.JarFileCreator;
 			//pm.marshal( this, System.out );
 			// --- Write values to xml-File ---------------
 			Writer pw = new FileWriter( projectFolderFullPath + Application.RunInfo.getFileNameProject() );
-			pm.marshal( this, pw );
+			pm.marshal(this, pw);
+			pw.close();
 			
 			// --- Save the userRuntimeObject in the Project into a different file as a serializable binary object.
 			FileOutputStream fos = null;
@@ -371,7 +372,7 @@ import agentgui.core.webserver.JarFileCreator;
 		       out.close();
 		       
 		    } catch(IOException ex) {
-		      ex.printStackTrace();
+		    	ex.printStackTrace();
 		    }
 		    
 			// --- Save the current SimulationSetup -------
@@ -398,23 +399,23 @@ import agentgui.core.webserver.JarFileCreator;
 	public boolean close() {
 		
 		// --- Close project? -----------------------------
-		String MsgHead = null;
-		String MsgText = null;
-		Integer MsgAnswer = 0;
+		String msgHead = null;
+		String msgText = null;
+		Integer msgAnswer = 0;
 		
 		Application.MainWindow.setStatusBar(Language.translate("Projekt schließen") + " ...");
 		if ( isUnsaved == true ) {
-			MsgHead = Language.translate("Projekt '@' speichern?");
-			MsgHead = MsgHead.replace( "'@'", "'" + projectName + "'");			
-			MsgText = Language.translate(
+			msgHead = Language.translate("Projekt '@' speichern?");
+			msgHead = msgHead.replace( "'@'", "'" + projectName + "'");			
+			msgText = Language.translate(
 						"Das aktuelle Projekt '@' ist noch nicht gespeichert!" + newLine + 
 						"Möchten Sie es nun speichern ?");
-			MsgText = MsgText.replace( "'@'", "'" + projectName + "'");
+			msgText = msgText.replace( "'@'", "'" + projectName + "'");
 			
-			MsgAnswer = JOptionPane.showInternalConfirmDialog (Application.MainWindow.getContentPane(), MsgText, MsgHead, JOptionPane.YES_NO_CANCEL_OPTION );
-			if ( MsgAnswer == JOptionPane.CANCEL_OPTION ) {
+			msgAnswer = JOptionPane.showInternalConfirmDialog (Application.MainWindow.getContentPane(), msgText, msgHead, JOptionPane.YES_NO_CANCEL_OPTION );
+			if (msgAnswer == JOptionPane.CANCEL_OPTION) {
 				return false;
-			} else if ( MsgAnswer == JOptionPane.YES_OPTION ) {
+			} else if (msgAnswer == JOptionPane.YES_OPTION) {
 				if ( save()== false ) 
 					return false;
 			}

@@ -99,7 +99,7 @@ public class StaticLoadBalancing extends StaticLoadBalancingBase {
 			Vector<String> locationNames = null;
 			int cont4DisMax = 0;
 			int cont4DisI = 0;
-			Hashtable<String, Location> newContainerLocations = this.startNumberOfRemoteContainer(currNumberOfContainer - 1, true, null, true);
+			Hashtable<String, Location> newContainerLocations = this.startNumberOfRemoteContainer(currNumberOfContainer - 1, true, null);
 			if (newContainerLocations!=null) {
 				locationNames = new Vector<String>(newContainerLocations.keySet());
 				cont4DisMax = newContainerLocations.size();

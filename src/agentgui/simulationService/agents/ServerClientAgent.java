@@ -263,7 +263,7 @@ public class ServerClientAgent extends Agent {
 			LoadServiceHelper loadHelper = null;
 			try {
 				loadHelper = (LoadServiceHelper) getHelper(LoadService.NAME);
-				remConf = loadHelper.getDefaultRemoteContainerConfig();
+				remConf = loadHelper.getAutoRemoteContainerConfig();
 			} catch (ServiceException e) {
 				e.printStackTrace();
 			}

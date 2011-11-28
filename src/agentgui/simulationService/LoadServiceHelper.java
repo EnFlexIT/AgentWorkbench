@@ -81,21 +81,12 @@ public interface LoadServiceHelper extends ServiceHelper {
 	/**
 	 * Will start a new remote container.
 	 *
-	 * @param preventUsageOfAlreadyUsedComputers can prevent the usage of already used computers
-	 * @return the name of the new container
-	 * @throws ServiceException the service exception
-	 */
-	public String startNewRemoteContainer(boolean preventUsageOfAlreadyUsedComputers) throws ServiceException;
-	
-	/**
-	 * Will start a new remote container.
-	 *
 	 * @param remoteConfig the remote container configuration
 	 * @param preventUsageOfAlreadyUsedComputers can prevent the usage of already used computers
 	 * @return the name of the new container
 	 * @throws ServiceException the service exception
 	 */
-	public String startNewRemoteContainer(RemoteContainerConfig remoteConfig, boolean preventUsageOfAlreadyUsedComputers) throws ServiceException;
+	public String startNewRemoteContainer(RemoteContainerConfig remoteConfig) throws ServiceException;
 	
 	/**
 	 * Provides the default remote container configuration.
@@ -103,16 +94,15 @@ public interface LoadServiceHelper extends ServiceHelper {
 	 * @return the default remote container configuration
 	 * @throws ServiceException the service exception
 	 */
-	public RemoteContainerConfig getDefaultRemoteContainerConfig() throws ServiceException;
+	public RemoteContainerConfig getAutoRemoteContainerConfig() throws ServiceException;
 	
 	/**
-	 * Provides the default remote container configuration.
+	 * Sets the default remote container configuration.
 	 *
-	 * @param preventUsageOfAlreadyUsedComputers can prevent the usage of already used computers
-	 * @return the default remote container configuration
+	 * @param remoteContainerConfig the new default remote container configuration
 	 * @throws ServiceException the service exception
 	 */
-	public RemoteContainerConfig getDefaultRemoteContainerConfig(boolean preventUsageOfAlreadyUsedComputers) throws ServiceException;
+	public void setDefaults4RemoteContainerConfig(RemoteContainerConfig remoteContainerConfig) throws ServiceException;
 	
 	/**
 	 * Returns the current status of the requested new container.

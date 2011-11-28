@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: ClientRemoteContainerReply
 * @author ontology bean generator
-* @version 2010/11/19, 15:30:25
+* @version 2011/11/27, 23:21:43
 */
 public class ClientRemoteContainerReply implements AgentAction {
 
@@ -24,6 +24,17 @@ public class ClientRemoteContainerReply implements AgentAction {
    }
 
    /**
+* Protege name: remoteOS
+   */
+   private OSInfo remoteOS;
+   public void setRemoteOS(OSInfo value) { 
+    this.remoteOS=value;
+   }
+   public OSInfo getRemoteOS() {
+     return this.remoteOS;
+   }
+
+   /**
 * Protege name: remoteContainerName
    */
    private String remoteContainerName;
@@ -35,25 +46,14 @@ public class ClientRemoteContainerReply implements AgentAction {
    }
 
    /**
-* Protege name: remoteBenchmarkResult
+* Protege name: remotePID
    */
-   private BenchmarkResult remoteBenchmarkResult;
-   public void setRemoteBenchmarkResult(BenchmarkResult value) { 
-    this.remoteBenchmarkResult=value;
+   private String remotePID;
+   public void setRemotePID(String value) { 
+    this.remotePID=value;
    }
-   public BenchmarkResult getRemoteBenchmarkResult() {
-     return this.remoteBenchmarkResult;
-   }
-
-   /**
-* Protege name: remoteOS
-   */
-   private OSInfo remoteOS;
-   public void setRemoteOS(OSInfo value) { 
-    this.remoteOS=value;
-   }
-   public OSInfo getRemoteOS() {
-     return this.remoteOS;
+   public String getRemotePID() {
+     return this.remotePID;
    }
 
    /**
@@ -68,14 +68,14 @@ public class ClientRemoteContainerReply implements AgentAction {
    }
 
    /**
-* Protege name: remotePID
+* Protege name: remoteBenchmarkResult
    */
-   private String remotePID;
-   public void setRemotePID(String value) { 
-    this.remotePID=value;
+   private BenchmarkResult remoteBenchmarkResult;
+   public void setRemoteBenchmarkResult(BenchmarkResult value) { 
+    this.remoteBenchmarkResult=value;
    }
-   public String getRemotePID() {
-     return this.remotePID;
+   public BenchmarkResult getRemoteBenchmarkResult() {
+     return this.remoteBenchmarkResult;
    }
 
 }
