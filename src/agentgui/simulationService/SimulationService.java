@@ -51,7 +51,6 @@ import java.util.Hashtable;
 import java.util.Vector;
 import java.util.logging.Level;
 
-import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.simulationService.agents.SimulationAgent;
 import agentgui.simulationService.agents.SimulationManagerAgent;
 import agentgui.simulationService.environment.EnvironmentModel;
