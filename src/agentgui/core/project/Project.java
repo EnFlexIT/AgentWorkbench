@@ -40,6 +40,7 @@ import java.util.Date;
 import java.util.Observable;
 import java.util.Vector;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.DesktopManager;
 import javax.swing.JDesktopPane;
 import javax.swing.JOptionPane;
@@ -252,11 +253,29 @@ import agentgui.core.webserver.JarFileCreator;
 	@XmlTransient
 	private EnvironmentPanel environmentPanel = null;
 	
+	/**
+	 * This model contains all known environment types of the application 
+	 * and can be used for tailored environment models / types
+	 */
+	@XmlTransient
+	private DefaultComboBoxModel environmentsComboBoxModel = null;
 	
 	/**
 	 * Default constructor for Project
 	 */
 	public Project() {
+	
+		// ----------------------------------------------------------
+		// --- Fill the projects ComboBoxModel for environments ----- 
+		environmentsComboBoxModel = new DefaultComboBoxModel();
+		
+		Vector<EnvironmentType> appEnvTypes = Application.RunInfo.getKnownEnvironmentTypes();
+		for (int i = 0; i < appEnvTypes.size(); i++) {
+			EnvironmentType envType = (EnvironmentType) appEnvTypes.get(i);
+			environmentsComboBoxModel.addElement(envType);
+		}
+		// ----------------------------------------------------------
+		
 	};
 	
 	/**
@@ -1040,6 +1059,22 @@ import agentgui.core.webserver.JarFileCreator;
 	 */
 	public void setEnvironmentPanel(EnvironmentPanel environmentPanel) {
 		this.environmentPanel = environmentPanel;
+	}
+
+	/**
+	 * Returns the current ComboBoxModel for environment types.
+	 * @return the environmentsComboBoxModel
+	 */
+	@XmlTransient
+	public DefaultComboBoxModel getEnvironmentsComboBoxModel() {
+		return environmentsComboBoxModel;
+	}
+	/**
+	 * Sets the ComboBoxModel for environment types.
+	 * @param environmentsComboBoxModel the environmentsComboBoxModel to set
+	 */
+	public void setEnvironmentsComboBoxModel(DefaultComboBoxModel environmentsComboBoxModel) {
+		this.environmentsComboBoxModel = environmentsComboBoxModel;
 	}
 
 }

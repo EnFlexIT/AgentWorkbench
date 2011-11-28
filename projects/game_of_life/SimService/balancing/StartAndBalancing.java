@@ -83,10 +83,6 @@ public class StartAndBalancing extends StaticLoadBalancingBase {
 		}
 		
 		// -----------------------------------------------------
-		// --- Display the system load -------------------------
-		this.openLoadMonitor();
-		
-		// -----------------------------------------------------
 		// --- start the needed remote-container ---------------
 		Vector<String> locationNames = null;
 		int cont4DisMax = 0;

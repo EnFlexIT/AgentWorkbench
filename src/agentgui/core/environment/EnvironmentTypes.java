@@ -31,8 +31,6 @@ package agentgui.core.environment;
 import java.util.Iterator;
 import java.util.Vector;
 
-import javax.swing.DefaultComboBoxModel;
-
 import agentgui.core.application.Application;
 import agentgui.core.config.GlobalInfo;
 
@@ -53,40 +51,11 @@ public class EnvironmentTypes extends Vector<EnvironmentType>{
 
 	private static final long serialVersionUID = 1887651840189227293L;
 
-	private DefaultComboBoxModel myComboBoxModel = new DefaultComboBoxModel();
-	
 	/**
 	 * Constructor of this class
 	 */
 	public EnvironmentTypes() {
 		super();
-	}
-	
-	/* (non-Javadoc)
-	 * @see java.util.Vector#add(java.lang.Object)
-	 */
-	@Override
-	public synchronized boolean add(EnvironmentType envType) {
-		try {
-			this.add2MyComboBoxModel(envType);
-			return super.add(envType);	
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		return false;
-	}
-	/* (non-Javadoc)
-	 * @see java.util.Vector#remove(java.lang.Object)
-	 */
-	@Override
-	public boolean remove(Object o) {
-		try {
-			this.removeFromMyComboBoxModel((EnvironmentType) o);
-			return super.remove(o);	
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		return false;
 	}
 	
 	/**
@@ -104,34 +73,6 @@ public class EnvironmentTypes extends Vector<EnvironmentType>{
 			}
 		}
 		return this.get(0); // --- the default value ---
-	}
-	
-	/**
-	 * This method returns this instance as a DefaultComboBoxModel
-	 * @return The DefaultComboBoxModel for the list of all EnvironmentType 
-	 */
-	public DefaultComboBoxModel getComboBoxModel() {
-		if (myComboBoxModel==null) {
-			myComboBoxModel = new DefaultComboBoxModel();
-			for (Iterator<EnvironmentType> it = this.iterator(); it.hasNext();) {
-				EnvironmentType envTyp = it.next();
-				myComboBoxModel.addElement(envTyp);
-			}
-		}
-		return myComboBoxModel;
-	}
-	/**
-	 * Add a new EnvironmentType to ComboBox model.
-	 */
-	private void add2MyComboBoxModel(EnvironmentType envTyp) {
-		this.getComboBoxModel().addElement(envTyp);
-	}
-	/**
-	 * Removes an EnvironmentType from ComboBox model.
-	 * @param envTyp the EnvironmentType
-	 */
-	private void removeFromMyComboBoxModel(EnvironmentType envTyp) {
-		this.getComboBoxModel().removeElement(envTyp);
 	}
 	
 }

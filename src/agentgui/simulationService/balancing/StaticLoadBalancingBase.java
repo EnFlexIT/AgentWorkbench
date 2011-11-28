@@ -79,6 +79,7 @@ public abstract class StaticLoadBalancingBase extends BaseLoadBalancing {
 	 */
 	@Override
 	public void onStart() {
+		this.openLoadMonitor();
 		this.setDefaults4RemoteContainerConfig();
 		this.startVisualizationAgent();
 	}
@@ -111,19 +112,20 @@ public abstract class StaticLoadBalancingBase extends BaseLoadBalancing {
 	}
 
 	/**
-	 * Sets the defaults4 remote container config.
+	 * Sets the defaults4 remote container configuration.
 	 */
 	private void setDefaults4RemoteContainerConfig() {
 
-		if (this.currRemConConfig==null) {
-			this.currRemConConfig = new RemoteContainerConfiguration();
+		RemoteContainerConfiguration projectRemContConfig = this.currProject.getRemoteContainerConfiguration();
+		if (projectRemContConfig==null) {
+			projectRemContConfig = new RemoteContainerConfiguration();
 		}
 		
 		RemoteContainerConfig remConConf = new RemoteContainerConfig();
-		remConConf.setPreventUsageOfUsedComputer(currRemConConfig.isPreventUsageOfAlreadyUsedComputers());
-		remConConf.setJadeShowGUI(currRemConConfig.isShowJADErmaGUI());
-		remConConf.setJvmMemAllocInitial(currRemConConfig.getJvmMemAllocInitial());
-		remConConf.setJvmMemAllocMaximum(currRemConConfig.getJvmMemAllocMaximum());
+		remConConf.setPreventUsageOfUsedComputer(projectRemContConfig.isPreventUsageOfAlreadyUsedComputers());
+		remConConf.setJadeShowGUI(projectRemContConfig.isShowJADErmaGUI());
+		remConConf.setJvmMemAllocInitial(projectRemContConfig.getJvmMemAllocInitial());
+		remConConf.setJvmMemAllocMaximum(projectRemContConfig.getJvmMemAllocMaximum());
 		
 		try {
 			loadHelper.setDefaults4RemoteContainerConfig(remConConf);

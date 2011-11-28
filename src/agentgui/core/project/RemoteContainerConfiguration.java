@@ -42,7 +42,7 @@ public class RemoteContainerConfiguration implements Serializable {
 
 	private static final long serialVersionUID = 7745495134485079177L;
 	
-	private boolean preventUsageOfAlreadyUsedComputers = true;
+	private boolean preventUsageOfAlreadyUsedComputers = false;
 	private boolean showJADErmaGUI = true;
 	
 	private String jvmMemAllocInitial = JadeRemoteStart.jvmMemo0032MB;

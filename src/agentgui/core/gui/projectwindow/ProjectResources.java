@@ -439,7 +439,7 @@ public class ProjectResources extends JPanel implements Observer {
 			
 			// --- Get current definitions --------------------------
 			jComboBoxEnvironmentModelSelector = new JComboBox();
-			jComboBoxEnvironmentModelSelector.setModel(Application.RunInfo.getKnownEnvironmentTypes().getComboBoxModel());
+			jComboBoxEnvironmentModelSelector.setModel(this.currProject.getEnvironmentsComboBoxModel());
 			jComboBoxEnvironmentModelSelector.setPreferredSize(new Dimension(400, 25));
 			jComboBoxEnvironmentModelSelector.setSelectedItem(this.currProject.getEnvironmentModelType());
 			jComboBoxEnvironmentModelSelector.addActionListener(new ActionListener() {
@@ -644,9 +644,7 @@ public class ProjectResources extends JPanel implements Observer {
 			if (envTypeOld.equals(envTypeNew)==false) {
 				this.getJComboBoxEnvironmentModelSelector().setSelectedItem(this.currProject.getEnvironmentModelType());	
 			}
-			
-		} else {
-			// ----
+		
 		}
 		
 	}

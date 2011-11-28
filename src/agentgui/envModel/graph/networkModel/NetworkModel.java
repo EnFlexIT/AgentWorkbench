@@ -167,22 +167,26 @@ public class NetworkModel implements Cloneable, Serializable {
 	}
 	/**
 	 * Sets the the graph of the network model
-	 * @param graph
+	 * @param newGraph
 	 */
-	public void setGraph(Graph<GraphNode, GraphEdge> graph) {
-		this.graph = graph;
-		
-		// Create HashMap of components
+	public void setGraph(Graph<GraphNode, GraphEdge> newGraph) {
+
+		this.graph = newGraph;
 		this.graphElements = new HashMap<String, GraphElement>();
-		Iterator<GraphNode> nodeIterator = graph.getVertices().iterator();
-		while(nodeIterator.hasNext()){
-			GraphNode node = nodeIterator.next();
-			graphElements.put(node.getId(), node);
-		}
-		Iterator<GraphEdge> edgeIterator = graph.getEdges().iterator();
-		while(edgeIterator.hasNext()){
-			GraphEdge edge = edgeIterator.next();
-			graphElements.put(edge.getId(), edge);
+		
+		if (this.graph!=null) {
+			// --- Register all nodes to the graphElement HashMap ------- 
+			Iterator<GraphNode> nodeIterator = this.graph.getVertices().iterator();
+			while(nodeIterator.hasNext()){
+				GraphNode node = nodeIterator.next();
+				graphElements.put(node.getId(), node);
+			}
+			// --- Register all edges to the graphElement HashMap -------
+			Iterator<GraphEdge> edgeIterator = this.graph.getEdges().iterator();
+			while(edgeIterator.hasNext()){
+				GraphEdge edge = edgeIterator.next();
+				graphElements.put(edge.getId(), edge);
+			}
 		}
 	}
 	/**

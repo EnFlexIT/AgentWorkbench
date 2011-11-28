@@ -14,12 +14,12 @@
         </entry>
     </agentConfiguration>
     <jadeConfiguration>
-        <useLocalPort>1108</useLocalPort>
+        <useLocalPort>1120</useLocalPort>
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
-            <service>jade.debugging.DebugService</service>
             <service>agentgui.simulationService.SimulationService</service>
+            <service>jade.debugging.DebugService</service>
             <service>jade.core.mobility.AgentMobilityService</service>
         </serviceList>
     </jadeConfiguration>
@@ -27,8 +27,8 @@
         <doDynamicLoadBalancing>false</doDynamicLoadBalancing>
         <doStaticLoadBalancing>true</doStaticLoadBalancing>
         <dynamicLoadBalancingClass>agentgui.simulationService.balancing.DynamicLoadBalancing</dynamicLoadBalancingClass>
-        <numberOfAgents>200</numberOfAgents>
-        <numberOfContainer>2</numberOfContainer>
+        <numberOfAgents>20</numberOfAgents>
+        <numberOfContainer>1</numberOfContainer>
         <staticLoadBalancingClass>game_of_life.SimService.balancing.StartAndBalancing</staticLoadBalancingClass>
         <useUserThresholds>false</useUserThresholds>
         <userThresholds>
@@ -40,7 +40,12 @@
             <thNoThreadsL>50</thNoThreadsL>
         </userThresholds>
     </distributionSetup>
-    <remoteContainerConfiguration/>
+    <remoteContainerConfiguration>
+        <jvmMemAllocInitial>32m</jvmMemAllocInitial>
+        <jvmMemAllocMaximum>128m</jvmMemAllocMaximum>
+        <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
+        <showJADErmaGUI>true</showJADErmaGUI>
+    </remoteContainerConfiguration>
     <simulationSetupCurrent>GoL ACL-Messages</simulationSetupCurrent>
     <simulationSetups>
         <entry>

@@ -89,7 +89,6 @@ public abstract class PlugIn implements Observer {
 	
 	/**
 	 * Gets the class reference.
-	 *
 	 * @return the classReference
 	 */
 	public String getClassReference() {
@@ -235,6 +234,7 @@ public abstract class PlugIn implements Observer {
 	protected void addEnvironmentType(EnvironmentType envType) {
 		if (envType!=null) {
 			Application.RunInfo.addEnvironmentType(envType);	
+			project.getEnvironmentsComboBoxModel().addElement(envType);
 			customEnvironmentTypes.add(envType);
 		}
 	}
@@ -265,6 +265,7 @@ public abstract class PlugIn implements Observer {
 			if (envType.equals(this.project.getEnvironmentModelType())) {
 				this.project.setEnvironmentModelName("none");
 			}
+			project.getEnvironmentsComboBoxModel().removeElement(envType);
 			Application.RunInfo.removeEnvironmentType(envType);
 		}
 		// --- validate/repaint the CorwWindow ------------

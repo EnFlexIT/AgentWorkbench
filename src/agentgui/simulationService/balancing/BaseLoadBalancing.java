@@ -47,7 +47,6 @@ import agentgui.core.jade.Platform;
 import agentgui.core.ontologies.gui.OntologyInstanceViewer;
 import agentgui.core.project.DistributionSetup;
 import agentgui.core.project.Project;
-import agentgui.core.project.RemoteContainerConfiguration;
 import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.simulationService.LoadService;
 import agentgui.simulationService.LoadServiceHelper;
@@ -84,9 +83,6 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 	protected SimulationSetup currSimSetup = null;
 	/** The current distribution setup. */ 
 	protected DistributionSetup currDisSetup = null;
-	/** The current remote container configuration, stored in the current project (NOT the ontology instance {@link RemoteContainerConfig}). */
-	protected RemoteContainerConfiguration currRemConConfig = null;
-	
 	
 	/** The current threshold levels. */
 	protected LoadThresholdLevels currThresholdLevels = null;
@@ -109,7 +105,6 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 		if (currProject!=null) {
 			currSimSetup = currProject.simulationSetups.getCurrSimSetup();
 			currDisSetup = currProject.getDistributionSetup();
-			currRemConConfig = currProject.getRemoteContainerConfiguration();
 		}
 		this.setLoadHelper();
 		this.setSimulationLoadHelper();

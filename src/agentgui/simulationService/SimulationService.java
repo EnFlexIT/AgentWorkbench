@@ -51,6 +51,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 import java.util.logging.Level;
 
+import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.simulationService.agents.SimulationAgent;
 import agentgui.simulationService.agents.SimulationManagerAgent;
 import agentgui.simulationService.environment.EnvironmentModel;
@@ -1270,13 +1271,14 @@ public class SimulationService extends BaseService {
 				SimulationServiceSlice newSlice = (SimulationServiceSlice) getFreshSlice(newSliceName);
 				// --- Set remote ManagerAgent, TimeModel,EnvironmentInstance --------------
 				newSlice.setManagerAgent(environmentManagerDescription);
+				// --- Set the current environment model to the new slice ------------------
 				newSlice.setEnvironmentModel(environmentModel);	
 				// --- Synchronise the time ------------------------------------------------
 				this.synchroniseTimeOfSlice(newSlice);
 				
 			}
 			catch (Throwable t) {
-				myLogger.log(Logger.WARNING, "Error notifying new slice "+newSliceName+" about current SimulationService-State", t);
+				myLogger.log(Logger.WARNING, "Error notifying new slice '"+newSliceName+"' about current SimulationService-State", t);
 			}
 		}
 	}

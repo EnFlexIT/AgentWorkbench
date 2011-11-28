@@ -16,24 +16,21 @@ public class CompressorAgent extends SimulationAgent {
 	protected void setup() {
 		super.setup();
 
-		while(this.myEnvironmentModel==null) {
-			
-			if (simHelper==null) {
-				try {
-					simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
-					EnvironmentModel envModel =  simHelper.getEnvironmentModel();
-					if (envModel!=null) {
-						this.myEnvironmentModel = envModel;
-						break;
-					}
-				} catch (ServiceException e) {
-					e.printStackTrace();
-				}
-			}
-
-			
-			
-		}
+//		while(this.myEnvironmentModel==null) {
+//			
+//			if (simHelper==null) {
+//				try {
+//					simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
+//					EnvironmentModel envModel =  simHelper.getEnvironmentModel();
+//					if (envModel!=null) {
+//						this.myEnvironmentModel = envModel;
+//						break;
+//					}
+//				} catch (ServiceException e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		}
 		
 	}
 	
