@@ -1,7 +1,11 @@
 package gasmas.agents.components;
 
-import jade.core.Agent;
+import agentgui.simulationService.agents.SimulationAgent;
 
-public class BranchAgent extends Agent {
+public class BranchAgent extends SimulationAgent {
 
+	private static final long serialVersionUID = -2040238832853890724L;
+
+	
+	
 }

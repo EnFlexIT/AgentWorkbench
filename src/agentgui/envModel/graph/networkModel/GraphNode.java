@@ -40,6 +40,8 @@ import java.awt.geom.Point2D;
  */
 public class GraphNode extends GraphElement {
 	
+	private static final long serialVersionUID = 7676853104978228247L;
+
 	/**
 	 * The GraphNode's position in a visualization
 	 */

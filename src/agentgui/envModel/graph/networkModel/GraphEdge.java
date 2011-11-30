@@ -39,6 +39,8 @@ package agentgui.envModel.graph.networkModel;
  */
 public class GraphEdge extends GraphElement {
 	
+	private static final long serialVersionUID = 1043215558300713661L;
+
 	/**
 	 * The type identifier of the network component represented by this edge
 	 */

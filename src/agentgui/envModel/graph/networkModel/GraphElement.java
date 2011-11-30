@@ -28,6 +28,8 @@
  */
 package agentgui.envModel.graph.networkModel;
 
+import jade.util.leap.Serializable;
+
 /**
  * Abstract super class for nodes and edges in an environment model of the type graph / network.
  * 
@@ -36,8 +38,10 @@ package agentgui.envModel.graph.networkModel;
  * 
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
  */
-public abstract class GraphElement {
+public abstract class GraphElement implements Serializable {
 	
+	private static final long serialVersionUID = -8008053317555768852L;
+
 	/**
 	 * Used for identification of a specific GraphElement instance
 	 */
