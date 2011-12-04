@@ -3,8 +3,13 @@
      20.01.2011 12:00:00                                                        
 
      project:		Agent.GUI
-     description	Build the executable version of Agent.GUI, which can
-     				be used as an library for other projects.
+     description	Build the executable version of Agent.GUI that can be 
+     				used as library for other agent applications or 
+     				simulations.
+     				Furthermore some jar-files will be buid in order to 
+     				allow to start new remote containers for a running 
+     				Multi-Agent system.  
+     				
      				The executable version will be packed to the 
      				folder '\exec\AgentGUI'	
                    
@@ -15,7 +20,7 @@
 	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
           Properties: Folder structure / ClassPath / Version Info                        
          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-	<!-- Folder - Information - - - - - - -->
+	<!-- Folder information for compiling and packing the AgentGui.jar -->
 	<property name="sourceDir" value="src" />
 	<property name="sourceDirLibraries" value="lib" />
 	<property name="sourceDirProperties" value="properties" />
@@ -27,29 +32,15 @@
 	<property name="binaryDirIMG" value="build\agentgui\core\gui\img" />
 	<property name="binaryFileProjectOntology" value="build\agentgui\core\ontologies\AgentGUIProjectOntology.txt" />
 	
-	<property name="simServiceSourceDir" value="${binaryDirANT}\agentgui\simulationService\\" />
-	<property name="simServiceDestinDir" value="lib\jade\lib\\" />
-	<property name="simServiceDestinJar" value="${simServiceDestinDir}\simulation.jar" />
-	
-	<property name="envModelP2DsvgSourceDir" value="${binaryDirANT}\agentgui\envModel\p2Dsvg\\" />
-	<property name="envModelP2DsvgDestinDir" value="lib\jade\lib\\" />
-	<property name="envModelP2DsvgDestinJar" value="${simServiceDestinDir}\envModelP2Dsvg.jar" />
-
-	<property name="envModelGraphSourceDir" value="${binaryDirANT}\agentgui\envModel\graph\\" />
-	<property name="envModelGraphDestinDir" value="lib\jade\lib\\" />
-	<property name="envModelGraphDestinJar" value="${simServiceDestinDir}\envModelGraph.jar" />
-	<property name="envModelGraphDirIagesSource" value="src\agentgui\envModel\graph\img" />
-	<property name="envModelGraphDirIagesDestin" value="build\agentgui\envModel\graph\img" />
-	
-	<property name="debugServiceSourceDir" value="${binaryDirANT}\jade\debugging\\" />
-	<property name="debugServiceDestinDir" value="lib\jade\lib\\" />
-	<property name="debugServiceDestinJar" value="${simServiceDestinDir}\debugging.jar" />
-
 	<property name="destinDir" value="exec\AgentGUI\\" />
 	<property name="destinJar" value="${destinDir}\AgentGui.jar" />		
 	<property name="destinDirLibraries" value="${destinDir}\lib\\" />
 	<property name="destinDirProperties" value="${destinDir}\properties\\" />
 	<property name="destinDirProjects" value="${destinDir}\projects\\" />
+
+	<property name="envModelGraphDirIagesSource" value="src\agentgui\envModel\graph\img" />
+	<property name="envModelGraphDirIagesDestin" value="build\agentgui\envModel\graph\img" />
+
 	
 	<!-- Jar's for the Class-Path in the AgentGui.jar-Manifest  -->
 	<property name="destinClassPath" 
@@ -185,58 +176,6 @@
           target: jarZip => Create (executable) jar files 
          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
     <target name="jarZip" description="Creating (executable) jar-files ... ">
-    	
-    	<!-- Alte simulation.jar löschen -->
-    	<delete failonerror="false" file="${simServiceDestinJar}" />    	
-    	<!-- Erzeugen der lokalen Datei simulation.jar -->
-    	<jar compress="true" destfile="${simServiceDestinJar}" >
- 			<manifest>
-				<attribute name="Built-By" value="${user.name}"/>
- 				<attribute name="Built-Lang" value="${user.language}"/>
-			</manifest>    		
-    		<fileset dir="${binaryDirANT}">
-    			<include name="**/agentgui/simulationService/**"/>
-    		</fileset>    		
-        </jar>
-    	
-    	<!-- Alte envModelP2Dsvg.jar löschen -->
-    	<delete failonerror="false" file="${envModelP2DsvgDestinJar}" />    	
-    	<!-- Erzeugen der lokalen Datei visualization.jar -->
-    	<jar compress="true" destfile="${envModelP2DsvgDestinJar}" >
- 			<manifest>
-				<attribute name="Built-By" value="${user.name}"/>
- 				<attribute name="Built-Lang" value="${user.language}"/>
-			</manifest>    		
-    		<fileset dir="${binaryDirANT}">
-    			<include name="**/agentgui/envModel/p2Dsvg/**"/>
-    		</fileset>    		
-        </jar>
-    	
-    	<!-- Alte envModelGraph.jar löschen -->
-    	<delete failonerror="false" file="${envModelGraphDestinJar}" />    	
-    	<!-- Erzeugen der lokalen Datei visualization.jar -->
-    	<jar compress="true" destfile="${envModelGraphDestinJar}" >
- 			<manifest>
-				<attribute name="Built-By" value="${user.name}"/>
- 				<attribute name="Built-Lang" value="${user.language}"/>
-			</manifest>    		
-    		<fileset dir="${binaryDirANT}">
-    			<include name="**/agentgui/envModel/graph/**"/>
-    		</fileset>    		
-        </jar>
-    	
-    	<!-- Alte debugging.jar löschen -->
-    	<delete failonerror="false" file="${visServiceDestinJar}" />    	
-    	<!-- Erzeugen der lokalen Datei visualization.jar -->
-    	<jar compress="true" destfile="${debugServiceDestinJar}" >
- 			<manifest>
-				<attribute name="Built-By" value="${user.name}"/>
- 				<attribute name="Built-Lang" value="${user.language}"/>
-			</manifest>    		
-    		<fileset dir="${binaryDirANT}">
-    			<include name="**/jade/debugging/**"/>
-    		</fileset>    		
-        </jar>
     	
     	<!-- Kopieren der Property-Files -->    	
     	<copy todir="${destinDirProperties}">

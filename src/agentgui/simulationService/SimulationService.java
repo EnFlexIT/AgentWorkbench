@@ -46,10 +46,18 @@ import jade.core.VerticalCommand;
 import jade.core.mobility.AgentMobilityHelper;
 import jade.util.Logger;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Vector;
 import java.util.logging.Level;
+
+import org.apache.commons.codec.binary.Base64;
 
 import agentgui.simulationService.agents.SimulationAgent;
 import agentgui.simulationService.agents.SimulationManagerAgent;
@@ -563,22 +571,15 @@ public class SimulationService extends BaseService {
 	private void broadcastSetEnvironmentModel(EnvironmentModel envModel, Service.Slice[] slices) throws ServiceException {
 		
 		if (myLogger.isLoggable(Logger.CONFIG)) {
-			myLogger.log(Logger.CONFIG, "Sending new EnvironmentModel !");
+			myLogger.log(Logger.CONFIG, "Sending new EnvironmentModel!");
 		}
 		for (int i = 0; i < slices.length; i++) {
-			String sliceName = null;
-			try {
-				SimulationServiceSlice slice = (SimulationServiceSlice) slices[i];
-				sliceName = slice.getNode().getName();
-				if (myLogger.isLoggable(Logger.FINER)) {
-					myLogger.log(Logger.FINER, "Sending new EnvironmentModel to " + sliceName);
-				}
-				slice.setEnvironmentModel(envModel);
+			SimulationServiceSlice slice = (SimulationServiceSlice) slices[i];
+			String sliceName = slice.getNode().getName();
+			if (myLogger.isLoggable(Logger.FINER)) {
+				myLogger.log(Logger.FINER, "Sending new EnvironmentModel to " + sliceName);
 			}
-			catch(Throwable t) {
-				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
-				myLogger.log(Logger.WARNING, "Error while sending the new EnvironmentModel to slice " + sliceName, t);
-			}
+			envModel = this.setEnvironmentModel2Slice(slice, envModel);
 		}
 	}
 
@@ -598,19 +599,12 @@ public class SimulationService extends BaseService {
 			myLogger.log(Logger.CONFIG, "Sending new EnvironmentModel + step simulation!");
 		}
 		for (int i = 0; i < slices.length; i++) {
-			String sliceName = null;
-			try {
-				SimulationServiceSlice slice = (SimulationServiceSlice) slices[i];
-				sliceName = slice.getNode().getName();
-				if (myLogger.isLoggable(Logger.FINER)) {
-					myLogger.log(Logger.FINER, "Sending new EnvironmentModel + step simulation to " + sliceName);
-				}
-				slice.stepSimulation(envModel, aSynchron);
+			SimulationServiceSlice slice = (SimulationServiceSlice) slices[i];
+			String sliceName = slice.getNode().getName();
+			if (myLogger.isLoggable(Logger.FINER)) {
+				myLogger.log(Logger.FINER, "Sending new EnvironmentModel + step simulation to " + sliceName);
 			}
-			catch(Throwable t) {
-				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
-				myLogger.log(Logger.WARNING, "Error while sending the new EnvironmentModel + step simulation to slice " + sliceName, t);
-			}
+			envModel = this.stepSimulationInSlice(slice, envModel, aSynchron);
 		}
 	}
 	
@@ -898,8 +892,11 @@ public class SimulationService extends BaseService {
 				else if (cmdName.equals(SimulationServiceSlice.SIM_SET_ENVIRONMENT_MODEL)) {
 					EnvironmentModel envModel = (EnvironmentModel) params[0];
 					if (myLogger.isLoggable(Logger.FINE)) {
-						myLogger.log(Logger.FINE, "Received 'Step Simulation'");
+						myLogger.log(Logger.FINE, "Received new environment model");
 					}	
+					if (envModel!=null && envModel.isComplexEnvironment()==true) {
+						envModel = decodeComplexEnvironmentModel(envModel);
+					}
 					setEnvironmentModel(envModel);
 				}
 				else if (cmdName.equals(SimulationServiceSlice.SIM_STEP_SIMULATION)) {
@@ -908,6 +905,9 @@ public class SimulationService extends BaseService {
 					if (myLogger.isLoggable(Logger.FINE)) {
 						myLogger.log(Logger.FINE, "Received 'Step Simulation'");
 					}	
+					if (envModel!=null && envModel.isComplexEnvironment()==true) {
+						envModel = decodeComplexEnvironmentModel(envModel);
+					}
 					stepSimulation(envModel, aSynchron);
 				}
 				else if (cmdName.equals(SimulationServiceSlice.SIM_SET_ANSWERS_EXPECTED)) {
@@ -1271,15 +1271,124 @@ public class SimulationService extends BaseService {
 				// --- Set remote ManagerAgent, TimeModel,EnvironmentInstance --------------
 				newSlice.setManagerAgent(environmentManagerDescription);
 				// --- Set the current environment model to the new slice ------------------
-				newSlice.setEnvironmentModel(environmentModel);	
+				this.setEnvironmentModel2Slice(newSlice, environmentModel);
 				// --- Synchronise the time ------------------------------------------------
 				this.synchroniseTimeOfSlice(newSlice);
 				
-			}
-			catch (Throwable t) {
+			} catch (Throwable t) {
 				myLogger.log(Logger.WARNING, "Error notifying new slice '"+newSliceName+"' about current SimulationService-State", t);
 			}
 		}
+	}
+
+	/**
+	 * Sets the environment model to the specified slice.
+	 * 
+	 * @param simSlice the SimulationServiceSlice
+	 * @param envModel the EnvironmentModel
+	 */
+	private EnvironmentModel setEnvironmentModel2Slice(SimulationServiceSlice simSlice, EnvironmentModel envModel) throws ServiceException {
+		
+		try {
+			simSlice.setEnvironmentModel(envModel);
+			return envModel;
+		} catch (IMTPException e) { }
+
+		// --- Next trial: Serialize and reorganise the general environment model -------
+		if (envModel.isComplexEnvironment()==false) {
+			envModel = encodeComplexEnvironmentModel(envModel);	
+		}
+		try {
+			simSlice.setEnvironmentModel(envModel);
+			return envModel;
+		} catch (IMTPException err) {
+			myLogger.log(Logger.WARNING, "Error while sending the new EnvironmentModel to slice " + simSlice.getNode().getName(), err);
+		}
+		return null;
+	}
+	
+	/**
+	 * Step the simulation on a remote SimulationServiceSlice.
+	 *
+	 * @param simSlice the SimulationServiceSlice instance
+	 * @param envModel the EnvironmentModel instance
+	 * @param aSynchron true, if this should be done asynchronous
+	 * @return the environment model
+	 */
+	private EnvironmentModel stepSimulationInSlice(SimulationServiceSlice simSlice, EnvironmentModel envModel, boolean aSynchron) throws ServiceException {
+		
+		try {
+			simSlice.stepSimulation(envModel, aSynchron);
+			return envModel;
+		} catch (IMTPException e) { }
+		
+		// --- Next trial: Serialize and reorganise the general environment model -------
+		if (envModel.isComplexEnvironment()==false) {
+			envModel = encodeComplexEnvironmentModel(envModel);	
+		}
+		try {
+			simSlice.stepSimulation(envModel, aSynchron);
+			return envModel;
+		} catch (IMTPException err) {
+			myLogger.log(Logger.WARNING, "Error while sending the new EnvironmentModel + step simulation to slice " + simSlice.getNode().getName(), err);
+		}
+		return null;
+	}
+	
+	/**
+	 * Encodes a more complex environment model by binarize the model, using the
+	 * on-board tools of Java and than encode it as a Base64 String.
+	 *
+	 * @param envModel the current environment model
+	 * @return the new encoded environment model
+	 */
+	private EnvironmentModel encodeComplexEnvironmentModel(EnvironmentModel envModel) {
+		
+		String complexEnvironmentBase64 = null;
+		try {
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			ObjectOutputStream out = new ObjectOutputStream(bos);
+	    	out.writeObject(envModel);
+	    	out.flush();
+
+	    	complexEnvironmentBase64 = new String(Base64.encodeBase64(bos.toByteArray()));
+	    	
+	    } catch(IOException ex) {
+	    	ex.printStackTrace();
+		}
+		
+	    EnvironmentModel newEnvMod = new EnvironmentModel();
+	    newEnvMod.setComplexEnvironment(true);
+	    newEnvMod.setComplexEnvironmentBase64(complexEnvironmentBase64);
+	    return newEnvMod;
+	}
+	
+	
+	/**
+	 * Decode the complex environment model, which was previously encoded by
+	 * the on-board tools of java and packed to a Base64 String.
+	 *
+	 * @param envModel the current EnvironmentModel
+	 * @return the decoded environment model
+	 */
+	private EnvironmentModel decodeComplexEnvironmentModel(EnvironmentModel envModel) {
+			
+		Serializable envModelObject = null;
+		try {
+			String base64String = (String) envModel.getComplexEnvironmentBase64();
+			byte[] byteData = Base64.decodeBase64(base64String.getBytes());
+			ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(byteData));
+			envModelObject = (Serializable) in.readObject();
+			
+		} catch(IOException ex) {
+			ex.printStackTrace();
+		} catch(ClassNotFoundException ex) {
+			ex.printStackTrace();
+		}
+		
+		EnvironmentModel newEnvModel = (EnvironmentModel) envModelObject;
+		return newEnvModel;
+		
 	}
 	
 	/**

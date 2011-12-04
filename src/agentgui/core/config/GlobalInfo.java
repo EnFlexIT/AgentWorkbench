@@ -76,7 +76,10 @@ public class GlobalInfo {
 	
 	// --- Variablen --------------------------------------------------------
 	private static Vector<String> localClassPathEntries = new Vector<String>();
-	private static String localAppExecutedOver = "IDE";
+	public final static String ExecutedOverIDE = "IDE";
+	public final static String ExecutedOverAgentGuiJar = "Executable";
+	private static String localAppExecutedOver = ExecutedOverIDE;
+	
 	private static String localAppLnF = "com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel";
 	
 	private static String localBaseDir = "";
@@ -143,7 +146,7 @@ public class GlobalInfo {
 		for (int i=0; i<JCP_Files.length; i++) {
 
 			if ( JCP_Files[i].endsWith( localFileRunnableJar )  ) {
-				localAppExecutedOver = "Executable";
+				localAppExecutedOver = ExecutedOverAgentGuiJar;
 				// --- Bei jar, immer interne Console verwenden -------------
 				CutAt = JCP_Files[i].lastIndexOf( localAppPathSeparatorString ) + 1;
 				localBaseDir = JCP_Folders[i].substring(0, CutAt);	
@@ -164,7 +167,7 @@ public class GlobalInfo {
 			Folders.add(JCP_Folders[i]);						
 		}
 		
-		if ( localAppExecutedOver.equals("IDE")) {
+		if ( localAppExecutedOver.equals(ExecutedOverIDE)) {
 			// --------------------------------------------------------------
 			// --- Verzeichnis-Eintraege eindeutig (unique) machen ----------
 			JCP_Folders = (String[])Folders.toArray(new String[Folders.size()]);
@@ -177,10 +180,6 @@ public class GlobalInfo {
 				}
 			} // -- End 'for' --
 
-			// --------------------------------------------------------------
-			// --- Bei Ausfuehrung IDE, einige Variablen umstellen ----------			
-			localFileRunnableJar = null;
-			
 		}
 		// ------------------------------------------------------------------
 		
@@ -535,12 +534,24 @@ public class GlobalInfo {
 	 * @return the path to the executable jar file
 	 */
 	public String AppFileRunnableJar(boolean absolute){
-		if ( absolute == true && localFileRunnableJar != null ) { 
-			return FilePath2Absolute( localFileRunnableJar );
+		
+		if (localAppExecutedOver.equals(ExecutedOverAgentGuiJar)) {
+			// --- The current instance was executed over an AgentGui.jar -----
+			if (absolute == true && localFileRunnableJar != null) { 
+				return FilePath2Absolute(localFileRunnableJar);
+			}else {
+				return localFileRunnableJar;	
+			}	
+		} else {
+			// --- The current instance was executed by using the IDE ---------
+			String path2Jar = "exec" + localAppPathSeparatorString + "AgentGUI" + localAppPathSeparatorString + localFileRunnableJar; 
+			if (absolute == true) { 
+				return FilePath2Absolute(path2Jar);
+			} else {
+				return path2Jar;	
+			}
 		}
-		else {
-			return localFileRunnableJar;	
-		}	
+		
 	}
 	/**
 	 * This method can be use in order to get the path to one of the dictionary files (Base64: '*.bin' | CSV-version: '*.csv'). 

@@ -43,8 +43,7 @@ import edu.uci.ics.jung.graph.util.EdgeType;
  * This class encapsulates a JUNG graph representing a grid, with edges representing the grid components.
  * 
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
- * @author <br>Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati 
- *
+ * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati 
  */
 public class NetworkModel implements Cloneable, Serializable {
 	

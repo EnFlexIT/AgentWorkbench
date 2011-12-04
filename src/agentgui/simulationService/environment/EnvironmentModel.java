@@ -49,6 +49,9 @@ public class EnvironmentModel implements Serializable {
 
 	private static final long serialVersionUID = -2845036237763599630L;
 	
+	private boolean complexEnvironment = false;
+	private String complexEnvironmentBase64 = null;
+	
 	private TimeModel timeModel = null;
 	private Object abstractEnvironment = null;
 	private Object displayEnvironment	= null;	
@@ -112,4 +115,39 @@ public class EnvironmentModel implements Serializable {
 		this.displayEnvironment = displayEnvironment;
 	}
 
+	// --------------------------------------------------------------
+	// ---   ---   ---   ---   ---   ---   ---   ---   ---   ---   --
+	// --------------------------------------------------------------
+	/**
+	 * Checks if is complex environment.
+	 * @return the complexEnvironment
+	 */
+	public boolean isComplexEnvironment() {
+		return complexEnvironment;
+	}
+	/**
+	 * Sets, that the environment is complex and needs to be serialized by the JAVA on-board tools.
+	 * @param complexEnvironment the complexEnvironment to set
+	 */
+	public void setComplexEnvironment(boolean complexEnvironment) {
+		this.complexEnvironment = complexEnvironment;
+	}
+
+	/**
+	 * Gets the complex environment base64.
+	 * @return the complexEnvironmentBase64
+	 */
+	public String getComplexEnvironmentBase64() {
+		return complexEnvironmentBase64;
+	}
+	/**
+	 * Sets the complex environment coded as base64 String.
+	 * @param complexEnvironmentBase64 the complexEnvironmentBase64 to set
+	 */
+	public void setComplexEnvironmentBase64(String complexEnvironmentBase64) {
+		this.complexEnvironmentBase64 = complexEnvironmentBase64;
+	}
+	// --------------------------------------------------------------
+	// ---   ---   ---   ---   ---   ---   ---   ---   ---   ---   --
+	// --------------------------------------------------------------
 }

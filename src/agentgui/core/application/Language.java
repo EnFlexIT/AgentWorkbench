@@ -82,29 +82,17 @@ public class Language {
 	private static List<String> dictLineListCSV = new ArrayList<String>();
 	private static Hashtable<String, Integer> dictHash64 = new Hashtable<String, Integer>(); 
 	
-	/**
-	 * The header for the first column (index=0) of the dictionary
-	 */
+	/** The header for the first column (index=0) of the dictionary */
 	public static final String SOURCE_LANG = "SOURCE_LANGUAGE";	
-	/**
-	 * Constant for German
-	 */
+	/** Constant for German */
 	public static final String DE = "DE";
-	/**
-	 * Constant for English
-	 */
+	/** Constant for English */
 	public static final String EN = "EN";
-	/**
-	 * Constant for Italian
-	 */
+	/** Constant for Italian */
 	public static final String IT = "IT";
-	/**
-	 * Constant for Spanish
-	 */
+	/** Constant for Spanish */
 	public static final String ES = "ES";
-	/**
-	 * Constant for French
-	 */
+	/** Constant for French */
 	public static final String FR = "FR";
 	
 	private static final String dictLangHeaderDefault = SOURCE_LANG + seperator + DE + seperator + EN + seperator + IT + seperator + ES + seperator + FR;

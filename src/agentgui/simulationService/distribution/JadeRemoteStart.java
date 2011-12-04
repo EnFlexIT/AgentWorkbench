@@ -35,7 +35,6 @@ import java.io.IOException;
 import java.util.Scanner;
 
 import agentgui.core.application.Application;
-import agentgui.core.project.PlatformJadeConfig;
 import agentgui.simulationService.agents.ServerSlaveAgent;
 import agentgui.simulationService.ontology.RemoteContainerConfig;
 
@@ -180,7 +179,7 @@ public class JadeRemoteStart extends Thread {
 	}
 	 
  	/**
- 	 * Deletes a folder and all subelements.
+ 	 * Deletes a folder and all sub elements.
  	 *
  	 * @param directory the directory
  	 */
@@ -235,7 +234,7 @@ public class JadeRemoteStart extends Thread {
 
 		// --------------------------------------
 		// --- Jade-Config ----------------------
-		jade += "jade.Boot";
+		jade += "agentgui.core.application.Application -jade" + " ";
 		if (jadeServices!=null) {
 			jadeArgs += "-services  " + jadeServices + " ";
 		}
@@ -254,7 +253,7 @@ public class JadeRemoteStart extends Thread {
 		// --- execute zusammenbauen ------------
 		String execute = java + " " + javaVMArgs + " " + classPath + " " + jade  + " " + jadeArgs;
 		execute = execute.replace("  ", " ");
-//		System.out.println( "=> Remote Execute: " + execute);
+		System.out.println( "Execute: " + execute);
 		
 		// --------------------------------------
 		try {
@@ -265,7 +264,6 @@ public class JadeRemoteStart extends Thread {
 			proBui.redirectErrorStream(true);
 			proBui.directory(new File(pathBaseDir));
 			
-			System.out.println("Start Container [" + jadeContainerName + "] ... ");
 			Process p = proBui.start();
 			
 			Scanner in = new Scanner( p.getInputStream() ).useDelimiter( "\\Z" );
@@ -311,65 +309,10 @@ public class JadeRemoteStart extends Thread {
 		classPath += ".;";
 		
 		// -----------------------------------------------------
-		// --- Agent.GUI related -----
-		classPath += "./lib/jade/lib/envModelGraph.jar;";
-		// --- JUNG einbinden ------------------------
-		classPath += "./lib/jung/collections-generic-4.01.jar;";
-		classPath += "./lib/jung/colt-1.2.0.jar;";
-		classPath += "./lib/jung/concurrent-1.3.4.jar;";
-		classPath += "./lib/jung/jung-algorithms-2.0.1.jar;";
-		classPath += "./lib/jung/jung-api-2.0.1.jar;";
-		classPath += "./lib/jung/jung-graph-impl-2.0.1.jar;";
-		classPath += "./lib/jung/jung-io-2.0.1.jar;";
-		classPath += "./lib/jung/jung-jai-2.0.1.jar;";
-		classPath += "./lib/jung/jung-samples-2.0.1.jar;";
-		classPath += "./lib/jung/jung-visualization-2.0.1.jar;";
-		classPath += "./lib/jung/stax-api-1.0.1.jar;";
-		classPath += "./lib/jung/vecmath-1.3.1.jar;";
-		classPath += "./lib/jung/wstx-asl-3.2.6.jar;";
-
-		// -----------------------------------------------------
-		// --- Jade  himself ----------
-		classPath += "./lib/jade/lib/jade.jar;";
-		classPath += "./lib/jade/lib/XMLCodec.jar;"; 							// xml-codec
-		classPath += "./lib/jade/lib/commons-codec/commons-codec-1.3.jar;"; 	// commons-codec
-		
-		// -----------------------------------------------------
-		// --- Configuration in relation to the JADE-Services --
-		if (ServiceList.contains(PlatformJadeConfig.SERVICE_InterPlatformMobilityService)) {
-			classPath += "./lib/jade/lib/migration.jar;";						// Mobility
-		}
-		if (ServiceList.contains(PlatformJadeConfig.SERVICE_AgentGUI_SimulationService) || ServiceList.contains(PlatformJadeConfig.SERVICE_AgentGUI_LoadService)) {
-			classPath += "./lib/jade/lib/simulation.jar;";						// Load and Simulation
-			// --- Hyperic-Sigar ----------
-			classPath += "./lib/hyperic-sigar/sigar-bin/lib/sigar.jar;";
-			classPath += "./lib/hyperic-sigar/sigar-bin/lib/log4j.jar;";
-			classPath += "./lib/hyperic-sigar/sigar-bin/lib/junit.jar;";
-		}
-		if (ServiceList.contains(PlatformJadeConfig.SERVICE_DebugService)) {
-			classPath += "./lib/jade/lib/debugging.jar;";						// Debugging
-		}
-		if (ServiceList.contains(PlatformJadeConfig.SERVICE_AgentGUI_P2DEnvironmentProviderService)) {
-			classPath += "./lib/jade/lib/envModelP2Dsvg.jar;";
-			// --- Batik einbinden ------------------------
-			classPath += "./lib/batik/batik-rasterizer.jar;";
-			classPath += "./lib/batik/batik-slideshow.jar;";
-			classPath += "./lib/batik/batik-squiggle.jar;";
-			classPath += "./lib/batik/batik-svgpp.jar;";
-			classPath += "./lib/batik/batik-ttf2svg.jar;";
-			classPath += "./lib/batik/batik.jar;";
-			classPath += "./lib/batik/lib/xml-apis-ext.jar;";
-			classPath += "./lib/batik/lib/batik-swing.jar;";
-			classPath += "./lib/batik/lib/batik-util.jar;";
-			classPath += "./lib/batik/lib/batik-svg-dom.jar;";
-			classPath += "./lib/batik/lib/batik-transcoder.jar;";
-			classPath += "./lib/batik/lib/batik-bridge.jar;";
-			classPath += "./lib/batik/lib/batik-script.jar;";
-			classPath += "./lib/batik/lib/batik-css.jar;";
-			classPath += "./lib/batik/lib/batik-dom.jar;";
-			classPath += "./lib/batik/lib/batik-ext.jar;";
-			classPath += "./lib/batik/lib/xercesImpl-2.7.1.jar;";
-		}
+		// --- Agent.GUI with its integrated libraries ---------
+		String agentGuiJar = Application.RunInfo.AppFileRunnableJar(false);
+		agentGuiJar = agentGuiJar.replace("\\", "/");
+		classPath += "./" + agentGuiJar + ";";
 		
 		// -----------------------------------------------------
 		// --- Configure external jar-files -------------------- 
@@ -379,7 +322,6 @@ public class JadeRemoteStart extends Thread {
 				classPath += jar;
 			}
 		}
-		System.out.println("Configured CLASSPATH-entry: " + classPath);
 		return classPath;
 	}
 	

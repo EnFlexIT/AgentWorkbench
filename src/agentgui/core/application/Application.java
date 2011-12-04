@@ -28,6 +28,8 @@
  */
 package agentgui.core.application;
 
+import java.util.Vector;
+
 import jade.debugging.components.JPanelConsole;
 
 import javax.swing.JOptionPane;
@@ -113,6 +115,8 @@ public class Application {
 	 * Holds the reference of the currently focused project
 	 */
 	public static Project ProjectCurr = null;
+	private static String project2OpenAfterStart = null;
+	
 	/**
 	 * This will hold the instance of the main application window 
 	 */
@@ -125,12 +129,13 @@ public class Application {
 	
 	private static AboutDialog about = null;
 	private static OptionDialog options = null;
-	/**
-	 * Indicates if the benchmark is currently running
-	 */
+
+	/** Indicates if the benchmark is currently running */
 	public static boolean benchmarkIsRunning = false; 
 	
-	private static String project2OpenAfterStart = null;
+	/** True, if a remote container has to be started (see start arguments) */
+	private static boolean justStartJade = false;
+	
 	
 	// --- Singleton-Constructor ---
 	private Application() {
@@ -152,53 +157,109 @@ public class Application {
 	public static void main(String[] args) {
 
 		// ----------------------------------------------------------
-		// --- Just starts the base-instances -----------------------
-		Console = new JPanelConsole(true);
-		RunInfo = new GlobalInfo();
-		Version = new VersionInfo();
-		Properties = new FileProperties();
-		Language.startDictionary();
-		proceedStartArguments(args);
-		new LoadMeasureThread().start();  
-		startAgentGUI();
-		proceedStartArgumentOpenProject();
+		// --- Read the start arguments and react on it?! -----------
+		String[] remainingArgs = proceedStartArguments(args);
+		
+		if (justStartJade==false) {
+			// ------------------------------------------------------
+			// --- Start the Agent.GUI base-instances ---------------
+			Console = new JPanelConsole(true);
+			RunInfo = new GlobalInfo();
+			Version = new VersionInfo();
+			Properties = new FileProperties();
+			Language.startDictionary();
+			
+			new LoadMeasureThread().start();  
+			startAgentGUI();
+			
+		} else {
+			// ------------------------------------------------------
+			// --- Start JADE ---------------------------------------
+			RunInfo = new GlobalInfo();
+			Version = new VersionInfo();
+			Properties = new FileProperties();
+			Language.startDictionary();
+
+			System.out.println("Just starting JADE now ...");
+			jade.Boot.main(remainingArgs);
+			
+		}
 		
 	}	
 
 	/**
-	 * This method will proceed the start-arguments of the application  
-	 * @param args
+	 * This method will proceed the start-arguments of the application and
+	 * returns these arguments, which are not understood.
+	 * @param args the start arguments
+	 * @return the remaining arguments, which are not proceeded by Agent.GUI
 	 */
-	private static void proceedStartArguments(String[] args){
+	private static String[] proceedStartArguments(String[] args){
 		
+		Vector<String> remainingArgsVector = new Vector<String>();
+
 		int i = 0;
 		while (i < args.length) {
 
+			// ----------------------------------------------------------------
+			// --- Pack the single argument to the remainingArgsVector --------  
+			remainingArgsVector.addElement(args[i]);
+			// ----------------------------------------------------------------
+			
 			if (args[i].startsWith("-")) {
 				
-				// ------------------------------------------------------------
-				// --- open a specified project ------------------------------- 
 				if (args[i].equalsIgnoreCase("-project")) {
+					// --------------------------------------------------------
+					// --- open a specified project --------------------------- 
+					remainingArgsVector.removeElement(args[i]);
+					
 					i++;
 					project2OpenAfterStart = args[i];
 					
-				// ------------------------------------------------------------
-				// --- print out the help for the start arguments --------------					
+				} else if (args[i].equalsIgnoreCase("-jade")) {
+					// --------------------------------------------------------
+					// --- JADE has to be started as remote container ---------	
+					remainingArgsVector.removeElement(args[i]);
+					justStartJade = true;
+				
 				} else if (args[i].equalsIgnoreCase("-help")) {
+					// --------------------------------------------------------
+					// --- print out the help for the start arguments ---------	
 					proceedStartArgumentPrintHelp();
+					
 				} else if (args[i].equalsIgnoreCase("-?")) {
+					// --------------------------------------------------------
+					// --- print out the help for the start arguments ---------	
+					remainingArgsVector.removeElement(args[i]);
+					remainingArgsVector.addElement("-help");
 					proceedStartArgumentPrintHelp();
+					
+				} else if (args[i].equalsIgnoreCase("-container") ||
+						   args[i].equalsIgnoreCase("-gui")) {
+					// --------------------------------------------------------
+					// --- do nothing in here ---------------------------------
+
+				} else {
+					// --------------------------------------------------------
+					// --- just skip and remind the next start argument -------
+					i++;
+					remainingArgsVector.addElement(args[i]);
 				}
 				
 			} else {
 				// --- unspecified start option ------------------------------- 
-				System.out.println(Language.translate("Argument") + " " + (i+1) + " '" + args[i] + "': " + Language.translate("Bitte spezifizieren Sie den Typ des Startarguments!"));
+				System.out.println("Argument" + " " + (i+1) + " '" + args[i] + "': unspecified start argument");
 			}
 			
 			// --- proceed next start argument ------------
 			i++;
 		}
 		
+		// ----------------------------------------------------------------
+		// --- Rebuild the Array of the start arguments -------------------  
+		// ----------------------------------------------------------------
+		String[] remainingArgs = new String[remainingArgsVector.size()];
+		remainingArgsVector.toArray(remainingArgs);
+		return remainingArgs;
 	}
 	
 	/**
@@ -209,7 +270,8 @@ public class Application {
 		System.out.println("Agent.GUI - usage of start arguments:");
 		System.out.println("");
 		System.out.println("1. '-project projectFolder': opens the project located in the Agent.GUI folder 'project' (e.g. 'myProject')");
-		System.out.println("2. '-help' or '-?'         : provides this information to the console" );
+		System.out.println("2. '-jade'                 : indicates that JADE has to be started. For the JADE start arguments, see JADE administrative guide." );
+		System.out.println("3. '-help' or '-?'         : provides this information to the console" );
 		System.out.println("");
 		System.out.println("");
 	}
@@ -221,7 +283,7 @@ public class Application {
 	private static void proceedStartArgumentOpenProject() {
 		
 		if (isServer==false && project2OpenAfterStart!=null) {
-			// --- open teh specified project -----------
+			// --- open the specified project -----------
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
@@ -260,6 +322,7 @@ public class Application {
 			startApplication();
 			MainWindow.setStatusBar( Language.translate("Fertig") );
 			doBenchmark(false);
+			proceedStartArgumentOpenProject();
 		}
 	}
 	

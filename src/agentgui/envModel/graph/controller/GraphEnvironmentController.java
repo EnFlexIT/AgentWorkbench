@@ -235,6 +235,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 * @return The GraphMLWriter
 	 */
 	private GraphMLWriter<GraphNode, GraphEdge> getGraphMLWriter(){
+		
 		if(graphMLWriter == null){
 			graphMLWriter = new GraphMLWriter<GraphNode, GraphEdge>();
 			graphMLWriter.setEdgeIDs(new Transformer<GraphEdge, String>() {
@@ -285,11 +286,10 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 * @throws FileNotFoundException
 	 */
 	private GraphMLReader2<Graph<GraphNode, GraphEdge>, GraphNode, GraphEdge> getGraphMLReader(File file) throws FileNotFoundException{
+		
 		Transformer<GraphMetadata, Graph<GraphNode, GraphEdge>> graphTransformer = new Transformer<GraphMetadata, Graph<GraphNode,GraphEdge>>() {
-
 			@Override
-			public SparseGraph<GraphNode, GraphEdge> transform(
-					GraphMetadata gmd) {
+			public SparseGraph<GraphNode, GraphEdge> transform(GraphMetadata gmd) {
 				return new SparseGraph<GraphNode, GraphEdge>();
 			}
 		};
@@ -298,16 +298,15 @@ public class GraphEnvironmentController extends EnvironmentController {
 
 			@Override
 			public GraphNode transform(NodeMetadata nmd) {
+				
 				GraphNode gn = new GraphNode();
 				gn.setId(nmd.getId());
-				
 				gn.setEncodedOntologyRepresentation(nmd.getProperty(KEY_ONTOLOGY_REPRESENTATION_PROPERTY));
 				
 				Point2D pos = null;
 				String posString = nmd.getProperty(KEY_POSITION_PROPERTY);
 				if(posString != null){
 					String[] coords = posString.split(":");
-					
 					if(coords.length == 2){
 						double xPos = Double.parseDouble(coords[0]);
 						double yPos = Double.parseDouble(coords[1]);
@@ -432,6 +431,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 */
 	@Override
 	protected void loadEnvironment() {
+		
 		networkModel = new NetworkModel();
 		
 		String fileName = getCurrentSimSetup().getEnvironmentFileName();
@@ -448,7 +448,6 @@ public class GraphEnvironmentController extends EnvironmentController {
 					// Load graph topology
 					networkModel.setGraph(getGraphMLReader(graphFile).readGraph());
 					
-					// Load network component definitions
 				} catch (FileNotFoundException e) {
 					e.printStackTrace();
 				} catch (GraphIOException e) {

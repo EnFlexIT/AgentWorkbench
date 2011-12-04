@@ -28,6 +28,7 @@
  */
 package agentgui.envModel.graph.networkModel;
 
+import java.io.Serializable;
 import java.util.HashSet;
 
 /**
@@ -39,8 +40,10 @@ import java.util.HashSet;
  * 
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
  */
-public class NetworkComponent {
+public class NetworkComponent implements Serializable {
 	
+	private static final long serialVersionUID = 537431665305238609L;
+
 	/** The NetworkComponent's ID */
 	private String id;
 	/** The NetworkComponent's type */
