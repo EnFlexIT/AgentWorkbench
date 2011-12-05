@@ -134,8 +134,7 @@ public class LoadInformation  {
 	 * @param container2Wait4 the new new container2 wait4
 	 * 
 	 * @see LoadServiceHelper#startNewRemoteContainer()
-	 * @see LoadServiceHelper#startNewRemoteContainer(boolean)
-	 * @see LoadServiceHelper#startNewRemoteContainer(agentgui.simulationService.ontology.RemoteContainerConfig, boolean)
+	 * @see LoadServiceHelper#startNewRemoteContainer(agentgui.simulationService.ontology.RemoteContainerConfig)
 	 */
 	public void setNewContainer2Wait4(String container2Wait4) {
 		Container2Wait4 cont = new Container2Wait4(container2Wait4);

@@ -387,7 +387,6 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 	 * will update the local information of {@link #currContainerLoactions} and
 	 * {@link #currContainerBenchmarkResults}.
 	 *
-	 * @param preventUsageOfAlreadyUsedComputers can prevent the usage of already used computers
 	 * @return the name of the new container
 	 * 
 	 * @see #currContainerLoactions
@@ -403,7 +402,6 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 	 * {@link #currContainerBenchmarkResults}.
 	 *
 	 * @param remoteContainerConfig the remote container configuration out of the Project 
-	 * @param preventUsageOfAlreadyUsedComputers can prevent the usage of already used computers
 	 * @return the name of the new container
 	 * 
 	 * @see #currContainerLoactions
@@ -468,7 +466,6 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 	 *
 	 * @param numberOfContainer the number of container
 	 * @param remoteContainerConfig the remote container configuration
-	 * @param preventUsageOfAlreadyUsedComputers the prevent usage of already used computers
 	 * @param filterMainContainer true, if the Main-Container should be filter out of the result
 	 * 
 	 * @return the of all newly started locations

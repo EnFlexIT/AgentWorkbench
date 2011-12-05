@@ -82,7 +82,6 @@ public interface LoadServiceHelper extends ServiceHelper {
 	 * Will start a new remote container.
 	 *
 	 * @param remoteConfig the remote container configuration
-	 * @param preventUsageOfAlreadyUsedComputers can prevent the usage of already used computers
 	 * @return the name of the new container
 	 * @throws ServiceException the service exception
 	 */

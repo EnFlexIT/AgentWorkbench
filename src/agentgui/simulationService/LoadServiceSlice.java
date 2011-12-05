@@ -85,7 +85,6 @@ public interface LoadServiceSlice extends Service.Slice {
 	 * Start new remote container.
 	 *
 	 * @param remoteConfig the RemoteContainerConfig
-	 * @param preventUsageOfAlreadyUsedComputers can prevent the usage of already used computers
 	 * @return the name of the remote container  
 	 * @throws IMTPException the IMTPException
 	 */
@@ -94,7 +93,7 @@ public interface LoadServiceSlice extends Service.Slice {
 	/**
 	 * Sets the defaults for a remote container configuration.
 	 *
-	 * @return the object
+	 * @param remoteConfig the ontology instance for the default remote container configuration
 	 * @throws IMTPException the iMTP exception
 	 */
 	public void setDefaults4RemoteContainerConfig(RemoteContainerConfig remoteConfig) throws IMTPException;
@@ -102,7 +101,6 @@ public interface LoadServiceSlice extends Service.Slice {
 	/**
 	 * Provides the Default remote container configuration.
 	 *
-	 * @param preventUsageOfAlreadyUsedComputers the prevent usage of already used computers
 	 * @return the default RemoteContainerConfig
 	 * @throws IMTPException the IMTPException
 	 */

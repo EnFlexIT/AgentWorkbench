@@ -79,7 +79,7 @@ public class RemoteContainerConfiguration implements Serializable {
 	}
 	/**
 	 * Sets if a remote RMA should be shown.
-	 * @param showJADErmaGUI the showJADErmaGUI to set
+	 * @param showRMA true, if the Jade rma agent shall appear
 	 */
 	public void setShowJADErmaGUI(boolean showRMA) {
 		this.showJADErmaGUI = showRMA;
