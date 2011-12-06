@@ -38,9 +38,18 @@
             <thNoThreadsL>5</thNoThreadsL>
         </userThresholds>
     </distributionSetup>
-    <remoteContainerConfiguration/>
-    <simulationSetupCurrent>Test</simulationSetupCurrent>
+    <remoteContainerConfiguration>
+        <jvmMemAllocInitial>32m</jvmMemAllocInitial>
+        <jvmMemAllocMaximum>128m</jvmMemAllocMaximum>
+        <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
+        <showJADErmaGUI>true</showJADErmaGUI>
+    </remoteContainerConfiguration>
+    <simulationSetupCurrent>Test 2 (Copy)</simulationSetupCurrent>
     <simulationSetups>
+        <entry>
+            <key>Test 2 (Copy)</key>
+            <value>test_2_copy.xml</value>
+        </entry>
         <entry>
             <key>Test 2</key>
             <value>test_2.xml</value>
