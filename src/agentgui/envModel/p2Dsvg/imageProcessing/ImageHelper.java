@@ -71,6 +71,7 @@ public class ImageHelper {
 	private static boolean READ_WORLD=false;
 	private static boolean IS_IN_METHOD=false;
 	private static boolean FIRST_CALL=true;
+	private boolean is_setup=false;
 	int divideHeight;
 	int divideWidth;
 	double lastDistance=-20;
@@ -1386,8 +1387,177 @@ public class ImageHelper {
 			return null;
 		}
 	}
-			
-					
+	public void setupEnviroment(String ownID,ArrayList<CombinedNameAndPos> otherAgent)	
+	{
+		this.evn=this.createManipulatedWorldWithAgents(otherAgent, ownID, 0.0);
+		this.is_setup=true;
+	}
+	
+	public Position sidestepLeft(String ownID,ArrayList<CombinedNameAndPos> otherAgent)
+	{
+	if(!this.is_setup)
+	{
+		this.setupEnviroment(ownID, otherAgent);
+	}
+	Document doc=helper.getSVGDoc();
+	Element self=doc.getElementById(ownID);
+	final float width=Float.parseFloat(self.getAttribute("width"));
+	final float height=Float.parseFloat(self.getAttribute("height"));
+	float x=Float.parseFloat(self.getAttribute("x"));
+	float y=Float.parseFloat(self.getAttribute("y"));
+	int lookAhead=10; 
+	
+	boolean found=false;
+	float currentXpos=x;
+	float currentYPos=y;
+	Position result = new Position();
+	// Left
+	while(!found&&lookAhead>0)
+	{
+	 try {
+		found=this.tranformAndCheckImage(this.evn, currentXpos, currentYPos, width, height, lookAhead, ImageHelper.DIRECTION_UP_LEFT, Color.gray.getRGB());
+		if(found)
+		{
+		result.setXPos(currentXpos-lookAhead);
+		result.setYPos(currentYPos);
+		return result;
+		}
+		
+	} catch (Exception e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+		return null;
+	}
+	 lookAhead--;
+	}
+		return null;	
+}
+	
+	public Position sidestepRight(String ownID,ArrayList<CombinedNameAndPos> otherAgent)
+	{
+	if(!this.is_setup)
+	{
+		this.setupEnviroment(ownID, otherAgent);
+	}
+	Document doc=helper.getSVGDoc();
+	Element self=doc.getElementById(ownID);
+	final float width=Float.parseFloat(self.getAttribute("width"));
+	final float height=Float.parseFloat(self.getAttribute("height"));
+	float x=Float.parseFloat(self.getAttribute("x"));
+	float y=Float.parseFloat(self.getAttribute("y"));
+	int lookAhead=10; 
+	
+	boolean found=false;
+	float currentXpos=x;
+	float currentYPos=y;
+	Position result = new Position();
+	// Left
+	while(!found&&lookAhead>0)
+	{
+	 try {
+		found=this.tranformAndCheckImage(this.evn, currentXpos, currentYPos, width, height, lookAhead, ImageHelper.DIRECTION_RIGHT, Color.gray.getRGB());
+		if(found)
+		{
+		result.setXPos(currentXpos+lookAhead);
+		result.setYPos(currentYPos);
+		return result;
+		}
+		
+	} catch (Exception e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+		return null;
+	}
+	 lookAhead--;
+	}
+		return null;	
+}	
+	
+	public Position sidesteppBackwards(String ownID,ArrayList<CombinedNameAndPos> otherAgent)
+	{
+	if(!this.is_setup)
+	{
+		this.setupEnviroment(ownID, otherAgent);
+	}
+	Document doc=helper.getSVGDoc();
+	Element self=doc.getElementById(ownID);
+	final float width=Float.parseFloat(self.getAttribute("width"));
+	final float height=Float.parseFloat(self.getAttribute("height"));
+	float x=Float.parseFloat(self.getAttribute("x"));
+	float y=Float.parseFloat(self.getAttribute("y"));
+	int lookAhead=10; 
+	
+	boolean found=false;
+	float currentXpos=x;
+	float currentYPos=y;
+	Position result = new Position();
+	// Left
+	while(!found&&lookAhead>0)
+	{
+	 try {
+		found=this.tranformAndCheckImage(this.evn, currentXpos, currentYPos, width, height, lookAhead, ImageHelper.DIRECTION_BACKWARD, Color.gray.getRGB());
+		if(found)
+		{
+		result.setXPos(currentXpos);
+		result.setYPos(currentYPos-lookAhead);
+		return result;
+		}
+		
+	} catch (Exception e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+		return null;
+	}
+	 lookAhead--;
+	}
+		return null;	
+}	
+	
+	
+	
+	
+	public Position sidesteppForward(String ownID,ArrayList<CombinedNameAndPos> otherAgent)
+	{
+	if(!this.is_setup)
+	{
+		this.setupEnviroment(ownID, otherAgent);
+	}
+	Document doc=helper.getSVGDoc();
+	Element self=doc.getElementById(ownID);
+	final float width=Float.parseFloat(self.getAttribute("width"));
+	final float height=Float.parseFloat(self.getAttribute("height"));
+	float x=Float.parseFloat(self.getAttribute("x"));
+	float y=Float.parseFloat(self.getAttribute("y"));
+	int lookAhead=10; 
+	
+	boolean found=false;
+	float currentXpos=x;
+	float currentYPos=y;
+	Position result = new Position();
+	// Left
+	while(!found&&lookAhead>0)
+	{
+	 try {
+		found=this.tranformAndCheckImage(this.evn, currentXpos, currentYPos, width, height, lookAhead, ImageHelper.DIRECTION_FORWARD, Color.gray.getRGB());
+		if(found)
+		{
+		result.setXPos(currentXpos);
+		result.setYPos(currentYPos+lookAhead);
+		return result;
+		}
+		
+	} catch (Exception e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+		return null;
+	}
+	 lookAhead--;
+	}
+		return null;	
+}	
+	
+	
+	
 	public synchronized BufferedImage createManipulatedWorldWithAgents(ArrayList<CombinedNameAndPos> otherAgent , String id,double discreteTime)
 	{
 	
