@@ -145,6 +145,9 @@ public class SimulationSetups extends Hashtable<String, String> {
 		// --- Setup rausschmeissen------------------------
 		this.remove(name);
 		new File(currSimXMLFile).delete();
+		// --- Interessenten informieren ------------------
+		currProject.setChangedAndNotify(new SimulationSetupsChangeNotification(SIMULATION_SETUP_REMOVE));
+		
 		// --- Groesse des Rests berücksichtigen ----------
 		if (this.size() == 0) {
 			// --- add default - Setup --------------------
@@ -154,10 +157,10 @@ public class SimulationSetups extends Hashtable<String, String> {
 			this.setupAddNew(currSimSetupName, newFileName);
 
 		} else {
-			// --- Select first Setup ---------------------
-			this.setupLoadAndFocus(SIMULATION_SETUP_REMOVE,this.getFirstSetup(), false);
+			// --- Load first Setup -----------------------
+			this.setupLoadAndFocus(SIMULATION_SETUP_LOAD,this.getFirstSetup(), false);
 		}
-		// --- Projekt speichern --------------------------
+		// --- Save project -------------------------------
 		currProject.save();
 	}
 	
@@ -198,6 +201,8 @@ public class SimulationSetups extends Hashtable<String, String> {
 	public void setupCopy(String nameOld, String nameNew, String fileNameNew) {
 
 		if (this.containsKey(nameOld)==false) return;
+		// --- Aktuellen Zustand speichern ----------------
+		currProject.save();
 		
 		// --- Verzeichnis-Info zusammenbauen -------------
 		String pathSimXML  = currProject.getSubFolder4Setups(true);
@@ -320,6 +325,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 	public void setupSave() {
 		if (currSimSetup!=null) {
 			currSimSetup.save();
+			currProject.setChangedAndNotify(new SimulationSetupsChangeNotification(SIMULATION_SETUP_SAVED));
 		}
 		this.setupCleanUpSubFolder();
 	}

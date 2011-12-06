@@ -352,67 +352,57 @@ public class GraphEnvironmentController extends EnvironmentController {
 	protected void handleSimSetupChange(SimulationSetupsChangeNotification sscn){
 		
 		switch(sscn.getUpdateReason()){
-			
-			case SimulationSetups.SIMULATION_SETUP_COPY:
-				// Saving the network model of previous setup before loading the next one
-				saveEnvironment();
-				
-				updateGraphFileName();
-				saveEnvironment();
-				this.getProject().isUnsaved = true;
+		case SimulationSetups.SIMULATION_SETUP_LOAD:
+			updateGraphFileName();
+			this.loadEnvironment(); //Loads network model and notifies observers	
+		
+			generalGraphSettings4MAS = (GeneralGraphSettings4MAS) this.getProject().getUserRuntimeObject();
+			setComponentTypeSettings(generalGraphSettings4MAS.getCurrentCTS());				
 			break;
 			
-			case SimulationSetups.SIMULATION_SETUP_ADD_NEW:
-				// Saving the network model of previous setup before loading the next one
-				saveEnvironment(); 
-				
-				updateGraphFileName();
-				networkModel = new NetworkModel();
-				
-				setChanged();
-				notifyObservers(EVENT_NETWORKMODEL_LOADED);
-				
+		case SimulationSetups.SIMULATION_SETUP_SAVED:
+			this.saveEnvironment();
+			break;
+		
+		case SimulationSetups.SIMULATION_SETUP_ADD_NEW:
+			this.updateGraphFileName();
+			networkModel = new NetworkModel();
+			
+			setChanged();
+			notifyObservers(EVENT_NETWORKMODEL_LOADED);
 			break;
 			
-			case SimulationSetups.SIMULATION_SETUP_REMOVE:
-				File graphFile = new File(getEnvFolderPath()+File.separator+baseFileName+".graphml");
-				if(graphFile.exists()){
-					graphFile.delete();
-				}
-				
-				File componentFile = new File(getEnvFolderPath()+File.separator+baseFileName+".xml");
-				if(componentFile.exists()){
-					componentFile.delete();
-				}
-			// No, there's no break missing here. After deleting a setup another one is loaded.
-			
-			case SimulationSetups.SIMULATION_SETUP_LOAD:
-				// Saving the network model of previous setup before loading the next one
-				saveEnvironment();
-				
-				updateGraphFileName();
-				this.loadEnvironment(); //Loads network model and notifies observers	
-			
-				generalGraphSettings4MAS = (GeneralGraphSettings4MAS) this.getProject().getUserRuntimeObject();
-				setComponentTypeSettings(generalGraphSettings4MAS.getCurrentCTS());				
-						
+		case SimulationSetups.SIMULATION_SETUP_COPY:
+			this.updateGraphFileName();
+			this.saveEnvironment();
+			this.getProject().isUnsaved = true;
 			break;
 			
-			case SimulationSetups.SIMULATION_SETUP_RENAME:
-				File oldGraphFile = new File(getEnvFolderPath()+File.separator+baseFileName+".graphml");
-				File oldComponentFile = new File(getEnvFolderPath()+File.separator+baseFileName+".xml");
-				updateGraphFileName();
-				if(oldGraphFile.exists()){
-					File newGraphFile = new File(getEnvFolderPath()+File.separator+baseFileName+".graphml");
-					oldGraphFile.renameTo(newGraphFile);
-				}
-				if(oldComponentFile.exists()){
-					File newComponentFile = new File(getEnvFolderPath()+File.separator+baseFileName+".xml");
-					oldComponentFile.renameTo(newComponentFile);
-				}
+		case SimulationSetups.SIMULATION_SETUP_REMOVE:
+			File graphFile = new File(getEnvFolderPath()+File.separator+baseFileName+".graphml");
+			if(graphFile.exists()){
+				graphFile.delete();
+			}
+			
+			File componentFile = new File(getEnvFolderPath()+File.separator+baseFileName+".xml");
+			if(componentFile.exists()){
+				componentFile.delete();
+			}
+			updateGraphFileName();
 			break;
 			
-			case SimulationSetups.SIMULATION_SETUP_SAVED:
+		case SimulationSetups.SIMULATION_SETUP_RENAME:
+			File oldGraphFile = new File(getEnvFolderPath()+File.separator+baseFileName+".graphml");
+			File oldComponentFile = new File(getEnvFolderPath()+File.separator+baseFileName+".xml");
+			updateGraphFileName();
+			if(oldGraphFile.exists()){
+				File newGraphFile = new File(getEnvFolderPath()+File.separator+baseFileName+".graphml");
+				oldGraphFile.renameTo(newGraphFile);
+			}
+			if(oldComponentFile.exists()){
+				File newComponentFile = new File(getEnvFolderPath()+File.separator+baseFileName+".xml");
+				oldComponentFile.renameTo(newComponentFile);
+			}
 			break;
 		}
 		
@@ -459,13 +449,20 @@ public class GraphEnvironmentController extends EnvironmentController {
 			File componentFile = new File(getEnvFolderPath()+File.separator+baseFileName+".xml");
 			if(componentFile.exists()){
 				try {
+					FileReader componentReader = new FileReader(componentFile);
+					
 					JAXBContext context = JAXBContext.newInstance(NetworkComponentList.class);
 					Unmarshaller unmarsh = context.createUnmarshaller();
-					NetworkComponentList compList = (NetworkComponentList) unmarsh.unmarshal(new FileReader(componentFile));
+					NetworkComponentList compList = (NetworkComponentList) unmarsh.unmarshal(componentReader);
 					networkModel.setNetworkComponents(compList.getComponentList());
+					
+					componentReader.close();
+					
 				} catch (JAXBException e) {
 					e.printStackTrace();
 				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
 					e.printStackTrace();
 				}				
 			}
@@ -488,8 +485,8 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 */
 	@Override
 	protected void saveEnvironment() {
+		
 		if(networkModel != null && networkModel.getGraph() != null){
-			
 			try {
 				// Save the graph topology 
 				String graphFileName = baseFileName+".graphml";
@@ -511,8 +508,9 @@ public class GraphEnvironmentController extends EnvironmentController {
 				Marshaller marsh = context.createMarshaller();
 				marsh.setProperty( Marshaller.JAXB_ENCODING, "UTF-8" );
 				marsh.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE );
-
 				marsh.marshal(new NetworkComponentList(networkModel.getNetworkComponents()), componentFileWriter);
+				
+				componentFileWriter.close();
 				
 			} catch (IOException e) {
 				e.printStackTrace();

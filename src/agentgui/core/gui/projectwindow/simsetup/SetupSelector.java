@@ -281,22 +281,22 @@ public class SetupSelector extends JPanel implements Observer, ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		// --- Das ActionCommand und den Auslöser des Events ermitteln ---
-		Object Trigger = ae.getSource();
+		Object trigger = ae.getSource();
 		
 		// --- Fallunterscheidung 'Auslöser' -----------------------------
-		if ( Trigger == jComboBoxSetupSelector ) {
+		if ( trigger == jComboBoxSetupSelector ) {
 			if (jComboBoxSetupSelector.getSelectedItem()!= null) {
 				currProject.simulationSetups.setupSave();
 				currProject.simulationSetups.setupLoadAndFocus(SimulationSetups.SIMULATION_SETUP_LOAD, jComboBoxSetupSelector.getSelectedItem().toString(), false);
 			}
 			
-		} else if ( Trigger == jButtonSetupRename ) {
+		} else if ( trigger == jButtonSetupRename ) {
 			this.setupRename();
-		} else if ( Trigger == jButtonSetupCopy ) {
+		} else if ( trigger == jButtonSetupCopy ) {
 			this.setupCopy();
-		} else if ( Trigger == jButtonSetupNew ) {
+		} else if ( trigger == jButtonSetupNew ) {
 			this.setupAdd();
-		} else if ( Trigger == jButtonSetupDelete ) {
+		} else if ( trigger == jButtonSetupDelete ) {
 			this.setupRemove();
 		} else {
 			System.out.println(ae.toString());

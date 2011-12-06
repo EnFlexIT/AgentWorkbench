@@ -750,41 +750,56 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 		return pgRect.contains(objRect);
 	}
 	
+	/**
+	 * Sets the default file names.
+	 */
+	private void setDefaultFileNames(){
+
+		String baseFileName = this.getProject().simulationSetupCurrent;
+		this.getCurrentSimSetup().setEnvironmentFileName(baseFileName+".xml");
+		this.setSvgFileName(baseFileName+".svg");
+		
+		this.currentEnvironmentPath = this.getEnvFolderPath() + getCurrentSimSetup().getEnvironmentFileName();
+		this.currentSVGPath = this.getEnvFolderPath() + this.getSvgFileName();
+	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.core.environment.EnvironmentController#handleSimSetupChange(agentgui.core.sim.setup.SimulationSetupsChangeNotification)
+	 */
 	@Override
 	protected void handleSimSetupChange(SimulationSetupsChangeNotification sscn){
 		
 		switch(sscn.getUpdateReason()){
+
+			case SimulationSetups.SIMULATION_SETUP_SAVED:
+				this.saveEnvironment();
+			break;
 			
 			case SimulationSetups.SIMULATION_SETUP_COPY:
-				setDefaultFileNames();
-				this.currentEnvironmentPath = this.getEnvFolderPath() + getCurrentSimSetup().getEnvironmentFileName();
-				this.currentSVGPath = this.getEnvFolderPath() + this.getSvgFileName();
-				saveEnvironment();
+				this.setDefaultFileNames();
+				this.saveEnvironment();
 			break;
 			
 			case SimulationSetups.SIMULATION_SETUP_ADD_NEW:
-				setDefaultFileNames();
-				this.currentEnvironmentPath = this.getEnvFolderPath() + getCurrentSimSetup().getEnvironmentFileName();
-				this.currentSVGPath = this.getEnvFolderPath() + this.getSvgFileName();
-				setEnvironment(null);
-				setSvgDoc(null);
+				this.setDefaultFileNames();
+				this.setEnvironment(null);
+				this.setSvgDoc(null);
 			break;
 			
 			case SimulationSetups.SIMULATION_SETUP_REMOVE:
 				File envFile = new File(this.currentEnvironmentPath);
 				File svgFile = new File(this.currentSVGPath);
-				
 				if(envFile.exists()){
 					envFile.delete();
 				}
 				if(svgFile.exists()){
 					svgFile.delete();
 				}
-			// No, there's no break missing here. After deleting a setup another one is loaded.
+				this.setDefaultFileNames();
+			break;
 			
 			case SimulationSetups.SIMULATION_SETUP_LOAD:
-				this.currentEnvironmentPath = this.getEnvFolderPath() + getCurrentSimSetup().getEnvironmentFileName();
-				this.currentSVGPath = this.getEnvFolderPath() + this.getSvgFileName();
+				this.setDefaultFileNames();
 				setEnvironment(loadEnvironmentFromXML(new File(this.currentEnvironmentPath)));
 				setSvgDoc(loadSVG(new File(this.currentSVGPath)));
 			break;
@@ -803,19 +818,11 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 					File newSvgFile = new File(this.getEnvFolderPath() + this.getSvgFileName());
 					oldSVGFile.renameTo(newSvgFile);
 				}
+				this.setDefaultFileNames();
 				
-				this.currentEnvironmentPath = this.getEnvFolderPath() + getCurrentSimSetup().getEnvironmentFileName();
-				this.currentSVGPath = this.getEnvFolderPath() + this.getSvgFileName();
 			break;
 		}
 		
-	}
-	
-	private void setDefaultFileNames(){
-		String baseFileName = this.getProject().simulationSetupCurrent;
-		//TODO remove the path from the simsetup
-		getCurrentSimSetup().setEnvironmentFileName(baseFileName+".xml");
-		this.setSvgFileName(baseFileName+".svg");
 	}
 	
 	public void setScale(Scale scale){
