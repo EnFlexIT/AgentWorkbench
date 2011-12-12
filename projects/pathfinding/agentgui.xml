@@ -44,19 +44,15 @@
         <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>true</showJADErmaGUI>
     </remoteContainerConfiguration>
-    <simulationSetupCurrent>Test 2 (Copy)</simulationSetupCurrent>
+    <simulationSetupCurrent>Test 2</simulationSetupCurrent>
     <simulationSetups>
         <entry>
-            <key>Test 2 (Copy)</key>
-            <value>test_2_copy.xml</value>
+            <key>default</key>
+            <value>default.xml</value>
         </entry>
         <entry>
             <key>Test 2</key>
             <value>test_2.xml</value>
-        </entry>
-        <entry>
-            <key>default</key>
-            <value>default.xml</value>
         </entry>
         <entry>
             <key>Test</key>

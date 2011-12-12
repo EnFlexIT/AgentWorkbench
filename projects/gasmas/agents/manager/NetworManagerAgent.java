@@ -44,6 +44,9 @@ public class NetworManagerAgent extends SimulationManagerAgent {
 	
 	private Project currProject = null;
 	
+	private NetworkModel myNetworkModel = null;
+	
+	
 	@Override
 	protected void setup() {
 		super.setup();
@@ -52,21 +55,19 @@ public class NetworManagerAgent extends SimulationManagerAgent {
 		if (currProject==null) {
 			takeDown();
 		}
-		this.addSimulationBehaviour();
-	}
-	
-	
-	/* (non-Javadoc)
-	 * @see agentgui.simulationService.agents.SimulationManagerInterface#doSingleSimulationSequennce()
-	 */
-	@Override
-	public void doSingleSimulationSequennce() {
 		
+		this.envModel = this.getInitialEnvironmentModel();
 		try {
-			simHelper.setEnvironmentModel(this.getEnvironmentModel());
+			simHelper.setEnvironmentModel(this.envModel);
 		} catch (ServiceException e) {
 			e.printStackTrace();
-		}
+		} 
+		
+		this.myNetworkModel = (NetworkModel) this.getDisplayEnvironment();
+		
+		// --- Here you can add Behaiviours, which acting centralized -----
+		//this.addBehaviour(yourBehaviour)
+		
 		
 	}
 	
@@ -99,7 +100,7 @@ public class NetworManagerAgent extends SimulationManagerAgent {
 			networkModel = (NetworkModel) envController.getEnvironmentModelCopy();
 			
 			envModel.setTimeModel(myTimeModel);
-			envModel.setAbstractEnvironment(networkModel);
+			envModel.setDisplayEnvironment(networkModel);
 			
 		} catch (Exception ex) {
 			String msg = null;
@@ -124,5 +125,12 @@ public class NetworManagerAgent extends SimulationManagerAgent {
 		}
 		return envModel;
 	}
+
+	@Override
+	public void doSingleSimulationSequennce() {
+		
+		
+	}
+	
 	
 }
