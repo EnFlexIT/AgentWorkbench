@@ -136,6 +136,15 @@ public interface SimulationServiceHelper extends ServiceHelper {
 	public void sensorPlugIn(ServiceSensor sensor) throws ServiceException;
 	
 	/**
+	 * Allows to plug in a {@link ServiceSensor} into the SimulationService.
+	 *
+	 * @param sensor the {@link ServiceSensor} to plug in
+	 * @param passive true, if the sensor is just listening to the actuator, but that there is no answer to expect  
+	 * @throws ServiceException the ServiceException
+	 */
+	public void sensorPlugIn(ServiceSensor sensor, boolean passive) throws ServiceException;
+	
+	/**
 	 * Allows to plug out a {@link ServiceSensor} into the SimulationService.
 	 *
 	 * @param sensor the {@link ServiceSensor} to plug out

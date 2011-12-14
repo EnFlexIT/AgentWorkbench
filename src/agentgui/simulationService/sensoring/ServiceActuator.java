@@ -60,7 +60,7 @@ import agentgui.simulationService.transaction.EnvironmentNotification;
 public class ServiceActuator {
 
 	private Vector<ServiceSensor> serviceSensors = new Vector<ServiceSensor>();
-	private int noOfSimulationAnswersExpected = 0;
+	private Vector<ServiceSensor> serviceSensorsPassive = new Vector<ServiceSensor>();
 	
 	private MigrationVector migrationList = new MigrationVector();
 	private MigrationVector migrationListInMovement = new MigrationVector();
@@ -74,6 +74,16 @@ public class ServiceActuator {
 	 */
 	public void plugIn(ServiceSensor currSensor) {
 		serviceSensors.addElement(currSensor);		
+	}
+	/**
+	 * Method for agents to plug-in to this actuator, but it is not 
+	 * expected that the connected agent will answer to the change
+	 * of the environment.
+	 * @param currSensor the ServiceSensor to plug-in
+	 */
+	public void plugInPassive(ServiceSensor currSensor) {
+		serviceSensors.addElement(currSensor);	
+		serviceSensorsPassive.addElement(currSensor);
 	}
 	/**
 	 * Method to plug-out from this actuator
@@ -130,8 +140,7 @@ public class ServiceActuator {
 			@Override
 			public void run() {
 				Object[] arrLocal = serviceSensors.toArray();
-				noOfSimulationAnswersExpected = arrLocal.length;
-				for (int i = noOfSimulationAnswersExpected-1; i>=0; i--) {
+				for (int i = arrLocal.length-1; i>=0; i--) {
 					((ServiceSensor)arrLocal[i]).putEnvironmentModel(currEnvironmentModel, aSynchron);
 				}
 			}
@@ -169,8 +178,7 @@ public class ServiceActuator {
 			@Override
 			public void run() {
 				Object[] arrLocal = serviceSensors.toArray();
-				noOfSimulationAnswersExpected = arrLocal.length;
-				for (int i = noOfSimulationAnswersExpected-1; i>=0; i--) {
+				for (int i = arrLocal.length-1; i>=0; i--) {
 					((ServiceSensor)arrLocal[i]).doDelete();
 				}
 			}
@@ -179,18 +187,11 @@ public class ServiceActuator {
 	}
 	
 	/**
-	 * Sets the number of simulation answers expected.
-	 * @param noOfSimulationAnswersExpected the noOfSimulationAnswersExpected to set
-	 */
-	public void setNoOfSimulationAnswersExpected(int noOfSimulationAnswersExpected) {
-		this.noOfSimulationAnswersExpected = noOfSimulationAnswersExpected;
-	}
-	/**
 	 * Returns the number of simulation answers expected.
 	 * @return the noOfSimulationAnswersExpected
 	 */
 	public int getNoOfSimulationAnswersExpected() {
-		return noOfSimulationAnswersExpected;
+		return serviceSensors.size() - serviceSensorsPassive.size();
 	}
 
 	/**

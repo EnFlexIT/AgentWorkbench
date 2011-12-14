@@ -1186,7 +1186,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			
 			currDistributionSetup.setNumberOfAgents(noAgents);
 			currDistributionSetup.setNumberOfContainer(noContainer);
-						
+			
 		} else if (trigger==jButtonDefaultClassStatic) {
 			this.setDefaults(STATIC_BALANCING_CLASS);
 		} else if (trigger==jButtonDefaultClassDynamic) { 
@@ -1223,6 +1223,9 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			default:
 				break;
 			}
+		
+		} else if (notifyObject==Project.CHANGED_DistributionSetup) {
+			this.setupLoad();
 			
 		} else {
 			//System.out.println( this.getClass().getName() + ": " + arg1.toString() );	

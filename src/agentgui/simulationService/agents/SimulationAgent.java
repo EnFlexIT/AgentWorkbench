@@ -56,6 +56,8 @@ public class SimulationAgent extends Agent {
 
 	private static final long serialVersionUID = 1782853782362543057L;
 
+	private boolean passive = false;
+	
 	/** The ServiceSensor of this agent. */
 	protected ServiceSensor mySensor;
 	/** The current EnvironmentModel. */
@@ -66,6 +68,22 @@ public class SimulationAgent extends Agent {
 	private CyclicNotificationHandler notifyHandler = null;
 	private Vector<EnvironmentNotification> notifications = new Vector<EnvironmentNotification>();
 
+	/**
+	 * Instantiates a new simulation agent as an active agent.
+	 */
+	public SimulationAgent() { }
+	/**
+	 * Instantiates a new simulation agent as a passive agent.
+	 * The agent will just listening to changes in the environment model
+	 * but it is not expected, that it will react on it. This is used 
+	 * for example for agents, which are displaying the current environment. 
+	 * 
+	 * @param passive the passive
+	 */
+	public SimulationAgent(boolean passive) {
+		this.passive = passive;
+	}
+	
 	/* (non-Javadoc)
 	 * @see jade.core.Agent#setup()
 	 */
@@ -134,7 +152,12 @@ public class SimulationAgent extends Agent {
 		// --- Register the sensor to the SimulationService ---------
 		try {
 			SimulationServiceHelper simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
-			simHelper.sensorPlugIn(mySensor);	
+			if (this.passive==true) {
+				simHelper.sensorPlugIn(mySensor, true);
+			} else {
+				simHelper.sensorPlugIn(mySensor);	
+			}
+				
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}

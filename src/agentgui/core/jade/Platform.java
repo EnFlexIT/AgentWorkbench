@@ -461,6 +461,8 @@ public class Platform extends Object {
 				msgText = Language.translate("Zur Zeit ist kein Agenten-Projekt geöffnet.");
 				JOptionPane.showMessageDialog( Application.MainWindow.getContentPane(), msgText, msgHead, JOptionPane.OK_OPTION);
 				return;	
+			} else {
+				Application.ProjectCurr.save();
 			}
 		}
 		// --- Setting the real name of the agent to start --- 

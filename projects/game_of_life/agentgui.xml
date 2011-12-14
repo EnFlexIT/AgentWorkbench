@@ -2,8 +2,13 @@
 <project>
     <projectName>Game of Life</projectName>
     <projectView>Developer</projectView>
-    <projectResources/>
-    <plugins/>
+    <environmentModel>Squared</environmentModel>
+    <projectResources>
+        <projectResource>D:\10 Java Projects\Game of Life\bin</projectResource>
+    </projectResources>
+    <plugins>
+        <className>gol.plugin.GameOfLifePlugIn</className>
+    </plugins>
     <subOntologies>
         <subOntology>agentgui.ontology.AgentGUI_BaseOntology</subOntology>
     </subOntologies>
@@ -28,7 +33,7 @@
         <doStaticLoadBalancing>true</doStaticLoadBalancing>
         <dynamicLoadBalancingClass>agentgui.simulationService.balancing.DynamicLoadBalancing</dynamicLoadBalancingClass>
         <numberOfAgents>800</numberOfAgents>
-        <numberOfContainer>2</numberOfContainer>
+        <numberOfContainer>1</numberOfContainer>
         <staticLoadBalancingClass>game_of_life.SimService.balancing.StartAndBalancing</staticLoadBalancingClass>
         <useUserThresholds>false</useUserThresholds>
         <userThresholds>
@@ -46,15 +51,11 @@
         <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>false</showJADErmaGUI>
     </remoteContainerConfiguration>
-    <simulationSetupCurrent>GoL ACL-Messages</simulationSetupCurrent>
+    <simulationSetupCurrent>default</simulationSetupCurrent>
     <simulationSetups>
         <entry>
-            <key>GoL ACL-Messages</key>
-            <value>gol_acl_messages.xml</value>
-        </entry>
-        <entry>
-            <key>GoL SimService</key>
-            <value>gol_simservice.xml</value>
+            <key>default</key>
+            <value>default.xml</value>
         </entry>
     </simulationSetups>
     <subFolderEnvSetups>setupsEnv</subFolderEnvSetups>

@@ -320,6 +320,12 @@ public class SimulationService extends BaseService {
 			localServiceActuator.plugIn(sensor);
 		}
 		/* (non-Javadoc)
+		 * @see agentgui.simulationService.SimulationServiceHelper#sensorPlugIn(agentgui.simulationService.sensoring.ServiceSensor, boolean)
+		 */
+		public void sensorPlugIn(ServiceSensor sensor, boolean pasive) throws ServiceException {
+			localServiceActuator.plugInPassive(sensor);
+		}
+		/* (non-Javadoc)
 		 * @see agentgui.simulationService.SimulationServiceHelper#sensorPlugOut(agentgui.simulationService.sensoring.ServiceSensor)
 		 */
 		public void sensorPlugOut(ServiceSensor sensor) throws ServiceException {
