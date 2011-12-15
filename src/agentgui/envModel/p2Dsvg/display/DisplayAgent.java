@@ -180,10 +180,10 @@ public class DisplayAgent extends Agent {
 				Icon icon = null;
 				if (play) {
 					icon = new ImageIcon(getClass().getResource(
-							pathImage + "MBLoadPlay.png"));
+							pathImage + "MBLoadPause.png"));
 				} else {
 					icon = new ImageIcon(getClass().getResource(
-							pathImage + "MBLoadPause.png"));
+							pathImage + "MBLoadPlay.png"));
 				}
 				myGUI.jButtonPlay.setIcon(icon);
 				sameVisualisationCounter = 0;
