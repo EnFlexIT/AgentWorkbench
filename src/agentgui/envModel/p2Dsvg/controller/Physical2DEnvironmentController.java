@@ -487,10 +487,11 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 	 */
 	private void addToAgentList(Physical2DObject p2DObj) {	
 		
+	
 		if(p2DObj instanceof ActiveObject) {					
 	
 	        String className = ((ActiveObject) p2DObj).getAgentClassName();
-	        if(className.equals("")||className==null) {
+	        if(className.equals("")||className==null||className.equals("None")) {
 	        	System.out.println("Class name not set");
 	        	return;
 	        }
@@ -500,13 +501,15 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 				Class<? extends Agent> cls = (Class<? extends Agent>) Class.forName(className);
 	        	
 	 			AgentClassElement4SimStart simStart=new AgentClassElement4SimStart(cls, SimulationSetup.AGENT_LIST_EnvironmentConfiguration);
+	 		
 	 			simStart.setStartAsName(p2DObj.getId());
 	 			simStart.setPostionNo(this.getAgents2Start().size()+1);
 	 			
 	 			if(isInListForAgents2Start(p2DObj.getId())==false) {
-		 			this.getAgents2Start().addElement(simStart);
+	 				this.getAgents2Start().addElement(simStart);
 		 			this.updatePositionNr();
 	 			} 
+	 			
 				
 		    } catch(Exception e)  {
 		       	e.printStackTrace();
@@ -524,7 +527,8 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
  	 */
  	private void changeElementFromAgentList(Physical2DObject  object, HashMap<String, Object> settings) {		
 			this.removeFromAgentList(selectedObject);
-			this.addToAgentList(createObject(settings));
+			String id = settings.get(Physical2DEnvironmentControllerGUI.SETTINGS_KEY_ID).toString();
+			this.addToAgentList(createObjectForList(settings));
 		
 	}
 	
@@ -532,17 +536,21 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 	{	
 		if(obj instanceof ActiveObject)
 		{	        	
+			
 				for(int i=0;i<this.getAgents2Start().size();i++)
 				{
 					
 				AgentClassElement4SimStart cmprElement= (AgentClassElement4SimStart) this.getAgents2Start().get(i);
+				
 				if(cmprElement.getStartAsName().equals(obj.getId()))
 				{
 					this.getAgents2Start().remove(i);
+					
 					break;
 				}
 				
 		 }
+				
 		  this.updatePositionNr();	
 		   
 		}
@@ -631,6 +639,38 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 		
 		return newObject;
 	}
+	private Physical2DObject createObjectForList(HashMap<String, Object> settings){
+		Physical2DObject newObject = null;
+		
+		// Check if the specified ID is available
+		
+		
+			try {
+				Class<?> ontologyClass = (Class<?>) settings.get(Physical2DEnvironmentControllerGUI.SETTINGS_KEY_ONTO_CLASS);
+				newObject = (Physical2DObject) ontologyClass.newInstance();
+				newObject.setId(settings.get(Physical2DEnvironmentControllerGUI.SETTINGS_KEY_ID).toString());
+				newObject.setPosition((Position) settings.get(Physical2DEnvironmentControllerGUI.SETTINGS_KEY_POSITION));
+				newObject.setSize((Size) settings.get(Physical2DEnvironmentControllerGUI.SETTINGS_KEY_SIZE));
+				newObject.setParentPlaygroundID(environment.getRootPlayground().getId());
+				if(newObject instanceof ActiveObject){
+					((ActiveObject)newObject).setMovement(new Movement());
+					if(! settings.get(Physical2DEnvironmentControllerGUI.SETTINGS_KEY_AGENT_MAX_SPEED).toString().isEmpty()){
+						((ActiveObject)newObject).setMaxSpeed(Float.parseFloat(settings.get(Physical2DEnvironmentControllerGUI.SETTINGS_KEY_AGENT_MAX_SPEED).toString()));
+						String agentClassName = settings.get(Physical2DEnvironmentControllerGUI.SETTINGS_KEY_AGENT_CLASSNAME).toString();
+						((ActiveObject)newObject).setAgentClassName(agentClassName);
+					}
+					
+				}
+			} catch (InstantiationException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		
+		
+		return newObject;
+	}
+	
 	/**
 	 * This method changes an existing Physical2DObject according to the given settings.
 	 * @param object The Physical2DObject
@@ -694,8 +734,9 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 	 * Removing the currently selected object from the environment
 	 */
 	public void removeObject(){
-		envWrap.removeObject(selectedObject);
 		this.removeFromAgentList(selectedObject);
+		envWrap.removeObject(selectedObject);
+		
 		setChanged();
 		notifyObservers(new Integer(OBJECTS_CHANGED));
 	}
@@ -784,6 +825,7 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 				this.setDefaultFileNames();
 				this.setEnvironment(null);
 				this.setSvgDoc(null);
+				this.registerDefaultListModel4SimulationStart(SimulationSetup.AGENT_LIST_EnvironmentConfiguration);
 			break;
 			
 			case SimulationSetups.SIMULATION_SETUP_REMOVE:
@@ -802,6 +844,7 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 				this.setDefaultFileNames();
 				setEnvironment(loadEnvironmentFromXML(new File(this.currentEnvironmentPath)));
 				setSvgDoc(loadSVG(new File(this.currentSVGPath)));
+				this.registerDefaultListModel4SimulationStart(SimulationSetup.AGENT_LIST_EnvironmentConfiguration);
 			break;
 			
 			case SimulationSetups.SIMULATION_SETUP_RENAME:
