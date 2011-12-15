@@ -91,6 +91,9 @@ public class ServiceActuator {
 	 */
 	public void plugOut(ServiceSensor currSensor) {
 		serviceSensors.removeElement(currSensor);
+		if (serviceSensorsPassive.contains(currSensor)) {
+			serviceSensorsPassive.removeElement(currSensor);
+		}
 	}
 	
 	/**
