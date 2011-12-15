@@ -127,10 +127,8 @@ public class EnvironmentProviderService extends BaseService {
 			super.boot(p);
 			getLocalNode().exportSlice(SERVICE_NAME, getLocalSlize());
 		} catch (ServiceException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IMTPException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -176,7 +174,6 @@ public class EnvironmentProviderService extends BaseService {
 			} catch (ServiceException e) {
 				throw new ServiceException("Error retrieving EnvironmentProviderService slices", e);
 			} catch (IMTPException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -206,10 +203,8 @@ public class EnvironmentProviderService extends BaseService {
 				EnvironmentProviderSlice mainSlice = (EnvironmentProviderSlice) getSlice(getMasterSlice());
 				env = mainSlice.getEnvironment();
 			} catch (ServiceException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IMTPException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -231,10 +226,8 @@ public class EnvironmentProviderService extends BaseService {
 				EnvironmentProviderSlice mainSlice = (EnvironmentProviderSlice) getSlice(getMasterSlice());
 				projectName = mainSlice.getProjectName();
 			} catch (ServiceException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IMTPException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			return projectName;
@@ -258,10 +251,8 @@ public class EnvironmentProviderService extends BaseService {
 				EnvironmentProviderSlice mainSlice = (EnvironmentProviderSlice) getSlice(getMasterSlice());
 				object = mainSlice.getObject(id);
 			} catch (ServiceException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IMTPException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -292,10 +283,8 @@ public class EnvironmentProviderService extends BaseService {
 				EnvironmentProviderSlice mainSlice = (EnvironmentProviderSlice) getSlice(getMasterSlice());
 				objects = mainSlice.getCurrentlyMovingObjects();
 			} catch (ServiceException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IMTPException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
@@ -352,10 +341,8 @@ public class EnvironmentProviderService extends BaseService {
 				EnvironmentProviderSlice mainSlice = (EnvironmentProviderSlice) getSlice(getMasterSlice());
 				result = mainSlice.setMovement(objectID, movement);
 			} catch (ServiceException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IMTPException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -376,10 +363,8 @@ public class EnvironmentProviderService extends BaseService {
 				EnvironmentProviderSlice mainSlice = (EnvironmentProviderSlice) getSlice(getMasterSlice());
 				doc = mainSlice.getSVGDoc();
 			} catch (ServiceException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IMTPException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -407,10 +392,8 @@ public class EnvironmentProviderService extends BaseService {
 				EnvironmentProviderSlice mainSlice = (EnvironmentProviderSlice) getSlice(getMasterSlice());
 				objects = mainSlice.getPlaygroundObjects(playgroundID);
 			} catch (ServiceException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IMTPException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -450,10 +433,8 @@ public class EnvironmentProviderService extends BaseService {
 				EnvironmentProviderSlice mainSlice = (EnvironmentProviderSlice) getSlice(getMasterSlice());
 				success = mainSlice.assignPassiveObject(passiveObjectID, activeObjectID);
 			} catch (ServiceException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IMTPException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -481,10 +462,8 @@ public class EnvironmentProviderService extends BaseService {
 				EnvironmentProviderSlice mainSlice = (EnvironmentProviderSlice) getSlice(getMasterSlice());
 				mainSlice.releasePassiveObject(passiveObjectID);
 			} catch (ServiceException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IMTPException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -688,7 +667,6 @@ public class EnvironmentProviderService extends BaseService {
 		 */
 		@Override
 		public void init(Agent arg0) {
-			// TODO Auto-generated method stub
 			
 		}
 		
@@ -860,7 +838,6 @@ public class EnvironmentProviderService extends BaseService {
 			try {
 				return EnvironmentProviderService.this.getLocalNode();
 			} catch (IMTPException e) {
-				// TODO Auto-generated catch block
 				throw new ServiceException("Unexpected error retrieving local node");
 			}
 		}

@@ -53,13 +53,23 @@
 					lib/google-api-translate-java-0.95.jar
 					lib/jdbc/mysql-connector-java-3.0.17-ga-bin.jar
 					
+					lib/batik/batik-rasterizer.jar
 					lib/batik/batik-slideshow.jar
 					lib/batik/batik-squiggle.jar
 					lib/batik/batik-svgpp.jar
 					lib/batik/batik-ttf2svg.jar
 					lib/batik/batik.jar
+					lib/batik/lib/xml-apis-ext.jar
+					lib/batik/lib/batik-swing.jar
+					lib/batik/lib/batik-util.jar
+					lib/batik/lib/batik-svg-dom.jar
+					lib/batik/lib/batik-transcoder.jar
+					lib/batik/lib/batik-bridge.jar
+					lib/batik/lib/batik-script.jar
+					lib/batik/lib/batik-css.jar
+					lib/batik/lib/batik-dom.jar
+					lib/batik/lib/batik-ext.jar
 					lib/batik/lib/xercesImpl-2.7.1.jar
-					lib/batik/batik-rasterizer.jar
 		
 					lib/jung/collections-generic-4.01.jar
 					lib/jung/colt-1.2.0.jar
