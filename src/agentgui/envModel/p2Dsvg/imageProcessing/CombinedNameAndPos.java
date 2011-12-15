@@ -28,13 +28,14 @@
  */
 package agentgui.envModel.p2Dsvg.imageProcessing;
 
+import jade.util.leap.Serializable;
 import agentgui.envModel.p2Dsvg.ontology.Position;
 /**
  * The class is used as a datastructure. It can be used in the concrete simulationManager for handling the collision information 
  *  * @author Tim Lewen - DAWIS - ICB - University of Duisburg - Essen
  *
  */
-public class CombinedNameAndPos {
+public class CombinedNameAndPos implements Serializable {
 	
 	     	String name;
 	    	Position pos;

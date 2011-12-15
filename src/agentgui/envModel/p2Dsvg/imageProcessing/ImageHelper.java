@@ -89,7 +89,7 @@ public class ImageHelper {
 	String fromID="";
 	String toID="";
 	EnvironmentProviderHelper helper;
-	boolean DEBUG=true;
+	boolean DEBUG=false;
 	
 	/**
 	 * @param fromID ID of the StartPoint
@@ -250,6 +250,7 @@ public class ImageHelper {
 	private synchronized agentgui.envModel.p2Dsvg.imageProcessing.StepNode withoutGrid(String id,float target_x,float target_y,float width,float height, int direction , float lookAhead, agentgui.envModel.p2Dsvg.imageProcessing.StepNode parent,int pixel) throws Exception
 	{
 			
+		System.out.println("Target in WITHOUTGRID:"+target_x+","+ target_y);
 		
 		ArrayList<agentgui.envModel.p2Dsvg.imageProcessing.StepNode> openList=new ArrayList<agentgui.envModel.p2Dsvg.imageProcessing.StepNode>();
 		ArrayList<agentgui.envModel.p2Dsvg.imageProcessing.StepNode> closedList=new ArrayList<agentgui.envModel.p2Dsvg.imageProcessing.StepNode>();
@@ -260,6 +261,8 @@ public class ImageHelper {
 		// Calculate pos
 		final float xStart= parent.getX();
 		final float yStart= parent.getY();
+		System.out.println("X Start:"+xStart);
+		System.out.println("Y Start:"+yStart);
 		float currentXPos=xStart;
 		float currentYPos=yStart; 
 		final int listXIndex= (int) (parent.getX()/lookAhead);
@@ -286,8 +289,10 @@ public class ImageHelper {
 					 {
 						 if(new_current!=null)
 						 {
+							 if(DEBUG)
+							 {
 						 this.drawLineToSave("l", String.valueOf(new_current.getX()), String.valueOf(width), String.valueOf(new_current.getY()), String.valueOf(height), doc,true,"red");	
-					 
+							 }
 						 }
 					 }
 					
@@ -310,8 +315,10 @@ public class ImageHelper {
 					 {
 						 if(new_current!=null)
 						 {
+							 if(DEBUG)
+							 {
 						 this.drawLineToSave("l", String.valueOf(new_current.getX()), String.valueOf(width), String.valueOf(new_current.getY()), String.valueOf(height), doc,true,"red");	
-					 
+							 }
 						 }
 					 }
 					
@@ -334,8 +341,10 @@ public class ImageHelper {
 					 {
 						 if(new_current!=null)
 						 {
+							 if(DEBUG)
+							 {
 						 this.drawLineToSave("l", String.valueOf(new_current.getX()), String.valueOf(width), String.valueOf(new_current.getY()), String.valueOf(height), doc,true,"red");	
-					 
+							 }
 						 }
 					 }
 					
@@ -359,8 +368,10 @@ public class ImageHelper {
 					 {
 						 if(new_current!=null)
 						 {
-					//	 this.drawLineToSave("l", String.valueOf(new_current.getX()), String.valueOf(width), String.valueOf(new_current.getY()), String.valueOf(height), doc,true,"red");	
-					 
+							 if(DEBUG)
+							 {
+							this.drawLineToSave("l", String.valueOf(new_current.getX()), String.valueOf(width), String.valueOf(new_current.getY()), String.valueOf(height), doc,true,"red");	
+							 }
 						 }
 					 }
 					 
@@ -498,12 +509,13 @@ public class ImageHelper {
 						 f=new File(name+".svg");
 					}
 					
-					sg.write(name+".svg", doc);
+					//sg.write(name+".svg", doc);
 					System.out.println("Datei geschrieben!");
 			    	}
-		    		current.setX(-666);
-		    		current.setY(-666);
-		    		return current;
+		    		//current.setX(-666);
+		    		//current.setY(-666);
+		    		System.out.println("nichts gefunden");
+		    		return null;//current;
 		    	}
 		    	//No path is found. Try too look less pixel ahead
 		    	else
@@ -516,7 +528,10 @@ public class ImageHelper {
 				int faktor=2;
 				if(lookAhead-faktor==0)
 				{
-					faktor=1;
+					current.setX(-666);
+		    		current.setY(-666);
+		    		System.out.println("nichts gefunden");
+		    		return null;
 				}
 				SVGSafe sg=new SVGSafe();
 	
@@ -529,8 +544,13 @@ public class ImageHelper {
 					 f=new File(name+".svg");
 				}
 				
+				if(DEBUG)
+				{
 				sg.write(name+".svg", doc);
+				}
 				System.out.println("Neue Datei geschreieben");
+				System.out.println("Neuer Rekursiver Aufruf");
+				System.out.println("LookAhead-faktor:"+ (lookAhead-faktor));
 		    	return this.withoutGrid(id, target_x, target_y, width, height, direction, lookAhead-faktor, parent, pixel);
 		    	}
 		     }		   
@@ -688,11 +708,14 @@ public class ImageHelper {
 			Thread.sleep(50);
 		}
 	 */
+		System.out.println("ID:"+id);
 		this.evn=this.createManipulatedWorldPerAgent();
 		Document doc=helper.getSVGDoc();
 		Element target=doc.getElementById(target_id);
 		float target_x=Float.parseFloat(target.getAttribute("x"));
 		float target_y=Float.parseFloat(target.getAttribute("y"));
+		System.out.println("FirstCall Target:"+target_x+","+target_y);
+		
 		Element self=doc.getElementById(id);
 		final float width=Float.parseFloat(self.getAttribute("width"));
 		final float height=Float.parseFloat(self.getAttribute("height"));
@@ -700,7 +723,72 @@ public class ImageHelper {
 		float y=Float.parseFloat(self.getAttribute("y"));
 		//System.out.println(id + " x:" +x +"," + "Y:"+y);
 		EnvironmentWrapper wrapper=new EnvironmentWrapper(this.helper.getEnvironment());
-		System.out.println(wrapper.getObjectById(id).getPosition().getXPos()+ "," + wrapper.getObjectById(id).getPosition().getYPos());
+		System.out.println("MyPos:"+wrapper.getObjectById(id).getPosition().getXPos()+ "," + wrapper.getObjectById(id).getPosition().getYPos());
+		System.out.println("Self X:"+x);
+		System.out.println("Self Y:"+y);
+		this.firstX=x;
+		this.firstY=y;
+		agentgui.envModel.p2Dsvg.imageProcessing.StepNode root=new agentgui.envModel.p2Dsvg.imageProcessing.StepNode();
+		root.setX(x);
+		root.setY(y);
+		final int listXIndex= (int) (root.getX()/lookAhead);
+		final int listYIndex=  (int) (root.getY()/lookAhead);
+		final int targetXIndex= (int) (target_x/lookAhead);
+		final int targetYIndex=(int) (target_y/lookAhead);
+		root.setDistanceToOrginal(0.0);
+		root.setDistance(this.getHCost(listXIndex, listYIndex, targetXIndex, targetYIndex));
+		root.setTotal_distance((this.getHCost(listXIndex, listYIndex, targetXIndex, targetYIndex)));
+		 root.setParent(null);
+		//int color=this.getPixelsOnce(plan, x, y, width, height);
+		agentgui.envModel.p2Dsvg.imageProcessing.StepNode targetNode= this.withoutGrid(id, target_x, target_y, width, height, direction, 10.0f,root , -1) ;   //this.originalAStar(id, target_x, target_y, width, height, target_id, direction, lookAhead, root, -1);          //      //this.originalAStar(id, target_x, target_y, width, height, target_id, direction, lookAhead, root, color) ;        //handle_subNodes_brute(id,target_x, target_y,  width, height, target_id, direction, lookAhead,root,color);
+		 return targetNode;
+		
+	}
+	
+	
+	
+
+	public synchronized agentgui.envModel.p2Dsvg.imageProcessing.StepNode createPlanImage(String id,Position own,String target_id , int direction , float lookAhead) throws Exception
+	{
+		//System.out.println("Agent:"+id + " will create his own world!");
+		/**
+		synchronized (this) {
+		if(!READ_WORLD&&!IS_IN_METHOD&FIRST_CALL)
+		{
+		FIRST_CALL=false;
+		
+		System.out.println(id + " erstell Welt");
+		this.createManipulatedWorld();
+		}
+		else
+		{
+		System.out.println(id + " liest Welt");
+		this.evn=ImageIO.read(new File("myWorld.jpg"));	
+		}
+			
+		}
+		
+		while(!READ_WORLD)
+		{
+			System.out.println("Warte!"+id);
+			Thread.sleep(50);
+		}
+	 */
+		this.evn=this.createManipulatedWorldPerAgent();
+		Document doc=helper.getSVGDoc();
+		Element target=doc.getElementById(target_id);
+		float target_x=Float.parseFloat(target.getAttribute("x"));
+		float target_y=Float.parseFloat(target.getAttribute("y"));
+		System.out.println("FirstCall Target:"+target_x+","+target_y);
+		
+		Element self=doc.getElementById(id);
+		final float width=Float.parseFloat(self.getAttribute("width"));
+		final float height=Float.parseFloat(self.getAttribute("height"));
+		float x=own.getXPos();
+		float y=own.getYPos();
+		//System.out.println(id + " x:" +x +"," + "Y:"+y);
+		EnvironmentWrapper wrapper=new EnvironmentWrapper(this.helper.getEnvironment());
+		
 		
 		this.firstX=x;
 		this.firstY=y;
@@ -722,6 +810,9 @@ public class ImageHelper {
 	}
 	
 	
+	
+	
+	
 	public synchronized agentgui.envModel.p2Dsvg.imageProcessing.StepNode createPlanImage(String id,Position target , int direction , float lookAhead) throws Exception
 	{
 		
@@ -731,6 +822,7 @@ public class ImageHelper {
 
 		float target_x=target.getXPos();
 		float target_y=target.getYPos();
+		System.out.println("Target X:"+target_x +","+target_y);
 		Element self=doc.getElementById(id);
 		final float width=Float.parseFloat(self.getAttribute("width"));
 		final float height=Float.parseFloat(self.getAttribute("height"));
@@ -778,8 +870,51 @@ public class ImageHelper {
 		final float height=Float.parseFloat(self.getAttribute("height"));
 		float x=own.getXPos();
 		float y=own.getYPos();
-		self.setAttribute("x", String.valueOf(x));
-		self.setAttribute("y", String.valueOf(y));
+		//self.setAttribute("x", String.valueOf(x));
+		//self.setAttribute("y", String.valueOf(y));
+		this.firstX=x;
+		this.firstY=y;
+		System.out.println("Own X:"+x +"," + "Y:"+y);
+		agentgui.envModel.p2Dsvg.imageProcessing.StepNode root=new agentgui.envModel.p2Dsvg.imageProcessing.StepNode();
+		root.setX(x); // correct it //
+		root.setY(y); // Correct it //
+		final int listXIndex= (int) (root.getX()/lookAhead);
+		final int listYIndex=  (int) (root.getY()/lookAhead);
+		final int targetXIndex= (int) (target_x/lookAhead);
+		final int targetYIndex=(int) (target_y/lookAhead);
+		root.setDistanceToOrginal(0.0);
+		root.setDistance(this.getHCost(listXIndex, listYIndex, targetXIndex, targetYIndex));
+		root.setTotal_distance((this.getHCost(listXIndex, listYIndex, targetXIndex, targetYIndex)));
+		 root.setParent(null);
+		//int color=this.getPixelsOnce(plan, x, y, width, height);
+		agentgui.envModel.p2Dsvg.imageProcessing.StepNode targetNode= this.withoutGrid(id, target_x, target_y, width, height,ImageHelper.DIRECTION_BACKWARD, 10.0f,root , -1) ;   //this.originalAStar(id, target_x, target_y, width, height, target_id, direction, lookAhead, root, -1);          //      //this.originalAStar(id, target_x, target_y, width, height, target_id, direction, lookAhead, root, color) ;        //handle_subNodes_brute(id,target_x, target_y,  width, height, target_id, direction, lookAhead,root,color);
+		 return targetNode;
+		
+	}
+	public synchronized agentgui.envModel.p2Dsvg.imageProcessing.StepNode createPlanImage(ArrayList<CombinedNameAndPos> otherAgent, Position own,String id ,Position target , float lookAhead, double discreteTime) throws Exception
+	{
+		synchronized (this) {		
+		this.evn=this.createManipulatedWorldWithAgents(otherAgent,id,discreteTime);
+		if(this.evn==null)
+		{
+			System.out.println("Sollte nicht vorkommen!");
+			return null;
+		}
+		}
+		
+		Document doc=helper.getSVGDoc();
+	
+		float target_x=target.getXPos();
+		float target_y=target.getYPos();  
+		System.out.println("Target x:"+target_x);
+		System.out.println("Target y:"+target_y);
+		Element self=doc.getElementById(id);
+		final float width=Float.parseFloat(self.getAttribute("width"));
+		final float height=Float.parseFloat(self.getAttribute("height"));
+		float x=own.getXPos();
+		float y=own.getYPos();
+		//self.setAttribute("x", String.valueOf(x));
+		//self.setAttribute("y", String.valueOf(y));
 		this.firstX=x;
 		this.firstY=y;
 		agentgui.envModel.p2Dsvg.imageProcessing.StepNode root=new agentgui.envModel.p2Dsvg.imageProcessing.StepNode();
@@ -798,6 +933,12 @@ public class ImageHelper {
 		 return targetNode;
 		
 	}
+	
+	
+	
+	
+	
+	
 	
 		
 	
@@ -1074,8 +1215,13 @@ public class ImageHelper {
 				 }
 				 catch(Exception e)
 						 {
-					 e.printStackTrace();
-					 System.out.println("X:"+x +"," + y +" ");
+					 //e.printStackTrace();
+					// System.out.println("Direction:"+direction);
+					// System.out.println("StartX:"+startx);
+					// System.out.println("XExit:"+xExit);
+					// System.out.println("YExit:"+yExit);
+					// System.out.println("X:"+x +"," + y +" ");
+					
 					 
 						 }
 			
@@ -1403,8 +1549,23 @@ public class ImageHelper {
 	Element self=doc.getElementById(ownID);
 	final float width=Float.parseFloat(self.getAttribute("width"));
 	final float height=Float.parseFloat(self.getAttribute("height"));
-	float x=Float.parseFloat(self.getAttribute("x"));
-	float y=Float.parseFloat(self.getAttribute("y"));
+	float x=0.0f;
+	float y=0.0f;
+	for(int i=0;i<otherAgent.size();i++)
+	{
+		if(otherAgent.get(i).name.equals(ownID))
+		{
+		  x=otherAgent.get(i).getPos().getXPos();
+		  y=otherAgent.get(i).getPos().getYPos();
+		}
+	}
+	
+	     //Float.parseFloat(self.getAttribute("x"));
+			//Float.parseFloat(self.getAttribute("y"));
+	System.out.println("Own ID:"+ownID);
+	System.out.println("X:"+x);
+	System.out.println("Y:"+y);
+	System.out.println("Vergleich:"+otherAgent.get(0).getPos().getXPos()+","+otherAgent.get(0).getPos().getYPos()+","+otherAgent.get(0).getName());
 	int lookAhead=10; 
 	
 	boolean found=false;
@@ -1415,7 +1576,7 @@ public class ImageHelper {
 	while(!found&&lookAhead>0)
 	{
 	 try {
-		found=this.tranformAndCheckImage(this.evn, currentXpos, currentYPos, width, height, lookAhead, ImageHelper.DIRECTION_UP_LEFT, Color.gray.getRGB());
+		found=this.tranformAndCheckImage(this.evn, currentXpos, currentYPos, width, height, lookAhead, ImageHelper.DIRECTION_LEFT, Color.gray.getRGB());
 		if(found)
 		{
 		result.setXPos(currentXpos-lookAhead);
@@ -1445,6 +1606,14 @@ public class ImageHelper {
 	final float height=Float.parseFloat(self.getAttribute("height"));
 	float x=Float.parseFloat(self.getAttribute("x"));
 	float y=Float.parseFloat(self.getAttribute("y"));
+	for(int i=0;i<otherAgent.size();i++)
+	{
+		if(otherAgent.get(i).name.equals(ownID))
+		{
+		  x=otherAgent.get(i).getPos().getXPos();
+		  y=otherAgent.get(i).getPos().getYPos();
+		}
+	}
 	int lookAhead=10; 
 	
 	boolean found=false;
@@ -1485,6 +1654,15 @@ public class ImageHelper {
 	final float height=Float.parseFloat(self.getAttribute("height"));
 	float x=Float.parseFloat(self.getAttribute("x"));
 	float y=Float.parseFloat(self.getAttribute("y"));
+	for(int i=0;i<otherAgent.size();i++)
+	{
+	
+		if(otherAgent.get(i).name.equals(ownID))
+		{
+		  x=otherAgent.get(i).getPos().getXPos();
+		  y=otherAgent.get(i).getPos().getYPos();
+		}
+	}
 	int lookAhead=10; 
 	
 	boolean found=false;
@@ -1528,6 +1706,15 @@ public class ImageHelper {
 	final float height=Float.parseFloat(self.getAttribute("height"));
 	float x=Float.parseFloat(self.getAttribute("x"));
 	float y=Float.parseFloat(self.getAttribute("y"));
+	for(int i=0;i<otherAgent.size();i++)
+	{
+	
+		if(otherAgent.get(i).name.equals(ownID))
+		{
+		  x=otherAgent.get(i).getPos().getXPos();
+		  y=otherAgent.get(i).getPos().getYPos();
+		}
+	}
 	int lookAhead=10; 
 	
 	boolean found=false;
@@ -1880,6 +2067,16 @@ public class ImageHelper {
 	public Stack<Position> orderAndMiddleCoordinates(StepNode way,float agentWidth,float agentHeight,float factor)
 	{
 		Stack<Position> pos=new Stack<Position>();
+		if(way.getParent()==null)
+		{
+			Position p=new Position();
+		 	float x=(way.getX()+agentWidth/2); // middle it
+			float y=(way.getY()+agentHeight/2); // middle it
+			p.setXPos(x/factor);
+			p.setYPos(y/factor);
+			
+			pos.add(0,p);		
+		}
 		while(way.getParent()!=null) 
 		{
 			 	Position p=new Position();
@@ -1891,6 +2088,7 @@ public class ImageHelper {
 				pos.add(0,p);	
 				way=way.getParent();
 		}
+		
 		return pos;
 	}
 	
