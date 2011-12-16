@@ -573,8 +573,10 @@ public class ImageHelper {
 					 name="WayPath"+id+counter;
 					 f=new File(name+".svg");
 				}
-				
+				if(DEBUG)
+				{
 				sg.write(name+".svg", doc);
+				}
 				System.out.println("WayPath"+ id +""+counter+".svg gespeichert");
 				System.out.println("Schreib!");
 				  //System.out.println("ID vollkommen:" + id);
@@ -591,10 +593,7 @@ public class ImageHelper {
 			
 			
 		}
-		if(DEBUG)
-    	{
-    	
-    	}
+		
 		  //System.out.println("ID vollkommen:" + id);
 		SVGSafe sg=new SVGSafe();
 		
@@ -606,8 +605,10 @@ public class ImageHelper {
 			 name="WayPath"+ id +""+counter;
 			 f=new File(name+".svg");
 		}
-		
+		if(DEBUG)
+		{
 		sg.write(name+".svg", doc);
+		}
 		System.out.println("Datei geschrieben");
 		  return current;
 		
@@ -1565,7 +1566,7 @@ public class ImageHelper {
 	System.out.println("Own ID:"+ownID);
 	System.out.println("X:"+x);
 	System.out.println("Y:"+y);
-	System.out.println("Vergleich:"+otherAgent.get(0).getPos().getXPos()+","+otherAgent.get(0).getPos().getYPos()+","+otherAgent.get(0).getName());
+	//System.out.println("Vergleich:"+otherAgent.get(0).getPos().getXPos()+","+otherAgent.get(0).getPos().getYPos()+","+otherAgent.get(0).getName());
 	int lookAhead=10; 
 	
 	boolean found=false;
