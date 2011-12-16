@@ -42,7 +42,9 @@ import java.awt.Stroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.net.URL;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
@@ -79,6 +81,7 @@ import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
 import edu.uci.ics.jung.visualization.control.PluggableGraphMouse;
 import edu.uci.ics.jung.visualization.control.ScalingControl;
 import edu.uci.ics.jung.visualization.decorators.AbstractVertexShapeTransformer;
+import edu.uci.ics.jung.visualization.decorators.ConstantDirectionalEdgeValueTransformer;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 
 /**
@@ -323,6 +326,43 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	public VisualizationViewer<GraphNode, GraphEdge> getVisView() {
 		return visView;
 	}
+	
+	/**
+	 * Gets the graph spread as Rectangle.
+	 *
+	 * @param graph the graph
+	 * @return the graph spread
+	 */
+	private Rectangle2D getGraphSpreadDimension(Graph<GraphNode, GraphEdge> graph) {
+		
+		Double x_min = null; 
+		Double y_min = null; 
+		double x_max = 0; 
+		double y_max = 0;
+		
+		if (graph==null) {
+			return new Rectangle2D.Double(0, 0, 0, 0);
+		}
+		
+		Collection<GraphNode> nodeCollection = graph.getVertices();
+		GraphNode[] nodes = nodeCollection.toArray(new GraphNode[nodeCollection.size()]);
+		for (int i = 0; i < nodes.length; i++) {
+			double x = nodes[i].getPosition().getX();
+			double y = nodes[i].getPosition().getY();
+			
+			if (x_min==null) x_min = x;
+			if (y_min==null) y_min = y;
+			
+			if (x < x_min) x_min = x;
+			if (x > x_max) x_max = x;
+			if (y < y_min) y_min = y;
+			if (y > y_max) y_max = y;
+		}
+
+		Rectangle2D rect = new Rectangle2D.Double(x_min, y_min, x_max, y_max);
+		return rect;
+	}
+	
 	/**
 	 * This method assigns a graph to a new VisualizationViewer and adds it to
 	 * the GUI This is used for creating graph for the first time
@@ -346,14 +386,32 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 		// ----------------------------------------------------------------
 		// --- Define graph layout ----------------------------------------
 		// ----------------------------------------------------------------
+		double margin = 50;
+		Rectangle2D rect = this.getGraphSpreadDimension(graph);
+		int width  = (int) ((rect.getWidth()  - rect.getX()) + (2 * margin));
+		int height = (int) ((rect.getHeight() - rect.getY()) + (2 * margin));
+		
+		double moveX = 0;
+		double moveY = 0;
+		if (rect.getMinX()<0) moveX = Math.abs(rect.getMinX()) + margin;  
+		if (rect.getMinY()<0) moveY = Math.abs(rect.getMinY()) + margin;
+		
+		final double move2X = moveX;
+		final double move2Y = moveY;
+		
 		Layout<GraphNode, GraphEdge> layout = new StaticLayout<GraphNode, GraphEdge>(graph);
-		layout.setSize(new Dimension(800, 800));
+		layout.setSize(new Dimension(width, height));
 		layout.setInitializer(new Transformer<GraphNode, Point2D>() {
-
 			@Override
 			public Point2D transform(GraphNode node) {
-				// The position is specified in the GraphNode instance
-				return node.getPosition();
+				if (move2X!=0 || move2Y!=0) {
+					double xPos = node.getPosition().getX() + move2X;
+					double yPos = node.getPosition().getY() + move2Y;
+					Point2D point = new Point2D.Double(xPos, yPos);
+					return point; 
+				} else {
+					return node.getPosition(); // The position is specified in the GraphNode instance	
+				}
 			}
 		});
 
@@ -368,9 +426,18 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 		vssa.setScaling(true);
 		visView.getRenderContext().setVertexShapeTransformer(vssa); 
 		
+//		// --- Set visualization scale and translation --------------------
+//		MutableAffineTransformer mat = (MutableAffineTransformer) visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW);
+//		
+//		mat.setTranslate(200, 200); // move Graph
+//		mat.setScale(10, 10, new Point2D.Double(10, 10));
+//		
+//		AffineTransform aTrans = new AffineTransform();
+//		aTrans.rotate(0.707);
+//		mat.setTransform(aTrans);
+		
 		// --- Configure mouse interaction ----		
 		visView.setGraphMouse(pgm);
-
 
 		// --- Configure to show node labels ------------------------------
 		boolean showLable = false;
@@ -450,7 +517,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 		visView.getRenderContext().setEdgeLabelTransformer(new Transformer<GraphEdge,String>() {	        	
 			public String transform(GraphEdge edge) {
 				//Get the path of the Image from the component type settings
-				String textDisplay = null;
+				String textDisplay = "";
 				try{
 					ComponentTypeSettings cts = controller.getComponentTypeSettings().get(edge.getComponentType());
 					String edgeImage = cts.getEdgeImage();
@@ -463,13 +530,16 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 					if(edgeImage!=null){
 						URL url = getClass().getResource(edgeImage);
 						if(url!=null){
-							return "<html>"+textDisplay+"<img src="+url+" height=16 width=16 >";
-						}
-						else {
+							if (showLabel) {
+								textDisplay = "<html><center>"+textDisplay+"<br><img src='"+url+"'></center></html>";	
+							} else {
+								textDisplay = "<html><center><img src='"+url+"'></center></html>";
+							}
+							return textDisplay;
+						} else {
 							return textDisplay;
 						}
-					}
-					else {
+					} else {
 						return textDisplay;
 					}
 				
@@ -479,6 +549,9 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 				}
 			}
 			});
+		// --- Configure edge label position ------------------------------
+		visView.getRenderContext().setLabelOffset(0);
+		visView.getRenderContext().setEdgeLabelClosenessTransformer(new ConstantDirectionalEdgeValueTransformer<GraphNode, GraphEdge>(.5, .5));
 		
 		// --- Use straight lines as edges --------------------------------
 		visView.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line<GraphNode, GraphEdge>());

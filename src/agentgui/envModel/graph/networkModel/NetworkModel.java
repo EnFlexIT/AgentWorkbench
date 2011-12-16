@@ -248,16 +248,46 @@ public class NetworkModel implements Cloneable, Serializable {
 	 * @return String The next unique node ID that can be used.
 	 */
 	public String nextNodeID() {
+		return this.nextNodeID(false);
+	}
+	/**
+	 * Generates the next unique node ID in the series PP0, PP1, PP2, ... 
+	 * @return String The next unique node ID that can be used.
+	 */
+	public String nextNodeID(boolean skipNullEntries) {
+		
 		//Finds the current maximum node ID and returns the next one to it.		
-		Collection<GraphNode> vertices = null;
-		vertices = getGraph().getVertices();
-		Iterator<GraphNode> vertexIter = vertices.iterator();
 		int max = -1;
-		while(vertexIter .hasNext()){
-			GraphNode vertex = vertexIter .next();
-			int num = Integer.parseInt(vertex.getId().substring(2));
-			if(num>max)
-				max = num;
+		boolean errEntry = false;
+		
+		Collection<GraphNode> nodeCollection = getGraph().getVertices();
+		GraphNode[] nodes = nodeCollection.toArray(new GraphNode[nodeCollection.size()]);
+		for (int i = 0; i < nodes.length; i++) {
+			
+			GraphNode node = nodes[i];
+			String id = node.getId();
+			if (id==null) {
+				errEntry = true;
+			} else if (id.equals("null")) {
+				errEntry = true;
+			} else {
+				errEntry = false;
+			}
+
+			if (errEntry==true && skipNullEntries==false) {
+				id = this.nextNodeID(true);
+				node.setId(id);
+				errEntry = false;
+			}
+			
+			// --- normal operation -------------
+			if (errEntry==false) {
+				int num = Integer.parseInt(id.substring(2));
+				if(num>max) {
+					max = num;
+				}	
+			}
+			
 		}
 		return "PP"+(max+1);
 	}
