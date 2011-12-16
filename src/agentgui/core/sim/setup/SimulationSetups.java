@@ -35,6 +35,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -46,6 +47,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 
+import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.common.FileCopier;
@@ -343,11 +345,11 @@ public class SimulationSetups extends Hashtable<String, String> {
 		Unmarshaller um = null;
 		
 		try {
-			pc = JAXBContext.newInstance( currSimSetup.getClass() );
+			pc = JAXBContext.newInstance(currSimSetup.getClass());
 			um = pc.createUnmarshaller();
-			// --- 'SimulationSetup'-Objekt neu "instanziieren" -
-			currSimSetup = (SimulationSetup) um.unmarshal( new FileReader( currSimXMLFile ) );
-			currSimSetup.setCurrProject(currProject);
+			FileReader fr = new FileReader(currSimXMLFile);
+			currSimSetup = (SimulationSetup) um.unmarshal(fr);
+			fr.close();
 			
 		} catch (FileNotFoundException e) {
 
@@ -363,8 +365,13 @@ public class SimulationSetups extends Hashtable<String, String> {
 			
 		} catch (JAXBException e) {
 			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 
+		// --- Set the project to the simulation setup -----------------------------
+		currSimSetup.setCurrProject(currProject);
+		
 		//--- Reading the serializable user object of the simsetup from the 'agentgui_userobject.bin' ---
 		String userObjectFileName = Application.RunInfo.getBinFileNameFromXmlFileName(currSimXMLFile);
 		File userObjectFile = new File(userObjectFileName);
@@ -386,9 +393,17 @@ public class SimulationSetups extends Hashtable<String, String> {
 			}
 		}
 		
-		// --- Create the DefaultListModels for the current agent configuration --------- 
+		// --- Create the DefaultListModels for the current agent configuration ---- 
 		currSimSetup.createHashMap4AgentDefaulListModelsFromAgentList();
-		
+
+		// --- Set the agent classes in the agentSetup -----------------------------
+		ArrayList<AgentClassElement4SimStart> agentList = currSimSetup.getAgentList();
+		for (int i = 0; i < agentList.size(); i++) {
+			// --- The .toSting method will check if the class is ---------   
+			// --- there and initialize the corresponding attribute -------
+			agentList.get(i).toString();
+		}
+		currSimSetup.setCurrProject(currProject);
 	}
 
 	/**
