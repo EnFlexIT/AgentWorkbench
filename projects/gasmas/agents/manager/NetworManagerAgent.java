@@ -29,6 +29,7 @@
 package gasmas.agents.manager;
 
 import jade.core.ServiceException;
+import agentgui.clustering.EdgeBetweenessBehaviour;
 import agentgui.core.application.Application;
 import agentgui.core.project.Project;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
@@ -38,99 +39,116 @@ import agentgui.simulationService.agents.SimulationManagerAgent;
 import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.time.TimeModelDiscrete;
 
-public class NetworManagerAgent extends SimulationManagerAgent {
+public class NetworManagerAgent extends SimulationManagerAgent
+{
 
 	private static final long serialVersionUID = 1823164338744218569L;
-	
+
 	private Project currProject = null;
-	
+
 	private NetworkModel myNetworkModel = null;
-	
-	
+
 	@Override
-	protected void setup() {
+	protected void setup()
+	{
 		super.setup();
-		
+
 		currProject = Application.ProjectCurr;
-		if (currProject==null) {
+		if ( currProject == null )
+		{
 			takeDown();
 		}
-		
+
 		this.envModel = this.getInitialEnvironmentModel();
-		try {
-			simHelper.setEnvironmentModel(this.envModel);
-		} catch (ServiceException e) {
+		try
+		{
+			simHelper.setEnvironmentModel( this.envModel );
+		}
+		catch ( ServiceException e )
+		{
 			e.printStackTrace();
-		} 
-		
+		}
+
 		this.myNetworkModel = (NetworkModel) this.getDisplayEnvironment();
-		
-		// --- Here you can add Behaiviours, which acting centralized -----
-		//this.addBehaviour(yourBehaviour)
-		
-		
+
+		this.addBehaviour( new EdgeBetweenessBehaviour( envModel ) );
+
 	}
-	
-	/* (non-Javadoc)
-	 * @see agentgui.simulationService.agents.SimulationManagerInterface#getInitialEnvironmentModel()
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see agentgui.simulationService.agents.SimulationManagerInterface#
+	 * getInitialEnvironmentModel()
 	 */
 	@Override
-	public EnvironmentModel getInitialEnvironmentModel() {
+	public EnvironmentModel getInitialEnvironmentModel()
+	{
 
 		int currentlyDoing = 0;
 		final int GET_EnvContGUI = 1;
 		final int GET_EnvCont = 2;
 		final int GET_NetworkModel = 3;
-		
+
 		EnvironmentModel envModel = new EnvironmentModel();
-		TimeModelDiscrete myTimeModel = new TimeModelDiscrete(new Long(1000*60));
-		
+		TimeModelDiscrete myTimeModel = new TimeModelDiscrete( new Long(
+				1000 * 60 ) );
+
 		GraphEnvironmentControllerGUI envPanel = null;
 		GraphEnvironmentController envController = null;
 		NetworkModel networkModel = null;
-		
-		try {
+
+		try
+		{
 			currentlyDoing = GET_EnvContGUI;
-			envPanel = (GraphEnvironmentControllerGUI) currProject.getEnvironmentPanel();
-			
+			envPanel = (GraphEnvironmentControllerGUI) currProject
+					.getEnvironmentPanel();
+
 			currentlyDoing = GET_EnvCont;
-			envController = (GraphEnvironmentController) envPanel.getEnvironmentController();
-			
+			envController = (GraphEnvironmentController) envPanel
+					.getEnvironmentController();
+
 			currentlyDoing = GET_NetworkModel;
-			networkModel = (NetworkModel) envController.getEnvironmentModelCopy();
-			
-			envModel.setTimeModel(myTimeModel);
-			envModel.setDisplayEnvironment(networkModel);
-			
-		} catch (Exception ex) {
+			networkModel = (NetworkModel) envController
+					.getEnvironmentModelCopy();
+
+			envModel.setTimeModel( myTimeModel );
+			envModel.setDisplayEnvironment( networkModel );
+
+		}
+		catch ( Exception ex )
+		{
 			String msg = null;
-			switch (currentlyDoing) {
-			case GET_EnvContGUI:
-				msg = ": Could not get GraphEnvironmentControllerGUI!";
-				break;
-			case GET_EnvCont:
-				msg = ": Could not get GraphEnvironmentController!";
-				break;
-			case GET_NetworkModel:
-				msg = ": Could not get NetworkModel!";
-				break;
+			switch ( currentlyDoing )
+			{
+				case GET_EnvContGUI:
+					msg = ": Could not get GraphEnvironmentControllerGUI!";
+					break;
+				case GET_EnvCont:
+					msg = ": Could not get GraphEnvironmentController!";
+					break;
+				case GET_NetworkModel:
+					msg = ": Could not get NetworkModel!";
+					break;
 			}
-			if (msg==null) {
+			if ( msg == null )
+			{
 				ex.printStackTrace();
-			} else {
-				System.err.println(this.getLocalName() + ": " + msg);
+			}
+			else
+			{
+				System.err.println( this.getLocalName() + ": " + msg );
 			}
 			return null;
-			
+
 		}
 		return envModel;
 	}
 
 	@Override
-	public void doSingleSimulationSequennce() {
-		
-		
+	public void doSingleSimulationSequennce()
+	{
+
 	}
-	
-	
+
 }
