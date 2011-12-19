@@ -319,6 +319,7 @@ public class DisplayAgent extends Agent {
 
 			try {
 				int size = -1;
+			
 				if (sameTransactionSizeCounter == 20) {
 					size = lastMaximumValue;
 				} else {
@@ -327,23 +328,36 @@ public class DisplayAgent extends Agent {
 					if (lastMaximumValue != size) {
 
 						sameTransactionSizeCounter = 0;
+						sameVisualisationCounter=0;
 						myGUI.setMaximum(size);
 					} else {
 						sameTransactionSizeCounter++;
 					}
 
 				}
+				
+				
 
 				if (size > 1) {
 
+					size = helper.getTransactionSize();
+					if (lastMaximumValue != size) {
+
+						sameTransactionSizeCounter = 0;
+						sameVisualisationCounter=0;
+						myGUI.setMaximum(size);
+					} 
+					
 					if (lastCurrentValue == counter) {
 						sameVisualisationCounter++;
 					} else {
 						sameVisualisationCounter = 0;
 					}
-					if (sameVisualisationCounter < 20) {
+					if (sameVisualisationCounter < 20 ) {
+						//System.out.println("Get:"+counter +" for displaying");
 						HashSet<Physical2DObject> movingObjects = this.fordwardToVisualation(helper.getModel(counter));
 						synchronized (movingObjects) {
+							//System.out.println("Update Darstellung");
 							myGUI.updatePositions(movingObjects);
 						}
 						myGUI.setCurrentTimePos(counter);
@@ -354,6 +368,7 @@ public class DisplayAgent extends Agent {
 						}
 						lastMaximumValue = size;
 						lastCurrentValue = counter;
+						
 					}
 					
 				} else {
