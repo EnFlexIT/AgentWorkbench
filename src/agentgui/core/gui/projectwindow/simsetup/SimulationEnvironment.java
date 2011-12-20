@@ -38,7 +38,7 @@ import java.util.Observer;
 
 import javax.swing.JPanel;
 
-import agentgui.core.environment.EnvironmentPanel;
+import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentType;
 import agentgui.core.project.Project;
 
@@ -51,10 +51,10 @@ public class SimulationEnvironment extends JPanel implements Observer, ActionLis
 
 	private static final long serialVersionUID = 3230313372954316520L;
 	
-	private Project project;
+	private Project currProject;
 	
 	private SetupSelector jPanelTopNew = null;
-	private EnvironmentPanel environmentControllerGUI = null;
+	private JPanel environmentControllerGUI = null;
 	
 	/**
 	 * Constructor.
@@ -62,8 +62,8 @@ public class SimulationEnvironment extends JPanel implements Observer, ActionLis
 	 * @param project the project
 	 */
 	public SimulationEnvironment(Project project){
-		this.project = project;
-		this.project.addObserver(this);
+		this.currProject = project;
+		this.currProject.addObserver(this);
 		this.initialize();
 	}
 	
@@ -84,27 +84,19 @@ public class SimulationEnvironment extends JPanel implements Observer, ActionLis
 	 *
 	 * @return the currently configured Environment-Display
 	 */
-	private EnvironmentPanel getEnvironmentControllerGUI(){
+	private JPanel getEnvironmentControllerGUI(){
 		
 		// --- Create an empty panel --------------------------------
-		environmentControllerGUI = new EnvironmentPanel(this.project){
-
-			private static final long serialVersionUID = 4276637599115228527L;
-
-			@Override
-			public void update(Observable o, Object arg) {
-				// TODO Auto-generated method stub
-				
-			}
-		};
+		environmentControllerGUI = new JPanel();
 		
-		EnvironmentType envType = project.getEnvironmentModelType();
-		Class<? extends EnvironmentPanel> envPanelClass = envType.getEnvironmentPanelClass();
+		EnvironmentType envType = currProject.getEnvironmentModelType();
+		Class<? extends EnvironmentController> envControllerClass = envType.getEnvironmentControllerClass();
 	
-		if (envPanelClass==null) {
+		if (envControllerClass==null) {
 			// ------------------------------------------------------
 			// --- If NO environment is specified -------------------
 			// ------------------------------------------------------
+			currProject.setEnvironmentController(null);
 			return environmentControllerGUI;
 		} 
 
@@ -118,13 +110,15 @@ public class SimulationEnvironment extends JPanel implements Observer, ActionLis
 			conParameter[0] = Project.class;
 		
 			// --- Get the constructor ------------------------------	
-			Constructor<?> envPanelClassConstructor = envPanelClass.getConstructor(conParameter);
+			Constructor<?> envPanelClassConstructor = envControllerClass.getConstructor(conParameter);
 
 			// --- Define the argument for the newInstance call ----- 
 			Object[] args = new Object[1];
-			args[0] = this.project;
+			args[0] = this.currProject;
 			
-			environmentControllerGUI = (EnvironmentPanel) envPanelClassConstructor.newInstance(args);
+			EnvironmentController envController = (EnvironmentController) envPanelClassConstructor.newInstance(args);
+			currProject.setEnvironmentController(envController);
+			environmentControllerGUI = envController.getEnvironmentPanel();
 			
 		} catch (SecurityException e) {
 			e.printStackTrace();
@@ -149,8 +143,7 @@ public class SimulationEnvironment extends JPanel implements Observer, ActionLis
 	 */
 	private void switchEnvironmentMode(String mode){
 		this.remove(environmentControllerGUI);
-		this.getEnvironmentControllerGUI();
-		this.add(environmentControllerGUI, BorderLayout.CENTER);
+		this.add(this.getEnvironmentControllerGUI(), BorderLayout.CENTER);
 	}
 	
 	/**
@@ -160,7 +153,7 @@ public class SimulationEnvironment extends JPanel implements Observer, ActionLis
 	 */
 	private JPanel getJPanelTopNew() {
 		if (jPanelTopNew == null) {
-			jPanelTopNew = new SetupSelector(this.project);
+			jPanelTopNew = new SetupSelector(this.currProject);
 		}
 		return jPanelTopNew;
 	}
@@ -170,8 +163,8 @@ public class SimulationEnvironment extends JPanel implements Observer, ActionLis
 	 */
 	@Override
 	public void update(Observable o, Object arg) {
-		if(o.equals(project) && arg.equals(Project.CHANGED_EnvironmentModel)){
-			this.switchEnvironmentMode(project.getEnvironmentModelName());
+		if(o.equals(currProject) && arg.equals(Project.CHANGED_EnvironmentModel)){
+			this.switchEnvironmentMode(currProject.getEnvironmentModelName());
 		}
 	}
 

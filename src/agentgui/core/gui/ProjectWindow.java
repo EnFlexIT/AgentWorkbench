@@ -63,7 +63,7 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import agentgui.core.application.Application;
-import agentgui.core.environment.EnvironmentPanel;
+import agentgui.core.environment.EnvironmentController;
 import agentgui.core.gui.projectwindow.ProjectWindowTab;
 import agentgui.core.project.Project;
 
@@ -690,7 +690,7 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 		}
 		
 		// --- Exists a Panle for the current environment model? ---- 
-		Class<? extends EnvironmentPanel> displayPanel = this.currProject.getEnvironmentModelType().getEnvironmentPanelClass();
+		Class<? extends EnvironmentController> envController = this.currProject.getEnvironmentModelType().getEnvironmentControllerClass();
 		
 		// --- Remind the current selection -------------------------
 		DefaultMutableTreeNode lastSelectedNode = null;
@@ -715,12 +715,12 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 			// --- Which view to the project is needed ? ------------ 
 			if (viewToSet == ProjectWindowTab.DISPLAY_4_DEVELOPER) {
 				// --- show everything ------------------------------
-				currCreatedNode = this.setViewFilterVisualization(pwt, displayPanel);
+				currCreatedNode = this.setViewFilterVisualization(pwt, envController);
 				
 			} else if (viewToSet == ProjectWindowTab.DISPLAY_4_END_USER) {
 				// --- show only the end user displays --------------
 				if (displayType < ProjectWindowTab.DISPLAY_4_DEVELOPER) {
-					currCreatedNode = this.setViewFilterVisualization(pwt, displayPanel);							
+					currCreatedNode = this.setViewFilterVisualization(pwt, envController);							
 				}
 			}
 			// --- Remind this as last selected node ----------------
@@ -759,13 +759,13 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	 * @param displayPanel the display panel
 	 * @return the default mutable tree node
 	 */
-	private DefaultMutableTreeNode setViewFilterVisualization(ProjectWindowTab pwt, Class<? extends EnvironmentPanel> displayPanel) {
+	private DefaultMutableTreeNode setViewFilterVisualization(ProjectWindowTab pwt, Class<? extends EnvironmentController> envController) {
 		
 		DefaultMutableTreeNode newNode = null;
 		if (pwt.getDisplayType() == ProjectWindowTab.DISPLAY_4_END_USER_VISUALIZATION) {
 			// --- Show Visualization-Tab only in case of  ----------
 			// --- an available defined Visualization-Panel ---------
-			if (displayPanel!=null) {
+			if (envController!=null) {
 				newNode = this.addProjectTabInternal(pwt);
 			}
 		} else {

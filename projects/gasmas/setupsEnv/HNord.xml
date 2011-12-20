@@ -226,6 +226,19 @@
             </value>
         </entry>
         <entry>
+            <key>n71</key>
+            <value>
+                <agentClassName>gasmas.agents.components.ControlValveAgent</agentClassName>
+                <directed>true</directed>
+                <graphElementIDs>n71</graphElementIDs>
+                <graphElementIDs>PP113</graphElementIDs>
+                <graphElementIDs>PP112</graphElementIDs>
+                <id>n71</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</prototypeClassName>
+                <type>ControlValve</type>
+            </value>
+        </entry>
+        <entry>
             <key>n35</key>
             <value>
                 <agentClassName>gasmas.agents.components.BranchAgent</agentClassName>
@@ -325,19 +338,6 @@
             </value>
         </entry>
         <entry>
-            <key>n22</key>
-            <value>
-                <agentClassName>gasmas.agents.components.SimpleValveAgent</agentClassName>
-                <directed>false</directed>
-                <graphElementIDs>PP41</graphElementIDs>
-                <graphElementIDs>n22</graphElementIDs>
-                <graphElementIDs>PP31</graphElementIDs>
-                <id>n22</id>
-                <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
-                <type>Valve</type>
-            </value>
-        </entry>
-        <entry>
             <key>n0</key>
             <value>
                 <agentClassName>gasmas.agents.components.BranchAgent</agentClassName>
@@ -352,6 +352,19 @@
                 <id>n0</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.Star3GraphElement</prototypeClassName>
                 <type>Branch3</type>
+            </value>
+        </entry>
+        <entry>
+            <key>n22</key>
+            <value>
+                <agentClassName>gasmas.agents.components.SimpleValveAgent</agentClassName>
+                <directed>false</directed>
+                <graphElementIDs>PP41</graphElementIDs>
+                <graphElementIDs>n22</graphElementIDs>
+                <graphElementIDs>PP31</graphElementIDs>
+                <id>n22</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
+                <type>Valve</type>
             </value>
         </entry>
         <entry>

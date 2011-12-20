@@ -32,8 +32,8 @@
             <value>
                 <agentClassName>gasmas.agents.components.ControlValveAgent</agentClassName>
                 <directed>true</directed>
-                <graphElementIDs>n5</graphElementIDs>
                 <graphElementIDs>PP10</graphElementIDs>
+                <graphElementIDs>n5</graphElementIDs>
                 <graphElementIDs>PP1</graphElementIDs>
                 <id>n5</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</prototypeClassName>
@@ -46,8 +46,8 @@
                 <agentClassName>gasmas.agents.components.EntryAgent</agentClassName>
                 <directed>true</directed>
                 <graphElementIDs>PP9</graphElementIDs>
-                <graphElementIDs>PP8</graphElementIDs>
                 <graphElementIDs>n4</graphElementIDs>
+                <graphElementIDs>PP8</graphElementIDs>
                 <id>n4</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</prototypeClassName>
                 <type>Entry</type>
@@ -58,8 +58,8 @@
             <value>
                 <agentClassName>gasmas.agents.components.BranchAgent</agentClassName>
                 <directed>false</directed>
-                <graphElementIDs>PP10</graphElementIDs>
                 <graphElementIDs>n3_1</graphElementIDs>
+                <graphElementIDs>PP10</graphElementIDs>
                 <graphElementIDs>n3_0</graphElementIDs>
                 <graphElementIDs>PP5</graphElementIDs>
                 <graphElementIDs>PP4</graphElementIDs>

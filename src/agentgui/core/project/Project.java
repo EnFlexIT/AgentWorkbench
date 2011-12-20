@@ -56,7 +56,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.common.ClassLoaderUtil;
-import agentgui.core.environment.EnvironmentPanel;
+import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentType;
 import agentgui.core.gui.ProjectWindow;
 import agentgui.core.gui.components.JPanel4Visualization;
@@ -251,7 +251,7 @@ import agentgui.core.webserver.JarFileCreator;
 	 * The environment controllerGUI of the project. Usually a subclass of EnvironmentPanel.
 	 */
 	@XmlTransient
-	private EnvironmentPanel environmentPanel = null;
+	private EnvironmentController environmentController = null;
 	
 	/**
 	 * This model contains all known environment types of the application 
@@ -1046,19 +1046,19 @@ import agentgui.core.webserver.JarFileCreator;
 	}
 
 	/**
-	 * Returns the current environment controllerGUI
-	 * @return the environment panel 
+	 * Returns the current environment controller
+	 * @return the environment controller 
 	 */
 	@XmlTransient
-	public EnvironmentPanel getEnvironmentPanel(){
-		return this.environmentPanel;
+	public EnvironmentController getEnvironmentController(){
+		return this.environmentController;
 	}
 	/**
-	 * Sets the environment controller GUI
-	 * @param environmentPanel
+	 * Sets the environment controller 
+	 * @param environmentController
 	 */
-	public void setEnvironmentPanel(EnvironmentPanel environmentPanel) {
-		this.environmentPanel = environmentPanel;
+	public void setEnvironmentController(EnvironmentController environmentController) {
+		this.environmentController = environmentController;
 	}
 
 	/**

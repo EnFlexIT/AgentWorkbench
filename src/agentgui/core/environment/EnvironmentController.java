@@ -42,14 +42,18 @@ import agentgui.core.sim.setup.SimulationSetupsChangeNotification;
  * This class has to be extended if you are writing your own environment model and visulization.
  * This class manages the environment model and notifies the observers about the changes to the environment model.
  * 
- * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati 
+ * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen 
  */
 public abstract class EnvironmentController extends Observable implements Observer {
 
-	/**
-	 * The current project
-	 */
+	
+	/** The current environment panel. */
+	private EnvironmentPanel myEnvironmentPanel = null;
+	
+	/** The current project */
 	private Project currProject = null;
+	
 	/**
 	 * The path to the folder where all environment related files are stored.
 	 * (Contains the slash at the end).
@@ -80,6 +84,30 @@ public abstract class EnvironmentController extends Observable implements Observ
 			this.setEnvFolderPath(this.currProject.getProjectFolderFullPath()+this.currProject.getSubFolderEnvSetups() + File.separator);	
 		}
 	}
+	
+	/**
+	 * Sets the environment panel for displaying the data model.
+	 * @param myEnvironmentPanel the myEnvironmentPanel to set
+	 */
+	public void setEnvironmentPanel(EnvironmentPanel environmentPanel) {
+		this.myEnvironmentPanel = environmentPanel;
+	}
+	/**
+	 * Gets the environment panel for displaying the data model.
+	 * @return the myEnvironmentPanel
+	 */
+	public EnvironmentPanel getEnvironmentPanel() {
+		if (this.myEnvironmentPanel==null) {
+			this.myEnvironmentPanel = createEnvironmentPanel();
+		}
+		return this.myEnvironmentPanel;
+	}
+	/**
+	 * Creates here the EnvironmentPanel, which allows to display the current data model 
+	 * of the environment model.
+	 * @return the environment panel
+	 */
+	protected abstract EnvironmentPanel createEnvironmentPanel();
 	
 	/**
 	 * Returns the current simulation setup

@@ -427,6 +427,12 @@
             <agentClassReference>gasmas.agents.components.PipeAgent</agentClassReference>
             <startAsName>n70</startAsName>
         </agent>
+        <agent>
+            <postionNo>71</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.ControlValveAgent</agentClassReference>
+            <startAsName>n71</startAsName>
+        </agent>
     </agentSetup>
     <environmentFileName>HNord.graphml</environmentFileName>
 </simulationSetup>

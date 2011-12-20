@@ -83,6 +83,7 @@ import edu.uci.ics.jung.visualization.control.ScalingControl;
 import edu.uci.ics.jung.visualization.decorators.AbstractVertexShapeTransformer;
 import edu.uci.ics.jung.visualization.decorators.ConstantDirectionalEdgeValueTransformer;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
+import edu.uci.ics.jung.visualization.transform.MutableAffineTransformer;
 
 /**
  * This class implements a GUI component for displaying visualizations for JUNG
@@ -215,8 +216,14 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	 * @return void
 	 */
 	private void initialize() {
+		this.setSize(300, 300);
 		this.setLayout(new BorderLayout());
 		this.add(getPnlControlls(), BorderLayout.WEST);
+		
+		GraphToolbar gtb = new GraphToolbar(controller);
+		this.add(gtb, BorderLayout.EAST);
+		
+		
 		
 		// Initializing JUNG mouse modes
 		this.initMouseModes();
@@ -359,6 +366,9 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 			if (y > y_max) y_max = y;
 		}
 
+		if (x_min==null) x_min = 0.0;
+		if (y_min==null) y_min = 0.0;
+		
 		Rectangle2D rect = new Rectangle2D.Double(x_min, y_min, x_max, y_max);
 		return rect;
 	}
@@ -396,22 +406,12 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 		if (rect.getMinX()<0) moveX = Math.abs(rect.getMinX()) + margin;  
 		if (rect.getMinY()<0) moveY = Math.abs(rect.getMinY()) + margin;
 		
-		final double move2X = moveX;
-		final double move2Y = moveY;
-		
 		Layout<GraphNode, GraphEdge> layout = new StaticLayout<GraphNode, GraphEdge>(graph);
 		layout.setSize(new Dimension(width, height));
 		layout.setInitializer(new Transformer<GraphNode, Point2D>() {
 			@Override
 			public Point2D transform(GraphNode node) {
-				if (move2X!=0 || move2Y!=0) {
-					double xPos = node.getPosition().getX() + move2X;
-					double yPos = node.getPosition().getY() + move2Y;
-					Point2D point = new Point2D.Double(xPos, yPos);
-					return point; 
-				} else {
-					return node.getPosition(); // The position is specified in the GraphNode instance	
-				}
+				return node.getPosition(); // The position is specified in the GraphNode instance	
 			}
 		});
 
@@ -428,16 +428,22 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 		
 //		// --- Set visualization scale and translation --------------------
 //		MutableAffineTransformer mat = (MutableAffineTransformer) visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW);
-//		
-//		mat.setTranslate(200, 200); // move Graph
+//		mat.setTranslate(moveX, moveY); // move Graph
 //		mat.setScale(10, 10, new Point2D.Double(10, 10));
-//		
 //		AffineTransform aTrans = new AffineTransform();
 //		aTrans.rotate(0.707);
 //		mat.setTransform(aTrans);
 		
-		// --- Configure mouse interaction ----		
+		// --- Configure mouse interaction --------------------------------
 		visView.setGraphMouse(pgm);
+
+		// --- Set tool tip for nodes -------------------------------------
+		visView.setVertexToolTipTransformer(new Transformer<GraphNode,String>() {
+			@Override
+			public String transform(GraphNode edge) {
+				return edge.getId();
+			}
+		});
 
 		// --- Configure to show node labels ------------------------------
 		boolean showLable = false;
@@ -598,7 +604,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	 * This method notifies the observers about a graph object selection
 	 * @param pickedObject The selected object
 	 */
-	void handleObjectLeftClick(Object pickedObject) {
+	public void handleObjectLeftClick(Object pickedObject) {
 		myObservable.setChanged();
 		myObservable.notifyObservers(new Notification(EVENT_OBJECT_LEFT_CLICK, pickedObject));
 	}
@@ -607,7 +613,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	 * Notifies the observers that this object is right clicked
 	 * @param pickedObject the selected object
 	 */
-	void handleObjectRightClick(Object pickedObject) {
+	public void handleObjectRightClick(Object pickedObject) {
 		myObservable.setChanged();
 		myObservable.notifyObservers(new Notification(EVENT_OBJECT_RIGHT_CLICK, pickedObject));
 	}
@@ -624,7 +630,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	/**
 	 * Clears the picked nodes and edges
 	 */
-	void clearPickedObjects() {
+	public void clearPickedObjects() {
 		visView.getPickedVertexState().clear();
 		visView.getPickedEdgeState().clear();
 	}
@@ -633,7 +639,7 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	 * Sets a node or edge as picked
 	 * @param object The GraphNode or GraphEdge to pick
 	 */
-	void setPickedObject(GraphElement object) {
+	public void setPickedObject(GraphElement object) {
 		if (object instanceof GraphEdge) {
 			visView.getPickedEdgeState().pick((GraphEdge) object, true);
 		} else if (object instanceof GraphNode) {
@@ -645,13 +651,14 @@ public class BasicGraphGUI extends JPanel implements ActionListener {
 	 * Marks a group of objects as picked
 	 * @param objects The objects
 	 */
-	void setPickedObjects(Vector<GraphElement> objects) {
+	public void setPickedObjects(Vector<GraphElement> objects) {
 		Iterator<GraphElement> objIter = objects.iterator();
 		while (objIter.hasNext()) {
 			setPickedObject(objIter.next());
 		}
 	}
 
+	
 	/**
 	 * Add an observer to the GUI's Observable
 	 * @param observer

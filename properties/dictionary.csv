@@ -467,6 +467,7 @@ de;Übersetzter Text;Text translated
 de;Übersetzung speichern (STRG+S);Save translation (CTRL + S)
 de;Überspringen;Skip
 en;;Discrete squares environment;;;
+en;;Vertex should be in two components;;;
 en;Agenten-Klasse;Agent class;;;
 en;Ausgewählte Komponente entfernen;Remove selected component;;;
 en;Auswahl Netzwerk-Komonente!;Select Network Component to Add;;;

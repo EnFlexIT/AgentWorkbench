@@ -53,7 +53,6 @@ import org.w3c.dom.Document;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.envModel.p2Dsvg.controller.Physical2DEnvironmentController;
-import agentgui.envModel.p2Dsvg.controller.Physical2DEnvironmentControllerGUI;
 import agentgui.envModel.p2Dsvg.ontology.Physical2DEnvironment;
 import agentgui.envModel.p2Dsvg.ontology.Physical2DObject;
 import agentgui.envModel.p2Dsvg.ontology.PositionUpdate;
@@ -118,8 +117,7 @@ public class DisplayAgent extends Agent {
 			use4Visualization = 2;
 			usePanel = (JPanel) startArgs[0];
 
-			Physical2DEnvironmentControllerGUI envPanel = (Physical2DEnvironmentControllerGUI) startArgs[1];
-			Physical2DEnvironmentController p2DCont = (Physical2DEnvironmentController) envPanel.getEnvironmentController();
+			Physical2DEnvironmentController p2DCont = (Physical2DEnvironmentController) startArgs[1];
 			environment = p2DCont.getEnvironmentModelCopy();
 			svgDoc = p2DCont.getSvgDocCopy();
 			

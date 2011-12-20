@@ -45,6 +45,7 @@ import javax.xml.bind.Unmarshaller;
 import org.apache.commons.collections15.Transformer;
 
 import agentgui.core.environment.EnvironmentController;
+import agentgui.core.environment.EnvironmentPanel;
 import agentgui.core.project.Project;
 import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.core.sim.setup.SimulationSetups;
@@ -136,6 +137,15 @@ public class GraphEnvironmentController extends EnvironmentController {
 			this.loadEnvironment();				
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.core.environment.EnvironmentController#createEnvironmentPanel()
+	 */
+	@Override
+	protected EnvironmentPanel createEnvironmentPanel() {
+		GraphEnvironmentControllerGUI graphDisplay = new GraphEnvironmentControllerGUI(this);
+		return graphDisplay;
+	}	
 	
 	/**
 	 * Set the SimulationSetup's ComponentTypeSettings property
@@ -560,6 +570,11 @@ public class GraphEnvironmentController extends EnvironmentController {
 		NetworkModel netModel = this.networkModel.getCopy();
 		netModel.setGeneralGraphSettings4MAS((GeneralGraphSettings4MAS) this.generalGraphSettings4MAS.clone());
 		return netModel;
-	}	
+	}
+	
+	public GraphNode getPickedVertex() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 }

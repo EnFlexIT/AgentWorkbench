@@ -36,7 +36,7 @@ import java.util.Iterator;
 
 import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.application.Language;
-import agentgui.core.environment.EnvironmentPanel;
+import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentType;
 import agentgui.core.project.RemoteContainerConfiguration;
 import agentgui.simulationService.agents.LoadExecutionAgent;
@@ -141,8 +141,8 @@ public abstract class StaticLoadBalancingBase extends BaseLoadBalancing {
 	 */
 	protected void startVisualizationAgent() {
 		
-		EnvironmentPanel envPanel = currProject.getEnvironmentPanel();
-		if (envPanel!=null) {
+		EnvironmentController envController = currProject.getEnvironmentController();
+		if (envController!=null) {
 			
 			EnvironmentType envType = currProject.getEnvironmentModelType();
 			String envTypeInternalKey = envType.getInternalKey();
@@ -163,7 +163,7 @@ public abstract class StaticLoadBalancingBase extends BaseLoadBalancing {
 				
 				Object[] startArg = new Object[3];
 				startArg[0] = currProject.projectVisualizationPanel;
-				startArg[1] = envPanel;
+				startArg[1] = envController;
 				this.startAgent("DisplayAgent", displayAgentClass, startArg);
 				
 				// --- Set the focus on Visualisation-Tab ---------------------

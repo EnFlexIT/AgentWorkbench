@@ -51,7 +51,7 @@ public class EnvironmentType {
 	private String internalKey = null;
 	private String displayName = null;
 	private String displayNameLanguage = null;
-	private Class<? extends EnvironmentPanel> environmentPanelClass = null;
+	private Class<? extends EnvironmentController> environmentController = null;
 	private Class<? extends Agent> displayAgentClass = null;
 	
 	/**
@@ -61,11 +61,11 @@ public class EnvironmentType {
 	 * @param displayName A name that will be displayed later on
 	 * @param panelClass The panel on which all components have to be placed in order to allow end users to define their own environment model
 	 */
-	public EnvironmentType(String key, String displayName, String displayNameLanguage, Class<? extends EnvironmentPanel> panelClass, Class<? extends Agent> agentClass) {
+	public EnvironmentType(String key, String displayName, String displayNameLanguage, Class<? extends EnvironmentController> controller, Class<? extends Agent> agentClass) {
 		this.internalKey = key;
 		this.displayName = displayName;
 		this.displayNameLanguage = displayNameLanguage;
-		this.environmentPanelClass = panelClass;
+		this.environmentController = controller;
 		this.displayAgentClass = agentClass;
 	}
 	
@@ -83,8 +83,8 @@ public class EnvironmentType {
 			if (envType.getDisplayName().equals(this.getDisplayName())==false) {
 				return false; 
 			}
-			if (!(envType.getEnvironmentPanelClass()==null & this.getEnvironmentPanelClass()==null)) {
-				if (envType.getEnvironmentPanelClass().equals(this.getEnvironmentPanelClass())==false) {
+			if (!(envType.getEnvironmentControllerClass()==null & this.getEnvironmentControllerClass()==null)) {
+				if (envType.getEnvironmentControllerClass().equals(this.getEnvironmentControllerClass())==false) {
 					return false; 
 				}
 			}
@@ -139,14 +139,14 @@ public class EnvironmentType {
 	/**
 	 * @return the displayPanelClass
 	 */
-	public Class<? extends EnvironmentPanel> getEnvironmentPanelClass() {
-		return environmentPanelClass;
+	public Class<? extends EnvironmentController> getEnvironmentControllerClass() {
+		return environmentController;
 	}
 	/**
 	 * @param displayPanelClass the displayPanel to set
 	 */
-	public void setEnvironmentPanelClass(Class<? extends EnvironmentPanel> displayPanelClass) {
-		this.environmentPanelClass = displayPanelClass;
+	public void setEnvironmentControllerClass(Class<? extends EnvironmentController> controllerClass) {
+		this.environmentController = controllerClass;
 	}
 
 	/**

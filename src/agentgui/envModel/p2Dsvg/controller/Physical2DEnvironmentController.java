@@ -63,6 +63,7 @@ import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.application.Language;
 import agentgui.core.common.FileCopier;
 import agentgui.core.environment.EnvironmentController;
+import agentgui.core.environment.EnvironmentPanel;
 import agentgui.core.project.Project;
 import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.core.sim.setup.SimulationSetups;
@@ -160,6 +161,11 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 		myGUI = gui;
 	}
 	
+	@Override
+	protected EnvironmentPanel createEnvironmentPanel() {
+		Physical2DEnvironmentControllerGUI p2dGUI = new Physical2DEnvironmentControllerGUI(this);
+		return p2dGUI;
+	}
 	
 	/**
 	 * Setting the selected Physical2DObject

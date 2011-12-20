@@ -88,11 +88,11 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	
 	/**
 	 * Constructor
-	 * @param parentGUI The parent BasicGraphGUI
+	 * @param graphVisualization The parent BasicGraphGUI
 	 */
-	public GraphEnvironmentMousePlugin(BasicGraphGUI parentGUI) {
+	public GraphEnvironmentMousePlugin(BasicGraphGUI basicGraphGUI) {
 		super();
-		this.myGUI = parentGUI;
+		this.myGUI = basicGraphGUI;
 	}
 	/**
 	 * Sets the visualization viewer.

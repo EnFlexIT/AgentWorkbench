@@ -41,13 +41,13 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.benchmark.BenchmarkMeasurement;
 import agentgui.core.common.ClassLoaderUtil;
-import agentgui.core.environment.EnvironmentPanel;
+import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentType;
 import agentgui.core.environment.EnvironmentTypes;
 import agentgui.core.project.PlatformJadeConfig;
-import agentgui.envModel.graph.controller.GraphEnvironmentControllerGUI;
+import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.visualisation.DisplayAgent;
-import agentgui.envModel.p2Dsvg.controller.Physical2DEnvironmentControllerGUI;
+import agentgui.envModel.p2Dsvg.controller.Physical2DEnvironmentController;
 
 /**
  * This class is for constant values or variables, which can
@@ -188,7 +188,7 @@ public class GlobalInfo {
 		String envKey = null;
 		String envDisplayName = null;
 		String envDisplayNameLanguage = null;
-		Class<? extends EnvironmentPanel> envPanelClass = null;
+		Class<? extends EnvironmentController> envControllerClass = null;
 		Class<? extends Agent> displayAgentClass = null;
 		EnvironmentType envType = null;
 		
@@ -196,27 +196,27 @@ public class GlobalInfo {
 		envKey = "none";
 		envDisplayName = "Kein vordefiniertes Umgebungsmodell verwenden";
 		envDisplayNameLanguage = Language.DE;
-		envPanelClass = null;
+		envControllerClass = null;
 		displayAgentClass = null;
-		envType = new EnvironmentType(envKey, envDisplayName, envDisplayNameLanguage, envPanelClass, displayAgentClass);
+		envType = new EnvironmentType(envKey, envDisplayName, envDisplayNameLanguage, envControllerClass, displayAgentClass);
 		addEnvironmentType(envType);
 		
 		// --- Continuous 2D environment ------------------------------------
 		envKey = "continous2Denvironment";
 		envDisplayName = "Kontinuierliches 2D-Umgebungsmodell";
 		envDisplayNameLanguage = Language.DE;
-		envPanelClass = Physical2DEnvironmentControllerGUI.class;
+		envControllerClass = Physical2DEnvironmentController.class;
 		displayAgentClass = agentgui.envModel.p2Dsvg.display.DisplayAgent.class;
-		envType = new EnvironmentType(envKey, envDisplayName, envDisplayNameLanguage, envPanelClass, displayAgentClass);
+		envType = new EnvironmentType(envKey, envDisplayName, envDisplayNameLanguage, envControllerClass, displayAgentClass);
 		addEnvironmentType(envType);
 		
 		// --- Grid Environment ---------------------------------------------
 		envKey = "gridEnvironment";
 		envDisplayName = "Graph bzw. Netzwerk";
 		envDisplayNameLanguage = Language.DE;
-		envPanelClass = GraphEnvironmentControllerGUI.class;
+		envControllerClass = GraphEnvironmentController.class;
 		displayAgentClass = DisplayAgent.class;
-		envType = new EnvironmentType(envKey, envDisplayName, envDisplayNameLanguage, envPanelClass, displayAgentClass);
+		envType = new EnvironmentType(envKey, envDisplayName, envDisplayNameLanguage, envControllerClass, displayAgentClass);
 		addEnvironmentType(envType);
 		
 	}

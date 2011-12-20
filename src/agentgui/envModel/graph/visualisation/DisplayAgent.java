@@ -88,8 +88,7 @@ public class DisplayAgent extends SimulationAgent {
 			// --- started from Agent.GUI -----------------
 			this.usePanel = (JPanel) startArgs[0];
 			
-			GraphEnvironmentControllerGUI startEnvPanel = (GraphEnvironmentControllerGUI) startArgs[1];
-			GraphEnvironmentController startController = (GraphEnvironmentController) startEnvPanel.getEnvironmentController();
+			GraphEnvironmentController startController = (GraphEnvironmentController) startArgs[1];
 			this.netModel = (NetworkModel) startController.getEnvironmentModelCopy();
 			
 		}
@@ -134,7 +133,7 @@ public class DisplayAgent extends SimulationAgent {
 		// --- Build the new Controller GUI ---------------
 		GraphEnvironmentController myGraphEnvController = new GraphEnvironmentController();
 		myGraphEnvController.setEnvironmentModel(this.netModel);
-		this.myGraphDisplay = new GraphEnvironmentControllerGUI(myGraphEnvController);
+		this.myGraphDisplay = (GraphEnvironmentControllerGUI) myGraphEnvController.getEnvironmentPanel();
 		
 		BasicGraphGUI basicGraphGUI = new BasicGraphGUI(myGraphEnvController);
 		basicGraphGUI.addObserver(this.myGraphDisplay);

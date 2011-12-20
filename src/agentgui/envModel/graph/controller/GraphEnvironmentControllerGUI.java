@@ -1,6 +1,6 @@
 /**
  * ***************************************************************
-h * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
  * applications based on the JADE - Framework in compliance with the 
  * FIPA specifications. 
  * Copyright (C) 2010 Christian Derksen and DAWIS
@@ -71,6 +71,7 @@ import javax.swing.table.TableRowSorter;
 import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentPanel;
 import agentgui.core.project.Project;
 import agentgui.envModel.graph.GraphGlobals;
@@ -98,82 +99,38 @@ import edu.uci.ics.jung.graph.util.EdgeType;
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
  * @author <br>Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati 
  */
-public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements Observer, ListSelectionListener, TableModelListener{
+public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements Observer, ListSelectionListener, TableModelListener {
 	
-	private static final long serialVersionUID = 1L;
-	
+	private static final long serialVersionUID = 7376906096627051173L;
+
 	private final static String pathImage = GraphGlobals.getPathImages();
 	
-	/**
-	 * JPanel containing the controls
-	 */
+	/** The SplitPane containing this GUI's components */
+	private JSplitPane jSplitPaneRoot = null;
+	
 	private JPanel jPanelControls = null;
-	/**
-	 * JScrollPane containing the components table
-	 */
 	private JScrollPane jScrollPaneComponentsTable = null;
-	/**
-	 * The components table
-	 */
+	private JLabel jLabelTable = null;
+	private JTextField jTextFieldSearch = null;
+	private JButton jButtonClearSearch = null;
+
 	private JTable jTableComponents = null;
-	/**
-	 *Used for showing buttons in the components table 
-	 */
 	private TableColumnModel colModel = null;
-	/**
-	 *Used for sorting and filtering components table 
-	 */
 	private TableRowSorter<DefaultTableModel> tblSorter = null;
 
-	/**
-	 * The Dialog for adding a new network component to the graph 
-	 */
-	private AddComponentDialog addComponentDialog = null;
-
-	/**
-	 * The GUI's GraphEnvironmentController 
-	 */
-	private GraphEnvironmentController controller = null;
-	
-	private JLabel jLabelTable = null;
-	/**
-	 * The SplitPane containing this GUI's components
-	 */
-	private JSplitPane jSplitPaneRoot = null;
-	/**
-	 * The graph visualization component
-	 */
+	/** The graph visualization component */
 	private BasicGraphGUI graphGUI = null;
-	private JTextField jTextFieldSearch = null;
-
-	private JButton jButtonClearSearch = null;
 	
 	
 	/**
 	 * This is the default constructor for just displaying the current
 	 * environment model during a running simulation
 	 */
-	public GraphEnvironmentControllerGUI(GraphEnvironmentController graphEnvironmentController) {
-		controller = graphEnvironmentController;
-		controller.addObserver(this);
-		this.setEnvironmentController(graphEnvironmentController);
+	public GraphEnvironmentControllerGUI(EnvironmentController envController) {
+		super(envController);
 		this.initialize();
 	}
 	
-	/**
-	 * This is the default constructor for configurations within Agent.GUI
-	 */
-	public GraphEnvironmentControllerGUI(Project project) {
-		super(project);
-		
-		//Creating a new Graph environment controller 
-		controller = new GraphEnvironmentController(currProject);
-		controller.addObserver(this);
-
-		this.setEnvironmentController(controller);
-		this.initialize();
-	}
-
 	/**
 	 * This method initializes this
 	 * @return void
@@ -184,6 +141,21 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		this.showNumberOfComponents();
 	}
 
+	/**
+	 * Returns the graph environment controller.
+	 * @return the graph environment controller
+	 */
+	public GraphEnvironmentController getGraphController() {
+		return (GraphEnvironmentController) this.environmentController;
+	}
+	/**
+	 * Gets the current project.
+	 * @return the current project
+	 */
+	public Project getCurrentProject() {
+		return this.getGraphController().getProject();
+	}
+	
 	/**
 	 * This method initializes pnlControlls	
 	 * @return javax.swing.JPanel	
@@ -250,12 +222,10 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	 */
 	private TableColumnModel getColModel(){
 		
-		final GraphEnvironmentControllerGUI graphEnvironmentControllerGUI = this;		
 		colModel = jTableComponents.getColumnModel();
         colModel.getColumn(2).setCellRenderer(new TableCellRenderer4Button());	        
         colModel.getColumn(2).setCellEditor(new TableCellEditor4TableButton(jTableComponents){
 			private static final long serialVersionUID = 1L;
-
 			/* (non-Javadoc)
         	 * @see agentgui.core.gui.components.JTableButtonEditor#actionPerformed(java.awt.event.ActionEvent)
         	 */
@@ -267,8 +237,8 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
                 //converting view coordinates to model coordinates
                 int modelRowIndex = jTableComponents.convertRowIndexToModel(row);
                 String compID = (String) jTableComponents.getModel().getValueAt(modelRowIndex, 0);
-        		NetworkComponent comp = controller.getNetworkModel().getNetworkComponent(compID);
-        		new OntologySettingsDialog(currProject, graphEnvironmentControllerGUI, comp).setVisible(true);
+        		NetworkComponent comp = getGraphController().getNetworkModel().getNetworkComponent(compID);
+        		new OntologySettingsDialog(getCurrentProject(), getGraphController(), comp).setVisible(true);
         	}
         });
         
@@ -382,7 +352,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	        if(column == 0 && row >=0 && row < model.getRowCount()){
 	        	String newCompID = (String) model.getValueAt(row, column);	    
 	        	//Getting the corresponding comp from the network model
-	        	NetworkComponent comp = (NetworkComponent) controller.getNetworkModel().getNetworkComponents().values().toArray()[row];
+	        	NetworkComponent comp = (NetworkComponent) getGraphController().getNetworkModel().getNetworkComponents().values().toArray()[row];
 	        	//The Old component ID before the change
 	        	String oldCompID = comp.getId();
 	        	
@@ -401,13 +371,13 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	        			getTblComponents().getModel().setValueAt(oldCompID, row, column);
 		        	}
 		        	//Check if a network component name already exists
-		        	else if(controller.getNetworkModel().getNetworkComponent(newCompID)!=null){
+		        	else if(getGraphController().getNetworkModel().getNetworkComponent(newCompID)!=null){
 	        			JOptionPane.showMessageDialog(this,Language.translate("The component name already exists!\n Choose a different one.", Language.EN),
 								Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);	 
 	        			getTblComponents().getModel().setValueAt(oldCompID, row, column);
 	        		}
 		        	//Check if the agent name already exists in the simulation setup
-		        	else if(this.currProject.simulationSetups.getCurrSimSetup().isAgentNameExists(newCompID)){
+		        	else if(getCurrentProject().simulationSetups.getCurrSimSetup().isAgentNameExists(newCompID)){
 		        		JOptionPane.showMessageDialog(this,Language.translate("An agent with the name already exists in the simulation setup!\n Choose a different one.", Language.EN),
 								Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);	 
 	        			getTblComponents().getModel().setValueAt(oldCompID, row, column);
@@ -430,7 +400,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	 */
 	private void handleRenameComponent(String oldCompID, String newCompID) {
 		//Environment network model
-		NetworkModel networkModel = controller.getNetworkModel();
+		NetworkModel networkModel = this.getGraphController().getNetworkModel();
 		NetworkComponent comp = networkModel.getNetworkComponent(oldCompID);
 		
 		//Temporary set
@@ -462,13 +432,13 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		
 		networkModel.addNetworkComponent(comp);
 		
-		controller.refreshNetworkModel();
+		this.getGraphController().refreshNetworkModel();
 		
 		//Renaming the agent in the agent start list of the simulation setup
 		int i=0;
-		for( i=0; i < getController().getAgents2Start().size(); i++)
+		for( i=0; i<this.getGraphController().getAgents2Start().size(); i++)
 		{
-			AgentClassElement4SimStart ac4s = (AgentClassElement4SimStart) getController().getAgents2Start().get(i);
+			AgentClassElement4SimStart ac4s = (AgentClassElement4SimStart) this.getGraphController().getAgents2Start().get(i);
 			if(ac4s.getStartAsName().equals(oldCompID)){
 				ac4s.setStartAsName(newCompID);
 				break;
@@ -483,10 +453,10 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	private Vector<Vector<String>> getComponentTableContents(){
 		Vector<Vector<String>> componentVector = new Vector<Vector<String>>();
 		
-		if(controller.getNetworkModel() != null){
+		if(this.getGraphController().getNetworkModel() != null){
 			
 			// Get the components from the controllers GridModel
-			Iterator<NetworkComponent> components = controller.getNetworkModel().getNetworkComponents().values().iterator();
+			Iterator<NetworkComponent> components = this.getGraphController().getNetworkModel().getNetworkComponents().values().iterator();
 			
 			// Add component ID and class name to the data vector
 			while(components.hasNext()){
@@ -507,9 +477,9 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	 * New dialog object is created each time. 
 	 * @return
 	 */
-	private AddComponentDialog getAddComponentDialog(){
-			addComponentDialog = new AddComponentDialog(this);
-		return addComponentDialog;
+	private void showAddComponentDialog(){
+		AddComponentDialog addComponentDialog = new AddComponentDialog(getGraphController());
+		addComponentDialog.setVisible(true);
 	}
 	
 	/**
@@ -518,10 +488,10 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	 */
 	public BasicGraphGUI getGraphGUI(){
 		if(graphGUI == null){
-			graphGUI = new BasicGraphGUI(this.getController());
+			graphGUI = new BasicGraphGUI(this.getGraphController());
 			graphGUI.addObserver(this);
-			if(controller.getNetworkModel()!=null && controller.getNetworkModel().getGraph()!=null){
-				graphGUI.setGraph(controller.getNetworkModel().getGraph());
+			if(this.getGraphController().getNetworkModel()!=null && this.getGraphController().getNetworkModel().getGraph()!=null){
+				graphGUI.setGraph(getGraphController().getNetworkModel().getGraph());
 			}
 		}
 		return graphGUI;
@@ -555,20 +525,20 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	@Override
 	public void update(Observable o, Object arg) {
 		
-		if(o.equals(controller) && arg.equals(GraphEnvironmentController.EVENT_NETWORKMODEL_LOADED)){
+		if(o.equals(this.getGraphController()) && arg.equals(GraphEnvironmentController.EVENT_NETWORKMODEL_LOADED)){
 			// --- The network model loaded --------------- 
 			if(graphGUI.getVisView()==null) {
 				// Create new graph visualization viewer --
-				graphGUI.setGraph(controller.getNetworkModel().getGraph()); 
+				graphGUI.setGraph(this.getGraphController().getNetworkModel().getGraph()); 
 			} else {
 				// Same vis view, but graph is refreshed
-				graphGUI.repaintGraph(controller.getNetworkModel().getGraph()); 
+				graphGUI.repaintGraph(this.getGraphController().getNetworkModel().getGraph()); 
 			}
 			rebuildTblComponents();
 			
-		} else if(o.equals(controller) && arg.equals(GraphEnvironmentController.EVENT_NETWORKMODEL_REFRESHED)) {			
+		} else if(o.equals(this.getGraphController()) && arg.equals(GraphEnvironmentController.EVENT_NETWORKMODEL_REFRESHED)) {			
 			// --- Network model is updated/refreshed -----
-			graphGUI.repaintGraph(controller.getNetworkModel().getGraph());
+			graphGUI.repaintGraph(this.getGraphController().getNetworkModel().getGraph());
 			// --- Rebuilding the component table ---------
 			this.rebuildTblComponents();
 			graphGUI.clearPickedObjects();
@@ -583,18 +553,18 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 			
 			if(notification.getEvent().equals(BasicGraphGUI.EVENT_NETWORKMODEL_CLEAR)){
 				// --- Clearing the actual Network and Graph model ------------
-				this.controller.clearNetworkModel();
+				this.getGraphController().clearNetworkModel();
 				this.showNumberOfComponents();
 				
 			} else if(notification.getEvent().equals(BasicGraphGUI.EVENT_ADD_COMPONENT_CLICKED)) {
 				// --- Add Component Button Clicked ---------------------------
-				if(controller.getNetworkModel().getGraph().getVertexCount()==0){
+				if(this.getGraphController().getNetworkModel().getGraph().getVertexCount()==0){
 					// --- If the graph is empty - starting from scratch -
-					getAddComponentDialog().setVisible(true);	
+					this.showAddComponentDialog();	
 				} else if(getPickedVertex()!=null) {
 					// --- Picked a vertex -------------------------------
 						if(isFreeToAddComponent(getPickedVertex())) {
-							getAddComponentDialog().setVisible(true);
+							this.showAddComponentDialog();
 						} else {
 							JOptionPane.showMessageDialog(this,Language.translate("Select a valid vertex", Language.EN),
 									Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
@@ -614,7 +584,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 					NetworkComponent selectedComponent = getNetworkComponentFromEdge(edgeSet.iterator().next());												
 					//Removing the component from the network model and updating the graph
 					this.handleRemoveNetworkComponent(selectedComponent);
-					this.getController().refreshNetworkModel();
+					this.getGraphController().refreshNetworkModel();
 					
 				} else {
 					// --- No edge is picked -----------------------------
@@ -672,19 +642,19 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 			} else if(notification.getEvent().equals(BasicGraphGUI.EVENT_IMPORT_GRAPH_CLICKED)){
 				//Import Graph button clicked
 				JFileChooser graphFC = new JFileChooser();
-				graphFC.setFileFilter(new FileNameExtensionFilter(Language.translate(controller.getGraphFileImporter().getTypeString()), controller.getGraphFileImporter().getGraphFileExtension()));
+				graphFC.setFileFilter(new FileNameExtensionFilter(Language.translate(this.getGraphController().getGraphFileImporter().getTypeString()), this.getGraphController().getGraphFileImporter().getGraphFileExtension()));
 				graphFC.setCurrentDirectory(Application.RunInfo.getLastSelectedFolder());
 				if(graphFC.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
 					Application.RunInfo.setLastSelectedFolder(graphFC.getCurrentDirectory());
 					File graphMLFile = graphFC.getSelectedFile();
-					this.controller.importNetworkModel(graphMLFile);
+					this.getGraphController().importNetworkModel(graphMLFile);
 				}
 			
 			} else if(notification.getEvent().equals(BasicGraphGUI.EVENT_NODE_EDIT_PROPERTIES_CLICKED)){
 				// Popup Menu Item Node properties clicked
 				GraphNode pickedVertex = getPickedVertex();
 				if(pickedVertex!=null){
-					new OntologySettingsDialog(currProject, this, pickedVertex).setVisible(true);
+					new OntologySettingsDialog(this.getCurrentProject(), this.getGraphController(), pickedVertex).setVisible(true);
 				}
 			
 			} else if(notification.getEvent().equals(BasicGraphGUI.EVENT_EDGE_EDIT_PROPERTIES_CLICKED)){
@@ -692,7 +662,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 				GraphEdge pickedEdge = getPickedEdge();
 				if(pickedEdge!=null){
 					NetworkComponent netComp = getNetworkComponentFromEdge(pickedEdge);						
-					new OntologySettingsDialog(currProject, this, netComp).setVisible(true);
+					new OntologySettingsDialog(this.getCurrentProject(), this.getGraphController(), netComp).setVisible(true);
 				}
 				
 			} else if(notification.getEvent().equals(BasicGraphGUI.EVENT_OBJECT_LEFT_CLICK) ||
@@ -717,7 +687,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	 */
 	private void handleSplitNode(GraphNode node) {		
 		//Environment Network Model
-		NetworkModel networkModel = getController().getNetworkModel();
+		NetworkModel networkModel = this.getGraphController().getNetworkModel();
 		Graph<GraphNode,GraphEdge> graph = networkModel.getGraph();
 		
 		//Get the components containing the node
@@ -769,7 +739,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		//Adding new node to the network model
 		networkModel.getGraphElements().put(newNode.getId(),newNode);
 		
-		controller.refreshNetworkModel();
+		this.getGraphController().refreshNetworkModel();
 	}
 
 	/**
@@ -780,7 +750,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	 */
 	private void handleMergeNodes(GraphNode node1, GraphNode node2) {
 		//Environment Network Model
-		NetworkModel networkModel = getController().getNetworkModel();
+		NetworkModel networkModel = this.getGraphController().getNetworkModel();
 		Graph<GraphNode,GraphEdge> graph = networkModel.getGraph();
 		
 		//Get the Network components from the nodes
@@ -831,7 +801,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 			graph.removeVertex(node2);
 			networkModel.getGraphElements().remove(node2.getId());
 			
-			getController().refreshNetworkModel();
+			this.getGraphController().refreshNetworkModel();
 		}
 		else
 		{
@@ -849,7 +819,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	public HashSet<NetworkComponent> getNetworkComponentsFromNode(GraphNode node){						
 		// Get the components from the controllers GridModel
 		HashSet<NetworkComponent>  compSet = new HashSet<NetworkComponent>();
-		Iterator<NetworkComponent> components = controller.getNetworkModel().getNetworkComponents().values().iterator();						
+		Iterator<NetworkComponent> components = this.getGraphController().getNetworkModel().getNetworkComponents().values().iterator();						
 		while(components.hasNext()){ // iterating through all network components
 			NetworkComponent comp = components.next();
 			// check if the component contains the given node
@@ -866,9 +836,9 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	 * @return count No of network components containing the given node
 	 */
 	public int getNetworkComponentCount(GraphNode node){
-		if(controller.getNetworkModel() != null){				
+		if(this.getGraphController().getNetworkModel() != null){				
 			// Get the components from the controllers GridModel
-			Iterator<NetworkComponent> components = controller.getNetworkModel().getNetworkComponents().values().iterator();						
+			Iterator<NetworkComponent> components = this.getGraphController().getNetworkModel().getNetworkComponents().values().iterator();						
 			int count = 0;
 			while(components.hasNext()){ // iterating through all network components
 				NetworkComponent comp = components.next();
@@ -889,7 +859,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	 */
 	private void handleRemoveNetworkComponent(NetworkComponent selectedComponent) {
 		
-		NetworkModel networkModel = getController().getNetworkModel();
+		NetworkModel networkModel = this.getGraphController().getNetworkModel();
 		
 		//The IDs of the elements present in the given component 
 		HashSet<String> graphElementIDs = selectedComponent.getGraphElementIDs();
@@ -924,17 +894,17 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		
 		//Removing the new agent from the agent start list of the simulation setup
 		int i=0;
-		for( i=0; i < getController().getAgents2Start().size(); i++) {
-			AgentClassElement4SimStart ac4s = (AgentClassElement4SimStart) getController().getAgents2Start().get(i);
+		for( i=0; i < this.getGraphController().getAgents2Start().size(); i++) {
+			AgentClassElement4SimStart ac4s = (AgentClassElement4SimStart) this.getGraphController().getAgents2Start().get(i);
 			if(ac4s.getStartAsName().equals(selectedComponent.getId())){
-				getController().getAgents2Start().remove(i);
+				this.getGraphController().getAgents2Start().remove(i);
 				break;
 			}
 		}
 		
 		//Shifting the positions of the later components by 1
-		for(int j=i; j<getController().getAgents2Start().size();j++) {
-			AgentClassElement4SimStart ac4s = (AgentClassElement4SimStart) getController().getAgents2Start().get(j);
+		for(int j=i; j<this.getGraphController().getAgents2Start().size();j++) {
+			AgentClassElement4SimStart ac4s = (AgentClassElement4SimStart) this.getGraphController().getAgents2Start().get(j);
 			ac4s.setPostionNo(ac4s.getPostionNo()-1);
 		}
 	}
@@ -976,7 +946,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	 */
 	private boolean isCenterNodeOfStar(GraphNode node, NetworkComponent comp) {
 		//Get the network model
-		NetworkModel networkModel = getController().getNetworkModel();
+		NetworkModel networkModel = this.getGraphController().getNetworkModel();
 		Iterator<String> iter  = comp.getGraphElementIDs().iterator();
 		//For each graph element of the component
 		while(iter.hasNext()){
@@ -1031,18 +1001,11 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 			//Converting from view coordinates to model coordinates
 			int selectedIndex = getTblComponents().convertRowIndexToModel(getTblComponents().getSelectedRow());
 			String componentID = (String) jTableComponents.getModel().getValueAt(selectedIndex, 0);
-			NetworkComponent component = controller.getNetworkModel().getNetworkComponent(componentID);
+			NetworkComponent component = this.getGraphController().getNetworkModel().getNetworkComponent(componentID);
 			
 			graphGUI.clearPickedObjects();
 			selectObject(component);			
 		}
-	}
-	/**
-	 * This method get's the GUI's controller
-	 * @return GraphEnvironmentController The controller of the environment network model.
-	 */
-	public GraphEnvironmentController getController(){
-		return controller;
 	}
 	
 	/**
@@ -1102,12 +1065,12 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		if(showComponentSettingsDialog){
 			OntologySettingsDialog osd = null;
 			if(object instanceof GraphNode){
-				osd = new OntologySettingsDialog(currProject, this, object);			
+				osd = new OntologySettingsDialog(this.getCurrentProject(), this.getGraphController(), object);			
 			}else if(object instanceof GraphEdge){
 				NetworkComponent netComp = getNetworkComponentFromEdge((GraphEdge)object);
-				osd = new OntologySettingsDialog(currProject, this, netComp);
+				osd = new OntologySettingsDialog(this.getCurrentProject(), this.getGraphController(), netComp);
 			}else if(object instanceof NetworkComponent){
-				osd = new OntologySettingsDialog(currProject, this, (NetworkComponent)object);
+				osd = new OntologySettingsDialog(this.getCurrentProject(), this.getGraphController(), (NetworkComponent)object);
 			}		
 			osd.setVisible(true);
 		}
@@ -1139,7 +1102,6 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	/**
 	 * Returns the node which is picked. If multiple nodes are picked, returns null.
 	 * @return GraphNode - the GraphNode which is picked. 
-	 * 
 	 */
 	public GraphNode getPickedVertex(){
 			Set<GraphNode> nodeSet = graphGUI.getVisView().getPickedVertexState().getPicked();
@@ -1150,7 +1112,6 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	/**
 	 * Returns the edge which is picked. If multiple nodes are picked, returns null.
 	 * @return GraphEdge - the GraphNode which is picked. 
-	 * 
 	 */
 	public GraphEdge getPickedEdge(){
 			Set<GraphEdge> edgeSet = graphGUI.getVisView().getPickedEdgeState().getPicked();
@@ -1166,7 +1127,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 	 */
 	private NetworkComponent getNetworkComponentFromEdge(GraphEdge edge){
 		// Get the components from the controllers GridModel
-		Iterator<NetworkComponent> components = controller.getNetworkModel().getNetworkComponents().values().iterator();						
+		Iterator<NetworkComponent> components = this.getGraphController().getNetworkModel().getNetworkComponents().values().iterator();						
 		while(components.hasNext()){ // iterating through all network components
 			NetworkComponent comp = components.next();
 			// check if the component contains the given node
@@ -1186,7 +1147,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		
 		Iterator<String> elementIDs = netComp.getGraphElementIDs().iterator();
 		while(elementIDs.hasNext()){
-			elements.add(controller.getNetworkModel().getGraphElement(elementIDs.next()));
+			elements.add(this.getGraphController().getNetworkModel().getGraphElement(elementIDs.next()));
 		}
 		
 		return elements;

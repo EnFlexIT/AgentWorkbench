@@ -68,6 +68,7 @@ import org.w3c.dom.events.EventTarget;
 import agentgui.core.agents.AgentClassElement;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentPanel;
 import agentgui.core.gui.AgentSelector;
 import agentgui.core.project.Project;
@@ -80,10 +81,11 @@ import agentgui.envModel.p2Dsvg.ontology.PlaygroundObject;
 import agentgui.envModel.p2Dsvg.ontology.Scale;
 import agentgui.envModel.p2Dsvg.ontology.StaticObject;
 import agentgui.envModel.p2Dsvg.utils.EnvironmentHelper;
+
 /**
  * This class provides the GUI for configuring the Physical2DEnvironment
+ * 
  * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
- *  
  */
 public class Physical2DEnvironmentControllerGUI extends EnvironmentPanel implements ActionListener{
 
@@ -124,25 +126,32 @@ public class Physical2DEnvironmentControllerGUI extends EnvironmentPanel impleme
 	 */
 	private String originalStyle = null;
 	
-	Physical2DEnvironmentController controller = null;  //  @jve:decl-index=0:
+	
 	/**
 	 * This is the default constructor
 	 */
-	public Physical2DEnvironmentControllerGUI(Project project) {
-		super(project);
-	
-		//Creating a new Physical 2D environment controller 
-		controller = new Physical2DEnvironmentController(currProject);
-		controller.addObserver(this);
-		
-		this.setEnvironmentController(controller);
-		
+	public Physical2DEnvironmentControllerGUI(EnvironmentController controller) {
+		super(controller);
 		initialize();
 	}
 
 	/**
+	 * Returns the Physical2DEnvironmentController.
+	 * @return the Physical2DEnvironmentController
+	 */
+	public Physical2DEnvironmentController getP2DController() {
+		return (Physical2DEnvironmentController) this.environmentController;
+	}
+	/**
+	 * Gets the current project.
+	 * @return the current project
+	 */
+	public Project getCurrentProject() {
+		return this.getP2DController().getProject();
+	}
+
+	/**
 	 * This method initializes this
-	 * 
 	 * @return void
 	 */
 	private void initialize() {
@@ -168,13 +177,13 @@ public class Physical2DEnvironmentControllerGUI extends EnvironmentPanel impleme
 //		this.add(getJPanelTopNew(), gridBagConstraints1);
 		
 		
-		controller.setGUI(this);
-		if(controller.getSvgDoc() != null){
-			setSVGDocument(controller.getSvgDoc());
+		this.getP2DController().setGUI(this);
+		if(this.getP2DController().getSvgDoc() != null){
+			setSVGDocument(this.getP2DController().getSvgDoc());
 		}
-		if(controller.getEnvironmentModel()!= null){
+		if(this.getP2DController().getEnvironmentModel()!= null){
 			rebuildTree();
-			environmentSettings.setScale(controller.getEnvironmentModel().getScale());
+			environmentSettings.setScale(this.getP2DController().getEnvironmentModel().getScale());
 		}
 	}
 	
@@ -236,7 +245,7 @@ public class Physical2DEnvironmentControllerGUI extends EnvironmentPanel impleme
 					
 					DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) treeEnvironment.getSelectionPath().getLastPathComponent();
 					String selectedObjectID = selectedNode.toString();
-					Physical2DObject selectedObject = controller.getEnvWrap().getObjectById(selectedObjectID);
+					Physical2DObject selectedObject = getP2DController().getEnvWrap().getObjectById(selectedObjectID);
 					if(selectedObject != null){
 						// Get target TreePath 
 						Point dropLocation = dtde.getLocation();
@@ -247,7 +256,7 @@ public class Physical2DEnvironmentControllerGUI extends EnvironmentPanel impleme
 						boolean targetPgFound = false;
 						Physical2DObject targetObject = null;
 						while(targetNode != null && !targetPgFound){
-							targetObject = controller.getEnvWrap().getObjectById(targetNode.toString());
+							targetObject = getP2DController().getEnvWrap().getObjectById(targetNode.toString());
 							if(targetObject != null && targetObject instanceof PlaygroundObject){
 								targetPgFound = true;
 							}else{
@@ -256,7 +265,7 @@ public class Physical2DEnvironmentControllerGUI extends EnvironmentPanel impleme
 						}
 						
 						if(targetPgFound){
-							dtde.dropComplete(controller.moveObjectToPlayground(selectedObjectID, targetObject.getId()));
+							dtde.dropComplete(getP2DController().moveObjectToPlayground(selectedObjectID, targetObject.getId()));
 							setSelectedElement(null);
 						}else{
 							dtde.dropComplete(false);
@@ -277,8 +286,8 @@ public class Physical2DEnvironmentControllerGUI extends EnvironmentPanel impleme
 	 * Rebuilding treeEnvironment's tree model
 	 */
 	private void rebuildTree(){
-		if(controller.getEnvironmentModel() != null){
-			DefaultMutableTreeNode rootNode = getPlaygroundNode(controller.getEnvironmentModel().getRootPlayground());
+		if(this.getP2DController().getEnvironmentModel() != null){
+			DefaultMutableTreeNode rootNode = getPlaygroundNode(this.getP2DController().getEnvironmentModel().getRootPlayground());
 			getTreeEnvironment().setModel(new DefaultTreeModel(rootNode));
 		}else{
 			DefaultMutableTreeNode dummyNode = new DefaultMutableTreeNode(Language.translate("Keine Umgebung definiert"));
@@ -414,16 +423,16 @@ public class Physical2DEnvironmentControllerGUI extends EnvironmentPanel impleme
 		if(arg0.getSource() == this.environmentSettings.getBtnLoadSVG()){
 			if(getLoadSVGDialog().showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
 				Application.RunInfo.setLastSelectedFolder(loadSVGDialog.getCurrentDirectory());
-				controller.setSVGFile(loadSVGDialog.getSelectedFile());
+				this.getP2DController().setSVGFile(loadSVGDialog.getSelectedFile());
 			}
 		}else if(arg0.getSource() == environmentSettings.getBtnSetScale()){
 			Scale scale = new Scale();
 			scale.setRealWorldUnitValue(Float.parseFloat(environmentSettings.getTfRwu().getText()));
 			scale.setRealWorldUntiName(environmentSettings.getCbUnit().getSelectedItem().toString());
 			scale.setPixelValue(Float.parseFloat(environmentSettings.getTfPx().getText()));
-			controller.setScale(scale);
+			this.getP2DController().setScale(scale);
 		}else if(arg0.getSource() == objectSettings.getBtnApply()){
-			if(controller.createOrChange(objectSettings.getObjectProperties())){
+			if(this.getP2DController().createOrChange(objectSettings.getObjectProperties())){
 				changePosAndSize(selectedElement,
 						objectSettings.getTfId().getText(),
 						objectSettings.getTfXPos().getText(), 
@@ -434,7 +443,7 @@ public class Physical2DEnvironmentControllerGUI extends EnvironmentPanel impleme
 			}
 			setSelectedElement(null);
 		}else if(arg0.getSource() == objectSettings.getBtnRemove()){
-			controller.removeObject();
+			this.getP2DController().removeObject();
 			setSelectedElement(null);
 		}else if(arg0.getSource() == objectSettings.getBtnSetAgentClass()){
 			AgentSelector agentSelector = new AgentSelector(Application.MainWindow);
@@ -477,22 +486,22 @@ public class Physical2DEnvironmentControllerGUI extends EnvironmentPanel impleme
 			
 			if(eventCode == Physical2DEnvironmentController.ENVIRONMENT_CHANGED){
 				rebuildTree();
-				if(controller.getEnvironmentModel() != null){
-					environmentSettings.setScale(controller.getEnvironmentModel().getScale());
+				if(this.getP2DController().getEnvironmentModel() != null){
+					environmentSettings.setScale(this.getP2DController().getEnvironmentModel().getScale());
 				}
 			}
 			if(eventCode == Physical2DEnvironmentController.SCALE_CHANGED){
-				environmentSettings.setScale(controller.getEnvironmentModel().getScale());
-				objectSettings.setUnit(controller.getEnvironmentModel().getScale().getRealWorldUntiName());
+				environmentSettings.setScale(this.getP2DController().getEnvironmentModel().getScale());
+				objectSettings.setUnit(this.getP2DController().getEnvironmentModel().getScale().getRealWorldUntiName());
 			}
 			if(eventCode == Physical2DEnvironmentController.OBJECTS_CHANGED){
 				rebuildTree();
 			}
 			if(eventCode == Physical2DEnvironmentController.SVG_CHANGED){
-				setSVGDocument(controller.getSvgDoc());
+				setSVGDocument(this.getP2DController().getSvgDoc());
 			}
 			if(eventCode == Physical2DEnvironmentController.EC_ERROR){
-				String errorMsg = controller.getLastErrorMessage();
+				String errorMsg = this.getP2DController().getLastErrorMessage();
 				JOptionPane.showMessageDialog(this, errorMsg, Language.translate("Fehler"), JOptionPane.ERROR_MESSAGE);
 			}
 			if(eventCode < 0 || eventCode > 4){
@@ -536,9 +545,9 @@ public class Physical2DEnvironmentControllerGUI extends EnvironmentPanel impleme
 				// Highlight selected element
 				String newStyle=fill+";"+selectionStyle;
 				element.setAttributeNS(null, "style", newStyle);
-				controller.setSelectedObject(element.getAttributeNS(null, "id"));
+				getP2DController().setSelectedObject(element.getAttributeNS(null, "id"));
 				
-				if(controller.getSelectedObject() != null){
+				if(getP2DController().getSelectedObject() != null){
 					objectSettings.getBtnRemove().setEnabled(true);
 				}else{
 					objectSettings.getBtnRemove().setEnabled(false);
@@ -580,8 +589,8 @@ public class Physical2DEnvironmentControllerGUI extends EnvironmentPanel impleme
 		@Override
 		public void run() {
 			elem.setAttributeNS(null, "id", id);
-			EnvironmentHelper.setSizeFromStrings(elem, controller.getEnvironmentModel().getScale(), width, height);
-			EnvironmentHelper.setPosFromStrings(elem, controller.getEnvironmentModel().getScale(), xPos, yPos, width, height);
+			EnvironmentHelper.setSizeFromStrings(elem, getP2DController().getEnvironmentModel().getScale(), width, height);
+			EnvironmentHelper.setPosFromStrings(elem, getP2DController().getEnvironmentModel().getScale(), xPos, yPos, width, height);
 		}
 		
 	}

@@ -85,10 +85,12 @@ public class Physical2DObjectSettingsPanel extends JPanel{
 	 * Assigns ontology classes to object types. 
 	 */
 	private HashMap<String, Class<?>> typeClass = null;
+	
 	/**
 	 * The EnvironmentSetup instance containing this EnvironmentSetupObjectSettings instance
 	 */
 	private Physical2DEnvironmentControllerGUI parent = null;
+	
 	private JTextField tfAgentClass = null;
 	private JButton btnSetAgentClass = null;
 	/**
@@ -97,6 +99,7 @@ public class Physical2DObjectSettingsPanel extends JPanel{
 	public Physical2DObjectSettingsPanel(Physical2DEnvironmentControllerGUI parent) {
 		super();
 		this.parent = parent;
+		
 		initialize();
 	}
 
@@ -385,8 +388,7 @@ public class Physical2DObjectSettingsPanel extends JPanel{
 	void setInputValues(Element elem){
 		if(elem != null){
 			
-			Scale scale = parent.controller.getEnvironmentModel().getScale();
-			
+			Scale scale = parent.getP2DController().getEnvironmentModel().getScale();
 			
 			getTfId().setText(elem.getAttributeNS(null, "id"));
 			
@@ -398,7 +400,7 @@ public class Physical2DObjectSettingsPanel extends JPanel{
 			getTfXPos().setText(""+pos.getXPos());
 			getTfYPos().setText(""+pos.getYPos());
 			
-			Physical2DObject object = parent.controller.getEnvWrap().getObjectById(elem.getAttributeNS(null, "id"));
+			Physical2DObject object = parent.getP2DController().getEnvWrap().getObjectById(elem.getAttributeNS(null, "id"));
 			setObjectType(object);
 			
 			if(object instanceof ActiveObject){

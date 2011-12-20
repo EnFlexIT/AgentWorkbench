@@ -102,21 +102,19 @@ import edu.uci.ics.jung.visualization.transform.MutableTransformer;
  *
  */
 public class AddComponentDialog extends JDialog implements ActionListener{
+	
+	private static final long serialVersionUID = -7481141098749690137L;
 
-	private static final long serialVersionUID = 1L;
-	/**
-	 * The graph element prototype of the selected component type.
-	 */
+	/** The graph element prototype of the selected component type. */
 	private GraphElementPrototype graphElement = null;  //  @jve:decl-index=0:
 	
 	private JPanel jContentPane = null;
 	private JList componentTypesList = null;
 
-	/**
-	 * The GraphEnvironmentControllerGUI that started this dialog
-	 */
-	private GraphEnvironmentControllerGUI parentGUI = null;
 	private JScrollPane jScrollPane = null;
+
+	private GraphEnvironmentController graphController = null;
+	
 	/**
 	 * Graph visualization component
 	 */
@@ -134,9 +132,9 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 	 * Gets the parent object and initializes
 	 * @param parent The parent GUI which creates this
 	 */
-	public AddComponentDialog(GraphEnvironmentControllerGUI parent) {
+	public AddComponentDialog(GraphEnvironmentController controller) {
 		super(Application.MainWindow);
-		this.parentGUI = parent;
+		this.graphController = controller;
 		initialize();
 	}
 
@@ -212,7 +210,7 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 							if(!e.getValueIsAdjusting()){
 								String selected = (String) componentTypesList.getSelectedValue();
 								//Gets the class name of the GraphPrototype of the selected component type from the environment controller
-								String graphPrototype = parentGUI.getController().getComponentTypeSettings().get(selected).getGraphPrototype();
+								String graphPrototype = graphController.getComponentTypeSettings().get(selected).getGraphPrototype();
 								//System.out.println("selected prototype: "+graphPrototype);
 								showPrototypePreview(graphPrototype);
 							}
@@ -247,7 +245,7 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 	    
 	    if(graphElement!=null){	   
 	    	//Generate and use the next unique network component ID
-	    	String nextID = parentGUI.getController().getNetworkModel().nextNetworkComponentID();
+	    	String nextID = this.graphController.getNetworkModel().nextNetworkComponentID();
 	    	graphElement.setId(nextID);	    	
 	    	graphElement.setType(componentTypesList.getSelectedValue().toString());
 			
@@ -292,7 +290,7 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 	 */
 	private Object[] getListData(){
 		Vector<String> list = new Vector<String>();
-		HashMap<String, ComponentTypeSettings> etsHash = parentGUI.getController().getComponentTypeSettings();
+		HashMap<String, ComponentTypeSettings> etsHash = this.graphController.getComponentTypeSettings();
 		if(etsHash != null){
 			Iterator<String> etsIter = etsHash.keySet().iterator();
 			while(etsIter.hasNext()){
@@ -331,7 +329,7 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 					@Override
 					public String transform(GraphEdge edge) {
 						//Get the path of the Image from the component type settings
-						String edgeImage = parentGUI.getController().getComponentTypeSettings().get(edge.getComponentType()).getEdgeImage();
+						String edgeImage = graphController.getComponentTypeSettings().get(edge.getComponentType()).getEdgeImage();
 						if(edgeImage!=null){
 							URL url = getClass().getResource(edgeImage);
 							if(url!=null){
@@ -350,19 +348,19 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 				visView.getRenderContext().setVertexFillPaintTransformer(
 						new Transformer<GraphNode, Paint>() {
 							public Paint transform(GraphNode arg0) {
-								if(visView.getPickedVertexState().isPicked(arg0))
-								{//Highlight color when picked	
+								if(visView.getPickedVertexState().isPicked(arg0)) {
+									//Highlight color when picked	
 									return BasicGraphGUI.DEFAULT_VERTEX_PICKED_COLOR;
-								}
-								else
-								{	//Get the color from the component type settings
-									String colorString= parentGUI.getController().getComponentTypeSettings().get("node").getColor();
+									
+								} else {	
+									//Get the color from the component type settings
+									String colorString= graphController.getComponentTypeSettings().get("node").getColor();
 									if(colorString!=null){
 										Color color = new Color(Integer.parseInt(colorString));							
 										return color;
-									}
-									else
+									} else {
 										return BasicGraphGUI.DEFAULT_VERTEX_COLOR;
+									}
 								}
 							}
 						}
@@ -372,19 +370,19 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 				visView.getRenderContext().setEdgeDrawPaintTransformer(
 				new Transformer<GraphEdge, Paint>() {
 					public Paint transform(GraphEdge arg0) {
-						if(visView.getPickedEdgeState().isPicked(arg0))
-						{//Highlight color when picked	
+						if(visView.getPickedEdgeState().isPicked(arg0)) {
+							//Highlight color when picked	
 							return BasicGraphGUI.DEFAULT_EDGE_PICKED_COLOR;
-						}
-						else
-						{	//Get the color from the component type settings
-							String colorString= parentGUI.getController().getComponentTypeSettings().get(arg0.getComponentType()).getColor();
+							
+						} else {	
+							//Get the color from the component type settings
+							String colorString= graphController.getComponentTypeSettings().get(arg0.getComponentType()).getColor();
 							if(colorString!=null){
 								Color color = new Color(Integer.parseInt(colorString));							
 								return color;
-							}
-							else
+							} else {
 								return BasicGraphGUI.DEFAULT_EDGE_COLOR;
+							}
 						}
 					}
 				}
@@ -453,11 +451,11 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 	@SuppressWarnings("unchecked")
 	private void addGraphPrototype(String selectedType, GraphNode pickedVertex) {
 		//Environment network model
-		NetworkModel gridModel = parentGUI.getController().getNetworkModel();		
+		NetworkModel gridModel = this.graphController.getNetworkModel();		
 		//The Node picked in the parent graph
-		GraphNode parentPickedVertex = parentGUI.getPickedVertex();
+		GraphNode parentPickedVertex = this.graphController.getPickedVertex();
 		
-		HashMap<String, ComponentTypeSettings> componentTypeSettings = parentGUI.getController().getComponentTypeSettings();
+		HashMap<String, ComponentTypeSettings> componentTypeSettings = this.graphController.getComponentTypeSettings();
 		
 		// Create a NetworkComponent representing the element
 		NetworkComponent newComponent = new NetworkComponent();
@@ -494,8 +492,7 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 		//Replace the network model graph with the new one
 		gridModel.setGraph(gridModel.getGraph());
 		
-		GraphEnvironmentController gec = parentGUI.getController(); 
-		gec.refreshNetworkModel();	
+		this.graphController.refreshNetworkModel();	
 		
 		//Adding the new agent to the agent start list of the environment
 		Class<? extends Agent> theAgentClass = null;
@@ -507,9 +504,9 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 		
 		AgentClassElement4SimStart ac4s = new AgentClassElement4SimStart(theAgentClass, SimulationSetup.AGENT_LIST_EnvironmentConfiguration);
 		ac4s.setStartAsName(newComponent.getId());
-		ac4s.setPostionNo(gec.getAgents2Start().size()+1);
+		ac4s.setPostionNo(this.graphController.getAgents2Start().size()+1);
 		
-		gec.getAgents2Start().addElement(ac4s);
+		this.graphController.getAgents2Start().addElement(ac4s);
 		
 		}
 		
@@ -538,7 +535,7 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 			if(v != v2){
 				GraphNode newNode = new GraphNode();
 				//Generate the unique ID to be assigned to the new node
-				String nextID = parentGUI.getController().getNetworkModel().nextNodeID();
+				String nextID = graphController.getNetworkModel().nextNodeID();
 				newNode.setId(nextID); 
 				
 				//Set position of node  v1+(v-v2)
