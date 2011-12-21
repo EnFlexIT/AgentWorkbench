@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
 
+import javax.swing.DefaultListModel;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -363,7 +364,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 		
 		switch(sscn.getUpdateReason()){
 		case SimulationSetups.SIMULATION_SETUP_LOAD:
-			updateGraphFileName();
+			this.updateGraphFileName();
 			this.loadEnvironment(); //Loads network model and notifies observers	
 		
 			generalGraphSettings4MAS = (GeneralGraphSettings4MAS) this.getProject().getUserRuntimeObject();
@@ -377,6 +378,10 @@ public class GraphEnvironmentController extends EnvironmentController {
 		case SimulationSetups.SIMULATION_SETUP_ADD_NEW:
 			this.updateGraphFileName();
 			networkModel = new NetworkModel();
+			
+			// --- register a new list of agents, which has to be started with the environment ------
+			this.setAgents2Start(new DefaultListModel());
+			this.registerDefaultListModel4SimulationStart(SimulationSetup.AGENT_LIST_EnvironmentConfiguration);
 			
 			setChanged();
 			notifyObservers(EVENT_NETWORKMODEL_LOADED);
@@ -438,6 +443,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 		if(fileName != null){
 
 			// --- register the list of agents, which has to be started with the environment ------
+			this.setAgents2Start(new DefaultListModel());
 			this.registerDefaultListModel4SimulationStart(SimulationSetup.AGENT_LIST_EnvironmentConfiguration);
 			
 			// --- Load the graph topology from the graph file ------

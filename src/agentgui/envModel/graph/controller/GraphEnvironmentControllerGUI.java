@@ -40,7 +40,6 @@ import java.awt.event.ActionListener;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Observable;
-import java.util.Observer;
 import java.util.Vector;
 
 import javax.swing.ImageIcon;
@@ -87,7 +86,7 @@ import agentgui.envModel.graph.networkModel.NetworkModel;
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
  * @author <br>Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati 
  */
-public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements Observer, ListSelectionListener, TableModelListener {
+public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements ListSelectionListener, TableModelListener {
 	
 	private static final long serialVersionUID = 7376906096627051173L;
 
