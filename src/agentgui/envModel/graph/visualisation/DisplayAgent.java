@@ -40,7 +40,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import agentgui.envModel.graph.GraphGlobals;
-import agentgui.envModel.graph.controller.BasicGraphGUI;
+import agentgui.envModel.graph.controller.BasicGraphGui;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.controller.GraphEnvironmentControllerGUI;
 import agentgui.envModel.graph.networkModel.NetworkModel;
@@ -135,12 +135,11 @@ public class DisplayAgent extends SimulationAgent {
 		myGraphEnvController.setEnvironmentModel(this.netModel);
 		this.myGraphDisplay = (GraphEnvironmentControllerGUI) myGraphEnvController.getEnvironmentPanel();
 		
-		BasicGraphGUI basicGraphGUI = new BasicGraphGUI(myGraphEnvController);
-		basicGraphGUI.addObserver(this.myGraphDisplay);
+		BasicGraphGui basicGraphGui = new BasicGraphGui(myGraphEnvController);
 		if (this.netModel!=null) {
-			basicGraphGUI.setGraph(this.netModel.getGraph());	
+			basicGraphGui.setGraph(this.netModel.getGraph());	
 		}
-		this.myGraphDisplay.setGraphGUI(basicGraphGUI);
+		this.myGraphDisplay.setGraphGUI(basicGraphGui);
 				
 		if (this.useFrame!=null) {
 			this.useFrame.setContentPane(this.myGraphDisplay);

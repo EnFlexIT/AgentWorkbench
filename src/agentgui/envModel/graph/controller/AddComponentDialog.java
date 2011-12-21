@@ -350,7 +350,7 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 							public Paint transform(GraphNode arg0) {
 								if(visView.getPickedVertexState().isPicked(arg0)) {
 									//Highlight color when picked	
-									return BasicGraphGUI.DEFAULT_VERTEX_PICKED_COLOR;
+									return BasicGraphGui.DEFAULT_VERTEX_PICKED_COLOR;
 									
 								} else {	
 									//Get the color from the component type settings
@@ -359,7 +359,7 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 										Color color = new Color(Integer.parseInt(colorString));							
 										return color;
 									} else {
-										return BasicGraphGUI.DEFAULT_VERTEX_COLOR;
+										return BasicGraphGui.DEFAULT_VERTEX_COLOR;
 									}
 								}
 							}
@@ -372,7 +372,7 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 					public Paint transform(GraphEdge arg0) {
 						if(visView.getPickedEdgeState().isPicked(arg0)) {
 							//Highlight color when picked	
-							return BasicGraphGUI.DEFAULT_EDGE_PICKED_COLOR;
+							return BasicGraphGui.DEFAULT_EDGE_PICKED_COLOR;
 							
 						} else {	
 							//Get the color from the component type settings
@@ -381,7 +381,7 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 								Color color = new Color(Integer.parseInt(colorString));							
 								return color;
 							} else {
-								return BasicGraphGUI.DEFAULT_EDGE_COLOR;
+								return BasicGraphGui.DEFAULT_EDGE_COLOR;
 							}
 						}
 					}
@@ -453,7 +453,8 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 		//Environment network model
 		NetworkModel gridModel = this.graphController.getNetworkModel();		
 		//The Node picked in the parent graph
-		GraphNode parentPickedVertex = this.graphController.getPickedVertex();
+		GraphEnvironmentControllerGUI graphEnvGUI = (GraphEnvironmentControllerGUI) this.graphController.getEnvironmentPanel();
+		GraphNode parentPickedVertex = graphEnvGUI.getGraphGUI().getPickedVertex();
 		
 		HashMap<String, ComponentTypeSettings> componentTypeSettings = this.graphController.getComponentTypeSettings();
 		
@@ -659,7 +660,7 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 						return;
 					}
 				}
-				addGraphPrototype(selected,pickedVertex);
+				addGraphPrototype(selected, pickedVertex);
 				
 				//this.setVisible(false);
 				this.dispose();

@@ -29,13 +29,14 @@
 
 package agentgui.envModel.graph.controller;
 
+import java.awt.event.MouseEvent;
+import java.awt.geom.Point2D;
+
+import javax.swing.JPopupMenu;
+
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.AbstractPopupGraphMousePlugin;
-import java.awt.Component;
-import java.awt.event.MouseEvent;
-import java.awt.geom.Point2D;
-import javax.swing.JPopupMenu;
 
 /**
  * A GraphMousePlugin that brings up distinct pop up menus when an edge or vertex is
@@ -47,25 +48,17 @@ import javax.swing.JPopupMenu;
  * @author <br>Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati 
  */
 public class GraphEnvironmentPopupPlugin<V, E> extends AbstractPopupGraphMousePlugin {
-	/**
-	 * The parent BasicGraphGUI
-	 */
-	private BasicGraphGUI myGUI = null;
+	
+	/** The parent BasicGraphGUI */
+	private BasicGraphGui myGUI = null;
 
     private JPopupMenu edgePopup, vertexPopup;
     
-    /** Creates a new instance of GraphPopupMenuMousePlugin */
-    public GraphEnvironmentPopupPlugin(BasicGraphGUI parentGUI) {
-        this(MouseEvent.BUTTON3_MASK);
-        this.myGUI = parentGUI;
-    }
     
-    /**
-     * Creates a new instance of PopupVertexEdgeMenuMousePlugin
-     * @param modifiers mouse event modifiers see the jung visualization Event class.
-     */
-    public GraphEnvironmentPopupPlugin(int modifiers) {
-        super(modifiers);
+    /** Creates a new instance of GraphPopupMenuMousePlugin */
+    public GraphEnvironmentPopupPlugin(BasicGraphGui parentGUI) {
+        super(MouseEvent.BUTTON3_MASK);
+        this.myGUI = parentGUI;
     }
     
     /**
@@ -100,11 +93,18 @@ public class GraphEnvironmentPopupPlugin<V, E> extends AbstractPopupGraphMousePl
         }
     }
     
+    /**
+     * Update vertex menu with context sensitive menu items.
+     *
+     * @param v the v
+     * @param vv the vv
+     * @param point the point
+     */
     private void updateVertexMenu(V v, VisualizationViewer<V, E> vv, Point2D point) {
-        if (vertexPopup == null) return;
-        Component[] menuComps = vertexPopup.getComponents();
-        //TODO needed for context sensitive menu items
         
+    	if (vertexPopup == null) return;
+    	
+//        Component[] menuComps = vertexPopup.getComponents();
 //        for (Component comp: menuComps) {
 //            if (comp instanceof VertexMenuListener) {
 //                ((VertexMenuListener)comp).setVertexAndView(v, vv);
@@ -148,11 +148,18 @@ public class GraphEnvironmentPopupPlugin<V, E> extends AbstractPopupGraphMousePl
         this.vertexPopup = vertexPopup;
     }
     
+    /**
+     * Update edge menu with context sensitive menu items.
+     *
+     * @param edge the edge
+     * @param vv the vv
+     * @param point the point
+     */
     private void updateEdgeMenu(E edge, VisualizationViewer<V, E> vv, Point2D point) {
-        if (edgePopup == null) return;
-        Component[] menuComps = edgePopup.getComponents();
-        //TODO needed for context sensitive menu items
-
+        
+    	if (edgePopup == null) return;
+    	
+//        Component[] menuComps = edgePopup.getComponents();
 //        for (Component comp: menuComps) {
 //            if (comp instanceof EdgeMenuListener) {
 //                ((EdgeMenuListener)comp).setEdgeAndView(edge, vv);
@@ -161,6 +168,7 @@ public class GraphEnvironmentPopupPlugin<V, E> extends AbstractPopupGraphMousePl
 //                ((MenuPointListener)comp).setPoint(point);
 //            }
 //        }
+        
     }
     
 }

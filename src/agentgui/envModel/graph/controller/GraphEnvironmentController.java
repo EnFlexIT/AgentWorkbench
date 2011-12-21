@@ -572,9 +572,5 @@ public class GraphEnvironmentController extends EnvironmentController {
 		return netModel;
 	}
 	
-	public GraphNode getPickedVertex() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
+
 }

@@ -74,7 +74,7 @@ import agentgui.core.gui.ClassSelector;
 import agentgui.core.gui.imaging.MissingIcon;
 import agentgui.core.project.Project;
 import agentgui.envModel.graph.GraphGlobals;
-import agentgui.envModel.graph.controller.BasicGraphGUI;
+import agentgui.envModel.graph.controller.BasicGraphGui;
 import agentgui.envModel.graph.networkModel.ComponentTypeSettings;
 import agentgui.envModel.graph.prototypes.GraphElementPrototype;
 
@@ -224,10 +224,10 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			if(vertexSize!=null){
 				size = vertexSize;
 			} else {
-				size = BasicGraphGUI.DEFAULT_VERTEX_SIZE;
+				size = BasicGraphGui.DEFAULT_VERTEX_SIZE;
 			}
 		} else {
-			size = BasicGraphGUI.DEFAULT_VERTEX_SIZE;
+			size = BasicGraphGui.DEFAULT_VERTEX_SIZE;
 		}
 		jComboBoxNodeSize.setSelectedItem(size);
 		
@@ -238,11 +238,11 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			if(colorString!=null){
 				color = new Color(Integer.parseInt(colorString));
 			} else {
-				color = BasicGraphGUI.DEFAULT_VERTEX_COLOR;
+				color = BasicGraphGui.DEFAULT_VERTEX_COLOR;
 			}
 		}
 		else {
-			color = BasicGraphGUI.DEFAULT_VERTEX_COLOR;
+			color = BasicGraphGui.DEFAULT_VERTEX_COLOR;
 		}
 		this.setNodeColor(color);
 		
@@ -253,7 +253,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			
 			double snapRaster = ctsNode.getSnapRaster();
 			if (snapRaster==0) {
-				snapRaster = BasicGraphGUI.DEFAULT_RASTER_SIZE;
+				snapRaster = BasicGraphGui.DEFAULT_RASTER_SIZE;
 			}
 			this.getJSpinnerGridWidth().setValue(new Double(snapRaster));
 			
@@ -494,7 +494,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 						String imagePath = cts.getEdgeImage();
 						Float edgeWidth = cts.getEdgeWidth();
 						if (edgeWidth==0) {
-							edgeWidth = BasicGraphGUI.DEFAULT_EDGE_WIDTH;
+							edgeWidth = BasicGraphGui.DEFAULT_EDGE_WIDTH;
 						}
 						Color edgeColor = new Color(Integer.parseInt(cts.getColor()));
 						
@@ -562,9 +562,9 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			} else if (i == getColumnHeaderIndex(COL_Image)) {
 				newRow.add(createImageIcon(null,"MissingIcon"));
 			} else if (i == getColumnHeaderIndex(COL_EdgeWidth)) {
-				newRow.add(BasicGraphGUI.DEFAULT_EDGE_WIDTH);
+				newRow.add(BasicGraphGui.DEFAULT_EDGE_WIDTH);
 			} else if (i == getColumnHeaderIndex(COL_EdgeColor)) {
-				newRow.add(BasicGraphGUI.DEFAULT_EDGE_COLOR);
+				newRow.add(BasicGraphGui.DEFAULT_EDGE_COLOR);
 			}
 		}
 		this.getTableModel4ComponentTypes().addRow(newRow);

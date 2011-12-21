@@ -55,7 +55,7 @@ import edu.uci.ics.jung.visualization.transform.MutableTransformer;
 /**
  * Handling mouse interaction with graph visualizations in a BasicGraphGUI.
  * 
- * @see BasicGraphGUI  
+ * @see BasicGraphGui  
  * 
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
  * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati
@@ -64,7 +64,7 @@ import edu.uci.ics.jung.visualization.transform.MutableTransformer;
 public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNode, GraphEdge> implements MouseWheelListener {
 	
 	/** The parent BasicGraphGUI */
-	private BasicGraphGUI myGUI = null;
+	private BasicGraphGui myGUI = null;
 	/** The current VisualizationViewer	*/
 	private VisualizationViewer<GraphNode,GraphEdge> vv = null; 	
 	
@@ -90,9 +90,9 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	 * Constructor
 	 * @param graphVisualization The parent BasicGraphGUI
 	 */
-	public GraphEnvironmentMousePlugin(BasicGraphGUI basicGraphGUI) {
+	public GraphEnvironmentMousePlugin(BasicGraphGui basicGraphGui) {
 		super();
-		this.myGUI = basicGraphGUI;
+		this.myGUI = basicGraphGui;
 	}
 	/**
 	 * Sets the visualization viewer.

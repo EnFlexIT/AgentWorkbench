@@ -19,12 +19,12 @@
         </entry>
     </agentConfiguration>
     <jadeConfiguration>
-        <useLocalPort>1116</useLocalPort>
+        <useLocalPort>1117</useLocalPort>
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
-            <service>agentgui.simulationService.SimulationService</service>
             <service>jade.debugging.DebugService</service>
+            <service>agentgui.simulationService.SimulationService</service>
             <service>jade.core.mobility.AgentMobilityService</service>
         </serviceList>
     </jadeConfiguration>
@@ -34,7 +34,7 @@
         <dynamicLoadBalancingClass>agentgui.simulationService.balancing.DynamicLoadBalancing</dynamicLoadBalancingClass>
         <numberOfAgents>800</numberOfAgents>
         <numberOfContainer>1</numberOfContainer>
-        <staticLoadBalancingClass>game_of_life.SimService.balancing.StartAndBalancing</staticLoadBalancingClass>
+        <staticLoadBalancingClass>gol.SimService.balancing.StartAndBalancing</staticLoadBalancingClass>
         <useUserThresholds>false</useUserThresholds>
         <userThresholds>
             <thCpuH>80</thCpuH>
