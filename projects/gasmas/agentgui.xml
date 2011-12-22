@@ -11,12 +11,12 @@
     </subOntologies>
     <agentConfiguration>
         <entry>
-            <key>gasmas.agents.EntryAgent</key>
-            <value>gasmas.ontology.Entry</value>
-        </entry>
-        <entry>
             <key>gasmas.agents.BranchAgent</key>
             <value>gasmas.ontology.Branch</value>
+        </entry>
+        <entry>
+            <key>gasmas.agents.EntryAgent</key>
+            <value>gasmas.ontology.Entry</value>
         </entry>
         <entry>
             <key>gasmas.agents.ValveAgent</key>
@@ -44,8 +44,8 @@
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
-            <service>jade.debugging.DebugService</service>
             <service>agentgui.simulationService.SimulationService</service>
+            <service>jade.debugging.DebugService</service>
             <service>jade.core.mobility.AgentMobilityService</service>
         </serviceList>
     </jadeConfiguration>
@@ -72,7 +72,7 @@
         <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>false</showJADErmaGUI>
     </remoteContainerConfiguration>
-    <simulationSetupCurrent>Testnetz 1</simulationSetupCurrent>
+    <simulationSetupCurrent>HNord</simulationSetupCurrent>
     <simulationSetups>
         <entry>
             <key>HNord</key>
@@ -81,6 +81,10 @@
         <entry>
             <key>Testnetz 1</key>
             <value>testnetz_1.xml</value>
+        </entry>
+        <entry>
+            <key>Neu Test</key>
+            <value>neu_test.xml</value>
         </entry>
         <entry>
             <key>Einfaches Netz</key>

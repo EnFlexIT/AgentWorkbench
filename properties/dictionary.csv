@@ -242,6 +242,7 @@ de;Mess-Agenten anhalten;Stop load measure agent
 de;Mess-Agenten starten;Start load measure agent
 de;Messung aufzeichnen;Record measurement
 de;Messungsaufzeichnung beenden;Stop recording measurement
+de;Mitwirkende;Contributors;;;
 de;MySQL-Fehler:;MySQL-Error:
 de;MySQL-Fehler;MySQL-Error
 de;Möchten Sie Agent.GUI nun umschalten und neu starten ?;Do you want to switch and restart Agent.GUI ?

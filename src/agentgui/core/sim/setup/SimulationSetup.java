@@ -253,9 +253,6 @@ import agentgui.core.project.Project;
 			dlm.addElement(ace4ss);
 		}
 		
-		// --- Ensure the right order in the ComboBoxModel ----------
-		this.sortComboBoxModel4AgentLists();
-		
 	}
 	
 	/**
@@ -292,7 +289,10 @@ import agentgui.core.project.Project;
 	public void setAgentDefaultListModel(String listName, DefaultListModel defaultListModel4AgentStarts) {
 		if (listName!=null) {
 			this.hashMap4AgentDefaulListModels.put(listName, defaultListModel4AgentStarts);
-			this.comboBoxModel4AgentLists.addElement(listName);
+			if (this.comboBoxModel4AgentLists.getIndexOf(listName)==-1) {
+				this.comboBoxModel4AgentLists.addElement(listName);	
+				this.sortComboBoxModel4AgentLists();
+			}
 		}
 	}
 	

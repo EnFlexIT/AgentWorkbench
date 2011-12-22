@@ -654,7 +654,9 @@ public class GraphEnvironmentController extends EnvironmentController {
 	@Override
 	protected void saveEnvironment() {
 		
+		this.validateNetworkComponentAndAgents2Start();
 		if(networkModel != null && networkModel.getGraph() != null){
+		
 			try {
 				// Save the graph topology 
 				String graphFileName = baseFileName+".graphml";

@@ -645,6 +645,11 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 			switch (scn.getUpdateReason()) {
 			case SimulationSetups.SIMULATION_SETUP_SAVED:
 				break;
+			case SimulationSetups.SIMULATION_SETUP_ADD_NEW:
+				this.jListModelAgents2Start = new DefaultListModel();
+				this.currSimSetup.setAgentDefaultListModel(SimulationSetup.AGENT_LIST_ManualConfiguration, this.jListModelAgents2Start);
+				this.setupLoad();
+				break;
 			default:
 				this.setupLoad();	
 				break;
