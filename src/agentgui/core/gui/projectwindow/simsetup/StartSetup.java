@@ -813,7 +813,6 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 			 ac4s = (AgentClassElement4SimStart) jListModelAgents2Start.getElementAt(i); 
 			 ac4s.setPostionNo(startCounter);
 			 startCounter++;
-			 jListModelAgents2Start.setElementAt(ac4s, i);
 		}
 
 	}

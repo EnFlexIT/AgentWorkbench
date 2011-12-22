@@ -29,11 +29,14 @@
 package agentgui.core.environment;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Vector;
 
 import javax.swing.DefaultListModel;
 
+import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.project.Project;
 import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.core.sim.setup.SimulationSetupsChangeNotification;
@@ -87,7 +90,7 @@ public abstract class EnvironmentController extends Observable implements Observ
 	
 	/**
 	 * Sets the environment panel for displaying the data model.
-	 * @param myEnvironmentPanel the myEnvironmentPanel to set
+	 * @param environmentPanel the EnvironmentPanel to set
 	 */
 	public void setEnvironmentPanel(EnvironmentPanel environmentPanel) {
 		this.myEnvironmentPanel = environmentPanel;
@@ -161,7 +164,75 @@ public abstract class EnvironmentController extends Observable implements Observ
 	public void setAgents2Start(DefaultListModel agents2Start) {
 		this.agents2Start = agents2Start;
 	}
+	
+	/**
+	 * Returns an empty position for the Agents2Start.
+	 * @return the empty position4 agents2 start
+	 */
+	public int getEmptyPosition4Agents2Start() {
+	
+		int emptyPos = 0;
+		
+		Vector<Integer> positions = new Vector<Integer>(); 
+		for (int i = 0; i < this.agents2Start.size(); i++) {
+			AgentClassElement4SimStart ace4s = (AgentClassElement4SimStart) this.agents2Start.get(i);
+			positions.add(ace4s.getPostionNo());
+		}
+		
+		Collections.sort(positions);
+		for (int i = 0; i < positions.size(); i++) {
+			if (positions.get(i)!=i+1) {
+				emptyPos = i+1;
+				break;
+			}
+		}
+		
+		if (emptyPos==0) {
+			emptyPos = this.agents2Start.size() + 1;
+		}
+		return emptyPos;
+	}
+	
+	/**
+	 * Gets the description instances of the agents to start, identified by the agent name
+	 *
+	 * @param agentName the agent name
+	 * @return the array of AgentClassElement4SimStart depending on the agent name
+	 */
+	public AgentClassElement4SimStart[] getAgents2StartFromAgentName(String agentName) {
+		
+		AgentClassElement4SimStart[] ace4sArr = null;
+		Vector<AgentClassElement4SimStart> ace4sVector = new Vector<AgentClassElement4SimStart>();
+		
+		for (int i = 0; i < this.agents2Start.size(); i++) {
+			AgentClassElement4SimStart ace4s = (AgentClassElement4SimStart) this.agents2Start.get(i);
+			if (ace4s.getStartAsName().equals(agentName)) {
+				ace4sVector.add(ace4s);
+			}
+		}
 
+		if (ace4sVector.size()!=0) {
+			ace4sArr = ace4sVector.toArray(new AgentClassElement4SimStart[ace4sVector.size()]);	
+		}
+		return ace4sArr;
+	}
+	
+	/**
+	 * Renumber the list of agents to start.
+	 */
+	public void reNumberAgents2Start() {
+		
+		Integer counter = 1;
+		AgentClassElement4SimStart ac4s = null;
+		
+		for (int i=0; i<this.agents2Start.size(); i++) {
+			 ac4s = (AgentClassElement4SimStart) this.agents2Start.getElementAt(i); 
+			 ac4s.setPostionNo(counter);
+			 counter++;
+			 //this.agents2Start.setElementAt(ac4s, i);
+		}
+	}
+	
 	/**
 	 * With this method the list of Agents {@link EnvironmentController#agents2Start}, which has to 
 	 * be started with the environment can be registered at the {@link SimulationSetup}

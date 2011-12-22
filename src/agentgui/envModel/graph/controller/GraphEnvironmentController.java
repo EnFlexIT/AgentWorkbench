@@ -28,6 +28,8 @@
  */
 package agentgui.envModel.graph.controller;
 
+import jade.core.Agent;
+
 import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -35,6 +37,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collection;
 import java.util.HashMap;
 
 import javax.swing.DefaultListModel;
@@ -45,6 +48,7 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.collections15.Transformer;
 
+import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentPanel;
 import agentgui.core.project.Project;
@@ -55,6 +59,7 @@ import agentgui.envModel.graph.controller.yedGraphml.YedGraphMLFileImporter;
 import agentgui.envModel.graph.networkModel.ComponentTypeSettings;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphNode;
+import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkComponentList;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 import edu.uci.ics.jung.graph.Graph;
@@ -495,7 +500,154 @@ public class GraphEnvironmentController extends EnvironmentController {
 		
 		setComponentTypeSettings(generalGraphSettings4MAS.getCurrentCTS());
 		
+		this.validateNetworkComponentAndAgents2Start();
 	}
+	
+	/**
+	 * Clean up / correct list of agents corresponding to the current NetworkModel.
+	 */
+	public void validateNetworkComponentAndAgents2Start() {
+		
+		// --------------------------------------------------------------------
+		// --- Get the current ComponentTypeSettings --------------------------
+		HashMap<String, ComponentTypeSettings> cts = this.generalGraphSettings4MAS.getCurrentCTS();
+
+		// --------------------------------------------------------------------
+		// --- Transfer the agent list into a HashMap for a faster access ----- 
+		HashMap<String, AgentClassElement4SimStart> agents2StartHash = new HashMap<String, AgentClassElement4SimStart>(); 
+		for (int i = 0; i < this.getAgents2Start().size(); i++) {
+			AgentClassElement4SimStart ace4s = (AgentClassElement4SimStart) this.getAgents2Start().get(i);
+			String agentName = ace4s.getStartAsName();
+			
+			AgentClassElement4SimStart ace4sThere = agents2StartHash.get(agentName);
+			agents2StartHash.put(agentName, ace4s);
+			if (ace4sThere!=null) {
+				// --- Remove the redundant entries and let one entry survive -
+				AgentClassElement4SimStart[] ace4sArr2Delete = getAgents2StartFromAgentName(agentName);
+				for (int j = 0; j < ace4sArr2Delete.length-1; j++) {
+					this.getAgents2Start().removeElement(ace4sArr2Delete[j]);
+				}
+			}
+		}
+		
+		// --------------------------------------------------------------------
+		// --- Run through the network components and validate agent list ----- 
+		Collection<String> compNameCollection = this.networkModel.getNetworkComponents().keySet();
+		String[] compNames = compNameCollection.toArray(new String[compNameCollection.size()]);
+		for (int i = 0; i < compNames.length; i++) {
+			// --- Current component ------------------------------------------
+			String compName = compNames[i];
+			NetworkComponent comp = this.networkModel.getNetworkComponent(compName);
+			
+			// ----------------------------------------------------------------
+			// --- Validate current component against ComponentTypeSettings ---
+			ComponentTypeSettings ctsSingle = cts.get(comp.getType());
+			if (comp.getAgentClassName().equals(ctsSingle.getAgentClass())==false) {
+				// --- Correct this entry -------
+				comp.setAgentClassName(ctsSingle.getAgentClass());
+			}
+			if (comp.getPrototypeClassName().equals(ctsSingle.getGraphPrototype())==false) {
+				// --- Correct this entry -------
+				//TODO change the graph elements if needed
+				comp.setPrototypeClassName(ctsSingle.getGraphPrototype());
+			}
+			
+			// ----------------------------------------------------------------
+			// --- Check if an Agent can be found in the start list -----------
+			AgentClassElement4SimStart ace4s = agents2StartHash.get(compName);
+			if (ace4s==null) {
+				// --- Agent definition NOT found in agent start list ---------
+				this.add2Agents2Start(comp);
+				
+			} else {
+				// --- Agent definition found in agent start list -------------
+				if (isValidAgent2Start(ace4s, comp)==false) {
+					// --- Error found --------------------
+					this.getAgents2Start().removeElement(ace4s);
+					this.add2Agents2Start(comp);
+				}
+				agents2StartHash.remove(compName);
+			}
+			
+		} // end for
+		
+		// --------------------------------------------------------------------
+		// --- Are there remaining agents in the start list? ------------------
+		if (agents2StartHash.size()!=0) {
+			
+			Collection<String> remainingAgents2Start = agents2StartHash.keySet();
+			String[] remainingAgents = remainingAgents2Start.toArray(new String[remainingAgents2Start.size()]);
+			for (int i = 0; i < remainingAgents.length; i++) {
+				String remainingAgent = remainingAgents[i];
+				AgentClassElement4SimStart remainingAce4s = agents2StartHash.get(remainingAgent);
+				this.getAgents2Start().removeElement(remainingAce4s);
+			}
+		}
+		
+		// --------------------------------------------------------------------
+		// --- Renumber list --------------------------------------------------
+		this.reNumberAgents2Start();
+		
+	}
+	
+	/**
+	 * Checks if is valid agent2 start.
+	 *
+	 * @param ace4s the AgentClassElement4SimStart
+	 * @param comp the NetworkComponent
+	 * @return true, if the AgentClassElement4SimStart is valid 
+	 */
+	private boolean isValidAgent2Start(AgentClassElement4SimStart ace4s, NetworkComponent comp) {
+		
+		boolean valid = true;
+		if (ace4s.getAgentClassReference().equals(comp.getAgentClassName())==false) {
+			valid = false;
+		}
+		if (ace4s.getStartAsName().equals(comp.getId())==false) {
+			valid = false;
+		}
+		return valid;
+	}
+	
+	/**
+	 * Adds an agent to the start list corresponding to the network component .
+	 * @param networkComponent the network component
+	 */
+	public void add2Agents2Start(NetworkComponent networkComponent) {
+		
+		Class<? extends Agent> agentClass = this.getAgentClass(networkComponent.getAgentClassName());
+		if (agentClass!=null) {
+
+			int newPosNo = this.getEmptyPosition4Agents2Start();
+			// --- Agent class found. Create new list element --------- 
+			AgentClassElement4SimStart ace4s = new AgentClassElement4SimStart(agentClass, SimulationSetup.AGENT_LIST_EnvironmentConfiguration);
+			ace4s.setStartAsName(networkComponent.getId());	
+			ace4s.setPostionNo(newPosNo);
+			// --- Add the new list element to the list ---------------
+			this.getAgents2Start().add(newPosNo-1, ace4s);
+		}
+		
+	}
+	
+	/**
+	 * Returns the agent class.
+	 *
+	 * @param agentReference the agent reference
+	 * @return the agent class
+	 */
+	@SuppressWarnings("unchecked")
+	private Class<? extends Agent> getAgentClass(String agentReference) {
+		
+		Class<? extends Agent> agentClass = null;
+		try {
+			agentClass = (Class<? extends Agent>) Class.forName(agentReference);
+		} catch (ClassNotFoundException ex) {
+			System.err.println("Could not find agent class '" + agentReference + "'");
+		}
+		return agentClass;
+	}
+	
+	
 	/* (non-Javadoc)
 	 * @see EnvironmentController#saveEnvironment()
 	 */

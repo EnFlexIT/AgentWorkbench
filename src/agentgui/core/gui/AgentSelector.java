@@ -70,40 +70,22 @@ public class AgentSelector extends JDialog implements ActionListener {
 	
 	/** The Path image. */
 	private final String PathImage = Application.RunInfo.PathImageIntern();  //  @jve:decl-index=0:
-	
-	/** The image icon. */
 	private ImageIcon imageIcon = new ImageIcon( this.getClass().getResource( PathImage + "AgentGUI.png") );
-	
-	/** The image. */
 	private Image image = imageIcon.getImage();
 	
 	/** The selected agent classes. */
 	private Object[] selectedAgentClasses = null; 
-	
-	/** The canceled. */
 	private boolean canceled = false;
 	
-	/** The j content pane. */
 	private JPanel jContentPane = null;
-	
-	/** The j list agents. */
-	private JListClassSearcher jListAgents = null;
-	
-	/** The j button ok. */
-	private JButton jButtonOk = null;
-	
-	/** The j button cancel. */
-	private JButton jButtonCancel = null;
-	
-	/** The j panel bottom. */
 	private JPanel jPanelBottom = null;
-
-	/** The j label search caption. */
+	private JListClassSearcher jListAgents = null;
 	private JLabel jLabelSearchCaption = null;
-	
-	/** The j text field search. */
 	private JTextField jTextFieldSearch = null;
+	private JButton jButtonOk = null;
+	private JButton jButtonCancel = null;
 
+	
 	/**
 	 * Instantiates a new agent selector.
 	 */

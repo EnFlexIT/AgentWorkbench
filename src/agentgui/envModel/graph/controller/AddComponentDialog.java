@@ -28,8 +28,6 @@
  */
 package agentgui.envModel.graph.controller;
 
-import jade.core.Agent;
-
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -64,10 +62,8 @@ import javax.swing.border.EtchedBorder;
 
 import org.apache.commons.collections15.Transformer;
 
-import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.envModel.graph.networkModel.ComponentTypeSettings;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphElement;
@@ -129,8 +125,8 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 	
 	
 	/**
-	 * Gets the parent object and initializes
-	 * @param parent The parent GUI which creates this
+	 * Gets the parent object and initializes.
+	 * @param controller the GraphEnvironmentController
 	 */
 	public AddComponentDialog(GraphEnvironmentController controller) {
 		super(Application.MainWindow);
@@ -448,8 +444,8 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 	 * @param selectedType - The Network component type selected
 	 * @param pickedVertex - The vertex selected in the prototype preview which is to be used as common point for merging
 	 */
-	@SuppressWarnings("unchecked")
 	private void addGraphPrototype(String selectedType, GraphNode pickedVertex) {
+		
 		//Environment network model
 		NetworkModel gridModel = this.graphController.getNetworkModel();		
 		//The Node picked in the parent graph
@@ -494,20 +490,9 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 		gridModel.setGraph(gridModel.getGraph());
 		
 		this.graphController.refreshNetworkModel();	
-		
+
 		//Adding the new agent to the agent start list of the environment
-		Class<? extends Agent> theAgentClass = null;
-		try {
-			theAgentClass = (Class<? extends Agent>)  Class.forName(newComponent.getAgentClassName());
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-		
-		AgentClassElement4SimStart ac4s = new AgentClassElement4SimStart(theAgentClass, SimulationSetup.AGENT_LIST_EnvironmentConfiguration);
-		ac4s.setStartAsName(newComponent.getId());
-		ac4s.setPostionNo(this.graphController.getAgents2Start().size()+1);
-		
-		this.graphController.getAgents2Start().addElement(ac4s);
+		this.graphController.add2Agents2Start(newComponent);
 		
 		}
 		

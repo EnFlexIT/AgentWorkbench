@@ -440,6 +440,7 @@ public class BasicGraphGuiTools implements ActionListener {
 			// - - - Waiting here - - -
 			if (ctsDialog.isCanceled()==false) {
 				this.controller.setComponentTypeSettings(ctsDialog.getComponentTypeSettings());
+				this.controller.validateNetworkComponentAndAgents2Start();
 				basicGraphGui.setGraph(this.controller.getNetworkModel().getGraph());
 			}
 			ctsDialog.dispose();

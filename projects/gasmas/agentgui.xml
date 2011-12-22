@@ -40,7 +40,7 @@
         </entry>
     </agentConfiguration>
     <jadeConfiguration>
-        <useLocalPort>1112</useLocalPort>
+        <useLocalPort>1113</useLocalPort>
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
@@ -81,10 +81,6 @@
         <entry>
             <key>Testnetz 1</key>
             <value>testnetz_1.xml</value>
-        </entry>
-        <entry>
-            <key>Kleiner Test</key>
-            <value>kleiner_test.xml</value>
         </entry>
         <entry>
             <key>Einfaches Netz</key>

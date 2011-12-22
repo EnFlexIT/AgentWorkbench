@@ -56,10 +56,12 @@ public class EnvironmentType {
 	
 	/**
 	 * Constructor for this class.
-	 * 
-	 * @param key A unique identifier for the environment model type  
+	 *
+	 * @param key A unique identifier for the environment model type
 	 * @param displayName A name that will be displayed later on
-	 * @param panelClass The panel on which all components have to be placed in order to allow end users to define their own environment model
+	 * @param displayNameLanguage the display name language
+	 * @param controller the controller class of the environment 
+	 * @param agentClass the agent class for displaying the environment during runtime
 	 */
 	public EnvironmentType(String key, String displayName, String displayNameLanguage, Class<? extends EnvironmentController> controller, Class<? extends Agent> agentClass) {
 		this.internalKey = key;
@@ -142,8 +144,10 @@ public class EnvironmentType {
 	public Class<? extends EnvironmentController> getEnvironmentControllerClass() {
 		return environmentController;
 	}
+	
 	/**
-	 * @param displayPanelClass the displayPanel to set
+	 * Sets the environment controller class.
+	 * @param controllerClass the new environment controller class
 	 */
 	public void setEnvironmentControllerClass(Class<? extends EnvironmentController> controllerClass) {
 		this.environmentController = controllerClass;

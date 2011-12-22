@@ -151,10 +151,8 @@ public class AgentClassElement4SimStart {
 		
 	}
 	
-	/**
-	 * returns the textual description of this Object.
-	 *
-	 * @return the string
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
 	 */
 	@SuppressWarnings("unchecked")
 	@Override

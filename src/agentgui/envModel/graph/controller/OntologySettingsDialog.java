@@ -73,9 +73,8 @@ public class OntologySettingsDialog extends JDialog implements ActionListener{
 	
 	/**
 	 * Constructor.
-	 *
 	 * @param project The simulation project
-	 * @param graphEnvContGUI the instance of GraphEnvironmentControllerGUI
+	 * @param controller the GraphEnvironmentController
 	 * @param element The GraphElement containing the ontology object
 	 */
 	public OntologySettingsDialog(Project project, GraphEnvironmentController controller, Object element) {
