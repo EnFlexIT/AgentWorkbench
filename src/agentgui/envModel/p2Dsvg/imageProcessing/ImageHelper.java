@@ -89,7 +89,8 @@ public class ImageHelper {
 	String fromID="";
 	String toID="";
 	EnvironmentProviderHelper helper;
-	boolean DEBUG=false;
+	boolean DEBUG=true;
+	Document manipulated=null;
 	
 	/**
 	 * @param fromID ID of the StartPoint
@@ -247,7 +248,7 @@ public class ImageHelper {
 	 * @return
 	 * @throws Exception
 	 */
-	private synchronized agentgui.envModel.p2Dsvg.imageProcessing.StepNode withoutGrid(String id,float target_x,float target_y,float width,float height, int direction , float lookAhead, agentgui.envModel.p2Dsvg.imageProcessing.StepNode parent,int pixel) throws Exception
+	private synchronized agentgui.envModel.p2Dsvg.imageProcessing.StepNode withoutGrid(String id,float target_x,float target_y,float width,float height, int direction , float lookAhead, agentgui.envModel.p2Dsvg.imageProcessing.StepNode parent,int pixel,boolean useAdjustedWorld) throws Exception
 	{
 			
 		System.out.println("Target in WITHOUTGRID:"+target_x+","+ target_y);
@@ -257,7 +258,16 @@ public class ImageHelper {
 		float worldWidth=helper.getEnvironment().getRootPlayground().getSize().getWidth();
 		float worldHeight=helper.getEnvironment().getRootPlayground().getSize().getHeight();
 	    counter++;
-		Document doc=helper.getSVGDoc();
+	    Document doc=null;
+	    if(!useAdjustedWorld)
+	    {
+	     doc=helper.getSVGDoc();	
+	    }
+	    else
+	    {
+	    	doc=manipulated;	
+	    }
+		
 		// Calculate pos
 		final float xStart= parent.getX();
 		final float yStart= parent.getY();
@@ -551,7 +561,7 @@ public class ImageHelper {
 				System.out.println("Neue Datei geschreieben");
 				System.out.println("Neuer Rekursiver Aufruf");
 				System.out.println("LookAhead-faktor:"+ (lookAhead-faktor));
-		    	return this.withoutGrid(id, target_x, target_y, width, height, direction, lookAhead-faktor, parent, pixel);
+		    	return this.withoutGrid(id, target_x, target_y, width, height, direction, lookAhead-faktor, parent, pixel,useAdjustedWorld);
 		    	}
 		     }		   
 		    
@@ -741,7 +751,7 @@ public class ImageHelper {
 		root.setTotal_distance((this.getHCost(listXIndex, listYIndex, targetXIndex, targetYIndex)));
 		 root.setParent(null);
 		//int color=this.getPixelsOnce(plan, x, y, width, height);
-		agentgui.envModel.p2Dsvg.imageProcessing.StepNode targetNode= this.withoutGrid(id, target_x, target_y, width, height, direction, 10.0f,root , -1) ;   //this.originalAStar(id, target_x, target_y, width, height, target_id, direction, lookAhead, root, -1);          //      //this.originalAStar(id, target_x, target_y, width, height, target_id, direction, lookAhead, root, color) ;        //handle_subNodes_brute(id,target_x, target_y,  width, height, target_id, direction, lookAhead,root,color);
+		agentgui.envModel.p2Dsvg.imageProcessing.StepNode targetNode= this.withoutGrid(id, target_x, target_y, width, height, direction, 10.0f,root , -1,false) ;   //this.originalAStar(id, target_x, target_y, width, height, target_id, direction, lookAhead, root, -1);          //      //this.originalAStar(id, target_x, target_y, width, height, target_id, direction, lookAhead, root, color) ;        //handle_subNodes_brute(id,target_x, target_y,  width, height, target_id, direction, lookAhead,root,color);
 		 return targetNode;
 		
 	}
@@ -805,7 +815,7 @@ public class ImageHelper {
 		root.setTotal_distance((this.getHCost(listXIndex, listYIndex, targetXIndex, targetYIndex)));
 		 root.setParent(null);
 		//int color=this.getPixelsOnce(plan, x, y, width, height);
-		agentgui.envModel.p2Dsvg.imageProcessing.StepNode targetNode= this.withoutGrid(id, target_x, target_y, width, height, direction, 10.0f,root , -1) ;   //this.originalAStar(id, target_x, target_y, width, height, target_id, direction, lookAhead, root, -1);          //      //this.originalAStar(id, target_x, target_y, width, height, target_id, direction, lookAhead, root, color) ;        //handle_subNodes_brute(id,target_x, target_y,  width, height, target_id, direction, lookAhead,root,color);
+		agentgui.envModel.p2Dsvg.imageProcessing.StepNode targetNode= this.withoutGrid(id, target_x, target_y, width, height, direction, 10.0f,root , -1,false) ;   //this.originalAStar(id, target_x, target_y, width, height, target_id, direction, lookAhead, root, -1);          //      //this.originalAStar(id, target_x, target_y, width, height, target_id, direction, lookAhead, root, color) ;        //handle_subNodes_brute(id,target_x, target_y,  width, height, target_id, direction, lookAhead,root,color);
 		 return targetNode;
 		
 	}
@@ -843,7 +853,7 @@ public class ImageHelper {
 		root.setTotal_distance((this.getHCost(listXIndex, listYIndex, targetXIndex, targetYIndex)));
 		 root.setParent(null);
 		//int color=this.getPixelsOnce(plan, x, y, width, height);
-		agentgui.envModel.p2Dsvg.imageProcessing.StepNode targetNode= this.withoutGrid(id, target_x, target_y, width, height, direction, 10.0f,root , -1) ;   //this.originalAStar(id, target_x, target_y, width, height, target_id, direction, lookAhead, root, -1);          //      //this.originalAStar(id, target_x, target_y, width, height, target_id, direction, lookAhead, root, color) ;        //handle_subNodes_brute(id,target_x, target_y,  width, height, target_id, direction, lookAhead,root,color);
+		agentgui.envModel.p2Dsvg.imageProcessing.StepNode targetNode= this.withoutGrid(id, target_x, target_y, width, height, direction, 10.0f,root , -1,false) ;   //this.originalAStar(id, target_x, target_y, width, height, target_id, direction, lookAhead, root, -1);          //      //this.originalAStar(id, target_x, target_y, width, height, target_id, direction, lookAhead, root, color) ;        //handle_subNodes_brute(id,target_x, target_y,  width, height, target_id, direction, lookAhead,root,color);
 		 return targetNode;
 		
 	}
@@ -888,7 +898,7 @@ public class ImageHelper {
 		root.setTotal_distance((this.getHCost(listXIndex, listYIndex, targetXIndex, targetYIndex)));
 		 root.setParent(null);
 		//int color=this.getPixelsOnce(plan, x, y, width, height);
-		agentgui.envModel.p2Dsvg.imageProcessing.StepNode targetNode= this.withoutGrid(id, target_x, target_y, width, height,ImageHelper.DIRECTION_BACKWARD, 10.0f,root , -1) ;   //this.originalAStar(id, target_x, target_y, width, height, target_id, direction, lookAhead, root, -1);          //      //this.originalAStar(id, target_x, target_y, width, height, target_id, direction, lookAhead, root, color) ;        //handle_subNodes_brute(id,target_x, target_y,  width, height, target_id, direction, lookAhead,root,color);
+		agentgui.envModel.p2Dsvg.imageProcessing.StepNode targetNode= this.withoutGrid(id, target_x, target_y, width, height,ImageHelper.DIRECTION_BACKWARD, 10.0f,root , -1,true) ;   //this.originalAStar(id, target_x, target_y, width, height, target_id, direction, lookAhead, root, -1);          //      //this.originalAStar(id, target_x, target_y, width, height, target_id, direction, lookAhead, root, color) ;        //handle_subNodes_brute(id,target_x, target_y,  width, height, target_id, direction, lookAhead,root,color);
 		 return targetNode;
 		
 	}
@@ -930,7 +940,7 @@ public class ImageHelper {
 		root.setTotal_distance((this.getHCost(listXIndex, listYIndex, targetXIndex, targetYIndex)));
 		 root.setParent(null);
 		//int color=this.getPixelsOnce(plan, x, y, width, height);
-		agentgui.envModel.p2Dsvg.imageProcessing.StepNode targetNode= this.withoutGrid(id, target_x, target_y, width, height,ImageHelper.DIRECTION_BACKWARD, 10.0f,root , -1) ;   //this.originalAStar(id, target_x, target_y, width, height, target_id, direction, lookAhead, root, -1);          //      //this.originalAStar(id, target_x, target_y, width, height, target_id, direction, lookAhead, root, color) ;        //handle_subNodes_brute(id,target_x, target_y,  width, height, target_id, direction, lookAhead,root,color);
+		agentgui.envModel.p2Dsvg.imageProcessing.StepNode targetNode= this.withoutGrid(id, target_x, target_y, width, height,ImageHelper.DIRECTION_BACKWARD, 10.0f,root , -1,true) ;   //this.originalAStar(id, target_x, target_y, width, height, target_id, direction, lookAhead, root, -1);          //      //this.originalAStar(id, target_x, target_y, width, height, target_id, direction, lookAhead, root, color) ;        //handle_subNodes_brute(id,target_x, target_y,  width, height, target_id, direction, lookAhead,root,color);
 		 return targetNode;
 		
 	}
@@ -990,12 +1000,41 @@ public class ImageHelper {
 		root.setTotal_distance((this.getHCost(listXIndex, listYIndex, targetXIndex, targetYIndex)));
 		 root.setParent(null);
 		//int color=this.getPixelsOnce(plan, x, y, width, height);
-		agentgui.envModel.p2Dsvg.imageProcessing.StepNode targetNode= this.withoutGrid(id, target_x, target_y, width, height, direction, 10.0f,root , -1) ;   //this.originalAStar(id, target_x, target_y, width, height, target_id, direction, lookAhead, root, -1);          //      //this.originalAStar(id, target_x, target_y, width, height, target_id, direction, lookAhead, root, color) ;        //handle_subNodes_brute(id,target_x, target_y,  width, height, target_id, direction, lookAhead,root,color);
+		agentgui.envModel.p2Dsvg.imageProcessing.StepNode targetNode= this.withoutGrid(id, target_x, target_y, width, height, direction, 10.0f,root , -1,false) ;   //this.originalAStar(id, target_x, target_y, width, height, target_id, direction, lookAhead, root, -1);          //      //this.originalAStar(id, target_x, target_y, width, height, target_id, direction, lookAhead, root, color) ;        //handle_subNodes_brute(id,target_x, target_y,  width, height, target_id, direction, lookAhead,root,color);
 		 return targetNode;
 		
 	}
 	
+	public void paintWay(String id,StepNode way,double width, double height)
+	{
+		StepNode tmp=way;
+		Document doc=helper.getSVGDoc();
+	  while(tmp!=null)
+	  {
+		  
+	  this.drawLineToSave("l", String.valueOf(tmp.getX()), String.valueOf(width), String.valueOf(tmp.getY()), String.valueOf(height), doc,true,"blue");	
+	  tmp=tmp.getParent();
+	  }
+	   SVGSafe save=new SVGSafe();
+	   try {
 	
+		int counter=0;
+		File f=new File(id+counter+".svg");
+		while(f.exists())
+		{
+			counter++;
+			String name=id+counter;
+			 f=new File(name+".svg");
+		}
+		save.write(id+counter+".svg", doc);
+		
+	} catch (Exception e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+		
+		
+	}
 	
 	/**
 	 * Return the a node with a specific node
@@ -1746,12 +1785,18 @@ public class ImageHelper {
 	
 	
 	
+	
+	
+	
+	
+	
+	
+	
 	public synchronized BufferedImage createManipulatedWorldWithAgents(ArrayList<CombinedNameAndPos> otherAgent , String id,double discreteTime)
 	{
 	
 		try
-		{			
-				
+		{					
 				IS_IN_METHOD=true;
 				Document doc=helper.getSVGDoc();
 				
@@ -1898,7 +1943,7 @@ public class ImageHelper {
 			}
 			*/		
 		}
-		
+			manipulated=doc;
 		return evn;
 	}
 	catch(Exception e)
