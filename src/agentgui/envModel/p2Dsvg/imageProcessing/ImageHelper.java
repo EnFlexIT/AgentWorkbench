@@ -44,6 +44,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+
+
 import agentgui.envModel.p2Dsvg.ontology.ActiveObject;
 import agentgui.envModel.p2Dsvg.ontology.PassiveObject;
 import agentgui.envModel.p2Dsvg.ontology.Physical2DObject;
@@ -1036,6 +1038,50 @@ public class ImageHelper {
 		
 	}
 	
+	public void paintWay(String id,StepNode way,double width, double height, ArrayList<CombinedNameAndPos> otherAgents)
+	{
+		StepNode tmp=way;
+		Document doc=helper.getSVGDoc();
+		for(int i=0;i<otherAgents.size();i++)
+		{
+		
+			Element element=doc.getElementById(otherAgents.get(i).name);
+			
+			element.removeAttribute("x");
+			element.setAttribute("x", String.valueOf(otherAgents.get(i).getPos().getXPos()));
+			element.removeAttribute("y");
+			element.setAttribute("y", String.valueOf(otherAgents.get(i).getPos().getYPos()));
+		}
+	  while(tmp!=null)
+	  {
+		  
+	  this.drawLineToSave("l", String.valueOf(tmp.getX()), String.valueOf(width), String.valueOf(tmp.getY()), String.valueOf(height), doc,true,"blue");	
+	  tmp=tmp.getParent();
+	  }
+	   SVGSafe save=new SVGSafe();
+	   try {
+	
+		int counter=0;
+		File f=new File(id+counter+".svg");
+		while(f.exists())
+		{
+			counter++;
+			String name=id+counter;
+			 f=new File(name+".svg");
+		}
+		save.write(id+counter+".svg", doc);
+		
+	} catch (Exception e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+		
+		
+	}
+	
+	
+	
+	
 	/**
 	 * Return the a node with a specific node
 	 * @param node The list of nodes
@@ -1562,7 +1608,7 @@ public class ImageHelper {
 			}
 			save.write(name+".svg", doc);
 			save.writeJPG(name+".svg");
-			System.out.println("Image geschrieben");
+			System.out.println("Habe:"+name +" geschrieben");
 			this.evn=ImageIO.read(new File(name+".jpg"));
 			return evn;	
 		}
@@ -1575,8 +1621,18 @@ public class ImageHelper {
 	}
 	public void setupEnviroment(String ownID,ArrayList<CombinedNameAndPos> otherAgent)	
 	{
+		System.out.println("Enviroment");
+		for(int i=0;i<otherAgent.size();i++)
+		{
+			System.out.println("ID:"+otherAgent.get(i).getPos().getXPos()+","+otherAgent.get(i).getPos().getYPos());
+		}
 		this.evn=this.createManipulatedWorldWithAgents(otherAgent, ownID, 0.0);
 		this.is_setup=true;
+	}
+	
+	public void resetEnviroment()
+	{
+		this.is_setup=false;
 	}
 	
 	public Position sidestepLeft(String ownID,ArrayList<CombinedNameAndPos> otherAgent)
@@ -1818,7 +1874,12 @@ public class ImageHelper {
 				{
 				
 					Element element=doc.getElementById(otherAgent.get(i).name);
-					
+					if(element==null)
+					{
+						//this.createNewElement(otherAgent.get(i).getName(), otherAgent.get(i).getPos().getXPos(),  otherAgent.get(i).getPos().getYPos(), "", width, height, id, doc)
+						
+						
+					}
 					element.removeAttribute("x");
 					element.setAttribute("x", String.valueOf(otherAgent.get(i).getPos().getXPos()));
 					element.removeAttribute("y");
@@ -1930,6 +1991,7 @@ public class ImageHelper {
 			
 			save.write(name+".svg", doc);
 			save.writeJPG(name+".svg");
+			System.out.println("Habe:"+name +" geschrieben");
 			this.evn=ImageIO.read(new File(name+".jpg"));
 		
 			/**
@@ -2195,11 +2257,12 @@ public class ImageHelper {
 							other.setPosition(otherPositions.get(min-1));	
 						}
 						
-						//	System.out.println(obj.getId() +" in Detection "+ obj.getPosition().getXPos()+","+obj.getPosition().getYPos());
-						//	System.out.println(other.getId() +" in Detection "+ other.getPosition().getXPos()+","+other.getPosition().getYPos());
+							System.out.println("Agent:"+agent.getId());
+						    System.out.println(obj.getId() +" in Detection "+ obj.getPosition().getXPos()+","+obj.getPosition().getYPos());
+							System.out.println(other.getId() +" in Detection "+ other.getPosition().getXPos()+","+other.getPosition().getYPos());
 						
 						boolean result=this.checkTimeBetween(obj, other);
-						//System.out.println("Result von Überprüfung:"+result +" Iter:"+iter);
+						System.out.println("Result von Überprüfung:"+result +" Iter:"+iter);
 						//System.out.println("--------------------");
 						if(result)
 						{
