@@ -33,6 +33,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Stack;
 import java.util.Vector;
 
@@ -254,9 +255,9 @@ public class ImageHelper {
 	{
 			
 		System.out.println("Target in WITHOUTGRID:"+target_x+","+ target_y);
-		
-		ArrayList<agentgui.envModel.p2Dsvg.imageProcessing.StepNode> openList=new ArrayList<agentgui.envModel.p2Dsvg.imageProcessing.StepNode>();
-		ArrayList<agentgui.envModel.p2Dsvg.imageProcessing.StepNode> closedList=new ArrayList<agentgui.envModel.p2Dsvg.imageProcessing.StepNode>();
+		int upperBound=50000;
+		ArrayList<agentgui.envModel.p2Dsvg.imageProcessing.StepNode> openList=new ArrayList<agentgui.envModel.p2Dsvg.imageProcessing.StepNode>( upperBound);
+		ArrayList<agentgui.envModel.p2Dsvg.imageProcessing.StepNode> closedList=new ArrayList<agentgui.envModel.p2Dsvg.imageProcessing.StepNode>( upperBound);
 		float worldWidth=helper.getEnvironment().getRootPlayground().getSize().getWidth();
 		float worldHeight=helper.getEnvironment().getRootPlayground().getSize().getHeight();
 	    counter++;
@@ -287,6 +288,7 @@ public class ImageHelper {
 			
 			// Up left
 			agentgui.envModel.p2Dsvg.imageProcessing.StepNode new_current=null;
+			/**
 			if(currentXPos-lookAhead>0&&currentYPos-lookAhead>0)
 			{
 				if(!this.isInList(openList, closedList, currentXPos-lookAhead, currentYPos-lookAhead,ImageHelper.DIRECTION_UP_LEFT))
@@ -310,9 +312,10 @@ public class ImageHelper {
 					
 			     }
 			}
-			
+			*/
 			// Up Right
 			 new_current=null;
+			 /*
 			if(currentXPos+lookAhead<worldWidth&&currentYPos-lookAhead>=0)
 			{
 				if(!this.isInList(openList, closedList, currentXPos+lookAhead, currentYPos-lookAhead,ImageHelper.DIRECTION_UP_RIGHT))
@@ -336,9 +339,10 @@ public class ImageHelper {
 					
 			     }
 			}
-			
+			*/
 			// Down left
 			 new_current=null;
+			 /**
 			if(currentXPos-lookAhead>=0&&currentYPos+lookAhead<=worldHeight)
 			{
 				if(!this.isInList(openList, closedList, currentXPos-lookAhead, currentYPos+lookAhead,ImageHelper.DIRECTION_DOWN_LEFT))
@@ -362,10 +366,11 @@ public class ImageHelper {
 					
 			     }
 			}
-			
+			*/
 			
 			// DOWN right
 			 new_current=null;
+			 /*
 			if(currentXPos+lookAhead<=worldWidth&&currentYPos+lookAhead<=worldHeight)
 			{
 				if(!this.isInList(openList, closedList, currentXPos-lookAhead, currentYPos+lookAhead,ImageHelper.DIRECTION_DOWN_RIGHT))
@@ -390,7 +395,7 @@ public class ImageHelper {
 					
 			     }
 			}	
-			
+			*/
 			// Left
 			 new_current=null;
 			if(currentXPos-lookAhead>=0)
@@ -502,6 +507,7 @@ public class ImageHelper {
 			}			
 		
 			closedList.add(current);
+			
 		    int index=this.getMinimumDistance(openList);
 		    if(index==-1)
 		    {		    
@@ -887,7 +893,7 @@ public class ImageHelper {
 		//self.setAttribute("y", String.valueOf(y));
 		this.firstX=x;
 		this.firstY=y;
-		System.out.println("Own X:"+x +"," + "Y:"+y);
+		System.out.println("Own Image X:"+x +"," + "Y:"+y);
 		agentgui.envModel.p2Dsvg.imageProcessing.StepNode root=new agentgui.envModel.p2Dsvg.imageProcessing.StepNode();
 		root.setX(x); // correct it //
 		root.setY(y); // Correct it //
@@ -1301,12 +1307,12 @@ public class ImageHelper {
 				 }
 				 catch(Exception e)
 						 {
-					 //e.printStackTrace();
+					// e.printStackTrace();
 					// System.out.println("Direction:"+direction);
 					// System.out.println("StartX:"+startx);
 					// System.out.println("XExit:"+xExit);
 					// System.out.println("YExit:"+yExit);
-					// System.out.println("X:"+x +"," + y +" ");
+					 System.out.println("X:"+x +"," + y +" ");
 					
 					 
 						 }
@@ -2257,12 +2263,12 @@ public class ImageHelper {
 							other.setPosition(otherPositions.get(min-1));	
 						}
 						
-							System.out.println("Agent:"+agent.getId());
-						    System.out.println(obj.getId() +" in Detection "+ obj.getPosition().getXPos()+","+obj.getPosition().getYPos());
-							System.out.println(other.getId() +" in Detection "+ other.getPosition().getXPos()+","+other.getPosition().getYPos());
+							//System.out.println("Agent:"+agent.getId());
+						    //System.out.println(obj.getId() +" in Detection "+ obj.getPosition().getXPos()+","+obj.getPosition().getYPos());
+							//System.out.println(other.getId() +" in Detection "+ other.getPosition().getXPos()+","+other.getPosition().getYPos());
 						
 						boolean result=this.checkTimeBetween(obj, other);
-						System.out.println("Result von Überprüfung:"+result +" Iter:"+iter);
+						//System.out.println("Result von Überprüfung:"+result +" Iter:"+iter);
 						//System.out.println("--------------------");
 						if(result)
 						{
