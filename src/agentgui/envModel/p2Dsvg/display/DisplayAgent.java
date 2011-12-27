@@ -72,7 +72,8 @@ public class DisplayAgent extends Agent {
 
 	private static final long serialVersionUID = 8613715346940866246L;
 
-	private static final int PERIOD = 50;
+	//private static final int PERIOD = 50;
+	private static final int PERIOD = 150;
 	
 	/**
 	 * The DisplayAgent's GUI
@@ -85,14 +86,16 @@ public class DisplayAgent extends Agent {
 	private Document svgDoc = null;
 	private Physical2DEnvironment environment = null;
 	private EnvironmentProviderHelper envHelper = null;
-	private int lastMaximumValue = -2;
-	private int lastCurrentValue = -1;
+	private int lastMaximumValue =1;
+	private int lastCurrentValue = 1;
 	private int sameTransactionSizeCounter = 0;
 	private int sameVisualisationCounter = 0;
-	private int counter = 0;
+	private int counter = 1;
 	private int addValue = 1;
 	private long initialTimeStep = 0;
 	private boolean play = true;
+	private boolean needsToDisplay=true;
+	boolean decided_to_display=false;
 
 	public void setup() {
 
@@ -193,10 +196,19 @@ public class DisplayAgent extends Agent {
 		myGUI.jSliderTime.addChangeListener(new javax.swing.event.ChangeListener() {
 
 					public void stateChanged(javax.swing.event.ChangeEvent e) {
-						counter = myGUI.jSliderTime.getValue();
+						needsToDisplay=true;
+						decided_to_display=true;
+						 int tmpCounter = myGUI.jSliderTime.getValue();
+						 if(!play)
+						 {
+							counter=tmpCounter;
+						 }
+						
 						sameVisualisationCounter = 0;
 						if (counter == -1) {
-							counter = 0;
+							counter=1;
+							System.out.println("Counter wurde auf 1 gesetzt");
+							return;
 						}
 
 						try {
@@ -295,7 +307,21 @@ public class DisplayAgent extends Agent {
 
 		public HashSet<Physical2DObject> fordwardToVisualation(
 				HashMap<AID, PositionUpdate> pos) {
-
+			while(envHelper==null)
+			{
+				
+				try
+				{
+			
+				envHelper = (EnvironmentProviderHelper) getHelper(EnvironmentProviderService.SERVICE_NAME);
+				Thread.sleep(100);
+				}
+				catch(Exception e)
+				{
+					e.printStackTrace();
+					
+				}
+			}
 			HashSet<Physical2DObject> movingObjects = envHelper	.getCurrentlyMovingObjects();
 		
 			// Clear map
@@ -314,67 +340,75 @@ public class DisplayAgent extends Agent {
 
 		@Override
 		protected void onTick() {
+		try 
+		{
+		int size = helper.getTransactionSize();
 
-			try {
-				int size = -1;
+		if (lastMaximumValue != size&&size!=-1) { // New SimulationStepp has arrived
 			
-				if (sameTransactionSizeCounter == 20) {
-					size = lastMaximumValue;
-				} else {
-
-					size = helper.getTransactionSize();
-					if (lastMaximumValue != size) {
-
-						sameTransactionSizeCounter = 0;
-						sameVisualisationCounter=0;
-						myGUI.setMaximum(size);
-					} else {
-						sameTransactionSizeCounter++;
-					}
-
-				}
+			myGUI.setMaximum(size);
+			needsToDisplay=true;
+			decided_to_display=true;
+			
+		}
+		else
+		{
+			needsToDisplay=false;
+			//System.out.println("Size hat nicht sich nicht geändert");
+		}
 				
-				
-
-				if (size > 1) {
-
-					size = helper.getTransactionSize();
-					if (lastMaximumValue != size) {
-
-						sameTransactionSizeCounter = 0;
-						sameVisualisationCounter=0;
-						myGUI.setMaximum(size);
-					} 
-					
-					if (lastCurrentValue == counter) {
-						sameVisualisationCounter++;
-					} else {
-						sameVisualisationCounter = 0;
-					}
-					if (sameVisualisationCounter < 20 ) {
-						//System.out.println("Get:"+counter +" for displaying");
-						HashSet<Physical2DObject> movingObjects = this.fordwardToVisualation(helper.getModel(counter));
-						synchronized (movingObjects) {
-							//System.out.println("Update Darstellung");
-							myGUI.updatePositions(movingObjects);
-						}
-						myGUI.setCurrentTimePos(counter);
-						if (play) {
-							if (counter + addValue < size) {
-								counter = counter + addValue;
-							}
-						}
-						lastMaximumValue = size;
-						lastCurrentValue = counter;
-						
-					}
-					
-				} else {
-
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
+		if(counter<=size-1)
+		{
+		
+			if(play)
+			{
+				needsToDisplay=true;
 			}
 		}
+		else
+		{
+			Thread.sleep(500);
+			needsToDisplay=false;
+		}
+				
+	  if(needsToDisplay||decided_to_display)	
+	  {
+
+		  HashSet<Physical2DObject> movingObjects = this.fordwardToVisualation(helper.getModel(counter));
+		  synchronized (movingObjects)
+		  {
+			  myGUI.updatePositions(movingObjects);
+		  }
+		  myGUI.setCurrentTimePos(counter);
+			if (play) 
+			{
+			
+				
+				
+		
+				if (counter + addValue < size) 
+				{
+					counter = counter + addValue;
+					
+				}
+				else
+				{
+					counter=size;
+				}
+				
+				lastCurrentValue = counter;
+				lastMaximumValue = size;
+			}
+			
+	 	}
+	
+		
+		decided_to_display=false;
 	}
+	catch(Exception e)
+	{
+		e.printStackTrace();
+	}
+   }
+ }
 }
