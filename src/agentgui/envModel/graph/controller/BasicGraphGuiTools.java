@@ -31,6 +31,7 @@ package agentgui.envModel.graph.controller;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.Point2D;
 import java.io.File;
 import java.util.Iterator;
 import java.util.Set;
@@ -66,9 +67,10 @@ public class BasicGraphGuiTools implements ActionListener {
 	
 	private JToolBar jToolBar = null; 
 	private JButton jButtonComponents = null;
+	private JButton jButtonZoomFit2Window = null;
+	private JButton jButtonZoomOne2One = null;
 	private JButton jButtonZoomIn = null;
 	private JButton jButtonZoomOut = null;
-	private JButton jButtonZoomReset = null;
 	private JToggleButton jToggleMouseTransforming = null;
 	private JToggleButton jToggleMousePicking = null;
 	private JButton jButtonAddComponent = null;
@@ -111,9 +113,10 @@ public class BasicGraphGuiTools implements ActionListener {
 			jToolBar.add(getJButtonComponents());
 			jToolBar.addSeparator();
 			
+			jToolBar.add(getJButtonZoomFit2Window());
+			jToolBar.add(getJButtonZoomOne2One());;
 			jToolBar.add(getJButtonZoomIn());
 			jToolBar.add(getJButtonZoomOut());
-			jToolBar.add(getJButtonZoomReset());
 			
 			jToolBar.addSeparator();
 			jToolBar.add(getJToggleMouseTransforming());
@@ -169,6 +172,34 @@ public class BasicGraphGuiTools implements ActionListener {
 		return jButtonComponents;
 	}
 	/**
+	 * This method initializes jButtonZoomReload
+	 * @return javax.swing.JButton
+	 */
+	private JButton getJButtonZoomFit2Window() {
+		if (jButtonZoomFit2Window == null) {
+			jButtonZoomFit2Window = new JButton();
+			jButtonZoomFit2Window.setIcon(new ImageIcon(getClass().getResource(pathImage + "FitSize.png")));
+			jButtonZoomFit2Window.setPreferredSize(jButtonSize);
+			jButtonZoomFit2Window.setToolTipText(Language.translate("An Fenster anpassen"));
+			jButtonZoomFit2Window.addActionListener(this);
+		}
+		return jButtonZoomFit2Window;
+	}
+	/**
+	 * This method initializes jButtonZoomReset
+	 * @return javax.swing.JButton
+	 */
+	private JButton getJButtonZoomOne2One() {
+		if (jButtonZoomOne2One == null) {
+			jButtonZoomOne2One = new JButton();
+			jButtonZoomOne2One.setIcon(new ImageIcon(getClass().getResource(pathImage + "One2One.png")));
+			jButtonZoomOne2One.setPreferredSize(jButtonSize);
+			jButtonZoomOne2One.setToolTipText("1:1 - Zoom 100%");
+			jButtonZoomOne2One.addActionListener(this);
+		}
+		return jButtonZoomOne2One;
+	}
+	/**
 	 * This method initializes jButtonZoomIn
 	 * @return javax.swing.JButton
 	 */
@@ -196,20 +227,7 @@ public class BasicGraphGuiTools implements ActionListener {
 		}
 		return jButtonZoomOut;
 	}
-	/**
-	 * This method initializes jButtonZoomReset
-	 * @return javax.swing.JButton
-	 */
-	private JButton getJButtonZoomReset() {
-		if (jButtonZoomReset == null) {
-			jButtonZoomReset = new JButton();
-			jButtonZoomReset.setIcon(new ImageIcon(getClass().getResource(pathImage + "Refresh.png")));
-			jButtonZoomReset.setPreferredSize(jButtonSize);
-			jButtonZoomReset.setToolTipText(Language.translate("Zurücksetzen"));
-			jButtonZoomReset.addActionListener(this);
-		}
-		return jButtonZoomReset;
-	}
+
 	/**
 	 * This method initializes jButtonAddComponent
 	 * @return javax.swing.JButton
@@ -445,23 +463,31 @@ public class BasicGraphGuiTools implements ActionListener {
 			}
 			ctsDialog.dispose();
 			ctsDialog = null;
-			
-		} else if (ae.getSource() == getJButtonZoomIn()) {
-			// ------------------------------------------------------
-			// --- Button Zoom in -----------------------------------
-			basicGraphGui.getScalingControl().scale(visView, 1.1f, visView.getCenter());
-			
-		} else if (ae.getSource() == getJButtonZoomOut()) {
-			// ------------------------------------------------------
-			// --- Button Zoom out ----------------------------------
-			basicGraphGui.getScalingControl().scale(visView, 1 / 1.1f, visView.getCenter());
 
-		} else if (ae.getSource() == getJButtonZoomReset()) {
+		} else if (ae.getSource() == getJButtonZoomFit2Window()) {
+			// ------------------------------------------------------
+			// --- Button Reset zoom --------------------------------
+			visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).setToIdentity();
+			visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).setToIdentity();
+			basicGraphGui.setAllowInitialScaling(true);
+			basicGraphGui.setInitialScaling();
+		
+		} else if (ae.getSource() == getJButtonZoomOne2One()) {
 			// ------------------------------------------------------
 			// --- Button Reset zoom --------------------------------
 			visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).setToIdentity();
 			visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).setToIdentity();
 			
+		} else if (ae.getSource() == getJButtonZoomIn()) {
+			// ------------------------------------------------------
+			// --- Button Zoom in -----------------------------------
+			basicGraphGui.getScalingControl().scale(visView, 1.1f, new Point2D.Double(0, 0));
+			
+		} else if (ae.getSource() == getJButtonZoomOut()) {
+			// ------------------------------------------------------
+			// --- Button Zoom out ----------------------------------
+			basicGraphGui.getScalingControl().scale(visView, 1 / 1.1f, new Point2D.Double(0, 0));
+
 		} else if (ae.getSource() == getJToggleMouseTransforming()) {
 			// ------------------------------------------------------
 			// --- Button Transforming Mouse mode -------------------

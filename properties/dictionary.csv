@@ -37,6 +37,7 @@ de;Alle Objekte löschen;Delete all objects
 de;Alle Ontologien;All ontologies
 de;Alle Rechte vorbehalten.;All rights reserved.
 de;Alter Wert:;Old value:
+de;An Fenster anpassen;Fit to window;;;
 de;Ansicht:;View:
 de;Ansicht;View
 de;Anwenden;Apply
@@ -87,7 +88,7 @@ de;Das Verzeichnis existiert bereits. Der Import wird unterbrochen.;The director
 de;Das aktuelle Projekt '@' ist noch nicht gespeichert!<br>Möchten Sie es nun speichern ?;The current project '@' is not saved yet! <br>Save it now?
 de;Das von Ihnen gewählte Projektverzeichnis wird bereits verwendet!<br><br>Bitte wählen Sie einen anderen Namen für Ihr Verzeichnis;Your chosen project directory is already in use! <br><br> Please select another name for the directory
 de;Datei nicht gefunden!;File not found!;;;
-de;Datei überschreiben?;;;;
+de;Datei überschreiben?;Overwrite file?;;;
 de;Datei:;File:
 de;Dateien einbinden;Include Files
 de;Datenbank erfolgreich angelegt!;Database created successfully!

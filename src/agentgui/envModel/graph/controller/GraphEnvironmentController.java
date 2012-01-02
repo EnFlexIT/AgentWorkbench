@@ -497,10 +497,10 @@ public class GraphEnvironmentController extends EnvironmentController {
 		if(generalGraphSettings4MAS == null){
 			generalGraphSettings4MAS = new GeneralGraphSettings4MAS();
 		}
-		
-		setComponentTypeSettings(generalGraphSettings4MAS.getCurrentCTS());
+		this.setComponentTypeSettings(generalGraphSettings4MAS.getCurrentCTS());
 		
 		this.validateNetworkComponentAndAgents2Start();
+		
 	}
 	
 	/**

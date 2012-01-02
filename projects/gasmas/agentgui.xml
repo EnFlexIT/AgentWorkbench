@@ -72,7 +72,7 @@
         <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>false</showJADErmaGUI>
     </remoteContainerConfiguration>
-    <simulationSetupCurrent>Einfaches Netz</simulationSetupCurrent>
+    <simulationSetupCurrent>Testnetz 1</simulationSetupCurrent>
     <simulationSetups>
         <entry>
             <key>HNord</key>

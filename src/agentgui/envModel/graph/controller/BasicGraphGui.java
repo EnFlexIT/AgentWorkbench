@@ -38,6 +38,8 @@ import java.awt.Paint;
 import java.awt.Point;
 import java.awt.Shape;
 import java.awt.Stroke;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.net.URL;
@@ -109,13 +111,23 @@ public class BasicGraphGui extends JPanel {
 	public static float DEFAULT_EDGE_WIDTH = 2;
 
 	
+	/** Environment model controller, to be passed by the parent GUI. */
+	private GraphEnvironmentController controller = null;  //  @jve:decl-index=0:
+	
+	/** The GUI's main component, either the graph visualization, or an empty JPanel if no graph is loaded */
+	private Component centerComponent = null;
+	/** The ToolBar for this component */
 	private BasicGraphGuiTools graphGuiTools = null;
 	
 	/** Graph visualization component */
 	private VisualizationViewer<GraphNode, GraphEdge> visView = null;
 	/** JUNG object handling zooming */
 	private ScalingControl scalingControl = new CrossoverScalingControl();  //  @jve:decl-index=0:
-
+	/** the margin of the graph for the visualization */
+	private double graphMargin = 25;
+	/** Indicates that the initial scaling is allowed */
+	private boolean allowInitialScaling = true;
+	
 	/**
 	 * The DefaultModalGraphMouse which can be added to the visualization
 	 * viewer. Used here for the transforming mode
@@ -127,16 +139,7 @@ public class BasicGraphGui extends JPanel {
 	 */
 	private PluggableGraphMouse pluggableGraphMouse = null; 								// @jve:decl-index=0:
 
-	/**
-	 * The GUI's main component, either the graph visualization, or an empty
-	 * JPanel if no graph is loaded
-	 */
-	private Component centerComponent = null;
-	
-	/**
-	 * Environment model controller, to be passed by the parent GUI.
-	 */
-	private GraphEnvironmentController controller = null;  //  @jve:decl-index=0:
+
 	
 	/**
 	 * This is the default constructor
@@ -155,12 +158,22 @@ public class BasicGraphGui extends JPanel {
 	 * @return void
 	 */
 	private void initialize() {
+		
 		this.setSize(300, 300);
 		this.setLayout(new BorderLayout());
 		this.add(this.graphGuiTools.getJToolBar(), BorderLayout.WEST);
 		
-		// Initializing JUNG mouse modes
+		// --- React on component changes ------------------
+		this.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentMoved(ComponentEvent ce) { 
+				setInitialScaling();
+			}
+		});
+		
+		// --- Initializing JUNG mouse modes --------------
 		this.initMouseModes();
+		
 	}
 
 	/**
@@ -271,7 +284,55 @@ public class BasicGraphGui extends JPanel {
 	public void setScalingControl(ScalingControl scalingControl) {
 		this.scalingControl = scalingControl;
 	}
+	
+	/**
+	 * Checks if the initial scaling is allowed.
+	 * @return true, if is allow initial scaling
+	 */
+	public boolean isAllowInitialScaling() {
+		return allowInitialScaling;
+	}
+	/**
+	 * Sets to allow the initial scaling.
+	 * @param allowInitialScaling the new allow initial scaling
+	 */
+	public void setAllowInitialScaling(boolean allowInitialScaling) {
+		this.allowInitialScaling = allowInitialScaling;
+	}
+	
+	/**
+	 * Sets the initial scaling for the graph on the VisualizationViewer.
+	 */
+	public void setInitialScaling() {
+		
+		if (this.visView==null) return;
+		if (this.allowInitialScaling==false) return;
+		
+		Graph<GraphNode, GraphEdge> currGraph = this.visView.getGraphLayout().getGraph();
+		Rectangle2D rectGraph = this.getGraphSpreadDimension(currGraph);
+		Rectangle2D rectVis   = this.visView.getVisibleRect();
+		if (rectVis.isEmpty()) return;
+		
+		double graphWidth  = rectGraph.getWidth() + this.graphMargin;
+		double graphHeight = rectGraph.getHeight() + this.graphMargin;
+		double VisibWidth  = rectVis.getWidth();
+		double VisibHeight = rectVis.getHeight();
 
+		float scaleX = (float) (graphWidth  / VisibWidth);
+		float scaleY = (float) (graphHeight / VisibHeight);
+		if (scaleX < 1) scaleX = 1;
+		if (scaleY < 1) scaleY = 1;
+		
+		float scale = scaleX;
+		if (scaleX < scaleY) scale = scaleY;	
+				
+		if (scale!=0 && scale!=1) {
+			this.scalingControl.scale(this.visView, 1/scale,  new Point2D.Double(0, 0));	
+		}
+		this.allowInitialScaling=false;
+		
+	}
+	
 	/**
 	 * Gets the graph spread as Rectangle.
 	 *
@@ -312,40 +373,96 @@ public class BasicGraphGui extends JPanel {
 	}
 	
 	/**
+	 * Sets the graph coordinates to values bigger than 0 for the x and the y axis.
+	 *
+	 * @param graph the graph
+	 * @return the graph
+	 */
+	private Graph<GraphNode, GraphEdge> correctGraphCoordinates(Graph<GraphNode, GraphEdge> graph2Correct, double xCorrect, double yCorrect) {
+		
+		if (xCorrect==0 && yCorrect==0) {
+			// --- Nothing to correct ---------------------
+			return graph2Correct;
+		}
+		
+		// --- Correct the positions of the graph nodes ---
+		Graph<GraphNode, GraphEdge> graph = graph2Correct; 
+		Collection<GraphNode> nodeCollection = graph.getVertices();
+		GraphNode[] nodes = nodeCollection.toArray(new GraphNode[nodeCollection.size()]);
+		for (int i = 0; i < nodes.length; i++) {
+			Point2D pos = nodes[i].getPosition();
+			pos.setLocation(pos.getX()+xCorrect, pos.getY()+yCorrect);
+			nodes[i].setPosition(pos);
+		}
+		return graph;
+	}
+	
+	
+	/**
 	 * This method assigns a graph to a new VisualizationViewer and adds 
-	 * it to the GUI This is used for creating graph for the first time.
+	 * it to the GUI This is used for creating graphs for the first time.
 	 * 
 	 * @param graph The graph
 	 */
 	public void setGraph(Graph<GraphNode, GraphEdge> graph) {
 
-		if (graph==null) {
-			if (centerComponent!=null) {
-				this.remove(centerComponent);
-			}
-			centerComponent = new JPanel();
-			this.add(centerComponent, BorderLayout.CENTER);
-			return;
+		// --- Remove the old component -------------------
+		if (centerComponent!=null) {
+			this.remove(centerComponent);
+			this.centerComponent = null;
+			this.visView = null;
 		}
-
-		// --- Get the ComponentTypeSettings for nodes -------------------- 
+		
+		// --- Set the display ---------------------------- 
+		if (graph==null) {
+			// --- NO graph to display ----------
+			this.visView = null;
+			this.centerComponent = new JPanel();
+			this.add(centerComponent, BorderLayout.CENTER);
+		
+		} else {
+			// --- Graph to display -------------
+			this.visView = this.getNewVisualizationViewer(graph);
+			this.centerComponent = new GraphZoomScrollPane(this.visView);
+			this.add(this.centerComponent, BorderLayout.CENTER);
+		
+			this.allowInitialScaling=true;
+			this.validate();
+			this.setInitialScaling();
+		}
+		
+		
+	}
+	
+	/**
+	 * Gets the new visualization viewer for a given graph.
+	 *
+	 * @param graph the graph
+	 * @return the new VisualizationViewer
+	 */
+	public VisualizationViewer<GraphNode, GraphEdge> getNewVisualizationViewer(Graph<GraphNode, GraphEdge> graph){
+		
+		// ----------------------------------------------------------------
+		// --- Get the ComponentTypeSettings for nodes --------------------
+		// ----------------------------------------------------------------
 		final ComponentTypeSettings cts = controller.getComponentTypeSettings().get("node");
+		
+		// ----------------------------------------------------------------
+		// --- Get the spread of the graph and correct the positions ------
+		// ----------------------------------------------------------------
+		double moveX = 0;
+		double moveY = 0;
+		
+		Rectangle2D rect = this.getGraphSpreadDimension(graph);
+		if (rect.getX()!=graphMargin) moveX = (rect.getX()*(-1)) + graphMargin;  
+		if (rect.getY()!=graphMargin) moveY = (rect.getY()*(-1)) + graphMargin;
+		graph = this.correctGraphCoordinates(graph, moveX, moveY);
 		
 		// ----------------------------------------------------------------
 		// --- Define graph layout ----------------------------------------
 		// ----------------------------------------------------------------
-		double margin = 50;
-		Rectangle2D rect = this.getGraphSpreadDimension(graph);
-		int width  = (int) ((rect.getWidth()  - rect.getX()) + (2 * margin));
-		int height = (int) ((rect.getHeight() - rect.getY()) + (2 * margin));
-		
-		double moveX = 0;
-		double moveY = 0;
-		if (rect.getMinX()<0) moveX = Math.abs(rect.getMinX()) + margin;  
-		if (rect.getMinY()<0) moveY = Math.abs(rect.getMinY()) + margin;
-		
 		Layout<GraphNode, GraphEdge> layout = new StaticLayout<GraphNode, GraphEdge>(graph);
-		layout.setSize(new Dimension(width, height));
+		layout.setSize(new Dimension((int) (rect.getWidth()+graphMargin), (int) (rect.getHeight()+graphMargin)));
 		layout.setInitializer(new Transformer<GraphNode, Point2D>() {
 			@Override
 			public Point2D transform(GraphNode node) {
@@ -353,30 +470,23 @@ public class BasicGraphGui extends JPanel {
 			}
 		});
 
+
 		// ----------------------------------------------------------------
 		// --- Create a new VisualizationViewer instance ------------------
 		// ----------------------------------------------------------------
-		visView = new VisualizationViewer<GraphNode, GraphEdge>(layout);
-		visView.setBackground(Color.WHITE);
+		final VisualizationViewer<GraphNode, GraphEdge> vViewer = new VisualizationViewer<GraphNode, GraphEdge>(layout);
+		vViewer.setBackground(Color.WHITE);
 		
 		// --- Configure vertex shape and size --						
 		VertexShapeSizeAspect<GraphNode, GraphEdge> vssa = new VertexShapeSizeAspect<GraphNode, GraphEdge>();
 		vssa.setScaling(true);
-		visView.getRenderContext().setVertexShapeTransformer(vssa); 
-		
-//		// --- Set visualization scale and translation --------------------
-//		MutableAffineTransformer mat = (MutableAffineTransformer) visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW);
-//		mat.setTranslate(moveX, moveY); // move Graph
-//		mat.setScale(10, 10, new Point2D.Double(10, 10));
-//		AffineTransform aTrans = new AffineTransform();
-//		aTrans.rotate(0.707);
-//		mat.setTransform(aTrans);
+		vViewer.getRenderContext().setVertexShapeTransformer(vssa); 
 		
 		// --- Configure mouse interaction --------------------------------
-		visView.setGraphMouse(pluggableGraphMouse);
+		vViewer.setGraphMouse(pluggableGraphMouse);
 
 		// --- Set tool tip for nodes -------------------------------------
-		visView.setVertexToolTipTransformer(new Transformer<GraphNode,String>() {
+		vViewer.setVertexToolTipTransformer(new Transformer<GraphNode,String>() {
 			@Override
 			public String transform(GraphNode edge) {
 				return edge.getId();
@@ -394,7 +504,7 @@ public class BasicGraphGui extends JPanel {
 		}
 		// --- Configure node labels --------------------------------------
 		if (showLable==true) {
-			visView.getRenderContext().setVertexLabelTransformer(
+			vViewer.getRenderContext().setVertexLabelTransformer(
 					new Transformer<GraphNode, String>() {
 						@Override
 						public String transform(GraphNode node) {
@@ -403,10 +513,10 @@ public class BasicGraphGui extends JPanel {
 					});
 		}
 		// --- Configure vertex colors ------------------------------------
-		visView.getRenderContext().setVertexFillPaintTransformer(
+		vViewer.getRenderContext().setVertexFillPaintTransformer(
 				new Transformer<GraphNode, Paint>() {
 					public Paint transform(GraphNode node) {
-						if(visView.getPickedVertexState().isPicked(node))
+						if(vViewer.getPickedVertexState().isPicked(node))
 						{//Highlight color when picked	
 							return BasicGraphGui.DEFAULT_VERTEX_PICKED_COLOR;
 						}
@@ -430,10 +540,10 @@ public class BasicGraphGui extends JPanel {
 				}
 		);
 		// --- Configure edge colors --------------------------------------
-		visView.getRenderContext().setEdgeDrawPaintTransformer(
+		vViewer.getRenderContext().setEdgeDrawPaintTransformer(
 		new Transformer<GraphEdge, Paint>() {
 			public Paint transform(GraphEdge edge) {
-				if(visView.getPickedEdgeState().isPicked(edge)) {
+				if(vViewer.getPickedEdgeState().isPicked(edge)) {
 					//Highlight color when picked	
 					return BasicGraphGui.DEFAULT_EDGE_PICKED_COLOR;
 					
@@ -458,7 +568,7 @@ public class BasicGraphGui extends JPanel {
 		}
 		);
 		// --- Configure Edge Image Labels --------------------------------			
-		visView.getRenderContext().setEdgeLabelTransformer(new Transformer<GraphEdge,String>() {	        	
+		vViewer.getRenderContext().setEdgeLabelTransformer(new Transformer<GraphEdge,String>() {	        	
 			public String transform(GraphEdge edge) {
 				//Get the path of the Image from the component type settings
 				String textDisplay = "";
@@ -494,14 +604,14 @@ public class BasicGraphGui extends JPanel {
 			}
 			});
 		// --- Configure edge label position ------------------------------
-		visView.getRenderContext().setLabelOffset(0);
-		visView.getRenderContext().setEdgeLabelClosenessTransformer(new ConstantDirectionalEdgeValueTransformer<GraphNode, GraphEdge>(.5, .5));
+		vViewer.getRenderContext().setLabelOffset(0);
+		vViewer.getRenderContext().setEdgeLabelClosenessTransformer(new ConstantDirectionalEdgeValueTransformer<GraphNode, GraphEdge>(.5, .5));
 		
 		// --- Use straight lines as edges --------------------------------
-		visView.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line<GraphNode, GraphEdge>());
+		vViewer.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line<GraphNode, GraphEdge>());
 		
 		// --- Set edge width ---------------------------------------------
-		visView.getRenderContext().setEdgeStrokeTransformer(new Transformer<GraphEdge, Stroke>(){
+		vViewer.getRenderContext().setEdgeStrokeTransformer(new Transformer<GraphEdge, Stroke>(){
 			@Override
 			public Stroke transform(GraphEdge edge) {
 				float edgeWidth = BasicGraphGui.DEFAULT_EDGE_WIDTH;
@@ -519,16 +629,9 @@ public class BasicGraphGui extends JPanel {
 				return new BasicStroke(edgeWidth);
 			}
 		}); 
-		
-		// --- Finally set the right view ---------------------------------
-		if (this.centerComponent!=null) {
-			this.remove(this.centerComponent);
-		}
-		this.centerComponent = new GraphZoomScrollPane(this.visView);
-		this.add(this.centerComponent, BorderLayout.CENTER);
-
+		return vViewer;
 	}
-
+	
 	/**
 	 * Repaints the visualisation viewer, with the given graph
 	 * @param graph The new graph to be painted with.
