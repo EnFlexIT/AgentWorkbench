@@ -31,7 +31,6 @@ package agentgui.envModel.graph.controller;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.geom.Point2D;
 import java.io.File;
 import java.util.Iterator;
 import java.util.Set;
@@ -47,9 +46,6 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import edu.uci.ics.jung.visualization.Layer;
-import edu.uci.ics.jung.visualization.VisualizationViewer;
-
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.envModel.graph.GraphGlobals;
@@ -57,6 +53,8 @@ import agentgui.envModel.graph.components.ComponentTypeDialog;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
+import edu.uci.ics.jung.visualization.Layer;
+import edu.uci.ics.jung.visualization.VisualizationViewer;
 
 public class BasicGraphGuiTools implements ActionListener {
 
@@ -481,12 +479,12 @@ public class BasicGraphGuiTools implements ActionListener {
 		} else if (ae.getSource() == getJButtonZoomIn()) {
 			// ------------------------------------------------------
 			// --- Button Zoom in -----------------------------------
-			basicGraphGui.getScalingControl().scale(visView, 1.1f, new Point2D.Double(0, 0));
+			basicGraphGui.getScalingControl().scale(visView, 1.1f, basicGraphGui.getDefaultScaleAtPoint());
 			
 		} else if (ae.getSource() == getJButtonZoomOut()) {
 			// ------------------------------------------------------
 			// --- Button Zoom out ----------------------------------
-			basicGraphGui.getScalingControl().scale(visView, 1 / 1.1f, new Point2D.Double(0, 0));
+			basicGraphGui.getScalingControl().scale(visView, 1 / 1.1f, basicGraphGui.getDefaultScaleAtPoint());
 
 		} else if (ae.getSource() == getJToggleMouseTransforming()) {
 			// ------------------------------------------------------

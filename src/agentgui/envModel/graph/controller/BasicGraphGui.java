@@ -327,10 +327,18 @@ public class BasicGraphGui extends JPanel {
 		if (scaleX < scaleY) scale = scaleY;	
 				
 		if (scale!=0 && scale!=1) {
-			this.scalingControl.scale(this.visView, 1/scale,  new Point2D.Double(0, 0));	
+			this.scalingControl.scale(this.visView, 1/scale,  this.getDefaultScaleAtPoint());	
 		}
 		this.allowInitialScaling=false;
 		
+	}
+	
+	/**
+	 * Gets the default point to scale at for zooming.
+	 * @return the default scale at point
+	 */
+	public Point2D getDefaultScaleAtPoint() {
+		return new Point2D.Double(this.graphMargin, this.graphMargin);
 	}
 	
 	/**
