@@ -27,7 +27,6 @@
  */
 package agentgui.core.environment;
 
-import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.JPanel;
@@ -72,12 +71,5 @@ public abstract class EnvironmentPanel extends JPanel implements Observer {
 	public void setEnvironmentController(EnvironmentController environmentController) {
 		this.environmentController = environmentController;
 	}
-	
-	/* (non-Javadoc)
-	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
-	 */
-	@Override
-	public abstract void update(Observable observable, Object objectArg) ;
-	
 	
 }

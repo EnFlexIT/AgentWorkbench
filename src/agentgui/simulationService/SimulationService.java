@@ -414,8 +414,14 @@ public class SimulationService extends BaseService {
 		 * @see agentgui.simulationService.SimulationServiceHelper#setEnvironmentModel(agentgui.simulationService.environment.EnvironmentModel)
 		 */
 		public void setEnvironmentModel(EnvironmentModel envModel) throws ServiceException {
+			this.setEnvironmentModel(envModel, false);
+		}
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.SimulationServiceHelper#setEnvironmentModel(agentgui.simulationService.environment.EnvironmentModel, boolean)
+		 */
+		public void setEnvironmentModel(EnvironmentModel envModel, boolean notifySensorAgents) throws ServiceException {
 			Service.Slice[] slices = getAllSlices();
-			broadcastSetEnvironmentModel(envModel, slices);
+			broadcastSetEnvironmentModel(envModel, notifySensorAgents, slices);
 		}
 		// ----------------------------------------------------------
 		// --- EnvironmentModel of the next simulation step ---------
@@ -570,11 +576,12 @@ public class SimulationService extends BaseService {
 	 * Broadcasts the current EnvironmentModel to all slices.
 	 *
 	 * @param envModel the EnvironmentModel
+	 * @param notifySensorAgents true, if the sensor agents should be also notified 
 	 * @param slices the slices
 	 * @throws ServiceException the service exception
 	 * @see EnvironmentModel
 	 */
-	private void broadcastSetEnvironmentModel(EnvironmentModel envModel, Service.Slice[] slices) throws ServiceException {
+	private void broadcastSetEnvironmentModel(EnvironmentModel envModel, boolean notifySensorAgents, Service.Slice[] slices) throws ServiceException {
 		
 		if (myLogger.isLoggable(Logger.CONFIG)) {
 			myLogger.log(Logger.CONFIG, "Sending new EnvironmentModel!");
@@ -585,7 +592,7 @@ public class SimulationService extends BaseService {
 			if (myLogger.isLoggable(Logger.FINER)) {
 				myLogger.log(Logger.FINER, "Sending new EnvironmentModel to " + sliceName);
 			}
-			envModel = this.setEnvironmentModel2Slice(slice, envModel);
+			envModel = this.setEnvironmentModel2Slice(slice, envModel, notifySensorAgents);
 		}
 	}
 
@@ -897,13 +904,14 @@ public class SimulationService extends BaseService {
 				
 				else if (cmdName.equals(SimulationServiceSlice.SIM_SET_ENVIRONMENT_MODEL)) {
 					EnvironmentModel envModel = (EnvironmentModel) params[0];
+					boolean notifySensorAgents = (Boolean) params[1];
 					if (myLogger.isLoggable(Logger.FINE)) {
 						myLogger.log(Logger.FINE, "Received new environment model");
 					}	
 					if (envModel!=null && envModel.isComplexEnvironment()==true) {
 						envModel = decodeComplexEnvironmentModel(envModel);
 					}
-					setEnvironmentModel(envModel);
+					setEnvironmentModel(envModel, notifySensorAgents);
 				}
 				else if (cmdName.equals(SimulationServiceSlice.SIM_STEP_SIMULATION)) {
 					EnvironmentModel envModel = (EnvironmentModel) params[0];
@@ -1039,14 +1047,18 @@ public class SimulationService extends BaseService {
 		private void setManagerAgent(EnvironmentManagerDescription envManager) {
 			environmentManagerDescription = envManager;
 		}
+		
 		/**
 		 * Sets the environment model.
 		 *
 		 * @param newEnvironmentModel the new environment model
+		 * @param notifySensorAgents true, if the sensor agents should be also notified 
 		 */
-		private void setEnvironmentModel(EnvironmentModel newEnvironmentModel) {
+		private void setEnvironmentModel(EnvironmentModel newEnvironmentModel, boolean notifySensorAgents) {
 			environmentModel = newEnvironmentModel;
-			// Do it or not? localServiceActuator.notifySensors(newEnvironmentModel, stepSimulationAsynchronous );
+			if (notifySensorAgents==true) {
+				localServiceActuator.notifySensors(environmentModel, stepSimulationAsynchronous );				
+			}
 		}
 		/**
 		 * Steps the simulation locally by putting the new EnvironmentModel to the connected agents.
@@ -1277,7 +1289,7 @@ public class SimulationService extends BaseService {
 				// --- Set remote ManagerAgent, TimeModel,EnvironmentInstance --------------
 				newSlice.setManagerAgent(environmentManagerDescription);
 				// --- Set the current environment model to the new slice ------------------
-				this.setEnvironmentModel2Slice(newSlice, environmentModel);
+				this.setEnvironmentModel2Slice(newSlice, environmentModel, false);
 				// --- Synchronise the time ------------------------------------------------
 				this.synchroniseTimeOfSlice(newSlice);
 				
@@ -1289,14 +1301,18 @@ public class SimulationService extends BaseService {
 
 	/**
 	 * Sets the environment model to the specified slice.
-	 * 
+	 *
 	 * @param simSlice the SimulationServiceSlice
 	 * @param envModel the EnvironmentModel
+	 * @param notifySensorAgents true, if the sensor agents should be also notified 
+	 * 
+	 * @return the environment model
+	 * @throws ServiceException the service exception
 	 */
-	private EnvironmentModel setEnvironmentModel2Slice(SimulationServiceSlice simSlice, EnvironmentModel envModel) throws ServiceException {
+	private EnvironmentModel setEnvironmentModel2Slice(SimulationServiceSlice simSlice, EnvironmentModel envModel, boolean notifySensorAgents) throws ServiceException {
 		
 		try {
-			simSlice.setEnvironmentModel(envModel);
+			simSlice.setEnvironmentModel(envModel, notifySensorAgents);
 			return envModel;
 		} catch (IMTPException e) { }
 
@@ -1305,7 +1321,7 @@ public class SimulationService extends BaseService {
 			envModel = encodeComplexEnvironmentModel(envModel);	
 		}
 		try {
-			simSlice.setEnvironmentModel(envModel);
+			simSlice.setEnvironmentModel(envModel, notifySensorAgents);
 			return envModel;
 		} catch (IMTPException err) {
 			myLogger.log(Logger.WARNING, "Error while sending the new EnvironmentModel to slice " + simSlice.getNode().getName(), err);

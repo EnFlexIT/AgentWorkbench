@@ -9,7 +9,7 @@ import jade.core.*;
    * A set of parameters describing the current gas flow at a PropagationPoint.
 * Protege name: FlowParameters
 * @author ontology bean generator
-* @version 2011/05/8, 09:32:41
+* @version 2012/01/4, 17:18:05
 */
 public class FlowParameters implements Concept {
 
@@ -22,17 +22,6 @@ public class FlowParameters implements Concept {
    }
    public float getPressure() {
      return this.pressure;
-   }
-
-   /**
-* Protege name: reynoldsNumber
-   */
-   private int reynoldsNumber;
-   public void setReynoldsNumber(int value) { 
-    this.reynoldsNumber=value;
-   }
-   public int getReynoldsNumber() {
-     return this.reynoldsNumber;
    }
 
    /**
@@ -77,6 +66,17 @@ public class FlowParameters implements Concept {
    }
    public float getFluidVelocity() {
      return this.fluidVelocity;
+   }
+
+   /**
+* Protege name: reynoldsNumber
+   */
+   private int reynoldsNumber;
+   public void setReynoldsNumber(int value) { 
+    this.reynoldsNumber=value;
+   }
+   public int getReynoldsNumber() {
+     return this.reynoldsNumber;
    }
 
 }

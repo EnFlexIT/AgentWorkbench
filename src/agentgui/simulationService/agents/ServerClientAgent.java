@@ -318,7 +318,7 @@ public class ServerClientAgent extends Agent {
 								System.out.println( "Server.Master not reachable! Try to reconnect in " + (triggerTime4Reconnection/1000) + " seconds ..." );
 								sendNotReachable++;
 								if (sendNotReachable>=sendNotReachableMax) {
-									System.out.println( "Stop now to inform that Server.Master is not reachable!" );
+									System.out.println( "Server.Master not reachable! Stop now to inform that Server.Master is not reachable!" );
 								}
 							}
 							trigger.reset(triggerTime4Reconnection);

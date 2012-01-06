@@ -141,11 +141,12 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 	 * @see agentgui.simulationService.SimulationServiceSlice#setEnvironmentModel(agentgui.simulationService.environment.EnvironmentModel)
 	 */
 	@Override
-	public void setEnvironmentModel(EnvironmentModel envModel) throws IMTPException {
+	public void setEnvironmentModel(EnvironmentModel envModel, boolean notifySensorAgents) throws IMTPException {
 
 		try {
 			GenericCommand cmd = new GenericCommand(SIM_SET_ENVIRONMENT_MODEL, SimulationService.NAME, null);
 			cmd.addParam(envModel);
+			cmd.addParam(notifySensorAgents);
 			
 			Node n = getNode();
 			Object result = n.accept(cmd);

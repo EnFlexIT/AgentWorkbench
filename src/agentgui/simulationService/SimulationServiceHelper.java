@@ -241,6 +241,17 @@ public interface SimulationServiceHelper extends ServiceHelper {
 	public void setEnvironmentModel(EnvironmentModel envModel) throws ServiceException;
 	
 	/**
+	 * Can be used in order to set and distribute an {@link EnvironmentModel} without
+	 * a direct notification to the involved agents.
+	 *
+	 * @param envModel the current or new EnvironmentModel instance
+	 * @param notifySensorAgents true, if the sensor agents should be also notified 
+	 * @throws ServiceException the ServiceException
+	 * @see EnvironmentModel
+	 */
+	public void setEnvironmentModel(EnvironmentModel envModel, boolean notifySensorAgents) throws ServiceException;
+
+	/**
 	 * Returns the current the EnvironmentModel.
 	 *
 	 * @return the environment model

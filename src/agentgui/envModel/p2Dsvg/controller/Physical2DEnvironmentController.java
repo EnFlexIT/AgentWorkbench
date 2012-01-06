@@ -161,6 +161,9 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 		myGUI = gui;
 	}
 	
+	/* (non-Javadoc)
+	 * @see agentgui.core.environment.EnvironmentController#createEnvironmentPanel()
+	 */
 	@Override
 	protected EnvironmentPanel createEnvironmentPanel() {
 		Physical2DEnvironmentControllerGUI p2dGUI = new Physical2DEnvironmentControllerGUI(this);

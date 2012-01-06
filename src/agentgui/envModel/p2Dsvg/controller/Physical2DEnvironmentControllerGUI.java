@@ -87,7 +87,7 @@ import agentgui.envModel.p2Dsvg.utils.EnvironmentHelper;
  * 
  * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
  */
-public class Physical2DEnvironmentControllerGUI extends EnvironmentPanel implements ActionListener{
+public class Physical2DEnvironmentControllerGUI extends EnvironmentPanel implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 	public static final String SETTINGS_KEY_ID = "id";

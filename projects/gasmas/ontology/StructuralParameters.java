@@ -9,20 +9,20 @@ import jade.core.*;
    * A set of parameters describing the physical properties of a PropagationPoint.
 * Protege name: StructuralParameters
 * @author ontology bean generator
-* @version 2011/05/8, 09:32:41
+* @version 2012/01/4, 17:18:05
 */
 public class StructuralParameters implements Concept {
 
    /**
-   * The geographical x coordinate of the propagation point.
-* Protege name: geoX
+   * The geographical y coordinate of the propagation point.
+* Protege name: diameter
    */
-   private float geoX;
-   public void setGeoX(float value) { 
-    this.geoX=value;
+   private float diameter;
+   public void setDiameter(float value) { 
+    this.diameter=value;
    }
-   public float getGeoX() {
-     return this.geoX;
+   public float getDiameter() {
+     return this.diameter;
    }
 
    /**
@@ -37,15 +37,15 @@ public class StructuralParameters implements Concept {
    }
 
    /**
-   * The geographical y coordinate of the propagation point.
-* Protege name: diameter
+   * The geographical x coordinate of the propagation point.
+* Protege name: geoX
    */
-   private float diameter;
-   public void setDiameter(float value) { 
-    this.diameter=value;
+   private float geoX;
+   public void setGeoX(float value) { 
+    this.geoX=value;
    }
-   public float getDiameter() {
-     return this.diameter;
+   public float getGeoX() {
+     return this.geoX;
    }
 
    /**

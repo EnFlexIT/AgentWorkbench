@@ -38,15 +38,12 @@ import jade.util.leap.Serializable;
  * You can add more attributes in this class if required, but be careful to cast and use the user object properly.
  * 
  * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati 
- *
  */
 public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	
 	private static final long serialVersionUID = 7425147528482747232L;
 	
-	/**
-	 * The component type settings used in the {@link GraphEnvironmentController}
-	 */
+	/** The component type settings used in the {@link GraphEnvironmentController} */
 	private HashMap<String, ComponentTypeSettings> currentCTS = null;
 
 	
@@ -67,6 +64,19 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	/**
+	 * Gets a copy from the current instance.
+	 * @return the copy
+	 */
+	public GeneralGraphSettings4MAS getCopy() {
+		
+		HashMap<String, ComponentTypeSettings> copyCTS = new HashMap<String, ComponentTypeSettings>(this.currentCTS);
+
+		GeneralGraphSettings4MAS copy = new GeneralGraphSettings4MAS();
+		copy.setCurrentCTS(copyCTS);
+		return copy;
 	}
 	
 	/**

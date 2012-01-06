@@ -28,7 +28,6 @@
  */
 package gasmas.agents.manager;
 
-import gasmas.clustering.EdgeBetweenessBehaviour;
 import jade.core.ServiceException;
 import agentgui.core.application.Application;
 import agentgui.core.project.Project;
@@ -50,25 +49,50 @@ public class NetworManagerAgent extends SimulationManagerAgent {
 	protected void setup() {
 		super.setup();
 
+		// --- Get the connection to the current project ------------
 		currProject = Application.ProjectCurr;
-		if ( currProject == null ) {
+		if (currProject == null) {
 			takeDown();
 		}
 
+		// --- Get the initial environment model --------------------
 		this.envModel = this.getInitialEnvironmentModel();
-		try {
-			simHelper.setEnvironmentModel( this.envModel );
+		// --- Remind the current network model ---------------------
+		this.myNetworkModel = (NetworkModel) this.getDisplayEnvironment();
+
+		// ++++++++++++++ Just to see if this feature can work +++++++++++ 
+		this.testAlternativeModels();
+		// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 		
+		// --- Put the environment model into the SimulationService - 
+		// --- in order to make it accessible for the whole agency -- 
+		try {
+			simHelper.setEnvironmentModel(this.envModel, true);
 		} catch ( ServiceException e ) {
 			e.printStackTrace();
 		}
-		
-		this.myNetworkModel = (NetworkModel) this.getDisplayEnvironment();
 
-		this.addBehaviour(new EdgeBetweenessBehaviour(envModel));
+		// --- Start working ----------------------------------------
+		//this.addBehaviour(new EdgeBetweenessBehaviour(envModel));
 
 	}
-
+	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	
+	// ++++++++++++++ Some temporary test cases here +++++++++++++++++++++
+	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	private void testAlternativeModels() {
+		
+		NetworkModel nmCopy1 = this.myNetworkModel.getCopy();
+		NetworkModel nmCopy2 = this.myNetworkModel.getCopy();
+		nmCopy2.getAlternativeNetworkModel().put("Sub Alternative of Alternative 2", nmCopy1.getCopy());
+		
+		this.myNetworkModel.getAlternativeNetworkModel().put("Alternative 1", nmCopy1);
+		this.myNetworkModel.getAlternativeNetworkModel().put("Alternative 2", nmCopy2);
+		this.setDisplayEnvironment(this.myNetworkModel);
+		
+	}
+	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -121,10 +145,12 @@ public class NetworManagerAgent extends SimulationManagerAgent {
 		return envModel;
 	}
 
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.agents.SimulationManagerInterface#doSingleSimulationSequennce()
+	 */
 	@Override
 	public void doSingleSimulationSequennce() {
 
 	}
 
-	
 }

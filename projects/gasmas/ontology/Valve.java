@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: Valve
 * @author ontology bean generator
-* @version 2011/05/8, 09:32:41
+* @version 2012/01/4, 17:18:05
 */
 public class Valve extends GridComponent{ 
 

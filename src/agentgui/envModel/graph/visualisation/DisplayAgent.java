@@ -40,9 +40,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import agentgui.envModel.graph.GraphGlobals;
-import agentgui.envModel.graph.controller.BasicGraphGui;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
-import agentgui.envModel.graph.controller.GraphEnvironmentControllerGUI;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.SimulationServiceHelper;
@@ -66,7 +64,7 @@ public class DisplayAgent extends SimulationAgent {
 	private JFrame useFrame = null;
 	private JPanel usePanel = null;
 	
-	private GraphEnvironmentControllerGUI myGraphDisplay = null;
+	private GraphEnvironmentController myGraphEnvironmentController = null;
 	private NetworkModel netModel = null;
 	
 	/* (non-Javadoc)
@@ -81,8 +79,8 @@ public class DisplayAgent extends SimulationAgent {
 			// --- started in a normal way ----------------
 			this.useFrame = this.getIndependentFrame();
 			
-			EnvironmentModel envModel = this.grabEnvironmentModelFromSimulationService(); 
-			this.netModel = (NetworkModel) envModel.getDisplayEnvironment();
+			this.myEnvironmentModel = this.grabEnvironmentModelFromSimulationService(); 
+			this.netModel = (NetworkModel) myEnvironmentModel.getDisplayEnvironment();
 
 		} else {
 			// --- started from Agent.GUI -----------------
@@ -120,7 +118,7 @@ public class DisplayAgent extends SimulationAgent {
 	protected void afterMove() {
 		this.useFrame = this.getIndependentFrame();
 		EnvironmentModel envModel = this.grabEnvironmentModelFromSimulationService(); 
-		this.netModel = (NetworkModel) envModel.getAbstractEnvironment();
+		this.netModel = (NetworkModel) envModel.getDisplayEnvironment();
 		this.buildVisualizationGUI();
 		super.afterMove();
 	}
@@ -131,23 +129,16 @@ public class DisplayAgent extends SimulationAgent {
 	private void buildVisualizationGUI() {
 		
 		// --- Build the new Controller GUI ---------------
-		GraphEnvironmentController myGraphEnvController = new GraphEnvironmentController();
-		myGraphEnvController.setEnvironmentModel(this.netModel);
-		this.myGraphDisplay = (GraphEnvironmentControllerGUI) myGraphEnvController.getEnvironmentPanel();
+		this.myGraphEnvironmentController = new GraphEnvironmentController();
+		this.myGraphEnvironmentController.setEnvironmentModel(this.netModel);
 		
-		BasicGraphGui basicGraphGui = new BasicGraphGui(myGraphEnvController);
-		if (this.netModel!=null) {
-			basicGraphGui.setGraph(this.netModel.getGraph());	
-		}
-		this.myGraphDisplay.setGraphGUI(basicGraphGui);
-				
 		if (this.useFrame!=null) {
-			this.useFrame.setContentPane(this.myGraphDisplay);
+			this.useFrame.setContentPane(myGraphEnvironmentController.getEnvironmentPanel());
 			this.useFrame.pack();
 			this.useFrame.setVisible(true);
 			
 		} else {
-			this.usePanel.add(this.myGraphDisplay, BorderLayout.CENTER);
+			this.usePanel.add(myGraphEnvironmentController.getEnvironmentPanel(), BorderLayout.CENTER);
 			this.usePanel.validate();
 			this.usePanel.repaint();
 			
@@ -160,9 +151,8 @@ public class DisplayAgent extends SimulationAgent {
 	private void destroyVisualizationGUI() {
 		
 		this.netModel = null;
-		if (this.myGraphDisplay!=null) {
-			this.myGraphDisplay.setVisible(false);
-			this.myGraphDisplay=null;
+		if (this.myGraphEnvironmentController!=null) {
+			this.myGraphEnvironmentController.getEnvironmentPanel().setVisible(false);
 		}
 		if (this.useFrame != null) {
 			this.useFrame.dispose();
@@ -218,8 +208,8 @@ public class DisplayAgent extends SimulationAgent {
 	 */
 	@Override
 	protected void onEnvironmentStimulus() {
-		
-		
+		this.netModel = (NetworkModel) myEnvironmentModel.getDisplayEnvironment();
+		this.myGraphEnvironmentController.setEnvironmentModel(this.netModel);
 	}
 	
 }

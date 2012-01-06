@@ -37,6 +37,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Observable;
@@ -44,11 +46,13 @@ import java.util.Vector;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
@@ -84,7 +88,8 @@ import agentgui.envModel.graph.networkModel.NetworkModel;
  * @see agentgui.envModel.graph.networkModel
  * 
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
- * @author <br>Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati 
+ * @author Satyadeep Karnati - CSE - Indian Institute of Technology - Guwahati
+ * @author Christian Derksen - DAWIS - ICB University of Duisburg - Essen 
  */
 public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements ListSelectionListener, TableModelListener {
 	
@@ -93,7 +98,11 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 	private final static String pathImage = GraphGlobals.getPathImages();
 	
 	/** The SplitPane containing this GUI's components */
+	private JComponent mainDisplayComponent = null;
+	private boolean useTabs = false;
 	private JSplitPane jSplitPaneRoot = null;
+	private JTabbedPane jTabbedPaneAltNetModels = null;
+	private HashMap<String, GraphEnvironmentControllerGUI> networkModelTabs= null;  //  @jve:decl-index=0:
 	
 	private JPanel jPanelControls = null;
 	private JScrollPane jScrollPaneComponentsTable = null;
@@ -107,6 +116,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 
 	/** The graph visualization component */
 	private BasicGraphGui graphGUI = null;
+	
 	
 	
 	/**
@@ -124,7 +134,15 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 	 */
 	private void initialize() {
 		this.setLayout(new BorderLayout());
-		this.add(getJSplitPaneRoot(), null);
+		
+		if (this.getGraphController().getProject()!=null) {
+			this.mainDisplayComponent = getJSplitPaneRoot();
+			this.useTabs = false;
+		} else {
+			this.mainDisplayComponent = getJTabbedPaneAltNetModels();
+			this.useTabs = true;
+		}
+		this.add(this.mainDisplayComponent, null);
 		this.showNumberOfComponents();
 	}
 
@@ -144,6 +162,52 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 	}
 
 	/**
+	 * Gets the JTabbedPane for alternative network models.
+	 * @return the JTabbedPane for alternative network models
+	 */
+	private JTabbedPane getJTabbedPaneAltNetModels() {
+		if (jTabbedPaneAltNetModels==null) {
+			jTabbedPaneAltNetModels = new JTabbedPane();
+			jTabbedPaneAltNetModels.setFont(new Font("Dialog", Font.BOLD, 12));
+
+			// --- Initialize the Tab-Reminder ------------
+			this.networkModelTabs = new HashMap<String, GraphEnvironmentControllerGUI>();
+			
+			// --- Display the normal topology ------------
+			jTabbedPaneAltNetModels.addTab(Language.translate("Topologie"), getJSplitPaneRoot());
+			this.networkModelTabs.put(Language.translate("Topologie"), this);			
+
+		}
+		return jTabbedPaneAltNetModels;
+	}
+	
+	/**
+	 * Sets to use tabs or not.
+	 * @param use the new use 
+	 */
+	public void setUseTabs(boolean use) {
+		
+		if (this.useTabs!=use) {
+			// --- Change the appearance of this tab ----------------
+			this.useTabs = use;
+			this.remove(this.mainDisplayComponent);
+			
+			if (this.useTabs == true) {
+				// --- NO tabs were displayed yet => show them now --
+				this.mainDisplayComponent = this.getJTabbedPaneAltNetModels();
+			} else {
+				// --- Tabs are displayed => remove them now --------
+				this.mainDisplayComponent = getJSplitPaneRoot();
+			}
+			
+			// --- Finally ------------------------------------------
+			this.add(this.mainDisplayComponent, null);
+			this.validate();
+			this.repaint();
+		}
+	}
+	
+	/**
 	 * This method initializes jSplitPaneRoot	
 	 * @return javax.swing.JSplitPane	
 	 */
@@ -152,7 +216,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 			jSplitPaneRoot = new JSplitPane();
 			jSplitPaneRoot.setOneTouchExpandable(true);
 			jSplitPaneRoot.setLeftComponent(getPnlControlls());
-			jSplitPaneRoot.setRightComponent(getGraphGUI());
+			jSplitPaneRoot.setRightComponent(getGraphVisualization());
 			jSplitPaneRoot.setDividerLocation(230);
 		}
 		return jSplitPaneRoot;
@@ -475,6 +539,17 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 		return componentVector;
 	}
 
+	
+	/**
+	 * Gets the graph visualization either for configuration or for 
+	 * displaying it during the simulation runtime.
+	 * @return the graph visualization
+	 */
+	private JComponent getGraphVisualization() {
+		return this.getGraphGUI();
+	}
+	
+	
 	/**
 	 * Get the visualization component
 	 * @return the basic graph GUI which contains the graph visualization component
@@ -491,52 +566,73 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 	}
 	
 	/**
-	 * Sets the graph GUI.
-	 * @param basicGraphGui the new graph GUI
+	 * Sets the network model to the display.
+	 * @param nm the new NetworkModel
 	 */
-	public void setGraphGUI(BasicGraphGui basicGraphGui) {
+	public void setNetworkModel(NetworkModel nm) {
+
+		this.getGraphGUI().setGraph(nm.getGraph()); 
+		this.rebuildTblComponents();
+		this.showNumberOfComponents();
 		
-		// --- remove the old one ---------------
-		JPanel comp = (JPanel) this.getJSplitPaneRoot().getRightComponent();
-		if (comp!=null) {
-			this.getJSplitPaneRoot().remove(comp);	
+		if (nm.getAlternativeNetworkModel().size()>0) {
+			// --------------------------------------------------------------------------
+			// --- Alternative NetworkModel's has to be displayed -----------------------
+			// --------------------------------------------------------------------------
+			HashMap<String, NetworkModel> altNetModelHash = nm.getAlternativeNetworkModel();
+			// --- Get the model names ordered ------------------------------------------
+			Vector<String> altNetModels = new Vector<String>(altNetModelHash.keySet());
+			Collections.sort(altNetModels);
+			
+			for (int i = 0; i < altNetModels.size(); i++) {
+				
+				String altNetModelName = altNetModels.get(i);
+				NetworkModel altNetModel = altNetModelHash.get(altNetModelName); 
+					
+				GraphEnvironmentControllerGUI graphControllerGUI = null;
+				GraphEnvironmentController graphController = null;
+				
+				if (networkModelTabs.get(altNetModelName)==null) {
+					// --- Create a new Controller for the alternative NetworkModel -----
+					graphController = new GraphEnvironmentController();
+					graphController.setEnvironmentModel(altNetModel);
+					graphControllerGUI = (GraphEnvironmentControllerGUI) graphController.getEnvironmentPanel();
+					
+					this.jTabbedPaneAltNetModels.addTab(altNetModelName, graphControllerGUI);
+					this.networkModelTabs.put(altNetModelName, graphControllerGUI);
+					
+				} else {
+					// --- Get the Controller for the alternative NetworkModel ----------
+					graphControllerGUI = networkModelTabs.get(altNetModelName);
+					graphController = graphControllerGUI.getGraphController();
+					graphController.setEnvironmentModel(altNetModel);
+					
+				}
+			
+				// --- Set the appearance of the GUI to use or not use a JTabbedPane ----
+				if (altNetModel.getAlternativeNetworkModel().size()>0) {
+					graphControllerGUI.setUseTabs(true);
+				} else {
+					graphControllerGUI.setUseTabs(false);
+				}
+				
+			}
+			// --------------------------------------------------------------------------
+			// --------------------------------------------------------------------------
 		}
-		// --- set the new one ------------------
-		this.graphGUI = basicGraphGui;
-		this.getJSplitPaneRoot().setRightComponent(basicGraphGui);
-		
 	}
 	
 	/**
-	 * Very important method which implements handlers for various notifications sent by observables 
-	 * 	({@link GraphEnvironmentController} and {@link BasicGraphGui} ). <br>
-	 * Handles Network model updates, and button clicks of Graph GUI and mouse interactions.
-	 * 
-	 * @param o The observable which notifies this class
-	 * @param arg Argument passed
+	 * Refresh network model.
 	 */
-	@Override
-	public void update(Observable o, Object arg) {
-		
-		if(o.equals(this.getGraphController()) && arg.equals(GraphEnvironmentController.EVENT_NETWORKMODEL_LOADED)){
-			// --- The network model loaded --------------- 
-			// Create new graph visualization viewer --
-			graphGUI.setGraph(this.getGraphController().getNetworkModel().getGraph()); 
-
-			this.rebuildTblComponents();
-			this.showNumberOfComponents();
-			
-		} else if(o.equals(this.getGraphController()) && arg.equals(GraphEnvironmentController.EVENT_NETWORKMODEL_REFRESHED)) {			
-			// --- Network model is updated/refreshed -----
-			graphGUI.repaintGraph(this.getGraphController().getNetworkModel().getGraph());
-			// --- Rebuilding the component table ---------
-			this.rebuildTblComponents();
-			this.showNumberOfComponents();
-			graphGUI.clearPickedObjects();
-			
-		}
+	public void refreshNetworkModel() {
+		// --- Network model is updated/refreshed -----
+		this.getGraphGUI().repaintGraph(this.getGraphController().getNetworkModel().getGraph());
+		// --- Rebuilding the component table ---------
+		this.rebuildTblComponents();
+		this.showNumberOfComponents();
+		this.getGraphGUI().clearPickedObjects();
 	}
-
 	
 	/**
 	 * Invoked when a row of the components table is selected.
@@ -551,8 +647,8 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 			String componentID = (String) jTableComponents.getModel().getValueAt(selectedIndex, 0);
 			NetworkComponent component = this.getGraphController().getNetworkModel().getNetworkComponent(componentID);
 			
-			graphGUI.clearPickedObjects();
-			graphGUI.selectObject(component);			
+			this.getGraphGUI().clearPickedObjects();
+			this.getGraphGUI().selectObject(component);			
 		}
 	}
 	
@@ -616,5 +712,14 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 		}
 		return jButtonClearSearch;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
+	 */
+	@Override
+	public void update(Observable o, Object arg) {
+		// --- Nothing to do here yet -----------
+	}
+	
 	
 }  //  @jve:decl-index=0:visual-constraint="33,19"

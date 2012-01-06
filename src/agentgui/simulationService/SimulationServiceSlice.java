@@ -117,10 +117,11 @@ public interface SimulationServiceSlice extends Service.Slice {
 	 * a direct notification to the involved agents.
 	 *
 	 * @param envModel the current or new EnvironmentModel instance
+	 * @param notifySensorAgents true, if the sensor agents should be also notified 
 	 * @throws IMTPException the IMTPException
 	 * @see EnvironmentModel
 	 */
-	public void setEnvironmentModel(EnvironmentModel envModel) throws IMTPException;
+	public void setEnvironmentModel(EnvironmentModel envModel, boolean notifySensorAgents) throws IMTPException;
 	
 	/**
 	 * Steps a simulation by using the current {@link EnvironmentModel} and the number of expected changes / answers.

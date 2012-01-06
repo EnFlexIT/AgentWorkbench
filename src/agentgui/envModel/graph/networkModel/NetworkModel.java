@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import agentgui.envModel.graph.controller.GeneralGraphSettings4MAS;
+import agentgui.envModel.graph.visualisation.DisplayAgent;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseGraph;
 import edu.uci.ics.jung.graph.util.EdgeType;
@@ -49,22 +50,28 @@ public class NetworkModel implements Cloneable, Serializable {
 	
 	private static final long serialVersionUID = -5712689010090750522L;
 	
-	/**
-	 * The JUNG graph.
-	 */
+	/** The original JUNG graph created or imported in the application. */
 	private Graph<GraphNode, GraphEdge> graph;
-	/**
-	 * HashMap providing access to the grid components based on the component's agentID
-	 */
+	/** HashMap providing access to the grid components based on the component's agentID */
 	private HashMap<String, GraphElement> graphElements;
-	/**
-	 * A list of all NetworkComponents in the GridModel, accessible by ID
-	 */
+	/** A list of all NetworkComponents in the GridModel, accessible by ID */
 	private HashMap<String, NetworkComponent> networkComponents;
-	/**
-	 * The user object, which stores the component type settings for example
+	
+	/** 
+	 * The user object, which stores the component type settings for example. 
+	 * This slot/field is only used during the runtime of the simulation in 
+	 * order to provide the settings without accessing the project information. 
 	 */
 	private GeneralGraphSettings4MAS generalGraphSettings4MAS = null;
+	
+	/**
+	 * This HashMap can hold alternative NetworkModel's that can be used 
+	 * to reduce the complexity of the original graph (e.g after clustering).
+	 * The NetworkModel's placed in this HashMap will be also displayed
+	 * through the {@link DisplayAgent}.
+	 */
+	private HashMap<String, NetworkModel> alternativeNetworkModel = null;
+	
 	
 	
 	/**
@@ -121,18 +128,30 @@ public class NetworkModel implements Cloneable, Serializable {
 			copyGraph.addEdge(edge, first, second, edgeType);
 			
 		}
-		
-		// ----------------------------------------------------------
+
 		// -- Create a copy of the networkComponents ----------------
-		// ----------------------------------------------------------
-		HashMap<String, NetworkComponent> copyComponents = new HashMap<String, NetworkComponent>(this.networkComponents);
+		HashMap<String, NetworkComponent> copyOfComponents = new HashMap<String, NetworkComponent>(this.networkComponents);
+
+		// -- Create a copy of the generalGraphSettings4MAS ---------
+		GeneralGraphSettings4MAS copyOfGeneralGraphSettings4MAS = null;
+		if (this.generalGraphSettings4MAS!=null) {
+			copyOfGeneralGraphSettings4MAS = this.generalGraphSettings4MAS.getCopy();
+		}
+		
+		// -- Create a copy of the alternativeNetworkModel ----------
+		HashMap<String, NetworkModel> copyOfAlternativeNetworkModel = null; 
+		if (this.alternativeNetworkModel!=null) {
+			copyOfAlternativeNetworkModel = new HashMap<String, NetworkModel>(this.alternativeNetworkModel);
+		}
 		
 		// ----------------------------------------------------------
 		// -- Create a new NetworkModel -----------------------------
 		// ----------------------------------------------------------
 		NetworkModel netModel = new NetworkModel();
 		netModel.setGraph(copyGraph);
-		netModel.setNetworkComponents(copyComponents);
+		netModel.setNetworkComponents(copyOfComponents);
+		netModel.setGeneralGraphSettings4MAS(copyOfGeneralGraphSettings4MAS);
+		netModel.setAlternativeNetworkModel(copyOfAlternativeNetworkModel);
 		return netModel;
 		
 	}
@@ -305,6 +324,24 @@ public class NetworkModel implements Cloneable, Serializable {
 	 */
 	public GeneralGraphSettings4MAS getGeneralGraphSettings4MAS() {
 		return generalGraphSettings4MAS;
+	}
+
+	/**
+	 * Sets the alternative network model.
+	 * @param alternativeNetworkModel the alternativeNetworkModel to set
+	 */
+	public void setAlternativeNetworkModel(HashMap<String, NetworkModel> alternativeNetworkModel) {
+		this.alternativeNetworkModel = alternativeNetworkModel;
+	}
+	/**
+	 * Gets the alternative network models.
+	 * @return the alternativeNetworkModel
+	 */
+	public HashMap<String, NetworkModel> getAlternativeNetworkModel() {
+		if (alternativeNetworkModel==null) {
+			alternativeNetworkModel = new HashMap<String, NetworkModel>();
+		}
+		return alternativeNetworkModel;
 	}
 	
 }
