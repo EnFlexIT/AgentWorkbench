@@ -225,7 +225,7 @@ public abstract class PlugIn implements Observer {
 	
 	/**
 	 * Adds an environment type to the list of available environment types. It can be used 
-	 * in order to register an individual, taylored EnvironmentType to Agent.GUI.<br>
+	 * in order to register an individual, tailored EnvironmentType to Agent.GUI.<br>
 	 * After this method was invoked the EnvironmentType can be found for selection
 	 * in the Resources-Tab of the project configuration.
 	 *  

@@ -5,7 +5,16 @@
 	<property name="destinDirAPI" value="${destinDir}\api\\" />
 	<property name="destinDirIMG" value="${destinDir}\img\\" />
 
+	<!-- Get the version info -->
+	<property name="versionPropertyFile" value="src\agentgui\version.properties"/>
+	<property prefix="old" file="${versionPropertyFile}"/>
+	<property name="version.major" value="${old.version.major}"/>
+	<property name="version.minor" value="${old.version.minor}"/>
+	<property name="doc.title" value="Agent.GUI (Version ${version.major}.${version.minor}) - Documentation"/> 
+		
+	
 	<target name="execute" depends="cleanup,javadoc" description="Creating javadoc ... ">
+		<echo>Build: ${doc.title}</echo>
 	</target>
 	
 	<target name="cleanup" description="Delete old API folder structure ...">
@@ -13,11 +22,13 @@
 	</target>	
 	
 	<target name="javadoc">
+		
+		<!-- Build the API -->
 		<javadoc access="package" author="true" 
 			source="1.6" 
 			sourcepath="projects;src" 
 			destdir="${destinDirAPI}" 
-			doctitle="AgentGUI - Documentation" 
+			doctitle="${doc.title}" 
 			nodeprecated="false" 
 			nodeprecatedlist="false" 
 			noindex="false" 
