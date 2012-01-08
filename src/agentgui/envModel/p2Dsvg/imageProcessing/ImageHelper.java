@@ -63,39 +63,103 @@ import agentgui.envModel.p2Dsvg.utils.EnvironmentWrapper;
  *
  */
 public class ImageHelper { 
+	
+	/** The Constant DIRECTION_FORWARD. */
 	public static final int DIRECTION_FORWARD=0;
+	
+	/** The Constant DIRECTION_BACKWARD. */
 	public static final int DIRECTION_BACKWARD=1;
+	
+	/** The Constant DIRECTION_LEFT. */
 	public static final int DIRECTION_LEFT=2;
+	
+	/** The Constant DIRECTION_RIGHT. */
 	public static final int DIRECTION_RIGHT=3;
+	
+	/** The Constant DIRECTION_UP_LEFT. */
 	public static final int DIRECTION_UP_LEFT=4;
+	
+	/** The Constant DIRECTION_UP_RIGHT. */
 	public static final int DIRECTION_UP_RIGHT=5;
+	
+	/** The Constant DIRECTION_DOWN_LEFT. */
 	public static final int DIRECTION_DOWN_LEFT=6;
+	
+	/** The Constant DIRECTION_DOWN_RIGHT. */
 	public static final int DIRECTION_DOWN_RIGHT=7;
+	
+	/** The REA d_ world. */
 	private static boolean READ_WORLD=false;
+	
+	/** The I s_ i n_ method. */
 	private static boolean IS_IN_METHOD=false;
+	
+	/** The FIRS t_ call. */
 	private static boolean FIRST_CALL=true;
+	
+	/** The is_setup. */
 	private boolean is_setup=false;
+	
+	/** The divide height. */
 	int divideHeight;
+	
+	/** The divide width. */
 	int divideWidth;
+	
+	/** The last distance. */
 	double lastDistance=-20;
+	
+	/** The evn. */
 	private BufferedImage evn=null;
+	
+	/** The endung. */
 	int endung=0;
+	
+	/** The first x. */
 	private float firstX;
+	
+	/** The first y. */
 	private float firstY;
+	
+	/** The first. */
 	boolean first=false;
+	
+	/** The igore no distance change. */
 	boolean igoreNoDistanceChange=false;
+	
+	/** The counter. */
 	int counter=0;
+	
+	/** The compare directions counter. */
 	int compareDirectionsCounter=5;
+	
+	/** The directions counter. */
 	int directionsCounter=0;
+	
+	/** The from. */
 	Position from=null;
+	
+	/** The to. */
 	Position to=null;
+	
+	/** The from id. */
 	String fromID="";
+	
+	/** The to id. */
 	String toID="";
+	
+	/** The helper. */
 	EnvironmentProviderHelper helper;
-	boolean DEBUG=true;
+	
+	/** The DEBUG. */
+	boolean DEBUG=false;
+	
+	/** The manipulated. */
 	Document manipulated=null;
 	
 	/**
+	 * Instantiates a new image helper.
+	 *
 	 * @param fromID ID of the StartPoint
 	 * @param toID   ID of the destination
 	 * @param helper The enviromentHelper
@@ -109,26 +173,41 @@ public class ImageHelper {
 	
 	}
 	
+	/**
+	 * Instantiates a new image helper.
+	 *
+	 * @param helper the helper
+	 */
 	public ImageHelper(EnvironmentProviderHelper helper)
 	{
 		this.helper=helper;
 	}
 	
+	/**
+	 * Instantiates a new image helper.
+	 */
 	public ImageHelper() 
 	{
 		
 	}
 	
+	/**
+	 * Instantiates a new image helper.
+	 *
+	 * @param destination the destination
+	 * @param ownID the own id
+	 */
 	public ImageHelper(Position destination, String ownID)
 	{
 		
 	}
 		
      /**
-      *  Uses recursion to delete node and child nodes 
-     * @param doc The SVG Document
-     * @param node The node which should be deleted
-     */
+      * Uses recursion to delete node and child nodes.
+      *
+      * @param doc The SVG Document
+      * @param node The node which should be deleted
+      */
     private void deleteNodes(Document doc,Node node)
      {
     	 NodeList list=node.getChildNodes();
@@ -147,13 +226,13 @@ public class ImageHelper {
 	
 	
 	/**
-	 * It's used as an heuristic
-	 * 
+	 * It's used as an heuristic.
+	 *
 	 * @param target_x The X position of the target
 	 * @param target_y The Y position of the target
 	 * @param x Own X Position
 	 * @param y Own Y Position
-	 * @return
+	 * @return the distance
 	 */
 	private double getDistance(float target_x,float target_y,float x,float y)
 	{
@@ -165,13 +244,13 @@ public class ImageHelper {
 
 
 	/**
-	 * It's used as an heuristic
-	 * 
+	 * It's used as an heuristic.
+	 *
 	 * @param target_x The X position of the target
 	 * @param target_y The Y position of the target
 	 * @param x Own X Position
 	 * @param y Own Y Position
-	 * @return
+	 * @return the manhattan distance
 	 */
 	private float getManhattanDistance(float target_x,float target_y,float x,float y)
 	{
@@ -183,9 +262,10 @@ public class ImageHelper {
 	
 	
 	/**
-	 * Returns a node for the open/closed List
+	 * Returns a node for the open/closed List.
+	 *
 	 * @param x Own X Position
-	 * @param y Own Y Position 
+	 * @param y Own Y Position
 	 * @param parent Parent node
 	 * @param target_x Target X Position
 	 * @param target_y Target Y Position
@@ -194,7 +274,7 @@ public class ImageHelper {
 	 * @param height Height of the agent
 	 * @param startXIndex Start X Index
 	 * @param startYIndex Start Y Index
-	 * @return
+	 * @return the agentgui.env model.p2 dsvg.image processing. step node
 	 */
 	private agentgui.envModel.p2Dsvg.imageProcessing.StepNode fillNode(float x, float y,agentgui.envModel.p2Dsvg.imageProcessing.StepNode parent,float target_x,float target_y,int ownDirection,float width,float height,int startXIndex,int startYIndex)
 	{
@@ -221,12 +301,13 @@ public class ImageHelper {
 	
 	
 	/**
-	 * Another possible heuristic
+	 * Another possible heuristic.
+	 *
 	 * @param startIndexX X startIndex in a grid
 	 * @param startIndexY Y startIndex in a grid
 	 * @param currentIndexX  Current index of the grid
 	 * @param currentIndexY Current index of the grid
-	 * @return
+	 * @return the h cost
 	 */
 	private int getHCost(int startIndexX,int startIndexY, int currentIndexX, int currentIndexY)
 	{
@@ -237,19 +318,20 @@ public class ImageHelper {
 	
 	
 	/**
-	 * Calculates the path
+	 * Calculates the path.
+	 *
 	 * @param id Agent ID
 	 * @param target_x  Target X postion
 	 * @param target_y Target Y position
 	 * @param width width of the agent
 	 * @param height height of the agent
-	 * @param target_id ID of the target
 	 * @param direction The direction the agent is moving
 	 * @param lookAhead How many pixels should be looked ahead
 	 * @param parent Parent Node
 	 * @param pixel The color of the pixel
-	 * @return
-	 * @throws Exception
+	 * @param useAdjustedWorld the use adjusted world
+	 * @return the agentgui.env model.p2 dsvg.image processing. step node
+	 * @throws Exception the exception
 	 */
 	private synchronized agentgui.envModel.p2Dsvg.imageProcessing.StepNode withoutGrid(String id,float target_x,float target_y,float width,float height, int direction , float lookAhead, agentgui.envModel.p2Dsvg.imageProcessing.StepNode parent,int pixel,boolean useAdjustedWorld) throws Exception
 	{
@@ -405,9 +487,11 @@ public class ImageHelper {
 					 new_current=this.fillNode(currentXPos-lookAhead, currentYPos, current, target_x, target_y, ImageHelper.DIRECTION_LEFT,width,height,listXIndex,listYIndex);
 					 if(this.tranformAndCheckImage(this.evn, currentXPos, currentYPos, width, height, lookAhead, ImageHelper.DIRECTION_LEFT, Color.gray.getRGB()))
 					  { 
-						
+						 if(DEBUG)
+						 {
 						 this.drawLineToSave("l", String.valueOf(new_current.getX()), String.valueOf(width), String.valueOf(new_current.getY()), String.valueOf(height), doc,true,"black");	
-					  	  openList.add(new_current);
+						 }
+						 addToList(openList,new_current);
 					  
 					   }
 					 else
@@ -433,9 +517,11 @@ public class ImageHelper {
 					  new_current=this.fillNode(currentXPos+lookAhead, currentYPos, current, target_x, target_y, ImageHelper.DIRECTION_RIGHT,width,height,listXIndex,listYIndex);
 					  	if(this.tranformAndCheckImage(this.evn, currentXPos, currentYPos, width, height, lookAhead, ImageHelper.DIRECTION_RIGHT, Color.gray.getRGB()))
 					  	{
-					  
+					  		if(DEBUG)
+					  		{
 					  		 this.drawLineToSave("l", String.valueOf(new_current.getX()), String.valueOf(width), String.valueOf(new_current.getY()), String.valueOf(height), doc,true,"black");	
-					    	  openList.add(new_current);
+					  		}
+					  		 addToList(openList,new_current);
 					    }
 					  	 else
 						 {
@@ -460,9 +546,11 @@ public class ImageHelper {
 					  new_current=this.fillNode(currentXPos, currentYPos+lookAhead, current, target_x, target_y, ImageHelper.DIRECTION_FORWARD,width,height,listXIndex,listYIndex);
 					  	if(this.tranformAndCheckImage(this.evn, currentXPos, currentYPos, width, height, lookAhead, ImageHelper.DIRECTION_FORWARD, Color.gray.getRGB()))
 					  	{
-					
+					  		if(DEBUG)
+					  		{
 					  		 this.drawLineToSave("l", String.valueOf(new_current.getX()), String.valueOf(width), String.valueOf(new_current.getY()), String.valueOf(height), doc,true,"black");
-					    	  openList.add(new_current);
+					  		}
+					  		 addToList(openList,new_current);
 					    }
 					  	 else
 						 {
@@ -487,9 +575,11 @@ public class ImageHelper {
 					  new_current=this.fillNode(currentXPos, currentYPos-lookAhead, current, target_x, target_y, ImageHelper.DIRECTION_BACKWARD,width,height,listXIndex,listYIndex);
 					   	if(this.tranformAndCheckImage(this.evn, currentXPos, currentYPos, width, height, lookAhead, ImageHelper.DIRECTION_BACKWARD, Color.gray.getRGB()))
 					  	{
-					  		
+					  		if(DEBUG)
+					  		{
 					  		 this.drawLineToSave("l", String.valueOf(new_current.getX()), String.valueOf(width), String.valueOf(new_current.getY()), String.valueOf(height), doc,true,"black");
-					    	 openList.add(new_current);
+					  		}
+					  		 addToList(openList,new_current);
 					    }
 					  	 else
 						 {
@@ -581,6 +671,8 @@ public class ImageHelper {
 			
 			if(this.getDistance(target_x, target_y, currentXPos, currentYPos)<=10)
 			{
+				if(DEBUG)
+				{
 				SVGSafe sg=new SVGSafe();
 				
 		    	String name="WayPath"+id+counter;
@@ -591,8 +683,7 @@ public class ImageHelper {
 					 name="WayPath"+id+counter;
 					 f=new File(name+".svg");
 				}
-				if(DEBUG)
-				{
+				
 				sg.write(name+".svg", doc);
 				}
 				System.out.println("WayPath"+ id +""+counter+".svg gespeichert");
@@ -614,7 +705,8 @@ public class ImageHelper {
 		
 		  //System.out.println("ID vollkommen:" + id);
 		SVGSafe sg=new SVGSafe();
-		
+		if(DEBUG)
+		{
     	String name="WayPath"+ id +""+counter;
 		File f=new File(name+".svg");
 		while(f.exists())
@@ -623,25 +715,37 @@ public class ImageHelper {
 			 name="WayPath"+ id +""+counter;
 			 f=new File(name+".svg");
 		}
-		if(DEBUG)
-		{
+		
 		sg.write(name+".svg", doc);
 		}
-		System.out.println("Datei geschrieben");
+	
 		  return current;
 		
 	}
 	
 	/**
-	 * Checks if a node is already in a list
-	 * @param open The list with the open Nodes
-	 * @param closed The list with the closed NOdes
-	 * @param x  X Position of the node
-	 * @param y Y Position of the node
-	 * @param direction The Direction of the node
+	 * Checks if a node is already in a list.
+	 *
+	 * @param list the list
+	 * @param node the node
 	 * @return True or false
 	 */
-	private boolean isInList(ArrayList<agentgui.envModel.p2Dsvg.imageProcessing.StepNode> open,ArrayList<agentgui.envModel.p2Dsvg.imageProcessing.StepNode> closed, float x,float y,int direction)
+	public void addToList(ArrayList	<agentgui.envModel.p2Dsvg.imageProcessing.StepNode> list,	agentgui.envModel.p2Dsvg.imageProcessing.StepNode node)
+	{
+		list.add(node);
+	}
+	
+	/**
+	 * Checks if is in list.
+	 *
+	 * @param open the open
+	 * @param closed the closed
+	 * @param x the x
+	 * @param y the y
+	 * @param direction the direction
+	 * @return true, if is in list
+	 */
+	public boolean isInList(ArrayList<agentgui.envModel.p2Dsvg.imageProcessing.StepNode> open,ArrayList<agentgui.envModel.p2Dsvg.imageProcessing.StepNode> closed, float x,float y,int direction)
 	{
 		for(int i=0;i<open.size();i++)
 		{
@@ -666,11 +770,12 @@ public class ImageHelper {
 		
 		
 	/**
-	 * Searches for the node with lowest costs 
+	 * Searches for the node with lowest costs.
+	 *
 	 * @param list The open node list
 	 * @return the node with the minimum costs
 	 */
-	private int getMinimumDistance(ArrayList<agentgui.envModel.p2Dsvg.imageProcessing.StepNode> list)
+	public int getMinimumDistance(ArrayList<agentgui.envModel.p2Dsvg.imageProcessing.StepNode> list)
 	{
 		int min=Integer.MAX_VALUE;
 		int result=-1;
@@ -690,13 +795,14 @@ public class ImageHelper {
 	
 	
 	/**
-	 * Creates the path
+	 * Creates the path.
+	 *
 	 * @param id The ID of the agent
 	 * @param target_id  The ID of the target
 	 * @param direction  The direction
 	 * @param lookAhead  Numbers of pixel
 	 * @return target node of the path
-	 * @throws Exception
+	 * @throws Exception the exception
 	 */
 	
 	
@@ -767,47 +873,31 @@ public class ImageHelper {
 	
 	
 
+	/**
+	 * Creates the plan image.
+	 *
+	 * @param id the id of the own agent. In this case it's used for getting the width and height of the agent
+	 * @param own the position of the agent. It has to be in the SVG coordinate system.
+	 * @param target_id is the ID for the target
+	 * @param direction the direction
+	 * @param lookAhead  How many pixel should be looked ahead
+	 * @return the agentgui.env model.p2 dsvg.image processing. step node the 
+	 * @throws Exception the exception
+	 */
 	public synchronized agentgui.envModel.p2Dsvg.imageProcessing.StepNode createPlanImage(String id,Position own,String target_id , int direction , float lookAhead) throws Exception
 	{
-		//System.out.println("Agent:"+id + " will create his own world!");
-		/**
-		synchronized (this) {
-		if(!READ_WORLD&&!IS_IN_METHOD&FIRST_CALL)
-		{
-		FIRST_CALL=false;
-		
-		System.out.println(id + " erstell Welt");
-		this.createManipulatedWorld();
-		}
-		else
-		{
-		System.out.println(id + " liest Welt");
-		this.evn=ImageIO.read(new File("myWorld.jpg"));	
-		}
-			
-		}
-		
-		while(!READ_WORLD)
-		{
-			System.out.println("Warte!"+id);
-			Thread.sleep(50);
-		}
-	 */
+	
 		this.evn=this.createManipulatedWorldPerAgent();
 		Document doc=helper.getSVGDoc();
 		Element target=doc.getElementById(target_id);
 		float target_x=Float.parseFloat(target.getAttribute("x"));
 		float target_y=Float.parseFloat(target.getAttribute("y"));
-		System.out.println("FirstCall Target:"+target_x+","+target_y);
-		
 		Element self=doc.getElementById(id);
 		final float width=Float.parseFloat(self.getAttribute("width"));
 		final float height=Float.parseFloat(self.getAttribute("height"));
 		float x=own.getXPos();
 		float y=own.getYPos();
 		//System.out.println(id + " x:" +x +"," + "Y:"+y);
-		EnvironmentWrapper wrapper=new EnvironmentWrapper(this.helper.getEnvironment());
-		
 		
 		this.firstX=x;
 		this.firstY=y;
@@ -828,10 +918,21 @@ public class ImageHelper {
 		
 	}
 	
+
 	
 	
 	
 	
+	/**
+	 * Creates the plan image.
+	 *
+	 * @param id the id of the own agent. It's used for getting the width, height and position of the agent
+	 * @param target the Position. It has to be in the SVG format.
+	 * @param direction the direction
+	 * @param lookAhead The numbers of pixel which is look ahead
+	 * @return the agentgui.env model.p2 dsvg.image processing. step node
+	 * @throws Exception the exception
+	 */
 	public synchronized agentgui.envModel.p2Dsvg.imageProcessing.StepNode createPlanImage(String id,Position target , int direction , float lookAhead) throws Exception
 	{
 		
@@ -866,14 +967,72 @@ public class ImageHelper {
 		
 	}
 	
+	/**
+	 * Creates the plan image. Difference to the other method is, that the other agent are ignored during the pathfinding.
+	 *
+	 * @param id the id of the agent. Just used for getting the width and height
+	 * @param start the start position of the own agent
+	 * @param target the target position of the own agent-
+	 * @param direction the direction
+	 * @param lookAhead the number of pixels which are looked ahead.
+	 * @return the agentgui.env model.p2 dsvg.image processing. step node
+	 * @throws Exception the exception
+	 */
+	public synchronized agentgui.envModel.p2Dsvg.imageProcessing.StepNode createPlanImage(String id,Position start,Position target , int direction , float lookAhead) throws Exception
+	{
+		
+		this.evn=this.createManipulatedWorldPerAgent();
+		
+		Document doc=helper.getSVGDoc();
 
+		float target_x=target.getXPos();
+		float target_y=target.getYPos();
+		Element self=doc.getElementById(id);
+		final float width=Float.parseFloat(self.getAttribute("width"));
+		final float height=Float.parseFloat(self.getAttribute("height"));
+		float x=start.getXPos();
+		float y=start.getYPos();
+		this.firstX=x;
+		this.firstY=y;
+		agentgui.envModel.p2Dsvg.imageProcessing.StepNode root=new agentgui.envModel.p2Dsvg.imageProcessing.StepNode();
+		root.setX(x);
+		root.setY(y);
+		final int listXIndex= (int) (root.getX()/lookAhead);
+		final int listYIndex=  (int) (root.getY()/lookAhead);
+		final int targetXIndex= (int) (target_x/lookAhead);
+		final int targetYIndex=(int) (target_y/lookAhead);
+		root.setDistanceToOrginal(0.0);
+		root.setDistance(this.getHCost(listXIndex, listYIndex, targetXIndex, targetYIndex));
+		root.setTotal_distance((this.getHCost(listXIndex, listYIndex, targetXIndex, targetYIndex)));
+		 root.setParent(null);
+		//int color=this.getPixelsOnce(plan, x, y, width, height);
+		agentgui.envModel.p2Dsvg.imageProcessing.StepNode targetNode= this.withoutGrid(id, target_x, target_y, width, height, direction, 10.0f,root , -1,false) ;   //this.originalAStar(id, target_x, target_y, width, height, target_id, direction, lookAhead, root, -1);          //      //this.originalAStar(id, target_x, target_y, width, height, target_id, direction, lookAhead, root, color) ;        //handle_subNodes_brute(id,target_x, target_y,  width, height, target_id, direction, lookAhead,root,color);
+		 return targetNode;
+		
+	}
+	
+	
+	
+
+	/**
+	 * Creates the plan image. During the creation of the agents other agents are considered.
+	 *
+	 * @param otherAgent the other agent stored in a list. the own agent is also part of the list.
+	 * @param own the own position which is used as a starting point
+	 * @param id the id
+	 * @param target the target
+	 * @param lookAhead the look ahead
+	 * @param discreteTime the discrete time
+	 * @return the agentgui.env model.p2 dsvg.image processing. step node
+	 * @throws Exception the exception
+	 */
 	public synchronized agentgui.envModel.p2Dsvg.imageProcessing.StepNode createPlanImage(ArrayList<CombinedNameAndPos> otherAgent, Position own,String id ,String target , float lookAhead, double discreteTime) throws Exception
 	{
 		synchronized (this) {		
 		this.evn=this.createManipulatedWorldWithAgents(otherAgent,id,discreteTime);
 		if(this.evn==null)
 		{
-			System.out.println("Sollte nicht vorkommen!");
+			System.out.println("Error enviroment couldn't be created!");
 			return null;
 		}
 		}
@@ -882,8 +1041,6 @@ public class ImageHelper {
 		Element targetElement=doc.getElementById(target);
 		float target_x=Float.parseFloat(targetElement.getAttribute("x"));
 		float target_y=Float.parseFloat(targetElement.getAttribute("y"));  
-		System.out.println("Target x:"+target_x);
-		System.out.println("Target y:"+target_y);
 		Element self=doc.getElementById(id);
 		final float width=Float.parseFloat(self.getAttribute("width"));
 		final float height=Float.parseFloat(self.getAttribute("height"));
@@ -893,7 +1050,6 @@ public class ImageHelper {
 		//self.setAttribute("y", String.valueOf(y));
 		this.firstX=x;
 		this.firstY=y;
-		System.out.println("Own Image X:"+x +"," + "Y:"+y);
 		agentgui.envModel.p2Dsvg.imageProcessing.StepNode root=new agentgui.envModel.p2Dsvg.imageProcessing.StepNode();
 		root.setX(x); // correct it //
 		root.setY(y); // Correct it //
@@ -910,13 +1066,26 @@ public class ImageHelper {
 		 return targetNode;
 		
 	}
+	
+	/**
+	 * Creates the plan image.
+	 *
+	 * @param otherAgent the other agent
+	 * @param own the own
+	 * @param id the id
+	 * @param target the target
+	 * @param lookAhead the look ahead
+	 * @param discreteTime the discrete time
+	 * @return the agentgui.env model.p2 dsvg.image processing. step node
+	 * @throws Exception the exception
+	 */
 	public synchronized agentgui.envModel.p2Dsvg.imageProcessing.StepNode createPlanImage(ArrayList<CombinedNameAndPos> otherAgent, Position own,String id ,Position target , float lookAhead, double discreteTime) throws Exception
 	{
 		synchronized (this) {		
 		this.evn=this.createManipulatedWorldWithAgents(otherAgent,id,discreteTime);
 		if(this.evn==null)
 		{
-			System.out.println("Sollte nicht vorkommen!");
+			System.out.println("Error couldn't create image!");
 			return null;
 		}
 		}
@@ -925,8 +1094,6 @@ public class ImageHelper {
 	
 		float target_x=target.getXPos();
 		float target_y=target.getYPos();  
-		System.out.println("Target x:"+target_x);
-		System.out.println("Target y:"+target_y);
 		Element self=doc.getElementById(id);
 		final float width=Float.parseFloat(self.getAttribute("width"));
 		final float height=Float.parseFloat(self.getAttribute("height"));
@@ -961,6 +1128,18 @@ public class ImageHelper {
 	
 		
 	
+	/**
+	 * Creates the plan image.
+	 *
+	 * @param otherAgent the other agent
+	 * @param own the own
+	 * @param id the id
+	 * @param target the target
+	 * @param direction the direction
+	 * @param lookAhead the look ahead
+	 * @return the agentgui.env model.p2 dsvg.image processing. step node
+	 * @throws Exception the exception
+	 */
 	public synchronized agentgui.envModel.p2Dsvg.imageProcessing.StepNode createPlanImage(String otherAgent,Position own,String id ,Position target , int direction , float lookAhead) throws Exception
 	{
 				
@@ -1013,6 +1192,14 @@ public class ImageHelper {
 		
 	}
 	
+	/**
+	 * Paint way.
+	 *
+	 * @param id the id
+	 * @param way the way
+	 * @param width the width
+	 * @param height the height
+	 */
 	public void paintWay(String id,StepNode way,double width, double height)
 	{
 		StepNode tmp=way;
@@ -1044,6 +1231,15 @@ public class ImageHelper {
 		
 	}
 	
+	/**
+	 * Paint way.
+	 *
+	 * @param id the id
+	 * @param way the way
+	 * @param width the width
+	 * @param height the height
+	 * @param otherAgents the other agents
+	 */
 	public void paintWay(String id,StepNode way,double width, double height, ArrayList<CombinedNameAndPos> otherAgents)
 	{
 		StepNode tmp=way;
@@ -1089,7 +1285,8 @@ public class ImageHelper {
 	
 	
 	/**
-	 * Return the a node with a specific node
+	 * Return the a node with a specific node.
+	 *
 	 * @param node The list of nodes
 	 * @param nodeName The name which is searched
 	 * @return  A node with a specific name
@@ -1110,7 +1307,8 @@ public class ImageHelper {
 	
 	
 	/**
-	 * Finds a specific node and returns the nide
+	 * Finds a specific node and returns the nide.
+	 *
 	 * @param node The node which should be searched
 	 * @param nodeName The name of the node
 	 * @return The node
@@ -1132,7 +1330,8 @@ public class ImageHelper {
 	}
 	
 	/**
-	 * Prints a nodelist
+	 * Prints a nodelist.
+	 *
 	 * @param node The nodelist which should be printed
 	 */
 	public void print(NodeList node)
@@ -1144,7 +1343,8 @@ public class ImageHelper {
 	}
 	
 	/**
-	 *  Print a node and all children of a node
+	 * Print a node and all children of a node.
+	 *
 	 * @param node The node which should be printed
 	 */
 	public void print(Node node)
@@ -1158,8 +1358,8 @@ public class ImageHelper {
 	}
 	
 	/**
-	 * Create a new node
-	 * 
+	 * Create a new node.
+	 *
 	 * @param nodename Name of Node which should be created
 	 * @param x Value of the x position
 	 * @param y Value of the y position
@@ -1187,7 +1387,8 @@ public class ImageHelper {
 	}	
 	
 	/**
-	 * Collision detection
+	 * Collision detection.
+	 *
 	 * @param world The image of the world
 	 * @param startx Starting search point
 	 * @param starty Starting search point
@@ -1197,7 +1398,7 @@ public class ImageHelper {
 	 * @param direction Which direction should be looked?
 	 * @param color Which color should be checked
 	 * @return true or false depending on the collision
-	 * @throws Exception
+	 * @throws Exception the exception
 	 */
 	public boolean tranformAndCheckImage(BufferedImage world, float startx, float starty, float width, float height,float lookAhead ,int direction, int color) throws Exception
 	{	
@@ -1300,20 +1501,24 @@ public class ImageHelper {
 			 {
 				 try
 				 {
+					 
 					 if(world.getRGB(x, y)==color)
 					 {	
+						 
 						 return false;
 					 }
 				 }
 				 catch(Exception e)
 						 {
 					// e.printStackTrace();
-					// System.out.println("Direction:"+direction);
-					// System.out.println("StartX:"+startx);
-					// System.out.println("XExit:"+xExit);
-					// System.out.println("YExit:"+yExit);
-					 System.out.println("X:"+x +"," + y +" ");
-					
+				 System.out.println("Direction:"+direction);
+			     System.out.println("StartX:"+startx);
+				  System.out.println("XExit:"+xExit);
+				 System.out.println("YExit:"+yExit);
+				 System.out.println("X:"+x +"," + y +" ");
+				 System.out.println("World With:"+ world.getWidth());
+				 System.out.println("Height With:"+ world.getHeight());
+					return false;
 					 
 						 }
 			
@@ -1327,6 +1532,7 @@ public class ImageHelper {
 	
 	/**
 	 * It can draw the actual position of an agent. Can be used for checking all the places which are available for the agent
+	 *
 	 * @param id  The Id attribut
 	 * @param x X Pos
 	 * @param y Y Pos
@@ -1336,7 +1542,7 @@ public class ImageHelper {
 	 * @param lookAhead How Many pixel ahead
 	 * @param target_id targetID
 	 * @return Creates a list with all elements which are being checked.
-	 * @throws Exception
+	 * @throws Exception the exception
 	 */
 	public ArrayList<Element> draw_way(String id,float x,float y,float width,float height ,int direction,float lookAhead,String target_id) throws Exception
 	{
@@ -1456,7 +1662,8 @@ public class ImageHelper {
 	  	
 	
 	/**
-	 * Deletes every object of the SVG except the agent
+	 * Deletes every object of the SVG except the agent.
+	 *
 	 * @return The manipuated world saved in a BufferedImage
 	 */
 	public synchronized BufferedImage createManipulatedWorld()
@@ -1542,6 +1749,11 @@ public class ImageHelper {
  }
 	
 	
+	/**
+	 * Creates the manipulated world per agent.
+	 *
+	 * @return the buffered image
+	 */
 	public synchronized BufferedImage createManipulatedWorldPerAgent()
 	{
 		try
@@ -1560,9 +1772,10 @@ public class ImageHelper {
 				}				
 				for(ActiveObject obj: agents)
 				{
+					//doc.removeChild(doc.getElementById(obj.getId()));
 	    	 	        	Element element=doc.getElementById(obj.getId());
-	    	 	           	Node tmp= element.getParentNode();
-	    	 	           	tmp.removeChild(element);
+	    	 	           Node tmp= element.getParentNode();
+	    	 	          	tmp.removeChild(element);
 	             }  
 		   		NodeList list=doc.getElementsByTagName("rect");
 			for(int i=0;i<list.getLength();i++)
@@ -1578,7 +1791,13 @@ public class ImageHelper {
 			
 			for(StaticObject obj: obstacles)
 			{		
+				System.out.println("Looking for:"+obj.getId());
 				Element element=doc.getElementById(obj.getId());
+				if(element==null)
+				{
+					System.out.println("Element nicht gefunden");
+					
+				}
 				String oldVal=element.getAttributeNS(null, "style");
 				String search="fill:";
 				int index=oldVal.indexOf(search);
@@ -1625,22 +1844,35 @@ public class ImageHelper {
 			return null;
 		}
 	}
+	
+	/**
+	 * Setup enviroment.
+	 *
+	 * @param ownID the own id
+	 * @param otherAgent the other agent
+	 */
 	public void setupEnviroment(String ownID,ArrayList<CombinedNameAndPos> otherAgent)	
 	{
-		System.out.println("Enviroment");
-		for(int i=0;i<otherAgent.size();i++)
-		{
-			System.out.println("ID:"+otherAgent.get(i).getPos().getXPos()+","+otherAgent.get(i).getPos().getYPos());
-		}
+		
 		this.evn=this.createManipulatedWorldWithAgents(otherAgent, ownID, 0.0);
 		this.is_setup=true;
 	}
 	
+	/**
+	 * Reset enviroment.
+	 */
 	public void resetEnviroment()
 	{
 		this.is_setup=false;
 	}
 	
+	/**
+	 * Sidestep left.
+	 *
+	 * @param ownID the own id
+	 * @param otherAgent the other agent
+	 * @return the position
+	 */
 	public Position sidestepLeft(String ownID,ArrayList<CombinedNameAndPos> otherAgent)
 	{
 	if(!this.is_setup)
@@ -1696,6 +1928,13 @@ public class ImageHelper {
 		return null;	
 }
 	
+	/**
+	 * Sidestep right.
+	 *
+	 * @param ownID the own id
+	 * @param otherAgent the other agent
+	 * @return the position
+	 */
 	public Position sidestepRight(String ownID,ArrayList<CombinedNameAndPos> otherAgent)
 	{
 	if(!this.is_setup)
@@ -1744,6 +1983,13 @@ public class ImageHelper {
 		return null;	
 }	
 	
+	/**
+	 * Sidestepp backwards.
+	 *
+	 * @param ownID the own id
+	 * @param otherAgent the other agent
+	 * @return the position
+	 */
 	public Position sidesteppBackwards(String ownID,ArrayList<CombinedNameAndPos> otherAgent)
 	{
 	if(!this.is_setup)
@@ -1796,6 +2042,13 @@ public class ImageHelper {
 	
 	
 	
+	/**
+	 * Sidestepp forward.
+	 *
+	 * @param ownID the own id
+	 * @param otherAgent the other agent
+	 * @return the position
+	 */
 	public Position sidesteppForward(String ownID,ArrayList<CombinedNameAndPos> otherAgent)
 	{
 	if(!this.is_setup)
@@ -1849,11 +2102,37 @@ public class ImageHelper {
 	
 	
 	
+	/**
+	 * Checks for to be shaded.
+	 *
+	 * @param name the name
+	 * @param otherAgents the other agents
+	 * @return the int
+	 */
+	private int hasToBeShaded(String name, ArrayList<CombinedNameAndPos> otherAgents)
+	{
+		for(int i=0;i<otherAgents.size();i++)
+		{
+			System.out.println("Name:"+name+ ", vergleiche mit:"+otherAgents.get(i).name);
+			if(otherAgents.get(i).name.equals(name))
+			{
+				return i;
+			}
+		}
+		return -1;
+	}
 	
 	
 	
 	
-	
+	/**
+	 * Creates the manipulated world with agents. It considers all agents which are in the list, as well as the agent which are 20 pixel away.
+	 *
+	 * @param otherAgent the other agent
+	 * @param id the id
+	 * @param discreteTime the discrete time
+	 * @return the buffered image
+	 */
 	public synchronized BufferedImage createManipulatedWorldWithAgents(ArrayList<CombinedNameAndPos> otherAgent , String id,double discreteTime)
 	{
 	
@@ -1868,6 +2147,18 @@ public class ImageHelper {
 		
 				Vector<StaticObject> obstacles=envWrap.getObstacles();
 				Vector<PassiveObject> passiveObjects=envWrap.getPayloads();
+				Vector<ActiveObject> allAgents=envWrap.getAgents();
+				Position selfPosition=null;
+				for(int i=0;i<otherAgent.size();i++)
+				{
+					if(otherAgent.get(i).name.equals(id))
+					{
+						 selfPosition=otherAgent.get(i).getPos();
+						 break;
+					}
+				}
+					
+				
 				for(PassiveObject passiveObject: passiveObjects)
 				{
 					Element element=doc.getElementById(passiveObject.getId());
@@ -1876,23 +2167,28 @@ public class ImageHelper {
 					
 				}
 				
-				for(int i=0;i<otherAgent.size();i++)
+				for(int i=0;i<allAgents.size();i++)
 				{
 				
-					Element element=doc.getElementById(otherAgent.get(i).name);
+					Element element=doc.getElementById(allAgents.get(i).getId());
 					if(element==null)
 					{
 						//this.createNewElement(otherAgent.get(i).getName(), otherAgent.get(i).getPos().getXPos(),  otherAgent.get(i).getPos().getYPos(), "", width, height, id, doc)
 						
 						
 					}
+					// Is insight
+					int nr=this.hasToBeShaded(allAgents.get(i).getId(), otherAgent);
+					boolean shaded= (nr!=-1);
+					if(shaded)
+					{
 					element.removeAttribute("x");
-					element.setAttribute("x", String.valueOf(otherAgent.get(i).getPos().getXPos()));
+					element.setAttribute("x", String.valueOf(otherAgent.get(nr).getPos().getXPos()));
 					element.removeAttribute("y");
-					element.setAttribute("y", String.valueOf(otherAgent.get(i).getPos().getYPos()));
-				
+					element.setAttribute("y", String.valueOf(otherAgent.get(nr).getPos().getYPos()));
+					}
 							//System.out.println("Untersuche:"+ obj.getId());
-							if((otherAgent.get(i).getName().equals(id)))
+							if((allAgents.get(i).getId().equals(id)))
 							{
 								
 		    	 	           	//ode tmp= element.getParentNode();
@@ -1900,7 +2196,23 @@ public class ImageHelper {
 	    	 	           	
 							}
 							else
-							{    /*
+							{  
+								if(!shaded)
+								{
+									
+								
+									float xDifferenz=Math.abs(Float.parseFloat(element.getAttribute("x"))-selfPosition.getXPos());
+									float yDifferenz=Math.abs(Float.parseFloat(element.getAttribute("y"))-selfPosition.getYPos());
+									if(xDifferenz<=20.0||yDifferenz<=20.0)
+									{
+										System.out.println("Nachträglich shaded!");
+										shaded=true;
+									}
+								}
+							if(shaded)	
+							{		
+									/*
+								}
 								Element elem=doc.getElementById(obj.getId());
 								float otherX=Float.parseFloat(elem.getAttribute("x"));
 								float otherY=Float.parseFloat(elem.getAttribute("y"));
@@ -1938,7 +2250,7 @@ public class ImageHelper {
 					 
 							//}
 						}		
-							}
+							}		}
 	             }  
 			NodeList list=doc.getElementsByTagName("rect");
 			if(list!=null)
@@ -2021,6 +2333,18 @@ public class ImageHelper {
 	}
 	
  }	
+	
+	/**
+	 * Calculate next coord.
+	 *
+	 * @param lastIndex the last index
+	 * @param selfPos the self pos
+	 * @param destPos the dest pos
+	 * @param msInSeconds the ms in seconds
+	 * @param speed the speed
+	 * @param position the position
+	 * @return the position update
+	 */
 	public PositionUpdate calculateNextCoord(int lastIndex,Position selfPos, Position destPos, final double msInSeconds,float speed, Stack<Position> position)
 	  {
 	    Position newPos=new Position(); // Save the Position which is passed to the simulation Agent here
@@ -2178,6 +2502,15 @@ public class ImageHelper {
 			return posUpdate; 
 		  }
 	
+	/**
+	 * Order and middle coordinates.
+	 *
+	 * @param way the way
+	 * @param agentWidth the agent width
+	 * @param agentHeight the agent height
+	 * @param factor the factor
+	 * @return the stack
+	 */
 	public Stack<Position> orderAndMiddleCoordinates(StepNode way,float agentWidth,float agentHeight,float factor)
 	{
 		Stack<Position> pos=new Stack<Position>();
@@ -2206,6 +2539,12 @@ public class ImageHelper {
 		return pos;
 	}
 	
+	/**
+	 * Gets the dynamic collision.
+	 *
+	 * @param update the update
+	 * @return the dynamic collision
+	 */
 	public HashMap<String, ArrayList<CombinedNameAndPos>> getDynamicCollision(HashMap<String,PositionUpdate> update)
 	{
 		try
@@ -2233,6 +2572,7 @@ public class ImageHelper {
 					PositionUpdate otherAgentPosition= update.get(agents.get(counter).getId());
 				    if(otherAgentPosition != null)
 				    {
+			
 					ArrayList<Position>  otherPositions=((Answer) otherAgentPosition.getCustomizedParameter()).getWayToDestination();
 					
 					
@@ -2308,6 +2648,13 @@ public class ImageHelper {
 		
 	}
      
+	/**
+	 * Check time between.
+	 *
+	 * @param agent the agent
+	 * @param cmpr the cmpr
+	 * @return true, if successful
+	 */
 	private boolean checkTimeBetween(Physical2DObject agent,Physical2DObject cmpr)
 	{
 		return agent.objectIntersects(cmpr)|| cmpr.objectIntersects(agent) || agent.objectContains(cmpr) || cmpr.objectContains(agent);
