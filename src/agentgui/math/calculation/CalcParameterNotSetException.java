@@ -5,7 +5,7 @@ package agentgui.math.calculation;
  * @author Nils
  *
  */
-public class ParameterNotSetException extends CalculationException {
+public class CalcParameterNotSetException extends CalcExeption {
 
 	/**
 	 * 

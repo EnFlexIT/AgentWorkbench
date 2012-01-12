@@ -1,6 +1,6 @@
 package agentgui.math.calculation;
 
-public class FormulaNotSetException extends CalculationException {
+public class CalcFormulaNotSetException extends CalcExeption {
 
 	/**
 	 * 

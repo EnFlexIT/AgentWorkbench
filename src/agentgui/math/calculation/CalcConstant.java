@@ -5,13 +5,14 @@ package agentgui.math.calculation;
  * @author Nils
  *
  */
-public class ConstantValue implements CalcExpression {
+public class CalcConstant extends CalcExpression {
+	
 	/**
 	 * The value of the constant.
 	 */
 	double value;
 	
-	public ConstantValue(double value){
+	public CalcConstant(double value){
 		this.value = value;
 	}
 

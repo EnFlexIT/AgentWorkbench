@@ -10,7 +10,7 @@ import org.nfunk.jep.JEP;
  * @author Nils
  *
  */
-public class Formula implements CalcExpression {
+public class CalcFormula extends CalcExpression {
 	/**
 	 * The formula to calculate
 	 */
@@ -54,10 +54,10 @@ public class Formula implements CalcExpression {
 
 	
 	@Override
-	public double getValue() throws CalculationException {
+	public double getValue() throws CalcExeption {
 		// If no formula is set, throw an exception.
 		if(formula == null){
-			throw new FormulaNotSetException();
+			throw new CalcFormulaNotSetException();
 		}
 		
 		// JEP parser instance
@@ -77,7 +77,7 @@ public class Formula implements CalcExpression {
 		// Get the result
 		double result = parser.getValue();
 		if(Double.isNaN(result)){
-			throw new ParameterNotSetException();
+			throw new CalcParameterNotSetException();
 		}
 		return result;
 	}
