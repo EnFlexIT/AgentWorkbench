@@ -447,7 +447,7 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 	private void addGraphPrototype(String selectedType, GraphNode pickedVertex) {
 		
 		//Environment network model
-		NetworkModel gridModel = this.graphController.getNetworkModel();		
+		NetworkModel networkModel = this.graphController.getNetworkModel();		
 		//The Node picked in the parent graph
 		GraphEnvironmentControllerGUI graphEnvGUI = (GraphEnvironmentControllerGUI) this.graphController.getEnvironmentPanel();
 		GraphNode parentPickedVertex = graphEnvGUI.getGraphGUI().getPickedVertex();
@@ -465,17 +465,17 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 		HashSet<GraphElement> graphElements = null;
 		
 		//Adding to an empty graph - starting from scratch 
-		if(gridModel.getGraph().getVertexCount()==0){
+		if(networkModel.getGraph().getVertexCount()==0){
 			//Creating an initial dummy vertex on the parent graph so that the same merge function can be used
 			GraphNode firstNode = new GraphNode();
 			firstNode.setId("PP0"); 
 			firstNode.setPosition(new Point(30,30));
-			gridModel.getGraph().addVertex(firstNode);
+			networkModel.getGraph().addVertex(firstNode);
 			parentPickedVertex = firstNode;
 		}
 		
 		// Adding the prototype element to the main graph
-		graphElements = merge(gridModel.getGraph(), getVisView().getGraphLayout().getGraph(), parentPickedVertex, pickedVertex);
+		graphElements = merge(networkModel.getGraph(), getVisView().getGraphLayout().getGraph(), parentPickedVertex, pickedVertex);
 		// Add the graph element IDs of the newly added network component
 		if(graphElements != null){
 			Iterator<GraphElement> geIter = graphElements.iterator();
@@ -485,9 +485,9 @@ public class AddComponentDialog extends JDialog implements ActionListener{
 			}
 		}	
 		//Add the newly created component to the network model
-		gridModel.addNetworkComponent(newComponent);
+		networkModel.addNetworkComponent(newComponent);
 		//Replace the network model graph with the new one
-		gridModel.setGraph(gridModel.getGraph());
+		networkModel.setGraph(networkModel.getGraph());
 		
 		this.graphController.refreshNetworkModel();	
 

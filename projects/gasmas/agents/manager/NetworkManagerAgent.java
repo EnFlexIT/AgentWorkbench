@@ -46,7 +46,7 @@ import agentgui.simulationService.time.TimeModelDiscrete;
 /**
  * The Class NetworManagerAgent.
  */
-public class NetworManagerAgent extends SimulationManagerAgent {
+public class NetworkManagerAgent extends SimulationManagerAgent {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1823164338744218569L;
@@ -117,13 +117,10 @@ public class NetworManagerAgent extends SimulationManagerAgent {
 
 	NetworkModel nmCopy1 = this.myNetworkModel.getCopy();
 	NetworkModel nmCopy2 = this.myNetworkModel.getCopy();
-	nmCopy2.getAlternativeNetworkModel().put(
-		"Sub Alternative of Alternative 2", nmCopy1.getCopy());
+	nmCopy2.getAlternativeNetworkModel().put("Sub Alternative of Alternative 2", nmCopy1.getCopy());
 
-	this.myNetworkModel.getAlternativeNetworkModel().put("Alternative 1",
-		nmCopy1);
-	this.myNetworkModel.getAlternativeNetworkModel().put("Alternative 2",
-		nmCopy2);
+	this.myNetworkModel.getAlternativeNetworkModel().put("Alternative 1", nmCopy1);
+	this.myNetworkModel.getAlternativeNetworkModel().put("Alternative 2", nmCopy2);
 	this.setDisplayEnvironment(this.myNetworkModel);
 
     }
@@ -212,17 +209,15 @@ public class NetworManagerAgent extends SimulationManagerAgent {
      * Identify active components.
      */
     private void identifyActiveComponents() {
-	for (NetworkComponent networkComponent : myNetworkModel
-		.getNetworkComponents().values()) {
-	    String agentClassName = networkComponent.getAgentClassName();
-	    for (String activeAgentClassType : activeNetworkComponentAgentClasses) {
-		if (agentClassName
-			.equals(activeNetworkComponentAgentClassPrefix
-				+ activeAgentClassType)) {
-		    activeNetworkComponents.add(networkComponent);
-		}
-	    }
-	}
+	
+    	for (NetworkComponent networkComponent : myNetworkModel.getNetworkComponents().values()) {
+		    String agentClassName = networkComponent.getAgentClassName();
+		    for (String activeAgentClassType : activeNetworkComponentAgentClasses) {
+				if (agentClassName.equals(activeNetworkComponentAgentClassPrefix + activeAgentClassType)) {
+				    activeNetworkComponents.add(networkComponent);
+				}
+		    }
+    	}
 
     }
 

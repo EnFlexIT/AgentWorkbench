@@ -57,8 +57,7 @@ public class EdgeBetweenessBehaviour extends SimpleBehaviour {
      *            the environment model
      */
     public EdgeBetweenessBehaviour(EnvironmentModel environmentModel) {
-	this.networkModel = (NetworkModel) environmentModel
-		.getDisplayEnvironment();
+	this.networkModel = (NetworkModel) environmentModel.getDisplayEnvironment();
 
     }
 
@@ -99,18 +98,16 @@ public class EdgeBetweenessBehaviour extends SimpleBehaviour {
      * @param networkModel
      */
     private void removeComponent(NetworkModel networkModel) {
-	NetworkModel workingCopyNetworkModel = networkModel.getCopy();
-	GraphEdge edge = removeEdge(workingCopyNetworkModel.getGraph());
-	if (edge == null) {
-	    return;
-	}
+		NetworkModel workingCopyNetworkModel = networkModel.getCopy();
+		GraphEdge edge = removeEdge(workingCopyNetworkModel.getGraph());
+		if (edge == null) {
+		    return;
+		}
+	
+		workingCopyNetworkModel.removeNetworkComponent(NetworkAnalysisFunctions.getNetworkComponentByGraphElement(edge, networkModel));
 
-	workingCopyNetworkModel.removeNetworkComponent(NetworkAnalysisFunctions
-		.getNetworkComponentByGraphElement(edge, networkModel));
-
-	HashMap<String, NetworkModel> hashMapNetworkModel = new HashMap<String, NetworkModel>();
-	hashMapNetworkModel.put("Test", workingCopyNetworkModel);
-	this.networkModel.setAlternativeNetworkModel(hashMapNetworkModel);
+		networkModel.getAlternativeNetworkModel().put("Test", workingCopyNetworkModel);
+		
     }
 
     /**

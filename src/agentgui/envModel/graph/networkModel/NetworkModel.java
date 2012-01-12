@@ -31,6 +31,7 @@ package agentgui.envModel.graph.networkModel;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 
 import agentgui.envModel.graph.controller.GeneralGraphSettings4MAS;
@@ -220,8 +221,62 @@ public class NetworkModel implements Cloneable, Serializable {
 	 * @param component The NetworkComponent to remove
 	 */
 	public void removeNetworkComponent(NetworkComponent component){
+		
+		// --- The IDs of the elements present in the given component --------- 
+		HashSet<String> graphElementIDs = component.getGraphElementIDs();
+		Iterator<String> idIter = graphElementIDs.iterator();
+		
+		// --- For each graph element of the network component ----------------
+		while(idIter.hasNext()){ 
+			String elementID = idIter.next();
+			GraphElement element = this.getGraphElement(elementID);
+			// ---- For an edge -----------------------------------------------		
+			if(element instanceof GraphEdge){ 
+				// --- Remove from the Graph ----------------------------------
+				this.getGraph().removeEdge((GraphEdge)element);
+				// --- Remove from the HashMap of GraphElements ---------------
+				this.getGraphElements().remove(element.getId());
+			}
+			// --- For a node -------------------------------------------------
+			else if (element instanceof GraphNode){
+				// --- Check whether the GraphNode is present in any other ---- 
+				// --- NetworkComponent									   ----
+				
+				// --- The vertex is only present in the selected component ---
+				if(getNetworkComponentCount((GraphNode)element)==1){
+					// --- Removing the vertex from the Graph -----------------
+					this.getGraph().removeVertex((GraphNode)element);
+					// --- Remove from the HashMap of GraphElements -----------
+					this.getGraphElements().remove(element.getId());
+				}
+			}
+		}
+
+		// --- Finally, remove the network component from the HashMap of ------ 
+		// --- components in the network model							 ------
 		networkComponents.remove(component.getId());
+		
 	}
+	/**
+	 * Returns the number of network components which have the given node
+	 * @param node Vertex in the Graph
+	 * @return count No of network components containing the given node
+	 */
+	public int getNetworkComponentCount(GraphNode node){
+		// Get the components from the controllers GridModel
+		Iterator<NetworkComponent> components = this.getNetworkComponents().values().iterator();						
+		int count = 0;
+		while(components.hasNext()){ // iterating through all network components
+			NetworkComponent comp = components.next();
+			// check if the component contains the current node
+			if(comp.getGraphElementIDs().contains(node.getId())){
+				count++;
+			}
+		}
+		return count;
+	}
+	
+	
 	/**
 	 * This method gets the NetworkComponent with the given ID from the GridModel's networkComponents HashMap
 	 * @param id The ID
@@ -269,8 +324,10 @@ public class NetworkModel implements Cloneable, Serializable {
 	public String nextNodeID() {
 		return this.nextNodeID(false);
 	}
+	
 	/**
-	 * Generates the next unique node ID in the series PP0, PP1, PP2, ... 
+	 * Generates the next unique node ID in the series PP0, PP1, PP2, ...
+	 * @param skipNullEntries the skip null entries
 	 * @return String The next unique node ID that can be used.
 	 */
 	public String nextNodeID(boolean skipNullEntries) {

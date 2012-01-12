@@ -1,8 +1,10 @@
 package gasmas.physics;
 
-import agentgui.math.calculation.CalculationException;
-import agentgui.math.calculation.ConstantValue;
-import agentgui.math.calculation.Formula;
+import gasmas.physics.pipes.Nikuradse;
+import gasmas.physics.pipes.Reynolds;
+import agentgui.math.calculation.CalcConstant;
+import agentgui.math.calculation.CalcExeption;
+import agentgui.math.calculation.CalcFormula;
 
 /**
  * Temporary class for the first CalcExpression tests.
@@ -14,9 +16,9 @@ public class CalcTest {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		ConstantValue velocity = new ConstantValue(20);
-		ConstantValue diameter = new ConstantValue(0.9);
-		ConstantValue kineticViscosity = new ConstantValue(14.9E-6);
+		CalcConstant velocity = new CalcConstant(20);
+		CalcConstant diameter = new CalcConstant(0.9);
+		CalcConstant kineticViscosity = new CalcConstant(14.9E-6);
 		
 		Reynolds re = new Reynolds();
 		re.setDiameter(diameter);
@@ -26,15 +28,15 @@ public class CalcTest {
 		Nikuradse ni = new Nikuradse();
 		ni.setReynolds(re);
 		
-		Formula test = new Formula();
+		CalcFormula test = new CalcFormula();
 		test.setFormula("a+b/c");
-		test.addParameter("a", new ConstantValue(5));
-		test.addParameter("b", new ConstantValue(0.666));
+		test.addParameter("a", new CalcConstant(5));
+		test.addParameter("b", new CalcConstant(0.666));
 		test.addParameter("c", ni);
 		
 		try {
 			System.out.println(test.getValue());
-		} catch (CalculationException e) {
+		} catch (CalcExeption e) {
 			e.printStackTrace();
 		}
 

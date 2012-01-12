@@ -40,7 +40,7 @@
         </entry>
     </agentConfiguration>
     <jadeConfiguration>
-        <useLocalPort>1114</useLocalPort>
+        <useLocalPort>1119</useLocalPort>
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
@@ -54,7 +54,7 @@
         <doStaticLoadBalancing>false</doStaticLoadBalancing>
         <dynamicLoadBalancingClass>agentgui.simulationService.balancing.DynamicLoadBalancing</dynamicLoadBalancingClass>
         <numberOfAgents>1500</numberOfAgents>
-        <numberOfContainer>2</numberOfContainer>
+        <numberOfContainer>1</numberOfContainer>
         <staticLoadBalancingClass>agentgui.simulationService.balancing.StaticLoadBalancing</staticLoadBalancingClass>
         <useUserThresholds>false</useUserThresholds>
         <userThresholds>

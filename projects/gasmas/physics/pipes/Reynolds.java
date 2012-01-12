@@ -1,26 +1,26 @@
-package gasmas.physics;
+package gasmas.physics.pipes;
 
+import agentgui.math.calculation.CalcExeption;
 import agentgui.math.calculation.CalcExpression;
-import agentgui.math.calculation.CalculationException;
-import agentgui.math.calculation.ParameterNotSetException;
+import agentgui.math.calculation.CalcParameterNotSetException;
 
 /**
  * This class calculates the Reynolds number (Cerbe Gl 4.2.5)
  * @author Nils
  *
  */
-public class Reynolds implements CalcExpression {
+public class Reynolds extends CalcExpression {
 	
-	CalcExpression diameter;
-	
-	CalcExpression kinematicViscosity;
-	
-	CalcExpression fluidVelocity;
+	private CalcExpression diameter;
+	private CalcExpression kinematicViscosity;
+	private CalcExpression fluidVelocity;
 
+	
+	
 	@Override
-	public double getValue() throws CalculationException {
+	public double getValue() throws CalcExeption {
 		if(diameter == null || kinematicViscosity == null || fluidVelocity == null){
-			throw new ParameterNotSetException();
+			throw new CalcParameterNotSetException();
 		}
 		return ((fluidVelocity.getValue() * diameter.getValue()) / kinematicViscosity.getValue());
 	}

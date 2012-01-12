@@ -43,16 +43,12 @@ public class ShortestPathBlackboard {
     /**
      * Adds the path.
      * 
-     * @param networkComponent1
-     *            the network component1
-     * @param networkComponent2
-     *            the network component2
-     * @param networkPath
-     *            the network path
+     * @param networkComponent1 the network component1
+     * @param networkComponent2 the network component2
+     * @param networkPath the network path
      */
-    public void addPath(NetworkComponent networkComponent1,
-	    NetworkComponent networkComponent2, NetworkPath networkPath) {
-	hashMapPaths.put(networkComponent1.getId() + networkComponent2.getId(),
+    public void addPath(NetworkComponent networkComponent1, NetworkComponent networkComponent2, NetworkPath networkPath) {
+    	hashMapPaths.put(networkComponent1.getId() + networkComponent2.getId(),
 		networkPath);
     }
 
@@ -65,16 +61,13 @@ public class ShortestPathBlackboard {
      *            the network component2
      * @return true, if successful
      */
-    public boolean contains(NetworkComponent networkComponent1,
-	    NetworkComponent networkComponent2) {
-	if (hashMapPaths.containsKey(networkComponent1.getId()
-		+ networkComponent2.getId())) {
-	    return true;
-	}
-	if (hashMapPaths.containsKey(networkComponent2.getId()
-		+ networkComponent1.getId())) {
-	    return true;
-	}
+    public boolean contains(NetworkComponent networkComponent1, NetworkComponent networkComponent2) {
+		if (hashMapPaths.containsKey(networkComponent1.getId() + networkComponent2.getId())) {
+		    return true;
+		}
+		if (hashMapPaths.containsKey(networkComponent2.getId() + networkComponent1.getId())) {
+		    return true;
+		}
 	return false;
     }
 

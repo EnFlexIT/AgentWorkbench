@@ -565,7 +565,7 @@ public class BasicGraphGuiTools implements ActionListener {
 			if(pickedVertex!=null){
 				//One vertex is picked
 				//Check whether it is in two network components
-				if(basicGraphGui.getNetworkComponentCount(pickedVertex)==2){
+				if(this.controller.getNetworkModel().getNetworkComponentCount(pickedVertex)==2){
 					basicGraphGui.splitNode(pickedVertex);
 				} else {
 					//The node is not in two components

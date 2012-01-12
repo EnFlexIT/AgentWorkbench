@@ -29,7 +29,7 @@
 package gasmas.clustering;
 
 import edu.uci.ics.jung.algorithms.shortestpath.DijkstraShortestPath;
-import gasmas.agents.manager.NetworManagerAgent;
+import gasmas.agents.manager.NetworkManagerAgent;
 import jade.core.behaviours.SimpleBehaviour;
 
 import java.util.List;
@@ -49,7 +49,7 @@ public class ShortestPathClusteringBehaviour extends SimpleBehaviour {
     private NetworkModel networkModel;
 
     /** The network manager agent. */
-    private NetworManagerAgent networkManagerAgent;
+    private NetworkManagerAgent networkManagerAgent;
 
     /** The this network component. */
     private NetworkComponent thisNetworkComponent;
@@ -68,7 +68,7 @@ public class ShortestPathClusteringBehaviour extends SimpleBehaviour {
      *            the this network component
      */
     public ShortestPathClusteringBehaviour(EnvironmentModel environmentModel,
-	    NetworManagerAgent networkManagerAgent,
+	    NetworkManagerAgent networkManagerAgent,
 	    NetworkComponent thisNetworkComponent) {
 	this.networkModel = (NetworkModel) environmentModel
 		.getDisplayEnvironment();

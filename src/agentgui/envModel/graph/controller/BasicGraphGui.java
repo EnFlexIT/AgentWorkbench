@@ -784,7 +784,7 @@ public class BasicGraphGui extends JPanel {
 		if(object instanceof GraphNode){
 			GraphNode node = (GraphNode) object;	
 			//The number of network components containing this node
-			int compCount = getNetworkComponentCount(node);
+			int compCount = this.controller.getNetworkModel().getNetworkComponentCount(node);
 			if(compCount == 1)
 			{ //Node is present in only one component
 				
@@ -801,27 +801,7 @@ public class BasicGraphGui extends JPanel {
 		return false;
 	}
 	
-	/**
-	 * Returns the number of network components which have the given node
-	 * @param node Vertex in the Graph
-	 * @return count No of network components containing the given node
-	 */
-	public int getNetworkComponentCount(GraphNode node){
-		if(this.controller.getNetworkModel() != null){				
-			// Get the components from the controllers GridModel
-			Iterator<NetworkComponent> components = this.controller.getNetworkModel().getNetworkComponents().values().iterator();						
-			int count = 0;
-			while(components.hasNext()){ // iterating through all network components
-				NetworkComponent comp = components.next();
-				// check if the component contains the current node
-				if(comp.getGraphElementIDs().contains(node.getId())){
-					count++;
-				}
-			}
-			return count;
-		}
-		return 0;
-	}
+	
 	
 	/**
 	 * Gives the set of network components containing the given node.
@@ -934,38 +914,7 @@ public class BasicGraphGui extends JPanel {
 	 */
 	public void removeNetworkComponent(NetworkComponent selectedComponent) {
 		
-		NetworkModel networkModel = this.controller.getNetworkModel();
-		
-		//The IDs of the elements present in the given component 
-		HashSet<String> graphElementIDs = selectedComponent.getGraphElementIDs();
-		Iterator<String> idIter = graphElementIDs.iterator();
-		
-		//For each graph element of the network component
-		while(idIter.hasNext()){ 
-			String elementID = idIter.next();
-			GraphElement element = networkModel.getGraphElement(elementID);
-			//For an edge		
-			if(element instanceof GraphEdge){ 
-				//Remove from the Graph
-				networkModel.getGraph().removeEdge((GraphEdge)element);
-				//Remove from the HashMap of GraphElements
-				networkModel.getGraphElements().remove(element.getId());
-			}
-			//For a node
-			else if (element instanceof GraphNode){
-				//Check whether the GraphNode is present in any other NetworkComponent
-				
-				// The vertex is only present in the selected component
-				if(getNetworkComponentCount((GraphNode)element)==1){
-					//Removing the vertex from the Graph
-					networkModel.getGraph().removeVertex((GraphNode)element);
-					//Remove from the HashMap of GraphElements
-					networkModel.getGraphElements().remove(element.getId());
-				}
-			}
-		}
-		//Finally, remove the network component from the HashMap of components in the network model
-		networkModel.removeNetworkComponent(selectedComponent);
+		this.controller.getNetworkModel().removeNetworkComponent(selectedComponent);
 		
 		//Removing the new agent from the agent start list of the simulation setup
 		int i=0;
