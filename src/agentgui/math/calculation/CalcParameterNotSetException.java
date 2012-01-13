@@ -7,9 +7,6 @@ package agentgui.math.calculation;
  */
 public class CalcParameterNotSetException extends CalcExeption {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 3447683625778488911L;
 
 }

@@ -2,6 +2,7 @@ package gasmas.physics.pipes;
 
 import agentgui.math.calculation.CalcExeption;
 import agentgui.math.calculation.CalcExpression;
+import agentgui.math.calculation.CalcFormula;
 import agentgui.math.calculation.CalcParameterNotSetException;
 
 /**
@@ -9,9 +10,12 @@ import agentgui.math.calculation.CalcParameterNotSetException;
  * @author Nils
  *
  */
-public class Nikuradse extends CalcExpression {
+public class Nikuradse extends CalcFormula {
+
+	private static final long serialVersionUID = -8141049028616495617L;
 	
 	private CalcExpression reynolds;
+	
 	
 	
 	/**

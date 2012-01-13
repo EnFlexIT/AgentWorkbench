@@ -28,21 +28,40 @@
  */
 package agentgui.math.calculation;
 
-import java.io.Serializable;
+import java.util.HashMap;
+
+import jade.util.leap.Serializable;
 
 /**
- * The Class CalcExpression.
+ * The Class CalcFormulary.
  */
-public abstract class CalcExpression implements Serializable {
+public class CalcFormulary implements Serializable {
 
-	private static final long serialVersionUID = 3777486633158645068L;
+	private static final long serialVersionUID = 3737871113281364105L;
+
+	private HashMap<String, CalcFormula> formulary = new HashMap<String, CalcFormula>();
+	
+	
+	/**
+	 * Instantiates a new formulary of possible calculations.
+	 */
+	public CalcFormulary() {
+	
+	}
 
 	/**
-	 * Returns or calculates the value of the CalcExpression.
-	 *
-	 * @return the value
-	 * @throws CalcExeption the CalcExeption
+	 * Sets the formulary.
+	 * @param formulary the formulary to set
 	 */
-	public abstract double getValue() throws CalcExeption;
-
+	public void setFormulary(HashMap<String, CalcFormula> formulary) {
+		this.formulary = formulary;
+	}
+	/**
+	 * Gets the formulary.
+	 * @return the formulary
+	 */
+	public HashMap<String, CalcFormula> getFormulary() {
+		return formulary;
+	}
+	
 }

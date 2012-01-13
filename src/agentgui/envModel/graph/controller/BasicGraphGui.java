@@ -453,14 +453,32 @@ public class BasicGraphGui extends JPanel {
 		// ----------------------------------------------------------------
 		// --- Get the ComponentTypeSettings for nodes --------------------
 		// ----------------------------------------------------------------
-		final ComponentTypeSettings cts = controller.getComponentTypeSettings().get("node");
+		ComponentTypeSettings cts = controller.getComponentTypeSettings().get("node");
+		if (cts==null) {
+			
+			String nodeColor = String.valueOf(DEFAULT_VERTEX_COLOR.getRGB());
+			
+			cts = new ComponentTypeSettings();
+			cts.setShowLabel(true);
+			cts.setVertexSize(DEFAULT_VERTEX_SIZE);
+			cts.setSnap2Grid(true);
+			cts.setSnapRaster(DEFAULT_RASTER_SIZE);
+			cts.setColor(nodeColor);
+			controller.getComponentTypeSettings().put("node", cts);
+			
+		}
 		
 		// ----------------------------------------------------------------
 		// --- Get the spread of the graph and correct the positions ------
 		// ----------------------------------------------------------------
+		if (cts.getSnapRaster()==0) {
+			this.graphMargin = DEFAULT_RASTER_SIZE;
+		} else {
+			this.graphMargin = cts.getSnapRaster(); 
+		}
 		double moveX = 0;
 		double moveY = 0;
-		
+
 		Rectangle2D rect = this.getGraphSpreadDimension(graph);
 		if (rect.getX()!=graphMargin) moveX = (rect.getX()*(-1)) + graphMargin;  
 		if (rect.getY()!=graphMargin) moveY = (rect.getY()*(-1)) + graphMargin;
@@ -502,16 +520,7 @@ public class BasicGraphGui extends JPanel {
 		});
 
 		// --- Configure to show node labels ------------------------------
-		boolean showLable = false;
-		if (cts==null) {
-			showLable = true;
-		} else {
-			if (cts.isShowLabel()==true){
-				showLable = true;
-			}
-		}
-		// --- Configure node labels --------------------------------------
-		if (showLable==true) {
+		if (cts.isShowLabel()==true) {
 			vViewer.getRenderContext().setVertexLabelTransformer(
 					new Transformer<GraphNode, String>() {
 						@Override
@@ -521,25 +530,22 @@ public class BasicGraphGui extends JPanel {
 					});
 		}
 		// --- Configure vertex colors ------------------------------------
+		final String colorString = cts.getColor();
 		vViewer.getRenderContext().setVertexFillPaintTransformer(
 				new Transformer<GraphNode, Paint>() {
 					public Paint transform(GraphNode node) {
-						if(vViewer.getPickedVertexState().isPicked(node))
-						{//Highlight color when picked	
+						if(vViewer.getPickedVertexState().isPicked(node)) {
+							//Highlight color when picked	
 							return BasicGraphGui.DEFAULT_VERTEX_PICKED_COLOR;
-						}
-						else
-						{	//Get the color from the component type settings
+						} else {	//Get the color from the component type settings
 							try{
-								String colorString= cts.getColor();
 								if(colorString!=null){
-									Color color = new Color(Integer.parseInt(colorString));							
-									return color;
-								}
-								else
+									return new Color(Integer.parseInt(colorString));
+								} else {
 									return BasicGraphGui.DEFAULT_VERTEX_COLOR;
-							}
-							catch(NullPointerException ex){
+								}
+								
+							} catch(NullPointerException ex){
 								ex.printStackTrace();
 								return BasicGraphGui.DEFAULT_VERTEX_COLOR;					
 							}

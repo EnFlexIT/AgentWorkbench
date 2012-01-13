@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.math.calculation;
 
 import java.util.HashMap;
@@ -6,21 +34,38 @@ import java.util.Iterator;
 import org.nfunk.jep.JEP;
 
 /**
- * Class for calculations using the JEP Parser
- * @author Nils
+ * Class for calculations using the JEP Parser.
  *
+ * @author Nils
  */
 public class CalcFormula extends CalcExpression {
-	/**
-	 * The formula to calculate
-	 */
+	
+	private static final long serialVersionUID = -669801540602778489L;
+
+	
+	/** The formula to calculate. */
 	private String formula;
+	
 	/**
-	 * List of parameters.
-	 * key = parameter name
-	 * value = parameter value 
+	 * List of parameters (key = parameter name,  value = parameter value). 
 	 */
-	private HashMap<String, CalcExpression> parameters;
+	private HashMap<String, CalcParameter> parameters = new HashMap<String, CalcParameter>();
+	
+
+	/**
+	 * Gets the formula.
+	 * @return the formula
+	 */
+	public String getFormula() {
+		return formula;
+	}
+	/**
+	 * This method sets the formula.
+	 * @param formula the formula to set
+	 */
+	public void setFormula(String formula) {
+		this.formula = formula;
+	}
 	
 	/**
 	 * This method adds a parameter to the formula's parameter list.
@@ -28,31 +73,33 @@ public class CalcFormula extends CalcExpression {
 	 * @param expression The parameter value
 	 */
 	public void addParameter(String name, CalcExpression expression){
-		if(parameters == null){
-			parameters = new HashMap<String, CalcExpression>();
+		CalcParameter parameter = null;
+		if (expression instanceof CalcConstant) {
+			parameter = new CalcParameter(CalcParameter.CONSTANT_VALUE, expression);
+		} else if (expression instanceof CalcFormula) {
+			parameter = new CalcParameter(CalcParameter.FORMULA, expression);
 		}
-		parameters.put(name, expression);
+		this.parameters.put(name, parameter);
 	}
-	
-
 	/**
-	 * @return the formula
+	 * Gets the parameters.
+	 * @return the parameters
 	 */
-	public String getFormula() {
-		return formula;
+	public HashMap<String, CalcParameter> getParameters() {
+		return this.parameters;
 	}
-
-
 	/**
-	 * This method sets the formula
-	 * @param formula the formula to set
+	 * Sets the parameters.
+	 * @param parameters the parameters to set
 	 */
-	public void setFormula(String formula) {
-		this.formula = formula;
+	public void setParameters(HashMap<String, CalcParameter> parameters) {
+		this.parameters = parameters;
 	}
-
 
 	
+	/* (non-Javadoc)
+	 * @see agentgui.math.calculation.CalcExpression#getValue()
+	 */
 	@Override
 	public double getValue() throws CalcExeption {
 		// If no formula is set, throw an exception.
@@ -73,6 +120,7 @@ public class CalcFormula extends CalcExpression {
 		
 		// Set the expression to parse
 		parser.parseExpression(formula);
+		parser.getSymbolTable().toString();
 		
 		// Get the result
 		double result = parser.getValue();

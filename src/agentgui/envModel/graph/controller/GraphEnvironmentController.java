@@ -106,7 +106,8 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 * Custom user object to be placed in the project object.
 	 * Used here for storing the current component type settings.
 	 */
-	private GeneralGraphSettings4MAS generalGraphSettings4MAS = null;
+	//private GeneralGraphSettings4MAS generalGraphSettings4MAS = null;
+	private static final String generalGraphSettings4MASFile = "~GeneralGraphSettings~";
 	/**
 	 * The GraphFileImporter used for importing externally defined graph definitions
 	 */
@@ -154,24 +155,17 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 * @param gesVector
 	 */
 	public void setComponentTypeSettings(HashMap<String, ComponentTypeSettings> gesVector){
-		
-		if (this.generalGraphSettings4MAS==null) {
-			this.generalGraphSettings4MAS = new GeneralGraphSettings4MAS();
-		}
-		this.generalGraphSettings4MAS.setCurrentCTS(gesVector);
-
+		this.networkModel.getGeneralGraphSettings4MAS().setCurrentCTS(gesVector);
 		if (this.getProject()!=null) {
-			this.getProject().setUserRuntimeObject(generalGraphSettings4MAS);
-			this.getProject().isUnsaved=true;			
+			this.getProject().isUnsaved = true;
 		}
-		
 	}
 	/**
 	 * Gets the current ComponentTypeSettings
 	 * @return HashMap<String, ComponentTypeSettings> The current component type settings map.
 	 */
 	public HashMap<String, ComponentTypeSettings> getComponentTypeSettings(){
-		return generalGraphSettings4MAS.getCurrentCTS();
+		return this.networkModel.getGeneralGraphSettings4MAS().getCurrentCTS();
 	}
 	
 	/**
@@ -359,9 +353,6 @@ public class GraphEnvironmentController extends EnvironmentController {
 		case SimulationSetups.SIMULATION_SETUP_LOAD:
 			this.updateGraphFileName();
 			this.loadEnvironment(); //Loads network model and notifies observers	
-		
-			generalGraphSettings4MAS = (GeneralGraphSettings4MAS) this.getProject().getUserRuntimeObject();
-			setComponentTypeSettings(generalGraphSettings4MAS.getCurrentCTS());				
 			break;
 			
 		case SimulationSetups.SIMULATION_SETUP_SAVED:
@@ -479,13 +470,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 		}		
 				
 		// --- Loading component type settings from the simulation setup --------------------------		
-		generalGraphSettings4MAS = (GeneralGraphSettings4MAS) this.getProject().getUserRuntimeObject();
-		
-		// --- If NO CTS are specified, assign an empty HashMap to avoid null pointers ------------
-		if(generalGraphSettings4MAS == null){
-			generalGraphSettings4MAS = new GeneralGraphSettings4MAS();
-		}
-		this.setComponentTypeSettings(generalGraphSettings4MAS.getCurrentCTS());
+		this.loadGeneralGraphSettings();
 		
 		// --- Clean up / correct list of agents corresponding to the current NetworkModel --------
 		this.validateNetworkComponentAndAgents2Start();
@@ -494,9 +479,11 @@ public class GraphEnvironmentController extends EnvironmentController {
 		((GraphEnvironmentControllerGUI) this.getEnvironmentPanel()).setNetworkModel(networkModel);
 //		setChanged();
 //		notifyObservers(EVENT_NETWORKMODEL_LOADED);
-
 		
 	}
+	
+	
+	
 	
 	/**
 	 * Clean up / correct list of agents corresponding to the current NetworkModel.
@@ -505,7 +492,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 		
 		// --------------------------------------------------------------------
 		// --- Get the current ComponentTypeSettings --------------------------
-		HashMap<String, ComponentTypeSettings> cts = this.generalGraphSettings4MAS.getCurrentCTS();
+		HashMap<String, ComponentTypeSettings> cts = this.networkModel.getGeneralGraphSettings4MAS().getCurrentCTS();
 
 		// --------------------------------------------------------------------
 		// --- Transfer the agent list into a HashMap for a faster access ----- 
@@ -537,14 +524,21 @@ public class GraphEnvironmentController extends EnvironmentController {
 			// ----------------------------------------------------------------
 			// --- Validate current component against ComponentTypeSettings ---
 			ComponentTypeSettings ctsSingle = cts.get(comp.getType());
-			if (comp.getAgentClassName().equals(ctsSingle.getAgentClass())==false) {
-				// --- Correct this entry -------
-				comp.setAgentClassName(ctsSingle.getAgentClass());
-			}
-			if (comp.getPrototypeClassName().equals(ctsSingle.getGraphPrototype())==false) {
-				// --- Correct this entry -------
-				//TODO change the graph elements if needed
-				comp.setPrototypeClassName(ctsSingle.getGraphPrototype());
+			if (ctsSingle==null) {
+				// --- remove this component ---
+				this.networkModel.removeNetworkComponent(comp);
+				comp = null;
+				
+			} else {
+				if (comp.getAgentClassName().equals(ctsSingle.getAgentClass())==false) {
+					// --- Correct this entry -------
+					comp.setAgentClassName(ctsSingle.getAgentClass());
+				}
+				if (comp.getPrototypeClassName().equals(ctsSingle.getGraphPrototype())==false) {
+					// --- Correct this entry -------
+					//TODO change the graph elements if needed
+					comp.setPrototypeClassName(ctsSingle.getGraphPrototype());
+				}
 			}
 			
 			// ----------------------------------------------------------------
@@ -594,14 +588,16 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 */
 	private boolean isValidAgent2Start(AgentClassElement4SimStart ace4s, NetworkComponent comp) {
 		
-		boolean valid = true;
+		if (comp==null) {
+			return false;
+		}
 		if (ace4s.getAgentClassReference().equals(comp.getAgentClassName())==false) {
-			valid = false;
+			return false;
 		}
 		if (ace4s.getStartAsName().equals(comp.getId())==false) {
-			valid = false;
+			return false;
 		}
-		return valid;
+		return true;
 	}
 	
 	/**
@@ -610,16 +606,19 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 */
 	public void add2Agents2Start(NetworkComponent networkComponent) {
 		
-		Class<? extends Agent> agentClass = this.getAgentClass(networkComponent.getAgentClassName());
-		if (agentClass!=null) {
+		if (networkComponent!=null) {
+			
+			Class<? extends Agent> agentClass = this.getAgentClass(networkComponent.getAgentClassName());
+			if (agentClass!=null) {
 
-			int newPosNo = this.getEmptyPosition4Agents2Start();
-			// --- Agent class found. Create new list element --------- 
-			AgentClassElement4SimStart ace4s = new AgentClassElement4SimStart(agentClass, SimulationSetup.AGENT_LIST_EnvironmentConfiguration);
-			ace4s.setStartAsName(networkComponent.getId());	
-			ace4s.setPostionNo(newPosNo);
-			// --- Add the new list element to the list ---------------
-			this.getAgents2Start().add(newPosNo-1, ace4s);
+				int newPosNo = this.getEmptyPosition4Agents2Start();
+				// --- Agent class found. Create new list element --------- 
+				AgentClassElement4SimStart ace4s = new AgentClassElement4SimStart(agentClass, SimulationSetup.AGENT_LIST_EnvironmentConfiguration);
+				ace4s.setStartAsName(networkComponent.getId());	
+				ace4s.setPostionNo(newPosNo);
+				// --- Add the new list element to the list ---------------
+				this.getAgents2Start().add(newPosNo-1, ace4s);
+			}
 		}
 		
 	}
@@ -650,6 +649,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 	protected void saveEnvironment() {
 		
 		this.validateNetworkComponentAndAgents2Start();
+		this.saveGeneralGraphSettings();
 		if(networkModel != null && networkModel.getGraph() != null){
 		
 			try {
@@ -693,15 +693,8 @@ public class GraphEnvironmentController extends EnvironmentController {
 		try {
 			if (environmentObject==null) {
 				this.setNetworkModel(null);
-				this.generalGraphSettings4MAS = null;
-				
 			} else {
-				this.networkModel = (NetworkModel) environmentObject;
-				if (this.networkModel.getGeneralGraphSettings4MAS()!=null) {
-					this.generalGraphSettings4MAS = this.networkModel.getGeneralGraphSettings4MAS(); 
-				}
 				this.setNetworkModel((NetworkModel) environmentObject);
-				
 			}
 			
 		} catch (Exception ex) {
@@ -723,9 +716,61 @@ public class GraphEnvironmentController extends EnvironmentController {
 	@Override
 	public Object getEnvironmentModelCopy() {
 		NetworkModel netModel = this.networkModel.getCopy();
-		netModel.setGeneralGraphSettings4MAS((GeneralGraphSettings4MAS) this.generalGraphSettings4MAS.clone());
 		return netModel;
 	}
 	
-
+	/**
+	 * Load general graph settings.
+	 */
+	private void loadGeneralGraphSettings() {
+	
+		try {
+			File componentFile = new File(getEnvFolderPath()+File.separator+generalGraphSettings4MASFile+".xml");
+			FileReader componentReader = new FileReader(componentFile);
+			
+			JAXBContext context = JAXBContext.newInstance(GeneralGraphSettings4MAS.class);
+			Unmarshaller unmarsh = context.createUnmarshaller();
+			GeneralGraphSettings4MAS ggs4MAS = (GeneralGraphSettings4MAS) unmarsh.unmarshal(componentReader);
+			this.networkModel.setGeneralGraphSettings4MAS(ggs4MAS);
+			componentReader.close();
+			
+		} catch (JAXBException e) {
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Save general graph settings.
+	 */
+	private void saveGeneralGraphSettings() {
+		
+		try {
+			
+			File componentFile = new File(getEnvFolderPath()+File.separator+generalGraphSettings4MASFile+".xml");
+			if(!componentFile.exists()){
+				componentFile.createNewFile();
+			}
+			
+			FileWriter componentFileWriter = new FileWriter(componentFile); 
+			
+			JAXBContext context = JAXBContext.newInstance(GeneralGraphSettings4MAS.class);
+			Marshaller marsh = context.createMarshaller();
+			marsh.setProperty( Marshaller.JAXB_ENCODING, "UTF-8" );
+			marsh.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE );
+			marsh.marshal(this.networkModel.getGeneralGraphSettings4MAS(), componentFileWriter);
+			
+			componentFileWriter.close();
+		
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (JAXBException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
 }

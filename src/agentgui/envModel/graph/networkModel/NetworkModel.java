@@ -380,6 +380,9 @@ public class NetworkModel implements Cloneable, Serializable {
 	 * @return the general graph settings for the MAS
 	 */
 	public GeneralGraphSettings4MAS getGeneralGraphSettings4MAS() {
+		if (generalGraphSettings4MAS==null) {
+			generalGraphSettings4MAS = new GeneralGraphSettings4MAS();
+		}
 		return generalGraphSettings4MAS;
 	}
 

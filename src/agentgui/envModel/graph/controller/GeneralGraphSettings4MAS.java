@@ -30,6 +30,8 @@ package agentgui.envModel.graph.controller;
 
 import java.util.HashMap;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import agentgui.envModel.graph.networkModel.ComponentTypeSettings;
 import jade.util.leap.Serializable;
 
@@ -39,6 +41,7 @@ import jade.util.leap.Serializable;
  * 
  * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati 
  */
+@XmlRootElement
 public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	
 	private static final long serialVersionUID = 7425147528482747232L;
@@ -51,8 +54,8 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	 * Default constructor
 	 */
 	public GeneralGraphSettings4MAS() {
-		currentCTS = new HashMap<String, ComponentTypeSettings>();
 	}
+	
 	/**
 	 * Creates a clone of the current instance
 	 */
@@ -84,6 +87,9 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	 * @return the currentCTS
 	 */
 	public HashMap<String, ComponentTypeSettings> getCurrentCTS() {
+		if (currentCTS==null) {
+			currentCTS = new HashMap<String, ComponentTypeSettings>();
+		}
 		return currentCTS;
 	}
 	/**

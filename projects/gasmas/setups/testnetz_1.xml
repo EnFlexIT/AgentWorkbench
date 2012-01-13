@@ -247,6 +247,12 @@
             <agentClassReference>gasmas.agents.components.ExitAgent</agentClassReference>
             <startAsName>n45</startAsName>
         </agent>
+        <agent>
+            <postionNo>41</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.PipeAgent</agentClassReference>
+            <startAsName>n46</startAsName>
+        </agent>
     </agentSetup>
     <environmentFileName>Testnetz 1.graphml</environmentFileName>
 </simulationSetup>
