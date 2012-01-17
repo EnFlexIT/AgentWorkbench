@@ -43,6 +43,7 @@ public class PipeFrictionCoefficient extends CalcFormula {
 	private static final long serialVersionUID = -5819657506014062429L;
 
 	private CalcExpression reynolds;
+	private CalcExpression diameter;
 	private CalcExpression pipeRoughness = new CalcConstant(0);
 	private CalcExpression precision = new CalcConstant(5);
 	
@@ -96,6 +97,7 @@ public class PipeFrictionCoefficient extends CalcFormula {
 		double pipeFrictionCoefficient = 1; // --- default value ---
 		
 		double dblReynolds = this.reynolds.getValue();
+		double dblDiameter = this.diameter.getValue();
 		double dblPipeRoughness = this.pipeRoughness.getValue();
 		double dblPrecision = this.precision.getValue();
 		
@@ -120,8 +122,8 @@ public class PipeFrictionCoefficient extends CalcFormula {
 
 			} else {
 				// --- hydraulically rough --------------------------
-				
 				pipeFrictionCoefficient = pipeFrictionCoefficient;
+				
 			}
 		}		
 				
@@ -219,6 +221,8 @@ public class PipeFrictionCoefficient extends CalcFormula {
 		super.addParameter(name, expression);
 		if (name.equals("reynolds")){
 			this.reynolds=expression;
+		} else if (name.equals("diameter")){
+			this.diameter = expression;
 		} else if (name.equals("pipeRoughness")){
 			this.pipeRoughness=expression;
 		} else if (name.equals("precision")){
@@ -232,6 +236,13 @@ public class PipeFrictionCoefficient extends CalcFormula {
 	 */
 	public void setReynolds(CalcExpression reynolds) {
 		this.addParameter("reynolds", reynolds);
+	}
+	/**
+	 * Sets the CalcExpression for the diameter of the pipe.
+	 * @param diameter the new diameter
+	 */
+	public void setDiameter(CalcExpression diameter) {
+		this.addParameter("diameter", diameter);
 	}
 	/**
 	 * Sets the CalcExpression for the pipe roughness.
