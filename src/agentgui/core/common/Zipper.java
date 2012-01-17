@@ -323,11 +323,12 @@ public class Zipper extends Thread {
 			while (zipEnum.hasMoreElements()) {
 			
 				ZipEntry item = (ZipEntry) zipEnum.nextElement();
+				String itemName = PathHandling.getPathName4LocalFileSystem(item.getName());
 				if (item.isDirectory()) {
-					File newdir = new File(dir + File.separator + item.getName());
+					File newdir = new File(dir + File.separator + itemName);
 					newdir.mkdir();
 				} else {
-					String newfilePath = dir + File.separator + item.getName();
+					String newfilePath = dir + File.separator + itemName;
 					File newFile = new File(newfilePath);
 					if (!newFile.getParentFile().exists()) {
 						newFile.getParentFile().mkdirs();

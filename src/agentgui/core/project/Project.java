@@ -56,6 +56,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.common.ClassLoaderUtil;
+import agentgui.core.common.PathHandling;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentType;
 import agentgui.core.gui.ProjectWindow;
@@ -878,6 +879,8 @@ import agentgui.core.webserver.JarFileCreator;
 
 		for(String jarFile4Display : this.getProjectResources()) {
 
+			jarFile4Display = PathHandling.getPathName4LocalFileSystem(jarFile4Display);
+			
 			String prefixText = null;
 			String suffixText = null;
 

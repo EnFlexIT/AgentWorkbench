@@ -46,10 +46,11 @@ public class Reynolds extends CalcFormula {
 	private CalcExpression kinematicViscosity;
 	private CalcExpression fluidVelocity;
 
-	public Reynolds() {
-		this.addParameter("diameter", diameter);
-		this.addParameter("kinematicViscosity", kinematicViscosity);
-		this.addParameter("fluidVelocity", fluidVelocity);
+	
+	public Reynolds(CalcExpression diameter, CalcExpression kinematicViscosity, CalcExpression fluidVelocity) {
+		this.setDiameter(diameter);
+		this.setKinematicViscosity(kinematicViscosity);
+		this.setFluidVelocity(fluidVelocity);
 	}
 	
 	@Override
@@ -79,23 +80,18 @@ public class Reynolds extends CalcFormula {
 	 * @param diameter the diameter to set
 	 */
 	public void setDiameter(CalcExpression diameter) {
-		this.diameter = diameter;
 		this.addParameter("diameter", diameter);
 	}
-
 	/**
 	 * @param kinematicViscosity the kinematicViscosity to set
 	 */
 	public void setKinematicViscosity(CalcExpression kinematicViscosity) {
-		this.kinematicViscosity = kinematicViscosity;
 		this.addParameter("kinematicViscosity", kinematicViscosity);
 	}
-
 	/**
 	 * @param fluidVelocity the fluidVelocity to set
 	 */
 	public void setFluidVelocity(CalcExpression fluidVelocity) {
-		this.fluidVelocity = fluidVelocity;
 		this.addParameter("fluidVelocity", fluidVelocity);
 	}
 

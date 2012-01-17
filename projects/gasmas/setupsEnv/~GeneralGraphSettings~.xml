@@ -15,16 +15,15 @@
             </value>
         </entry>
         <entry>
-            <key>Exit</key>
+            <key>node</key>
             <value>
-                <agentClass>gasmas.agents.components.ExitAgent</agentClass>
-                <color>-65536</color>
-                <edgeImage>MissingIcon</edgeImage>
-                <edgeWidth>3.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</graphPrototype>
-                <showLabel>true</showLabel>
-                <snap2Grid>false</snap2Grid>
-                <snapRaster>0.0</snapRaster>
+                <agentClass>gasmas.ontology.PropagationPoint</agentClass>
+                <color>-26368</color>
+                <edgeWidth>2.0</edgeWidth>
+                <showLabel>false</showLabel>
+                <snap2Grid>true</snap2Grid>
+                <snapRaster>5.0</snapRaster>
+                <vertexSize>8</vertexSize>
             </value>
         </entry>
         <entry>
@@ -41,26 +40,14 @@
             </value>
         </entry>
         <entry>
-            <key>node</key>
+            <key>Exit</key>
             <value>
-                <agentClass>gasmas.ontology.PropagationPoint</agentClass>
-                <color>-26368</color>
-                <edgeWidth>2.0</edgeWidth>
-                <showLabel>false</showLabel>
-                <snap2Grid>true</snap2Grid>
-                <snapRaster>5.0</snapRaster>
-                <vertexSize>8</vertexSize>
-            </value>
-        </entry>
-        <entry>
-            <key>Branch4</key>
-            <value>
-                <agentClass>gasmas.agents.components.BranchAgent</agentClass>
-                <color>-16777216</color>
+                <agentClass>gasmas.agents.components.ExitAgent</agentClass>
+                <color>-65536</color>
                 <edgeImage>MissingIcon</edgeImage>
-                <edgeWidth>2.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.Star4GraphElement</graphPrototype>
-                <showLabel>false</showLabel>
+                <edgeWidth>3.0</edgeWidth>
+                <graphPrototype>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</graphPrototype>
+                <showLabel>true</showLabel>
                 <snap2Grid>false</snap2Grid>
                 <snapRaster>0.0</snapRaster>
             </value>
@@ -79,13 +66,13 @@
             </value>
         </entry>
         <entry>
-            <key>Branch3</key>
+            <key>Branch4</key>
             <value>
                 <agentClass>gasmas.agents.components.BranchAgent</agentClass>
                 <color>-16777216</color>
                 <edgeImage>MissingIcon</edgeImage>
                 <edgeWidth>2.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.Star3GraphElement</graphPrototype>
+                <graphPrototype>agentgui.envModel.graph.prototypes.Star4GraphElement</graphPrototype>
                 <showLabel>false</showLabel>
                 <snap2Grid>false</snap2Grid>
                 <snapRaster>0.0</snapRaster>
@@ -100,6 +87,19 @@
                 <edgeWidth>4.0</edgeWidth>
                 <graphPrototype>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</graphPrototype>
                 <showLabel>true</showLabel>
+                <snap2Grid>false</snap2Grid>
+                <snapRaster>0.0</snapRaster>
+            </value>
+        </entry>
+        <entry>
+            <key>Branch3</key>
+            <value>
+                <agentClass>gasmas.agents.components.BranchAgent</agentClass>
+                <color>-16777216</color>
+                <edgeImage>MissingIcon</edgeImage>
+                <edgeWidth>2.0</edgeWidth>
+                <graphPrototype>agentgui.envModel.graph.prototypes.Star3GraphElement</graphPrototype>
+                <showLabel>false</showLabel>
                 <snap2Grid>false</snap2Grid>
                 <snapRaster>0.0</snapRaster>
             </value>
