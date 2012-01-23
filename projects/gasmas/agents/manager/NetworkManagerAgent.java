@@ -58,11 +58,10 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
     private NetworkModel myNetworkModel = null;
 
     /** The active network component agent class prefix. */
-    private final String activeNetworkComponentAgentClassPrefix = "gasmas.agents.components.";
+    private static final String activeNetworkComponentAgentClassPrefix = "gasmas.agents.components.";
 
     /** The active network component agent classes. */
-    private final String[] activeNetworkComponentAgentClasses = new String[] {
-	    "CompressorAgent", "EntryAgent", "ExitAgent", "StorageAgent" };
+    private final String[] activeNetworkComponentAgentClasses = new String[] { "CompressorAgent", "EntryAgent", "ExitAgent", "StorageAgent" };
 
     /** The active network components. */
     private ArrayList<NetworkComponent> activeNetworkComponents = new ArrayList<NetworkComponent>();
@@ -131,8 +130,7 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
     /*
      * (non-Javadoc)
      * 
-     * @see agentgui.simulationService.agents.SimulationManagerInterface#
-     * getInitialEnvironmentModel()
+     * @see agentgui.simulationService.agents.SimulationManagerInterface# getInitialEnvironmentModel()
      */
     @Override
     public EnvironmentModel getInitialEnvironmentModel() {
@@ -141,24 +139,18 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 	final int GET_EnvCont = 1;
 	final int GET_NetworkModel = 2;
 
-	EnvironmentModel envModel = new EnvironmentModel();
-	TimeModelDiscrete myTimeModel = new TimeModelDiscrete(new Long(
-		1000 * 60));
+	EnvironmentModel environmentModel = new EnvironmentModel();
+	TimeModelDiscrete myTimeModel = new TimeModelDiscrete(new Long(1000 * 60));
 
-	GraphEnvironmentController envController = null;
 	NetworkModel networkModel = null;
-
 	try {
 	    currentlyDoing = GET_EnvCont;
-	    envController = (GraphEnvironmentController) currProject
-		    .getEnvironmentController();
 
 	    currentlyDoing = GET_NetworkModel;
-	    networkModel = (NetworkModel) envController
-		    .getEnvironmentModelCopy();
+	    networkModel = (NetworkModel) ((GraphEnvironmentController) currProject.getEnvironmentController()).getEnvironmentModelCopy();
 
-	    envModel.setTimeModel(myTimeModel);
-	    envModel.setDisplayEnvironment(networkModel);
+	    environmentModel.setTimeModel(myTimeModel);
+	    environmentModel.setDisplayEnvironment(networkModel);
 
 	} catch (Exception ex) {
 
@@ -178,16 +170,14 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 		System.err.println(this.getLocalName() + ": " + msg);
 	    }
 	    return null;
-
 	}
-	return envModel;
+	return environmentModel;
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see agentgui.simulationService.agents.SimulationManagerInterface#
-     * doSingleSimulationSequennce()
+     * @see agentgui.simulationService.agents.SimulationManagerInterface# doSingleSimulationSequennce()
      */
     @Override
     public void doSingleSimulationSequennce() {
@@ -199,26 +189,20 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
      */
     private void behaviours() {
 	this.addBehaviour(new EdgeBetweenessBehaviour(envModel));
-	// Shortest Path Analysis
-	for (NetworkComponent networkComponent : activeNetworkComponents) {
-	    // TODO: adding the ShortestPathBehaviour to activeCompnent
-	}
     }
 
     /**
      * Identify active components.
      */
     private void identifyActiveComponents() {
-	
-    	for (NetworkComponent networkComponent : myNetworkModel.getNetworkComponents().values()) {
-		    String agentClassName = networkComponent.getAgentClassName();
-		    for (String activeAgentClassType : activeNetworkComponentAgentClasses) {
-				if (agentClassName.equals(activeNetworkComponentAgentClassPrefix + activeAgentClassType)) {
-				    activeNetworkComponents.add(networkComponent);
-				}
-		    }
-    	}
-
+	for (NetworkComponent networkComponent : myNetworkModel.getNetworkComponents().values()) {
+	    String agentClassName = networkComponent.getAgentClassName();
+	    for (String activeAgentClassType : activeNetworkComponentAgentClasses) {
+		if (agentClassName.equals(NetworkManagerAgent.activeNetworkComponentAgentClassPrefix + activeAgentClassType)) {
+		    activeNetworkComponents.add(networkComponent);
+		}
+	    }
+	}
     }
 
     /**

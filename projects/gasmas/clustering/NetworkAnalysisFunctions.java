@@ -34,40 +34,32 @@ import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 
 /**
- * The Class NetworkAnalysisFunctions has function used in different Clustering
- * Algorithms doesn't need to be initialized
+ * The Class NetworkAnalysisFunctions has function used in different Clustering Algorithms doesn't need to be initialized
  */
 public abstract class NetworkAnalysisFunctions {
 
     /**
      * Gets the network component by graph element ID identification
      * 
-     * @param graphElement
-     *            the graph element
-     * @param networkModel
-     *            the network model
+     * @param graphElement the graph element
+     * @param networkModel the network model
      * @return the network component by graph element
      */
-    public static NetworkComponent getNetworkComponentByGraphElement(
-	    GraphElement graphElement, NetworkModel networkModel) {
-	String componentID = graphElement.getId().split("_")[0];
-	return networkModel.getNetworkComponent(componentID);
+    public static NetworkComponent getNetworkComponentByGraphElement(GraphElement graphElement, NetworkModel networkModel) {
+	String[] componentID = graphElement.getId().split("_");
+	return networkModel.getNetworkComponent(graphElement.getId().replace("_" + componentID[componentID.length - 1], ""));
     }
 
     /**
      * Find node in network component.
      * 
-     * @param networkComponent
-     *            the network component
-     * @param networkModel
-     *            the network model
+     * @param networkComponent the network component
+     * @param networkModel the network model
      * @return the graph node
      */
-    public static GraphNode findNodeInNetworkComponent(
-	    NetworkComponent networkComponent, NetworkModel networkModel) {
+    public static GraphNode findNodeInNetworkComponent(NetworkComponent networkComponent, NetworkModel networkModel) {
 	for (String graphElementID : networkComponent.getGraphElementIDs()) {
-	    GraphElement graphElement = networkModel
-		    .getGraphElement(graphElementID);
+	    GraphElement graphElement = networkModel.getGraphElement(graphElementID);
 	    if (graphElement instanceof GraphNode) {
 		return (GraphNode) graphElement;
 	    }

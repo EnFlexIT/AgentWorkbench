@@ -30,7 +30,6 @@ package gasmas.clustering;
 
 import jade.core.behaviours.SimpleBehaviour;
 
-import java.util.HashMap;
 import java.util.List;
 
 import agentgui.envModel.graph.networkModel.GraphEdge;
@@ -41,9 +40,7 @@ import edu.uci.ics.jung.algorithms.cluster.EdgeBetweennessClusterer;
 import edu.uci.ics.jung.graph.Graph;
 
 /**
- * The Class EdgeBetweenessBehaviour. Based on the alreay implemented
- * EdgeBetweenessClusterer of the Jung 2.0 Framework. Some changes to fullfill
- * the needs of network clustering
+ * The Class EdgeBetweenessBehaviour. Based on the alreay implemented EdgeBetweenessClusterer of the Jung 2.0 Framework. Some changes to fullfill the needs of network clustering
  */
 public class EdgeBetweenessBehaviour extends SimpleBehaviour {
 
@@ -53,8 +50,7 @@ public class EdgeBetweenessBehaviour extends SimpleBehaviour {
     /**
      * Instantiates a new edge betweeness behaviour.
      * 
-     * @param environmentModel
-     *            the environment model
+     * @param environmentModel the environment model
      */
     public EdgeBetweenessBehaviour(EnvironmentModel environmentModel) {
 	this.networkModel = (NetworkModel) environmentModel.getDisplayEnvironment();
@@ -80,8 +76,7 @@ public class EdgeBetweenessBehaviour extends SimpleBehaviour {
      */
 
     private GraphEdge removeEdge(Graph<GraphNode, GraphEdge> graph) {
-	EdgeBetweennessClusterer<GraphNode, GraphEdge> edgeBetweennessClusterer = new EdgeBetweennessClusterer<GraphNode, GraphEdge>(
-		1);
+	EdgeBetweennessClusterer<GraphNode, GraphEdge> edgeBetweennessClusterer = new EdgeBetweennessClusterer<GraphNode, GraphEdge>(1);
 	edgeBetweennessClusterer.transform(graph);
 	List<GraphEdge> edges = edgeBetweennessClusterer.getEdgesRemoved();
 	if (edges.size() < 1) {
@@ -98,16 +93,16 @@ public class EdgeBetweenessBehaviour extends SimpleBehaviour {
      * @param networkModel
      */
     private void removeComponent(NetworkModel networkModel) {
-		NetworkModel workingCopyNetworkModel = networkModel.getCopy();
-		GraphEdge edge = removeEdge(workingCopyNetworkModel.getGraph());
-		if (edge == null) {
-		    return;
-		}
-	
-		workingCopyNetworkModel.removeNetworkComponent(NetworkAnalysisFunctions.getNetworkComponentByGraphElement(edge, networkModel));
+	NetworkModel workingCopyNetworkModel = networkModel.getCopy();
+	GraphEdge edge = removeEdge(workingCopyNetworkModel.getGraph());
+	if (edge == null) {
+	    return;
+	}
+	workingCopyNetworkModel.removeNetworkComponent(NetworkAnalysisFunctions.getNetworkComponentByGraphElement(edge, networkModel));
 
-		networkModel.getAlternativeNetworkModel().put("Test", workingCopyNetworkModel);
-		
+	networkModel.getAlternativeNetworkModel().put("Test", workingCopyNetworkModel);
+	System.out.println("Z");
+
     }
 
     /**
