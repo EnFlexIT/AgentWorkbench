@@ -39,133 +39,135 @@ import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.EdgeType;
 
 /**
- * A graph / network element with a ring arrangement.
- * Extend this class for implementing 'n' ring graph element prototypes. 
+ * A graph / network element with a ring arrangement. Extend this class for implementing 'n' ring graph element prototypes.
+ * 
  * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati
  */
 public class Ring3GraphElement extends GraphElementPrototype {
-	
-	/** The number of connection points */
-	private Integer n = null;
-	/** The vector of nodes which forms the corners of the element. */
-	private Vector<GraphNode> nodes = new Vector<GraphNode>();
-	
-	/**
-	 * Default constructor with 3 nodes
-	 */
-	public Ring3GraphElement(){
-		super();
-		n=3;
-	}
-	
-	/**
-	 * Constructor for creating the ring prototype with 'n' connection points
-	 * @param nNodes  the number of connection points
-	 */
-	public Ring3GraphElement(Integer nNodes){
-		super();
-		if( nNodes >= 3){
-			this.n = nNodes;
-		} else {
-			throw new GraphElementPrototypeException("Number of connection points should be greater or equal than 3 !");
-		}
-	}
-	
-	@Override
-	public HashSet<GraphElement> addToGraph(Graph<GraphNode, GraphEdge> graph) {
-		//check if n is set
-		if(n != null){			
-			this.graph = graph;
-			// Create a HashSet for the nodes and edges
-			HashSet<GraphElement> elements = new HashSet<GraphElement>();
-			
-			//Creating nodes
-			for(int i=0;i<n;i++){
-				//Create the node and add to the vector
-				GraphNode node = new GraphNode();
-				node.setId("PP"+(nodeCounter++));
-				graph.addVertex(node);
-				nodes.add(node);
-				elements.add(node);
-			}
-			
-			//Creating edges
-			int edgeCount =0;
-			for(int i=0; i<n-1; i++){
-					//Creating edge
-					GraphEdge edge = new GraphEdge(getId()+"_"+edgeCount, getType());
-					
-					//Adding to the graph
-					graph.addEdge(edge, nodes.get(i), nodes.get(i+1), EdgeType.UNDIRECTED);
-					elements.add(edge);			
-					edgeCount++;
-			}
-			//Creating last edge
-			GraphEdge edge = new GraphEdge(getId()+"_"+edgeCount, getType());
-			
-			//Adding to the graph
-			graph.addEdge(edge, nodes.get(n-1), nodes.get(0), EdgeType.UNDIRECTED);
-			elements.add(edge);
-			return elements;
-			
-		} else {	
-			throw new GraphElementPrototypeException("Number of connection points (n) is null");			
-		}
-	}
-	
-	@Override
-	public HashSet<GraphElement> addAfter(Graph<GraphNode, GraphEdge> graph, GraphElementPrototype predecessor) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	@Override
-	public HashSet<GraphElement> addBefore(Graph<GraphNode, GraphEdge> graph, GraphElementPrototype successor) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
-	@Override
-	public HashSet<GraphElement> addBetween(Graph<GraphNode, GraphEdge> graph, GraphElementPrototype predecessor, GraphElementPrototype successor) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    /** The number of connection points */
+    private Integer n = null;
+    /** The vector of nodes which forms the corners of the element. */
+    private Vector<GraphNode> nodes = new Vector<GraphNode>();
 
-	@Override
-	public GraphNode getFreeEntry() {
-		//TODO 
-//		Iterator<GraphNode> iter = outerNodes.iterator();
-//		while(iter.hasNext()){
-//			GraphNode node = iter.next();
-//			if(graph.getNeighborCount(node) < 2){
-//				return node;
-//			}
-//		}
-		return null;
-	}
+    /**
+     * Default constructor with 3 nodes
+     */
+    public Ring3GraphElement() {
+	super();
+	n = 3;
+    }
 
-	@Override
-	public GraphNode getFreeExit() {
-		return getFreeEntry();
+    /**
+     * Constructor for creating the ring prototype with 'n' connection points
+     * 
+     * @param nNodes the number of connection points
+     */
+    public Ring3GraphElement(Integer nNodes) {
+	super();
+	if (nNodes >= 3) {
+	    this.n = nNodes;
+	} else {
+	    throw new GraphElementPrototypeException("Number of connection points should be greater or equal than 3 !");
 	}
+    }
 
-	@Override
-	public boolean isDirected() {
-		return false;
+    @Override
+    public HashSet<GraphElement> addToGraph(Graph<GraphNode, GraphEdge> graph) {
+	// check if n is set
+	if (n != null) {
+	    this.graph = graph;
+	    // Create a HashSet for the nodes and edges
+	    HashSet<GraphElement> elements = new HashSet<GraphElement>();
+
+	    // Creating nodes
+	    for (int i = 0; i < n; i++) {
+		// Create the node and add to the vector
+		GraphNode node = new GraphNode();
+		node.setId(GraphNode.GRAPH_NODE_PREFIX + (nodeCounter++));
+		graph.addVertex(node);
+		nodes.add(node);
+		elements.add(node);
+	    }
+
+	    // Creating edges
+	    int edgeCount = 0;
+	    for (int i = 0; i < n - 1; i++) {
+		// Creating edge
+		GraphEdge edge = new GraphEdge(getId() + "_" + edgeCount, getType());
+
+		// Adding to the graph
+		graph.addEdge(edge, nodes.get(i), nodes.get(i + 1), EdgeType.UNDIRECTED);
+		elements.add(edge);
+		edgeCount++;
+	    }
+	    // Creating last edge
+	    GraphEdge edge = new GraphEdge(getId() + "_" + edgeCount, getType());
+
+	    // Adding to the graph
+	    graph.addEdge(edge, nodes.get(n - 1), nodes.get(0), EdgeType.UNDIRECTED);
+	    elements.add(edge);
+	    return elements;
+
+	} else {
+	    throw new GraphElementPrototypeException("Number of connection points (n) is null");
 	}
-	
-	/**
-	 * @return the number of corners
-	 */
-	public Integer getN(){
-		return n;
-	}
-	
-	/**
-	 * Set the number of corners
-	 * @param n the number of corners
-	 */
-	public void setN(Integer n){
-		this.n = n;
-	}
+    }
+
+    @Override
+    public HashSet<GraphElement> addAfter(Graph<GraphNode, GraphEdge> graph, GraphElementPrototype predecessor) {
+	// TODO Auto-generated method stub
+	return null;
+    }
+
+    @Override
+    public HashSet<GraphElement> addBefore(Graph<GraphNode, GraphEdge> graph, GraphElementPrototype successor) {
+	// TODO Auto-generated method stub
+	return null;
+    }
+
+    @Override
+    public HashSet<GraphElement> addBetween(Graph<GraphNode, GraphEdge> graph, GraphElementPrototype predecessor, GraphElementPrototype successor) {
+	// TODO Auto-generated method stub
+	return null;
+    }
+
+    @Override
+    public GraphNode getFreeEntry() {
+	// TODO
+	// Iterator<GraphNode> iter = outerNodes.iterator();
+	// while(iter.hasNext()){
+	// GraphNode node = iter.next();
+	// if(graph.getNeighborCount(node) < 2){
+	// return node;
+	// }
+	// }
+	return null;
+    }
+
+    @Override
+    public GraphNode getFreeExit() {
+	return getFreeEntry();
+    }
+
+    @Override
+    public boolean isDirected() {
+	return false;
+    }
+
+    /**
+     * @return the number of corners
+     */
+    public Integer getN() {
+	return n;
+    }
+
+    /**
+     * Set the number of corners
+     * 
+     * @param n the number of corners
+     */
+    public void setN(Integer n) {
+	this.n = n;
+    }
 }

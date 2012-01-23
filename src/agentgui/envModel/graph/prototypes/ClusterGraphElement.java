@@ -30,49 +30,51 @@
 package agentgui.envModel.graph.prototypes;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Vector;
 
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphElement;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import edu.uci.ics.jung.graph.Graph;
-import edu.uci.ics.jung.graph.util.EdgeType;
 
 /**
- * A graph / network element with a mesh arrangement. Extend this class for implementing 'n' vertex mesh graph element prototypes.
+ * A graph / network element with a star arrangement. Specialy designed for a Cluster
  * 
- * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati
+ * @author David Pachula
  */
-public class Mesh3GraphElement extends GraphElementPrototype {
-    /**
-     * The number of connection points
-     */
-    private Integer n = null;
+public class ClusterGraphElement extends GraphElementPrototype {
+
+    public static final String CLUSTER_PREFIX = "C_";
 
     /**
-     * The vector of nodes which form the connection points
+     * The vector of outernodes which forms the corners of the element.
      */
-    Vector<GraphNode> nodes;
+    Vector<GraphNode> outerNodes;
+
+    /**
+     * The central node of the element, to which all outernodes are connected.
+     */
+    GraphNode centralNode;
 
     /**
      * Default constructor with 3 corners
      */
-    public Mesh3GraphElement() {
+    public ClusterGraphElement() {
 	super();
-	n = 3;
-	nodes = new Vector<GraphNode>();
+	outerNodes = new Vector<GraphNode>();
     }
 
     /**
-     * Constructor for creating the Mesh prototype with 'n' connection points
+     * Constructor for creating the Star prototype with 'n' connection points
      * 
      * @param n the number of connection points
      */
-    public Mesh3GraphElement(Integer n) {
+    public ClusterGraphElement(Integer n) {
 	super();
 	if (n >= 3) {
-	    this.n = n;
-	    nodes = new Vector<GraphNode>();
+
+	    outerNodes = new Vector<GraphNode>();
 	} else {
 	    throw new GraphElementPrototypeException("Number of connection points should be greater than 3");
 	}
@@ -81,37 +83,18 @@ public class Mesh3GraphElement extends GraphElementPrototype {
     @Override
     public HashSet<GraphElement> addToGraph(Graph<GraphNode, GraphEdge> graph) {
 	// check if n is set
-	if (n != null) {
+	{
 	    this.graph = graph;
 	    // Create a HashSet for the nodes and edges
 	    HashSet<GraphElement> elements = new HashSet<GraphElement>();
 
-	    // Creating nodes
-	    for (int i = 0; i < n; i++) {
-		// Create the node and add to the vector
-		GraphNode node = new GraphNode();
-		node.setId(GraphNode.GRAPH_NODE_PREFIX + (nodeCounter++));
-		graph.addVertex(node);
-		nodes.add(node);
-		elements.add(node);
-	    }
+	    // Create central node and add to the graph
+	    centralNode = new GraphNode();
+	    centralNode.setId(GraphNode.GRAPH_NODE_PREFIX + (nodeCounter++));
+	    graph.addVertex(centralNode);
+	    elements.add(centralNode);
 
-	    // Creating edges
-	    int edgeCount = 0;
-	    for (int i = 0; i < n; i++) {
-		for (int j = i + 1; j < n; j++) {
-		    // Creating edge
-		    GraphEdge edge = new GraphEdge(getId() + "_" + edgeCount, getType());
-
-		    // Adding to the graph
-		    graph.addEdge(edge, nodes.get(i), nodes.get(j), EdgeType.UNDIRECTED);
-		    elements.add(edge);
-		    edgeCount++;
-		}
-	    }
 	    return elements;
-	} else {
-	    throw new GraphElementPrototypeException("Number of connection points (n) is null");
 	}
     }
 
@@ -135,14 +118,13 @@ public class Mesh3GraphElement extends GraphElementPrototype {
 
     @Override
     public GraphNode getFreeEntry() {
-	// TODO
-	// Iterator<GraphNode> iter = outerNodes.iterator();
-	// while(iter.hasNext()){
-	// GraphNode node = iter.next();
-	// if(graph.getNeighborCount(node) < 2){
-	// return node;
-	// }
-	// }
+	Iterator<GraphNode> iter = outerNodes.iterator();
+	while (iter.hasNext()) {
+	    GraphNode node = iter.next();
+	    if (graph.getNeighborCount(node) < 2) {
+		return node;
+	    }
+	}
 	return null;
     }
 
@@ -154,21 +136,5 @@ public class Mesh3GraphElement extends GraphElementPrototype {
     @Override
     public boolean isDirected() {
 	return false;
-    }
-
-    /**
-     * @return the number of corners
-     */
-    public Integer getN() {
-	return n;
-    }
-
-    /**
-     * Set the number of corners
-     * 
-     * @param n the number of corners
-     */
-    public void setN(Integer n) {
-	this.n = n;
     }
 }

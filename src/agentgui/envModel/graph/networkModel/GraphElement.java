@@ -36,31 +36,32 @@ import jade.util.leap.Serializable;
  * @see GraphEdge
  * @see GraphNode
  * 
- * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
+ * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen
  */
 public abstract class GraphElement implements Serializable {
-	
-	private static final long serialVersionUID = -8008053317555768852L;
 
-	/**
-	 * Used for identification of a specific GraphElement instance
-	 */
-	protected String id = null;
+    private static final long serialVersionUID = -8008053317555768852L;
 
-	/**
-	 * Gets the id.
-	 * @return the id
-	 */
-	public String getId() {
-		return id;
-	}
-	
-	/**
-	 * Sets the id.
-	 * @param id the id to set
-	 */
-	public void setId(String id) {
-		this.id = id;
-	}
+    /**
+     * Used for identification of a specific GraphElement instance
+     */
+    protected String id = null;
 
+    /**
+     * Gets the id.
+     * 
+     * @return the id
+     */
+    public String getId() {
+	return id;
+    }
+
+    /**
+     * Sets the id.
+     * 
+     * @param id the id to set
+     */
+    public void setId(String id) {
+	this.id = id;
+    }
 }
