@@ -60,22 +60,15 @@ public class ShortestPathClusteringBehaviour extends SimpleBehaviour {
     /**
      * Instantiates a new shortest path clustering behaviour.
      * 
-     * @param environmentModel
-     *            the environment model
-     * @param networkManagerAgent
-     *            the network manager agent
-     * @param thisNetworkComponent
-     *            the this network component
+     * @param environmentModel the environment model
+     * @param networkManagerAgent the network manager agent
+     * @param thisNetworkComponent the this network component
      */
-    public ShortestPathClusteringBehaviour(EnvironmentModel environmentModel,
-	    NetworkManagerAgent networkManagerAgent,
-	    NetworkComponent thisNetworkComponent) {
-	this.networkModel = (NetworkModel) environmentModel
-		.getDisplayEnvironment();
+    public ShortestPathClusteringBehaviour(EnvironmentModel environmentModel, NetworkManagerAgent networkManagerAgent, NetworkComponent thisNetworkComponent) {
+	this.networkModel = (NetworkModel) environmentModel.getDisplayEnvironment();
 	this.networkManagerAgent = networkManagerAgent;
 	this.thisNetworkComponent = thisNetworkComponent;
-	this.shortestPathBlackboard = networkManagerAgent
-		.getShortestPathBlackboard();
+	this.shortestPathBlackboard = networkManagerAgent.getShortestPathBlackboard();
     }
 
     /*
@@ -94,11 +87,9 @@ public class ShortestPathClusteringBehaviour extends SimpleBehaviour {
     private void findShortestPath() {
 	NetworkModel workingCopyNetworkModel = networkModel.getCopy();
 
-	for (NetworkComponent networkComponent : networkManagerAgent
-		.getActiveNetworkComponents()) {
+	for (NetworkComponent networkComponent : networkManagerAgent.getActiveNetworkComponents()) {
 	    if (networkComponent != thisNetworkComponent) {
-		if (!shortestPathBlackboard.contains(networkComponent,
-			thisNetworkComponent)) {
+		if (!shortestPathBlackboard.contains(networkComponent, thisNetworkComponent)) {
 		    findNetworkPath(networkComponent, workingCopyNetworkModel);
 		}
 	    }
@@ -108,21 +99,14 @@ public class ShortestPathClusteringBehaviour extends SimpleBehaviour {
     /**
      * Find network path.
      * 
-     * @param networkComponent
-     *            the network component
-     * @param workingCopyNetworkModel
-     *            the working copy network model
+     * @param networkComponent the network component
+     * @param workingCopyNetworkModel the working copy network model
      * @return the network path
      */
-    private NetworkPath findNetworkPath(NetworkComponent networkComponent,
-	    NetworkModel workingCopyNetworkModel) {
-	DijkstraShortestPath<GraphNode, GraphEdge> dijkstraShortestPath = new DijkstraShortestPath<GraphNode, GraphEdge>(
-		workingCopyNetworkModel.getGraph());
-	List<GraphEdge> path = dijkstraShortestPath.getPath(
-		NetworkAnalysisFunctions.findNodeInNetworkComponent(
-			thisNetworkComponent, workingCopyNetworkModel),
-		NetworkAnalysisFunctions.findNodeInNetworkComponent(
-			networkComponent, workingCopyNetworkModel));
+    private NetworkPath findNetworkPath(NetworkComponent networkComponent, NetworkModel workingCopyNetworkModel) {
+	DijkstraShortestPath<GraphNode, GraphEdge> dijkstraShortestPath = new DijkstraShortestPath<GraphNode, GraphEdge>(workingCopyNetworkModel.getGraph());
+	List<GraphEdge> path = dijkstraShortestPath.getPath(workingCopyNetworkModel.getANodeFromNetworkComponent(thisNetworkComponent),
+		workingCopyNetworkModel.getANodeFromNetworkComponent(networkComponent));
 	return new NetworkPath(workingCopyNetworkModel, path);
     }
 

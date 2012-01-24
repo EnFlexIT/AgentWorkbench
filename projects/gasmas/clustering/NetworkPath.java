@@ -41,17 +41,14 @@ public class NetworkPath {
     private NetworkModel networkModel;
     private ArrayList<NetworkComponent> path = new ArrayList<NetworkComponent>();
 
-    public NetworkPath(NetworkModel networkModel,
-	    List<GraphEdge> graphElementsPath) {
+    public NetworkPath(NetworkModel networkModel, List<GraphEdge> graphElementsPath) {
 	this.networkModel = networkModel;
 	graphElemntsPathToComponentsPath(graphElementsPath);
     }
 
-    private void graphElemntsPathToComponentsPath(
-	    List<GraphEdge> graphElementsPath) {
+    private void graphElemntsPathToComponentsPath(List<GraphEdge> graphElementsPath) {
 	for (GraphEdge graphEdge : graphElementsPath) {
-	    NetworkComponent networkComponent = NetworkAnalysisFunctions
-		    .getNetworkComponentByGraphElement(graphEdge, networkModel);
+	    NetworkComponent networkComponent = networkModel.getNetworkComponent(graphEdge);
 	    if (!path.contains(networkComponent)) {
 		path.add(networkComponent);
 	    }

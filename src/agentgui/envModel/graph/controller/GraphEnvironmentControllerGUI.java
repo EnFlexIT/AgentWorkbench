@@ -39,7 +39,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Observable;
 import java.util.Vector;
@@ -73,8 +72,6 @@ import agentgui.core.project.Project;
 import agentgui.envModel.graph.GraphGlobals;
 import agentgui.envModel.graph.components.TableCellEditor4TableButton;
 import agentgui.envModel.graph.components.TableCellRenderer4Button;
-import agentgui.envModel.graph.networkModel.GraphEdge;
-import agentgui.envModel.graph.networkModel.GraphElement;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 
@@ -340,12 +337,12 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 
 		private static final long serialVersionUID = 1636744550817904118L;
 
+		@Override
 		public boolean isCellEditable(int row, int col) {
 		    if (col != 1) {
 			return true;
-		    } else {
-			return false;
 		    }
+		    return false;
 		}
 	    };
 
@@ -477,37 +474,9 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
      * @param newCompID
      */
     private void handleRenameComponent(String oldCompID, String newCompID) {
-	// Environment network model
-	NetworkModel networkModel = this.getGraphController().getNetworkModel();
-	NetworkComponent comp = networkModel.getNetworkComponent(oldCompID);
-
-	// Temporary set
-	HashSet<String> newGraphElementIDs = new HashSet<String>(comp.getGraphElementIDs());
-	// Renaming the corresponding edges of the network component
-	for (String elementID : comp.getGraphElementIDs()) {
-	    GraphElement element = networkModel.getGraphElement(elementID);
-	    if (element instanceof GraphEdge) {
-		String newElementID = elementID.replaceFirst(oldCompID, newCompID);
-		// Updating the graph
-		element.setId(newElementID);
-
-		newGraphElementIDs.remove(elementID);
-		newGraphElementIDs.add(newElementID);
-
-		// Updating the GraphElement HashMap of the network model
-		networkModel.getGraphElements().remove(elementID);
-		networkModel.getGraphElements().put(newElementID, element);
-	    }
-	}
-	networkModel.removeNetworkComponent(comp);
-
-	// Updating the network component
-	comp.setGraphElementIDs(newGraphElementIDs);
-	comp.setId(newCompID);
-
-	networkModel.addNetworkComponent(comp);
-
-	this.getGraphController().refreshNetworkModel();
+	// renaming NetworkComponents and GraphElements
+	getGraphController().getNetworkModel().renameComponent(oldCompID, newCompID);
+	getGraphController().refreshNetworkModel();
 
 	// Renaming the agent in the agent start list of the simulation setup
 	int i = 0;
@@ -699,6 +668,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 	    jTextFieldSearch = new JTextField();
 	    jTextFieldSearch.setPreferredSize(new Dimension(100, 20));
 	    jTextFieldSearch.addKeyListener(new java.awt.event.KeyAdapter() {
+		@Override
 		public void keyReleased(java.awt.event.KeyEvent e) {
 		    // Calling the table row filter for searching the components
 		    tblFilter();
@@ -719,6 +689,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 	    jButtonClearSearch.setPreferredSize(new Dimension(16, 20));
 	    jButtonClearSearch.setIcon(new ImageIcon(this.getClass().getResource(pathImage + "ClearSearch.png")));
 	    jButtonClearSearch.addActionListener(new ActionListener() {
+		@Override
 		public void actionPerformed(ActionEvent e) {
 		    getJTextFieldSearch().setText(null);
 		    tblFilter();

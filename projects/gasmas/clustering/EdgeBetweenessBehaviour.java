@@ -98,7 +98,8 @@ public class EdgeBetweenessBehaviour extends SimpleBehaviour {
 	if (edge == null) {
 	    return;
 	}
-	workingCopyNetworkModel.removeNetworkComponent(NetworkAnalysisFunctions.getNetworkComponentByGraphElement(edge, networkModel));
+	workingCopyNetworkModel.removeNetworkComponent(workingCopyNetworkModel.getNetworkComponent(edge));
+	System.out.println(workingCopyNetworkModel.getNetworkComponent(edge));
 
 	networkModel.getAlternativeNetworkModel().put("Test", workingCopyNetworkModel);
 	System.out.println("Z");

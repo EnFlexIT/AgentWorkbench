@@ -203,6 +203,10 @@ public class NetworkModel implements Cloneable, Serializable {
 	this.graph = newGraph;
 	this.graphElements = new HashMap<String, GraphElement>();
 
+	refreshGraphElements();
+    }
+
+    private void refreshGraphElements() {
 	if (this.graph != null) {
 	    register(graph.getVertices().toArray(new GraphNode[0]));
 	    register(graph.getEdges().toArray(new GraphEdge[0]));
@@ -243,6 +247,7 @@ public class NetworkModel implements Cloneable, Serializable {
 	NetworkComponent networkComponent = new NetworkComponent(id, type, prototypeClassName, directed);
 	addNetworkComponent(networkComponent);
 	networkComponent.setGraphElements(graphElements);
+	refreshGraphElements();
 	return networkComponent;
     }
 
@@ -261,6 +266,45 @@ public class NetworkModel implements Cloneable, Serializable {
 	NetworkComponent networkComponent = addNetworkComponent(id, type, prototypeClassName, directed, graphElements);
 	networkComponent.setAgentClassName(agentClassName);
 	return networkComponent;
+    }
+
+    /**
+     * Rename graph element.
+     * 
+     * @param graphElementID the graph element id
+     * @param oldComponentID the old component id
+     * @param newComponentID the new component id
+     * @return the string
+     */
+    private String renameGraphElement(String graphElementID, String oldComponentID, String newComponentID) {
+	GraphElement graphElement = graphElements.get(graphElementID);
+	graphElements.remove(graphElementID);
+	graphElement.setId(graphElement.getId().replaceFirst(oldComponentID, newComponentID));
+	graphElements.put(graphElement.getId(), graphElement);
+	return graphElement.getId();
+    }
+
+    /**
+     * Rename component.
+     * 
+     * @param oldCompID the old comp id
+     * @param newCompID the new comp id
+     */
+    public void renameComponent(String oldCompID, String newCompID) {
+	NetworkComponent networkComponent = networkComponents.get(oldCompID);
+	// Temporary set
+	HashSet<String> newGraphElementIDs = new HashSet<String>(networkComponent.getGraphElementIDs());
+	// Renaming the corresponding edges of the network component
+	for (String graphElementID : networkComponent.getGraphElementIDs()) {
+	    newGraphElementIDs.remove(graphElementID);
+	    newGraphElementIDs.add(renameGraphElement(graphElementID, oldCompID, newCompID));
+	}
+
+	// Updating the network component
+	networkComponent.setGraphElementIDs(newGraphElementIDs);
+	networkComponent.setId(newCompID);
+	networkComponents.remove(oldCompID);
+	networkComponents.put(newCompID, networkComponent);
     }
 
     /**
@@ -314,6 +358,34 @@ public class NetworkModel implements Cloneable, Serializable {
      */
     public NetworkComponent getNetworkComponent(String id) {
 	return networkComponents.get(id);
+    }
+
+    /**
+     * Gets the a node from network component.
+     * 
+     * @param networkComponent the network component
+     * @return the a node from network component
+     */
+    public GraphNode getANodeFromNetworkComponent(NetworkComponent networkComponent) {
+	for (String graphElementID : networkComponent.getGraphElementIDs()) {
+	    GraphElement graphElement = graphElements.get(graphElementID);
+	    if (graphElement instanceof GraphNode) {
+		return (GraphNode) graphElement;
+	    }
+	}
+	return null;
+    }
+
+    /**
+     * Gets the network component by graph edge id.
+     * 
+     * @param graphEdge the graph edge
+     * @return the network component by graph edge id
+     */
+    public NetworkComponent getNetworkComponent(GraphEdge graphEdge) {
+	String[] componentID = graphEdge.getId().split("_");
+	// gets the networkComponent by removing the last part of the ID containing the edge no
+	return getNetworkComponent(graphEdge.getId().replace("_" + componentID[componentID.length - 1], ""));
     }
 
     /**
