@@ -28,6 +28,7 @@
  */
 package gasmas.clustering;
 
+import jade.core.ServiceException;
 import jade.core.behaviours.SimpleBehaviour;
 
 import java.util.List;
@@ -35,6 +36,8 @@ import java.util.List;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkModel;
+import agentgui.simulationService.SimulationService;
+import agentgui.simulationService.SimulationServiceHelper;
 import agentgui.simulationService.environment.EnvironmentModel;
 import edu.uci.ics.jung.algorithms.cluster.EdgeBetweennessClusterer;
 import edu.uci.ics.jung.graph.Graph;
@@ -44,17 +47,20 @@ import edu.uci.ics.jung.graph.Graph;
  */
 public class EdgeBetweenessBehaviour extends SimpleBehaviour {
 
-    /** The environment model. */
-    private NetworkModel networkModel;
+	private static final long serialVersionUID = -1944492299919314055L;
 
+	/** The environment model. */
+    private NetworkModel networkModel;
+    private EnvironmentModel environmentModel;
+    
     /**
      * Instantiates a new edge betweeness behaviour.
      * 
      * @param environmentModel the environment model
      */
     public EdgeBetweenessBehaviour(EnvironmentModel environmentModel) {
-	this.networkModel = (NetworkModel) environmentModel.getDisplayEnvironment();
-
+    	this.environmentModel = environmentModel;
+    	this.networkModel = (NetworkModel) environmentModel.getDisplayEnvironment();
     }
 
     /**
@@ -64,8 +70,13 @@ public class EdgeBetweenessBehaviour extends SimpleBehaviour {
      */
     @Override
     public void action() {
-	System.out.println("Begin Edge Betweness Cluster Analysis");
-	removeComponent(networkModel);
+		
+    	System.out.println("Begin Edge Betweness Cluster Analysis");
+		NetworkModel newNetModel = removeComponent(networkModel.getCopy());
+		for (int i = 0; i < 25; i++) {
+			newNetModel = removeComponent(newNetModel);	
+		}
+	
     }
 
     /**
@@ -92,18 +103,29 @@ public class EdgeBetweenessBehaviour extends SimpleBehaviour {
      * 
      * @param networkModel
      */
-    private void removeComponent(NetworkModel networkModel) {
-	NetworkModel workingCopyNetworkModel = networkModel.getCopy();
-	GraphEdge edge = removeEdge(workingCopyNetworkModel.getGraph());
-	if (edge == null) {
-	    return;
-	}
-	workingCopyNetworkModel.removeNetworkComponent(workingCopyNetworkModel.getNetworkComponent(edge));
-	System.out.println(workingCopyNetworkModel.getNetworkComponent(edge));
-
-	networkModel.getAlternativeNetworkModel().put("Test", workingCopyNetworkModel);
-	System.out.println("Z");
-
+    private NetworkModel removeComponent(NetworkModel networkModel) {
+		
+    	NetworkModel workingCopyNetworkModel = networkModel.getCopy();
+		GraphEdge edge = removeEdge(workingCopyNetworkModel.getGraph());
+		if (edge == null) {
+		    return networkModel;
+		}
+		workingCopyNetworkModel.removeNetworkComponent(workingCopyNetworkModel.getNetworkComponent(edge));
+		System.out.println(workingCopyNetworkModel.getNetworkComponent(edge));
+	
+		this.networkModel.getAlternativeNetworkModel().put("EdgeBetweeness", workingCopyNetworkModel);
+		this.environmentModel.setDisplayEnvironment(this.networkModel);
+		
+		// --- Put the environment model into the SimulationService -
+		// --- in order to make it accessible for the whole agency --
+		try {
+			SimulationServiceHelper simHelper = (SimulationServiceHelper) myAgent.getHelper(SimulationService.NAME);
+			simHelper.setEnvironmentModel(this.environmentModel, true);
+		   
+		} catch (ServiceException e) {
+		    e.printStackTrace();
+		}
+		return workingCopyNetworkModel;
     }
 
     /**

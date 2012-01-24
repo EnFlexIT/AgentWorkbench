@@ -33,6 +33,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Vector;
 
 import agentgui.envModel.graph.controller.GeneralGraphSettings4MAS;
 import agentgui.envModel.graph.visualisation.DisplayAgent;
@@ -181,7 +182,7 @@ public class NetworkModel implements Cloneable, Serializable {
      * @return The list
      */
     public Collection<GraphEdge> getEdges() {
-	return graph.getEdges();
+    	return graph.getEdges();
     }
 
     /**
@@ -190,7 +191,7 @@ public class NetworkModel implements Cloneable, Serializable {
      * @return The Graph
      */
     public Graph<GraphNode, GraphEdge> getGraph() {
-	return graph;
+    	return graph;
     }
 
     /**
@@ -199,18 +200,19 @@ public class NetworkModel implements Cloneable, Serializable {
      * @param newGraph the new graph
      */
     public void setGraph(Graph<GraphNode, GraphEdge> newGraph) {
-
-	this.graph = newGraph;
-	this.graphElements = new HashMap<String, GraphElement>();
-
-	refreshGraphElements();
+		this.graph = newGraph;
+		this.graphElements = new HashMap<String, GraphElement>();
+		this.refreshGraphElements();
     }
 
+    /**
+     * Refresh graph elements. 
+     */
     private void refreshGraphElements() {
-	if (this.graph != null) {
-	    register(graph.getVertices().toArray(new GraphNode[0]));
-	    register(graph.getEdges().toArray(new GraphEdge[0]));
-	}
+		if (this.graph != null) {
+		    register(graph.getVertices().toArray(new GraphNode[0]));
+		    register(graph.getEdges().toArray(new GraphEdge[0]));
+		}
     }
 
     /**
@@ -219,9 +221,9 @@ public class NetworkModel implements Cloneable, Serializable {
      * @param graphElements the graph elements
      */
     private void register(GraphElement[] graphElements) {
-	for (GraphElement graphElement : graphElements) {
-	    this.graphElements.put(graphElement.getId(), graphElement);
-	}
+		for (GraphElement graphElement : graphElements) {
+		    this.graphElements.put(graphElement.getId(), graphElement);
+		}
     }
 
     /**
@@ -230,7 +232,7 @@ public class NetworkModel implements Cloneable, Serializable {
      * @param networkComponent The NetworkComponent to add
      */
     public void addNetworkComponent(NetworkComponent networkComponent) {
-	networkComponents.put(networkComponent.getId(), networkComponent);
+    	networkComponents.put(networkComponent.getId(), networkComponent);
     }
 
     /**
@@ -244,11 +246,11 @@ public class NetworkModel implements Cloneable, Serializable {
      * @return the network component
      */
     public NetworkComponent addNetworkComponent(String id, String type, String prototypeClassName, boolean directed, HashSet<GraphElement> graphElements) {
-	NetworkComponent networkComponent = new NetworkComponent(id, type, prototypeClassName, directed);
-	addNetworkComponent(networkComponent);
-	networkComponent.setGraphElements(graphElements);
-	refreshGraphElements();
-	return networkComponent;
+		NetworkComponent networkComponent = new NetworkComponent(id, type, prototypeClassName, directed);
+		addNetworkComponent(networkComponent);
+		networkComponent.setGraphElements(graphElements);
+		refreshGraphElements();
+		return networkComponent;
     }
 
     /**
@@ -366,16 +368,45 @@ public class NetworkModel implements Cloneable, Serializable {
      * @param networkComponent the network component
      * @return the a node from network component
      */
-    public GraphNode getANodeFromNetworkComponent(NetworkComponent networkComponent) {
-	for (String graphElementID : networkComponent.getGraphElementIDs()) {
-	    GraphElement graphElement = graphElements.get(graphElementID);
-	    if (graphElement instanceof GraphNode) {
-		return (GraphNode) graphElement;
-	    }
-	}
-	return null;
+    public Vector<GraphNode> getNodesFromNetworkComponent(NetworkComponent networkComponent) {
+    	Vector<GraphNode> nodeList = new Vector<GraphNode>(); 
+    	for (String graphElementID : networkComponent.getGraphElementIDs()) {
+    		GraphElement graphElement = graphElements.get(graphElementID);
+		    if (graphElement instanceof GraphNode) {
+		    	nodeList.add((GraphNode) graphElement);
+		    }
+    	}
+    	return nodeList;
     }
 
+    /**
+     * Gets the neighbour network components.
+     * @param networkComponent the network component
+     * @return the neighbour network components
+     */
+    public Vector<NetworkComponent> getNeighbourNetworkComponents(NetworkComponent networkComponent) {
+    	
+    	Vector<NetworkComponent> comps = new Vector<NetworkComponent>();
+    	Vector<GraphNode> nodes = this.getNodesFromNetworkComponent(networkComponent);
+
+    	for (int i = 0; i < nodes.size(); i++) {
+			
+    		GraphNode node = nodes.get(i);
+    		for (NetworkComponent netComponent : this.getNetworkComponents().values()) {
+        		// --- check if the component contains the current node -------
+        	    if (netComponent.getGraphElementIDs().contains(node.getId())) {
+        	    	// --- Add component to result list -----------------------
+        	    	if (netComponent!=networkComponent && comps.contains(netComponent)==false) {
+        	    		comps.add(netComponent);
+        	    		break;
+        	    	}
+        	    }
+			}
+    		
+		}
+    	return comps;
+    }
+    
     /**
      * Gets the network component by graph edge id.
      * 
@@ -412,16 +443,12 @@ public class NetworkModel implements Cloneable, Serializable {
      * @return the next unique network component ID
      */
     public String nextNetworkComponentID() {
-	// Finds the current maximum network component ID and returns the next
-	// one to it.
-	int max = -1;
-	for (NetworkComponent networkComponent : networkComponents.values()) {
-	    int num = Integer.parseInt(networkComponent.getId().replace(NetworkComponent.PREFIX_NETWORK_COMPONENT, ""));
-	    if (num > max) {
-		max = num;
-	    }
-	}
-	return NetworkComponent.PREFIX_NETWORK_COMPONENT + (max + 1);
+		// --- Finds the current maximum network component ID and returns the next one to it. -----
+    	int startInt = networkComponents.size();
+    	while (networkComponents.get((NetworkComponent.PREFIX_NETWORK_COMPONENT + startInt))!=null ) {
+    		startInt++;
+    	}
+    	return NetworkComponent.PREFIX_NETWORK_COMPONENT + (startInt);
     }
 
     /**

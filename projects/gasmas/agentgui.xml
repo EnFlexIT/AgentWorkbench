@@ -11,16 +11,20 @@
     </subOntologies>
     <agentConfiguration>
         <entry>
-            <key>gasmas.agents.EntryAgent</key>
-            <value>gasmas.ontology.Entry</value>
-        </entry>
-        <entry>
             <key>gasmas.agents.BranchAgent</key>
             <value>gasmas.ontology.Branch</value>
         </entry>
         <entry>
+            <key>gasmas.agents.EntryAgent</key>
+            <value>gasmas.ontology.Entry</value>
+        </entry>
+        <entry>
             <key>gasmas.agents.ValveAgent</key>
             <value>gasmas.ontology.Valve</value>
+        </entry>
+        <entry>
+            <key>gasmas.agents.components.PipeAgent</key>
+            <value>gasmas.ontology.PropagationPoint</value>
         </entry>
         <entry>
             <key>gasmas.agents.ExitAgent</key>
@@ -40,12 +44,12 @@
         </entry>
     </agentConfiguration>
     <jadeConfiguration>
-        <useLocalPort>1119</useLocalPort>
+        <useLocalPort>1121</useLocalPort>
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
-            <service>jade.debugging.DebugService</service>
             <service>agentgui.simulationService.SimulationService</service>
+            <service>jade.debugging.DebugService</service>
             <service>jade.core.mobility.AgentMobilityService</service>
         </serviceList>
     </jadeConfiguration>

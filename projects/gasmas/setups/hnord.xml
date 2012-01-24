@@ -419,7 +419,7 @@
             <postionNo>69</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>gasmas.agents.components.ExitAgent</agentClassReference>
-            <startAsName>n69</startAsName>
+            <startAsName>bla</startAsName>
         </agent>
     </agentSetup>
     <environmentFileName>HNord.graphml</environmentFileName>

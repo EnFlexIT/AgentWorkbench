@@ -51,7 +51,7 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1823164338744218569L;
 
-    /** The curr project. */
+    /** The current project. */
     private Project currProject = null;
 
     /** The my network model. */
@@ -88,10 +88,6 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 	// --- Remind the current network model ---------------------
 	this.myNetworkModel = (NetworkModel) this.getDisplayEnvironment();
 
-	// ++++++++++++++ Just to see if this feature can work +++++++++++
-	this.testAlternativeModels();
-	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
 	// --- Put the environment model into the SimulationService -
 	// --- in order to make it accessible for the whole agency --
 	try {
@@ -109,20 +105,6 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // ++++++++++++++ Some temporary test cases here +++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    /**
-     * Test alternative models.
-     */
-    private void testAlternativeModels() {
-
-	NetworkModel nmCopy1 = this.myNetworkModel.getCopy();
-	NetworkModel nmCopy2 = this.myNetworkModel.getCopy();
-	nmCopy2.getAlternativeNetworkModel().put("Sub Alternative of Alternative 2", nmCopy1.getCopy());
-
-	this.myNetworkModel.getAlternativeNetworkModel().put("Alternative 1", nmCopy1);
-	this.myNetworkModel.getAlternativeNetworkModel().put("Alternative 2", nmCopy2);
-	this.setDisplayEnvironment(this.myNetworkModel);
-
-    }
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -188,21 +170,21 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
      * Adds Behaviours.
      */
     private void behaviours() {
-	this.addBehaviour(new EdgeBetweenessBehaviour(envModel));
+    	this.addBehaviour(new EdgeBetweenessBehaviour(envModel));
     }
 
     /**
      * Identify active components.
      */
     private void identifyActiveComponents() {
-	for (NetworkComponent networkComponent : myNetworkModel.getNetworkComponents().values()) {
-	    String agentClassName = networkComponent.getAgentClassName();
-	    for (String activeAgentClassType : activeNetworkComponentAgentClasses) {
-		if (agentClassName.equals(NetworkManagerAgent.activeNetworkComponentAgentClassPrefix + activeAgentClassType)) {
-		    activeNetworkComponents.add(networkComponent);
+		for (NetworkComponent networkComponent : myNetworkModel.getNetworkComponents().values()) {
+		    String agentClassName = networkComponent.getAgentClassName();
+		    for (String activeAgentClassType : activeNetworkComponentAgentClasses) {
+				if (agentClassName.equals(NetworkManagerAgent.activeNetworkComponentAgentClassPrefix + activeAgentClassType)) {
+				    activeNetworkComponents.add(networkComponent);
+				}
+		    }
 		}
-	    }
-	}
     }
 
     /**

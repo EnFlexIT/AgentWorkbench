@@ -33,6 +33,7 @@ import gasmas.agents.manager.NetworkManagerAgent;
 import jade.core.behaviours.SimpleBehaviour;
 
 import java.util.List;
+import java.util.Vector;
 
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphNode;
@@ -45,7 +46,9 @@ import agentgui.simulationService.environment.EnvironmentModel;
  */
 public class ShortestPathClusteringBehaviour extends SimpleBehaviour {
 
-    /** The network model. */
+	private static final long serialVersionUID = -2788112416597375066L;
+
+	/** The network model. */
     private NetworkModel networkModel;
 
     /** The network manager agent. */
@@ -104,10 +107,12 @@ public class ShortestPathClusteringBehaviour extends SimpleBehaviour {
      * @return the network path
      */
     private NetworkPath findNetworkPath(NetworkComponent networkComponent, NetworkModel workingCopyNetworkModel) {
-	DijkstraShortestPath<GraphNode, GraphEdge> dijkstraShortestPath = new DijkstraShortestPath<GraphNode, GraphEdge>(workingCopyNetworkModel.getGraph());
-	List<GraphEdge> path = dijkstraShortestPath.getPath(workingCopyNetworkModel.getANodeFromNetworkComponent(thisNetworkComponent),
-		workingCopyNetworkModel.getANodeFromNetworkComponent(networkComponent));
-	return new NetworkPath(workingCopyNetworkModel, path);
+		DijkstraShortestPath<GraphNode, GraphEdge> dijkstraShortestPath = new DijkstraShortestPath<GraphNode, GraphEdge>(workingCopyNetworkModel.getGraph());
+		
+		Vector<GraphNode> nodes = workingCopyNetworkModel.getNodesFromNetworkComponent(thisNetworkComponent);
+		Vector<GraphNode> nodesOfGoal = workingCopyNetworkModel.getNodesFromNetworkComponent(networkComponent);
+		List<GraphEdge> path = dijkstraShortestPath.getPath(nodes.firstElement(), nodesOfGoal.firstElement());
+		return new NetworkPath(workingCopyNetworkModel, path);
     }
 
     /*

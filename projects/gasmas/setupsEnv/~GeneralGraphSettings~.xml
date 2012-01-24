@@ -27,19 +27,6 @@
             </value>
         </entry>
         <entry>
-            <key>Entry</key>
-            <value>
-                <agentClass>gasmas.agents.components.EntryAgent</agentClass>
-                <color>-16724992</color>
-                <edgeImage>MissingIcon</edgeImage>
-                <edgeWidth>3.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</graphPrototype>
-                <showLabel>true</showLabel>
-                <snap2Grid>false</snap2Grid>
-                <snapRaster>0.0</snapRaster>
-            </value>
-        </entry>
-        <entry>
             <key>Exit</key>
             <value>
                 <agentClass>gasmas.agents.components.ExitAgent</agentClass>
@@ -53,14 +40,14 @@
             </value>
         </entry>
         <entry>
-            <key>Pipe</key>
+            <key>Entry</key>
             <value>
-                <agentClass>gasmas.agents.components.PipeAgent</agentClass>
-                <color>-16777216</color>
+                <agentClass>gasmas.agents.components.EntryAgent</agentClass>
+                <color>-16724992</color>
                 <edgeImage>MissingIcon</edgeImage>
-                <edgeWidth>1.5</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.SimpleGraphElement</graphPrototype>
-                <showLabel>false</showLabel>
+                <edgeWidth>3.0</edgeWidth>
+                <graphPrototype>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</graphPrototype>
+                <showLabel>true</showLabel>
                 <snap2Grid>false</snap2Grid>
                 <snapRaster>0.0</snapRaster>
             </value>
@@ -79,14 +66,14 @@
             </value>
         </entry>
         <entry>
-            <key>ControlValve</key>
+            <key>Pipe</key>
             <value>
-                <agentClass>gasmas.agents.components.ControlValveAgent</agentClass>
-                <color>-16777012</color>
-                <edgeImage>/gasmas/img/klpö</edgeImage>
-                <edgeWidth>4.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</graphPrototype>
-                <showLabel>true</showLabel>
+                <agentClass>gasmas.agents.components.PipeAgent</agentClass>
+                <color>-16777216</color>
+                <edgeImage>MissingIcon</edgeImage>
+                <edgeWidth>1.5</edgeWidth>
+                <graphPrototype>agentgui.envModel.graph.prototypes.SimpleGraphElement</graphPrototype>
+                <showLabel>false</showLabel>
                 <snap2Grid>false</snap2Grid>
                 <snapRaster>0.0</snapRaster>
             </value>
@@ -100,6 +87,19 @@
                 <edgeWidth>2.0</edgeWidth>
                 <graphPrototype>agentgui.envModel.graph.prototypes.Star3GraphElement</graphPrototype>
                 <showLabel>false</showLabel>
+                <snap2Grid>false</snap2Grid>
+                <snapRaster>0.0</snapRaster>
+            </value>
+        </entry>
+        <entry>
+            <key>ControlValve</key>
+            <value>
+                <agentClass>gasmas.agents.components.ControlValveAgent</agentClass>
+                <color>-16777012</color>
+                <edgeImage>/gasmas/img/klpö</edgeImage>
+                <edgeWidth>4.0</edgeWidth>
+                <graphPrototype>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</graphPrototype>
+                <showLabel>true</showLabel>
                 <snap2Grid>false</snap2Grid>
                 <snapRaster>0.0</snapRaster>
             </value>

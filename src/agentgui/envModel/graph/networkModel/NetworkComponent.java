@@ -85,10 +85,10 @@ public class NetworkComponent implements Serializable {
      * @param directed the directed
      */
     public NetworkComponent(String id, String type, String prototypeClassName, boolean directed) {
-	this.id = id;
-	this.type = type;
-	this.prototypeClassName = prototypeClassName;
-	this.directed = directed;
+		this.id = id;
+		this.type = type;
+		this.prototypeClassName = prototypeClassName;
+		this.directed = directed;
     }
 
     /**
