@@ -288,19 +288,18 @@ public class AddComponentDialog extends JDialog implements ActionListener {
      * @return Object[] - array of component types
      */
     private Object[] getListData() {
-	Vector<String> list = new Vector<String>();
-	HashMap<String, ComponentTypeSettings> etsHash = this.graphController.getComponentTypeSettings();
-	if (etsHash != null) {
-	    Iterator<String> etsIter = etsHash.keySet().iterator();
-	    while (etsIter.hasNext()) {
-		String etName = etsIter.next();
-		if (!etName.equals("node")) { // The node is not created
-					      // manually
-		    list.add(etName);
+		Vector<String> list = new Vector<String>();
+		HashMap<String, ComponentTypeSettings> etsHash = this.graphController.getComponentTypeSettings();
+		if (etsHash != null) {
+		    Iterator<String> etsIter = etsHash.keySet().iterator();
+		    while (etsIter.hasNext()) {
+		    	String etName = etsIter.next();
+				if (!etName.equals("node")) { // The node is not created manually
+				    list.add(etName);
+				}
+		    }
 		}
-	    }
-	}
-	return list.toArray();
+		return list.toArray();
     }
 
     /**
@@ -467,8 +466,7 @@ public class AddComponentDialog extends JDialog implements ActionListener {
 	HashSet<GraphElement> graphElements = merge(networkModel.getGraph(), getVisualizationViewer().getGraphLayout().getGraph(), parentPickedVertex, pickedVertex);
 
 	// create new NetworkComponent
-	NetworkComponent newComponent = networkModel.addNetworkComponent(graphElement.getId(), selectedType, componentTypeSettings.get(selectedType).getGraphPrototype(),
-		componentTypeSettings.get(selectedType).getAgentClass(), graphElement.isDirected(), graphElements);
+	NetworkComponent newComponent = networkModel.addNetworkComponent(graphElement.getId(), selectedType, componentTypeSettings.get(selectedType).getGraphPrototype(), componentTypeSettings.get(selectedType).getAgentClass(), graphElement.isDirected(), graphElements);
 
 	this.graphController.refreshNetworkModel();
 	// Adding the new agent to the agent start list of the environment
@@ -616,8 +614,7 @@ public class AddComponentDialog extends JDialog implements ActionListener {
 		    // All the edges in the graph or incident on the
 		    // pickedVertex => It is a center
 		    if (graph.getEdgeCount() == graph.getIncidentEdges(pickedVertex).size()) {
-			JOptionPane.showMessageDialog(this, Language.translate("Select a vertex other than the center of the star", Language.EN), Language.translate("Warning", Language.EN),
-				JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(this, Language.translate("Select a vertex other than the center of the star", Language.EN), Language.translate("Warning", Language.EN), JOptionPane.WARNING_MESSAGE);
 			return;
 		    }
 		}

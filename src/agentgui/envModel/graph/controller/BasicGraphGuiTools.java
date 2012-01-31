@@ -32,6 +32,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -53,6 +54,7 @@ import agentgui.envModel.graph.components.ComponentTypeDialog;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
+import agentgui.envModel.graph.prototypes.DistributionNode;
 import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 
@@ -502,36 +504,54 @@ public class BasicGraphGuiTools implements ActionListener {
 			if(this.controller.getNetworkModel().getGraph().getVertexCount()==0){
 				// --- If the graph is empty - starting from scratch -
 				this.showAddComponentDialog();	
+				
 			} else if(basicGraphGui.getPickedVertex()!=null) {
 				// --- Picked a vertex ------------------------------
 					if(basicGraphGui.isFreeToAddComponent(basicGraphGui.getPickedVertex())) {
 						this.showAddComponentDialog();
 					} else {
-						JOptionPane.showMessageDialog(graphEnvGUI, Language.translate("Select a valid vertex", Language.EN),
-								Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
+						JOptionPane.showMessageDialog(graphEnvGUI, Language.translate("Select a valid vertex", Language.EN), Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
 					};
 			} else {
 				// --- No vertex is picked ---------------------------
-				JOptionPane.showMessageDialog(graphEnvGUI, Language.translate("Select a valid vertex first", Language.EN),
-						Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(graphEnvGUI, Language.translate("Select a valid vertex first", Language.EN), Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
 			}
 			
 		} else if (ae.getSource() == getJButtonRemoveComponent() || ae.getSource() == getJMenuItemDeleteComp()) {
 			// ------------------------------------------------------
 			// --- Remove Component Button clicked ------------------
+			NetworkComponent selectedComponent = null;
 			Set<GraphEdge> edgeSet = visView.getPickedEdgeState().getPicked();
 			if(edgeSet.size()>0){ 
 				// --- At least one edge is picked ------------------
-				//Get the Network component from the picked edge
-				NetworkComponent selectedComponent = basicGraphGui.getNetworkComponentFromEdge(edgeSet.iterator().next());												
-				//Removing the component from the network model and updating the graph
+				// --- Get the Network component from picked edge ---
+				selectedComponent = basicGraphGui.getNetworkComponentFromEdge(edgeSet.iterator().next());												
+				// --- Remove component and update graph ------------ 
 				basicGraphGui.removeNetworkComponent(selectedComponent);
 				this.controller.refreshNetworkModel();
 				
 			} else {
 				// --- No edge is picked ----------------------------
-				JOptionPane.showMessageDialog(graphEnvGUI, Language.translate("Select an edge first", Language.EN),
-						Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
+				Set<GraphNode> nodeSet = visView.getPickedVertexState().getPicked();
+				if (nodeSet.size()>0) {
+					// --- At least one node is picked --------------
+					HashSet<NetworkComponent> components = this.controller.getNetworkModel().getNetworkComponent(nodeSet.iterator().next());
+					Iterator<NetworkComponent> it = components.iterator();
+					while(it.hasNext()) {
+						selectedComponent = it.next();
+						if (selectedComponent.getPrototypeClassName().equals(DistributionNode.class.getName())) {
+							// --- Remove component, update graph --- 
+							basicGraphGui.removeNetworkComponent(selectedComponent);
+							this.controller.refreshNetworkModel();
+							return;
+						}	
+					}
+					
+				} 
+				// --- Nothing valid picked -------------------------
+				JOptionPane.showMessageDialog(graphEnvGUI, Language.translate("Select a valid element first!", Language.EN), Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);	
+				
+				
 			}
 			
 		} else if (ae.getSource() == getJButtonMergeNodes()) {
@@ -569,14 +589,12 @@ public class BasicGraphGuiTools implements ActionListener {
 					basicGraphGui.splitNode(pickedVertex);
 				} else {
 					//The node is not in two components
-					JOptionPane.showMessageDialog(graphEnvGUI, Language.translate("Vertex should be in two components", Language.EN),
-							Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
+					JOptionPane.showMessageDialog(graphEnvGUI, Language.translate("The select Vertex should be between two components !", Language.EN), Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
 				}
 					
 			} else {
 				//Multiple vertices are picked
-				JOptionPane.showMessageDialog(graphEnvGUI, Language.translate("Select one vertex", Language.EN),
-						Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(graphEnvGUI, Language.translate("Select one vertex !", Language.EN), Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
 			}
 			
 		} else if (ae.getSource() == getJButtonClearGraph()) {

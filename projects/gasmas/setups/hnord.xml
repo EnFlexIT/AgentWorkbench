@@ -421,6 +421,12 @@
             <agentClassReference>gasmas.agents.components.ExitAgent</agentClassReference>
             <startAsName>bla</startAsName>
         </agent>
+        <agent>
+            <postionNo>70</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.EntryAgent</agentClassReference>
+            <startAsName>n69</startAsName>
+        </agent>
     </agentSetup>
     <environmentFileName>HNord.graphml</environmentFileName>
 </simulationSetup>

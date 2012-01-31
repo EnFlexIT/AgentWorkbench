@@ -151,11 +151,10 @@ public class NetworkComponent implements Serializable {
      * @param graphElements the new graph elements
      */
     public void setGraphElements(HashSet<GraphElement> graphElements) {
-	System.out.println("Size" + graphElements.size());
-	for (GraphElement graphElement : graphElements) {
-	    String id = graphElement.getId();
-	    graphElementIDs.add(id);
-	}
+		for (GraphElement graphElement : graphElements) {
+		    String id = graphElement.getId();
+		    graphElementIDs.add(id);
+		}
     }
 
     /**

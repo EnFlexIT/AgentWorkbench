@@ -35,7 +35,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Paint;
-import java.awt.Point;
 import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.event.ComponentAdapter;
@@ -62,6 +61,7 @@ import agentgui.envModel.graph.networkModel.GraphElement;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
+import agentgui.envModel.graph.prototypes.DistributionNode;
 import agentgui.envModel.graph.prototypes.GraphElementPrototype;
 import agentgui.envModel.graph.prototypes.Star3GraphElement;
 import edu.uci.ics.jung.algorithms.layout.Layout;
@@ -787,46 +787,45 @@ public class BasicGraphGui extends JPanel {
 	 * @return true if the node is a member of 0 or 1 components, false otherwise
 	 */
 	public boolean isFreeToAddComponent(Object object) {
+		
 		if(object instanceof GraphNode){
 			GraphNode node = (GraphNode) object;	
-			//The number of network components containing this node
-			int compCount = this.controller.getNetworkModel().getNetworkComponentCount(node);
-			if(compCount == 1)
-			{ //Node is present in only one component
-				
-				NetworkComponent comp = getNetworkComponentsFromNode(node).iterator().next();
-				if(isStarGraphElement(comp)){
-				//If it is a star component
-					//Check whether the given node is the center of the star.
-					if(isCenterNodeOfStar(node,comp))
-						return false;						
+			
+			// --- The number of network components containing this node ------
+			HashSet<NetworkComponent> networkComponents = this.controller.getNetworkModel().getNetworkComponent(node);
+			int compCount = networkComponents.size();
+
+			NetworkComponent singleNetworkComponent = null;
+			if(compCount == 1) {
+				// --- Node is present in only one component ------------------
+				singleNetworkComponent = networkComponents.iterator().next();
+				if(isStarGraphElement(singleNetworkComponent)){
+					// --- If it is a star component ------------------------------
+					// --- Check whether the given node is the center of the star -
+					if(isCenterNodeOfStar(node, singleNetworkComponent)) {
+						return false;
+					}
 				}
 				return true;
-			}					
+			
+			} else if (compCount>1) {
+				// --- Node is present in several components ------------------
+				Iterator<NetworkComponent> it = networkComponents.iterator(); 
+				while(it.hasNext()) {
+					singleNetworkComponent = it.next();
+					if (singleNetworkComponent.getPrototypeClassName().equals(DistributionNode.class.getName())) {
+						return true;
+					}	
+				}
+				
+			}
 		}	
 		return false;
 	}
 	
 	
 	
-	/**
-	 * Gives the set of network components containing the given node.
-	 * @param node - A GraphNode
-	 * @return HashSet<NetworkComponent> - The set of components which contain the node
-	 */
-	public HashSet<NetworkComponent> getNetworkComponentsFromNode(GraphNode node){						
-		// Get the components from the controllers GridModel
-		HashSet<NetworkComponent>  compSet = new HashSet<NetworkComponent>();
-		Iterator<NetworkComponent> components = this.controller.getNetworkModel().getNetworkComponents().values().iterator();						
-		while(components.hasNext()){ // iterating through all network components
-			NetworkComponent comp = components.next();
-			// check if the component contains the given node
-			if(comp.getGraphElementIDs().contains(node.getId())){
-				compSet.add(comp);
-			}
-		}
-		return compSet;		
-	}
+	
 	/**
 	 * Checks whether a network component is in the star graph element
 	 * @param comp the network component
@@ -952,8 +951,8 @@ public class BasicGraphGui extends JPanel {
 		
 		//Get the Network components from the nodes
 		
-		NetworkComponent comp1 = getNetworkComponentsFromNode(node1).iterator().next();
-		NetworkComponent comp2 = getNetworkComponentsFromNode(node2).iterator().next();
+		NetworkComponent comp1 = this.controller.getNetworkModel().getNetworkComponent(node1).iterator().next();
+		NetworkComponent comp2 = this.controller.getNetworkModel().getNetworkComponent(node2).iterator().next();
 		
 		//Finding the intersection set of the Graph elements of the two network components
 		HashSet<String> intersection = new HashSet<String>(comp1.getGraphElementIDs());
@@ -1013,59 +1012,7 @@ public class BasicGraphGui extends JPanel {
 	 * @param node
 	 */
 	public void splitNode(GraphNode node) {		
-		//Environment Network Model
-		NetworkModel networkModel = this.controller.getNetworkModel();
-		Graph<GraphNode,GraphEdge> graph = networkModel.getGraph();
-		
-		//Get the components containing the node
-		Iterator<NetworkComponent> compIter = getNetworkComponentsFromNode(node).iterator();		
-//		NetworkComponent comp1 = compIter.next();
-		NetworkComponent comp2 = compIter.next();
-		
-		//Creating the new Graph node
-		GraphNode newNode = new GraphNode();
-		newNode.setId(networkModel.nextNodeID());
-			//Shifting position a bit
-		newNode.setPosition(new Point((int)node.getPosition().getX()-20, (int)node.getPosition().getY()-20));
-		node.setPosition(new Point((int)node.getPosition().getX()+20, (int)node.getPosition().getY()+20));
-		
-		//Incident Edges on the node
-		Collection<GraphEdge> incidentEdges = graph.getIncidentEdges(node);		
-		Iterator<GraphEdge> edgeIter = incidentEdges.iterator();
-		while(edgeIter.hasNext()){ // for each incident edge
-			GraphEdge edge = edgeIter.next();
-			//If the edge is in comp2
-			if(comp2.getGraphElementIDs().contains(edge.getId())){						
-				//Find the node on the other side of the edge
-				GraphNode otherNode = graph.getOpposite(node,edge);
-				//Create a new edge with the same ID and type
-				GraphEdge newEdge = new GraphEdge(edge.getId(), edge.getComponentType());				
-				//if the edge is directed
-				if(graph.getSource(edge)!=null) 
-				{
-					if(graph.getSource(edge) == node)
-						graph.addEdge(newEdge,newNode, otherNode, EdgeType.DIRECTED);
-					else if(graph.getDest(edge) == node)
-						graph.addEdge(newEdge,otherNode, newNode, EdgeType.DIRECTED);
-				}
-				// if the edge is undirected
-				else 
-					graph.addEdge(newEdge,newNode, otherNode, EdgeType.UNDIRECTED);
-				
-				//Removing the old edge from the graph and network model
-				graph.removeEdge(edge);
-				networkModel.getGraphElements().remove(edge.getId());
-				networkModel.getGraphElements().put(newEdge.getId(),newEdge);
-			}
-		}
-		
-		//Updating the graph element IDs of the component
-		comp2.getGraphElementIDs().remove(node.getId());
-		comp2.getGraphElementIDs().add(newNode.getId());
-		
-		//Adding new node to the network model
-		networkModel.getGraphElements().put(newNode.getId(),newNode);
-		
+		this.controller.getNetworkModel().splitNetworkModelAtNode(node);
 		this.controller.refreshNetworkModel();
 	}
 

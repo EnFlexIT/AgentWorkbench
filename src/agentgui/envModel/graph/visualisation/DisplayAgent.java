@@ -153,16 +153,16 @@ public class DisplayAgent extends SimulationAgent {
 		this.netModel = null;
 		if (this.myGraphEnvironmentController!=null) {
 			this.myGraphEnvironmentController.getEnvironmentPanel().setVisible(false);
+			this.myGraphEnvironmentController = null;
 		}
 		if (this.useFrame != null) {
 			this.useFrame.dispose();
 			this.useFrame = null;
 		}
 		if (this.usePanel != null) {
-			this.usePanel.removeAll();
-			this.usePanel.repaint();
 			this.usePanel = null;
 		}
+		
 	}
 	
 	/**
