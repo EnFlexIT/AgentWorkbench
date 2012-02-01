@@ -29,14 +29,15 @@
 
 package agentgui.envModel.graph.prototypes;
 
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Vector;
 
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphElement;
 import agentgui.envModel.graph.networkModel.GraphNode;
+import agentgui.envModel.graph.networkModel.NetworkModel;
 import edu.uci.ics.jung.graph.Graph;
+import edu.uci.ics.jung.graph.util.EdgeType;
 
 /**
  * A graph / network element with a star arrangement. Specialy designed for a Cluster
@@ -45,57 +46,31 @@ import edu.uci.ics.jung.graph.Graph;
  */
 public class ClusterGraphElement extends GraphElementPrototype {
 
-    public static final String CLUSTER_PREFIX = "C_";
-
     /**
      * The vector of outernodes which forms the corners of the element.
      */
-    Vector<GraphNode> outerNodes;
+    ArrayList<GraphNode> outerNodes;
 
-    /**
-     * The central node of the element, to which all outernodes are connected.
-     */
-    GraphNode centralNode;
-
-    /**
-     * Default constructor with 3 corners
-     */
-    public ClusterGraphElement() {
-	super();
-	outerNodes = new Vector<GraphNode>();
+    public ClusterGraphElement(ArrayList<GraphNode> outerNodes, String id) {
+	this.outerNodes = outerNodes;
+	this.id = id;
     }
 
-    /**
-     * Constructor for creating the Star prototype with 'n' connection points
-     * 
-     * @param n the number of connection points
-     */
-    public ClusterGraphElement(Integer n) {
-	super();
-	if (n >= 3) {
-
-	    outerNodes = new Vector<GraphNode>();
-	} else {
-	    throw new GraphElementPrototypeException("Number of connection points should be greater than 3");
+    public HashSet<String> addToGraph(NetworkModel networkModel) {
+	HashSet<String> elements = new HashSet<String>();
+	// add central Node
+	GraphNode centralNode = new GraphNode();
+	centralNode.setId(networkModel.nextNodeID());
+	networkModel.getGraph().addVertex(centralNode);
+	elements.add(centralNode.getId());
+	// add Edges
+	int counter = -1;
+	for (GraphNode graphNode : outerNodes) {
+	    GraphEdge edge = new GraphEdge(id + "_" + counter++, getType());
+	    graph.addEdge(edge, centralNode, graphNode, EdgeType.UNDIRECTED);
+	    elements.add(edge.getId());
 	}
-    }
-
-    @Override
-    public HashSet<GraphElement> addToGraph(Graph<GraphNode, GraphEdge> graph) {
-	// check if n is set
-	{
-	    this.graph = graph;
-	    // Create a HashSet for the nodes and edges
-	    HashSet<GraphElement> elements = new HashSet<GraphElement>();
-
-	    // Create central node and add to the graph
-	    centralNode = new GraphNode();
-	    centralNode.setId(GraphNode.GRAPH_NODE_PREFIX + (nodeCounter++));
-	    graph.addVertex(centralNode);
-	    elements.add(centralNode);
-
-	    return elements;
-	}
+	return elements;
     }
 
     @Override
@@ -118,9 +93,7 @@ public class ClusterGraphElement extends GraphElementPrototype {
 
     @Override
     public GraphNode getFreeEntry() {
-	Iterator<GraphNode> iter = outerNodes.iterator();
-	while (iter.hasNext()) {
-	    GraphNode node = iter.next();
+	for (GraphNode node : outerNodes) {
 	    if (graph.getNeighborCount(node) < 2) {
 		return node;
 	    }
@@ -136,5 +109,11 @@ public class ClusterGraphElement extends GraphElementPrototype {
     @Override
     public boolean isDirected() {
 	return false;
+    }
+
+    @Override
+    public HashSet<GraphElement> addToGraph(Graph<GraphNode, GraphEdge> graph) {
+	// TODO Auto-generated method stub
+	return null;
     }
 }

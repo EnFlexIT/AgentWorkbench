@@ -71,6 +71,7 @@ public class GraphNode extends GraphElement {
      * 
      * @return the copy
      */
+    @Override
     public GraphNode getCopy() {
 	GraphNode nodeCopy = new GraphNode(id, new Point2D.Double(position.getX(), this.position.getY()));
 	nodeCopy.setEncodedOntologyRepresentation(this.encodedOntologyRepresentation);

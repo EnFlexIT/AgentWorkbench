@@ -98,10 +98,9 @@ public class DirectedSimpleGraphElement extends GraphElementPrototype {
 	    elements.add(entry);
 	    elements.add(exit);
 	    return elements;
-	} else {
-	    System.err.println(Language.translate("Fehler beim Einfügen von Komponente " + getId() + " : Kein freier Anschlusspunkt an Vorgänger ") + predecessor.getId());
-	    return null;
 	}
+	System.err.println(Language.translate("Fehler beim Einfügen von Komponente " + getId() + " : Kein freier Anschlusspunkt an Vorgänger ") + predecessor.getId());
+	return null;
 
     }
 
@@ -126,10 +125,9 @@ public class DirectedSimpleGraphElement extends GraphElementPrototype {
 	    elements.add(entry);
 	    elements.add(exit);
 	    return elements;
-	} else {
-	    System.err.println(Language.translate("Fehler beim Einfügen von Komponente " + getId() + " : Kein freier Anschlusspunkt an Nachfolger") + successor.getId());
-	    return null;
 	}
+	System.err.println(Language.translate("Fehler beim Einfügen von Komponente " + getId() + " : Kein freier Anschlusspunkt an Nachfolger") + successor.getId());
+	return null;
     }
 
     @Override
@@ -149,15 +147,14 @@ public class DirectedSimpleGraphElement extends GraphElementPrototype {
 	    elements.add(entry);
 	    elements.add(exit);
 	    return elements;
-	} else {
-	    if (entry == null) {
-		System.err.println(Language.translate("Fehler beim Einfügen von Komponente " + getId() + " : Kein freier Anschlusspunkt an Vorgänger ") + predecessor.getId());
-	    }
-	    if (exit == null) {
-		System.err.println(Language.translate("Fehler beim Einfügen von Komponente " + getId() + " : Kein freier Anschlusspunkt an Nachfolger") + successor.getId());
-	    }
-	    return null;
 	}
+	if (entry == null) {
+	    System.err.println(Language.translate("Fehler beim Einfügen von Komponente " + getId() + " : Kein freier Anschlusspunkt an Vorgänger ") + predecessor.getId());
+	}
+	if (exit == null) {
+	    System.err.println(Language.translate("Fehler beim Einfügen von Komponente " + getId() + " : Kein freier Anschlusspunkt an Nachfolger") + successor.getId());
+	}
+	return null;
     }
 
     @Override
@@ -165,9 +162,8 @@ public class DirectedSimpleGraphElement extends GraphElementPrototype {
 	// Only one incoming edge is possible
 	if (graph.getInEdges(entry).size() == 0) {
 	    return entry;
-	} else {
-	    return null;
 	}
+	return null;
     }
 
     @Override
@@ -175,9 +171,8 @@ public class DirectedSimpleGraphElement extends GraphElementPrototype {
 	// Only one outgoing edge is possible
 	if (graph.getOutEdges(exit).size() == 0) {
 	    return exit;
-	} else {
-	    return null;
 	}
+	return null;
     }
 
     @Override

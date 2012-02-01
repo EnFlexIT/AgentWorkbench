@@ -63,6 +63,7 @@ public class GraphEdge extends GraphElement {
      * 
      * @return the copy
      */
+    @Override
     public GraphEdge getCopy() {
 
 	GraphEdge edgceCopy = new GraphEdge(new String(this.id), new String(this.componentType));

@@ -84,11 +84,12 @@ public class NetworkComponent implements Serializable {
      * @param prototypeClassName the prototype class name
      * @param directed the directed
      */
-    public NetworkComponent(String id, String type, String prototypeClassName, boolean directed) {
-		this.id = id;
-		this.type = type;
-		this.prototypeClassName = prototypeClassName;
-		this.directed = directed;
+    public NetworkComponent(String id, String type, String prototypeClassName, HashSet<GraphElement> graphElements, boolean directed) {
+	this.id = id;
+	this.type = type;
+	this.prototypeClassName = prototypeClassName;
+	setGraphElements(graphElements);
+	this.directed = directed;
     }
 
     /**
@@ -151,10 +152,10 @@ public class NetworkComponent implements Serializable {
      * @param graphElements the new graph elements
      */
     public void setGraphElements(HashSet<GraphElement> graphElements) {
-		for (GraphElement graphElement : graphElements) {
-		    String id = graphElement.getId();
-		    graphElementIDs.add(id);
-		}
+	for (GraphElement graphElement : graphElements) {
+	    String id = graphElement.getId();
+	    graphElementIDs.add(id);
+	}
     }
 
     /**

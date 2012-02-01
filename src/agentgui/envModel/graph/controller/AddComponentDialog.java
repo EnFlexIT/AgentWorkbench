@@ -466,7 +466,7 @@ public class AddComponentDialog extends JDialog implements ActionListener {
 	HashSet<GraphElement> graphElements = merge(networkModel.getGraph(), getVisualizationViewer().getGraphLayout().getGraph(), parentPickedVertex, pickedVertex);
 
 	// create new NetworkComponent
-	NetworkComponent newComponent = networkModel.addNetworkComponent(graphElement.getId(), selectedType, componentTypeSettings.get(selectedType).getGraphPrototype(), componentTypeSettings.get(selectedType).getAgentClass(), graphElement.isDirected(), graphElements);
+	NetworkComponent newComponent = networkModel.addNetworkComponent(graphElement.getId(), selectedType, componentTypeSettings.get(selectedType).getGraphPrototype(), graphElement.isDirected(), graphElements, componentTypeSettings.get(selectedType).getAgentClass());
 
 	this.graphController.refreshNetworkModel();
 	// Adding the new agent to the agent start list of the environment
