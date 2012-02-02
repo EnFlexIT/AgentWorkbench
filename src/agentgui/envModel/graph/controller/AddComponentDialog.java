@@ -70,6 +70,7 @@ import agentgui.envModel.graph.networkModel.GraphElement;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
+import agentgui.envModel.graph.prototypes.DistributionNode;
 import agentgui.envModel.graph.prototypes.GraphElementPrototype;
 import agentgui.envModel.graph.prototypes.Star3GraphElement;
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
@@ -104,93 +105,85 @@ public class AddComponentDialog extends JDialog implements ActionListener {
     private GraphElementPrototype graphElement = null; // @jve:decl-index=0:
 
     private JPanel jContentPane = null;
-    private JList componentTypesList = null;
-
-    private JScrollPane jScrollPane = null;
-
-    private GraphEnvironmentController graphController = null;
-
-    /**
-     * Graph visualization component
-     */
-    private VisualizationViewer<GraphNode, GraphEdge> visualizationViewer = null;
-
     private JPanel jPanelBottom = null;
+    private JPanel jPanelViewer = null;
+    private JScrollPane jScrollPane = null;
+    private JList componentTypesList = null;
+    private JLabel jLabelInstruction = null;
     private JButton jButtonOK = null;
     private JButton jButtonCancel = null;
-    private JPanel jPanelViewer = null;
-    private JLabel jLabelInstruction = null;
+
+    private GraphEnvironmentController graphController = null;
+    private VisualizationViewer<GraphNode, GraphEdge> visualizationViewer = null;
+
 
     /**
      * Gets the parent object and initializes.
-     * 
      * @param controller the GraphEnvironmentController
      */
     public AddComponentDialog(GraphEnvironmentController controller) {
-	super(Application.MainWindow);
-	this.graphController = controller;
-	initialize();
+		super(Application.MainWindow);
+		this.graphController = controller;
+		initialize();
     }
 
     /**
      * This method initializes this
-     * 
      * @return void
      */
     private void initialize() {
-	this.setSize(400, 450);
-	this.setModal(true);
-	this.setTitle(Language.translate("Select Network Component to Add", Language.EN));
-	this.setLocationRelativeTo(null);
-	this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-	this.setContentPane(getJContentPane());
+		this.setSize(400, 450);
+		this.setModal(true);
+		this.setTitle(Language.translate("Select Network Component to Add", Language.EN));
+		this.setLocationRelativeTo(null);
+		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		this.setContentPane(getJContentPane());
     }
 
     /**
      * This method initializes jContentPane
-     * 
      * @return javax.swing.JPanel
      */
     private JPanel getJContentPane() {
-	if (jContentPane == null) {
-	    GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
-	    gridBagConstraints4.gridx = 0;
-	    gridBagConstraints4.fill = GridBagConstraints.BOTH;
-	    gridBagConstraints4.weightx = 0.0;
-	    gridBagConstraints4.weighty = 0.5;
-	    gridBagConstraints4.insets = new Insets(5, 10, 0, 10);
-	    gridBagConstraints4.ipadx = 0;
-	    gridBagConstraints4.anchor = GridBagConstraints.CENTER;
-	    gridBagConstraints4.gridy = 2;
-	    GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
-	    gridBagConstraints11.fill = GridBagConstraints.BOTH;
-	    gridBagConstraints11.gridx = 0;
-	    gridBagConstraints11.gridy = 1;
-	    gridBagConstraints11.insets = new Insets(10, 12, 0, 10);
-	    GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
-	    gridBagConstraints3.gridx = 0;
-	    gridBagConstraints3.ipadx = 0;
-	    gridBagConstraints3.fill = GridBagConstraints.HORIZONTAL;
-	    gridBagConstraints3.insets = new Insets(10, 10, 10, 10);
-	    gridBagConstraints3.gridy = 3;
-	    GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
-	    gridBagConstraints2.fill = GridBagConstraints.BOTH;
-	    gridBagConstraints2.gridy = 0;
-	    gridBagConstraints2.ipadx = 0;
-	    gridBagConstraints2.ipady = 0;
-	    gridBagConstraints2.weightx = 1.0;
-	    gridBagConstraints2.weighty = 0.5;
-	    gridBagConstraints2.insets = new Insets(15, 10, 0, 10);
-	    gridBagConstraints2.gridx = 0;
-
-	    jContentPane = new JPanel();
-	    jContentPane.setLayout(new GridBagLayout());
-	    jContentPane.add(getJScrollPane(), gridBagConstraints2);
-	    jContentPane.add(getJBottomPanel(), gridBagConstraints3);
-	    jContentPane.add(getJLabel(), gridBagConstraints11);
-	    jContentPane.add(getJViewerPanel(), gridBagConstraints4);
-	}
-	return jContentPane;
+		if (jContentPane == null) {
+		    GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
+		    gridBagConstraints4.gridx = 0;
+		    gridBagConstraints4.fill = GridBagConstraints.BOTH;
+		    gridBagConstraints4.weightx = 0.0;
+		    gridBagConstraints4.weighty = 0.5;
+		    gridBagConstraints4.insets = new Insets(5, 10, 0, 10);
+		    gridBagConstraints4.ipadx = 0;
+		    gridBagConstraints4.anchor = GridBagConstraints.CENTER;
+		    gridBagConstraints4.gridy = 2;
+		    GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
+		    gridBagConstraints11.fill = GridBagConstraints.BOTH;
+		    gridBagConstraints11.gridx = 0;
+		    gridBagConstraints11.gridy = 1;
+		    gridBagConstraints11.insets = new Insets(10, 12, 0, 10);
+		    GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
+		    gridBagConstraints3.gridx = 0;
+		    gridBagConstraints3.ipadx = 0;
+		    gridBagConstraints3.fill = GridBagConstraints.HORIZONTAL;
+		    gridBagConstraints3.insets = new Insets(10, 10, 10, 10);
+		    gridBagConstraints3.gridy = 3;
+		    GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
+		    gridBagConstraints2.fill = GridBagConstraints.BOTH;
+		    gridBagConstraints2.gridy = 0;
+		    gridBagConstraints2.ipadx = 0;
+		    gridBagConstraints2.ipady = 0;
+		    gridBagConstraints2.weightx = 1.0;
+		    gridBagConstraints2.weighty = 0.5;
+		    gridBagConstraints2.insets = new Insets(15, 10, 0, 10);
+		    gridBagConstraints2.gridx = 0;
+	
+		    jContentPane = new JPanel();
+		    jContentPane.setLayout(new GridBagLayout());
+		    jContentPane.add(getJScrollPane(), gridBagConstraints2);
+		    jContentPane.add(getJBottomPanel(), gridBagConstraints3);
+		    jContentPane.add(getJLabel(), gridBagConstraints11);
+		    jContentPane.add(getJViewerPanel(), gridBagConstraints4);
+		}
+		return jContentPane;
     }
 
     /**
@@ -199,63 +192,61 @@ public class AddComponentDialog extends JDialog implements ActionListener {
      * @return javax.swing.JList
      */
     private JList getComponentTypesList() {
-	if (componentTypesList == null) {
-	    componentTypesList = new JList(getListData());
-	    componentTypesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-	    componentTypesList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
-		public void valueChanged(javax.swing.event.ListSelectionEvent e) {
-		    if (!e.getValueIsAdjusting()) {
-			String selected = (String) componentTypesList.getSelectedValue();
-			// Gets the class name of the GraphPrototype of the
-			// selected component type from the environment
-			// controller
-			String graphPrototype = graphController.getComponentTypeSettings().get(selected).getGraphPrototype();
-			// System.out.println("selected prototype: "+graphPrototype);
-			showPrototypePreview(graphPrototype);
-		    }
+		if (componentTypesList == null) {
+		    componentTypesList = new JList(getListData());
+		    componentTypesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		    componentTypesList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+			public void valueChanged(javax.swing.event.ListSelectionEvent e) {
+			    if (!e.getValueIsAdjusting()) {
+				String selected = (String) componentTypesList.getSelectedValue();
+				// Gets the class name of the GraphPrototype of the
+				// selected component type from the environment
+				// controller
+				String graphPrototype = graphController.getComponentTypeSettings().get(selected).getGraphPrototype();
+				// System.out.println("selected prototype: "+graphPrototype);
+				showPrototypePreview(graphPrototype);
+			    }
+			}
+		    });
 		}
-	    });
-	}
-	return componentTypesList;
+		return componentTypesList;
     }
 
     /**
      * This method takes the GraphPrototype class name as string and creates a graph of the prototype and shows a preview in the visualizationViewer
-     * 
      * @param graphPrototype
      */
     private void showPrototypePreview(String graphPrototype) {
-
-	graphElement = null;
-	try {
-	    Class<?> theClass;
-	    theClass = Class.forName(graphPrototype);
-	    graphElement = (GraphElementPrototype) theClass.newInstance();
-	} catch (ClassNotFoundException ex) {
-	    System.err.println(ex + " GraphElementPrototype class must be in class path.");
-	} catch (InstantiationException ex) {
-	    System.err.println(ex + " GraphElementPrototype class must be concrete.");
-	} catch (IllegalAccessException ex) {
-	    System.err.println(ex + " GraphElementPrototype class must have a no-arg constructor.");
-	}
-
-	if (graphElement != null) {
-	    // Generate and use the next unique network component ID
-	    String nextID = this.graphController.getNetworkModel().nextNetworkComponentID();
-	    graphElement.setId(nextID);
-	    graphElement.setType(componentTypesList.getSelectedValue().toString());
-
-	    // Create an empty graph and add the graphElement to it
-	    Graph<GraphNode, GraphEdge> graph = new SparseGraph<GraphNode, GraphEdge>();
-	    graphElement.addToGraph(graph);
-	    graphRepaint(graph);
-	}
+	
+		graphElement = null;
+		try {
+		    Class<?> theClass;
+		    theClass = Class.forName(graphPrototype);
+		    graphElement = (GraphElementPrototype) theClass.newInstance();
+		} catch (ClassNotFoundException ex) {
+		    System.err.println(ex + " GraphElementPrototype class must be in class path.");
+		} catch (InstantiationException ex) {
+		    System.err.println(ex + " GraphElementPrototype class must be concrete.");
+		} catch (IllegalAccessException ex) {
+		    System.err.println(ex + " GraphElementPrototype class must have a no-arg constructor.");
+		}
+	
+		if (graphElement != null) {
+		    // Generate and use the next unique network component ID
+		    String nextID = this.graphController.getNetworkModel().nextNetworkComponentID();
+		    graphElement.setId(nextID);
+		    graphElement.setType(componentTypesList.getSelectedValue().toString());
+	
+		    // Create an empty graph and add the graphElement to it
+		    Graph<GraphNode, GraphEdge> graph = new SparseGraph<GraphNode, GraphEdge>();
+		    graphElement.addToGraph(graph);
+		    graphRepaint(graph);
+		}
 
     }
 
     /**
      * Initializes label
-     * 
      * @return javax.swing.JLabel
      */
     private JLabel getJLabel() {
@@ -270,7 +261,6 @@ public class AddComponentDialog extends JDialog implements ActionListener {
 
     /**
      * This method initializes jScrollPane
-     * 
      * @return javax.swing.JScrollPane
      */
     private JScrollPane getJScrollPane() {
@@ -284,7 +274,6 @@ public class AddComponentDialog extends JDialog implements ActionListener {
 
     /**
      * Gets the list of componentTypeSettings from the controller and returns it as an array
-     * 
      * @return Object[] - array of component types
      */
     private Object[] getListData() {
@@ -304,139 +293,135 @@ public class AddComponentDialog extends JDialog implements ActionListener {
 
     /**
      * Initializes the VisualizationViewer
-     * 
      * @return The VisualizationViewer
      */
     private VisualizationViewer<GraphNode, GraphEdge> getVisualizationViewer() {
-	// create VisualizationViewer if it is not there
-	if (visualizationViewer == null) {
-	    // Define graph layout
-	    Graph<GraphNode, GraphEdge> graph = new SparseGraph<GraphNode, GraphEdge>();
-	    Layout<GraphNode, GraphEdge> layout = new CircleLayout<GraphNode, GraphEdge>(graph);
-	    layout.setSize(new Dimension(120, 120));
-	    // Create a new VisualizationViewer instance
-	    visualizationViewer = new VisualizationViewer<GraphNode, GraphEdge>(layout);
-
-	    visualizationViewer.setLayout(new GridBagLayout());
-
-	    // Translate the graph to the right to bring it to the center
-	    MutableTransformer mutableLayout = visualizationViewer.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT);
-	    mutableLayout.translate(120, 10);
-
-	    // Configure edge labels, show the icon
-	    visualizationViewer.getRenderContext().setEdgeLabelTransformer(new Transformer<GraphEdge, String>() {
-
-		@Override
-		public String transform(GraphEdge edge) {
-		    // Get the path of the Image from the component type
-		    // settings
-		    String edgeImage = graphController.getComponentTypeSettings().get(edge.getComponentType()).getEdgeImage();
-		    if (edgeImage != null) {
-			URL url = getClass().getResource(edgeImage);
-			if (url != null) {
-			    // If the image path is valid
-			    return "<html><img src=" + url + " height=16 width=16 >";
-			} else
-			    return "";
-		    } else
-			return "";
-		}
-	    });
-
-	    // Configure vertex colors
-	    visualizationViewer.getRenderContext().setVertexFillPaintTransformer(new Transformer<GraphNode, Paint>() {
-		public Paint transform(GraphNode arg0) {
-		    if (visualizationViewer.getPickedVertexState().isPicked(arg0)) {
-			// Highlight color when picked
-			return BasicGraphGui.DEFAULT_VERTEX_PICKED_COLOR;
-
-		    } else {
-			// Get the color from the component type settings
-			String colorString = graphController.getComponentTypeSettings().get("node").getColor();
-			if (colorString != null) {
-			    Color color = new Color(Integer.parseInt(colorString));
-			    return color;
-			} else {
-			    return BasicGraphGui.DEFAULT_VERTEX_COLOR;
+		// create VisualizationViewer if it is not there
+		if (visualizationViewer == null) {
+		    // Define graph layout
+		    Graph<GraphNode, GraphEdge> graph = new SparseGraph<GraphNode, GraphEdge>();
+		    Layout<GraphNode, GraphEdge> layout = new CircleLayout<GraphNode, GraphEdge>(graph);
+		    layout.setSize(new Dimension(120, 120));
+		    // Create a new VisualizationViewer instance
+		    visualizationViewer = new VisualizationViewer<GraphNode, GraphEdge>(layout);
+	
+		    visualizationViewer.setLayout(new GridBagLayout());
+	
+		    // Translate the graph to the right to bring it to the center
+		    MutableTransformer mutableLayout = visualizationViewer.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT);
+		    mutableLayout.translate(120, 10);
+	
+		    // Configure edge labels, show the icon
+		    visualizationViewer.getRenderContext().setEdgeLabelTransformer(new Transformer<GraphEdge, String>() {
+	
+			@Override
+			public String transform(GraphEdge edge) {
+			    // Get the path of the Image from the component type
+			    // settings
+			    String edgeImage = graphController.getComponentTypeSettings().get(edge.getComponentType()).getEdgeImage();
+			    if (edgeImage != null) {
+				URL url = getClass().getResource(edgeImage);
+				if (url != null) {
+				    // If the image path is valid
+				    return "<html><img src=" + url + " height=16 width=16 >";
+				} else
+				    return "";
+			    } else
+				return "";
 			}
-		    }
-		}
-	    });
-
-	    // Configure edge colors
-	    visualizationViewer.getRenderContext().setEdgeDrawPaintTransformer(new Transformer<GraphEdge, Paint>() {
-		public Paint transform(GraphEdge arg0) {
-		    if (visualizationViewer.getPickedEdgeState().isPicked(arg0)) {
-			// Highlight color when picked
-			return BasicGraphGui.DEFAULT_EDGE_PICKED_COLOR;
-
-		    } else {
-			// Get the color from the component type settings
-			String colorString = graphController.getComponentTypeSettings().get(arg0.getComponentType()).getColor();
-			if (colorString != null) {
-			    Color color = new Color(Integer.parseInt(colorString));
-			    return color;
-			} else {
-			    return BasicGraphGui.DEFAULT_EDGE_COLOR;
+		    });
+	
+		    // Configure vertex colors
+		    visualizationViewer.getRenderContext().setVertexFillPaintTransformer(new Transformer<GraphNode, Paint>() {
+				public Paint transform(GraphNode arg0) {
+				    if (visualizationViewer.getPickedVertexState().isPicked(arg0)) {
+						// Highlight color when picked
+						return BasicGraphGui.DEFAULT_VERTEX_PICKED_COLOR;
+				    } else {
+						// Get the color from the component type settings
+						String colorString = graphController.getComponentTypeSettings().get("node").getColor();
+						if (colorString != null) {
+						    Color color = new Color(Integer.parseInt(colorString));
+						    return color;
+						} else {
+						    return BasicGraphGui.DEFAULT_VERTEX_COLOR;
+						}
+				    }
+				}
+		    });
+	
+		    // Configure edge colors
+		    visualizationViewer.getRenderContext().setEdgeDrawPaintTransformer(new Transformer<GraphEdge, Paint>() {
+				public Paint transform(GraphEdge arg0) {
+				    if (visualizationViewer.getPickedEdgeState().isPicked(arg0)) {
+						// Highlight color when picked
+						return BasicGraphGui.DEFAULT_EDGE_PICKED_COLOR;
+		
+				    } else {
+						// Get the color from the component type settings
+						String colorString = graphController.getComponentTypeSettings().get(arg0.getComponentType()).getColor();
+						if (colorString != null) {
+						    Color color = new Color(Integer.parseInt(colorString));
+						    return color;
+						} else {
+						    return BasicGraphGui.DEFAULT_EDGE_COLOR;
+						}
+				    }
+				}
+		    });
+	
+		    // Use straight lines as edges
+		    visualizationViewer.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line<GraphNode, GraphEdge>());
+	
+		    // Set edge width
+		    visualizationViewer.getRenderContext().setEdgeStrokeTransformer(new Transformer<GraphEdge, Stroke>() {
+	
+			@Override
+			public Stroke transform(GraphEdge arg0) {
+			    return new BasicStroke(2);
 			}
-		    }
+	
+		    });
+	
+		    // Mouse plugin to be placed here
+		    PluggableGraphMouse pgm = new PluggableGraphMouse();
+		    pgm.add(new PickingGraphMousePlugin<GraphNode, GraphEdge>());
+		    visualizationViewer.setGraphMouse(pgm);
+		    visualizationViewer.setBackground(Color.WHITE);
+		    visualizationViewer.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+		    visualizationViewer.setPreferredSize(new Dimension(200, 200));
+	
 		}
-	    });
-
-	    // Use straight lines as edges
-	    visualizationViewer.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line<GraphNode, GraphEdge>());
-
-	    // Set edge width
-	    visualizationViewer.getRenderContext().setEdgeStrokeTransformer(new Transformer<GraphEdge, Stroke>() {
-
-		@Override
-		public Stroke transform(GraphEdge arg0) {
-		    return new BasicStroke(2);
-		}
-
-	    });
-
-	    // Mouse plugin to be placed here
-	    PluggableGraphMouse pgm = new PluggableGraphMouse();
-	    pgm.add(new PickingGraphMousePlugin<GraphNode, GraphEdge>());
-	    visualizationViewer.setGraphMouse(pgm);
-	    visualizationViewer.setBackground(Color.WHITE);
-	    visualizationViewer.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
-	    visualizationViewer.setPreferredSize(new Dimension(200, 200));
-
-	}
-	return visualizationViewer;
+		return visualizationViewer;
     }
 
     /**
      * Repaints/Refreshes the visualisation viewer, with the given graph
-     * 
      * @param graph The new graph to be painted
      */
     private void graphRepaint(Graph<GraphNode, GraphEdge> graph) {
-	Layout<GraphNode, GraphEdge> layout = new CircleLayout<GraphNode, GraphEdge>(graph);
-	layout.setSize(new Dimension(120, 120));
-
-	visualizationViewer.setGraphLayout(layout);
-	visualizationViewer.repaint();
-	jContentPane.repaint();
+		Layout<GraphNode, GraphEdge> layout = new CircleLayout<GraphNode, GraphEdge>(graph);
+		layout.setSize(new Dimension(120, 120));
+	
+		visualizationViewer.setGraphLayout(layout);
+		visualizationViewer.repaint();
+		jContentPane.repaint();
     }
 
     /**
      * This method initializes btnOK
-     * 
      * @return javax.swing.JButton
      */
     private JButton getBtnOK() {
-	if (jButtonOK == null) {
-	    jButtonOK = new JButton();
-	    jButtonOK.setText("OK");
-	    jButtonOK.setPreferredSize(new Dimension(80, 26));
-	    jButtonOK.setForeground(new Color(0, 153, 0));
-	    jButtonOK.setFont(new Font("Dialog", Font.BOLD, 12));
-	    jButtonOK.addActionListener(this);
-	}
-	return jButtonOK;
+		if (jButtonOK == null) {
+		    jButtonOK = new JButton();
+		    jButtonOK.setText("OK");
+		    jButtonOK.setPreferredSize(new Dimension(80, 26));
+		    jButtonOK.setForeground(new Color(0, 153, 0));
+		    jButtonOK.setFont(new Font("Dialog", Font.BOLD, 12));
+		    jButtonOK.addActionListener(this);
+		}
+		return jButtonOK;
     }
 
     /**
@@ -446,31 +431,30 @@ public class AddComponentDialog extends JDialog implements ActionListener {
      * @param pickedVertex - The vertex selected in the prototype preview which is to be used as common point for merging
      */
     private void addGraphPrototype(String selectedType, GraphNode pickedVertex) {
-
-	// Environment network model
-	NetworkModel networkModel = this.graphController.getNetworkModel();
-	// The Node picked in the parent graph
-	GraphNode parentPickedVertex = ((GraphEnvironmentControllerGUI) this.graphController.getEnvironmentPanel()).getGraphGUI().getPickedVertex();
-
-	HashMap<String, ComponentTypeSettings> componentTypeSettings = this.graphController.getComponentTypeSettings();
-
-	// Adding to an empty graph - starting from scratch
-	if (networkModel.getGraph().getVertexCount() == 0) {
-	    // Creating an initial dummy vertex on the parent graph so that the
-	    // same merge function can be used
-	    parentPickedVertex = new GraphNode(GraphNode.GRAPH_NODE_PREFIX + "0", new Point(30, 30));
-	    networkModel.getGraph().addVertex(parentPickedVertex);
-	}
-
-	// Adding the prototype element to the main graph
-	HashSet<GraphElement> graphElements = merge(networkModel.getGraph(), getVisualizationViewer().getGraphLayout().getGraph(), parentPickedVertex, pickedVertex);
-
-	// create new NetworkComponent
-	NetworkComponent newComponent = networkModel.addNetworkComponent(graphElement.getId(), selectedType, componentTypeSettings.get(selectedType).getGraphPrototype(), graphElement.isDirected(), graphElements, componentTypeSettings.get(selectedType).getAgentClass());
-
-	this.graphController.refreshNetworkModel();
-	// Adding the new agent to the agent start list of the environment
-	this.graphController.add2Agents2Start(newComponent);
+	
+		// Environment network model
+		NetworkModel networkModel = this.graphController.getNetworkModel();
+		// The Node picked in the parent graph
+		GraphNode parentPickedVertex = ((GraphEnvironmentControllerGUI) this.graphController.getEnvironmentPanel()).getGraphGUI().getPickedVertex();
+	
+		HashMap<String, ComponentTypeSettings> componentTypeSettings = this.graphController.getComponentTypeSettings();
+	
+		// Adding to an empty graph - starting from scratch
+		if (networkModel.getGraph().getVertexCount() == 0) {
+		    // Creating an initial dummy vertex on the parent graph so that the
+		    // same merge function can be used
+		    parentPickedVertex = new GraphNode(GraphNode.GRAPH_NODE_PREFIX + "0", new Point(30, 30));
+		    networkModel.getGraph().addVertex(parentPickedVertex);
+		}
+	
+		// Adding the prototype element to the main graph
+		HashSet<GraphElement> graphElements = merge(networkModel.getGraph(), getVisualizationViewer().getGraphLayout().getGraph(), parentPickedVertex, pickedVertex);
+	
+		// create new NetworkComponent
+		NetworkComponent newComponent = networkModel.addNetworkComponent(graphElement.getId(), selectedType, componentTypeSettings.get(selectedType).getGraphPrototype(), graphElement.isDirected(), graphElements, componentTypeSettings.get(selectedType).getAgentClass());
+		this.graphController.refreshNetworkModel();
+		// Adding the new agent to the agent start list of the environment
+		this.graphController.add2Agents2Start(newComponent);
 
     }
 
@@ -483,52 +467,52 @@ public class AddComponentDialog extends JDialog implements ActionListener {
      * @param v2 a vertex in g2
      */
     private HashSet<GraphElement> merge(Graph<GraphNode, GraphEdge> g1, Graph<GraphNode, GraphEdge> g2, GraphNode v1, GraphNode v2) {
-	// A mapping from vertices in g2 to the newly created corresponding
-	// vertices in g1
-	HashMap<GraphNode, GraphNode> map = new HashMap<GraphNode, GraphNode>();
-
-	// Create a HashSet containing the nodes and edges belonging to the new
-	// network component and return it
-	HashSet<GraphElement> elements = new HashSet<GraphElement>();
-
-	// Copy the vertices from g2 to g1
-	// Adding the common vertex to the elements set
-	elements.add(v1);
-	for (GraphNode v : g2.getVertices()) {
-	    if (v != v2) {
-		GraphNode newNode = new GraphNode();
-		// Generate the unique ID to be assigned to the new node
-		String nextID = graphController.getNetworkModel().nextNodeID();
-		newNode.setId(nextID);
-
-		// Set position of node v1+(v-v2)
-		int x = (int) (v1.getPosition().getX() + (getVisualizationViewer().getGraphLayout().transform(v).getX() - getVisualizationViewer().getGraphLayout().transform(v2).getX()));
-		int y = (int) (v1.getPosition().getY() + (getVisualizationViewer().getGraphLayout().transform(v).getY() - getVisualizationViewer().getGraphLayout().transform(v2).getY()));
-		newNode.setPosition(new Point(x, y));
-		g1.addVertex(newNode);
-		// inserting a mapping from g2 to g1 of corresponding nodes
-		map.put(v, newNode);
-		elements.add(newNode);
-	    }
-	}
-
-	// copy the edges from g2 to g1
-	EdgeType direction = (graphElement.isDirected()) ? EdgeType.DIRECTED : EdgeType.UNDIRECTED;
-
-	for (GraphEdge e : g2.getEdges()) {
-	    GraphNode front = g2.getEndpoints(e).getFirst();
-	    GraphNode back = g2.getEndpoints(e).getSecond();
-	    GraphEdge newEdge = new GraphEdge(e.getId(), graphElement.getType());
-	    if (front == v2) {
-		g1.addEdge(newEdge, v1, map.get(back), direction);
-	    } else if (back == v2) {
-		g1.addEdge(newEdge, map.get(front), v1, direction);
-	    } else {
-		g1.addEdge(newEdge, map.get(front), map.get(back), direction);
-	    }
-	    elements.add(newEdge);
-	}
-	return elements;
+		// A mapping from vertices in g2 to the newly created corresponding
+		// vertices in g1
+		HashMap<GraphNode, GraphNode> map = new HashMap<GraphNode, GraphNode>();
+	
+		// Create a HashSet containing the nodes and edges belonging to the new
+		// network component and return it
+		HashSet<GraphElement> elements = new HashSet<GraphElement>();
+	
+		// Copy the vertices from g2 to g1
+		// Adding the common vertex to the elements set
+		elements.add(v1);
+		for (GraphNode v : g2.getVertices()) {
+		    if (v != v2) {
+			GraphNode newNode = new GraphNode();
+			// Generate the unique ID to be assigned to the new node
+			String nextID = graphController.getNetworkModel().nextNodeID();
+			newNode.setId(nextID);
+	
+			// Set position of node v1+(v-v2)
+			int x = (int) (v1.getPosition().getX() + (getVisualizationViewer().getGraphLayout().transform(v).getX() - getVisualizationViewer().getGraphLayout().transform(v2).getX()));
+			int y = (int) (v1.getPosition().getY() + (getVisualizationViewer().getGraphLayout().transform(v).getY() - getVisualizationViewer().getGraphLayout().transform(v2).getY()));
+			newNode.setPosition(new Point(x, y));
+			g1.addVertex(newNode);
+			// inserting a mapping from g2 to g1 of corresponding nodes
+			map.put(v, newNode);
+			elements.add(newNode);
+		    }
+		}
+	
+		// copy the edges from g2 to g1
+		EdgeType direction = (graphElement.isDirected()) ? EdgeType.DIRECTED : EdgeType.UNDIRECTED;
+	
+		for (GraphEdge e : g2.getEdges()) {
+		    GraphNode front = g2.getEndpoints(e).getFirst();
+		    GraphNode back = g2.getEndpoints(e).getSecond();
+		    GraphEdge newEdge = new GraphEdge(e.getId(), graphElement.getType());
+		    if (front == v2) {
+			g1.addEdge(newEdge, v1, map.get(back), direction);
+		    } else if (back == v2) {
+			g1.addEdge(newEdge, map.get(front), v1, direction);
+		    } else {
+			g1.addEdge(newEdge, map.get(front), map.get(back), direction);
+		    }
+		    elements.add(newEdge);
+		}
+		return elements;
     }
 
     /**
@@ -537,24 +521,24 @@ public class AddComponentDialog extends JDialog implements ActionListener {
      * @return javax.swing.JPanel
      */
     private JPanel getJBottomPanel() {
-	if (jPanelBottom == null) {
-	    GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
-	    gridBagConstraints1.gridwidth = 1;
-	    gridBagConstraints1.anchor = GridBagConstraints.CENTER;
-	    gridBagConstraints1.insets = new Insets(5, 0, 5, 20);
-	    gridBagConstraints1.ipadx = 3;
-	    GridBagConstraints gridBagConstraints = new GridBagConstraints();
-	    gridBagConstraints.gridx = 1;
-	    gridBagConstraints.gridwidth = 1;
-	    gridBagConstraints.insets = new Insets(5, 20, 5, 0);
-	    gridBagConstraints.gridy = 0;
-	    jPanelBottom = new JPanel();
-	    jPanelBottom.setLayout(new GridBagLayout());
-	    jPanelBottom.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
-	    jPanelBottom.add(getBtnOK(), gridBagConstraints1);
-	    jPanelBottom.add(getBtnCancel(), gridBagConstraints);
-	}
-	return jPanelBottom;
+		if (jPanelBottom == null) {
+		    GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
+		    gridBagConstraints1.gridwidth = 1;
+		    gridBagConstraints1.anchor = GridBagConstraints.CENTER;
+		    gridBagConstraints1.insets = new Insets(5, 0, 5, 20);
+		    gridBagConstraints1.ipadx = 3;
+		    GridBagConstraints gridBagConstraints = new GridBagConstraints();
+		    gridBagConstraints.gridx = 1;
+		    gridBagConstraints.gridwidth = 1;
+		    gridBagConstraints.insets = new Insets(5, 20, 5, 0);
+		    gridBagConstraints.gridy = 0;
+		    jPanelBottom = new JPanel();
+		    jPanelBottom.setLayout(new GridBagLayout());
+		    jPanelBottom.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+		    jPanelBottom.add(getBtnOK(), gridBagConstraints1);
+		    jPanelBottom.add(getBtnCancel(), gridBagConstraints);
+		}
+		return jPanelBottom;
     }
 
     /**
@@ -563,15 +547,15 @@ public class AddComponentDialog extends JDialog implements ActionListener {
      * @return javax.swing.JButton
      */
     private JButton getBtnCancel() {
-	if (jButtonCancel == null) {
-	    jButtonCancel = new JButton();
-	    jButtonCancel.setText("Cancel");
-	    jButtonCancel.setPreferredSize(new Dimension(80, 26));
-	    jButtonCancel.setFont(new Font("Dialog", Font.BOLD, 12));
-	    jButtonCancel.setForeground(new Color(153, 0, 0));
-	    jButtonCancel.addActionListener(this);
-	}
-	return jButtonCancel;
+		if (jButtonCancel == null) {
+		    jButtonCancel = new JButton();
+		    jButtonCancel.setText("Cancel");
+		    jButtonCancel.setPreferredSize(new Dimension(80, 26));
+		    jButtonCancel.setFont(new Font("Dialog", Font.BOLD, 12));
+		    jButtonCancel.setForeground(new Color(153, 0, 0));
+		    jButtonCancel.addActionListener(this);
+		}
+		return jButtonCancel;
     }
 
     /**
@@ -580,14 +564,14 @@ public class AddComponentDialog extends JDialog implements ActionListener {
      * @return javax.swing.JPanel
      */
     private JPanel getJViewerPanel() {
-	if (jPanelViewer == null) {
-	    BorderLayout borderLayout = new BorderLayout();
-	    borderLayout.setHgap(0);
-	    jPanelViewer = new JPanel();
-	    jPanelViewer.setLayout(borderLayout);
-	    jPanelViewer.add(getVisualizationViewer(), BorderLayout.CENTER);
-	}
-	return jPanelViewer;
+		if (jPanelViewer == null) {
+		    BorderLayout borderLayout = new BorderLayout();
+		    borderLayout.setHgap(0);
+		    jPanelViewer = new JPanel();
+		    jPanelViewer.setLayout(borderLayout);
+		    jPanelViewer.add(getVisualizationViewer(), BorderLayout.CENTER);
+		}
+		return jPanelViewer;
     }
 
     /*
@@ -598,40 +582,51 @@ public class AddComponentDialog extends JDialog implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ae) {
 
-	if (ae.getSource().equals(getBtnOK())) {
-	    // --- OK button ---
-	    // check whether only one vertex is picked or not
-	    String selected = (String) componentTypesList.getSelectedValue();
-	    Set<GraphNode> nodeSet = getVisualizationViewer().getPickedVertexState().getPicked();
-	    if (nodeSet.size() == 1) {
-		// Picked one vertex
-		GraphNode pickedVertex = nodeSet.iterator().next();
-		// Check for Star prototype
-		if (graphElement instanceof Star3GraphElement) {
-		    // If the picked vertex is the center of the star, cannot
-		    // add
-		    Graph<GraphNode, GraphEdge> graph = getVisualizationViewer().getGraphLayout().getGraph();
-		    // All the edges in the graph or incident on the
-		    // pickedVertex => It is a center
-		    if (graph.getEdgeCount() == graph.getIncidentEdges(pickedVertex).size()) {
-			JOptionPane.showMessageDialog(this, Language.translate("Select a vertex other than the center of the star", Language.EN), Language.translate("Warning", Language.EN), JOptionPane.WARNING_MESSAGE);
-			return;
+		if (ae.getSource().equals(getBtnOK())) {
+		    // --- OK button ---
+		    // check whether only one vertex is picked or not
+		    String selected = (String) componentTypesList.getSelectedValue();
+		    Set<GraphNode> nodeSet = getVisualizationViewer().getPickedVertexState().getPicked();
+		    if (nodeSet.size() == 1) {
+				// Picked one vertex
+				GraphNode pickedVertex = nodeSet.iterator().next();
+				// Check for Star prototype
+				if (graphElement instanceof Star3GraphElement) {
+				    // If the picked vertex is the center of the star, cannot add
+				    Graph<GraphNode, GraphEdge> graph = getVisualizationViewer().getGraphLayout().getGraph();
+				    // All the edges in the graph or incident on the pickedVertex => It is a center
+				    if (graph.getEdgeCount() == graph.getIncidentEdges(pickedVertex).size()) {
+				    	JOptionPane.showMessageDialog(this, Language.translate("Select a vertex other than the center of the star", Language.EN), Language.translate("Warning", Language.EN), JOptionPane.WARNING_MESSAGE);
+				    	return;
+				    }
+				} else if (graphElement instanceof DistributionNode) {
+					// --- If the current selection of the main graph is also a DistributionNode => disallow ---
+					GraphNode nodeSelected = ((GraphEnvironmentControllerGUI) this.graphController.getEnvironmentPanel()).getGraphGUI().getPickedVertex();
+					HashSet<NetworkComponent> components = this.graphController.getNetworkModel().getNetworkComponent(nodeSelected);
+					NetworkComponent containsDistributionNode = this.graphController.getNetworkModel().componentListContainsDistributionNode(components);
+					if (containsDistributionNode!=null) {
+						String msg = "The selection in the main graph already contains a component of\n";
+						msg += "the type 'DistributionNode'. This is only allowed once at one node! ";
+						JOptionPane.showMessageDialog(this, Language.translate(msg, Language.EN), Language.translate("Warning", Language.EN), JOptionPane.WARNING_MESSAGE);
+						return;
+					}
+					
+				}
+				
+				addGraphPrototype(selected, pickedVertex);
+		
+				// this.setVisible(false);
+				this.dispose();
+	
+		    } else {
+		    	JOptionPane.showMessageDialog(this, Language.translate("Select one vertex", Language.EN), Language.translate("Warning", Language.EN), JOptionPane.WARNING_MESSAGE);
 		    }
+	
+		} else if (ae.getSource().equals(getBtnCancel())) {
+		    // --- Cancel button ---
+		    // this.setVisible(false);
+		    this.dispose();
 		}
-		addGraphPrototype(selected, pickedVertex);
-
-		// this.setVisible(false);
-		this.dispose();
-
-	    } else {
-		JOptionPane.showMessageDialog(this, Language.translate("Select one vertex", Language.EN), Language.translate("Warning", Language.EN), JOptionPane.WARNING_MESSAGE);
-	    }
-
-	} else if (ae.getSource().equals(getBtnCancel())) {
-	    // --- Cancel button ---
-	    // this.setVisible(false);
-	    this.dispose();
-	}
     }
 
 } // @jve:decl-index=0:visual-constraint="18,-13"

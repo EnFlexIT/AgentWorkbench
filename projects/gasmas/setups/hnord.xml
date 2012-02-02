@@ -419,13 +419,61 @@
             <postionNo>69</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>gasmas.agents.components.ExitAgent</agentClassReference>
-            <startAsName>bla</startAsName>
+            <startAsName>n70</startAsName>
         </agent>
         <agent>
             <postionNo>70</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>gasmas.agents.components.EntryAgent</agentClassReference>
             <startAsName>n69</startAsName>
+        </agent>
+        <agent>
+            <postionNo>71</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.PipeAgent</agentClassReference>
+            <startAsName>n71</startAsName>
+        </agent>
+        <agent>
+            <postionNo>72</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.PipeAgent</agentClassReference>
+            <startAsName>n72</startAsName>
+        </agent>
+        <agent>
+            <postionNo>73</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.BranchAgent</agentClassReference>
+            <startAsName>n73</startAsName>
+        </agent>
+        <agent>
+            <postionNo>74</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.BranchAgent</agentClassReference>
+            <startAsName>n74</startAsName>
+        </agent>
+        <agent>
+            <postionNo>75</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.ExitAgent</agentClassReference>
+            <startAsName>n75</startAsName>
+        </agent>
+        <agent>
+            <postionNo>76</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.PipeAgent</agentClassReference>
+            <startAsName>n76</startAsName>
+        </agent>
+        <agent>
+            <postionNo>77</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.BranchAgent</agentClassReference>
+            <startAsName>n77</startAsName>
+        </agent>
+        <agent>
+            <postionNo>78</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.PipeAgent</agentClassReference>
+            <startAsName>n78</startAsName>
         </agent>
     </agentSetup>
     <environmentFileName>HNord.graphml</environmentFileName>
