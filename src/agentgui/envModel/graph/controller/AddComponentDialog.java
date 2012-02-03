@@ -336,7 +336,7 @@ public class AddComponentDialog extends JDialog implements ActionListener {
 				public Paint transform(GraphNode arg0) {
 				    if (visualizationViewer.getPickedVertexState().isPicked(arg0)) {
 						// Highlight color when picked
-						return BasicGraphGui.DEFAULT_VERTEX_PICKED_COLOR;
+						return GeneralGraphSettings4MAS.DEFAULT_VERTEX_PICKED_COLOR;
 				    } else {
 						// Get the color from the component type settings
 						String colorString = graphController.getComponentTypeSettings().get("node").getColor();
@@ -344,7 +344,7 @@ public class AddComponentDialog extends JDialog implements ActionListener {
 						    Color color = new Color(Integer.parseInt(colorString));
 						    return color;
 						} else {
-						    return BasicGraphGui.DEFAULT_VERTEX_COLOR;
+						    return GeneralGraphSettings4MAS.DEFAULT_VERTEX_COLOR;
 						}
 				    }
 				}
@@ -355,7 +355,7 @@ public class AddComponentDialog extends JDialog implements ActionListener {
 				public Paint transform(GraphEdge arg0) {
 				    if (visualizationViewer.getPickedEdgeState().isPicked(arg0)) {
 						// Highlight color when picked
-						return BasicGraphGui.DEFAULT_EDGE_PICKED_COLOR;
+						return GeneralGraphSettings4MAS.DEFAULT_EDGE_PICKED_COLOR;
 		
 				    } else {
 						// Get the color from the component type settings
@@ -364,7 +364,7 @@ public class AddComponentDialog extends JDialog implements ActionListener {
 						    Color color = new Color(Integer.parseInt(colorString));
 						    return color;
 						} else {
-						    return BasicGraphGui.DEFAULT_EDGE_COLOR;
+						    return GeneralGraphSettings4MAS.DEFAULT_EDGE_COLOR;
 						}
 				    }
 				}

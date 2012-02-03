@@ -90,21 +90,6 @@ public class BasicGraphGui extends JPanel {
 
     private static final long serialVersionUID = 5764679914667183305L;
 
-    /** Default color to be used for Vertices in the graph */
-    public static Color DEFAULT_VERTEX_COLOR = Color.RED; // @jve:decl-index=0:
-    /** Default color to be used for Vertices in the graph when highlighted/picked. */
-    public static Color DEFAULT_VERTEX_PICKED_COLOR = Color.YELLOW; // @jve:decl-index=0:
-    /** Default color to be used for edges in the graph */
-    public static Color DEFAULT_EDGE_COLOR = Color.BLACK; // @jve:decl-index=0:
-    /** Default color to be used for edges in the graph when highlighted/picked. */
-    public static Color DEFAULT_EDGE_PICKED_COLOR = Color.CYAN; // @jve:decl-index=0:
-    /** Default vertex size of the nodes. */
-    public static Integer DEFAULT_VERTEX_SIZE = 10; // @jve:decl-index=0:
-    /** Default raster size for guide grid. */
-    public static Integer DEFAULT_RASTER_SIZE = 20; // @jve:decl-index=0:
-    /** Default width for edges. */
-    public static float DEFAULT_EDGE_WIDTH = 2;
-
     /** Environment model controller, to be passed by the parent GUI. */
     private GraphEnvironmentController controller = null; // @jve:decl-index=0:
 
@@ -403,13 +388,13 @@ public class BasicGraphGui extends JPanel {
 		ComponentTypeSettings cts = controller.getComponentTypeSettings().get("node");
 		if (cts==null) {
 			
-			String nodeColor = String.valueOf(DEFAULT_VERTEX_COLOR.getRGB());
+			String nodeColor = String.valueOf(GeneralGraphSettings4MAS.DEFAULT_VERTEX_COLOR.getRGB());
 			
 			cts = new ComponentTypeSettings();
 			cts.setShowLabel(true);
-			cts.setVertexSize(DEFAULT_VERTEX_SIZE);
+			cts.setVertexSize(GeneralGraphSettings4MAS.DEFAULT_VERTEX_SIZE);
 			cts.setSnap2Grid(true);
-			cts.setSnapRaster(DEFAULT_RASTER_SIZE);
+			cts.setSnapRaster(GeneralGraphSettings4MAS.DEFAULT_RASTER_SIZE);
 			cts.setColor(nodeColor);
 			controller.getComponentTypeSettings().put("node", cts);
 			
@@ -419,7 +404,7 @@ public class BasicGraphGui extends JPanel {
 		// --- Get the spread of the graph and correct the positions ------
 		// ----------------------------------------------------------------
 		if (cts.getSnapRaster()==0) {
-			this.graphMargin = DEFAULT_RASTER_SIZE;
+			this.graphMargin = GeneralGraphSettings4MAS.DEFAULT_RASTER_SIZE;
 		} else {
 			this.graphMargin = cts.getSnapRaster(); 
 		}
@@ -470,7 +455,7 @@ public class BasicGraphGui extends JPanel {
 				public Paint transform(GraphNode node) {
 					if(vViewer.getPickedVertexState().isPicked(node)) {
 						// --- Highlight color when picked ----------------	
-						return BasicGraphGui.DEFAULT_VERTEX_PICKED_COLOR;
+						return GeneralGraphSettings4MAS.DEFAULT_VERTEX_PICKED_COLOR;
 					} else {	
 						// --- Get color from component type settings -----
 						String colorString = null;
@@ -488,12 +473,12 @@ public class BasicGraphGui extends JPanel {
 							if(colorString!=null){
 								return new Color(Integer.parseInt(colorString));
 							} else {
-								return BasicGraphGui.DEFAULT_VERTEX_COLOR;
+								return GeneralGraphSettings4MAS.DEFAULT_VERTEX_COLOR;
 							}
 							
 						} catch(NullPointerException ex){
 							ex.printStackTrace();
-							return BasicGraphGui.DEFAULT_VERTEX_COLOR;					
+							return GeneralGraphSettings4MAS.DEFAULT_VERTEX_COLOR;					
 						}
 					}
 				}
@@ -515,7 +500,7 @@ public class BasicGraphGui extends JPanel {
 			public Paint transform(GraphEdge edge) {
 				if(vViewer.getPickedEdgeState().isPicked(edge)) {
 					//Highlight color when picked	
-					return BasicGraphGui.DEFAULT_EDGE_PICKED_COLOR;
+					return GeneralGraphSettings4MAS.DEFAULT_EDGE_PICKED_COLOR;
 					
 				} else {	// the color from the component type settings
 					try{
@@ -526,11 +511,11 @@ public class BasicGraphGui extends JPanel {
 							return color;
 						}
 						else
-							return BasicGraphGui.DEFAULT_EDGE_COLOR;
+							return GeneralGraphSettings4MAS.DEFAULT_EDGE_COLOR;
 					}
 					catch(NullPointerException ex){
 						ex.printStackTrace();
-						return BasicGraphGui.DEFAULT_EDGE_COLOR;							
+						return GeneralGraphSettings4MAS.DEFAULT_EDGE_COLOR;							
 					}
 						
 				}
@@ -584,17 +569,17 @@ public class BasicGraphGui extends JPanel {
 		vViewer.getRenderContext().setEdgeStrokeTransformer(new Transformer<GraphEdge, Stroke>(){
 			@Override
 			public Stroke transform(GraphEdge edge) {
-				float edgeWidth = BasicGraphGui.DEFAULT_EDGE_WIDTH;
+				float edgeWidth = GeneralGraphSettings4MAS.DEFAULT_EDGE_WIDTH;
 				try {
 					ComponentTypeSettings cts = controller.getComponentTypeSettings().get(edge.getComponentType());
 					edgeWidth = cts.getEdgeWidth();
 					if(edgeWidth==0) {
-						edgeWidth = BasicGraphGui.DEFAULT_EDGE_WIDTH;
+						edgeWidth = GeneralGraphSettings4MAS.DEFAULT_EDGE_WIDTH;
 					}  
 					
 				} catch (Exception e) {
 					e.printStackTrace();
-					edgeWidth = BasicGraphGui.DEFAULT_EDGE_WIDTH;
+					edgeWidth = GeneralGraphSettings4MAS.DEFAULT_EDGE_WIDTH;
 				}
 				return new BasicStroke(edgeWidth);
 			}
@@ -869,7 +854,7 @@ public class BasicGraphGui extends JPanel {
         		
 				public Integer transform(GraphNode node) {
 					
-					Integer size = BasicGraphGui.DEFAULT_VERTEX_SIZE; // default
+					Integer size = GeneralGraphSettings4MAS.DEFAULT_VERTEX_SIZE; // default
 					Integer sizeFromCTS = null;
 					
 					HashSet<NetworkComponent> componentHashSet = controller.getNetworkModel().getNetworkComponent(node);

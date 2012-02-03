@@ -44,6 +44,8 @@ public class ComponentTypeSettings implements Serializable {
 	
 	private static final long serialVersionUID = 2456632300628196922L;
 	
+	/** The domain in which this instance represents this component type */
+	private String domain;
 	/** The agent class representing this component type */
 	private String agentClass;
 	/** The GraphElementPrototype class representing this component type */
@@ -84,6 +86,22 @@ public class ComponentTypeSettings implements Serializable {
 		this.edgeImage = edgeImage;
 		this.color = color;
 	}
+	
+	/**
+	 * Sets the domain.
+	 * @param domain the new domain
+	 */
+	public void setDomain(String domain) {
+		this.domain = domain;
+	}
+	/**
+	 * Gets the domain.
+	 * @return the domain
+	 */
+	public String getDomain() {
+		return domain;
+	}
+	
 	/**
 	 * Returns the agent class
 	 * @return the agentClass
@@ -167,7 +185,6 @@ public class ComponentTypeSettings implements Serializable {
 	public boolean isShowLabel() {
 		return showLabel;
 	}
-	
 	
 	/**
 	 * Returns the vertex size of the node.
