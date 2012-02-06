@@ -110,7 +110,11 @@ public class AboutDialog extends JDialog implements ActionListener{
 						"Nils Loose<br>" +
 						"Christopher Nde<br>" +
 						"Marvin Steinberg<br>" +
-						"Tim Lewen</CENTER></HTML></BODY>";
+						"Tim Lewen<br>" +
+						"Satyadeep Karnati<br>" +
+						"David Pachula" +
+						"</CENTER></HTML></BODY>";
+		
 		
 		// --- Set the Look and Feel of the Dialog ------------------
 		if (Application.isServer==true) {

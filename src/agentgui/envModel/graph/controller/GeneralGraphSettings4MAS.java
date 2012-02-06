@@ -48,25 +48,33 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	
 	private static final long serialVersionUID = 7425147528482747232L;
 	
+	/** Default name for the first DomainSettings. */
+	public static String DEFAULT_DOMAIN_SETTINGS_NAME = "Default Domain";
 	/** Default width for edges. */
 	public static float DEFAULT_EDGE_WIDTH = 2;
-	/** Default raster size for guide grid. */
-	public static Integer DEFAULT_RASTER_SIZE = 20; 
-	/** Default vertex size of the nodes. */
-	public static Integer DEFAULT_VERTEX_SIZE = 10; 
+	/** Default color to be used for edges in the graph */
+	public static Color DEFAULT_EDGE_COLOR = Color.BLACK;
 	/** Default color to be used for edges in the graph when highlighted/picked. */
 	public static Color DEFAULT_EDGE_PICKED_COLOR = Color.CYAN; 
-	/** Default color to be used for edges in the graph */
-	public static Color DEFAULT_EDGE_COLOR = Color.BLACK; 
-	/** Default color to be used for Vertices in the graph when highlighted/picked. */
-	public static Color DEFAULT_VERTEX_PICKED_COLOR = Color.YELLOW; 
+	/** Default vertex size of the nodes. */
+	public static Integer DEFAULT_VERTEX_SIZE = 10;
 	/** Default color to be used for Vertices in the graph */
 	public static Color DEFAULT_VERTEX_COLOR = Color.RED; 
+	/** Default color to be used for Vertices in the graph when highlighted/picked. */
+	public static Color DEFAULT_VERTEX_PICKED_COLOR = Color.YELLOW; 
+	/** Default raster size for guide grid. */
+	public static Integer DEFAULT_RASTER_SIZE = 5; 
+	 
 	
 	/** The component type settings used in the {@link GraphEnvironmentController} */
 	private HashMap<String, ComponentTypeSettings> currentCTS = null;
 	/** The available domains used in the {@link GraphEnvironmentController} */
 	private HashMap<String, DomainSettings> currentDomainSettings = null;
+	
+	/** The snap2 grid. */
+	private boolean snap2Grid = true;
+	/** The snap raster. */
+	private double snapRaster = DEFAULT_RASTER_SIZE; 
 
 	
 	/**
@@ -129,6 +137,10 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 		if (currentDomainSettings==null) {
 			currentDomainSettings = new HashMap<String, DomainSettings>();
 		}
+		if (this.currentDomainSettings.size()==0) {
+			DomainSettings ds = new DomainSettings();
+			currentDomainSettings.put(DEFAULT_DOMAIN_SETTINGS_NAME, ds);
+		}
 		return currentDomainSettings;
 	}
 	/**
@@ -137,6 +149,36 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	 */
 	public void setDomainSettings(HashMap<String, DomainSettings> domainSettings) {
 		this.currentDomainSettings = domainSettings;
+	}
+
+	/**
+	 * Sets the snap2 grid.
+	 * @param snap2Grid the new snap2 grid
+	 */
+	public void setSnap2Grid(boolean snap2Grid) {
+		this.snap2Grid = snap2Grid;
+	}
+	/**
+	 * Checks if is snap2 grid.
+	 * @return true, if is snap2grid is true
+	 */
+	public boolean isSnap2Grid() {
+		return snap2Grid;
+	}
+
+	/**
+	 * Sets the snap raster.
+	 * @param snapRaster the new snap raster
+	 */
+	public void setSnapRaster(double snapRaster) {
+		this.snapRaster = snapRaster;
+	}
+	/**
+	 * Gets the snap raster.
+	 * @return the snap raster
+	 */
+	public double getSnapRaster() {
+		return snapRaster;
 	}
 	
 }

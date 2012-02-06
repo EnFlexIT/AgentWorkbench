@@ -30,6 +30,8 @@ package agentgui.envModel.graph.networkModel;
 
 import java.io.Serializable;
 
+import agentgui.envModel.graph.controller.GeneralGraphSettings4MAS;
+
 /**
  * The Class DomainSettings.
  */
@@ -38,9 +40,11 @@ public class DomainSettings implements Serializable {
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 469880829860930598L;
 	
-	/** The node configuration stored as ComponentTypeSettings. */
-	private ComponentTypeSettings nodeConfiguration = null; 
-	
+	private String ontologyClass = null;
+	private Integer vertexSize = GeneralGraphSettings4MAS.DEFAULT_VERTEX_SIZE; 
+	private String vertexColor = String.valueOf(GeneralGraphSettings4MAS.DEFAULT_VERTEX_COLOR.getRGB());
+	private String vertexColorPicked = String.valueOf(GeneralGraphSettings4MAS.DEFAULT_VERTEX_PICKED_COLOR.getRGB());
+	private boolean showLabel = true;
 	
 	/**
 	 * Instantiates a new domain settings.
@@ -49,18 +53,78 @@ public class DomainSettings implements Serializable {
 	}
 	
 	/**
-	 * Sets the node configuration.
-	 * @param nodeConfiguration the new node configuration
+	 * Gets the ontology class.
+	 * @return the ontologyClass
 	 */
-	public void setNodeConfiguration(ComponentTypeSettings nodeConfiguration) {
-		this.nodeConfiguration = nodeConfiguration;
+	public String getOntologyClass() {
+		return ontologyClass;
 	}
 	/**
-	 * Returns the node configuration.
-	 * @return the node configuration
+	 * Sets the ontology class.
+	 * @param ontologyClass the ontologyClass to set
 	 */
-	public ComponentTypeSettings getNodeConfiguration() {
-		return nodeConfiguration;
+	public void setOntologyClass(String ontologyClass) {
+		this.ontologyClass = ontologyClass;
+	}
+
+	/**
+	 * Gets the vertex size.
+	 * @return the vertexSize
+	 */
+	public Integer getVertexSize() {
+		return vertexSize;
+	}
+	/**
+	 * Sets the vertex size.
+	 * @param vertexSize the vertexSize to set
+	 */
+	public void setVertexSize(Integer vertexSize) {
+		this.vertexSize = vertexSize;
+	}
+
+	/**
+	 * Gets the vertex color.
+	 * @return the vertexColor
+	 */
+	public String getVertexColor() {
+		return vertexColor;
+	}
+	/**
+	 * Sets the vertex color.
+	 * @param vertexColor the vertexColor to set
+	 */
+	public void setVertexColor(String vertexColor) {
+		this.vertexColor = vertexColor;
+	}
+
+	/**
+	 * Gets the vertex color if vertex is picked.
+	 * @return the vertexColor
+	 */
+	public String getVertexColorPicked() {
+		return vertexColorPicked;
+	}
+	/**
+	 * Sets the vertex color for a picked vertex.
+	 * @param vertexColor the vertexColor to set
+	 */
+	public void setVertexColorPicked(String vertexColorPicked) {
+		this.vertexColorPicked = vertexColorPicked;
+	}
+	
+	/**
+	 * Checks if is show label.
+	 * @return the showLabel
+	 */
+	public boolean isShowLabel() {
+		return showLabel;
+	}
+	/**
+	 * Sets the show label.
+	 * @param showLabel the showLabel to set
+	 */
+	public void setShowLabel(boolean showLabel) {
+		this.showLabel = showLabel;
 	}
 	
 	

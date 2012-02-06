@@ -36,6 +36,7 @@ de;Aktualisiere Agenten-Liste...;Refreshing agent list
 de;Alle Objekte löschen;Delete all objects
 de;Alle Ontologien;All ontologies
 de;Alle Rechte vorbehalten.;All rights reserved.
+de;Allgemein;General;;;
 de;Alter Wert:;Old value:
 de;An Fenster anpassen;Fit to window;;;
 de;Ansicht:;View:
@@ -401,6 +402,7 @@ de;Suche nach Agenten beendet...;Search for agents finished...
 de;Suche nach der nächsten fehlenden Übersetzung (STRG+F);Search for the next missing translation (CTRL + F)
 de;Suche;Search
 de;Teil-Umgebung;environment part
+de;Teilnetze;Subnetworks;;;
 de;Text zur Übersetzung;Text to translate
 de;Topologie;Topology;;;
 de;Typ-Bezeichner;Type-Specifier
@@ -481,6 +483,7 @@ en;Bitte wählen Sie einen Knoten.;Select one vertex;;;
 en;Bitte wählen Sie einen gültigen Knoten;Select a valid vertex first;;;
 en;Bitte wählen Sie zuerst eine Kante;Select an edge first;;;
 en;Bitte wählen Sie zuerst einen Knoten mit einem Rechtsklick aus!;Right click a valid vertex first;;;
+en;Breite;Width;;;
 en;Der ausgewählte Knoten des Netzwerkes enthält bereits eine Komponente
 vom Typ 'DistributionNode'. Dies ist für einen Knoten jedoch nur einmal zulässig!;The selection in the main graph already contains a component of
 the type 'DistributionNode'. This is only allowed once at one node!;;;
@@ -488,6 +491,8 @@ en;Die Komponente ist bereits vorhanden!
   Bitte wählen Sie einen anderen Namen.;The component name already exists!
  Choose a different one.;;;
 en;Eigenschaften bearbeiten;Edit Properties;;;
+en;Farbe (Auswahl);Color picked;;;
+en;Farbe;Color;;;
 en;Graph importieren;Import Graph from file;;;
 en;Graph löschen;Clear graph;;;
 en;Graph-Prototyp;Graph-prototype;;;
@@ -499,12 +504,16 @@ en;Klicken;Click;;;
 en;Knoten verbinden;Merge two nodes;;;
 en;Knotenfarbe;Vertex Color;;;
 en;Knotengröße;Vertex Size;;;
+en;Knotengröße;Vertex size;;;
 en;Komponente hinzufügen;Add component;;;
 en;Komponente hinzufügen;Add new component;;;
 en;Komponente löschen;Delete Component;;;
 en;Komponentensuche;Search Components;;;
+en;Name;Name;;;
+en;Ontologie-Klasse;Ontology class;;;
 en;Optionen;Options;;;
 en;Sind Sie sicher, dass Sie den Graphen löschen wollen?;Are you sure that you want to clear the graph?;;;
+en;Teilnetz;Subnetwork;;;
 en;Typen-Bezeichnung;Type-Specifier;;;
 en;Umschalten auf Picking-Modus;Switch to Picking mode;;;
 en;Unschalten auf Transorming-Modus;Switch to Transforming mode;;;

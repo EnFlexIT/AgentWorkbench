@@ -57,6 +57,7 @@ import agentgui.core.sim.setup.SimulationSetups;
 import agentgui.core.sim.setup.SimulationSetupsChangeNotification;
 import agentgui.envModel.graph.controller.yedGraphml.YedGraphMLFileImporter;
 import agentgui.envModel.graph.networkModel.ComponentTypeSettings;
+import agentgui.envModel.graph.networkModel.DomainSettings;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
@@ -92,48 +93,37 @@ public class GraphEnvironmentController extends EnvironmentController {
     /** The key string used for saving the ontology representation in the GraphML file */
     private static final String KEY_ONTOLOGY_REPRESENTATION_PROPERTY = "ontoRepr";
 
-    /**
-     * The base file name used for saving the graph and the components (without suffix)
-     */
+    /** The base file name used for saving the graph and the components (without suffix) */
     private String baseFileName = null;
-    /**
-     * The network model currently loaded
-     */
+    /** The network model currently loaded */
     private NetworkModel networkModel = null;
 
-    /**
-     * Custom user object to be placed in the project object. Used here for storing the current component type settings.
-     */
-    // private GeneralGraphSettings4MAS generalGraphSettings4MAS = null;
+    /** Custom user object to be placed in the project object. Used here for storing the current component type settings. */
     private static final String generalGraphSettings4MASFile = "~GeneralGraphSettings~";
-    /**
-     * The GraphFileImporter used for importing externally defined graph definitions
-     */
+    
+    /** The GraphFileImporter used for importing externally defined graph definitions */
     private GraphFileImporter graphFileImporter = null;
-    /**
-     * The GraphMLWriter used to save the graph
-     */
+    /** The GraphMLWriter used to save the graph */
     private GraphMLWriter<GraphNode, GraphEdge> graphMLWriter = null;
 
     /**
-     * The constructor for the GraphEnvironmentController for displaying the current environment model during a running simulation. Use {@link #setEnvironmentModel(Object)}, in order to set the
-     * current {@link NetworkModel}.
+     * The constructor for the GraphEnvironmentController for displaying the current environment 
+     * model during a running simulation. Use {@link #setEnvironmentModel(Object)}, in order to 
+     * set the current {@link NetworkModel}.
      */
     public GraphEnvironmentController() {
     }
 
     /**
      * The constructor for the GraphEnvironmentController for configurations within Agent.GUI
-     * 
-     * @param project
-     *            The current project
+     * @param project The current project
      */
     public GraphEnvironmentController(Project project) {
-	super(project);
-	if (this.getProject() != null) {
-	    this.updateGraphFileName();
-	    this.loadEnvironment();
-	}
+		super(project);
+		if (this.getProject() != null) {
+		    this.updateGraphFileName();
+		    this.loadEnvironment();
+		}
     }
 
     /*
@@ -143,40 +133,41 @@ public class GraphEnvironmentController extends EnvironmentController {
      */
     @Override
     protected EnvironmentPanel createEnvironmentPanel() {
-	GraphEnvironmentControllerGUI graphDisplay = new GraphEnvironmentControllerGUI(this);
-	return graphDisplay;
+    	GraphEnvironmentControllerGUI graphDisplay = new GraphEnvironmentControllerGUI(this);
+    	return graphDisplay;
     }
 
     /**
-     * Set the SimulationSetup's ComponentTypeSettings property
-     * 
-     * @param gesVector
+     * Sets the project unsaved.
      */
-    public void setComponentTypeSettings(HashMap<String, ComponentTypeSettings> gesVector) {
-	this.networkModel.getGeneralGraphSettings4MAS().setCurrentCTS(gesVector);
-	if (this.getProject() != null) {
-	    this.getProject().isUnsaved = true;
-	}
+    public void setProjectUnsaved() {
+    	if (this.getProject() != null) {
+		    this.getProject().isUnsaved = true;
+		}
     }
-
+    
     /**
      * Gets the current ComponentTypeSettings
-     * 
      * @return HashMap<String, ComponentTypeSettings> The current component type settings map.
      */
     public HashMap<String, ComponentTypeSettings> getComponentTypeSettings() {
-	return this.networkModel.getGeneralGraphSettings4MAS().getCurrentCTS();
+    	return this.networkModel.getGeneralGraphSettings4MAS().getCurrentCTS();
     }
-
+    /**
+     * Returns the DomainSttings.
+     * @return the DomainSttings
+     */
+    public HashMap<String, DomainSettings> getDomainSettings() {
+    	return this.networkModel.getGeneralGraphSettings4MAS().getDomainSettings();
+    }
+    
     /**
      * This method imports a new network model using the GraphFileImporter
-     * 
-     * @param graphMLFile
-     *            The GraphML file defining the new graph.
+     * @param graphMLFile The GraphML file defining the new graph.
      */
     public void importNetworkModel(File graphMLFile) {
-	NetworkModel netModel = this.getGraphFileImporter().importGraphFromFile(graphMLFile);
-	this.setNetworkModel(netModel);
+		NetworkModel netModel = this.getGraphFileImporter().importGraphFromFile(graphMLFile);
+		this.setNetworkModel(netModel);
     }
 
     /**
@@ -185,39 +176,36 @@ public class GraphEnvironmentController extends EnvironmentController {
      * @return NetworkModel - The environment model
      */
     private void setNetworkModel(NetworkModel networkModel) {
-	this.networkModel = networkModel;
-	((GraphEnvironmentControllerGUI) this.getEnvironmentPanel()).setNetworkModel(networkModel);
-	if (getProject() != null) {
-	    getProject().isUnsaved = true;
-	}
+		this.networkModel = networkModel;
+		((GraphEnvironmentControllerGUI) this.getEnvironmentPanel()).setNetworkModel(networkModel);
+		if (getProject() != null) {
+		    getProject().isUnsaved = true;
+		}
     }
 
     /**
      * Returns the environment network model
-     * 
      * @return NetworkModel - The environment model
      */
     public NetworkModel getNetworkModel() {
-	return networkModel;
+    	return networkModel;
     }
 
     /**
      * Clears the network model by replacing with an empty graph and notifies observers
      */
     public void clearNetworkModel() {
-
-	// clear the network model objects
-	networkModel = new NetworkModel();
-	this.getAgents2Start().clear();
-
-	refreshNetworkModel();
+		// clear the network model objects
+		networkModel = new NetworkModel();
+		this.getAgents2Start().clear();
+		refreshNetworkModel();
     }
 
     /**
      * Can be used to notify the observers after changing the network model from outside. Also sets the project as unsaved
      */
     public void refreshNetworkModel() {
-	((GraphEnvironmentControllerGUI) this.getEnvironmentPanel()).refreshNetworkModel();
+    	((GraphEnvironmentControllerGUI) this.getEnvironmentPanel()).refreshNetworkModel();
     }
 
     /**
@@ -226,10 +214,10 @@ public class GraphEnvironmentController extends EnvironmentController {
      * @return GraphFileImporter
      */
     public GraphFileImporter getGraphFileImporter() {
-	if (graphFileImporter == null) {
-	    graphFileImporter = new YedGraphMLFileImporter(getComponentTypeSettings());
-	}
-	return graphFileImporter;
+		if (graphFileImporter == null) {
+		    graphFileImporter = new YedGraphMLFileImporter(getComponentTypeSettings());
+		}
+		return graphFileImporter;
     }
 
     /**
@@ -239,47 +227,47 @@ public class GraphEnvironmentController extends EnvironmentController {
      */
     private GraphMLWriter<GraphNode, GraphEdge> getGraphMLWriter() {
 
-	if (graphMLWriter == null) {
-	    graphMLWriter = new GraphMLWriter<GraphNode, GraphEdge>();
-	    graphMLWriter.setEdgeIDs(new Transformer<GraphEdge, String>() {
-
-		@Override
-		public String transform(GraphEdge arg0) {
-		    return arg0.getId();
+		if (graphMLWriter == null) {
+		    graphMLWriter = new GraphMLWriter<GraphNode, GraphEdge>();
+		    graphMLWriter.setEdgeIDs(new Transformer<GraphEdge, String>() {
+	
+			@Override
+			public String transform(GraphEdge arg0) {
+			    return arg0.getId();
+			}
+		    });
+		    graphMLWriter.setEdgeDescriptions(new Transformer<GraphEdge, String>() {
+	
+			@Override
+			public String transform(GraphEdge arg0) {
+			    return arg0.getComponentType();
+			}
+		    });
+		    graphMLWriter.setVertexIDs(new Transformer<GraphNode, String>() {
+	
+			@Override
+			public String transform(GraphNode arg0) {
+			    return arg0.getId();
+			}
+		    });
+		    graphMLWriter.addVertexData(KEY_POSITION_PROPERTY, "position", "", new Transformer<GraphNode, String>() {
+	
+			@Override
+			public String transform(GraphNode node) {
+			    String pos = node.getPosition().getX() + ":" + node.getPosition().getY();
+			    return pos;
+			}
+		    });
+		    graphMLWriter.addVertexData(KEY_ONTOLOGY_REPRESENTATION_PROPERTY, "Base64 encoded ontology representation", "", new Transformer<GraphNode, String>() {
+	
+			@Override
+			public String transform(GraphNode arg0) {
+			    return arg0.getEncodedOntologyRepresentation();
+			}
+		    });
+	
 		}
-	    });
-	    graphMLWriter.setEdgeDescriptions(new Transformer<GraphEdge, String>() {
-
-		@Override
-		public String transform(GraphEdge arg0) {
-		    return arg0.getComponentType();
-		}
-	    });
-	    graphMLWriter.setVertexIDs(new Transformer<GraphNode, String>() {
-
-		@Override
-		public String transform(GraphNode arg0) {
-		    return arg0.getId();
-		}
-	    });
-	    graphMLWriter.addVertexData(KEY_POSITION_PROPERTY, "position", "", new Transformer<GraphNode, String>() {
-
-		@Override
-		public String transform(GraphNode node) {
-		    String pos = node.getPosition().getX() + ":" + node.getPosition().getY();
-		    return pos;
-		}
-	    });
-	    graphMLWriter.addVertexData(KEY_ONTOLOGY_REPRESENTATION_PROPERTY, "Base64 encoded ontology representation", "", new Transformer<GraphNode, String>() {
-
-		@Override
-		public String transform(GraphNode arg0) {
-		    return arg0.getEncodedOntologyRepresentation();
-		}
-	    });
-
-	}
-	return graphMLWriter;
+		return graphMLWriter;
     }
 
     /**

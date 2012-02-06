@@ -56,6 +56,7 @@ import org.apache.commons.collections15.Transformer;
 import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.application.Language;
 import agentgui.envModel.graph.networkModel.ComponentTypeSettings;
+import agentgui.envModel.graph.networkModel.DomainSettings;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphElement;
 import agentgui.envModel.graph.networkModel.GraphNode;
@@ -383,31 +384,14 @@ public class BasicGraphGui extends JPanel {
 	public VisualizationViewer<GraphNode, GraphEdge> getNewVisualizationViewer(Graph<GraphNode, GraphEdge> graph){
 		
 		// ----------------------------------------------------------------
-		// --- Get the ComponentTypeSettings for nodes --------------------
+		// --- Get the layout settings for domains ------------------------
 		// ----------------------------------------------------------------
-		ComponentTypeSettings cts = controller.getComponentTypeSettings().get("node");
-		if (cts==null) {
-			
-			String nodeColor = String.valueOf(GeneralGraphSettings4MAS.DEFAULT_VERTEX_COLOR.getRGB());
-			
-			cts = new ComponentTypeSettings();
-			cts.setShowLabel(true);
-			cts.setVertexSize(GeneralGraphSettings4MAS.DEFAULT_VERTEX_SIZE);
-			cts.setSnap2Grid(true);
-			cts.setSnapRaster(GeneralGraphSettings4MAS.DEFAULT_RASTER_SIZE);
-			cts.setColor(nodeColor);
-			controller.getComponentTypeSettings().put("node", cts);
-			
-		}
+		final GeneralGraphSettings4MAS graphSettings = this.controller.getNetworkModel().getGeneralGraphSettings4MAS();
 		
 		// ----------------------------------------------------------------
 		// --- Get the spread of the graph and correct the positions ------
 		// ----------------------------------------------------------------
-		if (cts.getSnapRaster()==0) {
-			this.graphMargin = GeneralGraphSettings4MAS.DEFAULT_RASTER_SIZE;
-		} else {
-			this.graphMargin = cts.getSnapRaster(); 
-		}
+		this.graphMargin = graphSettings.getSnapRaster();
 		double moveX = 0;
 		double moveY = 0;
 
@@ -453,74 +437,113 @@ public class BasicGraphGui extends JPanel {
 		vViewer.getRenderContext().setVertexFillPaintTransformer(
 			new Transformer<GraphNode, Paint>() {
 				public Paint transform(GraphNode node) {
-					if(vViewer.getPickedVertexState().isPicked(node)) {
-						// --- Highlight color when picked ----------------	
-						return GeneralGraphSettings4MAS.DEFAULT_VERTEX_PICKED_COLOR;
-					} else {	
-						// --- Get color from component type settings -----
-						String colorString = null;
-						HashSet<NetworkComponent> componentHashSet = controller.getNetworkModel().getNetworkComponent(node);
-						NetworkComponent networkComponent = controller.getNetworkModel().componentListContainsDistributionNode(componentHashSet);
-						try{
-		            		// --- Get the vertex size from the component type settings -
-							if (networkComponent!=null) {
-								ComponentTypeSettings cts = controller.getComponentTypeSettings().get(networkComponent.getType());
-								colorString = cts.getColor();
-							} else {
-								ComponentTypeSettings cts = controller.getComponentTypeSettings().get("node");
-								colorString = cts.getColor();
+					
+					String defaultColorString = controller.getDomainSettings().get(GeneralGraphSettings4MAS.DEFAULT_DOMAIN_SETTINGS_NAME).getVertexColor();
+					Color defaultColor = new Color(Integer.parseInt(defaultColorString));
+					boolean picked = vViewer.getPickedVertexState().isPicked(node);
+
+					// --- Get color from component type settings -----
+					String colorString = null;
+					NetworkModel networkModel = controller.getNetworkModel();
+					HashSet<NetworkComponent> componentHashSet = networkModel.getNetworkComponent(node);
+					NetworkComponent networkComponent = networkModel.componentListContainsDistributionNode(componentHashSet);
+					try{
+	            		// --- Get the vertex size from the component type settings -
+						if (networkComponent!=null) {
+							ComponentTypeSettings cts = controller.getComponentTypeSettings().get(networkComponent.getType());
+							colorString = cts.getColor();
+							if (picked==true) {
+								DomainSettings ds = controller.getDomainSettings().get(cts.getDomain());
+								colorString = ds.getVertexColorPicked();
 							}
-							if(colorString!=null){
-								return new Color(Integer.parseInt(colorString));
-							} else {
-								return GeneralGraphSettings4MAS.DEFAULT_VERTEX_COLOR;
+						} else {
+							if (componentHashSet.iterator().hasNext()) {
+								NetworkComponent component = componentHashSet.iterator().next();
+								ComponentTypeSettings cts = controller.getComponentTypeSettings().get(component.getType());
+								DomainSettings ds = controller.getDomainSettings().get(cts.getDomain());
+								if (picked==true) {
+									colorString = ds.getVertexColorPicked();
+								} else {
+									colorString = ds.getVertexColor();	
+								}
 							}
-							
-						} catch(NullPointerException ex){
-							ex.printStackTrace();
-							return GeneralGraphSettings4MAS.DEFAULT_VERTEX_COLOR;					
 						}
+						if(colorString!=null){
+							return new Color(Integer.parseInt(colorString));
+						} else {
+							return defaultColor;
+						}
+						
+					} catch(NullPointerException ex){
+						ex.printStackTrace();
+						return defaultColor;					
 					}
 				}
 			} // end transformer
 		);
 		// --- Configure to show node labels ------------------------------
-		if (cts.isShowLabel()==true) {
-			vViewer.getRenderContext().setVertexLabelTransformer(
-					new Transformer<GraphNode, String>() {
-						@Override
-						public String transform(GraphNode node) {
-							return node.getId();
+		vViewer.getRenderContext().setVertexLabelTransformer(
+			new Transformer<GraphNode, String>() {
+				@Override
+				public String transform(GraphNode node) {
+					
+					NetworkModel nModel = controller.getNetworkModel();
+					HashSet<NetworkComponent> components = nModel.getNetworkComponent(node);
+					NetworkComponent distributionNode = nModel.componentListContainsDistributionNode(components);
+					if (distributionNode==null) {
+						if (components.iterator().hasNext()) {
+							String compType = components.iterator().next().getType();
+							ComponentTypeSettings cts = graphSettings.getCurrentCTS().get(compType);
+							DomainSettings ds = graphSettings.getDomainSettings().get(cts.getDomain());
+							if (ds.isShowLabel()) {
+								return node.getId();
+							} else {
+								return null;
+							}
 						}
-					});
-		}
+												
+					} else {
+						String compType = distributionNode.getType();
+						ComponentTypeSettings cts = graphSettings.getCurrentCTS().get(compType);
+						if (cts.isShowLabel()) {
+							return node.getId();
+						} else {
+							return null;
+						}
+						
+					}
+					return null;
+				}
+			} // end transformer
+		);
+	
 		// --- Configure edge colors --------------------------------------
 		vViewer.getRenderContext().setEdgeDrawPaintTransformer(
-		new Transformer<GraphEdge, Paint>() {
-			public Paint transform(GraphEdge edge) {
-				if(vViewer.getPickedEdgeState().isPicked(edge)) {
-					//Highlight color when picked	
-					return GeneralGraphSettings4MAS.DEFAULT_EDGE_PICKED_COLOR;
-					
-				} else {	// the color from the component type settings
-					try{
-						ComponentTypeSettings cts = controller.getComponentTypeSettings().get(edge.getComponentType());
-						String colorString = cts.getColor();
-						if(colorString!=null){
-							Color color = new Color(Integer.parseInt(colorString));							
-							return color;
-						}
-						else
-							return GeneralGraphSettings4MAS.DEFAULT_EDGE_COLOR;
-					}
-					catch(NullPointerException ex){
-						ex.printStackTrace();
-						return GeneralGraphSettings4MAS.DEFAULT_EDGE_COLOR;							
-					}
+			new Transformer<GraphEdge, Paint>() {
+				public Paint transform(GraphEdge edge) {
+					if(vViewer.getPickedEdgeState().isPicked(edge)) {
+						//Highlight color when picked	
+						return GeneralGraphSettings4MAS.DEFAULT_EDGE_PICKED_COLOR;
 						
+					} else {	// the color from the component type settings
+						try{
+							ComponentTypeSettings cts = controller.getComponentTypeSettings().get(edge.getComponentType());
+							String colorString = cts.getColor();
+							if(colorString!=null){
+								Color color = new Color(Integer.parseInt(colorString));							
+								return color;
+							}
+							else
+								return GeneralGraphSettings4MAS.DEFAULT_EDGE_COLOR;
+						}
+						catch(NullPointerException ex){
+							ex.printStackTrace();
+							return GeneralGraphSettings4MAS.DEFAULT_EDGE_COLOR;							
+						}
+							
+					}
 				}
 			}
-		}
 		);
 		// --- Configure Edge Image Labels --------------------------------			
 		vViewer.getRenderContext().setEdgeLabelTransformer(new Transformer<GraphEdge,String>() {	        	
@@ -854,19 +877,24 @@ public class BasicGraphGui extends JPanel {
         		
 				public Integer transform(GraphNode node) {
 					
-					Integer size = GeneralGraphSettings4MAS.DEFAULT_VERTEX_SIZE; // default
+					Integer size = controller.getDomainSettings().get(GeneralGraphSettings4MAS.DEFAULT_DOMAIN_SETTINGS_NAME).getVertexSize();
 					Integer sizeFromCTS = null;
 					
-					HashSet<NetworkComponent> componentHashSet = controller.getNetworkModel().getNetworkComponent(node);
-					NetworkComponent networkComponent = controller.getNetworkModel().componentListContainsDistributionNode(componentHashSet);
+					NetworkModel networkModel = controller.getNetworkModel();
+					HashSet<NetworkComponent> componentHashSet = networkModel.getNetworkComponent(node);
+					NetworkComponent networkComponent = networkModel.componentListContainsDistributionNode(componentHashSet);
 					try{
 	            		// --- Get the vertex size from the component type settings -
 						if (networkComponent!=null) {
 							ComponentTypeSettings cts = controller.getComponentTypeSettings().get(networkComponent.getType());
 			            	sizeFromCTS = (int)cts.getEdgeWidth();
 						} else {
-							ComponentTypeSettings cts = controller.getComponentTypeSettings().get("node");
-			            	sizeFromCTS = (int)cts.getVertexSize();
+							if (componentHashSet.iterator().hasNext()) {
+								NetworkComponent component = componentHashSet.iterator().next();
+								ComponentTypeSettings cts = controller.getComponentTypeSettings().get(component.getType());
+								DomainSettings ds = controller.getDomainSettings().get(cts.getDomain());
+				            	sizeFromCTS = ds.getVertexSize();
+							}
 						}
 		    			if(sizeFromCTS!=null){
 		    				size = sizeFromCTS;

@@ -658,7 +658,7 @@ public class NetworkModel implements Cloneable, Serializable {
      */
     public Point2D getShiftedPosition(GraphNode fixedNode, GraphNode shiftNode) {
     	
-    	double move = this.generalGraphSettings4MAS.getCurrentCTS().get("node").getSnapRaster();
+    	double move = this.generalGraphSettings4MAS.getSnapRaster();
     	
     	double fixedNodeX = fixedNode.getPosition().getX();
     	double fixedNodeY = fixedNode.getPosition().getY();
@@ -848,5 +848,6 @@ public class NetworkModel implements Cloneable, Serializable {
 		}
 		return false;
     }
+    
     
 }

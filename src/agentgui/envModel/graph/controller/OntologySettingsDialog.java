@@ -36,8 +36,11 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.ontologies.gui.OntologyInstanceViewer;
 import agentgui.core.project.Project;
+import agentgui.envModel.graph.networkModel.ComponentTypeSettings;
+import agentgui.envModel.graph.networkModel.DomainSettings;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
+import agentgui.envModel.graph.networkModel.NetworkModel;
 
 import java.awt.Dialog;
 import java.awt.event.ActionEvent;
@@ -51,6 +54,7 @@ import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.Font;
+import java.util.HashSet;
 /**
  * GUI component for setting the properties of an ontology object representing the domain view of a grid component
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
@@ -175,7 +179,7 @@ public class OntologySettingsDialog extends JDialog implements ActionListener{
 		if(element instanceof NetworkComponent){
 			NetworkComponent elemNetComp = (NetworkComponent)element;
 			// Initiate a new OIV using the NetworkComponents agent class
-			oiv = new OntologyInstanceViewer(project, this.graphController.getComponentTypeSettings().get(((NetworkComponent) element).getType()).getAgentClass());
+			oiv = new OntologyInstanceViewer(project, this.graphController.getComponentTypeSettings().get(elemNetComp.getType()).getAgentClass());
 			// If an ontology instance is defined for this component, let the OIV decode and load it 
 			if(elemNetComp.getEncodedOntologyRepresentation()!=null){
 				String[] encodedOntoRepresentation = new String[1];
@@ -186,17 +190,40 @@ public class OntologySettingsDialog extends JDialog implements ActionListener{
 		} else if(element instanceof GraphNode) {
 			// Obtain the ontology class name defined for nodes
 			String[] ontoClassName = new String[1];
-			ontoClassName[0] = this.graphController.getComponentTypeSettings().get("node").getAgentClass();
-			if (ontoClassName[0]==null || ontoClassName[0].equals("") ) {
-				return null;
-			}
-			// Initiate a new OIV with the class name
-			oiv = new OntologyInstanceViewer(project, ontoClassName);
-			// If an ontology instance is defined for this node, let the OIV decode and load it
-			if(((GraphNode)element).getEncodedOntologyRepresentation() != null){
-				String[] encodedOntoRepresentation = new String[1];
-				encodedOntoRepresentation[0]=((GraphNode)element).getEncodedOntologyRepresentation();
-				oiv.setConfigurationXML64(encodedOntoRepresentation);
+			GraphNode node = (GraphNode) element;
+			
+			NetworkModel networkModel = graphController.getNetworkModel();
+			HashSet<NetworkComponent> components = networkModel.getNetworkComponent(node); 
+			NetworkComponent component = networkModel.componentListContainsDistributionNode(components);
+			if (component==null) {
+				// --- Component is NOT DistributionNode --
+				component = components.iterator().next();
+				ComponentTypeSettings cts = graphController.getComponentTypeSettings().get(component.getType());
+				DomainSettings ds = graphController.getDomainSettings().get(cts.getDomain());
+				ontoClassName[0] = ds.getOntologyClass();
+				
+				if (ontoClassName[0]==null || ontoClassName[0].equals("") ) {
+					return null;
+				}
+				// Initiate a new OIV with the class name
+				oiv = new OntologyInstanceViewer(project, ontoClassName);
+				// If an ontology instance is defined for this node, let the OIV decode and load it
+				if(((GraphNode)element).getEncodedOntologyRepresentation() != null){
+					String[] encodedOntoRepresentation = new String[1];
+					encodedOntoRepresentation[0]=node.getEncodedOntologyRepresentation();
+					oiv.setConfigurationXML64(encodedOntoRepresentation);
+				}
+				
+			} else {
+				// --- Component IS DistributionNode ------
+				// Initiate a new OIV using the NetworkComponents agent class
+				oiv = new OntologyInstanceViewer(project, this.graphController.getComponentTypeSettings().get(component.getType()).getAgentClass());
+				// If an ontology instance is defined for this component, let the OIV decode and load it 
+				if(component.getEncodedOntologyRepresentation()!=null){
+					String[] encodedOntoRepresentation = new String[1];
+					encodedOntoRepresentation[0]=component.getEncodedOntologyRepresentation();
+					oiv.setConfigurationXML64(encodedOntoRepresentation);
+				}
 			}
 			
 		}

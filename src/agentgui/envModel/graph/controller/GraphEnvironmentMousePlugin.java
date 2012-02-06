@@ -40,7 +40,6 @@ import java.util.Vector;
 
 import javax.swing.SwingUtilities;
 
-import agentgui.envModel.graph.networkModel.ComponentTypeSettings;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
@@ -284,9 +283,8 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 		if (moveNodeWithLeftAction==true) {
 			
 			Graph<GraphNode, GraphEdge> graph = null;
-			ComponentTypeSettings cts = null;
-			boolean snapToGrid = false;
-			double snapRaster = 0;
+			boolean snapToGrid = myGUI.getGraphEnvironmentController().getNetworkModel().getGeneralGraphSettings4MAS().isSnap2Grid();
+			double snapRaster = myGUI.getGraphEnvironmentController().getNetworkModel().getGeneralGraphSettings4MAS().getSnapRaster();
 			
 			Iterator<GraphNode> pickedNodes = vv.getPickedVertexState().getPicked().iterator();
 			while(pickedNodes.hasNext()){
@@ -296,12 +294,6 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 					graph = myGUI.getGraphEnvironmentController().getNetworkModel().getGraph();
 					this.nodesMoved.removeAllElements();
 					this.removeAllTemporaryNodes(graph);
-				}
-				// --- Get the ComponentTypeSettings, if not already there ----
-				if (cts==null) {
-					cts = myGUI.getGraphEnvironmentController().getComponentTypeSettings().get("node");	
-					snapToGrid = cts.isSnap2Grid();
-					snapRaster = cts.getSnapRaster();
 				}
 				
 				// --- Get the position of the node ---------------------------

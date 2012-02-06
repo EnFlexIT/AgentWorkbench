@@ -30,6 +30,7 @@ package agentgui.envModel.graph.networkModel;
 
 import java.io.Serializable;
 
+import agentgui.envModel.graph.controller.GeneralGraphSettings4MAS;
 import agentgui.envModel.graph.prototypes.GraphElementPrototype;
 
 /**
@@ -59,13 +60,7 @@ public class ComponentTypeSettings implements Serializable {
 	/** Indicates if a label is visible or not. */
 	private boolean showLabel = true;
 	
-	/** The vertex size, used only for the component type settings of the key "node". */
-	private Integer vertexSize = null;
-	/** The vertex size, used only for the component type settings of the key "node". */
-	private boolean snap2Grid= false;
-	/** The vertex size, used only for the component type settings of the key "node". */
-	private double snapRaster = 0.0;
-
+	
 	/**
 	 * Default Constructor
 	 */
@@ -99,6 +94,12 @@ public class ComponentTypeSettings implements Serializable {
 	 * @return the domain
 	 */
 	public String getDomain() {
+		if (domain == null) {
+			domain = GeneralGraphSettings4MAS.DEFAULT_DOMAIN_SETTINGS_NAME;
+		}
+		if (domain.equals("")) {
+			domain = GeneralGraphSettings4MAS.DEFAULT_DOMAIN_SETTINGS_NAME;
+		}
 		return domain;
 	}
 	
@@ -116,6 +117,7 @@ public class ComponentTypeSettings implements Serializable {
 	public void setAgentClass(String agentClass) {
 		this.agentClass = agentClass;
 	}
+	
 	/**
 	 * @return the graphPrototype
 	 */
@@ -186,52 +188,5 @@ public class ComponentTypeSettings implements Serializable {
 		return showLabel;
 	}
 	
-	/**
-	 * Returns the vertex size of the node.
-	 * Used only for the component type settings of the key "node".
-	 * @return the vertex size as String. 
-	 */
-	public Integer getVertexSize(){
-		return this.vertexSize;
-	}
-	/**
-	 * Sets the vertex size of the node.
-	 * Used only for the component type settings of the key "node".
-	 * @param vertexSize
-	 */
-	public void setVertexSize(Integer vertexSize){
-		this.vertexSize = vertexSize;
-	}
 	
-	/**
-	 * Checks if is snap2 grid.
-	 * @return true, if is snap2 grid
-	 */
-	public boolean isSnap2Grid() {
-		return snap2Grid;
-	}
-	/**
-	 * Sets the snap2 grid.
-	 * @param snap2Grid the new snap2 grid
-	 */
-	public void setSnap2Grid(boolean snap2Grid) {
-		this.snap2Grid = snap2Grid;
-	}
-
-	/**
-	 * Sets the snap raster.
-	 * @param snapRaster the new snap raster
-	 */
-	public void setSnapRaster(double snapRaster) {
-		this.snapRaster = snapRaster;
-	}
-	/**
-	 * Gets the snap raster.
-	 * @return the snap raster
-	 */
-	public double getSnapRaster() {
-		return snapRaster;
-	}
-	
-
 }

@@ -464,11 +464,12 @@ public class BasicGraphGuiTools implements ActionListener {
 		if (ae.getSource() == getJButtonComponents()) {
 			// ------------------------------------------------------
 			// --- Edit the ComponentType settings ------------------
-			ComponentTypeDialog ctsDialog = new ComponentTypeDialog(this.controller.getComponentTypeSettings(), this.controller.getProject());
+			ComponentTypeDialog ctsDialog = new ComponentTypeDialog(this.controller.getNetworkModel().getGeneralGraphSettings4MAS(), this.controller.getProject());
 			ctsDialog.setVisible(true);
 			// - - - Waiting here - - -
 			if (ctsDialog.isCanceled()==false) {
-				this.controller.setComponentTypeSettings(ctsDialog.getComponentTypeSettings());
+				this.controller.getNetworkModel().setGeneralGraphSettings4MAS(ctsDialog.getGeneralGraphSettings4MAS());
+				this.controller.setProjectUnsaved();
 				this.controller.validateNetworkComponentAndAgents2Start();
 				basicGraphGui.setGraph(this.controller.getNetworkModel().getGraph());
 			}
