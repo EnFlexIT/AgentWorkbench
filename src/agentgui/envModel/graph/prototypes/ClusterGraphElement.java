@@ -29,9 +29,12 @@
 
 package agentgui.envModel.graph.prototypes;
 
-import java.util.ArrayList;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.HashSet;
+import java.util.Vector;
 
+import agentgui.envModel.graph.controller.BasicGraphGui;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphElement;
 import agentgui.envModel.graph.networkModel.GraphNode;
@@ -40,80 +43,56 @@ import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.EdgeType;
 
 /**
- * A graph / network element with a star arrangement. Specialy designed for a Cluster
+ * A graph / network element with a star arrangement. Specially designed for a Cluster. 
+ * This Prototype works already with concrete NetworkModel and with real GraphElements
  * 
  * @author David Pachula
  */
-public class ClusterGraphElement extends GraphElementPrototype {
+public class ClusterGraphElement extends StarGraphElement {
 
-    /**
-     * The vector of outernodes which forms the corners of the element.
-     */
-    ArrayList<GraphNode> outerNodes;
-
-    public ClusterGraphElement(ArrayList<GraphNode> outerNodes, String id) {
-	this.outerNodes = outerNodes;
-	this.id = id;
-    }
-
-    public HashSet<String> addToGraph(NetworkModel networkModel) {
-	HashSet<String> elements = new HashSet<String>();
-	// add central Node
-	GraphNode centralNode = new GraphNode();
-	centralNode.setId(networkModel.nextNodeID());
-	networkModel.getGraph().addVertex(centralNode);
-	elements.add(centralNode.getId());
-	// add Edges
-	int counter = -1;
-	for (GraphNode graphNode : outerNodes) {
-	    GraphEdge edge = new GraphEdge(id + "_" + counter++, getType());
-	    graph.addEdge(edge, centralNode, graphNode, EdgeType.UNDIRECTED);
-	    elements.add(edge.getId());
+	/**
+	 * Instantiates a new cluster graph element.
+	 * 
+	 * @param outerNodes the outer nodes
+	 * @param id the id
+	 */
+	public ClusterGraphElement(Vector<GraphNode> outerNodes, String id) {
+		this.outerNodes = outerNodes;
+		this.id = id;
 	}
-	return elements;
-    }
 
-    @Override
-    public HashSet<GraphElement> addAfter(Graph<GraphNode, GraphEdge> graph, GraphElementPrototype predecessor) {
-	// TODO Auto-generated method stub
-	return null;
-    }
-
-    @Override
-    public HashSet<GraphElement> addBefore(Graph<GraphNode, GraphEdge> graph, GraphElementPrototype successor) {
-	// TODO Auto-generated method stub
-	return null;
-    }
-
-    @Override
-    public HashSet<GraphElement> addBetween(Graph<GraphNode, GraphEdge> graph, GraphElementPrototype predecessor, GraphElementPrototype successor) {
-	// TODO Auto-generated method stub
-	return null;
-    }
-
-    @Override
-    public GraphNode getFreeEntry() {
-	for (GraphNode node : outerNodes) {
-	    if (graph.getNeighborCount(node) < 2) {
-		return node;
-	    }
+	/**
+	 * Adds the to graph new Nodes for the ClusteComponent
+	 * 
+	 * @param networkModel the network model
+	 * @return the hash set
+	 */
+	public HashSet<GraphElement> addToGraph(NetworkModel networkModel) {
+		HashSet<GraphElement> elements = new HashSet<GraphElement>(outerNodes);
+		// add central Node
+		GraphNode centralNode = new GraphNode();
+		centralNode.setId(networkModel.nextNodeID());
+		Rectangle2D rectangle = BasicGraphGui.getVerticesSpreadDimension(outerNodes);
+		centralNode.setPosition(new Point2D.Double((rectangle.getMinX() + rectangle.getMaxX()) / 2, (rectangle.getMinY() + rectangle.getMaxY()) / 2));
+		networkModel.getGraph().addVertex(centralNode);
+		elements.add(centralNode);
+		// add Edges
+		int counter = -1;
+		for (GraphNode graphNode : outerNodes) {
+			GraphEdge edge = new GraphEdge(id + "_" + counter++, getType());
+			graph.addEdge(edge, centralNode, graphNode, EdgeType.UNDIRECTED);
+			elements.add(edge);
+		}
+		return elements;
 	}
-	return null;
-    }
 
-    @Override
-    public GraphNode getFreeExit() {
-	return getFreeEntry();
-    }
-
-    @Override
-    public boolean isDirected() {
-	return false;
-    }
-
-    @Override
-    public HashSet<GraphElement> addToGraph(Graph<GraphNode, GraphEdge> graph) {
-	// TODO Auto-generated method stub
-	return null;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see agentgui.envModel.graph.prototypes.GraphElementPrototype#addToGraph(edu.uci.ics.jung.graph.Graph)
+	 */
+	@Override
+	public HashSet<GraphElement> addToGraph(Graph<GraphNode, GraphEdge> graph) {
+		return null;
+	}
 }

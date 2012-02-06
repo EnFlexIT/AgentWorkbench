@@ -29,64 +29,69 @@
 package agentgui.envModel.graph.networkModel;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * The Class ClusterNetworkComponent.
  */
 public class ClusterNetworkComponent extends NetworkComponent {
 
-    /** The Constant CLUSTER_PREFIX. */
-    public static final String CLUSTER_PREFIX = "C_";
+	/** The cluster network model. */
+	private NetworkModel clusterNetworkModel;
 
-    /** The cluster network model. */
-    private NetworkModel clusterNetworkModel;
+	/** The network component IDs. */
+	private ArrayList<String> networkComponentIDs = new ArrayList<String>();
 
-    /** The network component IDs. */
-    private ArrayList<String> networkComponentIDs = new ArrayList<String>();
+	public ClusterNetworkComponent(String id, String type, String prototypeClassName, HashSet<GraphElement> graphElements, boolean directed, ArrayList<String> networkComponentIDs,
+			NetworkModel clusterNetworkModel) {
+		super(id, type, prototypeClassName, graphElements, directed);
+		this.networkComponentIDs = networkComponentIDs;
+		this.clusterNetworkModel = clusterNetworkModel;
+	}
 
-    /**
-     * Sets the network component IDs.
-     * 
-     * @param networkComponentIDs the new network component IDs
-     */
-    public void setNetworkComponentIDs(ArrayList<String> networkComponentIDs) {
-	this.networkComponentIDs = networkComponentIDs;
-    }
+	/**
+	 * Sets the network component IDs.
+	 * 
+	 * @param networkComponentIDs the new network component IDs
+	 */
+	public void setNetworkComponentIDs(ArrayList<String> networkComponentIDs) {
+		this.networkComponentIDs = networkComponentIDs;
+	}
 
-    /**
-     * Gets the network component IDs.
-     * 
-     * @return the network component IDs
-     */
-    public ArrayList<String> getNetworkComponentIDs() {
-	return networkComponentIDs;
-    }
+	/**
+	 * Gets the network component IDs.
+	 * 
+	 * @return the network component IDs
+	 */
+	public ArrayList<String> getNetworkComponentIDs() {
+		return networkComponentIDs;
+	}
 
-    /**
-     * Sets the cluster network model.
-     * 
-     * @param clusterNetworkModel the new cluster network model
-     */
-    public void setClusterNetworkModel(NetworkModel clusterNetworkModel) {
-	this.clusterNetworkModel = clusterNetworkModel;
-    }
+	/**
+	 * Sets the cluster network model.
+	 * 
+	 * @param clusterNetworkModel the new cluster network model
+	 */
+	public void setClusterNetworkModel(NetworkModel clusterNetworkModel) {
+		this.clusterNetworkModel = clusterNetworkModel;
+	}
 
-    /**
-     * Gets the cluster network model.
-     * 
-     * @return the cluster network model
-     */
-    public NetworkModel getClusterNetworkModel() {
-	return clusterNetworkModel;
-    }
+	/**
+	 * Gets the cluster network model.
+	 * 
+	 * @return the cluster network model
+	 */
+	public NetworkModel getClusterNetworkModel() {
+		return clusterNetworkModel;
+	}
 
-    /**
-     * Gets the Component represented by an Edge of the Cluster
-     * 
-     * @param graphNode the graph node
-     * @return the receive
-     */
-    private NetworkComponent getReceive(GraphNode graphNode) {
-	return clusterNetworkModel.getNetworkComponent(graphNode).iterator().next();
-    }
+	/**
+	 * Gets the Component represented by Node and of the ClusterStar
+	 * 
+	 * @param graphNode the graph node
+	 * @return the receive
+	 */
+	private NetworkComponent getReceiver(GraphNode graphNode) {
+		return clusterNetworkModel.getNetworkComponent(graphNode).iterator().next();
+	}
 }

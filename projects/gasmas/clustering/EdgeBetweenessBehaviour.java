@@ -50,92 +50,89 @@ public class EdgeBetweenessBehaviour extends SimpleBehaviour {
 	private static final long serialVersionUID = -1944492299919314055L;
 
 	/** The environment model. */
-    private NetworkModel networkModel;
-    private EnvironmentModel environmentModel;
-    
-    /**
-     * Instantiates a new edge betweeness behaviour.
-     * 
-     * @param environmentModel the environment model
-     */
-    public EdgeBetweenessBehaviour(EnvironmentModel environmentModel) {
-    	this.environmentModel = environmentModel;
-    	this.networkModel = (NetworkModel) environmentModel.getDisplayEnvironment();
-    }
+	private NetworkModel networkModel;
+	private EnvironmentModel environmentModel;
 
-    /**
-     * action to cluster the network
-     * 
-     * @see jade.core.behaviours.Behaviour#action()
-     */
-    @Override
-    public void action() {
-		
-    	System.out.println("Begin Edge Betweness Cluster Analysis");
+	/**
+	 * Instantiates a new edge betweeness behaviour.
+	 * 
+	 * @param environmentModel the environment model
+	 */
+	public EdgeBetweenessBehaviour(EnvironmentModel environmentModel) {
+		this.environmentModel = environmentModel;
+		this.networkModel = (NetworkModel) environmentModel.getDisplayEnvironment();
+	}
+
+	/**
+	 * action to cluster the network
+	 * 
+	 * @see jade.core.behaviours.Behaviour#action()
+	 */
+	@Override
+	public void action() {
+
+		System.out.println("Begin Edge Betweness Cluster Analysis");
 		NetworkModel newNetModel = removeComponent(networkModel.getCopy());
 		for (int i = 0; i < 25; i++) {
-			newNetModel = removeComponent(newNetModel);	
+			newNetModel = removeComponent(newNetModel);
 		}
-	
-    }
 
-    /**
-     * identifies a removable Edge with the Jung EdgeBetwenessClusterer
-     * 
-     * @param graph
-     * @return
-     */
-
-    private GraphEdge removeEdge(Graph<GraphNode, GraphEdge> graph) {
-	EdgeBetweennessClusterer<GraphNode, GraphEdge> edgeBetweennessClusterer = new EdgeBetweennessClusterer<GraphNode, GraphEdge>(1);
-	edgeBetweennessClusterer.transform(graph);
-	List<GraphEdge> edges = edgeBetweennessClusterer.getEdgesRemoved();
-	if (edges.size() < 1) {
-	    return null;
 	}
-	return edges.get(0);
-    }
 
-    /**
-     * removes a component from the copy of the network model
-     * 
-     * TODO: this has to run recursive
-     * 
-     * @param networkModel
-     */
-    private NetworkModel removeComponent(NetworkModel networkModel) {
-		
-    	NetworkModel workingCopyNetworkModel = networkModel.getCopy();
+	/**
+	 * identifies a removable Edge with the Jung EdgeBetwenessClusterer
+	 * 
+	 * @param graph
+	 * @return
+	 */
+
+	private GraphEdge removeEdge(Graph<GraphNode, GraphEdge> graph) {
+		EdgeBetweennessClusterer<GraphNode, GraphEdge> edgeBetweennessClusterer = new EdgeBetweennessClusterer<GraphNode, GraphEdge>(1);
+		edgeBetweennessClusterer.transform(graph);
+		List<GraphEdge> edges = edgeBetweennessClusterer.getEdgesRemoved();
+		if (edges.size() < 1) {
+			return null;
+		}
+		return edges.get(0);
+	}
+
+	/**
+	 * removes a component from the copy of the network model
+	 * 
+	 * @param networkModel
+	 */
+	private NetworkModel removeComponent(NetworkModel networkModel) {
+
+		NetworkModel workingCopyNetworkModel = networkModel.getCopy();
 		GraphEdge edge = removeEdge(workingCopyNetworkModel.getGraph());
 		if (edge == null) {
-		    return networkModel;
+			return networkModel;
 		}
 		workingCopyNetworkModel.removeNetworkComponent(workingCopyNetworkModel.getNetworkComponent(edge));
-		System.out.println(workingCopyNetworkModel.getNetworkComponent(edge));
-	
+
 		this.networkModel.getAlternativeNetworkModel().put("EdgeBetweeness", workingCopyNetworkModel);
 		this.environmentModel.setDisplayEnvironment(this.networkModel);
-		
+
 		// --- Put the environment model into the SimulationService -
 		// --- in order to make it accessible for the whole agency --
 		try {
 			SimulationServiceHelper simHelper = (SimulationServiceHelper) myAgent.getHelper(SimulationService.NAME);
 			simHelper.setEnvironmentModel(this.environmentModel, true);
-		   
+
 		} catch (ServiceException e) {
-		    e.printStackTrace();
+			e.printStackTrace();
 		}
 		return workingCopyNetworkModel;
-    }
+	}
 
-    /**
-     * @see jade.core.behaviours.Behaviour#done()
-     * 
-     *      return if the Behaviour is finished or remains active
-     */
-    @Override
-    public boolean done() {
-	return true;
-    }
+	/**
+	 * @see jade.core.behaviours.Behaviour#done()
+	 * 
+	 *      return if the Behaviour is finished or remains active
+	 */
+	@Override
+	public boolean done() {
+		return true;
+	}
 
 }

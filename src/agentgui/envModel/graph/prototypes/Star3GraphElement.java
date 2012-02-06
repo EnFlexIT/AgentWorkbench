@@ -30,8 +30,6 @@
 package agentgui.envModel.graph.prototypes;
 
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Vector;
 
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphElement;
@@ -44,129 +42,86 @@ import edu.uci.ics.jung.graph.util.EdgeType;
  * 
  * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati
  */
-public class Star3GraphElement extends GraphElementPrototype {
-    /**
-     * The number of corners or edges of the graph prototype
-     */
-    private Integer n = null;
+public class Star3GraphElement extends StarGraphElement {
+	/**
+	 * The number of corners or edges of the graph prototype
+	 */
+	private Integer n = null;
 
-    /** The vector of outernodes which forms the corners of the element. */
-    private Vector<GraphNode> outerNodes;
-
-    /** The central node of the element, to which all outernodes are connected. */
-    private GraphNode centralNode;
-
-    /**
-     * Default constructor with 3 corners
-     */
-    public Star3GraphElement() {
+	/**
+	 * Default constructor with 3 corners
+	 */
+	public Star3GraphElement() {
 		super();
 		n = 3;
-		outerNodes = new Vector<GraphNode>();
-    }
+	}
 
-    /**
-     * Constructor for creating the Star prototype with 'n' connection points
-     * 
-     * @param n the number of connection points
-     */
-    public Star3GraphElement(Integer n) {
+	/**
+	 * Constructor for creating the Star prototype with 'n' connection points
+	 * 
+	 * @param n the number of connection points
+	 */
+	public Star3GraphElement(Integer n) {
 		super();
 		if (n >= 3) {
-		    this.n = n;
-		    outerNodes = new Vector<GraphNode>();
+			this.n = n;
 		} else {
-		    throw new GraphElementPrototypeException("Number of connection points should be greater than 3");
+			throw new GraphElementPrototypeException("Number of connection points should be greater than 3");
 		}
-    }
+	}
 
-    @Override
-    public HashSet<GraphElement> addToGraph(Graph<GraphNode, GraphEdge> graph) {
-    	// check if n is set
+	@Override
+	public HashSet<GraphElement> addToGraph(Graph<GraphNode, GraphEdge> graph) {
+		// check if n is set
 		if (n != null) {
-		    this.graph = graph;
-		    // Create a HashSet for the nodes and edges
-		    HashSet<GraphElement> elements = new HashSet<GraphElement>();
-	
-		    // Create central node and add to the graph
-		    centralNode = new GraphNode();
-		    centralNode.setId(GraphNode.GRAPH_NODE_PREFIX + (nodeCounter++));
-		    graph.addVertex(centralNode);
-		    elements.add(centralNode);
-	
-		    // Creating outer nodes and edges
-		    for (int i = 0; i < n; i++) {
+			this.graph = graph;
+			// Create a HashSet for the nodes and edges
+			HashSet<GraphElement> elements = new HashSet<GraphElement>();
+
+			// Create central node and add to the graph
+			GraphNode centralNode = new GraphNode();
+			centralNode.setId(GraphNode.GRAPH_NODE_PREFIX + (nodeCounter++));
+			graph.addVertex(centralNode);
+			elements.add(centralNode);
+
+			// Creating outer nodes and edges
+			for (int i = 0; i < n; i++) {
 				// Create the node and add to the vector
 				GraphNode node = new GraphNode();
 				node.setId(GraphNode.GRAPH_NODE_PREFIX + (nodeCounter++));
 				outerNodes.add(node);
 				elements.add(node);
-		
+
 				// Creating edge
 				GraphEdge edge = new GraphEdge(getId() + "_" + i, getType());
-		
+
 				// Adding to the graph
 				graph.addVertex(node);
 				graph.addEdge(edge, centralNode, node, EdgeType.UNDIRECTED);
 				elements.add(edge);
-		    }
-		    return elements;
-		    
-		} else {
-		    throw new GraphElementPrototypeException("Number of connection points (n) is null");
+			}
+			return elements;
+
 		}
-    }
+		throw new GraphElementPrototypeException("Number of connection points (n) is null");
+	}
 
-    @Override
-    public HashSet<GraphElement> addAfter(Graph<GraphNode, GraphEdge> graph, GraphElementPrototype predecessor) {
-		return null;
-    }
+	/**
+	 * Gets the n.
+	 * 
+	 * @return the number of corners
+	 */
+	public Integer getN() {
+		return n;
+	}
 
-    @Override
-    public HashSet<GraphElement> addBefore(Graph<GraphNode, GraphEdge> graph, GraphElementPrototype successor) {
-    	return null;
-    }
+	/**
+	 * Set the number of corners
+	 * 
+	 * @param n the number of corners
+	 */
+	public void setN(Integer n) {
+		this.n = n;
+	}
 
-    @Override
-    public HashSet<GraphElement> addBetween(Graph<GraphNode, GraphEdge> graph, GraphElementPrototype predecessor, GraphElementPrototype successor) {
-    	return null;
-    }
-
-    @Override
-    public GraphNode getFreeEntry() {
-		Iterator<GraphNode> iter = outerNodes.iterator();
-		while (iter.hasNext()) {
-		    GraphNode node = iter.next();
-		    if (graph.getNeighborCount(node) < 2) {
-		    	return node;
-		    }
-		}
-		return null;
-    }
-
-    @Override
-    public GraphNode getFreeExit() {
-    	return getFreeEntry();
-    }
-
-    @Override
-    public boolean isDirected() {
-    	return false;
-    }
-
-    /**
-     * Gets the n.
-     * @return the number of corners
-     */
-    public Integer getN() {
-    	return n;
-    }
-    /**
-     * Set the number of corners
-     * @param n the number of corners
-     */
-    public void setN(Integer n) {
-    	this.n = n;
-    }
-    
 }
