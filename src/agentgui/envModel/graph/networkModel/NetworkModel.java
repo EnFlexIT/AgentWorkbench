@@ -352,6 +352,7 @@ public class NetworkModel implements Cloneable, Serializable {
 		GraphNode graphNode = (GraphNode) this.getGraphElement(graphElementID);
 		// TODO: quickfix hier kommt ein leerer GraphNode raus
 		if (graphNode == null) {
+			System.out.println("distribution Node Problem");
 			return;
 		}
 		this.splitNetworkModelAtNode(graphNode);
@@ -402,19 +403,14 @@ public class NetworkModel implements Cloneable, Serializable {
 			// ----------------------------------------------------------------
 			for (String graphElementID : component.getGraphElementIDs()) {
 				GraphElement graphElement = this.getGraphElement(graphElementID);
-				if (graphElement instanceof GraphEdge) {
-					this.graph.removeEdge((GraphEdge) graphElement);
-					// --- Remove from the HashMap of GraphElements -----------
-					this.graphElements.remove(graphElement.getId());
-				} else if (graphElement instanceof GraphNode && (this.getNetworkComponents((GraphNode) graphElement).size() == 1)) {
+				if (graphElement instanceof GraphNode && (this.getNetworkComponents((GraphNode) graphElement).size() < 2)) {
 					this.graph.removeVertex((GraphNode) graphElement);
-					// --- Remove from the HashMap of GraphElements -----------
-					graphElements.remove(graphElement.getId());
 				}
 			}
 			// ----------------------------------------------------------------
 		}
 		networkComponents.remove(component.getId());
+		refreshGraphElements();
 	}
 
 	/**
@@ -484,9 +480,13 @@ public class NetworkModel implements Cloneable, Serializable {
 	 * @return the network component by graph edge id
 	 */
 	public NetworkComponent getNetworkComponent(GraphEdge graphEdge) {
-		String[] componentID = graphEdge.getId().split("_");
-		// gets the networkComponent by removing the last part of the ID containing the edge no
-		return getNetworkComponent(graphEdge.getId().replace("_" + componentID[componentID.length - 1], ""));
+		for (NetworkComponent networkComponent : this.networkComponents.values()) {
+			if (networkComponent.getGraphElementIDs().contains(graphEdge.getId())) {
+				return networkComponent;
+			}
+		}
+		System.out.println("Edge not part of Component");
+		return null;
 	}
 
 	/**
@@ -512,12 +512,6 @@ public class NetworkModel implements Cloneable, Serializable {
 	public HashSet<NetworkComponent> getNetworkComponents(GraphNode graphNode) {
 		HashSet<NetworkComponent> networkComponents = new HashSet<NetworkComponent>();
 		for (NetworkComponent networkComponent : this.networkComponents.values()) {
-			if (graphNode == null) {
-				System.out.println("node arsch");
-			}
-			if (networkComponent.getGraphElementIDs() == null) {
-				System.out.println(networkComponent.getId());
-			}
 			if (networkComponent.getGraphElementIDs().contains(graphNode.getId())) {
 				networkComponents.add(networkComponent);
 			}
@@ -532,37 +526,6 @@ public class NetworkModel implements Cloneable, Serializable {
 	 */
 	public HashMap<String, NetworkComponent> getNetworkComponents() {
 		return networkComponents;
-	}
-
-	/**
-	 * Replace NetworkComponents by one ClusterComponent.
-	 * 
-	 * @param networkComponents A List of NetworkComponents
-	 */
-	public ClusterNetworkComponent replaceComonentsByCluster(HashSet<NetworkComponent> networkComponents) {
-		// ---------- Prepare Parameters for ClusterComponent ------------------------------
-		NetworkModel clusterNetworkModel = this.getCopy();
-		clusterNetworkModel.alternativeNetworkModel = null;
-		clusterNetworkModel.removeInverseNetworkComponents(networkComponents);
-		Vector<GraphNode> outerNodes = new Vector<GraphNode>();
-		for (NetworkComponent networkComponent : networkComponents) {
-			for (GraphNode graphNode : getNodesFromNetworkComponent(networkComponent)) {
-				if (isFreeNode(graphNode)) {
-					outerNodes.add(graphNode);
-					System.out.println(graphNode.getId());
-				}
-			}
-		}
-		// ----------- Create Cluster Prototype and Component ---------------------
-		String clusterComponentID = nextNetworkComponentID();
-		ClusterGraphElement clusterGraphElement = new ClusterGraphElement(outerNodes, clusterComponentID);
-		HashSet<GraphElement> clusterElements = new ClusterGraphElement(outerNodes, clusterComponentID).addToGraph(this);
-		ClusterNetworkComponent clusterNetworkComponent = new ClusterNetworkComponent(clusterComponentID, clusterGraphElement.getType(), "ClusterGraphElement", clusterElements,
-				clusterGraphElement.isDirected(), NetworkModel.networkComponentsIDs(networkComponents), clusterNetworkModel);
-		// --------- remove clustered etworkComponent from this NetworkModel and add clusterComponent -----
-		removeNetworkComponents(networkComponents);
-		this.networkComponents.put(clusterNetworkComponent.getId(), clusterNetworkComponent);
-		return clusterNetworkComponent;
 	}
 
 	/**
@@ -907,6 +870,41 @@ public class NetworkModel implements Cloneable, Serializable {
 		return false;
 	}
 
+	/**
+	 * Replace NetworkComponents by one ClusterComponent.
+	 * 
+	 * @param networkComponents A List of NetworkComponents
+	 */
+	public ClusterNetworkComponent replaceComonentsByCluster(HashSet<NetworkComponent> networkComponents) {
+		// ---------- Prepare Parameters for ClusterComponent ------------------------------
+		NetworkModel clusterNetworkModel = this.getCopy();
+		clusterNetworkModel.setAlternativeNetworkModel(null);
+		clusterNetworkModel.removeInverseNetworkComponents(networkComponents);
+		removeNetworkComponents(networkComponents);
+
+		Vector<GraphNode> outerNodes = new Vector<GraphNode>();
+		for (NetworkComponent networkComponent : networkComponents) {
+			for (GraphNode graphNode : getNodesFromNetworkComponent(networkComponent)) {
+				if (isFreeNode(graphNode)) {
+					outerNodes.add(graphNode);
+				}
+			}
+		}
+		// ----------- Create Cluster Prototype and Component ---------------------
+		String clusterComponentID = nextNetworkComponentID();
+		ClusterGraphElement clusterGraphElement = new ClusterGraphElement(outerNodes, clusterComponentID);
+		HashSet<GraphElement> clusterElements = new ClusterGraphElement(outerNodes, clusterComponentID).addToGraph(this);
+		ClusterNetworkComponent clusterNetworkComponent = new ClusterNetworkComponent(clusterComponentID, clusterGraphElement.getType(), "ClusterGraphElement", clusterElements,
+				clusterGraphElement.isDirected(), NetworkModel.networkComponentsIDs(networkComponents), clusterNetworkModel);
+		this.networkComponents.put(clusterNetworkComponent.getId(), clusterNetworkComponent);
+		return clusterNetworkComponent;
+	}
+
+	/**
+	 * Gets the outer network components.
+	 *
+	 * @return the outer network components
+	 */
 	public ArrayList<NetworkComponent> getOuterNetworkComponents() {
 		if (outerNetworkComponents != null) {
 			return outerNetworkComponents;

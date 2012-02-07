@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package gasmas.clustering;
 
 import jade.core.ServiceException;
@@ -14,37 +42,64 @@ import agentgui.simulationService.SimulationServiceHelper;
 import agentgui.simulationService.environment.EnvironmentModel;
 import edu.uci.ics.jung.algorithms.cluster.WeakComponentClusterer;
 
+/**
+ * The Class ClusterIdentifier.
+ */
 public class ClusterIdentifier {
 
+	/** The environment model. */
 	private EnvironmentModel environmentModel;
+
+	/** The base network model. */
 	private NetworkModel baseNetworkModel;
+
+	/** The simulation service helper. */
 	private SimulationServiceHelper simulationServiceHelper;
 
+	/**
+	 * Instantiates a new cluster identifier.
+	 *
+	 * @param environmentModel the environment model
+	 * @param simulationServiceHelper the simulation service helper
+	 */
 	public ClusterIdentifier(EnvironmentModel environmentModel, SimulationServiceHelper simulationServiceHelper) {
 		this.environmentModel = environmentModel;
 		this.simulationServiceHelper = simulationServiceHelper;
 		this.baseNetworkModel = (NetworkModel) environmentModel.getDisplayEnvironment();
 	}
 
+	/**
+	 * Seraches for possible Clusters.
+	 *
+	 * @param reducedModel the reduced model
+	 * @return the network model
+	 */
 	public NetworkModel serach(NetworkModel reducedModel) {
 		WeakComponentClusterer<GraphNode, GraphEdge> wcSearch = new WeakComponentClusterer<GraphNode, GraphEdge>();
 		Set<Set<GraphNode>> clusterSet = wcSearch.transform(reducedModel.getGraph());
 		boolean baseModelChanged = false;
 		if (clusterSet.size() > 1) {
 			for (Set<GraphNode> graphNodes : clusterSet) {
-				if (clusterReplace(reducedModel, reducedModel.getNetworkComponents(graphNodes))) {
+				if (graphNodes.size() > 3 && clusterReplace(reducedModel, reducedModel.getNetworkComponents(graphNodes))) {
 					baseModelChanged = true;
 				}
 			}
 		}
 		if (baseModelChanged) {
 			NetworkModel copy = baseNetworkModel.getCopy();
-			baseNetworkModel.setAlternativeNetworkModel(null);
+			copy.setAlternativeNetworkModel(null);
 			return copy;
 		}
 		return reducedModel;
 	}
 
+	/**
+	 * Cluster replace only for inner Clusters
+	 *
+	 * @param reducedModel the reduced model
+	 * @param networkComponents the network components
+	 * @return true, if successful
+	 */
 	private boolean clusterReplace(NetworkModel reducedModel, HashSet<NetworkComponent> networkComponents) {
 		// ------- Cluster can be only internal NetworkComponents of the NetworkModel
 		for (NetworkComponent networkComponent : networkComponents) {
@@ -58,6 +113,11 @@ public class ClusterIdentifier {
 		return true;
 	}
 
+	/**
+	 * Refreh display.
+	 *
+	 * @param clusterComponent the cluster component
+	 */
 	private void refrehDisplay(ClusterNetworkComponent clusterComponent) {
 		this.baseNetworkModel.getAlternativeNetworkModel().put("ClusterComponent " + clusterComponent.getId(), clusterComponent.getClusterNetworkModel());
 		this.environmentModel.setDisplayEnvironment(this.baseNetworkModel);

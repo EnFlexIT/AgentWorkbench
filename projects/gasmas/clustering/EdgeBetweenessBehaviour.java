@@ -79,7 +79,7 @@ public class EdgeBetweenessBehaviour extends SimpleBehaviour {
 		System.out.println("Begin Edge Betweness Cluster Analysis");
 		NetworkModel newNetModel = removeComponent(networkModel.getCopy());
 		ClusterIdentifier clusterIdentifier = new ClusterIdentifier(environmentModel, simulationServiceHelper);
-		for (int i = 0; i < 2; i++) {
+		for (int i = 0; i < 5; i++) {
 			newNetModel = clusterIdentifier.serach(removeComponent(newNetModel));
 		}
 	}

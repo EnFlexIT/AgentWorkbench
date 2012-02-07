@@ -611,7 +611,11 @@ public class BasicGraphGui extends JPanel {
 				float edgeWidth = GeneralGraphSettings4MAS.DEFAULT_EDGE_WIDTH;
 				try {
 					ComponentTypeSettings cts = controller.getComponentTypeSettings().get(edge.getComponentType());
+					if (cts == null) {
+						return new BasicStroke(edgeWidth);
+					}
 					edgeWidth = cts.getEdgeWidth();
+
 					if (edgeWidth == 0) {
 						edgeWidth = GeneralGraphSettings4MAS.DEFAULT_EDGE_WIDTH;
 					}

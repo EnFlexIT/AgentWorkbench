@@ -74,14 +74,15 @@ public class ClusterGraphElement extends StarGraphElement {
 		GraphNode centralNode = new GraphNode();
 		centralNode.setId(networkModel.nextNodeID());
 		Rectangle2D rectangle = BasicGraphGui.getVerticesSpreadDimension(outerNodes);
-		centralNode.setPosition(new Point2D.Double((rectangle.getMinX() + rectangle.getMaxX()) / 2, (rectangle.getMinY() + rectangle.getMaxY()) / 2));
+		double x = (rectangle.getMaxX() + rectangle.getMinX()) / 2 - 100;
+		double y = (rectangle.getMaxY() + rectangle.getMinY()) / 2;
+		centralNode.setPosition(new Point2D.Double(x, y));
 		networkModel.getGraph().addVertex(centralNode);
 		elements.add(centralNode);
 		// add Edges
-		int counter = -1;
+		int counter = 0;
 		for (GraphNode graphNode : outerNodes) {
 			GraphEdge edge = new GraphEdge(id + "_" + counter++, getType());
-			System.out.println(centralNode.getId() + " TO " + graphNode.getId());
 			networkModel.getGraph().addEdge(edge, centralNode, graphNode, EdgeType.UNDIRECTED);
 			elements.add(edge);
 		}
