@@ -86,12 +86,21 @@ public class ClusterNetworkComponent extends NetworkComponent {
 	}
 
 	/**
+	 * Gets the size.
+	 *
+	 * @return the size
+	 */
+	public int getSize() {
+		return networkComponentIDs.size();
+	}
+
+	/**
 	 * Gets the Component represented by Node and of the ClusterStar
 	 * 
 	 * @param graphNode the graph node
 	 * @return the receive
 	 */
 	private NetworkComponent getReceiver(GraphNode graphNode) {
-		return clusterNetworkModel.getNetworkComponent(graphNode).iterator().next();
+		return clusterNetworkModel.getNetworkComponents(graphNode).iterator().next();
 	}
 }

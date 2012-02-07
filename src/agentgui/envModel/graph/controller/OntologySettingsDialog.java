@@ -193,7 +193,7 @@ public class OntologySettingsDialog extends JDialog implements ActionListener{
 			GraphNode node = (GraphNode) element;
 			
 			NetworkModel networkModel = graphController.getNetworkModel();
-			HashSet<NetworkComponent> components = networkModel.getNetworkComponent(node); 
+			HashSet<NetworkComponent> components = networkModel.getNetworkComponents(node); 
 			NetworkComponent component = networkModel.componentListContainsDistributionNode(components);
 			if (component==null) {
 				// --- Component is NOT DistributionNode --

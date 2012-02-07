@@ -52,6 +52,7 @@ public class EdgeBetweenessBehaviour extends SimpleBehaviour {
 	/** The environment model. */
 	private NetworkModel networkModel;
 	private EnvironmentModel environmentModel;
+	private SimulationServiceHelper simulationServiceHelper;
 
 	/**
 	 * Instantiates a new edge betweeness behaviour.
@@ -70,13 +71,17 @@ public class EdgeBetweenessBehaviour extends SimpleBehaviour {
 	 */
 	@Override
 	public void action() {
-
+		try {
+			simulationServiceHelper = (SimulationServiceHelper) myAgent.getHelper(SimulationService.NAME);
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
 		System.out.println("Begin Edge Betweness Cluster Analysis");
 		NetworkModel newNetModel = removeComponent(networkModel.getCopy());
-		for (int i = 0; i < 25; i++) {
-			newNetModel = removeComponent(newNetModel);
+		ClusterIdentifier clusterIdentifier = new ClusterIdentifier(environmentModel, simulationServiceHelper);
+		for (int i = 0; i < 2; i++) {
+			newNetModel = clusterIdentifier.serach(removeComponent(newNetModel));
 		}
-
 	}
 
 	/**
@@ -113,12 +118,8 @@ public class EdgeBetweenessBehaviour extends SimpleBehaviour {
 		this.networkModel.getAlternativeNetworkModel().put("EdgeBetweeness", workingCopyNetworkModel);
 		this.environmentModel.setDisplayEnvironment(this.networkModel);
 
-		// --- Put the environment model into the SimulationService -
-		// --- in order to make it accessible for the whole agency --
 		try {
-			SimulationServiceHelper simHelper = (SimulationServiceHelper) myAgent.getHelper(SimulationService.NAME);
-			simHelper.setEnvironmentModel(this.environmentModel, true);
-
+			simulationServiceHelper.setEnvironmentModel(this.environmentModel, true);
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}

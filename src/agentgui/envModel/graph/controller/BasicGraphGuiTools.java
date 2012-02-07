@@ -547,7 +547,7 @@ public class BasicGraphGuiTools implements ActionListener {
 				Set<GraphNode> nodeSet = visView.getPickedVertexState().getPicked();
 				if (nodeSet.size()>0) {
 					// --- At least one node is picked --------------
-					HashSet<NetworkComponent> components = this.controller.getNetworkModel().getNetworkComponent(nodeSet.iterator().next());
+					HashSet<NetworkComponent> components = this.controller.getNetworkModel().getNetworkComponents(nodeSet.iterator().next());
 					Iterator<NetworkComponent> it = components.iterator();
 					while(it.hasNext()) {
 						selectedComponent = it.next();
@@ -596,7 +596,7 @@ public class BasicGraphGuiTools implements ActionListener {
 			GraphNode pickedVertex = basicGraphGui.getPickedVertex();
 			if(pickedVertex!=null){
 				// --- One vertex is picked -----
-				HashSet<NetworkComponent> components = this.controller.getNetworkModel().getNetworkComponent(pickedVertex);
+				HashSet<NetworkComponent> components = this.controller.getNetworkModel().getNetworkComponents(pickedVertex);
 				NetworkComponent containsDistributionNode = this.controller.getNetworkModel().componentListContainsDistributionNode(components);
 				if (containsDistributionNode!=null) {
 					if(components.size()>=2){

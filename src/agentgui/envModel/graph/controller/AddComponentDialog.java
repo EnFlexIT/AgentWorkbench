@@ -602,7 +602,7 @@ public class AddComponentDialog extends JDialog implements ActionListener {
 				} else if (graphElement instanceof DistributionNode) {
 					// --- If the current selection of the main graph is also a DistributionNode => disallow ---
 					GraphNode nodeSelected = ((GraphEnvironmentControllerGUI) this.graphController.getEnvironmentPanel()).getGraphGUI().getPickedVertex();
-					HashSet<NetworkComponent> components = this.graphController.getNetworkModel().getNetworkComponent(nodeSelected);
+					HashSet<NetworkComponent> components = this.graphController.getNetworkModel().getNetworkComponents(nodeSelected);
 					NetworkComponent containsDistributionNode = this.graphController.getNetworkModel().componentListContainsDistributionNode(components);
 					if (containsDistributionNode!=null) {
 						String msg = "The selection in the main graph already contains a component of\n";

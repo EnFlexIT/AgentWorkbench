@@ -14,17 +14,6 @@
             </value>
         </entry>
         <entry>
-            <key>Exit</key>
-            <value>
-                <agentClass>gasmas.agents.components.ExitAgent</agentClass>
-                <color>-65536</color>
-                <domain>Default Domain</domain>
-                <edgeWidth>3.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</graphPrototype>
-                <showLabel>true</showLabel>
-            </value>
-        </entry>
-        <entry>
             <key>Entry</key>
             <value>
                 <agentClass>gasmas.agents.components.EntryAgent</agentClass>
@@ -36,14 +25,14 @@
             </value>
         </entry>
         <entry>
-            <key>Branch4</key>
+            <key>Exit</key>
             <value>
-                <agentClass>gasmas.agents.components.BranchAgent</agentClass>
-                <color>-16777216</color>
+                <agentClass>gasmas.agents.components.ExitAgent</agentClass>
+                <color>-65536</color>
                 <domain>Default Domain</domain>
-                <edgeWidth>2.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.Star4GraphElement</graphPrototype>
-                <showLabel>false</showLabel>
+                <edgeWidth>3.0</edgeWidth>
+                <graphPrototype>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</graphPrototype>
+                <showLabel>true</showLabel>
             </value>
         </entry>
         <entry>
@@ -59,14 +48,13 @@
             </value>
         </entry>
         <entry>
-            <key>Branch3</key>
+            <key>Branch4</key>
             <value>
                 <agentClass>gasmas.agents.components.BranchAgent</agentClass>
                 <color>-16777216</color>
                 <domain>Default Domain</domain>
-                <edgeImage>MissingIcon</edgeImage>
                 <edgeWidth>2.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.Star3GraphElement</graphPrototype>
+                <graphPrototype>agentgui.envModel.graph.prototypes.Star4GraphElement</graphPrototype>
                 <showLabel>false</showLabel>
             </value>
         </entry>
@@ -80,6 +68,18 @@
                 <edgeWidth>4.0</edgeWidth>
                 <graphPrototype>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</graphPrototype>
                 <showLabel>true</showLabel>
+            </value>
+        </entry>
+        <entry>
+            <key>Branch3</key>
+            <value>
+                <agentClass>gasmas.agents.components.BranchAgent</agentClass>
+                <color>-16777216</color>
+                <domain>Default Domain</domain>
+                <edgeImage>MissingIcon</edgeImage>
+                <edgeWidth>2.0</edgeWidth>
+                <graphPrototype>agentgui.envModel.graph.prototypes.Star3GraphElement</graphPrototype>
+                <showLabel>false</showLabel>
             </value>
         </entry>
         <entry>

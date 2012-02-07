@@ -453,12 +453,15 @@ public class BasicGraphGui extends JPanel {
 				// --- Get color from component type settings -----
 				String colorString = null;
 				NetworkModel networkModel = controller.getNetworkModel();
-				HashSet<NetworkComponent> componentHashSet = networkModel.getNetworkComponent(node);
+				HashSet<NetworkComponent> componentHashSet = networkModel.getNetworkComponents(node);
 				NetworkComponent networkComponent = networkModel.componentListContainsDistributionNode(componentHashSet);
 				try {
 					// --- Get the vertex size from the component type settings -
 					if (networkComponent != null) {
 						ComponentTypeSettings cts = controller.getComponentTypeSettings().get(networkComponent.getType());
+						if (cts == null) {
+							return defaultColor;
+						}
 						colorString = cts.getColor();
 						if (picked == true) {
 							DomainSettings ds = controller.getDomainSettings().get(cts.getDomain());
@@ -468,6 +471,9 @@ public class BasicGraphGui extends JPanel {
 						if (componentHashSet.iterator().hasNext()) {
 							NetworkComponent component = componentHashSet.iterator().next();
 							ComponentTypeSettings cts = controller.getComponentTypeSettings().get(component.getType());
+							if (cts == null) {
+								return defaultColor;
+							}
 							DomainSettings ds = controller.getDomainSettings().get(cts.getDomain());
 							if (picked == true) {
 								colorString = ds.getVertexColorPicked();
@@ -494,12 +500,15 @@ public class BasicGraphGui extends JPanel {
 			public String transform(GraphNode node) {
 
 				NetworkModel nModel = controller.getNetworkModel();
-				HashSet<NetworkComponent> components = nModel.getNetworkComponent(node);
+				HashSet<NetworkComponent> components = nModel.getNetworkComponents(node);
 				NetworkComponent distributionNode = nModel.componentListContainsDistributionNode(components);
 				if (distributionNode == null) {
 					if (components.iterator().hasNext()) {
 						String compType = components.iterator().next().getType();
 						ComponentTypeSettings cts = graphSettings.getCurrentCTS().get(compType);
+						if (cts == null) {
+							return node.getId();
+						}
 						DomainSettings ds = graphSettings.getDomainSettings().get(cts.getDomain());
 						if (ds.isShowLabel()) {
 							return node.getId();
@@ -510,6 +519,9 @@ public class BasicGraphGui extends JPanel {
 				} else {
 					String compType = distributionNode.getType();
 					ComponentTypeSettings cts = graphSettings.getCurrentCTS().get(compType);
+					if (cts == null) {
+						return node.getId();
+					}
 					if (cts.isShowLabel()) {
 						return node.getId();
 					}
@@ -532,6 +544,9 @@ public class BasicGraphGui extends JPanel {
 				}
 				try {
 					ComponentTypeSettings cts = controller.getComponentTypeSettings().get(edge.getComponentType());
+					if (cts == null) {
+						return GeneralGraphSettings4MAS.DEFAULT_EDGE_COLOR;
+					}
 					String colorString = cts.getColor();
 					if (colorString != null) {
 						Color color = new Color(Integer.parseInt(colorString));
@@ -552,6 +567,9 @@ public class BasicGraphGui extends JPanel {
 				String textDisplay = "";
 				try {
 					ComponentTypeSettings cts = controller.getComponentTypeSettings().get(edge.getComponentType());
+					if (cts == null) {
+						return textDisplay;
+					}
 					String edgeImage = cts.getEdgeImage();
 					boolean showLabel = cts.isShowLabel();
 
@@ -844,17 +862,23 @@ public class BasicGraphGui extends JPanel {
 					Integer sizeFromCTS = null;
 
 					NetworkModel networkModel = controller.getNetworkModel();
-					HashSet<NetworkComponent> componentHashSet = networkModel.getNetworkComponent(node);
+					HashSet<NetworkComponent> componentHashSet = networkModel.getNetworkComponents(node);
 					NetworkComponent networkComponent = networkModel.componentListContainsDistributionNode(componentHashSet);
 					try {
 						// --- Get the vertex size from the component type settings -
 						if (networkComponent != null) {
 							ComponentTypeSettings cts = controller.getComponentTypeSettings().get(networkComponent.getType());
+							if (cts == null) {
+								return size;
+							}
 							sizeFromCTS = (int) cts.getEdgeWidth();
 						} else {
 							if (componentHashSet.iterator().hasNext()) {
 								NetworkComponent component = componentHashSet.iterator().next();
 								ComponentTypeSettings cts = controller.getComponentTypeSettings().get(component.getType());
+								if (cts == null) {
+									return size;
+								}
 								DomainSettings ds = controller.getDomainSettings().get(cts.getDomain());
 								sizeFromCTS = ds.getVertexSize();
 							}
@@ -865,6 +889,7 @@ public class BasicGraphGui extends JPanel {
 
 					} catch (NullPointerException ex) {
 						System.err.println("Invalid vertex size");
+						ex.printStackTrace();
 					}
 					return size;
 				}

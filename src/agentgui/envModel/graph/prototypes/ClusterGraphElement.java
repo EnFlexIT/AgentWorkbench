@@ -59,6 +59,7 @@ public class ClusterGraphElement extends StarGraphElement {
 	public ClusterGraphElement(Vector<GraphNode> outerNodes, String id) {
 		this.outerNodes = outerNodes;
 		this.id = id;
+		this.setType("Cluster");
 	}
 
 	/**
@@ -80,7 +81,8 @@ public class ClusterGraphElement extends StarGraphElement {
 		int counter = -1;
 		for (GraphNode graphNode : outerNodes) {
 			GraphEdge edge = new GraphEdge(id + "_" + counter++, getType());
-			graph.addEdge(edge, centralNode, graphNode, EdgeType.UNDIRECTED);
+			System.out.println(centralNode.getId() + " TO " + graphNode.getId());
+			networkModel.getGraph().addEdge(edge, centralNode, graphNode, EdgeType.UNDIRECTED);
 			elements.add(edge);
 		}
 		return elements;
