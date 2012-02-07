@@ -14,27 +14,36 @@
             </value>
         </entry>
         <entry>
-            <key>Entry</key>
+            <key>Exit</key>
             <value>
-                <agentClass>gasmas.agents.components.EntryAgent</agentClass>
-                <color>-16724992</color>
+                <agentClass>gasmas.agents.components.ExitAgent</agentClass>
+                <color>-65536</color>
                 <domain>Default Domain</domain>
-                <edgeImage>MissingIcon</edgeImage>
                 <edgeWidth>3.0</edgeWidth>
                 <graphPrototype>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</graphPrototype>
                 <showLabel>true</showLabel>
             </value>
         </entry>
         <entry>
-            <key>Exit</key>
+            <key>Entry</key>
             <value>
-                <agentClass>gasmas.agents.components.ExitAgent</agentClass>
-                <color>-65536</color>
+                <agentClass>gasmas.agents.components.EntryAgent</agentClass>
+                <color>-16724992</color>
                 <domain>Default Domain</domain>
-                <edgeImage>MissingIcon</edgeImage>
                 <edgeWidth>3.0</edgeWidth>
                 <graphPrototype>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</graphPrototype>
                 <showLabel>true</showLabel>
+            </value>
+        </entry>
+        <entry>
+            <key>Branch4</key>
+            <value>
+                <agentClass>gasmas.agents.components.BranchAgent</agentClass>
+                <color>-16777216</color>
+                <domain>Default Domain</domain>
+                <edgeWidth>2.0</edgeWidth>
+                <graphPrototype>agentgui.envModel.graph.prototypes.Star4GraphElement</graphPrototype>
+                <showLabel>false</showLabel>
             </value>
         </entry>
         <entry>
@@ -50,30 +59,6 @@
             </value>
         </entry>
         <entry>
-            <key>Branch4</key>
-            <value>
-                <agentClass>gasmas.agents.components.BranchAgent</agentClass>
-                <color>-16777216</color>
-                <domain>Default Domain</domain>
-                <edgeImage>MissingIcon</edgeImage>
-                <edgeWidth>2.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.Star4GraphElement</graphPrototype>
-                <showLabel>false</showLabel>
-            </value>
-        </entry>
-        <entry>
-            <key>ControlValve</key>
-            <value>
-                <agentClass>gasmas.agents.components.ControlValveAgent</agentClass>
-                <color>-16777012</color>
-                <domain>Default Domain</domain>
-                <edgeImage>/gasmas/img/klpö</edgeImage>
-                <edgeWidth>4.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</graphPrototype>
-                <showLabel>true</showLabel>
-            </value>
-        </entry>
-        <entry>
             <key>Branch3</key>
             <value>
                 <agentClass>gasmas.agents.components.BranchAgent</agentClass>
@@ -83,6 +68,18 @@
                 <edgeWidth>2.0</edgeWidth>
                 <graphPrototype>agentgui.envModel.graph.prototypes.Star3GraphElement</graphPrototype>
                 <showLabel>false</showLabel>
+            </value>
+        </entry>
+        <entry>
+            <key>ControlValve</key>
+            <value>
+                <agentClass>gasmas.agents.components.ControlValveAgent</agentClass>
+                <color>-16777012</color>
+                <domain>Default Domain</domain>
+                <edgeImage>MissingIcon</edgeImage>
+                <edgeWidth>4.0</edgeWidth>
+                <graphPrototype>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</graphPrototype>
+                <showLabel>true</showLabel>
             </value>
         </entry>
         <entry>
@@ -112,12 +109,31 @@
     </currentCTS>
     <domainSettings>
         <entry>
+            <key>A-Domain</key>
+            <value>
+                <ontologyClass>gasmas.ontology.FlowParameters</ontologyClass>
+                <showLabel>true</showLabel>
+                <vertexColor>-65536</vertexColor>
+                <vertexColorPicked>-256</vertexColorPicked>
+                <vertexSize>10</vertexSize>
+            </value>
+        </entry>
+        <entry>
+            <key>Z-Domain</key>
+            <value>
+                <showLabel>true</showLabel>
+                <vertexColor>-65536</vertexColor>
+                <vertexColorPicked>-256</vertexColorPicked>
+                <vertexSize>10</vertexSize>
+            </value>
+        </entry>
+        <entry>
             <key>Default Domain</key>
             <value>
                 <ontologyClass>gasmas.ontology.PropagationPoint</ontologyClass>
                 <showLabel>false</showLabel>
                 <vertexColor>-26368</vertexColor>
-				<vertexColorPicked>-256</vertexColorPicked>
+                <vertexColorPicked>-256</vertexColorPicked>
                 <vertexSize>8</vertexSize>
             </value>
         </entry>

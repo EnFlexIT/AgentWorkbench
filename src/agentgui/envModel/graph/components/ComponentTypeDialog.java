@@ -42,6 +42,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
@@ -59,6 +60,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EtchedBorder;
@@ -77,13 +79,13 @@ import agentgui.envModel.graph.controller.GeneralGraphSettings4MAS;
 import agentgui.envModel.graph.networkModel.ComponentTypeSettings;
 import agentgui.envModel.graph.networkModel.DomainSettings;
 import agentgui.envModel.graph.prototypes.GraphElementPrototype;
-import java.lang.String;
 
 /**
  * GUI dialog for configuring network component types
  *  
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
  * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class ComponentTypeDialog extends JDialog implements ActionListener{
 	
@@ -140,16 +142,15 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	private JButton jButtonRemoveComponentRow = null;
 	private JButton jButtonAddDomain = null;
 	private JButton jButtonRemoveDomainntRow = null;
-	private JButton jButtonSelectNodeClass = null;
-	
 	private JTable jTableComponentTypes = null;
 	private DefaultTableModel componentTypesModel = null;
 	private JTable jTableDomainTypes = null;
 	private DefaultTableModel domainTableModel = null;
 	
 	private TableCellEditor4ClassSelector prototypeClassesCellEditor = null;  //  @jve:decl-index=0:
-	private ClassSelector nodeClassSelector = null;
+	private ClassSelector ontologyClassSelector = null;
 	
+		
 	/**
 	 * This is the default constructor.
 	 *
@@ -192,9 +193,15 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	    
 	    // --- In case that we're in an executed MAS ------
 	    if (this.currProject==null) {
+	    	
+	    	this.getJTable4DomainTypes().setEnabled(false);
+	    	this.getJButtonAddDomain().setEnabled(false);
+	    	this.getJButtonRemoveDomainntRow().setEnabled(false);
+	    	
 	    	this.getJTable4ComponentTypes().setEnabled(false);
 	    	this.getJButtonAddComponentRow().setEnabled(false);
 	    	this.getJButtonRemoveComponentRow().setEnabled(false);
+
 	    	this.getJButtonConfirm().setEnabled(false);
 	    }
 	    
@@ -259,6 +266,74 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	}
 	
 	/**
+	 * Gets the Vector of the column header in the needed order.
+	 * @return the column header
+	 */
+	private Vector<String> getColumnHeaderDomains() {
+		if (columnHeaderDomains==null) {
+			columnHeaderDomains = new Vector<String>();
+			columnHeaderDomains.add(COL_D_DomainName);
+			columnHeaderDomains.add(COL_D_OntologyClass);
+			columnHeaderDomains.add(COL_D_ShowLable);	
+			columnHeaderDomains.add(COL_D_VertexSize);
+			columnHeaderDomains.add(COL_D_VertexColor);
+			columnHeaderDomains.add(COL_D_VertexColorPicked);
+		}
+		return columnHeaderDomains;
+	}
+	/**
+	 * Gets the header index.
+	 * @param header the header
+	 * @return the header index
+	 */
+	private int getColumnHeaderIndexDomains(String header) {
+		Vector<String> headers = this.getColumnHeaderDomains();
+		int headerIndex = -1;
+		for (int i=0; i < headers.size(); i++) {
+			if (headers.get(i).equals(header)) {
+				headerIndex = i;
+				break;
+			}
+		}
+		return headerIndex;
+	}
+	
+	/**
+	 * Gets the Vector of the column header in the needed order.
+	 * @return the column header
+	 */
+	private Vector<String> getColumnHeaderComponents() {
+		if (columnHeaderComponents==null) {
+			columnHeaderComponents = new Vector<String>();
+			columnHeaderComponents.add(COL_TypeSpecifier);
+			columnHeaderComponents.add(COL_Domain);
+			columnHeaderComponents.add(COL_AgentClass);
+			columnHeaderComponents.add(COL_GraphPrototyp);
+			columnHeaderComponents.add(COL_ShowLabel);
+			columnHeaderComponents.add(COL_Image);			
+			columnHeaderComponents.add(COL_EdgeWidth);
+			columnHeaderComponents.add(COL_EdgeColor);
+		}
+		return columnHeaderComponents;
+	}
+	/**
+	 * Gets the header index.
+	 * @param header the header
+	 * @return the header index
+	 */
+	private int getColumnHeaderIndexComponents(String header) {
+		Vector<String> headers = this.getColumnHeaderComponents();
+		int headerIndex = -1;
+		for (int i=0; i < headers.size(); i++) {
+			if (headers.get(i).equals(header)) {
+				headerIndex = i;
+				break;
+			}
+		}
+		return headerIndex;
+	}
+	
+	/**
 	 * This method initializes jContentPane
 	 * @return javax.swing.JPanel
 	 */
@@ -269,7 +344,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			gridBagConstraints21.gridheight = 3;
 			gridBagConstraints21.gridx = 0;
 			gridBagConstraints21.gridy = 3;
-			gridBagConstraints21.insets = new Insets(15, 10, 20, 10);
+			gridBagConstraints21.insets = new Insets(15, 15, 20, 15);
 			GridBagConstraints gridBagConstraints110 = new GridBagConstraints();
 			gridBagConstraints110.fill = GridBagConstraints.BOTH;
 			gridBagConstraints110.weighty = 1.0;
@@ -306,7 +381,6 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			jTabbedPane.setTitleAt(0, Language.translate("Teilnetze"));
 			jTabbedPane.setTitleAt(1, Language.translate("Netzwerk-Komponenten"));
 			jTabbedPane.setTitleAt(2, Language.translate("Allgemein"));
-			
 		}
 		return jTabbedPane;
 	}
@@ -365,15 +439,15 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	 * This method initializes the nodeClassSelector
 	 * @return The nodeClassSelector
 	 */
-	private ClassSelector getNodeClassSelector(){
-		if(nodeClassSelector == null){
+	private ClassSelector getOntologyClassSelector(){
+		if(ontologyClassSelector == null){
 			Class<?> superClass = Concept.class;
 			String currValue = null;
 			String defaultValue = null;
 			String description = Language.translate("Ontologie-Klasse für Übergabepunkte");
-			nodeClassSelector = new ClassSelector(Application.MainWindow, superClass, currValue, defaultValue, description);
+			ontologyClassSelector = new ClassSelector(Application.MainWindow, superClass, currValue, defaultValue, description);
 		}
-		return nodeClassSelector;
+		return ontologyClassSelector;
 	}
 
 	/**
@@ -419,11 +493,12 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			
 			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
 			gridBagConstraints3.gridx = 1;
-			gridBagConstraints3.insets = new Insets(5, 5, 5, 5);
+			gridBagConstraints3.insets = new Insets(5, 5, 3, 5);
+			gridBagConstraints3.anchor = GridBagConstraints.WEST;
 			gridBagConstraints3.gridy = 1;
 			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
 			gridBagConstraints2.gridx = 0;
-			gridBagConstraints2.insets = new Insets(5, 5, 5, 5);
+			gridBagConstraints2.insets = new Insets(5, 5, 3, 5);
 			gridBagConstraints2.gridy = 1;
 			GridBagConstraints gridBagConstraints13 = new GridBagConstraints();
 			gridBagConstraints13.fill = GridBagConstraints.BOTH;
@@ -433,17 +508,9 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			gridBagConstraints13.gridwidth = 2;
 			gridBagConstraints13.weightx = 1.0;
 			
-			GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
-			gridBagConstraints4.anchor = GridBagConstraints.WEST;
-			gridBagConstraints4.gridx = 6;
-			gridBagConstraints4.gridy = 1;
-			gridBagConstraints4.fill = GridBagConstraints.NONE;
-			gridBagConstraints4.insets = new Insets(5, 5, 0, 0);
-			
 			jPanelDomains = new JPanel();
 			jPanelDomains.setLayout(new GridBagLayout());
 			jPanelDomains.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
-			jPanelDomains.add(getJButtonSelectNodeClass(), gridBagConstraints4);
 			jPanelDomains.add(getJScrollPaneClassTableDomains(), gridBagConstraints13);
 			jPanelDomains.add(getJButtonAddDomain(), gridBagConstraints2);
 			jPanelDomains.add(getJButtonRemoveDomainntRow(), gridBagConstraints3);
@@ -500,14 +567,19 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			jTableDomainTypes.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jTableDomainTypes.setModel(getTableModel4Domains());
 			jTableDomainTypes.setAutoCreateRowSorter(true);
+			jTableDomainTypes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			
 			TableColumnModel tcm = jTableDomainTypes.getColumnModel();
-			
+
+			//Set up renderer and editor for the domain name column
+			TableColumn domainColumn = tcm.getColumn(getColumnHeaderIndexDomains(COL_D_DomainName));
+			domainColumn.setCellEditor(new TableCellEditor4Domains(this));
+
 			//Set up renderer and editor for the agent class column
 			TableColumn agentClassColumn = tcm.getColumn(getColumnHeaderIndexDomains(COL_D_OntologyClass));
-			agentClassColumn.setCellEditor(new TableCellEditor4AgentClass());
+			agentClassColumn.setCellEditor(new TableCellEditor4OntologyClass(this.getOntologyClassSelector()));
 			agentClassColumn.setCellRenderer(new TableCellRenderer4Label());
-			
+
 			//Set up renderer and editor for Graph prototype column
 			TableColumn vertexSize = tcm.getColumn(getColumnHeaderIndexDomains(COL_D_VertexSize));
 			vertexSize.setCellEditor(new TableCellEditor4Combo(this.getJComboBoxNodeSize()));
@@ -550,6 +622,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			
 			// Set table entries for defined assignments, if any
 			if(this.currDomainSettings!=null){
+				
 				Iterator<String> domainIterator = this.currDomainSettings.keySet().iterator();
 				while(domainIterator.hasNext()){
 					
@@ -604,6 +677,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			            	return String.class;
 			        }
 				};
+				
 			// --- define the TableModel --- End ----------
 			// --------------------------------------------
 			// ----------------------------------------------------------------
@@ -631,6 +705,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 				newRow.add(GeneralGraphSettings4MAS.DEFAULT_VERTEX_PICKED_COLOR);
 			}
 		}
+		this.setTableCellEditor4DomainsInComponents();
 		this.getTableModel4Domains().addRow(newRow);
 		this.getJTable4DomainTypes().changeSelection(getJTable4DomainTypes().getRowCount()-1, 0, false, false);
 		this.getJTable4DomainTypes().editCellAt(getJTable4DomainTypes().getRowCount()-1, 0);
@@ -642,40 +717,44 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	 */
 	private void removeDomainRow(int rowNum){
 		((DefaultTableModel)getJTable4DomainTypes().getModel()).removeRow(rowNum);
+		this.setTableCellEditor4DomainsInComponents();
 	}
+	
 	/**
-	 * Gets the Vector of the column header in the needed order.
-	 * @return the column header
-	 */
-	private Vector<String> getColumnHeaderDomains() {
-		if (columnHeaderDomains==null) {
-			columnHeaderDomains = new Vector<String>();
-			columnHeaderDomains.add(COL_D_DomainName);
-			columnHeaderDomains.add(COL_D_OntologyClass);
-			columnHeaderDomains.add(COL_D_ShowLable);	
-			columnHeaderDomains.add(COL_D_VertexSize);
-			columnHeaderDomains.add(COL_D_VertexColor);
-			columnHeaderDomains.add(COL_D_VertexColorPicked);
-		}
-		return columnHeaderDomains;
-	}
-	/**
-	 * Gets the header index.
+	 * Rename domain in components.
 	 *
-	 * @param header the header
-	 * @return the header index
+	 * @param oldDomainName the old domain name
+	 * @param newDomainName the new domain name
 	 */
-	private int getColumnHeaderIndexDomains(String header) {
+	public void renameDomainInComponents(String oldDomainName, String newDomainName) {
 		
-		Vector<String> headers = this.getColumnHeaderDomains();
-		int headerIndex = -1;
-		for (int i=0; i < headers.size(); i++) {
-			if (headers.get(i).equals(header)) {
-				headerIndex = i;
-				break;
+		DefaultTableModel dtmComponents = this.getTableModel4ComponentTypes();
+		int column = getColumnHeaderIndexComponents(COL_Domain);
+		
+		// --- Get the component type definitions from table ----
+		JTable jtComponents = this.getJTable4ComponentTypes();
+		// --- Confirm, apply changes in table ------------------						
+		TableCellEditor tceComponents = jtComponents.getCellEditor();
+		if (tceComponents!=null) {
+			tceComponents.stopCellEditing();
+		}
+		for(int row=0; row<dtmComponents.getRowCount(); row++){
+			String currValue = (String) dtmComponents.getValueAt(row, column);
+			if (currValue.equals(oldDomainName)) {
+				dtmComponents.setValueAt(newDomainName, row, column);	
 			}
 		}
-		return headerIndex;
+		this.setTableCellEditor4DomainsInComponents();
+	}
+	
+	
+	/**
+	 * Sets the table CellEditor for domains in components.
+	 */
+	private void setTableCellEditor4DomainsInComponents(){
+		TableColumnModel tcm = this.getJTable4ComponentTypes().getColumnModel();
+		TableColumn domainColumn = tcm.getColumn(getColumnHeaderIndexComponents(COL_Domain));
+		domainColumn.setCellEditor(new TableCellEditor4Combo(this.getJComboBoxDomains()));
 	}
 	
 	/**
@@ -707,6 +786,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			jTableComponentTypes.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jTableComponentTypes.setModel(getTableModel4ComponentTypes());
 			jTableComponentTypes.setAutoCreateRowSorter(true);
+			jTableComponentTypes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			
 			TableColumnModel tcm = jTableComponentTypes.getColumnModel();
 			
@@ -714,6 +794,10 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			TableColumn agentClassColumn = tcm.getColumn(getColumnHeaderIndexComponents(COL_AgentClass));
 			agentClassColumn.setCellEditor(new TableCellEditor4AgentClass());
 			agentClassColumn.setCellRenderer(new TableCellRenderer4Label());
+
+			//Set up renderer and editor for domain column
+			TableColumn domainColumn = tcm.getColumn(getColumnHeaderIndexComponents(COL_Domain));
+			domainColumn.setCellEditor(new TableCellEditor4Combo(this.getJComboBoxDomains()));
 			
 			//Set up renderer and editor for Graph prototype column
 			TableColumn prototypeClassColumn = tcm.getColumn(getColumnHeaderIndexComponents(COL_GraphPrototyp));
@@ -728,7 +812,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			
 			//Set up Editor for the ImageIcon column
 			TableColumn imageIconColumn = tcm.getColumn(getColumnHeaderIndexComponents(COL_Image));
-			imageIconColumn.setCellEditor(new TableCellEditor4Image(currProject));		
+			imageIconColumn.setCellEditor(new TableCellEditor4Image(this, currProject));		
 			imageIconColumn.setPreferredWidth(15);
 			
 			//Set up renderer and editor for the edge width.	        
@@ -745,53 +829,13 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		return jTableComponentTypes;
 	}
 	
-	
-	/**
-	 * Gets the Vector of the column header in the needed order.
-	 * @return the column header
-	 */
-	private Vector<String> getColumnHeaderComponents() {
-		if (columnHeaderComponents==null) {
-			columnHeaderComponents = new Vector<String>();
-			columnHeaderComponents.add(COL_TypeSpecifier);
-			columnHeaderComponents.add(COL_Domain);
-			columnHeaderComponents.add(COL_AgentClass);
-			columnHeaderComponents.add(COL_GraphPrototyp);
-			columnHeaderComponents.add(COL_ShowLabel);
-			columnHeaderComponents.add(COL_Image);			
-			columnHeaderComponents.add(COL_EdgeWidth);
-			columnHeaderComponents.add(COL_EdgeColor);
-		}
-		return columnHeaderComponents;
-	}
-	/**
-	 * Gets the header index.
-	 *
-	 * @param header the header
-	 * @return the header index
-	 */
-	private int getColumnHeaderIndexComponents(String header) {
-		
-		Vector<String> headers = this.getColumnHeaderComponents();
-		int headerIndex = -1;
-		for (int i=0; i < headers.size(); i++) {
-			if (headers.get(i).equals(header)) {
-				headerIndex = i;
-				break;
-			}
-		}
-		return headerIndex;
-	}
-	
 	/**
 	 * This method initiates the jTableClasses' TableModel
 	 * @return The TableModel
 	 */
 	private DefaultTableModel getTableModel4ComponentTypes(){
+		
 		if (componentTypesModel== null) {
-			// ----------------------------------------------------------------
-			// The ComboBoxModels must be initiated before adding rows 
-			//getJComboBoxAgentClasses();
 			
 			Vector<Vector<Object>> dataRows = new Vector<Vector<Object>>();
 			
@@ -799,40 +843,40 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			if(this.currCompTypSettings!=null){
 				Iterator<String> etsIter = this.currCompTypSettings.keySet().iterator();
 				while(etsIter.hasNext()){
+					
 					String etName = etsIter.next();
-					if(etName.equals("node")==false){	// The node class is defined in the JTextField, not in the table
-						
-						ComponentTypeSettings cts = this.currCompTypSettings.get(etName);
-						String imagePath = cts.getEdgeImage();
-						Float edgeWidth = cts.getEdgeWidth();
-						if (edgeWidth==0) {
-							edgeWidth = GeneralGraphSettings4MAS.DEFAULT_EDGE_WIDTH;
-						}
-						Color edgeColor = new Color(Integer.parseInt(cts.getColor()));
-						
-						// --- Create row vector --------------
-						Vector<Object> newRow = new Vector<Object>();
-						for (int i = 0; i < this.getColumnHeaderComponents().size(); i++) {
-							if (i == getColumnHeaderIndexComponents(COL_TypeSpecifier)) {
-								newRow.add(etName);
-							} else if (i == getColumnHeaderIndexComponents(COL_Domain)) {
-								newRow.add(cts.getDomain());
-							} else if (i == getColumnHeaderIndexComponents(COL_AgentClass)) {
-								newRow.add(cts.getAgentClass());
-							} else if (i == getColumnHeaderIndexComponents(COL_GraphPrototyp)) {
-								newRow.add(cts.getGraphPrototype());
-							} else if (i == getColumnHeaderIndexComponents(COL_ShowLabel)) {
-								newRow.add(cts.isShowLabel());
-							} else if (i == getColumnHeaderIndexComponents(COL_Image)) {
-								newRow.add(createImageIcon(imagePath, imagePath));
-							} else if (i == getColumnHeaderIndexComponents(COL_EdgeWidth)) {
-								newRow.add(edgeWidth);
-							} else if (i == getColumnHeaderIndexComponents(COL_EdgeColor)) {
-								newRow.add(edgeColor);
-							}
-						}
-						dataRows.add(newRow);
+					ComponentTypeSettings cts = this.currCompTypSettings.get(etName);
+					
+					String imagePath = cts.getEdgeImage();
+					Float edgeWidth = cts.getEdgeWidth();
+					if (edgeWidth==0) {
+						edgeWidth = GeneralGraphSettings4MAS.DEFAULT_EDGE_WIDTH;
 					}
+					Color edgeColor = new Color(Integer.parseInt(cts.getColor()));
+					
+					// --- Create row vector --------------
+					Vector<Object> newRow = new Vector<Object>();
+					for (int i = 0; i < this.getColumnHeaderComponents().size(); i++) {
+						if (i == getColumnHeaderIndexComponents(COL_TypeSpecifier)) {
+							newRow.add(etName);
+						} else if (i == getColumnHeaderIndexComponents(COL_Domain)) {
+							newRow.add(cts.getDomain());
+						} else if (i == getColumnHeaderIndexComponents(COL_AgentClass)) {
+							newRow.add(cts.getAgentClass());
+						} else if (i == getColumnHeaderIndexComponents(COL_GraphPrototyp)) {
+							newRow.add(cts.getGraphPrototype());
+						} else if (i == getColumnHeaderIndexComponents(COL_ShowLabel)) {
+							newRow.add(cts.isShowLabel());
+						} else if (i == getColumnHeaderIndexComponents(COL_Image)) {
+							newRow.add(this.createImageIcon(imagePath, imagePath));
+						} else if (i == getColumnHeaderIndexComponents(COL_EdgeWidth)) {
+							newRow.add(edgeWidth);
+						} else if (i == getColumnHeaderIndexComponents(COL_EdgeColor)) {
+							newRow.add(edgeColor);
+						}
+					}
+					dataRows.add(newRow);
+				
 				}
 			}
 			// --------------------------------------------
@@ -869,6 +913,8 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 				newRow.add(null);
 			} else if (i == getColumnHeaderIndexComponents(COL_AgentClass)) {
 				newRow.add(null);
+			} else if (i == getColumnHeaderIndexComponents(COL_Domain)) {
+				newRow.add(GeneralGraphSettings4MAS.DEFAULT_DOMAIN_SETTINGS_NAME);
 			} else if (i == getColumnHeaderIndexComponents(COL_GraphPrototyp)) {
 				newRow.add(null);
 			} else if (i == getColumnHeaderIndexComponents(COL_ShowLabel)) {
@@ -947,6 +993,28 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		return jComboBoxNodeSize;
 	}
 	
+	
+	/**
+	 * Returns a JComboBox with the list of Domains.
+	 * @return the JComboBox with the available domains
+	 */
+	private JComboBox getJComboBoxDomains() {
+		
+		Vector<String> domainVector =  new Vector<String>();
+		for (int i = 0; i < this.getTableModel4Domains().getRowCount(); i++) {
+			String domain = (String) this.getTableModel4Domains().getValueAt(i, 0);
+			if (domain!=null) {
+				domainVector.addElement(domain);	
+			}
+		}
+		Collections.sort(domainVector);
+		DefaultComboBoxModel comboBoxModel4Domains = new DefaultComboBoxModel(domainVector);
+		
+		JComboBox jComboBoxNodeSize = new JComboBox(comboBoxModel4Domains);
+		jComboBoxNodeSize.setPreferredSize(new Dimension(50, 26));
+		return jComboBoxNodeSize;
+	}
+	
 	/**
 	 * This method initializes jButtonRemoveComponentRow	
 	 * @return javax.swing.JButton	
@@ -961,48 +1029,28 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	}
 
 	/**
-	 * This method initializes jButtonNodeClassSelector	
-	 * @return javax.swing.JButton	
-	 */
-	private JButton getJButtonSelectNodeClass() {
-		if (jButtonSelectNodeClass == null) {
-			jButtonSelectNodeClass = new JButton();
-			jButtonSelectNodeClass.setText("...");
-			jButtonSelectNodeClass.setPreferredSize(new Dimension(43, 26));
-			jButtonSelectNodeClass.addActionListener(new ActionListener() {
-				
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					getNodeClassSelector().setVisible(true);
-					if(! getNodeClassSelector().isCanceled()){
-						//getJTextFieldNodeClass().setText(getNodeClassSelector().getClassSelected());
-					}
-				}
-			});
-		}
-		return jButtonSelectNodeClass;
-	}
-	
-	/** 
 	 * Returns an ImageIcon, or a default MissingIcon(a red X) if image not found.
-	 * @param path
-	 * @param description
-	 * @return ImageIcon 
+	 *
+	 * @param path the path
+	 * @param description the description
+	 * @return ImageIcon
 	 */
-	protected ImageIcon createImageIcon(String path, String description) {
-		
-		if(path!=null ){			
-		    java.net.URL imgURL = getClass().getResource(path);
-		    if (imgURL != null) {
-		        return new ImageIcon(imgURL, description);
-		    } else {
-		        return (new MissingIcon(description));
-		    }
-		
+	public ImageIcon createImageIcon(String path, String description) {
+		if(path!=null ){		
+			if (path.equals("MissingIcon")) {
+				return new MissingIcon(description);
+			} else {
+			    java.net.URL imgURL = getClass().getResource(path);
+			    if (imgURL != null) {
+			        return new ImageIcon(imgURL, description);
+			    } else {
+			        System.err.println("Couldn't find file: " + path);
+			        return new MissingIcon(description);
+			    }
+			}
 		} else{
 		    return (new MissingIcon(description));		    
 		}
-			
 	}
 
 	/**
@@ -1021,13 +1069,13 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			gridBagConstraints24.ipadx = 0;
 			gridBagConstraints24.insets = new Insets(0, 0, 0, 0);
 			GridBagConstraints gridBagConstraints6 = new GridBagConstraints();
-			gridBagConstraints6.insets = new Insets(5, 5, 5, 5);
+			gridBagConstraints6.insets = new Insets(5, 5, 3, 5);
 			gridBagConstraints6.gridy = 0;
 			gridBagConstraints6.weightx = 1.0;
 			gridBagConstraints6.anchor = GridBagConstraints.WEST;
 			gridBagConstraints6.gridx = 1;
 			GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
-			gridBagConstraints1.insets = new Insets(5, 5, 5, 5);
+			gridBagConstraints1.insets = new Insets(5, 5, 3, 5);
 			gridBagConstraints1.gridy = 0;
 			gridBagConstraints1.gridx = 0;
 			
@@ -1120,37 +1168,6 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			
 			HashMap<String, ComponentTypeSettings> ctsHash = new HashMap<String, ComponentTypeSettings>();
 			HashMap<String, DomainSettings> dsHash = new HashMap<String, DomainSettings>();
-
-			// --- Get the component type definitions from table ----
-			JTable jtComponents = this.getJTable4ComponentTypes();
-			DefaultTableModel dtmComponents = this.getTableModel4ComponentTypes();
-			// --- Confirm, apply changes in table ------------------						
-			TableCellEditor tceComponents = jtComponents.getCellEditor();
-			if (tceComponents!=null) {
-				tceComponents.stopCellEditing();
-			}
-			for(int row=0; row<dtmComponents.getRowCount(); row++){
-				
-				String name = (String) dtmComponents.getValueAt(row, this.getColumnHeaderIndexComponents(COL_TypeSpecifier));
-				if(name!=null && name.length()!=0){
-					
-					String agentClass 	 = (String)dtmComponents.getValueAt(row, this.getColumnHeaderIndexComponents(COL_AgentClass));
-					String graphProto 	 = (String)dtmComponents.getValueAt(row, this.getColumnHeaderIndexComponents(COL_GraphPrototyp));
-					ImageIcon imageIcon  = (ImageIcon)dtmComponents.getValueAt(row,this.getColumnHeaderIndexComponents(COL_Image));
-					String imageIconDesc = imageIcon.getDescription();
-					float edgeWidth 	 = (Float)dtmComponents.getValueAt(row, this.getColumnHeaderIndexComponents(COL_EdgeWidth));
-					Color color 		 = (Color)dtmComponents.getValueAt(row, this.getColumnHeaderIndexComponents(COL_EdgeColor));
-					String colorString 	 = String.valueOf(color.getRGB());
-					boolean showLable 	 = (Boolean) dtmComponents.getValueAt(row, this.getColumnHeaderIndexComponents(COL_ShowLabel));
-					
-					ComponentTypeSettings cts = new ComponentTypeSettings(agentClass, graphProto, imageIconDesc, colorString );
-					cts.setEdgeWidth(edgeWidth);
-					cts.setShowLabel(showLable);
-
-					ctsHash.put(name, cts);
-				}
-			}
-			this.currCompTypSettings = ctsHash;
 			
 			// --- Get the domain settings from table ---------------
 			JTable jtDomains = this.getJTable4DomainTypes();
@@ -1162,15 +1179,15 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			}
 			for(int row=0; row<dtmDomains.getRowCount(); row++){
 				
-				String name = (String) dtmDomains.getValueAt(row, this.getColumnHeaderIndexComponents(COL_D_DomainName));
+				String name = (String) dtmDomains.getValueAt(row, this.getColumnHeaderIndexDomains(COL_D_DomainName));
 				if(name!=null && name.length()!=0){
 					
-					String ontoClass 	 = (String) dtmDomains.getValueAt(row, this.getColumnHeaderIndexComponents(COL_D_OntologyClass));
-					boolean showLabel 	 = (Boolean)dtmDomains.getValueAt(row, this.getColumnHeaderIndexComponents(COL_D_ShowLable));
-					Integer vertexSize 	 = (Integer)dtmDomains.getValueAt(row, this.getColumnHeaderIndexComponents(COL_D_VertexSize));
-					Color color 		 = (Color)  dtmDomains.getValueAt(row, this.getColumnHeaderIndexComponents(COL_D_VertexColor));
+					String ontoClass 	 = (String) dtmDomains.getValueAt(row, this.getColumnHeaderIndexDomains(COL_D_OntologyClass));
+					boolean showLabel 	 = (Boolean)dtmDomains.getValueAt(row, this.getColumnHeaderIndexDomains(COL_D_ShowLable));
+					Integer vertexSize 	 = (Integer)dtmDomains.getValueAt(row, this.getColumnHeaderIndexDomains(COL_D_VertexSize));
+					Color color 		 = (Color)  dtmDomains.getValueAt(row, this.getColumnHeaderIndexDomains(COL_D_VertexColor));
 					String colorStr 	 = String.valueOf(color.getRGB());
-					Color colorPicked	 = (Color)  dtmDomains.getValueAt(row, this.getColumnHeaderIndexComponents(COL_D_VertexColorPicked));					
+					Color colorPicked	 = (Color)  dtmDomains.getValueAt(row, this.getColumnHeaderIndexDomains(COL_D_VertexColorPicked));					
 					String colorPickStr	 = String.valueOf(colorPicked.getRGB());
 					
 					DomainSettings ds = new DomainSettings();
@@ -1185,6 +1202,38 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			}
 			this.currDomainSettings = dsHash;
 			
+			// --- Get the component type definitions from table ----
+			JTable jtComponents = this.getJTable4ComponentTypes();
+			DefaultTableModel dtmComponents = this.getTableModel4ComponentTypes();
+			// --- Confirm, apply changes in table ------------------						
+			TableCellEditor tceComponents = jtComponents.getCellEditor();
+			if (tceComponents!=null) {
+				tceComponents.stopCellEditing();
+			}
+			for(int row=0; row<dtmComponents.getRowCount(); row++){
+				
+				String name = (String) dtmComponents.getValueAt(row, this.getColumnHeaderIndexComponents(COL_TypeSpecifier));
+				if(name!=null && name.length()!=0){
+					
+					String agentClass 	 = (String)dtmComponents.getValueAt(row, this.getColumnHeaderIndexComponents(COL_AgentClass));
+					String domain 	 	= (String)dtmComponents.getValueAt(row, this.getColumnHeaderIndexComponents(COL_Domain));
+					String graphProto 	 = (String)dtmComponents.getValueAt(row, this.getColumnHeaderIndexComponents(COL_GraphPrototyp));
+					ImageIcon imageIcon  = (ImageIcon)dtmComponents.getValueAt(row,this.getColumnHeaderIndexComponents(COL_Image));
+					String imageIconDesc = imageIcon.getDescription();
+					float edgeWidth 	 = (Float)dtmComponents.getValueAt(row, this.getColumnHeaderIndexComponents(COL_EdgeWidth));
+					Color color 		 = (Color)dtmComponents.getValueAt(row, this.getColumnHeaderIndexComponents(COL_EdgeColor));
+					String colorString 	 = String.valueOf(color.getRGB());
+					boolean showLable 	 = (Boolean) dtmComponents.getValueAt(row, this.getColumnHeaderIndexComponents(COL_ShowLabel));
+					
+					ComponentTypeSettings cts = new ComponentTypeSettings(agentClass, graphProto, imageIconDesc, colorString );
+					cts.setDomain(domain);
+					cts.setEdgeWidth(edgeWidth);
+					cts.setShowLabel(showLable);
+
+					ctsHash.put(name, cts);
+				}
+			}
+			this.currCompTypSettings = ctsHash;
 			
 			this.currSnap2Grid = this.jCheckBoxSnap2Grid.isSelected();
 			this.currSnapRaster = (Double)jSpnnerGridWidth.getValue(); 

@@ -34,20 +34,18 @@ import java.io.File;
 
 /**
  * For displaying the thumbnail sketch of the selected image in the File chooser accessory component.
+ * 
  * @author Satyadeep - CSE - Indian Institute of Technology, Guwahati
- *
  */
-public class ImagePreview extends JComponent
-                          implements PropertyChangeListener {
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 9188973626018493252L;
-	ImageIcon thumbnail = null;
-    File file = null;
+public class ImagePreview extends JComponent implements PropertyChangeListener {
 
+	private static final long serialVersionUID = 9188973626018493252L;
+	private ImageIcon thumbnail = null;
+    private File file = null;
+
+    
     public ImagePreview(JFileChooser fc) {
-        setPreferredSize(new Dimension(100, 50));
+    	this.setPreferredSize(new Dimension(100, 50));
         fc.addPropertyChangeListener(this);
     }
 
@@ -63,9 +61,7 @@ public class ImagePreview extends JComponent
         ImageIcon tmpIcon = new ImageIcon(file.getPath());
         if (tmpIcon != null) {
             if (tmpIcon.getIconWidth() > 90) {
-                thumbnail = new ImageIcon(tmpIcon.getImage().
-                                          getScaledInstance(90, -1,
-                                                      Image.SCALE_DEFAULT));
+                thumbnail = new ImageIcon(tmpIcon.getImage().getScaledInstance(90, -1, Image.SCALE_DEFAULT));
             } else { //no need to miniaturize
                 thumbnail = tmpIcon;
             }

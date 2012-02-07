@@ -34,77 +34,65 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.AbstractCellEditor;
-import javax.swing.JButton;
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
 
-import agentgui.core.agents.AgentClassElement;
-import agentgui.core.application.Application;
-import agentgui.core.gui.AgentSelector;
+import agentgui.envModel.graph.controller.GeneralGraphSettings4MAS;
 
 /**
  * This class is used in the {@link ComponentTypeDialog} for showing the agent class selector dialog 
  * for the agent column in the JTable
  *
- * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class TableCellEditor4AgentClass extends AbstractCellEditor implements TableCellEditor, ActionListener {
-	private static final long serialVersionUID = -1937780991527069423L;
+public class TableCellEditor4Domains extends AbstractCellEditor implements TableCellEditor, ActionListener {
 	
-	private JButton button;
-	/**
-	 * The agent class selector dialog
-	 */
-	private AgentSelector agentSelector;
-	/**
-	 * The current agent class 
-	 */
-	private String currentAgentClass;
-	protected static final String EDIT = "edit";
+	private static final long serialVersionUID = -1937780991527069423L;
+	private static final String EDIT = "edit";
+	
+	private ComponentTypeDialog ctsDialog = null;
+	
+	private JTextField textField 	= new JTextField();
+	private JLabel labelField 		= new JLabel();
+	private String domainName;
 	
 	/**
 	 * Default constructor
 	 */
-	public TableCellEditor4AgentClass() {
-		button = new JButton();
-        button.setActionCommand(EDIT);
-        button.addActionListener(this);
-        button.setBorderPainted(false);
-
-        agentSelector = new AgentSelector(Application.MainWindow);
+	public TableCellEditor4Domains(ComponentTypeDialog ctsDialog) {
+		this.ctsDialog = ctsDialog;
+		// --- edit appearance of the text field ----------
+		textField.setActionCommand(EDIT);
+        textField.addActionListener(this);
+        textField.setBorder(BorderFactory.createEmptyBorder());
 	}
 	/* (non-Javadoc)
 	 * @see javax.swing.CellEditor#getCellEditorValue()
 	 */
 	@Override
 	public Object getCellEditorValue() {
-		return currentAgentClass;
+		return domainName;
 	}
 
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (EDIT.equals(e.getActionCommand())) {
-            //The user has clicked the cell, so
-            //bring up the dialog.
-            button.setText(currentAgentClass);
-            
-            agentSelector.setVisible(true);    
-            // --- wait here for end of editing -----------
-            if (agentSelector.isCanceled()==false) { //If OK button pressed
-            	Object[] selected = agentSelector.getSelectedAgentClasses();
-    			if(selected != null && selected.length > 0){
-    				AgentClassElement agentClass = (AgentClassElement) selected[0];
-    				currentAgentClass = agentClass.getElementClass().getName();
-    			}
-            }
-            //Make the renderer reappear.
+	public void actionPerformed(ActionEvent ae) {
+		if (ae.getActionCommand().equals(EDIT )) {
+			String oldValue = domainName;
+			domainName = textField.getText();
+			// --- Make the renderer reappear -------------. 
             fireEditingStopped();
+            // --- Apply changes to the display elements 
+			if (oldValue.equals(domainName)==false) {
+				// --- Revise the current ComponentTypeSettings -----
+				ctsDialog.renameDomainInComponents(oldValue, domainName);
+			}
 
-        } else { //User pressed dialog's "OK" button.
-        	
         }
 	}
 
@@ -113,8 +101,15 @@ public class TableCellEditor4AgentClass extends AbstractCellEditor implements Ta
 	 */
 	@Override
 	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-		currentAgentClass = (String) value;
-		return button;
+		// This method is called when a cell value is edited by the user.
+		domainName = (String) value;
+		if (domainName.equals(GeneralGraphSettings4MAS.DEFAULT_DOMAIN_SETTINGS_NAME)==true) {
+			labelField.setText(domainName);
+			return labelField;
+		} else {
+			textField.setText(domainName);
+			return textField;
+		}
 	}
 
 }

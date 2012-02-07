@@ -29,6 +29,7 @@
 package agentgui.envModel.graph.components;
 
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -38,15 +39,16 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.common.PathHandling;
 import agentgui.core.gui.imaging.ImageFileView;
 import agentgui.core.gui.imaging.ImageFilter;
 import agentgui.core.gui.imaging.ImagePreview;
-import agentgui.core.gui.imaging.MissingIcon;
 import agentgui.core.project.Project;
 
 /**
@@ -60,54 +62,41 @@ public class TableCellEditor4Image extends AbstractCellEditor implements TableCe
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -1601832987481564552L;
 	
-	/** Current ImageIcon of the selected Cell. */
-	private ImageIcon currentImageIcon;
-	/**
-	 * Button to be displayed in the cell during editing.
-	 */
-	private JButton button;
-	
-	/** File chooser for selecting the image. */
-	JFileChooser fileChooser;
-    
-    /** The Constant EDIT. */
+	/** The Constant EDIT. */
     protected static final String EDIT = "edit";
     
+    private ComponentTypeDialog ctsDialog = null;
     /** Current project. */
     private Project project= null;
+
+    /** Current ImageIcon of the selected Cell. */
+	private ImageIcon currentImageIcon;
+	/** Button to be displayed in the cell during editing. */
+	private JButton button;
+	/** File chooser for selecting the image. */
+	private JFileChooser fileChooser;
+    private JButton jButtonRemove;
     
     /**
      * Constructor.
      *
      * @param project The current project to be passed by the parent
      */
-	public TableCellEditor4Image(Project project) {
+	public TableCellEditor4Image(ComponentTypeDialog ctsDialog, Project project) {
+		
+		this.ctsDialog = ctsDialog;
 		this.project = project;
 		
-		//Creating the button
+		// --- Creating the button --------------
 		button = new JButton();
 		button.setActionCommand(EDIT);
 		button.addActionListener(this);
 		button.setBorderPainted(false);
 		
-		//Set up the dialog that the button brings up.
-        fileChooser = new JFileChooser();
-       
-        //Add a custom file filter and disable the default
-	    //(Accept All) file filter.
-        fileChooser.addChoosableFileFilter(new ImageFilter());
-        fileChooser.setAcceptAllFileFilterUsed(false);
-
-	    //Add custom icons for file types.
-        fileChooser.setFileView(new ImageFileView());
-
-	    //Add the preview pane.
-        fileChooser.setAccessory(new ImagePreview(fileChooser));       
 	}
 	
 	/**
 	 * Value to be returned to the table after editing.
-	 *
 	 * @return the cell editor value
 	 */
 	@Override
@@ -119,84 +108,126 @@ public class TableCellEditor4Image extends AbstractCellEditor implements TableCe
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		  	if (EDIT.equals(e.getActionCommand())) {
-	            //The user has clicked the cell, so bring up the dialog.
-	            button.setIcon(currentImageIcon);
-	            //set the directory to the default project directory or the last selected folder 
+	public void actionPerformed(ActionEvent ae) {
+	  	
+		if (ae.getSource()==this.getJButtonRemove()) {
+			
+			this.getFileChooser().cancelSelection();
+			currentImageIcon = ctsDialog.createImageIcon(null, null);
+			
+		} else {
+			
+			if (ae.getActionCommand().equals(EDIT)) {
+	            
+				// --- set the directory to the default project directory or the last selected folder 
 	            if(Application.RunInfo.getLastSelectedFolderAsString().startsWith(project.getProjectFolderFullPath())){
-	            //last selected folder is a sub folder of the project folder
-	            	fileChooser.setCurrentDirectory(Application.RunInfo.getLastSelectedFolder());	           
-	            }
-	            else{
-	            //set current directory as the project folder	
-	            	fileChooser.setCurrentDirectory(new File(project.getProjectFolderFullPath()));
+	            	// --- last selected folder is a sub folder of the project folder ---
+	            	this.getFileChooser().setCurrentDirectory(Application.RunInfo.getLastSelectedFolder());	           
+	            } else{
+	            	// --- set current directory as the project folder ------------------	
+	            	this.getFileChooser().setCurrentDirectory(new File(project.getProjectFolderFullPath()));
 	            }
 	            
-	            int returnVal = fileChooser.showDialog(button, Language.translate("Choose Icon",Language.EN));
+	            if (currentImageIcon!=null && this.currentImageIcon.getDescription()!=null) {
+	            	// --- If file exists make it selected in the file chosser ----------
+	            	String fileDesc = this.currentImageIcon.getDescription().substring(1).replace(project.getProjectFolder(), "").substring(1);
+	            	String filePath = project.getProjectFolderFullPath() + fileDesc;
+	            	filePath = PathHandling.getPathName4LocalFileSystem(filePath);
+	            	File testFile = new File(filePath);
+	            	if (testFile.exists()==true) {
+	            		this.getFileChooser().setSelectedFile(testFile);
+	            	}
+	            }
+	            
+	            int returnVal = this.getFileChooser().showDialog(button, Language.translate("Choose Icon", Language.EN));
+	            // - - Wait for the end of the dialog - - - - - - -
 	            if (returnVal == JFileChooser.APPROVE_OPTION) {
-	            //Choosen a file
+	            	// --- Choosen a file -----------------------------------------------
 		            Application.RunInfo.setLastSelectedFolder(fileChooser.getCurrentDirectory());
 	            
-	            	File file = fileChooser.getSelectedFile();	               
+	            	File file = this.getFileChooser().getSelectedFile();	               
 	                String filePath = file.getPath();
 	                
-	                //Checking the prefix of the choosen file path
+	                // --- Checking the prefix of the choosen file path -----------------
 	                if(filePath.startsWith(project.getProjectFolderFullPath())){
-	                //The image is inside project folder or its subfolder
+	                	// --- The image is inside project folder or its subfolder ------
 	                	String path = filePath.replace(project.getProjectFolderFullPath(), "");
-	                    // Constructing the relative resource path
-	                	path = "/" + project.getProjectFolder() +"/"+ path.replace(File.separatorChar, '/');
-	                	//System.out.println(path);
-	                	
-	                	//Updating the image Icon of the table cell
-	                	currentImageIcon = createImageIcon(path, path);
-	                }
-	                else{	                
-	                //The image is not inside the project folder	
-	                	JOptionPane.showMessageDialog(null,Language.translate("The image should be in the "+project.getProjectFolder()+" folder.", Language.EN),
-								Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);	 	        			
+	                    // --- Constructing the relative resource path ------------------
+	                	path = "/"+ project.getProjectFolder() + "/"  + path.replace(File.separatorChar, '/');
+	                	// --- Updating the image Icon of the table cell ----------------
+	                	currentImageIcon = ctsDialog.createImageIcon(path, path);
+	                } else{	                
+	                	// --- The image is not inside the project folder ---------------	
+	                	String msg   = Language.translate("The image should be in the "+project.getProjectFolder()+" folder.", Language.EN);
+	                	String title = Language.translate("Warning", Language.EN);
+	                	JOptionPane.showMessageDialog(null, msg, title, JOptionPane.WARNING_MESSAGE);	 	        			
 	                }
 	            } 
-	            fireEditingStopped(); //Make the renderer reappear.
-
-	        } 
-		  	else { //User pressed dialog's "OK" button.
-		  		//System.out.println("choose button pressed");		  	
-	        }
+	            this.getFileChooser().setSelectedFile(null);
+			}
+            // --- Make the renderer reappear. ------------------------------------------
+            fireEditingStopped(); 
+        }
+		
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.swing.table.TableCellEditor#getTableCellEditorComponent(javax.swing.JTable, java.lang.Object, boolean, int, int)
 	 */
 	@Override
-	public Component getTableCellEditorComponent(JTable table, Object value,
-			boolean isSelected, int row, int column) {
+	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
 		currentImageIcon = (ImageIcon) value;
 		return button;
 	}
 	
+	
+	
 	/**
-	 * Returns an ImageIcon, or a default MissingIcon(a red X) if image not found.
-	 *
-	 * @param path the path
-	 * @param description the description
-	 * @return ImageIcon
+	 * Gets the file chooser for the selection of an image.
+	 * @return the file chooser
 	 */
-	protected ImageIcon createImageIcon(String path, String description) {
+	private JFileChooser getFileChooser() {
 		
-		if(path!=null ){			
-		    java.net.URL imgURL = getClass().getResource(path);
-		    if (imgURL != null) {
-		        return new ImageIcon(imgURL, description);
-		    } else {
-		        System.err.println("Couldn't find file: " + path);
-		        return (new MissingIcon(description));
-		    }
-		}
-		else{
-		    return (new MissingIcon(description));		    
-		}
+		if (this.fileChooser==null) {
 			
+			if (this.ctsDialog !=null) {
+				this.ctsDialog.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));	
+			}
+			
+			// --- Set up the dialog that the button brings up. -----
+	        fileChooser = new JFileChooser();
+	        fileChooser.addChoosableFileFilter(new ImageFilter());
+	        fileChooser.setAcceptAllFileFilterUsed(false);
+
+		    // --- Add custom icons for file types. -----------------
+	        fileChooser.setFileView(new ImageFileView());
+
+		    // --- Add the preview pane. ----------------------------
+	        fileChooser.setAccessory(new ImagePreview(fileChooser));
+	        
+	        // --- Add a button in order to remove current image ----
+	        JPanel panel3_1 = (JPanel) fileChooser.getComponent(3);
+	        JPanel panel3_2 = (JPanel) panel3_1.getComponent(3);
+	        panel3_2.add(this.getJButtonRemove(), 1);
+	        
+	        if (this.ctsDialog!=null) {
+	        	this.ctsDialog.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));	
+			}
+		}
+		return fileChooser;
 	}
+	
+	/**
+	 * Returns the JButton remove.
+	 * @return the JButton remove
+	 */
+	private JButton getJButtonRemove() {
+		if (jButtonRemove==null) {
+			jButtonRemove = new JButton();
+			jButtonRemove.setText(Language.translate("Remove current image", Language.EN));
+			jButtonRemove.addActionListener(this);	
+		}
+		return jButtonRemove;
+	}
+	
 }

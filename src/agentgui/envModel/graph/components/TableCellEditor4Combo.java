@@ -47,16 +47,16 @@ public class TableCellEditor4Combo extends AbstractCellEditor implements TableCe
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -1544056145162025328L;
 
-	/** The combo. */
+	/** The JComboBox. */
 	private JComboBox combo = null;
 	
 	/** The click count to start. */
 	private int clickCountToStart = 1;
 	 
+	
 	/**
-	 * Instantiates a new table cell editor4 combo.
-	 *
-	 * @param comboBox the combo box
+	 * Instantiates a new table cell editor for a JComboBox.
+	 * @param comboBox the JComboBox
 	 */
 	public TableCellEditor4Combo(JComboBox comboBox) {
 		this.combo = comboBox;

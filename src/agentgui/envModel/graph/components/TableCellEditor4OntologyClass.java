@@ -38,9 +38,7 @@ import javax.swing.JButton;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 
-import agentgui.core.agents.AgentClassElement;
-import agentgui.core.application.Application;
-import agentgui.core.gui.AgentSelector;
+import agentgui.core.gui.ClassSelector;
 
 /**
  * This class is used in the {@link ComponentTypeDialog} for showing the agent class selector dialog 
@@ -52,32 +50,30 @@ public class TableCellEditor4OntologyClass extends AbstractCellEditor implements
 	private static final long serialVersionUID = -1937780991527069423L;
 	
 	private JButton button;
-	/**
-	 * The agent class selector dialog
-	 */
-	private AgentSelector agentSelector;
-	/**
-	 * The current agent class 
-	 */
-	String currentAgentClass;
+	/** The ontology class selector dialog */
+	private ClassSelector nodeClassSelector = null;
+	/** The current ontology class. */
+	private String currentOntologyClass = null;
+	/** The current agent class	 */
 	protected static final String EDIT = "edit";
+	
 	/**
 	 * Default constructor
 	 */
-	public TableCellEditor4OntologyClass() {
+	public TableCellEditor4OntologyClass(ClassSelector nodeClassSelector) {
 		button = new JButton();
         button.setActionCommand(EDIT);
         button.addActionListener(this);
         button.setBorderPainted(false);
-
-        agentSelector = new AgentSelector(Application.MainWindow);
+        this.nodeClassSelector = nodeClassSelector;
+        
 	}
 	/* (non-Javadoc)
 	 * @see javax.swing.CellEditor#getCellEditorValue()
 	 */
 	@Override
 	public Object getCellEditorValue() {
-		return currentAgentClass;
+		return currentOntologyClass;
 	}
 
 	/* (non-Javadoc)
@@ -88,18 +84,18 @@ public class TableCellEditor4OntologyClass extends AbstractCellEditor implements
 		if (EDIT.equals(e.getActionCommand())) {
             //The user has clicked the cell, so
             //bring up the dialog.
-            button.setText(currentAgentClass);
+            button.setText(currentOntologyClass);
             
-            agentSelector.setVisible(true);    
-            if (agentSelector.isCanceled()==false) { //If OK button pressed
-            	Object[] selected = agentSelector.getSelectedAgentClasses();
-    			if(selected != null && selected.length > 0){
-    				AgentClassElement agentClass = (AgentClassElement) selected[0];
-    				currentAgentClass = agentClass.getElementClass().getName();
+            nodeClassSelector.setVisible(true);   
+            // --- wait here for end of editing -----------
+            if (nodeClassSelector.isCanceled()==false) { //If OK button pressed
+            	String selected = nodeClassSelector.getClassSelected();
+    			if(selected != null && selected.length() > 0){
+    				currentOntologyClass = selected;
     			}
             }
             //Make the renderer reappear.
-            fireEditingStopped();
+            this.fireEditingStopped();
 
         } else { //User pressed dialog's "OK" button.
         	
@@ -111,7 +107,7 @@ public class TableCellEditor4OntologyClass extends AbstractCellEditor implements
 	 */
 	@Override
 	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-		currentAgentClass = (String) value;
+		currentOntologyClass = (String) value;
 		return button;
 	}
 
