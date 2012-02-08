@@ -30,8 +30,10 @@ package gasmas.clustering;
 
 import jade.core.ServiceException;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Vector;
 
 import agentgui.envModel.graph.networkModel.ClusterNetworkComponent;
 import agentgui.envModel.graph.networkModel.GraphEdge;
@@ -56,6 +58,8 @@ public class ClusterIdentifier {
 	/** The simulation service helper. */
 	private SimulationServiceHelper simulationServiceHelper;
 
+	private int clusterCounter = 0;
+
 	/**
 	 * Instantiates a new cluster identifier.
 	 *
@@ -74,23 +78,27 @@ public class ClusterIdentifier {
 	 * @param reducedModel the reduced model
 	 * @return the network model
 	 */
-	public NetworkModel serach(NetworkModel reducedModel) {
+	public NetworkModel search(NetworkModel reducedModel, NetworkModel networkModel) {
 		WeakComponentClusterer<GraphNode, GraphEdge> wcSearch = new WeakComponentClusterer<GraphNode, GraphEdge>();
 		Set<Set<GraphNode>> clusterSet = wcSearch.transform(reducedModel.getGraph());
+		boolean clustersToSmall = true;
 		boolean baseModelChanged = false;
 		if (clusterSet.size() > 1) {
 			for (Set<GraphNode> graphNodes : clusterSet) {
-				if (graphNodes.size() > 3 && clusterReplace(reducedModel, reducedModel.getNetworkComponents(graphNodes))) {
-					baseModelChanged = true;
+				if (graphNodes.size() > 3) {
+					clustersToSmall = false;
+					if (clusterReplace(reducedModel, reducedModel.getNetworkComponents(graphNodes), networkModel)) {
+						baseModelChanged = true;
+					}
 				}
 			}
 		}
 		if (baseModelChanged) {
-			NetworkModel copy = baseNetworkModel.getCopy();
+			NetworkModel copy = networkModel.getCopy();
 			copy.setAlternativeNetworkModel(null);
 			return copy;
 		}
-		return reducedModel;
+		return clustersToSmall ? null : reducedModel;
 	}
 
 	/**
@@ -100,17 +108,47 @@ public class ClusterIdentifier {
 	 * @param networkComponents the network components
 	 * @return true, if successful
 	 */
-	private boolean clusterReplace(NetworkModel reducedModel, HashSet<NetworkComponent> networkComponents) {
+	private boolean clusterReplace(NetworkModel reducedModel, HashSet<NetworkComponent> networkComponents, NetworkModel networkModel) {
 		// ------- Cluster can be only internal NetworkComponents of the NetworkModel
 		for (NetworkComponent networkComponent : networkComponents) {
-			if (baseNetworkModel.getOuterNetworkComponents().contains(networkComponent)) {
+			if (networkModel.getOuterNetworkComponents().contains(networkComponent)) {
 				return false;
 			}
 		}
+		ArrayList<NetworkComponent> clusterComponents = new ArrayList<NetworkComponent>(networkComponents);
 		// ------- add the Neighbours to the List because removed are part of the cluster
-		networkComponents.addAll(baseNetworkModel.getNeighbourNetworkComponents(networkComponents));
-		refrehDisplay(baseNetworkModel.replaceComonentsByCluster(networkComponents));
+		networkComponents.addAll(networkModel.getNeighbourNetworkComponents(networkComponents));
+		connectionComponents(networkComponents, clusterComponents, networkModel);
+		refrehDisplay(networkModel.replaceComonentsByCluster(networkComponents));
 		return true;
+	}
+
+	/**
+	 * Removes Components with more than two outeNodes if more outerNodes are connected to the outside
+	 * 
+	 * @param networkComponents
+	 * @param clusterComponents
+	 * @param networkModel
+	 */
+	private void connectionComponents(HashSet<NetworkComponent> networkComponents, ArrayList<NetworkComponent> clusterComponents, NetworkModel networkModel) {
+		ArrayList<NetworkComponent> connectionComponents = new ArrayList<NetworkComponent>(networkComponents);
+		connectionComponents.removeAll(clusterComponents);
+		HashSet<GraphNode> clusterComponentsNodes = new HashSet<GraphNode>();
+		for (NetworkComponent networkComponent : clusterComponents) {
+			clusterComponentsNodes.addAll(networkModel.getNodesFromNetworkComponent(networkComponent));
+		}
+		for (NetworkComponent networkComponent : connectionComponents) {
+			int counter = 0;
+			Vector<GraphNode> componentsNodes = networkModel.getNodesFromNetworkComponent(networkComponent);
+			for (GraphNode graphNode : componentsNodes) {
+				if (clusterComponentsNodes.contains(graphNode)) {
+					counter++;
+				}
+			}
+			if (counter < componentsNodes.size() / 2) {
+				networkComponents.remove(networkComponent);
+			}
+		}
 	}
 
 	/**
@@ -119,7 +157,7 @@ public class ClusterIdentifier {
 	 * @param clusterComponent the cluster component
 	 */
 	private void refrehDisplay(ClusterNetworkComponent clusterComponent) {
-		this.baseNetworkModel.getAlternativeNetworkModel().put("ClusterComponent " + clusterComponent.getId(), clusterComponent.getClusterNetworkModel());
+		this.baseNetworkModel.getAlternativeNetworkModel().put("C" + clusterCounter++ + " " + clusterComponent.getId(), clusterComponent.getClusterNetworkModel());
 		this.environmentModel.setDisplayEnvironment(this.baseNetworkModel);
 
 		// --- Put the environment model into the SimulationService -

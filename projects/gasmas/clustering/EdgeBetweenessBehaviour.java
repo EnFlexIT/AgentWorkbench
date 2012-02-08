@@ -33,6 +33,7 @@ import jade.core.behaviours.SimpleBehaviour;
 
 import java.util.List;
 
+import agentgui.envModel.graph.networkModel.ClusterNetworkComponent;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkModel;
@@ -76,11 +77,22 @@ public class EdgeBetweenessBehaviour extends SimpleBehaviour {
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
-		System.out.println("Begin Edge Betweness Cluster Analysis");
-		NetworkModel newNetModel = removeComponent(networkModel.getCopy());
 		ClusterIdentifier clusterIdentifier = new ClusterIdentifier(environmentModel, simulationServiceHelper);
-		for (int i = 0; i < 5; i++) {
-			newNetModel = clusterIdentifier.serach(removeComponent(newNetModel));
+
+		System.out.println("Begin Edge Betweness Cluster Analysis");
+		analyseClusters(networkModel, clusterIdentifier);
+		for (ClusterNetworkComponent clusterNetworkComponent : networkModel.getClusterComponents()) {
+			NetworkModel networkModel = clusterNetworkComponent.getClusterNetworkModel();
+			if (networkModel.getNetworkComponents().values().size() > 8) {
+				analyseClusters(networkModel, clusterIdentifier);
+			}
+		}
+	}
+
+	public void analyseClusters(NetworkModel networkModel, ClusterIdentifier clusterIdentifier) {
+		NetworkModel newNetworkModel = networkModel.getCopy();
+		while (newNetworkModel != null) {
+			newNetworkModel = clusterIdentifier.search(removeComponent(newNetworkModel), networkModel);
 		}
 	}
 

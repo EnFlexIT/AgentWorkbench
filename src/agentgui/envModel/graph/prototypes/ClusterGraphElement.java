@@ -50,6 +50,9 @@ import edu.uci.ics.jung.graph.util.EdgeType;
  */
 public class ClusterGraphElement extends StarGraphElement {
 
+	public ClusterGraphElement() {
+	}
+
 	/**
 	 * Instantiates a new cluster graph element.
 	 * 

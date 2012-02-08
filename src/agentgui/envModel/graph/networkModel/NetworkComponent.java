@@ -188,6 +188,7 @@ public class NetworkComponent implements Serializable {
 	 * @param prototypeClassName the prototypeClassName to set
 	 */
 	public void setPrototypeClassName(String prototypeClassName) {
+		System.out.println(prototypeClassName);
 		this.prototypeClassName = prototypeClassName;
 	}
 

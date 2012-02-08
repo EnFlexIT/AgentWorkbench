@@ -289,7 +289,7 @@ public class BasicGraphGui extends JPanel {
 	 * @return the vertices spread dimension
 	 */
 	public static Rectangle2D getVerticesSpreadDimension(Collection<GraphNode> graphNodes) {
-		
+
 		double x_min = 0;
 		double y_min = 0;
 		double x_max = 0;
@@ -305,10 +305,14 @@ public class BasicGraphGui extends JPanel {
 				y_min = y;
 			}
 
-			if (x < x_min) x_min = x;
-			if (x > x_max) x_max = x;
-			if (y < y_min) y_min = y;
-			if (y > y_max) y_max = y;
+			if (x < x_min)
+				x_min = x;
+			if (x > x_max)
+				x_max = x;
+			if (y < y_min)
+				y_min = y;
+			if (y > y_max)
+				y_max = y;
 		}
 		return new Rectangle2D.Double(x_min, y_min, x_max, y_max);
 	}
@@ -909,16 +913,18 @@ public class BasicGraphGui extends JPanel {
 		 */
 		@Override
 		public Shape transform(GraphNode node) {
-			
-			Shape shape = factory.getEllipse(node); // DEFAULT 
-			
+
+			Shape shape = factory.getEllipse(node); // DEFAULT
+
 			NetworkModel networkModel = controller.getNetworkModel();
 			HashSet<NetworkComponent> componentHashSet = networkModel.getNetworkComponents(node);
 			NetworkComponent networkComponent = networkModel.componentListContainsDistributionNode(componentHashSet);
-			if (componentHashSet.size()==1 && networkComponent==null) {
+			if (componentHashSet.size() == 1 && networkComponent == null) {
 				networkComponent = componentHashSet.iterator().next();
-				if (networkComponent.getPrototypeClassName().equals(ClusterGraphElement.class.getName())){
-					
+				// TODO: Caused problem added !
+				// !
+				if (!networkComponent.getPrototypeClassName().equals(ClusterGraphElement.class.getName())) {
+
 					ComponentTypeSettings cts = controller.getComponentTypeSettings().get(networkComponent.getType());
 					DomainSettings ds = controller.getDomainSettings().get(cts.getDomain());
 					String shapeForm = ds.getClusterShape();
@@ -933,7 +939,7 @@ public class BasicGraphGui extends JPanel {
 					} else {
 						shape = factory.getEllipse(node);
 					}
-					
+
 				}
 			}
 			return shape;

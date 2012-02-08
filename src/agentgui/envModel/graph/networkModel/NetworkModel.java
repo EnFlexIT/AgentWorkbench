@@ -71,6 +71,8 @@ public class NetworkModel implements Cloneable, Serializable {
 	/** The outer network components of this NetworkModel with no Connections */
 	private ArrayList<NetworkComponent> outerNetworkComponents;
 
+	private ArrayList<ClusterNetworkComponent> clusterComponents = new ArrayList<ClusterNetworkComponent>();
+
 	/**
 	 * The user object, which stores the component type settings for example. This slot/field is only used during the runtime of the simulation in order to provide the settings without accessing the
 	 * project information.
@@ -383,28 +385,33 @@ public class NetworkModel implements Cloneable, Serializable {
 	/**
 	 * This method removes a NetworkComponent from the GridModel's networkComponents HashMap, using its' ID as key.
 	 * 
-	 * @param component The NetworkComponent to remove
+	 * @param networkComponent The NetworkComponent to remove
 	 */
-	public void removeNetworkComponent(NetworkComponent component) {
-		if (component.getPrototypeClassName().equals(DistributionNode.class.getName())) {
+	public void removeNetworkComponent(NetworkComponent networkComponent) {
+		if (networkComponent.getPrototypeClassName().equals(DistributionNode.class.getName())) {
 			// ----------------------------------------------------------------
 			// --- A DistributionNode has to be removed -----------------------
 			// ----------------------------------------------------------------
-			removeDistributionNode(component.getGraphElementIDs().iterator().next());
+			removeDistributionNode(networkComponent.getGraphElementIDs().iterator().next());
 			// ----------------------------------------------------------------
 		} else {
 			// ----------------------------------------------------------------
 			// --- Another element has to be removed --------------------------
 			// ----------------------------------------------------------------
-			for (String graphElementID : component.getGraphElementIDs()) {
+			for (String graphElementID : networkComponent.getGraphElementIDs()) {
 				GraphElement graphElement = this.getGraphElement(graphElementID);
-				if (graphElement instanceof GraphNode && (this.getNetworkComponents((GraphNode) graphElement).size() < 2)) {
+				if (graphElement instanceof GraphEdge) {
+					graph.removeEdge((GraphEdge) graphElement);
+				} else if (graphElement instanceof GraphNode && (this.getNetworkComponents((GraphNode) graphElement).size() < 2)) {
 					this.graph.removeVertex((GraphNode) graphElement);
 				}
 			}
 			// ----------------------------------------------------------------
 		}
-		networkComponents.remove(component.getId());
+		networkComponents.remove(networkComponent.getId());
+		if (networkComponent instanceof ClusterNetworkComponent) {
+			clusterComponents.remove(networkComponent);
+		}
 		refreshGraphElements();
 	}
 
@@ -806,6 +813,7 @@ public class NetworkModel implements Cloneable, Serializable {
 			theClass = Class.forName(comp.getPrototypeClassName());
 			graphElement = (GraphElementPrototype) theClass.newInstance();
 		} catch (ClassNotFoundException ex) {
+			ex.printStackTrace();
 			System.err.println(ex + " GraphElementPrototype class must be in class path.");
 		} catch (InstantiationException ex) {
 			System.err.println(ex + " GraphElementPrototype class must be concrete.");
@@ -889,9 +897,10 @@ public class NetworkModel implements Cloneable, Serializable {
 		String clusterComponentID = nextNetworkComponentID();
 		ClusterGraphElement clusterGraphElement = new ClusterGraphElement(outerNodes, clusterComponentID);
 		HashSet<GraphElement> clusterElements = new ClusterGraphElement(outerNodes, clusterComponentID).addToGraph(this);
-		ClusterNetworkComponent clusterNetworkComponent = new ClusterNetworkComponent(clusterComponentID, clusterGraphElement.getType(), "ClusterGraphElement", clusterElements,
-				clusterGraphElement.isDirected(), NetworkModel.networkComponentsIDs(networkComponents), clusterNetworkModel);
+		ClusterNetworkComponent clusterNetworkComponent = new ClusterNetworkComponent(clusterComponentID, clusterGraphElement.getType(), "agentgui.envModel.graph.prototypes.ClusterGraphElement",
+				clusterElements, clusterGraphElement.isDirected(), NetworkModel.networkComponentsIDs(networkComponents), clusterNetworkModel);
 		this.networkComponents.put(clusterNetworkComponent.getId(), clusterNetworkComponent);
+		this.clusterComponents.add(clusterNetworkComponent);
 		return clusterNetworkComponent;
 	}
 
@@ -914,5 +923,9 @@ public class NetworkModel implements Cloneable, Serializable {
 			}
 		}
 		return outerNetworkComponents;
+	}
+
+	public ArrayList<ClusterNetworkComponent> getClusterComponents() {
+		return clusterComponents;
 	}
 }
