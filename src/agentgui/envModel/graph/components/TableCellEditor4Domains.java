@@ -69,6 +69,7 @@ public class TableCellEditor4Domains extends AbstractCellEditor implements Table
         textField.addActionListener(this);
         textField.setBorder(BorderFactory.createEmptyBorder());
 	}
+	
 	/* (non-Javadoc)
 	 * @see javax.swing.CellEditor#getCellEditorValue()
 	 */
@@ -82,18 +83,22 @@ public class TableCellEditor4Domains extends AbstractCellEditor implements Table
 	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
+		
 		if (ae.getActionCommand().equals(EDIT )) {
 			String oldValue = domainName;
 			domainName = textField.getText();
 			// --- Make the renderer reappear -------------. 
             fireEditingStopped();
             // --- Apply changes to the display elements 
-			if (oldValue.equals(domainName)==false) {
-				// --- Revise the current ComponentTypeSettings -----
-				ctsDialog.renameDomainInComponents(oldValue, domainName);
+			if (oldValue!=null) {
+				if (oldValue.equals(domainName)==false) {
+					// --- Revise the current ComponentTypeSettings -----
+					ctsDialog.renameDomainInComponents(oldValue, domainName);
+				}
 			}
-
+			ctsDialog.setTableCellEditor4DomainsInComponents();
         }
+		
 	}
 
 	/* (non-Javadoc)
@@ -103,7 +108,10 @@ public class TableCellEditor4Domains extends AbstractCellEditor implements Table
 	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
 		// This method is called when a cell value is edited by the user.
 		domainName = (String) value;
-		if (domainName.equals(GeneralGraphSettings4MAS.DEFAULT_DOMAIN_SETTINGS_NAME)==true) {
+		if (domainName==null) {
+			textField.setText(domainName);
+			return textField;
+		} else if (domainName.equals(GeneralGraphSettings4MAS.DEFAULT_DOMAIN_SETTINGS_NAME)==true) {
 			labelField.setText(domainName);
 			return labelField;
 		} else {
@@ -112,4 +120,6 @@ public class TableCellEditor4Domains extends AbstractCellEditor implements Table
 		}
 	}
 
+	
+	
 }

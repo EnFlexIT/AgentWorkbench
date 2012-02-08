@@ -37,9 +37,12 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Observable;
 import java.util.Vector;
 
@@ -56,6 +59,8 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowFilter;
+import javax.swing.SortOrder;
+import javax.swing.RowSorter.SortKey;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
@@ -107,8 +112,6 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
     private JButton jButtonClearSearch = null;
 
     private JTable jTableComponents = null;
-    private TableColumnModel colModel = null;
-    private TableRowSorter<DefaultTableModel> tblSorter = null;
 
     /** The graph visualization component */
     private BasicGraphGui graphGUI = null;
@@ -117,8 +120,8 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
      * This is the default constructor for just displaying the current environment model during a running simulation
      */
     public GraphEnvironmentControllerGUI(EnvironmentController envController) {
-	super(envController);
-	this.initialize();
+		super(envController);
+		this.initialize();
     }
 
     /**
@@ -228,46 +231,46 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
      * @return javax.swing.JPanel
      */
     private JPanel getPnlControlls() {
-	if (jPanelControls == null) {
-	    GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
-	    gridBagConstraints1.gridx = 1;
-	    gridBagConstraints1.insets = new Insets(0, 0, 0, 5);
-	    gridBagConstraints1.gridy = 1;
-	    GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
-	    gridBagConstraints11.fill = GridBagConstraints.BOTH;
-	    gridBagConstraints11.gridy = 1;
-	    gridBagConstraints11.weightx = 0.5;
-	    gridBagConstraints11.gridwidth = 1;
-	    gridBagConstraints11.insets = new Insets(0, 10, 0, 1);
-	    gridBagConstraints11.gridx = 0;
-	    GridBagConstraints gridBagConstraints6 = new GridBagConstraints();
-	    gridBagConstraints6.gridx = 0;
-	    gridBagConstraints6.anchor = GridBagConstraints.WEST;
-	    gridBagConstraints6.insets = new Insets(0, 15, 0, 5);
-	    gridBagConstraints6.gridwidth = 2;
-	    gridBagConstraints6.fill = GridBagConstraints.HORIZONTAL;
-	    gridBagConstraints6.gridy = 0;
-	    jLabelTable = new JLabel();
-	    jLabelTable.setText("Search Components");
-	    jLabelTable.setFont(new Font("Dialog", Font.BOLD, 12));
-	    jLabelTable.setText(Language.translate(jLabelTable.getText(), Language.EN));
-	    GridBagConstraints gridBagConstraints = new GridBagConstraints();
-	    gridBagConstraints.fill = GridBagConstraints.BOTH;
-	    gridBagConstraints.gridy = 2;
-	    gridBagConstraints.weightx = 1.0;
-	    gridBagConstraints.weighty = 1.0;
-	    gridBagConstraints.gridheight = 1;
-	    gridBagConstraints.gridwidth = 0;
-	    gridBagConstraints.insets = new Insets(0, 10, 0, 5);
-	    gridBagConstraints.gridx = 0;
-	    jPanelControls = new JPanel();
-	    jPanelControls.setLayout(new GridBagLayout());
-	    jPanelControls.add(jLabelTable, gridBagConstraints6);
-	    jPanelControls.add(getJTextFieldSearch(), gridBagConstraints11);
-	    jPanelControls.add(getScpComponentTable(), gridBagConstraints);
-	    jPanelControls.add(getJButtonClearSearch(), gridBagConstraints1);
-	}
-	return jPanelControls;
+		if (jPanelControls == null) {
+		    GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
+		    gridBagConstraints1.gridx = 1;
+		    gridBagConstraints1.insets = new Insets(0, 0, 0, 5);
+		    gridBagConstraints1.gridy = 1;
+		    GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
+		    gridBagConstraints11.fill = GridBagConstraints.BOTH;
+		    gridBagConstraints11.gridy = 1;
+		    gridBagConstraints11.weightx = 0.5;
+		    gridBagConstraints11.gridwidth = 1;
+		    gridBagConstraints11.insets = new Insets(0, 10, 0, 1);
+		    gridBagConstraints11.gridx = 0;
+		    GridBagConstraints gridBagConstraints6 = new GridBagConstraints();
+		    gridBagConstraints6.gridx = 0;
+		    gridBagConstraints6.anchor = GridBagConstraints.WEST;
+		    gridBagConstraints6.insets = new Insets(0, 15, 0, 5);
+		    gridBagConstraints6.gridwidth = 2;
+		    gridBagConstraints6.fill = GridBagConstraints.HORIZONTAL;
+		    gridBagConstraints6.gridy = 0;
+		    jLabelTable = new JLabel();
+		    jLabelTable.setText("Search Components");
+		    jLabelTable.setFont(new Font("Dialog", Font.BOLD, 12));
+		    jLabelTable.setText(Language.translate(jLabelTable.getText(), Language.EN));
+		    GridBagConstraints gridBagConstraints = new GridBagConstraints();
+		    gridBagConstraints.fill = GridBagConstraints.BOTH;
+		    gridBagConstraints.gridy = 2;
+		    gridBagConstraints.weightx = 1.0;
+		    gridBagConstraints.weighty = 1.0;
+		    gridBagConstraints.gridheight = 1;
+		    gridBagConstraints.gridwidth = 0;
+		    gridBagConstraints.insets = new Insets(0, 10, 0, 5);
+		    gridBagConstraints.gridx = 0;
+		    jPanelControls = new JPanel();
+		    jPanelControls.setLayout(new GridBagLayout());
+		    jPanelControls.add(jLabelTable, gridBagConstraints6);
+		    jPanelControls.add(getJTextFieldSearch(), gridBagConstraints11);
+		    jPanelControls.add(getScpComponentTable(), gridBagConstraints);
+		    jPanelControls.add(getJButtonClearSearch(), gridBagConstraints1);
+		}
+		return jPanelControls;
     }
 
     /**
@@ -276,47 +279,11 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
      * @return javax.swing.JScrollPane
      */
     private JScrollPane getScpComponentTable() {
-	if (jScrollPaneComponentsTable == null) {
-	    jScrollPaneComponentsTable = new JScrollPane();
-	    jScrollPaneComponentsTable.setViewportView(getJTableComponents());
-	}
-	return jScrollPaneComponentsTable;
-    }
-
-    /**
-     * This method initializes the table column model. Responsible for showing edit buttons in the 3rd column
-     * 
-     * @return javax.swing.table.TableColumnModel
-     */
-    private TableColumnModel getColumnModel() {
-
-	colModel = jTableComponents.getColumnModel();
-	colModel.getColumn(2).setCellRenderer(new TableCellRenderer4Button());
-	colModel.getColumn(2).setCellEditor(new TableCellEditor4TableButton(jTableComponents) {
-	    private static final long serialVersionUID = 1L;
-
-	    /*
-	     * (non-Javadoc)
-	     * 
-	     * @see agentgui.core.gui.components.JTableButtonEditor#actionPerformed (java.awt.event.ActionEvent)
-	     */
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
-		super.actionPerformed(e);
-		int row = jTableComponents.getEditingRow();
-
-		// converting view coordinates to model coordinates
-		int modelRowIndex = jTableComponents.convertRowIndexToModel(row);
-		String compID = (String) jTableComponents.getModel().getValueAt(modelRowIndex, 0);
-		NetworkComponent comp = getGraphController().getNetworkModel().getNetworkComponent(compID);
-		new OntologySettingsDialog(getCurrentProject(), getGraphController(), comp).setVisible(true);
-	    }
-	});
-
-	// Setting column widths
-	colModel.getColumn(0).setPreferredWidth(20);
-	colModel.getColumn(2).setPreferredWidth(30);
-	return colModel;
+		if (jScrollPaneComponentsTable == null) {
+		    jScrollPaneComponentsTable = new JScrollPane();
+		    jScrollPaneComponentsTable.setViewportView(getJTableComponents());
+		}
+		return jScrollPaneComponentsTable;
     }
 
     /**
@@ -325,58 +292,105 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
      * @return javax.swing.JTable
      */
     private JTable getJTableComponents() {
-	if (jTableComponents == null) {
-	    // Column titles
-	    Vector<String> titles = new Vector<String>();
-	    titles.add(Language.translate("Komponente"));
-	    titles.add(Language.translate("Typ"));
-	    titles.add(Language.translate("Options", Language.EN));
+		if (jTableComponents == null) {
+		    // Column titles
+		    Vector<String> titles = new Vector<String>();
+		    titles.add(Language.translate("Komponente"));
+		    titles.add(Language.translate("Typ"));
+		    titles.add(Language.translate("Options", Language.EN));
+	
+		    final Vector<Vector<String>> data = getComponentTableContents();
+		    DefaultTableModel model = new DefaultTableModel(data, titles) {
+				private static final long serialVersionUID = 1636744550817904118L;
+				@Override
+				public boolean isCellEditable(int row, int col) {
+				    if (col != 1) {
+				    	return true;
+				    }
+				    return false;
+				}
+		    };
+	
+		    jTableComponents = new JTable(model);
+		    jTableComponents.setFillsViewportHeight(true);
+		    jTableComponents.setCellSelectionEnabled(true);
+		    jTableComponents.setShowGrid(false);
+		    jTableComponents.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		    
+		    jTableComponents.getModel().addTableModelListener(this);
+		    jTableComponents.getSelectionModel().addListSelectionListener(this);
 
-	    final Vector<Vector<String>> data = getComponentTableContents();
-	    DefaultTableModel model = new DefaultTableModel(data, titles) {
+		    TableRowSorter<DefaultTableModel> tblSorter = new TableRowSorter<DefaultTableModel>(model);
+		    tblSorter.setComparator(0, new Comparator<String>() {
+				@Override
+				public int compare(String o1, String o2) {
+					Integer o1Int = extractNumericalValue(o1);
+					Integer o2Int = extractNumericalValue(o2);
+					if (o1Int!=null && o2Int!=null) {
+						return o1Int.compareTo(o2Int);
+					} else if (o1Int==null && o2Int!=null) {
+						return -1;
+					} else if (o1Int!=null && o2Int==null) {
+						return 1;
+					} else {
+						return o1.compareTo(o2);	
+					}
+				}
+			});
+		    jTableComponents.setRowSorter(tblSorter);		    
 
-		private static final long serialVersionUID = 1636744550817904118L;
+		    // --- Define the first sort order ------------
+			List<SortKey> sortKeys = new ArrayList<SortKey>();
+			for (int i = 0; i < jTableComponents.getColumnCount(); i++) {
+			    sortKeys.add(new SortKey(i, SortOrder.ASCENDING));
+			}
+			jTableComponents.getRowSorter().setSortKeys(sortKeys);
+			
+			
+			TableColumnModel colModel = jTableComponents.getColumnModel();
+			colModel.getColumn(0).setPreferredWidth(20);
+			colModel.getColumn(2).setPreferredWidth(30);
+			colModel.getColumn(2).setCellEditor(new TableCellEditor4TableButton(getGraphController(), jTableComponents));			
+			colModel.getColumn(2).setCellRenderer(new TableCellRenderer4Button());
 
-		@Override
-		public boolean isCellEditable(int row, int col) {
-		    if (col != 1) {
-			return true;
-		    }
-		    return false;
 		}
-	    };
-
-	    tblSorter = new TableRowSorter<DefaultTableModel>(model);
-	    jTableComponents = new JTable(model);
-	    jTableComponents.setRowSorter(tblSorter);
-	    jTableComponents.setColumnModel(getColumnModel());
-
-	    jTableComponents.getSelectionModel().addListSelectionListener(this);
-	    jTableComponents.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-	    jTableComponents.setShowGrid(true);
-	    jTableComponents.setFillsViewportHeight(true);
-	    jTableComponents.setCellSelectionEnabled(true);
-
-	    jTableComponents.getModel().addTableModelListener(this);
-
-	}
-	return jTableComponents;
+		return jTableComponents;
     }
 
     /**
+     * Extract the numerical value from a String.
+     * @param expression the expression
+     * @return the integer value
+     */
+    private Integer extractNumericalValue(String expression) {
+    	String  numericString = "";
+    	Integer numeric = null;
+    	for (int i = 0; i < expression.length(); i++) {
+    		String letter = Character.toString(expression.charAt(i));
+    		if (letter.matches("[0-9]")) {
+    			numericString += letter;	
+    		}
+		}
+    	if (numericString.equals("")==false) {
+    		numeric = Integer.parseInt(numericString);
+    	}
+    	return numeric;
+    }
+    /**
      * Row filter for updating table view based on the expression in the text box Used for searching components
      */
-    public void tblFilter() {
-	RowFilter<DefaultTableModel, Object> rf = null;
-	// If current expression doesn't parse, don't update.
-	try {
-	    rf = RowFilter.regexFilter("(?i).*(" + getJTextFieldSearch().getText() + ").*", 0, 1);
-	} catch (java.util.regex.PatternSyntaxException e) {
-	    return;
-	}
-	tblSorter.setRowFilter(rf);
-
-	this.showNumberOfComponents();
+    @SuppressWarnings("unchecked")
+	public void tblFilter() {
+		
+    	RowFilter<DefaultTableModel, Object> rf = null;
+		// If current expression doesn't parse, don't update.
+		try {
+		    rf = RowFilter.regexFilter("(?i).*(" + getJTextFieldSearch().getText() + ").*", 0, 1);
+		} catch (java.util.regex.PatternSyntaxException e) {
+		    return;
+		}
+		((TableRowSorter<DefaultTableModel>)this.getJTableComponents().getRowSorter()).setRowFilter(rf);
+		this.showNumberOfComponents();
 
     }
 
@@ -391,21 +405,6 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 	}
 	text = text + " (" + jTableComponents.getRowCount() + ")";
 	this.jLabelTable.setText(text);
-    }
-
-    /**
-     * Rebuilds the components table by updating the table data model with a new vector
-     */
-    private void rebuildTblComponents() {
-	// Column titles
-	Vector<String> titles = new Vector<String>();
-	titles.add(Language.translate("Komponente"));
-	titles.add(Language.translate("Typ"));
-	titles.add(Language.translate("Options", Language.EN));
-
-	DefaultTableModel tblModel = (DefaultTableModel) this.getJTableComponents().getModel();
-	tblModel.setDataVector(this.getComponentTableContents(), titles);
-	getJTableComponents().setColumnModel(getColumnModel());
     }
 
     /*
@@ -548,7 +547,6 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
     public void setNetworkModel(NetworkModel nm) {
 
 	this.getGraphGUI().setGraph(nm.getGraph());
-	this.rebuildTblComponents();
 	this.showNumberOfComponents();
 
 	if (nm.getAlternativeNetworkModel().size() > 0) {
@@ -607,12 +605,11 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
      * Refresh network model.
      */
     public void refreshNetworkModel() {
-	// --- Network model is updated/refreshed -----
-	this.getGraphGUI().repaintGraph(this.getGraphController().getNetworkModel().getGraph());
-	// --- Rebuilding the component table ---------
-	this.rebuildTblComponents();
-	this.showNumberOfComponents();
-	this.getGraphGUI().clearPickedObjects();
+		// --- Network model is updated/refreshed -----
+		this.getGraphGUI().repaintGraph(this.getGraphController().getNetworkModel().getGraph());
+		// --- Rebuilding the component table ---------
+		this.showNumberOfComponents();
+		this.getGraphGUI().clearPickedObjects();
     }
 
     /**
@@ -622,15 +619,15 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
      */
     @Override
     public void valueChanged(ListSelectionEvent e) {
-	if (getJTableComponents().getSelectedRowCount() > 0) {
-	    // Converting from view coordinates to model coordinates
-	    int selectedIndex = getJTableComponents().convertRowIndexToModel(getJTableComponents().getSelectedRow());
-	    String componentID = (String) jTableComponents.getModel().getValueAt(selectedIndex, 0);
-	    NetworkComponent component = this.getGraphController().getNetworkModel().getNetworkComponent(componentID);
-
-	    this.getGraphGUI().clearPickedObjects();
-	    this.getGraphGUI().selectObject(component);
-	}
+		if (getJTableComponents().getSelectedRowCount() > 0) {
+		    // Converting from view coordinates to model coordinates
+		    int selectedIndex = getJTableComponents().convertRowIndexToModel(getJTableComponents().getSelectedRow());
+		    String componentID = (String) jTableComponents.getModel().getValueAt(selectedIndex, 0);
+		    NetworkComponent component = this.getGraphController().getNetworkModel().getNetworkComponent(componentID);
+	
+		    this.getGraphGUI().clearPickedObjects();
+		    this.getGraphGUI().selectObject(component);
+		}
     }
 
     /**

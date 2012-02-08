@@ -350,11 +350,6 @@ public class NetworkModel implements Cloneable, Serializable {
 	 */
 	private void removeDistributionNode(String graphElementID) {
 		GraphNode graphNode = (GraphNode) this.getGraphElement(graphElementID);
-		// TODO: quickfix hier kommt ein leerer GraphNode raus
-		if (graphNode == null) {
-			System.out.println("distribution Node Problem");
-			return;
-		}
 		this.splitNetworkModelAtNode(graphNode);
 		this.graph.removeVertex(graphNode);
 		graphElements.remove(graphNode.getId());

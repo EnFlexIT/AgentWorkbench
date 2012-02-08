@@ -65,6 +65,15 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	/** Default raster size for guide grid. */
 	public static Integer DEFAULT_RASTER_SIZE = 5; 
 	 
+	/** Default shapes for nodes */
+	public static final String SHAPE_ELLIPSE = "Ellipse";
+	public static final String SHAPE_RECTANGLE = "Rectangle";
+	public static final String SHAPE_ROUND_RECTANGLE = "Round rectangle";
+	public static final String SHAPE_REGULAR_POLYGON = "Regular polygon";
+	public static final String SHAPE_REGULAR_STAR = "Regular star";
+	/** Default shapes for a central cluster node */
+	public static final String DEFAULT_SHAPE_4_CLUSTER = SHAPE_RECTANGLE;
+	
 	
 	/** The component type settings used in the {@link GraphEnvironmentController} */
 	private HashMap<String, ComponentTypeSettings> currentCTS = null;
@@ -138,6 +147,10 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 			currentDomainSettings = new HashMap<String, DomainSettings>();
 		}
 		if (this.currentDomainSettings.size()==0) {
+			DomainSettings ds = new DomainSettings();
+			currentDomainSettings.put(DEFAULT_DOMAIN_SETTINGS_NAME, ds);
+		}
+		if (this.currentDomainSettings.containsKey(DEFAULT_DOMAIN_SETTINGS_NAME)==false) {
 			DomainSettings ds = new DomainSettings();
 			currentDomainSettings.put(DEFAULT_DOMAIN_SETTINGS_NAME, ds);
 		}

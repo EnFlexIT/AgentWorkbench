@@ -89,10 +89,9 @@ public class TableCellEditor4OntologyClass extends AbstractCellEditor implements
             nodeClassSelector.setVisible(true);   
             // --- wait here for end of editing -----------
             if (nodeClassSelector.isCanceled()==false) { //If OK button pressed
-            	String selected = nodeClassSelector.getClassSelected();
-    			if(selected != null && selected.length() > 0){
-    				currentOntologyClass = selected;
-    			}
+            	if (nodeClassSelector.isValidClass()) {
+            		currentOntologyClass = nodeClassSelector.getClassSelected();
+            	}
             }
             //Make the renderer reappear.
             this.fireEditingStopped();

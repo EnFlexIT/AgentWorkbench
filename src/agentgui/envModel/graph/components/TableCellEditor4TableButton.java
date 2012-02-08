@@ -40,6 +40,10 @@ import javax.swing.JButton;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 
+import agentgui.envModel.graph.controller.GraphEnvironmentController;
+import agentgui.envModel.graph.controller.OntologySettingsDialog;
+import agentgui.envModel.graph.networkModel.NetworkComponent;
+
 
 /**
  * Is used in the {@link ComponentTypeDialog}.
@@ -50,8 +54,9 @@ public class TableCellEditor4TableButton extends AbstractCellEditor implements T
 
 	private static final long serialVersionUID = 3607367692654837941L;
 	
-	@SuppressWarnings("unused")
-	private JTable table = null;
+	private JTable componentsTable;
+	private GraphEnvironmentController graphController;
+	
 	private JButton button = new JButton();
     int clickCountToStart = 1;
 
@@ -60,8 +65,9 @@ public class TableCellEditor4TableButton extends AbstractCellEditor implements T
      *
      * @param table the table
      */
-    public TableCellEditor4TableButton(JTable table) {
-    	this.table = table;
+    public TableCellEditor4TableButton(GraphEnvironmentController graphController, JTable componentsTable) {
+    	this.graphController = graphController;
+    	this.componentsTable = componentsTable;
     	this.button.addActionListener(this);
     }
 
@@ -69,9 +75,14 @@ public class TableCellEditor4TableButton extends AbstractCellEditor implements T
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
-//        int row = this.table.getEditingRow();
-//        int col = this.table.getEditingColumn();
-//        System.out.printf("row = %d  col = %d%n", row, col);    
+
+    	int row = componentsTable.getEditingRow();
+
+		// converting view coordinates to model coordinates
+		int modelRowIndex = componentsTable.convertRowIndexToModel(row);
+		String compID = (String) componentsTable.getModel().getValueAt(modelRowIndex, 0);
+		NetworkComponent comp = graphController.getNetworkModel().getNetworkComponent(compID);
+		new OntologySettingsDialog(graphController.getProject(), graphController, comp).setVisible(true);
     }
 
     /* (non-Javadoc)

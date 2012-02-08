@@ -45,6 +45,7 @@ public class DomainSettings implements Serializable {
 	private String vertexColor = String.valueOf(GeneralGraphSettings4MAS.DEFAULT_VERTEX_COLOR.getRGB());
 	private String vertexColorPicked = String.valueOf(GeneralGraphSettings4MAS.DEFAULT_VERTEX_PICKED_COLOR.getRGB());
 	private boolean showLabel = true;
+	private String clusterShape = GeneralGraphSettings4MAS.DEFAULT_SHAPE_4_CLUSTER; 
 	
 	/**
 	 * Instantiates a new domain settings.
@@ -126,6 +127,20 @@ public class DomainSettings implements Serializable {
 	public void setShowLabel(boolean showLabel) {
 		this.showLabel = showLabel;
 	}
-	
+
+	/**
+	 * Gets the cluster shape.
+	 * @return the cluster shape
+	 */
+	public String getClusterShape() {
+		return clusterShape;
+	}
+	/**
+	 * Sets the cluster shape.
+	 * @param clusterShape the new cluster shape
+	 */
+	public void setClusterShape(String clusterShape) {
+		this.clusterShape = clusterShape;
+	}
 	
 }

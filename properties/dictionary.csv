@@ -106,6 +106,9 @@ de;Die Datei '@' wurde nicht gefunden!;File '@' was not found!
 de;Die Datei existiert bereits. Wollen Sie diese Datei überschreiben?;The file already exists. Do you want to overwrite this file?
 de;Die Datei;The file
 de;Die Datenbank für den Server-Master ist nicht vorhanden.<br>Soll versucht werden diese nun anzulegen?;The database for the Server.Master is not available. <br> Try to create it now?
+de;Dieser Eintrag ist ein notwendiger Systemparameter, der 
+nicht gelöscht oder umbenannt werden darf!;This entry is a necessary system parameter, which
+can not be deleted or renamed!;;;
 de;Doppelklick um eine Klasse auszuwählen !;Double click to select a class!
 de;Dummy-Agenten starten;Start Dummy agent
 de;Dynamische Lastverteilung aktivieren;Enable dynamic load balancing ;null;null;null
@@ -232,6 +235,7 @@ de;Load Monitor;Load Monitor
 de;Log-Manager starten;Start Log Manager
 de;Lokal;Local;;;
 de;Lösche Verzeichnis;Delete Folder;;;
+de;Löschen nicht zulässig!;Deleting not allowed!;;;
 de;Löschen;Delete
 de;MAS-Pause;MAS-Pause
 de;MAS-Start;MAS-Start;;;
@@ -471,6 +475,10 @@ de;Übersetzen;Translate
 de;Übersetzter Text;Text translated
 de;Übersetzung speichern (STRG+S);Save translation (CTRL + S)
 de;Überspringen;Skip
+en;;Cluster shape;;;
+en;;Select a network component;;;
+en;;Select two valid vertices;;;
+en;;The select Vertex should be between two components !;;;
 en;Agenten-Klasse;Agent class;;;
 en;Aktuelles Bild entfernen;Remove current image;;;
 en;Ausgewählte Komponente entfernen;Remove selected component;;;

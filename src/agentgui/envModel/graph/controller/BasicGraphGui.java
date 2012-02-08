@@ -62,6 +62,7 @@ import agentgui.envModel.graph.networkModel.GraphElement;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
+import agentgui.envModel.graph.prototypes.ClusterGraphElement;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 import edu.uci.ics.jung.graph.Graph;
@@ -107,13 +108,9 @@ public class BasicGraphGui extends JPanel {
 	/** Indicates that the initial scaling is allowed */
 	private boolean allowInitialScaling = true;
 
-	/**
-	 * The DefaultModalGraphMouse which can be added to the visualization viewer. Used here for the transforming mode
-	 */
+	/** The DefaultModalGraphMouse which can be added to the visualization viewer. Used here for the transforming mode */
 	private DefaultModalGraphMouse<GraphNode, GraphEdge> defaultModalGraphMouse = null; // @jve:decl-index=0:
-	/**
-	 * The pluggable graph mouse which can be added to the visualization viewer. Used here for customized Picking mode
-	 */
+	/** The pluggable graph mouse which can be added to the visualization viewer. Used here for customized Picking mode	 */
 	private PluggableGraphMouse pluggableGraphMouse = null; // @jve:decl-index=0:
 
 	/**
@@ -153,7 +150,8 @@ public class BasicGraphGui extends JPanel {
 	}
 
 	/**
-	 * This method initializes the two mouse modes - Transforming mode and picking mode by using PluggableGraphMouse and DefaultModalGraphMouse respectively
+	 * This method initializes the two mouse modes - Transforming mode and picking mode by 
+	 * using PluggableGraphMouse and DefaultModalGraphMouse respectively
 	 */
 	private void initMouseModes() {
 
@@ -284,7 +282,14 @@ public class BasicGraphGui extends JPanel {
 		return new Point2D.Double(this.graphMargin, this.graphMargin);
 	}
 
+	/**
+	 * Gets the vertices spread dimension.
+	 *
+	 * @param graphNodes the graph nodes
+	 * @return the vertices spread dimension
+	 */
 	public static Rectangle2D getVerticesSpreadDimension(Collection<GraphNode> graphNodes) {
+		
 		double x_min = 0;
 		double y_min = 0;
 		double x_max = 0;
@@ -300,14 +305,10 @@ public class BasicGraphGui extends JPanel {
 				y_min = y;
 			}
 
-			if (x < x_min)
-				x_min = x;
-			if (x > x_max)
-				x_max = x;
-			if (y < y_min)
-				y_min = y;
-			if (y > y_max)
-				y_max = y;
+			if (x < x_min) x_min = x;
+			if (x > x_max) x_max = x;
+			if (y < y_min) y_min = y;
+			if (y > y_max) y_max = y;
 		}
 		return new Rectangle2D.Double(x_min, y_min, x_max, y_max);
 	}
@@ -322,7 +323,7 @@ public class BasicGraphGui extends JPanel {
 		if (graph == null) {
 			return new Rectangle2D.Double(0, 0, 0, 0);
 		}
-		return BasicGraphGui.getVerticesSpreadDimension(graph.getVertices());
+		return getVerticesSpreadDimension(graph.getVertices());
 	}
 
 	/**
@@ -428,7 +429,7 @@ public class BasicGraphGui extends JPanel {
 		vViewer.setBackground(Color.WHITE);
 
 		// --- Configure mouse interaction --------------------------------
-		vViewer.setGraphMouse(pluggableGraphMouse);
+		vViewer.setGraphMouse(this.pluggableGraphMouse);
 
 		// --- Set tool tip for nodes -------------------------------------
 		vViewer.setVertexToolTipTransformer(new Transformer<GraphNode, String>() {
@@ -907,8 +908,35 @@ public class BasicGraphGui extends JPanel {
 		 * @see org.apache.commons.collections15.Transformer#transform(java.lang.Object)
 		 */
 		@Override
-		public Shape transform(GraphNode v) {
-			return factory.getEllipse(v);
+		public Shape transform(GraphNode node) {
+			
+			Shape shape = factory.getEllipse(node); // DEFAULT 
+			
+			NetworkModel networkModel = controller.getNetworkModel();
+			HashSet<NetworkComponent> componentHashSet = networkModel.getNetworkComponents(node);
+			NetworkComponent networkComponent = networkModel.componentListContainsDistributionNode(componentHashSet);
+			if (componentHashSet.size()==1 && networkComponent==null) {
+				networkComponent = componentHashSet.iterator().next();
+				if (networkComponent.getPrototypeClassName().equals(ClusterGraphElement.class.getName())){
+					
+					ComponentTypeSettings cts = controller.getComponentTypeSettings().get(networkComponent.getType());
+					DomainSettings ds = controller.getDomainSettings().get(cts.getDomain());
+					String shapeForm = ds.getClusterShape();
+					if (shapeForm.equals(GeneralGraphSettings4MAS.SHAPE_RECTANGLE)) {
+						shape = factory.getRectangle(node);
+					} else if (shapeForm.equals(GeneralGraphSettings4MAS.SHAPE_ROUND_RECTANGLE)) {
+						shape = factory.getRoundRectangle(node);
+					} else if (shapeForm.equals(GeneralGraphSettings4MAS.SHAPE_REGULAR_POLYGON)) {
+						shape = factory.getRegularPolygon(node, 6);
+					} else if (shapeForm.equals(GeneralGraphSettings4MAS.SHAPE_REGULAR_STAR)) {
+						shape = factory.getRegularStar(node, 6);
+					} else {
+						shape = factory.getEllipse(node);
+					}
+					
+				}
+			}
+			return shape;
 		}
 	}
 

@@ -42,9 +42,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -55,12 +58,15 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.RowSorter.SortKey;
+import javax.swing.SortOrder;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EtchedBorder;
@@ -68,6 +74,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableRowSorter;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
@@ -112,6 +119,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	public final String COL_D_VertexColor			= Language.translate("Color", Language.EN);  			//  @jve:decl-index=0:
 	public final String COL_D_VertexColorPicked 	= Language.translate("Color picked", Language.EN);  	//  @jve:decl-index=0:
 	public final String COL_D_ShowLable				= Language.translate("Show label", Language.EN);  		//  @jve:decl-index=0:
+	public final String COL_D_ClusterShape			= Language.translate("Cluster shape", Language.EN);  	//  @jve:decl-index=0:
 	
 	private HashMap<String, ComponentTypeSettings> currCompTypSettings = null;
 	private HashMap<String, DomainSettings> currDomainSettings = null;
@@ -149,6 +157,10 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	
 	private TableCellEditor4ClassSelector prototypeClassesCellEditor = null;  //  @jve:decl-index=0:
 	private ClassSelector ontologyClassSelector = null;
+
+	private JPanel jPanelRaster = null;
+
+	private JLabel jLabelBottomDummy = null;
 	
 		
 	/**
@@ -172,7 +184,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	 */
 	private void initialize() {
 		
-		this.setSize(980, 589);
+		this.setSize(980, 700);
 		this.setTitle("Komponententyp-Definition");
 		this.setTitle(Language.translate(this.getTitle()));
 		this.setModal(true);
@@ -278,6 +290,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			columnHeaderDomains.add(COL_D_VertexSize);
 			columnHeaderDomains.add(COL_D_VertexColor);
 			columnHeaderDomains.add(COL_D_VertexColorPicked);
+			columnHeaderDomains.add(COL_D_ClusterShape);
 		}
 		return columnHeaderDomains;
 	}
@@ -305,8 +318,8 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	private Vector<String> getColumnHeaderComponents() {
 		if (columnHeaderComponents==null) {
 			columnHeaderComponents = new Vector<String>();
-			columnHeaderComponents.add(COL_TypeSpecifier);
 			columnHeaderComponents.add(COL_Domain);
+			columnHeaderComponents.add(COL_TypeSpecifier);
 			columnHeaderComponents.add(COL_AgentClass);
 			columnHeaderComponents.add(COL_GraphPrototyp);
 			columnHeaderComponents.add(COL_ShowLabel);
@@ -381,6 +394,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			jTabbedPane.setTitleAt(0, Language.translate("Teilnetze"));
 			jTabbedPane.setTitleAt(1, Language.translate("Netzwerk-Komponenten"));
 			jTabbedPane.setTitleAt(2, Language.translate("Allgemein"));
+			jTabbedPane.setSelectedIndex(1);
 		}
 		return jTabbedPane;
 	}
@@ -391,50 +405,84 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	 */
 	private JPanel getJPanelGeneralSettings() {
 		if (jPanelGeneralSettings == null) {
-			GridBagConstraints gridBagConstraints22 = new GridBagConstraints();
-			gridBagConstraints22.anchor = GridBagConstraints.WEST;
-			gridBagConstraints22.gridx = 0;
-			gridBagConstraints22.gridy = 2;
-			gridBagConstraints22.insets = new Insets(5, 0, 0, 0);
-			GridBagConstraints gridBagConstraints23 = new GridBagConstraints();
-			gridBagConstraints23.anchor = GridBagConstraints.WEST;
-			gridBagConstraints23.insets = new Insets(5, 5, 0, 0);
-			gridBagConstraints23.gridx = 1;
-			gridBagConstraints23.gridy = 2;
-			gridBagConstraints23.weightx = 0.0;
-			gridBagConstraints23.fill = GridBagConstraints.NONE;
-			GridBagConstraints gridBagConstraints18 = new GridBagConstraints();
-			gridBagConstraints18.anchor = GridBagConstraints.WEST;
-			gridBagConstraints18.gridwidth = 2;
-			gridBagConstraints18.gridx = 0;
-			gridBagConstraints18.gridy = 1;
-			gridBagConstraints18.insets = new Insets(5, 0, 0, 0);
+			GridBagConstraints gridBagConstraints12 = new GridBagConstraints();
+			gridBagConstraints12.gridx = 0;
+			gridBagConstraints12.fill = GridBagConstraints.BOTH;
+			gridBagConstraints12.weighty = 1.0;
+			gridBagConstraints12.weightx = 1.0;
+			gridBagConstraints12.insets = new Insets(0, 15, 15, 15);
+			gridBagConstraints12.gridy = 1;
+			
+			GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
+			gridBagConstraints4.gridx = 0;
+			gridBagConstraints4.fill = GridBagConstraints.NONE;
+			gridBagConstraints4.anchor = GridBagConstraints.WEST;
+			gridBagConstraints4.insets = new Insets(15, 15, 0, 15);
+			gridBagConstraints4.gridy = 0;
+			
+			jLabelBottomDummy = new JLabel();
+			jLabelBottomDummy.setText("");
+			
+			jPanelGeneralSettings = new JPanel();
+			jPanelGeneralSettings.setLayout(new GridBagLayout());
+			jPanelGeneralSettings.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+			jPanelGeneralSettings.add(getJPanelRaster(), gridBagConstraints4);
+			jPanelGeneralSettings.add(jLabelBottomDummy, gridBagConstraints12);
+		}
+		return jPanelGeneralSettings;
+	}
+	/**
+	 * This method initializes jPanelRaster	
+	 * @return javax.swing.JPanel	
+	 */
+	private JPanel getJPanelRaster() {
+		if (jPanelRaster == null) {
+			
 			GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
 			gridBagConstraints11.anchor = GridBagConstraints.WEST;
-			gridBagConstraints11.gridwidth = 2;
-			gridBagConstraints11.gridx = -1;
-			gridBagConstraints11.gridy = -1;
-			gridBagConstraints11.insets = new Insets(0, 0, 5, 0);
+			gridBagConstraints11.insets = new Insets(5, 5, 5, 0);
+			gridBagConstraints11.gridx = 2;
+			gridBagConstraints11.gridy = 1;
+			gridBagConstraints11.weightx = 0.0;
+			gridBagConstraints11.fill = GridBagConstraints.NONE;
+			GridBagConstraints gridBagConstraints10 = new GridBagConstraints();
+			gridBagConstraints10.anchor = GridBagConstraints.WEST;
+			gridBagConstraints10.gridx = 1;
+			gridBagConstraints10.gridy = 1;
+			gridBagConstraints10.insets = new Insets(5, 10, 5, 0);
+			GridBagConstraints gridBagConstraints7 = new GridBagConstraints();
+			gridBagConstraints7.anchor = GridBagConstraints.WEST;
+			gridBagConstraints7.gridwidth = 2;
+			gridBagConstraints7.gridx = -1;
+			gridBagConstraints7.gridy = -1;
+			gridBagConstraints7.insets = new Insets(5, 10, 5, 0);
+			GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
+			gridBagConstraints5.anchor = GridBagConstraints.WEST;
+			gridBagConstraints5.gridwidth = 1;
+			gridBagConstraints5.gridx = -1;
+			gridBagConstraints5.gridy = -1;
+			gridBagConstraints5.insets = new Insets(5, 5, 5, 5);
 			
 			jLabelGridHeader = new JLabel();
 			jLabelGridHeader.setText("Hilfs-Raster");
-			jLabelGridHeader.setFont(new Font("Dialog", Font.BOLD, 14));
-			jLabelGridHeader.setText(Language.translate(jLabelGridHeader.getText()));
+			jLabelGridHeader.setText(Language.translate(jLabelGridHeader.getText()) + ":");
+			jLabelGridHeader.setFont(new Font("Dialog", Font.BOLD, 12));
 			
 			jLabelGuideGridWidth = new JLabel();
 			jLabelGuideGridWidth.setText("Raster-Breite");
 			jLabelGuideGridWidth.setText(Language.translate(jLabelGuideGridWidth.getText()));
 			
-			jPanelGeneralSettings = new JPanel();
-			jPanelGeneralSettings.setLayout(new GridBagLayout());
-			jPanelGeneralSettings.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
-			jPanelGeneralSettings.add(jLabelGridHeader, gridBagConstraints11);
-			jPanelGeneralSettings.add(getJCheckBoxSnap2Grid(), gridBagConstraints18);
-			jPanelGeneralSettings.add(getJSpinnerGridWidth(), gridBagConstraints23);
-			jPanelGeneralSettings.add(jLabelGuideGridWidth, gridBagConstraints22);
+			
+			jPanelRaster = new JPanel();
+			jPanelRaster.setLayout(new GridBagLayout());
+			jPanelRaster.add(jLabelGridHeader, gridBagConstraints5);
+			jPanelRaster.add(getJCheckBoxSnap2Grid(), gridBagConstraints7);
+			jPanelRaster.add(jLabelGuideGridWidth, gridBagConstraints10);
+			jPanelRaster.add(getJSpinnerGridWidth(), gridBagConstraints11);
 		}
-		return jPanelGeneralSettings;
+		return jPanelRaster;
 	}
+	
 	/**
 	 * This method initializes the nodeClassSelector
 	 * @return The nodeClassSelector
@@ -560,15 +608,58 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	 */
 	private JTable getJTable4DomainTypes() {
 		if (jTableDomainTypes == null) {
+			
 			jTableDomainTypes = new JTable();
 			jTableDomainTypes.setFillsViewportHeight(true);
 			jTableDomainTypes.setShowGrid(true);
 			jTableDomainTypes.setRowHeight(20);
 			jTableDomainTypes.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jTableDomainTypes.setModel(getTableModel4Domains());
-			jTableDomainTypes.setAutoCreateRowSorter(true);
 			jTableDomainTypes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			jTableDomainTypes.setAutoCreateRowSorter(true);
 			
+			// --- Define the sorter ----------------------
+			TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<DefaultTableModel>(getTableModel4Domains());
+			sorter.setComparator(getColumnHeaderIndexDomains(COL_D_ShowLable), new Comparator<Boolean>() {
+				@Override
+				public int compare(Boolean o1, Boolean o2) {
+					return o1.compareTo(o2);
+				}
+			});
+			sorter.setComparator(getColumnHeaderIndexDomains(COL_D_VertexSize), new Comparator<Integer>() {
+				@Override
+				public int compare(Integer o1, Integer o2) {
+					return o1.compareTo(o2);
+				}
+			});
+			sorter.setComparator(getColumnHeaderIndexDomains(COL_D_VertexColor), new Comparator<Color>() {
+				@Override
+				public int compare(Color o1, Color o2) {
+					Integer o1RGB = o1.getRGB();
+					Integer o2RGB = o2.getRGB();
+					return o1RGB.compareTo(o2RGB);
+				}
+			});
+			sorter.setComparator(getColumnHeaderIndexDomains(COL_D_VertexColorPicked), new Comparator<Color>() {
+				@Override
+				public int compare(Color o1, Color o2) {
+					Integer o1RGB = o1.getRGB();
+					Integer o2RGB = o2.getRGB();
+					return o1RGB.compareTo(o2RGB);
+				}
+			});
+			jTableDomainTypes.setRowSorter(sorter);
+
+			
+			// --- Define the first sort order ------------
+			List<SortKey> sortKeys = new ArrayList<SortKey>();
+			for (int i = 0; i < jTableDomainTypes.getColumnCount(); i++) {
+			    sortKeys.add(new SortKey(i, SortOrder.ASCENDING));
+			}
+			jTableDomainTypes.getRowSorter().setSortKeys(sortKeys);
+
+			
+			// --- Configure the editor and the renderer of the cells ---------
 			TableColumnModel tcm = jTableDomainTypes.getColumnModel();
 
 			//Set up renderer and editor for the domain name column
@@ -603,6 +694,10 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			showLabelClassColumn.setCellRenderer(new TableCellRenderer4CheckBox());
 			showLabelClassColumn.setPreferredWidth(10);
 			
+			TableColumn clusterShapeColumn = tcm.getColumn(getColumnHeaderIndexDomains(COL_D_ClusterShape));
+			clusterShapeColumn.setCellEditor(new TableCellEditor4Combo(this.getJComboBoxClusterShape()));
+			clusterShapeColumn.setPreferredWidth(10);
+			
 		}
 		return jTableDomainTypes;
 	}
@@ -614,9 +709,6 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	private DefaultTableModel getTableModel4Domains(){
 		
 		if (domainTableModel== null) {
-			// ----------------------------------------------------------------
-			// The ComboBoxModels must be initiated before adding rows 
-			//getJComboBoxAgentClasses();
 			
 			Vector<Vector<Object>> dataRows = new Vector<Vector<Object>>();
 			
@@ -637,6 +729,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 					Color vertexColor = new Color(Integer.parseInt(domSetting.getVertexColor()));
 					Color vertexColorPicked = new Color(Integer.parseInt(domSetting.getVertexColorPicked()));
 					boolean showLabel = domSetting.isShowLabel();
+					String clusterShape = domSetting.getClusterShape();
 					
 					// --- Create row vector --------------
 					Vector<Object> newRow = new Vector<Object>();
@@ -653,6 +746,8 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 							newRow.add(vertexColorPicked);
 						} else if (i == getColumnHeaderIndexDomains(COL_D_ShowLable)) {
 							newRow.add(showLabel);
+						} else if (i == getColumnHeaderIndexDomains(COL_D_ClusterShape)) {
+							newRow.add(clusterShape);
 						}
 					}
 					dataRows.add(newRow);
@@ -684,6 +779,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		}
 		return domainTableModel;
 	}
+	
 	/**
 	 * This method adds a new row to the jTableClasses' TableModel4Domains
 	 */
@@ -705,19 +801,39 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 				newRow.add(GeneralGraphSettings4MAS.DEFAULT_VERTEX_PICKED_COLOR);
 			}
 		}
-		this.setTableCellEditor4DomainsInComponents();
+		
 		this.getTableModel4Domains().addRow(newRow);
-		this.getJTable4DomainTypes().changeSelection(getJTable4DomainTypes().getRowCount()-1, 0, false, false);
-		this.getJTable4DomainTypes().editCellAt(getJTable4DomainTypes().getRowCount()-1, 0);
+		int newIndex = this.getTableModel4Domains().getRowCount() - 1;
+		newIndex = this.getJTable4DomainTypes().convertRowIndexToView(newIndex);
+		
+		this.getJTable4DomainTypes().changeSelection(newIndex, 0, false, false);
+		this.getJTable4DomainTypes().editCellAt(newIndex, 0);
+		this.setTableCellEditor4DomainsInComponents();
 	}
 	
 	/**
 	 * Removes the domain row.
-	 * @param rowNum the row num
+	 * @param rowNumTable the row num
 	 */
-	private void removeDomainRow(int rowNum){
-		((DefaultTableModel)getJTable4DomainTypes().getModel()).removeRow(rowNum);
-		this.setTableCellEditor4DomainsInComponents();
+	private void removeDomainRow(int rowNumTable){
+		
+		int rowNumModel = this.getJTable4DomainTypes().convertRowIndexToModel(rowNumTable);
+		int colDamain = this.getColumnHeaderIndexDomains(COL_D_DomainName);
+		String domainName = (String)this.getJTable4DomainTypes().getValueAt(rowNumTable, colDamain);
+		String defaultDomain = GeneralGraphSettings4MAS.DEFAULT_DOMAIN_SETTINGS_NAME;
+		
+		if (domainName!=null) {
+			if (domainName.equals(defaultDomain)) {
+				String msg = Language.translate("Dieser Eintrag ist ein notwendiger Systemparameter, der \nnicht gelöscht oder umbenannt werden darf!");
+				String title = "'" + defaultDomain + "': " +  Language.translate("Löschen nicht zulässig!");
+				JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
+				return;
+			} 
+		} 
+		((DefaultTableModel)getJTable4DomainTypes().getModel()).removeRow(rowNumModel);
+		this.renameDomainInComponents(domainName, defaultDomain);
+		this.setTableCellEditor4DomainsInComponents();	
+		
 	}
 	
 	/**
@@ -751,7 +867,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	/**
 	 * Sets the table CellEditor for domains in components.
 	 */
-	private void setTableCellEditor4DomainsInComponents(){
+	public void setTableCellEditor4DomainsInComponents(){
 		TableColumnModel tcm = this.getJTable4ComponentTypes().getColumnModel();
 		TableColumn domainColumn = tcm.getColumn(getColumnHeaderIndexComponents(COL_Domain));
 		domainColumn.setCellEditor(new TableCellEditor4Combo(this.getJComboBoxDomains()));
@@ -788,16 +904,51 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			jTableComponentTypes.setAutoCreateRowSorter(true);
 			jTableComponentTypes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			
+			// --- Define the sorter ------------------------------------------
+			TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<DefaultTableModel>(getTableModel4ComponentTypes());
+			sorter.setComparator(getColumnHeaderIndexComponents(COL_ShowLabel), new Comparator<Boolean>() {
+				@Override
+				public int compare(Boolean o1, Boolean o2) {
+					return o1.compareTo(o2);
+				}
+			});
+			sorter.setComparator(getColumnHeaderIndexComponents(COL_EdgeWidth), new Comparator<Float>() {
+				@Override
+				public int compare(Float o1, Float o2) {
+					return o1.compareTo(o2);
+				}
+			});
+			sorter.setComparator(getColumnHeaderIndexComponents(COL_EdgeColor), new Comparator<Color>() {
+				@Override
+				public int compare(Color o1, Color o2) {
+					Integer o1RGB = o1.getRGB();
+					Integer o2RGB = o2.getRGB();
+					return o1RGB.compareTo(o2RGB);
+				}
+			});
+			jTableComponentTypes.setRowSorter(sorter);
+
+			
+			// --- Define the first sort order --------------------------------
+			List<SortKey> sortKeys = new ArrayList<SortKey>();
+			for (int i = 0; i < jTableComponentTypes.getColumnCount(); i++) {
+			    sortKeys.add(new SortKey(i, SortOrder.ASCENDING));
+			}
+			jTableComponentTypes.getRowSorter().setSortKeys(sortKeys);
+
+			
+			// --- Configure the editor and the renderer of the cells ---------
 			TableColumnModel tcm = jTableComponentTypes.getColumnModel();
 			
+			//Set up renderer and editor for domain column
+			TableColumn domainColumn = tcm.getColumn(getColumnHeaderIndexComponents(COL_Domain));
+			domainColumn.setCellEditor(new TableCellEditor4Combo(this.getJComboBoxDomains()));
+			domainColumn.setPreferredWidth(20);
+
 			//Set up renderer and editor for the agent class column
 			TableColumn agentClassColumn = tcm.getColumn(getColumnHeaderIndexComponents(COL_AgentClass));
 			agentClassColumn.setCellEditor(new TableCellEditor4AgentClass());
 			agentClassColumn.setCellRenderer(new TableCellRenderer4Label());
-
-			//Set up renderer and editor for domain column
-			TableColumn domainColumn = tcm.getColumn(getColumnHeaderIndexComponents(COL_Domain));
-			domainColumn.setCellEditor(new TableCellEditor4Combo(this.getJComboBoxDomains()));
 			
 			//Set up renderer and editor for Graph prototype column
 			TableColumn prototypeClassColumn = tcm.getColumn(getColumnHeaderIndexComponents(COL_GraphPrototyp));
@@ -813,18 +964,18 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			//Set up Editor for the ImageIcon column
 			TableColumn imageIconColumn = tcm.getColumn(getColumnHeaderIndexComponents(COL_Image));
 			imageIconColumn.setCellEditor(new TableCellEditor4Image(this, currProject));		
-			imageIconColumn.setPreferredWidth(15);
+			imageIconColumn.setPreferredWidth(10);
 			
 			//Set up renderer and editor for the edge width.	        
 			TableColumn edgeWidthColumn = tcm.getColumn(getColumnHeaderIndexComponents(COL_EdgeWidth));
 			edgeWidthColumn.setCellEditor(new TableCellEditor4Combo(this.getJComboBoxEdgeWidth()));
-			edgeWidthColumn.setPreferredWidth(15);
+			edgeWidthColumn.setPreferredWidth(10);
 			
 			//Set up renderer and editor for the  Color column.	        
 			TableColumn colorColumn = tcm.getColumn(getColumnHeaderIndexComponents(COL_EdgeColor));
 			colorColumn.setCellEditor(new TableCellEditor4Color());
 			colorColumn.setCellRenderer(new TableCellRenderer4Color(true));			
-			colorColumn.setPreferredWidth(15);
+			colorColumn.setPreferredWidth(10);
 		}
 		return jTableComponentTypes;
 	}
@@ -927,17 +1078,24 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 				newRow.add(GeneralGraphSettings4MAS.DEFAULT_EDGE_COLOR);
 			}
 		}
+		
 		this.getTableModel4ComponentTypes().addRow(newRow);
-		this.getJTable4ComponentTypes().changeSelection(getJTable4ComponentTypes().getRowCount()-1, 0, false, false);
-		this.getJTable4ComponentTypes().editCellAt(getJTable4ComponentTypes().getRowCount()-1, 0);
+		int newIndex = this.getTableModel4ComponentTypes().getRowCount() - 1;
+		newIndex = this.getJTable4ComponentTypes().convertRowIndexToView(newIndex);
+		
+		int editCell = this.getColumnHeaderIndexComponents(COL_TypeSpecifier);
+		this.getJTable4ComponentTypes().changeSelection(newIndex, editCell, false, false);
+		this.getJTable4ComponentTypes().editCellAt(newIndex, editCell);
+		
 	}
 	
 	/**
 	 * This method removes a row from the jTableClasses' TableModel
 	 * @param rowNum
 	 */
-	private void removeComponentRow(int rowNum){
-		((DefaultTableModel)getJTable4ComponentTypes().getModel()).removeRow(rowNum);
+	private void removeComponentRow(int rowNumTable){
+		int rowNumModel = this.getJTable4ComponentTypes().convertRowIndexToModel(rowNumTable);
+		((DefaultTableModel)getJTable4ComponentTypes().getModel()).removeRow(rowNumModel);
 	}
 
 	/**
@@ -993,7 +1151,6 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		return jComboBoxNodeSize;
 	}
 	
-	
 	/**
 	 * Returns a JComboBox with the list of Domains.
 	 * @return the JComboBox with the available domains
@@ -1011,6 +1168,24 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		DefaultComboBoxModel comboBoxModel4Domains = new DefaultComboBoxModel(domainVector);
 		
 		JComboBox jComboBoxNodeSize = new JComboBox(comboBoxModel4Domains);
+		jComboBoxNodeSize.setPreferredSize(new Dimension(50, 26));
+		return jComboBoxNodeSize;
+	}
+	
+	/**
+	 * Returns the JComboBox for the possible cluster shapes.
+	 * @return the JComboBox for the possible cluster shapes
+	 */
+	private JComboBox getJComboBoxClusterShape() {
+		String[] clusterList = {
+				GeneralGraphSettings4MAS.SHAPE_ELLIPSE,
+				GeneralGraphSettings4MAS.SHAPE_RECTANGLE,
+				GeneralGraphSettings4MAS.SHAPE_ROUND_RECTANGLE,
+				GeneralGraphSettings4MAS.SHAPE_REGULAR_POLYGON,
+				GeneralGraphSettings4MAS.SHAPE_REGULAR_STAR };
+		DefaultComboBoxModel cbmSizes = new DefaultComboBoxModel(clusterList); 
+
+		JComboBox jComboBoxNodeSize = new JComboBox(cbmSizes);
 		jComboBoxNodeSize.setPreferredSize(new Dimension(50, 26));
 		return jComboBoxNodeSize;
 	}
@@ -1135,7 +1310,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	private JSpinner getJSpinnerGridWidth() {
 		if (jSpnnerGridWidth == null) {
 			jSpnnerGridWidth = new JSpinner(new SpinnerNumberModel(5.0, 5.0, 100.0, 0.1));
-			jSpnnerGridWidth.setPreferredSize(new Dimension(80, 26));
+			jSpnnerGridWidth.setPreferredSize(new Dimension(60, 26));
 		}
 		return jSpnnerGridWidth;
 	}
@@ -1189,6 +1364,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 					String colorStr 	 = String.valueOf(color.getRGB());
 					Color colorPicked	 = (Color)  dtmDomains.getValueAt(row, this.getColumnHeaderIndexDomains(COL_D_VertexColorPicked));					
 					String colorPickStr	 = String.valueOf(colorPicked.getRGB());
+					String clusterShape  = (String) dtmDomains.getValueAt(row, this.getColumnHeaderIndexDomains(COL_D_ClusterShape));
 					
 					DomainSettings ds = new DomainSettings();
 					ds.setOntologyClass(ontoClass);
@@ -1196,6 +1372,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 					ds.setVertexSize(vertexSize);
 					ds.setVertexColor(colorStr);
 					ds.setVertexColorPicked(colorPickStr);
+					ds.setClusterShape(clusterShape);
 
 					dsHash.put(name, ds);
 				}

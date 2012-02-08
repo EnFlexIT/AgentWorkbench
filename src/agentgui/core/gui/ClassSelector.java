@@ -101,6 +101,7 @@ public class ClassSelector extends JDialog {
 
 	private ClassSearcherSingle css = null;
 	private boolean canceled = false;
+	private boolean validClass = false;
 	private String classSelected = null;  //  @jve:decl-index=0:
 
 
@@ -422,8 +423,9 @@ public class ClassSelector extends JDialog {
 		
 		String className = jTextField.getText().trim();
 		if (this.class2Search4DefaultValue==null && className.equals("")) {
-			// --- If no default value is configured, an empty textfield is allowed -----
+			// --- If no default value is configured, an empty text field is allowed -----
 			jButton.setIcon(new ImageIcon(getClass().getResource(PathImage + "MBcheckGreen.png")));
+			this.setValidClass(true);
 			return true;
 		
 		} else {
@@ -432,6 +434,7 @@ public class ClassSelector extends JDialog {
 				@SuppressWarnings("unused")
 				Class<?> clazz = Class.forName(className);
 				jButton.setIcon(new ImageIcon(getClass().getResource(PathImage + "MBcheckGreen.png")));
+				this.setValidClass(true);
 				return true;
 				
 			} catch (ClassNotFoundException e) {
@@ -439,7 +442,23 @@ public class ClassSelector extends JDialog {
 				jButton.setIcon(new ImageIcon(getClass().getResource(PathImage + "MBcheckRed.png")));
 			}
 		}
+		this.setValidClass(false);
 		return false;
+	}
+
+	/**
+	 * Sets the valid class.
+	 * @param validClass the new valid class
+	 */
+	private void setValidClass(boolean validClass) {
+		this.validClass = validClass;
+	}
+	/**
+	 * Checks if a valid class was selected.
+	 * @return true, if the class is valid or null
+	 */
+	public boolean isValidClass() {
+		return validClass;
 	}
 
 	/**

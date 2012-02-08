@@ -84,6 +84,7 @@ import edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin;
 import edu.uci.ics.jung.visualization.control.PluggableGraphMouse;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 import edu.uci.ics.jung.visualization.transform.MutableTransformer;
+import javax.swing.JTextField;
 
 /**
  * Dialog for adding a new network component to the model.<br>
@@ -104,18 +105,23 @@ public class AddComponentDialog extends JDialog implements ActionListener {
     /** The graph element prototype of the selected component type. */
     private GraphElementPrototype graphElement = null; // @jve:decl-index=0:
 
-    private JPanel jContentPane = null;
+	private JPanel jContentPane = null;
     private JPanel jPanelBottom = null;
-    private JPanel jPanelViewer = null;
-    private JScrollPane jScrollPane = null;
+    private JPanel jPanelViewer = null;  //  @jve:decl-index=0:visual-constraint="601,164"
+    private JScrollPane jScrollPane = null;  //  @jve:decl-index=0:visual-constraint="521,58"
     private JList componentTypesList = null;
-    private JLabel jLabelInstruction = null;
+    private JLabel jLabelInstructionMerge = null;
+    private JLabel jLabelInstructionSelect = null;
+    
     private JButton jButtonOK = null;
     private JButton jButtonCancel = null;
 
     private GraphEnvironmentController graphController = null;
+    private BasicGraphGui basicGraphGui = null;
+    
     private VisualizationViewer<GraphNode, GraphEdge> visualizationViewer = null;
 
+    
 
     /**
      * Gets the parent object and initializes.
@@ -124,6 +130,7 @@ public class AddComponentDialog extends JDialog implements ActionListener {
     public AddComponentDialog(GraphEnvironmentController controller) {
 		super(Application.MainWindow);
 		this.graphController = controller;
+		this.basicGraphGui = ((GraphEnvironmentControllerGUI) this.graphController.getEnvironmentPanel()).getGraphGUI();
 		initialize();
     }
 
@@ -132,63 +139,82 @@ public class AddComponentDialog extends JDialog implements ActionListener {
      * @return void
      */
     private void initialize() {
-		this.setSize(400, 450);
+		this.setSize(400, 542);
+		this.setContentPane(getJContentPane());
 		this.setModal(true);
 		this.setTitle(Language.translate("Select Network Component to Add", Language.EN));
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		this.setContentPane(getJContentPane());
     }
-
+    
     /**
-     * This method initializes jContentPane
-     * @return javax.swing.JPanel
-     */
-    private JPanel getJContentPane() {
+	 * This method initializes jContentPane	
+	 * @return javax.swing.JPanel	
+	 */
+	private JPanel getJContentPane() {
 		if (jContentPane == null) {
-		    GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
-		    gridBagConstraints4.gridx = 0;
-		    gridBagConstraints4.fill = GridBagConstraints.BOTH;
-		    gridBagConstraints4.weightx = 0.0;
-		    gridBagConstraints4.weighty = 0.5;
-		    gridBagConstraints4.insets = new Insets(5, 10, 0, 10);
-		    gridBagConstraints4.ipadx = 0;
-		    gridBagConstraints4.anchor = GridBagConstraints.CENTER;
-		    gridBagConstraints4.gridy = 2;
-		    GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
-		    gridBagConstraints11.fill = GridBagConstraints.BOTH;
-		    gridBagConstraints11.gridx = 0;
-		    gridBagConstraints11.gridy = 1;
-		    gridBagConstraints11.insets = new Insets(10, 12, 0, 10);
-		    GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
-		    gridBagConstraints3.gridx = 0;
-		    gridBagConstraints3.ipadx = 0;
-		    gridBagConstraints3.fill = GridBagConstraints.HORIZONTAL;
-		    gridBagConstraints3.insets = new Insets(10, 10, 10, 10);
-		    gridBagConstraints3.gridy = 3;
-		    GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
-		    gridBagConstraints2.fill = GridBagConstraints.BOTH;
-		    gridBagConstraints2.gridy = 0;
-		    gridBagConstraints2.ipadx = 0;
-		    gridBagConstraints2.ipady = 0;
-		    gridBagConstraints2.weightx = 1.0;
-		    gridBagConstraints2.weighty = 0.5;
-		    gridBagConstraints2.insets = new Insets(15, 10, 0, 10);
-		    gridBagConstraints2.gridx = 0;
-	
-		    jContentPane = new JPanel();
-		    jContentPane.setLayout(new GridBagLayout());
-		    jContentPane.add(getJScrollPane(), gridBagConstraints2);
-		    jContentPane.add(getJBottomPanel(), gridBagConstraints3);
-		    jContentPane.add(getJLabel(), gridBagConstraints11);
-		    jContentPane.add(getJViewerPanel(), gridBagConstraints4);
+			
+			GridBagConstraints gridBagConstraints0 = new GridBagConstraints();
+			gridBagConstraints0.fill = GridBagConstraints.BOTH;
+			gridBagConstraints0.gridx = 0;
+			gridBagConstraints0.gridy = 0;
+			gridBagConstraints0.insets = new Insets(15, 15, 0, 15);
+			
+			GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
+			gridBagConstraints1.fill = GridBagConstraints.BOTH;
+			gridBagConstraints1.gridx = 0;
+			gridBagConstraints1.gridy = 1;
+			gridBagConstraints1.weightx = 1.0;
+			gridBagConstraints1.weighty = 1.0;
+			gridBagConstraints1.insets = new Insets(5, 15, 0, 15);
+			
+			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
+			gridBagConstraints2.fill = GridBagConstraints.BOTH;
+			gridBagConstraints2.gridx = 0;
+			gridBagConstraints2.gridy = 2;
+			gridBagConstraints2.insets = new Insets(15, 15, 0, 15);
+			
+			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
+			gridBagConstraints3.fill = GridBagConstraints.BOTH;
+			gridBagConstraints3.gridx = 0;
+			gridBagConstraints3.gridy = 3;
+			gridBagConstraints3.weightx = 1.0;
+			gridBagConstraints3.weighty = 1.0;
+			gridBagConstraints3.insets = new Insets(5, 15, 0, 15);
+			gridBagConstraints3.ipadx = 0;
+			gridBagConstraints3.anchor = GridBagConstraints.CENTER;
+			
+			GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
+			gridBagConstraints4.fill = GridBagConstraints.HORIZONTAL;
+			gridBagConstraints4.gridx = 0;
+			gridBagConstraints4.gridy = 4;
+			gridBagConstraints4.ipadx = 0;
+			gridBagConstraints4.insets = new Insets(15, 15, 15, 15);
+
+			jLabelInstructionSelect = new JLabel();
+			jLabelInstructionSelect.setText("Select a network component");
+			jLabelInstructionSelect.setFont(new Font("Dialog", Font.BOLD, 12));
+			jLabelInstructionSelect.setText(Language.translate(jLabelInstructionSelect.getText(), Language.EN));
+
+			jLabelInstructionMerge = new JLabel();
+		    jLabelInstructionMerge.setText("Select a vertex to merge");
+		    jLabelInstructionMerge.setFont(new Font("Dialog", Font.BOLD, 12));
+		    jLabelInstructionMerge.setText(Language.translate(jLabelInstructionMerge.getText(), Language.EN));
+			
+			jContentPane = new JPanel();
+			jContentPane.setLayout(new GridBagLayout());
+			jContentPane.add(jLabelInstructionSelect, gridBagConstraints0);
+			jContentPane.add(getJScrollPane(), gridBagConstraints1);
+			jContentPane.add(jLabelInstructionMerge, gridBagConstraints2);
+			jContentPane.add(getJViewerPanel(), gridBagConstraints3);
+			jContentPane.add(getJBottomPanel(), gridBagConstraints4);
+			
 		}
 		return jContentPane;
-    }
-
+	}
+	
     /**
      * This method initializes componentTypesList
-     * 
      * @return javax.swing.JList
      */
     private JList getComponentTypesList() {
@@ -246,30 +272,16 @@ public class AddComponentDialog extends JDialog implements ActionListener {
     }
 
     /**
-     * Initializes label
-     * @return javax.swing.JLabel
-     */
-    private JLabel getJLabel() {
-	if (jLabelInstruction == null) {
-	    jLabelInstruction = new JLabel();
-	    jLabelInstruction.setText("Select a vertex to merge");
-	    jLabelInstruction.setFont(new Font("Dialog", Font.BOLD, 12));
-	    jLabelInstruction.setText(Language.translate(jLabelInstruction.getText(), Language.EN));
-	}
-	return jLabelInstruction;
-    }
-
-    /**
      * This method initializes jScrollPane
      * @return javax.swing.JScrollPane
      */
     private JScrollPane getJScrollPane() {
-	if (jScrollPane == null) {
-	    jScrollPane = new JScrollPane();
-	    jScrollPane.setPreferredSize(new Dimension(20, 200));
-	    jScrollPane.setViewportView(getComponentTypesList());
-	}
-	return jScrollPane;
+		if (jScrollPane == null) {
+		    jScrollPane = new JScrollPane();
+		    jScrollPane.setPreferredSize(new Dimension(20, 200));
+		    jScrollPane.setViewportView(getComponentTypesList());
+		}
+		return jScrollPane;
     }
 
     /**
@@ -298,103 +310,123 @@ public class AddComponentDialog extends JDialog implements ActionListener {
     private VisualizationViewer<GraphNode, GraphEdge> getVisualizationViewer() {
 		// create VisualizationViewer if it is not there
 		if (visualizationViewer == null) {
-		    // Define graph layout
-		    Graph<GraphNode, GraphEdge> graph = new SparseGraph<GraphNode, GraphEdge>();
-		    Layout<GraphNode, GraphEdge> layout = new CircleLayout<GraphNode, GraphEdge>(graph);
-		    layout.setSize(new Dimension(120, 120));
-		    // Create a new VisualizationViewer instance
-		    visualizationViewer = new VisualizationViewer<GraphNode, GraphEdge>(layout);
-	
-		    visualizationViewer.setLayout(new GridBagLayout());
-	
-		    // Translate the graph to the right to bring it to the center
-		    MutableTransformer mutableLayout = visualizationViewer.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT);
-		    mutableLayout.translate(120, 10);
-	
-		    // Configure edge labels, show the icon
-		    visualizationViewer.getRenderContext().setEdgeLabelTransformer(new Transformer<GraphEdge, String>() {
-	
-			@Override
-			public String transform(GraphEdge edge) {
-			    // Get the path of the Image from the component type
-			    // settings
-			    String edgeImage = graphController.getComponentTypeSettings().get(edge.getComponentType()).getEdgeImage();
-			    if (edgeImage != null) {
-				URL url = getClass().getResource(edgeImage);
-				if (url != null) {
-				    // If the image path is valid
-				    return "<html><img src=" + url + " height=16 width=16 >";
-				} else
-				    return "";
-			    } else
-				return "";
-			}
-		    });
-	
-		    // Configure vertex colors
-		    visualizationViewer.getRenderContext().setVertexFillPaintTransformer(new Transformer<GraphNode, Paint>() {
-				public Paint transform(GraphNode arg0) {
-				    if (visualizationViewer.getPickedVertexState().isPicked(arg0)) {
-						// Highlight color when picked
-						return GeneralGraphSettings4MAS.DEFAULT_VERTEX_PICKED_COLOR;
-				    } else {
-						// Get the color from the component type settings
-						String colorString = graphController.getComponentTypeSettings().get("node").getColor();
-						if (colorString != null) {
-						    Color color = new Color(Integer.parseInt(colorString));
-						    return color;
-						} else {
-						    return GeneralGraphSettings4MAS.DEFAULT_VERTEX_COLOR;
-						}
-				    }
-				}
-		    });
-	
-		    // Configure edge colors
-		    visualizationViewer.getRenderContext().setEdgeDrawPaintTransformer(new Transformer<GraphEdge, Paint>() {
-				public Paint transform(GraphEdge arg0) {
-				    if (visualizationViewer.getPickedEdgeState().isPicked(arg0)) {
-						// Highlight color when picked
-						return GeneralGraphSettings4MAS.DEFAULT_EDGE_PICKED_COLOR;
-		
-				    } else {
-						// Get the color from the component type settings
-						String colorString = graphController.getComponentTypeSettings().get(arg0.getComponentType()).getColor();
-						if (colorString != null) {
-						    Color color = new Color(Integer.parseInt(colorString));
-						    return color;
-						} else {
-						    return GeneralGraphSettings4MAS.DEFAULT_EDGE_COLOR;
-						}
-				    }
-				}
-		    });
-	
-		    // Use straight lines as edges
-		    visualizationViewer.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line<GraphNode, GraphEdge>());
-	
-		    // Set edge width
-		    visualizationViewer.getRenderContext().setEdgeStrokeTransformer(new Transformer<GraphEdge, Stroke>() {
-	
-			@Override
-			public Stroke transform(GraphEdge arg0) {
-			    return new BasicStroke(2);
-			}
-	
-		    });
-	
-		    // Mouse plugin to be placed here
-		    PluggableGraphMouse pgm = new PluggableGraphMouse();
+
+			Graph<GraphNode, GraphEdge> graph = new SparseGraph<GraphNode, GraphEdge>();
+			
+			visualizationViewer = basicGraphGui.getNewVisualizationViewer(graph);
+
+			PluggableGraphMouse pgm = new PluggableGraphMouse();
 		    pgm.add(new PickingGraphMousePlugin<GraphNode, GraphEdge>());
 		    visualizationViewer.setGraphMouse(pgm);
-		    visualizationViewer.setBackground(Color.WHITE);
-		    visualizationViewer.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+
+			MutableTransformer mutableLayout = visualizationViewer.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT);
+			mutableLayout.translate(120, 10);
+
+		    Layout<GraphNode, GraphEdge> layout = new CircleLayout<GraphNode, GraphEdge>(graph);
+		    layout.setSize(new Dimension(120, 120));
+			
+		    visualizationViewer.setGraphLayout(layout);
+		    visualizationViewer.setLayout(new GridBagLayout());
+			visualizationViewer.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 		    visualizationViewer.setPreferredSize(new Dimension(200, 200));
+			
+			
+//			// Define graph layout
+//		    Layout<GraphNode, GraphEdge> layout = new CircleLayout<GraphNode, GraphEdge>(graph);
+//		    layout.setSize(new Dimension(120, 120));
+//		    // Create a new VisualizationViewer instance
+//		    visualizationViewer = new VisualizationViewer<GraphNode, GraphEdge>(layout);
+//	
+//		    visualizationViewer.setLayout(new GridBagLayout());
+//	
+//		    // Translate the graph to the right to bring it to the center
+//		    MutableTransformer mutableLayout = visualizationViewer.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT);
+//		    mutableLayout.translate(120, 10);
+//	
+//		    // Configure edge labels, show the icon
+//		    visualizationViewer.getRenderContext().setEdgeLabelTransformer(new Transformer<GraphEdge, String>() {
+//	
+//			@Override
+//			public String transform(GraphEdge edge) {
+//			    // Get the path of the Image from the component type
+//			    // settings
+//			    String edgeImage = graphController.getComponentTypeSettings().get(edge.getComponentType()).getEdgeImage();
+//			    if (edgeImage != null) {
+//				URL url = getClass().getResource(edgeImage);
+//				if (url != null) {
+//				    // If the image path is valid
+//				    return "<html><img src=" + url + " height=16 width=16 >";
+//				} else
+//				    return "";
+//			    } else
+//				return "";
+//			}
+//		    });
+//	
+//		    // Configure vertex colors
+//		    visualizationViewer.getRenderContext().setVertexFillPaintTransformer(new Transformer<GraphNode, Paint>() {
+//				public Paint transform(GraphNode arg0) {
+//				    if (visualizationViewer.getPickedVertexState().isPicked(arg0)) {
+//						// Highlight color when picked
+//						return GeneralGraphSettings4MAS.DEFAULT_VERTEX_PICKED_COLOR;
+//				    } else {
+//						// Get the color from the component type settings
+////						String colorString = graphController.getComponentTypeSettings().get("node").getColor();
+////						if (colorString != null) {
+////						    Color color = new Color(Integer.parseInt(colorString));
+////						    return color;
+////						} else {
+//						    return GeneralGraphSettings4MAS.DEFAULT_VERTEX_COLOR;
+////						}
+//				    }
+//				}
+//		    });
+//	
+//		    // Configure edge colors
+//		    visualizationViewer.getRenderContext().setEdgeDrawPaintTransformer(new Transformer<GraphEdge, Paint>() {
+//				public Paint transform(GraphEdge arg0) {
+//				    if (visualizationViewer.getPickedEdgeState().isPicked(arg0)) {
+//						// Highlight color when picked
+//						return GeneralGraphSettings4MAS.DEFAULT_EDGE_PICKED_COLOR;
+//		
+//				    } else {
+//						// Get the color from the component type settings
+//						String colorString = graphController.getComponentTypeSettings().get(arg0.getComponentType()).getColor();
+//						if (colorString != null) {
+//						    Color color = new Color(Integer.parseInt(colorString));
+//						    return color;
+//						} else {
+//						    return GeneralGraphSettings4MAS.DEFAULT_EDGE_COLOR;
+//						}
+//				    }
+//				}
+//		    });
+//	
+//		    // Use straight lines as edges
+//		    visualizationViewer.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line<GraphNode, GraphEdge>());
+//	
+//		    // Set edge width
+//		    visualizationViewer.getRenderContext().setEdgeStrokeTransformer(new Transformer<GraphEdge, Stroke>() {
+//	
+//			@Override
+//			public Stroke transform(GraphEdge arg0) {
+//			    return new BasicStroke(2);
+//			}
+//	
+//		    });
+//	
+//		    // Mouse plugin to be placed here
+//		    PluggableGraphMouse pgm = new PluggableGraphMouse();
+//		    pgm.add(new PickingGraphMousePlugin<GraphNode, GraphEdge>());
+//		    visualizationViewer.setGraphMouse(pgm);
+//		    visualizationViewer.setBackground(Color.WHITE);
+//		    visualizationViewer.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+//		    visualizationViewer.setPreferredSize(new Dimension(200, 200));
 	
 		}
 		return visualizationViewer;
     }
-
+    
     /**
      * Repaints/Refreshes the visualisation viewer, with the given graph
      * @param graph The new graph to be painted
@@ -522,21 +554,15 @@ public class AddComponentDialog extends JDialog implements ActionListener {
      */
     private JPanel getJBottomPanel() {
 		if (jPanelBottom == null) {
-		    GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
-		    gridBagConstraints1.gridwidth = 1;
-		    gridBagConstraints1.anchor = GridBagConstraints.CENTER;
-		    gridBagConstraints1.insets = new Insets(5, 0, 5, 20);
-		    gridBagConstraints1.ipadx = 3;
-		    GridBagConstraints gridBagConstraints = new GridBagConstraints();
-		    gridBagConstraints.gridx = 1;
-		    gridBagConstraints.gridwidth = 1;
-		    gridBagConstraints.insets = new Insets(5, 20, 5, 0);
-		    gridBagConstraints.gridy = 0;
+		    GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
+		    gridBagConstraints5.insets = new Insets(5, 25, 5, 0);
+		    GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
+		    gridBagConstraints4.insets = new Insets(5, 0, 5, 25);
 		    jPanelBottom = new JPanel();
 		    jPanelBottom.setLayout(new GridBagLayout());
 		    jPanelBottom.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
-		    jPanelBottom.add(getBtnOK(), gridBagConstraints1);
-		    jPanelBottom.add(getBtnCancel(), gridBagConstraints);
+		    jPanelBottom.add(getBtnOK(), gridBagConstraints4);
+		    jPanelBottom.add(getBtnCancel(), gridBagConstraints5);
 		}
 		return jPanelBottom;
     }
@@ -560,16 +586,19 @@ public class AddComponentDialog extends JDialog implements ActionListener {
 
     /**
      * This method initializes jViewerPanel
-     * 
      * @return javax.swing.JPanel
      */
     private JPanel getJViewerPanel() {
 		if (jPanelViewer == null) {
-		    BorderLayout borderLayout = new BorderLayout();
-		    borderLayout.setHgap(0);
+		    GridBagConstraints gridBagConstraints = new GridBagConstraints();
+		    gridBagConstraints.fill = GridBagConstraints.BOTH;
+		    gridBagConstraints.weighty = 1.0;
+		    gridBagConstraints.weightx = 1.0;
 		    jPanelViewer = new JPanel();
-		    jPanelViewer.setLayout(borderLayout);
-		    jPanelViewer.add(getVisualizationViewer(), BorderLayout.CENTER);
+		    jPanelViewer.setLayout(new GridBagLayout());
+		    jPanelViewer.setPreferredSize(new Dimension(100, 250));
+		    //jPanelViewer.setSize(new Dimension(100, 200));
+		    jPanelViewer.add(getVisualizationViewer(), gridBagConstraints);
 		}
 		return jPanelViewer;
     }
@@ -628,5 +657,6 @@ public class AddComponentDialog extends JDialog implements ActionListener {
 		    this.dispose();
 		}
     }
+
 
 } // @jve:decl-index=0:visual-constraint="18,-13"

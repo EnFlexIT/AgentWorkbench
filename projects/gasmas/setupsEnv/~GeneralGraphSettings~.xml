@@ -6,7 +6,7 @@
             <value>
                 <agentClass>gasmas.agents.components.SimpleValveAgent</agentClass>
                 <color>-16777012</color>
-                <domain>Default Domain</domain>
+                <domain>Gas network</domain>
                 <edgeImage>/gasmas/img/Vent.png</edgeImage>
                 <edgeWidth>2.5</edgeWidth>
                 <graphPrototype>agentgui.envModel.graph.prototypes.SimpleGraphElement</graphPrototype>
@@ -14,37 +14,37 @@
             </value>
         </entry>
         <entry>
-            <key>Entry</key>
-            <value>
-                <agentClass>gasmas.agents.components.EntryAgent</agentClass>
-                <color>-16724992</color>
-                <domain>Default Domain</domain>
-                <edgeWidth>3.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</graphPrototype>
-                <showLabel>true</showLabel>
-            </value>
-        </entry>
-        <entry>
             <key>Exit</key>
             <value>
                 <agentClass>gasmas.agents.components.ExitAgent</agentClass>
                 <color>-65536</color>
-                <domain>Default Domain</domain>
+                <domain>Gas network</domain>
                 <edgeWidth>3.0</edgeWidth>
                 <graphPrototype>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</graphPrototype>
                 <showLabel>true</showLabel>
             </value>
         </entry>
         <entry>
-            <key>Pipe</key>
+            <key>Entry</key>
             <value>
-                <agentClass>gasmas.agents.components.PipeAgent</agentClass>
+                <agentClass>gasmas.agents.components.EntryAgent</agentClass>
+                <color>-16724992</color>
+                <domain>Gas network</domain>
+                <edgeWidth>3.0</edgeWidth>
+                <graphPrototype>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</graphPrototype>
+                <showLabel>true</showLabel>
+            </value>
+        </entry>
+        <entry>
+            <key>Coffee machine</key>
+            <value>
+                <agentClass>gasmas.agents.components.StorageAgent</agentClass>
                 <color>-16777216</color>
-                <domain>Default Domain</domain>
+                <domain>Electricity</domain>
                 <edgeImage>MissingIcon</edgeImage>
                 <edgeWidth>2.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.SimpleGraphElement</graphPrototype>
-                <showLabel>false</showLabel>
+                <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
+                <showLabel>true</showLabel>
             </value>
         </entry>
         <entry>
@@ -52,9 +52,33 @@
             <value>
                 <agentClass>gasmas.agents.components.BranchAgent</agentClass>
                 <color>-16777216</color>
-                <domain>Default Domain</domain>
+                <domain>Gas network</domain>
                 <edgeWidth>2.0</edgeWidth>
                 <graphPrototype>agentgui.envModel.graph.prototypes.Star4GraphElement</graphPrototype>
+                <showLabel>false</showLabel>
+            </value>
+        </entry>
+        <entry>
+            <key>Pipe</key>
+            <value>
+                <agentClass>gasmas.agents.components.PipeAgent</agentClass>
+                <color>-16777216</color>
+                <domain>Gas network</domain>
+                <edgeImage>MissingIcon</edgeImage>
+                <edgeWidth>2.0</edgeWidth>
+                <graphPrototype>agentgui.envModel.graph.prototypes.SimpleGraphElement</graphPrototype>
+                <showLabel>false</showLabel>
+            </value>
+        </entry>
+        <entry>
+            <key>Branch3</key>
+            <value>
+                <agentClass>gasmas.agents.components.BranchAgent</agentClass>
+                <color>-16777216</color>
+                <domain>Gas network</domain>
+                <edgeImage>MissingIcon</edgeImage>
+                <edgeWidth>2.0</edgeWidth>
+                <graphPrototype>agentgui.envModel.graph.prototypes.Star3GraphElement</graphPrototype>
                 <showLabel>false</showLabel>
             </value>
         </entry>
@@ -63,7 +87,7 @@
             <value>
                 <agentClass>gasmas.agents.components.ControlValveAgent</agentClass>
                 <color>-16777012</color>
-                <domain>Default Domain</domain>
+                <domain>Gas network</domain>
                 <edgeImage>MissingIcon</edgeImage>
                 <edgeWidth>4.0</edgeWidth>
                 <graphPrototype>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</graphPrototype>
@@ -71,23 +95,11 @@
             </value>
         </entry>
         <entry>
-            <key>Branch3</key>
-            <value>
-                <agentClass>gasmas.agents.components.BranchAgent</agentClass>
-                <color>-16777216</color>
-                <domain>Default Domain</domain>
-                <edgeImage>MissingIcon</edgeImage>
-                <edgeWidth>2.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.Star3GraphElement</graphPrototype>
-                <showLabel>false</showLabel>
-            </value>
-        </entry>
-        <entry>
             <key>Node4Distribution</key>
             <value>
                 <agentClass>gasmas.agents.components.BranchAgent</agentClass>
                 <color>-3393792</color>
-                <domain>Default Domain</domain>
+                <domain>Gas network</domain>
                 <edgeImage>MissingIcon</edgeImage>
                 <edgeWidth>20.0</edgeWidth>
                 <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
@@ -99,7 +111,7 @@
             <value>
                 <agentClass>gasmas.agents.components.CompressorAgent</agentClass>
                 <color>-39424</color>
-                <domain>Default Domain</domain>
+                <domain>Gas network</domain>
                 <edgeImage>MissingIcon</edgeImage>
                 <edgeWidth>3.0</edgeWidth>
                 <graphPrototype>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</graphPrototype>
@@ -109,32 +121,35 @@
     </currentCTS>
     <domainSettings>
         <entry>
-            <key>A-Domain</key>
+            <key>Gas network</key>
             <value>
-                <ontologyClass>gasmas.ontology.FlowParameters</ontologyClass>
-                <showLabel>true</showLabel>
-                <vertexColor>-65536</vertexColor>
-                <vertexColorPicked>-256</vertexColorPicked>
-                <vertexSize>10</vertexSize>
-            </value>
-        </entry>
-        <entry>
-            <key>Z-Domain</key>
-            <value>
-                <showLabel>true</showLabel>
-                <vertexColor>-65536</vertexColor>
-                <vertexColorPicked>-256</vertexColorPicked>
-                <vertexSize>10</vertexSize>
-            </value>
-        </entry>
-        <entry>
-            <key>Default Domain</key>
-            <value>
+                <clusterShape>Rectangle</clusterShape>
                 <ontologyClass>gasmas.ontology.PropagationPoint</ontologyClass>
                 <showLabel>false</showLabel>
                 <vertexColor>-26368</vertexColor>
                 <vertexColorPicked>-256</vertexColorPicked>
                 <vertexSize>8</vertexSize>
+            </value>
+        </entry>
+        <entry>
+            <key>Default Domain</key>
+            <value>
+                <clusterShape>Rectangle</clusterShape>
+                <ontologyClass></ontologyClass>
+                <showLabel>false</showLabel>
+                <vertexColor>-26368</vertexColor>
+                <vertexColorPicked>-256</vertexColorPicked>
+                <vertexSize>8</vertexSize>
+            </value>
+        </entry>
+        <entry>
+            <key>Electricity</key>
+            <value>
+                <clusterShape>Rectangle</clusterShape>
+                <showLabel>false</showLabel>
+                <vertexColor>-10978818</vertexColor>
+                <vertexColorPicked>-10027264</vertexColorPicked>
+                <vertexSize>10</vertexSize>
             </value>
         </entry>
     </domainSettings>
