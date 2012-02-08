@@ -81,12 +81,14 @@ public class EdgeBetweenessBehaviour extends SimpleBehaviour {
 
 		System.out.println("Begin Edge Betweness Cluster Analysis");
 		analyseClusters(networkModel, clusterIdentifier);
+		System.out.println("Begin EdgeBetweness Cluster Analysis fo Subcluster");
 		for (ClusterNetworkComponent clusterNetworkComponent : networkModel.getClusterComponents()) {
 			NetworkModel networkModel = clusterNetworkComponent.getClusterNetworkModel();
 			if (networkModel.getNetworkComponents().values().size() > 8) {
 				analyseClusters(networkModel, clusterIdentifier);
 			}
 		}
+		System.out.println("End Edge Betweness Cluster Analysis");
 	}
 
 	public void analyseClusters(NetworkModel networkModel, ClusterIdentifier clusterIdentifier) {
