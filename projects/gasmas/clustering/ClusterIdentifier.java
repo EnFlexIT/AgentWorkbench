@@ -81,9 +81,10 @@ public class ClusterIdentifier {
 	public NetworkModel search(NetworkModel reducedModel, NetworkModel networkModel) {
 		WeakComponentClusterer<GraphNode, GraphEdge> wcSearch = new WeakComponentClusterer<GraphNode, GraphEdge>();
 		Set<Set<GraphNode>> clusterSet = wcSearch.transform(reducedModel.getGraph());
-		boolean clustersToSmall = true;
+		boolean clustersToSmall = false;
 		boolean baseModelChanged = false;
 		if (clusterSet.size() > 1) {
+			clustersToSmall = true;
 			for (Set<GraphNode> graphNodes : clusterSet) {
 				if (graphNodes.size() > 3) {
 					clustersToSmall = false;
