@@ -601,44 +601,42 @@ public class GraphEnvironmentController extends EnvironmentController {
     /**
      * Adds an agent to the start list corresponding to the network component .
      * 
-     * @param networkComponent
-     *            the network component
+     * @param networkComponent the network component
      */
     public void add2Agents2Start(NetworkComponent networkComponent) {
-	if (networkComponent == null)
-	    return;
 
-	Class<? extends Agent> agentClass = this.getAgentClass(networkComponent.getAgentClassName());
-	if (agentClass != null) {
-
-	    int newPosNo = this.getEmptyPosition4Agents2Start();
-	    // --- Agent class found. Create new list element ---------
-	    AgentClassElement4SimStart ace4s = new AgentClassElement4SimStart(agentClass, SimulationSetup.AGENT_LIST_EnvironmentConfiguration);
-	    ace4s.setStartAsName(networkComponent.getId());
-	    ace4s.setPostionNo(newPosNo);
-	    // --- Add the new list element to the list ---------------
-	    this.getAgents2Start().add(newPosNo - 1, ace4s);
-	}
+    	if (networkComponent == null) {
+			return;
+		}
+		Class<? extends Agent> agentClass = this.getAgentClass(networkComponent.getAgentClassName());
+		if (agentClass != null) {
+	
+		    int newPosNo = this.getEmptyPosition4Agents2Start();
+		    // --- Agent class found. Create new list element ---------
+		    AgentClassElement4SimStart ace4s = new AgentClassElement4SimStart(agentClass, SimulationSetup.AGENT_LIST_EnvironmentConfiguration);
+		    ace4s.setStartAsName(networkComponent.getId());
+		    ace4s.setPostionNo(newPosNo);
+		    // --- Add the new list element to the list ---------------
+		    this.getAgents2Start().add(newPosNo - 1, ace4s);
+		}
 
     }
 
     /**
      * Returns the agent class.
      * 
-     * @param agentReference
-     *            the agent reference
+     * @param agentReference the agent reference
      * @return the agent class
      */
     @SuppressWarnings("unchecked")
     private Class<? extends Agent> getAgentClass(String agentReference) {
-
-	Class<? extends Agent> agentClass = null;
-	try {
-	    agentClass = (Class<? extends Agent>) Class.forName(agentReference);
-	} catch (ClassNotFoundException ex) {
-	    System.err.println("Could not find agent class '" + agentReference + "'");
-	}
-	return agentClass;
+		Class<? extends Agent> agentClass = null;
+		try {
+		    agentClass = (Class<? extends Agent>) Class.forName(agentReference);
+		} catch (ClassNotFoundException ex) {
+		    System.err.println("Could not find agent class '" + agentReference + "'");
+		}
+		return agentClass;
     }
 
     /*

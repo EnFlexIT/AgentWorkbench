@@ -45,7 +45,7 @@ public class DomainSettings implements Serializable {
 	private String vertexColor = String.valueOf(GeneralGraphSettings4MAS.DEFAULT_VERTEX_COLOR.getRGB());
 	private String vertexColorPicked = String.valueOf(GeneralGraphSettings4MAS.DEFAULT_VERTEX_PICKED_COLOR.getRGB());
 	private boolean showLabel = true;
-	private String clusterShape = GeneralGraphSettings4MAS.DEFAULT_SHAPE_4_CLUSTER; 
+	private String clusterShape = GeneralGraphSettings4MAS.SHAPE_DEFAULT_4_CLUSTER; 
 	
 	/**
 	 * Instantiates a new domain settings.

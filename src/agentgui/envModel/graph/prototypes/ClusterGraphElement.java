@@ -35,6 +35,7 @@ import java.util.HashSet;
 import java.util.Vector;
 
 import agentgui.envModel.graph.controller.BasicGraphGui;
+import agentgui.envModel.graph.controller.GeneralGraphSettings4MAS;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphElement;
 import agentgui.envModel.graph.networkModel.GraphNode;
@@ -62,7 +63,7 @@ public class ClusterGraphElement extends StarGraphElement {
 	public ClusterGraphElement(Vector<GraphNode> outerNodes, String id) {
 		this.outerNodes = outerNodes;
 		this.id = id;
-		this.setType("Cluster");
+		this.setType(GeneralGraphSettings4MAS.NETWORK_COMPONENT_TYPE_4_CLUSTER);
 	}
 
 	/**

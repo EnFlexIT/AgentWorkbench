@@ -49,22 +49,24 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	private static final long serialVersionUID = 7425147528482747232L;
 	
 	/** Default name for the first DomainSettings. */
-	public static String DEFAULT_DOMAIN_SETTINGS_NAME = "Default Domain";
+	public static final String DEFAULT_DOMAIN_SETTINGS_NAME = "Default Domain";
 	/** Default width for edges. */
-	public static float DEFAULT_EDGE_WIDTH = 2;
+	public static final float DEFAULT_EDGE_WIDTH = 2;
 	/** Default color to be used for edges in the graph */
-	public static Color DEFAULT_EDGE_COLOR = Color.BLACK;
+	public static final Color DEFAULT_EDGE_COLOR = Color.BLACK;
 	/** Default color to be used for edges in the graph when highlighted/picked. */
-	public static Color DEFAULT_EDGE_PICKED_COLOR = Color.CYAN; 
+	public static final Color DEFAULT_EDGE_PICKED_COLOR = Color.CYAN; 
 	/** Default vertex size of the nodes. */
-	public static Integer DEFAULT_VERTEX_SIZE = 10;
+	public static final Integer DEFAULT_VERTEX_SIZE = 10;
 	/** Default color to be used for Vertices in the graph */
-	public static Color DEFAULT_VERTEX_COLOR = Color.RED; 
+	public static final Color DEFAULT_VERTEX_COLOR = Color.RED; 
 	/** Default color to be used for Vertices in the graph when highlighted/picked. */
-	public static Color DEFAULT_VERTEX_PICKED_COLOR = Color.YELLOW; 
+	public static final Color DEFAULT_VERTEX_PICKED_COLOR = Color.YELLOW; 
 	/** Default raster size for guide grid. */
-	public static Integer DEFAULT_RASTER_SIZE = 5; 
+	public static final Integer DEFAULT_RASTER_SIZE = 5; 
 	 
+	public static final String NETWORK_COMPONENT_TYPE_4_CLUSTER = "C L U S T E R !";
+	
 	/** Default shapes for nodes */
 	public static final String SHAPE_ELLIPSE = "Ellipse";
 	public static final String SHAPE_RECTANGLE = "Rectangle";
@@ -72,7 +74,7 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	public static final String SHAPE_REGULAR_POLYGON = "Regular polygon";
 	public static final String SHAPE_REGULAR_STAR = "Regular star";
 	/** Default shapes for a central cluster node */
-	public static final String DEFAULT_SHAPE_4_CLUSTER = SHAPE_RECTANGLE;
+	public static final String SHAPE_DEFAULT_4_CLUSTER = SHAPE_RECTANGLE;
 	
 	
 	/** The component type settings used in the {@link GraphEnvironmentController} */

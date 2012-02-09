@@ -55,6 +55,7 @@ import org.apache.commons.collections15.Transformer;
 
 import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.application.Language;
+import agentgui.envModel.graph.networkModel.ClusterNetworkComponent;
 import agentgui.envModel.graph.networkModel.ComponentTypeSettings;
 import agentgui.envModel.graph.networkModel.DomainSettings;
 import agentgui.envModel.graph.networkModel.GraphEdge;
@@ -62,7 +63,6 @@ import agentgui.envModel.graph.networkModel.GraphElement;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
-import agentgui.envModel.graph.prototypes.ClusterGraphElement;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 import edu.uci.ics.jung.graph.Graph;
@@ -751,12 +751,19 @@ public class BasicGraphGui extends JPanel {
 
 		if (object instanceof GraphNode) {
 			this.setPickedObject((GraphElement) object);
-
+			// --- Is that node a distribution node? ----------------
+			HashSet<NetworkComponent> netComps = controller.getNetworkModel().getNetworkComponents((GraphNode)object);
+			NetworkComponent disNode = controller.getNetworkModel().componentListContainsDistributionNode(netComps);
+			if (disNode!=null) {
+				GraphEnvironmentControllerGUI graphEnvGui = (GraphEnvironmentControllerGUI) this.controller.getEnvironmentPanel();
+				graphEnvGui.networkComponentSelect(disNode);
+			}
+			
 		} else if (object instanceof GraphEdge) {
 			NetworkComponent netComp = controller.getNetworkModel().getNetworkComponent((GraphEdge) object);
 			this.setPickedObjects(controller.getNetworkModel().getGraphElementsFromNetworkComponent(netComp));
 			GraphEnvironmentControllerGUI graphEnvGui = (GraphEnvironmentControllerGUI) this.controller.getEnvironmentPanel();
-			graphEnvGui.selectComponentInTable(netComp);
+			graphEnvGui.networkComponentSelect(netComp);
 
 		} else if (object instanceof NetworkComponent) {
 			this.setPickedObjects(controller.getNetworkModel().getGraphElementsFromNetworkComponent((NetworkComponent) object));
@@ -921,12 +928,19 @@ public class BasicGraphGui extends JPanel {
 			NetworkComponent networkComponent = networkModel.componentListContainsDistributionNode(componentHashSet);
 			if (componentHashSet.size() == 1 && networkComponent == null) {
 				networkComponent = componentHashSet.iterator().next();
-				// TODO: Caused problem added !
-				// !
-				if (!networkComponent.getPrototypeClassName().equals(ClusterGraphElement.class.getName())) {
+				if (networkComponent instanceof ClusterNetworkComponent) {
 
-					ComponentTypeSettings cts = controller.getComponentTypeSettings().get(networkComponent.getType());
-					DomainSettings ds = controller.getDomainSettings().get(cts.getDomain());
+					DomainSettings ds = null;
+					ClusterNetworkComponent cnc = (ClusterNetworkComponent) networkComponent;
+					String domain = cnc.getDomain();
+					if (domain!=null) {
+						if (domain.equals("")==false) {
+							ds = controller.getDomainSettings().get(domain);
+						}
+					} 
+					if (ds==null) {
+						ds = controller.getDomainSettings().get(GeneralGraphSettings4MAS.DEFAULT_DOMAIN_SETTINGS_NAME);
+					}
 					String shapeForm = ds.getClusterShape();
 					if (shapeForm.equals(GeneralGraphSettings4MAS.SHAPE_RECTANGLE)) {
 						shape = factory.getRectangle(node);

@@ -346,18 +346,6 @@ public class NetworkModel implements Cloneable, Serializable {
 	}
 
 	/**
-	 * Removes the distribution node.
-	 * 
-	 * @param graphElementID the graph element id
-	 */
-	private void removeDistributionNode(String graphElementID) {
-		GraphNode graphNode = (GraphNode) this.getGraphElement(graphElementID);
-		this.splitNetworkModelAtNode(graphNode);
-		this.graph.removeVertex(graphNode);
-		graphElements.remove(graphNode.getId());
-	}
-
-	/**
 	 * Removes the network components.
 	 * 
 	 * @param networkComponents the network components
@@ -383,7 +371,8 @@ public class NetworkModel implements Cloneable, Serializable {
 	}
 
 	/**
-	 * This method removes a NetworkComponent from the GridModel's networkComponents HashMap, using its' ID as key.
+	 * This method removes a NetworkComponent from the GridModel's networkComponents 
+	 * HashMap, using its' ID as key.
 	 * 
 	 * @param networkComponent The NetworkComponent to remove
 	 */
@@ -392,7 +381,11 @@ public class NetworkModel implements Cloneable, Serializable {
 			// ----------------------------------------------------------------
 			// --- A DistributionNode has to be removed -----------------------
 			// ----------------------------------------------------------------
-			removeDistributionNode(networkComponent.getGraphElementIDs().iterator().next());
+			String graphElementID = networkComponent.getGraphElementIDs().iterator().next();
+			GraphNode graphNode = (GraphNode) this.getGraphElement(graphElementID);
+			this.splitNetworkModelAtNode(graphNode);
+			this.graph.removeVertex(graphNode);
+			this.graphElements.remove(graphNode.getId());
 			// ----------------------------------------------------------------
 		} else {
 			// ----------------------------------------------------------------
@@ -628,36 +621,36 @@ public class NetworkModel implements Cloneable, Serializable {
 	 */
 	public void splitNetworkModelAtNode(GraphNode node2SplitAt) {
 		// --- Get the components containing the node -------------------------
-		HashSet<NetworkComponent> networkComponents = this.getNetworkComponents(node2SplitAt);
-		NetworkComponent containsDistributionNode = componentListContainsDistributionNode(networkComponents);
+		HashSet<NetworkComponent> netCompHash = this.getNetworkComponents(node2SplitAt);
+		// --- Sort the list of component: ------------------------------------
 		// --- If the component list contains a DistributionNode, -------------
 		// --- this component should be the last one in the list! -------------
-		if (containsDistributionNode != null) {
-			networkComponents = this.getNetworkComponentVectorWithDistributionNodeAsLast(networkComponents);
-		}
-		for (NetworkComponent component : networkComponents) {
-			// --- Creating a new Graph node ----------------------------------
-			GraphNode newNode = new GraphNode();
-			newNode.setId(this.nextNodeID());
-			newNode.setPosition(node2SplitAt.getPosition());
-
+		Vector<NetworkComponent> netCompVector = this.getNetworkComponentVectorWithDistributionNodeAsLast(netCompHash);
+		for (int i = 0; i < (netCompVector.size()-1); i++) {
+			NetworkComponent component = netCompVector.get(i);
 			// --- Incident Edges on the node ---------------------------------
 			for (GraphEdge edge : this.graph.getIncidentEdges(node2SplitAt)) { // for each incident edge
 				// --- If the edge is in comp2 --------------------------------
 				if (component.getGraphElementIDs().contains(edge.getId())) {
+					// --- Creating a new Graph node --------------------------
+					GraphNode newNode = new GraphNode();
+					newNode.setId(this.nextNodeID());
+					newNode.setPosition(node2SplitAt.getPosition());
+
 					// --- Find the node on the other side of the edge --------
 					GraphNode otherNode = addEdge(edge, newNode, node2SplitAt);
 					// --- Shift position of the new node a bit ---------------
 					newNode.setPosition(this.getShiftedPosition(otherNode, newNode));
+					
+					component.getGraphElementIDs().add(newNode.getId());
+					// --- Adding new node to the network model -----------------------
+					this.graphElements.put(newNode.getId(), newNode);
 				}
 			}
 			// --- Updating the graph element IDs of the component ------------
 			component.getGraphElementIDs().remove(node2SplitAt.getId());
-			component.getGraphElementIDs().add(newNode.getId());
-			// --- Adding new node to the network model -----------------------
-			this.graphElements.put(newNode.getId(), newNode);
+
 		} // --- 'end for' for components -----
-		this.graph.removeVertex(node2SplitAt);
 		refreshGraphElements();
 	}
 
@@ -701,7 +694,7 @@ public class NetworkModel implements Cloneable, Serializable {
 	 */
 	public Point2D getShiftedPosition(GraphNode fixedNode, GraphNode shiftNode) {
 
-		double move = this.generalGraphSettings4MAS.getSnapRaster();
+		double move = this.generalGraphSettings4MAS.getSnapRaster() * 2;
 
 		double fixedNodeX = fixedNode.getPosition().getX();
 		double fixedNodeY = fixedNode.getPosition().getY();
@@ -724,10 +717,10 @@ public class NetworkModel implements Cloneable, Serializable {
 	 * @param componentVector the component vector
 	 * @return the network component vector with distribution node as last
 	 */
-	public HashSet<NetworkComponent> getNetworkComponentVectorWithDistributionNodeAsLast(HashSet<NetworkComponent> componentVector) {
-		HashSet<NetworkComponent> newComponentVector = new HashSet<NetworkComponent>();
+	public Vector<NetworkComponent> getNetworkComponentVectorWithDistributionNodeAsLast(HashSet<NetworkComponent> componentVector) {
+		
 		NetworkComponent distributionNodeComponent = null;
-
+		Vector<NetworkComponent> newComponentVector = new Vector<NetworkComponent>();
 		for (NetworkComponent component : componentVector) {
 			if (component.getPrototypeClassName().equals(DistributionNode.class.getName())) {
 				distributionNodeComponent = component;

@@ -36,12 +36,29 @@ import java.util.HashSet;
  */
 public class ClusterNetworkComponent extends NetworkComponent {
 
+	/** The Constant serialVersionUID. */
+	private static final long serialVersionUID = 682444875338053459L;
+
+	/** The domain. which this cluster contains to */
+	private String domain;
+	
 	/** The cluster network model. */
 	private NetworkModel clusterNetworkModel;
 
 	/** The network component IDs. */
 	private ArrayList<String> networkComponentIDs = new ArrayList<String>();
 
+	/**
+	 * Instantiates a new cluster network component.
+	 *
+	 * @param id the id
+	 * @param type the type
+	 * @param prototypeClassName the prototype class name
+	 * @param graphElements the graph elements
+	 * @param directed the directed
+	 * @param networkComponentIDs the network component i ds
+	 * @param clusterNetworkModel the cluster network model
+	 */
 	public ClusterNetworkComponent(String id, String type, String prototypeClassName, HashSet<GraphElement> graphElements, boolean directed, ArrayList<String> networkComponentIDs,
 			NetworkModel clusterNetworkModel) {
 		super(id, type, prototypeClassName, graphElements, directed);
@@ -49,6 +66,8 @@ public class ClusterNetworkComponent extends NetworkComponent {
 		this.clusterNetworkModel = clusterNetworkModel;
 	}
 
+	
+	
 	/**
 	 * Sets the network component IDs.
 	 * 
@@ -95,12 +114,27 @@ public class ClusterNetworkComponent extends NetworkComponent {
 	}
 
 	/**
-	 * Gets the Component represented by Node and of the ClusterStar
-	 * 
+	 * Gets the Component represented by Node and of the ClusterStar.
+	 *
 	 * @param graphNode the graph node
 	 * @return the receive
 	 */
 	private NetworkComponent getReceiver(GraphNode graphNode) {
 		return clusterNetworkModel.getNetworkComponents(graphNode).iterator().next();
+	}
+
+	/**
+	 * Sets the domain.
+	 * @param domain the new domain
+	 */
+	public void setDomain(String domain) {
+		this.domain = domain;
+	}
+	/**
+	 * Returns the domain.
+	 * @return the domain
+	 */
+	public String getDomain() {
+		return domain;
 	}
 }
