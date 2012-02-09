@@ -752,6 +752,32 @@ public class NetworkModel implements Cloneable, Serializable {
 	}
 
 	/**
+	 * Checks if a HashMap contains just one single ClusterNetworkComponent.
+	 *
+	 * @param components the components
+	 * @return true, if is just one ClusterNetworkComponent in the hashSet
+	 */
+	public boolean isSingleClusterHashSet(HashSet<NetworkComponent> components) {
+		
+		int componentsCount = components.size();
+		boolean isClusterNetworkComponent = false;
+		
+		Iterator<NetworkComponent> it = components.iterator(); 
+		while (it.hasNext()) {
+			NetworkComponent comp = it.next();
+			if (comp instanceof ClusterNetworkComponent) {
+				isClusterNetworkComponent = true;
+				break;
+			}
+		}
+		if (isClusterNetworkComponent && componentsCount==1) {
+			return true;
+		} else {
+			return false;	
+		}
+	}
+	
+	/**
 	 * Sets the general graph settings for the MAS.
 	 * 
 	 * @param generalGraphSettings4MAS the new general graph settings for the MAS

@@ -881,23 +881,48 @@ public class BasicGraphGui extends JPanel {
 					HashSet<NetworkComponent> componentHashSet = networkModel.getNetworkComponents(node);
 					NetworkComponent networkComponent = networkModel.componentListContainsDistributionNode(componentHashSet);
 					try {
-						// --- Get the vertex size from the component type settings -
 						if (networkComponent != null) {
+							// --- DistributionNode: get size from ComponentTypeSettings - Start --
 							ComponentTypeSettings cts = controller.getComponentTypeSettings().get(networkComponent.getType());
 							if (cts == null) {
 								return size;
 							}
 							sizeFromCTS = (int) cts.getEdgeWidth();
+							// --- DistributionNode: get size from ComponentTypeSettings - End ----
 						} else {
+							// --- Normal node or ClusterNode ---------------------------- Start --
 							if (componentHashSet.iterator().hasNext()) {
+								
 								NetworkComponent component = componentHashSet.iterator().next();
-								ComponentTypeSettings cts = controller.getComponentTypeSettings().get(component.getType());
-								if (cts == null) {
-									return size;
+								boolean isSingleCluster = networkModel.isSingleClusterHashSet(componentHashSet);
+								if (isSingleCluster) {
+									// --- This is a cluster component ------------------
+									ClusterNetworkComponent cnc = (ClusterNetworkComponent) component;
+									DomainSettings ds = null;
+									String domain = cnc.getDomain();
+									if (domain!=null) {
+										if (domain.equals("")==false) {
+											ds = controller.getDomainSettings().get(domain);
+										}
+									} 
+									if (ds==null) {
+										ds = controller.getDomainSettings().get(GeneralGraphSettings4MAS.DEFAULT_DOMAIN_SETTINGS_NAME);
+									}
+									sizeFromCTS = ds.getVertexSize();
+									sizeFromCTS = sizeFromCTS * 3;
+									
+								} else {
+									// --- This is a normal component -------------------
+									ComponentTypeSettings cts = controller.getComponentTypeSettings().get(component.getType());
+									if (cts == null) {
+										return size;
+									}
+									DomainSettings ds = controller.getDomainSettings().get(cts.getDomain());
+									sizeFromCTS = ds.getVertexSize();
+									
 								}
-								DomainSettings ds = controller.getDomainSettings().get(cts.getDomain());
-								sizeFromCTS = ds.getVertexSize();
 							}
+							// --- Normal node or ClusterNode ---------------------------- End ----
 						}
 						if (sizeFromCTS != null) {
 							size = sizeFromCTS;
