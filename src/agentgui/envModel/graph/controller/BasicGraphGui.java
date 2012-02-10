@@ -67,6 +67,7 @@ import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
+import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
 import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
@@ -75,6 +76,7 @@ import edu.uci.ics.jung.visualization.control.ScalingControl;
 import edu.uci.ics.jung.visualization.decorators.AbstractVertexShapeTransformer;
 import edu.uci.ics.jung.visualization.decorators.ConstantDirectionalEdgeValueTransformer;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
+import edu.uci.ics.jung.visualization.transform.MutableTransformer;
 
 /**
  * This class implements a GUI component for displaying visualizations for JUNG graphs. <br>
@@ -105,6 +107,7 @@ public class BasicGraphGui extends JPanel {
 	private ScalingControl scalingControl = new CrossoverScalingControl(); // @jve:decl-index=0:
 	/** the margin of the graph for the visualization */
 	private double graphMargin = 25;
+	private Point2D defaultScaleAtPoint = new Point2D.Double(graphMargin, graphMargin);  //  @jve:decl-index=0:
 	/** Indicates that the initial scaling is allowed */
 	private boolean allowInitialScaling = true;
 
@@ -140,7 +143,7 @@ public class BasicGraphGui extends JPanel {
 		this.addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentMoved(ComponentEvent ce) {
-				setInitialScaling();
+				setInitialScalingAndMovement();
 			}
 		});
 
@@ -173,16 +176,13 @@ public class BasicGraphGui extends JPanel {
 
 	/**
 	 * Gets the PluggableGraphMouse.
-	 * 
 	 * @return the pluggableGraphMouse
 	 */
 	public PluggableGraphMouse getPluggableGraphMouse() {
 		return pluggableGraphMouse;
 	}
-
 	/**
 	 * Gets the DefaultModalGraphMouse.
-	 * 
 	 * @return the pluggableGraphMouse
 	 */
 	public DefaultModalGraphMouse<GraphNode, GraphEdge> getDefaultModalGraphMouse() {
@@ -191,7 +191,6 @@ public class BasicGraphGui extends JPanel {
 
 	/**
 	 * Gets the VisualizationViewer
-	 * 
 	 * @return The VisualizationViewer
 	 */
 	public VisualizationViewer<GraphNode, GraphEdge> getVisView() {
@@ -200,16 +199,13 @@ public class BasicGraphGui extends JPanel {
 
 	/**
 	 * Gets the scaling control.
-	 * 
 	 * @return the scalingControl
 	 */
 	public ScalingControl getScalingControl() {
 		return scalingControl;
 	}
-
 	/**
 	 * Sets the scaling control.
-	 * 
 	 * @param scalingControl the scalingControl to set
 	 */
 	public void setScalingControl(ScalingControl scalingControl) {
@@ -218,16 +214,13 @@ public class BasicGraphGui extends JPanel {
 
 	/**
 	 * Checks if the initial scaling is allowed.
-	 * 
 	 * @return true, if is allow initial scaling
 	 */
 	public boolean isAllowInitialScaling() {
 		return allowInitialScaling;
 	}
-
 	/**
 	 * Sets to allow the initial scaling.
-	 * 
 	 * @param allowInitialScaling the new allow initial scaling
 	 */
 	public void setAllowInitialScaling(boolean allowInitialScaling) {
@@ -237,37 +230,53 @@ public class BasicGraphGui extends JPanel {
 	/**
 	 * Sets the initial scaling for the graph on the VisualizationViewer.
 	 */
-	public void setInitialScaling() {
+	public void setInitialScalingAndMovement() {
 
-		if (this.visView == null)
-			return;
-		if (this.allowInitialScaling == false)
-			return;
+		if (this.visView == null) 				return;
+		if (this.allowInitialScaling == false)  return;
 
 		Graph<GraphNode, GraphEdge> currGraph = this.visView.getGraphLayout().getGraph();
 		Rectangle2D rectGraph = this.getGraphSpreadDimension(currGraph);
 		Rectangle2D rectVis = this.visView.getVisibleRect();
-		if (rectVis.isEmpty())
-			return;
+		if (rectVis.isEmpty()) return;
 
-		double graphWidth = rectGraph.getWidth() + this.graphMargin;
-		double graphHeight = rectGraph.getHeight() + this.graphMargin;
-		double VisibWidth = rectVis.getWidth();
-		double VisibHeight = rectVis.getHeight();
+		Point2D scaleAt = new Point2D.Double(rectGraph.getX(), rectGraph.getY());
+		scaleAt = new Point2D.Double(0, 0);
+		this.setDefaultScaleAtPoint(scaleAt);
+		
+		// --- Calculate the scaling --------------------------------
+		double graphWidth = rectGraph.getWidth() + 2 * this.graphMargin;
+		double graphHeight = rectGraph.getHeight() + 2 * this.graphMargin;
+		double visWidth = rectVis.getWidth();
+		double visHeight = rectVis.getHeight();
 
-		float scaleX = (float) (graphWidth / VisibWidth);
-		float scaleY = (float) (graphHeight / VisibHeight);
-		if (scaleX < 1)
-			scaleX = 1;
-		if (scaleY < 1)
-			scaleY = 1;
+		float scaleX = (float) (visWidth / graphWidth);
+		float scaleY = (float) (visHeight / graphHeight );
+		if (scaleX > 1) scaleX = 1;
+		if (scaleY > 1) scaleY = 1;
 
 		float scale = scaleX;
-		if (scaleX < scaleY)
+		if (scaleX > scaleY) {
 			scale = scaleY;
+		}
 
+		// --- Calculate the movement in the view -------------------
+		double moveX = 0;
+		double moveY = 0;
+		if (rectGraph.getX()!=0) {
+			moveX = rectGraph.getX()*(-1) + this.graphMargin;
+		} 
+		if (rectGraph.getY()!=0) {
+			moveY = rectGraph.getY()*(-1) + this.graphMargin;
+		} 
+		
+		// --- Set movement -----------
+		MutableTransformer mtView = this.visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW);
+		mtView.translate(moveX, moveY);
+
+		// --- Set scaling ------------
 		if (scale != 0 && scale != 1) {
-			this.scalingControl.scale(this.visView, 1 / scale, this.getDefaultScaleAtPoint());
+			this.scalingControl.scale(this.visView, scale, this.getDefaultScaleAtPoint());
 		}
 		this.allowInitialScaling = false;
 
@@ -275,11 +284,17 @@ public class BasicGraphGui extends JPanel {
 
 	/**
 	 * Gets the default point to scale at for zooming.
-	 * 
 	 * @return the default scale at point
 	 */
 	public Point2D getDefaultScaleAtPoint() {
-		return new Point2D.Double(this.graphMargin, this.graphMargin);
+		return defaultScaleAtPoint;
+	}
+	/**
+	 * Sets the default point to scale at for zooming..
+	 * @param scalePoint the new default scale at point
+	 */
+	public void setDefaultScaleAtPoint(Point2D scalePoint) {
+		defaultScaleAtPoint = scalePoint;
 	}
 
 	/**
@@ -290,31 +305,31 @@ public class BasicGraphGui extends JPanel {
 	 */
 	public static Rectangle2D getVerticesSpreadDimension(Collection<GraphNode> graphNodes) {
 
+		int count = 0;
 		double x_min = 0;
-		double y_min = 0;
 		double x_max = 0;
+		double y_min = 0;
 		double y_max = 0;
 
-		GraphNode[] nodes = graphNodes.toArray(new GraphNode[0]);
+		GraphNode[] nodes = graphNodes.toArray(new GraphNode[graphNodes.size()]);
 		for (GraphNode node : nodes) {
 			double x = node.getPosition().getX();
 			double y = node.getPosition().getY();
-			// change init Value
-			if (x_min == 0) {
-				x_min = x;
-				y_min = y;
-			}
 
-			if (x < x_min)
+			if (count==0) {
 				x_min = x;
-			if (x > x_max)
 				x_max = x;
-			if (y < y_min)
 				y_min = y;
-			if (y > y_max)
 				y_max = y;
+			}
+			
+			if (x < x_min) x_min = x;
+			if (x > x_max) x_max = x;
+			if (y < y_min) y_min = y;
+			if (y > y_max) y_max = y;
+			count++;
 		}
-		return new Rectangle2D.Double(x_min, y_min, x_max, y_max);
+		return new Rectangle2D.Double(x_min, y_min, x_max-x_min, y_max-y_min);
 	}
 
 	/**
@@ -383,7 +398,7 @@ public class BasicGraphGui extends JPanel {
 
 			this.allowInitialScaling = true;
 			this.validate();
-			this.setInitialScaling();
+			this.setInitialScalingAndMovement();
 		}
 	}
 
@@ -418,7 +433,7 @@ public class BasicGraphGui extends JPanel {
 		// --- Define graph layout ----------------------------------------
 		// ----------------------------------------------------------------
 		Layout<GraphNode, GraphEdge> layout = new StaticLayout<GraphNode, GraphEdge>(graph);
-		layout.setSize(new Dimension((int) (rect.getWidth() + graphMargin), (int) (rect.getHeight() + graphMargin)));
+		layout.setSize(new Dimension((int) (rect.getWidth() + 2*graphMargin), (int) (rect.getHeight() + 2*graphMargin)));
 		layout.setInitializer(new Transformer<GraphNode, Point2D>() {
 			@Override
 			public Point2D transform(GraphNode node) {
@@ -652,7 +667,7 @@ public class BasicGraphGui extends JPanel {
 	 */
 	public void handleObjectLeftClick(Object pickedObject) {
 		this.clearPickedObjects();
-		selectObject(pickedObject);
+		this.selectObject(pickedObject);
 	}
 
 	/**
@@ -662,7 +677,7 @@ public class BasicGraphGui extends JPanel {
 	 */
 	public void handleObjectRightClick(Object pickedObject) {
 		this.clearPickedObjects();
-		selectObject(pickedObject);
+		this.selectObject(pickedObject);
 	}
 
 	/**

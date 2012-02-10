@@ -494,7 +494,7 @@ public class BasicGraphGuiTools implements ActionListener {
 			visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).setToIdentity();
 			visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).setToIdentity();
 			this.basicGraphGui.setAllowInitialScaling(true);
-			this.basicGraphGui.setInitialScaling();
+			this.basicGraphGui.setInitialScalingAndMovement();
 		
 		} else if (ae.getSource() == getJButtonZoomOne2One()) {
 			// ------------------------------------------------------
