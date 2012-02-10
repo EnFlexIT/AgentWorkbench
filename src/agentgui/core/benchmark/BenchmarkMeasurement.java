@@ -179,13 +179,13 @@ public class BenchmarkMeasurement extends Thread {
 		benchGUI.jProgressBarBenchmark.setValue(6);
 		res[0] = (res[1] + res[2] + res[3] + res[4] + res[5]) / 5;
 		
-		System.out.println("Benchmark Ergebnisse:");
+		System.out.println("Benchmark Result:");
 		System.out.println("FFT:" + res[1] + " Mflops");
 		System.out.println("SOR:" + res[2] + " Mflops");
 		System.out.println("MonteCarlo:" + res[3] + " Mflops");
 		System.out.println("SparseMatmult:" + res[4] + " Mflops");
 		System.out.println("LU:" + res[5] + " Mflops");
-		System.out.println("Arithmetisches Mittel:" + res[0] + " Mflops");
+		System.out.println("Average:" + res[0] + " Mflops");
 
 		float result  = (float)Math.round((float)res[0]*100)/100;
 		if (this.isSkipAction()) return;
