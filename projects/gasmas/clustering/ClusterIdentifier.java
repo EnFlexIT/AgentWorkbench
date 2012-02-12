@@ -120,7 +120,7 @@ public class ClusterIdentifier {
 		// ------- add the Neighbours to the List because removed are part of the cluster
 		networkComponents.addAll(networkModel.getNeighbourNetworkComponents(networkComponents));
 		connectionComponents(networkComponents, clusterComponents, networkModel);
-		refrehDisplay(networkModel.replaceComonentsByCluster(networkComponents));
+		refrehDisplay(networkModel.replaceComponentsByCluster(networkComponents));
 		return true;
 	}
 

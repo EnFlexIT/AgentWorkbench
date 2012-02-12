@@ -38,6 +38,7 @@ import agentgui.core.application.Language;
 import agentgui.envModel.graph.controller.GraphFileImporter;
 import agentgui.envModel.graph.networkModel.ComponentTypeSettings;
 import agentgui.envModel.graph.networkModel.GraphElement;
+import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.envModel.graph.prototypes.GraphElementPrototype;
 import edu.uci.ics.jung.graph.Graph;
@@ -49,63 +50,56 @@ import edu.uci.ics.jung.graph.Graph;
  * 
  */
 public class YedGraphMLFileImporter extends GraphFileImporter {
-    /**
-     * The file extension used for filtering in JFileChooser selecting the file to import
-     */
+   
+	/** The file extension used for filtering in JFileChooser selecting the file to import */
     private String fileTypeExtension = "graphml";
-    /**
-     * The file type description for the JFileChooser for selecting the file to import
-     */
+    /** The file type description for the JFileChooser for selecting the file to import */
     private String fileTypeDescription = "yEd GraphML";
-    /**
-     * Intermediate graph, after loading the GraphML file, before converting to a GridModel
-     */
+    /** Intermediate graph, after loading the GraphML file, before converting to a GridModel */
     private Graph<TempNode, Object> tempGraph;
-    /**
-     * The GridModel created from the imported yEd GraphML file
-     */
-    private NetworkModel gridModel;
+    /** The GridModel created from the imported yEd GraphML file */
+    private NetworkModel networkModel;
 
     private HashMap<String, GraphElementPrototype> addedElements = null;
 
     public YedGraphMLFileImporter(HashMap<String, ComponentTypeSettings> elementSettings) {
-	super(elementSettings);
-	addedElements = new HashMap<String, GraphElementPrototype>();
+		super(elementSettings);
+		addedElements = new HashMap<String, GraphElementPrototype>();
     }
 
     @Override
     public NetworkModel importGraphFromFile(File graphFile) {
-	// GraphML parser instance
-	YedGraphMLParser parser = new YedGraphMLParser();
-	// List of the graphs start nodes
-	Vector<TempNode> startNodesList = null;
-
-	// Load the intermediate graph from the yEd file
-	tempGraph = parser.getGraph(graphFile);
-	if (tempGraph == null) {
-	    return null;
-	} else {
-	    // Find the graphs start nodes
-	    Iterator<TempNode> nodes = tempGraph.getVertices().iterator();
-	    startNodesList = new Vector<TempNode>();
-	    while (nodes.hasNext()) {
-		TempNode node = nodes.next();
-		if (tempGraph.inDegree(node) == 0) {
-		    startNodesList.add(node);
+		// GraphML parser instance
+		YedGraphMLParser parser = new YedGraphMLParser();
+		// List of the graphs start nodes
+		Vector<TempNode> startNodesList = null;
+	
+		// Load the intermediate graph from the yEd file
+		tempGraph = parser.getGraph(graphFile);
+		if (tempGraph == null) {
+		    return null;
+		} else {
+		    // Find the graphs start nodes
+		    Iterator<TempNode> nodes = tempGraph.getVertices().iterator();
+		    startNodesList = new Vector<TempNode>();
+		    while (nodes.hasNext()) {
+				TempNode node = nodes.next();
+				if (tempGraph.inDegree(node) == 0) {
+				    startNodesList.add(node);
+				}
+		    }
 		}
-	    }
-	}
-
-	// Build the final graph, starting from the start nodes
-	if (startNodesList != null) {
-	    Iterator<TempNode> startNodes = startNodesList.iterator();
-	    gridModel = new NetworkModel();
-	    while (startNodes.hasNext()) {
-		TempNode startNode = startNodes.next();
-		addElement(startNode, null);
-	    }
-	}
-	return gridModel;
+	
+		// Build the final graph, starting from the start nodes
+		if (startNodesList != null) {
+		    Iterator<TempNode> startNodes = startNodesList.iterator();
+		    networkModel = new NetworkModel();
+		    while (startNodes.hasNext()) {
+			TempNode startNode = startNodes.next();
+			addElement(startNode, null);
+		    }
+		}
+		return networkModel;
     }
 
     /**
@@ -115,61 +109,64 @@ public class YedGraphMLFileImporter extends GraphFileImporter {
      * @param predecessor
      */
     private void addElement(TempNode tempElement, GraphElementPrototype predecessor) {
-	// Create a NetworkComponent representing the element
-	String prototypeClassName = componentTypeSettings.get(tempElement.getType()).getGraphPrototype();
-
-	// Create a GraphElementPrototype for the component
-	GraphElementPrototype newElement = null;
-
-	try {
-	    newElement = (GraphElementPrototype) Class.forName(prototypeClassName).newInstance();
-	} catch (InstantiationException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
-	} catch (IllegalAccessException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
-	} catch (ClassNotFoundException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
-	}
-
-	if (newElement != null) {
-	    newElement.setId(tempElement.getId());
-	    newElement.setType(tempElement.getType());
-
-	    // Look for an existing successor
-	    // Not supporting multiple successors at the moment !!!
-	    GraphElementPrototype successor = null;
-	    for (TempNode tempNode : tempGraph.getSuccessors(tempElement)) {
-		successor = addedElements.get(tempNode.getId());
-	    }
-
-	    HashSet<GraphElement> graphElements = null;
-	    if (predecessor == null) {
-		graphElements = successor == null ? newElement.addToGraph(gridModel.getGraph()) : newElement.addBefore(gridModel.getGraph(), successor);
-	    } else {
-		graphElements = successor == null ? newElement.addAfter(gridModel.getGraph(), predecessor) : newElement.addBetween(gridModel.getGraph(), predecessor, successor);
-	    }
-	    gridModel.addNetworkComponent(tempElement.getId(), tempElement.getType(), prototypeClassName, newElement.isDirected(), graphElements);
-
-	    // Call recursively for successor nodes
-	    // New iterator
-	    for (TempNode tempNode : tempGraph.getSuccessors(tempElement)) {
-		addElement(tempNode, newElement);
-	    }
-	} else {
-	    System.err.println(Language.translate("Fehler beim Instanziieren des GraphElementPrototyps für Element-Typ ") + tempElement.getType());
-	}
+		// Create a NetworkComponent representing the element
+		String prototypeClassName = this.componentTypeSettings.get(tempElement.getType()).getGraphPrototype();
+	
+		// Create a GraphElementPrototype for the component
+		GraphElementPrototype newElement = null;
+		try {
+		    newElement = (GraphElementPrototype) Class.forName(prototypeClassName).newInstance();
+		} catch (InstantiationException e) {
+		    e.printStackTrace();
+		} catch (IllegalAccessException e) {
+		    e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+		    e.printStackTrace();
+		}
+	
+		if (newElement != null) {
+		    newElement.setId(tempElement.getId());
+		    newElement.setType(tempElement.getType());
+	
+		    // Look for an existing successor
+		    // Not supporting multiple successors at the moment !!!
+		    GraphElementPrototype successor = null;
+		    for (TempNode tempNode : tempGraph.getSuccessors(tempElement)) {
+		    	successor = addedElements.get(tempNode.getId());
+		    }
+	
+		    HashSet<GraphElement> graphElements = null;
+		    if (predecessor == null) {
+		    	graphElements = successor == null ? newElement.addToGraph(networkModel.getGraph()) : newElement.addBefore(networkModel.getGraph(), successor);
+		    } else {
+		    	graphElements = successor == null ? newElement.addAfter(networkModel.getGraph(), predecessor) : newElement.addBetween(networkModel.getGraph(), predecessor, successor);
+		    }
+		    
+		    // Get the component type settings for the component
+		    ComponentTypeSettings cts = this.componentTypeSettings.get(tempElement.getType());
+		    
+		    // Add the new NetworkComponent
+		    NetworkComponent netComp = new NetworkComponent(tempElement.getId(), tempElement.getType(), prototypeClassName, cts.getAgentClass(), graphElements, newElement.isDirected());
+		    networkModel.addNetworkComponent(netComp);
+	
+		    // Call recursively for successor nodes
+		    // New iterator
+		    for (TempNode tempNode : tempGraph.getSuccessors(tempElement)) {
+		    	addElement(tempNode, newElement);
+		    }
+		    
+		} else {
+		    System.err.println(Language.translate("Fehler beim Instanziieren des GraphElementPrototyps für Element-Typ ") + tempElement.getType());
+		}
     }
 
     @Override
     public String getGraphFileExtension() {
-	return fileTypeExtension;
+    	return fileTypeExtension;
     }
 
     @Override
     public String getTypeString() {
-	return fileTypeDescription;
+    	return fileTypeDescription;
     }
 }

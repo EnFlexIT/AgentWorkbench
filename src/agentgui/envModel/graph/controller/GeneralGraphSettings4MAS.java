@@ -48,6 +48,9 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	
 	private static final long serialVersionUID = 7425147528482747232L;
 	
+	/** The Constant PREFIX_NETWORK_COMPONENT. */
+	public final static String PREFIX_NETWORK_COMPONENT = "n"; 
+	
 	/** Default name for the first DomainSettings. */
 	public static final String DEFAULT_DOMAIN_SETTINGS_NAME = "Default Domain";
 	/** Default width for edges. */
@@ -73,6 +76,7 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	public static final String SHAPE_ROUND_RECTANGLE = "Round rectangle";
 	public static final String SHAPE_REGULAR_POLYGON = "Regular polygon";
 	public static final String SHAPE_REGULAR_STAR = "Regular star";
+	
 	/** Default shapes for a central cluster node */
 	public static final String SHAPE_DEFAULT_4_CLUSTER = SHAPE_RECTANGLE;
 	
@@ -85,7 +89,7 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	/** The snap2 grid. */
 	private boolean snap2Grid = true;
 	/** The snap raster. */
-	private double snapRaster = DEFAULT_RASTER_SIZE; 
+	private double snapRaster = DEFAULT_RASTER_SIZE;
 
 	
 	/**

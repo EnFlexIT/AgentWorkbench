@@ -485,7 +485,10 @@ public class AddComponentDialog extends JDialog implements ActionListener {
 		HashSet<GraphElement> graphElements = merge(networkModel.getGraph(), getVisualizationViewer().getGraphLayout().getGraph(), parentPickedVertex, pickedVertex);
 	
 		// create new NetworkComponent
-		NetworkComponent newComponent = networkModel.addNetworkComponent(graphElement.getId(), selectedType, componentTypeSettings.get(selectedType).getGraphPrototype(), graphElement.isDirected(), graphElements, componentTypeSettings.get(selectedType).getAgentClass());
+		
+		NetworkComponent newComponent = new NetworkComponent(graphElement.getId(), selectedType, componentTypeSettings.get(selectedType).getGraphPrototype(), componentTypeSettings.get(selectedType).getAgentClass(), graphElements, graphElement.isDirected());
+		networkModel.addNetworkComponent(newComponent);
+		
 		this.graphController.refreshNetworkModel();
 		// Adding the new component to the table of components 
 		this.graphControllerGUI.networkComponentAdd(newComponent);
@@ -636,7 +639,7 @@ public class AddComponentDialog extends JDialog implements ActionListener {
 					// --- If the current selection of the main graph is also a DistributionNode => disallow ---
 					GraphNode nodeSelected = this.basicGraphGui.getPickedVertex();
 					HashSet<NetworkComponent> components = this.graphController.getNetworkModel().getNetworkComponents(nodeSelected);
-					NetworkComponent containsDistributionNode = this.graphController.getNetworkModel().componentListContainsDistributionNode(components);
+					NetworkComponent containsDistributionNode = this.graphController.getNetworkModel().containsDistributionNode(components);
 					if (containsDistributionNode!=null) {
 						String msg = "The selection in the main graph already contains a component of\n";
 						msg += "the type 'DistributionNode'. This is only allowed once at one node! ";

@@ -476,6 +476,7 @@ de;Übersetzter Text;Text translated
 de;Übersetzung speichern (STRG+S);Save translation (CTRL + S)
 de;Überspringen;Skip
 en;;Cluster shape;;;
+en;;Discrete squares environment;;;
 en;;Select a network component;;;
 en;;Select two valid vertices;;;
 en;;The select Vertex should be between two components !;;;

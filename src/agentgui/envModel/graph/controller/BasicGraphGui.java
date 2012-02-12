@@ -474,7 +474,7 @@ public class BasicGraphGui extends JPanel {
 				String colorString = null;
 				NetworkModel networkModel = controller.getNetworkModel();
 				HashSet<NetworkComponent> componentHashSet = networkModel.getNetworkComponents(node);
-				NetworkComponent networkComponent = networkModel.componentListContainsDistributionNode(componentHashSet);
+				NetworkComponent networkComponent = networkModel.containsDistributionNode(componentHashSet);
 				try {
 					// --- Get the vertex size from the component type settings -
 					if (networkComponent != null) {
@@ -521,7 +521,7 @@ public class BasicGraphGui extends JPanel {
 
 				NetworkModel nModel = controller.getNetworkModel();
 				HashSet<NetworkComponent> components = nModel.getNetworkComponents(node);
-				NetworkComponent distributionNode = nModel.componentListContainsDistributionNode(components);
+				NetworkComponent distributionNode = nModel.containsDistributionNode(components);
 				if (distributionNode == null) {
 					if (components.iterator().hasNext()) {
 						String compType = components.iterator().next().getType();
@@ -768,7 +768,7 @@ public class BasicGraphGui extends JPanel {
 			this.setPickedObject((GraphElement) object);
 			// --- Is that node a distribution node? ----------------
 			HashSet<NetworkComponent> netComps = controller.getNetworkModel().getNetworkComponents((GraphNode)object);
-			NetworkComponent disNode = controller.getNetworkModel().componentListContainsDistributionNode(netComps);
+			NetworkComponent disNode = controller.getNetworkModel().containsDistributionNode(netComps);
 			if (disNode!=null) {
 				GraphEnvironmentControllerGUI graphEnvGui = (GraphEnvironmentControllerGUI) this.controller.getEnvironmentPanel();
 				graphEnvGui.networkComponentSelect(disNode);
@@ -894,7 +894,7 @@ public class BasicGraphGui extends JPanel {
 
 					NetworkModel networkModel = controller.getNetworkModel();
 					HashSet<NetworkComponent> componentHashSet = networkModel.getNetworkComponents(node);
-					NetworkComponent networkComponent = networkModel.componentListContainsDistributionNode(componentHashSet);
+					NetworkComponent networkComponent = networkModel.containsDistributionNode(componentHashSet);
 					try {
 						if (networkComponent != null) {
 							// --- DistributionNode: get size from ComponentTypeSettings - Start --
@@ -965,7 +965,7 @@ public class BasicGraphGui extends JPanel {
 
 			NetworkModel networkModel = controller.getNetworkModel();
 			HashSet<NetworkComponent> componentHashSet = networkModel.getNetworkComponents(node);
-			NetworkComponent networkComponent = networkModel.componentListContainsDistributionNode(componentHashSet);
+			NetworkComponent networkComponent = networkModel.containsDistributionNode(componentHashSet);
 			if (componentHashSet.size() == 1 && networkComponent == null) {
 				networkComponent = componentHashSet.iterator().next();
 				if (networkComponent instanceof ClusterNetworkComponent) {

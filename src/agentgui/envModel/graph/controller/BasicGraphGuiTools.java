@@ -531,7 +531,7 @@ public class BasicGraphGuiTools implements ActionListener {
 				
 			} else if(basicGraphGui.getPickedVertex()!=null) {
 				// --- Picked a vertex ------------------------------
-					if(this.graphController.getNetworkModel().isFreeNode(basicGraphGui.getPickedVertex())) {
+					if(this.graphController.getNetworkModel().isFreeGraphNode(basicGraphGui.getPickedVertex())) {
 						this.showAddComponentDialog();
 					} else {
 						JOptionPane.showMessageDialog(this.graphControllerGUI, Language.translate("Select a valid vertex", Language.EN), Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
@@ -589,7 +589,7 @@ public class BasicGraphGuiTools implements ActionListener {
 				Iterator<GraphNode> nodeIter = nodeSet.iterator();
 				GraphNode node1 = nodeIter.next();
 				GraphNode node2 = nodeIter.next();
-				if (this.graphController.getNetworkModel().isFreeNode(node1) && this.graphController.getNetworkModel().isFreeNode(node2)) {
+				if (this.graphController.getNetworkModel().isFreeGraphNode(node1) && this.graphController.getNetworkModel().isFreeGraphNode(node2)) {
 					// --- Valid nodes are picked
 					basicGraphGui.mergeNodes(node1, node2);
 				} else {
@@ -611,7 +611,7 @@ public class BasicGraphGuiTools implements ActionListener {
 			if(pickedVertex!=null){
 				// --- One vertex is picked -----
 				HashSet<NetworkComponent> components = this.graphController.getNetworkModel().getNetworkComponents(pickedVertex);
-				NetworkComponent containsDistributionNode = this.graphController.getNetworkModel().componentListContainsDistributionNode(components);
+				NetworkComponent containsDistributionNode = this.graphController.getNetworkModel().containsDistributionNode(components);
 				if (containsDistributionNode!=null) {
 					if(components.size()>=2){
 						basicGraphGui.splitNode(pickedVertex);

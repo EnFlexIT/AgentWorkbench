@@ -59,9 +59,11 @@ public class ClusterNetworkComponent extends NetworkComponent {
 	 * @param networkComponentIDs the network component i ds
 	 * @param clusterNetworkModel the cluster network model
 	 */
-	public ClusterNetworkComponent(String id, String type, String prototypeClassName, HashSet<GraphElement> graphElements, boolean directed, ArrayList<String> networkComponentIDs,
-			NetworkModel clusterNetworkModel) {
-		super(id, type, prototypeClassName, graphElements, directed);
+	public ClusterNetworkComponent(String id, String type, String prototypeClassName, 
+			String agentClassName, HashSet<GraphElement> graphElements, boolean directed, 
+			ArrayList<String> networkComponentIDs, NetworkModel clusterNetworkModel) {
+		
+		super(id, type, prototypeClassName, agentClassName, graphElements, directed);
 		this.networkComponentIDs = networkComponentIDs;
 		this.clusterNetworkModel = clusterNetworkModel;
 	}

@@ -45,13 +45,14 @@ import agentgui.envModel.graph.networkModel.NetworkModel;
  * @see GraphEnvironmentController
  * 
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
- *
  */
 public abstract class GraphFileImporter {
+	
 	/**
 	 * The component type definitions
 	 */
 	protected HashMap<String, ComponentTypeSettings> componentTypeSettings = null;
+	
 	/**
 	 * Constructor
 	 * @param componentTypeSettings	The component type definitions
