@@ -381,8 +381,15 @@ public class NetworkModel implements Cloneable, Serializable {
 				GraphElement graphElement = this.getGraphElement(graphElementID);
 				if (graphElement instanceof GraphEdge) {
 					graph.removeEdge((GraphEdge) graphElement);
-				} else if (graphElement instanceof GraphNode && (this.getNetworkComponents((GraphNode) graphElement).size() < 2)) {
-					this.graph.removeVertex((GraphNode) graphElement);
+				} else if (graphElement instanceof GraphNode) {
+					HashSet<NetworkComponent> networkComponents = this.getNetworkComponents((GraphNode) graphElement);
+					for (NetworkComponent networkComponent2 : new ArrayList<NetworkComponent>(networkComponents)) {
+						if (networkComponent2 instanceof ClusterNetworkComponent) {
+							networkComponents.remove(networkComponent2);
+						}
+					}
+					if (networkComponents.size() < 2)
+						this.graph.removeVertex((GraphNode) graphElement);
 				}
 			}
 			// ----------------------------------------------------------------
