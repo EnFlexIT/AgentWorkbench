@@ -752,28 +752,27 @@ public class NetworkModel implements Cloneable, Serializable {
 	}
 
 	/**
-	 * Checks if a HashMap contains just one single ClusterNetworkComponent.
+	* Returns the cluster components of the NetworkModel.
+	* @return the cluster components
+	*/
+	public ArrayList<ClusterNetworkComponent> getClusterComponents() {
+		return getClusterComponents(this.networkComponents.values());
+	}
+
+	/**
+	 * Gets the cluster components of a collection of clusterComponents.
 	 *
 	 * @param components the components
-	 * @return true, if is just one ClusterNetworkComponent in the hashSet
+	 * @return the cluster components
 	 */
-	public boolean isSingleClusterHashSet(HashSet<NetworkComponent> components) {
-
-		int componentsCount = components.size();
-		boolean isClusterNetworkComponent = false;
-
-		Iterator<NetworkComponent> it = components.iterator();
-		while (it.hasNext()) {
-			NetworkComponent comp = it.next();
-			if (comp instanceof ClusterNetworkComponent) {
-				isClusterNetworkComponent = true;
-				break;
+	public ArrayList<ClusterNetworkComponent> getClusterComponents(Collection<NetworkComponent> components) {
+		ArrayList<ClusterNetworkComponent> clusterComponents = new ArrayList<ClusterNetworkComponent>();
+		for (NetworkComponent networkComponent : components) {
+			if (networkComponent instanceof ClusterNetworkComponent) {
+				clusterComponents.add((ClusterNetworkComponent) networkComponent);
 			}
 		}
-		if (isClusterNetworkComponent && componentsCount == 1) {
-			return true;
-		}
-		return false;
+		return clusterComponents;
 	}
 
 	/**
@@ -858,7 +857,7 @@ public class NetworkModel implements Cloneable, Serializable {
 		clusterNetworkModel.setAlternativeNetworkModel(null);
 		clusterNetworkModel.removeInverseNetworkComponents(getNetworkComponentsIDs(networkComponents));
 		removeNetworkComponents(networkComponents);
-
+		// --------------- Identifiy outernodes of the Cluster ----------------
 		Vector<GraphNode> outerNodes = new Vector<GraphNode>();
 		for (NetworkComponent networkComponent : networkComponents) {
 			for (GraphNode graphNode : getNodesFromNetworkComponent(networkComponent)) {
@@ -895,20 +894,6 @@ public class NetworkModel implements Cloneable, Serializable {
 			}
 		}
 		return outerNetworkComponents;
-	}
-
-	/**
-	 * Returns the cluster components of the NetworkModel.
-	 * @return the cluster components
-	 */
-	public ArrayList<ClusterNetworkComponent> getClusterComponents() {
-		ArrayList<ClusterNetworkComponent> clusterComponents = new ArrayList<ClusterNetworkComponent>();
-		for (NetworkComponent networkComponent : this.networkComponents.values()) {
-			if (networkComponent instanceof ClusterNetworkComponent) {
-				clusterComponents.add((ClusterNetworkComponent) networkComponent);
-			}
-		}
-		return clusterComponents;
 	}
 
 }

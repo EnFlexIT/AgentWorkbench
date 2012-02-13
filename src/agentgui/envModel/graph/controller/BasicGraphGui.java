@@ -107,7 +107,7 @@ public class BasicGraphGui extends JPanel {
 	private ScalingControl scalingControl = new CrossoverScalingControl(); // @jve:decl-index=0:
 	/** the margin of the graph for the visualization */
 	private double graphMargin = 25;
-	private Point2D defaultScaleAtPoint = new Point2D.Double(graphMargin, graphMargin);  //  @jve:decl-index=0:
+	private Point2D defaultScaleAtPoint = new Point2D.Double(graphMargin, graphMargin); // @jve:decl-index=0:
 	/** Indicates that the initial scaling is allowed */
 	private boolean allowInitialScaling = true;
 
@@ -181,6 +181,7 @@ public class BasicGraphGui extends JPanel {
 	public PluggableGraphMouse getPluggableGraphMouse() {
 		return pluggableGraphMouse;
 	}
+
 	/**
 	 * Gets the DefaultModalGraphMouse.
 	 * @return the pluggableGraphMouse
@@ -204,6 +205,7 @@ public class BasicGraphGui extends JPanel {
 	public ScalingControl getScalingControl() {
 		return scalingControl;
 	}
+
 	/**
 	 * Sets the scaling control.
 	 * @param scalingControl the scalingControl to set
@@ -219,6 +221,7 @@ public class BasicGraphGui extends JPanel {
 	public boolean isAllowInitialScaling() {
 		return allowInitialScaling;
 	}
+
 	/**
 	 * Sets to allow the initial scaling.
 	 * @param allowInitialScaling the new allow initial scaling
@@ -232,18 +235,21 @@ public class BasicGraphGui extends JPanel {
 	 */
 	public void setInitialScalingAndMovement() {
 
-		if (this.visView == null) 				return;
-		if (this.allowInitialScaling == false)  return;
+		if (this.visView == null)
+			return;
+		if (this.allowInitialScaling == false)
+			return;
 
 		Graph<GraphNode, GraphEdge> currGraph = this.visView.getGraphLayout().getGraph();
 		Rectangle2D rectGraph = this.getGraphSpreadDimension(currGraph);
 		Rectangle2D rectVis = this.visView.getVisibleRect();
-		if (rectVis.isEmpty()) return;
+		if (rectVis.isEmpty())
+			return;
 
 		Point2D scaleAt = new Point2D.Double(rectGraph.getX(), rectGraph.getY());
 		scaleAt = new Point2D.Double(0, 0);
 		this.setDefaultScaleAtPoint(scaleAt);
-		
+
 		// --- Calculate the scaling --------------------------------
 		double graphWidth = rectGraph.getWidth() + 2 * this.graphMargin;
 		double graphHeight = rectGraph.getHeight() + 2 * this.graphMargin;
@@ -251,9 +257,11 @@ public class BasicGraphGui extends JPanel {
 		double visHeight = rectVis.getHeight();
 
 		float scaleX = (float) (visWidth / graphWidth);
-		float scaleY = (float) (visHeight / graphHeight );
-		if (scaleX > 1) scaleX = 1;
-		if (scaleY > 1) scaleY = 1;
+		float scaleY = (float) (visHeight / graphHeight);
+		if (scaleX > 1)
+			scaleX = 1;
+		if (scaleY > 1)
+			scaleY = 1;
 
 		float scale = scaleX;
 		if (scaleX > scaleY) {
@@ -263,13 +271,13 @@ public class BasicGraphGui extends JPanel {
 		// --- Calculate the movement in the view -------------------
 		double moveX = 0;
 		double moveY = 0;
-		if (rectGraph.getX()!=0) {
-			moveX = rectGraph.getX()*(-1) + this.graphMargin;
-		} 
-		if (rectGraph.getY()!=0) {
-			moveY = rectGraph.getY()*(-1) + this.graphMargin;
-		} 
-		
+		if (rectGraph.getX() != 0) {
+			moveX = rectGraph.getX() * (-1) + this.graphMargin;
+		}
+		if (rectGraph.getY() != 0) {
+			moveY = rectGraph.getY() * (-1) + this.graphMargin;
+		}
+
 		// --- Set movement -----------
 		MutableTransformer mtView = this.visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW);
 		mtView.translate(moveX, moveY);
@@ -289,6 +297,7 @@ public class BasicGraphGui extends JPanel {
 	public Point2D getDefaultScaleAtPoint() {
 		return defaultScaleAtPoint;
 	}
+
 	/**
 	 * Sets the default point to scale at for zooming..
 	 * @param scalePoint the new default scale at point
@@ -316,20 +325,24 @@ public class BasicGraphGui extends JPanel {
 			double x = node.getPosition().getX();
 			double y = node.getPosition().getY();
 
-			if (count==0) {
+			if (count == 0) {
 				x_min = x;
 				x_max = x;
 				y_min = y;
 				y_max = y;
 			}
-			
-			if (x < x_min) x_min = x;
-			if (x > x_max) x_max = x;
-			if (y < y_min) y_min = y;
-			if (y > y_max) y_max = y;
+
+			if (x < x_min)
+				x_min = x;
+			if (x > x_max)
+				x_max = x;
+			if (y < y_min)
+				y_min = y;
+			if (y > y_max)
+				y_max = y;
 			count++;
 		}
-		return new Rectangle2D.Double(x_min, y_min, x_max-x_min, y_max-y_min);
+		return new Rectangle2D.Double(x_min, y_min, x_max - x_min, y_max - y_min);
 	}
 
 	/**
@@ -433,7 +446,7 @@ public class BasicGraphGui extends JPanel {
 		// --- Define graph layout ----------------------------------------
 		// ----------------------------------------------------------------
 		Layout<GraphNode, GraphEdge> layout = new StaticLayout<GraphNode, GraphEdge>(graph);
-		layout.setSize(new Dimension((int) (rect.getWidth() + 2*graphMargin), (int) (rect.getHeight() + 2*graphMargin)));
+		layout.setSize(new Dimension((int) (rect.getWidth() + 2 * graphMargin), (int) (rect.getHeight() + 2 * graphMargin)));
 		layout.setInitializer(new Transformer<GraphNode, Point2D>() {
 			@Override
 			public Point2D transform(GraphNode node) {
@@ -767,13 +780,13 @@ public class BasicGraphGui extends JPanel {
 		if (object instanceof GraphNode) {
 			this.setPickedObject((GraphElement) object);
 			// --- Is that node a distribution node? ----------------
-			HashSet<NetworkComponent> netComps = controller.getNetworkModel().getNetworkComponents((GraphNode)object);
+			HashSet<NetworkComponent> netComps = controller.getNetworkModel().getNetworkComponents((GraphNode) object);
 			NetworkComponent disNode = controller.getNetworkModel().containsDistributionNode(netComps);
-			if (disNode!=null) {
+			if (disNode != null) {
 				GraphEnvironmentControllerGUI graphEnvGui = (GraphEnvironmentControllerGUI) this.controller.getEnvironmentPanel();
 				graphEnvGui.networkComponentSelect(disNode);
 			}
-			
+
 		} else if (object instanceof GraphEdge) {
 			NetworkComponent netComp = controller.getNetworkModel().getNetworkComponent((GraphEdge) object);
 			this.setPickedObjects(controller.getNetworkModel().getGraphElementsFromNetworkComponent(netComp));
@@ -907,25 +920,24 @@ public class BasicGraphGui extends JPanel {
 						} else {
 							// --- Normal node or ClusterNode ---------------------------- Start --
 							if (componentHashSet.iterator().hasNext()) {
-								
+
 								NetworkComponent component = componentHashSet.iterator().next();
-								boolean isSingleCluster = networkModel.isSingleClusterHashSet(componentHashSet);
-								if (isSingleCluster) {
+								if (networkModel.getClusterComponents(componentHashSet).size() == 1) {
 									// --- This is a cluster component ------------------
 									ClusterNetworkComponent cnc = (ClusterNetworkComponent) component;
 									DomainSettings ds = null;
 									String domain = cnc.getDomain();
-									if (domain!=null) {
-										if (domain.equals("")==false) {
+									if (domain != null) {
+										if (domain.equals("") == false) {
 											ds = controller.getDomainSettings().get(domain);
 										}
-									} 
-									if (ds==null) {
+									}
+									if (ds == null) {
 										ds = controller.getDomainSettings().get(GeneralGraphSettings4MAS.DEFAULT_DOMAIN_SETTINGS_NAME);
 									}
 									sizeFromCTS = ds.getVertexSize();
 									sizeFromCTS = sizeFromCTS * 3;
-									
+
 								} else {
 									// --- This is a normal component -------------------
 									ComponentTypeSettings cts = controller.getComponentTypeSettings().get(component.getType());
@@ -934,7 +946,7 @@ public class BasicGraphGui extends JPanel {
 									}
 									DomainSettings ds = controller.getDomainSettings().get(cts.getDomain());
 									sizeFromCTS = ds.getVertexSize();
-									
+
 								}
 							}
 							// --- Normal node or ClusterNode ---------------------------- End ----
@@ -973,12 +985,12 @@ public class BasicGraphGui extends JPanel {
 					DomainSettings ds = null;
 					ClusterNetworkComponent cnc = (ClusterNetworkComponent) networkComponent;
 					String domain = cnc.getDomain();
-					if (domain!=null) {
-						if (domain.equals("")==false) {
+					if (domain != null) {
+						if (domain.equals("") == false) {
 							ds = controller.getDomainSettings().get(domain);
 						}
-					} 
-					if (ds==null) {
+					}
+					if (ds == null) {
 						ds = controller.getDomainSettings().get(GeneralGraphSettings4MAS.DEFAULT_DOMAIN_SETTINGS_NAME);
 					}
 					String shapeForm = ds.getClusterShape();
