@@ -63,6 +63,7 @@ import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkComponentList;
 import agentgui.envModel.graph.networkModel.NetworkModel;
+import agentgui.envModel.graph.networkModel.NetworkModelAction;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseGraph;
 import edu.uci.ics.jung.io.GraphIOException;
@@ -98,6 +99,8 @@ public class GraphEnvironmentController extends EnvironmentController {
     /** The network model currently loaded */
     private NetworkModel networkModel = null;
 
+    private NetworkModelAction networkModelAction;
+    
     /** Custom user object to be placed in the project object. Used here for storing the current component type settings. */
     private static final String generalGraphSettings4MASFile = "~GeneralGraphSettings~";
     
@@ -172,7 +175,6 @@ public class GraphEnvironmentController extends EnvironmentController {
 
     /**
      * Sets the environment network model
-     * 
      * @return NetworkModel - The environment model
      */
     private void setNetworkModel(NetworkModel networkModel) {
@@ -182,7 +184,6 @@ public class GraphEnvironmentController extends EnvironmentController {
 		    getProject().isUnsaved = true;
 		}
     }
-
     /**
      * Returns the environment network model
      * @return NetworkModel - The environment model
@@ -190,7 +191,18 @@ public class GraphEnvironmentController extends EnvironmentController {
     public NetworkModel getNetworkModel() {
     	return networkModel;
     }
-
+    
+    /**
+     * Gets the network model for actions.
+     * @return the network model action
+     */
+    public NetworkModelAction getNetworkModelAction() {
+    	if (networkModelAction==null) {
+    		this.networkModelAction = new NetworkModelAction(this, this.networkModel);
+    	}
+    	return this.networkModelAction;
+    }
+    
     /**
      * Clears the network model by replacing with an empty graph and notifies observers
      */
@@ -357,9 +369,16 @@ public class GraphEnvironmentController extends EnvironmentController {
 	    break;
 
 	case SimulationSetups.SIMULATION_SETUP_ADD_NEW:
-	    this.updateGraphFileName();
+	    
+		GeneralGraphSettings4MAS generalGraphSettings4MAS = null;
+		if (this.networkModel!=null) {
+			generalGraphSettings4MAS = this.networkModel.getGeneralGraphSettings4MAS();	
+		}
+		
+		this.updateGraphFileName();
 	    networkModel = new NetworkModel();
-
+	    networkModel.setGeneralGraphSettings4MAS(generalGraphSettings4MAS);
+	    
 	    // --- register a new list of agents, which has to be started with the environment ------
 	    this.setAgents2Start(new DefaultListModel());
 	    this.registerDefaultListModel4SimulationStart(SimulationSetup.AGENT_LIST_EnvironmentConfiguration);
@@ -433,38 +452,38 @@ public class GraphEnvironmentController extends EnvironmentController {
 	    // --- Load the graph topology from the graph file ------------------------------------
 	    File graphFile = new File(getEnvFolderPath() + fileName);
 	    if (graphFile.exists()) {
-		baseFileName = fileName.substring(0, fileName.lastIndexOf('.'));
-		try {
-		    // Load graph topology
-		    networkModel.setGraph(getGraphMLReader(graphFile).readGraph());
-
-		} catch (FileNotFoundException e) {
-		    e.printStackTrace();
-		} catch (GraphIOException e) {
-		    e.printStackTrace();
-		}
+	    	baseFileName = fileName.substring(0, fileName.lastIndexOf('.'));
+			try {
+			    // Load graph topology
+			    networkModel.setGraph(getGraphMLReader(graphFile).readGraph());
+	
+			} catch (FileNotFoundException e) {
+			    e.printStackTrace();
+			} catch (GraphIOException e) {
+			    e.printStackTrace();
+			}
 	    }
 
 	    // --- Load the component definitions from the component file -------------------------
 	    File componentFile = new File(getEnvFolderPath() + File.separator + baseFileName + ".xml");
 	    if (componentFile.exists()) {
-		try {
-		    FileReader componentReader = new FileReader(componentFile);
-
-		    JAXBContext context = JAXBContext.newInstance(NetworkComponentList.class);
-		    Unmarshaller unmarsh = context.createUnmarshaller();
-		    NetworkComponentList compList = (NetworkComponentList) unmarsh.unmarshal(componentReader);
-		    networkModel.setNetworkComponents(compList.getComponentList());
-
-		    componentReader.close();
-
-		} catch (JAXBException e) {
-		    e.printStackTrace();
-		} catch (FileNotFoundException e) {
-		    e.printStackTrace();
-		} catch (IOException e) {
-		    e.printStackTrace();
-		}
+			try {
+			    FileReader componentReader = new FileReader(componentFile);
+	
+			    JAXBContext context = JAXBContext.newInstance(NetworkComponentList.class);
+			    Unmarshaller unmarsh = context.createUnmarshaller();
+			    NetworkComponentList compList = (NetworkComponentList) unmarsh.unmarshal(componentReader);
+			    networkModel.setNetworkComponents(compList.getComponentList());
+	
+			    componentReader.close();
+	
+			} catch (JAXBException e) {
+			    e.printStackTrace();
+			} catch (FileNotFoundException e) {
+			    e.printStackTrace();
+			} catch (IOException e) {
+			    e.printStackTrace();
+			}
 	    }
 	}
 

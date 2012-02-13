@@ -71,12 +71,10 @@ public class NetworkModel implements Cloneable, Serializable {
 	/** The outer network components of this NetworkModel with no Connections */
 	private ArrayList<NetworkComponent> outerNetworkComponents;
 
-	/** The cluster components inside the NetworkModel. */
-	private ArrayList<ClusterNetworkComponent> clusterComponents = new ArrayList<ClusterNetworkComponent>();
-
 	/** This instance stores the DomainSettings and the ComponentTypeSettings. */
 	private GeneralGraphSettings4MAS generalGraphSettings4MAS = null;
 
+	
 	/**
 	 * This HashMap can hold alternative NetworkModel's that can be used to 
 	 * reduce the complexity of the original graph (e.g after clustering). 
@@ -139,25 +137,29 @@ public class NetworkModel implements Cloneable, Serializable {
 
 		NetworkModel netModel = new NetworkModel();
 		this.copyGraphAndGraphElements(netModel);
-
+	
 		// -- Create a copy of the networkComponents ----------------
-		HashMap<String, NetworkComponent> copyOfComponents = new HashMap<String, NetworkComponent>(this.networkComponents);
+		HashMap<String, NetworkComponent> copyOfComponents = new HashMap<String, NetworkComponent>();
+		for (NetworkComponent networkComponent : this.networkComponents.values()) {
+			NetworkComponent networkComponentCopy = networkComponent.getCopy();
+			copyOfComponents.put(networkComponentCopy.getId(), networkComponentCopy);
+		}
 		netModel.setNetworkComponents(copyOfComponents);
-
+		netModel.refreshGraphElements();
+		
 		// -- Create a copy of the generalGraphSettings4MAS ---------
 		GeneralGraphSettings4MAS copyOfGeneralGraphSettings4MAS = null;
 		if (this.generalGraphSettings4MAS != null) {
 			copyOfGeneralGraphSettings4MAS = this.generalGraphSettings4MAS.getCopy();
 		}
 		netModel.setGeneralGraphSettings4MAS(copyOfGeneralGraphSettings4MAS);
-
+		
 		// -- Create a copy of the alternativeNetworkModel ----------
 		HashMap<String, NetworkModel> copyOfAlternativeNetworkModel = null;
 		if (this.alternativeNetworkModel != null) {
 			copyOfAlternativeNetworkModel = new HashMap<String, NetworkModel>(this.alternativeNetworkModel);
 		}
 		netModel.setAlternativeNetworkModel(copyOfAlternativeNetworkModel);
-
 		return netModel;
 	}
 	/**
@@ -173,6 +175,7 @@ public class NetworkModel implements Cloneable, Serializable {
 		GraphEdge[] edges = edgesCollection.toArray(new GraphEdge[edgesCollection.size()]);
 		for (int i = 0; i < edges.length; i++) {
 			GraphEdge edge = edges[i];
+			EdgeType edgeType =  this.graph.getEdgeType(edge);
 			GraphNode first = this.graph.getEndpoints(edge).getFirst();
 			GraphNode second = this.graph.getEndpoints(edge).getSecond();
 
@@ -180,7 +183,7 @@ public class NetworkModel implements Cloneable, Serializable {
 			second = (GraphNode) copyGraphElement(copyGraphElements, second);
 			edge = (GraphEdge) copyGraphElement(copyGraphElements, edge);
 			// --- Add the edge and their components to the graph ---
-			copyGraph.addEdge(edge, first, second, graph.getEdgeType(edge));
+			copyGraph.addEdge(edge, first, second, edgeType);
 		}
 		netModel.setGraph(copyGraph);
 	}
@@ -193,7 +196,6 @@ public class NetworkModel implements Cloneable, Serializable {
 	private GraphElement copyGraphElement(HashMap<String, GraphElement> copyGraphElements, GraphElement graphElement) {
 		if (copyGraphElements.get(graphElement.getId()) == null) {
 			graphElement = graphElement.getCopy();
-			copyGraphElements.put(graphElement.getId(), graphElement);
 		} else {
 			graphElement = copyGraphElements.get(graphElement.getId());
 		}
@@ -206,7 +208,7 @@ public class NetworkModel implements Cloneable, Serializable {
 	 * @param networkComponents the network components
 	 * @return ArrayList of the IDs
 	 */
-	private ArrayList<String> getNetworkComponentsIDs(HashSet<NetworkComponent> networkComponents) {
+	public ArrayList<String> getNetworkComponentsIDs(HashSet<NetworkComponent> networkComponents) {
 		ArrayList<String> networkComponentIDs = new ArrayList<String>();
 		for (NetworkComponent networkComponent : networkComponents) {
 			networkComponentIDs.add(networkComponent.getId());
@@ -338,22 +340,11 @@ public class NetworkModel implements Cloneable, Serializable {
 	}
 
 	/**
-	 * Removes the network components.
-	 * 
-	 * @param networkComponents the network components
-	 */
-	public void removeNetworkComponents(Collection<NetworkComponent> networkComponents) {
-		for (NetworkComponent networkComponent : networkComponents) {
-			removeNetworkComponent(networkComponent);
-		}
-	}
-
-	/**
 	 * Removes the network components if not in list.
 	 * 
 	 * @param networkComponents the network components
 	 */
-	public void removeInverseNetworkComponents(Collection<NetworkComponent> networkComponents) {
+	public void removeInverseNetworkComponents(HashSet<NetworkComponent> networkComponents) {
 		ArrayList<NetworkComponent> allNetworkComponents = new ArrayList<NetworkComponent>(this.networkComponents.values());
 		for (NetworkComponent networkComponent : allNetworkComponents) {
 			if (!networkComponents.contains(networkComponent) && this.networkComponents.values().contains(networkComponent)) {
@@ -394,12 +385,18 @@ public class NetworkModel implements Cloneable, Serializable {
 			// ----------------------------------------------------------------
 		}
 		networkComponents.remove(networkComponent.getId());
-		if (networkComponent instanceof ClusterNetworkComponent) {
-			clusterComponents.remove(networkComponent);
-		}
 		refreshGraphElements();
 	}
-
+	/**
+	 * Removes the network components.
+	 * @param networkComponents the network components
+	 */
+	public void removeNetworkComponents(HashSet<NetworkComponent> networkComponents) {
+		for (NetworkComponent networkComponent : networkComponents) {
+			removeNetworkComponent(networkComponent);
+		}
+	}
+	
 	/**
 	 * Gets the a node from network component.
 	 * 
@@ -868,7 +865,6 @@ public class NetworkModel implements Cloneable, Serializable {
 				"agentgui.envModel.graph.prototypes.ClusterGraphElement", null, clusterElements,
 				clusterGraphElement.isDirected(), getNetworkComponentsIDs(networkComponents), clusterNetworkModel);
 		this.networkComponents.put(clusterComponent.getId(), clusterComponent);
-		this.clusterComponents.add(clusterComponent);
 		return clusterComponent;
 	}
 
@@ -893,10 +889,17 @@ public class NetworkModel implements Cloneable, Serializable {
 	}
 
 	/**
-	 * Gets the cluster components of the NetworkModel.
+	 * Returns the cluster components of the NetworkModel.
 	 * @return the cluster components
 	 */
 	public ArrayList<ClusterNetworkComponent> getClusterComponents() {
+		ArrayList<ClusterNetworkComponent> clusterComponents = new ArrayList<ClusterNetworkComponent>();
+		for (NetworkComponent networkComponent : this.networkComponents.values()) {
+			if (networkComponent instanceof ClusterNetworkComponent) {
+				clusterComponents.add((ClusterNetworkComponent) networkComponent);
+			}
+		}
 		return clusterComponents;
 	}
+	
 }

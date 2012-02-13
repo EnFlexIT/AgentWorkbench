@@ -68,7 +68,18 @@ public class ClusterNetworkComponent extends NetworkComponent {
 		this.clusterNetworkModel = clusterNetworkModel;
 	}
 
+	@Override
+	public ClusterNetworkComponent getCopy() {
 	
+		ArrayList<String> copyComponentIDs = new ArrayList<String>(this.networkComponentIDs);
+		
+		ClusterNetworkComponent copy = new ClusterNetworkComponent(this.id, this.type, this.prototypeClassName, 
+				this.agentClassName, null, this.directed, copyComponentIDs, this.clusterNetworkModel.getCopy());
+		copy.setGraphElementIDs(this.getGraphElementIDs());
+		return copy;
+		
+		
+	}
 	
 	/**
 	 * Sets the network component IDs.

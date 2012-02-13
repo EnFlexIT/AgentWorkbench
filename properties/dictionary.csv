@@ -479,6 +479,7 @@ en;;Cluster shape;;;
 en;;Discrete squares environment;;;
 en;;Select a network component;;;
 en;;Select two valid vertices;;;
+en;;The select Vertex should be at least between two components !;;;
 en;;The select Vertex should be between two components !;;;
 en;Agenten-Klasse;Agent class;;;
 en;Aktuelles Bild entfernen;Remove current image;;;

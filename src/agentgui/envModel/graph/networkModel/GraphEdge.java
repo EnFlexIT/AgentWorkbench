@@ -53,9 +53,9 @@ public class GraphEdge extends GraphElement {
      * @param componentType The component type identifier for this GraphEdge
      */
     public GraphEdge(String id, String componentType) {
-	super();
-	this.id = id;
-	this.componentType = componentType;
+		super();
+		this.id = id;
+		this.componentType = componentType;
     }
 
     /**
@@ -65,9 +65,9 @@ public class GraphEdge extends GraphElement {
      */
     @Override
     public GraphEdge getCopy() {
-
-	GraphEdge edgceCopy = new GraphEdge(new String(this.id), new String(this.componentType));
-	return edgceCopy;
+		GraphEdge edgceCopy = new GraphEdge(new String(this.id), new String(this.componentType));
+		edgceCopy.setComponentType(this.getComponentType());
+		return edgceCopy;
     }
 
     /**
@@ -76,7 +76,7 @@ public class GraphEdge extends GraphElement {
      * @return the componentType
      */
     public String getComponentType() {
-	return componentType;
+    	return componentType;
     }
 
     /**

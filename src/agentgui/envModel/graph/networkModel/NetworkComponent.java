@@ -44,17 +44,17 @@ public class NetworkComponent implements Serializable {
 	private static final long serialVersionUID = 537431665305238609L;
 
 	/** The NetworkComponent's ID. */
-	private String id;
+	protected String id;
 	/** The NetworkComponent's type. */
-	private String type;
+	protected String type;
 	/** The IDs of the nodes and edges that are part of this NetworkComponent. */
-	private HashSet<String> graphElementIDs = new HashSet<String>();
+	protected HashSet<String> graphElementIDs = new HashSet<String>();
 	/** Specifies if the NetworkComponent is directed or undirected. */
-	private boolean directed;
+	protected boolean directed;
 	/** The NetworkComponent's GraphElementPrototype class name. */
-	private String prototypeClassName;
+	protected String prototypeClassName;
 	/** The NetworkComponent's GraphElementPrototype class name. */
-	private String agentClassName;
+	protected String agentClassName;
 
 	/**
 	 * The ontology object instance representing this component, serialized 
@@ -65,7 +65,7 @@ public class NetworkComponent implements Serializable {
 	
 	/**
 	 * Instantiates a new network component.
-	 * Deprecated because of the JAXB context
+	 * Depreciated because of the JAXB context
 	 */
 	@Deprecated
 	public NetworkComponent() {
@@ -87,7 +87,17 @@ public class NetworkComponent implements Serializable {
 		this.directed = directed;
 		this.setGraphElements(graphElements);
 	}
-
+	
+	/**
+	 * Gets the copy.
+	 * @return the copy
+	 */
+	public NetworkComponent getCopy() {
+		NetworkComponent copy = new NetworkComponent(this.id, this.type, this.prototypeClassName, this.agentClassName, null, this.directed);
+		copy.setGraphElementIDs(this.getGraphElementIDs());
+		return copy;
+	}
+	
 	/**
 	 * Gets the id.
 	 * @return the id
@@ -137,11 +147,15 @@ public class NetworkComponent implements Serializable {
 	 * @param graphElements the new graph elements
 	 */
 	public void setGraphElements(HashSet<GraphElement> graphElements) {
-		HashSet<String> newGraphElementIDs = new HashSet<String>();
-		for (GraphElement graphElement : graphElements) {
-			newGraphElementIDs.add(graphElement.getId());
+		if (graphElements==null) {
+			graphElementIDs = null;
+		} else {
+			HashSet<String> newGraphElementIDs = new HashSet<String>();
+			for (GraphElement graphElement : graphElements) {
+				newGraphElementIDs.add(graphElement.getId());
+			}
+			graphElementIDs = newGraphElementIDs;	
 		}
-		graphElementIDs = newGraphElementIDs;
 	}
 
 	/**
@@ -203,4 +217,5 @@ public class NetworkComponent implements Serializable {
 	public void setEncodedOntologyRepresentation(String encodedOntologyRepresentation) {
 		this.encodedOntologyRepresentation = encodedOntologyRepresentation;
 	}
+	
 }

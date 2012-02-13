@@ -121,15 +121,13 @@ public class EdgeBetweenessBehaviour extends SimpleBehaviour {
 	 * @param networkModel
 	 */
 	private NetworkModel removeComponent(NetworkModel networkModel) {
-
-		NetworkModel workingCopyNetworkModel = networkModel.getCopy();
-		GraphEdge edge = removeEdge(workingCopyNetworkModel.getGraph());
+		GraphEdge edge = removeEdge(networkModel.getGraph());
 		if (edge == null) {
 			return networkModel;
 		}
-		workingCopyNetworkModel.removeNetworkComponent(workingCopyNetworkModel.getNetworkComponent(edge));
+		networkModel.removeNetworkComponent(networkModel.getNetworkComponent(edge));
 
-		this.networkModel.getAlternativeNetworkModel().put("EdgeBetweeness", workingCopyNetworkModel);
+		this.networkModel.getAlternativeNetworkModel().put("EdgeBetweeness", networkModel);
 		this.environmentModel.setDisplayEnvironment(this.networkModel);
 
 		try {
@@ -137,7 +135,7 @@ public class EdgeBetweenessBehaviour extends SimpleBehaviour {
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
-		return workingCopyNetworkModel;
+		return networkModel;
 	}
 
 	/**

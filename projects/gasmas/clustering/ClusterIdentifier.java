@@ -88,7 +88,7 @@ public class ClusterIdentifier {
 			for (Set<GraphNode> graphNodes : clusterSet) {
 				if (graphNodes.size() > 3) {
 					clustersToSmall = false;
-					if (clusterReplace(reducedModel, reducedModel.getNetworkComponents(graphNodes), networkModel)) {
+					if (clusterReplace(reducedModel, networkModel.getNetworkComponents( graphNodes ), networkModel)) {
 						baseModelChanged = true;
 					}
 				}
