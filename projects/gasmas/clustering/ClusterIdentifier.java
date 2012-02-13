@@ -88,7 +88,7 @@ public class ClusterIdentifier {
 			for (Set<GraphNode> graphNodes : clusterSet) {
 				if (graphNodes.size() > 3) {
 					clustersToSmall = false;
-					if (clusterReplace(reducedModel, networkModel.getNetworkComponents( graphNodes ), networkModel)) {
+					if (clusterReplace(networkModel.getNetworkComponents(graphNodes), networkModel)) {
 						baseModelChanged = true;
 					}
 				}
@@ -109,17 +109,23 @@ public class ClusterIdentifier {
 	 * @param networkComponents the network components
 	 * @return true, if successful
 	 */
-	private boolean clusterReplace(NetworkModel reducedModel, HashSet<NetworkComponent> networkComponents, NetworkModel networkModel) {
+	private boolean clusterReplace(HashSet<NetworkComponent> networkComponents, NetworkModel networkModel) {
 		// ------- Cluster can be only internal NetworkComponents of the NetworkModel
 		for (NetworkComponent networkComponent : networkComponents) {
-			if (networkModel.getOuterNetworkComponents().contains(networkComponent)) {
-				return false;
+			for (String outerNetworkComponentID : networkModel.getOuterNetworkComponentIDs()) {
+				if (outerNetworkComponentID.equals(networkComponent.getId())) {
+					return false;
+				}
 			}
 		}
-		ArrayList<NetworkComponent> clusterComponents = new ArrayList<NetworkComponent>(networkComponents);
+		for (NetworkComponent networkComponent : networkComponents) {
+			System.out.print(networkComponent.getId() + ' ');
+		}
+		System.out.println();
+		ArrayList<NetworkComponent> clustersComponents = new ArrayList<NetworkComponent>(networkComponents);
 		// ------- add the Neighbours to the List because removed are part of the cluster
 		networkComponents.addAll(networkModel.getNeighbourNetworkComponents(networkComponents));
-		connectionComponents(networkComponents, clusterComponents, networkModel);
+		connectionComponents(networkComponents, clustersComponents, networkModel);
 		refrehDisplay(networkModel.replaceComponentsByCluster(networkComponents));
 		return true;
 	}
@@ -128,14 +134,14 @@ public class ClusterIdentifier {
 	 * Removes Components with more than two outeNodes if more outerNodes are connected to the outside
 	 * 
 	 * @param networkComponents
-	 * @param clusterComponents
+	 * @param clustersComponents
 	 * @param networkModel
 	 */
-	private void connectionComponents(HashSet<NetworkComponent> networkComponents, ArrayList<NetworkComponent> clusterComponents, NetworkModel networkModel) {
+	private void connectionComponents(HashSet<NetworkComponent> networkComponents, ArrayList<NetworkComponent> clustersComponents, NetworkModel networkModel) {
 		ArrayList<NetworkComponent> connectionComponents = new ArrayList<NetworkComponent>(networkComponents);
-		connectionComponents.removeAll(clusterComponents);
+		connectionComponents.removeAll(clustersComponents);
 		HashSet<GraphNode> clusterComponentsNodes = new HashSet<GraphNode>();
-		for (NetworkComponent networkComponent : clusterComponents) {
+		for (NetworkComponent networkComponent : clustersComponents) {
 			clusterComponentsNodes.addAll(networkModel.getNodesFromNetworkComponent(networkComponent));
 		}
 		for (NetworkComponent networkComponent : connectionComponents) {
@@ -148,6 +154,13 @@ public class ClusterIdentifier {
 			}
 			if (counter < componentsNodes.size() / 2) {
 				networkComponents.remove(networkComponent);
+			}
+		}
+		for (NetworkComponent networkComponent : connectionComponents) {
+			for (String outerNetworkComponentID : networkModel.getOuterNetworkComponentIDs()) {
+				if (outerNetworkComponentID.equals(networkComponent.getId())) {
+					networkComponents.remove(networkComponent);
+				}
 			}
 		}
 	}

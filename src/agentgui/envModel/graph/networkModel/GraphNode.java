@@ -41,69 +41,69 @@ import java.awt.geom.Point2D;
  */
 public class GraphNode extends GraphElement {
 
-    private static final long serialVersionUID = 7676853104978228247L;
+	private static final long serialVersionUID = 7676853104978228247L;
 
-    /**
-     * The GraphNode's position in a visualization
-     */
-    private Point2D position = null;
-    /**
-     * The ontology object instance representing this component, serialized as a base64 encoded String for saving via JAXB
-     */
-    private String encodedOntologyRepresentation;
+	/**
+	 * The GraphNode's position in a visualization
+	 */
+	private Point2D position = null;
+	/**
+	 * The ontology object instance representing this component, serialized as a base64 encoded String for saving via JAXB
+	 */
+	private String encodedOntologyRepresentation;
 
-    public final static String GRAPH_NODE_PREFIX = "PP";
+	public final static String GRAPH_NODE_PREFIX = "PP";
 
-    /**
-     * Default constructor
-     */
-    public GraphNode() {
-	this.position = new Point2D.Double(50.0, 50.0);
-    }
+	/**
+	 * Default constructor
+	 */
+	public GraphNode() {
+		this.position = new Point2D.Double(50.0, 50.0);
+	}
 
-    public GraphNode(String id, Point2D position) {
-	this.id = id;
-	this.position = position;
-    }
+	public GraphNode(String id, Point2D position) {
+		this.id = id;
+		this.position = position;
+	}
 
-    /**
-     * Gets the copy of the current instance.
-     * 
-     * @return the copy
-     */
-    @Override
-    public GraphNode getCopy() {
-	GraphNode nodeCopy = new GraphNode(id, new Point2D.Double(position.getX(), this.position.getY()));
-	nodeCopy.setEncodedOntologyRepresentation(this.encodedOntologyRepresentation);
-	return nodeCopy;
-    }
+	/**
+	 * Gets the copy of the current instance.
+	 * 
+	 * @return the copy
+	 */
+	@Override
+	public GraphNode getCopy() {
+		GraphNode nodeCopy = new GraphNode(id, new Point2D.Double(position.getX(), this.position.getY()));
+		nodeCopy.setEncodedOntologyRepresentation(this.encodedOntologyRepresentation);
+		return nodeCopy;
+	}
 
-    /**
-     * @param point2d the position to set
-     */
-    public void setPosition(Point2D point2d) {
-	this.position = point2d;
-    }
+	/**
+	 * @param point2d the position to set
+	 */
+	public void setPosition(Point2D point2d) {
+		this.position = point2d;
+	}
 
-    /**
-     * @return the position
-     */
-    public Point2D getPosition() {
-	return position;
-    }
+	/**
+	 * @return the position
+	 */
+	public Point2D getPosition() {
+		return position;
+	}
 
-    /**
-     * @return the encodedOntologyRepresentation
-     */
-    public String getEncodedOntologyRepresentation() {
-	return encodedOntologyRepresentation;
-    }
+	/**
+	 * @return the encodedOntologyRepresentation
+	 */
+	public String getEncodedOntologyRepresentation() {
+		return encodedOntologyRepresentation;
+	}
 
-    /**
-     * @param encodedOntologyRepresentation the encodedOntologyRepresentation to set
-     */
-    public void setEncodedOntologyRepresentation(String encodedOntologyRepresentation) {
-	this.encodedOntologyRepresentation = encodedOntologyRepresentation;
-    }
+	/**
+	 * @param encodedOntologyRepresentation the encodedOntologyRepresentation to set
+	 */
+	public void setEncodedOntologyRepresentation(String encodedOntologyRepresentation) {
+		this.encodedOntologyRepresentation = encodedOntologyRepresentation;
+	}
 
 }

@@ -36,6 +36,7 @@ import java.util.List;
 import agentgui.envModel.graph.networkModel.ClusterNetworkComponent;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphNode;
+import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.SimulationServiceHelper;
@@ -48,6 +49,7 @@ import edu.uci.ics.jung.graph.Graph;
  */
 public class EdgeBetweenessBehaviour extends SimpleBehaviour {
 
+	private static final int edgeBetweneenessRuns = 1;
 	private static final long serialVersionUID = -1944492299919314055L;
 
 	/** The environment model. */
@@ -78,11 +80,18 @@ public class EdgeBetweenessBehaviour extends SimpleBehaviour {
 			e.printStackTrace();
 		}
 		ClusterIdentifier clusterIdentifier = new ClusterIdentifier(environmentModel, simulationServiceHelper);
+		NetworkModel copyNetworkModel = networkModel.getCopy();
+		this.networkModel.getAlternativeNetworkModel().put("ClusteredModel", copyNetworkModel);
+		try {
+			simulationServiceHelper.setEnvironmentModel(this.environmentModel, true);
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
 
 		System.out.println("Begin Edge Betweness Cluster Analysis");
-		analyseClusters(networkModel, clusterIdentifier);
+		analyseClusters(copyNetworkModel, clusterIdentifier);
 		System.out.println("Begin EdgeBetweness Cluster Analysis fo Subcluster");
-		for (ClusterNetworkComponent clusterNetworkComponent : networkModel.getClusterComponents()) {
+		for (ClusterNetworkComponent clusterNetworkComponent : copyNetworkModel.getClusterComponents()) {
 			NetworkModel networkModel = clusterNetworkComponent.getClusterNetworkModel();
 			if (networkModel.getNetworkComponents().values().size() > 8) {
 				analyseClusters(networkModel, clusterIdentifier);
@@ -105,14 +114,14 @@ public class EdgeBetweenessBehaviour extends SimpleBehaviour {
 	 * @return
 	 */
 
-	private GraphEdge removeEdge(Graph<GraphNode, GraphEdge> graph) {
-		EdgeBetweennessClusterer<GraphNode, GraphEdge> edgeBetweennessClusterer = new EdgeBetweennessClusterer<GraphNode, GraphEdge>(1);
+	private List<GraphEdge> removeEdge(Graph<GraphNode, GraphEdge> graph) {
+		EdgeBetweennessClusterer<GraphNode, GraphEdge> edgeBetweennessClusterer = new EdgeBetweennessClusterer<GraphNode, GraphEdge>(EdgeBetweenessBehaviour.edgeBetweneenessRuns);
 		edgeBetweennessClusterer.transform(graph);
 		List<GraphEdge> edges = edgeBetweennessClusterer.getEdgesRemoved();
 		if (edges.size() < 1) {
 			return null;
 		}
-		return edges.get(0);
+		return edges;
 	}
 
 	/**
@@ -121,11 +130,16 @@ public class EdgeBetweenessBehaviour extends SimpleBehaviour {
 	 * @param networkModel
 	 */
 	private NetworkModel removeComponent(NetworkModel networkModel) {
-		GraphEdge edge = removeEdge(networkModel.getGraph());
-		if (edge == null) {
+		List<GraphEdge> edges = removeEdge(networkModel.getGraph());
+		if (edges == null) {
 			return networkModel;
 		}
-		networkModel.removeNetworkComponent(networkModel.getNetworkComponent(edge));
+		for (GraphEdge edge : edges) {
+			NetworkComponent networkComponent = networkModel.getNetworkComponent(edge);
+			if (networkComponent != null) {
+				networkModel.removeNetworkComponent(networkModel.getNetworkComponent(edge));
+			}
+		}
 
 		this.networkModel.getAlternativeNetworkModel().put("EdgeBetweeness", networkModel);
 		this.environmentModel.setDisplayEnvironment(this.networkModel);

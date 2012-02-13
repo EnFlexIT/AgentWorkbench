@@ -39,9 +39,11 @@ public class ClusterNetworkComponent extends NetworkComponent {
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 682444875338053459L;
 
+	private static final String defaultPrototypeClassName = "agentgui.envModel.graph.prototypes.ClusterGraphElement";
+
 	/** The domain. which this cluster contains to */
 	private String domain;
-	
+
 	/** The cluster network model. */
 	private NetworkModel clusterNetworkModel;
 
@@ -59,28 +61,25 @@ public class ClusterNetworkComponent extends NetworkComponent {
 	 * @param networkComponentIDs the network component i ds
 	 * @param clusterNetworkModel the cluster network model
 	 */
-	public ClusterNetworkComponent(String id, String type, String prototypeClassName, 
-			String agentClassName, HashSet<GraphElement> graphElements, boolean directed, 
-			ArrayList<String> networkComponentIDs, NetworkModel clusterNetworkModel) {
-		
-		super(id, type, prototypeClassName, agentClassName, graphElements, directed);
+	public ClusterNetworkComponent(String id, String type, String agentClassName, HashSet<GraphElement> graphElements, boolean directed, ArrayList<String> networkComponentIDs,
+			NetworkModel clusterNetworkModel) {
+
+		super(id, type, ClusterNetworkComponent.defaultPrototypeClassName, agentClassName, graphElements, directed);
 		this.networkComponentIDs = networkComponentIDs;
 		this.clusterNetworkModel = clusterNetworkModel;
 	}
 
 	@Override
 	public ClusterNetworkComponent getCopy() {
-	
+
 		ArrayList<String> copyComponentIDs = new ArrayList<String>(this.networkComponentIDs);
-		
-		ClusterNetworkComponent copy = new ClusterNetworkComponent(this.id, this.type, this.prototypeClassName, 
-				this.agentClassName, null, this.directed, copyComponentIDs, this.clusterNetworkModel.getCopy());
+
+		ClusterNetworkComponent copy = new ClusterNetworkComponent(this.id, this.type, this.agentClassName, null, this.directed, copyComponentIDs, this.clusterNetworkModel.getCopy());
 		copy.setGraphElementIDs(this.getGraphElementIDs());
 		return copy;
-		
-		
+
 	}
-	
+
 	/**
 	 * Sets the network component IDs.
 	 * 
@@ -143,6 +142,7 @@ public class ClusterNetworkComponent extends NetworkComponent {
 	public void setDomain(String domain) {
 		this.domain = domain;
 	}
+
 	/**
 	 * Returns the domain.
 	 * @return the domain
