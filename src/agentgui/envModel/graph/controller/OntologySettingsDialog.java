@@ -40,7 +40,7 @@ import agentgui.envModel.graph.networkModel.ComponentTypeSettings;
 import agentgui.envModel.graph.networkModel.DomainSettings;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
-import agentgui.envModel.graph.networkModel.NetworkModel;
+import agentgui.envModel.graph.networkModel.NetworkModelAdapter;
 
 import java.awt.Dialog;
 import java.awt.event.ActionEvent;
@@ -192,7 +192,7 @@ public class OntologySettingsDialog extends JDialog implements ActionListener{
 			String[] ontoClassName = new String[1];
 			GraphNode node = (GraphNode) element;
 			
-			NetworkModel networkModel = graphController.getNetworkModel();
+			NetworkModelAdapter networkModel = graphController.getNetworkModelAdapter();
 			HashSet<NetworkComponent> components = networkModel.getNetworkComponents(node); 
 			NetworkComponent component = networkModel.containsDistributionNode(components);
 			if (component==null) {

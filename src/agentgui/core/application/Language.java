@@ -136,6 +136,7 @@ public class Language {
 		String newLangShort = newLang.toLowerCase().replace("lang_", "");
 		Application.RunInfo.setLanguage(newLangShort);
 		currLanguageIndex = getIndexOfLanguage(newLangShort);
+		
 	}
 		
 	/**
@@ -288,6 +289,12 @@ public class Language {
 	public static int getIndexOfLanguage(String language) {
 		// --- normation of the query string --------------
 		String langWork = language.toLowerCase();
+		if (langWork.equals("")) {
+			langWork = Language.EN;
+			Application.RunInfo.setLanguage(Language.EN);
+			langWork = language.toLowerCase();
+		}
+		
 		// --- search the dictionary header ---------------
 		for (int i = 0; i < dictLangHeaderArray.length; i++) {
 			String lang = dictLangHeaderArray[i].toLowerCase();

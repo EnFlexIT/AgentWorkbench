@@ -81,7 +81,7 @@ public class TableCellEditor4TableButton extends AbstractCellEditor implements T
 		// converting view coordinates to model coordinates
 		int modelRowIndex = componentsTable.convertRowIndexToModel(row);
 		String compID = (String) componentsTable.getModel().getValueAt(modelRowIndex, 0);
-		NetworkComponent comp = graphController.getNetworkModel().getNetworkComponent(compID);
+		NetworkComponent comp = graphController.getNetworkModelAdapter().getNetworkComponent(compID);
 		new OntologySettingsDialog(graphController.getProject(), graphController, comp).setVisible(true);
     }
 

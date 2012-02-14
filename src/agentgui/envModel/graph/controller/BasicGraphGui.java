@@ -62,7 +62,7 @@ import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphElement;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
-import agentgui.envModel.graph.networkModel.NetworkModel;
+import agentgui.envModel.graph.networkModel.NetworkModelAdapter;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 import edu.uci.ics.jung.graph.Graph;
@@ -426,7 +426,7 @@ public class BasicGraphGui extends JPanel {
 		// ----------------------------------------------------------------
 		// --- Get the layout settings for domains ------------------------
 		// ----------------------------------------------------------------
-		final GeneralGraphSettings4MAS graphSettings = this.controller.getNetworkModel().getGeneralGraphSettings4MAS();
+		final GeneralGraphSettings4MAS graphSettings = this.controller.getNetworkModelAdapter().getGeneralGraphSettings4MAS();
 
 		// ----------------------------------------------------------------
 		// --- Get the spread of the graph and correct the positions ------
@@ -485,7 +485,7 @@ public class BasicGraphGui extends JPanel {
 
 				// --- Get color from component type settings -----
 				String colorString = null;
-				NetworkModel networkModel = controller.getNetworkModel();
+				NetworkModelAdapter networkModel = controller.getNetworkModelAdapter();
 				HashSet<NetworkComponent> componentHashSet = networkModel.getNetworkComponents(node);
 				NetworkComponent networkComponent = networkModel.containsDistributionNode(componentHashSet);
 				try {
@@ -532,7 +532,7 @@ public class BasicGraphGui extends JPanel {
 			@Override
 			public String transform(GraphNode node) {
 
-				NetworkModel nModel = controller.getNetworkModel();
+				NetworkModelAdapter nModel = controller.getNetworkModelAdapter();
 				HashSet<NetworkComponent> components = nModel.getNetworkComponents(node);
 				NetworkComponent distributionNode = nModel.containsDistributionNode(components);
 				if (distributionNode == null) {
@@ -780,21 +780,21 @@ public class BasicGraphGui extends JPanel {
 		if (object instanceof GraphNode) {
 			this.setPickedObject((GraphElement) object);
 			// --- Is that node a distribution node? ----------------
-			HashSet<NetworkComponent> netComps = controller.getNetworkModel().getNetworkComponents((GraphNode) object);
-			NetworkComponent disNode = controller.getNetworkModel().containsDistributionNode(netComps);
+			HashSet<NetworkComponent> netComps = controller.getNetworkModelAdapter().getNetworkComponents((GraphNode) object);
+			NetworkComponent disNode = controller.getNetworkModelAdapter().containsDistributionNode(netComps);
 			if (disNode != null) {
 				GraphEnvironmentControllerGUI graphEnvGui = (GraphEnvironmentControllerGUI) this.controller.getEnvironmentPanel();
 				graphEnvGui.networkComponentSelect(disNode);
 			}
 
 		} else if (object instanceof GraphEdge) {
-			NetworkComponent netComp = controller.getNetworkModel().getNetworkComponent((GraphEdge) object);
-			this.setPickedObjects(controller.getNetworkModel().getGraphElementsFromNetworkComponent(netComp));
+			NetworkComponent netComp = controller.getNetworkModelAdapter().getNetworkComponent((GraphEdge) object);
+			this.setPickedObjects(controller.getNetworkModelAdapter().getGraphElementsFromNetworkComponent(netComp));
 			GraphEnvironmentControllerGUI graphEnvGui = (GraphEnvironmentControllerGUI) this.controller.getEnvironmentPanel();
 			graphEnvGui.networkComponentSelect(netComp);
 
 		} else if (object instanceof NetworkComponent) {
-			this.setPickedObjects(controller.getNetworkModel().getGraphElementsFromNetworkComponent((NetworkComponent) object));
+			this.setPickedObjects(controller.getNetworkModelAdapter().getGraphElementsFromNetworkComponent((NetworkComponent) object));
 
 		}
 
@@ -804,7 +804,7 @@ public class BasicGraphGui extends JPanel {
 				osd = new OntologySettingsDialog(this.controller.getProject(), this.controller, object);
 
 			} else if (object instanceof GraphEdge) {
-				NetworkComponent netComp = controller.getNetworkModel().getNetworkComponent((GraphEdge) object);
+				NetworkComponent netComp = controller.getNetworkModelAdapter().getNetworkComponent((GraphEdge) object);
 				osd = new OntologySettingsDialog(this.controller.getProject(), this.controller, netComp);
 
 			} else if (object instanceof NetworkComponent) {
@@ -823,7 +823,7 @@ public class BasicGraphGui extends JPanel {
 	 */
 	public void removeNetworkComponent(NetworkComponent selectedComponent) {
 
-		this.controller.getNetworkModel().removeNetworkComponent(selectedComponent);
+		this.controller.getNetworkModelAdapter().removeNetworkComponent(selectedComponent);
 
 		// Removing the new agent from the agent start list of the simulation setup
 		int i = 0;
@@ -850,7 +850,7 @@ public class BasicGraphGui extends JPanel {
 	 */
 	public void mergeNodes(GraphNode node1, GraphNode node2) {
 		// Environment Network Model
-		if (this.controller.getNetworkModel().mergeNodes(node1, node2)) {
+		if (this.controller.getNetworkModelAdapter().mergeNodes(node1, node2)) {
 			this.controller.refreshNetworkModel();
 		} else {
 			// Have a common node
@@ -865,7 +865,7 @@ public class BasicGraphGui extends JPanel {
 	 * @param node
 	 */
 	public void splitNode(GraphNode node) {
-		this.controller.getNetworkModel().splitNetworkModelAtNode(node);
+		this.controller.getNetworkModelAdapter().splitNetworkModelAtNode(node);
 		this.controller.refreshNetworkModel();
 	}
 
@@ -905,7 +905,7 @@ public class BasicGraphGui extends JPanel {
 					Integer size = controller.getDomainSettings().get(GeneralGraphSettings4MAS.DEFAULT_DOMAIN_SETTINGS_NAME).getVertexSize();
 					Integer sizeFromCTS = null;
 
-					NetworkModel networkModel = controller.getNetworkModel();
+					NetworkModelAdapter networkModel = controller.getNetworkModelAdapter();
 					HashSet<NetworkComponent> componentHashSet = networkModel.getNetworkComponents(node);
 					NetworkComponent networkComponent = networkModel.containsDistributionNode(componentHashSet);
 					try {
@@ -975,7 +975,7 @@ public class BasicGraphGui extends JPanel {
 
 			Shape shape = factory.getEllipse(node); // DEFAULT
 
-			NetworkModel networkModel = controller.getNetworkModel();
+			NetworkModelAdapter networkModel = controller.getNetworkModelAdapter();
 			HashSet<NetworkComponent> componentHashSet = networkModel.getNetworkComponents(node);
 			NetworkComponent networkComponent = networkModel.containsDistributionNode(componentHashSet);
 			if (componentHashSet.size() == 1 && networkComponent == null) {

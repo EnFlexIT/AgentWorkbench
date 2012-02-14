@@ -70,6 +70,7 @@ import agentgui.envModel.graph.networkModel.GraphElement;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
+import agentgui.envModel.graph.networkModel.NetworkModelAdapter;
 import agentgui.envModel.graph.prototypes.DistributionNode;
 import agentgui.envModel.graph.prototypes.GraphElementPrototype;
 import agentgui.envModel.graph.prototypes.Star3GraphElement;
@@ -261,7 +262,7 @@ public class AddComponentDialog extends JDialog implements ActionListener {
 	
 		if (graphElement != null) {
 		    // Generate and use the next unique network component ID
-		    String nextID = this.graphController.getNetworkModel().nextNetworkComponentID();
+		    String nextID = this.graphController.getNetworkModelAdapter().nextNetworkComponentID();
 		    graphElement.setId(nextID);
 		    graphElement.setType(componentTypesList.getSelectedValue().toString());
 	
@@ -467,7 +468,7 @@ public class AddComponentDialog extends JDialog implements ActionListener {
     private void addGraphPrototype(String selectedType, GraphNode pickedVertex) {
 	
 		// Environment network model
-		NetworkModel networkModel = this.graphController.getNetworkModel();
+		NetworkModelAdapter networkModel = this.graphController.getNetworkModelAdapter();
 		// The Node picked in the parent graph
 		GraphNode parentPickedVertex = this.basicGraphGui.getPickedVertex();
 	
@@ -521,7 +522,7 @@ public class AddComponentDialog extends JDialog implements ActionListener {
 		    if (v != v2) {
 			GraphNode newNode = new GraphNode();
 			// Generate the unique ID to be assigned to the new node
-			String nextID = graphController.getNetworkModel().nextNodeID();
+			String nextID = graphController.getNetworkModelAdapter().nextNodeID();
 			newNode.setId(nextID);
 	
 			// Set position of node v1+(v-v2)
@@ -638,8 +639,8 @@ public class AddComponentDialog extends JDialog implements ActionListener {
 				} else if (graphElement instanceof DistributionNode) {
 					// --- If the current selection of the main graph is also a DistributionNode => disallow ---
 					GraphNode nodeSelected = this.basicGraphGui.getPickedVertex();
-					HashSet<NetworkComponent> components = this.graphController.getNetworkModel().getNetworkComponents(nodeSelected);
-					NetworkComponent containsDistributionNode = this.graphController.getNetworkModel().containsDistributionNode(components);
+					HashSet<NetworkComponent> components = this.graphController.getNetworkModelAdapter().getNetworkComponents(nodeSelected);
+					NetworkComponent containsDistributionNode = this.graphController.getNetworkModelAdapter().containsDistributionNode(components);
 					if (containsDistributionNode!=null) {
 						String msg = "The selection in the main graph already contains a component of\n";
 						msg += "the type 'DistributionNode'. This is only allowed once at one node! ";

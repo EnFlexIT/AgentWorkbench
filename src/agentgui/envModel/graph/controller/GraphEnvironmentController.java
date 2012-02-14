@@ -63,7 +63,7 @@ import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkComponentList;
 import agentgui.envModel.graph.networkModel.NetworkModel;
-import agentgui.envModel.graph.networkModel.NetworkModelAction;
+import agentgui.envModel.graph.networkModel.NetworkModelAdapter;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseGraph;
 import edu.uci.ics.jung.io.GraphIOException;
@@ -99,7 +99,7 @@ public class GraphEnvironmentController extends EnvironmentController {
     /** The network model currently loaded */
     private NetworkModel networkModel = null;
 
-    private NetworkModelAction networkModelAction;
+    private NetworkModelAdapter networkModelAdapter;
     
     /** Custom user object to be placed in the project object. Used here for storing the current component type settings. */
     private static final String generalGraphSettings4MASFile = "~GeneralGraphSettings~";
@@ -191,16 +191,15 @@ public class GraphEnvironmentController extends EnvironmentController {
     public NetworkModel getNetworkModel() {
     	return networkModel;
     }
-    
     /**
      * Gets the network model for actions.
      * @return the network model action
      */
-    public NetworkModelAction getNetworkModelAction() {
-    	if (networkModelAction==null) {
-    		this.networkModelAction = new NetworkModelAction(this, this.networkModel);
+    public NetworkModelAdapter getNetworkModelAdapter() {
+    	if (networkModelAdapter==null) {
+    		this.networkModelAdapter = new NetworkModelAdapter(this);
     	}
-    	return this.networkModelAction;
+    	return this.networkModelAdapter;
     }
     
     /**

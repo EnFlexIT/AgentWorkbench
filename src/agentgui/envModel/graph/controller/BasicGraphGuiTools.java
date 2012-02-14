@@ -476,14 +476,14 @@ public class BasicGraphGuiTools implements ActionListener {
 		if (ae.getSource() == getJButtonComponents()) {
 			// ------------------------------------------------------
 			// --- Edit the ComponentType settings ------------------
-			ComponentTypeDialog ctsDialog = new ComponentTypeDialog(this.graphController.getNetworkModel().getGeneralGraphSettings4MAS(), this.graphController.getProject());
+			ComponentTypeDialog ctsDialog = new ComponentTypeDialog(this.graphController.getNetworkModelAdapter().getGeneralGraphSettings4MAS(), this.graphController.getProject());
 			ctsDialog.setVisible(true);
 			// - - - Waiting here - - -
 			if (ctsDialog.isCanceled()==false) {
-				this.graphController.getNetworkModel().setGeneralGraphSettings4MAS(ctsDialog.getGeneralGraphSettings4MAS());
+				this.graphController.getNetworkModelAdapter().setGeneralGraphSettings4MAS(ctsDialog.getGeneralGraphSettings4MAS());
 				this.graphController.setProjectUnsaved();
 				this.graphController.validateNetworkComponentAndAgents2Start();
-				this.basicGraphGui.setGraph(this.graphController.getNetworkModel().getGraph());
+				this.basicGraphGui.setGraph(this.graphController.getNetworkModelAdapter().getGraph());
 			}
 			ctsDialog.dispose();
 			ctsDialog = null;
@@ -525,13 +525,13 @@ public class BasicGraphGuiTools implements ActionListener {
 		} else if (ae.getSource() == getJButtonAddComponent() || ae.getSource() == getJMenuItemAddComp()) {
 			// ------------------------------------------------------
 			// --- Add Component Button Clicked ---------------------
-			if(this.graphController.getNetworkModel().getGraph().getVertexCount()==0){
+			if(this.graphController.getNetworkModelAdapter().getGraph().getVertexCount()==0){
 				// --- If the graph is empty - starting from scratch -
 				this.showAddComponentDialog();	
 				
 			} else if(basicGraphGui.getPickedVertex()!=null) {
 				// --- Picked a vertex ------------------------------
-					if(this.graphController.getNetworkModel().isFreeGraphNode(basicGraphGui.getPickedVertex())) {
+					if(this.graphController.getNetworkModelAdapter().isFreeGraphNode(basicGraphGui.getPickedVertex())) {
 						this.showAddComponentDialog();
 					} else {
 						JOptionPane.showMessageDialog(this.graphControllerGUI, Language.translate("Select a valid vertex", Language.EN), Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
@@ -549,7 +549,7 @@ public class BasicGraphGuiTools implements ActionListener {
 			if(edgeSet.size()>0){ 
 				// --- At least one edge is picked ------------------
 				// --- Get the Network component from picked edge ---
-				selectedComponent = this.graphController.getNetworkModel().getNetworkComponent(edgeSet.iterator().next());
+				selectedComponent = this.graphController.getNetworkModelAdapter().getNetworkComponent(edgeSet.iterator().next());
 				// --- Remove component and update graph ------------ 
 				this.basicGraphGui.removeNetworkComponent(selectedComponent);
 				this.graphControllerGUI.networkComponentRemove(selectedComponent);
@@ -560,7 +560,7 @@ public class BasicGraphGuiTools implements ActionListener {
 				Set<GraphNode> nodeSet = visView.getPickedVertexState().getPicked();
 				if (nodeSet.size()>0) {
 					// --- At least one node is picked --------------
-					HashSet<NetworkComponent> components = this.graphController.getNetworkModel().getNetworkComponents(nodeSet.iterator().next());
+					HashSet<NetworkComponent> components = this.graphController.getNetworkModelAdapter().getNetworkComponents(nodeSet.iterator().next());
 					Iterator<NetworkComponent> it = components.iterator();
 					while(it.hasNext()) {
 						selectedComponent = it.next();
@@ -589,7 +589,7 @@ public class BasicGraphGuiTools implements ActionListener {
 				Iterator<GraphNode> nodeIter = nodeSet.iterator();
 				GraphNode node1 = nodeIter.next();
 				GraphNode node2 = nodeIter.next();
-				if (this.graphController.getNetworkModel().isFreeGraphNode(node1) && this.graphController.getNetworkModel().isFreeGraphNode(node2)) {
+				if (this.graphController.getNetworkModelAdapter().isFreeGraphNode(node1) && this.graphController.getNetworkModelAdapter().isFreeGraphNode(node2)) {
 					// --- Valid nodes are picked
 					basicGraphGui.mergeNodes(node1, node2);
 				} else {
@@ -610,8 +610,8 @@ public class BasicGraphGuiTools implements ActionListener {
 			GraphNode pickedVertex = basicGraphGui.getPickedVertex();
 			if(pickedVertex!=null){
 				// --- One vertex is picked -----
-				HashSet<NetworkComponent> components = this.graphController.getNetworkModel().getNetworkComponents(pickedVertex);
-				NetworkComponent containsDistributionNode = this.graphController.getNetworkModel().containsDistributionNode(components);
+				HashSet<NetworkComponent> components = this.graphController.getNetworkModelAdapter().getNetworkComponents(pickedVertex);
+				NetworkComponent containsDistributionNode = this.graphController.getNetworkModelAdapter().containsDistributionNode(components);
 				if (containsDistributionNode!=null) {
 					if(components.size()>=2){
 						basicGraphGui.splitNode(pickedVertex);
@@ -671,7 +671,7 @@ public class BasicGraphGuiTools implements ActionListener {
 			// --- Popup Menu Item Edge properties clicked ----------
 			GraphEdge pickedEdge = basicGraphGui.getPickedEdge();
 			if(pickedEdge!=null){
-				NetworkComponent netComp = graphController.getNetworkModel().getNetworkComponent(pickedEdge);					
+				NetworkComponent netComp = graphController.getNetworkModelAdapter().getNetworkComponent(pickedEdge);					
 				new OntologySettingsDialog(this.graphController.getProject(), this.graphController, netComp).setVisible(true);
 			}
 		}		

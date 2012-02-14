@@ -79,6 +79,7 @@ import agentgui.envModel.graph.components.TableCellEditor4TableButton;
 import agentgui.envModel.graph.components.TableCellRenderer4Button;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
+import agentgui.envModel.graph.networkModel.NetworkModelAdapter;
 
 /**
  * The GUI for a GraphEnvironmentController. This contains a pane showing the NetworkComponents table and the BasicGraphGUI. The main class which associates with the components table, the environment
@@ -292,10 +293,10 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
     private Vector<Vector<String>> getComponentTableContents() {
 
 		Vector<Vector<String>> componentVector = new Vector<Vector<String>>();
-		if (this.getGraphController().getNetworkModel() != null) {
+		if (this.getGraphController().getNetworkModelAdapter() != null) {
 	
 		    // Get the components from the controllers GridModel
-		    Iterator<NetworkComponent> components = this.getGraphController().getNetworkModel().getNetworkComponents().values().iterator();
+		    Iterator<NetworkComponent> components = this.getGraphController().getNetworkModelAdapter().getNetworkComponents().values().iterator();
 		    // Add component ID and class name to the data vector
 		    while (components.hasNext()) {
 				NetworkComponent comp = components.next();
@@ -514,7 +515,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 		if (column == 0 && row >= 0 && row < model.getRowCount()) {
 		    String newCompID = (String) model.getValueAt(row, column);
 		    // Getting the corresponding comp from the network model
-		    NetworkComponent comp = (NetworkComponent) getGraphController().getNetworkModel().getNetworkComponents().values().toArray()[row];
+		    NetworkComponent comp = (NetworkComponent) getGraphController().getNetworkModelAdapter().getNetworkComponents().values().toArray()[row];
 		    // The Old component ID before the change
 		    String oldCompID = comp.getId();
 	
@@ -531,7 +532,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 			    JOptionPane.showMessageDialog(this, Language.translate("Enter the name without spaces", Language.EN), Language.translate("Warning", Language.EN), JOptionPane.WARNING_MESSAGE);
 			    getJTableComponents().getModel().setValueAt(oldCompID, row, column);
 	
-			} else if (getGraphController().getNetworkModel().getNetworkComponent(newCompID) != null) {
+			} else if (getGraphController().getNetworkModelAdapter().getNetworkComponent(newCompID) != null) {
 			    // --- Check if a network component name already exists
 			    JOptionPane.showMessageDialog(this, Language.translate("The component name already exists!\n Choose a different one.", Language.EN), Language.translate("Warning", Language.EN),
 				    JOptionPane.WARNING_MESSAGE);
@@ -562,7 +563,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
      */
     private void handleRenameComponent(String oldCompID, String newCompID) {
 		// renaming NetworkComponents and GraphElements
-		getGraphController().getNetworkModel().renameComponent(oldCompID, newCompID);
+		getGraphController().getNetworkModelAdapter().renameComponent(oldCompID, newCompID);
 		getGraphController().refreshNetworkModel();
 	
 		// Renaming the agent in the agent start list of the simulation setup
@@ -593,7 +594,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
     public BasicGraphGui getGraphGUI() {
 		if (graphGUI == null) {
 		    graphGUI = new BasicGraphGui(this.getGraphController());
-		    NetworkModel networkModel = this.getGraphController().getNetworkModel();
+		    NetworkModelAdapter networkModel = this.getGraphController().getNetworkModelAdapter();
 		    if (networkModel != null && networkModel.getGraph() != null) {
 			graphGUI.setGraph(networkModel.getGraph());
 		    }
@@ -668,7 +669,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
      */
     public void refreshNetworkModel() {
 		// --- Network model is updated/refreshed -----
-		this.getGraphGUI().repaintGraph(this.getGraphController().getNetworkModel().getGraph());
+		this.getGraphGUI().repaintGraph(this.getGraphController().getNetworkModelAdapter().getGraph());
 		// --- Rebuilding the component table ---------
 		this.showNumberOfComponents();
 		this.getGraphGUI().clearPickedObjects();
@@ -685,7 +686,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 		    // Converting from view coordinates to model coordinates
 		    int selectedIndex = getJTableComponents().convertRowIndexToModel(getJTableComponents().getSelectedRow());
 		    String componentID = (String) jTableComponents.getModel().getValueAt(selectedIndex, 0);
-		    NetworkComponent component = this.getGraphController().getNetworkModel().getNetworkComponent(componentID);
+		    NetworkComponent component = this.getGraphController().getNetworkModelAdapter().getNetworkComponent(componentID);
 	
 		    this.getGraphGUI().clearPickedObjects();
 		    this.getGraphGUI().selectObject(component);

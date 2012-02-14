@@ -14,10 +14,10 @@
             </value>
         </entry>
         <entry>
-            <key>Exit</key>
+            <key>Entry</key>
             <value>
-                <agentClass>gasmas.agents.components.ExitAgent</agentClass>
-                <color>-65536</color>
+                <agentClass>gasmas.agents.components.EntryAgent</agentClass>
+                <color>-16724992</color>
                 <domain>Gas network</domain>
                 <edgeWidth>3.0</edgeWidth>
                 <graphPrototype>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</graphPrototype>
@@ -25,10 +25,10 @@
             </value>
         </entry>
         <entry>
-            <key>Entry</key>
+            <key>Exit</key>
             <value>
-                <agentClass>gasmas.agents.components.EntryAgent</agentClass>
-                <color>-16724992</color>
+                <agentClass>gasmas.agents.components.ExitAgent</agentClass>
+                <color>-65536</color>
                 <domain>Gas network</domain>
                 <edgeWidth>3.0</edgeWidth>
                 <graphPrototype>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</graphPrototype>
@@ -48,17 +48,6 @@
             </value>
         </entry>
         <entry>
-            <key>Branch4</key>
-            <value>
-                <agentClass>gasmas.agents.components.BranchAgent</agentClass>
-                <color>-16777216</color>
-                <domain>Gas network</domain>
-                <edgeWidth>2.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.Star4GraphElement</graphPrototype>
-                <showLabel>false</showLabel>
-            </value>
-        </entry>
-        <entry>
             <key>Pipe</key>
             <value>
                 <agentClass>gasmas.agents.components.PipeAgent</agentClass>
@@ -71,14 +60,13 @@
             </value>
         </entry>
         <entry>
-            <key>Branch3</key>
+            <key>Branch4</key>
             <value>
                 <agentClass>gasmas.agents.components.BranchAgent</agentClass>
                 <color>-16777216</color>
                 <domain>Gas network</domain>
-                <edgeImage>MissingIcon</edgeImage>
                 <edgeWidth>2.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.Star3GraphElement</graphPrototype>
+                <graphPrototype>agentgui.envModel.graph.prototypes.Star4GraphElement</graphPrototype>
                 <showLabel>false</showLabel>
             </value>
         </entry>
@@ -92,6 +80,18 @@
                 <edgeWidth>4.0</edgeWidth>
                 <graphPrototype>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</graphPrototype>
                 <showLabel>true</showLabel>
+            </value>
+        </entry>
+        <entry>
+            <key>Branch3</key>
+            <value>
+                <agentClass>gasmas.agents.components.BranchAgent</agentClass>
+                <color>-16777216</color>
+                <domain>Gas network</domain>
+                <edgeImage>MissingIcon</edgeImage>
+                <edgeWidth>2.0</edgeWidth>
+                <graphPrototype>agentgui.envModel.graph.prototypes.Star3GraphElement</graphPrototype>
+                <showLabel>false</showLabel>
             </value>
         </entry>
         <entry>

@@ -120,7 +120,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	 * Sets the nodes moved2 end position.
 	 */
 	private void setNodesMoved2EndPosition() {
-		this.removeAllTemporaryNodes(myGUI.getGraphEnvironmentController().getNetworkModel().getGraph());
+		this.removeAllTemporaryNodes(myGUI.getGraphEnvironmentController().getNetworkModelAdapter().getGraph());
 		for (int i = 0; i < this.nodesMoved.size(); i++) {
 			GraphNode node = this.nodesMoved.get(i);
 			vv.getGraphLayout().setLocation(node, node.getPosition());
@@ -283,15 +283,15 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 		if (moveNodeWithLeftAction==true) {
 			
 			Graph<GraphNode, GraphEdge> graph = null;
-			boolean snapToGrid = myGUI.getGraphEnvironmentController().getNetworkModel().getGeneralGraphSettings4MAS().isSnap2Grid();
-			double snapRaster = myGUI.getGraphEnvironmentController().getNetworkModel().getGeneralGraphSettings4MAS().getSnapRaster();
+			boolean snapToGrid = myGUI.getGraphEnvironmentController().getNetworkModelAdapter().getGeneralGraphSettings4MAS().isSnap2Grid();
+			double snapRaster = myGUI.getGraphEnvironmentController().getNetworkModelAdapter().getGeneralGraphSettings4MAS().getSnapRaster();
 			
 			Iterator<GraphNode> pickedNodes = vv.getPickedVertexState().getPicked().iterator();
 			while(pickedNodes.hasNext()){
 
 				// --- Get the Graph, if not already there --------------------
 				if (graph==null) {
-					graph = myGUI.getGraphEnvironmentController().getNetworkModel().getGraph();
+					graph = myGUI.getGraphEnvironmentController().getNetworkModelAdapter().getGraph();
 					this.nodesMoved.removeAllElements();
 					this.removeAllTemporaryNodes(graph);
 				}
