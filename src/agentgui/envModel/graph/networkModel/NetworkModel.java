@@ -383,11 +383,11 @@ public class NetworkModel implements Cloneable, Serializable {
 					graph.removeEdge((GraphEdge) graphElement);
 				} else if (graphElement instanceof GraphNode) {
 					HashSet<NetworkComponent> networkComponents = this.getNetworkComponents((GraphNode) graphElement);
-					for (NetworkComponent networkComponent2 : new ArrayList<NetworkComponent>(networkComponents)) {
-						if (networkComponent2 instanceof ClusterNetworkComponent) {
-							networkComponents.remove(networkComponent2);
-						}
-					}
+					// for (NetworkComponent networkComponent2 : new ArrayList<NetworkComponent>(networkComponents)) {
+					// if (networkComponent2 instanceof ClusterNetworkComponent) {
+					// networkComponents.remove(networkComponent2);
+					// }
+					// }
 					if (networkComponents.size() < 2)
 						this.graph.removeVertex((GraphNode) graphElement);
 				}
@@ -873,6 +873,11 @@ public class NetworkModel implements Cloneable, Serializable {
 		ClusterNetworkComponent clusterComponent = new ClusterNetworkComponent(clusterComponentID, clusterGraphElement.getType(), null, clusterElements, clusterGraphElement.isDirected(),
 				getNetworkComponentsIDs(networkComponents), clusterNetworkModel);
 		this.networkComponents.put(clusterComponent.getId(), clusterComponent);
+		for (String id : clusterComponent.getGraphElementIDs()) {
+			System.out.print(id + ';');
+
+		}
+		System.out.println();
 		return clusterComponent;
 	}
 

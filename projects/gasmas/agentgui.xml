@@ -11,12 +11,12 @@
     </subOntologies>
     <agentConfiguration>
         <entry>
-            <key>gasmas.agents.EntryAgent</key>
-            <value>gasmas.ontology.Entry</value>
-        </entry>
-        <entry>
             <key>gasmas.agents.BranchAgent</key>
             <value>gasmas.ontology.Branch</value>
+        </entry>
+        <entry>
+            <key>gasmas.agents.EntryAgent</key>
+            <value>gasmas.ontology.Entry</value>
         </entry>
         <entry>
             <key>gasmas.agents.ValveAgent</key>
@@ -44,12 +44,12 @@
         </entry>
     </agentConfiguration>
     <jadeConfiguration>
-        <useLocalPort>1126</useLocalPort>
+        <useLocalPort>1127</useLocalPort>
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
-            <service>jade.debugging.DebugService</service>
             <service>agentgui.simulationService.SimulationService</service>
+            <service>jade.debugging.DebugService</service>
             <service>jade.core.mobility.AgentMobilityService</service>
         </serviceList>
     </jadeConfiguration>
@@ -76,7 +76,7 @@
         <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>false</showJADErmaGUI>
     </remoteContainerConfiguration>
-    <simulationSetupCurrent>HNord</simulationSetupCurrent>
+    <simulationSetupCurrent>Testnetz 1</simulationSetupCurrent>
     <simulationSetups>
         <entry>
             <key>HNord</key>
