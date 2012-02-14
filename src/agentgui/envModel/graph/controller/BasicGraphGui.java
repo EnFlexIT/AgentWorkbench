@@ -924,7 +924,7 @@ public class BasicGraphGui extends JPanel {
 								NetworkComponent component = componentHashSet.iterator().next();
 								if (networkModel.getClusterComponents(componentHashSet).size() == 1) {
 									// --- This is a cluster component ------------------
-									ClusterNetworkComponent cnc = (ClusterNetworkComponent) component;
+									ClusterNetworkComponent cnc = networkModel.getClusterComponents(componentHashSet).get(0);
 									DomainSettings ds = null;
 									String domain = cnc.getDomain();
 									if (domain != null) {
